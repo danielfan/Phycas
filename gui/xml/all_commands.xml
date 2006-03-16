@@ -1,0 +1,1395 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="../../gui/phycasGUI/swixml/translate/commandsXMLTransform.xsl" ?>
+<phyc:command_list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://commandLanguage.phycas.org file:/I:/Phycas/phycasdev/command_archive/xml/phycas_command_language.xsd" xmlns:phyc="http://commandLanguage.phycas.org">
+    <head>
+        <title>phycas</title>
+        <version>0.0.1</version>
+        <description>Model-based phylogenetic reconstruction</description>
+        <authors>Paul O. Lewis, Mark T. Holder, David L. Swofford, (GUI by Vanessa Jackson)</authors>
+        <category>phylogeny</category>
+        <doclink>http://phycas.org</doclink>
+    </head>
+    <command_set name="console_only" user_interface="console">
+        <command label="Alias" gui_order="1" compilation_target="ALL">
+            <format style="nexus">
+                <user_hint>(nickname) \'expanded command(s)\'</user_hint>
+            </format>
+            <description>Specifies a shortened name for a command or series of commands (note the
+                expanded command must be in single quotes)</description>
+            <phycas_impl>
+                <setup>
+                    <receiver_class>PhoFloor</receiver_class>
+                    <function>SetupAliasCommand</function>
+                </setup>
+                <handler>
+                    <receiver_class>PhoFloor</receiver_class>
+                    <function>HandleAlias</function>
+                </handler>
+            </phycas_impl>
+            <cmd_param_group gui_order="1">
+                <cmd_param label="" gui_order="1" persistent="false" placement="1">
+                    <description/>
+                    <gui_description>Shortened Name</gui_description>
+                    <user_level>basic_user</user_level>
+                    <name_type_info>
+                        <default/>
+                        <disallowed_values>
+                            <labile>
+                                <phycas_impl>
+                                    <receiver_class>PhoFloor</receiver_class>
+                                    <function>GetCommandNames</function>
+                                    <ptr_name_in_setup>this</ptr_name_in_setup>
+                                </phycas_impl>
+                            </labile>
+                        </disallowed_values>
+                    </name_type_info>
+                    <phycas_impl>
+                        <manipulated_var>aliasKey</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param label="" gui_order="2" persistent="false" placement="2">
+                    <description/>
+                    <gui_description>Command(s)</gui_description>
+                    <user_level>basic_user</user_level>
+                    <string_type_info>
+                        <default/>
+                    </string_type_info>
+                    <phycas_impl>
+                        <manipulated_var>expansion</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+            </cmd_param_group>
+        </command>
+        <command label="Set" gui_order="2" compilation_target="ALL">
+            <format style="nexus">
+                <user_hint>set &lt;command name&gt; &lt;command setting name&gt; = &lt;value&gt;;</user_hint>
+            </format>
+            <description>Sets general program behavior or changes settings of other commands without
+                executing the command</description>
+            <phycas_impl>
+                <setup>
+                    <receiver_class>PhoFloor</receiver_class>
+                    <function>SetupSetCommand</function>
+                </setup>
+                <handler>
+                    <receiver_class>PhoFloor</receiver_class>
+                    <function>HandleSet</function>
+                </handler>
+            </phycas_impl>
+            <cmd_param_group gui_order="1">
+                <cmd_param label="OutWidth" gui_order="10" persistent="true">
+                    <description>Number of characters per line in the output display</description>
+                    <gui_description/>
+                    <user_level>basic_user</user_level>
+                    <integer_type_info>
+                        <default>
+                            <constant_val>80</constant_val>
+                        </default>
+                        <min_val>
+                            <constant_val>1</constant_val>
+                        </min_val>
+                        <max_val/>
+                    </integer_type_info>
+                    <phycas_impl>
+                        <manipulated_var>outputWidth</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+            </cmd_param_group>
+        </command>
+        <command label="PWD" gui_order="3" compilation_target="WIN_PHOREST">
+            <format style="nexus"/>
+            <description>Displays the current working directory</description>
+            <phycas_impl>
+                <setup>
+                    <receiver_class>PWD</receiver_class>
+                    <function>SetupPWD</function>
+                    <setup_header>phycas/misc/pwd.hpp</setup_header>
+                </setup>
+                <handler>
+                    <receiver_class>PWD</receiver_class>
+                    <function>HandlePWD</function>
+                </handler>
+            </phycas_impl>
+        </command>
+        <command label="Quit" gui_order="4" compilation_target="ALL">
+            <format style="nexus"/>
+            <description/>
+            <phycas_impl>
+                <setup>
+                    <receiver_class>PhoFloor</receiver_class>
+                    <function>SetupQuitCommand</function>
+                </setup>
+                <handler>
+                    <receiver_class>PhoFloor</receiver_class>
+                    <function>HandleQuit</function>
+                </handler>
+            </phycas_impl>
+        </command>
+        <command label="Copying" gui_order="5" compilation_target="ALL">
+            <format style="nexus"/>
+            <description/>
+            <phycas_impl>
+                <setup>
+                    <receiver_class>PhoFloor</receiver_class>
+                    <function>SetupCopyingCommand</function>
+                </setup>
+                <handler>
+                    <receiver_class>PhoFloor</receiver_class>
+                    <function>HandleCopying</function>
+                </handler>
+            </phycas_impl>
+        </command>
+    </command_set>
+    <command_set name="Taxa" user_interface="gui">
+        <command label="TaxStatus" gui_order="1" compilation_target="ALL">
+            <format style="nexus"/>
+            <description>Displays information about the current taxa</description>
+            <phycas_impl>
+                <setup>
+                    <receiver_class>PhoTaxaManager</receiver_class>
+                    <function>SetupTaxStatusCommand</function>
+                    <setup_header>phycas/taxa/taxa_manager.hpp</setup_header>
+                </setup>
+                <handler>
+                    <receiver_class>PhoTaxaManager</receiver_class>
+                    <function>HandleTaxStatus</function>
+                </handler>
+            </phycas_impl>
+            <cmd_param_group gui_order="1">
+                <cmd_param label="FullDisplay" gui_order="1" persistent="true">
+                    <description>If true, a table with taxon number, name and inclusion status is
+                        shown. If false, a brief summary is displayed.</description>
+                    <gui_description>Show full details?</gui_description>
+                    <user_level>basic_user</user_level>
+                    <bool_type_info>
+                        <default>
+                            <constant_val>true</constant_val>
+                        </default>
+                    </bool_type_info>
+                    <phycas_impl>
+                        <manipulated_var>fullDisplay</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param label="ShowExcluded" gui_order="2" persistent="true">
+                    <description>Controls whether or not excluded are listed in the summary</description>
+                    <gui_description>Show Excluded Taxa?</gui_description>
+                    <user_level>basic_user</user_level>
+                    <bool_type_info>
+                        <default>
+                            <constant_val>true</constant_val>
+                        </default>
+                    </bool_type_info>
+                    <phycas_impl>
+                        <manipulated_var>showExcluded</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <!-- TEMP - VKJ Oct. 21:  Added this to test choice_type_info and mixed_type_info -->
+                <!--cmd_param label="Test" gui_order="22" persistent="true"> 
+					<description>Testing a choice type</description>
+					<gui_description>Testing a choice type</gui_description>
+					<user_level>basic_user</user_level>
+					<choice_type_info>
+						<default>
+							<constant_val>choice3</constant_val>
+						</default>
+						<choices>
+							<constant_val>choice0</constant_val>
+							<constant_val>choice1</constant_val>
+							<constant_val>choice2</constant_val>
+							<constant_val>choice3</constant_val>
+							<constant_val>choice4</constant_val>
+							<labile>
+								<phycas_impl>
+									<receiver_class>TestClass</receiver_class>
+									<function>TestFunction</function>
+									<ptr_name_in_setup>this</ptr_name_in_setup>
+								</phycas_impl>
+							</labile>
+						</choices>
+					    <phycas_impl>
+					        <manipulated_var>testInt</manipulated_var>
+					    </phycas_impl>
+					</choice_type_info>
+					<phycas_impl>
+						<manipulated_var>testChoice</manipulated_var>
+					</phycas_impl>
+				</cmd_param>
+				<cmd_param label="TestMixed" gui_order="22" persistent="true">
+					<description>Test mixed.</description>
+					<gui_description>Test Mixed</gui_description>
+					<user_level>basic_user</user_level>
+					<mixed_type_info>
+						<default>
+							<constant_val>1</constant_val>
+						</default>
+						<cmd_param label="TestMixed0" gui_order="23" persistent="true">
+							<description>Test MIxed 0</description>
+							<gui_description>Test Mixed 0</gui_description>
+							<user_level>basic_user</user_level>
+							<string_type_info>
+								<default>
+									<constant_val>default</constant_val>
+								</default>
+							</string_type_info>
+							<phycas_impl>
+								<manipulated_var>testMixed0</manipulated_var>
+							</phycas_impl>
+						</cmd_param>
+						<cmd_param label="TestMixed1" gui_order="24" persistent="true">
+							<description>Test MIxed 1</description>
+							<gui_description>Test Mixed 1</gui_description>
+							<user_level>basic_user</user_level>
+							<choice_type_info>
+								<default/>
+								<choices>
+									<constant_val>choice0</constant_val>
+									<constant_val>choice1</constant_val>
+									<constant_val>choice2</constant_val>
+									<constant_val>choice3</constant_val>
+									<constant_val>choice4</constant_val>
+								</choices>
+								<phycas_impl>
+									<manipulated_var>testMixed1C</manipulated_var>
+								</phycas_impl>
+							</choice_type_info>
+							<phycas_impl>
+								<manipulated_var>testMixed1</manipulated_var>
+							</phycas_impl>
+						</cmd_param>
+					</mixed_type_info>
+					<phycas_impl>
+						<manipulated_var>testMixed</manipulated_var>
+					</phycas_impl>
+				</cmd_param-->
+            </cmd_param_group>
+        </command>
+        <command label="TaxSet" gui_order="2" compilation_target="ALL">
+            <format style="nexus"/>
+            <description>Specifies a name to be assigned to a group of taxa</description>
+            <phycas_impl>
+                <setup>
+                    <receiver_class>PhoTaxaManager</receiver_class>
+                    <function>SetupTaxSetCommand</function>
+                    <setup_header>phycas/taxa/taxa_manager.hpp</setup_header>
+                </setup>
+                <handler>
+                    <receiver_class>PhoTaxaManager</receiver_class>
+                    <function>HandleTaxSet</function>
+                </handler>
+            </phycas_impl>
+            <cmd_param_group gui_order="1">
+                <cmd_param label="" gui_order="1" persistent="false" placement="1">
+                    <description/>
+                    <gui_description>Name for Set of Taxa</gui_description>
+                    <user_level>basic_user</user_level>
+                    <name_type_info>
+                        <default/>
+                        <disallowed_values>
+                            <labile>
+                                <phycas_impl>
+                                    <receiver_class>PhoTaxaManager</receiver_class>
+                                    <function>GetReservedSetNames</function>
+                                    <ptr_name_in_setup>this</ptr_name_in_setup>
+                                </phycas_impl>
+                            </labile>
+                        </disallowed_values>
+                    </name_type_info>
+                    <phycas_impl>
+                        <manipulated_var>name</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param label="" gui_order="2" persistent="true" placement="2">
+                    <description/>
+                    <gui_description>Set of Taxa</gui_description>
+                    <user_level>basic_user</user_level>
+                    <tax_set_type_info require_active="false">
+                        <default/>
+                        <phycas_impl>
+                            <manager_ptr>this</manager_ptr>
+                        </phycas_impl>
+                    </tax_set_type_info>
+                    <phycas_impl>
+                        <manipulated_var>taxSet</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+            </cmd_param_group>
+        </command>
+        <command label="IncludeTaxa" gui_order="3" compilation_target="ALL">
+            <format style="nexus"/>
+            <description>Includes taxa that are in memory, but have been made inactive by an
+                ExcludeTaxa command. The numbering of taxa is not affected by either IncludeTaxa or ExcludeTaxa.</description>
+            <phycas_impl>
+                <setup>
+                    <receiver_class>PhoTaxaManager</receiver_class>
+                    <function>SetupIncludeTaxaCommand</function>
+                    <setup_header>phycas/taxa/taxa_manager.hpp</setup_header>
+                </setup>
+                <handler>
+                    <receiver_class>PhoTaxaManager</receiver_class>
+                    <function>HandleIncludeTaxa</function>
+                </handler>
+            </phycas_impl>
+            <cmd_param_group gui_order="1">
+                <cmd_param label="" gui_order="1" persistent="true" placement="1">
+                    <description/>
+                    <gui_description>Set of Taxa to Include</gui_description>
+                    <user_level>basic_user</user_level>
+                    <tax_set_type_info>
+                        <default/>
+                        <phycas_impl>
+                            <manager_ptr>this</manager_ptr>
+                        </phycas_impl>
+                    </tax_set_type_info>
+                    <phycas_impl>
+                        <manipulated_var>taxSet</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+            </cmd_param_group>
+        </command>
+        <command label="ExcludeTaxa" gui_order="4" compilation_target="ALL">
+            <format style="nexus"/>
+            <description>Removes a set of taxa from further analyses, but does not alter th
+                numbering of taxa. The taxa can be reactivated by using the IncludeTaxa command</description>
+            <phycas_impl>
+                <setup>
+                    <receiver_class>PhoTaxaManager</receiver_class>
+                    <function>SetupExcludeTaxaCommand</function>
+                    <setup_header>phycas/taxa/taxa_manager.hpp</setup_header>
+                </setup>
+                <handler>
+                    <receiver_class>PhoTaxaManager</receiver_class>
+                    <function>HandleExcludeTaxa</function>
+                </handler>
+            </phycas_impl>
+            <cmd_param_group gui_order="1">
+                <cmd_param label="" gui_order="1" persistent="true" placement="1">
+                    <description/>
+                    <gui_description>Set of Taxa to Remove</gui_description>
+                    <user_level>basic_user</user_level>
+                    <tax_set_type_info>
+                        <default/>
+                        <phycas_impl>
+                            <manager_ptr>this</manager_ptr>
+                        </phycas_impl>
+                    </tax_set_type_info>
+                    <phycas_impl>
+                        <manipulated_var>taxSet</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+            </cmd_param_group>
+        </command>
+    </command_set>
+    <command_set name="Trees" user_interface="all">
+        <command label="TreeSet" compilation_target="ALL" gui_order="10">
+            <format style="nexus"/>
+            <description>Specifies a name to be assigned to a group of trees</description>
+            <phycas_impl>
+                <setup>
+                    <receiver_class>PhoTreesManager</receiver_class>
+                    <function>SetupTreeSetCommand</function>
+                    <setup_header>phycas/trees/trees_manager.hpp</setup_header>
+                </setup>
+                <handler>
+                    <receiver_class>PhoTreesManager</receiver_class>
+                    <function>HandleTreeSet</function>
+                </handler>
+            </phycas_impl>
+            <cmd_param_group gui_order="1">
+                <cmd_param label="" gui_order="1" persistent="false" placement="1">
+                    <description/>
+                    <gui_description>Name for Set of Trees</gui_description>
+                    <user_level>basic_user</user_level>
+                    <name_type_info>
+                        <default/>
+                        <disallowed_values>
+                            <labile>
+                                <phycas_impl>
+                                    <receiver_class>PhoTreesManager</receiver_class>
+                                    <function>GetReservedSetNames</function>
+                                    <ptr_name_in_setup>this</ptr_name_in_setup>
+                                </phycas_impl>
+                            </labile>
+                        </disallowed_values>
+                    </name_type_info>
+                    <phycas_impl>
+                        <manipulated_var>name</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param label="" gui_order="2" persistent="true" placement="2">
+                    <description/>
+                    <gui_description>Set of Trees</gui_description>
+                    <user_level>basic_user</user_level>
+                    <tree_set_type_info>
+                        <default/>
+                        <phycas_impl>
+                            <manager_ptr>this</manager_ptr>
+                        </phycas_impl>
+                    </tree_set_type_info>
+                    <phycas_impl>
+                        <manipulated_var>treeSet</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+            </cmd_param_group>
+        </command>
+        <command label="GetTrees" compilation_target="SUPPORT_GETTREES" gui_order="20">
+            <format style="nexus"/>
+            <description>Reads NEXUS Trees blocks in a file</description>
+            <phycas_impl>
+                <setup>
+                    <receiver_class>PhoFloor</receiver_class>
+                    <function>SetupGetTrees</function>
+                    <setup_header>phycas/trees/trees_manager.hpp</setup_header>
+                </setup>
+                <handler>
+                    <receiver_class>PhoFloor</receiver_class>
+                    <function>HandleGetTrees</function>
+                </handler>
+            </phycas_impl>
+            <cmd_param_group gui_order="1">
+                <cmd_param gui_order="1" label="ToSave" persistent="true">
+                    <description/>
+                    <gui_description>Set of trees to save</gui_description>
+                    <user_level>basic_user</user_level>
+                    <tree_set_type_info require_active="false" check_indices="false">
+                        <default/>
+                        <phycas_impl>
+                            <manager_ptr>&amp;PhoTreesManager::GetInstance()</manager_ptr>
+                        </phycas_impl>
+                    </tree_set_type_info>
+                    <phycas_impl>
+                        <manipulated_var>toSave</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+            </cmd_param_group>
+        </command>
+        <command label="ClearTrees" compilation_target="SUPPORT_GETTREES" gui_order="30">
+            <format style="nexus"/>
+            <description>Removes the specified trees from memory</description>
+            <phycas_impl>
+                <setup>
+                    <receiver_class>PhoTreesManager</receiver_class>
+                    <function>SetupClearTrees</function>
+                    <setup_header>phycas/trees/trees_manager.hpp</setup_header>
+                </setup>
+                <handler>
+                    <receiver_class>PhoTreesManager</receiver_class>
+                    <function>HandleClearTrees</function>
+                </handler>
+            </phycas_impl>
+            <cmd_param_group gui_order="1">
+                <cmd_param gui_order="1" label="" persistent="false" placement="1">
+                    <description/>
+                    <gui_description>Set of trees to clear</gui_description>
+                    <user_level>basic_user</user_level>
+                    <tree_set_type_info require_active="false">
+                        <default/>
+                        <phycas_impl>
+                            <manager_ptr>this</manager_ptr>
+                        </phycas_impl>
+                    </tree_set_type_info>
+                    <phycas_impl>
+                        <manipulated_var>toClear</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+            </cmd_param_group>
+        </command>
+    </command_set>
+    <command_set name="Analyses" user_interface="gui">
+        <command label="Execute" gui_order="1" compilation_target="ALL">
+            <format style="nexus"/>
+            <description>Reads the specified NEXUS file, executing the commands from all recognized blocks</description>
+            <phycas_impl>
+                <setup>
+                    <receiver_class>PhoFloor</receiver_class>
+                    <function>SetupExecuteCommand</function>
+                </setup>
+                <handler>
+                    <receiver_class>PhoFloor</receiver_class>
+                    <function>HandleExecute</function>
+                </handler>
+            </phycas_impl>
+            <cmd_param_group gui_order="1">
+                <cmd_param label="Filename" gui_order="1" persistent="true">
+                    <description/>
+                    <gui_description>Filename</gui_description>
+                    <user_level>basic_user</user_level>
+                    <infile_type_info>
+                        <default/>
+                    </infile_type_info>
+                    <phycas_impl>
+                        <manipulated_var>fileToExecute</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+            </cmd_param_group>
+        </command>
+        <!--command label="LScore" gui_order="15" compilation_target="ALL">
+            <format style="nexus"/>
+            <description>Calculates the likelihood of a tree using the current model settings</description>
+            <phycas_impl>
+                <setup>
+                    <receiver_class>AnalysisManager</receiver_class>
+                    <function>SetupLScoreCommand</function>
+                    <setup_header>phycas/analyses/analysismanager.h</setup_header>
+                    <settings_header>phycas/command/lscoresettings.h</settings_header>
+                </setup>
+                <handler>
+                    <receiver_class>AnalysisManager</receiver_class>
+                    <function>HandleLScore</function>
+                </handler>
+            </phycas_impl>
+            <cmd_param_group gui_order="1">
+                <cmd_param label="Trees" gui_order="1" persistent="true">
+                    <description>Set of trees to be scored</description>
+                    <gui_description>Set of trees to be scored</gui_description>
+                    <user_level>basic_user</user_level>
+                    <tree_set_type_info>
+                        <default>
+                            <constant_val>ALL</constant_val>
+                        </default>
+                        <phycas_impl>
+                            <manager_ptr>NxsTreeListener::treeMgr</manager_ptr>
+                        </phycas_impl>
+                    </tree_set_type_info>
+                    <phycas_impl>
+                        <manipulated_var>setOfTrees</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+            </cmd_param_group>
+        </command-->
+        <command label="MCMC" gui_order="2" compilation_target="ALL">
+            <availability implemented_at="c++">
+                <test_info>
+                    <message>
+                        <failure>there are no taxa in memory</failure>
+                    </message>
+                    <comparison name="hasTaxa">
+                        <left_operand>
+                            <labile>
+                                <phycas_impl>
+                                    <receiver_class>PhoTaxaManager</receiver_class>
+                                    <function>GetNumTaxa</function>
+                                    <ptr_name_in_setup>taxaMgr</ptr_name_in_setup>
+                                </phycas_impl>
+                            </labile>
+                        </left_operand>
+                        <operator>greater_than</operator>
+                        <right_operand>
+                            <constant_val>0</constant_val>
+                        </right_operand>
+                    </comparison>
+                </test_info>
+            </availability>
+            <format style="nexus"/>
+            <description>Starts an MCMC run using the data currently stored in memory</description>
+            <phycas_impl>
+                <setup>
+                    <receiver_class>PhoMCMC</receiver_class>
+                    <function>SetupMCMCCommand</function>
+                    <setup_header>phycas/modules/mcmc/mcmc.hpp</setup_header>
+                </setup>
+                <handler>
+                    <receiver_class>PhoMCMC</receiver_class>
+                    <function>HandleMCMC</function>
+                </handler>
+            </phycas_impl>
+            <cmd_param_group gui_order="1" name="General">
+                <cmd_param label="NIterations" gui_order="10" persistent="true">
+                    <description>Number of iterations to run the MCMC simulation</description>
+                    <gui_description>Number of iterations</gui_description>
+                    <user_level>basic_user</user_level>
+                    <integer_type_info>
+                        <default>
+                            <constant_val>1100</constant_val>
+                        </default>
+                        <min_val>
+                            <constant_val>1</constant_val>
+                        </min_val>
+                        <max_val/>
+                    </integer_type_info>
+                    <phycas_impl>
+                        <manipulated_var>niterations</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param label="NChains" gui_order="20" persistent="true">
+                    <description>Number of chains to be run simultaneously (all but one of these
+                        will be heated chains)</description>
+                    <gui_description>Number of chains</gui_description>
+                    <user_level>basic_user</user_level>
+                    <integer_type_info>
+                        <default>
+                            <constant_val>4</constant_val>
+                        </default>
+                        <min_val>
+                            <constant_val>1</constant_val>
+                        </min_val>
+                        <max_val/>
+                    </integer_type_info>
+                    <phycas_impl>
+                        <manipulated_var>nchains</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param label="SampleEvery" gui_order="30" persistent="true">
+                    <description>Sample interval</description>
+                    <gui_description>Sample interval</gui_description>
+                    <user_level>basic_user</user_level>
+                    <integer_type_info>
+                        <default>
+                            <constant_val>10</constant_val>
+                        </default>
+                        <min_val>
+                            <constant_val>0</constant_val>
+                        </min_val>
+                        <max_val>
+                            <label>NIterations</label>
+                        </max_val>
+                    </integer_type_info>
+                    <phycas_impl>
+                        <manipulated_var>sampleEvery</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param label="ReportEvery" gui_order="40" persistent="true">
+                    <description>Report Interval</description>
+                    <gui_description>Report Interval</gui_description>
+                    <user_level>basic_user</user_level>
+                    <integer_type_info>
+                        <default>
+                            <constant_val>100</constant_val>
+                        </default>
+                        <min_val>
+                            <constant_val>0</constant_val>
+                        </min_val>
+                        <max_val>
+                            <label>NIterations</label>
+                        </max_val>
+                    </integer_type_info>
+                    <phycas_impl>
+                        <manipulated_var>reportEvery</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param label="PlotEvery" gui_order="50" persistent="true">
+                    <description>Frequency with which majority rule consensus tree will be displayed
+                        during an MCMC run</description>
+                    <gui_description>Consensus tree interval</gui_description>
+                    <user_level>basic_user</user_level>
+                    <integer_type_info>
+                        <default>
+                            <constant_val>500</constant_val>
+                        </default>
+                        <min_val>
+                            <constant_val>0</constant_val>
+                        </min_val>
+                        <max_val>
+                            <label>NIterations</label>
+                        </max_val>
+                    </integer_type_info>
+                    <phycas_impl>
+                        <manipulated_var>plotEvery</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <!--cmd_param label="ParamFilename" gui_order="60" persistent="true">
+					<description>Output file containing samples of parameter values</description>
+					<gui_description>Parameter samples file</gui_description>
+					<user_level>basic_user</user_level>
+					<outfile_type_info>
+						<default>
+							<constant_val>samples.txt</constant_val>
+						</default>
+						<prefix>Param</prefix>
+					</outfile_type_info>
+					<phycas_impl>
+						<manipulated_var>paramFile</manipulated_var>
+					</phycas_impl>
+				</cmd_param-->
+                <cmd_param label="ParamOut" gui_order="60" persistent="true">
+                    <description>Output destination for summaries of parameter values</description>
+                    <gui_description>Parameter samples output</gui_description>
+                    <user_level>basic_user</user_level>
+                    <output_type_info>
+                        <default suppress="false" plottable="true">
+                            <file replace="true" append="false" path="samples.txt"/>
+                        </default>
+                    </output_type_info>
+                    <phycas_impl>
+                        <manipulated_var>paramOut</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param gui_order="65" label="SplitOut" persistent="true">
+                    <description>Destination for tabular summary of split frequencies</description>
+                    <gui_description>Split table output</gui_description>
+                    <user_level>basic_user</user_level>
+                    <output_type_info>
+                        <default suppress="false">
+                            <redirect>Output</redirect>
+                        </default>
+                    </output_type_info>
+                    <phycas_impl>
+                        <manipulated_var>splitOut</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param label="RNSeed" gui_order="70" persistent="true">
+                    <description>Seed for pseudorandom number generator used in MCMC runs</description>
+                    <gui_description>Seed for pseudorandom number generator</gui_description>
+                    <user_level>basic_user</user_level>
+                    <integer_type_info>
+                        <default>
+                            <constant_val>0</constant_val>
+                        </default>
+                        <min_val>
+                            <constant_val>0</constant_val>
+                        </min_val>
+                        <max_val/>
+                    </integer_type_info>
+                    <phycas_impl>
+                        <manipulated_var>rnseed</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param label="IgnoreData" gui_order="80" persistent="true">
+                    <description>If specified, MCMC will run with no data and thus the posterior
+                        will be equivalent to the prior</description>
+                    <gui_description>Ignore Data</gui_description>
+                    <user_level>basic_user</user_level>
+                    <bool_type_info>
+                        <default>
+                            <constant_val>false</constant_val>
+                        </default>
+                    </bool_type_info>
+                    <phycas_impl>
+                        <manipulated_var>ignoreData</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+            </cmd_param_group>
+            <cmd_param_group gui_order="2" name="Proposal Settings">
+                <cmd_param label="BushMoveWeight" gui_order="5" persistent="true">
+                    <description>Probability of proposing a dimension changing move to a less
+                        resolved (or more resolved) tree topology</description>
+                    <gui_description>Add/Delete edge proposal probability</gui_description>
+                    <user_level>basic_user</user_level>
+                    <double_type_info>
+                        <default>
+                            <constant_val>1</constant_val>
+                        </default>
+                        <min_val>
+                            <constant_val>0.0</constant_val>
+                        </min_val>
+                        <max_val/>
+                    </double_type_info>
+                    <phycas_impl>
+                        <manipulated_var>bushMoveWeight</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param label="GibbsEvery" gui_order="10" persistent="true">
+                    <description>Number of steps that must elapse before another round of Gibbs
+                        sampling is done</description>
+                    <gui_description>Gibbs sampling interval</gui_description>
+                    <user_level>basic_user</user_level>
+                    <integer_type_info>
+                        <default>
+                            <constant_val>10</constant_val>
+                        </default>
+                        <min_val>
+                            <constant_val>0</constant_val>
+                        </min_val>
+                        <max_val>
+                            <label>NIterations</label>
+                        </max_val>
+                    </integer_type_info>
+                    <phycas_impl>
+                        <manipulated_var>gibbsEvery</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param label="SliceDiv" gui_order="20" persistent="true">
+                    <description>Number of divisions in slice after adapting slice sampler unit width.</description>
+                    <gui_description>Number of slice divisions</gui_description>
+                    <user_level>basic_user</user_level>
+                    <availability>
+                        <test_info>
+                            <message>
+                                <failure>GibbsEvery is set to 0 (so slice sampling will not be performed)</failure>
+                            </message>
+                            <comparison name="doingGibbs">
+                                <left_operand>
+                                    <label>GibbsEvery</label>
+                                </left_operand>
+                                <operator>greater_than</operator>
+                                <right_operand>
+                                    <constant_val>0</constant_val>
+                                </right_operand>
+                            </comparison>
+                        </test_info>
+                    </availability>
+                    <integer_type_info>
+                        <default>
+                            <constant_val>3</constant_val>
+                        </default>
+                        <min_val>
+                            <constant_val>2</constant_val>
+                        </min_val>
+                        <max_val/>
+                    </integer_type_info>
+                    <phycas_impl>
+                        <manipulated_var>sliceDivisions</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param label="InitUWidth" gui_order="30" persistent="true">
+                    <description>Initial width of slice unit for sampling kappa values.</description>
+                    <gui_description>Initial slice width</gui_description>
+                    <user_level>basic_user</user_level>
+                    <availability>
+                        <test_info>
+                            <message>
+                                <failure>GibbsEvery is set to 0 (so slice sampling will not be performed)</failure>
+                            </message>
+                            <comparison name="doingGibbs">
+                                <left_operand>
+                                    <label>GibbsEvery</label>
+                                </left_operand>
+                                <operator>greater_than</operator>
+                                <right_operand>
+                                    <constant_val>0</constant_val>
+                                </right_operand>
+                            </comparison>
+                        </test_info>
+                    </availability>
+                    <double_type_info>
+                        <default>
+                            <constant_val>50.0</constant_val>
+                        </default>
+                        <min_val>
+                            <constant_val>DBL_MIN</constant_val>
+                        </min_val>
+                        <max_val/>
+                    </double_type_info>
+                    <phycas_impl>
+                        <manipulated_var>initUnitWidth</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param label="ScalerMoveWeight" gui_order="40" persistent="true">
+                    <description>Determines the probability of a tree scaling move, which scales all
+                        edges lengths in the tree up or down. Weights of all possible moves are
+                        normalized to obtain probabilities.</description>
+                    <gui_description>Relative weight of tree scaling move</gui_description>
+                    <user_level>basic_user</user_level>
+                    <double_type_info>
+                        <default>
+                            <constant_val>0.0</constant_val>
+                        </default>
+                        <min_val>
+                            <constant_val>0.0</constant_val>
+                        </min_val>
+                        <max_val/>
+                    </double_type_info>
+                    <phycas_impl>
+                        <manipulated_var>scalerMoveWeight</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param label="LocalMoveWeight" gui_order="50" persistent="true">
+                    <description>Determines probability of attempting a Larget-Simon LOCAL move.
+                        Weights of all possible moves are normalized to obtain the corresponding
+                        probability of proposing a move of some type.</description>
+                    <gui_description>Weight of Larget-Simon's LOCAL move</gui_description>
+                    <user_level>basic_user</user_level>
+                    <double_type_info>
+                        <default>
+                            <constant_val>2.0</constant_val>
+                        </default>
+                        <min_val>
+                            <constant_val>0.0</constant_val>
+                        </min_val>
+                        <max_val/>
+                    </double_type_info>
+                    <phycas_impl>
+                        <manipulated_var>localMoveWeight</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+            </cmd_param_group>
+            <cmd_param_group gui_order="3" name="Model Settings">
+                <cmd_param label="KStart" gui_order="10" persistent="true">
+                    <description>Initial value of kappa parameter (should be moved to model description)</description>
+                    <gui_description>Initial value of kappa</gui_description>
+                    <user_level>basic_user</user_level>
+                    <double_type_info>
+                        <default>
+                            <constant_val>4.0</constant_val>
+                        </default>
+                        <min_val>
+                            <constant_val>DBL_MIN</constant_val>
+                        </min_val>
+                        <max_val/>
+                    </double_type_info>
+                    <phycas_impl>
+                        <manipulated_var>kappaStartingValue</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param label="KappaPriorMean" gui_order="20" persistent="true">
+                    <description>Mean of the exponential prior for the kappa parameter (will make
+                        this more general in the future)</description>
+                    <gui_description>Mean of exponential prior for kappa</gui_description>
+                    <user_level>basic_user</user_level>
+                    <double_type_info>
+                        <default>
+                            <constant_val>1.0</constant_val>
+                        </default>
+                        <min_val>
+                            <constant_val>0</constant_val>
+                        </min_val>
+                        <max_val/>
+                    </double_type_info>
+                    <phycas_impl>
+                        <manipulated_var>kappaPriorMean</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param label="NCat" gui_order="30" persistent="true">
+                    <description>The number of rate categories for discrete gamma among site rate variation</description>
+                    <gui_description>Number of rate categories</gui_description>
+                    <user_level>basic_user</user_level>
+                    <integer_type_info>
+                        <default>
+                            <constant_val>1</constant_val>
+                        </default>
+                        <min_val>
+                            <constant_val>1</constant_val>
+                        </min_val>
+                        <max_val/>
+                    </integer_type_info>
+                    <phycas_impl>
+                        <manipulated_var>ncat</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param label="PTopoPrior" gui_order="40" persistent="true">
+                    <description>If TopoPriorFlat is false, PTopoPrior is used as the parameter of
+                        the geometric prior across resolution classes. A value near 0 means prior
+                        will be close to flat across resolution classes (but not across trees), and
+                        a value near 1 produces a prior that strongly favors less-resolved trees.</description>
+                    <gui_description>Parameter of geometric of topology prior</gui_description>
+                    <user_level>basic_user</user_level>
+                    <double_type_info>
+                        <default>
+                            <constant_val>0.5</constant_val>
+                        </default>
+                        <min_val>
+                            <constant_val>0.0</constant_val>
+                        </min_val>
+                        <max_val>
+                            <constant_val>1.0</constant_val>
+                        </max_val>
+                    </double_type_info>
+                    <phycas_impl>
+                        <manipulated_var>pTopoPrior</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param label="FlatTopoPrior" gui_order="50" persistent="true">
+                    <description>True specifies that prior should be flat across all topologies
+                        (regardless of the number of internal nodes). False specifies that prior
+                        should be geometric, with PTopoPrior being the parameter.</description>
+                    <gui_description>Flat prior on resolution classes?</gui_description>
+                    <user_level>basic_user</user_level>
+                    <bool_type_info>
+                        <default>
+                            <constant_val>true</constant_val>
+                        </default>
+                    </bool_type_info>
+                    <phycas_impl>
+                        <manipulated_var>topoPriorFlat</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param label="UseEdgeLenHyperPrior" gui_order="60" persistent="true">
+                    <description/>
+                    <gui_description>Use hyperprior on edge lengths</gui_description>
+                    <user_level>basic_user</user_level>
+                    <bool_type_info>
+                        <default>
+                            <constant_val>true</constant_val>
+                        </default>
+                    </bool_type_info>
+                    <phycas_impl>
+                        <manipulated_var>useEdgeLenHyper</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param label="MeanEdgeLenHyperPrior" gui_order="70" persistent="true">
+                    <description/>
+                    <gui_description>Mean of the hyperprior on edge lengths</gui_description>
+                    <user_level>basic_user</user_level>
+                    <availability>
+                        <test_info>
+                            <predicate evaluate_to="true" name="usingEdgeLenHyperPrior">
+                                <label>UseEdgeLenHyperPrior</label>
+                            </predicate>
+                        </test_info>
+                    </availability>
+                    <double_type_info>
+                        <default>
+                            <constant_val>1</constant_val>
+                        </default>
+                        <min_val>
+                            <constant_val>0</constant_val>
+                        </min_val>
+                        <max_val/>
+                    </double_type_info>
+                    <phycas_impl>
+                        <manipulated_var>edgeLenHyperPriorMean</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param label="VarEdgeLenHyperPrior" gui_order="80" persistent="true">
+                    <description/>
+                    <gui_description>Variance of edge length hyperprior</gui_description>
+                    <user_level>basic_user</user_level>
+                    <availability>
+                        <test_info>
+                            <predicate evaluate_to="true" name="usingEdgeLenHyperPrior">
+                                <label>UseEdgeLenHyperPrior</label>
+                            </predicate>
+                        </test_info>
+                    </availability>
+                    <double_type_info>
+                        <default>
+                            <constant_val>10</constant_val>
+                        </default>
+                        <min_val>
+                            <constant_val>0</constant_val>
+                        </min_val>
+                        <max_val/>
+                    </double_type_info>
+                    <phycas_impl>
+                        <manipulated_var>edgeLenHyperPriorVar</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param label="ResClassPrior" gui_order="90" persistent="true">
+                    <description/>
+                    <gui_description>Adjust for # trees in resolution class</gui_description>
+                    <user_level>basic_user</user_level>
+                    <bool_type_info>
+                        <default>
+                            <constant_val>false</constant_val>
+                        </default>
+                    </bool_type_info>
+                    <phycas_impl>
+                        <manipulated_var>resClassPrior</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param label="PolytomyLnPriorRatio" gui_order="100" persistent="true">
+                    <description>Log of the prior ratio for topology with m nodes to topology with
+                        m+1 nodes</description>
+                    <gui_description>Log of the delete-edge prior ratio</gui_description>
+                    <user_level>basic_user</user_level>
+                    <double_type_info>
+                        <default>
+                            <constant_val>0.0</constant_val>
+                        </default>
+                        <min_val/>
+                        <max_val/>
+                    </double_type_info>
+                    <phycas_impl>
+                        <manipulated_var>polytomyLnPriorRatio</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+            </cmd_param_group>
+        </command>
+        <command label="Phylodiversity" gui_order="3" compilation_target="ALL">
+            <format style="nexus"/>
+            <description>Computes phylodiversity measures</description>
+            <phycas_impl>
+                <setup>
+                    <receiver_class>Phylodiversity</receiver_class>
+                    <function>SetupPhylodiversity</function>
+                    <setup_header>phycas/modules/phylodiversity/pd.hpp</setup_header>
+                </setup>
+                <handler>
+                    <receiver_class>Phylodiversity</receiver_class>
+                    <function>HandlePhylodiversity</function>
+                </handler>
+            </phycas_impl>
+            <cmd_param_group gui_order="1">
+                <cmd_param label="Taxonset" gui_order="10" persistent="true">
+                    <description>The name of the taxon set to be treated as the focal group for
+                        purposes of computing phylodiversity measures.</description>
+                    <gui_description>Set of taxa</gui_description>
+                    <user_level>basic_user</user_level>
+                    <string_type_info>
+                        <default>
+                            <constant_val>None</constant_val>
+                        </default>
+                    </string_type_info>
+                    <phycas_impl>
+                        <manipulated_var>taxonset</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <!--cmd_param label="PDFilename" gui_order="20" persistent="true">
+					<description>File to which to save phylodiversity statistics in a tab-delimited format compatible with plotting with GnuPlot or importing into Excel.</description>
+					<gui_description>Filename</gui_description>
+					<user_level>basic_user</user_level>
+					<outfile_type_info>
+						<default>
+							<constant_val>pdstats.txt</constant_val>
+						</default>
+						<prefix>PD</prefix>
+					</outfile_type_info>
+					<phycas_impl>
+						<manipulated_var>pdfile</manipulated_var>
+					</phycas_impl>
+				</cmd_param-->
+                <cmd_param label="PDOutput" gui_order="20" persistent="true">
+                    <description>Output destination for a tab-delimited summary of the output
+                        compatible with plotting with GnuPlot or importing into Excel.</description>
+                    <gui_description>Output destination</gui_description>
+                    <user_level>basic_user</user_level>
+                    <output_type_info>
+                        <default suppress="true"/>
+                    </output_type_info>
+                    <phycas_impl>
+                        <manipulated_var>pdOut</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+            </cmd_param_group>
+        </command>
+        <command label="Distribution" gui_order="4" compilation_target="ALL">
+            <format style="nexus_def"/>
+            <description>Defines a probability distribution. The name can then be used in any
+                command that requires a distribution (for example when priors are specified).</description>
+            <phycas_impl>
+                <setup>
+                    <receiver_class>DistributionManager</receiver_class>
+                    <function>SetupDistributionCommand</function>
+                    <setup_header>phycas/rand/distribution_manager.hpp</setup_header>
+                    <settings_header>phycas/rand/distribution_description.hpp</settings_header>
+                </setup>
+                <handler>
+                    <receiver_class>DistributionManager</receiver_class>
+                    <function>HandleNewDistribution</function>
+                </handler>
+            </phycas_impl>
+            <cmd_param_group gui_order="1">
+                <cmd_param label="" gui_order="1" persistent="true" placement="1">
+                    <description>Name to be assigned to the distribution</description>
+                    <gui_description>Name to be assigned to the distribution</gui_description>
+                    <user_level>basic_user</user_level>
+                    <name_type_info>
+                        <default/>
+                        <disallowed_values>
+                            <labile>
+                                <phycas_impl>
+                                    <receiver_class>DistributionManager</receiver_class>
+                                    <function>GetReservedNames</function>
+                                    <ptr_name_in_setup>this</ptr_name_in_setup>
+                                </phycas_impl>
+                            </labile>
+                        </disallowed_values>
+                    </name_type_info>
+                    <phycas_impl>
+                        <manipulated_var>name</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param label="" gui_order="2" persistent="true" placement="2">
+                    <description>Definition of the distribution</description>
+                    <gui_description>Definition of the distribution</gui_description>
+                    <user_level>basic_user</user_level>
+                    <distribution_type_info distrib_class="Any">
+                        <default/>
+                        <num_variates>0</num_variates>
+                        <range_constraint constraint="Any"/>
+                        <phycas_impl>
+                            <receiver_class>DistributionManager</receiver_class>
+                            <function>GetDistribution</function>
+                            <ptr_name_in_setup>this</ptr_name_in_setup>
+                        </phycas_impl>
+                    </distribution_type_info>
+                    <phycas_impl>
+                        <manipulated_var>distrib</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+            </cmd_param_group>
+        </command>
+        <command label="Sample" gui_order="5" compilation_target="ALL">
+            <format style="nexus"/>
+            <description>Samples random deviates from the specified probability distribution</description>
+            <phycas_impl>
+                <setup>
+                    <receiver_class>PhoSampler</receiver_class>
+                    <function>SetupSampleCommand</function>
+                    <setup_header>phycas/modules/sampler/sampler.hpp</setup_header>
+                    <setup_header>phycas/rand/distribution_manager.hpp</setup_header>
+                    <settings_header>phycas/rand/distribution_description.hpp</settings_header>
+                </setup>
+                <handler>
+                    <receiver_class>PhoSampler</receiver_class>
+                    <function>HandleSample</function>
+                </handler>
+            </phycas_impl>
+            <cmd_param_group gui_order="1">
+                <cmd_param label="Distribution" gui_order="10" persistent="true">
+                    <description>Allows specification of the probability distribution from which
+                        random deviates are to be sampled (either the distribution description or
+                        the name of a previously specified distribution can be provided).</description>
+                    <gui_description>Distribution to sample</gui_description>
+                    <user_level>basic_user</user_level>
+                    <distribution_type_info distrib_class="Any">
+                        <default>
+                            <constant_val>Uniform(0.0,1.0)</constant_val>
+                        </default>
+                        <num_variates>0</num_variates>
+                        <range_constraint constraint="Any"/>
+                        <phycas_impl>
+                            <receiver_class>DistributionManager</receiver_class>
+                            <function>GetDistribution</function>
+                            <ptr_name_in_setup>&amp;DistributionManagerSingletonHolder::Instance()</ptr_name_in_setup>
+                        </phycas_impl>
+                    </distribution_type_info>
+                    <phycas_impl>
+                        <manipulated_var>distribution</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param label="NSampled" gui_order="20" persistent="true">
+                    <description>Number of random deviates to sample</description>
+                    <gui_description>Number of random deviates to sample</gui_description>
+                    <user_level>basic_user</user_level>
+                    <integer_type_info>
+                        <default>
+                            <constant_val>100</constant_val>
+                        </default>
+                        <min_val>
+                            <constant_val>1</constant_val>
+                        </min_val>
+                        <max_val/>
+                    </integer_type_info>
+                    <phycas_impl>
+                        <manipulated_var>nsampled</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param label="Show" gui_order="30" persistent="true">
+                    <description>if true, shows all random deviates sampled followed by a summary
+                        (e.g. mean and standard deviation); only the summary is output if NOSHOW is specified</description>
+                    <gui_description>Show all random deviates sampled?</gui_description>
+                    <user_level>basic_user</user_level>
+                    <bool_type_info>
+                        <default>
+                            <constant_val>false</constant_val>
+                        </default>
+                    </bool_type_info>
+                    <phycas_impl>
+                        <manipulated_var>show</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param label="Seed" gui_order="40" persistent="true">
+                    <description>Random number generator seed (0 to use the system clock)</description>
+                    <gui_description>Random number generator seed</gui_description>
+                    <user_level>basic_user</user_level>
+                    <integer_type_info>
+                        <default>
+                            <constant_val>0</constant_val>
+                        </default>
+                        <min_val>
+                            <constant_val>0</constant_val>
+                        </min_val>
+                        <max_val/>
+                    </integer_type_info>
+                    <phycas_impl>
+                        <manipulated_var>seed</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param label="OutputDestination" gui_order="50" persistent="true">
+                    <description>Destination for output of sampled deviates</description>
+                    <gui_description>Output of sampled deviates to:</gui_description>
+                    <user_level>basic_user</user_level>
+                    <output_type_info>
+                        <default suppress="true"/>
+                    </output_type_info>
+                    <phycas_impl>
+                        <manipulated_var>outDestination</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+                <cmd_param label="Precision" gui_order="60" persistent="true">
+                    <description>Specifies precision (number of decimal places) to be used when
+                        displaying sampled values</description>
+                    <gui_description>Precision for sampled values</gui_description>
+                    <user_level>basic_user</user_level>
+                    <integer_type_info>
+                        <default>
+                            <constant_val>6</constant_val>
+                        </default>
+                        <min_val>
+                            <constant_val>0</constant_val>
+                        </min_val>
+                        <max_val>
+                            <constant_val>30</constant_val>
+                        </max_val>
+                    </integer_type_info>
+                    <phycas_impl>
+                        <manipulated_var>precision</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+            </cmd_param_group>
+        </command>
+        <command label="SCM" compilation_target="ALL" gui_order="6">
+            <format style="nexus"/>
+            <description>Computes strict consensus merger supertree for trees currently stored</description>
+            <phycas_impl>
+                <setup>
+                    <receiver_class>SCM</receiver_class>
+                    <function>SetupSCM</function>
+                    <setup_header>phycas/modules/scm/scm.hpp</setup_header>
+                </setup>
+                <handler>
+                    <receiver_class>SCM</receiver_class>
+                    <function>HandleSCM</function>
+                </handler>
+            </phycas_impl>
+            <cmd_param_group gui_order="1">
+                <!--cmd_param gui_order="10" label="Treefile" persistent="true">
+	                <description>The name of the file in which to store the strict consensus merger supertree description</description>
+	                <gui_description>Supertree output file</gui_description>
+	                <user_level>basic_user</user_level>
+	                <outfile_type_info>
+	                    <default><constant_val>scm.tre</constant_val></default>
+	                    <prefix>SCM</prefix>
+	                </outfile_type_info>
+	                <phycas_impl>
+	                    <manipulated_var>scmfile</manipulated_var>
+	                </phycas_impl>
+	            </cmd_param-->
+                <cmd_param gui_order="10" label="TreeOuput" persistent="true">
+                    <description>Output destination for strict consensus merger supertree description</description>
+                    <gui_description>Destination for supertree output</gui_description>
+                    <user_level>basic_user</user_level>
+                    <output_type_info>
+                        <default suppress="false">
+                            <file path="scm.tre"/>
+                        </default>
+                    </output_type_info>
+                    <phycas_impl>
+                        <manipulated_var>scmfile</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+            </cmd_param_group>
+        </command>
+        <command label="GG" compilation_target="ALL" gui_order="7">
+            <format style="nexus"/>
+            <description>Computes Gelfand-Ghosh statistics for model selection (4-taxa only at this point)</description>
+            <phycas_impl>
+                <setup>
+                    <receiver_class>GG</receiver_class>
+                    <function>SetupGG</function>
+                    <setup_header>phycas/modules/gg/gg.hpp</setup_header>
+                </setup>
+                <handler>
+                    <receiver_class>GG</receiver_class>
+                    <function>HandleGG</function>
+                </handler>
+            </phycas_impl>
+            <cmd_param_group gui_order="1">
+                <cmd_param label="Taxonset" gui_order="10" persistent="true">
+                    <description>The name of the taxon set to be used for computing the Gelfand and Ghosh measures.</description>
+                    <gui_description>Set of taxa</gui_description>
+                    <user_level>basic_user</user_level>
+                    <string_type_info>
+                        <default>
+                            <constant_val>None</constant_val>
+                        </default>
+                    </string_type_info>
+                    <phycas_impl>
+                        <manipulated_var>taxonset</manipulated_var>
+                    </phycas_impl>
+                </cmd_param>
+            </cmd_param_group>
+        </command>
+    </command_set>
+</phyc:command_list>

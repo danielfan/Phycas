@@ -1,0 +1,16 @@
+mcmc_test
+329c329
+< Elapsed time: 6.310000 (0.006304 seconds per generation)
+---
+> Elapsed time: 6.230000 (0.006224 seconds per generation)
+alias_test
+32,33c32,37
+< Socket disconnected
+< Exiting from file
+---
+> Traceback (most recent call last):
+>   File "/Users/mholder/Documents/projects/Phycas/phycasdev/testing/../python/file_to_socket.py", line 65, in ?
+>     if not sendLine(line): 
+>   File "/Users/mholder/Documents/projects/Phycas/phycasdev/testing/../python/file_to_socket.py", line 22, in sendLine
+>     response = sock.recv(16384)
+> socket.error: (54, 'Connection reset by peer')

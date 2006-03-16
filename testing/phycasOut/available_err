@@ -1,0 +1,14 @@
+connected to  ('localhost', 4444)
+Sent:  available
+
+End Of Transmission
+Sent:  execute f = '../test.nex'
+
+End Of Transmission
+Sent:  available
+
+End Of Transmission
+Sent:  q
+
+End Of Transmission
+

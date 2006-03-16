@@ -1,0 +1,89 @@
+Simulation conditions:
+  no. sites   : 1000
+  model tree  : (1:0.1,2:0.1,(3:0.1,4:0.1):0.1)
+  subst. model: JC69
+
+Gelfand-Ghosh calculation for JC analysis:
+       k           Pm           Gm           Dm
+     0.5    207.88300     44.80524    275.09085
+     1.0    207.88300     52.39224    312.66748
+     2.0    207.88300     49.97153    357.79758
+
+Gelfand-Ghosh calculation for HKY analysis:
+       k           Pm           Gm           Dm
+     0.5    209.62688     43.91852    275.50465
+     1.0    209.62688     51.22480    312.07648
+     2.0    209.62688     48.72790    355.81057
+
+Gelfand-Ghosh calculation for HKY+G analysis:
+       k           Pm           Gm           Dm
+     0.5    226.64799     46.20326    295.95288
+     1.0    226.64799     54.76347    336.17493
+     2.0    226.64799     52.98799    385.61195
+
+Gelfand-Ghosh calculation for HKY+G+I analysis:
+       k           Pm           Gm           Dm
+     0.5    218.52038     44.01363    284.54083
+     1.0    218.52038     51.94057    322.40152
+     2.0    218.52038     49.97423    368.44306
+
+Gelfand-Ghosh calculation for GTR analysis:
+       k           Pm           Gm           Dm
+     0.5    219.59310     42.89726    283.93899
+     1.0    219.59310     50.22646    320.04603
+     2.0    219.59310     47.94079    363.41547
+
+Penalty rankings (best listed first):
+          JC    207.88300
+         HKY    209.62688
+       HKYgi    218.52038
+         GTR    219.59310
+        HKYg    226.64799
+
+For k = 0.5:
+
+  Goodness-of-fit rankings (best listed first):
+         GTR     42.89726
+         HKY     43.91852
+       HKYgi     44.01363
+          JC     44.80524
+        HKYg     46.20326
+
+  Overall rankings (best listed first):
+          JC    275.09085
+         HKY    275.50465
+         GTR    283.93899
+       HKYgi    284.54083
+        HKYg    295.95288
+
+For k = 1.0:
+
+  Goodness-of-fit rankings (best listed first):
+         GTR     50.22646
+         HKY     51.22480
+       HKYgi     51.94057
+          JC     52.39224
+        HKYg     54.76347
+
+  Overall rankings (best listed first):
+         HKY    312.07648
+          JC    312.66748
+         GTR    320.04603
+       HKYgi    322.40152
+        HKYg    336.17493
+
+For k = 2.0:
+
+  Goodness-of-fit rankings (best listed first):
+         GTR     47.94079
+         HKY     48.72790
+          JC     49.97153
+       HKYgi     49.97423
+        HKYg     52.98799
+
+  Overall rankings (best listed first):
+         HKY    355.81057
+          JC    357.79758
+         GTR    363.41547
+       HKYgi    368.44306
+        HKYg    385.61195

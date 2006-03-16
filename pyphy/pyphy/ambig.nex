@@ -1,0 +1,16 @@
+#nexus
+	
+begin data;
+  dimensions ntax=4 nchar=5;
+  format datatype=dna missing=? gap=-;
+  matrix
+    taxon1 A ? T  G    {CGT}
+    taxon2 A C - {ACG}  T 
+    taxon3 A C -  N    (AG)
+    taxon4 A C T  R     Y
+  ;
+end;
+
+begin trees;
+  tree one = (taxon3:0.21,taxon2:0.22,(taxon1:0.11,taxon4:0.12):0.10);
+end;

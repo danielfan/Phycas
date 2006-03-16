@@ -1,0 +1,21 @@
+subproject phylogeny ;
+import python ;
+
+extension _Phylogeny
+:	phylogeny_pymod.cpp
+	../common/boost_assertion_failed.cpp
+	basic_tree.cpp 
+	basic_tree_node.cpp
+	tree_manip.cpp
+    $(PHYCAS_ROOT)/pyphy/prob_dist/basic_lot.cpp
+	$(PHYCAS_ROOT)/pyphy/prob_dist/dcdflib/src/dcdflib.c
+	$(PHYCAS_ROOT)/pyphy/prob_dist/dcdflib/src/ipmpar.c
+	$(PHYCAS_ROOT)/pyphy/prob_dist/basic_cdf.cpp
+	../common/pyphy_string.cpp 
+	../include/num_util.cpp					# only needed on lewis.eeb.uconn.edu
+
+		# requirements and dependencies for Boost.Python extensions
+   	<template>@boost/libs/python/build/extension
+:  
+  ;
+

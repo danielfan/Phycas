@@ -1,0 +1,11 @@
+/**
+ *	\file executor_doc.txt 
+ *	\mainpage PhycasExecutor
+ *	\section phycas_gui_doc PhycasGUI
+ *	PhycasExecutor allows the user to choose whether to launch phycas_server on the local machine or to connect to an instance already running on a remote machine.  
+ *	If the local machine is chosen, the user can enter a specific port number or allow the PhycasExecutorto find an open port.
+ *	If a remote machine is chosen, the user supply the IP and port number.
+ *	After the user has chosen how where phycas_server will be run, PhycasExecutor launches the GUI and (if necessary) phycas_server using command line arguments to transmit the user's preferences to phycas_server and PhycasGUI.
+ *	phycas_server takes a port number to server as a command-line argument; it will then bind to the specified port and begin listening for connections.
+ *	PhycasGUI takes the IP and port number as command-line arguments. 
+ */

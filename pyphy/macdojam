@@ -1,0 +1,9 @@
+#!/bin/tcsh
+
+#setenv BOOST_ROOT $HOME/boost_1_33_0
+#setenv CIPRES_LIB_ROOT $HOME/cipres/framework
+#setenv PHYCAS_ROOT $HOME/phycasdev
+setenv NCL_ROOT $PHYCAS_ROOT
+setenv BUILD release
+setenv TOOLS darwin
+bjam -q

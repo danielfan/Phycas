@@ -1,0 +1,77 @@
+subproject read_nexus ;
+import python ;
+
+extension _ReadNexus
+: read_nexus_pymod.cpp
+  ../common/boost_assertion_failed.cpp
+  $(CIPRES_LIB_ROOT)/C++/CipresCommlib/CipresDataMatrixHelper.cpp
+  # $(PHYCAS_ROOT)/cipres_services/read_nexus/cipres_nexus_reader.cpp
+  $(PHYCAS_ROOT)/pyphy/include/num_util.cpp
+  $(NCL_ROOT)/ncl/nxs_basic_manager.cpp
+  $(NCL_ROOT)/ncl/nxs_block.cpp
+  $(NCL_ROOT)/ncl/nxs_exception.cpp
+  $(NCL_ROOT)/ncl/nxs_reader.cpp
+  $(NCL_ROOT)/ncl/nxs_token.cpp
+  $(NCL_ROOT)/ncl/characters/nxs_char_listener.cpp
+  # $(NCL_ROOT)/ncl/characters/nxs_characters_block.cpp
+  $(NCL_ROOT)/ncl/characters/nxs_characters_block_commands.cpp
+  $(NCL_ROOT)/ncl/characters/nxs_characters_manager.cpp
+  $(NCL_ROOT)/ncl/command/nxs_auto_command.cpp
+  $(NCL_ROOT)/ncl/command/nxs_choice_cmd_param.cpp
+  $(NCL_ROOT)/ncl/command/nxs_cmd_param.cpp
+  $(NCL_ROOT)/ncl/command/nxs_command.cpp
+  $(NCL_ROOT)/ncl/command/nxs_command_manager.cpp
+  # $(NCL_ROOT)/ncl/command/nxs_command_output.cpp
+  $(NCL_ROOT)/ncl/command/nxs_file_cmd_param.cpp
+  $(NCL_ROOT)/ncl/command/nxs_mixed_cmd_param.cpp
+  $(NCL_ROOT)/ncl/command/nxs_primitive_cmd_param.cpp
+  $(NCL_ROOT)/ncl/command/nxs_restricted_string_cmd_param.cpp
+  $(NCL_ROOT)/ncl/command/nxs_set_cmd_param.cpp
+  $(NCL_ROOT)/ncl/misc/arg_stream.cpp
+  $(NCL_ROOT)/ncl/misc/nxs_data_type.cpp
+  $(NCL_ROOT)/ncl/misc/eliminated_index_slider.cpp
+  $(NCL_ROOT)/ncl/misc/nxs_discrete_matrix.cpp
+  $(NCL_ROOT)/ncl/misc/nxs_file_path.cpp
+  $(NCL_ROOT)/ncl/misc/nxs_index_set.cpp
+  $(NCL_ROOT)/ncl/misc/nxs_test.cpp
+  $(NCL_ROOT)/ncl/misc/string_extensions.cpp
+  $(NCL_ROOT)/ncl/output/nxs_output_stream_wrapper.cpp
+  $(NCL_ROOT)/ncl/output/generic_output_classes.cpp
+  $(NCL_ROOT)/ncl/output/nxs_console_out_stream_impl.cpp
+  $(NCL_ROOT)/ncl/output/nxs_input.cpp
+  $(NCL_ROOT)/ncl/output/nxs_table.cpp
+  $(NCL_ROOT)/ncl/output/nxs_table_cell.cpp
+  $(NCL_ROOT)/ncl/output/nxs_typist.cpp
+  $(NCL_ROOT)/ncl/output/nxs_user_query.cpp
+  $(NCL_ROOT)/ncl/output/nxs_xml_socket_output_stream.cpp
+  $(NCL_ROOT)/ncl/taxa/base_taxa_manager.cpp
+  $(NCL_ROOT)/ncl/taxa/nxs_alternative_taxa_block.cpp
+  $(NCL_ROOT)/ncl/taxa/nxs_taxa_block.cpp
+  $(NCL_ROOT)/ncl/taxa/nxs_taxa_listener.cpp
+  $(NCL_ROOT)/ncl/taxa/nxs_taxa_manager.cpp
+  $(NCL_ROOT)/ncl/trees/newick_verifier.cpp
+  $(NCL_ROOT)/ncl/trees/nxs_tree_listener.cpp
+  $(NCL_ROOT)/ncl/trees/nxs_trees_block.cpp
+  $(NCL_ROOT)/ncl/trees/nxs_trees_manager.cpp
+  $(PHYCAS_ROOT)/phycas/characters/characters_manager.cpp
+  $(PHYCAS_ROOT)/phycas/likelihood/const_site_info.cpp
+  $(PHYCAS_ROOT)/phycas/misc/multiline_bound.cpp
+  $(PHYCAS_ROOT)/phycas/rand/probability_distribution.cpp
+  $(PHYCAS_ROOT)/phycas/rand/distribution_command_param.cpp
+  $(PHYCAS_ROOT)/phycas/rand/distribution_description.cpp
+  $(PHYCAS_ROOT)/pyphy/prob_dist/basic_lot.cpp
+  $(PHYCAS_ROOT)/pyphy/prob_dist/dcdflib/src/dcdflib.c
+  $(PHYCAS_ROOT)/pyphy/prob_dist/dcdflib/src/ipmpar.c
+  $(PHYCAS_ROOT)/phycas/taxa/taxa_manager.cpp
+  $(PHYCAS_ROOT)/phycas/trees/draw_context.cpp
+  $(PHYCAS_ROOT)/phycas/trees/draw_tree.cpp
+  $(PHYCAS_ROOT)/phycas/trees/tree_manip.cpp
+  $(PHYCAS_ROOT)/phycas/trees/tree_node.cpp
+  $(PHYCAS_ROOT)/phycas/trees/tree.cpp
+  $(PHYCAS_ROOT)/phycas/trees/trees_manager.cpp
+  $(PHYCAS_ROOT)/phycas/trees/split.cpp  
+  # requirements and dependencies for Boost.Python extensions
+   <template>@boost/libs/python/build/extension
+   	:  
+  ;
+

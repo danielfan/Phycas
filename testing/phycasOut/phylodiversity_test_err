@@ -1,0 +1,14 @@
+connected to  ('localhost', 4444)
+Sent:  execute f = '../test.nex'
+
+End Of Transmission
+Sent:  taxset mine = 5 - 10 \2;
+
+End Of Transmission
+Sent:  phylodiversity pd = (f = 'pd_file' replace) taxonset = mine
+
+End Of Transmission
+Sent:  q
+
+End Of Transmission
+

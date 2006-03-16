@@ -1,0 +1,3 @@
+Manifest-Version: 0.1
+Main-Class: phycasGUI.PhycasMainThread
+Class-Path: ../gui/xbean.jar ../gui/commandLanguage.jar ../gui/commandState.jar ../gui/swixml.jar ../gui/jdom.jar ../gui/jfreechart.jar ../gui/jcommon.jar ../gui/jh.jar ../gui/PhycasHelp.jar

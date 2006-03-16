@@ -1,0 +1,22 @@
+This directory is primarily for brainstorming in an effort to improve Phycas' xml -> GUI system so that we have a schema that is general enough to work for all of CIPRes.
+None of the Phycas' scripts for autogenerating code or interpretting xml command descriptions have been updated to handle the new version schema, so nothing can be done with the xml documents contained in this directory.
+
+cipres_command_language_description.xsd is the current version of this schema for describing a CIPRes module's user-configurable behavior.
+For bibliographic type elements I just imported mods-3-0.xsd which has dependencies on xlink.xsd and xml.xsd.
+My xml editor (Oxygen) looks up the referenced schemas using the URL's in the .xsd files (in import statements).  This is a real pain if you have slow or no connectivity, because you can't validate against the schema.  For this reason I've downloaded the imported schema and replaced the original url with a file path for the schema on my machine.  Thus anyone else will have to edit the initial lines of the xmls schema to remove the references to my filesystem (the original url's are in the files, but commented out).  I'll try to find a better solution to this.
+
+paup_commands.xml is a xml instance of the cipres_command_language_description.xsd that covers some of the options relevant to using paup as a tree improver.
+
+===========================================
+
+Notes:  things I know we need to add:
+
+elements to associate commands with CIPRes services (IDL interfaces)
+categories for command parameters:
+	algorithmic (hSearch.randomize = addseq|trees)
+	analysis target (set.criterion, lSet)
+	verbosity (hSearch.rStatus)
+	richness of output (hSearch.saveReps)
+	thoroughness (hSearch.swap)
+	
+	

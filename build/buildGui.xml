@@ -1,0 +1,28 @@
+<project name="Phycas GUI" default="dist" basedir="..">
+    <description>
+        simple Phycas GUI build file
+    </description>
+  <!-- set global properties for this build -->
+  <property name="guiDir" location="gui"/>
+  <property name="helpDir" location="${guiDir}/help"/>
+  <property name="phycasGUIDir" location="${guiDir}/phycasGUI"/>
+  <property name="execDir" location="executor"/>
+
+  <target name="compile"  description="compile the source " >
+    <!-- Compile the java code from ${src} into ${build} -->
+    <javac srcdir="${phycasGUIDir}" destdir="${guiDir}" classpath="${guiDir};${guiDir}/xbean.jar;${guiDir}/commandState.jar;${guiDir}/commandLanguage.jar; ${guiDir}/swixml.jar;${guiDir}/jdom.jar;${guiDir}/jfreechart.jar;${guiDir}/jcommon.jar;${guiDir}/jh.jar;${guiDir}/PhycasHelp.jar"/>
+  </target>
+
+  <target name="help" depends="compile"  description="generate the help distribution" >
+    <!-- Put necessary files in ${guidir}/help into the PhycasHelp.jar file -->
+    <jar jarfile="${guiDir}/PhycasHelp.jar" basedir="${helpDir}" includes="**/*"/>
+  </target>
+
+  <target name="dist" depends="help"  description="generate the distribution" >
+    <!-- Put necessary files in ${basedir} into the PhycasGui.jar file -->
+    <jar jarfile="${execDir}/PhycasGui.jar" basedir="${guiDir}" manifest="${execDir}/manifestGui.txt" includes="**/*.java **/*.class **/*.xml"/>
+  </target>
+
+
+</project>
+

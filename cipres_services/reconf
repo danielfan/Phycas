@@ -1,0 +1,28 @@
+#!/bin/sh
+echo "sh ./testEnv"
+sh testEnv
+if [ -d "doc" ]; then
+	echo "doc dir exists"
+else
+	mkdir doc
+fi
+
+echo "rm -f config.cache"
+rm -f config.cache	
+
+echo "aclocal"
+aclocal
+
+echo "autoconf"
+autoconf
+
+echo "touch README AUTHORS NEWS ChangeLog"
+touch README AUTHORS NEWS ChangeLog
+
+echo "autoheader"
+autoheader
+
+echo "automake -a"
+automake -a
+
+echo "ready to run ./configure"

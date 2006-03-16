@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<frame xmlns:phyc="http://phycas.org" plaf="com.sun.java.swing.plaf.windows.WindowsLookAndFeel" DefaultCloseOperation="JFrame.EXIT_ON_CLOSE" title="Phycas Executor" layout="BorderLayout" size="600,400" id="frame">
+<menubar id="mb">
+<menu mnemonic="VK_F" text="FILE" id="menu_main">
+<menuitem mnemonic="VK_E" Action="exitAction" ActionCommand="exitAction" text="Exit" id="mi_exit" macos_quit="true"/>
+</menu>
+</menubar>
+<splitpane dividerLocation="0.25" resizeWeight="0.9" orientation="HORIZONTAL" id="topPane">
+<scrollpane>
+<panel id="pnl_main" constraints="BorderLayout.CENTER">
+<vbox alignmentX="0.5">
+<hbox alignmentX="0.5">
+<textarea alignmentX="0.0" text="This utility is used to run the two components of the Phycas program - the processor and the user interface." background="grey" Foreground="black" wrapstyleword="true" linewrap="true" editable="false" Font="Serif-14" columns="20" id="taDesc"/>
+</hbox>
+<hbox alignmentX="0.5">
+<label text=" " id="lbl_vboxSpace1"/>
+</hbox>
+<hbox alignmentX="0.5">
+<label text=" " id="lbl_vboxSpace2"/>
+</hbox>
+<hbox alignmentX="0.5">
+<label preferredSize="225,20" maximumSize="225,20" alignmentY="0.0" text="Phycas Installation Directory" foreground="black" font="Verdana-Plain-14" id="lbl_BaseDir"/>
+<textfield preferredSize="100,20" maximumSize="100,20" alignmentY="0.0" text="" name="tf_BaseDir" id="tf_BaseDir" toolTipText="The executor directory of the Phycas installation."/>
+<button alignmentY="0.0" ActionCommand="action_ChooseBaseDir" Action="action_ChooseBaseDir" text="Choose" preferredSize="100,20" maximumSize="100,20"/>
+</hbox>
+<hbox alignmentX="0.5">
+<label text=" " id="lbl_vboxSpace3"/>
+</hbox>
+<hbox alignmentX="0.5">
+<label preferredSize="250,20" maximumSize="250,20" alignmentY="0.0" text="Location of the Phycas Processor" foreground="black" font="Verdana-Plain-14" id="lbl_Location"/>
+<buttongroup>
+	<radiobutton id="rb_Host_Local" name="rb_Host_Local" label="Local Machine" selected="true" font="Verdana-Plain-14"  alignmentY="0.0" toolTipText = "Select if Processor host is running on the local machine." action="action_Local" actionCommand="action_Local" />
+	<radiobutton id="rb_Host_Remote" name="rb_Host_Remote" label="Remote Location" selected="false" font="Verdana-Plain-14"  alignmentY="0.0" toolTipText = "Select if Processor is running on a remote machine." action="action_Remote" actionCommand="action_Remote" />
+</buttongroup>
+</hbox>
+<hbox alignmentX="0.5">
+<label preferredSize="50,20" maximumSize="50,20" alignmentY="0.0" text="Host" foreground="black" font="Verdana-Plain-14" id="lbl_Host"/>
+<textfield preferredSize="100,20" maximumSize="100,20" alignmentY="0.0" text="" name="tf_Host" id="tf_Host" enabled="false" toolTipText="The ip address of the remote host."/>
+<label preferredSize="15,20" maximumSize="15,20" alignmentY="0.0" text="" foreground="black" font="Verdana-Plain-14" id="lbl_Space"/>
+<label preferredSize="50,20" maximumSize="50,20" alignmentY="0.0" text="Port" foreground="black" font="Verdana-Plain-14" id="lbl_Port"/>
+<textfield preferredSize="100,20" maximumSize="100,20" alignmentY="0.0" text="" name="tf_Port" id="tf_Port" enabled="true" toolTipText="The port number of the host machine, leave blank to find an open port on the local machine."/>
+</hbox>
+<hbox alignmentX="0.5">
+<label text=" " id="lbl_vboxSpace4"/>
+</hbox>
+<hbox alignmentX="0.5">
+<label text=" " id="lbl_vboxSpace5"/>
+</hbox>
+<hbox alignmentX="0.5">
+<button ActionCommand="okAction" Action="okAction" text="Start Phycas"/>
+</hbox>
+</vbox>
+</panel>
+</scrollpane>
+<scrollpane>
+<textarea Font="Serif-14" wrapstyleword="true" linewrap="true" editable="false" autoscrolls="true" columns="20" rows="3" text="" id="taMsgs"/>
+</scrollpane>
+</splitpane>
+</frame>

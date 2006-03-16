@@ -1,0 +1,3 @@
+python GelfandGhosh.py
+pause
+ 

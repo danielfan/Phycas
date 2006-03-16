@@ -1,0 +1,152 @@
+<out>Executing test.nex
+</out><out>Reading DATA block
+</out><out>There are currently 17 taxa.
+
+</out><out>#   Name                                
+</out><out>--  ----------------------------------  
+</out><out>1   Oedogonium cardiacum                
+</out><out>2   Volvox carteri                      
+</out><out>3   Chlamydomonas reinhardtii           
+</out><out>4   Tetraspora sp                       
+</out><out>5   Chlamydomonas baca                  
+</out><out>6   Heterochlamydomonas inaequalis1705  
+</out><out>7   Heterochlamydomonas rugosa4586      
+</out><out>8   Heterochlamydomonas lobata728       
+</out><out>9   Carteria radiosa                    
+</out><out>10  Carteria obtusa                     
+</out><out>11  Spongiochloris spongiosa            
+</out><out>12  Chlamydopodium vacuolatum           
+</out><out>13  Haematococcus sp                    
+</out><out>14  Chlamydomonas moewusii              
+</out><out>15  Chlamydomonas noctigama             
+</out><out>16  Lobochlamys segnis                  
+</out><out>17  Carteria crucifera                  
+
+</out><out>17 taxa are active, 0 have been excluded.
+
+</out><out>
+DATA block contains 17 taxa and 3341 characters
+  Data type is "DNA"
+  Ignoring case
+  Data matrix entries are expected to be single symbols
+  Taxon labels are expected on left side of matrix
+  Matrix neither transposed nor interleaved
+  Missing data symbol is '?'
+  No match character specified
+  Gap character specified is '-'
+  Valid symbols are: ACGT
+  Equate macros in effect:
+    B = {CTG}
+    D = {ATG}
+    H = {ATC}
+    K = {GT}
+    M = {AC}
+    N = ?
+    R = {AG}
+    S = {CG}
+    V = {AGC}
+    W = {AT}
+    X = ?
+    Y = {CT}
+  No characters were eliminated
+  Data matrix:
+Finished with DATA block
+</out><out>Reading TREES block
+</out><out>There are currently 10 tree(s):
+</out><out>Finished with TREES block
+</out><out>Reading PHYCAS block
+</out><out>Finished with PHYCAS block
+</out><out>Finished reading test.nex
+</out><out></out><idle/><out></out><idle/><out>The set mine = Chlamydomonas baca Heterochlamydomonas rugosa4586 Carteria radiosa
+Number of trees: 10
+</out><out>Tree 1
+  T      = 6.398313
+  I      = 1.115310
+  E      = 1.111135
+  pEI    = 0.996257
+  pET    = 0.173661
+  pIT    = 0.174313
+  Mean length of terminal branch subtending selected taxon: 0.370378
+  Mean length of terminal branch subtending unselected taxon: 0.377357
+</out><out>Tree 2
+  T      = 6.910644
+  I      = 1.626129
+  E      = 1.240500
+  pEI    = 0.762855
+  pET    = 0.179506
+  pIT    = 0.235308
+  Mean length of terminal branch subtending selected taxon: 0.413500
+  Mean length of terminal branch subtending unselected taxon: 0.377465
+</out><out>Tree 3
+  T      = 7.206402
+  I      = 1.573437
+  E      = 1.142275
+  pEI    = 0.725974
+  pET    = 0.158508
+  pIT    = 0.218339
+  Mean length of terminal branch subtending selected taxon: 0.380758
+  Mean length of terminal branch subtending unselected taxon: 0.394518
+</out><out>Tree 4
+  T      = 6.986328
+  I      = 1.499502
+  E      = 0.609536
+  pEI    = 0.406492
+  pET    = 0.087247
+  pIT    = 0.214634
+  Mean length of terminal branch subtending selected taxon: 0.203179
+  Mean length of terminal branch subtending unselected taxon: 0.384903
+</out><out>Tree 5
+  T      = 6.765804
+  I      = 1.299975
+  E      = 0.705573
+  pEI    = 0.542759
+  pET    = 0.104285
+  pIT    = 0.192139
+  Mean length of terminal branch subtending selected taxon: 0.235191
+  Mean length of terminal branch subtending unselected taxon: 0.390416
+</out><out>Tree 6
+  T      = 7.008361
+  I      = 1.217001
+  E      = 0.706483
+  pEI    = 0.580511
+  pET    = 0.100806
+  pIT    = 0.173650
+  Mean length of terminal branch subtending selected taxon: 0.235494
+  Mean length of terminal branch subtending unselected taxon: 0.361066
+</out><out>Tree 7
+  T      = 6.891968
+  I      = 1.248321
+  E      = 0.726418
+  pEI    = 0.581916
+  pET    = 0.105401
+  pIT    = 0.181127
+  Mean length of terminal branch subtending selected taxon: 0.242139
+  Mean length of terminal branch subtending unselected taxon: 0.367610
+</out><out>Tree 8
+  T      = 7.032559
+  I      = 1.292876
+  E      = 0.743227
+  pEI    = 0.574863
+  pET    = 0.105684
+  pIT    = 0.183841
+  Mean length of terminal branch subtending selected taxon: 0.247742
+  Mean length of terminal branch subtending unselected taxon: 0.371771
+</out><out>Tree 9
+  T      = 7.022858
+  I      = 1.100821
+  E      = 0.743227
+  pEI    = 0.675157
+  pET    = 0.105830
+  pIT    = 0.156748
+  Mean length of terminal branch subtending selected taxon: 0.247742
+  Mean length of terminal branch subtending unselected taxon: 0.379120
+</out><out>Tree 10
+  T      = 7.135581
+  I      = 1.111715
+  E      = 0.756548
+  pEI    = 0.680523
+  pET    = 0.106025
+  pIT    = 0.155799
+  Mean length of terminal branch subtending selected taxon: 0.252183
+  Mean length of terminal branch subtending unselected taxon: 0.375906
+</out><out></out><idle/><out></out><idle/>

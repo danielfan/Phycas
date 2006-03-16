@@ -1,0 +1,378 @@
+<out>Executing test.nex
+</out><out>Reading DATA block
+</out><out>There are currently 17 taxa.
+
+</out><out>#   Name                                
+</out><out>--  ----------------------------------  
+</out><out>1   Oedogonium cardiacum                
+</out><out>2   Volvox carteri                      
+</out><out>3   Chlamydomonas reinhardtii           
+</out><out>4   Tetraspora sp                       
+</out><out>5   Chlamydomonas baca                  
+</out><out>6   Heterochlamydomonas inaequalis1705  
+</out><out>7   Heterochlamydomonas rugosa4586      
+</out><out>8   Heterochlamydomonas lobata728       
+</out><out>9   Carteria radiosa                    
+</out><out>10  Carteria obtusa                     
+</out><out>11  Spongiochloris spongiosa            
+</out><out>12  Chlamydopodium vacuolatum           
+</out><out>13  Haematococcus sp                    
+</out><out>14  Chlamydomonas moewusii              
+</out><out>15  Chlamydomonas noctigama             
+</out><out>16  Lobochlamys segnis                  
+</out><out>17  Carteria crucifera                  
+
+</out><out>17 taxa are active, 0 have been excluded.
+
+</out><out>
+DATA block contains 17 taxa and 3341 characters
+  Data type is "DNA"
+  Ignoring case
+  Data matrix entries are expected to be single symbols
+  Taxon labels are expected on left side of matrix
+  Matrix neither transposed nor interleaved
+  Missing data symbol is '?'
+  No match character specified
+  Gap character specified is '-'
+  Valid symbols are: ACGT
+  Equate macros in effect:
+    B = {CTG}
+    D = {ATG}
+    H = {ATC}
+    K = {GT}
+    M = {AC}
+    N = ?
+    R = {AG}
+    S = {CG}
+    V = {AGC}
+    W = {AT}
+    X = ?
+    Y = {CT}
+  No characters were eliminated
+  Data matrix:
+Finished with DATA block
+</out><out>Reading TREES block
+</out><out>There are currently 10 tree(s):
+</out><out>Finished with TREES block
+</out><out>Reading PHYCAS block
+</out><out>Finished with PHYCAS block
+</out><out>Finished reading test.nex
+</out><out></out><idle/><out>               /---------------------------- Volvox carteri
+               |
+               |                           /- Chlamydomonas baca
+               |             /-------------+
+               |   /---------+             \- Lobochlamys segnis
+               |   |         |
+               |   |         \--------------- Carteria radiosa
+               +   |
+               |   |                     /--- Heterochlamydomonas rugosa4586
+               |   +                    /+
+               |   |                    |\--- Chlamydomonas moewusii
+               |   |          /---------+
+               |   |          |         |  /- Haematococcus sp
+               |   |          |         \--+
+               |   +----------+            \- Chlamydomonas noctigama
+               +---+          |
+               |   |          |            /- Carteria obtusa
+/--------------+   |          \------------+
+|              |   |                       \- Carteria crucifera
+|              |   |
+|              |   |        /---------------- Heterochlamydomonas inaequalis1705
+|              |   |        |
+|              |   \--------+          /----- Heterochlamydomonas lobata728
+|              |            |    /-----+
+|              |            \----+     \----- Chlamydopodium vacuolatum
+|              |                 |
+|              |                 \---------- Spongiochloris spongiosa
+|              |
+|              \---------------------------- Tetraspora sp
+|
++------------------------------------------- Chlamydomonas reinhardtii
+|
+\----------------- Oedogonium cardiacum
+ 
+
+</out><out>
+MCMC command:
+  Number of iterations:               1000
+  Number of chains:                   1
+  Reporting frequency:                100
+  Sampling frequency:                 100
+  Parameter file name:                mcmc_param_file (exists)
+  Starting random number seed:        612
+  Local move weight:                  1.000000
+  Bush move weight:                   1.100000
+  Scaler move weight:                 0.400000
+  Data not ignored
+  Number of taxa:                     17
+  Number of sites:                    3341
+  Number of patterns:                 684
+</out><out>
+
+Parameter summary:
+Parameter    Fixed  Current Value
+---------------------------------
+Kappa        no     2.000000
+RateVar      no     1.000000
+FreqA        no     0.250000
+FreqC        no     0.250000
+FreqG        no     0.250000
+FreqT        no     0.250000
+---------------------------------
+
+Average of underlying frequency parameters: 1.000000
+Number of rate categories: 1
+
+</out><out>
+
+Topology prior: log prior ratio in favor of less resolved topology equal to 1.000000
+  (tree with one fewer internal node favored by a factor of 2.718282)
+
+      Internal nodes      Log(no. trees)       Induced prior       Nominal prior
+--------------------------------------------------------------------------------
+                   1                 0.0             0.00000             0.00000
+                   2                11.1             0.00000             0.00000
+                   3                18.0             0.00000             0.00000
+                   4                23.0             0.00000             0.00005
+                   5                27.0             0.00000             0.00093
+                   6                30.2             0.00006             0.00839
+                   7                32.8             0.00073             0.04091
+                   8                34.9             0.00577             0.11890
+                   9                36.5             0.02876             0.21817
+                  10                37.6             0.09349             0.26089
+                  11                38.4             0.20024             0.20556
+                  12                38.7             0.27957             0.10558
+                  13                38.6             0.24432             0.03394
+                  14                37.9             0.12112             0.00619
+                  15                36.4             0.02595             0.00049
+--------------------------------------------------------------------------------
+</out><out>
+Induced prior summary:
+    proportion due to unresolved classes:   0.974046
+    proportion due to fully-resolved class: 0.025954
+    unresolved/fully-resolved prior ratio:  37.530380
+Expected prior summary:
+    proportion due to unresolved classes:   0.999512
+    proportion due to fully-resolved class: 0.000488
+    unresolved/fully-resolved prior ratio:  2048.175744
+
+
+Tree move probabilities:
+  0.40  Larget-Simon LOCAL move
+  0.44  Bush move
+  0.16  Scaler move
+
+
+starting mcmc
+</out><out>
+  10.0% done (sampling)
+        cA       =1.01573, width=0.283005, failed=6.5, evals=11.5, n=2
+        cC       =0.918679, width=1.15234, failed=7.5, evals=11.5, n=2
+        cG       =1.01351, width=0.268105, failed=5.5, evals=10, n=2
+        cT       =1.02792, width=0.84319, failed=4, evals=8.5, n=2
+        kappa    =4.47797, width=13.6252, failed=1, evals=5, n=2
+        edgelen  =0.451602, width=2.24755, failed=4.5, evals=9, n=2
+</out><out>
+  20.0% done (sampling)
+        cA       =0.896308, width=0.18867, failed=0, evals=5.5, n=2
+        cC       =0.797295, width=0.512152, failed=0, evals=4.5, n=2
+        cG       =0.899006, width=0.162069, failed=1.5, evals=7, n=2
+        cT       =0.9209, width=0.180244, failed=2.5, evals=8, n=2
+        kappa    =2.74406, width=2.95583, failed=0.5, evals=4.5, n=2
+        edgelen  =0.133189, width=0.801273, failed=0.5, evals=5, n=2
+</out><out>
+  30.0% done (sampling)
+        cA       =0.852641, width=0.141627, failed=1, evals=7, n=2
+        cC       =0.737743, width=0.242892, failed=0.5, evals=5.5, n=2
+        cG       =0.825106, width=0.135931, failed=0.5, evals=7.5, n=2
+        cT       =0.912399, width=0.124802, failed=1, evals=6.5, n=2
+        kappa    =2.94793, width=1.11845, failed=1, evals=6, n=2
+        edgelen  =0.0469766, width=0.0569677, failed=2, evals=6, n=2
+</out><out>
+  40.0% done (sampling)
+        cA       =0.811431, width=0.165232, failed=0, evals=6.5, n=2
+        cC       =0.711764, width=0.14437, failed=3, evals=9.5, n=2
+        cG       =0.858222, width=0.135931, failed=0, evals=6, n=2
+        cT       =0.899002, width=0.110935, failed=0, evals=6.5, n=2
+        kappa    =2.73605, width=0.670403, failed=1, evals=6.5, n=2
+        edgelen  =0.0385473, width=0.0316487, failed=0, evals=5, n=2
+</out><out>
+  50.0% done (sampling)
+        cA       =0.906937, width=0.110155, failed=0, evals=5, n=2
+        cC       =0.790147, width=0.120308, failed=0, evals=5.5, n=2
+        cG       =0.912434, width=0.148539, failed=0.5, evals=7, n=2
+        cT       =1.0017, width=0.184892, failed=0, evals=7, n=2
+        kappa    =2.79783, width=0.446935, failed=0, evals=5.5, n=2
+        edgelen  =0.033557, width=0.0151778, failed=0.5, evals=7, n=2
+</out><out>50.000000% majority-rule consensus tree:
+/---------------------------------------------- Volvox carteri
+|
++----------------------------------------------------- Chlamydomonas reinhardtii
+|
++-------------------------------------------- Tetraspora sp
+|
++------------- Chlamydomonas baca
+|
++----------------------------- Heterochlamydomonas inaequalis1705
+|
++------------ Heterochlamydomonas rugosa4586
+|
++-------------- Heterochlamydomonas lobata728
+|
++-------------------- Carteria radiosa
+|
++---------- Carteria obtusa
+|
++-------------------- Spongiochloris spongiosa
+|
++--------- Chlamydopodium vacuolatum
+|
++------------------------------ Chlamydomonas moewusii
+|
++------ Lobochlamys segnis
+|
++----------------- Carteria crucifera
+|
+|       /----- Haematococcus sp
++-------+
+|       \-------------- Chlamydomonas noctigama
+|
+\----------------------- Oedogonium cardiacum
+ 
+
+</out><out>
+</out><out>
+  60.0% done (sampling)
+        cA       =0.881712, width=0.150862, failed=1.5, evals=8.5, n=2
+        cC       =0.804319, width=0.124324, failed=0.5, evals=8, n=2
+        cG       =0.898609, width=0.0354362, failed=1, evals=6.5, n=2
+        cT       =0.947594, width=0.154077, failed=0, evals=5.5, n=2
+        kappa    =2.88759, width=0.372446, failed=0, evals=5.5, n=2
+        edgelen  =0.0364909, width=0.0421606, failed=0, evals=9, n=2
+</out><out>
+  70.0% done (sampling)
+        cA       =0.894542, width=0.125718, failed=0, evals=5.5, n=2
+        cC       =0.797744, width=0.145045, failed=0, evals=6.5, n=2
+        cG       =0.895121, width=0.0471223, failed=0.5, evals=7, n=2
+        cT       =0.959048, width=0.177833, failed=1.5, evals=8, n=2
+        kappa    =2.82388, width=0.724201, failed=0, evals=7.5, n=2
+        edgelen  =0.0374187, width=0.0320763, failed=1, evals=6.5, n=2
+</out><out>
+  80.0% done (sampling)
+        cA       =0.922219, width=0.120034, failed=1, evals=7, n=2
+        cC       =0.75836, width=0.127652, failed=0.5, evals=6.5, n=2
+        cG       =0.88317, width=0.164928, failed=0, evals=9.5, n=2
+        cT       =0.948624, width=0.0918378, failed=0.5, evals=5.5, n=2
+        kappa    =2.86302, width=0.341644, failed=1.5, evals=7.5, n=2
+        edgelen  =0.0339227, width=0.020111, failed=0.5, evals=6.5, n=2
+</out><out>
+  90.0% done (sampling)
+        cA       =0.873352, width=0.14004, failed=0, evals=6.5, n=2
+        cC       =0.746145, width=0.0816785, failed=0.5, evals=6.5, n=2
+        cG       =0.892821, width=0.150209, failed=1.5, evals=7.5, n=2
+        cT       =0.941119, width=0.12245, failed=0, evals=6.5, n=2
+        kappa    =2.89625, width=0.33347, failed=0.5, evals=7.5, n=2
+        edgelen  =0.031361, width=0.0181158, failed=1, evals=7.5, n=2
+</out><out>
+ 100.0% done (sampling)
+        cA       =0.878511, width=0.1167, failed=0, evals=5.5, n=2
+        cC       =0.747402, width=0.133139, failed=0.5, evals=8.5, n=2
+        cG       =0.906673, width=0.165968, failed=0.5, evals=6.5, n=2
+        cT       =0.952475, width=0.142859, failed=0, evals=6.5, n=2
+        kappa    =2.86803, width=0.255679, failed=1, evals=7.5, n=2
+        edgelen  =0.0313009, width=0.0322059, failed=0, evals=7.5, n=2
+</out><out>50.000000% majority-rule consensus tree:
+/--------------------------------------------------- Chlamydomonas reinhardtii
+|
++-------------------------------------------------- Tetraspora sp
+|
++--------------- Chlamydomonas baca
+|
++-------------------------- Heterochlamydomonas inaequalis1705
+|
++---------------- Heterochlamydomonas rugosa4586
+|
++--------------- Heterochlamydomonas lobata728
+|
+|                  /-------------------------------------------- Volvox carteri
+|                  |
+|                  +------------------------- Carteria radiosa
+|                  |
+|                  +----------------------- Carteria obtusa
+|                  |
+|                  +---------------------- Spongiochloris spongiosa
+|                  |
+|                  +------------- Chlamydopodium vacuolatum
++------------------+
+|                  +------------ Haematococcus sp
+|                  |
+|                  +------------------------------------- Chlamydomonas moewusii
+|                  |
+|                  +-------------- Chlamydomonas noctigama
+|                  |
+|                  +--------- Lobochlamys segnis
+|                  |
+|                  \------------------- Carteria crucifera
+|
+\------------------------------------- Oedogonium cardiacum
+ 
+
+</out><out>
+</out><out>
+&lt;stopping&gt;
+Elapsed time: 6.310000 (0.006304 seconds per generation)
+</out><out>
+
+Parameter summary:
+</out><out>Parameter    Fixed  Current Value
+---------------------------------
+Kappa        no     2.886087
+RateVar      no     1.000000
+FreqA        no     0.258456
+FreqC        no     0.219830
+FreqG        no     0.256887
+FreqT        no     0.264826
+---------------------------------
+
+Average of underlying frequency parameters: 0.869797
+Number of rate categories: 1
+
+</out><out>
+</out><out>Split summary:
+
+</out><out>Split         Length        Freq.         Prob.         
+</out><out>------------  ------------  ------------  ------------  
+</out><out>------*-*---  
+</out><out>-----         0.003536      1             0.100000      
+</out><out>--------**--  
+</out><out>-----         0.022746      5             0.500000      
+</out><out>---------**-  
+</out><out>-----         0.018827      2             0.200000      
+</out><out>------------  
+</out><out>*-*--         0.016406      4             0.400000      
+</out><out>-*****--*---  
+</out><out>*-*--         0.002656      1             0.100000      
+</out><out>-*--------**  
+</out><out>***--         0.008983      5             0.500000      
+</out><out>---------*--  
+</out><out>---*-         0.003147      1             0.100000      
+</out><out>--------**--  
+</out><out>---*-         0.019639      1             0.100000      
+</out><out>------------  
+</out><out>---**         0.006804      5             0.500000      
+</out><out>--------**--  
+</out><out>---**         0.005530      5             0.500000      
+</out><out>---------**-  
+</out><out>---**         0.024028      2             0.200000      
+</out><out>--------**--  
+</out><out>*--**         0.010268      1             0.100000      
+</out><out>-**---*--***  
+</out><out>-*-**         0.006322      1             0.100000      
+</out><out>-*--------**  
+</out><out>*****         0.002197      1             0.100000      
+</out><out>-*------****  
+</out><out>*****         0.030806      7             0.700000      
+</out><out>-****---****  
+</out><out>*****         0.030130      1             0.100000      
+
+</out><out></out><out></out><idle/><out></out><idle/>

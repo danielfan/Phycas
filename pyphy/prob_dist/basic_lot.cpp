@@ -1,0 +1,77 @@
+#include "pyphy/prob_dist/basic_lot.hpp"
+
+const unsigned MASKSIGNBIT = 0x80000000;
+
+using namespace phycas;
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Default constructor. Sets `last_seed_setting' and `curr_seed' both to 1U, creates a new CDF object and stored the
+|	pointer in `cdf_converter', then calls the UseClockToSeed function.
+*/
+Lot::Lot() : last_seed_setting(1U), curr_seed(1U)
+	{
+	//cdf_converter = new CDF();
+	UseClockToSeed();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Constructor taking a starting seed. Initializes `last_seed_setting' and `curr_seed' both to 1U, creates a new CDF 
+|	object and stores the pointer in `cdf_converter', then calls the UseClockToSeed function if `rnd_seed' is zero or
+|	UINT_MAX, or the SetSeed function if `rnd_seed' is any other value.
+*/
+Lot::Lot(unsigned rnd_seed) : last_seed_setting(1U), curr_seed(1U)
+	{
+	//cdf_converter = new CDF();
+	if (rnd_seed == 0 || rnd_seed == UINT_MAX)
+		UseClockToSeed();
+	else
+		SetSeed(rnd_seed);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Destructor deletes `cdf_converter'.
+*/
+Lot::~Lot() 
+	{
+	//delete cdf_converter;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Member function returning uniform deviate. Provided by J. Monahan, Statistics Dept., North Carolina State 
+|	University. Originally from Schrage, ACM Trans. Math. Software 5:132-138 (1979). Translated to C by Paul O. Lewis, 
+|	Dec. 10, 1992.
+*/
+double Lot::Uniform()
+	{
+	const unsigned a = 16807U;
+	const unsigned b15 = 32768U;
+	const unsigned b16 = 65536U;
+	const unsigned p = 2147483647U;
+	const unsigned xhi = curr_seed / b16;
+	const unsigned xalo = (curr_seed - xhi * b16) * a;
+	const unsigned leftlo = xalo / b16;
+	const unsigned fhi = xhi * a + leftlo;
+	const unsigned k = fhi / b15;
+	curr_seed = (((xalo - leftlo * b16) - p) + (fhi - k * b15) * b16) + k;
+	if (curr_seed & MASKSIGNBIT) 
+		curr_seed = unsigned (((int)curr_seed) + p);
+	return curr_seed * 4.6566128575e-10;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns an unsigned integer in [0-`max') in which all values are equiprobable.
+*/
+unsigned Lot::SampleUInt(unsigned max)
+	{
+	assert(max > 0);
+
+	unsigned samples_uint = max;
+	while(samples_uint == max) 
+		{
+		double r = Uniform();
+		samples_uint = (unsigned)((double)max*r);
+		}
+
+	return samples_uint;
+	}
+

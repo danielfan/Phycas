@@ -1,0 +1,25 @@
+#include "Client.idl"
+module cipresCORBA
+{
+  interface TreeDrawer
+  {
+	typedef sequence <string> stringArray;
+	
+	string execute(in string command);
+	void setClient(in Client client_param);
+	void disconnect();
+	
+		//  exception raised when an illegal tree specification is sent 
+		//	to a tree-dependent method (e.g. drawTree)
+	exception X_InvalidTree {};
+
+	string findOrSetTaxa(in stringArray taxa);
+	void drawTree(in string tree)
+		raises (X_InvalidTree);
+  };
+  
+  interface TreeDrawFactory
+  {
+	  TreeDrawer build();
+  };
+};

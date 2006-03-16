@@ -1,0 +1,2 @@
+python FixedParams.py
+pause

@@ -1,0 +1,34 @@
+#if defined(_MSC_VER)
+#	pragma warning(disable : 4267) // boost's builtin_converters.hpp casts size_t to int rather than unsigned
+#endif
+
+#define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
+
+#include "phycas/force_include.h"
+#include "pyphy/phylogeny/basic_tree.hpp"
+#include <boost/python.hpp>
+//#include <boost/python/tuple.hpp>
+//#include <boost/python/numeric.hpp>
+#include "pyphy/include/num_util.h"
+#include "pyphy/include/pyconversions.h"	// from HippoDraw
+
+using namespace boost::python;
+
+BOOST_PYTHON_MODULE(_Conversions)
+{
+	// these lines required by num_util
+	import_array();
+	numeric::array::set_module_and_type("numarray", "NDArray");
+
+	// these lines taken from HippoGraph
+	std_vector_to_tuple<unsigned>();
+	std_vector_to_tuple<int8_t>();
+	std_vector_to_tuple<double>();
+	std_vector_to_tuple<std::string>();
+	std_vector_to_tuple<phycas::TreeNode *>();
+
+	from_python_sequence<std::vector<unsigned>, variable_capacity_policy>();
+    from_python_sequence<std::vector<int8_t>, variable_capacity_policy>();
+    from_python_sequence<std::vector<double>, variable_capacity_policy>();
+    from_python_sequence<std::vector<std::string>, variable_capacity_policy>();
+}

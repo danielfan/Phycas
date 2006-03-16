@@ -1,0 +1,19 @@
+connected to  ('localhost', 4444)
+Sent:  alias myexit = quit
+
+End Of Transmission
+Sent:  help
+
+End Of Transmission
+Sent:  myexit
+
+End Of Transmission
+Sent:  help
+
+Traceback (most recent call last):
+  File "/Users/mholder/Documents/projects/Phycas/phycasdev/testing/../python/file_to_socket.py", line 80, in ?
+    if not sendLine(line): 
+  File "/Users/mholder/Documents/projects/Phycas/phycasdev/testing/../python/file_to_socket.py", line 35, in sendLine
+    response = sock.recv(16384)
+socket.error: (54, 'Connection reset by peer')
+

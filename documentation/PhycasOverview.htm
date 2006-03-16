@@ -1,0 +1,970 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 10">
+<meta name=Originator content="Microsoft Word 10">
+<link rel=File-List href="PhycasOverview_files/filelist.xml">
+<link rel=Edit-Time-Data href="PhycasOverview_files/editdata.mso">
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]-->
+<title>The Phycas Software consists of two components – a backend processor
+written in C++ and a front-end GUI written in Java</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>vjackson</o:Author>
+  <o:LastAuthor>vjackson</o:LastAuthor>
+  <o:Revision>16</o:Revision>
+  <o:TotalTime>408</o:TotalTime>
+  <o:LastPrinted>2004-12-22T21:53:00Z</o:LastPrinted>
+  <o:Created>2004-12-23T20:04:00Z</o:Created>
+  <o:LastSaved>2004-12-30T15:41:00Z</o:LastSaved>
+  <o:Pages>1</o:Pages>
+  <o:Words>2056</o:Words>
+  <o:Characters>11725</o:Characters>
+  <o:Company>FSU</o:Company>
+  <o:Lines>97</o:Lines>
+  <o:Paragraphs>27</o:Paragraphs>
+  <o:CharactersWithSpaces>13754</o:CharactersWithSpaces>
+  <o:Version>10.4219</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:Compatibility>
+   <w:BreakWrappedTables/>
+   <w:SnapToGridInCell/>
+   <w:WrapTextWithPunct/>
+   <w:UseAsianBreakRules/>
+  </w:Compatibility>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+ </w:WordDocument>
+</xml><![endif]-->
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:Wingdings;
+	panose-1:5 0 0 0 0 0 0 0 0 0;
+	mso-font-charset:2;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:0 268435456 0 0 -2147483648 0;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+h1
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:1;
+	font-size:16.0pt;
+	font-family:Arial;
+	mso-font-kerning:16.0pt;}
+h2
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:2;
+	font-size:14.0pt;
+	font-family:Arial;
+	font-style:italic;}
+h3
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:3;
+	font-size:13.0pt;
+	font-family:Arial;}
+h4
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:4;
+	font-size:14.0pt;
+	font-family:"Times New Roman";}
+h5
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	mso-outline-level:5;
+	font-size:13.0pt;
+	font-family:"Times New Roman";
+	font-style:italic;}
+h6
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	mso-outline-level:6;
+	font-size:11.0pt;
+	font-family:"Times New Roman";}
+p.MsoCaption, li.MsoCaption, div.MsoCaption
+	{mso-style-noshow:yes;
+	mso-style-next:Normal;
+	margin-top:6.0pt;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	font-weight:bold;}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;
+	text-underline:single;}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+ /* List Definitions */
+ @list l0
+	{mso-list-id:228226846;
+	mso-list-template-ids:1197741042;}
+@list l0:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0A7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Wingdings;}
+@list l0:level2
+	{mso-level-number-format:bullet;
+	mso-level-text:o;
+	mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:"Courier New";
+	mso-bidi-font-family:"Times New Roman";}
+@list l1
+	{mso-list-id:1843079553;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1937647470 67698693 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l1:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0A7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Wingdings;}
+@list l1:level2
+	{mso-level-number-format:bullet;
+	mso-level-text:o;
+	mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:"Courier New";}
+@list l1:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
+<!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+ table.MsoNormalTable
+	{mso-style-name:"Table Normal";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-parent:"";
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-para-margin:0in;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";}
+table.MsoTableGrid
+	{mso-style-name:"Table Grid";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	border:solid windowtext 1.0pt;
+	mso-border-alt:solid windowtext .5pt;
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-border-insideh:.5pt solid windowtext;
+	mso-border-insidev:.5pt solid windowtext;
+	mso-para-margin:0in;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";}
+</style>
+<![endif]--><!--[if gte mso 9]><xml>
+ <o:shapedefaults v:ext="edit" spidmax="3074"/>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <o:shapelayout v:ext="edit">
+  <o:idmap v:ext="edit" data="1"/>
+ </o:shapelayout></xml><![endif]-->
+</head>
+
+<body lang=EN-US link=blue vlink=purple style='tab-interval:.5in'>
+
+<div class=Section1>
+
+<h1 align=center style='text-align:center'>Phycas Software Design</h1>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<h2>Overview</h2>
+
+<p class=MsoNormal>The Phycas Software consists of two components – a backend
+processor written in C++ and a front-end GUI written in Java.<span
+style='mso-spacerun:yes'>  </span>The Processor can be controlled through the
+GUI or accessed directly via the command line.<span style='mso-spacerun:yes'> 
+</span>The Phycas Executor is an additional program which is used to manage the
+execution of the Processor and the GUI components.</p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal>This software is based on an XML command language
+description and schema.<span style='mso-spacerun:yes'>  </span>The main XML
+file is used to auto-generate both C++ and Java code using several XSLT and
+Python scripts (see <span style='mso-field-code:" REF _Ref91494587 \\h "'>Figure
+<span style='mso-no-proof:yes'>1</span><!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000D0000005F00520065006600390031003400390034003500380037000000</w:data>
+</xml><![endif]--></span>). There is additional code in both the Processor and
+the GUI that is hard-coded.</p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal align=center style='text-align:center;page-break-after:avoid'><!--[if gte vml 1]><v:shapetype
+ id="_x0000_t75" coordsize="21600,21600" o:spt="75" o:preferrelative="t"
+ path="m@4@5l@4@11@9@11@9@5xe" filled="f" stroked="f">
+ <v:stroke joinstyle="miter"/>
+ <v:formulas>
+  <v:f eqn="if lineDrawn pixelLineWidth 0"/>
+  <v:f eqn="sum @0 1 0"/>
+  <v:f eqn="sum 0 0 @1"/>
+  <v:f eqn="prod @2 1 2"/>
+  <v:f eqn="prod @3 21600 pixelWidth"/>
+  <v:f eqn="prod @3 21600 pixelHeight"/>
+  <v:f eqn="sum @0 0 1"/>
+  <v:f eqn="prod @6 1 2"/>
+  <v:f eqn="prod @7 21600 pixelWidth"/>
+  <v:f eqn="sum @8 21600 0"/>
+  <v:f eqn="prod @7 21600 pixelHeight"/>
+  <v:f eqn="sum @10 21600 0"/>
+ </v:formulas>
+ <v:path o:extrusionok="f" gradientshapeok="t" o:connecttype="rect"/>
+ <o:lock v:ext="edit" aspectratio="t"/>
+</v:shapetype><v:shape id="_x0000_i1025" type="#_x0000_t75" style='width:6in;
+ height:228pt'>
+ <v:imagedata src="PhycasOverview_files/image007.emz" o:title="generation"/>
+</v:shape><![endif]--><![if !vml]><img width=576 height=304
+src="PhycasOverview_files/image002.gif" v:shapes="_x0000_i1025"><![endif]></p>
+
+<p class=MsoCaption align=center style='text-align:center'><a
+name="_Ref91494587">Figure </a><!--[if supportFields]><span style='mso-bookmark:
+_Ref91494587'></span><span style='mso-element:field-begin'></span><span
+style='mso-bookmark:_Ref91494587'><span style='mso-spacerun:yes'> </span>SEQ
+Figure \* ARABIC <span style='mso-element:field-separator'></span></span><![endif]--><span
+style='mso-bookmark:_Ref91494587'><span style='mso-no-proof:yes'>1</span></span><!--[if supportFields]><span
+style='mso-bookmark:_Ref91494587'></span><span style='mso-element:field-end'></span><![endif]--><span
+style='mso-bookmark:_Ref91494587'></span>.<span style='mso-spacerun:yes'> 
+</span>Much of the Java and C++ code is auto-generated from the <br>
+command language description XML file.</p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal>The Processor and the GUI communicate via sockets and can
+exist on the same machine or different machines.<span
+style='mso-spacerun:yes'>  </span>The Phycas Executor allows the user to choose
+whether to launch the Processor on the local machine or to connect to an
+instance already running on a remote machine.<span style='mso-spacerun:yes'> 
+</span>If the local machine is chosen, the user can either enter a specific
+port number or leave it blank and the Executor will search the localhost for an
+open port.<span style='mso-spacerun:yes'>  </span>If a remote machine is
+chosen, the user must enter the host ip address and port number.<span
+style='mso-spacerun:yes'>  </span>The host and port number are passed to the
+GUI and just the port number to the Processor at runtime.<span
+style='mso-spacerun:yes'>  </span>Through the socket connection, the GUI sends
+commands in Nexus format to the Processor and the Processor sends XML to the
+GUI (see <span style='mso-field-code:" REF _Ref91494619 \\h "'>Figure <span
+style='mso-no-proof:yes'>2</span><!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000D0000005F00520065006600390031003400390034003600310039000000</w:data>
+</xml><![endif]--></span>).<span style='mso-spacerun:yes'>  </span></p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal align=center style='text-align:center;page-break-after:avoid'><!--[if gte vml 1]><v:shape
+ id="_x0000_i1026" type="#_x0000_t75" style='width:333pt;height:66pt'>
+ <v:imagedata src="PhycasOverview_files/image008.emz" o:title="overview"/>
+</v:shape><![endif]--><![if !vml]><img width=444 height=88
+src="PhycasOverview_files/image004.gif" v:shapes="_x0000_i1026"><![endif]></p>
+
+<p class=MsoCaption align=center style='text-align:center'><a
+name="_Ref91494619">Figure </a><!--[if supportFields]><span style='mso-bookmark:
+_Ref91494619'></span><span style='mso-element:field-begin'></span><span
+style='mso-bookmark:_Ref91494619'><span style='mso-spacerun:yes'> </span>SEQ
+Figure \* ARABIC <span style='mso-element:field-separator'></span></span><![endif]--><span
+style='mso-bookmark:_Ref91494619'><span style='mso-no-proof:yes'>2</span></span><!--[if supportFields]><span
+style='mso-bookmark:_Ref91494619'></span><span style='mso-element:field-end'></span><![endif]--><span
+style='mso-bookmark:_Ref91494619'></span>.<span style='mso-spacerun:yes'>  
+</span>The Phycas Processor and GUI communicate through a Socket
+connection.<span style='mso-spacerun:yes'>  </span>The GUI sends commands in
+Nexus format to the Processor, and the Processor sends XML to the GUI.</p>
+
+<h2><o:p>&nbsp;</o:p></h2>
+
+<h2>Processor Layer</h2>
+
+<p class=MsoNormal><i style='mso-bidi-font-style:normal'>Coming soon.<o:p></o:p></i></p>
+
+<h2><o:p>&nbsp;</o:p></h2>
+
+<h2>Communication Layer</h2>
+
+<p class=MsoNormal>The Processor will respond to a command from the GUI with
+XML in one or more of the following tags:</p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<ul style='margin-top:0in' type=square>
+ <li class=MsoNormal style='mso-list:l1 level1 lfo3;tab-stops:list .5in'><b
+     style='mso-bidi-font-weight:normal'>out<o:p></o:p></b></li>
+ <ul style='margin-top:0in' type=circle>
+  <li class=MsoNormal style='mso-list:l1 level2 lfo3;tab-stops:list 1.0in'>Contains
+      output from the processing of the command.</li>
+  <li class=MsoNormal style='mso-list:l1 level2 lfo3;tab-stops:list 1.0in'>GUI
+      displays in Output text tab of Output Window.</li>
+ </ul>
+ <li class=MsoNormal style='mso-list:l1 level1 lfo3;tab-stops:list .5in'><b
+     style='mso-bidi-font-weight:normal'>comment<o:p></o:p></b></li>
+ <ul style='margin-top:0in' type=circle>
+  <li class=MsoNormal style='mso-list:l1 level2 lfo3;tab-stops:list 1.0in'>Contains
+      Nexus comments.</li>
+  <li class=MsoNormal style='mso-list:l1 level2 lfo3;tab-stops:list 1.0in'>GUI
+      displays along with data from out tag.</li>
+ </ul>
+ <li class=MsoNormal style='mso-list:l1 level1 lfo3;tab-stops:list .5in'><b
+     style='mso-bidi-font-weight:normal'>error<o:p></o:p></b></li>
+ <ul style='margin-top:0in' type=circle>
+  <li class=MsoNormal style='mso-list:l1 level2 lfo3;tab-stops:list 1.0in'>Contains
+      any error messages that may have been generated.</li>
+  <li class=MsoNormal style='mso-list:l1 level2 lfo3;tab-stops:list 1.0in'>GUI
+      displays a dialog box with error message and an OK button.</li>
+ </ul>
+ <li class=MsoNormal style='mso-list:l1 level1 lfo3;tab-stops:list .5in'><b
+     style='mso-bidi-font-weight:normal'>warning<o:p></o:p></b></li>
+ <ul style='margin-top:0in' type=circle>
+  <li class=MsoNormal style='mso-list:l1 level2 lfo3;tab-stops:list 1.0in'>Contains
+      any warning messages that may have been generated.</li>
+  <li class=MsoNormal style='mso-list:l1 level2 lfo3;tab-stops:list 1.0in'>GUI displays
+      a dialog box with warning message and an OK button.</li>
+ </ul>
+ <li class=MsoNormal style='mso-list:l1 level1 lfo3;tab-stops:list .5in'><b
+     style='mso-bidi-font-weight:normal'>user_query</b></li>
+ <ul style='margin-top:0in' type=circle>
+  <li class=MsoNormal style='mso-list:l1 level2 lfo3;tab-stops:list 1.0in'>Contains
+      message that needs to be displayed to the user.</li>
+  <li class=MsoNormal style='mso-list:l1 level2 lfo3;tab-stops:list 1.0in'><b
+      style='mso-bidi-font-weight:normal'>file</b> tag contains a message that
+      the Processor found a problem with the input or output file from the
+      command.<span style='mso-spacerun:yes'>  </span>GUI displays a dialog box
+      with the message and an OK button so the user can return to the command
+      panel and select a different file.</li>
+  <li class=MsoNormal style='mso-list:l1 level2 lfo3;tab-stops:list 1.0in'><b
+      style='mso-bidi-font-weight:normal'>string</b> tag contains a message
+      that needs a variable response from the user.<span
+      style='mso-spacerun:yes'>  </span>GUI displays a dialog box with the
+      message, an entry field for the user to type an answer, and an OK button
+      to submit the response. <b style='mso-bidi-font-weight:normal'><o:p></o:p></b></li>
+  <li class=MsoNormal style='mso-list:l1 level2 lfo3;tab-stops:list 1.0in'><b
+      style='mso-bidi-font-weight:normal'>alert </b>tag contains a message to
+      the user that needs no response.<span style='mso-spacerun:yes'> 
+      </span>GUI displays a dialog box with the message and an OK button.<b
+      style='mso-bidi-font-weight:normal'><o:p></o:p></b></li>
+  <li class=MsoNormal style='mso-list:l1 level2 lfo3;tab-stops:list 1.0in'><b
+      style='mso-bidi-font-weight:normal'>choices </b>tag contains a message
+      and a list of possible responses.<span style='mso-spacerun:yes'> 
+      </span>GUI displays a dialog box with the message, a drop down to choose
+      a response, and an OK button to submit the response.<b style='mso-bidi-font-weight:
+      normal'><o:p></o:p></b></li>
+  <li class=MsoNormal style='mso-list:l1 level2 lfo3;tab-stops:list 1.0in'><b
+      style='mso-bidi-font-weight:normal'>cancel_ok</b> contains a message that
+      needs either ok or cancel as a response.<span style='mso-spacerun:yes'> 
+      </span>GUI displays a dialog box with the message and OK and Cancel
+      buttons.<b style='mso-bidi-font-weight:normal'><o:p></o:p></b></li>
+  <li class=MsoNormal style='mso-list:l1 level2 lfo3;tab-stops:list 1.0in'><b
+      style='mso-bidi-font-weight:normal'>no_yes</b> contains a message that
+      needs either yes or no as a response.<span style='mso-spacerun:yes'> 
+      </span>GUI displays a dialog box with the message and Yes and No buttons.<b
+      style='mso-bidi-font-weight:normal'><o:p></o:p></b></li>
+  <li class=MsoNormal style='mso-list:l1 level2 lfo3;tab-stops:list 1.0in'>Processing
+      of tags handled by phycasGUI.swixml.PhycasUserQuery.<b style='mso-bidi-font-weight:
+      normal'><o:p></o:p></b></li>
+ </ul>
+ <li class=MsoNormal style='mso-list:l1 level1 lfo3;tab-stops:list .5in'><b
+     style='mso-bidi-font-weight:normal'>idle</b></li>
+ <ul style='margin-top:0in' type=circle>
+  <li class=MsoNormal style='mso-list:l1 level2 lfo3;tab-stops:list 1.0in'>Empty
+      tag signifying that the Processor is now idle.</li>
+ </ul>
+ <li class=MsoNormal style='mso-list:l1 level1 lfo3;tab-stops:list .5in'><b
+     style='mso-bidi-font-weight:normal'>plot</b></li>
+ <ul style='margin-top:0in' type=circle>
+  <li class=MsoNormal style='mso-list:l1 level2 lfo3;tab-stops:list 1.0in'>Contains
+      data to plot.</li>
+  <li class=MsoNormal style='mso-list:l1 level2 lfo3;tab-stops:list 1.0in'><b
+      style='mso-bidi-font-weight:normal'>label</b> tag includes tab-separated
+      string of data labels.</li>
+  <li class=MsoNormal style='mso-list:l1 level2 lfo3;tab-stops:list 1.0in'><b
+      style='mso-bidi-font-weight:normal'>entry</b> tag includes a single data
+      entry including a value for each label. </li>
+  <li class=MsoNormal style='mso-list:l1 level2 lfo3;tab-stops:list 1.0in'>Processing
+      of tags handled by phycasGUI.swixml.PhycasChart.</li>
+ </ul>
+ <li class=MsoNormal style='mso-list:l1 level1 lfo3;tab-stops:list .5in'><b
+     style='mso-bidi-font-weight:normal'>hidden_query</b></li>
+ <ul style='margin-top:0in' type=circle>
+  <li class=MsoNormal style='mso-list:l1 level2 lfo3;tab-stops:list 1.0in'>Response
+      to “available” command, which is sent by the GUI on startup and after
+      each command.<span style='mso-spacerun:yes'>  </span><b style='mso-bidi-font-weight:
+      normal'><o:p></o:p></b></li>
+  <li class=MsoNormal style='mso-list:l1 level2 lfo3;tab-stops:list 1.0in'><b
+      style='mso-bidi-font-weight:normal'>command_state</b> tag contains
+      information on the current state of the program, including which commands
+      and options are available and their current values.<span
+      style='mso-spacerun:yes'>  </span>It has a schema similar to the command
+      language but more concise, with additional tags for handling Tax Sets,
+      Tree Sets, and Character Sets.<span style='mso-spacerun:yes'> 
+      </span>Each of these set types has a set manager of type
+      phycasGUI.swixml.PhycasSetManager, which contains a group of sets of type
+      phycasGUI.swixml.PhycasSet.<span style='mso-spacerun:yes'> 
+      </span>PhycasMain maintains a reference to each of the set managers.<span
+      style='mso-spacerun:yes'>  </span>When a command state message is
+      received, PhycasCommandState updates each of the set managers to reflect
+      the currently available sets and their members.</li>
+ </ul>
+</ul>
+
+<h2><o:p>&nbsp;</o:p></h2>
+
+<h2>GUI Layer</h2>
+
+<h3>Introduction</h3>
+
+<p class=MsoNormal>phycasGUI.PhycasMainThread is the main class that runs when
+the Phycas GUI is started.<span style='mso-spacerun:yes'>  </span>This class
+spawns two threads – one for the socket communication called
+phycasGUI.network.PhycasSocket, and the other for phycasGUI.swixml.PhycasMain
+which controls the creation of the GUI and interactions with the user.<span
+style='mso-spacerun:yes'>  </span>PhycasSocket maintains the socket connection
+to the Processor and handles XML messages sent from the Processor.<span
+style='mso-spacerun:yes'>  </span>PhycasMain creates the windows of the GUI and
+maintains references to them and each of their components.<span
+style='mso-spacerun:yes'>  </span>Most of the GUI components are created using
+Swixml, a protocol which allows representation of Java Swing components in
+XML.<span style='mso-spacerun:yes'>  </span>These Swixml XML files are
+auto-generated using the XSLT scripts mainXMLTransform.xsl and commandsXMLTransform.xsl
+and are rendered upon starting the PhycasMain thread.<span
+style='mso-spacerun:yes'>  </span>The references to the Swixml components must
+be in the PhycasMain class.<span style='mso-spacerun:yes'>  </span>This class
+is auto-generated using the XSLT script mainJavaTransform.xsl.</p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<h3>Handler Classes</h3>
+
+<p class=MsoNormal>PhycasMain also contains references to the Handler
+classes.<span style='mso-spacerun:yes'>  </span>These classes are
+auto-generated using the Python scripts commandsJavaTransform.py and<span
+style='mso-spacerun:yes'>  </span>cmdParamJavaTransform.py.<span
+style='mso-spacerun:yes'>  </span>The GUI for each command in the command
+language description is controlled by a class named [Command Label]Handler in
+the package phycasGUI.swixml.handler.<span style='mso-spacerun:yes'> 
+</span>These classes handle all events generated by the user’s interaction with
+the GUI for each command, including validation of the data submitted and
+creation of the Nexus command string.<span style='mso-spacerun:yes'> 
+</span>Another responsibility of the Handler classes is to get and set the data
+to and from the XMLBeans and the GUI.</p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<h3>XMLBeans</h3>
+
+<p class=MsoNormal>XMLBeans are Java objects used to store the data from the
+initial command language description and the command state updates.<span
+style='mso-spacerun:yes'>  </span>These XMLBeans classes are generated from the
+XML schemas prior to compilation using the script “scomp”, which generates a
+jar file of the classes for each schema.<span style='mso-spacerun:yes'> 
+</span></p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal>When the PhycasMain thread is started, it parses the command
+language XML file into a set of command language XMLBeans, package
+org.phycas.commandLanguage.<span style='mso-spacerun:yes'>  </span>When a
+command state message is received by the GUI, PhycasSocket creates an XML
+document which phycasGUI.swixml.PhycasCommandState parses into a set of command
+state XMLBeans, package org.phycas.commandState.<span
+style='mso-spacerun:yes'>  </span>PhycasCommandState then moves the data from
+the command state beans to the command language beans using reflection (see <span
+style='mso-field-code:" REF _Ref91495564 \\h "'>Figure <span style='mso-no-proof:
+yes'>3</span><!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000D0000005F00520065006600390031003400390035003500360034000000</w:data>
+</xml><![endif]--></span>).<span style='mso-spacerun:yes'>  </span>Since the
+two schemas are quite different, some complicated translation between data
+types must occur.</p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<h3>Design</h3>
+
+<p class=MsoNormal>The GUI consists of two windows – the main window and the
+output window.<span style='mso-spacerun:yes'>  </span></p>
+
+<h5>Main Window</h5>
+
+<p class=MsoNormal>When the GUI is initially launched, the welcome screen is
+displayed in the main window panel.<span style='mso-spacerun:yes'>  </span>This
+screen allows the user to enter a command just as they would via the
+command-line interface to the Processor.<span style='mso-spacerun:yes'> 
+</span>Each command from the command language description has a menu item in a
+menu on the menu bar of the main window.<span style='mso-spacerun:yes'> 
+</span>When a menu item is selected, the main window panel displays the
+appropriate command’s panel.<span style='mso-spacerun:yes'>  </span>Each
+command panel has an OK button.<span style='mso-spacerun:yes'>  </span>When
+this button is pressed, the Nexus command string is generated and sent to the
+Processor via the socket connection.<span style='mso-spacerun:yes'>  </span>The
+main window panel then switches back to the welcome screen.<span
+style='mso-spacerun:yes'>  </span>If an error occurs in the Processor or more
+information is needed from the user, the main window panel will switch back to
+the last command panel viewed.<span style='mso-spacerun:yes'> 
+</span>Additional menu items in the menu bar allow the user to show the output
+window or the welcome screen, or to exit Phycas.</p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal align=center style='text-align:center;page-break-after:avoid'><!--[if gte vml 1]><v:shape
+ id="_x0000_i1027" type="#_x0000_t75" style='width:6in;height:364.5pt'>
+ <v:imagedata src="PhycasOverview_files/image009.emz" o:title="XMLBeans"/>
+</v:shape><![endif]--><![if !vml]><img width=576 height=486
+src="PhycasOverview_files/image010.gif" v:shapes="_x0000_i1027"><![endif]></p>
+
+<p class=MsoCaption align=center style='text-align:center'><a
+name="_Ref91495564">Figure </a><!--[if supportFields]><span style='mso-bookmark:
+_Ref91495564'></span><span style='mso-element:field-begin'></span><span
+style='mso-bookmark:_Ref91495564'><span style='mso-spacerun:yes'> </span>SEQ
+Figure \* ARABIC <span style='mso-element:field-separator'></span></span><![endif]--><span
+style='mso-bookmark:_Ref91495564'><span style='mso-no-proof:yes'>3</span></span><!--[if supportFields]><span
+style='mso-bookmark:_Ref91495564'></span><span style='mso-element:field-end'></span><![endif]--><span
+style='mso-bookmark:_Ref91495564'></span>.<span style='mso-spacerun:yes'> 
+</span>XMLBeans are created from the command language and the command state
+schemas.<span style='mso-spacerun:yes'>  </span>When a command state message is
+received by the GUI, the data is moved from the command state XMLBeans to the
+command language XMLBeans.</p>
+
+<h3><o:p>&nbsp;</o:p></h3>
+
+<h5>Output Window</h5>
+
+<p class=MsoNormal>The output window contains a tabbed pane which initially
+contains a single tab labeled output.<span style='mso-spacerun:yes'> 
+</span>The panel on this tab contains a text area in which all output from the
+Processor is written.<span style='mso-spacerun:yes'>  </span>If a command is
+issued by the user containing plottable data, tabs will be added to this window
+to allow the user to generate trace plots of the data returned by the
+Processor.<span style='mso-spacerun:yes'>  </span>These graphs are created by
+phycasGUI.swixml.PhycasChart which uses the third-party package JFreeChart.<span
+style='mso-spacerun:yes'>  </span>The output window can be closed without
+exiting Phycas.<span style='mso-spacerun:yes'>  </span>The menu bar of this
+window contains options for saving and clearing the output text, and for
+printing, saving, closing, and editing the properties of graphs.<span
+style='mso-spacerun:yes'>  </span>Most of these actions can also be performed
+using a popup menu, which is made visible by right-clicking the mouse in either
+the output text area or on a graph.<span style='mso-spacerun:yes'> 
+</span>phycasGUI.swixml.PhycasOutput handles all events generated by a user’s
+interaction with the output window.</p>
+
+<h5>Components</h5>
+
+<p class=MsoNormal>Each of the commands contains one or more options that each
+has a type.<span style='mso-spacerun:yes'>  </span>The type of the option
+dictates what GUI components are created for that command option.<span
+style='mso-spacerun:yes'>  </span>The types and their corresponding GUI
+components are found in <span style='mso-field-code:" REF _Ref91496962 \\h "'>Table
+<span style='mso-no-proof:yes'>1</span><!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000D0000005F00520065006600390031003400390036003900360032000000</w:data>
+</xml><![endif]--></span>.</p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoCaption align=center style='text-align:center;page-break-after:
+avoid'><a name="_Ref91496962">Table </a><!--[if supportFields]><span
+style='mso-bookmark:_Ref91496962'></span><span style='mso-element:field-begin'></span><span
+style='mso-bookmark:_Ref91496962'><span style='mso-spacerun:yes'> </span>SEQ
+Table \* ARABIC <span style='mso-element:field-separator'></span></span><![endif]--><span
+style='mso-bookmark:_Ref91496962'><span style='mso-no-proof:yes'>1</span></span><!--[if supportFields]><span
+style='mso-bookmark:_Ref91496962'></span><span style='mso-element:field-end'></span><![endif]--><span
+style='mso-bookmark:_Ref91496962'></span>.<span style='mso-spacerun:yes'> 
+</span>GUI components for each command option type.</p>
+
+<div align=center>
+
+<table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0
+ style='border-collapse:collapse;border:none;mso-border-alt:solid windowtext .5pt;
+ mso-yfti-tbllook:480;mso-padding-alt:0in 5.4pt 0in 5.4pt;mso-border-insideh:
+ .5pt solid windowtext;mso-border-insidev:.5pt solid windowtext'>
+ <tr style='mso-yfti-irow:0'>
+  <td width=272 valign=top style='width:204.0pt;border:solid windowtext 1.0pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><b
+  style='mso-bidi-font-weight:normal'>Command Option Type<o:p></o:p></b></p>
+  </td>
+  <td width=318 valign=top style='width:238.8pt;border:solid windowtext 1.0pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
+  solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><b
+  style='mso-bidi-font-weight:normal'>GUI Component<o:p></o:p></b></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:1'>
+  <td width=272 valign=top style='width:204.0pt;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Boolean</p>
+  </td>
+  <td width=318 valign=top style='width:238.8pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Label, check box</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:2'>
+  <td width=272 valign=top style='width:204.0pt;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Character Set</p>
+  </td>
+  <td width=318 valign=top style='width:238.8pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Label, scrollable list (contains member labels or
+  indeces), combo box (contains set names), text field (to enter values instead
+  of selecting)</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:3'>
+  <td width=272 valign=top style='width:204.0pt;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Choice</p>
+  </td>
+  <td width=318 valign=top style='width:238.8pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Label, radio buttons (if less than 4 choices and not
+  variable) or combo box (if variable number of choices or greater than 4)</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:4'>
+  <td width=272 valign=top style='width:204.0pt;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Distribution</p>
+  </td>
+  <td width=318 valign=top style='width:238.8pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Label, text field, choose button (displays phycasGUI.swixml.PhycasDistributionChooser
+  dialog box)</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:5'>
+  <td width=272 valign=top style='width:204.0pt;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Double</p>
+  </td>
+  <td width=318 valign=top style='width:238.8pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Label, text field</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:6'>
+  <td width=272 valign=top style='width:204.0pt;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Input File</p>
+  </td>
+  <td width=318 valign=top style='width:238.8pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Label, text field, choose button (displays file chooser)</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:7'>
+  <td width=272 valign=top style='width:204.0pt;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Integer</p>
+  </td>
+  <td width=318 valign=top style='width:238.8pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Label, text field</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:8'>
+  <td width=272 valign=top style='width:204.0pt;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Mixed (combination of two option types)</p>
+  </td>
+  <td width=318 valign=top style='width:238.8pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Based on sub-options</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:9'>
+  <td width=272 valign=top style='width:204.0pt;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Name (specialized Restricted String)</p>
+  </td>
+  <td width=318 valign=top style='width:238.8pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Label, text field</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:10'>
+  <td width=272 valign=top style='width:204.0pt;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Output</p>
+  </td>
+  <td width=318 valign=top style='width:238.8pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Label, text field, checkboxes for File and<span
+  style='mso-spacerun:yes'>  </span>Output and Plot (if plottable), choose
+  button (displays file chooser), radio buttons for Append to or Replace file</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:11'>
+  <td width=272 valign=top style='width:204.0pt;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Restricted String </p>
+  </td>
+  <td width=318 valign=top style='width:238.8pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Label, text field</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:12'>
+  <td width=272 valign=top style='width:204.0pt;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>String</p>
+  </td>
+  <td width=318 valign=top style='width:238.8pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Label, text field</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:13'>
+  <td width=272 valign=top style='width:204.0pt;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Tax Set</p>
+  </td>
+  <td width=318 valign=top style='width:238.8pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Label, scrollable list (contains member labels or
+  indeces), combo box (contains set names), text field (to enter values instead
+  of selecting)</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:14;mso-yfti-lastrow:yes'>
+  <td width=272 valign=top style='width:204.0pt;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Tree Set</p>
+  </td>
+  <td width=318 valign=top style='width:238.8pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal>Label, scrollable list (contains member labels or
+  indeces), combo box (contains set names), text field (to enter values instead
+  of selecting)</p>
+  </td>
+ </tr>
+</table>
+
+</div>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<h5>JavaHelp System</h5>
+
+<p class=MsoNormal>The main window has a Help menu which activates the JavaHelp
+system.<span style='mso-spacerun:yes'>  </span>JavaHelp provides a mechanism
+for incorporating a help window into an application, including context-sensitive
+help.<span style='mso-spacerun:yes'>  </span>All of the files necessary for the
+help system can be found in the gui/help directory.<span
+style='mso-spacerun:yes'>  </span>The Master.hs file is the Helpset file which
+designates which of the following components will be included:<span
+style='mso-spacerun:yes'>  </span>table of contents, index, search, glossary
+and favorites.<span style='mso-spacerun:yes'>  </span><i style='mso-bidi-font-style:
+normal'>Note:<span style='mso-spacerun:yes'>  </span>Currently, only the first
+three are implemented.</i><span style='mso-spacerun:yes'>  </span>Master.jhm is
+the Map file which maps id’s to html files.<span style='mso-spacerun:yes'> 
+</span>This allows for the html files to change names while the application
+code refers to the same map id.<span style='mso-spacerun:yes'> 
+</span>MasterTOC.xml is the table of contents file which creates the items in
+the table of contents and sets each of their target id’s.<span
+style='mso-spacerun:yes'>  </span>MasterIndex.xml is the index file which
+creates the items in the index and sets each of their target id’s.<span
+style='mso-spacerun:yes'>  </span>These target id’s must be found in the Map
+file.<span style='mso-spacerun:yes'>  </span>In order for the search feature to
+work, a search database must first be created using the command ‘jhindexer’.<span
+style='mso-spacerun:yes'>  </span>This command takes in the directory
+containing all of the html files as an argument.<span
+style='mso-spacerun:yes'>  </span>Therefore, in order to create the search
+database, type the command ‘jhindexer master’.<span style='mso-spacerun:yes'> 
+</span>A folder called JavaHelpSearch will then be created which contains the
+search database files.<span style='mso-spacerun:yes'>  </span></p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal>All of the help files except for Master.hs are auto-generated
+using XSLT scripts which are found in the directory gui\help\translate.<span
+style='mso-spacerun:yes'>  </span>The script tocXMLTransform.xsl creates the
+MasterTOC.xml file.<span style='mso-spacerun:yes'>  </span>The script indexXMLTransform.xsl
+creates the MasterIndex.xml file.<span style='mso-spacerun:yes'>  </span>The script
+mapXMLTransform.xsl creates the Master.jhm file.<span
+style='mso-spacerun:yes'>  </span>The script commandsHTMLTransform.xsl creates
+the commands.html file in the master directory.<span style='mso-spacerun:yes'> 
+</span>The master directory contains the html files associated with the
+Master.hs Helpset.<span style='mso-spacerun:yes'>  </span>The intro.html file
+contains introductory information on the software and GUI and is
+hard-coded.<span style='mso-spacerun:yes'>  </span>The commands.html is
+auto-generated and contains all the help information for all of the commands.</p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal>The “Launch Help” menu item in the Help menu brings up the
+Help window initially showing the introduction page.<span
+style='mso-spacerun:yes'>  </span>The “Get help on specific item” menu item
+allows for context-sensitive help.<span style='mso-spacerun:yes'>  </span>When
+a user selects this item from the Help menu, the cursor will turn into an arrow
+with a question mark.<span style='mso-spacerun:yes'>  </span>The user can then
+click on a field in the GUI and the help window will be displayed with the help
+information for that field.<span style='mso-spacerun:yes'>  </span>This system
+is made possible by code in the PhycasMain class which sets id’s for each of
+the GUI components.<span style='mso-spacerun:yes'>  </span>These id’s must be found
+in the Map file.</p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal>For more information on the JavaHelp system, see the <a
+href="jhug.pdf">JavaHelp User Guide</a>.</p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+</div>
+
+</body>
+
+</html>

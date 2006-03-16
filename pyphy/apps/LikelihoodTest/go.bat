@@ -1,0 +1,3 @@
+python LikelihoodTest.py
+pause
+ 

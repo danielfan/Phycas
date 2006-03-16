@@ -1,0 +1,4 @@
+execute f = '../test.nex'
+mcmc niter = 1000 rnseed = 612 nchains = 1 param = (f = 'mcmc_param_file' replace) reportevery = 100 sampleever	= 100 plotevery = 500 bushMoveW = 1.1 gibbsEv = 50 sliced = 3 InitUWidth = 40 ScalerMoveWeight = .4 LocalMoveWeight = 1 KStart = 2 KappaPriorMean = 10 ncat = 1 ptopo = .5 noFlatTopoPrior UseEdgeLenHyperPrior MeanEdgeLenHyperPrior = .1 VarEdgeLenHyperPrior = 10 NoResClassPrior PolytomyLnPriorRatio = 1
+q
+QUITFILETOSOCKET

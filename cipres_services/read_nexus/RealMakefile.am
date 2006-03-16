@@ -1,0 +1,10 @@
+AM_LDFLAGS =  $(CIPRES_LIB_LDFLAGS) -L@CIPHYCAS_DIR@ 
+AM_CXXFLAGS = $(CIPRES_LIB_CXXFLAGS)  $(CIPRES_LIB_INC_DIRS) @CXXFLAGS@ @CXXFLAGS_OPTIM_SPEED@ @CXXFLAGS_WARNINGS@ -include @CIPHYCAS_PREFIX_FILE@ 
+bin_PROGRAMS = read_nexus_server
+read_nexus_server_LDADD = -l@CIPHYCAS_LIBFLAG@ $(CIPRES_LIB_LDADD)
+read_nexus_server_DEPENDENCIES = @CIPHYCAS_DIR@/libCiphycas.a
+read_nexus_server_SOURCES = \
+	cipres_nexus_reader.cpp \
+	read_nexus_i.cpp \
+	read_nexus_main.cpp
+	

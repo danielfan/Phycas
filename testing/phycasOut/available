@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phyc:phycas_out xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://commandState.phycas.org file:/Users/mholder/Documents/projects/Phycas/phycasdev/command_archive/xml/phycas_out.xsd" xmlns:phyc="http://commandState.phycas.org">
+<hidden_query><command_state><command label="Alias" available="true"><cmd_param label="" available="true" placement="1"><restricted_string_type_info><disallowed_value>Alias</disallowed_value><disallowed_value>Copying</disallowed_value><disallowed_value>Distribution</disallowed_value><disallowed_value>ExcludeTaxa</disallowed_value><disallowed_value>Execute</disallowed_value><disallowed_value>IncludeTaxa</disallowed_value><disallowed_value>MCMC</disallowed_value><disallowed_value>Phylodiversity</disallowed_value><disallowed_value>Quit</disallowed_value><disallowed_value>Sample</disallowed_value><disallowed_value>Set</disallowed_value><disallowed_value>TaxSet</disallowed_value><disallowed_value>TaxStatus</disallowed_value></restricted_string_type_info></cmd_param>
+<cmd_param label="" available="true" placement="2"><string_type_info default=""></string_type_info></cmd_param>
+</command>
+<command label="Copying" available="true"></command>
+<command label="Distribution" available="true"><cmd_param label="" available="true" placement="1"><restricted_string_type_info><disallowed_value>Uniform</disallowed_value><disallowed_value>Bernoulli</disallowed_value><disallowed_value>Binomial</disallowed_value><disallowed_value>Exponential</disallowed_value><disallowed_value>Gamma</disallowed_value><disallowed_value>InvGamma</disallowed_value><disallowed_value>InverseGamma</disallowed_value><disallowed_value>Dirichlet</disallowed_value><disallowed_value>Beta</disallowed_value></restricted_string_type_info></cmd_param>
+<cmd_param label="" available="true" placement="2"><distribution_type_info distrib_class="Any"><range_constraint constraint="Any"></range_constraint></distribution_type_info></cmd_param>
+</command>
+<command label="ExcludeTaxa" available="true"><cmd_param label="" available="true" placement="1"><set_type_info default=""></set_type_info></cmd_param>
+</command>
+<command label="Execute" available="true"><cmd_param label="Filename" available="true"><infile_type_info default=""></infile_type_info></cmd_param>
+</command>
+<command label="IncludeTaxa" available="true"><cmd_param label="" available="true" placement="1"><set_type_info default=""></set_type_info></cmd_param>
+</command>
+<command label="MCMC" available="true"><cmd_param label="BushMoveWeight" available="true"><double_type_info default="1" min_val="0" max_val="1.79769e+308"></double_type_info></cmd_param>
+<cmd_param label="FlatTopoPrior" available="true"><bool_type_info default="true"></bool_type_info></cmd_param>
+<cmd_param label="GibbsEvery" available="true"><integer_type_info default="10" min_val="0" max_val="NIterations"></integer_type_info></cmd_param>
+<cmd_param label="IgnoreData" available="true"><bool_type_info default="false"></bool_type_info></cmd_param>
+<cmd_param label="InitUWidth" available="true"><double_type_info default="50" min_val="2.22507e-308" max_val="1.79769e+308"></double_type_info></cmd_param>
+<cmd_param label="KappaPriorMean" available="true"><double_type_info default="1" min_val="0" max_val="1.79769e+308"></double_type_info></cmd_param>
+<cmd_param label="KStart" available="true"><double_type_info default="4" min_val="2.22507e-308" max_val="1.79769e+308"></double_type_info></cmd_param>
+<cmd_param label="LocalMoveWeight" available="true"><double_type_info default="2" min_val="0" max_val="1.79769e+308"></double_type_info></cmd_param>
+<cmd_param label="MeanEdgeLenHyperPrior" available="true"><double_type_info default="1" min_val="0" max_val="1.79769e+308"></double_type_info></cmd_param>
+<cmd_param label="NCat" available="true"><integer_type_info default="1" min_val="1" max_val="4294967295"></integer_type_info></cmd_param>
+<cmd_param label="NChains" available="true"><integer_type_info default="4" min_val="1" max_val="4294967295"></integer_type_info></cmd_param>
+<cmd_param label="NIterations" available="true"><integer_type_info default="1100" min_val="1" max_val="4294967295"></integer_type_info></cmd_param>
+<cmd_param label="ParamOut" available="true"><output_type_info><default suppress="false"><file append="false" replace="true" path="samples.txt"></file></default></output_type_info></cmd_param>
+<cmd_param label="PlotEvery" available="true"><integer_type_info default="500" min_val="0" max_val="NIterations"></integer_type_info></cmd_param>
+<cmd_param label="PolytomyLnPriorRatio" available="true"><double_type_info default="0" min_val="-1.79769e+308" max_val="1.79769e+308"></double_type_info></cmd_param>
+<cmd_param label="PTopoPrior" available="true"><double_type_info default="0.5" min_val="0" max_val="1"></double_type_info></cmd_param>
+<cmd_param label="ReportEvery" available="true"><integer_type_info default="100" min_val="0" max_val="NIterations"></integer_type_info></cmd_param>
+<cmd_param label="ResClassPrior" available="true"><bool_type_info default="false"></bool_type_info></cmd_param>
+<cmd_param label="RNSeed" available="true"><integer_type_info default="0" min_val="0" max_val="4294967295"></integer_type_info></cmd_param>
+<cmd_param label="SampleEvery" available="true"><integer_type_info default="10" min_val="0" max_val="NIterations"></integer_type_info></cmd_param>
+<cmd_param label="ScalerMoveWeight" available="true"><double_type_info default="0" min_val="0" max_val="1.79769e+308"></double_type_info></cmd_param>
+<cmd_param label="SliceDiv" available="true"><integer_type_info default="3" min_val="2" max_val="4294967295"></integer_type_info></cmd_param>
+<cmd_param label="SplitOut" available="true"><output_type_info><default suppress="false"><redirect>Output</redirect></default></output_type_info></cmd_param>
+<cmd_param label="UseEdgeLenHyperPrior" available="true"><bool_type_info default="true"></bool_type_info></cmd_param>
+<cmd_param label="VarEdgeLenHyperPrior" available="true"><double_type_info default="10" min_val="0" max_val="1.79769e+308"></double_type_info></cmd_param>
+</command>
+<command label="Phylodiversity" available="true"><cmd_param label="PDOutput" available="true"><output_type_info><default suppress="true"></default></output_type_info></cmd_param>
+<cmd_param label="Taxonset" available="true"><string_type_info default="None"></string_type_info></cmd_param>
+</command>
+<command label="Quit" available="true"></command>
+<command label="Sample" available="true"><cmd_param label="Distribution" available="true"><distribution_type_info distrib_class="Any"><range_constraint constraint="Any"></range_constraint></distribution_type_info></cmd_param>
+<cmd_param label="NSampled" available="true"><integer_type_info default="100" min_val="1" max_val="4294967295"></integer_type_info></cmd_param>
+<cmd_param label="OutputDestination" available="true"><output_type_info><default suppress="true"></default></output_type_info></cmd_param>
+<cmd_param label="Precision" available="true"><integer_type_info default="6" min_val="0" max_val="30"></integer_type_info></cmd_param>
+<cmd_param label="Seed" available="true"><integer_type_info default="0" min_val="0" max_val="4294967295"></integer_type_info></cmd_param>
+<cmd_param label="Show" available="true"><bool_type_info default="false"></bool_type_info></cmd_param>
+</command>
+<command label="Set" available="true"><cmd_param label="OutWidth" available="true"><integer_type_info default="80" min_val="1" max_val="4294967295"></integer_type_info></cmd_param>
+</command>
+<command label="TaxSet" available="true"><cmd_param label="" available="true" placement="1"><restricted_string_type_info></restricted_string_type_info></cmd_param>
+<cmd_param label="" available="true" placement="2"><set_type_info default=""></set_type_info></cmd_param>
+</command>
+<command label="TaxStatus" available="true"><cmd_param label="FullDisplay" available="true"><bool_type_info default="true"></bool_type_info></cmd_param>
+<cmd_param label="ShowExcluded" available="true"><bool_type_info default="true"></bool_type_info></cmd_param>
+</command>
+<char_set_manager max_index="0"><known_set label="Active"><members></members></known_set><known_set label="All"><members></members></known_set></char_set_manager><tax_set_manager max_index="0"><known_set label="Active"><members></members></known_set><known_set label="All"><members></members></known_set></tax_set_manager><tree_set_manager max_index="0"><known_set label="Active"><members></members></known_set><known_set label="All"><members></members></known_set></tree_set_manager>
+</command_state>
+</hidden_query><out></out><idle/><out>Executing test.nex
+</out><out>Reading DATA block
+</out><out>There are currently 17 taxa.
+
+</out><out>#   Name                                
+</out><out>--  ----------------------------------  
+</out><out>1   Oedogonium cardiacum                
+</out><out>2   Volvox carteri                      
+</out><out>3   Chlamydomonas reinhardtii           
+</out><out>4   Tetraspora sp                       
+</out><out>5   Chlamydomonas baca                  
+</out><out>6   Heterochlamydomonas inaequalis1705  
+</out><out>7   Heterochlamydomonas rugosa4586      
+</out><out>8   Heterochlamydomonas lobata728       
+</out><out>9   Carteria radiosa                    
+</out><out>10  Carteria obtusa                     
+</out><out>11  Spongiochloris spongiosa            
+</out><out>12  Chlamydopodium vacuolatum           
+</out><out>13  Haematococcus sp                    
+</out><out>14  Chlamydomonas moewusii              
+</out><out>15  Chlamydomonas noctigama             
+</out><out>16  Lobochlamys segnis                  
+</out><out>17  Carteria crucifera                  
+
+</out><out>17 taxa are active, 0 have been excluded.
+
+</out><out>
+DATA block contains 17 taxa and 3341 characters
+  Data type is "DNA"
+  Ignoring case
+  Data matrix entries are expected to be single symbols
+  Taxon labels are expected on left side of matrix
+  Matrix neither transposed nor interleaved
+  Missing data symbol is '?'
+  No match character specified
+  Gap character specified is '-'
+  Valid symbols are: ACGT
+  Equate macros in effect:
+    B = {CTG}
+    D = {ATG}
+    H = {ATC}
+    K = {GT}
+    M = {AC}
+    N = ?
+    R = {AG}
+    S = {CG}
+    V = {AGC}
+    W = {AT}
+    X = ?
+    Y = {CT}
+  No characters were eliminated
+  Data matrix:
+Finished with DATA block
+</out><out>Reading TREES block
+</out><out>There are currently 10 tree(s):
+</out><out>Finished with TREES block
+</out><out>Reading PHYCAS block
+</out><out>Finished with PHYCAS block
+</out><out>Finished reading test.nex
+</out><out></out><idle/><hidden_query><command_state><command label="Alias" available="true"><cmd_param label="" available="true" placement="1"><restricted_string_type_info><disallowed_value>Alias</disallowed_value><disallowed_value>Copying</disallowed_value><disallowed_value>Distribution</disallowed_value><disallowed_value>ExcludeTaxa</disallowed_value><disallowed_value>Execute</disallowed_value><disallowed_value>IncludeTaxa</disallowed_value><disallowed_value>MCMC</disallowed_value><disallowed_value>Phylodiversity</disallowed_value><disallowed_value>Quit</disallowed_value><disallowed_value>Sample</disallowed_value><disallowed_value>Set</disallowed_value><disallowed_value>TaxSet</disallowed_value><disallowed_value>TaxStatus</disallowed_value></restricted_string_type_info></cmd_param>
+<cmd_param label="" available="true" placement="2"><string_type_info default=""></string_type_info></cmd_param>
+</command>
+<command label="Copying" available="true"></command>
+<command label="Distribution" available="true"><cmd_param label="" available="true" placement="1"><restricted_string_type_info><disallowed_value>Uniform</disallowed_value><disallowed_value>Bernoulli</disallowed_value><disallowed_value>Binomial</disallowed_value><disallowed_value>Exponential</disallowed_value><disallowed_value>Gamma</disallowed_value><disallowed_value>InvGamma</disallowed_value><disallowed_value>InverseGamma</disallowed_value><disallowed_value>Dirichlet</disallowed_value><disallowed_value>Beta</disallowed_value></restricted_string_type_info></cmd_param>
+<cmd_param label="" available="true" placement="2"><distribution_type_info distrib_class="Any"><range_constraint constraint="Any"></range_constraint></distribution_type_info></cmd_param>
+</command>
+<command label="ExcludeTaxa" available="true"><cmd_param label="" available="true" placement="1"><set_type_info default=""></set_type_info></cmd_param>
+</command>
+<command label="Execute" available="true"><cmd_param label="Filename" available="true"><infile_type_info default="../test.nex"></infile_type_info></cmd_param>
+</command>
+<command label="GetTrees" available="true"><cmd_param label="ToSave" available="true"><set_type_info default=""></set_type_info></cmd_param>
+</command>
+<command label="IncludeTaxa" available="true"><cmd_param label="" available="true" placement="1"><set_type_info default=""></set_type_info></cmd_param>
+</command>
+<command label="MCMC" available="true"><cmd_param label="BushMoveWeight" available="true"><double_type_info default="1" min_val="0" max_val="1.79769e+308"></double_type_info></cmd_param>
+<cmd_param label="FlatTopoPrior" available="true"><bool_type_info default="false"></bool_type_info></cmd_param>
+<cmd_param label="GibbsEvery" available="true"><integer_type_info default="10" min_val="0" max_val="NIterations"></integer_type_info></cmd_param>
+<cmd_param label="IgnoreData" available="true"><bool_type_info default="false"></bool_type_info></cmd_param>
+<cmd_param label="InitUWidth" available="true"><double_type_info default="50" min_val="2.22507e-308" max_val="1.79769e+308"></double_type_info></cmd_param>
+<cmd_param label="KappaPriorMean" available="true"><double_type_info default="1" min_val="0" max_val="1.79769e+308"></double_type_info></cmd_param>
+<cmd_param label="KStart" available="true"><double_type_info default="4" min_val="2.22507e-308" max_val="1.79769e+308"></double_type_info></cmd_param>
+<cmd_param label="LocalMoveWeight" available="true"><double_type_info default="2" min_val="0" max_val="1.79769e+308"></double_type_info></cmd_param>
+<cmd_param label="MeanEdgeLenHyperPrior" available="true"><double_type_info default="1" min_val="0" max_val="1.79769e+308"></double_type_info></cmd_param>
+<cmd_param label="NCat" available="true"><integer_type_info default="1" min_val="1" max_val="4294967295"></integer_type_info></cmd_param>
+<cmd_param label="NChains" available="true"><integer_type_info default="4" min_val="1" max_val="4294967295"></integer_type_info></cmd_param>
+<cmd_param label="NIterations" available="true"><integer_type_info default="1100" min_val="1" max_val="4294967295"></integer_type_info></cmd_param>
+<cmd_param label="ParamOut" available="true"><output_type_info><default suppress="false"><file append="false" replace="true" path="samples.txt"></file></default></output_type_info></cmd_param>
+<cmd_param label="PlotEvery" available="true"><integer_type_info default="500" min_val="0" max_val="NIterations"></integer_type_info></cmd_param>
+<cmd_param label="PolytomyLnPriorRatio" available="true"><double_type_info default="1" min_val="-1.79769e+308" max_val="1.79769e+308"></double_type_info></cmd_param>
+<cmd_param label="PTopoPrior" available="true"><double_type_info default="0.5" min_val="0" max_val="1"></double_type_info></cmd_param>
+<cmd_param label="ReportEvery" available="true"><integer_type_info default="100" min_val="0" max_val="NIterations"></integer_type_info></cmd_param>
+<cmd_param label="ResClassPrior" available="true"><bool_type_info default="false"></bool_type_info></cmd_param>
+<cmd_param label="RNSeed" available="true"><integer_type_info default="704068657" min_val="0" max_val="4294967295"></integer_type_info></cmd_param>
+<cmd_param label="SampleEvery" available="true"><integer_type_info default="10" min_val="0" max_val="NIterations"></integer_type_info></cmd_param>
+<cmd_param label="ScalerMoveWeight" available="true"><double_type_info default="0" min_val="0" max_val="1.79769e+308"></double_type_info></cmd_param>
+<cmd_param label="SliceDiv" available="true"><integer_type_info default="3" min_val="2" max_val="4294967295"></integer_type_info></cmd_param>
+<cmd_param label="SplitOut" available="true"><output_type_info><default suppress="false"><redirect>Output</redirect></default></output_type_info></cmd_param>
+<cmd_param label="UseEdgeLenHyperPrior" available="true"><bool_type_info default="true"></bool_type_info></cmd_param>
+<cmd_param label="VarEdgeLenHyperPrior" available="true"><double_type_info default="10" min_val="0" max_val="1.79769e+308"></double_type_info></cmd_param>
+</command>
+<command label="Phylodiversity" available="true"><cmd_param label="PDOutput" available="true"><output_type_info><default suppress="true"></default></output_type_info></cmd_param>
+<cmd_param label="Taxonset" available="true"><string_type_info default="het"></string_type_info></cmd_param>
+</command>
+<command label="Quit" available="true"></command>
+<command label="Sample" available="true"><cmd_param label="Distribution" available="true"><distribution_type_info distrib_class="Any"><range_constraint constraint="Any"></range_constraint></distribution_type_info></cmd_param>
+<cmd_param label="NSampled" available="true"><integer_type_info default="100" min_val="1" max_val="4294967295"></integer_type_info></cmd_param>
+<cmd_param label="OutputDestination" available="true"><output_type_info><default suppress="true"></default></output_type_info></cmd_param>
+<cmd_param label="Precision" available="true"><integer_type_info default="6" min_val="0" max_val="30"></integer_type_info></cmd_param>
+<cmd_param label="Seed" available="true"><integer_type_info default="0" min_val="0" max_val="4294967295"></integer_type_info></cmd_param>
+<cmd_param label="Show" available="true"><bool_type_info default="false"></bool_type_info></cmd_param>
+</command>
+<command label="Set" available="true"><cmd_param label="OutWidth" available="true"><integer_type_info default="80" min_val="1" max_val="4294967295"></integer_type_info></cmd_param>
+</command>
+<command label="TaxSet" available="true"><cmd_param label="" available="true" placement="1"><restricted_string_type_info></restricted_string_type_info></cmd_param>
+<cmd_param label="" available="true" placement="2"><set_type_info default="6 - 8"></set_type_info></cmd_param>
+</command>
+<command label="TaxStatus" available="true"><cmd_param label="FullDisplay" available="true"><bool_type_info default="true"></bool_type_info></cmd_param>
+<cmd_param label="ShowExcluded" available="true"><bool_type_info default="true"></bool_type_info></cmd_param>
+</command>
+<char_set_manager max_index="3341"><known_set label="Active"><members>1 - 3341</members></known_set><known_set label="All"><members>1 - 3341</members></known_set></char_set_manager><tax_set_manager max_index="17"><index_label label="Oedogonium cardiacum" index="1"></index_label><index_label label="Volvox carteri" index="2"></index_label><index_label label="Chlamydomonas reinhardtii" index="3"></index_label><index_label label="Tetraspora sp" index="4"></index_label><index_label label="Chlamydomonas baca" index="5"></index_label><index_label label="Heterochlamydomonas inaequalis1705" index="6"></index_label><index_label label="Heterochlamydomonas rugosa4586" index="7"></index_label><index_label label="Heterochlamydomonas lobata728" index="8"></index_label><index_label label="Carteria radiosa" index="9"></index_label><index_label label="Carteria obtusa" index="10"></index_label><index_label label="Spongiochloris spongiosa" index="11"></index_label><index_label label="Chlamydopodium vacuolatum" index="12"></index_label><index_label label="Haematococcus sp" index="13"></index_label><index_label label="Chlamydomonas moewusii" index="14"></index_label><index_label label="Chlamydomonas noctigama" index="15"></index_label><index_label label="Lobochlamys segnis" index="16"></index_label><index_label label="Carteria crucifera" index="17"></index_label><known_set label="Active"><members>1 - 17</members></known_set><known_set label="All"><members>1 - 17</members></known_set><known_set label="het"><members>6 - 8</members></known_set></tax_set_manager><tree_set_manager max_index="10"><known_set label="Active"><members>1 - 10</members></known_set><known_set label="All"><members>1 - 10</members></known_set></tree_set_manager>
+</command_state>
+</hidden_query><out></out><idle/><out></out><idle/></phyc:phycas_out>
+

@@ -1,0 +1,89 @@
+(9-10)-Mar-2006
+
+Building pyphy on Kris' machine:
+	[collins:~] mholder% sw_vers 
+	ProductName:    Mac OS X
+	ProductVersion: 10.3.9
+	BuildVersion:   7W98
+	[collins:~] mholder% gcc --version
+	gcc (GCC) 3.3 20030304 (Apple Computer, Inc. build 1666)
+	Copyright (C) 2002 Free Software Foundation, Inc.
+	This is free software; see the source for copying conditions.  There is NO
+	warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+
+
+o downloaded boost_1_33_1 from http://www.boost.org/
+	setenv BOOST_ROOT $HOME/boost_1_33_1
+	setenv PYTHON_ROOT /Library/Frameworks/Python.framework/Versions/2.4
+	setenv PYTHON_VERSION 2.4
+	
+o built bjam and move to $HOME/bin
+	cd $BOOST_ROOT/tools/build/jam_src
+	sh build.sh
+	mkdir $HOME/bin
+	cp bin.macosxppc/bjam $HOME/bin		     
+	
+o downloaded numarray 1.5.1 from http://www.stsci.edu/resources/software_hardware/numarray 
+ actual download from http://sourceforge.net/project/showfiles.php?group_id=1369&package_id=32367&release_id=391704
+ 	cd numarray-1.5.1
+ 	python setup.py install
+
+o checked out phycas 
+	cvs -d mholder@cvs.csit.fsu.edu:/usr/local/cvs checkout phycasdev 
+	cd phycasdev
+	setenv PHYCAS_ROOT `pwd`
+	cd python
+	setenv PYTHONPATH `pwd`
+	cd $PHYCAS_ROOT
+	python freshmake.py --code
+	
+ Note that $PHYCAS_ROOT/python does not need to be on PYTHONPATH after freshmake has run
+ 
+o downloaded CIPRES and moved cipres dir to $HOME
+	
+	
+o the relevant portion of the .tcshrc is follows:
+ 		#ANT_HOME was added for CIPRES Java builds not phycas
+	setenv ANT_HOME "$HOME/Desktop/apache-ant-1.6.5"	
+	setenv CIPRES_LIB_ROOT "$HOME/cipres/framework"
+	setenv BOOST_ROOT $HOME/boost_1_33_1
+	setenv PHYCAS_ROOT $HOME/phycasdev
+	setenv PYPHY_ROOT $PHYCAS_ROOT/pyphy
+	setenv PYTHON_ROOT /Library/Frameworks/Python.framework/Versions/2.4
+	setenv PYTHON_VERSION 2.4
+	setenv PYTHONPATH $PYPHY_ROOT/:$PYPHY_ROOT/apps:
+	setenv PATH "$HOME/bin:/usr/local/bin:$ANT_HOME/bin:$PATH"
+	setenv CVS_RSH /usr/bin/ssh
+
+o ran freshmake.py (PYTHONPATH must include $HOME/phycasdev/python)
+	cd $HOME/phycasdev
+	python freshmake.py --code
+
+o see POL's building_pyphy.txt for notes on weird link errors.
+	I included some files (that use boost bind) in pyphy/read_nexus/read_nexus_pymod.cpp
+	see the PYPHY_INCLUDE_TO_AVOID_LINK_ERROR notes in that file.
+	This means that projects should not include:
+		cipres_services/cipres_nexus_reader.cpp
+		ncl/characters/nxs_charcters_block.cpp
+		ncl/command/nxs_command_output.cpp 
+	This is a real hack, but it does mean we don't have to modify boost code.
+
+o I had to expand the preprocessor directives in pyphy/likelihood/mcmc_chain_manager.hpp
+	to include the hacky mac workaround for __APPLE_CC__ = 1666 (which is Kris' version).
+
+
+o ran pycasdev/pyphy/dojam script to build the pyphy so files
+
+o Added the libboost.dylib path to the DYLD_LIBRARY_PATH in my .tcshrc:
+
+
+			# this is how we get from where we built a boost-python project
+	setenv LIBBOOST_PLAT_NEUTRAL_FRAG bin/boost/libs/python/build/libboost_python.dylib
+			# this is the part of the path that changes depending on release and platform
+	setenv LIBBOOST_BUILD_SPECIFIC_FRAG darwin/release/shared-linkable-true
+	
+	setenv LIBBOOST_DYLIB_PAR $PYPHY_ROOT/$LIBBOOST_PLAT_NEUTRAL_FRAG/$LIBBOOST_BUILD_SPECIFIC_FRAG
+	
+	setenv DYLD_LIBRARY_PATH $LIBBOOST_DYLIB_PAR
+

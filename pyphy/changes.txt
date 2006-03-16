@@ -1,0 +1,146 @@
+This is the changes.txt file associated with the Python program Phycas
+and C++ Python extension library PyPhy
+by Mark T. Holder, Paul O. Lewis, and David L. Swofford
+Last modified: 19 Jan 2005
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The general rule is that the first version that works with the proposed new 
+features gets the x.x.0 release. The term "works" means that:
+  1) doctestall.py must return no errors;
+  2) all programs in the apps directory must run without errors; 
+  3) these programs should produce their reference output; and 
+  4) new features must be correctly implemented (at least no obvious errors)
+  5) all of the above is true for at least 2 of the 3 major platforms (i.e.
+     MacOS 10.4, Windows XP and Red Hat Fedora Core 4 Linux)
+After that, speed improvements and bug fixes yield new minor releases x.x.1, 
+x.x.2, and so on. Note that x.x.15 is a possibility (more than 9 minor releases
+are possible). Releases that are dated have been finished and may be checked out
+from CVS using the release tag specified. Releases that are not yet dated form
+the proposed release schedule.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Release 0.0.0 (December 2005, no CVS release tag)
+-------------------------------------------------
+o slice sampling for model parameters (including edge lengths)
+o single chain
+o unpartitioned
+o HKY model
+
+Release 0.1.0 (20-Jan-2006, CVS release tag rel_0_1_0)
+------------------------------------------------------
+o add Larget-Simon move to update topology
+o rel_0_1_1 (24-Jan-2006): 
+	- fixed bug (prior not being taken account of in LargetSimonMove)
+	- joint prior not calculated anymore, only prior for parameters that are relevant
+o rel_0_1_2 (24-Jan-2006):
+	- fixed expected output in the doctest example in MCMCSimple, which changed 
+		because not using full joint prior any more (the mode reported for slice 
+		samplers was different due to the new height of the log-posterior, but 
+		the samples drawn were identical to the reference sample before)
+
+Release 0.2.0 (26-Jan-2006, CVS release tag rel_0_2_0)
+------------------------------------------------------
+o add ability to simulate data
+o rel_0_2_1 (27-Jan-2006):
+	- create a Python wrapper file for the SimData class and add doctest examples
+	- change Tree & to TreeShPtr in TreeLikelihood member functions
+o rel_0_2_2 (31-Jan-2006):
+	- removed data matrix argument from TreeLikelihood constructor, allowing
+		a TreeLikelihood object to be created without reference to any source
+		of data. The functions copyDataFromDiscreteMatrix and copyDataFromSimData
+		are now used to associate data with the TreeLikelihood object. It is now
+		possible to simulate data, then transfer that data from a SimData object
+		to a TreeLikelihood object and compute the likelihood for (or perform a 
+		Bayesian MCMC analysis on) the simulated data.
+
+Release 0.3.0 (2-Feb-2006, CVS release tag rel_0_3_0)
+-----------------------------------------------------
+o ability to compute Gelfand-Ghosh measure
+o see pyphy/apps/GelfandGhosh/GelfandGhosh.py for an example
+
+Release 0.4.0 (12-Feb-2006, CVS release tag rel_0_4_0)
+------------------------------------------------------
+o add reversible-jump to accommodate polytomous trees
+o see pyphy/apps/Polytomies/Polytomies.py for an example
+o rel_0_4_1 (15-Feb-2006): 
+	- removed spin from lot initialization
+	- separated CDF from Lot
+	- simplified Lot and CDF classes, leaving only functions in actual use
+
+Release 0.5.0 (20-Feb-2006, CVS release tag rel_0_5_0)
+------------------------------------------------------
+o add gamma rate heterogeneity
+o added pyphy/apps/LikelihoodTest/LikelihoodTest.py (computes log-likelihood
+	under all models) 
+o rel_0_5_1	
+	- added pyphy/apps/ExplorePrior/ExplorePrior.py (runs without data to check priors)
+	- LikelihoodTest.py now performs its tests on both simulated and real data  
+	- GelfandGhosh.py now compares three models: JC, HKY and HKYgamma for data simulated under JC
+
+Release 0.6.0 (24-Feb-2006, CVS release tag rel_0_6_0)
+------------------------------------------------------
+o add proportion of invariable sites to all models
+o rel_0_6_1 (26-Feb-2006)
+	- add an MCMC parameter for pinvar and add  HKY+I and HKY+G+I to the list of models tested in GelfandGhosh.py
+	- add ability to fix model parameters (e.g. fixKappa() and freeKappa())
+	- add pyphy/apps/FixedParams/FixedParams.py example application to test parameter fixing ability
+o rel_0_6_2 (27-Feb-2006)
+	- move responsibility for creating edge length parameters and the edge length hyperparameter into Model
+	- add ability to fix edge lengths and/or edge length hyperparameter
+
+Release 0.7.0 (4-Mar-2006, CVS release tag rel_0_7_0)
+-----------------------------------------------------
+o add GTR model
+o add GTR to LikelihoodTest.py example
+
+Release 0.8.0
+-------------
+o add ASCII tree drawing to Tree class
+
+Release 0.9.0
+-------------
+o add Split and SplitManager classes
+o add no-data run to test polytomy prior to existing Polytomy.py example
+
+Release 0.10.0
+--------------
+o allow data partitioning
+
+Release 0.11.0
+--------------
+o speed up likelihood calculations
+
+Release 0.12.0
+--------------
+o add underflow protection to allow large trees 
+
+Release 0.13.0
+--------------
+o add Metropolis-coupled chains
+
+Release 0.14.0
+--------------
+o add Newton-Raphson for finding MLEs of edge lengths
+o add Brent method for finding MLEs of model parameters
+
+Release 0.15.0
+--------------
+o add NNI, SPR and TBR branch swapping 
+
+Release 0.16.0
+--------------
+o add minimial python GUI
+ 
+Release 0.17.0
+--------------
+o ensure that all routines called from python are represented in *.py wrappers
+o transfer exception handling from C++ code to Python wrappers where possible, replacing exceptions
+	with asserts on the C++ site
+o write a user manual and tutorial
+
+Release 1.0.0
+-------------
+o compile for all platforms and release version 1
+

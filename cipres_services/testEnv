@@ -1,0 +1,46 @@
+#!/bin/sh
+if [ -n "$CIPRES_LIB_ROOT" ];then
+	echo "using \$CIPRES_LIB_ROOT = $CIPRES_LIB_ROOT"
+else
+	echo "\$CIPRES_LIB_ROOT is not defined.  It should refer to framework directory (this will be \$(CIPRES_CVS_ROOT)/framework if you haven't moved it)."
+	exit
+fi
+if [ -n "$BOOST_ROOT" ];then
+	echo "using \$BOOST_ROOT = $BOOST_ROOT"
+else
+	echo "\$BOOST_ROOT is not defined.  It should refer to the directory that has a name like boost_1_32_0 and is the parent of a directory named boost"
+	exit
+fi
+if [ -n "$ACE_ROOT" ];then
+	echo "using \$ACE_ROOT = $ACE_ROOT"
+else
+	echo "\$ACE_ROOT is not defined.  It should refer to the directory called ACE_wrappers that contains a directory called ace."
+	exit
+fi
+if [ -n "$TAO_ROOT" ];then
+	echo "using \$TAO_ROOT = $TAO_ROOT"
+else
+	echo
+	echo "\$TAO_ROOT is not defined!"
+	echo "You should probably use the following command to define it:"
+	echo "setenv TAO_ROOT \$ACE_ROOT/TAO"
+	exit
+fi
+if [ -n "$PHYCAS_ROOT" ];then
+	echo "using \$PHYCAS_ROOT = $PHYCAS_ROOT"
+else
+	echo
+	echo "\$PHYCAS_ROOT is not defined!  Assuming that it is the parent of the current directory"
+	echo "You should probably use the following command to define it:"
+	echo "setenv PHYCAS_ROOT "`pwd`"/.."
+	exit
+fi
+if [ -n "$NCL_ROOT" ];then
+	echo "using \$NCL_ROOT = $NCL_ROOT"
+else
+	echo
+	echo "\$NCL_ROOT is not defined!"
+	echo "You should probably use the following command to define it:"
+	echo "setenv NCL_ROOT \$PHYCAS_ROOT"
+	exit
+fi

@@ -1,0 +1,909 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://command_language.cipres.org file:/Users/mholder/Documents/projects/Phycas/phycasdev/command_archive/xml/cipres/cipres_command_language_description.xsd"
+    xmlns:mods="http://www.loc.gov/mods/v3" xmlns="http://command_language.cipres.org">
+    <description>
+        <ui_label>PAUP*</ui_label>
+        <version>4.0b10</version>
+        <user_hint>Phylogenetic analysis using parsimony and other methods</user_hint>
+        <full_doc>Blah, blah, blah...</full_doc>
+        <doc_link>http://paup.csit.fsu.edu/</doc_link>
+        <reference>
+            <mods:titleInfo>
+                <mods:title>PAUP*</mods:title>
+                <mods:subTitle>Phylogenetic Analysis Using Parsimony (*and Other Methods), version 4.0</mods:subTitle>
+            </mods:titleInfo>
+            <mods:name type="personal">
+                <mods:namePart type="given">David</mods:namePart>
+                <mods:namePart type="given">L.</mods:namePart>
+                <mods:namePart type="family">Swofford</mods:namePart>
+                <mods:role>
+                    <mods:roleTerm type="text">author</mods:roleTerm>
+                </mods:role>
+            </mods:name>
+            <mods:typeOfResource>software, multimedia</mods:typeOfResource>
+            <mods:location>
+                <mods:url>http://paup.csit.fsu.edu</mods:url>
+            </mods:location>
+            <mods:originInfo>
+                <mods:place>
+                    <mods:placeTerm type="text">Sunderland, Massachusetts</mods:placeTerm>
+                </mods:place>
+                <mods:publisher>Sinauer Associates</mods:publisher>
+                <mods:dateIssued encoding="marc">1999</mods:dateIssued>
+            </mods:originInfo>
+        </reference>
+    </description>
+    <conditional name="hasTrees">
+        <logical operator="or">
+            <description>
+                <failure_message>There are no trees in memory</failure_message>
+            </description>
+            <left_operand>
+                <test_ref>isNotTreeImprover</test_ref>
+            </left_operand>
+            <right_operand>
+                <state>TreesManager.hasTrees</state>
+            </right_operand>
+        </logical>
+    </conditional>
+    <conditional name="isTreeImprover">
+        <comparison operator="equals">
+            <left_operand>
+                <state>service</state>
+            </left_operand>
+            <right_operand>
+                <const>TreeImprove</const>
+            </right_operand>
+        </comparison>
+    </conditional>
+    <conditional name="isNotTreeImprover">
+        <comparison operator="not_equal">
+            <left_operand>
+                <state>service</state>
+            </left_operand>
+            <right_operand>
+                <const>TreeImprove</const>
+            </right_operand>
+        </comparison>
+    </conditional>
+    <conditional name="usingLikelihood">
+        <comparison operator="equals">
+            <left_operand>
+                <state>OptimalityCriterion.category</state>
+            </left_operand>
+            <right_operand>
+                <const>Likelihood</const>
+            </right_operand>
+        </comparison>
+    </conditional>
+    <conditional name="usingDistance">
+        <comparison operator="equals">
+            <left_operand>
+                <state>OptimalityCriterion.category</state>
+            </left_operand>
+            <right_operand>
+                <const>Distance</const>
+            </right_operand>
+        </comparison>
+    </conditional>
+    <conditional name="stepwiseAddition">
+        <comparison operator="equals">
+            <description>
+                <annotation>stepwise addition algorithm used in hSearch</annotation>
+            </description>
+            <left_operand>
+                <label>Hsearch.start</label>
+            </left_operand>
+            <right_operand>
+                <const>Stepwise</const>
+            </right_operand>
+        </comparison>
+    </conditional>
+    <conditional name="randomAddSeq">
+        <logical operator="and">
+            <left_operand>
+                <test_ref>stepwiseAddition</test_ref>
+            </left_operand>
+            <right_operand>
+                <comparison operator="equals">
+                    <description>
+                        <annotation>AddSeq used in stepwise addition algorithm</annotation>
+                    </description>
+                    <left_operand>
+                        <label>Hsearch.addSeq</label>
+                    </left_operand>
+                    <right_operand>
+                        <const>Random</const>
+                    </right_operand>
+                </comparison>
+            </right_operand>
+        </logical>
+    </conditional>
+    <conditional name="willSwap">
+        <comparison operator="not_equal">
+            <left_operand>
+                <label>hSearch.swap</label>
+            </left_operand>
+            <right_operand>
+                <const>none</const>
+            </right_operand>
+        </comparison>
+    </conditional>
+    <shared_settings>
+        <setting_group name="searching">
+            <cmd_param gui_order="0" name="keep" user_level = "normal">
+                <description>
+                    <ui_label>Keep trees better than</ui_label>
+                    <full_doc>If real-value is zero, only the best trees found will be saved. If
+                        realvalue ≥ zero, all trees of score ≤ real-value will be saved. By default,
+                        real-value = 0, so that only the best trees found will be saved.</full_doc>
+                </description>
+                <double_type_info>
+                    <default>
+                        <const>0.0</const>
+                    </default>
+                    <minimum>
+                        <const>0.0</const>
+                    </minimum>
+                    <alias label="Best only" value="0.0"/>
+                </double_type_info>
+            </cmd_param>           
+        </setting_group>
+    </shared_settings>
+    <command_group ui_label="console_only" user_interface="console">
+        <command name="hSearch" order="1" category="analysis" user_interface="all" user_level="basic">
+            <description>
+                <ui_label>Heuristic search</ui_label>
+                <user_hint>Search for optimal trees using heuristic algorithms</user_hint>
+                <full_doc>Attempts to find an optimal tree by examining similar trees to the current
+                    tree. Replaces the current tree if a better one is found. Different branch
+                    swapping settings can be used to control the neighborhood of the current tree
+                    that will be searched.</full_doc>
+            </description>
+            <execute_precond>
+                <bool_cast>
+                    <description>
+                        <failure_message>There are no characters in memory.</failure_message>
+                    </description>
+                    <operand>
+                        <state>CharactersManager.hasCharacters</state>
+                    </operand>
+                </bool_cast>
+            </execute_precond>
+            <execute_precond>
+                <test_ref>hasTrees</test_ref>
+            </execute_precond>
+            <cmd_param_group ui_label="Starting Trees">
+                <modify_precond>
+                    <test_ref>isNotTreeImprover</test_ref>
+                </modify_precond>
+                <cmd_param gui_order="1" name="start" persistent="false">
+                    <description>
+                        <ui_label>Starting tree</ui_label>
+                        <user_hint>Specifies an algorithm used to construct an initial tree, or a
+                            tree that is already in memory.</user_hint>
+                        <full_doc>Specifies an algorithm used to construct an initial tree, or a
+                            tree that is already in memory. Branch swapping will begin from this tree.</full_doc>
+                    </description>
+                    <mixed_type_info>
+                        <default>
+                            <const>0</const>
+                            <or>
+                                <const>1</const>
+                                <if>
+                                    <test_ref>isTreeImprover</test_ref>
+                                </if>
+                            </or>
+                        </default>
+                        <sub_cmd_param>
+                            <choice_type_info>
+                                <default>
+                                    <const>Stepwise</const>
+                                    <or>
+                                        <const>NJ</const>
+                                        <if>
+                                            <test_ref>usingDistance</test_ref>
+                                        </if>
+                                    </or>
+                                </default>
+                                <choices>
+                                    <element>
+                                        <const>Stepwise</const>
+                                    </element>
+                                    <element>
+                                        <const>NJ</const>
+                                        <description>
+                                            <ui_label>Neighbor-joining</ui_label>
+                                        </description>
+                                    </element>
+                                    <element user_interface="console|gui|scripting">
+                                        <or>
+                                            <const>Current</const>
+                                            <if>
+                                                <bool_cast>
+                                                  <operand>
+                                                  <state>TreesManager.numTrees</state>
+                                                  </operand>
+                                                </bool_cast>
+                                            </if>
+                                        </or>
+                                    </element>
+                                </choices>
+                            </choice_type_info>
+                        </sub_cmd_param>
+                        <sub_cmd_param>
+                            <tree_set_type_info>
+                                <default>
+                                    <const>1</const>
+                                </default>
+                            </tree_set_type_info>
+                            <if>
+                                <test_ref>isNotTreeImprover</test_ref>
+                            </if>
+                        </sub_cmd_param>
+                    </mixed_type_info>
+                </cmd_param>
+                <cmd_param gui_order="2" name="addSeq" user_level="normal">
+                    <description>
+                        <ui_label>Taxon addition sequence order</ui_label>
+                        <full_doc>Use ADDSEQ to specify the addition sequence to be used in the
+                            stepwise addition procedure. SIMPLE addition sequence is the default
+                            procedure used when parsimony is selected as the optimality criterion;
+                            ASIS is the default under the likelihood criterion</full_doc>
+                    </description>
+                    <modify_precond>
+                        <comparison operator="equals">
+                            <description>
+                                <annotation>AddSeq used in stepwise addition algorithm</annotation>
+                            </description>
+                            <left_operand>
+                                <label>Hsearch.start</label>
+                            </left_operand>
+                            <right_operand>
+                                <const>Stepwise</const>
+                            </right_operand>
+                        </comparison>
+                    </modify_precond>
+                    <choice_type_info>
+                        <default>
+                            <const>Simple</const>
+                            <or>
+                                <const>AsIs</const>
+                                <if>
+                                    <test_ref>usingLikelihood</test_ref>
+                                </if>
+                            </or>
+                        </default>
+                        <choices>
+                            <element>
+                                <const>Simple</const>
+                            </element>
+                            <element>
+                                <const>Closest</const>
+                            </element>
+                            <element>
+                                <const>AsIs</const>
+                            </element>
+                            <element>
+                                <const>Random</const>
+                            </element>
+                            <element>
+                                <const>Furthest</const>
+                            </element>
+                        </choices>
+                    </choice_type_info>
+                </cmd_param>
+                <cmd_param gui_order="3" name="refTax" user_level="normal">
+                    <description>
+                        <ui_label>Reference Taxon for Simple AddSeq.</ui_label>
+                        <full_doc>By default, the first taxon in the data file is used as the
+                            reference taxon. Use REFTAX to specify an alternate reference taxon.
+                            This option is relevant only for unrooted-tree searches. For rooted-tree
+                            searches, the hypothetical ancestor is used as the reference taxon.</full_doc>
+                    </description>
+                    <modify_precond>
+                        <logical operator="and">
+                            <left_operand>
+                                <test_ref>stepwiseAddition</test_ref>
+                            </left_operand>
+                            <right_operand>
+                                <comparison operator="equals">
+                                    <description>
+                                        <annotation>Reference taxon is only used in simple variant
+                                            of the stepwise addition algorithm</annotation>
+                                    </description>
+                                    <left_operand>
+                                        <label>Hsearch.addSeq</label>
+                                    </left_operand>
+                                    <right_operand>
+                                        <const>simple</const>
+                                    </right_operand>
+                                </comparison>
+                            </right_operand>
+                        </logical>
+                    </modify_precond>
+                    <tax_set_type_info size="1">
+                        <default>
+                            <const>1</const>
+                        </default>
+                    </tax_set_type_info>
+                </cmd_param>
+                <cmd_param gui_order="4" name="nReps" user_level="normal">
+                    <description>
+                        <ui_label>Number of Addition Sequence replicates</ui_label>
+                        <full_doc>Use NREPS to specify the number of random-addition sequence
+                            replications to be performed. The default is 10. </full_doc>
+                    </description>
+                    <modify_precond>
+                        <test_ref>randomAddSeq</test_ref>
+                    </modify_precond>
+                    <integer_type_info>
+                        <default>
+                            <const>10</const>
+                        </default>
+                        <minimum>
+                            <const>1</const>
+                        </minimum>
+                    </integer_type_info>
+                </cmd_param>
+                <cmd_param gui_order="5" name="rSeed" user_level="normal">
+                    <description>
+                        <ui_label>Seed for the random number generator</ui_label>
+                    </description>
+                    <modify_precond>
+                        <test_ref>randomAddSeq</test_ref>
+                    </modify_precond>
+                    <integer_type_info>
+                        <default>
+                            <const>0</const>
+                        </default>
+                        <minimum>
+                            <const>0</const>
+                        </minimum>
+                        <maximum>
+                            <const>2147483646</const>
+                        </maximum>
+                        <alias value="0" label="From system clock"/>
+                    </integer_type_info>
+                </cmd_param>
+                <cmd_param gui_order="6" name="saveReps" user_level="normal">
+                    <description>
+                        <ui_label>Save best trees from each replicate</ui_label>
+                        <full_doc>If selected, optimal trees from each addition sequence replicatte
+                            are saved even if they are not optimal over all repetitions.</full_doc>
+                    </description>
+                    <modify_precond>
+                        <test_ref>randomAddSeq</test_ref>
+                    </modify_precond>
+                    <modify_precond>
+                        <comparison operator="greater_than">
+                            <left_operand>
+                                <label>hSearch.nReps</label>
+                            </left_operand>
+                            <right_operand>
+                                <const>1</const>
+                            </right_operand>
+                        </comparison>
+                    </modify_precond>
+                    <bool_type_info>
+                        <default>
+                            <const>False</const>
+                        </default>
+                    </bool_type_info>
+                </cmd_param>
+                <cmd_param gui_order="7" name="randomize" user_level="normal">
+                    <description>
+                        <ui_label>Randomize</ui_label>
+                        <full_doc>If RANDOMIZE = TREES, initial trees are random trees rather than
+                            trees found by random-addition-sequence. </full_doc>
+                    </description>
+                    <modify_precond>
+                        <test_ref>randomAddSeq</test_ref>
+                    </modify_precond>
+                    <choice_type_info>
+                        <default>
+                            <const>AddSeq</const>
+                        </default>
+                        <choices>
+                            <element>
+                                <const>AddSeq</const>
+                            </element>
+                            <element>
+                                <const>Trees</const>
+                            </element>
+                        </choices>
+                    </choice_type_info>
+                </cmd_param>
+                <cmd_param gui_order="8" name="rStatus" user_level="normal">
+                    <description>
+                        <ui_label>Report status of each replicate</ui_label>
+                        <full_doc>If selected, a status report showing the results of each
+                            random-addition-sequence replication is output. The status report can be
+                            useful in evaluating the effectiveness of the heuristic search while the
+                            search is proceeding. </full_doc>
+                    </description>
+                    <modify_precond>
+                        <test_ref>randomAddSeq</test_ref>
+                    </modify_precond>
+                    <bool_type_info>
+                        <default>
+                            <const>False</const>
+                        </default>
+                    </bool_type_info>
+                </cmd_param>
+                <cmd_param gui_order="9" name="hold" user_level="normal">
+                    <description>
+                        <ui_label>Hold extra trees in stepwise addition</ui_label>
+                        <full_doc>Specifies the number of trees to be held at each cycle of the
+                            stepwiseaddition procedure. By default, HOLD = 1, so that a single tree
+                            is held at each step. While setting n &gt; 1 sometimes improves the
+                            score of the tree found by stepwise addition it will aslo increase the
+                            time required to complete the addition of sequences. </full_doc>
+                    </description>
+                    <modify_precond>
+                        <test_ref>randomAddSeq</test_ref>
+                    </modify_precond>
+                    <integer_type_info>
+                        <default>
+                            <const>1</const>
+                        </default>
+                        <minimum>
+                            <const>1</const>
+                        </minimum>
+                        <alias label="No" value="1"/>
+                    </integer_type_info>
+                </cmd_param>
+            </cmd_param_group>
+            <cmd_param_group ui_label="swapping" user_level="basic">
+                <cmd_param gui_order="1" name="swap">
+                    <description>
+                        <ui_label>Branch swapping algorithm</ui_label>
+                        <full_doc>Specifies the algorithm used by branch-swapping: TBR = tree
+                            bisection-reconnection, SPR = subtree pruning-regrafting, NNI =
+                            nearest-neighbor interchange, NONE = No branch swapping performed. NNI
+                            rearrangements are a subset of those done by SPR, and SPR rearrangements
+                            are a subset of those done by TBR. Ordinarily, you will use TBR, but SPR
+                            or NNI can be used to reduce search times. </full_doc>
+                    </description>
+                    <choice_type_info>
+                        <default>
+                            <const>TBR</const>
+                        </default>
+                        <choices>
+                            <element>
+                                <const>TBR</const>
+                            </element>
+                            <element>
+                                <const>SPR</const>
+                            </element>
+                            <element>
+                                <const>NNI</const>
+                            </element>
+                            <element>
+                                <or>
+                                    <const>None</const>
+                                    <if>
+                                        <logical operator="or">
+                                            <left_operand>
+                                                <comparison operator="equals">
+                                                  <left_operand>
+                                                  <const>hSearch.start</const>
+                                                  </left_operand>
+                                                  <right_operand>
+                                                  <const>Stepwise</const>
+                                                  </right_operand>
+                                                </comparison>
+                                            </left_operand>
+                                            <right_operand>
+                                                <comparison operator="equals">
+                                                  <left_operand>
+                                                  <const>hSearch.start</const>
+                                                  </left_operand>
+                                                  <right_operand>
+                                                  <const>NJ</const>
+                                                  </right_operand>
+                                                </comparison>
+                                            </right_operand>
+                                        </logical>
+                                    </if>
+                                </or>
+                            </element>
+                        </choices>
+                    </choice_type_info>
+                </cmd_param>
+                <cmd_param gui_order="2" name="MulTrees">
+                    <description>
+                        <ui_label>Save multiple trees</ui_label>
+                        <full_doc>Ordinarily, PAUP* saves all minimal trees it finds during branch
+                            swapping. You can override the default with MULTREES=NO to save only one
+                            of the best trees found. Use of MULTREES = NO is not recommended, as it
+                            can drastically reduce the ability of branch swapping to find the best tree.</full_doc>
+                        <revision_history>
+                            <diff>This option is synonymous with MULPARS option in earlier versions
+                                of PAUP.</diff>
+                        </revision_history>
+                    </description>
+                    <bool_type_info>
+                        <default>
+                            <const>True</const>
+                        </default>
+                    </bool_type_info>
+                </cmd_param>
+                <cmd_param gui_order="3" name="nBest" user_level="normal">
+                    <description>
+                        <ui_label>Save suboptimal trees</ui_label>
+                        <full_doc>Use NBEST to save the N best trees discovered during the search
+                            according to the optimality criterion in effect.</full_doc>
+                    </description>
+                    <modify_precond>
+                        <bool_cast operator="not">
+                            <description>
+                                <annotation>The NBest option cannot be used when
+                                    random-addition-sequence is in effect (i.e., ADDSEQ = RANDOM). </annotation>
+                            </description>
+                            <operand>
+                                <test_ref>randomAddSeq</test_ref>
+                            </operand>
+                        </bool_cast>
+                    </modify_precond>
+                    <modify_precond>
+                        <test_ref>willSwap</test_ref>
+                    </modify_precond>
+                    <integer_type_info>
+                        <default>
+                            <const>1</const>
+                        </default>
+                        <minimum>
+                            <const>1</const>
+                        </minimum>
+                        <alias label="No" value="1"/>
+                    </integer_type_info>
+                </cmd_param>
+                <cmd_param gui_order="4" name="allSwap" user_level="normal">
+                    <description>
+                        <ui_label>Swap on all saved trees</ui_label>
+                        <full_doc>Unless ALLSWAP = YES is specified, the trees saved by setting
+                            NBest &gt; 1 will include only those trees encountered during a
+                            search for optimal trees; no special effort is made to find additional
+                            trees that might be still better. If ALLSWAP = YES is requested, then
+                            all trees saved are themselves input to the branch swapping procedure,
+                            making it much more likely that the optimal NBEST trees will be found.
+                            Setting ALLSWAP = YES can dramatically increase the search time,
+                            however. </full_doc>
+                    </description>
+                    <modify_precond>
+                        <comparison operator="greater_than">
+                            <left_operand>
+                                <label>hSearch.nBest</label>
+                            </left_operand>
+                            <right_operand>
+                                <const>1</const>
+                            </right_operand>
+                        </comparison>
+                    </modify_precond>
+                    <modify_precond>
+                        <test_ref>willSwap</test_ref>
+                    </modify_precond>
+                    <bool_type_info>
+                        <default>
+                            <const>False</const>
+                        </default>
+                    </bool_type_info>
+                </cmd_param>
+                <cmd_param gui_order="5" name="reconLimit" user_level="normal">
+                    <description>
+                        <ui_label>Swapping reconnection limit</ui_label>
+                        <full_doc>The reconnection limit option limits the scope of SPR and TBR
+                            rearrangements. If an integer-value is specified, the value corresponds
+                            to the sum of the number of nodes between each reconnected branch and
+                            the nodes incident to the branch that was cut for pruning (SPR) or
+                            bisection (TBR). A rearrangement limit of 1 corresponds to
+                            nearest-neighbor interchanges. The default limit is set to infinity.</full_doc>
+                    </description>
+                    <modify_precond>
+                        <logical operator="or">
+                            <left_operand>
+                                <comparison operator="equals">
+                                    <left_operand>
+                                        <label>hSearch.swap</label>
+                                    </left_operand>
+                                    <right_operand>
+                                        <const>TBR</const>
+                                    </right_operand>
+                                </comparison>
+                            </left_operand>
+                            <right_operand>
+                                <comparison operator="equals">
+                                    <left_operand>
+                                        <label>hSearch.swap</label>
+                                    </left_operand>
+                                    <right_operand>
+                                        <const>SPR</const>
+                                    </right_operand>
+                                </comparison>
+                            </right_operand>
+                        </logical>
+                    </modify_precond>
+                    <modify_precond>
+                        <test_ref>willSwap</test_ref>
+                    </modify_precond>
+                    <integer_type_info>
+                        <default>
+                            <const>2147483646</const>
+                        </default>
+                        <minimum>
+                            <const>1</const>
+                        </minimum>
+                        <alias label="Infinity" value="2147483646"/>
+                    </integer_type_info>
+                </cmd_param>
+                <cmd_param gui_order="6" name="useNonMin" user_level="normal">
+                    <description>
+                        <ui_label>Swap on sub-optimal starting trees</ui_label>
+                        <full_doc>It is possible that the trees in memory at the time
+                            branch-swapping begins are not all equal in score. By default, only the
+                            best available trees are input to the branch-swapping procedure. If you
+                            want to swap on nonminimal trees as well, specify USENONMIN=YES. </full_doc>
+                    </description>
+                    <bool_type_info>
+                        <default>
+                            <const>False</const>
+                        </default>
+                    </bool_type_info>
+                </cmd_param>
+                <cmd_param gui_order="7" name="steepest" user_level="normal">
+                    <description>
+                        <ui_label>Use steepest descent branch swapping</ui_label>
+                    </description>
+                    <modify_precond>
+                        <test_ref>willSwap</test_ref>
+                    </modify_precond>
+                    <bool_type_info>
+                        <default>
+                            <const>False</const>
+                        </default>
+                    </bool_type_info>
+                </cmd_param>
+                <cmd_param gui_order="8" name="chuckScore" user_level="normal">
+                    <description>
+                        <ui_label>Score for full max trees (Chuckscore)</ui_label>
+                        <full_doc>Used with NChuck to allow a user to effectively set a maxtrees
+                            limit when swapping on less "promising" trees and remove the limit for
+                            more "promising" trees. Only NChuck trees with score worse than the
+                            chuckScore can be saved, but up MaxTrees better trees will be stored.</full_doc>
+                    </description>
+                    <modify_precond>
+                        <test_ref>willSwap</test_ref>
+                    </modify_precond>
+                    <mixed_type_info>
+                        <default>
+                            <const>0</const>
+                        </default>
+                        <sub_cmd_param>
+                            <choice_type_info>
+                                <default>
+                                    <const>No</const>
+                                </default>
+                                <choices>
+                                    <element>
+                                        <const>No</const>
+                                    </element>
+                                </choices>
+                            </choice_type_info>
+                        </sub_cmd_param>
+                        <sub_cmd_param>
+                            <double_type_info>
+                                <default>
+                                    <const>1.0e300</const>
+                                </default>
+                                <minimum>
+                                    <const>0.0</const>
+                                </minimum>
+                            </double_type_info>
+                        </sub_cmd_param>
+                    </mixed_type_info>
+                </cmd_param>
+                <cmd_param gui_order="9" name="nChuck" user_level="normal">
+                    <description>
+                        <ui_label>Number of trees worse than Chuckscore</ui_label>
+                        <full_doc>Used with NChuck to allow a user to effectively set a maxtrees
+                            limit when swapping on less "promising" trees and remove the limit for
+                            more "promising" trees. Only NChuck trees with score worse than the
+                            chuckScore can be saved, but up MaxTrees better trees will be stored.</full_doc>
+                    </description>
+                    <modify_precond>
+                        <test_ref>willSwap</test_ref>
+                    </modify_precond>
+                    <modify_precond>
+                        <comparison operator="not_equal">
+                            <left_operand>
+                                <label>hSearch.chuckScore</label>
+                            </left_operand>
+                            <right_operand>
+                                <const>No</const>
+                            </right_operand>
+                        </comparison>
+                    </modify_precond>
+                    <integer_type_info>
+                        <default>
+                            <const>1</const>
+                        </default>
+                        <minimum>
+                            <const>1</const>
+                        </minimum>
+                    </integer_type_info>
+                </cmd_param>
+                <cmd_param gui_order="10" name="abortRep" user_level="normal">
+                    <description>
+                        <ui_label>Abort replicate if chuck limit is hit</ui_label>
+                        <full_doc>If AbortRep is requested and NChuck and ChuckScore values have
+                            been specified, the current random-addition-sequence replicate will be
+                            aborted if the "chucking" limits are hit. </full_doc>
+                    </description>
+                    <modify_precond>
+                        <test_ref>willSwap</test_ref>
+                    </modify_precond>
+                    <modify_precond>
+                        <comparison operator="not_equal">
+                            <left_operand>
+                                <label>hSearch.chuckScore</label>
+                            </left_operand>
+                            <right_operand>
+                                <const>No</const>
+                            </right_operand>
+                        </comparison>
+                    </modify_precond>
+                    <bool_type_info>
+                        <default>
+                            <const>False</const>
+                        </default>
+                    </bool_type_info>
+                </cmd_param>
+                <cmd_param_group ui_label="misc search behavior">
+                    <cmd_param gui_order="1" name="retain" user_interface="console|gui|scripting">
+                        <description>
+                            <ui_label>Retain first N trees. N =</ui_label>
+                            <full_doc>The first number-of-trees-to-retain will be retained in memory
+                                throughout the search. (Ordinarily, all trees initially in memory
+                                will be replaced by trees found during the search.) The RETAIN
+                                option is not persistent; you must reset it for every HSEARCH
+                                command if you want to continue retaining the same set of initial
+                                trees. </full_doc>
+                        </description>
+                        <modify_precond>
+                            <test_ref>hasTrees</test_ref>
+                        </modify_precond>
+                        <integer_type_info>
+                            <default>
+                                <const>0</const>
+                            </default>
+                            <minimum>
+                                <const>0</const>
+                            </minimum>
+                        </integer_type_info>
+                    </cmd_param>
+                    <cmd_param gui_order="2" name="timeLimit" user_level="normal">
+                        <description>
+                            <ui_label>Maximum search time (in seconds)</ui_label>
+                            <full_doc>If an integer-value is specified, the search will be limited
+                                to a user-specified length of time, where the integer-value is the
+                                number of seconds to search. </full_doc>
+                        </description>
+                        <mixed_type_info>
+                            <default>
+                                <const>0</const>
+                            </default>
+                            <sub_cmd_param>
+                                <choice_type_info>
+                                    <default>
+                                        <const>None</const>
+                                    </default>
+                                    <choices>
+                                        <element>
+                                            <const>None</const>
+                                        </element>
+                                    </choices>
+                                </choice_type_info>
+                            </sub_cmd_param>
+                            <sub_cmd_param>
+                                <integer_type_info>
+                                    <default>
+                                        <const>2147483646</const>
+                                    </default>
+                                    <minimum>
+                                        <const>1</const>
+                                    </minimum>
+                                </integer_type_info>
+                            </sub_cmd_param>
+                        </mixed_type_info>
+                    </cmd_param>
+                    <cmd_param gui_order="3" name="rearrLimit" user_level="normal">
+                        <description>
+                            <ui_label>Maximum number of rearrangements</ui_label>
+                            <full_doc>If an integer-value is specified, the search will be limited
+                                to a user-specified number of tree rearrangements (branch swaps). </full_doc>
+                        </description>
+                        <modify_precond>
+                            <test_ref>willSwap</test_ref>
+                        </modify_precond>
+                        <mixed_type_info>
+                            <default>
+                                <const>0</const>
+                            </default>
+                            <sub_cmd_param>
+                                <choice_type_info>
+                                    <default>
+                                        <const>None</const>
+                                    </default>
+                                    <choices>
+                                        <element>
+                                            <const>None</const>
+                                        </element>
+                                    </choices>
+                                </choice_type_info>
+                            </sub_cmd_param>
+                            <sub_cmd_param>
+                                <integer_type_info>
+                                    <default>
+                                        <const>2147483646</const>
+                                    </default>
+                                    <minimum>
+                                        <const>1</const>
+                                    </minimum>
+                                </integer_type_info>
+                            </sub_cmd_param>
+                        </mixed_type_info>
+                    </cmd_param>
+                    <cmd_param gui_order="4" name="limitPerRep" user_level="normal">
+                        <description>
+                            <ui_label>Apply limits to each replicate</ui_label>
+                            <full_doc>By default, the TL and RL options apply to the entire search
+                                in random-addition-sequence searches. However, if you request
+                                LIMITPERREP=YES, then the limits are imposed separately for each
+                                addition-sequence replicate. For replicated searches such as the
+                                bootstrap, the jackknife, and the partition-homogeneity test the
+                                limits are always applied separately for each search. </full_doc>
+                        </description>
+                        <modify_precond>
+                            <logical operator="and">
+                                <left_operand>
+                                    <test_ref>randomAddSeq</test_ref>
+                                </left_operand>
+                                <right_operand>
+                                    <logical operator="or">
+                                        <left_operand>
+                                            <comparison operator="not_equal">
+                                                <left_operand>
+                                                  <label>hSearch.timeLimit</label>
+                                                </left_operand>
+                                                <right_operand>
+                                                  <const>None</const>
+                                                </right_operand>
+                                            </comparison>
+                                        </left_operand>
+                                        <right_operand>
+                                            <comparison operator="not_equal">
+                                                <left_operand>
+                                                  <label>hSearch.rearrLimit</label>
+                                                </left_operand>
+                                                <right_operand>
+                                                  <const>None</const>
+                                                </right_operand>
+                                            </comparison>
+                                        </right_operand>
+                                    </logical>
+                                </right_operand>
+                            </logical>
+                        </modify_precond>
+                        <bool_type_info>
+                            <default>
+                                <const>False</const>
+                            </default>
+                        </bool_type_info>
+                    </cmd_param>
+                </cmd_param_group>
+            </cmd_param_group>
+        </command>
+    </command_group>
+</module>

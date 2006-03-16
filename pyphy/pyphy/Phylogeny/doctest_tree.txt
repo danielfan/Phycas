@@ -1,0 +1,5 @@
+>>> from Phylogeny import *
+>>> t = Tree()
+>>> t.buildFromString('(a,b,(c,d)x,(e,(f,g)y)z)root')
+>>> print t.walkPreorder()
+a -> root -> b -> x -> c -> d -> z -> e -> y -> f -> g
