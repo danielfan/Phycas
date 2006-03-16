@@ -3363,3 +3363,15 @@ D         testing/mock_generic_output.cpp
 D         testing/knownDiffs
 D         testing/test.nex
 D         testing
+[cheethree:CIPRES_dev/PhycasSVN/phycasdev] mholder% svn commit -m "removing outdated files"
+Deleting       autorun
+Deleting       build
+Deleting       ciphy
+Deleting       executor
+Deleting       gui
+Deleting       readme.txt
+Sending        repository_history.txt
+Deleting       testing
+Deleting       tmp
+Transmitting file data .
+Committed revision 2.
