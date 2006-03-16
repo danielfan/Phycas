@@ -1,5 +1,0 @@
-execute f = '../test.nex'
-taxset mine = 5 - 10 \2;
-phylodiversity pd = (f = 'pd_file' replace) taxonset = mine
-q
-QUITFILETOSOCKET

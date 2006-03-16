@@ -1,8 +1,0 @@
-FILE_TO_SOCKET_OUTPUT<?xml version="1.0" encoding="UTF-8"?>
-FILE_TO_SOCKET_OUTPUT<phyc:phycas_out xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://commandState.phycas.org file:/Users/mholder/Documents/projects/Phycas/phycasdev/command_archive/xml/phycas_out.xsd" xmlns:phyc="http://commandState.phycas.org">
-available
-execute f = '../test.nex'
-available
-q
-FILE_TO_SOCKET_OUTPUT</phyc:phycas_out>
-QUITFILETOSOCKET

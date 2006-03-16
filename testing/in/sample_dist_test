@@ -1,4 +1,0 @@
-distribution mine = uniform(.5, 2.4)
-sample distr = mine seed = 13465146 noshow output = (r=output f=usamples.txt replace)
-q
-QUITFILETOSOCKET

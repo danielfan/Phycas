@@ -1,9 +1,0 @@
-execute f = '../test.nex'
-taxset mine = 5 - 12 \2;
-taxstatus
-excludetaxa mine 
-taxstatus
-includetaxa 5 - 12 \3
-taxstatus
-q
-QUITFILETOSOCKET
