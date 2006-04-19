@@ -301,7 +301,7 @@ void Tree::RectifyNames(std::vector<std::string> name_vector)
 	unsigned name_vector_len = (unsigned)name_vector.size();
 	bool ok = (GetNObservables() == name_vector_len);
 	if (!ok)
-		throw XPhylogeny("number of names must equal number of tips");
+		throw XPhylogeny(str(boost::format("number of names (%d) not equal to the number of tips (%d)") % name_vector_len % GetNObservables()));
 
 	if (preorderDirty)
 		RefreshPreorder();

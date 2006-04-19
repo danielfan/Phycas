@@ -125,11 +125,103 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 	std::partial_sum(freqs.begin(), freqs.end(), cum_freqs.begin());
 
 	// Create a vector of cumulative rate probabilities to use in choosing relative rates
+#if POLPY_NEWWAY
+	// If using pattern-specific rates, the probability of choosing a rate is proportional to
+	// the frequency of that rate's pattern: e.g. rates corresponding to constant patterns
+	// will be chosen much more frequently than rates corresponding to rare variable patterns,
+	// which is as it should be
+	std::vector<double> cum_rate_probs(num_rates, 0.0);
+	if (use_pattern_specific_rates)
+		{
+		std::partial_sum(pattern_counts.begin(), pattern_counts.end(), cum_rate_probs.begin());
+
+		// Now normalize by dividing by the total number of sites
+		double total = cum_rate_probs.at(cum_rate_probs.size() - 1);
+		assert(total > 0.0);
+		std::for_each(cum_rate_probs.begin(), cum_rate_probs.end(), boost::lambda::_1 *= (1.0/total));
+		}
+	else
+		std::partial_sum(rate_probs.begin(), rate_probs.end(), cum_rate_probs.begin());
+#else
 	std::vector<double> cum_rate_probs(num_rates, 0.0);
 	std::partial_sum(rate_probs.begin(), rate_probs.end(), cum_rate_probs.begin());
+#endif
 
 	sim_data->resetPatternLength(t->GetNTips());
 	sim_data->wipePattern();
+
+#if 0  //POL temporary debugging section BEGIN
+	//std::ofstream doof("doof_check.txt", std::ios::out | std::ios::app); 
+	std::ofstream doof("doof_check.txt"); 
+	doof << "\nNEW DATA SET BEGINNING" << std::endl;
+	doof << "model parameter names:  " << model->paramHeader() << std::endl;
+	doof << "model parameter values: " << model->paramReport() << std::endl;
+
+	// Go through all nodes and show their edge lengths and transition probability matrices
+	{
+		preorder_iterator nd = t->begin();
+
+		// First preorder node is the root node and represents a special case
+		// Its transition matrices must be computed using the "subroot" node's edge length
+		// The subroot node's transition matrices need not be calculated 
+		TipData & ndTD = *(nd->GetTipData());
+		double * * * p = ndTD.getTransposedPMatrices();
+		TreeNode * subroot = nd->GetLeftChild();
+		doof << "Subroot node edge length = " << subroot->GetEdgeLen() << std::endl;
+		doof << "Transposed transition probability matrices:" << std::endl;
+		for (unsigned rr = 0; rr < num_rates; ++rr)
+			{
+			doof << "  Relative rate " << rr << " = " << rate_means[rr] << std::endl;
+			doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][0][0] % p[rr][0][1] % p[rr][0][2] % p[rr][0][3]);
+			doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][1][0] % p[rr][1][1] % p[rr][1][2] % p[rr][1][3]);
+			doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][2][0] % p[rr][2][1] % p[rr][2][2] % p[rr][2][3]);
+			doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][3][0] % p[rr][3][1] % p[rr][3][2] % p[rr][3][3]);
+			doof << std::endl;
+			}
+		++nd;
+
+		// Skip subroot node as its transition matrices are never used and thus do not need to be computed
+		++nd;
+
+		// Process the remaining nodes in the tree
+		for (; nd != t->end(); ++nd)
+			{
+			if (nd->IsTip())
+				{
+				TipData & ndTD = *(nd->GetTipData());
+				double * * * p = ndTD.getTransposedPMatrices();
+				doof << "Tip node " << nd->GetNodeNumber() << " edge length = " << nd->GetEdgeLen() << std::endl;
+				doof << "Transposed transition probability matrices:" << std::endl;
+				for (unsigned rr = 0; rr < num_rates; ++rr)
+					{
+					doof << "  Relative rate " << rr << " = " << rate_means[rr] << std::endl;
+					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][0][0] % p[rr][0][1] % p[rr][0][2] % p[rr][0][3]);
+					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][1][0] % p[rr][1][1] % p[rr][1][2] % p[rr][1][3]);
+					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][2][0] % p[rr][2][1] % p[rr][2][2] % p[rr][2][3]);
+					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][3][0] % p[rr][3][1] % p[rr][3][2] % p[rr][3][3]);
+					doof << std::endl;
+					}
+				}
+			else
+				{
+				InternalData & ndID	= *(nd->GetInternalData());
+				double * * * p = ndID.getPMatrices();
+				doof << "Internal node " << nd->GetNodeNumber() << " edge length = " << nd->GetEdgeLen() << std::endl;
+				doof << "Transition probability matrices:" << std::endl;
+				for (unsigned rr = 0; rr < num_rates; ++rr)
+					{
+					doof << "  Relative rate " << rr << " = " << rate_means[rr] << std::endl;
+					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][0][0] % p[rr][0][1] % p[rr][0][2] % p[rr][0][3]);
+					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][1][0] % p[rr][1][1] % p[rr][1][2] % p[rr][1][3]);
+					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][2][0] % p[rr][2][1] % p[rr][2][2] % p[rr][2][3]);
+					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][3][0] % p[rr][3][1] % p[rr][3][2] % p[rr][3][3]);
+					doof << std::endl;
+					}
+				}
+			}
+	}
+	doof.close();
+#endif	//POL temporary debugging section END
 
 	for (unsigned character = 0; character < nchar; ++character)
 		{
@@ -275,6 +367,13 @@ double TreeLikelihood::calcLnL(
 		return 0.0;
 		}
 
+#if POLPY_NEWWAY
+	if (use_pattern_specific_rates)
+		{
+		model->normalizePatternSpecificRates(rate_means, pattern_counts);
+		}
+#endif
+
 	TreeNode * rootNd = t->GetFirstPreorder();
 	TreeNode * firstNd = rootNd->GetLeftChild();
 	assert(firstNd);
@@ -353,13 +452,13 @@ double TreeLikelihood::calcLnL(
 					{
 					TipData & currTD = *(currNd->GetTipData());
 					calcPMatTranspose(currTD, currNd->GetEdgeLen());
-					conditionOnAdditionaTip(nd_ID, currTD);
+					conditionOnAdditionalTip(nd_ID, currTD);
 					}
 				else
 					{
 					InternalData & currID = *(currNd->GetInternalData());
 					calcPMat(currID, currNd->GetEdgeLen());
-					conditionOnAdditionaInternal(nd_ID, currID);
+					conditionOnAdditionalInternal(nd_ID, currID);
 					}
 				}
 			} // if (nd->IsInternal())
@@ -372,7 +471,7 @@ double TreeLikelihood::calcLnL(
 	//	{
 		TipData & rootTD = *(rootNd->GetTipData());
 		calcPMatTranspose(rootTD, firstNd->GetEdgeLen());
-		conditionOnAdditionaTip(firstID, rootTD);
+		conditionOnAdditionalTip(firstID, rootTD);
 	//	firstNd->UnselectNode();
 	//	}
 
@@ -507,11 +606,14 @@ TipData * TreeLikelihood::allocateTipData(  //POLBM TreeLikelihood::allocateTipD
 */
 InternalData * TreeLikelihood::allocateInternalData()
 	{
-	return new InternalData(num_patterns,	// number of site patterns
-							num_rates,		// number of relative rate categories
-							num_states,		// number of model states
-							NULL,		// pMat
-							true);		// managePMatrices
+	return new InternalData(num_patterns,				// number of site patterns
+							num_rates,					// number of relative rate categories
+							num_states,					// number of model states
+							NULL,						// pMat
+#if POLPY_NEWWAY
+							use_pattern_specific_rates,	// if true, cla will have only num_patterns*num_states elements rather than num_rates*num_patterns*num_states elements
+#endif
+							true);						// managePMatrices
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

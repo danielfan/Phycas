@@ -97,6 +97,9 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		// Modifiers
 		virtual void			setName(const std::string & s);
 		virtual void			setWeight(unsigned w);
+#if POLPY_NEWWAY
+		void					setMaxUnits(unsigned max_units);
+#endif
 		virtual void			setLot(LotShPtr p);
 		virtual void			setTree(TreeShPtr p);
 		virtual void			setTreeLikelihood(TreeLikeShPtr p);
@@ -160,6 +163,9 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		bool					is_master_param;		/**< True if this updater is a master parameter (does not update any model parameters but can compute the joint prior density for several model parameters) */
 		bool					is_hyper_param;			/**< True if this updater represents a hyperparameter (a model parameter that is part of the prior specification but not the likelihood function) */
 		bool					is_fixed;				/**< If true, update returns immediately so parameter is never updated */
+#if POLPY_NEWWAY
+		unsigned				slice_max_units;		/**< Maximum number of units used by `slice_sampler' */
+#endif
 	};
 
 typedef std::vector<MCMCUpdaterShPtr>		MCMCUpdaterVect;

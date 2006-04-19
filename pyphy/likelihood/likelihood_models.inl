@@ -23,6 +23,10 @@ inline Model::Model(
 	pinvar(0.0), 
 	gamma_shape_fixed(false),
 	gamma_shape(0.5)
+#if POLPY_NEWWAY
+	, is_psr_model(false)
+	, invert_shape(true)
+#endif
 	{
 	assert(num_states > 0);
 	setAllFreqsEqual();
@@ -198,7 +202,7 @@ inline void Model::setNGammaRates(
 	if (nGammaRates != num_gamma_rates)
 		{
 		assert(nGammaRates > 0);
-		gamma_rate_probs.resize(nGammaRates);
+		gamma_rate_probs.resize(nGammaRates); //@POL this line not necessary (?) because assign also resizes
 		gamma_rate_probs.assign(nGammaRates, 1.0/(double)nGammaRates);
 		num_gamma_rates = nGammaRates;
 		}
@@ -242,6 +246,18 @@ inline void Model::setShape(
 	assert(alpha > 0.0);
 	gamma_shape = alpha;
 	}
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Modifier function that sets the data member `invert_shape' to the supplied value `invert'. If true is specified for
+|	`invert', then `gamma_shape_param' will manage the inverse of the gamma shape rather than the shape itself.
+*/
+inline void Model::setPriorOnShapeInverse(
+  bool invert)		/**< is the new value for the `gamma_shape' data member */
+	{
+	invert_shape = invert;
+	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the data member `gamma_shape_fixed' to true. The fixParameter member function of the DiscreteGammaParam object
@@ -405,6 +421,46 @@ inline void Model::freeStateFreqs()
 		}
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the new value (`r') for the pattern-specific relative rate belonging to pattern `k'.
+*/
+inline void Model::setPatternSpecificRate(
+  double r,		/**< is a new value for the pattern-specific rate parameter */
+  unsigned k)	/**< is the (0-based) index of the pattern that to which this new rate applies */
+	{
+	assert(is_psr_model);
+	assert(num_gamma_rates > k);
+	unnorm_pat_spec_rates[k] = r;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `is_psr_model' to true and calls the setNGammaRates function, supplying `npatterns' as the
+|	argument. Assumes `npatterns' > 0 (and implicitly assumes that `npatterns' equals the number of data patterns). A 
+|	subsequent call to the createParameters member function will result in `npatterns' PatternSpecificRateParam updaters
+|	being added to the list of updaters for this model.
+*/
+inline void Model::setPatternSpecificRatesModel(
+  unsigned npatterns)	/**< is the number of relative rates to create (should be number of patterns) */
+	{
+	//@POL need to find a way to determine npatterns rather than relying on user to supply the correct value!
+	assert(npatterns > 0);
+	setNGammaRates(npatterns); //@POL also assigns gamma_rate_probs, which is not necessary because it is not used under the psr model (?)
+	unnorm_pat_spec_rates.assign(npatterns, 1.0);
+	is_psr_model = true;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `is_psr_model' to false and calls the setNGammaRates function, supplying 1 as the argument.
+|	Thus, this function returns the model to one that assumes rate homogeneity.
+*/
+inline void Model::setNotPatternSpecificRatesModel()
+	{
+	setNGammaRates(1);
+	is_psr_model = false;
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the data member `is_pinvar_model' to true. A subsequent call to the createParameters member function will
 |	result in a PinvarParam being added to the list of updaters for this model.
@@ -455,7 +511,7 @@ inline ProbDistShPtr Model::getDiscreteGammaShapePrior()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Returns current value of data member `gamma_shape_prior'.
+|	Sets value of data member `gamma_shape_prior'.
 */
 inline void Model::setDiscreteGammaShapePrior(ProbDistShPtr d)
  	{
@@ -640,11 +696,11 @@ inline std::string JC::getModelName() const
 |	created.
 */
 inline void	Model::createParameters(
-  TreeShPtr t,								/**< is the tree (the nodes of which are needed for creating edge length parameters) */
-  MCMCUpdaterVect & edgelens_vect_ref,				/**< is the vector of edge length parameters to fill */
+  TreeShPtr t,									/**< is the tree (the nodes of which are needed for creating edge length parameters) */
+  MCMCUpdaterVect & edgelens_vect_ref,			/**< is the vector of edge length parameters to fill */
   MCMCUpdaterShPtr & edgelen_hyperparam_ref,	/**< is the edge length hyperparameter */
-  MCMCUpdaterVect & parameters_vect_ref,				/**< is the vector of model-specific parameters to fill */
-  bool separate_edgelens) const				/**< specifies (if true) that each edge should have its own parameter or (if false) that one edge length master parameter should be created */
+  MCMCUpdaterVect & parameters_vect_ref,		/**< is the vector of model-specific parameters to fill */
+  bool separate_edgelens) const					/**< specifies (if true) that each edge should have its own parameter or (if false) that one edge length master parameter should be created */
 	{
 	assert(t);
 	assert(edgelens_vect_ref.empty());
@@ -707,6 +763,36 @@ inline void	Model::createParameters(
 		}
 
 	// Create any model-specific parameters and add to the parameters vector
+#if POLPY_NEWWAY
+	if (num_gamma_rates > 1)
+		{
+		if (is_psr_model)
+			{
+			for (unsigned r = 0; r < num_gamma_rates; ++r)
+				{
+				MCMCUpdaterShPtr p = MCMCUpdaterShPtr(new PatternSpecificRateParam(r));
+				p->setName(str(boost::format("Pattern specific rate for pattern %d") % r)); //@POL shouldn't this be done in the constructor?
+				p->setTree(t);
+				p->setPrior(gamma_shape_prior); //@POL should create a data member pattern_specific_rate_prior for this!
+				parameters_vect_ref.push_back(p);
+				}
+			}
+		else
+			{
+			assert(!gamma_shape_param);
+			gamma_shape_param = MCMCUpdaterShPtr(new DiscreteGammaShapeParam(invert_shape));
+			if (invert_shape)
+				gamma_shape_param->setName("Inverse of discrete gamma shape"); //@POL shouldn't this be done in the constructor?
+			else
+				gamma_shape_param->setName("Discrete gamma shape"); //@POL shouldn't this be done in the constructor?
+			gamma_shape_param->setTree(t);
+			gamma_shape_param->setPrior(gamma_shape_prior);
+			if (gamma_shape_fixed)
+				gamma_shape_param->fixParameter();
+			parameters_vect_ref.push_back(gamma_shape_param);
+			}
+		}
+#else
 	if (num_gamma_rates > 1)
 		{
 		assert(num_gamma_rates > 1);
@@ -719,9 +805,13 @@ inline void	Model::createParameters(
 			gamma_shape_param->fixParameter();
 		parameters_vect_ref.push_back(gamma_shape_param);
 		}
+#endif
 
 	if (is_pinvar_model)
 		{
+#if POLPY_NEWWAY
+		assert(!is_psr_model);
+#endif
 		assert(!pinvar_param);
 		pinvar_param = MCMCUpdaterShPtr(new PinvarParam());
 		pinvar_param->setName("Proportion of invariable sites");

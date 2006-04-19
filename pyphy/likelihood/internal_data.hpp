@@ -76,7 +76,11 @@ class InternalData
 
 	private:
 
+#if POLPY_NEWWAY
+										InternalData(unsigned nPatterns, unsigned nRates, unsigned nStates, double * * * pMatrices = NULL, bool psr = false, bool managePMatrices = false);
+#else
 										InternalData(unsigned nPatterns, unsigned nRates, unsigned nStates, double * * * pMatrices = NULL, bool managePMatrices = false);
+#endif
 	
 	private:
 

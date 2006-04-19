@@ -34,10 +34,7 @@ void translateXLikelihood(const XLikelihood &e)
 
 BOOST_PYTHON_MODULE(_LikelihoodBase)
 {
-	// these lines required by num_util
-	import_array();
-	numeric::array::set_module_and_type("numarray", "NDArray");
-
+	// these lines required by num_util	import_array();	numeric::array::set_module_and_type("numarray", "NDArray");
 	class_<AdHocDensity, boost::noncopyable, boost::shared_ptr<AdHocDensity> >("AdHocDensityBase", no_init)
 		;
 	class_<phycas::MCMCChainManager, boost::noncopyable, boost::shared_ptr<phycas::MCMCChainManager> >("MCMCChainManagerBase")
@@ -175,16 +172,15 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("getEdgeLenHyperPrior", &phycas::Model::getEdgeLenHyperPrior)
 		.def("setEdgeLenHyperPrior", &phycas::Model::setEdgeLenHyperPrior)
 		.def("getModelName", &phycas::Model::getModelName)
-		.def("getPinvar", &phycas::Model::getPinvar)
-		.def("setPinvar", &phycas::Model::setPinvar)
-		.def("getShape", &phycas::Model::getShape)
-		.def("setShape", &phycas::Model::setShape)
-		.def("getNGammaRates", &phycas::Model::getNGammaRates)
+		.def("getPinvar", &phycas::Model::getPinvar)		.def("setPinvar", &phycas::Model::setPinvar)		.def("getShape", &phycas::Model::getShape)		.def("setShape", &phycas::Model::setShape)#if POLPY_NEWWAY		.def("setPatternSpecificRate", &phycas::Model::setPatternSpecificRate)
+		.def("normalizePatternSpecificRates", &phycas::Model::normalizePatternSpecificRates)
+		.def("setPatternSpecificRatesModel", &phycas::Model::setPatternSpecificRatesModel)
+		.def("setNotPatternSpecificRatesModel", &phycas::Model::setNotPatternSpecificRatesModel)
+		.def("setPriorOnShapeInverse", &phycas::Model::setPriorOnShapeInverse)#endif		.def("getNGammaRates", &phycas::Model::getNGammaRates)
 		.def("setNGammaRates", &phycas::Model::setNGammaRates)
 		.def("getGammaRateProbs", &phycas::Model::getGammaRateProbs, return_value_policy<copy_const_reference>())
 		.def("setAllGammaRateProbsEqual", &phycas::Model::setAllGammaRateProbsEqual)
-		.def("getPMatrix", &phycas::Model::getPMatrix)
-		;
+		.def("getPMatrix", &phycas::Model::getPMatrix)		;
 	class_<phycas::JC, bases<phycas::Model> >("JCModelBase")
 		.def("getModelName", &phycas::JC::getModelName)
 		.def("getNStates", &phycas::JC::getNStates)
@@ -235,6 +231,13 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		;
 	class_<phycas::SimData, boost::noncopyable, boost::shared_ptr<phycas::SimData> >("SimDataBase")
 		.def("clear", &phycas::SimData::clear)
+#if POLPY_NEWWAY
+		.def("zeroCounts", &phycas::SimData::zeroCounts)
+		.def("createMapleTuples", &phycas::SimData::createMapleTuples)
+		.def("appendCountsToFile", &phycas::SimData::appendCountsToFile)
+		.def("getPatterns", &phycas::SimData::getPatterns)
+#endif
+		.def("getNUniquePatterns", &phycas::SimData::getNUniquePatterns)
 		.def("resetPatternLength", &phycas::SimData::resetPatternLength)
 		.def("wipePattern", &phycas::SimData::wipePattern)
 		.def("setState", &phycas::SimData::setState)
@@ -246,9 +249,7 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("calct", &phycas::SimData::calct)
 		;
 	class_<TreeLikelihood, boost::noncopyable>("TreeLikelihoodBase", init<boost::shared_ptr<Model> >())
-		.def("copyDataFromDiscreteMatrix", &TreeLikelihood::copyDataFromDiscreteMatrix)
-		.def("copyDataFromSimData", &TreeLikelihood::copyDataFromSimData)
-		.def("prepareForSimulation", &TreeLikelihood::prepareForSimulation)
+		.def("copyDataFromDiscreteMatrix", &TreeLikelihood::copyDataFromDiscreteMatrix)		.def("copyDataFromSimData", &TreeLikelihood::copyDataFromSimData)		.def("prepareForSimulation", &TreeLikelihood::prepareForSimulation)
 		.def("prepareForLikelihood", &TreeLikelihood::prepareForLikelihood)
 		.def("replaceModel", &TreeLikelihood::replaceModel)
 		.def("calcLnL", &TreeLikelihood::calcLnL)
@@ -263,20 +264,16 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("getRateMeans", &TreeLikelihood::getRateMeans, return_value_policy<copy_const_reference>())
 		.def("setNoData", &TreeLikelihood::setNoData)
 		.def("setHaveData", &TreeLikelihood::setHaveData)
+#if POLPY_NEWWAY
+		.def("getNPatterns", &TreeLikelihood::getNPatterns)
+		.def("setUsePatternSpecificRates", &TreeLikelihood::setUsePatternSpecificRates)
+#endif
 		;
 	class_<TipData, boost::noncopyable>("TipData", no_init)
 		;
 	class_<InternalData, boost::noncopyable>("InternalData", no_init)
 		;
 	class_<QMatrix, boost::noncopyable>("QMatrixBase")
-		.def("getDimension", &QMatrix::getDimension)
-		.def("setRelativeRates", &QMatrix::setRelativeRates)
-		.def("setStateFreqs", &QMatrix::setStateFreqs)
-		.def("getPMatrix", &QMatrix::getPMatrix)
-		.def("getQMatrix", &QMatrix::getQMatrix)
-		.def("getEigenVectors", &QMatrix::getEigenVectors)
-		.def("getEigenValues", &QMatrix::getEigenValues)
-		;
-
+		.def("getDimension", &QMatrix::getDimension)		.def("setRelativeRates", &QMatrix::setRelativeRates)		.def("setStateFreqs", &QMatrix::setStateFreqs)		.def("getPMatrix", &QMatrix::getPMatrix)		.def("getQMatrix", &QMatrix::getQMatrix)		.def("getEigenVectors", &QMatrix::getEigenVectors)		.def("getEigenValues", &QMatrix::getEigenValues)		;
 	register_exception_translator<XLikelihood>(&translateXLikelihood);
 }

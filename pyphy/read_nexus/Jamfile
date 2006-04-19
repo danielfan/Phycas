@@ -5,7 +5,7 @@ extension _ReadNexus
 : read_nexus_pymod.cpp
   ../common/boost_assertion_failed.cpp
   $(CIPRES_LIB_ROOT)/C++/CipresCommlib/CipresDataMatrixHelper.cpp
-  # $(PHYCAS_ROOT)/cipres_services/read_nexus/cipres_nexus_reader.cpp
+  $(PHYCAS_ROOT)/cipres_services/read_nexus/cipres_nexus_reader.cpp #POL 18-Mar-2006 may need to comment out for Mac
   $(PHYCAS_ROOT)/pyphy/include/num_util.cpp
   $(NCL_ROOT)/ncl/nxs_basic_manager.cpp
   $(NCL_ROOT)/ncl/nxs_block.cpp
@@ -13,7 +13,7 @@ extension _ReadNexus
   $(NCL_ROOT)/ncl/nxs_reader.cpp
   $(NCL_ROOT)/ncl/nxs_token.cpp
   $(NCL_ROOT)/ncl/characters/nxs_char_listener.cpp
-  # $(NCL_ROOT)/ncl/characters/nxs_characters_block.cpp
+  $(NCL_ROOT)/ncl/characters/nxs_characters_block.cpp #POL 18-Mar-2006 may need to comment out for Mac
   $(NCL_ROOT)/ncl/characters/nxs_characters_block_commands.cpp
   $(NCL_ROOT)/ncl/characters/nxs_characters_manager.cpp
   $(NCL_ROOT)/ncl/command/nxs_auto_command.cpp
@@ -21,7 +21,7 @@ extension _ReadNexus
   $(NCL_ROOT)/ncl/command/nxs_cmd_param.cpp
   $(NCL_ROOT)/ncl/command/nxs_command.cpp
   $(NCL_ROOT)/ncl/command/nxs_command_manager.cpp
-  # $(NCL_ROOT)/ncl/command/nxs_command_output.cpp
+  $(NCL_ROOT)/ncl/command/nxs_command_output.cpp #POL 18-Mar-2006 may need to comment out for Mac
   $(NCL_ROOT)/ncl/command/nxs_file_cmd_param.cpp
   $(NCL_ROOT)/ncl/command/nxs_mixed_cmd_param.cpp
   $(NCL_ROOT)/ncl/command/nxs_primitive_cmd_param.cpp

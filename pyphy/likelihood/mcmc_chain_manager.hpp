@@ -78,7 +78,11 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 		const MCMCUpdaterVect &	getEdgeLenParams() const;
 		MCMCUpdaterShPtr		getEdgeLenHyperparam();
 
+#if POLPY_NEWWAY
+		void					addMCMCUpdaters(ModelShPtr m, TreeShPtr t, TreeLikeShPtr like, LotShPtr r, bool separate_edgelen_params, unsigned max_units, unsigned weight);
+#else
 		void					addMCMCUpdaters(ModelShPtr m, TreeShPtr t, TreeLikeShPtr like, LotShPtr r, bool separate_edgelen_params, unsigned weight);
+#endif
 
 	public:
 		// magic workaround for avoiding bogus error when compiling with darwin GCC 3.3 build 1640: 

@@ -59,12 +59,124 @@ inline void SimData::wipePattern()
 	tmp_pattern.assign((VecStateList::size_type)pattern_length, SimData::missing_state); 
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets all counts in `sim_pattern_map' to zero.
+*/
+inline void SimData::zeroCounts()
+	{
+	for (PatternMapType::iterator it = sim_pattern_map.begin(); it != sim_pattern_map.end(); ++it)
+		{
+		it->second = 0;
+		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Saves all counts as a tab-delimited row appended to the file whose name is 'fn'. Note: no header is output
+|	identifying which pattern goes with each count, so this will not be useful unless only the unidentified counts are 
+|	of interest.
+*/
+inline void SimData::appendCountsToFile(std::string fn, bool binary)
+	{
+	std::ofstream outf(fn.c_str(), std::ios::out | std::ios::app);
+	PatternMapType::iterator it = sim_pattern_map.begin();
+	unsigned count = (unsigned)(it->second);
+	if (binary && count > 0)
+		count = 1;
+	outf << count;
+	++it;
+	for (; it != sim_pattern_map.end(); ++it)
+		{
+		count = (unsigned)(it->second);
+		if (binary && count > 0)
+			count = 1;
+		outf << '\t' << count;
+		}
+	outf << std::endl;
+	outf.close();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns a vector of patterns, each represented as a string. The patterns are in the same order as the counts 
+|	returned by the appendCountsToFile function, so this function can be used to identify the patterns belonging to the
+|	pattern counts returned by that function. This is a slow function, so don't use it in situations where speed is 
+|	critical.
+*/
+inline std::vector<std::string> SimData::getPatterns(std::vector<std::string> symbols)
+	{
+	std::vector<std::string> v;
+	for (PatternMapType::iterator it = sim_pattern_map.begin(); it != sim_pattern_map.end(); ++it)
+		{
+		// Create a string out of the pattern
+		std::string s;
+		for (VecStateList::const_iterator i = it->first.begin(); i != it->first.end(); ++i)
+			{
+			s += symbols.at(*i);
+			}
+		v.push_back(s);
+		}
+	return v;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Saves all counts as a string that can be used within Maple to create a 3D surface plot. To make a surface plot of 
+|	the following 2x3 matrix in Maple 9,
+|>
+|	1  2  3
+|	4  6  8
+|>
+|	place the following commands in a file named maple_commands:
+|>
+|	with(linalg);
+|	with(plots);
+|	points := [[[0,0,1],[0,1,2],[0,2,3]],[[1,0,4],[1,1,6],[1,2,8]]];
+|	surfdata(points, axes=framed, labels=["rows", "cols", "height"]);
+|>
+|	then read this file by typing 'read maple_commands;' in the Maple interpreter. In our case, rows will be separate
+|	posterior predictive data sets and columns will be patterns (256 columns for 4 taxa and DNA data). The height
+|	will be the number of counts. This function returns a string representing one row of the points matrix. For 
+|	example, if this data set were going to be the 2nd row (index 1) in the above example, the string returned would be 
+|>
+|	[[1,0,4],[1,1,5],[1,2,6]]
+|>
+|	
+*/
+inline std::string SimData::createMapleTuples(unsigned row, unsigned cutoff)
+	{
+	bool use_cutoff = true;
+	if (cutoff == 0)
+		use_cutoff = false;
+
+	std::string s = "[";
+	unsigned col = 0;
+	PatternMapType::iterator it = sim_pattern_map.begin();
+	unsigned count = (unsigned)(it->second);
+	if (use_cutoff && count > cutoff)
+		count = 0;
+	double log_count = count > 0 ? std::log((double)count) : 0.0;
+	s += str(boost::format("[%d,%d,%f]") % row % col % log_count);
+	++it;
+	++col;
+	for (; it != sim_pattern_map.end(); ++it, ++col)
+		{
+		count = (unsigned)(it->second);
+		if (use_cutoff && count > cutoff)
+			count = 0;
+		log_count = count > 0 ? std::log((double)count) : 0.0;
+		s += str(boost::format(",[%d,%d,%f]") % row % col % log_count);
+		}
+	s += "]";
+	return s;
+	}
+
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets `tmp_pattern'[`pos'] to the supplied `state'.
 */
 inline void SimData::setState(
-  unsigned pos, 	/**< is the state to assign to every element in `tmp_pattern' */
-  int8_t state)		/**< is the state to assign to every element in `tmp_pattern' */
+  unsigned pos, 	/**< is the position in `tmp_pattern' to set */
+  int8_t state)		/**< is the state to assign to the element in `tmp_pattern' at position pos */
 	{
 	assert(pos < pattern_length);
 	tmp_pattern[pos] = state;
@@ -142,11 +254,20 @@ inline unsigned SimData::getPatternLength()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Returns the value of the `total_count' data member.
+|	Returns the value of the `total_count' data member, which represents the total number of patterns added (not 
+|	`sim_pattern_map'.size().
 */
 inline PatternCountType SimData::getTotalCount()
 	{
 	return total_count;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the value `sim_pattern_map'.size(), the number of unique patterns currently stored.
+*/
+inline unsigned SimData::getNUniquePatterns()
+	{
+	return (unsigned)sim_pattern_map.size();
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

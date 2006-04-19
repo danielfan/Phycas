@@ -59,6 +59,9 @@ void MCMCChainManager::addMCMCUpdaters(
   TreeLikeShPtr like,				/**< is the likelihood calculator */
   LotShPtr r,						/**< is the pseudo-random number generator */
   bool separate_edgelen_params,		/**< is true if one EdgeLenParam should be added for every edge and false if a single EdgeLenMasterParam should be added  */
+#if POLPY_NEWWAY
+  unsigned max_units,				/**< is the maximum number of slice sampler units to use in each update */
+#endif
   unsigned weight)					/**< is the weight to be used for all parameters added by this function */
 	{
 	if (!like)
@@ -98,6 +101,9 @@ void MCMCChainManager::addMCMCUpdaters(
 		{
 		MCMCUpdaterShPtr p = (*iter);
 		p->setWeight(weight);
+#if POLPY_NEWWAY
+		p->setMaxUnits(max_units);
+#endif
 		p->setModel(m);
 		p->setTreeLikelihood(like);
 		p->setLot(r);
@@ -108,6 +114,9 @@ void MCMCChainManager::addMCMCUpdaters(
 	if (edgelen_hyperparam)
 		{
 		edgelen_hyperparam->setWeight(weight);
+#if POLPY_NEWWAY
+		edgelen_hyperparam->setMaxUnits(max_units);
+#endif
 		edgelen_hyperparam->setModel(m);
 		edgelen_hyperparam->setTreeLikelihood(like);
 		edgelen_hyperparam->setLot(r);
@@ -118,6 +127,9 @@ void MCMCChainManager::addMCMCUpdaters(
 		{
 		MCMCUpdaterShPtr p = (*iter);
 		p->setWeight(weight);
+#if POLPY_NEWWAY
+		p->setMaxUnits(max_units);
+#endif
 		p->setModel(m);
 		p->setTreeLikelihood(like);
 		p->setLot(r);

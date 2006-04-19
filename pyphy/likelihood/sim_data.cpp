@@ -8,7 +8,7 @@
 #include "pyphy/likelihood/tip_data.hpp"
 #include "pyphy/likelihood/sim_data.hpp"
 #include "pyphy/common/pyphy_string.hpp"
-#include <cmath>
+
 const int8_t phycas::SimData::missing_state = -1;	// GCC 3.2.3 (Red Hat Linux 3.2.3-20) requires initializing here rather than in header
 
 
@@ -43,7 +43,7 @@ double SimData::calct(unsigned nstates)
 	{
 	// m is the number of distinct patterns
 	double m					= (double)sim_pattern_map.size();
-	//unused double log_m				= std::log(m);
+	double log_m				= std::log(m);
 
 	// s is the number of character states
 	double s					= (double)nstates;

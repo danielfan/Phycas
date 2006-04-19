@@ -15,20 +15,14 @@
 #if !defined(_MSC_VER)	//POL 18-Mar-2006
 #	define PYPHY_INCLUDE_TO_AVOID_LINK_ERROR
 #endif
+
 #if defined(PYPHY_INCLUDE_TO_AVOID_LINK_ERROR)
-#	if defined(_MSC_VER)
-//tucson2005: #warning not allowed in VC7
-#		include "cipres_services/read_nexus/cipres_nexus_reader.cpp"
-#		include "ncl/characters/nxs_characters_block.cpp"
-#		include "ncl/command/nxs_command_output.cpp"
-#	else
-#		warning using macro to include cipres_nexus_reader.cpp TEMPORARY HACK!
-#		include "cipres_services/read_nexus/cipres_nexus_reader.cpp"
-#		warning using macro to include nxs_charcters_block.cpp TEMPORARY HACK!
-#		include "ncl/characters/nxs_characters_block.cpp"
-#		warning using macro to include nxs_command_output.cpp TEMPORARY HACK!
-#		include "ncl/command/nxs_command_output.cpp"
-#	endif
+#	warning using macro to include cipres_nexus_reader.cpp TEMPORARY HACK!
+#	include "cipres_services/read_nexus/cipres_nexus_reader.cpp"
+#	warning using macro to include nxs_charcters_block.cpp TEMPORARY HACK!
+#	include "ncl/characters/nxs_characters_block.cpp"
+#	warning using macro to include nxs_command_output.cpp TEMPORARY HACK!
+#	include "ncl/command/nxs_command_output.cpp"
 #else
 #	include "cipres_services/read_nexus/cipres_nexus_reader.hpp"
 #endif

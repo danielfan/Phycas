@@ -21,6 +21,9 @@ inline MCMCUpdater::MCMCUpdater()
   is_move(false),
   is_master_param(false),
   is_hyper_param(false), 
+#if POLPY_NEWWAY
+  slice_max_units(UINT_MAX),
+#endif
   is_fixed(false)
 	{
 	//ln_zero = std::log(std::numeric_limits<double>::denorm_min()); // this doesn't work, lnL can get much lower than the log of dnorm_min!
@@ -168,6 +171,21 @@ inline void MCMCUpdater::setWeight(unsigned w)
 	weight = w;
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the value of data member `slice_max_units', which is the maximum number of units used for slice sampling 
+|	updates. If a slice sampler has been created, calls the setMaxUnits function of `slice_sampler'.
+*/
+inline void MCMCUpdater::setMaxUnits(unsigned max_units)
+	{
+	slice_max_units = max_units;
+	if (slice_sampler)
+		{
+		slice_sampler->SetMaxUnits(slice_max_units);
+		}
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	This base class version does nothing. Derived classes should override this to compute the log posterior density of
 |	the supplied value conditional on all other parameter values.
@@ -189,6 +207,9 @@ inline void MCMCUpdater::createSliceSampler()
 	{
 	assert(!slice_sampler);	// don't want to do this more than once
 	slice_sampler.reset(new SliceSampler(rng, shared_from_this())); // forces inclusion of "phycas/modules/mcmc/slice_sampler.hpp"
+#if POLPY_NEWWAY
+	slice_sampler->SetMaxUnits(slice_max_units);
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
