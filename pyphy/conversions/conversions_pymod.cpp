@@ -11,7 +11,7 @@
 //#include <boost/python/numeric.hpp>
 #include "pyphy/include/num_util.h"
 #include "pyphy/include/pyconversions.h"	// from HippoDraw
-
+#include "CipresCommlib/ConfigDependentHeaders.h"	// int8_t typedef //POL 18Mar2006
 using namespace boost::python;
 
 BOOST_PYTHON_MODULE(_Conversions)
