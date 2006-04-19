@@ -172,6 +172,17 @@ ParamAndLnProb SliceSampler::GetNextSample(const ParamAndLnProb initialPair)
 		++realized_m;
 		}
 
+#if POLPY_NEWWAY
+	if (K == 0)
+		{
+		std::cerr << "\n*** K = 0 in SliceSampler::GetNextSample ***\n" << std::endl;
+		}
+	else if (J == 0)
+		{
+		std::cerr << "\n*** J = 0 in SliceSampler::GetNextSample ***\n" << std::endl;
+		}
+#endif
+
 	orig_left_edge = left_edge;
 	orig_right_edge = right_edge;
 		
