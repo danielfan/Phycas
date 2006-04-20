@@ -1,6 +1,9 @@
 from _LikelihoodBase import *
 
-class SimData(SimDataBase):    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|    """    This class is a container for simulated data. It stores simulated
+class SimData(SimDataBase):
+    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+    """
+    This class is a container for simulated data. It stores simulated
     data internally (in the C++ base class SimDataBase) as a pattern map
     (an associative array in which the first element is a pattern and the
     second element is a count of the number of times that pattern was
@@ -85,10 +88,14 @@ class SimData(SimDataBase):    #---+----|----+----|----+----|----+----|----+----
     >>> phycas.tree.buildFromString(model_tree)
     >>> 
     >>> # Create a model
-    >>> phycas.model = Likelihood.HKYModel()    >>> phycas.model.setKappa(4.0)    >>> phycas.model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
+    >>> phycas.model = Likelihood.HKYModel()
+    >>> phycas.model.setKappa(4.0)
+    >>> phycas.model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
     >>> 
     >>> # Create a likelihood object to orchestrate everything
-    >>> phycas.likelihood = Likelihood.TreeLikelihood(phycas.model)    >>> phycas.likelihood.copyDataFromDiscreteMatrix(phycas.data_matrix)    >>> 
+    >>> phycas.likelihood = Likelihood.TreeLikelihood(phycas.model)
+    >>> phycas.likelihood.copyDataFromDiscreteMatrix(phycas.data_matrix)
+    >>> 
     >>> # Prepare the tree (e.g. equip it with transition matrices)
     >>> phycas.likelihood.prepareForLikelihood(phycas.tree)
     >>> 
@@ -137,10 +144,12 @@ class SimData(SimDataBase):    #---+----|----+----|----+----|----+----|----+----
            1.0  TTCT
            1.0  TTTC
           22.0  TTTT
-                """
+            
+    """
 
     def __init__(self):
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         The constructor takes no arguments and simply initializes the private
         base class data members.
         
@@ -148,14 +157,16 @@ class SimData(SimDataBase):    #---+----|----+----|----+----|----+----|----+----
         SimDataBase.__init__(self)
         
     def getNUniquePatterns(self):
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Returns the current number of stored patterns.
         
         """
         return SimDataBase.getNUniquePatterns(self)
         
     def clear(self):
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Returns the SimData object to its just-constructed state. Calling this
         function will delete any data stored in the internal pattern map.
         
@@ -178,7 +189,8 @@ class SimData(SimDataBase):    #---+----|----+----|----+----|----+----|----+----
         SimDataBase.clear(self)
         
     def resetPatternLength(self, ntaxa):
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Establishes the length of a single pattern and sets up a temporary
         pattern internally that can be filled using ntaxa invocations of the
         function setState. Warning: this function has no effect if the last
@@ -192,7 +204,8 @@ class SimData(SimDataBase):    #---+----|----+----|----+----|----+----|----+----
         SimDataBase.resetPatternLength(self, ntaxa)
         
     def wipePattern(self):
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Fills the temporary workspace used to build up a new pattern with
         invalid states. These invalid states must all be replaced with valid
         states (positive integers) before insertPattern() will succeed. It is
@@ -204,7 +217,8 @@ class SimData(SimDataBase):    #---+----|----+----|----+----|----+----|----+----
         SimDataBase.wipePattern(self)
         
     def setState(self, pos, state):
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Sets the value in position pos of the temporary pattern workspace to
         state. After calling wipePattern(), you should call the setState
         function ntaxa times (once for every position in the temporary pattern
@@ -217,7 +231,8 @@ class SimData(SimDataBase):    #---+----|----+----|----+----|----+----|----+----
         SimDataBase.setState(self, pos, state)
 
     def insertPattern(self, weight):
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         After building up a pattern in the temporary workspace using calls to
         setState, this function stores the pattern in the internal pattern
         map. The value of weight specifies by how much the count for this
@@ -234,7 +249,8 @@ class SimData(SimDataBase):    #---+----|----+----|----+----|----+----|----+----
         SimDataBase.insertPattern(self, weight)
 
     def saveToNexusFile(self, filename, taxon_names, data_type, state_symbols):
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         This function saves the patterns currently stored to a file named
         filename. If the file already exists, it will be overwritten without
         warning. If the file does not yet exist, it will be created. The file
@@ -255,7 +271,8 @@ class SimData(SimDataBase):    #---+----|----+----|----+----|----+----|----+----
         SimDataBase.saveToNexusFile(self, filename, taxon_names, data_type, state_symbols)
 
     def patternTable(self, state_symbols):
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         This function returns a string containing a tabular representation of
         the internal pattern map. There are two columns in the table, one
         labeled "Count" and the other labeled "Pattern". The Count column

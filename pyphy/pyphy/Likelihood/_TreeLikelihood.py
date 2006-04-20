@@ -1,7 +1,10 @@
 #from _DataMatrixBase import *
 from _LikelihoodBase import *
 
-class TreeLikelihood(TreeLikelihoodBase):    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|    """    Likelihood objects contain methods for both manipulating trees (i.e.
+class TreeLikelihood(TreeLikelihoodBase):
+    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+    """
+    Likelihood objects contain methods for both manipulating trees (i.e.
     they are able to decorate trees with the data structures needed for
     computing likelihoods) and for computing likelihoods on trees once
     the trees have been equipped with these data structures. The following
@@ -35,29 +38,39 @@ class TreeLikelihood(TreeLikelihoodBase):    #---+----|----+----|----+----|----+
     ...     lnL = likelihood.calcLnL(tree)
     ...     print '%.5f' % lnL
     -7812.79213
-        """
+    
+    """
     
     def __init__(self, model):
         """
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        Initializes the TreeLikelihoodBase object, establishing the model to
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        Initializes the TreeLikelihoodBase object, establishing the model to
         be used.
         
         """
         TreeLikelihoodBase.__init__(self, model)
         
-    def copyDataFromDiscreteMatrix(self, data_matrix):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+    def copyDataFromDiscreteMatrix(self, data_matrix):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Copies data from a discrete data matrix object (such as that returned
         by the function ReadNexus.getDiscreteMatrix). The contents of
         data_matrix are compressed into data patterns and their counts.
         
         """
         TreeLikelihoodBase.copyDataFromDiscreteMatrix(self, data_matrix)
-    def copyDataFromSimData(self, sim_data):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def copyDataFromSimData(self, sim_data):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Copies data from a simulated data matrix (see SimData for details).
         
         """
         TreeLikelihoodBase.copyDataFromSimData(self, sim_data)
-    def prepareForSimulation(self, tree):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def prepareForSimulation(self, tree):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Creates a basic TipData object for all tip nodes and calls the
         function allocateInternalData for all internal nodes in the supplied
         tree. This function (prepareForSimulation) does not require a data
@@ -65,40 +78,57 @@ class TreeLikelihood(TreeLikelihoodBase):    #---+----|----+----|----+----|----+
         returns if root node already has a TipData structure. This is taken
         to indicate that prepareForLikelihood or prepareForSimulation was
         previously called for this tree, in which case all data structures
-        needed for simulation are already present.        
+        needed for simulation are already present.
+        
         """
         TreeLikelihoodBase.prepareForSimulation(self, tree)
-    def prepareForLikelihood(self, tree):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def prepareForLikelihood(self, tree):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Prepares the specified tree for likelihood calculations by adding
         data structures to nodes for storing transition probability matrices
         and conditional likelihood arrays.
         
         """
         TreeLikelihoodBase.prepareForLikelihood(self, tree)
-    def replaceModel(self, new_model):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def replaceModel(self, new_model):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Replaces the substitution model used in computing likelihoods with
         new_model.
         
         """
         TreeLikelihoodBase.replaceModel(self, new_model)
-    def calcLnL(self, tree):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def calcLnL(self, tree):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Calculates the log-likelihood using the current model. All transition
         probabilities and conditional likelihood arrays are recalculated, if
         necessary.
         
         """
         return TreeLikelihoodBase.calcLnL(self, tree)
-    def simulateFirst(self, sim_data, tree, lot, nchar):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def simulateFirst(self, sim_data, tree, lot, nchar):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Recalculates transition probabilities (or calculates them for the
         first time) in tree, then simulates data for nchar characters using
         the supplied pseudorandom number generator lot. The data is stored in
         the sim_data object. After simulateFirst is called to ensure that the
         transition probabilities are (re)computed, the function simulate can
         be called many more times to generate additional data sets using the
-        same transition probabilities.        
+        same transition probabilities.
+        
         """
         TreeLikelihoodBase.simulateFirst(self, sim_data, tree, lot, nchar)
-        def simulate(self, sim_data, tree, lot, nchar):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+    
+    def simulate(self, sim_data, tree, lot, nchar):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Assuming that transition probabilities are present and calculated
         correctly in tree, simulates data for nchar characters using the
         supplied pseudorandom number generator lot. The data is stored in
@@ -107,40 +137,59 @@ class TreeLikelihood(TreeLikelihoodBase):    #---+----|----+----|----+----|----+
         can be called many more times to generate additional data sets using
         the same transition probabilities. Only call this function after
         first calling simulateFirst at least once, otherwise the transition
-        probabilities will contain garbage.        
+        probabilities will contain garbage.
+        
         """
         TreeLikelihoodBase.simulate(self, sim_data, tree, lot, nchar)
-        def debugListPatterns(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+    
+    def debugListPatterns(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Documentation needs to be written.
         
         """
         return TreeLikelihoodBase.listPatterns(self, True)
-        def listPatterns(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+    
+    def listPatterns(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Documentation needs to be written.
         
         """
         return TreeLikelihoodBase.listPatterns(self, False)
-    def resetNEvals(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def resetNEvals(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Resets the number of likelihood evaluations to 0. The function
         getNEvals can be called to obtain the number of times the likelihood
         has been evaluated since resetNEvals was last called.
         
         """
         TreeLikelihoodBase.resetNEvals(self)
-        def getNEvals(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+    
+    def getNEvals(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Reports the number of times the likelihood has been evaluated since
         the function resetNEvals was last called.
         
         """
         return TreeLikelihoodBase.getNEvals(self)
-        def addDataTo(self, other_sim_data):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+    
+    def addDataTo(self, other_sim_data):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Adds data currently stored to the patterns already stored in the
         supplied SimData object. Assumes that the number of taxa comprising
         patterns in this object is identical to that of other_sim_data.
         
         """
         TreeLikelihoodBase.addDataTo(self, other_sim_data)
-        def recalcRelativeRates(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+    
+    def recalcRelativeRates(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         If the number of rates or the gamma shape parameter is changed in the
         model, this function should be called before using either the mean
         rates or the rate category boundaries. These quantities are calculated
@@ -154,7 +203,9 @@ class TreeLikelihood(TreeLikelihoodBase):    #---+----|----+----|----+----|----+
         """
         TreeLikelihoodBase.recalcRelativeRates(self)
 
-    def getCategoryLowerBoundaries(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+    def getCategoryLowerBoundaries(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Returns tuple comprising the lower bounds for all rate categories. In
         the discrete gamma model of among-site rate heterogeneity, the
         continuous gamma distribution is divided into ncat categories (where
@@ -168,7 +219,10 @@ class TreeLikelihood(TreeLikelihoodBase):    #---+----|----+----|----+----|----+
         
         """
         return TreeLikelihoodBase.getCategoryLowerBoundaries(self)
-        def getRateMeans(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+    
+    def getRateMeans(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Returns tuple comprising the mean rate for all rate categories. In
         the discrete gamma model of among-site rate heterogeneity, the
         continuous gamma distribution is divided into ncat categories (where
@@ -250,12 +304,17 @@ class TreeLikelihood(TreeLikelihoodBase):    #---+----|----+----|----+----|----+
         """
         return TreeLikelihoodBase.getRateMeans(self)
 
-    def getNPatterns(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+    def getNPatterns(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Returns the number of data patterns currently stored.
         
         """
         return TreeLikelihoodBase.getNPatterns(self)
-        def usePatternSpecificRates(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+    
+    def usePatternSpecificRates(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Causes pattern-specific rates model to be used instead of a discrete
         gamma rate heterogeneity model. In the pattern-specific rates model,
         each pattern has its own relative rate and every site that shows that
@@ -263,7 +322,10 @@ class TreeLikelihood(TreeLikelihoodBase):    #---+----|----+----|----+----|----+
         
         """
         TreeLikelihoodBase.setUsePatternSpecificRates(self, True)
-        def doNotUsePatternSpecificRates(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+    
+    def doNotUsePatternSpecificRates(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Causes discrete gamma rate heterogeneity model to be used instead of
         a pattern-specific rates model. In the discrete gamma model, each
         site is assumed to evolve at one of a number of relative rates,
@@ -273,5 +335,6 @@ class TreeLikelihood(TreeLikelihoodBase):    #---+----|----+----|----+----|----+
         
         """
         TreeLikelihoodBase.setUsePatternSpecificRates(self, False)
-        
+    
+    
     

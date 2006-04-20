@@ -172,7 +172,7 @@ ParamAndLnProb SliceSampler::GetNextSample(const ParamAndLnProb initialPair)
 		++realized_m;
 		}
 
-#if POLPY_NEWWAY
+#if 0 && POLPY_NEWWAY
 	if (K == 0)
 		{
 		std::cerr << "\n*** K = 0 in SliceSampler::GetNextSample ***\n" << std::endl;

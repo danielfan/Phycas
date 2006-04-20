@@ -1,21 +1,30 @@
 from _LikelihoodBase import *
 
-class JCModel(JCModelBase):    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|    """    Encapsulates the Jukes and Cantor (1969) substitution model, which
+class JCModel(JCModelBase):
+    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+    """
+    Encapsulates the Jukes and Cantor (1969) substitution model, which
     assumes base frequencies are equal and all types of substitutions
     occur at the same rate.
-        Literature Cited:
+    
+    Literature Cited:
     
     Jukes, T. H., and C. R. Cantor. 1969. Evolution of protein molecules.
     Pages 21-132 in Mammalian Protein Metabolism (H. N. Munro, ed.)
     Academic Press, New York.    
 
     """
-    def getNStates(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+    def getNStates(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Returns the number of states (always 4 for this model).
         
         """
         return JCModelBase.getNStates(self)
-    def getStateFreqs(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def getStateFreqs(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Returns a tuple comprising the 4 state frequencies. Always
         (0.25, 0.25, 0.25, 0.25) for this model.
 
@@ -26,37 +35,54 @@ class JCModel(JCModelBase):    #---+----|----+----|----+----|----+----|----+----
         
         """
         return JCModelBase.getStateFreqs(self)
-    def setAllFreqsEqual(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def setAllFreqsEqual(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Sets all four state frequencies to 0.25. Superfluous for this model,
         but included for conformity
         
         """
         return JCModelBase.setAllFreqsEqual(self)
-    def getNGammaRates(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def getNGammaRates(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Returns the current number of relative rate categories.
         
         """
         return JCModelBase.getNGammaRates(self)
-    def setNGammaRates(self, n):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def setNGammaRates(self, n):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Sets the number of relative rate categories to n (n should be greater
         than zero).
         
         """
         return JCModelBase.setNGammaRates(self, n)
-    def getRateProbs(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def getRateProbs(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Returns a list each element of which is the probability that any given
         site falls in its particular rate category.
         
         """
         return JCModelBase.getRateProbs(self)
-    def setAllRateProbsEqual(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def setAllRateProbsEqual(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Sets all rate probabilities to the inverse of the number of rate
         categories.
         
         """
         return JCModelBase.setAllRateProbsEqual(self)
 
-    def setPriorOnShapeInverse(self, invert):            #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+    def setPriorOnShapeInverse(self, invert):    
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         If True is specified, then the gamma shape parameter will actually
         update the inverse of the shape parameter rather than the shape
         parameter itself.
@@ -64,7 +90,10 @@ class JCModel(JCModelBase):    #---+----|----+----|----+----|----+----|----+----
         """
         JCModelBase.setPriorOnShapeInverse(self, invert)
 
-class HKYModel(HKYModelBase):    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|    """    Encapsulates the Hasegawa-Kishino-Yano (1985) substitution model,
+class HKYModel(HKYModelBase):
+    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+    """
+    Encapsulates the Hasegawa-Kishino-Yano (1985) substitution model,
     which allows unequal base frequencies and transition-type
     substitutions to occur at a different rate than transversion-type
     substitutions. The transition/transversion rate ratio is termed kappa,
@@ -92,18 +121,27 @@ class HKYModel(HKYModelBase):    #---+----|----+----|----+----|----+----|----+--
     Kimura, M. 1980. A simple method for estimating evolutionary rate of
     base substitutions through comparative studies of nucleotide sequences.
     Journal of Molecular Evolution 16:111-120.    
+    
+    """
+    def getNStates(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-    def getNStates(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
         Returns the number of states (always 4 for this model).
         
         """
         return HKYModelBase.getNStates(self)
-    def getStateFreqs(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def getStateFreqs(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Returns a tuple comprising the 4 state frequencies.
         
         """
         return HKYModelBase.getStateFreqs(self)
-    def setStateFreqParam(self, i, value):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def setStateFreqParam(self, i, value):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Sets frequency parameter for state i to value. use i = 0 for A,
         i = 1 for C, i = 2 for G and i = 3 for T. Note that value can be any
         non-negative number; there is no need to ensure that it is between
@@ -115,34 +153,50 @@ class HKYModel(HKYModelBase):    #---+----|----+----|----+----|----+----|----+--
         
         """
         return HKYModelBase.setStateFreqParam(self, i, value)
-    def setAllFreqsEqual(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def setAllFreqsEqual(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Sets all four state frequencies to 0.25.
         
         """
         return HKYModelBase.setAllFreqsEqual(self)
-    def setNucleotideFreqs(self, freqA, freqC, freqG, freqT):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def setNucleotideFreqs(self, freqA, freqC, freqG, freqT):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Sets the four state frequencies to the values provided, which should
         all be greater than or equal to 0.0.
         
         """
         assert freqA >= 0.0 and freqC >= 0.0 and freqG >= 0.0 and freqT >= 0.0
         return HKYModelBase.setNucleotideFreqs(self, freqA, freqC, freqG, freqT)
-    def getKappa(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def getKappa(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Returns the current value of the transition-transversion rate
         ratio kappa.
         
         """
         return HKYModelBase.getKappa(self)
-    def setKappa(self, k):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def setKappa(self, k):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Sets the value of the transition-transversion rate ratio kappa.
         
         """
         return HKYModelBase.setKappa(self, k)
-    def setKappaFromTRatio(self, tratio):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def setKappaFromTRatio(self, tratio):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Sets the value of the transition-transversion rate ratio kappa given
         a supplied value of tratio, the transition-transversion ratio. The
         rate ratio kappa is related to tratio as follows (where piA means the
         frequency of base A, piC means the frequency of base C, etc.
+
                 tratio (piA + piG) (piC + piT)
         kappa = -------------------------------
                     (piA piG + piC piT)
@@ -152,7 +206,10 @@ class HKYModel(HKYModelBase):    #---+----|----+----|----+----|----+----|----+--
         substitutions compared to transition-type substitutions.
         """
         return HKYModelBase.setKappaFromTRatio(self, tratio)
-    def calcTRatio(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def calcTRatio(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Calculates the transition/transversion ratio (tratio) given the
         transition/transversion rate ratio (kappa) and the relative base
         frequencies. Here are the details of the calculation (for brevity,
@@ -179,30 +236,45 @@ class HKYModel(HKYModelBase):    #---+----|----+----|----+----|----+----|----+--
         
         """
         return HKYModelBase.calcTRatio(self)
-    def getNGammaRates(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def getNGammaRates(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Returns the current number of relative rate categories.
         
         """
         return HKYModelBase.getNGammaRates(self)
-    def setNGammaRates(self, n):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def setNGammaRates(self, n):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Sets the number of relative rate categories to n (n should be greater
         than zero).
         
         """
         return HKYModelBase.setNGammaRates(self, n)
-    def getRateProbs(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def getRateProbs(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Returns a list each element of which is the probability that any given
         site falls in its particular rate category.
         
         """
         return HKYModelBase.getRateProbs(self)
-    def setAllRateProbsEqual(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def setAllRateProbsEqual(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Sets all rate probabilities to the inverse of the number of rate
         categories.
         
         """
         return HKYModelBase.setAllRateProbsEqual(self)
-    def setPriorOnShapeInverse(self, invert):            #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def setPriorOnShapeInverse(self, invert):    
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         If True is specified, then the gamma shape parameter will actually
         update the inverse of the shape parameter rather than the shape
         parameter itself.
@@ -210,7 +282,10 @@ class HKYModel(HKYModelBase):    #---+----|----+----|----+----|----+----|----+--
         """
         HKYModelBase.setPriorOnShapeInverse(self, invert)
 
-class GTRModel(GTRModelBase):    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|    """    Encapsulates the General Time Reversible substitution model, first
+class GTRModel(GTRModelBase):
+    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+    """
+    Encapsulates the General Time Reversible substitution model, first
     described by Rodriguez et al. (1990). This model allows unequal base
     frequencies as well as six different relative rates corresponding to
     the substitution classes A <-> C, A <-> G, A <-> T, C <-> G, C <-> T
@@ -224,17 +299,25 @@ class GTRModel(GTRModelBase):    #---+----|----+----|----+----|----+----|----+--
     Theoretical Biology 142: 485-501.
     
     """
-    def getNStates(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+    def getNStates(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Returns the number of states (always 4 for this model).
         
         """
         return GTRModelBase.getNStates(self)
-    def getStateFreqs(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def getStateFreqs(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Returns a tuple comprising the 4 state frequencies.
         
         """
         return GTRModelBase.getStateFreqs(self)
-    def setStateFreqParam(self, i, value):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def setStateFreqParam(self, i, value):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Sets frequency parameter for state i to value. use i = 0 for A,
         i = 1 for C, i = 2 for G and i = 3 for T. Note that value can be any
         non-negative number; there is no need to ensure that it is between
@@ -246,29 +329,44 @@ class GTRModel(GTRModelBase):    #---+----|----+----|----+----|----+----|----+--
         
         """
         return GTRModelBase.setStateFreqParam(self, i, value)
-    def setAllFreqsEqual(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def setAllFreqsEqual(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Sets all four state frequencies to 0.25.
         
         """
         return GTRModelBase.setAllFreqsEqual(self)
-    def setNucleotideFreqs(self, freqA, freqC, freqG, freqT):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def setNucleotideFreqs(self, freqA, freqC, freqG, freqT):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Sets the four state frequencies to the values provided, which should
         all be greater than or equal to 0.0.
         
         """
         assert freqA >= 0.0 and freqC >= 0.0 and freqG >= 0.0 and freqT >= 0.0
         return GTRModelBase.setNucleotideFreqs(self, freqA, freqC, freqG, freqT)
-    def getRelRates(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def getRelRates(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Returns a list comprising the six relative rates.
         
         """
         return GTRModelBase.getRelRates(self)
-    def setRelRates(self, rr):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def setRelRates(self, rr):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Sets all six relative rates.
         
         """
         return GTRModelBase.setRelRates(self, rr)
-    def calcTRatio(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def calcTRatio(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Calculates the transition/transversion ratio (tratio) given the six
         relative rates and the relative base frequencies. Here are the
         details of the calculation.
@@ -312,30 +410,45 @@ class GTRModel(GTRModelBase):    #---+----|----+----|----+----|----+----|----+--
         
         """
         return GTRModelBase.calcTRatio(self)
-    def getNGammaRates(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def getNGammaRates(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Returns the current number of relative rate categories.
         
         """
         return GTRModelBase.getNGammaRates(self)
-    def setNGammaRates(self, n):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def setNGammaRates(self, n):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Sets the number of relative rate categories to n (n should be greater
         than zero).
         
         """
         return GTRModelBase.setNGammaRates(self, n)
-    def getRateProbs(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def getRateProbs(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Returns a list each element of which is the probability that any given
         site falls in its particular rate category.
         
         """
         return GTRModelBase.getRateProbs(self)
-    def setAllRateProbsEqual(self):        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def setAllRateProbsEqual(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         Sets all rate probabilities to the inverse of the number of rate
         categories.
         
         """
         return GTRModelBase.setAllRateProbsEqual(self)
-    def setPriorOnShapeInverse(self, invert):            #---+----|----+----|----+----|----+----|----+----|----+----|----+----|        """
+
+    def setPriorOnShapeInverse(self, invert):    
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         If True is specified, then the gamma shape parameter will actually
         update the inverse of the shape parameter rather than the shape
         parameter itself.

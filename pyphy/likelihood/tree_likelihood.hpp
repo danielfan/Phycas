@@ -84,4 +84,65 @@ class TreeLikelihood
 		void							simulate(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar);
 
 		void							addDataTo(SimData & other);
-		unsigned						getNEvals();		void							resetNEvals();	protected:		bool							no_data;				/**< If true, calcLnL always returns 0.0 (useful for allowing MCMC to explore the prior) */		unsigned						nTaxa;					/**< The number of taxa (i.e. the number of elements in each pattern stored in pattern_map) */		unsigned						num_patterns;			/**< The number of site patterns */		unsigned						num_states;				/**< The number of states */		unsigned						num_rates;				/**< The number of relative rate categories */		ModelShPtr						model;					/**< The substitution model */		VecStateList					state_list;				/**< The global lookup table for decoding coded states */		VecStateListPos					state_list_pos;			/**< The vector of positions of states in `state_list' */#if POLPY_NEWWAY		bool							use_pattern_specific_rates;		/**< If true, each pattern has its own relative rate; if false, rate_means holds discrete gamma rate means (and possibly also a zero category if pinvar is being used) */#endif		std::vector<double>				rate_means;				/**< Vector of relative rates */		std::vector<double>				rate_probs;				/**< Vector of relative rate probabilities */		unsigned						nevals;					/**> For debugging, records the number of times calcLnL() is called */	protected:		// Utilities		void							buildPatternReprVector(std::vector<std::string> &, TreeShPtr);		TipData *						allocateTipData(unsigned);		InternalData *					allocateInternalData();		unsigned						compressDataMatrix(const CipresNative::DiscreteMatrix &);		void							calcTMatForSim(TipData &, double);		void							simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar, bool refresh_probs);		void							calcPMatTranspose(TipData &, double);		void							calcPMat(InternalData &, double);		void							calcPMatCommon(double * * *, double);		void							calcCLATwoTips(InternalData &, const TipData &, const TipData &);		void							calcCLAOneTip(InternalData &, const TipData &, const InternalData &);		void							calcCLANoTips(InternalData &, const InternalData &, const InternalData &);		void							conditionOnAdditionalTip(InternalData &, const TipData &);		void							conditionOnAdditionalInternal(InternalData &, const InternalData &);		double							harvestLnL(const InternalData &);	public: //@POL these should be protected rather than public		std::vector<double>				likelihood_rate_site;	/**< Vector of likelihoods for each rate/site combination */		std::vector<double>				site_likelihoods;		/**< Vector of site likelihoods */		CountVectorType					pattern_counts;			/**< vector of pattern counts */		PatternMapType					pattern_map;			/**< keys are patterns, values are pattern counts */	};} // namespace phycas#include "tree_likelihood.inl"#endif
+
+		unsigned						getNEvals();
+		void							resetNEvals();
+
+	protected:
+
+		bool							no_data;				/**< If true, calcLnL always returns 0.0 (useful for allowing MCMC to explore the prior) */
+
+		unsigned						nTaxa;					/**< The number of taxa (i.e. the number of elements in each pattern stored in pattern_map) */
+		unsigned						num_patterns;			/**< The number of site patterns */
+		unsigned						num_states;				/**< The number of states */
+		unsigned						num_rates;				/**< The number of relative rate categories */
+		ModelShPtr						model;					/**< The substitution model */
+		VecStateList					state_list;				/**< The global lookup table for decoding coded states */
+		VecStateListPos					state_list_pos;			/**< The vector of positions of states in `state_list' */
+
+#if POLPY_NEWWAY
+		bool							use_pattern_specific_rates;		/**< If true, each pattern has its own relative rate; if false, rate_means holds discrete gamma rate means (and possibly also a zero category if pinvar is being used) */
+#endif
+
+		std::vector<double>				rate_means;				/**< Vector of relative rates */
+		std::vector<double>				rate_probs;				/**< Vector of relative rate probabilities */
+
+		unsigned						nevals;					/**> For debugging, records the number of times calcLnL() is called */
+
+	protected:
+
+		// Utilities
+		void							buildPatternReprVector(std::vector<std::string> &, TreeShPtr);
+		TipData *						allocateTipData(unsigned);
+		InternalData *					allocateInternalData();
+		unsigned						compressDataMatrix(const CipresNative::DiscreteMatrix &);
+
+		void							calcTMatForSim(TipData &, double);
+		void							simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar, bool refresh_probs);
+		void							calcPMatTranspose(TipData &, double);
+		void							calcPMat(InternalData &, double);
+		void							calcPMatCommon(double * * *, double);
+
+		void							calcCLATwoTips(InternalData &, const TipData &, const TipData &);
+		void							calcCLAOneTip(InternalData &, const TipData &, const InternalData &);
+		void							calcCLANoTips(InternalData &, const InternalData &, const InternalData &);
+
+		void							conditionOnAdditionalTip(InternalData &, const TipData &);
+		void							conditionOnAdditionalInternal(InternalData &, const InternalData &);
+
+		double							harvestLnL(const InternalData &);
+
+
+	public: //@POL these should be protected rather than public
+
+		std::vector<double>				likelihood_rate_site;	/**< Vector of likelihoods for each rate/site combination */
+		std::vector<double>				site_likelihoods;		/**< Vector of site likelihoods */
+		CountVectorType					pattern_counts;			/**< vector of pattern counts */
+		PatternMapType					pattern_map;			/**< keys are patterns, values are pattern counts */
+	};
+
+} // namespace phycas
+
+#include "tree_likelihood.inl"
+
+#endif
