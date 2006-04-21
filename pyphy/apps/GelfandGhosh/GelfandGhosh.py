@@ -22,6 +22,8 @@ def commonSetup():
     phycas.slice_weight = 1
     phycas.gg_do = True
     phycas.gg_kvect = [0.5, 1.0, 2.0]
+    phycas.slice_max_units = 0
+    phycas.use_inverse_shape = False
 
 def runJC(rnseed):
     global jc_p, jc_g, jc_d
@@ -46,7 +48,7 @@ def runJC(rnseed):
     phycas.param_file_name = 'analJC.nex.p'
     phycas.paramFileOpen()
     phycas.tree_file_name = 'analJC.nex.t'
-    phycas.treeFileOpen(taxon_names)
+    phycas.treeFileOpen()
 
     commonSetup()
     phycas.run()
@@ -83,7 +85,7 @@ def runHKY(rnseed):
     phycas.param_file_name = 'analHKY.nex.p'
     phycas.paramFileOpen()
     phycas.tree_file_name = 'analHKY.nex.t'
-    phycas.treeFileOpen(taxon_names)
+    phycas.treeFileOpen()
 
     commonSetup()
     phycas.run()
@@ -124,7 +126,7 @@ def runHKYg(rnseed):
     phycas.param_file_name = 'analHKYg.nex.p'
     phycas.paramFileOpen()
     phycas.tree_file_name = 'analHKYg.nex.t'
-    phycas.treeFileOpen(taxon_names)
+    phycas.treeFileOpen()
 
     commonSetup()
     phycas.run()
@@ -167,7 +169,7 @@ def runHKYgi(rnseed):
     phycas.param_file_name = 'analHKYgi.nex.p'
     phycas.paramFileOpen()
     phycas.tree_file_name = 'analHKYgi.nex.t'
-    phycas.treeFileOpen(taxon_names)
+    phycas.treeFileOpen()
 
     commonSetup()
     phycas.run()
@@ -206,7 +208,7 @@ def runGTR(rnseed):
     phycas.param_file_name = 'analGTR.nex.p'
     phycas.paramFileOpen()
     phycas.tree_file_name = 'analGTR.nex.t'
-    phycas.treeFileOpen(taxon_names)
+    phycas.treeFileOpen()
 
     commonSetup()
     phycas.run()
@@ -219,7 +221,7 @@ if __name__ == "__main__":
     phycas = Phycas()
 
     # Define the names of the taxa to use when the simulated data set is saved to a file
-    taxon_names = ['P. parksii', 'P. articulata', 'P._gracilis', 'P. macrophylla']
+    phycas.taxon_labels = ['P. parksii', 'P. articulata', 'P._gracilis', 'P. macrophylla']
 
     # Create a model tree
     phycas.ntax = 4
@@ -251,20 +253,20 @@ if __name__ == "__main__":
     # to force calculation of transition probabilities
     phycas.likelihood.simulateFirst(sim_data, phycas.tree, phycas.r, num_sites)
 
-    # Save simulated data to a NEXUS file using taxon_names, datatype=dna and
+    # Save simulated data to a NEXUS file using taxon_labels, datatype=dna and
     # using the symbols a, c, g, and t for state codes 0, 1, 2, and 3, respectively
-    sim_data.saveToNexusFile('simJC.nex', taxon_names, 'dna', ('a','c','g','t'))
+    sim_data.saveToNexusFile('simJC.nex', phycas.taxon_labels, 'dna', ('a','c','g','t'))
 
     # Copy the simulated data from sim_data to phycas.likelihood so that
     # we can run MCMC analyses on the simulated data
     phycas.likelihood.copyDataFromSimData(sim_data)
     phycas.nchar = num_sites # this should be set by copyDataFromSimData
 
-    runJC(master_seed)
-    runHKY(master_seed)
+    #runJC(master_seed)
+    #runHKY(master_seed)
     runHKYg(master_seed)
-    runHKYgi(master_seed)
-    runGTR(master_seed)
+    #runHKYgi(master_seed)
+    #runGTR(master_seed)
     
     # Output results
     outf = file('ggout.txt','w')

@@ -2,10 +2,10 @@
 [ID: 13579]
 begin trees;
    translate
-       1 Synergus,
-       2 Periclistus,
-       3 Aylax,
-       4 Ibalia;
+       1 'Synergus',
+       2 'Periclistus',
+       3 'Aylax',
+       4 'Ibalia';
    tree rep.1 = (1:0.22681,(2:0.05618,4:0.85420):0.14171,3:0.00510);
    tree rep.100 = (1:0.22681,(2:0.05618,4:0.85420):0.14171,3:0.00510);
    tree rep.200 = (1:0.22681,(2:0.05618,4:0.85420):0.14171,3:0.00510);

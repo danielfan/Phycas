@@ -576,11 +576,18 @@ inline void SliceSampler::SetSliceUnitWidth(double uwidth)
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Sets the maximum number of units of size `w' to use for interval I used for sampling from the slice S.
+|	Sets the maximum number of units of size `w' to use for interval I used for sampling from the slice S. If `umax'
+|	equals zero, maxUnits is set to UINT_MAX instead.
 */
 inline void SliceSampler::SetMaxUnits(unsigned umax)
 	{
+#if POLPY_NEWWAY
 	maxUnits = umax;
+	if (maxUnits == 0)
+		maxUnits = UINT_MAX;
+#else
+	maxUnits = umax;
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

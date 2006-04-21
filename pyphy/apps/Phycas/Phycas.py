@@ -567,9 +567,11 @@ class Phycas:
         self.treef.write('   translate\n')
         for i in range(self.ntax):
             if self.taxon_labels[i].find(' ') < 0:
-                self.treef.write("       %d '%s'%s\n" % (i + 1, self.taxon_labels[i].replace(' ', '_'), i == self.ntax - 1 and ';' or ','))
-            else:
+                # no spaces found in name
                 self.treef.write('       %d %s%s\n' % (i + 1, self.taxon_labels[i], i == self.ntax - 1 and ';' or ','))
+            else:
+                # at least one space in taxon name, so enclose name in quotes
+                self.treef.write("       %d '%s'%s\n" % (i + 1, self.taxon_labels[i], i == self.ntax - 1 and ';' or ','))
 
     def treeFileClose(self):
         self.treef.write('end;\n')

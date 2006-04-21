@@ -48,7 +48,8 @@ phycas.likelihood.prepareForLikelihood(phycas.tree)
 phycas.param_file_name = 'params.p'
 phycas.paramFileOpen()
 phycas.tree_file_name = 'trees.t'
-phycas.treeFileOpen(phycas.reader.getTaxLabels())
+phycas.taxon_labels = phycas.reader.getTaxLabels() 
+phycas.treeFileOpen()
 
 phycas.ncycles = 2500
 phycas.run()

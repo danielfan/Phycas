@@ -25,7 +25,9 @@ if __name__ == "__main__":
     phycas.verbose                  = True
     phycas.metropolis_weight        = 100
     phycas.slice_weight             = 1
+    phycas.slice_max_units          = 0
     phycas.gg_do                    = False
+    phycas.use_inverse_shape        = False
 
     phycas.setup()
     phycas.run()
