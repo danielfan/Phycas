@@ -261,6 +261,7 @@ class MCMCSimple:
                                       self.likelihood,  # likelihood calculation machinery
                                       self.r,           # pseudorandom number generator
                                       True,             # separate_edgelen_params
+                                      0,                # max slice units (0 means use largest unsigned int)
                                       1)                # weight for each parameter added
         self.chain_manager.finalize()
 

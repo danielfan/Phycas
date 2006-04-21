@@ -2,10 +2,10 @@
 [ID: 13579]
 begin trees;
    translate
-       1 P._parksii,
-       2 P._articulata,
+       1 'P. parksii',
+       2 'P. articulata',
        3 P._gracilis,
-       4 P._macrophylla;
+       4 'P. macrophylla';
    tree rep.1 = (1:0.10000,2:0.10000,(3:0.10000,4:0.10000):0.10000);
    tree rep.100 = (1:0.10876,2:0.10744,(3:0.09807,4:0.08638):0.08459);
    tree rep.200 = (1:0.11083,2:0.12055,(3:0.09502,4:0.09330):0.09233);

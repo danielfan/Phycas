@@ -17,12 +17,12 @@ InternalData::InternalData(
   unsigned				nRates,				/**< is the number of relative rate categories */
   unsigned				nStates,			/**< is the number of states in the model */
   double * * *			pMat,				/**< is an alias to the rates by states by states `pMatrix' array, and may be NULL */
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY	// PSR_MODEL
   bool					psr,				/**< if true, means pattern specific rates model is being used and cla will have only num_patterns*num_states elements rather than num_rates*num_patterns*num_states elements */
 #endif
   bool 					managePMatrices) 	/**< if true, a 3D matrix will be allocated (if `pMat' is also NULL, `pMatrices' will alias `ownedPMatrices.ptr') */ 
 	: state(-1), 
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY	// PSR_MODEL
 	cla(psr ? nPatterns*nStates : nPatterns*nRates*nStates), 
 #else
 	cla(nPatterns*nRates*nStates), 

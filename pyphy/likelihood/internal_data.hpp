@@ -76,7 +76,7 @@ class InternalData
 
 	private:
 
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY	// PSR_MODEL
 										InternalData(unsigned nPatterns, unsigned nRates, unsigned nStates, double * * * pMatrices = NULL, bool psr = false, bool managePMatrices = false);
 #else
 										InternalData(unsigned nPatterns, unsigned nRates, unsigned nStates, double * * * pMatrices = NULL, bool managePMatrices = false);

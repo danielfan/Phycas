@@ -78,28 +78,28 @@ def tryAllModels(fn):
     paup_commands.append('lscores 1 / userbrlen;')
     paup_commands.append('[!Phycas GTR+G lnL = %.5f]' % lnL)
 
-# ************* temporary below here **************
-    raw_input('debug stop: just about to compute GTR+psr')
+    # ************* temporary below here **************
+    #raw_input('debug stop: just about to compute GTR+psr')
 
-    print '\nGTR+psr model'
-    phycas.model = Likelihood.GTRModel()
-    phycas.model.setRelRates([1.8, 4.0, 1.5, 1.2, 5.0, 1.0])
-    phycas.model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
-    phycas.model.setNGammaRates(4)
-    phycas.model.setShape(1.2)
-    phycas.model.setNotPinvarModel()
-    phycas.likelihood.usePatternSpecificRates() 
-    phycas.likelihood.replaceModel(phycas.model)
-    phycas.likelihood.prepareForLikelihood(phycas.tree)
-    lnL = phycas.likelihood.calcLnL(phycas.tree)
-    print 'lnL = %.5f (%.5f worse than the reference lnL)' % (lnL, ref_lnL - lnL)
-    paup_commands.append('\n[!\n***** GTR+psr (actually, using GTR+G since no way to do psr in PAUP*) *****]')
-    paup_commands.append('lset nst=6 basefreq=(0.1 0.2 0.3) rmatrix=(1.8 4.0 1.5 1.2 5.0) rates=gamma shape=1.2 pinvar=0.0;')
-    paup_commands.append('lscores 1 / userbrlen;')
-    paup_commands.append('[!Phycas GTR+G lnL = %.5f]' % lnL)
+    #print '\nGTR+psr model'
+    #phycas.model = Likelihood.GTRModel()
+    #phycas.model.setRelRates([1.8, 4.0, 1.5, 1.2, 5.0, 1.0])
+    #phycas.model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
+    #phycas.model.setNGammaRates(4)
+    #phycas.model.setShape(1.2)
+    #phycas.model.setNotPinvarModel()
+    #phycas.likelihood.usePatternSpecificRates() 
+    #phycas.likelihood.replaceModel(phycas.model)
+    #phycas.likelihood.prepareForLikelihood(phycas.tree)
+    #lnL = phycas.likelihood.calcLnL(phycas.tree)
+    #print 'lnL = %.5f (%.5f worse than the reference lnL)' % (lnL, ref_lnL - lnL)
+    #paup_commands.append('\n[!\n***** GTR+psr (actually, using GTR+G since no way to do psr in PAUP*) *****]')
+    #paup_commands.append('lset nst=6 basefreq=(0.1 0.2 0.3) rmatrix=(1.8 4.0 1.5 1.2 5.0) rates=gamma shape=1.2 pinvar=0.0;')
+    #paup_commands.append('lscores 1 / userbrlen;')
+    #paup_commands.append('[!Phycas GTR+G lnL = %.5f]' % lnL)
     
-    phycas.likelihood.doNotUsePatternSpecificRates()
-# ************* temporary above here **************
+    #phycas.likelihood.doNotUsePatternSpecificRates()
+    # ************* temporary above here **************
 
     # Compute likelihood using the GTR model
     print '\nGTR model'
@@ -117,8 +117,6 @@ def tryAllModels(fn):
     paup_commands.append('lset nst=6 basefreq=(0.1 0.2 0.3) rmatrix=(1.8 4.0 1.5 1.2 5.0) rates=equal pinvar=0.0;')
     paup_commands.append('lscores 1 / userbrlen;')
     paup_commands.append('[!Phycas GTR lnL = %.5f]' % lnL)
-
-    raw_input('debug stop: just calculated GTR')
 
     print
     print '************* Testing HKYModel *******************'
@@ -553,7 +551,8 @@ def readData(fn):
     #print 'taxon names =',phycas.taxon_names
     phycas.model = Likelihood.JCModel()
     phycas.likelihood = Likelihood.TreeLikelihood(phycas.model)
-    phycas.likelihood.copyDataFromDiscreteMatrix(phycas.data_matrix)    phycas.likelihood.prepareForLikelihood(phycas.tree)
+    phycas.likelihood.copyDataFromDiscreteMatrix(phycas.data_matrix)
+    phycas.likelihood.prepareForLikelihood(phycas.tree)
 
 def createCommandFile(fn):
     outf = file(fn, 'w')

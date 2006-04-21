@@ -133,7 +133,7 @@ double DiscreteGammaShapeParam::operator()(
 	return curr_ln_like + curr_ln_prior;
 	}
 
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY	// PSR_MODEL
 /*----------------------------------------------------------------------------------------------------------------------
 |	PatternSpecificRateParam is a functor whose operator() returns a value proportional to the full-conditional 
 |	posterior probability density for a particular value of a pattern-specific rate parameter. If the supplied pattern

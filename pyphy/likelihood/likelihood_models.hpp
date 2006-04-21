@@ -85,10 +85,10 @@ class Model	{
 		void							setShape(double alpha);
 
 #if POLPY_NEWWAY
-		void							setPatternSpecificRate(double r, unsigned k);
-		void							normalizePatternSpecificRates(std::vector<double> & rates, CountVectorType & counts);
-		void							setPatternSpecificRatesModel(unsigned npatterns);
-		void							setNotPatternSpecificRatesModel();
+		void							setPatternSpecificRate(double r, unsigned k);	// PSR_MODEL
+		void							normalizePatternSpecificRates(std::vector<double> & rates, CountVectorType & counts);	// PSR_MODEL
+		void							setPatternSpecificRatesModel(unsigned npatterns);	// PSR_MODEL
+		void							setNotPatternSpecificRatesModel();	// PSR_MODEL
 		void							setPriorOnShapeInverse(bool invert);
 #endif
 
@@ -135,9 +135,11 @@ protected:
 	ProbDistShPtr					gamma_shape_prior;			/**< The prior distribution governing the discrete gamma shape parameter */
 	double							gamma_shape;				/**< Used for discrete gamma rate heterogeneity */
 
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY	// PSR_MODEL
 	std::vector<double>				unnorm_pat_spec_rates;		/**< Holds unnormalized pattern specific rates; function normalizePatternSpecificRates can be used to save the normalize rates into a supplied vector */
 	bool							is_psr_model;				/**< If true, a relative rate parameter for every pattern will be added to MCMC analysis */
+#endif
+#if POLPY_NEWWAY
 	bool							invert_shape;				/**< If true, gamma_shape_param will hold inverse of shape rather than shape itself */
 #endif
 	

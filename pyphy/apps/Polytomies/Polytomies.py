@@ -7,13 +7,18 @@ from Phycas import *
 
 phycas = Phycas()
 
+# By default, Phycas assumes slice_max_units = 1000, but here we will let the maximum
+# number of slice sampler units be the largest possible unsigned int. To do this, set
+# slice_max_units to 0
+phycas.slice_max_units = 0
+
 print
 print '~~~~~~~~~~~~~~~~~~~~~'
 print 'Simulating a data set'
 print '~~~~~~~~~~~~~~~~~~~~~'
 
 # Define the names of the taxa to use when the simulated data set is saved to a file
-taxon_names = ['P._fimbriata', 'P._parksii', 'P._articulata', 'P._gracilis', 'P._macrophylla']
+phycas.taxon_labels = ['P._fimbriata', 'P._parksii', 'P._articulata', 'P._gracilis', 'P._macrophylla']
 
 # Create a model tree containing one polytomy
 phycas.ntax = 5
@@ -47,9 +52,9 @@ sim_data = Likelihood.SimData()
 # to force calculation of transition probabilities
 phycas.likelihood.simulateFirst(sim_data, phycas.tree, phycas.r, num_sites)
 
-# Save simulated data to a NEXUS file using taxon_names, datatype=dna and
+# Save simulated data to a NEXUS file using phycas.taxon_labels, datatype=dna and
 # using the symbols a, c, g, and t for state codes 0, 1, 2, and 3, respectively
-sim_data.saveToNexusFile('simHKY.nex', taxon_names, 'dna', ('a','c','g','t'))
+sim_data.saveToNexusFile('simHKY.nex', phycas.taxon_labels, 'dna', ('a','c','g','t'))
 
 # Add a MrBayes block to make it easier to summariz trees later
 # A temporary measure: this functionality should be built into Phycas
@@ -87,7 +92,7 @@ phycas.topo_prior_C     = 2.0
 phycas.param_file_name = 'analHKY.nex.p'
 phycas.paramFileOpen()
 phycas.tree_file_name = 'analHKY.nex.t'
-phycas.treeFileOpen(taxon_names)
+phycas.treeFileOpen()
 
 # Build a random starting tree for an MCMC analysis and prepare it
 # for likelihood calculations (i.e. equip nodes with both transition
@@ -97,6 +102,5 @@ phycas.setupTree()
 phycas.likelihood.prepareForLikelihood(phycas.tree)
 
 # start MCMC
-#raw_input('about to run')
 phycas.run()
 

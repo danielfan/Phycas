@@ -1023,6 +1023,8 @@ if __name__ == '__main__':
     mcmc.metropolis_weight = 300
     mcmc.slice_weight = 1
     mcmc.gg_do = False
+    mcmc.slice_max_units = 0
+    mcmc.use_inverse_shape = False
 
     mcmc.setup()
     mcmc.run()

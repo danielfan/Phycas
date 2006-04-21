@@ -98,7 +98,7 @@ inline void DiscreteGammaShapeParam::update()
 	slice_sampler->Sample();
 	}
 
-#if POLPY_NEWWAY	// pattern-specific rates
+#if POLPY_NEWWAY	// PSR_MODEL
 /*----------------------------------------------------------------------------------------------------------------------
 |	Constructor calls the base class (MCMCUpdater) constructor. Also sets the `curr_value' data member to 0.5.
 */

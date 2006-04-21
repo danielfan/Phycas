@@ -1,6 +1,9 @@
 @echo off
 if exist runall_diffs.txt del runall_diffs.txt
 
+echo ****************************
+echo *** Running ExplorePrior ***
+echo ****************************
 echo **************************** >> runall_diffs.txt
 echo *** Running ExplorePrior *** >> runall_diffs.txt
 echo **************************** >> runall_diffs.txt
@@ -13,6 +16,10 @@ fc nodata.nex.t refExplorePrior\nodata.nex.t >> ..\runall_diffs.txt
 if errorlevel 1 (goto abort)
 cd ..
 
+echo.
+echo ***************************
+echo *** Running FixedParams ***
+echo ***************************
 echo. >> runall_diffs.txt
 echo *************************** >> runall_diffs.txt
 echo *** Running FixedParams *** >> runall_diffs.txt
@@ -26,6 +33,10 @@ fc trees.t ref_output\trees.t >> ..\runall_diffs.txt
 if errorlevel 1 (goto abort)
 cd ..
 
+echo.
+echo ****************************
+echo *** Running GelfandGhosh ***
+echo ****************************
 echo. >> runall_diffs.txt
 echo **************************** >> runall_diffs.txt
 echo *** Running GelfandGhosh *** >> runall_diffs.txt
@@ -37,6 +48,10 @@ fc ggout.txt refJCvHKY\ggout.txt >> ..\runall_diffs.txt
 if errorlevel 1 (goto abort)
 cd ..
 
+echo.
+echo ******************************
+echo *** Running LikelihoodTest ***
+echo ******************************
 echo. >> runall_diffs.txt
 echo ****************************** >> runall_diffs.txt
 echo *** Running LikelihoodTest *** >> runall_diffs.txt
@@ -50,6 +65,10 @@ fc check.nex refLikelihoodTest\check.nex >> ..\runall_diffs.txt
 if errorlevel 1 (goto abort)
 cd ..
 
+echo.
+echo **************************
+echo *** Running MCMCSimple ***
+echo **************************
 echo. >> runall_diffs.txt
 echo ************************** >> runall_diffs.txt
 echo *** Running MCMCSimple *** >> runall_diffs.txt
@@ -63,6 +82,10 @@ fc nyldna4.nex.t refHKYhyper\nyldna4.nex.t >> ..\runall_diffs.txt
 if errorlevel 1 (goto abort)
 cd ..
 
+echo.
+echo **********************
+echo *** Running Phycas ***
+echo **********************
 echo. >> runall_diffs.txt
 echo ********************** >> runall_diffs.txt
 echo *** Running Phycas *** >> runall_diffs.txt
@@ -76,6 +99,10 @@ fc nyldna4.nex.t refHKYhyper\nyldna4.nex.t >> ..\runall_diffs.txt
 if errorlevel 1 (goto abort)
 cd ..
 
+echo.
+echo **************************
+echo *** Running Polytomies ***
+echo **************************
 echo. >> runall_diffs.txt
 echo ************************** >> runall_diffs.txt
 echo *** Running Polytomies *** >> runall_diffs.txt
@@ -91,6 +118,10 @@ fc simHKY.nex refHKY\simHKY.nex >> ..\runall_diffs.txt
 if errorlevel 1 (goto abort)
 cd ..
 
+echo.
+echo *************************
+echo *** Running Simulator ***
+echo *************************
 echo. >> runall_diffs.txt
 echo ************************* >> runall_diffs.txt
 echo *** Running Simulator *** >> runall_diffs.txt

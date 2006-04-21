@@ -5,7 +5,7 @@ from Phycas import *
 phycas = Phycas()
 
 # Define the names of the taxa to use when the simulated data set is saved to a file
-taxon_names = ['P. parksii', 'P. articulata', 'P._gracilis', 'P. macrophylla']
+phycas.taxon_labels = ['P. parksii', 'P. articulata', 'P._gracilis', 'P. macrophylla']
 
 # Create a model tree
 phycas.tree = Phylogeny.Tree()
@@ -37,9 +37,9 @@ sim_data = SimData()
 # to force calculation of transition probabilities
 phycas.likelihood.simulateFirst(sim_data, phycas.tree, phycas.r, num_sites)
 
-# Save simulated data to a NEXUS file using taxon_names, datatype=dna and
+# Save simulated data to a NEXUS file using phycas.taxon_labels, datatype=dna and
 # using the symbols a, c, g, and t for state codes 0, 1, 2, and 3, respectively
-sim_data.saveToNexusFile('simulated.nex', taxon_names, 'dna', ('a','c','g','t'))
+sim_data.saveToNexusFile('simulated.nex', phycas.taxon_labels, 'dna', ('a','c','g','t'))
 
 # Copy the simulated data from sim_data to phycas.likelihood so that
 # we can compute the likelihood for the simulated data
@@ -61,12 +61,12 @@ f.write('\nend;')
 f.write('\n')
 f.write('\nbegin trees;')
 f.write('\n  translate')
-for i,nm in enumerate(taxon_names):
+for i,nm in enumerate(phycas.taxon_labels):
     if nm.count(' ') > 0:
         f.write("\n    %d '%s'" % (i, nm))
     else:
         f.write("\n    %d %s" % (i, nm))
-    if i < len(taxon_names) - 1:
+    if i < len(phycas.taxon_labels) - 1:
         f.write(',')
     else:
         f.write(';')

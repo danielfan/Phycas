@@ -180,10 +180,10 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("getShape", &phycas::Model::getShape)
 		.def("setShape", &phycas::Model::setShape)
 #if POLPY_NEWWAY
-		.def("setPatternSpecificRate", &phycas::Model::setPatternSpecificRate)
-		.def("normalizePatternSpecificRates", &phycas::Model::normalizePatternSpecificRates)
-		.def("setPatternSpecificRatesModel", &phycas::Model::setPatternSpecificRatesModel)
-		.def("setNotPatternSpecificRatesModel", &phycas::Model::setNotPatternSpecificRatesModel)
+		.def("setPatternSpecificRate", &phycas::Model::setPatternSpecificRate)	// PSR_MODEL
+		.def("normalizePatternSpecificRates", &phycas::Model::normalizePatternSpecificRates)	// PSR_MODEL
+		.def("setPatternSpecificRatesModel", &phycas::Model::setPatternSpecificRatesModel)	// PSR_MODEL
+		.def("setNotPatternSpecificRatesModel", &phycas::Model::setNotPatternSpecificRatesModel)	// PSR_MODEL
 		.def("setPriorOnShapeInverse", &phycas::Model::setPriorOnShapeInverse)
 #endif
 		.def("getNGammaRates", &phycas::Model::getNGammaRates)
@@ -279,7 +279,7 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("setHaveData", &TreeLikelihood::setHaveData)
 #if POLPY_NEWWAY
 		.def("getNPatterns", &TreeLikelihood::getNPatterns)
-		.def("setUsePatternSpecificRates", &TreeLikelihood::setUsePatternSpecificRates)
+		.def("setUsePatternSpecificRates", &TreeLikelihood::setUsePatternSpecificRates)	// PSR_MODEL
 #endif
 		;
 	class_<TipData, boost::noncopyable>("TipData", no_init)

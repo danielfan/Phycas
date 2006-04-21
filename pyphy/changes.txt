@@ -94,6 +94,41 @@ Release 0.7.0 (4-Mar-2006, CVS release tag rel_0_7_0)
 -----------------------------------------------------
 o add GTR model
 o add GTR to LikelihoodTest.py example
+o Note: one correction should be made if this version is checked out, otherwise some of the
+  tests in pyphydev/pyphy/apps/runall.bat will fail:
+  In Phycas.py, in the setupModel() function, replace these lines
+        if self.num_rates > 1:
+            self.model.setNGammaRates(self.num_rates)
+            self.model.setShape(0.5)
+            self.model.setDiscreteGammaShapePrior(self.gamma_shape_prior)
+        else:
+            self.model.setNotGammaModel()
+  with these lines:
+        self.model.setNGammaRates(self.num_rates)
+        if self.num_rates > 1:
+            self.model.setShape(0.5)
+            self.model.setDiscreteGammaShapePrior(self.gamma_shape_prior)
+o rel_0_7_1 (21-Apr-2006)
+  This release adds some heterogeneous functionality, but is mostly the fruits of the 
+  desperate hacking that went on just before my (POL) talks in Duke Biology and Duke
+  Stats April 6 and 14 (respectively), 2006. Some of this (e.g. pattern-specific rates
+  model will be removed/replaced, so this will be the only tagged release in which it
+  makes an appearance.
+	- this will be first tagged release to the new subversion repository
+	- added MCMCUpdater::invert_shape data member to govern whether the prior on the gamma
+	  shape parameter applies to alpha directly (invert_shape = false), or to 1/alpha 
+	  (invert_shape = true) 
+	- implements the (probably ill-conceived) pattern-specific rates model, which will
+	  not appear in the next release but will be replaced with a much more elegant model.
+	  To find the parts relevant to pattern-specific rates, search for the keyword PSR_MODEL
+	  in // comments (c++ files) or # comments (Python files)
+	- SliceSampler::SetMaxUnits(0) now sets data member maxUnits to UINT_MAX
+	- Tree::SetAllEdgeLens function was added
+	- setAllEdgeLens function was added to the phylogeny_pymod.cpp BOOST_PYTHON_MODULE
+	- added SimData::createMapleTuples, SimData::zeroCounts, SimData::appendCountsToFileand
+	  SimData::getPatterns to help in visualizing patterns in small (4-taxon) posterior
+	  predictive simulated data sets (not sure how long these functions will be around, 
+	  especially createMapleTuples)
 
 Release 0.8.0
 -------------

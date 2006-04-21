@@ -173,7 +173,7 @@ void TreeLikelihood::calcCLATwoTips(
 	const int8_t * rightStateCodes = rightTip.getConstStateCodes();
 	double * cla = internalData.getCLA(); //PELIGROSO
 
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY	// PSR_MODEL
 	if (use_pattern_specific_rates)
 		{
 		for (unsigned p = 0; p < num_patterns; ++p, cla += num_states)
@@ -201,7 +201,7 @@ void TreeLikelihood::calcCLATwoTips(
 					cla[s] = leftPMatTRow[s]*rightPMatTRow[s];
 				}
 			}
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY	// PSR_MODEL
 		}
 #endif
 	}
@@ -236,7 +236,7 @@ void TreeLikelihood::calcCLAOneTip(
 	// | A | C | G | T | A | C | G | T | A | C | G | T | A | C | G | T | A | C | G | T |
 	// +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
 	//
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY	// PSR_MODEL
 	if (use_pattern_specific_rates)
 		{
 		for (unsigned pat = 0; pat < num_patterns; ++pat, rightCLA += num_states)
@@ -274,7 +274,7 @@ void TreeLikelihood::calcCLAOneTip(
 					}
 				}
 			}
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY	// PSR_MODEL
 		}
 #endif
 	}
@@ -314,7 +314,7 @@ void TreeLikelihood::calcCLANoTips(
 	// | A | C | G | T | A | C | G | T |      ...      | A | C | G | T | ...
 	// +---+---+---+---+---+---+---+---+---------------+---+---+---+---+
 	//
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY	// PSR_MODEL
 	if (use_pattern_specific_rates)
 		{
 		for (unsigned pat = 0; pat < num_patterns; ++pat, leftCLA += num_states, rightCLA += num_states)
@@ -360,7 +360,7 @@ void TreeLikelihood::calcCLANoTips(
 					}
 				}
 			}
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY	// PSR_MODEL
 		}
 #endif
 	}
@@ -387,7 +387,7 @@ void TreeLikelihood::conditionOnAdditionalTip(
 	// | A | C | G | T | A | C | G | T | A | C | G | T | A | C | G | T | A | C | G | T |
 	// +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
 	//
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY	// PSR_MODEL
 	if (use_pattern_specific_rates)
 		{
 		for (unsigned pat = 0; pat < num_patterns; ++pat)
@@ -411,7 +411,7 @@ void TreeLikelihood::conditionOnAdditionalTip(
 					*cla++ *= tipPMatT_pat[i];
 				}
 			}
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY	// PSR_MODEL
 		}
 #endif
 	}
@@ -440,7 +440,7 @@ void TreeLikelihood::conditionOnAdditionalInternal(
 	// | A | C | G | T | A | C | G | T | A | C | G | T | A | C | G | T | A | C | G | T |
 	// +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
 	//
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY	// PSR_MODEL
 	if (use_pattern_specific_rates)
 		{
 		for (unsigned pat = 0; pat < num_patterns; ++pat, childCLA += num_states)
@@ -474,7 +474,7 @@ void TreeLikelihood::conditionOnAdditionalInternal(
 					}
 				}
 			}
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY	// PSR_MODEL
 		}
 #endif
 	}
@@ -501,7 +501,7 @@ double TreeLikelihood::harvestLnL(
 	//@POL why have likelihood_rate_site? I think it is only used in this function. Try replacing it 
 	// everywhere with a simple double value and see if it makes a difference
 	unsigned sz = likelihood_rate_site.size();
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY	// PSR_MODEL
 	if (use_pattern_specific_rates)
 		{
 		if (sz != num_patterns || num_rates != num_patterns)
@@ -544,14 +544,14 @@ double TreeLikelihood::harvestLnL(
 	// Get state frequencies from model and alias rate category probability array for speed
 	const double * stateFreq = &model->getStateFreqs()[0]; //PELIGROSO
 	const double * rateCatProbArray = &rate_probs[0]; //PELIGROSO
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY	// PSR_MODEL
 	//double rateCatProb = rateCatProbArray[0];
 #else
 	double rateCatProb = rateCatProbArray[0];
 #endif
 
 	// Get conditional likelihood arrays for the root node
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY	// PSR_MODEL
 	if (use_pattern_specific_rates)
 		assert(rootCLA.getCLASize() == num_patterns*num_states);
 	else
@@ -587,7 +587,7 @@ double TreeLikelihood::harvestLnL(
 	else
 		{
 		// Compute lnLikelihood assuming rate heterogeneity
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY	// PSR_MODEL
 		if (use_pattern_specific_rates)
 			{
 			// Same as num_rates == 1 case, so should combine as soon as this is working
@@ -614,7 +614,7 @@ double TreeLikelihood::harvestLnL(
 			memset(siteLike, 0, num_patterns*sizeof(double));
 			for (unsigned r = 0; r < num_rates; ++r)
 				{
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY	// PSR_MODEL
 				double rateCatProb = rateCatProbArray[r];
 #else
 				rateCatProb = rateCatProbArray[r];
@@ -638,7 +638,7 @@ double TreeLikelihood::harvestLnL(
 				assert(siteLike[k] > 0.0);
 				lnLikelihood += counts[k]*log(siteLike[k]);
 				}
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY	// PSR_MODEL
 			}
 #endif
 		}

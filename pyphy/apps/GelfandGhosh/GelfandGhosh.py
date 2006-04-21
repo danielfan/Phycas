@@ -102,6 +102,7 @@ def runHKYg(rnseed):
     print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
 
     phycas.r.setSeed(rnseed)    
+    commonSetup()
 
     # Change to HKY+Gamma model
     phycas.model = Likelihood.HKYModel()
@@ -110,6 +111,7 @@ def runHKYg(rnseed):
     phycas.model.setKappaPrior(ProbDist.ExponentialDist(1.0))
     phycas.model.setBaseFreqParamPrior(ProbDist.ExponentialDist(1.0))
     phycas.model.setNGammaRates(4)
+    phycas.model.setPriorOnShapeInverse(phycas.use_inverse_shape)
     phycas.model.setShape(0.5)
     phycas.model.setDiscreteGammaShapePrior(ProbDist.ExponentialDist(1.0))
     phycas.model.setNotPinvarModel()
@@ -128,7 +130,7 @@ def runHKYg(rnseed):
     phycas.tree_file_name = 'analHKYg.nex.t'
     phycas.treeFileOpen()
 
-    commonSetup()
+    #commonSetup()
     phycas.run()
 
     hkyg_p = phycas.gg_Pm
@@ -143,6 +145,7 @@ def runHKYgi(rnseed):
     print '~~~~~~~~~~~~~~~~~~~~~~~~~~'
 
     phycas.r.setSeed(rnseed)    
+    commonSetup()
 
     # Change to HKY+G+I model
     phycas.model = Likelihood.HKYModel()
@@ -151,6 +154,7 @@ def runHKYgi(rnseed):
     phycas.model.setKappaPrior(ProbDist.ExponentialDist(1.0))
     phycas.model.setBaseFreqParamPrior(ProbDist.ExponentialDist(1.0))
     phycas.model.setNGammaRates(4)
+    phycas.model.setPriorOnShapeInverse(phycas.use_inverse_shape)
     phycas.model.setShape(0.5)
     phycas.model.setDiscreteGammaShapePrior(ProbDist.ExponentialDist(1.0))
     phycas.model.setPinvarModel()
@@ -171,7 +175,7 @@ def runHKYgi(rnseed):
     phycas.tree_file_name = 'analHKYgi.nex.t'
     phycas.treeFileOpen()
 
-    commonSetup()
+    #commonSetup()
     phycas.run()
 
     hkygi_p = phycas.gg_Pm
@@ -262,11 +266,11 @@ if __name__ == "__main__":
     phycas.likelihood.copyDataFromSimData(sim_data)
     phycas.nchar = num_sites # this should be set by copyDataFromSimData
 
-    #runJC(master_seed)
-    #runHKY(master_seed)
+    runJC(master_seed)
+    runHKY(master_seed)
     runHKYg(master_seed)
-    #runHKYgi(master_seed)
-    #runGTR(master_seed)
+    runHKYgi(master_seed)
+    runGTR(master_seed)
     
     # Output results
     outf = file('ggout.txt','w')

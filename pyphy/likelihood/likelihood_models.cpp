@@ -7,7 +7,7 @@
 using std::cout;
 using namespace phycas;
 
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY	// PSR_MODEL
 /*----------------------------------------------------------------------------------------------------------------------
 |	Normalizes the rates in `unnorm_pat_spec_rates' so that the mean rate across all sites is 1.0, and copies the 
 |	normalized values into the supplied vector.

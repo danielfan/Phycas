@@ -24,7 +24,7 @@ inline Model::Model(
 	gamma_shape_fixed(false),
 	gamma_shape(0.5)
 #if POLPY_NEWWAY
-	, is_psr_model(false)
+	, is_psr_model(false)	// PSR_MODEL
 	, invert_shape(true)
 #endif
 	{
@@ -421,7 +421,7 @@ inline void Model::freeStateFreqs()
 		}
 	}
 
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY	// PSR_MODEL
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the new value (`r') for the pattern-specific relative rate belonging to pattern `k'.
 */
@@ -763,7 +763,7 @@ inline void	Model::createParameters(
 		}
 
 	// Create any model-specific parameters and add to the parameters vector
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY	// PSR_MODEL
 	if (num_gamma_rates > 1)
 		{
 		if (is_psr_model)
@@ -809,7 +809,7 @@ inline void	Model::createParameters(
 
 	if (is_pinvar_model)
 		{
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY	// PSR_MODEL
 		assert(!is_psr_model);
 #endif
 		assert(!pinvar_param);

@@ -65,7 +65,7 @@ class TreeLikelihood
 		void							setNoData();
 		void							setHaveData();
 
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY	// PSR_MODEL
 		void							setUsePatternSpecificRates(bool ok);
 #endif
 
@@ -100,7 +100,7 @@ class TreeLikelihood
 		VecStateList					state_list;				/**< The global lookup table for decoding coded states */
 		VecStateListPos					state_list_pos;			/**< The vector of positions of states in `state_list' */
 
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY	// PSR_MODEL
 		bool							use_pattern_specific_rates;		/**< If true, each pattern has its own relative rate; if false, rate_means holds discrete gamma rate means (and possibly also a zero category if pinvar is being used) */
 #endif
 

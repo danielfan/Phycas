@@ -90,7 +90,7 @@ class DiscreteGammaShapeParam : public MCMCUpdater
 #endif
 	};
 
-#if POLPY_NEWWAY	// pattern-specific rates
+#if POLPY_NEWWAY	// PSR_MODEL
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Encapsulates a pattern-specific rate parameter.
