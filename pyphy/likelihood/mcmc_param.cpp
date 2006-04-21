@@ -133,33 +133,6 @@ double DiscreteGammaShapeParam::operator()(
 	return curr_ln_like + curr_ln_prior;
 	}
 
-#if POLPY_NEWWAY	// PSR_MODEL
-/*----------------------------------------------------------------------------------------------------------------------
-|	PatternSpecificRateParam is a functor whose operator() returns a value proportional to the full-conditional 
-|	posterior probability density for a particular value of a pattern-specific rate parameter. If the supplied pattern
-|	specific rate value `r' is out of bounds (i.e. <= 0.0), the return value is -DBL_MAX (closest we can come to a log 
-|	posterior equal to negative infinity).
-*/
-double PatternSpecificRateParam::operator()(
-  double r)	/**< is a new value for the pattern-specific rate parameter */
-	{
-	curr_ln_like = ln_zero;
-	curr_ln_prior = 0.0;
-
-	if (r > 0.0)
-		{
-		curr_value = r;
-		recalcPrior(); // base class function that recomputes curr_ln_prior for the value curr_value
-		model->setPatternSpecificRate(r, which_pattern);	// change the pattern-specific rate parameter in the model
-		curr_ln_like = likelihood->calcLnL(tree); //@POL only *need* to recalculate likelihood for one pattern, but currently the setPatternSpecificRate function renormalizes all the rates, which forces us to recalculate everything (any way we can avoid having to normalize while updating one of these parameters?)
-		ChainManagerShPtr p = chain_mgr.lock();
-		assert(p);
-		p->setLastLnLike(curr_ln_like);
-		}
-	return curr_ln_like + curr_ln_prior;
-	}
-#endif
-
 /*----------------------------------------------------------------------------------------------------------------------
 |	PinvarParam is a functor whose operator() returns a value proportional to the full-conditional posterior
 |	probability density for a particular value of the proportion of invariable sites parameter. If the supplied 

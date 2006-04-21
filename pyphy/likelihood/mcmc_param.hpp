@@ -90,31 +90,6 @@ class DiscreteGammaShapeParam : public MCMCUpdater
 #endif
 	};
 
-#if POLPY_NEWWAY	// PSR_MODEL
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Encapsulates a pattern-specific rate parameter.
-*/
-class PatternSpecificRateParam : public MCMCUpdater
-	{
-	public:
-
-						PatternSpecificRateParam(unsigned which);
-						virtual ~PatternSpecificRateParam()
-							{
-							//std::cerr << "PatternSpecificRateParam dying..." << std::endl;
-							}
-
-		virtual void	update();				// override virtual from MCMCUpdater base class
-		virtual double	operator()(double k);	// override pure virtual from AdHocDensity (base class of MCMCUpdater)
-
-	private:
-
-		unsigned		which_pattern;			/**< the pattern for which this parameter holds the relative rate */
-
-	};
-#endif
-
 /*----------------------------------------------------------------------------------------------------------------------
 |	Encapsulates the proportion of invariable sites parameter.
 */

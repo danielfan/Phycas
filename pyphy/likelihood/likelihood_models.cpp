@@ -7,48 +7,6 @@
 using std::cout;
 using namespace phycas;
 
-#if POLPY_NEWWAY	// PSR_MODEL
-/*----------------------------------------------------------------------------------------------------------------------
-|	Normalizes the rates in `unnorm_pat_spec_rates' so that the mean rate across all sites is 1.0, and copies the 
-|	normalized values into the supplied vector.
-*/
-void Model::normalizePatternSpecificRates(
-  std::vector<double> & rates,  /**< is the vector that should receive the normalized rates */
-  CountVectorType & counts)		/**< is the vector of pattern counts needed to normalize the rates to have mean 1.0 */
-	{
-	assert(unnorm_pat_spec_rates.size() == rates.size());
-	assert(unnorm_pat_spec_rates.size() == counts.size());
-	//@POL when there is time, convert this to use algorithms instead of loops
-	CountVectorType::iterator cit = counts.begin();
-	std::vector<double>::iterator rit = unnorm_pat_spec_rates.begin();
-	double numerator = 0.0;
-	double denominator = 0.0;
-	for (; cit != counts.end(); ++cit, ++rit)
-		{
-		double count = (double)(*cit);
-		double rate = *rit;
-		numerator += (count*rate);
-		denominator += count;
-		}
-	assert(numerator > 0.0);
-	assert(denominator > 0.0);
-	double norm_factor = numerator/denominator;
-	//std::cerr << "norm_factor = " << norm_factor << std::endl;
-	std::vector<double>::iterator it = rates.begin();
-	rit = unnorm_pat_spec_rates.begin();
-	for (; it != rates.end(); ++it, ++rit)
-		{
-		*it = (*rit)/norm_factor;
-		}
-	//std::transform(unnorm_pat_spec_rates.begin(), unnorm_pat_spec_rates.end(), rates.begin(), boost::lambda::_1/norm_factor);
-
-	// former (wrong) code is below
-	//double sum = std::accumulate(unnorm_pat_spec_rates.begin(), unnorm_pat_spec_rates.end(), 0.0);
-	//assert(sum > 0.0);
-	//std::transform(unnorm_pat_spec_rates.begin(), unnorm_pat_spec_rates.end(), rates.begin(), boost::lambda::_1/sum);
-	}
-#endif
-
 /*----------------------------------------------------------------------------------------------------------------------
 |	
 */

@@ -125,27 +125,8 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 	std::partial_sum(freqs.begin(), freqs.end(), cum_freqs.begin());
 
 	// Create a vector of cumulative rate probabilities to use in choosing relative rates
-#if POLPY_NEWWAY	// PSR_MODEL
-	// If using pattern-specific rates, the probability of choosing a rate is proportional to
-	// the frequency of that rate's pattern: e.g. rates corresponding to constant patterns
-	// will be chosen much more frequently than rates corresponding to rare variable patterns,
-	// which is as it should be
-	std::vector<double> cum_rate_probs(num_rates, 0.0);
-	if (use_pattern_specific_rates)
-		{
-		std::partial_sum(pattern_counts.begin(), pattern_counts.end(), cum_rate_probs.begin());
-
-		// Now normalize by dividing by the total number of sites
-		double total = cum_rate_probs.at(cum_rate_probs.size() - 1);
-		assert(total > 0.0);
-		std::for_each(cum_rate_probs.begin(), cum_rate_probs.end(), boost::lambda::_1 *= (1.0/total));
-		}
-	else
-		std::partial_sum(rate_probs.begin(), rate_probs.end(), cum_rate_probs.begin());
-#else
 	std::vector<double> cum_rate_probs(num_rates, 0.0);
 	std::partial_sum(rate_probs.begin(), rate_probs.end(), cum_rate_probs.begin());
-#endif
 
 	sim_data->resetPatternLength(t->GetNTips());
 	sim_data->wipePattern();
@@ -366,13 +347,6 @@ double TreeLikelihood::calcLnL(
 		++nevals;
 		return 0.0;
 		}
-
-#if POLPY_NEWWAY	// PSR_MODEL
-	if (use_pattern_specific_rates)
-		{
-		model->normalizePatternSpecificRates(rate_means, pattern_counts);
-		}
-#endif
 
 	TreeNode * rootNd = t->GetFirstPreorder();
 	TreeNode * firstNd = rootNd->GetLeftChild();
@@ -610,9 +584,6 @@ InternalData * TreeLikelihood::allocateInternalData()
 							num_rates,					// number of relative rate categories
 							num_states,					// number of model states
 							NULL,						// pMat
-#if POLPY_NEWWAY	// PSR_MODEL
-							use_pattern_specific_rates,	// if true, cla will have only num_patterns*num_states elements rather than num_rates*num_patterns*num_states elements
-#endif
 							true);						// managePMatrices
 	}
 

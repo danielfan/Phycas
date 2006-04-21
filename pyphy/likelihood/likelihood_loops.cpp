@@ -173,37 +173,18 @@ void TreeLikelihood::calcCLATwoTips(
 	const int8_t * rightStateCodes = rightTip.getConstStateCodes();
 	double * cla = internalData.getCLA(); //PELIGROSO
 
-#if POLPY_NEWWAY	// PSR_MODEL
-	if (use_pattern_specific_rates)
+	for (unsigned r = 0; r < num_rates; ++r)
 		{
+		const double * const * leftPMatT = leftPMatricesTrans[r];
+		const double * const * const rightPMatT = rightPMatricesTrans[r];
 		for (unsigned p = 0; p < num_patterns; ++p, cla += num_states)
 			{
-			const double * const * leftPMatT = leftPMatricesTrans[p];
-			const double * const * const rightPMatT = rightPMatricesTrans[p];
 			const double * leftPMatTRow = leftPMatT[leftStateCodes[p]];
 			const double * rightPMatTRow = rightPMatT[rightStateCodes[p]];
 			for (unsigned s = 0; s < num_states; ++s)
 				cla[s] = leftPMatTRow[s]*rightPMatTRow[s];
 			}
 		}
-	else
-		{
-#endif
-		for (unsigned r = 0; r < num_rates; ++r)
-			{
-			const double * const * leftPMatT = leftPMatricesTrans[r];
-			const double * const * const rightPMatT = rightPMatricesTrans[r];
-			for (unsigned p = 0; p < num_patterns; ++p, cla += num_states)
-				{
-				const double * leftPMatTRow = leftPMatT[leftStateCodes[p]];
-				const double * rightPMatTRow = rightPMatT[rightStateCodes[p]];
-				for (unsigned s = 0; s < num_states; ++s)
-					cla[s] = leftPMatTRow[s]*rightPMatTRow[s];
-				}
-			}
-#if POLPY_NEWWAY	// PSR_MODEL
-		}
-#endif
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
@@ -236,13 +217,12 @@ void TreeLikelihood::calcCLAOneTip(
 	// | A | C | G | T | A | C | G | T | A | C | G | T | A | C | G | T | A | C | G | T |
 	// +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
 	//
-#if POLPY_NEWWAY	// PSR_MODEL
-	if (use_pattern_specific_rates)
+	for (unsigned r = 0; r < num_rates; ++r)
 		{
+		const double * const * const leftPMatrixT = leftPMatricesTrans[r];
+		const double * const * rightPMatrix = rightPMatrices[r];
 		for (unsigned pat = 0; pat < num_patterns; ++pat, rightCLA += num_states)
 			{
-			const double * const * const leftPMatrixT = leftPMatricesTrans[pat];
-			const double * const * rightPMatrix = rightPMatrices[pat];
 			const double * leftPMatT_pat = leftPMatrixT[leftStateCodes[pat]];
 			for (unsigned i = 0; i < num_states; ++i)
 				{
@@ -254,29 +234,6 @@ void TreeLikelihood::calcCLAOneTip(
 				}
 			}
 		}
-	else
-		{
-#endif
-		for (unsigned r = 0; r < num_rates; ++r)
-			{
-			const double * const * const leftPMatrixT = leftPMatricesTrans[r];
-			const double * const * rightPMatrix = rightPMatrices[r];
-			for (unsigned pat = 0; pat < num_patterns; ++pat, rightCLA += num_states)
-				{
-				const double * leftPMatT_pat = leftPMatrixT[leftStateCodes[pat]];
-				for (unsigned i = 0; i < num_states; ++i)
-					{
-					double right_side = 0.0;
-					const double * rightP_i = rightPMatrix[i];
-					for (unsigned j = 0; j < num_states; ++j)
-						right_side += rightP_i[j]*rightCLA[j];
-					*cla++ = (leftPMatT_pat[i]*right_side);
-					}
-				}
-			}
-#if POLPY_NEWWAY	// PSR_MODEL
-		}
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -314,13 +271,12 @@ void TreeLikelihood::calcCLANoTips(
 	// | A | C | G | T | A | C | G | T |      ...      | A | C | G | T | ...
 	// +---+---+---+---+---+---+---+---+---------------+---+---+---+---+
 	//
-#if POLPY_NEWWAY	// PSR_MODEL
-	if (use_pattern_specific_rates)
+	for (unsigned r = 0; r < num_rates; ++r)
 		{
+		const double * const * leftPMatrix  = leftPMatrices[r];
+		const double * const * rightPMatrix = rightPMatrices[r];
 		for (unsigned pat = 0; pat < num_patterns; ++pat, leftCLA += num_states, rightCLA += num_states)
 			{
-			const double * const * leftPMatrix  = leftPMatrices[pat];
-			const double * const * rightPMatrix = rightPMatrices[pat];
 			for (unsigned i = 0; i < num_states; ++i)
 				{
 				double left_side  = 0.0;
@@ -336,33 +292,6 @@ void TreeLikelihood::calcCLANoTips(
 				}
 			}
 		}
-	else
-		{
-#endif
-		for (unsigned r = 0; r < num_rates; ++r)
-			{
-			const double * const * leftPMatrix  = leftPMatrices[r];
-			const double * const * rightPMatrix = rightPMatrices[r];
-			for (unsigned pat = 0; pat < num_patterns; ++pat, leftCLA += num_states, rightCLA += num_states)
-				{
-				for (unsigned i = 0; i < num_states; ++i)
-					{
-					double left_side  = 0.0;
-					double right_side = 0.0;
-					const double * leftP_i  = leftPMatrix[i];
-					const double * rightP_i = rightPMatrix[i];
-					for (unsigned j = 0; j < num_states; ++j)
-						{
-						left_side  += (leftP_i[j]*leftCLA[j]);
-						right_side += (rightP_i[j]*rightCLA[j]);
-						}
-					*cla++ = (left_side*right_side);
-					}
-				}
-			}
-#if POLPY_NEWWAY	// PSR_MODEL
-		}
-#endif
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
@@ -387,33 +316,16 @@ void TreeLikelihood::conditionOnAdditionalTip(
 	// | A | C | G | T | A | C | G | T | A | C | G | T | A | C | G | T | A | C | G | T |
 	// +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
 	//
-#if POLPY_NEWWAY	// PSR_MODEL
-	if (use_pattern_specific_rates)
+	for (unsigned r = 0; r < num_rates; ++r)
 		{
+		const double * const * const tipPMatrixT = tipPMatricesTrans[r];
 		for (unsigned pat = 0; pat < num_patterns; ++pat)
 			{
-			const double * const * const tipPMatrixT = tipPMatricesTrans[pat];
 			const double * tipPMatT_pat = tipPMatrixT[tipStateCodes[pat]];
 			for (unsigned i = 0; i < num_states; ++i)
 				*cla++ *= tipPMatT_pat[i];
 			}
 		}
-	else
-		{
-#endif
-		for (unsigned r = 0; r < num_rates; ++r)
-			{
-			const double * const * const tipPMatrixT = tipPMatricesTrans[r];
-			for (unsigned pat = 0; pat < num_patterns; ++pat)
-				{
-				const double * tipPMatT_pat = tipPMatrixT[tipStateCodes[pat]];
-				for (unsigned i = 0; i < num_states; ++i)
-					*cla++ *= tipPMatT_pat[i];
-				}
-			}
-#if POLPY_NEWWAY	// PSR_MODEL
-		}
-#endif
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
@@ -440,12 +352,11 @@ void TreeLikelihood::conditionOnAdditionalInternal(
 	// | A | C | G | T | A | C | G | T | A | C | G | T | A | C | G | T | A | C | G | T |
 	// +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
 	//
-#if POLPY_NEWWAY	// PSR_MODEL
-	if (use_pattern_specific_rates)
+	for (unsigned r = 0; r < num_rates; ++r)
 		{
+		const double * const * childPMatrix = childPMatrices[r];
 		for (unsigned pat = 0; pat < num_patterns; ++pat, childCLA += num_states)
 			{
-			const double * const * childPMatrix = childPMatrices[pat];
 			for (unsigned i = 0; i < num_states; ++i)
 				{
 				double childLike = 0.0;
@@ -456,27 +367,6 @@ void TreeLikelihood::conditionOnAdditionalInternal(
 				}
 			}
 		}
-	else
-		{
-#endif
-		for (unsigned r = 0; r < num_rates; ++r)
-			{
-			const double * const * childPMatrix = childPMatrices[r];
-			for (unsigned pat = 0; pat < num_patterns; ++pat, childCLA += num_states)
-				{
-				for (unsigned i = 0; i < num_states; ++i)
-					{
-					double childLike = 0.0;
-					const double * childP_i = childPMatrix[i];
-					for (unsigned j = 0; j < num_states; ++j)
-						childLike += childP_i[j]*childCLA[j];
-					*cla++ *= childLike;
-					}
-				}
-			}
-#if POLPY_NEWWAY	// PSR_MODEL
-		}
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -501,28 +391,6 @@ double TreeLikelihood::harvestLnL(
 	//@POL why have likelihood_rate_site? I think it is only used in this function. Try replacing it 
 	// everywhere with a simple double value and see if it makes a difference
 	unsigned sz = likelihood_rate_site.size();
-#if POLPY_NEWWAY	// PSR_MODEL
-	if (use_pattern_specific_rates)
-		{
-		if (sz != num_patterns || num_rates != num_patterns)
-			{
-			std::cerr << "sz           = " << sz << std::endl;
-			std::cerr << "num_rates    = " << num_rates << std::endl;
-			std::cerr << "num_patterns = " << num_patterns << std::endl;
-			}
-		assert(likelihood_rate_site.size() == num_patterns);
-		}
-	else
-		{
-		if (sz != num_rates*num_patterns)
-			{
-			std::cerr << "sz           = " << sz << std::endl;
-			std::cerr << "num_rates    = " << num_rates << std::endl;
-			std::cerr << "num_patterns = " << num_patterns << std::endl;
-			}
-		assert(likelihood_rate_site.size() == num_rates*num_patterns);
-		}
-#else
 	if (sz != num_rates*num_patterns)
 		{
 		std::cerr << "sz           = " << sz << std::endl;
@@ -530,7 +398,6 @@ double TreeLikelihood::harvestLnL(
 		std::cerr << "num_patterns = " << num_patterns << std::endl;
 		}
 	assert(likelihood_rate_site.size() == num_rates*num_patterns);
-#endif
 	double * like_rate_site = (double *)(&likelihood_rate_site[0]); //PELIGROSO
 
 	// Get pointer to start of array where site likelihoods will be stored
@@ -544,21 +411,10 @@ double TreeLikelihood::harvestLnL(
 	// Get state frequencies from model and alias rate category probability array for speed
 	const double * stateFreq = &model->getStateFreqs()[0]; //PELIGROSO
 	const double * rateCatProbArray = &rate_probs[0]; //PELIGROSO
-#if POLPY_NEWWAY	// PSR_MODEL
-	//double rateCatProb = rateCatProbArray[0];
-#else
 	double rateCatProb = rateCatProbArray[0];
-#endif
 
 	// Get conditional likelihood arrays for the root node
-#if POLPY_NEWWAY	// PSR_MODEL
-	if (use_pattern_specific_rates)
-		assert(rootCLA.getCLASize() == num_patterns*num_states);
-	else
-		assert(rootCLA.getCLASize() == num_rates*num_patterns*num_states);
-#else
 	assert(rootCLA.getCLASize() == num_rates*num_patterns*num_states);
-#endif
 	const double * cla = rootCLA.getConstCLA();
 
 	double lnLikelihood = 0.0;
@@ -587,60 +443,30 @@ double TreeLikelihood::harvestLnL(
 	else
 		{
 		// Compute lnLikelihood assuming rate heterogeneity
-#if POLPY_NEWWAY	// PSR_MODEL
-		if (use_pattern_specific_rates)
+		// Compute array of site likelihoods
+		memset(siteLike, 0, num_patterns*sizeof(double));
+		for (unsigned r = 0; r < num_rates; ++r)
 			{
-			// Same as num_rates == 1 case, so should combine as soon as this is working
-			double site_likelihood;
-			for (unsigned p = 0; p < num_patterns; ++p)
+			rateCatProb = rateCatProbArray[r];
+		
+			for (unsigned p = 0; p < num_patterns; ++p, cla += num_states, ++like_rate_site)
 				{
-				site_likelihood = 0.0;
-				const double * sf = stateFreq;
+				*like_rate_site = 0.0;
 				for (unsigned j = 0; j < num_states; ++j)
 					{
-					double state_freq = *sf++;
-					double cond_like  = *cla++;
-					site_likelihood += (state_freq*cond_like);
+					*like_rate_site += stateFreq[j]*cla[j];
 					}
-				double count = (double)(*counts++);
-				siteLike[p] = site_likelihood;
-				lnLikelihood += count*log(site_likelihood);
+				siteLike[p] += rateCatProb*(*like_rate_site);
 				}
 			}
-		else
-			{
-#endif
-			// Compute array of site likelihoods
-			memset(siteLike, 0, num_patterns*sizeof(double));
-			for (unsigned r = 0; r < num_rates; ++r)
-				{
-#if POLPY_NEWWAY	// PSR_MODEL
-				double rateCatProb = rateCatProbArray[r];
-#else
-				rateCatProb = rateCatProbArray[r];
-#endif
-			
-				for (unsigned p = 0; p < num_patterns; ++p, cla += num_states, ++like_rate_site)
-					{
-					*like_rate_site = 0.0;
-					for (unsigned j = 0; j < num_states; ++j)
-						{
-						*like_rate_site += stateFreq[j]*cla[j];
-						}
-					siteLike[p] += rateCatProb*(*like_rate_site);
-					}
-				}
 
-			// Compute log-likelihood
-			//@POL note that an additional loop is needed because rates are not nested within patterns in the cla
-			for (unsigned k = 0; k < num_patterns; ++k)
-				{
-				assert(siteLike[k] > 0.0);
-				lnLikelihood += counts[k]*log(siteLike[k]);
-				}
-#if POLPY_NEWWAY	// PSR_MODEL
+		// Compute log-likelihood
+		//@POL note that an additional loop is needed because rates are not nested within patterns in the cla
+		for (unsigned k = 0; k < num_patterns; ++k)
+			{
+			assert(siteLike[k] > 0.0);
+			lnLikelihood += counts[k]*log(siteLike[k]);
 			}
-#endif
 		}
 
 	return lnLikelihood;

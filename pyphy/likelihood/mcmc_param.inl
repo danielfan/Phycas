@@ -98,33 +98,6 @@ inline void DiscreteGammaShapeParam::update()
 	slice_sampler->Sample();
 	}
 
-#if POLPY_NEWWAY	// PSR_MODEL
-/*----------------------------------------------------------------------------------------------------------------------
-|	Constructor calls the base class (MCMCUpdater) constructor. Also sets the `curr_value' data member to 0.5.
-*/
-inline PatternSpecificRateParam::PatternSpecificRateParam(unsigned which)
-  : which_pattern(which), MCMCUpdater()
-	{
-	curr_value = 1.0;
-	has_slice_sampler = true;
-	is_move = false;
-	is_master_param = false;
-	is_hyper_param = false;
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Calls the sample() member function of the `slice_sampler' data member.
-*/
-inline void PatternSpecificRateParam::update()
-	{
-	if (is_fixed)
-		{
-		return;
-		}
-	slice_sampler->Sample();
-	}
-#endif
-
 /*----------------------------------------------------------------------------------------------------------------------
 |	Constructor calls the base class (MCMCUpdater) constructor. Also sets the `curr_value' data member to 0.5.
 */

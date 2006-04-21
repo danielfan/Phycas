@@ -14,9 +14,6 @@ namespace phycas
 inline TreeLikelihood::TreeLikelihood(
   ModelShPtr mod)		/**< is the substitution model */
   :
-#if POLPY_NEWWAY	// PSR_MODEL
-  use_pattern_specific_rates(false),
-#endif
   no_data(false),
   nTaxa(0),
   num_patterns(0),
@@ -65,18 +62,6 @@ inline void TreeLikelihood::replaceModel(
 	recalcRelativeRates();
 	}
 
-#if POLPY_NEWWAY	// PSR_MODEL
-/*----------------------------------------------------------------------------------------------------------------------
-|	Sets data member `use_pattern_specific_rates' to supplied bool value `ok'. If `ok' is true, pattern specific rates
-|	will be used; if `ok' is false, discrete gamma among-site rate heterogeneity model will be used.
-*/
-inline void TreeLikelihood::setUsePatternSpecificRates(bool ok)
-	{
-	use_pattern_specific_rates = ok;
-	recalcRelativeRates();
-	}
-#endif
-
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the values of the `num_states' and `num_rates' data members according to the model, then calls the 
 |	recalcRatesAndProbs function of the model to force recalculation of the `rate_means' and `rate_probs' vectors. 
@@ -87,26 +72,9 @@ inline void TreeLikelihood::setUsePatternSpecificRates(bool ok)
 inline void TreeLikelihood::recalcRelativeRates()
 	{
 	num_states = model->getNStates();
-#if POLPY_NEWWAY	// PSR_MODEL
-	if (use_pattern_specific_rates)
-		{
-		assert(num_patterns > 0);	//@POL need to check this before we get to this point in order to tell user that pattern specific rates cannot be employed unless there are stored patterns
-		rate_means.resize(num_patterns, 1.0); // note: only newly added elements will be set to 1.0, but that is ok since this entire vector is refreshed at the beginning of calcLnL anyway
-		num_rates = num_patterns;
-		rate_probs.clear();
-		likelihood_rate_site.resize(num_patterns, 0.0);
-		}
-	else
-		{
-		num_rates = model->getNRatesTotal();
-		model->recalcRatesAndProbs(rate_means, rate_probs);
-		likelihood_rate_site.resize(num_rates*num_patterns, 0.0);
-		}
-#else
 	num_rates = model->getNRatesTotal();
 	model->recalcRatesAndProbs(rate_means, rate_probs);
 	likelihood_rate_site.resize(num_rates*num_patterns, 0.0);
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

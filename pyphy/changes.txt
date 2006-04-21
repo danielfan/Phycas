@@ -108,7 +108,7 @@ o Note: one correction should be made if this version is checked out, otherwise 
         if self.num_rates > 1:
             self.model.setShape(0.5)
             self.model.setDiscreteGammaShapePrior(self.gamma_shape_prior)
-o rel_0_7_1 (21-Apr-2006)
+o rel_0_7_1 (21-Apr-2006, SVN revision 16)
   This release adds some heterogeneous functionality, but is mostly the fruits of the 
   desperate hacking that went on just before my (POL) talks in Duke Biology and Duke
   Stats April 6 and 14 (respectively), 2006. Some of this (e.g. pattern-specific rates
