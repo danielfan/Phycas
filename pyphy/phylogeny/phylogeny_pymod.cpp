@@ -55,9 +55,7 @@ BOOST_PYTHON_MODULE(_Phylogeny)
 		.def("clear", &Tree::Clear)
 		.def("buildFromString", &Tree::BuildFromString)
 		.def("edgeLenSum", &Tree::EdgeLenSum)
-#if POLPY_NEWWAY
 		.def("setAllEdgeLens", &Tree::SetAllEdgeLens)
-#endif
 		.def("debugWalkTree", &Tree::DebugWalkTree)
 		.def("rerootAtTip", &Tree::RerootAtTip)
 		.def("makeNewick", &Tree::MakeNewick)

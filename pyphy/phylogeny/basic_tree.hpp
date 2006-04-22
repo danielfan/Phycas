@@ -65,11 +65,7 @@ class Tree
 		void					RectifyNumbers(std::vector<std::string> name_vector); // throws XPhylogeny
 		void					RectifyNames(std::vector<std::string> name_vector); // throws XPhylogeny
 		double					EdgeLenSum();
-
-#if POLPY_NEWWAY
 		void					SetAllEdgeLens(double v);
-#endif
-
 		void					RerootAt(TreeNode *nd);
 		void					RerootAtTip(unsigned num);
 		void					RefreshPreorder(TreeNode *nd = NULL);

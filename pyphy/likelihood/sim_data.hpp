@@ -23,12 +23,10 @@ class SimData
 
 
 		void						clear();
-#if POLPY_NEWWAY
 		void						zeroCounts();
 		void						appendCountsToFile(std::string fn, bool binary);
 		std::string					createMapleTuples(unsigned row, unsigned cutoff);
 		std::vector<std::string>	getPatterns(std::vector<std::string> symbols);
-#endif
 		void						resetPatternLength(unsigned ntaxa);
 		void						wipePattern();
 		void						setState(unsigned pos, int8_t state);

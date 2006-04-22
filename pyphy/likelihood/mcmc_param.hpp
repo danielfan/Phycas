@@ -83,11 +83,9 @@ class DiscreteGammaShapeParam : public MCMCUpdater
 		virtual void	update();				// override virtual from MCMCUpdater base class
 		virtual double	operator()(double k);	// override pure virtual from AdHocDensity (base class of MCMCUpdater)
 
-#if POLPY_NEWWAY
 	private:
 
 		bool			invert_shape;	/**< If true, inverse of shape parameter (rather than the shape parameter itself) is managed by this updater */
-#endif
 	};
 
 /*----------------------------------------------------------------------------------------------------------------------

@@ -114,7 +114,6 @@ inline void Tree::DebugHere(
 	std::cerr << "~~~~~~~ " << s << " ~~~~~~~" << std::endl;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Assigns all edge lengths in the tree to the supplied value `v'.
 */
@@ -122,7 +121,6 @@ inline void Tree::SetAllEdgeLens(double v)
 	{
 	std::for_each(begin(), end(), boost::lambda::bind(&TreeNode::SetEdgeLen, boost::lambda::_1, v));
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns Tree object to just-constructed state. If preorder pointers are valid, walks tree in postorder fashion 

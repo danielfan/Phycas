@@ -83,11 +83,7 @@ class Model	{
 		void							freeShape();
 		double							getShape();
 		void							setShape(double alpha);
-
-#if POLPY_NEWWAY
 		void							setPriorOnShapeInverse(bool invert);
-#endif
-
 		void							setDiscreteGammaShapePrior(ProbDistShPtr d);
 		ProbDistShPtr					getDiscreteGammaShapePrior();
 
@@ -130,11 +126,7 @@ protected:
 	mutable MCMCUpdaterShPtr		gamma_shape_param;			/**< Shared pointer to the gamma shape parameter (need to retain a pointer so that the fixed/free status can be changed) */
 	ProbDistShPtr					gamma_shape_prior;			/**< The prior distribution governing the discrete gamma shape parameter */
 	double							gamma_shape;				/**< Used for discrete gamma rate heterogeneity */
-
-#if POLPY_NEWWAY
 	bool							invert_shape;				/**< If true, gamma_shape_param will hold inverse of shape rather than shape itself */
-#endif
-	
 	CDF								cdf;						/**< Provides cumulative gamma distribution function */
 
 };

@@ -179,9 +179,7 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("setPinvar", &phycas::Model::setPinvar)
 		.def("getShape", &phycas::Model::getShape)
 		.def("setShape", &phycas::Model::setShape)
-#if POLPY_NEWWAY
 		.def("setPriorOnShapeInverse", &phycas::Model::setPriorOnShapeInverse)
-#endif
 		.def("getNGammaRates", &phycas::Model::getNGammaRates)
 		.def("setNGammaRates", &phycas::Model::setNGammaRates)
 		.def("getGammaRateProbs", &phycas::Model::getGammaRateProbs, return_value_policy<copy_const_reference>())
@@ -238,12 +236,10 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		;
 	class_<phycas::SimData, boost::noncopyable, boost::shared_ptr<phycas::SimData> >("SimDataBase")
 		.def("clear", &phycas::SimData::clear)
-#if POLPY_NEWWAY
 		.def("zeroCounts", &phycas::SimData::zeroCounts)
 		.def("createMapleTuples", &phycas::SimData::createMapleTuples)
 		.def("appendCountsToFile", &phycas::SimData::appendCountsToFile)
 		.def("getPatterns", &phycas::SimData::getPatterns)
-#endif
 		.def("getNUniquePatterns", &phycas::SimData::getNUniquePatterns)
 		.def("resetPatternLength", &phycas::SimData::resetPatternLength)
 		.def("wipePattern", &phycas::SimData::wipePattern)
@@ -273,9 +269,7 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("getRateMeans", &TreeLikelihood::getRateMeans, return_value_policy<copy_const_reference>())
 		.def("setNoData", &TreeLikelihood::setNoData)
 		.def("setHaveData", &TreeLikelihood::setHaveData)
-#if POLPY_NEWWAY
 		.def("getNPatterns", &TreeLikelihood::getNPatterns)
-#endif
 		;
 	class_<TipData, boost::noncopyable>("TipData", no_init)
 		;

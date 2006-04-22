@@ -243,7 +243,6 @@ inline void Model::setShape(
 	gamma_shape = alpha;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Modifier function that sets the data member `invert_shape' to the supplied value `invert'. If true is specified for
 |	`invert', then `gamma_shape_param' will manage the inverse of the gamma shape rather than the shape itself.
@@ -253,7 +252,6 @@ inline void Model::setPriorOnShapeInverse(
 	{
 	invert_shape = invert;
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the data member `gamma_shape_fixed' to true. The fixParameter member function of the DiscreteGammaParam object

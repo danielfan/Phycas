@@ -71,13 +71,8 @@ inline void GTRRateParam::update()
 |	Constructor calls the base class (MCMCUpdater) constructor. Also sets the `curr_value' data member to 0.5 (or 2.0
 |	if `invert' is true. Sets `invert_shape' to the value of `invert'.
 */
-#if POLPY_NEWWAY
 inline DiscreteGammaShapeParam::DiscreteGammaShapeParam(bool invert)
   : MCMCUpdater(), invert_shape(invert)
-#else
-inline DiscreteGammaShapeParam::DiscreteGammaShapeParam()
-  : MCMCUpdater()
-#endif
 	{
 	curr_value = (invert_shape ? 2.0 : 0.5);
 	has_slice_sampler = true;

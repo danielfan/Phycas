@@ -59,7 +59,6 @@ inline void SimData::wipePattern()
 	tmp_pattern.assign((VecStateList::size_type)pattern_length, SimData::missing_state); 
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets all counts in `sim_pattern_map' to zero.
 */
@@ -168,8 +167,6 @@ inline std::string SimData::createMapleTuples(unsigned row, unsigned cutoff)
 	s += "]";
 	return s;
 	}
-
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets `tmp_pattern'[`pos'] to the supplied `state'.

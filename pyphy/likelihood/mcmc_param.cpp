@@ -116,14 +116,10 @@ double DiscreteGammaShapeParam::operator()(
 		{
 		curr_value = a;
 		recalcPrior(); // base class function that recomputes curr_ln_prior for the value curr_value
-#if POLPY_NEWWAY
 		if (invert_shape)
 			model->setShape(1.0/a);	// change the gamma shape parameter in the model
 		else
 			model->setShape(a);	// change the gamma shape parameter in the model
-#else
-		model->setShape(a);	// change the gamma shape parameter in the model
-#endif
 		likelihood->recalcRelativeRates();	// must do this whenever model's shape parameter changes
 		curr_ln_like = likelihood->calcLnL(tree);
 		ChainManagerShPtr p = chain_mgr.lock();

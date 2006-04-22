@@ -581,13 +581,9 @@ inline void SliceSampler::SetSliceUnitWidth(double uwidth)
 */
 inline void SliceSampler::SetMaxUnits(unsigned umax)
 	{
-#if POLPY_NEWWAY
 	maxUnits = umax;
 	if (maxUnits == 0)
 		maxUnits = UINT_MAX;
-#else
-	maxUnits = umax;
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
