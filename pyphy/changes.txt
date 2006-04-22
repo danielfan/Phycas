@@ -109,6 +109,8 @@ o Note: one correction should be made if this version is checked out, otherwise 
             self.model.setShape(0.5)
             self.model.setDiscreteGammaShapePrior(self.gamma_shape_prior)
 o rel_0_7_1 (21-Apr-2006, SVN revision 16)
+  Note: this release was not tagged. Now that the project is under SVN control, the SVN revision
+  number can serve as the release tag.
   This release adds some heterogeneous functionality, but is mostly the fruits of the 
   desperate hacking that went on just before my (POL) talks in Duke Biology and Duke
   Stats April 6 and 14 (respectively), 2006. Some of this (e.g. pattern-specific rates
@@ -129,6 +131,10 @@ o rel_0_7_1 (21-Apr-2006, SVN revision 16)
 	  SimData::getPatterns to help in visualizing patterns in small (4-taxon) posterior
 	  predictive simulated data sets (not sure how long these functions will be around, 
 	  especially createMapleTuples)
+o rel_0_7_2 (22-Apr-2006, SVN revision 19) 
+	- removed remaining POLPY_NEWWAY wrappers, which were flagging changes that allowed
+	  (1) the maximum number of slice sampling units in a slice to be set by the user, and
+	  (2) a prior to be set on the inverse of the gamma shape parameter
 
 Release 0.8.0
 -------------
