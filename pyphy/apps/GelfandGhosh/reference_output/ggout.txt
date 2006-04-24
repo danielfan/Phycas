@@ -12,46 +12,59 @@ Simulation conditions:
 
 Gelfand-Ghosh calculation for HKY analysis:
        k           Pm           Gm           Dm
-     0.5    169.03976     99.14549    268.18524
-     1.0    169.03976    149.57176    318.61151
-     2.0    169.03976    207.88856    376.92832
+     0.5    169.30483     98.31640    267.62122
+     1.0    169.30483    148.10296    317.40778
+     2.0    169.30483    205.41909    374.72392
 
 Gelfand-Ghosh calculation for HKY+G analysis:
        k           Pm           Gm           Dm
-     0.5    224.25867     80.44926    304.70793
-     1.0    224.25867    126.76408    351.02274
-     2.0    224.25867    184.21069    408.46935
+     0.5    228.25786     78.27029    306.52815
+     1.0    228.25786    123.59992    351.85778
+     2.0    228.25786    179.87615    408.13401
+
+Gelfand-Ghosh calculation for HKY+FLEX analysis:
+       k           Pm           Gm           Dm
+     0.5    230.02876     79.50583    309.53458
+     1.0    230.02876    125.52322    355.55198
+     2.0    230.02876    182.65456    412.68332
 
 Penalty rankings (best listed first):
-         HKY    169.03976
-        HKYg    224.25867
+         HKY    169.30483
+        HKYg    228.25786
+     HKYFLEX    230.02876
 
 For k = 0.5:
 
   Goodness-of-fit rankings (best listed first):
-        HKYg     80.44926
-         HKY     99.14549
+        HKYg     78.27029
+     HKYFLEX     79.50583
+         HKY     98.31640
 
   Overall rankings (best listed first):
-         HKY    268.18524
-        HKYg    304.70793
+         HKY    267.62122
+        HKYg    306.52815
+     HKYFLEX    309.53458
 
 For k = 1.0:
 
   Goodness-of-fit rankings (best listed first):
-        HKYg    126.76408
-         HKY    149.57176
+        HKYg    123.59992
+     HKYFLEX    125.52322
+         HKY    148.10296
 
   Overall rankings (best listed first):
-         HKY    318.61151
-        HKYg    351.02274
+         HKY    317.40778
+        HKYg    351.85778
+     HKYFLEX    355.55198
 
 For k = 2.0:
 
   Goodness-of-fit rankings (best listed first):
-        HKYg    184.21069
-         HKY    207.88856
+        HKYg    179.87615
+     HKYFLEX    182.65456
+         HKY    205.41909
 
   Overall rankings (best listed first):
-         HKY    376.92832
-        HKYg    408.46935
+         HKY    374.72392
+        HKYg    408.13401
+     HKYFLEX    412.68332

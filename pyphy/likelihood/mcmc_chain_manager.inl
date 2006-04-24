@@ -206,7 +206,7 @@ inline void MCMCChainManager::finalize()
 	std::for_each(params_begin, params_end, 
 		boost::lambda::bind(&MCMCUpdater::recalcPrior, *boost::lambda::_1));
 
-	//POL Wondering why we need all these vectors? It is convenient to have one vector of updaters, but not all of 
+	//@POL Wondering why we need all these vectors? It is convenient to have one vector of updaters, but not all of 
 	// these updaters are necessarily created in MCMCChainManager::addMCMCUpdaters. When finalize() is called, we 
 	// can be sure that all the updaters that are going to be defined have been defined, and at that point we can 
 	// quickly build the vector all_updaters. In the future, if it turns out we never need moves, model_params, or

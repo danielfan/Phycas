@@ -136,50 +136,55 @@ o rel_0_7_2 (22-Apr-2006, SVN revision 19)
 	  (1) the maximum number of slice sampling units in a slice to be set by the user, and
 	  (2) a prior to be set on the inverse of the gamma shape parameter
 
-Release 0.8.0
--------------
-o allow data partitioning
+Release 0.8.0 (24-Apr-2006, SVN revision 20)
+--------------------------------------------
+o implement the FLEX model (rates and probabilities independent, rates are not assumed
+  to be gamma-distributed)
 
 Release 0.9.0
 -------------
-o add ASCII tree drawing to Tree class
+o allow data partitioning
 
 Release 0.10.0
+--------------
+o add ASCII tree drawing to Tree class
+
+Release 0.11.0
 --------------
 o add Split and SplitManager classes
 o add no-data run to test polytomy prior to existing Polytomy.py example
 
-Release 0.11.0
+Release 0.12.0
 --------------
 o speed up likelihood calculations
 
-Release 0.12.0
+Release 0.13.0
 --------------
 o add underflow protection to allow large trees 
 
-Release 0.13.0
+Release 0.14.0
 --------------
 o add Metropolis-coupled chains
 
-Release 0.14.0
+Release 0.15.0
 --------------
 o add Newton-Raphson for finding MLEs of edge lengths
 o add Brent method for finding MLEs of model parameters
 
-Release 0.15.0
+Release 0.16.0
 --------------
 o add NNI, SPR and TBR branch swapping 
 
-Release 0.16.0
+Release 0.17.0
 --------------
 o add minimial python GUI
  
-Release 0.17.0
+Release 0.18.0
 --------------
 These are deficiencies that should be corrected before first release:
 o ensure that slice sampler doesn't get stuck (e.g. no rate heterogeneity combined with vague prior on shape parameter)
 
-Release 0.18.0
+Release 0.19.0
 --------------
 These are on the wish list but do not need to be implemented before the first release:
 o codon model
@@ -187,7 +192,7 @@ o standard Mkv morphology model
 o "episodic rates" version of the Mk model
 o Ornstein-Uhlenbeck model for single-nucleotide repeat data (Q. Cronk)
 
-Release 0.19.0
+Release 0.20.0
 --------------
 o ensure that all routines called from python are represented in *.py wrappers
 o transfer exception handling from C++ code to Python wrappers where possible, replacing exceptions

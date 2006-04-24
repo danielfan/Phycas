@@ -155,6 +155,58 @@ double PinvarParam::operator()(
 	return curr_ln_like + curr_ln_prior;
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	
+*/
+double FlexRateParam::operator()(
+  double r) /**< is a new value for the relative rate parameter */
+	{
+	curr_ln_like = ln_zero;
+	curr_ln_prior = 0.0;
+
+	refreshLeftRightValues();
+
+    if (r > left_value && r < right_value)
+		{
+		model->setFlexRateUnnorm(which, r);
+		likelihood->recalcRelativeRates();	// must do this whenever one of the relative rates changes
+        curr_value = r;
+		recalcPrior();
+        curr_ln_like = likelihood->calcLnL(tree);
+		ChainManagerShPtr p = chain_mgr.lock();
+		assert(p);
+		p->setLastLnLike(curr_ln_like);
+		}
+
+	return curr_ln_like + curr_ln_prior;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	
+*/
+double FlexProbParam::operator()(
+  double f) /**< is a new value for the relative rate probability parameter */
+	{
+	curr_ln_like = ln_zero;
+	curr_ln_prior = 0.0;
+
+    if (f > 0.0)
+		{
+		model->setFlexProbUnnorm(which, f);
+		likelihood->recalcRelativeRates();	// must do this whenever one of the rate probabilities changes
+        curr_value = f;
+		recalcPrior();
+        curr_ln_like = likelihood->calcLnL(tree);
+		ChainManagerShPtr p = chain_mgr.lock();
+		assert(p);
+		p->setLastLnLike(curr_ln_like);
+		}
+
+	return curr_ln_like + curr_ln_prior;
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	BaseFreqParam is a functor whose operator() returns a value proportional to the full-conditional posterior 
 |	probability density for a particular value of f, the quantity governing a particular relative base frequency (but 

@@ -14,6 +14,12 @@ inline Model::Model(
   unsigned numStates)	/**< is the number of basic states (e.g. 4 for DNA) */
 	: num_states(numStates), //@POL 31-Oct-2005 what about morphological models, is numStates in this case the maximum number of states allowed?
 	num_gamma_rates(1), 
+#if POLPY_NEWWAY
+	gamma_rates_unnorm(1, 1.0),
+	is_flex_model(false),
+	flex_probs_fixed(false),
+	flex_rates_fixed(false),
+#endif
 	gamma_rate_probs(1, 1.0), 
 	state_freq_fixed(false),
 	edge_lengths_fixed(false),	
@@ -198,6 +204,9 @@ inline void Model::setNGammaRates(
 	if (nGammaRates != num_gamma_rates)
 		{
 		assert(nGammaRates > 0);
+#if POLPY_NEWWAY
+		gamma_rates_unnorm.assign(nGammaRates, 1.0);
+#endif
 		gamma_rate_probs.resize(nGammaRates); //@POL this line not necessary (?) because assign also resizes
 		gamma_rate_probs.assign(nGammaRates, 1.0/(double)nGammaRates);
 		num_gamma_rates = nGammaRates;
@@ -415,6 +424,186 @@ inline void Model::freeStateFreqs()
 		}
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `is_flex_model' to true. A subsequent call to the createParameters member function will
+|	result in `num_gamma_rates' FlexRateParam and FlexProbParam objects being added to the list of updaters for this 
+|	model.
+*/
+inline void Model::setFlexModel()
+	{
+	is_flex_model = true;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `is_flex_model' to false. No FlexRateParam or FlexProbParam objects will be added in a 
+|	subsequent call to the createParameters member function.
+*/
+inline void Model::setNotFlexModel()
+	{
+	is_flex_model = false;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `flex_probs_fixed' to true. The fixParameter member function of all FlexProbParam objects is 
+|	either called immediately (if the `flex_prob_params' vector is not empty) or is called in createParameters (when 
+|	`flex_prob_params' is built).
+*/
+inline void Model::fixFlexProbs()
+	{
+	flex_probs_fixed = true;
+	if (!flex_prob_params.empty())
+		{
+		//@POL good place to use std::for_each with a boost::lambda functor?
+		for (MCMCUpdaterVect::iterator it = flex_prob_params.begin(); it != flex_prob_params.end(); ++it)
+			(*it)->fixParameter();
+		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `flex_probs_fixed' to false. The freeParameter member function of all FlexProbParam objects is 
+|	called immediately if the `flex_prob_params' vector is not empty.
+*/
+inline void Model::freeFlexProbs()
+	{
+	flex_probs_fixed = false;
+	if (!flex_prob_params.empty())
+		{
+		//@POL good place to use std::for_each with a boost::lambda functor?
+		for (MCMCUpdaterVect::iterator it = flex_prob_params.begin(); it != flex_prob_params.end(); ++it)
+			(*it)->freeParameter();
+		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `flex_rates_fixed' to true. The fixParameter member function of all FlexRateParam objects is 
+|	either called immediately (if the `flex_rate_params' vector is not empty) or is called in createParameters (when 
+|	`flex_rate_params' is built).
+*/
+inline void Model::fixFlexRates()
+	{
+	flex_rates_fixed = true;
+	if (!flex_rate_params.empty())
+		{
+		//@POL good place to use std::for_each with a boost::lambda functor?
+		for (MCMCUpdaterVect::iterator it = flex_rate_params.begin(); it != flex_rate_params.end(); ++it)
+			(*it)->fixParameter();
+		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `flex_rates_fixed' to false. The freeParameter member function of all FlexRateParam objects is 
+|	called immediately if the `flex_rate_params' vector is not empty.
+*/
+inline void Model::freeFlexRates()
+	{
+	flex_rates_fixed = false;
+	if (!flex_rate_params.empty())
+		{
+		//@POL good place to use std::for_each with a boost::lambda functor?
+		for (MCMCUpdaterVect::iterator it = flex_rate_params.begin(); it != flex_rate_params.end(); ++it)
+			(*it)->freeParameter();
+		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets value of data member `flex_prob_param_prior'.
+*/
+inline void Model::setFLEXProbParamPrior(ProbDistShPtr d)
+ 	{
+	flex_prob_param_prior = d;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns current value of data member `flex_prob_param_prior'.
+*/
+inline ProbDistShPtr Model::getFLEXProbParamPrior()
+ 	{
+	return flex_prob_param_prior;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Modifier function that sets one of the FLEX rate parameters (the unnormalized values that determine the values in 
+|	the `TreeLikelihood::rate_means' vector when normalized) in the data member vector `gamma_rates_unnorm'. The 
+|	function Model::recalcRatesAndProbs should be called to recalculate `TreeLikelihood::rate_means' before the 
+|	likelihood is computed (ideally immediately after setFlexRateUnnorm is called). Assumes `param_index' is less than 
+|	`num_gamma_rates' (i.e. a valid index into `gamma_rates_unnorm') and `value' is non-negative.
+*/
+inline void Model::setFlexRateUnnorm(
+  unsigned param_index,		/**< the 0-based index into the `gamma_rates_unnorm' vector of the element to modify */
+  double value)				/**< the new value of `gamma_rates_unnorm'[`param_index'] */
+	{
+	assert(gamma_rates_unnorm.size() == num_gamma_rates);
+	assert(param_index < num_gamma_rates);
+	assert(value >= 0.0);
+	gamma_rates_unnorm[param_index] = value;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Modifier function that sets one of the FLEX rate probability parameters (the unnormalized values that determine the 
+|	values in the `TreeLikelihood::rate_probs' vector when normalized) in the data member vector `gamma_rate_probs'. 
+|	The function Model::recalcRatesAndProbs should be called to recalculate `TreeLikelihood::rate_probs' before the 
+|	likelihood is computed (ideally immediately after setFlexProbUnnorm is called). Assumes `param_index' is less than 
+|	`num_gamma_rates' (i.e. a valid index into `gamma_rate_probs') and `value' is non-negative.
+*/
+inline void Model::setFlexProbUnnorm(
+  unsigned param_index,		/**< the 0-based index into the `gamma_rate_probs' vector of the element to modify */
+  double value)				/**< the new value of `gamma_rate_probs'[`param_index'] */
+	{
+	assert(gamma_rate_probs.size() == num_gamma_rates);
+	assert(param_index < num_gamma_rates);
+	assert(value >= 0.0);
+	gamma_rate_probs[param_index] = value;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Normalizes the rates stored in `gamma_rates_unnorm' so that their mean (using probabilities in `gamma_rate_probs')
+|	equals 1.0. Normalizes the probabilities stored in `gamma_rate_probs' so that their sum is 1.0. Copies normalized
+|	rates to supplied vector `rates' and normalized probabilities to the supplied vector `probs'. Resizes `rates' and
+|	`probs' if necessary.
+*/
+inline void Model::normalizeRatesAndProbs(
+  std::vector<double> & rates,		/**< is the vector to receive the normalized rates */
+  std::vector<double> & probs)		/**< is the vector to receive the normalized probabilities */
+  const
+	{
+	// c*r0*p0 + c*r1*p1 + c*r2*p2 + c*r3*p3 = 1.0
+	// c*(r0*p0 + r1*p1 + r2*p2 + r3*p3) = 1.0
+	// c = 1/(r0*p0 + r1*p1 + r2*p2 + r3*p3)
+	//
+	assert(gamma_rates_unnorm.size() == num_gamma_rates);
+	assert(gamma_rate_probs.size() == num_gamma_rates);
+	rates.resize(num_gamma_rates, 0.0);
+	probs.resize(num_gamma_rates, 0.0);
+	std::vector<double>::const_iterator rates_it = gamma_rates_unnorm.begin();
+	std::vector<double>::const_iterator probs_it = gamma_rate_probs.begin();
+	unsigned i;
+
+	// normalize the probabilities first (we will need them to normalize the rates)
+	double prob_sum = 0.0;
+	for (i = 0; i < num_gamma_rates; ++i)
+		{
+		prob_sum += gamma_rate_probs[i];
+		}
+	double prob_normalizer = 1.0/prob_sum;
+
+	// normalize the rates and copy the probs
+	double rate_prob_sum = 0.0;
+	for (i = 0; i < num_gamma_rates; ++i)
+		{
+		probs[i] = gamma_rate_probs[i]*prob_normalizer;
+		rate_prob_sum += gamma_rates_unnorm[i]*probs[i];
+		}
+	double rate_normalizer = 1.0/rate_prob_sum;
+
+	// copy the rates
+	for (i = 0; i < num_gamma_rates; ++i)
+		{
+		rates[i] = gamma_rates_unnorm[i]*rate_normalizer;
+		}
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the data member `is_pinvar_model' to true. A subsequent call to the createParameters member function will
 |	result in a PinvarParam being added to the list of updaters for this model.
@@ -501,41 +690,52 @@ inline void Model::recalcRatesAndProbs(
   std::vector<double> & rates, 
   std::vector<double> & probs) const
 	{
-	std::vector<double> boundaries;
-
-	if (is_pinvar_model)
+#if POLPY_NEWWAY
+	if (is_flex_model)
 		{
-		assert(pinvar < 1.0);
-		double one_minus_pinvar = 1.0 - pinvar;
-
-		// First calculate the gamma rates alone
-		std::vector<double> gamma_rates;
-		recalcGammaRatesAndBoundaries(gamma_rates, boundaries);
-
-		// Build up the rates and probs vectors using the local vector gamma_rates and the data members 
-		// pinvar and gamma_rate_probs
-		rates.resize(num_gamma_rates + 1, 0.0);
-		probs.resize(num_gamma_rates + 1, 0.0);
-		std::vector<double>::iterator rates_iter = rates.begin();
-		std::vector<double>::iterator probs_iter = probs.begin();
-		std::vector<double>::const_iterator gamma_probs_iter = gamma_rate_probs.begin();
-		std::vector<double>::const_iterator gamma_rates_iter = gamma_rates.begin();
-		(*rates_iter++) = 0.0;
-		(*probs_iter++) = pinvar;
-		//@POL use std::transform algorithm with a boost::lambda here?
-		for (unsigned i = 0; i < num_gamma_rates; ++i)
-			{
-			*rates_iter++ = (*gamma_rates_iter++)/one_minus_pinvar;
-			*probs_iter++ = (*gamma_probs_iter++)*one_minus_pinvar;
-			}
+		normalizeRatesAndProbs(rates, probs);
 		}
 	else
 		{
-		// The rates and probs computed by recalcGammaRatesAndBoundaries are what we need if is_pinvar_model is false
-		recalcGammaRatesAndBoundaries(rates, boundaries);
-		probs.resize(num_gamma_rates, 0.0);
-		std::copy(gamma_rate_probs.begin(), gamma_rate_probs.end(), probs.begin());
+#endif
+		std::vector<double> boundaries;
+
+		if (is_pinvar_model)
+			{
+			assert(pinvar < 1.0);
+			double one_minus_pinvar = 1.0 - pinvar;
+
+			// First calculate the gamma rates alone
+			std::vector<double> gamma_rates;
+			recalcGammaRatesAndBoundaries(gamma_rates, boundaries);
+
+			// Build up the rates and probs vectors using the local vector gamma_rates and the data members 
+			// pinvar and gamma_rate_probs
+			rates.resize(num_gamma_rates + 1, 0.0);
+			probs.resize(num_gamma_rates + 1, 0.0);
+			std::vector<double>::iterator rates_iter = rates.begin();
+			std::vector<double>::iterator probs_iter = probs.begin();
+			std::vector<double>::const_iterator gamma_probs_iter = gamma_rate_probs.begin();
+			std::vector<double>::const_iterator gamma_rates_iter = gamma_rates.begin();
+			(*rates_iter++) = 0.0;
+			(*probs_iter++) = pinvar;
+			//@POL use std::transform algorithm with a boost::lambda here?
+			for (unsigned i = 0; i < num_gamma_rates; ++i)
+				{
+				*rates_iter++ = (*gamma_rates_iter++)/one_minus_pinvar;
+				*probs_iter++ = (*gamma_probs_iter++)*one_minus_pinvar;
+				}
+			}
+		else
+			{
+			// The rates and probs computed by recalcGammaRatesAndBoundaries are what we need if is_pinvar_model is false
+			recalcGammaRatesAndBoundaries(rates, boundaries);
+			probs.resize(num_gamma_rates, 0.0);
+			std::copy(gamma_rate_probs.begin(), gamma_rate_probs.end(), probs.begin());
+			}
+#if POLPY_NEWWAY
 		}
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -717,6 +917,57 @@ inline void	Model::createParameters(
 		}
 
 	// Create any model-specific parameters and add to the parameters vector
+#if POLPY_NEWWAY
+	if (num_gamma_rates > 1)
+		{
+		if (is_flex_model)
+			{
+			assert(num_gamma_rates > 1);
+			gamma_rates_unnorm.resize(num_gamma_rates, 0.0);
+			assert(flex_rate_params.empty());
+			assert(flex_prob_params.empty());
+			for (unsigned i = 0; i < num_gamma_rates; ++i)
+				{
+				// create parameter representing probability of rate i
+				MCMCUpdaterShPtr prob_param = MCMCUpdaterShPtr(new FlexProbParam(i));
+				prob_param->setName(str(boost::format("Prob. rate %d") % i)); //@POL shouldn't this be done in the constructor?
+				prob_param->setTree(t);
+				prob_param->setPrior(flex_prob_param_prior);
+				if (flex_probs_fixed)
+					prob_param->fixParameter();
+				parameters_vect_ref.push_back(prob_param);
+				flex_prob_params.push_back(prob_param);
+
+				// create parameter representing rate i
+				// start with rates evenly spaced between 0.0 and 1.0; e.g. with num_gamma_rates = 4,
+				// 0.0  0.2  0.4  0.6  0.8  1.0
+				//      r_0  r_1  r_2  r_3
+				// so r_i = (i + 1)/(num_gamma_rates + 1), where i = 0, 1, 2, 3
+				gamma_rates_unnorm[i] = (double)(i + 1)/(double)(num_gamma_rates + 1);
+				MCMCUpdaterShPtr rate_param = MCMCUpdaterShPtr(new FlexRateParam(i, gamma_rates_unnorm));
+				rate_param->setName(str(boost::format("FLEX rate %d") % i)); //@POL shouldn't this be done in the constructor?
+				rate_param->setTree(t);
+				rate_param->setPrior(flex_rate_param_prior);
+				if (flex_rates_fixed)
+					rate_param->fixParameter();
+				parameters_vect_ref.push_back(rate_param);
+				flex_rate_params.push_back(rate_param);
+				}
+			}
+		else
+			{
+			assert(num_gamma_rates > 1);
+			assert(!gamma_shape_param);
+			gamma_shape_param = MCMCUpdaterShPtr(new DiscreteGammaShapeParam(invert_shape));
+			gamma_shape_param->setName("Discrete gamma shape"); //@POL shouldn't this be done in the constructor?
+			gamma_shape_param->setTree(t);
+			gamma_shape_param->setPrior(gamma_shape_prior);
+			if (gamma_shape_fixed)
+				gamma_shape_param->fixParameter();
+			parameters_vect_ref.push_back(gamma_shape_param);
+			}
+		}
+#else
 	if (num_gamma_rates > 1)
 		{
 		assert(num_gamma_rates > 1);
@@ -729,6 +980,7 @@ inline void	Model::createParameters(
 			gamma_shape_param->fixParameter();
 		parameters_vect_ref.push_back(gamma_shape_param);
 		}
+#endif
 
 	if (is_pinvar_model)
 		{
@@ -785,8 +1037,32 @@ inline void Model::buildStateList(
 inline std::string JC::paramHeader() const
 	{
 	std::string s = std::string("Gen\tLnL\tTL");
+#if POLPY_NEWWAY
+	if (num_gamma_rates > 1)
+		{
+		if (is_flex_model)
+			{
+			unsigned i;
+			for ( i = 0; i < num_gamma_rates; ++i)
+				{
+				s += "\trate";
+				s += i;
+				}
+			for ( i = 0; i < num_gamma_rates; ++i)
+				{
+				s += "\trateprob";
+				s += i;
+				}
+			}
+		else
+			{
+			s += "\tshape";
+			}
+		}
+#else
 	if (num_gamma_rates > 1)
 		s += "\tshape";
+#endif
 	if (is_pinvar_model)
 		s += "\tpinvar";
 	return s;
@@ -799,8 +1075,33 @@ inline std::string JC::paramHeader() const
 inline std::string JC::paramReport() const
 	{
 	std::string s;
+#if POLPY_NEWWAY
+	if (num_gamma_rates > 1)
+		{
+		if (is_flex_model)
+			{
+			std::vector<double> rates(num_gamma_rates, 0.0);
+			std::vector<double> probs(num_gamma_rates, 0.0);
+			normalizeRatesAndProbs(rates, probs);
+			unsigned i;
+			for ( i = 0; i < num_gamma_rates; ++i)
+				{
+				s += str(boost::format("\t%.5f") % rates[i]);
+				}
+			for ( i = 0; i < num_gamma_rates; ++i)
+				{
+				s += str(boost::format("\t%.5f") % probs[i]);
+				}
+			}
+		else
+			{
+			s += "\tshape";
+			}
+		}
+#else
 	if (num_gamma_rates > 1)
 		s += str(boost::format("\t%.5f") % gamma_shape);
+#endif
 	if (is_pinvar_model)
 		s += str(boost::format("\t%.5f") % pinvar);
 	return s;
@@ -922,8 +1223,30 @@ inline void	HKY::createParameters(
 inline std::string HKY::paramHeader() const
 	{
 	std::string s = std::string("Gen\tLnL\tTL\tkappa\tfreqA\tfreqC\tfreqG\tfreqT");
+#if POLPY_NEWWAY
+	if (num_gamma_rates > 1)
+		{
+		if (is_flex_model)
+			{
+			unsigned i;
+			for ( i = 0; i < num_gamma_rates; ++i)
+				{
+				s += str(boost::format("\trate%d") % i);
+				}
+			for ( i = 0; i < num_gamma_rates; ++i)
+				{
+				s += str(boost::format("\trateprob%d") % i);
+				}
+			}
+		else
+			{
+			s += "\tshape";
+			}
+		}
+#else
 	if (num_gamma_rates > 1)
 		s += "\tshape";
+#endif
 	if (is_pinvar_model)
 		s += "\tpinvar";
 	return s;
@@ -936,8 +1259,33 @@ inline std::string HKY::paramHeader() const
 inline std::string HKY::paramReport() const
 	{
 	std::string s = str(boost::format("\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f") % kappa % state_freqs[0] % state_freqs[1] % state_freqs[2] % state_freqs[3]);;
+#if POLPY_NEWWAY
+	if (num_gamma_rates > 1)
+		{
+		if (is_flex_model)
+			{
+			std::vector<double> rates(num_gamma_rates, 0.0);
+			std::vector<double> probs(num_gamma_rates, 0.0);
+			normalizeRatesAndProbs(rates, probs);
+			unsigned i;
+			for ( i = 0; i < num_gamma_rates; ++i)
+				{
+				s += str(boost::format("\t%.5f") % rates[i]);
+				}
+			for ( i = 0; i < num_gamma_rates; ++i)
+				{
+				s += str(boost::format("\t%.5f") % probs[i]);
+				}
+			}
+		else
+			{
+			s += "\tshape";
+			}
+		}
+#else
 	if (num_gamma_rates > 1)
 		s += str(boost::format("\t%.5f") % gamma_shape);
+#endif
 	if (is_pinvar_model)
 		s += str(boost::format("\t%.5f") % pinvar);
 	return s;
@@ -1394,8 +1742,32 @@ inline void GTR::setBaseFreqParamPrior(ProbDistShPtr d)
 inline std::string GTR::paramHeader() const
 	{
 	std::string s = std::string("Gen\tLnL\tTL\trAC\trAG\trAT\trCG\trCT\trGT\tfreqA\tfreqC\tfreqG\tfreqT");
+#if POLPY_NEWWAY
+	if (num_gamma_rates > 1)
+		{
+		if (is_flex_model)
+			{
+			unsigned i;
+			for ( i = 0; i < num_gamma_rates; ++i)
+				{
+				s += "\trate";
+				s += i;
+				}
+			for ( i = 0; i < num_gamma_rates; ++i)
+				{
+				s += "\trateprob";
+				s += i;
+				}
+			}
+		else
+			{
+			s += "\tshape";
+			}
+		}
+#else
 	if (num_gamma_rates > 1)
 		s += "\tshape";
+#endif
 	if (is_pinvar_model)
 		s += "\tpinvar";
 	return s;
@@ -1412,8 +1784,33 @@ inline std::string GTR::paramReport() const
 	assert(state_freqs.size() == 4);
 	std::string s = str(boost::format("\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f") % rel_rates[0] % rel_rates[1] % rel_rates[2] % rel_rates[3] % rel_rates[4] % rel_rates[5]);
 	s += str(boost::format("\t%.5f\t%.5f\t%.5f\t%.5f") % state_freqs[0] % state_freqs[1] % state_freqs[2] % state_freqs[3]);
+#if POLPY_NEWWAY
+	if (num_gamma_rates > 1)
+		{
+		if (is_flex_model)
+			{
+			std::vector<double> rates(num_gamma_rates, 0.0);
+			std::vector<double> probs(num_gamma_rates, 0.0);
+			normalizeRatesAndProbs(rates, probs);
+			unsigned i;
+			for ( i = 0; i < num_gamma_rates; ++i)
+				{
+				s += str(boost::format("\t%.5f") % rates[i]);
+				}
+			for ( i = 0; i < num_gamma_rates; ++i)
+				{
+				s += str(boost::format("\t%.5f") % probs[i]);
+				}
+			}
+		else
+			{
+			s += "\tshape";
+			}
+		}
+#else
 	if (num_gamma_rates > 1)
 		s += str(boost::format("\t%.5f") % gamma_shape);
+#endif
 	if (is_pinvar_model)
 		s += str(boost::format("\t%.5f") % pinvar);
 	return s;

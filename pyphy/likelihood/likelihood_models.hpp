@@ -69,6 +69,19 @@ class Model	{
 		bool							stateFreqsFixed() const;
 		void							fixStateFreqs();
 		void							freeStateFreqs();
+#if POLPY_NEWWAY
+		void							setFlexModel();
+		void							setNotFlexModel();
+		void							fixFlexProbs();
+		void							freeFlexProbs();
+		void							fixFlexRates();
+		void							freeFlexRates();
+		void							setFLEXProbParamPrior(ProbDistShPtr d);
+		ProbDistShPtr					getFLEXProbParamPrior();
+		virtual void					setFlexRateUnnorm(unsigned param_index, double value);
+		virtual void					setFlexProbUnnorm(unsigned param_index, double value);
+		void							normalizeRatesAndProbs(std::vector<double> & rates, std::vector<double> & probs) const;
+#endif
 		void							setPinvarModel();
 		void							setNotPinvarModel();
 		bool							pinvarFixed() const;
@@ -107,6 +120,9 @@ protected:
 	ProbDistShPtr					edgeLenPrior;				/**< The prior distribution governing all edge lengths */
 	unsigned						num_states;					/**< The number of states (e.g. 4 for DNA) */
 	unsigned						num_gamma_rates;			/**< The number of discrete gamma rate categories. If greater than 1, the model becomes a discrete gamma rate heterogeneity ("G") model. */
+#if POLPY_NEWWAY
+	mutable std::vector<double>		gamma_rates_unnorm;			/**< A vector of quantities that yield the relative rates when normalized in recalcRatesAndProbs (length is `num_gamma_rates') */
+#endif
 	std::vector<double>				gamma_rate_probs;			/**< A vector of probabilities that a site falls in any given rate category (length is `num_gamma_rates') */
 	std::vector<double>				state_freqs;				/**< A vector of relative state frequencies (length is `num_states') */
 	std::vector<double>				state_freq_unnorm;			/**< A vector of quantities that yield the values in `state_freqs' when normalized using the normalizeFreqs member function (length is `num_states') */
@@ -118,6 +134,15 @@ protected:
 	bool							edge_lengths_fixed;			/**< If true, the value of the edge lengths will not change during MCMC updates */
 	bool							edgelen_hyperprior_fixed;	/**< If true, the value of the edge length hyperprior will not change during MCMC updates */
 	bool							is_pinvar_model;			/**< If true, a parameter for pinvar will be added to MCMC analysis (pinvar_fixed determines whether it is updated or not) */
+#if POLPY_NEWWAY
+	bool							is_flex_model;				/**< If true, the FLEX model of rate heterogeneity will be used instead of the discrete gamma model */
+	bool							flex_probs_fixed;			/**< If true, the values in `flex_prob_params' will not change during MCMC updates */
+	bool							flex_rates_fixed;			/**< If true, the values in `flex_rate_params' will not change during MCMC updates */
+	mutable MCMCUpdaterVect			flex_rate_params;			/**< Vector of shared pointers to the relative rate parameters used in the FLEX model (need to retain pointers to these so that the fixed/free status can be changed) */	
+	mutable MCMCUpdaterVect			flex_prob_params;			/**< Vector of shared pointers to the rate probability parameters used in the FLEX model (need to retain pointers to these so that the fixed/free status can be changed) */	
+	ProbDistShPtr					flex_prob_param_prior;		/**< The prior distribution governing all `num_gamma_rate' FLEX probability parameters */
+	ProbDistShPtr					flex_rate_param_prior;		/**< The prior distribution governing all `num_gamma_rate' FLEX rate parameters */
+#endif
 	bool							pinvar_fixed;				/**< If true, the value of pinvar will not change during MCMC updates */
 	mutable MCMCUpdaterShPtr		pinvar_param;				/**< Shared pointer to the proportion of invariable sites parameter (need to retain a pointer so that the fixed/free status can be changed) */
 	ProbDistShPtr					pinvar_prior;				/**< The prior distribution governing the proportion of invariable sites parameter */

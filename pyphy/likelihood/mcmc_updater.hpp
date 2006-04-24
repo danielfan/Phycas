@@ -85,7 +85,7 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		unsigned				getWeight() const;
 		double					getLnLike() const;
 		double					getLnPrior() const;
-		const std::string 		getPriorDescr() const;
+		virtual std::string 	getPriorDescr() const;
 
 		// Accessors used only by parameters
 		SliceSamplerShPtr		getSliceSampler();

@@ -48,6 +48,7 @@ class Phycas:
     Sampled trees will be saved in nyldna4.nex.t
     Sampled parameters will be saved in nyldna4.nex.p
     Tip node numbers were set using the names in the tree description
+    <BLANKLINE>
     Sampling (100 cycles)...
     <BLANKLINE>
     cycle = 10, lnL = -7129.98700
@@ -829,7 +830,7 @@ class Phycas:
         self.elapsed_secs = 0.0
         self.likelihood.resetNEvals()
 
-        print 'Sampling (%d cycles)...' % self.ncycles
+        print '\nSampling (%d cycles)...' % self.ncycles
         if self.verbose:
             print
         self.recordSample(0)

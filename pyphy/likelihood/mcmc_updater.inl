@@ -270,7 +270,7 @@ inline const std::string & MCMCUpdater::getName() const
 |	Returns a const reference to the string returned by the GetDistributionDescription() function of the `prior' data 
 |	member.
 */
-inline const std::string MCMCUpdater::getPriorDescr() const
+inline std::string MCMCUpdater::getPriorDescr() const
 	{
 	return prior->GetDistributionDescription();
 	}

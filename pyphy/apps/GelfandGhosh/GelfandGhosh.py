@@ -15,8 +15,8 @@ from Phycas import *
 def commonSetup():
     # Set up MCMC
     phycas.ncycles = 4000
-    phycassample_every = 20
-    phycas.adapt_first = 50
+    phycas.sample_every = 20
+    phycas.adapt_first = 10
     phycas.verbose = True
     phycas.metropolis_weight = 300
     phycas.slice_weight = 1
@@ -105,8 +105,51 @@ def runHKYg(rnseed):
     hkyg_g = phycas.gg_Gm
     hkyg_d = phycas.gg_Dm
 
+def runHKYFLEX(rnseed):
+    global hkyflex_p, hkyflex_g, hkyflex_d
+    print
+    print '~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+    print 'HKY+FLEX analysis beginning'
+    print '~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+
+    phycas.r.setSeed(rnseed)    
+    commonSetup()
+
+    # Change to HKY+FLEX model
+    phycas.model = Likelihood.HKYModel()
+    phycas.model.setKappa(1.0)
+    phycas.model.setNucleotideFreqs(1.0, 1.0, 1.0, 1.0)
+    phycas.model.setKappaPrior(ProbDist.ExponentialDist(1.0))
+    phycas.model.setBaseFreqParamPrior(ProbDist.ExponentialDist(1.0))
+    phycas.model.setNGammaRates(4)
+    phycas.model.setFlexModel()
+    phycas.model.setFLEXProbParamPrior(ProbDist.ExponentialDist(1.0))
+    phycas.model.setNotPinvarModel()
+
+    phycas.model.setEdgeLenPrior(ProbDist.ExponentialDist(10.0))
+    phycas.model.setEdgeLenHyperPrior(ProbDist.InverseGammaDist(2.1, 0.9090909))
+    phycas.likelihood.replaceModel(phycas.model)
+
+    # Start with same tree we used for the simulation
+    phycas.tree.buildFromString(phycas.tree_topology)
+    phycas.likelihood.prepareForLikelihood(phycas.tree)
+
+    # Open new parameter and tree files
+    phycas.param_file_name = 'analHKYFLEX.nex.p'
+    phycas.paramFileOpen()
+    phycas.tree_file_name = 'analHKYFLEX.nex.t'
+    phycas.treeFileOpen()
+
+    phycas.run()
+
+    hkyflex_p = phycas.gg_Pm
+    hkyflex_g = phycas.gg_Gm
+    hkyflex_d = phycas.gg_Dm
+
 if __name__ == "__main__":
     phycas = Phycas()
+
+    #raw_input('debug stop')
 
     # Define the names of the taxa to use when the simulated data set is saved to a file
     phycas.taxon_labels = ['P. parksii', 'P. articulata', 'P._gracilis', 'P. macrophylla']
@@ -163,6 +206,7 @@ if __name__ == "__main__":
 
     runHKY(master_seed)
     runHKYg(master_seed)
+    runHKYFLEX(master_seed)
     
     # Output results
     outf = file('ggout.txt','w')
@@ -189,8 +233,13 @@ if __name__ == "__main__":
     for k,G,D in zip(phycas.gg_kvect, hkyg_g, hkyg_d):
         outf.write('  %6.1f %12.5f %12.5f %12.5f\n' % (k, hkyg_p, G, D))
 
+    outf.write('\nGelfand-Ghosh calculation for HKY+FLEX analysis:\n')
+    outf.write('  %6s %12s %12s %12s\n' % ('k','Pm','Gm','Dm'))
+    for k,G,D in zip(phycas.gg_kvect, hkyflex_g, hkyflex_d):
+        outf.write('  %6.1f %12.5f %12.5f %12.5f\n' % (k, hkyflex_p, G, D))
+
     outf.write('\nPenalty rankings (best listed first):\n')
-    plist = [('HKY', hky_p), ('HKYg',hkyg_p)]
+    plist = [('HKY', hky_p), ('HKYg',hkyg_p), ('HKYFLEX',hkyflex_p)]
     plist.sort(lambda x,y: cmp(x[1], y[1]))
     for name,value in plist:
         outf.write('%12s %12.5f\n' % (name, value))
@@ -199,13 +248,13 @@ if __name__ == "__main__":
         outf.write('\nFor k = %.1f:\n' % k)
         
         outf.write('\n  Goodness-of-fit rankings (best listed first):\n')
-        glist = [('HKY', hky_g[i]), ('HKYg',hkyg_g[i])]
+        glist = [('HKY', hky_g[i]), ('HKYg',hkyg_g[i]), ('HKYFLEX',hkyflex_g[i])]
         glist.sort(lambda x,y: cmp(x[1], y[1]))
         for name,value in glist:
             outf.write('%12s %12.5f\n' % (name, value))
 
         outf.write('\n  Overall rankings (best listed first):\n')
-        dlist = [('HKY', hky_d[i]), ('HKYg',hkyg_d[i])]
+        dlist = [('HKY', hky_d[i]), ('HKYg',hkyg_d[i]), ('HKYFLEX',hkyflex_d[i])]
         dlist.sort(lambda x,y: cmp(x[1], y[1]))
         for name,value in dlist:
             outf.write('%12s %12.5f\n' % (name, value))

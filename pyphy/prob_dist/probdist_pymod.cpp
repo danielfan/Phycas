@@ -89,6 +89,9 @@ BOOST_PYTHON_MODULE(_ProbDist)
 		.def("getLnDensityAtMode", &SliceSampler::GetLnDensityAtMode)
 		.def("getLastSampledXValue", &SliceSampler::GetLastSampledXValue)
 		.def("getLastSampledYValue", &SliceSampler::GetLastSampledYValue)
+#if POLPY_NEWWAY
+		.def("setXValue", &SliceSampler::SetXValue)
+#endif
 		;
 
 //We tell boost::python the smart pointer type we're using, like this:

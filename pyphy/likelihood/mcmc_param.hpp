@@ -104,6 +104,57 @@ class PinvarParam : public MCMCUpdater
 		virtual double	operator()(double k);	// override pure virtual from AdHocDensity (base class of MCMCUpdater)
 	};
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	
+*/
+class FlexRateParam : public MCMCUpdater
+{
+	public:
+									FlexRateParam(unsigned w, std::vector<double> & rr);
+									virtual ~FlexRateParam()
+										{
+										//std::cerr << "FlexRateParam dying..." << std::endl;
+										}
+	
+		virtual void				update();				// override virtual from MCMCUpdater base class
+		virtual std::string			getPriorDescr() const;	// override virtual from MCMCUpdater base class
+		virtual double				recalcPrior();			// override virtual from MCMCUpdater base class
+		virtual void				setChainManager(ChainManagerWkPtr p);	// override virtual from MCMCUpdater base class
+		virtual double				operator()(double r);
+
+	private:
+
+		void						refreshLeftRightValues();
+	private:
+
+		std::vector<double>	&		rel_rates;
+		double						left_value;
+		double						right_value;
+		unsigned					which;
+};
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	
+*/
+class FlexProbParam : public MCMCUpdater
+{
+	public:
+								FlexProbParam(unsigned w);
+								virtual ~FlexProbParam()
+									{
+									//std::cerr << "FlexProbParam dying..." << std::endl;
+									}
+	
+		virtual void			update();				// override virtual from MCMCUpdater base class
+		virtual double			operator()(double f);
+
+	private:
+
+		unsigned				which;
+};
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Encapsulates a base frequency parameter. More precisely, this class encapsulates a parameter that governs a base
 |	frequency. Because all four base frequencies must add to 1.0, the value of this parameter and the other three 

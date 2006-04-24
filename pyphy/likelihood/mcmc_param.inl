@@ -116,6 +116,125 @@ inline void PinvarParam::update()
 	slice_sampler->Sample();
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	
+*/
+inline FlexRateParam::FlexRateParam(
+  unsigned w,					/**< is the index of the rate being managed by this parameter */
+  std::vector<double> & rr)		/**< is the relative rate parameter vector (this parameter needs to know the value on either side when updating) */
+  : MCMCUpdater(),  which(w), rel_rates(rr), left_value(0.0), right_value(1.0)
+	{
+	assert(which < rel_rates.size());
+	curr_value = rel_rates[which];
+	has_slice_sampler = true;
+	is_move = false;
+	is_master_param = false;
+	is_hyper_param = false;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	The MCMCChainManager::finalize function calls this function for each MCMCUpdater it knows about. This provides a way 
+|	for each updater to call back the MCMCChainManager when it needs the joint prior over all parameters.
+*/
+inline void FlexRateParam::setChainManager(
+ ChainManagerWkPtr p)		/**< is a pointer to the MCMCChainManager containing this updater */
+	{
+	MCMCUpdater::setChainManager(p);
+	//refreshLeftRightValues();
+	//double starting_x = (left_value + right_value)/2.0;
+	//slice_sampler->SetXValue(starting_x);
+	slice_sampler->SetXValue(curr_value);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Determines the quantities `left_value' and `right_value'. The smallest this parameter can become is `left_value', 
+|	which should equal `rel_rates'[`which' - 1] (unless `which' is 0, in which case `left_value' is 0.0). The largest 
+|	this parameter can become is `right_value', which should equal `rel_rates'[`which' + 1] (unless `which' is 
+|	`num_rates' - 1, in which case `right_value' is 1.0). 
+*/
+inline void FlexRateParam::refreshLeftRightValues()
+	{
+	assert(rel_rates.size() > 0);
+	unsigned last = (unsigned)rel_rates.size() - 1;
+	if (which == 0 && which == last)
+		{
+		// only one rate (i.e. no rate heterogeneity)
+		left_value  = 0.0;
+		right_value = 1.0;
+		}
+	else if (which == 0)
+		{
+		left_value = 0.0;
+		right_value = rel_rates[which + 1];
+		}
+	else if (which == last)
+		{
+		left_value = rel_rates[which - 1];
+		right_value = 1.0;
+		}
+	else
+		{
+		left_value = rel_rates[which - 1];
+		right_value = rel_rates[which + 1];
+		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the string "Order statistics prior" (user gets no choice of prior in this case).
+*/
+inline std::string FlexRateParam::getPriorDescr() const
+	{
+	return std::string("Order statistics prior");
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Computes the order statistics prior used for relative rates in the FLEX model, and sets `curr_ln_prior'. The order 
+|	statistics prior is largest when `curr_value' is between `left_value' and `right_value' and becomes tiny if 
+|	`curr_value' gets close to either `left_value' or `right_value'. 
+*/
+inline double FlexRateParam::recalcPrior()
+	{
+	refreshLeftRightValues();
+	curr_ln_prior = std::log(curr_value - left_value) + std::log(right_value - curr_value);
+	return curr_ln_prior;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Calls the sample() member function of the `slice_sampler' data member.
+*/
+inline void FlexRateParam::update()
+	{
+	if (is_fixed)
+		return;
+	slice_sampler->Sample();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	
+*/
+inline FlexProbParam::FlexProbParam(
+  unsigned w)					/**< is the index of the rate being managed by this parameter */
+  : MCMCUpdater(), which(w)
+	{
+	curr_value = 1.0;
+	has_slice_sampler = true;
+	is_move = false;
+	is_master_param = false;
+	is_hyper_param = false;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Calls the sample() member function of the `slice_sampler' data member.
+*/
+inline void FlexProbParam::update()
+	{
+	if (is_fixed)
+		return;
+	slice_sampler->Sample();
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	The BaseFreqParam constructor requires the caller to specify a value for `which'. `which' is 0, 1, 2 or 3 and 
 |	determines the particular base frequency (A, C, G or T, respectively) this object represents. It calls the base
