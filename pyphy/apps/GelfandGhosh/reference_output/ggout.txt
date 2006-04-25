@@ -1,6 +1,6 @@
 Simulation conditions:
   no. sites   : 1000
-  model tree  : (1:0.1,2:0.1,(3:0.1,4:0.1):0.1)
+  model tree  : (1:0.5,2:0.01,(3:0.5,4:0.01):0.01)
   subst. model: HKY85+G
   kappa       : 4.0
   shape       : 0.2
@@ -12,59 +12,59 @@ Simulation conditions:
 
 Gelfand-Ghosh calculation for HKY analysis:
        k           Pm           Gm           Dm
-     0.5    169.30483     98.31640    267.62122
-     1.0    169.30483    148.10296    317.40778
-     2.0    169.30483    205.41909    374.72392
+     0.5    139.87433     78.91531    218.78964
+     1.0    139.87433    119.11952    258.99385
+     2.0    139.87433    164.59918    304.47351
 
 Gelfand-Ghosh calculation for HKY+G analysis:
        k           Pm           Gm           Dm
-     0.5    228.25786     78.27029    306.52815
-     1.0    228.25786    123.59992    351.85778
-     2.0    228.25786    179.87615    408.13401
+     0.5    162.30560     43.78876    206.09436
+     1.0    162.30560     68.23733    230.54293
+     2.0    162.30560     97.65548    259.96107
 
 Gelfand-Ghosh calculation for HKY+FLEX analysis:
        k           Pm           Gm           Dm
-     0.5    230.02876     79.50583    309.53458
-     1.0    230.02876    125.52322    355.55198
-     2.0    230.02876    182.65456    412.68332
+     0.5    162.97068     42.37606    205.34673
+     1.0    162.97068     65.89991    228.87059
+     2.0    162.97068     94.10504    257.07571
 
 Penalty rankings (best listed first):
-         HKY    169.30483
-        HKYg    228.25786
-     HKYFLEX    230.02876
+         HKY    139.87433
+        HKYg    162.30560
+     HKYFLEX    162.97068
 
 For k = 0.5:
 
   Goodness-of-fit rankings (best listed first):
-        HKYg     78.27029
-     HKYFLEX     79.50583
-         HKY     98.31640
+     HKYFLEX     42.37606
+        HKYg     43.78876
+         HKY     78.91531
 
   Overall rankings (best listed first):
-         HKY    267.62122
-        HKYg    306.52815
-     HKYFLEX    309.53458
+     HKYFLEX    205.34673
+        HKYg    206.09436
+         HKY    218.78964
 
 For k = 1.0:
 
   Goodness-of-fit rankings (best listed first):
-        HKYg    123.59992
-     HKYFLEX    125.52322
-         HKY    148.10296
+     HKYFLEX     65.89991
+        HKYg     68.23733
+         HKY    119.11952
 
   Overall rankings (best listed first):
-         HKY    317.40778
-        HKYg    351.85778
-     HKYFLEX    355.55198
+     HKYFLEX    228.87059
+        HKYg    230.54293
+         HKY    258.99385
 
 For k = 2.0:
 
   Goodness-of-fit rankings (best listed first):
-        HKYg    179.87615
-     HKYFLEX    182.65456
-         HKY    205.41909
+     HKYFLEX     94.10504
+        HKYg     97.65548
+         HKY    164.59918
 
   Overall rankings (best listed first):
-         HKY    374.72392
-        HKYg    408.13401
-     HKYFLEX    412.68332
+     HKYFLEX    257.07571
+        HKYg    259.96107
+         HKY    304.47351

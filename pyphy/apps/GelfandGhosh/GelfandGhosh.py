@@ -157,7 +157,12 @@ if __name__ == "__main__":
     # Create a model tree
     phycas.ntax = 4
     phycas.tree = Phylogeny.Tree()
-    phycas.tree_topology = '(1:0.1,2:0.1,(3:0.1,4:0.1):0.1)'
+    
+    #POLPY_OLDWAY
+    #phycas.tree_topology = '(1:0.1,2:0.1,(3:0.1,4:0.1):0.1)'
+    #POLPY_NEWWAY
+    phycas.tree_topology = '(1:0.5,2:0.01,(3:0.5,4:0.01):0.01)'
+    
     phycas.tree.buildFromString(phycas.tree_topology)
 
     # Create a model

@@ -111,7 +111,7 @@ class PinvarParam : public MCMCUpdater
 class FlexRateParam : public MCMCUpdater
 {
 	public:
-									FlexRateParam(unsigned w, std::vector<double> & rr);
+									FlexRateParam(unsigned w, unsigned s, std::vector<double> & rr);
 									virtual ~FlexRateParam()
 										{
 										//std::cerr << "FlexRateParam dying..." << std::endl;
@@ -126,12 +126,14 @@ class FlexRateParam : public MCMCUpdater
 	private:
 
 		void						refreshLeftRightValues();
+
 	private:
 
 		std::vector<double>	&		rel_rates;
 		double						left_value;
 		double						right_value;
 		unsigned					which;
+		unsigned					nspacers;
 };
 
 /*----------------------------------------------------------------------------------------------------------------------

@@ -122,8 +122,9 @@ inline void PinvarParam::update()
 */
 inline FlexRateParam::FlexRateParam(
   unsigned w,					/**< is the index of the rate being managed by this parameter */
+  unsigned s,					/**< is the number of spacers between each rate in the order statistics prior */
   std::vector<double> & rr)		/**< is the relative rate parameter vector (this parameter needs to know the value on either side when updating) */
-  : MCMCUpdater(),  which(w), rel_rates(rr), left_value(0.0), right_value(1.0)
+  : MCMCUpdater(),  which(w), nspacers(s), rel_rates(rr), left_value(0.0), right_value(1.0)
 	{
 	assert(which < rel_rates.size());
 	curr_value = rel_rates[which];
@@ -191,12 +192,15 @@ inline std::string FlexRateParam::getPriorDescr() const
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the order statistics prior used for relative rates in the FLEX model, and sets `curr_ln_prior'. The order 
 |	statistics prior is largest when `curr_value' is between `left_value' and `right_value' and becomes tiny if 
-|	`curr_value' gets close to either `left_value' or `right_value'. 
+|	`curr_value' gets close to either `left_value' or `right_value'. Between each pair of rates is an imaginary spacer.
+|	The more spacers lying between each adjacent pair of rates, the harder it is for rates to get close together. The
+|	number of spacers between each adjacent pair is specified by the data member `nspacers', which is set in the 
+|	constructor.
 */
 inline double FlexRateParam::recalcPrior()
 	{
 	refreshLeftRightValues();
-	curr_ln_prior = std::log(curr_value - left_value) + std::log(right_value - curr_value);
+	curr_ln_prior = (double)nspacers*(std::log(curr_value - left_value) + std::log(right_value - curr_value));
 	return curr_ln_prior;
 	}
 

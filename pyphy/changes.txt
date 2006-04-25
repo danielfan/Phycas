@@ -136,7 +136,7 @@ o rel_0_7_2 (22-Apr-2006, SVN revision 19)
 	  (1) the maximum number of slice sampling units in a slice to be set by the user, and
 	  (2) a prior to be set on the inverse of the gamma shape parameter
 
-Release 0.8.0 (24-Apr-2006, SVN revision 20)
+Release 0.8.0 (24-Apr-2006, SVN revision 21)
 --------------------------------------------
 o implement the FLEX model (rates and probabilities independent, rates are not assumed
   to be gamma-distributed)

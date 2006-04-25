@@ -150,13 +150,14 @@ class Phycas:
 
         # Settings related to the model and prior distributions
         self.num_rates              = 1         # default is rate homogeneity (1 rate)
-        self.use_pattern_specific_rates = False
         self.relrate_prior          = ProbDist.ExponentialDist(1.0)
         self.base_freq_param_prior  = ProbDist.ExponentialDist(1.0)
         self.gamma_shape_prior      = ProbDist.ExponentialDist(1.0)
         self.use_inverse_shape      = True  # if True, gamma_shape_prior applied to 1/shape rather than shape
         self.estimate_pinvar        = False
         self.pinvar_prior           = ProbDist.BetaDist(1.0, 1.0)
+        self.use_flex_model         = False
+        self.num_flex_spacers       = 1
         
         # MCMC settings (used by run function)
         self.ncycles                = 10000
@@ -242,15 +243,21 @@ class Phycas:
 
         # If rate heterogeneity is to be assumed, add it to the model here
         # Note must defer setting up pattern specific rates model until we know number of patterns
-        if self.num_rates > 1 and not self.use_pattern_specific_rates:
+        if self.num_rates > 1 and self.use_flex_model:
+            self.model.setNGammaRates(self.num_rates)
+            self.model.setFlexModel()
+            self.model.setNumFlexSpacers(self.num_flex_spacers)
+            self.model.setFLEXProbParamPrior(ProbDist.ExponentialDist(1.0))
+        elif self.num_rates > 1:
             self.model.setNGammaRates(self.num_rates)
             self.model.setPriorOnShapeInverse(self.use_inverse_shape)
             self.model.setShape(0.5)
             self.model.setDiscreteGammaShapePrior(self.gamma_shape_prior)
-        elif self.num_rates == 1:
-            self.model.setNGammaRates(self.num_rates)
+        else:
+            self.model.setNGammaRates(1)
             
         if self.estimate_pinvar:
+            assert not self.use_flex_model, 'Cannot currently use flex model with pinvar'
             self.model.setPinvarModel()
             self.model.setPinvar(0.2)
             self.model.setPinvarPrior(self.pinvar_prior)
@@ -502,13 +509,6 @@ class Phycas:
             self.likelihood.copyDataFromDiscreteMatrix(self.data_matrix)
             self.npatterns = self.likelihood.getNPatterns()
             
-        if self.use_pattern_specific_rates:
-            assert self.npatterns > 0, 'No patterns stored before setupLikelihood function called with pattern-specific rates model in effect'
-            #raw_input('stopped: about to call setPatternSpecificRatesModel')
-            self.likelihood.usePatternSpecificRates()
-            self.model.setPatternSpecificRatesModel(self.npatterns)
-            self.model.setDiscreteGammaShapePrior(self.gamma_shape_prior) # should be changed when a prior specifically for pattern specific rates is added
-
         # Add data structures to the nodes of the tree to allow likelihood calculations
         # The structures added to tips allow the tips to store data and transition probability matrices
         # The structures added to the internal nodes allow for storage of transition probability matrices
@@ -997,15 +997,15 @@ class Phycas:
                     ggf.write('%d\t%f\t1.0\n' % (i, t))
                 ggf.close()
                 
-                ggf = file(self.gg_outfile+'.patterns.txt','w')
-                ggf.write('*** yobs:\n')
-                ggf.write(self.gg_y.patternTable(['A', 'C', 'G', 'T']))
-                ggf.write('*** mu:\n')
-                ggf.write(self.gg_mu.patternTable(['A', 'C', 'G', 'T']))
-                for i,k in enumerate(self.gg_kvect):
-                    ggf.write('\n*** a (k = %f):\n' % k)
-                    ggf.write(self.gg_a[i].patternTable(['A', 'C', 'G', 'T']))
-                ggf.close()
+                #ggf = file(self.gg_outfile+'.patterns.txt','w')
+                #ggf.write('*** yobs:\n')
+                #ggf.write(self.gg_y.patternTable(['A', 'C', 'G', 'T']))
+                #ggf.write('\n*** mu:\n')
+                #ggf.write(self.gg_mu.patternTable(['A', 'C', 'G', 'T']))
+                #for i,k in enumerate(self.gg_kvect):
+                #    ggf.write('\n*** a (k = %f):\n' % k)
+                #    ggf.write(self.gg_a[i].patternTable(['A', 'C', 'G', 'T']))
+                #ggf.close()
         
 if __name__ == '__main__':
     mcmc = Phycas()

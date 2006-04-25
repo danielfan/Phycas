@@ -17,6 +17,7 @@ inline Model::Model(
 #if POLPY_NEWWAY
 	gamma_rates_unnorm(1, 1.0),
 	is_flex_model(false),
+	num_flex_spacers(1),
 	flex_probs_fixed(false),
 	flex_rates_fixed(false),
 #endif
@@ -433,6 +434,15 @@ inline void Model::freeStateFreqs()
 inline void Model::setFlexModel()
 	{
 	is_flex_model = true;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `num_flex_spacers' to `s'. See the data member `num_flex_spacers' and the function 
+|	FlexRateParam::recalcPrior for more information on FLEX model spacers.
+*/
+inline void Model::setNumFlexSpacers(unsigned s)
+	{
+	num_flex_spacers = s;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -926,25 +936,16 @@ inline void	Model::createParameters(
 			gamma_rates_unnorm.resize(num_gamma_rates, 0.0);
 			assert(flex_rate_params.empty());
 			assert(flex_prob_params.empty());
-			for (unsigned i = 0; i < num_gamma_rates; ++i)
+			unsigned i;
+			for (i = 0; i < num_gamma_rates; ++i)
 				{
-				// create parameter representing probability of rate i
-				MCMCUpdaterShPtr prob_param = MCMCUpdaterShPtr(new FlexProbParam(i));
-				prob_param->setName(str(boost::format("Prob. rate %d") % i)); //@POL shouldn't this be done in the constructor?
-				prob_param->setTree(t);
-				prob_param->setPrior(flex_prob_param_prior);
-				if (flex_probs_fixed)
-					prob_param->fixParameter();
-				parameters_vect_ref.push_back(prob_param);
-				flex_prob_params.push_back(prob_param);
-
 				// create parameter representing rate i
 				// start with rates evenly spaced between 0.0 and 1.0; e.g. with num_gamma_rates = 4,
 				// 0.0  0.2  0.4  0.6  0.8  1.0
 				//      r_0  r_1  r_2  r_3
 				// so r_i = (i + 1)/(num_gamma_rates + 1), where i = 0, 1, 2, 3
 				gamma_rates_unnorm[i] = (double)(i + 1)/(double)(num_gamma_rates + 1);
-				MCMCUpdaterShPtr rate_param = MCMCUpdaterShPtr(new FlexRateParam(i, gamma_rates_unnorm));
+				MCMCUpdaterShPtr rate_param = MCMCUpdaterShPtr(new FlexRateParam(i, num_flex_spacers, gamma_rates_unnorm));
 				rate_param->setName(str(boost::format("FLEX rate %d") % i)); //@POL shouldn't this be done in the constructor?
 				rate_param->setTree(t);
 				rate_param->setPrior(flex_rate_param_prior);
@@ -952,6 +953,19 @@ inline void	Model::createParameters(
 					rate_param->fixParameter();
 				parameters_vect_ref.push_back(rate_param);
 				flex_rate_params.push_back(rate_param);
+				}
+
+			for (i = 0; i < num_gamma_rates; ++i)
+				{
+				// create parameter representing probability of rate i
+				MCMCUpdaterShPtr prob_param = MCMCUpdaterShPtr(new FlexProbParam(i));
+				prob_param->setName(str(boost::format("FLEX prob %d") % i)); //@POL shouldn't this be done in the constructor?
+				prob_param->setTree(t);
+				prob_param->setPrior(flex_prob_param_prior);
+				if (flex_probs_fixed)
+					prob_param->fixParameter();
+				parameters_vect_ref.push_back(prob_param);
+				flex_prob_params.push_back(prob_param);
 				}
 			}
 		else
@@ -1095,7 +1109,7 @@ inline std::string JC::paramReport() const
 			}
 		else
 			{
-			s += "\tshape";
+			s += str(boost::format("\t%.5f") % gamma_shape);
 			}
 		}
 #else
@@ -1279,7 +1293,7 @@ inline std::string HKY::paramReport() const
 			}
 		else
 			{
-			s += "\tshape";
+			s += str(boost::format("\t%.5f") % gamma_shape);
 			}
 		}
 #else
@@ -1804,7 +1818,7 @@ inline std::string GTR::paramReport() const
 			}
 		else
 			{
-			s += "\tshape";
+			s += str(boost::format("\t%.5f") % gamma_shape);
 			}
 		}
 #else

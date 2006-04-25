@@ -9,7 +9,7 @@ echo *** Running ExplorePrior *** >> runall_diffs.txt
 echo **************************** >> runall_diffs.txt
 echo. >> runall_diffs.txt
 cd ExplorePrior
-python ExplorePrior.py
+REM python ExplorePrior.py
 fc nodata.nex.p refExplorePrior\nodata.nex.p >> ..\runall_diffs.txt 
 if errorlevel 1 (goto abort)
 fc nodata.nex.t refExplorePrior\nodata.nex.t >> ..\runall_diffs.txt
@@ -26,7 +26,7 @@ echo *** Running FixedParams *** >> runall_diffs.txt
 echo *************************** >> runall_diffs.txt
 echo. >> runall_diffs.txt
 cd FixedParams
-python FixedParams.py
+REM python FixedParams.py
 fc params.p ref_output\params.p >> ..\runall_diffs.txt
 if errorlevel 1 (goto abort)
 fc trees.t ref_output\trees.t >> ..\runall_diffs.txt
@@ -43,8 +43,8 @@ echo *** Running GelfandGhosh *** >> runall_diffs.txt
 echo **************************** >> runall_diffs.txt
 echo. >> runall_diffs.txt
 cd GelfandGhosh
-python GelfandGhosh.py
-fc ggout.txt refJCvHKY\ggout.txt >> ..\runall_diffs.txt
+REM python GelfandGhosh.py
+fc ggout.txt reference_output\ggout.txt >> ..\runall_diffs.txt
 if errorlevel 1 (goto abort)
 cd ..
 

@@ -163,6 +163,7 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("edgeLenHyperParamFixed", &phycas::Model::edgeLenHyperParamFixed)
 		.def("edgeLengthsFixed", &phycas::Model::edgeLengthsFixed)
 #if POLPY_NEWWAY
+		.def("setNumFlexSpacers", &phycas::Model::setNumFlexSpacers)
 		.def("setFlexModel", &phycas::Model::setFlexModel)
 		.def("setNotFlexModel", &phycas::Model::setNotFlexModel)
 		.def("fixFlexProbs", &phycas::Model::fixFlexProbs)

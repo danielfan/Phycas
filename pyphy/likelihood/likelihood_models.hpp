@@ -70,6 +70,7 @@ class Model	{
 		void							fixStateFreqs();
 		void							freeStateFreqs();
 #if POLPY_NEWWAY
+		void							setNumFlexSpacers(unsigned s);
 		void							setFlexModel();
 		void							setNotFlexModel();
 		void							fixFlexProbs();
@@ -136,6 +137,7 @@ protected:
 	bool							is_pinvar_model;			/**< If true, a parameter for pinvar will be added to MCMC analysis (pinvar_fixed determines whether it is updated or not) */
 #if POLPY_NEWWAY
 	bool							is_flex_model;				/**< If true, the FLEX model of rate heterogeneity will be used instead of the discrete gamma model */
+	unsigned						num_flex_spacers;			/**< The number of spacers between rates in the FLEX model rate prior. Spacers act like repelling magnets, keeping adjacent rates from getting too close together. Adding more spacers between each pair of adjacent rates increases the repulsive force. Changing the number of spacers is the only modification allowed to the FLEX model rate prior. */
 	bool							flex_probs_fixed;			/**< If true, the values in `flex_prob_params' will not change during MCMC updates */
 	bool							flex_rates_fixed;			/**< If true, the values in `flex_rate_params' will not change during MCMC updates */
 	mutable MCMCUpdaterVect			flex_rate_params;			/**< Vector of shared pointers to the relative rate parameters used in the FLEX model (need to retain pointers to these so that the fixed/free status can be changed) */	
