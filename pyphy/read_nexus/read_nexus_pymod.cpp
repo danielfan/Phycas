@@ -12,7 +12,7 @@
 		ncl/command/nxs_command_output.cpp 
 	lines from the pyphy/read_nexus/Jamfile
 */
-#if !defined(_MSC_VER)	//POL 18-Mar-2006
+#if !defined(_MSC_VER) && !defined(__linux__)	//POL 18-Mar-2006 (_MSC_VER) and 25-Apr-2006 (__linux__)
 #	define PYPHY_INCLUDE_TO_AVOID_LINK_ERROR
 #endif
 

@@ -14,13 +14,14 @@ from Phycas import *
 
 def commonSetup():
     # Set up MCMC
-    phycas.ncycles = 4000
+    phycas.ncycles = 4000 
     phycas.sample_every = 20
-    phycas.adapt_first = 10
+    phycas.adapt_first = 2 # was 10
     phycas.verbose = True
     phycas.metropolis_weight = 300
     phycas.slice_weight = 1
     phycas.gg_do = True
+    phycas.gg_nreps = 5 # was 1
     phycas.gg_kvect = [0.5, 1.0, 2.0]
     phycas.slice_max_units = 0
     phycas.use_inverse_shape = False
@@ -149,20 +150,38 @@ def runHKYFLEX(rnseed):
 if __name__ == "__main__":
     phycas = Phycas()
 
-    #raw_input('debug stop')
+    # Simulation settings
+    master_seed = 15397  # was 13579
+    phycas.r.setSeed(master_seed)
+    num_sites = 2000    # was 1000
 
     # Define the names of the taxa to use when the simulated data set is saved to a file
-    phycas.taxon_labels = ['P. parksii', 'P. articulata', 'P._gracilis', 'P. macrophylla']
+    #POLPY_OLDWAY
+    #phycas.taxon_labels = ['P. parksii', 'P. articulata', 'P._gracilis', 'P. macrophylla']
+    #POLPY_NEWWAY
+    phycas.taxon_labels = ['long_1', 'short_2', 'long_3', 'short_4']
 
     # Create a model tree
     phycas.ntax = 4
     phycas.tree = Phylogeny.Tree()
     
-    #POLPY_OLDWAY
-    #phycas.tree_topology = '(1:0.1,2:0.1,(3:0.1,4:0.1):0.1)'
-    #POLPY_NEWWAY
-    phycas.tree_topology = '(1:0.5,2:0.01,(3:0.5,4:0.01):0.01)'
+    # Build a random tree
+    #edge_len_dist = ProbDist.ExponentialDist(1.0)
+    #edge_len_dist.setLot(phycas.r)
+    #Phylogeny.TreeManip(phycas.tree).randomTree(
+    #    phycas.ntax,     # number of tips
+    #    phycas.r,        # pseudorandom number generator
+    #    edge_len_dist,   # distribution from which to draw edge lengths
+    #    False)           # Yule tree if True, edge lengths independent if False
+    #self.starting_tree = self.tree.makeNewick()
     
+    phycas.tree_topology = '(1:0.2,2:0.02,(3:0.2,4:0.02):0.02)'
+    #phycas.tree_topology = '(1:0.1,2:0.1,(3:0.1,4:0.1):0.1)'
+    #phycas.tree_topology = '(1:0.142857143,2:0.071428571,(3:0.142857143,4:0.071428571):0.071428571)'
+    #phycas.tree_topology = '(1:0.192307692,2:0.038461538,(3:0.192307692,4:0.038461538):0.038461538)'
+    #phycas.tree_topology = '(1:0.217391304,2:0.02173913,(3:0.217391304,4:0.02173913):0.02173913)'
+    #phycas.tree_topology = '(1:0.23255814,2:0.011627907,(3:0.23255814,4:0.011627907):0.011627907)'
+
     phycas.tree.buildFromString(phycas.tree_topology)
 
     # Create a model
@@ -185,12 +204,6 @@ if __name__ == "__main__":
 
     # Prepare the tree for simulation (i.e. equip nodes with transition matrices)
     phycas.likelihood.prepareForSimulation(phycas.tree)
-
-    # Simulation settings
-    master_seed = 13579
-    phycas.r.setSeed(master_seed)
-    phycas.sim_nreps = 1 # ignored at present
-    num_sites = 1000
 
     # Create a SimData object to hold the simulated data
     sim_data = Likelihood.SimData()
