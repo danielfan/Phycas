@@ -98,12 +98,12 @@ class MCMCChainManager(MCMCChainManagerBase):
         """
         return MCMCChainManagerBase.getEdgeLenHyperparam(self)
 
-    def addMCMCUpdaters(self, model, tree, like, rng, separate_edgelens, max_units, weight):
-        """
-        Sorry, no documentation yet.
-        
-        """
-        return MCMCChainManagerBase.addMCMCUpdaters(self, model, tree, like, rng, separate_edgelens, max_units, weight)
+    #def addMCMCUpdaters(self, model, tree, like, rng, separate_edgelens, max_units, weight):
+    #    """
+    #    Sorry, no documentation yet.
+    #    
+    #    """
+    #    return MCMCChainManagerBase.addMCMCUpdaters(self, model, tree, like, rng, separate_edgelens, max_units, weight)
 
     def clear(self):
         """
