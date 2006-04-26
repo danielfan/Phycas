@@ -13,7 +13,7 @@ echo "*** Running ExplorePrior ***" >> runall_diffs.txt
 echo "****************************" >> runall_diffs.txt
 echo " " >> runall_diffs.txt
 cd ExplorePrior
-#python ExplorePrior.py
+python ExplorePrior.py
 diff nodata.nex.p refExplorePrior/nodata.nex.p >> ../runall_diffs.txt 
 if [ $? -ne 0 ] 
 then
@@ -32,7 +32,7 @@ echo "*** Running FixedParams ***" >> runall_diffs.txt
 echo "***************************" >> runall_diffs.txt
 echo " " >> runall_diffs.txt
 cd FixedParams
-#python FixedParams.py
+python FixedParams.py
 diff params.p ref_output/params.p >> ../runall_diffs.txt
 if [ $? -ne 0 ] 
 then
@@ -51,7 +51,7 @@ echo "*** Running GelfandGhosh ***" >> runall_diffs.txt
 echo "****************************" >> runall_diffs.txt
 echo " " >> runall_diffs.txt
 cd GelfandGhosh
-#python GelfandGhosh.py
+python GelfandGhosh.py
 diff ggout.txt reference_output/ggout.txt >> ../runall_diffs.txt
 if [ $? -ne 0 ] 
 then
