@@ -38,6 +38,10 @@ class TreeManip
 		void		starTree(unsigned ntips, ProbDistShPtr edge_len_dist);
 		void		randomTree(unsigned ntips, LotShPtr rng, ProbDistShPtr edge_len_dist, bool yule);
 
+#if POLPY_NEWWAY
+		void		setRandomEdgeLens(ProbDistShPtr d);
+#endif
+
 		//void		BuildTreeFromID(NxsTaxaManager *tm,const TreeID& tree_id, unsigned root_at = 0);
 		//void		SimpleBuildTreeFromID(unsigned nlvs, const TreeIDShPtr tree_id, unsigned root_at = 0);
 

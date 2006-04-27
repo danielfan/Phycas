@@ -1,0 +1,38 @@
+#nexus
+
+begin paup;
+  set autoclose increase=auto autoinc=200 nowarntsave;
+  log file=paup.log start replace;
+  exe simHKYg.nex;
+  set crit=like;
+  lset nst=2 basefreq=estim tratio=estim rates=equal;
+  alltrees; 
+  [!
+  *** here is the HKY tree ***
+  ]
+  describe 1;
+  lset rates=gamma shape=estim;
+  alltrees;
+  [!
+  *** here is the HKYg tree ***
+  ]
+  describe 1; 
+  cleartrees;
+  gettrees file=analHKY.nex.t unrooted;
+  [!
+  *** here is the HKY consensus tree ***
+  ]
+  contree 2-. / nostrict majrule showtree;
+  gettrees file=analHKYg.nex.t unrooted;
+  [!
+  *** here is the HKYg consensus tree ***
+  ]
+  contree 2-. / nostrict majrule showtree;
+  gettrees file=analHKYFLEX.nex.t unrooted;
+  [!
+  *** here is the HKY-FLEX consensus tree ***
+  ]
+  contree 2-. / nostrict majrule showtree;
+  log stop;
+  quit;
+end;

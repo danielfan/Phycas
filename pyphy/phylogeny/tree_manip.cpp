@@ -21,6 +21,17 @@
 
 using namespace phycas;
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Assigns all edge lengths in the tree using independent draws from the ProbabilityDistribution object pointed to by
+|	`d'.
+*/
+void TreeManip::setRandomEdgeLens(ProbDistShPtr d)
+	{
+	std::for_each(tree->begin(), tree->end(), boost::lambda::bind(&TreeNode::SetEdgeLen, boost::lambda::_1, d->Sample()));
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Begins with left child of parent of `start' and calls GetRightSib() until the left sibling of `start' is located.
 |	Assumes `start' is non-NULL.
