@@ -28,7 +28,13 @@ using namespace phycas;
 */
 void TreeManip::setRandomEdgeLens(ProbDistShPtr d)
 	{
-	std::for_each(tree->begin(), tree->end(), boost::lambda::bind(&TreeNode::SetEdgeLen, boost::lambda::_1, d->Sample()));
+	//@POL would like to do something like that shown below, but doesn't compile with d wrapped in var, and not using
+	// var wrapper results in Sample() only getting called once (all edge lengths set to the same value)
+	//std::for_each(tree->begin(), tree->end(), boost::lambda::bind(&TreeNode::SetEdgeLen, boost::lambda::_1, boost::lambda::var(d)->Sample()));
+	for (preorder_iterator nd = tree->begin(); nd != tree->end(); ++nd)
+		{
+		nd->SetEdgeLen(d->Sample());
+		}
 	}
 #endif
 
