@@ -1,51 +1,120 @@
 #include "test.hpp"
 
 // ************************* begin modifiable *****************************************
-//#include <vector>
-//#include <algorithm>
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
-//#include <cmath>
-
-void foo(int k)
-	{
-	std::cerr << "foo(int) called with value " << k << std::endl;
-	}
-
-double bar(double d)
-	{
-	//std::cerr << "bar(double) called with value " << d << std::endl;
-	return sqrt(d);
-	}
+#include <vector>
 
 // *************************** end modifiable *****************************************
 
 int main()
 	{
 	// ************************* begin modifiable *****************************************
+	double lower = 0.0;
+	double upper = 1.0;
 	std::vector<double> v;
-	v.push_back(1.0);
-	v.push_back(2.0);
-	v.push_back(3.0);
-	v.push_back(4.0);
+	v.push_back(0.3);
+	v.push_back(0.6);
+	v.push_back(0.8);
 
-	std::vector<double> v2(4);
+	// (0.1)  0.3         0.6        0.8          lower_bound = begin()  0.0,     *it
+	//        0.3  (0.4)  0.6        0.8          lower_bound = 0.6      *(--it), *it
+	//        0.3         0.6 (0.7)  0.8          lower_bound = 0.8      *(--it), *it
+	//        0.3         0.6        0.8  (0.9)   lower_bound = end()    *(--it), L
 
-	//std::transform(v.begin(), v.end(), v2.begin(), boost::lambda::bind(psqrt, boost::lambda::_1));
-	//std::for_each(v2.begin(), v2.end(), std::cout << boost::lambda::_1 << constant('\n'));
+	double val = 0.0;
 
-	using namespace boost::lambda;
-	//double i = 9.0; 
+	std::vector<double>::iterator p;
 
-	//std::for_each(v.begin(), v.end(), std::cerr << bind(&bar, _1) << '\n');
-	//std::transform(v.begin(), v.end(), v2.begin(), bind(&bar, _1));
-	std::transform(v.begin(), v.end(), v2.begin(), bind(static_cast<double(*)(double)>(&sqrt), _1));
+	for (p = v.begin(); p != v.end(); ++p)
+		std::cerr << *p << "  " << std::endl;
 
+	val = 0.1;
+	p = std::lower_bound(v.begin(), v.end(), val);
+	std::cerr << "val = " << val << std::endl;
+	if (p == v.begin())
+		std::cerr << "p = begin()" << std::endl;
+	else if (p == v.end())
+		std::cerr << "p = end()" << std::endl;
+	else
+		std::cerr << "p = " << *p << std::endl;
 
-	std::for_each(v2.begin(), v2.end(), std::cout << boost::lambda::_1 << constant('\n'));
+	val = 0.4;
+	p = std::lower_bound(v.begin(), v.end(), val);
+	std::cerr << "val = " << val << std::endl;
+	if (p == v.begin())
+		std::cerr << "p = begin()" << std::endl;
+	else if (p == v.end())
+		std::cerr << "p = end()" << std::endl;
+	else
+		std::cerr << "p = " << *p << std::endl;
 
-	//double sqrt_i = bind(&bar, _1)(i);
-	//std::cerr << "Square root of the value " << i << " is " << sqrt_i << std::endl;
+	val = 0.7;
+	p = std::lower_bound(v.begin(), v.end(), val);
+	std::cerr << "val = " << val << std::endl;
+	if (p == v.begin())
+		std::cerr << "p = begin()" << std::endl;
+	else if (p == v.end())
+		std::cerr << "p = end()" << std::endl;
+	else
+		std::cerr << "p = " << *p << std::endl;
+
+	val = 0.9;
+	p = std::lower_bound(v.begin(), v.end(), val);
+	std::cerr << "val = " << val << std::endl;
+	if (p == v.begin())
+		std::cerr << "p = begin()" << std::endl;
+	else if (p == v.end())
+		std::cerr << "p = end()" << std::endl;
+	else
+		std::cerr << "p = " << *p << std::endl;
+
+#if 0
+	typedef std::pair<std::vector<double>::iterator, std::vector<double>::iterator> MyPair;
+	MyPair p = std::equal_range(v.begin(), v.end(), val);
+	std::cerr << "val = " << val << std::endl;
+	if (p.first == v.end() && p.second == v.end())
+		{
+		std::cerr << "first  = end()" << std::endl;
+		std::cerr << "second = end()" << std::endl;
+		//std::cerr << "prev = " << v[v.size() - 1] << std::endl;
+		//std::cerr << "next = " << upper << std::endl;
+		}
+	else if (p.first != v.end() && p.second == v.end())
+		{
+		std::cerr << "first  = " << *(p.first) << std::endl;
+		std::cerr << "second = end()" << std::endl;
+		//std::cerr << "prev = " << *(p.first) << std::endl;
+		//std::cerr << "next = " << upper << std::endl;
+		}
+	else if (p.first != v.end() && p.second != v.end())
+		{
+		if (p.first == p.second)
+			{
+			if (p.first == v.begin())
+				{
+				std::cerr << "first  = begin()" << std::endl;
+				std::cerr << "second = begin()" << std::endl;
+				//std::cerr << "prev = " << lower << std::endl;
+				//std::cerr << "next = " << *(p.second) << std::endl;
+				}
+			else
+				{
+				std::cerr << "first  = " << *(p.first) << std::endl;
+				std::cerr << "second = " << *(p.second) << std::endl;
+				//std::cerr << "prev = " << *(--p.first) << std::endl;
+				//std::cerr << "next = " << *(p.second) << std::endl;
+				}
+			}
+		else
+			{
+			std::cerr << "first  = " << *(p.first) << std::endl;
+			std::cerr << "second = " << *(p.second) << std::endl;
+			//std::cerr << "prev = " << *(p.first) << std::endl;
+			//std::cerr << "next = " << *(p.second) << std::endl;
+			}
+		}
+	else
+		std::cerr << "oops!" << std::endl;
+#endif		
 
 	// *************************** end modifiable *****************************************
 

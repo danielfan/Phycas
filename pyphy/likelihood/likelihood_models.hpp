@@ -29,6 +29,10 @@ namespace phycas{
 |	from Model can be instantiated.
 */
 class Model	{
+#if POLPY_NEWWAY
+	friend class NCatMove;
+#endif
+
 	public:
 
 	// Destructor
@@ -70,6 +74,7 @@ class Model	{
 		void							fixStateFreqs();
 		void							freeStateFreqs();
 #if POLPY_NEWWAY
+		void							setFlexRateUpperBound(double new_upper_bound);
 		void							setNumFlexSpacers(unsigned s);
 		void							setFlexModel();
 		void							setNotFlexModel();
@@ -123,8 +128,10 @@ protected:
 	unsigned						num_gamma_rates;			/**< The number of discrete gamma rate categories. If greater than 1, the model becomes a discrete gamma rate heterogeneity ("G") model. */
 #if POLPY_NEWWAY
 	mutable std::vector<double>		gamma_rates_unnorm;			/**< A vector of quantities that yield the relative rates when normalized in recalcRatesAndProbs (length is `num_gamma_rates') */
-#endif
+	mutable std::vector<double>		gamma_rate_probs;			/**< A vector of probabilities that a site falls in any given rate category (length is `num_gamma_rates') */
+#else
 	std::vector<double>				gamma_rate_probs;			/**< A vector of probabilities that a site falls in any given rate category (length is `num_gamma_rates') */
+#endif
 	std::vector<double>				state_freqs;				/**< A vector of relative state frequencies (length is `num_states') */
 	std::vector<double>				state_freq_unnorm;			/**< A vector of quantities that yield the values in `state_freqs' when normalized using the normalizeFreqs member function (length is `num_states') */
 	std::vector<std::string>		state_repr;					/**< A vector strings representing the states allowed by this model */
@@ -137,7 +144,8 @@ protected:
 	bool							is_pinvar_model;			/**< If true, a parameter for pinvar will be added to MCMC analysis (pinvar_fixed determines whether it is updated or not) */
 #if POLPY_NEWWAY
 	bool							is_flex_model;				/**< If true, the FLEX model of rate heterogeneity will be used instead of the discrete gamma model */
-	unsigned						num_flex_spacers;			/**< The number of spacers between rates in the FLEX model rate prior. Spacers act like repelling magnets, keeping adjacent rates from getting too close together. Adding more spacers between each pair of adjacent rates increases the repulsive force. Changing the number of spacers is the only modification allowed to the FLEX model rate prior. */
+	mutable double					flex_upper_rate_bound;		/**< Largest possible unnormalized relative rate parameter value (lower bound is always 0.0) */
+	mutable unsigned				num_flex_spacers;			/**< The number of spacers between rates in the FLEX model rate prior. Spacers act like repelling magnets, keeping adjacent rates from getting too close together. Adding more spacers between each pair of adjacent rates increases the repulsive force. Changing the number of spacers is the only modification allowed to the FLEX model rate prior. */
 	bool							flex_probs_fixed;			/**< If true, the values in `flex_prob_params' will not change during MCMC updates */
 	bool							flex_rates_fixed;			/**< If true, the values in `flex_rate_params' will not change during MCMC updates */
 	mutable MCMCUpdaterVect			flex_rate_params;			/**< Vector of shared pointers to the relative rate parameters used in the FLEX model (need to retain pointers to these so that the fixed/free status can be changed) */	

@@ -13,6 +13,7 @@ extension _LikelihoodBase
 	topo_prior_calculator.cpp 
 	edge_move.cpp 
 	bush_move.cpp 
+	ncat_move.cpp 
 	likelihood_loops.cpp 
 	likelihood_models.cpp 
 	likelihood_pymod.cpp 

@@ -3,23 +3,12 @@
 #include "pyphy/prob_dist/basic_lot.hpp"
 #include "phycas/rand/probability_distribution.hpp"
 #include "pyphy/phylogeny/basic_tree.hpp"
-//#include <set>
-//#include <list>
-//#include <boost/function.hpp>
-//#include <iostream>
-//#include <iomanip>
-//#include "phycas/rand/probability_distribution.hpp"
-//#include "phycas/trees/split.hpp"
-//#include "phycas/trees/tree_id.hpp"
-//#include "phycas/trees/tree_node.hpp"
-//#include "ncl/taxa/nxs_taxa_manager.hpp"
-//#include "phycas/trees/tree_inl.hpp"
-
-//#include "phycas/tree/drawcontext.h"
-//#include "phycas/rand/lot.h"
-//#include <boost/bind.hpp>
 
 using namespace phycas;
+
+#if POLPY_NEWWAY
+#include "pyphy/prob_dist/basic_lot.hpp"
+#endif
 
 #if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------

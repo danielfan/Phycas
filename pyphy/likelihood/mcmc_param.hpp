@@ -111,7 +111,7 @@ class PinvarParam : public MCMCUpdater
 class FlexRateParam : public MCMCUpdater
 {
 	public:
-									FlexRateParam(unsigned w, unsigned s, std::vector<double> & rr);
+									FlexRateParam(unsigned & s, double & ub, std::vector<double> & rr);
 									virtual ~FlexRateParam()
 										{
 										//std::cerr << "FlexRateParam dying..." << std::endl;
@@ -129,11 +129,12 @@ class FlexRateParam : public MCMCUpdater
 
 	private:
 
+		unsigned &					nspacers;
+		double &					upper_bound;
 		std::vector<double>	&		rel_rates;
 		double						left_value;
 		double						right_value;
 		unsigned					which;
-		unsigned					nspacers;
 };
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -142,18 +143,20 @@ class FlexRateParam : public MCMCUpdater
 class FlexProbParam : public MCMCUpdater
 {
 	public:
-								FlexProbParam(unsigned w);
+								FlexProbParam(std::vector<double> & rp);
 								virtual ~FlexProbParam()
 									{
 									//std::cerr << "FlexProbParam dying..." << std::endl;
 									}
 	
 		virtual void			update();				// override virtual from MCMCUpdater base class
+		virtual void			setLot(LotShPtr r);
 		virtual double			operator()(double f);
 
 	private:
 
 		unsigned				which;
+		std::vector<double>	&	rate_probs;
 };
 #endif
 

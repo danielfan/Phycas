@@ -291,6 +291,16 @@ inline void MCMCUpdater::setName(const std::string & s)
 	name = s;
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the `rng' data member, which is a shared pointer to the pseudorandom number generator (Lot object).
+*/
+inline LotShPtr MCMCUpdater::getLot()
+	{
+	return rng;
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the `rng' data member to the supplied Lot shared pointer.
 */

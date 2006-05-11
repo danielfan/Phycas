@@ -9,6 +9,9 @@ using namespace phycas;
 |	pointer in `cdf_converter', then calls the UseClockToSeed function.
 */
 Lot::Lot() : last_seed_setting(1U), curr_seed(1U)
+#if POLPY_NEWWAY
+	, num_seeds_generated(0)
+#endif
 	{
 	//cdf_converter = new CDF();
 	UseClockToSeed();
@@ -20,6 +23,9 @@ Lot::Lot() : last_seed_setting(1U), curr_seed(1U)
 |	UINT_MAX, or the SetSeed function if `rnd_seed' is any other value.
 */
 Lot::Lot(unsigned rnd_seed) : last_seed_setting(1U), curr_seed(1U)
+#if POLPY_NEWWAY
+	, num_seeds_generated(0)
+#endif
 	{
 	//cdf_converter = new CDF();
 	if (rnd_seed == 0 || rnd_seed == UINT_MAX)
@@ -55,7 +61,14 @@ double Lot::Uniform()
 	curr_seed = (((xalo - leftlo * b16) - p) + (fhi - k * b15) * b16) + k;
 	if (curr_seed & MASKSIGNBIT) 
 		curr_seed = unsigned (((int)curr_seed) + p);
+#if 0 && POLPY_NEWWAY
+	double retval = curr_seed * 4.6566128575e-10;
+	std::cerr << num_seeds_generated << " -> " << retval << std::endl;
+	num_seeds_generated++;
+	return retval;
+#else
 	return curr_seed * 4.6566128575e-10;
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

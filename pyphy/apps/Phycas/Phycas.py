@@ -127,11 +127,18 @@ class Phycas:
         sample_every, report_every, adapt_first and data_file_name.
         
         """
+        # Create a pseudorandom number generator
+        self.r = ProbDist.Lot()
+
         self.starting_tree_source   = 'random'  # source of starting tree topology
         self.starting_tree          = ''        # will contain description of actual starting tree used
         self.tree_topology          = ''        # unused unless starting_tree_source is 'usertree'
         self.using_hyperprior       = True      # Hyperprior for edge length prior used if True
-        self.edgelen_prior_mean     = 0.5       # Prior mean of exponential edge length distribution
+        # POLPY_NEWWAY begins here
+        #self.edgelen_prior_mean     = 0.5       # Prior mean of exponential edge length distribution
+        self.master_edgelen_dist    = ProbDist.ExponentialDist(2.0);
+        self.edgelen_hyperprior     = ProbDist.InverseGammaDist(2.1, 0.909)
+        # POLPY_NEWWAY ends here
         self.model_type             = 'hky'     # HKY model used if True, JC used if False
         self.verbose                = True      # more output if True
         self.random_seed            = 'auto'    # determines random number seed
@@ -157,8 +164,15 @@ class Phycas:
         self.estimate_pinvar        = False
         self.pinvar_prior           = ProbDist.BetaDist(1.0, 1.0)
         self.use_flex_model         = False
-        self.num_flex_spacers       = 1
-        
+        # POLPY_NEWWAY begins here
+        self.flex_ncat_move_weight  = 10        # number of times each cycle to attempt an ncat move
+        self.flex_num_spacers       = 1         # number of fake rates between each adjacent pair of real rates
+        self.flex_phi               = 0.5       # proportion of ncat moves in which ncat is incremented (ncat is decremented with probability 1 - flex_phi)
+        self.flex_L                 = 5.0       # upper bound of interval used for unnormalized relative rate parameter values
+        self.flex_lambda            = 1.0       # parameter of Poisson prior on the number of categories
+        self.flex_prob_param_prior  = ProbDist.ExponentialDist(1.0)
+        # POLPY_NEWWAY ends here
+
         # MCMC settings (used by run function)
         self.ncycles                = 10000
         self.sample_every           = 100
@@ -214,9 +228,6 @@ class Phycas:
         #self.adapt_ycond_param      = 1.3
         #self.adapt_ycond_from_ends  = 0.25
         
-        # Create a pseudorandom number generator
-        self.r = ProbDist.Lot()
-
         # Create a Nexus file reader
         self.reader = ReadNexus.NexusReader()
 
@@ -227,6 +238,15 @@ class Phycas:
         ParamManager object.
         
         """
+        # Make sure prior distributions are all using the same random number generator object
+        self.relrate_prior.setLot(self.r)   # POLPY_NEWWAY
+        self.base_freq_param_prior.setLot(self.r)   # POLPY_NEWWAY
+        self.flex_prob_param_prior.setLot(self.r)   # POLPY_NEWWAY
+        self.gamma_shape_prior.setLot(self.r)   # POLPY_NEWWAY
+        self.pinvar_prior.setLot(self.r)   # POLPY_NEWWAY
+        self.edgelen_hyperprior.setLot(self.r)   # POLPY_NEWWAY
+        self.master_edgelen_dist.setLot(self.r)   # POLPY_NEWWAY
+        
         # Create a substitution model and define priors for the model parameters
         if self.model_type == 'gtr':
             self.model = Likelihood.GTRModel()
@@ -246,8 +266,9 @@ class Phycas:
         if self.num_rates > 1 and self.use_flex_model:
             self.model.setNGammaRates(self.num_rates)
             self.model.setFlexModel()
-            self.model.setNumFlexSpacers(self.num_flex_spacers)
-            self.model.setFLEXProbParamPrior(ProbDist.ExponentialDist(1.0))
+            #self.model.setFlexRateUpperBound(self.flex_L)
+            self.model.setNumFlexSpacers(self.flex_num_spacers)
+            self.model.setFLEXProbParamPrior(self.flex_prob_param_prior)    # POLPY_NEWWAY
         elif self.num_rates > 1:
             self.model.setNGammaRates(self.num_rates)
             self.model.setPriorOnShapeInverse(self.use_inverse_shape)
@@ -265,15 +286,17 @@ class Phycas:
             self.model.setNotPinvarModel()
         
         # Define an edge length prior distribution
-        assert self.edgelen_prior_mean > 0.0, 'edgelen_prior_mean must be a positive, non-zero number'
-        v = 1.0/float(self.edgelen_prior_mean)
-        self.master_edgelen_dist = ProbDist.ExponentialDist(v);
+        #POLPY_NEWWAY assert self.edgelen_prior_mean > 0.0, 'edgelen_prior_mean must be a positive, non-zero number'
+        #POLPY_NEWWAY v = 1.0/float(self.edgelen_prior_mean)
+        #POLPY_NEWWAY self.master_edgelen_dist = ProbDist.ExponentialDist(v);
         self.model.setEdgeLenPrior(self.master_edgelen_dist)
         if self.using_hyperprior:
             # Edge length prior governed by a InverseGamma-distributed hyperprior
-            d = ProbDist.InverseGammaDist(2.1, 0.909)
-            d.setMeanAndVariance(1.0, 10.0)
-            self.model.setEdgeLenHyperPrior(d)
+            self.edgelen_hyperprior.setMeanAndVariance(1.0, 10.0) # POLPY_NEWWAY
+            self.model.setEdgeLenHyperPrior(self.edgelen_hyperprior) # POLPY_NEWWAY
+            #d = ProbDist.InverseGammaDist(2.1, 0.909)
+            #d.setMeanAndVariance(1.0, 10.0)
+            #self.model.setEdgeLenHyperPrior(d)
         else:
             # Edge length prior distribution is not hierarchical
             self.model.setEdgeLenHyperPrior(None)
@@ -306,6 +329,32 @@ class Phycas:
             self.larget_simon_move.fixParameter()
         self.chain_manager.addMove(self.larget_simon_move)
 
+        # POLPY_NEWWAY begins here
+        
+        # If requested, create an NCatMove object to allow the number of rate categories to change
+        if self.use_flex_model:
+            # Create an NCatMove object
+            self.ncat_move = Likelihood.NCatMove()
+            
+            # Set up features specific to NCatMove
+            self.ncat_move.setCatProbPrior(self.flex_prob_param_prior)
+            self.ncat_move.setL(self.flex_L)
+            self.ncat_move.setS(self.flex_num_spacers)
+            self.ncat_move.setLambda(self.flex_lambda)
+            self.ncat_move.setPhi(self.flex_phi)
+
+            # Continue setting up NCatMove object
+            self.ncat_move.setName("NCat move")
+            self.ncat_move.setWeight(self.flex_ncat_move_weight)
+            self.ncat_move.setTree(self.tree)
+            self.ncat_move.setModel(self.model)
+            self.ncat_move.setTreeLikelihood(self.likelihood)
+            self.ncat_move.setLot(self.r)
+            
+            self.chain_manager.addMove(self.ncat_move)
+            
+        # POLPY_NEWWAY ends here
+            
         # If requested, create a BushMove object to allow polytomous trees
         if self.allow_polytomies:
             # If allowing polytomies, do about half and half Larget Simon moves vs. Bush moves
@@ -335,6 +384,7 @@ class Phycas:
             if self.model.edgeLengthsFixed():
                 self.bush_move.fixParameter()
             self.bush_move.finalize()
+            
             self.chain_manager.addMove(self.bush_move)
         else:
             # Only Larget Simon moves if not allowing polytomies
@@ -378,14 +428,23 @@ class Phycas:
             assert self.ntax > 0, 'expecting ntax to be greater than 0'
             
             # Build a random tree
-            edge_dist_param = 1.0/self.edgelen_prior_mean
-            edge_len_dist = ProbDist.ExponentialDist(edge_dist_param)
-            edge_len_dist.setLot(self.r)
+            # begin POLPY_NEWWAY
+            #edge_dist_param = 1.0/self.edgelen_prior_mean
+            #edge_len_dist = ProbDist.ExponentialDist(edge_dist_param)
+            #edge_len_dist.setLot(self.r)
+            #Phylogeny.TreeManip(self.tree).randomTree(
+            #    self.ntax,     # number of tips
+            #    self.r,        # pseudorandom number generator
+            #    edge_len_dist, # distribution from which to draw edge lengths
+            #    False)         # Yule tree if True, edge lengths independent if False
+            self.master_edgelen_dist.setLot(self.r)
+            print 'self.r.getSeed() returns',self.r.getSeed()
             Phylogeny.TreeManip(self.tree).randomTree(
                 self.ntax,     # number of tips
                 self.r,        # pseudorandom number generator
-                edge_len_dist, # distribution from which to draw edge lengths
+                self.master_edgelen_dist, # distribution from which to draw edge lengths
                 False)         # Yule tree if True, edge lengths independent if False
+            # end POLPY_NEWWAY
             self.starting_tree = self.tree.makeNewick()
             
         elif self.starting_tree_source == 'usertree':
@@ -542,7 +601,7 @@ class Phycas:
                 print 'Data file:     ', 'None (running MCMC with no data to explore prior)'
             else:
                 print 'Data file:     ', self.data_file_name
-            print 'Prior:         ', self.edgelen_prior_mean
+            #POLPY_NEWWAY print 'Prior:         ', self.edgelen_prior_mean
             print 'No. cycles:    ', self.ncycles
             print 'Sample every:  ', self.sample_every
             print 'Starting tree: ', self.starting_tree
@@ -843,6 +902,9 @@ class Phycas:
                 #print '*** Updating %s...' % p.getName()
                 for x in range(w):
                     p.update()
+                # POLPY_NEWWAY
+                #if w == 10:
+                #    raw_input('stopped')
             if self.verbose and (cycle + 1) % self.report_every == 0:
                 print 'cycle = %d, lnL = %.5f' % (cycle + 1, self.chain_manager.getLastLnLike())
             if (cycle + 1) % self.sample_every == 0:
@@ -1019,7 +1081,8 @@ if __name__ == '__main__':
     mcmc.random_seed = '13579'
     mcmc.model_type = 'hky'
     mcmc.using_hyperprior = True
-    mcmc.edgelen_prior_mean = 0.1
+    #POLPY_NEWWAY mcmc.edgelen_prior_mean = 0.1
+    self.master_edgelen_dist = ProbDist.ExponentialDist(10.0) # POLPY_NEWWAY
     mcmc.verbose = True
     mcmc.metropolis_weight = 300
     mcmc.slice_weight = 1

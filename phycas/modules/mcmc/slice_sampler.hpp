@@ -548,7 +548,16 @@ inline void SliceSampler::AttachRandomNumberGenerator(LotShPtr rnd)
 */
 inline void SliceSampler::SetXValue(double x)
 	{
+#if POLPY_NEWWAY
+	if (x != lastSampled.first)
+		{
+		lastSampled.first = x;
+		assert(func);
+		lastSampled.second = (*func)(x);
+		}
+#else
 	lastSampled.first = x;
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

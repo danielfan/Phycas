@@ -121,12 +121,11 @@ inline void PinvarParam::update()
 |	
 */
 inline FlexRateParam::FlexRateParam(
-  unsigned w,					/**< is the index of the rate being managed by this parameter */
-  unsigned s,					/**< is the number of spacers between each rate in the order statistics prior */
+  unsigned & s,					/**< is the number of spacers between each rate in the order statistics prior */
+  double & ub,					/**< is the maximum possible value for a rate */
   std::vector<double> & rr)		/**< is the relative rate parameter vector (this parameter needs to know the value on either side when updating) */
-  : MCMCUpdater(),  which(w), nspacers(s), rel_rates(rr), left_value(0.0), right_value(1.0)
+  : MCMCUpdater(),  which(0), nspacers(s), upper_bound(ub), rel_rates(rr), left_value(0.0), right_value(1.0)
 	{
-	assert(which < rel_rates.size());
 	curr_value = rel_rates[which];
 	has_slice_sampler = true;
 	is_move = false;
@@ -145,14 +144,15 @@ inline void FlexRateParam::setChainManager(
 	//refreshLeftRightValues();
 	//double starting_x = (left_value + right_value)/2.0;
 	//slice_sampler->SetXValue(starting_x);
-	slice_sampler->SetXValue(curr_value);
+	//slice_sampler->SetXValue(curr_value);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Determines the quantities `left_value' and `right_value'. The smallest this parameter can become is `left_value', 
-|	which should equal `rel_rates'[`which' - 1] (unless `which' is 0, in which case `left_value' is 0.0). The largest 
-|	this parameter can become is `right_value', which should equal `rel_rates'[`which' + 1] (unless `which' is 
-|	`num_rates' - 1, in which case `right_value' is 1.0). 
+|	Determines the quantities `curr_value', `left_value' and `right_value'. The smallest this parameter can become is 
+|	`left_value', which should equal `rel_rates'[`which' - 1] (unless `which' is 0, in which case `left_value' is 0.0).
+|	The largest this parameter can become is `right_value', which should equal `rel_rates'[`which' + 1] (unless `which'
+|	is `num_rates' - 1, in which case `right_value' is `upper_bound'). The `curr_value' of this parameter is equal to
+|	`rel_rates'[`which'].
 */
 inline void FlexRateParam::refreshLeftRightValues()
 	{
@@ -162,7 +162,7 @@ inline void FlexRateParam::refreshLeftRightValues()
 		{
 		// only one rate (i.e. no rate heterogeneity)
 		left_value  = 0.0;
-		right_value = 1.0;
+		right_value = upper_bound;
 		}
 	else if (which == 0)
 		{
@@ -172,7 +172,7 @@ inline void FlexRateParam::refreshLeftRightValues()
 	else if (which == last)
 		{
 		left_value = rel_rates[which - 1];
-		right_value = 1.0;
+		right_value = upper_bound;
 		}
 	else
 		{
@@ -200,6 +200,7 @@ inline std::string FlexRateParam::getPriorDescr() const
 inline double FlexRateParam::recalcPrior()
 	{
 	refreshLeftRightValues();
+	assert(curr_value == rel_rates[which]);
 	curr_ln_prior = (double)nspacers*(std::log(curr_value - left_value) + std::log(right_value - curr_value));
 	return curr_ln_prior;
 	}
@@ -211,21 +212,35 @@ inline void FlexRateParam::update()
 	{
 	if (is_fixed)
 		return;
-	slice_sampler->Sample();
+
+	unsigned nrates = rel_rates.size();
+	for (unsigned i = 0; i < nrates; ++i)
+		{
+		which = i;
+		curr_value = rel_rates[which];
+		slice_sampler->SetXValue(curr_value);
+		slice_sampler->Sample();
+		}
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	
 */
 inline FlexProbParam::FlexProbParam(
-  unsigned w)					/**< is the index of the rate being managed by this parameter */
-  : MCMCUpdater(), which(w)
+  std::vector<double> & rp)		/**< is the category probability parameter vector */
+  : MCMCUpdater(), which(0), rate_probs(rp)
 	{
 	curr_value = 1.0;
 	has_slice_sampler = true;
 	is_move = false;
 	is_master_param = false;
 	is_hyper_param = false;
+	}
+
+inline void FlexProbParam::setLot(LotShPtr r)
+	{
+	rng = r;
+	std::cerr << "\n\n**** init seed for rng inside FlexProbParam = " << rng->GetInitSeed() << " ****\n" << std::endl;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -235,7 +250,15 @@ inline void FlexProbParam::update()
 	{
 	if (is_fixed)
 		return;
-	slice_sampler->Sample();
+
+	unsigned nrates = rate_probs.size();
+	for (unsigned i = 0; i < nrates; ++i)
+		{
+		which = i;
+		curr_value = rate_probs[which];
+		slice_sampler->SetXValue(curr_value);
+		slice_sampler->Sample();
+		}
 	}
 #endif
 

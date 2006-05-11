@@ -20,7 +20,16 @@ if __name__ == "__main__":
     phycas.model_type               = 'hky'
     phycas.using_hyperprior         = True
     phycas.num_rates                = 4
-    phycas.gamma_shape_mean         = 1.0
+    # POLPY_NEWWAY begins here
+    # phycas.gamma_shape_mean         = 1.0
+    phycas.use_flex_model           = True
+    phycas.flex_ncat_move_weight    = 10        # number of times each cycle to attempt an ncat move
+    phycas.flex_num_spacers         = 1         # number of fake rates between each adjacent pair of real rates
+    phycas.flex_phi                 = 0.5       # proportion of ncat moves in which ncat is incremented (ncat is decremented with probability 1 - flex_phi)
+    phycas.flex_L                   = 5.0       # upper bound of interval used for unnormalized relative rate parameter values
+    phycas.flex_lambda              = 4.0       # parameter of Poisson prior on the number of extra categories
+    phycas.flex_prob_param_prior    = ProbDist.ExponentialDist(1.0)
+    # POLPY_NEWWAY ends here
     phycas.edgelen_prior_mean       = 1.0
     phycas.verbose                  = True
     phycas.metropolis_weight        = 100
@@ -30,5 +39,6 @@ if __name__ == "__main__":
     phycas.use_inverse_shape        = False
 
     phycas.setup()
+    raw_input('attach debugger')
     phycas.run()
 

@@ -37,6 +37,10 @@ class Lot
 		unsigned 				last_seed_setting;
 		unsigned				curr_seed;
 		//CDF *					cdf_converter;
+
+#if POLPY_NEWWAY
+		unsigned				num_seeds_generated;
+#endif
 	};
 
 typedef boost::shared_ptr<Lot> LotShPtr;

@@ -203,6 +203,9 @@
 				RelativePath="..\mcmc_updater.cpp">
 			</File>
 			<File
+				RelativePath="..\ncat_move.cpp">
+			</File>
+			<File
 				RelativePath="..\..\include\num_util.cpp">
 			</File>
 			<File
@@ -314,6 +317,12 @@
 			</File>
 			<File
 				RelativePath="..\mcmc_updater.inl">
+			</File>
+			<File
+				RelativePath="..\ncat_move.hpp">
+			</File>
+			<File
+				RelativePath="..\ncat_move.inl">
 			</File>
 			<File
 				RelativePath="..\..\include\num_util.h">
