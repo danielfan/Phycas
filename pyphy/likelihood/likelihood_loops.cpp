@@ -414,7 +414,7 @@ double TreeLikelihood::harvestLnL(
 	double rateCatProb = rateCatProbArray[0];
 
 	// Get conditional likelihood arrays for the root node
-	assert(rootCLA.getCLASize() == num_rates*num_patterns*num_states);
+	assert(rootCLA.getCLASize() >= num_rates*num_patterns*num_states);
 	const double * cla = rootCLA.getConstCLA();
 
 	double lnLikelihood = 0.0;

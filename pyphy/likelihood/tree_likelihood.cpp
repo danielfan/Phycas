@@ -665,8 +665,6 @@ void TreeLikelihood::copyDataFromDiscreteMatrix(
 
 	// size of likelihood_rate_site vector needs to be revisited if the number of rates subsequently changes 
 	recalcRelativeRates();
-	//num_total_rates = model->getNRatesTotal();
-	//likelihood_rate_site.resize(num_total_rates*num_patterns, 0.0);	//POL replaced mat.getNChar() with nPatterns
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -693,8 +691,6 @@ void TreeLikelihood::copyDataFromSimData(
 
 	// size of likelihood_rate_site vector needs to be revisited if the number of rates subsequently changes 
 	recalcRelativeRates();
-	//num_total_rates = model->getNRatesTotal();
-	//likelihood_rate_site.resize(num_total_rates*num_patterns, 0.0);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

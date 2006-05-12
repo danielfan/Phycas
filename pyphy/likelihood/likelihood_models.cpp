@@ -81,60 +81,56 @@ void Model::createParameters(
 
 	// Create any model-specific parameters and add to the parameters vector
 #if POLPY_NEWWAY
-	if (num_gamma_rates > 1)
+	if (is_flex_model)
 		{
-		if (is_flex_model)
+		gamma_rates_unnorm.resize(num_gamma_rates, 0.0);
+		assert(flex_rate_params.empty());
+		assert(flex_prob_params.empty());
+		for (unsigned i = 0; i < num_gamma_rates; ++i)
 			{
-			assert(num_gamma_rates > 1);
-			gamma_rates_unnorm.resize(num_gamma_rates, 0.0);
-			assert(flex_rate_params.empty());
-			assert(flex_prob_params.empty());
-			for (unsigned i = 0; i < num_gamma_rates; ++i)
-				{
-				// start with rates drawn from Uniform(0.0, flex_upper_rate_bound)
-				//@POL to do this right, need to draw from prior, but this will be close if number of spacers is small
-				double u = flex_prob_param_prior->GetLot()->Uniform();
-				gamma_rates_unnorm[i] = flex_upper_rate_bound*u;
-				//old way: gamma_rates_unnorm[i] = flex_upper_rate_bound*(double)(i + 1)/(double)(num_gamma_rates + 1);
+			// start with rates drawn from Uniform(0.0, flex_upper_rate_bound)
+			//@POL to do this right, need to draw from prior, but this will be close if number of spacers is small
+			double u = flex_prob_param_prior->GetLot()->Uniform();
+			gamma_rates_unnorm[i] = flex_upper_rate_bound*u;
+			//old way: gamma_rates_unnorm[i] = flex_upper_rate_bound*(double)(i + 1)/(double)(num_gamma_rates + 1);
 
-				// start with probabilities all equal
-				assert(flex_prob_param_prior);
-				gamma_rate_probs[i] = flex_prob_param_prior->Sample();
-				}
-
-			// Rates must be sorted from lowest to highest to begin with
-			std::sort(gamma_rates_unnorm.begin(), gamma_rates_unnorm.end());
-
-			MCMCUpdaterShPtr rate_param = MCMCUpdaterShPtr(new FlexRateParam(num_flex_spacers, flex_upper_rate_bound, gamma_rates_unnorm));
-			rate_param->setName("FLEX rates"); //@POL shouldn't this be done in the constructor?
-			rate_param->setTree(t);
-			rate_param->setPrior(flex_rate_param_prior);
-			if (flex_rates_fixed)
-				rate_param->fixParameter();
-			parameters_vect_ref.push_back(rate_param);
-			flex_rate_params.push_back(rate_param);
-
-			MCMCUpdaterShPtr prob_param = MCMCUpdaterShPtr(new FlexProbParam(gamma_rate_probs));
-			prob_param->setName("FLEX probs"); //@POL shouldn't this be done in the constructor?
-			prob_param->setTree(t);
-			prob_param->setPrior(flex_prob_param_prior);
-			if (flex_probs_fixed)
-				prob_param->fixParameter();
-			parameters_vect_ref.push_back(prob_param);
-			flex_prob_params.push_back(prob_param);
+			// start with probabilities all equal
+			assert(flex_prob_param_prior);
+			gamma_rate_probs[i] = flex_prob_param_prior->Sample();
 			}
-		else
-			{
-			assert(num_gamma_rates > 1);
-			assert(!gamma_shape_param);
-			gamma_shape_param = MCMCUpdaterShPtr(new DiscreteGammaShapeParam(invert_shape));
-			gamma_shape_param->setName("Discrete gamma shape"); //@POL shouldn't this be done in the constructor?
-			gamma_shape_param->setTree(t);
-			gamma_shape_param->setPrior(gamma_shape_prior);
-			if (gamma_shape_fixed)
-				gamma_shape_param->fixParameter();
-			parameters_vect_ref.push_back(gamma_shape_param);
-			}
+
+		// Rates must be sorted from lowest to highest to begin with
+		std::sort(gamma_rates_unnorm.begin(), gamma_rates_unnorm.end());
+
+		MCMCUpdaterShPtr rate_param = MCMCUpdaterShPtr(new FlexRateParam(num_flex_spacers, flex_upper_rate_bound, gamma_rates_unnorm));
+		rate_param->setName("FLEX rates"); //@POL shouldn't this be done in the constructor?
+		rate_param->setTree(t);
+		rate_param->setPrior(flex_rate_param_prior);
+		if (flex_rates_fixed)
+			rate_param->fixParameter();
+		parameters_vect_ref.push_back(rate_param);
+		flex_rate_params.push_back(rate_param);
+
+		MCMCUpdaterShPtr prob_param = MCMCUpdaterShPtr(new FlexProbParam(gamma_rate_probs));
+		prob_param->setName("FLEX probs"); //@POL shouldn't this be done in the constructor?
+		prob_param->setTree(t);
+		prob_param->setPrior(flex_prob_param_prior);
+		if (flex_probs_fixed)
+			prob_param->fixParameter();
+		parameters_vect_ref.push_back(prob_param);
+		flex_prob_params.push_back(prob_param);
+		}
+	else if (num_gamma_rates > 1)
+		{
+		assert(num_gamma_rates > 1);
+		assert(!gamma_shape_param);
+		gamma_shape_param = MCMCUpdaterShPtr(new DiscreteGammaShapeParam(invert_shape));
+		gamma_shape_param->setName("Discrete gamma shape"); //@POL shouldn't this be done in the constructor?
+		gamma_shape_param->setTree(t);
+		gamma_shape_param->setPrior(gamma_shape_prior);
+		if (gamma_shape_fixed)
+			gamma_shape_param->fixParameter();
+		parameters_vect_ref.push_back(gamma_shape_param);
 		}
 #else
 	if (num_gamma_rates > 1)

@@ -263,11 +263,11 @@ class Phycas:
 
         # If rate heterogeneity is to be assumed, add it to the model here
         # Note must defer setting up pattern specific rates model until we know number of patterns
-        if self.num_rates > 1 and self.use_flex_model:
-            self.model.setNGammaRates(self.num_rates)
-            self.model.setFlexModel()
-            #self.model.setFlexRateUpperBound(self.flex_L)
-            self.model.setNumFlexSpacers(self.flex_num_spacers)
+        if self.use_flex_model:    # POLPY_NEWWAY
+            self.model.setNGammaRates(self.num_rates)    # POLPY_NEWWAY
+            self.model.setFlexModel()    # POLPY_NEWWAY
+            self.model.setFlexRateUpperBound(self.flex_L)
+            self.model.setNumFlexSpacers(self.flex_num_spacers)    # POLPY_NEWWAY
             self.model.setFLEXProbParamPrior(self.flex_prob_param_prior)    # POLPY_NEWWAY
         elif self.num_rates > 1:
             self.model.setNGammaRates(self.num_rates)
@@ -648,6 +648,8 @@ class Phycas:
         self.paramf.write(self.model.paramHeader())
         if self.using_hyperprior:
             self.paramf.write('\thyper')
+        if self.use_flex_model:
+            self.paramf.write('\trates_probs')
         self.paramf.write('\n')
 
     def paramFileClose(self):
@@ -670,6 +672,13 @@ class Phycas:
             if self.using_hyperprior:
                 p = self.chain_manager.getEdgeLenHyperparam()
                 self.paramf.write('\t%.5f' % p.getCurrValue())
+            if self.use_flex_model:
+                rates_vector = self.likelihood.getRateMeans()
+                for rr in rates_vector:
+                    self.paramf.write('\t%.5f' % rr)
+                probs_vector = self.likelihood.getRateProbs()
+                for rp in probs_vector:
+                    self.paramf.write('\t%.5f' % rp)
             self.paramf.write('\n')
         
         # Add line to tree file if it exists

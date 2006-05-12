@@ -917,27 +917,24 @@ inline std::string JC::paramHeader() const
 	{
 	std::string s = std::string("Gen\tLnL\tTL");
 #if POLPY_NEWWAY
-	if (num_gamma_rates > 1)
+	if (is_flex_model)
 		{
-		if (is_flex_model)
-			{
-			s += "\tncat";
-			//unsigned i;
-			//for ( i = 0; i < num_gamma_rates; ++i)
-			//	{
-			//	s += "\trate";
-			//	s += i;
-			//	}
-			//for ( i = 0; i < num_gamma_rates; ++i)
-			//	{
-			//	s += "\trateprob";
-			//	s += i;
-			//	}
-			}
-		else
-			{
-			s += "\tshape";
-			}
+		s += "\tncat";
+		//unsigned i;
+		//for ( i = 0; i < num_gamma_rates; ++i)
+		//	{
+		//	s += "\trate";
+		//	s += i;
+		//	}
+		//for ( i = 0; i < num_gamma_rates; ++i)
+		//	{
+		//	s += "\trateprob";
+		//	s += i;
+		//	}
+		}
+	else if (num_gamma_rates > 1)
+		{
+		s += "\tshape";
 		}
 #else
 	if (num_gamma_rates > 1)
@@ -1102,25 +1099,27 @@ inline std::string HKY::paramHeader() const
 	{
 	std::string s = std::string("Gen\tLnL\tTL\tkappa\tfreqA\tfreqC\tfreqG\tfreqT");
 #if POLPY_NEWWAY
-	if (num_gamma_rates > 1)
+	if (is_flex_model)
 		{
-		if (is_flex_model)
-			{
-			s += "\tncat";
-			//unsigned i;
-			//for ( i = 0; i < num_gamma_rates; ++i)
-			//	{
-			//	s += str(boost::format("\trate%d") % i);
-			//	}
-			//for ( i = 0; i < num_gamma_rates; ++i)
-			//	{
-			//	s += str(boost::format("\trateprob%d") % i);
-			//	}
-			}
-		else
-			{
-			s += "\tshape";
-			}
+		s += "\tncat";
+
+		//std::ofstream ratef("flex_rates.txt");
+		//ratef << str(boost::format("%12s\t%12s\t%12s\t%12s\n") % "i" % "n" % "rate" % "prob");
+		//ratef.close();
+
+		//unsigned i;
+		//for ( i = 0; i < num_gamma_rates; ++i)
+		//	{
+		//	s += str(boost::format("\trate%d") % i);
+		//	}
+		//for ( i = 0; i < num_gamma_rates; ++i)
+		//	{
+		//	s += str(boost::format("\trateprob%d") % i);
+		//	}
+		}
+	else if (num_gamma_rates > 1)
+		{
+		s += "\tshape";
 		}
 #else
 	if (num_gamma_rates > 1)
@@ -1142,6 +1141,12 @@ inline std::string HKY::paramReport() const
 	if (is_flex_model)
 		{
 		s += str(boost::format("\t%d") % num_gamma_rates);
+
+		//std::ofstream ratef("flex_rates.txt", std::ios::out | std::ios::app);
+		//for (unsigned i = 0; i < num_gamma_rates; ++i)
+		//	ratef << str(boost::format("%12d\t%12d\t%12.5f\t%12.5f\n") % i % num_gamma_rates % gamma_rates_unnorm[i] % gamma_rate_probs[i]);
+		//ratef.close();
+
 		//std::vector<double> rates(num_gamma_rates, 0.0);
 		//std::vector<double> probs(num_gamma_rates, 0.0);
 		//normalizeRatesAndProbs(rates, probs);
@@ -1620,27 +1625,24 @@ inline std::string GTR::paramHeader() const
 	{
 	std::string s = std::string("Gen\tLnL\tTL\trAC\trAG\trAT\trCG\trCT\trGT\tfreqA\tfreqC\tfreqG\tfreqT");
 #if POLPY_NEWWAY
-	if (num_gamma_rates > 1)
+	if (is_flex_model)
 		{
-		if (is_flex_model)
-			{
-			s += "\tncat";
-			//unsigned i;
-			//for ( i = 0; i < num_gamma_rates; ++i)
-			//	{
-			//	s += "\trate";
-			//	s += i;
-			//	}
-			//for ( i = 0; i < num_gamma_rates; ++i)
-			//	{
-			//	s += "\trateprob";
-			//	s += i;
-			//	}
-			}
-		else
-			{
-			s += "\tshape";
-			}
+		s += "\tncat";
+		//unsigned i;
+		//for ( i = 0; i < num_gamma_rates; ++i)
+		//	{
+		//	s += "\trate";
+		//	s += i;
+		//	}
+		//for ( i = 0; i < num_gamma_rates; ++i)
+		//	{
+		//	s += "\trateprob";
+		//	s += i;
+		//	}
+		}
+	else if (num_gamma_rates > 1)
+		{
+		s += "\tshape";
 		}
 #else
 	if (num_gamma_rates > 1)
