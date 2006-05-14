@@ -69,7 +69,7 @@ Lot::~Lot()
 	curr_seed = (((xalo - leftlo * b16) - p) + (fhi - k * b15) * b16) + k;
 	if (curr_seed & MASKSIGNBIT) 
 		curr_seed = unsigned (((int)curr_seed) + p);
-#if 1 & POLPY_NEWWAY
+#if 0 & POLPY_NEWWAY
 #	if defined(NDEBUG)
 		return curr_seed * 4.6566128575e-10;
 #	else

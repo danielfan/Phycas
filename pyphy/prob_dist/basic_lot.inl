@@ -36,11 +36,6 @@ inline void Lot::UseClockToSeed()
 	{
 	time_t timer;
 	curr_seed = (unsigned)time(&timer);
-
-	//@POL deprecated, left in only until correctness can be verified
-	for(unsigned k = 0; k < 100; ++k )
-		Uniform(FILE_AND_LINE);
-
 	last_seed_setting = curr_seed;
 	}
 

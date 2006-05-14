@@ -563,7 +563,6 @@ class Phycas:
         #   self.ntax = self.data_matrix.getNTax()
         #   self.nchar = self.data_matrix.getNChar() # used for Gelfand-Ghosh simulations only
 
-        self.setupTree()        
         self.setupModel()
 
         if self.data_source != 'memory':       
@@ -582,6 +581,8 @@ class Phycas:
             self.npatterns = self.likelihood.getNPatterns()
             assert self.ntax > 0
             assert self.nchar > 0
+
+        self.setupTree()        
 
         #if not self.no_data:
         #    self.likelihood.copyDataFromDiscreteMatrix(self.data_matrix)
