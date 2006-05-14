@@ -146,14 +146,14 @@ class Phycas:
         self.slice_weight           = 1         # Slice sampled parameters will be updated this many times per cycle
         self.slice_max_units        = 1000      # Max. number of units used in slice sampling
 
-        # Related to the data file        
+        # Related to the data source
+        self.data_source            = None      # If None, MCMC will explore prior; if 'file', self.data_file_name should be a valid nexus file name; if 'memory', data should already be in memory (e.g. via simulation) 
+        #self.no_data                = False     # if True, Phycas will pretend that there is no data during MCMC runs (useful for exploring the prior)
         self.data_file_name         = ''        # will hold actual data file name
         self.ntax                   = 0         # will hold the actual number of taxa after data file read
         self.nchar                  = 0         # will hold the actual number of characters after data file has been read
         self.npatterns              = 0         # will hold the actual number of patterns after data file has been read
-        self.taxon_labels           = []        # will hold taxon labels from data file or default names if self.no_data is True
-
-        self.no_data                = False     # if True, Phycas will pretend that there is no data during MCMC runs (useful for exploring the prior)
+        self.taxon_labels           = []        # will hold taxon labels from data file or default names if self.data_source equals None
 
         # Settings related to the model and prior distributions
         self.num_rates              = 1         # default is rate homogeneity (1 rate)
@@ -165,11 +165,11 @@ class Phycas:
         self.pinvar_prior           = ProbDist.BetaDist(1.0, 1.0)
         self.use_flex_model         = False
         # POLPY_NEWWAY begins here
-        self.flex_ncat_move_weight  = 10        # number of times each cycle to attempt an ncat move
+        self.flex_ncat_move_weight  = 1         # number of times each cycle to attempt an ncat move
         self.flex_num_spacers       = 1         # number of fake rates between each adjacent pair of real rates
-        self.flex_phi               = 0.5       # proportion of ncat moves in which ncat is incremented (ncat is decremented with probability 1 - flex_phi)
-        self.flex_L                 = 5.0       # upper bound of interval used for unnormalized relative rate parameter values
-        self.flex_lambda            = 1.0       # parameter of Poisson prior on the number of categories
+        self.flex_phi               = 0.25      # proportion of ncat moves in which ncat is incremented (ncat is decremented with probability 1 - flex_phi)
+        self.flex_L                 = 1.0       # upper bound of interval used for unnormalized relative rate parameter values
+        self.flex_lambda            = 1.0       # parameter of Poisson prior on the number of extra categories
         self.flex_prob_param_prior  = ProbDist.ExponentialDist(1.0)
         # POLPY_NEWWAY ends here
 
@@ -412,7 +412,9 @@ class Phycas:
         # If user requested using a tree from the data file, grab the first one stored there
         self.tree = Phylogeny.Tree()
         if self.starting_tree_source == 'file':
-            assert not self.no_data, 'Specified starting_tree_source = file when no_data = True (file was not read)'
+            # PYPHY_NEWWAY
+            assert self.data_source, "Specified starting_tree_source to be 'file' when data_source was None (file was not read)"
+            #assert not self.no_data, 'Specified starting_tree_source = file when no_data = True (file was not read)'
             
             # Grab first tree description in the data file
             newicks = []
@@ -520,14 +522,16 @@ class Phycas:
         self.data_matrix. Also sets self.ntax and self.nchar accordingly.
         
         """
-        assert not self.no_data, 'set no_data to False before calling readNexusFile'
+        # PYPHY_NEWWAY
+        assert self.data_source == 'file', "set data_source to 'file' before calling readNexusFile"
+        #assert not self.no_data, 'set no_data to False before calling readNexusFile'
         if not self.data_file_name == fn:
             self.data_file_name = fn
         self.reader.readFile(self.data_file_name)
         self.data_matrix = ReadNexus.getDiscreteMatrix(self.reader, 0)
         self.ntax = self.data_matrix.getNTax()
         self.nchar = self.data_matrix.getNChar() # used for Gelfand-Ghosh simulations only
-        # used to avoid next two lines if self.no_data was true, but we have to
+        # used to avoid next two lines if self.data_source was None, but we have to
         # copy over the data from data_matrix to set self.npatterns, so without the
         # next two lines, we would not be able to run the pattern-specific rates model
         # without data because we would not know how many rate parameters to create
@@ -539,12 +543,11 @@ class Phycas:
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         This function is for parts of the setup that should occur right before
-        run() is called. In fact, calling setup() is the first thing done
-        inside the run() function, and thus this function should not be
-        called at all - just call run(). Some things, such as setting the
-        random number seed, are deferred until this point to give the user of
-        the class a chance to change the defaults between class construction
-        and the call to run().
+        run() is called. Some things, such as setting the random number seed,
+        are deferred until this point to give the user of the class a chance
+        to change the defaults between class construction and the call to
+        run().
+        
         """
         self.nsamples = self.ncycles//self.sample_every
 
@@ -553,20 +556,36 @@ class Phycas:
             self.r.setSeed(int(self.random_seed))
 
         # Read the data file and store the number of taxa and number of characters
-        if not self.no_data:
-            #print '*** In Phycas.setup(), reading data file %s, ntax = %d' % (self.data_file_name, self.ntax)  # TEMPORARY
+        # PYPHY_NEWWAY
+        #if not self.no_data: 
+        #   self.reader.readFile(self.data_file_name)
+        #   self.data_matrix = ReadNexus.getDiscreteMatrix(self.reader, 0)
+        #   self.ntax = self.data_matrix.getNTax()
+        #   self.nchar = self.data_matrix.getNChar() # used for Gelfand-Ghosh simulations only
+
+        self.setupTree()        
+        self.setupModel()
+
+        if self.data_source != 'memory':       
+            self.setupLikelihood()
+
+        # PYPHY_NEWWAY
+        if self.data_source == 'file':
             self.reader.readFile(self.data_file_name)
+            self.taxon_labels = self.reader.getTaxLabels()
             self.data_matrix = ReadNexus.getDiscreteMatrix(self.reader, 0)
             self.ntax = self.data_matrix.getNTax()
             self.nchar = self.data_matrix.getNChar() # used for Gelfand-Ghosh simulations only
-
-        self.setupTree()        
-        self.setupModel()        
-        self.setupLikelihood()
-
-        if not self.no_data:
             self.likelihood.copyDataFromDiscreteMatrix(self.data_matrix)
             self.npatterns = self.likelihood.getNPatterns()
+        elif self.data_source == 'memory':
+            self.npatterns = self.likelihood.getNPatterns()
+            assert self.ntax > 0
+            assert self.nchar > 0
+
+        #if not self.no_data:
+        #    self.likelihood.copyDataFromDiscreteMatrix(self.data_matrix)
+        #    self.npatterns = self.likelihood.getNPatterns()
             
         # Add data structures to the nodes of the tree to allow likelihood calculations
         # The structures added to tips allow the tips to store data and transition probability matrices
@@ -583,24 +602,31 @@ class Phycas:
         self.paramFileOpen()
         
         # Store (and create, if necessary) list of taxon labels
-        self.taxon_labels = []
-        if self.no_data:
+        # PYPHY_NEWWAY
+        if (not self.data_source) or (len(self.taxon_labels) != self.ntax):
+        #if self.no_data:
             for i in range(self.ntax):
                 s = 'taxon_%d' % (i + 1)
                 self.taxon_labels.append(s)
-        else:
-            labels_in_datafile = self.reader.getTaxLabels()
-            for i in range(self.ntax):
-                self.taxon_labels.append(labels_in_datafile[i])
+        #else:
+        #    labels_in_datafile = self.reader.getTaxLabels()
+        #    for i in range(self.ntax):
+        #        self.taxon_labels.append(labels_in_datafile[i])
 
         # Open the tree file
         self.treeFileOpen()
         
         if self.verbose:
-            if self.no_data:
-                print 'Data file:     ', 'None (running MCMC with no data to explore prior)'
+            # PYPHY_NEWWAY
+            if self.data_source == 'file':
+            #if self.no_data:
+                print 'Data source:   ', 'None (running MCMC with no data to explore prior)'
+            elif self.data_source == 'file':
+            #else:
+                print 'Data source:   ', self.data_file_name
             else:
-                print 'Data file:     ', self.data_file_name
+            #else:
+                print 'Data source:   ', 'Data already in memory'
             #POLPY_NEWWAY print 'Prior:         ', self.edgelen_prior_mean
             print 'No. cycles:    ', self.ncycles
             print 'Sample every:  ', self.sample_every
@@ -824,15 +850,14 @@ class Phycas:
     def run(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Calls setup() to finish preparations and then runs the Markov chain.
-        Delaying the call to setup() until now allows some parameters to be
-        changed after the MCMCSimple object is constructed but before the
-        analysis commences.
+        Runs the Markov chain. Assumes setup() has been called (or that the
+        equivalent work has been done)
         
         """
-        print '*** Just entered Phycas.run(), ntax =',self.ntax
         if self.gg_do:
-            assert not self.no_data, 'cannot set gg_do and no_data both to True'
+            # POLPY_NEWWAY
+            assert self.data_source, 'cannot set gg_do to True and data_source to None'
+            #assert not self.no_data, 'cannot set gg_do and no_data both to True'
             assert self.nchar > 0, 'nchar not set, required for Gelfand-Ghosh calculation'
 
             # Clear gg_y and let it contain the observed pattern counts            
@@ -872,7 +897,9 @@ class Phycas:
         self.createChain()
 
         # Tell TreeLikelihood object if user wants to run with no data
-        if self.no_data:
+        # PYPHY_NEWWAY
+        if not self.data_source:
+        #if self.no_data:
             self.likelihood.setNoData()
 
         # Compute the current log-likelihood and log-prior in case first updater 
@@ -911,9 +938,6 @@ class Phycas:
                 #print '*** Updating %s...' % p.getName()
                 for x in range(w):
                     p.update()
-                # POLPY_NEWWAY
-                #if w == 10:
-                #    raw_input('stopped')
             if self.verbose and (cycle + 1) % self.report_every == 0:
                 print 'cycle = %d, lnL = %.5f' % (cycle + 1, self.chain_manager.getLastLnLike())
             if (cycle + 1) % self.sample_every == 0:
@@ -960,8 +984,6 @@ class Phycas:
                 for i in range(4):
                     for j,p in enumerate(patterns):
                         entry = '%s%s' % ((j == 0 and '' or '\t'), p[i])
-                        #if j == 0:
-                        #    raw_input('check entry: |%s|' % entry)
                         spectf.write(entry)
                     spectf.write('\n')
                 spectf.close()
@@ -1068,19 +1090,10 @@ class Phycas:
                     ggf.write('%d\t%f\t1.0\n' % (i, t))
                 ggf.close()
                 
-                #ggf = file(self.gg_outfile+'.patterns.txt','w')
-                #ggf.write('*** yobs:\n')
-                #ggf.write(self.gg_y.patternTable(['A', 'C', 'G', 'T']))
-                #ggf.write('\n*** mu:\n')
-                #ggf.write(self.gg_mu.patternTable(['A', 'C', 'G', 'T']))
-                #for i,k in enumerate(self.gg_kvect):
-                #    ggf.write('\n*** a (k = %f):\n' % k)
-                #    ggf.write(self.gg_a[i].patternTable(['A', 'C', 'G', 'T']))
-                #ggf.close()
-        
 if __name__ == '__main__':
     mcmc = Phycas()
-    
+
+    mcmc.data_source = 'file' # POLPY_NEWWAY    
     mcmc.data_file_name = '../../pyphy/nyldna4.nex'
     mcmc.starting_tree_source = 'usertree'
     mcmc.tree_topology = '(0:0.1,1:0.1,(2:0.1,3:0.1):0.1)'
@@ -1091,7 +1104,7 @@ if __name__ == '__main__':
     mcmc.model_type = 'hky'
     mcmc.using_hyperprior = True
     #POLPY_NEWWAY mcmc.edgelen_prior_mean = 0.1
-    self.master_edgelen_dist = ProbDist.ExponentialDist(10.0) # POLPY_NEWWAY
+    mcmc.master_edgelen_dist = ProbDist.ExponentialDist(10.0) # POLPY_NEWWAY
     mcmc.verbose = True
     mcmc.metropolis_weight = 300
     mcmc.slice_weight = 1

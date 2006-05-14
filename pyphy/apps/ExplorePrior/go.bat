@@ -1,6 +1,9 @@
 del nodata.nex
 del nodata.nex.p
 del nodata.nex.t
-python ExplorePrior.py
+start /low /b /wait python ExplorePrior.py 
 pause
+
+
+
  

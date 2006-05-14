@@ -8,7 +8,9 @@ from Phycas import *
 if __name__ == "__main__":
     phycas = Phycas()
 
-    phycas.no_data                  = True
+    # POLPY_NEWWAY
+    phycas.data_source              = None
+    #phycas.no_data                  = True
     phycas.data_file_name           = 'nodata.nex'  # used for creating *.p and *.t file names
     phycas.ntax                     = 10 
     phycas.starting_tree_source     = 'random'
@@ -39,6 +41,5 @@ if __name__ == "__main__":
     phycas.use_inverse_shape        = False
 
     phycas.setup()
-    raw_input('attach debugger')
     phycas.run()
 

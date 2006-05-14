@@ -47,7 +47,15 @@ Lot::~Lot()
 |	University. Originally from Schrage, ACM Trans. Math. Software 5:132-138 (1979). Translated to C by Paul O. Lewis, 
 |	Dec. 10, 1992.
 */
-double Lot::Uniform()
+#if POLPY_NEWWAY
+#	if defined(NDEBUG)
+		double Lot::Uniform()
+#	else
+		double Lot::Uniform(const char * file, int line)
+#	endif
+#else
+	double Lot::Uniform()
+#endif
 	{
 	const unsigned a = 16807U;
 	const unsigned b15 = 32768U;
@@ -61,11 +69,15 @@ double Lot::Uniform()
 	curr_seed = (((xalo - leftlo * b16) - p) + (fhi - k * b15) * b16) + k;
 	if (curr_seed & MASKSIGNBIT) 
 		curr_seed = unsigned (((int)curr_seed) + p);
-#if 0 && POLPY_NEWWAY
-	double retval = curr_seed * 4.6566128575e-10;
-	std::cerr << num_seeds_generated << " -> " << retval << std::endl;
-	num_seeds_generated++;
-	return retval;
+#if 1 & POLPY_NEWWAY
+#	if defined(NDEBUG)
+		return curr_seed * 4.6566128575e-10;
+#	else
+		double retval = curr_seed * 4.6566128575e-10;
+		std::cerr << num_seeds_generated << " -> " << retval << "(" << file << ":" << line << ")" << std::endl;
+		num_seeds_generated++;
+		return retval;
+#	endif
 #else
 	return curr_seed * 4.6566128575e-10;
 #endif
@@ -81,7 +93,7 @@ unsigned Lot::SampleUInt(unsigned max)
 	unsigned samples_uint = max;
 	while(samples_uint == max) 
 		{
-		double r = Uniform();
+		double r = Uniform(FILE_AND_LINE);
 		samples_uint = (unsigned)((double)max*r);
 		}
 

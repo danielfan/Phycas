@@ -1,5 +1,5 @@
 del *.nex.p
 del *.nex.t
-python Phycas.py
+start /low /b /wait python Phycas.py
 pause
  

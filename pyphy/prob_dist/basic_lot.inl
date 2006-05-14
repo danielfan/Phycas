@@ -39,7 +39,7 @@ inline void Lot::UseClockToSeed()
 
 	//@POL deprecated, left in only until correctness can be verified
 	for(unsigned k = 0; k < 100; ++k )
-		Uniform();
+		Uniform(FILE_AND_LINE);
 
 	last_seed_setting = curr_seed;
 	}
@@ -62,7 +62,7 @@ inline unsigned Lot::GetRandBits(unsigned nbits)
 	assert(nbits > 0);
 	assert(nbits < 32);
 
-	double u = Uniform();
+	double u = Uniform(FILE_AND_LINE);
 
 	if (u == 0.0)
 		{

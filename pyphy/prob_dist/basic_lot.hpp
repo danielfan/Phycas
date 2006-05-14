@@ -30,7 +30,16 @@ class Lot
 		// Utilities
 		unsigned 				SampleUInt(unsigned);
 		unsigned				GetRandBits(unsigned nbits);
+
+#if POLPY_NEWWAY
+#	if defined(NDEBUG)
 		double 					Uniform();
+#	else
+		double 					Uniform(const char * file, int line);
+#	endif
+#else
+		double 					Uniform();
+#endif
 
 	private:    	
 

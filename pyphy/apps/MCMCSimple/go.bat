@@ -1,5 +1,5 @@
 del nyldna4.nex.p
 del nyldna4.nex.t
-python MCMCSimple.py
+start /low /b /wait python MCMCSimple.py
 pause
  

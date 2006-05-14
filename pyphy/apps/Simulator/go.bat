@@ -1,3 +1,3 @@
-python Simulator.py
+start /low /b /wait python Simulator.py
 pause
  

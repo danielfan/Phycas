@@ -34,6 +34,7 @@ phycas.model.setEdgeLenHyperPrior(ProbDist.InverseGammaDist(2.1, 0.9090909))
 phycas.setupLikelihood()
 
 # read data file
+phycas.data_source = 'file' # POLPY_NEWWAY
 phycas.readNexusFile('../../pyphy/nyldna4.nex')
 
 # create a random starting tree

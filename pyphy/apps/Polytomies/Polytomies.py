@@ -56,7 +56,7 @@ phycas.likelihood.simulateFirst(sim_data, phycas.tree, phycas.r, num_sites)
 # using the symbols a, c, g, and t for state codes 0, 1, 2, and 3, respectively
 sim_data.saveToNexusFile('simHKY.nex', phycas.taxon_labels, 'dna', ('a','c','g','t'))
 
-# Add a MrBayes block to make it easier to summariz trees later
+# Add a MrBayes block to make it easier to summarize trees later
 # A temporary measure: this functionality should be built into Phycas
 dataf = file('simHKY.nex', 'a')
 dataf.write('\n\nbegin mrbayes;')
@@ -68,6 +68,11 @@ dataf.close()
 # we can run MCMC analyses on the simulated data
 phycas.likelihood.copyDataFromSimData(sim_data)
 phycas.nchar = num_sites # this should be set by copyDataFromSimData
+
+# POLPY_NEWWAY
+# Tell Phycas that the data is already in memory (it will not obtain data
+# from a file)
+phycas.data_source = 'memory'
 
 print
 print '~~~~~~~~~~~~~~~~~~~~~~'

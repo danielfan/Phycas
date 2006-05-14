@@ -491,7 +491,7 @@ inline double BernoulliDistribution::GetCDF(
 */
 inline double BernoulliDistribution::Sample() const
   	{
-	return (lot->Uniform() <= p ? 1.0 : 0.0);
+	return (lot->Uniform(FILE_AND_LINE) <= p ? 1.0 : 0.0);
 	}
  
 /*----------------------------------------------------------------------------------------------------------------------
@@ -702,7 +702,7 @@ inline double BinomialDistribution::Sample() const
 	unsigned cum = 0;
 	for (unsigned i = 0; i < n; ++i)
 		{
-		if (lot->Uniform() <= p)
+		if (lot->Uniform(FILE_AND_LINE) <= p)
 			++cum;
 		}
 	return cum;
@@ -877,11 +877,12 @@ inline double UniformDistribution::GetCDF(
 	}
  
 /*------------------------------------------------------------------------------------------------------------------------------------------------------------------
-|	Returns a sampled value from a uniform distribution having left and right bounds a and b, respectively. The value returned is a + (b - a)*r.Uniform().
+|	Returns a sampled value from a uniform distribution having left and right bounds a and b, respectively. The value returned is 
+|	a + (b - a)*r.Uniform(FILE_AND_LINE).
 */
 inline double UniformDistribution::Sample() const
   	{
-	double u = lot->Uniform();
+	double u = lot->Uniform(FILE_AND_LINE);
 	return (a + (b - a)*u);
 	}
  
@@ -1041,7 +1042,7 @@ inline double GammaDistribution::GetCDF(
 */
 inline double GammaDistribution::Sample() const
 	{
-	return cdf.SampleGamma(lot->Uniform(), alpha, beta); 
+	return cdf.SampleGamma(lot->Uniform(FILE_AND_LINE), alpha, beta); 
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -1287,7 +1288,7 @@ inline double InverseGammaDistribution::GetCDF(
 */
 inline double InverseGammaDistribution::Sample() const
 	{
-	double gamma_deviate = cdf.SampleGamma(lot->Uniform(), alpha, beta);
+	double gamma_deviate = cdf.SampleGamma(lot->Uniform(FILE_AND_LINE), alpha, beta);
 
 	if (gamma_deviate == 0.0)
 		return DBL_MAX;
@@ -1952,8 +1953,8 @@ inline double BetaDistribution::GetCDF(double x) const
 	
 inline double BetaDistribution::Sample() const
 	{
-	double x_1 = cdf.SampleGamma(lot->Uniform(), alphaParam, 1.0); 
-	double x_2 = cdf.SampleGamma(lot->Uniform(), betaParam, 1.0); 
+	double x_1 = cdf.SampleGamma(lot->Uniform(FILE_AND_LINE), alphaParam, 1.0); 
+	double x_2 = cdf.SampleGamma(lot->Uniform(FILE_AND_LINE), betaParam, 1.0); 
 
 	return x_1/(x_1 + x_2);
 	}

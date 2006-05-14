@@ -14,135 +14,88 @@ from Phycas import *
 
 def commonSetup():
     # Set up MCMC
-    phycas.ncycles = 4000 
-    phycas.sample_every = 20
-    phycas.adapt_first = 2 # was 10
+    phycas.ncycles = 4000
+    phycas.sample_every = 20 
+    phycas.adapt_first = 10
     phycas.verbose = True
-    phycas.metropolis_weight = 300
+    phycas.metropolis_weight = 100
     phycas.slice_weight = 1
     phycas.gg_do = True
     phycas.gg_nreps = 5 # was 1
     phycas.gg_kvect = [0.5, 1.0, 2.0]
     phycas.slice_max_units = 0
     phycas.use_inverse_shape = False
+    phycas.using_hyperprior = True
+    phycas.gg_outfile = None
+    phycas.starting_tree_source = 'usertree'
+    phycas.starting_tree = '(1:0.2,2:0.02,(3:0.2,4:0.02):0.02)'
+    phycas.model_type = 'hky'
+    phycas.data_source = 'memory'
+    phycas.estimate_pinvar = False
+    phycas.use_flex_model = False
 
 def runHKY(rnseed):
-    global hky_p, hky_g, hky_d
     print
     print '~~~~~~~~~~~~~~~~~~~~~~'
     print 'HKY analysis beginning'
     print '~~~~~~~~~~~~~~~~~~~~~~'
 
-    phycas.r.setSeed(rnseed)    
-
-    # Change to HKY model
-    phycas.model = Likelihood.HKYModel()
-    phycas.model.setKappa(1.0)
-    phycas.model.setNucleotideFreqs(1.0, 1.0, 1.0, 1.0)
-    phycas.model.setKappaPrior(ProbDist.ExponentialDist(1.0))
-    phycas.model.setBaseFreqParamPrior(ProbDist.ExponentialDist(1.0))
-
-    phycas.model.setEdgeLenPrior(ProbDist.ExponentialDist(10.0))
-    phycas.model.setEdgeLenHyperPrior(ProbDist.InverseGammaDist(2.1, 0.9090909))
-    phycas.likelihood.replaceModel(phycas.model)
-
-    # Start with same tree we used for the simulation
-    phycas.tree.buildFromString(phycas.tree_topology)
-    phycas.likelihood.prepareForLikelihood(phycas.tree)
-
-    # Open new parameter and tree files
-    phycas.param_file_name = 'analHKY.nex.p'
-    phycas.paramFileOpen()
-    phycas.tree_file_name = 'analHKY.nex.t'
-    phycas.treeFileOpen()
-
     commonSetup()
+
+    phycas.random_seed = rnseed
+    phycas.data_file_name = 'analHKY.nex'
+
+    phycas.setup()
     phycas.run()
 
+    global hky_p, hky_g, hky_d
     hky_p = phycas.gg_Pm
     hky_g = phycas.gg_Gm
     hky_d = phycas.gg_Dm
 
 def runHKYg(rnseed):
-    global hkyg_p, hkyg_g, hkyg_d
     print
     print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
     print 'HKY+Gamma analysis beginning'
     print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
 
-    phycas.r.setSeed(rnseed)    
     commonSetup()
 
-    # Change to HKY+Gamma model
-    phycas.model = Likelihood.HKYModel()
-    phycas.model.setKappa(1.0)
-    phycas.model.setNucleotideFreqs(1.0, 1.0, 1.0, 1.0)
-    phycas.model.setKappaPrior(ProbDist.ExponentialDist(1.0))
-    phycas.model.setBaseFreqParamPrior(ProbDist.ExponentialDist(1.0))
-    phycas.model.setNGammaRates(4)
-    phycas.model.setPriorOnShapeInverse(phycas.use_inverse_shape)
-    phycas.model.setShape(0.5)
-    phycas.model.setDiscreteGammaShapePrior(ProbDist.ExponentialDist(1.0))
-    phycas.model.setNotPinvarModel()
+    phycas.random_seed = rnseed
+    phycas.data_file_name = 'analHKYg.nex'
+    phycas.num_rates = 4
 
-    phycas.model.setEdgeLenPrior(ProbDist.ExponentialDist(10.0))
-    phycas.model.setEdgeLenHyperPrior(ProbDist.InverseGammaDist(2.1, 0.9090909))
-    phycas.likelihood.replaceModel(phycas.model)
-
-    # Start with same tree we used for the simulation
-    phycas.tree.buildFromString(phycas.tree_topology)
-    phycas.likelihood.prepareForLikelihood(phycas.tree)
-
-    # Open new parameter and tree files
-    phycas.param_file_name = 'analHKYg.nex.p'
-    phycas.paramFileOpen()
-    phycas.tree_file_name = 'analHKYg.nex.t'
-    phycas.treeFileOpen()
-
-    #commonSetup()
+    phycas.setup()
     phycas.run()
 
+    global hkyg_p, hkyg_g, hkyg_d
     hkyg_p = phycas.gg_Pm
     hkyg_g = phycas.gg_Gm
     hkyg_d = phycas.gg_Dm
 
 def runHKYFLEX(rnseed):
-    global hkyflex_p, hkyflex_g, hkyflex_d
     print
     print '~~~~~~~~~~~~~~~~~~~~~~~~~~~'
     print 'HKY+FLEX analysis beginning'
     print '~~~~~~~~~~~~~~~~~~~~~~~~~~~'
 
-    phycas.r.setSeed(rnseed)    
     commonSetup()
 
-    # Change to HKY+FLEX model
-    phycas.model = Likelihood.HKYModel()
-    phycas.model.setKappa(1.0)
-    phycas.model.setNucleotideFreqs(1.0, 1.0, 1.0, 1.0)
-    phycas.model.setKappaPrior(ProbDist.ExponentialDist(1.0))
-    phycas.model.setBaseFreqParamPrior(ProbDist.ExponentialDist(1.0))
-    phycas.model.setNGammaRates(4)
-    phycas.model.setFlexModel()
-    phycas.model.setFLEXProbParamPrior(ProbDist.ExponentialDist(1.0))
-    phycas.model.setNotPinvarModel()
+    phycas.random_seed            = rnseed
+    phycas.data_file_name         = 'analHKYflex.nex'
+    phycas.num_rates              = 1
+    phycas.use_flex_model         = True
+    phycas.flex_ncat_move_weight  = 1
+    phycas.flex_num_spacers       = 1
+    phycas.flex_phi               = 0.25
+    phycas.flex_L                 = 1.0
+    phycas.flex_lambda            = 1.0 
+    phycas.flex_prob_param_prior  = ProbDist.ExponentialDist(1.0)
 
-    phycas.model.setEdgeLenPrior(ProbDist.ExponentialDist(10.0))
-    phycas.model.setEdgeLenHyperPrior(ProbDist.InverseGammaDist(2.1, 0.9090909))
-    phycas.likelihood.replaceModel(phycas.model)
-
-    # Start with same tree we used for the simulation
-    phycas.tree.buildFromString(phycas.tree_topology)
-    phycas.likelihood.prepareForLikelihood(phycas.tree)
-
-    # Open new parameter and tree files
-    phycas.param_file_name = 'analHKYFLEX.nex.p'
-    phycas.paramFileOpen()
-    phycas.tree_file_name = 'analHKYFLEX.nex.t'
-    phycas.treeFileOpen()
-
+    phycas.setup()
     phycas.run()
 
+    global hkyflex_p, hkyflex_g, hkyflex_d
     hkyflex_p = phycas.gg_Pm
     hkyflex_g = phycas.gg_Gm
     hkyflex_d = phycas.gg_Dm
@@ -156,32 +109,12 @@ if __name__ == "__main__":
     num_sites = 2000    # was 1000
 
     # Define the names of the taxa to use when the simulated data set is saved to a file
-    #POLPY_OLDWAY
-    #phycas.taxon_labels = ['P. parksii', 'P. articulata', 'P._gracilis', 'P. macrophylla']
-    #POLPY_NEWWAY
     phycas.taxon_labels = ['long_1', 'short_2', 'long_3', 'short_4']
 
     # Create a model tree
     phycas.ntax = 4
     phycas.tree = Phylogeny.Tree()
-    
-    # Build a random tree
-    #edge_len_dist = ProbDist.ExponentialDist(1.0)
-    #edge_len_dist.setLot(phycas.r)
-    #Phylogeny.TreeManip(phycas.tree).randomTree(
-    #    phycas.ntax,     # number of tips
-    #    phycas.r,        # pseudorandom number generator
-    #    edge_len_dist,   # distribution from which to draw edge lengths
-    #    False)           # Yule tree if True, edge lengths independent if False
-    #self.starting_tree = self.tree.makeNewick()
-    
     phycas.tree_topology = '(1:0.2,2:0.02,(3:0.2,4:0.02):0.02)'
-    #phycas.tree_topology = '(1:0.1,2:0.1,(3:0.1,4:0.1):0.1)'
-    #phycas.tree_topology = '(1:0.142857143,2:0.071428571,(3:0.142857143,4:0.071428571):0.071428571)'
-    #phycas.tree_topology = '(1:0.192307692,2:0.038461538,(3:0.192307692,4:0.038461538):0.038461538)'
-    #phycas.tree_topology = '(1:0.217391304,2:0.02173913,(3:0.217391304,4:0.02173913):0.02173913)'
-    #phycas.tree_topology = '(1:0.23255814,2:0.011627907,(3:0.23255814,4:0.011627907):0.011627907)'
-
     phycas.tree.buildFromString(phycas.tree_topology)
 
     # Create a model

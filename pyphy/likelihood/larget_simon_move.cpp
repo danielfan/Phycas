@@ -61,7 +61,7 @@ void LargetSimonMove::update()
 
 	double ln_accept_ratio = curr_posterior - prev_posterior + getLnHastingsRatio() + getLnJacobian();
 
-	if (ln_accept_ratio >= 0.0 || std::log(rng->Uniform()) <= ln_accept_ratio)
+	if (ln_accept_ratio >= 0.0 || std::log(rng->Uniform(FILE_AND_LINE)) <= ln_accept_ratio)
 		{
 		p->setLastLnPrior(curr_ln_prior);
 		p->setLastLnLike(curr_ln_like);
@@ -98,7 +98,7 @@ void LargetSimonMove::proposeNewState()
 |	Chooses a random edge and changes its current length m to a new length m* using the following formula, where `lambda' is
 |	a tuning parameter.
 |>
-|	m* = m*exp(lambda*(r.Uniform() - 0.5))
+|	m* = m*exp(lambda*(r.Uniform(FILE_AND_LINE) - 0.5))
 |>
 */
 void LargetSimonMove::starTreeProposeNewState()
@@ -127,7 +127,7 @@ void LargetSimonMove::starTreeProposeNewState()
 	// Modify the edge
 	//
 	double m		= orig_node->GetEdgeLen();
-	double mstar	= m*std::exp(lambda*(rng->Uniform() - 0.5));
+	double mstar	= m*std::exp(lambda*(rng->Uniform(FILE_AND_LINE) - 0.5));
 	orig_node->SetEdgeLen(mstar);
 	orig_node->InvalidateAttrDown(true, orig_node->GetParent());
 	}
@@ -160,7 +160,7 @@ void LargetSimonMove::starTreeProposeNewState()
 |	
 |	The path represented by the double line above is either contracted or expanded by a factor m*, where
 |	
-|	m* = m*exp(lambda*(r.Uniform() - 0.5))
+|	m* = m*exp(lambda*(r.Uniform(FILE_AND_LINE) - 0.5))
 |	
 |	Then, one of {u, v} is chosen at random to move. Let's say for illustration that u was chosen. u is moved (along 
 |	with b and c) to a random point along the main path from a to x. If this makes the node u cross over node v, then 
@@ -269,17 +269,17 @@ void LargetSimonMove::defaultProposeNewState()
 		}
 
 	m = origX + origY + origZ;
-	mstar = m*exp(lambda*(rng->Uniform() - 0.5));
+	mstar = m*exp(lambda*(rng->Uniform(FILE_AND_LINE) - 0.5));
 	x = origX*mstar/m;
 	y = origY*mstar/m;
 	z = origZ*mstar/m;
 
-	xstar = rng->Uniform()*mstar;
+	xstar = rng->Uniform(FILE_AND_LINE)*mstar;
 
 	// Decide whether to move ndY down or node U up
 	//
 	bool moving_Y = true;
-	if (rng->Uniform() < 0.5)
+	if (rng->Uniform(FILE_AND_LINE) < 0.5)
 		moving_Y = false;
 	bool moving_U = !moving_Y;
 

@@ -5,6 +5,14 @@
 #	include <MSLCarbonPrefix.h>
 #endif
 
+#if POLPY_NEWWAY
+#if defined(NDEBUG)
+#	define FILE_AND_LINE
+#else
+#	define FILE_AND_LINE  __FILE__,__LINE__
+#endif
+#endif
+
 /* to make cipres services supplied by phycas reentrant, MTH is on a crusade against statics 
 The following defines will help me wade through harmless, class-level functions and 
   and static data and functions that hinder thread-safety.
