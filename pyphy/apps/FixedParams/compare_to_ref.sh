@@ -1,3 +1,3 @@
-diff params.p ref_output/params.p
-diff trees.t ref_output/trees.t
+diff params.p reference_output/params.p
+diff trees.t reference_output/trees.t
 

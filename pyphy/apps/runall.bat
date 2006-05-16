@@ -10,9 +10,9 @@ echo **************************** >> runall_diffs.txt
 echo. >> runall_diffs.txt
 cd ExplorePrior
 start /low /b /wait python ExplorePrior.py
-fc nodata.nex.p refExplorePrior\nodata.nex.p >> ..\runall_diffs.txt 
+fc nodata.nex.p reference_output\nodata.nex.p >> ..\runall_diffs.txt 
 if errorlevel 1 (goto abort)
-fc nodata.nex.t refExplorePrior\nodata.nex.t >> ..\runall_diffs.txt
+fc nodata.nex.t reference_output\nodata.nex.t >> ..\runall_diffs.txt
 if errorlevel 1 (goto abort)
 cd ..
 
@@ -27,9 +27,9 @@ echo *************************** >> runall_diffs.txt
 echo. >> runall_diffs.txt
 cd FixedParams
 start /low /b /wait python FixedParams.py
-fc params.p ref_output\params.p >> ..\runall_diffs.txt
+fc params.p reference_output\params.p >> ..\runall_diffs.txt
 if errorlevel 1 (goto abort)
-fc trees.t ref_output\trees.t >> ..\runall_diffs.txt
+fc trees.t reference_output\trees.t >> ..\runall_diffs.txt
 if errorlevel 1 (goto abort)
 cd ..
 
@@ -59,9 +59,9 @@ echo ****************************** >> runall_diffs.txt
 echo. >> runall_diffs.txt
 cd LikelihoodTest
 start /low /b /wait python LikelihoodTest.py
-fc simulated.nex refLikelihoodTest\simulated.nex >> ..\runall_diffs.txt
+fc simulated.nex reference_output\simulated.nex >> ..\runall_diffs.txt
 if errorlevel 1 (goto abort)
-fc check.nex refLikelihoodTest\check.nex >> ..\runall_diffs.txt
+fc check.nex reference_output\check.nex >> ..\runall_diffs.txt
 if errorlevel 1 (goto abort)
 cd ..
 
@@ -76,9 +76,9 @@ echo ************************** >> runall_diffs.txt
 echo. >> runall_diffs.txt
 cd MCMCSimple
 start /low /b /wait python MCMCSimple.py
-fc nyldna4.nex.p refHKYhyper\nyldna4.nex.p >> ..\runall_diffs.txt 
+fc nyldna4.nex.p reference_output\nyldna4.nex.p >> ..\runall_diffs.txt 
 if errorlevel 1 (goto abort)
-fc nyldna4.nex.t refHKYhyper\nyldna4.nex.t >> ..\runall_diffs.txt
+fc nyldna4.nex.t reference_output\nyldna4.nex.t >> ..\runall_diffs.txt
 if errorlevel 1 (goto abort)
 cd ..
 
@@ -93,9 +93,9 @@ echo ********************** >> runall_diffs.txt
 echo. >> runall_diffs.txt
 cd Phycas
 start /low /b /wait python Phycas.py
-fc nyldna4.nex.p refHKYhyper\nyldna4.nex.p >> ..\runall_diffs.txt 
+fc nyldna4.nex.p reference_output\nyldna4.nex.p >> ..\runall_diffs.txt 
 if errorlevel 1 (goto abort)
-fc nyldna4.nex.t refHKYhyper\nyldna4.nex.t >> ..\runall_diffs.txt
+fc nyldna4.nex.t reference_output\nyldna4.nex.t >> ..\runall_diffs.txt
 if errorlevel 1 (goto abort)
 cd ..
 
@@ -110,11 +110,11 @@ echo ************************** >> runall_diffs.txt
 echo. >> runall_diffs.txt
 cd Polytomies
 start /low /b /wait python Polytomies.py
-fc analHKY.nex.p refHKY\analHKY.nex.p >> ..\runall_diffs.txt
+fc analHKY.nex.p reference_output\analHKY.nex.p >> ..\runall_diffs.txt
 if errorlevel 1 (goto abort)
-fc analHKY.nex.t refHKY\analHKY.nex.t >> ..\runall_diffs.txt
+fc analHKY.nex.t reference_output\analHKY.nex.t >> ..\runall_diffs.txt
 if errorlevel 1 (goto abort)
-fc simHKY.nex refHKY\simHKY.nex >> ..\runall_diffs.txt
+fc simHKY.nex reference_output\simHKY.nex >> ..\runall_diffs.txt
 if errorlevel 1 (goto abort)
 cd ..
 
@@ -129,7 +129,7 @@ echo ************************* >> runall_diffs.txt
 echo. >> runall_diffs.txt
 cd Simulator
 start /low /b /wait python Simulator.py
-fc simulated.nex refHKY/simulated.nex >> ..\runall_diffs.txt
+fc simulated.nex reference_output/simulated.nex >> ..\runall_diffs.txt
 if errorlevel 1 (goto abort)
 cd ..
 

@@ -1,5 +1,5 @@
 #!/bin/sh
 
-diff simulated.nex refLikelihoodTest/simulated.nex
-diff check.nex refLikelihoodTest/check.nex
+diff simulated.nex reference_output/simulated.nex
+diff check.nex reference_output/check.nex
  

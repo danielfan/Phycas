@@ -14,12 +14,12 @@ echo "****************************" >> runall_diffs.txt
 echo " " >> runall_diffs.txt
 cd ExplorePrior
 python ExplorePrior.py
-diff nodata.nex.p refExplorePrior/nodata.nex.p >> ../runall_diffs.txt 
+diff nodata.nex.p reference_output/nodata.nex.p >> ../runall_diffs.txt 
 if [ $? -ne 0 ] 
 then
   abort
 fi
-diff nodata.nex.t refExplorePrior/nodata.nex.t >> ../runall_diffs.txt
+diff nodata.nex.t reference_output/nodata.nex.t >> ../runall_diffs.txt
 if [ $? -ne 0 ] 
 then
   abort
@@ -33,12 +33,12 @@ echo "***************************" >> runall_diffs.txt
 echo " " >> runall_diffs.txt
 cd FixedParams
 python FixedParams.py
-diff params.p ref_output/params.p >> ../runall_diffs.txt
+diff params.p reference_output/params.p >> ../runall_diffs.txt
 if [ $? -ne 0 ] 
 then
   abort
 fi
-diff trees.t ref_output/trees.t >> ../runall_diffs.txt
+diff trees.t reference_output/trees.t >> ../runall_diffs.txt
 if [ $? -ne 0 ] 
 then
   abort
@@ -66,12 +66,12 @@ echo "******************************" >> runall_diffs.txt
 echo " " >> runall_diffs.txt
 cd LikelihoodTest
 python LikelihoodTest.py
-diff simulated.nex refLikelihoodTest/simulated.nex >> ../runall_diffs.txt
+diff simulated.nex reference_output/simulated.nex >> ../runall_diffs.txt
 if [ $? -ne 0 ] 
 then
   abort
 fi
-diff check.nex refLikelihoodTest/check.nex >> ../runall_diffs.txt
+diff check.nex reference_output/check.nex >> ../runall_diffs.txt
 if [ $? -ne 0 ] 
 then
   abort
@@ -85,12 +85,12 @@ echo "**************************" >> runall_diffs.txt
 echo " " >> runall_diffs.txt
 cd MCMCSimple
 python MCMCSimple.py
-diff nyldna4.nex.p refHKYhyper/nyldna4.nex.p >> ../runall_diffs.txt 
+diff nyldna4.nex.p reference_output/nyldna4.nex.p >> ../runall_diffs.txt 
 if [ $? -ne 0 ] 
 then
   abort
 fi
-diff nyldna4.nex.t refHKYhyper/nyldna4.nex.t >> ../runall_diffs.txt
+diff nyldna4.nex.t reference_output/nyldna4.nex.t >> ../runall_diffs.txt
 if [ $? -ne 0 ] 
 then
   abort
@@ -104,12 +104,12 @@ echo "**********************" >> runall_diffs.txt
 echo " " >> runall_diffs.txt
 cd Phycas
 python Phycas.py
-diff nyldna4.nex.p refHKYhyper/nyldna4.nex.p >> ../runall_diffs.txt 
+diff nyldna4.nex.p reference_output/nyldna4.nex.p >> ../runall_diffs.txt 
 if [ $? -ne 0 ] 
 then
   abort
 fi
-diff nyldna4.nex.t refHKYhyper/nyldna4.nex.t >> ../runall_diffs.txt
+diff nyldna4.nex.t reference_output/nyldna4.nex.t >> ../runall_diffs.txt
 if [ $? -ne 0 ] 
 then
   abort
@@ -123,17 +123,17 @@ echo "**************************" >> runall_diffs.txt
 echo " " >> runall_diffs.txt
 cd Polytomies
 python Polytomies.py
-diff analHKY.nex.p refHKY/analHKY.nex.p >> ../runall_diffs.txt
+diff analHKY.nex.p reference_output/analHKY.nex.p >> ../runall_diffs.txt
 if [ $? -ne 0 ] 
 then
   abort
 fi
-diff analHKY.nex.t refHKY/analHKY.nex.t >> ../runall_diffs.txt
+diff analHKY.nex.t reference_output/analHKY.nex.t >> ../runall_diffs.txt
 if [ $? -ne 0 ] 
 then
   abort
 fi
-diff simHKY.nex refHKY/simHKY.nex >> ../runall_diffs.txt
+diff simHKY.nex reference_output/simHKY.nex >> ../runall_diffs.txt
 if [ $? -ne 0 ] 
 then
   abort
@@ -147,7 +147,7 @@ echo "*************************" >> runall_diffs.txt
 echo " " >> runall_diffs.txt
 cd Simulator
 python Simulator.py
-diff simulated.nex refHKY/simulated.nex >> ../runall_diffs.txt
+diff simulated.nex reference_output/simulated.nex >> ../runall_diffs.txt
 if [ $? -ne 0 ] 
 then
   abort

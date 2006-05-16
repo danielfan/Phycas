@@ -1,4 +1,4 @@
 #!/bin/sh
 
-diff simulated.nex refHKY/simulated.nex 
+diff simulated.nex reference_output/simulated.nex 
  
