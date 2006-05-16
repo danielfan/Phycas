@@ -13,7 +13,7 @@ phycas.num_rates = 4
 phycas.using_hyperprior = True
 phycas.edgelen_prior_mean = 0.1
 phycas.verbose = True
-phycas.metropolis_weight = 300
+phycas.ls_move_weight = 300
 phycas.slice_weight = 1
 phycas.gg_do = False
 

@@ -18,7 +18,7 @@ def commonSetup():
     phycas.sample_every = 20 
     phycas.adapt_first = 10
     phycas.verbose = True
-    phycas.metropolis_weight = 100
+    phycas.ls_move_weight = 100
     phycas.slice_weight = 1
     phycas.gg_do = True
     phycas.gg_nreps = 5 # was 1

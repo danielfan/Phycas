@@ -1080,7 +1080,6 @@ if __name__ == '__main__':
     mcmc.using_hyperprior = True
     mcmc.master_edgelen_dist = ProbDist.ExponentialDist(10.0)
     mcmc.verbose = True
-    #mcmc.metropolis_weight = 300
     mcmc.ls_move_weight = 300
     mcmc.slice_weight = 1
     mcmc.gg_do = False
