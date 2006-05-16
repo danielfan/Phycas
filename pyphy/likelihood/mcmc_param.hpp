@@ -104,9 +104,10 @@ class PinvarParam : public MCMCUpdater
 		virtual double	operator()(double k);	// override pure virtual from AdHocDensity (base class of MCMCUpdater)
 	};
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
-|	
+|	Encapsulates an among-sites relative rate parameter (component of the FLEXCAT model). More precisely, this class 
+|	encapsulates a parameter that governs an unnormalized FLEXCAT relative rate. Before being used in the likelihood
+|	function, all FlexRateParam values are normalized to have mean 1.0.
 */
 class FlexRateParam : public MCMCUpdater
 {
@@ -138,7 +139,9 @@ class FlexRateParam : public MCMCUpdater
 };
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	
+|	Encapsulates an among-sites relative rate category probability parameter (component of the FLEXCAT model). More 
+|	precisely, this class encapsulates a parameter that governs an unnormalized FLEXCAT rate category probability. 
+|	Before being used in the likelihood function, all FlexProbParam values are normalized to have sum 1.0.
 */
 class FlexProbParam : public MCMCUpdater
 {
@@ -158,7 +161,6 @@ class FlexProbParam : public MCMCUpdater
 		unsigned				which;
 		std::vector<double>	&	rate_probs;
 };
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Encapsulates a base frequency parameter. More precisely, this class encapsulates a parameter that governs a base

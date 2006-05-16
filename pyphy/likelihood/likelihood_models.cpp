@@ -80,7 +80,6 @@ void Model::createParameters(
 		}
 
 	// Create any model-specific parameters and add to the parameters vector
-#if POLPY_NEWWAY
 	if (is_flex_model)
 		{
 		gamma_rates_unnorm.resize(num_gamma_rates, 0.0);
@@ -132,20 +131,6 @@ void Model::createParameters(
 			gamma_shape_param->fixParameter();
 		parameters_vect_ref.push_back(gamma_shape_param);
 		}
-#else
-	if (num_gamma_rates > 1)
-		{
-		assert(num_gamma_rates > 1);
-		assert(!gamma_shape_param);
-		gamma_shape_param = MCMCUpdaterShPtr(new DiscreteGammaShapeParam(invert_shape));
-		gamma_shape_param->setName("Discrete gamma shape"); //@POL shouldn't this be done in the constructor?
-		gamma_shape_param->setTree(t);
-		gamma_shape_param->setPrior(gamma_shape_prior);
-		if (gamma_shape_fixed)
-			gamma_shape_param->fixParameter();
-		parameters_vect_ref.push_back(gamma_shape_param);
-		}
-#endif
 
 	if (is_pinvar_model)
 		{

@@ -6,11 +6,8 @@
 
 using namespace phycas;
 
-#if POLPY_NEWWAY
 #include "pyphy/prob_dist/basic_lot.hpp"
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Assigns all edge lengths in the tree using independent draws from the ProbabilityDistribution object pointed to by
 |	`d'.
@@ -25,7 +22,6 @@ void TreeManip::setRandomEdgeLens(ProbDistShPtr d)
 		nd->SetEdgeLen(d->Sample());
 		}
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Begins with left child of parent of `start' and calls GetRightSib() until the left sibling of `start' is located.

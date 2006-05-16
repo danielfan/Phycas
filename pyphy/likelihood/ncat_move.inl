@@ -1,5 +1,3 @@
-#if POLPY_NEWWAY
-
 #if ! defined(NCAT_MOVE_INL)
 #define NCAT_MOVE_INL
 
@@ -161,6 +159,4 @@ inline double NCatMove::getLnJacobian() const
 } // namespace phycas
 
 #endif
-
-#endif //POLPY_NEWWAY
 

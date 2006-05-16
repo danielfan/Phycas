@@ -8,12 +8,8 @@ using namespace phycas;
 |	Default constructor. Sets `last_seed_setting' and `curr_seed' both to 1U, creates a new CDF object and stored the
 |	pointer in `cdf_converter', then calls the UseClockToSeed function.
 */
-Lot::Lot() : last_seed_setting(1U), curr_seed(1U)
-#if POLPY_NEWWAY
-	, num_seeds_generated(0)
-#endif
+Lot::Lot() : last_seed_setting(1U), curr_seed(1U), num_seeds_generated(0)
 	{
-	//cdf_converter = new CDF();
 	UseClockToSeed();
 	}
 
@@ -22,10 +18,7 @@ Lot::Lot() : last_seed_setting(1U), curr_seed(1U)
 |	object and stores the pointer in `cdf_converter', then calls the UseClockToSeed function if `rnd_seed' is zero or
 |	UINT_MAX, or the SetSeed function if `rnd_seed' is any other value.
 */
-Lot::Lot(unsigned rnd_seed) : last_seed_setting(1U), curr_seed(1U)
-#if POLPY_NEWWAY
-	, num_seeds_generated(0)
-#endif
+Lot::Lot(unsigned rnd_seed) : last_seed_setting(1U), curr_seed(1U), num_seeds_generated(0)
 	{
 	//cdf_converter = new CDF();
 	if (rnd_seed == 0 || rnd_seed == UINT_MAX)
@@ -47,14 +40,10 @@ Lot::~Lot()
 |	University. Originally from Schrage, ACM Trans. Math. Software 5:132-138 (1979). Translated to C by Paul O. Lewis, 
 |	Dec. 10, 1992.
 */
-#if POLPY_NEWWAY
-#	if defined(NDEBUG)
-		double Lot::Uniform()
-#	else
-		double Lot::Uniform(const char * file, int line)
-#	endif
+#if defined(NDEBUG)
+double Lot::Uniform()
 #else
-	double Lot::Uniform()
+double Lot::Uniform(const char * file, int line)
 #endif
 	{
 	const unsigned a = 16807U;
@@ -69,17 +58,13 @@ Lot::~Lot()
 	curr_seed = (((xalo - leftlo * b16) - p) + (fhi - k * b15) * b16) + k;
 	if (curr_seed & MASKSIGNBIT) 
 		curr_seed = unsigned (((int)curr_seed) + p);
-#if 0 & POLPY_NEWWAY
-#	if defined(NDEBUG)
-		return curr_seed * 4.6566128575e-10;
-#	else
-		double retval = curr_seed * 4.6566128575e-10;
-		std::cerr << num_seeds_generated << " -> " << retval << "(" << file << ":" << line << ")" << std::endl;
-		num_seeds_generated++;
-		return retval;
-#	endif
-#else
+#if 1 || defined(NDEBUG)
 	return curr_seed * 4.6566128575e-10;
+#else
+	double retval = curr_seed * 4.6566128575e-10;
+	std::cerr << num_seeds_generated << " -> " << retval << "(" << file << ":" << line << ")" << std::endl;
+	num_seeds_generated++;
+	return retval;
 #endif
 	}
 

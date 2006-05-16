@@ -71,9 +71,7 @@ BOOST_PYTHON_MODULE(_Phylogeny)
 	class_<TreeManip>("TreeManipBase", init<boost::shared_ptr<Tree> >())
 		.def("starTree", &TreeManip::starTree)
 		.def("randomTree", &TreeManip::randomTree)
-#if POLPY_NEWWAY
 		.def("setRandomEdgeLens", &TreeManip::setRandomEdgeLens)
-#endif
 		;
 
 	register_exception_translator<XPhylogeny>(&translateXPhylogeny);

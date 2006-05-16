@@ -56,9 +56,7 @@ class TreeLikelihood
 		const VecStateList &			getStateList() const;
 		const VecStateListPos &			getStateListPos() const;
 		const std::vector<double> &		getRateMeans() const;
-#if POLPY_NEWWAY
 		const std::vector<double> &		getRateProbs() const;
-#endif
 		void							recalcRelativeRates();
 		std::vector<double>				getCategoryLowerBoundaries() const;
 

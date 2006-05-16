@@ -1,5 +1,3 @@
-#if POLPY_NEWWAY
-
 #if ! defined(NCAT_MOVE_HPP)
 #define NCAT_MOVE_HPP
 
@@ -106,5 +104,3 @@ class NCatMove : public MCMCUpdater
 #include "pyphy/likelihood/ncat_move.inl"
 
 #endif
-
-#endif //POLPY_NEWWAY

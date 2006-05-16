@@ -3,7 +3,6 @@
 
 #include <cassert>
 #include <boost/shared_ptr.hpp>
-//#include "phycas/rand/cdf.hpp"
 
 namespace phycas
 {
@@ -31,25 +30,17 @@ class Lot
 		unsigned 				SampleUInt(unsigned);
 		unsigned				GetRandBits(unsigned nbits);
 
-#if POLPY_NEWWAY
-#	if defined(NDEBUG)
+#if defined(NDEBUG)
 		double 					Uniform();
-#	else
-		double 					Uniform(const char * file = "", int line = 0);
-#	endif
 #else
-		double 					Uniform();
+		double 					Uniform(const char * file = "", int line = 0);
 #endif
 
 	private:    	
 
 		unsigned 				last_seed_setting;
 		unsigned				curr_seed;
-		//CDF *					cdf_converter;
-
-#if POLPY_NEWWAY
 		unsigned				num_seeds_generated;
-#endif
 	};
 
 typedef boost::shared_ptr<Lot> LotShPtr;

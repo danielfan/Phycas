@@ -14,14 +14,12 @@ inline Model::Model(
   unsigned numStates)	/**< is the number of basic states (e.g. 4 for DNA) */
 	: num_states(numStates), //@POL 31-Oct-2005 what about morphological models, is numStates in this case the maximum number of states allowed?
 	num_gamma_rates(1), 
-#if POLPY_NEWWAY
 	gamma_rates_unnorm(1, 1.0),
 	is_flex_model(false),
 	flex_upper_rate_bound(1.0),
 	num_flex_spacers(1),
 	flex_probs_fixed(false),
 	flex_rates_fixed(false),
-#endif
 	gamma_rate_probs(1, 1.0), 
 	state_freq_fixed(false),
 	edge_lengths_fixed(false),	
@@ -206,9 +204,7 @@ inline void Model::setNGammaRates(
 	if (nGammaRates != num_gamma_rates)
 		{
 		assert(nGammaRates > 0);
-#if POLPY_NEWWAY
 		gamma_rates_unnorm.assign(nGammaRates, 1.0);
-#endif
 		gamma_rate_probs.resize(nGammaRates); //@POL this line not necessary (?) because assign also resizes
 		gamma_rate_probs.assign(nGammaRates, 1.0/(double)nGammaRates);
 		num_gamma_rates = nGammaRates;
@@ -426,7 +422,6 @@ inline void Model::freeStateFreqs()
 		}
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the data member `is_flex_model' to true. A subsequent call to the createParameters member function will
 |	result in `num_gamma_rates' FlexRateParam and FlexProbParam objects being added to the list of updaters for this 
@@ -632,7 +627,6 @@ inline void Model::normalizeRatesAndProbs(
 		rates[i] = gamma_rates_unnorm[i]*rate_normalizer;
 		}
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the data member `is_pinvar_model' to true. A subsequent call to the createParameters member function will
@@ -720,14 +714,12 @@ inline void Model::recalcRatesAndProbs(
   std::vector<double> & rates, 
   std::vector<double> & probs) const
 	{
-#if POLPY_NEWWAY
 	if (is_flex_model)
 		{
 		normalizeRatesAndProbs(rates, probs);
 		}
 	else
 		{
-#endif
 		std::vector<double> boundaries;
 
 		if (is_pinvar_model)
@@ -763,9 +755,7 @@ inline void Model::recalcRatesAndProbs(
 			probs.resize(num_gamma_rates, 0.0);
 			std::copy(gamma_rate_probs.begin(), gamma_rate_probs.end(), probs.begin());
 			}
-#if POLPY_NEWWAY
 		}
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -916,7 +906,6 @@ inline void Model::buildStateList(
 inline std::string JC::paramHeader() const
 	{
 	std::string s = std::string("Gen\tLnL\tTL");
-#if POLPY_NEWWAY
 	if (is_flex_model)
 		{
 		s += "\tncat";
@@ -936,10 +925,6 @@ inline std::string JC::paramHeader() const
 		{
 		s += "\tshape";
 		}
-#else
-	if (num_gamma_rates > 1)
-		s += "\tshape";
-#endif
 	if (is_pinvar_model)
 		s += "\tpinvar";
 	return s;
@@ -952,7 +937,6 @@ inline std::string JC::paramHeader() const
 inline std::string JC::paramReport() const
 	{
 	std::string s;
-#if POLPY_NEWWAY
 	if (is_flex_model)
 		{
 		s += str(boost::format("\t%d") % num_gamma_rates);
@@ -973,10 +957,6 @@ inline std::string JC::paramReport() const
 		{
 		s += str(boost::format("\t%.5f") % gamma_shape);
 		}
-#else
-	if (num_gamma_rates > 1)
-		s += str(boost::format("\t%.5f") % gamma_shape);
-#endif
 	if (is_pinvar_model)
 		s += str(boost::format("\t%.5f") % pinvar);
 	return s;
@@ -1098,7 +1078,6 @@ inline void	HKY::createParameters(
 inline std::string HKY::paramHeader() const
 	{
 	std::string s = std::string("Gen\tLnL\tTL\tkappa\tfreqA\tfreqC\tfreqG\tfreqT");
-#if POLPY_NEWWAY
 	if (is_flex_model)
 		{
 		s += "\tncat";
@@ -1121,10 +1100,6 @@ inline std::string HKY::paramHeader() const
 		{
 		s += "\tshape";
 		}
-#else
-	if (num_gamma_rates > 1)
-		s += "\tshape";
-#endif
 	if (is_pinvar_model)
 		s += "\tpinvar";
 	return s;
@@ -1137,7 +1112,6 @@ inline std::string HKY::paramHeader() const
 inline std::string HKY::paramReport() const
 	{
 	std::string s = str(boost::format("\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f") % kappa % state_freqs[0] % state_freqs[1] % state_freqs[2] % state_freqs[3]);;
-#if POLPY_NEWWAY
 	if (is_flex_model)
 		{
 		s += str(boost::format("\t%d") % num_gamma_rates);
@@ -1164,10 +1138,6 @@ inline std::string HKY::paramReport() const
 		{
 		s += str(boost::format("\t%.5f") % gamma_shape);
 		}
-#else
-	if (num_gamma_rates > 1)
-		s += str(boost::format("\t%.5f") % gamma_shape);
-#endif
 	if (is_pinvar_model)
 		s += str(boost::format("\t%.5f") % pinvar);
 	return s;
@@ -1624,30 +1594,14 @@ inline void GTR::setBaseFreqParamPrior(ProbDistShPtr d)
 inline std::string GTR::paramHeader() const
 	{
 	std::string s = std::string("Gen\tLnL\tTL\trAC\trAG\trAT\trCG\trCT\trGT\tfreqA\tfreqC\tfreqG\tfreqT");
-#if POLPY_NEWWAY
 	if (is_flex_model)
 		{
 		s += "\tncat";
-		//unsigned i;
-		//for ( i = 0; i < num_gamma_rates; ++i)
-		//	{
-		//	s += "\trate";
-		//	s += i;
-		//	}
-		//for ( i = 0; i < num_gamma_rates; ++i)
-		//	{
-		//	s += "\trateprob";
-		//	s += i;
-		//	}
 		}
 	else if (num_gamma_rates > 1)
 		{
 		s += "\tshape";
 		}
-#else
-	if (num_gamma_rates > 1)
-		s += "\tshape";
-#endif
 	if (is_pinvar_model)
 		s += "\tpinvar";
 	return s;
@@ -1664,31 +1618,14 @@ inline std::string GTR::paramReport() const
 	assert(state_freqs.size() == 4);
 	std::string s = str(boost::format("\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f") % rel_rates[0] % rel_rates[1] % rel_rates[2] % rel_rates[3] % rel_rates[4] % rel_rates[5]);
 	s += str(boost::format("\t%.5f\t%.5f\t%.5f\t%.5f") % state_freqs[0] % state_freqs[1] % state_freqs[2] % state_freqs[3]);
-#if POLPY_NEWWAY
 	if (is_flex_model)
 		{
 		s += str(boost::format("\t%d") % num_gamma_rates);
-		//std::vector<double> rates(num_gamma_rates, 0.0);
-		//std::vector<double> probs(num_gamma_rates, 0.0);
-		//normalizeRatesAndProbs(rates, probs);
-		//unsigned i;
-		//for ( i = 0; i < num_gamma_rates; ++i)
-		//	{
-		//	s += str(boost::format("\t%.5f") % rates[i]);
-		//	}
-		//for ( i = 0; i < num_gamma_rates; ++i)
-		//	{
-		//	s += str(boost::format("\t%.5f") % probs[i]);
-		//	}
 		}
 	else if (num_gamma_rates > 1)
 		{
 		s += str(boost::format("\t%.5f") % gamma_shape);
 		}
-#else
-	if (num_gamma_rates > 1)
-		s += str(boost::format("\t%.5f") % gamma_shape);
-#endif
 	if (is_pinvar_model)
 		s += str(boost::format("\t%.5f") % pinvar);
 	return s;

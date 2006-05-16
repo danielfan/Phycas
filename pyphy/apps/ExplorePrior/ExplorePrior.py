@@ -13,7 +13,7 @@ if __name__ == "__main__":
     phycas.ntax                     = 10 
     phycas.starting_tree_source     = 'random'
     phycas.ncycles                  = 200000
-    phycas.sample_every             = 20 # POLPY_NEWWAY was 100
+    phycas.sample_every             = 20
     phycas.report_every             = phycas.ncycles//100
     phycas.adapt_first              = 100
     phycas.random_seed              = '463859'

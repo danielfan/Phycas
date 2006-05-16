@@ -16,9 +16,7 @@
 #include "pyphy/likelihood/mcmc_chain_manager.hpp"
 #include "pyphy/likelihood/topo_prior_calculator.hpp"
 #include "pyphy/likelihood/larget_simon_move.hpp"
-#if POLPY_NEWWAY
 #include "pyphy/likelihood/ncat_move.hpp"
-#endif
 #include "pyphy/likelihood/bush_move.hpp"
 #include "pyphy/likelihood/edge_move.hpp"
 #include "pyphy/likelihood/sim_data.hpp"
@@ -145,7 +143,6 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("finalize", &phycas::BushMove::finalize)
 		.def("getTopoPriorCalculator", &phycas::BushMove::getTopoPriorCalculator)
 		;
-#if POLPY_NEWWAY
 	class_<phycas::NCatMove, bases<phycas::MCMCUpdater>, 
 		boost::noncopyable, boost::shared_ptr<phycas::NCatMove> >("NCatMove") 
 		.def("update", &phycas::NCatMove::update)
@@ -163,7 +160,6 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("getCatProbPrior", &phycas::NCatMove::getCatProbPrior)
 		.def("setCatProbPrior", &phycas::NCatMove::setCatProbPrior)
 		;
-#endif
 	class_<phycas::EdgeMove, bases<phycas::MCMCUpdater>, 
 		boost::noncopyable, boost::shared_ptr<phycas::EdgeMove> >("EdgeMove") 
 		.def("update", &phycas::EdgeMove::update)
@@ -184,7 +180,6 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("stateFreqsFixed", &phycas::Model::stateFreqsFixed)
 		.def("edgeLenHyperParamFixed", &phycas::Model::edgeLenHyperParamFixed)
 		.def("edgeLengthsFixed", &phycas::Model::edgeLengthsFixed)
-#if POLPY_NEWWAY
 		.def("setFlexRateUpperBound", &phycas::Model::setFlexRateUpperBound)
 		.def("setNumFlexSpacers", &phycas::Model::setNumFlexSpacers)
 		.def("setFlexModel", &phycas::Model::setFlexModel)
@@ -197,7 +192,6 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("getFLEXProbParamPrior", &phycas::Model::getFLEXProbParamPrior)
 		.def("setFlexRateUnnorm", &phycas::Model::setFlexRateUnnorm)
 		.def("setFlexProbUnnorm", &phycas::Model::setFlexProbUnnorm)
-#endif
 		.def("setPinvarModel", &phycas::Model::setPinvarModel)
 		.def("setNotPinvarModel", &phycas::Model::setNotPinvarModel)
 		.def("fixPinvar", &phycas::Model::fixPinvar)
@@ -303,9 +297,7 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("recalcRelativeRates", &TreeLikelihood::recalcRelativeRates)
 		.def("getCategoryLowerBoundaries", &TreeLikelihood::getCategoryLowerBoundaries)
 		.def("getRateMeans", &TreeLikelihood::getRateMeans, return_value_policy<copy_const_reference>())
-#if POLPY_NEWWAY
 		.def("getRateProbs", &TreeLikelihood::getRateProbs, return_value_policy<copy_const_reference>())
-#endif
 		.def("setNoData", &TreeLikelihood::setNoData)
 		.def("setHaveData", &TreeLikelihood::setHaveData)
 		.def("getNPatterns", &TreeLikelihood::getNPatterns)

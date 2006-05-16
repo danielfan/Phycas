@@ -1,5 +1,3 @@
-#if POLPY_NEWWAY
-
 //#define DEBUGGING_OUTPUT
 
 #include "phycas/force_include.h"
@@ -387,5 +385,3 @@ void NCatMove::update()
 	std::cerr << "\n" << std::endl;
 #endif
 	}
-
-#endif //POLPY_NEWWAY

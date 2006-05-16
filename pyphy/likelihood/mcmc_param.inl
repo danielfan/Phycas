@@ -116,9 +116,12 @@ inline void PinvarParam::update()
 	slice_sampler->Sample();
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
-|	
+|	The FlexRateParam constructor requires a reference to an unsigned variable that holds the number of spacers (fake
+|	rates that serve to determine the strength of the prior for relative rate parameters). It also requires a reference
+|	to a double variable that holds the maximum possible value for a relative rate. Finally, a reference to the vector
+|	of relative rates is required because in order to update a particular rate parameter, one needs to know the rates 
+|	on either side of it.
 */
 inline FlexRateParam::FlexRateParam(
   unsigned & s,					/**< is the number of spacers between each rate in the order statistics prior */
@@ -224,7 +227,8 @@ inline void FlexRateParam::update()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	
+|	The FlexProbParam constructor requires a reference to the vector of category probabilities so that it can deposit
+|	a changed value in the appropriate place after an update.
 */
 inline FlexProbParam::FlexProbParam(
   std::vector<double> & rp)		/**< is the category probability parameter vector */
@@ -260,7 +264,6 @@ inline void FlexProbParam::update()
 		slice_sampler->Sample();
 		}
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	The BaseFreqParam constructor requires the caller to specify a value for `which'. `which' is 0, 1, 2 or 3 and 

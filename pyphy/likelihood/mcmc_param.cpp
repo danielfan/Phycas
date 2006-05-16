@@ -155,9 +155,11 @@ double PinvarParam::operator()(
 	return curr_ln_like + curr_ln_prior;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
-|	
+|	FlexRateParam is a functor whose operator() returns a value proportional to the full-conditional posterior
+|	probability density for a particular value of an among-sites relative rate parameter in the FLEXCAT model. If the 
+|	supplied relative rate `r' is out of bounds (i.e. < 0.0), the return value is `ln_zero' (closest we can come to a 
+|	log posterior equal to negative infinity).
 */
 double FlexRateParam::operator()(
   double r) /**< is a new value for the relative rate parameter */
@@ -183,7 +185,10 @@ double FlexRateParam::operator()(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	
+|	FlexProbParam is a functor whose operator() returns a value proportional to the full-conditional posterior
+|	probability density for a particular value of an among-sites relative rate category probability parameter in the 
+|	FLEXCAT model. If the supplied relative category probability `f' is out of bounds (i.e. < 0.0), the return value is 
+|	`ln_zero' (closest we can come to a log posterior equal to negative infinity).
 */
 double FlexProbParam::operator()(
   double f) /**< is a new value for the relative rate probability parameter */
@@ -205,7 +210,6 @@ double FlexProbParam::operator()(
 
 	return curr_ln_like + curr_ln_prior;
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	BaseFreqParam is a functor whose operator() returns a value proportional to the full-conditional posterior 

@@ -64,7 +64,6 @@ dataf.close()
 phycas.likelihood.copyDataFromSimData(sim_data)
 phycas.nchar = num_sites # this should be set by copyDataFromSimData
 
-# POLPY_NEWWAY
 # Tell Phycas that the data is already in memory (it will not obtain data
 # from a file)
 phycas.data_source = 'memory'

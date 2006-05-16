@@ -143,7 +143,6 @@ inline const std::vector<double> & TreeLikelihood::getRateMeans() const
 	return rate_means;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Accessor function that returns the data member `rate_probs'.
 */
@@ -151,7 +150,6 @@ inline const std::vector<double> & TreeLikelihood::getRateProbs() const
 	{
 	return rate_probs;
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Accessor function that returns the data member `category_boundaries'.

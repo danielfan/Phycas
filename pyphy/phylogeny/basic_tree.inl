@@ -150,7 +150,7 @@ inline void Tree::Clear()
 	isRooted			= false;
 	nodeCountsValid		= false;
 	treeid_valid		= false;
-	numbers_from_names	= false;	// POLPY_NEWWAY
+	numbers_from_names	= false;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
