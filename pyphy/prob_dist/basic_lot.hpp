@@ -35,7 +35,7 @@ class Lot
 #	if defined(NDEBUG)
 		double 					Uniform();
 #	else
-		double 					Uniform(const char * file, int line);
+		double 					Uniform(const char * file = "", int line = 0);
 #	endif
 #else
 		double 					Uniform();

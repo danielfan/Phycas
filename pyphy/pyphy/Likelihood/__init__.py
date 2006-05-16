@@ -9,9 +9,9 @@ from _QMatrix import *
 
 def testExamples():
     import doctest
-    doctest.testfile('_TreeLikelihood.py')
-    doctest.testfile('_Model.py')
     doctest.testfile('_MCMCChainManager.py')
+    doctest.testfile('_Model.py')
+    doctest.testfile('_QMatrix.py')
     doctest.testfile('_SimData.py')
     doctest.testfile('_TopoPriorCalculator.py')
-    doctest.testfile('_QMatrix.py')
+    doctest.testfile('_TreeLikelihood.py')

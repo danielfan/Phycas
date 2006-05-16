@@ -7,11 +7,6 @@ from Phycas import *
 
 phycas = Phycas()
 
-# By default, Phycas assumes slice_max_units = 1000, but here we will let the maximum
-# number of slice sampler units be the largest possible unsigned int. To do this, set
-# slice_max_units to 0
-phycas.slice_max_units = 0
-
 print
 print '~~~~~~~~~~~~~~~~~~~~~'
 print 'Simulating a data set'
@@ -79,33 +74,20 @@ print '~~~~~~~~~~~~~~~~~~~~~~'
 print 'HKY analysis beginning'
 print '~~~~~~~~~~~~~~~~~~~~~~'
 
-# Finish setting up the model for MCMC
-d = ProbDist.ExponentialDist(10.0)
-d.setLot(phycas.r)
-phycas.model.setEdgeLenPrior(d)
-d = ProbDist.InverseGammaDist(2.1, 0.9090909)
-d.setLot(phycas.r)
-phycas.model.setEdgeLenHyperPrior(d)
-phycas.likelihood.replaceModel(phycas.model)
-
 # Tell phycas we want to allow polytomies
 phycas.allow_polytomies = True
 phycas.polytomy_prior   = True
 phycas.topo_prior_C     = 2.0
 
-# Open new parameter and tree files
-phycas.param_file_name = 'analHKY.nex.p'
-phycas.paramFileOpen()
-phycas.tree_file_name = 'analHKY.nex.t'
-phycas.treeFileOpen()
-
-# Build a random starting tree for an MCMC analysis and prepare it
-# for likelihood calculations (i.e. equip nodes with both transition
-# matrices and conditional likelihood arrays)
+# Start with a random tree
 phycas.starting_tree_source = 'random'
-phycas.setupTree()
-phycas.likelihood.prepareForLikelihood(phycas.tree)
+phycas.data_file_name = 'analHKY.nex'
 
-# start MCMC
+# By default, Phycas assumes slice_max_units = 1000, but here we will let the maximum
+# number of slice sampler units be the largest possible unsigned int. To do this, set
+# slice_max_units to 0
+phycas.slice_max_units = 0
+
+phycas.setup()
 phycas.run()
 

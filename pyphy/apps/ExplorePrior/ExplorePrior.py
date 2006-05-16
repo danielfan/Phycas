@@ -8,9 +8,7 @@ from Phycas import *
 if __name__ == "__main__":
     phycas = Phycas()
 
-    # POLPY_NEWWAY
     phycas.data_source              = None
-    #phycas.no_data                  = True
     phycas.data_file_name           = 'nodata.nex'  # used for creating *.p and *.t file names
     phycas.ntax                     = 10 
     phycas.starting_tree_source     = 'random'
@@ -22,8 +20,6 @@ if __name__ == "__main__":
     phycas.model_type               = 'hky'
     phycas.using_hyperprior         = True
     phycas.num_rates                = 4
-    # POLPY_NEWWAY begins here
-    # phycas.gamma_shape_mean         = 1.0
     phycas.use_flex_model           = True
     phycas.flex_ncat_move_weight    = 10        # number of times each cycle to attempt an ncat move
     phycas.flex_num_spacers         = 1         # number of fake rates between each adjacent pair of real rates
@@ -31,10 +27,9 @@ if __name__ == "__main__":
     phycas.flex_L                   = 5.0       # upper bound of interval used for unnormalized relative rate parameter values
     phycas.flex_lambda              = 4.0       # parameter of Poisson prior on the number of extra categories
     phycas.flex_prob_param_prior    = ProbDist.ExponentialDist(1.0)
-    # POLPY_NEWWAY ends here
     phycas.edgelen_prior_mean       = 1.0
     phycas.verbose                  = True
-    phycas.metropolis_weight        = 100
+    phycas.ls_move_weight           = 100
     phycas.slice_weight             = 1
     phycas.slice_max_units          = 0
     phycas.gg_do                    = False

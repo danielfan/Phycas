@@ -18,8 +18,8 @@ class MCMCSimple:
     topology and runs a single Markov chain sampler for 100 cycles using
     the HKY model.
     
-    >>> import MCMCSimple
-    >>> mcmc = MCMCSimple.MCMCSimple()
+    >>> from MCMCSimple import *
+    >>> mcmc = MCMCSimple()
     >>> mcmc.data_file_name = 'nyldna4.nex'
     >>> mcmc.tree_topology = '(0:0.1,1:0.1,(2:0.1,3:0.1):0.1)'
     >>> mcmc.ncycles = 100

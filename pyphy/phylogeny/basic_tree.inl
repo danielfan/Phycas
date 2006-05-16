@@ -45,8 +45,6 @@ inline Tree::~Tree()
 */
 inline bool Tree::SetNumberFromName(TreeNode * nd, std::set<unsigned> & used)
 	{
-	//@POL this function could use some work (would rather not use atoi, for example)
-
 	assert(nd != NULL);
 	std::string name = nd->GetNodeName();
 	boost::trim(name);
@@ -62,7 +60,7 @@ inline bool Tree::SetNumberFromName(TreeNode * nd, std::set<unsigned> & used)
 		}
 
 	// This data member is set to false initially for every node examined.
-	// It will thus end up being true after a tree is build only if the 
+	// It will thus end up being true after a tree is built only if the 
 	// conversion from names to numbers succeeds for every node.
 	numbers_from_names = false;
 
@@ -152,6 +150,7 @@ inline void Tree::Clear()
 	isRooted			= false;
 	nodeCountsValid		= false;
 	treeid_valid		= false;
+	numbers_from_names	= false;	// POLPY_NEWWAY
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

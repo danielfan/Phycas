@@ -12,83 +12,107 @@ class Phycas:
     Performs a phylogenetic MCMC analysis. The tree topology and edge
     lengths are updated via the Metropolis-Hastings algorithm (using the
     Larget-Simon LOCAL move without a molecular clock). Slice sampling is
-    used to update all model parameters except edge lengths. A series of
-    Larget-Simon updates are periodically interrupted by a round of
-    slice sampling in which each model parameter is updated. The period
-    is determined by the variables metropolis_weight and slice_weight. If
-    the default values 9 and 1 are used for metropolis_weight and
-    slice_weight, respectively, then a single cycle will consist of 9
-    Larget-Simon metropolis updates followed by one round of slice
-    sampling.
+    used to update all model parameters except edge lengths.
 
     The following example reads a nexus data file, specifies a tree
-    topology and runs a single Markov chain sampler for 100 cycles using
-    the HKY model.
-    
-    >>> import Phycas
-    >>> mcmc = Phycas.Phycas()
+    topology and runs a Markov chain sampler for 100 cycles using the HKY
+    model.
+
+    >>> from Phycas import *
+    >>> mcmc = Phycas()
+    >>> mcmc.data_source = 'file'
     >>> mcmc.data_file_name = 'nyldna4.nex'
-    >>> mcmc.metropolis_weight = 9
+    >>> mcmc.starting_tree_source = 'random'
+    >>> mcmc.ls_move_weight = 10
     >>> mcmc.slice_weight = 1
     >>> mcmc.ncycles = 100
-    >>> mcmc.sample_every = 100
+    >>> mcmc.sample_every = 10
     >>> mcmc.report_every = 10
     >>> mcmc.adapt_first = 25
     >>> mcmc.random_seed = '13579'
     >>> mcmc.model_type = 'hky'
     >>> mcmc.verbose = True
-    >>> mcmc.gg_do = False
+    >>> mcmc.setup()
     >>> mcmc.run() # doctest:+ELLIPSIS
-    Data file:      nyldna4.nex
-    Prior:          hyper
+    Data source:    nyldna4.nex
     No. cycles:     100
-    Sample every:   100
-    Tree topology:  (0:0.1,1:0.1,(2:0.1,3:0.1):0.1)
-    No. samples:    1
+    Sample every:   10
+    Starting tree:  (1:0.22681,(2:0.05618,4:0.85420):0.14171,3:0.00510)
+    No. samples:    10
     Sampled trees will be saved in nyldna4.nex.t
     Sampled parameters will be saved in nyldna4.nex.p
     Tip node numbers were set using the names in the tree description
+    Starting log-likelihood = -8754.6126271
+    Starting log-prior = -10.80950415
+    Parameter starting values and prior densities:
+      Parameter name:     edge length master parameter
+      Prior distribution: ExponentialDist(2.00000)
+      Master parameter (no current value)
+      Prior log-density:  0.897768422706
+    <BLANKLINE>
+      Parameter name:     edge length hyperprior
+      Prior distribution: InverseGammaDist(2.10000, 0.90909)
+      Current value:      0.1
+      Prior log-density:  -3.70727257267
+    <BLANKLINE>
+      Parameter name:     trs/trv rate ratio
+      Prior distribution: ExponentialDist(1.00000)
+      Current value:      4.0
+      Prior log-density:  -4.0
+    <BLANKLINE>
+      Parameter name:     base freq. A
+      Prior distribution: ExponentialDist(1.00000)
+      Current value:      1.0
+      Prior log-density:  -1.0
+    <BLANKLINE>
+      Parameter name:     base freq. C
+      Prior distribution: ExponentialDist(1.00000)
+      Current value:      1.0
+      Prior log-density:  -1.0
+    <BLANKLINE>
+      Parameter name:     base freq. G
+      Prior distribution: ExponentialDist(1.00000)
+      Current value:      1.0
+      Prior log-density:  -1.0
+    <BLANKLINE>
+      Parameter name:     base freq. T
+      Prior distribution: ExponentialDist(1.00000)
+      Current value:      1.0
+      Prior log-density:  -1.0
+    <BLANKLINE>
+    Topology prior:
+      flat across all fully-resolved tree topologies (polytomies not allowed)
     <BLANKLINE>
     Sampling (100 cycles)...
     <BLANKLINE>
-    cycle = 10, lnL = -7129.98700
-    cycle = 20, lnL = -7128.98328
+    cycle = 10, lnL = -7478.19231
+    cycle = 20, lnL = -7200.29389
     <BLANKLINE>
     Slice sampler diagnostics:
-      mode=0.05148, avgevals=10.440 (edge length for node 1)
-      mode=0.06327, avgevals=10.120 (edge length for node 1)
-      mode=0.00804, avgevals=10.080 (edge length for node 0)
-      mode=0.03692, avgevals=11.520 (edge length for node 2)
-      mode=0.06462, avgevals=8.880 (edge length for node 3)
-      mode=0.14666, avgevals=6.920 (edge length hyperprior)
-      mode=1.90334, avgevals=7.360 (trs/trv rate ratio)
-      mode=10.13449, avgevals=8.560 (base freq. A)
-      mode=6.47742, avgevals=6.640 (base freq. C)
-      mode=7.40993, avgevals=7.000 (base freq. G)
-      mode=11.88085, avgevals=8.840 (base freq. T)
+      mode=0.28426, avgevals=6.920 (edge length hyperprior)
+      mode=1.97206, avgevals=8.080 (trs/trv rate ratio)
+      mode=19.06566, avgevals=15.880 (base freq. A)
+      mode=11.05060, avgevals=13.840 (base freq. C)
+      mode=13.89816, avgevals=19.640 (base freq. G)
+      mode=21.69949, avgevals=22.360 (base freq. T)
     <BLANKLINE>
-    cycle = 30, lnL = -7128.54884
-    cycle = 40, lnL = -7126.97586
-    cycle = 50, lnL = -7128.50749
-    cycle = 60, lnL = -7128.66949
-    cycle = 70, lnL = -7129.21719
+    cycle = 30, lnL = -7130.00149
+    cycle = 40, lnL = -7118.29235
+    cycle = 50, lnL = -7107.60439
+    cycle = 60, lnL = -7110.76873
+    cycle = 70, lnL = -7108.09492
     <BLANKLINE>
     Slice sampler diagnostics:
-      mode=0.04988, avgevals=6.080 (edge length for node 1)
-      mode=0.06189, avgevals=6.120 (edge length for node 1)
-      mode=0.01083, avgevals=8.120 (edge length for node 0)
-      mode=0.04150, avgevals=5.960 (edge length for node 2)
-      mode=0.06003, avgevals=6.220 (edge length for node 3)
-      mode=0.17108, avgevals=6.040 (edge length hyperprior)
-      mode=1.92832, avgevals=6.620 (trs/trv rate ratio)
-      mode=4.17365, avgevals=6.440 (base freq. A)
-      mode=2.46462, avgevals=6.180 (base freq. C)
-      mode=3.15126, avgevals=6.160 (base freq. G)
-      mode=4.97198, avgevals=6.500 (base freq. T)
+      mode=0.16131, avgevals=6.180 (edge length hyperprior)
+      mode=1.69050, avgevals=6.280 (trs/trv rate ratio)
+      mode=5.76392, avgevals=6.840 (base freq. A)
+      mode=4.28486, avgevals=6.460 (base freq. C)
+      mode=4.42296, avgevals=7.700 (base freq. G)
+      mode=6.85893, avgevals=7.120 (base freq. T)
     <BLANKLINE>
-    cycle = 80, lnL = -7130.20819
-    cycle = 90, lnL = -7126.20187
-    cycle = 100, lnL = -7131.13567
+    cycle = 80, lnL = -7108.10488
+    cycle = 90, lnL = -7106.99959
+    cycle = 100, lnL = -7109.36445
     ...
 
     """
@@ -127,35 +151,49 @@ class Phycas:
         sample_every, report_every, adapt_first and data_file_name.
         
         """
-        # Create a pseudorandom number generator
-        self.r = ProbDist.Lot()
+        # These variables can be modified before setup() is called to change the
+        # behavior of Phycas when it runs
 
-        self.starting_tree_source   = 'random'  # source of starting tree topology
-        self.starting_tree          = ''        # will contain description of actual starting tree used
-        self.tree_topology          = ''        # unused unless starting_tree_source is 'usertree'
-        self.using_hyperprior       = True      # Hyperprior for edge length prior used if True
-        # POLPY_NEWWAY begins here
-        #self.edgelen_prior_mean     = 0.5       # Prior mean of exponential edge length distribution
-        self.master_edgelen_dist    = ProbDist.ExponentialDist(2.0);
-        self.edgelen_hyperprior     = ProbDist.InverseGammaDist(2.1, 0.909)
-        # POLPY_NEWWAY ends here
-        self.model_type             = 'hky'     # HKY model used if True, JC used if False
-        self.verbose                = True      # more output if True
-        self.random_seed            = 'auto'    # determines random number seed
-        self.metropolis_weight      = 9         # Metropolis moves will be performed this many times per cycle
+        # deprecated variables, defined here temporarily to root out old instances that need removing
+        self.metropolis_weight = 0
+        
+        # Variables controlling the MCMC analysis and progress reporting
+        self.random_seed            = 'auto'             # determines random number seed
+        self.ncycles                = 10000              # the number of cycles through all parameters
+        self.sample_every           = 100                # a new sample will be taken after this many cycles
+        self.report_every           = self.ncycles//100  # a progress report will be displayed after this many cycles
+        self.verbose                = True               # more output if True
+
+        # Variables associated with Larget-Simon moves
+        self.ls_move_lambda         = 0.2       # The value of the tuning parameter for the Larget-Simon move
+        self.ls_move_weight         = 100       # Larget-Simon moves will be performed this many times per cycle
+        
+        # Variables associated with Polytomy (Bush) moves
+        self.allow_polytomies       = False     # if True, do Bush moves in addition to Larget-Simon moves; if False, do Larget-Simon moves only
+        self.polytomy_prior         = True      # if True, use polytomy prior; if False, use resolution class prior
+        self.topo_prior_C           = 2.0       # specifies the strength of the prior (C = 1 is flat prior; C > 1 favors less resolved topologies)
+        self.bush_move_edgelen_mean = 1.0       # specifies mean of exponential edge length generation distribution used by BushMove when new edges are created
+        self.bush_move_weight       = 100       # Bush moves will be performed this many times per cycle if
+        
+        # Variables associated with slice samplers
         self.slice_weight           = 1         # Slice sampled parameters will be updated this many times per cycle
         self.slice_max_units        = 1000      # Max. number of units used in slice sampling
+        self.adapt_first            = 100       # Adaptation of slice samplers is performed the first time at cycle adapt_first.
+                                                # Subsequent adaptations wait twice the number of cycles as the previous adaptation.
+                                                # Thus, adaptation n occurs at cycle adapt_first*(2^n - 1)
+                                                # The total number of adaptations that will occur during an MCMC run is
+                                                #      [ln(adapt_first + ncycles) - ln(adapt_first)]/ln(2)
+        self.adapt_simple_param     = 0.5       # Slice sampler adaptation parameter
+        #self.adapt_ycond_param      = 1.3
+        #self.adapt_ycond_from_ends  = 0.25
 
-        # Related to the data source
-        self.data_source            = None      # If None, MCMC will explore prior; if 'file', self.data_file_name should be a valid nexus file name; if 'memory', data should already be in memory (e.g. via simulation) 
-        #self.no_data                = False     # if True, Phycas will pretend that there is no data during MCMC runs (useful for exploring the prior)
-        self.data_file_name         = ''        # will hold actual data file name
-        self.ntax                   = 0         # will hold the actual number of taxa after data file read
-        self.nchar                  = 0         # will hold the actual number of characters after data file has been read
-        self.npatterns              = 0         # will hold the actual number of patterns after data file has been read
-        self.taxon_labels           = []        # will hold taxon labels from data file or default names if self.data_source equals None
-
-        # Settings related to the model and prior distributions
+        # Variables associated with edge length prior distributions
+        self.using_hyperprior       = True      # Hyperprior for edge length prior used if True
+        self.master_edgelen_dist    = ProbDist.ExponentialDist(2.0);
+        self.edgelen_hyperprior     = ProbDist.InverseGammaDist(2.1, 0.909)
+        
+        # Variables associated with substitution models
+        self.model_type             = 'hky'     # Can be 'jc', 'hky' or 'gtr'
         self.num_rates              = 1         # default is rate homogeneity (1 rate)
         self.relrate_prior          = ProbDist.ExponentialDist(1.0)
         self.base_freq_param_prior  = ProbDist.ExponentialDist(1.0)
@@ -163,43 +201,48 @@ class Phycas:
         self.use_inverse_shape      = True  # if True, gamma_shape_prior applied to 1/shape rather than shape
         self.estimate_pinvar        = False
         self.pinvar_prior           = ProbDist.BetaDist(1.0, 1.0)
+        
+        # Variables associated with the source of data        
+        self.data_source            = None      # If None, MCMC will explore prior; if 'file', self.data_file_name should be a valid nexus file name; if 'memory', data should already be in memory (e.g. via simulation) 
+        self.data_file_name         = ''        # will hold actual data file name
+
+        # Variables associated with the source of starting tree
+        self.starting_tree_source   = 'random'  # source of starting tree topology
+        self.tree_topology          = ''        # unused unless starting_tree_source is 'usertree'
+
+        # Variables associated with Gelfand-Ghosh calculation
+        self.gg_do                  = False         # gather GG statistics during MCMC run if True
+        self.gg_outfile             = 'ggout.txt'   # file in which to save gg results (use None to not save results)
+        self.gg_nreps               = 1             # the number of replicate simulations to do every MCMC sample
+        self.gg_kvect               = [1.0]         # vector of k values to use when computing Gm and Dm
+        self.gg_save_postpreds      = False         # if True, all posterior predictive data sets will be saved
+        self.gg_postpred_prefix     = 'postpred'    # prefix to use for posterior predictive dataset filenames (only used if gg_save_postpreds is True)
+        self.gg_save_spectra        = False         # adds all 256 counts for posterior predictive simulated data sets to a file named spectra.txt, with counts separated by tabs (only use for four-taxon problems)
+
+        # Variables associated with the FLEXCAT model
         self.use_flex_model         = False
-        # POLPY_NEWWAY begins here
         self.flex_ncat_move_weight  = 1         # number of times each cycle to attempt an ncat move
         self.flex_num_spacers       = 1         # number of fake rates between each adjacent pair of real rates
         self.flex_phi               = 0.25      # proportion of ncat moves in which ncat is incremented (ncat is decremented with probability 1 - flex_phi)
         self.flex_L                 = 1.0       # upper bound of interval used for unnormalized relative rate parameter values
         self.flex_lambda            = 1.0       # parameter of Poisson prior on the number of extra categories
         self.flex_prob_param_prior  = ProbDist.ExponentialDist(1.0)
-        # POLPY_NEWWAY ends here
 
-        # MCMC settings (used by run function)
-        self.ncycles                = 10000
-        self.sample_every           = 100
-        self.report_every           = self.ncycles//100
+        # ***** DO NOT CHANGE ANYTHING BELOW HERE *****
+        self.r = ProbDist.Lot()
+        self.starting_tree          = ''        # will contain description of actual starting tree used
+        self.warn_tip_numbers       = False     # True only if tip numbers were not able to be created using the tip names in the tree description (always False if starting_tree_source == 'random' because BuildTreeFromString is not called in this case)
+        self.ntax                   = 0         # will hold the actual number of taxa after data file read
+        self.nchar                  = 0         # will hold the actual number of characters after data file has been read
+        self.npatterns              = 0         # will hold the actual number of patterns after data file has been read
+        self.taxon_labels           = []        # will hold taxon labels from data file or default names if self.data_source equals None
         self.paramf                 = None
         self.treef                  = None
-
-        # Bush move settings
-        self.allow_polytomies       = False     # if True, do Bush moves in addition to Larget-Simon moves; if False, do Larget-Simon moves only
-        self.polytomy_prior         = True      # if True, use polytomy prior; if False, use resolution class prior
-        self.topo_prior_C           = 2.0       # specifies the strength of the prior (C = 1 is flat prior; C > 1 favors less resolved topologies)
-        self.bush_move_edgelen_mean = 1.0       # specifies mean of exponential edge length generation distribution used by BushMove when new edges are created
-        
-        # Simulation settings (used by simulate function)
-        self.sim_nreps              = 0
-        self.sim_outfile            = 'simout.nex'
-
-        # Gelfand-Ghosh settings and variables
-        self.gg_do                  = False         # gather GG statistics during MCMC run if True
-        self.gg_outfile             = 'ggout.txt'   # file in which to save gg results (use None to not save results)
-        self.gg_nreps               = 1             # the number of replicate simulations to do every MCMC sample
         self.gg_y                   = Likelihood.SimData()  # observed dataset
         self.gg_mu                  = Likelihood.SimData()  # mean of all posterior predictive datasets
         self.gg_a                   = []            # vector of compromise actions (one for each k in gg_kvect)
         self.gg_npatterns           = []            # vector containing the number of patterns in each posterior predictive dataset
         self.gg_t                   = []            # vector of t values computed from posterior predictive datasets
-        self.gg_kvect               = [1.0]         # vector of k values to use when computing Gm and Dm
         self.gg_total               = 0
         self.gg_t_y                 = 0.0           # t for original dataset
         self.gg_t_mean              = 0.0           # mean of t over all posterior predictive datasets
@@ -208,27 +251,9 @@ class Phycas:
         self.gg_Gm                  = []            # vector of goodness-of-fit components (one for each k in gg_kvect)
         self.gg_Pm                  = 0.0           # penalty component (same for all k)
         self.gg_Dm                  = []            # vector of overall measures (one for each k in gg_kvect)
-        self.gg_save_postpreds      = False         # if True, all posterior predictive data sets will be saved
-        self.gg_postpred_prefix     = 'postpred'    # prefix to use for posterior predictive dataset filenames (only used if gg_save_postpreds is True)
-        self.gg_save_spectra        = False         # adds all 256 counts for posterior predictive simulated data sets to a file named spectra.txt, with counts separated by tabs (only use for four-taxon problems)
         self.gg_spectrum            = Likelihood.SimData()  # workspace used if gg_save_spectra is True
         self.gg_spectrum_points     = ''            # used for creating surface plot in Maple for spectrum
         self.gg_spectrum_row        = 0
-
-        # Adaptation of slice samplers is performed the first time at cycle adapt_first.
-        # Subsequent adaptations wait twice the number of cycles as the previous adaptation.
-        # Thus, adaptation n occurs at cycle adapt_first*(2^n - 1)
-        # The total number of adaptations that will occur during an MCMC run is
-        #      [ln(adapt_first + ncycles) - ln(adapt_first)]/ln(2)
-        self.adapt_first            = 100
-
-        # Slice sampler adaptation parameters
-        #
-        self.adapt_simple_param     = 0.5
-        #self.adapt_ycond_param      = 1.3
-        #self.adapt_ycond_from_ends  = 0.25
-        
-        # Create a Nexus file reader
         self.reader = ReadNexus.NexusReader()
 
     def setupModel(self):
@@ -239,13 +264,13 @@ class Phycas:
         
         """
         # Make sure prior distributions are all using the same random number generator object
-        self.relrate_prior.setLot(self.r)   # POLPY_NEWWAY
-        self.base_freq_param_prior.setLot(self.r)   # POLPY_NEWWAY
-        self.flex_prob_param_prior.setLot(self.r)   # POLPY_NEWWAY
-        self.gamma_shape_prior.setLot(self.r)   # POLPY_NEWWAY
-        self.pinvar_prior.setLot(self.r)   # POLPY_NEWWAY
-        self.edgelen_hyperprior.setLot(self.r)   # POLPY_NEWWAY
-        self.master_edgelen_dist.setLot(self.r)   # POLPY_NEWWAY
+        self.relrate_prior.setLot(self.r)
+        self.base_freq_param_prior.setLot(self.r)
+        self.flex_prob_param_prior.setLot(self.r)
+        self.gamma_shape_prior.setLot(self.r)
+        self.pinvar_prior.setLot(self.r)
+        self.edgelen_hyperprior.setLot(self.r)
+        self.master_edgelen_dist.setLot(self.r)
         
         # Create a substitution model and define priors for the model parameters
         if self.model_type == 'gtr':
@@ -263,12 +288,12 @@ class Phycas:
 
         # If rate heterogeneity is to be assumed, add it to the model here
         # Note must defer setting up pattern specific rates model until we know number of patterns
-        if self.use_flex_model:    # POLPY_NEWWAY
-            self.model.setNGammaRates(self.num_rates)    # POLPY_NEWWAY
-            self.model.setFlexModel()    # POLPY_NEWWAY
+        if self.use_flex_model:
+            self.model.setNGammaRates(self.num_rates)
+            self.model.setFlexModel()
             self.model.setFlexRateUpperBound(self.flex_L)
-            self.model.setNumFlexSpacers(self.flex_num_spacers)    # POLPY_NEWWAY
-            self.model.setFLEXProbParamPrior(self.flex_prob_param_prior)    # POLPY_NEWWAY
+            self.model.setNumFlexSpacers(self.flex_num_spacers)
+            self.model.setFLEXProbParamPrior(self.flex_prob_param_prior)
         elif self.num_rates > 1:
             self.model.setNGammaRates(self.num_rates)
             self.model.setPriorOnShapeInverse(self.use_inverse_shape)
@@ -286,19 +311,13 @@ class Phycas:
             self.model.setNotPinvarModel()
         
         # Define an edge length prior distribution
-        #POLPY_NEWWAY assert self.edgelen_prior_mean > 0.0, 'edgelen_prior_mean must be a positive, non-zero number'
-        #POLPY_NEWWAY v = 1.0/float(self.edgelen_prior_mean)
-        #POLPY_NEWWAY self.master_edgelen_dist = ProbDist.ExponentialDist(v);
         self.model.setEdgeLenPrior(self.master_edgelen_dist)
         if self.using_hyperprior:
-            # Edge length prior governed by a InverseGamma-distributed hyperprior
-            self.edgelen_hyperprior.setMeanAndVariance(1.0, 10.0) # POLPY_NEWWAY
-            self.model.setEdgeLenHyperPrior(self.edgelen_hyperprior) # POLPY_NEWWAY
-            #d = ProbDist.InverseGammaDist(2.1, 0.909)
-            #d.setMeanAndVariance(1.0, 10.0)
-            #self.model.setEdgeLenHyperPrior(d)
+            # Edge length prior distribution is hierarchical
+            self.edgelen_hyperprior.setMeanAndVariance(1.0, 10.0)
+            self.model.setEdgeLenHyperPrior(self.edgelen_hyperprior)
         else:
-            # Edge length prior distribution is not hierarchical
+            # Edge length prior distribution is NOT hierarchical
             self.model.setEdgeLenHyperPrior(None)
 
         # Create a TreeLikelihood object. This can be used to compute the likelihood
@@ -320,17 +339,16 @@ class Phycas:
         # updates to the tree topology and edge lengths
         self.larget_simon_move = Likelihood.LargetSimonMove()
         self.larget_simon_move.setName("Larget-Simon move")
+        self.larget_simon_move.setWeight(self.ls_move_weight)
         self.larget_simon_move.setTree(self.tree)
         self.larget_simon_move.setModel(self.model)
         self.larget_simon_move.setTreeLikelihood(self.likelihood)
         self.larget_simon_move.setLot(self.r)
-        self.larget_simon_move.setLambda(0.2) # should be a user setting
+        self.larget_simon_move.setLambda(self.ls_move_lambda)
         if self.model.edgeLengthsFixed():
             self.larget_simon_move.fixParameter()
         self.chain_manager.addMove(self.larget_simon_move)
 
-        # POLPY_NEWWAY begins here
-        
         # If requested, create an NCatMove object to allow the number of rate categories to change
         if self.use_flex_model:
             # Create an NCatMove object
@@ -353,14 +371,8 @@ class Phycas:
             
             self.chain_manager.addMove(self.ncat_move)
             
-        # POLPY_NEWWAY ends here
-            
         # If requested, create a BushMove object to allow polytomous trees
         if self.allow_polytomies:
-            # If allowing polytomies, do about half and half Larget Simon moves vs. Bush moves
-            w = self.metropolis_weight//2
-            self.larget_simon_move.setWeight(self.metropolis_weight - w)
-            
             # Create a BushMove object
             self.bush_move = Likelihood.BushMove()
 
@@ -375,7 +387,7 @@ class Phycas:
                 
             # Continue setting up BushMove object
             self.bush_move.setName("Bush move")
-            self.bush_move.setWeight(w)
+            self.bush_move.setWeight(self.bush_move_weight)
             self.bush_move.setTree(self.tree)
             self.bush_move.setModel(self.model)
             self.bush_move.setTreeLikelihood(self.likelihood)
@@ -386,9 +398,6 @@ class Phycas:
             self.bush_move.finalize()
             
             self.chain_manager.addMove(self.bush_move)
-        else:
-            # Only Larget Simon moves if not allowing polytomies
-            self.larget_simon_move.setWeight(self.metropolis_weight)
 
         self.chain_manager.finalize()
         
@@ -412,9 +421,7 @@ class Phycas:
         # If user requested using a tree from the data file, grab the first one stored there
         self.tree = Phylogeny.Tree()
         if self.starting_tree_source == 'file':
-            # PYPHY_NEWWAY
             assert self.data_source, "Specified starting_tree_source to be 'file' when data_source was None (file was not read)"
-            #assert not self.no_data, 'Specified starting_tree_source = file when no_data = True (file was not read)'
             
             # Grab first tree description in the data file
             newicks = []
@@ -425,36 +432,31 @@ class Phycas:
 
             # Build a Tree object from the description stored in the data file
             self.tree.buildFromString(self.starting_tree)
+            if not self.tree.tipNumbersSetUsingNames():
+                self.warn_tip_numbers = True
             
         elif self.starting_tree_source == 'random':
             assert self.ntax > 0, 'expecting ntax to be greater than 0'
             
             # Build a random tree
-            # begin POLPY_NEWWAY
-            #edge_dist_param = 1.0/self.edgelen_prior_mean
-            #edge_len_dist = ProbDist.ExponentialDist(edge_dist_param)
-            #edge_len_dist.setLot(self.r)
-            #Phylogeny.TreeManip(self.tree).randomTree(
-            #    self.ntax,     # number of tips
-            #    self.r,        # pseudorandom number generator
-            #    edge_len_dist, # distribution from which to draw edge lengths
-            #    False)         # Yule tree if True, edge lengths independent if False
             self.master_edgelen_dist.setLot(self.r)
-            print 'self.r.getSeed() returns',self.r.getSeed()
+            #print 'self.r.getSeed() returns',self.r.getSeed()
             Phylogeny.TreeManip(self.tree).randomTree(
                 self.ntax,     # number of tips
                 self.r,        # pseudorandom number generator
                 self.master_edgelen_dist, # distribution from which to draw edge lengths
                 False)         # Yule tree if True, edge lengths independent if False
-            # end POLPY_NEWWAY
             self.starting_tree = self.tree.makeNewick()
+            self.warn_tip_numbers = False
             
         elif self.starting_tree_source == 'usertree':
             # self.tree_topology should already be created
             self.starting_tree = self.tree_topology
 
-            # Build a Tree object from the description stored in self.tree_topology
+            # Build a Tree object from the description stored in self.starting_tree
             self.tree.buildFromString(self.starting_tree)
+            if not self.tree.tipNumbersSetUsingNames():
+                self.warn_tip_numbers = True
             
         else:
             # throw exception
@@ -468,6 +470,10 @@ class Phycas:
         taxNames = []
         for i in range(self.ntax):
             taxNames.append(str(i+1))
+        #print 'taxNames =',taxNames
+        #print 'self.tree_topology =', self.tree_topology
+        #print 'self.starting_tree =', self.starting_tree
+        #raw_input('stopped before rectifyNames')
         self.tree.rectifyNames(taxNames)
 
     def showParamInfo(self, p):
@@ -522,9 +528,7 @@ class Phycas:
         self.data_matrix. Also sets self.ntax and self.nchar accordingly.
         
         """
-        # PYPHY_NEWWAY
         assert self.data_source == 'file', "set data_source to 'file' before calling readNexusFile"
-        #assert not self.no_data, 'set no_data to False before calling readNexusFile'
         if not self.data_file_name == fn:
             self.data_file_name = fn
         self.reader.readFile(self.data_file_name)
@@ -549,26 +553,15 @@ class Phycas:
         run().
         
         """
-        self.nsamples = self.ncycles//self.sample_every
-
         # Set seed if user has supplied one
         if self.random_seed != 'auto':
             self.r.setSeed(int(self.random_seed))
-
-        # Read the data file and store the number of taxa and number of characters
-        # PYPHY_NEWWAY
-        #if not self.no_data: 
-        #   self.reader.readFile(self.data_file_name)
-        #   self.data_matrix = ReadNexus.getDiscreteMatrix(self.reader, 0)
-        #   self.ntax = self.data_matrix.getNTax()
-        #   self.nchar = self.data_matrix.getNChar() # used for Gelfand-Ghosh simulations only
 
         self.setupModel()
 
         if self.data_source != 'memory':       
             self.setupLikelihood()
 
-        # PYPHY_NEWWAY
         if self.data_source == 'file':
             self.reader.readFile(self.data_file_name)
             self.taxon_labels = self.reader.getTaxLabels()
@@ -583,15 +576,6 @@ class Phycas:
             assert self.nchar > 0
 
         self.setupTree()        
-
-        #if not self.no_data:
-        #    self.likelihood.copyDataFromDiscreteMatrix(self.data_matrix)
-        #    self.npatterns = self.likelihood.getNPatterns()
-            
-        # Add data structures to the nodes of the tree to allow likelihood calculations
-        # The structures added to tips allow the tips to store data and transition probability matrices
-        # The structures added to the internal nodes allow for storage of transition probability matrices
-        # as well as conditional likelihood arrays
         self.likelihood.prepareForLikelihood(self.tree)
 
         # Create parameter and tree file names based on the data file name
@@ -603,44 +587,14 @@ class Phycas:
         self.paramFileOpen()
         
         # Store (and create, if necessary) list of taxon labels
-        # PYPHY_NEWWAY
         if (not self.data_source) or (len(self.taxon_labels) != self.ntax):
-        #if self.no_data:
             for i in range(self.ntax):
                 s = 'taxon_%d' % (i + 1)
                 self.taxon_labels.append(s)
-        #else:
-        #    labels_in_datafile = self.reader.getTaxLabels()
-        #    for i in range(self.ntax):
-        #        self.taxon_labels.append(labels_in_datafile[i])
 
         # Open the tree file
         self.treeFileOpen()
         
-        if self.verbose:
-            # PYPHY_NEWWAY
-            if self.data_source == 'file':
-            #if self.no_data:
-                print 'Data source:   ', 'None (running MCMC with no data to explore prior)'
-            elif self.data_source == 'file':
-            #else:
-                print 'Data source:   ', self.data_file_name
-            else:
-            #else:
-                print 'Data source:   ', 'Data already in memory'
-            #POLPY_NEWWAY print 'Prior:         ', self.edgelen_prior_mean
-            print 'No. cycles:    ', self.ncycles
-            print 'Sample every:  ', self.sample_every
-            print 'Starting tree: ', self.starting_tree
-            print 'No. samples:   ', self.nsamples
-            print 'Sampled trees will be saved in', self.tree_file_name
-            print 'Sampled parameters will be saved in', self.param_file_name
-
-            if self.tree.tipNumbersSetUsingNames():
-                print 'Tip node numbers were set using the names in the tree description'
-            else:
-                print 'Warning: tip node numbers were NOT set using the names in the tree description'
-
     def treeFileOpen(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -855,10 +809,32 @@ class Phycas:
         equivalent work has been done)
         
         """
+        self.nsamples = self.ncycles//self.sample_every
+        assert self.metropolis_weight == 0, 'deprecated variable metropolis_weight was used'
+        
+        if self.verbose:
+            if not self.data_source:
+                print 'Data source:   ', 'None (running MCMC with no data to explore prior)'
+            if self.data_source == 'file':
+                print 'Data source:   ', self.data_file_name
+            elif self.data_source == 'memory':
+                print 'Data source:   ', 'Data already in memory'
+            else:
+                print 'Data source:   ', "Unknown (something other than 'file' or 'memory' was specified for data_source)"
+            print 'No. cycles:    ', self.ncycles
+            print 'Sample every:  ', self.sample_every
+            print 'Starting tree: ', self.starting_tree
+            print 'No. samples:   ', self.nsamples
+            print 'Sampled trees will be saved in', self.tree_file_name
+            print 'Sampled parameters will be saved in', self.param_file_name
+
+            if not self.warn_tip_numbers:
+                print 'Tip node numbers were set using the names in the tree description'
+            else:
+                print 'Warning: tip node numbers were NOT set using the names in the tree description'
+
         if self.gg_do:
-            # POLPY_NEWWAY
             assert self.data_source, 'cannot set gg_do to True and data_source to None'
-            #assert not self.no_data, 'cannot set gg_do and no_data both to True'
             assert self.nchar > 0, 'nchar not set, required for Gelfand-Ghosh calculation'
 
             # Clear gg_y and let it contain the observed pattern counts            
@@ -898,9 +874,7 @@ class Phycas:
         self.createChain()
 
         # Tell TreeLikelihood object if user wants to run with no data
-        # PYPHY_NEWWAY
         if not self.data_source:
-        #if self.no_data:
             self.likelihood.setNoData()
 
         # Compute the current log-likelihood and log-prior in case first updater 
@@ -1094,7 +1068,7 @@ class Phycas:
 if __name__ == '__main__':
     mcmc = Phycas()
 
-    mcmc.data_source = 'file' # POLPY_NEWWAY    
+    mcmc.data_source = 'file'
     mcmc.data_file_name = '../../pyphy/nyldna4.nex'
     mcmc.starting_tree_source = 'usertree'
     mcmc.tree_topology = '(0:0.1,1:0.1,(2:0.1,3:0.1):0.1)'
@@ -1104,10 +1078,10 @@ if __name__ == '__main__':
     mcmc.random_seed = '13579'
     mcmc.model_type = 'hky'
     mcmc.using_hyperprior = True
-    #POLPY_NEWWAY mcmc.edgelen_prior_mean = 0.1
-    mcmc.master_edgelen_dist = ProbDist.ExponentialDist(10.0) # POLPY_NEWWAY
+    mcmc.master_edgelen_dist = ProbDist.ExponentialDist(10.0)
     mcmc.verbose = True
-    mcmc.metropolis_weight = 300
+    #mcmc.metropolis_weight = 300
+    mcmc.ls_move_weight = 300
     mcmc.slice_weight = 1
     mcmc.gg_do = False
     mcmc.slice_max_units = 0
