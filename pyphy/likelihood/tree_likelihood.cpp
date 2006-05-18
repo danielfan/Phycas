@@ -340,7 +340,7 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 |	function prepareForLikelihood() has already been called for the same tree. If setNoData function was called more
 |	recently than the setHaveData function, returns 0.0 immediately.
 */
-#if POLPY_NEWWAY
+#if 0 && POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Updates the conditional likelihood array for `nd' in a direction away from `avoid'.
 */
