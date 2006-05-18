@@ -98,5 +98,35 @@ samples     1,000           50                     50                        ---
 nevals      3,418,862       515,487                500,000                   ---    
 secs        441.65931       66.74547                 ---                
 
+16-May-2006
+-----------
 
+Comparison of MrBayes and Phycas running 4-taxon data set (nyldna4.nex)
 
+Description       Evals      Seconds     Evals/sec     
+----------------------------------------------------
+Phycas (SVN 41)   1009910    46.76983    21593.19246 <- 7.7% faster
+MrBayes 3.1.1      999993    49.85900    20056.41910
+
+Phycas breakdown of likelihood evals:
+-------------------------------------
+  3000*300         = 900000 evals. (89.1%) devoted to Larget-Simon moves
+  1009910 - 900000 = 109910 evals. (10.9%) devoted to parameter updates
+
+MrBayes breakdown:
+------------------
+  0.6817*999993 =  681695.2281 evals. (68.17%) devoted to TBR
+  0.2273*999993 =  227298.4089 evals. (22.73%) devoted to LOCAL
+                                       90.90%  devoted to topology moves
+                                       
+  0.0455*999993 =   45499.6815 evals. (4.55%) devoted to updating kappa
+  0.0455*999993 =   45499.6815 evals. (4.55%) devoted to updating state freqs
+                                       9.10%  devoted to parameter updates
+
+Comparison of MrBayes and Phycas running 10-taxon data set (green.nex)
+
+Description       Evals      Seconds     Evals/sec    moves    params
+----------------------------------------------------------------------
+Phycas (SVN 41)  1011178    311.67920   3244.29093   89.01%    10.99%
+MrBayes 3.1.1     999993    199.125     5021.93597   90.90%     9.10% <- 54.8% faster
+                                       

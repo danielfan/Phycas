@@ -33,6 +33,8 @@ o checkout phycasdev using CVS
 o ran freshmake.py (PYTHONPATH must include $HOME/phycasdev/python)
 	cd $HOME/phycasdev
 	python freshmake.py --code
+	17-May-2006: Mark says this is no longer necessary, the setup files are now in the repository so they 
+	  do not need to be generated
 o NOTE: NOT SURE THIS IS A GOOD IDEA
 	Based on posting by Ryan McGann (2005-12-18, http://lists.boost.org/boost-users/2005/12/15934.php),
 	I added "|| defined(__APPLE__)" to boost/bind/placeholders.hpp to avoid multiple definitions of _1, _2, etc.

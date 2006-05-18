@@ -1068,23 +1068,18 @@ class Phycas:
 if __name__ == '__main__':
     mcmc = Phycas()
 
-    mcmc.data_source = 'file'
-    mcmc.data_file_name = '../../pyphy/nyldna4.nex'
-    mcmc.starting_tree_source = 'usertree'
-    mcmc.tree_topology = '(0:0.1,1:0.1,(2:0.1,3:0.1):0.1)'
-    mcmc.ncycles = 1500
-    mcmc.sample_every = 15
-    mcmc.adapt_first = 60
     mcmc.random_seed = '13579'
+    mcmc.data_source = 'file'
+    #mcmc.data_file_name = '../../pyphy/nyldna4.nex'
+    mcmc.data_file_name = '../../pyphy/green.nex'
+    mcmc.starting_tree_source = 'random'
+    mcmc.ncycles = 3000
+    mcmc.sample_every = 10
+    mcmc.adapt_first = 10
     mcmc.model_type = 'hky'
-    mcmc.using_hyperprior = True
-    mcmc.master_edgelen_dist = ProbDist.ExponentialDist(10.0)
-    mcmc.verbose = True
     mcmc.ls_move_weight = 300
-    mcmc.slice_weight = 1
-    mcmc.gg_do = False
     mcmc.slice_max_units = 0
-    mcmc.use_inverse_shape = False
+    mcmc.verbose = True
 
     mcmc.setup()
     mcmc.run()

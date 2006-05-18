@@ -339,8 +339,70 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 |	function prepareForLikelihood() has already been called for the same tree. If setNoData function was called more
 |	recently than the setHaveData function, returns 0.0 immediately.
 */
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Updates the conditional likelihood array for `nd' in a direction away from `avoid'.
+*/
+void TreeLikelihood::updateCLA(TreeNode & nd, TreeNode * avoid)
+	{
+	if (IsValid(nd, avoid))
+		return;
+
+	std::stack<std::pair<TreeNode *>> nd_stack;
+	TreeNode * curr_nd = nd.GetLeftChild();
+	for (;;)
+		{
+		if (IsValid(curr_nd, curr_nd->GetParent()))
+			{
+			curr_nd = curr_nd->GetRightSib();
+			if (curr_nd == NULL)
+				{
+				if (nd_stack.empty())
+					break;
+				curr_nd = nd_stack.top();
+				nd_stack.pop();
+				}
+			}
+		else
+			{
+			nd_stack.push(curr_nd);
+			curr_nd = curr_nd->GetLeftChild();
+			}
+		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Assumes all CLAs of neighboring nodes are up to date and calculates the log-likelihood by combining the CLAs of 
+|	neighbors with the state frequencies at the `focal_nd'.
+*/
+double TreeLikelihood::evaluateLnL(TreeNode & focal_nd)
+	{
+	}
+
 double TreeLikelihood::calcLnL(
-  TreeShPtr t)		/**< is the tree for which the log-likelihood is to be computed */
+  TreeNode & focal_nd)		/**< is the node around which the likelihood will be computed */
+	{
+	if (no_data)
+		{
+		++nevals;
+		return 0.0;
+		}
+
+	for (TreeNode * child = focal_nd.GetLChild(); child != NULL; child = child->GetRightSib())
+		{
+		updateCLA(neighbor, focal_node);
+		}
+	assert(!focal_nd.IsRoot());
+	updateCLA(focal_nd.GetParent(), focal_nd);
+
+	lnL = evaluateLnL(focal_nd);
+
+	++nevals;
+	return lnL;
+	}
+#else
+double TreeLikelihood::calcLnL(
+  TreeShPtr t)
 	{
 	if (no_data)
 		{
@@ -474,6 +536,7 @@ double TreeLikelihood::calcLnL(
 
 	return lnL;
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Allocates the TipData data structure needed to store the data for one tip (the tip corresponding to the supplied
