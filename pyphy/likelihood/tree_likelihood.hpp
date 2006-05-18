@@ -73,7 +73,14 @@ class TreeLikelihood
 		void							copyDataFromDiscreteMatrix(const CipresNative::DiscreteMatrix &);
 		void							copyDataFromSimData(SimDataShPtr sim_data);
 
+#if POLPY_NEWWAY
+		bool							IsValid(const TreeNode *focal, const TreeNode *avoidNd) const;
+		void 							updateCLA(TreeNode & nd, const TreeNode * avoid) const;
+		double 							evaluateLnL(TreeNode & focal_nd);
+		double							calcLnL(TreeNode &);
+#else
 		double							calcLnL(TreeShPtr);
+#endif
 		std::string						listPatterns(bool translate);
 		std::string						getStateStr(int8_t state) const;
 
@@ -85,6 +92,7 @@ class TreeLikelihood
 		unsigned						getNEvals();
 		void							resetNEvals();
 
+		
 	protected:
 
 		bool							no_data;				/**< If true, calcLnL always returns 0.0 (useful for allowing MCMC to explore the prior) */

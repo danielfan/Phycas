@@ -10,6 +10,7 @@
 #include "pyphy/prob_dist/basic_lot.hpp"
 #include <boost/format.hpp>
 #include <numeric>
+#include "pyphy/phylogeny/toward_node_iterator.hpp"
 
 namespace phycas
 {
@@ -343,7 +344,7 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 /*----------------------------------------------------------------------------------------------------------------------
 |	Updates the conditional likelihood array for `nd' in a direction away from `avoid'.
 */
-void TreeLikelihood::updateCLA(TreeNode & nd, TreeNode * avoid)
+void TreeLikelihood::updateCLA(TreeNode & nd, const TreeNode * avoid) const
 	{
 	if (IsValid(nd, avoid))
 		return;
