@@ -10,7 +10,7 @@
 #include "pyphy/prob_dist/basic_lot.hpp"
 #include <boost/format.hpp>
 #include <numeric>
-#include "pyphy/phylogeny/toward_node_iterator.hpp"
+#include "pyphy/phylogeny/edge_iterators.hpp"
 
 namespace phycas
 {
@@ -380,8 +380,8 @@ double TreeLikelihood::calcLnL(
 		}
 
 	NodeValidityChecker validFunctor = boost::bind(&TreeLikelihood::isValid, this, _1, _2);
-	toward_nd_iterator i(&focalNode, validFunctor);
-	toward_nd_iterator e;
+	effective_postorder_edge_iterator i(&focalNode, validFunctor);
+	effective_postorder_edge_iterator e;
 	for (; i != e; ++i)
 		refreshCLA(*i->first, i->second);
 	const double lnL = evaluateLnL(focalNode);

@@ -6,14 +6,10 @@
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/function.hpp>
 #include "pyphy/phylogeny/basic_tree_node.hpp"
+#include "pyphy/phylogeny/edge_endpoints.hpp"
 
 namespace phycas
 {
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	EdgeEndpoints is a pair of adjacent nodes.
-*/
-typedef std::pair<TreeNode*, TreeNode*> EdgeEndpoints;
 typedef boost::function< bool (const TreeNode *, const TreeNode *) > NodeValidityChecker;
 		
 /*----------------------------------------------------------------------------------------------------------------------
@@ -22,23 +18,23 @@ typedef boost::function< bool (const TreeNode *, const TreeNode *) > NodeValidit
 |	But the creation of the iterator involves a pre-order traversal to allow subtree to be 
 |		omitted if they are valid.
 */
-class toward_nd_iterator 
+class effective_postorder_edge_iterator 
   : public boost::iterator_facade<
-		toward_nd_iterator,				// Derived
+		effective_postorder_edge_iterator,				// Derived
 		EdgeEndpoints,					// Value
 		boost::forward_traversal_tag>	// CategoryOrTraversal
 	{
 	public:
 
-						toward_nd_iterator();
-		explicit		toward_nd_iterator(TreeNode * effectiveRoot, NodeValidityChecker f);
+						effective_postorder_edge_iterator();
+		explicit		effective_postorder_edge_iterator(TreeNode * effectiveRoot, NodeValidityChecker f = NodeValidityChecker());
 
 	private:
 		
 		friend class boost::iterator_core_access;
 
 		void					increment();
-		bool				  	equal(toward_nd_iterator const & other) const;
+		bool				  	equal(effective_postorder_edge_iterator const & other) const;
 	    EdgeEndpoints	      & dereference() const;
 
 	private:
@@ -50,37 +46,37 @@ class toward_nd_iterator
 		TreeNode 				  * effectiveRoot;
 	};
 
-class TowardNodeIteratorContainer
+class EffectivePostorderEdgeContainer
 	{
 	public:
-		TowardNodeIteratorContainer(TreeNode * effectiveRoot, NodeValidityChecker f)
+		EffectivePostorderEdgeContainer(TreeNode * effectiveRoot, NodeValidityChecker f)
 			:beginIt(effectiveRoot, f)
 			{}
 			
-		toward_nd_iterator	begin()
+		effective_postorder_edge_iterator	begin()
 			{
 			return beginIt;
 			}
 
-		toward_nd_iterator	end()
+		effective_postorder_edge_iterator	end()
 			{
-			return toward_nd_iterator();
+			return effective_postorder_edge_iterator();
 			}
 	private:
-		toward_nd_iterator beginIt;
+		effective_postorder_edge_iterator beginIt;
 	};
 	
 /*----------------------------------------------------------------------------------------------------------------------
 |	
 */
-inline toward_nd_iterator::toward_nd_iterator() : effectiveRoot(NULL)
+inline effective_postorder_edge_iterator::effective_postorder_edge_iterator() : effectiveRoot(NULL)
 	{
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	
 */
-inline toward_nd_iterator::toward_nd_iterator(
+inline effective_postorder_edge_iterator::effective_postorder_edge_iterator(
   TreeNode * effRoot, 		/// "focal" node of the iteration (order of nodes will be postorder if this node were the root)
   NodeValidityChecker f)	/// functor that takes two Node pointers and returns true if the iteration in this subtree should be stopped)
   : isValidChecker(f), effectiveRoot(effRoot)
@@ -103,7 +99,7 @@ inline toward_nd_iterator::toward_nd_iterator(
 	}
 
 
-inline void toward_nd_iterator::BuildStackFromNodeAndSiblings(TreeNode * curr, const TreeNode * nodeToSkip)
+inline void effective_postorder_edge_iterator::BuildStackFromNodeAndSiblings(TreeNode * curr, const TreeNode * nodeToSkip)
 	{
 	if (nodeToSkip != NULL && curr == nodeToSkip)
 		curr = curr->GetRightSib();
@@ -142,7 +138,7 @@ inline void toward_nd_iterator::BuildStackFromNodeAndSiblings(TreeNode * curr, c
 /*----------------------------------------------------------------------------------------------------------------------
 |	
 */
-inline void toward_nd_iterator::increment()
+inline void effective_postorder_edge_iterator::increment()
 	{
 	if (!edge_stack.empty())
 		{
@@ -159,7 +155,7 @@ inline void toward_nd_iterator::increment()
 /*----------------------------------------------------------------------------------------------------------------------
 |	Provides one of the core operations required for forward iterators.
 */
-inline bool toward_nd_iterator::equal(toward_nd_iterator const & other) const
+inline bool effective_postorder_edge_iterator::equal(effective_postorder_edge_iterator const & other) const
     {
     if (this->effectiveRoot != other.effectiveRoot)
     	return false;
@@ -171,7 +167,7 @@ inline bool toward_nd_iterator::equal(toward_nd_iterator const & other) const
 /*----------------------------------------------------------------------------------------------------------------------
 |	Provides one of the core operations required for forward iterators.
 */
-inline EdgeEndpoints & toward_nd_iterator::dereference() const
+inline EdgeEndpoints & effective_postorder_edge_iterator::dereference() const
     {
 	assert(!edge_stack.empty());
 	topOfEdgeStack = edge_stack.top();

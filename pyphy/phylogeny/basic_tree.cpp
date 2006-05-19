@@ -6,7 +6,7 @@
 #include "pyphy/phylogeny/xphylogeny.hpp"
 #define TESTING_TOWARD_NODE_ITERATOR
 #if defined(TESTING_TOWARD_NODE_ITERATOR)
-#	include "pyphy/phylogeny/toward_node_iterator.hpp"
+#	include "pyphy/phylogeny/edge_iterators.hpp"
 #endif
 using namespace phycas;
 
@@ -393,8 +393,8 @@ std::string Tree::DebugWalkTree(bool preorder, unsigned verbosity)
 		if (z->IsTip())
 			continue;
 		s << "\nStarting with " << z->nodeName << "...\n";
-		toward_nd_iterator i(z, validFunctor);
-		toward_nd_iterator e;
+		effective_postorder_edge_iterator i(z, validFunctor);
+		effective_postorder_edge_iterator e;
 		for (; i != e; ++i)
 #	else
 	TreeNode *nd = (preorder ? GetFirstPreorder() : GetLastPreorder());
