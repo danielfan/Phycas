@@ -6,7 +6,6 @@
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/function.hpp>
 #include "pyphy/phylogeny/basic_tree_node.hpp"
-#include "pyphy/likelihood/tree_likelihood.hpp"
 
 namespace phycas
 {
