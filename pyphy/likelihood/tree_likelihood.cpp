@@ -360,7 +360,7 @@ void TreeLikelihood::updateCLA(TreeNode & nd, const TreeNode * avoid) const
  */
 bool TreeLikelihood::IsValid(const TreeNode * refNd, const TreeNode * neighborCloserToEffectiveRoot) const
 	{
-	return true;
+	return false;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
