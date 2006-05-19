@@ -42,7 +42,7 @@ class toward_nd_iterator
 	    EdgeEndpoints	      & dereference() const;
 
 	private:
-		void					BuildStackFromSubtree(TreeNode *);
+		void					BuildStackFromNodeAndSiblings(TreeNode *, const TreeNode *);
 
 		NodeValidityChecker			isValidChecker;
 		std::stack<EdgeEndpoints>	edge_stack;
@@ -85,32 +85,30 @@ inline toward_nd_iterator::toward_nd_iterator(
   NodeValidityChecker f)	/// functor that takes two Node pointers and returns true if the iteration in this subtree should be stopped)
   : isValidChecker(f), effectiveRoot(effRoot)
 	{
+	assert(!isValidChecker.empty());
 	assert(effectiveRoot != NULL);
-	TreeNode * leftChild = effectiveRoot->GetLeftChild();
-	assert(leftChild != NULL);
-	BuildStackFromSubtree(leftChild);
+	BuildStackFromNodeAndSiblings(effectiveRoot->GetLeftChild(), NULL);
+
 	TreeNode * currAvoidNode = effectiveRoot;
-	for (TreeNode *currAnc = effectiveRoot->GetParent(); currAnc != NULL; currAnc = currAnc->GetParent(), currAvoidNode = currAnc)
+	for (TreeNode *currAnc = effectiveRoot->GetParent(); currAnc != NULL; currAnc = currAnc->GetParent())
 		{
-		if ((!isValidChecker.empty()) && isValidChecker(currAnc, currAvoidNode))
+		if (!isValidChecker.empty() && isValidChecker(currAnc, currAvoidNode))
 			break;
 		edge_stack.push(EdgeEndpoints(currAnc, currAvoidNode));
-		for (TreeNode * c = currAnc->GetLeftChild(); c != NULL; c = c->GetLeftChild())
-			{
-			if (c != currAvoidNode && (isValidChecker.empty() || !isValidChecker(c, currAnc)))
-				{
-				edge_stack.push(EdgeEndpoints(c, currAnc));
-				BuildStackFromSubtree(c);
-				}
-			}
+		BuildStackFromNodeAndSiblings(currAnc->GetLeftChild(), currAvoidNode);
+		currAvoidNode = currAnc;
 		}
 	if (edge_stack.empty())
 		effectiveRoot = NULL;
 	}
 
 
-inline void toward_nd_iterator::BuildStackFromSubtree(TreeNode * curr)
+inline void toward_nd_iterator::BuildStackFromNodeAndSiblings(TreeNode * curr, const TreeNode * nodeToSkip)
 	{
+	if (nodeToSkip != NULL && curr == nodeToSkip)
+		curr = curr->GetRightSib();
+	if (curr == NULL)
+		return;
 	std::stack<TreeNode*> nd_stack;
 	for (;;)
 		{
@@ -118,6 +116,8 @@ inline void toward_nd_iterator::BuildStackFromSubtree(TreeNode * curr)
 		if ((!isValidChecker.empty()) && isValidChecker(curr, par))
 			{
 			curr = curr->GetRightSib();
+			if (nodeToSkip != NULL && curr == nodeToSkip)
+				curr = curr->GetRightSib();
 			if (curr == NULL)
 				{
 				if (nd_stack.empty())
@@ -130,10 +130,12 @@ inline void toward_nd_iterator::BuildStackFromSubtree(TreeNode * curr)
 			{
 			edge_stack.push(EdgeEndpoints(curr, par));
 			TreeNode *r = curr->GetRightSib();
+			if (r != NULL && r == nodeToSkip)
+				r = r->GetRightSib();
 			if (r != NULL)
 				nd_stack.push(r);
 			curr = curr->GetLeftChild();
-			assert(curr != NULL);
+			assert(curr != NULL); //@
 			}
 		}
 	}

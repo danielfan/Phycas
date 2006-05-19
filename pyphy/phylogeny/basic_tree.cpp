@@ -378,14 +378,24 @@ TreeNode *Tree::FindTipNode(unsigned num)
 |	1 means add node numbers and indicate using brackets or parentheses whether node is an [internal], (tip) or {root}
 |	node; 2 means show nearly everything about each node (each node requires a paragraph to explain).
 */
+bool isValid(const TreeNode * refNd, const TreeNode * neighborCloserToEffectiveRoot)
+	{
+	return refNd->IsTip();
+	}
+
 std::string Tree::DebugWalkTree(bool preorder, unsigned verbosity)
 	{
 	std::string s;
 #	if defined(TESTING_TOWARD_NODE_ITERATOR)
-	NodeValidityChecker validFunctor;
-	toward_nd_iterator i(GetFirstPreorder(), validFunctor);
-	toward_nd_iterator e;
-	for (; i != e; ++i)
+	NodeValidityChecker validFunctor = isValid;
+	for (TreeNode * z = GetFirstPreorder(); z != NULL; z = z->GetNextPreorder())
+		{
+		if (z->IsTip())
+			continue;
+		s << "\nStarting with " << z->nodeName << "...\n";
+		toward_nd_iterator i(z, validFunctor);
+		toward_nd_iterator e;
+		for (; i != e; ++i)
 #	else
 	TreeNode *nd = (preorder ? GetFirstPreorder() : GetLastPreorder());
 	for (; nd != NULL; nd = (preorder ? nd->GetNextPreorder() : nd->GetNextPostorder()))
@@ -467,6 +477,9 @@ std::string Tree::DebugWalkTree(bool preorder, unsigned verbosity)
 				s << " -> ";
 			}
 		}
+#	if defined(TESTING_TOWARD_NODE_ITERATOR)
+	}
+#	endif
 
 	return s;
 	}

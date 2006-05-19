@@ -174,6 +174,9 @@
 				RelativePath="..\..\common\pyphy_string.hpp">
 			</File>
 			<File
+				RelativePath="..\toward_node_iterator.hpp">
+			</File>
+			<File
 				RelativePath="..\tree_iterators.hpp">
 			</File>
 			<File

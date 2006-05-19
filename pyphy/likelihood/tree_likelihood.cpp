@@ -358,7 +358,7 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid) const
  */
 bool TreeLikelihood::isValid(const TreeNode * refNd, const TreeNode * neighborCloserToEffectiveRoot) const
 	{
-	return false;
+	return refNd->IsTip();
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
