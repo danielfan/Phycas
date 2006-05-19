@@ -61,20 +61,20 @@ inline toward_nd_iterator::toward_nd_iterator() : effectiveRoot(NULL)
 inline toward_nd_iterator::toward_nd_iterator(TreeNode * effRoot) : effectiveRoot(effRoot)
 	{
 	assert(effectiveRoot != NULL);
-	TreeNode * leftChild = subTreeRoot->GetLeftChild();
+	TreeNode * leftChild = effectiveRoot->GetLeftChild();
 	assert(leftChild != NULL);
 	BuildStackFromSubtree(leftChild);
 	TreeNode * currAvoidNode = effectiveRoot;
-	for (TreeNode *currAnc = effectiveRoot.getParent(); currAnc != NULL; currAnc = currAnc->getParent())
+	for (TreeNode *currAnc = effectiveRoot->GetParent(); currAnc != NULL; currAnc = currAnc->GetParent())
 		{
 		if (TreeLikelihood::IsValid(currAnc, currAvoidNode))
-			break
-		edge_stack.push(EdgeEndpoints(currAnc, currAvoidNode);
-		for (TreeNode * c = currAnc.GetLeftChild(); c != NULL; c = c->GetLeftChild())
+			break;
+		edge_stack.push(EdgeEndpoints(currAnc, currAvoidNode));
+		for (TreeNode * c = currAnc->GetLeftChild(); c != NULL; c = c->GetLeftChild())
 			{
 			if (c != currAvoidNode && !TreeLikelihood::IsValid(c, currAnc))
 				{
-				edge_stack.push(EdgeEndpoints(c, currAnc);
+				edge_stack.push(EdgeEndpoints(c, currAnc));
 				BuildStackFromSubtree(c);
 				}
 			}
@@ -102,7 +102,7 @@ inline void toward_nd_iterator::BuildStackFromSubtree(TreeNode * curr)
 			}
 		else
 			{
-			edge_stack.push(EdgeEndpoints(curr, par);
+			edge_stack.push(EdgeEndpoints(curr, par));
 			TreeNode *r = curr->GetRightSib();
 			if (r != NULL)
 				nd_stack.push(r);
@@ -119,7 +119,7 @@ inline void toward_nd_iterator::increment()
 	if (edge_stack.empty())
 		effectiveRoot = NULL;
 	else
-		edge_stack.pop()
+		edge_stack.pop();
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -139,7 +139,8 @@ inline bool toward_nd_iterator::equal(toward_nd_iterator const & other) const
 */
 inline const EdgeEndpoints & toward_nd_iterator::dereference() const
     {
-    return this->currentEdgeEndpoint;
+	assert(!edge_stack.empty());
+    return edge_stack.top();
     }
 
 }	// namespace phycas
