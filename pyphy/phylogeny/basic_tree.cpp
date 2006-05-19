@@ -392,8 +392,7 @@ std::string Tree::DebugWalkTree(bool preorder, unsigned verbosity)
 #	endif	
 		{
 #		if defined(TESTING_TOWARD_NODE_ITERATOR)
-			//const std::pair<phycas::TreeNode*, phycas::TreeNode*>	 & edgeEnd = *i;
-			TreeNode * nd = NULL ; // = edgeEnd.first;
+			TreeNode * nd = i->first;
 #		endif
 		if (verbosity == 2)
 			{
