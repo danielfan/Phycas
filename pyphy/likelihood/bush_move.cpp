@@ -213,7 +213,7 @@ void BushMove::proposeNewState()
 		//
 		//  A     C   A     B   A     B   B     A   B     A   C     A 
 		//   \___/     \___/     \___/     \___/     \___/     \___/  
-		//   /   \     / * \     /   \     /   \     / * \     /   \  
+		//   /   \     / * \     /   \     /   \     / * \     /   \  <not a backslash>
 		//  B     D   C     D   C     D   C     D   D     C   D     B 
 		//              
 		// 
@@ -601,7 +601,7 @@ void BushMove::update()
 	//	std::cerr << "  delete-edge move\n";
 	//std::cerr << std::endl;
 
-	double curr_ln_like				= likelihood->calcLnL(tree);
+	double curr_ln_like				= likelihood->calcLnL(*tree->GetFirstPreorder());
 
 	double curr_ln_prior			= 0.0;
 	double prev_ln_prior			= 0.0;

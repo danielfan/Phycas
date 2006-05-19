@@ -50,7 +50,7 @@ phycas.likelihood.copyDataFromSimData(sim_data)
 phycas.likelihood.prepareForLikelihood(phycas.tree)
 
 # Compute likelihood for simulated data
-print 'lnL =',phycas.likelihood.calcLnL(phycas.tree)
+print 'lnL =',phycas.likelihood.calcLnL(phycas.tree.getFirstPreorder())
 
 # Add a PAUP block to the simulated.nex file to make it easy to check the results
 f = file('simulated.nex', 'a')

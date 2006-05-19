@@ -94,7 +94,7 @@ class NCatMove : public MCMCUpdater
 		double							ln_hastings;			/**< The natural log of the Hastings ratio for the move last proposed */
 
 		unsigned total_updates;
-		std::vector<unsigned> ncat_distr;
+		std::vector<unsigned> 			ncat_distr;
 
 		CDF								cdf;					/**< CDF object needed for its LnGamma function */
 	};

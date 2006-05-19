@@ -4,6 +4,7 @@
 #include <utility>
 #include <stack>
 #include <boost/iterator/iterator_facade.hpp>
+#include <boost/function.hpp>
 #include "pyphy/phylogeny/basic_tree_node.hpp"
 #include "pyphy/likelihood/tree_likelihood.hpp"
 
@@ -14,7 +15,8 @@ namespace phycas
 |	EdgeEndpoints is a pair of adjacent nodes.
 */
 typedef std::pair<TreeNode*, TreeNode*> EdgeEndpoints;
-
+typedef boost::function< bool (const TreeNode *, const TreeNode *) > NodeValidityChecker;
+		
 /*----------------------------------------------------------------------------------------------------------------------
 |	Iterates through EdgeEndpoints 
 |	The ordering of nodes returned is "post-order" (post-order if the node used to construct the iterator were the root)
@@ -30,7 +32,7 @@ class toward_nd_iterator
 	public:
 
 						toward_nd_iterator();
-		explicit		toward_nd_iterator(TreeNode * effectiveRoot);
+		explicit		toward_nd_iterator(TreeNode * effectiveRoot, NodeValidityChecker f);
 
 	private:
 		
@@ -43,6 +45,7 @@ class toward_nd_iterator
 	private:
 		void					BuildStackFromSubtree(TreeNode *);
 
+		NodeValidityChecker			isValidChecker;
 		std::stack<EdgeEndpoints>	edge_stack;
 		TreeNode 				  * effectiveRoot;
 	};
@@ -58,7 +61,10 @@ inline toward_nd_iterator::toward_nd_iterator() : effectiveRoot(NULL)
 /*----------------------------------------------------------------------------------------------------------------------
 |	
 */
-inline toward_nd_iterator::toward_nd_iterator(TreeNode * effRoot) : effectiveRoot(effRoot)
+inline toward_nd_iterator::toward_nd_iterator(
+  TreeNode * effRoot, 		/// "focal" node of the iteration (order of nodes will be postorder if this node were the root)
+  NodeValidityChecker f)	/// functor that takes two Node pointers and returns true if the iteration in this subtree should be stopped)
+  : isValidChecker(f), effectiveRoot(effRoot)
 	{
 	assert(effectiveRoot != NULL);
 	TreeNode * leftChild = effectiveRoot->GetLeftChild();
@@ -67,12 +73,12 @@ inline toward_nd_iterator::toward_nd_iterator(TreeNode * effRoot) : effectiveRoo
 	TreeNode * currAvoidNode = effectiveRoot;
 	for (TreeNode *currAnc = effectiveRoot->GetParent(); currAnc != NULL; currAnc = currAnc->GetParent())
 		{
-		if (TreeLikelihood::IsValid(currAnc, currAvoidNode))
+		if ((!isValidChecker.empty()) && isValidChecker(currAnc, currAvoidNode))
 			break;
 		edge_stack.push(EdgeEndpoints(currAnc, currAvoidNode));
 		for (TreeNode * c = currAnc->GetLeftChild(); c != NULL; c = c->GetLeftChild())
 			{
-			if (c != currAvoidNode && !TreeLikelihood::IsValid(c, currAnc))
+			if (c != currAvoidNode && (isValidChecker.empty() || !isValidChecker(c, currAnc)))
 				{
 				edge_stack.push(EdgeEndpoints(c, currAnc));
 				BuildStackFromSubtree(c);
@@ -89,7 +95,7 @@ inline void toward_nd_iterator::BuildStackFromSubtree(TreeNode * curr)
 	for (;;)
 		{
 		TreeNode * par = curr->GetParent();
-		if (TreeLikelihood::IsValid(curr, par))
+		if ((!isValidChecker.empty()) && isValidChecker(curr, par))
 			{
 			curr = curr->GetRightSib();
 			if (curr == NULL)
@@ -97,7 +103,7 @@ inline void toward_nd_iterator::BuildStackFromSubtree(TreeNode * curr)
 				if (nd_stack.empty())
 					break;
 				curr = nd_stack.top();
-				curr = nd_stack.pop();
+				nd_stack.pop();
 				}
 			}
 		else

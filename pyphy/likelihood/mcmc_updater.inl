@@ -21,8 +21,8 @@ inline MCMCUpdater::MCMCUpdater()
   is_move(false),
   is_master_param(false),
   is_hyper_param(false), 
-  slice_max_units(UINT_MAX),
-  is_fixed(false)
+  is_fixed(false),
+  slice_max_units(UINT_MAX)
 	{
 	//ln_zero = std::log(std::numeric_limits<double>::denorm_min()); // this doesn't work, lnL can get much lower than the log of dnorm_min!
 	ln_zero = -DBL_MAX;
@@ -247,6 +247,8 @@ inline double MCMCUpdater::recalcPrior()
 	{
 	curr_ln_prior = prior->GetLnPDF(curr_value);
 
+
+
 	return curr_ln_prior;
 	}
 
@@ -298,6 +300,7 @@ inline LotShPtr MCMCUpdater::getLot()
 	{
 	return rng;
 	}
+
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the `rng' data member to the supplied Lot shared pointer.

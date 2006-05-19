@@ -12,19 +12,20 @@ namespace phycas
 */
 inline Model::Model(
   unsigned numStates)	/**< is the number of basic states (e.g. 4 for DNA) */
-	: num_states(numStates), //@POL 31-Oct-2005 what about morphological models, is numStates in this case the maximum number of states allowed?
+	:
+	num_states(numStates), //@POL 31-Oct-2005 what about morphological models, is numStates in this case the maximum number of states allowed?
 	num_gamma_rates(1), 
 	gamma_rates_unnorm(1, 1.0),
-	is_flex_model(false),
-	flex_upper_rate_bound(1.0),
-	num_flex_spacers(1),
-	flex_probs_fixed(false),
-	flex_rates_fixed(false),
 	gamma_rate_probs(1, 1.0), 
 	state_freq_fixed(false),
 	edge_lengths_fixed(false),	
 	edgelen_hyperprior_fixed(false),
 	is_pinvar_model(false),
+	is_flex_model(false),
+	flex_upper_rate_bound(1.0),
+	num_flex_spacers(1),
+	flex_probs_fixed(false),
+	flex_rates_fixed(false),
 	pinvar_fixed(false),
 	pinvar(0.0), 
 	gamma_shape_fixed(false),
@@ -1222,8 +1223,11 @@ inline void HKY::setBaseFreqParamPrior(ProbDistShPtr d)
 |	`state_freqs'[1], piC means	`state_freqs'[2] and piT means `state_freqs'[3]):
 |>
 |	         tratio (piA + piG) (piC + piT)
+
 |	kappa = -------------------------------
+
 |	              (piA piG + piC piT)
+
 |>
 |	Throws XLikelihood exception if `tratio' is less than or equal to 0.0.
 */
@@ -1232,38 +1236,68 @@ inline void HKY::setKappaFromTRatio(double tratio)
 	if (tratio <= 0.0)
 		throw XLikelihood();
 	double numerator   = tratio*(state_freqs[0] + state_freqs[2])*(state_freqs[1] + state_freqs[3]);
+
 	double denominator = ((state_freqs[0]*state_freqs[2]) + (state_freqs[1]*state_freqs[3]));
+
 	assert(denominator != 0.0);
+
 	kappa = numerator/denominator;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+
 |	Calculates the transition/transversion ratio given the transition/transversion rate ratio `kappa' and the relative
+
 |	base frequencies, which are stored in the `state_freqs' vector. Here are the details of the calculation (for brevity,
+
 |	`state_freqs'[0] has been symbolized piA, `state_freqs'[1] by piC, `state_freqs'[2] by piG and `state_freqs'[3] by piT):
+
 |>
+
 |	Parameters: b = transversion rate, k = kappa
+
 |	Pr(any transition | dt)   = Pr(AG) + Pr(CT) + Pr(GA) + Pr(TC) 
+
 |	                          = (piA piG k b dt) + (piC piT k b dt) + (piG piA k b dt) + (piT piC k b dt)
+
 |	                          = 2 k b dt (piA piG + piC piT)
+
 |	
+
 |	Pr(any transversion | dt) = Pr(AC) + Pr(AT) + Pr(CA) + Pr(CG) + Pr(GC) + Pr(GT) + Pr(TA) + Pr(TG)
+
 |	                          = (piA piC b dt) + (piA piT b dt) + (piC piA b dt) + (piC piG b dt)
+
 |	                            + (piG piC b dt) + (piG piT b dt) + (piT piA b dt) + (piT piG b dt)
+
 |	                          = 2 b dt (piA + piG) (piC + piT)
+
 |	
+
 |	          2 k b dt (piA piG + piC piT)     k (piA piG + piC piT)
+
 |	TRatio = ------------------------------ = -----------------------
+
 |	         2 b dt (piA + piG) (piC + piT)   (piA + piG) (piC + piT)
+
 |<
+
 */
+
 inline double HKY::calcTRatio()
+
 	{
+
 	double numerator   = kappa*((state_freqs[0]*state_freqs[2]) + (state_freqs[1]*state_freqs[3]));
+
 	double denominator = (state_freqs[0] + state_freqs[2])*(state_freqs[1] + state_freqs[3]);
+
 	assert(denominator != 0.0);
+
 	double tratio = numerator/denominator;
+
 	return tratio;
+
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -1632,37 +1666,69 @@ inline std::string GTR::paramReport() const
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+
 |	Calculates the transition/transversion ratio given the six relative rates stored in the `rel_rates' vector, and the 
+
 |	relative base frequencies, which are stored in the `state_freqs' vector. Here are the details of the calculation 
+
 |	(for brevity, `state_freqs'[0] has been symbolized piA, `state_freqs'[1] by piC, `state_freqs'[2] by piG and 
+
 |	`state_freqs'[3] by piT, `rel_rates'[0] by rAC, `rel_rates'[1] by rAG `rel_rates'[2] by rAT, `rel_rates'[3] by rCG, 
+
 |	`rel_rates'[4] by rCT and `rel_rates'[5] by rGT):
+
 |>
+
 |	Pr(any transition | dt)   = Pr(AG) + Pr(CT) + Pr(GA) + Pr(TC) 
+
 |	                          = (piA piG rAG dt) + (piC piT rCT dt) + (piG piA rAG dt) + (piT piC rCT dt)
+
 |	                          = 2 dt (piA piG rAG + piT piC rCT dt)
+
 |	
+
 |	Pr(any transversion | dt) = Pr(AC) + Pr(AT) + Pr(CA) + Pr(CG) + Pr(GC) + Pr(GT) + Pr(TA) + Pr(TG)
+
 |	                          = (piA piC rAC dt) + (piA piT rAT dt) + (piC piA rAC dt) + (piC piG rCG dt)
+
 |	                            + (piG piC rCG dt) + (piG piT rGT dt) + (piT piA rAT dt) + (piT piG rGT dt)
+
 |	                          = 2 dt (piA piC rAC + piA piT rAT + piC piG rCG +  + piG piT rGT)
+
 |	
+
 |	                      2 dt (piA piG rAG + piT piC rCT)
+
 |	TRatio = ------------------------------------------------------------
+
 |	         2 dt (piA piC rAC + piA piT rAT + piC piG rCG + piG piT rGT)
+
 |	
+
 |	                     piA piG rAG + piT piC rCT
+
 |	       = -----------------------------------------------------
+
 |	         piA piC rAC + piA piT rAT + piC piG rCG + piG piT rGT
+
 |<
+
 */
+
 inline double GTR::calcTRatio()
+
 	{
+
 	double numerator = state_freqs[0]*state_freqs[2]*rel_rates[1] + state_freqs[3]*state_freqs[1]*rel_rates[4];
+
 	double denominator = state_freqs[0]*state_freqs[1]*rel_rates[0] + state_freqs[0]*state_freqs[3]*rel_rates[2] + state_freqs[1]*state_freqs[2]*rel_rates[3] + state_freqs[2]*state_freqs[3]*rel_rates[5];
+
 	assert(denominator != 0.0);
+
 	double tratio = numerator/denominator;
+
 	return tratio;
+
 	}
 
 }	// namespace phycas

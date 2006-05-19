@@ -102,7 +102,7 @@ class TreeLikelihood(TreeLikelihoodBase):
         """
         TreeLikelihoodBase.replaceModel(self, new_model)
 
-    def calcLnL(self, tree):
+    def calcLnL(self, nd):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Calculates the log-likelihood using the current model. All transition
@@ -110,7 +110,7 @@ class TreeLikelihood(TreeLikelihoodBase):
         necessary.
         
         """
-        return TreeLikelihoodBase.calcLnL(self, tree)
+        return TreeLikelihoodBase.calcLnL(self, nd)
 
     def simulateFirst(self, sim_data, tree, lot, nchar):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

@@ -340,48 +340,40 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 |	function prepareForLikelihood() has already been called for the same tree. If setNoData function was called more
 |	recently than the setHaveData function, returns 0.0 immediately.
 */
-#if 0 && POLPY_NEWWAY
+#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Updates the conditional likelihood array for `nd' in a direction away from `avoid'.
 */
 void TreeLikelihood::updateCLA(TreeNode & nd, const TreeNode * avoid) const
 	{
-	if (IsValid(nd, avoid))
+	if (IsValid(&nd, avoid))
 		return;
+	assert(0);
+	}
 
-	std::stack<std::pair<TreeNode *>> nd_stack;
-	TreeNode * curr_nd = nd.GetLeftChild();
-	for (;;)
-		{
-		if (IsValid(curr_nd, curr_nd->GetParent()))
-			{
-			curr_nd = curr_nd->GetRightSib();
-			if (curr_nd == NULL)
-				{
-				if (nd_stack.empty())
-					break;
-				curr_nd = nd_stack.top();
-				nd_stack.pop();
-				}
-			}
-		else
-			{
-			nd_stack.push(curr_nd);
-			curr_nd = curr_nd->GetLeftChild();
-			}
-		}
+/*----------------------------------------------------------------------------------------------------------------------
+ * Returns true if the conditional likelihood of refNd is up to date for calculations centered
+ * 	at some effective root node (neighborCloserToEffectiveRoot will be a node adjacent to refNd, but closer
+ * 	to the the effective root).
+ * Called in a context in which neighborCloserToEffectiveRoot is requesting that all of its neighbors update their 
+ *	likelihood temporaries.
+ */
+bool TreeLikelihood::IsValid(const TreeNode * refNd, const TreeNode * neighborCloserToEffectiveRoot) const
+	{
+	return true;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Assumes all CLAs of neighboring nodes are up to date and calculates the log-likelihood by combining the CLAs of 
 |	neighbors with the state frequencies at the `focal_nd'.
 */
-double TreeLikelihood::evaluateLnL(TreeNode & focal_nd)
+double TreeLikelihood::evaluateLnL(TreeNode & /*focal_nd*/)
 	{
+	return 0.0;
 	}
 
 double TreeLikelihood::calcLnL(
-  TreeNode & focal_nd)		/**< is the node around which the likelihood will be computed */
+  TreeNode & focalNode)		/**< is the node around which the likelihood will be computed */
 	{
 	if (no_data)
 		{
@@ -389,15 +381,13 @@ double TreeLikelihood::calcLnL(
 		return 0.0;
 		}
 
-	for (TreeNode * child = focal_nd.GetLChild(); child != NULL; child = child->GetRightSib())
+	for (TreeNode * child = focalNode.GetLeftChild(); child != NULL; child = child->GetRightSib())
 		{
-		updateCLA(neighbor, focal_node);
+		updateCLA(*child, &focalNode);
 		}
-	assert(!focal_nd.IsRoot());
-	updateCLA(focal_nd.GetParent(), focal_nd);
-
-	lnL = evaluateLnL(focal_nd);
-
+	assert(!focalNode.IsRoot());
+	updateCLA(*focalNode.GetParent(), &focalNode);
+	const double lnL = evaluateLnL(focalNode);
 	++nevals;
 	return lnL;
 	}

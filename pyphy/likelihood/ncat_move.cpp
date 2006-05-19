@@ -16,8 +16,15 @@ using namespace phycas;
 /*----------------------------------------------------------------------------------------------------------------------
 |	The constructor calls NCatMove::reset to initialize all variables.
 */
-NCatMove::NCatMove() : MCMCUpdater(), phi(0.5), L(1.0), s(1), lambda(1.0)
-  , total_updates(0), ncat_distr(1, 0), ncat_max(1)
+NCatMove::NCatMove() : 
+	MCMCUpdater(), 
+	ncat_max(1),
+	lambda(1.0),
+	s(1),
+	L(1.0),
+	phi(0.5), 
+	total_updates(0), 
+  	ncat_distr(1, 0)
 	{
 	reset();
 	}
@@ -266,7 +273,7 @@ void NCatMove::update()
 
 	proposeNewState();
 
-	double curr_ln_like		= likelihood->calcLnL(tree);
+	double curr_ln_like		= likelihood->calcLnL(*tree->GetFirstPreorder());
 	double ln_like_ratio	= curr_ln_like - prev_ln_like;
 	double ln_prior_ratio	= 0.0;
 

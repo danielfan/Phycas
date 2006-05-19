@@ -17,7 +17,7 @@ namespace phycas
 */
 double MCMCUpdater::recalcLike()
 	{
-	curr_ln_like = likelihood->calcLnL(tree);
+	curr_ln_like = likelihood->calcLnL(*tree->GetFirstPreorder());
 
 	//std::cerr << "--> in MCMCUpdater::recalcLike(), name = " << getName();	//POL temp
 	//std::cerr << ", curr_ln_like = " << curr_ln_like;	//POL temp

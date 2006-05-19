@@ -127,7 +127,7 @@ inline FlexRateParam::FlexRateParam(
   unsigned & s,					/**< is the number of spacers between each rate in the order statistics prior */
   double & ub,					/**< is the maximum possible value for a rate */
   std::vector<double> & rr)		/**< is the relative rate parameter vector (this parameter needs to know the value on either side when updating) */
-  : MCMCUpdater(),  which(0), nspacers(s), upper_bound(ub), rel_rates(rr), left_value(0.0), right_value(1.0)
+  : MCMCUpdater(),  nspacers(s), upper_bound(ub), rel_rates(rr), left_value(0.0), right_value(1.0), which(0)
 	{
 	curr_value = rel_rates[which];
 	has_slice_sampler = true;

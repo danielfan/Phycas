@@ -2,6 +2,14 @@
 #include <stdlib.h>
 #include <math.h>
 #include "cdflib.h"
+
+static void E0000(int,int*,double*,double*,unsigned long*,
+                  unsigned long*,double*,double*,double*,
+                  double*,double*,double*,double*);
+static void E0001(int,int*,double*,double*,double*,double*,
+                  unsigned long*,unsigned long*,double*,double*,
+                  double*,double*);
+
 /*
 -----------------------------------------------------------------------
  
