@@ -40,17 +40,37 @@ class toward_nd_iterator
 
 		void					increment();
 		bool				  	equal(toward_nd_iterator const & other) const;
-	    const EdgeEndpoints	  & dereference() const;
+	    EdgeEndpoints	      & dereference() const;
 
 	private:
 		void					BuildStackFromSubtree(TreeNode *);
 
 		NodeValidityChecker			isValidChecker;
 		std::stack<EdgeEndpoints>	edge_stack;
+		mutable EdgeEndpoints		topOfEdgeStack;
 		TreeNode 				  * effectiveRoot;
 	};
 
+class TowardNodeIteratorContainer
+	{
+	public:
+		TowardNodeIteratorContainer(TreeNode * effectiveRoot, NodeValidityChecker f)
+			:beginIt(effectiveRoot, f)
+			{}
+			
+		toward_nd_iterator	begin()
+			{
+			return beginIt;
+			}
 
+		toward_nd_iterator	end()
+			{
+			return toward_nd_iterator();
+			}
+	private:
+		toward_nd_iterator beginIt;
+	};
+	
 /*----------------------------------------------------------------------------------------------------------------------
 |	
 */
@@ -71,7 +91,7 @@ inline toward_nd_iterator::toward_nd_iterator(
 	assert(leftChild != NULL);
 	BuildStackFromSubtree(leftChild);
 	TreeNode * currAvoidNode = effectiveRoot;
-	for (TreeNode *currAnc = effectiveRoot->GetParent(); currAnc != NULL; currAnc = currAnc->GetParent())
+	for (TreeNode *currAnc = effectiveRoot->GetParent(); currAnc != NULL; currAnc = currAnc->GetParent(), currAvoidNode = currAnc)
 		{
 		if ((!isValidChecker.empty()) && isValidChecker(currAnc, currAvoidNode))
 			break;
@@ -84,8 +104,9 @@ inline toward_nd_iterator::toward_nd_iterator(
 				BuildStackFromSubtree(c);
 				}
 			}
-		currAvoidNode = currAnc;
 		}
+	if (edge_stack.empty())
+		effectiveRoot = NULL;
 	}
 
 
@@ -122,10 +143,16 @@ inline void toward_nd_iterator::BuildStackFromSubtree(TreeNode * curr)
 */
 inline void toward_nd_iterator::increment()
 	{
-	if (edge_stack.empty())
-		effectiveRoot = NULL;
-	else
+	if (!edge_stack.empty())
+		{
 		edge_stack.pop();
+		if (edge_stack.empty())
+			effectiveRoot = NULL;
+		}
+	else
+		{
+		assert(effectiveRoot == NULL);
+		}
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -143,10 +170,11 @@ inline bool toward_nd_iterator::equal(toward_nd_iterator const & other) const
 /*----------------------------------------------------------------------------------------------------------------------
 |	Provides one of the core operations required for forward iterators.
 */
-inline const EdgeEndpoints & toward_nd_iterator::dereference() const
+inline EdgeEndpoints & toward_nd_iterator::dereference() const
     {
 	assert(!edge_stack.empty());
-    return edge_stack.top();
+	topOfEdgeStack = edge_stack.top();
+    return topOfEdgeStack;
     }
 
 }	// namespace phycas

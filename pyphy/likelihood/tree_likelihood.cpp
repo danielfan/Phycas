@@ -344,10 +344,8 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 /*----------------------------------------------------------------------------------------------------------------------
 |	Updates the conditional likelihood array for `nd' in a direction away from `avoid'.
 */
-void TreeLikelihood::updateCLA(TreeNode & nd, const TreeNode * avoid) const
+void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid) const
 	{
-	if (IsValid(&nd, avoid))
-		return;
 	assert(0);
 	}
 
@@ -358,7 +356,7 @@ void TreeLikelihood::updateCLA(TreeNode & nd, const TreeNode * avoid) const
  * Called in a context in which neighborCloserToEffectiveRoot is requesting that all of its neighbors update their 
  *	likelihood temporaries.
  */
-bool TreeLikelihood::IsValid(const TreeNode * refNd, const TreeNode * neighborCloserToEffectiveRoot) const
+bool TreeLikelihood::isValid(const TreeNode * refNd, const TreeNode * neighborCloserToEffectiveRoot) const
 	{
 	return false;
 	}
@@ -381,12 +379,11 @@ double TreeLikelihood::calcLnL(
 		return 0.0;
 		}
 
-	for (TreeNode * child = focalNode.GetLeftChild(); child != NULL; child = child->GetRightSib())
-		{
-		updateCLA(*child, &focalNode);
-		}
-	assert(!focalNode.IsRoot());
-	updateCLA(*focalNode.GetParent(), &focalNode);
+	NodeValidityChecker validFunctor = boost::bind(&TreeLikelihood::isValid, this, _1, _2);
+	toward_nd_iterator i(&focalNode, validFunctor);
+	toward_nd_iterator e;
+	for (; i != e; ++i)
+		refreshCLA(*i->first, i->second);
 	const double lnL = evaluateLnL(focalNode);
 	++nevals;
 	return lnL;

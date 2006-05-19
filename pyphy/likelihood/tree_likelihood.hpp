@@ -74,8 +74,8 @@ class TreeLikelihood
 		void							copyDataFromSimData(SimDataShPtr sim_data);
 
 #if POLPY_NEWWAY
-		bool							IsValid(const TreeNode *focal, const TreeNode *avoidNd) const;
-		void 							updateCLA(TreeNode & nd, const TreeNode * avoid) const;
+		bool							isValid(const TreeNode *focal, const TreeNode *avoidNd) const;
+		void 							refreshCLA(TreeNode & nd, const TreeNode * avoid) const;
 		double 							evaluateLnL(TreeNode & focal_nd);
 		double							calcLnL(TreeNode &);
 #else

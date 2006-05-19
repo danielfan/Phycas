@@ -4,7 +4,10 @@
 #include "pyphy/common/pyphy_string.hpp"
 #include "pyphy/phylogeny/basic_tree.hpp"
 #include "pyphy/phylogeny/xphylogeny.hpp"
-
+#undef TESTING_TOWARD_NODE_ITERATOR
+#if defined(TESTING_TOWARD_NODE_ITERATOR)
+#	include "pyphy/phylogeny/toward_node_iterator.hpp"
+#endif
 using namespace phycas;
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -378,9 +381,20 @@ TreeNode *Tree::FindTipNode(unsigned num)
 std::string Tree::DebugWalkTree(bool preorder, unsigned verbosity)
 	{
 	std::string s;
+#	if defined(TESTING_TOWARD_NODE_ITERATOR)
+	NodeValidityChecker validFunctor;
+	toward_nd_iterator i(GetFirstPreorder(), validFunctor);
+	toward_nd_iterator e;
+	for (; i != e; ++i)
+#	else
 	TreeNode *nd = (preorder ? GetFirstPreorder() : GetLastPreorder());
 	for (; nd != NULL; nd = (preorder ? nd->GetNextPreorder() : nd->GetNextPostorder()))
+#	endif	
 		{
+#		if defined(TESTING_TOWARD_NODE_ITERATOR)
+			//const std::pair<phycas::TreeNode*, phycas::TreeNode*>	 & edgeEnd = *i;
+			TreeNode * nd = NULL ; // = edgeEnd.first;
+#		endif
 		if (verbosity == 2)
 			{
 			s << "\n";
