@@ -58,7 +58,17 @@ class EdgeEndpoints : public std::pair<TreeNode *, TreeNode *>
 			return first;
 			}
 		
-		 operator bool () const
+		double getEdgeLength() const
+			{
+			TreeNode * c = this->getActualChild();
+			if (c == NULL)
+				{
+				assert(c != NULL);
+				}
+			return c->GetEdgeLen();
+			}
+		
+		operator bool () const
 			{
 			return first != 0;
 			}

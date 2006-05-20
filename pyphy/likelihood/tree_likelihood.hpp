@@ -139,6 +139,7 @@ class TreeLikelihood
 		std::vector<double>				likelihood_rate_site;	/**< Vector of likelihoods for each rate/site combination */
 		CountVectorType					pattern_counts;			/**< vector of pattern counts */
 		PatternMapType					pattern_map;			/**< keys are patterns, values are pattern counts */
+		std::map<unsigned, unsigned>	charIndexToPatternIndex; /*maps original character index to the index in compressed pattern "matrix" */
 	};
 
 } // namespace phycas

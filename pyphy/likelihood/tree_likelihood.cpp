@@ -770,9 +770,14 @@ void TreeLikelihood::prepareForLikelihood(
 unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix & mat) //POLBM TreeLikelihood::compressDataMatrix
 	{
 	pattern_map.clear();
+	charIndexToPatternIndex.clear();
 	unsigned ntax = mat.getNTax();
 	unsigned nchar = mat.getNChar();
 
+	typedef std::list<unsigned> IndexList;
+	typedef std::map<VecStateList, IndexList> PatternToIndex;
+	PatternToIndex patternToIndex;
+	
 	// Loop across each site in mat
 	for (unsigned j = 0; j < nchar; ++j)
 		{
@@ -798,14 +803,29 @@ unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix &
 			// pattern has not yet been stored in pattern_map
 			pattern_map.insert(lowb, PatternMapType::value_type(pattern, 1));
 			}
+		
+		// Add the pattern to the map if it has not yet been seen, otherwise increment 
+		// the count of this pattern if it is already in the map (see item 24, p. 110, in Meyers' Efficient STL)
+		PatternToIndex::iterator pToILowB = patternToIndex.lower_bound(pattern);
+		if (pToILowB != patternToIndex.end() && !(patternToIndex.key_comp()(pattern, pToILowB->first)))
+			pToILowB->second.push_back(j);
+		else
+			{
+			IndexList ilist(1, j);
+			patternToIndex.insert(pToILowB, PatternToIndex::value_type(pattern, ilist));
+			}
 		}
 
 	// Copy counts to pattern_counts before returning
 	pattern_counts.clear();
 	pattern_counts.reserve(pattern_map.size());
-	for (PatternMapType::iterator mapit = pattern_map.begin(); mapit != pattern_map.end(); ++mapit)
+	unsigned patternIndex = 0;
+	for (PatternMapType::iterator mapit = pattern_map.begin(); mapit != pattern_map.end(); ++mapit, ++patternIndex)
 		{
 		pattern_counts.push_back(mapit->second);
+		const IndexList & inds = patternToIndex[mapit->first];
+		for (IndexList::const_iterator indIt = inds.begin(); indIt != inds.end(); ++indIt)
+			charIndexToPatternIndex[*indIt] = patternIndex;
 		}
 
 	return (unsigned)pattern_map.size();
