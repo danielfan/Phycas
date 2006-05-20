@@ -420,11 +420,15 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 	const double * stateFreq = &model->getStateFreqs()[0]; //PELIGROSO
 	const double * rateCatProbArray = &rate_probs[0]; //PELIGROSO
 
+	if (store_site_likes)
+		site_likelihood.clear();
+
 	double lnLikelihood = 0.0;
 	if (focalNeighbor->IsTip())
 		{
-		const TipData & tipData = *focalNeighbor->GetTipData();
+		TipData & tipData = *focalNeighbor->GetTipData();
 		
+		calcPMatTranspose(tipData, focalEdgeLen);
 		const double * const * const * tipPMatricesTrans = tipData.getConstTransposedPMatrices();
 		const int8_t * tipStateCodes = tipData.getConstStateCodes();
 		std::vector<const double *> focalNdCLAPtr(num_rates);
@@ -442,14 +446,20 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 				for (unsigned i = 0; i < num_states; ++i)
 					siteRateLike += stateFreq[i] * focalNdCLAPtr[r][i] * tipPMatT_pat[i];
 				siteLike += rateCatProbArray[r] * siteRateLike;
+				focalNdCLAPtr[r] += num_states;
 				}
-			lnLikelihood += counts[pat] * std::log(siteLike);
+			double site_lnL = std::log(siteLike);
+			if (store_site_likes)
+				site_likelihood.push_back(site_lnL);
+			lnLikelihood += counts[pat] * site_lnL;
 			}		
 		}
 	else
 		{
-		const double * const * const * childPMatrices = actualChild->GetInternalData()->getConstPMatrices();
-		const double * focalNeighborCLA = focalNeighbor->GetInternalData()->getCLA(); //PELIGROSO
+		InternalData * neighborID = focalNeighbor->GetInternalData();
+		calcPMat(*neighborID, focalEdgeLen);
+		const double * const * const * childPMatrices = neighborID->getConstPMatrices();
+		const double * focalNeighborCLA = neighborID->getConstCLA(); //PELIGROSO
 		std::vector<const double *> focalNdCLAPtr(num_rates);
 		std::vector<const double *> focalNeighborCLAPtr(num_rates);
 		
@@ -475,120 +485,30 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 					siteRateLike += stateFreq[i] * focalNdCLAPtr[r][i] * neigborLike;
 					}
 				siteLike += rateCatProbArray[r] * siteRateLike;
+				focalNdCLAPtr[r] += num_states;
+				focalNeighborCLAPtr[r] += num_states;
 				}
-			lnLikelihood += counts[pat] * std::log(siteLike);
+			double site_lnL = std::log(siteLike);
+			if (store_site_likes)
+				site_likelihood.push_back(site_lnL);
+			lnLikelihood += counts[pat] * site_lnL;
 			}
 		}
+
+#if 0 // for debugging
+	std::ofstream doof("counts_patterns.txt");
+	std::vector<double>::iterator sit = site_likelihood.begin();
+	for (PatternMapType::iterator pit = pattern_map.begin(); pit != pattern_map.end(); ++pit, ++sit)
+		{
+		assert(sit != site_likelihood.end());
+		doof << str(boost::format("%12.5f\t%.1f\t|\t") % (*sit) % pit->second);
+		std::copy(pit->first.begin(), pit->first.end(), std::ostream_iterator<int>(doof, "\t")); 
+		doof << std::endl;
+		}
+	doof.close();
+#endif
 
 	return lnLikelihood;
 	}
-
-#if 0
-	// Get state frequencies from model and alias rate category probability array for speed
-	const double * stateFreq = &model->getStateFreqs()[0]; //PELIGROSO
-	const double * rateCatProbArray = &rate_probs[0]; //PELIGROSO
-	
-	TreeNode * secondNeighor = focalNd.GetLeftChild();
-	assert(firstNeighbor != NULL);
-	assert(secondNeighor != NULL);
-	const double firstEdgeLen = focalNd.GetEdgeLen();
-	for (unsigned r = 0; r < num_rates; ++r)
-		{
-		rateCatProb = rateCatProbArray[r];
-	
-		for (unsigned p = 0; p < num_patterns; ++p, cla += num_states, ++like_rate_site)
-			{
-			*like_rate_site = 0.0;
-			for (unsigned j = 0; j < num_states; ++j)
-				{
-				*like_rate_site += stateFreq[j]*cla[j];
-				}
-			siteLike[p] += rateCatProb*(*like_rate_site);
-			}
-		}
-
-	// Get pointer to start of array where likelihoods for each site and rate combination will be stored
-	//@POL why have likelihood_rate_site? I think it is only used in this function. Try replacing it 
-	// everywhere with a simple double value and see if it makes a difference
-	unsigned sz = likelihood_rate_site.size();
-	if (sz != num_rates*num_patterns)
-		{
-		std::cerr << "sz           = " << sz << std::endl;
-		std::cerr << "num_rates    = " << num_rates << std::endl;
-		std::cerr << "num_patterns = " << num_patterns << std::endl;
-		}
-	assert(likelihood_rate_site.size() == num_rates*num_patterns);
-	double * like_rate_site = (double *)(&likelihood_rate_site[0]); //PELIGROSO
-
-	// Get pointer to start of array where site likelihoods will be stored
-	assert(site_likelihoods.size() == num_patterns);
-	double * siteLike = (double *)(&site_likelihoods[0]); //PELIGROSO
-
-	// Get pointer to start of array holding pattern counts
-	assert(pattern_counts.size() == num_patterns);
-	PatternCountType * counts = (PatternCountType *)(&pattern_counts[0]); //PELIGROSO
-
-	// Get state frequencies from model and alias rate category probability array for speed
-	const double * stateFreq = &model->getStateFreqs()[0]; //PELIGROSO
-	const double * rateCatProbArray = &rate_probs[0]; //PELIGROSO
-	double rateCatProb = rateCatProbArray[0];
-
-	// Get conditional likelihood arrays for the root node
-	assert(rootCLA.getCLASize() >= num_rates*num_patterns*num_states);
-	const double * cla = rootCLA.getConstCLA();
-
-	double lnLikelihood = 0.0;
-	if (num_rates == 1)
-		{
-		// Compute lnLikelihood assuming rate homogeneity
-		// The like_rate_site vector has one element for every pattern in this case
-		// For each pattern p, compute current site likelihood, storing this value in
-		// both like_rate_site[p] and siteLike[p]. Add this value to lnLikelihood.
-		for (unsigned p = 0; p < num_patterns; ++p)
-			{
-			*like_rate_site = 0.0;
-			const double * sf = stateFreq;
-			for (unsigned j = 0; j < num_states; ++j)
-				{
-				double state_freq = *sf++;
-				double cond_like = *cla++;
-				*like_rate_site += (state_freq*cond_like);
-				}
-			double count = (double)(*counts++);
-			double site_likelihood = *like_rate_site++;
-			siteLike[p] = site_likelihood;
-			lnLikelihood += count*log(site_likelihood);
-			}
-		}
-	else
-		{
-		// Compute lnLikelihood assuming rate heterogeneity
-		// Compute array of site likelihoods
-		memset(siteLike, 0, num_patterns*sizeof(double));
-		for (unsigned r = 0; r < num_rates; ++r)
-			{
-			rateCatProb = rateCatProbArray[r];
-		
-			for (unsigned p = 0; p < num_patterns; ++p, cla += num_states, ++like_rate_site)
-				{
-				*like_rate_site = 0.0;
-				for (unsigned j = 0; j < num_states; ++j)
-					{
-					*like_rate_site += stateFreq[j]*cla[j];
-					}
-				siteLike[p] += rateCatProb*(*like_rate_site);
-				}
-			}
-
-		// Compute log-likelihood
-		//@POL note that an additional loop is needed because rates are not nested within patterns in the cla
-		for (unsigned k = 0; k < num_patterns; ++k)
-			{
-			assert(siteLike[k] > 0.0);
-			lnLikelihood += counts[k]*log(siteLike[k]);
-			}
-		}
-
-#endif
 
 } //namespace phycas

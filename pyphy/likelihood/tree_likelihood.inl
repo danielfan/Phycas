@@ -14,6 +14,7 @@ namespace phycas
 inline TreeLikelihood::TreeLikelihood(
   ModelShPtr mod)		/**< is the substitution model */
   :
+  store_site_likes(true),
   no_data(false),
   nTaxa(0),
   num_patterns(0),

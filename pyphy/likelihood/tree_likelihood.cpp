@@ -405,7 +405,7 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 		}
 
 	// Deal with possible polytomy in which secondNeighor has siblings
-	for (TreeNode * currNd = firstNeighbor->GetRightSib(); currNd != NULL; currNd = currNd->GetRightSib())
+	for (TreeNode * currNd = secondNeighor->GetRightSib(); currNd != NULL; currNd = currNd->GetRightSib())
 		{
 		if (currNd != avoid)
 			{
@@ -784,7 +784,7 @@ unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix &
 		// Build up a vector representing the pattern of state codes at this site
 		std::vector<int8_t> pattern;
 		for (unsigned i = 0; i < ntax; ++i)
-				{
+			{
 			const int8_t * row  = mat.getRow(i);
 			const int8_t   code = row[j];
 			pattern.push_back(code);

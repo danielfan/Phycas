@@ -95,6 +95,7 @@ class TreeLikelihood
 		
 	protected:
 
+		bool							store_site_likes;		/**< If true, calcLnL always stores the site likelihoods in the `site_likelihood' data member; if false, the `site_likelihood' data member is not updated by calcLnL */
 		bool							no_data;				/**< If true, calcLnL always returns 0.0 (useful for allowing MCMC to explore the prior) */
 
 		unsigned						nTaxa;					/**< The number of taxa (i.e. the number of elements in each pattern stored in pattern_map) */
@@ -139,7 +140,8 @@ class TreeLikelihood
 		std::vector<double>				likelihood_rate_site;	/**< Vector of likelihoods for each rate/site combination */
 		CountVectorType					pattern_counts;			/**< vector of pattern counts */
 		PatternMapType					pattern_map;			/**< keys are patterns, values are pattern counts */
-		std::map<unsigned, unsigned>	charIndexToPatternIndex; /*maps original character index to the index in compressed pattern "matrix" */
+		std::vector<double>				site_likelihood;		/**< site_likelihood[pat] stores the site likelihood for pattern pat, but only if `store_site_likes' is true */
+		std::map<unsigned, unsigned>	charIndexToPatternIndex; /**< maps original character index to the index in compressed pattern "matrix" */
 	};
 
 } // namespace phycas
