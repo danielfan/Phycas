@@ -13,37 +13,36 @@ namespace phycas
 typedef boost::function< bool (const TreeNode *, const TreeNode *) > NodeValidityChecker;
 		
 /*----------------------------------------------------------------------------------------------------------------------
-|	Iterates through EdgeEndpoints 
-|	The ordering of nodes returned is "post-order" (post-order if the node used to construct the iterator were the root)
-|	But the creation of the iterator involves a pre-order traversal to allow subtree to be 
-|		omitted if they are valid.
+|	Iterates through EdgeEndpoints. The ordering of nodes returned is "post-order" (post-order if the node used to 
+|	construct the iterator were the root), but the creation of the iterator involves a pre-order traversal to allow 
+|	subtrees to be omitted if they are valid according to the NodeValidityChecker functor.
 */
 class effective_postorder_edge_iterator 
   : public boost::iterator_facade<
-		effective_postorder_edge_iterator,				// Derived
-		EdgeEndpoints,					// Value
-		boost::forward_traversal_tag>	// CategoryOrTraversal
+		effective_postorder_edge_iterator,	// Derived
+		EdgeEndpoints,						// Value
+		boost::forward_traversal_tag>		// CategoryOrTraversal
 	{
 	public:
 
 						effective_postorder_edge_iterator();
-		explicit		effective_postorder_edge_iterator(TreeNode * effectiveRoot, NodeValidityChecker f = NodeValidityChecker());
+		explicit		effective_postorder_edge_iterator(TreeNode * effectiveRoot, NodeValidityChecker f /* = NodeValidityChecker() <-- this causes internal compiler error in VC */);
 
 	private:
 		
 		friend class boost::iterator_core_access;
 
-		void					increment();
-		bool				  	equal(effective_postorder_edge_iterator const & other) const;
-	    EdgeEndpoints	      & dereference() const;
+		void						increment();
+		bool				  		equal(effective_postorder_edge_iterator const & other) const;
+	    EdgeEndpoints &				dereference() const;
 
 	private:
-		void					BuildStackFromNodeAndSiblings(TreeNode *, const TreeNode *);
+		void						BuildStackFromNodeAndSiblings(TreeNode *, const TreeNode *);
 
 		NodeValidityChecker			isValidChecker;
 		std::stack<EdgeEndpoints>	edge_stack;
 		mutable EdgeEndpoints		topOfEdgeStack;
-		TreeNode 				  * effectiveRoot;
+		TreeNode *					effectiveRoot;
 	};
 
 class EffectivePostorderEdgeContainer
@@ -77,8 +76,8 @@ inline effective_postorder_edge_iterator::effective_postorder_edge_iterator() : 
 |	
 */
 inline effective_postorder_edge_iterator::effective_postorder_edge_iterator(
-  TreeNode * effRoot, 		/// "focal" node of the iteration (order of nodes will be postorder if this node were the root)
-  NodeValidityChecker f)	/// functor that takes two Node pointers and returns true if the iteration in this subtree should be stopped)
+  TreeNode * effRoot, 		/*< "focal" node of the iteration (order of nodes will be postorder if this node were the root) */
+  NodeValidityChecker f)	/*< functor that takes two Node pointers and returns true if the iteration in this subtree should be stopped) */
   : isValidChecker(f), effectiveRoot(effRoot)
 	{
 	assert(!isValidChecker.empty());
@@ -135,6 +134,7 @@ inline void effective_postorder_edge_iterator::BuildStackFromNodeAndSiblings(Tre
 			}
 		}
 	}
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	
 */

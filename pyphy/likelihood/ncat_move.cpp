@@ -273,7 +273,7 @@ void NCatMove::update()
 
 	proposeNewState();
 
-	double curr_ln_like		= likelihood->calcLnL(*tree->GetFirstPreorder());
+	double curr_ln_like		= likelihood->calcLnL(tree);
 	double ln_like_ratio	= curr_ln_like - prev_ln_like;
 	double ln_prior_ratio	= 0.0;
 

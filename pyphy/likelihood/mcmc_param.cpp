@@ -50,7 +50,7 @@ double KappaParam::operator()(
 		hky->setKappa(k);
 		curr_value = k;
 		recalcPrior();
-		curr_ln_like = likelihood->calcLnL(*tree->GetFirstPreorder());
+		curr_ln_like = likelihood->calcLnL(tree);
 		ChainManagerShPtr p = chain_mgr.lock();
 		assert(p);
 		p->setLastLnLike(curr_ln_like);
@@ -91,7 +91,7 @@ double GTRRateParam::operator()(
 		gtr->setRelRateUnnorm(which, r);
         curr_value = r;
 		recalcPrior();
-        curr_ln_like = likelihood->calcLnL(*tree->GetFirstPreorder());
+        curr_ln_like = likelihood->calcLnL(tree);
 		ChainManagerShPtr p = chain_mgr.lock();
 		assert(p);
 		p->setLastLnLike(curr_ln_like);
@@ -121,7 +121,7 @@ double DiscreteGammaShapeParam::operator()(
 		else
 			model->setShape(a);	// change the gamma shape parameter in the model
 		likelihood->recalcRelativeRates();	// must do this whenever model's shape parameter changes
-		curr_ln_like = likelihood->calcLnL(*tree->GetFirstPreorder());
+		curr_ln_like = likelihood->calcLnL(tree);
 		ChainManagerShPtr p = chain_mgr.lock();
 		assert(p);
 		p->setLastLnLike(curr_ln_like);
@@ -147,7 +147,7 @@ double PinvarParam::operator()(
 		recalcPrior(); // base class function that recomputes curr_ln_prior for the value curr_value
 		model->setPinvar(pinv);	// change the proportion of invariable sites parameter in the model
 		likelihood->recalcRelativeRates();	// must do this whenever model's rate heterogeneity status changes
-		curr_ln_like = likelihood->calcLnL(*tree->GetFirstPreorder());
+		curr_ln_like = likelihood->calcLnL(tree);
 		ChainManagerShPtr p = chain_mgr.lock();
 		assert(p);
 		p->setLastLnLike(curr_ln_like);
@@ -175,7 +175,7 @@ double FlexRateParam::operator()(
 		likelihood->recalcRelativeRates();	// must do this whenever one of the relative rates changes
         curr_value = r;
 		recalcPrior();
-        curr_ln_like = likelihood->calcLnL(*tree->GetFirstPreorder());
+        curr_ln_like = likelihood->calcLnL(tree);
 		ChainManagerShPtr p = chain_mgr.lock();
 		assert(p);
 		p->setLastLnLike(curr_ln_like);
@@ -202,7 +202,7 @@ double FlexProbParam::operator()(
 		likelihood->recalcRelativeRates();	// must do this whenever one of the rate probabilities changes
         curr_value = f;
 		recalcPrior();
-        curr_ln_like = likelihood->calcLnL(*tree->GetFirstPreorder());
+        curr_ln_like = likelihood->calcLnL(tree);
 		ChainManagerShPtr p = chain_mgr.lock();
 		assert(p);
 		p->setLastLnLike(curr_ln_like);
@@ -233,7 +233,7 @@ double BaseFreqParam::operator()(
         //model.normalizeFreqs(base_freq.freqs);
         curr_value = f;
 		recalcPrior();
-        curr_ln_like = likelihood->calcLnL(*tree->GetFirstPreorder());
+        curr_ln_like = likelihood->calcLnL(tree);
 		ChainManagerShPtr p = chain_mgr.lock();
 		assert(p);
 		p->setLastLnLike(curr_ln_like);
@@ -257,7 +257,7 @@ double HyperPriorParam::operator()(
 
 	if (mu > 0.0)
 		{
-		curr_ln_like = likelihood->calcLnL(*tree->GetFirstPreorder());
+		curr_ln_like = likelihood->calcLnL(tree);
 		curr_value = mu;
 		recalcPrior();
 
@@ -299,7 +299,7 @@ double EdgeLenParam::operator()(
 			nd->SetEdgeLen(x);
 			}
 
-		curr_ln_like = likelihood->calcLnL(*tree->GetFirstPreorder());
+		curr_ln_like = likelihood->calcLnL(tree);
 		curr_value = x;
 		recalcPrior();
 		ChainManagerShPtr p = chain_mgr.lock();

@@ -4,7 +4,7 @@
 #include "pyphy/common/pyphy_string.hpp"
 #include "pyphy/phylogeny/basic_tree.hpp"
 #include "pyphy/phylogeny/xphylogeny.hpp"
-#define TESTING_TOWARD_NODE_ITERATOR
+//#define TESTING_TOWARD_NODE_ITERATOR
 #if defined(TESTING_TOWARD_NODE_ITERATOR)
 #	include "pyphy/phylogeny/edge_iterators.hpp"
 #endif

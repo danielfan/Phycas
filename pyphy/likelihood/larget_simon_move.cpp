@@ -32,7 +32,7 @@ void LargetSimonMove::update()
 
 	proposeNewState();
 
-	curr_ln_like = likelihood->calcLnL(*tree->GetFirstPreorder());
+	curr_ln_like = likelihood->calcLnL(tree);
 
 	double prev_ln_prior = 0.0;
 	if (star_tree_proposal)

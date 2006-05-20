@@ -12,33 +12,32 @@ namespace phycas
 |	For the purpose of a calculation (e.g. one that works up the tree), an edge in the tree maybe inverted wrt its 
 | 		internal data structure (a child node maybe the "effective parent" of its actual parent node).
 */
-class EdgeEndpoints
+class EdgeEndpoints : public std::pair<TreeNode *, TreeNode *>
 	{
 	public:
-		TreeNode * first; // effectiveChild (name legacy of when EdgeEndpoints was a pair)
-		TreeNode * second; // effectiveParent (name legacy of when EdgeEndpoints was a pair)
-
-		EdgeEndpoints()
-			:first(NULL),
-			second(NULL)
+		EdgeEndpoints(): std::pair<TreeNode *, TreeNode *>(NULL, NULL)
 			{
 			}
 			
-		EdgeEndpoints(TreeNode * effectiveChild, TreeNode * effectiveParent)
-			:first(effectiveChild),
-			second(effectiveParent)
+		EdgeEndpoints(TreeNode * focal_nd, TreeNode * focal_neighbor)
+			:std::pair<TreeNode *, TreeNode *>(focal_nd, focal_neighbor)
 			{
-			assert(!(effectiveParent == NULL ^ effectiveChild == NULL));
-			assert(effectiveParent == NULL || (effectiveChild->GetParent() == effectiveParent || effectiveParent->GetParent() == effectiveChild));
+			assert(focal_nd == NULL || focal_neighbor == NULL || (focal_neighbor->GetParent() == focal_nd || focal_nd->GetParent() == focal_neighbor));
 			}
-		TreeNode * getEffectiveChild() const
+		TreeNode * getFocalNode() const
 			{
 			return first;
 			}
-		TreeNode * getEffectiveParent() const
+		TreeNode * getFocalNeighbor() const
 			{
 			return second;
 			}
+		void setFocalNeighbor(TreeNode * n)
+			{
+			second = n;
+			assert(n == NULL || (n->GetParent() == first || first->GetParent() == n));
+			}
+
 		TreeNode * getActualChild() const
 			{
 			if (first == NULL)

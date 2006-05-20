@@ -336,12 +336,6 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Computes and returns the log-likelihood score of the supplied tree using the supplied model. Assumes that the
-|	function prepareForLikelihood() has already been called for the same tree. If setNoData function was called more
-|	recently than the setHaveData function, returns 0.0 immediately.
-*/
-#if POLPY_NEWWAY
-/*----------------------------------------------------------------------------------------------------------------------
 |	Updates the conditional likelihood array for `nd' in a direction away from `avoid'.
 |	All adjacent nodes (other than avoid node are assumed be valid).
 */
@@ -444,15 +438,9 @@ bool TreeLikelihood::isValid(const TreeNode * refNd, const TreeNode * neighborCl
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Assumes all CLAs of neighboring nodes are up to date and calculates the log-likelihood by combining the CLAs of 
-|	neighbors with the state frequencies at the `focal_nd'.
+|	
 */
-double TreeLikelihood::evaluateLnL(TreeNode & effectiveRoot)
-	{
-	return harvestLnL(*(effectiveRoot.GetInternalData()));;
-	}
-
-double TreeLikelihood::calcLnL(
+double TreeLikelihood::calcLnLFromNode(
   TreeNode & focalNode)		/**< is the node around which the likelihood will be computed */
 	{
 	double lnL;
@@ -466,149 +454,24 @@ double TreeLikelihood::calcLnL(
 		effective_postorder_edge_iterator e;
 		for (; i != e; ++i)
 			refreshCLA(*i->first, i->second);
-		lnL = evaluateLnL(focalNode);
+		lnL = harvestLnL(EdgeEndpoints(&focalNode, NULL));
 		}
 	++nevals;
 	return lnL;
 	}
 
-#else
+/*----------------------------------------------------------------------------------------------------------------------
+|	Calls calcLnLFromNode passing in the subroot (only child of root node) as the focal node.
+*/
 double TreeLikelihood::calcLnL(
   TreeShPtr t)
 	{
-	if (no_data)
-		{
-		++nevals;
-		return 0.0;
-		}
-
-	TreeNode * rootNd = t->GetFirstPreorder();
-	TreeNode * firstNd = rootNd->GetLeftChild();
-	assert(firstNd);
-	for (TreeNode * nd = t->GetLastPreorder(); nd != 0; nd = nd->GetNextPostorder())
-		{
-		if (nd->IsInternal())
-			{
-#			if 0	// if reinstated, also reinstate code in TreeNode::SetEdgeLen
-				// If this node needs to be recalculated, so does its parent
-				TreeNode * parent = nd->GetParent();
-				assert(parent);
-				parent->SelectNode();
-
-				// Can go ahead and unselect this internal node now. The only exception is the node
-				// that is the only child of the root (tip) node. This node must remain selected until
-				// the information from the root is incorporated
-				if (nd != firstNd)
-					nd->UnselectNode();
-#			endif
-
-			InternalData & nd_ID = *(nd->GetInternalData());
-			TreeNode * left_child = nd->GetLeftChild();
-			TreeNode * second_child	= left_child->GetRightSib();
-
-			// There are four possibilities:
-			// 1. both left child and its sibling are tips
-			// 2. left child is a tip, but its sibling is an internal node
-			// 3. left child is an internal node, but its sibling is a tip
-			// 4. both left child and its sibling are internal nodes
-
-			if (left_child->IsTip())
-				{
-				// left child is a tip
-				TipData & leftTD = *(left_child->GetTipData());
-				calcPMatTranspose(leftTD, left_child->GetEdgeLen());
-				if (second_child->IsTip())
-					{
-					// 1. both left child and its sibling are tips
-					TipData & secondTD = *(second_child->GetTipData());
-					calcPMatTranspose(secondTD, second_child->GetEdgeLen());
-					calcCLATwoTips(nd_ID, leftTD, secondTD);
-					}
-				else
-					{
-					// 2. left child is a tip, but its sibling is an internal node
-					InternalData & secondID	= *(second_child->GetInternalData());
-					calcPMat(secondID, second_child->GetEdgeLen());
-					calcCLAOneTip(nd_ID, leftTD, secondID);
-					}
-				}
-			else
-				{
-				// left child is an internal node
-				InternalData & leftID = *(left_child->GetInternalData());
-				calcPMat(leftID, left_child->GetEdgeLen());
-				if (second_child->IsTip())
-					{
-					// 3. left child is an internal node, but its sibling is a tip
-					TipData & secondTD = *(second_child->GetTipData());
-					calcPMatTranspose(secondTD, second_child->GetEdgeLen());
-					calcCLAOneTip(nd_ID, secondTD, leftID);
-					}
-				else
-					{
-					// 4. both left child and its sibling are internal nodes
-					InternalData & secondID	= *(second_child->GetInternalData());
-					calcPMat(secondID, second_child->GetEdgeLen());
-					calcCLANoTips(nd_ID, leftID, secondID);
-					}
-				}
-
-			// Deal with possible polytomy in which second_child has siblings
-			for (TreeNode * currNd = second_child->GetRightSib(); currNd != NULL; currNd = currNd->GetRightSib())
-				{
-				if (currNd->IsTip())
-					{
-					TipData & currTD = *(currNd->GetTipData());
-					calcPMatTranspose(currTD, currNd->GetEdgeLen());
-					conditionOnAdditionalTip(nd_ID, currTD);
-					}
-				else
-					{
-					InternalData & currID = *(currNd->GetInternalData());
-					calcPMat(currID, currNd->GetEdgeLen());
-					conditionOnAdditionalInternal(nd_ID, currID);
-					}
-				}
-			} // if (nd->IsInternal())
-		} // main postorder loop
-
-	// Deal with special case of internal node that is only child of the tip node serving as the root
-	// Currently assuming the tree is unrooted and thus the root node has data like all other tips
-	InternalData & firstID = *(firstNd->GetInternalData());
-	//if (firstNd->IsSelected())
-	//	{
-		TipData & rootTD = *(rootNd->GetTipData());
-		calcPMatTranspose(rootTD, firstNd->GetEdgeLen());
-		conditionOnAdditionalTip(firstID, rootTD);
-	//	firstNd->UnselectNode();
-	//	}
-
-	// The first internal node (child of root) now holds all the information about the likelihood of each
-	// pattern for each site and each relative rate category. The tree has ripened, and now it is harvest time!
-	double lnL = harvestLnL(firstID);
-
-#	if 0
-		//POL-debug
-		std::string s;
-		std::vector<std::string> pattern_repr;
-		buildPatternReprVector(pattern_repr, t);
-
-		std::cerr << "\ncalcLnL function";
-		std::cerr << std::endl;
-		std::cerr << str(boost::format("%6s  %12s  pattern") % "i" % "site-like") << std::endl;
-
-		double *siteLike = (double *)(&site_likelihoods[0]);
-		for (unsigned i = 0; i < getNPatterns(); ++i)
-			{
-			std::cerr << str(boost::format("%6d  %12.10f  %s") % i % siteLike[i] % pattern_repr[i]) << std::endl;
-			}
-#	endif
-
-	++nevals;
-
-	return lnL;
+	TreeNode * nd = t->GetFirstPreorder();
+	assert(nd);
+	nd = nd->GetNextPreorder();
+	assert(nd);
+	return calcLnLFromNode(*nd);
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Allocates the TipData data structure needed to store the data for one tip (the tip corresponding to the supplied
@@ -793,7 +656,6 @@ void TreeLikelihood::copyDataFromDiscreteMatrix(
 	// The compressDataMatrix function first erases, then builds, both pattern_map and 
 	// pattern_counts using the uncompressed data contained in mat
 	num_patterns = compressDataMatrix(mat);
-	site_likelihoods.resize(num_patterns, 0.0);
 
 	state_list = mat.getStateList(); 
 	state_list_pos = mat.getStateListPos();
@@ -820,7 +682,6 @@ void TreeLikelihood::copyDataFromSimData(
 
 	nTaxa = sim_data->getPatternLength();
 	num_patterns = (unsigned)pattern_map.size();
-	site_likelihoods.resize(num_patterns, 0.0);
 
 	model->buildStateList(state_list, state_list_pos);
 

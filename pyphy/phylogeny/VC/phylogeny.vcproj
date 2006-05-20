@@ -171,10 +171,13 @@
 				RelativePath="..\basic_tree_node.inl">
 			</File>
 			<File
-				RelativePath="..\..\common\pyphy_string.hpp">
+				RelativePath="..\edge_endpoints.hpp">
 			</File>
 			<File
-				RelativePath="..\toward_node_iterator.hpp">
+				RelativePath="..\edge_iterators.hpp">
+			</File>
+			<File
+				RelativePath="..\..\common\pyphy_string.hpp">
 			</File>
 			<File
 				RelativePath="..\tree_iterators.hpp">

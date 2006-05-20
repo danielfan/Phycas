@@ -5,6 +5,7 @@
 #include "pyphy/likelihood/tree_likelihood.hpp"
 #include "pyphy/likelihood/tip_data.hpp"
 #include "pyphy/likelihood/internal_data.hpp"
+#include "pyphy/phylogeny/edge_endpoints.hpp"
 #include "CipresCommlib/util_copy.hpp"
 #include <numeric>
 
@@ -370,9 +371,10 @@ void TreeLikelihood::conditionOnAdditionalInternal(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Called after conditional likelihood arrays are brought up-to-date, this function calculates the likelihood for each
-|	data pattern, as well as the total log-likelihood.
-|	
+|	Called after neighboring conditional likelihood arrays are brought up-to-date.
+|	This function calculates the likelihood for each data pattern, as well as the total log-likelihood.
+|	The site-likelihoods are not stored.
+|
 |	Conditional likelihood arrays are laid out as follows for DNA data:
 |>
 |	+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
@@ -385,8 +387,126 @@ void TreeLikelihood::conditionOnAdditionalInternal(
 |>	
 */
 double TreeLikelihood::harvestLnL(
-  const InternalData & rootCLA)
+   EdgeEndpoints & focalEdge)
 	{
+	assert(focalEdge.getFocalNode() != NULL);
+	if (focalEdge.getFocalNeighbor() == NULL)
+		focalEdge.setFocalNeighbor(focalEdge.getFocalNode()->GetParent());
+	TreeNode * focalNeighbor = focalEdge.getFocalNeighbor();
+	assert(focalNeighbor != NULL);
+	refreshCLA(*focalEdge.getFocalNode(), focalNeighbor);
+	return harvestLnLFromValidEdge(focalEdge);
+	}
+
+double TreeLikelihood::harvestLnLFromValidEdge(
+   EdgeEndpoints & focalEdge)
+	{
+	assert(focalEdge.getFocalNode() != NULL);
+	assert(focalEdge.getFocalNeighbor() != NULL);
+	TreeNode * focalNeighbor = focalEdge.getFocalNeighbor();
+	TreeNode * focalNode = focalEdge.getFocalNode();
+	assert(focalNode->IsInternal());
+	TreeNode * actualChild = focalEdge.getActualChild();
+	const double focalEdgeLen = actualChild->GetEdgeLen();
+	const InternalData & focalNodeInfo = *focalNode->GetInternalData();
+	const double * focalNodeCLA = focalNodeInfo.getConstCLA(); //PELIGROSO
+	const unsigned singleRateCLALength = num_patterns*num_states;
+
+	// Get pointer to start of array holding pattern counts
+	assert(pattern_counts.size() == num_patterns);
+	PatternCountType * counts = (PatternCountType *)(&pattern_counts[0]); //PELIGROSO
+
+	// Get state frequencies from model and alias rate category probability array for speed
+	const double * stateFreq = &model->getStateFreqs()[0]; //PELIGROSO
+	const double * rateCatProbArray = &rate_probs[0]; //PELIGROSO
+
+	double lnLikelihood = 0.0;
+	if (focalNeighbor->IsTip())
+		{
+		const TipData & tipData = *focalNeighbor->GetTipData();
+		
+		const double * const * const * tipPMatricesTrans = tipData.getConstTransposedPMatrices();
+		const int8_t * tipStateCodes = tipData.getConstStateCodes();
+		std::vector<const double *> focalNdCLAPtr(num_rates);
+		for (unsigned i = 0; i < num_rates; ++i)
+			focalNdCLAPtr[i] = focalNodeCLA + singleRateCLALength*i;
+			
+		for (unsigned pat = 0; pat < num_patterns; ++pat)
+			{
+			double siteLike = 0.0;
+			for (unsigned r = 0; r < num_rates; ++r)
+				{
+				const double * const * const tipPMatrixT = tipPMatricesTrans[r];
+				const double * tipPMatT_pat = tipPMatrixT[tipStateCodes[pat]];
+				double siteRateLike = 0.0;
+				for (unsigned i = 0; i < num_states; ++i)
+					siteRateLike += stateFreq[i] * focalNdCLAPtr[r][i] * tipPMatT_pat[i];
+				siteLike += rateCatProbArray[r] * siteRateLike;
+				}
+			lnLikelihood += counts[pat] * std::log(siteLike);
+			}		
+		}
+	else
+		{
+		const double * const * const * childPMatrices = actualChild->GetInternalData()->getConstPMatrices();
+		const double * focalNeighborCLA = focalNeighbor->GetInternalData()->getCLA(); //PELIGROSO
+		std::vector<const double *> focalNdCLAPtr(num_rates);
+		std::vector<const double *> focalNeighborCLAPtr(num_rates);
+		
+		for (unsigned i = 0; i < num_rates; ++i)
+			{
+			focalNdCLAPtr[i] = focalNodeCLA + singleRateCLALength*i;
+			focalNeighborCLAPtr[i] = focalNeighborCLA + singleRateCLALength*i;
+			}
+		for (unsigned pat = 0; pat < num_patterns; ++pat)
+			{
+			double siteLike = 0.0;
+			for (unsigned r = 0; r < num_rates; ++r)
+				{
+				const double * const * childPMatrix = childPMatrices[r];
+				const double * neigborCLAForRate = focalNeighborCLAPtr[r];
+				double siteRateLike = 0.0;
+				for (unsigned i = 0; i < num_states; ++i)
+					{
+					double neigborLike = 0.0;
+					const double * childP_i = childPMatrix[i];
+					for (unsigned j = 0; j < num_states; ++j)
+						neigborLike += childP_i[j]*neigborCLAForRate[j];
+					siteRateLike += stateFreq[i] * focalNdCLAPtr[r][i] * neigborLike;
+					}
+				siteLike += rateCatProbArray[r] * siteRateLike;
+				}
+			lnLikelihood += counts[pat] * std::log(siteLike);
+			}
+		}
+
+	return lnLikelihood;
+	}
+
+#if 0
+	// Get state frequencies from model and alias rate category probability array for speed
+	const double * stateFreq = &model->getStateFreqs()[0]; //PELIGROSO
+	const double * rateCatProbArray = &rate_probs[0]; //PELIGROSO
+	
+	TreeNode * secondNeighor = focalNd.GetLeftChild();
+	assert(firstNeighbor != NULL);
+	assert(secondNeighor != NULL);
+	const double firstEdgeLen = focalNd.GetEdgeLen();
+	for (unsigned r = 0; r < num_rates; ++r)
+		{
+		rateCatProb = rateCatProbArray[r];
+	
+		for (unsigned p = 0; p < num_patterns; ++p, cla += num_states, ++like_rate_site)
+			{
+			*like_rate_site = 0.0;
+			for (unsigned j = 0; j < num_states; ++j)
+				{
+				*like_rate_site += stateFreq[j]*cla[j];
+				}
+			siteLike[p] += rateCatProb*(*like_rate_site);
+			}
+		}
+
 	// Get pointer to start of array where likelihoods for each site and rate combination will be stored
 	//@POL why have likelihood_rate_site? I think it is only used in this function. Try replacing it 
 	// everywhere with a simple double value and see if it makes a difference
@@ -469,7 +589,6 @@ double TreeLikelihood::harvestLnL(
 			}
 		}
 
-	return lnLikelihood;
-	}
+#endif
 
 } //namespace phycas

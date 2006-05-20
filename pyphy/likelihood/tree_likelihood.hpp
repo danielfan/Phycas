@@ -22,7 +22,7 @@ namespace phycas
 {
 
 class Tree;
-//class Model;
+class EdgeEndpoints;
 class TipData;
 class InternalData;
 
@@ -76,8 +76,8 @@ class TreeLikelihood
 #if POLPY_NEWWAY
 		bool							isValid(const TreeNode *focal, const TreeNode *avoidNd);
 		void 							refreshCLA(TreeNode & nd, const TreeNode * avoid);
-		double 							evaluateLnL(TreeNode & focal_nd);
-		double							calcLnL(TreeNode &);
+		double							calcLnLFromNode(TreeNode & focal_node);
+		double							calcLnL(TreeShPtr);
 #else
 		double							calcLnL(TreeShPtr);
 #endif
@@ -131,13 +131,12 @@ class TreeLikelihood
 		void							conditionOnAdditionalTip(InternalData &, const TipData &);
 		void							conditionOnAdditionalInternal(InternalData &, const InternalData &);
 
-		double							harvestLnL(const InternalData &);
-
+		double							harvestLnL(EdgeEndpoints & focalEdge);
+		double							harvestLnLFromValidEdge(EdgeEndpoints & focalEdge);
 
 	public: //@POL these should be protected rather than public
 
 		std::vector<double>				likelihood_rate_site;	/**< Vector of likelihoods for each rate/site combination */
-		std::vector<double>				site_likelihoods;		/**< Vector of site likelihoods */
 		CountVectorType					pattern_counts;			/**< vector of pattern counts */
 		PatternMapType					pattern_map;			/**< keys are patterns, values are pattern counts */
 	};

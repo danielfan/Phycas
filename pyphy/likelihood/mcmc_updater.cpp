@@ -12,12 +12,12 @@ namespace phycas
 {
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Calls `likelihood'->calcLnL(*`tree') to recalculate `curr_ln_like'. This function is important because the 
+|	Calls `likelihood'->calcLnL(`tree') to recalculate `curr_ln_like'. This function is important because the 
 |	tempting getLnLike() member function only returns the value of `curr_ln_like' (it does not recalculate anything).
 */
 double MCMCUpdater::recalcLike()
 	{
-	curr_ln_like = likelihood->calcLnL(*tree->GetFirstPreorder());
+	curr_ln_like = likelihood->calcLnL(tree);
 
 	//std::cerr << "--> in MCMCUpdater::recalcLike(), name = " << getName();	//POL temp
 	//std::cerr << ", curr_ln_like = " << curr_ln_like;	//POL temp
