@@ -454,7 +454,8 @@ double TreeLikelihood::calcLnLFromNode(
 		effective_postorder_edge_iterator e;
 		for (; i != e; ++i)
 			refreshCLA(*i->first, i->second);
-		lnL = harvestLnL(EdgeEndpoints(&focalNode, NULL));
+		EdgeEndpoints edge(&focalNode, NULL);
+		lnL = harvestLnL(edge);
 		}
 	++nevals;
 	return lnL;
