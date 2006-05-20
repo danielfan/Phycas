@@ -343,10 +343,92 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 #if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Updates the conditional likelihood array for `nd' in a direction away from `avoid'.
+|	All adjacent nodes (other than avoid node are assumed be valid).
 */
-void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid) const
+void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 	{
-	assert(0);
+	if (nd.IsTip())
+		return;
+	InternalData & nd_ID = *(nd.GetInternalData());
+	
+	TreeNode * parent = nd.GetParent();
+	TreeNode * lChild = nd.GetLeftChild();
+	assert(parent != NULL);
+	assert(lChild != NULL);
+	TreeNode * firstNeighbor;
+	TreeNode * secondNeighor;
+	double firstEdgeLen;
+	if (parent == avoid)
+		{
+		firstNeighbor = lChild;
+		firstEdgeLen = lChild->GetEdgeLen();
+		secondNeighor = lChild->GetRightSib();
+		}
+	else
+		{
+		firstNeighbor = parent;
+		firstEdgeLen = nd.GetEdgeLen();
+		secondNeighor = (lChild == avoid ? lChild->GetRightSib() : lChild);
+		}
+
+	if (firstNeighbor->IsTip())
+		{
+		TipData & firstTD = *(firstNeighbor->GetTipData());
+		calcPMatTranspose(firstTD, firstEdgeLen);
+		if (secondNeighor->IsTip())
+			{
+			// 1. both neighbors are tips
+			TipData & secondTD = *(secondNeighor->GetTipData());
+			calcPMatTranspose(secondTD, secondNeighor->GetEdgeLen());
+			calcCLATwoTips(nd_ID, firstTD, secondTD);
+			}
+		else
+			{
+			// 2. first neighbor is a tip, but second is an internal node
+			InternalData & secondID	= *(secondNeighor->GetInternalData());
+			calcPMat(secondID, secondNeighor->GetEdgeLen());
+			calcCLAOneTip(nd_ID, firstTD, secondID);
+			}
+		}
+	else
+		{
+		InternalData & firstID = *(firstNeighbor->GetInternalData());
+		calcPMat(firstID, firstEdgeLen);
+		if (secondNeighor->IsTip())
+			{
+			// 3. first neighbor internal node, but second is a tip
+			TipData & secondTD = *(secondNeighor->GetTipData());
+			calcPMatTranspose(secondTD, secondNeighor->GetEdgeLen());
+			calcCLAOneTip(nd_ID, secondTD, firstID);
+			}
+		else
+			{
+			// 4. both neighbors are internal nodes
+			InternalData & secondID	= *(secondNeighor->GetInternalData());
+			calcPMat(secondID, secondNeighor->GetEdgeLen());
+			calcCLANoTips(nd_ID, firstID, secondID);
+			}
+		}
+
+	// Deal with possible polytomy in which secondNeighor has siblings
+	for (TreeNode * currNd = firstNeighbor->GetRightSib(); currNd != NULL; currNd = currNd->GetRightSib())
+		{
+		if (currNd != avoid)
+			{
+			if (currNd->IsTip())
+				{
+				TipData & currTD = *(currNd->GetTipData());
+				calcPMatTranspose(currTD, currNd->GetEdgeLen());
+				conditionOnAdditionalTip(nd_ID, currTD);
+				}
+			else
+				{
+				InternalData & currID = *(currNd->GetInternalData());
+				calcPMat(currID, currNd->GetEdgeLen());
+				conditionOnAdditionalInternal(nd_ID, currID);
+				}
+			}
+		}
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -356,7 +438,7 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid) const
  * Called in a context in which neighborCloserToEffectiveRoot is requesting that all of its neighbors update their 
  *	likelihood temporaries.
  */
-bool TreeLikelihood::isValid(const TreeNode * refNd, const TreeNode * neighborCloserToEffectiveRoot) const
+bool TreeLikelihood::isValid(const TreeNode * refNd, const TreeNode * neighborCloserToEffectiveRoot)
 	{
 	return refNd->IsTip();
 	}
@@ -365,29 +447,31 @@ bool TreeLikelihood::isValid(const TreeNode * refNd, const TreeNode * neighborCl
 |	Assumes all CLAs of neighboring nodes are up to date and calculates the log-likelihood by combining the CLAs of 
 |	neighbors with the state frequencies at the `focal_nd'.
 */
-double TreeLikelihood::evaluateLnL(TreeNode & /*focal_nd*/)
+double TreeLikelihood::evaluateLnL(TreeNode & effectiveRoot)
 	{
-	return 0.0;
+	return harvestLnL(*(effectiveRoot.GetInternalData()));;
 	}
 
 double TreeLikelihood::calcLnL(
   TreeNode & focalNode)		/**< is the node around which the likelihood will be computed */
 	{
+	double lnL;
 	if (no_data)
+		lnL =  0.0;
+	else
 		{
-		++nevals;
-		return 0.0;
+		assert(!focalNode.IsTip());
+		NodeValidityChecker validFunctor = boost::bind(&TreeLikelihood::isValid, this, _1, _2);
+		effective_postorder_edge_iterator i(&focalNode, validFunctor);
+		effective_postorder_edge_iterator e;
+		for (; i != e; ++i)
+			refreshCLA(*i->first, i->second);
+		lnL = evaluateLnL(focalNode);
 		}
-
-	NodeValidityChecker validFunctor = boost::bind(&TreeLikelihood::isValid, this, _1, _2);
-	effective_postorder_edge_iterator i(&focalNode, validFunctor);
-	effective_postorder_edge_iterator e;
-	for (; i != e; ++i)
-		refreshCLA(*i->first, i->second);
-	const double lnL = evaluateLnL(focalNode);
 	++nevals;
 	return lnL;
 	}
+
 #else
 double TreeLikelihood::calcLnL(
   TreeShPtr t)

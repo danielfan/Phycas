@@ -35,7 +35,7 @@ class TreeLikelihood(TreeLikelihoodBase):
     ...     tree = Phylogeny.Tree()
     ...     tree.buildFromString(t.newick)
     ...     likelihood.prepareForLikelihood(tree)
-    ...     lnL = likelihood.calcLnL(tree)
+    ...     lnL = likelihood.calcLnL(tree.getFirstPreorder())
     ...     print '%.5f' % lnL
     -7812.79213
     

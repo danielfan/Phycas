@@ -28,7 +28,7 @@ class EdgeEndpoints
 			:first(effectiveChild),
 			second(effectiveParent)
 			{
-			assert(effectiveParent == NULL ^ effectiveChild == NULL);
+			assert(!(effectiveParent == NULL ^ effectiveChild == NULL));
 			assert(effectiveParent == NULL || (effectiveChild->GetParent() == effectiveParent || effectiveParent->GetParent() == effectiveChild));
 			}
 		TreeNode * getEffectiveChild() const

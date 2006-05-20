@@ -69,6 +69,8 @@ variant common :
     <darwin><*><cxxflags>-Wno-unknown-pragmas
     <darwin><*><cxxflags>-Wno-long-double
     <darwin><*><linkflags>"-undefined dynamic_lookup"
+    <darwin><*><linkflags>"-twolevel_namespace"
+    <darwin><*><linkflags>"-multiply_defined suppress"
     ;
 
 variant debug : common :

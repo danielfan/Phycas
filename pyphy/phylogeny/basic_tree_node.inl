@@ -273,6 +273,22 @@ inline InternalData * TreeNode::GetInternalData()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Returns the `tipData' data member.
+*/
+inline const TipData * TreeNode::GetTipData() const
+	{
+	return tipData;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the `internalData' data member.
+*/
+inline const InternalData * TreeNode::GetInternalData() const
+	{
+	return internalData;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Sets data member `tipData' to its just-constructed state, namely 0. If `tipData' is non-zero, calls the associated
 |	`tipDataDeleter' function to delete the object. Assumes that if `tipData' is non-zero, then `tipDataDeleter' is 
 |	valid.

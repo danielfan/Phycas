@@ -59,6 +59,8 @@ class TreeNode
 		double				GetEdgeLen() const;
 		TipData *			GetTipData();
 		InternalData *		GetInternalData();
+		const TipData *		GetTipData() const;
+		const InternalData *GetInternalData() const;
 
 		// Modifiers
 		//
