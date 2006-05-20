@@ -35,7 +35,7 @@ class TreeLikelihood(TreeLikelihoodBase):
     ...     tree = Phylogeny.Tree()
     ...     tree.buildFromString(t.newick)
     ...     likelihood.prepareForLikelihood(tree)
-    ...     lnL = likelihood.calcLnL(tree.getFirstPreorder())
+    ...     lnL = likelihood.calcLnL(tree)
     ...     print '%.5f' % lnL
     -7812.79213
     
@@ -102,7 +102,7 @@ class TreeLikelihood(TreeLikelihoodBase):
         """
         TreeLikelihoodBase.replaceModel(self, new_model)
 
-    def calcLnL(self, nd):
+    def calcLnL(self, tree):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Calculates the log-likelihood using the current model. All transition
@@ -110,7 +110,17 @@ class TreeLikelihood(TreeLikelihoodBase):
         necessary.
         
         """
-        return TreeLikelihoodBase.calcLnL(self, nd)
+        return TreeLikelihoodBase.calcLnL(self, tree)
+
+    def calcLnLFromNode(self, nd):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Calculates the log-likelihood using the current model. All transition
+        probabilities and conditional likelihood arrays are recalculated, if
+        necessary.
+        
+        """
+        return TreeLikelihoodBase.calcLnLFromNode(self, nd)
 
     def simulateFirst(self, sim_data, tree, lot, nchar):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
