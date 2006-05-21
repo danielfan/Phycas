@@ -13,33 +13,33 @@ namespace phycas
 | 		internal data structure (a child node maybe the "effective parent" of its actual parent node).
 */
 template<typename T>
-class GenericEdgeEndpoints : public std::pair<T*, T*>
+class GenericEdgeEndpoints : public std::pair<T, T>
 	{
 	public:
-		GenericEdgeEndpoints(): std::pair<T *, T *>(NULL, NULL)
+		GenericEdgeEndpoints(): std::pair<T, T>(NULL, NULL)
 			{
 			}
 			
-		GenericEdgeEndpoints(T * focal_nd, T * focal_neighbor)
-			:std::pair<T *, T *>(focal_nd, focal_neighbor)
+		GenericEdgeEndpoints(T focal_nd, T focal_neighbor)
+			:std::pair<T, T>(focal_nd, focal_neighbor)
 			{
 			assert(focal_nd == NULL || focal_neighbor == NULL || (focal_neighbor->GetParent() == focal_nd || focal_nd->GetParent() == focal_neighbor));
 			}
-		T * getFocalNode() const
+		T  getFocalNode() const
 			{
 			return this->first;
 			}
-		T * getFocalNeighbor() const
+		T  getFocalNeighbor() const
 			{
 			return this->second;
 			}
-		void setFocalNeighbor(T * n)
+		void setFocalNeighbor(T n)
 			{
 			this->second = n;
 			assert(n == NULL || (n->GetParent() == this->first || this->first->GetParent() == n));
 			}
 
-		T * getActualChild() const
+		T 	getActualChild() const
 			{
 			if (this->first == NULL)
 				return NULL;
@@ -49,7 +49,7 @@ class GenericEdgeEndpoints : public std::pair<T*, T*>
 			return this->second;
 			}
 			
-		T * getActualParent() const
+		T 	getActualParent() const
 			{
 			if (this->first == NULL)
 				return NULL;
@@ -61,7 +61,7 @@ class GenericEdgeEndpoints : public std::pair<T*, T*>
 		
 		double getEdgeLength() const
 			{
-			T * c = this->getActualChild();
+			T c = this->getActualChild();
 			if (c == NULL)
 				{
 				assert(c != NULL);

@@ -41,12 +41,14 @@ inline void TreeLikelihood::setNoData()
 
 inline CondLikelihood * getCondLike(TreeNode *focalNd, TreeNode *avoid) 
 	{
-	return getCondLike(EdgeEndpoints(focalNd, avoid));
+	EdgeEndpoints e(focalNd, avoid);
+	return getCondLike(e);
 	}
 
 inline const CondLikelihood * getCondLike(const TreeNode *focalNd, const TreeNode *avoid) 
 	{
-	return getCondLike(ConstEdgeEndpoints(focalNd, avoid));
+	ConstEdgeEndpoints e(focalNd, avoid);
+	return getCondLike(e);
 	}
 
 
@@ -55,14 +57,14 @@ inline const CondLikelihood * getCondLike(ConstEdgeEndpoints edge)
 	const TreeNode * c = edge.getActualChild();
 	if (edge.getFocalNode() == c)
 		{
-		assert(c->isInternal());
+		assert(c->IsInternal());
 		const InternalData * childInternalData = c->GetInternalData();
 		assert(childInternalData != NULL);
 		return childInternalData->getChildCondLike();
 		}
 	/// moving up the tree in calculations (root to leaves).
 	assert(c == edge.getFocalNeighbor());
-	if (c->isInternal())
+	if (c->IsInternal())
 		{
 		const InternalData * childInternalData = c->GetInternalData();
 		assert(childInternalData != NULL);
