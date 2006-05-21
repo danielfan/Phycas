@@ -343,8 +343,9 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 	{
 	if (nd.IsTip())
 		return;
+	assert(avoid != NULL);
 	InternalData & nd_ID = *(nd.GetInternalData());
-	
+	CondLikelihood * ndCondLike = getCondLike(&nd, avoid);
 	TreeNode * parent = nd.GetParent();
 	TreeNode * lChild = nd.GetLeftChild();
 	assert(parent != NULL);
@@ -352,19 +353,20 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 	TreeNode * firstNeighbor;
 	TreeNode * secondNeighor;
 	double firstEdgeLen;
-	if (parent == avoid)
-		{
-		firstNeighbor = lChild;
-		firstEdgeLen = lChild->GetEdgeLen();
-		secondNeighor = lChild->GetRightSib();
-		}
-	else
+	const bool movingTowardLeaves = !(parent == avoid);
+	if (movingTowardLeaves)
 		{
 		firstNeighbor = parent;
 		firstEdgeLen = nd.GetEdgeLen();
 		secondNeighor = (lChild == avoid ? lChild->GetRightSib() : lChild);
 		}
-
+	else
+		{
+		firstNeighbor = lChild;
+		firstEdgeLen = lChild->GetEdgeLen();
+		secondNeighor = lChild->GetRightSib();
+		}
+	
 	if (firstNeighbor->IsTip())
 		{
 		TipData & firstTD = *(firstNeighbor->GetTipData());
@@ -374,33 +376,39 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 			// 1. both neighbors are tips
 			TipData & secondTD = *(secondNeighor->GetTipData());
 			calcPMatTranspose(secondTD, secondNeighor->GetEdgeLen());
-			calcCLATwoTips(nd_ID, firstTD, secondTD);
+			calcCLATwoTips(ndCondLike, firstTD, secondTD);
 			}
 		else
 			{
 			// 2. first neighbor is a tip, but second is an internal node
 			InternalData & secondID	= *(secondNeighor->GetInternalData());
 			calcPMat(secondID, secondNeighor->GetEdgeLen());
-			calcCLAOneTip(nd_ID, firstTD, secondID);
+			const CondLikelihood & secCL = secondID.getChildCondLike();
+			ConstPMatrices secPMat = secondID.getConstPMatrices();
+			calcCLAOneTip(ndCondLike, firstTD, secPMat, secCL);
 			}
 		}
 	else
 		{
 		InternalData & firstID = *(firstNeighbor->GetInternalData());
 		calcPMat(firstID, firstEdgeLen);
+		const CondLikelihood & firCL = (firstIsParent ? *firstID.getParentCondLike() : *firstID.getChildCondLike());
+		ConstPMatrices firPMat = firstID.getConstPMatrices();	
 		if (secondNeighor->IsTip())
 			{
 			// 3. first neighbor internal node, but second is a tip
 			TipData & secondTD = *(secondNeighor->GetTipData());
 			calcPMatTranspose(secondTD, secondNeighor->GetEdgeLen());
-			calcCLAOneTip(nd_ID, secondTD, firstID);
+			calcCLAOneTip(ndCondLike, secondTD, firPMat, firCL);
 			}
 		else
 			{
 			// 4. both neighbors are internal nodes
 			InternalData & secondID	= *(secondNeighor->GetInternalData());
 			calcPMat(secondID, secondNeighor->GetEdgeLen());
-			calcCLANoTips(nd_ID, firstID, secondID);
+			const CondLikelihood & secCL = secondID.getChildCondLike();
+			ConstPMatrices secPMat = secondID.getConstPMatrices();
+			calcCLANoTips(ndCondLike, firPMat, firCL, secPMat, secCL);
 			}
 		}
 

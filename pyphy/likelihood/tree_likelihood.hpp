@@ -20,9 +20,14 @@ class DiscreteMatrix;
 	
 namespace phycas
 {
-
+typedef const double * const * const * ConstPMatrices;
+class CondLikelihood;
 class Tree;
-class EdgeEndpoints;
+
+template<typename T> class GenericEdgeEndpoints;
+typedef GenericEdgeEndpoints<TreeNode *> EdgeEndpoints;
+typedef GenericEdgeEndpoints<const TreeNode *> ConstEdgeEndpoints;
+
 class TipData;
 class InternalData;
 
@@ -125,12 +130,12 @@ class TreeLikelihood
 		void							calcPMat(InternalData &, double);
 		void							calcPMatCommon(double * * *, double);
 
-		void							calcCLATwoTips(InternalData &, const TipData &, const TipData &);
-		void							calcCLAOneTip(InternalData &, const TipData &, const InternalData &);
-		void							calcCLANoTips(InternalData &, const InternalData &, const InternalData &);
+		void							calcCLATwoTips(CondLikelihood &, const TipData &, const TipData &);
+		void							calcCLAOneTip(CondLikelihood &, const TipData &, ConstPMatrices, const CondLikelihood &);
+		void							calcCLANoTips(CondLikelihood &, ConstPMatrices, const CondLikelihood &, ConstPMatrices, const CondLikelihood &);
 
-		void							conditionOnAdditionalTip(InternalData &, const TipData &);
-		void							conditionOnAdditionalInternal(InternalData &, const InternalData &);
+		void							conditionOnAdditionalTip(CondLikelihood &, const TipData &);
+		void							conditionOnAdditionalInternal(CondLikelihood &, const InternalData &);
 
 		double							harvestLnL(EdgeEndpoints & focalEdge);
 		double							harvestLnLFromValidEdge(EdgeEndpoints & focalEdge);
@@ -143,6 +148,11 @@ class TreeLikelihood
 		std::vector<double>				site_likelihood;		/**< site_likelihood[pat] stores the site likelihood for pattern pat, but only if `store_site_likes' is true */
 		std::map<unsigned, unsigned>	charIndexToPatternIndex; /**< maps original character index to the index in compressed pattern "matrix" */
 	};
+
+CondLikelihood * getCondLike(TreeNode *focalNd, TreeNode *avoid);
+const CondLikelihood * getCondLike(const TreeNode *focalNd, const TreeNode *avoid);
+CondLikelihood * getCondLike(EdgeEndpoints edge);
+const CondLikelihood * getCondLike(ConstEdgeEndpoints edge);
 
 } // namespace phycas
 

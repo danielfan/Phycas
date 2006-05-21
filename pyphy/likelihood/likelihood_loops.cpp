@@ -1,6 +1,7 @@
 #include "phycas/force_include.h"
 #include "CipresCommlib/CipresDataMatrixHelper.h"
 #include "pyphy/phylogeny/basic_tree.hpp"
+#include "pyphy/likelihood/cond_likelihood.hpp"
 #include "pyphy/likelihood/likelihood_models.hpp"
 #include "pyphy/likelihood/tree_likelihood.hpp"
 #include "pyphy/likelihood/tip_data.hpp"
@@ -110,12 +111,9 @@ void TreeLikelihood::calcTMatForSim(
 	for (unsigned rate = 0; rate < num_rates; ++rate)
 		{
 		double * * pMat = transPMats[rate];
-		
 		//std::cerr << "Edge length: " << edgeLength << std::endl;
 		//DebugShowNuclTransMatrix(pMat, "Untransposed");
-
 		transpose(pMat, num_states);
-
 		//DebugShowNuclTransMatrix(pMat, "Transposed");
 		}
 	}
@@ -164,16 +162,15 @@ void TreeLikelihood::calcPMatTranspose(
 |	Computes the conditional likelihood arrays at an internal node subtending two tips.
 */
 void TreeLikelihood::calcCLATwoTips(
-  InternalData &	internalData, 
-  const TipData &	leftTip, 
-  const TipData &	rightTip)
+  CondLikelihood & 		condLike,
+  const TipData &		leftTip, 
+  const TipData &		rightTip)
 	{
 	const double * const * const * leftPMatricesTrans = leftTip.getConstTransposedPMatrices();
 	const int8_t * leftStateCodes = leftTip.getConstStateCodes();
 	const double * const * const * rightPMatricesTrans = rightTip.getConstTransposedPMatrices();
 	const int8_t * rightStateCodes = rightTip.getConstStateCodes();
-	double * cla = internalData.getCLA(); //PELIGROSO
-
+	LikeFltType * cla = condLike.getCLA();
 	for (unsigned r = 0; r < num_rates; ++r)
 		{
 		const double * const * leftPMatT = leftPMatricesTrans[r];
@@ -193,23 +190,23 @@ void TreeLikelihood::calcCLATwoTips(
 |	node for a right child.
 */
 void TreeLikelihood::calcCLAOneTip(
-  InternalData &		ndInfo, 
-  const TipData &		leftChild, 
-  const InternalData &	rightChild)
+  CondLikelihood & 		condLike,
+  const TipData &		leftChild,
+  ConstPMatrices		rightPMatrices,
+  const InternalData &	rightCondLike)
 	{
 	// Get transition probability matrices for the left and right child nodes of this node
 	// These are 3D because there are potentially several 2D transition matrices, one
 	// for each relative rate
-	const double * const * const * leftPMatricesTrans = leftChild.getConstTransposedPMatrices();
-	const double * const * const * rightPMatrices = rightChild.getConstPMatrices();
+	ConstPMatrices leftPMatricesTrans = leftChild.getConstTransposedPMatrices();
 
 	// cla is the conditional likelihood array we are updating
-	double * cla = ndInfo.getCLA(); //PELIGROSO
+	LikeFltType * cla = condLike.getCLA();
 
 	// These are the conditional likelihood arrays of the left and right child nodes of this node
 	const int8_t * leftStateCodes = leftChild.getConstStateCodes();
 	const double * rightCLA = rightChild.getConstCLA();
-
+	
 	// conditional likelihood arrays are laid out as follows for DNA data:
 	//
 	// +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
@@ -241,26 +238,23 @@ void TreeLikelihood::calcCLAOneTip(
 |	Computes the conditional likelihood arrays at an internal node having two internal nodes for children.
 */
 void TreeLikelihood::calcCLANoTips(
-  InternalData &		ndInfo, 
-  const InternalData &	leftNode, 
-  const InternalData &	rightNode)
+  CondLikelihood &		condLike,
+  ConstPMatrices 		leftPMatrices,
+  const CondLikelihood &leftCondLike, 
+  ConstPMatrices 		rightPMatrices,
+  const CondLikelihood &rightCondLike)
 	{
+	
 	// This function updates the conditional likelihood array of a node assuming that the
 	// conditional likelihood arrays of its left and right children have already been 
 	// updated
 
-	// Get transition probability matrices for the left and right child nodes of this node
-	// These are 3D because there are potentially several 2x2 transition matrices, one
-	// for each relative rate
-	const double * const * const * leftPMatrices  = leftNode.getConstPMatrices();
-	const double * const * const * rightPMatrices = rightNode.getConstPMatrices();
-
 	// cla is the conditional likelihood array we are updating
-	double * cla = ndInfo.getCLA(); //PELIGROSO
+	LikeFltType * cla = condLike.getCLA();
 
 	// These are the conditional likelihood arrays of the left and right child nodes of this node
-	const double * leftCLA  = leftNode.getConstCLA();
-	const double * rightCLA = rightNode.getConstCLA();
+	const LikeFltType * leftCLA  = leftCondLike.getCLA();
+	const LikeFltType * rightCLA = rightCondLike.getCLA();
 
 	// conditional likelihood arrays are laid out as follows for DNA data:
 	//
@@ -302,10 +296,10 @@ void TreeLikelihood::calcCLANoTips(
 |	TreeLikelihood::calcCLAOneTip or TreeLikelihood::calcCLANoTips.
 */
 void TreeLikelihood::conditionOnAdditionalTip(
-  InternalData &	ndInfo,
+  CondLikelihood &	condLike,
   const TipData &	tipData)
 	{
-	double * cla = ndInfo.getCLA(); //PELIGROSO
+	LikeFltType * cla = condLike.getCLA();
 	const double * const * const * tipPMatricesTrans = tipData.getConstTransposedPMatrices();
 	const int8_t * tipStateCodes = tipData.getConstStateCodes();
 	
@@ -336,11 +330,11 @@ void TreeLikelihood::conditionOnAdditionalTip(
 |	TreeLikelihood::calcCLATwoTips, TreeLikelihood::calcCLAOneTip or TreeLikelihood::calcCLANoTips.
 */
 void TreeLikelihood::conditionOnAdditionalInternal(
-  InternalData &		ndInfo,
+  CondLikelihood &	condLike,
   const InternalData &	childInfo)
 	{
 	// cla is the conditional likelihood array we are updating
-	double * cla = ndInfo.getCLA(); //PELIGROSO
+	double * cla = condLike.getCLA();
 
 	const double * const * const * childPMatrices = childInfo.getConstPMatrices();
 	const double * childCLA = childInfo.getConstCLA();

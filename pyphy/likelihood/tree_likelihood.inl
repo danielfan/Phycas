@@ -1,6 +1,9 @@
 #if !defined(TREE_LIKELIHOOD_INL)
 #define TREE_LIKELIHOOD_INL
 
+#include "pyphy/likelihood/internal_data.hpp"
+#include "pyphy/phylogeny/edge_endpoints.hpp"
+
 namespace phycas
 {
 
@@ -34,6 +37,50 @@ inline TreeLikelihood::TreeLikelihood(
 inline void TreeLikelihood::setNoData()
 	{
 	no_data = true;
+	}
+
+inline CondLikelihood * getCondLike(TreeNode *focalNd, TreeNode *avoid) 
+	{
+	return getCondLike(EdgeEndpoints(focalNd, avoid));
+	}
+
+inline const CondLikelihood * getCondLike(const TreeNode *focalNd, const TreeNode *avoid) 
+	{
+	return getCondLike(ConstEdgeEndpoints(focalNd, avoid));
+	}
+
+
+inline const CondLikelihood * getCondLike(ConstEdgeEndpoints edge) 
+	{
+	const TreeNode * c = edge.getActualChild();
+	if (edge.getFocalNode() == c)
+		{
+		assert(c->isInternal());
+		const InternalData * childInternalData = c->GetInternalData();
+		assert(childInternalData != NULL);
+		return childInternalData->getChildCondLike();
+		}
+	/// moving up the tree in calculations (root to leaves).
+	assert(c == edge.getFocalNeighbor());
+	if (c->isInternal())
+		{
+		const InternalData * childInternalData = c->GetInternalData();
+		assert(childInternalData != NULL);
+		return childInternalData->getParentalCondLike();		
+		}
+	else
+		{
+		const TipData * childTipData = c->GetTipData();
+		assert(childTipData != NULL);
+		return childTipData->getParentalCondLike();
+		}
+	}
+	
+inline CondLikelihood * getCondLike(EdgeEndpoints edge) 
+	{
+	ConstEdgeEndpoints c(edge.first, edge.second);
+	const CondLikelihood * cl = getCondLike(c);
+	return const_cast<CondLikelihood *>(cl);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -143,6 +190,7 @@ inline const std::vector<double> & TreeLikelihood::getRateMeans() const
 	{
 	return rate_means;
 	}
+
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Accessor function that returns the data member `rate_probs'.

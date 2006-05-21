@@ -18,8 +18,12 @@ InternalData::InternalData(
   unsigned				nStates,			/**< is the number of states in the model */
   double * * *			pMat,				/**< is an alias to the rates by states by states `pMatrix' array, and may be NULL */
   bool 					managePMatrices) 	/**< if true, a 3D matrix will be allocated (if `pMat' is also NULL, `pMatrices' will alias `ownedPMatrices.ptr') */ 
-	: state(-1), 
-	cla(nPatterns*nRates*nStates), 
+	:
+	parValidCLA(NULL),	
+	parCachedCLA(NULL),
+	childValidCLA(NULL),
+	childCachedCLA(NULL),
+	state(-1), 
 	pMatrices(pMat)
 	{
 	if (managePMatrices)

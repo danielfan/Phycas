@@ -15,7 +15,11 @@ namespace phycas
 TipData::TipData(
   unsigned nRates,		/**< is the number of relative rate categories */
   unsigned nStates)		/**< is the number of states in the model */
-	: state(-1), pMatrixTranspose(NULL)
+	:
+	towardValidCLA(NULL),
+	towardCachedCLA(NULL),
+	state(-1), 
+	pMatrixTranspose(NULL)
 	{
 	const unsigned nToStates = nStates;	// simulated data never has ambiguities, so num. rows in T matrix is just nStates
 	ownedPMatrices.Initialize(nRates, nToStates, nStates);
@@ -33,7 +37,13 @@ TipData::TipData(
   unsigned							nStates,			/**< is the number of states in the model */
   double * * *						pMatTranspose,		/**< is an alias to the rates by states by states pMatrix array, may be NULL */
   bool								managePMatrices) 	/**< if true, a 3D matrix will be allocated (if pMat is also NULL, the pMatrices will alias ownedPMatrices.ptr) */ 
-	: state(-1), state_list_pos(stateListPosVec), state_codes(stateCodesShPtr), pMatrixTranspose(pMatTranspose)
+	:
+	towardValidCLA(NULL),
+	towardCachedCLA(NULL),
+	state(-1), 
+	state_list_pos(stateListPosVec), 
+	state_codes(stateCodesShPtr), 
+	pMatrixTranspose(pMatTranspose)
 	{
 	const unsigned nObservedStates = nStates + 1 + state_list_pos.size();
 	if (managePMatrices)

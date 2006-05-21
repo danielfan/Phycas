@@ -18,7 +18,7 @@ class DiscreteMatrix;
 	
 namespace phycas
 {
-
+class CondLikelihood;
 class Tree;
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -142,6 +142,14 @@ class TipData
 		double * * *						getTransposedPMatrices();
 		const int8_t *						getConstStateCodes() const;
 
+		CondLikelihood *					getParentalCondLike()
+			{
+			const InternalData * t = const_cast<const InternalData *>(this);
+			const CondLikelihood * cl = t->getParentalCondLike();
+			return const_cast<CondLikelihood *>(cl);
+			}
+		const CondLikelihood *			 	getParentalCondLike() const;
+
 	private:
 
 											TipData(unsigned nRates, unsigned nStates);
@@ -151,6 +159,10 @@ class TipData
 		friend void							calcPMatTranspose(const TreeLikelihood & treeLikeInfo, TipData & tipData, double edgeLength);
 	
 	private:
+											// conditional likelihood of the rest of the tree
+		CondLikelihood *					parValidCLA; 	/**< valid conditional likelihood for this a node and everything above it */
+		CondLikelihood *					parCachedCLA; 	/**< cached */
+		
 
 		int8_t								state;				/**< Used in simulation to temporarily store the state for one character */
 		std::vector<unsigned int>			state_list_pos;		/**< Vector of indices into the tip-specific `state_codes' array */

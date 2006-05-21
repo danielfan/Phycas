@@ -18,6 +18,8 @@ class DiscreteMatrix;
 	
 namespace phycas
 {
+class CondLikelihood;
+
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	The InternalData class stores the data structures needed for computing likelihoods on trees. This includes both
@@ -69,21 +71,36 @@ class InternalData
 										//	}
 
 		unsigned						getCLASize() const;
-		double *						getCLA();
-		const double * const			getConstCLA() const;
 		double * * *					getPMatrices();
 		const double * const * const *	getConstPMatrices() const;
+		
+		CondLikelihood *				getChildCondLike()
+			{
+			const InternalData * t = const_cast<const InternalData *>(this);
+			const CondLikelihood * cl = t->getChildCondLike();
+			return const_cast<CondLikelihood *>(cl);
+			}
+		const CondLikelihood *			getChildCondLike() const;
+		CondLikelihood *				getParentalCondLike()
+			{
+			const InternalData * t = const_cast<const InternalData *>(this);
+			const CondLikelihood * cl = t->getParentalCondLike();
+			return const_cast<CondLikelihood *>(cl);
+			}
+		const CondLikelihood *			 getParentalCondLike() const;
 
 	private:
-
 										InternalData(unsigned nPatterns, unsigned nRates, unsigned nStates, double * * * pMatrices = NULL, bool managePMatrices = false);
-	
-	private:
 
-		int8_t							state;					/**< Used in simulation to temporarily store the state for one character */
-		std::vector<double>				cla;					/**< Conditional likelihood array */
-		double * * *					pMatrices; 				/**< Either an alias to a pMatrix array or an alias to ownedPMatrices.ptr */
-		ScopedThreeDMatrix<double>		ownedPMatrices; 		/**< Transition probability matrices for this interior node  */
+		CondLikelihood *				parValidCLA; 	/**< valid conditional likelihood for this a node and everything above it */
+		CondLikelihood *				parCachedCLA; 	/**< cached */
+													 			
+		CondLikelihood *				childValidCLA;	/**< valid conditional likelihood for all data above this node */ 
+		CondLikelihood *				childCachedCLA; /**< cached conditional likelihood for all data above this node */
+		
+		int8_t							state;			/**< Used in simulation to temporarily store the state for one character */
+		double * * *					pMatrices; 		/**< Either an alias to a pMatrix array or an alias to ownedPMatrices.ptr */
+		ScopedThreeDMatrix<double>		ownedPMatrices; /**< Transition probability matrices for this interior node  */
 	};
 	
 typedef boost::shared_ptr<InternalData>			InternalDataShPtr;
@@ -92,35 +109,6 @@ typedef std::vector<InternalDataShPtr>			VecInternalDataShPtr;
 // **************************************************************************************
 // ***** InternalData inlines ***********************************************************
 // **************************************************************************************
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Returns size of the vector of conditional likelihoods `cla'. Useful for debugging to check length of `cla' before
-|	playing dangerously with pointers using the getCLA or getConstCLA functions.
-*/
-inline unsigned InternalData::getCLASize() const
-	{
-	return (unsigned)cla.size();
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Accessor function that returns address of first element of the vector conditional likelihoods `cla'. Assumes `cla' 
-|	is not empty.
-*/
-inline double * InternalData::getCLA()
-	{
-	assert(!cla.empty());
-	return &cla[0]; //PELIGROSO
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Accessor function that returns address of first element of the vector conditional likelihoods `cla'. Assumes `cla' 
-|	is not empty.
-*/
-inline const double * const InternalData::getConstCLA() const
-	{
-	assert(!cla.empty());
-	return &cla[0]; //PELIGROSO
-	}
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Accessor function that returns the data member `pMatrices'.

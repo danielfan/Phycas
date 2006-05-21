@@ -12,55 +12,56 @@ namespace phycas
 |	For the purpose of a calculation (e.g. one that works up the tree), an edge in the tree maybe inverted wrt its 
 | 		internal data structure (a child node maybe the "effective parent" of its actual parent node).
 */
-class EdgeEndpoints : public std::pair<TreeNode *, TreeNode *>
+template<typename T>
+class GenericEdgeEndpoints : public std::pair<T*, T*>
 	{
 	public:
-		EdgeEndpoints(): std::pair<TreeNode *, TreeNode *>(NULL, NULL)
+		GenericEdgeEndpoints(): std::pair<T *, T *>(NULL, NULL)
 			{
 			}
 			
-		EdgeEndpoints(TreeNode * focal_nd, TreeNode * focal_neighbor)
-			:std::pair<TreeNode *, TreeNode *>(focal_nd, focal_neighbor)
+		GenericEdgeEndpoints(T * focal_nd, T * focal_neighbor)
+			:std::pair<T *, T *>(focal_nd, focal_neighbor)
 			{
 			assert(focal_nd == NULL || focal_neighbor == NULL || (focal_neighbor->GetParent() == focal_nd || focal_nd->GetParent() == focal_neighbor));
 			}
-		TreeNode * getFocalNode() const
+		T * getFocalNode() const
 			{
-			return first;
+			return this->first;
 			}
-		TreeNode * getFocalNeighbor() const
+		T * getFocalNeighbor() const
 			{
-			return second;
+			return this->second;
 			}
-		void setFocalNeighbor(TreeNode * n)
+		void setFocalNeighbor(T * n)
 			{
-			second = n;
-			assert(n == NULL || (n->GetParent() == first || first->GetParent() == n));
+			this->second = n;
+			assert(n == NULL || (n->GetParent() == this->first || this->first->GetParent() == n));
 			}
 
-		TreeNode * getActualChild() const
+		T * getActualChild() const
 			{
-			if (first == NULL)
+			if (this->first == NULL)
 				return NULL;
-			if (first->GetParent() == second)
-				return first;
-			assert(second->GetParent() == first);
-			return second;
+			if (this->first->GetParent() == this->second)
+				return this->first;
+			assert(this->second->GetParent() == this->first);
+			return this->second;
 			}
 			
-		TreeNode * getActualParent() const
+		T * getActualParent() const
 			{
-			if (first == NULL)
+			if (this->first == NULL)
 				return NULL;
-			if (first->GetParent() == second)
-				return second;
-			assert(second->GetParent() == first);
-			return first;
+			if (this->first->GetParent() == this->second)
+				return this->second;
+			assert(this->second->GetParent() == this->first);
+			return this->first;
 			}
 		
 		double getEdgeLength() const
 			{
-			TreeNode * c = this->getActualChild();
+			T * c = this->getActualChild();
 			if (c == NULL)
 				{
 				assert(c != NULL);
@@ -70,10 +71,11 @@ class EdgeEndpoints : public std::pair<TreeNode *, TreeNode *>
 		
 		operator bool () const
 			{
-			return first != 0;
+			return this->first != 0;
 			}
 	};
-
+typedef GenericEdgeEndpoints<TreeNode *> EdgeEndpoints;
+typedef GenericEdgeEndpoints<const TreeNode *> ConstEdgeEndpoints;
 
 }	// namespace phycas
 
