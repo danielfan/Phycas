@@ -383,9 +383,9 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 			// 2. first neighbor is a tip, but second is an internal node
 			InternalData & secondID	= *(secondNeighor->GetInternalData());
 			calcPMat(secondID.getPMatrices(), secondNeighor->GetEdgeLen());
-			const CondLikelihood * secCL = secondID.getChildCondLike();
+			const CondLikelihood &secCL = getCondLike(secondID, &nd);
 			ConstPMatrices secPMat = secondID.getConstPMatrices();
-			calcCLAOneTip(*ndCondLike, firstTD, secPMat, *secCL);
+			calcCLAOneTip(*ndCondLike, firstTD, secPMat, secCL);
 			}
 		}
 	else
@@ -637,7 +637,8 @@ TipData * TreeLikelihood::allocateTipData(  //POLBM TreeLikelihood::allocateTipD
 						num_rates,													// number of relative rate categories
 						num_states,													// number of states in the model
 						NULL,														// pMatTranspose
-						true);														// managePMatrices
+						true,														// managePMatrices
+						cla_pool);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -651,7 +652,8 @@ InternalData * TreeLikelihood::allocateInternalData()
 							num_rates,					// number of relative rate categories
 							num_states,					// number of model states
 							NULL,						// pMat
-							true);						// managePMatrices
+							true,						// managePMatrices
+							cla_pool);					
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

@@ -14,12 +14,15 @@ namespace phycas
 */
 TipData::TipData(
   unsigned nRates,		/**< is the number of relative rate categories */
-  unsigned nStates)		/**< is the number of states in the model */
+  unsigned nStates,		/**< is the number of states in the model */
+  CondLikelihoodStorage & 			claPool)
 	:
+	parCLAValid(false)
 	parValidCLA(NULL),
 	parCachedCLA(NULL),
 	state(-1), 
 	pMatrixTranspose(NULL)
+	claPool(claPool)
 	{
 	const unsigned nToStates = nStates;	// simulated data never has ambiguities, so num. rows in T matrix is just nStates
 	ownedPMatrices.Initialize(nRates, nToStates, nStates);
@@ -36,14 +39,17 @@ TipData::TipData(
   unsigned							nRates,				/**< is the number of relative rate categories */
   unsigned							nStates,			/**< is the number of states in the model */
   double * * *						pMatTranspose,		/**< is an alias to the rates by states by states pMatrix array, may be NULL */
-  bool								managePMatrices) 	/**< if true, a 3D matrix will be allocated (if pMat is also NULL, the pMatrices will alias ownedPMatrices.ptr) */ 
+  bool								managePMatrices, 	/**< if true, a 3D matrix will be allocated (if pMat is also NULL, the pMatrices will alias ownedPMatrices.ptr) */ 
+  CondLikelihoodStorage & 			claPool)
 	:
+	parCLAValid(false),
 	parValidCLA(NULL),
 	parCachedCLA(NULL),
 	state(-1), 
 	state_list_pos(stateListPosVec), 
 	state_codes(stateCodesShPtr), 
-	pMatrixTranspose(pMatTranspose)
+	pMatrixTranspose(pMatTranspose),
+	claPool(claPool)
 	{
 	const unsigned nObservedStates = nStates + 1 + state_list_pos.size();
 	if (managePMatrices)

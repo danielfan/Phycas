@@ -155,10 +155,13 @@ class TreeLikelihood
 		std::map<unsigned, unsigned>	charIndexToPatternIndex; /**< maps original character index to the index in compressed pattern "matrix" */
 	};
 
-CondLikelihood * getCondLike(EdgeEndpoints edge);
-CondLikelihood * getCondLike(TreeNode *focalNd, TreeNode *avoid);
-const CondLikelihood * getCondLike(ConstEdgeEndpoints edge);
-const CondLikelihood * getCondLike(const TreeNode *focalNd, const TreeNode *avoid);
+/// used to get access to a CLA to write it
+CondLikelihood * getCondLikePtr(EdgeEndpoints edge);
+CondLikelihood * getCondLikePtr(TreeNode *focalNd, TreeNode *avoid);
+
+/// read-only access to a CLA (must be valid already)
+const CondLikelihood * getValidCondLike(ConstEdgeEndpoints edge);
+const CondLikelihood * getValidCondLike(const TreeNode *focalNd, const TreeNode *avoid);
 
 } // namespace phycas
 

@@ -8,6 +8,7 @@ extension _LikelihoodBase
 	$(PHYCAS_ROOT)/pyphy/prob_dist/dcdflib/src/dcdflib.c
 	$(PHYCAS_ROOT)/pyphy/prob_dist/dcdflib/src/ipmpar.c
 	$(CIPRES_LIB_ROOT)/C++/CipresCommlib/CipresDataMatrixHelper.cpp
+	cond_likelihood.cpp
 	internal_data.cpp 
 	larget_simon_move.cpp 
 	topo_prior_calculator.cpp 

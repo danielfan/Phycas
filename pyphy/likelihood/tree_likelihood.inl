@@ -40,20 +40,20 @@ inline void TreeLikelihood::setNoData()
 	no_data = true;
 	}
 
-inline CondLikelihood * getCondLike(TreeNode *focalNd, TreeNode *avoid) 
+inline CondLikelihood * getCondLikePtr(TreeNode *focalNd, TreeNode *avoid) 
 	{
 	EdgeEndpoints e(focalNd, avoid);
-	return getCondLike(e);
+	return getCondLikePtr(e);
 	}
 
-inline const CondLikelihood * getCondLike(const TreeNode *focalNd, const TreeNode *avoid) 
+inline const CondLikelihood * getValidCondLike(const TreeNode *focalNd, const TreeNode *avoid) 
 	{
 	ConstEdgeEndpoints e(focalNd, avoid);
-	return getCondLike(e);
+	return getValidCondLike(e);
 	}
 
 
-inline const CondLikelihood * getCondLike(ConstEdgeEndpoints edge) 
+inline const CondLikelihood * getValidCondLike(ConstEdgeEndpoints edge) 
 	{
 	const TreeNode * c = edge.getActualChild();
 	if (edge.getFocalNode() == c)
@@ -61,7 +61,7 @@ inline const CondLikelihood * getCondLike(ConstEdgeEndpoints edge)
 		assert(c->IsInternal());
 		const InternalData * childInternalData = c->GetInternalData();
 		assert(childInternalData != NULL);
-		return childInternalData->getChildCondLike();
+		return childInternalData->getValidChildCondLike();
 		}
 	/// moving up the tree in calculations (root to leaves).
 	assert(c == edge.getFocalNeighbor());
@@ -69,22 +69,39 @@ inline const CondLikelihood * getCondLike(ConstEdgeEndpoints edge)
 		{
 		const InternalData * childInternalData = c->GetInternalData();
 		assert(childInternalData != NULL);
-		return childInternalData->getParentalCondLike();		
+		return childInternalData->getValidParentalCondLike();		
+		}
+	const TipData * childTipData = c->GetTipData();
+	assert(childTipData != NULL);
+	return childTipData->getValidParentalCondLike();
+	}
+
+inline CondLikelihood * getCondLikePtr(EdgeEndpoints edge) 
+	{
+	TreeNode * c = edge.getActualChild();
+	if (edge.getFocalNode() == c)
+		{
+		assert(c->IsInternal());
+		InternalData * childInternalData = c->GetInternalData();
+		assert(childInternalData != NULL);
+		return childInternalData->getChildCondLikePtr();
+		}
+	/// moving up the tree in calculations (root to leaves).
+	assert(c == edge.getFocalNeighbor());
+	if (c->IsInternal())
+		{
+		InternalData * childInternalData = c->GetInternalData();
+		assert(childInternalData != NULL);
+		return childInternalData->getParentalCondLikePtr();		
 		}
 	else
 		{
-		const TipData * childTipData = c->GetTipData();
+		TipData * childTipData = c->GetTipData();
 		assert(childTipData != NULL);
-		return childTipData->getParentalCondLike();
+		childTipData->getParentalCondLikePtr();
 		}
 	}
 	
-inline CondLikelihood * getCondLike(EdgeEndpoints edge) 
-	{
-	ConstEdgeEndpoints c(edge.first, edge.second);
-	const CondLikelihood * cl = getCondLike(c);
-	return const_cast<CondLikelihood *>(cl);
-	}
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Modifier function that sets the value of the `no_data' data member to false.

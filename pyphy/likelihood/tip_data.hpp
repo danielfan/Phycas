@@ -144,24 +144,25 @@ class TipData
 		double * * *						getMutableTransposedPMatrices() const;
 		const int8_t *						getConstStateCodes() const;
 
-		CondLikelihood *					getParentalCondLike()
+		CondLikelihood *				getParentalCondLikePtr();
+		const CondLikelihood *			getValidParentalCondLike() const
 			{
-			const TipData * t = const_cast<const TipData *>(this);
-			const CondLikelihood * cl = t->getParentalCondLike();
-			return const_cast<CondLikelihood *>(cl);
+			assert(parCLAValid);
+			TipData * t = const_cast<TipData *>(this);
+			return t->getParentalCondLikePtr();
 			}
-		const CondLikelihood *			 	getParentalCondLike() const;
 
 	private:
 
-											TipData(unsigned nRates, unsigned nStates);
-											TipData(const std::vector<unsigned int> & stateListPosVec, boost::shared_array<const int8_t> stateCodesShPtr, unsigned nRates, unsigned nStates, double * * * pMatTranspose, bool managePMatrices);
+											TipData(unsigned nRates, unsigned nStates, CondLikelihoodStorage & claPool);
+											TipData(const std::vector<unsigned int> & stateListPosVec, boost::shared_array<const int8_t> stateCodesShPtr, unsigned nRates, unsigned nStates, double * * * pMatTranspose, bool managePMatrices, CondLikelihoodStorage & claPool);
 		const StateListPos &				getConstStateListPos() const;
 
 		friend void							calcPMatTranspose(const TreeLikelihood & treeLikeInfo, const TipData & tipData, double edgeLength);
 	
 	private:
 											// conditional likelihood of the rest of the tree
+		bool								parCLAValid;
 		CondLikelihood *					parValidCLA; 	/**< valid conditional likelihood for this a node and everything above it */
 		CondLikelihood *					parCachedCLA; 	/**< cached */
 		
@@ -171,6 +172,7 @@ class TipData
 		boost::shared_array<const int8_t>	state_codes; 		/**< Array of tip-specific state codes */
 		mutable double * * *				pMatrixTranspose;	/**< The (rate category) x (stateCode) x (ancestor state) augmented transposed transition probability matrices (points to `ownedPMatrices' if the constructor parameter `managePMatrices' parameter is true) */
 		ScopedThreeDMatrix<double>			ownedPMatrices;		/**< Vector of transposed transition matrices */
+		CondLikelihoodStorage & 			claPool;
 	};
 	
 typedef boost::shared_ptr<TipData> TipDataShPtr;

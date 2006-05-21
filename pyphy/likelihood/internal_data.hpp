@@ -19,7 +19,7 @@ class DiscreteMatrix;
 namespace phycas
 {
 class CondLikelihood;
-
+class CondLikelihoodStorage;
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	The InternalData class stores the data structures needed for computing likelihoods on trees. This includes both
@@ -75,33 +75,36 @@ class InternalData
 		double * * *					getMutablePMatrices() const;
 		const double * const * const *	getConstPMatrices() const;
 		
-		CondLikelihood *				getChildCondLike()
+		CondLikelihood *				getChildCondLikePtr();
+		CondLikelihood *				getParentalCondLikePtr();
+		const CondLikelihood *			getValidChildCondLike() const
 			{
-			const InternalData * t = const_cast<const InternalData *>(this);
-			const CondLikelihood * cl = t->getChildCondLike();
-			return const_cast<CondLikelihood *>(cl);
+			assert(childCLAValid);
+			InternalData * t = const_cast<InternalData *>(this);
+			return t->getChildCondLikePtr();
 			}
-		const CondLikelihood *			getChildCondLike() const;
-		CondLikelihood *				getParentalCondLike()
+		const CondLikelihood *			getValidParentalCondLike() const
 			{
-			const InternalData * t = const_cast<const InternalData *>(this);
-			const CondLikelihood * cl = t->getParentalCondLike();
-			return const_cast<CondLikelihood *>(cl);
+			assert(parCLAValid);
+			InternalData * t = const_cast<InternalData *>(this);
+			return t->getParentalCondLikePtr();
 			}
-		const CondLikelihood *			 getParentalCondLike() const;
-
+		
 	private:
-										InternalData(unsigned nPatterns, unsigned nRates, unsigned nStates, double * * * pMatrices = NULL, bool managePMatrices = false);
-
-		CondLikelihood *				parValidCLA; 	/**< valid conditional likelihood for this a node and everything above it */
+										InternalData(unsigned nPatterns, unsigned nRates, unsigned nStates, double * * * pMatrices, bool managePMatrices, CondLikelihoodStorage & claPool);
+		//CLA's for an edge from a Node to its parent are stored 
+		//	in the Node's InternalData (or TipData).
+		bool							parCLAValid;	/**< true if parWorkingCLA is valid */
+		CondLikelihood *				parWorkingCLA; 	/**< valid conditional likelihood for this a node and everything above it */
 		CondLikelihood *				parCachedCLA; 	/**< cached */
-													 			
-		CondLikelihood *				childValidCLA;	/**< valid conditional likelihood for all data above this node */ 
+		bool							childCLAValid;	/**< true if childWorkingCLA is valid. */
+		CondLikelihood *				childWorkingCLA;/**< valid conditional likelihood for all data above this node */ 
 		CondLikelihood *				childCachedCLA; /**< cached conditional likelihood for all data above this node */
 		
 		int8_t							state;			/**< Used in simulation to temporarily store the state for one character */
 		mutable double * * *			pMatrices; 		/**< Either an alias to a pMatrix array or an alias to ownedPMatrices.ptr */
 		ScopedThreeDMatrix<double>		ownedPMatrices; /**< Transition probability matrices for this interior node  */
+		CondLikelihoodStorage &			claPool;		/**< source of new CondLikelihoods */
 	};
 	
 typedef boost::shared_ptr<InternalData>			InternalDataShPtr;
