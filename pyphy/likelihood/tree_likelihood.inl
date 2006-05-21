@@ -126,6 +126,7 @@ inline void TreeLikelihood::recalcRelativeRates()
 	num_rates = model->getNRatesTotal();
 	model->recalcRatesAndProbs(rate_means, rate_probs);
 	likelihood_rate_site.resize(num_rates*num_patterns, 0.0);
+	cla_pool.setCondLikeLength(num_rates*num_patterns*num_states);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

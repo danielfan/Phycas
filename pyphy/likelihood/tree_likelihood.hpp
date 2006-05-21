@@ -104,7 +104,7 @@ class TreeLikelihood
 		
 	protected:
 
-		CondLikelihoodStorage			cla_pool;				/**< */
+		CondLikelihoodStorage			cla_pool;				/**< Stores currently unused CondLikelihood objects */
 
 		bool							store_site_likes;		/**< If true, calcLnL always stores the site likelihoods in the `site_likelihood' data member; if false, the `site_likelihood' data member is not updated by calcLnL */
 		bool							no_data;				/**< If true, calcLnL always returns 0.0 (useful for allowing MCMC to explore the prior) */
