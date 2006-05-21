@@ -2,6 +2,7 @@
 #define COND_LIKELIHOOD_HPP
 
 #include <vector>
+#include <stack>
 namespace phycas
 {
 typedef double LikeFltType;
@@ -73,7 +74,9 @@ class CondLikelihoodStorage
 |	member function to add `starting_size' new objects to the stack.
 */
 inline CondLikelihoodStorage::CondLikelihoodStorage(unsigned cond_like_len, unsigned starting_size)
-  : realloc_min(1), cl_len(cond_like_len)
+  :
+  cl_len(cond_like_len),
+  realloc_min(1)
 	{
 	assert(cl_len > 0);
 	assert(starting_size > 0);
