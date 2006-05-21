@@ -113,13 +113,6 @@ inline void effective_postorder_edge_iterator::BuildStackFromNodeAndSiblings(Tre
 			curr = curr->GetRightSib();
 			if (nodeToSkip != NULL && curr == nodeToSkip)
 				curr = curr->GetRightSib();
-			if (curr == NULL)
-				{
-				if (nd_stack.empty())
-					break;
-				curr = nd_stack.top();
-				nd_stack.pop();
-				}
 			}
 		else
 			{
@@ -130,7 +123,13 @@ inline void effective_postorder_edge_iterator::BuildStackFromNodeAndSiblings(Tre
 			if (r != NULL)
 				nd_stack.push(r);
 			curr = curr->GetLeftChild();
-			assert(curr != NULL); //@
+			}
+		if (curr == NULL)
+			{
+			if (nd_stack.empty())
+				break;
+			curr = nd_stack.top();
+			nd_stack.pop();
 			}
 		}
 	}
