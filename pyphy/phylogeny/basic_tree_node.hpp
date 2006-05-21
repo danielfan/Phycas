@@ -54,6 +54,7 @@ class TreeNode
 		TreeNode *			GetRightSib();
 		const TreeNode *	GetRightSibConst() const;
 		TreeNode *			GetParent();
+		const TreeNode *	GetParentConst() const;
 		TreeNode *			GetNextPreorder();
 		TreeNode *			GetNextPostorder();
 		double				GetEdgeLen() const;

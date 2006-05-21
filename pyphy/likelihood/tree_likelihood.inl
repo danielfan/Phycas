@@ -2,6 +2,7 @@
 #define TREE_LIKELIHOOD_INL
 
 #include "pyphy/likelihood/internal_data.hpp"
+#include "pyphy/likelihood/tip_data.hpp"
 #include "pyphy/phylogeny/edge_endpoints.hpp"
 
 namespace phycas

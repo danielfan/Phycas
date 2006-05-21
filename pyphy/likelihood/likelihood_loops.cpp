@@ -75,12 +75,13 @@ void TreeLikelihood::calcPMatCommon(
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calls calcPMatCommon to compute the transition matrix for an internal node given the value of `edgeLength'.
+|	
 */
 void TreeLikelihood::calcPMat(
-  InternalData &	cla, 
-  double			edgeLength)
+  double * * *	p, 
+  double		edgeLength)
 	{
-	calcPMatCommon(cla.getPMatrices(), edgeLength);
+	calcPMatCommon(p, edgeLength);
 	}
 
 #if 0
@@ -123,15 +124,14 @@ void TreeLikelihood::calcTMatForSim(
 |	T matrices: transposed and augmented transition matrices.
 */
 void TreeLikelihood::calcPMatTranspose(
-  TipData &	tipData, 
-  double	edgeLength)
+  double * * * 			transPMats,
+  const StateListPos &	stateListPosVec, 
+  double				edgeLength)
 	{
-	double * * * transPMats = tipData.getTransposedPMatrices();
 	calcPMatCommon(transPMats,  edgeLength);
 
 	// For each rate category, transpose the num_states x num_states portion of the matrices
 	// and fill in the ambiguity codes by summing columns
-	const std::vector<unsigned int> stateListPosVec(tipData.getConstStateListPos());
 	const unsigned nPartialAmbigs = (unsigned)stateListPosVec.size();
 	const unsigned int * const stateListPosArr = &stateListPosVec[0]; //PELIGROSO
 	const VecStateList stateListVec = state_list;
@@ -184,7 +184,7 @@ void TreeLikelihood::calcCLATwoTips(
 			}
 		}
 	}
-	
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the conditional likelihood arrays at an internal node having a tip node as its left child and an internal
 |	node for a right child.
@@ -193,7 +193,7 @@ void TreeLikelihood::calcCLAOneTip(
   CondLikelihood & 		condLike,
   const TipData &		leftChild,
   ConstPMatrices		rightPMatrices,
-  const InternalData &	rightCondLike)
+  const CondLikelihood &rightCondLike)
 	{
 	// Get transition probability matrices for the left and right child nodes of this node
 	// These are 3D because there are potentially several 2D transition matrices, one
@@ -205,7 +205,7 @@ void TreeLikelihood::calcCLAOneTip(
 
 	// These are the conditional likelihood arrays of the left and right child nodes of this node
 	const int8_t * leftStateCodes = leftChild.getConstStateCodes();
-	const double * rightCLA = rightChild.getConstCLA();
+	const double * rightCLA = rightCondLike.getCLA();
 	
 	// conditional likelihood arrays are laid out as follows for DNA data:
 	//
@@ -330,14 +330,12 @@ void TreeLikelihood::conditionOnAdditionalTip(
 |	TreeLikelihood::calcCLATwoTips, TreeLikelihood::calcCLAOneTip or TreeLikelihood::calcCLANoTips.
 */
 void TreeLikelihood::conditionOnAdditionalInternal(
-  CondLikelihood &	condLike,
-  const InternalData &	childInfo)
+  CondLikelihood &		condLike,
+  ConstPMatrices		childPMatrices,
+  const CondLikelihood &childCondLike)
 	{
-	// cla is the conditional likelihood array we are updating
 	double * cla = condLike.getCLA();
-
-	const double * const * const * childPMatrices = childInfo.getConstPMatrices();
-	const double * childCLA = childInfo.getConstCLA();
+	const double * childCLA = childCondLike.getCLA();
 
 	// conditional likelihood arrays are laid out as follows for DNA data:
 	//
@@ -384,26 +382,31 @@ double TreeLikelihood::harvestLnL(
    EdgeEndpoints & focalEdge)
 	{
 	assert(focalEdge.getFocalNode() != NULL);
+	TreeNode * focalNode = focalEdge.getFocalNode();
 	if (focalEdge.getFocalNeighbor() == NULL)
-		focalEdge.setFocalNeighbor(focalEdge.getFocalNode()->GetParent());
+		focalEdge.setFocalNeighbor(focalNode->GetParent());
 	TreeNode * focalNeighbor = focalEdge.getFocalNeighbor();
 	assert(focalNeighbor != NULL);
-	refreshCLA(*focalEdge.getFocalNode(), focalNeighbor);
-	return harvestLnLFromValidEdge(focalEdge);
+	refreshCLA(*focalNode, focalNeighbor);
+	ConstEdgeEndpoints c(focalNode, focalNeighbor);
+	return harvestLnLFromValidEdge(c);
 	}
 
 double TreeLikelihood::harvestLnLFromValidEdge(
-   EdgeEndpoints & focalEdge)
+   ConstEdgeEndpoints & focalEdge)
 	{
 	assert(focalEdge.getFocalNode() != NULL);
 	assert(focalEdge.getFocalNeighbor() != NULL);
-	TreeNode * focalNeighbor = focalEdge.getFocalNeighbor();
-	TreeNode * focalNode = focalEdge.getFocalNode();
+	const TreeNode * focalNeighbor = focalEdge.getFocalNeighbor();
+	const TreeNode * focalNode = focalEdge.getFocalNode();
 	assert(focalNode->IsInternal());
-	TreeNode * actualChild = focalEdge.getActualChild();
+	const TreeNode * actualChild = focalEdge.getActualChild();
 	const double focalEdgeLen = actualChild->GetEdgeLen();
-	const InternalData & focalNodeInfo = *focalNode->GetInternalData();
-	const double * focalNodeCLA = focalNodeInfo.getConstCLA(); //PELIGROSO
+	
+	const CondLikelihood * focalCondLike = getCondLike(focalEdge);
+	assert(focalCondLike != NULL);
+	const LikeFltType * focalNodeCLA = focalCondLike->getCLA(); //PELIGROSO
+	assert(focalNodeCLA != NULL);
 	const unsigned singleRateCLALength = num_patterns*num_states;
 
 	// Get pointer to start of array holding pattern counts
@@ -420,9 +423,9 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 	double lnLikelihood = 0.0;
 	if (focalNeighbor->IsTip())
 		{
-		TipData & tipData = *focalNeighbor->GetTipData();
-		
-		calcPMatTranspose(tipData, focalEdgeLen);
+		const TipData & tipData = *focalNeighbor->GetTipData();
+		double * * * p = tipData.getMutableTransposedPMatrices();
+		calcPMatTranspose(p, tipData.getConstStateListPos(),  focalEdgeLen);
 		const double * const * const * tipPMatricesTrans = tipData.getConstTransposedPMatrices();
 		const int8_t * tipStateCodes = tipData.getConstStateCodes();
 		std::vector<const double *> focalNdCLAPtr(num_rates);
@@ -450,10 +453,12 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 		}
 	else
 		{
-		InternalData * neighborID = focalNeighbor->GetInternalData();
-		calcPMat(*neighborID, focalEdgeLen);
+		const InternalData * neighborID = focalNeighbor->GetInternalData();
+		calcPMat(neighborID->getMutablePMatrices(), focalEdgeLen);
 		const double * const * const * childPMatrices = neighborID->getConstPMatrices();
-		const double * focalNeighborCLA = neighborID->getConstCLA(); //PELIGROSO
+		
+		const CondLikelihood * neighborCondLike = getCondLike(focalNeighbor, focalNode); // 
+		const double * focalNeighborCLA = neighborCondLike->getCLA(); //PELIGROSO
 		std::vector<const double *> focalNdCLAPtr(num_rates);
 		std::vector<const double *> focalNeighborCLAPtr(num_rates);
 		

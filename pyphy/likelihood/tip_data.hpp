@@ -20,6 +20,7 @@ namespace phycas
 {
 class CondLikelihood;
 class Tree;
+typedef std::vector<unsigned int> StateListPos;
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	The TipData class stores the data associated with each tip in the tree. The description below assumes the data was
@@ -140,11 +141,12 @@ class TipData
 
 		const double * const * const *		getConstTransposedPMatrices() const;
 		double * * *						getTransposedPMatrices();
+		double * * *						getMutableTransposedPMatrices() const;
 		const int8_t *						getConstStateCodes() const;
 
 		CondLikelihood *					getParentalCondLike()
 			{
-			const InternalData * t = const_cast<const InternalData *>(this);
+			const TipData * t = const_cast<const TipData *>(this);
 			const CondLikelihood * cl = t->getParentalCondLike();
 			return const_cast<CondLikelihood *>(cl);
 			}
@@ -154,9 +156,9 @@ class TipData
 
 											TipData(unsigned nRates, unsigned nStates);
 											TipData(const std::vector<unsigned int> & stateListPosVec, boost::shared_array<const int8_t> stateCodesShPtr, unsigned nRates, unsigned nStates, double * * * pMatTranspose, bool managePMatrices);
-		const std::vector<unsigned int> &	getConstStateListPos() const;
+		const StateListPos &				getConstStateListPos() const;
 
-		friend void							calcPMatTranspose(const TreeLikelihood & treeLikeInfo, TipData & tipData, double edgeLength);
+		friend void							calcPMatTranspose(const TreeLikelihood & treeLikeInfo, const TipData & tipData, double edgeLength);
 	
 	private:
 											// conditional likelihood of the rest of the tree
@@ -165,9 +167,9 @@ class TipData
 		
 
 		int8_t								state;				/**< Used in simulation to temporarily store the state for one character */
-		std::vector<unsigned int>			state_list_pos;		/**< Vector of indices into the tip-specific `state_codes' array */
+		StateListPos						state_list_pos;		/**< Vector of indices into the tip-specific `state_codes' array */
 		boost::shared_array<const int8_t>	state_codes; 		/**< Array of tip-specific state codes */
-		double * * *						pMatrixTranspose;	/**< The (rate category) x (stateCode) x (ancestor state) augmented transposed transition probability matrices (points to `ownedPMatrices' if the constructor parameter `managePMatrices' parameter is true) */
+		mutable double * * *				pMatrixTranspose;	/**< The (rate category) x (stateCode) x (ancestor state) augmented transposed transition probability matrices (points to `ownedPMatrices' if the constructor parameter `managePMatrices' parameter is true) */
 		ScopedThreeDMatrix<double>			ownedPMatrices;		/**< Vector of transposed transition matrices */
 	};
 	
@@ -193,6 +195,13 @@ inline double * * * TipData::getTransposedPMatrices()
 	{
 	return pMatrixTranspose;
 	}
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns the data member `pMatrixTranspose' (non-const).
+*/
+inline double * * * TipData::getMutableTransposedPMatrices() const
+	{
+	return pMatrixTranspose;
+	}	
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Accessor function that calls the get() function of the `state_codes' data member. The returned array contains the 
@@ -207,7 +216,7 @@ inline const int8_t * TipData::getConstStateCodes() const
 |	Accessor function that calls returns the `state_list_pos' data member. The returned vector of unsigned values holds
 |	the position of each particular coded state for this tip in the global state list. (correct?)
 */
-inline const std::vector<unsigned int> & TipData::getConstStateListPos() const
+inline const StateListPos & TipData::getConstStateListPos() const
 	{
 	return state_list_pos;
 	}

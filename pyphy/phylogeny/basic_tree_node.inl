@@ -387,6 +387,14 @@ inline TreeNode	* TreeNode::GetParent()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Returns the value of the data member `par'.
+*/
+inline const TreeNode	* TreeNode::GetParentConst() const
+	{
+	return par;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Returns the value of the data member `nextPreorder'.
 */
 inline TreeNode	* TreeNode::GetNextPreorder()

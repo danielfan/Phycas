@@ -21,6 +21,7 @@ class DiscreteMatrix;
 namespace phycas
 {
 typedef const double * const * const * ConstPMatrices;
+typedef std::vector<unsigned int> StateListPos;
 class CondLikelihood;
 class Tree;
 
@@ -126,19 +127,19 @@ class TreeLikelihood
 
 		void							calcTMatForSim(TipData &, double);
 		void							simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar, bool refresh_probs);
-		void							calcPMatTranspose(TipData &, double);
-		void							calcPMat(InternalData &, double);
+		void							calcPMatTranspose(double * * *, const StateListPos &, double);
+		void							calcPMat(double * * *, double); //
 		void							calcPMatCommon(double * * *, double);
 
 		void							calcCLATwoTips(CondLikelihood &, const TipData &, const TipData &);
 		void							calcCLAOneTip(CondLikelihood &, const TipData &, ConstPMatrices, const CondLikelihood &);
 		void							calcCLANoTips(CondLikelihood &, ConstPMatrices, const CondLikelihood &, ConstPMatrices, const CondLikelihood &);
-
+  
 		void							conditionOnAdditionalTip(CondLikelihood &, const TipData &);
-		void							conditionOnAdditionalInternal(CondLikelihood &, const InternalData &);
+		void							conditionOnAdditionalInternal(CondLikelihood &, ConstPMatrices , const CondLikelihood &);
 
 		double							harvestLnL(EdgeEndpoints & focalEdge);
-		double							harvestLnLFromValidEdge(EdgeEndpoints & focalEdge);
+		double							harvestLnLFromValidEdge(ConstEdgeEndpoints & focalEdge);
 
 	public: //@POL these should be protected rather than public
 
@@ -149,10 +150,10 @@ class TreeLikelihood
 		std::map<unsigned, unsigned>	charIndexToPatternIndex; /**< maps original character index to the index in compressed pattern "matrix" */
 	};
 
-CondLikelihood * getCondLike(TreeNode *focalNd, TreeNode *avoid);
-const CondLikelihood * getCondLike(const TreeNode *focalNd, const TreeNode *avoid);
 CondLikelihood * getCondLike(EdgeEndpoints edge);
+CondLikelihood * getCondLike(TreeNode *focalNd, TreeNode *avoid);
 const CondLikelihood * getCondLike(ConstEdgeEndpoints edge);
+const CondLikelihood * getCondLike(const TreeNode *focalNd, const TreeNode *avoid);
 
 } // namespace phycas
 

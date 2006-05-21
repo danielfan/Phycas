@@ -115,7 +115,7 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 			else
 				{
 				InternalData & ndID	= *(nd->GetInternalData());
-				calcPMat(ndID, nd->GetEdgeLen());
+				calcPMat(ndID.getPMatrices(), nd->GetEdgeLen());
 				}
 			}
 		}
@@ -344,8 +344,8 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 	if (nd.IsTip())
 		return;
 	assert(avoid != NULL);
-	InternalData & nd_ID = *(nd.GetInternalData());
-	CondLikelihood * ndCondLike = getCondLike(&nd, avoid);
+	//@@ this const_cast should be safe because we aren't relying on const-ness of CLA's but it needs to be revisited
+	CondLikelihood * ndCondLike = getCondLike(&nd, const_cast<TreeNode *>(avoid)); 
 	TreeNode * parent = nd.GetParent();
 	TreeNode * lChild = nd.GetLeftChild();
 	assert(parent != NULL);
@@ -370,45 +370,45 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 	if (firstNeighbor->IsTip())
 		{
 		TipData & firstTD = *(firstNeighbor->GetTipData());
-		calcPMatTranspose(firstTD, firstEdgeLen);
+		calcPMatTranspose(firstTD.getTransposedPMatrices(), firstTD.getConstStateListPos(), firstEdgeLen);
 		if (secondNeighor->IsTip())
 			{
 			// 1. both neighbors are tips
 			TipData & secondTD = *(secondNeighor->GetTipData());
-			calcPMatTranspose(secondTD, secondNeighor->GetEdgeLen());
-			calcCLATwoTips(ndCondLike, firstTD, secondTD);
+			calcPMatTranspose(secondTD.getTransposedPMatrices(), secondTD.getConstStateListPos(), secondNeighor->GetEdgeLen());
+			calcCLATwoTips(*ndCondLike, firstTD, secondTD);
 			}
 		else
 			{
 			// 2. first neighbor is a tip, but second is an internal node
 			InternalData & secondID	= *(secondNeighor->GetInternalData());
-			calcPMat(secondID, secondNeighor->GetEdgeLen());
-			const CondLikelihood & secCL = secondID.getChildCondLike();
+			calcPMat(secondID.getPMatrices(), secondNeighor->GetEdgeLen());
+			const CondLikelihood * secCL = secondID.getChildCondLike();
 			ConstPMatrices secPMat = secondID.getConstPMatrices();
-			calcCLAOneTip(ndCondLike, firstTD, secPMat, secCL);
+			calcCLAOneTip(*ndCondLike, firstTD, secPMat, *secCL);
 			}
 		}
 	else
 		{
 		InternalData & firstID = *(firstNeighbor->GetInternalData());
-		calcPMat(firstID, firstEdgeLen);
-		const CondLikelihood & firCL = (firstIsParent ? *firstID.getParentCondLike() : *firstID.getChildCondLike());
+		calcPMat(firstID.getPMatrices(), firstEdgeLen);
+		const CondLikelihood & firCL = *getCondLike(firstNeighbor, &nd);
 		ConstPMatrices firPMat = firstID.getConstPMatrices();	
 		if (secondNeighor->IsTip())
 			{
 			// 3. first neighbor internal node, but second is a tip
 			TipData & secondTD = *(secondNeighor->GetTipData());
-			calcPMatTranspose(secondTD, secondNeighor->GetEdgeLen());
-			calcCLAOneTip(ndCondLike, secondTD, firPMat, firCL);
+			calcPMatTranspose(secondTD.getTransposedPMatrices(), secondTD.getConstStateListPos(), secondNeighor->GetEdgeLen());
+			calcCLAOneTip(*ndCondLike, secondTD, firPMat, firCL);
 			}
 		else
 			{
 			// 4. both neighbors are internal nodes
 			InternalData & secondID	= *(secondNeighor->GetInternalData());
-			calcPMat(secondID, secondNeighor->GetEdgeLen());
-			const CondLikelihood & secCL = secondID.getChildCondLike();
+			calcPMat(secondID.getPMatrices(), secondNeighor->GetEdgeLen());
+			const CondLikelihood & secCL = *getCondLike(secondNeighor, &nd);
 			ConstPMatrices secPMat = secondID.getConstPMatrices();
-			calcCLANoTips(ndCondLike, firPMat, firCL, secPMat, secCL);
+			calcCLANoTips(*ndCondLike, firPMat, firCL, secPMat, secCL);
 			}
 		}
 
@@ -420,14 +420,16 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 			if (currNd->IsTip())
 				{
 				TipData & currTD = *(currNd->GetTipData());
-				calcPMatTranspose(currTD, currNd->GetEdgeLen());
-				conditionOnAdditionalTip(nd_ID, currTD);
+				calcPMatTranspose(currTD.getTransposedPMatrices(), currTD.getConstStateListPos(), currNd->GetEdgeLen());
+				conditionOnAdditionalTip(*ndCondLike, currTD);
 				}
 			else
 				{
 				InternalData & currID = *(currNd->GetInternalData());
-				calcPMat(currID, currNd->GetEdgeLen());
-				conditionOnAdditionalInternal(nd_ID, currID);
+				calcPMat(currID.getPMatrices(), currNd->GetEdgeLen());
+				const CondLikelihood & currCL = *getCondLike(currNd, &nd);
+				ConstPMatrices currPMat = currID.getConstPMatrices();
+				conditionOnAdditionalInternal(*ndCondLike, currPMat, currCL);
 				}
 			}
 		}

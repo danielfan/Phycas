@@ -196,7 +196,7 @@ void LargetSimonMove::defaultProposeNewState()
 	ndY = NULL;
 	for (ndY = tree->GetFirstPreorder(); ndY != NULL; ndY = ndY->GetNextPreorder())
 		{
-		if (ndY->IsInternal() && !ndY->GetParent()->IsRoot())
+		if (ndY->IsInternal() && !ndY->GetParentConst()->IsRoot())
 			{
 			if (i == ypos)
 				break;
@@ -204,7 +204,7 @@ void LargetSimonMove::defaultProposeNewState()
 			}
 		}
 	assert(ndY->GetLeftChild() != NULL);
-	assert(ndY->GetParent() != NULL);
+	assert(ndY->GetParentConst() != NULL);
 	assert(!ndY->GetParent()->IsRoot());
 
 	// Save ndY's edge length in case revert is needed.

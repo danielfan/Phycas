@@ -72,6 +72,7 @@ class InternalData
 
 		unsigned						getCLASize() const;
 		double * * *					getPMatrices();
+		double * * *					getMutablePMatrices() const;
 		const double * const * const *	getConstPMatrices() const;
 		
 		CondLikelihood *				getChildCondLike()
@@ -99,7 +100,7 @@ class InternalData
 		CondLikelihood *				childCachedCLA; /**< cached conditional likelihood for all data above this node */
 		
 		int8_t							state;			/**< Used in simulation to temporarily store the state for one character */
-		double * * *					pMatrices; 		/**< Either an alias to a pMatrix array or an alias to ownedPMatrices.ptr */
+		mutable double * * *			pMatrices; 		/**< Either an alias to a pMatrix array or an alias to ownedPMatrices.ptr */
 		ScopedThreeDMatrix<double>		ownedPMatrices; /**< Transition probability matrices for this interior node  */
 	};
 	

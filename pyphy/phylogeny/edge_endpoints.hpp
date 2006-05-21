@@ -23,7 +23,7 @@ class GenericEdgeEndpoints : public std::pair<T, T>
 		GenericEdgeEndpoints(T focal_nd, T focal_neighbor)
 			:std::pair<T, T>(focal_nd, focal_neighbor)
 			{
-			assert(focal_nd == NULL || focal_neighbor == NULL || (focal_neighbor->GetParent() == focal_nd || focal_nd->GetParent() == focal_neighbor));
+			assert(focal_nd == NULL || focal_neighbor == NULL || (focal_neighbor->GetParentConst() == focal_nd || focal_nd->GetParentConst() == focal_neighbor));
 			}
 		T  getFocalNode() const
 			{
@@ -36,16 +36,16 @@ class GenericEdgeEndpoints : public std::pair<T, T>
 		void setFocalNeighbor(T n)
 			{
 			this->second = n;
-			assert(n == NULL || (n->GetParent() == this->first || this->first->GetParent() == n));
+			assert(n == NULL || (n->GetParentConst() == this->first || this->first->GetParentConst() == n));
 			}
 
 		T 	getActualChild() const
 			{
 			if (this->first == NULL)
 				return NULL;
-			if (this->first->GetParent() == this->second)
+			if (this->first->GetParentConst() == this->second)
 				return this->first;
-			assert(this->second->GetParent() == this->first);
+			assert(this->second->GetParentConst() == this->first);
 			return this->second;
 			}
 			
@@ -53,9 +53,9 @@ class GenericEdgeEndpoints : public std::pair<T, T>
 			{
 			if (this->first == NULL)
 				return NULL;
-			if (this->first->GetParent() == this->second)
+			if (this->first->GetParentConst() == this->second)
 				return this->second;
-			assert(this->second->GetParent() == this->first);
+			assert(this->second->GetParentConst() == this->first);
 			return this->first;
 			}
 		
