@@ -153,7 +153,6 @@ protected:
 	double							gamma_shape;				/**< Used for discrete gamma rate heterogeneity */
 	bool							invert_shape;				/**< If true, gamma_shape_param will hold inverse of shape rather than shape itself */
 	CDF								cdf;						/**< Provides cumulative gamma distribution function */
-
 };
 
 typedef boost::shared_ptr<Model> ModelShPtr;

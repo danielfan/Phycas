@@ -10,6 +10,7 @@
 #include "CipresCommlib/AllocateMatrix.hpp"
 #include "CipresCommlib/ConfigDependentHeaders.h"	// int8_t typedef
 #include "pyphy/likelihood/likelihood_models.hpp"
+#include "pyphy/likelihood/cond_likelihood.hpp"
 
 struct CIPRES_Matrix;
 
@@ -80,6 +81,8 @@ class TreeLikelihood
 		void							copyDataFromSimData(SimDataShPtr sim_data);
 
 #if POLPY_NEWWAY
+		bool							invalidateNode(const TreeNode * refNd, const TreeNode * neighborCloserToEffectiveRoot);
+		void							invalidateAwayFromNode(TreeNode & focalNode);
 		bool							isValid(const TreeNode *focal, const TreeNode *avoidNd);
 		void 							refreshCLA(TreeNode & nd, const TreeNode * avoid);
 		double							calcLnLFromNode(TreeNode & focal_node);
@@ -100,6 +103,8 @@ class TreeLikelihood
 
 		
 	protected:
+
+		CondLikelihoodStorage			cla_pool;				/**< */
 
 		bool							store_site_likes;		/**< If true, calcLnL always stores the site likelihoods in the `site_likelihood' data member; if false, the `site_likelihood' data member is not updated by calcLnL */
 		bool							no_data;				/**< If true, calcLnL always returns 0.0 (useful for allowing MCMC to explore the prior) */

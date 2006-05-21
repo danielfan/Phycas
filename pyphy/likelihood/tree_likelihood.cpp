@@ -436,15 +436,73 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
- * Returns true if the conditional likelihood of refNd is up to date for calculations centered
- * 	at some effective root node (neighborCloserToEffectiveRoot will be a node adjacent to refNd, but closer
- * 	to the the effective root).
- * Called in a context in which neighborCloserToEffectiveRoot is requesting that all of its neighbors update their 
- *	likelihood temporaries.
- */
+|	Returns true if the conditional likelihood of refNd is up to date for calculations centered
+|	at some effective root node (neighborCloserToEffectiveRoot will be a node adjacent to refNd, but closer
+|	to the the effective root).
+|	Called in a context in which neighborCloserToEffectiveRoot is requesting that all of its neighbors update their 
+|	likelihood temporaries.
+*/
 bool TreeLikelihood::isValid(const TreeNode * refNd, const TreeNode * neighborCloserToEffectiveRoot)
 	{
 	return refNd->IsTip();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	
+*/
+bool TreeLikelihood::invalidateNode(const TreeNode * refNd, const TreeNode * neighborCloserToEffectiveRoot)
+	{
+	assert(refNd != NULL);
+	if (refNd->IsTip())
+		{
+		TipData * td = refNd->GetTipData();
+		if (td->parValidCLA == NULL)
+			return false;
+		if (td->parCachedCLA != NULL)
+			cla_pool.putCondLikelihood(td->parCachedCLA);
+		td->parCachedCLA = td->parValidCLA;
+		td->parValidCLA = NULL;
+		}
+	else
+		{
+		if (refNd->GetParent() == neighborCloserToEffectiveRoot)
+			{
+			// refNd is the actual child
+			InternalData * id = refNd->GetInternalData();
+			if (id->parValidCLA == NULL)
+				return false;
+			if (id->parCachedCLA != NULL)
+				cla_pool.putCondLikelihood(id->parCachedCLA);
+			id->parCachedCLA = id->parValidCLA;
+			id->parValidCLA = NULL;
+			}
+		else
+			{
+			// neighborCloserToEffectiveRoot is the actual child
+			if (neighborCloserToEffectiveRoot->IsTip())
+				return false;
+			InternalData * id = neighborCloserToEffectiveRoot->GetInternalData();
+			if (id->childValidCLA == NULL)
+				return false;
+			if (id->childCachedCLA != NULL)
+				cla_pool.putCondLikelihood(id->childCachedCLA);
+			id->childCachedCLA = id->childValidCLA;
+			id->childValidCLA = NULL;
+			}
+		}
+	return false;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	
+*/
+void TreeLikelihood::invalidateAwayFromNode(
+  TreeNode & focalNode)		/**< invalidation of conditional likelihood arrays will proceed outward from this node */
+	{
+	NodeValidityChecker validFunctor = boost::bind(&TreeLikelihood::invalidateNode, this, _1, _2);
+
+	// All we need to do is construct the iterator
+	effective_postorder_edge_iterator(&focalNode, validFunctor);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

@@ -56,11 +56,18 @@ class CondLikelihoodStorage
 	{
 	public:
 
+										CondLikelihoodStorage();
 										CondLikelihoodStorage(unsigned cond_like_len, unsigned starting_size = 1);
 
+										~CondLikelihoodStorage();
+
 		CondLikelihood *				getCondLikelihood();
+		void							putCondLikelihood(CondLikelihood * p);
 		void							fillTo(unsigned capacity);
+
+		void							setCondLikeLength(unsigned sz);
 		void							setReallocMin(unsigned sz);
+		void							clearStack();
 
 	private:
 
@@ -68,6 +75,26 @@ class CondLikelihoodStorage
 		unsigned						realloc_min;	/**< When a request is made and `cl_stack' is empty, `realloc_min' new objects are created and added to the stack */
 		std::stack<CondLikelihood *>	cl_stack;		/**< The stack of CondLikelihood pointers */
 	};
+
+typedef boost::shared_ptr<CondLikelihood> CondLikelihoodShPtr;
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Constructor sets `realloc_min' to 1 and `cl_len' to 0. 
+*/
+inline CondLikelihoodStorage::CondLikelihoodStorage()
+  : 
+  cl_len(0), 
+  realloc_min(1)
+	{
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Destructor calls clearStack to destroy all CondLikelihood objects currently stored.
+*/
+inline CondLikelihoodStorage::~CondLikelihoodStorage()
+	{
+	clearStack();
+	}
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Constructor sets `realloc_min' to 1, `cl_len' to `cond_like_len', and then calls the CondLikelihoodStorage::fillTo 
@@ -79,8 +106,8 @@ inline CondLikelihoodStorage::CondLikelihoodStorage(unsigned cond_like_len, unsi
   realloc_min(1)
 	{
 	assert(cl_len > 0);
-	assert(starting_size > 0);
-	fillTo(starting_size);
+	if (starting_size > 0)
+		fillTo(starting_size);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -89,6 +116,7 @@ inline CondLikelihoodStorage::CondLikelihoodStorage(unsigned cond_like_len, unsi
 */
 inline CondLikelihood * CondLikelihoodStorage::getCondLikelihood()
 	{
+	assert(cl_len > 0);
 	if (cl_stack.empty())
 		fillTo(realloc_min);
 
@@ -98,10 +126,20 @@ inline CondLikelihood * CondLikelihoodStorage::getCondLikelihood()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Pushes supplied pointer to a CondLikelihood object `p' onto `cl_stack'.
+*/
+inline void CondLikelihoodStorage::putCondLikelihood(CondLikelihood * p)
+	{
+	assert(cl_len > 0);
+	cl_stack.push(p);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Ensures that the `cl_stack' contains at least `capacity' CondLikelihood pointers.
 */
 inline void CondLikelihoodStorage::fillTo(unsigned capacity)
 	{
+	assert(cl_len > 0);
 	unsigned curr_sz = cl_stack.size();
 	unsigned num_needed = (capacity > curr_sz ? capacity - curr_sz : 0);
 	for (unsigned i = 0; i < num_needed; ++i)
@@ -118,6 +156,32 @@ inline void CondLikelihoodStorage::setReallocMin(unsigned sz)
 	{
 	assert(sz > 0);
 	realloc_min = sz;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Deletes all CondLikelihood objects currently in the `cl_stack'.
+*/
+inline void CondLikelihoodStorage::clearStack()
+	{
+	while (!cl_stack.empty())
+		{
+		CondLikelihood * next = cl_stack.top();
+		cl_stack.pop();
+		delete next;
+		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `cl_len', which determines the length of all CondLikelihood objects stored. If the	`cl_stack'
+|	is not currently empty and if `sz' is not equal to the current value of `cl_len', deletes all existing objects in
+|	`cl_stack'.
+*/
+inline void CondLikelihoodStorage::setCondLikeLength(unsigned sz)
+	{
+	assert(sz > 0);
+	if (sz != cl_len)
+		clearStack();
+	cl_len = sz;
 	}
 
 } //namespace phycas

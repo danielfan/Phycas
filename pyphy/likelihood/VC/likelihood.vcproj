@@ -274,6 +274,9 @@
 				RelativePath="$(CIPRES_LIB_ROOT)\C++\CipresCommlib\CipresDataMatrixHelper.h">
 			</File>
 			<File
+				RelativePath="..\cond_likelihood.hpp">
+			</File>
+			<File
 				RelativePath="..\dls.h">
 			</File>
 			<File
