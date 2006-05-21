@@ -104,12 +104,12 @@ echo "**********************" >> runall_diffs.txt
 echo " " >> runall_diffs.txt
 cd Phycas
 python Phycas.py
-diff nyldna4.nex.p reference_output/nyldna4.nex.p >> ../runall_diffs.txt 
+diff green.nex.p reference_output/green.nex.p >> ../runall_diffs.txt 
 if [ $? -ne 0 ] 
 then
   abort
 fi
-diff nyldna4.nex.t reference_output/nyldna4.nex.t >> ../runall_diffs.txt
+diff green.nex.t reference_output/green.nex.t >> ../runall_diffs.txt
 if [ $? -ne 0 ] 
 then
   abort

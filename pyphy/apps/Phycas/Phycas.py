@@ -1070,7 +1070,6 @@ if __name__ == '__main__':
 
     mcmc.random_seed = '13579'
     mcmc.data_source = 'file'
-    #mcmc.data_file_name = '../../pyphy/nyldna4.nex'
     mcmc.data_file_name = '../../pyphy/green.nex'
     mcmc.starting_tree_source = 'random'
     mcmc.ncycles = 3000

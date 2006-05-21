@@ -1,4 +1,4 @@
-fc nyldna4.nex.p reference_output/nyldna4.nex.p 
-fc nyldna4.nex.t reference_output/nyldna4.nex.t
+fc green.nex.p reference_output/green.nex.p 
+fc green.nex.t reference_output/green.nex.t
 pause
  

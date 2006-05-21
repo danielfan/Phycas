@@ -93,9 +93,9 @@ echo ********************** >> runall_diffs.txt
 echo. >> runall_diffs.txt
 cd Phycas
 start /low /b /wait python Phycas.py
-fc nyldna4.nex.p reference_output\nyldna4.nex.p >> ..\runall_diffs.txt 
+fc green.nex.p reference_output\green.nex.p >> ..\runall_diffs.txt 
 if errorlevel 1 (goto abort)
-fc nyldna4.nex.t reference_output\nyldna4.nex.t >> ..\runall_diffs.txt
+fc green.nex.t reference_output\green.nex.t >> ..\runall_diffs.txt
 if errorlevel 1 (goto abort)
 cd ..
 

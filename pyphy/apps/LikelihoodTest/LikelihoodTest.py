@@ -566,7 +566,7 @@ def createCommandFile(fn):
 if __name__ == '__main__':    
     phycas = Phycas()
 
-    raw_input('debug stop')
+    #raw_input('debug stop')
 
     # Create a model tree
     phycas.tree = Phylogeny.Tree()
