@@ -76,56 +76,81 @@ inline effective_postorder_edge_iterator::effective_postorder_edge_iterator() : 
 |	
 */
 inline effective_postorder_edge_iterator::effective_postorder_edge_iterator(
-  TreeNode * effRoot, 		/*< "focal" node of the iteration (order of nodes will be postorder if this node were the root) */
-  NodeValidityChecker f)	/*< functor that takes two Node pointers and returns true if the iteration in this subtree should be stopped) */
+  TreeNode * effRoot, 		/**< "focal" node of the iteration (order of nodes will be postorder if this node were the root) */
+  NodeValidityChecker f)	/**< functor that takes two Node pointers and returns true if the iteration in this subtree should be stopped) */
   : isValidChecker(f), effectiveRoot(effRoot)
 	{
 	assert(!isValidChecker.empty());
 	assert(effectiveRoot != NULL);
+
+	// Build that part of edge_stack based on nodes above effectiveRoot
 	BuildStackFromNodeAndSiblings(effectiveRoot->GetLeftChild(), NULL);
 
+	// Now finish the job by considering nodes below effectiveRoot
 	TreeNode * currAvoidNode = effectiveRoot;
-	for (TreeNode *currAnc = effectiveRoot->GetParent(); currAnc != NULL; currAnc = currAnc->GetParent())
+	for (TreeNode * currAnc = effectiveRoot->GetParent(); currAnc != NULL; currAnc = currAnc->GetParent())
 		{
 		if (!isValidChecker.empty() && isValidChecker(currAnc, currAvoidNode))
 			break;
+
+		// 
 		edge_stack.push(EdgeEndpoints(currAnc, currAvoidNode));
 		BuildStackFromNodeAndSiblings(currAnc->GetLeftChild(), currAvoidNode);
 		currAvoidNode = currAnc;
 		}
+
+	// Make sure we look like a default-constructed object if there are no edges in edge_stack
+	// This allows the iterator to determine when it has reached the end
 	if (edge_stack.empty())
 		effectiveRoot = NULL;
 	}
 
-
+/*----------------------------------------------------------------------------------------------------------------------
+|	
+*/
 inline void effective_postorder_edge_iterator::BuildStackFromNodeAndSiblings(TreeNode * curr, const TreeNode * nodeToSkip)
 	{
+	// Handle case in which curr equals nodeToSkip
 	if (nodeToSkip != NULL && curr == nodeToSkip)
 		curr = curr->GetRightSib();
 	if (curr == NULL)
 		return;
-	std::stack<TreeNode*> nd_stack;
+
+	// Create a temporary stack of nodes to remember
+	std::stack<TreeNode *> nd_stack;
+
+	// Visit all nodes in the subtree extending up from curr's parent (with the exception 
+	// of the subtree whose root is nodeToSkip)
 	for (;;)
 		{
 		TreeNode * par = curr->GetParent();
 		if ((!isValidChecker.empty()) && isValidChecker(curr, par))
 			{
+			// edge was valid:
+			//   - let curr be curr's next sibling
 			curr = curr->GetRightSib();
 			if (nodeToSkip != NULL && curr == nodeToSkip)
 				curr = curr->GetRightSib();
 			}
 		else
 			{
+			// edge was not valid:
+			//   - push edge onto edge stack
+			//   - if curr has a sibling, push that sibling onto nd_stack (i.e. remember it so we can deal with it later)
+			//   - let curr be curr's left child
 			edge_stack.push(EdgeEndpoints(curr, par));
-			TreeNode *r = curr->GetRightSib();
+			TreeNode * r = curr->GetRightSib();
 			if (r != NULL && r == nodeToSkip)
 				r = r->GetRightSib();
 			if (r != NULL)
 				nd_stack.push(r);
 			curr = curr->GetLeftChild();
 			}
+
 		if (curr == NULL)
 			{
+			// we've come to the end of the road for this subtree
+			// let curr be node on top of nd_stack
 			if (nd_stack.empty())
 				break;
 			curr = nd_stack.top();

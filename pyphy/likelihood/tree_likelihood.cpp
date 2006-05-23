@@ -336,8 +336,8 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Updates the conditional likelihood array for `nd' in a direction away from `avoid'.
-|	All adjacent nodes (other than avoid node are assumed be valid).
+|	Updates the conditional likelihood array for `nd' in a direction away from `avoid'. All adjacent nodes (other than 
+|	avoid node are assumed be valid).
 */
 void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 	{
@@ -436,19 +436,53 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Returns true if the conditional likelihood of refNd is up to date for calculations centered
-|	at some effective root node (neighborCloserToEffectiveRoot will be a node adjacent to refNd, but closer
-|	to the the effective root).
-|	Called in a context in which neighborCloserToEffectiveRoot is requesting that all of its neighbors update their 
-|	likelihood temporaries.
+|	Returns true if the conditional likelihood of refNd is up to date for calculations centered at some effective root 
+|	node (neighborCloserToEffectiveRoot will be a node adjacent to refNd, but closer than refNd to the the effective 
+|	root). Called in a context in which neighborCloserToEffectiveRoot is requesting that all of its neighbors update 
+|	their likelihood temporaries.
 */
 bool TreeLikelihood::isValid(const TreeNode * refNd, const TreeNode * neighborCloserToEffectiveRoot)
 	{
-	return refNd->IsTip();
+	assert(refNd != NULL);
+	assert(neighborCloserToEffectiveRoot != NULL);
+	assert(refNd != neighborCloserToEffectiveRoot);
+	if (refNd->IsTip())
+		{
+		// tip nodes always return true because they must be the child of neighborCloserToEffectiveRoot
+		// and they do not hold filial CLAs
+		return true;
+		}
+	else
+		{
+		// refNd is internal
+		if (refNd->GetParent() == neighborCloserToEffectiveRoot)
+			{
+			// refNd is the child of neighborCloserToEffectiveRoot
+			// If refNd has a filial CLA, then return true because that means refNd is valid
+			InternalData * id = refNd->GetInternalData();
+			return (id->childCLAValid != NULL);			
+			}
+		else
+			{
+			// neighborCloserToEffectiveRoot is the child of refNd
+			// If neighborCloserToEffectiveRoot has a parental CLA, then return true because 
+			// that means refNd is valid
+			InternalData * id = neighborCloserToEffectiveRoot->GetInternalData();
+			return (id->parValidCLA != NULL);			
+			}
+		}
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	
+|	Function used in conjunction with effective_postorder_edge_iterator to invalidate the appropriate conditional 
+|	likelihood arrays (CLAs) of all nodes starting with a focal node. For nodes that are descendants of the focal node
+|	(by descendant, I mean that a node can be found using only left child and right sib pointers starting from the focal
+|	node), it is the parental CLAs that are invalidated. For a node that is an ancestor of the focal node, it is the 
+|	filial CLAs that are invalidated. For all other nodes (on independent lineages derived from an ancestral node), it 
+|	is the parental CLAs that are invalidated. This pattern of invalidation ensures that the likelihood will be 
+|	correctly computed using any node in the tree as the effective root for the likelihood calculation. For any 
+|	effective root n, it now appears as though an edge length just on the other side of the focal node from n has been 
+|	changed, necessitating the recalculation of all CLAs starting from that point back toward the effective root.
 */
 bool TreeLikelihood::invalidateNode(const TreeNode * refNd, const TreeNode * neighborCloserToEffectiveRoot)
 	{

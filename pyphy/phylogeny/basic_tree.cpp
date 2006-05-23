@@ -366,6 +366,13 @@ TreeNode *Tree::FindTipNode(unsigned num)
 	return 0;
 	}
 
+#if defined(TESTING_TOWARD_NODE_ITERATOR)
+bool isValid(const TreeNode * refNd, const TreeNode * neighborCloserToEffectiveRoot)
+	{
+	return refNd->IsTip();
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Walks tree using preorder pointers, returning a string documenting the journey. For this tree description:
 |	"(c:0.4,d:0.5,(a:0.1, b:0.2):0.3);", the returned string would be: "[1] -> c (0) -> d (1) -> [0] -> a (2) -> b (3)"
@@ -378,11 +385,6 @@ TreeNode *Tree::FindTipNode(unsigned num)
 |	1 means add node numbers and indicate using brackets or parentheses whether node is an [internal], (tip) or {root}
 |	node; 2 means show nearly everything about each node (each node requires a paragraph to explain).
 */
-bool isValid(const TreeNode * refNd, const TreeNode * neighborCloserToEffectiveRoot)
-	{
-	return refNd->IsTip();
-	}
-
 std::string Tree::DebugWalkTree(bool preorder, unsigned verbosity)
 	{
 	std::string s;
