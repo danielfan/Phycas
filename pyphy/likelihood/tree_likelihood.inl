@@ -13,7 +13,7 @@ namespace phycas
 // **************************************************************************************
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	
+|	TreeLikelihood constructor.
 */
 inline TreeLikelihood::TreeLikelihood(
   ModelShPtr mod)		/**< is the substitution model */
@@ -33,28 +33,150 @@ inline TreeLikelihood::TreeLikelihood(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Modifier function that sets the value of the `no_data' data member to true.
+|	Returns a shared pointer to the CondLikelihood object that would be used to compute the likelihood conditional on a 
+|	particular state being assigned to `focal_nd' when `avoid' is the likelihood root. This function obtains the correct
+|	shared pointer, but if that pointer does not point to an object, it goes to `cla_pool' to get another one.
 */
-inline void TreeLikelihood::setNoData()
+inline CondLikelihoodShPtr getCondLikePtr(
+  TreeNode * focal_nd,	/**< is the focal node */
+  TreeNode * avoid) 	/**< is the focal node neighbor (node closer to likelihood root) */
 	{
-	no_data = true;
-	}
-
-inline CondLikelihood * getCondLikePtr(TreeNode *focalNd, TreeNode *avoid) 
-	{
-	EdgeEndpoints e(focalNd, avoid);
+	EdgeEndpoints e(focal_nd, avoid);
 	return getCondLikePtr(e);
 	}
 
-inline const CondLikelihood * getValidCondLike(const TreeNode *focalNd, const TreeNode *avoid) 
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns a shared pointer to the CondLikelihood object that would be used to compute the likelihood conditional on a 
+|	particular state being assigned to `focal_nd' when `avoid' is the likelihood root. 
+*/
+inline ConstCondLikelihoodShPtr getValidCondLikePtr(
+  const TreeNode * focal_nd,	/**< is the focal node */
+  const TreeNode * avoid) 		/**< is the focal node neighbor (node closer to likelihood root) */
 	{
-	ConstEdgeEndpoints e(focalNd, avoid);
-	return getValidCondLike(e);
+	ConstEdgeEndpoints e(focal_nd, avoid);
+	return getValidCondLikePtr(e);
 	}
 
-
-inline const CondLikelihood * getValidCondLike(ConstEdgeEndpoints edge) 
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns a shared pointer to the CondLikelihood object that would be used to compute the likelihood conditional on a
+|	particular state being assigned to the focal node of `edge' when `edge' focal neighbor is the likelihood root. This
+|	function obtain the correct shared pointer, but if that pointer does not point to a CondLikelihood object, it goes 
+|	to `cla_pool' to get one.
+*/
+inline CondLikelihoodShPtr getCondLikePtr(
+  EdgeEndpoints edge) /**< is the edge specifying the focal node and the focal node neighbor */
 	{
+	TreeNode * actual_child = edge.getActualChild();
+	if (actual_child == edge.getFocalNode())
+		{
+		// focal node F is a child of N, the focal neighbor (likelihood root is somewhere below N)
+		//
+		//      \   /
+		//       \ /
+		//        F
+		//   \   / <-- filial CLA of focal node is returned
+		//    \ /
+		//     N
+		//    / 
+		//
+		assert(actual_child->IsInternal());
+		InternalData * child_internal_data = actual_child->GetInternalData();
+		assert(child_internal_data != NULL);
+		return child_internal_data->getChildCondLikePtr();
+		}
+
+	// focal neighbor N is a child of the focal node F
+	assert(actual_child == edge.getFocalNeighbor());
+	if (actual_child->IsInternal())
+		{
+		// focal neighbor N is an internal node (likelihood root is somewhere above N)
+		//
+		//      \   /
+		//       \ /
+		//        N
+		//   \   /
+		//    \ / <-- parental CLA of focal neighbor is returned
+		//     F
+		//    / 
+		//
+		InternalData * child_internal_data = actual_child->GetInternalData();
+		assert(child_internal_data != NULL);
+		return child_internal_data->getParentalCondLikePtr();		
+		}
+
+	// focal neighbor N is a tip node (N equals the likelihood root in this case)
+	//
+	//        N
+	//   \   /
+	//    \ / <-- parental CLA of focal neighbor is returned
+	//     F
+	//    / 
+	//
+	TipData * child_tip_data = actual_child->GetTipData();
+	assert(child_tip_data != NULL);
+	return child_tip_data->getParentalCondLikePtr();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns a pointer to the CondLikelihood object that would be used to compute the likelihood conditional on a
+|	particular state being assigned to the focal node of `edge' when `edge' focal neighbor is the likelihood root.
+|	This is a const version of the corresponding getCondLikePtr function, to be used when it can be assumed that the
+|	conditional likelihood arrays are up-to-date.
+*/
+inline ConstCondLikelihoodShPtr getValidCondLikePtr(
+  ConstEdgeEndpoints edge) /**< is the edge comprising the focal node and focal node neighbor */
+	{
+#if 1
+	const TreeNode * actual_child = edge.getActualChild();
+	if (actual_child == edge.getFocalNode())
+		{
+		// focal node F is a child of N, the focal neighbor (likelihood root is somewhere below N)
+		//
+		//      \   /
+		//       \ /
+		//        F
+		//   \   / <-- filial CLA of focal node is returned
+		//    \ /
+		//     N
+		//    / 
+		//
+		assert(actual_child->IsInternal());
+		const InternalData * child_internal_data = actual_child->GetInternalData();
+		assert(child_internal_data != NULL);
+		return child_internal_data->getValidChildCondLikePtr();
+		}
+
+	// focal neighbor N is a child of the focal node F
+	assert(actual_child == edge.getFocalNeighbor());
+	if (actual_child->IsInternal())
+		{
+		// focal neighbor N is an internal node (likelihood root is somewhere above N)
+		//
+		//      \   /
+		//       \ /
+		//        N
+		//   \   /
+		//    \ / <-- parental CLA of focal neighbor is returned
+		//     F
+		//    / 
+		//
+		const InternalData * child_internal_data = actual_child->GetInternalData();
+		assert(child_internal_data != NULL);
+		return child_internal_data->getValidParentalCondLikePtr();		
+		}
+
+	// focal neighbor N is a tip node (N equals the likelihood root in this case)
+	//
+	//        N
+	//   \   /
+	//    \ / <-- parental CLA of focal neighbor is returned
+	//     F
+	//    / 
+	//
+	const TipData * child_tip_data = actual_child->GetTipData();
+	assert(child_tip_data != NULL);
+	return child_tip_data->getValidParentalCondLikePtr();
+#else
 	const TreeNode * c = edge.getActualChild();
 	if (edge.getFocalNode() == c)
 		{
@@ -63,7 +185,7 @@ inline const CondLikelihood * getValidCondLike(ConstEdgeEndpoints edge)
 		assert(childInternalData != NULL);
 		return childInternalData->getValidChildCondLike();
 		}
-	/// moving up the tree in calculations (root to leaves).
+	// moving up the tree in calculations (root to leaves).
 	assert(c == edge.getFocalNeighbor());
 	if (c->IsInternal())
 		{
@@ -74,34 +196,16 @@ inline const CondLikelihood * getValidCondLike(ConstEdgeEndpoints edge)
 	const TipData * childTipData = c->GetTipData();
 	assert(childTipData != NULL);
 	return childTipData->getValidParentalCondLike();
+#endif
 	}
 
-inline CondLikelihood * getCondLikePtr(EdgeEndpoints edge) 
+/*----------------------------------------------------------------------------------------------------------------------
+|	Modifier function that sets the value of the `no_data' data member to true.
+*/
+inline void TreeLikelihood::setNoData()
 	{
-	TreeNode * c = edge.getActualChild();
-	if (edge.getFocalNode() == c)
-		{
-		assert(c->IsInternal());
-		InternalData * childInternalData = c->GetInternalData();
-		assert(childInternalData != NULL);
-		return childInternalData->getChildCondLikePtr();
-		}
-	/// moving up the tree in calculations (root to leaves).
-	assert(c == edge.getFocalNeighbor());
-	if (c->IsInternal())
-		{
-		InternalData * childInternalData = c->GetInternalData();
-		assert(childInternalData != NULL);
-		return childInternalData->getParentalCondLikePtr();		
-		}
-	else
-		{
-		TipData * childTipData = c->GetTipData();
-		assert(childTipData != NULL);
-		childTipData->getParentalCondLikePtr();
-		}
+	no_data = true;
 	}
-	
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Modifier function that sets the value of the `no_data' data member to false.

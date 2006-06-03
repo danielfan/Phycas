@@ -337,31 +337,37 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Updates the conditional likelihood array for `nd' in a direction away from `avoid'. All adjacent nodes (other than 
-|	avoid node are assumed be valid).
+|	`avoid') are assumed to be valid.
 */
 void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 	{
 	if (nd.IsTip())
 		return;
 	assert(avoid != NULL);
-	//@@ this const_cast should be safe because we aren't relying on const-ness of CLA's but it needs to be revisited
-	CondLikelihood * ndCondLike = getCondLike(&nd, const_cast<TreeNode *>(avoid)); 
+	//@MTH-NESCENT this const_cast should be safe because we aren't relying on const-ness of CLA's but it needs to be revisited
+	//@POL-NESCENT Mark, if we are going to immediately cast away the const on avoid, why do we need to make it const in the first place?
+	CondLikelihoodShPtr ndCondLike = getCondLikePtr(&nd, const_cast<TreeNode *>(avoid)); 
 	TreeNode * parent = nd.GetParent();
 	TreeNode * lChild = nd.GetLeftChild();
 	assert(parent != NULL);
 	assert(lChild != NULL);
-	TreeNode * firstNeighbor;
-	TreeNode * secondNeighor;
-	double firstEdgeLen;
+
+	// The first neighbor can either be the parent or the leftmost child. The second neighbor must be a child, but
+	// which child depends on the first neighbor. Third and subsequent neighbors are always next sibs.
+	TreeNode * firstNeighbor = NULL;
+	TreeNode * secondNeighor = NULL;
+	double firstEdgeLen = 0.0;
 	const bool movingTowardLeaves = !(parent == avoid);
 	if (movingTowardLeaves)
 		{
+		// A child of nd is closer to the likelihood root than nd
 		firstNeighbor = parent;
 		firstEdgeLen = nd.GetEdgeLen();
 		secondNeighor = (lChild == avoid ? lChild->GetRightSib() : lChild);
 		}
 	else
 		{
+		// The parent of nd is closer to the likelihood root than nd
 		firstNeighbor = lChild;
 		firstEdgeLen = lChild->GetEdgeLen();
 		secondNeighor = lChild->GetRightSib();
@@ -383,16 +389,16 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 			// 2. first neighbor is a tip, but second is an internal node
 			InternalData & secondID	= *(secondNeighor->GetInternalData());
 			calcPMat(secondID.getPMatrices(), secondNeighor->GetEdgeLen());
-			const CondLikelihood &secCL = getCondLike(secondID, &nd);
+			CondLikelihoodShPtr secCL = getCondLikePtr(secondNeighor, &nd);
 			ConstPMatrices secPMat = secondID.getConstPMatrices();
-			calcCLAOneTip(*ndCondLike, firstTD, secPMat, secCL);
+			calcCLAOneTip(*ndCondLike, firstTD, secPMat, *secCL);
 			}
 		}
 	else
 		{
 		InternalData & firstID = *(firstNeighbor->GetInternalData());
 		calcPMat(firstID.getPMatrices(), firstEdgeLen);
-		const CondLikelihood & firCL = *getCondLike(firstNeighbor, &nd);
+		const CondLikelihood & firCL = *getCondLikePtr(firstNeighbor, &nd);
 		ConstPMatrices firPMat = firstID.getConstPMatrices();	
 		if (secondNeighor->IsTip())
 			{
@@ -406,7 +412,7 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 			// 4. both neighbors are internal nodes
 			InternalData & secondID	= *(secondNeighor->GetInternalData());
 			calcPMat(secondID.getPMatrices(), secondNeighor->GetEdgeLen());
-			const CondLikelihood & secCL = *getCondLike(secondNeighor, &nd);
+			const CondLikelihood & secCL = *getCondLikePtr(secondNeighor, &nd);
 			ConstPMatrices secPMat = secondID.getConstPMatrices();
 			calcCLANoTips(*ndCondLike, firPMat, firCL, secPMat, secCL);
 			}
@@ -427,7 +433,7 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 				{
 				InternalData & currID = *(currNd->GetInternalData());
 				calcPMat(currID.getPMatrices(), currNd->GetEdgeLen());
-				const CondLikelihood & currCL = *getCondLike(currNd, &nd);
+				const CondLikelihood & currCL = *getCondLikePtr(currNd, &nd);
 				ConstPMatrices currPMat = currID.getConstPMatrices();
 				conditionOnAdditionalInternal(*ndCondLike, currPMat, currCL);
 				}
@@ -455,20 +461,20 @@ bool TreeLikelihood::isValid(const TreeNode * refNd, const TreeNode * neighborCl
 	else
 		{
 		// refNd is internal
-		if (refNd->GetParent() == neighborCloserToEffectiveRoot)
+		if (refNd->GetParentConst() == neighborCloserToEffectiveRoot)
 			{
 			// refNd is the child of neighborCloserToEffectiveRoot
 			// If refNd has a filial CLA, then return true because that means refNd is valid
-			InternalData * id = refNd->GetInternalData();
-			return (id->childCLAValid != NULL);			
+			const InternalData * id = refNd->GetInternalData();
+			return (id->childWorkingCLA);			
 			}
 		else
 			{
 			// neighborCloserToEffectiveRoot is the child of refNd
 			// If neighborCloserToEffectiveRoot has a parental CLA, then return true because 
 			// that means refNd is valid
-			InternalData * id = neighborCloserToEffectiveRoot->GetInternalData();
-			return (id->parValidCLA != NULL);			
+			const InternalData * id = neighborCloserToEffectiveRoot->GetInternalData();
+			return (id->parWorkingCLA);			
 			}
 		}
 	}
@@ -476,52 +482,57 @@ bool TreeLikelihood::isValid(const TreeNode * refNd, const TreeNode * neighborCl
 /*----------------------------------------------------------------------------------------------------------------------
 |	Function used in conjunction with effective_postorder_edge_iterator to invalidate the appropriate conditional 
 |	likelihood arrays (CLAs) of all nodes starting with a focal node. For nodes that are descendants of the focal node
-|	(by descendant, I mean that a node can be found using only left child and right sib pointers starting from the focal
+|	(descendant means that a node can be found using only left child and right sib pointers starting from the focal
 |	node), it is the parental CLAs that are invalidated. For a node that is an ancestor of the focal node, it is the 
-|	filial CLAs that are invalidated. For all other nodes (on independent lineages derived from an ancestral node), it 
-|	is the parental CLAs that are invalidated. This pattern of invalidation ensures that the likelihood will be 
-|	correctly computed using any node in the tree as the effective root for the likelihood calculation. For any 
-|	effective root n, it now appears as though an edge length just on the other side of the focal node from n has been 
-|	changed, necessitating the recalculation of all CLAs starting from that point back toward the effective root.
+|	filial CLAs that are invalidated. For all other nodes (e.g. on independent lineages derived from an ancestral node), 
+|	it is the parental CLAs that are invalidated. This pattern of invalidation ensures that the likelihood will be 
+|	correctly computed using any node in the tree as the likelihood root. For any likelihood root n, it now appears as 
+|	though an edge length just on the other side of the focal node from n has been changed, necessitating the 
+|	recalculation of all CLAs starting from that point back toward the likelihood root. The return value indicates
+|	whether or not the iterator should continue into the subtree defined by `refNd' (away from 
+|	`neighborCloserToEffectiveRoot'). This function always returns false because the goal is to invalidate every node
+|	that needs to be invalidated.
 */
-bool TreeLikelihood::invalidateNode(const TreeNode * refNd, const TreeNode * neighborCloserToEffectiveRoot)
+bool TreeLikelihood::invalidateNode(TreeNode * ref_nd, TreeNode * neighbor_closer_to_likelihood_root)
 	{
-	assert(refNd != NULL);
-	if (refNd->IsTip())
+	//@POL-NESCENT Mark, I removed const qualifier from both arguments (this function changes one of these two nodes,
+	// so if we are going to use the effective_postorder_edge_iterator for evil like this, we shouldn't false advertise
+	// that we aren't going to be changing nodes)
+	if (ref_nd->IsTip())
 		{
-		TipData * td = refNd->GetTipData();
-		if (td->parValidCLA == NULL)
+		TipData * td = ref_nd->GetTipData();
+		if (!td->parWorkingCLA)
 			return false;
-		if (td->parCachedCLA != NULL)
+		if (td->parCachedCLA)
 			cla_pool.putCondLikelihood(td->parCachedCLA);
-		td->parCachedCLA = td->parValidCLA;
-		td->parValidCLA = NULL;
+		td->parCachedCLA = td->parWorkingCLA;
+		td->parWorkingCLA.reset();
 		}
 	else
 		{
-		if (refNd->GetParent() == neighborCloserToEffectiveRoot)
+		if (ref_nd->GetParent() == neighbor_closer_to_likelihood_root)
 			{
-			// refNd is the actual child
-			InternalData * id = refNd->GetInternalData();
-			if (id->parValidCLA == NULL)
+			// ref_nd is the actual child
+			InternalData * id = ref_nd->GetInternalData();
+			if (!id->parWorkingCLA)
 				return false;
-			if (id->parCachedCLA != NULL)
+			if (id->parCachedCLA)
 				cla_pool.putCondLikelihood(id->parCachedCLA);
-			id->parCachedCLA = id->parValidCLA;
-			id->parValidCLA = NULL;
+			id->parCachedCLA = id->parWorkingCLA;
+			id->parWorkingCLA.reset();
 			}
 		else
 			{
-			// neighborCloserToEffectiveRoot is the actual child
-			if (neighborCloserToEffectiveRoot->IsTip())
+			// neighbor_closer_to_likelihood_root is the actual child
+			if (neighbor_closer_to_likelihood_root->IsTip())
 				return false;
-			InternalData * id = neighborCloserToEffectiveRoot->GetInternalData();
-			if (id->childValidCLA == NULL)
+			InternalData * id = neighbor_closer_to_likelihood_root->GetInternalData();
+			if (!id->childWorkingCLA)
 				return false;
-			if (id->childCachedCLA != NULL)
+			if (id->childCachedCLA)
 				cla_pool.putCondLikelihood(id->childCachedCLA);
-			id->childCachedCLA = id->childValidCLA;
-			id->childValidCLA = NULL;
+			id->childCachedCLA = id->childWorkingCLA;
+			id->childWorkingCLA.reset();
 			}
 		}
 	return false;
@@ -540,40 +551,56 @@ void TreeLikelihood::invalidateAwayFromNode(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	
+|	Calls calcLnLFromNode passing in the subroot (only child of root node) as the focal node.
+*/
+double TreeLikelihood::calcLnL(
+  TreeShPtr t)
+	{
+	// Get the root node
+	TreeNode * nd = t->GetFirstPreorder();
+	assert(nd);
+
+	// Move to the subroot node
+	nd = nd->GetNextPreorder();
+	assert(nd);
+
+	// Calculate log-likelihood with the subroot node focal
+	return calcLnLFromNode(*nd);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Computes the log-likelihood using `focal_node' as the likelihood root (i.e. the root of the likelihood calculation,
+|	but not necessarily the root of the tree).
 */
 double TreeLikelihood::calcLnLFromNode(
-  TreeNode & focalNode)		/**< is the node around which the likelihood will be computed */
+  TreeNode & focal_node)	/**< is the likelihood root (i.e. node around which the likelihood will be computed) */
 	{
 	double lnL;
 	if (no_data)
 		lnL =  0.0;
 	else
 		{
-		assert(!focalNode.IsTip());
-		NodeValidityChecker validFunctor = boost::bind(&TreeLikelihood::isValid, this, _1, _2);
-		effective_postorder_edge_iterator i(&focalNode, validFunctor);
-		effective_postorder_edge_iterator e;
-		for (; i != e; ++i)
-			refreshCLA(*i->first, i->second);
-		EdgeEndpoints edge(&focalNode, NULL);
+		assert(!focal_node.IsTip());
+
+		// valid_functor will return true if the conditional likelihood arrays pointing away from the
+		// focal_node are up-to-date, false if they need to be recomputed
+		NodeValidityChecker valid_functor = boost::bind(&TreeLikelihood::isValid, this, _1, _2);
+
+		// iter will visit nodes that need their CLAs updated centripetally (like a postorder traversal 
+		// but also coming from below the focal node). Each node visited is guaranteed by valid_functor 
+		// to need its CLA updated.
+		effective_postorder_edge_iterator iter(&focal_node, valid_functor);
+		effective_postorder_edge_iterator iter_end;
+		for (; iter != iter_end; ++iter)
+			refreshCLA(*iter->first, iter->second);
+
+		// We have now brought all neighboring CLAs up-to-date, so we can now call harvestLnL to
+		// compute the likelihood
+		EdgeEndpoints edge(&focal_node, NULL);
 		lnL = harvestLnL(edge);
 		}
 	++nevals;
 	return lnL;
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Calls calcLnLFromNode passing in the subroot (only child of root node) as the focal node.
-*/
-double TreeLikelihood::calcLnL(
-  TreeShPtr t)
-	{
-	TreeNode * nd = t->GetFirstPreorder();
-	assert(nd);
-	nd = nd->GetNextPreorder();
-	assert(nd);
-	return calcLnLFromNode(*nd);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -739,7 +766,7 @@ void TreeLikelihood::prepareForSimulation(
 		{
 		if (nd->IsTip())
 			{
-			TipData * td = 	new TipData(num_rates,	num_states);	//@POL should be using shared_ptr here?
+			TipData * td = 	new TipData(num_rates,	num_states, cla_pool);	//@POL should be using shared_ptr here?
 			nd->SetTipData(td, td_deleter);
 			}
 		else

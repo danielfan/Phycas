@@ -4,6 +4,7 @@
 #include "pyphy/likelihood/likelihood_models.hpp"
 #include "pyphy/likelihood/tree_likelihood.hpp"
 #include "pyphy/likelihood/tip_data.hpp"
+#include "pyphy/likelihood/cond_likelihood.hpp"
 
 namespace phycas
 {
@@ -15,14 +16,14 @@ namespace phycas
 TipData::TipData(
   unsigned nRates,		/**< is the number of relative rate categories */
   unsigned nStates,		/**< is the number of states in the model */
-  CondLikelihoodStorage & 			claPool)
+  CondLikelihoodStorage & cla_storage)
 	:
-	parCLAValid(false)
-	parValidCLA(NULL),
-	parCachedCLA(NULL),
+	//parCLAValid(false)
+	//parWorkingCLA(NULL),
+	//parCachedCLA(NULL),
 	state(-1), 
-	pMatrixTranspose(NULL)
-	claPool(claPool)
+	pMatrixTranspose(NULL),
+	cla_pool(cla_storage)
 	{
 	const unsigned nToStates = nStates;	// simulated data never has ambiguities, so num. rows in T matrix is just nStates
 	ownedPMatrices.Initialize(nRates, nToStates, nStates);
@@ -40,16 +41,16 @@ TipData::TipData(
   unsigned							nStates,			/**< is the number of states in the model */
   double * * *						pMatTranspose,		/**< is an alias to the rates by states by states pMatrix array, may be NULL */
   bool								managePMatrices, 	/**< if true, a 3D matrix will be allocated (if pMat is also NULL, the pMatrices will alias ownedPMatrices.ptr) */ 
-  CondLikelihoodStorage & 			claPool)
+  CondLikelihoodStorage & 			cla_storage)
 	:
-	parCLAValid(false),
-	parValidCLA(NULL),
-	parCachedCLA(NULL),
+	//parCLAValid(false),
+	//parWorkingCLA(NULL),
+	//parCachedCLA(NULL),
 	state(-1), 
 	state_list_pos(stateListPosVec), 
 	state_codes(stateCodesShPtr), 
 	pMatrixTranspose(pMatTranspose),
-	claPool(claPool)
+	cla_pool(cla_storage)
 	{
 	const unsigned nObservedStates = nStates + 1 + state_list_pos.size();
 	if (managePMatrices)
@@ -59,6 +60,18 @@ TipData::TipData(
 		if (pMatrixTranspose == NULL)
 			pMatrixTranspose = ownedPMatrices.ptr;
 		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns `parWorkingCLA' data member. If `parWorkingCLA' does not currently point to anything, a CondLikelihood 
+|	object is first retrieved from `cla_pool', so this function always returns a shared pointer that actually points to
+|	something.
+*/
+CondLikelihoodShPtr TipData::getParentalCondLikePtr()
+	{
+	if (!parWorkingCLA)
+		parWorkingCLA = cla_pool.getCondLikelihood();
+	return parWorkingCLA;
 	}
 
 }	// namespace phycas

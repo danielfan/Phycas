@@ -143,9 +143,6 @@
 				RelativePath="$(CIPRES_LIB_ROOT)\C++\CipresCommlib\CipresDataMatrixHelper.cpp">
 			</File>
 			<File
-				RelativePath="..\cond_likelihood.cpp">
-			</File>
-			<File
 				RelativePath="..\..\prob_dist\dcdflib\src\dcdflib.c">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -278,6 +275,9 @@
 			</File>
 			<File
 				RelativePath="..\cond_likelihood.hpp">
+			</File>
+			<File
+				RelativePath="..\cond_likelihood.inl">
 			</File>
 			<File
 				RelativePath="..\dls.h">

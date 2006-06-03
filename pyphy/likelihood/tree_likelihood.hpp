@@ -80,16 +80,13 @@ class TreeLikelihood
 		void							copyDataFromDiscreteMatrix(const CipresNative::DiscreteMatrix &);
 		void							copyDataFromSimData(SimDataShPtr sim_data);
 
-#if POLPY_NEWWAY
-		bool							invalidateNode(const TreeNode * refNd, const TreeNode * neighborCloserToEffectiveRoot);
+		bool							invalidateNode(TreeNode * ref_nd, TreeNode * neighbor_closer_to_likelihood_root);
 		void							invalidateAwayFromNode(TreeNode & focalNode);
 		bool							isValid(const TreeNode *focal, const TreeNode *avoidNd);
 		void 							refreshCLA(TreeNode & nd, const TreeNode * avoid);
 		double							calcLnLFromNode(TreeNode & focal_node);
 		double							calcLnL(TreeShPtr);
-#else
-		double							calcLnL(TreeShPtr);
-#endif
+
 		std::string						listPatterns(bool translate);
 		std::string						getStateStr(int8_t state) const;
 
@@ -156,12 +153,12 @@ class TreeLikelihood
 	};
 
 /// used to get access to a CLA to write it
-CondLikelihood * getCondLikePtr(EdgeEndpoints edge);
-CondLikelihood * getCondLikePtr(TreeNode *focalNd, TreeNode *avoid);
+CondLikelihoodShPtr getCondLikePtr(EdgeEndpoints edge);
+CondLikelihoodShPtr getCondLikePtr(TreeNode * focal_nd, TreeNode * avoid);
 
 /// read-only access to a CLA (must be valid already)
-const CondLikelihood * getValidCondLike(ConstEdgeEndpoints edge);
-const CondLikelihood * getValidCondLike(const TreeNode *focalNd, const TreeNode *avoid);
+ConstCondLikelihoodShPtr getValidCondLikePtr(ConstEdgeEndpoints edge);
+ConstCondLikelihoodShPtr getValidCondLikePtr(const TreeNode * focal_nd, const TreeNode * avoid);
 
 } // namespace phycas
 

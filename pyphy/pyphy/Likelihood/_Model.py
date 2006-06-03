@@ -359,7 +359,10 @@ class GTRModel(GTRModelBase):
     def setRelRates(self, rr):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Sets all six relative rates.
+        Sets all six relative rates. Supply the rates in a list or tuple of
+        length 6. The rates should be ordered as follows: rAC, rAG, rAT, rCG,
+        rCT, rGT. All rates should be greater than zero. They do not need to
+        be normalized in any way.
         
         """
         return GTRModelBase.setRelRates(self, rr)

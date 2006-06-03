@@ -18,17 +18,17 @@ InternalData::InternalData(
   unsigned				nStates,			/**< is the number of states in the model */
   double * * *			pMat,				/**< is an alias to the rates by states by states `pMatrix' array, and may be NULL */
   bool 					managePMatrices, 	/**< if true, a 3D matrix will be allocated (if `pMat' is also NULL, `pMatrices' will alias `ownedPMatrices.ptr') */ 
-  CondLikelihoodStorage & cla_pool)
+  CondLikelihoodStorage & cla_storage)
 	:
-	parCLAValid(false),
-	parWorkingCLA(NULL),	
-	parCachedCLA(NULL),
-	childCLAValid(false),
-	childWorkingCLA(NULL),
-	childCachedCLA(NULL),
+	//parCLAValid(false),
+	//parWorkingCLA(NULL),	
+	//parCachedCLA(NULL),
+	//childCLAValid(false),
+	//childWorkingCLA(NULL),
+	//childCachedCLA(NULL),
 	state(-1), 
 	pMatrices(pMat),
-	claPool(cla_pool)
+	cla_pool(cla_storage)
 	{
 	if (managePMatrices)
 		{

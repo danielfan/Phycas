@@ -19,6 +19,9 @@ class DiscreteMatrix;
 namespace phycas
 {
 class CondLikelihood;
+class CondLikelihoodStorage;
+typedef boost::shared_ptr<CondLikelihood> CondLikelihoodShPtr;
+typedef boost::shared_ptr<const CondLikelihood> ConstCondLikelihoodShPtr;
 class Tree;
 typedef std::vector<unsigned int> StateListPos;
 
@@ -144,27 +147,22 @@ class TipData
 		double * * *						getMutableTransposedPMatrices() const;
 		const int8_t *						getConstStateCodes() const;
 
-		CondLikelihood *				getParentalCondLikePtr();
-		const CondLikelihood *			getValidParentalCondLike() const
-			{
-			assert(parCLAValid);
-			TipData * t = const_cast<TipData *>(this);
-			return t->getParentalCondLikePtr();
-			}
+		CondLikelihoodShPtr					getParentalCondLikePtr();
+		ConstCondLikelihoodShPtr			getValidParentalCondLikePtr() const;
 
 	private:
 
-											TipData(unsigned nRates, unsigned nStates, CondLikelihoodStorage & claPool);
-											TipData(const std::vector<unsigned int> & stateListPosVec, boost::shared_array<const int8_t> stateCodesShPtr, unsigned nRates, unsigned nStates, double * * * pMatTranspose, bool managePMatrices, CondLikelihoodStorage & claPool);
+											TipData(unsigned nRates, unsigned nStates, CondLikelihoodStorage & cla_storage);
+											TipData(const std::vector<unsigned int> & stateListPosVec, boost::shared_array<const int8_t> stateCodesShPtr, unsigned nRates, unsigned nStates, double * * * pMatTranspose, bool managePMatrices, CondLikelihoodStorage & cla_storage);
 		const StateListPos &				getConstStateListPos() const;
 
 		friend void							calcPMatTranspose(const TreeLikelihood & treeLikeInfo, const TipData & tipData, double edgeLength);
 	
 	private:
 											// conditional likelihood of the rest of the tree
-		bool								parCLAValid;
-		CondLikelihood *					parValidCLA; 	/**< valid conditional likelihood for this a node and everything above it */
-		CondLikelihood *					parCachedCLA; 	/**< cached */
+		//bool								parCLAValid;
+		CondLikelihoodShPtr					parWorkingCLA; 	/**< conditional likelihood array for parent and beyond (valid if it points to something, invalid otherwise) */
+		CondLikelihoodShPtr					parCachedCLA; 	/**< parental conditional likelihood array is stored here to make reverting MCMC moves cheap */
 		
 
 		int8_t								state;				/**< Used in simulation to temporarily store the state for one character */
@@ -172,7 +170,7 @@ class TipData
 		boost::shared_array<const int8_t>	state_codes; 		/**< Array of tip-specific state codes */
 		mutable double * * *				pMatrixTranspose;	/**< The (rate category) x (stateCode) x (ancestor state) augmented transposed transition probability matrices (points to `ownedPMatrices' if the constructor parameter `managePMatrices' parameter is true) */
 		ScopedThreeDMatrix<double>			ownedPMatrices;		/**< Vector of transposed transition matrices */
-		CondLikelihoodStorage & 			claPool;
+		CondLikelihoodStorage & 			cla_pool;			/**< Source of CondLikelihood objects if needed */
 	};
 	
 typedef boost::shared_ptr<TipData> TipDataShPtr;
@@ -181,6 +179,20 @@ typedef std::vector<TipDataShPtr> VecTipDataShPtr;
 // *********************************************************************************
 // ***** TipData inlines ***********************************************************
 // *********************************************************************************
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns `parWorkingCLA' data member as a shared pointer to const CondLikelihood. If `parWorkingCLA' does not 
+|	currently point to anything, a CondLikelihood object is first retrieved from `cla_pool', so this function always 
+|	returns a shared pointer that actually points to something.
+*/
+inline ConstCondLikelihoodShPtr	TipData::getValidParentalCondLikePtr() const
+	{
+	//assert(parCLAValid);
+	//TipData * t = const_cast<TipData *>(this);
+	//return t->getParentalCondLikePtr();
+	assert(parWorkingCLA);
+	return ConstCondLikelihoodShPtr(parWorkingCLA);
+	}
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Accessor function that returns the data member `pMatrixTranspose' (const).

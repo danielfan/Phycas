@@ -10,7 +10,8 @@
 
 namespace phycas
 {
-typedef boost::function< bool (const TreeNode *, const TreeNode *) > NodeValidityChecker;
+//@POL-NESCENT Mark, I removed const from the template parameters because some uses of the iterator change one of the nodes
+typedef boost::function< bool (TreeNode *, TreeNode *) > NodeValidityChecker;
 		
 /*----------------------------------------------------------------------------------------------------------------------
 |	Iterates through EdgeEndpoints. The ordering of nodes returned is "post-order" (post-order if the node used to 

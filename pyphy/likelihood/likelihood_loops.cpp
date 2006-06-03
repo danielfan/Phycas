@@ -190,10 +190,10 @@ void TreeLikelihood::calcCLATwoTips(
 |	node for a right child.
 */
 void TreeLikelihood::calcCLAOneTip(
-  CondLikelihood & 		condLike,
-  const TipData &		leftChild,
-  ConstPMatrices		rightPMatrices,
-  const CondLikelihood &rightCondLike)
+  CondLikelihood &			condLike,
+  const TipData &			leftChild,
+  ConstPMatrices			rightPMatrices,
+  const CondLikelihood &	rightCondLike)
 	{
 	// Get transition probability matrices for the left and right child nodes of this node
 	// These are 3D because there are potentially several 2D transition matrices, one
@@ -238,11 +238,11 @@ void TreeLikelihood::calcCLAOneTip(
 |	Computes the conditional likelihood arrays at an internal node having two internal nodes for children.
 */
 void TreeLikelihood::calcCLANoTips(
-  CondLikelihood &		condLike,
-  ConstPMatrices 		leftPMatrices,
-  const CondLikelihood &leftCondLike, 
-  ConstPMatrices 		rightPMatrices,
-  const CondLikelihood &rightCondLike)
+  CondLikelihood &			condLike,
+  ConstPMatrices 			leftPMatrices,
+  const CondLikelihood &	leftCondLike, 
+  ConstPMatrices 			rightPMatrices,
+  const CondLikelihood &	rightCondLike)
 	{
 	
 	// This function updates the conditional likelihood array of a node assuming that the
@@ -330,9 +330,9 @@ void TreeLikelihood::conditionOnAdditionalTip(
 |	TreeLikelihood::calcCLATwoTips, TreeLikelihood::calcCLAOneTip or TreeLikelihood::calcCLANoTips.
 */
 void TreeLikelihood::conditionOnAdditionalInternal(
-  CondLikelihood &		condLike,
-  ConstPMatrices		childPMatrices,
-  const CondLikelihood &childCondLike)
+  CondLikelihood &			condLike,
+  ConstPMatrices			childPMatrices,
+  const CondLikelihood &	childCondLike)
 	{
 	double * cla = condLike.getCLA();
 	const double * childCLA = childCondLike.getCLA();
@@ -379,32 +379,45 @@ void TreeLikelihood::conditionOnAdditionalInternal(
 |>	
 */
 double TreeLikelihood::harvestLnL(
-   EdgeEndpoints & focalEdge)
+   EdgeEndpoints & focal_edge)
 	{
-	assert(focalEdge.getFocalNode() != NULL);
-	TreeNode * focalNode = focalEdge.getFocalNode();
-	if (focalEdge.getFocalNeighbor() == NULL)
-		focalEdge.setFocalNeighbor(focalNode->GetParent());
-	TreeNode * focalNeighbor = focalEdge.getFocalNeighbor();
-	assert(focalNeighbor != NULL);
-	refreshCLA(*focalNode, focalNeighbor);
-	ConstEdgeEndpoints c(focalNode, focalNeighbor);
+	// Get the focal node
+	TreeNode * focal_node = focal_edge.getFocalNode();
+	assert(focal_node != NULL);
+
+	// If the focal neighbor is NULL, let the parent of the focal node be the focal neighbor
+	TreeNode * focal_neighbor = focal_edge.getFocalNeighbor();
+	if (focal_neighbor == NULL)
+		{
+		focal_neighbor = focal_node->GetParent();
+		focal_edge.setFocalNeighbor(focal_neighbor);
+		}
+	assert(focal_neighbor != NULL);
+
+	// Recompute the conditional likelihood array of the focal node
+	// The focal neighbor is closer to the likelihood root than the focal_node
+	refreshCLA(*focal_node, focal_neighbor);
+	ConstEdgeEndpoints c(focal_node, focal_neighbor);
 	return harvestLnLFromValidEdge(c);
 	}
 
+/*----------------------------------------------------------------------------------------------------------------------
+|	Calculates log-likelihood using the focal node of `focal_edge' as the likelihood root. Assumes that all the 
+|	necessary conditional likelihood arrays that are needed are up-to-date.
+*/
 double TreeLikelihood::harvestLnLFromValidEdge(
-   ConstEdgeEndpoints & focalEdge)
+   ConstEdgeEndpoints & focal_edge)	/**< is the edge containing the focal node that will serve as the likelihood root */	
 	{
-	assert(focalEdge.getFocalNode() != NULL);
-	assert(focalEdge.getFocalNeighbor() != NULL);
-	const TreeNode * focalNeighbor = focalEdge.getFocalNeighbor();
-	const TreeNode * focalNode = focalEdge.getFocalNode();
+	assert(focal_edge.getFocalNode() != NULL);
+	assert(focal_edge.getFocalNeighbor() != NULL);
+	const TreeNode * focalNeighbor = focal_edge.getFocalNeighbor();
+	const TreeNode * focalNode = focal_edge.getFocalNode();
 	assert(focalNode->IsInternal());
-	const TreeNode * actualChild = focalEdge.getActualChild();
+	const TreeNode * actualChild = focal_edge.getActualChild();
 	const double focalEdgeLen = actualChild->GetEdgeLen();
 	
-	const CondLikelihood * focalCondLike = getCondLike(focalEdge);
-	assert(focalCondLike != NULL);
+	ConstCondLikelihoodShPtr focalCondLike = getValidCondLikePtr(focal_edge);
+	assert(focalCondLike);
 	const LikeFltType * focalNodeCLA = focalCondLike->getCLA(); //PELIGROSO
 	assert(focalNodeCLA != NULL);
 	const unsigned singleRateCLALength = num_patterns*num_states;
@@ -457,7 +470,7 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 		calcPMat(neighborID->getMutablePMatrices(), focalEdgeLen);
 		const double * const * const * childPMatrices = neighborID->getConstPMatrices();
 		
-		const CondLikelihood * neighborCondLike = getCondLike(focalNeighbor, focalNode); // 
+		ConstCondLikelihoodShPtr neighborCondLike = getValidCondLikePtr(focalNeighbor, focalNode); // 
 		const double * focalNeighborCLA = neighborCondLike->getCLA(); //PELIGROSO
 		std::vector<const double *> focalNdCLAPtr(num_rates);
 		std::vector<const double *> focalNeighborCLAPtr(num_rates);

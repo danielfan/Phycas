@@ -75,36 +75,26 @@ class InternalData
 		double * * *					getMutablePMatrices() const;
 		const double * const * const *	getConstPMatrices() const;
 		
-		CondLikelihood *				getChildCondLikePtr();
-		CondLikelihood *				getParentalCondLikePtr();
-		const CondLikelihood *			getValidChildCondLike() const
-			{
-			assert(childCLAValid);
-			InternalData * t = const_cast<InternalData *>(this);
-			return t->getChildCondLikePtr();
-			}
-		const CondLikelihood *			getValidParentalCondLike() const
-			{
-			assert(parCLAValid);
-			InternalData * t = const_cast<InternalData *>(this);
-			return t->getParentalCondLikePtr();
-			}
+		CondLikelihoodShPtr				getChildCondLikePtr();
+		CondLikelihoodShPtr				getParentalCondLikePtr();
+		ConstCondLikelihoodShPtr		getValidChildCondLikePtr() const;
+		ConstCondLikelihoodShPtr		getValidParentalCondLikePtr() const;
 		
 	private:
-										InternalData(unsigned nPatterns, unsigned nRates, unsigned nStates, double * * * pMatrices, bool managePMatrices, CondLikelihoodStorage & claPool);
-		//CLA's for an edge from a Node to its parent are stored 
-		//	in the Node's InternalData (or TipData).
-		bool							parCLAValid;	/**< true if parWorkingCLA is valid */
-		CondLikelihood *				parWorkingCLA; 	/**< valid conditional likelihood for this a node and everything above it */
-		CondLikelihood *				parCachedCLA; 	/**< cached */
-		bool							childCLAValid;	/**< true if childWorkingCLA is valid. */
-		CondLikelihood *				childWorkingCLA;/**< valid conditional likelihood for all data above this node */ 
-		CondLikelihood *				childCachedCLA; /**< cached conditional likelihood for all data above this node */
+										InternalData(unsigned nPatterns, unsigned nRates, unsigned nStates, double * * * pMatrices, bool managePMatrices, CondLikelihoodStorage & cla_storage);
+
+		//CLA's for an edge from a node to its parent are stored in the node's InternalData (or TipData).
+		//bool							parCLAValid;	/**< true if parWorkingCLA is valid */
+		CondLikelihoodShPtr				parWorkingCLA; 	/**< conditional likelihood array for the parent node and beyond (valid if it points to something, invalid otherwise) */
+		CondLikelihoodShPtr				parCachedCLA; 	/**< parental conditional likelihood array is stored here to make reverting MCMC moves cheap */
+		//bool							childCLAValid;	/**< true if childWorkingCLA is valid. */
+		CondLikelihoodShPtr				childWorkingCLA;/**< conditional likelihood array for this node and above (valid if it points to something, invalid otherwise) */ 
+		CondLikelihoodShPtr				childCachedCLA; /**< filial conditional likelihood array is stored here to make reverting MCMC moves cheap */
 		
 		int8_t							state;			/**< Used in simulation to temporarily store the state for one character */
 		mutable double * * *			pMatrices; 		/**< Either an alias to a pMatrix array or an alias to ownedPMatrices.ptr */
 		ScopedThreeDMatrix<double>		ownedPMatrices; /**< Transition probability matrices for this interior node  */
-		CondLikelihoodStorage &			claPool;		/**< source of new CondLikelihoods */
+		CondLikelihoodStorage &			cla_pool;		/**< CondLikelihood object storage facility */
 	};
 	
 typedef boost::shared_ptr<InternalData>			InternalDataShPtr;
@@ -125,9 +115,61 @@ inline double * * * InternalData::getPMatrices()
 /*----------------------------------------------------------------------------------------------------------------------
 |	Accessor function that returns the data member `pMatrices'.
 */
+inline double * * * InternalData::getMutablePMatrices() const
+	{
+	return pMatrices;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns the data member `pMatrices'.
+*/
 inline const double * const * const * InternalData::getConstPMatrices() const
 	{
 	return pMatrices;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns `childWorkingCLA' data member. If `childWorkingCLA' does not currently point to anything, a CondLikelihood 
+|	object is first retrieved from `cla_pool', so this function always returns a shared pointer that actually points to
+|	something.
+*/
+inline CondLikelihoodShPtr InternalData::getChildCondLikePtr()
+	{
+	if (!childWorkingCLA)
+		childWorkingCLA = cla_pool.getCondLikelihood();
+	return childWorkingCLA;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns `parWorkingCLA' data member. If `parWorkingCLA' does not currently point to anything, a CondLikelihood 
+|	object is first retrieved from `cla_pool', so this function always returns a shared pointer that actually points to
+|	something.
+*/
+inline CondLikelihoodShPtr InternalData::getParentalCondLikePtr()
+	{
+	if (!parWorkingCLA)
+		parWorkingCLA = cla_pool.getCondLikelihood();
+	return parWorkingCLA;
+	}
+
+inline ConstCondLikelihoodShPtr InternalData::getValidChildCondLikePtr() const
+	{
+	//@POL-NESCENT Mark, I don't understand this - why not just assert that childWorkingCLA actually 
+	// points to a CondLikelihood object, then return childWorkingCLA directly?
+	//assert(childCLAValid);
+	//InternalData * t = const_cast<InternalData *>(this);
+	//return t->getChildCondLikePtr();
+	assert(childWorkingCLA);
+	return ConstCondLikelihoodShPtr(childWorkingCLA);
+	}
+
+inline ConstCondLikelihoodShPtr InternalData::getValidParentalCondLikePtr() const
+	{
+	//assert(parCLAValid);
+	//InternalData * t = const_cast<InternalData *>(this);
+	//return t->getParentalCondLikePtr();
+	assert(parWorkingCLA);
+	return ConstCondLikelihoodShPtr(parWorkingCLA);
 	}
 
 } // namespace phycas

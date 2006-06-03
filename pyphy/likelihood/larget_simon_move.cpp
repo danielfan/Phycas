@@ -130,10 +130,9 @@ void LargetSimonMove::starTreeProposeNewState()
 	double mstar	= m*std::exp(lambda*(rng->Uniform(FILE_AND_LINE) - 0.5));
 	orig_node->SetEdgeLen(mstar);
 
-	//@POL pretty sure the edge orientations are not correct yet
+	//@POL-NESCENT pretty sure the edge orientations are not correct yet
 	likelihood->invalidateAwayFromNode(*orig_node);
-	likelihood->invalidateEdge(EdgeEndpoints(orig_node, orig_node->GetParent()));
-	//orig_node->InvalidateAttrDown(true, orig_node->GetParent());
+	likelihood->invalidateNode(orig_node, orig_node->GetParent());
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -197,7 +196,9 @@ void LargetSimonMove::defaultProposeNewState()
 	//
 	unsigned ypos = rng->SampleUInt(numAcceptableNodes);
 	unsigned i = 0;
-	for (ndY->GetFirstPreorder(); ndY != NULL; ndY = ndY->GetNextPreorder())
+	//@POL-NESCENT how did line below ever work?
+	//for (ndY->GetFirstPreorder(); ndY != NULL; ndY = ndY->GetNextPreorder())
+	for (ndY = tree->GetFirstPreorder(); ndY != NULL; ndY = ndY->GetNextPreorder())
 		{
 		if (ndY->IsInternal() && !ndY->GetParentConst()->IsRoot())
 			{
@@ -358,14 +359,11 @@ void LargetSimonMove::defaultProposeNewState()
 		topol_changed = true;
 		}
 
-	//@POL pretty sure the edge orientations are not correct yet
+	//@POL-NESCENT pretty sure the edge orientations are not correct yet
 	likelihood->invalidateAwayFromNode(*ndX);
-	likelihood->invalidateEdge(EdgeEndpoints(ndX, ndX->GetParent()));
-	likelihood->invalidateEdge(EdgeEndpoints(ndY, ndY->GetParent()));
-	likelihood->invalidateEdge(EdgeEndpoints(ndZ, ndZ->GetParent()));
-	//ndX->InvalidateAttrDown(true, ndBase);
-	//ndY->InvalidateAttrDown(true, ndBase);
-	//ndZ->InvalidateAttrDown(true, ndBase);
+	likelihood->invalidateNode(ndX, ndX->GetParent());
+	likelihood->invalidateNode(ndY, ndY->GetParent());
+	likelihood->invalidateNode(ndZ, ndZ->GetParent());
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -378,10 +376,9 @@ void LargetSimonMove::revert()
 		{
 		orig_node->SetEdgeLen(orig_edge_len);
 
-		//@POL pretty sure the edge orientations are not correct yet
+		//@POL-NESCENT pretty sure the edge orientations are not correct yet
 		likelihood->invalidateAwayFromNode(*orig_node);
-		likelihood->invalidateEdge(EdgeEndpoints(orig_node, orig_node->GetParent()));
-		//orig_node->InvalidateAttrDown(true, orig_node->GetParent());
+		likelihood->invalidateNode(orig_node, orig_node->GetParent());
 		}
 	else
 		{
@@ -419,14 +416,11 @@ void LargetSimonMove::revert()
 		ndY->SetEdgeLen(origY);
 		ndZ->SetEdgeLen(origZ);
 
-		//@POL pretty sure the edge orientations are not correct yet
+		//@POL-NESCENT pretty sure the edge orientations are not correct yet
 		likelihood->invalidateAwayFromNode(*ndX);
-		likelihood->invalidateEdge(EdgeEndpoints(ndX, ndX->GetParent()));
-		likelihood->invalidateEdge(EdgeEndpoints(ndY, ndY->GetParent()));
-		likelihood->invalidateEdge(EdgeEndpoints(ndZ, ndZ->GetParent()));
-		//ndX->InvalidateAttrDown(true, ndBase);
-		//ndY->InvalidateAttrDown(true, ndBase);
-		//ndZ->InvalidateAttrDown(true, ndBase);
+		likelihood->invalidateNode(ndX, ndX->GetParent());
+		likelihood->invalidateNode(ndY, ndY->GetParent());
+		likelihood->invalidateNode(ndZ, ndZ->GetParent());
 		}
 
 	reset();

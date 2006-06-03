@@ -2,35 +2,34 @@ subproject likelihood ;
 import python ;
 
 extension _LikelihoodBase
-:	../phylogeny/basic_tree.cpp 
+:	$(PHYCAS_ROOT)/pyphy/prob_dist/basic_lot.cpp
+	../phylogeny/basic_tree.cpp 
 	../phylogeny/basic_tree_node.cpp 
 	../common/boost_assertion_failed.cpp
-	$(PHYCAS_ROOT)/pyphy/prob_dist/dcdflib/src/dcdflib.c
-	$(PHYCAS_ROOT)/pyphy/prob_dist/dcdflib/src/ipmpar.c
-	$(CIPRES_LIB_ROOT)/C++/CipresCommlib/CipresDataMatrixHelper.cpp
-	cond_likelihood.cpp
-	internal_data.cpp 
-	larget_simon_move.cpp 
-	topo_prior_calculator.cpp 
-	edge_move.cpp 
 	bush_move.cpp 
-	ncat_move.cpp 
+	$(CIPRES_LIB_ROOT)/C++/CipresCommlib/CipresDataMatrixHelper.cpp
+	$(PHYCAS_ROOT)/pyphy/prob_dist/dcdflib/src/dcdflib.c
+	edge_move.cpp 
+	internal_data.cpp 
+	$(PHYCAS_ROOT)/pyphy/prob_dist/dcdflib/src/ipmpar.c
+	larget_simon_move.cpp 
 	likelihood_loops.cpp 
 	likelihood_models.cpp 
 	likelihood_pymod.cpp 
-	$(PHYCAS_ROOT)/pyphy/prob_dist/basic_lot.cpp
+	linalg.c
 	mcmc_chain_manager.cpp 
-	mcmc_updater.cpp 
 	mcmc_param.cpp 
+	mcmc_updater.cpp 
+	ncat_move.cpp 
+	../include/num_util.cpp
 	../common/pyphy_string.cpp 
+	q_matrix.cpp
 	sim_data.cpp 
 	$(PHYCAS_ROOT)/phycas/modules/mcmc/slice_sampler.cpp
 	tip_data.cpp 
+	topo_prior_calculator.cpp 
 	tree_likelihood.cpp 
 	../phylogeny/tree_manip.cpp 
-	../include/num_util.cpp
-	linalg.c
-	q_matrix.cpp
 
     # requirements and dependencies for Boost.Python extensions
     <template>@boost/libs/python/build/extension
