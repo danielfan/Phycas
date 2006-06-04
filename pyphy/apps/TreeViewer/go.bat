@@ -1,4 +1,4 @@
 python TreeViewer.py
-pause
+
 
 
