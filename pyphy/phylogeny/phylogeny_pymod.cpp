@@ -15,6 +15,9 @@
 #include "pyphy/phylogeny/tree_manip.hpp"
 //#include "ncl/misc/string_extensions.hpp"
 //#include "ncl/nxs_exception.hpp"
+#include "pyphy/likelihood/cond_likelihood.hpp"
+#include "pyphy/likelihood/tip_data.hpp"
+#include "pyphy/likelihood/internal_data.hpp"
 #include <boost/python.hpp>
 
 #include "pyphy/phylogeny/xphylogeny.hpp"
@@ -30,7 +33,19 @@ void translateXPhylogeny(const XPhylogeny &e)
 
 BOOST_PYTHON_MODULE(_Phylogeny)
 {
+	// These function pointers are used to distinguish const from non-const member functions with the same name
+	// see http://www.boost.org/libs/python/doc/tutorial/doc/html/python/functions.html#python.overloading
+	const TipData *			(TreeNode::*GetTipDataConst)() const		= &TreeNode::GetTipData;
+	const InternalData *	(TreeNode::*GetInternalDataConst)()	const	= &TreeNode::GetInternalData;
+
 	class_<TreeNode>("TreeNodeBase", no_init)
+		.def("getX", &TreeNode::GetX)
+		.def("getY", &TreeNode::GetY)
+		.def("setX", &TreeNode::SetX)
+		.def("setY", &TreeNode::SetY)
+		.def("isSelected", &TreeNode::IsSelected)
+		.def("selectNode", &TreeNode::SelectNode)
+		.def("unselectNode", &TreeNode::UnselectNode)
 		.def("isRoot", &TreeNode::IsRoot)
 		.def("isTip", &TreeNode::IsTip)
 		.def("isInternal", &TreeNode::IsInternal)
@@ -42,6 +57,9 @@ BOOST_PYTHON_MODULE(_Phylogeny)
 		.def("getEdgeLen", &TreeNode::GetEdgeLen)
 		.def("setEdgeLen", &TreeNode::SetEdgeLen)
 		.def("getNextPreorder", &TreeNode::GetNextPreorder, return_internal_reference<>())
+		.def("getNextPostorder", &TreeNode::GetNextPostorder, return_internal_reference<>())
+		.def("getTipData", GetTipDataConst, return_internal_reference<>())
+		.def("getInternalData", GetInternalDataConst, return_internal_reference<>())
 		;
 
 	class_<Tree, boost::shared_ptr<Tree> >("TreeBase")
@@ -50,6 +68,7 @@ BOOST_PYTHON_MODULE(_Phylogeny)
 		.def("getNObservables", &Tree::GetNObservables)
 		.def("getNInternals", &Tree::GetNInternals)
 		.def("getFirstPreorder", &Tree::GetFirstPreorder, return_internal_reference<>())
+		.def("getFirstPostorder", &Tree::GetLastPreorder, return_internal_reference<>())
 		.def("isRooted", &Tree::IsRooted)
 		.def("hasEdgeLens", &Tree::HasEdgeLens)
 		.def("clear", &Tree::Clear)
@@ -65,6 +84,7 @@ BOOST_PYTHON_MODULE(_Phylogeny)
 		.def("refreshPreorder", &Tree::RefreshPreorder)
 		.def("selectAllNodes", &Tree::SelectAllNodes)
 		.def("unselectAllNodes", &Tree::UnselectAllNodes)
+		.def("calcTotalHeight", &Tree::calcTotalHeight)
 		.def("here", &Tree::DebugHere)
 		;
 

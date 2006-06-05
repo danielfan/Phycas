@@ -67,7 +67,7 @@ void GTRRateParam::setModel(ModelShPtr m)
 	{
 	MCMCUpdater::setModel(m);
 	Model * p = m.get();
-	gtr = dynamic_cast<GTR *>(p);	// forces inclusion of "pyphy/likelihood/likelihood_models.hpp"
+	gtr = dynamic_cast<GTR *>(p);	// forces inclusion of "pyphy/models/likelihood_models.hpp"
 
 	// If tempted to move this to mcmc_param.inl, see comment in KappaParam::setModel function
 	}

@@ -169,7 +169,7 @@ class Tree(TreeBase):
         """
         return TreeBase.getNInternals(self)
 
-    def getNLeaves(self):
+    def getNTips(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Returns the number of leaf nodes currently composing the tree (i.e.
@@ -189,7 +189,7 @@ class Tree(TreeBase):
         4
 
         """
-        return TreeBase.getNLeaves(self)
+        return TreeBase.getNTips(self)
 
     def getNNodes(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -391,3 +391,31 @@ class Tree(TreeBase):
         """
         return TreeBase.unselectAllNodes(self)
 
+    def hasEdgeLens(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns True if edge lengths have been specified for the tree, False
+        otherwise.
+
+        """
+        return TreeBase.hasEdgeLens(self)
+
+    def getFirstPreorder(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns the root node. Use the TreeNode getNextPreorder to walk
+        through the other nodes in the tree in preorder fashion.
+
+        """
+        return TreeBase.getFirstPreorder(self)
+
+    def getFirstPostorder(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns the node at the upper right corner of the tree (the last
+        node in the preorder sequence, which is also the first node in the
+        postorder sequence). Use the TreeNode getNextPostorder to walk
+        through the other nodes in the tree in postorder fashion.
+
+        """
+        return TreeBase.getFirstPostorder(self)

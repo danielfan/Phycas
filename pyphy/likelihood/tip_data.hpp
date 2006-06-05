@@ -150,6 +150,8 @@ class TipData
 		CondLikelihoodShPtr					getParentalCondLikePtr();
 		ConstCondLikelihoodShPtr			getValidParentalCondLikePtr() const;
 
+		bool								parentalCLAValid() const;
+
 	private:
 
 											TipData(unsigned nRates, unsigned nStates, CondLikelihoodStorage & cla_storage);
@@ -233,6 +235,15 @@ inline const int8_t * TipData::getConstStateCodes() const
 inline const StateListPos & TipData::getConstStateListPos() const
 	{
 	return state_list_pos;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns true if `parWorkingCLA' data member actually points to something, which means that the parental CLA is 
+|	valid. Returns false if `parWorkingCLA' does not point to a CondLikelihood object.
+*/
+inline bool TipData::parentalCLAValid() const
+	{
+	return parWorkingCLA;
 	}
 
 } // namespace phycas

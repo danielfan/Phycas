@@ -203,6 +203,9 @@
 				RelativePath="..\mcmc_updater.cpp">
 			</File>
 			<File
+				RelativePath="..\model_pymod.cpp">
+			</File>
+			<File
 				RelativePath="..\ncat_move.cpp">
 			</File>
 			<File

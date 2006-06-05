@@ -374,6 +374,49 @@ bool isValid(const TreeNode * refNd, const TreeNode * neighborCloserToEffectiveR
 #endif
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Computes and returns the longest path from the root to any leaf node in the tree.
+*/
+double Tree::calcTotalHeight()
+	{
+	assert(GetFirstPreorder() != NULL);
+	assert(GetFirstPreorder()->GetNextPreorder() != NULL);
+
+	// Create a map (node number -> height) that will keep track of the maximum height above each internal node
+	typedef std::map<unsigned, double> HeightMap;
+	HeightMap hmap;
+
+	// Walk through nodes in postorder fashion, for each internal node adding an entry to hmap
+	for (TreeNode * nd = GetLastPreorder(); nd != NULL; nd = nd->GetNextPostorder())
+		{
+		if (nd->IsInternal())
+			{
+			// Figure out which path above this node is greatest and insert that value into hmap
+			double max_child_height = 0.0;
+			for (TreeNode * child = nd->GetLeftChild(); child != NULL; child = child->GetRightSib())
+				{
+				// height for child is really child's edge length plus the maximum height above child,
+				// which is stored in hmap if child is an internal node
+				double h = (hasEdgeLens ? child->GetEdgeLen() : 1.0);
+				unsigned child_nodenum = child->GetNodeNumber();
+				if (child->IsInternal())
+					h += hmap[child_nodenum];
+				if (h > max_child_height)
+					max_child_height = h;
+				}
+			unsigned nd_nodenum = nd->GetNodeNumber();
+			hmap.insert(HeightMap::value_type(nd_nodenum,max_child_height));
+			}
+		}
+
+	// Maximum tree height is now equal to the maximum height above the subroot plus the subroot's edge length
+	TreeNode * subroot = GetFirstPreorder()->GetNextPreorder();
+	unsigned subroot_nodenum = subroot->GetNodeNumber();
+	double subroot_height = (hasEdgeLens ? subroot->GetEdgeLen() : 1.0);
+	double height_above_subroot = hmap[subroot_nodenum];
+	return subroot_height + height_above_subroot;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Walks tree using preorder pointers, returning a string documenting the journey. For this tree description:
 |	"(c:0.4,d:0.5,(a:0.1, b:0.2):0.3);", the returned string would be: "[1] -> c (0) -> d (1) -> [0] -> a (2) -> b (3)"
 |	assuming that the `preorder' parameter was true. Note that node names are output if they were supplied, the internal
@@ -557,7 +600,7 @@ void Tree::BuildFromString(const std::string &newick)
 
 	//std::cerr << "About to build this tree: " << newick << std::endl; //POL-debug
 
-	// Stow away any existing nodes and reset data members
+	// Stow away any existing nodes, reset nTips and nInternals to 0, and reset data members
 	//
 	Clear();
 

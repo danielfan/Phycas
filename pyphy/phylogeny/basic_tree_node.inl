@@ -16,6 +16,8 @@ inline TreeNode::TreeNode()
   nextPreorder(0),
   prevPreorder(0),
   observable(false),
+  x(0.0),
+  y(0.0),
   selected(false),
   tipData(0),
   tipDataDeleter(0),
@@ -43,6 +45,8 @@ inline void TreeNode::Clear()
 	edgeLen			= TreeNode::edgeLenInitValue;
 	nodeName		= "";
 	observable		= false;
+	x				= 0.0;
+	y				= 0.0;
 	selected		= false;
 	}
 
@@ -53,6 +57,40 @@ inline TreeNode::~TreeNode()
 	{
 	ResetInternalData();
 	ResetTipData();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the current value of the data member `x'.
+*/
+inline float TreeNode::GetX()
+	{
+	return x;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `x' to the value `xx'.
+*/
+inline void TreeNode::SetX(
+  float xx)						/**< is the new x-coordinate */
+	{
+	x = xx;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the current value of the data member `y'.
+*/
+inline float TreeNode::GetY()
+	{
+	return y;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `y' to the value `yy'.
+*/
+inline void TreeNode::SetY(
+  float yy)						/**< is the new y-coordinate */
+	{
+	y = yy;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

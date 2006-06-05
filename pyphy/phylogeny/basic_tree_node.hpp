@@ -47,24 +47,28 @@ class TreeNode
 
 		// Accessors
 		//
-		const std::string &	GetNodeName() const;
-		unsigned			GetNodeNumber() const;
-		TreeNode *			GetLeftChild();
-		const TreeNode *	GetLeftChildConst() const;
-		TreeNode *			GetRightSib();
-		const TreeNode *	GetRightSibConst() const;
-		TreeNode *			GetParent();
-		const TreeNode *	GetParentConst() const;
-		TreeNode *			GetNextPreorder();
-		TreeNode *			GetNextPostorder();
-		double				GetEdgeLen() const;
-		TipData *			GetTipData();
-		InternalData *		GetInternalData();
-		const TipData *		GetTipData() const;
-		const InternalData *GetInternalData() const;
+		float					GetX();
+		float					GetY();
+		const std::string &		GetNodeName() const;
+		unsigned				GetNodeNumber() const;
+		TreeNode *				GetLeftChild();
+		const TreeNode *		GetLeftChildConst() const;
+		TreeNode *				GetRightSib();
+		const TreeNode *		GetRightSibConst() const;
+		TreeNode *				GetParent();
+		const TreeNode *		GetParentConst() const;
+		TreeNode *				GetNextPreorder();
+		TreeNode *				GetNextPostorder();
+		double					GetEdgeLen() const;
+		TipData *				GetTipData();
+		InternalData *			GetInternalData();
+		const TipData *			GetTipData() const;
+		const InternalData *	GetInternalData() const;
 
 		// Modifiers
 		//
+		void			SetX(float xx);
+		void			SetY(float yy);
 		void			SelectNode();
 		void			UnselectNode();
 		void			SetEdgeLen(double x);
@@ -99,6 +103,9 @@ class TreeNode
 		TreeNode *			nextPreorder;			/**< points to next node in preorder sequence */
 		TreeNode *			prevPreorder;			/**< points to previous node in preorder sequence */
 		bool				observable;				/**< true if data could be observed for this node */
+
+		float				x;						/**< x-coordinate for purposes of drawing the tree */
+		float				y;						/**< y-coordinate for purposes of drawing the tree */
 		bool				selected;				/**< can be used anytime a node needs to be selected for some purpose */
 
 		// Pointers to structures used by likelihood calculation routines. 

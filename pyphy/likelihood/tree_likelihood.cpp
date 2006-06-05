@@ -564,6 +564,9 @@ double TreeLikelihood::calcLnL(
 	nd = nd->GetNextPreorder();
 	assert(nd);
 
+	// Invalidate away from subroot (to avoid recalculating all CLAs, call calcLnLFromNode instead)
+	invalidateAwayFromNode(*nd);
+
 	// Calculate log-likelihood with the subroot node focal
 	return calcLnLFromNode(*nd);
 	}

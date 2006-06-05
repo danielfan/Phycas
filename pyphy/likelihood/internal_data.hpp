@@ -80,6 +80,9 @@ class InternalData
 		ConstCondLikelihoodShPtr		getValidChildCondLikePtr() const;
 		ConstCondLikelihoodShPtr		getValidParentalCondLikePtr() const;
 		
+		bool							filialCLAValid() const;
+		bool							parentalCLAValid() const;
+
 	private:
 										InternalData(unsigned nPatterns, unsigned nRates, unsigned nStates, double * * * pMatrices, bool managePMatrices, CondLikelihoodStorage & cla_storage);
 
@@ -170,6 +173,24 @@ inline ConstCondLikelihoodShPtr InternalData::getValidParentalCondLikePtr() cons
 	//return t->getParentalCondLikePtr();
 	assert(parWorkingCLA);
 	return ConstCondLikelihoodShPtr(parWorkingCLA);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns true if `childWorkingCLA' data member actually points to something, which means that the parental CLA is 
+|	valid. Returns false if `childWorkingCLA' does not point to a CondLikelihood object.
+*/
+inline bool InternalData::filialCLAValid() const
+	{
+	return childWorkingCLA;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns true if `parWorkingCLA' data member actually points to something, which means that the parental CLA is 
+|	valid. Returns false if `parWorkingCLA' does not point to a CondLikelihood object.
+*/
+inline bool InternalData::parentalCLAValid() const
+	{
+	return parWorkingCLA;
 	}
 
 } // namespace phycas

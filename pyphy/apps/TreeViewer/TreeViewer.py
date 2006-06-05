@@ -9,7 +9,7 @@
 #   (this is useful for showing, for example, which edges were modified by a
 #   Larget-Simon move)
 # o The label of the node currently serving at the likelihood root is shown in
-#   magenta, whereas other nodes are cyan (todo: allow nodes other than node 0 to
+#   magenta, whereas other nodes are gray (todo: allow nodes other than node 0 to
 #   serve as the likelihood root)
 # o A default tree is shown initially (todo: allow tree to be replaced)
 # o Parental and filial conditional likelihood array status is indicated by colored
@@ -19,7 +19,39 @@
 #     green: CLA is valid
 #     red:   CLA is invalid and will be recalculated upon next use
 
+# Useful colors (for others, see http://www.mindspring.com/~squicker/colors.html):
+white       = '#ffffff' 
+black       = '#000000'
+red         = '#ff0000' 
+magenta     = '#ff00ff'
+maroon      = '#800000'
+green       = '#00ff00' 
+dkgreen     = '#008000'
+teal        = '#008080'
+cyan        = '#00ffff'
+blue        = '#0000ff'
+purple      = '#800080'
+navy        = '#000080'
+midnight    = '#00009C'
+gray        = '#808080' 
+silver      = '#c0c0c0' 
+brown       = '#5C3317'
+olive       = '#808000'
+yellow      = '#ffff00'
+
+# The values of these variables determine the color scheme
+color_plot_background   = midnight
+color_undefined_cla     = silver
+color_valid_cla         = green
+color_invalid_cla       = red
+color_selected_edge     = red
+color_unselected_edge   = silver
+color_selected_node     = red
+color_unselected_node   = silver
+color_likelihood_root   = magenta
+
 from Phycas import *
+from threading import *
 from Tkinter import *
 from tkMessageBox import askokcancel, askquestion
 from tkSimpleDialog import askstring
@@ -34,13 +66,13 @@ class TreeCanvas(Canvas):
     def ytranslate(self, y):
         return int(self.bottom - self.yscaler*y)
 
-    def plotNode(self, xval, yval, number, label, node_color='yellow', radius=2):
+    def plotNode(self, xval, yval, number, label, node_color=color_unselected_node, radius=2):
         x = self.xtranslate(xval)
         y = self.ytranslate(yval)
-        color = (number == self.likelihood_root_nodenum and self.likelihood_root_color or node_color)
+        color = (number == self.likelihood_root_nodenum and color_likelihood_root or node_color)
         Canvas.create_text(self, x, y, text=str(label), font=self.font, fill=color)
 
-    def plotEdge(self, parent_x, parent_y, child_x, child_y, radius=10, edge_color='yellow', parental_color='gray', filial_color='gray'):
+    def plotEdge(self, parent_x, parent_y, child_x, child_y, radius=10, edge_color=color_unselected_edge, parental_color=color_undefined_cla, filial_color=color_undefined_cla):
         x0 = self.xtranslate(parent_x)
         y0 = self.ytranslate(parent_y)
         x = self.xtranslate(child_x)
@@ -72,6 +104,11 @@ class TreeCanvas(Canvas):
         return (self.tree.hasEdgeLens() and nd.getEdgeLen() or 1.0)
 
     def drawTree(self):
+        # acquire will block other threads while tree is drawn (this prevents trying
+        # to drawing a tree that is in the process of being modified - probably not a
+        # good idea)
+        self.tree_mutex.acquire()
+        
         # Do a postorder traversal to gather information
         self.tree_width = float(self.tree.getNTips() - 2)
         x = self.tree_width
@@ -116,7 +153,7 @@ class TreeCanvas(Canvas):
         x = root.getLeftChild().getX()
         y = 0.0
         id = self.use_node_names and root.getNodeName() or root.getNodeNumber()
-        color = root.isSelected() and self.node_selected_fill_color or self.node_unselected_fill_color
+        color = root.isSelected() and color_selected_node or color_unselected_node
         self.plotNode(x, y, root.getNodeNumber(), id, color)
 
         while nd:
@@ -126,17 +163,37 @@ class TreeCanvas(Canvas):
             nd.setY(parent.getY() - self.getEdgeLen(nd))
             x = nd.getX()
             y = self.tree_height - nd.getY()
-            color = nd.isSelected() and self.edge_selected_color or self.edge_unselected_color
-            self.plotEdge(x0, y0, x, y, 2*self.font_Mwidth, color)
+            color = nd.isSelected() and color_selected_edge or color_unselected_edge
+            par_color, fil_color = self.checkCLAstatus(nd)
+            self.plotEdge(parent_x=x0, parent_y=y0, child_x=x, child_y=y, radius=2*self.font_Mwidth,
+                          edge_color=color, parental_color=par_color, filial_color=fil_color)
             id = self.use_node_names and nd.getNodeName() or nd.getNodeNumber()
-            color = nd.isSelected() and self.node_selected_fill_color or self.node_unselected_fill_color
+            color = nd.isSelected() and color_selected_node or color_unselected_node
             self.plotNode(x, y, nd.getNodeNumber(), id, color)
             nd = nd.getNextPreorder()
-        
-    def __init__(self, parent, tree, width, height):
-        self.tree = tree
-        self.background_color = 'blue'
 
+        # Release the lock so other threads can play with the tree            
+        self.tree_mutex.release()
+
+    def checkCLAstatus(self, nd):
+        parental_color = color_undefined_cla
+        filial_color = color_undefined_cla
+        if nd.isTip():
+            td = nd.getTipData()
+            if td:
+                parental_color = td.parentalCLAValid() and color_valid_cla or color_invalid_cla
+        else:
+            id = nd.getInternalData()
+            if id:
+                parental_color = id.parentalCLAValid() and color_valid_cla or color_invalid_cla
+                filial_color = id.filialCLAValid() and color_valid_cla or color_invalid_cla
+        return parental_color, filial_color
+        
+    def __init__(self, parent, tree, tree_lock, width, height):
+        self.tree_mutex = tree_lock
+        Canvas.__init__(self, master=parent, bg=color_plot_background, width=width, height=height)
+
+        self.tree = tree
         self.tree_modified = True
         self.tree_height = 0.0
         self.tree_width = 0.0
@@ -150,30 +207,18 @@ class TreeCanvas(Canvas):
         #self.tree.buildFromString(self.default_tree_topology)
         self.likelihood_root_nodenum = 0
 
-        # variables associated with showing edges
-        self.edge_selected_color = 'red'
-        self.edge_unselected_color = 'cyan'
-
         # variables associated with showing nodes
         self.use_node_names = False
-        self.node_selected_fill_color = 'red'
-        self.node_unselected_fill_color = 'cyan'
-        self.node_stroke_color = 'cyan'
-        self.likelihood_root_color = 'magenta'
 
         # variables associated with showing status of conditional likelihood arrays
         self.CLA_radius = 2             # radius of circle plotted for each CLA
-        self.CLA_valid_color = 'green'  # color indicating a CLA that is currently valid
-        self.CLA_invalid_color = 'red'  # color indicating a CLA that needs to be recalculated
         
-        Canvas.__init__(self, master=parent, bg=self.background_color, width=width, height=height)
-
         # font-related
         self.font = tkFont.Font(family='Courier', size=8)
         fm = self.font.metrics()
         self.font_height = fm['ascent'] + fm['descent']
         self.font_Mwidth = self.font.measure('M')
-        self.nodename_text_color = 'cyan'
+        self.nodename_text_color = color_unselected_node
 
         self.bind("<Configure>", self.resizeEvent)
 
@@ -198,7 +243,7 @@ class TreeCanvas(Canvas):
         #Canvas.config(self, width=new_width, height=new_height)        
         
     def repaint(self):
-        Canvas.create_rectangle(self, 0, 0, self.plotw, self.ploth, fill=self.background_color);
+        Canvas.create_rectangle(self, 0, 0, self.plotw, self.ploth, fill=color_plot_background);
         self.drawTree()
 
     def reset(self):
@@ -206,16 +251,17 @@ class TreeCanvas(Canvas):
         gc.collect()    # should capture return value, which is number of unreachable objects found
         self.repaint()
 
-class TreeViewer(Frame):
-    def __init__(self, tree, parent=None):
-        Frame.__init__(self, parent, bg='yellow')
+class TreeViewer(Frame,Thread):
+    def __init__(self, tree, mutex, parent=None):
+        Thread.__init__(self)
+        Frame.__init__(self, parent)
         self.pack(expand=YES, fill=BOTH)
 
         # variables related to how much is displayed
         self.show_CLAs = False
 
         # create a frame to hold the menu buttons
-        menuf = Frame(self, bg='magenta')
+        menuf = Frame(self)
         menuf.pack(expand=NO, fill=X)
         
         # create the File menu button
@@ -236,7 +282,7 @@ class TreeViewer(Frame):
         # create the canvas
         canvasw = int(0.67*self.winfo_screenwidth())
         canvash = int(0.67*self.winfo_screenheight())
-        self.plotter = TreeCanvas(parent=self, tree=tree, width=canvasw, height=canvash)
+        self.plotter = TreeCanvas(parent=self, tree=tree, tree_lock=mutex, width=canvasw, height=canvash)
         self.plotter.pack(side=TOP, expand=YES, fill=BOTH)
         
         # create the status label
@@ -270,8 +316,25 @@ class TreeViewer(Frame):
             self.show_CLAs = True
             self.status_label.config(text='CLAs visible')
 
+    def close(self):
+        self.quit()
+        
+    def refresh(self, message):
+        self.status_label.config(text=message)
+        self.plotter.repaint()
+        
+    def run(self):
+        mainloop()
+
 if __name__ == '__main__':
     newick = '(A,(((B,C)U,(D,(E,F)W)V)T,G)S,(H,(I,(J,K)Z,L)Y)X)R'
     t = Phylogeny.Tree()
     t.buildFromString(newick)
-    TreeViewer(tree=t).mainloop()
+
+    m = Lock()
+    tv = TreeViewer(tree=t, mutex=m)
+
+    # Call start() method of base class Thread
+    # This invokes TreeViewer.run() in its own thread
+    tv.start()
+    

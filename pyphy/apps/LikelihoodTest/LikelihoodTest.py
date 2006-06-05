@@ -9,6 +9,8 @@
 import Conversions
 from Likelihood import SimData
 from Phycas import *
+#from TreeViewer import TreeViewer 
+#from threading import Lock
 
 def tryAllModels(fn):
     # Create string containing PAUP commands that will be added to the end of the
@@ -566,12 +568,14 @@ def createCommandFile(fn):
 if __name__ == '__main__':    
     phycas = Phycas()
 
-    #raw_input('debug stop')
-
     # Create a model tree
     phycas.tree = Phylogeny.Tree()
     model_tree = '(0:0.1,1:0.15,(2:0.025,3:0.15):0.05)'
     phycas.tree.buildFromString(model_tree)
+
+    #m = Lock()
+    #tv = TreeViewer(tree=phycas.tree, mutex=m)
+    #tv.start()
 
     print
     print '+------------------------------------------------+'
@@ -589,4 +593,3 @@ if __name__ == '__main__':
     readData('../../pyphy/nyldna4.nex')
     createCommandFile('check.nex')
     tryAllModels('check.nex')
-    

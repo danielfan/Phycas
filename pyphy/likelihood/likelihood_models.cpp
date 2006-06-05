@@ -1,6 +1,6 @@
 #include <cmath>
 #include <iostream>
-#include "likelihood_models.hpp"
+#include "pyphy/likelihood/likelihood_models.hpp"
 #include "CipresCommlib/AllocateMatrix.hpp"
 #include <boost/python/numeric.hpp>
 #include "pyphy/include/num_util.h"

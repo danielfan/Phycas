@@ -13,9 +13,10 @@ extension _LikelihoodBase
 	internal_data.cpp 
 	$(PHYCAS_ROOT)/pyphy/prob_dist/dcdflib/src/ipmpar.c
 	larget_simon_move.cpp 
-	likelihood_loops.cpp 
+	likelihood_loops.cpp
 	likelihood_models.cpp 
 	likelihood_pymod.cpp 
+	model_pymod.cpp
 	linalg.c
 	mcmc_chain_manager.cpp 
 	mcmc_param.cpp 
