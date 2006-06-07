@@ -610,7 +610,7 @@ void ThrowIllegalNexusChar(
 		return i == 1;
 		}
 #endif
-#if defined (BOOST_ENABLE_ASSERT_HANDLER)
+#if defined (BOOST_ENABLE_ASSERT_HANDLER) && 0 //Deprecated
 	/*----------------------------------------------------------------------------------------------------------------------
 	|	Defined whenever BOOST_ENABLE_ASSERT_HANDLER is defined.  This function is called when an assert trips in Boost 
 	|	code.  It simply redirects the call to NxsAssertionFailed
