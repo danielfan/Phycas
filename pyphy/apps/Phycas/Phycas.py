@@ -1,12 +1,13 @@
 import os, sys, time, math
-import os, sys, time, math
 import DataMatrix
 import ReadNexus
 import Phylogeny
 import Likelihood
 import ProbDist
-import TreeViewer # POLPY_NEWWAY
-import threading # POLPY_NEWWAY
+
+# POLPY_NEWWAY
+import TreeViewer
+import threading
 
 class Phycas:
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -165,7 +166,7 @@ class Phycas:
         self.sample_every           = 100                # a new sample will be taken after this many cycles
         self.report_every           = self.ncycles//100  # a progress report will be displayed after this many cycles
         self.verbose                = True               # more output if True
-        self.use_tree_viewer        = False              # popup graphical TreeViewer to show trees during run POLPY_NEWWAY
+        #self.use_tree_viewer        = False              # popup graphical TreeViewer to show trees during run POLPY_NEWWAY
         
         # Variables associated with Larget-Simon moves
         self.ls_move_lambda         = 0.2       # The value of the tuning parameter for the Larget-Simon move
@@ -911,10 +912,10 @@ class Phycas:
         last_adaptation = 0
         next_adaptation = self.adapt_first
 
-        if self.use_tree_viewer: # POLPY_NEWWAY
-            self.tree_mutex = threading.Lock()
-            self.tree_viewer = TreeViewer.TreeViewer(tree=self.tree, mutex=self.tree_mutex) # POLPY_NEWWAY
-            self.tree_viewer.start() # POLPY_NEWWAY
+        #if self.use_tree_viewer:
+        #    self.tree_mutex = threading.Lock()
+        #    self.tree_viewer = TreeViewer.TreeViewer(tree=self.tree, mutex=self.tree_mutex) # POLPY_NEWWAY
+        #    self.tree_viewer.start() # POLPY_NEWWAY
 
         for cycle in range(self.ncycles):
             for p in self.chain_manager.getAllUpdaters():
@@ -924,8 +925,8 @@ class Phycas:
                     p.update()
             if self.verbose and (cycle + 1) % self.report_every == 0:
                 print 'cycle = %d, lnL = %.5f' % (cycle + 1, self.chain_manager.getLastLnLike())
-                if self.use_tree_viewer and self.tree_viewer: # POLPY_NEWWAY
-                    self.tree_viewer.refresh('Cycle %d' % (cycle + 1)) # POLPY_NEWWAY
+                #if self.use_tree_viewer and self.tree_viewer:
+                #    self.tree_viewer.refresh('Cycle %d' % (cycle + 1))
             if (cycle + 1) % self.sample_every == 0:
                 self.recordSample(cycle, self.chain_manager.getLastLnLike())
             if (cycle + 1) % next_adaptation == 0:
@@ -933,8 +934,8 @@ class Phycas:
                 next_adaptation += 2*(next_adaptation - last_adaptation)
                 last_adaptation = cycle + 1
 
-        if self.use_tree_viewer and self.tree_viewer: # POLPY_NEWWAY
-            self.tree_viewer.close() # POLPY_NEWWAY
+        #if self.use_tree_viewer and self.tree_viewer:
+        #    self.tree_viewer.close() # POLPY_NEWWAY
 
         self.adaptSliceSamplers()
         total_evals = self.likelihood.getNEvals()
@@ -1095,10 +1096,11 @@ if __name__ == '__main__':
     mcmc.slice_max_units = 0
     mcmc.verbose = True
 
-    mcmc.use_tree_viewer = False
-    if mcmc.use_tree_viewer:
-        mcmc.ncycles = 1000
-        mcmc.report_every = 10
+    if False:
+        mcmc.ncycles = 1
+        mcmc.report_every = 1
+        mcmc.ls_move_weight = 1
+        raw_input('debug stop')
 
     mcmc.setup()
     mcmc.run()

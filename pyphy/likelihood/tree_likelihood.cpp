@@ -480,6 +480,54 @@ bool TreeLikelihood::isValid(const TreeNode * refNd, const TreeNode * neighborCl
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Unconditionally invalidate parental (and, if ref_nd is internal, filial) conditional likelihood arrays. Always 
+|	returns false so it can be used in conjunction with effective_postorder_edge_iterator to invalidate every CLA in
+|	the entire tree.
+*/
+bool TreeLikelihood::invalidateBothEnds(TreeNode & ref_nd)
+	{
+	if (ref_nd.IsTip())
+		{
+		// Tip nodes have only parental CLAs
+		TipData * td = ref_nd.GetTipData();
+
+		// Invalidate the parental CLAs if they exist
+		if (td->parWorkingCLA)
+			{
+			if (td->parCachedCLA)
+				cla_pool.putCondLikelihood(td->parCachedCLA);
+			td->parCachedCLA = td->parWorkingCLA;
+			td->parWorkingCLA.reset();
+			}
+		}
+	else
+		{
+		// Internal nodes have both parental and filial CLAs
+		InternalData * id = ref_nd.GetInternalData();
+
+		// Invalidate the parental CLAs if they exist
+		if (id->parWorkingCLA)
+			{
+			if (id->parCachedCLA)
+				cla_pool.putCondLikelihood(id->parCachedCLA);
+			id->parCachedCLA = id->parWorkingCLA;
+			id->parWorkingCLA.reset();
+			}
+
+		// Invalidate the filial CLAs if they exist
+		if (id->childWorkingCLA)
+			{
+			if (id->childCachedCLA)
+				cla_pool.putCondLikelihood(id->childCachedCLA);
+			id->childCachedCLA = id->childWorkingCLA;
+			id->childWorkingCLA.reset();
+			}
+		}
+
+	return false;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Function used in conjunction with effective_postorder_edge_iterator to invalidate the appropriate conditional 
 |	likelihood arrays (CLAs) of all nodes starting with a focal node. For nodes that are descendants of the focal node
 |	(descendant means that a node can be found using only left child and right sib pointers starting from the focal
@@ -498,15 +546,24 @@ bool TreeLikelihood::invalidateNode(TreeNode * ref_nd, TreeNode * neighbor_close
 	//@POL-NESCENT Mark, I removed const qualifier from both arguments (this function changes one of these two nodes,
 	// so if we are going to use the effective_postorder_edge_iterator for evil like this, we shouldn't false advertise
 	// that we aren't going to be changing nodes)
-	if (ref_nd->IsTip())
+
+	//std::ofstream tmpf("tmp.invalidate.txt", std::ios::out | std::ios::app);
+	//tmpf << str(boost::format("ref_nd                             = %d") % ref_nd->GetNodeNumber()) << std::endl;
+	//tmpf << str(boost::format("neighbor_closer_to_likelihood_root = %d") % neighbor_closer_to_likelihood_root->GetNodeNumber()) << std::endl;
+
+	if (ref_nd->IsTip() && !ref_nd->IsRoot())
 		{
 		TipData * td = ref_nd->GetTipData();
 		if (!td->parWorkingCLA)
+			{
+			//tmpf << "  ref_nd is a tip, parWorkingCLA already absent, so no action taken" << std::endl;
 			return false;
+			}
 		if (td->parCachedCLA)
 			cla_pool.putCondLikelihood(td->parCachedCLA);
 		td->parCachedCLA = td->parWorkingCLA;
 		td->parWorkingCLA.reset();
+		//tmpf << "  ref_nd is a tip, parWorkingCLA present, so parWorkingCLA reset" << std::endl; //!POL temporary!
 		}
 	else
 		{
@@ -515,26 +572,45 @@ bool TreeLikelihood::invalidateNode(TreeNode * ref_nd, TreeNode * neighbor_close
 			// ref_nd is the actual child
 			InternalData * id = ref_nd->GetInternalData();
 			if (!id->parWorkingCLA)
+				{
+				//tmpf << "  ref_nd is internal and actual child, parWorkingCLA already absent, so no action taken" << std::endl; //!POL temporary!
 				return false;
+				}
 			if (id->parCachedCLA)
 				cla_pool.putCondLikelihood(id->parCachedCLA);
 			id->parCachedCLA = id->parWorkingCLA;
 			id->parWorkingCLA.reset();
+			//tmpf << "  ref_nd is internal and actual child, parWorkingCLA present, so parWorkingCLA reset" << std::endl; //!POL temporary!
 			}
 		else
 			{
 			// neighbor_closer_to_likelihood_root is the actual child
 			if (neighbor_closer_to_likelihood_root->IsTip())
+				{
+				//tmpf << "  ref_nd is internal but not actual child, neighbor_closer_to_likelihood_root is tip, so no action taken" << std::endl; //!POL temporary!
 				return false;
+				}
+			// Either ref_nd is not a tip, or it is the tip serving as the root node
 			InternalData * id = neighbor_closer_to_likelihood_root->GetInternalData();
 			if (!id->childWorkingCLA)
+				{
+				//if (ref_nd->IsRoot())
+				//	tmpf << "  ref_nd is the root, subroot's childWorkingCLA already absent, so no action taken" << std::endl; //!POL temporary!
+				//else
+				//	tmpf << "  ref_nd is internal but not actual child, childWorkingCLA already absent, so no action taken" << std::endl; //!POL temporary!
 				return false;
+				}
 			if (id->childCachedCLA)
 				cla_pool.putCondLikelihood(id->childCachedCLA);
 			id->childCachedCLA = id->childWorkingCLA;
 			id->childWorkingCLA.reset();
+			//if (ref_nd->IsRoot())
+			//	tmpf << "  ref_nd is the root, subroot's childWorkingCLA present, so childWorkingCLA reset" << std::endl; //!POL temporary!
+			//else
+			//	tmpf << "  ref_nd is internal but not actual child, childWorkingCLA present, so childWorkingCLA reset" << std::endl; //!POL temporary!
 			}
 		}
+	//tmpf.close();
 	return false;
 	}
 
@@ -551,24 +627,44 @@ void TreeLikelihood::invalidateAwayFromNode(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Calls calcLnLFromNode passing in the subroot (only child of root node) as the focal node.
+|	
 */
 double TreeLikelihood::calcLnL(
   TreeShPtr t)
 	{
-	// Get the root node
-	TreeNode * nd = t->GetFirstPreorder();
+	// Compute likelihood using likelihood_root if specified
+	// Assume that if likelihood_root has been specified, then the necessary 
+	// CLA invalidations have already been performed.
+	TreeNode * nd = likelihood_root;
+	if (nd == NULL)
+		{
+		// If no likelihood_root has been specified, use the subroot node (and
+		// invalidate the entire tree to be safe)
+		nd = t->GetFirstPreorder();
+		assert(nd);
+
+		// Move to the subroot node
+		nd = nd->GetNextPreorder();
+		assert(nd);
+
+		// Invalidate away from subroot (to avoid recalculating all CLAs, call calcLnLFromNode instead)
+		invalidateAwayFromNode(*nd);
+		}
+
 	assert(nd);
+	assert(nd->IsInternal());
 
-	// Move to the subroot node
-	nd = nd->GetNextPreorder();
-	assert(nd);
+	// Calculate log-likelihood using nd as the likelihood root
+	double tmp = calcLnLFromNode(*nd);
 
-	// Invalidate away from subroot (to avoid recalculating all CLAs, call calcLnLFromNode instead)
-	invalidateAwayFromNode(*nd);
+	// likelihood_root is never persistent
+	likelihood_root = NULL;
 
-	// Calculate log-likelihood with the subroot node focal
-	return calcLnLFromNode(*nd);
+	//std::ofstream tmpf("tmp.lnLlog.txt", std::ios::out | std::ios::app);
+	//tmpf << tmp << std::endl;
+	//tmpf.close();
+
+	return tmp;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

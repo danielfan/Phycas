@@ -49,7 +49,7 @@ class TreeLikelihood(TreeLikelihoodBase):
         
         """
         TreeLikelihoodBase.__init__(self, model)
-        
+
     def copyDataFromDiscreteMatrix(self, data_matrix):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -345,6 +345,11 @@ class TreeLikelihood(TreeLikelihoodBase):
         
         """
         TreeLikelihoodBase.setUsePatternSpecificRates(self, False)
-    
-    
-    
+        
+    def startTreeViewer(self, t, s):
+        import TreeViewer
+        tv = TreeViewer.TreeViewer(tree=t, msg=s)
+        tv.setLikelihoodRoot(TreeLikelihoodBase.getLikelihoodRootNodeNum(self))
+        tv.run()
+        
+        return 1

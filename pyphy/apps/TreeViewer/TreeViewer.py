@@ -44,14 +44,14 @@ color_plot_background   = midnight
 color_undefined_cla     = silver
 color_valid_cla         = green
 color_invalid_cla       = red
-color_selected_edge     = red
+color_selected_edge     = teal
 color_unselected_edge   = silver
-color_selected_node     = red
+color_selected_node     = teal
 color_unselected_node   = silver
 color_likelihood_root   = magenta
 
 from Phycas import *
-from threading import *
+#from threading import *
 from Tkinter import *
 from tkMessageBox import askokcancel, askquestion
 from tkSimpleDialog import askstring
@@ -101,13 +101,14 @@ class TreeCanvas(Canvas):
         Canvas.create_oval(self, x-dx-2, y-dy-2, x-dx+2, y-dy+2, fill=filial_color, outline=filial_color)
 
     def getEdgeLen(self, nd):
-        return (self.tree.hasEdgeLens() and nd.getEdgeLen() or 1.0)
+        return (self.use_edgelens and nd.getEdgeLen() or 1.0)
 
     def drawTree(self):
         # acquire will block other threads while tree is drawn (this prevents trying
         # to drawing a tree that is in the process of being modified - probably not a
         # good idea)
-        self.tree_mutex.acquire()
+        #if self.tree_mutex:
+        #    self.tree_mutex.acquire()
         
         # Do a postorder traversal to gather information
         self.tree_width = float(self.tree.getNTips() - 2)
@@ -173,7 +174,8 @@ class TreeCanvas(Canvas):
             nd = nd.getNextPreorder()
 
         # Release the lock so other threads can play with the tree            
-        self.tree_mutex.release()
+        #if self.tree_mutex:
+        #    self.tree_mutex.release()
 
     def checkCLAstatus(self, nd):
         parental_color = color_undefined_cla
@@ -189,11 +191,13 @@ class TreeCanvas(Canvas):
                 filial_color = id.filialCLAValid() and color_valid_cla or color_invalid_cla
         return parental_color, filial_color
         
-    def __init__(self, parent, tree, tree_lock, width, height):
-        self.tree_mutex = tree_lock
+    #def __init__(self, parent, tree, tree_lock, width, height):
+    def __init__(self, parent, tree, width, height):
+        #self.tree_mutex = tree_lock
         Canvas.__init__(self, master=parent, bg=color_plot_background, width=width, height=height)
 
         self.tree = tree
+        self.use_edgelens = False   # by default, all edges are drawn as equal in length (call useEdgelens() to change this)
         self.tree_modified = True
         self.tree_height = 0.0
         self.tree_width = 0.0
@@ -240,8 +244,8 @@ class TreeCanvas(Canvas):
         self.bottom = self.ploth - self.plotm
         self.hcenter = self.plotw/2
         self.vcenter = self.ploth/2
-        #Canvas.config(self, width=new_width, height=new_height)        
-        
+        #Canvas.config(self, width=new_width, height=new_height)
+
     def repaint(self):
         Canvas.create_rectangle(self, 0, 0, self.plotw, self.ploth, fill=color_plot_background);
         self.drawTree()
@@ -251,11 +255,22 @@ class TreeCanvas(Canvas):
         gc.collect()    # should capture return value, which is number of unreachable objects found
         self.repaint()
 
-class TreeViewer(Frame,Thread):
-    def __init__(self, tree, mutex, parent=None):
-        Thread.__init__(self)
+    def useEdgelens(self):
+        # Can only honor this request if tree has edge lengths
+        self.use_edgelens = self.tree.hasEdgeLens()
+        if self.use_edgelens:
+            self.repaint()
+        
+#class TreeViewer(Frame,Thread):
+class TreeViewer(Frame):
+    #def __init__(self, tree, mutex=None, parent=None):
+    def __init__(self, tree, msg='Tree Viewer for Debugging', parent=None):
+        #Thread.__init__(self)
         Frame.__init__(self, parent)
         self.pack(expand=YES, fill=BOTH)
+
+        # set the window title
+        self.winfo_toplevel().title(msg)        
 
         # variables related to how much is displayed
         self.show_CLAs = False
@@ -282,7 +297,8 @@ class TreeViewer(Frame,Thread):
         # create the canvas
         canvasw = int(0.67*self.winfo_screenwidth())
         canvash = int(0.67*self.winfo_screenheight())
-        self.plotter = TreeCanvas(parent=self, tree=tree, tree_lock=mutex, width=canvasw, height=canvash)
+        #self.plotter = TreeCanvas(parent=self, tree=tree, tree_lock=mutex, width=canvasw, height=canvash)
+        self.plotter = TreeCanvas(parent=self, tree=tree, width=canvasw, height=canvash)
         self.plotter.pack(side=TOP, expand=YES, fill=BOTH)
         
         # create the status label
@@ -323,6 +339,12 @@ class TreeViewer(Frame,Thread):
         self.status_label.config(text=message)
         self.plotter.repaint()
         
+    def setLikelihoodRoot(self, like_root_node_num):
+        if like_root_node_num < 0:
+            self.plotter.likelihood_root_nodenum = None
+        else:
+            self.plotter.likelihood_root_nodenum = like_root_node_num
+        
     def run(self):
         mainloop()
 
@@ -331,10 +353,10 @@ if __name__ == '__main__':
     t = Phylogeny.Tree()
     t.buildFromString(newick)
 
-    m = Lock()
-    tv = TreeViewer(tree=t, mutex=m)
+    #tv = TreeViewer(tree=t)
+    TreeViewer(tree=t, msg='Showing default tree').run()
 
     # Call start() method of base class Thread
     # This invokes TreeViewer.run() in its own thread
-    tv.start()
+    #tv.start()
     

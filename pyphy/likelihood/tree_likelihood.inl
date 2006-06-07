@@ -27,7 +27,8 @@ inline TreeLikelihood::TreeLikelihood(
   model(mod), 
   rate_means(mod->getNRatesTotal(), 1.0), 
   rate_probs(mod->getNRatesTotal(), 1.0), 
-  nevals(0)
+  nevals(0),
+  likelihood_root(0)
 	{
 	mod->recalcRatesAndProbs(rate_means, rate_probs);
 	}

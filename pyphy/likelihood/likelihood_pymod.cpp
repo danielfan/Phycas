@@ -35,6 +35,34 @@ void translateXLikelihood(const XLikelihood &e)
     PyErr_SetString(PyExc_Exception, e.what());
     }
 
+// TreeLikelihoodWrapper is necessary in order to allow this (in C++ code)
+//
+// startTreeViewer(t);
+//
+// to be translated into a call of TreeLikelihoodDerived.startTreeViewer, where 
+// TreeLikelihoodDerived is a Python class derived from TreeLikelihoodBase. 
+// (TreeLikelihoodBase is what TreeLikelihood is called within Python, search for 
+// TreeLikelihoodBase below.) For more background, go to 
+// http://www.boost.org/libs/python/doc/index.html, click on the "Reference Manual"
+// link, then see the example at the bottom of the page that results from clicking
+// on the "call_method.hpp" link (under the category "Function Invocation and 
+// Creation").
+class TreeLikelihoodWrapper : public TreeLikelihood
+	{
+	public:
+		TreeLikelihoodWrapper(PyObject * self, ModelShPtr m) : TreeLikelihood(m), m_self(self) 
+			{
+			}
+
+		int startTreeViewer(TreeShPtr t, std::string msg) const 
+			{ 
+			return call_method<int,TreeShPtr,std::string>(m_self, "startTreeViewer", t, msg); 
+			}
+
+	private:
+		PyObject * const m_self;
+	};
+
 BOOST_PYTHON_MODULE(_LikelihoodBase)
 {
 	// these lines required by num_util
@@ -185,7 +213,7 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("addDataTo", &phycas::SimData::addDataTo)
 		.def("calct", &phycas::SimData::calct)
 		;
-	class_<TreeLikelihood, boost::noncopyable>("TreeLikelihoodBase", init<boost::shared_ptr<Model> >())
+	class_<TreeLikelihood, TreeLikelihoodWrapper, boost::noncopyable>("TreeLikelihoodBase", init<boost::shared_ptr<Model> >())
 		.def("copyDataFromDiscreteMatrix", &TreeLikelihood::copyDataFromDiscreteMatrix)
 		.def("copyDataFromSimData", &TreeLikelihood::copyDataFromSimData)
 		.def("prepareForSimulation", &TreeLikelihood::prepareForSimulation)
@@ -207,6 +235,7 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("setNoData", &TreeLikelihood::setNoData)
 		.def("setHaveData", &TreeLikelihood::setHaveData)
 		.def("getNPatterns", &TreeLikelihood::getNPatterns)
+		.def("getLikelihoodRootNodeNum", &TreeLikelihood::getLikelihoodRootNodeNum)
 		;
 	class_<TipData, boost::noncopyable>("TipData", no_init)
 		.def("parentalCLAValid", &TipData::parentalCLAValid)

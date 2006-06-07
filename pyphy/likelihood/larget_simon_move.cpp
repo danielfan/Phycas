@@ -9,6 +9,8 @@
 #include "pyphy/likelihood/larget_simon_move.hpp"
 #include "pyphy/phylogeny/basic_tree.hpp"
 
+#include "boost/format.hpp"
+
 #define KEEP_BRANCHES_LEGAL
 #define MAX_LEGAL_BRLEN 285
 
@@ -60,6 +62,15 @@ void LargetSimonMove::update()
 	double curr_posterior = curr_ln_like + curr_ln_prior;
 
 	double ln_accept_ratio = curr_posterior - prev_posterior + getLnHastingsRatio() + getLnJacobian();
+
+	//std::ofstream tmpf("tmp.lsmove.txt", std::ios::app | std::ios::out );
+	//tmpf << "\nln_accept_ratio = " << ln_accept_ratio;
+	//tmpf << "\n  curr_posterior       = " << curr_posterior;
+	//tmpf << "\n  prev_posterior       = " << prev_posterior;
+	//tmpf << "\n  getLnHastingsRatio() = " << getLnHastingsRatio();
+	//tmpf << "\n  getLnJacobian()      = " << getLnJacobian();
+	//tmpf << std::endl;
+	//tmpf.close();
 
 	if (ln_accept_ratio >= 0.0 || std::log(rng->Uniform(FILE_AND_LINE)) <= ln_accept_ratio)
 		{
@@ -130,9 +141,11 @@ void LargetSimonMove::starTreeProposeNewState()
 	double mstar	= m*std::exp(lambda*(rng->Uniform(FILE_AND_LINE) - 0.5));
 	orig_node->SetEdgeLen(mstar);
 
-	//@POL-NESCENT pretty sure the edge orientations are not correct yet
+	// Invalidate CLAs to ensure next likelihood calculation will be correct
+	//orig_node->SelectNode();
+	likelihood->useAsLikelihoodRoot(orig_node);
 	likelihood->invalidateAwayFromNode(*orig_node);
-	likelihood->invalidateNode(orig_node, orig_node->GetParent());
+	likelihood->invalidateBothEnds(*orig_node);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -140,35 +153,47 @@ void LargetSimonMove::starTreeProposeNewState()
 |	Larget and Simon (1999. Mol. Biol. Evol. 16(6): 750-759). This version allows polytomies (except the case of the 
 |	star tree, for which the required three-contiguous-edge segment cannot be identified).
 |	
-|	     x  y  z
+|	     X  c  d
 |	      \ | /
 |          \|/
-|	  b  c  v
+|	  a  b  Y
 |	   \ | /
 |	    \|/
 |	     u
 |	     |
-|	     a <-- may or may not be the tip at which tree is rooted
+|	     Z <-- may or may not be the tip at which tree is rooted
 |	
-|	Pick a random interior node v whose parent is not the root (i.e. avoid the internal node directly connected to the 
-|	tip node at which the tree is rooted. Let u be the parent of v. Let a be a randomly-chosen child of u (note that in 
-|	this case u's parent is considered a "child" of u. In the figure above, we (by chance) chose the parent of u to be 
-|	a, but we could have chosen any of u's real children (except v) to be the "a" node. Let b, c, ..., be the other 
-|	"children" of u, not including v. Let x be a randomly chosen child of v (and here a child is really a child). Let y,
-|	z, ..., be the other children of v.
+|	Pick a random interior node Y whose parent is not the root (i.e. avoid the internal node directly connected to the 
+|	tip node at which the tree is rooted. Let u be the parent of y. Let Z be a randomly-chosen child of u (note that in 
+|	this case u's parent is considered a "child" of u). In the figure above, we (by chance) chose the parent of u to be 
+|	Z, but we could have chosen any of u's real children (except Y). a and b are the other "children" of u, not 
+|	including Y. Let X be a randomly chosen child of Y (and here a "child" is really a child). c and d are the other 
+|	children of Y.
 |	
-|	      b   c   y   z
+|	      a   b   c   d
 |	       \ /     \ /
-|	a ===== u ===== v ===== x
+|	Z ===== u ===== Y ===== X
 |	
 |	The path represented by the double line above is either contracted or expanded by a factor m*, where
 |	
 |	m* = m*exp(lambda*(r.Uniform(FILE_AND_LINE) - 0.5))
 |	
-|	Then, one of {u, v} is chosen at random to move. Let's say for illustration that u was chosen. u is moved (along 
-|	with b and c) to a random point along the main path from a to x. If this makes the node u cross over node v, then 
-|	the equivalent of an NNI rearrangement is effected (a swapped with x); otherwise, the move will only require 
-|	adjusting edge lengths.
+|	Then, one of {u, Y} is chosen at random to move. Let's say for illustration that u was chosen. u is moved (along 
+|	with a and c) to a random point along the main path from Z to X. If this makes the node u cross over node Y, then 
+|	the equivalent of an NNI rearrangement is effected:
+|	
+|	    X  c  d          X  a  b
+|	     \ | /            \ | /    In this case, invalidate CLAs away from u and 
+|         \|/              \|/     make u the likelihood root
+|	 a  b  Y          c  d  u
+|	  \ | /   -->      \ | /
+|	   \|/              \|/
+|	    u                Y
+|	    |                |
+|	    Z                Z
+|
+|	If there is no NNI rearrangement, the move will only require adjusting edge lengths. In this case, invalidate CLAs
+|	away from Y and make Y the likelihood root.
 */
 void LargetSimonMove::defaultProposeNewState()
 	{
@@ -359,11 +384,35 @@ void LargetSimonMove::defaultProposeNewState()
 		topol_changed = true;
 		}
 
-	//@POL-NESCENT pretty sure the edge orientations are not correct yet
-	likelihood->invalidateAwayFromNode(*ndX);
-	likelihood->invalidateNode(ndX, ndX->GetParent());
-	likelihood->invalidateNode(ndY, ndY->GetParent());
-	likelihood->invalidateNode(ndZ, ndZ->GetParent());
+	//ndX->SelectNode();
+	//ndY->SelectNode();
+	//ndZ->SelectNode();
+	likelihood->useAsLikelihoodRoot(ndY);
+
+	//likelihood->startTreeViewer(tree, "LargetSimonMove::defaultProposeNewState(), before invalidating anything"); //@POL temporary!
+
+	//std::ofstream tmpf;
+	//tmpf.open("tmp.invalidate.txt", std::ios::out | std::ios::app);
+	//tmpf << "\n*******************\nIn LargetSimonMove::defaultProposeNewState(), about to invalidate away from node " << ndY->GetNodeNumber() << std::endl;
+	//tmpf.close();
+
+	likelihood->invalidateAwayFromNode(*ndY);
+
+	//std::string msg = str(boost::format("LargetSimonMove::defaultProposeNewState(), after invalidating away from ndY (%d)") % ndY->GetNodeNumber());
+	//likelihood->startTreeViewer(tree, msg);
+
+	//tmpf.open("tmp.invalidate.txt", std::ios::out | std::ios::app);
+	//tmpf << "\n*******************\nIn LargetSimonMove::defaultProposeNewState(), about to invalidate node " << ndY->GetNodeNumber() << std::endl;
+	//tmpf.close();
+
+	likelihood->invalidateBothEnds(*ndY);
+
+	//msg = str(boost::format("LargetSimonMove::defaultProposeNewState(), after invalidating both ends of ndY (%d)") % ndY->GetNodeNumber());
+	//likelihood->startTreeViewer(tree, msg);
+
+	//ndX->UnselectNode();
+	//ndY->UnselectNode();
+	//ndZ->UnselectNode();
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -376,9 +425,10 @@ void LargetSimonMove::revert()
 		{
 		orig_node->SetEdgeLen(orig_edge_len);
 
-		//@POL-NESCENT pretty sure the edge orientations are not correct yet
+		//@POL-NESCENT should be restoreAwayFromNode and restoreBothEnds
+		likelihood->useAsLikelihoodRoot(orig_node);
 		likelihood->invalidateAwayFromNode(*orig_node);
-		likelihood->invalidateNode(orig_node, orig_node->GetParent());
+		likelihood->invalidateBothEnds(*orig_node);
 		}
 	else
 		{
@@ -416,11 +466,10 @@ void LargetSimonMove::revert()
 		ndY->SetEdgeLen(origY);
 		ndZ->SetEdgeLen(origZ);
 
-		//@POL-NESCENT pretty sure the edge orientations are not correct yet
-		likelihood->invalidateAwayFromNode(*ndX);
-		likelihood->invalidateNode(ndX, ndX->GetParent());
-		likelihood->invalidateNode(ndY, ndY->GetParent());
-		likelihood->invalidateNode(ndZ, ndZ->GetParent());
+		//@POL-NESCENT should be restoreAwayFromNode and restoreBothEnds
+		likelihood->useAsLikelihoodRoot(ndY);
+		likelihood->invalidateAwayFromNode(*ndY);
+		likelihood->invalidateBothEnds(*ndY);
 		}
 
 	reset();
