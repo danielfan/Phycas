@@ -920,8 +920,10 @@ class Phycas:
         for cycle in range(self.ncycles):
             for p in self.chain_manager.getAllUpdaters():
                 w = p.getWeight()
-                #print '*** Updating %s...' % p.getName()
                 for x in range(w):
+                    #tmpf = file('tmp.lnLlog.txt', 'a')
+                    #tmpf.write('*** Updating %s...\n' % p.getName())
+                    #tmpf.close()
                     p.update()
             if self.verbose and (cycle + 1) % self.report_every == 0:
                 print 'cycle = %d, lnL = %.5f' % (cycle + 1, self.chain_manager.getLastLnLike())
@@ -1097,9 +1099,9 @@ if __name__ == '__main__':
     mcmc.verbose = True
 
     if False:
-        mcmc.ncycles = 1
+        mcmc.ncycles = 2
         mcmc.report_every = 1
-        mcmc.ls_move_weight = 1
+        mcmc.ls_move_weight = 10
         raw_input('debug stop')
 
     mcmc.setup()

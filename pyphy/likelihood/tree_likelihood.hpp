@@ -86,7 +86,8 @@ class TreeLikelihood
 		void							copyDataFromSimData(SimDataShPtr sim_data);
 
 		bool							invalidateNode(TreeNode * ref_nd, TreeNode * neighbor_closer_to_likelihood_root);
-		bool							invalidateBothEnds(TreeNode & ref_nd);
+		bool							invalidateBothEnds(TreeNode * ref_nd, TreeNode * unused = NULL);
+		bool							invalidateBothEndsNoCache(TreeNode * ref_nd, TreeNode * unused = NULL);
 		void							invalidateAwayFromNode(TreeNode & focalNode);
 		bool							isValid(const TreeNode *focal, const TreeNode *avoidNd);
 		void 							refreshCLA(TreeNode & nd, const TreeNode * avoid);

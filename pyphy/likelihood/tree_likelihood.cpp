@@ -480,16 +480,77 @@ bool TreeLikelihood::isValid(const TreeNode * refNd, const TreeNode * neighborCl
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Unconditionally invalidates parental (and, if ref_nd is internal, filial) conditional likelihood arrays and also
+|	removes cached conditional likelihood arrays if present. This function always returns false so it can be used in 
+|	conjunction with effective_postorder_edge_iterator to invalidate every CLA in the entire tree and ensure that there
+|	are also no cached CLAs as well.
+*/
+bool TreeLikelihood::invalidateBothEndsNoCache(TreeNode * ref_nd, TreeNode * /* unused */)
+	{
+	if (ref_nd->IsTip())
+		{
+		// Tip nodes have only parental CLAs
+		TipData * td = ref_nd->GetTipData();
+
+		// Invalidate the parental CLAs if they exist
+		if (td->parWorkingCLA)
+			{
+			cla_pool.putCondLikelihood(td->parWorkingCLA);
+			td->parWorkingCLA.reset();
+			}
+		// Remove cached parental CLAs if they exist
+		if (td->parCachedCLA)
+			{
+			cla_pool.putCondLikelihood(td->parCachedCLA);
+			td->parCachedCLA.reset();
+			}
+		}
+	else
+		{
+		// Internal nodes have both parental and filial CLAs
+		InternalData * id = ref_nd->GetInternalData();
+
+		// Invalidate the parental CLAs if they exist
+		if (id->parWorkingCLA)
+			{
+			cla_pool.putCondLikelihood(id->parWorkingCLA);
+			id->parWorkingCLA.reset();
+			}
+		// Remove cached parental CLAs if they exist
+		if (id->parCachedCLA)
+			{
+			cla_pool.putCondLikelihood(id->parCachedCLA);
+			id->parCachedCLA.reset();
+			}
+
+		// Invalidate the filial CLAs if they exist
+		if (id->childWorkingCLA)
+			{
+			cla_pool.putCondLikelihood(id->childWorkingCLA);
+			id->childWorkingCLA.reset();
+			}
+		// Remove cached filial CLAs if they exist
+		if (id->childCachedCLA)
+			{
+			cla_pool.putCondLikelihood(id->childCachedCLA);
+			id->childCachedCLA.reset();
+			}
+		}
+
+	return false;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Unconditionally invalidate parental (and, if ref_nd is internal, filial) conditional likelihood arrays. Always 
 |	returns false so it can be used in conjunction with effective_postorder_edge_iterator to invalidate every CLA in
 |	the entire tree.
 */
-bool TreeLikelihood::invalidateBothEnds(TreeNode & ref_nd)
+bool TreeLikelihood::invalidateBothEnds(TreeNode * ref_nd, TreeNode * /* unused */)
 	{
-	if (ref_nd.IsTip())
+	if (ref_nd->IsTip())
 		{
 		// Tip nodes have only parental CLAs
-		TipData * td = ref_nd.GetTipData();
+		TipData * td = ref_nd->GetTipData();
 
 		// Invalidate the parental CLAs if they exist
 		if (td->parWorkingCLA)
@@ -503,7 +564,7 @@ bool TreeLikelihood::invalidateBothEnds(TreeNode & ref_nd)
 	else
 		{
 		// Internal nodes have both parental and filial CLAs
-		InternalData * id = ref_nd.GetInternalData();
+		InternalData * id = ref_nd->GetInternalData();
 
 		// Invalidate the parental CLAs if they exist
 		if (id->parWorkingCLA)
@@ -647,8 +708,16 @@ double TreeLikelihood::calcLnL(
 		nd = nd->GetNextPreorder();
 		assert(nd);
 
-		// Invalidate away from subroot (to avoid recalculating all CLAs, call calcLnLFromNode instead)
-		invalidateAwayFromNode(*nd);
+		// Invalidate (and do not cache) all CLAs from the tree. This will require all CLAs to be recomputed 
+		// when the likelihood is computed using the subroot as the likelihood root. This path should be taken
+		// if a parameter is changed that invalidates the entire tree.
+		//startTreeViewer(t, str(boost::format("calcLnL, before invalidating everything away from subroot(%d)") % nd->GetNodeNumber()));
+
+		NodeValidityChecker validFunctor = boost::bind(&TreeLikelihood::invalidateBothEndsNoCache, this, _1, _2);
+		effective_postorder_edge_iterator(nd, validFunctor); // constructor does all the work we need
+		invalidateBothEndsNoCache(nd);
+
+		//startTreeViewer(t, str(boost::format("calcLnL, after invalidating everything away from subroot(%d)") % nd->GetNodeNumber()));
 		}
 
 	assert(nd);

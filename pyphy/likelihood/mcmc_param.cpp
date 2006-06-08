@@ -50,6 +50,13 @@ double KappaParam::operator()(
 		hky->setKappa(k);
 		curr_value = k;
 		recalcPrior();
+
+		//@POL temporary!
+		//std::ofstream tmpf("tmp.lnLlog.txt", std::ios::out | std::ios::app);
+		//tmpf << "KappaParam curr_value    = " << curr_value << std::endl;
+		//tmpf << "           curr_ln_prior = " << curr_ln_prior << std::endl;
+		//tmpf.close();
+
 		curr_ln_like = likelihood->calcLnL(tree);
 		ChainManagerShPtr p = chain_mgr.lock();
 		assert(p);

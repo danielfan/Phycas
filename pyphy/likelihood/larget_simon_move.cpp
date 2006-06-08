@@ -145,7 +145,7 @@ void LargetSimonMove::starTreeProposeNewState()
 	//orig_node->SelectNode();
 	likelihood->useAsLikelihoodRoot(orig_node);
 	likelihood->invalidateAwayFromNode(*orig_node);
-	likelihood->invalidateBothEnds(*orig_node);
+	likelihood->invalidateBothEnds(orig_node);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -405,7 +405,7 @@ void LargetSimonMove::defaultProposeNewState()
 	//tmpf << "\n*******************\nIn LargetSimonMove::defaultProposeNewState(), about to invalidate node " << ndY->GetNodeNumber() << std::endl;
 	//tmpf.close();
 
-	likelihood->invalidateBothEnds(*ndY);
+	likelihood->invalidateBothEnds(ndY);
 
 	//msg = str(boost::format("LargetSimonMove::defaultProposeNewState(), after invalidating both ends of ndY (%d)") % ndY->GetNodeNumber());
 	//likelihood->startTreeViewer(tree, msg);
@@ -428,7 +428,7 @@ void LargetSimonMove::revert()
 		//@POL-NESCENT should be restoreAwayFromNode and restoreBothEnds
 		likelihood->useAsLikelihoodRoot(orig_node);
 		likelihood->invalidateAwayFromNode(*orig_node);
-		likelihood->invalidateBothEnds(*orig_node);
+		likelihood->invalidateBothEnds(orig_node);
 		}
 	else
 		{
@@ -469,7 +469,7 @@ void LargetSimonMove::revert()
 		//@POL-NESCENT should be restoreAwayFromNode and restoreBothEnds
 		likelihood->useAsLikelihoodRoot(ndY);
 		likelihood->invalidateAwayFromNode(*ndY);
-		likelihood->invalidateBothEnds(*ndY);
+		likelihood->invalidateBothEnds(ndY);
 		}
 
 	reset();
