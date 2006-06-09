@@ -601,6 +601,7 @@ void BushMove::update()
 	//	std::cerr << "  delete-edge move\n";
 	//std::cerr << std::endl;
 
+	likelihood->useAsLikelihoodRoot(NULL);
 	double curr_ln_like				= likelihood->calcLnL(tree);
 
 	double curr_ln_prior			= 0.0;

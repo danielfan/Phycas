@@ -239,10 +239,13 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		;
 	class_<TipData, boost::noncopyable>("TipData", no_init)
 		.def("parentalCLAValid", &TipData::parentalCLAValid)
+		.def("parentalCLACached", &TipData::parentalCLACached)
 		;
 	class_<InternalData, boost::noncopyable>("InternalData", no_init)
 		.def("filialCLAValid", &InternalData::filialCLAValid)
+		.def("filialCLACached", &InternalData::filialCLACached)
 		.def("parentalCLAValid", &InternalData::parentalCLAValid)
+		.def("parentalCLACached", &InternalData::parentalCLACached)
 		;
 	class_<QMatrix, boost::noncopyable>("QMatrixBase")
 		.def("getDimension", &QMatrix::getDimension)

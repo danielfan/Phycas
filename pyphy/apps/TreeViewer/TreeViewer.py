@@ -40,15 +40,17 @@ olive       = '#808000'
 yellow      = '#ffff00'
 
 # The values of these variables determine the color scheme
-color_plot_background   = midnight
-color_undefined_cla     = silver
-color_valid_cla         = green
-color_invalid_cla       = red
-color_selected_edge     = teal
-color_unselected_edge   = silver
-color_selected_node     = teal
-color_unselected_node   = silver
-color_likelihood_root   = magenta
+color_plot_background       = midnight
+color_undefined_cla         = silver
+color_valid_cla             = green
+color_valid_cached_dot      = dkgreen
+color_invalid_cla           = red
+color_invalid_cached_dot    = maroon
+color_selected_edge         = white
+color_unselected_edge       = silver
+color_selected_node         = white
+color_unselected_node       = silver
+color_likelihood_root       = magenta
 
 from Phycas import *
 #from threading import *
@@ -66,13 +68,20 @@ class TreeCanvas(Canvas):
     def ytranslate(self, y):
         return int(self.bottom - self.yscaler*y)
 
-    def plotNode(self, xval, yval, number, label, node_color=color_unselected_node, radius=2):
+    def plotNode(self, xval, yval, number, label, node_color=color_unselected_node):
         x = self.xtranslate(xval)
         y = self.ytranslate(yval)
         color = (number == self.likelihood_root_nodenum and color_likelihood_root or node_color)
         Canvas.create_text(self, x, y, text=str(label), font=self.font, fill=color)
 
-    def plotEdge(self, parent_x, parent_y, child_x, child_y, radius=10, edge_color=color_unselected_edge, parental_color=color_undefined_cla, filial_color=color_undefined_cla):
+    def plotEdge(self, parent_x, parent_y, child_x, child_y,
+                 thickness=1,
+                 nodenum_radius=10, cla_radius=3, cached_radius=1,
+                 edge_color=color_unselected_edge,
+                 parental_color=color_undefined_cla,
+                 parental_cached_color=color_undefined_cla,
+                 filial_color=color_undefined_cla,
+                 filial_cached_color=color_undefined_cla):
         x0 = self.xtranslate(parent_x)
         y0 = self.ytranslate(parent_y)
         x = self.xtranslate(child_x)
@@ -88,17 +97,19 @@ class TreeCanvas(Canvas):
             theta = math.atan(float(y - y0)/float(x - x0))
             if x < x0:
                 theta += math.pi
-        dx = float(radius)*math.cos(theta)
-        dy = float(radius)*math.sin(theta)
+        dx = float(nodenum_radius)*math.cos(theta)
+        dy = float(nodenum_radius)*math.sin(theta)
         
         # Draw the edge itself
-        Canvas.create_line(self, x0+dx, y0+dy, x-dx, y-dy, fill=edge_color)
+        Canvas.create_line(self, x0+dx, y0+dy, x-dx, y-dy, fill=edge_color, width=thickness)
 
         # Draw the parental CLA marker
-        Canvas.create_oval(self, x0+dx-2, y0+dy-2, x0+dx+2, y0+dy+2, fill=parental_color, outline=parental_color)
+        Canvas.create_oval(self, x0+dx-cla_radius, y0+dy-cla_radius, x0+dx+cla_radius, y0+dy+cla_radius, fill=parental_color, outline=parental_color)
+        Canvas.create_oval(self, x0+dx-cached_radius, y0+dy-cached_radius, x0+dx+cached_radius, y0+dy+cached_radius, fill=parental_cached_color, outline=parental_cached_color)
 
         # Draw the filial CLA marker
-        Canvas.create_oval(self, x-dx-2, y-dy-2, x-dx+2, y-dy+2, fill=filial_color, outline=filial_color)
+        Canvas.create_oval(self, x-dx-cla_radius, y-dy-cla_radius, x-dx+cla_radius, y-dy+cla_radius, fill=filial_color, outline=filial_color)
+        Canvas.create_oval(self, x-dx-cached_radius, y-dy-cached_radius, x-dx+cached_radius, y-dy+cached_radius, fill=filial_cached_color, outline=filial_cached_color)
 
     def getEdgeLen(self, nd):
         return (self.use_edgelens and nd.getEdgeLen() or 1.0)
@@ -165,9 +176,14 @@ class TreeCanvas(Canvas):
             x = nd.getX()
             y = self.tree_height - nd.getY()
             color = nd.isSelected() and color_selected_edge or color_unselected_edge
-            par_color, fil_color = self.checkCLAstatus(nd)
-            self.plotEdge(parent_x=x0, parent_y=y0, child_x=x, child_y=y, radius=2*self.font_Mwidth,
-                          edge_color=color, parental_color=par_color, filial_color=fil_color)
+            par_color, par_dot_color, fil_color, fil_dot_color = self.checkCLAstatus(nd)
+            self.plotEdge(parent_x=x0, parent_y=y0, child_x=x, child_y=y,
+                          thickness=nd.isSelected() and 3 or 1,
+                          nodenum_radius=2*self.font_Mwidth,
+                          cla_radius=4, cached_radius=2, 
+                          edge_color=color,
+                          parental_color=par_color, parental_cached_color=par_dot_color,
+                          filial_color=fil_color, filial_cached_color=fil_dot_color)
             id = self.use_node_names and nd.getNodeName() or nd.getNodeNumber()
             color = nd.isSelected() and color_selected_node or color_unselected_node
             self.plotNode(x, y, nd.getNodeNumber(), id, color)
@@ -180,16 +196,51 @@ class TreeCanvas(Canvas):
     def checkCLAstatus(self, nd):
         parental_color = color_undefined_cla
         filial_color = color_undefined_cla
+        parental_cached_color = color_undefined_cla
+        filial_cached_color = color_undefined_cla
         if nd.isTip():
             td = nd.getTipData()
             if td:
-                parental_color = td.parentalCLAValid() and color_valid_cla or color_invalid_cla
+                if td.parentalCLAValid():
+                    parental_color = color_valid_cla
+                    if td.parentalCLACached():
+                        parental_cached_color = color_valid_cached_dot
+                    else:
+                        parental_cached_color = color_valid_cla
+                else:
+                    parental_color = color_invalid_cla
+                    if td.parentalCLACached():
+                        parental_cached_color = color_invalid_cached_dot
+                    else:
+                        parental_cached_color = color_invalid_cla
         else:
             id = nd.getInternalData()
             if id:
-                parental_color = id.parentalCLAValid() and color_valid_cla or color_invalid_cla
-                filial_color = id.filialCLAValid() and color_valid_cla or color_invalid_cla
-        return parental_color, filial_color
+                if id.parentalCLAValid():
+                    parental_color = color_valid_cla
+                    if id.parentalCLACached():
+                        parental_cached_color = color_valid_cached_dot
+                    else:
+                        parental_cached_color = color_valid_cla
+                else:
+                    parental_color = color_invalid_cla
+                    if id.parentalCLACached():
+                        parental_cached_color = color_invalid_cached_dot
+                    else:
+                        parental_cached_color = color_invalid_cla
+                if id.filialCLAValid():
+                    filial_color = color_valid_cla
+                    if id.filialCLACached():
+                        filial_cached_color = color_valid_cached_dot
+                    else:
+                        filial_cached_color = color_valid_cla
+                else:
+                    filial_color = color_invalid_cla
+                    if id.filialCLACached():
+                        filial_cached_color = color_invalid_cached_dot
+                    else:
+                        filial_cached_color = color_invalid_cla
+        return parental_color, parental_cached_color, filial_color, filial_cached_color
         
     #def __init__(self, parent, tree, tree_lock, width, height):
     def __init__(self, parent, tree, width, height):

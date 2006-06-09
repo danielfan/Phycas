@@ -99,6 +99,7 @@ void EdgeMove::update()
 	one_edgelen[0]				= origEdgelen;
 	double prev_ln_prior		= p->partialEdgeLenPrior(one_edgelen);
 
+	likelihood->useAsLikelihoodRoot(NULL);
 	double curr_ln_like			= likelihood->calcLnL(tree);
 
 	one_edgelen[0]				= origNode->GetEdgeLen();

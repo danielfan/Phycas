@@ -81,7 +81,9 @@ class InternalData
 		ConstCondLikelihoodShPtr		getValidParentalCondLikePtr() const;
 		
 		bool							filialCLAValid() const;
+		bool							filialCLACached() const;
 		bool							parentalCLAValid() const;
+		bool							parentalCLACached() const;
 
 	private:
 										InternalData(unsigned nPatterns, unsigned nRates, unsigned nStates, double * * * pMatrices, bool managePMatrices, CondLikelihoodStorage & cla_storage);
@@ -185,12 +187,32 @@ inline bool InternalData::filialCLAValid() const
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Returns true if `childCachedCLA' data member actually points to something, which means the working CLA has been 
+|	cached in case a revert of the current move is needed. Returns false if `childCachedCLA' does not point to a 
+|	CondLikelihood object.
+*/
+inline bool InternalData::filialCLACached() const
+	{
+	return childCachedCLA;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Returns true if `parWorkingCLA' data member actually points to something, which means that the parental CLA is 
 |	valid. Returns false if `parWorkingCLA' does not point to a CondLikelihood object.
 */
 inline bool InternalData::parentalCLAValid() const
 	{
 	return parWorkingCLA;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns true if `parCachedCLA' data member actually points to something, which means the working CLA has been cached
+|	in case a revert of the current move is needed. Returns false if `parCachedCLA' does not point to a CondLikelihood 
+|	object.
+*/
+inline bool InternalData::parentalCLACached() const
+	{
+	return parCachedCLA;
 	}
 
 } // namespace phycas

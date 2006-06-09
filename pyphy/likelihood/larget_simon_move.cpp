@@ -3,7 +3,6 @@
 #include "phycas/rand/probability_distribution.hpp"
 #include "pyphy/likelihood/likelihood_models.hpp"
 #include "pyphy/likelihood/tree_likelihood.hpp"
-//#include "pyphy/likelihood/mcmc_params.hpp"
 #include "pyphy/likelihood/xlikelihood.hpp"
 #include "pyphy/likelihood/mcmc_chain_manager.hpp"
 #include "pyphy/likelihood/larget_simon_move.hpp"
@@ -62,15 +61,6 @@ void LargetSimonMove::update()
 	double curr_posterior = curr_ln_like + curr_ln_prior;
 
 	double ln_accept_ratio = curr_posterior - prev_posterior + getLnHastingsRatio() + getLnJacobian();
-
-	//std::ofstream tmpf("tmp.lsmove.txt", std::ios::app | std::ios::out );
-	//tmpf << "\nln_accept_ratio = " << ln_accept_ratio;
-	//tmpf << "\n  curr_posterior       = " << curr_posterior;
-	//tmpf << "\n  prev_posterior       = " << prev_posterior;
-	//tmpf << "\n  getLnHastingsRatio() = " << getLnHastingsRatio();
-	//tmpf << "\n  getLnJacobian()      = " << getLnJacobian();
-	//tmpf << std::endl;
-	//tmpf.close();
 
 	if (ln_accept_ratio >= 0.0 || std::log(rng->Uniform(FILE_AND_LINE)) <= ln_accept_ratio)
 		{
@@ -142,7 +132,7 @@ void LargetSimonMove::starTreeProposeNewState()
 	orig_node->SetEdgeLen(mstar);
 
 	// Invalidate CLAs to ensure next likelihood calculation will be correct
-	//orig_node->SelectNode();
+	orig_node->SelectNode();
 	likelihood->useAsLikelihoodRoot(orig_node);
 	likelihood->invalidateAwayFromNode(*orig_node);
 	likelihood->invalidateBothEnds(orig_node);
@@ -221,8 +211,6 @@ void LargetSimonMove::defaultProposeNewState()
 	//
 	unsigned ypos = rng->SampleUInt(numAcceptableNodes);
 	unsigned i = 0;
-	//@POL-NESCENT how did line below ever work?
-	//for (ndY->GetFirstPreorder(); ndY != NULL; ndY = ndY->GetNextPreorder())
 	for (ndY = tree->GetFirstPreorder(); ndY != NULL; ndY = ndY->GetNextPreorder())
 		{
 		if (ndY->IsInternal() && !ndY->GetParentConst()->IsRoot())
@@ -384,35 +372,12 @@ void LargetSimonMove::defaultProposeNewState()
 		topol_changed = true;
 		}
 
-	//ndX->SelectNode();
-	//ndY->SelectNode();
-	//ndZ->SelectNode();
+	ndX->SelectNode();
+	ndY->SelectNode();
+	ndZ->SelectNode();
 	likelihood->useAsLikelihoodRoot(ndY);
-
-	//likelihood->startTreeViewer(tree, "LargetSimonMove::defaultProposeNewState(), before invalidating anything"); //@POL temporary!
-
-	//std::ofstream tmpf;
-	//tmpf.open("tmp.invalidate.txt", std::ios::out | std::ios::app);
-	//tmpf << "\n*******************\nIn LargetSimonMove::defaultProposeNewState(), about to invalidate away from node " << ndY->GetNodeNumber() << std::endl;
-	//tmpf.close();
-
 	likelihood->invalidateAwayFromNode(*ndY);
-
-	//std::string msg = str(boost::format("LargetSimonMove::defaultProposeNewState(), after invalidating away from ndY (%d)") % ndY->GetNodeNumber());
-	//likelihood->startTreeViewer(tree, msg);
-
-	//tmpf.open("tmp.invalidate.txt", std::ios::out | std::ios::app);
-	//tmpf << "\n*******************\nIn LargetSimonMove::defaultProposeNewState(), about to invalidate node " << ndY->GetNodeNumber() << std::endl;
-	//tmpf.close();
-
 	likelihood->invalidateBothEnds(ndY);
-
-	//msg = str(boost::format("LargetSimonMove::defaultProposeNewState(), after invalidating both ends of ndY (%d)") % ndY->GetNodeNumber());
-	//likelihood->startTreeViewer(tree, msg);
-
-	//ndX->UnselectNode();
-	//ndY->UnselectNode();
-	//ndZ->UnselectNode();
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -425,10 +390,11 @@ void LargetSimonMove::revert()
 		{
 		orig_node->SetEdgeLen(orig_edge_len);
 
-		//@POL-NESCENT should be restoreAwayFromNode and restoreBothEnds
 		likelihood->useAsLikelihoodRoot(orig_node);
-		likelihood->invalidateAwayFromNode(*orig_node);
-		likelihood->invalidateBothEnds(orig_node);
+		likelihood->restoreFromCacheAwayFromNode(*orig_node);
+		likelihood->invalidateBothEndsDiscardCache(orig_node);
+
+		orig_node->UnselectNode();
 		}
 	else
 		{
@@ -456,20 +422,17 @@ void LargetSimonMove::revert()
 				}
 			}
 
-		//std::cerr << "==> rejected LS move: nodes involved were: ";
-		//std::cerr << ndX->GetNodeNumber() << ", ";
-		//std::cerr << ndY->GetNodeNumber() << ", ";
-		//std::cerr << ndZ->GetNodeNumber();
-		//std::cerr << std::endl;
-
 		ndX->SetEdgeLen(origX);
 		ndY->SetEdgeLen(origY);
 		ndZ->SetEdgeLen(origZ);
 
-		//@POL-NESCENT should be restoreAwayFromNode and restoreBothEnds
 		likelihood->useAsLikelihoodRoot(ndY);
-		likelihood->invalidateAwayFromNode(*ndY);
-		likelihood->invalidateBothEnds(ndY);
+		likelihood->restoreFromCacheAwayFromNode(*ndY);
+		likelihood->invalidateBothEndsDiscardCache(ndY);
+
+		ndX->UnselectNode();
+		ndY->UnselectNode();
+		ndZ->UnselectNode();
 		}
 
 	reset();
@@ -480,18 +443,15 @@ void LargetSimonMove::revert()
 */
 void LargetSimonMove::accept()
 	{
-	reset();
+	likelihood->useAsLikelihoodRoot(ndY);
+	likelihood->discardCacheAwayFromNode(*ndY);
+	likelihood->discardCacheBothEnds(ndY);
 
-	// some older code deleted relating to attribute invalidation
-	//std::cerr << "==> accepted LS move: nodes involved were: ";
-	//std::cerr << ndX->GetNodeNumber() << ", ";
-	//std::cerr << ndY->GetNodeNumber() << ", ";
-	//std::cerr << ndZ->GetNodeNumber();
-	//if (topol_changed)
-	//	{
-	//	std::cerr << " (topology changed)";
-	//	}
-	//std::cerr << std::endl;
+	ndX->UnselectNode();
+	ndY->UnselectNode();
+	ndZ->UnselectNode();
+
+	reset();
 	}
 
 }	// namespace phycas

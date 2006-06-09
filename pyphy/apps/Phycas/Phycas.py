@@ -1099,7 +1099,7 @@ if __name__ == '__main__':
     mcmc.verbose = True
 
     if False:
-        mcmc.ncycles = 2
+        mcmc.ncycles = 20
         mcmc.report_every = 1
         mcmc.ls_move_weight = 10
         raw_input('debug stop')

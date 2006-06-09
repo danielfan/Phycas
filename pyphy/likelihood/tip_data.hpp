@@ -151,6 +151,7 @@ class TipData
 		ConstCondLikelihoodShPtr			getValidParentalCondLikePtr() const;
 
 		bool								parentalCLAValid() const;
+		bool								parentalCLACached() const;
 
 	private:
 
@@ -244,6 +245,16 @@ inline const StateListPos & TipData::getConstStateListPos() const
 inline bool TipData::parentalCLAValid() const
 	{
 	return parWorkingCLA;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns true if `parCachedCLA' data member actually points to something, which means the working CLA has been cached
+|	in case a revert of the current move is needed. Returns false if `parCachedCLA' does not point to a CondLikelihood 
+|	object.
+*/
+inline bool TipData::parentalCLACached() const
+	{
+	return parCachedCLA;
 	}
 
 } // namespace phycas

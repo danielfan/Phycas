@@ -485,7 +485,7 @@ bool TreeLikelihood::isValid(const TreeNode * refNd, const TreeNode * neighborCl
 |	conjunction with effective_postorder_edge_iterator to invalidate every CLA in the entire tree and ensure that there
 |	are also no cached CLAs as well.
 */
-bool TreeLikelihood::invalidateBothEndsNoCache(TreeNode * ref_nd, TreeNode * /* unused */)
+bool TreeLikelihood::invalidateBothEndsDiscardCache(TreeNode * ref_nd, TreeNode * /* unused */)
 	{
 	if (ref_nd->IsTip())
 		{
@@ -604,27 +604,15 @@ bool TreeLikelihood::invalidateBothEnds(TreeNode * ref_nd, TreeNode * /* unused 
 */
 bool TreeLikelihood::invalidateNode(TreeNode * ref_nd, TreeNode * neighbor_closer_to_likelihood_root)
 	{
-	//@POL-NESCENT Mark, I removed const qualifier from both arguments (this function changes one of these two nodes,
-	// so if we are going to use the effective_postorder_edge_iterator for evil like this, we shouldn't false advertise
-	// that we aren't going to be changing nodes)
-
-	//std::ofstream tmpf("tmp.invalidate.txt", std::ios::out | std::ios::app);
-	//tmpf << str(boost::format("ref_nd                             = %d") % ref_nd->GetNodeNumber()) << std::endl;
-	//tmpf << str(boost::format("neighbor_closer_to_likelihood_root = %d") % neighbor_closer_to_likelihood_root->GetNodeNumber()) << std::endl;
-
 	if (ref_nd->IsTip() && !ref_nd->IsRoot())
 		{
 		TipData * td = ref_nd->GetTipData();
 		if (!td->parWorkingCLA)
-			{
-			//tmpf << "  ref_nd is a tip, parWorkingCLA already absent, so no action taken" << std::endl;
 			return false;
-			}
 		if (td->parCachedCLA)
 			cla_pool.putCondLikelihood(td->parCachedCLA);
 		td->parCachedCLA = td->parWorkingCLA;
 		td->parWorkingCLA.reset();
-		//tmpf << "  ref_nd is a tip, parWorkingCLA present, so parWorkingCLA reset" << std::endl; //!POL temporary!
 		}
 	else
 		{
@@ -633,62 +621,218 @@ bool TreeLikelihood::invalidateNode(TreeNode * ref_nd, TreeNode * neighbor_close
 			// ref_nd is the actual child
 			InternalData * id = ref_nd->GetInternalData();
 			if (!id->parWorkingCLA)
-				{
-				//tmpf << "  ref_nd is internal and actual child, parWorkingCLA already absent, so no action taken" << std::endl; //!POL temporary!
 				return false;
-				}
 			if (id->parCachedCLA)
 				cla_pool.putCondLikelihood(id->parCachedCLA);
 			id->parCachedCLA = id->parWorkingCLA;
 			id->parWorkingCLA.reset();
-			//tmpf << "  ref_nd is internal and actual child, parWorkingCLA present, so parWorkingCLA reset" << std::endl; //!POL temporary!
 			}
 		else
 			{
 			// neighbor_closer_to_likelihood_root is the actual child
 			if (neighbor_closer_to_likelihood_root->IsTip())
-				{
-				//tmpf << "  ref_nd is internal but not actual child, neighbor_closer_to_likelihood_root is tip, so no action taken" << std::endl; //!POL temporary!
 				return false;
-				}
 			// Either ref_nd is not a tip, or it is the tip serving as the root node
 			InternalData * id = neighbor_closer_to_likelihood_root->GetInternalData();
 			if (!id->childWorkingCLA)
-				{
-				//if (ref_nd->IsRoot())
-				//	tmpf << "  ref_nd is the root, subroot's childWorkingCLA already absent, so no action taken" << std::endl; //!POL temporary!
-				//else
-				//	tmpf << "  ref_nd is internal but not actual child, childWorkingCLA already absent, so no action taken" << std::endl; //!POL temporary!
 				return false;
-				}
 			if (id->childCachedCLA)
 				cla_pool.putCondLikelihood(id->childCachedCLA);
 			id->childCachedCLA = id->childWorkingCLA;
 			id->childWorkingCLA.reset();
-			//if (ref_nd->IsRoot())
-			//	tmpf << "  ref_nd is the root, subroot's childWorkingCLA present, so childWorkingCLA reset" << std::endl; //!POL temporary!
-			//else
-			//	tmpf << "  ref_nd is internal but not actual child, childWorkingCLA present, so childWorkingCLA reset" << std::endl; //!POL temporary!
 			}
 		}
-	//tmpf.close();
 	return false;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	
+|	Invalidates all conditional likelihood arrays (CLAs) pointing toward the supplied `focal_node'. That is, the
+|	parental CLA of a child of `focal_node' would be invalidated, as would be the filial CLA for the parent of the
+|	`focal_node'. The invalidation propagates throughout the tree from `focal_node' so that regardless of the node
+|	serving as the likelihood root, the correct CLAs will be recalculated the next time the log-likelihood is 
+|	recomputed. If the edge of `focal_node' has been changed, the function invalidateBothEnds(`focal_node') should also
+|	be called to invalidate the one remaining CLA not invalidated by this function.
 */
 void TreeLikelihood::invalidateAwayFromNode(
-  TreeNode & focalNode)		/**< invalidation of conditional likelihood arrays will proceed outward from this node */
+  TreeNode & focal_node)		/**< invalidation of conditional likelihood arrays will proceed outward from this node */
 	{
 	NodeValidityChecker validFunctor = boost::bind(&TreeLikelihood::invalidateNode, this, _1, _2);
-
-	// All we need to do is construct the iterator
-	effective_postorder_edge_iterator(&focalNode, validFunctor);
+	effective_postorder_edge_iterator(&focal_node, validFunctor); // need only construct unnamed iterator object
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	
+|	Unconditionally discards cached parental (and, if ref_nd is internal, filial) conditional likelihood arrays if
+|	present. This function always returns false so it can be used in conjunction with effective_postorder_edge_iterator
+|	to discard every cached CLA in the entire tree (something that needs to be done when any move is accepted).
+*/
+bool TreeLikelihood::discardCacheBothEnds(TreeNode * ref_nd, TreeNode * /* unused */)
+	{
+	if (ref_nd->IsTip())
+		{
+		// Tip nodes have only parental CLAs
+		TipData * td = ref_nd->GetTipData();
+
+		// Remove cached parental CLAs if they exist
+		if (td->parCachedCLA)
+			{
+			cla_pool.putCondLikelihood(td->parCachedCLA);
+			td->parCachedCLA.reset();
+			}
+		}
+	else
+		{
+		// Internal nodes have both parental and filial CLAs
+		InternalData * id = ref_nd->GetInternalData();
+
+		// Remove cached parental CLAs if they exist
+		if (id->parCachedCLA)
+			{
+			cla_pool.putCondLikelihood(id->parCachedCLA);
+			id->parCachedCLA.reset();
+			}
+
+		// Remove cached filial CLAs if they exist
+		if (id->childCachedCLA)
+			{
+			cla_pool.putCondLikelihood(id->childCachedCLA);
+			id->childCachedCLA.reset();
+			}
+		}
+
+	return false;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Restores parental (and, if ref_nd is internal, filial) conditional likelihood arrays from cache and stores the
+|	existing conditional likelihood arrays for later use. This function always returns false so it can be used in 
+|	conjunction with effective_postorder_edge_iterator to restore every CLA from cache in the entire tree.
+*/
+bool TreeLikelihood::restoreFromCacheBothEnds(TreeNode * ref_nd, TreeNode * /* unused */)
+	{
+	if (ref_nd->IsTip())
+		{
+		// Tip nodes have only parental CLAs
+		TipData * td = ref_nd->GetTipData();
+		if (td->parCachedCLA)
+			{
+			if (td->parWorkingCLA)
+				cla_pool.putCondLikelihood(td->parWorkingCLA);
+			td->parWorkingCLA = td->parCachedCLA;
+			td->parCachedCLA.reset();
+			}
+		}
+	else
+		{
+		// Internal nodes have both parental and filial CLAs
+		InternalData * id = ref_nd->GetInternalData();
+
+		// Restore parental CLA from cache
+		if (id->parCachedCLA)
+			{
+			if (id->parWorkingCLA)
+				cla_pool.putCondLikelihood(id->parWorkingCLA);
+			id->parWorkingCLA = id->parCachedCLA;
+			id->parCachedCLA.reset();
+			}
+
+		// Restore filial CLA from cache
+		if (id->childCachedCLA)
+			{
+			if (id->childWorkingCLA)
+				cla_pool.putCondLikelihood(id->childWorkingCLA);
+			id->childWorkingCLA = id->childCachedCLA;
+			id->childCachedCLA.reset();
+			}
+		}
+
+	return false;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Function used in conjunction with effective_postorder_edge_iterator to restore the conditional likelihood arrays 
+|	(CLAs) of all nodes starting with the supplied focal node `ref_nd'. For nodes that are descendants of the focal node
+|	(descendant means that a node can be found using only left child and right sib pointers starting from the focal
+|	node), it is the parental CLAs that are restored. For a node that is an ancestor of the focal node, it is the 
+|	filial CLAs that are restored. For all other nodes (e.g. on independent lineages derived from an ancestral node), 
+|	it is the parental CLAs that are restored. This function always returns false because the goal is to restore every 
+|	node that needs to be invalidated.
+*/
+bool TreeLikelihood::restoreFromCacheNode(TreeNode * ref_nd, TreeNode * neighbor_closer_to_likelihood_root)
+	{
+	if (ref_nd->IsTip() && !ref_nd->IsRoot())
+		{
+		TipData * td = ref_nd->GetTipData();
+		if (!td->parCachedCLA)
+			return false;
+		if (td->parWorkingCLA)
+			cla_pool.putCondLikelihood(td->parWorkingCLA);
+		td->parWorkingCLA = td->parCachedCLA;
+		td->parCachedCLA.reset();
+		}
+	else
+		{
+		if (ref_nd->GetParent() == neighbor_closer_to_likelihood_root)
+			{
+			InternalData * id = ref_nd->GetInternalData();
+			if (!id->parCachedCLA)
+				return false;
+			if (id->parWorkingCLA)
+				cla_pool.putCondLikelihood(id->parWorkingCLA);
+			id->parWorkingCLA = id->parCachedCLA;
+			id->parCachedCLA.reset();
+			}
+		else
+			{
+			// neighbor_closer_to_likelihood_root is the actual child
+			if (neighbor_closer_to_likelihood_root->IsTip())
+				return false;
+
+			// Either ref_nd is not a tip, or it is the tip serving as the root node
+			InternalData * id = neighbor_closer_to_likelihood_root->GetInternalData();
+			if (!id->childCachedCLA)
+				return false;
+			if (id->childWorkingCLA)
+				cla_pool.putCondLikelihood(id->childWorkingCLA);
+			id->childWorkingCLA = id->childCachedCLA;
+			id->childCachedCLA.reset();
+			}
+		}
+	return false;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Restores all conditional likelihood arrays (CLAs) pointing toward the supplied `focal_node' from cache. That is, the
+|	parental CLA of a child of `focal_node' would be restored, as would be the filial CLA for the parent of the 
+|	`focal_node'. It may be necessary to call the function invalidateBothEnds(`focal_node') also to restore the one 
+|	remaining CLA not restored by this function.
+*/
+void TreeLikelihood::restoreFromCacheAwayFromNode(
+  TreeNode & focal_node)		/**< restoration of cached conditional likelihood arrays will proceed outward from this node */
+	{
+	NodeValidityChecker validFunctor = boost::bind(&TreeLikelihood::restoreFromCacheNode, this, _1, _2);
+	effective_postorder_edge_iterator(&focal_node, validFunctor); // need only construct unnamed iterator object
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Discards all cached conditional likelihood arrays (CLAs) pointing toward the supplied `focal_node'. That is, the
+|	cached parental CLA of a child of `focal_node' would be discarded, as would be the cached filial CLA for the parent 
+|	of the `focal_node'. None of the working CLAs are affected. It may be necessary to call the function 
+|	discardCacheBothEnds(`focal_node') also to discard the cache from the two remaining CLAs not affected by this 
+|	function.
+*/
+void TreeLikelihood::discardCacheAwayFromNode(
+  TreeNode & focal_node)		/**< restoration of cached conditional likelihood arrays will proceed outward from this node */
+	{
+	NodeValidityChecker validFunctor = boost::bind(&TreeLikelihood::discardCacheBothEnds, this, _1, _2);
+	effective_postorder_edge_iterator(&focal_node, validFunctor); // need only construct unnamed iterator object
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	This is the function that needs to be called to recompute the log-likelihood. If `likelihood_root' is not NULL, 
+|	the calculation will use that node as the root of the likelihood calculation, and it will be assumed that all
+|	conditional likelihood arrays (CLAs) are correctly calculated or have been invalidated if they need to be 
+|	recomputed. On the other hand, if `likelihood_root' is NULL, then all CLAs will be invalidated and recomputed
+|	(useful if a parameter has been changed that requires recalculation of all CLAs).
 */
 double TreeLikelihood::calcLnL(
   TreeShPtr t)
@@ -711,29 +855,111 @@ double TreeLikelihood::calcLnL(
 		// Invalidate (and do not cache) all CLAs from the tree. This will require all CLAs to be recomputed 
 		// when the likelihood is computed using the subroot as the likelihood root. This path should be taken
 		// if a parameter is changed that invalidates the entire tree.
-		//startTreeViewer(t, str(boost::format("calcLnL, before invalidating everything away from subroot(%d)") % nd->GetNodeNumber()));
-
-		NodeValidityChecker validFunctor = boost::bind(&TreeLikelihood::invalidateBothEndsNoCache, this, _1, _2);
+		NodeValidityChecker validFunctor = boost::bind(&TreeLikelihood::invalidateBothEndsDiscardCache, this, _1, _2);
 		effective_postorder_edge_iterator(nd, validFunctor); // constructor does all the work we need
-		invalidateBothEndsNoCache(nd);
-
-		//startTreeViewer(t, str(boost::format("calcLnL, after invalidating everything away from subroot(%d)") % nd->GetNodeNumber()));
+		invalidateBothEndsDiscardCache(nd);
 		}
 
 	assert(nd);
 	assert(nd->IsInternal());
 
 	// Calculate log-likelihood using nd as the likelihood root
-	double tmp = calcLnLFromNode(*nd);
+	double lnL = calcLnLFromNode(*nd);
 
 	// likelihood_root is never persistent
 	likelihood_root = NULL;
 
-	//std::ofstream tmpf("tmp.lnLlog.txt", std::ios::out | std::ios::app);
-	//tmpf << tmp << std::endl;
-	//tmpf.close();
+	return lnL;
+	}
 
-	return tmp;
+void TreeLikelihood::debugSaveCLAs(TreeShPtr t, std::string fn, bool overwrite)
+	{
+	std::ofstream tmpf;
+	if (overwrite)
+		tmpf.open(fn.c_str());
+	else
+		{
+		tmpf.open(fn.c_str(), std::ios::out | std::ios::app);
+		}
+
+	for (TreeNode * nd = t->GetFirstPreorder(); nd != NULL; nd = nd->GetNextPreorder())
+		{
+		if (nd->IsTip())
+			{
+			tmpf << "\n\nTip node number " << nd->GetNodeNumber();
+			if (nd->IsRoot())
+                tmpf << "\n  parent = None";
+			else
+                tmpf << "\n  parent = " << nd->GetParent()->GetNodeNumber();
+            tmpf << "\n  children = ";
+			for (TreeNode * child = nd->GetLeftChild(); child != NULL; child = child->GetRightSib())
+                tmpf << child->GetNodeNumber() << " ";
+
+			TipData * td = nd->GetTipData();
+			if (td->parentalCLAValid())
+				{
+				CondLikelihoodShPtr cla = td->getParentalCondLikePtr();
+				unsigned sz = cla->getCLASize();
+				LikeFltType * arr = cla->getCLA();
+	            tmpf << "\n  cla length = " << sz;
+	            tmpf << "\n  parental = ";
+				for (unsigned i = 0; i < sz; ++i)
+					{
+					tmpf << str(boost::format("%20.12f ") % arr[i]);
+					}
+				}
+			else
+				{
+	            tmpf << "\n  parental CLA = None";
+				}
+			}
+		else
+			{
+			tmpf << "\n\nInternal node number " << nd->GetNodeNumber();
+
+            tmpf << "\n  parent = " << nd->GetParent()->GetNodeNumber();
+            tmpf << "\n  children = ";
+			for (TreeNode * child = nd->GetLeftChild(); child != NULL; child = child->GetRightSib())
+                tmpf << child->GetNodeNumber() << " ";
+
+			InternalData * id = nd->GetInternalData();
+			if (id->parentalCLAValid())
+				{
+				CondLikelihoodShPtr cla = id->getParentalCondLikePtr();
+				unsigned sz = cla->getCLASize();
+				LikeFltType * arr = cla->getCLA();
+	            tmpf << "\n  parental CLA length = " << sz;
+	            tmpf << "\n  parental CLA = ";
+				for (unsigned i = 0; i < sz; ++i)
+					{
+					tmpf << str(boost::format("%20.12f ") % arr[i]);
+					}
+				}
+			else
+				{
+	            tmpf << "\n  parental CLA = None";
+				}
+
+			if (id->filialCLAValid())
+				{
+				CondLikelihoodShPtr cla = id->getChildCondLikePtr();
+				unsigned sz = cla->getCLASize();
+				LikeFltType * arr = cla->getCLA();
+	            tmpf << "\n  filial CLA length = " << sz;
+	            tmpf << "\n  filial CLA = ";
+				for (unsigned i = 0; i < sz; ++i)
+					{
+					tmpf << str(boost::format("%20.12f ") % arr[i]);
+					}
+				}
+			else
+				{
+	            tmpf << "\n  filial CLA = None";
+				}
+			}
+		}
+
+	tmpf.close();
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

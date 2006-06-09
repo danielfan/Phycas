@@ -39,11 +39,6 @@ typedef boost::shared_ptr<SimData>	SimDataShPtr;
 class Lot;
 typedef boost::shared_ptr<Lot>	LotShPtr;
 
-//struct TreeViewerAgent
-//	{
-//	virtual int startTreeViewer() { std::cerr << "I am writing this from C++" << std::endl; return 0; }
-//	};
-
 /*----------------------------------------------------------------------------------------------------------------------
 |	Used for computing the likelihood on a tree.
 */
@@ -87,8 +82,15 @@ class TreeLikelihood
 
 		bool							invalidateNode(TreeNode * ref_nd, TreeNode * neighbor_closer_to_likelihood_root);
 		bool							invalidateBothEnds(TreeNode * ref_nd, TreeNode * unused = NULL);
-		bool							invalidateBothEndsNoCache(TreeNode * ref_nd, TreeNode * unused = NULL);
+		bool							invalidateBothEndsDiscardCache(TreeNode * ref_nd, TreeNode * unused = NULL);
 		void							invalidateAwayFromNode(TreeNode & focalNode);
+
+		bool							restoreFromCacheNode(TreeNode * ref_nd, TreeNode * neighbor_closer_to_likelihood_root);
+		bool							restoreFromCacheBothEnds(TreeNode * ref_nd, TreeNode * unused = NULL);
+		bool							discardCacheBothEnds(TreeNode * ref_nd, TreeNode * unused = NULL);
+		void							restoreFromCacheAwayFromNode(TreeNode & focalNode);
+		void							discardCacheAwayFromNode(TreeNode & focalNode);
+
 		bool							isValid(const TreeNode *focal, const TreeNode *avoidNd);
 		void 							refreshCLA(TreeNode & nd, const TreeNode * avoid);
 		double							calcLnLFromNode(TreeNode & focal_node);
@@ -110,6 +112,7 @@ class TreeLikelihood
 											{
 											return (likelihood_root ? (int)likelihood_root->GetNodeNumber() : -1);
 											}
+		void							debugSaveCLAs(TreeShPtr t, std::string fn, bool overwrite);
 		virtual int						startTreeViewer(TreeShPtr, std::string) const {return 0;}
 
 	protected:

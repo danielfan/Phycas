@@ -10,7 +10,6 @@
 
 namespace phycas
 {
-//@POL-NESCENT Mark, I removed const from the template parameters because some uses of the iterator change one of the nodes
 typedef boost::function< bool (TreeNode *, TreeNode *) > NodeValidityChecker;
 		
 /*----------------------------------------------------------------------------------------------------------------------

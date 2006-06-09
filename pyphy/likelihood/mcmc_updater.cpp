@@ -17,6 +17,7 @@ namespace phycas
 */
 double MCMCUpdater::recalcLike()
 	{
+	likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
 	curr_ln_like = likelihood->calcLnL(tree);
 
 	//std::cerr << "--> in MCMCUpdater::recalcLike(), name = " << getName();	//POL temp
