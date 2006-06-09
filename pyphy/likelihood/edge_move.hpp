@@ -91,6 +91,7 @@ class EdgeMove : public MCMCUpdater
 		double						origEdgelen;	/**< Length of modified edge saved (in case revert is necessary) */
 		TreeNode *					origNode;		/**< Node owning the modified edge (in case revert is necessary) */
 
+#if 0 // POLPY_NEWWAY
 		//unsigned						num_taxa;							/**< The number of taxa */
 		//unsigned						num_nodes_in_fully_resolved_tree;	/**< Total number of nodes in a fully resolved tree having the same number of taxa, N (= 2N - 2) */
 		//bool							add_edge_move_proposed;				/**< True if last move proposed was an add-edge move; false otherwise */
@@ -113,9 +114,10 @@ class EdgeMove : public MCMCUpdater
 		//double							ln_jacobian;						/**< The natural log of the Jacobian for the move last proposed */
 		//double							ln_hastings;						/**< The natural log of the Hastings ratio for the move last proposed */
 
-		std::vector<double>				one_edgelen;						/**< Workspace declared here to avoid unnecessary allocs/deallocs */
-
 		//TopoPriorCalculatorShPtr		topo_prior_calculator;				/**< Used to compute the various kinds of topological priors needed for dealing with polytomies */
+#endif
+
+		std::vector<double>				one_edgelen;						/**< Workspace declared here to avoid unnecessary allocs/deallocs */
 	};
 
 } // namespace phycas

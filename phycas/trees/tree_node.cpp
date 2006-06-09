@@ -332,7 +332,8 @@ void TreeNode::Recurse(void &FuncObj(TreeNode*, int))
 	FuncObj(this, 3);
 	}
 #endif
-	
+
+#if 0 // POLPY_NEWWAY
 //@POL Mark, I introduced this function because it appears you commented out the '(*it)->clDirty = true' in
 // my InvalidateAttrDown function (see below), which caused problems when BushMaster proposed moves that either
 // broke up or created polytomies. For example, breaking up a polytomy involves pulling a node out of storage and 
@@ -354,7 +355,9 @@ void TreeNode::InvalidateCondLikeArrays()
 			}
 		}
 	}
+#endif
 
+#if 0 // POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Included so that LargetSimonMove would work, but has not yet been transferred
 */
@@ -372,6 +375,8 @@ void TreeNode::InvalidateAttrDown(bool ,//brLenChanged,
 			}
 		}
 	}
+#endif
+
 #if ALT_TRAVERSE_TREE
 	TreeNode *TreeNode::SetPreorderPointers(TreeNode *p)
 		{

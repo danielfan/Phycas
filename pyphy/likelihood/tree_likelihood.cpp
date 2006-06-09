@@ -702,7 +702,6 @@ bool TreeLikelihood::discardCacheBothEnds(TreeNode * ref_nd, TreeNode * /* unuse
 	return false;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Restores parental conditional likelihood arrays from cache and stores the existing conditional likelihood arrays 
 |	for later use. This function always returns false so it can be used in conjunction with 
@@ -749,7 +748,6 @@ bool TreeLikelihood::restoreFromCacheParentalOnly(TreeNode * ref_nd, TreeNode * 
 
 	return false;
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Restores parental (and, if ref_nd is internal, filial) conditional likelihood arrays from cache and stores the
@@ -765,7 +763,7 @@ bool TreeLikelihood::restoreFromCacheBothEnds(TreeNode * ref_nd, TreeNode * /* u
 		{
 		// Tip nodes have only parental CLAs
 		TipData * td = ref_nd->GetTipData();
-#if POLPY_NEWWAY
+
 		// Store working CLA in any case
 		if (td->parWorkingCLA)
 			cla_pool.putCondLikelihood(td->parWorkingCLA);
@@ -777,15 +775,6 @@ bool TreeLikelihood::restoreFromCacheBothEnds(TreeNode * ref_nd, TreeNode * /* u
 			td->parWorkingCLA = td->parCachedCLA;
 			td->parCachedCLA.reset();
 			}
-#else
-		if (td->parCachedCLA)
-			{
-			if (td->parWorkingCLA)
-				cla_pool.putCondLikelihood(td->parWorkingCLA);
-			td->parWorkingCLA = td->parCachedCLA;
-			td->parCachedCLA.reset();
-			}
-#endif
 		}
 	else
 		{
@@ -793,7 +782,7 @@ bool TreeLikelihood::restoreFromCacheBothEnds(TreeNode * ref_nd, TreeNode * /* u
 		InternalData * id = ref_nd->GetInternalData();
 
 		// Restore parental CLA from cache
-#if POLPY_NEWWAY
+
 		// Store working CLA in any case
 		if (id->parWorkingCLA)
 			cla_pool.putCondLikelihood(id->parWorkingCLA);
@@ -805,18 +794,9 @@ bool TreeLikelihood::restoreFromCacheBothEnds(TreeNode * ref_nd, TreeNode * /* u
 			id->parWorkingCLA = id->parCachedCLA;
 			id->parCachedCLA.reset();
 			}
-#else
-		if (id->parCachedCLA)
-			{
-			if (id->parWorkingCLA)
-				cla_pool.putCondLikelihood(id->parWorkingCLA);
-			id->parWorkingCLA = id->parCachedCLA;
-			id->parCachedCLA.reset();
-			}
-#endif
 
 		// Restore filial CLA from cache
-#if POLPY_NEWWAY
+
 		// Store working CLA in any case
 		if (id->childWorkingCLA)
 			cla_pool.putCondLikelihood(id->childWorkingCLA);
@@ -828,15 +808,6 @@ bool TreeLikelihood::restoreFromCacheBothEnds(TreeNode * ref_nd, TreeNode * /* u
 			id->childWorkingCLA = id->childCachedCLA;
 			id->childCachedCLA.reset();
 			}
-#else
-		if (id->childCachedCLA)
-			{
-			if (id->childWorkingCLA)
-				cla_pool.putCondLikelihood(id->childWorkingCLA);
-			id->childWorkingCLA = id->childCachedCLA;
-			id->childCachedCLA.reset();
-			}
-#endif
 		}
 
 	return false;
@@ -858,7 +829,7 @@ bool TreeLikelihood::restoreFromCacheNode(TreeNode * ref_nd, TreeNode * neighbor
 	if (ref_nd->IsTip() && !ref_nd->IsRoot())
 		{
 		TipData * td = ref_nd->GetTipData();
-#if POLPY_NEWWAY
+
 		// Store the working CLA in any case
 		if (td->parWorkingCLA)
 			cla_pool.putCondLikelihood(td->parWorkingCLA);
@@ -870,21 +841,13 @@ bool TreeLikelihood::restoreFromCacheNode(TreeNode * ref_nd, TreeNode * neighbor
 			td->parWorkingCLA = td->parCachedCLA;
 			td->parCachedCLA.reset();
 			}
-#else
-		if (!td->parCachedCLA)
-			return false;
-		if (td->parWorkingCLA)
-			cla_pool.putCondLikelihood(td->parWorkingCLA);
-		td->parWorkingCLA = td->parCachedCLA;
-		td->parCachedCLA.reset();
-#endif
 		}
 	else
 		{
 		if (ref_nd->GetParent() == neighbor_closer_to_likelihood_root)
 			{
 			InternalData * id = ref_nd->GetInternalData();
-#if POLPY_NEWWAY
+
 			// Store the working CLA in any case
 			if (id->parWorkingCLA)
 				cla_pool.putCondLikelihood(id->parWorkingCLA);
@@ -896,15 +859,6 @@ bool TreeLikelihood::restoreFromCacheNode(TreeNode * ref_nd, TreeNode * neighbor
 				id->parWorkingCLA = id->parCachedCLA;
 				id->parCachedCLA.reset();
 				}
-#else
-			InternalData * id = ref_nd->GetInternalData();
-			if (!id->parCachedCLA)
-				return false;
-			if (id->parWorkingCLA)
-				cla_pool.putCondLikelihood(id->parWorkingCLA);
-			id->parWorkingCLA = id->parCachedCLA;
-			id->parCachedCLA.reset();
-#endif
 			}
 		else
 			{
@@ -914,7 +868,7 @@ bool TreeLikelihood::restoreFromCacheNode(TreeNode * ref_nd, TreeNode * neighbor
 
 			// Either ref_nd is not a tip, or it is the tip serving as the root node
 			InternalData * id = neighbor_closer_to_likelihood_root->GetInternalData();
-#if POLPY_NEWWAY
+
 			// Store the working CLA in any case
 			if (id->childWorkingCLA)
 				cla_pool.putCondLikelihood(id->childWorkingCLA);
@@ -926,14 +880,6 @@ bool TreeLikelihood::restoreFromCacheNode(TreeNode * ref_nd, TreeNode * neighbor
 				id->childWorkingCLA = id->childCachedCLA;
 				id->childCachedCLA.reset();
 				}
-#else
-			if (!id->childCachedCLA)
-				return false;
-			if (id->childWorkingCLA)
-				cla_pool.putCondLikelihood(id->childWorkingCLA);
-			id->childWorkingCLA = id->childCachedCLA;
-			id->childCachedCLA.reset();
-#endif
 			}
 		}
 	return false;

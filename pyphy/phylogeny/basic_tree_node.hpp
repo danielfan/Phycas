@@ -87,8 +87,10 @@ class TreeNode
 
 		// Utilities
 		//
+#if 0 //POLPY_NEWWAY
 		void			InvalidateCondLikeArrays();
 		void			InvalidateAttrDown(bool, TreeNode *);
+#endif
 		unsigned		CountChildren() const;
 		void			AppendNodeInfo(std::string &s, bool num_and_name_only = false);
 

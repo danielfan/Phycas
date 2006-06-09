@@ -10,6 +10,7 @@ const double TreeNode::edgeLenDefault = 0.1;
 const double TreeNode::edgeLenInitValue = DBL_MAX;
 const unsigned TreeNode::nodeNumInitValue = UINT_MAX;
 
+#if 0	//POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Added to make BushMove compile, but need to revisit when likelihood calculations are optimized.
 */
@@ -25,7 +26,9 @@ void TreeNode::InvalidateCondLikeArrays()
 	//		}
 	//	}
 	}
+#endif
 
+#if 0	//POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Added to make LargetSimonMove compile, but need to revisit when likelihood calculations are optimized.
 */
@@ -43,6 +46,7 @@ void TreeNode::InvalidateAttrDown(
 	//			}
 	//		}
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns number of immediate descendants (should be 0 for a tip node, 1 for the root (tip) node, and 2 or more for

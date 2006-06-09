@@ -87,9 +87,7 @@ class TreeLikelihood
 
 		bool							restoreFromCacheNode(TreeNode * ref_nd, TreeNode * neighbor_closer_to_likelihood_root);
 		bool							restoreFromCacheBothEnds(TreeNode * ref_nd, TreeNode * unused = NULL);
-#if POLPY_NEWWAY
 		bool							restoreFromCacheParentalOnly(TreeNode * ref_nd, TreeNode * unused = NULL);
-#endif
 		bool							discardCacheBothEnds(TreeNode * ref_nd, TreeNode * unused = NULL);
 		void							restoreFromCacheAwayFromNode(TreeNode & focalNode);
 		void							discardCacheAwayFromNode(TreeNode & focalNode);

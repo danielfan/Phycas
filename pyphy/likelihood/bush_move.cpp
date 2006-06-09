@@ -59,6 +59,12 @@ void BushMove::revert()
 		// of orig_par. To reverse the add-edge move, we need only transfer all children of orig_lchild to orig_par, then store 
 		// orig_lchild for use in some later add-edge move proposal
 
+#if POLPY_NEWWAY
+		// Must discard CLAs before moving children, otherwise orig_lchild will look like a tip node
+		// which causes invalidateBothEndsDiscardCache to attempt to access its TipData structure
+		likelihood->invalidateBothEndsDiscardCache(orig_lchild); //@POL should not be any cached CLAs here
+#endif
+
 		// Transfer all children of orig_lchild to orig_par
 		while (orig_lchild->GetLeftChild() != NULL)
 			{
@@ -71,7 +77,15 @@ void BushMove::revert()
 		//
 		tree_manipulator.DetachSubtree(orig_lchild);
 		tree->StoreTreeNode(orig_lchild);
+
+#if 0 // POLPY_NEWWAY
 		orig_par->InvalidateCondLikeArrays();	// invalidate conditional likelihood arrays only
+#endif
+
+#if POLPY_NEWWAY
+		likelihood->useAsLikelihoodRoot(orig_par);
+		likelihood->restoreFromCacheAwayFromNode(*orig_par);
+#endif
 
 		tree->InvalidateNodeCounts();
 		}
@@ -87,8 +101,11 @@ void BushMove::revert()
 		TreeNode * u = tree->GetNewNode();
 		u->SetEdgeLen(orig_edgelen);
 		tree_manipulator.InsertSubtree(u, orig_par, TreeManip::kOnRight);
+
+#if 0 //POLPY_NEWWAY
 		u->InvalidateAttrDown(true, orig_par);	// invalidates transition probability matrix only
 		u->InvalidateCondLikeArrays(); 	// invalidates conditional likelihood arrays only
+#endif
 
 		TreeNode * nd = orig_lchild;
 		for (;;)
@@ -100,6 +117,13 @@ void BushMove::revert()
 			if (s == orig_rchild)
 				break;
 			}
+
+#if POLPY_NEWWAY
+		likelihood->useAsLikelihoodRoot(orig_lchild);
+		likelihood->restoreFromCacheAwayFromNode(*orig_lchild);
+		likelihood->restoreFromCacheParentalOnly(orig_lchild);
+#endif
+
 		tree->InvalidateNodeCounts();
 		}
 
@@ -429,8 +453,11 @@ void BushMove::proposeAddEdgeMove(TreeNode * u)
 	v->SetNodeNum(tree->GetNNodes());
 	likelihood->prepareInternalNodeForLikelihood(v);
 	tree_manipulator.InsertSubtree(v, u, TreeManip::kOnLeft);
+
+#if 0 //POLPY_NEWWAY
 	v->InvalidateAttrDown(true, u);	// invalidates transition probability matrix only
 	v->InvalidateCondLikeArrays();	// invalidates conditional likelihood arrays only
+#endif
 
 	// Save u and v. If revert is necessary, all of orig_lchild's nodes will be returned
 	// to orig_par, and orig_lchild will be deleted.
@@ -491,6 +518,14 @@ void BushMove::proposeAddEdgeMove(TreeNode * u)
 			}
 		}
 
+#if POLPY_NEWWAY
+	orig_lchild->SelectNode();
+
+	likelihood->useAsLikelihoodRoot(orig_lchild);
+	likelihood->invalidateAwayFromNode(*orig_lchild);
+	likelihood->invalidateBothEnds(orig_lchild);	//@POL really just need invalidateParentalOnly function
+#endif
+
 	tree->InvalidateNodeCounts();
 	}
 
@@ -516,6 +551,18 @@ void BushMove::proposeAddEdgeMove(TreeNode * u)
 */
 void BushMove::proposeDeleteEdgeMove(TreeNode * u)
 	{
+#if POLPY_NEWWAY
+	//u->SelectNode();
+	//likelihood->startTreeViewer(tree, str(boost::format("before deleting edge (%d)") % u->GetNodeNumber()));
+
+	// Node u will be stored, so get rid of any CLAs
+	//@POL should not discard cache here in case move is reverted - right now we're discarding because
+	// tree_manipulator.DeleteLeaf stores node u, and we do not want any CLAs to travel to node storage
+	// and come back to haunt us later. Better solution would be to keep u around until we know the move
+	// will be accepted, at which point the CLAs can definitely be discarded
+	likelihood->invalidateBothEndsDiscardCache(u);
+#endif
+
 	// Save nd's edge length in case we need to revert
 	//
 	orig_edgelen = u->GetEdgeLen();
@@ -562,9 +609,18 @@ void BushMove::proposeDeleteEdgeMove(TreeNode * u)
 		tree_manipulator.DetachSubtree(orig_rchild);
 		tree_manipulator.InsertSubtree(orig_rchild, orig_par, TreeManip::kOnRight);
 		}
+
+#if 0 //POLPY_NEWWAY
 	//orig_par->InvalidateAttrDown(true, orig_par->GetParent());	// no need to invalidate transition probability matrix
 	orig_par->InvalidateCondLikeArrays();	// invalidates conditional likelihood arrays only
+#endif
+
 	tree_manipulator.DeleteLeaf(u);
+
+#if POLPY_NEWWAY
+	likelihood->useAsLikelihoodRoot(orig_par);
+	likelihood->invalidateAwayFromNode(*orig_par);
+#endif
 
 	tree->InvalidateNodeCounts();
 	}
@@ -589,19 +645,8 @@ void BushMove::update()
 	assert(p);
 	double prev_ln_like = p->getLastLnLike();
 
-	//std::cerr << "In BushMove::update():\n";
-	//std::cerr << "  tree before: " << tree->MakeNewick() << std::endl;
-
 	proposeNewState();
 
-	//std::cerr << "  tree after: " << tree->MakeNewick() << std::endl;
-	//if (add_edge_move_proposed)
-	//	std::cerr << "  add-edge move\n";
-	//else
-	//	std::cerr << "  delete-edge move\n";
-	//std::cerr << std::endl;
-
-	likelihood->useAsLikelihoodRoot(NULL);
 	double curr_ln_like				= likelihood->calcLnL(tree);
 
 	double curr_ln_prior			= 0.0;

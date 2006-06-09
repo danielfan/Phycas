@@ -62,6 +62,20 @@ import tkFont
 import math
 
 class TreeCanvas(Canvas):
+    # Wrapping Canvas calls in these display* functions in order to later make
+    # it easier to draw to a PDF file rather than the screen
+    def displayText(self, x, y, text, font, color):
+        Canvas.create_text(self, x, y, text=text, font=font, fill=color)
+        
+    def displayLine(self, x0, y0, x, y, color, thickness):
+        Canvas.create_line(self, x0, y0, x, y, fill=color, width=thickness)
+
+    def displayFilledOval(self, x0, y0, x, y, color):
+        Canvas.create_oval(self, x0, y0, x, y, fill=color, outline=color)
+
+    def displayFilledRectangle(self, x, y, width, height, color):
+        Canvas.create_rectangle(self, x, y, width, height, fill=color)
+        
     def xtranslate(self, x):
         return int(self.left + self.xscaler*x)
 
@@ -72,7 +86,7 @@ class TreeCanvas(Canvas):
         x = self.xtranslate(xval)
         y = self.ytranslate(yval)
         color = (number == self.likelihood_root_nodenum and color_likelihood_root or node_color)
-        Canvas.create_text(self, x, y, text=str(label), font=self.font, fill=color)
+        self.displayText(x, y, text=str(label), font=self.font, color=color)
 
     def plotEdge(self, parent_x, parent_y, child_x, child_y,
                  thickness=1,
@@ -101,15 +115,15 @@ class TreeCanvas(Canvas):
         dy = float(nodenum_radius)*math.sin(theta)
         
         # Draw the edge itself
-        Canvas.create_line(self, x0+dx, y0+dy, x-dx, y-dy, fill=edge_color, width=thickness)
+        self.displayLine(x0+dx, y0+dy, x-dx, y-dy, edge_color, thickness)
 
         # Draw the parental CLA marker
-        Canvas.create_oval(self, x0+dx-cla_radius, y0+dy-cla_radius, x0+dx+cla_radius, y0+dy+cla_radius, fill=parental_color, outline=parental_color)
-        Canvas.create_oval(self, x0+dx-cached_radius, y0+dy-cached_radius, x0+dx+cached_radius, y0+dy+cached_radius, fill=parental_cached_color, outline=parental_cached_color)
+        self.displayFilledOval(x0+dx-cla_radius, y0+dy-cla_radius, x0+dx+cla_radius, y0+dy+cla_radius, color=parental_color)
+        self.displayFilledOval(x0+dx-cached_radius, y0+dy-cached_radius, x0+dx+cached_radius, y0+dy+cached_radius, color=parental_cached_color)
 
         # Draw the filial CLA marker
-        Canvas.create_oval(self, x-dx-cla_radius, y-dy-cla_radius, x-dx+cla_radius, y-dy+cla_radius, fill=filial_color, outline=filial_color)
-        Canvas.create_oval(self, x-dx-cached_radius, y-dy-cached_radius, x-dx+cached_radius, y-dy+cached_radius, fill=filial_cached_color, outline=filial_cached_color)
+        self.displayFilledOval(x-dx-cla_radius, y-dy-cla_radius, x-dx+cla_radius, y-dy+cla_radius, color=filial_color)
+        self.displayFilledOval(x-dx-cached_radius, y-dy-cached_radius, x-dx+cached_radius, y-dy+cached_radius, color=filial_cached_color)
 
     def getEdgeLen(self, nd):
         return (self.use_edgelens and nd.getEdgeLen() or 1.0)
@@ -298,7 +312,7 @@ class TreeCanvas(Canvas):
         #Canvas.config(self, width=new_width, height=new_height)
 
     def repaint(self):
-        Canvas.create_rectangle(self, 0, 0, self.plotw, self.ploth, fill=color_plot_background);
+        self.displayFilledRectangle(0, 0, self.plotw, self.ploth, color=color_plot_background)
         self.drawTree()
 
     def reset(self):
@@ -311,6 +325,19 @@ class TreeCanvas(Canvas):
         self.use_edgelens = self.tree.hasEdgeLens()
         if self.use_edgelens:
             self.repaint()
+
+class HelpWindow(Frame):
+    def __init__(self, parent=None):
+        Frame.__init__(self, parent)
+        self.pack(expand=YES, fill=BOTH)
+        
+        # set the window title
+        self.winfo_toplevel().title('About the Phycas TreeViewer')
+        
+        # create the Label holding the help text
+        self.status_label = Label(self, justify=LEFT, relief=SUNKEN, height=1, anchor=W,
+                                  text='Is this all the help there is?!')
+        self.status_label.pack(side=TOP, expand=NO, fill=X)
         
 #class TreeViewer(Frame,Thread):
 class TreeViewer(Frame):
@@ -322,9 +349,6 @@ class TreeViewer(Frame):
 
         # set the window title
         self.winfo_toplevel().title(msg)        
-
-        # variables related to how much is displayed
-        self.show_CLAs = False
 
         # create a frame to hold the menu buttons
         menuf = Frame(self)
@@ -339,12 +363,18 @@ class TreeViewer(Frame):
         
         # create the Options menu button
         self.samplemb = Menubutton(menuf, text='Options', relief=RAISED, anchor=W, borderwidth=0)
-        self.samplemb.pack(expand=YES, fill=X, side=LEFT)
+        self.samplemb.pack(expand=NO, fill=X, side=LEFT)
         self.samplemb.menu = Menu(self.samplemb, tearoff=0)
         self.samplemb['menu'] = self.samplemb.menu
         self.samplemb.menu.add_command(label='Toggle node numbers', command=self.toggleNodeNamesNumbers)
-        self.samplemb.menu.add_command(label='Toggle CLAs', command=self.toggleCLAs)
 
+        # create the Help menu button
+        self.helpmb = Menubutton(menuf, text='Help', relief=RAISED, anchor=W, borderwidth=0)
+        self.helpmb.pack(expand=YES, fill=X, side=LEFT)
+        self.helpmb.menu = Menu(self.helpmb, tearoff=0)
+        self.helpmb['menu'] = self.helpmb.menu
+        self.helpmb.menu.add_command(label='About', command=self.helpAbout)
+        
         # create the canvas
         canvasw = int(0.67*self.winfo_screenwidth())
         canvash = int(0.67*self.winfo_screenheight())
@@ -375,13 +405,9 @@ class TreeViewer(Frame):
             self.status_label.config(text='now showing node names')
         self.plotter.repaint()
         
-    def toggleCLAs(self):
-        if self.show_CLAs:
-            self.show_CLAs = False
-            self.status_label.config(text='CLAs hidden')
-        else:
-            self.show_CLAs = True
-            self.status_label.config(text='CLAs visible')
+    def helpAbout(self):
+        self.status_label.config(text='Sorry, no help is available just yet')
+        #HelpWindow()
 
     def close(self):
         self.quit()

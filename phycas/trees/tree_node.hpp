@@ -110,8 +110,11 @@ class TreeNode
 				unsigned 	CountNumNodesBelow() const;
 				unsigned 	CountNumLeafNodesBelow() const;
 				void		ClassifyNodesBelow(unsigned * const nInternals, unsigned *const nTerminals) const;
+
+#if 0 // POLPY_NEWWAY
 				void		InvalidateCondLikeArrays();
 				void		InvalidateAttrDown(bool brLenChanged, TreeNode *nextCtrNd);
+#endif
 
 		// Modifiers
 		//
