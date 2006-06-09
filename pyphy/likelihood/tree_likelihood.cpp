@@ -702,10 +702,62 @@ bool TreeLikelihood::discardCacheBothEnds(TreeNode * ref_nd, TreeNode * /* unuse
 	return false;
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Restores parental conditional likelihood arrays from cache and stores the existing conditional likelihood arrays 
+|	for later use. This function always returns false so it can be used in conjunction with 
+|	effective_postorder_edge_iterator to restore every parental CLA from cache in the entire tree. If `ref_nd' 
+|	has a working parental CLA but no corresponding cached parental CLA, then the working parental CLA is discarded. 
+|	This is done because this working parental CLA must have been calculated while the tree was in a proposed state, 
+|	and thus would be invalid if the tree were reverted.
+*/
+bool TreeLikelihood::restoreFromCacheParentalOnly(TreeNode * ref_nd, TreeNode * /* unused */)
+	{
+	if (ref_nd->IsTip())
+		{
+		// Tip nodes have only parental CLAs
+		TipData * td = ref_nd->GetTipData();
+
+		// Store working CLA in any case
+		if (td->parWorkingCLA)
+			cla_pool.putCondLikelihood(td->parWorkingCLA);
+		td->parWorkingCLA.reset();
+
+		// Move cached to working if cached exists
+		if (td->parCachedCLA)
+			{
+			td->parWorkingCLA = td->parCachedCLA;
+			td->parCachedCLA.reset();
+			}
+		}
+	else
+		{
+		InternalData * id = ref_nd->GetInternalData();
+
+		// Store working CLA in any case
+		if (id->parWorkingCLA)
+			cla_pool.putCondLikelihood(id->parWorkingCLA);
+		id->parWorkingCLA.reset();
+
+		// Move cached to working if cached exists
+		if (id->parCachedCLA)
+			{
+			id->parWorkingCLA = id->parCachedCLA;
+			id->parCachedCLA.reset();
+			}
+		}
+
+	return false;
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Restores parental (and, if ref_nd is internal, filial) conditional likelihood arrays from cache and stores the
 |	existing conditional likelihood arrays for later use. This function always returns false so it can be used in 
-|	conjunction with effective_postorder_edge_iterator to restore every CLA from cache in the entire tree.
+|	conjunction with effective_postorder_edge_iterator to restore every CLA from cache in the entire tree. If `ref_nd' 
+|	has a working CLA but no corresponding cached CLA, then the working CLA is discarded. This is done because this 
+|	working CLA must have been calculated while the tree was in a proposed state, and thus would be invalid if the tree
+|	were reverted.
 */
 bool TreeLikelihood::restoreFromCacheBothEnds(TreeNode * ref_nd, TreeNode * /* unused */)
 	{
@@ -713,6 +765,19 @@ bool TreeLikelihood::restoreFromCacheBothEnds(TreeNode * ref_nd, TreeNode * /* u
 		{
 		// Tip nodes have only parental CLAs
 		TipData * td = ref_nd->GetTipData();
+#if POLPY_NEWWAY
+		// Store working CLA in any case
+		if (td->parWorkingCLA)
+			cla_pool.putCondLikelihood(td->parWorkingCLA);
+		td->parWorkingCLA.reset();
+
+		// Move cached to working if cached exists
+		if (td->parCachedCLA)
+			{
+			td->parWorkingCLA = td->parCachedCLA;
+			td->parCachedCLA.reset();
+			}
+#else
 		if (td->parCachedCLA)
 			{
 			if (td->parWorkingCLA)
@@ -720,6 +785,7 @@ bool TreeLikelihood::restoreFromCacheBothEnds(TreeNode * ref_nd, TreeNode * /* u
 			td->parWorkingCLA = td->parCachedCLA;
 			td->parCachedCLA.reset();
 			}
+#endif
 		}
 	else
 		{
@@ -727,6 +793,19 @@ bool TreeLikelihood::restoreFromCacheBothEnds(TreeNode * ref_nd, TreeNode * /* u
 		InternalData * id = ref_nd->GetInternalData();
 
 		// Restore parental CLA from cache
+#if POLPY_NEWWAY
+		// Store working CLA in any case
+		if (id->parWorkingCLA)
+			cla_pool.putCondLikelihood(id->parWorkingCLA);
+		id->parWorkingCLA.reset();
+
+		// Move cached to working if cached exists
+		if (id->parCachedCLA)
+			{
+			id->parWorkingCLA = id->parCachedCLA;
+			id->parCachedCLA.reset();
+			}
+#else
 		if (id->parCachedCLA)
 			{
 			if (id->parWorkingCLA)
@@ -734,8 +813,22 @@ bool TreeLikelihood::restoreFromCacheBothEnds(TreeNode * ref_nd, TreeNode * /* u
 			id->parWorkingCLA = id->parCachedCLA;
 			id->parCachedCLA.reset();
 			}
+#endif
 
 		// Restore filial CLA from cache
+#if POLPY_NEWWAY
+		// Store working CLA in any case
+		if (id->childWorkingCLA)
+			cla_pool.putCondLikelihood(id->childWorkingCLA);
+		id->childWorkingCLA.reset();
+
+		// Move cached to working if cached exists
+		if (id->childCachedCLA)
+			{
+			id->childWorkingCLA = id->childCachedCLA;
+			id->childCachedCLA.reset();
+			}
+#else
 		if (id->childCachedCLA)
 			{
 			if (id->childWorkingCLA)
@@ -743,6 +836,7 @@ bool TreeLikelihood::restoreFromCacheBothEnds(TreeNode * ref_nd, TreeNode * /* u
 			id->childWorkingCLA = id->childCachedCLA;
 			id->childCachedCLA.reset();
 			}
+#endif
 		}
 
 	return false;
@@ -755,24 +849,54 @@ bool TreeLikelihood::restoreFromCacheBothEnds(TreeNode * ref_nd, TreeNode * /* u
 |	node), it is the parental CLAs that are restored. For a node that is an ancestor of the focal node, it is the 
 |	filial CLAs that are restored. For all other nodes (e.g. on independent lineages derived from an ancestral node), 
 |	it is the parental CLAs that are restored. This function always returns false because the goal is to restore every 
-|	node that needs to be invalidated.
+|	node that needs to be invalidated. If a node is has a working CLA but no corresponding cached CLA, then the working
+|	CLA is discarded. This is done because this working CLA must have been calculated while the tree was in a proposed
+|	state, and thus would be invalid if the tree were reverted.
 */
 bool TreeLikelihood::restoreFromCacheNode(TreeNode * ref_nd, TreeNode * neighbor_closer_to_likelihood_root)
 	{
 	if (ref_nd->IsTip() && !ref_nd->IsRoot())
 		{
 		TipData * td = ref_nd->GetTipData();
+#if POLPY_NEWWAY
+		// Store the working CLA in any case
+		if (td->parWorkingCLA)
+			cla_pool.putCondLikelihood(td->parWorkingCLA);
+		td->parWorkingCLA.reset();
+
+		// Move cached to working if there is a cached CLA
+		if (td->parCachedCLA)
+			{
+			td->parWorkingCLA = td->parCachedCLA;
+			td->parCachedCLA.reset();
+			}
+#else
 		if (!td->parCachedCLA)
 			return false;
 		if (td->parWorkingCLA)
 			cla_pool.putCondLikelihood(td->parWorkingCLA);
 		td->parWorkingCLA = td->parCachedCLA;
 		td->parCachedCLA.reset();
+#endif
 		}
 	else
 		{
 		if (ref_nd->GetParent() == neighbor_closer_to_likelihood_root)
 			{
+			InternalData * id = ref_nd->GetInternalData();
+#if POLPY_NEWWAY
+			// Store the working CLA in any case
+			if (id->parWorkingCLA)
+				cla_pool.putCondLikelihood(id->parWorkingCLA);
+			id->parWorkingCLA.reset();
+
+			// Move cached to working if there is a cached CLA
+			if (id->parCachedCLA)
+				{
+				id->parWorkingCLA = id->parCachedCLA;
+				id->parCachedCLA.reset();
+				}
+#else
 			InternalData * id = ref_nd->GetInternalData();
 			if (!id->parCachedCLA)
 				return false;
@@ -780,6 +904,7 @@ bool TreeLikelihood::restoreFromCacheNode(TreeNode * ref_nd, TreeNode * neighbor
 				cla_pool.putCondLikelihood(id->parWorkingCLA);
 			id->parWorkingCLA = id->parCachedCLA;
 			id->parCachedCLA.reset();
+#endif
 			}
 		else
 			{
@@ -789,12 +914,26 @@ bool TreeLikelihood::restoreFromCacheNode(TreeNode * ref_nd, TreeNode * neighbor
 
 			// Either ref_nd is not a tip, or it is the tip serving as the root node
 			InternalData * id = neighbor_closer_to_likelihood_root->GetInternalData();
+#if POLPY_NEWWAY
+			// Store the working CLA in any case
+			if (id->childWorkingCLA)
+				cla_pool.putCondLikelihood(id->childWorkingCLA);
+			id->childWorkingCLA.reset();
+
+			// Move cached to working if there is a cached CLA
+			if (id->childCachedCLA)
+				{
+				id->childWorkingCLA = id->childCachedCLA;
+				id->childCachedCLA.reset();
+				}
+#else
 			if (!id->childCachedCLA)
 				return false;
 			if (id->childWorkingCLA)
 				cla_pool.putCondLikelihood(id->childWorkingCLA);
 			id->childWorkingCLA = id->childCachedCLA;
 			id->childCachedCLA.reset();
+#endif
 			}
 		}
 	return false;
@@ -852,6 +991,9 @@ double TreeLikelihood::calcLnL(
 		nd = nd->GetNextPreorder();
 		assert(nd);
 
+		// The subroot node is the new likelihood_root
+		likelihood_root = nd;
+
 		// Invalidate (and do not cache) all CLAs from the tree. This will require all CLAs to be recomputed 
 		// when the likelihood is computed using the subroot as the likelihood root. This path should be taken
 		// if a parameter is changed that invalidates the entire tree.
@@ -865,9 +1007,6 @@ double TreeLikelihood::calcLnL(
 
 	// Calculate log-likelihood using nd as the likelihood root
 	double lnL = calcLnLFromNode(*nd);
-
-	// likelihood_root is never persistent
-	likelihood_root = NULL;
 
 	return lnL;
 	}

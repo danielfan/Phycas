@@ -30,6 +30,9 @@ void LargetSimonMove::update()
 	ChainManagerShPtr p = chain_mgr.lock();
 	assert(p);
 	double prev_ln_like = p->getLastLnLike();
+#if POLPY_NEWWAY
+	TreeNode * prev_likelihood_root = likelihood->getLikelihoodRoot();
+#endif
 
 	proposeNewState();
 
@@ -73,6 +76,9 @@ void LargetSimonMove::update()
 		curr_ln_like	= p->getLastLnLike();
 		curr_ln_prior	= p->getLastLnPrior();
 		revert();
+#if POLPY_NEWWAY
+		likelihood->useAsLikelihoodRoot(prev_likelihood_root);
+#endif
 		}
 	}
 
@@ -392,7 +398,11 @@ void LargetSimonMove::revert()
 
 		likelihood->useAsLikelihoodRoot(orig_node);
 		likelihood->restoreFromCacheAwayFromNode(*orig_node);
+#if POLPY_NEWWAY
+		likelihood->restoreFromCacheParentalOnly(orig_node);
+#else
 		likelihood->invalidateBothEndsDiscardCache(orig_node);
+#endif
 
 		orig_node->UnselectNode();
 		}
@@ -428,7 +438,11 @@ void LargetSimonMove::revert()
 
 		likelihood->useAsLikelihoodRoot(ndY);
 		likelihood->restoreFromCacheAwayFromNode(*ndY);
+#if POLPY_NEWWAY
+		likelihood->restoreFromCacheParentalOnly(ndY);
+#else
 		likelihood->invalidateBothEndsDiscardCache(ndY);
+#endif
 
 		ndX->UnselectNode();
 		ndY->UnselectNode();

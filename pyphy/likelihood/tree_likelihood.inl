@@ -34,6 +34,39 @@ inline TreeLikelihood::TreeLikelihood(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Returns the current value of `likelihood_root'. See TreeLikelihood::useAsLikelihoodRoot for more information about
+|	the meaning of the likelihood root.
+*/
+inline TreeNode * TreeLikelihood::getLikelihoodRoot()
+	{
+	return likelihood_root;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Specifies the (internal) node to use as the likelihood root (it will be stored in the `likelihood_root' data member). 
+|	The likelihood root is separate from the actual root of the tree, and specifies the node used when harvesting the 
+|	log-likelihood from surrounding conditional likelihood arrays (CLAs). It behooves one to set the likelihood root to 
+|	that node requiring the fewest CLA recalculations. Specifying NULL for the likelihood root will result in the 
+|	unconditional recalculation of all CLAs in the entire tree, and subsequently the likelihood root will be set to the
+|	subroot node of the tree (the only child of the root).
+*/
+inline void	TreeLikelihood::useAsLikelihoodRoot(
+  TreeNode * nd)
+	{
+	likelihood_root = nd;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the number of the node currently serving as the likelihood root. If `likelihood_root' is NULL, returns -1
+|	instead to indicate that no node is currently designated as the likelihood root. This function was written primarily
+|	for use by the TreeViewer.py application for debugging purposes.
+*/
+inline int TreeLikelihood::getLikelihoodRootNodeNum() const
+	{
+	return (likelihood_root ? (int)likelihood_root->GetNodeNumber() : -1);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Returns a shared pointer to the CondLikelihood object that would be used to compute the likelihood conditional on a 
 |	particular state being assigned to `focal_nd' when `avoid' is the likelihood root. This function obtains the correct
 |	shared pointer, but if that pointer does not point to an object, it goes to `cla_pool' to get another one.
