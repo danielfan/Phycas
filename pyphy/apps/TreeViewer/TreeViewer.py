@@ -19,6 +19,15 @@
 #     green: CLA is valid
 #     red:   CLA is invalid and will be recalculated upon next use
 
+from Phycas import *
+#from threading import *
+from Tkinter import *
+from tkMessageBox import askokcancel, askquestion
+from tkSimpleDialog import askstring
+from tkFileDialog import askopenfilename
+import tkFont
+import math
+
 # Useful colors (for others, see http://www.mindspring.com/~squicker/colors.html):
 white       = '#ffffff' 
 black       = '#000000'
@@ -52,14 +61,20 @@ color_selected_node         = white
 color_unselected_node       = silver
 color_likelihood_root       = magenta
 
-from Phycas import *
-#from threading import *
-from Tkinter import *
-from tkMessageBox import askokcancel, askquestion
-from tkSimpleDialog import askstring
-from tkFileDialog import askopenfilename
-import tkFont
-import math
+# The text displayed in the Help | About dialog box
+helptext = """
+Knobs on ends of edges represent conditional likelihood arrays (CLAs)
+Valid CLAs are GREEN
+Invalid CLAs are RED
+Undefined CLAs are GRAY
+Dotted CLAs are cached
+Likelihood root node is PINK
+
+Keyboard shortcuts:
+  h - opens this help dialog box
+  n - toggles between node numbers and names
+  q - quits application
+"""
 
 class TreeCanvas(Canvas):
     # Wrapping Canvas calls in these display* functions in order to later make
@@ -326,19 +341,95 @@ class TreeCanvas(Canvas):
         if self.use_edgelens:
             self.repaint()
 
-class HelpWindow(Frame):
-    def __init__(self, parent=None):
-        Frame.__init__(self, parent)
-        self.pack(expand=YES, fill=BOTH)
+class DialogBox(Toplevel):
+    """
+    This DialogBox base class is adapted only slighlty from the Dialog class presented
+    in Lundh, Fredrik. 1999. An Introduction to Tkinter. 
+    """
+    def __init__(self, parent, title):
+        Toplevel.__init__(self, parent)
+
+        self.winfo_toplevel().title(title)        
+
+        # Associate with parent window (e.g. if parent is minimized, so will this one)        
+        self.transient(parent)
+
+        self.parent = parent
+        body = Frame(self)
+        self.initial_focus = self.body(body)
+        body.pack(padx=5, pady=5)
+        self.buttonbox()
+
+        # Make this window modal        
+        self.grab_set()
         
-        # set the window title
-        self.winfo_toplevel().title('About the Phycas TreeViewer')
+        if not self.initial_focus:
+            self.initial_focus = self
+
+        # Ensure that an explicit close is treated the same as cancel            
+        self.protocol("WM_DELETE_WINDOW", self.cancel)
+
+        # Positions dialog box relative to parent window        
+        self.geometry("+%d+%d" % (parent.winfo_rootx()+50, parent.winfo_rooty()+50))
+
+        # Give keyboard focus to the appropriate widget        
+        self.initial_focus.focus_set()
         
-        # create the Label holding the help text
-        self.status_label = Label(self, justify=LEFT, relief=SUNKEN, height=1, anchor=W,
-                                  text='Is this all the help there is?!')
-        self.status_label.pack(side=TOP, expand=NO, fill=X)
+        self.wait_window(self)
+
+    def body(self, master):
+        # Create dialog body, return widget that should have initial focus
+        # This method should be overridden in derived classes.
+        pass
+
+    def buttonbox(self):
+        # Add standard button box, override if you do not want the standard buttons
+        box = Frame(self)
+        w = Button(box, text='OK', width=10, command=self.ok, default=ACTIVE)
+        w.pack(side=LEFT, padx=5, pady=5)
+        w = Button(box, text='Cancel', width=10, command=self.cancel)
+        w.pack(side=LEFT, padx=5, pady=5)
+        self.bind('<Return>', self.ok)
+        self.bind('<Escape>', self.cancel)
+        box.pack()
+
+    def ok(self, event=None):
+        if not self.validate():
+            self.initial_focus.focus_set() # put focus back
+            return
+        self.withdraw()
+        self.update_idletasks()
+        self.apply()
+        self.cancel()
+
+    def cancel(self, event=None):
+        # put focus back to the parent window
+        self.parent.focus_set()
+        self.destroy()
+
+    def validate(self):
+        return 1 # override
+
+    def apply(self):
+        pass # override
+
+class HelpWindow(DialogBox):
+    def __init__(self, parent):
+        DialogBox.__init__(self, parent, 'About the Phycas TreeViewer')
+
+    def body(self, master):
+        # Add a Label containing the help text
+        Label(master, text=helptext, justify=LEFT).grid(row=0)
         
+    def buttonbox(self):
+        # Override the base class version
+        box = Frame(self)
+        w = Button(box, text='OK', width=10, command=self.ok, default=ACTIVE)
+        w.pack(side=LEFT, padx=5, pady=5)
+        self.bind('<Return>', self.ok)
+        self.bind('<Escape>', self.ok)
+        box.pack()
+
 #class TreeViewer(Frame,Thread):
 class TreeViewer(Frame):
     #def __init__(self, tree, mutex=None, parent=None):
@@ -388,6 +479,8 @@ class TreeViewer(Frame):
         
         # bind some keys to the application (doesn't matter which widget has focus when you use bind_all
         self.bind_all("<KeyPress-n>", self.keybdToggleNodeNamesNumbers)
+        self.bind_all("<KeyPress-h>", self.keybdHelpAbout)
+        self.bind_all("<KeyPress-q>", self.keybdQuit)
         #self.bind_all("<Shift-KeyPress-N>", self.keybdManySteps)
 
         # configure event is bound only to the main frame
@@ -405,9 +498,14 @@ class TreeViewer(Frame):
             self.status_label.config(text='now showing node names')
         self.plotter.repaint()
         
+    def keybdHelpAbout(self, event):
+        self.helpAbout()
+
     def helpAbout(self):
-        self.status_label.config(text='Sorry, no help is available just yet')
-        #HelpWindow()
+        HelpWindow(self)
+
+    def keybdQuit(self, event):
+        self.close()
 
     def close(self):
         self.quit()
