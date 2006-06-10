@@ -22,7 +22,7 @@
 from Phycas import *
 #from threading import *
 from Tkinter import *
-from tkMessageBox import askokcancel, askquestion
+from tkMessageBox import askokcancel, askquestion, showinfo
 from tkSimpleDialog import askstring
 from tkFileDialog import askopenfilename
 import tkFont
@@ -74,6 +74,8 @@ Keyboard shortcuts:
   h - opens this help dialog box
   n - toggles between node numbers and names
   q - quits application
+
+Currently, edge are not shown proportional to their lengths.
 """
 
 class TreeCanvas(Canvas):
@@ -341,95 +343,6 @@ class TreeCanvas(Canvas):
         if self.use_edgelens:
             self.repaint()
 
-class DialogBox(Toplevel):
-    """
-    This DialogBox base class is adapted only slighlty from the Dialog class presented
-    in Lundh, Fredrik. 1999. An Introduction to Tkinter. 
-    """
-    def __init__(self, parent, title):
-        Toplevel.__init__(self, parent)
-
-        self.winfo_toplevel().title(title)        
-
-        # Associate with parent window (e.g. if parent is minimized, so will this one)        
-        self.transient(parent)
-
-        self.parent = parent
-        body = Frame(self)
-        self.initial_focus = self.body(body)
-        body.pack(padx=5, pady=5)
-        self.buttonbox()
-
-        # Make this window modal        
-        self.grab_set()
-        
-        if not self.initial_focus:
-            self.initial_focus = self
-
-        # Ensure that an explicit close is treated the same as cancel            
-        self.protocol("WM_DELETE_WINDOW", self.cancel)
-
-        # Positions dialog box relative to parent window        
-        self.geometry("+%d+%d" % (parent.winfo_rootx()+50, parent.winfo_rooty()+50))
-
-        # Give keyboard focus to the appropriate widget        
-        self.initial_focus.focus_set()
-        
-        self.wait_window(self)
-
-    def body(self, master):
-        # Create dialog body, return widget that should have initial focus
-        # This method should be overridden in derived classes.
-        pass
-
-    def buttonbox(self):
-        # Add standard button box, override if you do not want the standard buttons
-        box = Frame(self)
-        w = Button(box, text='OK', width=10, command=self.ok, default=ACTIVE)
-        w.pack(side=LEFT, padx=5, pady=5)
-        w = Button(box, text='Cancel', width=10, command=self.cancel)
-        w.pack(side=LEFT, padx=5, pady=5)
-        self.bind('<Return>', self.ok)
-        self.bind('<Escape>', self.cancel)
-        box.pack()
-
-    def ok(self, event=None):
-        if not self.validate():
-            self.initial_focus.focus_set() # put focus back
-            return
-        self.withdraw()
-        self.update_idletasks()
-        self.apply()
-        self.cancel()
-
-    def cancel(self, event=None):
-        # put focus back to the parent window
-        self.parent.focus_set()
-        self.destroy()
-
-    def validate(self):
-        return 1 # override
-
-    def apply(self):
-        pass # override
-
-class HelpWindow(DialogBox):
-    def __init__(self, parent):
-        DialogBox.__init__(self, parent, 'About the Phycas TreeViewer')
-
-    def body(self, master):
-        # Add a Label containing the help text
-        Label(master, text=helptext, justify=LEFT).grid(row=0)
-        
-    def buttonbox(self):
-        # Override the base class version
-        box = Frame(self)
-        w = Button(box, text='OK', width=10, command=self.ok, default=ACTIVE)
-        w.pack(side=LEFT, padx=5, pady=5)
-        self.bind('<Return>', self.ok)
-        self.bind('<Escape>', self.ok)
-        box.pack()
-
 #class TreeViewer(Frame,Thread):
 class TreeViewer(Frame):
     #def __init__(self, tree, mutex=None, parent=None):
@@ -502,7 +415,7 @@ class TreeViewer(Frame):
         self.helpAbout()
 
     def helpAbout(self):
-        HelpWindow(self)
+        showinfo('About the Phycas TreeViewer', helptext)
 
     def keybdQuit(self, event):
         self.close()
