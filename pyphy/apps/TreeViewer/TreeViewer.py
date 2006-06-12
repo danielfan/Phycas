@@ -146,6 +146,29 @@ class TreeCanvas(Canvas):
         return (self.use_edgelens and nd.getEdgeLen() or 1.0)
 
     def drawTree(self):
+        # The angle at which edges are drawn is theta. If v is the length of an
+        # edge, then dx = v cos(theta) and dy = v sin(theta).
+        #
+        # X         Y
+        # \        /      |    This is a drawing of one pair of tips (X, Y)
+        #  \      /       |    and their parent (Z). The length of the
+        #   \   v/       dy    right child's edge is v. The distance between
+        #    \  / theta   |    sibling distance (the intersibling distance, 
+        #     \/____      |    or isd) is the horizontal distance between
+        #     Z  dx            X and Y. The isd determines theta.
+        #
+        # The plot area is w pixels wide and h pixels high, so we need to find
+        # the angle that would allow us to draw a tree that has the same ratio
+        # of w to h. The width of the tree when plotted using a given theta is
+        # equal to (left_sum + right_sum) * cos(theta), where left_sum is the
+        # sum of all edge lengths from the subroot (only child of root) to the
+        # subroot's leftmost descendant, and right_sum is the sum of all edge
+        # lengths from the subroot node to its rightmost descendant (which will
+        # always be the tree's first postorder node). Likewise, the height of
+        # the tree when plotted will be the subroot's edge length plus
+        # longest_path * sin(theta), where longest_path is the sum of the edge
+        # lengths in the path from the subroot to the furthest leaf.
+
         # acquire will block other threads while tree is drawn (this prevents trying
         # to drawing a tree that is in the process of being modified - probably not a
         # good idea)
@@ -352,7 +375,10 @@ class TreeViewer(Frame):
         self.pack(expand=YES, fill=BOTH)
 
         # set the window title
-        self.winfo_toplevel().title(msg)        
+        self.winfo_toplevel().title(msg)
+
+        # always position the main window 50 pixels from top and 50 pixels from left
+        self.winfo_toplevel().geometry("+%d+%d" % (50, 50))
 
         # create a frame to hold the menu buttons
         menuf = Frame(self)

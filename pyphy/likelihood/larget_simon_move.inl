@@ -16,7 +16,17 @@ inline LargetSimonMove::LargetSimonMove() : MCMCUpdater()
 	m				= 0.0;
 	mstar			= 0.0;
 	three_edgelens.reserve(3);
+	view_proposed_move = false;
 	reset();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	If `yes' is true, subsequent calls to LargetSimonMove::update will pop up a graphical tree viewer to show the edges
+|	affected by the move.
+*/
+inline void LargetSimonMove::viewProposedMove(bool yes)
+	{
+	view_proposed_move = yes;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

@@ -140,6 +140,7 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("setLambda", &phycas::LargetSimonMove::setLambda)
 		.def("getLambda", &phycas::LargetSimonMove::getLambda)
 		.def("topologyChanged", &phycas::LargetSimonMove::topologyChanged)
+		.def("viewProposedMove", &phycas::LargetSimonMove::viewProposedMove)
 		;
 	class_<TopoPriorCalculator, boost::noncopyable, 
 		boost::shared_ptr<phycas::TopoPriorCalculator> >("TopoPriorCalculatorBase")
