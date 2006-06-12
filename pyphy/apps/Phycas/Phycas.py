@@ -171,6 +171,7 @@ class Phycas:
         # Variables associated with Larget-Simon moves
         self.ls_move_lambda         = 0.2       # The value of the tuning parameter for the Larget-Simon move
         self.ls_move_weight         = 100       # Larget-Simon moves will be performed this many times per cycle
+        self.ls_move_debug          = False     # If set to true, TreeViewer will popup on each Larget-Simon move update showing edges affected by the proposed move
         
         # Variables associated with Polytomy (Bush) moves
         self.allow_polytomies       = False     # if True, do Bush moves in addition to Larget-Simon moves; if False, do Larget-Simon moves only
@@ -349,6 +350,7 @@ class Phycas:
         self.larget_simon_move.setTreeLikelihood(self.likelihood)
         self.larget_simon_move.setLot(self.r)
         self.larget_simon_move.setLambda(self.ls_move_lambda)
+        self.larget_simon_move.viewProposedMove(self.ls_move_debug)
         if self.model.edgeLengthsFixed():
             self.larget_simon_move.fixParameter()
         self.chain_manager.addMove(self.larget_simon_move)
@@ -1098,11 +1100,11 @@ if __name__ == '__main__':
     mcmc.slice_max_units = 0
     mcmc.verbose = True
 
-    if False:
-        mcmc.ncycles = 20
+    if True:
+        mcmc.ncycles = 1
         mcmc.report_every = 1
         mcmc.ls_move_weight = 10
-        raw_input('debug stop')
+        mcmc.ls_move_debug = True
 
     mcmc.setup()
     mcmc.run()
