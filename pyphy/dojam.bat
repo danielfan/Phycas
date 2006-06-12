@@ -1,5 +1,10 @@
 @echo off
 
+REM Just in case someone installs VC in a strange place, this will set the necessary
+REM environmental variables correctly so that the compiler and its associated DLLs
+REM can be located
+call "%VS71COMNTOOLS%\..\..\VC7\bin\vcvars32.bat"
+
 if defined PYTHON_ROOT (
 	echo PYTHON_ROOT=%PYTHON_ROOT%
 ) else (
