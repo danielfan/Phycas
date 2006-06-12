@@ -1100,7 +1100,7 @@ if __name__ == '__main__':
     mcmc.slice_max_units = 0
     mcmc.verbose = True
 
-    if True:
+    if False:
         mcmc.ncycles = 1
         mcmc.report_every = 1
         mcmc.ls_move_weight = 10
