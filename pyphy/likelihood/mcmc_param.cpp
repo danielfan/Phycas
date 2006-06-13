@@ -265,9 +265,6 @@ double HyperPriorParam::operator()(
 
 	if (mu > 0.0)
 		{
-#if 0 //POLPY_NEWWAY
-		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
-#endif
 		curr_ln_like = likelihood->calcLnL(tree);
 		curr_value = mu;
 		recalcPrior();
@@ -305,17 +302,16 @@ double EdgeLenParam::operator()(
 			TreeNode * subroot = nd->GetLeftChild();
 			assert(subroot);
 			subroot->SetEdgeLen(x);
-#if POLPY_NEWWAY
+
 			//@POL seems like we will be updating subroot once more than every other node
 			likelihood->useAsLikelihoodRoot(subroot);
 			likelihood->invalidateAwayFromNode(*subroot);
 			likelihood->invalidateBothEnds(subroot);	//@POL really just need invalidateParentalOnly function
-#endif
 			}
 		else
 			{
 			nd->SetEdgeLen(x);
-#if POLPY_NEWWAY
+
 			TreeNode * likeroot = nd;
 			if (nd->IsTip())
 				likeroot = nd->GetParent();
@@ -324,7 +320,6 @@ double EdgeLenParam::operator()(
 			likelihood->useAsLikelihoodRoot(likeroot);
 			likelihood->invalidateAwayFromNode(*nd);
 			likelihood->invalidateBothEnds(nd);	//@POL really just need invalidateParentalOnly function
-#endif
 			}
 
 		curr_ln_like = likelihood->calcLnL(tree);

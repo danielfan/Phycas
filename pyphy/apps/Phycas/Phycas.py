@@ -179,7 +179,8 @@ class Phycas:
         self.topo_prior_C           = 2.0       # specifies the strength of the prior (C = 1 is flat prior; C > 1 favors less resolved topologies)
         self.bush_move_edgelen_mean = 1.0       # specifies mean of exponential edge length generation distribution used by BushMove when new edges are created
         self.bush_move_weight       = 100       # Bush moves will be performed this many times per cycle if
-        
+        self.bush_move_debug        = False     # If set to true, TreeViewer will pop up on each Bush move update showing edges affected by the proposed move
+
         # Variables associated with slice samplers
         self.slice_weight           = 1         # Slice sampled parameters will be updated this many times per cycle
         self.slice_max_units        = 1000      # Max. number of units used in slice sampling
@@ -399,6 +400,7 @@ class Phycas:
             self.bush_move.setTreeLikelihood(self.likelihood)
             self.bush_move.setLot(self.r)
             self.bush_move.setEdgeLenDistMean(self.bush_move_edgelen_mean)
+            self.bush_move.viewProposedMove(self.bush_move_debug)
             if self.model.edgeLengthsFixed():
                 self.bush_move.fixParameter()
             self.bush_move.finalize()
@@ -922,10 +924,13 @@ class Phycas:
         for cycle in range(self.ncycles):
             for p in self.chain_manager.getAllUpdaters():
                 w = p.getWeight()
-                for x in range(w):
+                for i,x in enumerate(range(w)):
+                    #print 'Cycle %d: updating' % cycle,p.getName(),'for the %dth time' % i
                     #tmpf = file('tmp.lnLlog.txt', 'a')
                     #tmpf.write('*** Updating %s...\n' % p.getName())
                     #tmpf.close()
+                    #if cycle == 1 and i == 99 and p.getName() == 'Bush move':
+                    #    self.bush_move.viewProposedMove(True)
                     p.update()
             if self.verbose and (cycle + 1) % self.report_every == 0:
                 print 'cycle = %d, lnL = %.5f' % (cycle + 1, self.chain_manager.getLastLnLike())

@@ -13,6 +13,15 @@ inline TopoPriorCalculatorShPtr BushMove::getTopoPriorCalculator()
 	return topo_prior_calculator;
 	}
 
+/*----------------------------------------------------------------------------------------------------------------------
+|	If `yes' is true, subsequent calls to BushMove::update will pop up a graphical tree viewer to show the edges 
+|	affected by the move.
+*/
+inline void BushMove::viewProposedMove(bool yes)
+	{
+	view_proposed_move = yes;
+	}
+
 /*--------------------------------------------------------------------------------------------------------------------------
 |	Setup `edgelen_dist' data member.
 */
@@ -38,21 +47,25 @@ inline void BushMove::setEdgeLenDistMean(
 */
 inline void BushMove::accept()
 	{
-#if POLPY_NEWWAY
 	if (add_edge_move_proposed)
 		{
 		// Keeping added edge, where orig_par was original polytomous node and orig_lchild was the added node
 		likelihood->useAsLikelihoodRoot(orig_lchild);
 		likelihood->discardCacheAwayFromNode(*orig_lchild);
 		likelihood->discardCacheBothEnds(orig_lchild);
+
+		if (view_proposed_move)
+			likelihood->startTreeViewer(tree, "Add edge move ACCEPTED");
 		}
 	else
 		{
 		// Keeping edge deletion, orig_par is the new polytomous node
 		likelihood->useAsLikelihoodRoot(orig_par);
 		likelihood->discardCacheAwayFromNode(*orig_par);
+
+		if (view_proposed_move)
+			likelihood->startTreeViewer(tree, "Delete edge move ACCEPTED");
 		}
-#endif
 
 	reset();
 	}

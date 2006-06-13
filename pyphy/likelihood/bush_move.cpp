@@ -20,7 +20,7 @@ using namespace phycas;
 |	The constructor sets `num_taxa' and `num_nodes_in_fully_resolved_tree', computes the polytomy distribution, and 
 |	finally calls BushMove::reset to re-initialize all other variables.
 */
-BushMove::BushMove() : MCMCUpdater()
+BushMove::BushMove() : view_proposed_move(false), MCMCUpdater()
 	{
 	edgelen_mean = 1.0;
 	topo_prior_calculator = TopoPriorCalculatorShPtr(new TopoPriorCalculator());
@@ -31,123 +31,71 @@ BushMove::BushMove() : MCMCUpdater()
 	reset();
 	}
 
-/*--------------------------------------------------------------------------------------------------------------------------
-|	Sets `num_taxa' to the number of tips in `tree', computes the polytomy distribution, and sets the number of taxa for the
-|	`topo_prior_calculator' object to `num_taxa'.
-*/
-void BushMove::finalize()
-	{
-	num_taxa = tree->GetNTips();
-	num_nodes_in_fully_resolved_tree = 2*(num_taxa - 1);
-
-	computePolytomyDistribution(num_taxa);
-
-	// Ensure that the TopoPriorCalculator has computed the prior based on the correct number of taxa,
-	// but otherwise leave it alone (the user is expected to configure the prior beforehand)
-	topo_prior_calculator->SetNTax(num_taxa);
-	}
-
 /*----------------------------------------------------------------------------------------------------------------------
-|	Called if the proposed move is rejected. Causes tree to be returned to its state just prior to proposing the move.
+|	Calls proposeNewState(), then decides whether to accept or reject the proposed new state, calling accept() or 
+|	revert(), whichever is appropriate.
 */
-void BushMove::revert()
+void BushMove::update()
 	{
+	// The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
+	// A proposed BushMove cannot be accepted without changing edge lengths, so it is best to bail out now.
+	if (is_fixed)
+		return;
+
+	if (num_taxa == 0)
+		{
+		throw XLikelihood("Must call finalize() before calling update() for BushMove");
+		}
+
+	ChainManagerShPtr p = chain_mgr.lock();
+	assert(p);
+	double prev_ln_like = p->getLastLnLike();
+
+	proposeNewState();
+
+	double curr_ln_like				= likelihood->calcLnL(tree);
+
+	if (view_proposed_move)
+		likelihood->startTreeViewer(tree, str(boost::format("Bush move PROPOSED (%s)") % (add_edge_move_proposed ? "add edge" : "delete edge")));
+
+	double curr_ln_prior			= 0.0;
+	double prev_ln_prior			= 0.0;
+	double ln_polytomy_prior_ratio	= 0.0;
+
+	unsigned m						= tree->GetNInternals();
+	double topo_prior_after			= topo_prior_calculator->GetLnTopologyPrior(m);
+
 	if (add_edge_move_proposed)
 		{
-		// An add-edge move was previously proposed, which means a new internal node (orig_lchild) and its edge were created. 
-		// orig_lchild's parent is known as orig_par. The children of orig_lchild represent a subset of the original children 
-		// of orig_par. To reverse the add-edge move, we need only transfer all children of orig_lchild to orig_par, then store 
-		// orig_lchild for use in some later add-edge move proposal
-
-#if POLPY_NEWWAY
-		// Must discard CLAs before moving children, otherwise orig_lchild will look like a tip node
-		// which causes invalidateBothEndsDiscardCache to attempt to access its TipData structure
-		likelihood->invalidateBothEndsDiscardCache(orig_lchild); //@POL should not be any cached CLAs here
-#endif
-
-		// Transfer all children of orig_lchild to orig_par
-		while (orig_lchild->GetLeftChild() != NULL)
-			{
-			TreeNode * s = orig_lchild->GetLeftChild();
-			tree_manipulator.DetachSubtree(s);
-			tree_manipulator.InsertSubtree(s, orig_par, TreeManip::kOnRight);
-			}
-
-		// Now delete orig_lchild
-		//
-		tree_manipulator.DetachSubtree(orig_lchild);
-		tree->StoreTreeNode(orig_lchild);
-
-#if 0 // POLPY_NEWWAY
-		orig_par->InvalidateCondLikeArrays();	// invalidate conditional likelihood arrays only
-#endif
-
-#if POLPY_NEWWAY
-		likelihood->useAsLikelihoodRoot(orig_par);
-		likelihood->restoreFromCacheAwayFromNode(*orig_par);
-#endif
-
-		tree->InvalidateNodeCounts();
+		double topo_prior_before	= topo_prior_calculator->GetLnTopologyPrior(m - 1);
+		ln_polytomy_prior_ratio		= topo_prior_after - topo_prior_before;
+		one_edgelen[0]				= new_edgelen;
+		curr_ln_prior				= p->partialEdgeLenPrior(one_edgelen);
 		}
 	else
 		{
-		// A delete-edge move was proposed, which means an internal node and its edge have been deleted. This deleted
-		// node's parent is known as orig_par. The children of the deleted node have been added as children of orig_par,
-		// with the first being identified now as orig_lchild and the last in the series now pointed to by orig_rchild.
-		// To revert the delete-edge move, create a new child of orig_par having edgelen equal to orig_edgelen, then transfer
-		// the nodes from orig_lchild to orig_rchild (following rSib pointers, and including both orig_lchild and 
-		// orig_rchild) to the new node.
-		//
-		TreeNode * u = tree->GetNewNode();
-		u->SetEdgeLen(orig_edgelen);
-		tree_manipulator.InsertSubtree(u, orig_par, TreeManip::kOnRight);
-
-#if 0 //POLPY_NEWWAY
-		u->InvalidateAttrDown(true, orig_par);	// invalidates transition probability matrix only
-		u->InvalidateCondLikeArrays(); 	// invalidates conditional likelihood arrays only
-#endif
-
-		TreeNode * nd = orig_lchild;
-		for (;;)
-			{
-			TreeNode * s = nd;
-			assert(s != NULL);
-			nd = nd->GetRightSib();
-			tree_manipulator.SibToChild(u, s, TreeManip::kOnRight);
-			if (s == orig_rchild)
-				break;
-			}
-
-#if POLPY_NEWWAY
-		likelihood->useAsLikelihoodRoot(orig_lchild);
-		likelihood->restoreFromCacheAwayFromNode(*orig_lchild);
-		likelihood->restoreFromCacheParentalOnly(orig_lchild);
-#endif
-
-		tree->InvalidateNodeCounts();
+		double topo_prior_before	= topo_prior_calculator->GetLnTopologyPrior(m + 1);
+		ln_polytomy_prior_ratio		= topo_prior_after - topo_prior_before;
+		one_edgelen[0]				= orig_edgelen;
+		prev_ln_prior				= p->partialEdgeLenPrior(one_edgelen);
 		}
 
-	reset();
-	}
+	double prev_posterior = prev_ln_like + prev_ln_prior;
+	double curr_posterior = curr_ln_like + curr_ln_prior;
 
-/*----------------------------------------------------------------------------------------------------------------------
-|	Clears the `polytomies' vector, then walks the tree adding nodes that represent polytomies (more than two children)
-|	to the `polytomies' vector.
-*/
-void BushMove::refreshPolytomies()
-	{
-	//@POL should keep polytomies list up to date rather than building anew
-	polytomies.clear();
-	for (TreeNode *nd = tree->GetFirstPreorder(); nd != NULL; nd = nd->GetNextPreorder())
+	double ln_accept_ratio = curr_posterior - prev_posterior + ln_hastings + ln_jacobian + ln_polytomy_prior_ratio;
+
+	if (ln_accept_ratio >= 0.0 || std::log(rng->Uniform(FILE_AND_LINE)) <= ln_accept_ratio)
 		{
-		if (nd->IsRoot())
-			continue;
-		
-		unsigned s = nd->CountChildren();
-		if (s > 2)
-			{
-			polytomies.push_back(nd);
-			}
+		p->setLastLnPrior(curr_ln_prior);
+		p->setLastLnLike(curr_ln_like);
+		accept();
+		}
+	else
+		{
+		curr_ln_like	= p->getLastLnLike();
+		curr_ln_prior	= p->getLastLnPrior();
+		revert();
 		}
 	}
 
@@ -379,6 +327,120 @@ void BushMove::proposeNewState()
 	}
 
 /*--------------------------------------------------------------------------------------------------------------------------
+|	Sets `num_taxa' to the number of tips in `tree', computes the polytomy distribution, and sets the number of taxa for the
+|	`topo_prior_calculator' object to `num_taxa'.
+*/
+void BushMove::finalize()
+	{
+	num_taxa = tree->GetNTips();
+	num_nodes_in_fully_resolved_tree = 2*(num_taxa - 1);
+
+	computePolytomyDistribution(num_taxa);
+
+	// Ensure that the TopoPriorCalculator has computed the prior based on the correct number of taxa,
+	// but otherwise leave it alone (the user is expected to configure the prior beforehand)
+	topo_prior_calculator->SetNTax(num_taxa);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Called if the proposed move is rejected. Causes tree to be returned to its state just prior to proposing the move.
+*/
+void BushMove::revert()
+	{
+	if (add_edge_move_proposed)
+		{
+		// An add-edge move was previously proposed, which means a new internal node (orig_lchild) and its edge were created. 
+		// orig_lchild's parent is known as orig_par. The children of orig_lchild represent a subset of the original children 
+		// of orig_par. To reverse the add-edge move, we need only transfer all children of orig_lchild to orig_par, then store 
+		// orig_lchild for use in some later add-edge move proposal
+
+		// Must discard CLAs before moving children, otherwise orig_lchild will look like a tip node
+		// which causes invalidateBothEndsDiscardCache to attempt to access its TipData structure
+		likelihood->invalidateBothEndsDiscardCache(orig_lchild); //@POL should not be any cached CLAs here
+
+		// Transfer all children of orig_lchild to orig_par
+		while (orig_lchild->GetLeftChild() != NULL)
+			{
+			TreeNode * s = orig_lchild->GetLeftChild();
+			tree_manipulator.DetachSubtree(s);
+			tree_manipulator.InsertSubtree(s, orig_par, TreeManip::kOnRight);
+			}
+
+		// Now delete orig_lchild
+		//
+		tree_manipulator.DetachSubtree(orig_lchild);
+		tree->StoreTreeNode(orig_lchild);
+
+		likelihood->useAsLikelihoodRoot(orig_par);
+		likelihood->restoreFromCacheAwayFromNode(*orig_par);
+
+		if (view_proposed_move)
+			likelihood->startTreeViewer(tree, "Add edge move REVERTED");
+
+		tree->InvalidateNodeCounts();
+		}
+	else
+		{
+		// A delete-edge move was proposed, which means an internal node and its edge have been deleted. This deleted
+		// node's parent is known as orig_par. The children of the deleted node have been added as children of orig_par,
+		// with the first being identified now as orig_lchild and the last in the series now pointed to by orig_rchild.
+		// To revert the delete-edge move, create a new child of orig_par having edgelen equal to orig_edgelen, then transfer
+		// the nodes from orig_lchild to orig_rchild (following rSib pointers, and including both orig_lchild and 
+		// orig_rchild) to the new node.
+		//
+		TreeNode * u = tree->GetNewNode();
+		u->SetEdgeLen(orig_edgelen);
+		tree_manipulator.InsertSubtree(u, orig_par, TreeManip::kOnRight);
+
+		TreeNode * nd = orig_lchild;
+		for (;;)
+			{
+			TreeNode * s = nd;
+			assert(s != NULL);
+			nd = nd->GetRightSib();
+			tree_manipulator.SibToChild(u, s, TreeManip::kOnRight);
+			if (s == orig_rchild)
+				break;
+			}
+
+		likelihood->useAsLikelihoodRoot(orig_par);
+		likelihood->restoreFromCacheAwayFromNode(*orig_lchild);
+		likelihood->restoreFromCacheParentalOnly(orig_lchild);
+
+		if (view_proposed_move)
+			{
+			orig_par->UnselectNode();
+			likelihood->startTreeViewer(tree, "Delete edge move REVERTED");
+			}
+
+		tree->InvalidateNodeCounts();
+		}
+
+	reset();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Clears the `polytomies' vector, then walks the tree adding nodes that represent polytomies (more than two children)
+|	to the `polytomies' vector.
+*/
+void BushMove::refreshPolytomies()
+	{
+	//@POL should keep polytomies list up to date rather than building anew
+	polytomies.clear();
+	for (TreeNode *nd = tree->GetFirstPreorder(); nd != NULL; nd = nd->GetNextPreorder())
+		{
+		if (nd->IsRoot())
+			continue;
+		
+		unsigned s = nd->CountChildren();
+		if (s > 2)
+			{
+			polytomies.push_back(nd);
+			}
+		}
+	}
+
+/*--------------------------------------------------------------------------------------------------------------------------
 |	Determines distribution of x given nspokes, where x is the number spokes assigned to the newly created node in an 
 |	add-edge move. The number of ways of choosing x spokes to move out of nspokes total is {nspokes \choose x}. We are not 
 |	interested in the values x = 0, x = 1, x = nspokes - 1, and x = n because these lead either to a non-move (x = 0 and 
@@ -454,11 +516,6 @@ void BushMove::proposeAddEdgeMove(TreeNode * u)
 	likelihood->prepareInternalNodeForLikelihood(v);
 	tree_manipulator.InsertSubtree(v, u, TreeManip::kOnLeft);
 
-#if 0 //POLPY_NEWWAY
-	v->InvalidateAttrDown(true, u);	// invalidates transition probability matrix only
-	v->InvalidateCondLikeArrays();	// invalidates conditional likelihood arrays only
-#endif
-
 	// Save u and v. If revert is necessary, all of orig_lchild's nodes will be returned
 	// to orig_par, and orig_lchild will be deleted.
 	//
@@ -518,13 +575,12 @@ void BushMove::proposeAddEdgeMove(TreeNode * u)
 			}
 		}
 
-#if POLPY_NEWWAY
-	orig_lchild->SelectNode();
+	if (view_proposed_move)
+		orig_lchild->SelectNode();
 
 	likelihood->useAsLikelihoodRoot(orig_lchild);
 	likelihood->invalidateAwayFromNode(*orig_lchild);
 	likelihood->invalidateBothEnds(orig_lchild);	//@POL really just need invalidateParentalOnly function
-#endif
 
 	tree->InvalidateNodeCounts();
 	}
@@ -551,17 +607,12 @@ void BushMove::proposeAddEdgeMove(TreeNode * u)
 */
 void BushMove::proposeDeleteEdgeMove(TreeNode * u)
 	{
-#if POLPY_NEWWAY
-	//u->SelectNode();
-	//likelihood->startTreeViewer(tree, str(boost::format("before deleting edge (%d)") % u->GetNodeNumber()));
-
 	// Node u will be stored, so get rid of any CLAs
 	//@POL should not discard cache here in case move is reverted - right now we're discarding because
 	// tree_manipulator.DeleteLeaf stores node u, and we do not want any CLAs to travel to node storage
 	// and come back to haunt us later. Better solution would be to keep u around until we know the move
 	// will be accepted, at which point the CLAs can definitely be discarded
 	likelihood->invalidateBothEndsDiscardCache(u);
-#endif
 
 	// Save nd's edge length in case we need to revert
 	//
@@ -610,83 +661,13 @@ void BushMove::proposeDeleteEdgeMove(TreeNode * u)
 		tree_manipulator.InsertSubtree(orig_rchild, orig_par, TreeManip::kOnRight);
 		}
 
-#if 0 //POLPY_NEWWAY
-	//orig_par->InvalidateAttrDown(true, orig_par->GetParent());	// no need to invalidate transition probability matrix
-	orig_par->InvalidateCondLikeArrays();	// invalidates conditional likelihood arrays only
-#endif
-
 	tree_manipulator.DeleteLeaf(u);
 
-#if POLPY_NEWWAY
+	if (view_proposed_move)
+		orig_par->SelectNode();
 	likelihood->useAsLikelihoodRoot(orig_par);
 	likelihood->invalidateAwayFromNode(*orig_par);
-#endif
 
 	tree->InvalidateNodeCounts();
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Calls proposeNewState(), then decides whether to accept or reject the proposed new state, calling accept() or 
-|	revert(), whichever is appropriate.
-*/
-void BushMove::update()
-	{
-	// The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
-	// A proposed BushMove cannot be accepted without changing edge lengths, so it is best to bail out now.
-	if (is_fixed)
-		return;
-
-	if (num_taxa == 0)
-		{
-		throw XLikelihood("Must call finalize() before calling update() for BushMove");
-		}
-
-	ChainManagerShPtr p = chain_mgr.lock();
-	assert(p);
-	double prev_ln_like = p->getLastLnLike();
-
-	proposeNewState();
-
-	double curr_ln_like				= likelihood->calcLnL(tree);
-
-	double curr_ln_prior			= 0.0;
-	double prev_ln_prior			= 0.0;
-	double ln_polytomy_prior_ratio	= 0.0;
-
-	unsigned m						= tree->GetNInternals();
-	double topo_prior_after			= topo_prior_calculator->GetLnTopologyPrior(m);
-
-	if (add_edge_move_proposed)
-		{
-		double topo_prior_before	= topo_prior_calculator->GetLnTopologyPrior(m - 1);
-		ln_polytomy_prior_ratio		= topo_prior_after - topo_prior_before;
-		one_edgelen[0]				= new_edgelen;
-		curr_ln_prior				= p->partialEdgeLenPrior(one_edgelen);
-		}
-	else
-		{
-		double topo_prior_before	= topo_prior_calculator->GetLnTopologyPrior(m + 1);
-		ln_polytomy_prior_ratio		= topo_prior_after - topo_prior_before;
-		one_edgelen[0]				= orig_edgelen;
-		prev_ln_prior				= p->partialEdgeLenPrior(one_edgelen);
-		}
-
-	double prev_posterior = prev_ln_like + prev_ln_prior;
-	double curr_posterior = curr_ln_like + curr_ln_prior;
-
-	double ln_accept_ratio = curr_posterior - prev_posterior + ln_hastings + ln_jacobian + ln_polytomy_prior_ratio;
-
-	if (ln_accept_ratio >= 0.0 || std::log(rng->Uniform(FILE_AND_LINE)) <= ln_accept_ratio)
-		{
-		p->setLastLnPrior(curr_ln_prior);
-		p->setLastLnLike(curr_ln_like);
-		accept();
-		}
-	else
-		{
-		curr_ln_like	= p->getLastLnLike();
-		curr_ln_prior	= p->getLastLnPrior();
-		revert();
-		}
 	}
 

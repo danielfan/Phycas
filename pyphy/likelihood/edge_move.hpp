@@ -91,32 +91,6 @@ class EdgeMove : public MCMCUpdater
 		double						origEdgelen;	/**< Length of modified edge saved (in case revert is necessary) */
 		TreeNode *					origNode;		/**< Node owning the modified edge (in case revert is necessary) */
 
-#if 0 // POLPY_NEWWAY
-		//unsigned						num_taxa;							/**< The number of taxa */
-		//unsigned						num_nodes_in_fully_resolved_tree;	/**< Total number of nodes in a fully resolved tree having the same number of taxa, N (= 2N - 2) */
-		//bool							add_edge_move_proposed;				/**< True if last move proposed was an add-edge move; false otherwise */
-
-		//double							edgelen_mean;						/**< The mean of the exponential distribution governing new edge lengths */
-		//ExponentialDistributionShPtr	edgelen_dist;						/**< The distribution from which new edge lengths are chosen */
-
-		//PolytomyDistrMap				poly_prob;							/**< Map of probability distributions for x where x is the number of spokes split off in an add-edge move that divides the spokes of a polytomy of size n into two groups. A polytomy with n spokes is split into two nodes, with x spokes going to one node and n - x remaining with the other node. polyProb[n][x] is prob(x|n). */
-
-		//std::vector<TreeNode *>			polytomies;							/**< Vector containing pointers to TreeNode objects representing polytomies */
-
-		//double							new_edgelen;						/**< Stores new edge length created by an add-edge move */
-		//unsigned						polytomy_size;						/**< Stores number of spokes in polytomy broken by last proposed add-edge move */
-		//unsigned						num_polytomies;						/**< Stores number of polytomies in tree */
-
-		//double							orig_edgelen;						/**< Length of deleted edge saved (in case revert of delete-edge move is necessary) */
-		//TreeNode *						orig_par;							/**< Parent of deleted node (in case revert of delete-edge move is necessary) */
-		//TreeNode *						orig_lchild;						/**< Leftmost child of deleted node (in case revert of delete-edge move is necessary) */
-		//TreeNode *						orig_rchild;						/**< Rightmost child of deleted node (in case revert of delete-edge move is necessary) */
-		//double							ln_jacobian;						/**< The natural log of the Jacobian for the move last proposed */
-		//double							ln_hastings;						/**< The natural log of the Hastings ratio for the move last proposed */
-
-		//TopoPriorCalculatorShPtr		topo_prior_calculator;				/**< Used to compute the various kinds of topological priors needed for dealing with polytomies */
-#endif
-
 		std::vector<double>				one_edgelen;						/**< Workspace declared here to avoid unnecessary allocs/deallocs */
 	};
 

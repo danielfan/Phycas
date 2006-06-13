@@ -27,11 +27,9 @@ EdgeMove::EdgeMove() : MCMCUpdater()
 */
 void EdgeMove::accept()
 	{
-#if POLPY_NEWWAY
 	likelihood->useAsLikelihoodRoot(origNode);
 	likelihood->discardCacheAwayFromNode(*origNode);
 	likelihood->discardCacheBothEnds(origNode);
-#endif
 
 	reset();
 	}
@@ -43,15 +41,9 @@ void EdgeMove::revert()
 	{
 	origNode->SetEdgeLen(origEdgelen);
 
-#if 0 //POLPY_NEWWAY
-	origNode->InvalidateAttrDown(true, origNode->GetParent());
-#endif
-
-#if POLPY_NEWWAY
 	likelihood->useAsLikelihoodRoot(origNode);
 	likelihood->restoreFromCacheAwayFromNode(*origNode);
 	likelihood->restoreFromCacheParentalOnly(origNode);
-#endif
 
 	reset();
 	}
@@ -92,15 +84,9 @@ void EdgeMove::proposeNewState()
 	double mstar	= m*std::exp(lambda*(rng->Uniform(FILE_AND_LINE) - 0.5));
 	origNode->SetEdgeLen(mstar);
 
-#if 0 //POLPY_NEWWAY
-	origNode->InvalidateAttrDown(true, origNode->GetParent());
-#endif
-
-#if POLPY_NEWWAY
 	likelihood->useAsLikelihoodRoot(origNode);
 	likelihood->invalidateAwayFromNode(*origNode);
 	likelihood->invalidateBothEnds(origNode);	//@POL really just need invalidateParentalOnly function
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

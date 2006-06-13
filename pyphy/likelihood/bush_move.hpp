@@ -73,6 +73,8 @@ class BushMove : public MCMCUpdater
 		virtual void				revert();
 		virtual void				accept();
 
+		void						viewProposedMove(bool yes);
+
 	private:
 
 		void						reset();
@@ -110,6 +112,8 @@ class BushMove : public MCMCUpdater
 		std::vector<double>				one_edgelen;						/**< Workspace declared here to avoid unnecessary allocs/deallocs */
 
 		TopoPriorCalculatorShPtr		topo_prior_calculator;				/**< Used to compute the various kinds of topological priors needed for dealing with polytomies */
+
+		bool							view_proposed_move;					/**< If set to true, graphical tree viewer will pop up showing edges affected by the next proposed Bush move */
 	};
 
 } // namespace phycas

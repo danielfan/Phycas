@@ -173,6 +173,7 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("setEdgeLenDistMean", &phycas::BushMove::setEdgeLenDistMean)
 		.def("finalize", &phycas::BushMove::finalize)
 		.def("getTopoPriorCalculator", &phycas::BushMove::getTopoPriorCalculator)
+		.def("viewProposedMove", &phycas::BushMove::viewProposedMove)
 		;
 	class_<phycas::NCatMove, bases<phycas::MCMCUpdater>, 
 		boost::noncopyable, boost::shared_ptr<phycas::NCatMove> >("NCatMove") 

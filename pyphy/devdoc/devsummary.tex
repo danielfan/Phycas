@@ -26,6 +26,7 @@
 
 \newcommand{\svnurl}{https://svn.scs.fsu.edu/svn/phycasdev}
 \newcommand{\None}{\verb+None+}
+\newcommand{\new}{{\bfseries *** NEW ***}}
 
 \begin{document}
 
@@ -36,7 +37,7 @@
 
 \section{Intended Audience}
 
-This document was prepared for the purpose of bringing Phycas co-authors Mark T. Holder and David L. Swofford up to speed on Phycas development for the meeting at NESCENT 17-20 May, 2006. I have taken a first stab at creating a usable (if not user-friendly) Phycas library and application, but I'm open to any changes you (Mark and Dave) feel are important. Note that the relevant directory structure is listed at the end, so skip to the back at any point if you lost as to where to find the files mentioned herein.
+This document was prepared for the purpose of bringing Phycas co-authors Mark T. Holder and David L. Swofford up to speed on Phycas development for the meeting at NESCENT 17-20 May, 2006. I have taken a first stab at creating a usable (if not user-friendly) Phycas library and application, but I'm open to any changes you (Mark and Dave) feel are important. Note that the relevant directory structure is listed at the end, so skip to the back at any point if you are lost as to where to find the files mentioned herein.
 
 \section{Quick Start}
 
@@ -70,7 +71,7 @@ Discussion point: should we allow users to put some or all of these Python comma
 Phycas can currently conduct a single-chain MCMC analysis under the standard set of substitution models (i.e. JC, F81, K2P, HKY, GTR, plus I, G or I+G versions of these). It supports only a single partition at the moment, but support for data partitioning is the next major item on the TODO list. Phycas now supports {\bfseries several features not supported by MrBayes 3.1}, namely:
 
 \begin{itemize}
-\item Phycas uses slice sampling \citep{Neal2003a} for all individual updates of model parameter, which obviates the need for a plethora of tuning parameters and enables the automatic tuning during MCMC.
+\item Phycas uses slice sampling \citep{Neal2003a} for all individual updates of model parameters, which obviates the need for a plethora of tuning parameters and enables the automatic tuning during MCMC.
 \item The option of using a hierarchical model for edge lengths in which the mean of the edge length prior is a hyperparameter that is itself updated during an MCMC analysis.
 \item Reversible-jump MCMC to switch between fully-resolved and polytomous trees \citep{LewisHolderHolsinger2005}
 \item The option of using the General Discrete Distribution for relative rates \citep{KosakovskypondMuse2005} and an associated reversible-jump MCMC move to switch between different numbers of rate categories.
@@ -78,13 +79,13 @@ Phycas can currently conduct a single-chain MCMC analysis under the standard set
 \item Being a Python library as well as an application, Phycas is much more scriptable and customizable than MrBayes. Users tempted to meddle can do a lot without having to touch a C or C++ compiler.
 \end{itemize}
 
-Despite these advantages, Phycas still has a long way to go, however. Here are some of its {\bfseries current limitations}:
+Despite these advantages, Phycas still has a long way to go. Here are some of its {\bfseries current limitations}:
 \begin{itemize}
 \item Slow. I have thus far concentrated on flexibility and ensuring that the likelihood calculations and MCMC moves are accurately implemented, but the calculation of likelihoods has not yet been optimized in any way. This is something I was hoping you guys could help me with while we are together this week. See below for actual speed comparison with MrBayes.
 \item Underflow is not yet implemented, so large numbers of taxa are not able to be analyzed yet.
 \item Data partitioning is not yet implemented. This is something that must be done before most potential users will be interested. I discussed ideas about how to implement this with Dave during the ATOL meeting here in March, but I haven't actually embarked on implementing it yet and we should probably talk about this some more as a group.
 \item MCMCMC is not yet implemented. I suppose this is worthwhile, and should be done, but I must admit I am not as hot on this (ha ha) as I once was.
-\item No way to summarize split posteriors or to draw trees. Given that this has been implemented before, it will not be hard to add, but thus far has not been incorporated. I generally just use PAUP to construct consensus trees at the moment.
+\item No way to summarize split posteriors or to draw trees. Given that this has been implemented before, it will not be hard to add, but thus far has not been incorporated. For the time being, I have been using PAUP to construct consensus trees.
 \item No GUI. This may or may not be viewed as a disadvantage. I think a lot of labs will appreciate the ability to roll their own scripts using Phycas as a library, and I think the bioinformatics community will embrace Phycas as a tool they can simply add to their pipeline, so maybe this is the niche we should be shooting for, at least for the short term.
 \item I'm sure other drawbacks will become apparent during your visit!
 \end{itemize}
@@ -126,6 +127,7 @@ Below is a description of each user-modifiable setting. The default values are a
 \begin{description}
 \item[{\tt ls\_move\_lambda}] The tuning parameter of the Larget-Simon move. Larger values lead to greater contraction/expansion of the selected 3-edge segment.
 \item[{\tt ls\_move\_weight}] The number of times during a cycle in which the Larget-Simon move is attempted.
+\item[{\tt ls\_move\_debug}] \new If True, a graphical tree viewer will pop up twice per update. The first time it will show the next proposed move and the second time it will show the results (after accepting or reverting the move).
 \end{description}
 
 \subsection{Bush (Polytomy) moves}
@@ -135,6 +137,7 @@ Below is a description of each user-modifiable setting. The default values are a
 \item[{\tt topo\_prior\_C}] Specifies the strength of the prior ($C = 1$ is flat prior; $C > 1$ favors less resolved topologies)
 \item[{\tt bush\_move\_edgelen\_mean}] Specifies mean of the exponential edge length generation distribution used by the Bush move when a new edges is created
 \item[{\tt bush\_move\_weight}] Bush moves will be performed this many times per cycle if \verb+allow_polytomies+ is True
+\item[{\tt bush\_move\_debug}] \new If True, a graphical tree viewer will pop up twice per update. The first time it will show the next proposed move and the second time it will show the results (after accepting or reverting the move).
 \end{description}
 
 \subsection{Slice Sampling}
@@ -207,7 +210,7 @@ Here are the currently missing features that I think are most important for rele
 \begin{itemize}
 \item Data partitioning needs to be implemented. This is probably the single most {\em difficult} remaining obstacle.
 \item Documentation. A very effective quick start guide needs to be written that can handle 90\% of the questions people are going to have. This is probably the single most {\em important} remaining obstacle because, without good documentation, potential users will be frightened away by even the small amount of Python coding needed to run Phycas.
-\item Speed should be made comparable to MrBayes.
+\item Speed should be made comparable to MrBayes. \new\ This was accomplished in the NESCENT meeting.
 \item Phycas should be able to handle large numbers of taxa (underflow handling needs to be implemented).
 \item Split and topology managers need to be added so that Phycas can produce posterior summaries people expect.
 \end{itemize}
@@ -220,7 +223,7 @@ As I have added features, I have added example applications to test those featur
 
 \section{Python and C++ Source Code Documentation}
 
-Most of the C++ source code I have written thus far is the directories {\tt conversions}, {\tt data\_matrix}, {\tt likelihood}, {\tt phylogeny}, {\tt prob\_dist} and {\tt read\_nexus}, all subdirectories of {\tt phycasdev/pyphy}. This C++ source code is nearly all documented in a style suitable for Doxygen, although I have not yet tried to compile all of it into web pages. I have tried to be good about always creating three files for each new class: an {\tt .hpp} header file, a {\tt .inl} ``inlined functions'' file containing the inlined functions, and a {\tt .cpp} source code file. There are still many cases where I didn't follow this rule, but I've been getting better about conforming to this recently. It is very tempting to just define the inlined functions in place in the headers, but I find that if I do this then very few of them end up being documented.
+Most of the C++ source code I have written thus far is located in the directories {\tt conversions}, {\tt data\_matrix}, {\tt likelihood}, {\tt phylogeny}, {\tt prob\_dist} and {\tt read\_nexus}, all subdirectories of {\tt phycasdev/pyphy}. This C++ source code is nearly all documented in a style suitable for Doxygen, although I have not yet tried to compile all of it into web pages. I have tried to be good about always creating three files for each new class: an {\tt .hpp} header file, a {\tt .inl} ``inlined functions'' file containing the inlined functions, and a {\tt .cpp} source code file. There are still many cases where I didn't follow this rule, but I've been getting better about conforming to this recently. It is very tempting to just define the inlined functions in place in the headers, but I find that if I do this then very few of them end up being documented.
 
 The {\tt *\_pymod.cpp} files themselves serve as nice, concise summaries of which C++ functions and classes have been made available in the Python modules. These files are: 
 \begin{itemize}
@@ -232,7 +235,7 @@ The {\tt *\_pymod.cpp} files themselves serve as nice, concise summaries of whic
 \item[] {\tt read\_nexus\_pymod.cpp} in the {\tt phycasdev/pyphy/read\_nexus} directory
 \end{itemize}
 
-I found that it was desirable to have source code documentation for the Python classes and member functions that is different from that for the corresponding C++ classes and member functions. This is because the Python source code is more visible to and important for ordinary users. For example, a user could type the following at a Python prompt to get a very useful description of how to create and sample from an exponential distribution:
+I found that it was desirable to have source code documentation for the Python classes and member functions that is different from that for the corresponding C++ classes and member functions. This is because the Python source code is more visible to (and important for) ordinary users. For example, a user could type the following at a Python prompt to get a very useful description of how to create and sample from an exponential distribution:
 
 {\tiny
 \begin{verbatim}
@@ -472,7 +475,7 @@ class ExponentialDist(ProbDist._ProbDist.ExponentialDistBase)
 \end{verbatim}
 }
 
-Most of the above ``help'' comes directly from the Python source code documentation. While is is possible to put such documentation in the {\tt *\_pymod.cpp} files, it is much easier for users I think to create a shadow Python class that wraps the corresponding C++ class. The drawback is that it is more work, but good documentation is absolutely essential I think. The hard core programmers who want to peer into the C++ code behind the Python functionality will encounter the Doxygen documentation, which duplicates a lot of what is in the Python shadow class documentation, but adds more C++ specific information and is directed more toward programmers rather than users.
+Most of the above ``help'' comes directly from the Python source code documentation. While is is possible to put such documentation in the {\tt *\_pymod.cpp} files, it is much easier for users I think to create a shadow Python class that wraps the corresponding C++ class. The drawback is that it is more work, but good documentation is absolutely essential. The hard core programmers who want to peer into the C++ code behind the Python functionality will encounter the Doxygen documentation, which duplicates a lot of what is in the Python shadow class documentation, but adds more C++ specific information and is directed more toward programmers rather than users.
 
 The tiny Python examples sprinkled above can all be tested for accuracy by running a single Python script, {\tt phycasdev/pyphy/pyphy/doctestall.py}. Each module, in its {\tt \_\_init\_\_.py} file, defines a function named {\tt testExamples()}. This function is called for each module and this causes the Python {\tt doctest} facility to check all of the examples in all of the {\tt .py} files listed in the {\tt testExamples()} function.
 
@@ -483,7 +486,7 @@ Here are the most important parts of the directory structure for the purposes of
 \begin{verbatim}
 phycasdev/pyphy/apps                  test suite, example applications
 phycasdev/pyphy/conversions           Python/STL conversions (e.g. list <-> vector)
-phycasdev/pyphy/data_matrix           C++ code for creating DataNexus Python module
+phycasdev/pyphy/data_matrix           C++ code for creating DataMatrix Python module
 phycasdev/pyphy/likelihood            C++ code for creating Likelihood Python module
 phycasdev/pyphy/phylogeny             C++ code for creating Phylogeny Python module
 phycasdev/pyphy/prob_dist             C++ code for creating ProbDist Python module

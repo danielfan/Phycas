@@ -949,6 +949,11 @@ double TreeLikelihood::calcLnL(
 		}
 
 	assert(nd);
+	//if (!nd->IsInternal())
+	//	{
+	//	startTreeViewer(t, "oops");
+	//	std::cerr << "oops" << std::endl;
+	//	}
 	assert(nd->IsInternal());
 
 	// Calculate log-likelihood using nd as the likelihood root

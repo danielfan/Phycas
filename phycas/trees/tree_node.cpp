@@ -333,50 +333,6 @@ void TreeNode::Recurse(void &FuncObj(TreeNode*, int))
 	}
 #endif
 
-#if 0 // POLPY_NEWWAY
-//@POL Mark, I introduced this function because it appears you commented out the '(*it)->clDirty = true' in
-// my InvalidateAttrDown function (see below), which caused problems when BushMaster proposed moves that either
-// broke up or created polytomies. For example, breaking up a polytomy involves pulling a node out of storage and 
-// adding some children to it. After adding children to it, I was calling InvalidateAttrDown to invalidate its
-// cond. like. arrays, so commenting out the '(*it)->clDirty = true' line caused these conditional likelihood arrays
-// to go uncorrected. I thought about using brLenChanged to indicate whether pMatIsDirty or clDirty should be 
-// set to true in InvalidateAttrDown, but thought I would install this temporary solution (InvalidateCondLikeArrays)
-// until I had a chance to talk with you about it.
-//
-void TreeNode::InvalidateCondLikeArrays()
-	{
-	//@POL temporary version designed to work with HKYAdHocEvaluator only
-	if (!attr.empty())
-		{
-		vector<TreeNodeAttribute *>::iterator it = attr.begin();
-		for (; it != attr.end(); ++it)
-			{
-			(*it)->clDirty = true;
-			}
-		}
-	}
-#endif
-
-#if 0 // POLPY_NEWWAY
-/*----------------------------------------------------------------------------------------------------------------------
-|	Included so that LargetSimonMove would work, but has not yet been transferred
-*/
-void TreeNode::InvalidateAttrDown(bool ,//brLenChanged, 
-  TreeNode * )// nextCtrNd)
-	{
-	//@POL temporary version designed to work with HKYAdHocEvaluator only
-	if (!attr.empty())
-		{
-		vector<TreeNodeAttribute *>::iterator it = attr.begin();
-		for (; it != attr.end(); ++it)
-			{
-			(*it)->pMatIsDirty = true;
-			//@@@@@(*it)->clDirty = true;
-			}
-		}
-	}
-#endif
-
 #if ALT_TRAVERSE_TREE
 	TreeNode *TreeNode::SetPreorderPointers(TreeNode *p)
 		{
