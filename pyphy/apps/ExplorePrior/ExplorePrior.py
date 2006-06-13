@@ -12,7 +12,7 @@ if __name__ == "__main__":
     phycas.data_file_name           = 'nodata.nex'  # used for creating *.p and *.t file names
     phycas.ntax                     = 10 
     phycas.starting_tree_source     = 'random'
-    phycas.ncycles                  = 200000
+    phycas.ncycles                  = 1000
     phycas.sample_every             = 20
     phycas.report_every             = phycas.ncycles//100
     phycas.adapt_first              = 100

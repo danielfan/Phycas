@@ -32,7 +32,7 @@
 
 \title{Current State of Phycas}
 \author{Paul O. Lewis} 
-\date{16 May 2006}
+\date{16 May 2006 (revised 13 June 2006)}
 \maketitle
 
 \section{Intended Audience}
@@ -90,16 +90,41 @@ Despite these advantages, Phycas still has a long way to go. Here are some of it
 \item I'm sure other drawbacks will become apparent during your visit!
 \end{itemize}
 
-Here is a comparison of Phycas (SVN revision 41) with MrBayes 3.1.1 on two different data sets: nyldna4.nex (4 taxa, 3080 sites) and green.nex (10 taxa, 1296 sites). MrBayes devotes approximately 10\% of its likelihood evaluations to updating the parameters of the HKY model used (i.e. updating kappa and the four base frequencies). The other 90\% of its likelihood evaluations go toward updating the topology and edge lengths using LOCAL and extended TBR moves. I set up the Phycas runs to match both the total number of likelihood evaluations and this distribution of effort as closely as possible. {\em In summary, Phycas was about 8\% faster than MrBayes on the 4-taxon data set but MrBayes was about 55\% faster than Phycas on the 10-taxon data set}. This is actually surprisingly good, considering that I have not devoted any time yet to speeding up Phycas' likelihood calculation.
+Here is a comparison of Phycas (SVN revision 41) with MrBayes 3.1.1 on two different data sets: nyldna4.nex (4 taxa, 3080 sites) and green.nex (10 taxa, 1296 sites). MrBayes devotes approximately 10\% of its likelihood evaluations to updating the parameters of the HKY model used (i.e. updating kappa and the four base frequencies). The other 90\% of its likelihood evaluations go toward updating the topology and edge lengths using LOCAL and extended TBR moves. I set up the Phycas runs to match both the total number of likelihood evaluations and this distribution of effort as closely as possible. {\em In summary, Phycas was about 8\% faster than MrBayes on the 4-taxon data set but MrBayes was about 55\% faster than Phycas on the 10-taxon data set}. This is actually surprisingly good, considering that I have not devoted any time yet to speeding up Phycas' likelihood calculation.  
 
 \begin{tabular}{rrrrrrr}
-            &         & Likelihood  &            & Evals.      & \% evals. spent & \% evals. spent \\
-Data set    & Program & evaluations &  Seconds   & per second  & on topology     & on parameters \\ \hline
-nyldna4.nex & Phycas  &  1009910    &   46.8     & 21593.2     &   89.1 & 10.9 \\
-            & MrBayes &   999993    &   49.9     & 20056.4     &   90.9 &  9.1 \\ \hline
-green.nex   & Phycas  &  1011178    &  311.7     & 3244.3      &   89.01 & 10.99 \\
-            & MrBayes &   999993    &  199.1     & 5022.9      &   90.9 &  9.1 \\ \hline
+            &             & Likelihood  &            & Evals.      & \% evals. spent & \% evals. spent \\
+Data set    & Program     & evaluations &  Seconds   & per second  & on topology     & on parameters   \\ \hline
+nyldna4.nex & Phycas (65) &  1009910    &   46.8     & 21593.2     &   89.1          & 10.9            \\
+            & Phycas (95) &  1009910    &   60.4     & 16731.7     &   89.1          & 10.9            \\ 
+            & MrBayes     &   999993    &   49.9     & 20056.4     &   90.9          &  9.1            \\ \hline
+green.nex   & Phycas (65) &  1011178    &  311.7     & 3244.3      &   89.0          & 11.0            \\
+            & Phycas (95) &  1011178    &  193.5     & 5225.6      &   89.0          & 11.0            \\
+            & MrBayes     &   999993    &  199.1     & 5022.9      &   90.9          &  9.1            \\ \hline
 \end{tabular}
+
+\new\ The value in parentheses after the program name Phycas indicates the SVN revision number tested. Interestingly, Phycas became slower under the new CLA system for the 4-taxon case. When testing Phycas, the {\tt Phycas.py} script was run as is to generate the data. For future reference, here is a listing of the settings used in {\tt Phycas.py} for the above tests. Note that in revisions later than 95, the number of cycles was reduced from the 3000 used here to a much smaller value to speed up the testing cycle:
+
+\begin{verbatim}
+if __name__ == '__main__':
+    mcmc = Phycas()
+
+    mcmc.random_seed = '13579'
+    mcmc.data_source = 'file'
+    #mcmc.data_file_name = '../../pyphy/green.nex'
+    mcmc.data_file_name = '../../pyphy/nyldna4.nex'
+    mcmc.starting_tree_source = 'random'
+    mcmc.ncycles = 3000
+    mcmc.sample_every = 10
+    mcmc.adapt_first = 10
+    mcmc.model_type = 'hky'
+    mcmc.ls_move_weight = 300
+    mcmc.slice_max_units = 0
+    mcmc.verbose = True
+
+    mcmc.setup()
+    mcmc.run()
+\end{verbatim}
 
 Below is a description of each user-modifiable setting. The default values are all defined in the Phycas constructor, \verb+Phycas.__init__()+.
 

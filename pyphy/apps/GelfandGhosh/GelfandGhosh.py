@@ -14,8 +14,8 @@ from Phycas import *
 
 def commonSetup():
     # Set up MCMC
-    phycas.ncycles = 4000
-    phycas.sample_every = 20 
+    phycas.ncycles = 200
+    phycas.sample_every = 2 
     phycas.adapt_first = 10
     phycas.verbose = True
     phycas.ls_move_weight = 100

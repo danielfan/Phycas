@@ -87,6 +87,10 @@ phycas.data_file_name = 'analHKY.nex'
 # slice_max_units to 0
 phycas.slice_max_units = 0
 
+phycas.ncycles = 200
+phycas.sample_every = 10
+phycas.adapt_first = 100
+
 phycas.setup()
 phycas.run()
 

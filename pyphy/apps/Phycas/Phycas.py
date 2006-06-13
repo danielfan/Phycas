@@ -1096,12 +1096,13 @@ if __name__ == '__main__':
     mcmc.random_seed = '13579'
     mcmc.data_source = 'file'
     mcmc.data_file_name = '../../pyphy/green.nex'
+    #mcmc.data_file_name = '../../pyphy/nyldna4.nex'
     mcmc.starting_tree_source = 'random'
-    mcmc.ncycles = 3000
+    mcmc.ncycles = 200
     mcmc.sample_every = 10
     mcmc.adapt_first = 10
     mcmc.model_type = 'hky'
-    mcmc.ls_move_weight = 300
+    mcmc.ls_move_weight = 10
     mcmc.slice_max_units = 0
     mcmc.verbose = True
 

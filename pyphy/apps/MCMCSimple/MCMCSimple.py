@@ -526,9 +526,9 @@ if __name__ == '__main__':
     mcmc.data_file_name = '../../pyphy/nyldna4.nex'
     #mcmc.tree_topology = '(0:0.1,1:0.1,(2:0.1,3:0.1):0.1)'
     mcmc.tree_topology = '(0:0.1,3:0.1,(2:0.1,1:0.1):0.1)'
-    mcmc.ncycles = 10000
-    mcmc.sample_every = 100
-    mcmc.adapt_first = 100
+    mcmc.ncycles = 500
+    mcmc.sample_every = 10
+    mcmc.adapt_first = 10
     mcmc.random_seed = '13579'
     mcmc.model_type = 'hky'
     mcmc.using_hyperprior = True
