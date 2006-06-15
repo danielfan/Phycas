@@ -1,5 +1,5 @@
 // This file is included by read_nexus_i.cpp to avoid a bizarre anonymous namespace multiple definition link error that TL is getting on Mac 10.3.9 (gcc 3.3)
-#if defined (INCLUDE_TO_AVOID_LINK_ERROR) || defined(POL_PYPHY)
+#if defined (INCLUDE_TO_AVOID_LINK_ERROR) || defined(POL_PHYCAS)
 
 #include "phycas/force_include.h"
 #include <fstream>
@@ -47,7 +47,7 @@ const std::vector<FullTreeDescription> & CipresNexusReader::GetTrees() const
 	return phoTreesMgr->GetTrees();
 	}
 
-#if defined(POL_PYPHY) //@POL 10-Nov-2005 added
+#if defined(POL_PHYCAS) //@POL 10-Nov-2005 added
 vector<string> CipresNexusReader::GetTaxLabels() const
 	{
 	assert(phoTaxaMgr);
@@ -133,7 +133,7 @@ void addSymbolForState(string & symbolsForCIPR, const DataStorageType * nclState
 	{
 	try	{
 		symbolsForCIPR += datatype.GetStateChar(nclState, false);
-#		if !defined(POL_PYPHY) //POL 29-Oct-2005 to eliminate unwanted output when calling from Python
+#		if !defined(POL_PHYCAS) //POL 29-Oct-2005 to eliminate unwanted output when calling from Python
 			if (verbose)
 				cout << "symbolsForCIPR.length() = " << (unsigned)symbolsForCIPR.length() <<"\nsymbolsForCIPR = \"" << symbolsForCIPR << "\"\n";
 #		endif
@@ -168,7 +168,7 @@ CIPR_StateSet_t addNewStateSetSingleCode(
 		if (nclCode & currNCLState)
 			newStates.push_back(i);
 		}
-#	if !defined(POL_PYPHY) //POL 31-Oct-2005 to eliminate unwanted output when calling from Python
+#	if !defined(POL_PHYCAS) //POL 31-Oct-2005 to eliminate unwanted output when calling from Python
 		if (verbose)
 			cout << "newStates.size() = " << (unsigned)newStates.size() << endl;
 #	endif
@@ -219,7 +219,7 @@ CIPR_StateSet_t addNewStateSetMultiElementCode(
 			newStates.push_back(i);
 		}
 
-#	if !defined(POL_PYPHY) //POL 29-Oct-2005 to eliminate unwanted output when calling from Python
+#	if !defined(POL_PHYCAS) //POL 29-Oct-2005 to eliminate unwanted output when calling from Python
 		if (verbose)
 			cout << "newStates.size() = " << (unsigned)newStates.size() << endl;
 #	endif
@@ -285,7 +285,7 @@ CIPR_Matrix toCIPRMatrix(const ncl::NxsDiscreteMatrix & inMatrix, const bool ver
 	vector<CIPR_State_t> tempStateList;
 	vector<unsigned> tempStateListPos;
 
-#	if !defined(POL_PYPHY) //POL 29-Oct-2005 to eliminate unwanted output when calling from Python
+#	if !defined(POL_PHYCAS) //POL 29-Oct-2005 to eliminate unwanted output when calling from Python
 		if (verbose)
 			{
 			cout << "toCIPRMatrix" << std::endl;
@@ -513,7 +513,7 @@ CIPR_Matrix toCIPRMatrix(const ncl::NxsDiscreteMatrix & inMatrix, const bool ver
 	toReturn.stateList = new CIPR_State_t[tempStateList.size()];
 	cip_copy(tempStateList.begin(), tempStateList.end(), toReturn.stateList);
 
-#	if !defined(POL_PYPHY) //POL 29-Oct-2005 to eliminate unwanted output when calling from Python
+#	if !defined(POL_PHYCAS) //POL 29-Oct-2005 to eliminate unwanted output when calling from Python
 		if (verbose)
 			{
 			cout << "toCIPRMatrix toReturn.stateList" << endl;
@@ -591,7 +591,7 @@ void CipresNexusReader::NexusError(const std::string &msg, file_pos pos, unsigne
 	filePositionOfError = pos;
 	lineOfError = line;
 	columnOfError = col;
-#	if defined(POL_PYPHY) && 0
+#	if defined(POL_PHYCAS) && 0
 		throw my_exception(msg);
 #	endif
 	}

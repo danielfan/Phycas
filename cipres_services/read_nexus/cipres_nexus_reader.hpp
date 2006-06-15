@@ -11,7 +11,7 @@ class PhoTaxaManager;
 class PhoTreesManager;
 class PhoCharactersManager;
 
-#if defined(POL_PYPHY)
+#if defined(POL_PHYCAS)
 struct my_exception // : std::exception
 	{
 	my_exception(std::string s) : msg(s) {}
@@ -36,7 +36,7 @@ class CipresNexusReader: public NxsReader
 			ReadNxsFilePath(fp);
 			}
 
-#		if defined(POL_PYPHY)
+#		if defined(POL_PHYCAS)
 		int		GetNChar();
 		std::string GetErrorMessage()
 			{
@@ -59,7 +59,7 @@ class CipresNexusReader: public NxsReader
 			
 		const std::vector<FullTreeDescription> & GetTrees() const;
 
-#	if defined(POL_PYPHY) //@POL 10-Nov-2005 added
+#	if defined(POL_PHYCAS) //@POL 10-Nov-2005 added
 		std::vector<std::string> GetTaxLabels() const;
 #	endif
 

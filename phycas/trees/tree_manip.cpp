@@ -340,7 +340,7 @@ void TreeManip::SimpleBuildTreeFromID(
 void TreeManip::SimpleBuildStarTree(
   unsigned	nlvs,		/**< number of tip nodes (root plus leaves) */
   unsigned	root_at,		/**< node number of root node (should correspond to index of tip in taxa manager */	//POL added 22-Oct-2004
-#if defined(POL_PYPHY)
+#if defined(POL_PHYCAS)
   phycas::Lot *		rnd,		/**< random number generator to be used */
 #else
   Lot *		rnd,		/**< random number generator to be used */
@@ -439,7 +439,7 @@ void TreeManip::SimpleBuildStarTree(
 |	exponentially distributed with hazard parameter j*lambda, where j is the number of extant lineages.
 */
 void TreeManip::SimpleBuildYuleTree(
-#if defined(POL_PYPHY)
+#if defined(POL_PHYCAS)
   phycas::Lot	&rnd,		/* random number generator to be used */
 #else
   Lot		&rnd,		/* random number generator to be used */

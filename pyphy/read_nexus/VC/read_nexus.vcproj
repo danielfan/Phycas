@@ -72,6 +72,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
+				ImproveFloatingPointConsistency="TRUE"
 				AdditionalIncludeDirectories="$(PYTHON_ROOT)\include;$(PHYCAS_ROOT);$(PHYCAS_ROOT)\pyphy\include;$(BOOST_ROOT);$(CIPRES_LIB_ROOT)\C++"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;VC_EXPORTS"
 				RuntimeLibrary="2"
@@ -175,6 +176,12 @@
 							Name="VCCLCompilerTool"
 							ForcedIncludeFiles="$(NOINHERIT)"/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ForcedIncludeFiles="$(NOINHERIT)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\phycas\rand\distribution_command_param.cpp">
@@ -192,6 +199,12 @@
 					RelativePath="..\..\prob_dist\dcdflib\src\ipmpar.c">
 					<FileConfiguration
 						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ForcedIncludeFiles="$(NOINHERIT)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
 							ForcedIncludeFiles="$(NOINHERIT)"/>
@@ -341,6 +354,9 @@
 				</File>
 				<File
 					RelativePath="..\..\..\ncl\misc\nxs_test.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\ncl\nxs_token.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\ncl\trees\nxs_tree_listener.cpp">
@@ -554,9 +570,6 @@
 				</File>
 				<File
 					RelativePath="..\..\..\ncl\misc\nxs_test_impl.hpp">
-				</File>
-				<File
-					RelativePath="..\..\..\ncl\nxs_token.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\ncl\nxs_token.hpp">

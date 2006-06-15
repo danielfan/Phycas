@@ -2,6 +2,8 @@
 #define BASIC_LOT_HPP
 
 #include <cassert>
+#include <cmath>
+#include <ctime>
 #include <boost/shared_ptr.hpp>
 
 namespace phycas

@@ -1110,8 +1110,9 @@ if __name__ == '__main__':
         mcmc.ncycles = 1
         mcmc.report_every = 1
         mcmc.ls_move_weight = 10
-        mcmc.ls_move_debug = True
+        mcmc.ls_move_debug = False
 
     mcmc.setup()
+    raw_input('debug stop')
     mcmc.run()
     

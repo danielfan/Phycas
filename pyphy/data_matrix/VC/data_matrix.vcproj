@@ -71,6 +71,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
+				ImproveFloatingPointConsistency="TRUE"
 				AdditionalIncludeDirectories="$(CIPRES_LIB_ROOT)\C++;$(PYTHON_ROOT)\include;$(PHYCAS_ROOT);$(BOOST_ROOT)"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;VC_EXPORTS"
 				RuntimeLibrary="2"
@@ -144,5 +145,8 @@
 		</Filter>
 	</Files>
 	<Globals>
+		<Global
+			Name="DevPartner_IsInstrumented"
+			Value="0"/>
 	</Globals>
 </VisualStudioProject>

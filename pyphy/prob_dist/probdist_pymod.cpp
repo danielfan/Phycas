@@ -5,7 +5,7 @@
 #define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
 
 #include "phycas/force_include.h"
-#if defined(POL_PYPHY)
+#if defined(POL_PHYCAS)
 #	include "pyphy/prob_dist/basic_lot.hpp"
 #else
 #	include "phycas/rand/lot.hpp"

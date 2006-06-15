@@ -1,3 +1,5 @@
+#include <iostream>
+#include <string>
 #include <windows.h>
 
 // Prompts user with string s, then returns the first character typed. If any problems arise 

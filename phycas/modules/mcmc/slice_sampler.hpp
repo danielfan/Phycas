@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <climits>
 #include <cfloat>
-#if defined(POL_PYPHY)
+#if defined(POL_PHYCAS)
 #	include "pyphy/prob_dist/basic_lot.hpp"
 	typedef boost::shared_ptr<phycas::Lot> LotShPtr;
 #else

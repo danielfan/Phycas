@@ -27,6 +27,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "conversions", "..\conversio
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "profiling", "profiling\profiling.vcproj", "{26F712EA-B139-4CF4-A61A-67DAF08A62BE}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -68,9 +72,12 @@ Global
 		{EA8F76DF-5381-4628-B07F-AE53F2D9DB0C}.Release.ActiveCfg = Release|Win32
 		{EA8F76DF-5381-4628-B07F-AE53F2D9DB0C}.Release.Build.0 = Release|Win32
 		{EA8F76DF-5381-4628-B07F-AE53F2D9DB0C}.Test.ActiveCfg = Release|Win32
-		{6D38AA30-8DB5-4582-BA16-81BE09B707A9}.Debug.ActiveCfg = Debug|Win32
-		{6D38AA30-8DB5-4582-BA16-81BE09B707A9}.Release.ActiveCfg = Release|Win32
-		{6D38AA30-8DB5-4582-BA16-81BE09B707A9}.Test.ActiveCfg = Release|Win32
+		{26F712EA-B139-4CF4-A61A-67DAF08A62BE}.Debug.ActiveCfg = Debug|Win32
+		{26F712EA-B139-4CF4-A61A-67DAF08A62BE}.Debug.Build.0 = Debug|Win32
+		{26F712EA-B139-4CF4-A61A-67DAF08A62BE}.Release.ActiveCfg = Release|Win32
+		{26F712EA-B139-4CF4-A61A-67DAF08A62BE}.Release.Build.0 = Release|Win32
+		{26F712EA-B139-4CF4-A61A-67DAF08A62BE}.Test.ActiveCfg = Release|Win32
+		{26F712EA-B139-4CF4-A61A-67DAF08A62BE}.Test.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

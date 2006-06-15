@@ -281,7 +281,8 @@ inline void TreeLikelihood::recalcRelativeRates()
 	num_rates = model->getNRatesTotal();
 	model->recalcRatesAndProbs(rate_means, rate_probs);
 	likelihood_rate_site.resize(num_rates*num_patterns, 0.0);
-	cla_pool.setCondLikeLength(num_rates*num_patterns*num_states);
+	cla_pool.setCondLikeDimensions(num_patterns, num_rates, num_states);
+	//cla_pool.setCondLikeLength(num_patterns*num_rates*num_states);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -390,6 +391,42 @@ inline void TreeLikelihood::simulate(SimDataShPtr sim_data, TreeShPtr t, LotShPt
 	{
 	simulateImpl(sim_data, t, rng, nchar, false);	// false means do not recalculate transition probabilities
 	}
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets value of data member `underflow_num_edges' to `nedges'.
+*/
+inline void	TreeLikelihood::setUnderflowNumEdges(unsigned nedges)
+	{
+	assert(nedges > 0);
+	underflow_num_edges = nedges;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns value of data member `underflow_num_edges'.
+*/
+inline unsigned TreeLikelihood::getUnderflowNumEdges() const
+	{
+	return underflow_num_edges;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets value of data member `underflow_max_value' to `maxv'.
+*/
+inline void	TreeLikelihood::setUnderflowMaxValue(double maxv)
+	{
+	underflow_max_value = maxv;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns value of data member `underflow_max_value'.
+*/
+inline double TreeLikelihood::getUnderflowMaxValue() const
+	{
+	return underflow_max_value;
+	}
+#endif
+
 
 } // namespace phycas
 

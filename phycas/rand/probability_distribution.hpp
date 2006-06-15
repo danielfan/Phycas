@@ -10,13 +10,15 @@
 
 #include <boost/shared_ptr.hpp>
 #include <boost/format.hpp>
-#if defined(POL_PYPHY)
+#if defined(POL_PHYCAS)
 #	include "pyphy/prob_dist/basic_cdf.hpp"
 #	include "pyphy/prob_dist/basic_lot.hpp"
 #	include "pyphy/common/pyphy_string.hpp"
-#	include <boost/python/tuple.hpp>
-#	include <boost/python/numeric.hpp>
-#	include "pyphy/include/num_util.h"
+#	if defined(POL_PYPHY)
+#		include <boost/python/tuple.hpp>
+#		include <boost/python/numeric.hpp>
+#		include "pyphy/include/num_util.h"
+#	endif
 #else
 #	include "phycas/rand/cdf.hpp"
 #	include "phycas/rand/lot.hpp"
@@ -42,7 +44,7 @@ class ProbabilityDistribution : public AdHocDensity
 							ProbabilityDistribution() {lot = &myLot;}
 							virtual ~ProbabilityDistribution() {}
 
-#if defined(POL_PYPHY)
+#if defined(POL_PHYCAS)
 		virtual void			SetLot(phycas::Lot * other); //@POL seems like this should be a shared pointer
 		virtual phycas::Lot *	GetLot() {return lot;} // temporary!
 #else
@@ -67,7 +69,7 @@ class ProbabilityDistribution : public AdHocDensity
 
 		virtual double		operator()(double x);
 
-#if defined(POL_PYPHY)
+#if defined(POL_PHYCAS)
 		phycas::CDF			cdf;
 		phycas::Lot			myLot;
 		phycas::Lot *		lot;
@@ -91,7 +93,7 @@ class MultivariateProbabilityDistribution
 									MultivariateProbabilityDistribution() {lot = &myLot;}
 							virtual ~MultivariateProbabilityDistribution() {}
 
-#if defined(POL_PYPHY)
+#if defined(POL_PHYCAS)
 		virtual void				SetLot(phycas::Lot *other)									= 0;
 #else
 		virtual void				SetLot(Lot *other)											= 0;
@@ -109,16 +111,18 @@ class MultivariateProbabilityDistribution
 		virtual double				ApproxCDF(const VecDbl &x, unsigned nsamples = 10000) const	= 0;
 		virtual double				GetLnPDF(const VecDbl &) const								= 0; 
 		virtual double				GetRelativeLnPDF(const VecDbl &) const						= 0; 
-#		if defined(POL_PYPHY)
+#		if defined(POL_PHYCAS)
 			virtual void 			SetMeanAndVariance(const VecDbl &m, const VecDbl &v)		= 0;
-			virtual void 			AltSetMeanAndVariance(boost::python::numeric::array m, boost::python::numeric::array v) = 0;
-			virtual boost::python::numeric::array	GetVarCovarMatrix()							= 0;
+#			if defined(POL_PYPHY)
+				virtual void 			AltSetMeanAndVariance(boost::python::numeric::array m, boost::python::numeric::array v) = 0;
+				virtual boost::python::numeric::array	GetVarCovarMatrix()							= 0;
+#			endif
 #		else
 			virtual void 			SetMeanAndVariance(const double *m,const double *v)			= 0;
 #		endif
 		virtual unsigned			GetNParams()	const										= 0;
 
-#if defined(POL_PYPHY)
+#if defined(POL_PHYCAS)
 		phycas::CDF					cdf;
 		phycas::Lot					myLot;
 		phycas::Lot *				lot;
@@ -136,7 +140,7 @@ class MultivariateProbabilityDistribution
 |	It is assumed that `other' is non-NULL.
 */
 inline void ProbabilityDistribution::SetLot(
-#if defined(POL_PYPHY)
+#if defined(POL_PHYCAS)
 	phycas::Lot * other) /**< is a pointer to the random number generator object to be used subsequently by Sample */
 #else
   Lot * other) /**< is a pointer to the random number generator object to be used subsequently by Sample */
@@ -654,7 +658,7 @@ inline double BinomialDistribution::GetCDF(
 	double cum_prob = 0.0;
 	double n_only = n + 1.0;
 
-#if defined(POL_PYPHY)
+#if defined(POL_PHYCAS)
 	double term1 = cdf.LnGamma(n_only);
 #else
 	double term1 = cdf.CDFLnGamma(&n_only);
@@ -667,7 +671,7 @@ inline double BinomialDistribution::GetCDF(
 
 		double x_only = x + 1.0;
 
-#if defined(POL_PYPHY)
+#if defined(POL_PHYCAS)
 		double term3 = cdf.LnGamma(x_only);
 #else
 		double term3 = cdf.CDFLnGamma(&x_only);
@@ -675,7 +679,7 @@ inline double BinomialDistribution::GetCDF(
 
 		double n_minus_x = n - x + 1.0;
 
-#if defined(POL_PYPHY)
+#if defined(POL_PHYCAS)
 		double term4 = cdf.LnGamma(n_minus_x);
 #else
 		double term4 = cdf.CDFLnGamma(&n_minus_x);
@@ -729,7 +733,7 @@ inline double BinomialDistribution::GetLnPDF(
 	double x_only		= x + 1.0;
 	double n_minus_x	= n - x + 1.0;
 
-#if defined(POL_PYPHY)
+#if defined(POL_PHYCAS)
 	lnprob += cdf.LnGamma(n_only);
 	lnprob -= cdf.LnGamma(x_only);
 	lnprob -= cdf.LnGamma(n_minus_x);
@@ -1107,7 +1111,7 @@ inline void GammaDistribution::ComputeLnConst()
   	{
 	double a = alpha;
 
-#if defined(POL_PYPHY)
+#if defined(POL_PHYCAS)
 	double gammalnalpha = cdf.LnGamma(a);
 #else
 	double gammalnalpha = cdf.CDFLnGamma(&a);
@@ -1318,7 +1322,7 @@ inline double InverseGammaDistribution::GetLnPDF(
 		lnpdf -= alpha*std::log(beta);
 		double a = alpha;
 
-#if defined(POL_PYPHY)
+#if defined(POL_PHYCAS)
 		lnpdf -= cdf.LnGamma(a);
 #else
 		lnpdf -= cdf.CDFLnGamma(&a);
@@ -1386,7 +1390,7 @@ class DirichletDistribution : public MultivariateProbabilityDistribution
 											DirichletDistribution(const std::vector<double> &params);
 											~DirichletDistribution() {}
 	
-#if defined(POL_PYPHY)
+#if defined(POL_PHYCAS)
 		void								SetLot(phycas::Lot * other);
 #else
 		void								SetLot(Lot * other);
@@ -1405,10 +1409,12 @@ class DirichletDistribution : public MultivariateProbabilityDistribution
 		double								ApproxCDF(const VecDbl &x, unsigned nsamples = 10000) const;
 		double								GetLnPDF(const VecDbl &x) const;
 		double								GetRelativeLnPDF(const VecDbl &x) const;
-#		if defined(POL_PYPHY)
+#		if defined(POL_PHYCAS)
 			void 							SetMeanAndVariance(const VecDbl &m, const VecDbl &v);
-			void							AltSetMeanAndVariance(boost::python::numeric::array m, boost::python::numeric::array v);
-			boost::python::numeric::array	GetVarCovarMatrix();
+#			if defined(POL_PYPHY)
+				void							AltSetMeanAndVariance(boost::python::numeric::array m, boost::python::numeric::array v);
+				boost::python::numeric::array	GetVarCovarMatrix();
+#			endif
 #		else
 			virtual void 					SetMeanAndVariance(const double *m, const double * v);
 #		endif
@@ -1450,7 +1456,7 @@ inline DirichletDistribution::DirichletDistribution()
 |	calls SetLot for all its component distributions so that the same random number generator is used throughout.
 */
 inline void DirichletDistribution::SetLot(
-#if defined(POL_PYPHY)
+#if defined(POL_PHYCAS)
 	phycas::Lot * other) /**< is a pointer to the random number generator object to be used subsequently by Sample */
 #else
   Lot * other) /**< is a pointer to the random number generator object to be used subsequently by Sample */
@@ -1679,14 +1685,14 @@ inline double DirichletDistribution::GetLnPDF(
 		c += c_i;
 		retVal += (c_i - 1.0) * std::log(x[i]);
 
-#if defined(POL_PYPHY)
+#if defined(POL_PHYCAS)
 		retVal -= cdf.LnGamma(c_i);
 #else
 		retVal -= cdf.CDFLnGamma(&c_i);
 #endif
 		}
 
-#if defined(POL_PYPHY)
+#if defined(POL_PHYCAS)
 	retVal += cdf.LnGamma(c);
 #else
 	retVal += cdf.CDFLnGamma(&c);
@@ -1748,7 +1754,9 @@ inline boost::python::numeric::array DirichletDistribution::GetVarCovarMatrix()
 
 	return num_util::makeNum(&V[0], dims);
 	}
+#endif
 
+#if defined(POL_PHYCAS)
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets parameters of the distribution from the vector of means and vector of variances (note: v is not the variance
 |	covariance matrix, but just a single-dimensional array of variances - the covariances are not needed).
@@ -1793,7 +1801,9 @@ inline void DirichletDistribution::SetMeanAndVariance(const VecDbl &m, const Vec
 		paramDistributions.push_back(GammaDistribution(c_i, 1.0));
 		}
 	}
+#endif
 
+#if defined(POL_PYPHY)
 /*----------------------------------------------------------------------------------------------------------------------
 |	Identical to SetMeanAndVariance, but uses numarray objects rather than std::vector. This is temporary, only serving
 |	as a template for how to import a numarray and access its data within a member function.
@@ -1837,9 +1847,9 @@ inline void DirichletDistribution::AltSetMeanAndVariance(boost::python::numeric:
 		paramDistributions.push_back(GammaDistribution(c_i, 1.0));
 		}
 	}
+#endif
 
-#else
-
+#if !defined(POL_PHYCAS)
 inline void DirichletDistribution::SetMeanAndVariance(const double * mean, const double * variance)
 	{
 	const unsigned m_length = GetNParams();
@@ -1868,7 +1878,6 @@ inline void DirichletDistribution::SetMeanAndVariance(const double * mean, const
 		paramDistributions.push_back(GammaDistribution(c_i, 1.0));
 		}
 	}
-	
 #endif
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -1970,7 +1979,7 @@ inline double BetaDistribution::GetLnPDF(double x) const
 		double b_only = betaParam;
 		double a_plus_b = alphaParam + betaParam;
 
-#if defined(POL_PYPHY)
+#if defined(POL_PHYCAS)
 		lnpdf += cdf.LnGamma(a_plus_b);
 		lnpdf -= cdf.LnGamma(a_only);
 		lnpdf -= cdf.LnGamma(b_only);

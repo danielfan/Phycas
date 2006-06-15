@@ -3,7 +3,7 @@
 #include "ncl/misc/nxs_index_set.hpp"
 #include "ncl/taxa/nxs_taxa_manager.hpp"
 #include "phycas/trees/split.hpp"
-#if defined(POL_PYPHY)
+#if defined(POL_PHYCAS)
 #	include "pyphy/prob_dist/basic_cdf.hpp"
 #	include "pyphy/prob_dist/basic_lot.hpp"
 #else
@@ -292,7 +292,7 @@ double Split::CalcLnPriorProb(unsigned n, unsigned m)
 
 	double ln_prior = log(2.0);
 
-#if defined(POL_PYPHY)
+#if defined(POL_PHYCAS)
 	phycas::CDF cdf;
 	ln_prior += cdf.LnGamma((double)(2*n - 2));
 	ln_prior += cdf.LnGamma((double)(2*m - 2));

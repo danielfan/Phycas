@@ -15,326 +15,6 @@
 namespace phycas
 {
 
-#if 0
-class CalcTransitionMatrixForOneNode : public std::unary_function<TreeNode &, void>
-	{
-	private:
-		TreeLikelihood & treelike;
-
-	public:
-		CalcTransitionMatrixForOneNode(TreeLikelihood & tl) : treelike(tl) {}
-		void operator()(TreeNode & nd)
-			{
-#			error do not use unless root node special case is taken into account
-			if (!nd.IsRoot())
-				{
-				double edge_len = nd.GetEdgeLen();
-				if (nd.IsTip())
-					{
-					TipData & ndTD = *(nd.GetTipData());
-					treelike.calcTMatForSim(ndTD, edge_len);
-					}
-				else
-					{
-					InternalData & ndID	= *(nd.GetInternalData());
-					treelike.calcPMat(ndID, edge_len);
-					}
-				}
-			}
-	};
-#endif
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Simulates data for `nchar' characters using the current model and edge lengths. Transition matrices are recomputed
-|	if `refresh_probs' is true; if `refresh_probs' is false, assumes transition probability matrices are up-to-date. 
-|	Only the `num_states' primary states are generated, and the state created for each node is stored initially in the 
-|	`state' data member of the TipData or InternalData structure associated with the tip or internal node, respectively.
-|	This function expects these data structures to be in place (the TreeLikelihood::prepareForSimulation and 
-|	TreeLikelihood::prepareForLikelihood functions both perform this task). As states are generated for tip nodes, they
-|	are copied into a temporary pattern inside `sim_data', and this pattern is then inserted into a pattern map inside 
-|	`sim_data' when it is completed. Assumes that `nchar' is greater than zero and that the shared pointers `sim_data' 
-|	and `rng' actually point to real objects.
-|	
-|	The following makes use of T matrices, which are transposed, augmented transition matrices. These are transposed 
-|	because the "from" states form the columns rather than the rows. They are augmented because, ordinarily, there are
-|	additional rows corresponding to ambiguities observed in some tip nodes. With simulated data, however, there are 
-|	never any ambiguities, so in this case T matrices are nothing more than transposed transition matrices. 
-|	Important: note that T matrices are only used in the TipData structures; InternalData structures store normal 
-|	untransposed transition probability matrices in which the rows form the "from" states. 
-|	
-|	Here is an example of a T matrix created using the JC model and an edge length equal to 0.1:
-|>	
-|	            |--------------- from state -------------|
-|	                0          1          2          3
-|	  	            A          C          G          T
-|	t  0   A     0.90638    0.03121    0.03121    0.03121
-|	o  1   C     0.03121    0.90638    0.03121    0.03121
-|	   2   G     0.03121    0.03121    0.90638    0.03121
-|	s  3   T     0.03121    0.03121    0.03121    0.90638
-|	t  4   N     1.00000    1.00000    1.00000    1.00000 \
-|	a  5 {GT}    0.06241    0.06241    0.93759    0.93759  | These rows not present if prepareForSimulation function
-|	t  6 {ACT}   0.96879    0.96879    0.09362    0.96879  | was used to create the TipData structures
-|	e  7 {AG}    0.93757    0.06241    0.93759    0.06241 /
-|>
-|	The `pMatrixTranspose' data member in TipData structures holds the array of T matrices (one T matrix for each 
-|	rate category).
-*/
-void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar, bool refresh_probs)
-	{
-	assert(sim_data);
-	assert(rng);
-	assert(nchar > 0);
-
-	// Recalculate transition probabilities if requested
-	//@POL using for_each would simplify this
-	if (refresh_probs)
-		{
-		preorder_iterator nd = t->begin();
-
-		// First preorder node is the root node and represents a special case
-		// Its transition matrices must be computed using the "subroot" node's edge length
-		// The subroot node's transition matrices need not be calculated 
-		TipData & ndTD = *(nd->GetTipData());
-		TreeNode * subroot = nd->GetLeftChild();
-		assert(subroot);
-		assert(!subroot->GetRightSib());	//@POL need to create a IsSubroot() member function for TreeNode
-		calcTMatForSim(ndTD, subroot->GetEdgeLen());
-		++nd;
-
-		// Skip subroot node as its transition matrices are never used and thus do not need to be computed
-		++nd;
-
-		// Process the remaining nodes in the tree
-		for (; nd != t->end(); ++nd)
-			{
-			if (nd->IsTip())
-				{
-				TipData & ndTD = *(nd->GetTipData());
-				calcTMatForSim(ndTD, nd->GetEdgeLen());
-				}
-			else
-				{
-				InternalData & ndID	= *(nd->GetInternalData());
-				calcPMat(ndID.getPMatrices(), nd->GetEdgeLen());
-				}
-			}
-		}
-
-	// Create a vector of cumulative state frequencies to use in choosing starting states
-	const std::vector<double> & freqs = model->getStateFreqs();
-	std::vector<double> cum_freqs(num_states, 0.0);
-	std::partial_sum(freqs.begin(), freqs.end(), cum_freqs.begin());
-
-	// Create a vector of cumulative rate probabilities to use in choosing relative rates
-	std::vector<double> cum_rate_probs(num_rates, 0.0);
-	std::partial_sum(rate_probs.begin(), rate_probs.end(), cum_rate_probs.begin());
-
-	sim_data->resetPatternLength(t->GetNTips());
-	sim_data->wipePattern();
-
-#if 0  //POL temporary debugging section BEGIN
-	//std::ofstream doof("doof_check.txt", std::ios::out | std::ios::app); 
-	std::ofstream doof("doof_check.txt"); 
-	doof << "\nNEW DATA SET BEGINNING" << std::endl;
-	doof << "model parameter names:  " << model->paramHeader() << std::endl;
-	doof << "model parameter values: " << model->paramReport() << std::endl;
-
-	// Go through all nodes and show their edge lengths and transition probability matrices
-	{
-		preorder_iterator nd = t->begin();
-
-		// First preorder node is the root node and represents a special case
-		// Its transition matrices must be computed using the "subroot" node's edge length
-		// The subroot node's transition matrices need not be calculated 
-		TipData & ndTD = *(nd->GetTipData());
-		double * * * p = ndTD.getTransposedPMatrices();
-		TreeNode * subroot = nd->GetLeftChild();
-		doof << "Subroot node edge length = " << subroot->GetEdgeLen() << std::endl;
-		doof << "Transposed transition probability matrices:" << std::endl;
-		for (unsigned rr = 0; rr < num_rates; ++rr)
-			{
-			doof << "  Relative rate " << rr << " = " << rate_means[rr] << std::endl;
-			doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][0][0] % p[rr][0][1] % p[rr][0][2] % p[rr][0][3]);
-			doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][1][0] % p[rr][1][1] % p[rr][1][2] % p[rr][1][3]);
-			doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][2][0] % p[rr][2][1] % p[rr][2][2] % p[rr][2][3]);
-			doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][3][0] % p[rr][3][1] % p[rr][3][2] % p[rr][3][3]);
-			doof << std::endl;
-			}
-		++nd;
-
-		// Skip subroot node as its transition matrices are never used and thus do not need to be computed
-		++nd;
-
-		// Process the remaining nodes in the tree
-		for (; nd != t->end(); ++nd)
-			{
-			if (nd->IsTip())
-				{
-				TipData & ndTD = *(nd->GetTipData());
-				double * * * p = ndTD.getTransposedPMatrices();
-				doof << "Tip node " << nd->GetNodeNumber() << " edge length = " << nd->GetEdgeLen() << std::endl;
-				doof << "Transposed transition probability matrices:" << std::endl;
-				for (unsigned rr = 0; rr < num_rates; ++rr)
-					{
-					doof << "  Relative rate " << rr << " = " << rate_means[rr] << std::endl;
-					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][0][0] % p[rr][0][1] % p[rr][0][2] % p[rr][0][3]);
-					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][1][0] % p[rr][1][1] % p[rr][1][2] % p[rr][1][3]);
-					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][2][0] % p[rr][2][1] % p[rr][2][2] % p[rr][2][3]);
-					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][3][0] % p[rr][3][1] % p[rr][3][2] % p[rr][3][3]);
-					doof << std::endl;
-					}
-				}
-			else
-				{
-				InternalData & ndID	= *(nd->GetInternalData());
-				double * * * p = ndID.getPMatrices();
-				doof << "Internal node " << nd->GetNodeNumber() << " edge length = " << nd->GetEdgeLen() << std::endl;
-				doof << "Transition probability matrices:" << std::endl;
-				for (unsigned rr = 0; rr < num_rates; ++rr)
-					{
-					doof << "  Relative rate " << rr << " = " << rate_means[rr] << std::endl;
-					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][0][0] % p[rr][0][1] % p[rr][0][2] % p[rr][0][3]);
-					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][1][0] % p[rr][1][1] % p[rr][1][2] % p[rr][1][3]);
-					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][2][0] % p[rr][2][1] % p[rr][2][2] % p[rr][2][3]);
-					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][3][0] % p[rr][3][1] % p[rr][3][2] % p[rr][3][3]);
-					doof << std::endl;
-					}
-				}
-			}
-	}
-	doof.close();
-#endif	//POL temporary debugging section END
-
-	for (unsigned character = 0; character < nchar; ++character)
-		{
-		// Choose a rate for this character (actually, choose index, the actual rate is rate_means[r])
-		unsigned r = 0;
-		if (num_rates > 1)
-			{
-			// warning: removing the if statement will invalidate all examples involving simulated data with rate
-			// homogeneity because of the call to rng->Uniform here!
-			r = (unsigned)(std::lower_bound(cum_rate_probs.begin(), cum_rate_probs.end(), rng->Uniform(FILE_AND_LINE)) - cum_rate_probs.begin());
-			}
-
-		// Generate the starting state
-		int8_t j = (unsigned)(std::lower_bound(cum_freqs.begin(), cum_freqs.end(), rng->Uniform(FILE_AND_LINE)) - cum_freqs.begin());
-
-		// Assign starting state to the tip node currently serving as the root of the tree
-		preorder_iterator nd = t->begin();
-		TipData & rootTD = *(nd->GetTipData());
-		rootTD.state = j;
-
-		sim_data->setState(nd->GetNodeNumber(), j);
-
-		// Go ahead and generate the state for the (only) descendant of the root node (the "subroot" node)
-		// Note that the root node's T matrix is used for this calculation; the P matrix of the subroot node
-		// is never computed
-		unsigned parent_state = (unsigned)j;
-
-		// Get the T matrix for the tip node serving as the root
-		double * * Tmatrix = rootTD.pMatrixTranspose[r];
-
-		// Choose a uniform random deviate
-		double u = rng->Uniform(FILE_AND_LINE);
-
-		// Spin the roulette wheel to choose a state for the subroot node
-		double cum = 0.0;
-		unsigned i = 0;
-		for (; i < num_states; ++i)
-			{
-			double pr = Tmatrix[i][parent_state];
-			//std::cerr << str(boost::format("Tmatrix[%d][%d] = %f") % i % parent_state % pr) << std::endl;
-			cum += pr;
-			if (u < cum)
-				break;
-			}
-
-		// Increment iterator so that nd now refers to the subroot (sole descendant of the root)
-		++nd;
-
-		// Assign the new state to the subroot node
-		InternalData & ndID = *(nd->GetInternalData());
-		ndID.state = (int8_t)i;
-		//std::cerr << "  Assigning state " << i << " to node " << nd->GetNodeNumber() << std::endl;
-
-		// Walk the remainder of the tree using the preorder sequence, generating data for each node along the way
-		for (++nd; nd != t->end(); ++nd)
-			{
-			// Get state of parent of nd
-			TreeNode * parent = nd->GetParent();
-			parent_state = UINT_MAX;
-			if (parent->IsTip())
-				{
-				TipData * parentTD = parent->GetTipData();
-				parent_state = (unsigned)parentTD->state;
-				}
-			else
-				{
-				InternalData * parentID = parent->GetInternalData();
-				parent_state = (unsigned)parentID->state;
-				}
-			assert(parent_state < num_states);
-
-			if (nd->IsTip())
-				{
-				// Get the T matrix
-				TipData & ndTD = *(nd->GetTipData());
-				double * * Tmatrix = ndTD.pMatrixTranspose[r];
-
-				// Choose a uniform random deviate
-				double u = rng->Uniform(FILE_AND_LINE);
-
-				// Spin the roulette wheel and assign a state to nd
-				double cum = 0.0;
-				unsigned i = 0;
-				for (; i < num_states; ++i)
-					{
-					double pr = Tmatrix[i][parent_state];
-					//std::cerr << str(boost::format("Tmatrix[%d][%d] = %f") % i % parent_state % pr) << std::endl;
-					cum += pr;
-					if (u < cum)
-						break;
-					}
-				ndTD.state = (int8_t)i;
-				sim_data->setState(nd->GetNodeNumber(), (int8_t)i);
-
-				//std::cerr << "  Assigning state " << i;
-				}
-			else
-				{
-				// Get the T matrix
-				InternalData & ndID = *(nd->GetInternalData());
-				double * * Pmatrix = ndID.pMatrices[r];
-
-				// Choose a uniform random deviate
-				double u = rng->Uniform(FILE_AND_LINE);
-
-				// Spin the roulette wheel and assign a state to nd
-				double cum = 0.0;
-				unsigned i = 0;
-				for (; i < num_states; ++i)
-					{
-					double pr = Pmatrix[parent_state][i];
-					//std::cerr << str(boost::format("Pmatrix[%d][%d] = %f") % parent_state % i % pr) << std::endl;
-					cum += pr;
-					if (u < cum)
-						break;
-					}
-				ndID.state = (int8_t)i;
-				//std::cerr << "  Assigning state " << i;
-				}
-
-			//std::cerr << " to node " << nd->GetNodeNumber() << std::endl;
-			}
-		//std::cerr << std::endl;
-
-		// We are now finished simulating data for one character, so insert the pattern just generated
-		// into the pattern map maintained by sim_data; the 1 means that the count for this pattern
-		// should be incremented by 1
-		sim_data->insertPattern(1);
-		}
-	}
-
 /*----------------------------------------------------------------------------------------------------------------------
 |	Updates the conditional likelihood array for `nd' in a direction away from `avoid'. All adjacent nodes (other than 
 |	`avoid') are assumed to be valid.
@@ -910,6 +590,326 @@ void TreeLikelihood::discardCacheAwayFromNode(
 	{
 	NodeValidityChecker validFunctor = boost::bind(&TreeLikelihood::discardCacheBothEnds, this, _1, _2);
 	effective_postorder_edge_iterator(&focal_node, validFunctor); // need only construct unnamed iterator object
+	}
+
+#if 0
+class CalcTransitionMatrixForOneNode : public std::unary_function<TreeNode &, void>
+	{
+	private:
+		TreeLikelihood & treelike;
+
+	public:
+		CalcTransitionMatrixForOneNode(TreeLikelihood & tl) : treelike(tl) {}
+		void operator()(TreeNode & nd)
+			{
+#			error do not use unless root node special case is taken into account
+			if (!nd.IsRoot())
+				{
+				double edge_len = nd.GetEdgeLen();
+				if (nd.IsTip())
+					{
+					TipData & ndTD = *(nd.GetTipData());
+					treelike.calcTMatForSim(ndTD, edge_len);
+					}
+				else
+					{
+					InternalData & ndID	= *(nd.GetInternalData());
+					treelike.calcPMat(ndID, edge_len);
+					}
+				}
+			}
+	};
+#endif
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Simulates data for `nchar' characters using the current model and edge lengths. Transition matrices are recomputed
+|	if `refresh_probs' is true; if `refresh_probs' is false, assumes transition probability matrices are up-to-date. 
+|	Only the `num_states' primary states are generated, and the state created for each node is stored initially in the 
+|	`state' data member of the TipData or InternalData structure associated with the tip or internal node, respectively.
+|	This function expects these data structures to be in place (the TreeLikelihood::prepareForSimulation and 
+|	TreeLikelihood::prepareForLikelihood functions both perform this task). As states are generated for tip nodes, they
+|	are copied into a temporary pattern inside `sim_data', and this pattern is then inserted into a pattern map inside 
+|	`sim_data' when it is completed. Assumes that `nchar' is greater than zero and that the shared pointers `sim_data' 
+|	and `rng' actually point to real objects.
+|	
+|	The following makes use of T matrices, which are transposed, augmented transition matrices. These are transposed 
+|	because the "from" states form the columns rather than the rows. They are augmented because, ordinarily, there are
+|	additional rows corresponding to ambiguities observed in some tip nodes. With simulated data, however, there are 
+|	never any ambiguities, so in this case T matrices are nothing more than transposed transition matrices. 
+|	Important: note that T matrices are only used in the TipData structures; InternalData structures store normal 
+|	untransposed transition probability matrices in which the rows form the "from" states. 
+|	
+|	Here is an example of a T matrix created using the JC model and an edge length equal to 0.1:
+|>	
+|	            |--------------- from state -------------|
+|	                0          1          2          3
+|	  	            A          C          G          T
+|	t  0   A     0.90638    0.03121    0.03121    0.03121
+|	o  1   C     0.03121    0.90638    0.03121    0.03121
+|	   2   G     0.03121    0.03121    0.90638    0.03121
+|	s  3   T     0.03121    0.03121    0.03121    0.90638
+|	t  4   N     1.00000    1.00000    1.00000    1.00000 \
+|	a  5 {GT}    0.06241    0.06241    0.93759    0.93759  | These rows not present if prepareForSimulation function
+|	t  6 {ACT}   0.96879    0.96879    0.09362    0.96879  | was used to create the TipData structures
+|	e  7 {AG}    0.93757    0.06241    0.93759    0.06241 /
+|>
+|	The `pMatrixTranspose' data member in TipData structures holds the array of T matrices (one T matrix for each 
+|	rate category).
+*/
+void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar, bool refresh_probs)
+	{
+	assert(sim_data);
+	assert(rng);
+	assert(nchar > 0);
+
+	// Recalculate transition probabilities if requested
+	//@POL using for_each would simplify this
+	if (refresh_probs)
+		{
+		preorder_iterator nd = t->begin();
+
+		// First preorder node is the root node and represents a special case
+		// Its transition matrices must be computed using the "subroot" node's edge length
+		// The subroot node's transition matrices need not be calculated 
+		TipData & ndTD = *(nd->GetTipData());
+		TreeNode * subroot = nd->GetLeftChild();
+		assert(subroot);
+		assert(!subroot->GetRightSib());	//@POL need to create a IsSubroot() member function for TreeNode
+		calcTMatForSim(ndTD, subroot->GetEdgeLen());
+		++nd;
+
+		// Skip subroot node as its transition matrices are never used and thus do not need to be computed
+		++nd;
+
+		// Process the remaining nodes in the tree
+		for (; nd != t->end(); ++nd)
+			{
+			if (nd->IsTip())
+				{
+				TipData & ndTD = *(nd->GetTipData());
+				calcTMatForSim(ndTD, nd->GetEdgeLen());
+				}
+			else
+				{
+				InternalData & ndID	= *(nd->GetInternalData());
+				calcPMat(ndID.getPMatrices(), nd->GetEdgeLen());
+				}
+			}
+		}
+
+	// Create a vector of cumulative state frequencies to use in choosing starting states
+	const std::vector<double> & freqs = model->getStateFreqs();
+	std::vector<double> cum_freqs(num_states, 0.0);
+	std::partial_sum(freqs.begin(), freqs.end(), cum_freqs.begin());
+
+	// Create a vector of cumulative rate probabilities to use in choosing relative rates
+	std::vector<double> cum_rate_probs(num_rates, 0.0);
+	std::partial_sum(rate_probs.begin(), rate_probs.end(), cum_rate_probs.begin());
+
+	sim_data->resetPatternLength(t->GetNTips());
+	sim_data->wipePattern();
+
+#if 0  //POL temporary debugging section BEGIN
+	//std::ofstream doof("doof_check.txt", std::ios::out | std::ios::app); 
+	std::ofstream doof("doof_check.txt"); 
+	doof << "\nNEW DATA SET BEGINNING" << std::endl;
+	doof << "model parameter names:  " << model->paramHeader() << std::endl;
+	doof << "model parameter values: " << model->paramReport() << std::endl;
+
+	// Go through all nodes and show their edge lengths and transition probability matrices
+	{
+		preorder_iterator nd = t->begin();
+
+		// First preorder node is the root node and represents a special case
+		// Its transition matrices must be computed using the "subroot" node's edge length
+		// The subroot node's transition matrices need not be calculated 
+		TipData & ndTD = *(nd->GetTipData());
+		double * * * p = ndTD.getTransposedPMatrices();
+		TreeNode * subroot = nd->GetLeftChild();
+		doof << "Subroot node edge length = " << subroot->GetEdgeLen() << std::endl;
+		doof << "Transposed transition probability matrices:" << std::endl;
+		for (unsigned rr = 0; rr < num_rates; ++rr)
+			{
+			doof << "  Relative rate " << rr << " = " << rate_means[rr] << std::endl;
+			doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][0][0] % p[rr][0][1] % p[rr][0][2] % p[rr][0][3]);
+			doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][1][0] % p[rr][1][1] % p[rr][1][2] % p[rr][1][3]);
+			doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][2][0] % p[rr][2][1] % p[rr][2][2] % p[rr][2][3]);
+			doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][3][0] % p[rr][3][1] % p[rr][3][2] % p[rr][3][3]);
+			doof << std::endl;
+			}
+		++nd;
+
+		// Skip subroot node as its transition matrices are never used and thus do not need to be computed
+		++nd;
+
+		// Process the remaining nodes in the tree
+		for (; nd != t->end(); ++nd)
+			{
+			if (nd->IsTip())
+				{
+				TipData & ndTD = *(nd->GetTipData());
+				double * * * p = ndTD.getTransposedPMatrices();
+				doof << "Tip node " << nd->GetNodeNumber() << " edge length = " << nd->GetEdgeLen() << std::endl;
+				doof << "Transposed transition probability matrices:" << std::endl;
+				for (unsigned rr = 0; rr < num_rates; ++rr)
+					{
+					doof << "  Relative rate " << rr << " = " << rate_means[rr] << std::endl;
+					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][0][0] % p[rr][0][1] % p[rr][0][2] % p[rr][0][3]);
+					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][1][0] % p[rr][1][1] % p[rr][1][2] % p[rr][1][3]);
+					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][2][0] % p[rr][2][1] % p[rr][2][2] % p[rr][2][3]);
+					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][3][0] % p[rr][3][1] % p[rr][3][2] % p[rr][3][3]);
+					doof << std::endl;
+					}
+				}
+			else
+				{
+				InternalData & ndID	= *(nd->GetInternalData());
+				double * * * p = ndID.getPMatrices();
+				doof << "Internal node " << nd->GetNodeNumber() << " edge length = " << nd->GetEdgeLen() << std::endl;
+				doof << "Transition probability matrices:" << std::endl;
+				for (unsigned rr = 0; rr < num_rates; ++rr)
+					{
+					doof << "  Relative rate " << rr << " = " << rate_means[rr] << std::endl;
+					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][0][0] % p[rr][0][1] % p[rr][0][2] % p[rr][0][3]);
+					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][1][0] % p[rr][1][1] % p[rr][1][2] % p[rr][1][3]);
+					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][2][0] % p[rr][2][1] % p[rr][2][2] % p[rr][2][3]);
+					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][3][0] % p[rr][3][1] % p[rr][3][2] % p[rr][3][3]);
+					doof << std::endl;
+					}
+				}
+			}
+	}
+	doof.close();
+#endif	//POL temporary debugging section END
+
+	for (unsigned character = 0; character < nchar; ++character)
+		{
+		// Choose a rate for this character (actually, choose index, the actual rate is rate_means[r])
+		unsigned r = 0;
+		if (num_rates > 1)
+			{
+			// warning: removing the if statement will invalidate all examples involving simulated data with rate
+			// homogeneity because of the call to rng->Uniform here!
+			r = (unsigned)(std::lower_bound(cum_rate_probs.begin(), cum_rate_probs.end(), rng->Uniform(FILE_AND_LINE)) - cum_rate_probs.begin());
+			}
+
+		// Generate the starting state
+		int8_t j = (unsigned)(std::lower_bound(cum_freqs.begin(), cum_freqs.end(), rng->Uniform(FILE_AND_LINE)) - cum_freqs.begin());
+
+		// Assign starting state to the tip node currently serving as the root of the tree
+		preorder_iterator nd = t->begin();
+		TipData & rootTD = *(nd->GetTipData());
+		rootTD.state = j;
+
+		sim_data->setState(nd->GetNodeNumber(), j);
+
+		// Go ahead and generate the state for the (only) descendant of the root node (the "subroot" node)
+		// Note that the root node's T matrix is used for this calculation; the P matrix of the subroot node
+		// is never computed
+		unsigned parent_state = (unsigned)j;
+
+		// Get the T matrix for the tip node serving as the root
+		double * * Tmatrix = rootTD.pMatrixTranspose[r];
+
+		// Choose a uniform random deviate
+		double u = rng->Uniform(FILE_AND_LINE);
+
+		// Spin the roulette wheel to choose a state for the subroot node
+		double cum = 0.0;
+		unsigned i = 0;
+		for (; i < num_states; ++i)
+			{
+			double pr = Tmatrix[i][parent_state];
+			//std::cerr << str(boost::format("Tmatrix[%d][%d] = %f") % i % parent_state % pr) << std::endl;
+			cum += pr;
+			if (u < cum)
+				break;
+			}
+
+		// Increment iterator so that nd now refers to the subroot (sole descendant of the root)
+		++nd;
+
+		// Assign the new state to the subroot node
+		InternalData & ndID = *(nd->GetInternalData());
+		ndID.state = (int8_t)i;
+		//std::cerr << "  Assigning state " << i << " to node " << nd->GetNodeNumber() << std::endl;
+
+		// Walk the remainder of the tree using the preorder sequence, generating data for each node along the way
+		for (++nd; nd != t->end(); ++nd)
+			{
+			// Get state of parent of nd
+			TreeNode * parent = nd->GetParent();
+			parent_state = UINT_MAX;
+			if (parent->IsTip())
+				{
+				TipData * parentTD = parent->GetTipData();
+				parent_state = (unsigned)parentTD->state;
+				}
+			else
+				{
+				InternalData * parentID = parent->GetInternalData();
+				parent_state = (unsigned)parentID->state;
+				}
+			assert(parent_state < num_states);
+
+			if (nd->IsTip())
+				{
+				// Get the T matrix
+				TipData & ndTD = *(nd->GetTipData());
+				double * * Tmatrix = ndTD.pMatrixTranspose[r];
+
+				// Choose a uniform random deviate
+				double u = rng->Uniform(FILE_AND_LINE);
+
+				// Spin the roulette wheel and assign a state to nd
+				double cum = 0.0;
+				unsigned i = 0;
+				for (; i < num_states; ++i)
+					{
+					double pr = Tmatrix[i][parent_state];
+					//std::cerr << str(boost::format("Tmatrix[%d][%d] = %f") % i % parent_state % pr) << std::endl;
+					cum += pr;
+					if (u < cum)
+						break;
+					}
+				ndTD.state = (int8_t)i;
+				sim_data->setState(nd->GetNodeNumber(), (int8_t)i);
+
+				//std::cerr << "  Assigning state " << i;
+				}
+			else
+				{
+				// Get the T matrix
+				InternalData & ndID = *(nd->GetInternalData());
+				double * * Pmatrix = ndID.pMatrices[r];
+
+				// Choose a uniform random deviate
+				double u = rng->Uniform(FILE_AND_LINE);
+
+				// Spin the roulette wheel and assign a state to nd
+				double cum = 0.0;
+				unsigned i = 0;
+				for (; i < num_states; ++i)
+					{
+					double pr = Pmatrix[parent_state][i];
+					//std::cerr << str(boost::format("Pmatrix[%d][%d] = %f") % parent_state % i % pr) << std::endl;
+					cum += pr;
+					if (u < cum)
+						break;
+					}
+				ndID.state = (int8_t)i;
+				//std::cerr << "  Assigning state " << i;
+				}
+
+			//std::cerr << " to node " << nd->GetNodeNumber() << std::endl;
+			}
+		//std::cerr << std::endl;
+
+		// We are now finished simulating data for one character, so insert the pattern just generated
+		// into the pattern map maintained by sim_data; the 1 means that the count for this pattern
+		// should be incremented by 1
+		sim_data->insertPattern(1);
+		}
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

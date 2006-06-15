@@ -72,6 +72,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
+				ImproveFloatingPointConsistency="TRUE"
 				AdditionalIncludeDirectories="$(CIPRES_LIB_ROOT)\C++;$(PYTHON_ROOT)\include;$(PHYCAS_ROOT);$(BOOST_ROOT)"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;VC_EXPORTS"
 				RuntimeLibrary="2"
@@ -143,9 +144,18 @@
 				RelativePath="$(CIPRES_LIB_ROOT)\C++\CipresCommlib\CipresDataMatrixHelper.cpp">
 			</File>
 			<File
+				RelativePath="..\cond_likelihood_storage.cpp">
+			</File>
+			<File
 				RelativePath="..\..\prob_dist\dcdflib\src\dcdflib.c">
 				<FileConfiguration
 					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ForcedIncludeFiles="$(NOINHERIT)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
 						ForcedIncludeFiles="$(NOINHERIT)"/>
@@ -161,6 +171,12 @@
 				RelativePath="..\..\prob_dist\dcdflib\src\ipmpar.c">
 				<FileConfiguration
 					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ForcedIncludeFiles="$(NOINHERIT)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
 						ForcedIncludeFiles="$(NOINHERIT)"/>
@@ -188,6 +204,12 @@
 				RelativePath="..\linalg.c">
 				<FileConfiguration
 					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ForcedIncludeFiles="$(NOINHERIT)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
 						ForcedIncludeFiles="$(NOINHERIT)"/>
@@ -281,6 +303,12 @@
 			</File>
 			<File
 				RelativePath="..\cond_likelihood.inl">
+			</File>
+			<File
+				RelativePath="..\cond_likelihood_storage.hpp">
+			</File>
+			<File
+				RelativePath="..\cond_likelihood_storage.inl">
 			</File>
 			<File
 				RelativePath="..\dls.h">
@@ -398,5 +426,8 @@
 		</Filter>
 	</Files>
 	<Globals>
+		<Global
+			Name="DevPartner_IsInstrumented"
+			Value="0"/>
 	</Globals>
 </VisualStudioProject>

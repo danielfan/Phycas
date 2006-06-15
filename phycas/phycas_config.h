@@ -32,9 +32,11 @@ The following defines will help me wade through harmless, class-level functions 
 #define STATIC_CONST static
 
 
-#if defined(POL_PYPHY)
-#   include <Python.h>
+#if defined(POL_PHYCAS)
 #	define NXS_SUPPRESS_OUTPUT
+#	if defined(POL_PYPHY)
+#		include <Python.h>
+#	endif
 #endif
 
 

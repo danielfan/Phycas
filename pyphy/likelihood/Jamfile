@@ -8,6 +8,7 @@ extension _LikelihoodBase
 	../common/boost_assertion_failed.cpp
 	bush_move.cpp 
 	$(CIPRES_LIB_ROOT)/C++/CipresCommlib/CipresDataMatrixHelper.cpp
+	cond_likelihood_storage.cpp
 	$(PHYCAS_ROOT)/pyphy/prob_dist/dcdflib/src/dcdflib.c
 	edge_move.cpp 
 	internal_data.cpp 

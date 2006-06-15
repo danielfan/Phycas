@@ -11,6 +11,7 @@
 #include "CipresCommlib/ConfigDependentHeaders.h"	// int8_t typedef
 #include "pyphy/likelihood/likelihood_models.hpp"
 #include "pyphy/likelihood/cond_likelihood.hpp"
+#include "pyphy/likelihood/cond_likelihood_storage.hpp"
 
 struct CIPRES_Matrix;
 
@@ -115,9 +116,21 @@ class TreeLikelihood
 		void							debugSaveCLAs(TreeShPtr t, std::string fn, bool overwrite);
 		virtual int						startTreeViewer(TreeShPtr, std::string) const {return 0;}
 
+#if POLPY_NEWWAY
+		void							setUnderflowNumEdges(unsigned nedges);
+		unsigned						getUnderflowNumEdges() const;
+		void							setUnderflowMaxValue(double maxv);
+		double							getUnderflowMaxValue() const;
+#endif
+
 	protected:
 
 		TreeNode *						likelihood_root;		/**< If not NULL< calcLnL will use this node as the likelihood root, then reset it to NULL before returning */
+
+#if POLPY_NEWWAY
+		unsigned						underflow_num_edges;	/**< Number of edges to traverse before underflow risk is evaluated */
+		double							underflow_max_value;	/**< Maximum of the `num_states' conditional likelihoods for a given rate and pattern after underflow correction */
+#endif
 
 		CondLikelihoodStorage			cla_pool;				/**< Stores currently unused CondLikelihood objects */
 

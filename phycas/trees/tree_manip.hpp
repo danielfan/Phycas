@@ -5,7 +5,7 @@
 class TreeNode;
 class Tree;
 
-#if defined(POL_PYPHY)
+#if defined(POL_PHYCAS)
 namespace phycas
 	{
 	class Lot;
@@ -22,7 +22,7 @@ class TreeManip
 	public:
 					TreeManip(Tree *t);
 
-#if defined(POL_PYPHY)
+#if defined(POL_PHYCAS)
 		void		SimpleBuildStarTree(unsigned nlvs, unsigned root_at = 0, phycas::Lot * r = NULL, double lambda = 1.0);	//POL added root_at 22-Oct-2004
 		void		SimpleBuildYuleTree(phycas::Lot & r, double lambda, unsigned nlvs);
 #else

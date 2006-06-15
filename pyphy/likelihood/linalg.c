@@ -5,7 +5,6 @@
 |	Copyright (c) 2003 by David L. Swofford, Florida State University.
 |	All rights reserved.
 */
-
 #include "dls.h"
 
 #if 1 /* POL modifications needed for using linalg.h and linalg.c with PHYCAS */
