@@ -54,7 +54,7 @@ void NCatMove::reset()
 void NCatMove::proposeNewState()
 	{
 	ncat_before = model->getNGammaRates();
-	addcat_move_proposed = (ncat_before > 1 ? rng->Uniform(FILE_AND_LINE) < phi : 1.0);
+	addcat_move_proposed = (ncat_before == 1 ? true : (bool)(rng->Uniform(FILE_AND_LINE) < phi));
 
 	// Make sure model is using the same upper bound on unnormalized rates that we are
 	model->setFlexRateUpperBound(L);

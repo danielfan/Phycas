@@ -173,6 +173,7 @@ inline void QMatrix::recalcQMatrix()
 	recalcQMatrixImpl();
 	}
 
+#if defined(POL_PYPHY)
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the entries in the data member `qmat' as a NumArray. Calls recalcQMatrix first to ensure that `qmat' is up
 |	to date.
@@ -194,6 +195,18 @@ inline boost::python::numeric::array QMatrix::getEigenVectors()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Returns the eigenvectors in the data member `z' as a NumArray. Calls recalcQMatrix first to ensure that `z' is up
+|	to date.
+*/
+inline boost::python::numeric::array QMatrix::getPMatrix(double edgelen)
+	{
+	std::vector<double> p;
+	recalcPMatrix(p, edgelen);
+	return num_util::makeNum(&p[0], dim_vect);	//PELIGROSO
+	}
+#endif
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Returns the eigenvalues in the data member `w' as a vector. Calls recalcQMatrix first to ensure that `w' is up to 
 |	date.
 */
@@ -203,17 +216,6 @@ inline std::vector<double> QMatrix::getEigenValues()
 	std::vector<double> v(dimension, 0.0);
 	std::copy(w_begin, w_end, v.begin());
 	return v;
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Returns the eigenvectors in the data member `z' as a NumArray. Calls recalcQMatrix first to ensure that `z' is up
-|	to date.
-*/
-inline boost::python::numeric::array QMatrix::getPMatrix(double edgelen)
-	{
-	std::vector<double> p;
-	recalcPMatrix(p, edgelen);
-	return num_util::makeNum(&p[0], dim_vect);	//PELIGROSO
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

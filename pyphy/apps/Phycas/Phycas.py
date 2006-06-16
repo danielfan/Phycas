@@ -1107,12 +1107,13 @@ if __name__ == '__main__':
     mcmc.verbose = True
 
     if False:
-        mcmc.ncycles = 1
-        mcmc.report_every = 1
-        mcmc.ls_move_weight = 10
+        # for timing
+        mcmc.ncycles = 2000
+        mcmc.report_every = 500
+        mcmc.ls_move_weight = 100
         mcmc.ls_move_debug = False
+        #raw_input('debug stop')
 
     mcmc.setup()
-    raw_input('debug stop')
     mcmc.run()
     

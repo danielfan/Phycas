@@ -8,6 +8,7 @@
 #include "pyphy/likelihood/sim_data.hpp"
 #include "pyphy/common/pyphy_string.hpp"
 #include "pyphy/prob_dist/basic_lot.hpp"
+#include <boost/bind.hpp>
 #include <boost/format.hpp>
 #include <numeric>
 #include "pyphy/phylogeny/edge_iterators.hpp"

@@ -14,7 +14,9 @@
 #include "phycas/rand/probability_distribution.hpp"
 #include "pyphy/prob_dist/xprobdist.hpp"
 #include <boost/shared_ptr.hpp>
-#include <boost/python/call_method.hpp>
+#if defined(POL_PYPHY)
+#	include <boost/python/call_method.hpp>
+#endif
 typedef std::pair<double, double> ParamAndLnProb;
 typedef std::pair<double, double> SliceInterval;
 

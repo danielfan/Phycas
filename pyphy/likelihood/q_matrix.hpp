@@ -12,9 +12,11 @@ extern "C"
 
 #include <cmath>
 #include <vector>
-#include <boost/python/tuple.hpp>
-#include <boost/python/numeric.hpp>
-#include "pyphy/include/num_util.h"
+#if defined(POL_PYPHY)
+#	include <boost/python/tuple.hpp>
+#	include <boost/python/numeric.hpp>
+#	include "pyphy/include/num_util.h"
+#endif
 
 namespace phycas
 {
@@ -48,10 +50,12 @@ class QMatrix
 
 		// Utilities
 		//
+#if defined(POL_PYPHY)
 		boost::python::numeric::array	getQMatrix();
 		boost::python::numeric::array	getEigenVectors();
-		std::vector<double>				getEigenValues();
 		boost::python::numeric::array	getPMatrix(double edgelen);
+#endif
+		std::vector<double>				getEigenValues();
 
 	private:
 

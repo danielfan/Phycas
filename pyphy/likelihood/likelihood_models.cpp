@@ -2,8 +2,10 @@
 #include <iostream>
 #include "pyphy/likelihood/likelihood_models.hpp"
 #include "CipresCommlib/AllocateMatrix.hpp"
-#include <boost/python/numeric.hpp>
-#include "pyphy/include/num_util.h"
+#if defined(POL_PYPHY)
+#	include <boost/python/numeric.hpp>
+#	include "pyphy/include/num_util.h"
+#endif
 using std::cout;
 using namespace phycas;
 
@@ -145,6 +147,7 @@ void Model::createParameters(
 		}
 	}
 	
+#if defined(POL_PYPHY)
 /*----------------------------------------------------------------------------------------------------------------------
 |	
 */
@@ -171,6 +174,7 @@ boost::python::numeric::array Model::getPMatrix(double edgeLength) const
 
 	return num_util::makeNum(&p[0], dim_vect);	//PELIGROSO
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the transition probability matrix given an edge length. Overrides the pure virtual function inherited from 

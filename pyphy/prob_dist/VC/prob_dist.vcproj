@@ -201,6 +201,9 @@
 				RelativePath="..\densityfunc.hpp">
 			</File>
 			<File
+				RelativePath="..\..\likelihood\larget_simon_move.hpp">
+			</File>
+			<File
 				RelativePath="..\..\include\num_util.h">
 			</File>
 			<File

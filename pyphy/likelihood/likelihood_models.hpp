@@ -109,7 +109,9 @@ class Model	{
 		ProbDistShPtr					getEdgeLenPrior();
 
 		// Python-specific utilities
+#if defined(POL_PYPHY)
 		boost::python::numeric::array	getPMatrix(double edgeLength) const;
+#endif
 
 protected:
 
@@ -175,6 +177,8 @@ class JC: public Model
 		virtual std::string		paramReport() const;
 	};
 
+typedef boost::shared_ptr<JC> JCShPtr;
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Specialization of the base class Model that represents the Hasegawa-Kishino-Yano (1985) model.
 */
@@ -211,6 +215,8 @@ protected:
 	bool						kappa_fixed;		/**< If true, the value of kappa will not change during MCMC updates */
 	mutable MCMCUpdaterShPtr	kappa_param;		/**< Copy of the kappa parameter (saved so that fixed/free status can be changed) */
 	};
+
+typedef boost::shared_ptr<HKY> HKYShPtr;
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Specialization of the base class Model that represents the General Time Reversible (GTR) model.
@@ -252,6 +258,8 @@ class GTR: public Model
 		mutable MCMCUpdaterVect		rel_rate_params;	/**< A vector containing copies of all six relative rate parameters (saved so that fixed/free status can be changed) */
 		mutable QMatrix				q_matrix;			/**< A QMatrix object used to compute transition probabilities */
 	};
+
+typedef boost::shared_ptr<GTR> GTRShPtr;
 
 } // namespace phycas
 

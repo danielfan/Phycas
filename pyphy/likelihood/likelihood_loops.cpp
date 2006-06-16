@@ -18,13 +18,30 @@ using std::endl;
 using std::log;
 
 using std::accumulate;
+
+#if POLPY_NEWWAY
+template<typename T>
+void scaleVector(std::vector<T> & result, const std::vector<T> & orig, T scaler);
+#else
 template<typename T>
 std::vector<T> scaleVector(T scaler, const std::vector<T> & orig);
+#endif
+
 template<typename T>
 void transpose(T * * mat, unsigned dim);
 
 using std::vector;
 
+#if POLPY_NEWWAY
+template<typename T>
+void scaleVector(std::vector<T> & scaled, const vector<T> & orig, T scaler)
+	{
+	const unsigned origLen = (const unsigned)orig.size();
+	scaled.resize(origLen);
+	scaled.assign(origLen, scaler);
+	cip_imult(orig.begin(), orig.end(), scaled.begin());
+	}
+#else
 template<typename T>
 vector<T> scaleVector(T scaler, const vector<T> & orig)
 	{
@@ -33,6 +50,7 @@ vector<T> scaleVector(T scaler, const vector<T> & orig)
 	cip_imult(orig.begin(), orig.end(), scaled.begin());
 	return scaled;
 	}
+#endif
 
 template<typename T>
 void transpose(T * * mat, unsigned dim)
@@ -57,8 +75,14 @@ void TreeLikelihood::calcPMatCommon(
   double		edgeLength)
 	{
 	assert(num_rates > 0);
+#if POLPY_NEWWAY
+	vector<double> scaledEdges;
+	scaleVector(scaledEdges, rate_means, edgeLength);
+	model->calcPMatrices(pMatrices, &scaledEdges[0], num_rates); //PELIGROSO
+#else
 	const vector<double> scaledEdges = scaleVector(edgeLength, rate_means);
 	model->calcPMatrices(pMatrices, &scaledEdges[0], num_rates); //PELIGROSO
+#endif
 
 #if 0
 	// debugging code
@@ -219,6 +243,72 @@ void TreeLikelihood::calcCLAOneTip(
 		{
 		const double * const * const leftPMatrixT = leftPMatricesTrans[r];
 		const double * const * rightPMatrix = rightPMatrices[r];
+#if POLPY_NEWWAY
+		if (num_states == 4)
+			{
+			//POL 16-June-2006 Unrolling the nested loops across states here as well as in TreeLikelihood::calcCLANoTips
+			// resulted in a 26.6% speedup on Windows using green.nex and SVN version 97
+			for (unsigned pat = 0; pat < num_patterns; ++pat)
+				{
+				const double * leftPMatT_pat = leftPMatrixT[leftStateCodes[pat]];
+				double rightCLA0 = *rightCLA++;
+				double rightCLA1 = *rightCLA++;
+				double rightCLA2 = *rightCLA++;
+				double rightCLA3 = *rightCLA++;
+
+				// *** from state 0
+				const double * rightP_i = rightPMatrix[0];
+				double right0 = (*rightP_i++)*rightCLA0;
+				double right1 = (*rightP_i++)*rightCLA1;
+				double right2 = (*rightP_i++)*rightCLA2;
+				double right3 = (*rightP_i++)*rightCLA3;
+				double right_side = right0 + right1 + right2 + right3;
+				*cla++ = ((*leftPMatT_pat++)*right_side);
+
+				// *** from state 1
+				rightP_i = rightPMatrix[1];
+				right0 = (*rightP_i++)*rightCLA0;
+				right1 = (*rightP_i++)*rightCLA1;
+				right2 = (*rightP_i++)*rightCLA2;
+				right3 = (*rightP_i++)*rightCLA3;
+				right_side = right0 + right1 + right2 + right3;
+				*cla++ = ((*leftPMatT_pat++)*right_side);
+
+				// *** from state 2
+				rightP_i = rightPMatrix[2];
+				right0 = (*rightP_i++)*rightCLA0;
+				right1 = (*rightP_i++)*rightCLA1;
+				right2 = (*rightP_i++)*rightCLA2;
+				right3 = (*rightP_i++)*rightCLA3;
+				right_side = right0 + right1 + right2 + right3;
+				*cla++ = ((*leftPMatT_pat++)*right_side);
+
+				// *** from state 3
+				rightP_i = rightPMatrix[3];
+				right0 = (*rightP_i++)*rightCLA0;
+				right1 = (*rightP_i++)*rightCLA1;
+				right2 = (*rightP_i++)*rightCLA2;
+				right3 = (*rightP_i++)*rightCLA3;
+				right_side = right0 + right1 + right2 + right3;
+				*cla++ = ((*leftPMatT_pat++)*right_side);
+				}
+			}
+		else
+			{
+			for (unsigned pat = 0; pat < num_patterns; ++pat, rightCLA += num_states)
+				{
+				const double * leftPMatT_pat = leftPMatrixT[leftStateCodes[pat]];
+				for (unsigned i = 0; i < num_states; ++i)
+					{
+					double right_side = 0.0;
+					const double * rightP_i = rightPMatrix[i];
+					for (unsigned j = 0; j < num_states; ++j)
+						right_side += rightP_i[j]*rightCLA[j];
+					*cla++ = (leftPMatT_pat[i]*right_side);
+					}
+				}
+			}
+#else // POLPY_NEWWAY
 		for (unsigned pat = 0; pat < num_patterns; ++pat, rightCLA += num_states)
 			{
 			const double * leftPMatT_pat = leftPMatrixT[leftStateCodes[pat]];
@@ -231,6 +321,8 @@ void TreeLikelihood::calcCLAOneTip(
 				*cla++ = (leftPMatT_pat[i]*right_side);
 				}
 			}
+#endif // POLPY_NEWWAY
+
 		}
 	}
 
@@ -268,8 +360,141 @@ void TreeLikelihood::calcCLANoTips(
 	//
 	for (unsigned r = 0; r < num_rates; ++r)
 		{
-		const double * const * leftPMatrix  = leftPMatrices[r];
-		const double * const * rightPMatrix = rightPMatrices[r];
+		double const * const * leftPMatrix  = leftPMatrices[r];
+		double const * const * rightPMatrix = rightPMatrices[r];
+#if POLPY_NEWWAY
+		if (num_states == 4)
+			{
+			//POL 16-June-2006 Unrolling the nested loops across states here as well as in TreeLikelihood::calcCLAOneTip
+			// resulted in a 26.6% speedup on Windows using green.nex and SVN version 97
+			for (unsigned pat = 0; pat < num_patterns; ++pat)
+				{
+				double leftCLA0 = *leftCLA++;
+				double leftCLA1 = *leftCLA++;
+				double leftCLA2 = *leftCLA++;
+				double leftCLA3 = *leftCLA++;
+				double rightCLA0 = *rightCLA++;
+				double rightCLA1 = *rightCLA++;
+				double rightCLA2 = *rightCLA++;
+				double rightCLA3 = *rightCLA++;
+
+				// *** from state 0 ***
+				const double * leftP_i  = leftPMatrix[0];
+				const double * rightP_i = rightPMatrix[0];
+
+				// to state 0
+				double left0 = (*leftP_i++)*leftCLA0;
+				double right0 = (*rightP_i++)*rightCLA0;
+
+				// to state 1
+				double left1 = (*leftP_i++)*leftCLA1;
+				double right1 = (*rightP_i++)*rightCLA1;
+
+				// to state 2
+				double left2 = (*leftP_i++)*leftCLA2;
+				double right2 = (*rightP_i++)*rightCLA2;
+
+				// to state 3
+				double left3 = (*leftP_i++)*leftCLA3;
+				double right3 = (*rightP_i++)*rightCLA3;
+
+				double left_side  = left0 + left1 + left2 + left3;
+				double right_side = right0 + right1 + right2 + right3;
+				*cla++ = (left_side*right_side);
+
+				// *** from state 1 ***
+				leftP_i  = leftPMatrix[1];
+				rightP_i = rightPMatrix[1];
+
+				// to state 0
+				left0 = (*leftP_i++)*leftCLA0;
+				right0 = (*rightP_i++)*rightCLA0;
+
+				// to state 1
+				left1 = (*leftP_i++)*leftCLA1;
+				right1 = (*rightP_i++)*rightCLA1;
+
+				// to state 2
+				left2 = (*leftP_i++)*leftCLA2;
+				right2 = (*rightP_i++)*rightCLA2;
+
+				// to state 3
+				left3 = (*leftP_i++)*leftCLA3;
+				right3 = (*rightP_i++)*rightCLA3;
+
+				left_side  = left0 + left1 + left2 + left3;
+				right_side = right0 + right1 + right2 + right3;
+				*cla++ = (left_side*right_side);
+
+				// *** from state 2 ***
+				leftP_i  = leftPMatrix[2];
+				rightP_i = rightPMatrix[2];
+
+				// to state 0
+				left0 = (*leftP_i++)*leftCLA0;
+				right0 = (*rightP_i++)*rightCLA0;
+
+				// to state 1
+				left1 = (*leftP_i++)*leftCLA1;
+				right1 = (*rightP_i++)*rightCLA1;
+
+				// to state 2
+				left2 = (*leftP_i++)*leftCLA2;
+				right2 = (*rightP_i++)*rightCLA2;
+
+				// to state 3
+				left3 = (*leftP_i++)*leftCLA3;
+				right3 = (*rightP_i++)*rightCLA3;
+
+				left_side  = left0 + left1 + left2 + left3;
+				right_side = right0 + right1 + right2 + right3;
+				*cla++ = (left_side*right_side);
+
+				// *** from state 3 ***
+				leftP_i  = leftPMatrix[3];
+				rightP_i = rightPMatrix[3];
+
+				// to state 0
+				left0 = (*leftP_i++)*leftCLA0;
+				right0 = (*rightP_i++)*rightCLA0;
+
+				// to state 1
+				left1 = (*leftP_i++)*leftCLA1;
+				right1 = (*rightP_i++)*rightCLA1;
+
+				// to state 2
+				left2 = (*leftP_i++)*leftCLA2;
+				right2 = (*rightP_i++)*rightCLA2;
+
+				// to state 3
+				left3 = (*leftP_i++)*leftCLA3;
+				right3 = (*rightP_i++)*rightCLA3;
+
+				left_side  = left0 + left1 + left2 + left3;
+				right_side = right0 + right1 + right2 + right3;
+				*cla++ = (left_side*right_side);
+				}
+			}
+		else
+			{
+			for (unsigned pat = 0; pat < num_patterns; ++pat, leftCLA += num_states, rightCLA += num_states)
+				{
+				for (unsigned i = 0; i < num_states; ++i)
+					{
+					double left_side  = 0.0;
+					double right_side = 0.0;
+					const double * leftP_i  = leftPMatrix[i];
+					const double * rightP_i = rightPMatrix[i];
+					for (unsigned j = 0; j < num_states; ++j)
+						{
+						left_side  += (leftP_i[j]*leftCLA[j]);
+						right_side += (rightP_i[j]*rightCLA[j]);
+						}
+					*cla++ = (left_side*right_side);
+					}
+				}
+			}
+#else
 		for (unsigned pat = 0; pat < num_patterns; ++pat, leftCLA += num_states, rightCLA += num_states)
 			{
 			for (unsigned i = 0; i < num_states; ++i)
@@ -286,6 +511,7 @@ void TreeLikelihood::calcCLANoTips(
 				*cla++ = (left_side*right_side);
 				}
 			}
+#endif
 		}
 	}
 	
