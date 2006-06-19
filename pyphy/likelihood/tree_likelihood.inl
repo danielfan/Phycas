@@ -28,6 +28,10 @@ inline TreeLikelihood::TreeLikelihood(
   rate_means(mod->getNRatesTotal(), 1.0), 
   rate_probs(mod->getNRatesTotal(), 1.0), 
   nevals(0),
+#if POLPY_NEWWAY
+	underflow_num_edges(25),
+	underflow_max_value(10000.0),
+#endif
   likelihood_root(0)
 	{
 	mod->recalcRatesAndProbs(rate_means, rate_probs);

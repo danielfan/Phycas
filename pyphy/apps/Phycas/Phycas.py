@@ -5,7 +5,7 @@ import Phylogeny
 import Likelihood
 import ProbDist
 
-# POLPY_NEWWAY
+# POLPY_NEWWAY7
 import TreeViewer
 import threading
 

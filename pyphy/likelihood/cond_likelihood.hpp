@@ -22,8 +22,16 @@ class CondLikelihood
 		unsigned					getCLASize() const;
 
 		UnderflowType *				getUF();
-		UnderflowType *				getUF() const;
+		UnderflowType const *		getUF() const;
 		unsigned					getUFSize() const;
+
+#if POLPY_NEWWAY
+		void						zeroUF();
+		std::string					debugShowUF() const;
+		unsigned					getUFSum() const;
+		unsigned					getUnderflowNumEdges() const;
+		void						setUnderflowNumEdges(unsigned n);
+#endif
 
 	private:
 

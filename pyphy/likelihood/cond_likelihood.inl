@@ -1,6 +1,9 @@
 #if ! defined(COND_LIKELIHOOD_INL)
 #define COND_LIKELIHOOD_INL
 
+#include <numeric>
+#include "boost/format.hpp"
+
 namespace phycas
 {
 
@@ -24,6 +27,25 @@ inline CondLikelihood::CondLikelihood(
 	cla = &claVec[0];
 	uf = &underflowExponVec[0];
 	}
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns current value of the data member `numEdgesSinceUnderflowProtection'.
+*/
+inline unsigned	CondLikelihood::getUnderflowNumEdges() const
+	{
+	return numEdgesSinceUnderflowProtection;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets value of the data member `numEdgesSinceUnderflowProtection' to `n'.
+*/
+inline void	CondLikelihood::setUnderflowNumEdges(
+  unsigned n)	/**< is the number of edges traversed since underflow correction was last applied */
+	{
+	numEdgesSinceUnderflowProtection = n;
+	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns pointer to the conditional likelihood array stored by the vector data member `claVec'.
@@ -52,7 +74,7 @@ inline UnderflowType * CondLikelihood::getUF()
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns pointer to the conditional likelihood array stored by the vector data member `underflowExponVec'.
 */
-inline UnderflowType * CondLikelihood::getUF() const
+inline UnderflowType const * CondLikelihood::getUF() const
 	{
 	return uf;	//PELIGROSO
 	}
@@ -72,6 +94,36 @@ inline unsigned CondLikelihood::getUFSize() const
 	{
 	return (unsigned)underflowExponVec.size();
 	}
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets all elements in `underflowExponVec' to zero.
+*/
+inline void CondLikelihood::zeroUF()
+	{
+	//std::vector<UnderflowType>::size_type sz = (std::vector<UnderflowType>::size_type)underflowExponVec.size();
+	underflowExponVec.assign(underflowExponVec.size(), 0);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns sum of all elements in `underflowExponVec'.
+*/
+inline unsigned CondLikelihood::getUFSum() const
+	{
+	return std::accumulate(underflowExponVec.begin(), underflowExponVec.end(), 0);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns a string containing a space-separated list of all elements in `underflowExponVec'.
+*/
+inline std::string CondLikelihood::debugShowUF() const
+	{
+	std::string s;
+	for (std::vector<UnderflowType>::const_iterator it = underflowExponVec.begin(); it != underflowExponVec.end(); ++it)
+		s += str(boost::format("%d ") % (*it));
+	return s;
+	}
+#endif
 
 } //namespace phycas
 

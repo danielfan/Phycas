@@ -13,6 +13,9 @@
 #include <numeric>
 #include "pyphy/phylogeny/edge_iterators.hpp"
 
+//#define DEBUG_RECORD_LNL
+//#define DEBUG_RECORD_SUMS
+
 namespace phycas
 {
 
@@ -36,7 +39,7 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 	// The first neighbor can either be the parent or the leftmost child. The second neighbor must be a child, but
 	// which child depends on the first neighbor. Third and subsequent neighbors are always next sibs.
 	TreeNode * firstNeighbor = NULL;
-	TreeNode * secondNeighor = NULL;
+	TreeNode * secondNeighbor = NULL;
 	double firstEdgeLen = 0.0;
 	const bool movingTowardLeaves = !(parent == avoid);
 	if (movingTowardLeaves)
@@ -44,33 +47,39 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 		// A child of nd is closer to the likelihood root than nd
 		firstNeighbor = parent;
 		firstEdgeLen = nd.GetEdgeLen();
-		secondNeighor = (lChild == avoid ? lChild->GetRightSib() : lChild);
+		secondNeighbor = (lChild == avoid ? lChild->GetRightSib() : lChild);
 		}
 	else
 		{
 		// The parent of nd is closer to the likelihood root than nd
 		firstNeighbor = lChild;
 		firstEdgeLen = lChild->GetEdgeLen();
-		secondNeighor = lChild->GetRightSib();
+		secondNeighbor = lChild->GetRightSib();
 		}
 	
+#if defined(DEBUG_RECORD_SUMS)
+	std::ofstream tmpf("uf_history.txt", std::ios::out | std::ios::app);
+	tmpf << "refreshCLA: firstNeighbor=" << firstNeighbor->GetNodeNumber() << ", secondNeighbor=" << secondNeighbor->GetNodeNumber() << std::endl;
+	tmpf.close();
+#endif
+
 	if (firstNeighbor->IsTip())
 		{
 		TipData & firstTD = *(firstNeighbor->GetTipData());
 		calcPMatTranspose(firstTD.getTransposedPMatrices(), firstTD.getConstStateListPos(), firstEdgeLen);
-		if (secondNeighor->IsTip())
+		if (secondNeighbor->IsTip())
 			{
 			// 1. both neighbors are tips
-			TipData & secondTD = *(secondNeighor->GetTipData());
-			calcPMatTranspose(secondTD.getTransposedPMatrices(), secondTD.getConstStateListPos(), secondNeighor->GetEdgeLen());
+			TipData & secondTD = *(secondNeighbor->GetTipData());
+			calcPMatTranspose(secondTD.getTransposedPMatrices(), secondTD.getConstStateListPos(), secondNeighbor->GetEdgeLen());
 			calcCLATwoTips(*ndCondLike, firstTD, secondTD);
 			}
 		else
 			{
 			// 2. first neighbor is a tip, but second is an internal node
-			InternalData & secondID	= *(secondNeighor->GetInternalData());
-			calcPMat(secondID.getPMatrices(), secondNeighor->GetEdgeLen());
-			CondLikelihoodShPtr secCL = getCondLikePtr(secondNeighor, &nd);
+			InternalData & secondID	= *(secondNeighbor->GetInternalData());
+			calcPMat(secondID.getPMatrices(), secondNeighbor->GetEdgeLen());
+			CondLikelihoodShPtr secCL = getCondLikePtr(secondNeighbor, &nd);
 			ConstPMatrices secPMat = secondID.getConstPMatrices();
 			calcCLAOneTip(*ndCondLike, firstTD, secPMat, *secCL);
 			}
@@ -81,26 +90,26 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 		calcPMat(firstID.getPMatrices(), firstEdgeLen);
 		const CondLikelihood & firCL = *getCondLikePtr(firstNeighbor, &nd);
 		ConstPMatrices firPMat = firstID.getConstPMatrices();	
-		if (secondNeighor->IsTip())
+		if (secondNeighbor->IsTip())
 			{
 			// 3. first neighbor internal node, but second is a tip
-			TipData & secondTD = *(secondNeighor->GetTipData());
-			calcPMatTranspose(secondTD.getTransposedPMatrices(), secondTD.getConstStateListPos(), secondNeighor->GetEdgeLen());
+			TipData & secondTD = *(secondNeighbor->GetTipData());
+			calcPMatTranspose(secondTD.getTransposedPMatrices(), secondTD.getConstStateListPos(), secondNeighbor->GetEdgeLen());
 			calcCLAOneTip(*ndCondLike, secondTD, firPMat, firCL);
 			}
 		else
 			{
 			// 4. both neighbors are internal nodes
-			InternalData & secondID	= *(secondNeighor->GetInternalData());
-			calcPMat(secondID.getPMatrices(), secondNeighor->GetEdgeLen());
-			const CondLikelihood & secCL = *getCondLikePtr(secondNeighor, &nd);
+			InternalData & secondID	= *(secondNeighbor->GetInternalData());
+			calcPMat(secondID.getPMatrices(), secondNeighbor->GetEdgeLen());
+			const CondLikelihood & secCL = *getCondLikePtr(secondNeighbor, &nd);
 			ConstPMatrices secPMat = secondID.getConstPMatrices();
 			calcCLANoTips(*ndCondLike, firPMat, firCL, secPMat, secCL);
 			}
 		}
 
-	// Deal with possible polytomy in which secondNeighor has siblings
-	for (TreeNode * currNd = secondNeighor->GetRightSib(); currNd != NULL; currNd = currNd->GetRightSib())
+	// Deal with possible polytomy in which secondNeighbor has siblings
+	for (TreeNode * currNd = secondNeighbor->GetRightSib(); currNd != NULL; currNd = currNd->GetRightSib())
 		{
 		if (currNd != avoid)
 			{
@@ -923,12 +932,20 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 double TreeLikelihood::calcLnL(
   TreeShPtr t)
 	{
+#if defined(DEBUG_RECORD_LNL)
+	std::ofstream lnLf("calcLnL.txt", std::ios::out | std::ios::app);
+	bool clean_slate = false;
+#endif
+
 	// Compute likelihood using likelihood_root if specified
 	// Assume that if likelihood_root has been specified, then the necessary 
 	// CLA invalidations have already been performed.
 	TreeNode * nd = likelihood_root;
 	if (nd == NULL)
 		{
+#if defined(DEBUG_RECORD_LNL)
+		clean_slate = true;
+#endif
 		// If no likelihood_root has been specified, use the subroot node (and
 		// invalidate the entire tree to be safe)
 		nd = t->GetFirstPreorder();
@@ -959,6 +976,19 @@ double TreeLikelihood::calcLnL(
 
 	// Calculate log-likelihood using nd as the likelihood root
 	double lnL = calcLnLFromNode(*nd);
+
+#if defined(DEBUG_RECORD_SUMS)
+	startTreeViewer(t, str(boost::format("calcLnLFromNode(%d) = %.5f") % nd->GetNodeNumber() % lnL));
+#endif
+
+#if defined(DEBUG_RECORD_LNL)
+	if (clean_slate)
+		lnLf << "*";
+	//else
+	//	startTreeViewer(t, "In TreeLikelihood::calcLnL()");
+	lnLf << nd->GetNodeNumber() << '\t' << str(boost::format("%.5f") % lnL) << std::endl;
+	lnLf.close();
+#endif
 
 	return lnL;
 	}
@@ -1067,6 +1097,12 @@ double TreeLikelihood::calcLnLFromNode(
 		{
 		assert(!focal_node.IsTip());
 
+#if defined(DEBUG_RECORD_SUMS)
+		std::ofstream tmpf("uf_history.txt", std::ios::out | std::ios::app);
+		tmpf << "********************************************************" << std::endl;
+		tmpf << "calcLnLFromNode: focal_node=" << focal_node.GetNodeNumber() << std::endl;
+		tmpf.close();
+#endif
 		// valid_functor will return true if the conditional likelihood arrays pointing away from the
 		// focal_node are up-to-date, false if they need to be recomputed
 		NodeValidityChecker valid_functor = boost::bind(&TreeLikelihood::isValid, this, _1, _2);

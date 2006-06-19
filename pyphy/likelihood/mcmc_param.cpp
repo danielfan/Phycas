@@ -265,6 +265,7 @@ double HyperPriorParam::operator()(
 
 	if (mu > 0.0)
 		{
+		// no need to invalidate all CLAs because ony the prior is changing
 		curr_ln_like = likelihood->calcLnL(tree);
 		curr_value = mu;
 		recalcPrior();

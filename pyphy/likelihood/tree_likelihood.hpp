@@ -128,6 +128,7 @@ class TreeLikelihood
 		TreeNode *						likelihood_root;		/**< If not NULL< calcLnL will use this node as the likelihood root, then reset it to NULL before returning */
 
 #if POLPY_NEWWAY
+		std::vector<double>				underflow_work;			/**< Workspace used when correcting for underflow (will have length equal to num_patterns) */
 		unsigned						underflow_num_edges;	/**< Number of edges to traverse before underflow risk is evaluated */
 		double							underflow_max_value;	/**< Maximum of the `num_states' conditional likelihoods for a given rate and pattern after underflow correction */
 #endif
