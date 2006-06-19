@@ -1,10 +1,6 @@
 18-June-2006
 ------------
-Downloaded NoWel.nex and NoWel.tree from http://www.flmnh.ufl.edu/angiospermATOL/
+rbcl704.nex is based on the famous 500 taxon Chase et al. rbcL data set, and is large
+enough to cause underflow problems
 
-angio560.nex appears to be an older verion of NoWel.nex that contains exsets 
-  (not sure where I got this originally)
-
-rbcl500.nex is from Derrick Zwickl, but looks like it came from Usman Roshan's
-  Rec-I-DCM3 distribution (http://www.cs.njit.edu/usman/RecIDCM3.html)
     
