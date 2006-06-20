@@ -346,6 +346,17 @@ class TreeLikelihood(TreeLikelihoodBase):
         """
         TreeLikelihoodBase.setUsePatternSpecificRates(self, False)
         
+    def setUFNumEdges(self, nedges):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Sets number of edges that must be traversed before action is taken to
+        prevent underflow. Likelihood calculations will be faster for higher
+        values of nedges, but the tradeoff is that higher values of nedges
+        also mean greater probability of underflow.
+        
+        """
+        TreeLikelihoodBase.setUFNumEdges(self, nedges)
+        
     def startTreeViewer(self, t, s):
         import TreeViewer
         tv = TreeViewer.TreeViewer(tree=t, msg=s)
