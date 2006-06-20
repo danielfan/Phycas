@@ -64,13 +64,6 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 			// 1. both neighbors are tips
 			TipData & secondTD = *(secondNeighbor->GetTipData());
 			calcPMatTranspose(secondTD.getTransposedPMatrices(), secondTD.getConstStateListPos(), secondNeighbor->GetEdgeLen());
-
-			//std::ofstream doof("doofuf.txt", std::ios::out | std::ios::app);
-			//doof << "refreshCLA -> calcCLATwoTips: firstNeighbor = " << firstNeighbor->GetNodeNumber();
-			//doof << ", secondNeighbor = " << secondNeighbor->GetNodeNumber();
-			//doof << std::endl;
-			//doof.close();
-
 			calcCLATwoTips(*ndCondLike, firstTD, secondTD);
 			}
 		else
@@ -80,13 +73,6 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 			calcPMat(secondID.getPMatrices(), secondNeighbor->GetEdgeLen());
 			CondLikelihoodShPtr secCL = getCondLikePtr(secondNeighbor, &nd);
 			ConstPMatrices secPMat = secondID.getConstPMatrices();
-
-			//std::ofstream doof("doofuf.txt", std::ios::out | std::ios::app);
-			//doof << "refreshCLA -> calcCLAOneTip: firstNeighbor = " << firstNeighbor->GetNodeNumber();
-			//doof << ", secondNeighbor = " << secondNeighbor->GetNodeNumber();
-			//doof << std::endl;
-			//doof.close();
-
 			calcCLAOneTip(*ndCondLike, firstTD, secPMat, *secCL);
 			}
 		}
@@ -101,13 +87,6 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 			// 3. first neighbor internal node, but second is a tip
 			TipData & secondTD = *(secondNeighbor->GetTipData());
 			calcPMatTranspose(secondTD.getTransposedPMatrices(), secondTD.getConstStateListPos(), secondNeighbor->GetEdgeLen());
-
-			//std::ofstream doof("doofuf.txt", std::ios::out | std::ios::app);
-			//doof << "refreshCLA -> calcCLAOneTip: firstNeighbor = " << firstNeighbor->GetNodeNumber();
-			//doof << ", secondNeighbor = " << secondNeighbor->GetNodeNumber();
-			//doof << std::endl;
-			//doof.close();
-
 			calcCLAOneTip(*ndCondLike, secondTD, firPMat, firCL);
 			}
 		else
@@ -117,13 +96,6 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 			calcPMat(secondID.getPMatrices(), secondNeighbor->GetEdgeLen());
 			const CondLikelihood & secCL = *getCondLikePtr(secondNeighbor, &nd);
 			ConstPMatrices secPMat = secondID.getConstPMatrices();
-
-			//std::ofstream doof("doofuf.txt", std::ios::out | std::ios::app);
-			//doof << "refreshCLA -> calcCLANoTips: firstNeighbor = " << firstNeighbor->GetNodeNumber();
-			//doof << ", secondNeighbor = " << secondNeighbor->GetNodeNumber();
-			//doof << std::endl;
-			//doof.close();
-
 			calcCLANoTips(*ndCondLike, firPMat, firCL, secPMat, secCL);
 			}
 		}
@@ -137,12 +109,6 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 				{
 				TipData & currTD = *(currNd->GetTipData());
 				calcPMatTranspose(currTD.getTransposedPMatrices(), currTD.getConstStateListPos(), currNd->GetEdgeLen());
-
-				//std::ofstream doof("doofuf.txt", std::ios::out | std::ios::app);
-				//doof << "refreshCLA -> conditionOnAdditionalTip: currNd = " << currNd->GetNodeNumber();
-				//doof << std::endl;
-				//doof.close();
-
 				conditionOnAdditionalTip(*ndCondLike, currTD);
 				}
 			else
@@ -151,12 +117,6 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 				calcPMat(currID.getPMatrices(), currNd->GetEdgeLen());
 				const CondLikelihood & currCL = *getCondLikePtr(currNd, &nd);
 				ConstPMatrices currPMat = currID.getConstPMatrices();
-
-				//std::ofstream doof("doofuf.txt", std::ios::out | std::ios::app);
-				//doof << "refreshCLA -> conditionOnAdditionalInternal: currNd = " << currNd->GetNodeNumber();
-				//doof << std::endl;
-				//doof.close();
-
 				conditionOnAdditionalInternal(*ndCondLike, currPMat, currCL);
 				}
 			}
@@ -993,19 +953,8 @@ double TreeLikelihood::calcLnL(
 	assert(nd);
 	assert(nd->IsInternal());
 
-	//startTreeViewer(t, "Before");
-	//std::ofstream doof;
-	//doof.open("doofuf.txt");
-	//doof << "calcLnL for nd = " << nd->GetNodeNumber() << std::endl;
-	//doof.close();
-
 	// Calculate log-likelihood using nd as the likelihood root
 	double lnL = calcLnLFromNode(*nd);
-
-	//doof.open("doofuf.txt", std::ios::out | std::ios::app);
-	//doof << "lnL = " << str(boost::format("lnL = %.5f") % lnL) << std::endl;
-	//doof.close();
-	//startTreeViewer(t, str(boost::format("lnL = %.5f") % lnL));
 
 	return lnL;
 	}

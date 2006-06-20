@@ -15,6 +15,8 @@ namespace phycas
 class Tree;
 typedef boost::shared_ptr<Tree>					TreeShPtr;
 
+class SimpleUnderflowPolicy;
+
 class TreeLikelihood;
 typedef boost::shared_ptr<TreeLikelihood>		TreeLikeShPtr;
 

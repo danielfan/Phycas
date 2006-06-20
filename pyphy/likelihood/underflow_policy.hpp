@@ -5,6 +5,18 @@
 #include "pyphy/likelihood/cond_likelihood.hpp"
 #include "pyphy/likelihood/cond_likelihood_storage.hpp"
 
+//POL The original intention was to create several underflow policy classes in this file, then 
+// make TreeLikelihood a template taking one of these policy classes. It was more complicated than
+// it first appeared, however (more than TreeLikelihood would need to be templatized, and then there
+// was the issue of TreeLikelihoodShPtr, which can be defined to only point to one instantiation!), 
+// so the templatization step has been postponed. For now, TreeLikelihood has a SimpleUnderflowPolicy
+// data member, which could be replaced by one of the others, but that would require recompliation.
+
+//@POL I was surprised to discover that NaiveUnderflowPolicy, which has only empty member functions,
+// was not nearly as fast as a version of the program that deletes all calls to the underflow policy 
+// object. I thought that the inlined member function bodies would be optimized out entirely, but 
+// I guess my intuition was wrong again.
+
 namespace phycas
 {
 
@@ -47,7 +59,7 @@ class SimpleUnderflowPolicy
 		void						correctSiteLike(double & site_like, unsigned pat, ConstCondLikelihoodShPtr condlike_shptr) const;
 		void						correctLnLike(double & ln_like, ConstCondLikelihoodShPtr condlike_shptr) const;
 
-	private:
+	protected:
 
 		unsigned					num_rates;				/**< Number of among-site rate categories */
 		unsigned					num_patterns;			/**< Number of data patterns */
@@ -67,6 +79,13 @@ class PatternSpecificUnderflowPolicy : public SimpleUnderflowPolicy
 	{
 	public:
 									PatternSpecificUnderflowPolicy() : SimpleUnderflowPolicy() {}
+
+		void						twoTips(CondLikelihood & cond_like) const;
+		void						oneTip(CondLikelihood & cond_like, const CondLikelihood & other_cond_like, const CountVectorType & counts) const;
+		void						noTips(CondLikelihood & cond_like, const CondLikelihood & left_cond_like, const CondLikelihood & right_cond_like, const CountVectorType & counts) const;
+
+		void						correctSiteLike(double & site_like, unsigned pat, ConstCondLikelihoodShPtr condlike_shptr) const;
+		void						correctLnLike(double & ln_like, ConstCondLikelihoodShPtr condlike_shptr) const;
 	};
 
 } // namespace phycas

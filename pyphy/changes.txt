@@ -153,11 +153,13 @@ o rel_0_8_1 (14-May-2006, SVN revision 33)
 
 Release 0.9.0 (13-Apr-2006, SVN revision 95)
 --------------------------------------------
-o installed new system for keeping track of conditional likelihood arrays (CLAs) in which 
-  CLAs are stored until needed and then left in place until invalidated (the new system
-  resulted in approximately 64% speedup)
-o SVN revision 98: able to achieve another 26% speedup for DNA data by unrolling loops 
+o Installed new system (devised at the NESCent meeting 17-22 May, 2006) for keeping track 
+  of conditional likelihood arrays (CLAs) in which CLAs are stored until needed and then 
+  left in place until invalidated (the new system resulted in approximately 64% speedup)
+o rel_0_9_1 (SVN revision 98) achieved another 26% speedup for DNA data by unrolling loops 
   over num_states in both TreeLikelihood::calcCLAOneTip and TreeLikelihood::calcCLANoTips
+o rel_0_9_2 (20-June-2006, SVN revision 102) added underflow protection (see 
+  underflow_policy.hpp)
 
 Release 0.10.0
 --------------
@@ -174,35 +176,27 @@ o add no-data run to test polytomy prior to existing Polytomy.py example
 
 Release 0.13.0
 --------------
-o speed up likelihood calculations
-
-Release 0.14.0
---------------
-o add underflow protection to allow large trees 
-
-Release 0.15.0
---------------
 o add Metropolis-coupled chains
 
-Release 0.16.0
+Release 0.14.0
 --------------
 o add Newton-Raphson for finding MLEs of edge lengths
 o add Brent method for finding MLEs of model parameters
 
-Release 0.17.0
+Release 0.15.0
 --------------
 o add NNI, SPR and TBR branch swapping 
 
-Release 0.18.0
+Release 0.16.0
 --------------
 o add minimial python GUI
  
-Release 0.19.0
+Release 0.17.0
 --------------
 These are deficiencies that should be corrected before first release:
 o ensure that slice sampler doesn't get stuck (e.g. no rate heterogeneity combined with vague prior on shape parameter)
 
-Release 0.20.0
+Release 0.18.0
 --------------
 These are on the wish list but do not need to be implemented before the first major release:
 o codon model
@@ -210,7 +204,7 @@ o standard Mkv morphology model
 o "episodic rates" version of the Mk model
 o Ornstein-Uhlenbeck model for single-nucleotide repeat data (Q. Cronk)
 
-Release 0.21.0
+Release 0.19.0
 --------------
 o ensure that all routines called from python are represented in *.py wrappers
 o transfer exception handling from C++ code to Python wrappers where possible, replacing exceptions

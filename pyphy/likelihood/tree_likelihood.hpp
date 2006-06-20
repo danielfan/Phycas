@@ -46,15 +46,9 @@ typedef boost::shared_ptr<Lot>	LotShPtr;
 */
 class TreeLikelihood
 	{
-	//friend class CalcTransitionMatrixForOneNode;
-
 	public:
 
 										TreeLikelihood(ModelShPtr);
-										//~TreeLikelihood() 
-										//	{
-										//	std::cerr << "TreeLikelihood dying..." << std::endl;
-										//	}
 
 		// Accessors
 		unsigned						getNTaxa() const;

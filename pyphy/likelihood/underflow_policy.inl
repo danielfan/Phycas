@@ -1,9 +1,6 @@
 #if !defined(UNDERFLOW_POLICY_INL)
 #define UNDERFLOW_POLICY_INL
 
-#define SIMPLE
-//#define COMPLEX
-
 namespace phycas
 {
 
@@ -35,71 +32,6 @@ inline void SimpleUnderflowPolicy::setCorrectToValue(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Handles case of a node subtending two tips. In this case, the number of edges traversed is just two, and thus no
-|	corrective action is taken other than to set the number of underflow edges traversed to 2. The zeroUF member
-|	function of the supplied `cond_like' object is called, however, to ensure that the cumulative correction factor is 
-|	zero (this `cond_like' might have just been brought in from storage with some correction factor already in place).
-*/
-inline void SimpleUnderflowPolicy::twoTips(
-  CondLikelihood & cond_like) /**< is the conditional likelihood array to correct */
-  const
-	{
-	cond_like.setUnderflowNumEdges(2);
-	cond_like.zeroUF();
-
-#if defined(SIMPLE)
-	UnderflowType & uf_sum = cond_like.getUFSumRef();
-#endif
-	//std::ofstream doof("doofuf.txt", std::ios::out | std::ios::app);
-	//doof << "  nedges = " << cond_like.getUnderflowNumEdges() << std::endl;
-	//doof << "  uf_sum zeroed out" << std::endl;
-	//doof << "    check: uf_sum = " << uf_sum << std::endl;
-	//doof.close();
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Obtains a pointer to the underflow array for `cond_like', then subtracts the value stored in that underflow array 
-|	for pattern `pat' from the site likelihood `site_like'.
-*/
-inline void SimpleUnderflowPolicy::correctSiteLike(
-  double & site_like,						/**< is the log-site-likelihood to correct */
-  unsigned pat,								/**< is the index of the pattern representing the site to correct */
-  ConstCondLikelihoodShPtr condlike_shptr)	/**< is the conditional likelihood array of the likelihood root node */
-  const
-	{
-#if defined(COMPLEX)
-	assert(condlike_shptr);
-	UnderflowType const * uf = condlike_shptr->getUF();
-	assert(uf != NULL);
-	site_like -= (double)uf[pat];
-#endif
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Obtains sum of underflow correction for all patterns in `cond_like', then subtracts that value from the 
-|	log-likelihood `ln_like'.
-*/
-inline void SimpleUnderflowPolicy::correctLnLike(
-  double & ln_like,							/**< is the log-likelihood to correct for underflow */
-  ConstCondLikelihoodShPtr condlike_shptr)	/**< is the conditional likelihood array of the likelihood root node */
-  const
-	{
-#if defined(SIMPLE)
-	assert(condlike_shptr);
-	UnderflowType ufsum = condlike_shptr->getUFSum();
-
-	//std::ofstream doof("doofuf.txt", std::ios::out | std::ios::app);
-	//doof << "  correctLnLike: uf_sum = " << ufsum << ", ln_like (before) = " << ln_like;
-
-	ln_like -= (double)ufsum;
-
-	//doof << ", ln_like (after) = " << ln_like << std::endl;
-	//doof.close();
-#endif
-
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
 |	Sets the `num_rates', `num_patterns', and `num_states' data members to `nr', `np' and `ns', respectively. Assumes
 |	that all three values are greater than zero.
 */
@@ -114,6 +46,72 @@ inline void SimpleUnderflowPolicy::setDimensions(
 	num_patterns = np;
 	num_rates = nr;
 	num_states = ns;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Handles case of a node subtending two tips. In this case, the number of edges traversed is just two, and thus no
+|	corrective action is taken other than to set the number of underflow edges traversed to 2. The zeroUF member
+|	function of the supplied `cond_like' object is called, however, to ensure that the cumulative correction factor is 
+|	zero (this `cond_like' might have just been brought in from storage with some correction factor already in place).
+*/
+inline void SimpleUnderflowPolicy::twoTips(
+  CondLikelihood & cond_like) /**< is the conditional likelihood array to correct */
+  const
+	{
+	cond_like.setUnderflowNumEdges(2);
+	cond_like.zeroUF();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Nothing needs to be done in the simple case, so this method is a no-op.
+*/
+inline void SimpleUnderflowPolicy::correctSiteLike(
+  double & site_like,						/**< is the log-site-likelihood to correct */
+  unsigned pat,								/**< is the index of the pattern representing the site to correct */
+  ConstCondLikelihoodShPtr condlike_shptr)	/**< is the conditional likelihood array of the likelihood root node */
+  const
+	{
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Obtains a pointer to the underflow array for `cond_like', then subtracts the value stored in that underflow array 
+|	for pattern `pat' from the site likelihood `site_like'.
+*/
+inline void PatternSpecificUnderflowPolicy::correctSiteLike(
+  double & site_like,						/**< is the log-site-likelihood to correct */
+  unsigned pat,								/**< is the index of the pattern representing the site to correct */
+  ConstCondLikelihoodShPtr condlike_shptr)	/**< is the conditional likelihood array of the likelihood root node */
+  const
+	{
+	assert(condlike_shptr);
+	UnderflowType const * uf = condlike_shptr->getUF();
+	assert(uf != NULL);
+	site_like -= (double)uf[pat];
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Obtains sum of underflow correction for all patterns in `cond_like', then subtracts that value from the 
+|	log-likelihood `ln_like'.
+*/
+inline void SimpleUnderflowPolicy::correctLnLike(
+  double & ln_like,							/**< is the log-likelihood to correct for underflow */
+  ConstCondLikelihoodShPtr condlike_shptr)	/**< is the conditional likelihood array of the likelihood root node */
+  const
+	{
+	assert(condlike_shptr);
+	UnderflowType ufsum = condlike_shptr->getUFSum();
+	ln_like -= (double)ufsum;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Nothing needs to be done to the overall log-likelihood because the correction takes place at the site log-likelihood
+|	stage, so this method is a no-op.
+*/
+inline void PatternSpecificUnderflowPolicy::correctLnLike(
+  double & ln_like,							/**< is the log-likelihood to correct for underflow */
+  ConstCondLikelihoodShPtr condlike_shptr)	/**< is the conditional likelihood array of the likelihood root node */
+  const
+	{
 	}
 
 } // namespace phycas

@@ -1116,7 +1116,7 @@ if __name__ == '__main__':
         mcmc.report_every = 500
         mcmc.ls_move_weight = 100
         mcmc.ls_move_debug = False
-        mcmc.uf_num_edges = 1
+        mcmc.uf_num_edges = 50
         #raw_input('debug stop')
 
     mcmc.setup()
