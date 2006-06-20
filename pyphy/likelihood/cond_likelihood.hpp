@@ -25,19 +25,20 @@ class CondLikelihood
 		UnderflowType const *		getUF() const;
 		unsigned					getUFSize() const;
 
-#if POLPY_NEWWAY
 		void						zeroUF();
 		std::string					debugShowUF() const;
-		unsigned					getUFSum() const;
+		UnderflowType				getUFSum() const;
+		UnderflowType &				getUFSumRef();
+
 		unsigned					getUnderflowNumEdges() const;
 		void						setUnderflowNumEdges(unsigned n);
-#endif
 
 	private:
 
 		LikeFltType *				cla;								/**< Pointer to conditional likelihood array stored by `claVec'  */
 		std::vector<LikeFltType>	claVec;								/**< Each element contains the likelihood conditional on a particular state, rate and pattern */
 
+		UnderflowType				uf_sum;								/**< Stores sum of underflow corrections over all sites */
 		UnderflowType *				uf;									/**< Pointer to the underflow correction array stored by `underflowExponVec'  */
 		std::vector<UnderflowType>	underflowExponVec;					/**< Stores log of the underflow correction factor for each pattern */
 

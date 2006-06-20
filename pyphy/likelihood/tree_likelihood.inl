@@ -28,13 +28,21 @@ inline TreeLikelihood::TreeLikelihood(
   rate_means(mod->getNRatesTotal(), 1.0), 
   rate_probs(mod->getNRatesTotal(), 1.0), 
   nevals(0),
-#if POLPY_NEWWAY
-	underflow_num_edges(25),
-	underflow_max_value(10000.0),
-#endif
   likelihood_root(0)
 	{
 	mod->recalcRatesAndProbs(rate_means, rate_probs);
+	underflow_policy.setTriggerSensitivity(50);
+	underflow_policy.setCorrectToValue(10000.0);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Calls the setTriggerSensitivity function of the data member `underflow_policy' to set the number of edges that must
+|	be traversed before taking action to prevent underflow.
+*/
+inline void TreeLikelihood::setUFNumEdges(
+  unsigned nedges)	/**< is the number of edges to traverse before taking action to prevent underflow */
+	{
+	underflow_policy.setTriggerSensitivity(nedges);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -286,7 +294,7 @@ inline void TreeLikelihood::recalcRelativeRates()
 	model->recalcRatesAndProbs(rate_means, rate_probs);
 	likelihood_rate_site.resize(num_rates*num_patterns, 0.0);
 	cla_pool.setCondLikeDimensions(num_patterns, num_rates, num_states);
-	//cla_pool.setCondLikeLength(num_patterns*num_rates*num_states);
+	underflow_policy.setDimensions(num_patterns, num_rates, num_states);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -395,42 +403,6 @@ inline void TreeLikelihood::simulate(SimDataShPtr sim_data, TreeShPtr t, LotShPt
 	{
 	simulateImpl(sim_data, t, rng, nchar, false);	// false means do not recalculate transition probabilities
 	}
-
-#if POLPY_NEWWAY
-/*----------------------------------------------------------------------------------------------------------------------
-|	Sets value of data member `underflow_num_edges' to `nedges'.
-*/
-inline void	TreeLikelihood::setUnderflowNumEdges(unsigned nedges)
-	{
-	assert(nedges > 0);
-	underflow_num_edges = nedges;
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Returns value of data member `underflow_num_edges'.
-*/
-inline unsigned TreeLikelihood::getUnderflowNumEdges() const
-	{
-	return underflow_num_edges;
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Sets value of data member `underflow_max_value' to `maxv'.
-*/
-inline void	TreeLikelihood::setUnderflowMaxValue(double maxv)
-	{
-	underflow_max_value = maxv;
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Returns value of data member `underflow_max_value'.
-*/
-inline double TreeLikelihood::getUnderflowMaxValue() const
-	{
-	return underflow_max_value;
-	}
-#endif
-
 
 } // namespace phycas
 

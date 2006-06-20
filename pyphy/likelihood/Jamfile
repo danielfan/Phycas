@@ -32,6 +32,7 @@ extension _LikelihoodBase
 	topo_prior_calculator.cpp 
 	tree_likelihood.cpp 
 	../phylogeny/tree_manip.cpp 
+	underflow_policy.cpp 
 
     # requirements and dependencies for Boost.Python extensions
     <template>@boost/libs/python/build/extension

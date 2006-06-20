@@ -10,10 +10,7 @@
 #include "CipresCommlib/util_copy.hpp"
 #include <numeric>
 
-//#define DEBUG_RECORD_SUMS
-//#define DEBUG_RECORD_SITELIKES
-//#define DEBUG_RECORD_UF
-#define DO_UF
+//#define LOG_SITELIKES
 
 #include <iostream>
 using std::cerr;
@@ -191,10 +188,7 @@ void TreeLikelihood::calcCLATwoTips(
 				cla[s] = leftPMatTRow[s]*rightPMatTRow[s];
 			}
 		}
-#if POLPY_NEWWAY && defined(DO_UF)
-	condLike.setUnderflowNumEdges(2);
-	condLike.zeroUF();
-#endif
+	underflow_policy.twoTips(condLike);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -297,86 +291,7 @@ void TreeLikelihood::calcCLAOneTip(
 			}
 		} // loop over rates
 
-#if POLPY_NEWWAY && defined(DO_UF)
-	unsigned nedges = 1 + rightCondLike.getUnderflowNumEdges();
-	if (nedges > underflow_num_edges)
-		{
-#if defined(DEBUG_RECORD_UF)
-		std::ofstream claf("cla_dump.txt", std::ios::out | std::ios::app);
-		std::ofstream uff("underflow_dump.txt", std::ios::out | std::ios::app);
-#endif
-		underflow_work.resize(num_patterns*num_states);
-		underflow_work.assign(num_patterns*num_states, 0.0);
-		cla = condLike.getCLA();
-
-		// Begin by finding the largest conditional likelihood for each pattern
-		// over all rates and states (store these in underflow_work vector)
-		for (unsigned r = 0; r < num_rates; ++r)
-			{
-			for (unsigned pat = 0; pat < num_patterns; ++pat)
-				{
-				for (unsigned i = 0; i < num_states; ++i)
-					{
-					double curr = *cla++;
-					if (curr > underflow_work[pat])
-						underflow_work[pat] = curr;
-#if defined(DEBUG_RECORD_UF)
-					claf << r << '\t' << pat << '\t' << i << '\t' << curr << std::endl;
-#endif
-					}
-				}
-			}
-
-#if defined(DEBUG_RECORD_UF)
-		claf.close();
-#endif
-
-		// Assume that x is the largest of the num_rates*num_states conditional likelihoods
-		// for a given pattern. Find factor f such that f*x = underflow_max_value. Suppose
-		// x = 0.05 and underflow_max_value = 10,000, f = 10,000/0.05 = 200,000 = e^{12.206}
-		// In this case, we would add the integer component of the exponent (i.e. 12) to
-		// the underflow correction for this pattern and adjust all conditional likelihoods 
-		// by a factor f* = e^{12} = 22026.46579. So, the conditional likelihood 0.05 now
-		// becomes 0.05*e^{12} = 1101.32329.
-		cla = condLike.getCLA();
-		UnderflowType *	uf = condLike.getUF();
-		UnderflowType const * uf_right = rightCondLike.getUF();
-		unsigned condlikes_per_rate = num_patterns*num_states;
-		for (unsigned pat = 0; pat < num_patterns; ++pat, ++uf, ++uf_right)
-			{
-			assert(underflow_work[pat] > 0.0);
-			double f = floor(log(underflow_max_value/underflow_work[pat]));
-			double expf = exp(f);
-			LikeFltType * claPat = &cla[num_states*pat];
-			for (unsigned r = 0; r < num_rates; ++r, claPat += condlikes_per_rate)
-				{
-				for (unsigned i = 0; i < num_states; ++i)
-					{
-#if defined(DEBUG_RECORD_UF)
-					uff << r << '\t' << pat << '\t' << i << '\t' << claPat[i] << '\t';
-#endif
-					claPat[i] *= expf;
-#if defined(DEBUG_RECORD_UF)
-					uff << claPat[i] << '\t' << (*uf_right + (unsigned)f) << std::endl;
-#endif
-					}
-				}
-			*uf = *uf_right + (unsigned)f;
-			}
-		nedges = 0;
-#if defined(DEBUG_RECORD_UF)
-		uff.close();
-#endif
-		}
-	else
-		{
-		UnderflowType *	uf = condLike.getUF();
-		UnderflowType const * uf_right = rightCondLike.getUF();
-		for (unsigned pat = 0; pat < num_patterns; ++pat, ++uf, ++uf_right)
-			*uf = *uf_right;
-		}
-	condLike.setUnderflowNumEdges(nedges);
-#endif
+	underflow_policy.oneTip(condLike, rightCondLike, pattern_counts);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -548,89 +463,7 @@ void TreeLikelihood::calcCLANoTips(
 			}
 		}	// loop over rates
 
-#if POLPY_NEWWAY && defined(DO_UF)
-	unsigned nedges = leftCondLike.getUnderflowNumEdges() + rightCondLike.getUnderflowNumEdges();
-	if (nedges > underflow_num_edges)
-		{
-#if defined(DEBUG_RECORD_UF)
-		std::ofstream claf("cla_dump.txt", std::ios::out | std::ios::app);
-		std::ofstream uff("underflow_dump.txt", std::ios::out | std::ios::app);
-		uff << nedges << '\t';
-#endif
-		underflow_work.resize(num_patterns*num_states);
-		underflow_work.assign(num_patterns*num_states, 0.0);
-		cla = condLike.getCLA();
-
-		// Begin by finding the largest conditional likelihood for each pattern
-		// over all rates and states (store these in underflow_work vector)
-		for (unsigned r = 0; r < num_rates; ++r)
-			{
-			for (unsigned pat = 0; pat < num_patterns; ++pat)
-				{
-				for (unsigned i = 0; i < num_states; ++i)
-					{
-					double curr = *cla++;
-					if (curr > underflow_work[pat])
-						underflow_work[pat] = curr;
-#if defined(DEBUG_RECORD_UF)
-					claf << r << '\t' << pat << '\t' << i << '\t' << curr << std::endl;
-#endif
-					}
-				}
-			}
-
-#if defined(DEBUG_RECORD_UF)
-		claf.close();
-#endif
-
-		// Assume that x is the largest of the num_rates*num_states conditional likelihoods
-		// for a given pattern. Find factor f such that f*x = underflow_max_value. Suppose
-		// x = 0.05 and underflow_max_value = 10,000, f = 10,000/0.05 = 200,000 = e^{12.206}
-		// In this case, we would add the integer component of the exponent (i.e. 12) to
-		// the underflow correction for this pattern and adjust all conditional likelihoods 
-		// by a factor f* = e^{12} = 22026.46579. So, the conditional likelihood 0.05 now
-		// becomes 0.05*e^{12} = 1101.32329.
-		cla = condLike.getCLA();
-		UnderflowType *	uf = condLike.getUF();
-		UnderflowType const *	uf_left = leftCondLike.getUF();
-		UnderflowType const *	uf_right = rightCondLike.getUF();
-		unsigned condlikes_per_rate = num_patterns*num_states;
-		for (unsigned pat = 0; pat < num_patterns; ++pat, ++uf, ++uf_left, ++uf_right)
-			{
-			assert(underflow_work[pat] > 0.0);
-			double f = floor(log(underflow_max_value/underflow_work[pat]));
-			double expf = exp(f);
-			LikeFltType * claPat = &cla[num_states*pat];
-			for (unsigned r = 0; r < num_rates; ++r, claPat += condlikes_per_rate)
-				{
-				for (unsigned i = 0; i < num_states; ++i)
-					{
-#if defined(DEBUG_RECORD_UF)
-					uff << r << '\t' << pat << '\t' << i << '\t' << claPat[i] << '\t';
-#endif
-					claPat[i] *= expf;
-#if defined(DEBUG_RECORD_UF)
-					uff << claPat[i] << '\t' << (*uf_right + (unsigned)f) << std::endl;
-#endif
-					}
-				}
-			*uf = *uf_left + *uf_right + (unsigned)f;
-			}
-		nedges = 0;
-#if defined(DEBUG_RECORD_UF)
-		uff.close();
-#endif
-		}
-	else
-		{
-		UnderflowType *	uf = condLike.getUF();
-		UnderflowType const *	uf_left = leftCondLike.getUF();
-		UnderflowType const *	uf_right = rightCondLike.getUF();
-		for (unsigned pat = 0; pat < num_patterns; ++pat, ++uf, ++uf_left, ++uf_right)
-			*uf = *uf_left + *uf_right;
-		}
-	condLike.setUnderflowNumEdges(nedges);
-#endif
+	underflow_policy.noTips(condLike, leftCondLike, rightCondLike, pattern_counts);
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
@@ -740,12 +573,6 @@ double TreeLikelihood::harvestLnL(
 		}
 	assert(focal_neighbor != NULL);
 
-#if defined(DEBUG_RECORD_SUMS)
-	std::ofstream tmpf("uf_history.txt", std::ios::out | std::ios::app);
-	tmpf << "harvestLnL: focal_node=" << focal_node->GetNodeNumber() << std::endl;
-	tmpf.close();
-#endif
-
 	// Recompute the conditional likelihood array of the focal node
 	// The focal neighbor is closer to the likelihood root than the focal_node
 	refreshCLA(*focal_node, focal_neighbor);
@@ -770,9 +597,6 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 	
 	ConstCondLikelihoodShPtr focalCondLike = getValidCondLikePtr(focal_edge);
 	assert(focalCondLike);
-#if POLPY_NEWWAY && defined(DO_UF)
-	UnderflowType const * focalUF = focalCondLike->getUF();
-#endif
 	const LikeFltType * focalNodeCLA = focalCondLike->getCLA(); //PELIGROSO
 	assert(focalNodeCLA != NULL);
 	const unsigned singleRateCLALength = num_patterns*num_states;
@@ -788,18 +612,9 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 	if (store_site_likes)
 		site_likelihood.clear();
 
-#if defined(DEBUG_RECORD_SITELIKES)
-#if defined(DO_UF)
-	const char * lnLfn = "uf_lnL_dump.txt";
-#else
-	const char * lnLfn = "ref_lnL_dump.txt";
-#endif
-	std::ofstream lnLf(lnLfn);
-#if defined(DO_UF)
-	lnLf << "pattern\tcount\tsitelnL\tuf\tcorr\tcumlnL" << std::endl;
-#else
-	lnLf << "pattern\tcount\tsitelnL\tcumlnL" << std::endl;
-#endif
+#if defined(LOG_SITELIKES)
+	std::ofstream tmpf("doof.txt", std::ios::out | std::ios::app);
+	tmpf << "tip\tpat\tuncorr\tcorr\tcount\tlnL" << std::endl;
 #endif
 
 	double lnLikelihood = 0.0;
@@ -828,20 +643,30 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 				focalNdCLAPtr[r] += num_states;
 				}
 			double site_lnL = std::log(siteLike);
-#if POLPY_NEWWAY && defined(DO_UF)
-#if defined(DEBUG_RECORD_SITELIKES)
-			lnLf << pat << '\t' << counts[pat] << '\t' << site_lnL << '\t' << focalUF[pat] << '\t' << (site_lnL - focalUF[pat]) << '\t' << (lnLikelihood + counts[pat]*(site_lnL - focalUF[pat])) << std::endl;
+
+#if defined(LOG_SITELIKES)
+			tmpf << '\t';
+			tmpf << pat << '\t';
+			tmpf << site_lnL << '\t';
 #endif
-			site_lnL -= focalUF[pat];
-#else
-#if defined(DEBUG_RECORD_SITELIKES)
-			lnLf << pat << '\t' << counts[pat] << '\t' << site_lnL << '\t' << (lnLikelihood + counts[pat]*site_lnL) << std::endl;
-#endif
-#endif
+
+			underflow_policy.correctSiteLike(site_lnL, pat, focalCondLike);
+
 			if (store_site_likes)
 				site_likelihood.push_back(site_lnL);
 			lnLikelihood += counts[pat]*site_lnL;
+
+#if defined(LOG_SITELIKES)
+			tmpf << site_lnL << '\t';
+			tmpf << counts[pat] << '\t';
+			tmpf << lnLikelihood << std::endl;
+#endif
 			}		
+		underflow_policy.correctLnLike(lnLikelihood, focalCondLike);
+
+#if defined(LOG_SITELIKES)
+		tmpf << "1\t\t\t\t\t" << lnLikelihood << std::endl;
+#endif
 		}
 	else
 		{
@@ -850,9 +675,6 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 		const double * const * const * childPMatrices = neighborID->getConstPMatrices();
 		
 		ConstCondLikelihoodShPtr neighborCondLike = getValidCondLikePtr(focalNeighbor, focalNode); // 
-#if POLPY_NEWWAY && defined(DO_UF)
-		UnderflowType const * otherUF = neighborCondLike->getUF();
-#endif
 
 		const double * focalNeighborCLA = neighborCondLike->getCLA(); //PELIGROSO
 		std::vector<const double *> focalNdCLAPtr(num_rates);
@@ -885,39 +707,47 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 				focalNeighborCLAPtr[r] += num_states;
 				}
 			double site_lnL = std::log(siteLike);
-#if POLPY_NEWWAY && defined(DO_UF)
-#if defined(DEBUG_RECORD_SITELIKES)
-			lnLf << pat << '\t' << counts[pat] << '\t' << site_lnL << '\t' << focalUF[pat] << '\t' << (site_lnL - focalUF[pat]) << '\t' << (lnLikelihood + counts[pat]*(site_lnL - focalUF[pat])) << std::endl;
+
+#if defined(LOG_SITELIKES)
+			tmpf << '\t';
+			tmpf << pat << '\t';
+			tmpf << site_lnL << '\t';
 #endif
-			site_lnL -= focalUF[pat];
-			site_lnL -= otherUF[pat];
-#else
-#if defined(DEBUG_RECORD_SITELIKES)
-			lnLf << pat << '\t' << counts[pat] << '\t' << site_lnL << '\t' << (lnLikelihood + counts[pat]*site_lnL) << std::endl;
-#endif
-#endif
+
+			underflow_policy.correctSiteLike(site_lnL, pat, focalCondLike);
+			underflow_policy.correctSiteLike(site_lnL, pat, neighborCondLike);
 			if (store_site_likes)
 				site_likelihood.push_back(site_lnL);
 			lnLikelihood += counts[pat]*site_lnL;
+
+#if defined(LOG_SITELIKES)
+			tmpf << site_lnL << '\t';
+			tmpf << counts[pat] << '\t';
+			tmpf << lnLikelihood << std::endl;
+#endif
 			}
+		underflow_policy.correctLnLike(lnLikelihood, focalCondLike);
+		underflow_policy.correctLnLike(lnLikelihood, neighborCondLike);
+
+#if defined(LOG_SITELIKES)
+		tmpf << "0\t\t\t\t\t" << lnLikelihood << std::endl;
+#endif
 		}
 
-#if defined(DEBUG_RECORD_SITELIKES)
-		lnLf.close();
+#if defined(LOG_SITELIKES)
+	tmpf.close();
 #endif
 
-#if 0 // for debugging
-	std::ofstream doof("counts_patterns.txt");
-	std::vector<double>::iterator sit = site_likelihood.begin();
-	for (PatternMapType::iterator pit = pattern_map.begin(); pit != pattern_map.end(); ++pit, ++sit)
-		{
-		assert(sit != site_likelihood.end());
-		doof << str(boost::format("%12.5f\t%.1f\t|\t") % (*sit) % pit->second);
-		std::copy(pit->first.begin(), pit->first.end(), std::ostream_iterator<int>(doof, "\t")); 
-		doof << std::endl;
-		}
-	doof.close();
-#endif
+	//std::ofstream doof("counts_patterns.txt");
+	//std::vector<double>::iterator sit = site_likelihood.begin();
+	//for (PatternMapType::iterator pit = pattern_map.begin(); pit != pattern_map.end(); ++pit, ++sit)
+	//	{
+	//	assert(sit != site_likelihood.end());
+	//	doof << str(boost::format("%12.5f\t%.1f\t|\t") % (*sit) % pit->second);
+	//	std::copy(pit->first.begin(), pit->first.end(), std::ostream_iterator<int>(doof, "\t")); 
+	//	doof << std::endl;
+	//	}
+	//doof.close();
 
 	return lnLikelihood;
 	}

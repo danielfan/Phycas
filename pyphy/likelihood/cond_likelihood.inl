@@ -20,6 +20,7 @@ inline CondLikelihood::CondLikelihood(
   unsigned nrates,		/**< is the number of among-site relative rate categories */
   unsigned nstates)		/**< is the number of states */
   :
+  uf_sum(0),
   underflowExponVec(npatterns),
   numEdgesSinceUnderflowProtection(UINT_MAX),
   claVec(npatterns*nrates*nstates)
@@ -28,7 +29,6 @@ inline CondLikelihood::CondLikelihood(
 	uf = &underflowExponVec[0];
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns current value of the data member `numEdgesSinceUnderflowProtection'.
 */
@@ -45,7 +45,6 @@ inline void	CondLikelihood::setUnderflowNumEdges(
 	{
 	numEdgesSinceUnderflowProtection = n;
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns pointer to the conditional likelihood array stored by the vector data member `claVec'.
@@ -95,22 +94,29 @@ inline unsigned CondLikelihood::getUFSize() const
 	return (unsigned)underflowExponVec.size();
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
-|	Sets all elements in `underflowExponVec' to zero.
+|	Sets all elements in `underflowExponVec' to zero and sets `uf_sum' to 0 as well.
 */
 inline void CondLikelihood::zeroUF()
 	{
-	//std::vector<UnderflowType>::size_type sz = (std::vector<UnderflowType>::size_type)underflowExponVec.size();
+	uf_sum = 0;
 	underflowExponVec.assign(underflowExponVec.size(), 0);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Returns sum of all elements in `underflowExponVec'.
+|	Returns sum of underflow corrections over all sites (i.e. value of data member `uf_sum').
 */
-inline unsigned CondLikelihood::getUFSum() const
+inline UnderflowType CondLikelihood::getUFSum() const
 	{
-	return std::accumulate(underflowExponVec.begin(), underflowExponVec.end(), 0);
+	return uf_sum;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns reference to `uf_sum' data member.
+*/
+inline UnderflowType & CondLikelihood::getUFSumRef()
+	{
+	return uf_sum;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -123,7 +129,6 @@ inline std::string CondLikelihood::debugShowUF() const
 		s += str(boost::format("%d ") % (*it));
 	return s;
 	}
-#endif
 
 } //namespace phycas
 

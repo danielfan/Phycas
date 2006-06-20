@@ -257,6 +257,9 @@
 			<File
 				RelativePath="..\..\phylogeny\tree_manip.cpp">
 			</File>
+			<File
+				RelativePath="..\underflow_policy.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -414,6 +417,12 @@
 			</File>
 			<File
 				RelativePath="..\..\phylogeny\tree_manip.inl">
+			</File>
+			<File
+				RelativePath="..\underflow_policy.hpp">
+			</File>
+			<File
+				RelativePath="..\underflow_policy.inl">
 			</File>
 			<File
 				RelativePath="..\xlikelihood.hpp">

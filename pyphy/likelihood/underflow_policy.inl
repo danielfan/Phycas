@@ -1,0 +1,121 @@
+#if !defined(UNDERFLOW_POLICY_INL)
+#define UNDERFLOW_POLICY_INL
+
+#define SIMPLE
+//#define COMPLEX
+
+namespace phycas
+{
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets value of the data member `underflow_num_edges' to `nedges'. This is the number of edges to accumulate before 
+|	correcting for underflow. Assumes `nedges' is greater than zero. Often several hundred taxa are required before
+|	underflow becomes a problem, so a reasonable value for `underflow_num_edges' is 25.
+*/
+inline void SimpleUnderflowPolicy::setTriggerSensitivity(
+  unsigned nedges)		/**< is the number of edges to traverse before correcting for underflow */
+	{
+	assert(nedges > 0);
+	underflow_num_edges = nedges;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets value of data member `underflow_max_value' to `maxval'. The largest conditional likelihood for every pattern 
+|	will be adjusted to a value close to this. Suppose the largest conditional likelihood for pattern i was x. A factor 
+|	exp(f) is found such that x*exp(f) = `underflow_max_value'. The fractional component of f is then removed, yielding
+|	an unsigned int k, which is what is actually stored. The largest conditional likelihood for pattern i after the
+|	correction is thus x*exp(k), which will be less than or equal to `underflow_max_value'. Assumes `maxval' is greater
+|	than zero. A reasonable value for `underflow_max_value' is 10000.
+*/
+inline void SimpleUnderflowPolicy::setCorrectToValue(
+  double maxval)	/**< is the target value to which the largest conditional likelihood for any given pattern will be scaled */
+	{
+	assert(maxval > 0.0);
+	underflow_max_value = maxval;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Handles case of a node subtending two tips. In this case, the number of edges traversed is just two, and thus no
+|	corrective action is taken other than to set the number of underflow edges traversed to 2. The zeroUF member
+|	function of the supplied `cond_like' object is called, however, to ensure that the cumulative correction factor is 
+|	zero (this `cond_like' might have just been brought in from storage with some correction factor already in place).
+*/
+inline void SimpleUnderflowPolicy::twoTips(
+  CondLikelihood & cond_like) /**< is the conditional likelihood array to correct */
+  const
+	{
+	cond_like.setUnderflowNumEdges(2);
+	cond_like.zeroUF();
+
+#if defined(SIMPLE)
+	UnderflowType & uf_sum = cond_like.getUFSumRef();
+#endif
+	//std::ofstream doof("doofuf.txt", std::ios::out | std::ios::app);
+	//doof << "  nedges = " << cond_like.getUnderflowNumEdges() << std::endl;
+	//doof << "  uf_sum zeroed out" << std::endl;
+	//doof << "    check: uf_sum = " << uf_sum << std::endl;
+	//doof.close();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Obtains a pointer to the underflow array for `cond_like', then subtracts the value stored in that underflow array 
+|	for pattern `pat' from the site likelihood `site_like'.
+*/
+inline void SimpleUnderflowPolicy::correctSiteLike(
+  double & site_like,						/**< is the log-site-likelihood to correct */
+  unsigned pat,								/**< is the index of the pattern representing the site to correct */
+  ConstCondLikelihoodShPtr condlike_shptr)	/**< is the conditional likelihood array of the likelihood root node */
+  const
+	{
+#if defined(COMPLEX)
+	assert(condlike_shptr);
+	UnderflowType const * uf = condlike_shptr->getUF();
+	assert(uf != NULL);
+	site_like -= (double)uf[pat];
+#endif
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Obtains sum of underflow correction for all patterns in `cond_like', then subtracts that value from the 
+|	log-likelihood `ln_like'.
+*/
+inline void SimpleUnderflowPolicy::correctLnLike(
+  double & ln_like,							/**< is the log-likelihood to correct for underflow */
+  ConstCondLikelihoodShPtr condlike_shptr)	/**< is the conditional likelihood array of the likelihood root node */
+  const
+	{
+#if defined(SIMPLE)
+	assert(condlike_shptr);
+	UnderflowType ufsum = condlike_shptr->getUFSum();
+
+	//std::ofstream doof("doofuf.txt", std::ios::out | std::ios::app);
+	//doof << "  correctLnLike: uf_sum = " << ufsum << ", ln_like (before) = " << ln_like;
+
+	ln_like -= (double)ufsum;
+
+	//doof << ", ln_like (after) = " << ln_like << std::endl;
+	//doof.close();
+#endif
+
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the `num_rates', `num_patterns', and `num_states' data members to `nr', `np' and `ns', respectively. Assumes
+|	that all three values are greater than zero.
+*/
+inline void SimpleUnderflowPolicy::setDimensions(
+  unsigned np,	/**< is the number of patterns in the data */
+  unsigned nr, 	/**< is the number of relative rates used in modeling among-site rate variation */
+  unsigned ns)	/**< is the number of states */
+	{
+	assert(np > 0);
+	assert(nr > 0);
+	assert(ns > 0);
+	num_patterns = np;
+	num_rates = nr;
+	num_states = ns;
+	}
+
+} // namespace phycas
+
+#endif

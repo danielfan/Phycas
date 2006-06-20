@@ -238,12 +238,7 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("setHaveData", &TreeLikelihood::setHaveData)
 		.def("getNPatterns", &TreeLikelihood::getNPatterns)
 		.def("getLikelihoodRootNodeNum", &TreeLikelihood::getLikelihoodRootNodeNum)
-#if POLPY_NEWWAY
-		.def("setUnderflowNumEdges", &TreeLikelihood::setUnderflowNumEdges)
-		.def("getUnderflowNumEdges", &TreeLikelihood::getUnderflowNumEdges)
-		.def("setUnderflowMaxValue", &TreeLikelihood::setUnderflowMaxValue)
-		.def("getUnderflowMaxValue", &TreeLikelihood::getUnderflowMaxValue)
-#endif
+		.def("setUFNumEdges", &TreeLikelihood::setUFNumEdges)
 		;
 	class_<TipData, boost::noncopyable>("TipData", no_init)
 		.def("parentalCLAValid", &TipData::parentalCLAValid)

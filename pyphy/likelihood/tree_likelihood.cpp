@@ -13,9 +13,6 @@
 #include <numeric>
 #include "pyphy/phylogeny/edge_iterators.hpp"
 
-//#define DEBUG_RECORD_LNL
-//#define DEBUG_RECORD_SUMS
-
 namespace phycas
 {
 
@@ -27,6 +24,7 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 	{
 	if (nd.IsTip())
 		return;
+
 	assert(avoid != NULL);
 	//@MTH-NESCENT this const_cast should be safe because we aren't relying on const-ness of CLA's but it needs to be revisited
 	//@POL-NESCENT Mark, if we are going to immediately cast away the const on avoid, why do we need to make it const in the first place?
@@ -57,12 +55,6 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 		secondNeighbor = lChild->GetRightSib();
 		}
 	
-#if defined(DEBUG_RECORD_SUMS)
-	std::ofstream tmpf("uf_history.txt", std::ios::out | std::ios::app);
-	tmpf << "refreshCLA: firstNeighbor=" << firstNeighbor->GetNodeNumber() << ", secondNeighbor=" << secondNeighbor->GetNodeNumber() << std::endl;
-	tmpf.close();
-#endif
-
 	if (firstNeighbor->IsTip())
 		{
 		TipData & firstTD = *(firstNeighbor->GetTipData());
@@ -72,6 +64,13 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 			// 1. both neighbors are tips
 			TipData & secondTD = *(secondNeighbor->GetTipData());
 			calcPMatTranspose(secondTD.getTransposedPMatrices(), secondTD.getConstStateListPos(), secondNeighbor->GetEdgeLen());
+
+			//std::ofstream doof("doofuf.txt", std::ios::out | std::ios::app);
+			//doof << "refreshCLA -> calcCLATwoTips: firstNeighbor = " << firstNeighbor->GetNodeNumber();
+			//doof << ", secondNeighbor = " << secondNeighbor->GetNodeNumber();
+			//doof << std::endl;
+			//doof.close();
+
 			calcCLATwoTips(*ndCondLike, firstTD, secondTD);
 			}
 		else
@@ -81,6 +80,13 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 			calcPMat(secondID.getPMatrices(), secondNeighbor->GetEdgeLen());
 			CondLikelihoodShPtr secCL = getCondLikePtr(secondNeighbor, &nd);
 			ConstPMatrices secPMat = secondID.getConstPMatrices();
+
+			//std::ofstream doof("doofuf.txt", std::ios::out | std::ios::app);
+			//doof << "refreshCLA -> calcCLAOneTip: firstNeighbor = " << firstNeighbor->GetNodeNumber();
+			//doof << ", secondNeighbor = " << secondNeighbor->GetNodeNumber();
+			//doof << std::endl;
+			//doof.close();
+
 			calcCLAOneTip(*ndCondLike, firstTD, secPMat, *secCL);
 			}
 		}
@@ -95,6 +101,13 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 			// 3. first neighbor internal node, but second is a tip
 			TipData & secondTD = *(secondNeighbor->GetTipData());
 			calcPMatTranspose(secondTD.getTransposedPMatrices(), secondTD.getConstStateListPos(), secondNeighbor->GetEdgeLen());
+
+			//std::ofstream doof("doofuf.txt", std::ios::out | std::ios::app);
+			//doof << "refreshCLA -> calcCLAOneTip: firstNeighbor = " << firstNeighbor->GetNodeNumber();
+			//doof << ", secondNeighbor = " << secondNeighbor->GetNodeNumber();
+			//doof << std::endl;
+			//doof.close();
+
 			calcCLAOneTip(*ndCondLike, secondTD, firPMat, firCL);
 			}
 		else
@@ -104,6 +117,13 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 			calcPMat(secondID.getPMatrices(), secondNeighbor->GetEdgeLen());
 			const CondLikelihood & secCL = *getCondLikePtr(secondNeighbor, &nd);
 			ConstPMatrices secPMat = secondID.getConstPMatrices();
+
+			//std::ofstream doof("doofuf.txt", std::ios::out | std::ios::app);
+			//doof << "refreshCLA -> calcCLANoTips: firstNeighbor = " << firstNeighbor->GetNodeNumber();
+			//doof << ", secondNeighbor = " << secondNeighbor->GetNodeNumber();
+			//doof << std::endl;
+			//doof.close();
+
 			calcCLANoTips(*ndCondLike, firPMat, firCL, secPMat, secCL);
 			}
 		}
@@ -117,6 +137,12 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 				{
 				TipData & currTD = *(currNd->GetTipData());
 				calcPMatTranspose(currTD.getTransposedPMatrices(), currTD.getConstStateListPos(), currNd->GetEdgeLen());
+
+				//std::ofstream doof("doofuf.txt", std::ios::out | std::ios::app);
+				//doof << "refreshCLA -> conditionOnAdditionalTip: currNd = " << currNd->GetNodeNumber();
+				//doof << std::endl;
+				//doof.close();
+
 				conditionOnAdditionalTip(*ndCondLike, currTD);
 				}
 			else
@@ -125,6 +151,12 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 				calcPMat(currID.getPMatrices(), currNd->GetEdgeLen());
 				const CondLikelihood & currCL = *getCondLikePtr(currNd, &nd);
 				ConstPMatrices currPMat = currID.getConstPMatrices();
+
+				//std::ofstream doof("doofuf.txt", std::ios::out | std::ios::app);
+				//doof << "refreshCLA -> conditionOnAdditionalInternal: currNd = " << currNd->GetNodeNumber();
+				//doof << std::endl;
+				//doof.close();
+
 				conditionOnAdditionalInternal(*ndCondLike, currPMat, currCL);
 				}
 			}
@@ -932,20 +964,12 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 double TreeLikelihood::calcLnL(
   TreeShPtr t)
 	{
-#if defined(DEBUG_RECORD_LNL)
-	std::ofstream lnLf("calcLnL.txt", std::ios::out | std::ios::app);
-	bool clean_slate = false;
-#endif
-
 	// Compute likelihood using likelihood_root if specified
 	// Assume that if likelihood_root has been specified, then the necessary 
 	// CLA invalidations have already been performed.
 	TreeNode * nd = likelihood_root;
 	if (nd == NULL)
 		{
-#if defined(DEBUG_RECORD_LNL)
-		clean_slate = true;
-#endif
 		// If no likelihood_root has been specified, use the subroot node (and
 		// invalidate the entire tree to be safe)
 		nd = t->GetFirstPreorder();
@@ -967,28 +991,21 @@ double TreeLikelihood::calcLnL(
 		}
 
 	assert(nd);
-	//if (!nd->IsInternal())
-	//	{
-	//	startTreeViewer(t, "oops");
-	//	std::cerr << "oops" << std::endl;
-	//	}
 	assert(nd->IsInternal());
+
+	//startTreeViewer(t, "Before");
+	//std::ofstream doof;
+	//doof.open("doofuf.txt");
+	//doof << "calcLnL for nd = " << nd->GetNodeNumber() << std::endl;
+	//doof.close();
 
 	// Calculate log-likelihood using nd as the likelihood root
 	double lnL = calcLnLFromNode(*nd);
 
-#if defined(DEBUG_RECORD_SUMS)
-	startTreeViewer(t, str(boost::format("calcLnLFromNode(%d) = %.5f") % nd->GetNodeNumber() % lnL));
-#endif
-
-#if defined(DEBUG_RECORD_LNL)
-	if (clean_slate)
-		lnLf << "*";
-	//else
-	//	startTreeViewer(t, "In TreeLikelihood::calcLnL()");
-	lnLf << nd->GetNodeNumber() << '\t' << str(boost::format("%.5f") % lnL) << std::endl;
-	lnLf.close();
-#endif
+	//doof.open("doofuf.txt", std::ios::out | std::ios::app);
+	//doof << "lnL = " << str(boost::format("lnL = %.5f") % lnL) << std::endl;
+	//doof.close();
+	//startTreeViewer(t, str(boost::format("lnL = %.5f") % lnL));
 
 	return lnL;
 	}
@@ -1097,12 +1114,6 @@ double TreeLikelihood::calcLnLFromNode(
 		{
 		assert(!focal_node.IsTip());
 
-#if defined(DEBUG_RECORD_SUMS)
-		std::ofstream tmpf("uf_history.txt", std::ios::out | std::ios::app);
-		tmpf << "********************************************************" << std::endl;
-		tmpf << "calcLnLFromNode: focal_node=" << focal_node.GetNodeNumber() << std::endl;
-		tmpf.close();
-#endif
 		// valid_functor will return true if the conditional likelihood arrays pointing away from the
 		// focal_node are up-to-date, false if they need to be recomputed
 		NodeValidityChecker valid_functor = boost::bind(&TreeLikelihood::isValid, this, _1, _2);

@@ -159,6 +159,9 @@ class Phycas:
 
         # deprecated variables, defined here temporarily to root out old instances that need removing
         self.metropolis_weight = 0
+
+        # Variables associated with underflow protection                
+        self.uf_num_edges           = 50                 # number of edges to traverse before taking action to prevent underflow
         
         # Variables controlling the MCMC analysis and progress reporting
         self.random_seed            = 'auto'             # determines random number seed
@@ -527,6 +530,7 @@ class Phycas:
         """
         assert self.model, 'create Phycas.model before calling Phycas.setupLikelihood'
         self.likelihood = Likelihood.TreeLikelihood(self.model)
+        self.likelihood.setUFNumEdges(self.uf_num_edges)
 
     def readNexusFile(self, fn):            
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -1112,6 +1116,7 @@ if __name__ == '__main__':
         mcmc.report_every = 500
         mcmc.ls_move_weight = 100
         mcmc.ls_move_debug = False
+        mcmc.uf_num_edges = 1
         #raw_input('debug stop')
 
     mcmc.setup()
