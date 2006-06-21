@@ -46,6 +46,36 @@ inline void TreeLikelihood::setUFNumEdges(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Returns number of bytes allocated for each CLA. This equals sizeof(LikeFltType) times the product of the number of
+|	patterns, number of rates and number of states. Calls corresponding function of data member `cla_pool' to get the
+|	value returned.
+*/
+inline unsigned TreeLikelihood::bytesPerCLA() const
+	{
+	return cla_pool.bytesPerCLA();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the number of CondLikelihood objects created since the `cla_pool' data member was constructed, or since the
+|	last call to the function clearStack of `cla_pool', which resets the value to zero. Calls corresponding function of
+|	data member `cla_pool' to get the value returned.
+*/
+inline unsigned TreeLikelihood::numCLAsCreated() const
+	{
+	return cla_pool.numCLAsCreated();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the current number of CondLikelihood objects stored in `cla_pool'. The total number of CLAs currently
+|	checked out to the tree can be obtained as TreeLikelihood::numCLAsCreated() minus TreeLikelihood::numCLAsStored().
+|	Calls corresponding function of data member `cla_pool' to get the value returned.
+*/
+inline unsigned TreeLikelihood::numCLAsStored() const
+	{
+	return cla_pool.numCLAsStored();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Returns the current value of `likelihood_root'. See TreeLikelihood::useAsLikelihoodRoot for more information about
 |	the meaning of the likelihood root.
 */
@@ -295,6 +325,14 @@ inline void TreeLikelihood::recalcRelativeRates()
 	likelihood_rate_site.resize(num_rates*num_patterns, 0.0);
 	cla_pool.setCondLikeDimensions(num_patterns, num_rates, num_states);
 	underflow_policy.setDimensions(num_patterns, num_rates, num_states);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns the `cla_pool' data member.
+*/
+inline const CondLikelihoodStorage & TreeLikelihood::getCLAStorage() const
+	{
+	return cla_pool;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

@@ -9,6 +9,17 @@ namespace phycas
 */
 inline void NCatMove::accept()
 	{
+#if defined(OBSOLETE_DEBUGGING_CODE)
+	if (addcat_move_proposed)
+		{
+		std::cerr << "Accepting addcat move: num_gamma_rates after accept is " << model->num_gamma_rates << std::endl;
+		}
+	else
+		{
+		std::cerr << "Accepting delcat move: num_gamma_rates after accept is " << model->num_gamma_rates << std::endl;
+		}
+#endif
+
 	reset();
 	}
 

@@ -1,5 +1,3 @@
-//#define DEBUGGING_OUTPUT
-
 #include "phycas/force_include.h"
 #include "CipresCommlib/CipresDataMatrixHelper.h"
 #include "phycas/rand/probability_distribution.hpp"
@@ -10,6 +8,8 @@
 #include "pyphy/likelihood/ncat_move.hpp"
 #include "pyphy/phylogeny/basic_tree.hpp"
 #include "pyphy/phylogeny/tree_manip.hpp"
+
+//#define SHOW_DEBUGGING_OUTPUT
 
 using namespace phycas;
 
@@ -90,6 +90,31 @@ void NCatMove::proposeNewState()
 			ln_hastings += std::log(phi);
 		}
 
+	// If number of rates has increased beyond the current capacity of CLAs, be sure to 
+	// store all CLAs checked out to the tree now so that they will be deleted when  
+	// likelihood->cla_pool.clearStack() is called (in the call to recalcRelativeRates below)
+	unsigned new_nr = model->getNGammaRates();
+	const CondLikelihoodStorage & clapool = likelihood->getCLAStorage();
+	unsigned old_nr = clapool.getNumRates();
+
+#if defined(OBSOLETE_DEBUGGING_CODE)
+	std::cerr << "\n### Checking whether need to recall all CLAs from tree:"  << std::endl;
+	std::cerr << "###   new_nr = " << new_nr << std::endl;
+	std::cerr << "###   old_nr = " << old_nr << std::endl;
+#endif
+
+	if (new_nr > old_nr)
+		{
+#if defined(OBSOLETE_DEBUGGING_CODE)
+		std::cerr << "###   new_nr > old_nr: recalling all CLAs from tree" << std::endl;
+#endif
+		likelihood->storeAllCLAs(tree);
+		}
+#if defined(OBSOLETE_DEBUGGING_CODE)
+	else
+		std::cerr << "###   new_nr <= old_nr: no CLAs recalled" << std::endl;
+#endif
+
 	// Renormalize the rates and probs so that we are ready for next likelihood calculation
 	likelihood->recalcRelativeRates();
 
@@ -136,6 +161,7 @@ void NCatMove::proposeAddCatMove()
 	tmp_prob_iter = model->gamma_rate_probs.begin() + offset;
 
 	// Choose a new category probability from the category probability prior distribution
+
 	assert(cat_prob_prior);
 	tmp_prob = cat_prob_prior->Sample();
 
@@ -147,6 +173,7 @@ void NCatMove::proposeAddCatMove()
 
 	// Fix num_gamma_rates to reflect changes
 	model->num_gamma_rates = (unsigned)model->gamma_rates_unnorm.size();
+
 	assert(model->num_gamma_rates == model->gamma_rate_probs.size());
 	assert(model->num_gamma_rates == ncat_after);
 
@@ -158,11 +185,16 @@ void NCatMove::proposeAddCatMove()
 	std::cerr << "  tmp_prob   = " << tmp_prob << std::endl;
 	std::cerr << "  rate_left  = " << rate_left << std::endl;
 	std::cerr << "  rate_right = " << rate_right << std::endl;
+	std::cerr << "  ncat_before = " << ncat_before << std::endl;
+	std::cerr << "  ncat_after  = " << ncat_after << std::endl;
+	std::cerr << "  model->num_gamma_rates         = " << model->num_gamma_rates << std::endl;
+	std::cerr << "  model->gamma_rate_probs.size() = " << model->gamma_rate_probs.size() << std::endl;
 	std::cerr << "  Unnormalized rates and probs after addcat:" << std::endl;
 	for (unsigned i = 0; i < ncat_after; ++i)
 		{
 		std::cerr << str(boost::format("  %12.5f %12.5f") % model->gamma_rates_unnorm[i] % model->gamma_rate_probs[i])<< std::endl;
 		}
+	std::cerr << "~~~~~~~~~~~~~~~~~~" << std::endl;
 #endif
 	}
 
@@ -202,6 +234,7 @@ void NCatMove::proposeDelCatMove()
 
 	// Fix num_gamma_rates to reflect changes
 	model->num_gamma_rates = (unsigned)model->gamma_rates_unnorm.size();
+
 	assert(model->num_gamma_rates == model->gamma_rate_probs.size());
 	assert(model->num_gamma_rates == ncat_after);
 
@@ -235,6 +268,10 @@ void NCatMove::revert()
 
 		// Delete prob just inserted
 		model->gamma_rate_probs.erase(tmp_prob_iter);
+
+#if defined(OBSOLETE_DEBUGGING_CODE)
+		std::cerr << "Reverting addcat move: after revert, ";
+#endif
 		}
 	else
 		{
@@ -243,10 +280,19 @@ void NCatMove::revert()
 
 		// Reinsert prob at its original location
 		model->gamma_rate_probs.insert(tmp_prob_iter, tmp_prob);
+
+#if defined(OBSOLETE_DEBUGGING_CODE)
+		std::cerr << "Reverting delcat move: after revert, ";
+#endif
 		}
 
 	// Fix num_gamma_rates to reflect changes
 	model->num_gamma_rates = (unsigned)model->gamma_rates_unnorm.size();
+
+#if defined(OBSOLETE_DEBUGGING_CODE)
+	std::cerr << "num_gamma_rates is " << model->num_gamma_rates << std::endl;
+#endif
+
 	assert(model->num_gamma_rates == model->gamma_rate_probs.size());
 	assert(model->num_gamma_rates == ncat_before);
 
@@ -272,6 +318,15 @@ void NCatMove::update()
 	double prev_ln_like = p->getLastLnLike();
 
 	proposeNewState();
+
+#if defined(OBSOLETE_DEBUGGING_CODE)
+	const CondLikelihoodStorage & clapool = likelihood->getCLAStorage();
+	unsigned created = clapool.numCLAsCreated();
+	unsigned stored = clapool.numCLAsStored();
+	unsigned kbytes = created*clapool.bytesPerCLA()/1024;
+	std::string msg = str(boost::format("%s: %d evals, %d stored, %d in tree, %d total KB allocated") % (addcat_move_proposed ? "addcat" : "delcat") % likelihood->getNEvals() % stored % (created - stored) % kbytes);
+	std::cerr << msg << std::endl;
+#endif
 
 	likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
 	double curr_ln_like		= likelihood->calcLnL(tree);

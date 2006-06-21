@@ -87,6 +87,13 @@ class TreeLikelihood
 		bool							discardCacheBothEnds(TreeNode * ref_nd, TreeNode * unused = NULL);
 		void							restoreFromCacheAwayFromNode(TreeNode & focalNode);
 		void							discardCacheAwayFromNode(TreeNode & focalNode);
+		
+		const CondLikelihoodStorage &	getCLAStorage() const;
+		unsigned						bytesPerCLA() const;
+		unsigned						numCLAsCreated() const;
+		unsigned						numCLAsStored() const;
+
+		TreeNode *						storeAllCLAs(TreeShPtr t);
 
 		bool							isValid(const TreeNode *focal, const TreeNode *avoidNd);
 		void 							refreshCLA(TreeNode & nd, const TreeNode * avoid);

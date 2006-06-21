@@ -32,10 +32,6 @@ double MCMCUpdater::recalcLike()
 */
 double MCMCUpdater::getLnPrior() const
 	{
-	//POL temporary!
-	//if (dynamic_cast<EdgeLenMasterParam *>((MCMCUpdater *)this))
-	//	std::cerr << "~~~~   " << curr_ln_prior << " (" << getName() << ")" << std::endl;
-
 	return curr_ln_prior;
 	}
 

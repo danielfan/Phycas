@@ -937,7 +937,13 @@ class Phycas:
                     #    self.bush_move.viewProposedMove(True)
                     p.update()
             if self.verbose and (cycle + 1) % self.report_every == 0:
-                print 'cycle = %d, lnL = %.5f' % (cycle + 1, self.chain_manager.getLastLnLike())
+                msg = 'cycle = %d, lnL = %.5f' % (cycle + 1, self.chain_manager.getLastLnLike())
+                if self.use_flex_model:
+                    bytes_per_cla = self.likelihood.bytesPerCLA()
+                    ncreated = self.likelihood.numCLAsCreated()
+                    megabytes = ncreated*bytes_per_cla//1048576
+                    msg += ', %d rates, %d MB in %d CLAs' % (self.model.getNGammaRates(),megabytes,ncreated)
+                print msg
                 #if self.use_tree_viewer and self.tree_viewer:
                 #    self.tree_viewer.refresh('Cycle %d' % (cycle + 1))
             if (cycle + 1) % self.sample_every == 0:

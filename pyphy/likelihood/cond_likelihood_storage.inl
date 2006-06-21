@@ -1,6 +1,8 @@
 #if ! defined(COND_LIKELIHOOD_STORAGE_INL)
 #define COND_LIKELIHOOD_STORAGE_INL
 
+#include "pyphy/likelihood/xlikelihood.hpp"
+
 namespace phycas
 {
 
@@ -12,7 +14,8 @@ inline CondLikelihoodStorage::CondLikelihoodStorage()
   num_patterns(0), 
   num_rates(0), 
   num_states(0), 
-  realloc_min(1)
+  realloc_min(1),
+  num_created(0)
 	{
 	}
 
@@ -22,6 +25,60 @@ inline CondLikelihoodStorage::CondLikelihoodStorage()
 inline CondLikelihoodStorage::~CondLikelihoodStorage()
 	{
 	clearStack();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the value of the data member `num_patterns', which holds the number of patterns used in determining the size
+|	of newly-created CondLikelihood objects.
+*/
+inline unsigned CondLikelihoodStorage::getNumPatterns() const
+	{
+	return num_patterns;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the value of the data member `num_rates', which holds the number of rates used in determining the size of
+|	newly-created CondLikelihood objects.
+*/
+inline unsigned CondLikelihoodStorage::getNumRates() const
+	{
+	return num_rates;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the value of the data member `num_states', which holds the number of states used in determining the size of
+|	newly-created CondLikelihood objects.
+*/
+inline unsigned CondLikelihoodStorage::getNumStates() const
+	{
+	return num_states;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns number of bytes allocated for each CLA. This equals sizeof(LikeFltType) times the product of the number of
+|	patterns, number of rates and number of states.
+*/
+inline unsigned CondLikelihoodStorage::bytesPerCLA() const
+	{
+	return (unsigned)(num_patterns*num_rates*num_states*sizeof(LikeFltType));
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns value of the data member `num_created', which keeps track of the number of CondLikelihood objects created 
+|	since this object was constructed, or since the last call to clearStack, which resets `num_created' to zero.
+*/
+inline unsigned CondLikelihoodStorage::numCLAsCreated() const
+	{
+	return num_created;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the current number of elements stored in the data member `cl_stack'. The total number of CLAs currently
+|	checked out to the tree can be obtained as `num_created' minus the value returned by this function.
+*/
+inline unsigned CondLikelihoodStorage::numCLAsStored() const
+	{
+	return (unsigned)cl_stack.size();
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -52,6 +109,14 @@ inline CondLikelihoodShPtr CondLikelihoodStorage::getCondLikelihood()
 
 	CondLikelihoodShPtr cl_ptr = cl_stack.top();
 	cl_stack.pop();
+
+#if defined(OBSOLETE_DEBUGGING_CODE)
+	unsigned bytes = cl_ptr->getCLASize();
+	unsigned expected_bytes = num_patterns*num_rates*num_states;
+	if (bytes < expected_bytes)
+		std::cerr << "***** bad, Bad, BAD! supplying CLA of length " << bytes << ", which is shorter than it needs to be (" << expected_bytes << ")" << std::endl;
+#endif
+
 	return cl_ptr;
 	}
 
@@ -63,6 +128,14 @@ inline void CondLikelihoodStorage::putCondLikelihood(CondLikelihoodShPtr p)
 	assert(num_patterns > 0);
 	assert(num_rates > 0);
 	assert(num_states > 0);
+
+#if defined(OBSOLETE_DEBUGGING_CODE)
+	unsigned bytes = p->getCLASize();
+	unsigned expected_bytes = num_patterns*num_rates*num_states;
+	if (bytes < expected_bytes)
+		std::cerr << "***** bad, Bad, BAD! storing CLA of length " << bytes << ", which is shorter than the current expected length (" << expected_bytes << ")" << std::endl;
+#endif
+
 	cl_stack.push(p);
 	}
 
@@ -83,24 +156,60 @@ inline void CondLikelihoodStorage::clearStack()
 	{
 	while (!cl_stack.empty())
 		cl_stack.pop();
+	num_created = 0;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the data members `num_patterns', `num_rates' and `num_states', which determine the dimensions of all 
-|	CondLikelihood objects stored. If the `cl_stack' is not currently empty and if any one of `np', `nr' or `ns' differ
-|	from their corresponding CondLikelihoodStorage data members, all existing objects in `cl_stack' are deleted.
+|	CondLikelihood objects stored. If the `cl_stack' is not currently empty and if the new conditional likelihood array
+|	length is greater than the current length, all existing objects in `cl_stack' are deleted so that CLAs supplied to
+|	the tree in the future will be at least the minimum length needed. Because it is critical that CLAs already checked
+|	out to a tree be removed if the new length is longer than the old length (otherwise, CLAs that are too short will 
+|	be used in the future), this function also checks to make sure there are no CLAs currently checked out. If there are
+|	checked out CLAs, an XLikelihood exception is thrown. This function has no effect unless the supplied arguments
+|	imply that newly-created CLAs will be longer than the existing ones. It is somewhat wastefull to leave in CLAs that
+|	are longer than they need to be, but perhaps more wasteful to continually recall and delete all existing CLAs just
+|	to ensure that their length is exactly correct.
 */
 inline void CondLikelihoodStorage::setCondLikeDimensions(unsigned np, unsigned nr, unsigned ns)
 	{
 	assert(np > 0);
 	assert(nr > 0);
 	assert(ns > 0);
-	bool changed = ((np != num_patterns) || (nr != num_rates) || (ns != num_states));
-	if (changed)
+	unsigned newlen = np*nr*ns;
+	unsigned oldlen = num_patterns*num_rates*num_states;
+
+#if defined(OBSOLETE_DEBUGGING_CODE)
+	std::cerr << "\n### Checking whether need to clear cl_stack:"  << std::endl;
+	std::cerr << "###   newlen          = " << newlen << std::endl;
+	std::cerr << "###     np            = " << np << std::endl;
+	std::cerr << "###     nr            = " << nr << std::endl;
+	std::cerr << "###     ns            = " << ns << std::endl;
+	std::cerr << "###   oldlen          = " << oldlen << std::endl;
+	std::cerr << "###     num_patterns  = " << num_patterns << std::endl;
+	std::cerr << "###     num_rates     = " << num_rates << std::endl;
+	std::cerr << "###     num_states    = " << num_states << std::endl;
+#endif
+
+	//bool changed = ((np != num_patterns) || (nr != num_rates) || (ns != num_states));
+	//if (changed)
+	if (newlen > oldlen)
+		{
+#if defined(OBSOLETE_DEBUGGING_CODE)
+		std::cerr << "###   newlen > oldlen: cl_stack will be cleared" << std::endl;
+#endif
+		unsigned checkouts = num_created - cl_stack.size();
+		if (checkouts > 0)
+			throw XLikelihood("number of among-site rates increased, but some shorter conditional likelihood arrays remain in the tree");
 		clearStack();
-	num_patterns = np;
-	num_rates = nr;
-	num_states = ns;
+		num_patterns = np;
+		num_rates = nr;
+		num_states = ns;
+		}
+#if defined(OBSOLETE_DEBUGGING_CODE)
+	else
+		std::cerr << "###   newlen <= oldlen: cl_stack will be left alone" << std::endl;
+#endif
 	}
 
 } //namespace phycas

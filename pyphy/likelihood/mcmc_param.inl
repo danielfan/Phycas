@@ -244,7 +244,9 @@ inline FlexProbParam::FlexProbParam(
 inline void FlexProbParam::setLot(LotShPtr r)
 	{
 	rng = r;
+#if defined(OBSOLETE_DEBUGGING_CODE)
 	std::cerr << "\n\n**** init seed for rng inside FlexProbParam = " << rng->GetInitSeed() << " ****\n" << std::endl;
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

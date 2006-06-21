@@ -173,49 +173,53 @@ bool TreeLikelihood::invalidateBothEndsDiscardCache(TreeNode * ref_nd, TreeNode 
 		{
 		// Tip nodes have only parental CLAs
 		TipData * td = ref_nd->GetTipData();
-
-		// Invalidate the parental CLAs if they exist
-		if (td->parWorkingCLA)
+		if (td != NULL)
 			{
-			cla_pool.putCondLikelihood(td->parWorkingCLA);
-			td->parWorkingCLA.reset();
-			}
-		// Remove cached parental CLAs if they exist
-		if (td->parCachedCLA)
-			{
-			cla_pool.putCondLikelihood(td->parCachedCLA);
-			td->parCachedCLA.reset();
+			// Invalidate the parental CLAs if they exist
+			if (td->parWorkingCLA)
+				{
+				cla_pool.putCondLikelihood(td->parWorkingCLA);
+				td->parWorkingCLA.reset();
+				}
+			// Remove cached parental CLAs if they exist
+			if (td->parCachedCLA)
+				{
+				cla_pool.putCondLikelihood(td->parCachedCLA);
+				td->parCachedCLA.reset();
+				}
 			}
 		}
 	else
 		{
 		// Internal nodes have both parental and filial CLAs
 		InternalData * id = ref_nd->GetInternalData();
+		if (id != NULL)
+			{
+			// Invalidate the parental CLAs if they exist
+			if (id->parWorkingCLA)
+				{
+				cla_pool.putCondLikelihood(id->parWorkingCLA);
+				id->parWorkingCLA.reset();
+				}
+			// Remove cached parental CLAs if they exist
+			if (id->parCachedCLA)
+				{
+				cla_pool.putCondLikelihood(id->parCachedCLA);
+				id->parCachedCLA.reset();
+				}
 
-		// Invalidate the parental CLAs if they exist
-		if (id->parWorkingCLA)
-			{
-			cla_pool.putCondLikelihood(id->parWorkingCLA);
-			id->parWorkingCLA.reset();
-			}
-		// Remove cached parental CLAs if they exist
-		if (id->parCachedCLA)
-			{
-			cla_pool.putCondLikelihood(id->parCachedCLA);
-			id->parCachedCLA.reset();
-			}
-
-		// Invalidate the filial CLAs if they exist
-		if (id->childWorkingCLA)
-			{
-			cla_pool.putCondLikelihood(id->childWorkingCLA);
-			id->childWorkingCLA.reset();
-			}
-		// Remove cached filial CLAs if they exist
-		if (id->childCachedCLA)
-			{
-			cla_pool.putCondLikelihood(id->childCachedCLA);
-			id->childCachedCLA.reset();
+			// Invalidate the filial CLAs if they exist
+			if (id->childWorkingCLA)
+				{
+				cla_pool.putCondLikelihood(id->childWorkingCLA);
+				id->childWorkingCLA.reset();
+				}
+			// Remove cached filial CLAs if they exist
+			if (id->childCachedCLA)
+				{
+				cla_pool.putCondLikelihood(id->childCachedCLA);
+				id->childCachedCLA.reset();
+				}
 			}
 		}
 
@@ -915,6 +919,31 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Stores all CondLikelihood objects stored in TipData or InternalData structures. This will require all CLAs to be
+|	recomputed the next time the likelihood needs to be computed. Returns the subroot node (only child of root node).
+*/
+TreeNode * TreeLikelihood::storeAllCLAs(
+  TreeShPtr t)				/**< is the tree from which all CLAs are to be removed */
+	{
+	// Start at the root node
+	TreeNode * nd = t->GetFirstPreorder();
+	assert(nd);
+
+	// Move to the subroot node
+	nd = nd->GetNextPreorder();
+	assert(nd);
+
+	// Invalidate (and do not cache) all CLAs from the tree. This will require all CLAs to be recomputed 
+	// when the likelihood is computed using the subroot as the likelihood root. This path should be taken
+	// if a parameter is changed that invalidates the entire tree.
+	NodeValidityChecker validFunctor = boost::bind(&TreeLikelihood::invalidateBothEndsDiscardCache, this, _1, _2);
+	effective_postorder_edge_iterator(nd, validFunctor); // constructor does all the work we need
+	invalidateBothEndsDiscardCache(nd);
+
+	return nd;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	This is the function that needs to be called to recompute the log-likelihood. If `likelihood_root' is not NULL, 
 |	the calculation will use that node as the root of the likelihood calculation, and it will be assumed that all
 |	conditional likelihood arrays (CLAs) are correctly calculated or have been invalidated if they need to be 
@@ -930,6 +959,7 @@ double TreeLikelihood::calcLnL(
 	TreeNode * nd = likelihood_root;
 	if (nd == NULL)
 		{
+#if 0
 		// If no likelihood_root has been specified, use the subroot node (and
 		// invalidate the entire tree to be safe)
 		nd = t->GetFirstPreorder();
@@ -948,6 +978,13 @@ double TreeLikelihood::calcLnL(
 		NodeValidityChecker validFunctor = boost::bind(&TreeLikelihood::invalidateBothEndsDiscardCache, this, _1, _2);
 		effective_postorder_edge_iterator(nd, validFunctor); // constructor does all the work we need
 		invalidateBothEndsDiscardCache(nd);
+#else
+		// If no likelihood_root has been specified, invalidate the entire tree to be safe
+		nd = storeAllCLAs(t);
+
+		// The subroot node is the new likelihood_root
+		likelihood_root = nd;
+#endif
 		}
 
 	assert(nd);
@@ -1073,7 +1110,9 @@ double TreeLikelihood::calcLnLFromNode(
 		effective_postorder_edge_iterator iter(&focal_node, valid_functor);
 		effective_postorder_edge_iterator iter_end;
 		for (; iter != iter_end; ++iter)
+			{
 			refreshCLA(*iter->first, iter->second);
+			}
 
 		// We have now brought all neighboring CLAs up-to-date, so we can now call harvestLnL to
 		// compute the likelihood
@@ -1356,7 +1395,9 @@ void TreeLikelihood::prepareForLikelihood(
 	TreeNode::TipDataDeleter		td_deleter	= &deallocateTipData;
 	TreeNode::InternalDataDeleter	cl_deleter	= &deallocateInternalData;
 
-	//std::cerr << "In TreeLikelihood::prepareForLikelihood..." << std::endl; //POL temp
+	// Put all existing conditional likelihood arrays already back into storage
+	//storeAllCLAs(t);
+	//cla_pool.clearStack();	//@POL this here only because prepareForLikelihood called in NCatMove::proposeNewState when ncat is increased
 
 	for (preorder_iterator nd = t->begin(); nd != t->end(); ++nd)
 		{
