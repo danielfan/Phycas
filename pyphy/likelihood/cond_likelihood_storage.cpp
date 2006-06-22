@@ -19,9 +19,6 @@ void CondLikelihoodStorage::fillTo(unsigned capacity)
 		cl_stack.push(CondLikelihoodShPtr(new CondLikelihood(num_patterns, num_rates, num_states)));
 		num_created++;
 		}
-#if defined(OBSOLETE_DEBUGGING_CODE)
-	std::cerr << "num_created is now " << num_created << std::endl;
-#endif
 	}
 
 } // namespace phycas

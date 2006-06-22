@@ -93,27 +93,30 @@ void NCatMove::proposeNewState()
 	// If number of rates has increased beyond the current capacity of CLAs, be sure to 
 	// store all CLAs checked out to the tree now so that they will be deleted when  
 	// likelihood->cla_pool.clearStack() is called (in the call to recalcRelativeRates below)
-	unsigned new_nr = model->getNGammaRates();
+	unsigned new_nr = model->getNRatesTotal();
 	const CondLikelihoodStorage & clapool = likelihood->getCLAStorage();
 	unsigned old_nr = clapool.getNumRates();
 
-#if defined(OBSOLETE_DEBUGGING_CODE)
-	std::cerr << "\n### Checking whether need to recall all CLAs from tree:"  << std::endl;
-	std::cerr << "###   new_nr = " << new_nr << std::endl;
-	std::cerr << "###   old_nr = " << old_nr << std::endl;
-#endif
+	if (old_nr < ncat_max)
+		{
+		//@POL temporary!
+		std::cerr << "old_nr < ncat_max (" << old_nr << " > " << ncat_max << "), but they should be the same, no?" << std::endl;
+		}
 
 	if (new_nr > old_nr)
 		{
-#if defined(OBSOLETE_DEBUGGING_CODE)
-		std::cerr << "###   new_nr > old_nr: recalling all CLAs from tree" << std::endl;
-#endif
+		//@POL temporary!
+		std::cerr << "new_nr > old_nr (" << new_nr << " > " << old_nr << "), so recalling all CLAs from tree" << std::endl;
+
 		likelihood->storeAllCLAs(tree);
+
+		//@POL temporary!
+		std::cerr << "Checking tree for CLAs" << std::endl;
+		if (likelihood->debugCheckCLAsRemainInTree(tree))
+			std::cerr << "debugCheckCLAsRemainInTree found dangling CLAs in tree" << std::endl;
+		else
+			std::cerr << "debugCheckCLAsRemainInTree found no CLAs in tree" << std::endl;
 		}
-#if defined(OBSOLETE_DEBUGGING_CODE)
-	else
-		std::cerr << "###   new_nr <= old_nr: no CLAs recalled" << std::endl;
-#endif
 
 	// Renormalize the rates and probs so that we are ready for next likelihood calculation
 	likelihood->recalcRelativeRates();
@@ -124,6 +127,10 @@ void NCatMove::proposeNewState()
 	if (ncat_after > ncat_max)
 		{
 		ncat_max = ncat_after;
+
+		//@POL temporary!
+		std::cerr << "Calling prepareForLikelihood in NCatMove::proposeNewState..." << std::endl;
+
 		likelihood->prepareForLikelihood(tree);
 		}
 	}
@@ -268,10 +275,6 @@ void NCatMove::revert()
 
 		// Delete prob just inserted
 		model->gamma_rate_probs.erase(tmp_prob_iter);
-
-#if defined(OBSOLETE_DEBUGGING_CODE)
-		std::cerr << "Reverting addcat move: after revert, ";
-#endif
 		}
 	else
 		{
@@ -280,18 +283,10 @@ void NCatMove::revert()
 
 		// Reinsert prob at its original location
 		model->gamma_rate_probs.insert(tmp_prob_iter, tmp_prob);
-
-#if defined(OBSOLETE_DEBUGGING_CODE)
-		std::cerr << "Reverting delcat move: after revert, ";
-#endif
 		}
 
 	// Fix num_gamma_rates to reflect changes
 	model->num_gamma_rates = (unsigned)model->gamma_rates_unnorm.size();
-
-#if defined(OBSOLETE_DEBUGGING_CODE)
-	std::cerr << "num_gamma_rates is " << model->num_gamma_rates << std::endl;
-#endif
 
 	assert(model->num_gamma_rates == model->gamma_rate_probs.size());
 	assert(model->num_gamma_rates == ncat_before);
@@ -319,7 +314,7 @@ void NCatMove::update()
 
 	proposeNewState();
 
-#if defined(OBSOLETE_DEBUGGING_CODE)
+#if 1 || defined(OBSOLETE_DEBUGGING_CODE)
 	const CondLikelihoodStorage & clapool = likelihood->getCLAStorage();
 	unsigned created = clapool.numCLAsCreated();
 	unsigned stored = clapool.numCLAsStored();
@@ -406,7 +401,7 @@ void NCatMove::update()
 
 	if (ln_accept_ratio >= 0.0 || std::log(u) <= ln_accept_ratio)
 		{
-#if defined(SHOW_DEBUGGING_OUTPUT)
+#if 1 || defined(SHOW_DEBUGGING_OUTPUT)
 		std::cerr << "  " << (addcat_move_proposed ? "ADDCAT" : "DELCAT") << " move accepted" << std::endl;
 #endif
 
@@ -416,7 +411,7 @@ void NCatMove::update()
 		}
 	else
 		{
-#if defined(SHOW_DEBUGGING_OUTPUT)
+#if 1 || defined(SHOW_DEBUGGING_OUTPUT)
 		std::cerr << "  " << (addcat_move_proposed ? "ADDCAT" : "DELCAT") << " move rejected" << std::endl;
 #endif
 

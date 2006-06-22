@@ -944,6 +944,47 @@ TreeNode * TreeLikelihood::storeAllCLAs(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Sanity check to make sure TreeLikelihood::storeAllCLAs really has stored all CLAs. Returns true if any CLAs are 
+|	found, false if no CLAs are found (not even in cache positions).
+*/
+bool TreeLikelihood::debugCheckCLAsRemainInTree(
+  TreeShPtr t) const	/**< is the tree to check */
+	{
+	for (TreeNode * nd = t->GetFirstPreorder(); nd != NULL; nd = nd->GetNextPreorder())
+		{
+		if (nd->IsTip())
+			{
+			TipData * td = nd->GetTipData();
+			if (td != NULL)
+				{
+				if (td->parWorkingCLA)
+					return true;
+				if (td->parCachedCLA)
+					return true;
+				}
+			}
+		else
+			{
+			InternalData * id = nd->GetInternalData();
+			if (id != NULL)
+				{
+				if (id->parWorkingCLA)
+					return true;
+				if (id->parCachedCLA)
+					return true;
+
+				if (id->childWorkingCLA)
+					return true;
+				if (id->childCachedCLA)
+					return true;
+				}
+			}
+		}	// preorder loop over all nodes
+
+	return false;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	This is the function that needs to be called to recompute the log-likelihood. If `likelihood_root' is not NULL, 
 |	the calculation will use that node as the root of the likelihood calculation, and it will be assumed that all
 |	conditional likelihood arrays (CLAs) are correctly calculated or have been invalidated if they need to be 

@@ -94,6 +94,7 @@ class TreeLikelihood
 		unsigned						numCLAsStored() const;
 
 		TreeNode *						storeAllCLAs(TreeShPtr t);
+		bool							debugCheckCLAsRemainInTree(TreeShPtr t) const;
 
 		bool							isValid(const TreeNode *focal, const TreeNode *avoidNd);
 		void 							refreshCLA(TreeNode & nd, const TreeNode * avoid);
