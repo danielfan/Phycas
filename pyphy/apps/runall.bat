@@ -66,23 +66,6 @@ if errorlevel 1 (goto abort)
 cd ..
 
 echo.
-echo **************************
-echo *** Running MCMCSimple ***
-echo **************************
-echo. >> runall_diffs.txt
-echo ************************** >> runall_diffs.txt
-echo *** Running MCMCSimple *** >> runall_diffs.txt
-echo ************************** >> runall_diffs.txt
-echo. >> runall_diffs.txt
-cd MCMCSimple
-start /low /b /wait python MCMCSimple.py
-fc nyldna4.nex.p reference_output\nyldna4.nex.p >> ..\runall_diffs.txt 
-if errorlevel 1 (goto abort)
-fc nyldna4.nex.t reference_output\nyldna4.nex.t >> ..\runall_diffs.txt
-if errorlevel 1 (goto abort)
-cd ..
-
-echo.
 echo **********************
 echo *** Running Phycas ***
 echo **********************

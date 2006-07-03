@@ -79,25 +79,6 @@ fi
 cd ..
 
 echo " " >> runall_diffs.txt
-echo "**************************" >> runall_diffs.txt
-echo "*** Running MCMCSimple ***" >> runall_diffs.txt
-echo "**************************" >> runall_diffs.txt
-echo " " >> runall_diffs.txt
-cd MCMCSimple
-python MCMCSimple.py
-diff nyldna4.nex.p reference_output/nyldna4.nex.p >> ../runall_diffs.txt 
-if [ $? -ne 0 ] 
-then
-  abort
-fi
-diff nyldna4.nex.t reference_output/nyldna4.nex.t >> ../runall_diffs.txt
-if [ $? -ne 0 ] 
-then
-  abort
-fi
-cd ..
-
-echo " " >> runall_diffs.txt
 echo "**********************" >> runall_diffs.txt
 echo "*** Running Phycas ***" >> runall_diffs.txt
 echo "**********************" >> runall_diffs.txt

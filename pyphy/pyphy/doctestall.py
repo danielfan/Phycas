@@ -26,7 +26,6 @@ import doctest
 #doctest.testfile('../apps/FixedParams/FixedParams.py')
 #doctest.testfile('../apps/GelfandGhosh/GelfandGhosh.py')
 #doctest.testfile('../apps/LikelihoodTest/LikelihoodTest.py')
-doctest.testfile('../apps/MCMCSimple/MCMCSimple.py')
 doctest.testfile('../apps/Phycas/Phycas.py')
 #doctest.testfile('../apps/Polytomies/Polytomies.py')
 #doctest.testfile('../apps/Simulator/Simulator.py')

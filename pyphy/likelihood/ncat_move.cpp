@@ -97,25 +97,28 @@ void NCatMove::proposeNewState()
 	const CondLikelihoodStorage & clapool = likelihood->getCLAStorage();
 	unsigned old_nr = clapool.getNumRates();
 
+#if defined(OBSOLETE_DEBUGGING_CODE)
 	if (old_nr < ncat_max)
 		{
-		//@POL temporary!
 		std::cerr << "old_nr < ncat_max (" << old_nr << " > " << ncat_max << "), but they should be the same, no?" << std::endl;
 		}
+#endif
 
 	if (new_nr > old_nr)
 		{
-		//@POL temporary!
+#if defined(OBSOLETE_DEBUGGING_CODE)
 		std::cerr << "new_nr > old_nr (" << new_nr << " > " << old_nr << "), so recalling all CLAs from tree" << std::endl;
+#endif
 
 		likelihood->storeAllCLAs(tree);
 
-		//@POL temporary!
+#if defined(OBSOLETE_DEBUGGING_CODE)
 		std::cerr << "Checking tree for CLAs" << std::endl;
 		if (likelihood->debugCheckCLAsRemainInTree(tree))
 			std::cerr << "debugCheckCLAsRemainInTree found dangling CLAs in tree" << std::endl;
 		else
 			std::cerr << "debugCheckCLAsRemainInTree found no CLAs in tree" << std::endl;
+#endif
 		}
 
 	// Renormalize the rates and probs so that we are ready for next likelihood calculation
@@ -128,8 +131,9 @@ void NCatMove::proposeNewState()
 		{
 		ncat_max = ncat_after;
 
-		//@POL temporary!
+#if defined(OBSOLETE_DEBUGGING_CODE)
 		std::cerr << "Calling prepareForLikelihood in NCatMove::proposeNewState..." << std::endl;
+#endif
 
 		likelihood->prepareForLikelihood(tree);
 		}
@@ -314,7 +318,7 @@ void NCatMove::update()
 
 	proposeNewState();
 
-#if 1 || defined(OBSOLETE_DEBUGGING_CODE)
+#if defined(OBSOLETE_DEBUGGING_CODE)
 	const CondLikelihoodStorage & clapool = likelihood->getCLAStorage();
 	unsigned created = clapool.numCLAsCreated();
 	unsigned stored = clapool.numCLAsStored();
@@ -401,7 +405,7 @@ void NCatMove::update()
 
 	if (ln_accept_ratio >= 0.0 || std::log(u) <= ln_accept_ratio)
 		{
-#if 1 || defined(SHOW_DEBUGGING_OUTPUT)
+#if defined(SHOW_DEBUGGING_OUTPUT)
 		std::cerr << "  " << (addcat_move_proposed ? "ADDCAT" : "DELCAT") << " move accepted" << std::endl;
 #endif
 
@@ -411,7 +415,7 @@ void NCatMove::update()
 		}
 	else
 		{
-#if 1 || defined(SHOW_DEBUGGING_OUTPUT)
+#if defined(SHOW_DEBUGGING_OUTPUT)
 		std::cerr << "  " << (addcat_move_proposed ? "ADDCAT" : "DELCAT") << " move rejected" << std::endl;
 #endif
 

@@ -994,6 +994,9 @@ bool TreeLikelihood::debugCheckCLAsRemainInTree(
 double TreeLikelihood::calcLnL(
   TreeShPtr t)
 	{
+	if (no_data)
+		return 0.0;
+
 	// Compute likelihood using likelihood_root if specified
 	// Assume that if likelihood_root has been specified, then the necessary 
 	// CLA invalidations have already been performed.
@@ -1148,6 +1151,7 @@ double TreeLikelihood::calcLnLFromNode(
 		// iter will visit nodes that need their CLAs updated centripetally (like a postorder traversal 
 		// but also coming from below the focal node). Each node visited is guaranteed by valid_functor 
 		// to need its CLA updated.
+
 		effective_postorder_edge_iterator iter(&focal_node, valid_functor);
 		effective_postorder_edge_iterator iter_end;
 		for (; iter != iter_end; ++iter)

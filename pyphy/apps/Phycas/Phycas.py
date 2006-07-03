@@ -88,34 +88,42 @@ class Phycas:
     <BLANKLINE>
     Sampling (100 cycles)...
     <BLANKLINE>
-    cycle = 10, lnL = -7478.19231
-    cycle = 20, lnL = -7200.29389
+    cycle = 10, lnL = -7344.52303
+    cycle = 20, lnL = -7140.30175
     <BLANKLINE>
     Slice sampler diagnostics:
-      mode=0.28426, avgevals=6.920 (edge length hyperprior)
-      mode=1.97206, avgevals=8.080 (trs/trv rate ratio)
-      mode=19.06566, avgevals=15.880 (base freq. A)
-      mode=11.05060, avgevals=13.840 (base freq. C)
-      mode=13.89816, avgevals=19.640 (base freq. G)
-      mode=21.69949, avgevals=22.360 (base freq. T)
+      mode=0.30095, avgevals=7.080 (edge length hyperprior)
+      mode=1.94564, avgevals=5.760 (trs/trv rate ratio)
+      mode=1.26483, avgevals=7.520 (base freq. A)
+      mode=0.77694, avgevals=6.560 (base freq. C)
+      mode=0.98147, avgevals=7.080 (base freq. G)
+      mode=1.47942, avgevals=7.320 (base freq. T)
     <BLANKLINE>
-    cycle = 30, lnL = -7130.00149
-    cycle = 40, lnL = -7118.29235
-    cycle = 50, lnL = -7107.60439
-    cycle = 60, lnL = -7110.76873
-    cycle = 70, lnL = -7108.09492
+    cycle = 30, lnL = -7112.72828
+    cycle = 40, lnL = -7108.87283
+    cycle = 50, lnL = -7108.18816
+    cycle = 60, lnL = -7115.11477
+    cycle = 70, lnL = -7105.93621
     <BLANKLINE>
     Slice sampler diagnostics:
-      mode=0.16131, avgevals=6.180 (edge length hyperprior)
-      mode=1.69050, avgevals=6.280 (trs/trv rate ratio)
-      mode=5.76392, avgevals=6.840 (base freq. A)
-      mode=4.28486, avgevals=6.460 (base freq. C)
-      mode=4.42296, avgevals=7.700 (base freq. G)
-      mode=6.85893, avgevals=7.120 (base freq. T)
+      mode=0.17280, avgevals=5.960 (edge length hyperprior)
+      mode=1.85486, avgevals=6.080 (trs/trv rate ratio)
+      mode=0.91947, avgevals=5.540 (base freq. A)
+      mode=0.55485, avgevals=5.900 (base freq. C)
+      mode=0.64938, avgevals=5.940 (base freq. G)
+      mode=1.03497, avgevals=5.920 (base freq. T)
     <BLANKLINE>
-    cycle = 80, lnL = -7108.10488
-    cycle = 90, lnL = -7106.99959
-    cycle = 100, lnL = -7109.36445
+    cycle = 80, lnL = -7109.18286
+    cycle = 90, lnL = -7106.26287
+    cycle = 100, lnL = -7109.00408
+    <BLANKLINE>
+    Slice sampler diagnostics:
+      mode=0.17280, avgevals=6.760 (edge length hyperprior)
+      mode=1.85486, avgevals=6.360 (trs/trv rate ratio)
+      mode=0.91947, avgevals=5.160 (base freq. A)
+      mode=0.55485, avgevals=5.440 (base freq. C)
+      mode=0.64938, avgevals=5.680 (base freq. G)
+      mode=1.03497, avgevals=6.000 (base freq. T)
     ...
 
     """
@@ -821,6 +829,10 @@ class Phycas:
         equivalent work has been done)
         
         """
+        # Tell TreeLikelihood object if user wants to run with no data
+        if not self.data_source:
+            self.likelihood.setNoData()
+
         self.nsamples = self.ncycles//self.sample_every
         assert self.metropolis_weight == 0, 'deprecated variable metropolis_weight was used'
         
@@ -884,10 +896,6 @@ class Phycas:
         # Create a single Markov chain and add the parameters needed by the
         # model (as well as Metropolis moves to modify the topology)
         self.createChain()
-
-        # Tell TreeLikelihood object if user wants to run with no data
-        if not self.data_source:
-            self.likelihood.setNoData()
 
         # Compute the current log-likelihood and log-prior in case first updater 
         # is a move and will thus depend on these quantities being accurate

@@ -1,3 +1,8 @@
+#define DO_UNDERFLOW_POLICY	
+//#if defined(_MSC_VER)
+//#	pragma warning(error : 4710) // reports functions not inlined as errors
+//#endif
+
 #include "phycas/force_include.h"
 #include "CipresCommlib/CipresDataMatrixHelper.h"
 #include "pyphy/phylogeny/basic_tree.hpp"
@@ -188,7 +193,9 @@ void TreeLikelihood::calcCLATwoTips(
 				cla[s] = leftPMatTRow[s]*rightPMatTRow[s];
 			}
 		}
+#if defined(DO_UNDERFLOW_POLICY)
 	underflow_policy.twoTips(condLike);
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -291,7 +298,9 @@ void TreeLikelihood::calcCLAOneTip(
 			}
 		} // loop over rates
 
+#if defined(DO_UNDERFLOW_POLICY)
 	underflow_policy.oneTip(condLike, rightCondLike, pattern_counts);
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -463,7 +472,9 @@ void TreeLikelihood::calcCLANoTips(
 			}
 		}	// loop over rates
 
+#if defined(DO_UNDERFLOW_POLICY)
 	underflow_policy.noTips(condLike, leftCondLike, rightCondLike, pattern_counts);
+#endif
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
@@ -650,7 +661,9 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 			tmpf << site_lnL << '\t';
 #endif
 
+#if defined(DO_UNDERFLOW_POLICY)
 			underflow_policy.correctSiteLike(site_lnL, pat, focalCondLike);
+#endif
 
 			if (store_site_likes)
 				site_likelihood.push_back(site_lnL);
@@ -662,7 +675,9 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 			tmpf << lnLikelihood << std::endl;
 #endif
 			}		
+#if defined(DO_UNDERFLOW_POLICY)
 		underflow_policy.correctLnLike(lnLikelihood, focalCondLike);
+#endif
 
 #if defined(LOG_SITELIKES)
 		tmpf << "1\t\t\t\t\t" << lnLikelihood << std::endl;
@@ -714,8 +729,10 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 			tmpf << site_lnL << '\t';
 #endif
 
+#if defined(DO_UNDERFLOW_POLICY)
 			underflow_policy.correctSiteLike(site_lnL, pat, focalCondLike);
 			underflow_policy.correctSiteLike(site_lnL, pat, neighborCondLike);
+#endif
 			if (store_site_likes)
 				site_likelihood.push_back(site_lnL);
 			lnLikelihood += counts[pat]*site_lnL;
@@ -726,8 +743,10 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 			tmpf << lnLikelihood << std::endl;
 #endif
 			}
+#if defined(DO_UNDERFLOW_POLICY)
 		underflow_policy.correctLnLike(lnLikelihood, focalCondLike);
 		underflow_policy.correctLnLike(lnLikelihood, neighborCondLike);
+#endif
 
 #if defined(LOG_SITELIKES)
 		tmpf << "0\t\t\t\t\t" << lnLikelihood << std::endl;

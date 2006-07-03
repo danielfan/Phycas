@@ -53,6 +53,7 @@ class TreeLikelihoodWrapper : public TreeLikelihood
 		TreeLikelihoodWrapper(PyObject * self, ModelShPtr m) : TreeLikelihood(m), m_self(self) 
 			{
 			}
+		virtual ~TreeLikelihoodWrapper() {} //POL added because GCC claims that there are virtual functions, but where are they?
 
 		int startTreeViewer(TreeShPtr t, std::string msg) const 
 			{ 
@@ -103,6 +104,9 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("getWeight", &MCMCUpdater::getWeight)
 		.def("setName", &MCMCUpdater::setName)
 		.def("setWeight", &MCMCUpdater::setWeight)
+#if POLPY_NEWWAY
+		.def("setStartingValue", &MCMCUpdater::setStartingValue)
+#endif
 		.def("setTree", &MCMCUpdater::setTree)
 		.def("setLot", &MCMCUpdater::setLot)
 		.def("setTreeLikelihood", &MCMCUpdater::setTreeLikelihood)

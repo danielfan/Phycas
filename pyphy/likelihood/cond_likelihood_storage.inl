@@ -1,6 +1,7 @@
 #if ! defined(COND_LIKELIHOOD_STORAGE_INL)
 #define COND_LIKELIHOOD_STORAGE_INL
 
+//#define OBSOLETE_DEBUGGING_CODE
 #include "pyphy/likelihood/xlikelihood.hpp"
 
 namespace phycas
@@ -110,7 +111,7 @@ inline CondLikelihoodShPtr CondLikelihoodStorage::getCondLikelihood()
 	CondLikelihoodShPtr cl_ptr = cl_stack.top();
 	cl_stack.pop();
 
-#if 1 || defined(OBSOLETE_DEBUGGING_CODE)
+#if defined(OBSOLETE_DEBUGGING_CODE)
 	unsigned bytes = cl_ptr->getCLASize();
 	unsigned expected_bytes = num_patterns*num_rates*num_states;
 	if (bytes < expected_bytes)
@@ -129,7 +130,7 @@ inline void CondLikelihoodStorage::putCondLikelihood(CondLikelihoodShPtr p)
 	assert(num_rates > 0);
 	assert(num_states > 0);
 
-#if 1 || defined(OBSOLETE_DEBUGGING_CODE)
+#if defined(OBSOLETE_DEBUGGING_CODE)
 	unsigned bytes = p->getCLASize();
 	unsigned expected_bytes = num_patterns*num_rates*num_states;
 	if (bytes < expected_bytes)
@@ -181,11 +182,11 @@ inline void CondLikelihoodStorage::setCondLikeDimensions(unsigned np, unsigned n
 
 	if (newlen > oldlen)
 		{
+#if defined(OBSOLETE_DEBUGGING_CODE)
 		unsigned checkouts = num_created - cl_stack.size();
 		if (checkouts > 0)
-			//POL temporary!
 			std::cerr << "### The number of among-site rates increased, but some shorter conditional likelihood arrays remain in the tree" << std::endl;
-			//throw XLikelihood("number of among-site rates increased, but some shorter conditional likelihood arrays remain in the tree");
+#endif
 		clearStack();
 		num_patterns = np;
 		num_rates = nr;

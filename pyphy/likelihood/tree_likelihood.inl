@@ -323,7 +323,8 @@ inline void TreeLikelihood::recalcRelativeRates()
 	num_rates = model->getNRatesTotal();
 	model->recalcRatesAndProbs(rate_means, rate_probs);
 	likelihood_rate_site.resize(num_rates*num_patterns, 0.0);
-	cla_pool.setCondLikeDimensions(num_patterns, num_rates, num_states);
+	if (!no_data)
+		cla_pool.setCondLikeDimensions(num_patterns, num_rates, num_states);
 	underflow_policy.setDimensions(num_patterns, num_rates, num_states);
 	}
 
