@@ -220,7 +220,7 @@ class Phycas:
         self.pinvar_prior           = ProbDist.BetaDist(1.0, 1.0)
         
         # Variables associated with the source of data        
-        self.data_source            = None      # If None, MCMC will explore prior; if 'file', self.data_file_name should be a valid nexus file name; if 'memory', data should already be in memory (e.g. via simulation) 
+        self.data_source            = 'file'    # If None, MCMC will explore prior; if 'file', self.data_file_name should be a valid nexus file name; if 'memory', data should already be in memory (e.g. via simulation) 
         self.data_file_name         = ''        # will hold actual data file name
 
         # Variables associated with the source of starting tree
@@ -1131,7 +1131,6 @@ if __name__ == '__main__':
         mcmc.ls_move_weight = 100
         mcmc.ls_move_debug = False
         mcmc.uf_num_edges = 50
-        #raw_input('debug stop')
 
     mcmc.setup()
     mcmc.run()

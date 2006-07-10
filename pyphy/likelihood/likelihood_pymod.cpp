@@ -104,9 +104,7 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("getWeight", &MCMCUpdater::getWeight)
 		.def("setName", &MCMCUpdater::setName)
 		.def("setWeight", &MCMCUpdater::setWeight)
-#if POLPY_NEWWAY
 		.def("setStartingValue", &MCMCUpdater::setStartingValue)
-#endif
 		.def("setTree", &MCMCUpdater::setTree)
 		.def("setLot", &MCMCUpdater::setLot)
 		.def("setTreeLikelihood", &MCMCUpdater::setTreeLikelihood)

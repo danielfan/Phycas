@@ -1023,9 +1023,7 @@ inline void	HKY::createParameters(
 	assert(!kappa_param);
 	kappa_param = MCMCUpdaterShPtr(new KappaParam());
 	kappa_param->setName("trs/trv rate ratio");
-#if POLPY_NEWWAY
 	kappa_param->setStartingValue(4.0);
-#endif
 	kappa_param->setTree(t);
 	kappa_param->setPrior(kappa_prior);
 	if (kappa_fixed)
@@ -1037,9 +1035,7 @@ inline void	HKY::createParameters(
 	MCMCUpdaterShPtr freqA_param = MCMCUpdaterShPtr(new BaseFreqParam(0));
 	freqA_param->setName("base freq. A");
 	freqA_param->setTree(t);
-#if POLPY_NEWWAY
 	freqA_param->setStartingValue(1.0);
-#endif
 	freqA_param->setPrior(freq_param_prior);
 	if (state_freq_fixed)
 		freqA_param->fixParameter();
@@ -1049,9 +1045,7 @@ inline void	HKY::createParameters(
 	MCMCUpdaterShPtr freqC_param = MCMCUpdaterShPtr(new BaseFreqParam(1));
 	freqC_param->setName("base freq. C");
 	freqC_param->setTree(t);
-#if POLPY_NEWWAY
 	freqC_param->setStartingValue(1.0);
-#endif
 	freqC_param->setPrior(freq_param_prior);
 	if (state_freq_fixed)
 		freqC_param->fixParameter();
@@ -1061,9 +1055,7 @@ inline void	HKY::createParameters(
 	MCMCUpdaterShPtr freqG_param = MCMCUpdaterShPtr(new BaseFreqParam(2));
 	freqG_param->setName("base freq. G");
 	freqG_param->setTree(t);
-#if POLPY_NEWWAY
 	freqG_param->setStartingValue(1.0);
-#endif
 	freqG_param->setPrior(freq_param_prior);
 	if (state_freq_fixed)
 		freqG_param->fixParameter();
@@ -1073,9 +1065,7 @@ inline void	HKY::createParameters(
 	MCMCUpdaterShPtr freqT_param = MCMCUpdaterShPtr(new BaseFreqParam(3));
 	freqT_param->setName("base freq. T");
 	freqT_param->setTree(t);
-#if POLPY_NEWWAY
 	freqT_param->setStartingValue(1.0);
-#endif
 	freqT_param->setPrior(freq_param_prior);
 	if (state_freq_fixed)
 		freqT_param->fixParameter();
@@ -1366,9 +1356,7 @@ inline void	GTR::createParameters(
 	MCMCUpdaterShPtr rAC_param = MCMCUpdaterShPtr(new GTRRateParam(0));
 	rAC_param->setName("rAC");
 	rAC_param->setTree(t);
-#if POLPY_NEWWAY
 	rAC_param->setStartingValue(1.0);
-#endif
 	rAC_param->setPrior(rel_rate_prior);
 	if (rel_rates_fixed)
 		rAC_param->fixParameter();
@@ -1378,9 +1366,7 @@ inline void	GTR::createParameters(
 	MCMCUpdaterShPtr rAG_param = MCMCUpdaterShPtr(new GTRRateParam(1));
 	rAG_param->setName("rAG");
 	rAG_param->setTree(t);
-#if POLPY_NEWWAY
 	rAG_param->setStartingValue(4.0);
-#endif
 	rAG_param->setPrior(rel_rate_prior);
 	if (rel_rates_fixed)
 		rAG_param->fixParameter();
@@ -1390,9 +1376,7 @@ inline void	GTR::createParameters(
 	MCMCUpdaterShPtr rAT_param = MCMCUpdaterShPtr(new GTRRateParam(2));
 	rAT_param->setName("rAT");
 	rAT_param->setTree(t);
-#if POLPY_NEWWAY
 	rAT_param->setStartingValue(1.0);
-#endif
 	rAT_param->setPrior(rel_rate_prior);
 	if (rel_rates_fixed)
 		rAT_param->fixParameter();
@@ -1402,9 +1386,7 @@ inline void	GTR::createParameters(
 	MCMCUpdaterShPtr rCG_param = MCMCUpdaterShPtr(new GTRRateParam(3));
 	rCG_param->setName("rCG");
 	rCG_param->setTree(t);
-#if POLPY_NEWWAY
 	rCG_param->setStartingValue(1.0);
-#endif
 	rCG_param->setPrior(rel_rate_prior);
 	if (rel_rates_fixed)
 		rCG_param->fixParameter();
@@ -1414,9 +1396,7 @@ inline void	GTR::createParameters(
 	MCMCUpdaterShPtr rCT_param = MCMCUpdaterShPtr(new GTRRateParam(4));
 	rCT_param->setName("rCT");
 	rCT_param->setTree(t);
-#if POLPY_NEWWAY
 	rCT_param->setStartingValue(4.0);
-#endif
 	rCT_param->setPrior(rel_rate_prior);
 	if (rel_rates_fixed)
 		rCT_param->fixParameter();
@@ -1425,9 +1405,7 @@ inline void	GTR::createParameters(
 
 	MCMCUpdaterShPtr rGT_param = MCMCUpdaterShPtr(new GTRRateParam(5));
 	rGT_param->setName("rGT");
-#if POLPY_NEWWAY
 	rGT_param->setStartingValue(1.0);
-#endif
 	rGT_param->setTree(t);
 	rGT_param->setPrior(rel_rate_prior);
 	if (rel_rates_fixed)
@@ -1440,9 +1418,7 @@ inline void	GTR::createParameters(
 	MCMCUpdaterShPtr freqA_param = MCMCUpdaterShPtr(new BaseFreqParam(0));
 	freqA_param->setName("base freq. A");
 	freqA_param->setTree(t);
-#if POLPY_NEWWAY
 	freqA_param->setStartingValue(1.0);
-#endif
 	freqA_param->setPrior(freq_param_prior);
 	if (state_freq_fixed)
 		freqA_param->fixParameter();
@@ -1452,9 +1428,7 @@ inline void	GTR::createParameters(
 	MCMCUpdaterShPtr freqC_param = MCMCUpdaterShPtr(new BaseFreqParam(1));
 	freqC_param->setName("base freq. C");
 	freqC_param->setTree(t);
-#if POLPY_NEWWAY
 	freqC_param->setStartingValue(1.0);
-#endif
 	freqC_param->setPrior(freq_param_prior);
 	if (state_freq_fixed)
 		freqC_param->fixParameter();
@@ -1464,9 +1438,7 @@ inline void	GTR::createParameters(
 	MCMCUpdaterShPtr freqG_param = MCMCUpdaterShPtr(new BaseFreqParam(2));
 	freqG_param->setName("base freq. G");
 	freqG_param->setTree(t);
-#if POLPY_NEWWAY
 	freqG_param->setStartingValue(1.0);
-#endif
 	freqG_param->setPrior(freq_param_prior);
 	if (state_freq_fixed)
 		freqG_param->fixParameter();
@@ -1476,9 +1448,7 @@ inline void	GTR::createParameters(
 	MCMCUpdaterShPtr freqT_param = MCMCUpdaterShPtr(new BaseFreqParam(3));
 	freqT_param->setName("base freq. T");
 	freqT_param->setTree(t);
-#if POLPY_NEWWAY
 	freqT_param->setStartingValue(1.0);
-#endif
 	freqT_param->setPrior(freq_param_prior);
 	if (state_freq_fixed)
 		freqT_param->fixParameter();

@@ -108,9 +108,7 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		virtual void			setChainManager(ChainManagerWkPtr p);
 
 		// Modifiers used only by parameters
-#if POLPY_NEWWAY
 		virtual void			setStartingValue(double x);
-#endif
 		virtual void			setPrior(ProbDistShPtr p);
 		virtual void			setPriorMeanAndVariance(double m, double v);
 		virtual double			recalcPrior();
@@ -168,9 +166,7 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		bool					is_hyper_param;			/**< True if this updater represents a hyperparameter (a model parameter that is part of the prior specification but not the likelihood function) */
 		bool					is_fixed;				/**< If true, update returns immediately so parameter is never updated */
 		unsigned				slice_max_units;		/**< Maximum number of units used by `slice_sampler' */
-#if POLPY_NEWWAY
 		double					slice_starting_value;	/**< Starting value used by `slice_sampler' */
-#endif
 	};
 
 typedef std::vector<MCMCUpdaterShPtr>		MCMCUpdaterVect;
