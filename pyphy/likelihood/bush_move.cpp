@@ -20,7 +20,9 @@ using namespace phycas;
 |	The constructor sets `num_taxa' and `num_nodes_in_fully_resolved_tree', computes the polytomy distribution, and 
 |	finally calls BushMove::reset to re-initialize all other variables.
 */
-BushMove::BushMove() : view_proposed_move(false), MCMCUpdater()
+BushMove::BushMove()
+  :MCMCUpdater(),
+  view_proposed_move(false)
 	{
 	edgelen_mean = 1.0;
 	topo_prior_calculator = TopoPriorCalculatorShPtr(new TopoPriorCalculator());

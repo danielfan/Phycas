@@ -18,6 +18,7 @@ namespace phycas
 inline TreeLikelihood::TreeLikelihood(
   ModelShPtr mod)		/**< is the substitution model */
   :
+  likelihood_root(0),
   store_site_likes(true),
   no_data(false),
   nTaxa(0),
@@ -27,8 +28,7 @@ inline TreeLikelihood::TreeLikelihood(
   model(mod), 
   rate_means(mod->getNRatesTotal(), 1.0), 
   rate_probs(mod->getNRatesTotal(), 1.0), 
-  nevals(0),
-  likelihood_root(0)
+  nevals(0)
 	{
 	mod->recalcRatesAndProbs(rate_means, rate_probs);
 	underflow_policy.setTriggerSensitivity(50);
@@ -40,49 +40,89 @@ inline TreeLikelihood::TreeLikelihood(
 |	be traversed before taking action to prevent underflow.
 */
 inline void TreeLikelihood::setUFNumEdges(
+
   unsigned nedges)	/**< is the number of edges to traverse before taking action to prevent underflow */
+
 	{
+
 	underflow_policy.setTriggerSensitivity(nedges);
+
 	}
 
+
 /*----------------------------------------------------------------------------------------------------------------------
+
 |	Returns number of bytes allocated for each CLA. This equals sizeof(LikeFltType) times the product of the number of
+
 |	patterns, number of rates and number of states. Calls corresponding function of data member `cla_pool' to get the
+
 |	value returned.
+
 */
+
 inline unsigned TreeLikelihood::bytesPerCLA() const
+
 	{
+
 	return cla_pool.bytesPerCLA();
+
 	}
 
+
+
 /*----------------------------------------------------------------------------------------------------------------------
+
 |	Returns the number of CondLikelihood objects created since the `cla_pool' data member was constructed, or since the
+
 |	last call to the function clearStack of `cla_pool', which resets the value to zero. Calls corresponding function of
+
 |	data member `cla_pool' to get the value returned.
+
 */
+
 inline unsigned TreeLikelihood::numCLAsCreated() const
+
 	{
+
 	return cla_pool.numCLAsCreated();
+
 	}
 
+
+
 /*----------------------------------------------------------------------------------------------------------------------
+
 |	Returns the current number of CondLikelihood objects stored in `cla_pool'. The total number of CLAs currently
+
 |	checked out to the tree can be obtained as TreeLikelihood::numCLAsCreated() minus TreeLikelihood::numCLAsStored().
+
 |	Calls corresponding function of data member `cla_pool' to get the value returned.
+
 */
+
 inline unsigned TreeLikelihood::numCLAsStored() const
+
 	{
+
 	return cla_pool.numCLAsStored();
+
 	}
+
+
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the current value of `likelihood_root'. See TreeLikelihood::useAsLikelihoodRoot for more information about
 |	the meaning of the likelihood root.
 */
 inline TreeNode * TreeLikelihood::getLikelihoodRoot()
+
 	{
+
 	return likelihood_root;
+
 	}
+
+
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Specifies the (internal) node to use as the likelihood root (it will be stored in the `likelihood_root' data member). 
@@ -93,10 +133,16 @@ inline TreeNode * TreeLikelihood::getLikelihoodRoot()
 |	subroot node of the tree (the only child of the root).
 */
 inline void	TreeLikelihood::useAsLikelihoodRoot(
+
   TreeNode * nd)
+
 	{
+
 	likelihood_root = nd;
+
 	}
+
+
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the number of the node currently serving as the likelihood root. If `likelihood_root' is NULL, returns -1
@@ -104,13 +150,19 @@ inline void	TreeLikelihood::useAsLikelihoodRoot(
 |	for use by the TreeViewer.py application for debugging purposes.
 */
 inline int TreeLikelihood::getLikelihoodRootNodeNum() const
+
 	{
+
 	return (likelihood_root ? (int)likelihood_root->GetNodeNumber() : -1);
+
 	}
+
+
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns a shared pointer to the CondLikelihood object that would be used to compute the likelihood conditional on a 
 |	particular state being assigned to `focal_nd' when `avoid' is the likelihood root. This function obtains the correct
+
 |	shared pointer, but if that pointer does not point to an object, it goes to `cla_pool' to get another one.
 */
 inline CondLikelihoodShPtr getCondLikePtr(
@@ -136,6 +188,7 @@ inline ConstCondLikelihoodShPtr getValidCondLikePtr(
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns a shared pointer to the CondLikelihood object that would be used to compute the likelihood conditional on a
 |	particular state being assigned to the focal node of `edge' when `edge' focal neighbor is the likelihood root. This
+
 |	function obtain the correct shared pointer, but if that pointer does not point to a CondLikelihood object, it goes 
 |	to `cla_pool' to get one.
 */

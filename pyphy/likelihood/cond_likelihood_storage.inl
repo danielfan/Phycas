@@ -15,8 +15,8 @@ inline CondLikelihoodStorage::CondLikelihoodStorage()
   num_patterns(0), 
   num_rates(0), 
   num_states(0), 
-  realloc_min(1),
-  num_created(0)
+  num_created(0),
+  realloc_min(1)
 	{
 	}
 

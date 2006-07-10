@@ -43,7 +43,7 @@ double SimData::calct(unsigned nstates)
 	{
 	// m is the number of distinct patterns
 	double m					= (double)sim_pattern_map.size();
-	double log_m				= std::log(m);
+	//unused:  double log_m				= std::log(m);
 
 	// s is the number of character states
 	double s					= (double)nstates;

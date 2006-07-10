@@ -20,10 +20,10 @@ inline CondLikelihood::CondLikelihood(
   unsigned nrates,		/**< is the number of among-site relative rate categories */
   unsigned nstates)		/**< is the number of states */
   :
+  claVec(npatterns*nrates*nstates),
   uf_sum(0),
   underflowExponVec(npatterns),
-  numEdgesSinceUnderflowProtection(UINT_MAX),
-  claVec(npatterns*nrates*nstates)
+  numEdgesSinceUnderflowProtection(UINT_MAX)
 	{
 	cla = &claVec[0];
 	uf = &underflowExponVec[0];

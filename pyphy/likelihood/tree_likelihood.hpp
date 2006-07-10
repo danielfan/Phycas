@@ -49,6 +49,7 @@ class TreeLikelihood
 	public:
 
 										TreeLikelihood(ModelShPtr);
+								virtual ~TreeLikelihood(){} //needed as long as startTreeViewer is virtual
 
 		// Accessors
 		unsigned						getNTaxa() const;
