@@ -562,7 +562,7 @@ class Phycas:
         assert self.likelihood, 'call Phycas.setupLikelihood before calling Phycas.readNexusFile'
         self.likelihood.copyDataFromDiscreteMatrix(self.data_matrix)
         self.npatterns = self.likelihood.getNPatterns()
-                
+
     def setup(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """

@@ -73,12 +73,55 @@
                     <platforms>all</platforms>
                     <distributionFileList>
                         <distributionFile>
-                            <origin>Conversions/_Conversions.pyd</origin>
-                        </distributionFile>
-                        <distributionFile>
                             <origin>Conversions/__init__.py</origin>
                         </distributionFile>
                     </distributionFileList>
+                    <ruleList>
+                        <compareText>
+                            <logic>equals</logic>
+                            <nocase>0</nocase>
+                            <text>${platform_name}</text>
+                            <value>windows</value>
+                        </compareText>
+                    </ruleList>
+                </folder><folder>
+                    <description>ConversionsPyd</description>
+                    <destination>${installdir}/pyphy/Conversions</destination>
+                    <name>ConversionsPyd</name>
+                    <platforms>windows</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>Conversions/_Conversions.pyd</origin>
+                        </distributionFile>     
+                    </distributionFileList>
+                    <ruleList>
+                        <compareText>
+                            <logic>equals</logic>
+                            <nocase>0</nocase>
+                            <text>${platform_name}</text>
+                            <value>windows</value>
+                        </compareText>
+                    </ruleList>
+                </folder>
+                <folder>
+                    <description>ConversionsSo</description>
+                    <destination>${installdir}/pyphy/Conversions</destination>
+                    <name>ConversionsSo</name>
+                    <platforms>osx</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>Conversions/_Conversions.so</origin>
+                        </distributionFile>
+                        
+                    </distributionFileList>
+                    <ruleList>
+                        <compareText>
+                            <logic>does_not_equal</logic>
+                            <nocase>0</nocase>
+                            <text>${platform_name}</text>
+                            <value>windows</value>
+                        </compareText>
+                    </ruleList>
                 </folder>
                 <folder>
                     <description>DataMatrix</description>
@@ -87,15 +130,59 @@
                     <platforms>all</platforms>
                     <distributionFileList>
                         <distributionFile>
-                            <origin>DataMatrix/_DataMatrixBase.pyd</origin>
-                        </distributionFile>
-                        <distributionFile>
                             <origin>DataMatrix/__init__.py</origin>
                         </distributionFile>
                         <distributionFile>
                             <origin>DataMatrix/_DataMatrix.py</origin>
                         </distributionFile>
                     </distributionFileList>
+                    <ruleList>
+                        <compareText>
+                            <logic>equals</logic>
+                            <nocase>0</nocase>
+                            <text>${platform_name}</text>
+                            <value>windows</value>
+                        </compareText>
+                    </ruleList>
+                </folder><folder>
+                    <description>DataMatrixPyd</description>
+                    <destination>${installdir}/pyphy/DataMatrix</destination>
+                    <name>DataMatrix</name>
+                    <platforms>windows</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>DataMatrix/_DataMatrixBase.pyd</origin>
+                        </distributionFile>
+                        
+                        
+                    </distributionFileList>
+                    <ruleList>
+                        <compareText>
+                            <logic>equals</logic>
+                            <nocase>0</nocase>
+                            <text>${platform_name}</text>
+                            <value>windows</value>
+                        </compareText>
+                    </ruleList>
+                </folder>
+                <folder>
+                    <description>DataMatrixSo</description>
+                    <destination>${installdir}/pyphy/DataMatrix</destination>
+                    <name>DataMatrix</name>
+                    <platforms>osx</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>DataMatrix/_DataMatrixBase.so</origin>
+                        </distributionFile>
+                    </distributionFileList>
+                    <ruleList>
+                        <compareText>
+                            <logic>does_not_equal</logic>
+                            <nocase>0</nocase>
+                            <text>${platform_name}</text>
+                            <value>windows</value>
+                        </compareText>
+                    </ruleList>
                 </folder>
                 <folder>
                     <description>Likelihood</description>
@@ -103,9 +190,6 @@
                     <name>Likelihood</name>
                     <platforms>all</platforms>
                     <distributionFileList>
-                        <distributionFile>
-                            <origin>Likelihood/_TreeLikelihood.py</origin>
-                        </distributionFile>
                         <distributionFile>
                             <origin>Likelihood/__init__.py</origin>
                         </distributionFile>
@@ -128,6 +212,52 @@
                             <origin>Likelihood/_TopoPriorCalculator.py</origin>
                         </distributionFile>
                     </distributionFileList>
+                    <ruleList>
+                        <compareText>
+                            <logic>equals</logic>
+                            <nocase>0</nocase>
+                            <text>${platform_name}</text>
+                            <value>windows</value>
+                        </compareText>
+                    </ruleList>
+                </folder>
+                <folder>
+                    <description>LikelihoodPyd</description>
+                    <destination>${installdir}/pyphy/Likelihood</destination>
+                    <name>Likelihood</name>
+                    <platforms>windows</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>Likelihood/_LikelihoodBase.pyd</origin>
+                        </distributionFile>
+                    </distributionFileList>
+                    <ruleList>
+                        <compareText>
+                            <logic>equals</logic>
+                            <nocase>0</nocase>
+                            <text>${platform_name}</text>
+                            <value>windows</value>
+                        </compareText>
+                    </ruleList>
+                </folder>
+                <folder>
+                    <description>LikelihoodSo</description>
+                    <destination>${installdir}/pyphy/Likelihood</destination>
+                    <name>Likelihood</name>
+                    <platforms>osx</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>Likelihood/_LikelihoodBase.so</origin>
+                        </distributionFile>
+                    </distributionFileList>
+                    <ruleList>
+                        <compareText>
+                            <logic>does_not_equal</logic>
+                            <nocase>0</nocase>
+                            <text>${platform_name}</text>
+                            <value>windows</value>
+                        </compareText>
+                    </ruleList>
                 </folder>
                 <folder>
                     <description>Phylogeny</description>
@@ -142,15 +272,57 @@
                             <origin>Phylogeny/__init__.py</origin>
                         </distributionFile>
                         <distributionFile>
-                            <origin>Phylogeny/_Phylogeny.pyd</origin>
-                        </distributionFile>
-                        <distributionFile>
                             <origin>Phylogeny/_Tree.py</origin>
                         </distributionFile>
                         <distributionFile>
                             <origin>Phylogeny/_TreeManip.py</origin>
                         </distributionFile>
                     </distributionFileList>
+                    <ruleList>
+                        <compareText>
+                            <logic>equals</logic>
+                            <nocase>0</nocase>
+                            <text>${platform_name}</text>
+                            <value>windows</value>
+                        </compareText>
+                    </ruleList>
+                </folder><folder>
+                    <description>PhylogenyPyd</description>
+                    <destination>${installdir}/pyphy/Phylogeny</destination>
+                    <name>Phylogeny</name>
+                    <platforms>windows</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>Phylogeny/_Phylogeny.pyd</origin>
+                        </distributionFile>
+                    </distributionFileList>
+                    <ruleList>
+                        <compareText>
+                            <logic>equals</logic>
+                            <nocase>0</nocase>
+                            <text>${platform_name}</text>
+                            <value>windows</value>
+                        </compareText>
+                    </ruleList>
+                </folder>
+                <folder>
+                    <description>PhylogenySo</description>
+                    <destination>${installdir}/pyphy/Phylogeny</destination>
+                    <name>Phylogeny</name>
+                    <platforms>osx</platforms>
+                    <distributionFileList>
+                         <distributionFile>
+                            <origin>Phylogeny/_Phylogeny.so</origin>
+                        </distributionFile>         
+                    </distributionFileList>
+                    <ruleList>
+                        <compareText>
+                            <logic>does_not_equal</logic>
+                            <nocase>0</nocase>
+                            <text>${platform_name}</text>
+                            <value>windows</value>
+                        </compareText>
+                    </ruleList>
                 </folder>
                 <folder>
                     <description>ProbDist</description>
@@ -189,12 +361,55 @@
                             <origin>ProbDist/_Lot.py</origin>
                         </distributionFile>
                         <distributionFile>
-                            <origin>ProbDist/_ProbDist.pyd</origin>
-                        </distributionFile>
-                        <distributionFile>
                             <origin>ProbDist/_SliceSampler.py</origin>
                         </distributionFile>
                     </distributionFileList>
+                    <ruleList>
+                        <compareText>
+                            <logic>equals</logic>
+                            <nocase>0</nocase>
+                            <text>${platform_name}</text>
+                            <value>windows</value>
+                        </compareText>
+                    </ruleList>
+                </folder>
+                <folder>
+                    <description>ProbDistPyd</description>
+                    <destination>${installdir}/pyphy/ProbDist</destination>
+                    <name>ProbDist</name>
+                    <platforms>windows</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>ProbDist/_ProbDist.pyd</origin>
+                        </distributionFile>
+                    </distributionFileList>
+                    <ruleList>
+                        <compareText>
+                            <logic>equals</logic>
+                            <nocase>0</nocase>
+                            <text>${platform_name}</text>
+                            <value>windows</value>
+                        </compareText>
+                    </ruleList>
+                </folder>
+                <folder>
+                    <description>ProbDistSo</description>
+                    <destination>${installdir}/pyphy/ProbDist</destination>
+                    <name>ProbDist</name>
+                    <platforms>osx</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>ProbDist/_ProbDist.so</origin>
+                        </distributionFile>
+                    </distributionFileList>
+                    <ruleList>
+                        <compareText>
+                            <logic>does_not_equal</logic>
+                            <nocase>0</nocase>
+                            <text>${platform_name}</text>
+                            <value>windows</value>
+                        </compareText>
+                    </ruleList>
                 </folder>
                 <folder>
                     <description>ReadNexus</description>
@@ -203,15 +418,57 @@
                     <platforms>all</platforms>
                     <distributionFileList>
                         <distributionFile>
-                            <origin>ReadNexus/_ReadNexus.pyd</origin>
-                        </distributionFile>
-                        <distributionFile>
                             <origin>ReadNexus/__init__.py</origin>
                         </distributionFile>
                         <distributionFile>
                             <origin>ReadNexus/_NexusReader.py</origin>
                         </distributionFile>
                     </distributionFileList>
+                    <ruleList>
+                        <compareText>
+                            <logic>equals</logic>
+                            <nocase>0</nocase>
+                            <text>${platform_name}</text>
+                            <value>windows</value>
+                        </compareText>
+                    </ruleList>
+                </folder><folder>
+                    <description>ReadNexusPyd</description>
+                    <destination>${installdir}/pyphy/ReadNexus</destination>
+                    <name>ReadNexus</name>
+                    <platforms>windows</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>ReadNexus/_ReadNexus.pyd</origin>
+                        </distributionFile>
+                    </distributionFileList>
+                    <ruleList>
+                        <compareText>
+                            <logic>equals</logic>
+                            <nocase>0</nocase>
+                            <text>${platform_name}</text>
+                            <value>windows</value>
+                        </compareText>
+                    </ruleList>
+                </folder>
+                <folder>
+                    <description>ReadNexusSo</description>
+                    <destination>${installdir}/pyphy/ReadNexus</destination>
+                    <name>ReadNexus</name>
+                    <platforms>osx</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>ReadNexus/_ReadNexus.so</origin>
+                        </distributionFile>
+                    </distributionFileList>
+                    <ruleList>
+                        <compareText>
+                            <logic>does_not_equal</logic>
+                            <nocase>0</nocase>
+                            <text>${platform_name}</text>
+                            <value>windows</value>
+                        </compareText>
+                    </ruleList>
                 </folder>
                 <folder>
                     <description>Install Directory</description>
@@ -255,14 +512,38 @@
     <finalPageActionList/>
     <parameterList>
         <infoParameter>
-            <name>CheckPython</name>
+            <name>NonexistantPythonMessage</name>
             <title>Python Check</title>
             <description></description>
-            <explanation>You must have Python 2.4 (or a later version) installed before you can use Phycas.</explanation>
-            <value>${pythonversion}</value>
+            <explanation>You must have Python 2.4 (or a later) installed before you can use Phycas. You can continue the installation of Phycas, but you will need to install the latest Python on your system before using Phycas for the first time</explanation>
+            <value></value>
             <default></default>
             <leftImage></leftImage>
             <trimMarginNumChars>0</trimMarginNumChars>
+            <ruleList>
+                <compareTextLength>
+                    <length>0</length>
+                    <logic>equals</logic>
+                    <text>${pythonversion}</text>
+                </compareTextLength>
+            </ruleList>
+        </infoParameter>
+        <infoParameter>
+            <name>InsufficientPythonMessage</name>
+            <title>Python Check</title>
+            <description></description>
+            <explanation>You must have Python 2.4 (or a later) installed before you can use Phycas. You can continue the installation of Phycas, but you will need to upgrade your Python installation before using Phycas. Here is the version information detected for your current Python installation:</explanation>
+            <value>${pythonversioninfo}</value>
+            <default></default>
+            <leftImage></leftImage>
+            <trimMarginNumChars>0</trimMarginNumChars>
+            <ruleList>
+                <compareValues>
+                    <logic>less</logic>
+                    <value1>${pythonversion}</value1>
+                    <value2>24</value2>
+                </compareValues>
+            </ruleList>
         </infoParameter>
         <directoryParameter>
             <name>installdir</name>
@@ -292,8 +573,13 @@
     <preInstallationActionList>
         <setInstallerVariableFromScriptOutput>
             <exec>python</exec>
-            <execArgs>-c 'import sys; print sys.version'</execArgs>
+            <execArgs>-c "import sys,re; print ''.join(re.match(r'(\d+)\.(\d+)', sys.version).groups())"</execArgs>
             <name>pythonversion</name>
+        </setInstallerVariableFromScriptOutput>
+        <setInstallerVariableFromScriptOutput>
+            <exec>python</exec>
+            <execArgs>-c "import sys; print sys.version"</execArgs>
+            <name>pythonversioninfo</name>
         </setInstallerVariableFromScriptOutput>
         <registryGet>
             <key>HKEY_CURRENT_USER\Environment</key>
