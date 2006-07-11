@@ -292,7 +292,7 @@
     <preInstallationActionList>
         <setInstallerVariableFromScriptOutput>
             <exec>python</exec>
-            <execArgs>-V</execArgs>
+            <execArgs>-c 'import sys; print sys.version'</execArgs>
             <name>pythonversion</name>
         </setInstallerVariableFromScriptOutput>
         <registryGet>
