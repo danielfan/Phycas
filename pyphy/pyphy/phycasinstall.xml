@@ -291,8 +291,8 @@
     <preBuildActionList/>
     <preInstallationActionList>
         <setInstallerVariableFromScriptOutput>
-            <exec>test.exe</exec>
-            <execArgs></execArgs>
+            <exec>python</exec>
+            <execArgs>-V</execArgs>
             <name>pythonversion</name>
         </setInstallerVariableFromScriptOutput>
         <registryGet>
