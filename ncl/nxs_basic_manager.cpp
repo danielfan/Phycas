@@ -70,8 +70,7 @@ void NxsBasicListManager::IndicesIncreased(unsigned newSize, bool makeNewIndices
 	
 void NxsBasicListManager::IndicesDecreased(unsigned newSize)
 	{
-	unsigned prevMax = (allSet->empty() ? 0 : allSet->GetLast());
-	assert(newSize <= prevMax);
+	assert(newSize <= (allSet->empty() ? 0 : allSet->GetLast()));
 	if (newSize == 0)
 		{
 		allSet->clear();

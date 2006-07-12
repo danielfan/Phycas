@@ -39,7 +39,7 @@ std::string	Join(const VecString &v, const std::string & separator)
 
 bool IsALegalNexusLabelForObjectN(const std::string &s, unsigned n, bool *isANumber)
 	{
-	UInt u;
+	UInt u = 0;
 	*isANumber = IsAnUnsigned(s, &u);
 	if (*isANumber)
 		return u == (n+1);
