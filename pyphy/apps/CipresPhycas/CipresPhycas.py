@@ -15,7 +15,10 @@ class CipresPhycas(CipresIDL_api1__POA.AsyncTreeInfer, SimpleServer, Phycas):
         _LOG.info('Initializing Phycas')
         Phycas.__init__(self)
         self.data_source = 'file'
-        self.data_file_name = r'C:\Synchronized\Projects\pyphydev\pyphy\pyphy\nyldna4.nex'
+        if sys.platform == 'darwin':
+            self.data_file_name = r'/Users/mholder/Documents/projects/phycas_svn/phycasdev/pyphy/pyphy/nyldna4.nex'
+        else:
+            self.data_file_name = r'C:\Synchronized\Projects\pyphydev\pyphy\pyphy\nyldna4.nex'
         SimpleServer.__init__(self, registry)
         self.registry = registry
         self.trees = []
@@ -57,6 +60,7 @@ class CipresPhycas(CipresIDL_api1__POA.AsyncTreeInfer, SimpleServer, Phycas):
         _LOG.debug('CipresPhycas.inferTrees')
         if self.nTax == 0:
             raise RuntimeError, 'Failed to call setMatrix before inferTree'
+        _LOG.debug(self.data_file_name)
         self.setup()
         self.runThread = threading.Thread(target=self.run, name='MCMC')
         self.runThread.start()
@@ -153,7 +157,8 @@ class CipresPhycas(CipresIDL_api1__POA.AsyncTreeInfer, SimpleServer, Phycas):
         """
         Phycas.recordSample(self, cycle, lnL)
         
-        t = (cycle, lnL, self.tree.makeNewick())
+        t = (cycle + 1, lnL, self.tree.makeNewick())
+        _LOG.debug(str(t))
         self.treesLock.acquire()
         try:
             self.trees.append(t)

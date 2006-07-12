@@ -26,6 +26,7 @@ class NexusReader(NexusReaderBase):
         Need to write.
 
         """
+        print fn
         NexusReaderBase.readFile(self, fn)
         
     def getNChar(self):

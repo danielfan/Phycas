@@ -367,10 +367,13 @@ void NxsFilePath::CreateNative() const
 	if (nativePath.empty())
 		return;
 #	if (NEW_PATH_STRING_IMPLEMENTATION)
-		list<string> dirStack;
-		split<char, string>(nativePath, '/', &dirStack);
-		ShortenDirStack(dirStack);
-		TranslateDirStack(dirStack);
+		if (!nativePath.empty() && nativePath[0] != nativeSeparator)
+			{
+			list<string> dirStack;
+			split<char, string>(nativePath, '/', &dirStack);
+			ShortenDirStack(dirStack);
+			TranslateDirStack(dirStack);
+			}
 #	else
 		replace_if(nativePath.begin(), nativePath.end(), IsDivider, nativeSeparator);
 #	endif

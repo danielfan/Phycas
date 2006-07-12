@@ -193,9 +193,6 @@
                             <origin>Likelihood/__init__.py</origin>
                         </distributionFile>
                         <distributionFile>
-                            <origin>Likelihood/_LikelihoodBase.pyd</origin>
-                        </distributionFile>
-                        <distributionFile>
                             <origin>Likelihood/_MCMCChainManager.py</origin>
                         </distributionFile>
                         <distributionFile>
@@ -211,14 +208,6 @@
                             <origin>Likelihood/_TopoPriorCalculator.py</origin>
                         </distributionFile>
                     </distributionFileList>
-                    <ruleList>
-                        <compareText>
-                            <logic>equals</logic>
-                            <nocase>0</nocase>
-                            <text>${platform_name}</text>
-                            <value>windows</value>
-                        </compareText>
-                    </ruleList>
                 </folder>
                 <folder>
                     <description>LikelihoodPyd</description>
