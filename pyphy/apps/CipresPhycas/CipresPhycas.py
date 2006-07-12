@@ -48,6 +48,11 @@ class CipresPhycas(CipresIDL_api1__POA.AsyncTreeInfer, SimpleServer, Phycas):
     # Scriptable interface    
     def execute(self, cmd):
         _LOG.debug('CipresPhycas.execute cmd=%s' % cmd)
+        settings = cmd.split(';')
+        for s in settings:
+            name,value = s.split('=')
+            if name.strip() == 'ncycles':
+                self.ncycles = int(value)
         return True, ''
 
     # AsyncTreeInfer (will be called before AsyncTreeIterator functions)

@@ -22,10 +22,8 @@ inline MCMCUpdater::MCMCUpdater()
   is_master_param(false),
   is_hyper_param(false), 
   is_fixed(false),
-  slice_max_units(UINT_MAX)
-#if POLPY_NEWWAY
-  , slice_starting_value(0.1)
-#endif
+  slice_max_units(UINT_MAX),
+  slice_starting_value(0.1)
 	{
 	//ln_zero = std::log(std::numeric_limits<double>::denorm_min()); // this doesn't work, lnL can get much lower than the log of dnorm_min!
 	ln_zero = -DBL_MAX;
@@ -345,7 +343,6 @@ inline void MCMCUpdater::setPrior(ProbDistShPtr p)
 	prior = p;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the starting value of the slice sampler to the supplied value `x'. The value is stored in the data member
 |	`slice_starting_value' and passed to the slice sampler if and when it is created in the member function
@@ -355,7 +352,6 @@ inline void MCMCUpdater::setStartingValue(double x)
 	{
 	slice_starting_value = x;
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	If data member `prior' actually points to a ProbabilityDistribution object, this function calls the 

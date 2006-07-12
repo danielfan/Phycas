@@ -1342,6 +1342,44 @@ void TreeLikelihood::prepareForSimulation(
 		}
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	
+*/
+void TreeLikelihood::copyDataFromIDLMatrix(
+  const PhycasIDLishMatrix & m)	/**< */
+	{
+	// Copy information about state codes 
+	state_list.clear();
+	state_list_pos.clear();
+	int curr_pos = 0;
+	typedef std::vector<CIPR_State_t> CIPRStateVect;
+	std::vector<CIPRStateVect>::const_iterator rowit = m.state_lookup.begin();
+	for (unsigned i = 0; rowit != m.state_lookup.end(); ++rowit, ++i)
+		{
+		state_list_pos.push_back(curr_pos);
+		curr_pos += (unsigned)rowit->size();
+		std::vector<CIPR_State_t>::const_iterator it = rowit->begin();
+		for (; it != rowit->end(); ++it)
+			state_list.push_back(int8_t(*it));
+		}
+
+	// The compressIDLMatrix function first erases, then builds, both pattern_map and 
+	// pattern_counts using the uncompressed data contained in mat
+	std::vector<const CIPR_StateSet_t *> vecRowPtr;
+	for (std::vector<CIPRStateVect>::const_iterator rowIt = m.matrix.begin(); rowIt != m.matrix.end(); ++rowIt)
+		{
+		const CIPRStateVect & v = *rowIt;
+		vecRowPtr.push_back(&v[0]);
+		}
+	const CIPR_StateSet_t * const * matPtr = &vecRowPtr[0];
+	num_patterns = compressIDLMatrix(m.ntaxa, m.nchar, matPtr);
+
+	// size of likelihood_rate_site vector needs to be revisited if the number of rates subsequently changes 
+	recalcRelativeRates();
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Builds `pattern_map' and `pattern_counts' using uncompressed data stored in `mat'.
 */
@@ -1352,7 +1390,11 @@ void TreeLikelihood::copyDataFromDiscreteMatrix(
 
 	// The compressDataMatrix function first erases, then builds, both pattern_map and 
 	// pattern_counts using the uncompressed data contained in mat
+#if POLPY_NEWWAY
+	num_patterns = compressDataMatrix(mat.getNTax(), mat.getNChar(), mat);
+#else
 	num_patterns = compressDataMatrix(mat);
+#endif
 
 	state_list = mat.getStateList(); 
 	state_list_pos = mat.getStateListPos();
@@ -1460,11 +1502,94 @@ void TreeLikelihood::prepareForLikelihood(
 		}
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Helper function used by both compressDataMatrix and compressIDLMatrix that (re)builds `pattern_map', 
+|	`pattern_counts' and `charIndexToPatternIndex' from a two-dimensional array `mat' of state codes (rows are taxa, 
+|	columns are sites).
+*/
+unsigned TreeLikelihood::buildPatternMapFromRawMatrix(unsigned ntax, unsigned nchar, const CIPR_StateSet_t * const * mat)
+	{
+	pattern_map.clear();
+	charIndexToPatternIndex.clear();
+
+	typedef std::list<unsigned> IndexList;
+	typedef std::map<VecStateList, IndexList> PatternToIndex;
+	PatternToIndex patternToIndex;
+	
+	// Loop across each site in mat
+	for (unsigned j = 0; j < nchar; ++j)
+		{
+		// Build up a vector representing the pattern of state codes at this site
+		std::vector<int8_t> pattern;
+		for (unsigned i = 0; i < ntax; ++i)
+			{
+			const CIPR_StateSet_t * row  = mat[i];
+			const CIPR_StateSet_t   code = row[j];
+			pattern.push_back(code);
+			}
+
+		// Add the pattern to the map if it has not yet been seen, otherwise increment 
+		// the count of this pattern if it is already in the map (see item 24, p. 110, in Meyers' Efficient STL)
+		PatternMapType::iterator lowb = pattern_map.lower_bound(pattern);
+		if (lowb != pattern_map.end() && !(pattern_map.key_comp()(pattern, lowb->first)))
+			{
+			// pattern is already in pattern_map, increment count
+			lowb->second += 1.0;
+			}
+		else
+			{
+			// pattern has not yet been stored in pattern_map
+			pattern_map.insert(lowb, PatternMapType::value_type(pattern, 1));
+			}
+		
+		// Add the pattern to the map if it has not yet been seen, otherwise increment 
+		// the count of this pattern if it is already in the map (see item 24, p. 110, in Meyers' Efficient STL)
+		PatternToIndex::iterator pToILowB = patternToIndex.lower_bound(pattern);
+		if (pToILowB != patternToIndex.end() && !(patternToIndex.key_comp()(pattern, pToILowB->first)))
+			pToILowB->second.push_back(j);
+		else
+			{
+			IndexList ilist(1, j);
+			patternToIndex.insert(pToILowB, PatternToIndex::value_type(pattern, ilist));
+			}
+		}
+
+	// Copy counts to pattern_counts before returning
+	pattern_counts.clear();
+	pattern_counts.reserve(pattern_map.size());
+	unsigned patternIndex = 0;
+	for (PatternMapType::iterator mapit = pattern_map.begin(); mapit != pattern_map.end(); ++mapit, ++patternIndex)
+		{
+		pattern_counts.push_back(mapit->second);
+		const IndexList & inds = patternToIndex[mapit->first];
+		for (IndexList::const_iterator indIt = inds.begin(); indIt != inds.end(); ++indIt)
+			charIndexToPatternIndex[*indIt] = patternIndex;
+		}
+	return (unsigned)pattern_map.size();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	
+*/
+unsigned TreeLikelihood::compressIDLMatrix(unsigned ntax, unsigned nchar, const CIPR_StateSet_t * const * matrix)
+	{
+	return buildPatternMapFromRawMatrix(ntax, nchar, matrix);
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Copies data from `mat' to the map `pattern_map'. The resulting map holds pairs whose key is the pattern for one site
 |	and whose value is a count of the number of sites having that pattern. The counts from `pattern_map' are transferred  
 |	to the `pattern_counts' vector (vectors are more efficient containers for use during likelihood calculations).
 */
+#if POLPY_NEWWAY
+unsigned TreeLikelihood::compressDataMatrix(unsigned ntax, unsigned nchar, const CipresNative::DiscreteMatrix & matrix) //POLBM TreeLikelihood::compressDataMatrix
+	{
+	const CIPR_StateSet_t * const * mat = matrix.getMatrix();
+	return buildPatternMapFromRawMatrix(ntax, nchar, mat);
+	}
+#else
 unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix & mat) //POLBM TreeLikelihood::compressDataMatrix
 	{
 	pattern_map.clear();
@@ -1528,6 +1653,7 @@ unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix &
 
 	return (unsigned)pattern_map.size();
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Creates a string representation of the supplied `state'. For example, if `state' equals 1 (where model is a 

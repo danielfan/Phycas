@@ -177,7 +177,7 @@ class Phycas:
         self.sample_every           = 100                # a new sample will be taken after this many cycles
         self.report_every           = self.ncycles//100  # a progress report will be displayed after this many cycles
         self.verbose                = True               # more output if True
-        #self.use_tree_viewer        = False              # popup graphical TreeViewer to show trees during run POLPY_NEWWAY
+        #self.use_tree_viewer        = False             # popup graphical TreeViewer to show trees during run POLPY_NEWWAY
         
         # Variables associated with Larget-Simon moves
         self.ls_move_lambda         = 0.2       # The value of the tuning parameter for the Larget-Simon move
@@ -1111,18 +1111,20 @@ class Phycas:
 if __name__ == '__main__':
     mcmc = Phycas()
 
-    mcmc.random_seed = '13579'
-    mcmc.data_source = 'file'
-    mcmc.data_file_name = '../../pyphy/green.nex'
-    #mcmc.data_file_name = '../../pyphy/nyldna4.nex'
-    mcmc.starting_tree_source = 'random'
-    mcmc.ncycles = 200
-    mcmc.sample_every = 10
-    mcmc.adapt_first = 10
-    mcmc.model_type = 'hky'
-    mcmc.ls_move_weight = 10
-    mcmc.slice_max_units = 0
-    mcmc.verbose = True
+    if False:
+        # set above to True for normal operation
+        mcmc.random_seed = '13579'
+        mcmc.data_source = 'file'
+        mcmc.data_file_name = '../../pyphy/green.nex'
+        #mcmc.data_file_name = '../../pyphy/nyldna4.nex'
+        mcmc.starting_tree_source = 'random'
+        mcmc.ncycles = 200
+        mcmc.sample_every = 10
+        mcmc.adapt_first = 10
+        mcmc.model_type = 'hky'
+        mcmc.ls_move_weight = 10
+        mcmc.slice_max_units = 0
+        mcmc.verbose = True
 
     if False:
         # for timing
@@ -1131,6 +1133,10 @@ if __name__ == '__main__':
         mcmc.ls_move_weight = 100
         mcmc.ls_move_debug = False
         mcmc.uf_num_edges = 50
+
+    if True:
+        # for Tallahassee session
+        mcmc.data_file_name = '../../pyphy/nyldna4.nex'
 
     mcmc.setup()
     mcmc.run()

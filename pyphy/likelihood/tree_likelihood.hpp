@@ -41,6 +41,45 @@ typedef boost::shared_ptr<SimData>	SimDataShPtr;
 class Lot;
 typedef boost::shared_ptr<Lot>	LotShPtr;
 
+#if POLPY_NEWWAY
+class PhycasIDLishMatrix
+	{
+	friend class TreeLikelihood;
+	public:
+		typedef std::vector<CIPR_State_t> CIPRStateVect;
+
+		PhycasIDLishMatrix(unsigned nt, unsigned nc, std::string s, int dt, unsigned ns)
+		  : ntaxa(nt), nchar(nc), symbols(s), datatype(dt), nstates(ns)
+			{
+			state_lookup.resize(symbols.length());
+			matrix.resize(ntaxa);
+			}
+
+		void setCharStateLookup(unsigned n, const CIPRStateVect & state_codes)
+			{
+			if (n >= state_lookup.size())
+				state_lookup.resize(n + 1);
+			state_lookup[n] = state_codes;
+			}
+
+		void replaceRow(unsigned n, const CIPRStateVect & row)
+			{
+			assert(row.size() == nchar);
+			assert(n < matrix.size());
+			matrix[n] = row;
+			}
+
+	private:
+		unsigned ntaxa;
+		unsigned nchar;
+		std::string symbols;
+		int datatype;
+		unsigned nstates;
+		std::vector<CIPRStateVect> matrix;
+		std::vector<CIPRStateVect> state_lookup;
+	};
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Used for computing the likelihood on a tree.
 */
@@ -74,6 +113,10 @@ class TreeLikelihood
 		void							prepareForSimulation(TreeShPtr);
 		void							prepareForLikelihood(TreeShPtr);
 		void							prepareInternalNodeForLikelihood(TreeNode * nd);
+
+#if POLPY_NEWWAY
+		void							copyDataFromIDLMatrix(const PhycasIDLishMatrix & m);
+#endif
 		void							copyDataFromDiscreteMatrix(const CipresNative::DiscreteMatrix &);
 		void							copyDataFromSimData(SimDataShPtr sim_data);
 
@@ -88,7 +131,7 @@ class TreeLikelihood
 		bool							discardCacheBothEnds(TreeNode * ref_nd, TreeNode * unused = NULL);
 		void							restoreFromCacheAwayFromNode(TreeNode & focalNode);
 		void							discardCacheAwayFromNode(TreeNode & focalNode);
-		
+
 		const CondLikelihoodStorage &	getCLAStorage() const;
 		unsigned						bytesPerCLA() const;
 		unsigned						numCLAsCreated() const;
@@ -152,7 +195,14 @@ class TreeLikelihood
 		void							buildPatternReprVector(std::vector<std::string> &, TreeShPtr);
 		TipData *						allocateTipData(unsigned);
 		InternalData *					allocateInternalData();
+
+#if POLPY_NEWWAY
+		unsigned						compressDataMatrix(unsigned ntax, unsigned nchar, const CipresNative::DiscreteMatrix &);
+		unsigned						compressIDLMatrix(unsigned ntax, unsigned nchar, const CIPR_StateSet_t * const * matrix);
+		unsigned						buildPatternMapFromRawMatrix(unsigned ntax, unsigned nchar, const CIPR_StateSet_t * const * mat);
+#else
 		unsigned						compressDataMatrix(const CipresNative::DiscreteMatrix &);
+#endif
 
 		void							calcTMatForSim(TipData &, double);
 		void							simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar, bool refresh_probs);

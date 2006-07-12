@@ -217,7 +217,14 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("addDataTo", &phycas::SimData::addDataTo)
 		.def("calct", &phycas::SimData::calct)
 		;
+#if POLPY_NEWWAY
+	class_<PhycasIDLishMatrix, boost::noncopyable>("PhycasIDLishMatrix", init<unsigned, unsigned, std::string, int, unsigned>())
+		;
+#endif
 	class_<TreeLikelihood, TreeLikelihoodWrapper, boost::noncopyable>("TreeLikelihoodBase", init<boost::shared_ptr<Model> >())
+#if POLPY_NEWWAY
+		.def("copyDataFromIDLMatrix", &TreeLikelihood::copyDataFromIDLMatrix)
+#endif
 		.def("copyDataFromDiscreteMatrix", &TreeLikelihood::copyDataFromDiscreteMatrix)
 		.def("copyDataFromSimData", &TreeLikelihood::copyDataFromSimData)
 		.def("prepareForSimulation", &TreeLikelihood::prepareForSimulation)
