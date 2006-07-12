@@ -84,7 +84,8 @@
                             <value>windows</value>
                         </compareText>
                     </ruleList>
-                </folder><folder>
+                </folder>
+                <folder>
                     <description>ConversionsPyd</description>
                     <destination>${installdir}/pyphy/Conversions</destination>
                     <name>ConversionsPyd</name>
@@ -92,7 +93,7 @@
                     <distributionFileList>
                         <distributionFile>
                             <origin>Conversions/_Conversions.pyd</origin>
-                        </distributionFile>     
+                        </distributionFile>
                     </distributionFileList>
                     <ruleList>
                         <compareText>
@@ -112,7 +113,6 @@
                         <distributionFile>
                             <origin>Conversions/_Conversions.so</origin>
                         </distributionFile>
-                        
                     </distributionFileList>
                     <ruleList>
                         <compareText>
@@ -144,17 +144,16 @@
                             <value>windows</value>
                         </compareText>
                     </ruleList>
-                </folder><folder>
+                </folder>
+                <folder>
                     <description>DataMatrixPyd</description>
                     <destination>${installdir}/pyphy/DataMatrix</destination>
-                    <name>DataMatrix</name>
+                    <name>DataMatrixPyd</name>
                     <platforms>windows</platforms>
                     <distributionFileList>
                         <distributionFile>
                             <origin>DataMatrix/_DataMatrixBase.pyd</origin>
                         </distributionFile>
-                        
-                        
                     </distributionFileList>
                     <ruleList>
                         <compareText>
@@ -168,7 +167,7 @@
                 <folder>
                     <description>DataMatrixSo</description>
                     <destination>${installdir}/pyphy/DataMatrix</destination>
-                    <name>DataMatrix</name>
+                    <name>DataMatrixSo</name>
                     <platforms>osx</platforms>
                     <distributionFileList>
                         <distributionFile>
@@ -224,7 +223,7 @@
                 <folder>
                     <description>LikelihoodPyd</description>
                     <destination>${installdir}/pyphy/Likelihood</destination>
-                    <name>Likelihood</name>
+                    <name>LikelihoodPyd</name>
                     <platforms>windows</platforms>
                     <distributionFileList>
                         <distributionFile>
@@ -243,7 +242,7 @@
                 <folder>
                     <description>LikelihoodSo</description>
                     <destination>${installdir}/pyphy/Likelihood</destination>
-                    <name>Likelihood</name>
+                    <name>LikelihoodSo</name>
                     <platforms>osx</platforms>
                     <distributionFileList>
                         <distributionFile>
@@ -286,10 +285,11 @@
                             <value>windows</value>
                         </compareText>
                     </ruleList>
-                </folder><folder>
+                </folder>
+                <folder>
                     <description>PhylogenyPyd</description>
                     <destination>${installdir}/pyphy/Phylogeny</destination>
-                    <name>Phylogeny</name>
+                    <name>PhylogenyPyd</name>
                     <platforms>windows</platforms>
                     <distributionFileList>
                         <distributionFile>
@@ -308,12 +308,12 @@
                 <folder>
                     <description>PhylogenySo</description>
                     <destination>${installdir}/pyphy/Phylogeny</destination>
-                    <name>Phylogeny</name>
+                    <name>PhylogenySo</name>
                     <platforms>osx</platforms>
                     <distributionFileList>
-                         <distributionFile>
+                        <distributionFile>
                             <origin>Phylogeny/_Phylogeny.so</origin>
-                        </distributionFile>         
+                        </distributionFile>
                     </distributionFileList>
                     <ruleList>
                         <compareText>
@@ -376,7 +376,7 @@
                 <folder>
                     <description>ProbDistPyd</description>
                     <destination>${installdir}/pyphy/ProbDist</destination>
-                    <name>ProbDist</name>
+                    <name>ProbDistPyd</name>
                     <platforms>windows</platforms>
                     <distributionFileList>
                         <distributionFile>
@@ -395,7 +395,7 @@
                 <folder>
                     <description>ProbDistSo</description>
                     <destination>${installdir}/pyphy/ProbDist</destination>
-                    <name>ProbDist</name>
+                    <name>ProbDistSo</name>
                     <platforms>osx</platforms>
                     <distributionFileList>
                         <distributionFile>
@@ -432,10 +432,11 @@
                             <value>windows</value>
                         </compareText>
                     </ruleList>
-                </folder><folder>
+                </folder>
+                <folder>
                     <description>ReadNexusPyd</description>
                     <destination>${installdir}/pyphy/ReadNexus</destination>
-                    <name>ReadNexus</name>
+                    <name>ReadNexusPyd</name>
                     <platforms>windows</platforms>
                     <distributionFileList>
                         <distributionFile>
@@ -454,7 +455,7 @@
                 <folder>
                     <description>ReadNexusSo</description>
                     <destination>${installdir}/pyphy/ReadNexus</destination>
-                    <name>ReadNexus</name>
+                    <name>ReadNexusSo</name>
                     <platforms>osx</platforms>
                     <distributionFileList>
                         <distributionFile>
@@ -482,19 +483,7 @@
                     </distributionFileList>
                 </folder>
             </folderList>
-            <postInstallationActionList>
-                <registryGet>
-                    <key>HKEY_CURRENT_USER\Environment</key>
-                    <name>FAKEPYTHONPATH</name>
-                    <variable>fakepythonpath</variable>
-                </registryGet>
-                <registrySet>
-                    <key>HKEY_CURRENT_USER\Environment</key>
-                    <name>FAKEPYTHONPATH</name>
-                    <type>REG_SZ</type>
-                    <value>${installdir}</value>
-                </registrySet>
-            </postInstallationActionList>
+            <postInstallationActionList/>
             <startMenuShortcutList>
                 <startMenuShortcut>
                     <comment>Uninstall ${product_fullname}</comment>
@@ -567,7 +556,26 @@
             <platform>windows</platform>
         </platformOptions>
     </platformOptionsList>
-    <postInstallationActionList/>
+    <postInstallationActionList>
+        <actionGroup>
+            <actionList>
+                <registrySet>
+                    <key>HKEY_CURRENT_USER\Environment</key>
+                    <name>FAKEPYTHONPATH</name>
+                    <type>REG_SZ</type>
+                    <value>${newfakepythonpath}</value>
+                </registrySet>
+            </actionList>
+            <ruleList>
+                <compareText>
+                    <logic>does_not_contain</logic>
+                    <nocase>0</nocase>
+                    <text>${fakepythonpath}</text>
+                    <value>${installdir}</value>
+                </compareText>
+            </ruleList>
+        </actionGroup>
+    </postInstallationActionList>
     <postUninstallationActionList/>
     <preBuildActionList/>
     <preInstallationActionList>
@@ -583,9 +591,13 @@
         </setInstallerVariableFromScriptOutput>
         <registryGet>
             <key>HKEY_CURRENT_USER\Environment</key>
-            <name>PYTHONPATH</name>
-            <variable>pythonpath</variable>
+            <name>FAKEPYTHONPATH</name>
+            <variable>fakepythonpath</variable>
         </registryGet>
+        <setInstallerVariable>
+            <name>newfakepythonpath</name>
+            <value>${fakepythonpath};${installdir}</value>
+        </setInstallerVariable>
     </preInstallationActionList>
     <preUninstallationActionList>
         <registryDelete>
