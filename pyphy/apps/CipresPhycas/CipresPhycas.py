@@ -24,6 +24,7 @@ class CipresPhycas(CipresIDL_api1__POA.AsyncTreeInfer, SimpleServer, Phycas):
         self.trees = []
         self.treesLock = threading.Lock()
         self.curr_tree_pos = None
+        self.matrix = None
         #self.nTax = 0
         #self.tree = CipresTree('(1,2,(3,4))')
         #self.nTrees = 10
@@ -59,7 +60,16 @@ class CipresPhycas(CipresIDL_api1__POA.AsyncTreeInfer, SimpleServer, Phycas):
     def setMatrix(self, mat):
         _LOG.debug('CipresPhycas.setMatrix')
         self.nTax = len(mat.m_matrix)
-        self.leafSet = range(1, self.nTax + 1)
+        if self.nTax == 0:
+            self.nChars = 0
+            self.matrix = None
+            return
+        phycasIDLishMatrix = PhycasIDLishMatrix(self.nTax, self.nChars, mat.m_symbols, mat.m_datatype, mat.m_numStates)
+        for n, stateList in enumerate(mat.m_charStateLookup):
+            phycasIDLishMatrix.setCharStateLookup(n, stateList)
+        for n, row in enumerate(mat):
+            phycasIDLishMatrix.replaceRow(n, row)
+        self.copyDataFromIDLMatrix(self.phycasIDLishMatrix)
 
     def inferTrees(self, outStream):
         _LOG.debug('CipresPhycas.inferTrees')
