@@ -579,7 +579,8 @@ class Phycas:
 
         self.setupModel()
 
-        if self.data_source != 'memory':       
+        #@POL if self.data_source != 'memory':       
+        if self.__dict__.get('likelihood') is None:
             self.setupLikelihood()
 
         if self.data_source == 'file':

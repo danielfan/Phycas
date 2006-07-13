@@ -25,8 +25,8 @@ class CipresPhycas(CipresIDL_api1__POA.AsyncTreeInfer, SimpleServer, Phycas):
         self.trees = []
         self.treesLock = threading.Lock()
         self.curr_tree_pos = None
-        self.matrix = None
-        #self.nTax = 0
+        self.phycasIDLishMatrix = None
+        self.ntax = 0
         #self.tree = CipresTree('(1,2,(3,4))')
         #self.nTrees = 10
 
@@ -60,27 +60,30 @@ class CipresPhycas(CipresIDL_api1__POA.AsyncTreeInfer, SimpleServer, Phycas):
     # AsyncTreeInfer (will be called before AsyncTreeIterator functions)
     def setMatrix(self, mat):
         _LOG.debug('CipresPhycas.setMatrix')
-        self.nTax = len(mat.m_matrix)
-        if self.nTax == 0:
-            self.nChars = 0
+        self.ntax = len(mat.m_matrix)
+        if self.ntax == 0:
+            self.nchar = 0
             self.matrix = None
             return
-        self.nChars = len(mat.m_matrix[0])
+        self.nchar = len(mat.m_matrix[0])
         # TEMP hard coding datatype (need to look up how to deal with IDL enums).
-        phycasIDLishMatrix = PhycasIDLishMatrix(self.nTax, self.nChars, mat.m_symbols, 0, mat.m_numStates)
+        self.phycasIDLishMatrix = PhycasIDLishMatrix(self.ntax, self.nchar, mat.m_symbols, 0, mat.m_numStates)
         for n, stateList in enumerate(mat.m_charStateLookup):
-            phycasIDLishMatrix.setCharStateLookup(n, stateList)
+            self.phycasIDLishMatrix.setCharStateLookup(n, stateList)
         for n, row in enumerate(mat.m_matrix):
-            phycasIDLishMatrix.replaceRow(n, row)
-        self.copyDataFromIDLMatrix(self.phycasIDLishMatrix)
+            self.phycasIDLishMatrix.replaceRow(n, row)
 
     def inferTrees(self, outStream):
         _LOG.debug('CipresPhycas.inferTrees')
-        if self.nTax == 0:
+        if self.phycasIDLishMatrix is None:
             raise RuntimeError, 'Failed to call setMatrix before inferTree'
-        _LOG.debug(self.data_file_name)
+        #self.setupModel()
+        #self.setupLikelihood()
+        _LOG.debug('about to call setup')
         self.setup()
+        self.likelihood.copyDataFromIDLMatrix(self.phycasIDLishMatrix)
         self.runThread = threading.Thread(target=self.run, name='MCMC')
+        _LOG.debug('about to launch mcmc thread')
         self.runThread.start()
         return self
     
