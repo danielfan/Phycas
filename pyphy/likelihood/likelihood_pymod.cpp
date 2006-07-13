@@ -219,6 +219,8 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		;
 #if POLPY_NEWWAY
 	class_<PhycasIDLishMatrix, boost::noncopyable>("PhycasIDLishMatrix", init<unsigned, unsigned, std::string, int, unsigned>())
+		.def("setCharStateLookup", &PhycasIDLishMatrix::setCharStateLookup)
+		.def("replaceRow", &PhycasIDLishMatrix::replaceRow)
 		;
 #endif
 	class_<TreeLikelihood, TreeLikelihoodWrapper, boost::noncopyable>("TreeLikelihoodBase", init<boost::shared_ptr<Model> >())
