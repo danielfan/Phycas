@@ -1,4 +1,5 @@
 from Phycas import Phycas
+from Likelihood import PhycasIDLishMatrix
 import os, sys
 import re
 import threading
@@ -14,11 +15,11 @@ class CipresPhycas(CipresIDL_api1__POA.AsyncTreeInfer, SimpleServer, Phycas):
     def __init__(self, registry):
         _LOG.info('Initializing Phycas')
         Phycas.__init__(self)
-        self.data_source = 'file'
-        if sys.platform == 'darwin':
-            self.data_file_name = r'/Users/mholder/Documents/projects/phycas_svn/phycasdev/pyphy/pyphy/nyldna4.nex'
-        else:
-            self.data_file_name = r'C:\Synchronized\Projects\pyphydev\pyphy\pyphy\nyldna4.nex'
+        self.data_source = 'memory'
+        #if sys.platform == 'darwin':
+        #    self.data_file_name = r'/Users/mholder/Documents/projects/phycas_svn/phycasdev/pyphy/pyphy/nyldna4.nex'
+        #else:
+        #    self.data_file_name = r'C:\Synchronized\Projects\pyphydev\pyphy\pyphy\nyldna4.nex'
         SimpleServer.__init__(self, registry)
         self.registry = registry
         self.trees = []
@@ -64,7 +65,9 @@ class CipresPhycas(CipresIDL_api1__POA.AsyncTreeInfer, SimpleServer, Phycas):
             self.nChars = 0
             self.matrix = None
             return
-        phycasIDLishMatrix = PhycasIDLishMatrix(self.nTax, self.nChars, mat.m_symbols, mat.m_datatype, mat.m_numStates)
+        self.nChars = len(mat.m_matrix[0])
+        # TEMP hard coding datatype (need to look up how to deal with IDL enums).
+        phycasIDLishMatrix = PhycasIDLishMatrix(self.nTax, self.nChars, mat.m_symbols, 0, mat.m_numStates)
         for n, stateList in enumerate(mat.m_charStateLookup):
             phycasIDLishMatrix.setCharStateLookup(n, stateList)
         for n, row in enumerate(mat):
