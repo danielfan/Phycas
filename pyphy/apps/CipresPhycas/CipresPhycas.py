@@ -80,6 +80,7 @@ class CipresPhycas(CipresIDL_api1__POA.AsyncTreeInfer, SimpleServer, Phycas):
         #self.setupModel()
         #self.setupLikelihood()
         _LOG.debug('about to call setup')
+        self.leafSet = range(1, self.ntax + 1)
         self.setup()
         self.runThread = threading.Thread(target=self.run, name='MCMC')
         _LOG.debug('about to launch mcmc thread')
