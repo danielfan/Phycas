@@ -34,7 +34,8 @@ class CipresPhycas(CipresIDL_api1__POA.AsyncTreeInfer, SimpleServer, Phycas):
 
     def remove(self):
         self.serverRefCount -= 1
-        if self.serverRefCount < 1:
+        _LOG.warn('not removing')
+        if self.serverRefCount is None:#< 1:
             SimpleServer.remove(self)
 
     def toCipresIDLTree(self, t):
@@ -60,9 +61,14 @@ class CipresPhycas(CipresIDL_api1__POA.AsyncTreeInfer, SimpleServer, Phycas):
         _LOG.debug('CipresPhycas.execute cmd=%s' % cmd)
         settings = cmd.split(';')
         for s in settings:
-            name,value = s.split('=')
-            if name.strip() == 'ncycles':
-                self.ncycles = int(value)
+            if s:
+                splitOnEqual = s.split('=')
+                if len(splitOnEqual) == 1:
+                    return False, 'No = character seen.  Expecting command in the form of <name> = <value>'
+                name = splitOnEqual[0].strip()
+                value = '='.join(splitOnEqual[1:]).strip()
+                if name.strip() == 'ncycles':
+                    self.ncycles = int(value)
         return True, ''
 
     # AsyncTreeInfer (will be called before AsyncTreeIterator functions)

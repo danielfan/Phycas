@@ -1,2 +1,9 @@
 '''Root of the pyphy package.'''
-__all__ = 	['DataMatrix', 'Likelihood', 'ReadNexus', 'ProbDist', 'Phylogeny']
+__all__ = [
+    'Conversions',
+    'DataMatrix', 
+    'Likelihood', 
+    'Phylogeny',
+    'ProbDist', 
+    'ReadNexus', 
+    ]
