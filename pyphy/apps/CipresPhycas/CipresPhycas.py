@@ -27,8 +27,15 @@ class CipresPhycas(CipresIDL_api1__POA.AsyncTreeInfer, SimpleServer, Phycas):
         self.curr_tree_pos = None
         self.phycasIDLishMatrix = None
         self.ntax = 0
+        self.leafSet = []
+        self.serverRefCount = 1
         #self.tree = CipresTree('(1,2,(3,4))')
         #self.nTrees = 10
+
+    def remove(self):
+        self.serverRefCount -= 1
+        if self.serverRefCount < 1:
+            SimpleServer.remove(self)
 
     def toCipresIDLTree(self, t):
         cycle, lnL, newick = t
@@ -38,6 +45,7 @@ class CipresPhycas(CipresIDL_api1__POA.AsyncTreeInfer, SimpleServer, Phycas):
             CipresIDL_api1.TreeScore(CipresIDL_api1.DOUBLE_SCORE_TYPE, lnL),
             self.leafSet,
             name)
+
     def returnTree(self, ind):
         self.curr_tree_pos = ind
         self.treesLock.acquire()
@@ -86,21 +94,26 @@ class CipresPhycas(CipresIDL_api1__POA.AsyncTreeInfer, SimpleServer, Phycas):
         _LOG.debug('about to launch mcmc thread')
         self.runThread.start()
         _LOG.debug('back from launching thread')
+        self.serverRefCount += 1
         return self
-    def coptyDataMatrix(self):
+
+    def copyDataMatrix(self):
         self.likelihood.copyDataFromIDLMatrix(self.phycasIDLishMatrix)
     # AsyncTreeIterator
+
     def getFirstTree(self):
         _LOG.debug('CipresPhycas.getFirstTree')
         if self.getNumTrees() > 0:
             return self.returnTree(0)
         raise RuntimeError, 'getFirstTree failed because there are currently no trees to supply'
+
     def getLastTree(self):
         _LOG.debug('CipresPhycas.getLastTree')
         n = self.getNumTrees()
         if n > 0:
             return self.returnTree(n-1)
         raise RuntimeError, 'getLastTree failed because there are currently no trees to supply'
+
     def getNextTree(self):
         _LOG.debug('CipresPhycas.getNextTree')
         n = self.getNumTrees()
