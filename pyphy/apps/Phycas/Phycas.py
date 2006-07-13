@@ -563,6 +563,18 @@ class Phycas:
         self.likelihood.copyDataFromDiscreteMatrix(self.data_matrix)
         self.npatterns = self.likelihood.getNPatterns()
 
+    def copyDataMatrix(self):
+        if self.data_source == 'file':
+            self.reader.readFile(self.data_file_name)
+            self.taxon_labels = self.reader.getTaxLabels()
+            self.data_matrix = ReadNexus.getDiscreteMatrix(self.reader, 0)
+            self.ntax = self.data_matrix.getNTax()
+            self.nchar = self.data_matrix.getNChar() # used for Gelfand-Ghosh simulations only
+            self.likelihood.copyDataFromDiscreteMatrix(self.data_matrix)
+        elif self.data_source == 'memory':
+            assert self.ntax > 0
+            assert self.nchar > 0
+            
     def setup(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -583,18 +595,8 @@ class Phycas:
         if self.__dict__.get('likelihood') is None:
             self.setupLikelihood()
 
-        if self.data_source == 'file':
-            self.reader.readFile(self.data_file_name)
-            self.taxon_labels = self.reader.getTaxLabels()
-            self.data_matrix = ReadNexus.getDiscreteMatrix(self.reader, 0)
-            self.ntax = self.data_matrix.getNTax()
-            self.nchar = self.data_matrix.getNChar() # used for Gelfand-Ghosh simulations only
-            self.likelihood.copyDataFromDiscreteMatrix(self.data_matrix)
-            self.npatterns = self.likelihood.getNPatterns()
-        elif self.data_source == 'memory':
-            self.npatterns = self.likelihood.getNPatterns()
-            assert self.ntax > 0
-            assert self.nchar > 0
+        self.copyDataMatrix();            
+        self.npatterns = self.likelihood.getNPatterns()
 
         self.setupTree()        
         self.likelihood.prepareForLikelihood(self.tree)
