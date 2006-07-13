@@ -70,7 +70,7 @@ class CipresPhycas(CipresIDL_api1__POA.AsyncTreeInfer, SimpleServer, Phycas):
         phycasIDLishMatrix = PhycasIDLishMatrix(self.nTax, self.nChars, mat.m_symbols, 0, mat.m_numStates)
         for n, stateList in enumerate(mat.m_charStateLookup):
             phycasIDLishMatrix.setCharStateLookup(n, stateList)
-        for n, row in enumerate(mat):
+        for n, row in enumerate(mat.m_matrix):
             phycasIDLishMatrix.replaceRow(n, row)
         self.copyDataFromIDLMatrix(self.phycasIDLishMatrix)
 
