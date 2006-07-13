@@ -81,12 +81,13 @@ class CipresPhycas(CipresIDL_api1__POA.AsyncTreeInfer, SimpleServer, Phycas):
         #self.setupLikelihood()
         _LOG.debug('about to call setup')
         self.setup()
-        self.likelihood.copyDataFromIDLMatrix(self.phycasIDLishMatrix)
         self.runThread = threading.Thread(target=self.run, name='MCMC')
         _LOG.debug('about to launch mcmc thread')
         self.runThread.start()
+        _LOG.debug('back from launching thread')
         return self
-    
+    def coptyDataMatrix(self):
+        self.likelihood.copyDataFromIDLMatrix(self.phycasIDLishMatrix)
     # AsyncTreeIterator
     def getFirstTree(self):
         _LOG.debug('CipresPhycas.getFirstTree')
