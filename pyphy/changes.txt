@@ -159,7 +159,8 @@ o Installed new system (devised at the NESCent meeting 17-22 May, 2006) for keep
 o rel_0_9_1 (SVN revision 98) achieved another 26% speedup for DNA data by unrolling loops 
   over num_states in both TreeLikelihood::calcCLAOneTip and TreeLikelihood::calcCLANoTips
 o rel_0_9_2 (20-June-2006, SVN revision 102) added underflow protection (see 
-  underflow_policy.hpp)
+  underflow_policy.hpp) 
+o SVN revision 127 represents the first successful implementation of CipresPhycas
 
 Release 0.10.0
 --------------
