@@ -570,7 +570,7 @@
     <preInstallationActionList>
          <setInstallerVariableFromScriptOutput>
             <exec>which</exec>
-            <execArgs>python2.5</execArgs>
+            <execArgs>python2.4</execArgs>
             <name>whichpython</name>
                <ruleList> 
                  <compareText>
