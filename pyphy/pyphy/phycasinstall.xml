@@ -471,6 +471,17 @@
                         </distributionFile>
                     </distributionFileList>
                 </folder>
+                <folder>
+                    <description>Python version Windows batch file</description>
+                    <destination>${installdir}</destination>
+                    <name>PythonVersionBat</name>
+                    <platforms>windows</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>pythonversion.bat</origin>
+                        </distributionFile>
+                    </distributionFileList>
+                </folder>
             </folderList>
             <postInstallationActionList/>
             <startMenuShortcutList>
@@ -489,40 +500,6 @@
     <fileList/>
     <finalPageActionList/>
     <parameterList>
-        <infoParameter>
-            <name>NonexistantPythonMessage</name>
-            <title>Python Check</title>
-            <description></description>
-            <explanation>You must have Python 2.4 (or a later) installed before you can use Phycas. You can continue the installation of Phycas, but you will need to install the latest Python on your system before using Phycas for the first time</explanation>
-            <value></value>
-            <default></default>
-            <leftImage></leftImage>
-            <trimMarginNumChars>0</trimMarginNumChars>
-            <ruleList>
-                <compareTextLength>
-                    <length>0</length>
-                    <logic>equals</logic>
-                    <text>${pythonversion}</text>
-                </compareTextLength>
-            </ruleList>
-        </infoParameter>
-        <infoParameter>
-            <name>InsufficientPythonMessage</name>
-            <title>Python Check</title>
-            <description></description>
-            <explanation>You must have Python 2.4 (or a later) installed before you can use Phycas. You can continue the installation of Phycas, but you will need to upgrade your Python installation before using Phycas. Here is the version information detected for your current Python installation:</explanation>
-            <value>${pythonversioninfo}</value>
-            <default></default>
-            <leftImage></leftImage>
-            <trimMarginNumChars>0</trimMarginNumChars>
-            <ruleList>
-                <compareValues>
-                    <logic>less</logic>
-                    <value1>${pythonversion}</value1>
-                    <value2>24</value2>
-                </compareValues>
-            </ruleList>
-        </infoParameter>
         <directoryParameter>
             <name>installdir</name>
             <title></title>
@@ -568,45 +545,77 @@
     <postUninstallationActionList/>
     <preBuildActionList/>
     <preInstallationActionList>
-         <setInstallerVariableFromScriptOutput>
+        <setInstallerVariableFromScriptOutput>
             <exec>which</exec>
             <execArgs>python2.4</execArgs>
             <name>whichpython</name>
-               <ruleList> 
-                 <compareText>
+            <ruleList>
+                <compareText>
                     <logic>does_not_equal</logic>
                     <nocase>0</nocase>
                     <text>${platform_name}</text>
                     <value>windows</value>
-                  </compareText>
-               </ruleList> 
+                </compareText>
+            </ruleList>
         </setInstallerVariableFromScriptOutput>
-        <throwError> 
-               <text>Python2.4 executable not found!
-Please install the python (version 2.4 or greater) or add the path to python2.4 to your shell's $PATH variable.</text> 
-               <ruleList> 
-                 <compareText>
-                            <logic>does_not_equal</logic>
-                            <nocase>0</nocase>
-                            <text>${platform_name}</text>
-                            <value>windows</value>
-                        </compareText>
-                 <fileTest> 
-                   <path>${whichpython}</path> 
-                   <condition>not_executable</condition> 
-                 </fileTest> 
-               </ruleList> 
-            </throwError> 
+        <throwError>
+            <text>Python2.4 executable not found!
+Please install the python (version 2.4 or greater) or add the path to python2.4 to your shell's $PATH variable.</text>
+            <ruleList>
+                <compareText>
+                    <logic>does_not_equal</logic>
+                    <nocase>0</nocase>
+                    <text>${platform_name}</text>
+                    <value>windows</value>
+                </compareText>
+                <fileTest>
+                    <condition>not_executable</condition>
+                    <path>${whichpython}</path>
+                </fileTest>
+            </ruleList>
+        </throwError>
+        <setInstallerVariableFromScriptOutput>
+            <exec>pythonversion.bat</exec>
+            <execArgs></execArgs>
+            <name>pythonversion</name>
+            <ruleList>
+                <compareText>
+                    <logic>equals</logic>
+                    <nocase>0</nocase>
+                    <text>${platform_name}</text>
+                    <value>windows</value>
+                </compareText>
+            </ruleList>
+        </setInstallerVariableFromScriptOutput>
         <setInstallerVariableFromScriptOutput>
             <exec>${whichpython}</exec>
             <execArgs>-c "import sys,re; print ''.join(re.match(r'(\d+)\.(\d+)', sys.version).groups())"</execArgs>
             <name>pythonversion</name>
+            <ruleList>
+                <compareText>
+                    <logic>equals</logic>
+                    <nocase>0</nocase>
+                    <text>${platform_name}</text>
+                    <value>osx</value>
+                </compareText>
+            </ruleList>
         </setInstallerVariableFromScriptOutput>
         <setInstallerVariableFromScriptOutput>
             <exec>python</exec>
             <execArgs>-c "import sys; print sys.version"</execArgs>
             <name>pythonversioninfo</name>
         </setInstallerVariableFromScriptOutput>
+        <throwError>
+            <text>You must  have Python 2.4 (or a later version) installed before you can install Phycas.</text>
+            <ruleList>
+                <compareText>
+                    <logic>equals</logic>
+                    <nocase>0</nocase>
+                    <text>${pythonversion}</text>
+                    <value>nopython</value>
+                </compareText>
+            </ruleList>
+        </throwError>
         <registryGet>
             <key>HKEY_CURRENT_USER\Environment</key>
             <name>FAKEPYTHONPATH</name>
