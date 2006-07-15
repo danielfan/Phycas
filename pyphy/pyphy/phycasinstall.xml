@@ -569,7 +569,21 @@
     <preBuildActionList/>
     <preInstallationActionList>
         <setInstallerVariableFromScriptOutput>
-            <exec>python</exec>
+            <exec>/usr/bin/which</exec>
+            <execArgs>python</execArgs>
+            <name>whichpython</name>
+        </setInstallerVariableFromScriptOutput>
+        <throwError> 
+               <text>Python executable not found.</text> 
+               <ruleList> 
+                 <fileTest> 
+                   <path>${whichpython}</path> 
+                   <condition>not_executable</condition> 
+                 </fileTest> 
+               </ruleList> 
+            </throwError> 
+        <setInstallerVariableFromScriptOutput>
+            <exec>${whichpython}</exec>
             <execArgs>-c "import sys,re; print ''.join(re.match(r'(\d+)\.(\d+)', sys.version).groups())"</execArgs>
             <name>pythonversion</name>
         </setInstallerVariableFromScriptOutput>
