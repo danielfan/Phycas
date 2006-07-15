@@ -1,14 +1,18 @@
 #include "test.hpp"
 
 // ************************* begin modifiable *****************************************
-#include <cstdlib>
 #include <iostream>
+#include <process.h>
+
 // *************************** end modifiable *****************************************
 
 int main()
 	{
 	// ************************* begin modifiable *****************************************
-	std::cout << "Python 2.4.1" << std::endl;
+
+	int retcode = system("python -V");
+	if (retcode)
+		std::cout << "nopython";
 	std::exit(0);
 
 	// *************************** end modifiable *****************************************

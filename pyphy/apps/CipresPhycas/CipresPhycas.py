@@ -35,7 +35,7 @@ class CipresPhycas(CipresIDL_api1__POA.AsyncTreeInfer, SimpleServer, Phycas):
     def remove(self):
         self.serverRefCount -= 1
         _LOG.warn('not removing')
-        if self.serverRefCount is None:#< 1:
+        if self.serverRefCount is None: #< 1:
             SimpleServer.remove(self)
 
     def toCipresIDLTree(self, t):
