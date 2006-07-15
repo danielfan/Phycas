@@ -568,14 +568,29 @@
     <postUninstallationActionList/>
     <preBuildActionList/>
     <preInstallationActionList>
-        <setInstallerVariableFromScriptOutput>
-            <exec>/usr/bin/which</exec>
-            <execArgs>python</execArgs>
+         <setInstallerVariableFromScriptOutput>
+            <exec>which</exec>
+            <execArgs>python2.5</execArgs>
             <name>whichpython</name>
+               <ruleList> 
+                 <compareText>
+                    <logic>does_not_equal</logic>
+                    <nocase>0</nocase>
+                    <text>${platform_name}</text>
+                    <value>windows</value>
+                  </compareText>
+               </ruleList> 
         </setInstallerVariableFromScriptOutput>
         <throwError> 
-               <text>Python executable not found.</text> 
+               <text>Python2.4 executable not found!
+Please install the python (version 2.4 or greater) or add the path to python2.4 to your shell's $PATH variable.</text> 
                <ruleList> 
+                 <compareText>
+                            <logic>does_not_equal</logic>
+                            <nocase>0</nocase>
+                            <text>${platform_name}</text>
+                            <value>windows</value>
+                        </compareText>
                  <fileTest> 
                    <path>${whichpython}</path> 
                    <condition>not_executable</condition> 
