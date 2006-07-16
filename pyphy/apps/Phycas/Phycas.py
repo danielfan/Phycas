@@ -152,7 +152,7 @@ class Phycas:
         Substitution Model. The HKY model is used by default; set model_type
         to 'jc' to use the JC model instead.
 
-        Pseudorandom Number Generation. The variable random_seed is 'auto'
+        Pseudorandom Number Generation. The variable random_seed is 0
         by default, which means that the pseudorandom number generator is
         initialized using the system clock. You can, however, set random_seed
         to a particular random number seed to repeat a previous analysis
@@ -172,7 +172,7 @@ class Phycas:
         self.uf_num_edges           = 50                 # number of edges to traverse before taking action to prevent underflow
         
         # Variables controlling the MCMC analysis and progress reporting
-        self.random_seed            = 'auto'             # determines random number seed
+        self.random_seed            = 0                  # determines random number seed (0 means autogenerate)
         self.ncycles                = 10000              # the number of cycles through all parameters
         self.sample_every           = 100                # a new sample will be taken after this many cycles
         self.report_every           = self.ncycles//100  # a progress report will be displayed after this many cycles
@@ -586,7 +586,7 @@ class Phycas:
         
         """
         # Set seed if user has supplied one
-        if self.random_seed != 'auto':
+        if self.random_seed != 0:
             self.r.setSeed(int(self.random_seed))
 
         self.setupModel()

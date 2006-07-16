@@ -1,5 +1,6 @@
 from Phycas import Phycas
 from Likelihood import PhycasIDLishMatrix
+import ProbDist
 import os, sys
 import re
 import threading
@@ -29,6 +30,7 @@ class CipresPhycas(CipresIDL_api1__POA.AsyncTreeInfer, SimpleServer, Phycas):
         self.ntax = 0
         self.leafSet = []
         self.serverRefCount = 1
+        self.settings = {}
         #self.tree = CipresTree('(1,2,(3,4))')
         #self.nTrees = 10
 
@@ -59,17 +61,47 @@ class CipresPhycas(CipresIDL_api1__POA.AsyncTreeInfer, SimpleServer, Phycas):
     # Scriptable interface    
     def execute(self, cmd):
         _LOG.debug('CipresPhycas.execute cmd=%s' % cmd)
-        settings = cmd.split(';')
-        for s in settings:
+        parts = cmd.split(';')
+        for s in parts:
             if s:
                 splitOnEqual = s.split('=')
                 if len(splitOnEqual) == 1:
-                    return False, 'No = character seen.  Expecting command in the form of <name> = <value>'
+                    return False, "No '=' character seen.  Expecting command in the form of <name> = <value>"
                 name = splitOnEqual[0].strip()
                 value = '='.join(splitOnEqual[1:]).strip()
-                if name.strip() == 'ncycles':
-                    self.ncycles = int(value)
+                _LOG.debug('splitOnEqual[0]=%s, splitOnEqual[1]=%s, name=%s, value=%s' % (splitOnEqual[0], splitOnEqual[1], name, value))
+                self.settings[name] = value
         return True, ''
+
+    def applySettings(self):
+        if self.settings.has_key('ncycles'):
+            self.ncycles = int(self.settings['ncycles'])
+            _LOG.debug('setting self.ncycles = %d' % self.ncycles)
+        if self.settings.has_key('sample_every'):
+            self.sample_every = int(self.settings['sample_every'])
+            _LOG.debug('setting self.sample_every = %d' % self.sample_every)
+        if self.settings.has_key('ls_move_weight'):
+            self.ls_move_weight = int(self.settings['ls_move_weight'])
+            _LOG.debug('setting self.ls_move_weight = %d' % self.ls_move_weight)
+        if self.settings.has_key('random_seed'):
+            self.random_seed = int(self.settings['random_seed'])
+            _LOG.debug('setting self.random_seed = %d' % self.random_seed)
+        if self.settings.has_key('using_hyperprior'):
+            if int(self.settings['using_hyperprior']):
+                self.using_hyperprior = True
+                _LOG.debug('setting self.using_hyperprior = True')
+            else:
+                self.using_hyperprior = False
+                _LOG.debug('setting self.using_hyperprior = False')
+        if self.settings.has_key('edgelen_hyperprior'):
+            if self.settings['edgelen_hyperprior'] == 'InverseGammaDist': 
+                inversegamma_shape = 2.1
+                if self.settings.has_key('inversegamma_shape'):
+                    inversegamma_shape = float(self.settings['inversegamma_shape'])
+                self.edgelen_hyperprior = ProbDist.InverseGammaDist(inversegamma_shape, 0.909)
+            elif self.settings['edgelen_hyperprior'] == 'GammaDist':
+                self.edgelen_hyperprior = ProbDist.GammaDist(1.0, 10.0)
+            _LOG.debug('setting self.edgelen_hyperprior = %s' % self.edgelen_hyperprior)
 
     # AsyncTreeInfer (will be called before AsyncTreeIterator functions)
     def setMatrix(self, mat):
@@ -91,8 +123,7 @@ class CipresPhycas(CipresIDL_api1__POA.AsyncTreeInfer, SimpleServer, Phycas):
         _LOG.debug('CipresPhycas.inferTrees')
         if self.phycasIDLishMatrix is None:
             raise RuntimeError, 'Failed to call setMatrix before inferTree'
-        #self.setupModel()
-        #self.setupLikelihood()
+        self.applySettings()
         _LOG.debug('about to call setup')
         self.leafSet = range(1, self.ntax + 1)
         self.setup()
