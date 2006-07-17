@@ -90,18 +90,16 @@ class CipresPhycas(CipresIDL_api1__POA.AsyncTreeInfer, SimpleServer, Phycas):
             if int(self.settings['using_hyperprior']):
                 self.using_hyperprior = True
                 _LOG.debug('setting self.using_hyperprior = True')
-            else:
-                self.using_hyperprior = False
-                _LOG.debug('setting self.using_hyperprior = False')
-        if self.settings.has_key('edgelen_hyperprior'):
-            if self.settings['edgelen_hyperprior'] == 'InverseGammaDist': 
                 inversegamma_shape = 2.1
                 if self.settings.has_key('inversegamma_shape'):
                     inversegamma_shape = float(self.settings['inversegamma_shape'])
-                self.edgelen_hyperprior = ProbDist.InverseGammaDist(inversegamma_shape, 0.909)
-            elif self.settings['edgelen_hyperprior'] == 'GammaDist':
-                self.edgelen_hyperprior = ProbDist.GammaDist(1.0, 10.0)
-            _LOG.debug('setting self.edgelen_hyperprior = %s' % self.edgelen_hyperprior)
+                inversegamma_scale = 1.0/1.1
+                if self.settings.has_key('inversegamma_scale'):
+                    inversegamma_scale = float(self.settings['inversegamma_scale'])
+                self.edgelen_hyperprior = ProbDist.InverseGammaDist(inversegamma_shape, inversegamma_scale)
+            else:
+                self.using_hyperprior = False
+                _LOG.debug('setting self.using_hyperprior = False')
 
     # AsyncTreeInfer (will be called before AsyncTreeIterator functions)
     def setMatrix(self, mat):
