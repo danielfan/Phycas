@@ -2,15 +2,15 @@ subproject prob_dist ;
 import python ;
 
 extension _ProbDist
-:	probdist_pymod.cpp 
-	$(PHYCAS_ROOT)/pyphy/common/boost_assertion_failed.cpp
-	$(PHYCAS_ROOT)/pyphy/common/pyphy_string.cpp
-	$(PHYCAS_ROOT)/pyphy/include/num_util.cpp
-	$(PHYCAS_ROOT)/pyphy/prob_dist/basic_lot.cpp
-	$(PHYCAS_ROOT)/pyphy/prob_dist/dcdflib/src/dcdflib.c
-	$(PHYCAS_ROOT)/pyphy/prob_dist/dcdflib/src/ipmpar.c
-	$(PHYCAS_ROOT)/phycas/rand/probability_distribution.cpp
-	$(PHYCAS_ROOT)/phycas/modules/mcmc/slice_sampler.cpp
+:	../src/probdist_pymod.cpp 
+	../src/boost_assertion_failed.cpp
+	../src/pyphy_string.cpp
+	../src/thirdparty/num_util.cpp
+	../src/basic_lot.cpp
+	../src/thirdparty/dcdflib/src/dcdflib.c
+	../src/thirdparty/dcdflib/src/ipmpar.c
+	../src/probability_distribution.cpp
+	../src/slice_sampler.cpp
 		# requirements and dependencies for Boost.Python extensions
    	<template>@boost/libs/python/build/extension
 :  

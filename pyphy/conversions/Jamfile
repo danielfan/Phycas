@@ -2,11 +2,11 @@ subproject conversions ;
 import python ;
 
 extension _Conversions
-:	conversions_pymod.cpp 
-	../common/boost_assertion_failed.cpp
-	../phylogeny/basic_tree.cpp
-	../phylogeny/basic_tree_node.cpp
-	../common/pyphy_string.cpp
+:	../src/conversions_pymod.cpp 
+	../src/boost_assertion_failed.cpp
+	../src/basic_tree.cpp
+	../src/basic_tree_node.cpp
+	../src/pyphy_string.cpp
 
     # requirements and dependencies for Boost.Python extensions
     <template>@boost/libs/python/build/extension

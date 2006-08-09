@@ -1,7 +1,7 @@
 #include <cfloat>
 #include <cassert>
-#include "pyphy/phylogeny/basic_tree_node.hpp"
-#include "pyphy/common/pyphy_string.hpp"
+#include "pyphy/src/basic_tree_node.hpp"
+#include "pyphy/src/pyphy_string.hpp"
 
 using namespace phycas;
 

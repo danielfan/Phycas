@@ -42,10 +42,7 @@ variant common :
     <include>$(CIPRES_LIB_ROOT)/C++
     <include>$(PHYCAS_ROOT)
     <include>$(BOOST_ROOT)
-    # <include>$(PHYCAS_ROOT)/pyphy/prob_dist
-    <include>$(PHYCAS_ROOT)/pyphy/include
-    # <include>$(PHYCAS_ROOT)/pyphy/common
-    # <include>$(PYTHON_ROOT)/Lib/site-packages
+    <include>$(PHYCAS_ROOT)/pyphy/src
     <darwin><include>$(HOME)/site-packages
     <vtable-thunks>default
     <struct-alignment>auto
@@ -62,7 +59,7 @@ variant common :
     <object-model>default
     <darwin><*><cxxflags>"-include phycas/pol_pyphy_config.h"
     <gcc><*><cxxflags>"-include phycas/pol_pyphy_config.h"
-    <vc-7_1><*><cxxflags>"-FI phycas\\pol_pyphy_config.h"
+    <vc-7_1><*><cxxflags>"-FI pyphy\\src\\pol_pyphy_config.h"
     # <vc-7_1><*><cxxflags>"-showIncludes"
     <darwin><*><cxxflags>-Wmost
     <darwin><*><cxxflags>-Wno-four-char-constants

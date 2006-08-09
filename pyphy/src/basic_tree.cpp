@@ -1,12 +1,12 @@
 #include <string>
 #include <cstdio>
 #include <cctype>
-#include "pyphy/common/pyphy_string.hpp"
-#include "pyphy/phylogeny/basic_tree.hpp"
-#include "pyphy/phylogeny/xphylogeny.hpp"
+#include "pyphy/src/pyphy_string.hpp"
+#include "pyphy/src/basic_tree.hpp"
+#include "pyphy/src/xphylogeny.hpp"
 //#define TESTING_TOWARD_NODE_ITERATOR
 #if defined(TESTING_TOWARD_NODE_ITERATOR)
-#	include "pyphy/phylogeny/edge_iterators.hpp"
+#	include "pyphy/src/edge_iterators.hpp"
 #endif
 using namespace phycas;
 
