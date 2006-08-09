@@ -125,7 +125,7 @@ class TreeNode
 
 }	// namespace phycas
 
-#include "pyphy/phylogeny/basic_tree_node.inl"	// TreeNode inlined function bodies
+#include "pyphy/src/basic_tree_node.inl"	// TreeNode inlined function bodies
 
 #endif
 

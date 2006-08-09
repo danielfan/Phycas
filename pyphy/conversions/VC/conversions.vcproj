@@ -29,7 +29,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="4"
-				ForcedIncludeFiles="$(PHYCAS_ROOT)\phycas\pol_pyphy_config.h"/>
+				ForcedIncludeFiles="$(PHYCAS_ROOT)\pyphy\src\pol_pyphy_config.h"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -81,7 +81,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="3"
-				ForcedIncludeFiles="$(PHYCAS_ROOT)\phycas\pol_pyphy_config.h"/>
+				ForcedIncludeFiles="$(PHYCAS_ROOT)\pyphy\src\pol_pyphy_config.h"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -126,13 +126,25 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath="..\conversions_pymod.cpp">
+				RelativePath="..\..\src\conversions_pymod.cpp">
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			<File
+				RelativePath="..\..\src\basic_tree.hpp">
+			</File>
+			<File
+				RelativePath="..\..\src\cipres\ConfigDependentHeaders.h">
+			</File>
+			<File
+				RelativePath="..\..\src\thirdparty\num_util.h">
+			</File>
+			<File
+				RelativePath="..\..\src\thirdparty\pyconversions.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"

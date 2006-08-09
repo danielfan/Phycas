@@ -2,10 +2,10 @@
 #	pragma warning(disable : 4267) // boost's builtin_converters.hpp casts size_t to int rather than unsigned
 #endif
 
-#include "phycas/force_include.h"
+//#include "phycas/force_include.h"
 //#include <cassert>
 #include <cmath>
-#include "phycas/modules/mcmc/slice_sampler.hpp"
+#include "pyphy/src/slice_sampler.hpp"
 using std::ofstream;
 using std::ios;
 using std::vector;

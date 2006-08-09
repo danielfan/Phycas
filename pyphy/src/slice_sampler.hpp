@@ -5,14 +5,14 @@
 #include <climits>
 #include <cfloat>
 #if defined(POL_PHYCAS)
-#	include "pyphy/prob_dist/basic_lot.hpp"
+#	include "pyphy/src/basic_lot.hpp"
 	typedef boost::shared_ptr<phycas::Lot> LotShPtr;
 #else
 #	include "phycas/rand/lot.hpp"
 	typedef boost::shared_ptr<Lot> LotShPtr;
 #endif
-#include "phycas/rand/probability_distribution.hpp"
-#include "pyphy/prob_dist/xprobdist.hpp"
+#include "pyphy/src/probability_distribution.hpp"
+#include "pyphy/src/xprobdist.hpp"
 #include <boost/shared_ptr.hpp>
 #if defined(POL_PYPHY)
 #	include <boost/python/call_method.hpp>

@@ -4,16 +4,16 @@
 
 #define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
 
-#include "phycas/force_include.h"
+//#include "phycas/force_include.h"
 #if defined(POL_PHYCAS)
-#	include "pyphy/prob_dist/basic_lot.hpp"
+#	include "pyphy/src/basic_lot.hpp"
 #else
 #	include "phycas/rand/lot.hpp"
 #endif
-#include "phycas/rand/probability_distribution.hpp"
-#include "phycas/modules/mcmc/slice_sampler.hpp"
+#include "pyphy/src/probability_distribution.hpp"
+#include "pyphy/src/slice_sampler.hpp"
 #include <boost/python.hpp>
-#include "pyphy/prob_dist/xprobdist.hpp"
+#include "pyphy/src/xprobdist.hpp"
 
 using namespace boost::python;
 

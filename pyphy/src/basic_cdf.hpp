@@ -7,7 +7,7 @@
 
 extern "C"
 {
-#include "pyphy/prob_dist/dcdflib/src/cdflib.h"
+#include "pyphy/src/thirdparty/dcdflib/src/cdflib.h"
 }
 
 namespace phycas
@@ -35,6 +35,6 @@ class CDF
 
 } // namespace phycas
 
-#include "pyphy/prob_dist/basic_cdf.inl"
+#include "pyphy/src/basic_cdf.inl"
 
 #endif

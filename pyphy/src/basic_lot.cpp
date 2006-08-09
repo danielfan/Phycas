@@ -1,4 +1,4 @@
-#include "pyphy/prob_dist/basic_lot.hpp"
+#include "pyphy/src/basic_lot.hpp"
 
 const unsigned MASKSIGNBIT = 0x80000000;
 

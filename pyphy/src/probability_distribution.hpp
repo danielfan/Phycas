@@ -11,19 +11,19 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/format.hpp>
 #if defined(POL_PHYCAS)
-#	include "pyphy/prob_dist/basic_cdf.hpp"
-#	include "pyphy/prob_dist/basic_lot.hpp"
-#	include "pyphy/common/pyphy_string.hpp"
+#	include "pyphy/src/basic_cdf.hpp"
+#	include "pyphy/src/basic_lot.hpp"
+#	include "pyphy/src/pyphy_string.hpp"
 #	if defined(POL_PYPHY)
 #		include <boost/python/tuple.hpp>
 #		include <boost/python/numeric.hpp>
-#		include "pyphy/include/num_util.h"
+#		include "pyphy/src/thirdparty/num_util.h"
 #	endif
 #else
 #	include "phycas/rand/cdf.hpp"
 #	include "phycas/rand/lot.hpp"
 #endif
-#include "pyphy/prob_dist/xprobdist.hpp"
+#include "pyphy/src/xprobdist.hpp"
 class XUnderflow{};
 
 //namespace phycas

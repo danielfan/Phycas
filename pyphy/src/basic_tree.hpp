@@ -8,10 +8,10 @@
 #include <iostream>
 #include <boost/algorithm/string.hpp>	// used by SetNumberFromName member function
 #include <boost/lexical_cast.hpp>		// used by SetNumberFromName member function
-#include "pyphy/phylogeny/basic_tree_node.hpp"
-#include "pyphy/phylogeny/tree_iterators.hpp"
-#include "pyphy/phylogeny/xphylogeny.hpp"
-#include "pyphy/common/pyphy_string.hpp"
+#include "pyphy/src/basic_tree_node.hpp"
+#include "pyphy/src/tree_iterators.hpp"
+#include "pyphy/src/xphylogeny.hpp"
+#include "pyphy/src/pyphy_string.hpp"
 
 //	To do next:
 //		o ASCII tree drawing
@@ -119,6 +119,6 @@ typedef boost::shared_ptr<Tree> TreeShPtr;
 
 }	// namespace phycas
 
-#include "pyphy/phylogeny/basic_tree.inl"
+#include "pyphy/src/basic_tree.inl"
 
 #endif

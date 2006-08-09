@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(PYTHON_ROOT)\include;$(PHYCAS_ROOT);$(PHYCAS_ROOT)\pyphy\include;$(BOOST_ROOT)"
+				AdditionalIncludeDirectories="&quot;$(PYTHON_ROOT)\include&quot;;&quot;$(PHYCAS_ROOT)&quot;;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;VC_EXPORTS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -29,7 +29,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="4"
-				ForcedIncludeFiles="$(PHYCAS_ROOT)\phycas\pol_pyphy_config.h"/>
+				ForcedIncludeFiles="$(PHYCAS_ROOT)\pyphy\src\pol_pyphy_config.h"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -73,7 +73,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				ImproveFloatingPointConsistency="TRUE"
-				AdditionalIncludeDirectories="$(PYTHON_ROOT)\include;$(PHYCAS_ROOT);$(PHYCAS_ROOT)\pyphy\include;$(BOOST_ROOT)"
+				AdditionalIncludeDirectories="&quot;$(PYTHON_ROOT)\include&quot;;&quot;$(PHYCAS_ROOT)&quot;;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;VC_EXPORTS"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
@@ -81,7 +81,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="3"
-				ForcedIncludeFiles="$(PHYCAS_ROOT)\phycas\pol_pyphy_config.h"/>
+				ForcedIncludeFiles="$(PHYCAS_ROOT)\pyphy\src\pol_pyphy_config.h"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -122,70 +122,46 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Obsolete Source Files"
-			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
-			<File
-				RelativePath="..\..\include\num_util.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\phycas\rand\probability_distribution.cpp">
-			</File>
-			<File
-				RelativePath="..\probdist_pymod.cpp">
-			</File>
-			<File
-				RelativePath="..\..\common\pyphy_string.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\phycas\modules\mcmc\slice_sampler.cpp">
-			</File>
-		</Filter>
-		<Filter
 			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			Filter="">
 			<File
-				RelativePath="..\basic_cdf.hpp">
+				RelativePath="..\..\src\basic_cdf.hpp">
 			</File>
 			<File
-				RelativePath="..\basic_cdf.inl">
+				RelativePath="..\..\src\basic_cdf.inl">
 			</File>
 			<File
-				RelativePath="..\basic_lot.hpp">
+				RelativePath="..\..\src\basic_lot.hpp">
 			</File>
 			<File
-				RelativePath="..\basic_lot.inl">
+				RelativePath="..\..\src\basic_lot.inl">
 			</File>
 			<File
-				RelativePath="..\dcdflib\src\cdflib.h">
+				RelativePath="..\..\src\thirdparty\dcdflib\src\cdflib.h">
 			</File>
 			<File
-				RelativePath="..\densityfunc.hpp">
+				RelativePath="..\..\src\thirdparty\num_util.h">
 			</File>
 			<File
-				RelativePath="..\..\likelihood\larget_simon_move.hpp">
+				RelativePath="..\..\src\phycas_config.h">
 			</File>
 			<File
-				RelativePath="..\..\include\num_util.h">
+				RelativePath="..\..\src\pol_pyphy_config.h">
 			</File>
 			<File
-				RelativePath="..\..\..\phycas\pol_pyphy_config.h">
+				RelativePath="..\..\src\probability_distribution.hpp">
 			</File>
 			<File
-				RelativePath="..\..\..\phycas\rand\probability_distribution.hpp">
+				RelativePath="..\..\src\pyphy_string.hpp">
 			</File>
 			<File
-				RelativePath="..\..\common\pyphy_string.hpp">
+				RelativePath="..\..\src\slice_sampler.hpp">
 			</File>
 			<File
-				RelativePath="..\..\..\phycas\modules\mcmc\slice_sampler.hpp">
+				RelativePath="..\..\src\xprobdist.hpp">
 			</File>
 			<File
-				RelativePath="..\xprobdist.hpp">
-			</File>
-			<File
-				RelativePath="..\..\include\xpyphy.hpp">
+				RelativePath="..\..\src\xpyphy.hpp">
 			</File>
 		</Filter>
 		<Filter
@@ -232,6 +208,40 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"
+						ForcedIncludeFiles="$(NOINHERIT)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"
+						ForcedIncludeFiles="$(NOINHERIT)"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\thirdparty\dcdflib\src\ipmpar.c">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"
+						ForcedIncludeFiles="$(NOINHERIT)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"
+						ForcedIncludeFiles="$(NOINHERIT)"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\thirdparty\num_util.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
 						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -242,7 +252,52 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\thirdparty\dcdflib\src\ipmpar.c">
+				RelativePath="..\..\src\probability_distribution.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\probdist_pymod.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\pyphy_string.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\slice_sampler.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
