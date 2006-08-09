@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ -n $PYTHON_ROOT ]
+if [ -n "$PYTHON_ROOT" ]
 then
 	echo PYTHON_ROOT=$PYTHON_ROOT
 else
