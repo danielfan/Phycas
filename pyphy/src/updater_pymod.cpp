@@ -9,6 +9,7 @@
 #include "pyphy/src/ncat_move.hpp"
 #include "pyphy/src/bush_move.hpp"
 #include "pyphy/src/edge_move.hpp"
+#include "pyphy/src/topo_prior_calculator.hpp"
 
 #include <boost/python.hpp>
 using namespace boost::python;

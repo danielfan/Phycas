@@ -389,6 +389,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\mcmc_flexcat_param.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\mcmc_param.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -606,6 +609,9 @@
 			Name="Header Files"
 			Filter="">
 			<File
+				RelativePath="..\..\src\cipres\AllocateMatrix.hpp">
+			</File>
+			<File
 				RelativePath="..\..\src\basic_cdf.hpp">
 			</File>
 			<File
@@ -642,6 +648,9 @@
 				RelativePath="..\..\src\cipres\CipresDataMatrixHelper.h">
 			</File>
 			<File
+				RelativePath="..\..\src\cipres\CipresHelper.h">
+			</File>
+			<File
 				RelativePath="..\..\src\cond_likelihood.hpp">
 			</File>
 			<File
@@ -652,6 +661,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\cond_likelihood_storage.inl">
+			</File>
+			<File
+				RelativePath="..\..\src\cipres\ConfigDependentHeaders.h">
 			</File>
 			<File
 				RelativePath="..\..\src\dls.h">
@@ -763,6 +775,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\underflow_policy.inl">
+			</File>
+			<File
+				RelativePath="..\..\src\cipres\util_copy.hpp">
 			</File>
 			<File
 				RelativePath="..\..\src\xlikelihood.hpp">

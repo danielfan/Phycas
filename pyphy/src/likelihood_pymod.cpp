@@ -14,7 +14,7 @@
 #include "pyphy/src/internal_data.hpp"
 #include "pyphy/src/mcmc_param.hpp"
 #include "pyphy/src/mcmc_chain_manager.hpp"
-#include "pyphy/src/topo_prior_calculator.hpp"
+//#include "pyphy/src/topo_prior_calculator.hpp"
 //#include "pyphy/src/larget_simon_move.hpp"
 //#include "pyphy/src/ncat_move.hpp"
 //#include "pyphy/src/bush_move.hpp"
