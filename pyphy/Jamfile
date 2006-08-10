@@ -2,8 +2,8 @@ project-root ;
 import python ;
 stage pyphy/Conversions :
 	<pyd>@pyphy/conversions/_Conversions ;
-#stage pyphy/DataMatrix :
-#	<pyd>@pyphy/data_matrix/_DataMatrixBase ;
+stage pyphy/DataMatrix :
+	<pyd>@pyphy/data_matrix/_DataMatrixBase ;
 #stage pyphy/ReadNexus : 
 #	<pyd>@pyphy/read_nexus/_ReadNexus ;
 stage pyphy/Likelihood :

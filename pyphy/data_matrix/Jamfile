@@ -2,9 +2,9 @@ subproject data_matrix ;
 import python ;
 
 extension _DataMatrixBase
-:   data_matrix_pymod.cpp
-	../common/boost_assertion_failed.cpp
-    $(CIPRES_LIB_ROOT)/C++/CipresCommlib/CipresDataMatrixHelper.cpp
+:	../src/data_matrix_pymod.cpp
+	../src/boost_assertion_failed.cpp
+	../src/cipres/CipresDataMatrixHelper.cpp
 
     # requirements and dependencies for Boost.Python extensions
     <template>@boost/libs/python/build/extension
