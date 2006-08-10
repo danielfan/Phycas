@@ -10,5 +10,5 @@ stage pyphy/Likelihood :
 	<pyd>@pyphy/likelihood/_LikelihoodBase ;
 stage pyphy/ProbDist :
 	<pyd>@pyphy/prob_dist/_ProbDist ;
-#stage pyphy/Phylogeny :
-#	<pyd>@pyphy/phylogeny/_Phylogeny ;
+stage pyphy/Phylogeny :
+	<pyd>@pyphy/phylogeny/_Phylogeny ;
