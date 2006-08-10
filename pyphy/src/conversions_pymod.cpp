@@ -11,7 +11,7 @@
 //#include <boost/python/numeric.hpp>
 #include "pyphy/src/thirdparty/num_util.h"
 #include "pyphy/src/thirdparty/pyconversions.h"	// from HippoDraw
-#include "CipresCommlib/ConfigDependentHeaders.h"	// int8_t typedef //POL 18Mar2006
+#include "pyphy/src/cipres/ConfigDependentHeaders.h"	// int8_t typedef //POL 18Mar2006
 using namespace boost::python;
 
 BOOST_PYTHON_MODULE(_Conversions)
@@ -20,6 +20,7 @@ BOOST_PYTHON_MODULE(_Conversions)
 	import_array();
 	//numeric::array::set_module_and_type("numarray", "NDArray");
 	numeric::array::set_module_and_type();
+	//numeric::array::set_module_and_type();
 
 	// these lines taken from HippoGraph
 	std_vector_to_tuple<unsigned>();
