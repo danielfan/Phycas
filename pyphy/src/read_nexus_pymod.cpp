@@ -18,15 +18,15 @@
 
 #if defined(PYPHY_INCLUDE_TO_AVOID_LINK_ERROR)
 #	warning using macro to include cipres_nexus_reader.cpp TEMPORARY HACK!
-#	include "cipres_services/read_nexus/cipres_nexus_reader.cpp"
+#	include "pyphy/src/cipres/cipres_nexus_reader.cpp"
 #	warning using macro to include nxs_charcters_block.cpp TEMPORARY HACK!
-#	include "ncl/characters/nxs_characters_block.cpp"
+#	include "pyphy/src/oldphycas/nxs_characters_block.cpp"
 #	warning using macro to include nxs_command_output.cpp TEMPORARY HACK!
-#	include "ncl/command/nxs_command_output.cpp"
+#	include "pyphy/src/ncl/command/nxs_command_output.cpp"
 #else
-#	include "cipres_services/read_nexus/cipres_nexus_reader.hpp"
+#	include "pyphy/src/cipres/cipres_nexus_reader.hpp"
 #endif
-#include "pyphy/src/characters_manager.hpp"
+#include "pyphy/src/oldphycas/characters_manager.hpp"
 #include "pyphy/src/cipres/CipresDataMatrixHelper.h"
 #include "pyphy/src/ncl/nxs_exception.hpp"
 #include "pyphy/src/ncl/trees/full_tree_description.hpp"

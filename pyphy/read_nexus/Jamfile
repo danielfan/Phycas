@@ -5,7 +5,7 @@ extension _ReadNexus
 : ../src/read_nexus_pymod.cpp
   ../src/boost_assertion_failed.cpp
   ../src/cipres/CipresDataMatrixHelper.cpp
-  ../src/cipres_nexus_reader.cpp 			#POL 18-Mar-2006 may need to comment out for Mac
+  ../src/cipres/cipres_nexus_reader.cpp 		#POL 18-Mar-2006 may need to comment out for Mac
   ../src/thirdparty/num_util.cpp
   ../src/ncl/nxs_basic_manager.cpp
   ../src/ncl/nxs_block.cpp
@@ -53,23 +53,23 @@ extension _ReadNexus
   ../src/ncl/trees/nxs_tree_listener.cpp
   ../src/ncl/trees/nxs_trees_block.cpp
   ../src/ncl/trees/nxs_trees_manager.cpp
-  ../src/unvetted/characters_manager.cpp
-  ../src/unvetted/const_site_info.cpp
-  ../src/unvetted/multiline_bound.cpp
+  ../src/oldphycas/characters_manager.cpp
+  ../src/oldphycas/const_site_info.cpp
+  ../src/oldphycas/multiline_bound.cpp
   ../src/probability_distribution.cpp
-  ../src/unvetted/distribution_command_param.cpp
-  ../src/unvetted/distribution_description.cpp
+  ../src/oldphycas/distribution_command_param.cpp
+  ../src/oldphycas/distribution_description.cpp
   ../src/basic_lot.cpp
   ../src/thirdparty/dcdflib/src/dcdflib.c
   ../src/thirdparty/dcdflib/src/ipmpar.c
-  ../src/unvetted/taxa_manager.cpp
-  ../src/unvetted/draw_context.cpp
-  ../src/unvetted/draw_tree.cpp
-  ../src/tree_manip.cpp
-  ../src/unvetted/tree_node.cpp
-  ../src/unvetted/tree.cpp
-  ../src/unvetted/trees_manager.cpp
-  ../src/unvetted/split.cpp   
+  ../src/oldphycas/taxa_manager.cpp
+  ../src/oldphycas/draw_context.cpp
+  ../src/oldphycas/draw_tree.cpp
+  ../src/oldphycas/tree_manip.cpp
+  ../src/oldphycas/tree_node.cpp
+  ../src/oldphycas/tree.cpp
+  ../src/oldphycas/trees_manager.cpp
+  ../src/oldphycas/split.cpp   
   
   # requirements and dependencies for Boost.Python extensions
    <template>@boost/libs/python/build/extension
