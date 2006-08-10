@@ -9,7 +9,7 @@
 using namespace boost::python;
 using namespace phycas;
 
-void more_likelihood_pymod()
+void model_pymod()
 	{
 	class_<phycas::Model, boost::noncopyable>("Model", no_init)
 		.def("fixEdgeLenHyperprior", &phycas::Model::fixEdgeLenHyperprior)

@@ -15,15 +15,16 @@
 #include "pyphy/src/mcmc_param.hpp"
 #include "pyphy/src/mcmc_chain_manager.hpp"
 #include "pyphy/src/topo_prior_calculator.hpp"
-#include "pyphy/src/larget_simon_move.hpp"
-#include "pyphy/src/ncat_move.hpp"
-#include "pyphy/src/bush_move.hpp"
-#include "pyphy/src/edge_move.hpp"
+//#include "pyphy/src/larget_simon_move.hpp"
+//#include "pyphy/src/ncat_move.hpp"
+//#include "pyphy/src/bush_move.hpp"
+//#include "pyphy/src/edge_move.hpp"
 #include "pyphy/src/sim_data.hpp"
 #include "pyphy/src/q_matrix.hpp"
 #include "pyphy/src/xlikelihood.hpp"
 
-void more_likelihood_pymod();
+void model_pymod();
+void updater_pymod();
 
 #include <boost/python.hpp>
 using namespace boost::python;
@@ -94,111 +95,6 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		;
 	class_<std::vector<MCMCUpdaterShPtr> >("paramVec", no_init)
 		.def("__iter__",  iterator<std::vector<MCMCUpdaterShPtr> >())
-		;
-   	class_<phycas::MCMCUpdater, bases<AdHocDensity>, boost::noncopyable, boost::shared_ptr<phycas::MCMCUpdater> >("MCMCUpdaterBase", no_init)
-		.def("getLnPrior", &MCMCUpdater::getLnPrior)
-		.def("getLnLike", &MCMCUpdater::getLnLike)
-		.def("getCurrValue", &MCMCUpdater::getCurrValue)
-		.def("getName", &MCMCUpdater::getName, return_value_policy<copy_const_reference>())
-		.def("getPriorDescr", &MCMCUpdater::getPriorDescr)
-		.def("getWeight", &MCMCUpdater::getWeight)
-		.def("setName", &MCMCUpdater::setName)
-		.def("setWeight", &MCMCUpdater::setWeight)
-		.def("setStartingValue", &MCMCUpdater::setStartingValue)
-		.def("setTree", &MCMCUpdater::setTree)
-		.def("setLot", &MCMCUpdater::setLot)
-		.def("setTreeLikelihood", &MCMCUpdater::setTreeLikelihood)
-		.def("setModel", &MCMCUpdater::setModel)
-		.def("setChainManager", &MCMCUpdater::setChainManager)
-		.def("hasSliceSampler", &MCMCUpdater::hasSliceSampler)
-		.def("isParameter", &MCMCUpdater::isParameter)
-		.def("isMasterParameter", &MCMCUpdater::isMasterParameter)
-		.def("isHyperParameter", &MCMCUpdater::isHyperParameter)
-		.def("isMove", &MCMCUpdater::isMove)
-		.def("getSliceSampler", &MCMCUpdater::getSliceSampler)
-		.def("update", &MCMCUpdater::update)
-		.def("isFixed", &MCMCUpdater::isFixed)
-		.def("fixParameter", &MCMCUpdater::fixParameter)
-		.def("freeParameter", &MCMCUpdater::freeParameter)
-		;
-	class_<phycas::KappaParam, bases<phycas::MCMCUpdater, AdHocDensity>, 
-		boost::noncopyable, boost::shared_ptr<phycas::KappaParam> >("KappaParam")
-		;
-	class_<phycas::GTRRateParam, bases<phycas::MCMCUpdater, AdHocDensity>, 
-		boost::noncopyable, boost::shared_ptr<phycas::GTRRateParam> >("GTRRateParam", init<unsigned>())
-		;
-	class_<phycas::BaseFreqParam, bases<phycas::MCMCUpdater, AdHocDensity>, 
-		boost::noncopyable, boost::shared_ptr<phycas::BaseFreqParam> >("BaseFreqParam", init<unsigned>()) 
-		;
-	class_<phycas::HyperPriorParam, bases<phycas::MCMCUpdater, AdHocDensity>, 
-		boost::noncopyable, boost::shared_ptr<phycas::HyperPriorParam> >("HyperPriorParam") 
-		;
-	class_<phycas::EdgeLenParam, bases<phycas::MCMCUpdater, AdHocDensity>, 
-		boost::noncopyable, boost::shared_ptr<phycas::EdgeLenParam> >("EdgeLenParam", init<TreeNode *>()) 
-		;
-	class_<phycas::LargetSimonMove, bases<phycas::MCMCUpdater>, 
-		boost::noncopyable, boost::shared_ptr<phycas::LargetSimonMove> >("LargetSimonMove") 
-		.def("update", &phycas::LargetSimonMove::update)
-		.def("setLambda", &phycas::LargetSimonMove::setLambda)
-		.def("getLambda", &phycas::LargetSimonMove::getLambda)
-		.def("topologyChanged", &phycas::LargetSimonMove::topologyChanged)
-		.def("viewProposedMove", &phycas::LargetSimonMove::viewProposedMove)
-		;
-	class_<TopoPriorCalculator, boost::noncopyable, 
-		boost::shared_ptr<phycas::TopoPriorCalculator> >("TopoPriorCalculatorBase")
-		.def("setNTax", &TopoPriorCalculator::SetNTax)
-		.def("getNTax", &TopoPriorCalculator::GetNTax)
-		.def("chooseRooted", &TopoPriorCalculator::ChooseRooted)
-		.def("chooseUnrooted", &TopoPriorCalculator::ChooseUnrooted)
-		.def("getCount", &TopoPriorCalculator::GetCount)
-		.def("getSaturatedCount", &TopoPriorCalculator::GetSaturatedCount)
-		.def("getTotalCount", &TopoPriorCalculator::GetTotalCount)
-		.def("getCountsVect", &TopoPriorCalculator::GetCountsVect)
-		.def("chooseResolutionClassPrior", &TopoPriorCalculator::ChooseResolutionClassPrior)
-		.def("choosePolytomyPrior", &TopoPriorCalculator::ChoosePolytomyPrior)
-		.def("setC", &TopoPriorCalculator::SetC)
-		.def("getC", &TopoPriorCalculator::GetC)
-		.def("getLnTopologyPrior", &TopoPriorCalculator::GetLnTopologyPrior)
-		.def("getLnNormalizedTopologyPrior", &TopoPriorCalculator::GetLnNormalizedTopologyPrior)
-		.def("GetLnNormConstant", &TopoPriorCalculator::GetLnNormConstant)
-		.def("getTopoPriorVect", &TopoPriorCalculator::GetTopoPriorVect)
-		.def("isResolutionClassPrior", &TopoPriorCalculator::IsResolutionClassPrior)
-		.def("isPolytomyPrior", &TopoPriorCalculator::IsPolytomyPrior)
-		.def("isRooted", &TopoPriorCalculator::IsRooted)
-		.def("isUnrooted", &TopoPriorCalculator::IsUnrooted)
-		.def("getRealizedResClassPriorsVect", &TopoPriorCalculator::GetRealizedResClassPriorsVect)
-		;
-	class_<phycas::BushMove, bases<phycas::MCMCUpdater>, 
-		boost::noncopyable, boost::shared_ptr<phycas::BushMove> >("BushMove") 
-		.def("update", &phycas::BushMove::update)
-		.def("addEdgeMoveProposed", &phycas::BushMove::addEdgeMoveProposed)
-		.def("setEdgeLenDistMean", &phycas::BushMove::setEdgeLenDistMean)
-		.def("finalize", &phycas::BushMove::finalize)
-		.def("getTopoPriorCalculator", &phycas::BushMove::getTopoPriorCalculator)
-		.def("viewProposedMove", &phycas::BushMove::viewProposedMove)
-		;
-	class_<phycas::NCatMove, bases<phycas::MCMCUpdater>, 
-		boost::noncopyable, boost::shared_ptr<phycas::NCatMove> >("NCatMove") 
-		.def("update", &phycas::NCatMove::update)
-		.def("addCatMoveProposed", &phycas::NCatMove::addCatMoveProposed)
-		.def("getPhi", &phycas::NCatMove::getPhi)
-		.def("setPhi", &phycas::NCatMove::setPhi)
-		.def("getLambda", &phycas::NCatMove::getLambda)
-		.def("setLambda", &phycas::NCatMove::setLambda)
-		.def("getNCatMax", &phycas::NCatMove::getNCatMax)
-		.def("setNCatMax", &phycas::NCatMove::setNCatMax)
-		.def("getS", &phycas::NCatMove::getS)
-		.def("setS", &phycas::NCatMove::setS)
-		.def("getL", &phycas::NCatMove::getL)
-		.def("setL", &phycas::NCatMove::setL)
-		.def("getCatProbPrior", &phycas::NCatMove::getCatProbPrior)
-		.def("setCatProbPrior", &phycas::NCatMove::setCatProbPrior)
-		;
-	class_<phycas::EdgeMove, bases<phycas::MCMCUpdater>, 
-		boost::noncopyable, boost::shared_ptr<phycas::EdgeMove> >("EdgeMove") 
-		.def("update", &phycas::EdgeMove::update)
-		.def("setLambda", &phycas::EdgeMove::setLambda)
-		.def("getLambda", &phycas::EdgeMove::getLambda)
 		;
 	class_<phycas::SimData, boost::noncopyable, boost::shared_ptr<phycas::SimData> >("SimDataBase")
 		.def("clear", &phycas::SimData::clear)
@@ -276,7 +172,8 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 
 	// This function call necessary to avoid fatal error C1204: Compiler limit: internal structure overflow
 	// in VC 7.1 (see http://www.boost.org/libs/python/doc/v2/faq.html#c1204)
-	more_likelihood_pymod();
+	model_pymod();
+	updater_pymod();
 
 	register_exception_translator<XLikelihood>(&translateXLikelihood);
 }

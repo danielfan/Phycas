@@ -598,6 +598,9 @@
 						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath="..\..\src\updater_pymod.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
