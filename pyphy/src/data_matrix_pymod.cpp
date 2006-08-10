@@ -2,8 +2,8 @@
 #	pragma warning(disable : 4267) // boost's builtin_converters.hpp casts size_t to int rather than unsigned
 #endif
 
-#include "phycas/force_include.h"
-#include "CipresCommlib/CipresDataMatrixHelper.h"
+//#include "phycas/force_include.h"
+#include "pyphy/src/cipres/CipresDataMatrixHelper.h"
 
 #include <boost/python.hpp>
 
