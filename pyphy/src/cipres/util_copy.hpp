@@ -3,9 +3,9 @@
 #include <algorithm>
 #include <cstring>
 
-#include "CipresCommlib/ConfigDependentHeaders.h"
-#include "CipresCommlib/generic_type_mapping.hpp"
-#include "CipresCommlib/compile_assert.hpp"
+#include "pyphy/src/cipres/ConfigDependentHeaders.h"
+#include "pyphy/src/cipres/generic_type_mapping.hpp"
+#include "pyphy/src/cipres/compile_assert.hpp"
 
 #if defined(HAVE_COMPILE_TIME_DISPATCH)
 template<typename T> struct SupportsBitwiseCopy { enum {kResult = false};	};
