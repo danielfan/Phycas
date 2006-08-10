@@ -29,7 +29,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="4"
-				ForcedIncludeFiles="$(PHYCAS_ROOT)\phycas\pol_pyphy_config.h"/>
+				ForcedIncludeFiles="$(PHYCAS_ROOT)\pyphy\src\pol_pyphy_config.h"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -83,7 +83,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="3"
-				ForcedIncludeFiles="$(PHYCAS_ROOT)\phycas\pol_pyphy_config.h"/>
+				ForcedIncludeFiles="$(PHYCAS_ROOT)\pyphy\src\pol_pyphy_config.h"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -124,79 +124,161 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Source Files"
-			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
-			<File
-				RelativePath="..\..\prob_dist\basic_lot.cpp">
-			</File>
-			<File
-				RelativePath="..\basic_tree.cpp">
-			</File>
-			<File
-				RelativePath="..\basic_tree_node.cpp">
-			</File>
-			<File
-				RelativePath="..\..\common\boost_assertion_failed.cpp">
-			</File>
-			<File
-				RelativePath="..\phylogeny_pymod.cpp">
-			</File>
-			<File
-				RelativePath="..\..\common\pyphy_string.cpp">
-			</File>
-			<File
-				RelativePath="..\tree_manip.cpp">
-			</File>
-		</Filter>
-		<Filter
 			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			Filter="">
 			<File
-				RelativePath="..\..\prob_dist\basic_lot.hpp">
+				RelativePath="..\..\src\basic_lot.hpp">
 			</File>
 			<File
-				RelativePath="..\..\prob_dist\basic_lot.inl">
+				RelativePath="..\..\src\basic_lot.inl">
 			</File>
 			<File
-				RelativePath="..\basic_tree.hpp">
+				RelativePath="..\..\src\basic_tree.hpp">
 			</File>
 			<File
-				RelativePath="..\basic_tree.inl">
+				RelativePath="..\..\src\basic_tree.inl">
 			</File>
 			<File
-				RelativePath="..\basic_tree_node.hpp">
+				RelativePath="..\..\src\basic_tree_node.hpp">
 			</File>
 			<File
-				RelativePath="..\basic_tree_node.inl">
+				RelativePath="..\..\src\basic_tree_node.inl">
 			</File>
 			<File
-				RelativePath="..\edge_endpoints.hpp">
+				RelativePath="..\..\src\edge_endpoints.hpp">
 			</File>
 			<File
-				RelativePath="..\edge_iterators.hpp">
+				RelativePath="..\..\src\edge_iterators.hpp">
 			</File>
 			<File
-				RelativePath="..\..\common\pyphy_string.hpp">
+				RelativePath="..\..\src\pyphy_string.hpp">
 			</File>
 			<File
-				RelativePath="..\tree_iterators.hpp">
+				RelativePath="..\..\src\tree_iterators.hpp">
 			</File>
 			<File
-				RelativePath="..\tree_manip.hpp">
+				RelativePath="..\..\src\tree_manip.hpp">
 			</File>
 			<File
-				RelativePath="..\tree_manip.inl">
+				RelativePath="..\..\src\tree_manip.inl">
 			</File>
 			<File
-				RelativePath="..\xphylogeny.hpp">
+				RelativePath="..\..\src\xphylogeny.hpp">
 			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
+		</Filter>
+		<Filter
+			Name="Source Files"
+			Filter="">
+			<File
+				RelativePath="..\..\src\basic_lot.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\basic_tree.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\basic_tree_node.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\boost_assertion_failed.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\phylogeny_pymod.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\pyphy_string.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\tree_manip.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

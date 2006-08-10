@@ -74,6 +74,6 @@ class TreeManip
 
 } // namespace phycas
 
-#include "pyphy/phylogeny/tree_manip.inl"
+#include "pyphy/src/tree_manip.inl"
 	
 #endif

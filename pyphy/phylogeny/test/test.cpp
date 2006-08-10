@@ -1,6 +1,6 @@
 #include <string>
 #include <iostream>
-#include "pyphy/phylogeny/basic_tree.hpp"
+#include "pyphy/src/basic_tree.hpp"
 
 int main()
 	{
