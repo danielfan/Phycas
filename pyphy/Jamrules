@@ -57,8 +57,8 @@ variant common :
     <instruction-set>default
     <profiling>off
     <object-model>default
-    <darwin><*><cxxflags>"-include phycas/pol_pyphy_config.h"
-    <gcc><*><cxxflags>"-include phycas/pol_pyphy_config.h"
+    <darwin><*><cxxflags>"-include pyphy/src/pol_pyphy_config.h"
+    <gcc><*><cxxflags>"-include pyphy/src/pol_pyphy_config.h"
     <vc-7_1><*><cxxflags>"-FI pyphy\\src\\pol_pyphy_config.h"
     # <vc-7_1><*><cxxflags>"-showIncludes"
     <darwin><*><cxxflags>-Wmost

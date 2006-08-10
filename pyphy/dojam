@@ -33,16 +33,16 @@ else
 	exit 0
 fi
 
-if [ -n "$CIPRES_LIB_ROOT" ]
-then
-	echo CIPRES_LIB_ROOT=$CIPRES_LIB_ROOT
-else
-	echo Please define CIPRES_LIB_ROOT environmental variable as path to cipres framework directory
-	echo For example:
-	echo   if using bash: export CIPRES_LIB_ROOT=$HOME/cipres/framework
-	echo   if using tcsh: setenv CIPRES_LIB_ROOT $HOME/cipres/framework
-	exit 0
-fi
+# if [ -n "$CIPRES_LIB_ROOT" ]
+# then
+# 	echo CIPRES_LIB_ROOT=$CIPRES_LIB_ROOT
+# else
+# 	echo Please define CIPRES_LIB_ROOT environmental variable as path to cipres framework directory
+# 	echo For example:
+# 	echo   if using bash: export CIPRES_LIB_ROOT=$HOME/cipres/framework
+# 	echo   if using tcsh: setenv CIPRES_LIB_ROOT $HOME/cipres/framework
+# 	exit 0
+# fi
 
 if [ -n "$PHYCAS_ROOT" ]
 then
