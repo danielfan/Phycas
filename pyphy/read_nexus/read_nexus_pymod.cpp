@@ -2,7 +2,7 @@
 #	pragma warning(disable : 4267) // boost's builtin_converters.hpp casts size_t to int rather than unsigned
 #endif
 
-#include "phycas/force_include.h"
+//#include "phycas/force_include.h"
 
 /*  This file inclusion avoids a bizarre anonymous namespace multiple definition link error that 
 	TL (and others) are getting on Mac 10.3.9 (gcc 3.3).
@@ -26,17 +26,17 @@
 #else
 #	include "cipres_services/read_nexus/cipres_nexus_reader.hpp"
 #endif
-#include "phycas/characters/characters_manager.hpp"
-#include "CipresCommlib/CipresDataMatrixHelper.h"
-#include "ncl/nxs_exception.hpp"
-#include "ncl/trees/full_tree_description.hpp"
-#include "ncl/misc/nxs_index_set.hpp"
+#include "pyphy/src/characters_manager.hpp"
+#include "pyphy/src/cipres/CipresDataMatrixHelper.h"
+#include "pyphy/src/ncl/nxs_exception.hpp"
+#include "pyphy/src/ncl/trees/full_tree_description.hpp"
+#include "pyphy/src/ncl/misc/nxs_index_set.hpp"
 
 // These next three lines required, otherwise get link error "unresolved external symbol _PyArrayHandle" 
 // (at least in VC7)
 #define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
 #include <boost/python/numeric.hpp>
-#include <num_util.h>
+#include "pyphy/src/thirdparty/num_util.h"
 
 #include <boost/python.hpp>
 
