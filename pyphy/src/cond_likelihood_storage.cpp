@@ -1,5 +1,5 @@
-#include "pyphy/likelihood/cond_likelihood.hpp"
-#include "pyphy/likelihood/cond_likelihood_storage.hpp"
+#include "pyphy/src/cond_likelihood.hpp"
+#include "pyphy/src/cond_likelihood_storage.hpp"
 
 namespace phycas
 {

@@ -32,7 +32,7 @@ struct SliceStats
 	double evals;
 	};
 
-// Note: AdHocDensity is in phycas/rand/probablity_distribution.hpp
+// Note: AdHocDensity is in pyphy/src/probablity_distribution.hpp
 
 typedef boost::shared_ptr<AdHocDensity> FuncToSampleShPtr;
 

@@ -2,7 +2,7 @@
 #define COND_LIKELIHOOD_STORAGE_INL
 
 //#define OBSOLETE_DEBUGGING_CODE
-#include "pyphy/likelihood/xlikelihood.hpp"
+#include "pyphy/src/xlikelihood.hpp"
 
 namespace phycas
 {

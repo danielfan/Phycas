@@ -1,7 +1,7 @@
 #if ! defined(STATES_PATTERNS_HPP)
 #define STATES_PATTERNS_HPP
 
-#include "CipresCommlib/ConfigDependentHeaders.h"	// for int8_t typedef
+#include "pyphy/src/cipres/ConfigDependentHeaders.h"	// for int8_t typedef
 
 typedef std::vector<int8_t>				VecStateList;
 typedef std::vector<unsigned>			VecStateListPos;

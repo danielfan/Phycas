@@ -1,10 +1,10 @@
-#include "phycas/force_include.h"
-#include "CipresCommlib/CipresDataMatrixHelper.h"
-#include "pyphy/phylogeny/basic_tree.hpp"
-#include "pyphy/likelihood/likelihood_models.hpp"
-#include "pyphy/likelihood/tree_likelihood.hpp"
-#include "pyphy/likelihood/tip_data.hpp"
-#include "pyphy/likelihood/cond_likelihood.hpp"
+//#include "phycas/force_include.h"
+#include "pyphy/src/cipres/CipresDataMatrixHelper.h"
+#include "pyphy/src/basic_tree.hpp"
+#include "pyphy/src/likelihood_models.hpp"
+#include "pyphy/src/tree_likelihood.hpp"
+#include "pyphy/src/tip_data.hpp"
+#include "pyphy/src/cond_likelihood.hpp"
 
 namespace phycas
 {

@@ -5,7 +5,7 @@
 #include <boost/shared_ptr.hpp>						// for boost::shared_ptr
 #include <boost/weak_ptr.hpp>						// for boost::weak_ptr
 //#include <boost/enable_shared_from_this.hpp>		// for boost::enable_shared_from_this
-#include "pyphy/likelihood/mcmc_updater.hpp"		// for base class MCMCUpdater
+#include "pyphy/src/mcmc_updater.hpp"		// for base class MCMCUpdater
 
 //struct CIPRES_Matrix;
 
@@ -121,6 +121,6 @@ class LargetSimonMove : public MCMCUpdater
 
 } // namespace phycas
 
-#include "pyphy/likelihood/larget_simon_move.inl"
+#include "pyphy/src/larget_simon_move.inl"
 
 #endif
