@@ -78,24 +78,24 @@ then
 fi
 cd ..
 
-echo " " >> runall_diffs.txt
-echo "**********************" >> runall_diffs.txt
-echo "*** Running Phycas ***" >> runall_diffs.txt
-echo "**********************" >> runall_diffs.txt
-echo " " >> runall_diffs.txt
-cd Phycas
-python Phycas.py
-diff green.nex.p reference_output/green.nex.p >> ../runall_diffs.txt 
-if [ $? -ne 0 ] 
-then
-  abort
-fi
-diff green.nex.t reference_output/green.nex.t >> ../runall_diffs.txt
-if [ $? -ne 0 ] 
-then
-  abort
-fi
-cd ..
+#echo " " >> runall_diffs.txt
+#echo "**********************" >> runall_diffs.txt
+#echo "*** Running Phycas ***" >> runall_diffs.txt
+#echo "**********************" >> runall_diffs.txt
+#echo " " >> runall_diffs.txt
+#cd Phycas
+#python Phycas.py
+#diff green.nex.p reference_output/green.nex.p >> ../runall_diffs.txt 
+#if [ $? -ne 0 ] 
+#then
+#  abort
+#fi
+#diff green.nex.t reference_output/green.nex.t >> ../runall_diffs.txt
+#if [ $? -ne 0 ] 
+#then
+#  abort
+#fi
+#cd ..
 
 echo " " >> runall_diffs.txt
 echo "**************************" >> runall_diffs.txt
