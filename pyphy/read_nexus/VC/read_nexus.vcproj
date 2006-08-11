@@ -208,6 +208,9 @@
 				RelativePath="..\..\src\ncl\trees\newick_verifier.hpp">
 			</File>
 			<File
+				RelativePath="..\..\src\oldphycas\node_iterator.hpp">
+			</File>
+			<File
 				RelativePath="..\..\src\oldphycas\node_iterator_types.hpp">
 			</File>
 			<File
@@ -427,6 +430,9 @@
 				RelativePath="..\..\src\oldphycas\tree_inl.hpp">
 			</File>
 			<File
+				RelativePath="..\..\src\oldphycas\tree_iterator.hpp">
+			</File>
+			<File
 				RelativePath="..\..\src\oldphycas\tree_manip.hpp">
 			</File>
 			<File
@@ -474,6 +480,9 @@
 						Name="VCCLCompilerTool"
 						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\basic_lot.cpp">
 			</File>
 			<File
 				RelativePath="..\..\src\boost_assertion_failed.cpp">

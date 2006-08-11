@@ -1,8 +1,8 @@
 //#include "phycas/force_include.h"
-#include "ncl/nxs_defs.hpp"
-#include "phycas/trees/draw_context.hpp"
-#include "phycas/trees/tree.hpp"
-#include "phycas/trees/tree_node.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "pyphy/src/oldphycas/draw_context.hpp"
+#include "pyphy/src/oldphycas/tree.hpp"
+#include "pyphy/src/oldphycas/tree_node.hpp"
 using std::string;
 const unsigned char ASCIIDrawContext::codeToAscii[]
 	= { ' ', '|', '-', '\\', '|', '|', '/', '+', '-', '/', '-', '\\', '+', '+', '+', '+'}; 

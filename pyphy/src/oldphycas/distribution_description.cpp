@@ -1,7 +1,7 @@
 //#include "phycas/force_include.h"
-#include "phycas/rand/distribution_description.hpp"
-#include "phycas/rand/probability_distribution.hpp"
-#include "ncl/nxs_exception.hpp"
+#include "pyphy/src/oldphycas/distribution_description.hpp"
+#include "pyphy/src/probability_distribution.hpp"
+#include "pyphy/src/ncl/nxs_exception.hpp"
 using std::string;
 DistributionDescription::DistributionDescription()
 	:family(kUniform),
