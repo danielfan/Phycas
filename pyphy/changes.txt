@@ -162,7 +162,7 @@ o rel_0_9_2 (20-June-2006, SVN revision 102) added underflow protection (see
   underflow_policy.hpp) 
 o SVN revision 127 represents the first successful implementation of CipresPhycas
 
-Release 0.11.0 (11-Aug-2006, SVN revision 171)
+Release 0.11.0 (11-Aug-2006, SVN revision 173)
 ----------------------------------------------
 o reorganized sources so that all source code files currently in use are under a single "src"
   directory, and everything is organized as a package so that only one PYTHONPATH point is needed
