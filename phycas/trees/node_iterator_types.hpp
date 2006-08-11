@@ -1,7 +1,7 @@
 #ifndef	PHO_TREE_NODE_ITERATOR_TYPES_H
 #define	PHO_TREE_NODE_ITERATOR_TYPES_H
 
-#include "ncl/misc/nxs_copy.hpp" // current location of Int2Type
+#include "pyphy/src/ncl/misc/nxs_copy.hpp" // current location of Int2Type
 
 class TreeNode;
 	

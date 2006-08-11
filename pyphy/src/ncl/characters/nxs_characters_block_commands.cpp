@@ -1,4 +1,4 @@
-#include "phycas/force_include.h"
+//#include "phycas/force_include.h"
 #include "ncl/nxs_defs.hpp"
 #include "ncl/characters/nxs_characters_block.hpp"
 #include "ncl/characters/nxs_characters_manager.hpp"

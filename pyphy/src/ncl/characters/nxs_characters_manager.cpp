@@ -1,4 +1,4 @@
-#include "phycas/force_include.h"
+//#include "phycas/force_include.h"
 #include "ncl/nxs_defs.hpp"
 #include "ncl/taxa/nxs_taxa_manager.hpp"	//@POL Mark, moved this line above line that includes nxscharactersmanager.h
 #include "ncl/characters/nxs_characters_manager.hpp"

@@ -1,8 +1,8 @@
 #ifndef PHO_CONST_SITE_INFO_H
 #define PHO_CONST_SITE_INFO_H
 
-#include "ncl/misc/nxs_data_type.hpp"
-#include "phycas/misc/compressed_2d_array.hpp"
+#include "pyphy/src/ncl/misc/nxs_data_type.hpp"
+#include "pyphy/src/oldphycas/compressed_2d_array.hpp"
 /*--------------------------------------------------------------------------------------------------------------------------
 |	simple class for holding info about the constant sites in a subset.  
 |	This information is needed when efficiently scoring trees with models that include a proportion of constant sites.

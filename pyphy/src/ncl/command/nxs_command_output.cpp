@@ -1,7 +1,7 @@
 // This file is included by nxs_characters_block.cpp to avoid a bizarre anonymous namespace multiple definition link error that TL is getting on Mac 10.3.9 (gcc 3.3)
 //#if defined (INCLUDE_TO_AVOID_LINK_ERROR)
 
-#include "phycas/force_include.h"
+//#include "phycas/force_include.h"
 #include "ncl/command/nxs_command_output.hpp"
 #include "ncl/command/nxs_choice_cmd_param.hpp"
 #include "ncl/command/nxs_file_cmd_param.hpp"

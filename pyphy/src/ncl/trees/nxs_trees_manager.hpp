@@ -2,11 +2,11 @@
 #define NCL_NXS_TREE_MANAGER_H
 
 #include <boost/weak_ptr.hpp>
-#include "ncl/nxs_basic_manager.hpp"
-#include "ncl/trees/full_tree_description.hpp"
-#include "ncl/nxs_manager_with_listeners.hpp"
-#include "ncl/taxa/nxs_taxa_listener.hpp"
-#include "ncl/trees/nxs_tree_listener.hpp"
+#include "pyphy/src/ncl/nxs_basic_manager.hpp"
+#include "pyphy/src/ncl/trees/full_tree_description.hpp"
+#include "pyphy/src/ncl/nxs_manager_with_listeners.hpp"
+#include "pyphy/src/ncl/taxa/nxs_taxa_listener.hpp"
+#include "pyphy/src/ncl/trees/nxs_tree_listener.hpp"
 class NxsTreesBlock;
 class NxsTaxaManager;
 typedef boost::shared_ptr<NxsTreesBlock> TreesBlockShPtr;

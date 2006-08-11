@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(PYTHON_ROOT)\include;$(PHYCAS_ROOT);$(PHYCAS_ROOT)\pyphy\include;$(BOOST_ROOT);$(CIPRES_LIB_ROOT)\C++"
+				AdditionalIncludeDirectories="&quot;$(PYTHON_ROOT)\include&quot;;&quot;$(PHYCAS_ROOT)&quot;;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;VC_EXPORTS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -29,7 +29,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="4"
-				ForcedIncludeFiles="$(PHYCAS_ROOT)\phycas\pol_pyphy_config.h"/>
+				ForcedIncludeFiles="$(PHYCAS_ROOT)\pyphy\src\pol_pyphy_config.h"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -73,7 +73,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				ImproveFloatingPointConsistency="TRUE"
-				AdditionalIncludeDirectories="$(PYTHON_ROOT)\include;$(PHYCAS_ROOT);$(PHYCAS_ROOT)\pyphy\include;$(BOOST_ROOT);$(CIPRES_LIB_ROOT)\C++"
+				AdditionalIncludeDirectories="&quot;$(PYTHON_ROOT)\include&quot;;&quot;$(PHYCAS_ROOT)&quot;;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;VC_EXPORTS"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
@@ -81,7 +81,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="3"
-				ForcedIncludeFiles="$(PHYCAS_ROOT)\phycas\pol_pyphy_config.h"/>
+				ForcedIncludeFiles="$(PHYCAS_ROOT)\pyphy\src\pol_pyphy_config.h"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -160,6 +160,9 @@
 				RelativePath="..\..\src\ncl\misc\compile_assert.hpp">
 			</File>
 			<File
+				RelativePath="..\..\src\oldphycas\compressed_2d_array.hpp">
+			</File>
+			<File
 				RelativePath="..\..\src\oldphycas\const_site_info.hpp">
 			</File>
 			<File
@@ -185,6 +188,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\ncl\misc\generic_type_mapping.hpp">
+			</File>
+			<File
+				RelativePath="..\..\src\oldphycas\msg_exception.hpp">
 			</File>
 			<File
 				RelativePath="..\..\src\oldphycas\multiline_bound.hpp">
@@ -376,6 +382,9 @@
 				RelativePath="..\..\src\ncl\output\output_fwd_decl.hpp">
 			</File>
 			<File
+				RelativePath="..\..\src\phycas_config.h">
+			</File>
+			<File
 				RelativePath="..\..\src\probability_distribution.hpp">
 			</File>
 			<File
@@ -389,6 +398,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\oldphycas\taxa_manager.hpp">
+			</File>
+			<File
+				RelativePath="..\..\src\oldphycas\taxstatus_settings.hpp">
 			</File>
 			<File
 				RelativePath="..\..\src\ncl\output\temp_basic_output_operators.hpp">
@@ -441,9 +453,6 @@
 						Name="VCCLCompilerTool"
 						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
 				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\basic_cdf.cpp">
 			</File>
 			<File
 				RelativePath="..\..\src\boost_assertion_failed.cpp">
@@ -526,13 +535,15 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						ObjectFile="$(IntDir)/$(InputName)1.obj"
+						ForcedIncludeFiles="$(NOINHERIT)"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						ObjectFile="$(IntDir)/$(InputName)1.obj"
+						ForcedIncludeFiles="$(NOINHERIT)"/>
 				</FileConfiguration>
 			</File>
 			<File
@@ -631,13 +642,15 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						ObjectFile="$(IntDir)/$(InputName)1.obj"
+						ForcedIncludeFiles="$(NOINHERIT)"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						ObjectFile="$(IntDir)/$(InputName)1.obj"
+						ForcedIncludeFiles="$(NOINHERIT)"/>
 				</FileConfiguration>
 			</File>
 			<File

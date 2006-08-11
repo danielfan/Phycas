@@ -1,4 +1,4 @@
-#include "phycas/force_include.h"
+//#include "phycas/force_include.h"
 #include "generic_output_classes.hpp"
 #include "ncl/output/temp_basic_output_operators.hpp"
 #if defined(MTH_PHYCAS_MODULARIZING_OUTPUT) && MTH_PHYCAS_MODULARIZING_OUTPUT && 0

@@ -2,8 +2,8 @@
 #define NCL_NXSTOKEN_H
 
 #include <boost/noncopyable.hpp>
-#include "ncl/nxs_defs.hpp"
-#include "ncl/misc/string_extensions.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/misc/string_extensions.hpp"
 
 // April 2003 changes:
 //	Correctly parses embedded comments: test[embedded]comment as one token "testcomment"

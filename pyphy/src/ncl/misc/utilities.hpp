@@ -1,6 +1,6 @@
 #ifndef __NXS_UTILITIES_
 #define __NXS_UTILITIES_
-#include "ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
 #include <vector>
 
 #if defined(C_FUNCS_IN_STD_NAMESPACE)

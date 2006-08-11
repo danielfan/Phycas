@@ -1,8 +1,8 @@
 #ifndef PHO_TREE_MANAGER_H
 #define PHO_TREE_MANAGER_H
 
-#include "ncl/trees/nxs_trees_manager.hpp"
-#include "phycas/trees/tree_id.hpp"	// for the GetIDFromDescription function, perhaps we should move it.
+#include "pyphy/src/ncl/trees/nxs_trees_manager.hpp"
+#include "pyphy/src/oldphycas/tree_id.hpp"	// for the GetIDFromDescription function, perhaps we should move it.
 class ClearTreesSettings;
 class NxsCommandManager;
 /*----------------------------------------------------------------------------------------------------------------------

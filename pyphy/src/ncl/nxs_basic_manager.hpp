@@ -3,10 +3,10 @@
 
 #include <boost/bind.hpp>
 
-#include "ncl/nxs_defs.hpp"
-#include "ncl/misc/nxs_index_set.hpp"
-#include "ncl/misc/utilities.hpp"
-#include "ncl/misc/string_extensions.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/misc/nxs_index_set.hpp"
+#include "pyphy/src/ncl/misc/utilities.hpp"
+#include "pyphy/src/ncl/misc/string_extensions.hpp"
 
 class NxsBlock;
 class NxsTaxaBlock;

@@ -1,14 +1,14 @@
 #ifndef NCL_NXSCHARACTERSBLOCK_H
 #define NCL_NXSCHARACTERSBLOCK_H
 
-#include "ncl/nxs_defs.hpp"
-#include "ncl/taxa/nxs_alternative_taxa_block.hpp"
-#include "ncl/nxs_basic_manager.hpp"
-#include "ncl/nxs_block.hpp"
-#include "ncl/misc/nxs_discrete_matrix.hpp"
-#include "ncl/misc/nxs_data_type.hpp"
-#include "ncl/characters/nxs_characters_block_cmd_settings.hpp"
-#include "ncl/misc/eliminated_index_slider.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/taxa/nxs_alternative_taxa_block.hpp"
+#include "pyphy/src/ncl/nxs_basic_manager.hpp"
+#include "pyphy/src/ncl/nxs_block.hpp"
+#include "pyphy/src/ncl/misc/nxs_discrete_matrix.hpp"
+#include "pyphy/src/ncl/misc/nxs_data_type.hpp"
+#include "pyphy/src/ncl/characters/nxs_characters_block_cmd_settings.hpp"
+#include "pyphy/src/ncl/misc/eliminated_index_slider.hpp"
 
 class NxsCharactersManager;
 class NxsFormatCmdSettings;

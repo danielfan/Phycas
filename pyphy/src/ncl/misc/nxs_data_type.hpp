@@ -1,10 +1,10 @@
 #ifndef NCL_NXSDATATYPE_H
 #define NCL_NXSDATATYPE_H
 
-#include "ncl/nxs_defs.hpp"
-#include "ncl/misc/utilities.hpp"
-#include "ncl/nxs_exception.hpp"
-#include "ncl/nxs_token.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/misc/utilities.hpp"
+#include "pyphy/src/ncl/nxs_exception.hpp"
+#include "pyphy/src/ncl/nxs_token.hpp"
 #define CODED_STATES_AS_VEC 1
 
 namespace ncl

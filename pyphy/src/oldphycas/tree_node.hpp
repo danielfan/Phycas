@@ -2,7 +2,7 @@
 #define	PHO_TREENODE_H
 #include <stack> //needed for some of the  templated functions
 
-#include "phycas/trees/split.hpp"
+#include "pyphy/src/oldphycas/split.hpp"
 
 //POL moved Score union and Length typedef to split.h
 

@@ -1,8 +1,8 @@
 #ifndef NCL_ELIMINATED_INDEX_SLIDER_H
 #define NCL_ELIMINATED_INDEX_SLIDER_H
 
-#include "ncl/nxs_defs.hpp"
-#include "ncl/misc/nxs_index_set.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/misc/nxs_index_set.hpp"
 
 /*--------------------------------------------------------------------------------------------------
 |	A class that translates one indexing system into another.  

@@ -1,7 +1,7 @@
 #ifndef NCL_NXS_COMMAND_COMMON_H
 #define NCL_NXS_COMMAND_COMMON_H
 
-#include "ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
 
 class NxsCmdOption;
 class NxsCommand;

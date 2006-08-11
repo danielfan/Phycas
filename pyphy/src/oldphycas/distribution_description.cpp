@@ -1,4 +1,4 @@
-#include "phycas/force_include.h"
+//#include "phycas/force_include.h"
 #include "phycas/rand/distribution_description.hpp"
 #include "phycas/rand/probability_distribution.hpp"
 #include "ncl/nxs_exception.hpp"

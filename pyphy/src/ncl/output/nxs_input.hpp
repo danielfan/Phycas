@@ -1,7 +1,7 @@
 #if !defined (NCL_NXS_INPUT_HPP)
 #define NCL_NXS_INPUT_HPP
 #include <deque>
-#include "ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
 namespace NxsIO {
 
 class NxsInput

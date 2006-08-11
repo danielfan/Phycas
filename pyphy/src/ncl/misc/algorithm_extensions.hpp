@@ -12,7 +12,7 @@
 //	(or are very similar to the algorithm's suggested there.
 
 #include <list>
-#include "ncl/misc/nxs_copy.hpp"
+#include "pyphy/src/ncl/misc/nxs_copy.hpp"
 
 
 /*----------------------------------------------------------------------------------------------------------------------

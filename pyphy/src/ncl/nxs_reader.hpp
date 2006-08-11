@@ -1,7 +1,7 @@
 #ifndef NCL_NXSREADER_H
 #define NCL_NXSREADER_H
-#include "ncl/nxs_defs.hpp"
-#include "ncl/output/nxs_output.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/output/nxs_output.hpp"
 #if NEW_NXS_BLOCK_AND_READER
 
 #include <boost/weak_ptr.hpp>

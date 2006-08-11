@@ -1,10 +1,10 @@
-#include "phycas/force_include.h"
-#include "phycas/taxa/taxa_manager.hpp"
-#include "phycas/command/taxset_settings.hpp"
-#include "phycas/command/excludetaxa_settings.hpp"
-#include "phycas/command/includetaxa_settings.hpp"
-#include "ncl/output/nxs_output.hpp"
-#include "ncl/nxs_exception.hpp"
+//#include "phycas/force_include.h"
+#include "pyphy/src/oldphycas/taxa_manager.hpp"
+#include "pyphy/src/oldphycas/taxset_settings.hpp"
+#include "pyphy/src/oldphycas/excludetaxa_settings.hpp"
+#include "pyphy/src/oldphycas/includetaxa_settings.hpp"
+#include "pyphy/src/ncl/output/nxs_output.hpp"
+#include "pyphy/src/ncl/nxs_exception.hpp"
 using ncl::flush;
 using std::string;
 inline void PrintInclExclStatus(NxsOutputStream &outStream, unsigned nActive, unsigned nExcluded);

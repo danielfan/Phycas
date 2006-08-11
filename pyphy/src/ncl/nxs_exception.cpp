@@ -1,4 +1,4 @@
-#include "phycas/force_include.h"
+//#include "phycas/force_include.h"
 #if (MWERKS_LIB_BUILD)
 #	pragma export on
 #endif

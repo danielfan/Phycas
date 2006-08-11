@@ -1,7 +1,7 @@
 #if !defined(PHO_TREEID_H)
 #define PHO_TREEID_H
 
-#include "phycas/trees/split.hpp"
+#include "pyphy/src/oldphycas/split.hpp"
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	A wrapper around a set of splits

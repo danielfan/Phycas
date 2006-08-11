@@ -1,4 +1,4 @@
-#include "phycas/force_include.h"
+//#include "phycas/force_include.h"
 #if defined (NCL_SOCKET_IO)
 #	include "gui/phycasGUI/network/PhycasSocket.h"
 #	if defined (WIN_PHOREST)

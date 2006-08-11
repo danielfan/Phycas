@@ -1,7 +1,7 @@
 #if !defined MSG_EXCEPTION_H
 #define MSG_EXCEPTION_H
 
-#include "ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Generic exception class that is like an assert (will only be caught at a high level leading to program termination).

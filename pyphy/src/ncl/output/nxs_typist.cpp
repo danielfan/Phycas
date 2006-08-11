@@ -1,4 +1,4 @@
-#include "phycas/force_include.h"
+//#include "phycas/force_include.h"
 #include "ncl/nxs_defs.hpp"
 #if defined(NCL_USE_NXS_CONSOLE_OUTPUT)
 #	include "ncl/output/nxs_output_stream.hpp"

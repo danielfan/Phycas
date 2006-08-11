@@ -1,8 +1,8 @@
 //#define POL_MESQUITE_COLORING
 	
-#include "phycas/force_include.h"
+//#include "phycas/force_include.h"
 #include <boost/function.hpp>
-#include "phycas/taxa/taxa_manager.hpp"
+#include "pyphy/src/oldphycas/taxa_manager.hpp"
 #include "phycas/trees/tree.hpp"
 #include "phycas/trees/tree_node.hpp"
 #include "phycas/trees/tree_manip.hpp"

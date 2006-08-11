@@ -1,7 +1,7 @@
 // This file is included by read_nexus_i.cpp to avoid a bizarre anonymous namespace multiple definition link error that TL is getting on Mac 10.3.9 (gcc 3.3)
 #if defined (INCLUDE_TO_AVOID_LINK_ERROR) || defined(POL_PHYCAS)
 
-#include "phycas/force_include.h"
+//#include "phycas/force_include.h"
 #include <fstream>
 #include <map>
 #include "pyphy/src/cipres/cipres_nexus_reader.hpp"
@@ -22,8 +22,8 @@
 #include "pyphy/src/ncl/characters/stored_matrix.hpp"
 
 #if defined(NO_IDL_TYPES)
-#	include "CipresCommlib/ReadNexusConstants.h"
-#	include "ncl/nxs_exception.hpp"
+#	include "pyphy/src/cipres/ReadNexusConstants.h"
+#	include "pyphy/src/ncl/nxs_exception.hpp"
 #else
 #	include "CipresIDL/ReadNexusS.h"
 	const int NEXUS_TAXA_BLOCK_BIT = CipresIDL::ReadNexus::NEXUS_TAXA_BLOCK_BIT;

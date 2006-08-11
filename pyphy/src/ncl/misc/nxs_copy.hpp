@@ -2,7 +2,7 @@
 #define NXS_COPY_H
 #include <algorithm>
 #include <cstring>
-#include "ncl/misc/generic_type_mapping.hpp"
+#include "pyphy/src/ncl/misc/generic_type_mapping.hpp"
 
 #if 0
 template<typename T> struct SupportsBitwiseCopy { enum {kResult = false};	};

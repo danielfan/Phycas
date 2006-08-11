@@ -1,5 +1,5 @@
-#include "phycas/force_include.h"
-#include "phycas/likelihood/const_site_info.hpp"
+//#include "phycas/force_include.h"
+#include "pyphy/src/const_site_info.hpp"
 #include "ncl/misc/nxs_data_type.hpp"
 using std::vector;
 

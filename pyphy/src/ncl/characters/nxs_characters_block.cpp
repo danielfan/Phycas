@@ -4,7 +4,7 @@
 //#include "ncl/command/nxs_command_output.cpp"
 
 
-#include "phycas/force_include.h"
+//#include "phycas/force_include.h"
 #include "ncl/nxs_token.hpp"
 #include "ncl/output/nxs_output.hpp"
 #include "ncl/nxs_defs.hpp"

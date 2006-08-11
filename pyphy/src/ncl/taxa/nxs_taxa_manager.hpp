@@ -1,7 +1,7 @@
 #ifndef NCL_NXS_TAXA_MANAGER_H
 #define NCL_NXS_TAXA_MANAGER_H
 
-#include "ncl/taxa/base_taxa_manager.hpp"
+#include "pyphy/src/ncl/taxa/base_taxa_manager.hpp"
 class NxsTaxaBlock;
 class NxsCommandManager;
 typedef boost::weak_ptr<NxsTaxaBlock> NxsTaxaBlockAlias;

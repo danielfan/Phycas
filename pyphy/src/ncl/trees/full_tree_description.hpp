@@ -1,7 +1,7 @@
 #ifndef NCL_NXSTREE_DESCRIPTION_H
 #define NCL_NXSTREE_DESCRIPTION_H
 
-#include "ncl/misc/nxs_index_set.hpp"
+#include "pyphy/src/ncl/misc/nxs_index_set.hpp"
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Class that stores a Newick representation of the tree (with indices for the taxa that correspond to those in the 

@@ -1,4 +1,4 @@
-#include "phycas/force_include.h"
+//#include "phycas/force_include.h"
 #include "ncl/nxs_defs.hpp"
 #include "ncl/misc/eliminated_index_slider.hpp"
 

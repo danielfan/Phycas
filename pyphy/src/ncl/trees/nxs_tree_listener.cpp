@@ -1,4 +1,4 @@
-#include "phycas/force_include.h"
+//#include "phycas/force_include.h"
 #include "ncl/nxs_defs.hpp"
 #include "ncl/taxa/nxs_taxa_manager.hpp"
 #include "ncl/trees/nxs_trees_manager.hpp"

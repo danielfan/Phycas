@@ -1,7 +1,7 @@
 #ifndef NCL_SUPPRESS_OUTSTREAM_H
 #define NCL_SUPPRESS_OUTSTREAM_H
 
-#include "ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
 #if defined (SUPPORT_TREE_OUTPUT)
 	class Tree;
 #endif

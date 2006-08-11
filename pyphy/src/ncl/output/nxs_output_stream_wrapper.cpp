@@ -1,4 +1,4 @@
-#include "phycas/force_include.h"
+//#include "phycas/force_include.h"
 #include "ncl/output/nxs_output.hpp"
 #include "ncl/output/nxs_output_stream_wrapper.hpp"
 #include "ncl/output/nxs_output_destination_description.hpp"

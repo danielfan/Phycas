@@ -1,11 +1,11 @@
 #ifndef NCL_NXSTREESBLOCK_H
 #define NCL_NXSTREESBLOCK_H
 
-#include "ncl/nxs_defs.hpp"
-#include "ncl/nxs_basic_manager.hpp"
-#include "ncl/nxs_block.hpp"
-#include "ncl/taxa/nxs_taxa_manager.hpp"
-#include "ncl/trees/newick_verifier.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/nxs_basic_manager.hpp"
+#include "pyphy/src/ncl/nxs_block.hpp"
+#include "pyphy/src/ncl/taxa/nxs_taxa_manager.hpp"
+#include "pyphy/src/ncl/trees/newick_verifier.hpp"
 
 class NxsTreesManager;
 /*----------------------------------------------------------------------------------------------------------------------

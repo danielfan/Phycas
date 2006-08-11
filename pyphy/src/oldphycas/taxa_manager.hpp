@@ -1,8 +1,8 @@
 #ifndef PHO_TAXA_MANAGER_H
 #define PHO_TAXA_MANAGER_H
 
-#include "ncl/taxa/nxs_taxa_manager.hpp"
-#include "phycas/command/taxstatus_settings.hpp"
+#include "pyphy/src/ncl/taxa/nxs_taxa_manager.hpp"
+#include "pyphy/src/oldphycas/taxstatus_settings.hpp"
 class ExcludeTaxaSettings;
 class IncludeTaxaSettings;
 class TaxSetSettings;

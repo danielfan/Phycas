@@ -37,7 +37,7 @@
 //  See http://www.boost.org/libs/filesystem for documentation.
 
 //----------------------------------------------------------------------------// 
-#include "ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
 #include <fstream>
 #include <list>
 #include <sys/stat.h>

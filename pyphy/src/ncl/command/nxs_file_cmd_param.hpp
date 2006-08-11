@@ -1,7 +1,7 @@
 #if !defined (NCL_NXS_FILE_CMD_OPTIONS_H)
 #define NCL_NXS_FILE_CMD_OPTIONS_H
 
-#include "phycas/force_include.h"
+//#include "phycas/force_include.h"
 #include "ncl/nxs_defs.hpp"
 #include "ncl/misc/nxs_file_path.hpp"
 #include "ncl/command/nxs_cmd_param.hpp"

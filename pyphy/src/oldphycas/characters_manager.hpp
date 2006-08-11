@@ -2,8 +2,8 @@
 #define PHO_CHARACTERS_MANAGER_H
 
 #include <list>
-#include "ncl/characters/nxs_characters_manager.hpp"
-#include "ncl/characters/data_pattern.hpp"
+#include "pyphy/src/ncl/characters/nxs_characters_manager.hpp"
+#include "pyphy/src/ncl/characters/data_pattern.hpp"
 class NxsDataType;
 class PhoCharactersManager;
 class ConstSiteInfo;

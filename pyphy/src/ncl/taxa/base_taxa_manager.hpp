@@ -2,10 +2,10 @@
 #define TAXA_MANAGER_H
 
 #include <boost/weak_ptr.hpp>
-#include "ncl/nxs_defs.hpp"
-#include "ncl/nxs_basic_manager.hpp"
-#include "ncl/nxs_manager_with_listeners.hpp"
-#include "ncl/taxa/nxs_taxa_listener.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/nxs_basic_manager.hpp"
+#include "pyphy/src/ncl/nxs_manager_with_listeners.hpp"
+#include "pyphy/src/ncl/taxa/nxs_taxa_listener.hpp"
 class BaseTaxaManager;
 class BaseTaxaManager : 
   public NxsBasicListManager ,

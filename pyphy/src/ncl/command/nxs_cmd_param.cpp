@@ -1,4 +1,4 @@
-#include "phycas/force_include.h"
+//#include "phycas/force_include.h"
 #include "ncl/nxs_defs.hpp"
 #include "ncl/command/nxs_cmd_param.hpp"
 #include "ncl/command/nxs_command.hpp"

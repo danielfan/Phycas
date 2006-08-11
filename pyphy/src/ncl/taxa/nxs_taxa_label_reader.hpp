@@ -1,9 +1,9 @@
 #ifndef NCL_NXSTAXALABELREADER_H
 #define NCL_NXSTAXALABELREADER_H
 
-#include "ncl/nxs_defs.hpp"
-#include "ncl/command/nxs_command_decl.hpp"
-#include "ncl/nxs_basic_manager.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/command/nxs_command_decl.hpp"
+#include "pyphy/src/ncl/nxs_basic_manager.hpp"
 class NxsToken;
 /*----------------------------------------------------------------------------------------------------------------------
 |	Parses the taxlabels command (which can occur in taxa, characters, data, unaligned, distances, etc blocks)

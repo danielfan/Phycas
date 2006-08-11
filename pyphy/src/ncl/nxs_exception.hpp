@@ -1,7 +1,7 @@
 #ifndef NCL_NXSEXCEPTION_H
 #define NCL_NXSEXCEPTION_H
-#include "ncl/nxs_defs.hpp"
-#include "ncl/misc/string_extensions.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/misc/string_extensions.hpp"
 #include <exception>
 class NxsToken;
 /*----------------------------------------------------------------------------------------------------------------------

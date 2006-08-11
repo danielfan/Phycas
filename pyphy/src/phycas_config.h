@@ -54,16 +54,16 @@ The following defines will help me wade through harmless, class-level functions 
 #	define NCL_USER_SUPPLIED_OUTPUT
 #	define NCL_SUPPRESS_OUTPUT
 #   define NCL_PRINT_COMMAND_STATE_TO_HIDDEN 0
-#	define NCL_USER_OUTPUT_FWD_DECLARATIONS "ncl/output/nxs_suppress_fwd_decl.hpp"
-#	define NCL_USER_OUTPUT_HEADER "ncl/output/nxs_suppress_output_stream.hpp"
-#	define NCL_USER_OUTPUT_MGR_HEADER "ncl/output/nxs_suppress_output_mgr.hpp"
+#	define NCL_USER_OUTPUT_FWD_DECLARATIONS "pyphy/src/ncl/output/nxs_suppress_fwd_decl.hpp"
+#	define NCL_USER_OUTPUT_HEADER "pyphy/src/ncl/output/nxs_suppress_output_stream.hpp"
+#	define NCL_USER_OUTPUT_MGR_HEADER "pyphy/src/ncl/output/nxs_suppress_output_mgr.hpp"
 #else
 #	define NCL_SOCKET_IO
 #	define NCL_USER_SUPPLIED_OUTPUT
 #   define NCL_PRINT_COMMAND_STATE_TO_HIDDEN 1
-#	define NCL_USER_OUTPUT_FWD_DECLARATIONS "ncl/output/nxs_xml_socket_fwd_decl.hpp"
-#	define NCL_USER_OUTPUT_HEADER "ncl/output/nxs_xml_socket_output_stream.hpp"
-#	define NCL_USER_OUTPUT_MGR_HEADER "ncl/output/nxs_xml_socket_output_mgr.hpp"
+#	define NCL_USER_OUTPUT_FWD_DECLARATIONS "pyphy/src/ncl/output/nxs_xml_socket_fwd_decl.hpp"
+#	define NCL_USER_OUTPUT_HEADER "pyphy/src/ncl/output/nxs_xml_socket_output_stream.hpp"
+#	define NCL_USER_OUTPUT_MGR_HEADER "pyphy/src/ncl/output/nxs_xml_socket_output_mgr.hpp"
 #endif //defined (CONSOLE_PHYCAS_NO_SOCKET)
 
 #if defined (CORBA_CLIENT_PHYCAS) || defined(CORBA_SERVER_PHYCAS)

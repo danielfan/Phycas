@@ -1,7 +1,7 @@
 #ifndef NCL_INDEXSET_H
 #define NCL_INDEXSET_H
 
-#include "ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
 
 class NxsIndexSet 
 	{
