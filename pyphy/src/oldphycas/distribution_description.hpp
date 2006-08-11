@@ -4,11 +4,10 @@
 #include "pyphy/src/ncl/nxs_defs.hpp"
 #include "pyphy/src/ncl/misc/string_extensions.hpp"
 #include "pyphy/src/ncl/output/temp_basic_output_operators.hpp"
-class ProbabilityDistribution;
-class MultivariateProbabilityDistribution;
+#include "pyphy/src/probability_distribution.hpp"
 
-typedef boost::shared_ptr<ProbabilityDistribution> ProbDistPtr; 
-typedef boost::shared_ptr<MultivariateProbabilityDistribution> MVProbDistPtr; 
+typedef boost::shared_ptr<phycas::ProbabilityDistribution> ProbDistPtr; 
+typedef boost::shared_ptr<phycas::MultivariateProbabilityDistribution> MVProbDistPtr; 
 
 class DistributionDescription // shouldn't we have a separate types for discrete and continuous
 	{

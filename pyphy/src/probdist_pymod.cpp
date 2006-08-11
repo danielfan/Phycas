@@ -4,18 +4,14 @@
 
 #define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
 
-//#include "phycas/force_include.h"
-#if defined(POL_PHYCAS)
-#	include "pyphy/src/basic_lot.hpp"
-#else
-#	include "phycas/rand/lot.hpp"
-#endif
-#include "pyphy/src/probability_distribution.hpp"
-#include "pyphy/src/slice_sampler.hpp"
+#include "basic_lot.hpp"
+#include "probability_distribution.hpp"
+#include "slice_sampler.hpp"
 #include <boost/python.hpp>
-#include "pyphy/src/xprobdist.hpp"
+#include "xprobdist.hpp"
 
 using namespace boost::python;
+using namespace phycas;
 
 double getEffectiveLnZero()
 	{
@@ -251,6 +247,24 @@ BOOST_PYTHON_MODULE(_ProbDist)
 		.def("getLnPDF", &InverseGammaDistribution::GetLnPDF)
 		.def("getRelativeLnPDF", &InverseGammaDistribution::GetRelativeLnPDF)
 		.def("setMeanAndVariance", &InverseGammaDistribution::SetMeanAndVariance)
+		;
+	class_<NormalDistribution, bases<ProbabilityDistribution, AdHocDensity> >("NormalDistBase")
+		.def(init<double, double>())
+		.def("isDiscrete", &NormalDistribution::IsDiscrete)
+		.def("getDistName", &NormalDistribution::GetDistributionName)
+		.def("__str__", &NormalDistribution::GetDistributionDescription)
+		.def("__repr__", &NormalDistribution::GetDistributionDescription)
+		.def("setLot", &NormalDistribution::SetLot)
+		.def("setSeed", &NormalDistribution::SetSeed)
+		.def("resetLot", &NormalDistribution::ResetLot)
+		.def("getMean", &NormalDistribution::GetMean)
+		.def("getVar", &NormalDistribution::GetVar)
+		.def("getStdDev", &NormalDistribution::GetStdDev)
+		.def("getCDF", &NormalDistribution::GetCDF)
+		.def("sample", &NormalDistribution::Sample)
+		.def("getLnPDF", &NormalDistribution::GetLnPDF)
+		.def("getRelativeLnPDF", &NormalDistribution::GetRelativeLnPDF)
+		.def("setMeanAndVariance", &NormalDistribution::SetMeanAndVariance)
 		;
 	register_exception_translator<XProbDist>(&translateXProbDist);
 }

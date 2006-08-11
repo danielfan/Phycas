@@ -1,24 +1,22 @@
-#ifndef PHYCAS_SLICE_SAMPLER_H
-#define PHYCAS_SLICE_SAMPLER_H
+#ifndef SLICE_SAMPLER_HPP
+#define SLICE_SAMPLER_HPP
 
 #include <cstdlib>
 #include <climits>
 #include <cfloat>
-#if defined(POL_PHYCAS)
-#	include "pyphy/src/basic_lot.hpp"
-	typedef boost::shared_ptr<phycas::Lot> LotShPtr;
-#else
-#	include "phycas/rand/lot.hpp"
-	typedef boost::shared_ptr<Lot> LotShPtr;
-#endif
-#include "pyphy/src/probability_distribution.hpp"
-#include "pyphy/src/xprobdist.hpp"
+#include "basic_lot.hpp"
+typedef boost::shared_ptr<phycas::Lot> LotShPtr;
+#include "probability_distribution.hpp"
+#include "xprobdist.hpp"
 #include <boost/shared_ptr.hpp>
-#if defined(POL_PYPHY)
+#if defined(PYTHON_ONLY)
 #	include <boost/python/call_method.hpp>
 #endif
 typedef std::pair<double, double> ParamAndLnProb;
 typedef std::pair<double, double> SliceInterval;
+
+namespace phycas
+{
 
 struct SliceStats
 	{
@@ -32,8 +30,7 @@ struct SliceStats
 	double evals;
 	};
 
-// Note: AdHocDensity is in pyphy/src/probablity_distribution.hpp
-
+// Note: AdHocDensity is defined in probablity_distribution.hpp
 typedef boost::shared_ptr<AdHocDensity> FuncToSampleShPtr;
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -761,5 +758,7 @@ inline VecDbl SliceSampler::DebugSample()
 
 	return v;
 	}
+
+} // namespace phycas
 
 #endif

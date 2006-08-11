@@ -7,11 +7,11 @@
 //#include <boost/enable_shared_from_this.hpp>		// for boost::enable_shared_from_this
 #include "pyphy/src/mcmc_updater.hpp"		// for base class MCMCUpdater
 
-class ProbabilityDistribution;
-typedef boost::shared_ptr<ProbabilityDistribution>	ProbDistShPtr;
-
 namespace phycas
 {
+
+class ProbabilityDistribution;
+typedef boost::shared_ptr<ProbabilityDistribution>	ProbDistShPtr;
 
 class MCMCChainManager;
 typedef boost::weak_ptr<MCMCChainManager>			ChainManagerWkPtr;

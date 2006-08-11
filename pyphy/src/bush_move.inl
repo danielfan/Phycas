@@ -32,7 +32,7 @@ inline void BushMove::setEdgeLenDistMean(
 	if (rng)
 		{
 		edgelen_mean = mean;
-		edgelen_dist = ExponentialDistributionShPtr(new ExponentialDistribution(1.0/edgelen_mean));
+		edgelen_dist = ExponentialDistributionShPtr(new phycas::ExponentialDistribution(1.0/edgelen_mean));
 		edgelen_dist->SetMeanAndVariance(edgelen_mean, edgelen_mean);
 		edgelen_dist->SetLot(rng.get());  //@POL should just be able to pass in the shared_ptr rather than a raw pointer
 		}

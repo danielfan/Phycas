@@ -7,7 +7,7 @@
 
 extern "C"
 {
-#include "pyphy/src/thirdparty/dcdflib/src/cdflib.h"
+#include "thirdparty/dcdflib/src/cdflib.h"
 }
 
 namespace phycas
@@ -22,7 +22,7 @@ namespace phycas
 |
 |	This file contains the minimum functionality needed for Phycas and does not attempt to wrap all the functions in the
 |	original DCDFLIB library. The original source code and documentation for DCDFLIB is in the directory 
-|	pyphy/src/thirdparty/dcdflib.
+|	pyphy/prob_dist/dcdflib.
 */
 class CDF
 	{
@@ -31,10 +31,12 @@ class CDF
 		double						CumBeta(double x, double alpha, double beta) const;
 		double						CumGamma(double x, double alpha, double beta) const;
 		double						SampleGamma(double p, double alpha, double beta) const;
+		double						CumNorm(double x, double mu, double sigma) const;
+		double						SampleNorm(double p, double alpha, double beta) const;
 	};
 
 } // namespace phycas
 
-#include "pyphy/src/basic_cdf.inl"
+#include "basic_cdf.inl"
 
 #endif

@@ -1,9 +1,11 @@
 #define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
 #define NO_IMPORT_ARRAY
 
-//#include "phycas/force_include.h"
-#include "pyphy/src/probability_distribution.hpp"
-#include "pyphy/src/ncl/nxs_exception.hpp"
+#include "probability_distribution.hpp"
+#include "ncl/nxs_exception.hpp"
+
+namespace phycas
+{
 
 DirichletDistribution::DirichletDistribution(const std::vector<double> &params) 
 	{
@@ -34,3 +36,4 @@ DirichletDistribution::DirichletDistribution(const std::vector<double> &params)
 		}
 	}
 
+} // namespace phycas

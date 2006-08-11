@@ -98,6 +98,58 @@ inline double CDF::SampleGamma(
 	return X;
 	}
 
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns cumulative normal distribution function for the value `x', mean `mu' and standard deviation `sigma'. This 
+|	is the integral of the normal probability density function from negative infinity up to `x'. The normal density is
+|>
+|	                 1             /  (x - mu)^2   \
+|	f(x) = ------------------- exp| --------------- |
+|	        sigma (2 pi)^{0.5}     \   2 sigma^2   /
+|>
+*/
+inline double CDF::CumNorm(
+  double x,					/**< is the upper limit of the interval starting at 0.0 for which the integral will be computed */
+  double mu,				/**< is the mean of the normal distribution */
+  double sigma) const		/**< is the standard deviation of the distribution */
+	{
+	assert(sigma > 0.0);
+	double X		= (x - mu)/sigma;
+	int status		= 0;
+	int which		= 1;	// compute p given x, mean and standard deviation
+	double P		= 0.0;
+	double Q		= 0.0;
+	double bound	= 0.0;
+	cdfnor(&which, &P, &Q, &X, &mu, &sigma, &status, &bound);
+	assert(status == 0);
+	return P;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns value of `x' such that the integral of the normal probability density function from negative infinity up to
+|	`x' is equal to the supplied parameter `p' (with mean `mu' and standard devition `sigma' provided). Useful for 
+|	simulating draws from a normal distribution. The normal density is
+|>
+|	                 1             /  (x - mu)^2   \
+|	f(x) = ------------------- exp| --------------- |
+|	        sigma (2 pi)^{0.5}     \   2 sigma^2   /
+|>
+*/
+inline double CDF::SampleNorm(
+  double p,				/**< is the integral of the normal probability density function from negative infinity up to `x' */
+  double mu,			/**< is the mean of the normal distribution */
+  double sigma) const	/**< is the standard deviation of the normal distribution */
+	{
+	double X = 0.0;
+	int status = 0;
+	int which = 2;	// compute x given p, shape and scale
+	double P = p;
+	double Q = 1.0 - P;
+	double bound = 0.0;
+	cdfnor(&which, &P, &Q, &X, &mu, &sigma, &status, &bound);
+	assert(status == 0);
+	return X;
+	}
+
 } // namespace phycas
 
 #endif

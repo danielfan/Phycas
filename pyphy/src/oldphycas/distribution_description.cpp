@@ -1,8 +1,9 @@
 //#include "phycas/force_include.h"
-#include "pyphy/src/oldphycas/distribution_description.hpp"
 #include "pyphy/src/probability_distribution.hpp"
+#include "pyphy/src/oldphycas/distribution_description.hpp"
 #include "pyphy/src/ncl/nxs_exception.hpp"
 using std::string;
+
 DistributionDescription::DistributionDescription()
 	:family(kUniform),
 	meaningOfVariable(kParam), 
@@ -87,7 +88,7 @@ MVProbDistPtr DistributionDescription::CreateMultiVariateProbabilityDistribution
  			return jointDist->CreateMultiVariateProbabilityDistribution();
 		case kDirichlet:
 			if (mvProbDist == MVProbDistPtr())
-				mvProbDist  = MVProbDistPtr(new DirichletDistribution(contVariables));
+				mvProbDist  = MVProbDistPtr(new phycas::DirichletDistribution(contVariables));
 			break;
 		default:
 			assert(0);
@@ -109,15 +110,15 @@ ProbDistPtr DistributionDescription::CreateProbabilityDistribution() const
 	switch (family)
 		{
 		case kBernoulli:
-			probDist = ProbDistPtr(new BernoulliDistribution(contVariables[0]));
+			probDist = ProbDistPtr(new phycas::BernoulliDistribution(contVariables[0]));
 			break;
 
 		case kBinomial:
-			probDist = ProbDistPtr(new BinomialDistribution(discreteVariables[0], contVariables[0]));	//new_distr
+			probDist = ProbDistPtr(new phycas::BinomialDistribution(discreteVariables[0], contVariables[0]));	//new_distr
 			break;
 
 		case kUniform:
-			probDist = ProbDistPtr(new UniformDistribution(contVariables[0], contVariables[1]));
+			probDist = ProbDistPtr(new phycas::UniformDistribution(contVariables[0], contVariables[1]));
 			break;
 
 		case kBeta:
@@ -125,11 +126,11 @@ ProbDistPtr DistributionDescription::CreateProbabilityDistribution() const
 				{
 				firstParam = contVariables[0];
 				secondParam = contVariables[1];
-				probDist = ProbDistPtr(new BetaDistribution(firstParam, secondParam));
+				probDist = ProbDistPtr(new phycas::BetaDistribution(firstParam, secondParam));
 				}
 			else
 				{
-				probDist = ProbDistPtr(new BetaDistribution(1.0, 1.0));
+				probDist = ProbDistPtr(new phycas::BetaDistribution(1.0, 1.0));
 				probDist->SetMeanAndVariance(contVariables[0], contVariables[1]);
 				}
 			break;
@@ -145,7 +146,7 @@ ProbDistPtr DistributionDescription::CreateProbabilityDistribution() const
 				secondParam = contVariables[1]/contVariables[0];
 				firstParam = contVariables[0]/secondParam;
 				}
-			probDist = ProbDistPtr(new GammaDistribution(firstParam, secondParam));
+			probDist = ProbDistPtr(new phycas::GammaDistribution(firstParam, secondParam));
 			break;
 
 		case kExponential:
@@ -153,7 +154,7 @@ ProbDistPtr DistributionDescription::CreateProbabilityDistribution() const
 				firstParam = contVariables[0];
 			else
 				firstParam = 1.0/contVariables[0];
-			probDist = ProbDistPtr(new ExponentialDistribution(firstParam));
+			probDist = ProbDistPtr(new phycas::ExponentialDistribution(firstParam));
 			break;
 
 		case kInverseGamma:
@@ -167,7 +168,7 @@ ProbDistPtr DistributionDescription::CreateProbabilityDistribution() const
 				firstParam = 2.0 + (contVariables[0] * contVariables[0] /contVariables[1]);
 				secondParam = 1.0 / ((firstParam- 1.0) * contVariables[0]);
 				}
-			probDist = ProbDistPtr(new InverseGammaDistribution(firstParam, secondParam));
+			probDist = ProbDistPtr(new phycas::InverseGammaDistribution(firstParam, secondParam));
 			break;
 
 		default:

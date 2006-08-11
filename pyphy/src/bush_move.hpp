@@ -11,11 +11,11 @@
 
 //class ProbabilityDistribution;
 
-class ExponentialDistribution;
-typedef boost::shared_ptr<ExponentialDistribution>	ExponentialDistributionShPtr;
-
 namespace phycas
 {
+
+class ExponentialDistribution;
+typedef boost::shared_ptr<ExponentialDistribution>	ExponentialDistributionShPtr;
 
 //class TreeNode;
 

@@ -5,7 +5,7 @@
 //#include "phycas/force_include.h"
 //#include <cassert>
 #include <cmath>
-#include "pyphy/src/slice_sampler.hpp"
+#include "slice_sampler.hpp"
 using std::ofstream;
 using std::ios;
 using std::vector;
@@ -14,6 +14,8 @@ using std::vector;
 	using std::fabs;
 	using std::log;
 #endif
+
+using namespace phycas;
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Draws a sample from the target distribution using overrelaxed slice sampling. Throws XPyPhy.

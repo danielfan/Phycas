@@ -5,6 +5,7 @@ from pyphy.Conversions import *
 from _ProbDist import *
 from _Lot import *
 from _SliceSampler import *
+from _NormalDist import *
 from _GammaDist import *
 from _ExponentialDist import *
 from _InverseGammaDist import *

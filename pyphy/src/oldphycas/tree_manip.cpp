@@ -16,7 +16,6 @@ using std::list;
 using std::vector;
 using std::string;
 
-
 /*#include "phycas/tree/drawcontext.h"
 
 #include "phycas/rand/lot.h"
@@ -352,7 +351,7 @@ void TreeManip::SimpleBuildStarTree(
 	tree->hasEdgelens = true;
 	const double commonEdgeLen = 1.0;	// used only if rnd == NULL
 
-	ExponentialDistribution expDist;
+	phycas::ExponentialDistribution expDist;
 	expDist.SetLot(rnd); //POL 20Jun2005
 	expDist.SetMeanAndVariance(lambda, lambda*lambda); //@ is this right? check mean and variance of exponential distribution
 
@@ -461,7 +460,7 @@ void TreeManip::SimpleBuildYuleTree(
 	unsigned nextLeafNodeNum = 2; // 0 is reserved for root node, and 1 is given to the first tip created
 	unsigned nextInternalNodeNum = nlvs;
 
-	ExponentialDistribution expDist;
+	phycas::ExponentialDistribution expDist;
 	expDist.SetLot(&rnd); //POL 20Jun2005
 
 	// This vector keeps all nodes representing growing tips handy

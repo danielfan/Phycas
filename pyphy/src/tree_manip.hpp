@@ -7,11 +7,11 @@
 #include <cassert>
 #include "boost/shared_ptr.hpp"
 
-class ProbabilityDistribution;
-typedef boost::shared_ptr<ProbabilityDistribution> ProbDistShPtr;
-
 namespace phycas
 {
+
+class ProbabilityDistribution;
+typedef boost::shared_ptr<ProbabilityDistribution> ProbDistShPtr;
 
 class TreeNode;
 
