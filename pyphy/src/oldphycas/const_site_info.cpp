@@ -1,6 +1,6 @@
 //#include "phycas/force_include.h"
-#include "pyphy/src/const_site_info.hpp"
-#include "ncl/misc/nxs_data_type.hpp"
+#include "pyphy/src/oldphycas/const_site_info.hpp"
+#include "pyphy/src/ncl/misc/nxs_data_type.hpp"
 using std::vector;
 
 OrdCodedArrs::OrdCodedArrs(

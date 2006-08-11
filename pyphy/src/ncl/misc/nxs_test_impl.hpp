@@ -1,11 +1,11 @@
 #if !defined NCL_NXS_TEST_IMPLEMENTATION_H
 #define NCL_NXS_TEST_IMPLEMENTATION_H
 
-#include "ncl/misc/nxs_test.hpp"
+#include "pyphy/src/ncl/misc/nxs_test.hpp"
 #include <boost/function.hpp>
-#include "ncl/misc/nxs_copy.hpp"
-#include "ncl/misc/utilities.hpp"
-#include "ncl/misc/string_extensions.hpp"
+#include "pyphy/src/ncl/misc/nxs_copy.hpp"
+#include "pyphy/src/ncl/misc/utilities.hpp"
+#include "pyphy/src/ncl/misc/string_extensions.hpp"
 /*----------------------------------------------------------------------------------------------------------------------
 |	To avoid code-bloat the NxsTest class is abstract and not templated.  The implemenation of the tests is templated.
 |

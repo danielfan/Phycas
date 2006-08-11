@@ -1,7 +1,7 @@
 #if !defined(NXS_INDEX_SET_OUTPUT_HPP)
 #define NXS_INDEX_SET_OUTPUT_HPP
 
-#include "ncl/output/temp_basic_output_operators.hpp"
+#include "pyphy/src/ncl/output/temp_basic_output_operators.hpp"
 class NxsBasicListManager;
 class NxsTaxaManager;
 class NxsCharactersManager;

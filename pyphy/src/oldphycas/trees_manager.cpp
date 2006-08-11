@@ -1,8 +1,8 @@
 //#include "phycas/force_include.h"
 #include "pyphy/src/oldphycas/taxa_manager.hpp"
-#include "phycas/trees/trees_manager.hpp"
-#include "phycas/trees/tree.hpp"
-#include "ncl/output/nxs_output.hpp"
+#include "pyphy/src/oldphycas/trees_manager.hpp"
+#include "pyphy/src/oldphycas/tree.hpp"
+#include "pyphy/src/ncl/output/nxs_output.hpp"
 #include "pyphy/src/oldphycas/cleartrees_settings.hpp"
 using ncl::flush;
 

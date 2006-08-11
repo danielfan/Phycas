@@ -1,9 +1,9 @@
 //#include "phycas/force_include.h"
-#include "ncl/nxs_defs.hpp"
-#include "ncl/command/nxs_auto_command.hpp"
-#include "ncl/command/nxs_cmd_param.hpp"
-#include "ncl/nxs_exception.hpp"
-#include "ncl/output/nxs_output.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/command/nxs_auto_command.hpp"
+#include "pyphy/src/ncl/command/nxs_cmd_param.hpp"
+#include "pyphy/src/ncl/nxs_exception.hpp"
+#include "pyphy/src/ncl/output/nxs_output.hpp"
 using ncl::endl;
 using std::string;
 bool CheckCmdOptIfUnread(VecNxsCmdOptionShPtr::iterator &optIt);

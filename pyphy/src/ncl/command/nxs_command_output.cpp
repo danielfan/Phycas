@@ -2,13 +2,13 @@
 //#if defined (INCLUDE_TO_AVOID_LINK_ERROR)
 
 //#include "phycas/force_include.h"
-#include "ncl/command/nxs_command_output.hpp"
-#include "ncl/command/nxs_choice_cmd_param.hpp"
-#include "ncl/command/nxs_file_cmd_param.hpp"
-#include "ncl/command/nxs_mixed_cmd_param.hpp"
-#include "ncl/command/nxs_restricted_string_cmd_param.hpp"
-#include "phycas/rand/distribution_command_param.hpp"
-#include "ncl/command/nxs_set_cmd_param.hpp"
+#include "pyphy/src/ncl/command/nxs_command_output.hpp"
+#include "pyphy/src/ncl/command/nxs_choice_cmd_param.hpp"
+#include "pyphy/src/ncl/command/nxs_file_cmd_param.hpp"
+#include "pyphy/src/ncl/command/nxs_mixed_cmd_param.hpp"
+#include "pyphy/src/ncl/command/nxs_restricted_string_cmd_param.hpp"
+#include "pyphy/src/oldphycas/distribution_command_param.hpp"
+#include "pyphy/src/ncl/command/nxs_set_cmd_param.hpp"
 
 #if defined(NCL_SOCKET_IO)
 

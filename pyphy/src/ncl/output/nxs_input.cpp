@@ -1,7 +1,7 @@
 //#include "phycas/force_include.h"
-#include "ncl/output/nxs_input.hpp"
-#include "ncl/output/nxs_output.hpp"
-#include "ncl/nxs_exception.hpp"
+#include "pyphy/src/ncl/output/nxs_input.hpp"
+#include "pyphy/src/ncl/output/nxs_output.hpp"
+#include "pyphy/src/ncl/nxs_exception.hpp"
 using std::string;
 using NxsIO::NxsInput;
 #if defined (NCL_SOCKET_IO)

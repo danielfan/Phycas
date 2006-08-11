@@ -1,8 +1,8 @@
 #ifndef	PHO_TREE_NODE_ITERATOR_H
 #define	PHO_TREE_NODE_ITERATOR_H
 
-#include "phycas/trees/node_iterator_types.hpp"
-#include "phycas/trees/tree_node.hpp"
+#include "pyphy/src/oldphycas/node_iterator_types.hpp"
+#include "pyphy/src/oldphycas/tree_node.hpp"
 
 template <class T, typename U> class pho_nd_iterator
 	{

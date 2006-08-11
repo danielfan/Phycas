@@ -1,15 +1,15 @@
 //#include "phycas/force_include.h"
-#include "ncl/trees/nxs_trees_manager.hpp"
-#include "ncl/taxa/nxs_taxa_manager.hpp"
-#include "ncl/trees/nxs_trees_block.hpp"
+#include "pyphy/src/ncl/trees/nxs_trees_manager.hpp"
+#include "pyphy/src/ncl/taxa/nxs_taxa_manager.hpp"
+#include "pyphy/src/ncl/trees/nxs_trees_block.hpp"
 #include <boost/bind.hpp>
-#include "ncl/command/nxs_set_cmd_param.hpp"
-#include "ncl/output/nxs_output.hpp"
+#include "pyphy/src/ncl/command/nxs_set_cmd_param.hpp"
+#include "pyphy/src/ncl/output/nxs_output.hpp"
 using std::vector;
 using std::string;
 #define MTH_MARCH_3_2005_DEBUG
 #if defined(MTH_MARCH_3_2005_DEBUG)
-#	include "phycas/trees/tree.hpp"
+#	include "pyphy/src/oldphycas/tree.hpp"
 #endif
 
 FullTreeDescription   NxsTreesManager::GetTree(unsigned i) const

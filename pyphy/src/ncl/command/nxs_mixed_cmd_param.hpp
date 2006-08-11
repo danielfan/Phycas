@@ -1,8 +1,8 @@
 #ifndef NCL_NXS_META_CMD_OPTIONS_H
 #define NCL_NXS_META_CMD_OPTIONS_H
-#include "ncl/nxs_defs.hpp"
-#include "ncl/command/nxs_command_decl.hpp"
-#include "ncl/command/nxs_cmd_param.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/command/nxs_command_decl.hpp"
+#include "pyphy/src/ncl/command/nxs_cmd_param.hpp"
 #include <boost/mem_fn.hpp>
 
 #if defined TEMPLATED_MIXED_CMD_OPTION

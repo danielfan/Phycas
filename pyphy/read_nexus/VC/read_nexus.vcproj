@@ -157,6 +157,9 @@
 				RelativePath="..\..\src\cipres\CipresDataMatrixHelper.h">
 			</File>
 			<File
+				RelativePath="..\..\src\oldphycas\cleartrees_settings.hpp">
+			</File>
+			<File
 				RelativePath="..\..\src\ncl\misc\compile_assert.hpp">
 			</File>
 			<File
@@ -181,6 +184,9 @@
 				RelativePath="..\..\src\ncl\misc\eliminated_index_slider.hpp">
 			</File>
 			<File
+				RelativePath="..\..\src\oldphycas\excludetaxa_settings.hpp">
+			</File>
+			<File
 				RelativePath="..\..\src\ncl\trees\full_tree_description.hpp">
 			</File>
 			<File
@@ -190,6 +196,9 @@
 				RelativePath="..\..\src\ncl\misc\generic_type_mapping.hpp">
 			</File>
 			<File
+				RelativePath="..\..\src\oldphycas\includetaxa_settings.hpp">
+			</File>
+			<File
 				RelativePath="..\..\src\oldphycas\msg_exception.hpp">
 			</File>
 			<File
@@ -197,6 +206,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\ncl\trees\newick_verifier.hpp">
+			</File>
+			<File
+				RelativePath="..\..\src\oldphycas\node_iterator_types.hpp">
 			</File>
 			<File
 				RelativePath="..\..\src\ncl\taxa\nxs_alternative_taxa_block.hpp">
@@ -400,6 +412,9 @@
 				RelativePath="..\..\src\oldphycas\taxa_manager.hpp">
 			</File>
 			<File
+				RelativePath="..\..\src\oldphycas\taxset_settings.hpp">
+			</File>
+			<File
 				RelativePath="..\..\src\oldphycas\taxstatus_settings.hpp">
 			</File>
 			<File
@@ -409,10 +424,16 @@
 				RelativePath="..\..\src\oldphycas\tree.hpp">
 			</File>
 			<File
+				RelativePath="..\..\src\oldphycas\tree_inl.hpp">
+			</File>
+			<File
 				RelativePath="..\..\src\oldphycas\tree_manip.hpp">
 			</File>
 			<File
 				RelativePath="..\..\src\oldphycas\tree_node.hpp">
+			</File>
+			<File
+				RelativePath="..\..\src\oldphycas\tree_node_attributes.hpp">
 			</File>
 			<File
 				RelativePath="..\..\src\oldphycas\trees_manager.hpp">

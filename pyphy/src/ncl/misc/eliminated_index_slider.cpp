@@ -1,6 +1,6 @@
 //#include "phycas/force_include.h"
-#include "ncl/nxs_defs.hpp"
-#include "ncl/misc/eliminated_index_slider.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/misc/eliminated_index_slider.hpp"
 
 
 /*--------------------------------------------------------------------------------------------------

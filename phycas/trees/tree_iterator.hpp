@@ -1,6 +1,6 @@
 #if !defined (PHO_TREE_ITERATORS_H)
-#include "phycas/trees/node_iterator.hpp"
-#include "phycas/trees/tree.hpp"
+#include "pyphy/src/oldphycas/node_iterator.hpp"
+#include "pyphy/src/oldphycas/tree.hpp"
 
 				
 inline pre_iterator Tree::pre_begin() 

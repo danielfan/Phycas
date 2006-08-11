@@ -18,7 +18,7 @@ class DrawContext;
 class TreeNodeAttribute;
 class MultilineBound;
 class PhoTaxaManager;
-#include "phycas/trees/node_iterator_types.hpp"
+#include "pyphy/src/oldphycas/node_iterator_types.hpp"
 
 
 /*------------------------------------------------------------------------------------------------------------------------------------------------------------------

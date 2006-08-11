@@ -2,15 +2,15 @@
 #define NCL_NXS_FILE_CMD_OPTIONS_H
 
 //#include "phycas/force_include.h"
-#include "ncl/nxs_defs.hpp"
-#include "ncl/misc/nxs_file_path.hpp"
-#include "ncl/command/nxs_cmd_param.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/misc/nxs_file_path.hpp"
+#include "pyphy/src/ncl/command/nxs_cmd_param.hpp"
 
 class NxsCommand;
 
 void AssignAllFieldsExceptAppAndReplace(NxsOutFilePath *leftOP, const NxsOutFilePath &rightOp);  //this equals operator should be used for NxsOutFilePath in the CmdOption context
 
-#include "ncl/output/nxs_output_destination_description.hpp"
+#include "pyphy/src/ncl/output/nxs_output_destination_description.hpp"
 class NxsOutputCmdOption : public SimpleCmdOptionInterface<NxsOutputDestinationDescription>
 	{
 	public:

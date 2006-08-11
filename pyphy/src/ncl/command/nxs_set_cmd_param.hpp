@@ -1,9 +1,9 @@
 #ifndef NCL_NXS_ADVANCED_CMD_OPTION_H
 #define NCL_NXS_ADVANCED_CMD_OPTION_H
 #include <boost/bind.hpp>
-#include "ncl/nxs_defs.hpp"
-#include "ncl/command/nxs_primitive_cmd_param.hpp"
-#include "ncl/misc/nxs_index_set.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/command/nxs_primitive_cmd_param.hpp"
+#include "pyphy/src/ncl/misc/nxs_index_set.hpp"
 	
 /*----------------------------------------------------------------------------------------------------------------------
 |	A CmdOption that will read in NEXUS set descriptions.

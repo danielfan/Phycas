@@ -1,15 +1,15 @@
 //#include "phycas/force_include.h"
-#include "ncl/nxs_defs.hpp"
-#include "ncl/command/nxs_command_manager.hpp"
-#include "ncl/command/nxs_cmd_param.hpp"
-#include "ncl/command/nxs_command.hpp"
-#include "ncl/nxs_exception.hpp"
-#include "ncl/misc/utilities.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/command/nxs_command_manager.hpp"
+#include "pyphy/src/ncl/command/nxs_cmd_param.hpp"
+#include "pyphy/src/ncl/command/nxs_command.hpp"
+#include "pyphy/src/ncl/nxs_exception.hpp"
+#include "pyphy/src/ncl/misc/utilities.hpp"
 #include <boost/bind.hpp>
 #include <boost/mem_fn.hpp>
-#include "ncl/output/nxs_output.hpp"
-#include "ncl/command/nxs_command_output.hpp"
-#include "ncl/misc/string_extensions.hpp"
+#include "pyphy/src/ncl/output/nxs_output.hpp"
+#include "pyphy/src/ncl/command/nxs_command_output.hpp"
+#include "pyphy/src/ncl/misc/string_extensions.hpp"
 
 using std::map;
 using std::vector;

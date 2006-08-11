@@ -1,10 +1,10 @@
 #ifndef NCL_NXSDATATYPE_INLINES_H
 #define NCL_NXSDATATYPE_INLINES_H
 
-#include "ncl/nxs_defs.hpp"
-#include "ncl/misc/nxs_data_type.hpp"
-#include "ncl/misc/nxs_discrete_matrix.hpp"
-#include "ncl/nxs_token.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/misc/nxs_data_type.hpp"
+#include "pyphy/src/ncl/misc/nxs_discrete_matrix.hpp"
+#include "pyphy/src/ncl/nxs_token.hpp"
 
 
 

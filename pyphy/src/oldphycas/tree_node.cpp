@@ -1,9 +1,9 @@
 //#include "phycas/force_include.h"
-#include "ncl/misc/string_extensions.hpp"
+#include "pyphy/src/ncl/misc/string_extensions.hpp"
 #include "pyphy/src/oldphycas/taxa_manager.hpp"
-#include "phycas/trees/tree_node.hpp"
-#include "ncl/taxa/nxs_taxa_manager.hpp"
-#include "pyphy/src/tree_node_attributes.hpp"
+#include "pyphy/src/oldphycas/tree_node.hpp"
+#include "pyphy/src/ncl/taxa/nxs_taxa_manager.hpp"
+#include "pyphy/src/oldphycas/tree_node_attributes.hpp"
 using std::vector;
 using std::string;
 #if defined(C_FUNCS_IN_STD_NAMESPACE)

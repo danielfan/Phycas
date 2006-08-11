@@ -1,8 +1,8 @@
 //#include "phycas/force_include.h"
-#include "ncl/nxs_defs.hpp"
-#include "ncl/misc/nxs_data_type.hpp"
-#include "ncl/nxs_exception.hpp"
-#include "ncl/misc/algorithm_extensions.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/misc/nxs_data_type.hpp"
+#include "pyphy/src/ncl/nxs_exception.hpp"
+#include "pyphy/src/ncl/misc/algorithm_extensions.hpp"
 
 //@TEMP 
 #include <iostream>

@@ -1,9 +1,9 @@
 #if !defined NCL_DISTRIBUTION_DESCRIPRIPTION_ITEM_H
 #define NCL_DISTRIBUTION_DESCRIPRIPTION_ITEM_H
 
-#include "ncl/nxs_defs.hpp"
-#include "ncl/misc/string_extensions.hpp"
-#include "ncl/output/temp_basic_output_operators.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/misc/string_extensions.hpp"
+#include "pyphy/src/ncl/output/temp_basic_output_operators.hpp"
 class ProbabilityDistribution;
 class MultivariateProbabilityDistribution;
 

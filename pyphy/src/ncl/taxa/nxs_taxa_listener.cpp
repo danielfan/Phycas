@@ -1,7 +1,7 @@
 //#include "phycas/force_include.h"
-#include "ncl/nxs_defs.hpp"
-#include "ncl/taxa/base_taxa_manager.hpp"
-#include "ncl/taxa/nxs_taxa_listener.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/taxa/base_taxa_manager.hpp"
+#include "pyphy/src/ncl/taxa/nxs_taxa_listener.hpp"
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Stores alias and calls the NxsTaxaManager::AddListener

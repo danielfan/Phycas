@@ -1,8 +1,8 @@
 //#include "phycas/force_include.h"
-#include "ncl/nxs_defs.hpp"
-#include "ncl/taxa/nxs_alternative_taxa_block.hpp"
-#include "ncl/nxs_exception.hpp"
-#include "ncl/taxa/nxs_taxa_manager.hpp"	//!oops not part of ncl
+#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/taxa/nxs_alternative_taxa_block.hpp"
+#include "pyphy/src/ncl/nxs_exception.hpp"
+#include "pyphy/src/ncl/taxa/nxs_taxa_manager.hpp"	//!oops not part of ncl
 using std::string;
 /*----------------------------------------------------------------------------------------------------------------------
 |	Flushes all locally stored taxa info and gets pointer to the default taxa block from the NxsTaxaManager.

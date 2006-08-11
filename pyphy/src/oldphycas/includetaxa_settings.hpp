@@ -1,7 +1,7 @@
 /*########## includetaxa_settings.hpp ##########*/
 #if !defined (PHYC_INCLUDETAXA_SETTINGS_HPP)
 #define PHYC_INCLUDETAXA_SETTINGS_HPP
-#include "ncl/misc/nxs_index_set.hpp"
+#include "pyphy/src/ncl/misc/nxs_index_set.hpp"
 class IncludeTaxaSettings
 	{
 	public:

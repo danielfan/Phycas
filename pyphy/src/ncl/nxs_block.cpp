@@ -1,11 +1,11 @@
 //#include "phycas/force_include.h"
-#include "ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
 #if NEW_NXS_BLOCK_AND_READER
-#include "ncl/misc/utilities.hpp"
-#include "ncl/nxs_block.hpp"
-#include "ncl/nxs_token.hpp"
-#include "ncl/nxs_exception.hpp"
-#include "ncl/output/nxs_output.hpp"
+#include "pyphy/src/ncl/misc/utilities.hpp"
+#include "pyphy/src/ncl/nxs_block.hpp"
+#include "pyphy/src/ncl/nxs_token.hpp"
+#include "pyphy/src/ncl/nxs_exception.hpp"
+#include "pyphy/src/ncl/output/nxs_output.hpp"
 using ncl::endl;
 using std::string;
 

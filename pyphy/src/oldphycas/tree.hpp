@@ -2,8 +2,8 @@
 #define PHO_TREE_H
 
 #include <stack>
-#include "phycas/trees/tree_id.hpp"
-#include "phycas/trees/node_iterator_types.hpp"
+#include "pyphy/src/oldphycas/tree_id.hpp"
+#include "pyphy/src/oldphycas/node_iterator_types.hpp"
 #define ROOTING_AT_A_TIP 1
 
 typedef TreeNode*			TNodePtr;

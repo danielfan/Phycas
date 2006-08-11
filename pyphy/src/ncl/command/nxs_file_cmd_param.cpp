@@ -1,9 +1,9 @@
 //#include "phycas/force_include.h"
-#include "ncl/nxs_defs.hpp"
-#include "ncl/command/nxs_file_cmd_param.hpp"
-#include "ncl/command/nxs_primitive_cmd_param.hpp"
-#include "ncl/command/nxs_command.hpp"
-#include "ncl/misc/string_extensions.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/command/nxs_file_cmd_param.hpp"
+#include "pyphy/src/ncl/command/nxs_primitive_cmd_param.hpp"
+#include "pyphy/src/ncl/command/nxs_command.hpp"
+#include "pyphy/src/ncl/misc/string_extensions.hpp"
 
 using std::string;
 #if defined(C_FUNCS_IN_STD_NAMESPACE)

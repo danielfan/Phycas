@@ -1,7 +1,7 @@
 #ifndef NCL_NXS_TEST_H
 #define NCL_NXS_TEST_H
 
-#include "ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
 class NxsTest;
 typedef boost::shared_ptr<NxsTest>			NxsTestShPtr;//NOTE:this typedef is also in nxscommandcommon.h change it in both places
 

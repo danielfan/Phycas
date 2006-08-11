@@ -1,10 +1,10 @@
 #ifndef NCL_NXS_COMMAND_H
 #define NCL_NXS_COMMAND_H
 
-#include "ncl/nxs_defs.hpp"
-#include "ncl/misc/algorithm_extensions.hpp"
-#include "ncl/command/nxs_command_decl.hpp"
-#include "ncl/nxs_token.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/misc/algorithm_extensions.hpp"
+#include "pyphy/src/ncl/command/nxs_command_decl.hpp"
+#include "pyphy/src/ncl/nxs_token.hpp"
 class NxsTable;
 
 /*---------------------------------------------------------------------------------------------------

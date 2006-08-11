@@ -1,7 +1,7 @@
 #ifndef NCL_NXS_SAX_OUTPUT_WRAPPER_HPP
 #define NCL_NXS_SAX_OUTPUT_WRAPPER_HPP
 #include <list>
-#include "ncl/output/nxs_output_stream.hpp"
+#include "pyphy/src/ncl/output/nxs_output_stream.hpp"
 class NxsXMLSocketOutputStream;
 template <class OUT_STREAM_TYPE>
 class NxsGenericSaxOutputWrapper
@@ -25,7 +25,7 @@ class NxsGenericSaxOutputWrapper
 		OUT_STREAM_TYPE & outputStream;
 	};
 
-#include "ncl/output/nxs_xml_socket_output_stream.hpp"
+#include "pyphy/src/ncl/output/nxs_xml_socket_output_stream.hpp"
 template <>
 class NxsGenericSaxOutputWrapper<NxsXMLSocketOutputStream>
 	{

@@ -1,8 +1,8 @@
 //#include "phycas/force_include.h"
-#include "ncl/output/nxs_output.hpp"
-#include "ncl/output/nxs_output_stream_wrapper.hpp"
-#include "ncl/output/nxs_output_destination_description.hpp"
-#include "ncl/misc/string_extensions.hpp"
+#include "pyphy/src/ncl/output/nxs_output.hpp"
+#include "pyphy/src/ncl/output/nxs_output_stream_wrapper.hpp"
+#include "pyphy/src/ncl/output/nxs_output_destination_description.hpp"
+#include "pyphy/src/ncl/misc/string_extensions.hpp"
 using std::ofstream;
 using std::string;
 #if defined(C_FUNCS_IN_STD_NAMESPACE)

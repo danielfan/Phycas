@@ -1,8 +1,8 @@
 #ifndef NCL_NXSTABLE_H
 #define NCL_NXSTABLE_H
 
-#include "ncl/nxs_defs.hpp"
-#include "ncl/output/nxs_table_cell.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/output/nxs_table_cell.hpp"
 
 class NxsSimpleStats;
 

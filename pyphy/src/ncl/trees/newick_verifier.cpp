@@ -1,8 +1,8 @@
 //#include "phycas/force_include.h"
-#include "ncl/trees/newick_verifier.hpp"
-#include "ncl/nxs_token.hpp"
-#include "ncl/taxa/base_taxa_manager.hpp"
-#include "ncl/nxs_exception.hpp"
+#include "pyphy/src/ncl/trees/newick_verifier.hpp"
+#include "pyphy/src/ncl/nxs_token.hpp"
+#include "pyphy/src/ncl/taxa/base_taxa_manager.hpp"
+#include "pyphy/src/ncl/nxs_exception.hpp"
 using std::string;
 // undef ALLOW_EDGE_LENGTHS_ON_ROOT to throw exceptions when there is :# after the closing parentheses
 #define ALLOW_EDGE_LENGTHS_ON_ROOT 

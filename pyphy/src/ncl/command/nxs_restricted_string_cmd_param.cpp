@@ -1,6 +1,6 @@
 //#include "phycas/force_include.h"
-#include "ncl/nxs_defs.hpp"
-#include "ncl/command/nxs_restricted_string_cmd_param.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/command/nxs_restricted_string_cmd_param.hpp"
 using std::string;
 /*----------------------------------------------------------------------------------------------------------------------
 |	

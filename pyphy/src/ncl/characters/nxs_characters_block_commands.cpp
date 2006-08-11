@@ -1,14 +1,14 @@
 //#include "phycas/force_include.h"
-#include "ncl/nxs_defs.hpp"
-#include "ncl/characters/nxs_characters_block.hpp"
-#include "ncl/characters/nxs_characters_manager.hpp"
-#include "ncl/command/nxs_auto_command.hpp"
-#include "ncl/command/nxs_primitive_cmd_param.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/characters/nxs_characters_block.hpp"
+#include "pyphy/src/ncl/characters/nxs_characters_manager.hpp"
+#include "pyphy/src/ncl/command/nxs_auto_command.hpp"
+#include "pyphy/src/ncl/command/nxs_primitive_cmd_param.hpp"
 #include <boost/bind.hpp>
-#include "ncl/command/nxs_choice_cmd_param.hpp"
-#include "ncl/misc/nxs_test_impl.hpp"
-#include "ncl/command/nxs_set_cmd_param.hpp"
-#include "ncl/characters/nxs_characters_block_cmd_settings.hpp"
+#include "pyphy/src/ncl/command/nxs_choice_cmd_param.hpp"
+#include "pyphy/src/ncl/misc/nxs_test_impl.hpp"
+#include "pyphy/src/ncl/command/nxs_set_cmd_param.hpp"
+#include "pyphy/src/ncl/characters/nxs_characters_block_cmd_settings.hpp"
 using std::string;
 
 NxsCommandShPtr NxsAlternativeTaxaBlock::GetTaxLabelsCommand()

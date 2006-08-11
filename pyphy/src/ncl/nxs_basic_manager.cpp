@@ -1,6 +1,6 @@
 //#include "phycas/force_include.h"
-#include "ncl/nxs_defs.hpp"
-#include "ncl/nxs_basic_manager.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/nxs_basic_manager.hpp"
 
 using std::pair;
 using std::map;

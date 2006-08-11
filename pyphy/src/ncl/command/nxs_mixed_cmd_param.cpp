@@ -1,8 +1,8 @@
 //#include "phycas/force_include.h"
-#include "ncl/nxs_defs.hpp"
-#include "ncl/command/nxs_mixed_cmd_param.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/command/nxs_mixed_cmd_param.hpp"
 #include <iterator>
-#include "ncl/misc/algorithm_extensions.hpp"
+#include "pyphy/src/ncl/misc/algorithm_extensions.hpp"
 using std::string;
 #if !defined TEMPLATED_MIXED_CMD_OPTION
 

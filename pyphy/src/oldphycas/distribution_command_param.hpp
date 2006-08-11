@@ -1,8 +1,8 @@
 #if !defined NCL_NXS_DISTRIBUTION_CMD_OPTION_H
 #define NCL_NXS_DISTRIBUTION_CMD_OPTION_H
 
-#include "ncl/command/nxs_cmd_param.hpp"
-#include "phycas/rand/distribution_description.hpp"
+#include "pyphy/src/ncl/command/nxs_cmd_param.hpp"
+#include "pyphy/src/oldphycas/distribution_description.hpp"
 #include<boost/function.hpp>
 
 /**

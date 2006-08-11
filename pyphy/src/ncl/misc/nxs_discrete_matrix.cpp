@@ -1,7 +1,7 @@
 //#include "phycas/force_include.h"
-#include "ncl/nxs_defs.hpp"
-#include "ncl/misc/nxs_discrete_matrix.hpp"
-#include "ncl/misc/nxs_data_type_inl.hpp"
+#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "pyphy/src/ncl/misc/nxs_discrete_matrix.hpp"
+#include "pyphy/src/ncl/misc/nxs_data_type_inl.hpp"
 #include <cmath>
 
 using ncl::NxsDiscreteMatrixBase;
