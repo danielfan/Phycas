@@ -164,6 +164,6 @@ const unsigned int kNxsTreesManagerLongevity = 40;
 const unsigned int kNxsCharactersManagerLongevity = 40;
 const unsigned int kNxsTaxaManagerLongevity = 50;
 const unsigned int kNxsOutputManagerLongevity = 100;
-#include "phycas/phycas.h"
+#include "pyphy/src/phycas.h"
 
 #endif	/* __PHOREST_CONFIG_H */
