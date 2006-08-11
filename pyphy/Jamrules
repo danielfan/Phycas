@@ -39,7 +39,7 @@ project pyphy : $(PYPHY_ROOT) ;
 
 ##### Variant definitions from http://www.boost.org/tools/build/v1/features.jam####
 variant common :
-    <include>$(CIPRES_LIB_ROOT)/C++
+    #<include>$(CIPRES_LIB_ROOT)/C++
     <include>$(PHYCAS_ROOT)
     <include>$(BOOST_ROOT)
     <include>$(PHYCAS_ROOT)/pyphy/src

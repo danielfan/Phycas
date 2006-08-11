@@ -32,14 +32,14 @@ if defined BOOST_ROOT (
 	exit
 )
 
-if defined CIPRES_LIB_ROOT (
-	echo CIPRES_LIB_ROOT=%CIPRES_LIB_ROOT%
-) else (
-	echo Please define CIPRES_LIB_ROOT environmental variable as path to cipres framework directory
-	echo e.g. set CIPRES_LIB_ROOT=C:\cipres\framework
-	pause
-	exit
-)
+REM if defined CIPRES_LIB_ROOT (
+REM 	echo CIPRES_LIB_ROOT=%CIPRES_LIB_ROOT%
+REM ) else (
+REM 	echo Please define CIPRES_LIB_ROOT environmental variable as path to cipres framework directory
+REM 	echo e.g. set CIPRES_LIB_ROOT=C:\cipres\framework
+REM 	pause
+REM 	exit
+REM )
 
 if defined PHYCAS_ROOT (
 	echo PHYCAS_ROOT=%PHYCAS_ROOT%
@@ -50,14 +50,14 @@ if defined PHYCAS_ROOT (
 	exit
 )
 
-if defined NCL_ROOT (
-	echo NCL_ROOT=%NCL_ROOT%
-) else (
-	echo Please define NCL_ROOT environmental variable as path to parent of ncl directory
-	echo e.g. set NCL_ROOT=C:\phycasdev
-	pause
-	exit
-)
+REM if defined NCL_ROOT (
+REM 	echo NCL_ROOT=%NCL_ROOT%
+REM ) else (
+REM 	echo Please define NCL_ROOT environmental variable as path to parent of ncl directory
+REM 	echo e.g. set NCL_ROOT=C:\phycasdev
+REM 	pause
+REM 	exit
+REM )
 
 REM Choose release build and Visual C++ version 7.1 (a.k.a. Visual Studio .NET 2003)
 set BUILD=release
