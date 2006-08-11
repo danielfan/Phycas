@@ -6,7 +6,7 @@ import Likelihood
 import ProbDist
 
 # POLPY_NEWWAY7
-import TreeViewer
+from Examples import TreeViewer
 import threading
 
 class Phycas:
@@ -1114,7 +1114,7 @@ class Phycas:
 if __name__ == '__main__':
     mcmc = Phycas()
 
-    if False:
+    if True:
         # set above to True for normal operation
         mcmc.random_seed = '13579'
         mcmc.data_source = 'file'
@@ -1137,7 +1137,7 @@ if __name__ == '__main__':
         mcmc.ls_move_debug = False
         mcmc.uf_num_edges = 50
 
-    if True:
+    if False:
         # for Tallahassee session
         mcmc.data_file_name = '../../pyphy/nyldna4.nex'
 

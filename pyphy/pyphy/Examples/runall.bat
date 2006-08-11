@@ -65,22 +65,22 @@ fc check.nex reference_output\check.nex >> ..\runall_diffs.txt
 if errorlevel 1 (goto abort)
 cd ..
 
-echo.
-echo **********************
-echo *** Running Phycas ***
-echo **********************
-echo. >> runall_diffs.txt
-echo ********************** >> runall_diffs.txt
-echo *** Running Phycas *** >> runall_diffs.txt
-echo ********************** >> runall_diffs.txt
-echo. >> runall_diffs.txt
-cd Phycas
-start /low /b /wait python Phycas.py
-fc green.nex.p reference_output\green.nex.p >> ..\runall_diffs.txt 
-if errorlevel 1 (goto abort)
-fc green.nex.t reference_output\green.nex.t >> ..\runall_diffs.txt
-if errorlevel 1 (goto abort)
-cd ..
+REM echo.
+REM echo **********************
+REM echo *** Running Phycas ***
+REM echo **********************
+REM echo. >> runall_diffs.txt
+REM echo ********************** >> runall_diffs.txt
+REM echo *** Running Phycas *** >> runall_diffs.txt
+REM echo ********************** >> runall_diffs.txt
+REM echo. >> runall_diffs.txt
+REM cd Phycas
+REM start /low /b /wait python Phycas.py
+REM fc green.nex.p reference_output\green.nex.p >> ..\runall_diffs.txt 
+REM if errorlevel 1 (goto abort)
+REM fc green.nex.t reference_output\green.nex.t >> ..\runall_diffs.txt
+REM if errorlevel 1 (goto abort)
+REM cd ..
 
 echo.
 echo **************************

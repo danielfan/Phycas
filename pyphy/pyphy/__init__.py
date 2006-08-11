@@ -6,4 +6,6 @@ __all__ = [
     'Phylogeny',
     'ProbDist', 
     'ReadNexus', 
+    'Phycas',
+    'Examples',
     ]
