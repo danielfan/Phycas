@@ -1,10 +1,12 @@
 #import warnings
 #warnings.filterwarnings('ignore', '.*second conversion method ignored.*', RuntimeWarning)
 
-from Conversions._Conversions import *
+from pyphy.Conversions import *
 from _Phylogeny import *
 from _Tree import *
 from _TreeManip import *
+
+#print 'importing Phylogeny...'
 
 def testExamples():
     import doctest

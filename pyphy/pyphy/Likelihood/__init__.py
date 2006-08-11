@@ -1,4 +1,4 @@
-from Conversions._Conversions import *
+from pyphy.Conversions import *
 from _LikelihoodBase import *
 from _TreeLikelihood import *
 from _Model import *
@@ -6,6 +6,8 @@ from _MCMCChainManager import *
 from _SimData import *
 from _TopoPriorCalculator import *
 from _QMatrix import *
+
+#print 'importing Likelihood...'
 
 def testExamples():
     import doctest

@@ -1,7 +1,7 @@
 #import warnings
 #warnings.filterwarnings('ignore', '.*second conversion method ignored.*', RuntimeWarning)
 
-from Conversions._Conversions import *
+from pyphy.Conversions import *
 from _ProbDist import *
 from _Lot import *
 from _SliceSampler import *
@@ -13,6 +13,8 @@ from _BinomialDist import *
 from _BernoulliDist import *
 from _BetaDist import *
 from _DirichletDist import *
+
+#print 'importing ProbDist...'
 
 def testExamples():
     import doctest

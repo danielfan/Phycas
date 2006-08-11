@@ -8,9 +8,7 @@
 # Start near the bottom of this file with the __name__ == "__main___" conditional
 # Note that Phycas.py is used to most of the actual work.
 
-import Conversions
-from ProbDist import Lot
-from Phycas import *
+from pyphy import *
 
 def commonSetup():
     # Set up MCMC

@@ -1,6 +1,8 @@
-from Conversions._Conversions import *
+from pyphy.Conversions import *
 from _DataMatrixBase import *
 from _DataMatrix import *
+
+#print 'importing DataMatrix...'
 
 def testExamples():
     import doctest

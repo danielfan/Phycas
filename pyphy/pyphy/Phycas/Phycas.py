@@ -1,13 +1,10 @@
-import os, sys, time, math
-import DataMatrix
-import ReadNexus
-import Phylogeny
-import Likelihood
-import ProbDist
-
-# POLPY_NEWWAY7
-from Examples import TreeViewer
-import threading
+import os, sys, time, math, threading
+from pyphy.Conversions import *
+from pyphy.DataMatrix import *
+from pyphy.Likelihood import *
+from pyphy.Phylogeny import *
+from pyphy.ProbDist import *
+from pyphy.ReadNexus import *
 
 class Phycas:
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -206,18 +203,18 @@ class Phycas:
 
         # Variables associated with edge length prior distributions
         self.using_hyperprior       = True      # Hyperprior for edge length prior used if True
-        self.master_edgelen_dist    = ProbDist.ExponentialDist(2.0);
-        self.edgelen_hyperprior     = ProbDist.InverseGammaDist(2.1, 0.909)
+        self.master_edgelen_dist    = ExponentialDist(2.0);
+        self.edgelen_hyperprior     = InverseGammaDist(2.1, 0.909)
         
         # Variables associated with substitution models
         self.model_type             = 'hky'     # Can be 'jc', 'hky' or 'gtr'
         self.num_rates              = 1         # default is rate homogeneity (1 rate)
-        self.relrate_prior          = ProbDist.ExponentialDist(1.0)
-        self.base_freq_param_prior  = ProbDist.ExponentialDist(1.0)
-        self.gamma_shape_prior      = ProbDist.ExponentialDist(1.0)
+        self.relrate_prior          = ExponentialDist(1.0)
+        self.base_freq_param_prior  = ExponentialDist(1.0)
+        self.gamma_shape_prior      = ExponentialDist(1.0)
         self.use_inverse_shape      = True  # if True, gamma_shape_prior applied to 1/shape rather than shape
         self.estimate_pinvar        = False
-        self.pinvar_prior           = ProbDist.BetaDist(1.0, 1.0)
+        self.pinvar_prior           = BetaDist(1.0, 1.0)
         
         # Variables associated with the source of data        
         self.data_source            = 'file'    # If None, MCMC will explore prior; if 'file', self.data_file_name should be a valid nexus file name; if 'memory', data should already be in memory (e.g. via simulation) 
@@ -243,10 +240,10 @@ class Phycas:
         self.flex_phi               = 0.25      # proportion of ncat moves in which ncat is incremented (ncat is decremented with probability 1 - flex_phi)
         self.flex_L                 = 1.0       # upper bound of interval used for unnormalized relative rate parameter values
         self.flex_lambda            = 1.0       # parameter of Poisson prior on the number of extra categories
-        self.flex_prob_param_prior  = ProbDist.ExponentialDist(1.0)
+        self.flex_prob_param_prior  = ExponentialDist(1.0)
 
         # ***** DO NOT CHANGE ANYTHING BELOW HERE *****
-        self.r = ProbDist.Lot()
+        self.r = Lot()
         self.starting_tree          = ''        # will contain description of actual starting tree used
         self.warn_tip_numbers       = False     # True only if tip numbers were not able to be created using the tip names in the tree description (always False if starting_tree_source == 'random' because BuildTreeFromString is not called in this case)
         self.ntax                   = 0         # will hold the actual number of taxa after data file read
@@ -255,8 +252,8 @@ class Phycas:
         self.taxon_labels           = []        # will hold taxon labels from data file or default names if self.data_source equals None
         self.paramf                 = None
         self.treef                  = None
-        self.gg_y                   = Likelihood.SimData()  # observed dataset
-        self.gg_mu                  = Likelihood.SimData()  # mean of all posterior predictive datasets
+        self.gg_y                   = SimData()  # observed dataset
+        self.gg_mu                  = SimData()  # mean of all posterior predictive datasets
         self.gg_a                   = []            # vector of compromise actions (one for each k in gg_kvect)
         self.gg_npatterns           = []            # vector containing the number of patterns in each posterior predictive dataset
         self.gg_t                   = []            # vector of t values computed from posterior predictive datasets
@@ -268,10 +265,10 @@ class Phycas:
         self.gg_Gm                  = []            # vector of goodness-of-fit components (one for each k in gg_kvect)
         self.gg_Pm                  = 0.0           # penalty component (same for all k)
         self.gg_Dm                  = []            # vector of overall measures (one for each k in gg_kvect)
-        self.gg_spectrum            = Likelihood.SimData()  # workspace used if gg_save_spectra is True
+        self.gg_spectrum            = SimData()  # workspace used if gg_save_spectra is True
         self.gg_spectrum_points     = ''            # used for creating surface plot in Maple for spectrum
         self.gg_spectrum_row        = 0
-        self.reader = ReadNexus.NexusReader()
+        self.reader = NexusReader()
 
     def setupModel(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -291,17 +288,17 @@ class Phycas:
         
         # Create a substitution model and define priors for the model parameters
         if self.model_type == 'gtr':
-            self.model = Likelihood.GTRModel()
+            self.model = GTRModel()
             self.model.setRelRates([1.0, 4.0, 1.0, 1.0, 4.0, 1.0])
             self.model.setRelRatePrior(self.relrate_prior)
             self.model.setBaseFreqParamPrior(self.base_freq_param_prior)
         elif self.model_type == 'hky':
-            self.model = Likelihood.HKYModel()
+            self.model = HKYModel()
             self.model.setKappa(4.0)
             self.model.setKappaPrior(self.relrate_prior)
             self.model.setBaseFreqParamPrior(self.base_freq_param_prior)
         else:
-            self.model = Likelihood.JCModel()
+            self.model = JCModel()
 
         # If rate heterogeneity is to be assumed, add it to the model here
         # Note must defer setting up pattern specific rates model until we know number of patterns
@@ -343,7 +340,7 @@ class Phycas:
     def createChain(self):
         # Create a list of parameters for updating quantities such as kappa and the
         # base frequencies. 
-        self.chain_manager = Likelihood.MCMCChainManager()
+        self.chain_manager = MCMCChainManager()
         self.chain_manager.addMCMCUpdaters(self.model,              # substitution model
                                            self.tree,               # tree
                                            self.likelihood,         # likelihood calculation machinery
@@ -354,7 +351,7 @@ class Phycas:
 
         # Create a LargetSimonMove object to handle Metropolis-Hastings
         # updates to the tree topology and edge lengths
-        self.larget_simon_move = Likelihood.LargetSimonMove()
+        self.larget_simon_move = LargetSimonMove()
         self.larget_simon_move.setName("Larget-Simon move")
         self.larget_simon_move.setWeight(self.ls_move_weight)
         self.larget_simon_move.setTree(self.tree)
@@ -370,7 +367,7 @@ class Phycas:
         # If requested, create an NCatMove object to allow the number of rate categories to change
         if self.use_flex_model:
             # Create an NCatMove object
-            self.ncat_move = Likelihood.NCatMove()
+            self.ncat_move = NCatMove()
             
             # Set up features specific to NCatMove
             self.ncat_move.setCatProbPrior(self.flex_prob_param_prior)
@@ -392,7 +389,7 @@ class Phycas:
         # If requested, create a BushMove object to allow polytomous trees
         if self.allow_polytomies:
             # Create a BushMove object
-            self.bush_move = Likelihood.BushMove()
+            self.bush_move = BushMove()
 
             # Set up the topology prior
             self.topo_prior_calculator = self.bush_move.getTopoPriorCalculator()
@@ -438,7 +435,7 @@ class Phycas:
             self.starting_tree_source = source
             
         # If user requested using a tree from the data file, grab the first one stored there
-        self.tree = Phylogeny.Tree()
+        self.tree = Tree()
         if self.starting_tree_source == 'file':
             assert self.data_source, "Specified starting_tree_source to be 'file' when data_source was None (file was not read)"
             
@@ -460,7 +457,7 @@ class Phycas:
             # Build a random tree
             self.master_edgelen_dist.setLot(self.r)
             #print 'self.r.getSeed() returns',self.r.getSeed()
-            Phylogeny.TreeManip(self.tree).randomTree(
+            TreeManip(self.tree).randomTree(
                 self.ntax,     # number of tips
                 self.r,        # pseudorandom number generator
                 self.master_edgelen_dist, # distribution from which to draw edge lengths
@@ -537,7 +534,7 @@ class Phycas:
         
         """
         assert self.model, 'create Phycas.model before calling Phycas.setupLikelihood'
-        self.likelihood = Likelihood.TreeLikelihood(self.model)
+        self.likelihood = TreeLikelihood(self.model)
         self.likelihood.setUFNumEdges(self.uf_num_edges)
 
     def readNexusFile(self, fn):            
@@ -552,7 +549,7 @@ class Phycas:
         if not self.data_file_name == fn:
             self.data_file_name = fn
         self.reader.readFile(self.data_file_name)
-        self.data_matrix = ReadNexus.getDiscreteMatrix(self.reader, 0)
+        self.data_matrix = getDiscreteMatrix(self.reader, 0)
         self.ntax = self.data_matrix.getNTax()
         self.nchar = self.data_matrix.getNChar() # used for Gelfand-Ghosh simulations only
         # used to avoid next two lines if self.data_source was None, but we have to
@@ -567,7 +564,7 @@ class Phycas:
         if self.data_source == 'file':
             self.reader.readFile(self.data_file_name)
             self.taxon_labels = self.reader.getTaxLabels()
-            self.data_matrix = ReadNexus.getDiscreteMatrix(self.reader, 0)
+            self.data_matrix = getDiscreteMatrix(self.reader, 0)
             self.ntax = self.data_matrix.getNTax()
             self.nchar = self.data_matrix.getNChar() # used for Gelfand-Ghosh simulations only
             self.likelihood.copyDataFromDiscreteMatrix(self.data_matrix)
@@ -693,7 +690,7 @@ class Phycas:
         if self.gg_do and cycle > 0:
             for j in range(self.gg_nreps):
                 # Simulate from the posterior
-                sim_data = Likelihood.SimData()
+                sim_data = SimData()
                 self.likelihood.simulate(sim_data, self.tree, self.r, self.nchar)
 
                 if self.gg_save_spectra:
@@ -1030,7 +1027,7 @@ class Phycas:
             # Loop over k values, computing Gm and Dm for each k value in gg_kvect
             for k in self.gg_kvect:
                 # Create a dataset representing the compromise "action"
-                a = Likelihood.SimData()
+                a = SimData()
                 self.gg_mu.addDataTo(a, 1.0)
                 self.gg_y.addDataTo(a, k)
                 a.divideBy(k + 1.0)

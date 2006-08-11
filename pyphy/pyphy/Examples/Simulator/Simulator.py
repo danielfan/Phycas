@@ -1,6 +1,4 @@
-import Conversions
-from Likelihood import SimData
-from Phycas import *
+from pyphy import *
 
 phycas = Phycas()
 

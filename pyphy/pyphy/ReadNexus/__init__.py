@@ -1,6 +1,8 @@
-from Conversions._Conversions import *
+from pyphy.Conversions import *
 from _ReadNexus import *
 from _NexusReader import *
+
+#print 'importing ReadNexus...'
 
 def testExamples():
     import doctest

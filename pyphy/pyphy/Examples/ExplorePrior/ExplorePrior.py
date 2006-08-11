@@ -2,8 +2,7 @@
 # exploring only the priors. The posterior resulting from such an analysis should
 # approximate the joint prior distribution.
 
-import Conversions
-from Phycas import *
+from pyphy import *
 
 if __name__ == "__main__":
     phycas = Phycas()

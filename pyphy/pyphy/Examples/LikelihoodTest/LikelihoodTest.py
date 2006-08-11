@@ -6,11 +6,7 @@
 # (nyldna4.nex) and a paup command file is written to allow verification of Phycas'
 # likelihood calculations.
 
-import Conversions
-from Likelihood import SimData
-from Phycas import *
-#from TreeViewer import TreeViewer 
-#from threading import Lock
+from pyphy import *
 
 def tryAllModels(fn):
     # Create string containing PAUP commands that will be added to the end of the
@@ -590,6 +586,6 @@ if __name__ == '__main__':
     print '|           Analyzing nyldna4.nex                |'
     print '+------------------------------------------------+'
 
-    readData('../../pyphy/nyldna4.nex')
+    readData('../Data/nyldna4.nex')
     createCommandFile('check.nex')
     tryAllModels('check.nex')

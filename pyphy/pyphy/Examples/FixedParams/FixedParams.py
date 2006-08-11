@@ -1,4 +1,4 @@
-from Phycas import *
+from pyphy import *
 
 phycas = Phycas()
 phycas.r.setSeed(13579)
@@ -35,7 +35,7 @@ phycas.setupLikelihood()
 
 # read data file
 phycas.data_source = 'file'
-phycas.readNexusFile('../../pyphy/nyldna4.nex')
+phycas.readNexusFile('../Data/nyldna4.nex')
 
 # create a random starting tree
 phycas.setupTree('random')
