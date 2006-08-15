@@ -18,10 +18,10 @@ class Phycas:
     topology and runs a Markov chain sampler for 100 cycles using the HKY
     model.
 
-    >>> from Phycas import *
+    >>> from pyphy import *
     >>> mcmc = Phycas()
     >>> mcmc.data_source = 'file'
-    >>> mcmc.data_file_name = 'nyldna4.nex'
+    >>> mcmc.data_file_name = 'Examples/Data/nyldna4.nex'
     >>> mcmc.starting_tree_source = 'random'
     >>> mcmc.ls_move_weight = 10
     >>> mcmc.slice_weight = 1
@@ -34,7 +34,7 @@ class Phycas:
     >>> mcmc.verbose = True
     >>> mcmc.setup()
     >>> mcmc.run() # doctest:+ELLIPSIS
-    Data source:    nyldna4.nex
+    Data source:    Examples/Data/nyldna4.nex
     No. cycles:     100
     Sample every:   10
     Starting tree:  (1:0.22681,(2:0.05618,4:0.85420):0.14171,3:0.00510)

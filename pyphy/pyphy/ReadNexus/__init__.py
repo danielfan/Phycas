@@ -1,3 +1,6 @@
+import warnings
+warnings.filterwarnings('ignore', '.*second conversion method ignored.*', RuntimeWarning)
+
 from pyphy.Conversions import *
 from _ReadNexus import *
 from _NexusReader import *

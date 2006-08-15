@@ -29,7 +29,7 @@ class SimData(SimDataBase):
     patterns are built up by hand and stored in the SimData object, then
     the internal map representation is printed out.
 
-    >>> from Likelihood import SimData
+    >>> from pyphy import *
     >>> d = SimData()
     >>> d.resetPatternLength(4) # specify that there are 4 taxa
     >>> 
@@ -70,14 +70,11 @@ class SimData(SimDataBase):
     simulation, and in this case the requirement is automatically
     satisfied.
     
-    >>> import Conversions
-    >>> from Likelihood import SimData
-    >>> from Phycas import *
-
+    >>> from pyphy import *
     >>> phycas = Phycas()
-
+    >>> 
     >>> # Read a data file
-    >>> phycas.reader.readFile('nyldna4.nex')
+    >>> phycas.reader.readFile('Examples/Data/nyldna4.nex')
     >>> phycas.data_matrix = ReadNexus.getDiscreteMatrix(phycas.reader, 0)
     >>> phycas.ntax = phycas.data_matrix.getNTax()
     >>> taxon_names = phycas.reader.getTaxLabels()
@@ -170,7 +167,7 @@ class SimData(SimDataBase):
         Returns the SimData object to its just-constructed state. Calling this
         function will delete any data stored in the internal pattern map.
         
-        >>> from Likelihood import SimData
+        >>> from pyphy import *
         >>> d = SimData()
         >>> d.resetPatternLength(4) # specify that there are 4 taxa
         >>> d.setState(0, 0)      # store state 0 for taxon 0
