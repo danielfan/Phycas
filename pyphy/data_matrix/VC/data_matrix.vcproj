@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(CIPRES_LIB_ROOT)\C++;$(PYTHON_ROOT)\include;$(PHYCAS_ROOT);$(BOOST_ROOT)"
+				AdditionalIncludeDirectories="$(PYTHON_ROOT)\include;$(PHYCAS_ROOT);$(BOOST_ROOT)"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;VC_EXPORTS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -28,7 +28,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="4"
-				ForcedIncludeFiles="$(PHYCAS_ROOT)\phycas\pol_pyphy_config.h"/>
+				ForcedIncludeFiles="$(PHYCAS_ROOT)\pyphy\src\pol_pyphy_config.h"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -72,14 +72,14 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				ImproveFloatingPointConsistency="TRUE"
-				AdditionalIncludeDirectories="$(CIPRES_LIB_ROOT)\C++;$(PYTHON_ROOT)\include;$(PHYCAS_ROOT);$(BOOST_ROOT)"
+				AdditionalIncludeDirectories="$(PYTHON_ROOT)\include;$(PHYCAS_ROOT);$(BOOST_ROOT)"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;VC_EXPORTS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="3"
-				ForcedIncludeFiles="$(PHYCAS_ROOT)\phycas\pol_pyphy_config.h"/>
+				ForcedIncludeFiles="$(PHYCAS_ROOT)\pyphy\src\pol_pyphy_config.h"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -124,10 +124,10 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath="..\..\..\..\cipresdev\cipres\framework\C++\CipresCommlib\CipresDataMatrixHelper.cpp">
+				RelativePath="..\..\src\cipres\CipresDataMatrixHelper.cpp">
 			</File>
 			<File
-				RelativePath="..\data_matrix_pymod.cpp">
+				RelativePath="..\..\src\data_matrix_pymod.cpp">
 			</File>
 		</Filter>
 		<Filter
@@ -135,7 +135,7 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath="..\..\..\..\cipresdev\cipres\framework\C++\CipresCommlib\CipresDataMatrixHelper.h">
+				RelativePath="..\..\src\cipres\CipresDataMatrixHelper.h">
 			</File>
 		</Filter>
 		<Filter

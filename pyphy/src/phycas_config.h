@@ -121,7 +121,7 @@ The following defines will help me wade through harmless, class-level functions 
 #	error need to define a platform
 #endif
 
-#include "ncl/singleton.hpp"
+#include "pyphy/src/ncl/singleton.hpp"
 
 class Phylodiversity;
 class DistributionManager;
