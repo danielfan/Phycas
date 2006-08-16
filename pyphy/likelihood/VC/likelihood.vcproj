@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(PYTHON_ROOT)\include&quot;;&quot;$(PHYCAS_ROOT)&quot;;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="$(PYTHON_ROOT)\include;$(PHYCAS_ROOT);$(BOOST_ROOT)"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;VC_EXPORTS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -73,7 +73,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				ImproveFloatingPointConsistency="TRUE"
-				AdditionalIncludeDirectories="&quot;$(PYTHON_ROOT)\include&quot;;&quot;$(PHYCAS_ROOT)&quot;;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="$(PYTHON_ROOT)\include;$(PHYCAS_ROOT);$(BOOST_ROOT)"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;VC_EXPORTS"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
@@ -330,18 +330,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\likelihood_models.cpp">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\src\likelihood_pymod.cpp">
