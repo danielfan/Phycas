@@ -718,9 +718,6 @@
 				RelativePath="..\..\src\tree_likelihood.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\tree_manip.cpp">
-			</File>
-			<File
 				RelativePath="..\..\src\oldphycas\tree_manip.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -734,6 +731,9 @@
 						Name="VCCLCompilerTool"
 						ObjectFile="$(IntDir)/$(InputName)2.obj"/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\tree_manip.cpp">
 			</File>
 			<File
 				RelativePath="..\..\src\oldphycas\tree_node.cpp">
@@ -772,6 +772,9 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
 				RelativePath="..\..\src\phycas_config.h">
+			</File>
+			<File
+				RelativePath=".\pol_profiling_config.h">
 			</File>
 			<File
 				RelativePath="..\..\src\ncl\singleton.hpp">

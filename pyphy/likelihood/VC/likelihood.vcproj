@@ -708,6 +708,9 @@
 				RelativePath="..\..\src\thirdparty\num_util.h">
 			</File>
 			<File
+				RelativePath="..\..\src\pol_pyphy_config.h">
+			</File>
+			<File
 				RelativePath="..\..\src\probability_distribution.hpp">
 			</File>
 			<File

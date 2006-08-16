@@ -2,7 +2,7 @@
 #include <iostream>
 #include "pyphy/src/likelihood_models.hpp"
 #include "pyphy/src/cipres/AllocateMatrix.hpp"
-#if defined(POL_PYPHY)
+#if defined(PYTHON_ONLY)
 #	include <boost/python/numeric.hpp>
 #	include "pyphy/src/thirdparty/num_util.h"
 #endif
@@ -147,7 +147,7 @@ void Model::createParameters(
 		}
 	}
 	
-#if defined(POL_PYPHY)
+#if defined(PYTHON_ONLY)
 /*----------------------------------------------------------------------------------------------------------------------
 |	
 */

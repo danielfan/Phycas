@@ -173,7 +173,7 @@ inline void QMatrix::recalcQMatrix()
 	recalcQMatrixImpl();
 	}
 
-#if defined(POL_PYPHY)
+#if defined(PYTHON_ONLY)
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the entries in the data member `qmat' as a NumArray. Calls recalcQMatrix first to ensure that `qmat' is up
 |	to date.

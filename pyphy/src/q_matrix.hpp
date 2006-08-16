@@ -12,7 +12,7 @@ extern "C"
 
 #include <cmath>
 #include <vector>
-#if defined(POL_PYPHY)
+#if defined(PYTHON_ONLY)
 #	include <boost/python/tuple.hpp>
 #	include <boost/python/numeric.hpp>
 #	include "pyphy/src/thirdparty/num_util.h"
@@ -50,7 +50,7 @@ class QMatrix
 
 		// Utilities
 		//
-#if defined(POL_PYPHY)
+#if defined(PYTHON_ONLY)
 		boost::python::numeric::array	getQMatrix();
 		boost::python::numeric::array	getEigenVectors();
 		boost::python::numeric::array	getPMatrix(double edgelen);

@@ -108,7 +108,7 @@ class Model	{
 		ProbDistShPtr					getEdgeLenPrior();
 
 		// Python-specific utilities
-#if defined(POL_PYPHY)
+#if defined(PYTHON_ONLY)
 		boost::python::numeric::array	getPMatrix(double edgeLength) const;
 #endif
 
