@@ -34,7 +34,7 @@ string DistributionDescription::GetValueInStringForm() const
 	switch (family)
 		{
 		case kPartOfJoint:
-			assert(jointDist != NULL);
+			PHYCAS_ASSERT(jointDist != NULL);
 			retStr << "The " << GetOrderString(indexInJointDist) << " element in";
 			retStr += jointDist->GetValueInStringForm();
 			break;
@@ -91,7 +91,7 @@ MVProbDistPtr DistributionDescription::CreateMultiVariateProbabilityDistribution
 				mvProbDist  = MVProbDistPtr(new phycas::DirichletDistribution(contVariables));
 			break;
 		default:
-			assert(0);
+			PHYCAS_ASSERT(0);
 			return MVProbDistPtr();
 		}
 	return mvProbDist;
@@ -172,7 +172,7 @@ ProbDistPtr DistributionDescription::CreateProbabilityDistribution() const
 			break;
 
 		default:
-			assert(0);
+			PHYCAS_ASSERT(0);
 			return ProbDistPtr();
 		}
 	return probDist;

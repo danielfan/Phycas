@@ -145,7 +145,7 @@ template <class T> bool NxsArrayCmdOption<T>::ReadValue(
 					}
 				else
 					{
-					assert(!HadError());
+					NXS_ASSERT(!HadError());
 					for (;;)
 						{
 						if (token.GetTokenReference() == ';')

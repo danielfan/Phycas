@@ -49,7 +49,7 @@ void SimpleUnderflowPolicy::oneTip(
 		unsigned condlikes_per_rate = num_patterns*num_states;
 		for (unsigned pat = 0; pat < num_patterns; ++pat)
 			{
-			assert(underflow_work[pat] > 0.0);
+			PHYCAS_ASSERT(underflow_work[pat] > 0.0);
 			double f = floor(log(underflow_max_value/underflow_work[pat]));
 			double expf = exp(f);
 			LikeFltType * claPat = &cla[num_states*pat];
@@ -121,7 +121,7 @@ void PatternSpecificUnderflowPolicy::oneTip(
 		unsigned condlikes_per_rate = num_patterns*num_states;
 		for (unsigned pat = 0; pat < num_patterns; ++pat)
 			{
-			assert(underflow_work[pat] > 0.0);
+			PHYCAS_ASSERT(underflow_work[pat] > 0.0);
 			double f = floor(log(underflow_max_value/underflow_work[pat]));
 			double expf = exp(f);
 			LikeFltType * claPat = &cla[num_states*pat];
@@ -196,7 +196,7 @@ void SimpleUnderflowPolicy::noTips(
 		unsigned condlikes_per_rate = num_patterns*num_states;
 		for (unsigned pat = 0; pat < num_patterns; ++pat)
 			{
-			assert(underflow_work[pat] > 0.0);
+			PHYCAS_ASSERT(underflow_work[pat] > 0.0);
 			double f = floor(log(underflow_max_value/underflow_work[pat]));
 			double expf = exp(f);
 			LikeFltType * claPat = &cla[num_states*pat];
@@ -272,7 +272,7 @@ void PatternSpecificUnderflowPolicy::noTips(
 		unsigned condlikes_per_rate = num_patterns*num_states;
 		for (unsigned pat = 0; pat < num_patterns; ++pat)
 			{
-			assert(underflow_work[pat] > 0.0);
+			PHYCAS_ASSERT(underflow_work[pat] > 0.0);
 			double f = floor(log(underflow_max_value/underflow_work[pat]));
 			double expf = exp(f);
 			LikeFltType * claPat = &cla[num_states*pat];

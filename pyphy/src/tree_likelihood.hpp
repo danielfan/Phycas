@@ -3,7 +3,6 @@
 
 #include "pyphy/src/states_patterns.hpp"
 #include <vector>
-#include <cassert>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
@@ -64,8 +63,8 @@ class PhycasIDLishMatrix
 
 		void replaceRow(unsigned n, const CIPRStateVect & row)
 			{
-			assert(row.size() == nchar);
-			assert(n < matrix.size());
+			PHYCAS_ASSERT(row.size() == nchar);
+			PHYCAS_ASSERT(n < matrix.size());
 			matrix[n] = row;
 			}
 

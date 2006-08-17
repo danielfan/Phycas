@@ -65,7 +65,7 @@ void TreeLikelihood::calcPMatCommon(
   double * * *	pMatrices, 
   double		edgeLength)
 	{
-	assert(num_rates > 0);
+	PHYCAS_ASSERT(num_rates > 0);
 	vector<double> scaledEdges;
 	scaleVector(scaledEdges, rate_means, edgeLength);
 	model->calcPMatrices(pMatrices, &scaledEdges[0], num_rates); //PELIGROSO
@@ -573,7 +573,7 @@ double TreeLikelihood::harvestLnL(
 	{
 	// Get the focal node
 	TreeNode * focal_node = focal_edge.getFocalNode();
-	assert(focal_node != NULL);
+	PHYCAS_ASSERT(focal_node != NULL);
 
 	// If the focal neighbor is NULL, let the parent of the focal node be the focal neighbor
 	TreeNode * focal_neighbor = focal_edge.getFocalNeighbor();
@@ -582,7 +582,7 @@ double TreeLikelihood::harvestLnL(
 		focal_neighbor = focal_node->GetParent();
 		focal_edge.setFocalNeighbor(focal_neighbor);
 		}
-	assert(focal_neighbor != NULL);
+	PHYCAS_ASSERT(focal_neighbor != NULL);
 
 	// Recompute the conditional likelihood array of the focal node
 	// The focal neighbor is closer to the likelihood root than the focal_node
@@ -598,22 +598,22 @@ double TreeLikelihood::harvestLnL(
 double TreeLikelihood::harvestLnLFromValidEdge(
    ConstEdgeEndpoints & focal_edge)	/**< is the edge containing the focal node that will serve as the likelihood root */	
 	{
-	assert(focal_edge.getFocalNode() != NULL);
-	assert(focal_edge.getFocalNeighbor() != NULL);
+	PHYCAS_ASSERT(focal_edge.getFocalNode() != NULL);
+	PHYCAS_ASSERT(focal_edge.getFocalNeighbor() != NULL);
 	const TreeNode * focalNeighbor = focal_edge.getFocalNeighbor();
 	const TreeNode * focalNode = focal_edge.getFocalNode();
-	assert(focalNode->IsInternal());
+	PHYCAS_ASSERT(focalNode->IsInternal());
 	const TreeNode * actualChild = focal_edge.getActualChild();
 	const double focalEdgeLen = actualChild->GetEdgeLen();
 	
 	ConstCondLikelihoodShPtr focalCondLike = getValidCondLikePtr(focal_edge);
-	assert(focalCondLike);
+	PHYCAS_ASSERT(focalCondLike);
 	const LikeFltType * focalNodeCLA = focalCondLike->getCLA(); //PELIGROSO
-	assert(focalNodeCLA != NULL);
+	PHYCAS_ASSERT(focalNodeCLA != NULL);
 	const unsigned singleRateCLALength = num_patterns*num_states;
 
 	// Get pointer to start of array holding pattern counts
-	assert(pattern_counts.size() == num_patterns);
+	PHYCAS_ASSERT(pattern_counts.size() == num_patterns);
 	PatternCountType * counts = (PatternCountType *)(&pattern_counts[0]); //PELIGROSO
 
 	// Get state frequencies from model and alias rate category probability array for speed
@@ -761,7 +761,7 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 	//std::vector<double>::iterator sit = site_likelihood.begin();
 	//for (PatternMapType::iterator pit = pattern_map.begin(); pit != pattern_map.end(); ++pit, ++sit)
 	//	{
-	//	assert(sit != site_likelihood.end());
+	//	PHYCAS_ASSERT(sit != site_likelihood.end());
 	//	doof << str(boost::format("%12.5f\t%.1f\t|\t") % (*sit) % pit->second);
 	//	std::copy(pit->first.begin(), pit->first.end(), std::ostream_iterator<int>(doof, "\t")); 
 	//	doof << std::endl;

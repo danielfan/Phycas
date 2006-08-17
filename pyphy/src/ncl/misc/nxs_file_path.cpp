@@ -407,7 +407,7 @@ NxsFilePath::NxsFilePath(bool shouldBeDir)
 	nativePath(),
 	queryUserOnError(true)
 	{
-	assert(!shouldBeDir);	// file paths without filenames aren't supported yet
+	NXS_ASSERT(!shouldBeDir);	// file paths without filenames aren't supported yet
 	}
 
 NxsFilePath::NxsFilePath(const string &s, bool shouldBeDir )
@@ -420,7 +420,7 @@ NxsFilePath::NxsFilePath(const string &s, bool shouldBeDir )
 	nativePath(),
 	queryUserOnError(true)
 	{
-	assert(!shouldBeDir);	// file paths without filenames aren't supported yet
+	NXS_ASSERT(!shouldBeDir);	// file paths without filenames aren't supported yet
 	if (ReadNewPathString(s))
 		CreateNative();
 	}
@@ -464,7 +464,7 @@ NxsFilePath::OpenOutputReturnCode NxsFilePath::OpenOutput(
   	
 string NxsOutFilePath::ComposeReplaceAppendErrorMsg() const
 	{
-	assert ((GetReplace() && GetAppend()) || (!GetReplace() && !GetAppend()));
+	NXS_ASSERT ((GetReplace() && GetAppend()) || (!GetReplace() && !GetAppend()));
 	
 	string s;
 	s << "The file " << GetFullName() << " already exists, and ";

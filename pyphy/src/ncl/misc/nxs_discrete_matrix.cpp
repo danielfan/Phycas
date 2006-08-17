@@ -77,7 +77,7 @@ NxsDiscreteMatrix::NxsDiscreteMatrix(
 inline unsigned	NxsDiscreteMatrixBase::UnitToAddTo(const unsigned &ordination) const
 	{
 	const unsigned nBitsInStoreType = 8*sizeof(DataStorageType);
-  	assert (ordination / nBitsInStoreType <= nUnitsPerElement);
+  	NXS_ASSERT (ordination / nBitsInStoreType <= nUnitsPerElement);
   	return ordination / nBitsInStoreType;
 	}
 	
@@ -95,7 +95,7 @@ void NxsDiscreteMatrixBase::AddStateIndex(
   unsigned colN,
   unsigned ordinationOfState)
 	{
-	assert( IsValidPutElement(rowN, colN));
+	NXS_ASSERT( IsValidPutElement(rowN, colN));
   	unsigned unitToAddTo = UnitToAddTo(ordinationOfState);
 	unsigned binaryPatternToAdd = UnsignedBinaryPatternFromOrd(ordinationOfState);
   	
@@ -152,7 +152,7 @@ bool NxsUnalignedMatrix::PadRowZeroLast(
   unsigned rowN, 
   unsigned colN)
   	{
-  	assert(rowN < GetNumRows());
+  	NXS_ASSERT(rowN < GetNumRows());
   	const DataStorageType  *tempMissingCode = dataType.GetMissingBitCode();
   	unsigned nToAdd = colN + 1 - (dataMat[rowN].size()/ nUnitsPerElement);
   	for  (; nToAdd > 1; --nToAdd)

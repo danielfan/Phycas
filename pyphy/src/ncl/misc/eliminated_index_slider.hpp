@@ -54,7 +54,7 @@ inline void EliminatedIndexSlider::clear()
 inline unsigned EliminatedIndexSlider::UseOffsetMapToSlideIndex(unsigned orig) const
 	{
 	OffsetMap::const_iterator mIt = offsets.lower_bound(orig);
-	assert(mIt != offsets.end());  // as long as orig <= maxIndex sent in AddEliminated we should find an element.
+	PHYCAS_ASSERT(mIt != offsets.end());  // as long as orig <= maxIndex sent in AddEliminated we should find an element.
 #	if 0
 		const unsigned &endOfEliminatedBlock = mIt->first;	
 		const unsigned &sizeOfEliminatedBlock =  mIt->second.first;

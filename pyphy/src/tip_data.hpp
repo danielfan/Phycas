@@ -2,7 +2,6 @@
 #define TIP_DATA_HPP
 
 #include <vector>
-#include <cassert>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
@@ -190,10 +189,10 @@ typedef std::vector<TipDataShPtr> VecTipDataShPtr;
 */
 inline ConstCondLikelihoodShPtr	TipData::getValidParentalCondLikePtr() const
 	{
-	//assert(parCLAValid);
+	//PHYCAS_ASSERT(parCLAValid);
 	//TipData * t = const_cast<TipData *>(this);
 	//return t->getParentalCondLikePtr();
-	assert(parWorkingCLA);
+	PHYCAS_ASSERT(parWorkingCLA);
 	return ConstCondLikelihoodShPtr(parWorkingCLA);
 	}
 

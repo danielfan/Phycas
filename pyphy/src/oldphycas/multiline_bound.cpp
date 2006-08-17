@@ -13,7 +13,7 @@ MultilineBound::MultilineBound(double min_x, double max_x)
 	minPt(-DBL_MAX, -DBL_MAX),
 	typeOfBound(kLowerBoundType) //need to set new defaults for maxPt and minPt if we want something other than upperbounds
 	{
-	assert(minX > -DBL_MAX && maxX < DBL_MAX);
+	PHYCAS_ASSERT(minX > -DBL_MAX && maxX < DBL_MAX);
 	}
 
 LineSegment::LineSegment(const Line &l, double min, double max)
@@ -30,8 +30,8 @@ LineSegment::LineSegment(const Line &l, double min, double max)
 	
 bool MultilineBound::AddUpperBound(const Line &lineToAdd) //NOT DEBUGGED
 	{
-	assert(0);//NOT DEBUGGED YET!!!
-	assert(typeOfBound == kUnknownBoundType || typeOfBound == kUpperBoundType);
+	PHYCAS_ASSERT(0);//NOT DEBUGGED YET!!!
+	PHYCAS_ASSERT(typeOfBound == kUnknownBoundType || typeOfBound == kUpperBoundType);
 	typeOfBound = kUpperBoundType;
 	LineSegment lineSeg(lineToAdd, minX, maxX);
 	return AddCroppedUpperBound(lineSeg);
@@ -39,7 +39,7 @@ bool MultilineBound::AddUpperBound(const Line &lineToAdd) //NOT DEBUGGED
 	
 bool MultilineBound::AddCroppedUpperBound(const LineSegment &lineSeg)
 	{
-	assert(0);//NOT DEBUGGED YET!!!
+	PHYCAS_ASSERT(0);//NOT DEBUGGED YET!!!
 	double newLineMin = lineSeg.AtLeft();
 	double newLineMax = lineSeg.AtRight();
 	pho_sort(newLineMin, newLineMax);
@@ -127,7 +127,7 @@ bool MultilineBound::AddCroppedUpperBound(const LineSegment &lineSeg)
 
 bool MultilineBound::AddLowerBound(const Line &lineToAdd) //NOT DEBUGGED
 	{
-	assert(typeOfBound == kUnknownBoundType || typeOfBound == kLowerBoundType);
+	PHYCAS_ASSERT(typeOfBound == kUnknownBoundType || typeOfBound == kLowerBoundType);
 	typeOfBound = kLowerBoundType;
 	LineSegment lineSeg(lineToAdd, minX, maxX);
 	return AddCroppedLowerBound(lineSeg);
@@ -271,7 +271,7 @@ Line::Line(const XYPoint &onePt, const XYPoint &anotherPt)
 	{
 	if (fabs(onePt.first-anotherPt.first) < DBL_EPSILON)
 		{
-		assert(0);
+		PHYCAS_ASSERT(0);
 		throw XVerticalLine();
 		}
 	slope = (onePt.second-anotherPt.second)/(onePt.first-anotherPt.first);

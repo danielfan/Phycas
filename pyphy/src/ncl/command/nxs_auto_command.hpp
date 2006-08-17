@@ -45,8 +45,8 @@ template<class ExecutionObject> inline NxsVoidExecuteCommandCallback<ExecutionOb
 	:obj(o),
 	handlerFunction(h)
 	{
-	assert(o != NULL);
-	assert(h != 0L);
+	NXS_ASSERT(o != NULL);
+	NXS_ASSERT(h != 0L);
 	}
 
 /*--------------------------------------------------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ template<class T, class SettingsStruct> inline NxsExecuteCommandCallback<T, Sett
 	{
 	NXS_ASSERT(o != NULL);
 #	if defined (MAC_PHOREST)
-		assert(h != NULL);	// this assert is causing a warning on g++ on linux.  checking != NULL on one platform should be sufficient.
+		NXS_ASSERT(h != NULL);	// this PHYCAS_ASSERT is causing a warning on g++ on linux.  checking != NULL on one platform should be sufficient.
 #	endif
 	} 
 	
@@ -98,7 +98,7 @@ template<class T, class SettingsStruct> inline NxsExecuteCommandCallback<T, Sett
 */
 template<class T, class SettingsStruct> inline CmdResult NxsExecuteCommandCallback<T, SettingsStruct>::operator()()	
 	{
-	assert (obj != NULL );
+	PHYCAS_ASSERT (obj != NULL );
 	SettingsStruct * temp = settings.get();
 	return (obj->*(mfuncPtr))(temp);
 	}
@@ -129,8 +129,8 @@ template<class ParsingObject> inline NxsExternalCommandParser<ParsingObject>::Nx
 	: obj(o),
 	parserFunction(f)
 	{
-	assert(obj != NULL);
-	assert(f != 0L);
+	NXS_ASSERT(obj != NULL);
+	NXS_ASSERT(f != 0L);
 	}
 
 /*--------------------------------------------------------------------------------------------------------------------------

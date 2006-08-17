@@ -94,7 +94,7 @@ vector<bool> NxsReader::DisableAllBlocksExcept(const VecString &activeBlockIDs)
 void NxsReader::Add(
   NxsBlockWeakPtr newBlock)
 	{
-	assert(boost::make_shared(newBlock) != NxsBlockPtrShared());
+	NXS_ASSERT(boost::make_shared(newBlock) != NxsBlockPtrShared());
 	boost::make_shared(newBlock)->SetNexus(this);
 	weakBlockPtrs.push_back(newBlock);
 	}
@@ -106,7 +106,7 @@ void NxsReader::Add(
 void NxsReader::Add(
   NxsBlock *newBlock)
 	{
-	assert(newBlock != NULL);
+	NXS_ASSERT(newBlock != NULL);
 	newBlock->SetNexus(this);
 	blockPtrs.push_back(newBlock);
 	}
@@ -135,7 +135,7 @@ void NxsReader::Detach(
 void NxsReader::Detach(
   NxsBlock *newBlock)
 	{
-	assert(newBlock != NULL);
+	NXS_ASSERT(newBlock != NULL);
 	newBlock->SetNexus(NULL);
 	blockPtrs.remove(newBlock);
 	//	also remove the shared block pointer to the object
@@ -289,7 +289,7 @@ bool NxsReader::Execute(
 					// Return false for any fatal errors (disabled/unknown blocks are skipped and are 
 					// not treated as fatal errors)
 					//
-					assert(nxsBlockReader != NULL);
+					NXS_ASSERT(nxsBlockReader != NULL);
 					errCode = UseNexusBlockToRead(nxsBlockReader, token);
 					if (errCode == quit_or_leave)
 						return true;
@@ -434,7 +434,7 @@ NxsReader::~NxsReader()
 void NxsReader::Add(
   NxsBlock *newBlock)	/* a pointer to an existing block object */
 	{
-	assert(newBlock != NULL);
+	NXS_ASSERT(newBlock != NULL);
 
 	newBlock->SetNexus(this);
 
@@ -447,7 +447,7 @@ void NxsReader::Add(
 		NxsBlock *curr;
 		for (curr = blockList; curr && curr->next;)
 			curr = curr->next;
-		assert(curr && !curr->next);
+		NXS_ASSERT(curr && !curr->next);
 		curr->next = newBlock;
 		}
 	}
@@ -497,7 +497,7 @@ void NxsReader::Reassign(
 		curr = curr->next;
 		}
 
-	assert(curr != NULL);
+	NXS_ASSERT(curr != NULL);
 
 	newb->next = curr->next;
 	if (prev == NULL) 
@@ -548,7 +548,7 @@ void NxsReader::DebugReportBlock(
 void NxsReader::Detach(
   NxsBlock *oldBlock)	/* a pointer to an existing block object */
 	{
-	assert(oldBlock != NULL);
+	NXS_ASSERT(oldBlock != NULL);
 
 	// Return quietly if there are not blocks attached
 	//
@@ -574,7 +574,7 @@ void NxsReader::Detach(
 		// function about "...simply returns quietly" will be incorrect (at least
 		// in the Debugging version of the program where asserts are active).
 		//
-		//assert(curr->next == oldBlock);
+		//NXS_ASSERT(curr->next == oldBlock);
 
 		if (curr->next == oldBlock) 
 			{

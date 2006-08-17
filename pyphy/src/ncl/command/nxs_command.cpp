@@ -220,7 +220,7 @@ void NxsCommand::AbortCommand(
 	if (cResCode == kCmdFailedGenerateMessage)
 		{
 		PrintWarnings();
-		assert (errormsg.length() > 0);
+		NXS_ASSERT (errormsg.length() > 0);
 		}
 	else
 		errormsg.clear();
@@ -265,7 +265,7 @@ void NxsCommand::ShowDescription(
 		NxsOutputStream &nxsOutStream = *outStreamPtr;
 		if (keywordIndex != UINT_MAX)
 			{
-			assert(keywordIndex < (unsigned) keywords.size());
+			NXS_ASSERT(keywordIndex < (unsigned) keywords.size());
 			NxsCmdOptionShPtr argCI = keywords[keywordIndex];
 			if (argCI->GetDescription().length() > 0)
 				nxsOutStream << argCI->GetDescription() << '\n';
@@ -317,7 +317,7 @@ void NxsCommand::ShowCurrentSettings(
 					}
 				else
 					{
-					assert (keywordIndex < keywords.size());
+					NXS_ASSERT (keywordIndex < keywords.size());
 					DisplayKeywordCurrentSetting(outTable, keywords[keywordIndex]);
 					if (!keywords[keywordIndex]->HasPermission(userPermLevel))
 						{
@@ -342,7 +342,7 @@ void NxsCommand::ShowCurrentSettings(
 				nxsOutStream << "This command is currently unavailable because " << GetReasonForUnavailability() << '.';
 			nxsOutStream << ncl::endl;
 #		else
-			assert(0); //@unimplemented
+			NXS_ASSERT(0); //@unimplemented
 #		endif		
 		}
 	}
@@ -464,7 +464,7 @@ bool NxsCommand::DetermineKeywordAbbreviations()
 				++tnIt;
 				}
 			}
-		assert(tnIt == tempNames.end());
+		NXS_ASSERT(tnIt == tempNames.end());
 		}
 	else
 		{

@@ -58,7 +58,7 @@ inline double CDF::CumGamma(
 	double scale	= 1.0/beta; // CDF library uses inverse of normal definition of scale parameter
 	double bound	= 0.0;
 	cdfgam(&which, &P, &Q, &X, &shape, &scale, &status, &bound);
-	assert(status == 0);
+	PHYCAS_ASSERT(status == 0);
 	return P;
 	}
 
@@ -91,7 +91,7 @@ inline double CDF::SampleGamma(
 		{
 		// If alpha is tiny (alpha < 0.001) and beta is huge (beta > 1000.0), then cdfgam may 
 		// fail with status 10, in which case we return 0.0
-		assert(alpha < 0.001 && beta > 1000.0);
+		PHYCAS_ASSERT(alpha < 0.001 && beta > 1000.0);
 		//@POL not sure about the validity of this
 		return 0.0;
 		}
@@ -112,7 +112,7 @@ inline double CDF::CumNorm(
   double mu,				/**< is the mean of the normal distribution */
   double sigma) const		/**< is the standard deviation of the distribution */
 	{
-	assert(sigma > 0.0);
+	PHYCAS_ASSERT(sigma > 0.0);
 	double X		= (x - mu)/sigma;
 	int status		= 0;
 	int which		= 1;	// compute p given x, mean and standard deviation
@@ -120,7 +120,7 @@ inline double CDF::CumNorm(
 	double Q		= 0.0;
 	double bound	= 0.0;
 	cdfnor(&which, &P, &Q, &X, &mu, &sigma, &status, &bound);
-	assert(status == 0);
+	PHYCAS_ASSERT(status == 0);
 	return P;
 	}
 
@@ -146,7 +146,7 @@ inline double CDF::SampleNorm(
 	double Q = 1.0 - P;
 	double bound = 0.0;
 	cdfnor(&which, &P, &Q, &X, &mu, &sigma, &status, &bound);
-	assert(status == 0);
+	PHYCAS_ASSERT(status == 0);
 	return X;
 	}
 

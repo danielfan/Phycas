@@ -39,7 +39,7 @@ inline void NxsDataType::AddStateChar(
   char ch,
   const NxsToken &token) const
   	{
-  	assert(j != UINT_MAX && i != UINT_MAX);
+  	NXS_ASSERT(j != UINT_MAX && i != UINT_MAX);
   	const DataStorageType *codedState = GetStateInBitCode(ch);
 	if (codedState != NULL)
   		dataMatrix->AddState(i, j, codedState);
@@ -75,7 +75,7 @@ inline void NxsDataType::AddStateChar(
   char ch,
   const NxsToken &token) const
   	{
-  	assert(j != UINT_MAX && i != UINT_MAX);
+  	PHYCAS_ASSERT(j != UINT_MAX && i != UINT_MAX);
   	const DataStorageType *codedState = GetStateInBitCode(ch);
   	if (codedState != NULL)
   		dataMatrix->AddState(i, j, codedState);
@@ -105,7 +105,7 @@ inline void ncl::NxsDiscreteMatrix::SetStateChar(
   char ch,
   const NxsToken &token)
   	{
-  	assert(j != UINT_MAX && i != UINT_MAX);
+  	PHYCAS_ASSERT(j != UINT_MAX && i != UINT_MAX);
   	const DataStorageType *codedState = dataType.GetStateInBitCode(ch);
   	if (codedState != NULL)
   		SetState(i, j, codedState);
@@ -140,7 +140,7 @@ inline void ncl::NxsUnalignedMatrix::SetStateChar(
   char ch,
   const NxsToken &token)
   	{
-  	assert(j != UINT_MAX && i != UINT_MAX);
+  	PHYCAS_ASSERT(j != UINT_MAX && i != UINT_MAX);
   	const DataStorageType *codedState =dataType. GetStateInBitCode(ch);
   	if (codedState != NULL)
   		SetState(i, j, codedState);
@@ -202,7 +202,7 @@ template <class T> void NxsDataType::AddStateRange(
 		{
 		unsigned ordFrom = IndexOfFirstOnBit(codedFrom, nCodeUnitsPerCharacter) ;
   		unsigned ordTo = IndexOfFirstOnBit(codedTo, nCodeUnitsPerCharacter) ;
-  		assert(ordFrom != UINT_MAX && ordTo != UINT_MAX);
+  		PHYCAS_ASSERT(ordFrom != UINT_MAX && ordTo != UINT_MAX);
   		if (ordFrom < ordTo)
 			{
   			if (j != UINT_MAX)

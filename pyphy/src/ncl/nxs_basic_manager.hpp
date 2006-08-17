@@ -103,7 +103,7 @@ class OrderedCaseInsensitiveLabels
 			/// does NOT verify uniqueness of label
 		void SetLabel(unsigned index, const std::string &label)
 			{
-			assert(index < this->size());
+			NXS_ASSERT(index < this->size());
 			this->origLabels[index] = label;
 			this->capLabelToIndex[GetCapitalized(label)] = index;
 			}

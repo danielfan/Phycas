@@ -27,8 +27,8 @@ void NxsAlternativeTaxaBlock::ResetTaxaInfo()
 */
 void NxsAlternativeTaxaBlock::SetTaxonLabel(unsigned ind, const std::string &s)
 	{
-	assert(ind < taxLabels.size());
-	assert(IsAddingNewTaxa());
+	NXS_ASSERT(ind < taxLabels.size());
+	NXS_ASSERT(IsAddingNewTaxa());
 	if (!IsLegalNexusWord(s))
 		{
 		std::string msg;
@@ -52,7 +52,7 @@ CmdResult  NxsAlternativeTaxaBlock::HandleDimensions(NxsDimensionsSettings *s)
 		if (s->nTaxa == UINT_MAX)
 			throw NxsException("NTax was not specified in the DIMENSIONS command");
 		createdNewTaxa = true;
- 		assert(taxLabels.empty());
+ 		NXS_ASSERT(taxLabels.empty());
 		VecString tmp;
  		FillVectorWithNumbers(tmp, 1, s->nTaxa+1);
 		taxLabels.AppendLabels(tmp);

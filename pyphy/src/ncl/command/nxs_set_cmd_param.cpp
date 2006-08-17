@@ -214,7 +214,7 @@ void NxsIndexSetCmdOption::ReturnValueToDefault()
 		{
 		NxsToken token(defStr);
 		bool readCorrectly = ReadValue(token, true);
-		assert(readCorrectly);
+		NXS_ASSERT(readCorrectly);
 		if (!readCorrectly)
 			currentValue->clear();
 		}

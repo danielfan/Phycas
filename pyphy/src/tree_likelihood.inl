@@ -208,14 +208,14 @@ inline CondLikelihoodShPtr getCondLikePtr(
 		//     N
 		//    / 
 		//
-		assert(actual_child->IsInternal());
+		PHYCAS_ASSERT(actual_child->IsInternal());
 		InternalData * child_internal_data = actual_child->GetInternalData();
-		assert(child_internal_data != NULL);
+		PHYCAS_ASSERT(child_internal_data != NULL);
 		return child_internal_data->getChildCondLikePtr();
 		}
 
 	// focal neighbor N is a child of the focal node F
-	assert(actual_child == edge.getFocalNeighbor());
+	PHYCAS_ASSERT(actual_child == edge.getFocalNeighbor());
 	if (actual_child->IsInternal())
 		{
 		// focal neighbor N is an internal node (likelihood root is somewhere above N)
@@ -229,7 +229,7 @@ inline CondLikelihoodShPtr getCondLikePtr(
 		//    / 
 		//
 		InternalData * child_internal_data = actual_child->GetInternalData();
-		assert(child_internal_data != NULL);
+		PHYCAS_ASSERT(child_internal_data != NULL);
 		return child_internal_data->getParentalCondLikePtr();		
 		}
 
@@ -242,7 +242,7 @@ inline CondLikelihoodShPtr getCondLikePtr(
 	//    / 
 	//
 	TipData * child_tip_data = actual_child->GetTipData();
-	assert(child_tip_data != NULL);
+	PHYCAS_ASSERT(child_tip_data != NULL);
 	return child_tip_data->getParentalCondLikePtr();
 	}
 
@@ -269,14 +269,14 @@ inline ConstCondLikelihoodShPtr getValidCondLikePtr(
 		//     N
 		//    / 
 		//
-		assert(actual_child->IsInternal());
+		PHYCAS_ASSERT(actual_child->IsInternal());
 		const InternalData * child_internal_data = actual_child->GetInternalData();
-		assert(child_internal_data != NULL);
+		PHYCAS_ASSERT(child_internal_data != NULL);
 		return child_internal_data->getValidChildCondLikePtr();
 		}
 
 	// focal neighbor N is a child of the focal node F
-	assert(actual_child == edge.getFocalNeighbor());
+	PHYCAS_ASSERT(actual_child == edge.getFocalNeighbor());
 	if (actual_child->IsInternal())
 		{
 		// focal neighbor N is an internal node (likelihood root is somewhere above N)
@@ -290,7 +290,7 @@ inline ConstCondLikelihoodShPtr getValidCondLikePtr(
 		//    / 
 		//
 		const InternalData * child_internal_data = actual_child->GetInternalData();
-		assert(child_internal_data != NULL);
+		PHYCAS_ASSERT(child_internal_data != NULL);
 		return child_internal_data->getValidParentalCondLikePtr();		
 		}
 
@@ -303,27 +303,27 @@ inline ConstCondLikelihoodShPtr getValidCondLikePtr(
 	//    / 
 	//
 	const TipData * child_tip_data = actual_child->GetTipData();
-	assert(child_tip_data != NULL);
+	PHYCAS_ASSERT(child_tip_data != NULL);
 	return child_tip_data->getValidParentalCondLikePtr();
 #else
 	const TreeNode * c = edge.getActualChild();
 	if (edge.getFocalNode() == c)
 		{
-		assert(c->IsInternal());
+		PHYCAS_ASSERT(c->IsInternal());
 		const InternalData * childInternalData = c->GetInternalData();
-		assert(childInternalData != NULL);
+		PHYCAS_ASSERT(childInternalData != NULL);
 		return childInternalData->getValidChildCondLike();
 		}
 	// moving up the tree in calculations (root to leaves).
-	assert(c == edge.getFocalNeighbor());
+	PHYCAS_ASSERT(c == edge.getFocalNeighbor());
 	if (c->IsInternal())
 		{
 		const InternalData * childInternalData = c->GetInternalData();
-		assert(childInternalData != NULL);
+		PHYCAS_ASSERT(childInternalData != NULL);
 		return childInternalData->getValidParentalCondLike();		
 		}
 	const TipData * childTipData = c->GetTipData();
-	assert(childTipData != NULL);
+	PHYCAS_ASSERT(childTipData != NULL);
 	return childTipData->getValidParentalCondLike();
 #endif
 	}
@@ -411,7 +411,7 @@ inline unsigned TreeLikelihood::getNPatterns() const
 */
 inline unsigned TreeLikelihood::getNRatesTotal() const
 	{
-	assert(rate_means.size() == num_rates);
+	PHYCAS_ASSERT(rate_means.size() == num_rates);
 	return num_rates;
 	}
 

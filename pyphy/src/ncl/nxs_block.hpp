@@ -153,7 +153,7 @@ inline void NxsCommandManagerBlock::InitializeRecognizedCommands()
 		FinishedAddingCommands();
 #	else
 		bool check = FinishedAddingCommands();
-		assert(check);
+		NXS_ASSERT(check);
 #	endif
 	}
 

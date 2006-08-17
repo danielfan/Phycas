@@ -161,7 +161,7 @@ template<class T> int ArrayCompare(const T * leftOp, const T *rightOp, unsigned 
 */
 template<class T> int ArrayCompareReversePrecedence(const T * leftOp, const T *rightOp, unsigned dim)
 	{
-	assert(dim>0);
+	NXS_ASSERT(dim>0);
 	unsigned i = dim-1;
 	for (;;)
 		{
@@ -182,7 +182,7 @@ template<class T> int ArrayCompareReversePrecedence(const T * leftOp, const T *r
 */
 template<class T> int ArrayLessThanReversePrecedence(const T * leftOp, const T *rightOp, unsigned dim)
 	{
-	assert(dim>0);
+	NXS_ASSERT(dim>0);
 	unsigned i = dim-1;
 	for (;;)
 		{
@@ -289,7 +289,7 @@ template <class T> T ***NewThreeDArray(
   unsigned s, 
   unsigned t)
 	{
-	assert(f > 0 && s > 0 && t> 0);
+	NXS_ASSERT(f > 0 && s > 0 && t> 0);
 	T ***temp;
 	temp = new T **[f];
 	temp[0] = new T *[f * s];
@@ -356,7 +356,7 @@ template<class T> bool ArrayEq(const T * leftOp, const T *rightOp, unsigned dim)
 */
 template<class T> int ArrayCompReversePrecedence(const T * leftOp, const T *rightOp, unsigned dim)
 	{
-	assert(dim>0);
+	NXS_ASSERT(dim>0);
 	for (unsigned i = dim-1; i >= 0; --i)
 		{
 		if (leftOp[i] < rightOp[i])
@@ -373,7 +373,7 @@ template<class T> int ArrayCompReversePrecedence(const T * leftOp, const T *righ
 */
 template<class T> int ArrayComp(const T * leftOp, const T *rightOp, unsigned dim)
 	{
-	assert(dim>0);
+	NXS_ASSERT(dim>0);
 	for (unsigned i = 0; i < dim; ++i)
 		{
 		if (leftOp[i] < rightOp[i])

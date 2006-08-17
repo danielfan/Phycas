@@ -24,7 +24,7 @@ CmdResult NxsTaxaManager::NewBlockRead(NxsBlock *newBlock)
 	NxsTaxaBlock * newTaxa = dynamic_cast<NxsTaxaBlock *>(newBlock);
 	if (newTaxa != NULL)
 		return ReplaceTaxa(newTaxa->GetTaxa());
-	assert(0);
+	NXS_ASSERT(0);
 	return kCmdSucceeded;
 	}
 

@@ -27,7 +27,7 @@ void DeleteTwoDArray(T **& ptr);
 */
 template<typename T> T *** NewThreeDArray(unsigned f , unsigned s , unsigned t)
 	{
-	assert(f > 0 && s > 0 && t> 0);
+	PHYCAS_ASSERT(f > 0 && s > 0 && t> 0);
 	const unsigned twoDStride = s*t;
 	T ***ptr;
 	ptr = new T **[f];
@@ -79,7 +79,7 @@ template<typename T> void DeleteThreeDArray	(T *** & ptr)
 */
 template<typename T> T **NewTwoDArray(unsigned f , unsigned s)
 	{
-	assert(f > 0 && s > 0);
+	PHYCAS_ASSERT(f > 0 && s > 0);
 	T **ptr;
 	ptr = new T *[f];
 	*ptr = new T [f * s];

@@ -46,7 +46,7 @@ double KappaParam::operator()(
 
 	if (k > 0.0)
 		{
-		assert(hky);
+		PHYCAS_ASSERT(hky);
 		hky->setKappa(k);
 		curr_value = k;
 		recalcPrior();
@@ -54,7 +54,7 @@ double KappaParam::operator()(
 		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
 		curr_ln_like = likelihood->calcLnL(tree);
 		ChainManagerShPtr p = chain_mgr.lock();
-		assert(p);
+		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
 		}
 	return curr_ln_like + curr_ln_prior;
@@ -88,15 +88,15 @@ double GTRRateParam::operator()(
 
     if (r > 0.0)
 		{
-		assert(which < 6);
-		assert(gtr);
+		PHYCAS_ASSERT(which < 6);
+		PHYCAS_ASSERT(gtr);
 		gtr->setRelRateUnnorm(which, r);
         curr_value = r;
 		recalcPrior();
 		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
         curr_ln_like = likelihood->calcLnL(tree);
 		ChainManagerShPtr p = chain_mgr.lock();
-		assert(p);
+		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
 		}
 
@@ -127,7 +127,7 @@ double DiscreteGammaShapeParam::operator()(
 		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
 		curr_ln_like = likelihood->calcLnL(tree);
 		ChainManagerShPtr p = chain_mgr.lock();
-		assert(p);
+		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
 		}
 	return curr_ln_like + curr_ln_prior;
@@ -154,7 +154,7 @@ double PinvarParam::operator()(
 		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
 		curr_ln_like = likelihood->calcLnL(tree);
 		ChainManagerShPtr p = chain_mgr.lock();
-		assert(p);
+		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
 		}
 	return curr_ln_like + curr_ln_prior;
@@ -176,7 +176,7 @@ double BaseFreqParam::operator()(
 
     if (f > 0.0)
 		{
-		assert(which < 4);
+		PHYCAS_ASSERT(which < 4);
 		model->setStateFreqUnnorm(which, f);
 		//base_freq.freqs[which] = f;
         //model.normalizeFreqs(base_freq.freqs);
@@ -185,7 +185,7 @@ double BaseFreqParam::operator()(
 		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
         curr_ln_like = likelihood->calcLnL(tree);
 		ChainManagerShPtr p = chain_mgr.lock();
-		assert(p);
+		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
 		}
 
@@ -217,7 +217,7 @@ double HyperPriorParam::operator()(
 		// the new edge length prior parameter value mu so that the call to 
 		// chain_mgr->calcJointLnPrior() will return the correct joint prior
 		ChainManagerShPtr p = chain_mgr.lock();
-		assert(p);
+		PHYCAS_ASSERT(p);
 		//std::cerr << "  calling MCMCChainManager::recalcEdgeLenPriors" << std::endl;
 		edgeLensLnPrior = p->recalcEdgeLenPriors(mu, mu*mu);	//@POL implicit assumption that edge length prior is exponential
 		p->setLastLnLike(curr_ln_like);
@@ -243,7 +243,7 @@ double EdgeLenParam::operator()(
 		if (nd->IsRoot())
 			{
 			TreeNode * subroot = nd->GetLeftChild();
-			assert(subroot);
+			PHYCAS_ASSERT(subroot);
 			subroot->SetEdgeLen(x);
 
 			//@POL seems like we will be updating subroot once more than every other node
@@ -258,7 +258,7 @@ double EdgeLenParam::operator()(
 			TreeNode * likeroot = nd;
 			if (nd->IsTip())
 				likeroot = nd->GetParent();
-			assert(likeroot != NULL);
+			PHYCAS_ASSERT(likeroot != NULL);
 
 			likelihood->useAsLikelihoodRoot(likeroot);
 			likelihood->invalidateAwayFromNode(*nd);
@@ -269,7 +269,7 @@ double EdgeLenParam::operator()(
 		curr_value = x;
 		recalcPrior();
 		ChainManagerShPtr p = chain_mgr.lock();
-		assert(p);
+		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
 		}
 

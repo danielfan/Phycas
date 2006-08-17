@@ -81,7 +81,7 @@ inline DistributionDescription::~DistributionDescription()
 	
 inline bool DistributionDescription::IsPartOfJointMultivariate() const
 	{
-	assert(family != kPartOfJoint || jointDist != NULL);
+	PHYCAS_ASSERT(family != kPartOfJoint || jointDist != NULL);
 	return (family == kPartOfJoint);
 	}
 	
@@ -109,7 +109,7 @@ inline unsigned	DistributionDescription::GetNVariates() const
 	{
 	if (IsMultivariate())
 		{
-		assert(family == kDirichlet);
+		PHYCAS_ASSERT(family == kDirichlet);
 		return (unsigned)contVariables.size();
 		}
 	return 1;
@@ -141,7 +141,7 @@ inline std::string DistributionDescription::GetNameOfDistribution(DistrFamily f)
 		case DistributionDescription::kInverseGamma: return "InverseGamma";
 		case DistributionDescription::kPartOfJoint: break;
 		}
-	assert(0);
+	PHYCAS_ASSERT(0);
 	return std::string();
 	}
 
@@ -161,7 +161,7 @@ inline std::string DistributionDescription::GetFundamentalRange(DistrFamily f)
 													return "positive";
 		case DistributionDescription::kPartOfJoint: break;
 		}
-	assert(0);
+	PHYCAS_ASSERT(0);
 	return std::string();
 	}
 
@@ -174,7 +174,7 @@ inline std::string DistributionDescription::GetDistributionName() const
 	{
 	if (family == kPartOfJoint)
 		{
-		assert(jointDist != NULL);
+		PHYCAS_ASSERT(jointDist != NULL);
 		std::string s;
 		s << '{' << indexInJointDist << '}' << jointDist->GetDistributionName();
 		}

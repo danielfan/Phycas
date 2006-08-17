@@ -20,13 +20,13 @@ NxsOutputDestinationDescription &NxsOutputDestinationDescription::operator=(cons
 NxsOutputDestinationDescription::NxsOutputDestinationDescription()
 	:outDestinationType(kSuppressOutput)
 	{
-	assert(true);
+	NXS_ASSERT(true);
 	}
 NxsOutputDestinationDescription::NxsOutputDestinationDescription(ValidNCLOutputRedirect o)
 	:outDestinationType(kDirectOutputToNCLStream),
 	redirectStreams(1,o)
 	{
-	assert(true);
+	NXS_ASSERT(true);
 	}
 NxsOutputDestinationDescription::NxsOutputDestinationDescription(const std::string &fn, bool appendIfPresent, bool replaceIfPresent)
 	:outDestinationType(kDirectOutputToFile),

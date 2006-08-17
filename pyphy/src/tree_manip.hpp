@@ -4,7 +4,6 @@
 //POL This file is a modified version of phycasdev/phycas/tree/tree_manip.hpp
 // I am gradually incorporating the functions needed by the new Phycas
 
-#include <cassert>
 #include "boost/shared_ptr.hpp"
 
 namespace phycas

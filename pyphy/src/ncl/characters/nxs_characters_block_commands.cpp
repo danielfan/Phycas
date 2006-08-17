@@ -147,7 +147,7 @@ bool NxsCharactersBlock::AddEliminateCommand(NxsTestShPtr noAdvancedCmdsTest, Nx
 	eliminate->AddSettingReq(noAdvancedCmdsTest);
 	eliminate->AddSettingReq(somCharsExpectedTest);
 	bool check = eliminate->FinishedAddingOptions();
-	assert(check);
+	NXS_ASSERT(check);
 	AddCommand(eliminate);
 	return check;
 	}
@@ -166,7 +166,7 @@ bool NxsCharactersBlock::AddDimensionsCommand(NxsTestShPtr noAdvancedCmdsTest)
 	UIntCmdOption *nCharCI = new UIntCmdOption(GetNumCharsName(),  &dimensionSettings->secondDimension, 0, 			1, 		UINT_MAX, false, kCmdPermBasicUser );
 	dimen->AddKeyword(NxsCmdOptionShPtr(nCharCI));
 	check = dimen->FinishedAddingOptions();
-	assert(check);
+	NXS_ASSERT(check);
 	
 	AddCommand(dimen);
 	dimen->SetNumberOfTimesAllowedPerBlock(NxsCommand::kOnceAlways);
@@ -218,7 +218,7 @@ bool NxsCharactersBlock::AddFormatCommand(NxsTestShPtr noAdvancedCmdsTest)
 	// still need to check legality of missing, gap and match
 	//
 	check = vFormatCommand->FinishedAddingOptions();
-	assert(check);
+	NXS_ASSERT(check);
 	vFormatCommand->SetNumberOfTimesAllowedPerBlock(NxsCommand::kOnceMax);
 	vFormatCommand->AddSettingReq(noAdvancedCmdsTest);
 	AddCommand(vFormatCommand);

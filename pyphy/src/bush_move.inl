@@ -28,7 +28,7 @@ inline void BushMove::viewProposedMove(bool yes)
 inline void BushMove::setEdgeLenDistMean(
   double mean)
 	{
-	assert(mean > 0.0);
+	PHYCAS_ASSERT(mean > 0.0);
 	if (rng)
 		{
 		edgelen_mean = mean;

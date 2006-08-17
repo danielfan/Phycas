@@ -29,7 +29,7 @@ void EliminatedIndexSlider::SetEliminated(const NxsIndexSet &s, unsigned maxInde
 			}
 		else
 			++prevElement;
-		assert(prevElement <= maxIndex);
+		NXS_ASSERT(prevElement <= maxIndex);
 		}
 	const unsigned secSizeOfBlockMinusOne = beginingOfBlock- prevElement; 
 	offsets[beginingOfBlock + secSizeOfBlockMinusOne] = PairUInt(secSizeOfBlockMinusOne, totalOffset);
@@ -56,7 +56,7 @@ void EliminatedIndexSlider::BuildOldToNewIndexMap(std::vector<unsigned> *v, unsi
 		{
 		if (ind  >= begOfNextBlock)
 			{
-				assert(ind - currIndex == mIt->second.second);
+				NXS_ASSERT(ind - currIndex == mIt->second.second);
 			for (; ind <= mIt->first;)	
 				{
 				v->push_back(UINT_MAX);
@@ -65,9 +65,9 @@ void EliminatedIndexSlider::BuildOldToNewIndexMap(std::vector<unsigned> *v, unsi
 					return;
 				}
 			++mIt;
-			assert(mIt != offsets.end());
+			NXS_ASSERT(mIt != offsets.end());
 			begOfNextBlock = (mIt->first - mIt->second.first);
-			assert(ind < begOfNextBlock);
+			NXS_ASSERT(ind < begOfNextBlock);
 
 			}
 		v->push_back(currIndex++);

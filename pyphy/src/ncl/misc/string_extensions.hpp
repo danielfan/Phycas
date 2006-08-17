@@ -622,7 +622,7 @@ inline bool StrEquals(
 		case ncl::kStringCapAbbrev :
 			return IsCapAbbreviation(f, s);
 		default :
-			assert(0);// incorrect setting for mode
+			NXS_ASSERT(0);// incorrect setting for mode
 		}
 	return false;
 	}

@@ -52,7 +52,7 @@ NxsTable::NxsTable(
 void NxsTable::AddColumns(
   unsigned n)	/* the number of columns to add */
 	{
-	assert(n > 0);
+	NXS_ASSERT(n > 0);
 
 	// Create a new activeCol array of the larger size and copy the first
 	// ncols elements of the old activeCol array, initializing the remaining
@@ -92,7 +92,7 @@ void NxsTable::AddColumns(
 void NxsTable::AddRows(
   unsigned n)	/* the number of rows to add */
 	{
-	assert(n > 0);
+	NXS_ASSERT(n > 0);
 
 	// Create a new cells array with n more rows than the current version
 	//
@@ -549,7 +549,7 @@ void NxsTable::NextDown()
 	++curr_row;
 	if (bottom && curr_row >= bottom)
 		{
-		//@pol isn't this a situation where we should use an assert?
+		//@pol isn't this a situation where we should use an NXS_ASSERT?
 		curr_row = 0;
 		NextAcross();
 		}
@@ -1018,7 +1018,7 @@ void NxsTable::AddDoubleArr(
 				sprintf(temp,"%e", d[i]);
 			else
 				sprintf(temp,"%f", d[i]);
-			assert(!temp[99]);
+			NXS_ASSERT(!temp[99]);
 			s << temp  << ' ';
 			}
 		s << ')';
@@ -1438,9 +1438,9 @@ void NxsTable::AddCIP(
 void NxsTable::Show(
   NxsOutputStream & out)	/* the output stream object to which the formatted table will be sent */
 	{
-	assert(hideFrom <= nrows);
-	assert(hideTo <= nrows);
-	assert(hideTo >= hideFrom);
+	NXS_ASSERT(hideFrom <= nrows);
+	NXS_ASSERT(hideTo <= nrows);
+	NXS_ASSERT(hideTo >= hideFrom);
 
 	unsigned	lastRow	= (bottom > 0 ? bottom : nrows);
 	unsigned	lastCol	= (right > 0 ? right : ncols);
@@ -1624,12 +1624,12 @@ void NxsTable::Show(
 #if 0 //HIDE_PROTECTION_FUNCS
 	NxsTable::NxsTable(const NxsTable &)
 		{
-		assert(0);
+		NXS_ASSERT(0);
 		throw BadCopyConstrXcp("NxsTable");
 		}
 	NxsTable &NxsTable::operator=(const NxsTable &)
 		{
-		assert(0);
+		NXS_ASSERT(0);
 		throw BadEqOpXcp("NxsTable");
 		}
 

@@ -202,7 +202,7 @@ inline double MCMCUpdater::operator()(double)
 */
 inline void MCMCUpdater::createSliceSampler() 
 	{
-	assert(!slice_sampler);	// don't want to do this more than once
+	PHYCAS_ASSERT(!slice_sampler);	// don't want to do this more than once
 	slice_sampler.reset(new SliceSampler(rng, shared_from_this())); // forces inclusion of "pyphy/src/slice_sampler.hpp"
 	slice_sampler->SetMaxUnits(slice_max_units);
 	slice_sampler->SetXValue(slice_starting_value);

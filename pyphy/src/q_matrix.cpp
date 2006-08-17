@@ -10,12 +10,12 @@ using namespace phycas;
 */
 void QMatrix::recalcQMatrixImpl()
 	{
-	assert(q_dirty);
+	PHYCAS_ASSERT(q_dirty);
 
 	// pi, sqrtPi and rr should all be non-empty
-	assert(pi.size() > 0);
-	assert(sqrtPi.size() == pi.size());
-	assert(rr.size() > 0);
+	PHYCAS_ASSERT(pi.size() > 0);
+	PHYCAS_ASSERT(sqrtPi.size() == pi.size());
+	PHYCAS_ASSERT(rr.size() > 0);
 
 	// First check to make sure lengths of `rr' and `pi' are compatible with each other
 	unsigned dim_pi = (unsigned)pi.size();
@@ -60,7 +60,7 @@ void QMatrix::recalcQMatrixImpl()
 		qmat[i][i] = -row_sum[i];
 		}
 
-	assert(sum_for_scaling > 0.0);
+	PHYCAS_ASSERT(sum_for_scaling > 0.0);
 	edgelen_scaler = 1.0/sum_for_scaling;
 
 	// Calculate eigenvalues and eigenvectors
@@ -81,7 +81,7 @@ void QMatrix::recalcPMat(
   double * * pmat,		/**< */
   double edgelen) 		/**< */
 	{
-	assert(edgelen >= 0.0);
+	PHYCAS_ASSERT(edgelen >= 0.0);
 	recalcQMatrix();
 
 	// Adjust the supplied edgelen to account for the fact that the expected number of substitutions
@@ -113,7 +113,7 @@ void QMatrix::recalcPMatrix(
   std::vector<double> & P,	/**< */
   double edgelen)			/**< */
 	{
-	assert(edgelen >= 0.0);
+	PHYCAS_ASSERT(edgelen >= 0.0);
 	recalcQMatrix();
 
 	// Adjust the supplied edgelen to account for the fact that the expected number of substitutions

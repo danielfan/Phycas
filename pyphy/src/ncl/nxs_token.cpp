@@ -496,7 +496,7 @@ bool NxsToken::ReadCommandCommentOrToken()
 void NxsToken::ReadAllTokensUntil(
   char tokenBreaker)
   	{
-  	assert(IsTokenBreaker(tokenBreaker));
+  	NXS_ASSERT(IsTokenBreaker(tokenBreaker));
   	ResetToken();
 	char ch = ReadFirstGraphChar();
 	while (ch != tokenBreaker)

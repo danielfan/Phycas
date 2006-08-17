@@ -36,7 +36,7 @@ std::string TreeNode::GetDebugDescription() const
 	*/
 	string TreeNode::GetName() const
 		{
-		assert(gTaxaMgr);
+		PHYCAS_ASSERT(gTaxaMgr);
 		return gTaxaMgr->GetLabel(GetNodeNumber());
 		}
 
@@ -235,7 +235,7 @@ TreeNode * TreeNode::FindLeftSibImpl_() const
 	TreeNode * nd = par->GetLeftChild();
 	if (nd == this)
 		return NULL;
-	assert(nd != NULL); // parent should have at least one child
+	PHYCAS_ASSERT(nd != NULL); // parent should have at least one child
 	while (nd != NULL && nd->GetRightSib() != this)
 		nd = nd->GetRightSib();
 	return nd;
@@ -314,7 +314,7 @@ void TreeNode::ClassifyNodesBelow(unsigned * const nInternals, unsigned * const 
 void TreeNode::SetInfo(
   const string &info)	/* the branch length information; converted to float using atof and stored using SetFltEdgeLen member function */
 	{
-	assert(info.length() > 0);
+	PHYCAS_ASSERT(info.length() > 0);
 	SetFltEdgeLen(atof(info.c_str()));
 	}
 	
@@ -341,7 +341,7 @@ void TreeNode::Recurse(void &FuncObj(TreeNode*, int))
 		prevPreorder = p;
 		nextPreorder = NULL;
 		TreeNode *const lastPreorderInThisClade = (lChild == NULL ? this : lChild->SetPreorderPointers(this));
-		assert(p != NULL);
+		PHYCAS_ASSERT(p != NULL);
 		return (rSib == NULL ? lastPreorderInThisClade : rSib->SetPreorderPointers(lastPreorderInThisClade));
 		}
 #endif

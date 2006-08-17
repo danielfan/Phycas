@@ -129,7 +129,7 @@ inline unsigned NxsAlternativeTaxaBlock::GetNumTaxaWithData() const
 inline void NxsAlternativeTaxaBlock::SetNewNumTaxaAfterReadingData(
   unsigned i)
 	{
-	assert( i <= nTaxaInMatrix);
+	NXS_ASSERT( i <= nTaxaInMatrix);
 	nTaxaInMatrix = i;
 	}
 
@@ -151,8 +151,8 @@ inline void NxsAlternativeTaxaBlock::SetTaxPosInMatrix(
   unsigned taxaBlockPos,
   unsigned localPos)
 	{
-	assert(taxaBlockPos < taxonPos.size());
-	assert(taxonPos[taxaBlockPos] == UINT_MAX);
+	NXS_ASSERT(taxaBlockPos < taxonPos.size());
+	NXS_ASSERT(taxonPos[taxaBlockPos] == UINT_MAX);
 	taxonPos[taxaBlockPos] = localPos;
 	}
 	

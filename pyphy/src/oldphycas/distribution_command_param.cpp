@@ -183,7 +183,7 @@ bool DistributionCmdOption::ReadInvGamma(
 		}
 	if (currentValue->meaningOfVariable == DistributionDescription::kParam)
 		{
-		assert(currentValue->contVariables.size() == 2);
+		PHYCAS_ASSERT(currentValue->contVariables.size() == 2);
 		if (currentValue->contVariables[0] <= 2)
 			{
 			errState = query_for_error;
@@ -234,7 +234,7 @@ bool DistributionCmdOption::ReadDirichlet(
 		}
 	else
 		{
-		assert(!asBeta);
+		PHYCAS_ASSERT(!asBeta);
 		// nVariates unknown read any number or params (> 1)
 		//
 		unsigned nRead = 0;
@@ -367,7 +367,7 @@ DistributionCmdOption::DistributionCmdOption(
   	classOfDistribution(c),
   	nVariates(numVariates)
   	{
-  	assert(ddToModify);
+  	PHYCAS_ASSERT(ddToModify);
   	if (!def.empty() && ReadStringAsValue(def))
 		defaultValue = *currentValue;
 	}
@@ -460,7 +460,7 @@ const DistributionCmdOption::VecDistParamDesc *DistributionCmdOption::ReadParams
 	vector<const VecDistParamDesc *> stillViable;
 	vector<const VecDistParamDesc *>::const_iterator vecIt = inVec.begin();
 	DistParamType pt = kUndefinedParam;
-	assert(token.GetTokenReference().length() > 0);
+	PHYCAS_ASSERT(token.GetTokenReference().length() > 0);
 	//	Narrow down which of the ways of specifying the distribution is being used.
 	// we should be able to determine the type of the next token here.  If none are consistent with the token stream, return NULL
 	//
@@ -474,7 +474,7 @@ const DistributionCmdOption::VecDistParamDesc *DistributionCmdOption::ReadParams
 				const DistParamDesc &dpd = (**vecIt)[index];
 				if (token.IsAbbreviation(dpd.name))
 					{
-					assert(pt == kUndefinedParam || pt == dpd.type);	// we shouldn't have multiple matches with different types of params
+					PHYCAS_ASSERT(pt == kUndefinedParam || pt == dpd.type);	// we shouldn't have multiple matches with different types of params
 					pt = dpd.type;
 					stillViable.push_back(*vecIt);
 					}
@@ -498,7 +498,7 @@ const DistributionCmdOption::VecDistParamDesc *DistributionCmdOption::ReadParams
 				const DistParamDesc &dpd = (**vecIt)[index];
 				if (dpd.nameIsOptional)
 					{
-					assert(pt == kUndefinedParam || pt == dpd.type);	// we shouldn't have multiple matches with different types of params
+					PHYCAS_ASSERT(pt == kUndefinedParam || pt == dpd.type);	// we shouldn't have multiple matches with different types of params
 					pt = dpd.type;
 					stillViable.push_back(*vecIt);
 					}
@@ -535,11 +535,11 @@ const DistributionCmdOption::VecDistParamDesc *DistributionCmdOption::ReadParams
 				 return NULL;
 			break;
 		case (kUndefinedParam):
-			assert(false);
+			PHYCAS_ASSERT(false);
 			return NULL;
 		}
 	++token;
-	assert(!stillViable.empty());
+	PHYCAS_ASSERT(!stillViable.empty());
 	const DistributionCmdOption::VecDistParamDesc *returnVec = NULL;
 	//  recurse if there are more parameters to read)
 	if (stillViable[0]->size() > index + 1)
@@ -553,14 +553,14 @@ const DistributionCmdOption::VecDistParamDesc *DistributionCmdOption::ReadParams
 		}
 	else
 		{
-		assert (stillViable.size() == 1); //it shouldn't be possible reach the end of the param list and still not be certain which description is being used.
+		PHYCAS_ASSERT (stillViable.size() == 1); //it shouldn't be possible reach the end of the param list and still not be certain which description is being used.
 		returnVec = stillViable[0];
 		currentValue->meaningOfVariable = ((*returnVec)[index].isParam ? DistributionDescription::kParam: DistributionDescription::kMoment);
 		}
 	if (returnVec != NULL)
 		{
 		const DistParamDesc &dpd = (*returnVec)[index];
-		assert( (currentValue->meaningOfVariable == DistributionDescription::kMoment) && (!(dpd.isParam)) || (currentValue->meaningOfVariable == DistributionDescription::kParam) && (dpd.isParam));	// we shouldn't allow mixing of descriptions via params and via moments
+		PHYCAS_ASSERT( (currentValue->meaningOfVariable == DistributionDescription::kMoment) && (!(dpd.isParam)) || (currentValue->meaningOfVariable == DistributionDescription::kParam) && (dpd.isParam));	// we shouldn't allow mixing of descriptions via params and via moments
 		//	square all standard deviations to get the variance
 		//
 		if (currentValue->meaningOfVariable == DistributionDescription::kMoment && EqualsCaseInsensitive(dpd.name, "STDDEV"))
@@ -571,14 +571,14 @@ const DistributionCmdOption::VecDistParamDesc *DistributionCmdOption::ReadParams
 			{
 			while (currentValue->discreteVariables.size() <= dpd.paramIndex)
 				currentValue->discreteVariables.push_back(0);
-			assert(currentValue->discreteVariables[dpd.paramIndex] == 0);
+			PHYCAS_ASSERT(currentValue->discreteVariables[dpd.paramIndex] == 0);
 			currentValue->discreteVariables[dpd.paramIndex] = l;
 			}
 		else
 			{
 			while (currentValue->contVariables.size() <= dpd.paramIndex)
 				currentValue->contVariables.push_back(0.0);
-			assert(currentValue->contVariables[dpd.paramIndex] == 0.0);
+			PHYCAS_ASSERT(currentValue->contVariables[dpd.paramIndex] == 0.0);
 			currentValue->contVariables[dpd.paramIndex] = d;
 			}
 		}
@@ -633,7 +633,7 @@ bool DistributionCmdOption::ReadBeta(
 		}
 	if (currentValue->meaningOfVariable == DistributionDescription::kMoment)
 		{
-		assert(currentValue->contVariables.size() == 2);
+		PHYCAS_ASSERT(currentValue->contVariables.size() == 2);
 		if (currentValue->contVariables[1] > (currentValue->contVariables[0] - currentValue->contVariables[0]*currentValue->contVariables[0]))
 			{
 			errState = query_for_error;
@@ -681,8 +681,8 @@ bool DistributionCmdOption::ReadUniform(
 		errSnippet << "Expecting Uniform(LowerBound = <number>, UpperBound = <number>) but encountered " << distCmdOptcmdRead << "...";
 		return false;
 		}
-	assert(currentValue->contVariables.size() == 2);
-	assert(currentValue->discreteVariables.empty());
+	PHYCAS_ASSERT(currentValue->contVariables.size() == 2);
+	PHYCAS_ASSERT(currentValue->discreteVariables.empty());
 	if (currentValue->contVariables[0] >= currentValue->contVariables[1])
 		{
 		errState = illegal_range;

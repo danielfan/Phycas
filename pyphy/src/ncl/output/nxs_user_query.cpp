@@ -253,8 +253,8 @@ unsigned NxsUserQuery::UserChoice(
   unsigned nonBlockingResponse) const /// the response used in non-interactive mode to allow computation to proceed MUST be less than v.size()
 	{
 	
-	assert(defaultResponse == UINT_MAX || defaultResponse < v.size());
-	assert(nonBlockingResponse < v.size());
+	PHYCAS_ASSERT(defaultResponse == UINT_MAX || defaultResponse < v.size());
+	PHYCAS_ASSERT(nonBlockingResponse < v.size());
 	string autoAcceptString;
 	autoAcceptString << v[nonBlockingResponse] << " chosen  (Running in automatic mode)";
 	UInt chosenIndex = defaultResponse;

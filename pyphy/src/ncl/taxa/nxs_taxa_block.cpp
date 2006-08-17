@@ -55,7 +55,7 @@ bool NxsTaxaBlock::ParseDimensions(NxsToken &token)
 	unsigned u;
 	if (!IsAnUnsigned(token.GetTokenReference(), &u)|| u == UINT_MAX || u == 0)
 		token.ThrowUnexpectedTokenNxsException("a positive number");
-	assert(taxLabels.empty());
+	NXS_ASSERT(taxLabels.empty());
 	taxLabels.clear();
 	VecString tmp;
 	FillVectorWithNumbers(tmp, 1, u + 1);

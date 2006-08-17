@@ -33,8 +33,8 @@ using std::string;
 	  	indexBefCmd(defIndex),
 	  	defaultIndex(defIndex)
 	  	{
-	  	assert(vectorOfSubOption.size() > 1);
-	  	assert(defIndex < vectorOfSubOption.size());
+	  	NXS_ASSERT(vectorOfSubOption.size() > 1);
+	  	NXS_ASSERT(defIndex < vectorOfSubOption.size());
 	  	*optIndex = defaultIndex;
 	  	for (VecNxsCmdOptionShPtr::iterator sovIt = subOptVector.begin();  sovIt != subOptVector.end();  ++sovIt)
 	  		{
@@ -72,7 +72,7 @@ using std::string;
 		
 	bool NxsMixedCmdOption::IsCurrentlyValid()
 		{
-		assert(*subOptionIndex < subOptVector.size());
+		NXS_ASSERT(*subOptionIndex < subOptVector.size());
 		return (subOptVector[*subOptionIndex]->IsCurrentlyValid() ? true : FlagError(subOptVector[*subOptionIndex]->GetErrorState(), subOptVector[*subOptionIndex]->GetErrorSnippet()));
 		}
 		
@@ -128,7 +128,7 @@ using std::string;
 	  	
 	string NxsMixedCmdOption::GetCurrentValueAsString() const
 		{
-		assert(*subOptionIndex < subOptVector.size());
+		NXS_ASSERT(*subOptionIndex < subOptVector.size());
 		return subOptVector[*subOptionIndex]->GetCurrentValueAsString();
 		}
 			

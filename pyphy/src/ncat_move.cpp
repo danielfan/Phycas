@@ -77,7 +77,7 @@ void NCatMove::proposeNewState()
 	else
 		{
 		ncat_after = ncat_before - 1;
-		assert(ncat_after > 0);
+		PHYCAS_ASSERT(ncat_after > 0);
 
 		proposeDelCatMove();
 
@@ -173,7 +173,7 @@ void NCatMove::proposeAddCatMove()
 
 	// Choose a new category probability from the category probability prior distribution
 
-	assert(cat_prob_prior);
+	PHYCAS_ASSERT(cat_prob_prior);
 	tmp_prob = cat_prob_prior->Sample();
 
 	// Insert the new rate
@@ -185,8 +185,8 @@ void NCatMove::proposeAddCatMove()
 	// Fix num_gamma_rates to reflect changes
 	model->num_gamma_rates = (unsigned)model->gamma_rates_unnorm.size();
 
-	assert(model->num_gamma_rates == model->gamma_rate_probs.size());
-	assert(model->num_gamma_rates == ncat_after);
+	PHYCAS_ASSERT(model->num_gamma_rates == model->gamma_rate_probs.size());
+	PHYCAS_ASSERT(model->num_gamma_rates == ncat_after);
 
 #if defined(SHOW_DEBUGGING_OUTPUT)
 	std::cerr << "\n*********** In proposeAddCatMove() ***********" << std::endl;
@@ -246,8 +246,8 @@ void NCatMove::proposeDelCatMove()
 	// Fix num_gamma_rates to reflect changes
 	model->num_gamma_rates = (unsigned)model->gamma_rates_unnorm.size();
 
-	assert(model->num_gamma_rates == model->gamma_rate_probs.size());
-	assert(model->num_gamma_rates == ncat_after);
+	PHYCAS_ASSERT(model->num_gamma_rates == model->gamma_rate_probs.size());
+	PHYCAS_ASSERT(model->num_gamma_rates == ncat_after);
 
 #if defined(SHOW_DEBUGGING_OUTPUT)
 	std::cerr << "\n*********** In proposeDelCatMove() ***********" << std::endl;
@@ -292,8 +292,8 @@ void NCatMove::revert()
 	// Fix num_gamma_rates to reflect changes
 	model->num_gamma_rates = (unsigned)model->gamma_rates_unnorm.size();
 
-	assert(model->num_gamma_rates == model->gamma_rate_probs.size());
-	assert(model->num_gamma_rates == ncat_before);
+	PHYCAS_ASSERT(model->num_gamma_rates == model->gamma_rate_probs.size());
+	PHYCAS_ASSERT(model->num_gamma_rates == ncat_before);
 
 	// Renormalize the rates and probs so that we are ready for next likelihood calculation
 	likelihood->recalcRelativeRates();
@@ -313,7 +313,7 @@ void NCatMove::update()
 		return;
 
 	ChainManagerShPtr p = chain_mgr.lock();
-	assert(p);
+	PHYCAS_ASSERT(p);
 	double prev_ln_like = p->getLastLnLike();
 
 	proposeNewState();

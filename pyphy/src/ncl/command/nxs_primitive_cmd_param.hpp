@@ -90,14 +90,14 @@ class NamedNumberSource
 			:ptr(p),
 			name(n)
 			{
-			assert(p);
+			NXS_ASSERT(p);
 			}
 		NamedNumberSource(const std::string &n, CallbackPtr p)
 			:callback(p),
 			ptr(NULL),
 			name(n)
 			{
-			assert(p);
+			NXS_ASSERT(p);
 			}
 		operator bool () const // implicit cast to bool
 			{

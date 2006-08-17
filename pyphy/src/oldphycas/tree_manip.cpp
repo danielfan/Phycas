@@ -40,14 +40,14 @@ void TreeManip::BuildTreeFromID(
   const TreeID& tree_id,	/**< s the TreeID object specifying the splits to be used in constructing the tree */
   unsigned root_at)			/**< is the index of the tip node serving as the root */	//POL added 22-Oct-2004
 	{
-	assert(taxaMgr != NULL);
+	PHYCAS_ASSERT(taxaMgr != NULL);
 	unsigned nlvs = taxaMgr->GetNumActive();
 	unsigned maxlvs = taxaMgr->GetNumTaxa();
 	unsigned nextInternalNodeNum = maxlvs;
 	const double commonDefEdgeLen = 1.0;
 
 	SplitSet const &ss = tree_id.GetSplitSet();
-	assert(!ss.empty());
+	PHYCAS_ASSERT(!ss.empty());
 
 #if defined(DEBUG_BUILD_TREE_FROM_ID)
 	std::string tmps;
@@ -168,8 +168,8 @@ void TreeManip::BuildTreeFromID(
 	std::cerr << "GetNLeaves() = " << tree->GetNLeaves() << std::endl;
 	std::cerr << "nlvs = " << nlvs << std::endl;
 
-	assert(tree->GetNLeaves() == nlvs);
-	assert(rootNode == tree->GetRoot());
+	PHYCAS_ASSERT(tree->GetNLeaves() == nlvs);
+	PHYCAS_ASSERT(rootNode == tree->GetRoot());
 
 	tree->RefreshFullID();
 	tree->DebugCheckTreeStructure();
@@ -325,8 +325,8 @@ void TreeManip::SimpleBuildTreeFromID(
 	std::cerr << "GetNLeaves() = " << tree->GetNLeaves() << std::endl;
 	std::cerr << "nlvs = " << nlvs << std::endl;
 
-	//assert(tree->GetNLeaves() == nlvs);
-	assert(rootNode == tree->GetRoot());
+	//PHYCAS_ASSERT(tree->GetNLeaves() == nlvs);
+	PHYCAS_ASSERT(rootNode == tree->GetRoot());
 
 	tree->RefreshFullID();
 	tree->DebugCheckTreeStructure();
@@ -346,7 +346,7 @@ void TreeManip::SimpleBuildStarTree(
 #endif
   double	lambda)		/**< mean edge length */
 	{
-	assert(tree != NULL);
+	PHYCAS_ASSERT(tree != NULL);
 	tree->Clear();
 	tree->hasEdgelens = true;
 	const double commonEdgeLen = 1.0;	// used only if rnd == NULL
@@ -387,9 +387,9 @@ void TreeManip::SimpleBuildStarTree(
 #endif
 
 	tree->TraverseTree();
-	assert(tree->GetNLeaves() == nlvs);
-	assert(tree->GetNInternals() == 1);
-	assert(rootNd == tree->GetRoot());
+	PHYCAS_ASSERT(tree->GetNLeaves() == nlvs);
+	PHYCAS_ASSERT(tree->GetNInternals() == 1);
+	PHYCAS_ASSERT(rootNd == tree->GetRoot());
 	rootNd->split.Clear();
 	tree->ForAllLeaves(boost::function1<void, TreeNode*>(&TreeNode::CreateSplit));
 	tree->RefreshID();
@@ -450,7 +450,7 @@ void TreeManip::SimpleBuildYuleTree(
 
 	//@POL this function essentially builds an unrooted tree because node 0 is the root
 	// need to decide how to deal with rooted trees - is the root node number 0 for rooted trees?
-	assert(tree != NULL);
+	PHYCAS_ASSERT(tree != NULL);
 	tree->Clear();
 	tree->hasEdgelens = true;
 
@@ -521,7 +521,7 @@ void TreeManip::SimpleBuildYuleTree(
 
 		// Check for lChild pointer directed at nd, redirect to parent
 		//
-		assert(nd->par != NULL);
+		PHYCAS_ASSERT(nd->par != NULL);
 		if (nd->par->lChild == nd)
 			nd->par->lChild = parent;
 
@@ -582,7 +582,7 @@ void TreeManip::SimpleBuildYuleTree(
 
 	// Choose a final brlen
 	//
-	assert(i == nlvs);
+	PHYCAS_ASSERT(i == nlvs);
 	mean = 1.0/(lambda*nlvs);
 	variance = mean*mean;
 	expDist.SetMeanAndVariance(mean, variance);
@@ -597,7 +597,7 @@ void TreeManip::SimpleBuildYuleTree(
 		}
 
 	tree->TraverseTree();
-	assert(tree->GetNLeaves() == nlvs);
+	PHYCAS_ASSERT(tree->GetNLeaves() == nlvs);
 	tree->RefreshFullID();
 	tree->DebugCheckTreeStructure();
 	}
@@ -609,9 +609,9 @@ void TreeManip::SimpleBuildYuleTree(
 void TreeManip::DetachSubtree(
   TreeNode *s)	/* the root of the subtree to be detached */
 	{
-	assert(s != NULL);
-	assert(!s->IsRoot());
-	assert(!s->GetParent()->IsRoot());
+	PHYCAS_ASSERT(s != NULL);
+	PHYCAS_ASSERT(!s->IsRoot());
+	PHYCAS_ASSERT(!s->GetParent()->IsRoot());
 
 	// Save pointers to relevant nodes
 	//
@@ -662,9 +662,9 @@ void TreeManip::InsertSubtree(
   InsertMode m,			/* if kOnRight, s will be added to the right of targetSib or, if targetSib is not specified, s will become rightmost child of u (vice versa if kOnLeft specified) */
   TreeNode *targetSib)	/* if non-NULL, s will become an immediate sibling of this node (right or left depending on value of `m') */
 	{
-	assert(u != NULL);
-	assert(s != NULL);
-	assert(targetSib == NULL || (targetSib->par == u));
+	PHYCAS_ASSERT(u != NULL);
+	PHYCAS_ASSERT(s != NULL);
+	PHYCAS_ASSERT(targetSib == NULL || (targetSib->par == u));
 
 	TreeNode *slast					= s->FindLastPreorderInClade();
 	TreeNode *u_lChild				= u->lChild;
@@ -775,11 +775,11 @@ void TreeManip::SibToChild(
   InsertMode ,			/* if kOnRight, s will be added to the right of targetSib or, if targetSib is not specified, s will become rightmost child of u (vice versa if kOnLeft specified) */
   TreeNode *targetSib)	/* if specified, s will become and immediate sibling of this node (which should be a child of u) */
 	{
-	assert(u				!= NULL);
-	assert(u->par			!= NULL);
-	assert(s->par			!= NULL);
-	assert(u->par == s->par);
-	assert(targetSib == NULL || (targetSib->par == u));
+	PHYCAS_ASSERT(u				!= NULL);
+	PHYCAS_ASSERT(u->par			!= NULL);
+	PHYCAS_ASSERT(s->par			!= NULL);
+	PHYCAS_ASSERT(u->par == s->par);
+	PHYCAS_ASSERT(targetSib == NULL || (targetSib->par == u));
 
 	DetachSubtree(s);
 	InsertSubtree(s, u, TreeManip::kOnRight, targetSib);
@@ -816,12 +816,12 @@ void TreeManip::DeleteLeaf(
 	else
 		u_lSib->rSib = u_rSib;
 
-	assert(u_prevPre != NULL);
+	PHYCAS_ASSERT(u_prevPre != NULL);
 	u_prevPre->nextPreorder = u_nextPre;
 
 	// Detach and then delete u
 	//
-	assert(u->lChild == NULL);
+	PHYCAS_ASSERT(u->lChild == NULL);
 	u->rSib			= NULL;
 	u->par			= NULL;
 	u->prevPreorder = NULL;
@@ -857,11 +857,11 @@ void TreeManip::LChildToLSib(
   TreeNode *u,	/* this node's leftmost child will be removed */
   TreeNode *w)	/* the removed node will become this node's left sibling */
 	{
-	assert(u				!= NULL);
-	assert(u->lChild		!= NULL);	// must have a node to mode
-	assert(w				!= NULL);
-	assert(w->par			!= NULL);
-	assert(w->par->lChild	!= NULL);
+	PHYCAS_ASSERT(u				!= NULL);
+	PHYCAS_ASSERT(u->lChild		!= NULL);	// must have a node to mode
+	PHYCAS_ASSERT(w				!= NULL);
+	PHYCAS_ASSERT(w->par			!= NULL);
+	PHYCAS_ASSERT(w->par->lChild	!= NULL);
 
 	// Make copies of the important pointers
 	//
@@ -927,11 +927,11 @@ void TreeManip::RChildToRSib(
   TreeNode *u,	/* this node's rightmost child will be removed */
   TreeNode *w)	/* the removed node will become this node's right sibling */
 	{
-	assert(u				!= NULL);
-	assert(u->lChild		!= NULL);
-	assert(w				!= NULL);
-	assert(w->par			!= NULL);
-	assert(w->par->lChild	!= NULL);
+	PHYCAS_ASSERT(u				!= NULL);
+	PHYCAS_ASSERT(u->lChild		!= NULL);
+	PHYCAS_ASSERT(w				!= NULL);
+	PHYCAS_ASSERT(w->par			!= NULL);
+	PHYCAS_ASSERT(w->par->lChild	!= NULL);
 
 	// Make copies of the important pointers
 	//
@@ -1009,13 +1009,13 @@ void TreeManip::RChildToRSib(
 void TreeManip::NNISwapSpecial(
   TreeNode *swap1)
 	{
-	assert(swap1 != NULL);
+	PHYCAS_ASSERT(swap1 != NULL);
 
 	TreeNode *V = swap1->GetParent();
-	assert(V != NULL);
+	PHYCAS_ASSERT(V != NULL);
 
 	TreeNode *U = V->GetParent();
-	assert(U != NULL);
+	PHYCAS_ASSERT(U != NULL);
 
 	TreeNode *R = U->FindRightChild();
 	if (R == V)
@@ -1048,14 +1048,14 @@ void TreeManip::NNISwap(
   TreeNode *swap1, 
   TreeNode *swap2)
 	{
-	assert(tree != NULL);
-	assert(tree->GetRoot() != NULL);
-	assert(tree->GetRoot() != swap1);
-	assert(tree->GetRoot() != swap2);
-	assert(swap1 != NULL);
-	assert(swap2 != NULL);
-	assert(swap1->GetParent() != NULL);
-	assert(swap2->GetParent() != NULL);
+	PHYCAS_ASSERT(tree != NULL);
+	PHYCAS_ASSERT(tree->GetRoot() != NULL);
+	PHYCAS_ASSERT(tree->GetRoot() != swap1);
+	PHYCAS_ASSERT(tree->GetRoot() != swap2);
+	PHYCAS_ASSERT(swap1 != NULL);
+	PHYCAS_ASSERT(swap2 != NULL);
+	PHYCAS_ASSERT(swap1->GetParent() != NULL);
+	PHYCAS_ASSERT(swap2->GetParent() != NULL);
 
 	// Let node v be the higher of the two parent nodes, with u being the lower of the two parent nodes, 
 	// and let x be v's child and y be u's child:
@@ -1086,7 +1086,7 @@ void TreeManip::NNISwap(
 		v = swap2->GetParent();
 		}
 
-	assert(v->GetParent() == u);
+	PHYCAS_ASSERT(v->GetParent() == u);
 
 	// +------------------------------------------------------------------+
 	// | First order of business is to save the new navigational pointer  |

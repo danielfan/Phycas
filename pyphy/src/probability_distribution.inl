@@ -112,7 +112,7 @@ inline NormalDistribution::NormalDistribution(
   double m,		/* the mean parameter */
   double s)		/* the standard deviation parameter */
   	{
-	assert(s > 0.0);
+	PHYCAS_ASSERT(s > 0.0);
 	mean = m;
 	sd = s;
 	pi_const = 2.0*std::asin(1.0);
@@ -240,7 +240,7 @@ inline void NormalDistribution::SetMeanAndVariance(
   double mu, 	/* the mean of the gamma distribution */
   double var)	/* the variance of the gamma distribution */
   	{
-	assert(var > 0.0);
+	PHYCAS_ASSERT(var > 0.0);
 	mean = mu;
   	sd = sqrt(var);
 	ComputeLnConst();
@@ -831,8 +831,8 @@ inline GammaDistribution::GammaDistribution(
   double shape,		/* the shape parameter */
   double scale)		/* the scale parameter */
   	{
-	assert(shape > 0.0);
-	assert(scale > 0.0);
+	PHYCAS_ASSERT(shape > 0.0);
+	PHYCAS_ASSERT(scale > 0.0);
 	alpha = shape;
 	beta = scale;
 	ComputeLnConst();
@@ -960,8 +960,8 @@ inline void GammaDistribution::SetMeanAndVariance(
   double mean, 	/* the mean of the gamma distribution */
   double var)	/* the variance of the gamma distribution */
   	{
-	assert(mean > 0.0);
-	assert(var > 0.0);
+	PHYCAS_ASSERT(mean > 0.0);
+	PHYCAS_ASSERT(var > 0.0);
 	alpha = mean*mean/var;
   	beta = var/mean;
 	ComputeLnConst();
@@ -1254,7 +1254,7 @@ inline void InverseGammaDistribution::SetMeanAndVariance(
 inline const GammaDistribution &DirichletDistribution::GetDistributionOnParameter(
   unsigned i) const
   	{
-  	assert( i < paramDistributions.size());
+  	PHYCAS_ASSERT( i < paramDistributions.size());
 	return paramDistributions[i];
   	}
 
@@ -1336,7 +1336,7 @@ inline std::string DirichletDistribution::GetDistributionName() const
 
 inline std::string DirichletDistribution::GetDistributionDescription() const 
 	{
-	assert(GetNParams() > 1);
+	PHYCAS_ASSERT(GetNParams() > 1);
 	std::string s;
 	s << "DirichletDist(";
 	//s << MakeStrPrintF("%.5f", dirParams[0]);
@@ -1367,7 +1367,7 @@ inline std::string DirichletDistribution::GetDistributionDescription() const
 */
 inline std::string DirichletDistribution::GetDescriptionForPython() const 
 	{
-	assert(GetNParams() > 1);
+	PHYCAS_ASSERT(GetNParams() > 1);
 	std::string s;
 	s << "DirichletDist((";
 	//s << MakeStrPrintF("%.5f", dirParams[0]);
@@ -1443,9 +1443,9 @@ inline double DirichletDistribution::ApproxCDF(
   unsigned nsamples)	/**< is the number of samples to use in approximating the CDF */
   const 
 	{
-	assert(nsamples > 0);
+	PHYCAS_ASSERT(nsamples > 0);
 	unsigned nparams = GetNParams();
-	assert(x.size() >= nparams - 1);
+	PHYCAS_ASSERT(x.size() >= nparams - 1);
 	unsigned num_inside = 0;
 
 	for (unsigned k = 0; k < nsamples; ++k)
@@ -1498,7 +1498,7 @@ inline double DirichletDistribution::GetLnPDF(
   const VecDbl &x)
   const 
 	{
-	assert(GetNParams() == (unsigned)x.size());
+	PHYCAS_ASSERT(GetNParams() == (unsigned)x.size());
 	double retVal = 0.0;
 
 	double c = 0.0;
@@ -1519,7 +1519,7 @@ inline double DirichletDistribution::GetRelativeLnPDF(
   const VecDbl &x)
   const 
 	{
-	assert(GetNParams() == (unsigned)x.size());
+	PHYCAS_ASSERT(GetNParams() == (unsigned)x.size());
 	double retVal = 0.0;
 
 	for (unsigned i = 0; i < GetNParams(); ++i)
@@ -1579,10 +1579,10 @@ inline void DirichletDistribution::SetMeanAndVariance(const VecDbl &m, const Vec
 	unsigned m_length = (unsigned)m.size();
 
 	// check to make sure mean and variance vectors are the same length
-	assert(m_length == (unsigned)v.size());
+	PHYCAS_ASSERT(m_length == (unsigned)v.size());
 
 	// check to make sure user isn't trying to change the dimension of the distribution
-	assert(m_length == GetNParams());
+	PHYCAS_ASSERT(m_length == GetNParams());
 
 	// create iterators
 	// get pointers to the underlying C arrays
@@ -1625,10 +1625,10 @@ inline void DirichletDistribution::AltSetMeanAndVariance(boost::python::numeric:
 	unsigned m_length = (unsigned)m.nelements();
 
 	// check to make sure mean and variance vectors are the same length
-	assert(m_length == (unsigned)v.nelements());
+	PHYCAS_ASSERT(m_length == (unsigned)v.nelements());
 
 	// check to make sure user isn't trying to change the dimension of the distribution
-	assert(m_length == GetNParams());
+	PHYCAS_ASSERT(m_length == GetNParams());
 
 	// get pointers to the underlying C arrays
 	double *mean     = (double *)num_util::data(m);

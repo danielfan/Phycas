@@ -80,8 +80,8 @@ inline effective_postorder_edge_iterator::effective_postorder_edge_iterator(
   NodeValidityChecker f)	/**< functor that takes two Node pointers and returns true if the iteration in this subtree should be stopped) */
   : isValidChecker(f), effectiveRoot(effRoot)
 	{
-	assert(!isValidChecker.empty());
-	assert(effectiveRoot != NULL);
+	PHYCAS_ASSERT(!isValidChecker.empty());
+	PHYCAS_ASSERT(effectiveRoot != NULL);
 
 	// Build that part of edge_stack based on nodes above effectiveRoot
 	BuildStackFromNodeAndSiblings(effectiveRoot->GetLeftChild(), NULL);
@@ -172,7 +172,7 @@ inline void effective_postorder_edge_iterator::increment()
 		}
 	else
 		{
-		assert(effectiveRoot == NULL);
+		PHYCAS_ASSERT(effectiveRoot == NULL);
 		}
 	}
 
@@ -193,7 +193,7 @@ inline bool effective_postorder_edge_iterator::equal(effective_postorder_edge_it
 */
 inline EdgeEndpoints & effective_postorder_edge_iterator::dereference() const
     {
-	assert(!edge_stack.empty());
+	PHYCAS_ASSERT(!edge_stack.empty());
 	topOfEdgeStack = edge_stack.top();
     return topOfEdgeStack;
     }

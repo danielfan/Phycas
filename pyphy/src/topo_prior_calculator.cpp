@@ -65,8 +65,8 @@ void TopoPriorCalculator::RecalcCountsAndPriorsImpl(
 void TopoPriorCalculator::AddNextCount(
   unsigned m)	/**< is the number of internal nodes (should equal current length of `counts' vector) */
 	{
-	assert(m > 1);
-	assert(counts.size() == m);
+	PHYCAS_ASSERT(m > 1);
+	PHYCAS_ASSERT(counts.size() == m);
 	counts.push_back(0.0);
 
 	// This will probably not make any sense at all unless you read the section on computing numbers of trees
@@ -134,7 +134,7 @@ void TopoPriorCalculator::RecalcPriorsImpl()
 	unsigned maxm = ntax - (is_rooted ? 1 : 2);
 
 	// counts vector should have length equal to maxm - 1 if everything is ok
-	assert(maxm == (unsigned)counts.size() - 1);
+	PHYCAS_ASSERT(maxm == (unsigned)counts.size() - 1);
 
 	double total = 0.0;
 	double logC = std::log(C);
@@ -158,7 +158,7 @@ double TopoPriorCalculator::GetCount(
   unsigned n,	/**< is the number of taxa */
   unsigned m)	/**< is the number of internal nodes */
 	{
-	assert((is_rooted && (m < n)) || (!is_rooted && (m < n - 1)));
+	PHYCAS_ASSERT((is_rooted && (m < n)) || (!is_rooted && (m < n - 1)));
 	if (n != ntax)
 		SetNTax(n);
 	if (topo_priors_dirty)

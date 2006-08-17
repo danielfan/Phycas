@@ -269,7 +269,7 @@ inline void Tree::ChangeNInternals(signed delta)
 	if (delta < 0)
 		{
 		unsigned u_delta = (unsigned)(-delta);
-		assert(u_delta <= nInternals);
+		PHYCAS_ASSERT(u_delta <= nInternals);
 		nInternals -= u_delta;
 		}
 	else

@@ -100,7 +100,7 @@ void EdgeMove::update()
 		return;
 
 	ChainManagerShPtr p = chain_mgr.lock();
-	assert(p);
+	PHYCAS_ASSERT(p);
 
 	double prev_ln_like			= p->getLastLnLike();
 

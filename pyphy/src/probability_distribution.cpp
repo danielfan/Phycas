@@ -11,7 +11,7 @@ DirichletDistribution::DirichletDistribution(const std::vector<double> &params)
 	{
 	unsigned params_size = (unsigned)params.size();
 	//std::cerr << "params_size = " << params_size << std::endl;
-	assert(params_size > 1);
+	PHYCAS_ASSERT(params_size > 1);
 
 	// Reserve necessary space to save copying
 	//

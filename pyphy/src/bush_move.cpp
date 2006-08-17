@@ -49,7 +49,7 @@ void BushMove::update()
 		}
 
 	ChainManagerShPtr p = chain_mgr.lock();
-	assert(p);
+	PHYCAS_ASSERT(p);
 	double prev_ln_like = p->getLastLnLike();
 
 	proposeNewState();
@@ -123,7 +123,7 @@ void BushMove::proposeNewState()
 		{
 		// Choose a polytomy at random to split
 		//
-		assert(num_polytomies > 0);
+		PHYCAS_ASSERT(num_polytomies > 0);
 		unsigned i = rng->SampleUInt(num_polytomies);
 		nd = polytomies[i];
 		proposeAddEdgeMove(nd);
@@ -259,8 +259,8 @@ void BushMove::proposeNewState()
 		// already a polytomy)
 		//
 		unsigned num_internals = nnodes - num_taxa - 1;
-		assert(num_internals > 0);
-		assert(num_internals < num_taxa);
+		PHYCAS_ASSERT(num_internals > 0);
+		PHYCAS_ASSERT(num_internals < num_taxa);
 		unsigned i = rng->SampleUInt(num_internals);
 
 		for (nd = tree->GetFirstPreorder(); nd != NULL; nd = nd->GetNextPreorder())
@@ -397,7 +397,7 @@ void BushMove::revert()
 		for (;;)
 			{
 			TreeNode * s = nd;
-			assert(s != NULL);
+			PHYCAS_ASSERT(s != NULL);
 			nd = nd->GetRightSib();
 			tree_manipulator.SibToChild(u, s, TreeManip::kOnRight);
 			if (s == orig_rchild)
@@ -460,7 +460,7 @@ void BushMove::refreshPolytomies()
 */
 const VecPolytomyDistr & BushMove::computePolytomyDistribution(unsigned nspokes)
 	{
-	assert(nspokes > 2);
+	PHYCAS_ASSERT(nspokes > 2);
 	std::pair<PolytomyDistrMap::const_iterator, bool> retval;
 	PolytomyDistrMap::const_iterator i = poly_prob.find(nspokes);
 	if (i == poly_prob.end())
@@ -478,7 +478,7 @@ const VecPolytomyDistr & BushMove::computePolytomyDistribution(unsigned nspokes)
 			v.push_back(prob_x);
 			}
 		retval = poly_prob.insert(PolytomyDistrMap::value_type(nspokes, v));
-		assert(retval.second == true);
+		PHYCAS_ASSERT(retval.second == true);
 		i = retval.first;
 		}
 	return (i->second);
@@ -490,7 +490,7 @@ const VecPolytomyDistr & BushMove::computePolytomyDistribution(unsigned nspokes)
 */
 void BushMove::proposeAddEdgeMove(TreeNode * u)
 	{
-	assert(u != NULL);
+	PHYCAS_ASSERT(u != NULL);
 	polytomy_size = 1 + u->CountChildren();
 
 	const std::vector<double> & prob_n = computePolytomyDistribution(polytomy_size);
@@ -507,7 +507,7 @@ void BushMove::proposeAddEdgeMove(TreeNode * u)
 		if (p < cum)
 			break;
 		}
-	assert(x < polytomy_size - 1);
+	PHYCAS_ASSERT(x < polytomy_size - 1);
 
 	// Create the new node that will receive the x randomly-chosen spokes
 	new_edgelen = edgelen_dist->Sample();
@@ -535,7 +535,7 @@ void BushMove::proposeAddEdgeMove(TreeNode * u)
 		if (uchild != v)
 			uspokes.push_back(uchild);
 		}
-	assert(uspokes.size() == polytomy_size);
+	PHYCAS_ASSERT(uspokes.size() == polytomy_size);
 
 	bool reverse_polarity = false;
 	std::vector<TreeNode *> vspokes;
@@ -543,7 +543,7 @@ void BushMove::proposeAddEdgeMove(TreeNode * u)
 	for (unsigned k = 0; k < x; ++k)
 		{
 		unsigned num_u_spokes = (unsigned)uspokes.size();
-		assert(num_u_spokes > 0);
+		PHYCAS_ASSERT(num_u_spokes > 0);
 		unsigned j = rng->SampleUInt(num_u_spokes);
 		TreeNode * s = uspokes[j];
 		if (s == u->GetParent())
@@ -551,7 +551,7 @@ void BushMove::proposeAddEdgeMove(TreeNode * u)
 		vspokes.push_back(s);
 		uspokes.erase(uspokes.begin() + (vec_it_diff) j);
 		} 
-	assert(uspokes.size() + vspokes.size() == polytomy_size);
+	PHYCAS_ASSERT(uspokes.size() + vspokes.size() == polytomy_size);
 
 	if (reverse_polarity)
 		{
@@ -624,8 +624,8 @@ void BushMove::proposeDeleteEdgeMove(TreeNode * u)
 	// child of root
 	//
 	orig_par = u->GetParent();
-	assert(orig_par != NULL);
-	assert(!orig_par->IsRoot());
+	PHYCAS_ASSERT(orig_par != NULL);
+	PHYCAS_ASSERT(!orig_par->IsRoot());
 
 	num_polytomies = (unsigned)polytomies.size();
 

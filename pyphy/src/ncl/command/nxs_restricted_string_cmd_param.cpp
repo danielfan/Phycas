@@ -29,7 +29,7 @@ RestrictNameCmdOption::RestrictNameCmdOption(
   	:NxsWordCmdOption(n, manipVal, def, true, persist, pLevel),
   	tabooListProvider(tabooProvider)
   	{
-  	assert(tabooListProvider != NULL);
+  	NXS_ASSERT(tabooListProvider != NULL);
   	RefreshTabooList();
   	}
 	

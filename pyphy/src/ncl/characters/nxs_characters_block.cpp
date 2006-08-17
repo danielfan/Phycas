@@ -467,7 +467,7 @@ bool NxsCharactersBlock::ReadNextStateToken(
   unsigned j, 
   unsigned origInd)
 	{
-	assert(formatSettings.tokens);
+	NXS_ASSERT(formatSettings.tokens);
 	++token;
 	// handle case in which TOKENS was specified in the FORMAT command
 	// token should be in one of the following forms: "{"  "a"  "bb"
@@ -657,7 +657,7 @@ bool NxsCharactersBlock::ReadTransposedMatrix(NxsToken& token)
 					if (!tokens)
 						{
 						token.ReadSingleCharacter();
-						assert(token.GetTokenLength() > 0);
+						NXS_ASSERT(token.GetTokenLength() > 0);
 						if (token.GetTokenReference()[0] == '\n')
 							ok = false;
 						else
@@ -671,7 +671,7 @@ bool NxsCharactersBlock::ReadTransposedMatrix(NxsToken& token)
 							
 					if(!ok)
 						{
-						assert(interleaving);
+						NXS_ASSERT(interleaving);
 						if (lastTaxonInPage < totalNTax && currTaxon != lastTaxonInPage) 
 							{
 							errorMsg = "Each line within an interleave page must comprise the same number of taxa";
@@ -830,7 +830,7 @@ bool NxsCharactersBlock::ReadStdMatrix(
 					if (!tokens)
 						{
 						token.ReadSingleCharacter();
-						assert(token.GetTokenLength() > 0);
+						NXS_ASSERT(token.GetTokenLength() > 0);
 						if (token.GetTokenReference()[0] != '\n')
 							{
 							ok = true;
@@ -846,7 +846,7 @@ bool NxsCharactersBlock::ReadStdMatrix(
 	            		{
 	            		// ok will be false only if a newline character is encountered
 						//
-						assert(interleaving);
+						NXS_ASSERT(interleaving);
 	            		if(lastCharInCurrPage < nCharTotal && currChar != lastCharInCurrPage) 
 							{
 							// lastCharInCurrPage ==  nCharTotal for the first taxon in a page.
@@ -899,7 +899,7 @@ bool  NxsCharactersBlock::ParseMatrix(
 		matRead = ReadTransposedMatrix(token);
 	else
 		matRead = ReadStdMatrix(token);
-	assert(matRead);
+	NXS_ASSERT(matRead);
 	//  now the ordering of the taxa in the matrix is known, so we alert the AlternativeTaxaBlock interface
 	//	that we are done introducing new taxa, or deciding on the order of taxa 
 	//
@@ -1158,7 +1158,7 @@ unsigned NxsCharactersBlock::GetMaxLabelLength() const
 CmdResult NxsCharactersBlock::FinishHandlingDimensions(NxsDimensionsSettings *s)
 	{
 	nChar = s->secondDimension;
-	assert(charLabels.empty() && charStates.empty());
+	NXS_ASSERT(charLabels.empty() && charStates.empty());
 	return kCmdSucceeded;
 	}
 	

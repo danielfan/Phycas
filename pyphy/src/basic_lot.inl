@@ -25,7 +25,7 @@ inline unsigned Lot::GetInitSeed() const
 */
 inline void Lot::SetSeed(unsigned s)
 	{
-	assert(s > 0 && s < UINT_MAX);
+	PHYCAS_ASSERT(s > 0 && s < UINT_MAX);
 	curr_seed = last_seed_setting = s;
 	}
 
@@ -54,8 +54,8 @@ inline void Lot::UseClockToSeed()
 */
 inline unsigned Lot::GetRandBits(unsigned nbits)
 	{
-	assert(nbits > 0);
-	assert(nbits < 32);
+	PHYCAS_ASSERT(nbits > 0);
+	PHYCAS_ASSERT(nbits < 32);
 
 	double u = Uniform(FILE_AND_LINE);
 

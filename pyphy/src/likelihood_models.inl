@@ -31,7 +31,7 @@ inline Model::Model(
 	gamma_shape_fixed(false),
 	gamma_shape(0.5)
 	{
-	assert(num_states > 0);
+	PHYCAS_ASSERT(num_states > 0);
 	setAllFreqsEqual();
 	}
 
@@ -119,11 +119,11 @@ inline void Model::setNucleotideFreqs(
   double freqG,				/**< the new value of `state_freq_unnorm'[2] (i.e. frequency of base G) */
   double freqT)				/**< the new value of `state_freq_unnorm'[3] (i.e. frequency of base T/U) */
 	{
-	assert(num_states == 4);
-	assert(freqA >= 0.0);
-	assert(freqC >= 0.0);
-	assert(freqG >= 0.0);
-	assert(freqT >= 0.0);
+	PHYCAS_ASSERT(num_states == 4);
+	PHYCAS_ASSERT(freqA >= 0.0);
+	PHYCAS_ASSERT(freqC >= 0.0);
+	PHYCAS_ASSERT(freqG >= 0.0);
+	PHYCAS_ASSERT(freqT >= 0.0);
 	state_freq_unnorm[0] = freqA;
 	state_freq_unnorm[1] = freqC;
 	state_freq_unnorm[2] = freqG;
@@ -141,8 +141,8 @@ inline void Model::setStateFreqUnnorm(
   unsigned param_index,		/**< the 0-based index into the `state_freq_unnorm' vector of the element to modify */
   double value)				/**< the new value of `state_freq_unnorm'[`param_index'] */
 	{
-	assert(param_index < num_states);
-	assert(value >= 0.0);
+	PHYCAS_ASSERT(param_index < num_states);
+	PHYCAS_ASSERT(value >= 0.0);
 	state_freq_unnorm[param_index] = value;
 	normalizeFreqs();
 	}
@@ -153,7 +153,7 @@ inline void Model::setStateFreqUnnorm(
 */
 inline void Model::setAllFreqsEqual()
 	{
-	assert(num_states > 0);
+	PHYCAS_ASSERT(num_states > 0);
 	state_freq_unnorm.clear();
 	state_freq_unnorm.assign(num_states, 1.0);
 	state_freqs.clear();
@@ -166,10 +166,10 @@ inline void Model::setAllFreqsEqual()
 */
 inline void Model::normalizeFreqs()
 	{
-	assert(num_states > 0);
+	PHYCAS_ASSERT(num_states > 0);
 	double sum = std::accumulate(state_freq_unnorm.begin(), state_freq_unnorm.end(), 0.0);
-	assert(sum != 0.0);
-	assert(state_freq_unnorm.size() == state_freqs.size());
+	PHYCAS_ASSERT(sum != 0.0);
+	PHYCAS_ASSERT(state_freq_unnorm.size() == state_freqs.size());
 	std::transform(state_freq_unnorm.begin(), state_freq_unnorm.end(), state_freqs.begin(), boost::lambda::_1/sum);
 	}
 
@@ -204,7 +204,7 @@ inline void Model::setNGammaRates(
 	{
 	if (nGammaRates != num_gamma_rates)
 		{
-		assert(nGammaRates > 0);
+		PHYCAS_ASSERT(nGammaRates > 0);
 		gamma_rates_unnorm.assign(nGammaRates, 1.0);
 		gamma_rate_probs.resize(nGammaRates); //@POL this line not necessary (?) because assign also resizes
 		gamma_rate_probs.assign(nGammaRates, 1.0/(double)nGammaRates);
@@ -227,7 +227,7 @@ inline const std::vector<double> & Model::getGammaRateProbs() const
 */
 inline void Model::setAllGammaRateProbsEqual()
 	{
-	assert(num_gamma_rates > 0);
+	PHYCAS_ASSERT(num_gamma_rates > 0);
 	gamma_rate_probs.clear();
 	gamma_rate_probs.assign(num_gamma_rates, 1.0/num_gamma_rates);
 	}
@@ -247,7 +247,7 @@ inline double Model::getShape()
 inline void Model::setShape(
   double alpha)		/**< is the new value for the `gamma_shape' data member */
 	{
-	assert(alpha > 0.0);
+	PHYCAS_ASSERT(alpha > 0.0);
 	gamma_shape = alpha;
 	}
 
@@ -299,8 +299,8 @@ inline double Model::getPinvar()
 inline void Model::setPinvar(
   double pinv)		/**< is the new value for the `pinvar' data member */
 	{
-	assert(pinv >= 0.0);
-	assert(pinv < 1.0);
+	PHYCAS_ASSERT(pinv >= 0.0);
+	PHYCAS_ASSERT(pinv < 1.0);
 	pinvar = pinv;
 	}
 
@@ -444,7 +444,7 @@ inline void Model::setFlexRateUpperBound(double new_upper_bound)
 	double old_upper_bound = flex_upper_rate_bound;
 	if (new_upper_bound == old_upper_bound)
 		return;
-	assert(new_upper_bound > 0.0);
+	PHYCAS_ASSERT(new_upper_bound > 0.0);
 	flex_upper_rate_bound = new_upper_bound;
 	double mult_factor = new_upper_bound/old_upper_bound;
 	std::for_each(gamma_rates_unnorm.begin(), gamma_rates_unnorm.end(), boost::lambda::_1 *= mult_factor);
@@ -557,9 +557,9 @@ inline void Model::setFlexRateUnnorm(
   unsigned param_index,		/**< the 0-based index into the `gamma_rates_unnorm' vector of the element to modify */
   double value)				/**< the new value of `gamma_rates_unnorm'[`param_index'] */
 	{
-	assert(gamma_rates_unnorm.size() == num_gamma_rates);
-	assert(param_index < num_gamma_rates);
-	assert(value >= 0.0);
+	PHYCAS_ASSERT(gamma_rates_unnorm.size() == num_gamma_rates);
+	PHYCAS_ASSERT(param_index < num_gamma_rates);
+	PHYCAS_ASSERT(value >= 0.0);
 	gamma_rates_unnorm[param_index] = value;
 	}
 
@@ -574,9 +574,9 @@ inline void Model::setFlexProbUnnorm(
   unsigned param_index,		/**< the 0-based index into the `gamma_rate_probs' vector of the element to modify */
   double value)				/**< the new value of `gamma_rate_probs'[`param_index'] */
 	{
-	assert(gamma_rate_probs.size() == num_gamma_rates);
-	assert(param_index < num_gamma_rates);
-	assert(value >= 0.0);
+	PHYCAS_ASSERT(gamma_rate_probs.size() == num_gamma_rates);
+	PHYCAS_ASSERT(param_index < num_gamma_rates);
+	PHYCAS_ASSERT(value >= 0.0);
 	gamma_rate_probs[param_index] = value;
 	}
 
@@ -595,8 +595,8 @@ inline void Model::normalizeRatesAndProbs(
 	// c*(r0*p0 + r1*p1 + r2*p2 + r3*p3) = 1.0
 	// c = 1/(r0*p0 + r1*p1 + r2*p2 + r3*p3)
 	//
-	assert(gamma_rates_unnorm.size() == num_gamma_rates);
-	assert(gamma_rate_probs.size() == num_gamma_rates);
+	PHYCAS_ASSERT(gamma_rates_unnorm.size() == num_gamma_rates);
+	PHYCAS_ASSERT(gamma_rate_probs.size() == num_gamma_rates);
 	rates.resize(num_gamma_rates, 0.0);
 	probs.resize(num_gamma_rates, 0.0);
 	std::vector<double>::const_iterator rates_it = gamma_rates_unnorm.begin();
@@ -607,7 +607,7 @@ inline void Model::normalizeRatesAndProbs(
 	double prob_sum = 0.0;
 	for (i = 0; i < num_gamma_rates; ++i)
 		{
-		assert(gamma_rate_probs[i] > 0.0);
+		PHYCAS_ASSERT(gamma_rate_probs[i] > 0.0);
 		prob_sum += gamma_rate_probs[i];
 		}
 	double prob_normalizer = 1.0/prob_sum;
@@ -617,7 +617,7 @@ inline void Model::normalizeRatesAndProbs(
 	for (i = 0; i < num_gamma_rates; ++i)
 		{
 		probs[i] = gamma_rate_probs[i]*prob_normalizer;
-		assert(gamma_rates_unnorm[i] > 0.0);
+		PHYCAS_ASSERT(gamma_rates_unnorm[i] > 0.0);
 		rate_prob_sum += gamma_rates_unnorm[i]*probs[i];
 		}
 	double rate_normalizer = 1.0/rate_prob_sum;
@@ -725,7 +725,7 @@ inline void Model::recalcRatesAndProbs(
 
 		if (is_pinvar_model)
 			{
-			assert(pinvar < 1.0);
+			PHYCAS_ASSERT(pinvar < 1.0);
 			double one_minus_pinvar = 1.0 - pinvar;
 
 			// First calculate the gamma rates alone
@@ -789,7 +789,7 @@ inline void Model::recalcRatesAndProbs(
 */
 inline void Model::recalcGammaRatesAndBoundaries(std::vector<double> & rates, std::vector<double> & boundaries) const
 	{
-	assert(num_gamma_rates > 0);
+	PHYCAS_ASSERT(num_gamma_rates > 0);
 	rates.resize(num_gamma_rates, 0.0);
 	boundaries.resize(num_gamma_rates, 0.0);
 
@@ -800,7 +800,7 @@ inline void Model::recalcGammaRatesAndBoundaries(std::vector<double> & rates, st
 		return;
 		}
 
-	assert(gamma_shape > 0.0);
+	PHYCAS_ASSERT(gamma_shape > 0.0);
 	double alpha = gamma_shape;
 	double beta = 1.0/gamma_shape;
 	
@@ -1020,7 +1020,7 @@ inline void	HKY::createParameters(
 	{
 	Model::createParameters(t, edgelens, edgelen_hyperparam, parameters, separate_edgelens);
 
-	assert(!kappa_param);
+	PHYCAS_ASSERT(!kappa_param);
 	kappa_param = MCMCUpdaterShPtr(new KappaParam());
 	kappa_param->setName("trs/trv rate ratio");
 	kappa_param->setStartingValue(4.0);
@@ -1030,7 +1030,7 @@ inline void	HKY::createParameters(
 		kappa_param->fixParameter();
 	parameters.push_back(kappa_param);
 
-	assert(freq_params.empty());
+	PHYCAS_ASSERT(freq_params.empty());
 
 	MCMCUpdaterShPtr freqA_param = MCMCUpdaterShPtr(new BaseFreqParam(0));
 	freqA_param->setName("base freq. A");
@@ -1244,7 +1244,7 @@ inline void HKY::setKappaFromTRatio(double tratio)
 
 	double denominator = ((state_freqs[0]*state_freqs[2]) + (state_freqs[1]*state_freqs[3]));
 
-	assert(denominator != 0.0);
+	PHYCAS_ASSERT(denominator != 0.0);
 
 	kappa = numerator/denominator;
 	}
@@ -1297,7 +1297,7 @@ inline double HKY::calcTRatio()
 
 	double denominator = (state_freqs[0] + state_freqs[2])*(state_freqs[1] + state_freqs[3]);
 
-	assert(denominator != 0.0);
+	PHYCAS_ASSERT(denominator != 0.0);
 
 	double tratio = numerator/denominator;
 
@@ -1351,7 +1351,7 @@ inline void	GTR::createParameters(
 	{
 	Model::createParameters(t, edgelens, edgelen_hyperparam, parameters, separate_edgelens);
 
-	assert(rel_rate_params.empty());
+	PHYCAS_ASSERT(rel_rate_params.empty());
 
 	MCMCUpdaterShPtr rAC_param = MCMCUpdaterShPtr(new GTRRateParam(0));
 	rAC_param->setName("rAC");
@@ -1413,7 +1413,7 @@ inline void	GTR::createParameters(
 	parameters.push_back(rGT_param);
 	rel_rate_params.push_back(rGT_param);
 
-	assert(freq_params.empty());
+	PHYCAS_ASSERT(freq_params.empty());
 
 	MCMCUpdaterShPtr freqA_param = MCMCUpdaterShPtr(new BaseFreqParam(0));
 	freqA_param->setName("base freq. A");
@@ -1519,7 +1519,7 @@ inline std::vector<double> GTR::getRelRates()
 */
 inline void GTR::setRelRates(const std::vector<double> & rates)
  	{
-	assert(rel_rates.size() == 6);
+	PHYCAS_ASSERT(rel_rates.size() == 6);
 
 	// Ensure that we are not about to set any negative relative rates
 	if (std::find_if(rates.begin(), rates.end(), boost::lambda::_1 < 0.0) != rates.end())
@@ -1544,7 +1544,7 @@ inline void GTR::setRelRateUnnorm(
   unsigned param_index,		/**< the 0-based index into the `rel_rates' vector of the element to modify */
   double value)				/**< the new value of `rel_rates'[`param_index'] */
 	{
-	assert(rel_rates.size() == 6);
+	PHYCAS_ASSERT(rel_rates.size() == 6);
 
 	// Ensure that user supplied a correct index
 	if (param_index >= 6)
@@ -1663,8 +1663,8 @@ inline std::string GTR::paramHeader() const
 */
 inline std::string GTR::paramReport() const
 	{
-	assert(rel_rates.size() == 6);
-	assert(state_freqs.size() == 4);
+	PHYCAS_ASSERT(rel_rates.size() == 6);
+	PHYCAS_ASSERT(state_freqs.size() == 4);
 	std::string s = str(boost::format("\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f") % rel_rates[0] % rel_rates[1] % rel_rates[2] % rel_rates[3] % rel_rates[4] % rel_rates[5]);
 	s += str(boost::format("\t%.5f\t%.5f\t%.5f\t%.5f") % state_freqs[0] % state_freqs[1] % state_freqs[2] % state_freqs[3]);
 	if (is_flex_model)
@@ -1738,7 +1738,7 @@ inline double GTR::calcTRatio()
 
 	double denominator = state_freqs[0]*state_freqs[1]*rel_rates[0] + state_freqs[0]*state_freqs[3]*rel_rates[2] + state_freqs[1]*state_freqs[2]*rel_rates[3] + state_freqs[2]*state_freqs[3]*rel_rates[5];
 
-	assert(denominator != 0.0);
+	PHYCAS_ASSERT(denominator != 0.0);
 
 	double tratio = numerator/denominator;
 

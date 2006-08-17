@@ -1,7 +1,6 @@
 #if ! defined(BASIC_CDF_HPP)
 #define BASIC_CDF_HPP
 
-#include <cassert>
 #include <cstdio>
 #include <cmath>
 

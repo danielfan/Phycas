@@ -218,7 +218,7 @@ inline  void NxsStdOutputStream::SetNDigitsAfterDecimal(unsigned i)
 
 inline void NxsStdOutputStream::PrintTable(NxsTable *p)
 	{
-	assert(p == &table);	//you should be getting the Table pointer from NxsStdOutputStream::GetTablePtr so that it has the correct width etc
+	NXS_ASSERT(p == &table);	//you should be getting the Table pointer from NxsStdOutputStream::GetTablePtr so that it has the correct width etc
 	try 
 		{
 		p->Show(*this);

@@ -43,14 +43,14 @@ const unsigned MAX_CIPR_MATRIX_ELEMENT = (1 << ((sizeof(CIPR_StateSet_t) * 8) - 
 
 const std::vector<FullTreeDescription> & CipresNexusReader::GetTrees() const
 	{
-	assert(phoTreesMgr);
+	PHYCAS_ASSERT(phoTreesMgr);
 	return phoTreesMgr->GetTrees();
 	}
 
 #if defined(POL_PHYCAS) //@POL 10-Nov-2005 added
 vector<string> CipresNexusReader::GetTaxLabels() const
 	{
-	assert(phoTaxaMgr);
+	PHYCAS_ASSERT(phoTaxaMgr);
 	unsigned ntaxa = phoTaxaMgr->GetNumTaxa();
 	vector<string> tax_labels;
 	tax_labels.reserve(ntaxa);
@@ -123,7 +123,7 @@ CIPR_Datatypes nclToNativeDatatype(const NxsDataType::NxsDatatypesEnum dt)
 		case NxsDataType::kProtein:		return CIPR_AA_Datatype;
 		case NxsDataType::kStandard:	return CIPR_Generic_Datatype;
 		default:
-			assert(0);
+			PHYCAS_ASSERT(0);
 		}
 		//unreachable
 	return CIPR_Generic_Datatype;
@@ -203,7 +203,7 @@ CIPR_StateSet_t addNewStateSetMultiElementCode(
 		}
 	const unsigned nStates = datatype.GetNumStates();
 	const unsigned indexToReturn = (unsigned)tempStateListPos.size();
-	assert(indexToReturn == vecNCLCodes.size());
+	PHYCAS_ASSERT(indexToReturn == vecNCLCodes.size());
 	tempStateListPos.push_back((unsigned)tempStateList.size());
 	vector<CIPR_State_t> newStates;
 	if (hasGap)
@@ -278,7 +278,7 @@ CIPR_Matrix toCIPRMatrix(const ncl::NxsDiscreteMatrix & inMatrix, const bool ver
 	const unsigned nStates = toReturn.nStates;
 	const char * symCStr = datatype.GetSymbols();
 	string symbolsForCIPR(symCStr, symCStr + nStates);
-	assert(symbolsForCIPR.length() == nStates);
+	PHYCAS_ASSERT(symbolsForCIPR.length() == nStates);
 	symbolsForCIPR += '?';
 	toReturn.matrix = NewTwoDArray<CIPR_StateSet_t>(toReturn.nTax, toReturn.nChar);
 	
@@ -425,7 +425,7 @@ CIPR_Matrix toCIPRMatrix(const ncl::NxsDiscreteMatrix & inMatrix, const bool ver
 		}
 	else
 		{
-		assert(nStates > 0);
+		PHYCAS_ASSERT(nStates > 0);
 		VecOfNCLStateArrays vecNCLCodes;
 		CIPR_State_t currStateSetIndex = 0;
 		for (; currStateSetIndex != (CIPR_State_t)nStates; ++currStateSetIndex)

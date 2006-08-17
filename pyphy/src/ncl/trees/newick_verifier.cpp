@@ -143,7 +143,7 @@ void SimpleNode::ReadTree(
 #	if defined(C_FUNCS_IN_STD_NAMESPACE)
 		using std::isdigit;
 #	endif
-	assert(treesBlock != NULL);
+	NXS_ASSERT(treesBlock != NULL);
 	delete rSib;
 	rSib = NULL;
 	delete lChild;
@@ -423,7 +423,7 @@ FullTreeDescription NewickVerifier::ReadNewickTree(NxsToken &token, VecString *n
 		errorMsg << "A tree must contain three or more nodes, only one was found";
 		throw NxsException(errorMsg, token);
 		}
-	assert(rootN.lChild != NULL && rootN.lChild->rSib != NULL);
+	NXS_ASSERT(rootN.lChild != NULL && rootN.lChild->rSib != NULL);
 	bool rooted = rootedSpecified;
 	if (unrootedSpecified)
 		{

@@ -1,7 +1,6 @@
 #ifndef PHO_TREEMANIP_H
 #define PHO_TREEMANIP_H
 
-#include <cassert>
 class TreeNode;
 class Tree;
 
@@ -58,7 +57,7 @@ class TreeManip
 inline TreeManip::TreeManip(
   Tree *t)
   	{
-	assert(t != NULL);
+	PHYCAS_ASSERT(t != NULL);
 	tree = t;
   	}
 

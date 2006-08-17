@@ -287,7 +287,7 @@ bool NxsTableCell::Show(NxsOutputStream &out)
 	// out.setf(ios::showpoint);
 
 	unsigned colwidth = width - NxsTable::colspacer;
-	assert(colwidth <= ABSOLUTE_MAXIMUM_COLUMN_WIDTH);
+	NXS_ASSERT(colwidth <= ABSOLUTE_MAXIMUM_COLUMN_WIDTH);
 
 	// Return value is true unless we haven't finished with this cell
 	// which is only the case if the cell contains a string that is
@@ -375,7 +375,7 @@ bool NxsTableCell::Show(NxsOutputStream &out)
 					}
 				else
 					{
-					assert(justification != NxsTableCell::nojustify);
+					NXS_ASSERT(justification != NxsTableCell::nojustify);
 					out << MakeRightJustifiedString(cell_workspace, colwidth);
 					out << std::string(NxsTable::colspacer, ' ');
 					}
@@ -410,7 +410,7 @@ bool NxsTableCell::Show(NxsOutputStream &out)
 				}
 			else
 				{
-				assert(justification != NxsTableCell::nojustify);
+				NXS_ASSERT(justification != NxsTableCell::nojustify);
 				out << MakeRightJustifiedString(s, colwidth);
 				out << string(NxsTable::colspacer, ' ');
 				}
@@ -437,7 +437,7 @@ bool NxsTableCell::Show(NxsOutputStream &out)
 				}
 			else
 				{
-				assert(justification != NxsTableCell::nojustify);
+				NXS_ASSERT(justification != NxsTableCell::nojustify);
 				out << MakeRightJustifiedString(cStringBuffer, colwidth) <<  string(NxsTable::colspacer, ' ');
 				}
 			break;
@@ -455,7 +455,7 @@ bool NxsTableCell::Show(NxsOutputStream &out)
 				}
 			else
 				{
-				assert(justification != NxsTableCell::nojustify);
+				NXS_ASSERT(justification != NxsTableCell::nojustify);
 				out << MakeRightJustifiedString(cStringBuffer, colwidth) << string(NxsTable::colspacer, ' ');
 				}
 			break;
@@ -473,7 +473,7 @@ bool NxsTableCell::Show(NxsOutputStream &out)
 				}
 			else
 				{
-				assert(justification != NxsTableCell::nojustify);
+				NXS_ASSERT(justification != NxsTableCell::nojustify);
 				out << MakeRightJustifiedString(cStringBuffer, colwidth) <<  string(NxsTable::colspacer, ' ');
 				}
 			break;
@@ -491,7 +491,7 @@ bool NxsTableCell::Show(NxsOutputStream &out)
 				}
 			else
 				{
-				assert(justification != NxsTableCell::nojustify);
+				NXS_ASSERT(justification != NxsTableCell::nojustify);
 				out << MakeRightJustifiedString(cStringBuffer, colwidth) << string(NxsTable::colspacer, ' ');
 				}
 			break;
@@ -510,7 +510,7 @@ bool NxsTableCell::Show(NxsOutputStream &out)
 				}
 			else
 				{
-				assert(justification != NxsTableCell::nojustify);
+				NXS_ASSERT(justification != NxsTableCell::nojustify);
 				out << MakeRightJustifiedString(FillWith((unsigned) i, '*'), colwidth);
 				out << FillWith(NxsTable::colspacer, ' ');
 				}

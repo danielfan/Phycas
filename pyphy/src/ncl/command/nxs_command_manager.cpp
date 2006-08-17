@@ -60,7 +60,7 @@ void  NxsCommandManager::ProcessAliasedCommandLine(const string &expansion, NxsT
 void NxsCommandManager::ProcessCommandLine(
   NxsToken	&token) /* token stream */
 	{
-	assert(readyToParse); // If you trip this you must not have called FinishedAddingCommands
+	NXS_ASSERT(readyToParse); // If you trip this you must not have called FinishedAddingCommands
 	
 	if (!aliases.empty())
 		{
@@ -201,7 +201,7 @@ NxsCommandShPtr NxsCommandManager::AddCommand(
   NxsCommandShPtr c)
 	{
 	readyToParse = false;
-	assert(c);
+	NXS_ASSERT(c);
 	if (c)
 		{
 		commands.push_back(c);
@@ -319,7 +319,7 @@ bool NxsCommandManager::FinishedAddingCommands()
 			return false;
 		}
 	readyToParse = DetermineAbbreviations();
-	assert(readyToParse);	//command names weren't long enough
+	NXS_ASSERT(readyToParse);	//command names weren't long enough
 	return readyToParse;
 	}
 		
@@ -430,7 +430,7 @@ void NxsCommandManager::ListCommandNames()
 			}
 #	else
 	const bool StdIOTabularOutputNotImplemented = false;
-	assert(StdIOTabularOutputNotImplemented); //unimplemented
+	NXS_ASSERT(StdIOTabularOutputNotImplemented); //unimplemented
 #	endif
 	}
 	
@@ -461,7 +461,7 @@ void	NxsCommandManager::ProcessHelp(
 					// Check to see if the user is requesting help about a specific command keyword
 					//
 					++token;
-					assert(commandWithHelpReq);
+					NXS_ASSERT(commandWithHelpReq);
 					unsigned keywordIndex = commandWithHelpReq->GetKeywordIndex(token.GetTokenReference());
 					//	display command help
 					//
@@ -525,7 +525,7 @@ void	NxsCommandManager::ProcessAvailable(
 					{
 					NxsCommandShPtr commandWithHelpReq = commands[i];
 					++token;
-					assert(commandWithHelpReq);
+					NXS_ASSERT(commandWithHelpReq);
 					VecString validArgs;
 					if (token.GetTokenReference() == ';')
 						{

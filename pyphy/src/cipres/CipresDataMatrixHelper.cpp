@@ -20,7 +20,7 @@ CIPR_Datatypes CipresNative::corbaToNativeDatatype(const CipresIDL_api1::Discret
 		case CipresIDL_api1::CODON_DATATYPE:		return CIPR_Codon_Datatype;
 		case CipresIDL_api1::GENERIC_DATATYPE:	return CIPR_Generic_Datatype;
 		default:
-			assert(0);
+			PHYCAS_ASSERT(0);
 		}
 		//unreachable
 	return CIPR_Generic_Datatype;
@@ -36,7 +36,7 @@ CipresIDL_api1::DiscreteDatatypes CipresNative::nativeToCorbaDatatype(const CIPR
 		case CIPR_Codon_Datatype:	return CipresIDL_api1::CODON_DATATYPE;
 		case CIPR_Generic_Datatype:	return CipresIDL_api1::GENERIC_DATATYPE;
 		default:
-			assert(0);
+			PHYCAS_ASSERT(0);
 		}
 		//unreachable
 	return CipresIDL_api1::GENERIC_DATATYPE;
@@ -127,7 +127,7 @@ DiscreteMatrix::DiscreteMatrix(const CipresIDL_api1::DataMatrix & corbaMatrix)
 #		else
 			stateListAlias.push_back(nativeCMatrix.nStates);
 #		endif
-		assert(nativeCMatrix.nStates < 127); //need to fit into int8_t
+		PHYCAS_ASSERT(nativeCMatrix.nStates < 127); //need to fit into int8_t
 		for (CIPR_State_t i = 0; i < static_cast<CIPR_State_t>(nativeCMatrix.nStates); ++i)
 			stateListAlias.push_back(i);
 		++stateSetIndex;

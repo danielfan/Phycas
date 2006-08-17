@@ -128,8 +128,8 @@ int ConvertToIntOrThrow(const string & s, ncl::IntegerConversion conv) X_SPEC_TH
 
 size_t CopyToCStr(const string & s, char *buffer, const size_t bufferLen)
 	{
-	assert(buffer != NULL);
-	assert(bufferLen > 0);
+	PHYCAS_ASSERT(buffer != NULL);
+	PHYCAS_ASSERT(bufferLen > 0);
 	size_t len = s.length();
 	if (len == 0)
 		{

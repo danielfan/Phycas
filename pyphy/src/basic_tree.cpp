@@ -27,8 +27,8 @@ void Tree::StoreTreeNode(TreeNode * u)
 */
 void Tree::RerootHelper(TreeNode * m, TreeNode * t)
 	{
-	assert(m != NULL);
-	assert(t != NULL);
+	PHYCAS_ASSERT(m != NULL);
+	PHYCAS_ASSERT(t != NULL);
 
 	// Save nodes to which m attaches
 	TreeNode *m_lChild	= m->lChild;
@@ -40,7 +40,7 @@ void Tree::RerootHelper(TreeNode * m, TreeNode * t)
 	while (x->par != m)
 		{
 		x = x->par;
-		assert(x != NULL);
+		PHYCAS_ASSERT(x != NULL);
 		}
 	TreeNode *x_rSib = x->rSib;
 
@@ -52,7 +52,7 @@ void Tree::RerootHelper(TreeNode * m, TreeNode * t)
 		while (x_lSib->rSib != x)
 			{
 			x_lSib = x_lSib->rSib;
-			assert(x_lSib != NULL);
+			PHYCAS_ASSERT(x_lSib != NULL);
 			}
 		}
 
@@ -64,7 +64,7 @@ void Tree::RerootHelper(TreeNode * m, TreeNode * t)
 		while (m_lSib->rSib != m)
 			{
 			m_lSib = m_lSib->rSib;
-			assert(m_lSib != NULL);
+			PHYCAS_ASSERT(m_lSib != NULL);
 			}
 		}
 
@@ -73,8 +73,8 @@ void Tree::RerootHelper(TreeNode * m, TreeNode * t)
 	if (m_par == NULL)
 		{
 		// m is the root node
-		assert(m_rSib == NULL);
-		assert(m_lSib == NULL);
+		PHYCAS_ASSERT(m_rSib == NULL);
+		PHYCAS_ASSERT(m_lSib == NULL);
 		x->rSib = NULL;
 		x->par = NULL;
 		if (x == m_lChild)
@@ -130,13 +130,13 @@ void Tree::RerootHelper(TreeNode * m, TreeNode * t)
 */
 void Tree::RerootAt(TreeNode *nd)
 	{
-	assert(nd->IsTip()); // can only reroot at a tip
+	PHYCAS_ASSERT(nd->IsTip()); // can only reroot at a tip
 	TreeNode *t = nd;
 	TreeNode *m = nd->par;
 	while (!nd->IsRoot())
 		{
 		//std::cerr << "In RerootAt: t = " << t->GetNodeName() << ", m = " << m->GetNodeName() << std::endl; //POL-debug
-		assert(nd->HasParent());
+		PHYCAS_ASSERT(nd->HasParent());
 
 		// Begin by swapping the mover's edge length with nd's edge length
 		if (HasEdgeLens())
@@ -195,7 +195,7 @@ void Tree::RefreshPreorder(TreeNode *nd)
 	if (nd == NULL)
 		nd = firstPreorder;
 
-	assert(nd != NULL);
+	PHYCAS_ASSERT(nd != NULL);
 
 	if (nd->lChild == NULL && nd->rSib == NULL)
 		{
@@ -378,8 +378,8 @@ bool isValid(const TreeNode * refNd, const TreeNode * neighborCloserToEffectiveR
 */
 double Tree::calcTotalHeight()
 	{
-	assert(GetFirstPreorder() != NULL);
-	assert(GetFirstPreorder()->GetNextPreorder() != NULL);
+	PHYCAS_ASSERT(GetFirstPreorder() != NULL);
+	PHYCAS_ASSERT(GetFirstPreorder()->GetNextPreorder() != NULL);
 
 	// Create a map (node number -> height) that will keep track of the maximum height above each internal node
 	typedef std::map<unsigned, double> HeightMap;
@@ -588,7 +588,7 @@ void Tree::RefreshNodeCounts()
 */
 void Tree::BuildFromString(const std::string &newick)
 	{
-	assert(newick.length() > 0);
+	PHYCAS_ASSERT(newick.length() > 0);
 
 	// Assume tip node names represent the 0-offset index of the taxon represented by the tip in the data matrix
 	// and thus that tip node numbers should be set to the tip node name after converting it to an integer. This
@@ -705,7 +705,7 @@ void Tree::BuildFromString(const std::string &newick)
 					if (!(previous & LParen_Valid))
 						throw XPhylogeny("unexpected left parenthesis");
 					// Create new_node above and to the left of the current node
-					assert(nd->lChild == NULL);
+					PHYCAS_ASSERT(nd->lChild == NULL);
 					nd->lChild = GetNewNode();
 					nd->lChild->par = nd;
 					nd = nd->lChild;
@@ -894,7 +894,7 @@ void Tree::BuildFromString(const std::string &newick)
 
 	if (tip_numbers_equal_names)
 		{
-		assert(!numbers_used.empty());
+		PHYCAS_ASSERT(!numbers_used.empty());
 		if (numbers_used.find(0) == numbers_used.end())
 			{
 			// 0 has not been used as a tip node number, so assume that tip node numbers started at 1
@@ -903,7 +903,7 @@ void Tree::BuildFromString(const std::string &newick)
 				if (nd->IsTip())
 					{
 					nd->nodeNum = nd->nodeNum - 1;
-					assert(nd->nodeNum >= 0);
+					PHYCAS_ASSERT(nd->nodeNum >= 0);
 					}
 				}
 			}
@@ -946,7 +946,7 @@ std::string &Tree::AppendNewick(std::string &s)
 
 	bool showEdgeLens = HasEdgeLens();
 	bool rooted = IsRooted();
-	assert(!rooted); //@ this assert should go away as soon as possible
+	PHYCAS_ASSERT(!rooted); //@ this assert should go away as soon as possible
 
 	s << '(';
 	unsigned openParens = 1;
@@ -954,7 +954,7 @@ std::string &Tree::AppendNewick(std::string &s)
 	// Start with root node, which may actually represent an extant tip (unrooted trees are 
 	// rooted at one of the tips)
 	TreeNode *nd = GetFirstPreorder();
-	assert(nd->IsRoot());
+	PHYCAS_ASSERT(nd->IsRoot());
 
 	if (!rooted)
 		{
@@ -972,8 +972,8 @@ std::string &Tree::AppendNewick(std::string &s)
 		// the root node's edge length is actually held by its only child
 		s << ':';
 		TreeNode *onlyChild = nd->GetLeftChild();
-		assert(onlyChild != NULL);
-		assert(onlyChild->rSib == NULL);
+		PHYCAS_ASSERT(onlyChild != NULL);
+		PHYCAS_ASSERT(onlyChild->rSib == NULL);
 		df.FormatDouble(s, onlyChild->GetEdgeLen());
 		}
 
@@ -1007,7 +1007,7 @@ std::string &Tree::AppendNewick(std::string &s)
 	nd = nd->GetNextPreorder();
 
 	// If we trip this we have a two taxon tree with 3 nodes (degree 2 node in the middle)
-	assert(nd->GetNextPreorder());
+	PHYCAS_ASSERT(nd->GetNextPreorder());
 
 	// Now visit all other nodes
 	for (; nd != NULL; nd = nd->GetNextPreorder())
@@ -1038,9 +1038,9 @@ std::string &Tree::AppendNewick(std::string &s)
 					{
 					s << ')';
 					--openParens;
-					assert(openParens > 0);
+					PHYCAS_ASSERT(openParens > 0);
 					tempAncNode = tempAncNode->par;
-					assert(tempAncNode != NULL);
+					PHYCAS_ASSERT(tempAncNode != NULL);
 
 					// Output names for internal nodes if they are available, otherwise 
 					// do not output anything
@@ -1074,7 +1074,7 @@ std::string &Tree::AppendNewick(std::string &s)
 			{
 			s << ')';
 			--openParens;
-			assert(tmpNode != NULL);
+			PHYCAS_ASSERT(tmpNode != NULL);
 			tmpNode = tmpNode->par;
 			TreeNode *tmpNodePar = tmpNode->par;
 			bool tmpNodeParIsRoot = tmpNodePar->IsRoot();

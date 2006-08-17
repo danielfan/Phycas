@@ -3,7 +3,6 @@
 #endif
 
 //#include "phycas/force_include.h"
-//#include <cassert>
 #include <cmath>
 #include "slice_sampler.hpp"
 using std::ofstream;
@@ -22,8 +21,8 @@ using namespace phycas;
 */
 ParamAndLnProb SliceSampler::GetNextOverrelaxedSample(const ParamAndLnProb initialPair)
 	{
-	assert(r != NULL);
-	assert(func != NULL);
+	PHYCAS_ASSERT(r != NULL);
+	PHYCAS_ASSERT(func != NULL);
 
 	++num_overrelaxed_samples;
 
@@ -91,8 +90,8 @@ ParamAndLnProb SliceSampler::GetNextOverrelaxedSample(const ParamAndLnProb initi
 */
 ParamAndLnProb SliceSampler::GetNextSample(const ParamAndLnProb initialPair)
 	{
-	assert(r != NULL);
-	assert(func != NULL);
+	PHYCAS_ASSERT(r != NULL);
+	PHYCAS_ASSERT(func != NULL);
 
 	++num_samples;
 

@@ -28,7 +28,7 @@ void FullTreeDescription::RemoveEdgeLengths()
 			if (token.GetTokenReference() == ':')
 				{
 				++token;
-				assert(!token.AtEOF());
+				NXS_ASSERT(!token.AtEOF());
 				}
 			else
 				newNewick += token.GetTokenReference();

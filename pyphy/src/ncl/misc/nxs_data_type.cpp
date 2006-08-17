@@ -390,11 +390,11 @@ void NxsDataType::ReplaceWithCheckedSymbols(
 	nStates = (unsigned) s.length();
 	if (nStates  == 0)
 		{
-		assert(0);	//I can't think of case when we'd want to initialize with empty symbols list, comment out the assert if you can
+		NXS_ASSERT(0);	//I can't think of case when we'd want to initialize with empty symbols list, comment out the NXS_ASSERT if you can
 		return;
 		}
 	respectingCase = respectCase;
-	assert(!symbolsList.empty() && symbolsList[symbolsList.size() - 1] == '\0');
+	NXS_ASSERT(!symbolsList.empty() && symbolsList[symbolsList.size() - 1] == '\0');
 	symbolsList.pop_back();
 	nxs_copy(s.begin(), s.end(), back_inserter(symbolsList));
 	symbolsList.push_back('\0');	// so that array will be null terminated
@@ -458,7 +458,7 @@ void NxsDataType::ReplaceWithCheckedSymbols(
 		//	alias this element in the contigCodedStates array to the element in 
 		//	symbolToCode that is associated with the jth symbol
 		//
-		assert(symbolToCode[(int) s[j]] == NULL);
+		NXS_ASSERT(symbolToCode[(int) s[j]] == NULL);
 #		if CODED_STATES_AS_VEC
 			SetSymbolToCodePtr(s[j], &codedStatesVec[0] + firstElement);
 #		else
@@ -485,7 +485,7 @@ void NxsDataType::ReplaceWithCheckedSymbols(
 			missingCode[k] = (DataStorageType) ((missingCode[k] << 1) + 1);
 		}
 	scratchSpace = missingCode + nCodeUnitsPerCharacter;
-	assert(symbolToCode[(int) missingSymbol] == NULL);
+	NXS_ASSERT(symbolToCode[(int) missingSymbol] == NULL);
 	SetMissingChar(missingSymbol);
 	}
 
@@ -514,7 +514,7 @@ void NxsDataType::CheckSymbols(
   		{
   		SymbolsListType::const_iterator endIt = symbolsList.end();
   		--endIt;
-  		assert(*endIt == '\0');
+  		NXS_ASSERT(*endIt == '\0');
   		nxs_copy(symbolsList.begin(), endIt, inserter(uniqSymbs, uniqSymbs.begin()));
   		}
 	for (unsigned sl = 0; sl < rawSymbols.length(); ++sl)
@@ -639,7 +639,7 @@ void NxsDataType::SwapInternalAliases(DataStorageType * begOfOldPtr, DataStorage
 		begOfOldPtr	+= nCodeUnitsPerCharacter;
 		begOfNewPtr	+= nCodeUnitsPerCharacter;
 		}
-  	assert(Validate());
+  	NXS_ASSERT(Validate());
 	}
 	
 bool NxsDataType::Validate() const
@@ -648,25 +648,25 @@ bool NxsDataType::Validate() const
 	//for (SymbolsListType::const_iterator sym = symbolsList.begin(); sym != symbolsList.end(); ++sym)
 	//	std::cout << *sym ;
 	//std::cout << " should have length " << nStates << ". Reported to be "<< symbolsList.size() <<  std::endl;
-	assert(nStates + 1== symbolsList.size()); // symbolsList is Null terminated vector
+	NXS_ASSERT(nStates + 1== symbolsList.size()); // symbolsList is Null terminated vector
 	if (nStates == 0)
 		return true;
-	assert(nCodeUnitsPerCharacter > 0);
+	NXS_ASSERT(nCodeUnitsPerCharacter > 0);
 	for (SymbolsListType::const_iterator sym = symbolsList.begin(); sym != symbolsList.end(); ++sym)
 		{
 		if (*sym)
 			{
 			//std::cout << "validating symbol"<< *sym << std::endl;
-			assert(symbolToCode[(unsigned)*sym]);
+			NXS_ASSERT(symbolToCode[(unsigned)*sym]);
 			if (!respectingCase)
 				{
 				if (islower(*sym))
 					{
-					assert(symbolToCode[toupper(*sym)]);
+					NXS_ASSERT(symbolToCode[toupper(*sym)]);
 					}
 				else if (isupper(*sym))
 					{
-					assert(symbolToCode[tolower(*sym)]);
+					NXS_ASSERT(symbolToCode[tolower(*sym)]);
 					}
 				}
 			}
@@ -674,37 +674,37 @@ bool NxsDataType::Validate() const
 	if (missingSymbol)
 		{
 		//std::cout << "missing symbol"<< missingSymbol << std::endl;
-		assert(!symbolToCode[(unsigned) missingSymbol]); // missing not in symbol to code lookup
+		NXS_ASSERT(!symbolToCode[(unsigned) missingSymbol]); // missing not in symbol to code lookup
 		}
 	if (gapSymbol)
 		{
 		//std::cout << "missing symbol"<< gapSymbol << std::endl;
-		assert(!symbolToCode[(unsigned)gapSymbol]); // gap not in symbolToCode lookup
+		NXS_ASSERT(!symbolToCode[(unsigned)gapSymbol]); // gap not in symbolToCode lookup
 		}
 	for (EquateMap::const_iterator em = equateCodes.begin(); em != equateCodes.end(); ++em)
 		{
-		assert(symbolToCode[(unsigned) em->first] == em->second.first);
-		assert(symbolToCode[(unsigned)em->first]);
+		NXS_ASSERT(symbolToCode[(unsigned) em->first] == em->second.first);
+		NXS_ASSERT(symbolToCode[(unsigned)em->first]);
 		}
 	
 #	if CODED_STATES_AS_VEC
-		assert(codedStatesVec.size() >= nStates * nCodeUnitsPerCharacter);
+		NXS_ASSERT(codedStatesVec.size() >= nStates * nCodeUnitsPerCharacter);
 #		if 0 //tucson2005: this code was previously inserted as a sanity check, but it wasn't compiling on 
 			// windows so we have decided to just not check whether or not we are sane
 			const int64_t begCodedStates = static_cast<const int64_t>(&codedStatesVec[0]);
 			const int64_t endCodedStates = static_cast<const int64_t>(&codedStatesVec[codedStatesVec.size() -1]);
 			if (missingCode)
-				assert(static_cast<int64_t>(missingCode) >= begCodedStates && static_cast<int64_t>(missingCode) <= endCodedStates);
+				NXS_ASSERT(static_cast<int64_t>(missingCode) >= begCodedStates && static_cast<int64_t>(missingCode) <= endCodedStates);
 			if (scratchSpace)
-				assert(static_cast<int64_t>(scratchSpace) >= begCodedStates && static_cast<int64_t>(scratchSpace) <= endCodedStates);
+				NXS_ASSERT(static_cast<int64_t>(scratchSpace) >= begCodedStates && static_cast<int64_t>(scratchSpace) <= endCodedStates);
 			for (unsigned i = 0; i < MAX_NSTATES_ALLOWED; ++i)
 				{
 				if (symbolToCode[i])
-					assert(static_cast<int64_t>(symbolToCode[i]) >= begCodedStates && static_cast<int64_t>(symbolToCode[i]) <= endCodedStates);
+					NXS_ASSERT(static_cast<int64_t>(symbolToCode[i]) >= begCodedStates && static_cast<int64_t>(symbolToCode[i]) <= endCodedStates);
 				}
 			for (EquateMap::const_iterator em = equateCodes.begin(); em != equateCodes.end(); ++em)
 				{
-				assert(static_cast<int64_t>(em->second.first) >= begCodedStates && static_cast<int64_t>(em->second.first) <= endCodedStates);
+				NXS_ASSERT(static_cast<int64_t>(em->second.first) >= begCodedStates && static_cast<int64_t>(em->second.first) <= endCodedStates);
 				}
 #		endif
 
@@ -771,7 +771,7 @@ string NxsDataType::GetStatesAsNexusStringNoPunctuation(
 	string s;
 	if (ords.size() == 1)
 		{
-		assert(ords[0] < symbolsList.size() - 1);	//last symbol is bogus '\0' for null terminated strings
+		NXS_ASSERT(ords[0] < symbolsList.size() - 1);	//last symbol is bogus '\0' for null terminated strings
 		s = symbolsList[ords[0]];
 		}
 	else if (ords.empty() || ords.size() == nStates)
@@ -796,7 +796,7 @@ string NxsDataType::GetStatesAsNexusStringNoPunctuation(
 		for(unsigned k = 0; k < ords.size(); ++k) 
 			{
 			//std::cout << " expanded to " << ords.size() << " states the ["<< k << "] = "<<unsigned(ords[k]) << std::endl;
-			assert(ords[k] < symbolsList.size() - 1);
+			NXS_ASSERT(ords[k] < symbolsList.size() - 1);
 			s << symbolsList[ords[k]];
 			}
 		//s << polymorphic ? ')' : '}';
@@ -871,7 +871,7 @@ void NxsDataType::AddSymbols(
 		{
 		SymbolsListType::const_iterator endIt = symbolsList.end();
   		--endIt;
-  		assert(*endIt == '\0');
+  		NXS_ASSERT(*endIt == '\0');
   		for (vector<char>::iterator sLIt = symbolsList.begin(); sLIt != endIt; ++sLIt)
 			newSym << *sLIt;
 		}
@@ -888,7 +888,7 @@ void NxsDataType::AddSymbols(
 		string eValStr;
 		if (ords.size() == 1)
 			{
-			assert(ords[0] < symbolsList.size() - 1); //-1 because last char in symbol list is bogus '\0'
+			NXS_ASSERT(ords[0] < symbolsList.size() - 1); //-1 because last char in symbol list is bogus '\0'
 			eValStr << symbolsList[ords[0]];
 			}
 		else if (ords.empty())
@@ -899,7 +899,7 @@ void NxsDataType::AddSymbols(
 			{
 			for(unsigned k = 0; k < ords.size(); ++k) 
 				{
-				assert(ords[k] < symbolsList.size() - 1); //-1 because last char in symbol list is bogus '\0'
+				NXS_ASSERT(ords[k] < symbolsList.size() - 1); //-1 because last char in symbol list is bogus '\0'
 				eValStr << symbolsList[ords[k]];
 				}
 			}
@@ -1020,7 +1020,7 @@ string UserTypeDescription::GetMatrixDescription() const
 	string s;
 	ncl::VerifyMatrixIsSquare(costMatrix);
 	s << (unsigned)costMatrix.size() << "\n\t\t";
-	assert( costMatrix.size() == symbols.size());
+	NXS_ASSERT( costMatrix.size() == symbols.size());
 	for (unsigned i = 0; i <  symbols.size(); ++i)
 		s << symbols[i] << "\t";
 	for (unsigned j = 0; j <  costMatrix.size(); ++j)

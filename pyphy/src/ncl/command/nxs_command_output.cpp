@@ -50,7 +50,7 @@
 				range_constraint_enum = "NonNegative";
 			else
 				{
-				assert(0);
+				NXS_ASSERT(0);
 				range_constraint_enum = "Any";
 				}
 			}

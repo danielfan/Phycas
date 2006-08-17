@@ -42,7 +42,7 @@ CmdResult NxsTreesManager::NewBlockRead(NxsBlock *newBlock)
 	NxsTreesBlock * newTrees = dynamic_cast<NxsTreesBlock *>(newBlock); //tucson2005: VC7 warning C4541: 'dynamic_cast' used on polymorphic type 'NxsBlock' with /GR-; unpredictable behavior may result nxs_taxa_listener.cpp
 	if (newTrees != NULL)
 		return AddNewTrees(newTrees->GetTreeDescriptions(), newTrees->GetDefaultTree());
-	assert(0);
+	NXS_ASSERT(0);
 	return kCmdSucceeded;
 	}
 

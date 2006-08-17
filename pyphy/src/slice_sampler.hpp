@@ -246,7 +246,7 @@ inline double SliceSampler::GetSliceUnitWidth() const
 */
 inline double SliceSampler::AdaptSimple(double multiplier)
 	{
-	assert(num_samples > 0);
+	PHYCAS_ASSERT(num_samples > 0);
 	ycond_on = false;
 	w = multiplier*sumWidths/(double)num_samples;
 	return w;
@@ -258,7 +258,7 @@ inline double SliceSampler::AdaptSimple(double multiplier)
 */
 inline double SliceSampler::AdaptNeal(double multiplier)
 	{
-	assert(num_samples > 0);
+	PHYCAS_ASSERT(num_samples > 0);
 	ycond_on = false;
 	w = multiplier*sumDiffs/(double)num_samples;
 	return w;
@@ -322,7 +322,7 @@ inline SliceInterval SliceSampler::BisectionSqueeze(double left, double lnf_left
 	{
 	bool left_below = (lnf_left < ln_y0);
 	bool right_below = (lnf_right < ln_y0);
-	assert((left_below && !right_below) || (right_below && !left_below));
+	PHYCAS_ASSERT((left_below && !right_below) || (right_below && !left_below));
 	double middle = (left + right)/2.0;
 	double lnf_middle = (*func)(middle);
 	bool middle_below = (lnf_middle < ln_y0);
@@ -339,7 +339,7 @@ inline SliceInterval SliceSampler::BisectionSqueeze(double left, double lnf_left
 	else if (right_below && middle_above)
 		go_left = false;
 	else 
-		assert(0);
+		PHYCAS_ASSERT(0);
 	if (leave_now)
 		{
 		SliceInterval slice_interval;
@@ -550,7 +550,7 @@ inline void SliceSampler::SetXValue(double x)
 	if (x != lastSampled.first)
 		{
 		lastSampled.first = x;
-		assert(func);
+		PHYCAS_ASSERT(func);
 		lastSampled.second = (*func)(x);
 		}
 	}

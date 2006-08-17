@@ -19,7 +19,7 @@ class LookupStateSymbol : public std::unary_function<int8_t, char>
 
 		char operator()(int8_t i)
 			{
-			assert((unsigned)i < (unsigned)symbols.size());
+			PHYCAS_ASSERT((unsigned)i < (unsigned)symbols.size());
 			return symbols[i][0];
 			}
 
@@ -94,7 +94,7 @@ double SimData::calct(unsigned nstates)
 std::string SimData::patternTable(
   const StringVect & state_symbols)		/**< is a vector of strings representing states (e.g. {"A", "C", "G", "T"}). Note that each state symbol should be a string of length 1 (i.e. a single character) */	
 	{
-	assert(state_symbols.size() > 0);
+	PHYCAS_ASSERT(state_symbols.size() > 0);
 
 	outstr.clear();
 	if (sim_pattern_map.empty())
@@ -135,8 +135,8 @@ void SimData::saveToNexusFile(
   const std::string datatype,			/**< is a string to be used as the NEXUS datatype (e.g. "dna" or "standard") */	
   const StringVect & state_symbols)		/**< is a vector of strings representing states (e.g. {"A", "C", "G", "T"}). Note that each state symbol should be a string of length 1 (i.e. a single character) */	
 	{
-	assert(state_symbols.size() > 0);
-	assert(taxon_names.size() == pattern_length);
+	PHYCAS_ASSERT(state_symbols.size() > 0);
+	PHYCAS_ASSERT(taxon_names.size() == pattern_length);
 
 	// Find length of longest string in taxon_names vector; this is used later for formatting purposes
 	// The 2 is included in case apostrophes are needed when taxon names are output in the matrix command
@@ -174,7 +174,7 @@ void SimData::saveToNexusFile(
 			// to the standard symbol for this data type (e.g. A, C, G or T for DNA characters)
 			int8_t j = (*it).first[i];
 
-			assert(j < (int8_t)state_symbols.size());
+			PHYCAS_ASSERT(j < (int8_t)state_symbols.size());
 			char s = state_symbols[j][0];	// use the first (and hopefully only) character in the string at position j
 
 			// The second member of it is the pattern count

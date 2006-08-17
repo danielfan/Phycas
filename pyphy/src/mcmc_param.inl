@@ -45,8 +45,8 @@ inline GTRRateParam::GTRRateParam(
   unsigned w)		/**< The 0-based index of the relative rate being managed by this object (0=AC, 1=AG, 2=AT, 3=CG, 4=CT and 5=GT) */
   : MCMCUpdater(), gtr(NULL), which(w)
 	{
-	assert(w >= 0);
-	assert(w < 6);
+	PHYCAS_ASSERT(w >= 0);
+	PHYCAS_ASSERT(w < 6);
 	curr_value = 1.0;
 	has_slice_sampler = true;
 	is_move = false;
@@ -158,7 +158,7 @@ inline void FlexRateParam::setChainManager(
 */
 inline void FlexRateParam::refreshLeftRightValues()
 	{
-	assert(rel_rates.size() > 0);
+	PHYCAS_ASSERT(rel_rates.size() > 0);
 	unsigned last = (unsigned)rel_rates.size() - 1;
 	if (which == 0 && which == last)
 		{
@@ -202,7 +202,7 @@ inline std::string FlexRateParam::getPriorDescr() const
 inline double FlexRateParam::recalcPrior()
 	{
 	refreshLeftRightValues();
-	assert(curr_value == rel_rates[which]);
+	PHYCAS_ASSERT(curr_value == rel_rates[which]);
 	curr_ln_prior = (double)nspacers*(std::log(curr_value - left_value) + std::log(right_value - curr_value));
 	return curr_ln_prior;
 	}

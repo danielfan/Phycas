@@ -173,7 +173,7 @@ inline unsigned NxsDiscreteMatrix::GetNumColumns() const
 */
 inline unsigned NxsUnalignedMatrix::GetNumColumns(unsigned rowN) const
 	{
-	assert(rowN < dataMat.size());
+	NXS_ASSERT(rowN < dataMat.size());
 	return (unsigned)dataMat[rowN].size()/nUnitsPerElement;
 	}
 
@@ -222,7 +222,7 @@ inline void NxsDiscreteMatrixBase::SetState(
   unsigned colN, 
   const DataStorageType *inValue)
   	{
-  	assert(IsValidPutElement(rowN, colN));
+  	NXS_ASSERT(IsValidPutElement(rowN, colN));
   	nxs_copy(inValue, (inValue + nUnitsPerElement), &dataMat[rowN][nUnitsPerElement*colN]);
   	}
   	
@@ -246,7 +246,7 @@ inline void NxsDiscreteMatrixBase::AddState(
   unsigned colN, 
   const DataStorageType *inValue)
   	{
-  	assert(IsValidPutElement(rowN, colN));
+  	NXS_ASSERT(IsValidPutElement(rowN, colN));
   	for (unsigned i = 0; i < nUnitsPerElement; ++i)
   		dataMat[rowN][nUnitsPerElement*colN + i] |= inValue[i];
   	}
@@ -258,7 +258,7 @@ inline void NxsDiscreteMatrixBase::ZeroState(
   unsigned rowN, 
   unsigned colN)
   	{
-  	assert(IsValidPutElement(rowN, colN));
+  	NXS_ASSERT(IsValidPutElement(rowN, colN));
   	for (unsigned i = 0; i < nUnitsPerElement; ++i)
   		dataMat[rowN][nUnitsPerElement*colN + i] = (DataStorageType) 0;
   	}
@@ -279,7 +279,7 @@ inline void NxsDiscreteMatrix::CopyStatesFromFirstRow(
   unsigned rowN, 
   unsigned colN)
   	{
-  	assert(IsValidPutElement(rowN, colN));
+  	NXS_ASSERT(IsValidPutElement(rowN, colN));
   	if (IsGap(0,colN))
   		SetGap(rowN,colN);
   	else
@@ -293,7 +293,7 @@ inline const DataStorageType *NxsDiscreteMatrixBase::GetState(
   unsigned rowN, 
   unsigned colN) const
   	{
-  	assert(IsValidGetElement(rowN, colN));
+  	NXS_ASSERT(IsValidGetElement(rowN, colN));
   	return ((&dataMat[rowN][0]) + (colN * nUnitsPerElement));
   	}
   	
@@ -351,7 +351,7 @@ inline bool NxsDiscreteMatrix::IsGap(
   unsigned rowN, 
   unsigned colN) const
   	{
-  	assert(IsValidGetElement(rowN, colN));
+  	NXS_ASSERT(IsValidGetElement(rowN, colN));
 	const IndSet & setOfGappedCells = GetGapMatrixRow(rowN);
   	return (setOfGappedCells.find(colN) != setOfGappedCells.end());
   	}
@@ -363,7 +363,7 @@ inline bool NxsDiscreteMatrixBase::IsPolymorphic(
   unsigned rowN, 
   unsigned colN) const
   	{
-  	assert(IsValidGetElement(rowN, colN));
+  	NXS_ASSERT(IsValidGetElement(rowN, colN));
   	TwoDLookUp::const_iterator pIt = polymorphic.find(rowN);
   	if (pIt == polymorphic.end())
   		return false;
@@ -439,7 +439,7 @@ inline bool NxsUnalignedMatrix::IsValidPutElement(
 */
 inline void NxsUnalignedMatrix::AddStateIndex(unsigned rowN, unsigned colN, unsigned indexOfState)
 	{
-	assert(IsValidPutElement(rowN, colN));
+	NXS_ASSERT(IsValidPutElement(rowN, colN));
 	PadRowZeroLast(rowN, colN);
 	NxsDiscreteMatrixBase::AddStateIndex(rowN, colN, indexOfState);
 	}
@@ -449,7 +449,7 @@ inline void NxsUnalignedMatrix::AddStateIndex(unsigned rowN, unsigned colN, unsi
 */
 inline void NxsUnalignedMatrix::AddState(unsigned rowN, unsigned colN,const DataStorageType *inValue)
 	{
-	assert(IsValidPutElement(rowN, colN));
+	NXS_ASSERT(IsValidPutElement(rowN, colN));
 	PadRowZeroLast(rowN, colN);
 	NxsDiscreteMatrixBase::AddState(rowN, colN, inValue);
 	}
@@ -459,7 +459,7 @@ inline void NxsUnalignedMatrix::AddState(unsigned rowN, unsigned colN,const Data
 */
 inline void NxsUnalignedMatrix::ZeroState(unsigned rowN, unsigned colN)
 	{
-	assert(IsValidPutElement(rowN, colN));
+	NXS_ASSERT(IsValidPutElement(rowN, colN));
 	if (PadRowZeroLast(rowN, colN))
 		NxsDiscreteMatrixBase::ZeroState(rowN, colN);
 	}

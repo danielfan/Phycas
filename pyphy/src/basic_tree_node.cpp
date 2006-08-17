@@ -1,5 +1,4 @@
 #include <cfloat>
-#include <cassert>
 #include "pyphy/src/basic_tree_node.hpp"
 #include "pyphy/src/pyphy_string.hpp"
 

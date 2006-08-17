@@ -76,14 +76,8 @@ class Lot(LotBase):
     def uniform(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Returns the next pseudorandom number between 0.0 and 1.0.
+        Returns a pseudorandom number between 0.0 and 1.0.
 
-        >>> from ProbDist import *
-        >>> lot = Lot()
-        >>> lot.setSeed(1357)
-        >>> print lot.uniform()
-        0.0106203830446
-        
         """
         return LotBase.uniform(self)
     

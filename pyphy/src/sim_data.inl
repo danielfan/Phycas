@@ -38,7 +38,7 @@ inline const PatternMapType & SimData::getSimPatternMap() const
 inline void SimData::resetPatternLength(
   unsigned ntaxa)	/**< is the number of taxa (same as the number of elements in a pattern vector) */
 	{
-	assert(ntaxa > 0);
+	PHYCAS_ASSERT(ntaxa > 0);
 	if (ntaxa == pattern_length)
 		return;
 
@@ -175,7 +175,7 @@ inline void SimData::setState(
   unsigned pos, 	/**< is the position in `tmp_pattern' to set */
   int8_t state)		/**< is the state to assign to the element in `tmp_pattern' at position pos */
 	{
-	assert(pos < pattern_length);
+	PHYCAS_ASSERT(pos < pattern_length);
 	tmp_pattern[pos] = state;
 	}
 
@@ -188,7 +188,7 @@ inline void SimData::insertPattern(PatternCountType count)
 	// In debug build check to make sure there are no elements in tmp_pattern that still equal
 	// missing_state (if assert trips, it means that not all elements of tmp_pattern have been 
 	// replaced with actual states)
-	assert(std::find(tmp_pattern.begin(), tmp_pattern.end(), missing_state) == tmp_pattern.end());
+	PHYCAS_ASSERT(std::find(tmp_pattern.begin(), tmp_pattern.end(), missing_state) == tmp_pattern.end());
 
 	// Add tmp_pattern to sim_pattern_map if it has not yet been seen, otherwise increment the count 
 	// for this pattern if it is already in the map (see item 24, p. 110, in Meyers' Efficient STL)
@@ -217,14 +217,14 @@ inline void SimData::insertPattern(PatternCountType count)
 */
 inline void SimData::addDataTo(SimData & other, PatternCountType mult)
 	{
-	assert(mult > 0.0);
+	PHYCAS_ASSERT(mult > 0.0);
 	if (total_count == 0.0)
 		return;
 	if (other.getTotalCount() == 0)
 		{
 		other.resetPatternLength(pattern_length);
 		}
-	assert(pattern_length == other.getPatternLength());
+	PHYCAS_ASSERT(pattern_length == other.getPatternLength());
 	for (PatternMapType::iterator it = sim_pattern_map.begin(); it != sim_pattern_map.end(); ++it)
 		{
 		PatternCountType count = it->second;
@@ -273,7 +273,7 @@ inline unsigned SimData::getNUniquePatterns()
 */
 inline void SimData::divideBy(PatternCountType total)
 	{
-	assert(total > 0.0);
+	PHYCAS_ASSERT(total > 0.0);
 	total_count /= total;
 	for (PatternMapType::iterator it = sim_pattern_map.begin(); it != sim_pattern_map.end(); ++it)
 		{

@@ -1,7 +1,6 @@
 #if !defined(CIPRES_DATA_MATRIX_HELPERS_H)
 #define CIPRES_DATA_MATRIX_HELPERS_H
 
-#include <cassert>
 #include <string>
 #include <vector>
 #include "pyphy/src/cipres/CipresNativeC.h"
@@ -64,7 +63,7 @@
 				}
 			const CIPR_StateSet_t *getRow(unsigned i) const 
 				{
-				assert(i < nativeCMatrix.nTax);
+				PHYCAS_ASSERT(i < nativeCMatrix.nTax);
 				return nativeCMatrix.matrix[i];
 				}
 			const CIPR_StateSet_t * const * getMatrix() const 

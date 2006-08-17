@@ -18,7 +18,7 @@ inline TreeManip::TreeManip()
 inline TreeManip::TreeManip(
   TreeShPtr t)	/**< Is the tree to be manipulated */
   	{
-	assert(t);
+	PHYCAS_ASSERT(t);
 	tree = t;
   	}
 

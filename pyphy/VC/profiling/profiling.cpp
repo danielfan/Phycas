@@ -36,9 +36,9 @@ int main()
 
 	// Get access to the embedded data
 	CipresNative::DiscreteMatrix * data_matrix = createNativeDiscreteMatrix(reader, 0);
-	assert(data_matrix != NULL);
-	assert(ntax == data_matrix->getNTax());
-	assert(nchar == data_matrix->getNChar());
+	PHYCAS_ASSERT(data_matrix != NULL);
+	PHYCAS_ASSERT(ntax == data_matrix->getNTax());
+	PHYCAS_ASSERT(nchar == data_matrix->getNChar());
 
 	// Create a random number generator
 	phycas::LotShPtr lot(new phycas::Lot());

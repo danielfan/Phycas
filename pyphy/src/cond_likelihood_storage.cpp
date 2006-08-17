@@ -9,9 +9,9 @@ namespace phycas
 */
 void CondLikelihoodStorage::fillTo(unsigned capacity)
 	{
-	assert(num_patterns > 0);
-	assert(num_rates > 0);
-	assert(num_states > 0);
+	PHYCAS_ASSERT(num_patterns > 0);
+	PHYCAS_ASSERT(num_rates > 0);
+	PHYCAS_ASSERT(num_states > 0);
 	unsigned curr_sz = (unsigned)cl_stack.size();
 	unsigned num_needed = (capacity > curr_sz ? capacity - curr_sz : 0);
 	for (unsigned i = 0; i < num_needed; ++i)

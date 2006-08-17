@@ -28,7 +28,7 @@ void LargetSimonMove::update()
 		return;
 
 	ChainManagerShPtr p = chain_mgr.lock();
-	assert(p);
+	PHYCAS_ASSERT(p);
 	double prev_ln_like = p->getLastLnLike();
 	TreeNode * prev_likelihood_root = likelihood->getLikelihoodRoot();
 
@@ -198,10 +198,10 @@ void LargetSimonMove::defaultProposeNewState()
 
 	// Make sure all the necessary shared pointers have been set to something meaningful
 	//
-	assert(rng);
-	assert(tree);
-	assert(model);
-	assert(likelihood);
+	PHYCAS_ASSERT(rng);
+	PHYCAS_ASSERT(tree);
+	PHYCAS_ASSERT(model);
+	PHYCAS_ASSERT(likelihood);
 
 	// Begin by resetting all the data members involved with reverting a move
 	//
@@ -227,9 +227,9 @@ void LargetSimonMove::defaultProposeNewState()
 			++i;
 			}
 		}
-	assert(ndY->GetLeftChild() != NULL);
-	assert(ndY->GetParentConst() != NULL);
-	assert(!ndY->GetParent()->IsRoot());
+	PHYCAS_ASSERT(ndY->GetLeftChild() != NULL);
+	PHYCAS_ASSERT(ndY->GetParentConst() != NULL);
+	PHYCAS_ASSERT(!ndY->GetParent()->IsRoot());
 
 	// Save ndY's edge length in case revert is needed.
 	//
@@ -246,7 +246,7 @@ void LargetSimonMove::defaultProposeNewState()
 			break;
 		++k;
 		}
-	assert(ndX != NULL);
+	PHYCAS_ASSERT(ndX != NULL);
 	origX = ndX->GetEdgeLen();
 
 	// Set ndZ equal to a randomly-chosen child of U = ndY->par, ignoring ndY but treating U->par as if it were a child
@@ -254,7 +254,7 @@ void LargetSimonMove::defaultProposeNewState()
 	// that manage the relevant edge lengths in the move.
 	//
 	TreeNode * U = ndY->GetParent();
-	assert(U != NULL);
+	PHYCAS_ASSERT(U != NULL);
 	unsigned uchildren = U->CountChildren();
 	which_child = rng->SampleUInt(uchildren);
 	if (which_child == 0)
@@ -284,7 +284,7 @@ void LargetSimonMove::defaultProposeNewState()
 				++k;
 				}
 			}
-		assert(ndZ != NULL);
+		PHYCAS_ASSERT(ndZ != NULL);
 		origZ = ndZ->GetEdgeLen();
 
 		//	Set ndBase to the deepest affected node
@@ -372,9 +372,9 @@ void LargetSimonMove::defaultProposeNewState()
 			ndZ->SetEdgeLen(y + z);
 			}
 
-		assert(ndX->GetEdgeLen() > 0.0);
-		assert(ndY->GetEdgeLen() > 0.0);
-		assert(ndZ->GetEdgeLen() > 0.0);
+		PHYCAS_ASSERT(ndX->GetEdgeLen() > 0.0);
+		PHYCAS_ASSERT(ndY->GetEdgeLen() > 0.0);
+		PHYCAS_ASSERT(ndZ->GetEdgeLen() > 0.0);
 
 		topol_changed = true;
 		}
@@ -405,10 +405,10 @@ void LargetSimonMove::revert()
 		}
 	else
 		{
-		assert(ndX != NULL);
-		assert(ndY != NULL);
-		assert(ndZ != NULL);
-		assert(topol_changed ? (swap1 != NULL && swap2 != NULL) : (swap1 == NULL && swap2 == NULL));
+		PHYCAS_ASSERT(ndX != NULL);
+		PHYCAS_ASSERT(ndY != NULL);
+		PHYCAS_ASSERT(ndZ != NULL);
+		PHYCAS_ASSERT(topol_changed ? (swap1 != NULL && swap2 != NULL) : (swap1 == NULL && swap2 == NULL));
 
 		if (topol_changed)
 			{

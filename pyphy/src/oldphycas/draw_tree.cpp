@@ -93,10 +93,10 @@ void Tree::Draw(
 	{
 	//	To accommodate the new rooting scheme, we will copy the tree and root it at a fake tip so t
 	//
-	assert(&dc != NULL);
+	PHYCAS_ASSERT(&dc != NULL);
 	Tree treeToDraw(*this);
 	TreeNode *tempRoot = NULL; //will be allocated independently, but will then be attached to treeToDraw, and destroyed when it goes out of scope
-	assert(treeToDraw.GetRoot() != NULL);
+	PHYCAS_ASSERT(treeToDraw.GetRoot() != NULL);
 	if (treeToDraw.IsRooted())
 		{
 		NXS_ASSERT(0);//@need to add support for rooted trees
@@ -111,17 +111,17 @@ void Tree::Draw(
 			TreeNode *oldRoot = treeToDraw.GetRoot();
 			if (oldRoot == NULL)
 				{
-				assert(0);
+				PHYCAS_ASSERT(0);
 				return;//@@@ should throw some exception
 				}
 			
 			TreeNode *ingroupMRCA = oldRoot->GetLeftChild();
 			if (ingroupMRCA == NULL)
 				{
-				assert(0);
+				PHYCAS_ASSERT(0);
 				return;//@@@ should throw some exception
 				}
-			assert(ingroupMRCA->GetRightSib() == NULL);
+			PHYCAS_ASSERT(ingroupMRCA->GetRightSib() == NULL);
 			ingroupMRCA = ingroupMRCA->FindRightChild();
 			tempRoot = treeToDraw.CreateTreeNode(UINT_MAX, 0.0, false);
 			ingroupMRCA->AddRightSib(tempRoot);
@@ -245,7 +245,7 @@ void SetUnscaledCoordsRecursively(
 void TreeNode::AddToX(
   double additionalX)	/* scaling factor to use for y-coordinates */
 	{
-	assert(plotData != NULL);
+	PHYCAS_ASSERT(plotData != NULL);
 	SetX(GetX() + additionalX);
 	}
 
@@ -256,7 +256,7 @@ void TreeNode::ScaleCoords(
   double xscaler,	/* scaling factor to use for x-coordinates */
   double yscaler)	/* scaling factor to use for y-coordinates */
 	{
-	assert(plotData != NULL);
+	PHYCAS_ASSERT(plotData != NULL);
 	SetX(GetX() * xscaler);
 	SetY(GetY() * yscaler);
 	}
@@ -347,7 +347,7 @@ void CalcWidthScaler(
   double plotWidth,			/* width of plot area */
   double &scaler) 			/* overall scaling factor for edge lengths */			
 	{
-	assert(focalNd->plotData != NULL);
+	PHYCAS_ASSERT(focalNd->plotData != NULL);
 	if (focalNd->IsShootTip() && focalNd->GetX() > 0.0)
 		{
 		// Allow for space between name and branch tip (2 spaces because cast 
@@ -386,7 +386,7 @@ void CalcWidthScalerBounds(
 	{
 	if (focalNd->IsLeafOrRoot())
 		{
-		assert(focalNd->plotData != NULL);
+		PHYCAS_ASSERT(focalNd->plotData != NULL);
 		// Allow for space between name and branch tip (2 spaces because cast 
 		// from double to unsigned bumps tips up to next "pixel")
 		//

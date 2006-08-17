@@ -339,7 +339,7 @@ template<class T> inline void NxsDataType::AddStateCode(
 	{
 	if (j == UINT_MAX)
 		return;
-	assert(ch != '\0');
+	NXS_ASSERT(ch != '\0');
 	AddStateChar(dataMatrix, i, j, ch, token);
 	}
 

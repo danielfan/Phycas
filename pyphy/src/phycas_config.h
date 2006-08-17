@@ -1,14 +1,28 @@
 #ifndef PHYCAS_CONFIG_H
 #define PHYCAS_CONFIG_H
 
-#if defined(__MWERKS__) && defined(__APPLE__)
-#	include <MSLCarbonPrefix.h>
+#if defined(PYTHON_ONLY)
+#	include <Python.h>
 #endif
 
 #if defined(NDEBUG)
 #	define FILE_AND_LINE
+#	define PHYCAS_ASSERT(expr)
+#elif defined(_MSC_VER) // Microsoft Visual Studio C++ compiler issues error C1055 "out of keys" unless __LINE__ is not used in asserts or phycas::Uniform constructor
+#	define FILE_AND_LINE
+#	include <boost/assert.hpp>
+#	define PHYCAS_ASSERT(expr)  if (!(expr)) boost::assertion_failed((const char *)#expr, (const char *)__FUNCTION__, (const char *)"" /* __FILE__ */, 0L /* __LINE__*/)
+#	define IGNORE_NXS_ASSERT	// used in nxs_defs.hpp to cause NXS_ASSERT to expand to nothing
 #else
 #	define FILE_AND_LINE  __FILE__,__LINE__
+#	include <cassert>
+#	define PHYCAS_ASSERT(expr)  assert(expr)
+#endif
+
+#define NXS_SUPPRESS_OUTPUT
+
+#if defined(__MWERKS__) && defined(__APPLE__)
+#	include <MSLCarbonPrefix.h>
 #endif
 
 /* to make cipres services supplied by phycas reentrant, MTH is on a crusade against statics 
@@ -31,16 +45,7 @@ The following defines will help me wade through harmless, class-level functions 
   /* STATIC_CONST declares data as const and static */
 #define STATIC_CONST static
 
-
-//#if defined(POL_PHYCAS)
-#define NXS_SUPPRESS_OUTPUT
-#if defined(PYTHON_ONLY)
-#	include <Python.h>
-#endif
-//#endif
-
-
-	/*currently we only support a console or suppressing output */
+/*currently we only support a console or suppressing output */
 #define CONSOLE_PHOREST 
 #if defined (CONSOLE_PHYCAS_NO_SOCKET)
 #   if !defined(NCL_USE_STD_OUTPUT)

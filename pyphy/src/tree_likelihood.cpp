@@ -25,14 +25,14 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 	if (nd.IsTip())
 		return;
 
-	assert(avoid != NULL);
+	PHYCAS_ASSERT(avoid != NULL);
 	//@MTH-NESCENT this const_cast should be safe because we aren't relying on const-ness of CLA's but it needs to be revisited
 	//@POL-NESCENT Mark, if we are going to immediately cast away the const on avoid, why do we need to make it const in the first place?
 	CondLikelihoodShPtr ndCondLike = getCondLikePtr(&nd, const_cast<TreeNode *>(avoid)); 
 	TreeNode * parent = nd.GetParent();
 	TreeNode * lChild = nd.GetLeftChild();
-	assert(parent != NULL);
-	assert(lChild != NULL);
+	PHYCAS_ASSERT(parent != NULL);
+	PHYCAS_ASSERT(lChild != NULL);
 
 	// The first neighbor can either be the parent or the leftmost child. The second neighbor must be a child, but
 	// which child depends on the first neighbor. Third and subsequent neighbors are always next sibs.
@@ -131,9 +131,9 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 */
 bool TreeLikelihood::isValid(const TreeNode * refNd, const TreeNode * neighborCloserToEffectiveRoot)
 	{
-	assert(refNd != NULL);
-	assert(neighborCloserToEffectiveRoot != NULL);
-	assert(refNd != neighborCloserToEffectiveRoot);
+	PHYCAS_ASSERT(refNd != NULL);
+	PHYCAS_ASSERT(neighborCloserToEffectiveRoot != NULL);
+	PHYCAS_ASSERT(refNd != neighborCloserToEffectiveRoot);
 	if (refNd->IsTip())
 		{
 		// tip nodes always return true because they must be the child of neighborCloserToEffectiveRoot
@@ -664,9 +664,9 @@ class CalcTransitionMatrixForOneNode : public std::unary_function<TreeNode &, vo
 */
 void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar, bool refresh_probs)
 	{
-	assert(sim_data);
-	assert(rng);
-	assert(nchar > 0);
+	PHYCAS_ASSERT(sim_data);
+	PHYCAS_ASSERT(rng);
+	PHYCAS_ASSERT(nchar > 0);
 
 	// Recalculate transition probabilities if requested
 	//@POL using for_each would simplify this
@@ -679,8 +679,8 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 		// The subroot node's transition matrices need not be calculated 
 		TipData & ndTD = *(nd->GetTipData());
 		TreeNode * subroot = nd->GetLeftChild();
-		assert(subroot);
-		assert(!subroot->GetRightSib());	//@POL need to create a IsSubroot() member function for TreeNode
+		PHYCAS_ASSERT(subroot);
+		PHYCAS_ASSERT(!subroot->GetRightSib());	//@POL need to create a IsSubroot() member function for TreeNode
 		calcTMatForSim(ndTD, subroot->GetEdgeLen());
 		++nd;
 
@@ -856,7 +856,7 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 				InternalData * parentID = parent->GetInternalData();
 				parent_state = (unsigned)parentID->state;
 				}
-			assert(parent_state < num_states);
+			PHYCAS_ASSERT(parent_state < num_states);
 
 			if (nd->IsTip())
 				{
@@ -927,11 +927,11 @@ TreeNode * TreeLikelihood::storeAllCLAs(
 	{
 	// Start at the root node
 	TreeNode * nd = t->GetFirstPreorder();
-	assert(nd);
+	PHYCAS_ASSERT(nd);
 
 	// Move to the subroot node
 	nd = nd->GetNextPreorder();
-	assert(nd);
+	PHYCAS_ASSERT(nd);
 
 	// Invalidate (and do not cache) all CLAs from the tree. This will require all CLAs to be recomputed 
 	// when the likelihood is computed using the subroot as the likelihood root. This path should be taken
@@ -1007,11 +1007,11 @@ double TreeLikelihood::calcLnL(
 		// If no likelihood_root has been specified, use the subroot node (and
 		// invalidate the entire tree to be safe)
 		nd = t->GetFirstPreorder();
-		assert(nd);
+		PHYCAS_ASSERT(nd);
 
 		// Move to the subroot node
 		nd = nd->GetNextPreorder();
-		assert(nd);
+		PHYCAS_ASSERT(nd);
 
 		// The subroot node is the new likelihood_root
 		likelihood_root = nd;
@@ -1031,8 +1031,8 @@ double TreeLikelihood::calcLnL(
 #endif
 		}
 
-	assert(nd);
-	assert(nd->IsInternal());
+	PHYCAS_ASSERT(nd);
+	PHYCAS_ASSERT(nd->IsInternal());
 
 	// Calculate log-likelihood using nd as the likelihood root
 	double lnL = calcLnLFromNode(*nd);
@@ -1142,7 +1142,7 @@ double TreeLikelihood::calcLnLFromNode(
 		lnL =  0.0;
 	else
 		{
-		assert(!focal_node.IsTip());
+		PHYCAS_ASSERT(!focal_node.IsTip());
 
 		// valid_functor will return true if the conditional likelihood arrays pointing away from the
 		// focal_node are up-to-date, false if they need to be recomputed
@@ -1438,10 +1438,10 @@ void TreeLikelihood::addDataTo(SimData & other)
 		return;
 	if (other.getTotalCount() == 0)
 		{
-		assert(nTaxa > 0);
+		PHYCAS_ASSERT(nTaxa > 0);
 		other.resetPatternLength(nTaxa);
 		}
-	assert(nTaxa == other.getPatternLength());
+	PHYCAS_ASSERT(nTaxa == other.getPatternLength());
 	for (PatternMapType::iterator it = pattern_map.begin(); it != pattern_map.end(); ++it)
 		{
 		PatternCountType count = it->second;
@@ -1776,11 +1776,11 @@ void TreeLikelihood::buildPatternReprVector(std::vector<std::string> & pattern_r
 			{
 			// get node number i
 			unsigned i = nd->GetNodeNumber();
-			assert(i >= 0 && i < nTips);
+			PHYCAS_ASSERT(i >= 0 && i < nTips);
 
 			// get tip-specific state code array
 			TipData * tipData = nd->GetTipData();
-			assert(tipData);
+			PHYCAS_ASSERT(tipData);
 			const int8_t * tipCodes = tipData->getConstStateCodes();
 
 			// get position vector that allows us to translate tip-specific state codes into global state codes

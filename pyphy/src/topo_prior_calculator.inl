@@ -38,7 +38,7 @@ inline void TopoPriorCalculator::SetNTax(
 	if (ntax != new_ntax)
 		{
 		// Set ntax to the new value
-		assert(new_ntax > (unsigned)(is_rooted ? 1 : 2));
+		PHYCAS_ASSERT(new_ntax > (unsigned)(is_rooted ? 1 : 2));
 		ntax = new_ntax;
 
 		topo_priors_dirty = true;
@@ -131,7 +131,7 @@ inline void TopoPriorCalculator::ChoosePolytomyPrior()
 */
 inline void TopoPriorCalculator::SetC(double c)
 	{
-	assert(c > 0.0);
+	PHYCAS_ASSERT(c > 0.0);
 	if (c != C)
 		{
 		C = c;
@@ -174,7 +174,7 @@ inline double TopoPriorCalculator::GetLnTopologyPrior(
 
 	if (topo_priors_dirty)
 		Reset();
-	assert(m < topology_prior.size());
+	PHYCAS_ASSERT(m < topology_prior.size());
 	return topology_prior[m];
 	}
 
@@ -189,7 +189,7 @@ inline double TopoPriorCalculator::GetLnNormalizedTopologyPrior(
 	{
 	if (topo_priors_dirty)
 		Reset();
-	assert(m < topology_prior.size());
+	PHYCAS_ASSERT(m < topology_prior.size());
 	return (topology_prior[m] - topology_prior[0]);
 	}
 

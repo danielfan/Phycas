@@ -2,7 +2,6 @@
 #define INTERNAL_DATA_HPP
 
 #include <vector>
-#include <cassert>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
@@ -161,19 +160,19 @@ inline ConstCondLikelihoodShPtr InternalData::getValidChildCondLikePtr() const
 	{
 	//@POL-NESCENT Mark, I don't understand this - why not just assert that childWorkingCLA actually 
 	// points to a CondLikelihood object, then return childWorkingCLA directly?
-	//assert(childCLAValid);
+	//PHYCAS_ASSERT(childCLAValid);
 	//InternalData * t = const_cast<InternalData *>(this);
 	//return t->getChildCondLikePtr();
-	assert(childWorkingCLA);
+	PHYCAS_ASSERT(childWorkingCLA);
 	return ConstCondLikelihoodShPtr(childWorkingCLA);
 	}
 
 inline ConstCondLikelihoodShPtr InternalData::getValidParentalCondLikePtr() const
 	{
-	//assert(parCLAValid);
+	//PHYCAS_ASSERT(parCLAValid);
 	//InternalData * t = const_cast<InternalData *>(this);
 	//return t->getParentalCondLikePtr();
-	assert(parWorkingCLA);
+	PHYCAS_ASSERT(parWorkingCLA);
 	return ConstCondLikelihoodShPtr(parWorkingCLA);
 	}
 

@@ -81,7 +81,7 @@ inline unsigned DataPatternInfo::GetOrigIndex(
   unsigned i)	/**< is the (0-based) index of the desired value in the `origIndex' vector */
   const
 	{
-	assert(i < count); 
+	PHYCAS_ASSERT(i < count); 
 	return origIndex[i];
 	}
 

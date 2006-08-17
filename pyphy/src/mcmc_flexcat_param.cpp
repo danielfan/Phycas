@@ -33,7 +33,7 @@ double FlexRateParam::operator()(
 		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
         curr_ln_like = likelihood->calcLnL(tree);
 		ChainManagerShPtr p = chain_mgr.lock();
-		assert(p);
+		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
 		}
 
@@ -61,7 +61,7 @@ double FlexProbParam::operator()(
 		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
         curr_ln_like = likelihood->calcLnL(tree);
 		ChainManagerShPtr p = chain_mgr.lock();
-		assert(p);
+		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
 		}
 

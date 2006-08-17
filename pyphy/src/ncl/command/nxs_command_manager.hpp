@@ -186,7 +186,7 @@ inline NxsCommandShPtr NxsCommandManager::GetCommand(
 	{
 	if (which_cmd >= commands.size())
 		{
-		assert(0);
+		NXS_ASSERT(0);
 		throw XCommandNotFound();
 		}
 	return commands[(VecNxsCommandShPtr::size_type) which_cmd];

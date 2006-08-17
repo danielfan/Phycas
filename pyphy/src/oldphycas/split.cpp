@@ -254,7 +254,7 @@ unsigned Split::CalcComplexity() const
 void Split::CreateAndAppendPatternRepresentation(
 	string *s) const	/* pointer to string object to which the representation will be appended */
 	{
-	assert(s != NULL); //@pol -> mth: why not use string & here?
+	PHYCAS_ASSERT(s != NULL); //@pol -> mth: why not use string & here?
 	if (Split::splitNTax > 0)
 		{
 		unsigned nTaxAdded = 0;
@@ -561,7 +561,7 @@ bool Split::Compatible( const Split& other ) const
 */
 void Split::CreatePatternRepresentation( char* s, unsigned slen ) const
 	{
-	assert( slen > Split::ntax );
+	PHYCAS_ASSERT( slen > Split::ntax );
 	
 	unsigned pos = 0;
 	for( unsigned i = 0; i < nunits && pos < Split::ntax; ++i ) 

@@ -27,8 +27,8 @@ inline double NCatMove::getPhi() const
 */
 inline void NCatMove::setPhi(double new_phi)
 	{
-	assert(new_phi > 0.0);
-	assert(new_phi < 1.0);
+	PHYCAS_ASSERT(new_phi > 0.0);
+	PHYCAS_ASSERT(new_phi < 1.0);
 	phi = new_phi;
 	}
 
@@ -48,7 +48,7 @@ inline unsigned NCatMove::getNCatMax() const
 */
 inline void NCatMove::setNCatMax(unsigned new_ncat_max)
 	{
-	assert(ncat_max > 0);
+	PHYCAS_ASSERT(ncat_max > 0);
 	ncat_max = new_ncat_max;
 	}
 
@@ -66,7 +66,7 @@ inline double NCatMove::getLambda() const
 */
 inline void NCatMove::setLambda(double new_lambda)
 	{
-	assert(new_lambda > 0.0);
+	PHYCAS_ASSERT(new_lambda > 0.0);
 	lambda = new_lambda;
 	}
 
@@ -84,7 +84,7 @@ inline double NCatMove::getL() const
 */
 inline void NCatMove::setL(double new_L)
 	{
-	assert(new_L > 0.0);
+	PHYCAS_ASSERT(new_L > 0.0);
 	L = new_L;
 	}
 
@@ -105,7 +105,7 @@ inline unsigned NCatMove::getS() const
 */
 inline void NCatMove::setS(unsigned new_s)
 	{
-	assert(new_s >= 0);
+	PHYCAS_ASSERT(new_s >= 0);
 	s = new_s;
 	}
 
@@ -125,7 +125,7 @@ inline ProbDistShPtr NCatMove::getCatProbPrior() const
 */
 inline void NCatMove::setCatProbPrior(ProbDistShPtr new_cat_prob_prior)
 	{
-	assert(new_cat_prob_prior); //@POL should we also check to make sure the distribution pointed to is either Gamma or Exponential?
+	PHYCAS_ASSERT(new_cat_prob_prior); //@POL should we also check to make sure the distribution pointed to is either Gamma or Exponential?
 	cat_prob_prior = new_cat_prob_prior;
 	}
 

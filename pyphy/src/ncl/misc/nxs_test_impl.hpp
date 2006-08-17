@@ -70,7 +70,7 @@ template <typename T> class NxsVariableWrapper
 		NxsVariableWrapper(const T *v)
 		  :valueAddress(v)
 		  	{
-		  	assert(v != NULL);
+		  	NXS_ASSERT(v != NULL);
 		  	}
 		T operator()() const 
 			{
@@ -87,7 +87,7 @@ template <typename T> class NxsFuncWrapper
 		NxsFuncWrapper(boost::function0<T> v)
 		  :functionPtr(v)
 		  	{
-		  	assert(v);
+		  	NXS_ASSERT(v);
 		  	}
 		T operator()() const 
 			{
@@ -133,7 +133,7 @@ template<typename ComparedType,
 				return leftOperand() >= rightOperand();
 			if(op == NxsTest::ComparisonOperator(kGreaterThan))
 				return leftOperand() > rightOperand();
-			assert(op == NxsTest::ComparisonOperator(kNotEqual));
+			NXS_ASSERT(op == NxsTest::ComparisonOperator(kNotEqual));
 			return leftOperand() != rightOperand();
 			}
 		std::string 	GetMessage(NxsTest::msgContext context = explain_failure)
@@ -182,7 +182,7 @@ template<typename ComparedType,
 			case(NxsTest::ComparisonOperator(kGreaterOrEq)) : return leftOperand() >= rightOperand();
 			case(NxsTest::ComparisonOperator(kGreaterThan)) : return leftOperand() > rightOperand();
 			}
-		assert(op == NxsTest::ComparisonOperator(kNotEqual));
+		NXS_ASSERT(op == NxsTest::ComparisonOperator(kNotEqual));
 		return leftOperand() != rightOperand();
 		}
 

@@ -117,11 +117,17 @@ typedef unsigned char 							DataStorageType; /* binary encodings of character d
 #if defined (NDEBUG)
 #	define NON_COPYABLE 
 #	define AND_NON_COPYABLE 
-#	define NXS_ASSERT(test) assert(test)
+#	if defined(IGNORE_NXS_ASSERT)
+#		define NXS_ASSERT(test)
+#	else
+#		define NXS_ASSERT(test) assert(test)
+#	endif
 #else
 #	define NON_COPYABLE : public boost::noncopyable
 #	define AND_NON_COPYABLE , public boost::noncopyable
-#	if defined(STOP_DEBUGGER_ON_TRIPPED_ASSERTS) //@pol -> mth defined(STOP...) ok? Was just STOP... before
+#	if defined(IGNORE_NXS_ASSERT)
+#		define NXS_ASSERT(test)
+#	elif defined(STOP_DEBUGGER_ON_TRIPPED_ASSERTS) //@pol -> mth defined(STOP...) ok? Was just STOP... before
 		bool	NxsAssertionFailed(const char *, unsigned); 
 #		define NXS_ASSERT(test) ((test) ? ((void) 0) : (NxsAssertionFailed(__FILE__, __LINE__) ? assert(test) : assert(test)))
 #	else

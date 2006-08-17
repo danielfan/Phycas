@@ -259,7 +259,7 @@ inline double MCMCChainManager::partialEdgeLenPrior(const std::vector<double> & 
 
 #if defined(USE_PARTIAL_SUM_FUNCTOR)
 	ExponentialDistribution * d = dynamic_cast<ExponentialDistribution *>(p.get());
-	assert(d);
+	PHYCAS_ASSERT(d);
 	//@POL assuming edge length distribution is Exponential for now (allows GetLnPDF to be inlined)
 	return std::for_each(edge_len_vect.begin(), edge_len_vect.end(), PartialPriorSum(*d)).result();
 #else

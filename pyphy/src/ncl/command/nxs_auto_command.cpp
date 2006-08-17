@@ -112,7 +112,7 @@ std::string NxsCommand::GetErrorStringFromCmdOption(
   NxsToken    & tok, /* the token stream */
   std::string   suffixStr)
   	{
-  	assert(ci->GetErrorState() != NxsCmdOption::no_err);
+  	NXS_ASSERT(ci->GetErrorState() != NxsCmdOption::no_err);
   	std::string errormsg;
 	std::string transitionString;
 	const int ciError = ci->GetErrorState();
@@ -254,7 +254,7 @@ bool NxsAutomaticallyParsedCommand::CheckUnnamedCmdOptIfUnread(NxsCmdOptionShPtr
 			if (temp.empty())
 				{
 				errormsg << "The command contains unnamed options that must are not currently documented";
-				assert(0);
+				NXS_ASSERT(0);
 				}
 			else
 				errormsg << "The correct usage of the command is:\n" << temp;				
@@ -384,7 +384,7 @@ bool	NxsAutomaticallyParsedCommand::ParseCommand(
 				// Back the token up and try to read it and reset to command item that choked
 				//
 			token.SeekTokenizerState(backupTokenizerState);
-			assert((*currUnNamedSetting)->HadError());
+			NXS_ASSERT((*currUnNamedSetting)->HadError());
 			(*currUnNamedSetting)->RevertBecauseCommandFailed();
 			}
 		SkipHelpRequests(token);

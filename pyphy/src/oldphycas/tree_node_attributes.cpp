@@ -10,12 +10,12 @@ TreeNodeAttribute::TreeNodeAttribute(
   unsigned nrates,		/**< is the number of rate categories to be used with discrete gamma rate heterogeneity */
   double *blen)			/**< is a pointer to an edge length */
 	{
-	assert(blen == NULL);
+	PHYCAS_ASSERT(blen == NULL);
 #	if defined(HAVE_PRAGMA_UNUSED) && defined (NDEBUG)
 #		pragma unused(blen)
 #	endif
-	assert(nsites > 0);
-	assert(nrates > 0);
+	PHYCAS_ASSERT(nsites > 0);
+	PHYCAS_ASSERT(nrates > 0);
 
 	lastAvoidNode = NULL;
 	pMatIsDirty = true;
@@ -71,7 +71,7 @@ TreeNodeAttribute::TreeNodeAttribute(
 */
 TreeNodeAttribute::~TreeNodeAttribute()
 	{
-	assert(condLike != NULL);
+	PHYCAS_ASSERT(condLike != NULL);
 
 	delete [] condLike;
 

@@ -21,7 +21,7 @@ string TreeID::CreateIdRepresentation() const
 
 inline void TreeID::GetIntersection(const TreeID &otherSet, SplitSet *intersect) const
 	{
-	assert(intersect != NULL);
+	PHYCAS_ASSERT(intersect != NULL);
 	set_intersection( split_set.begin(), split_set.end(), otherSet.split_set.begin(), otherSet.split_set.end(), inserter( *intersect, intersect->begin() ) );
 	}
 	
@@ -90,7 +90,7 @@ istream& operator>>( istream& in, TreeID& id )
 	unsigned sz;
 	unsigned nu;
 	in >> sz >> nu;
-	assert( nu == Split::nunits );
+	PHYCAS_ASSERT( nu == Split::nunits );
 	for (unsigned i = 0; i < (unsigned)sz; ++i)
 		{
 		Split x;

@@ -12,7 +12,7 @@ namespace phycas
 inline void SimpleUnderflowPolicy::setTriggerSensitivity(
   unsigned nedges)		/**< is the number of edges to traverse before correcting for underflow */
 	{
-	assert(nedges > 0);
+	PHYCAS_ASSERT(nedges > 0);
 	underflow_num_edges = nedges;
 	}
 
@@ -27,7 +27,7 @@ inline void SimpleUnderflowPolicy::setTriggerSensitivity(
 inline void SimpleUnderflowPolicy::setCorrectToValue(
   double maxval)	/**< is the target value to which the largest conditional likelihood for any given pattern will be scaled */
 	{
-	assert(maxval > 0.0);
+	PHYCAS_ASSERT(maxval > 0.0);
 	underflow_max_value = maxval;
 	}
 
@@ -40,9 +40,9 @@ inline void SimpleUnderflowPolicy::setDimensions(
   unsigned nr, 	/**< is the number of relative rates used in modeling among-site rate variation */
   unsigned ns)	/**< is the number of states */
 	{
-	assert(np > 0);
-	assert(nr > 0);
-	assert(ns > 0);
+	PHYCAS_ASSERT(np > 0);
+	PHYCAS_ASSERT(nr > 0);
+	PHYCAS_ASSERT(ns > 0);
 	num_patterns = np;
 	num_rates = nr;
 	num_states = ns;
@@ -83,9 +83,9 @@ inline void PatternSpecificUnderflowPolicy::correctSiteLike(
   ConstCondLikelihoodShPtr condlike_shptr)	/**< is the conditional likelihood array of the likelihood root node */
   const
 	{
-	assert(condlike_shptr);
+	PHYCAS_ASSERT(condlike_shptr);
 	UnderflowType const * uf = condlike_shptr->getUF();
-	assert(uf != NULL);
+	PHYCAS_ASSERT(uf != NULL);
 	site_like -= (double)uf[pat];
 	}
 
@@ -98,7 +98,7 @@ inline void SimpleUnderflowPolicy::correctLnLike(
   ConstCondLikelihoodShPtr condlike_shptr)	/**< is the conditional likelihood array of the likelihood root node */
   const
 	{
-	assert(condlike_shptr);
+	PHYCAS_ASSERT(condlike_shptr);
 	UnderflowType ufsum = condlike_shptr->getUFSum();
 	ln_like -= (double)ufsum;
 	}

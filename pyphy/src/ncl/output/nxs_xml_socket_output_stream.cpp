@@ -187,7 +187,7 @@
 		
 	void NxsXMLSocketOutputStream::PrintTable(NxsTable *p)
 		{
-		assert(p == &table);	//you should be getting the Table pointer from NxsXMLSocketOutputStream::GetTablePtr so that it has the correct width etc
+		PHYCAS_ASSERT(p == &table);	//you should be getting the Table pointer from NxsXMLSocketOutputStream::GetTablePtr so that it has the correct width etc
 		try 
 			{
 			p->Show(*this);

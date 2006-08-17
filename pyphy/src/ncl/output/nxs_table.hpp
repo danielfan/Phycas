@@ -207,7 +207,7 @@ class NxsTable
 */
 inline void NxsTable::SetNominalCIPercent(unsigned p)
 	{
-	assert(p <= 100);
+	NXS_ASSERT(p <= 100);
 	nominal_CIpct = p;
 	}
 

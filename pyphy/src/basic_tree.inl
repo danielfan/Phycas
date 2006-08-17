@@ -45,7 +45,7 @@ inline Tree::~Tree()
 */
 inline bool Tree::SetNumberFromName(TreeNode * nd, std::set<unsigned> & used)
 	{
-	assert(nd != NULL);
+	PHYCAS_ASSERT(nd != NULL);
 	std::string name = nd->GetNodeName();
 	boost::trim(name);
 	unsigned x = 0;
@@ -181,7 +181,7 @@ inline TreeNode *Tree::GetNewNode()
 inline void Tree::Reserve(
   unsigned n)	/**< is the desired length of the `nodeStorage' vector */
 	{
-	assert(n > 0);
+	PHYCAS_ASSERT(n > 0);
 	unsigned num_existing_nodes = (unsigned)nodeStorage.size();
 	if (num_existing_nodes >= n)
 		return;

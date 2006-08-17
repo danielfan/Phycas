@@ -156,7 +156,7 @@ void NxsIndexSet::Crop(
   unsigned lowest, 
   unsigned highest)
   	{
-  	assert(highest >= lowest);
+  	NXS_ASSERT(highest >= lowest);
   	const unsigned currLast = GetLast();
   	const unsigned currFirst = GetFirst();
   	if (lowest > currLast || highest < currFirst)

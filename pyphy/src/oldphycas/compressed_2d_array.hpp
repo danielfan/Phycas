@@ -41,7 +41,7 @@ template <typename T> class Compressed2DArray
 			// Compressed2DArray should only be used with signed types. Would use a compile-time assert here 
 			// if numeric_limits was more portable
 			//
-			NXS_ASSERT(0 > (T) (-(T)1)); 
+			PHYCAS_ASSERT(0 > (T) (-(T)1)); 
 
 			if (lenGuess != 0)
 				arr.reserve(lenGuess);

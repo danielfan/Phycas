@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 #include <set>
-#include <cassert>
 #include <iostream>
 #include <boost/algorithm/string.hpp>	// used by SetNumberFromName member function
 #include <boost/lexical_cast.hpp>		// used by SetNumberFromName member function

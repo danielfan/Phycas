@@ -130,7 +130,7 @@ inline void QMatrix::setStateFreqs(const std::vector<double> & freqs)
 */
 inline void QMatrix::redimension(unsigned new_dim)
 	{
-	assert(new_dim > 0);
+	PHYCAS_ASSERT(new_dim > 0);
 	clearAllExceptFreqsAndRates();
 
 	dimension = new_dim;
@@ -142,7 +142,7 @@ inline void QMatrix::redimension(unsigned new_dim)
 
 	// Create and fill qmat with default (Mk model) values 
 	qmat = NewTwoDArray<double>(dimension, dimension);
-	assert(qmat);
+	PHYCAS_ASSERT(qmat);
 
 	qmat_begin		= &qmat[0][0];
 	qmat_end		= qmat_begin + flat_length;

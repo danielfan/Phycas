@@ -103,7 +103,7 @@ inline void NxsIndexSet::insert(const NxsIndexSet &r)
 
 inline void NxsIndexSet::InsertRange(unsigned f, unsigned t)
 	{
-	assert(f <= t);
+	NXS_ASSERT(f <= t);
 	for (;f <= t; ++f)
 		included.insert(f);
 	}
@@ -206,7 +206,7 @@ inline	void NxsIndexSet::erase(
 	
 inline	void NxsIndexSet::SetToIntersection(const NxsIndexSet &f, const NxsIndexSet&s)
 	{
-	assert( &f != this && &s != this);
+	NXS_ASSERT( &f != this && &s != this);
 	clear();
 	set_intersection(f.included.begin(),f.included.end(), s.included.begin(),s.included.end(), std::insert_iterator< std::set<unsigned> >(included, included.begin()));
 	}

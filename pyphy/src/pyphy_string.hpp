@@ -103,7 +103,7 @@ inline void DoubleFormatter::SetWidth(
 inline void DoubleFormatter::SetPrecision(
   unsigned nDigitsPrecision)	/**< is the new precision */
 	{
-	assert(nDigitsPrecision < fieldWidth - 1);
+	PHYCAS_ASSERT(nDigitsPrecision < fieldWidth - 1);
 	digitsAfterDecimal =  (unsigned) (nDigitsPrecision > kMaxDoublePrintPrecision ? kMaxDoublePrintPrecision : nDigitsPrecision);
 	RecreateFormatCode();
 	}

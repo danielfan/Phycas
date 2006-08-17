@@ -141,7 +141,7 @@
 		const unsigned firstlineWidth = width-line.length();
 		if (firstlineWidth > 5)
 			{
-			assert(i + firstlineWidth < wordLength);
+			PHYCAS_ASSERT(i + firstlineWidth < wordLength);
 			temp.assign(word, i, firstlineWidth);
 			AppendWordToLine(temp);
 			i += firstlineWidth;

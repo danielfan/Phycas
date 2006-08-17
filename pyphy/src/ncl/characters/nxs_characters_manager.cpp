@@ -57,7 +57,7 @@ CmdResult NxsCharactersManager::NewBlockRead(NxsBlock *newBlock)
 		IndicesIncreased(GetSize(), true);
 		return r;
 		}
-	assert(0);
+	NXS_ASSERT(0);
 	return kCmdSucceeded;
 	}
 

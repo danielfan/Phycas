@@ -327,7 +327,7 @@ TreeNode *Tree::BuildUnfinishedTreeToCheckString(
   bool translateNames,				/* if true, the names should be translated from taxon names */
   set<unsigned> *termNodeNumbers)	/* */	
 	{
-	assert(s != NULL);
+	PHYCAS_ASSERT(s != NULL);
 	// Eliminate any existing nodes
 	//
 	Clear();
@@ -358,12 +358,12 @@ TreeNode *Tree::BuildUnfinishedTreeToCheckString(
 			switch(ch)
 				{
 				case ';':
-					assert(token.GetTokenLength() == 1);
+					PHYCAS_ASSERT(token.GetTokenLength() == 1);
 					throw XBadTreeDef("premature semicolon", token);
 					break;  
 
 				case ')':
-					assert(token.GetTokenLength() == 1);
+					PHYCAS_ASSERT(token.GetTokenLength() == 1);
 					if (nd->IsRoot())
 						throw XBadTreeDef("too many right parentheses", token);
 					if (previous != Prev_Tok_RParens && previous != Prev_Tok_Name && previous != Prev_Tok_EdgeLen)
@@ -377,17 +377,17 @@ TreeNode *Tree::BuildUnfinishedTreeToCheckString(
 					break;
 
 				case ':':
-					assert(token.GetTokenLength() == 1);
+					PHYCAS_ASSERT(token.GetTokenLength() == 1);
 					if (previous != Prev_Tok_RParens && previous != Prev_Tok_Name && previous != Prev_Tok_EdgeLen)
 						throw XBadTreeDef("unexpected colon", token);
 					previous = Prev_Tok_Colon;
-					assert(nd->GetFltEdgeLen() == DBL_MAX);
+					PHYCAS_ASSERT(nd->GetFltEdgeLen() == DBL_MAX);
 					//if(nd->GetFltEdgeLen() != DBL_MAX)
 					// 	throw XBadTreeDef("multiple branch lengths specified for one node", token);
 					break;
 
 				case ',':
-					assert(token.GetTokenLength() == 1);
+					PHYCAS_ASSERT(token.GetTokenLength() == 1);
 					// Create sibling for nd
 					//
 					if (nd->IsRoot() || previous == Prev_Tok_LParens || previous == Prev_Tok_Comma || previous == Prev_Tok_Colon)
@@ -404,12 +404,12 @@ TreeNode *Tree::BuildUnfinishedTreeToCheckString(
 					break;
 
 				case '(':
-					assert(token.GetTokenLength() == 1);
+					PHYCAS_ASSERT(token.GetTokenLength() == 1);
 					if (previous != Prev_Tok_LParens && previous != Prev_Tok_Comma)
 						throw XBadTreeDef("too many left parentheses - not after a comma or left parentheses ", token);
 					// Create new_node above and to the left of the current node
 					//
-					assert(nd->GetLeftChild() == NULL);
+					PHYCAS_ASSERT(nd->GetLeftChild() == NULL);
 					nd->lChild = CreateTreeNode(UINT_MAX, DBL_MAX, false);
 					nd->lChild->par = nd;
 					nd = nd->lChild;
@@ -541,7 +541,7 @@ void Tree::Reroot(
 	{
 	if (nd->IsRoot())
 		return;
-	assert(nd->lChild == NULL && nd->par != NULL);	//assumes that we are rooting at a tip that had been attached 
+	PHYCAS_ASSERT(nd->lChild == NULL && nd->par != NULL);	//assumes that we are rooting at a tip that had been attached 
 	firstPreorder = nd;
 	const bool treeHasEdgeLens = hasEdgelens;
 	
@@ -575,7 +575,7 @@ void Tree::Reroot(
 	const unsigned nChildrenOrigRoot = nd->par->CountChildren();
 	if (nChildrenOrigRoot != 2)
 		{ 	
-		assert(nChildrenOrigRoot != 0);
+		PHYCAS_ASSERT(nChildrenOrigRoot != 0);
 		FlipNodeHelper(nd);
 		nd->par = newParent;
 		if (treeHasEdgeLens)
@@ -589,7 +589,7 @@ void Tree::Reroot(
 		// had been rooted with a node of degree 2 - we need to delete the previous root
 		// add our sibling as our rightmost (or only) child.
 		TreeNode *formerSibling = (nd->rSib != NULL ? nd->rSib : nd->par->lChild);
-		assert(formerSibling != NULL);
+		PHYCAS_ASSERT(formerSibling != NULL);
 		if (formerSibling->rSib == nd)
 			{
 			NXS_ASSERT(nd->rSib == NULL);
@@ -646,7 +646,7 @@ void Tree::BuildTreeFromString(const char *s, bool translateNames, bool readAsRo
 	isRooted = readAsRooted;
 	if (!readAsRooted)
 		Reroot(rootToBe);
-	assert(!isRooted);
+	PHYCAS_ASSERT(!isRooted);
 	RefreshFullID();
 	DebugCheckTreeStructure();
 	}
@@ -1014,7 +1014,7 @@ void Tree::DebugCheckTreeStructure(
 			{
 			// We've reached the upper right corner of this clade
 			//
-			assert(preheld == NULL);
+			PHYCAS_ASSERT(preheld == NULL);
 			preheld = nd;
 			nd->nextPreorder = NULL;
 			lastPreorder = preheld; // preheld might be last node in pre-order sequence
@@ -1116,11 +1116,11 @@ std::string & Tree::AppendNewickRepresentation(
 	DblFormatter df(UINT_MAX, fltprec);
 	s << '(';
 	unsigned openParens = 1;
-	assert(TreeNode::gTaxaMgr);
+	PHYCAS_ASSERT(TreeNode::gTaxaMgr);
 	PhoTaxaManager & taxMgr = *TreeNode::gTaxaMgr;
 	const TreeNode * nd = GetFirstPreorder();
 	
-	assert(nd->IsRoot());
+	PHYCAS_ASSERT(nd->IsRoot());
 	// MTH 13-Dec-2004 moving root handling out of the preorder loop, fixes bug that assigned the branch length to the root incorrectly.
 	//POL 19-Oct-2004
 	AppendTaxonLabel(s, nd->GetNodeNumber(), taxMgr, useTaxonNames);
@@ -1139,7 +1139,7 @@ std::string & Tree::AppendNewickRepresentation(
 			return s << ")";
 		}
 	nd = nd->GetNextPreorder(); // note: we don't add an open parentheses here, this is how we get the polytomy at the root
-	assert(nd->GetNextPreorder()); // if we trip this we have a two taxon tree with 3 nodes (degree 2 node in the middle)
+	PHYCAS_ASSERT(nd->GetNextPreorder()); // if we trip this we have a two taxon tree with 3 nodes (degree 2 node in the middle)
 	for (; nd != NULL; nd = nd->GetNextPreorder())
 		{
 		if (nd->IsShootTip())
@@ -1156,9 +1156,9 @@ std::string & Tree::AppendNewickRepresentation(
 					{
 					s << ')';
 					--openParens;
-					assert(openParens > 0);
+					PHYCAS_ASSERT(openParens > 0);
 					tempAncNode = tempAncNode->par;
-					assert(tempAncNode != NULL);
+					PHYCAS_ASSERT(tempAncNode != NULL);
 					if (edgelens)
 						AppendColonAndEdgeLen(s, df, fltlens, *tempAncNode);
 					}
@@ -1190,7 +1190,7 @@ std::string & Tree::AppendNewickRepresentation(
 			{
 			s << ')';
 			--openParens;
-			assert(tmpNode != NULL);
+			PHYCAS_ASSERT(tmpNode != NULL);
 			tmpNode = tmpNode->par;
 			if (!tmpNode->GetParent()->IsRoot() && edgelens)
 				AppendColonAndEdgeLen(s, df, fltlens, *tmpNode);

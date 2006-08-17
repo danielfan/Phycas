@@ -335,7 +335,7 @@ inline void TreeNode::ResetTipData()
 	{
 	if (tipData)
 		{
-		assert(tipDataDeleter);
+		PHYCAS_ASSERT(tipDataDeleter);
 		tipDataDeleter(tipData);
 		}
 	tipData = 0;
@@ -351,7 +351,7 @@ inline void TreeNode::ResetInternalData()
 	{
 	if (internalData)
 		{
-		assert(internalDataDeleter);
+		PHYCAS_ASSERT(internalDataDeleter);
 		internalDataDeleter(internalData);
 		}
 	internalData = 0;

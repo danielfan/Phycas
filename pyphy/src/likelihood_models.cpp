@@ -21,10 +21,10 @@ void Model::createParameters(
   MCMCUpdaterVect & parameters_vect_ref,		/**< is the vector of model-specific parameters to fill */
   bool separate_edgelens) const					/**< specifies (if true) that each edge should have its own parameter or (if false) that one edge length master parameter should be created */
 	{
-	assert(t);
-	assert(edgelens_vect_ref.empty());
-	assert(!edgelen_hyperparam_ref);
-	assert(parameters_vect_ref.empty());
+	PHYCAS_ASSERT(t);
+	PHYCAS_ASSERT(edgelens_vect_ref.empty());
+	PHYCAS_ASSERT(!edgelen_hyperparam_ref);
+	PHYCAS_ASSERT(parameters_vect_ref.empty());
 
 	// Add the edge length parameter(s)
 	if (separate_edgelens)
@@ -85,8 +85,8 @@ void Model::createParameters(
 	if (is_flex_model)
 		{
 		gamma_rates_unnorm.resize(num_gamma_rates, 0.0);
-		assert(flex_rate_params.empty());
-		assert(flex_prob_params.empty());
+		PHYCAS_ASSERT(flex_rate_params.empty());
+		PHYCAS_ASSERT(flex_prob_params.empty());
 		for (unsigned i = 0; i < num_gamma_rates; ++i)
 			{
 			// start with rates drawn from Uniform(0.0, flex_upper_rate_bound)
@@ -96,7 +96,7 @@ void Model::createParameters(
 			//old way: gamma_rates_unnorm[i] = flex_upper_rate_bound*(double)(i + 1)/(double)(num_gamma_rates + 1);
 
 			// start with probabilities all equal
-			assert(flex_prob_param_prior);
+			PHYCAS_ASSERT(flex_prob_param_prior);
 			gamma_rate_probs[i] = flex_prob_param_prior->Sample();
 			}
 
@@ -123,8 +123,8 @@ void Model::createParameters(
 		}
 	else if (num_gamma_rates > 1)
 		{
-		assert(num_gamma_rates > 1);
-		assert(!gamma_shape_param);
+		PHYCAS_ASSERT(num_gamma_rates > 1);
+		PHYCAS_ASSERT(!gamma_shape_param);
 		gamma_shape_param = MCMCUpdaterShPtr(new DiscreteGammaShapeParam(invert_shape));
 		gamma_shape_param->setName("Discrete gamma shape"); //@POL shouldn't this be done in the constructor?
 		gamma_shape_param->setTree(t);
@@ -136,7 +136,7 @@ void Model::createParameters(
 
 	if (is_pinvar_model)
 		{
-		assert(!pinvar_param);
+		PHYCAS_ASSERT(!pinvar_param);
 		pinvar_param = MCMCUpdaterShPtr(new PinvarParam());
 		pinvar_param->setName("Proportion of invariable sites");
 		pinvar_param->setTree(t);
@@ -221,7 +221,7 @@ void JC::calcPMat(double * * pMat, double edgeLength) const
 */
 void HKY::calcPMat(double * * pMat, double edgeLength) const
 	{
-	assert(state_freqs.size() == 4);
+	PHYCAS_ASSERT(state_freqs.size() == 4);
 	double piA = state_freqs[0];
 	double piC = state_freqs[1];
 	double piG = state_freqs[2];

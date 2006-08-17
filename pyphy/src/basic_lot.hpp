@@ -1,7 +1,6 @@
 #if ! defined(BASIC_LOT_HPP)
 #define BASIC_LOT_HPP
 
-#include <cassert>
 #include <cmath>
 #include <ctime>
 #include <boost/shared_ptr.hpp>

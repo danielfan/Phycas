@@ -73,7 +73,7 @@ double Lot::Uniform(const char * file, int line)
 */
 unsigned Lot::SampleUInt(unsigned max)
 	{
-	assert(max > 0);
+	PHYCAS_ASSERT(max > 0);
 
 	unsigned samples_uint = max;
 	while(samples_uint == max) 

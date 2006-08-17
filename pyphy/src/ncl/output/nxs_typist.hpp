@@ -164,7 +164,7 @@ inline void NxsTypist::SetLeftMargin(unsigned i)
 		
 inline void NxsTypist::SetOutputStream(const NxsOutputStream *p)
 	{
-	assert(p != NULL);
+	NXS_ASSERT(p != NULL);
 	outStream = p;
 	}
 

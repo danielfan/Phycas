@@ -90,7 +90,7 @@ NxsChoiceCmdOption::NxsChoiceCmdOption(
   	choices = SplitString(choiceStr, '|');
   	*currentValue = def;
   	IsCurrentlyValid();
-  	assert(errState == no_err);
+  	NXS_ASSERT(errState == no_err);
   	}
 
 /*----------------------------------------------------------------------------------------------------------------------

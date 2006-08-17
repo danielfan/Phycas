@@ -91,7 +91,7 @@ inline unsigned CondLikelihoodStorage::numCLAsStored() const
 //  cl_len(cond_like_len),
 //  realloc_min(1)
 //	{
-//	assert(cl_len > 0);
+//	PHYCAS_ASSERT(cl_len > 0);
 //	if (starting_size > 0)
 //		fillTo(starting_size);
 //	}
@@ -102,9 +102,9 @@ inline unsigned CondLikelihoodStorage::numCLAsStored() const
 */
 inline CondLikelihoodShPtr CondLikelihoodStorage::getCondLikelihood()
 	{
-	assert(num_patterns > 0);
-	assert(num_rates > 0);
-	assert(num_states > 0);
+	PHYCAS_ASSERT(num_patterns > 0);
+	PHYCAS_ASSERT(num_rates > 0);
+	PHYCAS_ASSERT(num_states > 0);
 	if (cl_stack.empty())
 		fillTo(realloc_min);
 
@@ -126,9 +126,9 @@ inline CondLikelihoodShPtr CondLikelihoodStorage::getCondLikelihood()
 */
 inline void CondLikelihoodStorage::putCondLikelihood(CondLikelihoodShPtr p)
 	{
-	assert(num_patterns > 0);
-	assert(num_rates > 0);
-	assert(num_states > 0);
+	PHYCAS_ASSERT(num_patterns > 0);
+	PHYCAS_ASSERT(num_rates > 0);
+	PHYCAS_ASSERT(num_states > 0);
 
 #if defined(OBSOLETE_DEBUGGING_CODE)
 	unsigned bytes = p->getCLASize();
@@ -146,7 +146,7 @@ inline void CondLikelihoodStorage::putCondLikelihood(CondLikelihoodShPtr p)
 */
 inline void CondLikelihoodStorage::setReallocMin(unsigned sz)
 	{
-	assert(sz > 0);
+	PHYCAS_ASSERT(sz > 0);
 	realloc_min = sz;
 	}
 
@@ -174,9 +174,9 @@ inline void CondLikelihoodStorage::clearStack()
 */
 inline void CondLikelihoodStorage::setCondLikeDimensions(unsigned np, unsigned nr, unsigned ns)
 	{
-	assert(np > 0);
-	assert(nr > 0);
-	assert(ns > 0);
+	//PHYCAS_ASSERT(np > 0); //POL: np == 0 is not necessarily an error, see doctest example inside getRateMeans function (in TreeLikelihood.py)
+	PHYCAS_ASSERT(nr > 0);
+	PHYCAS_ASSERT(ns > 0);
 	unsigned newlen = np*nr*ns;
 	unsigned oldlen = num_patterns*num_rates*num_states;
 
