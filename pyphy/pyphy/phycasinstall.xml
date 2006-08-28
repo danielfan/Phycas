@@ -1,8 +1,9 @@
+
 <project>
-    <shortName>phycas</shortName>
+    <shortName>pyphy</shortName>
     <fullName>Phycas</fullName>
     <version>1.0</version>
-    <installerFilename>${product_shortname}-${product_version}-${platform_name}-installer.${platform_exec_suffix}</installerFilename>
+    <installerFilename>${product_shortname}-${product_version}-installer.${platform_exec_suffix}</installerFilename>
     <readmeFile></readmeFile>
     <licenseFile>license.txt</licenseFile>
     <wrapLicenseFileText>1</wrapLicenseFileText>
@@ -68,7 +69,7 @@
                 </folder>
                 <folder>
                     <description>Conversions</description>
-                    <destination>${installdir}/pyphy/Conversions</destination>
+                    <destination>${installdir}/Conversions</destination>
                     <name>Conversions</name>
                     <platforms>all</platforms>
                     <distributionFileList>
@@ -87,7 +88,7 @@
                 </folder>
                 <folder>
                     <description>ConversionsPyd</description>
-                    <destination>${installdir}/pyphy/Conversions</destination>
+                    <destination>${installdir}/Conversions</destination>
                     <name>ConversionsPyd</name>
                     <platforms>windows</platforms>
                     <distributionFileList>
@@ -106,7 +107,7 @@
                 </folder>
                 <folder>
                     <description>ConversionsSo</description>
-                    <destination>${installdir}/pyphy/Conversions</destination>
+                    <destination>${installdir}/Conversions</destination>
                     <name>ConversionsSo</name>
                     <platforms>osx</platforms>
                     <distributionFileList>
@@ -125,7 +126,7 @@
                 </folder>
                 <folder>
                     <description>DataMatrix</description>
-                    <destination>${installdir}/pyphy/DataMatrix</destination>
+                    <destination>${installdir}/DataMatrix</destination>
                     <name>DataMatrix</name>
                     <platforms>all</platforms>
                     <distributionFileList>
@@ -147,7 +148,7 @@
                 </folder>
                 <folder>
                     <description>DataMatrixPyd</description>
-                    <destination>${installdir}/pyphy/DataMatrix</destination>
+                    <destination>${installdir}/DataMatrix</destination>
                     <name>DataMatrixPyd</name>
                     <platforms>windows</platforms>
                     <distributionFileList>
@@ -166,7 +167,7 @@
                 </folder>
                 <folder>
                     <description>DataMatrixSo</description>
-                    <destination>${installdir}/pyphy/DataMatrix</destination>
+                    <destination>${installdir}/DataMatrix</destination>
                     <name>DataMatrixSo</name>
                     <platforms>osx</platforms>
                     <distributionFileList>
@@ -185,7 +186,7 @@
                 </folder>
                 <folder>
                     <description>Likelihood</description>
-                    <destination>${installdir}/pyphy/Likelihood</destination>
+                    <destination>${installdir}/Likelihood</destination>
                     <name>Likelihood</name>
                     <platforms>all</platforms>
                     <distributionFileList>
@@ -207,11 +208,14 @@
                         <distributionFile>
                             <origin>Likelihood/_TopoPriorCalculator.py</origin>
                         </distributionFile>
+                        <distributionFile>
+                            <origin>Likelihood/_TreeLikelihood.py</origin>
+                        </distributionFile>
                     </distributionFileList>
                 </folder>
                 <folder>
                     <description>LikelihoodPyd</description>
-                    <destination>${installdir}/pyphy/Likelihood</destination>
+                    <destination>${installdir}/Likelihood</destination>
                     <name>LikelihoodPyd</name>
                     <platforms>windows</platforms>
                     <distributionFileList>
@@ -230,7 +234,7 @@
                 </folder>
                 <folder>
                     <description>LikelihoodSo</description>
-                    <destination>${installdir}/pyphy/Likelihood</destination>
+                    <destination>${installdir}/Likelihood</destination>
                     <name>LikelihoodSo</name>
                     <platforms>osx</platforms>
                     <distributionFileList>
@@ -249,7 +253,7 @@
                 </folder>
                 <folder>
                     <description>Phylogeny</description>
-                    <destination>${installdir}/pyphy/Phylogeny</destination>
+                    <destination>${installdir}/Phylogeny</destination>
                     <name>Phylogeny</name>
                     <platforms>all</platforms>
                     <distributionFileList>
@@ -277,7 +281,7 @@
                 </folder>
                 <folder>
                     <description>PhylogenyPyd</description>
-                    <destination>${installdir}/pyphy/Phylogeny</destination>
+                    <destination>${installdir}/Phylogeny</destination>
                     <name>PhylogenyPyd</name>
                     <platforms>windows</platforms>
                     <distributionFileList>
@@ -296,7 +300,7 @@
                 </folder>
                 <folder>
                     <description>PhylogenySo</description>
-                    <destination>${installdir}/pyphy/Phylogeny</destination>
+                    <destination>${installdir}/Phylogeny</destination>
                     <name>PhylogenySo</name>
                     <platforms>osx</platforms>
                     <distributionFileList>
@@ -315,7 +319,7 @@
                 </folder>
                 <folder>
                     <description>ProbDist</description>
-                    <destination>${installdir}/pyphy/ProbDist</destination>
+                    <destination>${installdir}/ProbDist</destination>
                     <name>ProbDist</name>
                     <platforms>all</platforms>
                     <distributionFileList>
@@ -352,6 +356,9 @@
                         <distributionFile>
                             <origin>ProbDist/_SliceSampler.py</origin>
                         </distributionFile>
+                        <distributionFile>
+                            <origin>ProbDist/_NormalDist.py</origin>
+                        </distributionFile>
                     </distributionFileList>
                     <ruleList>
                         <compareText>
@@ -364,7 +371,7 @@
                 </folder>
                 <folder>
                     <description>ProbDistPyd</description>
-                    <destination>${installdir}/pyphy/ProbDist</destination>
+                    <destination>${installdir}/ProbDist</destination>
                     <name>ProbDistPyd</name>
                     <platforms>windows</platforms>
                     <distributionFileList>
@@ -383,7 +390,7 @@
                 </folder>
                 <folder>
                     <description>ProbDistSo</description>
-                    <destination>${installdir}/pyphy/ProbDist</destination>
+                    <destination>${installdir}/ProbDist</destination>
                     <name>ProbDistSo</name>
                     <platforms>osx</platforms>
                     <distributionFileList>
@@ -402,7 +409,7 @@
                 </folder>
                 <folder>
                     <description>ReadNexus</description>
-                    <destination>${installdir}/pyphy/ReadNexus</destination>
+                    <destination>${installdir}/ReadNexus</destination>
                     <name>ReadNexus</name>
                     <platforms>all</platforms>
                     <distributionFileList>
@@ -424,7 +431,7 @@
                 </folder>
                 <folder>
                     <description>ReadNexusPyd</description>
-                    <destination>${installdir}/pyphy/ReadNexus</destination>
+                    <destination>${installdir}/ReadNexus</destination>
                     <name>ReadNexusPyd</name>
                     <platforms>windows</platforms>
                     <distributionFileList>
@@ -443,7 +450,7 @@
                 </folder>
                 <folder>
                     <description>ReadNexusSo</description>
-                    <destination>${installdir}/pyphy/ReadNexus</destination>
+                    <destination>${installdir}/ReadNexus</destination>
                     <name>ReadNexusSo</name>
                     <platforms>osx</platforms>
                     <distributionFileList>
@@ -467,20 +474,566 @@
                     <platforms>all</platforms>
                     <distributionFileList>
                         <distributionFile>
+                            <origin>__init__.py</origin>
+                        </distributionFile>
+                    </distributionFileList>
+                </folder>
+                <folder>
+                    <description>Examples</description>
+                    <destination>${installdir}/Examples</destination>
+                    <name>examples</name>
+                    <platforms>all</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>Examples/__init__.py</origin>
+                        </distributionFile>
+                    </distributionFileList>
+                </folder>
+                <folder>
+                    <description>Examples runall script</description>
+                    <destination>${installdir}/Examples</destination>
+                    <name>runall</name>
+                    <platforms>windows</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>Examples/runall.bat</origin>
+                        </distributionFile>
+                        <distributionFile>
                             <origin>doctestall.py</origin>
                         </distributionFile>
                     </distributionFileList>
                 </folder>
                 <folder>
-                    <description>Python version Windows batch file</description>
-                    <destination>${installdir}</destination>
-                    <name>PythonVersionBat</name>
-                    <platforms>windows</platforms>
+                    <description>Data</description>
+                    <destination>${installdir}/Examples/Data</destination>
+                    <name>examplesdata</name>
+                    <platforms>all</platforms>
                     <distributionFileList>
                         <distributionFile>
-                            <origin>pythonversion.bat</origin>
+                            <origin>Examples/Data/nyldna4.nex</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>Examples/Data/green.nex</origin>
                         </distributionFile>
                     </distributionFileList>
+                </folder>
+                <folder>
+                    <description>Phycas</description>
+                    <destination>${installdir}/Phycas</destination>
+                    <name>phycas</name>
+                    <platforms>all</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>Phycas/__init__.py</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>Phycas/Phycas.py</origin>
+                        </distributionFile>
+                    </distributionFileList>
+                </folder>
+                <folder>
+                    <description>ExplorePrior</description>
+                    <destination>${installdir}/Examples/ExplorePrior</destination>
+                    <name>exploreprior</name>
+                    <platforms>all</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>Examples/ExplorePrior/ExplorePrior.py</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>Examples/ExplorePrior/__init__.py</origin>
+                        </distributionFile>
+                    </distributionFileList>
+                </folder>
+                <folder>
+                    <description>ExplorePrior Reference Output</description>
+                    <destination>${installdir}/Examples/ExplorePrior/reference_output</destination>
+                    <name>explorepriorref</name>
+                    <platforms>all</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>Examples/ExplorePrior/reference_output/nodata.nex.t</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>Examples/ExplorePrior/reference_output/nodata.nex.p</origin>
+                        </distributionFile>
+                    </distributionFileList>
+                </folder>
+                <folder>
+                    <description>FixedParams</description>
+                    <destination>${installdir}/Examples/FixedParams</destination>
+                    <name>fixedparams</name>
+                    <platforms>all</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>Examples/FixedParams/FixedParams.py</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>Examples/FixedParams/__init__.py</origin>
+                        </distributionFile>
+                    </distributionFileList>
+                </folder>
+                <folder>
+                    <description>FixedParams Reference Output</description>
+                    <destination>${installdir}/Examples/FixedParams/reference_output</destination>
+                    <name>fixedparamsref</name>
+                    <platforms>all</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>Examples/FixedParams/reference_output/trees.t</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>Examples/FixedParams/reference_output/params.p</origin>
+                        </distributionFile>
+                    </distributionFileList>
+                </folder>
+                <folder>
+                    <description>GelfandGhosh</description>
+                    <destination>${installdir}/Examples/GelfandGhosh</destination>
+                    <name>gelfandghosh</name>
+                    <platforms>all</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>Examples/GelfandGhosh/GelfandGhosh.py</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>Examples/GelfandGhosh/__init__.py</origin>
+                        </distributionFile>
+                    </distributionFileList>
+                </folder>
+                <folder>
+                    <description>GelfandGhosh Reference Output</description>
+                    <destination>${installdir}/Examples/GelfandGhosh/reference_output</destination>
+                    <name>gelfandghoshref</name>
+                    <platforms>all</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>Examples/GelfandGhosh/reference_output/ggout.txt</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>Examples/GelfandGhosh/reference_output/analHKY.nex.p</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>Examples/GelfandGhosh/reference_output/analHKY.nex.t</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>Examples/GelfandGhosh/reference_output/analHKYflex.nex.p</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>Examples/GelfandGhosh/reference_output/analHKYflex.nex.t</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>Examples/GelfandGhosh/reference_output/analHKYg.nex.p</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>Examples/GelfandGhosh/reference_output/analHKYg.nex.t</origin>
+                        </distributionFile>
+                    </distributionFileList>
+                </folder>
+                <folder>
+                    <description>LikelihoodTest</description>
+                    <destination>${installdir}/Examples/LikelihoodTest</destination>
+                    <name>likelihoodtest</name>
+                    <platforms>all</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>Examples/LikelihoodTest/LikelihoodTest.py</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>Examples/LikelihoodTest/__init__.py</origin>
+                        </distributionFile>
+                    </distributionFileList>
+                </folder>
+                <folder>
+                    <description>LikelihoodTest Reference Output</description>
+                    <destination>${installdir}/Examples/LikelihoodTest/reference_output</destination>
+                    <name>likelihoodtestref</name>
+                    <platforms>all</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>Examples/LikelihoodTest/reference_output/simulated.nex</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>Examples/LikelihoodTest/reference_output/check.nex</origin>
+                        </distributionFile>
+                    </distributionFileList>
+                </folder>
+                <folder>
+                    <description>Polytomies</description>
+                    <destination>${installdir}/Examples/Polytomies</destination>
+                    <name>polytomies</name>
+                    <platforms>all</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>Examples/Polytomies/Polytomies.py</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>Examples/Polytomies/__init__.py</origin>
+                        </distributionFile>
+                    </distributionFileList>
+                </folder>
+                <folder>
+                    <description>Polytomies Reference Output</description>
+                    <destination>${installdir}/Examples/Polytomies/reference_output</destination>
+                    <name>polytomiesref</name>
+                    <platforms>all</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>Examples/Polytomies/reference_output/analHKY.nex.t</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>Examples/Polytomies/reference_output/simHKY.nex</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>Examples/Polytomies/reference_output/analHKY.nex.p</origin>
+                        </distributionFile>
+                    </distributionFileList>
+                </folder>
+                <folder>
+                    <description>Simulator</description>
+                    <destination>${installdir}/Examples/Simulator</destination>
+                    <name>simulator</name>
+                    <platforms>all</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>Examples/Simulator/Simulator.py</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>Examples/Simulator/__init__.py</origin>
+                        </distributionFile>
+                    </distributionFileList>
+                </folder>
+                <folder>
+                    <description>Simulator Reference Output</description>
+                    <destination>${installdir}/Examples/Simulator/reference_output</destination>
+                    <name>simulatorref</name>
+                    <platforms>all</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>Examples/Simulator/reference_output/simulated.nex</origin>
+                        </distributionFile>
+                    </distributionFileList>
+                </folder>
+                <folder>
+                    <description>Sources</description>
+                    <destination>${installdir}/src</destination>
+                    <name>sources</name>
+                    <platforms>all</platforms>
+                    <distributionFileList>
+                        <distributionDirectory>
+                            <origin>../src/cipres</origin>
+                        </distributionDirectory>
+                        <distributionDirectory>
+                            <origin>../src/ncl</origin>
+                        </distributionDirectory>
+                        <distributionDirectory>
+                            <origin>../src/oldphycas</origin>
+                        </distributionDirectory>
+                        <distributionDirectory>
+                            <origin>../src/thirdparty</origin>
+                        </distributionDirectory>
+                        <distributionFile>
+                            <origin>../src/xpyphy.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/basic_cdf.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/basic_cdf.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/basic_cdf.inl</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/basic_lot.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/basic_lot.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/basic_lot.inl</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/basic_tree.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/basic_tree.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/basic_tree.inl</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/basic_tree_node.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/basic_tree_node.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/basic_tree_node.inl</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/boost_assertion_failed.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/bush_move.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/bush_move.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/bush_move.inl</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/cond_likelihood.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/cond_likelihood.inl</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/cond_likelihood_storage.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/cond_likelihood_storage.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/cond_likelihood_storage.inl</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/conversions_pymod.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/data_matrix_pymod.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/dls.h</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/edge_endpoints.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/edge_iterators.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/edge_move.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/edge_move.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/edge_move.inl</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/internal_data.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/internal_data.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/larget_simon_move.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/larget_simon_move.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/larget_simon_move.inl</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/likelihood_loops.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/likelihood_models.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/likelihood_models.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/likelihood_models.inl</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/likelihood_pymod.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/linalg.c</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/linalg.h</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/mcmc_chain_manager.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/mcmc_chain_manager.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/mcmc_chain_manager.inl</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/mcmc_flexcat_param.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/mcmc_move.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/mcmc_move.inl</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/mcmc_param.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/mcmc_param.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/mcmc_param.inl</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/mcmc_updater.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/mcmc_updater.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/mcmc_updater.inl</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/model_pymod.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/ncat_move.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/ncat_move.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/ncat_move.inl</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/phycas.h</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/phycas_config.h</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/phylogeny_pymod.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/pol_pyphy_config.h</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/probability_distribution.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/probability_distribution.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/probability_distribution.inl</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/probdist_pymod.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/pyphy_string.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/pyphy_string.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/q_matrix.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/q_matrix.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/q_matrix.inl</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/read_nexus_pymod.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/sim_data.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/sim_data.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/sim_data.inl</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/slice_sampler.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/slice_sampler.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/states_patterns.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/tip_data.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/tip_data.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/topo_prior_calculator.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/topo_prior_calculator.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/topo_prior_calculator.inl</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/tree_iterators.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/tree_likelihood.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/tree_likelihood.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/tree_likelihood.inl</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/tree_manip.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/tree_manip.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/tree_manip.inl</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/tree_score.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/underflow_policy.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/underflow_policy.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/underflow_policy.inl</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/updater_pymod.cpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/xlikelihood.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/xphylogeny.hpp</origin>
+                        </distributionFile>
+                        <distributionFile>
+                            <origin>../src/xprobdist.hpp</origin>
+                        </distributionFile>
+                    </distributionFileList>
+                    <ruleList>
+                        <compareValues>
+                            <logic>equals</logic>
+                            <value1>${installsources}</value1>
+                            <value2>1</value2>
+                        </compareValues>
+                    </ruleList>
                 </folder>
             </folderList>
             <postInstallationActionList/>
@@ -505,8 +1058,8 @@
             <title></title>
             <description>Installer.Parameter.installdir.description</description>
             <explanation>Installer.Parameter.installdir.explanation</explanation>
-            <value>${platform_install_prefix}/${product_shortname}-${product_version}</value>
-            <default>${platform_install_prefix}/${product_shortname}-${product_version}</default>
+            <value>${pythoninstalldir}/${product_shortname}</value>
+            <default>${platform_install_prefix}/${product_shortname}</default>
             <allowEmptyValue>0</allowEmptyValue>
             <ask>yes</ask>
             <cliOptionName>prefix</cliOptionName>
@@ -515,6 +1068,73 @@
             <mustExist>0</mustExist>
             <width>40</width>
         </directoryParameter>
+        <booleanParameter>
+            <name>installsources</name>
+            <title>Install Source Code</title>
+            <description></description>
+            <explanation>Should the C++ source code be installed (Note: this is optional, the source code is not needed to run Phycas or use the PyPhy library)?</explanation>
+            <value>0</value>
+            <default>0</default>
+            <ask>yes</ask>
+            <cliOptionName></cliOptionName>
+            <leftImage></leftImage>
+        </booleanParameter>
+        <infoParameter>
+            <name>pythonversionwarning</name>
+            <title>Python Requirement</title>
+            <description>This page is shown if python is installed but version is not at least 2.4</description>
+            <explanation>It appears that you do not have Python 2.4 (or later) installed. The version detected is shown below. You may continue to install Phycas, but you will not be able to use it until upgrade Python to the latest version (download Python from http://www.python.org/).</explanation>
+            <value>${pythonversionstr}</value>
+            <default></default>
+            <leftImage></leftImage>
+            <trimMarginNumChars>0</trimMarginNumChars>
+            <ruleList>
+                <compareValues>
+                    <logic>equals</logic>
+                    <value1>${ispython}</value1>
+                    <value2>1</value2>
+                </compareValues>
+                <compareValues>
+                    <logic>less</logic>
+                    <value1>${pythonmajorversion}</value1>
+                    <value2>24</value2>
+                </compareValues>
+            </ruleList>
+        </infoParameter>
+        <infoParameter>
+            <name>nopythonwarning</name>
+            <title>Python Requirement</title>
+            <description>This page is shown if no version of python can be detected</description>
+            <explanation>It appears that you do not have Python installed. You may continue to install Phycas, but you will not be able to use it until you also install Python (download Python from the web site shown below).</explanation>
+            <value>http://www.python.org/</value>
+            <default></default>
+            <leftImage></leftImage>
+            <trimMarginNumChars>0</trimMarginNumChars>
+            <ruleList>
+                <compareValues>
+                    <logic>equals</logic>
+                    <value1>${ispython}</value1>
+                    <value2>0</value2>
+                </compareValues>
+            </ruleList>
+        </infoParameter>
+        <infoParameter>
+            <name>debuginfoparam</name>
+            <title>Debugging Information</title>
+            <description>This page is only for showing debugging information</description>
+            <explanation>Here are some installer variables that have been set:</explanation>
+            <value>${installdir};${pythoninstalldir}</value>
+            <default></default>
+            <leftImage></leftImage>
+            <trimMarginNumChars>0</trimMarginNumChars>
+            <ruleList>
+                <compareValues>
+                    <logic>equals</logic>
+                    <value1>1</value1>
+                    <value2>1</value2>
+                </compareValues>
+            </ruleList>
+        </infoParameter>
     </parameterList>
     <platformOptionsList>
         <platformOptions>
@@ -523,29 +1143,210 @@
         </platformOptions>
     </platformOptionsList>
     <postInstallationActionList>
-        <actionGroup>
-            <actionList>
-                <registrySet>
-                    <key>HKEY_CURRENT_USER\Environment</key>
-                    <name>FAKEPYTHONPATH</name>
-                    <type>REG_SZ</type>
-                    <value>${newfakepythonpath}</value>
-                </registrySet>
-            </actionList>
+            <registryGet>
+                <!-- Win: Store current value of PYTHONPATH in ${pythonpath}-->
+                <key>HKEY_CURRENT_USER\Environment</key>
+                <name>PYTHONPATH</name>
+                <variable>pythonpath</variable>
+            </registryGet>  
+            <setInstallerVariable>
+                <!-- Win: let ${newpythonpath} equal ${pythonpath};${installdir}\pyphy if
+                    1) ${pythonpath} is not empty 
+                    2) ${pythonpath} does not already contain ${installdir}\pyphy
+                    3) platform is Windows
+                -->
+                <name>newpythonpath</name>
+                <value>${pythonpath};${installdir}\pyphy</value>
+                <ruleList>
+                    <compareTextLength>
+                        <text>${pythonpath}</text>
+                        <logic>greater</logic>
+                        <length>0</length>
+                    </compareTextLength>
+                    <compareText>
+                        <text>${pythonpath}</text>
+                        <logic>does_not_contain</logic>
+                        <value>${installdir}/pyphy</value>
+                    </compareText>
+                    <compareText>
+                        <logic>equals</logic>
+                        <nocase>0</nocase>
+                        <text>${platform_name}</text>
+                        <value>windows</value>
+                    </compareText>
+                </ruleList>
+            </setInstallerVariable>
+            <setInstallerVariable>
+                <!-- Win: let ${newpythonpath} equal ${pythonpath} if
+                    1) ${pythonpath} is not empty 
+                    2) ${pythonpath} already contains ${installdir}\pyphy
+                    3) platform is Windows
+                -->
+                <name>newpythonpath</name>
+                <value>${pythonpath}</value>
+                <ruleList>
+                    <compareTextLength>
+                        <text>${pythonpath}</text>
+                        <logic>greater</logic>
+                        <length>0</length>
+                    </compareTextLength>
+                    <compareText>
+                        <text>${pythonpath}</text>
+                        <logic>contains</logic>
+                        <value>${installdir}\pyphy</value>
+                    </compareText>
+                    <compareText>
+                        <logic>equals</logic>
+                        <nocase>0</nocase>
+                        <text>${platform_name}</text>
+                        <value>windows</value>
+                    </compareText>
+                </ruleList>
+            </setInstallerVariable>
+            <setInstallerVariable>
+                <!-- Win: let ${newpythonpath} equal ${installdir}\pyphy if 
+                    1) ${pythonpath} is empty
+                    2) platform is Windows
+                -->
+                <name>newpythonpath</name>
+                <value>${installdir}\pyphy</value>
+                <ruleList>
+                    <compareTextLength>
+                        <text>${pythonpath}</text>
+                        <logic>equals</logic>
+                        <length>0</length>
+                    </compareTextLength>
+                    <compareText>
+                        <logic>equals</logic>
+                        <nocase>0</nocase>
+                        <text>${platform_name}</text>
+                        <value>windows</value>
+                    </compareText>
+                </ruleList>
+            </setInstallerVariable>
+        <registrySet>
+            <!-- Win: set PYTHONPATH to ${newpythonpath} if 
+                   1) ${installdir} does not contain ${pythoninstalldir}\Lib\site-packages 
+                   2) platform is Windows
+            -->
+            <key>HKEY_CURRENT_USER\Environment</key>
+            <name>PYTHONPATH</name>
+            <type>REG_SZ</type>
+            <value>${newpythonpath}</value>
             <ruleList>
                 <compareText>
                     <logic>does_not_contain</logic>
                     <nocase>0</nocase>
-                    <text>${fakepythonpath}</text>
-                    <value>${installdir}</value>
+                    <text>${installdir}</text>
+                    <value>${pythoninstalldir}</value>
+                </compareText>
+                <compareText>
+                    <logic>equals</logic>
+                    <nocase>0</nocase>
+                    <text>${platform_name}</text>
+                    <value>windows</value>
                 </compareText>
             </ruleList>
-        </actionGroup>
+        </registrySet>
     </postInstallationActionList>
     <postUninstallationActionList/>
     <preBuildActionList/>
     <preInstallationActionList>
         <setInstallerVariableFromScriptOutput>
+            <!-- Win: set ${ispython} to 1 if any version of Python is installed -->
+            <exec>cmd</exec>
+            <execArgs>/s /c "python -V&amp;&amp;echo 1||echo 0"</execArgs>
+            <name>ispython</name>
+            <ruleList>
+                <compareText>
+                    <logic>equals</logic>
+                    <nocase>0</nocase>
+                    <text>${platform_name}</text>
+                    <value>windows</value>
+                </compareText>
+            </ruleList>
+        </setInstallerVariableFromScriptOutput>
+        <setInstallerVariableFromScriptOutput>
+            <!-- Win: set ${pythoninstalldir} to site-packages directory if 
+                1) Python is installed 
+                2) platform is Windows 
+            -->
+            <exec>python</exec>
+            <execArgs>-c "import sys; print '%s\\%s' % (sys.prefix,'Lib\\site-packages')"</execArgs>
+            <name>pythoninstalldir</name>
+            <ruleList>
+                <compareValues>
+                    <logic>equals</logic>
+                    <value1>${ispython}</value1>
+                    <value2>1</value2>
+                </compareValues>
+                <compareText>
+                    <logic>equals</logic>
+                    <nocase>0</nocase>
+                    <text>${platform_name}</text>
+                    <value>windows</value>
+                </compareText>
+            </ruleList>
+        </setInstallerVariableFromScriptOutput>
+        <setInstallerVariableFromScriptOutput>
+            <!-- set ${pythonmajorversion} to integer (e.g. 2.4.1 stored as 24) if Python is installed -->
+            <exec>python</exec>
+            <execArgs>-c "import sys,re; print ''.join(re.match(r'(\d+)\.(\d+)', sys.version).groups())"</execArgs>
+            <name>pythonmajorversion</name>
+            <ruleList>
+                <compareValues>
+                    <logic>equals</logic>
+                    <value1>${ispython}</value1>
+                    <value2>1</value2>
+                </compareValues>
+            </ruleList>
+       </setInstallerVariableFromScriptOutput>
+      <setInstallerVariableFromScriptOutput>
+            <!-- set ${pythonversionstr} to python version string if Python is installed -->
+            <exec>python</exec>
+            <execArgs>-c "import sys,re; print sys.version"</execArgs>
+            <name>pythonversionstr</name>
+          <ruleList>
+              <compareValues>
+                  <logic>equals</logic>
+                  <value1>${ispython}</value1>
+                  <value2>1</value2>
+              </compareValues>
+          </ruleList>
+      </setInstallerVariableFromScriptOutput>
+        <throwError>
+            <!-- Win: bail out if no version of Python is installed -->
+            <text>You must install Python version 2.4 (or greater) before installing Phycas.
+Python can be downloaded from http://www.python.org/</text>
+            <ruleList>
+                <compareValues>
+                    <logic>equals</logic>
+                    <value1>${ispython}</value1>
+                    <value2>0</value2>
+                </compareValues>
+            </ruleList>
+        </throwError>
+        <throwError>
+            <!-- bail out if a version of Python earlier than 2.4 is installed -->
+            <text>You must install Python version 2.4 (or greater) before installing Phycas.
+The version of Python that is currently installed is
+${pythonversionstr}
+The latest version of Python can be downloaded from http://www.python.org/</text>
+            <ruleList>
+                <compareValues>
+                    <logic>equals</logic>
+                    <value1>${ispython}</value1>
+                    <value2>1</value2>
+                </compareValues>
+                <compareValues>
+                    <logic>less</logic>
+                    <value1>${pythonmajorversion}</value1>
+                    <value2>24</value2>
+                </compareValues>
+            </ruleList>
+        </throwError>
+        <setInstallerVariableFromScriptOutput>
+            <!-- NonWin -->
             <exec>which</exec>
             <execArgs>python2.4</execArgs>
             <name>whichpython</name>
@@ -559,6 +1360,7 @@
             </ruleList>
         </setInstallerVariableFromScriptOutput>
         <throwError>
+            <!-- NonWin -->
             <text>Python2.4 executable not found!
 Please install the python (version 2.4 or greater) or add the path to python2.4 to your shell's $PATH variable.</text>
             <ruleList>
@@ -575,19 +1377,7 @@ Please install the python (version 2.4 or greater) or add the path to python2.4 
             </ruleList>
         </throwError>
         <setInstallerVariableFromScriptOutput>
-            <exec>pythonversion.bat</exec>
-            <execArgs></execArgs>
-            <name>pythonversion</name>
-            <ruleList>
-                <compareText>
-                    <logic>equals</logic>
-                    <nocase>0</nocase>
-                    <text>${platform_name}</text>
-                    <value>windows</value>
-                </compareText>
-            </ruleList>
-        </setInstallerVariableFromScriptOutput>
-        <setInstallerVariableFromScriptOutput>
+            <!-- Mac: store current Python major version as integer in ${pythonversion}-->
             <exec>${whichpython}</exec>
             <execArgs>-c "import sys,re; print ''.join(re.match(r'(\d+)\.(\d+)', sys.version).groups())"</execArgs>
             <name>pythonversion</name>
@@ -601,30 +1391,11 @@ Please install the python (version 2.4 or greater) or add the path to python2.4 
             </ruleList>
         </setInstallerVariableFromScriptOutput>
         <setInstallerVariableFromScriptOutput>
+            <!-- Store current version string in ${pythonversioninfo}-->
             <exec>python</exec>
             <execArgs>-c "import sys; print sys.version"</execArgs>
             <name>pythonversioninfo</name>
         </setInstallerVariableFromScriptOutput>
-        <throwError>
-            <text>You must  have Python 2.4 (or a later version) installed before you can install Phycas.</text>
-            <ruleList>
-                <compareText>
-                    <logic>equals</logic>
-                    <nocase>0</nocase>
-                    <text>${pythonversion}</text>
-                    <value>nopython</value>
-                </compareText>
-            </ruleList>
-        </throwError>
-        <registryGet>
-            <key>HKEY_CURRENT_USER\Environment</key>
-            <name>FAKEPYTHONPATH</name>
-            <variable>fakepythonpath</variable>
-        </registryGet>
-        <setInstallerVariable>
-            <name>newfakepythonpath</name>
-            <value>${fakepythonpath};${installdir}</value>
-        </setInstallerVariable>
     </preInstallationActionList>
     <preUninstallationActionList>
         <registryDelete>

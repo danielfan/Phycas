@@ -108,7 +108,7 @@ class QMatrix(QMatrixBase):
         
         >>> import math
         >>> import numarray
-        >>> import Likelihood
+        >>> from pyphy import *
         >>> 
         >>> qmatrix = Likelihood.QMatrix()
         >>> 

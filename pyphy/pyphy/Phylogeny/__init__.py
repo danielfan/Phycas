@@ -12,4 +12,3 @@ def testExamples():
     import doctest
     doctest.testfile('_Tree.py')
     doctest.testfile('_TreeManip.py')
-    doctest.testfile('doctest_tree.txt')

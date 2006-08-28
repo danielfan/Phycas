@@ -522,7 +522,7 @@ def simulateData(fn):
     num_sites = 100000
 
     # Create a SimData object to hold the simulated data
-    sim_data = SimData()
+    sim_data = Likelihood.SimData()
 
     # Simulate num_sites of data and store in sim_data
     # Use the function simulateFirst (rather than just simulate) in order

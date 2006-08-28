@@ -1,5 +1,5 @@
 from Tkinter import *
-from ProbDist import *
+from pyphy.ProbDist import *
 from tkMessageBox import askokcancel, askquestion
 from tkSimpleDialog import askstring
 from tkFileDialog import askopenfilename

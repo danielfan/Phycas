@@ -19,7 +19,7 @@ class BetaDist(BetaDistBase):
         """
         Specify the a and b parameters of the BetaDist object. e.g.,
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = BetaDist(2, 3)
         >>> print d.getMean()
         0.4
@@ -49,7 +49,7 @@ class BetaDist(BetaDistBase):
         Returns a string that could be used to initialize another BetaDist
         object identical to this one. e.g.,
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = BetaDist(2, 3)
         >>> print d.__str__()
         BetaDist(2.00000, 3.00000)
@@ -63,7 +63,7 @@ class BetaDist(BetaDistBase):
         Returns a string that could be used to initialize another BetaDist
         object identical to this one. e.g.,
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = BetaDist(2, 3)
         >>> print d.__repr__()
         BetaDist(2.00000, 3.00000)
@@ -109,7 +109,7 @@ class BetaDist(BetaDistBase):
         seed! If you have already called setLot, you probably want to call
         the setSeed function of that Lot ojbect. e.g.,
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = BetaDist(2, 3)
         >>> d.setSeed(135)
         >>> print "%.12f" % d.sample()
@@ -141,7 +141,7 @@ class BetaDist(BetaDistBase):
         (i.e., it will not change if sample is called to generate samples
         from this distribution).
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = BetaDist(2, 3)
         >>> print d.getMean()
         0.4
@@ -156,7 +156,7 @@ class BetaDist(BetaDistBase):
         variance (i.e., it will not change if sample is called to generate
         samples from this distribution).
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = BetaDist(2, 3)
         >>> print d.getVar()
         0.04
@@ -171,7 +171,7 @@ class BetaDist(BetaDistBase):
         theoretical standard deviation (i.e., it will not change if sample is
         called to generate samples from this distribution).
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = BetaDist(2, 3)
         >>> print d.getStdDev()
         0.2
@@ -186,7 +186,7 @@ class BetaDist(BetaDistBase):
         x. This is the integral of the probability density function from 0.0
         up to the value x.
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = BetaDist(2, 3)
         >>> print d.getCDF(0.35)
         0.43701875
@@ -201,7 +201,7 @@ class BetaDist(BetaDistBase):
         this BetaDist object. Python list comprehensions can be used to
         store many simulated samples for use in subsequent calculations.
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = BetaDist(2, 3)
         >>> d.setSeed(97531)
         >>> print round(d.sample(), 8)
@@ -220,7 +220,7 @@ class BetaDist(BetaDistBase):
         Evaluates the probability density function at the supplied value x.
         Returns the natural logarithm of the density at x. e.g.,
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = BetaDist(2, 3)
         >>> print d.getLnPDF(0.35)
         0.573518693104
@@ -254,7 +254,7 @@ class BetaDist(BetaDistBase):
         correctly normalized density value (i.e. from a density function that
         integrates to 1.0)
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = BetaDist(2, 3)
         >>> print d.getRelativeLnPDF(0.35)
         -1.91138795668
@@ -282,7 +282,7 @@ class BetaDist(BetaDistBase):
         """
         Sets the mean and variance of this distribution. 
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = BetaDist(2, 3)
         >>> print d.getMean()
         0.4

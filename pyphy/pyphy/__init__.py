@@ -10,12 +10,12 @@
 #    'Examples',
 #    ]
 
-from Conversions import *
-from DataMatrix import *
-from Likelihood import *
-from Phylogeny import *
-from ProbDist import *
-from ReadNexus import *
-from Phycas import *
+import Conversions
+import DataMatrix
+import Likelihood
+import Phylogeny
+import ProbDist
+import ReadNexus
+from Phycas import Phycas
 
 #print 'importing pyphy...'

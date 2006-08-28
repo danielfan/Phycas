@@ -1,6 +1,6 @@
-from Phycas import Phycas
-from Likelihood import PhycasIDLishMatrix
-import ProbDist
+from pyphy.Phycas import Phycas
+from pyphy.Likelihood import PhycasIDLishMatrix
+import pyphy.ProbDist
 import os, sys
 import re
 import threading

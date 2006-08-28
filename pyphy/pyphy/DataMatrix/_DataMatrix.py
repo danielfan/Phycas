@@ -9,7 +9,7 @@ class DataMatrix(DataMatrixBase):
 
     >>> from pyphy import *
     >>> r = ReadNexus.NexusReader()
-    >>> r.readFile('Examples/Data/nyldna4.nex')
+    >>> r.readFile('../Examples/Data/nyldna4.nex')
     >>> m = ReadNexus.getDiscreteMatrix(r, 0)
 
     """
@@ -19,9 +19,9 @@ class DataMatrix(DataMatrixBase):
         Returns the number of characters in the data matrix.
 
         >>> from pyphy import *
-        >>> r = NexusReader()
-        >>> r.readFile('Examples/Data/nyldna4.nex')
-        >>> m = getDiscreteMatrix(r, 0)
+        >>> r = ReadNexus.NexusReader()
+        >>> r.readFile('../Examples/Data/nyldna4.nex')
+        >>> m = ReadNexus.getDiscreteMatrix(r, 0)
         >>> m.getNChar()
         3080
 
@@ -34,9 +34,9 @@ class DataMatrix(DataMatrixBase):
         Returns the number of taxa in the data matrix.
 
         >>> from pyphy import *
-        >>> r = NexusReader()
-        >>> r.readFile('Examples/Data/nyldna4.nex')
-        >>> m = getDiscreteMatrix(r, 0)
+        >>> r = ReadNexus.NexusReader()
+        >>> r.readFile('../Examples/Data/nyldna4.nex')
+        >>> m = ReadNexus.getDiscreteMatrix(r, 0)
         >>> m.getNTax()
         4
         
@@ -51,9 +51,9 @@ class DataMatrix(DataMatrixBase):
         ambiguities are coded as separate states.
 
         >>> from pyphy import *
-        >>> r = NexusReader()
-        >>> r.readFile('Examples/Data/nyldna4.nex')
-        >>> m = getDiscreteMatrix(r, 0)
+        >>> r = ReadNexus.NexusReader()
+        >>> r.readFile('../Examples/Data/nyldna4.nex')
+        >>> m = ReadNexus.getDiscreteMatrix(r, 0)
         >>> m.getNStates()
         4
 
@@ -68,9 +68,9 @@ class DataMatrix(DataMatrixBase):
         recoded, and getStateList() returns the codes used.
 
         >>> from pyphy import *
-        >>> r = NexusReader()
-        >>> r.readFile('Examples/Data/nyldna4.nex')
-        >>> m = getDiscreteMatrix(r, 0)
+        >>> r = ReadNexus.NexusReader()
+        >>> r.readFile('../Examples/Data/nyldna4.nex')
+        >>> m = ReadNexus.getDiscreteMatrix(r, 0)
         >>> print m.getSymbolsList()
         ACGT?N
 
@@ -88,9 +88,9 @@ class DataMatrix(DataMatrixBase):
         the original meaning of these coded states.
 
         >>> from pyphy import *
-        >>> r = NexusReader()
-        >>> r.readFile('Examples/Data/nyldna4.nex')
-        >>> m = getDiscreteMatrix(r, 0)
+        >>> r = ReadNexus.NexusReader()
+        >>> r.readFile('../Examples/Data/nyldna4.nex')
+        >>> m = ReadNexus.getDiscreteMatrix(r, 0)
         >>> print m.getStateList()
         (1, 0, 1, 1, 1, 2, 1, 3, 5, -1, 0, 1, 2, 3, 4, 0, 1, 2, 3)
 
@@ -132,11 +132,10 @@ class DataMatrix(DataMatrixBase):
         Returns a tuple showing the index corresponding to each state found
         in the data matrix into the state list.
 
-        >>> import DataMatrix
-        >>> from ReadNexus import *
-        >>> r = NexusReader()
-        >>> r.readFile('Examples/Data/nyldna4.nex')
-        >>> m = getDiscreteMatrix(r, 0)
+        >>> from pyphy import *
+        >>> r = ReadNexus.NexusReader()
+        >>> r.readFile('../Examples/Data/nyldna4.nex')
+        >>> m = ReadNexus.getDiscreteMatrix(r, 0)
         >>> print m.getStateListPos()
         (0, 2, 4, 6, 8, 14)
 

@@ -11,9 +11,9 @@ class NexusReader(NexusReaderBase):
         """
         Need to write.
 
-        >>> from pyphy import NexusReader
-        >>> reader = NexusReader()
-        >>> reader.readFile('Examples/Data/nyldna4.nex')
+        >>> from pyphy import *
+        >>> reader = ReadNexus.NexusReader()
+        >>> reader.readFile('../Examples/Data/nyldna4.nex')
         >>> print reader.getNChar()
         3080
 

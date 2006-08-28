@@ -1,7 +1,7 @@
 import warnings
 warnings.filterwarnings('ignore', '.*second conversion method ignored.*', RuntimeWarning)
 
-from pyphy.Conversions import *
+#from pyphy.Conversions import *
 from _DataMatrixBase import *
 from _DataMatrix import *
 

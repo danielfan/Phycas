@@ -30,7 +30,7 @@ class SimData(SimDataBase):
     the internal map representation is printed out.
 
     >>> from pyphy import *
-    >>> d = SimData()
+    >>> d = Likelihood.SimData()
     >>> d.resetPatternLength(4) # specify that there are 4 taxa
     >>> 
     >>> # Create the first pattern
@@ -74,7 +74,7 @@ class SimData(SimDataBase):
     >>> phycas = Phycas()
     >>> 
     >>> # Read a data file
-    >>> phycas.reader.readFile('Examples/Data/nyldna4.nex')
+    >>> phycas.reader.readFile('../Examples/Data/nyldna4.nex')
     >>> phycas.data_matrix = ReadNexus.getDiscreteMatrix(phycas.reader, 0)
     >>> phycas.ntax = phycas.data_matrix.getNTax()
     >>> taxon_names = phycas.reader.getTaxLabels()
@@ -103,11 +103,8 @@ class SimData(SimDataBase):
     >>> num_sites = 100
     >>> 
     >>> # Simulate the data
-    >>> sim_data = SimData()
+    >>> sim_data = Likelihood.SimData()
     >>> phycas.likelihood.simulateFirst(sim_data, phycas.tree, phycas.r, num_sites)
-    >>>
-    >>> # Save the data to a file
-    >>> sim_data.saveToNexusFile('simulated.nex', taxon_names, 'dna', ('a','c','g','t'))
     >>>
     >>> # Output a table showing the patterns that were simulated and the number of
     >>> # sites exhibiting each pattern
@@ -168,7 +165,7 @@ class SimData(SimDataBase):
         function will delete any data stored in the internal pattern map.
         
         >>> from pyphy import *
-        >>> d = SimData()
+        >>> d = Likelihood.SimData()
         >>> d.resetPatternLength(4) # specify that there are 4 taxa
         >>> d.setState(0, 0)      # store state 0 for taxon 0
         >>> d.setState(1, 1)      # store state 1 for taxon 1

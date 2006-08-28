@@ -15,7 +15,7 @@ class UniformDist(UniformDistBase):
         """
         Specify the left and right bounds of the UniformDist object. e.g.,
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = UniformDist(2, 3)
         >>> print d.getMean()
         2.5
@@ -45,7 +45,7 @@ class UniformDist(UniformDistBase):
         Returns a string that could be used to initialize another UniformDist
         object identical to this one. e.g.,
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = UniformDist(2, 3)
         >>> print d.__str__()
         UniformDist(2.00000, 3.00000)
@@ -59,7 +59,7 @@ class UniformDist(UniformDistBase):
         Returns a string that could be used to initialize another UniformDist
         object identical to this one. e.g.,
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = UniformDist(2, 3)
         >>> print d.__repr__()
         UniformDist(2.00000, 3.00000)
@@ -107,7 +107,7 @@ class UniformDist(UniformDistBase):
         seed! If you have already called setLot, you probably want to call
         the setSeed function of that Lot ojbect. e.g.,
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = UniformDist(2, 3)
         >>> d.setSeed(135)
         >>> print d.sample()
@@ -139,7 +139,7 @@ class UniformDist(UniformDistBase):
         (i.e., it will not change if sample is called to generate samples
         from this distribution).
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = UniformDist(2, 3)
         >>> print d.getMean()
         2.5
@@ -154,7 +154,7 @@ class UniformDist(UniformDistBase):
         variance (i.e., it will not change if sample is called to generate
         samples from this distribution).
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = UniformDist(2, 3)
         >>> print d.getVar()
         0.0833333333333
@@ -169,7 +169,7 @@ class UniformDist(UniformDistBase):
         theoretical standard deviation (i.e., it will not change if sample is
         called to generate samples from this distribution).
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = UniformDist(2, 3)
         >>> print d.getStdDev()
         0.288675134595
@@ -184,7 +184,7 @@ class UniformDist(UniformDistBase):
         x. This is the integral of the probability density function from the
         left bound up to the value x.
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = UniformDist(2, 3)
         >>> print d.getCDF(2.5)
         0.5
@@ -199,7 +199,7 @@ class UniformDist(UniformDistBase):
         this UniformDist object. Python list comprehensions can be used to
         store many simulated samples for use in subsequent calculations.
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = UniformDist(2, 3)
         >>> d.setSeed(97531)
         >>> print [d.sample()] * 3
@@ -214,7 +214,7 @@ class UniformDist(UniformDistBase):
         Evaluates the probability density function at the supplied value x.
         Returns the natural logarithm of the density at x. e.g.,
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> import math
         >>> d = UniformDist(2, 3)
         >>> print math.fabs(d.getLnPDF(2.5))  # see note about fabs below
@@ -253,7 +253,7 @@ class UniformDist(UniformDistBase):
         returns the most negative floating point number possible if x is out
         of bounds.
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = UniformDist(2, 3)
         >>> print d.getRelativeLnPDF(1.5)
         -1.79769313486e+308
@@ -274,7 +274,7 @@ class UniformDist(UniformDistBase):
         a = mean - c/2
         b = a + c
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = UniformDist(2, 3)
         >>> print d.getMean()
         2.5

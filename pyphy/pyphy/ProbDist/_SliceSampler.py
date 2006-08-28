@@ -31,7 +31,7 @@ class SliceSampler(SliceSamplerBase):
         Below is an example where the function represents one of the standard
         univariate continuous distributions (the Beta distribution):
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> rng = Lot(13579)
         >>> func = BetaDist(2.0, 1.0)
         >>> print round(2.0/3.0, 12) # expected mean
@@ -68,7 +68,7 @@ class SliceSampler(SliceSamplerBase):
         be defined so that SliceSampler can treat an instance of MyBimodalDist
         as if it were a function.
         
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> import math
         >>> class MyBimodalDist(AdHocDensityBase):
         ...    def __init__(self):
@@ -110,7 +110,7 @@ class SliceSampler(SliceSamplerBase):
         version is meant to be relatively efficient. Use debugSample() if you
         want to get some details of the slice sampling process.
         
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> ss = SliceSampler(Lot(91735), ExponentialDist(10.0))
         >>> print round(ss.sample(), 12)
         0.044758783301
@@ -135,7 +135,7 @@ class SliceSampler(SliceSamplerBase):
              6: original slice interval width
             7+: x-coord of failed sampling attempts
         
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> ss = SliceSampler(Lot(91735), ExponentialDist(10.0))
         >>> info = ss.debugSample()
         >>> print round(info[0], 12) # sampled value
@@ -179,7 +179,7 @@ class SliceSampler(SliceSamplerBase):
         not unimodal may raise exceptions. Thus, use sample() unless there is
         a demonstrated need for overrelaxed sampling.
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> ss = SliceSampler(Lot(91735), ExponentialDist(10.0))
         >>> print round(ss.overrelaxedSample(), 12)
         0.033135032654
@@ -201,7 +201,7 @@ class SliceSampler(SliceSamplerBase):
              4: x-coord of right edge of slice
              5: log of y-coord of slice
         
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> ss = SliceSampler(Lot(91735), ExponentialDist(10.0))
         >>> info = ss.debugOverrelaxedSample()
         >>> print "%.12f" % info[0] # sampled value
@@ -238,7 +238,7 @@ class SliceSampler(SliceSamplerBase):
         BinomialDist) or multivariate distributions (e.g. DirichletDist)
         cannot be used to create a SliceSampler object.
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> ss = SliceSampler(Lot(91735), ExponentialDist(10.0))
         >>> print round(ss.sample(), 12)
         0.044758783301
@@ -256,7 +256,7 @@ class SliceSampler(SliceSamplerBase):
         Swaps in a new pseudorandom number generator (an instance of the class
         Lot) for the one installed at object creation.
         
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> # Create SliceSampler with r1
         >>> r1 = Lot(73915)
         >>> ss = SliceSampler(r1, ExponentialDist(0.1))
@@ -284,7 +284,7 @@ class SliceSampler(SliceSamplerBase):
         be drawn before calling this method (because otherwise there is no
         basis for computing the average cropped slice interval width).
         
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> ss = SliceSampler(Lot(73915), ExponentialDist(0.1))
         >>> ss.adaptSimple(1.0)
         Traceback (most recent call last):
@@ -310,7 +310,7 @@ class SliceSampler(SliceSamplerBase):
         calling this method (because otherwise there is no basis for
         computing the average distance between successive sampled values).
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> ss = SliceSampler(Lot(73915), ExponentialDist(0.1))
         >>> ss.adaptNeal(1.0)
         Traceback (most recent call last):
@@ -335,7 +335,7 @@ class SliceSampler(SliceSamplerBase):
         The slice is increased to the right and left by adding more units of
         this width until the density curve is crossed on each side.
         
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> ss = SliceSampler(Lot(73915), ExponentialDist(0.1))
         >>> samples = [ss.sample() for i in range(10)]
         >>> print ss.getSliceUnitWidth()
@@ -354,7 +354,7 @@ class SliceSampler(SliceSamplerBase):
         resetDiagnostics() function. At least one sample must be drawn before
         calling this method, otherwise an exception is raised.
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> ss = SliceSampler(Lot(73915), ExponentialDist(0.1))
         >>> ss.getMinX()
         Traceback (most recent call last):
@@ -377,7 +377,7 @@ class SliceSampler(SliceSamplerBase):
         resetDiagnostics() function. At least one sample must be drawn before
         calling this method, otherwise an exception is raised.
         
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> ss = SliceSampler(Lot(73915), ExponentialDist(0.1))
         >>> ss.getMaxX()
         Traceback (most recent call last):
@@ -408,7 +408,7 @@ class SliceSampler(SliceSamplerBase):
         the left edge of the final slice (after a successful sampling), use
         the function getLeftEdgeOfSlice().
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> ss = SliceSampler(Lot(73915), BetaDist(50.0, 50.0))
         >>> print round(ss.sample(), 12)
         0.591999204028
@@ -441,7 +441,7 @@ class SliceSampler(SliceSamplerBase):
         the right edge of the final slice (after a successful sampling), use
         the function getRightEdgeOfSlice().
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> ss = SliceSampler(Lot(73915), BetaDist(50.0, 50.0))
         >>> print round(ss.sample(), 12)
         0.591999204028
@@ -473,7 +473,7 @@ class SliceSampler(SliceSamplerBase):
         original slice width before any cropping, use the function
         getLeftEdgeOfSlice().
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> ss = SliceSampler(Lot(73915), BetaDist(50.0, 5.0))
         >>> print round(ss.sample(), 12)
         0.591999204028
@@ -505,7 +505,7 @@ class SliceSampler(SliceSamplerBase):
         original slice width before any cropping, use the function
         getRightEdgeOfSlice().
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> ss = SliceSampler(Lot(73915), BetaDist(5.0, 50.0))
         >>> print round(ss.sample(), 12)
         0.087950013611
@@ -528,7 +528,7 @@ class SliceSampler(SliceSamplerBase):
         Returns the height (on the log scale) of the slice for the last sample
         taken.
         
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> ss = SliceSampler(Lot(73915), BetaDist(5.0, 50.0))
         >>> print round(ss.sample(), 12)
         0.087950013611
@@ -547,7 +547,7 @@ class SliceSampler(SliceSamplerBase):
         the value returned by getNumSamples() to compute average number of
         function evaluations required for each sample drawn.
         
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> ss = SliceSampler(Lot(73915), ExponentialDist(10.0))
         >>> samples = [ss.sample() for i in range(10)]
         >>> evals = ss.getNumFuncEvals()
@@ -568,7 +568,7 @@ class SliceSampler(SliceSamplerBase):
         getNumSamples() to compute the average number of failures per sample
         drawn.
         
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> ss = SliceSampler(Lot(73915), ExponentialDist(10.0))
         >>> print ss.getNumFailedSamples()
         0
@@ -590,7 +590,7 @@ class SliceSampler(SliceSamplerBase):
         Divide by the result of calling getNumSamples() to compute the average
         number of units required per sample drawn.
         
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> ss = SliceSampler(Lot(73915), ExponentialDist(0.2))
         >>> print ss.getNumUnitsRequired()
         0
@@ -612,7 +612,7 @@ class SliceSampler(SliceSamplerBase):
         various quantities, such as the mean cropped slice interval width
         used by adaptSimple().
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> ss = SliceSampler(Lot(73915), ExponentialDist(0.1))
         >>> samples = [ss.sample() for i in range(10)]
         >>> print len(samples)
@@ -633,7 +633,7 @@ class SliceSampler(SliceSamplerBase):
         from previous sampling, i.e. adaptSimple(), adaptNeal() and
         adaptYConditional().
         
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> ss = SliceSampler(Lot(73915), ExponentialDist(0.1))
         >>> samples = [ss.sample() for i in range(10)]
         >>> print ss.getNumSamples()
@@ -666,7 +666,7 @@ class SliceSampler(SliceSamplerBase):
         at any height. The parameter multiplier is stored for use by the
         calcW() function.
         
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> ss = SliceSampler(Lot(73915), BetaDist(20.0, 20.0))
         >>> samples = [ss.sample() for i in range(20)]
         >>> print ss.getNumFailedSamples()
@@ -697,7 +697,7 @@ class SliceSampler(SliceSamplerBase):
         probably never need to call this function explicitly except for
         debugging purposes.
         
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> import math
         >>> ss = SliceSampler(Lot(73915), BetaDist(20.0, 20.0))
         >>> print ss.getSliceUnitWidth()
@@ -730,7 +730,7 @@ class SliceSampler(SliceSamplerBase):
         correspondingly diminished. Here is an example involving a highly
         variable distribution in which the true mode is located at 0.5.
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> ss = SliceSampler(Lot(73915), BetaDist(2.0, 2.0))
         >>> first = ss.sample()
         >>> print round(ss.getMode(), 12)
@@ -751,7 +751,7 @@ class SliceSampler(SliceSamplerBase):
         attempting to call this function before calling sample will trip an
         assert.
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> ss = SliceSampler(Lot(73915), BetaDist(2.0, 2.0))
         >>> first = ss.sample()
         >>> print "%.5f" % first
@@ -776,7 +776,7 @@ class SliceSampler(SliceSamplerBase):
         improved (0.503134657448) and thus the height of the density at that
         estimated mode is higher.
         
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> ss = SliceSampler(Lot(73915), BetaDist(2.0, 2.0))
         >>> first = ss.sample()
         >>> print round(ss.getLnDensityAtMode(), 12)

@@ -21,7 +21,7 @@ class Phycas:
     >>> from pyphy import *
     >>> mcmc = Phycas()
     >>> mcmc.data_source = 'file'
-    >>> mcmc.data_file_name = 'Examples/Data/nyldna4.nex'
+    >>> mcmc.data_file_name = '../Examples/Data/nyldna4.nex'
     >>> mcmc.starting_tree_source = 'random'
     >>> mcmc.ls_move_weight = 10
     >>> mcmc.slice_weight = 1
@@ -34,13 +34,12 @@ class Phycas:
     >>> mcmc.verbose = True
     >>> mcmc.setup()
     >>> mcmc.run() # doctest:+ELLIPSIS
-    Data source:    Examples/Data/nyldna4.nex
+    Data source:    ../Examples/Data/nyldna4.nex
     No. cycles:     100
     Sample every:   10
     Starting tree:  (1:0.22681,(2:0.05618,4:0.85420):0.14171,3:0.00510)
     No. samples:    10
-    Sampled trees will be saved in nyldna4.nex.t
-    Sampled parameters will be saved in nyldna4.nex.p
+    ...
     Tip node numbers were set using the names in the tree description
     Starting log-likelihood = -8754.6126271
     Starting log-prior = -10.80950415
@@ -599,7 +598,8 @@ class Phycas:
         self.likelihood.prepareForLikelihood(self.tree)
 
         # Create parameter and tree file names based on the data file name
-        prefix = os.path.basename(self.data_file_name)        
+        prefix = os.path.abspath(self.data_file_name) #os.path.basename(self.data_file_name)
+        #print 'prefix=',prefix
         self.param_file_name = prefix + '.p'
         self.tree_file_name = prefix + '.t'
 

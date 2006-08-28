@@ -12,7 +12,7 @@ class DirichletDist(DirichletDistBase):
         """
         Specify the parameters of the DirichletDist object as a tuple. e.g.,
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = DirichletDist((1,1,1,1))
         >>> print d.getMean()
         (0.25, 0.25, 0.25, 0.25)
@@ -25,7 +25,7 @@ class DirichletDist(DirichletDistBase):
         """
         Always returns False because the Dirichlet distribution is continuous.
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = DirichletDist((1,1,1,1))
         >>> print d.isDiscrete()
         False
@@ -38,7 +38,7 @@ class DirichletDist(DirichletDistBase):
         """
         Returns the string 'Dirichlet'
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = DirichletDist((1,1,1,1))
         >>> print d.getDistName()
         Dirichlet
@@ -52,7 +52,7 @@ class DirichletDist(DirichletDistBase):
         Returns a string that could be used to initialize another DirichletDist
         object identical to this one. e.g.,
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = DirichletDist((1,2,3,4))
         >>> print d.__str__()
         DirichletDist((1.00000, 2.00000, 3.00000, 4.00000))
@@ -66,7 +66,7 @@ class DirichletDist(DirichletDistBase):
         Returns a string that could be used to initialize another DirichletDist
         object identical to this one. e.g.,
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = DirichletDist((1,2,3,4))
         >>> print d.__repr__()
         DirichletDist((1.00000, 2.00000, 3.00000, 4.00000))
@@ -128,7 +128,7 @@ class DirichletDist(DirichletDistBase):
         seed! If you have already called setLot, you probably want to call
         the setSeed function of that Lot ojbect. e.g.,
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = DirichletDist((1,2,3,4))
         >>> d.setSeed(135)
         >>> for x in d.sample():
@@ -173,7 +173,7 @@ class DirichletDist(DirichletDistBase):
         from this distribution). Because this is a multivariate distribution,
         the object returned is a tuple.
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = DirichletDist((1,2,3,4))
         >>> print d.getMean()
         (0.10000000000000001, 0.20000000000000001, 0.29999999999999999, 0.40000000000000002)
@@ -189,7 +189,7 @@ class DirichletDist(DirichletDistBase):
         samples from this distribution). Because this is a multivariate
         distribution, the object returned is a tuple.
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = DirichletDist((1,2,3,4))
         >>> print d.getVar()
         (0.0081818181818181825, 0.014545454545454545, 0.019090909090909092, 0.02181818181818182)
@@ -205,7 +205,7 @@ class DirichletDist(DirichletDistBase):
         called to generate samples from this distribution). Because this is
         a multivariate distribution, the object returned is a tuple.
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = DirichletDist((1,2,3,4))
         >>> print d.getStdDev()
         (0.090453403373329092, 0.12060453783110545, 0.13816985594155148, 0.14770978917519928)
@@ -220,7 +220,7 @@ class DirichletDist(DirichletDistBase):
         by this DirichletDist object. Python list comprehensions can be used
         to store many simulated samples for use in subsequent calculations.
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = DirichletDist((1,2,3,4))
         >>> d.setSeed(97531)
         >>> for x in d.sample():
@@ -251,7 +251,7 @@ class DirichletDist(DirichletDistBase):
         to ensure that the approximated CDF will be the same every time this
         example is run):
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = DirichletDist((1,1))
         >>> d.setSeed(1357)
         >>> print d.approxCDF(d.getMean())
@@ -272,7 +272,7 @@ class DirichletDist(DirichletDistBase):
         Evaluates the probability density function at the supplied value x.
         Returns the natural logarithm of the density at x. e.g.,
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = DirichletDist((1,2,3,4))
         >>> print d.getLnPDF((0.4,0.3,0.2,0.1))
         -1.01368307788
@@ -320,7 +320,7 @@ class DirichletDist(DirichletDistBase):
         correctly normalized density value (i.e. from a density function that
         integrates to 1.0)
 
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = DirichletDist((1,2,3,4))
         >>> print d.getRelativeLnPDF((0.4,0.3,0.2,0.1))
         -11.3306039082
@@ -360,7 +360,7 @@ class DirichletDist(DirichletDistBase):
         are not needed to fully specify the Dirichlet distribution).
         For example:
         
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> from numarray import array
         >>> d = DirichletDist((1,1,1))
         >>> m = array([1./9., 3./9., 5./9.])
@@ -394,7 +394,7 @@ class DirichletDist(DirichletDistBase):
         are not needed to fully specify the Dirichlet distribution).
         For example:
         
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> from numarray import array
         >>> d = DirichletDist((1,1,1))
         >>> m = array([1./9., 3./9., 5./9.])
@@ -439,7 +439,7 @@ class DirichletDist(DirichletDistBase):
         Var_i  = 1*2/36 = 0.05555556
         Cov_ij = -1*1/36 = -0.02777778
         
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d = DirichletDist((1,1,1))
         >>> print d.getVarCovarMatrix()
         [[ 0.05555556 -0.02777778 -0.02777778]
@@ -455,7 +455,7 @@ class DirichletDist(DirichletDistBase):
         Returns the number of parameters in the Dirichlet distribution. 
         For example:
         
-        >>> from ProbDist import *
+        >>> from pyphy.ProbDist import *
         >>> d1 = DirichletDist((1,2,3,4))
         >>> print d1.getNParams()
         4
