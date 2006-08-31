@@ -1082,48 +1082,19 @@
                         </compareText>
                     </ruleList>
                 </setInstallerVariableFromScriptOutput>
-            </postShowPageActionList>
-        </directoryParameter>
-        <booleanParameter>
-            <name>overwrite</name>
-            <title>Phycas has been previously installed in this location</title>
-            <description></description>
-            <explanation>Overwrite?</explanation>
-            <value>0</value>
-            <default>0</default>
-            <ask>yes</ask>
-            <cliOptionName></cliOptionName>
-            <leftImage></leftImage>
-            <ruleList>
-                <compareValues>
-                    <logic>equals</logic>
-                    <value1>${alreadyinstalled}</value1>
-                    <value2>1</value2>
-                </compareValues>
-            </ruleList>
-            <postShowPageActionList>
                 <throwError>
-                    <text>Aborting installation to avoid overwriting existing Phycas installation</text>
+                    <text>Please uninstall the existing version and then run this installer again</text>
                     <ruleList>
                         <compareValues>
                             <logic>equals</logic>
-                            <value1>${overwrite}</value1>
-                            <value2>0</value2>
-                        </compareValues>
-                    </ruleList>
-                </throwError>
-                <deleteFile>
-                    <path>${installdir}</path>
-                    <ruleList>
-                        <compareValues>
-                            <logic>equals</logic>
-                            <value1>${overwrite}</value1>
+                            <value1>${alreadyinstalled}</value1>
                             <value2>1</value2>
                         </compareValues>
                     </ruleList>
-                </deleteFile>
-             </postShowPageActionList>
-        </booleanParameter>
+                </throwError>
+            </postShowPageActionList>
+        </directoryParameter>
+        
         <booleanParameter>
             <name>installsources</name>
             <title>Install Source Code</title>
