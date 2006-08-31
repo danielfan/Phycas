@@ -490,16 +490,16 @@
                     </distributionFileList>
                 </folder>
                 <folder>
-                    <description>Examples runall script</description>
-                    <destination>${installdir}/Examples</destination>
-                    <name>runall</name>
+                    <description>Test scripts</description>
+                    <destination>${installdir}/Tests</destination>
+                    <name>tests</name>
                     <platforms>windows</platforms>
                     <distributionFileList>
                         <distributionFile>
-                            <origin>Examples/runall.bat</origin>
+                            <origin>Tests/runall.bat</origin>
                         </distributionFile>
                         <distributionFile>
-                            <origin>doctestall.py</origin>
+                            <origin>Tests/doctestall.py</origin>
                         </distributionFile>
                     </distributionFileList>
                 </folder>
@@ -1067,7 +1067,63 @@
             <mustBeWritable>yes</mustBeWritable>
             <mustExist>0</mustExist>
             <width>40</width>
+            <postShowPageActionList>
+                <setInstallerVariableFromScriptOutput>
+                    <!-- Win: set ${alreadyinstalled} to 1 if ${installdir} already exists, 0 otherwise -->
+                    <exec>cmd</exec>
+                    <execArgs>/c IF EXIST "${installdir}" (echo 1) ELSE echo 0</execArgs>
+                    <name>alreadyinstalled</name>
+                    <ruleList>
+                        <compareText>
+                            <logic>equals</logic>
+                            <nocase>0</nocase>
+                            <text>${platform_name}</text>
+                            <value>windows</value>
+                        </compareText>
+                    </ruleList>
+                </setInstallerVariableFromScriptOutput>
+            </postShowPageActionList>
         </directoryParameter>
+        <booleanParameter>
+            <name>overwrite</name>
+            <title>Phycas has been previously installed in this location</title>
+            <description></description>
+            <explanation>Overwrite?</explanation>
+            <value>0</value>
+            <default>0</default>
+            <ask>yes</ask>
+            <cliOptionName></cliOptionName>
+            <leftImage></leftImage>
+            <ruleList>
+                <compareValues>
+                    <logic>equals</logic>
+                    <value1>${alreadyinstalled}</value1>
+                    <value2>1</value2>
+                </compareValues>
+            </ruleList>
+            <postShowPageActionList>
+                <throwError>
+                    <text>Aborting installation to avoid overwriting existing Phycas installation</text>
+                    <ruleList>
+                        <compareValues>
+                            <logic>equals</logic>
+                            <value1>${overwrite}</value1>
+                            <value2>0</value2>
+                        </compareValues>
+                    </ruleList>
+                </throwError>
+                <deleteFile>
+                    <path>${installdir}</path>
+                    <ruleList>
+                        <compareValues>
+                            <logic>equals</logic>
+                            <value1>${overwrite}</value1>
+                            <value2>1</value2>
+                        </compareValues>
+                    </ruleList>
+                </deleteFile>
+             </postShowPageActionList>
+        </booleanParameter>
         <booleanParameter>
             <name>installsources</name>
             <title>Install Source Code</title>
@@ -1123,7 +1179,7 @@
             <title>Debugging Information</title>
             <description>This page is only for showing debugging information</description>
             <explanation>Here are some installer variables that have been set:</explanation>
-            <value>${installdir};${pythoninstalldir}</value>
+            <value>${alreadyinstalled};${installdir};${pythoninstalldir}</value>
             <default></default>
             <leftImage></leftImage>
             <trimMarginNumChars>0</trimMarginNumChars>
