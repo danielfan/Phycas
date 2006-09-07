@@ -29,7 +29,7 @@ class SimData(SimDataBase):
     patterns are built up by hand and stored in the SimData object, then
     the internal map representation is printed out.
 
-    >>> from pyphy import *
+    >>> from phypy import *
     >>> d = Likelihood.SimData()
     >>> d.resetPatternLength(4) # specify that there are 4 taxa
     >>> 
@@ -70,7 +70,7 @@ class SimData(SimDataBase):
     simulation, and in this case the requirement is automatically
     satisfied.
     
-    >>> from pyphy import *
+    >>> from phypy import *
     >>> phycas = Phycas()
     >>> 
     >>> # Read a data file
@@ -164,7 +164,7 @@ class SimData(SimDataBase):
         Returns the SimData object to its just-constructed state. Calling this
         function will delete any data stored in the internal pattern map.
         
-        >>> from pyphy import *
+        >>> from phypy import *
         >>> d = Likelihood.SimData()
         >>> d.resetPatternLength(4) # specify that there are 4 taxa
         >>> d.setState(0, 0)      # store state 0 for taxon 0

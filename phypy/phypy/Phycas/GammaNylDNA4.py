@@ -2,7 +2,7 @@ from Phycas import *
 
 phycas = Phycas()
 
-phycas.data_file_name = '../../pyphy/nyldna4.nex'
+phycas.data_file_name = '../../phypy/nyldna4.nex'
 phycas.starting_tree_source = 'random'
 phycas.ncycles = 1500
 phycas.sample_every = 30

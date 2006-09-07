@@ -43,7 +43,7 @@ class TopoPriorCalculator(TopoPriorCalculatorBase):
     Holder and Holsinger (2005) paper:
 
     >>> import math
-    >>> from pyphy import *
+    >>> from phypy import *
     >>> 
     >>> tpc = Likelihood.TopoPriorCalculator()
     >>> tpc.setNTax(17)

@@ -22,7 +22,7 @@ class InverseGammaDist(InverseGammaDistBase):
         Specify the shape and scale parameters of the InverseGammaDist
         object. e.g.,
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = InverseGammaDist(2.25, 0.2)
         >>> print d.getMean()
         4.0
@@ -30,7 +30,7 @@ class InverseGammaDist(InverseGammaDistBase):
         Trying to create an InverseGammaDist object with a shape less than
         2 results in a VAlueError exception:
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = InverseGammaDist(0.5, 3)
         Traceback (most recent call last):
         ...
@@ -61,7 +61,7 @@ class InverseGammaDist(InverseGammaDistBase):
         Returns a string that could be used to initialize another InverseGammaDist
         object identical to this one. e.g.,
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = InverseGammaDist(2.25, 0.2)
         >>> print d.__str__()
         InverseGammaDist(2.25000, 0.20000)
@@ -75,7 +75,7 @@ class InverseGammaDist(InverseGammaDistBase):
         Returns a string that could be used to initialize another
         InverseGammaDist object identical to this one. e.g.,
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = InverseGammaDist(2.25, 0.2)
         >>> print d.__repr__()
         InverseGammaDist(2.25000, 0.20000)
@@ -123,7 +123,7 @@ class InverseGammaDist(InverseGammaDistBase):
         seed! If you have already called setLot, you probably want to call
         the setSeed function of that Lot ojbect. e.g.,
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = InverseGammaDist(2.25, 0.2)
         >>> d.setSeed(135)
         >>> print d.sample()
@@ -155,7 +155,7 @@ class InverseGammaDist(InverseGammaDistBase):
         (i.e., it will not change if sample is called to generate samples
         from this distribution).
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = InverseGammaDist(2.25, 0.2)
         >>> print d.getMean()
         4.0
@@ -170,7 +170,7 @@ class InverseGammaDist(InverseGammaDistBase):
         variance (i.e., it will not change if sample is called to generate
         samples from this distribution).
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = InverseGammaDist(2.25, 0.2)
         >>> print d.getVar()
         64.0
@@ -185,7 +185,7 @@ class InverseGammaDist(InverseGammaDistBase):
         theoretical standard deviation (i.e., it will not change if sample is
         called to generate samples from this distribution).
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = InverseGammaDist(2.25, 0.2)
         >>> print d.getStdDev()
         8.0
@@ -200,7 +200,7 @@ class InverseGammaDist(InverseGammaDistBase):
         x. This is the integral of the probability density function from 0.0
         up to the value x.
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = InverseGammaDist(2.25, 0.2)
         >>> print d.getCDF(1.5)
         0.198360740619
@@ -215,7 +215,7 @@ class InverseGammaDist(InverseGammaDistBase):
         this InverseGammaDist object. Python list comprehensions can be used to
         store many simulated samples for use in subsequent calculations.
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = InverseGammaDist(2.25, 0.2)
         >>> d.setSeed(97531)
         >>> print "%.12f" % d.sample()
@@ -234,7 +234,7 @@ class InverseGammaDist(InverseGammaDistBase):
         Evaluates the probability density function at the supplied value x.
         Returns the natural logarithm of the density at x. e.g.,
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = InverseGammaDist(3, 2)
         >>> print d.getLnPDF(1.5)
         -4.72778248801
@@ -266,7 +266,7 @@ class InverseGammaDist(InverseGammaDistBase):
         getLnPDF instead if you need to have a correctly normalized density
         value (i.e. from a density function that integrates to 1.0)
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = InverseGammaDist(3, 2)
         >>> print d.getRelativeLnPDF(1.5)
         -1.95519376577
@@ -303,7 +303,7 @@ class InverseGammaDist(InverseGammaDistBase):
         shape a = 2 + 12.5 = 14.5
         scale b = 1/(5 + 5*12.5) = 1/67.5 = 0.014814815
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = InverseGammaDist(2.25, 0.2)
         >>> print d.getMean()
         4.0

@@ -11,7 +11,7 @@ class TreeLikelihood(TreeLikelihoodBase):
     example illustrates how to open a nexus data file containing both
     data and trees, and compute the likelihood for the first tree.
 
-    >>> from pyphy import *
+    >>> from phypy import *
     >>> import time
     >>> reader = ReadNexus.NexusReader()
     >>> reader.readFile('../Examples/Data/nyldna4.nex')
@@ -274,7 +274,7 @@ class TreeLikelihood(TreeLikelihoodBase):
         the gamma shape parameter is set to 100, however, the highest rate is
         only 1.129806/0.875906 = 1.3 times faster than the slowest.
         
-        >>> from pyphy import *
+        >>> from phypy import *
         >>> 
         >>> m = Likelihood.JCModel()
         >>>

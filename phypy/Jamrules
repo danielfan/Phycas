@@ -59,7 +59,7 @@ variant common :
     <object-model>default
     <darwin><*><cxxflags>"-include phypy/src/pol_phypy_config.h"
     <gcc><*><cxxflags>"-include phypy/src/pol_phypy_config.h"
-    <vc-7_1><*><cxxflags>"-FI phypy\\src\\pol_phypy_config.h"
+    <vc-7_1><*><cxxflags>"-FI pol_phypy_config.h"
     # <vc-7_1><*><cxxflags>"-showIncludes"
     <darwin><*><cxxflags>-Wmost
     <darwin><*><cxxflags>-Wno-four-char-constants

@@ -5,7 +5,7 @@
 #include <boost/shared_ptr.hpp>						// for boost::shared_ptr
 #include <boost/weak_ptr.hpp>						// for boost::weak_ptr
 //#include <boost/enable_shared_from_this.hpp>		// for boost::enable_shared_from_this
-#include "pyphy/phylogeny/tree_manip.hpp"			// for TreeManip
+#include "phypy/phylogeny/tree_manip.hpp"			// for TreeManip
 
 struct CIPRES_Matrix;
 
@@ -91,6 +91,6 @@ typedef MCMCMoveVect::iterator			MCMCMoveIter;
 
 } // namespace phycas
 
-#include "pyphy/likelihood/mcmc_move.inl"
+#include "phypy/likelihood/mcmc_move.inl"
 
 #endif

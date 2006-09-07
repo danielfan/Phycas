@@ -209,7 +209,7 @@ enum CmdPermissionLevel
 #include "ncl/output/output_fwd_decl.hpp"
 
 #if 0
-//@POL 26-Oct-2005 Mark, I had to disable this when compiling pyphy modules because it trips on
+//@POL 26-Oct-2005 Mark, I had to disable this when compiling phypy modules because it trips on
 // some Microsoft internal headers (e.g. xlocmon) that are invoked when <boost/format>
 // is #included
 template<typename T>

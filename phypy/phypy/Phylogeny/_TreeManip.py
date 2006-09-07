@@ -12,7 +12,7 @@ class TreeManip(TreeManipBase):
         """
         Constructs a TreeManip object that operates on the supplied tree t.
         
-        >>> from pyphy import *
+        >>> from phypy import *
         >>> t = Phylogeny.Tree()
         >>> tm = Phylogeny.TreeManip(t)
         >>> d = ProbDist.ExponentialDist(10.0)
@@ -29,7 +29,7 @@ class TreeManip(TreeManipBase):
         Creates a star tree having num_tips tips and edge lengths drawn at
         random from the supplied edge_len_dist probability distribution.
         
-        >>> from pyphy import *
+        >>> from phypy import *
         >>> t = Phylogeny.Tree()
         >>> tm = Phylogeny.TreeManip(t)
         >>> d = ProbDist.ExponentialDist(10.0)
@@ -48,7 +48,7 @@ class TreeManip(TreeManipBase):
         generator rng. num_tips should include the tip used to root the
         resulting tree.
         
-        >>> from pyphy import *
+        >>> from phypy import *
         >>> t = Phylogeny.Tree()
         >>> rng = ProbDist.Lot(13579)
         >>> tm = Phylogeny.TreeManip(t)
@@ -59,8 +59,8 @@ class TreeManip(TreeManipBase):
         (1:0.10962,(2:0.29077,4:0.29077):0.00340,(3:0.22779,5:0.22779):0.06638)
 
         """
-        import pyphy.ProbDist
-        dist = pyphy.ProbDist.ExponentialDist(lambd)
+        import phypy.ProbDist
+        dist = phypy.ProbDist.ExponentialDist(lambd)
         dist.setLot(rng)
         TreeManipBase.randomTree(self, num_tips, rng, dist, True)
 
@@ -71,7 +71,7 @@ class TreeManip(TreeManipBase):
         determined by the supplied probability distribution edge_len_dist.
         num_tips should include the tip used to root the resulting tree.
         
-        >>> from pyphy import *
+        >>> from phypy import *
         >>> t = Phylogeny.Tree()
         >>> rng = ProbDist.Lot(13579)
         >>> dist = ProbDist.ExponentialDist(0.5)

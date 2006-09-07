@@ -7,7 +7,7 @@ class DataMatrix(DataMatrixBase):
     possible to construct an empty DataMatrix object; the way to obtain
     one is to import ReadNexus and call its getDiscreteMatrix function:
 
-    >>> from pyphy import *
+    >>> from phypy import *
     >>> r = ReadNexus.NexusReader()
     >>> r.readFile('../Examples/Data/nyldna4.nex')
     >>> m = ReadNexus.getDiscreteMatrix(r, 0)
@@ -18,7 +18,7 @@ class DataMatrix(DataMatrixBase):
         """
         Returns the number of characters in the data matrix.
 
-        >>> from pyphy import *
+        >>> from phypy import *
         >>> r = ReadNexus.NexusReader()
         >>> r.readFile('../Examples/Data/nyldna4.nex')
         >>> m = ReadNexus.getDiscreteMatrix(r, 0)
@@ -33,7 +33,7 @@ class DataMatrix(DataMatrixBase):
         """
         Returns the number of taxa in the data matrix.
 
-        >>> from pyphy import *
+        >>> from phypy import *
         >>> r = ReadNexus.NexusReader()
         >>> r.readFile('../Examples/Data/nyldna4.nex')
         >>> m = ReadNexus.getDiscreteMatrix(r, 0)
@@ -50,7 +50,7 @@ class DataMatrix(DataMatrixBase):
         matrix. Note: there may well be more state codes than this, because
         ambiguities are coded as separate states.
 
-        >>> from pyphy import *
+        >>> from phypy import *
         >>> r = ReadNexus.NexusReader()
         >>> r.readFile('../Examples/Data/nyldna4.nex')
         >>> m = ReadNexus.getDiscreteMatrix(r, 0)
@@ -67,7 +67,7 @@ class DataMatrix(DataMatrixBase):
         original symbols or ambiguity/polymorphism specifications have been
         recoded, and getStateList() returns the codes used.
 
-        >>> from pyphy import *
+        >>> from phypy import *
         >>> r = ReadNexus.NexusReader()
         >>> r.readFile('../Examples/Data/nyldna4.nex')
         >>> m = ReadNexus.getDiscreteMatrix(r, 0)
@@ -87,7 +87,7 @@ class DataMatrix(DataMatrixBase):
         as if it were a separate state. The state list can be used to uncover
         the original meaning of these coded states.
 
-        >>> from pyphy import *
+        >>> from phypy import *
         >>> r = ReadNexus.NexusReader()
         >>> r.readFile('../Examples/Data/nyldna4.nex')
         >>> m = ReadNexus.getDiscreteMatrix(r, 0)
@@ -132,7 +132,7 @@ class DataMatrix(DataMatrixBase):
         Returns a tuple showing the index corresponding to each state found
         in the data matrix into the state list.
 
-        >>> from pyphy import *
+        >>> from phypy import *
         >>> r = ReadNexus.NexusReader()
         >>> r.readFile('../Examples/Data/nyldna4.nex')
         >>> m = ReadNexus.getDiscreteMatrix(r, 0)

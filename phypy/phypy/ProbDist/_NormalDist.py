@@ -12,7 +12,7 @@ class NormalDist(NormalDistBase):
         Specify the mean and standard deviation when creating a new NormalDist
         object. e.g.,
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = NormalDist(2, 3)
         >>> print d.getMean()
         2.0
@@ -44,7 +44,7 @@ class NormalDist(NormalDistBase):
         Returns a string that could be used to initialize another NormalDist
         object identical to this one. e.g.,
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = NormalDist(2, 3)
         >>> print d.__str__()
         NormalDist(2.00000, 3.00000)
@@ -58,7 +58,7 @@ class NormalDist(NormalDistBase):
         Returns a string that could be used to initialize another NormalDist
         object identical to this one. e.g.,
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = NormalDist(2, 3)
         >>> print d.__repr__()
         NormalDist(2.00000, 3.00000)
@@ -106,7 +106,7 @@ class NormalDist(NormalDistBase):
         seed! If you have already called setLot, you probably want to call
         the setSeed function of that Lot ojbect. e.g.,
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = NormalDist(2, 3)
         >>> d.setSeed(135)
         >>> print "%.12f" % d.sample()
@@ -138,7 +138,7 @@ class NormalDist(NormalDistBase):
         (i.e., it will not change if sample is called to generate samples
         from this distribution).
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = NormalDist(2, 3)
         >>> print d.getMean()
         2.0
@@ -153,7 +153,7 @@ class NormalDist(NormalDistBase):
         variance (i.e., it will not change if sample is called to generate
         samples from this distribution).
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = NormalDist(2, 3)
         >>> print d.getVar()
         9.0
@@ -168,7 +168,7 @@ class NormalDist(NormalDistBase):
         theoretical standard deviation (i.e., it will not change if sample is
         called to generate samples from this distribution).
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = NormalDist(2, 3)
         >>> print d.getStdDev()
         3.0
@@ -183,7 +183,7 @@ class NormalDist(NormalDistBase):
         x. This is the integral of the probability density function from 
         negative infinity up to the value x.
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = NormalDist(0, 3)
         >>> print d.getCDF(0.0)
         0.5
@@ -198,7 +198,7 @@ class NormalDist(NormalDistBase):
         by this NormalDist object. Python list comprehensions can be used to
         store many simulated samples for use in subsequent calculations.
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = NormalDist(0, 3)
         >>> d.setSeed(97531)
         >>> samples = [d.sample() for i in range(3)]
@@ -217,7 +217,7 @@ class NormalDist(NormalDistBase):
         Evaluates the probability density function at the supplied value x.
         Returns the natural logarithm of the density at x. e.g.,
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = NormalDist(0, 3)
         >>> ln_pdf = d.getLnPDF(1.0)
         >>> print round(ln_pdf, 9)
@@ -260,7 +260,7 @@ class NormalDist(NormalDistBase):
         correctly normalized density value (i.e. from a density function that
         integrates to 1.0)
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = NormalDist(0, 3)
         >>> print d.getRelativeLnPDF(1.5)
         0.125
@@ -299,7 +299,7 @@ class NormalDist(NormalDistBase):
         """
         Sets the mean and variance of this distribution. 
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = NormalDist(2, 3)
         >>> print d.getMean()
         2.0

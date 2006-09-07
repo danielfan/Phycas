@@ -6,7 +6,7 @@
 # (nyldna4.nex) and a paup command file is written to allow verification of Phycas'
 # likelihood calculations.
 
-from pyphy import *
+from phypy import *
 
 def tryAllModels(fn):
     # Create string containing PAUP commands that will be added to the end of the
@@ -557,7 +557,7 @@ def createCommandFile(fn):
     outf.write('#nexus\n\n')
     outf.write('begin paup;\n')
     outf.write("  set nowarnroot;\n")
-    outf.write("  exe '../../pyphy/nyldna4.nex';\n")
+    outf.write("  exe '../../phypy/nyldna4.nex';\n")
     outf.write('end;\n')
     outf.close()    
 

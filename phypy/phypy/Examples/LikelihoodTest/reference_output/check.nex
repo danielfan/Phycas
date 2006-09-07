@@ -2,7 +2,7 @@
 
 begin paup;
   set nowarnroot;
-  exe '../../pyphy/nyldna4.nex';
+  exe '../../phypy/nyldna4.nex';
 end;
 
 

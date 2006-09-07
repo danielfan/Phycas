@@ -1,11 +1,11 @@
 import doctest
-import pyphy
+import phypy
 
-pyphy.ProbDist.testExamples()
-pyphy.Phylogeny.testExamples()
-pyphy.ReadNexus.testExamples()
-pyphy.DataMatrix.testExamples()
-pyphy.Likelihood.testExamples()
+phypy.ProbDist.testExamples()
+phypy.Phylogeny.testExamples()
+phypy.ReadNexus.testExamples()
+phypy.DataMatrix.testExamples()
+phypy.Likelihood.testExamples()
 doctest.testfile('../Phycas/Phycas.py')
 
 print 'Finished testing examples'

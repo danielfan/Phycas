@@ -1,4 +1,4 @@
-from pyphy import *
+from phypy import *
 
 phycas = Phycas()
 phycas.r.setSeed(13579)

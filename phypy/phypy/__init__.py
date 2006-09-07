@@ -1,4 +1,4 @@
-'''Root of the pyphy package.'''
+'''Root of the phypy package.'''
 #__all__ = [
 #    'Conversions',
 #    'DataMatrix', 
@@ -18,4 +18,4 @@ import ProbDist
 import ReadNexus
 from Phycas import Phycas
 
-#print 'importing pyphy...'
+#print 'importing phypy...'

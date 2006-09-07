@@ -4,7 +4,7 @@
 #ifdef __cplusplus
 	/* C++ version */
 	/* CIPRES_RELEASE_ASSERT is an assert that is not sensitive to NDEBUG */
-#	include "pyphy/src/cipres/compile_assert.hpp"
+#	include "phypy/src/cipres/compile_assert.hpp"
 #	include <iostream>
 #	define CIPRES_RELEASE_ASSERT(expression)  \
   	((void) ((expression) ? 0 : __TRIP_CIPRES_RELEASE_ASSERT (expression, __FILE__, __LINE__)))

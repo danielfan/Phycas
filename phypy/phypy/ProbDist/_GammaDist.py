@@ -22,7 +22,7 @@ class GammaDist(GammaDistBase):
         """
         Specify the shape and scale parameters of the GammaDist object. e.g.,
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = GammaDist(2, 3)
         >>> print d.getMean()
         6.0
@@ -52,7 +52,7 @@ class GammaDist(GammaDistBase):
         Returns a string that could be used to initialize another GammaDist
         object identical to this one. e.g.,
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = GammaDist(2, 3)
         >>> print d.__str__()
         GammaDist(2.00000, 3.00000)
@@ -66,7 +66,7 @@ class GammaDist(GammaDistBase):
         Returns a string that could be used to initialize another GammaDist
         object identical to this one. e.g.,
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = GammaDist(2, 3)
         >>> print d.__repr__()
         GammaDist(2.00000, 3.00000)
@@ -114,7 +114,7 @@ class GammaDist(GammaDistBase):
         seed! If you have already called setLot, you probably want to call
         the setSeed function of that Lot ojbect. e.g.,
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = GammaDist(2, 3)
         >>> d.setSeed(135)
         >>> print "%.12f" % d.sample()
@@ -146,7 +146,7 @@ class GammaDist(GammaDistBase):
         (i.e., it will not change if sample is called to generate samples
         from this distribution).
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = GammaDist(2, 3)
         >>> print d.getMean()
         6.0
@@ -161,7 +161,7 @@ class GammaDist(GammaDistBase):
         variance (i.e., it will not change if sample is called to generate
         samples from this distribution).
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = GammaDist(2, 3)
         >>> print d.getVar()
         18.0
@@ -176,7 +176,7 @@ class GammaDist(GammaDistBase):
         theoretical standard deviation (i.e., it will not change if sample is
         called to generate samples from this distribution).
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = GammaDist(2, 3)
         >>> print d.getStdDev()
         4.24264068712
@@ -191,7 +191,7 @@ class GammaDist(GammaDistBase):
         x. This is the integral of the probability density function from 0.0
         up to the value x.
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = GammaDist(2, 3)
         >>> print d.getCDF(1.5)
         0.090204010431
@@ -206,7 +206,7 @@ class GammaDist(GammaDistBase):
         this GammaDist object. Python list comprehensions can be used to
         store many simulated samples for use in subsequent calculations.
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = GammaDist(2, 3)
         >>> d.setSeed(97531)
         >>> samples = [d.sample() for i in range(3)]
@@ -228,7 +228,7 @@ class GammaDist(GammaDistBase):
         Evaluates the probability density function at the supplied value x.
         Returns the natural logarithm of the density at x. e.g.,
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = GammaDist(2, 3)
         >>> ln_pdf = d.getLnPDF(1.5)
         >>> print round(ln_pdf, 9)
@@ -263,7 +263,7 @@ class GammaDist(GammaDistBase):
         correctly normalized density value (i.e. from a density function that
         integrates to 1.0)
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = GammaDist(2, 3)
         >>> print d.getRelativeLnPDF(1.5)
         -0.0945348918918
@@ -292,7 +292,7 @@ class GammaDist(GammaDistBase):
         """
         Sets the mean and variance of this distribution. 
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> d = GammaDist(2, 3)
         >>> print d.getMean()
         6.0

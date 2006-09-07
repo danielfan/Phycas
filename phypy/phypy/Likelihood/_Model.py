@@ -28,8 +28,8 @@ class JCModel(JCModelBase):
         Returns a tuple comprising the 4 state frequencies. Always
         (0.25, 0.25, 0.25, 0.25) for this model.
 
-        >>> import pyphy.Likelihood
-        >>> model = pyphy.Likelihood.JCModel()
+        >>> import phypy.Likelihood
+        >>> model = phypy.Likelihood.JCModel()
         >>> print model.getStateFreqs()
         (0.25, 0.25, 0.25, 0.25)
         
@@ -404,7 +404,7 @@ class GTRModel(GTRModelBase):
                  piA piC rAC + piA piT rAT + piC piG rCG + piG piT rGT
 
         Example:
-        >>> from pyphy import *
+        >>> from phypy import *
         >>> model = Likelihood.GTRModel()
         >>> model.setRelRates([1.0, 4.0, 1.0, 1.0, 4.0, 1.0])
         >>> model.setNucleotideFreqs(0.25, 0.25, 0.25, 0.25)

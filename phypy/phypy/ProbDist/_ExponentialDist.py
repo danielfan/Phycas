@@ -18,7 +18,7 @@ class ExponentialDist(ExponentialDistBase):
         Specify the hazard parameter (i.e. inverse of the mean) when
         initializing an ExponentialDist object. e.g.,
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> b = ExponentialDist(2)
         >>> print b.getMean()
         0.5
@@ -47,7 +47,7 @@ class ExponentialDist(ExponentialDistBase):
         Returns a string that could be used to initialize another
         ExponentialDist object identical to this one. e.g.,
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> b = ExponentialDist(2)
         >>> print b.__str__()
         ExponentialDist(2.00000)
@@ -61,7 +61,7 @@ class ExponentialDist(ExponentialDistBase):
         Returns a string that could be used to initialize another
         ExponentialDist object identical to this one. e.g.,
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> b = ExponentialDist(2)
         >>> print b.__repr__()
         ExponentialDist(2.00000)
@@ -109,7 +109,7 @@ class ExponentialDist(ExponentialDistBase):
         seed! If you have already called setLot, you probably want to call
         the setSeed function of that Lot ojbect. e.g.,
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> b = ExponentialDist(2)
         >>> b.setSeed(135)
         >>> print "%.12f" % b.sample()
@@ -141,7 +141,7 @@ class ExponentialDist(ExponentialDistBase):
         (i.e., it will not change if sample is called to generate samples
         from this distribution).
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> b = ExponentialDist(2)
         >>> print b.getMean()
         0.5
@@ -156,7 +156,7 @@ class ExponentialDist(ExponentialDistBase):
         variance (i.e., it will not change if sample is called to generate
         samples from this distribution).
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> b = ExponentialDist(2)
         >>> print b.getVar()
         0.25
@@ -171,7 +171,7 @@ class ExponentialDist(ExponentialDistBase):
         theoretical standard deviation (i.e., it will not change if sample is
         called to generate samples from this distribution).
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> b = ExponentialDist(2)
         >>> print b.getStdDev()
         0.5
@@ -186,7 +186,7 @@ class ExponentialDist(ExponentialDistBase):
         x. This is the integral of the probability density function from 0.0
         up to the value x.
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> b = ExponentialDist(2)
         >>> print b.getCDF(1.5)
         0.950212931632
@@ -206,7 +206,7 @@ class ExponentialDist(ExponentialDistBase):
         can be used to store many simulated samples for use in subsequent
         calculations.
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> b = ExponentialDist(2)
         >>> b.setSeed(97531)
         >>> print "%.12f" % b.sample()
@@ -225,7 +225,7 @@ class ExponentialDist(ExponentialDistBase):
         Evaluates the probability density function at the supplied value x.
         Returns the natural logarithm of the density at x. e.g.,
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> b = ExponentialDist(2)
         >>> print b.getLnPDF(1.5)
         -2.30685281944
@@ -247,7 +247,7 @@ class ExponentialDist(ExponentialDistBase):
         correctly normalized density value (i.e. from a density function that
         integrates to 1.0)
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> b = ExponentialDist(2)
         >>> print b.getRelativeLnPDF(1.5)
         -3.0
@@ -269,7 +269,7 @@ class ExponentialDist(ExponentialDistBase):
         reason this function requires both mean and variance is for
         compatibility with functions of the same name in other distributions.
 
-        >>> from pyphy.ProbDist import *
+        >>> from phypy.ProbDist import *
         >>> b = ExponentialDist(2)
         >>> print b.getMean()
         0.5

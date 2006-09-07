@@ -8,7 +8,7 @@
 # Start near the bottom of this file with the __name__ == "__main___" conditional
 # Note that Phycas.py is used to most of the actual work.
 
-from pyphy import *
+from phypy import *
 
 def commonSetup():
     # Set up MCMC

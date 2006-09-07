@@ -1,7 +1,7 @@
 import warnings
 warnings.filterwarnings('ignore', '.*second conversion method ignored.*', RuntimeWarning)
 
-from pyphy.Conversions import *
+from phypy.Conversions import *
 from _Phylogeny import *
 from _Tree import *
 from _TreeManip import *

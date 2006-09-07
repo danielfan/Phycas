@@ -1,10 +1,10 @@
 import os, sys, time, math, threading
-from pyphy.Conversions import *
-from pyphy.DataMatrix import *
-from pyphy.Likelihood import *
-from pyphy.Phylogeny import *
-from pyphy.ProbDist import *
-from pyphy.ReadNexus import *
+from phypy.Conversions import *
+from phypy.DataMatrix import *
+from phypy.Likelihood import *
+from phypy.Phylogeny import *
+from phypy.ProbDist import *
+from phypy.ReadNexus import *
 
 class Phycas:
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -18,7 +18,7 @@ class Phycas:
     topology and runs a Markov chain sampler for 100 cycles using the HKY
     model.
 
-    >>> from pyphy import *
+    >>> from phypy import *
     >>> mcmc = Phycas()
     >>> mcmc.data_source = 'file'
     >>> mcmc.data_file_name = '../Examples/Data/nyldna4.nex'
@@ -1115,8 +1115,8 @@ if __name__ == '__main__':
         # set above to True for normal operation
         mcmc.random_seed = '13579'
         mcmc.data_source = 'file'
-        mcmc.data_file_name = '../../pyphy/green.nex'
-        #mcmc.data_file_name = '../../pyphy/nyldna4.nex'
+        mcmc.data_file_name = '../../phypy/green.nex'
+        #mcmc.data_file_name = '../../phypy/nyldna4.nex'
         mcmc.starting_tree_source = 'random'
         mcmc.ncycles = 200
         mcmc.sample_every = 10
@@ -1136,7 +1136,7 @@ if __name__ == '__main__':
 
     if False:
         # for Tallahassee session
-        mcmc.data_file_name = '../../pyphy/nyldna4.nex'
+        mcmc.data_file_name = '../../phypy/nyldna4.nex'
 
     mcmc.setup()
     mcmc.run()

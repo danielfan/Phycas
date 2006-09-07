@@ -1,7 +1,7 @@
 #ifndef CIPRES_NATIVE_C_H
 #define CIPRES_NATIVE_C_H
 
-#include "pyphy/src/cipres/ConfigDependentHeaders.h"
+#include "phypy/src/cipres/ConfigDependentHeaders.h"
 
 #ifdef __cplusplus
 extern "C" 

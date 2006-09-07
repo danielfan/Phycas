@@ -16,7 +16,7 @@ class Tree(TreeBase):
         """
         Calls clear() to initialize data members.
 
-        >>> from pyphy.Phylogeny import *
+        >>> from phypy.Phylogeny import *
         >>> t1 = Tree()
         >>> print t1.getNNodes()
         0
@@ -29,7 +29,7 @@ class Tree(TreeBase):
         """
         Returns nodes in preorder sequence.
 
-        >>> from pyphy.Phylogeny import *
+        >>> from phypy.Phylogeny import *
         >>> tree = Tree()
         >>> tree.buildFromString('(a,b,(c,(d,e)x)y)z')
         >>> for nd in tree:
@@ -50,7 +50,7 @@ class Tree(TreeBase):
         Returns nodes that have edges, which is all nodes in an unrooted tree
         except the root node. The nodes are visited in preorder sequence.
 
-        >>> from pyphy.Phylogeny import *
+        >>> from phypy.Phylogeny import *
         >>> tree = Tree()
         >>> tree.buildFromString('(a,b,(c,(d,e)x)y)z')
         >>> for nd in tree.nodesWithEdges():
@@ -73,7 +73,7 @@ class Tree(TreeBase):
         node (including the root node) that is of degree one (i.e. has only
         one edge attached to it). The nodes are visited in preorder sequence.
 
-        >>> from pyphy.Phylogeny import *
+        >>> from phypy.Phylogeny import *
         >>> tree = Tree()
         >>> tree.buildFromString('(a,b,(c,(d,e)x)y)z')
         >>> for nd in tree.tipNodes():
@@ -97,7 +97,7 @@ class Tree(TreeBase):
         three edges attached to it). The nodes are visited in preorder
         sequence.
 
-        >>> from pyphy.Phylogeny import *
+        >>> from phypy.Phylogeny import *
         >>> tree = Tree()
         >>> tree.buildFromString('(a,b,(c,(d,e)x)y)z')
         >>> for nd in tree.internalNodes():
@@ -122,7 +122,7 @@ class Tree(TreeBase):
         Before returning, roots tree at first tip node. Raises an XPhylogeny
         exception if a problem is encountered.
 
-        >>> from pyphy.Phylogeny import *
+        >>> from phypy.Phylogeny import *
         >>> t2 = Tree()
         >>> t2.buildFromString('(c,d,(a, b))')
         >>> print t2.walkPreorder()
@@ -136,7 +136,7 @@ class Tree(TreeBase):
         """
         Returns object to just-constructed state.
 
-        >>> from pyphy.Phylogeny import *
+        >>> from phypy.Phylogeny import *
         >>> t3 = Tree()
         >>> t3.buildFromString('(c,d,(a, b))')
         >>> t3.getNNodes()
@@ -158,7 +158,7 @@ class Tree(TreeBase):
         tree, and n-1 for a fully-resolved rooted tree. Calls
         refreshNodeCounts() if node counts have been invalidated.
 
-        >>> from pyphy.Phylogeny import *
+        >>> from phypy.Phylogeny import *
         >>> t4 = Tree()
         >>> t4.buildFromString('(fish,shark,(bird, mammal))')
         >>> print t4.getNNodes()
@@ -180,7 +180,7 @@ class Tree(TreeBase):
         is a leaf node but not a taxon. Calls refreshNodeCounts() if node
         counts have been invalidated.
 
-        >>> from pyphy.Phylogeny import *
+        >>> from phypy.Phylogeny import *
         >>> t5 = Tree()
         >>> t5.buildFromString('(fish,shark,(bird, mammal))')
         >>> print t5.getNNodes()
@@ -202,7 +202,7 @@ class Tree(TreeBase):
         node exists but is not identical to one of the tips. Calls
         refreshNodeCounts() if node counts have been invalidated.
 
-        >>> from pyphy.Phylogeny import *
+        >>> from phypy.Phylogeny import *
         >>> t6 = Tree()
         >>> t6.buildFromString('(fish,shark,(bird, mammal))')
         >>> print t6.getNNodes()
@@ -217,7 +217,7 @@ class Tree(TreeBase):
         Returns True if tree is rooted, or False if the root is actually a
         tip.
 
-        >>> from pyphy.Phylogeny import *
+        >>> from phypy.Phylogeny import *
         >>> t7 = Tree()
         >>> t7.buildFromString('(fish,shark,(bird, mammal))')
         >>> print t7.isRooted()
@@ -232,7 +232,7 @@ class Tree(TreeBase):
         Returns True if tree has edge lengths defined, False if edge lengths
         have not yet been set.
 
-        >>> from pyphy.Phylogeny import *
+        >>> from phypy.Phylogeny import *
         >>> t8 = Tree()
         >>> t8.buildFromString('(fish,shark,(bird, mammal))')
         >>> print t8.hasEdgeLens()
@@ -256,7 +256,7 @@ class Tree(TreeBase):
         name is used instead of the node number, both for internal and leaf
         nodes.
 
-        >>> from pyphy.Phylogeny import *
+        >>> from phypy.Phylogeny import *
         >>> t9 = Tree()
         >>> t9.buildFromString('(fish,shark,(bird, mammal))')
         >>> print t9.walkPreorder()
@@ -277,7 +277,7 @@ class Tree(TreeBase):
         name is used instead of the node number, both for internal and leaf
         nodes.
 
-        >>> from pyphy.Phylogeny import *
+        >>> from phypy.Phylogeny import *
         >>> tA = Tree()
         >>> tA.buildFromString('(fish,shark,(bird, mammal))')
         >>> print tA.walkPostorder()
@@ -292,7 +292,7 @@ class Tree(TreeBase):
         Reroots the tree at the leaf node numbered num. An XPhylogeny
         exception is raised if a leaf node having number num cannot be found.
 
-        >>> from pyphy.Phylogeny import *
+        >>> from phypy.Phylogeny import *
         >>> tC = Tree()
         >>> tC.buildFromString('((a,b),c,(d,e))')
         >>> print tC.walkPreorder()
@@ -314,7 +314,7 @@ class Tree(TreeBase):
         Sums all edge lengths in the tree. Raises an Exception if edge lengths
         were never provided for the tree.
 
-        >>> from pyphy.Phylogeny import *
+        >>> from phypy.Phylogeny import *
         >>> tB = Tree()
         >>> tB.buildFromString('(fish,shark,(bird, mammal))')
         >>> print tB.edgeLenSum()
@@ -336,7 +336,7 @@ class Tree(TreeBase):
         tree description. Tip nodes are represented by node numbers if they
         do not have a name. If edge lengths are present, they will be shown.
 
-        >>> from pyphy.Phylogeny import *
+        >>> from phypy.Phylogeny import *
         >>> t = Tree()
         >>> t.buildFromString('((a:0.11,b:0.12)x:0.10,c:0.21,(d:0.31,e:0.32)y:0.30)z')
         >>> print t.makeNewick()
@@ -352,7 +352,7 @@ class Tree(TreeBase):
         the supplied object taxon_names, which should be a list or tuple of
         taxon names.
 
-        >>> from pyphy.Phylogeny import *
+        >>> from phypy.Phylogeny import *
         >>> t = Tree()
         >>> t.buildFromString('((a,b),c,(d,e))')
         >>> print t.walkPreorder(verbosity=1)
@@ -371,7 +371,7 @@ class Tree(TreeBase):
         taxon_names, which should be a list or tuple of taxon names. The node
         numbers are treated as indices into the taxon_names list.
 
-        >>> from pyphy.Phylogeny import *
+        >>> from phypy.Phylogeny import *
         >>> t = Tree()
         >>> t.buildFromString('((a,b),c,(d,e))')
         >>> print t.walkPreorder(verbosity=1)

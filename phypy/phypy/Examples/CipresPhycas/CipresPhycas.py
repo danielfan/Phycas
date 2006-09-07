@@ -1,6 +1,6 @@
-from pyphy.Phycas import Phycas
-from pyphy.Likelihood import PhycasIDLishMatrix
-import pyphy.ProbDist
+from phypy.Phycas import Phycas
+from phypy.Likelihood import PhycasIDLishMatrix
+import phypy.ProbDist
 import os, sys
 import re
 import threading
@@ -18,9 +18,9 @@ class CipresPhycas(CipresIDL_api1__POA.AsyncTreeInfer, SimpleServer, Phycas):
         Phycas.__init__(self)
         self.data_source = 'memory'
         #if sys.platform == 'darwin':
-        #    self.data_file_name = r'/Users/mholder/Documents/projects/phycas_svn/phycasdev/pyphy/pyphy/nyldna4.nex'
+        #    self.data_file_name = r'/Users/mholder/Documents/projects/phycas_svn/phycasdev/phypy/phypy/nyldna4.nex'
         #else:
-        #    self.data_file_name = r'C:\Synchronized\Projects\pyphydev\pyphy\pyphy\nyldna4.nex'
+        #    self.data_file_name = r'C:\Synchronized\Projects\pyphydev\phypy\phypy\nyldna4.nex'
         SimpleServer.__init__(self, registry)
         self.registry = registry
         self.trees = []

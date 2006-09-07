@@ -2,7 +2,7 @@
 # This data set is then analyzed using an MCMC analysis that allows polytomies
 # to demonstrate that the polytomous true tree can be recovered
 
-from pyphy import *
+from phypy import *
 
 phycas = Phycas()
 
