@@ -1,0 +1,2969 @@
+"DeployProject"
+{
+"VSVersion" = "3:701"
+"ProjectType" = "8:{2C2AF0D9-9B47-4FE5-BEF2-169778172667}"
+"IsWebType" = "8:FALSE"
+"ProjectName" = "8:Phycas"
+"LanguageId" = "3:1033"
+"CodePage" = "3:1252"
+"UILanguageId" = "3:1033"
+"SccProjectName" = "8:"
+"SccLocalPath" = "8:"
+"SccAuxPath" = "8:"
+"SccProvider" = "8:"
+    "Hierarchy"
+    {
+        "Entry"
+        {
+        "MsmKey" = "8:_0231DAA2572045EC9B63C43DE3DB9487"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_02D8749AF6DB4ACD8E58E680367FE8CA"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_07ABA36F5BC841FAB3E5AE0FBD9742E2"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_09FB3C057BE747E9A1E88F6D07E1249A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_0C4BD91AD5DF49A6B7D72299D3C011D2"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_12F829173C4240BDB0624C9B184593E2"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_13FDA3CDB76B46979640071B7C755172"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_17B79B28B23E425C936FAC2615164697"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_1DBAE084BB5243998A8B16ADE20E8A4A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_2340440C13FD4D0CA979A3F6F7478542"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_28EC9CDF578148028372242AACA3F921"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_2BB0187BD3604E5183F976E2CF8CDAD9"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_2CA2FC2408AE48479D21E2F66B0BF8F2"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_2E1E31E0EEEB4178AD3E2FAAE8BBE642"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_2E21B489D8EE408FBDDEC5FFE1C41166"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_2F417B1A5AB244CB80886B76EEAAE406"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_365A1A8B2F1C4BB795CFC55571944312"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_396F4107FE6044BD8D60AFEF82872456"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_3B8756F347AA4CA6AE2295D38EC90BFE"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_3D10E3C1B1EA49E79104D0CC7D991BA5"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_3E2F9DAF632445C89DEE6EA81985780B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_464E84CA85D54A0EA3F288B4B666CE79"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_47142858CC4A444192D89170DD64A0B1"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_476C58A8256A4D8291F3113AF2720888"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_4E9687C603184C52A7302E068F0573F0"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_51330D5D8A784897AEB62A81107E64D1"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5AD05CB9187240A38D48ACD88ECF900E"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5FFCD883FC0944B5BF89697DDB181918"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_62F0C0513ADB408A909F183E9D58EF3A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_65D707B207204EFCB18EF6BB480CE044"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_68416BDAFE2D48F986043C03D9F49B81"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_6B0FC901B98F45E2815C1E5721EFA9ED"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_73FE72CFF55F4927A73B5D46FB196906"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_78FCBEB7929E4435BEAC53404C913FAD"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_7A678A7F437D447AB7B165C074DA03BC"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_7CC12FACDD0B4B04AFEDE8AFAAF5BE22"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_829E44E77E4D461BBCAED666842E01AF"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_88C4C68D372343739E716D395B15FD31"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_8978E7B1DC4E42879E53CDC92FF36E94"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_8B327C74BE8E48F88377758B9863AC57"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_914A296C35E54C3493D3CFBD2026112C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_95E8C05B02F04D69A6E90E9DA01E7381"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9ED7FE7A520F4FB997B994DEF1B5148F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A0C0C2BE18964981B583D0BE573C5175"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A0EC009B948243B18B6C2C6EA9F0AC35"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A6D11F6E65AE4EEA8980CD41CE8CBBF1"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A8A78866A41B47CE9917CE89F81D9614"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A9EFAEAFACBC4723BEB37F2E73AAB297"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_AB2DA9A14632416F80869E2A64768B84"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_AE33A3D036CD46E5B4A8B0C41B6545F9"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_AE44D436600B4D5B863EC19FFCA84DEF"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_AFCCD348D03A407ABF102A3E90EB8B9F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B2451760148E4A6E913C8EE9889A7CD6"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B5577E502B444D1FB37F953833349F19"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B6E555F65FDD46B5BA8FF6B6812A5BEA"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_BAB308FB969A466F8C00C64EE28EF597"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_BB62D5E712514296B637A459A0CCF6AC"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_BD9BE9B9AB2E4B7C9A0614CFE53A77A8"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C59BDAC73EF64532AD7E7BA0F3BF004D"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C6E4A2EB9F3A4C948AB560E15A5AAAF8"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C9EA14A5F9AE49FB8B4819994D10E3BD"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_CC4F5C537C9C43CB90C3372CE15352CF"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_CE838171F9F64B71ABBFD037C7575697"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D03282A949604C08B9A3516D9583D8D3"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_DCAACE62C980449993FEC42722DC1962"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_DE64B16193454B7C9ECCB525D3BC3FE2"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E15647089681422895138DE7680862CF"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E3299D9E2E4042F89F9E411EAFAB10B7"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E380A530035B4DA58F220B9A150A829B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E3EAFEC5AAC14587A3454179FD9E8BC7"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E8C14EDF7EFF4B429A3556AC9C6866E3"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_EA8DFF2DCB7C477F892C6C7A4819582F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_EE4856CB1E144C6183299E3847EB29E3"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_EEC9B2CB29B14D75A7EB3CA662A9CF54"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_EF494E2222D647DAB8631C936BE5BB3C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_FAD03EC96FEB4FD1912A50E250E8AC4F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_FC760463B16D4681935C116F030C535D"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+    }
+    "Configurations"
+    {
+        "Debug"
+        {
+        "DisplayName" = "8:Debug"
+        "IsDebugOnly" = "11:TRUE"
+        "IsReleaseOnly" = "11:FALSE"
+        "OutputFilename" = "8:Debug\\Phycas.msi"
+        "PackageFilesAs" = "3:2"
+        "PackageFileSize" = "3:-2147483648"
+        "CabType" = "3:1"
+        "Compression" = "3:2"
+        "SignOutput" = "11:FALSE"
+        "CertificateFile" = "8:"
+        "PrivateKeyFile" = "8:"
+        "TimeStampServer" = "8:"
+        "InstallerBootstrapper" = "3:2"
+        }
+        "Release"
+        {
+        "DisplayName" = "8:Release"
+        "IsDebugOnly" = "11:FALSE"
+        "IsReleaseOnly" = "11:TRUE"
+        "OutputFilename" = "8:Release\\Phycas.msi"
+        "PackageFilesAs" = "3:2"
+        "PackageFileSize" = "3:-2147483648"
+        "CabType" = "3:1"
+        "Compression" = "3:2"
+        "SignOutput" = "11:FALSE"
+        "CertificateFile" = "8:"
+        "PrivateKeyFile" = "8:"
+        "TimeStampServer" = "8:"
+        "InstallerBootstrapper" = "3:2"
+        }
+    }
+    "Deployable"
+    {
+        "CustomAction"
+        {
+        }
+        "DefaultFeature"
+        {
+        "Name" = "8:DefaultFeature"
+        "Title" = "8:"
+        "Description" = "8:"
+        }
+        "ExternalPersistence"
+        {
+            "LaunchCondition"
+            {
+            }
+        }
+        "Feature"
+        {
+        }
+        "File"
+        {
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_0231DAA2572045EC9B63C43DE3DB9487"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Phylogeny\\_Phylogeny.pyd"
+            "TargetName" = "8:_Phylogeny.pyd"
+            "Tag" = "8:"
+            "Folder" = "8:_83DACA4B62694200842ADA99D7FEC480"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_02D8749AF6DB4ACD8E58E680367FE8CA"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\DataMatrix\\_DataMatrix.py"
+            "TargetName" = "8:_DataMatrix.py"
+            "Tag" = "8:"
+            "Folder" = "8:_5AB890CCF6224A7596706FDAB3815E40"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_07ABA36F5BC841FAB3E5AE0FBD9742E2"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Likelihood\\_TopoPriorCalculator.py"
+            "TargetName" = "8:_TopoPriorCalculator.py"
+            "Tag" = "8:"
+            "Folder" = "8:_C3E4A139087E4A02809433C18F9B5C06"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_09FB3C057BE747E9A1E88F6D07E1249A"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\Polytomies\\Polytomies.py"
+            "TargetName" = "8:Polytomies.py"
+            "Tag" = "8:"
+            "Folder" = "8:_DD10266C226C4374BA748388BFCFB75E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_0C4BD91AD5DF49A6B7D72299D3C011D2"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\GelfandGhosh\\__init__.py"
+            "TargetName" = "8:__init__.py"
+            "Tag" = "8:"
+            "Folder" = "8:_02B78BBC5BE94506ACA964026118D212"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_12F829173C4240BDB0624C9B184593E2"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Likelihood\\_MCMCChainManager.py"
+            "TargetName" = "8:_MCMCChainManager.py"
+            "Tag" = "8:"
+            "Folder" = "8:_C3E4A139087E4A02809433C18F9B5C06"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_13FDA3CDB76B46979640071B7C755172"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\ExplorePrior\\reference_output\\nodata.nex.t"
+            "TargetName" = "8:nodata.nex.t"
+            "Tag" = "8:"
+            "Folder" = "8:_D7B91E0BA0A94BF7866FC7A7DD7306F3"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_17B79B28B23E425C936FAC2615164697"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Phycas\\reference_output\\green.nex.p"
+            "TargetName" = "8:green.nex.p"
+            "Tag" = "8:"
+            "Folder" = "8:_C63A770463D64E63B5E86DFE5125C716"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_1DBAE084BB5243998A8B16ADE20E8A4A"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\Polytomies\\reference_output\\simHKY.nex"
+            "TargetName" = "8:simHKY.nex"
+            "Tag" = "8:"
+            "Folder" = "8:_90C28B33A8654468BA2A0F8A3E50C477"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_2340440C13FD4D0CA979A3F6F7478542"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\GelfandGhosh\\reference_output\\analHKYg.nex.t"
+            "TargetName" = "8:analHKYg.nex.t"
+            "Tag" = "8:"
+            "Folder" = "8:_C75F92C258B84E3A939B44026A1D0ACD"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_28EC9CDF578148028372242AACA3F921"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\Data\\green.nex"
+            "TargetName" = "8:green.nex"
+            "Tag" = "8:"
+            "Folder" = "8:_9E533FFB37D14040868C4F1009126BD9"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_2BB0187BD3604E5183F976E2CF8CDAD9"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Likelihood\\_SimData.py"
+            "TargetName" = "8:_SimData.py"
+            "Tag" = "8:"
+            "Folder" = "8:_C3E4A139087E4A02809433C18F9B5C06"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_2CA2FC2408AE48479D21E2F66B0BF8F2"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\FixedParams\\__init__.py"
+            "TargetName" = "8:__init__.py"
+            "Tag" = "8:"
+            "Folder" = "8:_911878CFD965486BAC3026BFBBBBD5FD"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_2E1E31E0EEEB4178AD3E2FAAE8BBE642"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\Polytomies\\reference_output\\analHKY.nex.t"
+            "TargetName" = "8:analHKY.nex.t"
+            "Tag" = "8:"
+            "Folder" = "8:_90C28B33A8654468BA2A0F8A3E50C477"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_2E21B489D8EE408FBDDEC5FFE1C41166"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\ProbDist\\_Lot.py"
+            "TargetName" = "8:_Lot.py"
+            "Tag" = "8:"
+            "Folder" = "8:_4323F43CE1D743CAAD7772959BBE2225"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_2F417B1A5AB244CB80886B76EEAAE406"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Tests\\doctestall.bat"
+            "TargetName" = "8:doctestall.bat"
+            "Tag" = "8:"
+            "Folder" = "8:_D961916C88A545C1AC31DAB261D3F4EB"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_365A1A8B2F1C4BB795CFC55571944312"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\FixedParams\\FixedParams.py"
+            "TargetName" = "8:FixedParams.py"
+            "Tag" = "8:"
+            "Folder" = "8:_911878CFD965486BAC3026BFBBBBD5FD"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_396F4107FE6044BD8D60AFEF82872456"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\__init__.py"
+            "TargetName" = "8:__init__.py"
+            "Tag" = "8:"
+            "Folder" = "8:_DB7FD04B61A34C92B6AB542B298C816A"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_3B8756F347AA4CA6AE2295D38EC90BFE"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\ReadNexus\\_NexusReader.py"
+            "TargetName" = "8:_NexusReader.py"
+            "Tag" = "8:"
+            "Folder" = "8:_1E4A7CB72CD64F2CACD31D1C293196DD"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_3D10E3C1B1EA49E79104D0CC7D991BA5"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\ProbDist\\_NormalDist.py"
+            "TargetName" = "8:_NormalDist.py"
+            "Tag" = "8:"
+            "Folder" = "8:_4323F43CE1D743CAAD7772959BBE2225"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_3E2F9DAF632445C89DEE6EA81985780B"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Phycas\\reference_output\\green.nex.t"
+            "TargetName" = "8:green.nex.t"
+            "Tag" = "8:"
+            "Folder" = "8:_C63A770463D64E63B5E86DFE5125C716"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_464E84CA85D54A0EA3F288B4B666CE79"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\Polytomies\\reference_output\\analHKY.nex.p"
+            "TargetName" = "8:analHKY.nex.p"
+            "Tag" = "8:"
+            "Folder" = "8:_90C28B33A8654468BA2A0F8A3E50C477"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_47142858CC4A444192D89170DD64A0B1"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\DataMatrix\\_DataMatrixBase.pyd"
+            "TargetName" = "8:_DataMatrixBase.pyd"
+            "Tag" = "8:"
+            "Folder" = "8:_5AB890CCF6224A7596706FDAB3815E40"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_476C58A8256A4D8291F3113AF2720888"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\LikelihoodTest\\LikelihoodTest.py"
+            "TargetName" = "8:LikelihoodTest.py"
+            "Tag" = "8:"
+            "Folder" = "8:_7E327CA423DF45FFA6530F82EC39D132"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_4E9687C603184C52A7302E068F0573F0"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\GelfandGhosh\\reference_output\\ggout.txt"
+            "TargetName" = "8:ggout.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_C75F92C258B84E3A939B44026A1D0ACD"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_51330D5D8A784897AEB62A81107E64D1"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Phylogeny\\__init__.py"
+            "TargetName" = "8:__init__.py"
+            "Tag" = "8:"
+            "Folder" = "8:_83DACA4B62694200842ADA99D7FEC480"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_5AD05CB9187240A38D48ACD88ECF900E"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Phylogeny\\_Tree.py"
+            "TargetName" = "8:_Tree.py"
+            "Tag" = "8:"
+            "Folder" = "8:_83DACA4B62694200842ADA99D7FEC480"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_5FFCD883FC0944B5BF89697DDB181918"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\GelfandGhosh\\reference_output\\analHKY.nex.t"
+            "TargetName" = "8:analHKY.nex.t"
+            "Tag" = "8:"
+            "Folder" = "8:_C75F92C258B84E3A939B44026A1D0ACD"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_62F0C0513ADB408A909F183E9D58EF3A"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\Simulator\\reference_output\\simulated.nex"
+            "TargetName" = "8:simulated.nex"
+            "Tag" = "8:"
+            "Folder" = "8:_F491C249EAD4414BA3EA82F8231FF914"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_65D707B207204EFCB18EF6BB480CE044"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\LikelihoodTest\\reference_output\\simulated.nex"
+            "TargetName" = "8:simulated.nex"
+            "Tag" = "8:"
+            "Folder" = "8:_7647B36936AE4A58A4D3AFB9B3583064"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_68416BDAFE2D48F986043C03D9F49B81"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\ProbDist\\_InverseGammaDist.py"
+            "TargetName" = "8:_InverseGammaDist.py"
+            "Tag" = "8:"
+            "Folder" = "8:_4323F43CE1D743CAAD7772959BBE2225"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_6B0FC901B98F45E2815C1E5721EFA9ED"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\ReadNexus\\__init__.py"
+            "TargetName" = "8:__init__.py"
+            "Tag" = "8:"
+            "Folder" = "8:_1E4A7CB72CD64F2CACD31D1C293196DD"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_73FE72CFF55F4927A73B5D46FB196906"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\ProbDist\\_UniformDist.py"
+            "TargetName" = "8:_UniformDist.py"
+            "Tag" = "8:"
+            "Folder" = "8:_4323F43CE1D743CAAD7772959BBE2225"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_78FCBEB7929E4435BEAC53404C913FAD"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\ReadNexus\\_ReadNexus.pyd"
+            "TargetName" = "8:_ReadNexus.pyd"
+            "Tag" = "8:"
+            "Folder" = "8:_1E4A7CB72CD64F2CACD31D1C293196DD"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_7A678A7F437D447AB7B165C074DA03BC"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\ExplorePrior\\reference_output\\nodata.nex.p"
+            "TargetName" = "8:nodata.nex.p"
+            "Tag" = "8:"
+            "Folder" = "8:_D7B91E0BA0A94BF7866FC7A7DD7306F3"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_7CC12FACDD0B4B04AFEDE8AFAAF5BE22"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\ProbDist\\_BinomialDist.py"
+            "TargetName" = "8:_BinomialDist.py"
+            "Tag" = "8:"
+            "Folder" = "8:_4323F43CE1D743CAAD7772959BBE2225"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_829E44E77E4D461BBCAED666842E01AF"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\ProbDist\\_BetaDist.py"
+            "TargetName" = "8:_BetaDist.py"
+            "Tag" = "8:"
+            "Folder" = "8:_4323F43CE1D743CAAD7772959BBE2225"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_88C4C68D372343739E716D395B15FD31"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\ProbDist\\_ExponentialDist.py"
+            "TargetName" = "8:_ExponentialDist.py"
+            "Tag" = "8:"
+            "Folder" = "8:_4323F43CE1D743CAAD7772959BBE2225"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_8978E7B1DC4E42879E53CDC92FF36E94"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Likelihood\\_LikelihoodBase.pyd"
+            "TargetName" = "8:_LikelihoodBase.pyd"
+            "Tag" = "8:"
+            "Folder" = "8:_C3E4A139087E4A02809433C18F9B5C06"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_8B327C74BE8E48F88377758B9863AC57"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\GelfandGhosh\\GelfandGhosh.py"
+            "TargetName" = "8:GelfandGhosh.py"
+            "Tag" = "8:"
+            "Folder" = "8:_02B78BBC5BE94506ACA964026118D212"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_914A296C35E54C3493D3CFBD2026112C"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Likelihood\\_Model.py"
+            "TargetName" = "8:_Model.py"
+            "Tag" = "8:"
+            "Folder" = "8:_C3E4A139087E4A02809433C18F9B5C06"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_95E8C05B02F04D69A6E90E9DA01E7381"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\Simulator\\Simulator.py"
+            "TargetName" = "8:Simulator.py"
+            "Tag" = "8:"
+            "Folder" = "8:_D35A12DC198D412FB08E8A5761EC65A9"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_9ED7FE7A520F4FB997B994DEF1B5148F"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Conversions\\_Conversions.pyd"
+            "TargetName" = "8:_Conversions.pyd"
+            "Tag" = "8:"
+            "Folder" = "8:_3D582E24312B491F8E166F27AD25B11C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_A0C0C2BE18964981B583D0BE573C5175"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Phylogeny\\_TreeNode.py"
+            "TargetName" = "8:_TreeNode.py"
+            "Tag" = "8:"
+            "Folder" = "8:_83DACA4B62694200842ADA99D7FEC480"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_A0EC009B948243B18B6C2C6EA9F0AC35"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\license.rtf"
+            "TargetName" = "8:license.rtf"
+            "Tag" = "8:"
+            "Folder" = "8:_DB7FD04B61A34C92B6AB542B298C816A"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_A6D11F6E65AE4EEA8980CD41CE8CBBF1"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Phycas\\Phycas.py"
+            "TargetName" = "8:Phycas.py"
+            "Tag" = "8:"
+            "Folder" = "8:_BF87B239628143DF8A0EEF63E87679EE"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_A8A78866A41B47CE9917CE89F81D9614"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\ProbDist\\_SliceSampler.py"
+            "TargetName" = "8:_SliceSampler.py"
+            "Tag" = "8:"
+            "Folder" = "8:_4323F43CE1D743CAAD7772959BBE2225"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_A9EFAEAFACBC4723BEB37F2E73AAB297"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\Simulator\\__init__.py"
+            "TargetName" = "8:__init__.py"
+            "Tag" = "8:"
+            "Folder" = "8:_D35A12DC198D412FB08E8A5761EC65A9"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_AB2DA9A14632416F80869E2A64768B84"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Phylogeny\\_TreeManip.py"
+            "TargetName" = "8:_TreeManip.py"
+            "Tag" = "8:"
+            "Folder" = "8:_83DACA4B62694200842ADA99D7FEC480"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_AE33A3D036CD46E5B4A8B0C41B6545F9"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\FixedParams\\reference_output\\params.p"
+            "TargetName" = "8:params.p"
+            "Tag" = "8:"
+            "Folder" = "8:_85B801D7641E45CEAA49ACCFC239054D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_AE44D436600B4D5B863EC19FFCA84DEF"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\GelfandGhosh\\reference_output\\analHKYg.nex.p"
+            "TargetName" = "8:analHKYg.nex.p"
+            "Tag" = "8:"
+            "Folder" = "8:_C75F92C258B84E3A939B44026A1D0ACD"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_AFCCD348D03A407ABF102A3E90EB8B9F"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\ProbDist\\_BernoulliDist.py"
+            "TargetName" = "8:_BernoulliDist.py"
+            "Tag" = "8:"
+            "Folder" = "8:_4323F43CE1D743CAAD7772959BBE2225"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_B2451760148E4A6E913C8EE9889A7CD6"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\ProbDist\\_DirichletDist.py"
+            "TargetName" = "8:_DirichletDist.py"
+            "Tag" = "8:"
+            "Folder" = "8:_4323F43CE1D743CAAD7772959BBE2225"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_B5577E502B444D1FB37F953833349F19"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\FixedParams\\reference_output\\trees.t"
+            "TargetName" = "8:trees.t"
+            "Tag" = "8:"
+            "Folder" = "8:_85B801D7641E45CEAA49ACCFC239054D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_B6E555F65FDD46B5BA8FF6B6812A5BEA"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\ProbDist\\__init__.py"
+            "TargetName" = "8:__init__.py"
+            "Tag" = "8:"
+            "Folder" = "8:_4323F43CE1D743CAAD7772959BBE2225"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_BAB308FB969A466F8C00C64EE28EF597"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\ExplorePrior\\__init__.py"
+            "TargetName" = "8:__init__.py"
+            "Tag" = "8:"
+            "Folder" = "8:_8C2740D770BB49CFA238AF235032009C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_BB62D5E712514296B637A459A0CCF6AC"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\Polytomies\\__init__.py"
+            "TargetName" = "8:__init__.py"
+            "Tag" = "8:"
+            "Folder" = "8:_DD10266C226C4374BA748388BFCFB75E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_BD9BE9B9AB2E4B7C9A0614CFE53A77A8"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Likelihood\\__init__.py"
+            "TargetName" = "8:__init__.py"
+            "Tag" = "8:"
+            "Folder" = "8:_C3E4A139087E4A02809433C18F9B5C06"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_C59BDAC73EF64532AD7E7BA0F3BF004D"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Likelihood\\_TreeLikelihood.py"
+            "TargetName" = "8:_TreeLikelihood.py"
+            "Tag" = "8:"
+            "Folder" = "8:_C3E4A139087E4A02809433C18F9B5C06"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_C6E4A2EB9F3A4C948AB560E15A5AAAF8"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\GelfandGhosh\\reference_output\\analHKYflex.nex.p"
+            "TargetName" = "8:analHKYflex.nex.p"
+            "Tag" = "8:"
+            "Folder" = "8:_C75F92C258B84E3A939B44026A1D0ACD"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_C9EA14A5F9AE49FB8B4819994D10E3BD"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\ProbDist\\_ProbDist.pyd"
+            "TargetName" = "8:_ProbDist.pyd"
+            "Tag" = "8:"
+            "Folder" = "8:_4323F43CE1D743CAAD7772959BBE2225"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_CC4F5C537C9C43CB90C3372CE15352CF"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Tests\\doctestall.py"
+            "TargetName" = "8:doctestall.py"
+            "Tag" = "8:"
+            "Folder" = "8:_D961916C88A545C1AC31DAB261D3F4EB"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_CE838171F9F64B71ABBFD037C7575697"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Conversions\\__init__.py"
+            "TargetName" = "8:__init__.py"
+            "Tag" = "8:"
+            "Folder" = "8:_3D582E24312B491F8E166F27AD25B11C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_D03282A949604C08B9A3516D9583D8D3"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\Data\\nyldna4.nex"
+            "TargetName" = "8:nyldna4.nex"
+            "Tag" = "8:"
+            "Folder" = "8:_9E533FFB37D14040868C4F1009126BD9"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_DCAACE62C980449993FEC42722DC1962"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\GelfandGhosh\\reference_output\\analHKYflex.nex.t"
+            "TargetName" = "8:analHKYflex.nex.t"
+            "Tag" = "8:"
+            "Folder" = "8:_C75F92C258B84E3A939B44026A1D0ACD"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_DE64B16193454B7C9ECCB525D3BC3FE2"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Phycas\\__init__.py"
+            "TargetName" = "8:__init__.py"
+            "Tag" = "8:"
+            "Folder" = "8:_BF87B239628143DF8A0EEF63E87679EE"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_E15647089681422895138DE7680862CF"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Tests\\runall.bat"
+            "TargetName" = "8:runall.bat"
+            "Tag" = "8:"
+            "Folder" = "8:_D961916C88A545C1AC31DAB261D3F4EB"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_E3299D9E2E4042F89F9E411EAFAB10B7"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\LikelihoodTest\\__init__.py"
+            "TargetName" = "8:__init__.py"
+            "Tag" = "8:"
+            "Folder" = "8:_7E327CA423DF45FFA6530F82EC39D132"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_E380A530035B4DA58F220B9A150A829B"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\ExplorePrior\\ExplorePrior.py"
+            "TargetName" = "8:ExplorePrior.py"
+            "Tag" = "8:"
+            "Folder" = "8:_8C2740D770BB49CFA238AF235032009C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_E3EAFEC5AAC14587A3454179FD9E8BC7"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Likelihood\\_QMatrix.py"
+            "TargetName" = "8:_QMatrix.py"
+            "Tag" = "8:"
+            "Folder" = "8:_C3E4A139087E4A02809433C18F9B5C06"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_E8C14EDF7EFF4B429A3556AC9C6866E3"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Tests\\cleanall.bat"
+            "TargetName" = "8:cleanall.bat"
+            "Tag" = "8:"
+            "Folder" = "8:_D961916C88A545C1AC31DAB261D3F4EB"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_EA8DFF2DCB7C477F892C6C7A4819582F"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Tests\\runall.sh"
+            "TargetName" = "8:runall.sh"
+            "Tag" = "8:"
+            "Folder" = "8:_D961916C88A545C1AC31DAB261D3F4EB"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_EE4856CB1E144C6183299E3847EB29E3"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\ProbDist\\_GammaDist.py"
+            "TargetName" = "8:_GammaDist.py"
+            "Tag" = "8:"
+            "Folder" = "8:_4323F43CE1D743CAAD7772959BBE2225"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_EEC9B2CB29B14D75A7EB3CA662A9CF54"
+            {
+            "SourcePath" = "8:..\\..\\phycaslogo.bmp"
+            "TargetName" = "8:phycaslogo.bmp"
+            "Tag" = "8:"
+            "Folder" = "8:_DB7FD04B61A34C92B6AB542B298C816A"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_EF494E2222D647DAB8631C936BE5BB3C"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\LikelihoodTest\\reference_output\\check.nex"
+            "TargetName" = "8:check.nex"
+            "Tag" = "8:"
+            "Folder" = "8:_7647B36936AE4A58A4D3AFB9B3583064"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_FAD03EC96FEB4FD1912A50E250E8AC4F"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\DataMatrix\\__init__.py"
+            "TargetName" = "8:__init__.py"
+            "Tag" = "8:"
+            "Folder" = "8:_5AB890CCF6224A7596706FDAB3815E40"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_FC760463B16D4681935C116F030C535D"
+            {
+            "SourcePath" = "8:..\\..\\pyphy\\Examples\\GelfandGhosh\\reference_output\\analHKY.nex.p"
+            "TargetName" = "8:analHKY.nex.p"
+            "Tag" = "8:"
+            "Folder" = "8:_C75F92C258B84E3A939B44026A1D0ACD"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+        }
+        "FileType"
+        {
+        }
+        "Folder"
+        {
+            "{78BAF5CE-F2E5-45BE-83BC-DB6AF387E941}:_8D6B2459C8EE42E784779D81D1E31F18"
+            {
+            "Name" = "8:#1916"
+            "AlwaysCreate" = "11:FALSE"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Property" = "8:DesktopFolder"
+                "Folders"
+                {
+                }
+            }
+            "{58C0ADA3-3CEA-43BD-A3B3-2EA121BC8217}:_9464ACCBD98241318428BE2C276D2270"
+            {
+            "DefaultLocation" = "8:[PYTHON24]\\Lib\\site-packages"
+            "Name" = "8:#1925"
+            "AlwaysCreate" = "11:FALSE"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Property" = "8:TARGETDIR"
+                "Folders"
+                {
+                    "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_DB7FD04B61A34C92B6AB542B298C816A"
+                    {
+                    "Name" = "8:phypy"
+                    "AlwaysCreate" = "11:FALSE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_820F053C9B4D421396483E741479E83F"
+                        "Folders"
+                        {
+                            "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_1E4A7CB72CD64F2CACD31D1C293196DD"
+                            {
+                            "Name" = "8:ReadNexus"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_C20E30AEE6584D968DF8F23D1AC9A18C"
+                                "Folders"
+                                {
+                                }
+                            }
+                            "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_3D582E24312B491F8E166F27AD25B11C"
+                            {
+                            "Name" = "8:Conversions"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_858D136400F64872BA15B82B1C7D62C9"
+                                "Folders"
+                                {
+                                }
+                            }
+                            "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_4323F43CE1D743CAAD7772959BBE2225"
+                            {
+                            "Name" = "8:ProbDist"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_726E565A40F24C448FB75670A8472086"
+                                "Folders"
+                                {
+                                }
+                            }
+                            "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_5AB890CCF6224A7596706FDAB3815E40"
+                            {
+                            "Name" = "8:DataMatrix"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_63E8A002C9404A869A1BDF1E5A82FA8A"
+                                "Folders"
+                                {
+                                }
+                            }
+                            "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_6EDBBA6088A24BC088B880E7C19E0085"
+                            {
+                            "Name" = "8:Examples"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_BA3AC494EEB14B3299F1DC67DB501876"
+                                "Folders"
+                                {
+                                    "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_02B78BBC5BE94506ACA964026118D212"
+                                    {
+                                    "Name" = "8:GelfandGhosh"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_D467E6D2734A4914B0C9274344808174"
+                                        "Folders"
+                                        {
+                                            "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_C75F92C258B84E3A939B44026A1D0ACD"
+                                            {
+                                            "Name" = "8:reference_output"
+                                            "AlwaysCreate" = "11:FALSE"
+                                            "Condition" = "8:"
+                                            "Transitive" = "11:FALSE"
+                                            "Property" = "8:_BE50C6C126F0462496559AA580177641"
+                                                "Folders"
+                                                {
+                                                }
+                                            }
+                                        }
+                                    }
+                                    "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_7E327CA423DF45FFA6530F82EC39D132"
+                                    {
+                                    "Name" = "8:LikelihoodTest"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_B7F16F79FACB4908A133FF896E4695CE"
+                                        "Folders"
+                                        {
+                                            "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_7647B36936AE4A58A4D3AFB9B3583064"
+                                            {
+                                            "Name" = "8:reference_output"
+                                            "AlwaysCreate" = "11:FALSE"
+                                            "Condition" = "8:"
+                                            "Transitive" = "11:FALSE"
+                                            "Property" = "8:_088F664442DD49A984D7561A8814B404"
+                                                "Folders"
+                                                {
+                                                }
+                                            }
+                                        }
+                                    }
+                                    "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_8C2740D770BB49CFA238AF235032009C"
+                                    {
+                                    "Name" = "8:ExplorePrior"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_0D47D918DDF841C9BFA19C5E5D9BA7D0"
+                                        "Folders"
+                                        {
+                                            "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_D7B91E0BA0A94BF7866FC7A7DD7306F3"
+                                            {
+                                            "Name" = "8:reference_output"
+                                            "AlwaysCreate" = "11:FALSE"
+                                            "Condition" = "8:"
+                                            "Transitive" = "11:FALSE"
+                                            "Property" = "8:_2036005491384856A7B09D951258FC90"
+                                                "Folders"
+                                                {
+                                                }
+                                            }
+                                        }
+                                    }
+                                    "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_911878CFD965486BAC3026BFBBBBD5FD"
+                                    {
+                                    "Name" = "8:FixedParams"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_508C3CD86720490FBF53280699FAFCE4"
+                                        "Folders"
+                                        {
+                                            "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_85B801D7641E45CEAA49ACCFC239054D"
+                                            {
+                                            "Name" = "8:reference_output"
+                                            "AlwaysCreate" = "11:FALSE"
+                                            "Condition" = "8:"
+                                            "Transitive" = "11:FALSE"
+                                            "Property" = "8:_EBE4732502744AEE9BD926EE94A8767B"
+                                                "Folders"
+                                                {
+                                                }
+                                            }
+                                        }
+                                    }
+                                    "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_9E533FFB37D14040868C4F1009126BD9"
+                                    {
+                                    "Name" = "8:Data"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_CCB65B4643C44B7292C4AA63EE8CB30C"
+                                        "Folders"
+                                        {
+                                        }
+                                    }
+                                    "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_D35A12DC198D412FB08E8A5761EC65A9"
+                                    {
+                                    "Name" = "8:Simulator"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_6C1C045886AA4A06BCAAFC2F2A8B92C9"
+                                        "Folders"
+                                        {
+                                            "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_F491C249EAD4414BA3EA82F8231FF914"
+                                            {
+                                            "Name" = "8:reference_output"
+                                            "AlwaysCreate" = "11:FALSE"
+                                            "Condition" = "8:"
+                                            "Transitive" = "11:FALSE"
+                                            "Property" = "8:_747A98687B79484597DD053FA2A5E62E"
+                                                "Folders"
+                                                {
+                                                }
+                                            }
+                                        }
+                                    }
+                                    "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_DD10266C226C4374BA748388BFCFB75E"
+                                    {
+                                    "Name" = "8:Polytomies"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_D3931F86FDDC4267884C6F8F7EAFF53D"
+                                        "Folders"
+                                        {
+                                            "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_90C28B33A8654468BA2A0F8A3E50C477"
+                                            {
+                                            "Name" = "8:reference_output"
+                                            "AlwaysCreate" = "11:FALSE"
+                                            "Condition" = "8:"
+                                            "Transitive" = "11:FALSE"
+                                            "Property" = "8:_96AD806988B541D2AA62958C7EA3D75A"
+                                                "Folders"
+                                                {
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_83DACA4B62694200842ADA99D7FEC480"
+                            {
+                            "Name" = "8:Phylogeny"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_6B237810F4E34238BF45D84F3BC0A381"
+                                "Folders"
+                                {
+                                }
+                            }
+                            "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_BF87B239628143DF8A0EEF63E87679EE"
+                            {
+                            "Name" = "8:Phycas"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_18DBFD3B180E43E38C547E816DBD3FAB"
+                                "Folders"
+                                {
+                                    "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_C63A770463D64E63B5E86DFE5125C716"
+                                    {
+                                    "Name" = "8:reference_output"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_CB4F048FD100472385BBEEBD1999E31C"
+                                        "Folders"
+                                        {
+                                        }
+                                    }
+                                }
+                            }
+                            "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_C3E4A139087E4A02809433C18F9B5C06"
+                            {
+                            "Name" = "8:Likelihood"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_5988B708423441E19C2BC7576229C827"
+                                "Folders"
+                                {
+                                }
+                            }
+                            "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_D961916C88A545C1AC31DAB261D3F4EB"
+                            {
+                            "Name" = "8:Tests"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_45E2650D8C46411B89C72D8B70CA721F"
+                                "Folders"
+                                {
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            "{78BAF5CE-F2E5-45BE-83BC-DB6AF387E941}:_F4A96A62E5384A99804857A8EBB32C0F"
+            {
+            "Name" = "8:#1919"
+            "AlwaysCreate" = "11:FALSE"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Property" = "8:ProgramMenuFolder"
+                "Folders"
+                {
+                }
+            }
+        }
+        "LaunchCondition"
+        {
+            "{E4DE4623-56CB-424E-96A0-1AD21D5ECA20}:_A11D3B4103C34148B933D5B96E2D9ACD"
+            {
+            "Name" = "8:Python24Present"
+            "Condition" = "8:PYTHON24"
+            "Message" = "8:Phycas requires Python 2.4 but it appears that Python 2.4 has not yet been installed. Would you like to visit the Python web site before the installer exits?"
+            "InstallUrl" = "8:http://www.python.org/"
+            }
+        }
+        "Locator"
+        {
+            "{B8D64026-A502-496C-8C20-1D720E2264E5}:_F560F3F28C1645E092FB81E270009C94"
+            {
+            "Name" = "8:Search for Python 2.4"
+            "Root" = "2:1"
+            "RegKey" = "8:SOFTWARE\\Python\\PythonCore\\2.4\\InstallPath"
+            "Value" = "8:"
+            "Property" = "8:PYTHON24"
+            }
+        }
+        "MsiBootstrapper"
+        {
+        "LangId" = "3:1033"
+        }
+        "Product"
+        {
+        "Name" = "8:Microsoft Visual Studio"
+        "ProductName" = "8:PhyPy"
+        "ProductCode" = "8:{D6E6EF34-D36C-4F32-A514-03362876E327}"
+        "PackageCode" = "8:{A71336EA-1E41-4BA9-B0DB-2AC0DB8C46B3}"
+        "UpgradeCode" = "8:{53EFB159-6589-4304-AFA0-69CF5DC4EB94}"
+        "RestartWWWService" = "11:FALSE"
+        "RemovePreviousVersions" = "11:TRUE"
+        "DetectNewerInstalledVersion" = "11:TRUE"
+        "ProductVersion" = "8:1.0.0"
+        "Manufacturer" = "8:phypy.org"
+        "ARPHELPTELEPHONE" = "8:"
+        "ARPHELPLINK" = "8:http://www.phypy.org/"
+        "Title" = "8:PhyPy (including Phycas)"
+        "Subject" = "8:"
+        "ARPCONTACT" = "8:Holder, M. T., Lewis, P. O. and D. L. Swofford"
+        "Keywords" = "8:"
+        "ARPCOMMENTS" = "8:Python library for Phylogenetic Analysis"
+        "ARPURLINFOABOUT" = "8:"
+        "ARPPRODUCTICON" = "8:"
+        "ARPIconIndex" = "3:0"
+        "SearchPath" = "8:"
+        "UseSystemSearchPath" = "11:TRUE"
+        }
+        "Registry"
+        {
+            "HKLM"
+            {
+                "Keys"
+                {
+                    "{6A471EEF-D31B-40F8-BCF6-C9E8EC783F36}:_9301A26188244B4AB459875FC614BAD4"
+                    {
+                    "Name" = "8:Software"
+                    "Condition" = "8:"
+                    "AlwaysCreate" = "11:FALSE"
+                    "DeleteAtUninstall" = "11:FALSE"
+                    "Transitive" = "11:FALSE"
+                        "Keys"
+                        {
+                            "{6A471EEF-D31B-40F8-BCF6-C9E8EC783F36}:_01F22F48CE6A4F2CAE288AC3338055A6"
+                            {
+                            "Name" = "8:[Manufacturer]"
+                            "Condition" = "8:"
+                            "AlwaysCreate" = "11:FALSE"
+                            "DeleteAtUninstall" = "11:FALSE"
+                            "Transitive" = "11:FALSE"
+                                "Keys"
+                                {
+                                }
+                                "Values"
+                                {
+                                }
+                            }
+                        }
+                        "Values"
+                        {
+                        }
+                    }
+                }
+            }
+            "HKCU"
+            {
+                "Keys"
+                {
+                    "{6A471EEF-D31B-40F8-BCF6-C9E8EC783F36}:_8A4C8324949F46A3AB927744FE3BE6FA"
+                    {
+                    "Name" = "8:Software"
+                    "Condition" = "8:"
+                    "AlwaysCreate" = "11:FALSE"
+                    "DeleteAtUninstall" = "11:FALSE"
+                    "Transitive" = "11:FALSE"
+                        "Keys"
+                        {
+                            "{6A471EEF-D31B-40F8-BCF6-C9E8EC783F36}:_5ECEC44391014659B7B3E1043617F716"
+                            {
+                            "Name" = "8:[Manufacturer]"
+                            "Condition" = "8:"
+                            "AlwaysCreate" = "11:FALSE"
+                            "DeleteAtUninstall" = "11:FALSE"
+                            "Transitive" = "11:FALSE"
+                                "Keys"
+                                {
+                                }
+                                "Values"
+                                {
+                                }
+                            }
+                        }
+                        "Values"
+                        {
+                        }
+                    }
+                }
+            }
+            "HKCR"
+            {
+                "Keys"
+                {
+                }
+            }
+            "HKU"
+            {
+                "Keys"
+                {
+                }
+            }
+            "HKPU"
+            {
+                "Keys"
+                {
+                }
+            }
+        }
+        "Sequences"
+        {
+        }
+        "Shortcut"
+        {
+        }
+        "UserInterface"
+        {
+            "{8D9DEE8B-DD8B-4F48-9072-C4364E4F4011}:_137EB91647684830B0D772BFBEC60111"
+            {
+            "Name" = "8:#1900"
+            "Sequence" = "3:2"
+            "Attributes" = "3:1"
+                "Dialogs"
+                {
+                    "{18ADD6EC-89FE-4ED7-AD3E-211C40278470}:_2DA6F72C3A414994B06DB7A6BD64F3EA"
+                    {
+                    "Sequence" = "3:200"
+                    "DisplayName" = "8:Installation Folder"
+                    "UseDynamicProperties" = "11:TRUE"
+                    "IsDependency" = "11:FALSE"
+                    "SourcePath" = "8:<VsdDialogDir>\\VsdAdminFolderDlg.wid"
+                        "Properties"
+                        {
+                            "BannerBitmap"
+                            {
+                            "Name" = "8:BannerBitmap"
+                            "DisplayName" = "8:#1001"
+                            "Description" = "8:#1101"
+                            "Type" = "3:8"
+                            "ContextData" = "8:Bitmap"
+                            "Attributes" = "3:4"
+                            "Setting" = "3:1"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                        }
+                    }
+                    "{18ADD6EC-89FE-4ED7-AD3E-211C40278470}:_8F708CD67BA341E3BCCAB7F1AB8DC381"
+                    {
+                    "Sequence" = "3:100"
+                    "DisplayName" = "8:Welcome"
+                    "UseDynamicProperties" = "11:TRUE"
+                    "IsDependency" = "11:FALSE"
+                    "SourcePath" = "8:<VsdDialogDir>\\VsdAdminWelcomeDlg.wid"
+                        "Properties"
+                        {
+                            "BannerBitmap"
+                            {
+                            "Name" = "8:BannerBitmap"
+                            "DisplayName" = "8:#1001"
+                            "Description" = "8:#1101"
+                            "Type" = "3:8"
+                            "ContextData" = "8:Bitmap"
+                            "Attributes" = "3:4"
+                            "Setting" = "3:1"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "CopyrightWarning"
+                            {
+                            "Name" = "8:CopyrightWarning"
+                            "DisplayName" = "8:#1002"
+                            "Description" = "8:#1102"
+                            "Type" = "3:3"
+                            "ContextData" = "8:"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:1"
+                            "Value" = "8:#1202"
+                            "DefaultValue" = "8:#1202"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "Welcome"
+                            {
+                            "Name" = "8:Welcome"
+                            "DisplayName" = "8:#1003"
+                            "Description" = "8:#1103"
+                            "Type" = "3:3"
+                            "ContextData" = "8:"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:1"
+                            "Value" = "8:#1203"
+                            "DefaultValue" = "8:#1203"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                        }
+                    }
+                    "{18ADD6EC-89FE-4ED7-AD3E-211C40278470}:_E543ECDD169B411C9A18426FB67894B3"
+                    {
+                    "Sequence" = "3:300"
+                    "DisplayName" = "8:Confirm Installation"
+                    "UseDynamicProperties" = "11:TRUE"
+                    "IsDependency" = "11:FALSE"
+                    "SourcePath" = "8:<VsdDialogDir>\\VsdAdminConfirmDlg.wid"
+                        "Properties"
+                        {
+                            "BannerBitmap"
+                            {
+                            "Name" = "8:BannerBitmap"
+                            "DisplayName" = "8:#1001"
+                            "Description" = "8:#1101"
+                            "Type" = "3:8"
+                            "ContextData" = "8:Bitmap"
+                            "Attributes" = "3:4"
+                            "Setting" = "3:1"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                        }
+                    }
+                }
+            }
+            "{8D9DEE8B-DD8B-4F48-9072-C4364E4F4011}:_22C1C2613EA8453EB00E021F71312F4D"
+            {
+            "Name" = "8:#1902"
+            "Sequence" = "3:2"
+            "Attributes" = "3:3"
+                "Dialogs"
+                {
+                    "{18ADD6EC-89FE-4ED7-AD3E-211C40278470}:_DECF553BAA4E47F68DE9CC1EAFAE58CA"
+                    {
+                    "Sequence" = "3:100"
+                    "DisplayName" = "8:Finished"
+                    "UseDynamicProperties" = "11:TRUE"
+                    "IsDependency" = "11:FALSE"
+                    "SourcePath" = "8:<VsdDialogDir>\\VsdAdminFinishedDlg.wid"
+                        "Properties"
+                        {
+                            "BannerBitmap"
+                            {
+                            "Name" = "8:BannerBitmap"
+                            "DisplayName" = "8:#1001"
+                            "Description" = "8:#1101"
+                            "Type" = "3:8"
+                            "ContextData" = "8:Bitmap"
+                            "Attributes" = "3:4"
+                            "Setting" = "3:1"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                        }
+                    }
+                }
+            }
+            "{8D9DEE8B-DD8B-4F48-9072-C4364E4F4011}:_493A48FB19824593A6B90390311D20F6"
+            {
+            "Name" = "8:#1901"
+            "Sequence" = "3:1"
+            "Attributes" = "3:2"
+                "Dialogs"
+                {
+                    "{18ADD6EC-89FE-4ED7-AD3E-211C40278470}:_033FDCBE4C744D1EA8B58FB7F7EDCAA6"
+                    {
+                    "Sequence" = "3:100"
+                    "DisplayName" = "8:Progress"
+                    "UseDynamicProperties" = "11:TRUE"
+                    "IsDependency" = "11:FALSE"
+                    "SourcePath" = "8:<VsdDialogDir>\\VsdProgressDlg.wid"
+                        "Properties"
+                        {
+                            "BannerBitmap"
+                            {
+                            "Name" = "8:BannerBitmap"
+                            "DisplayName" = "8:#1001"
+                            "Description" = "8:#1101"
+                            "Type" = "3:8"
+                            "ContextData" = "8:Bitmap"
+                            "Attributes" = "3:4"
+                            "Setting" = "3:2"
+                            "Value" = "8:_EEC9B2CB29B14D75A7EB3CA662A9CF54"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "ShowProgress"
+                            {
+                            "Name" = "8:ShowProgress"
+                            "DisplayName" = "8:#1009"
+                            "Description" = "8:#1109"
+                            "Type" = "3:5"
+                            "ContextData" = "8:1;True=1;False=0"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:0"
+                            "Value" = "3:1"
+                            "DefaultValue" = "3:1"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                        }
+                    }
+                }
+            }
+            "{8D9DEE8B-DD8B-4F48-9072-C4364E4F4011}:_7410C3A848BD46D9AF6379C017AF979D"
+            {
+            "Name" = "8:#1900"
+            "Sequence" = "3:1"
+            "Attributes" = "3:1"
+                "Dialogs"
+                {
+                    "{18ADD6EC-89FE-4ED7-AD3E-211C40278470}:_47DC4772AE8346F9A0B1C54B3714DB76"
+                    {
+                    "Sequence" = "3:300"
+                    "DisplayName" = "8:License Agreement"
+                    "UseDynamicProperties" = "11:TRUE"
+                    "IsDependency" = "11:FALSE"
+                    "SourcePath" = "8:<VsdDialogDir>\\VsdLicenseDlg.wid"
+                        "Properties"
+                        {
+                            "BannerBitmap"
+                            {
+                            "Name" = "8:BannerBitmap"
+                            "DisplayName" = "8:#1001"
+                            "Description" = "8:#1101"
+                            "Type" = "3:8"
+                            "ContextData" = "8:Bitmap"
+                            "Attributes" = "3:4"
+                            "Setting" = "3:2"
+                            "Value" = "8:_EEC9B2CB29B14D75A7EB3CA662A9CF54"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "EulaText"
+                            {
+                            "Name" = "8:EulaText"
+                            "DisplayName" = "8:#1008"
+                            "Description" = "8:#1108"
+                            "Type" = "3:6"
+                            "ContextData" = "8:"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:2"
+                            "Value" = "8:_A0EC009B948243B18B6C2C6EA9F0AC35"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "Sunken"
+                            {
+                            "Name" = "8:Sunken"
+                            "DisplayName" = "8:#1007"
+                            "Description" = "8:#1107"
+                            "Type" = "3:5"
+                            "ContextData" = "8:4;True=4;False=0"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:0"
+                            "Value" = "3:4"
+                            "DefaultValue" = "3:4"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                        }
+                    }
+                    "{18ADD6EC-89FE-4ED7-AD3E-211C40278470}:_4C547A0A1B564133901C852274375E7B"
+                    {
+                    "Sequence" = "3:200"
+                    "DisplayName" = "8:Installation Folder"
+                    "UseDynamicProperties" = "11:TRUE"
+                    "IsDependency" = "11:FALSE"
+                    "SourcePath" = "8:<VsdDialogDir>\\VsdFolderDlg.wid"
+                        "Properties"
+                        {
+                            "BannerBitmap"
+                            {
+                            "Name" = "8:BannerBitmap"
+                            "DisplayName" = "8:#1001"
+                            "Description" = "8:#1101"
+                            "Type" = "3:8"
+                            "ContextData" = "8:Bitmap"
+                            "Attributes" = "3:4"
+                            "Setting" = "3:2"
+                            "Value" = "8:_EEC9B2CB29B14D75A7EB3CA662A9CF54"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                        }
+                    }
+                    "{18ADD6EC-89FE-4ED7-AD3E-211C40278470}:_D83FB2650FAF4A88B539ED88DAA0370C"
+                    {
+                    "Sequence" = "3:100"
+                    "DisplayName" = "8:Welcome"
+                    "UseDynamicProperties" = "11:TRUE"
+                    "IsDependency" = "11:FALSE"
+                    "SourcePath" = "8:<VsdDialogDir>\\VsdWelcomeDlg.wid"
+                        "Properties"
+                        {
+                            "BannerBitmap"
+                            {
+                            "Name" = "8:BannerBitmap"
+                            "DisplayName" = "8:#1001"
+                            "Description" = "8:#1101"
+                            "Type" = "3:8"
+                            "ContextData" = "8:Bitmap"
+                            "Attributes" = "3:4"
+                            "Setting" = "3:2"
+                            "Value" = "8:_EEC9B2CB29B14D75A7EB3CA662A9CF54"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "CopyrightWarning"
+                            {
+                            "Name" = "8:CopyrightWarning"
+                            "DisplayName" = "8:#1002"
+                            "Description" = "8:#1102"
+                            "Type" = "3:3"
+                            "ContextData" = "8:"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:2"
+                            "Value" = "8:"
+                            "DefaultValue" = "8:#1202"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "Welcome"
+                            {
+                            "Name" = "8:Welcome"
+                            "DisplayName" = "8:#1003"
+                            "Description" = "8:#1103"
+                            "Type" = "3:3"
+                            "ContextData" = "8:"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:1"
+                            "Value" = "8:#1203"
+                            "DefaultValue" = "8:#1203"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                        }
+                    }
+                    "{18ADD6EC-89FE-4ED7-AD3E-211C40278470}:_F221BC1DF1B2444F8E71F97EEEFDCB31"
+                    {
+                    "Sequence" = "3:400"
+                    "DisplayName" = "8:Confirm Installation"
+                    "UseDynamicProperties" = "11:TRUE"
+                    "IsDependency" = "11:FALSE"
+                    "SourcePath" = "8:<VsdDialogDir>\\VsdConfirmDlg.wid"
+                        "Properties"
+                        {
+                            "BannerBitmap"
+                            {
+                            "Name" = "8:BannerBitmap"
+                            "DisplayName" = "8:#1001"
+                            "Description" = "8:#1101"
+                            "Type" = "3:8"
+                            "ContextData" = "8:Bitmap"
+                            "Attributes" = "3:4"
+                            "Setting" = "3:2"
+                            "Value" = "8:_EEC9B2CB29B14D75A7EB3CA662A9CF54"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                        }
+                    }
+                }
+            }
+            "{B654A020-6903-4E6A-A86C-75DC463DB54B}:_7A98A2A61DBA4570B577BF2A75705F36"
+            {
+            "UseDynamicProperties" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "SourcePath" = "8:<VsdDialogDir>\\VsdBasicDialogs.wim"
+            }
+            "{B654A020-6903-4E6A-A86C-75DC463DB54B}:_9F6E02E63EE94492A64A0169AB5F83E6"
+            {
+            "UseDynamicProperties" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "SourcePath" = "8:<VsdDialogDir>\\VsdUserInterface.wim"
+            }
+            "{8D9DEE8B-DD8B-4F48-9072-C4364E4F4011}:_DB7CCE4CE2FF45939BABCB7D982AE7A7"
+            {
+            "Name" = "8:#1902"
+            "Sequence" = "3:1"
+            "Attributes" = "3:3"
+                "Dialogs"
+                {
+                    "{18ADD6EC-89FE-4ED7-AD3E-211C40278470}:_3E8223AAC4D6493796B7A0FBB72ACCC0"
+                    {
+                    "Sequence" = "3:100"
+                    "DisplayName" = "8:Finished"
+                    "UseDynamicProperties" = "11:TRUE"
+                    "IsDependency" = "11:FALSE"
+                    "SourcePath" = "8:<VsdDialogDir>\\VsdFinishedDlg.wid"
+                        "Properties"
+                        {
+                            "BannerBitmap"
+                            {
+                            "Name" = "8:BannerBitmap"
+                            "DisplayName" = "8:#1001"
+                            "Description" = "8:#1101"
+                            "Type" = "3:8"
+                            "ContextData" = "8:Bitmap"
+                            "Attributes" = "3:4"
+                            "Setting" = "3:2"
+                            "Value" = "8:_EEC9B2CB29B14D75A7EB3CA662A9CF54"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "UpdateText"
+                            {
+                            "Name" = "8:UpdateText"
+                            "DisplayName" = "8:#1058"
+                            "Description" = "8:#1158"
+                            "Type" = "3:15"
+                            "ContextData" = "8:"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:1"
+                            "Value" = "8:#1258"
+                            "DefaultValue" = "8:#1258"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                        }
+                    }
+                }
+            }
+            "{8D9DEE8B-DD8B-4F48-9072-C4364E4F4011}:_E2E2EC3E6572447393906D7B6495DA1D"
+            {
+            "Name" = "8:#1901"
+            "Sequence" = "3:2"
+            "Attributes" = "3:2"
+                "Dialogs"
+                {
+                    "{18ADD6EC-89FE-4ED7-AD3E-211C40278470}:_E365D7E9A55A4A7396A887A3B8C05D48"
+                    {
+                    "Sequence" = "3:100"
+                    "DisplayName" = "8:Progress"
+                    "UseDynamicProperties" = "11:TRUE"
+                    "IsDependency" = "11:FALSE"
+                    "SourcePath" = "8:<VsdDialogDir>\\VsdAdminProgressDlg.wid"
+                        "Properties"
+                        {
+                            "BannerBitmap"
+                            {
+                            "Name" = "8:BannerBitmap"
+                            "DisplayName" = "8:#1001"
+                            "Description" = "8:#1101"
+                            "Type" = "3:8"
+                            "ContextData" = "8:Bitmap"
+                            "Attributes" = "3:4"
+                            "Setting" = "3:1"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "ShowProgress"
+                            {
+                            "Name" = "8:ShowProgress"
+                            "DisplayName" = "8:#1009"
+                            "Description" = "8:#1109"
+                            "Type" = "3:5"
+                            "ContextData" = "8:1;True=1;False=0"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:0"
+                            "Value" = "3:1"
+                            "DefaultValue" = "3:1"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        "MergeModule"
+        {
+        }
+        "ProjectOutput"
+        {
+        }
+        "VJSharpPlugin"
+        {
+        }
+    }
+}

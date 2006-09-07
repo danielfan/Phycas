@@ -1,0 +1,32 @@
+recursive-include pyphy/Conversions *.pyd
+recursive-include pyphy/DataMatrix *.pyd
+recursive-include pyphy/Likelihood *.pyd
+recursive-include pyphy/ProbDist *.pyd
+recursive-include pyphy/Phylogeny *.pyd
+recursive-include pyphy/ReadNexus *.pyd
+
+recursive-include pyphy/Examples *.py *.nex
+
+recursive-include pyphy/Examples/ExplorePrior/reference_output *
+prune pyphy/Examples/ExplorePrior/reference_output/.svn
+
+recursive-include pyphy/Examples/FixedParams/reference_output *
+prune pyphy/Examples/FixedParams/reference_output/.svn
+
+recursive-include pyphy/Examples/GelfandGhosh/reference_output *
+prune pyphy/Examples/GelfandGhosh/reference_output/.svn
+
+recursive-include pyphy/Examples/LikelihoodTest/reference_output *
+prune pyphy/Examples/LikelihoodTest/reference_output/.svn
+
+recursive-include pyphy/Examples/Polytomies/reference_output *
+prune pyphy/Examples/Polytomies/reference_output/.svn
+
+recursive-include pyphy/Examples/Simulator/reference_output *
+prune pyphy/Examples/Simulator/reference_output/.svn
+
+recursive-include pyphy/Tests *.py *.bat
+
+
+
+
