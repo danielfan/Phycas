@@ -59,16 +59,16 @@ The following defines will help me wade through harmless, class-level functions 
 #	define NCL_USER_SUPPLIED_OUTPUT
 #	define NCL_SUPPRESS_OUTPUT
 #   define NCL_PRINT_COMMAND_STATE_TO_HIDDEN 0
-#	define NCL_USER_OUTPUT_FWD_DECLARATIONS "pyphy/src/ncl/output/nxs_suppress_fwd_decl.hpp"
-#	define NCL_USER_OUTPUT_HEADER "pyphy/src/ncl/output/nxs_suppress_output_stream.hpp"
-#	define NCL_USER_OUTPUT_MGR_HEADER "pyphy/src/ncl/output/nxs_suppress_output_mgr.hpp"
+#	define NCL_USER_OUTPUT_FWD_DECLARATIONS "phypy/src/ncl/output/nxs_suppress_fwd_decl.hpp"
+#	define NCL_USER_OUTPUT_HEADER "phypy/src/ncl/output/nxs_suppress_output_stream.hpp"
+#	define NCL_USER_OUTPUT_MGR_HEADER "phypy/src/ncl/output/nxs_suppress_output_mgr.hpp"
 #else
 #	define NCL_SOCKET_IO
 #	define NCL_USER_SUPPLIED_OUTPUT
 #   define NCL_PRINT_COMMAND_STATE_TO_HIDDEN 1
-#	define NCL_USER_OUTPUT_FWD_DECLARATIONS "pyphy/src/ncl/output/nxs_xml_socket_fwd_decl.hpp"
-#	define NCL_USER_OUTPUT_HEADER "pyphy/src/ncl/output/nxs_xml_socket_output_stream.hpp"
-#	define NCL_USER_OUTPUT_MGR_HEADER "pyphy/src/ncl/output/nxs_xml_socket_output_mgr.hpp"
+#	define NCL_USER_OUTPUT_FWD_DECLARATIONS "phypy/src/ncl/output/nxs_xml_socket_fwd_decl.hpp"
+#	define NCL_USER_OUTPUT_HEADER "phypy/src/ncl/output/nxs_xml_socket_output_stream.hpp"
+#	define NCL_USER_OUTPUT_MGR_HEADER "phypy/src/ncl/output/nxs_xml_socket_output_mgr.hpp"
 #endif //defined (CONSOLE_PHYCAS_NO_SOCKET)
 
 #if defined (CORBA_CLIENT_PHYCAS) || defined(CORBA_SERVER_PHYCAS)
@@ -126,7 +126,7 @@ The following defines will help me wade through harmless, class-level functions 
 #	error need to define a platform
 #endif
 
-#include "pyphy/src/ncl/singleton.hpp"
+#include "phypy/src/ncl/singleton.hpp"
 
 class Phylodiversity;
 class DistributionManager;
@@ -169,6 +169,6 @@ const unsigned int kNxsTreesManagerLongevity = 40;
 const unsigned int kNxsCharactersManagerLongevity = 40;
 const unsigned int kNxsTaxaManagerLongevity = 50;
 const unsigned int kNxsOutputManagerLongevity = 100;
-#include "pyphy/src/phycas.h"
+#include "phypy/src/phycas.h"
 
 #endif	/* __PHOREST_CONFIG_H */

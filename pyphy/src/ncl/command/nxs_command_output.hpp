@@ -1,13 +1,13 @@
 #if !defined(NXS_COMMAND_OUTPUT_HPP)
 #define NXS_COMMAND_OUTPUT_HPP
 
-#include "pyphy/src/ncl/output/nxs_output.hpp"
-#include "pyphy/src/ncl/output/temp_basic_output_operators.hpp"
-#include "pyphy/src/ncl/command/nxs_command_manager.hpp"
-#include "pyphy/src/ncl/command/nxs_command.hpp"
-#include "pyphy/src/ncl/command/nxs_cmd_param.hpp"
-#include "pyphy/src/ncl/command/nxs_primitive_cmd_param.hpp"
-#include "pyphy/src/ncl/nxs_basic_manager.hpp"
+#include "phypy/src/ncl/output/nxs_output.hpp"
+#include "phypy/src/ncl/output/temp_basic_output_operators.hpp"
+#include "phypy/src/ncl/command/nxs_command_manager.hpp"
+#include "phypy/src/ncl/command/nxs_command.hpp"
+#include "phypy/src/ncl/command/nxs_cmd_param.hpp"
+#include "phypy/src/ncl/command/nxs_primitive_cmd_param.hpp"
+#include "phypy/src/ncl/nxs_basic_manager.hpp"
 
 #if defined(NCL_SOCKET_IO)
 typedef std::pair<UInt, const NxsCmdOption *> PairPlacementParam;

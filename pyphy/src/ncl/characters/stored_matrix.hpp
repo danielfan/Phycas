@@ -1,9 +1,9 @@
 #ifndef NCL_NXS_STORED_MATRIX_H
 #define NCL_NXS_STORED_MATRIX_H
 
-#include "pyphy/src/ncl/misc/nxs_discrete_matrix.hpp"
-#include "pyphy/src/ncl/characters/nxs_characters_manager.hpp"
-#include "pyphy/src/ncl/misc/eliminated_index_slider.hpp"
+#include "phypy/src/ncl/misc/nxs_discrete_matrix.hpp"
+#include "phypy/src/ncl/characters/nxs_characters_manager.hpp"
+#include "phypy/src/ncl/misc/eliminated_index_slider.hpp"
 
 class NxsCharactersManager;
 namespace ncl

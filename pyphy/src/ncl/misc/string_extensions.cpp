@@ -1,8 +1,8 @@
 //#include "phycas/force_include.h"
 #include <cstdarg>
 #include <boost/scoped_array.hpp>
-#include "pyphy/src/ncl/misc/string_extensions.hpp"
-#include "pyphy/src/ncl/nxs_exception.hpp"
+#include "phypy/src/ncl/misc/string_extensions.hpp"
+#include "phypy/src/ncl/nxs_exception.hpp"
 using std::string;
 using std::vector;
 using std::va_list;

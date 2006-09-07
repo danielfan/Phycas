@@ -1,8 +1,8 @@
 #ifndef NCL_NXS_SUPPRESS_OUTPUT_MGR_H
 #define NCL_NXS_SUPPRESS_OUTPUT_MGR_H
 
-#include "pyphy/src/ncl/nxs_defs.hpp"
-#include "pyphy/src/ncl/output/nxs_output_stream.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/output/nxs_output_stream.hpp"
 
 class NxsOutputDestinationDescription;
 /*----------------------------------------------------------------------------------------------------------------------

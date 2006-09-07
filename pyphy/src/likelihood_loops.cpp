@@ -4,15 +4,15 @@
 //#endif
 
 //#include "phycas/force_include.h"
-#include "pyphy/src/cipres/CipresDataMatrixHelper.h"
-#include "pyphy/src/basic_tree.hpp"
-#include "pyphy/src/cond_likelihood.hpp"
-#include "pyphy/src/likelihood_models.hpp"
-#include "pyphy/src/tree_likelihood.hpp"
-#include "pyphy/src/tip_data.hpp"
-#include "pyphy/src/internal_data.hpp"
-#include "pyphy/src/edge_endpoints.hpp"
-#include "pyphy/src/cipres/util_copy.hpp"
+#include "phypy/src/cipres/CipresDataMatrixHelper.h"
+#include "phypy/src/basic_tree.hpp"
+#include "phypy/src/cond_likelihood.hpp"
+#include "phypy/src/likelihood_models.hpp"
+#include "phypy/src/tree_likelihood.hpp"
+#include "phypy/src/tip_data.hpp"
+#include "phypy/src/internal_data.hpp"
+#include "phypy/src/edge_endpoints.hpp"
+#include "phypy/src/cipres/util_copy.hpp"
 #include <numeric>
 
 //#define LOG_SITELIKES

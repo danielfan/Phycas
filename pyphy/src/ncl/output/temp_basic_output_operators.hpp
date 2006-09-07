@@ -1,8 +1,8 @@
 #if !defined (TEMP_BASIC_OUTPUT_OPERATORS_HPP)
 #define TEMP_BASIC_OUTPUT_OPERATORS_HPP
-#include "pyphy/src/ncl/misc/generic_type_mapping.hpp"
-#include "pyphy/src/ncl/misc/compile_assert.hpp"
-#include "pyphy/src/ncl/output/nxs_output_stream_wrapper.hpp"
+#include "phypy/src/ncl/misc/generic_type_mapping.hpp"
+#include "phypy/src/ncl/misc/compile_assert.hpp"
+#include "phypy/src/ncl/output/nxs_output_stream_wrapper.hpp"
 
 	// declare primitive output operators
 NxsWritableStream & operator<<(NxsWritableStream & outS, const std::string & s);
@@ -171,7 +171,7 @@ inline _ObjectFormatterImpl<OUT_STYLE, T> objectFormatter(const T & obj)
 	}
 
 #if !defined(NCL_USE_NXS_CONSOLE_OUTPUT) && ! defined(NCL_USE_STD_OUTPUT)
-#   include "pyphy/src/ncl/output/nxs_sax_output_wrapper.hpp" 
+#   include "phypy/src/ncl/output/nxs_sax_output_wrapper.hpp" 
 #endif
 template<class OBJ>
 inline NxsOutputStreamWrapper & EmitGenericPlotLabels(NxsOutputStreamWrapper & out, const OBJ & obj)
@@ -202,7 +202,7 @@ inline NxsOutputStreamWrapper & EmitGenericPlotData(NxsOutputStreamWrapper & out
 #   endif
 	return out;
 	}
-#include "pyphy/src/ncl/output/nxs_output_stream_wrapper.hpp"
+#include "phypy/src/ncl/output/nxs_output_stream_wrapper.hpp"
 template<class TABLE_OUT, typename DATA>
 TABLE_OUT & EmitFirstColumn(TABLE_OUT & out, const DATA & d);
 	

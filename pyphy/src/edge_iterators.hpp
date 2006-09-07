@@ -5,8 +5,8 @@
 #include <stack>
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/function.hpp>
-#include "pyphy/src/basic_tree_node.hpp"
-#include "pyphy/src/edge_endpoints.hpp"
+#include "phypy/src/basic_tree_node.hpp"
+#include "phypy/src/edge_endpoints.hpp"
 
 namespace phycas
 {

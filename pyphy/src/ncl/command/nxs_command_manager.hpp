@@ -1,8 +1,8 @@
 #ifndef NCL_NXS_COMMAND_MANAGER_H
 #define NCL_NXS_COMMAND_MANAGER_H
-#include "pyphy/src/ncl/nxs_defs.hpp"
-#include "pyphy/src/ncl/command/nxs_command_decl.hpp"
-#include "pyphy/src/ncl/misc/string_extensions.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/command/nxs_command_decl.hpp"
+#include "phypy/src/ncl/misc/string_extensions.hpp"
 #include <deque>
 class NxsToken; 
 class NxsBasicListManager;

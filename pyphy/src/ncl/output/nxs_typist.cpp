@@ -1,8 +1,8 @@
 //#include "phycas/force_include.h"
-#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
 #if defined(NCL_USE_NXS_CONSOLE_OUTPUT)
-#	include "pyphy/src/ncl/output/nxs_output_stream.hpp"
-#	include pyphy/src/"ncl/output/nxs_typist.hpp"
+#	include "phypy/src/ncl/output/nxs_output_stream.hpp"
+#	include phypy/src/"ncl/output/nxs_typist.hpp"
 #	if defined (C_FUNCS_IN_STD_NAMESPACE)
 		using std::isgraph;
 		using std::isdigit;

@@ -1,9 +1,9 @@
 //#include "phycas/force_include.h"
-#include "pyphy/src/oldphycas/const_site_info.hpp"
-#include "pyphy/src/oldphycas/taxa_manager.hpp"	
-#include "pyphy/src/ncl/characters/stored_matrix.hpp"	
-#include "pyphy/src/oldphycas/characters_manager.hpp"
-#include "pyphy/src/oldphycas/msg_exception.hpp"
+#include "phypy/src/oldphycas/const_site_info.hpp"
+#include "phypy/src/oldphycas/taxa_manager.hpp"	
+#include "phypy/src/ncl/characters/stored_matrix.hpp"	
+#include "phypy/src/oldphycas/characters_manager.hpp"
+#include "phypy/src/oldphycas/msg_exception.hpp"
 using std::vector;
 PhoCharactersManager::PhoCharactersManager(PhoTaxaManager & taxaMgr):NxsCharactersManager(taxaMgr){}
 /*----------------------------------------------------------------------------------------------------------------------

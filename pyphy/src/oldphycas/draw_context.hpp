@@ -1,8 +1,8 @@
 #ifndef PHO_DRAWCONTEXT_H
 #define PHO_DRAWCONTEXT_H
 
-#include "pyphy/src/ncl/output/nxs_user_query.hpp"
-#include "pyphy/src/ncl/output/nxs_output.hpp"
+#include "phypy/src/ncl/output/nxs_user_query.hpp"
+#include "phypy/src/ncl/output/nxs_output.hpp"
 
 class PhoFont
 	{

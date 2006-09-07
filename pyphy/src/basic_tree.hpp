@@ -7,10 +7,10 @@
 #include <iostream>
 #include <boost/algorithm/string.hpp>	// used by SetNumberFromName member function
 #include <boost/lexical_cast.hpp>		// used by SetNumberFromName member function
-#include "pyphy/src/basic_tree_node.hpp"
-#include "pyphy/src/tree_iterators.hpp"
-#include "pyphy/src/xphylogeny.hpp"
-#include "pyphy/src/pyphy_string.hpp"
+#include "phypy/src/basic_tree_node.hpp"
+#include "phypy/src/tree_iterators.hpp"
+#include "phypy/src/xphylogeny.hpp"
+#include "phypy/src/pyphy_string.hpp"
 
 //	To do next:
 //		o ASCII tree drawing
@@ -118,6 +118,6 @@ typedef boost::shared_ptr<Tree> TreeShPtr;
 
 }	// namespace phycas
 
-#include "pyphy/src/basic_tree.inl"
+#include "phypy/src/basic_tree.inl"
 
 #endif

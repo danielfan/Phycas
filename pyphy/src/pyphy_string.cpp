@@ -1,4 +1,4 @@
-#include "pyphy/src/pyphy_string.hpp"
+#include "phypy/src/pyphy_string.hpp"
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Appends a string version of the supplied unsigned value `v' to the string `s' and returns a reference to `s'.

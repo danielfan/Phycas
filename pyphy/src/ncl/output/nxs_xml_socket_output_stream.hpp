@@ -1,12 +1,12 @@
 #ifndef NCL_NXS_XML_SOCKET_OUTSTREAM_H
 #define NCL_NXS_XML_SOCKET_OUTSTREAM_H
 
-#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
 #include <iostream>
 #include <boost/noncopyable.hpp>
-#include "pyphy/src/ncl/output/nxs_table_cell.hpp"
-#include "pyphy/src/ncl/output/nxs_table.hpp"
-#include "pyphy/src/ncl/misc/string_extensions.hpp"
+#include "phypy/src/ncl/output/nxs_table_cell.hpp"
+#include "phypy/src/ncl/output/nxs_table.hpp"
+#include "phypy/src/ncl/misc/string_extensions.hpp"
 
 #if defined (SUPPORT_TREE_OUTPUT)
 	class Tree;

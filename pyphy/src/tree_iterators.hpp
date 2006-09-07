@@ -2,7 +2,7 @@
 #define PYPHY_TREE_ITERATOR_HPP
 
 #include <boost/iterator/iterator_facade.hpp>
-#include "pyphy/src/basic_tree_node.hpp"
+#include "phypy/src/basic_tree_node.hpp"
 
 namespace phycas
 {

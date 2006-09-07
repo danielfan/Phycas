@@ -5,7 +5,7 @@
 #include <boost/shared_ptr.hpp>						// for boost::shared_ptr
 #include <boost/weak_ptr.hpp>						// for boost::weak_ptr
 //#include <boost/enable_shared_from_this.hpp>		// for boost::enable_shared_from_this
-#include "pyphy/src/mcmc_updater.hpp"		// for base class MCMCUpdater
+#include "phypy/src/mcmc_updater.hpp"		// for base class MCMCUpdater
 
 //struct CIPRES_Matrix;
 
@@ -118,6 +118,6 @@ class BushMove : public MCMCUpdater
 
 } // namespace phycas
 
-#include "pyphy/src/bush_move.inl"
+#include "phypy/src/bush_move.inl"
 
 #endif

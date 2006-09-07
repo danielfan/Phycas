@@ -73,6 +73,6 @@ class TreeManip
 
 } // namespace phycas
 
-#include "pyphy/src/tree_manip.inl"
+#include "phypy/src/tree_manip.inl"
 	
 #endif

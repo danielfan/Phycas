@@ -1,10 +1,10 @@
 #ifndef NCL_NXSTAXABLOCK_H
 #define NCL_NXSTAXABLOCK_H
 
-#include "pyphy/src/ncl/nxs_defs.hpp"
-#include "pyphy/src/ncl/nxs_basic_manager.hpp"
-#include "pyphy/src/ncl/nxs_block.hpp"
-#include "pyphy/src/ncl/taxa/nxs_taxa_label_reader.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/nxs_basic_manager.hpp"
+#include "phypy/src/ncl/nxs_block.hpp"
+#include "phypy/src/ncl/taxa/nxs_taxa_label_reader.hpp"
 class NxsTaxaManager;
 /*----------------------------------------------------------------------------------------------------------------------
 |	Class that reads taxa blocks and stores the list of taxon labels.

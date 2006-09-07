@@ -1,5 +1,5 @@
-#include "pyphy/src/q_matrix.hpp"
-#include "pyphy/src/xlikelihood.hpp"
+#include "phypy/src/q_matrix.hpp"
+#include "phypy/src/xlikelihood.hpp"
 using namespace phycas;
 
 /*----------------------------------------------------------------------------------------------------------------------

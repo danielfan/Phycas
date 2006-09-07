@@ -1,8 +1,8 @@
 #ifndef NCL_NXSDISCRETEMATRIX_H
 #define NCL_NXSDISCRETEMATRIX_H
 
-#include "pyphy/src/ncl/misc/nxs_data_type.hpp"
-#include "pyphy/src/ncl/misc/algorithm_extensions.hpp"
+#include "phypy/src/ncl/misc/nxs_data_type.hpp"
+#include "phypy/src/ncl/misc/algorithm_extensions.hpp"
 
 typedef std::vector<DataStorageType> DiscreteDataRow;
 typedef std::vector<DiscreteDataRow> DiscreteDataMatrix;

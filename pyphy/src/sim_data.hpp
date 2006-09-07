@@ -1,7 +1,7 @@
 #if ! defined(SIM_DATA_HPP)
 #define SIM_DATA_HPP
 
-#include "pyphy/src/states_patterns.hpp"
+#include "phypy/src/states_patterns.hpp"
 
 namespace phycas
 {

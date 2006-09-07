@@ -1,8 +1,8 @@
 //#include "phycas/force_include.h"
-#include "pyphy/src/oldphycas/tree_iterator.hpp"
-#include "pyphy/src/oldphycas/draw_context.hpp"
-#include "pyphy/src/oldphycas/multiline_bound.hpp"
-#include "pyphy/src/ncl/misc/string_extensions.hpp"
+#include "phypy/src/oldphycas/tree_iterator.hpp"
+#include "phypy/src/oldphycas/draw_context.hpp"
+#include "phypy/src/oldphycas/multiline_bound.hpp"
+#include "phypy/src/ncl/misc/string_extensions.hpp"
 using std::string;
 
 // 		this file uses several functions to alter a node's plot data that are only likely to be used within this file

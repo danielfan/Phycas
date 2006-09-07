@@ -1,7 +1,7 @@
 #if !defined(NCL_NXSCHARACTERSBLOCK_CMD_SETTINGS_H)
 #define NCL_NXSCHARACTERSBLOCK_CMD_SETTINGS_H
 
-#include "pyphy/src/ncl/misc/nxs_index_set.hpp"
+#include "phypy/src/ncl/misc/nxs_index_set.hpp"
 
 class NxsFormatCmdSettings
 	{

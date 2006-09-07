@@ -1,17 +1,17 @@
 #if ! defined(TREE_LIKELIHOOD_HPP)
 #define TREE_LIKELIHOOD_HPP
 
-#include "pyphy/src/states_patterns.hpp"
+#include "phypy/src/states_patterns.hpp"
 #include <vector>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
-#include "pyphy/src/cipres/AllocateMatrix.hpp"
-#include "pyphy/src/cipres/ConfigDependentHeaders.h"	// int8_t typedef
-#include "pyphy/src/likelihood_models.hpp"
-#include "pyphy/src/cond_likelihood.hpp"
-#include "pyphy/src/cond_likelihood_storage.hpp"
-#include "pyphy/src/underflow_policy.hpp"
+#include "phypy/src/cipres/AllocateMatrix.hpp"
+#include "phypy/src/cipres/ConfigDependentHeaders.h"	// int8_t typedef
+#include "phypy/src/likelihood_models.hpp"
+#include "phypy/src/cond_likelihood.hpp"
+#include "phypy/src/cond_likelihood_storage.hpp"
+#include "phypy/src/underflow_policy.hpp"
 
 struct CIPRES_Matrix;
 

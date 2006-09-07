@@ -1,5 +1,5 @@
-#include "pyphy/src/cipres/CipresDataMatrixHelper.h"
-#include "pyphy/src/cipres/util_copy.hpp"
+#include "phypy/src/cipres/CipresDataMatrixHelper.h"
+#include "phypy/src/cipres/util_copy.hpp"
 using CipresNative::DiscreteMatrix;
 using std::string;
 using std::vector;

@@ -1,13 +1,13 @@
 #if ! defined(NCL_OUTPUT_MGR_H) 
 #define NCL_OUTPUT_MGR_H
 #include <boost/shared_ptr.hpp>
-#include "pyphy/src/ncl/nxs_defs.hpp"
-#include "pyphy/src/ncl/output/nxs_input.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/output/nxs_input.hpp"
 class NxsOutputDestinationDescription;
 class NxsOutputStreamWrapper;
 typedef boost::shared_ptr<NxsOutputStreamWrapper> NxsOutputStreamWrapperShPtr;
 #if defined(NCL_USE_STD_OUTPUT)
-#	include "pyphy/src/ncl/output/nxs_user_query.hpp" //@@TESTING OUTPUT
+#	include "phypy/src/ncl/output/nxs_user_query.hpp" //@@TESTING OUTPUT
 
 	class StdOutputManager
 		{
@@ -110,8 +110,8 @@ typedef boost::shared_ptr<NxsOutputStreamWrapper> NxsOutputStreamWrapperShPtr;
 			
 #else	//defined (NCL_USE_STD_OUTPUT)
 #	if defined(NCL_USE_SINGLE_STREAM_OUTPUT_MGR)
-#		include "pyphy/src/ncl/output/nxs_output.hpp" 
-#		include "pyphy/src/ncl/output/nxs_user_query.hpp" //@@TESTING OUTPUT
+#		include "phypy/src/ncl/output/nxs_output.hpp" 
+#		include "phypy/src/ncl/output/nxs_user_query.hpp" //@@TESTING OUTPUT
 		/*----------------------------------------------------------------------------------------------------------------------
 		|	Class that supplies pointers to the "fundamental" streams for all types of output and the user query.
 		|	In this implementation, there is only one output stream and all more specific types alias it.

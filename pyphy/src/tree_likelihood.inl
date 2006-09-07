@@ -1,9 +1,9 @@
 #if !defined(TREE_LIKELIHOOD_INL)
 #define TREE_LIKELIHOOD_INL
 
-#include "pyphy/src/internal_data.hpp"
-#include "pyphy/src/tip_data.hpp"
-#include "pyphy/src/edge_endpoints.hpp"
+#include "phypy/src/internal_data.hpp"
+#include "phypy/src/tip_data.hpp"
+#include "phypy/src/edge_endpoints.hpp"
 
 namespace phycas
 {

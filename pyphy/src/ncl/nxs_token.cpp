@@ -2,10 +2,10 @@
 #if (MWERKS_LIB_BUILD)
 #	pragma export on
 #endif
-#include "pyphy/src/ncl/nxs_defs.hpp"
-#include "pyphy/src/ncl/nxs_token.hpp"
-#include "pyphy/src/ncl/nxs_exception.hpp"
-#include "pyphy/src/ncl/output/nxs_output.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/nxs_token.hpp"
+#include "phypy/src/ncl/nxs_exception.hpp"
+#include "phypy/src/ncl/output/nxs_output.hpp"
 #if (MWERKS_LIB_BUILD)
 #	pragma export off
 #endif

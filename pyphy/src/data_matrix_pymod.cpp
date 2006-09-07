@@ -3,7 +3,7 @@
 #endif
 
 //#include "phycas/force_include.h"
-#include "pyphy/src/cipres/CipresDataMatrixHelper.h"
+#include "phypy/src/cipres/CipresDataMatrixHelper.h"
 
 #include <boost/python.hpp>
 

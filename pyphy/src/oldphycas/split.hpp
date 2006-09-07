@@ -2,8 +2,8 @@
 #define PHO_SPLIT_H
 #include <set>
 #include <limits>
-#include "pyphy/src/ncl/nxs_defs.hpp"
-#include "pyphy/src/ncl/misc/algorithm_extensions.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/misc/algorithm_extensions.hpp"
 class TreeID;
 class NxsTaxaManager;
 

@@ -1,7 +1,7 @@
 /*########## cleartrees_settings.hpp ##########*/
 #if !defined (PHYC_CLEARTREES_SETTINGS_HPP)
 #define PHYC_CLEARTREES_SETTINGS_HPP
-#include "pyphy/src/ncl/misc/nxs_index_set.hpp"
+#include "phypy/src/ncl/misc/nxs_index_set.hpp"
 class ClearTreesSettings
 	{
 	public:

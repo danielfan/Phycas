@@ -1,8 +1,8 @@
 #include <cmath>								// std::sqrt
 #include <boost/lambda/lambda.hpp>				// for boost::lambda::_1
 #include <boost/lambda/bind.hpp>				// for boost::lambda::bind
-#include "pyphy/src/q_matrix.hpp"
-#include "pyphy/src/cipres/AllocateMatrix.hpp"
+#include "phypy/src/q_matrix.hpp"
+#include "phypy/src/cipres/AllocateMatrix.hpp"
 #include <functional>
 #include <algorithm>
 #include <boost/format.hpp>

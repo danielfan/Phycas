@@ -1,11 +1,11 @@
 //#include "phycas/force_include.h"
-#include "pyphy/src/ncl/nxs_defs.hpp"
-#include "pyphy/src/ncl/trees/nxs_trees_block.hpp"
-#include "pyphy/src/ncl/trees/nxs_trees_manager.hpp"
-#include "pyphy/src/ncl/nxs_exception.hpp"
-#include "pyphy/src/ncl/command/nxs_auto_command.hpp"
-#include "pyphy/src/ncl/output/nxs_output.hpp"
-#include "pyphy/src/ncl/taxa/nxs_taxa_manager.hpp" 
+#include "phypy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/trees/nxs_trees_block.hpp"
+#include "phypy/src/ncl/trees/nxs_trees_manager.hpp"
+#include "phypy/src/ncl/nxs_exception.hpp"
+#include "phypy/src/ncl/command/nxs_auto_command.hpp"
+#include "phypy/src/ncl/output/nxs_output.hpp"
+#include "phypy/src/ncl/taxa/nxs_taxa_manager.hpp" 
 using std::string;
 
 #define TREAT_TAXA_NAMES_AS_TAXA_NUMBERS_ONLY

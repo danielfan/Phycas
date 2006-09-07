@@ -1,6 +1,6 @@
 //#include "phycas/force_include.h"
-#include "pyphy/src/ncl/nxs_defs.hpp"
-#include "pyphy/src/ncl/misc/nxs_test_impl.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/misc/nxs_test_impl.hpp"
 using std::string;
 /*--------------------------------------------------------------------------------------------------------------------------
 |	Walks through the vector of tests, checking each one.  if returns false, then errM is set to the first

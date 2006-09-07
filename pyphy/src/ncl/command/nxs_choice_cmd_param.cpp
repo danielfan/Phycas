@@ -1,6 +1,6 @@
 //#include "phycas/force_include.h"
-#include "pyphy/src/ncl/nxs_defs.hpp"
-#include "pyphy/src/ncl/command/nxs_choice_cmd_param.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/command/nxs_choice_cmd_param.hpp"
 using std::string;
 /*----------------------------------------------------------------------------------------------------------------------
 |	returns a | separated list of legal choices

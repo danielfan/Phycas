@@ -1,7 +1,7 @@
 #ifndef PYPHY_EDGE_ENDPOINTS_HPP
 #define PYPHY_EDGE_ENDPOINTS_HPP
 
-#include "pyphy/src/basic_tree_node.hpp"
+#include "phypy/src/basic_tree_node.hpp"
 
 namespace phycas
 {

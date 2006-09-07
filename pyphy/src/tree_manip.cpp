@@ -1,12 +1,12 @@
 //#include "phycas/force_include.h"
-#include "pyphy/src/tree_manip.hpp"
-#include "pyphy/src/basic_lot.hpp"
-#include "pyphy/src/probability_distribution.hpp"
-#include "pyphy/src/basic_tree.hpp"
+#include "phypy/src/tree_manip.hpp"
+#include "phypy/src/basic_lot.hpp"
+#include "phypy/src/probability_distribution.hpp"
+#include "phypy/src/basic_tree.hpp"
 
 using namespace phycas;
 
-#include "pyphy/src/basic_lot.hpp"
+#include "phypy/src/basic_lot.hpp"
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Assigns all edge lengths in the tree using independent draws from the ProbabilityDistribution object pointed to by

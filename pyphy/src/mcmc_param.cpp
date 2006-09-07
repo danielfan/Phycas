@@ -1,11 +1,11 @@
 //#include "phycas/force_include.h"
-#include "pyphy/src/cipres/CipresDataMatrixHelper.h"
-#include "pyphy/src/likelihood_models.hpp"
-#include "pyphy/src/tree_likelihood.hpp"
-#include "pyphy/src/probability_distribution.hpp"
-#include "pyphy/src/mcmc_param.hpp"
-#include "pyphy/src/mcmc_chain_manager.hpp"
-#include "pyphy/src/basic_tree.hpp"
+#include "phypy/src/cipres/CipresDataMatrixHelper.h"
+#include "phypy/src/likelihood_models.hpp"
+#include "phypy/src/tree_likelihood.hpp"
+#include "phypy/src/probability_distribution.hpp"
+#include "phypy/src/mcmc_param.hpp"
+#include "phypy/src/mcmc_chain_manager.hpp"
+#include "phypy/src/basic_tree.hpp"
 
 namespace phycas
 {
@@ -19,12 +19,12 @@ void KappaParam::setModel(ModelShPtr m)
 	{
 	MCMCUpdater::setModel(m);
 	Model * p = m.get();
-	hky = dynamic_cast<HKY *>(p);	// forces inclusion of "pyphy/src/likelihood_models.hpp"
+	hky = dynamic_cast<HKY *>(p);	// forces inclusion of "phypy/src/likelihood_models.hpp"
 
 	//POL tried unsuccessfully to get this to compile as an inlined function, but VC gave me this 
 	// error (which makes sense):
 	//
-	// C:\Synchronized\Projects\phycasdev\pyphy\likelihood\mcmc_param.inl(43) : error C2680: 'phycas::HKY *' : 
+	// C:\Synchronized\Projects\phycasdev\phypy\likelihood\mcmc_param.inl(43) : error C2680: 'phycas::HKY *' : 
 	//  invalid target type for dynamic_cast
 	//  'HKY' : class must be defined before using in a dynamic_cast
 	//
@@ -69,7 +69,7 @@ void GTRRateParam::setModel(ModelShPtr m)
 	{
 	MCMCUpdater::setModel(m);
 	Model * p = m.get();
-	gtr = dynamic_cast<GTR *>(p);	// forces inclusion of "pyphy/models/likelihood_models.hpp"
+	gtr = dynamic_cast<GTR *>(p);	// forces inclusion of "phypy/models/likelihood_models.hpp"
 
 	// If tempted to move this to mcmc_param.inl, see comment in KappaParam::setModel function
 	}

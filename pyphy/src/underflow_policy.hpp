@@ -1,9 +1,9 @@
 #if !defined(UNDERFLOW_POLICY_HPP)
 #define UNDERFLOW_POLICY_HPP
 
-#include "pyphy/src/states_patterns.hpp"
-#include "pyphy/src/cond_likelihood.hpp"
-#include "pyphy/src/cond_likelihood_storage.hpp"
+#include "phypy/src/states_patterns.hpp"
+#include "phypy/src/cond_likelihood.hpp"
+#include "phypy/src/cond_likelihood_storage.hpp"
 
 //POL The original intention was to create several underflow policy classes in this file, then 
 // make TreeLikelihood a template taking one of these policy classes. It was more complicated than
@@ -91,6 +91,6 @@ class PatternSpecificUnderflowPolicy : public SimpleUnderflowPolicy
 
 } // namespace phycas
 
-#include "pyphy/src/underflow_policy.inl"
+#include "phypy/src/underflow_policy.inl"
 
 #endif

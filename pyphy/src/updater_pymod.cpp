@@ -3,13 +3,13 @@
 #endif
 
 //#include "phycas/force_include.h"
-#include "pyphy/src/cipres/CipresDataMatrixHelper.h"
-#include "pyphy/src/tree_likelihood.hpp"
-#include "pyphy/src/larget_simon_move.hpp"
-#include "pyphy/src/ncat_move.hpp"
-#include "pyphy/src/bush_move.hpp"
-#include "pyphy/src/edge_move.hpp"
-#include "pyphy/src/topo_prior_calculator.hpp"
+#include "phypy/src/cipres/CipresDataMatrixHelper.h"
+#include "phypy/src/tree_likelihood.hpp"
+#include "phypy/src/larget_simon_move.hpp"
+#include "phypy/src/ncat_move.hpp"
+#include "phypy/src/bush_move.hpp"
+#include "phypy/src/edge_move.hpp"
+#include "phypy/src/topo_prior_calculator.hpp"
 
 #include <boost/python.hpp>
 using namespace boost::python;

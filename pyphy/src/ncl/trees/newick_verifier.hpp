@@ -1,7 +1,7 @@
 #ifndef NCL_NEWICK_VERIFIER_H
 #define NCL_NEWICK_VERIFIER_H
 
-#include "pyphy/src/ncl/trees/full_tree_description.hpp"
+#include "phypy/src/ncl/trees/full_tree_description.hpp"
 
 class BaseTaxaManager;
 class NxsToken;

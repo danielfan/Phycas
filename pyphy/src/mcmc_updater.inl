@@ -2,8 +2,8 @@
 #define MCMC_UPDATER_INL
 
 #include <limits>									// for std::numeric_limits
-#include "pyphy/src/slice_sampler.hpp"	// see MCMCUpdater::createSliceSampler
-#include "pyphy/src/probability_distribution.hpp"	// see MCMCUpdater::setPriorMeanAndVariance
+#include "phypy/src/slice_sampler.hpp"	// see MCMCUpdater::createSliceSampler
+#include "phypy/src/probability_distribution.hpp"	// see MCMCUpdater::setPriorMeanAndVariance
 
 namespace phycas
 {
@@ -203,7 +203,7 @@ inline double MCMCUpdater::operator()(double)
 inline void MCMCUpdater::createSliceSampler() 
 	{
 	PHYCAS_ASSERT(!slice_sampler);	// don't want to do this more than once
-	slice_sampler.reset(new SliceSampler(rng, shared_from_this())); // forces inclusion of "pyphy/src/slice_sampler.hpp"
+	slice_sampler.reset(new SliceSampler(rng, shared_from_this())); // forces inclusion of "phypy/src/slice_sampler.hpp"
 	slice_sampler->SetMaxUnits(slice_max_units);
 	slice_sampler->SetXValue(slice_starting_value);
 	}
@@ -363,7 +363,7 @@ inline void MCMCUpdater::setPriorMeanAndVariance(double m, double v)
 	if (prior)
 		{
 		//std::cerr << "    setting prior mean, variance to " << m << ", " << v << " for " << getName() << std::endl;
-		prior->SetMeanAndVariance(m, v);	// forces inclusion of "pyphy/src/probability_distribution.hpp"
+		prior->SetMeanAndVariance(m, v);	// forces inclusion of "phypy/src/probability_distribution.hpp"
 		}
 	}
 

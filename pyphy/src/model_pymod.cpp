@@ -3,7 +3,7 @@
 #endif
 
 //#include "phycas/force_include.h"
-#include "pyphy/src/likelihood_models.hpp"
+#include "phypy/src/likelihood_models.hpp"
 
 #include <boost/python.hpp>
 using namespace boost::python;

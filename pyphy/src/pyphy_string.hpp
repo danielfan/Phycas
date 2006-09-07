@@ -5,7 +5,7 @@
 //
 // This file was originally intended to be a replacement for string_extensions.hpp and a workspace
 // for trying new things (e.g. boost::format) without tampering with working code that depends on
-// string_extensions.hpp. Unfortunately, there are too many places in the pyphy code where I needed
+// string_extensions.hpp. Unfortunately, there are too many places in the phypy code where I needed
 // to include headers from ncl, which eventually leads to a conflict between string_extensions.hpp
 // and pyphy_string.hpp. So, now this file is largely useless and should be eliminated. I still like
 // my DoubleFormatter function, however. It does the same job as string_extensions' DblFormatter,

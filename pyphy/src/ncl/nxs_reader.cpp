@@ -1,10 +1,10 @@
 //#include "phycas/force_include.h"
-#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
 #if NEW_NXS_BLOCK_AND_READER
-#include "pyphy/src/ncl/nxs_reader.hpp"
-#include "pyphy/src/ncl/nxs_block.hpp"
-#include "pyphy/src/ncl/nxs_token.hpp"
-#include "pyphy/src/ncl/nxs_exception.hpp"
+#include "phypy/src/ncl/nxs_reader.hpp"
+#include "phypy/src/ncl/nxs_block.hpp"
+#include "phypy/src/ncl/nxs_token.hpp"
+#include "phypy/src/ncl/nxs_exception.hpp"
 using std::vector;
 using std::string;
 void DisableBlockIfItCannotReadID(NxsBlock *nxsBlockReader, const VecString &activeBlockIDs);

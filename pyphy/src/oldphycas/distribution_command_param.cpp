@@ -1,6 +1,6 @@
 //#include "phycas/force_include.h"
-#include "pyphy/src/ncl/nxs_defs.hpp"
-#include "pyphy/src/oldphycas/distribution_command_param.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/oldphycas/distribution_command_param.hpp"
 using std::vector;
 using std::pair;
 using std::string;

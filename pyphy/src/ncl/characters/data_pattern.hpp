@@ -1,9 +1,9 @@
 #ifndef NXS_DATA_PATTERN_H
 #define NXS_DATA_PATTERN_H
 
-#include "pyphy/src/ncl/misc/nxs_data_type.hpp"
-#include "pyphy/src/ncl/misc/utilities.hpp"
-#include "pyphy/src/ncl/misc/algorithm_extensions.hpp"
+#include "phypy/src/ncl/misc/nxs_data_type.hpp"
+#include "phypy/src/ncl/misc/utilities.hpp"
+#include "phypy/src/ncl/misc/algorithm_extensions.hpp"
 
 typedef DataStorageType *DataPattern;
 

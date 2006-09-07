@@ -1,8 +1,8 @@
 #if !defined(NCL_NXS_STD_USER_QUERY_H)
 #define NCL_NXS_STD_USER_QUERY_H
 
-#include "pyphy/src/ncl/misc/nxs_file_path.hpp"
-#include "pyphy/src/ncl/nxs_exception.hpp"
+#include "phypy/src/ncl/misc/nxs_file_path.hpp"
+#include "phypy/src/ncl/nxs_exception.hpp"
 namespace NxsIO
 	{
 	class NxsInput;

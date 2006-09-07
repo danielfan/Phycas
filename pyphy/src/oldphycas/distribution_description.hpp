@@ -1,10 +1,10 @@
 #if !defined NCL_DISTRIBUTION_DESCRIPRIPTION_ITEM_H
 #define NCL_DISTRIBUTION_DESCRIPRIPTION_ITEM_H
 
-#include "pyphy/src/ncl/nxs_defs.hpp"
-#include "pyphy/src/ncl/misc/string_extensions.hpp"
-#include "pyphy/src/ncl/output/temp_basic_output_operators.hpp"
-#include "pyphy/src/probability_distribution.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/misc/string_extensions.hpp"
+#include "phypy/src/ncl/output/temp_basic_output_operators.hpp"
+#include "phypy/src/probability_distribution.hpp"
 
 typedef boost::shared_ptr<phycas::ProbabilityDistribution> ProbDistPtr; 
 typedef boost::shared_ptr<phycas::MultivariateProbabilityDistribution> MVProbDistPtr; 

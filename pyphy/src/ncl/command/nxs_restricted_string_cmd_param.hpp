@@ -1,9 +1,9 @@
 #ifndef NCL_NXS_RESTRICTED_STRING_CMD_OPTION_H
 #define NCL_NXS_RESTRICTED_STRING_CMD_OPTION_H
 
-#include "pyphy/src/ncl/nxs_defs.hpp"
-#include "pyphy/src/ncl/misc/nxs_index_set.hpp"
-#include "pyphy/src/ncl/command/nxs_cmd_param.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/misc/nxs_index_set.hpp"
+#include "phypy/src/ncl/command/nxs_cmd_param.hpp"
 #include <boost/function.hpp>
 /*----------------------------------------------------------------------------------------------------------------------
 |	a NxsStringCmdOption that does not allow the value to be a single punctuation character (the punctuation list is 

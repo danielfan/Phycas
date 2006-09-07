@@ -2,8 +2,8 @@
 #define MCMC_CHAIN_MANAGER_HPP
 
 #include <boost/enable_shared_from_this.hpp>		// for boost::enable_shared_from_this
-#include "pyphy/src/mcmc_updater.hpp"		// for MCMCUpdaterShPtr (plus LotShPtr, ModelShPtr, TreeShPtr, TreeLikeShPtr, etc.)
-#include "pyphy/src/mcmc_param.hpp"			// for MCMCUpdaterShPtr (plus LotShPtr, ModelShPtr, TreeShPtr, TreeLikeShPtr, etc.)
+#include "phypy/src/mcmc_updater.hpp"		// for MCMCUpdaterShPtr (plus LotShPtr, ModelShPtr, TreeShPtr, TreeLikeShPtr, etc.)
+#include "phypy/src/mcmc_param.hpp"			// for MCMCUpdaterShPtr (plus LotShPtr, ModelShPtr, TreeShPtr, TreeLikeShPtr, etc.)
 
 struct CIPRES_Matrix;
 
@@ -124,6 +124,6 @@ typedef boost::weak_ptr<MCMCChainManager>		ChainManagerWkPtr;
 
 } // namespace phycas
 
-#include "pyphy/src/mcmc_chain_manager.inl"
+#include "phypy/src/mcmc_chain_manager.inl"
 
 #endif

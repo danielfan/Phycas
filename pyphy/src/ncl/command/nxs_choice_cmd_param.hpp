@@ -1,8 +1,8 @@
 #ifndef NCL_NXS_CHOICE_CMD_OPTION_H
 #define NCL_NXS_CHOICE_CMD_OPTION_H
 
-#include "pyphy/src/ncl/nxs_defs.hpp"
-#include "pyphy/src/ncl/command/nxs_primitive_cmd_param.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/command/nxs_primitive_cmd_param.hpp"
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	A NxsStringCmdOption that will only accept a few words.  

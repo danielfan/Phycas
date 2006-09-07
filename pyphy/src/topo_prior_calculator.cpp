@@ -1,6 +1,6 @@
 //#include "phycas/force_include.h"
-#include "pyphy/src/topo_prior_calculator.hpp"
-#include "pyphy/src/basic_tree.hpp"
+#include "phypy/src/topo_prior_calculator.hpp"
+#include "phypy/src/basic_tree.hpp"
 //#include "boost/shared_ptr.hpp"
 #include <cmath>
 

@@ -1,6 +1,6 @@
 //#include "phycas/force_include.h"
-#include "pyphy/src/ncl/misc/algorithm_extensions.hpp"
-#include "pyphy/src/oldphycas/multiline_bound.hpp"
+#include "phypy/src/ncl/misc/algorithm_extensions.hpp"
+#include "phypy/src/oldphycas/multiline_bound.hpp"
 using std::pair;
 #if defined(C_FUNCS_IN_STD_NAMESPACE)
 	using std::fabs;

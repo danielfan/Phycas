@@ -5,17 +5,17 @@
 
 
 //#include "phycas/force_include.h"
-#include "pyphy/src/ncl/nxs_token.hpp"
-#include "pyphy/src/ncl/output/nxs_output.hpp"
-#include "pyphy/src/ncl/nxs_defs.hpp"
-#include "pyphy/src/ncl/characters/nxs_characters_block.hpp"
-#include "pyphy/src/ncl/characters/nxs_characters_manager.hpp"
-#include "pyphy/src/ncl/taxa/nxs_taxa_manager.hpp"
-#include "pyphy/src/ncl/nxs_exception.hpp"
-#include "pyphy/src/ncl/nxs_token.hpp"
-#include "pyphy/src/ncl/command/nxs_cmd_param.hpp" // needed because we have to check if commands have been read in HandleFormat
-#include "pyphy/src/ncl/misc/nxs_data_type_inl.hpp"
-#include "pyphy/src/ncl/output/nxs_output_stream.hpp"
+#include "phypy/src/ncl/nxs_token.hpp"
+#include "phypy/src/ncl/output/nxs_output.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/characters/nxs_characters_block.hpp"
+#include "phypy/src/ncl/characters/nxs_characters_manager.hpp"
+#include "phypy/src/ncl/taxa/nxs_taxa_manager.hpp"
+#include "phypy/src/ncl/nxs_exception.hpp"
+#include "phypy/src/ncl/nxs_token.hpp"
+#include "phypy/src/ncl/command/nxs_cmd_param.hpp" // needed because we have to check if commands have been read in HandleFormat
+#include "phypy/src/ncl/misc/nxs_data_type_inl.hpp"
+#include "phypy/src/ncl/output/nxs_output_stream.hpp"
 
 using std::map;
 using std::vector;

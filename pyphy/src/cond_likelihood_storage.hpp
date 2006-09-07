@@ -54,6 +54,6 @@ class CondLikelihoodStorage
 
 } //namespace phycas
 
-#include "pyphy/src/cond_likelihood_storage.inl"
+#include "phypy/src/cond_likelihood_storage.inl"
 
 #endif

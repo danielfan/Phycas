@@ -2,7 +2,7 @@
 #define	PHO_TREENODE_H
 #include <stack> //needed for some of the  templated functions
 
-#include "pyphy/src/oldphycas/split.hpp"
+#include "phypy/src/oldphycas/split.hpp"
 
 //POL moved Score union and Length typedef to split.h
 
@@ -18,7 +18,7 @@ class DrawContext;
 class TreeNodeAttribute;
 class MultilineBound;
 class PhoTaxaManager;
-#include "pyphy/src/oldphycas/node_iterator_types.hpp"
+#include "phypy/src/oldphycas/node_iterator_types.hpp"
 
 
 /*------------------------------------------------------------------------------------------------------------------------------------------------------------------

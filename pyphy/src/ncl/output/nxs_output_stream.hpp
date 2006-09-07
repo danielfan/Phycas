@@ -1,7 +1,7 @@
 #if !defined(NCL_OUTPUT_OUTPUTSTREAM_H)
 #define NCL_OUTPUT_OUTPUTSTREAM_H
 
-#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
 #include "boost/shared_ptr.hpp"
 
 typedef std::pair<std::string, std::string> NxsSAXAttribute;
@@ -62,7 +62,7 @@ const std::string GetEscapedMessageForOutput(const std::string  & message)
 #	endif // defined(NCL_USE_NXS_CONSOLE_OUTPUT)
 #endif //defined(NCL_USE_STD_OUTPUT)
 
-#include "pyphy/src/ncl/output/nxs_output_stream_wrapper.hpp"
+#include "phypy/src/ncl/output/nxs_output_stream_wrapper.hpp"
 
 
 #if defined(NCL_USE_NXS_CONSOLE_OUTPUT) || defined(NCL_USE_STD_OUTPUT)

@@ -3,12 +3,12 @@
 
 #include <string>
 #include <vector>
-#include "pyphy/src/cipres/CipresNativeC.h"
-#include "pyphy/src/cipres/AllocateMatrix.hpp"
+#include "phypy/src/cipres/CipresNativeC.h"
+#include "phypy/src/cipres/AllocateMatrix.hpp"
 
 #ifdef __cplusplus
 #if !defined(NO_IDL_TYPES)
-#	include "pyphy/src/cipres/CipresHelper.h"
+#	include "phypy/src/cipres/CipresHelper.h"
 #endif
 	namespace CipresNative 
 	{

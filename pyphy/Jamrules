@@ -29,7 +29,7 @@ path-global BOOST_ROOT : $(BOOST_ROOT) ;
 # refer to it by name.
 #
 project boost : $(BOOST_ROOT) ;
-project pyphy : $(PYPHY_ROOT) ;
+project phypy : $(PHYPY_ROOT) ;
 #project cipres : $(CIPRES_LIB_ROOT)/C++ ;
 
 # Change this setting to have all your built products placed under a
@@ -42,7 +42,7 @@ variant common :
     #<include>$(CIPRES_LIB_ROOT)/C++
     <include>$(PHYCAS_ROOT)
     <include>$(BOOST_ROOT)
-    <include>$(PHYCAS_ROOT)/pyphy/src
+    <include>$(PHYCAS_ROOT)/phypy/src
     <darwin><include>$(HOME)/site-packages
     <vtable-thunks>default
     <struct-alignment>auto
@@ -57,9 +57,9 @@ variant common :
     <instruction-set>default
     <profiling>off
     <object-model>default
-    <darwin><*><cxxflags>"-include pyphy/src/pol_pyphy_config.h"
-    <gcc><*><cxxflags>"-include pyphy/src/pol_pyphy_config.h"
-    <vc-7_1><*><cxxflags>"-FI pyphy\\src\\pol_pyphy_config.h"
+    <darwin><*><cxxflags>"-include phypy/src/pol_phypy_config.h"
+    <gcc><*><cxxflags>"-include phypy/src/pol_phypy_config.h"
+    <vc-7_1><*><cxxflags>"-FI phypy\\src\\pol_phypy_config.h"
     # <vc-7_1><*><cxxflags>"-showIncludes"
     <darwin><*><cxxflags>-Wmost
     <darwin><*><cxxflags>-Wno-four-char-constants

@@ -1,8 +1,8 @@
 #ifndef NCL_NXS_AUTO_COMMAND_H
 #define NCL_NXS_AUTO_COMMAND_H
-#include "pyphy/src/ncl/nxs_defs.hpp"
-#include "pyphy/src/ncl/command/nxs_command_decl.hpp"
-#include "pyphy/src/ncl/command/nxs_command.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/command/nxs_command_decl.hpp"
+#include "phypy/src/ncl/command/nxs_command.hpp"
 
 /*--------------------------------------------------------------------------------------------------------------------------
 |	NxsManualCommand and NxsAutoCommand both demand a callable object that takes void and returns a bool to serve as 

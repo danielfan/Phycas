@@ -48,7 +48,7 @@ typedef boost::shared_ptr<Lot> LotShPtr;
 
 } // namespace phycas
 
-#include "pyphy/src/basic_lot.inl"
+#include "phypy/src/basic_lot.inl"
 
 #endif
 

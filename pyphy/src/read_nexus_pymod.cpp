@@ -10,7 +10,7 @@
 		cipres_services/cipres_nexus_reader.cpp
 		ncl/characters/nxs_charcters_block.cpp
 		ncl/command/nxs_command_output.cpp 
-	lines from the pyphy/read_nexus/Jamfile
+	lines from the phypy/read_nexus/Jamfile
 */
 #if defined(__APPLE__) && defined(__GNUC__) &&  (__GNUC__ == 3) && (__GNUC_MINOR__ == 3)	//17-May-2006
 #	define PYPHY_INCLUDE_TO_AVOID_LINK_ERROR
@@ -18,25 +18,25 @@
 
 #if defined(PYPHY_INCLUDE_TO_AVOID_LINK_ERROR)
 #	warning using macro to include cipres_nexus_reader.cpp TEMPORARY HACK!
-#	include "pyphy/src/cipres/cipres_nexus_reader.cpp"
+#	include "phypy/src/cipres/cipres_nexus_reader.cpp"
 #	warning using macro to include nxs_charcters_block.cpp TEMPORARY HACK!
-#	include "pyphy/src/oldphycas/nxs_characters_block.cpp"
+#	include "phypy/src/oldphycas/nxs_characters_block.cpp"
 #	warning using macro to include nxs_command_output.cpp TEMPORARY HACK!
-#	include "pyphy/src/ncl/command/nxs_command_output.cpp"
+#	include "phypy/src/ncl/command/nxs_command_output.cpp"
 #else
-#	include "pyphy/src/cipres/cipres_nexus_reader.hpp"
+#	include "phypy/src/cipres/cipres_nexus_reader.hpp"
 #endif
-#include "pyphy/src/oldphycas/characters_manager.hpp"
-#include "pyphy/src/cipres/CipresDataMatrixHelper.h"
-#include "pyphy/src/ncl/nxs_exception.hpp"
-#include "pyphy/src/ncl/trees/full_tree_description.hpp"
-#include "pyphy/src/ncl/misc/nxs_index_set.hpp"
+#include "phypy/src/oldphycas/characters_manager.hpp"
+#include "phypy/src/cipres/CipresDataMatrixHelper.h"
+#include "phypy/src/ncl/nxs_exception.hpp"
+#include "phypy/src/ncl/trees/full_tree_description.hpp"
+#include "phypy/src/ncl/misc/nxs_index_set.hpp"
 
 // These next three lines required, otherwise get link error "unresolved external symbol _PyArrayHandle" 
 // (at least in VC7)
 #define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
 #include <boost/python/numeric.hpp>
-#include "pyphy/src/thirdparty/num_util.h"
+#include "phypy/src/thirdparty/num_util.h"
 
 #include <boost/python.hpp>
 

@@ -1,8 +1,8 @@
 //#include "phycas/force_include.h"
 #include <boost/bind.hpp>
-#include "pyphy/src/ncl/nxs_defs.hpp"
-#include "pyphy/src/ncl/taxa/base_taxa_manager.hpp"
-#include "pyphy/src/ncl/misc/nxs_copy.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/taxa/base_taxa_manager.hpp"
+#include "phypy/src/ncl/misc/nxs_copy.hpp"
 using std::string;
 BaseTaxaManager::~BaseTaxaManager()	
 	{

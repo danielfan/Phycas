@@ -1,8 +1,8 @@
 // This file is part of Oak, a program for likelihood and bayesian
 #ifndef NCL_NXS_CMD_OPTION_PRIMITIVES_H
 #define NCL_NXS_CMD_OPTION_PRIMITIVES_H
-#include "pyphy/src/ncl/nxs_defs.hpp"
-#include "pyphy/src/ncl/command/nxs_cmd_param.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/command/nxs_cmd_param.hpp"
 #include <boost/function.hpp>
 
 /*----------------------------------------------------------------------------------------------------------------------

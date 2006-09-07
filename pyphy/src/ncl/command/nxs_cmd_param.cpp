@@ -1,8 +1,8 @@
 //#include "phycas/force_include.h"
-#include "pyphy/src/ncl/nxs_defs.hpp"
-#include "pyphy/src/ncl/command/nxs_cmd_param.hpp"
-#include "pyphy/src/ncl/command/nxs_command.hpp"
-#include "pyphy/src/ncl/misc/utilities.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/command/nxs_cmd_param.hpp"
+#include "phypy/src/ncl/command/nxs_command.hpp"
+#include "phypy/src/ncl/misc/utilities.hpp"
 using std::string;
 
 bool NxsCmdOption::IsAvailable() const

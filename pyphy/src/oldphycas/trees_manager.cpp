@@ -1,9 +1,9 @@
 //#include "phycas/force_include.h"
-#include "pyphy/src/oldphycas/taxa_manager.hpp"
-#include "pyphy/src/oldphycas/trees_manager.hpp"
-#include "pyphy/src/oldphycas/tree.hpp"
-#include "pyphy/src/ncl/output/nxs_output.hpp"
-#include "pyphy/src/oldphycas/cleartrees_settings.hpp"
+#include "phypy/src/oldphycas/taxa_manager.hpp"
+#include "phypy/src/oldphycas/trees_manager.hpp"
+#include "phypy/src/oldphycas/tree.hpp"
+#include "phypy/src/ncl/output/nxs_output.hpp"
+#include "phypy/src/oldphycas/cleartrees_settings.hpp"
 using ncl::flush;
 
 #undef CONSTRUCT_TREES_ON_INPUT

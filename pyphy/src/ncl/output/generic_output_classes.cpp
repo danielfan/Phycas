@@ -1,6 +1,6 @@
 //#include "phycas/force_include.h"
-#include "pyphy/src/ncl/output/generic_output_classes.hpp"
-#include "pyphy/src/ncl/output/temp_basic_output_operators.hpp"
+#include "phypy/src/ncl/output/generic_output_classes.hpp"
+#include "phypy/src/ncl/output/temp_basic_output_operators.hpp"
 #if defined(MTH_PHYCAS_MODULARIZING_OUTPUT) && MTH_PHYCAS_MODULARIZING_OUTPUT && 0
 using std::stack;
 

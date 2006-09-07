@@ -1,9 +1,9 @@
 #ifndef NCL_NXS_CMD_OPTION_H
 #define NCL_NXS_CMD_OPTION_H
-#include "pyphy/src/ncl/nxs_defs.hpp"
-#include "pyphy/src/ncl/nxs_token.hpp"
-#include "pyphy/src/ncl/command/nxs_command_decl.hpp"
-#include "pyphy/src/ncl/misc/nxs_test.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/nxs_token.hpp"
+#include "phypy/src/ncl/command/nxs_command_decl.hpp"
+#include "phypy/src/ncl/misc/nxs_test.hpp"
 
 std::string UserLevelTooLowString(int requiredUserLevel);
 /*--------------------------------------------------------------------------------------------------------------------------

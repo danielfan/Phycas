@@ -1,10 +1,10 @@
 #include <cmath>
 #include <iostream>
-#include "pyphy/src/likelihood_models.hpp"
-#include "pyphy/src/cipres/AllocateMatrix.hpp"
+#include "phypy/src/likelihood_models.hpp"
+#include "phypy/src/cipres/AllocateMatrix.hpp"
 #if defined(PYTHON_ONLY)
 #	include <boost/python/numeric.hpp>
-#	include "pyphy/src/thirdparty/num_util.h"
+#	include "phypy/src/thirdparty/num_util.h"
 #endif
 using std::cout;
 using namespace phycas;

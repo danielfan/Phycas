@@ -1,13 +1,13 @@
 //#include "phycas/force_include.h"
-#include "pyphy/src/ncl/nxs_defs.hpp"
-#include "pyphy/src/ncl/taxa/nxs_taxa_manager.hpp"	//@POL Mark, moved this line above line that includes nxscharactersmanager.h
-#include "pyphy/src/ncl/characters/nxs_characters_manager.hpp"
-#include "pyphy/src/ncl/characters/nxs_characters_block.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/taxa/nxs_taxa_manager.hpp"	//@POL Mark, moved this line above line that includes nxscharactersmanager.h
+#include "phypy/src/ncl/characters/nxs_characters_manager.hpp"
+#include "phypy/src/ncl/characters/nxs_characters_block.hpp"
 #include <boost/bind.hpp>
-#include "pyphy/src/ncl/misc/eliminated_index_slider.hpp"
-#include "pyphy/src/ncl/characters/stored_matrix.hpp"	
-#include "pyphy/src/ncl/command/nxs_set_cmd_param.hpp"
-#include "pyphy/src/ncl/output/nxs_output.hpp"
+#include "phypy/src/ncl/misc/eliminated_index_slider.hpp"
+#include "phypy/src/ncl/characters/stored_matrix.hpp"	
+#include "phypy/src/ncl/command/nxs_set_cmd_param.hpp"
+#include "phypy/src/ncl/output/nxs_output.hpp"
 using std::string;
 
 NxsIndexSetCmdOption *InstantiateCharSetOption(const string &n, NxsIndexSet *manip, const string &d, NxsCharactersManager *tmPtr, bool  persist, CmdPermissionLevel pLevel)

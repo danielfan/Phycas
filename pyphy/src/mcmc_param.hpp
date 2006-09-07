@@ -5,7 +5,7 @@
 #include <boost/shared_ptr.hpp>						// for boost::shared_ptr
 #include <boost/weak_ptr.hpp>						// for boost::weak_ptr
 #include <boost/enable_shared_from_this.hpp>		// for boost::enable_shared_from_this
-#include "pyphy/src/mcmc_updater.hpp"				// for MCMCUpdater base class
+#include "phypy/src/mcmc_updater.hpp"				// for MCMCUpdater base class
 
 //struct CIPRES_Matrix;
 
@@ -247,6 +247,6 @@ class EdgeLenParam : public EdgeLenMasterParam
 
 } // namespace phycas
 
-#include "pyphy/src/mcmc_param.inl"
+#include "phypy/src/mcmc_param.inl"
 
 #endif

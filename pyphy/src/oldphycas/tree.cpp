@@ -2,16 +2,16 @@
 	
 //#include "phycas/force_include.h"
 #include <boost/function.hpp>
-#include "pyphy/src/oldphycas/taxa_manager.hpp"
-#include "pyphy/src/oldphycas/tree.hpp"
-#include "pyphy/src/oldphycas/tree_node.hpp"
-#include "pyphy/src/oldphycas/tree_manip.hpp"
-#include "pyphy/src/oldphycas/tree_inl.hpp"
-#include "pyphy/src/ncl/nxs_token.hpp"
-#include "pyphy/src/ncl/taxa/nxs_taxa_manager.hpp"
-#include "pyphy/src/ncl/trees/full_tree_description.hpp"
-#include "pyphy/src/ncl/output/nxs_output.hpp"
-#include "pyphy/src/ncl/misc/string_extensions.hpp"
+#include "phypy/src/oldphycas/taxa_manager.hpp"
+#include "phypy/src/oldphycas/tree.hpp"
+#include "phypy/src/oldphycas/tree_node.hpp"
+#include "phypy/src/oldphycas/tree_manip.hpp"
+#include "phypy/src/oldphycas/tree_inl.hpp"
+#include "phypy/src/ncl/nxs_token.hpp"
+#include "phypy/src/ncl/taxa/nxs_taxa_manager.hpp"
+#include "phypy/src/ncl/trees/full_tree_description.hpp"
+#include "phypy/src/ncl/output/nxs_output.hpp"
+#include "phypy/src/ncl/misc/string_extensions.hpp"
 using std::set;
 using std::ostream;
 using std::string;

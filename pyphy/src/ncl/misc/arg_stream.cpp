@@ -1,6 +1,6 @@
 //#include "phycas/force_include.h"
-#include "pyphy/src/ncl/misc/arg_stream.hpp"
-#include "pyphy/src/ncl/misc/string_extensions.hpp"
+#include "phypy/src/ncl/misc/arg_stream.hpp"
+#include "phypy/src/ncl/misc/string_extensions.hpp"
 #include <ctype.h>
 using std::string;
 ArgStream::VecToken ArgStream::Split(const string &s) const

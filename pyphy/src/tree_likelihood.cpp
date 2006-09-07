@@ -1,17 +1,17 @@
 //#include "phycas/force_include.h"
-#include "pyphy/src/cipres/CipresDataMatrixHelper.h"
-#include "pyphy/src/basic_tree.hpp"
-#include "pyphy/src/likelihood_models.hpp"
-#include "pyphy/src/tree_likelihood.hpp"
-#include "pyphy/src/tip_data.hpp"
-#include "pyphy/src/internal_data.hpp"
-#include "pyphy/src/sim_data.hpp"
-#include "pyphy/src/pyphy_string.hpp"
-#include "pyphy/src/basic_lot.hpp"
+#include "phypy/src/cipres/CipresDataMatrixHelper.h"
+#include "phypy/src/basic_tree.hpp"
+#include "phypy/src/likelihood_models.hpp"
+#include "phypy/src/tree_likelihood.hpp"
+#include "phypy/src/tip_data.hpp"
+#include "phypy/src/internal_data.hpp"
+#include "phypy/src/sim_data.hpp"
+#include "phypy/src/pyphy_string.hpp"
+#include "phypy/src/basic_lot.hpp"
 #include <boost/bind.hpp>
 #include <boost/format.hpp>
 #include <numeric>
-#include "pyphy/src/edge_iterators.hpp"
+#include "phypy/src/edge_iterators.hpp"
 
 namespace phycas
 {

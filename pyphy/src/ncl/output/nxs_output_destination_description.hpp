@@ -1,6 +1,6 @@
 #if ! defined(NCL_NXS_OUTPUT_DESTINATION_DESCRIPTION_HPP)
 #define NCL_NXS_OUTPUT_DESTINATION_DESCRIPTION_HPP
-#include "pyphy/src/ncl/misc/nxs_file_path.hpp"
+#include "phypy/src/ncl/misc/nxs_file_path.hpp"
 
 class NxsOutputDestinationDescription
 	{

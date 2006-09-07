@@ -1,13 +1,13 @@
 //#include "phycas/force_include.h"
 #include <list>
 #include <ctype.h> 
-#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
 #if defined(NCL_USE_NXS_CONSOLE_OUTPUT)
-#	include "pyphy/src/ncl/misc/algorithm_extensions.hpp"
-#	include "pyphy/src/ncl/nxs_token.hpp"
-#	include "pyphy/src/ncl/nxs_basic_manager.hpp"
-#	include "pyphy/src/ncl/misc/nxs_index_set.hpp"
-#	include "pyphy/src/ncl/output/nxs_output_stream.hpp"
+#	include "phypy/src/ncl/misc/algorithm_extensions.hpp"
+#	include "phypy/src/ncl/nxs_token.hpp"
+#	include "phypy/src/ncl/nxs_basic_manager.hpp"
+#	include "phypy/src/ncl/misc/nxs_index_set.hpp"
+#	include "phypy/src/ncl/output/nxs_output_stream.hpp"
 	using ncl::flush;
 
 	void NxsStdOutputStream::DisplaySet(const NxsIndexSet &s, bool useNumbers, const NxsIndexInfo &indInfo)

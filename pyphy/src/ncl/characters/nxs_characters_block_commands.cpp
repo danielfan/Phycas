@@ -1,14 +1,14 @@
 //#include "phycas/force_include.h"
-#include "pyphy/src/ncl/nxs_defs.hpp"
-#include "pyphy/src/ncl/characters/nxs_characters_block.hpp"
-#include "pyphy/src/ncl/characters/nxs_characters_manager.hpp"
-#include "pyphy/src/ncl/command/nxs_auto_command.hpp"
-#include "pyphy/src/ncl/command/nxs_primitive_cmd_param.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/characters/nxs_characters_block.hpp"
+#include "phypy/src/ncl/characters/nxs_characters_manager.hpp"
+#include "phypy/src/ncl/command/nxs_auto_command.hpp"
+#include "phypy/src/ncl/command/nxs_primitive_cmd_param.hpp"
 #include <boost/bind.hpp>
-#include "pyphy/src/ncl/command/nxs_choice_cmd_param.hpp"
-#include "pyphy/src/ncl/misc/nxs_test_impl.hpp"
-#include "pyphy/src/ncl/command/nxs_set_cmd_param.hpp"
-#include "pyphy/src/ncl/characters/nxs_characters_block_cmd_settings.hpp"
+#include "phypy/src/ncl/command/nxs_choice_cmd_param.hpp"
+#include "phypy/src/ncl/misc/nxs_test_impl.hpp"
+#include "phypy/src/ncl/command/nxs_set_cmd_param.hpp"
+#include "phypy/src/ncl/characters/nxs_characters_block_cmd_settings.hpp"
 using std::string;
 
 NxsCommandShPtr NxsAlternativeTaxaBlock::GetTaxLabelsCommand()

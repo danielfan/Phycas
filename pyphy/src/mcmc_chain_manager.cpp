@@ -1,8 +1,8 @@
 //#include "phycas/force_include.h"
-#include "pyphy/src/likelihood_models.hpp"
-#include "pyphy/src/mcmc_chain_manager.hpp"
-#include "pyphy/src/xlikelihood.hpp"
-#include "pyphy/src/basic_tree.hpp"
+#include "phypy/src/likelihood_models.hpp"
+#include "phypy/src/mcmc_chain_manager.hpp"
+#include "phypy/src/xlikelihood.hpp"
+#include "phypy/src/basic_tree.hpp"
 
 namespace phycas
 {

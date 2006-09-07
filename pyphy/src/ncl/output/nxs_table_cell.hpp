@@ -1,7 +1,7 @@
 #ifndef NCL_NXSTABLECELL_H
 #define NCL_NXSTABLECELL_H
 
-#include "pyphy/src/ncl/output/nxs_ratio.hpp"
+#include "phypy/src/ncl/output/nxs_ratio.hpp"
 // The macro below specifies the upper limit for the width of any column. Columns wider than this value will be wrapped.
 // Used to create a STATIC_DATA character array (cell_workspace) that can be used as a workspace to use in deciding where to 
 // wrap the contents of a cell. This should be set to a value large enough that only string cell types could exceed it 

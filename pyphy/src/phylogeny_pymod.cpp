@@ -6,22 +6,22 @@
 
 //#include "phycas/force_include.h"
 #if defined(POL_PHYCAS)
-#	include "pyphy/src/basic_lot.hpp"
+#	include "phypy/src/basic_lot.hpp"
 #else
 #	include "phycas/rand/lot.hpp"
 #endif
-#include "pyphy/src/probability_distribution.hpp"
-#include "pyphy/src/basic_tree.hpp"
-#include "pyphy/src/tree_manip.hpp"
+#include "phypy/src/probability_distribution.hpp"
+#include "phypy/src/basic_tree.hpp"
+#include "phypy/src/tree_manip.hpp"
 //#include "ncl/misc/string_extensions.hpp"
 //#include "ncl/nxs_exception.hpp"
-#include "pyphy/src/cond_likelihood.hpp"
-#include "pyphy/src/cond_likelihood_storage.hpp"
-#include "pyphy/src/tip_data.hpp"
-#include "pyphy/src/internal_data.hpp"
+#include "phypy/src/cond_likelihood.hpp"
+#include "phypy/src/cond_likelihood_storage.hpp"
+#include "phypy/src/tip_data.hpp"
+#include "phypy/src/internal_data.hpp"
 #include <boost/python.hpp>
 
-#include "pyphy/src/xphylogeny.hpp"
+#include "phypy/src/xphylogeny.hpp"
 
 using namespace boost::python;
 using namespace phycas;

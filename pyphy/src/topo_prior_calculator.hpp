@@ -74,6 +74,6 @@ typedef boost::shared_ptr<TopoPriorCalculator> TopoPriorCalculatorShPtr;
 
 }	// namespace phycas
 
-#include "pyphy/src/topo_prior_calculator.inl"
+#include "phypy/src/topo_prior_calculator.inl"
 
 #endif

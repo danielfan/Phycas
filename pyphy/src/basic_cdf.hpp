@@ -21,7 +21,7 @@ namespace phycas
 |
 |	This file contains the minimum functionality needed for Phycas and does not attempt to wrap all the functions in the
 |	original DCDFLIB library. The original source code and documentation for DCDFLIB is in the directory 
-|	pyphy/prob_dist/dcdflib.
+|	phypy/prob_dist/dcdflib.
 */
 class CDF
 	{

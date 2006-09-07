@@ -5,9 +5,9 @@
 #include <boost/shared_ptr.hpp>						// for boost::shared_ptr
 #include <boost/weak_ptr.hpp>						// for boost::weak_ptr
 #include <boost/enable_shared_from_this.hpp>		// for boost::enable_shared_from_this
-#include "pyphy/src/tree_manip.hpp"			// for TreeManip
-#include "pyphy/src/slice_sampler.hpp"
-#include "pyphy/src/probability_distribution.hpp"
+#include "phypy/src/tree_manip.hpp"			// for TreeManip
+#include "phypy/src/slice_sampler.hpp"
+#include "phypy/src/probability_distribution.hpp"
 
 namespace phycas
 {
@@ -174,6 +174,6 @@ typedef MCMCUpdaterVect::iterator			MCMCUpdaterIter;
 
 } // namespace phycas
 
-#include "pyphy/src/mcmc_updater.inl"
+#include "phypy/src/mcmc_updater.inl"
 
 #endif

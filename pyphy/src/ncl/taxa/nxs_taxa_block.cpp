@@ -1,10 +1,10 @@
 //#include "phycas/force_include.h"
-#include "pyphy/src/ncl/nxs_defs.hpp"
-#include "pyphy/src/ncl/taxa/nxs_taxa_block.hpp"
-#include "pyphy/src/ncl/taxa/nxs_taxa_manager.hpp"
-#include "pyphy/src/ncl/command/nxs_auto_command.hpp"
-#include "pyphy/src/ncl/nxs_exception.hpp"
-#include "pyphy/src/ncl/output/nxs_output.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/taxa/nxs_taxa_block.hpp"
+#include "phypy/src/ncl/taxa/nxs_taxa_manager.hpp"
+#include "phypy/src/ncl/command/nxs_auto_command.hpp"
+#include "phypy/src/ncl/nxs_exception.hpp"
+#include "phypy/src/ncl/output/nxs_output.hpp"
 using std::string;
 
 

@@ -1,7 +1,7 @@
 /*########## taxset_settings.hpp ##########*/
 #if !defined (PHYC_TAXSET_SETTINGS_HPP)
 #define PHYC_TAXSET_SETTINGS_HPP
-#include "pyphy/src/ncl/misc/nxs_index_set.hpp"
+#include "phypy/src/ncl/misc/nxs_index_set.hpp"
 class TaxSetSettings
 	{
 	public:

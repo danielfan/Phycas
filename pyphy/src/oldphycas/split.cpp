@@ -1,11 +1,11 @@
 //#include "phycas/force_include.h"
 #include <cmath>
-#include "pyphy/src/ncl/misc/nxs_index_set.hpp"
-#include "pyphy/src/ncl/taxa/nxs_taxa_manager.hpp"
-#include "pyphy/src/oldphycas/split.hpp"
+#include "phypy/src/ncl/misc/nxs_index_set.hpp"
+#include "phypy/src/ncl/taxa/nxs_taxa_manager.hpp"
+#include "phypy/src/oldphycas/split.hpp"
 #if defined(POL_PHYCAS)
-#	include "pyphy/src/basic_cdf.hpp"
-#	include "pyphy/src/basic_lot.hpp"
+#	include "phypy/src/basic_cdf.hpp"
+#	include "phypy/src/basic_lot.hpp"
 #else
 #	include "phycas/rand/lot.hpp"
 #endif

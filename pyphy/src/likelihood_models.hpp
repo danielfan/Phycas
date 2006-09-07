@@ -1,17 +1,17 @@
 #if ! defined(LIKELIHOOD_MODELS_HPP)
 #define LIKELIHOOD_MODELS_HPP
 
-#include "pyphy/src/states_patterns.hpp"
+#include "phypy/src/states_patterns.hpp"
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <vector>
 #include <numeric>
 #include <algorithm>
-#include "pyphy/src/xlikelihood.hpp"
-#include "pyphy/src/mcmc_param.hpp"
-#include "pyphy/src/basic_cdf.hpp"
-#include "pyphy/src/q_matrix.hpp"
+#include "phypy/src/xlikelihood.hpp"
+#include "phypy/src/mcmc_param.hpp"
+#include "phypy/src/basic_cdf.hpp"
+#include "phypy/src/q_matrix.hpp"
 
 namespace phycas{
 	
@@ -262,6 +262,6 @@ typedef boost::shared_ptr<GTR> GTRShPtr;
 
 } // namespace phycas
 
-#include "pyphy/src/likelihood_models.inl"
+#include "phypy/src/likelihood_models.inl"
 
 #endif

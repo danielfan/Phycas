@@ -1,13 +1,13 @@
 //#include "phycas/force_include.h"
-#include "pyphy/src/cipres/CipresDataMatrixHelper.h"
-#include "pyphy/src/probability_distribution.hpp"
-#include "pyphy/src/likelihood_models.hpp"
-#include "pyphy/src/tree_likelihood.hpp"
-#include "pyphy/src/xlikelihood.hpp"
-#include "pyphy/src/mcmc_chain_manager.hpp"
-#include "pyphy/src/ncat_move.hpp"
-#include "pyphy/src/basic_tree.hpp"
-#include "pyphy/src/tree_manip.hpp"
+#include "phypy/src/cipres/CipresDataMatrixHelper.h"
+#include "phypy/src/probability_distribution.hpp"
+#include "phypy/src/likelihood_models.hpp"
+#include "phypy/src/tree_likelihood.hpp"
+#include "phypy/src/xlikelihood.hpp"
+#include "phypy/src/mcmc_chain_manager.hpp"
+#include "phypy/src/ncat_move.hpp"
+#include "phypy/src/basic_tree.hpp"
+#include "phypy/src/tree_manip.hpp"
 
 //#define SHOW_DEBUGGING_OUTPUT
 

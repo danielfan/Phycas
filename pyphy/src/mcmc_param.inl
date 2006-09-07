@@ -5,7 +5,7 @@
 #include <numeric>										// for std::accumulate
 #include <boost/lambda/lambda.hpp>						// for boost::lambda::_1, boost::lambda::_2
 #include <boost/lambda/bind.hpp>						// for boost::lambda::bind
-#include "pyphy/src/basic_tree.hpp"				// for Tree::begin() and Tree::end()
+#include "phypy/src/basic_tree.hpp"				// for Tree::begin() and Tree::end()
 
 namespace phycas
 {

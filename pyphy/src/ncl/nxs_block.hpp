@@ -1,7 +1,7 @@
 #ifndef NCL_NXSBLOCK_H
 #define NCL_NXSBLOCK_H
 
-#include "pyphy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
 
 #undef NCL_NXSBLOCK_SILENTLY_SKIPS_CMDS
 
@@ -19,7 +19,7 @@
 //	All blocks now have space for a title
 //
 
-#include "pyphy/src/ncl/command/nxs_command_manager.hpp"
+#include "phypy/src/ncl/command/nxs_command_manager.hpp"
 
 class NxsReader;
 

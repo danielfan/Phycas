@@ -1,7 +1,7 @@
 //#include "phycas/force_include.h"
-#include "pyphy/src/probability_distribution.hpp"
-#include "pyphy/src/oldphycas/distribution_description.hpp"
-#include "pyphy/src/ncl/nxs_exception.hpp"
+#include "phypy/src/probability_distribution.hpp"
+#include "phypy/src/oldphycas/distribution_description.hpp"
+#include "phypy/src/ncl/nxs_exception.hpp"
 using std::string;
 
 DistributionDescription::DistributionDescription()

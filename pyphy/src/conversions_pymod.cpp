@@ -5,13 +5,13 @@
 #define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
 
 //#include "phycas/force_include.h"
-#include "pyphy/src/basic_tree.hpp"
+#include "phypy/src/basic_tree.hpp"
 #include <boost/python.hpp>
 //#include <boost/python/tuple.hpp>
 //#include <boost/python/numeric.hpp>
-#include "pyphy/src/thirdparty/num_util.h"
-#include "pyphy/src/thirdparty/pyconversions.h"	// from HippoDraw
-#include "pyphy/src/cipres/ConfigDependentHeaders.h"	// int8_t typedef //POL 18Mar2006
+#include "phypy/src/thirdparty/num_util.h"
+#include "phypy/src/thirdparty/pyconversions.h"	// from HippoDraw
+#include "phypy/src/cipres/ConfigDependentHeaders.h"	// int8_t typedef //POL 18Mar2006
 using namespace boost::python;
 
 BOOST_PYTHON_MODULE(_Conversions)

@@ -1,6 +1,6 @@
 #if !defined(PHYCAS_TREES_TREE_INL_H)
-#include "pyphy/src/oldphycas/tree.hpp"
-#include "pyphy/src/oldphycas/tree_node.hpp"
+#include "phypy/src/oldphycas/tree.hpp"
+#include "phypy/src/oldphycas/tree_node.hpp"
 
 // This file contains Tree member functions that should be inlined, but which (at least on gcc3.4) require
 // 	the include "tree/tree_node.hpp" statement (in previous versions of gcc tree node.hpp would have to be

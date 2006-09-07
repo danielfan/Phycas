@@ -1,14 +1,14 @@
 #include <algorithm>
 #include <iostream>
-#include "pyphy/VC/test/test.hpp"
-#include "pyphy/src/cipres/CipresDataMatrixHelper.h"
-#include "pyphy/src/cipres/cipres_nexus_reader.hpp"
-#include "pyphy/src/tree_likelihood.hpp"
-#include "pyphy/src/likelihood_models.hpp"
-#include "pyphy/src/larget_simon_move.hpp"
-#include "pyphy/src/mcmc_chain_manager.hpp"
-#include "pyphy/src/probability_distribution.hpp"
-#include "pyphy/src/oldphycas/characters_manager.hpp"
+#include "phypy/VC/test/test.hpp"
+#include "phypy/src/cipres/CipresDataMatrixHelper.h"
+#include "phypy/src/cipres/cipres_nexus_reader.hpp"
+#include "phypy/src/tree_likelihood.hpp"
+#include "phypy/src/likelihood_models.hpp"
+#include "phypy/src/larget_simon_move.hpp"
+#include "phypy/src/mcmc_chain_manager.hpp"
+#include "phypy/src/probability_distribution.hpp"
+#include "phypy/src/oldphycas/characters_manager.hpp"
 
 using namespace phycas;
 
@@ -21,8 +21,8 @@ int main()
 	{
 	// Read the data matrix
 	CipresNexusReader reader = CipresNexusReader(-1);
-	//std::string file_path = "../../pyphy/green.nex";
-	std::string file_path = "../../pyphy/nyldna4.nex";
+	//std::string file_path = "../../phypy/green.nex";
+	std::string file_path = "../../phypy/nyldna4.nex";
 	reader.ReadFilePath(file_path);
 	std::vector<std::string> taxon_names = reader.GetTaxLabels();
 	unsigned ntax = (unsigned)taxon_names.size();

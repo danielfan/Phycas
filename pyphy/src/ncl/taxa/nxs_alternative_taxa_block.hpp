@@ -1,10 +1,10 @@
 #ifndef NCL_NXSALTERNATIVETAXABLOCK_H
 #define NCL_NXSALTERNATIVETAXABLOCK_H
 
-#include "pyphy/src/ncl/nxs_defs.hpp"
-#include "pyphy/src/ncl/command/nxs_command_decl.hpp"
-#include "pyphy/src/ncl/nxs_basic_manager.hpp"
-#include "pyphy/src/ncl/taxa/nxs_taxa_label_reader.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/command/nxs_command_decl.hpp"
+#include "phypy/src/ncl/nxs_basic_manager.hpp"
+#include "phypy/src/ncl/taxa/nxs_taxa_label_reader.hpp"
 
 class NxsDimensionsSettings
 	{

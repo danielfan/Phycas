@@ -4,8 +4,8 @@
 #include <string>
 #include <stack>
 #include "boost/shared_ptr.hpp"
-#include "pyphy/src/ncl/nxs_reader.hpp"
-#include "pyphy/src/cipres/CipresNativeC.h"
+#include "phypy/src/ncl/nxs_reader.hpp"
+#include "phypy/src/cipres/CipresNativeC.h"
 
 class PhoTaxaManager;
 class PhoTreesManager;

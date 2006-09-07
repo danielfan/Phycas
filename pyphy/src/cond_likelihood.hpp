@@ -50,6 +50,6 @@ typedef boost::shared_ptr<const CondLikelihood> ConstCondLikelihoodShPtr;
 
 } //namespace phycas
 
-#include "pyphy/src/cond_likelihood.inl"
+#include "phypy/src/cond_likelihood.inl"
 
 #endif

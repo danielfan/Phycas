@@ -1,8 +1,8 @@
 //#include "phycas/force_include.h"
-#include "pyphy/src/ncl/nxs_defs.hpp"
-#include "pyphy/src/ncl/taxa/nxs_taxa_manager.hpp"
-#include "pyphy/src/ncl/trees/nxs_trees_manager.hpp"
-#include "pyphy/src/ncl/trees/nxs_tree_listener.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/taxa/nxs_taxa_manager.hpp"
+#include "phypy/src/ncl/trees/nxs_trees_manager.hpp"
+#include "phypy/src/ncl/trees/nxs_tree_listener.hpp"
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Stores alias to the NxsTreeListener and calls the NxsTreeListener::AddListener

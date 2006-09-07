@@ -1,12 +1,12 @@
 //#include "phycas/force_include.h"
-#include "pyphy/src/ncl/nxs_defs.hpp"
-#include "pyphy/src/ncl/taxa/nxs_taxa_manager.hpp"
-#include "pyphy/src/ncl/taxa/nxs_taxa_block.hpp"
-#include "pyphy/src/ncl/nxs_exception.hpp"
-#include "pyphy/src/ncl/misc/algorithm_extensions.hpp"
-#include "pyphy/src/ncl/misc/nxs_index_set_output.hpp"
-#include "pyphy/src/ncl/command/nxs_set_cmd_param.hpp"
-#include "pyphy/src/ncl/output/nxs_output.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/taxa/nxs_taxa_manager.hpp"
+#include "phypy/src/ncl/taxa/nxs_taxa_block.hpp"
+#include "phypy/src/ncl/nxs_exception.hpp"
+#include "phypy/src/ncl/misc/algorithm_extensions.hpp"
+#include "phypy/src/ncl/misc/nxs_index_set_output.hpp"
+#include "phypy/src/ncl/command/nxs_set_cmd_param.hpp"
+#include "phypy/src/ncl/output/nxs_output.hpp"
 using std::string;
 NxsTaxaManager::NxsTaxaManager()
 	:reservedTaxAndSetNames(SplitString("ALL|INCLUDED|ACTIVE|REMAINDER", '|')),

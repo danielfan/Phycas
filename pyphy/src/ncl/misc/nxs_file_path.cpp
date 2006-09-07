@@ -1,11 +1,11 @@
 //#include "phycas/force_include.h"
 #include <iostream>
 #include <fstream>
-#include "pyphy/src/ncl/nxs_defs.hpp"
-#include "pyphy/src/ncl/misc/nxs_file_path.hpp"
-#include "pyphy/src/ncl/misc/algorithm_extensions.hpp"
-#include "pyphy/src/ncl/nxs_exception.hpp"
-#include "pyphy/src/ncl/output/nxs_output.hpp"
+#include "phypy/src/ncl/nxs_defs.hpp"
+#include "phypy/src/ncl/misc/nxs_file_path.hpp"
+#include "phypy/src/ncl/misc/algorithm_extensions.hpp"
+#include "phypy/src/ncl/nxs_exception.hpp"
+#include "phypy/src/ncl/output/nxs_output.hpp"
 #if defined (NCL_SUPPORT_DIR_LIST)
 #   include <dirent.h>
 #endif
