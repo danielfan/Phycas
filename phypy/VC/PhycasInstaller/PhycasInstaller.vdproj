@@ -2103,7 +2103,7 @@
                     "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_DB7FD04B61A34C92B6AB542B298C816A"
                     {
                     "Name" = "8:phypy"
-                    "AlwaysCreate" = "11:FALSE"
+                    "AlwaysCreate" = "11:TRUE"
                     "Condition" = "8:"
                     "Transitive" = "11:FALSE"
                     "Property" = "8:_820F053C9B4D421396483E741479E83F"
@@ -2406,23 +2406,23 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:PhyPy"
+        "ProductName" = "8:Phycas"
         "ProductCode" = "8:{D6E6EF34-D36C-4F32-A514-03362876E327}"
-        "PackageCode" = "8:{F414FCC1-1A93-48CF-BA1C-562CAB477A02}"
+        "PackageCode" = "8:{A65CE0F0-8132-421D-84F2-709B6F2AB164}"
         "UpgradeCode" = "8:{53EFB159-6589-4304-AFA0-69CF5DC4EB94}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "ProductVersion" = "8:1.0.0"
-        "Manufacturer" = "8:phypy.org"
+        "Manufacturer" = "8:Phycas"
         "ARPHELPTELEPHONE" = "8:"
-        "ARPHELPLINK" = "8:http://www.phypy.org/"
-        "Title" = "8:PhyPy (including Phycas)"
+        "ARPHELPLINK" = "8:http://www.phycas.org/"
+        "Title" = "8:Phycas"
         "Subject" = "8:"
         "ARPCONTACT" = "8:Holder, M. T., Lewis, P. O. and D. L. Swofford"
         "Keywords" = "8:"
-        "ARPCOMMENTS" = "8:Python library for Phylogenetic Analysis"
-        "ARPURLINFOABOUT" = "8:"
+        "ARPCOMMENTS" = "8:Python Software for Phylogenetic Analysis"
+        "ARPURLINFOABOUT" = "8:www.phycas.org"
         "ARPPRODUCTICON" = "8:"
         "ARPIconIndex" = "3:0"
         "SearchPath" = "8:"
@@ -2486,6 +2486,28 @@
                             "Transitive" = "11:FALSE"
                                 "Keys"
                                 {
+                                    "{6A471EEF-D31B-40F8-BCF6-C9E8EC783F36}:_E6A7D452E9D24AFA9B8D0E6B5648B800"
+                                    {
+                                    "Name" = "8:Version"
+                                    "Condition" = "8:"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "DeleteAtUninstall" = "11:FALSE"
+                                    "Transitive" = "11:FALSE"
+                                        "Keys"
+                                        {
+                                        }
+                                        "Values"
+                                        {
+                                            "{35AE352C-BC79-4EF9-ABD8-61F467188583}:_D909C547E731491BADF9EA8C2A09E8BB"
+                                            {
+                                            "Name" = "8:1.0"
+                                            "Condition" = "8:"
+                                            "Transitive" = "11:FALSE"
+                                            "ValueTypes" = "3:1"
+                                            "Value" = "8:"
+                                            }
+                                        }
+                                    }
                                 }
                                 "Values"
                                 {
@@ -2522,6 +2544,34 @@
         }
         "Shortcut"
         {
+            "{478F747B-8505-45D1-9AAE-8C3B645C26E3}:_5CA484E6EA9F4A5EA8342FC4CF496726"
+            {
+            "Name" = "8:PhyPy"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:0"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_DB7FD04B61A34C92B6AB542B298C816A"
+            "Folder" = "8:_F4A96A62E5384A99804857A8EBB32C0F"
+            "WorkingFolder" = "8:_9464ACCBD98241318428BE2C276D2270"
+            "Icon" = "8:"
+            "Feature" = "8:"
+            }
+            "{478F747B-8505-45D1-9AAE-8C3B645C26E3}:_7DFEB42CD6454C3FBAD2CF0DCDFE6043"
+            {
+            "Name" = "8:PhyPy"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:0"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_DB7FD04B61A34C92B6AB542B298C816A"
+            "Folder" = "8:_8D6B2459C8EE42E784779D81D1E31F18"
+            "WorkingFolder" = "8:_9464ACCBD98241318428BE2C276D2270"
+            "Icon" = "8:"
+            "Feature" = "8:"
+            }
         }
         "UserInterface"
         {

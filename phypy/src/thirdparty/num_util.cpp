@@ -15,7 +15,7 @@ KindStringMapEntry kindStringMapEntries[] =
   {
     KindStringMapEntry(PyArray_CHAR,   "PyArray_CHAR"),
     KindStringMapEntry(PyArray_UBYTE,  "PyArray_UBYTE"),
-    KindStringMapEntry(PyArray_SBYTE,  "PyArray_SBYTE"),
+    //POL KindStringMapEntry(PyArray_SBYTE,  "PyArray_SBYTE"),
     KindStringMapEntry(PyArray_SHORT,  "PyArray_SHORT"),
     KindStringMapEntry(PyArray_INT,    "PyArray_INT"),
     KindStringMapEntry(PyArray_LONG,   "PyArray_LONG"),
@@ -33,7 +33,7 @@ KindCharMapEntry kindCharMapEntries[] =
   {
     KindCharMapEntry(PyArray_CHAR,   'c'),
     KindCharMapEntry(PyArray_UBYTE,  'b'),
-    KindCharMapEntry(PyArray_SBYTE,  '1'),
+    //POL KindCharMapEntry(PyArray_SBYTE,  '1'),
     KindCharMapEntry(PyArray_SHORT,  's'),
     KindCharMapEntry(PyArray_INT,    'i'),
     KindCharMapEntry(PyArray_LONG,   'l'),
@@ -49,7 +49,7 @@ KindTypeMapEntry kindTypeMapEntries[] =
   {
     KindTypeMapEntry('c',PyArray_CHAR),
     KindTypeMapEntry('b',PyArray_UBYTE),
-    KindTypeMapEntry('1',PyArray_SBYTE),
+    //POL KindTypeMapEntry('1',PyArray_SBYTE),
     KindTypeMapEntry('s',PyArray_SHORT),
     KindTypeMapEntry('i',PyArray_INT),
     KindTypeMapEntry('l',PyArray_LONG),
@@ -131,7 +131,8 @@ numeric::array makeNum(char * data, std::vector<int> dims){
     total *= *iter;
     ++iter;
   }  
-  object obj(handle<>(PyArray_FromDims(dims.size(),&dims[0], PyArray_SBYTE)));
+  //POL object obj(handle<>(PyArray_FromDims(dims.size(),&dims[0], PyArray_SBYTE)));
+  object obj(handle<>(PyArray_FromDims(dims.size(),&dims[0], PyArray_BYTE)));	//POL see numpy/oldnumeric.h
   char *arr_data = ((PyArrayObject*) obj.ptr())->data;
   memcpy(arr_data, data, sizeof(char) * total);
   return extract<numeric::array>(obj);
@@ -357,7 +358,8 @@ bool spacesaver(numeric::array arr){
     PyErr_SetString(PyExc_ValueError, "expected a PyArrayObject");
     throw_error_already_set();
   }
-  return PyArray_ISSPACESAVER(arr.ptr());
+  //POL return PyArray_ISSPACESAVER(arr.ptr());
+  return NPY_FALSE;	//POL see numpy/oldnumeric.h
 }
 
 void savespace(numeric::array arr, bool set_savespace=true){
@@ -367,10 +369,12 @@ void savespace(numeric::array arr, bool set_savespace=true){
   }
   int flags = ((PyArrayObject*) arr.ptr())->flags;
   if (set_savespace) {
-    flags |= SAVESPACE;
+    //POL flags |= SAVESPACE;
+    flags |= 0;	//POL see numpy/oldnumeric.h
   } 
   else {
-    flags &= ~SAVESPACE;
+    //POL flags &= ~SAVESPACE;
+    flags &= ~0;	//POL see numpy/oldnumeric.h
   }
   ((PyArrayObject*) arr.ptr())->flags = flags;
   return;

@@ -1,3 +1,5 @@
+## Automatically adapted for numpy.numarray Sep 19, 2006 by alter_code1.py
+
 from _LikelihoodBase import *
 
 class QMatrix(QMatrixBase):
@@ -107,7 +109,7 @@ class QMatrix(QMatrixBase):
         edgelength equal to 0.1.
         
         >>> import math
-        >>> import numarray
+        >>> import numpy.numarray as numarray
         >>> from phypy import *
         >>> 
         >>> qmatrix = Likelihood.QMatrix()

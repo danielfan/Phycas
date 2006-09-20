@@ -54,7 +54,6 @@ void translate(const NxsException & e)
     PyErr_SetString(PyExc_Exception, e.what());
     }
 
-
 BOOST_PYTHON_MODULE(_ReadNexus)
 {
 	class_<FullTreeDescription>("FullTreeDescription", init<FullTreeDescription>())
@@ -63,9 +62,13 @@ BOOST_PYTHON_MODULE(_ReadNexus)
 		.def_readwrite("rooted", &FullTreeDescription::rooted)
 		;
 
+#if 1
+	// If this section is included, Visual Studio .NET 2003 Service Pack 1 produces
+	// error C2247: 'boost::python::objects::iterator_range<NextPolicies,Iterator>::next' not accessible because 'boost::details::compressed_pair_imp<T1,T2,Version>' uses 'private' to inherit from 'boost::python::objects::iterator_range<NextPolicies,Iterator>::next'
 	class_<std::vector<FullTreeDescription> >("VecFullTreeDescription", no_init)
 		.def("__iter__",  iterator<std::vector<FullTreeDescription> >())
 		;
+#endif
    
 	class_<CipresNexusReader>("NexusReaderBase", init<int>())
         .def("readFile", &CipresNexusReader::ReadFilePath)

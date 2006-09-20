@@ -40,6 +40,8 @@ project phypy : $(PHYPY_ROOT) ;
 ##### Variant definitions from http://www.boost.org/tools/build/v1/features.jam####
 variant common :
     #<include>$(CIPRES_LIB_ROOT)/C++
+    <include>$(PYTHON_ROOT)/Lib/site-packages/numpy/core/include
+    <include>$(PYTHON_ROOT)/Lib/site-packages/numpy/numarray
     <include>$(PHYCAS_ROOT)
     <include>$(BOOST_ROOT)
     <include>$(PHYCAS_ROOT)/phypy/src
@@ -57,9 +59,9 @@ variant common :
     <instruction-set>default
     <profiling>off
     <object-model>default
-    <darwin><*><cxxflags>"-include phypy/src/pol_phypy_config.h"
-    <gcc><*><cxxflags>"-include phypy/src/pol_phypy_config.h"
-    <vc-7_1><*><cxxflags>"-FI pol_phypy_config.h"
+    <darwin><*><cxxflags>"-include phypy/src/phypy_config.h"
+    <gcc><*><cxxflags>"-include phypy/src/phypy_config.h"
+    <vc-7_1><*><cxxflags>"-FI phypy_config.h"
     # <vc-7_1><*><cxxflags>"-showIncludes"
     <darwin><*><cxxflags>-Wmost
     <darwin><*><cxxflags>-Wno-four-char-constants

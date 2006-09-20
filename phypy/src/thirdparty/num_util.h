@@ -2,8 +2,12 @@
 #define NUM_UTIL_H__
 
 #include <boost/python.hpp>
-//#include <Numeric/arrayobject.h>
-#include <numarray/arrayobject.h>
+//#include <numarray/arrayobject.h>
+#include <numpy/arrayobject.h>
+//#include <numpy/libnumarray.h>
+//#include "numpy/noprefix.h"
+//#include "numpy/oldnumeric.h"
+//#include "numpy/old_defines.h"
 #include <iostream>
 #include <sstream>
 #include <vector>

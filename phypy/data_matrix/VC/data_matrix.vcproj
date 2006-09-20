@@ -28,13 +28,13 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="4"
-				ForcedIncludeFiles="$(PHYCAS_ROOT)\pyphy\src\pol_pyphy_config.h"/>
+				ForcedIncludeFiles="$(PHYCAS_ROOT)\phypy\src\phypy_config.h"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="python24.lib boost_python_debug.lib"
-				OutputFile="$(PHYCAS_ROOT)/pyphy/pyphy/DataMatrix/_DataMatrixBase.pyd"
+				OutputFile="$(PHYCAS_ROOT)/phypy/phypy/DataMatrix/_DataMatrixBase.pyd"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(BOOST_ROOT)\libs\python\build\bin-stage;$(PYTHON_ROOT)\libs"
 				GenerateDebugInformation="TRUE"
@@ -79,13 +79,13 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="3"
-				ForcedIncludeFiles="$(PHYCAS_ROOT)\pyphy\src\pol_pyphy_config.h"/>
+				ForcedIncludeFiles="$(PHYCAS_ROOT)\phypy\src\phypy_config.h"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="python24.lib boost_python.lib"
-				OutputFile="$(PHYCAS_ROOT)/pyphy/pyphy/DataMatrix/_DataMatrixBase.pyd"
+				OutputFile="$(PHYCAS_ROOT)/phypy/phypy/DataMatrix/_DataMatrixBase.pyd"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(BOOST_ROOT)\libs\python\build\bin-stage;$(PYTHON_ROOT)\libs"
 				GenerateDebugInformation="TRUE"

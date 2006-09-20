@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(PYTHON_ROOT)\include;$(PHYCAS_ROOT);$(BOOST_ROOT)"
+				AdditionalIncludeDirectories="&quot;$(PYTHON_ROOT)\Lib\site-packages\numpy\numarray&quot;;&quot;$(PYTHON_ROOT)\Lib\site-packages\numpy\core\include&quot;;&quot;$(PYTHON_ROOT)\include&quot;;&quot;$(PHYCAS_ROOT)&quot;;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;VC_EXPORTS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -29,13 +29,13 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="4"
-				ForcedIncludeFiles="$(PHYCAS_ROOT)\pyphy\src\pol_pyphy_config.h"/>
+				ForcedIncludeFiles="$(PHYCAS_ROOT)\phypy\src\phypy_config.h"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="python24.lib boost_python_debug.lib"
-				OutputFile="$(PHYCAS_ROOT)/pyphy/pyphy/Likelihood/_LikelihoodBase.pyd"
+				OutputFile="$(PHYCAS_ROOT)/phypy/phypy/Likelihood/_LikelihoodBase.pyd"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(BOOST_ROOT)\libs\python\build\bin-stage;$(PYTHON_ROOT)\libs"
 				GenerateDebugInformation="TRUE"
@@ -73,7 +73,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				ImproveFloatingPointConsistency="TRUE"
-				AdditionalIncludeDirectories="$(PYTHON_ROOT)\include;$(PHYCAS_ROOT);$(BOOST_ROOT)"
+				AdditionalIncludeDirectories="&quot;$(PYTHON_ROOT)\Lib\site-packages\numpy\numarray&quot;;&quot;$(PYTHON_ROOT)\Lib\site-packages\numpy\core\include&quot;;&quot;$(PYTHON_ROOT)\include&quot;;&quot;$(PHYCAS_ROOT)&quot;;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;VC_EXPORTS"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
@@ -81,13 +81,13 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="3"
-				ForcedIncludeFiles="$(PHYCAS_ROOT)\pyphy\src\pol_pyphy_config.h"/>
+				ForcedIncludeFiles="$(PHYCAS_ROOT)\phypy\src\phypy_config.h"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="python24.lib boost_python.lib"
-				OutputFile="$(PHYCAS_ROOT)/pyphy/pyphy/Likelihood/_LikelihoodBase.pyd"
+				OutputFile="$(PHYCAS_ROOT)/phypy/phypy/Likelihood/_LikelihoodBase.pyd"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(BOOST_ROOT)\libs\python\build\bin-stage;$(PYTHON_ROOT)\libs"
 				GenerateDebugInformation="TRUE"

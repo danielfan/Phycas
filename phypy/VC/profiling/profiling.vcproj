@@ -29,7 +29,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="4"
-				ForcedIncludeFiles="$(PHYCAS_ROOT)\pyphy\VC\profiling\pol_profiling_config.h"/>
+				ForcedIncludeFiles="$(PHYCAS_ROOT)\phypy\VC\profiling\pol_profiling_config.h"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -78,7 +78,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="3"
-				ForcedIncludeFiles="$(PHYCAS_ROOT)\pyphy\VC\profiling\pol_profiling_config.h"/>
+				ForcedIncludeFiles="$(PHYCAS_ROOT)\phypy\VC\profiling\pol_profiling_config.h"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -718,6 +718,9 @@
 				RelativePath="..\..\src\tree_likelihood.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\tree_manip.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\oldphycas\tree_manip.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -731,9 +734,6 @@
 						Name="VCCLCompilerTool"
 						ObjectFile="$(IntDir)/$(InputName)2.obj"/>
 				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\tree_manip.cpp">
 			</File>
 			<File
 				RelativePath="..\..\src\oldphycas\tree_node.cpp">

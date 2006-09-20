@@ -1,3 +1,5 @@
+## Automatically adapted for numpy.numarray Sep 19, 2006 by alter_code1.py
+
 from _ProbDist import *
 
 class DirichletDist(DirichletDistBase):
@@ -361,7 +363,7 @@ class DirichletDist(DirichletDistBase):
         For example:
         
         >>> from phypy.ProbDist import *
-        >>> from numarray import array
+        >>> from numpy.numarray import array
         >>> d = DirichletDist((1,1,1))
         >>> m = array([1./9., 3./9., 5./9.])
         >>> print m
@@ -395,7 +397,7 @@ class DirichletDist(DirichletDistBase):
         For example:
         
         >>> from phypy.ProbDist import *
-        >>> from numarray import array
+        >>> from numpy.numarray import array
         >>> d = DirichletDist((1,1,1))
         >>> m = array([1./9., 3./9., 5./9.])
         >>> print m
