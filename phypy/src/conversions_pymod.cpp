@@ -9,7 +9,7 @@
 #include <boost/python.hpp>
 //#include <boost/python/tuple.hpp>
 //#include <boost/python/numeric.hpp>
-#include "phypy/src/thirdparty/num_util.h"
+#include "phypy/src/thirdparty/num_util/num_util.h"
 #include "phypy/src/thirdparty/pyconversions.h"	// from HippoDraw
 #include "phypy/src/cipres/ConfigDependentHeaders.h"	// int8_t typedef //POL 18Mar2006
 using namespace boost::python;
@@ -18,7 +18,8 @@ BOOST_PYTHON_MODULE(_Conversions)
 {
 	// these lines required by num_util
 	import_array();
-	numeric::array::set_module_and_type(); // defaults to "numarray", "NDArray"
+	//numeric::array::set_module_and_type(); // defaults to "numarray", "NDArray"
+	numeric::array::set_module_and_type("numpy", "ArrayType");
 	//numeric::array::set_module_and_type("Numeric", "ArrayType");	// old numeric, don't use
 
 	// these lines taken from HippoGraph

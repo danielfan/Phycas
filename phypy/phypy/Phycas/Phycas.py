@@ -174,6 +174,7 @@ class Phycas:
         self.report_every           = self.ncycles//100  # a progress report will be displayed after this many cycles
         self.verbose                = True               # more output if True
         #self.use_tree_viewer        = False             # popup graphical TreeViewer to show trees during run POLPY_NEWWAY
+        self.outfile_prefix         = ''                # the prefix for the parameter file (<outfile_prefix>.p) and tree file (<outfile_prefix>.t) output files from an MCMC analysis. If '', uses a default prefix (e.g. the data file name) (**NEW**)
         
         # Variables associated with Larget-Simon moves
         self.ls_move_lambda         = 0.2       # The value of the tuning parameter for the Larget-Simon move
@@ -222,7 +223,11 @@ class Phycas:
         # Variables associated with the source of starting tree
         self.starting_tree_source   = 'random'  # source of starting tree topology
         self.tree_topology          = ''        # unused unless starting_tree_source is 'usertree'
+        self.sim_tree_topology      = ''        # unused unless simulations are performed (**NEW**)
 
+        # Variables associated with simulations (**NEW**)
+        self.sim_nsites             = 1000          # the number of sites (characters) in each simulated dataset (**NEW**)
+        
         # Variables associated with Gelfand-Ghosh calculation
         self.gg_do                  = False         # gather GG statistics during MCMC run if True
         self.gg_outfile             = 'ggout.txt'   # file in which to save gg results (use None to not save results)
@@ -243,6 +248,7 @@ class Phycas:
 
         # ***** DO NOT CHANGE ANYTHING BELOW HERE *****
         self.r = Lot()
+        self.sim_data               = None      # will contain simulated data if simulations are performed (**NEW**)
         self.starting_tree          = ''        # will contain description of actual starting tree used
         self.warn_tip_numbers       = False     # True only if tip numbers were not able to be created using the tip names in the tree description (always False if starting_tree_source == 'random' because BuildTreeFromString is not called in this case)
         self.ntax                   = 0         # will hold the actual number of taxa after data file read
