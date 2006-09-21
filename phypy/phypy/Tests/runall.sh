@@ -10,7 +10,7 @@ rm -f runall_diffs.txt
 
 TESTDIR=`pwd`
 echo $TESTDIR
-exit(0)
+exit 0
 cd ../Examples
 
 echo "****************************" >> runall_diffs.txt
