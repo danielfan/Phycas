@@ -5,6 +5,7 @@
 #include <boost/format.hpp>
 #include "phypy/src/cipres/ConfigDependentHeaders.h"	// int8_t typedef
 #include "phypy/src/basic_tree.hpp"
+#include "phypy/src/tree_likelihood.hpp"
 #include "phypy/src/tip_data.hpp"
 #include "phypy/src/sim_data.hpp"
 #include "phypy/src/pyphy_string.hpp"
