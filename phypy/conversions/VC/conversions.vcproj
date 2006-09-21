@@ -140,7 +140,10 @@
 				RelativePath="..\..\src\cipres\ConfigDependentHeaders.h">
 			</File>
 			<File
-				RelativePath="..\..\src\thirdparty\num_util.h">
+				RelativePath="..\..\src\thirdparty\num_util\num_util.h">
+			</File>
+			<File
+				RelativePath="..\..\src\phypy_config.h">
 			</File>
 			<File
 				RelativePath="..\..\src\thirdparty\pyconversions.h">

@@ -12,7 +12,7 @@ extension _Phylogeny
 	../src/thirdparty/dcdflib/src/ipmpar.c
 	../src/basic_cdf.cpp
 	../src/pyphy_string.cpp 
-	../src/thirdparty/num_util.cpp	# only needed on linux?
+	../src/thirdparty/num_util/num_util.cpp	# only needed on linux?
 
 		# requirements and dependencies for Boost.Python extensions
    	<template>@boost/libs/python/build/extension
