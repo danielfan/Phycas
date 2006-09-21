@@ -4,5 +4,4 @@
 #define NO_IDL_TYPES
 #define POLPY_NEWWAY  1
 #define POLPY_OLDWAY  !(POLPY_NEWWAY)
-typedef int intp;
 #include "phypy/src/phycas_config.h"
