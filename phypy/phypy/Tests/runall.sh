@@ -8,6 +8,11 @@ exit 1
 
 rm -f runall_diffs.txt
 
+TESTDIR=`pwd`
+echo $TESTDIR
+exit(0)
+cd ../Examples
+
 echo "****************************" >> runall_diffs.txt
 echo "*** Running ExplorePrior ***" >> runall_diffs.txt
 echo "****************************" >> runall_diffs.txt
