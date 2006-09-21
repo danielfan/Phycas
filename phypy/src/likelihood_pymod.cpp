@@ -69,7 +69,8 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 {
 	// these lines required by num_util
 	import_array();
-	numeric::array::set_module_and_type("numarray", "NDArray");
+	//numeric::array::set_module_and_type("numarray", "NDArray");
+	numeric::array::set_module_and_type();
 
 	class_<AdHocDensity, boost::noncopyable, boost::shared_ptr<AdHocDensity> >("AdHocDensityBase", no_init)
 		;
