@@ -15,9 +15,9 @@
 
 // POL These lines needed to make num_util.cpp compile
 typedef int intp;
-#include "numpy/noprefix.h"
+//#include "numpy/noprefix.h"
 #include "numpy/oldnumeric.h"
-#include "numpy/old_defines.h"
+//#include "numpy/old_defines.h"
 
 #include <iostream>
 #include <sstream>

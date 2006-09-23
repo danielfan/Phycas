@@ -140,7 +140,7 @@
 				RelativePath="..\..\src\thirdparty\dcdflib\src\cdflib.h">
 			</File>
 			<File
-				RelativePath="..\..\src\thirdparty\num_util.h">
+				RelativePath="..\..\src\thirdparty\num_util\num_util.h">
 			</File>
 			<File
 				RelativePath="..\..\src\phycas_config.h">
@@ -150,6 +150,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\probability_distribution.hpp">
+			</File>
+			<File
+				RelativePath="..\..\src\probability_distribution.inl">
 			</File>
 			<File
 				RelativePath="..\..\src\pyphy_string.hpp">
@@ -237,19 +240,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\thirdparty\num_util.cpp">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
+				RelativePath="..\..\src\thirdparty\num_util\num_util.cpp">
 			</File>
 			<File
 				RelativePath="..\..\src\probability_distribution.cpp">

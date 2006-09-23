@@ -1528,48 +1528,6 @@ inline double DirichletDistribution::GetRelativeLnPDF(
 	return retVal;
 	}
 
-#if defined(PYTHON_ONLY)
-/*----------------------------------------------------------------------------------------------------------------------
-|	Returns the variance-covariance matrix in the form of a numarray object.
-*/
-inline boost::python::numeric::array DirichletDistribution::GetVarCovarMatrix()
-	{
-	unsigned i, j;
-	unsigned dim = (unsigned)dirParams.size();
-
-	std::vector<int> dims;
-	dims.push_back((int)dim);
-	dims.push_back((int)dim);
-
-	double c = 0.0;
-	for (i = 0; i < dim; ++i)
-		{
-		c += dirParams[i];
-		}
-	double denom = c*c*(c + 1.0);
-
-	VecDbl V;
-	for (i = 0; i < dim; ++i)
-		{
-		for (j = 0; j < dim; ++j)
-			{
-			if (i == j)
-				{
-				double var_i = dirParams[i]*(c - dirParams[i])/denom;
-				V.push_back(var_i);
-				}
-			else
-				{
-				double cov_ij = -dirParams[i]*dirParams[j]/denom;
-				V.push_back(cov_ij);
-				}
-			}
-		}
-
-	return num_util::makeNum(&V[0], dims);
-	}
-#endif
-
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets parameters of the distribution from the vector of means and vector of variances (note: v is not the variance
 |	covariance matrix, but just a single-dimensional array of variances - the covariances are not needed).
