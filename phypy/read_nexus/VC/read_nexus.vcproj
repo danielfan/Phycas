@@ -714,7 +714,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\thirdparty\num_util.cpp">
+				RelativePath="..\..\src\thirdparty\num_util\num_util.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool

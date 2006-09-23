@@ -36,7 +36,7 @@
 // (at least in VC7)
 #define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
 #include <boost/python/numeric.hpp>
-#include "phypy/src/thirdparty/num_util.h"
+#include "phypy/src/thirdparty/num_util/num_util.h"
 
 #include <boost/python.hpp>
 

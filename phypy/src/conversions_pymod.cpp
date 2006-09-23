@@ -9,7 +9,7 @@
 #include <boost/python.hpp>
 //#include <boost/python/tuple.hpp>
 //#include <boost/python/numeric.hpp>
-#include "phypy/src/thirdparty/num_util.h"
+#include "phypy/src/thirdparty/num_util/num_util.h"
 #include "phypy/src/thirdparty/pyconversions.h"	// from HippoDraw
 #include "phypy/src/cipres/ConfigDependentHeaders.h"	// int8_t typedef //POL 18Mar2006
 using namespace boost::python;

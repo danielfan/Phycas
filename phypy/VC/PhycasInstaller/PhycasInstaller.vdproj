@@ -2406,7 +2406,7 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:PhyPy"
+        "ProductName" = "8:Phycas"
         "ProductCode" = "8:{D6E6EF34-D36C-4F32-A514-03362876E327}"
         "PackageCode" = "8:{F414FCC1-1A93-48CF-BA1C-562CAB477A02}"
         "UpgradeCode" = "8:{53EFB159-6589-4304-AFA0-69CF5DC4EB94}"
