@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(PYTHON_ROOT)\include;$(PYTHON_ROOT)\Lib\site-packages\numpy\numarray\numpy;$(PYTHON_ROOT)\Lib\site-packages\numpy\core\include;$(PHYCAS_ROOT);$(BOOST_ROOT)"
+				AdditionalIncludeDirectories="&quot;$(PYTHON_ROOT)\include&quot;;&quot;$(PHYCAS_ROOT)&quot;;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;VC_EXPORTS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -35,7 +35,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="python24.lib boost_python_debug.lib"
-				OutputFile="$(PHYCAS_ROOT)/phypy/phypy/ReadNexus/_ReadNexus.pyd"
+				OutputFile="$(PHYCAS_ROOT)\phypy\phypy\ReadNexus\_ReadNexus.pyd"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(BOOST_ROOT)\libs\python\build\bin-stage&quot;;$(PYTHON_ROOT)\libs"
 				GenerateDebugInformation="TRUE"
@@ -73,7 +73,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				ImproveFloatingPointConsistency="TRUE"
-				AdditionalIncludeDirectories="$(PYTHON_ROOT)\include;$(PYTHON_ROOT)\Lib\site-packages\numpy\numarray\numpy;$(PYTHON_ROOT)\Lib\site-packages\numpy\core\include;$(PHYCAS_ROOT);$(BOOST_ROOT)"
+				AdditionalIncludeDirectories="&quot;$(PYTHON_ROOT)\include&quot;;&quot;$(PHYCAS_ROOT)&quot;;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;VC_EXPORTS"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
@@ -87,7 +87,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="python24.lib boost_python.lib"
-				OutputFile="$(PHYCAS_ROOT)/phypy/phypy/ReadNexus/_ReadNexus.pyd"
+				OutputFile="$(PHYCAS_ROOT)\phypy\phypy\ReadNexus\_ReadNexus.pyd"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(BOOST_ROOT)\libs\python\build\bin-stage&quot;;$(PYTHON_ROOT)\libs"
 				GenerateDebugInformation="TRUE"

@@ -718,9 +718,6 @@
 				RelativePath="..\..\src\tree_likelihood.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\tree_manip.cpp">
-			</File>
-			<File
 				RelativePath="..\..\src\oldphycas\tree_manip.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -734,6 +731,9 @@
 						Name="VCCLCompilerTool"
 						ObjectFile="$(IntDir)/$(InputName)2.obj"/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\tree_manip.cpp">
 			</File>
 			<File
 				RelativePath="..\..\src\oldphycas\tree_node.cpp">

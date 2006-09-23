@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(PYTHON_ROOT)\include&quot;;&quot;$(PHYCAS_ROOT)&quot;;&quot;$(PHYCAS_ROOT)\pyphy\include&quot;;&quot;$(SolutionDir)\..&quot;;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="&quot;$(PYTHON_ROOT)\include&quot;;&quot;$(PHYCAS_ROOT)&quot;;&quot;$(PHYCAS_ROOT)\phypy\include&quot;;&quot;$(SolutionDir)\..&quot;;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"

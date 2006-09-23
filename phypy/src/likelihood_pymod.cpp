@@ -69,9 +69,7 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 {
 	// these lines required by num_util
 	import_array();
-	//numeric::array::set_module_and_type("numarray", "NDArray");
-	//numeric::array::set_module_and_type();
-	numeric::array::set_module_and_type("numpy", "ArrayType");
+	numeric::array::set_module_and_type("numarray", "NDArray");
 
 	class_<AdHocDensity, boost::noncopyable, boost::shared_ptr<AdHocDensity> >("AdHocDensityBase", no_init)
 		;
@@ -95,14 +93,9 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("refreshLastLnLike", &MCMCChainManager::refreshLastLnLike)
 		.def("refreshLastLnPrior", &MCMCChainManager::refreshLastLnPrior)
 		;
-#if 1
-	// If this section is included, Visual Studio .NET 2003 Service Pack 1 produces
-	// error C2247: 'boost::python::objects::iterator_range<NextPolicies,Iterator>::next' not accessible because 'boost::details::compressed_pair_imp<T1,T2,Version>' uses 'private' to inherit from 'boost::python::objects::iterator_range<NextPolicies,Iterator>::next'
 	class_<std::vector<MCMCUpdaterShPtr> >("paramVec", no_init)
 		.def("__iter__",  iterator<std::vector<MCMCUpdaterShPtr> >())
 		;
-#endif
-
 	class_<phycas::SimData, boost::noncopyable, boost::shared_ptr<phycas::SimData> >("SimDataBase")
 		.def("clear", &phycas::SimData::clear)
 		.def("zeroCounts", &phycas::SimData::zeroCounts)

@@ -6,9 +6,8 @@ echo "Shell script aborted because of failed example"
 exit 1
 }
 
-rm -f $TESTDIR/runall_diffs.txt
-
 TESTDIR=`pwd`
+rm -f $TESTDIR/runall_diffs.txt
 cd ../Examples
 
 echo "****************************" >> $TESTDIR/runall_diffs.txt
@@ -137,4 +136,3 @@ then
   abort
 fi
 cd ..
-

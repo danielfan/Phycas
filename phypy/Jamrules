@@ -40,8 +40,6 @@ project phypy : $(PHYPY_ROOT) ;
 ##### Variant definitions from http://www.boost.org/tools/build/v1/features.jam####
 variant common :
     #<include>$(CIPRES_LIB_ROOT)/C++
-    <include>$(PYTHON_ROOT)/Lib/site-packages/numpy/core/include
-    <include>$(PYTHON_ROOT)/Lib/site-packages/numpy/numarray
     <include>$(PHYCAS_ROOT)
     <include>$(BOOST_ROOT)
     <include>$(PHYCAS_ROOT)/phypy/src

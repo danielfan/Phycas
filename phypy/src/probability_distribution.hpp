@@ -16,7 +16,7 @@
 #if defined(PYTHON_ONLY)
 #	include <boost/python/tuple.hpp>
 #	include <boost/python/numeric.hpp>
-#	include "phypy/src/thirdparty/num_util/num_util.h"
+#	include "thirdparty/num_util.h"
 #endif
 #include "xprobdist.hpp"
 class XUnderflow{};

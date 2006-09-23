@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(PYTHON_ROOT)\include;$(PYTHON_ROOT)\Lib\site-packages\numpy\numarray\numpy;$(PYTHON_ROOT)\Lib\site-packages\numpy\core\include;$(PHYCAS_ROOT);$(BOOST_ROOT)"
+				AdditionalIncludeDirectories="$(PYTHON_ROOT)\include;$(PHYCAS_ROOT);$(BOOST_ROOT)"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;VC_EXPORTS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -35,7 +35,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="python24.lib boost_python_debug.lib"
-				OutputFile="$(PHYCAS_ROOT)/phypy/phypy/ProbDist/_ProbDist.pyd"
+				OutputFile="$(PHYCAS_ROOT)\phypy\phypy\ProbDist\_ProbDist.pyd"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(BOOST_ROOT)\libs\python\build\bin-stage&quot;;$(PYTHON_ROOT)\libs"
 				GenerateDebugInformation="TRUE"
@@ -73,7 +73,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				ImproveFloatingPointConsistency="TRUE"
-				AdditionalIncludeDirectories="$(PYTHON_ROOT)\include;$(PYTHON_ROOT)\Lib\site-packages\numpy\numarray\numpy;$(PYTHON_ROOT)\Lib\site-packages\numpy\core\include;$(PHYCAS_ROOT);$(BOOST_ROOT)"
+				AdditionalIncludeDirectories="$(PYTHON_ROOT)\include;$(PHYCAS_ROOT);$(BOOST_ROOT)"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;VC_EXPORTS"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
@@ -87,7 +87,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="python24.lib boost_python.lib"
-				OutputFile="$(PHYCAS_ROOT)/phypy/phypy/ProbDist/_ProbDist.pyd"
+				OutputFile="$(PHYCAS_ROOT)\phypy\phypy\ProbDist\_ProbDist.pyd"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(BOOST_ROOT)\libs\python\build\bin-stage&quot;;$(PYTHON_ROOT)\libs"
 				GenerateDebugInformation="TRUE"
@@ -140,19 +140,16 @@
 				RelativePath="..\..\src\thirdparty\dcdflib\src\cdflib.h">
 			</File>
 			<File
-				RelativePath="..\..\src\thirdparty\num_util\num_util.h">
+				RelativePath="..\..\src\thirdparty\num_util.h">
 			</File>
 			<File
 				RelativePath="..\..\src\phycas_config.h">
 			</File>
 			<File
-				RelativePath="..\..\src\pol_pyphy_config.h">
+				RelativePath="..\..\src\phypy_config.h">
 			</File>
 			<File
 				RelativePath="..\..\src\probability_distribution.hpp">
-			</File>
-			<File
-				RelativePath="..\..\src\probability_distribution.inl">
 			</File>
 			<File
 				RelativePath="..\..\src\pyphy_string.hpp">
@@ -240,7 +237,19 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\thirdparty\num_util\num_util.cpp">
+				RelativePath="..\..\src\thirdparty\num_util.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\src\probability_distribution.cpp">

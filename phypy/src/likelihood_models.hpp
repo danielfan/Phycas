@@ -265,4 +265,3 @@ typedef boost::shared_ptr<GTR> GTRShPtr;
 #include "phypy/src/likelihood_models.inl"
 
 #endif
-

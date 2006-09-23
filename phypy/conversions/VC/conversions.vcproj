@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(PYTHON_ROOT)\Lib\site-packages\numpy\core\include;$(PYTHON_ROOT)\Lib\site-packages\numpy\numarray;$(CIPRES_LIB_ROOT)\C++;$(PYTHON_ROOT)\include;$(PHYCAS_ROOT);$(BOOST_ROOT)"
+				AdditionalIncludeDirectories="$(CIPRES_LIB_ROOT)\C++;$(PYTHON_ROOT)\include;$(PHYCAS_ROOT);$(BOOST_ROOT)"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;VC_EXPORTS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -29,7 +29,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="4"
-				ForcedIncludeFiles="$(PHYCAS_ROOT)\phypy\src\phypy_config.h"/>
+				ForcedIncludeFiles="$(PHYCAS_ROOT)/phypy/src/phypy_config.h"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -73,7 +73,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				ImproveFloatingPointConsistency="TRUE"
-				AdditionalIncludeDirectories="$(PYTHON_ROOT)\Lib\site-packages\numpy\core\include;$(PYTHON_ROOT)\Lib\site-packages\numpy\numarray;$(CIPRES_LIB_ROOT)\C++;$(PYTHON_ROOT)\include;$(PHYCAS_ROOT);$(BOOST_ROOT)"
+				AdditionalIncludeDirectories="$(CIPRES_LIB_ROOT)\C++;$(PYTHON_ROOT)\include;$(PHYCAS_ROOT);$(BOOST_ROOT)"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;VC_EXPORTS"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
@@ -81,7 +81,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="3"
-				ForcedIncludeFiles="$(PHYCAS_ROOT)\phypy\src\phypy_config.h"/>
+				ForcedIncludeFiles="$(PHYCAS_ROOT)/phypy/src/phypy_config.h"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -140,10 +140,7 @@
 				RelativePath="..\..\src\cipres\ConfigDependentHeaders.h">
 			</File>
 			<File
-				RelativePath="..\..\src\thirdparty\num_util\num_util.h">
-			</File>
-			<File
-				RelativePath="..\..\src\phypy_config.h">
+				RelativePath="..\..\src\thirdparty\num_util.h">
 			</File>
 			<File
 				RelativePath="..\..\src\thirdparty\pyconversions.h">

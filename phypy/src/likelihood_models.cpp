@@ -4,7 +4,7 @@
 #include "phypy/src/cipres/AllocateMatrix.hpp"
 #if defined(PYTHON_ONLY)
 #	include <boost/python/numeric.hpp>
-#	include "phypy/src/thirdparty/num_util/num_util.h"
+#	include "phypy/src/thirdparty/num_util.h"
 #endif
 using std::cout;
 using namespace phycas;

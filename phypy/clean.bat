@@ -1,43 +1,43 @@
-cd phypy
+cd pyphy
 del *.pyc 
 cd ..
 
-cd phypy\Conversions
+cd pyphy\Conversions
 del *.ilk
 del *.lib
 del *.pyd
 del *.pyc 
 cd ..\..
 
-cd phypy\DataMatrix
+cd pyphy\DataMatrix
 del *.ilk
 del *.lib
 del *.pyd
 del *.pyc 
 cd ..\..
 
-cd phypy\Likelihood
+cd pyphy\Likelihood
 del *.ilk
 del *.lib
 del *.pyd
 del *.pyc 
 cd ..\..
 
-cd phypy\Phylogeny
+cd pyphy\Phylogeny
 del *.ilk
 del *.lib
 del *.pyd
 del *.pyc 
 cd ..\..
 
-cd phypy\ProbDist
+cd pyphy\ProbDist
 del *.ilk
 del *.lib
 del *.pyd
 del *.pyc 
 cd ..\..
 
-cd phypy\ReadNexus
+cd pyphy\ReadNexus
 del *.ilk
 del *.lib
 del *.pyd
