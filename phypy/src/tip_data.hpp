@@ -17,6 +17,7 @@ class DiscreteMatrix;
 	
 namespace phycas
 {
+class TreeLikelihood;
 class CondLikelihood;
 class CondLikelihoodStorage;
 typedef boost::shared_ptr<CondLikelihood> CondLikelihoodShPtr;

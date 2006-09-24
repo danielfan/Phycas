@@ -18,8 +18,7 @@ BOOST_PYTHON_MODULE(_Conversions)
 {
 	// these lines required by num_util
 	import_array();
-	//numeric::array::set_module_and_type("numarray", "NDArray");
-	numeric::array::set_module_and_type();
+	numeric::array::set_module_and_type("numarray", "NDArray");
 	//numeric::array::set_module_and_type();
 
 	// these lines taken from HippoGraph

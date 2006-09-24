@@ -440,6 +440,7 @@ class DirichletDist(DirichletDistBase):
         Cov_ij = -1*1/36 = -0.02777778
         
         >>> from phypy.ProbDist import *
+        >>> from numpy.numarray import array
         >>> d = DirichletDist((1,1,1))
         >>> print d.getVarCovarMatrix()
         [[ 0.05555556 -0.02777778 -0.02777778]
