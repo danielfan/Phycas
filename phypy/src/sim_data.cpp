@@ -7,7 +7,7 @@
 #include "phypy/src/basic_tree.hpp"
 #include "phypy/src/tip_data.hpp"
 #include "phypy/src/sim_data.hpp"
-#include "phypy/src/pyphy_string.hpp"
+#include "phypy/src/phypy_string.hpp"
 
 const int8_t phycas::SimData::missing_state = -1;	// GCC 3.2.3 (Red Hat Linux 3.2.3-20) requires initializing here rather than in header
 using std::exp;

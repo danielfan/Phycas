@@ -61,15 +61,15 @@ fi
 #else
 #	echo Please define NCL_ROOT environmental variable as path to parent of ncl directory
 #	echo For example:
-#	echo   if using bash: export NCL_ROOT=$HOME/phycasdev/pyphy/src
-#	echo   if using tcsh: setenv NCL_ROOT $HOME/phycasdev/pyphy/src
+#	echo   if using bash: export NCL_ROOT=$HOME/phycasdev/phypy/src
+#	echo   if using tcsh: setenv NCL_ROOT $HOME/phycasdev/phypy/src
 #	exit 0
 #fi
 
 # export PATH=.:$HOME/local/bin:/usr/local/condor/bin:$PATH
-# export DYLD_LIBRARY_PATH=$HOME/phycasdev/pyphy/bin/boost/libs/python/build/libboost_python.dylib/darwin/release/shared-linkable-true
+# export DYLD_LIBRARY_PATH=$HOME/phycasdev/phypy/bin/boost/libs/python/build/libboost_python.dylib/darwin/release/shared-linkable-true
 # export CVS_RSH=/usr/bin/ssh
-# export PYTHONPATH=$HOME/site-packages/numarray:$HOME/phycasdev/pyphy/pyphy:$HOME/phycasdev/pyphy/apps:$HOME/phycasdev/python
+# export PYTHONPATH=$HOME/site-packages/numarray:$HOME/phycasdev/phypy/phypy:$HOME/phycasdev/phypy/apps:$HOME/phycasdev/python
 
 export BUILD=release
 

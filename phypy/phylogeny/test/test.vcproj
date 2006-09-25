@@ -124,7 +124,7 @@
 				RelativePath="..\..\common\boost_assertion_failed.cpp">
 			</File>
 			<File
-				RelativePath="..\..\common\pyphy_string.cpp">
+				RelativePath="..\..\common\phypy_string.cpp">
 			</File>
 			<File
 				RelativePath=".\test.cpp">

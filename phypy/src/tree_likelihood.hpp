@@ -40,7 +40,7 @@ typedef boost::shared_ptr<SimData>	SimDataShPtr;
 class Lot;
 typedef boost::shared_ptr<Lot>	LotShPtr;
 
-#if POLPY_NEWWAY
+#if defined(INTERFACE_WITH_CIPRES)
 class PhycasIDLishMatrix
 	{
 	friend class TreeLikelihood;
@@ -113,7 +113,7 @@ class TreeLikelihood
 		void							prepareForLikelihood(TreeShPtr);
 		void							prepareInternalNodeForLikelihood(TreeNode * nd);
 
-#if POLPY_NEWWAY
+#if defined(INTERFACE_WITH_CIPRES)
 		void							copyDataFromIDLMatrix(const PhycasIDLishMatrix & m);
 #endif
 		void							copyDataFromDiscreteMatrix(const CipresNative::DiscreteMatrix &);
@@ -195,7 +195,7 @@ class TreeLikelihood
 		TipData *						allocateTipData(unsigned);
 		InternalData *					allocateInternalData();
 
-#if POLPY_NEWWAY
+#if defined(INTERFACE_WITH_CIPRES)
 		unsigned						compressDataMatrix(unsigned ntax, unsigned nchar, const CipresNative::DiscreteMatrix &);
 		unsigned						compressIDLMatrix(unsigned ntax, unsigned nchar, const CIPR_StateSet_t * const * matrix);
 		unsigned						buildPatternMapFromRawMatrix(unsigned ntax, unsigned nchar, const CIPR_StateSet_t * const * mat);

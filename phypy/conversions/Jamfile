@@ -6,7 +6,7 @@ extension _Conversions
 	../src/boost_assertion_failed.cpp
 	../src/basic_tree.cpp
 	../src/basic_tree_node.cpp
-	../src/pyphy_string.cpp
+	../src/phypy_string.cpp
 
     # requirements and dependencies for Boost.Python extensions
     <template>@boost/libs/python/build/extension

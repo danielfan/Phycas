@@ -1,6 +1,6 @@
 
 <project>
-    <shortName>pyphy</shortName>
+    <shortName>phypy</shortName>
     <fullName>Phycas</fullName>
     <version>1.0</version>
     <installerFilename>${product_shortname}-${product_version}-installer.${platform_exec_suffix}</installerFilename>
@@ -733,7 +733,7 @@
                             <origin>../src/thirdparty</origin>
                         </distributionDirectory>
                         <distributionFile>
-                            <origin>../src/xpyphy.hpp</origin>
+                            <origin>../src/xphypy.hpp</origin>
                         </distributionFile>
                         <distributionFile>
                             <origin>../src/basic_cdf.cpp</origin>
@@ -916,7 +916,7 @@
                             <origin>../src/phylogeny_pymod.cpp</origin>
                         </distributionFile>
                         <distributionFile>
-                            <origin>../src/pol_pyphy_config.h</origin>
+                            <origin>../src/pol_phypy_config.h</origin>
                         </distributionFile>
                         <distributionFile>
                             <origin>../src/probability_distribution.cpp</origin>
@@ -931,10 +931,10 @@
                             <origin>../src/probdist_pymod.cpp</origin>
                         </distributionFile>
                         <distributionFile>
-                            <origin>../src/pyphy_string.cpp</origin>
+                            <origin>../src/phypy_string.cpp</origin>
                         </distributionFile>
                         <distributionFile>
-                            <origin>../src/pyphy_string.hpp</origin>
+                            <origin>../src/phypy_string.hpp</origin>
                         </distributionFile>
                         <distributionFile>
                             <origin>../src/q_matrix.cpp</origin>
@@ -1177,13 +1177,13 @@
                 <variable>pythonpath</variable>
             </registryGet>  
             <setInstallerVariable>
-                <!-- Win: let ${newpythonpath} equal ${pythonpath};${installdir}\pyphy if
+                <!-- Win: let ${newpythonpath} equal ${pythonpath};${installdir}\phypy if
                     1) ${pythonpath} is not empty 
-                    2) ${pythonpath} does not already contain ${installdir}\pyphy
+                    2) ${pythonpath} does not already contain ${installdir}\phypy
                     3) platform is Windows
                 -->
                 <name>newpythonpath</name>
-                <value>${pythonpath};${installdir}\pyphy</value>
+                <value>${pythonpath};${installdir}\phypy</value>
                 <ruleList>
                     <compareTextLength>
                         <text>${pythonpath}</text>
@@ -1193,7 +1193,7 @@
                     <compareText>
                         <text>${pythonpath}</text>
                         <logic>does_not_contain</logic>
-                        <value>${installdir}/pyphy</value>
+                        <value>${installdir}/phypy</value>
                     </compareText>
                     <compareText>
                         <logic>equals</logic>
@@ -1206,7 +1206,7 @@
             <setInstallerVariable>
                 <!-- Win: let ${newpythonpath} equal ${pythonpath} if
                     1) ${pythonpath} is not empty 
-                    2) ${pythonpath} already contains ${installdir}\pyphy
+                    2) ${pythonpath} already contains ${installdir}\phypy
                     3) platform is Windows
                 -->
                 <name>newpythonpath</name>
@@ -1220,7 +1220,7 @@
                     <compareText>
                         <text>${pythonpath}</text>
                         <logic>contains</logic>
-                        <value>${installdir}\pyphy</value>
+                        <value>${installdir}\phypy</value>
                     </compareText>
                     <compareText>
                         <logic>equals</logic>
@@ -1231,12 +1231,12 @@
                 </ruleList>
             </setInstallerVariable>
             <setInstallerVariable>
-                <!-- Win: let ${newpythonpath} equal ${installdir}\pyphy if 
+                <!-- Win: let ${newpythonpath} equal ${installdir}\phypy if 
                     1) ${pythonpath} is empty
                     2) platform is Windows
                 -->
                 <name>newpythonpath</name>
-                <value>${installdir}\pyphy</value>
+                <value>${installdir}\phypy</value>
                 <ruleList>
                     <compareTextLength>
                         <text>${pythonpath}</text>

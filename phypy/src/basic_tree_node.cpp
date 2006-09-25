@@ -1,6 +1,6 @@
 #include <cfloat>
 #include "phypy/src/basic_tree_node.hpp"
-#include "phypy/src/pyphy_string.hpp"
+#include "phypy/src/phypy_string.hpp"
 
 using namespace phycas;
 

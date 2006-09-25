@@ -12,8 +12,8 @@
 #include <boost/format.hpp>
 #include "basic_cdf.hpp"
 #include "basic_lot.hpp"
-#include "pyphy_string.hpp"
-#if defined(PYTHON_ONLY)
+#include "phypy_string.hpp"
+#if defined(PYTHON_ONLY) && defined(USE_NUMARRAY)
 #	include <boost/python/tuple.hpp>
 #	include <boost/python/numeric.hpp>
 #	include "thirdparty/num_util/num_util.h"
@@ -86,10 +86,15 @@ class MultivariateProbabilityDistribution
 		virtual double				ApproxCDF(const VecDbl &x, unsigned nsamples = 10000) const	= 0;
 		virtual double				GetLnPDF(const VecDbl &) const								= 0; 
 		virtual double				GetRelativeLnPDF(const VecDbl &) const						= 0; 
-		virtual void 			SetMeanAndVariance(const VecDbl &m, const VecDbl &v)		= 0;
+		virtual void 				SetMeanAndVariance(const VecDbl &m, const VecDbl &v)		= 0;
 #		if defined(PYTHON_ONLY)
-			virtual void 			AltSetMeanAndVariance(boost::python::numeric::array m, boost::python::numeric::array v) = 0;
-			virtual boost::python::numeric::array	GetVarCovarMatrix()							= 0;
+#			if defined(USE_NUMARRAY)
+				virtual void 			AltSetMeanAndVariance(boost::python::numeric::array m, boost::python::numeric::array v) = 0;
+				virtual boost::python::numeric::array	GetVarCovarMatrix()						= 0;
+#			else
+				virtual void 			AltSetMeanAndVariance(VecDbl m, VecDbl v)				= 0;
+				virtual VecDbl			GetVarCovarMatrix()										= 0;
+#			endif
 #		endif
 		virtual unsigned			GetNParams()	const										= 0;
 
@@ -345,8 +350,13 @@ class DirichletDistribution : public MultivariateProbabilityDistribution
 		double								GetRelativeLnPDF(const VecDbl &x) const;
 		void 								SetMeanAndVariance(const VecDbl &m, const VecDbl &v);
 #		if defined(PYTHON_ONLY)
-			void							AltSetMeanAndVariance(boost::python::numeric::array m, boost::python::numeric::array v);
-			boost::python::numeric::array	GetVarCovarMatrix();
+#			if defined(USE_NUMARRAY)
+				void							AltSetMeanAndVariance(boost::python::numeric::array m, boost::python::numeric::array v);
+				boost::python::numeric::array	GetVarCovarMatrix();
+#			else
+				void							AltSetMeanAndVariance(VecDbl m, VecDbl v);
+				VecDbl							GetVarCovarMatrix();
+#			endif
 #		endif
 
 		unsigned							GetNParams() const;

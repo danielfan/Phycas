@@ -25,7 +25,7 @@ extension _LikelihoodBase
 	../src/mcmc_updater.cpp 
 	../src/ncat_move.cpp 
 	../src/thirdparty/num_util/num_util.cpp
-	../src/pyphy_string.cpp 
+	../src/phypy_string.cpp 
 	../src/q_matrix.cpp
 	../src/sim_data.cpp 
 	../src/slice_sampler.cpp

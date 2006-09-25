@@ -1,7 +1,7 @@
 #include <string>
 #include <cstdio>
 #include <cctype>
-#include "phypy/src/pyphy_string.hpp"
+#include "phypy/src/phypy_string.hpp"
 #include "phypy/src/basic_tree.hpp"
 #include "phypy/src/xphylogeny.hpp"
 //#define TESTING_TOWARD_NODE_ITERATOR

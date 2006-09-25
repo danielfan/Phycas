@@ -113,14 +113,14 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("addDataTo", &phycas::SimData::addDataTo)
 		.def("calct", &phycas::SimData::calct)
 		;
-#if POLPY_NEWWAY
+#if defined(INTERFACE_WITH_CIPRES)
 	class_<PhycasIDLishMatrix, boost::noncopyable>("PhycasIDLishMatrix", init<unsigned, unsigned, std::string, int, unsigned>())
 		.def("setCharStateLookup", &PhycasIDLishMatrix::setCharStateLookup)
 		.def("replaceRow", &PhycasIDLishMatrix::replaceRow)
 		;
 #endif
 	class_<TreeLikelihood, TreeLikelihoodWrapper, boost::noncopyable>("TreeLikelihoodBase", init<boost::shared_ptr<Model> >())
-#if POLPY_NEWWAY
+#if defined(INTERFACE_WITH_CIPRES)
 		.def("copyDataFromIDLMatrix", &TreeLikelihood::copyDataFromIDLMatrix)
 #endif
 		.def("copyDataFromDiscreteMatrix", &TreeLikelihood::copyDataFromDiscreteMatrix)

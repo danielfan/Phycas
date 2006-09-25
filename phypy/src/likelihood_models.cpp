@@ -2,7 +2,7 @@
 #include <iostream>
 #include "phypy/src/likelihood_models.hpp"
 #include "phypy/src/cipres/AllocateMatrix.hpp"
-#if defined(PYTHON_ONLY)
+#if defined(PYTHON_ONLY) && defined(USE_NUMARRAY)
 #	include <boost/python/numeric.hpp>
 #	include "phypy/src/thirdparty/num_util/num_util.h"
 #endif
@@ -148,6 +148,7 @@ void Model::createParameters(
 	}
 	
 #if defined(PYTHON_ONLY)
+#if defined(USE_NUMARRAY)
 /*----------------------------------------------------------------------------------------------------------------------
 |	
 */
@@ -174,6 +175,35 @@ boost::python::numeric::array Model::getPMatrix(double edgeLength) const
 
 	return num_util::makeNum(&p[0], dim_vect);	//PELIGROSO
 	}
+#else
+/*----------------------------------------------------------------------------------------------------------------------
+|	
+*/
+VecDbl Model::getPMatrix(double edgeLength) const
+	{
+#error needs work
+	//@POL this function, along with calcPMat and calcPMatrices, should be provided by a policy class
+	// (which would be QMatrix for GTR model). This function is full of ad hoc nonsense at the moment!
+	double * * pMat = NewTwoDArray<double>(num_states, num_states);
+	calcPMat(pMat, edgeLength);
+
+	// copy to a vector so that we can delete pMat
+	unsigned flat_length = num_states*num_states;
+	std::vector<double> p(flat_length, 0.0);
+	double * pMat_begin = &pMat[0][0];
+	double * pMat_end   = pMat_begin + flat_length;
+	std::copy(pMat_begin, pMat_end, p.begin());
+
+	DeleteTwoDArray<double>(pMat);
+
+	// create vector of dimensions
+	std::vector<int> dim_vect;
+	dim_vect.push_back((int)num_states);
+	dim_vect.push_back((int)num_states);
+
+	return num_util::makeNum(&p[0], dim_vect);	//PELIGROSO
+	}
+#endif
 #endif
 
 /*----------------------------------------------------------------------------------------------------------------------

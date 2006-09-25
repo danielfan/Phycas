@@ -640,7 +640,7 @@
 				RelativePath=".\profiling.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\pyphy_string.cpp">
+				RelativePath="..\..\src\phypy_string.cpp">
 			</File>
 			<File
 				RelativePath="..\..\src\sim_data.cpp">

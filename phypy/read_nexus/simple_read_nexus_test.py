@@ -1,5 +1,5 @@
-from pyphy.ReadNexus import *
-from pyphy.DataMatrix import *
+from phypy.ReadNexus import *
+from phypy.DataMatrix import *
 import sys, os
 
 defaultFileName = 'nyldna4.nex'

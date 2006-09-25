@@ -455,7 +455,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\pyphy_string.cpp">
+				RelativePath="..\..\src\phypy_string.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -717,7 +717,7 @@
 				RelativePath="..\..\src\thirdparty\pyconversions.h">
 			</File>
 			<File
-				RelativePath="..\..\src\pyphy_string.hpp">
+				RelativePath="..\..\src\phypy_string.hpp">
 			</File>
 			<File
 				RelativePath="..\..\src\q_matrix.hpp">

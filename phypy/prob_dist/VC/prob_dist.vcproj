@@ -152,7 +152,7 @@
 				RelativePath="..\..\src\probability_distribution.hpp">
 			</File>
 			<File
-				RelativePath="..\..\src\pyphy_string.hpp">
+				RelativePath="..\..\src\phypy_string.hpp">
 			</File>
 			<File
 				RelativePath="..\..\src\slice_sampler.hpp">
@@ -161,7 +161,7 @@
 				RelativePath="..\..\src\xprobdist.hpp">
 			</File>
 			<File
-				RelativePath="..\..\src\xpyphy.hpp">
+				RelativePath="..\..\src\xphypy.hpp">
 			</File>
 		</Filter>
 		<Filter
@@ -282,7 +282,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\pyphy_string.cpp">
+				RelativePath="..\..\src\phypy_string.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool

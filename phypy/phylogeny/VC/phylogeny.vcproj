@@ -151,7 +151,7 @@
 				RelativePath="..\..\src\edge_iterators.hpp">
 			</File>
 			<File
-				RelativePath="..\..\src\pyphy_string.hpp">
+				RelativePath="..\..\src\phypy_string.hpp">
 			</File>
 			<File
 				RelativePath="..\..\src\tree_iterators.hpp">
@@ -250,7 +250,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\pyphy_string.cpp">
+				RelativePath="..\..\src\phypy_string.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool

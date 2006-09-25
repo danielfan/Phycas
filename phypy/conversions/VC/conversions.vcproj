@@ -143,6 +143,9 @@
 				RelativePath="..\..\src\thirdparty\num_util.h">
 			</File>
 			<File
+				RelativePath="..\..\src\phypy_config.h">
+			</File>
+			<File
 				RelativePath="..\..\src\thirdparty\pyconversions.h">
 			</File>
 		</Filter>

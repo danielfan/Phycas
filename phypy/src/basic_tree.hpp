@@ -10,7 +10,7 @@
 #include "phypy/src/basic_tree_node.hpp"
 #include "phypy/src/tree_iterators.hpp"
 #include "phypy/src/xphylogeny.hpp"
-#include "phypy/src/pyphy_string.hpp"
+#include "phypy/src/phypy_string.hpp"
 
 //	To do next:
 //		o ASCII tree drawing

@@ -7,7 +7,7 @@ setup(name='phypy',
       author='Paul O. Lewis',
       author_email='paul.lewis@uconn.edu',
       url='http://www.phypy.org/',
-      packages=['pyphy','pyphy.Conversions','pyphy.DataMatrix','pyphy.Likelihood','pyphy.ProbDist','pyphy.Phylogeny','pyphy.ReadNexus'],
+      packages=['phypy','phypy.Conversions','phypy.DataMatrix','phypy.Likelihood','phypy.ProbDist','phypy.Phylogeny','phypy.ReadNexus'],
      )
 
 #from setuptools import setup, find_packages
@@ -33,7 +33,7 @@ setup(name='phypy',
 #    author_email = "phycoids@phycas.org",
 #    description = "PhyPy: Python Software for Phylogenetic Analysis",
 #    license = "PSF",
-#    keywords = "pyphy phypy phycas Bayesian phylogenetics phylogeny likelihood",
+#    keywords = "phypy phycas Bayesian phylogenetics phylogeny likelihood",
 #    url = "http://www.phypy.org/",   # project home page, if any
 #
 #    # could also include long_description, download_url, classifiers, etc.

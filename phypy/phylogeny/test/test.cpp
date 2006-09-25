@@ -1,6 +1,6 @@
 #include <string>
 #include <iostream>
-#include "pyphy/src/basic_tree.hpp"
+#include "phypy/src/basic_tree.hpp"
 
 int main()
 	{

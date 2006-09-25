@@ -53,7 +53,7 @@ Release 0.5.0 (rel_0_5_0, 20-Feb-2006):
 ---------------------------------------
 Comparison of PAUP* (MLEs), MrBayes 3.1 and Phycas on nyldna4.nex for HKY+Gamma model
 Phycas: 
-	data_file_name = '../../pyphy/nyldna4.nex'
+	data_file_name = '../../phypy/nyldna4.nex'
 	starting_tree_source = 'random'
 	ncycles = 10000 (long run)
 	ncycles = 1500 (short run)

@@ -6,7 +6,7 @@
 #include "phypy/src/tip_data.hpp"
 #include "phypy/src/internal_data.hpp"
 #include "phypy/src/sim_data.hpp"
-#include "phypy/src/pyphy_string.hpp"
+#include "phypy/src/phypy_string.hpp"
 #include "phypy/src/basic_lot.hpp"
 #include <boost/bind.hpp>
 #include <boost/format.hpp>
@@ -1342,7 +1342,7 @@ void TreeLikelihood::prepareForSimulation(
 		}
 	}
 
-#if POLPY_NEWWAY
+#if defined(INTERFACE_WITH_CIPRES)
 /*----------------------------------------------------------------------------------------------------------------------
 |	
 */
@@ -1390,7 +1390,9 @@ void TreeLikelihood::copyDataFromDiscreteMatrix(
 
 	// The compressDataMatrix function first erases, then builds, both pattern_map and 
 	// pattern_counts using the uncompressed data contained in mat
-#if POLPY_NEWWAY
+#if defined(INTERFACE_WITH_CIPRES)
+	// changed signature because both compressDataMatrix and compressIDLMatrix now use 
+	// buildPatternMapFromRawMatrix, which takes ntax and nchar as first two arguments
 	num_patterns = compressDataMatrix(mat.getNTax(), mat.getNChar(), mat);
 #else
 	num_patterns = compressDataMatrix(mat);
@@ -1502,7 +1504,7 @@ void TreeLikelihood::prepareForLikelihood(
 		}
 	}
 
-#if POLPY_NEWWAY
+#if defined(INTERFACE_WITH_CIPRES)
 /*----------------------------------------------------------------------------------------------------------------------
 |	Helper function used by both compressDataMatrix and compressIDLMatrix that (re)builds `pattern_map', 
 |	`pattern_counts' and `charIndexToPatternIndex' from a two-dimensional array `mat' of state codes (rows are taxa, 
@@ -1568,7 +1570,9 @@ unsigned TreeLikelihood::buildPatternMapFromRawMatrix(unsigned ntax, unsigned nc
 		}
 	return (unsigned)pattern_map.size();
 	}
+#endif
 
+#if defined(INTERFACE_WITH_CIPRES)
 /*----------------------------------------------------------------------------------------------------------------------
 |	
 */
@@ -1583,7 +1587,7 @@ unsigned TreeLikelihood::compressIDLMatrix(unsigned ntax, unsigned nchar, const 
 |	and whose value is a count of the number of sites having that pattern. The counts from `pattern_map' are transferred  
 |	to the `pattern_counts' vector (vectors are more efficient containers for use during likelihood calculations).
 */
-#if POLPY_NEWWAY
+#if defined(INTERFACE_WITH_CIPRES)
 unsigned TreeLikelihood::compressDataMatrix(unsigned ntax, unsigned nchar, const CipresNative::DiscreteMatrix & matrix) //POLBM TreeLikelihood::compressDataMatrix
 	{
 	const CIPR_StateSet_t * const * mat = matrix.getMatrix();
