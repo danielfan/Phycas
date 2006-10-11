@@ -2092,10 +2092,10 @@
             }
             "{58C0ADA3-3CEA-43BD-A3B3-2EA121BC8217}:_9464ACCBD98241318428BE2C276D2270"
             {
-            "DefaultLocation" = "8:[PYTHON24]\\Lib\\site-packages"
+            "DefaultLocation" = "8:[PYTHON24CU][PYTHON24LM]\\Lib\\site-packages"
             "Name" = "8:#1925"
             "AlwaysCreate" = "11:FALSE"
-            "Condition" = "8:"
+            "Condition" = "8:Python24atLM OR Python24atCU"
             "Transitive" = "11:FALSE"
             "Property" = "8:TARGETDIR"
                 "Folders"
@@ -2380,23 +2380,31 @@
         }
         "LaunchCondition"
         {
-            "{E4DE4623-56CB-424E-96A0-1AD21D5ECA20}:_A11D3B4103C34148B933D5B96E2D9ACD"
+            "{E4DE4623-56CB-424E-96A0-1AD21D5ECA20}:_D85809844BF043BDBAE222B6F380F0E5"
             {
-            "Name" = "8:Python24Present"
-            "Condition" = "8:PYTHON24"
+            "Name" = "8:Python24"
+            "Condition" = "8:PYTHON24CU OR PYTHON24LM"
             "Message" = "8:Phycas requires Python 2.4 but it appears that Python 2.4 has not yet been installed. Would you like to visit the Python web site before the installer exits?"
             "InstallUrl" = "8:http://www.python.org/"
             }
         }
         "Locator"
         {
-            "{B8D64026-A502-496C-8C20-1D720E2264E5}:_F560F3F28C1645E092FB81E270009C94"
+            "{B8D64026-A502-496C-8C20-1D720E2264E5}:_346A42ED40FA4A408C69391BEDE00926"
             {
-            "Name" = "8:Search for Python 2.4"
+            "Name" = "8:HKLM Python 2.4"
             "Root" = "2:1"
             "RegKey" = "8:SOFTWARE\\Python\\PythonCore\\2.4\\InstallPath"
             "Value" = "8:"
-            "Property" = "8:PYTHON24"
+            "Property" = "8:PYTHON24LM"
+            }
+            "{B8D64026-A502-496C-8C20-1D720E2264E5}:_F560F3F28C1645E092FB81E270009C94"
+            {
+            "Name" = "8:HKCU Python 2.4"
+            "Root" = "2:2"
+            "RegKey" = "8:SOFTWARE\\Python\\PythonCore\\2.4\\InstallPath"
+            "Value" = "8:"
+            "Property" = "8:PYTHON24CU"
             }
         }
         "MsiBootstrapper"
@@ -2408,7 +2416,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Phycas"
         "ProductCode" = "8:{D6E6EF34-D36C-4F32-A514-03362876E327}"
-        "PackageCode" = "8:{F414FCC1-1A93-48CF-BA1C-562CAB477A02}"
+        "PackageCode" = "8:{C3114FDE-EC23-4E91-9E3F-915D37CB1856}"
         "UpgradeCode" = "8:{53EFB159-6589-4304-AFA0-69CF5DC4EB94}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
