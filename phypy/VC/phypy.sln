@@ -31,15 +31,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "profiling", "profiling\prof
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "PhycasInstaller", "PhycasInstaller\PhycasInstaller.vdproj", "{89094A89-574B-412C-921E-AA135C1C5D66}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
 		Release = Release
 		Test = Test
+	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
 		{25AE080A-D363-4927-8F9A-F31F591BBD5C}.Debug.ActiveCfg = Debug|Win32
@@ -82,9 +80,6 @@ Global
 		{26F712EA-B139-4CF4-A61A-67DAF08A62BE}.Release.Build.0 = Release|Win32
 		{26F712EA-B139-4CF4-A61A-67DAF08A62BE}.Test.ActiveCfg = Release|Win32
 		{26F712EA-B139-4CF4-A61A-67DAF08A62BE}.Test.Build.0 = Release|Win32
-		{89094A89-574B-412C-921E-AA135C1C5D66}.Debug.ActiveCfg = Debug
-		{89094A89-574B-412C-921E-AA135C1C5D66}.Release.ActiveCfg = Release
-		{89094A89-574B-412C-921E-AA135C1C5D66}.Test.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
