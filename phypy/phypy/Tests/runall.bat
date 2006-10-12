@@ -119,6 +119,12 @@ fc simulated.nex reference_output/simulated.nex >> %TESTDIR%\runall_diffs.txt
 if errorlevel 1 (goto abort)
 cd ..
 
+echo.
+echo Results of tests are in the %TESTDIR%\runall_diffs.txt file
+echo.
+type %TESTDIR%\runall_diffs.txt
+pause
+
 goto end
 
 :abort
