@@ -120,15 +120,22 @@ if errorlevel 1 (goto abort)
 cd ..
 
 echo.
-echo Results of tests are in the %TESTDIR%\runall_diffs.txt file
+echo ********** RESULTS OF TESTS ***********
 echo.
 type %TESTDIR%\runall_diffs.txt
+echo.
+echo Success! If you see this message, it means all tests were successful.
+echo Results of tests are shown above, and are also saved in the file 
+echo %TESTDIR%\runall_diffs.txt.
+echo "FC: no differences encountered" means that Phycas installed on your 
+echo computer produced the output expected for a test.
+echo.
 pause
 
 goto end
 
 :abort
-echo Batch file aborted because of failed example
+echo Batch file aborted because of failed example.
 pause
 
 :end
