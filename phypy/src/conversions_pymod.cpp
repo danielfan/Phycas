@@ -16,10 +16,12 @@ using namespace boost::python;
 
 BOOST_PYTHON_MODULE(_Conversions)
 {
+#if defined(USING_NUMARRAY)
 	// these lines required by num_util
 	import_array();
 	numeric::array::set_module_and_type("numarray", "NDArray");
 	//numeric::array::set_module_and_type();
+#endif
 
 	// these lines taken from HippoGraph
 	std_vector_to_tuple<unsigned>();

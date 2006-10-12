@@ -45,9 +45,11 @@ BOOST_PYTHON_MODULE(_ProbDist)
 {
 	def("getEffectiveLnZero", getEffectiveLnZero);
 
+#if defined(USING_NUMARRAY)
 	// these lines required by num_util
 	import_array();
 	numeric::array::set_module_and_type("numarray", "NDArray");
+#endif
 
 	class_<AdHocDensity, boost::noncopyable, boost::shared_ptr<AdHocDensityWrapper> >("AdHocDensityBase")
 		;

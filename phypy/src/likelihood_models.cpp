@@ -2,7 +2,7 @@
 #include <iostream>
 #include "phypy/src/likelihood_models.hpp"
 #include "phypy/src/cipres/AllocateMatrix.hpp"
-#if defined(PYTHON_ONLY) && defined(USE_NUMARRAY)
+#if defined(PYTHON_ONLY) && defined(USING_NUMARRAY)
 #	include <boost/python/numeric.hpp>
 #	include "phypy/src/thirdparty/num_util/num_util.h"
 #endif
@@ -148,7 +148,7 @@ void Model::createParameters(
 	}
 	
 #if defined(PYTHON_ONLY)
-#if defined(USE_NUMARRAY)
+#if defined(USING_NUMARRAY)
 /*----------------------------------------------------------------------------------------------------------------------
 |	
 */

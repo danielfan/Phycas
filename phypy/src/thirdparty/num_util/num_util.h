@@ -1,6 +1,8 @@
 #ifndef NUM_UTIL_H__
 #define NUM_UTIL_H__
 
+#if defined(USING_NUMARRAY)
+
 #include <boost/python.hpp>
 //#include <Numeric/arrayobject.h>
 #include <numarray/arrayobject.h>
@@ -335,5 +337,7 @@ namespace num_util{
   inline void check_size_match(std::vector<int> dims, int n);
 
 } //  namespace num_util
+
+#endif	//#if defined(USING_NUMARRAY)
 
 #endif

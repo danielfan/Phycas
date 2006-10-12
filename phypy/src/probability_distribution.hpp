@@ -13,7 +13,7 @@
 #include "basic_cdf.hpp"
 #include "basic_lot.hpp"
 #include "phypy_string.hpp"
-#if defined(PYTHON_ONLY) && defined(USE_NUMARRAY)
+#if defined(PYTHON_ONLY) && defined(USING_NUMARRAY)
 #	include <boost/python/tuple.hpp>
 #	include <boost/python/numeric.hpp>
 #	include "thirdparty/num_util/num_util.h"
@@ -88,7 +88,7 @@ class MultivariateProbabilityDistribution
 		virtual double				GetRelativeLnPDF(const VecDbl &) const						= 0; 
 		virtual void 				SetMeanAndVariance(const VecDbl &m, const VecDbl &v)		= 0;
 #		if defined(PYTHON_ONLY)
-#			if defined(USE_NUMARRAY)
+#			if defined(USING_NUMARRAY)
 				virtual void 			AltSetMeanAndVariance(boost::python::numeric::array m, boost::python::numeric::array v) = 0;
 				virtual boost::python::numeric::array	GetVarCovarMatrix()						= 0;
 #			else
@@ -350,7 +350,7 @@ class DirichletDistribution : public MultivariateProbabilityDistribution
 		double								GetRelativeLnPDF(const VecDbl &x) const;
 		void 								SetMeanAndVariance(const VecDbl &m, const VecDbl &v);
 #		if defined(PYTHON_ONLY)
-#			if defined(USE_NUMARRAY)
+#			if defined(USING_NUMARRAY)
 				void							AltSetMeanAndVariance(boost::python::numeric::array m, boost::python::numeric::array v);
 				boost::python::numeric::array	GetVarCovarMatrix();
 #			else

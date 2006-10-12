@@ -12,7 +12,7 @@ extern "C"
 
 #include <cmath>
 #include <vector>
-#if defined(PYTHON_ONLY) && defined(USE_NUMARRAY)
+#if defined(PYTHON_ONLY) && defined(USING_NUMARRAY)
 #	include <boost/python/tuple.hpp>
 #	include <boost/python/numeric.hpp>
 #	include "phypy/src/thirdparty/num_util/num_util.h"
@@ -51,7 +51,7 @@ class QMatrix
 		// Utilities
 		//
 #if defined(PYTHON_ONLY)
-#	if defined(USE_NUMARRAY)
+#	if defined(USING_NUMARRAY)
 		boost::python::numeric::array	getQMatrix();
 		boost::python::numeric::array	getEigenVectors();
 		boost::python::numeric::array	getPMatrix(double edgelen);

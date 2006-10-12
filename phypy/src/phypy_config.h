@@ -4,6 +4,6 @@
 #define NO_IDL_TYPES
 #define POLPY_NEWWAY  1
 #define POLPY_OLDWAY  !(POLPY_NEWWAY)
-#define USE_NUMARRAY
+#define USING_NUMARRAY
 //#define INTERFACE_WITH_CIPRES
 #include "phypy/src/phycas_config.h"

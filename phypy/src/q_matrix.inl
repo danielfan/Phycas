@@ -174,7 +174,7 @@ inline void QMatrix::recalcQMatrix()
 	}
 
 #if defined(PYTHON_ONLY)
-#if defined(USE_NUMARRAY)
+#if defined(USING_NUMARRAY)
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the entries in the data member `qmat' as a NumArray. Calls recalcQMatrix first to ensure that `qmat' is up
 |	to date.

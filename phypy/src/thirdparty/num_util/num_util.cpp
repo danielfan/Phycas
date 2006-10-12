@@ -1,3 +1,5 @@
+#if defined(USING_NUMARRAY)
+
 #if defined(_MSC_VER)
 #	pragma warning(disable : 4267) // boost's builtin_converters.hpp casts size_t to int rather than unsigned
 #endif
@@ -453,3 +455,6 @@ inline void check_size_match(std::vector<int> dims, int n)
 }
 
 } //namespace numarray_bpl
+
+#endif	//#if defined(USING_NUMARRAY)
+

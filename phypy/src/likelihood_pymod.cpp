@@ -67,9 +67,11 @@ class TreeLikelihoodWrapper : public TreeLikelihood
 
 BOOST_PYTHON_MODULE(_LikelihoodBase)
 {
+#if defined(USING_NUMARRAY)
 	// these lines required by num_util
 	import_array();
 	numeric::array::set_module_and_type("numarray", "NDArray");
+#endif
 
 	class_<AdHocDensity, boost::noncopyable, boost::shared_ptr<AdHocDensity> >("AdHocDensityBase", no_init)
 		;

@@ -109,7 +109,7 @@ class Model	{
 
 		// Python-specific utilities
 #if defined(PYTHON_ONLY)
-#	if defined(USE_NUMARRAY)
+#	if defined(USING_NUMARRAY)
 		boost::python::numeric::array	getPMatrix(double edgeLength) const;
 #	else
 		VecDbl getPMatrix(double edgeLength) const;
