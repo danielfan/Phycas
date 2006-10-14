@@ -146,6 +146,21 @@ void Model::createParameters(
 		parameters_vect_ref.push_back(pinvar_param);
 		}
 	}
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Stores a flattened version of the supplied 2-dimensional array `twoDarr', storing the result in the supplied VecDbl
+|	reference variable `p'. The supplied `twoDarr' should be laid out so that rows occupy contiguous memory.
+*/
+inline void Model::flattenTwoDMatrix(VecDbl & p, double * * twoDarr, unsigned dim) const
+	{
+	unsigned flat_length = dim*dim;
+	p.reserve(flat_length);
+	double * twoD_begin = &twoDarr[0][0];
+	double * twoD_end   = twoD_begin + flat_length;
+	std::copy(twoD_begin, twoD_end, p.begin());
+	}
+#endif
 	
 #if defined(PYTHON_ONLY)
 #if defined(USING_NUMARRAY)
@@ -159,12 +174,17 @@ boost::python::numeric::array Model::getPMatrix(double edgeLength) const
 	double * * pMat = NewTwoDArray<double>(num_states, num_states);
 	calcPMat(pMat, edgeLength);
 
+#if POLPY_NEWWAY
+	VecDbl p;
+	flattenTwoDMatrix(p, pMat, num_states);
+#else
 	// copy to a vector so that we can delete pMat
 	unsigned flat_length = num_states*num_states;
 	std::vector<double> p(flat_length, 0.0);
 	double * pMat_begin = &pMat[0][0];
 	double * pMat_end   = pMat_begin + flat_length;
 	std::copy(pMat_begin, pMat_end, p.begin());
+#endif
 
 	DeleteTwoDArray<double>(pMat);
 
@@ -177,31 +197,34 @@ boost::python::numeric::array Model::getPMatrix(double edgeLength) const
 	}
 #else
 /*----------------------------------------------------------------------------------------------------------------------
-|	
+|	This function was written for the purpose of displaying a transition probability matrix on the Python side. It is 
+|	not intended to be used for anything other than display purposes (just use calcPMat directly if you want to 
+|	efficiently calculate transition probabilities. It first creates a temporary 2-dimensional array, calls calcPMat 
+|	to compute the transition probabilities and fill this array, then flattens out the matrix, returning a 1-dimensional
+|	vector containing the first row, then second row, etc.
 */
 VecDbl Model::getPMatrix(double edgeLength) const
 	{
-#error needs work
 	//@POL this function, along with calcPMat and calcPMatrices, should be provided by a policy class
-	// (which would be QMatrix for GTR model). This function is full of ad hoc nonsense at the moment!
+	// (which would be QMatrix for GTR model).
 	double * * pMat = NewTwoDArray<double>(num_states, num_states);
 	calcPMat(pMat, edgeLength);
 
+#if POLPY_NEWWAY
+	VecDbl p;
+	flattenTwoDMatrix(p, pMat, num_states);
+#else
 	// copy to a vector so that we can delete pMat
 	unsigned flat_length = num_states*num_states;
 	std::vector<double> p(flat_length, 0.0);
 	double * pMat_begin = &pMat[0][0];
 	double * pMat_end   = pMat_begin + flat_length;
 	std::copy(pMat_begin, pMat_end, p.begin());
+#endif
 
 	DeleteTwoDArray<double>(pMat);
 
-	// create vector of dimensions
-	std::vector<int> dim_vect;
-	dim_vect.push_back((int)num_states);
-	dim_vect.push_back((int)num_states);
-
-	return num_util::makeNum(&p[0], dim_vect);	//PELIGROSO
+	return p;
 	}
 #endif
 #endif

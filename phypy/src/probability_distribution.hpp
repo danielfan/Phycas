@@ -92,7 +92,7 @@ class MultivariateProbabilityDistribution
 				virtual void 			AltSetMeanAndVariance(boost::python::numeric::array m, boost::python::numeric::array v) = 0;
 				virtual boost::python::numeric::array	GetVarCovarMatrix()						= 0;
 #			else
-				virtual void 			AltSetMeanAndVariance(VecDbl m, VecDbl v)				= 0;
+				//virtual void 			AltSetMeanAndVariance(VecDbl m, VecDbl v)				= 0;
 				virtual VecDbl			GetVarCovarMatrix()										= 0;
 #			endif
 #		endif

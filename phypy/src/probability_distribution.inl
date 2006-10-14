@@ -1529,6 +1529,7 @@ inline double DirichletDistribution::GetRelativeLnPDF(
 	}
 
 #if defined(PYTHON_ONLY)
+#if defined(USING_NUMARRAY)
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the variance-covariance matrix in the form of a numarray object.
 */
@@ -1568,6 +1569,43 @@ inline boost::python::numeric::array DirichletDistribution::GetVarCovarMatrix()
 
 	return num_util::makeNum(&V[0], dims);
 	}
+#else	// USING_NUMARRAY not #defined
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the variance-covariance matrix in the form of a 1-dimensional vector (first row, then second row, etc.)
+*/
+inline VecDbl DirichletDistribution::GetVarCovarMatrix()
+	{
+	unsigned i, j;
+	unsigned dim = (unsigned)dirParams.size();
+
+	double c = 0.0;
+	for (i = 0; i < dim; ++i)
+		{
+		c += dirParams[i];
+		}
+	double denom = c*c*(c + 1.0);
+
+	VecDbl V;
+	for (i = 0; i < dim; ++i)
+		{
+		for (j = 0; j < dim; ++j)
+			{
+			if (i == j)
+				{
+				double var_i = dirParams[i]*(c - dirParams[i])/denom;
+				V.push_back(var_i);
+				}
+			else
+				{
+				double cov_ij = -dirParams[i]*dirParams[j]/denom;
+				V.push_back(cov_ij);
+				}
+			}
+		}
+
+	return V;
+	}
+#endif
 #endif
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -1615,7 +1653,7 @@ inline void DirichletDistribution::SetMeanAndVariance(const VecDbl &m, const Vec
 		}
 	}
 
-#if defined(PYTHON_ONLY)
+#if defined(PYTHON_ONLY) && defined(USING_NUMARRAY)
 /*----------------------------------------------------------------------------------------------------------------------
 |	Identical to SetMeanAndVariance, but uses numarray objects rather than std::vector. This is temporary, only serving
 |	as a template for how to import a numarray and access its data within a member function.

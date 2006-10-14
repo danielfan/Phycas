@@ -75,6 +75,10 @@ class QMatrix
 		void							redimension(unsigned new_dim);
 		std::string						showMatrixImpl(const double * q) const;
 
+#if POLPY_NEWWAY
+		void							flattenTwoDMatrix(VecDbl & p, double * * twoDarr, unsigned dim) const;
+#endif
+
 	private:
 
 		unsigned						dimension;		/**< Number of elements in any given row or column of Q matrix (e.g. 4 for a 4x4 Q matrix) */

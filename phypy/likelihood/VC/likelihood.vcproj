@@ -711,13 +711,13 @@
 				RelativePath="..\..\src\phypy_config.h">
 			</File>
 			<File
+				RelativePath="..\..\src\phypy_string.hpp">
+			</File>
+			<File
 				RelativePath="..\..\src\probability_distribution.hpp">
 			</File>
 			<File
 				RelativePath="..\..\src\thirdparty\pyconversions.h">
-			</File>
-			<File
-				RelativePath="..\..\src\phypy_string.hpp">
 			</File>
 			<File
 				RelativePath="..\..\src\q_matrix.hpp">

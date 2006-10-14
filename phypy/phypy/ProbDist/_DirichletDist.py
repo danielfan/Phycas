@@ -349,26 +349,58 @@ class DirichletDist(DirichletDistBase):
         assert nparams == len(x), 'Vector supplied to getRelativeLnPDF has length %d but length expected was %d' % (len(x), nparams)
         return DirichletDistBase.getRelativeLnPDF(self, x)
         
+    # Uncomment this version if numarray is re-introduced
+    #def setMeanAndVariance(self, mean, variance):
+    #    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+    #    """
+    #    Sets the (multivariate) mean and variance of this distribution.
+    #    Note: mean and variance are numarray array objects rather than simple
+    #    tuples. This was an exercise to see if numarray could be used for this
+    #    purpose, but tuples would be better. Note that the variances are
+    #    given as a one-dimensional array, leaving out the covariances (which
+    #    are not needed to fully specify the Dirichlet distribution).
+    #    For example:
+    #
+    #    >>> from phypy.ProbDist import *
+    #    >>> from numarray import array
+    #    >>> d = DirichletDist((1,1,1))
+    #    >>> m = array([1./9., 3./9., 5./9.])
+    #    >>> print m
+    #    [ 0.11111111  0.33333333  0.55555556]
+    #    >>> v = array([8./810.,18./810.,20./810.])
+    #    >>> print v
+    #    [ 0.00987654  0.02222222  0.02469136]
+    #    >>> d.setMeanAndVariance(m,v)
+    #    >>> d.getMean()
+    #    (0.1111111111111111, 0.33333333333333331, 0.55555555555555558)
+    #    >>> d.getVar()
+    #    (0.009876543209876543, 0.022222222222222223, 0.024691358024691357)
+    #    
+    #    """
+    #    nparams = DirichletDistBase.getNParams(self)
+    #    assert len(mean.shape) == 1, 'Mean vector supplied to DirichletDist.setMeanAndVariance should be a single-dimensional array'
+    #    assert len(variance.shape) == 1, 'Variance vector supplied to DirichletDist.setMeanAndVariance should be a single-dimensional array'
+    #    assert nparams == len(mean), 'Mean vector supplied to setMeanAndVariance should have %d elements, but %d were found' % (nparams, len(mean))
+    #    assert nparams == len(variance), 'Variance vector supplied to setMeanAndVariance should have %d elements, but %d were found' % (nparams, len(variance))
+    #    return DirichletDistBase.setMeanAndVariance(self, mean, variance)
+        
+    # Comment out this version if numarray is re-introduced
     def setMeanAndVariance(self, mean, variance):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Sets the (multivariate) mean and variance of this distribution.
-        Note: mean and variance are numarray array objects rather than simple
-        tuples. This was an exercise to see if numarray could be used for this
-        purpose, but tuples would be better. Note that the variances are
-        given as a one-dimensional array, leaving out the covariances (which
-        are not needed to fully specify the Dirichlet distribution).
-        For example:
+        Note that the variances are given as a one-dimensional tuple, leaving
+        out the covariances (which are not needed to fully specify the
+        Dirichlet distribution). For example:
         
         >>> from phypy.ProbDist import *
-        >>> from numarray import array
         >>> d = DirichletDist((1,1,1))
-        >>> m = array([1./9., 3./9., 5./9.])
+        >>> m = (1./9., 3./9., 5./9.)
         >>> print m
-        [ 0.11111111  0.33333333  0.55555556]
-        >>> v = array([8./810.,18./810.,20./810.])
+        (0.1111111111111111, 0.33333333333333331, 0.55555555555555558)
+        >>> v = (8./810.,18./810.,20./810.)
         >>> print v
-        [ 0.00987654  0.02222222  0.02469136]
+        (0.009876543209876543, 0.022222222222222223, 0.024691358024691357)
         >>> d.setMeanAndVariance(m,v)
         >>> d.getMean()
         (0.1111111111111111, 0.33333333333333331, 0.55555555555555558)
@@ -377,46 +409,64 @@ class DirichletDist(DirichletDistBase):
         
         """
         nparams = DirichletDistBase.getNParams(self)
-        assert len(mean.shape) == 1, 'Mean vector supplied to DirichletDist.setMeanAndVariance should be a single-dimensional array'
-        assert len(variance.shape) == 1, 'Variance vector supplied to DirichletDist.setMeanAndVariance should be a single-dimensional array'
         assert nparams == len(mean), 'Mean vector supplied to setMeanAndVariance should have %d elements, but %d were found' % (nparams, len(mean))
         assert nparams == len(variance), 'Variance vector supplied to setMeanAndVariance should have %d elements, but %d were found' % (nparams, len(variance))
         return DirichletDistBase.setMeanAndVariance(self, mean, variance)
         
-    def altSetMeanAndVariance(self, mean, variance):
+    # Uncomment this version if numarray is re-introduced
+    #def getVarCovarMatrix(self):
+    #    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+    #    """
+    #    Returns the variance-covariance matrix of this distribution. The
+    #    matrix is returned in the form of a numarray object. Letting c be the
+    #    sum of the n Dirichlet parameters, c_i be the ith. parameter, and
+    #    denom be c*c*(c + 1), then
+    #
+    #    Var_i = c_i*(c - c_i)/denom
+    #    Cov_ij = -c_i*c_j/denom
+    #
+    #    In this example,
+    #
+    #    n      = 3
+    #    c_1    = 1 
+    #    c_2    = 1 
+    #    c_3    = 1
+    #    c      = 3
+    #    denom  = 3*3*4 = 36
+    #    Var_i  = 1*2/36 = 0.05555556
+    #    Cov_ij = -1*1/36 = -0.02777778
+    #
+    #    >>> from phypy.ProbDist import *
+    #    >>> from numpy.numarray import array
+    #    >>> d = DirichletDist((1,1,1))
+    #    >>> print d.getVarCovarMatrix()
+    #    [[ 0.05555556 -0.02777778 -0.02777778]
+    #     [-0.02777778  0.05555556 -0.02777778]
+    #     [-0.02777778 -0.02777778  0.05555556]]
+    #    
+    #    """
+    #    return DirichletDistBase.getVarCovarMatrix(self)
+
+    # Comment out this version if numarray is re-introduced
+    def printSquareMatrix(self, matrix):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Sets the (multivariate) mean and variance of this distribution.
-        Note: mean and variance are numarray array objects rather than simple
-        tuples. This was an exercise to see if numarray could be used for this
-        purpose, but tuples would be better. Note that the variances are
-        given as a one-dimensional array, leaving out the covariances (which
-        are not needed to fully specify the Dirichlet distribution).
-        For example:
-        
-        >>> from phypy.ProbDist import *
-        >>> from numarray import array
-        >>> d = DirichletDist((1,1,1))
-        >>> m = array([1./9., 3./9., 5./9.])
-        >>> print m
-        [ 0.11111111  0.33333333  0.55555556]
-        >>> v = array([8./810.,18./810.,20./810.])
-        >>> print v
-        [ 0.00987654  0.02222222  0.02469136]
-        >>> d.setMeanAndVariance(m,v)
-        >>> d.getMean()
-        (0.1111111111111111, 0.33333333333333331, 0.55555555555555558)
-        >>> d.getVar()
-        (0.009876543209876543, 0.022222222222222223, 0.024691358024691357)
+        Utility function used to interpret a vector as a square matrix and
+        print it out.
         
         """
-        nparams = DirichletDistBase.getNParams(self)
-        assert len(mean.shape) == 1, 'Mean vector supplied to DirichletDist.setMeanAndVariance should be a single-dimensional array'
-        assert len(variance.shape) == 1, 'Variance vector supplied to DirichletDist.setMeanAndVariance should be a single-dimensional array'
-        assert nparams == len(mean), 'Mean vector supplied to setMeanAndVariance should have %d elements, but %d were found' % (nparams, len(mean))
-        assert nparams == len(variance), 'Variance vector supplied to setMeanAndVariance should have %d elements, but %d were found' % (nparams, len(variance))
-        return DirichletDistBase.setMeanAndVariance(self, mean, variance)
+        total_len = len(matrix)
+        import math
+        row_len = int(math.sqrt(total_len))
+        assert row_len*row_len == total_len, 'Attempting to print a matrix that is not square'
+        k = 0
+        for i in range(row_len):
+            for j in range(row_len):
+                print '% .8f ' % matrix[k],
+                k += 1
+            print
         
+    # Comment out this version if numarray is re-introduced
     def getVarCovarMatrix(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -440,12 +490,11 @@ class DirichletDist(DirichletDistBase):
         Cov_ij = -1*1/36 = -0.02777778
         
         >>> from phypy.ProbDist import *
-        >>> from numpy.numarray import array
         >>> d = DirichletDist((1,1,1))
-        >>> print d.getVarCovarMatrix()
-        [[ 0.05555556 -0.02777778 -0.02777778]
-         [-0.02777778  0.05555556 -0.02777778]
-         [-0.02777778 -0.02777778  0.05555556]]
+        >>> d.printSquareMatrix(d.getVarCovarMatrix())
+         0.05555556  -0.02777778  -0.02777778 
+        -0.02777778   0.05555556  -0.02777778 
+        -0.02777778  -0.02777778   0.05555556 
         
         """
         return DirichletDistBase.getVarCovarMatrix(self)

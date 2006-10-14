@@ -46,12 +46,6 @@ data_windows_only = ['Tests/cleanall.bat',
                   ]
 data_windows_only.extend(data_all)
 
-data_linux_only = ['Tests/cleanall.bat',
-                  'Tests/doctestall.bat',
-                  'Tests/runall.bat'
-                  ]
-data_linux_only.extend(data_all)
-
 windows_package_data = {'phypy.Conversions': ['*.pyd','*.dll'],
                     'phypy.DataMatrix': ['*.pyd'],
                     'phypy.Likelihood': ['*.pyd'],
@@ -60,18 +54,10 @@ windows_package_data = {'phypy.Conversions': ['*.pyd','*.dll'],
                     'phypy.ReadNexus': ['*.pyd']}
 windows_package_data.update({'phypy': data_windows_only})
 
-linux_package_data = {'phypy.Conversions': ['*.so'],
-                    'phypy.DataMatrix': ['*.so'],
-                    'phypy.Likelihood': ['*.so'],
-                    'phypy.ProbDist': ['*.so'],
-                    'phypy.Phylogeny': ['*.so'],
-                    'phypy.ReadNexus': ['*.so']}
-linux_package_data.update({'phypy': data_linux_only})
-      
 setup(name='Phycas',
       version='1.0',
       description='Phycas: Python Software for Phylogenetic Analysis',
-      author='Mark T. Holder, Paul O. Lewis and David L. Swofford',
+      author='Phycas Development Team',
       author_email='phycas@phypy.org',
       url='http://www.phypy.org/',
       scripts=['win_shortcuts.py'],
@@ -84,5 +70,4 @@ setup(name='Phycas',
                 'phypy.Phylogeny',
                 'phypy.ReadNexus'],
       package_data=windows_package_data
-      #package_data = linux_package_data
      )

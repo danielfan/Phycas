@@ -95,19 +95,70 @@ class QMatrix(QMatrixBase):
         
         """
         QMatrixBase.setStateFreqs(self, freqs)
+
+    # Uncomment if numarray re-instated        
+    #def getPMatrix(self, edgelen):
+    #    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+    #    """
+    #    Returns a numarray representing the matrix of transition
+    #    probabilities for an edge length equal to the supplied value edgelen.
+    #    The following example sets up an HKY model with kappa = 4 and base
+    #    frequencies piA = 0.1, piC = 0.2, piG = 0.3 and piT = 0.4, then
+    #    calculates and prints out the transition probability matrix for an
+    #    edgelength equal to 0.1.
+    #    
+    #    >>> import math
+    #    >>> import numarray
+    #    >>> from phypy import *
+    #    >>> 
+    #    >>> qmatrix = Likelihood.QMatrix()
+    #    >>> 
+    #    >>> rr = [1.0,4.0,1.0,1.0,4.0,1.0]
+    #    >>> qmatrix.setRelativeRates(rr)
+    #    >>> 
+    #    >>> pi = [0.1, 0.2, 0.3, 0.4]
+    #    >>> qmatrix.setStateFreqs(pi)
+    #    >>> 
+    #    >>> print qmatrix.getPMatrix(0.1)
+    #    [[ 0.87734732  0.01417824  0.08011797  0.02835647]
+    #     [ 0.00708912  0.86650039  0.02126735  0.10514313]
+    #     [ 0.02670599  0.01417824  0.9307593   0.02835647]
+    #     [ 0.00708912  0.05257157  0.02126735  0.91907196]]
+    #
+    #    """
+    #    return QMatrixBase.getPMatrix(self, edgelen)
         
+    # Comment out this version if numarray is re-introduced
+    def printSquareMatrix(self, matrix):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Utility function used to interpret a vector as a square matrix and
+        print it out.
+        
+        """
+        total_len = len(matrix)
+        import math
+        row_len = int(math.sqrt(total_len))
+        assert row_len*row_len == total_len, 'Attempting to print a matrix that is not square'
+        k = 0
+        for i in range(row_len):
+            for j in range(row_len):
+                print '% .8f ' % matrix[k],
+                k += 1
+            print
+        
+    # Comment out if numarray re-instated        
     def getPMatrix(self, edgelen):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Returns a numarray representing the matrix of transition
-        probabilities for an edge length equal to the supplied value edgelen.
-        The following example sets up an HKY model with kappa = 4 and base
-        frequencies piA = 0.1, piC = 0.2, piG = 0.3 and piT = 0.4, then
-        calculates and prints out the transition probability matrix for an
-        edgelength equal to 0.1.
+        Returns a vector representing the matrix of transition probabilities
+        for an edge length equal to the supplied value edgelen. The following
+        example sets up an HKY model with kappa = 4 and base frequencies
+        piA = 0.1, piC = 0.2, piG = 0.3 and piT = 0.4, then calculates and
+        prints out the transition probability matrix for an edgelength equal
+        to 0.1.
         
         >>> import math
-        >>> import numarray
         >>> from phypy import *
         >>> 
         >>> qmatrix = Likelihood.QMatrix()
@@ -118,12 +169,12 @@ class QMatrix(QMatrixBase):
         >>> pi = [0.1, 0.2, 0.3, 0.4]
         >>> qmatrix.setStateFreqs(pi)
         >>> 
-        >>> print qmatrix.getPMatrix(0.1)
-        [[ 0.87734732  0.01417824  0.08011797  0.02835647]
-         [ 0.00708912  0.86650039  0.02126735  0.10514313]
-         [ 0.02670599  0.01417824  0.9307593   0.02835647]
-         [ 0.00708912  0.05257157  0.02126735  0.91907196]]
-
+        >>> qmatrix.printSquareMatrix(qmatrix.getPMatrix(0.1))
+         0.87734732   0.01417824   0.08011797   0.02835647 
+         0.00708912   0.86650039   0.02126735   0.10514313 
+         0.02670599   0.01417824   0.93075930   0.02835647 
+         0.00708912   0.05257157   0.02126735   0.91907196 
+        
         """
         return QMatrixBase.getPMatrix(self, edgelen)
         

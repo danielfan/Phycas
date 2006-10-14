@@ -12,10 +12,32 @@ if len(sys.argv) > 0 and sys.argv[1] == '-install':
         os.mkdir(Phycas_shortcuts)
         directory_created(Phycas_shortcuts)
 
+    # Create shortcut to phypy installation directory
+    target = os.path.join(site_packages, 'phypy')
+    description = 'Shortcut to folder into which Phycas was installed'
+    filename = 'Phycas Installation Folder.lnk'
+    arguments = ''
+    workdir = os.path.join(site_packages, 'phypy')
+    create_shortcut(target, description, filename, arguments, workdir)
+    dest_name, ok = distutils.file_util.copy_file(filename, Phycas_shortcuts)
+    file_created(os.path.join(Phycas_shortcuts, filename))
+    os.remove(filename)
+
     # Create shortcut to runall.bat file
     target = os.path.join(site_packages, 'phypy', 'Tests', 'runall.bat')
-    description = 'Batch file that tests Phycas'
-    filename = 'Test Phycas.lnk'
+    description = 'Batch file that tests examples that come with Phycas'
+    filename = 'Test Phycas Example Scripts.lnk'
+    arguments = ''
+    workdir = os.path.join(site_packages, 'phypy', 'Tests')
+    create_shortcut(target, description, filename, arguments, workdir)
+    dest_name, ok = distutils.file_util.copy_file(filename, Phycas_shortcuts)
+    file_created(os.path.join(Phycas_shortcuts, filename))
+    os.remove(filename)
+
+    # Create shortcut to doctestall.bat file
+    target = os.path.join(site_packages, 'phypy', 'Tests', 'doctestall.bat')
+    description = 'Batch file that tests examples embedded within Phycas online documentation'
+    filename = 'Test Examples Within Phycas Documentation.lnk'
     arguments = ''
     workdir = os.path.join(site_packages, 'phypy', 'Tests')
     create_shortcut(target, description, filename, arguments, workdir)
@@ -34,7 +56,9 @@ if len(sys.argv) > 0 and sys.argv[1] == '-install':
     file_created(os.path.join(Phycas_shortcuts, filename))
     os.remove(filename)
 
-    print 'Please use the "Test Phycas" shortcut and let us know of any problems reported'
+    print 'Please try the "Test Phycas Example Scripts" and'
+    print '"Test Examples Within Phycas Documentation" shortcuts'
+    print 'and let us know of any problems encountered.'
 elif len(sys.argv) > 0 and sys.argv[1] == '-remove':
     pass
 else:

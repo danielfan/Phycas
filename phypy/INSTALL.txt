@@ -1,0 +1,18 @@
+Installing Phycas and the PhyPy library
+=======================================
+
+Windows
+-------
+Python 2.4 or 2.5 is a prerequisite
+Run correct installer for your version of Python
+If you have installed Python previously and have upgraded to 2.5, be sure your PATH 
+  environmental variable includes the path to the python.exe file
+After installing Phycas, you should find a Phycas folder in Start > All Programs...
+  Choose the "Test Phycas" shortcut to run a series of tests (only takes a couple of minutes)
+
+MacOS
+-----
+
+
+Linux
+-----

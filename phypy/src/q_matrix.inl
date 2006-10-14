@@ -212,9 +212,10 @@ inline boost::python::numeric::array QMatrix::getPMatrix(double edgelen)
 */
 inline VecDbl QMatrix::getQMatrix()
 	{
-#error needs work
 	recalcQMatrix();
-	return num_util::makeNum(qmat_begin, dim_vect);
+	VecDbl p;
+	flattenTwoDMatrix(p, qmat, dim_vect[0]); 
+	return p;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -223,9 +224,10 @@ inline VecDbl QMatrix::getQMatrix()
 */
 inline VecDbl QMatrix::getEigenVectors()
 	{
-#error needs work
 	recalcQMatrix();
-	return num_util::makeNum(z_begin, dim_vect);
+	VecDbl p;
+	flattenTwoDMatrix(p, z, dim_vect[0]); 
+	return p;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -234,10 +236,9 @@ inline VecDbl QMatrix::getEigenVectors()
 */
 inline VecDbl QMatrix::getPMatrix(double edgelen)
 	{
-#error needs work
-	std::vector<double> p;
+	VecDbl p;
 	recalcPMatrix(p, edgelen);
-	return num_util::makeNum(&p[0], dim_vect);	//PELIGROSO
+	return p;
 	}
 #endif
 #endif
@@ -263,4 +264,19 @@ inline std::string QMatrix::showQMatrix()
 	return showMatrixImpl(qmat_begin);
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Stores a flattened version of the supplied 2-dimensional array `twoDarr', storing the result in the supplied VecDbl
+|	reference variable `p'. The supplied `twoDarr' should be laid out so that rows occupy contiguous memory.
+*/
+inline void QMatrix::flattenTwoDMatrix(VecDbl & p, double * * twoDarr, unsigned dim) const
+	{
+	unsigned flat_length = dim*dim;
+	p.reserve(flat_length);
+	double * twoD_begin = &twoDarr[0][0];
+	double * twoD_end   = twoD_begin + flat_length;
+	std::copy(twoD_begin, twoD_end, p.begin());
+	}
+#endif
+	
 } // namespace phycas
