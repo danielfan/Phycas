@@ -1,3 +1,5 @@
+recursive-include src *.h *.hpp *.cpp *.inl
+
 recursive-include phypy/Examples *.py *.nex
 
 recursive-include phypy/Examples/ExplorePrior/reference_output *
