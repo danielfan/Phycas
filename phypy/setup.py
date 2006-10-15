@@ -54,13 +54,22 @@ windows_package_data = {'phypy.Conversions': ['*.pyd','*.dll'],
                     'phypy.ReadNexus': ['*.pyd']}
 windows_package_data.update({'phypy': data_windows_only})
 
+phycas_description = """\
+Phycas and the PhyPy library:
+ 	
+Phycas is a Python application for carrying out phylogenetic analyses.
+The PhyPy library is a C++ and Python library used by Phycas, but which
+can be used to create new applications or to extend the functionality
+currently built into Phycas.
+"""
+
 setup(name='Phycas',
       version='1.0',
       description='Phycas: Python Software for Phylogenetic Analysis',
       author='Phycas Development Team',
       author_email='phycas@phypy.org',
       url='http://www.phypy.org/',
-      license='GNU Public License (GPL)',
+      license='GNU General Public License (GPL)',
       scripts=['win_shortcuts.py'],
       packages=['phypy',
                 'phypy.Conversions',
@@ -71,6 +80,9 @@ setup(name='Phycas',
                 'phypy.Phylogeny',
                 'phypy.ReadNexus'],
       package_data=windows_package_data,
+      long_description=phycas_description,
+      platforms=['Linux', 'MacOS X', 'Windows'],
+      keywords=['phylogeny', 'phylogenetics', 'MCMC', 'Bayesian', 'bioinformatics'],
       classifiers=[
                   'Development Status :: 3 - Alpha',
                   'Environment :: Console',

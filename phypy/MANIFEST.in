@@ -1,12 +1,12 @@
 recursive-include src *.h *.hpp *.cpp *.inl
-prune phypy/*/.svn
 
 include dojam.bat
 include clean
 include clean.bat
-include INSTALL.txt
+include INSTALL
 include MANIFEST.in
-include changes.txt
+include LICENSE
+include CHANGES
 include build_windows_installer.bat
 include build_windows_source_distr.bat
 include build_linux_source_distr.sh
@@ -48,23 +48,10 @@ include VC/test/test.hpp
 include VC/test/test.cpp
 
 recursive-include phypy/Examples *.py *.nex
-
 recursive-include phypy/Examples/ExplorePrior/reference_output *
-prune phypy/Examples/ExplorePrior/reference_output/.svn
-
 recursive-include phypy/Examples/FixedParams/reference_output *
-prune phypy/Examples/FixedParams/reference_output/.svn
-
 recursive-include phypy/Examples/GelfandGhosh/reference_output *
-prune phypy/Examples/GelfandGhosh/reference_output/.svn
-
 recursive-include phypy/Examples/LikelihoodTest/reference_output *
-prune phypy/Examples/LikelihoodTest/reference_output/.svn
-
 recursive-include phypy/Examples/Polytomies/reference_output *
-prune phypy/Examples/Polytomies/reference_output/.svn
-
 recursive-include phypy/Examples/Simulator/reference_output *
-prune phypy/Examples/Simulator/reference_output/.svn
-
 recursive-include phypy/Tests *.py *.bat
