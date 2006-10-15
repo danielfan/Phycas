@@ -1,4 +1,51 @@
 recursive-include src *.h *.hpp *.cpp *.inl
+prune phypy/*/.svn
+
+include dojam.bat
+include clean
+include clean.bat
+include INSTALL.txt
+include MANIFEST.in
+include changes.txt
+include build_windows_installer.bat
+include build_windows_source_distr.bat
+include build_linux_source_distr.sh
+include phycaslogo.bmp
+
+include Jamfile
+include Jamrules
+
+include conversions/VC/conversions.sln
+include conversions/VC/conversions.vcproj
+include conversions/Jamfile
+
+include data_matrix/VC/data_matrix.sln
+include data_matrix/VC/data_matrix.vcproj
+include data_matrix/Jamfile
+
+include likelihood/VC/likelihood.sln
+include likelihood/VC/likelihood.vcproj
+include likelihood/Jamfile
+
+include phylogeny/VC/phylogeny.sln
+include phylogeny/VC/phylogeny.vcproj
+include phylogeny/Jamfile
+
+include prob_dist/VC/prob_dist.sln
+include prob_dist/VC/prob_dist.vcproj
+include prob_dist/Jamfile
+
+include read_nexus/VC/read_nexus.sln
+include read_nexus/VC/read_nexus.vcproj
+include read_nexus/Jamfile
+
+include VC/phypy.sln
+include VC/profiling/profiling.vcproj
+include VC/profiling/profiling.cpp
+include VC/profiling/pol_profiling_config.h
+include VC/test/test.vcproj
+include VC/test/test.hpp
+include VC/test/test.cpp
 
 recursive-include phypy/Examples *.py *.nex
 
@@ -21,7 +68,3 @@ recursive-include phypy/Examples/Simulator/reference_output *
 prune phypy/Examples/Simulator/reference_output/.svn
 
 recursive-include phypy/Tests *.py *.bat
-
-
-
-
