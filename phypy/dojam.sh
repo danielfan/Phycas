@@ -1,5 +1,11 @@
 #!/bin/sh
 
+# export PATH=$PATH:$HOME/boost_1_33_1/tools/build/jam_src/bin.linuxx86
+# export PHYCAS_ROOT=$HOME/Phycas-1.0
+# export PYTHON_ROOT=/usr/local
+# export PYTHON_VERSION=2.4
+# export BOOST_ROOT=$HOME/boost_1_33_1
+
 if [ -n "$PYTHON_ROOT" ]
 then
 	echo PYTHON_ROOT=$PYTHON_ROOT
