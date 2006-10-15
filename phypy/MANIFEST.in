@@ -2,16 +2,12 @@ recursive-include src *.h *.hpp *.cpp *.inl
 
 include dojam.sh
 include dojam.bat
-include clean
+include clean.sh
 include clean.bat
 include INSTALL
 include MANIFEST.in
 include LICENSE
 include CHANGES
-include build_windows_installer.bat
-include build_windows_source_distr.bat
-include build_linux_source_distr.sh
-include phycaslogo.bmp
 
 include Jamfile
 include Jamrules
