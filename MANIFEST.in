@@ -1,0 +1,53 @@
+recursive-include phypy/src *.h *.hpp *.inl *.c *.cpp
+
+include phypy/dojam.sh
+include phypy/dojam.bat
+include phypy/clean.sh
+include phypy/clean.bat
+include phypy/INSTALL
+include phypy/LICENSE
+include phypy/CHANGES
+
+include phypy/Jamfile
+include phypy/Jamrules
+
+include phypy/conversions/VC/conversions.sln
+include phypy/conversions/VC/conversions.vcproj
+include phypy/conversions/Jamfile
+
+include phypy/data_matrix/VC/data_matrix.sln
+include phypy/data_matrix/VC/data_matrix.vcproj
+include phypy/data_matrix/Jamfile
+
+include phypy/likelihood/VC/likelihood.sln
+include phypy/likelihood/VC/likelihood.vcproj
+include phypy/likelihood/Jamfile
+
+include phypy/phylogeny/VC/phylogeny.sln
+include phypy/phylogeny/VC/phylogeny.vcproj
+include phypy/phylogeny/Jamfile
+
+include phypy/prob_dist/VC/prob_dist.sln
+include phypy/prob_dist/VC/prob_dist.vcproj
+include phypy/prob_dist/Jamfile
+
+include phypy/read_nexus/VC/read_nexus.sln
+include phypy/read_nexus/VC/read_nexus.vcproj
+include phypy/read_nexus/Jamfile
+
+include phypy/VC/phypy.sln
+include phypy/VC/profiling/profiling.vcproj
+include phypy/VC/profiling/profiling.cpp
+include phypy/VC/profiling/pol_profiling_config.h
+include phypy/VC/test/test.vcproj
+include phypy/VC/test/test.hpp
+include phypy/VC/test/test.cpp
+
+recursive-include phypy/phypy/Examples *.py *.nex
+recursive-include phypy/phypy/Examples/ExplorePrior/reference_output *
+recursive-include phypy/phypy/Examples/FixedParams/reference_output *
+recursive-include phypy/phypy/Examples/GelfandGhosh/reference_output *
+recursive-include phypy/phypy/Examples/LikelihoodTest/reference_output *
+recursive-include phypy/phypy/Examples/Polytomies/reference_output *
+recursive-include phypy/phypy/Examples/Simulator/reference_output *
+recursive-include phypy/phypy/Tests *.py *.bat
