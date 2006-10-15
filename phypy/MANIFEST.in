@@ -1,6 +1,6 @@
 recursive-include src *.h *.hpp *.cpp *.inl
 
-include dojam
+include dojam.sh
 include dojam.bat
 include clean
 include clean.bat
