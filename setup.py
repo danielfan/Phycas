@@ -71,6 +71,7 @@ setup(name='Phycas',
       url='http://www.phypy.org/',
       license='GNU General Public License (GPL)',
       scripts=['win_shortcuts.py'],
+      package_dir = {'': 'phypy'}
       packages=['phypy',
                 'phypy.Conversions',
                 'phypy.DataMatrix',
