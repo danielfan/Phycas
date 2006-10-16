@@ -5,53 +5,57 @@
 
 from distutils.core import setup
 
-data_all = ['phypy/Tests/doctestall.py',
-          'phypy/Examples/Data/green.nex',
-          'phypy/Examples/Data/nyldna4.nex',
-          'phypy/Examples/ExplorePrior/__init__.py',
-          'phypy/Examples/ExplorePrior/ExplorePrior.py',
-          'phypy/Examples/ExplorePrior/reference_output/nodata.nex.p',
-          'phypy/Examples/ExplorePrior/reference_output/nodata.nex.t',
-          'phypy/Examples/FixedParams/__init__.py',
-          'phypy/Examples/FixedParams/FixedParams.py',
-          'phypy/Examples/FixedParams/reference_output/params.p',
-          'phypy/Examples/FixedParams/reference_output/trees.t',
-          'phypy/Examples/GelfandGhosh/__init__.py',
-          'phypy/Examples/GelfandGhosh/GelfandGhosh.py',
-          'phypy/Examples/GelfandGhosh/reference_output/analHKY.nex.p',
-          'phypy/Examples/GelfandGhosh/reference_output/analHKY.nex.t',
-          'phypy/Examples/GelfandGhosh/reference_output/analHKYflex.nex.p',
-          'phypy/Examples/GelfandGhosh/reference_output/analHKYflex.nex.t',
-          'phypy/Examples/GelfandGhosh/reference_output/analHKYg.nex.p',
-          'phypy/Examples/GelfandGhosh/reference_output/analHKYg.nex.t',
-          'phypy/Examples/GelfandGhosh/reference_output/ggout.txt',
-          'phypy/Examples/LikelihoodTest/__init__.py',
-          'phypy/Examples/LikelihoodTest/LikelihoodTest.py',
-          'phypy/Examples/LikelihoodTest/reference_output/check.nex',
-          'phypy/Examples/LikelihoodTest/reference_output/simulated.nex',
-          'phypy/Examples/Polytomies/__init__.py',
-          'phypy/Examples/Polytomies/Polytomies.py',
-          'phypy/Examples/Polytomies/reference_output/analHKY.nex.p',
-          'phypy/Examples/Polytomies/reference_output/analHKY.nex.t',
-          'phypy/Examples/Polytomies/reference_output/simHKY.nex',
-          'phypy/Examples/Simulator/__init__.py',
-          'phypy/Examples/Simulator/Simulator.py',
-          'phypy/Examples/Simulator/reference_output/simulated.nex',
-          'phypy/Examples/*.py'
+data_all = [
+          'Tests/doctestall.py',
+          'Examples/Data/green.nex',
+          'Examples/Data/nyldna4.nex',
+          'Examples/ExplorePrior/__init__.py',
+          'Examples/ExplorePrior/ExplorePrior.py',
+          'Examples/ExplorePrior/reference_output/nodata.nex.p',
+          'Examples/ExplorePrior/reference_output/nodata.nex.t',
+          'Examples/FixedParams/__init__.py',
+          'Examples/FixedParams/FixedParams.py',
+          'Examples/FixedParams/reference_output/params.p',
+          'Examples/FixedParams/reference_output/trees.t',
+          'Examples/GelfandGhosh/__init__.py',
+          'Examples/GelfandGhosh/GelfandGhosh.py',
+          'Examples/GelfandGhosh/reference_output/analHKY.nex.p',
+          'Examples/GelfandGhosh/reference_output/analHKY.nex.t',
+          'Examples/GelfandGhosh/reference_output/analHKYflex.nex.p',
+          'Examples/GelfandGhosh/reference_output/analHKYflex.nex.t',
+          'Examples/GelfandGhosh/reference_output/analHKYg.nex.p',
+          'Examples/GelfandGhosh/reference_output/analHKYg.nex.t',
+          'Examples/GelfandGhosh/reference_output/ggout.txt',
+          'Examples/LikelihoodTest/__init__.py',
+          'Examples/LikelihoodTest/LikelihoodTest.py',
+          'Examples/LikelihoodTest/reference_output/check.nex',
+          'Examples/LikelihoodTest/reference_output/simulated.nex',
+          'Examples/Polytomies/__init__.py',
+          'Examples/Polytomies/Polytomies.py',
+          'Examples/Polytomies/reference_output/analHKY.nex.p',
+          'Examples/Polytomies/reference_output/analHKY.nex.t',
+          'Examples/Polytomies/reference_output/simHKY.nex',
+          'Examples/Simulator/__init__.py',
+          'Examples/Simulator/Simulator.py',
+          'Examples/Simulator/reference_output/simulated.nex',
+          'Examples/*.py'
           ]
 
-data_windows_only = ['phypy/Tests/cleanall.bat',
-                  'phypy/Tests/doctestall.bat',
-                  'phypy/Tests/runall.bat'
+data_windows_only = [
+                  'Tests/cleanall.bat',
+                  'Tests/doctestall.bat',
+                  'Tests/runall.bat'
                   ]
 data_windows_only.extend(data_all)
 
-windows_package_data = {'phypy.Conversions': ['*.pyd','*.dll'],
+windows_package_data = {
+                    'phypy.Conversions': ['*.pyd','*.dll'],
                     'phypy.DataMatrix': ['*.pyd'],
                     'phypy.Likelihood': ['*.pyd'],
                     'phypy.ProbDist': ['*.pyd'],
                     'phypy.Phylogeny': ['*.pyd'],
-                    'phypy.ReadNexus': ['*.pyd']}
+                    'phypy.ReadNexus': ['*.pyd']
+                    }
 windows_package_data.update({'phypy': data_windows_only})
 
 phycas_description = """\
@@ -71,7 +75,7 @@ setup(name='Phycas',
       url='http://www.phypy.org/',
       license='GNU General Public License (GPL)',
       scripts=['win_shortcuts.py'],
-      package_dir = {'': 'phypy'}
+      package_dir = {'': 'phypy'},
       packages=['phypy',
                 'phypy.Conversions',
                 'phypy.DataMatrix',
