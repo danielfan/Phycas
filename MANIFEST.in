@@ -48,5 +48,5 @@ recursive-include phypy/phypy/Examples/GelfandGhosh/reference_output *
 recursive-include phypy/phypy/Examples/LikelihoodTest/reference_output *
 recursive-include phypy/phypy/Examples/Polytomies/reference_output *
 recursive-include phypy/phypy/Examples/Simulator/reference_output *
-recursive-include phypy/phypy/Tests *.py *.bat
+recursive-include phypy/phypy/Tests *.py *.bat *.sh
 recursive-include phypy/src *.h *.hpp *.inl *.c *.cpp

@@ -1,18 +1,147 @@
 Installing Phycas and the PhyPy library
 =======================================
 
-Windows
--------
-Python 2.4 or 2.5 is a prerequisite
-Run correct installer for your version of Python
-If you have installed Python previously and have upgraded to 2.5, be sure your PATH 
-  environmental variable includes the path to the python.exe file
-After installing Phycas, you should find a Phycas folder in Start > All Programs...
-  Choose the "Test Phycas" shortcut to run a series of tests (only takes a couple of minutes)
-
 MacOS
 -----
 
+TODO 
+
+Windows
+-------
+Python 2.4 or 2.5 must be installed before trying to install Phycas.
+If you have previously installed Phycas, uninstall your existing version
+of Phycas before installing a new version. To do this, choose 
+
+   Start > All Programs > Phycas > Uninstall Phycas
+
+Download and run the correct installer for your version of Python:
+  
+  Phycas-1.0.win32-py2.4.exe if you have Python 2.4 installed
+  Phycas-1.0.win32-py2.5.exe if you have Python 2.5 installed
+  
+After installing Phycas, choose Start > All Programs > Phycas > 
+"Test Phycas Example Scripts" to run a series of short tests (only 
+takes a couple of minutes). The results of the tests are saved in
+the file runall_diffs.txt, which is stored in the Tests folder of
+your Phycas installation folder, which can be opened using
+Start > All Programs > Phycas > "Phycas Installation Folder"
+
+You may also wish to test all the examples embedded in the online
+documentation. To do this, choose Start > All Programs > Phycas > 
+"Test Examples Within Phycas Documenation"
 
 Linux
 -----
+Download the source distribution (e.g. Phycas-1.0.tar.gz).
+
+Uncompress the archive:
+
+	tar zxvf Phycas-1.0.tar.gz
+
+Move into the phypy directory
+
+	cd Phycas-1.0/phypy
+
+Edit the dojam.sh script, uncommenting the 5 export statements
+at the beginning and replacing the definitions with ones
+appropriate for your system:
+  
+  BOOST_ROOT should be the top-level directory for the Boost
+     library (download from http://www.boost.org/ if you do not
+     have this library)
+    
+  PYTHON_ROOT should be set to the output of the following:
+     python -c "import sys; print sys.prefix"
+     
+  PYTHON_VERSION should be set to your Python major.minor 
+     version (do not go deeper than the minor version, there
+     should be only one dot in your PYTHON_VERSION! 
+     
+  PHYCAS_ROOT should be set to Phycas-1.0 (the top-level 
+     directory created by tar when you unpacked the distribution)
+     In the following discussion, I will assume that the Phycas-1.0
+     directory is inside $HOME, so $PHYCAS_ROOT will equal
+     $HOME/Phycas-1.0
+     
+  PATH should specify the location of the directory containing
+     your bjam executable. bjam is part of Boost, and can be
+     built as follows:
+
+        cd $BOOST_ROOT/tools/build/jam_src
+        ./build.sh
+
+     This will create a directory at the same level as build.sh
+     (on my machine, it is named bin.linuxx86) containing the
+     bjam executable.     
+     
+     See the http://www.boost.org/libs/python/doc/tutorial for 
+     more information about Boost and Boost Python in particular.
+      
+Run dojam.sh. This will create a directory $PHYCAS_ROOT/phypy/bin 
+containing two subdirectories: boost and phypy. In the boost 
+subdirectory, at the bottom of a very long pile of subdirectories, 
+bjam will build the boost_python "so" file (dynamic link library). 
+This library allows the C++ part of Phycas to communicate with the 
+Python interface. bjam will then build the phypy library, placing 
+it in $PHYCAS_ROOT/phypy/bin/phypy.
+
+Once bjam is finished, you should be able to use Phycas. You will
+need to first tell Python how to find the phypy package. This can
+be done in one of two ways. The choice will depend on how much
+access you have to the linux system and personal preference.
+
+Option 1: If you do *not* have superuser privileges, you can set
+a couple of environmental variables that tell Python where to look  
+for Phycas and the components of the phypy library:
+
+	# if your shell is tcsh...
+	setenv PYTHONPATH $PHYCAS_ROOT/phypy
+	setenv LD_LIBRARY_PATH $PHYCAS_ROOT/phypy/bin/boost/libs/python/build/libboost_python.so/gcc/release/shared-linkable-true
+
+	# if your shell is bash...
+	export PYTHONPATH=$PHYCAS_ROOT/phypy
+	export LD_LIBRARY_PATH=$PHYCAS_ROOT/phypy/bin/boost/libs/python/build/libboost_python.so/gcc/release/shared-linkable-true
+	
+Note that I have used my own installation as an example, yours may
+well differ in the details. You probably will want to put these 
+environmental variable initializations in your login script
+(i.e. $HOME/.tcshrc or $HOME/.bashrc to save having to enter 
+them each time you run Phycas)
+	
+Option 2: You can copy (as superuser) the entire $PHYCAS_ROOT/phypy/phypy
+subtree to the site-packages directory of your Python installation. For example,
+
+	cp $PHYCAS_ROOT/phypy/phypy $PYTHON_ROOT/lib/python2.4/site-packages -R
+	
+You will also need to copy (again, as superuser) the Boost Python "so" file to 
+a place where it can be found by the operating system (e.g. /usr/local/lib)
+
+	cp $PHYCAS_ROOT/phypy/bin/boost/libs/python/build/libboost_python.so/gcc/release/shared-linkable-true/libboost_python.so.1.33.1 /usr/local/lib
+	cd /usr/local/lib
+	ln -s libboost_python.so.1.33.1 libboost_python.so
+	/sbin/ldconfig /usr/local/lib
+	
+At some point, we will make this process easier by using the Python distutils 
+module, but the need to use a non-standard make utility (i.e. bjam) has complicated 
+things.
+
+At this point, it is probably a good idea to run some quick tests.
+First, navigate to the Tests directory. This will do the trick if
+you used Option 1 above:
+
+	cd $PHYCAS_ROOT/phypy/phypy/Tests
+	
+Otherwise, locate your Python installation's site-packages directory.
+Under that should be the phypy directory, and inside that should be
+the Tests directory.
+
+Once inside the Tests directory, run
+
+	python doctestall.py
+	
+to test all the examples embedded within the online documentation,
+and issue this command
+
+	./runall.sh
+
+to test all the example scripts (in the Examples directory).
