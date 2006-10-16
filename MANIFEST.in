@@ -1,12 +1,10 @@
-recursive-include phypy/src *.h *.hpp *.inl *.c *.cpp
-
+include LICENSE
+include CHANGES
+include phypy/INSTALL
 include phypy/dojam.sh
 include phypy/dojam.bat
 include phypy/clean.sh
 include phypy/clean.bat
-include phypy/INSTALL
-include phypy/LICENSE
-include phypy/CHANGES
 
 include phypy/Jamfile
 include phypy/Jamrules
@@ -51,3 +49,4 @@ recursive-include phypy/phypy/Examples/LikelihoodTest/reference_output *
 recursive-include phypy/phypy/Examples/Polytomies/reference_output *
 recursive-include phypy/phypy/Examples/Simulator/reference_output *
 recursive-include phypy/phypy/Tests *.py *.bat
+recursive-include phypy/src *.h *.hpp *.inl *.c *.cpp

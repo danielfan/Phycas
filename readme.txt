@@ -1,3 +1,7 @@
+15-Oct-2006
+-----------
+This file is a little out of date now.
+
 11-August-2006
 --------------
 In this directory, you should find only two folders: "pyphy" and "unused". 
