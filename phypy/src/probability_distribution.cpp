@@ -17,8 +17,10 @@
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
-#define NO_IMPORT_ARRAY
+#if defined(USING_NUMARRAY)
+#	define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
+#	define NO_IMPORT_ARRAY
+#endif
 
 #include "probability_distribution.hpp"
 #include "ncl/nxs_exception.hpp"

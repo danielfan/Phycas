@@ -51,11 +51,13 @@
 #include "phypy/src/ncl/trees/full_tree_description.hpp"
 #include "phypy/src/ncl/misc/nxs_index_set.hpp"
 
+#if defined(USING_NUMARRAY)
 // These next three lines required, otherwise get link error "unresolved external symbol _PyArrayHandle" 
 // (at least in VC7)
-#define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
-#include <boost/python/numeric.hpp>
-#include "phypy/src/thirdparty/num_util/num_util.h"
+#	define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
+#	include <boost/python/numeric.hpp>
+#	include "phypy/src/thirdparty/num_util/num_util.h"
+#endif
 
 #include <boost/python.hpp>
 

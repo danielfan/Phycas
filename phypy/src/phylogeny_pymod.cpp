@@ -21,7 +21,9 @@
 #	pragma warning(disable : 4267) // boost's builtin_converters.hpp casts size_t to int rather than unsigned
 #endif
 
-#define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle		// only needed on lewis.eeb.uconn.edu
+#if defined(USING_NUMARRAY)
+#	define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
+#endif
 
 //#include "phycas/force_include.h"
 #if defined(POL_PHYCAS)

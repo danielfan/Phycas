@@ -21,14 +21,15 @@
 #	pragma warning(disable : 4267) // boost's builtin_converters.hpp casts size_t to int rather than unsigned
 #endif
 
-#define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
-
 //#include "phycas/force_include.h"
 #include "phypy/src/basic_tree.hpp"
 #include <boost/python.hpp>
 //#include <boost/python/tuple.hpp>
 //#include <boost/python/numeric.hpp>
-#include "phypy/src/thirdparty/num_util/num_util.h"
+#if defined(USING_NUMARRAY)
+#	define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
+#	include "phypy/src/thirdparty/num_util/num_util.h"
+#endif
 #include "phypy/src/thirdparty/pyconversions.h"	// from HippoDraw
 #include "phypy/src/cipres/ConfigDependentHeaders.h"	// int8_t typedef //POL 18Mar2006
 using namespace boost::python;

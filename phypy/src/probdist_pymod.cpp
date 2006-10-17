@@ -21,7 +21,9 @@
 #	pragma warning(disable : 4267) // boost's builtin_converters.hpp casts size_t to int rather than unsigned
 #endif
 
-#define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
+#if defined(USING_NUMARRAY)
+#	define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
+#endif
 
 #include "basic_lot.hpp"
 #include "probability_distribution.hpp"
