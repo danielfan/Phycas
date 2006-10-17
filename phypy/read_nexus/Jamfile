@@ -6,7 +6,7 @@ extension _ReadNexus
   ../src/boost_assertion_failed.cpp
   ../src/cipres/CipresDataMatrixHelper.cpp
   ../src/cipres/cipres_nexus_reader.cpp 		#POL 18-Mar-2006 may need to comment out for Mac
-  ../src/thirdparty/num_util/num_util.cpp
+  #../src/thirdparty/num_util/num_util.cpp
   ../src/ncl/nxs_basic_manager.cpp
   ../src/ncl/nxs_block.cpp
   ../src/ncl/nxs_exception.cpp

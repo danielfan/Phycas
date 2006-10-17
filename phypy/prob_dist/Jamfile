@@ -5,7 +5,7 @@ extension _ProbDist
 :	../src/probdist_pymod.cpp 
 	../src/boost_assertion_failed.cpp
 	../src/phypy_string.cpp
-	../src/thirdparty/num_util/num_util.cpp
+	#../src/thirdparty/num_util/num_util.cpp
 	../src/basic_lot.cpp
 	../src/thirdparty/dcdflib/src/dcdflib.c
 	../src/thirdparty/dcdflib/src/ipmpar.c
