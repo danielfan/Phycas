@@ -201,9 +201,12 @@ class Phycas:
         #self.adapt_ycond_from_ends  = 0.25
 
         # Variables associated with edge length prior distributions
-        self.using_hyperprior       = True      # Hyperprior for edge length prior used if True
-        self.master_edgelen_dist    = ExponentialDist(2.0);
+        self.using_hyperprior       = True      # If True, a hyperprior will be used to govern the edge length prior; if False, master_edgelen_dist will be used as the edge length prior
+        self.master_edgelen_dist    = ExponentialDist(2.0)  # Used as the edge length prior for all edges if using_hyperprior is False; if using_hyperprior is True, this variable only determines the initial edge length prior
         self.edgelen_hyperprior     = InverseGammaDist(2.1, 0.909)
+
+        # Variables associated with initializing the MCMC sampler
+        self.starting_edgelen_dist  = ExponentialDist(10.0) # Used to select the starting edge lengths when starting_tree_source is 'random'
         
         # Variables associated with substitution models
         self.model_type             = 'hky'     # Can be 'jc', 'hky' or 'gtr'
@@ -459,7 +462,7 @@ class Phycas:
             TreeManip(self.tree).randomTree(
                 self.ntax,     # number of tips
                 self.r,        # pseudorandom number generator
-                self.master_edgelen_dist, # distribution from which to draw edge lengths
+                self.starting_edgelen_dist, # distribution from which to draw starting edge lengths
                 False)         # Yule tree if True, edge lengths independent if False
             self.starting_tree = self.tree.makeNewick()
             self.warn_tip_numbers = False
