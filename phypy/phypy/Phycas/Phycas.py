@@ -39,8 +39,7 @@ class Phycas:
     Sample every:   10
     Starting tree:  (1:0.04536,(2:0.01124,4:0.17084):0.02834,3:0.00102)
     No. samples:    10
-    Sampled trees will be saved in C:\Synchronized\Projects\phycasdev_trunk\phypy\phypy\Examples\Data\nyldna4.nex.t
-    Sampled parameters will be saved in C:\Synchronized\Projects\phycasdev_trunk\phypy\phypy\Examples\Data\nyldna4.nex.p
+    ...
     Tip node numbers were set using the names in the tree description
     Starting log-likelihood = -7664.64812893
     Starting log-prior = -8.75513016589
