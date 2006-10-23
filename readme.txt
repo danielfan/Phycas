@@ -37,7 +37,7 @@ and shows projections for future feature additions:
 
   phycasdev/pyphy/changes.txt
 
-The following clean out the so/pyd dynamic libraries. This seems to be necessary
+The following cleans out the so/pyd dynamic libraries. This seems to be necessary
 (on Windows at least) when switching between debug and release versions:
 
   phycasdev/pyphy/clean       (shell script)
@@ -57,21 +57,30 @@ There are several environmental variables that dojam and/or dojam.bat expect to
 be set before they are run. Here are the environmental variable settings used 
 on a Windows machine in case it helps:
 
-PYTHON_ROOT     C:\Python24
-PYTHON_VERSION  2.4
-BOOST_ROOT      C:\boost_1_33_0
+PYTHON_ROOT     C:\Python25
+PYTHON_VERSION  2.5
+BOOST_ROOT      C:\boost_1_33_1
 PHYCAS_ROOT     C:\Synchronized\Projects\phycasdev
 
 If the bjam build is successful, you will need to add something like this to 
 your PYTHONPATH environmental variable:
 
-PYTHONPATH      $HOME/phycasdev/pyphy
+PYTHONPATH      $HOME/phycasdev/pyphy 
 
-To try running the examples (in total, this should take only a couple of minutes):
+You also need to put boost_python.dll where it can be found. I usually copy it from
+  phycasdev_trunk\phypy\bin\boost\libs\python\build\boost_python.dll\vc-7_1\release\threading-multi
+to
+  phycasdev_trunk\phypy\phypy\Conversions
+When you issue the "from phypy import *" command in Python, the first module that is
+loaded is Conversions, and that's also the first time the system tries to find
+boost_python.dll. If boost_python.dll is in the same directory as _Conversions.pyd,
+then the system will find boost_python.dll there too and all will be well
 
-cd phycasdev/pyphy/pyphy/Examples
-./runall.sh
+To try running the tests (in total, this should take only a couple of minutes):
 
-If the script does not abort, then the output of each example matched the reference
+cd phycasdev/pyphy/pyphy/Tests
+runall.bat
+
+If the script does not abort, then the output of each test run matched the reference
 output and all is well.
 
