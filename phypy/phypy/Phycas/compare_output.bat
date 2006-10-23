@@ -1,4 +1,4 @@
-fc green.nex.p reference_output/green.nex.p 
-fc green.nex.t reference_output/green.nex.t
+fc ..\Examples\Data\green.nex.p reference_output\green.nex.p 
+fc ..\Examples\Data\green.nex.t reference_output\green.nex.t
 pause
  

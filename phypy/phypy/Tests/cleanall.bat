@@ -1,6 +1,9 @@
 @echo off
 if exist runall_diffs.txt del /Q runall_diffs.txt
 
+if exist ..\Examples\Data\nyldna4.nex.p del /Q ..\Examples\Data\green.nex.p
+if exist ..\Examples\Data\nyldna4.nex.t del /Q ..\Examples\Data\green.nex.t
+
 if exist ..\Examples\Data\nyldna4.nex.p del /Q ..\Examples\Data\nyldna4.nex.p
 if exist ..\Examples\Data\nyldna4.nex.t del /Q ..\Examples\Data\nyldna4.nex.t
 

@@ -37,17 +37,18 @@ class Phycas:
     Data source:    ../Examples/Data/nyldna4.nex
     No. cycles:     100
     Sample every:   10
-    Starting tree:  (1:0.22681,(2:0.05618,4:0.85420):0.14171,3:0.00510)
+    Starting tree:  (1:0.04536,(2:0.01124,4:0.17084):0.02834,3:0.00102)
     No. samples:    10
-    ...
+    Sampled trees will be saved in C:\Synchronized\Projects\phycasdev_trunk\phypy\phypy\Examples\Data\nyldna4.nex.t
+    Sampled parameters will be saved in C:\Synchronized\Projects\phycasdev_trunk\phypy\phypy\Examples\Data\nyldna4.nex.p
     Tip node numbers were set using the names in the tree description
-    Starting log-likelihood = -8754.6126271
-    Starting log-prior = -10.80950415
+    Starting log-likelihood = -7664.64812893
+    Starting log-prior = -8.75513016589
     Parameter starting values and prior densities:
       Parameter name:     edge length master parameter
       Prior distribution: ExponentialDist(2.00000)
       Master parameter (no current value)
-      Prior log-density:  0.897768422706
+      Prior log-density:  2.95214240678
     <BLANKLINE>
       Parameter name:     edge length hyperprior
       Prior distribution: InverseGammaDist(2.10000, 0.90909)
@@ -84,42 +85,42 @@ class Phycas:
     <BLANKLINE>
     Sampling (100 cycles)...
     <BLANKLINE>
-    cycle = 10, lnL = -7344.52303
-    cycle = 20, lnL = -7140.30175
+    cycle = 10, lnL = -7120.68639
+    cycle = 20, lnL = -7110.88061
     <BLANKLINE>
     Slice sampler diagnostics:
-      mode=0.30095, avgevals=7.080 (edge length hyperprior)
-      mode=1.94564, avgevals=5.760 (trs/trv rate ratio)
-      mode=1.26483, avgevals=7.520 (base freq. A)
-      mode=0.77694, avgevals=6.560 (base freq. C)
-      mode=0.98147, avgevals=7.080 (base freq. G)
-      mode=1.47942, avgevals=7.320 (base freq. T)
+      mode=0.23720, avgevals=6.640 (edge length hyperprior)
+      mode=1.83372, avgevals=6.280 (trs/trv rate ratio)
+      mode=0.73221, avgevals=7.880 (base freq. A)
+      mode=0.48452, avgevals=8.080 (base freq. C)
+      mode=0.54534, avgevals=8.200 (base freq. G)
+      mode=0.85928, avgevals=7.080 (base freq. T)
     <BLANKLINE>
-    cycle = 30, lnL = -7112.72828
-    cycle = 40, lnL = -7108.87283
-    cycle = 50, lnL = -7108.18816
-    cycle = 60, lnL = -7115.11477
-    cycle = 70, lnL = -7105.93621
-    <BLANKLINE>
-    Slice sampler diagnostics:
-      mode=0.17280, avgevals=5.960 (edge length hyperprior)
-      mode=1.85486, avgevals=6.080 (trs/trv rate ratio)
-      mode=0.91947, avgevals=5.540 (base freq. A)
-      mode=0.55485, avgevals=5.900 (base freq. C)
-      mode=0.64938, avgevals=5.940 (base freq. G)
-      mode=1.03497, avgevals=5.920 (base freq. T)
-    <BLANKLINE>
-    cycle = 80, lnL = -7109.18286
-    cycle = 90, lnL = -7106.26287
-    cycle = 100, lnL = -7109.00408
+    cycle = 30, lnL = -7107.71576
+    cycle = 40, lnL = -7111.01488
+    cycle = 50, lnL = -7105.43839
+    cycle = 60, lnL = -7106.21236
+    cycle = 70, lnL = -7109.91097
     <BLANKLINE>
     Slice sampler diagnostics:
-      mode=0.17280, avgevals=6.760 (edge length hyperprior)
-      mode=1.85486, avgevals=6.360 (trs/trv rate ratio)
-      mode=0.91947, avgevals=5.160 (base freq. A)
-      mode=0.55485, avgevals=5.440 (base freq. C)
-      mode=0.64938, avgevals=5.680 (base freq. G)
-      mode=1.03497, avgevals=6.000 (base freq. T)
+      mode=0.19132, avgevals=5.840 (edge length hyperprior)
+      mode=1.94113, avgevals=5.840 (trs/trv rate ratio)
+      mode=1.05523, avgevals=6.120 (base freq. A)
+      mode=0.66567, avgevals=6.040 (base freq. C)
+      mode=0.77854, avgevals=6.240 (base freq. G)
+      mode=1.20334, avgevals=5.580 (base freq. T)
+    <BLANKLINE>
+    cycle = 80, lnL = -7108.00202
+    cycle = 90, lnL = -7105.35931
+    cycle = 100, lnL = -7107.94337
+    <BLANKLINE>
+    Slice sampler diagnostics:
+      mode=0.19132, avgevals=6.240 (edge length hyperprior)
+      mode=1.94113, avgevals=5.680 (trs/trv rate ratio)
+      mode=1.05523, avgevals=6.160 (base freq. A)
+      mode=0.66567, avgevals=5.960 (base freq. C)
+      mode=0.77854, avgevals=6.120 (base freq. G)
+      mode=1.20334, avgevals=5.640 (base freq. T)
     ...
 
     """
@@ -287,6 +288,7 @@ class Phycas:
         self.pinvar_prior.setLot(self.r)
         self.edgelen_hyperprior.setLot(self.r)
         self.master_edgelen_dist.setLot(self.r)
+        self.starting_edgelen_dist.setLot(self.r)
         
         # Create a substitution model and define priors for the model parameters
         if self.model_type == 'gtr':
@@ -457,7 +459,8 @@ class Phycas:
             assert self.ntax > 0, 'expecting ntax to be greater than 0'
             
             # Build a random tree
-            self.master_edgelen_dist.setLot(self.r)
+            #self.master_edgelen_dist.setLot(self.r)
+            self.starting_edgelen_dist.setLot(self.r)
             #print 'self.r.getSeed() returns',self.r.getSeed()
             TreeManip(self.tree).randomTree(
                 self.ntax,     # number of tips
@@ -1118,8 +1121,8 @@ if __name__ == '__main__':
         # set above to True for normal operation
         mcmc.random_seed = '13579'
         mcmc.data_source = 'file'
-        mcmc.data_file_name = '../../phypy/green.nex'
-        #mcmc.data_file_name = '../../phypy/nyldna4.nex'
+        mcmc.data_file_name = '../Examples/Data/green.nex'
+        #mcmc.data_file_name = '../Examples/Data/nyldna4.nex'
         mcmc.starting_tree_source = 'random'
         mcmc.ncycles = 200
         mcmc.sample_every = 10
@@ -1139,7 +1142,7 @@ if __name__ == '__main__':
 
     if False:
         # for Tallahassee session
-        mcmc.data_file_name = '../../phypy/nyldna4.nex'
+        mcmc.data_file_name = '../Examples/Data/nyldna4.nex'
 
     mcmc.setup()
     mcmc.run()
