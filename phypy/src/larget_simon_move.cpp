@@ -159,7 +159,7 @@ void LargetSimonMove::starTreeProposeNewState()
 
 	// Invalidate CLAs to ensure next likelihood calculation will be correct
 	orig_node->SelectNode();
-	likelihood->useAsLikelihoodRoot(orig_node);
+	likelihood->useAsLikelihoodRoot(orig_node->IsTip() ? orig_node->GetParent() : orig_node);
 	likelihood->invalidateAwayFromNode(*orig_node);
 	likelihood->invalidateBothEnds(orig_node);
 	}
@@ -416,7 +416,7 @@ void LargetSimonMove::revert()
 		{
 		orig_node->SetEdgeLen(orig_edge_len);
 
-		likelihood->useAsLikelihoodRoot(orig_node);
+		likelihood->useAsLikelihoodRoot(orig_node->IsTip() ? orig_node->GetParent() : orig_node);
 		likelihood->restoreFromCacheAwayFromNode(*orig_node);
 		likelihood->restoreFromCacheParentalOnly(orig_node);
 
@@ -472,16 +472,30 @@ void LargetSimonMove::revert()
 */
 void LargetSimonMove::accept()
 	{
-	likelihood->useAsLikelihoodRoot(ndY);
-	likelihood->discardCacheAwayFromNode(*ndY);
-	likelihood->discardCacheBothEnds(ndY);
+	if (star_tree_proposal)
+		{
+		likelihood->useAsLikelihoodRoot(orig_node->IsTip() ? orig_node->GetParent() : orig_node);
+		likelihood->discardCacheAwayFromNode(*orig_node);
+		likelihood->discardCacheBothEnds(orig_node);
 
-	if (view_proposed_move)
-		likelihood->startTreeViewer(tree, "Larget-Simon move ACCEPTED");
+		if (view_proposed_move)
+			likelihood->startTreeViewer(tree, "Larget-Simon move ACCEPTED");
 
-	ndX->UnselectNode();
-	ndY->UnselectNode();
-	ndZ->UnselectNode();
+		orig_node->UnselectNode();
+		}
+	else
+		{
+		likelihood->useAsLikelihoodRoot(ndY);
+		likelihood->discardCacheAwayFromNode(*ndY);
+		likelihood->discardCacheBothEnds(ndY);
+
+		if (view_proposed_move)
+			likelihood->startTreeViewer(tree, "Larget-Simon move ACCEPTED");
+
+		ndX->UnselectNode();
+		ndY->UnselectNode();
+		ndZ->UnselectNode();
+		}
 
 	reset();
 	}
