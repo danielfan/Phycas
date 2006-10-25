@@ -1,4 +1,5 @@
 #!python
+"""This is the --install-script used for the windows installer for phypy"""
 
 import sys,os,distutils.file_util
 

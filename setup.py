@@ -3,7 +3,10 @@
 # This will create two directories: build and dist
 # The installer will be placed in dist, build can be deleted
 
-from distutils.core import setup
+from distutils.core import setup, Extension
+import distutils.sysconfig
+import os
+import sys
 
 data_all = [
           'Tests/doctestall.py',
@@ -58,6 +61,21 @@ windows_package_data = {
                     }
 windows_package_data.update({'phypy': data_windows_only})
 
+isWin = sys.platform == 'win32'
+
+sharedObjSuffix = [distutils.sysconfig.get_config_var("SO")]
+dynamicLibSuffix = isWin and ['.dll'] or [".dylib"]
+conversionsDataFiles = sharedObjSuffix + dynamicLibSuffix
+
+test_data = [
+          'Tests/cleanall.py',
+          'Tests/doctestall.py',
+          'Tests/runall.py'
+          ]
+_pack_data = {
+        'phypy': '__init__.py'
+        
+        }
 phycas_description = """\
 Phycas and the PhyPy library:
  	
@@ -67,42 +85,101 @@ can be used to create new applications or to extend the functionality
 currently built into Phycas.
 """
 
-setup(name='Phycas',
-      version='1.0',
-      description='Phycas: Python Software for Phylogenetic Analysis',
-      author='Phycas Development Team',
-      author_email='phycas@phypy.org',
-      url='http://www.phypy.org/',
-      license='GNU General Public License (GPL)',
-      scripts=['win_shortcuts.py'],
-      package_dir = {'': 'phypy'},
-      packages=['phypy',
-                'phypy.Conversions',
-                'phypy.DataMatrix',
-                'phypy.Likelihood',
-                'phypy.ProbDist',
-                'phypy.Phycas',
-                'phypy.Phylogeny',
-                'phypy.ReadNexus'],
-      package_data=windows_package_data,
-      long_description=phycas_description,
-      platforms=['Linux', 'MacOS X', 'Windows'],
-      keywords=['phylogeny', 'phylogenetics', 'MCMC', 'Bayesian', 'bioinformatics'],
-      classifiers=[
-                  'Development Status :: 3 - Alpha',
-                  'Environment :: Console',
-                  'Environment :: Win32 (MS Windows)',
-                  'Environment :: MacOS X',
-                  'Intended Audience :: End Users/Desktop',
-                  'Intended Audience :: Education',
-                  'Intended Audience :: Science/Research',
-                  'License :: OSI Approved :: GNU General Public License (GPL)',
-                  'Natural Language :: English',
-                  'Operating System :: MacOS :: MacOS X',
-                  'Operating System :: Microsoft :: Windows',
-                  'Operating System :: POSIX',
-                  'Programming Language :: Python',
-                  'Programming Language :: C++',
-                  'Topic :: Scientific/Engineering :: Bio-Informatics'
-                  ],      
-     )
+setupArgs = {
+    'name':'Phycas',
+    'version':'1.0',
+    'description':'Phycas: Python Software for Phylogenetic Analysis',
+    'author':'Phycas Development Team',
+    'author_email':'phycas@phypy.org',
+    'url':'http://www.phypy.org/',
+    'license':'GNU General Public License (GPL)',
+        'package_dir':{'': 'phypy'},
+        'packages':[
+         '',
+         'phypy',
+         'phypy.Conversions',
+         'phypy.DataMatrix',
+         'phypy.Likelihood',
+         'phypy.ProbDist',
+         'phypy.Phycas',
+         'phypy.Phylogeny',
+         'phypy.ReadNexus'],
+    'long_description':phycas_description,
+    'platforms':['Linux', 'MacOS X', 'Windows'],
+    'keywords':['phylogeny', 'phylogenetics', 'MCMC', 'Bayesian', 'bioinformatics'],
+    'classifiers':[
+              'Development Status :: 3 - Alpha',
+              'Environment :: Console',
+              'Environment :: Win32 (MS Windows)',
+              'Environment :: MacOS X',
+              'Intended Audience :: End Users/Desktop',
+              'Intended Audience :: Education',
+              'Intended Audience :: Science/Research',
+              'License :: OSI Approved :: GNU General Public License (GPL)',
+              'Natural Language :: English',
+              'Operating System :: MacOS :: MacOS X',
+              'Operating System :: Microsoft :: Windows',
+              'Operating System :: POSIX',
+              'Programming Language :: Python',
+              'Programming Language :: C++',
+              'Topic :: Scientific/Engineering :: Bio-Informatics'
+              ],      
+     }
+
+if isWin:
+    setupArgs.update({
+        'package_data' : windows_package_data,
+        'scripts':['win_shortcuts.py'],
+        })
+elif sys.platform == 'darwin':
+    setupArgs.update({
+        'ext_package':'phypy',
+        'ext_modules':[
+           Extension('Conversions._Conversions', ['phypy/src/conversions_pymod.cpp'], 
+                    extra_link_args = [
+                        '--colocate-lib=libboost_python.dylib',
+                        '--built-under=phypy',
+                        '--path-from-package=phypy/Conversions', ]),
+            Extension('DataMatrix._DataMatrixBase', ['phypy/src/data_matrix_pymod.cpp'], 
+                    extra_link_args = [
+                        '--built-under=phypy',
+                        '--path-from-package=phypy/DataMatrix', ]),
+            Extension('Likelihood._LikelihoodBase', ['phypy/src/likelihood_pymod.cpp'], 
+                    extra_link_args = [
+                        '--built-under=phypy',
+                        '--path-from-package=phypy/Likelihood', ]),
+            Extension('Phylogeny._Phylogeny', ['phypy/src/phylogeny_pymod.cpp'], 
+                    extra_link_args = [
+                        '--built-under=phypy',
+                        '--path-from-package=phypy/Phylogeny', ]),
+            Extension('ProbDist._ProbDist', ['phypy/src/probdist_pymod.cpp'], 
+                    extra_link_args = [
+                        '--built-under=phypy',
+                        '--path-from-package=phypy/ProbDist', ]),
+            Extension('ReadNexus._ReadNexus', ['phypy/src/read_nexus_pymod.cpp'], 
+                    extra_link_args = [
+                        '--built-under=phypy',
+                        '--path-from-package=phypy/ReadNexus', ]),
+            ],
+        })
+
+setup(**setupArgs)
+
+
+# What follows is some args to Extension for the Conversions extension from an
+#   aborted attempt to get Extensions built using g++ directly (instead of bjam driving
+#   g++)
+#      ['phypy/src/conversions_pymod.cpp',
+#                     'phypy/src/boost_assertion_failed.cpp',
+#                     'phypy/src/basic_tree.cpp',
+#                     'phypy/src/basic_tree_node.cpp',
+#                     'phypy/src/phypy_string.cpp'], 
+#                     include_dirs= [
+#                         os.environ.get('BOOST_ROOT'), 
+#                         os.environ.get('PHYCAS_ROOT'),
+#                         os.path.expandvars('$PHYCAS_ROOT/phypy/src')
+#                         ],
+#                     define_macros=[
+#                         ('BOOST_PYTHON_DYNAMIC_LIB', '1')
+#                         ],
+                   
