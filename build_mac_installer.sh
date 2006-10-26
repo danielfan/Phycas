@@ -6,11 +6,25 @@
 #   4. Change --target-version below to reflect correct Python target version
 #   5. Run this batch file to generate installer (which will be in dist folder)
 set -x
-rm -rf build
-cd phypy
-python dojam.py || exit
-cd ..
-cp phypy/bin/boost/libs/python/build/libboost_python.dylib/darwin/release/shared-linkable-true/libboost_python.dylib dist/usr/local/lib
+cleanOld=1
+doBuild=1
+
+if test $cleanOld = 1
+then
+    rm -rf build
+    rm -rf dist
+fi
+
+#do the real build of the source
+if test $doBuild = 1
+then
+    python phypy/dojam.py || exit
+fi
+
+mkdir -p dist/usr/local/lib
+cp "phypy/bin/boost/libs/python/build/libboost_python.dylib/darwin/$BUILD/shared-linkable-true/libboost_python.dylib" dist/usr/local/lib
+cp phypy/installer/mac/libBoost.pmproj dist
+cp phypy/installer/mac/phycas+boost.pmproj dist
 
 if test -e "$PYTHON_ROOT/bin/bdist_mpkg" ;
 then

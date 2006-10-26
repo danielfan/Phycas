@@ -3,10 +3,19 @@
 # This will create two directories: build and dist
 # The installer will be placed in dist, build can be deleted
 
+
+import sys
+fakeCompilingExtensions = sys.platform == 'darwin'
+if fakeCompilingExtensions:
+    import distutils.ccompiler
+    distutils.ccompiler.compiler_class['fake'] = ('ccompiler', 'FakeCompiler', "Dummy for a compiler that clones already built sources")
+    import fakecompiler 
+    distutils.ccompiler.FakeCompiler = fakecompiler.FakeCompiler
+                               
 from distutils.core import setup, Extension
 import distutils.sysconfig
+import distutils
 import os
-import sys
 
 data_all = [
           'Tests/doctestall.py',
@@ -131,13 +140,14 @@ if isWin:
         'package_data' : windows_package_data,
         'scripts':['win_shortcuts.py'],
         })
-elif sys.platform == 'darwin':
+
+if fakeCompilingExtensions:
     setupArgs.update({
         'ext_package':'phypy',
         'ext_modules':[
            Extension('Conversions._Conversions', ['phypy/src/conversions_pymod.cpp'], 
                     extra_link_args = [
-                        '--colocate-lib=libboost_python.dylib',
+                        #'--colocate-lib=libboost_python.dylib',
                         '--built-under=phypy',
                         '--path-from-package=phypy/Conversions', ]),
             Extension('DataMatrix._DataMatrixBase', ['phypy/src/data_matrix_pymod.cpp'], 

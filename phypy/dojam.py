@@ -1,5 +1,10 @@
 #! /usr/bin/env python
 import os,sys
+
+#allow the script to be invoked from any dir, but use the script's parent as $PHYCAS_ROOT/phypy
+scriptPar = os.path.split(os.path.abspath(sys.argv[0]))[0]
+os.chdir(scriptPar)
+
 env = os.environ
 warnings = []
 if "PYTHON_ROOT" not in env:
@@ -27,7 +32,6 @@ For example:
 print "BOOST_ROOT =", env["BOOST_ROOT"]
 
 if "PHYCAS_ROOT" not in env:
-    scriptPar = os.path.split(os.path.abspath(sys.argv[0]))[0]
     env["PHYCAS_ROOT"] = os.path.split(scriptPar)[0]
     s = '"PHYCAS_ROOT" not in enviroment. The default: "%s"\n is being used.' % env["PHYCAS_ROOT"]
     warnings.append(s)
