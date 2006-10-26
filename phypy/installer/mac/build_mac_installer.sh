@@ -41,7 +41,7 @@ then
     cp README "$packPar/Readme.txt"
     cp LICENSE "$packPar/License.txt"
     
-    sudr rm -rf "$packPar"
+    sudo rm -rf "$subPack"
     if ! test -e $subPack
     then
         sudo mkdir -p $subPack || exit
