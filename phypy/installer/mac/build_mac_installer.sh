@@ -47,12 +47,31 @@ then
         sudo mkdir -p $subPack || exit
     fi
     
-    sudo /Developer/Tools/packagemaker -build -v -p $packPar/libBoost.pkg -proj $packPar/libBoost.pmproj || exit
+    sudo /Developer/Tools/packagemaker -build -v -p $subPack/libBoost.pkg -proj $packPar/libBoost.pmproj || exit
     
     sudo cp -r dist/Phycas-1.0-py$PYTHON_VERSION-macosx*mpkg/Contents/Packages/Phycas-platlib-1.0-py$PYTHON_VERSION-macosx10*.pkg $subPack/Phycas.pkg || exit
     
-    sudo /Developer/Tools/packagemaker -build -v -p "$packPar/$pack"  -mi Contents -v -proj "$packPar/phycas+boost.pmproj" || exit
+    sudo /Developer/Tools/packagemaker -build -v -p "$packPar/$pack" -v -proj "$packPar/phycas+boost.pmproj" || exit
     
+    
+    
+    cd $packPar || exit
+
+    # create the correct Info.plist
+    cp info-pList-prefix.txt  info.plist
+    cat 10.3test.xml >> info.plist
+    if test `arch` = "i386" 
+    then
+        cat intelTest.xml >> info.plist
+    else
+        cat ppcTest.xml >> info.plist    
+    fi
+    cat pyTest.xml | sed -E "s/PYTHON_ROOT/$PYTHON_ROOT/" >> info.plist
+    cat info-pList-suffix.txt >> info.plist
+
+    # replace with the correct Info.plist
+    sudo mv info.plist "$pack/Contents/Info.plist"
+
     echo "$pack created"
     
     #create the dmg file
