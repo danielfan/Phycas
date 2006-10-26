@@ -11,8 +11,8 @@ doBuild=1
 
 if test $cleanOld = 1
 then
-    rm -rf build
-    rm -rf dist
+    sudo rm -rf build
+    sudo rm -rf dist
 fi
 
 #do the real build of the source
@@ -39,9 +39,9 @@ then
     then
         sudo mkdir -p $subPack || exit
     fi
-    sudo /Developer/Tools/packagemaker -build -p $subPack/libBoost.pkg -proj libBoost.pmproj || exit
+    sudo /Developer/Tools/packagemaker -build -v -p $subPack/libBoost.pkg -proj libBoost.pmproj || exit
     sudo cp -r Phycas-1.0-py$PYTHON_VERSION-macosx*mpkg/Contents/Packages/Phycas-platlib-1.0-py$PYTHON_VERSION-macosx10*.pkg $subPack/ || exit
-    sudo /Developer/Tools/packagemaker -build -p $pack  -mi Contents -v -proj phycas+boost.pmproj || exit
+    sudo /Developer/Tools/packagemaker -build -v -p $pack  -mi Contents -v -proj phycas+boost.pmproj || exit
     echo "$pack created"
 else
     echo "bdist_mpkp is required.  see http://cheeseshop.python.org/pypi/bdist_mpkg/"
