@@ -1,0 +1,18 @@
+		<dict>
+			<key>TitleKey</key>
+			<string>Non-standard python installation.</string>
+			<key>LabelKey</key>
+			<string>PyDir</string>
+			<key>MessageKey</key>
+			<string>Expecting a directory called /Library/Frameworks/Python.framework/Versions/2.5  Please install from a built distribution using setup.py as described on the phycas web site</string>
+			<key>SpecType</key>
+			<string>file</string>
+			<key>SpecArgument</key>
+			<string>/Library/Frameworks/Python.framework/Versions/2.5/bin/python</string>
+			<key>TestOperator</key>
+			<string>!=</string>
+			<key>TestObject</key>
+			<string></string>
+			<key>Level</key>
+			<string>requires</string>
+		</dict>

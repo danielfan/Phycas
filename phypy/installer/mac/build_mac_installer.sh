@@ -29,17 +29,17 @@ cp "phypy/bin/boost/libs/python/build/libboost_python.dylib/darwin/$BUILD/shared
 if test -e "$PYTHON_ROOT/bin/bdist_mpkg" ;
 then
     #  move the objects and py files to the correct temp location (in build)
-    python setup.py build --compiler=fake
-
+    python setup.py build --compiler=fake || exit
+ 
     #  build the phycas installer package
     #  tell it that we have compiled.  -k saves temps
-    "$PYTHON_ROOT/bin/bdist_mpkg" --skip-build -k
+    "$PYTHON_ROOT/bin/bdist_mpkg" --skip-build -k || exit
     
 
     buildIdentifier="Phycas-Mac-`arch`-python$PYTHON_VERSION"
     pack="$buildIdentifier.mpkg"
-    cp README "$packPar/Readme.txt"
-    cp LICENSE "$packPar/License.txt"
+    cp README "$packPar/Readme.txt" || exit
+    cp LICENSE "$packPar/License.txt" || exit
     
     sudo rm -rf "$subPack"
     if ! test -e $subPack
@@ -58,28 +58,28 @@ then
     cd $packPar || exit
 
     # create the correct Info.plist
-    cp info-pList-prefix.txt  info.plist
-    cat 10.3test.xml >> info.plist
+    cp info-pList-prefix.txt  info.plist || exit
+    cat 10.3test.xml >> info.plist || exit
     if test `arch` = "i386" 
     then
-        cat intelTest.xml >> info.plist
+        cat intelTest.xml >> info.plist || exit
     else
-        cat ppcTest.xml >> info.plist    
+        cat ppcTest.xml >> info.plist || exit
     fi
-    cat py${PYTHON_VERSION}Test.xml >> info.plist
-    cat info-pList-suffix.txt >> info.plist
+    cat py${PYTHON_VERSION}Test.xml >> info.plist || exit
+    cat info-pList-suffix.txt >> info.plist || exit
 
     # replace with the correct Info.plist
-    sudo mv info.plist "$pack/Contents/Info.plist"
+    sudo mv info.plist "$pack/Contents/Info.plist" || exit
 
     echo "$pack created"
     
     #create the dmg file
-    cd $packPar
-    export PHYCAS_MPKG_NAME="$pack"
+    cd $packPar || exit
+    export PHYCAS_MPKG_NAME="$pack" || exit
     make -f dmgMakefile || exit
 
-    mv Phycas-1.0.dmg "$PHYCAS_ROOT/${buildIdentifier}.dmg"
+    mv Phycas-1.0.dmg "$PHYCAS_ROOT/${buildIdentifier}.dmg" || exit
     
     echo "$PHYCAS_ROOT/${buildIdentifier}.dmg created"
 else

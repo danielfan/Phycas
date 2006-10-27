@@ -60,7 +60,8 @@ else:
 for w in warnings:
     print "Warning: ", w
 
-os.system('bjam -q')
+if not os.system('bjam -q') == 0:
+    sys.exit('Build failed')
 
 for w in warnings:
     print "Warning: ", w
