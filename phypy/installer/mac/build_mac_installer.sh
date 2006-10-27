@@ -51,7 +51,7 @@ then
     
     sudo cp -r dist/Phycas-1.0-py$PYTHON_VERSION-macosx*mpkg/Contents/Packages/Phycas-platlib-1.0-py$PYTHON_VERSION-macosx10*.pkg $subPack/Phycas.pkg || exit
     
-    sudo /Developer/Tools/packagemaker -build -v -p "$packPar/$pack" -v -proj "$packPar/phycas+boost.pmproj" || exit
+    sudo /Developer/Tools/packagemaker -build -v -p "$packPar/$pack" -v -proj $packPar/phycas+boost-`arch`-${PYTHON_VERSION}.pmproj || exit
     
     
     
@@ -66,7 +66,7 @@ then
     else
         cat ppcTest.xml >> info.plist    
     fi
-    cat pyTest.xml | sed -E "s/PYTHON_ROOT/$PYTHON_ROOT/" >> info.plist
+    cat py${PYTHON_VERSION}Test.xml >> info.plist
     cat info-pList-suffix.txt >> info.plist
 
     # replace with the correct Info.plist
