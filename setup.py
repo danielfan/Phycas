@@ -18,7 +18,9 @@ import distutils
 import os
 
 data_all = [
+          'Tests/cleanall.py',
           'Tests/doctestall.py',
+          'Tests/runall.py',
           'Examples/Data/green.nex',
           'Examples/Data/nyldna4.nex',
           'Examples/ExplorePrior/__init__.py',
@@ -82,8 +84,7 @@ test_data = [
           'Tests/runall.py'
           ]
 _pack_data = {
-        'phypy': '__init__.py'
-        
+        'phypy': data_all,
         }
 phycas_description = """\
 Phycas and the PhyPy library:
@@ -113,7 +114,6 @@ setupArgs = {
          'phypy.Phycas',
          'phypy.Phylogeny',
          'phypy.ReadNexus',
-         'phypy.Tests',
          ],
     'long_description':phycas_description,
     'platforms':['Linux', 'MacOS X', 'Windows'],
@@ -142,6 +142,11 @@ if isWin:
         'package_data' : windows_package_data,
         'scripts':['win_shortcuts.py'],
         })
+else:
+    setupArgs.update({
+        'package_data' : _pack_data,
+        })
+    
 
 if fakeCompilingExtensions:
     setupArgs.update({
