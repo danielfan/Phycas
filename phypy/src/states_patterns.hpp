@@ -30,3 +30,5 @@ typedef	std::map<VecStateList, PatternCountType>	PatternMapType;
 typedef	std::vector<PatternCountType>				CountVectorType;
 
 #endif
+
+

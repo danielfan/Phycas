@@ -266,7 +266,18 @@ inline void MCMCUpdater::setChainManager(
 */
 inline double MCMCUpdater::recalcPrior()
 	{
+#if POLPY_NEWWAY
+	try 
+		{
+		curr_ln_prior = prior->GetLnPDF(curr_value);
+		}
+	catch(XProbDist &)
+		{
+		curr_ln_prior = prior->GetRelativeLnPDF(curr_value);
+		}
+#else
 	curr_ln_prior = prior->GetLnPDF(curr_value);
+#endif
 	return curr_ln_prior;
 	}
 

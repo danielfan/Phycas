@@ -359,7 +359,20 @@ inline double EdgeLenMasterParam::lnPriorOneEdge(TreeNode & nd) const
 		return 0.0;
 
 	double v = nd.GetEdgeLen();
+
+#if POLPY_NEWWAY
+	double retval = 0.0;
+	try 
+		{
+		retval = prior->GetLnPDF(v);
+		}
+	catch(XProbDist &)
+		{
+		retval = prior->GetRelativeLnPDF(v);
+		}
+#else
 	double retval = prior->GetLnPDF(v);
+#endif
 
 	return retval;
 	}

@@ -21,10 +21,13 @@ namespace phycas
 {
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Sets `divide_by' to 1.0, and `total_count' and `pattern_length' both to zero.
+|	Sets `total_count' and `pattern_length' both to zero.
 */
 inline SimData::SimData()
   : total_count(0.0), pattern_length(0)
+#if POLPY_NEWWAY
+	//, num_additions(0)
+#endif
 	{
 	}
 
@@ -37,12 +40,15 @@ inline void SimData::clear()
 	sim_pattern_map.clear();
 	total_count = 0.0;
 	pattern_length = 0;
+#if POLPY_NEWWAY
+	//num_additions = 0;
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns a const reference to the data member `sim_pattern_map'.
 */
-inline const PatternMapType & SimData::getSimPatternMap() const
+inline const SimPatternMapType & SimData::getSimPatternMap() const
 	{
 	return sim_pattern_map;
 	}
@@ -83,9 +89,9 @@ inline void SimData::wipePattern()
 */
 inline void SimData::zeroCounts()
 	{
-	for (PatternMapType::iterator it = sim_pattern_map.begin(); it != sim_pattern_map.end(); ++it)
+	for (SimPatternMapType::iterator it = sim_pattern_map.begin(); it != sim_pattern_map.end(); ++it)
 		{
-		it->second = 0;
+		it->second = 0.0;
 		}
 	}
 
@@ -97,7 +103,7 @@ inline void SimData::zeroCounts()
 inline void SimData::appendCountsToFile(std::string fn, bool binary)
 	{
 	std::ofstream outf(fn.c_str(), std::ios::out | std::ios::app);
-	PatternMapType::iterator it = sim_pattern_map.begin();
+	SimPatternMapType::iterator it = sim_pattern_map.begin();
 	unsigned count = (unsigned)(it->second);
 	if (binary && count > 0)
 		count = 1;
@@ -114,6 +120,63 @@ inline void SimData::appendCountsToFile(std::string fn, bool binary)
 	outf.close();
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Saves all counts as a tab-delimited row appended to the file whose name is 'fn'. Note: no header is output
+|	identifying which pattern goes with each count, so this will not be useful unless only the unidentified counts are 
+|	of interest.
+*/
+inline void SimData::debugAppendCountsToFile(std::string row_name, std::string fn)
+	{
+	std::ofstream outf(fn.c_str(), std::ios::out | std::ios::app);
+	outf << row_name;
+
+#if 1
+
+	for (unsigned i = 0; i < 4; ++i)
+		{
+		for (unsigned j = 0; j < 4; ++j)
+			{
+			for (unsigned k = 0; k < 4; ++k)
+				{
+					for (unsigned m = 0; m < 4; ++m)
+						{
+						VecStateList v;
+						v.push_back(i);
+						v.push_back(j);
+						v.push_back(k);
+						v.push_back(m);
+						SimPatternMapType::iterator it = sim_pattern_map.find(v);
+						PatternCountType count = 0.0;
+						if (it != sim_pattern_map.end())
+							{
+							count = (PatternCountType)(it->second);
+							}
+						outf << '\t' << count;
+						}
+				}
+			}
+		}
+
+#else
+
+	SimPatternMapType::iterator it = sim_pattern_map.begin();
+	PatternCountType count = (PatternCountType)(it->second);
+	outf << count;
+	++it;
+	for (; it != sim_pattern_map.end(); ++it)
+		{
+		count = (PatternCountType)(it->second);
+		outf << '\t' << count;
+		}
+
+#endif
+
+	outf << std::endl;
+	outf.close();
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns a vector of patterns, each represented as a string. The patterns are in the same order as the counts 
 |	returned by the appendCountsToFile function, so this function can be used to identify the patterns belonging to the
@@ -123,7 +186,7 @@ inline void SimData::appendCountsToFile(std::string fn, bool binary)
 inline std::vector<std::string> SimData::getPatterns(std::vector<std::string> symbols)
 	{
 	std::vector<std::string> v;
-	for (PatternMapType::iterator it = sim_pattern_map.begin(); it != sim_pattern_map.end(); ++it)
+	for (SimPatternMapType::iterator it = sim_pattern_map.begin(); it != sim_pattern_map.end(); ++it)
 		{
 		// Create a string out of the pattern
 		std::string s;
@@ -167,7 +230,7 @@ inline std::string SimData::createMapleTuples(unsigned row, unsigned cutoff)
 
 	std::string s = "[";
 	unsigned col = 0;
-	PatternMapType::iterator it = sim_pattern_map.begin();
+	SimPatternMapType::iterator it = sim_pattern_map.begin();
 	unsigned count = (unsigned)(it->second);
 	if (use_cutoff && count > cutoff)
 		count = 0;
@@ -199,61 +262,6 @@ inline void SimData::setState(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Adds `tmp_pattern' to `sim_pattern_map' then passes `missing_state' to the wipePattern() function to fill 
-|	`tmp_pattern' with invalid values.
-*/
-inline void SimData::insertPattern(PatternCountType count)
-	{
-	// In debug build check to make sure there are no elements in tmp_pattern that still equal
-	// missing_state (if assert trips, it means that not all elements of tmp_pattern have been 
-	// replaced with actual states)
-	PHYCAS_ASSERT(std::find(tmp_pattern.begin(), tmp_pattern.end(), missing_state) == tmp_pattern.end());
-
-	// Add tmp_pattern to sim_pattern_map if it has not yet been seen, otherwise increment the count 
-	// for this pattern if it is already in the map (see item 24, p. 110, in Meyers' Efficient STL)
-	PatternMapType::iterator lowb = sim_pattern_map.lower_bound(tmp_pattern);
-	if (lowb != sim_pattern_map.end() && !(sim_pattern_map.key_comp()(tmp_pattern, lowb->first)))
-		{
-		// pattern is already in sim_pattern_map, increment count
-		lowb->second += count;
-		}
-	else
-		{
-		// sim_pattern_map has not yet been stored in sim_pattern_map
-		sim_pattern_map.insert(lowb, PatternMapType::value_type(tmp_pattern, count));
-		}
-
-	total_count += count;
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Adds data currently stored in `sim_pattern_map' to the patterns already in `other'. The value of `mult' is used to
-|	modify the counts before they are added to `other'; that is, the count of each pattern added to `other' is the 
-|	original count multiplied by `mult'. Normally, `mult' would be specified to be 1.0, but in some cases it is
-|	necessary to build up SimData objects that represent averages of other SimData objects, and it is these situations
-|	where `mult' is handy. Assumes that `mult' is positive and non-zero. Assumes that `pattern_length' for this SimData
-|	object is identical to the `pattern_length' of `other'.
-*/
-inline void SimData::addDataTo(SimData & other, PatternCountType mult)
-	{
-	PHYCAS_ASSERT(mult > 0.0);
-	if (total_count == 0.0)
-		return;
-	if (other.getTotalCount() == 0)
-		{
-		other.resetPatternLength(pattern_length);
-		}
-	PHYCAS_ASSERT(pattern_length == other.getPatternLength());
-	for (PatternMapType::iterator it = sim_pattern_map.begin(); it != sim_pattern_map.end(); ++it)
-		{
-		PatternCountType count = it->second;
-		VecStateList & other_pattern = other.getCurrPattern();
-		std::copy(it->first.begin(), it->first.end(), other_pattern.begin());
-		other.insertPattern(mult*count);
-		}
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
 |	Returns a reference to the `tmp_pattern' data member.
 */
 inline VecStateList & SimData::getCurrPattern()
@@ -271,12 +279,43 @@ inline unsigned SimData::getPatternLength()
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the value of the `total_count' data member, which represents the total number of patterns added (not 
-|	`sim_pattern_map'.size().
+|	`sim_pattern_map'.size()).
 */
 inline PatternCountType SimData::getTotalCount()
 	{
 	return total_count;
 	}
+
+#if 0 && POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the value of the 'num_additions' data member to the supplied value 'n'.
+*/
+inline void SimData::setNumAdditions(unsigned n)
+	{
+	num_additions = n;
+	}
+#endif
+
+#if 0 && POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the value of the 'num_additions' data member.
+*/
+inline unsigned SimData::getNumAdditions()
+	{
+	return num_additions;
+	}
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the value of the `total_count' data member, which represents the sum of all pattern counts (not 
+|	`sim_pattern_map'.size()).
+*/
+inline void SimData::setTotalCount(PatternCountType total)
+	{
+	total_count = total;
+	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the value `sim_pattern_map'.size(), the number of unique patterns currently stored.
@@ -287,17 +326,34 @@ inline unsigned SimData::getNUniquePatterns()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Divides the count associated with every pattern in `sim_pattern_map' by `total'. Also divides `total_count' by
-|	`total'. Assumes `total' is greater than zero. 
+|	Divides the count associated with every pattern in `sim_pattern_map' by `factor'. Also divides `total_count' by
+|	`factor'. Assumes `factor' is greater than zero. 
 */
-inline void SimData::divideBy(PatternCountType total)
+inline void SimData::divideBy(PatternCountType factor)
 	{
-	PHYCAS_ASSERT(total > 0.0);
-	total_count /= total;
-	for (PatternMapType::iterator it = sim_pattern_map.begin(); it != sim_pattern_map.end(); ++it)
+	PHYCAS_ASSERT(factor > 0.0);
+
+	total_count /= factor;
+
+	for (SimPatternMapType::iterator it = sim_pattern_map.begin(); it != sim_pattern_map.end(); ++it)
 		{
-		it->second /= total;
+		it->second /= factor;
 		}
 	}
 
+/*----------------------------------------------------------------------------------------------------------------------
+|	Multiplies the count associated with every pattern in `sim_pattern_map' by `factor'. Also multiplies `total_count'
+|	`factor'. Assumes `factor' is greater than zero. 
+*/
+inline void SimData::multBy(PatternCountType factor)
+	{
+	PHYCAS_ASSERT(factor > 0.0);
+
+	total_count *= factor;
+
+	for (SimPatternMapType::iterator it = sim_pattern_map.begin(); it != sim_pattern_map.end(); ++it)
+		{
+		it->second *= factor;
+		}
+	}
 }	// namespace phycas

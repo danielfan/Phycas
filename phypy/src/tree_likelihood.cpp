@@ -931,9 +931,9 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 		//std::cerr << std::endl;
 
 		// We are now finished simulating data for one character, so insert the pattern just generated
-		// into the pattern map maintained by sim_data; the 1 means that the count for this pattern
+		// into the pattern map maintained by sim_data; the 1.0 means that the count for this pattern
 		// should be incremented by 1
-		sim_data->insertPattern(1);
+		sim_data->insertPattern(1.0);
 		}
 	}
 

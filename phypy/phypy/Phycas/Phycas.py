@@ -1,4 +1,5 @@
 import os, sys, time, math, threading
+import os, sys, time, math, threading
 from phypy.Conversions import *
 from phypy.DataMatrix import *
 from phypy.Likelihood import *
@@ -235,6 +236,9 @@ class Phycas:
         self.gg_postpred_prefix     = 'postpred'    # prefix to use for posterior predictive dataset filenames (only used if gg_save_postpreds is True)
         self.gg_save_spectra        = False         # adds all 256 counts for posterior predictive simulated data sets to a file named spectra.txt, with counts separated by tabs (only use for four-taxon problems)
 
+        # Gelfand-Ghosh experimental
+        self.gg_bin_patterns        = False         # if True, patterns will be classified into 7 bins, corresponding to 'A only', 'C only', 'G only', 'T only', 'any 2 states', 'any 3 states' and 'any 4 states'. Gelfand-Ghosh statistics will be computed on this vector of counts instead of the complete vector of pattern counts. Can only be used for DNA/RNA data.
+
         # Variables associated with the FLEXCAT model
         self.use_flex_model         = False
         self.flex_ncat_move_weight  = 1         # number of times each cycle to attempt an ncat move
@@ -254,6 +258,8 @@ class Phycas:
         self.taxon_labels           = []        # will hold taxon labels from data file or default names if self.data_source equals None
         self.paramf                 = None
         self.treef                  = None
+        self.tmp_simdata            = SimData()
+        self.gg_num_post_pred_reps  = 0.0
         self.gg_y                   = SimData()  # observed dataset
         self.gg_mu                  = SimData()  # mean of all posterior predictive datasets
         self.gg_a                   = []            # vector of compromise actions (one for each k in gg_kvect)
@@ -694,13 +700,15 @@ class Phycas:
         # Perform posterior predictive simulations if Gelfand-Ghosh statistics requested
         if self.gg_do and cycle > 0:
             for j in range(self.gg_nreps):
+                self.gg_num_post_pred_reps += 1.0
                 # Simulate from the posterior
-                sim_data = SimData()
-                self.likelihood.simulate(sim_data, self.tree, self.r, self.nchar)
+                #tmp_simdata = SimData()
+                self.tmp_simdata.clear()
+                self.likelihood.simulate(self.tmp_simdata, self.tree, self.r, self.nchar)
 
                 if self.gg_save_spectra:
                     self.gg_spectrum.zeroCounts()
-                    sim_data.addDataTo(self.gg_spectrum, 1.0)
+                    self.tmp_simdata.addDataTo(self.gg_spectrum, 1.0)
                     self.gg_spectrum_points += ','
                     self.gg_spectrum_points += self.gg_spectrum.createMapleTuples(self.gg_spectrum_row, 100)
                     self.gg_spectrum_row += 1
@@ -709,7 +717,7 @@ class Phycas:
                 # Save the simulated data set if desired
                 if self.gg_save_postpreds:
                     fn = '%s_cycle%d_rep%d.nex' % (self.gg_postpred_prefix, cycle, j)
-                    sim_data.saveToNexusFile(fn, self.taxon_labels, 'dna', ('a','c','g','t'))
+                    self.tmp_simdata.saveToNexusFile(fn, self.taxon_labels, 'dna', ('a','c','g','t'))
                     simf = file(fn, 'a')
                     simf.write('\nbegin trees;\n')
                     simf.write('  translate\n')
@@ -738,17 +746,25 @@ class Phycas:
                     simf.write(']\n')
                     simf.close()
 
-                # Compute the t function for the simulated dataset                
-                curr_t = sim_data.calct(4)
+                if self.gg_bin_patterns:
+                    # Compute the t function for the simulated dataset                
+                    curr_t = self.tmp_simdata.calctBinned(4)
+                else:
+                    # Compute the t function for the simulated dataset                
+                    curr_t = self.tmp_simdata.calct(4)
 
                 # Add this value of t to the list (later the mean t will be computed)                
                 self.gg_t.append(curr_t)
 
-                # Add the number of patterns in sim_data to the gg_npatterns list
-                self.gg_npatterns.append(sim_data.getNUniquePatterns())
+                # Add the number of patterns in self.tmp_simdata to the gg_npatterns list
+                self.gg_npatterns.append(self.tmp_simdata.getNUniquePatterns())
 
                 # Add the pattern counts for this data set to gg_mu (later the mean counts will be computed)
-                sim_data.addDataTo(self.gg_mu, 1.0)
+                # begin again here
+                p = 1.0/self.gg_num_post_pred_reps
+                self.gg_mu.multBy(1.0 - p)
+                self.tmp_simdata.multBy(p)
+                self.tmp_simdata.addDataTo(self.gg_mu, 1.0)
 
                 # Increment count of the total number of simulated datasets created
                 # This value is used to later compute the mean t for all simulated datasets
@@ -897,6 +913,7 @@ class Phycas:
             self.gg_Dm = []
             self.gg_mu.clear()
             self.gg_total = 0
+            self.gg_num_post_pred_reps = 0.0
 
         # Create a single Markov chain and add the parameters needed by the
         # model (as well as Metropolis moves to modify the topology)
@@ -984,14 +1001,18 @@ class Phycas:
             two_n = 2.0*float(self.nchar)
 
             # Compute the t function for the observed dataset
-            self.gg_t_y = self.gg_y.calct(4)
+            if self.gg_bin_patterns:
+                self.gg_t_y = self.gg_y.calctBinned(4)
+            else:                
+                self.gg_t_y = self.gg_y.calct(4)
 
-            # Divide the counts stored in gg_mu by gg_total so that gg_mu becomes
-            # the mean of all the posterior predictive datasets. Also compute the
-            # t function for the mean dataset
-            self.gg_mu.divideBy(float(self.gg_total))
-            self.gg_t_mu = self.gg_mu.calct(4)
-
+            # gg_mu is the mean of all the posterior predictive datasets.
+            # Compute the t function for the mean dataset
+            if self.gg_bin_patterns:
+                self.gg_t_mu = self.gg_mu.calctBinned(4)
+            else:
+                self.gg_t_mu = self.gg_mu.calct(4)
+                
             # If saving spectra, save the spectrum from the original data set
             if self.gg_save_spectra:
                 self.gg_spectrum.zeroCounts()
@@ -1036,7 +1057,10 @@ class Phycas:
                 self.gg_mu.addDataTo(a, 1.0)
                 self.gg_y.addDataTo(a, k)
                 a.divideBy(k + 1.0)
-                t_a = a.calct(4)
+                if self.gg_bin_patterns:
+                    t_a = a.calctBinned(4)
+                else:
+                    t_a = a.calct(4)
                 self.gg_t_a.append(t_a)
                 self.gg_a.append(a)
 

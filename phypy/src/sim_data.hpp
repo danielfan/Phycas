@@ -22,6 +22,8 @@
 
 #include "phypy/src/states_patterns.hpp"
 
+typedef	PatternMapType	SimPatternMapType;
+
 namespace phycas
 {
 
@@ -44,6 +46,9 @@ class SimData
 		void						clear();
 		void						zeroCounts();
 		void						appendCountsToFile(std::string fn, bool binary);
+#if POLPY_NEWWAY
+		void						debugAppendCountsToFile(std::string row_name, std::string fn);
+#endif
 		std::string					createMapleTuples(unsigned row, unsigned cutoff);
 		std::vector<std::string>	getPatterns(std::vector<std::string> symbols);
 		void						resetPatternLength(unsigned ntaxa);
@@ -52,26 +57,41 @@ class SimData
 		void						insertPattern(PatternCountType count);
 
 		double						calct(unsigned nstates);
+#if POLPY_NEWWAY
+		double						calctBinned(unsigned nstates);
+#endif
 		void						includeDataFrom(SimData &);
 		unsigned					getPatternLength();
 		VecStateList &				getCurrPattern();
 		PatternCountType			getTotalCount();
 		unsigned					getNUniquePatterns();
 		void						addDataTo(SimData & other, PatternCountType mult);
-		void						divideBy(PatternCountType total);
+#if POLPY_NEWWAY
+		void						setNumAdditions(unsigned n);
+		unsigned					getNumAdditions();
+		void						setTotalCount(PatternCountType total);
+		//void						addToRunningAverage(SimData & other, PatternCountType mult);
+		void						multBy(PatternCountType factor);
+#endif
+		void						divideBy(PatternCountType factor);
 
 		std::string					patternTable(const StringVect & state_symbols);
 		void						saveToNexusFile(const std::string filename, const StringVect & taxon_names, const std::string datatype, const StringVect & state_symbols);
 
 		const static int8_t			missing_state;			/**< The value that represents missing data */
 
-		const PatternMapType &		getSimPatternMap() const;
+		const SimPatternMapType &	getSimPatternMap() const;
 
 	private:
 
+#if POLPY_NEWWAY
+		void						insertPatternToRunningAverage(PatternCountType count, PatternCountType p);
+
+		//unsigned					num_additions;			/**< The number of times addToRunningAverage has been called */
+#endif
 		PatternCountType			total_count;			/**< The number of patterns inserted since sim_pattern_map was last cleared (note that this is not sim_pattern_map.size(), but instead equals the sum of all the counts) */
 		unsigned					pattern_length;			/**< Number of taxa, used to reserve elements in new pattern vectors */
-		PatternMapType				sim_pattern_map;		/**< Keys are patterns, values are pattern counts */
+		SimPatternMapType			sim_pattern_map;		/**< Keys are patterns, values are pattern counts */
 		VecStateList				tmp_pattern;			/**< Workspace for building up a pattern */
 		std::string					outstr;					/**< Workspace for building up a tabular representation of `sim_pattern_map' (used by showPatternMap function) */
 	};

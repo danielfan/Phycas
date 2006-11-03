@@ -10,6 +10,7 @@ from _GammaDist import *
 from _ExponentialDist import *
 from _InverseGammaDist import *
 from _UniformDist import *
+from _ImproperUniformDist import *
 from _BinomialDist import *
 from _BernoulliDist import *
 from _BetaDist import *
@@ -29,3 +30,4 @@ def testExamples():
     doctest.testfile('_Lot.py')
     doctest.testfile('_SliceSampler.py')
     doctest.testfile('_UniformDist.py')
+    doctest.testfile('_ImproperUniformDist.py')

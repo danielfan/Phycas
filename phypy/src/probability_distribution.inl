@@ -649,6 +649,123 @@ inline void BinomialDistribution::SetMeanAndVariance(
 	p = mean/n;
 	}
 
+#if POLPY_NEWWAY
+//############################################################################################
+//###### IMPROPER UNIFORM DISTRIBUTION INLINED FUNCTIONS #####################################
+//############################################################################################
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Nothing to be done.
+*/
+inline ImproperUniformDistribution::ImproperUniformDistribution()
+  	{
+	}
+ 
+/*----------------------------------------------------------------------------------------------------------------------
+|	Nothing to be done.
+*/
+inline ImproperUniformDistribution::~ImproperUniformDistribution()
+	{
+	//std::cerr << "Deleting a ImproperUniformDistribution object" << std::endl;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns false.
+*/
+inline bool ImproperUniformDistribution::IsDiscrete() const
+	{
+	return false;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the string "Improper Uniform", which is the name of this distribution.
+*/
+inline std::string ImproperUniformDistribution::GetDistributionName() const
+	{
+	return "Improper Uniform";
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the string "ImproperUniformDist()", which is the string that would be necessary on the Python side to 
+|	create an object of this type.
+*/
+inline std::string ImproperUniformDistribution::GetDistributionDescription() const
+	{
+	return "ImproperUniformDist()";
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	The mean is not defined in this distribution, so an exception is thrown.
+*/
+inline double ImproperUniformDistribution::GetMean() const
+  	{
+	throw XProbDist("the mean is undefined for an improper uniform distribution");
+	}
+ 
+/*----------------------------------------------------------------------------------------------------------------------
+|	The variance is not defined in this distribution, so an exception is thrown.
+*/
+inline double ImproperUniformDistribution::GetVar() const
+  	{
+	throw XProbDist("the variance is undefined for an improper uniform distribution");
+	}
+ 
+/*----------------------------------------------------------------------------------------------------------------------
+|	The standard deviation is not defined in this distribution, so an exception is thrown.
+*/
+inline double ImproperUniformDistribution::GetStdDev() const
+  	{
+	throw XProbDist("the standard deviation is undefined for an improper uniform distribution");
+	}
+ 
+/*----------------------------------------------------------------------------------------------------------------------
+|	The cumulative distribution function is not defined in this distribution, so an exception is thrown.
+*/
+inline double ImproperUniformDistribution::GetCDF(
+  double x)	 const /**> is the value for which the cumulative distribution function is to be evaluated */
+  	{
+	throw XProbDist("the cumulative distribution function is undefined for an improper uniform distribution");
+	}
+ 
+/*----------------------------------------------------------------------------------------------------------------------
+|	It is not possible to sample from an improper uniform distribution, so an exception is thrown.
+*/
+inline double ImproperUniformDistribution::Sample() const
+  	{
+	throw XProbDist("it is not possible to sample from an improper uniform distribution");
+	}
+ 
+/*----------------------------------------------------------------------------------------------------------------------
+|	The probability density function of the improper uniform distribution is infinitesimal, so the log of this value is 
+|	undefined. Therefore, an exception is thrown.
+*/
+inline double ImproperUniformDistribution::GetLnPDF(
+  double x) const	/* the value for which the density function is to be evaluated */
+	{
+	throw XProbDist("the probability density function of an improper uniform distribution is not defined");
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	The relative probability density of any point in an improper uniform distribution can be any constant. The value 
+|	1.0 is arbitrarily chosen here, making the log 0.0.
+*/
+inline double ImproperUniformDistribution::GetRelativeLnPDF(
+  double x) const	/* the value for which the density function is to be evaluated */
+	{
+	return 0.0;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	The mean and variance are both undefined for an improper uniform distribution, so an exception is thrown.
+*/
+inline void ImproperUniformDistribution::SetMeanAndVariance(
+  double mean,	/* the mean of the uniform distribution */
+  double var)	/* the variance of the uniform distribution */
+  	{
+	throw XProbDist("neither the mean nor the variance of an improper uniform distribution is defined");
+	}
+#endif
+
 //############################################################################################
 //###### UNIFORM DISTRIBUTION INLINED FUNCTIONS ##############################################
 //############################################################################################
