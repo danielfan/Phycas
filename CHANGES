@@ -166,6 +166,19 @@ Release 0.11.0 (11-Aug-2006, SVN revision 174)
 ----------------------------------------------
 o reorganized sources so that all source code files currently in use are under a single "src"
   directory, and everything is organized as a package so that only one PYTHONPATH point is needed
+o release 0.11.1 (3-Nov-2006, SVN revision 294)
+	- added ProbDist.ImproperUniformPrior
+	- removed dependence on numarray (USING_NUMARRAY macro can be used to restore dependence)
+	- added a SimData::calctBinned function to allow compaction of patterns into 7 bins
+	  for Gelfand-Ghosh evaluation of DNA models. The seven bins are
+	    0: constant patterns in which all states are A
+	    1: constant patterns in which all states are C
+	    2: constant patterns in which all states are G
+	    3: constant patterns in which all states are T
+	    4: variable patterns in which any 2 distinct states are present
+	    5: variable patterns in which any 3 distinct states are present
+	    6: variable patterns in which all 4 distinct states are present
+	- note: revision 295 is identical except for removal of POLPY_NEWWAY wrappers
 
 Release 0.12.0
 --------------

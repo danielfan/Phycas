@@ -46,9 +46,7 @@ class SimData
 		void						clear();
 		void						zeroCounts();
 		void						appendCountsToFile(std::string fn, bool binary);
-#if POLPY_NEWWAY
 		void						debugAppendCountsToFile(std::string row_name, std::string fn);
-#endif
 		std::string					createMapleTuples(unsigned row, unsigned cutoff);
 		std::vector<std::string>	getPatterns(std::vector<std::string> symbols);
 		void						resetPatternLength(unsigned ntaxa);
@@ -57,22 +55,17 @@ class SimData
 		void						insertPattern(PatternCountType count);
 
 		double						calct(unsigned nstates);
-#if POLPY_NEWWAY
 		double						calctBinned(unsigned nstates);
-#endif
 		void						includeDataFrom(SimData &);
 		unsigned					getPatternLength();
 		VecStateList &				getCurrPattern();
 		PatternCountType			getTotalCount();
 		unsigned					getNUniquePatterns();
 		void						addDataTo(SimData & other, PatternCountType mult);
-#if POLPY_NEWWAY
 		void						setNumAdditions(unsigned n);
 		unsigned					getNumAdditions();
 		void						setTotalCount(PatternCountType total);
-		//void						addToRunningAverage(SimData & other, PatternCountType mult);
 		void						multBy(PatternCountType factor);
-#endif
 		void						divideBy(PatternCountType factor);
 
 		std::string					patternTable(const StringVect & state_symbols);
@@ -84,11 +77,10 @@ class SimData
 
 	private:
 
-#if POLPY_NEWWAY
 		void						insertPatternToRunningAverage(PatternCountType count, PatternCountType p);
 
-		//unsigned					num_additions;			/**< The number of times addToRunningAverage has been called */
-#endif
+	private:
+
 		PatternCountType			total_count;			/**< The number of patterns inserted since sim_pattern_map was last cleared (note that this is not sim_pattern_map.size(), but instead equals the sum of all the counts) */
 		unsigned					pattern_length;			/**< Number of taxa, used to reserve elements in new pattern vectors */
 		SimPatternMapType			sim_pattern_map;		/**< Keys are patterns, values are pattern counts */

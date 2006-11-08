@@ -649,7 +649,6 @@ inline void BinomialDistribution::SetMeanAndVariance(
 	p = mean/n;
 	}
 
-#if POLPY_NEWWAY
 //############################################################################################
 //###### IMPROPER UNIFORM DISTRIBUTION INLINED FUNCTIONS #####################################
 //############################################################################################
@@ -764,7 +763,6 @@ inline void ImproperUniformDistribution::SetMeanAndVariance(
   	{
 	throw XProbDist("neither the mean nor the variance of an improper uniform distribution is defined");
 	}
-#endif
 
 //############################################################################################
 //###### UNIFORM DISTRIBUTION INLINED FUNCTIONS ##############################################

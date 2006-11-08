@@ -126,10 +126,8 @@ class Model	{
 		ProbDistShPtr					getEdgeLenHyperPrior();
 		ProbDistShPtr					getEdgeLenPrior();
 
-#if POLPY_NEWWAY
 		// Utility functions
 		void flattenTwoDMatrix(VecDbl & p, double * * twoDarr, unsigned dim) const;
-#endif
 
 		// Python-specific utilities
 #if defined(PYTHON_ONLY)

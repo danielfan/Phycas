@@ -251,7 +251,6 @@ struct PartialPriorSum : public std::unary_function<double, void>
 
 	void operator()(const double & nxt)
 		{
-#if POLPY_NEWWAY
 	try 
 		{
 		sum += distr.GetLnPDF(nxt);
@@ -260,9 +259,6 @@ struct PartialPriorSum : public std::unary_function<double, void>
 		{
 		sum += distr.GetRelativeLnPDF(nxt);
 		}
-#else
-		sum += distr.GetLnPDF(nxt);
-#endif
 		}
 
 	double result()
@@ -296,7 +292,6 @@ inline double MCMCChainManager::partialEdgeLenPrior(const std::vector<double> & 
 	double partial_prior_sum = 0.0;
 	for (std::vector<double>::const_iterator it = edge_len_vect.begin(); it != edge_len_vect.end(); ++it)
 		{
-#if POLPY_NEWWAY
 		double tmp = 0.0;
 		try 
 			{
@@ -307,9 +302,6 @@ inline double MCMCChainManager::partialEdgeLenPrior(const std::vector<double> & 
 			tmp =  p->GetRelativeLnPDF(*it);
 			}
 		partial_prior_sum += tmp;
-#else
-		partial_prior_sum += p->GetLnPDF(*it);
-#endif
 		}
 	return partial_prior_sum;
 #endif

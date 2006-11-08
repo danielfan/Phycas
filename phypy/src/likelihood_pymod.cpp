@@ -135,13 +135,10 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("divideBy", &phycas::SimData::divideBy)
 		.def("addDataTo", &phycas::SimData::addDataTo)
 		.def("calct", &phycas::SimData::calct)
-#if POLPY_NEWWAY
 		.def("multBy", &phycas::SimData::multBy)
 		.def("debugAppendCountsToFile", &phycas::SimData::debugAppendCountsToFile)
-		//.def("addToRunningAverage", &phycas::SimData::addToRunningAverage)
 		.def("calctBinned", &phycas::SimData::calctBinned)
 		.def("getTotalCount", &phycas::SimData::getTotalCount)
-#endif
 		;
 #if defined(INTERFACE_WITH_CIPRES)
 	class_<PhycasIDLishMatrix, boost::noncopyable>("PhycasIDLishMatrix", init<unsigned, unsigned, std::string, int, unsigned>())

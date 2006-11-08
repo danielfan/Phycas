@@ -283,7 +283,6 @@ inline std::string QMatrix::showQMatrix()
 	return showMatrixImpl(qmat_begin);
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Stores a flattened version of the supplied 2-dimensional array `twoDarr', storing the result in the supplied VecDbl
 |	reference variable `p'. The supplied `twoDarr' should be laid out so that rows occupy contiguous memory.
@@ -296,6 +295,5 @@ inline void QMatrix::flattenTwoDMatrix(VecDbl & p, double * * twoDarr, unsigned 
 	double * twoD_end   = twoD_begin + flat_length;
 	std::copy(twoD_begin, twoD_end, p.begin());
 	}
-#endif
 	
 } // namespace phycas

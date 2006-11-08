@@ -49,7 +49,6 @@ class LookupStateSymbol : public std::unary_function<int8_t, char>
 namespace phycas
 {
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calculates the binned t function used in the Gelfand-Ghosh measure for the patterns currently stored in this 
 |	object. The binned t function looks like this for multinomial data, 4 DNA states and 4 taxa:
@@ -156,7 +155,6 @@ double SimData::calctBinned(unsigned nstates)
 
 	return t;
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calculates the t function used in the Gelfand-Ghosh measure for the patterns currently stored in this object. The
@@ -323,7 +321,6 @@ void SimData::saveToNexusFile(
 	outf.close();
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Adds `tmp_pattern' to `sim_pattern_map' then passes `missing_state' to the wipePattern() function to fill 
 |	`tmp_pattern' with invalid values. 
@@ -366,7 +363,6 @@ void SimData::insertPatternToRunningAverage(
 		f.close();
 		}
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Adds `tmp_pattern' to `sim_pattern_map' then passes `missing_state' to the wipePattern() function to fill 

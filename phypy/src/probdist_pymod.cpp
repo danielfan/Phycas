@@ -199,7 +199,6 @@ BOOST_PYTHON_MODULE(_ProbDist)
 		.def("getRelativeLnPDF", &BinomialDistribution::GetRelativeLnPDF)
 		.def("setMeanAndVariance", &BernoulliDistribution::SetMeanAndVariance)
 		;
-#if POLPY_NEWWAY
 	class_<ImproperUniformDistribution, bases<ProbabilityDistribution, AdHocDensity> >("ImproperUniformDistBase")
 		.def("isDiscrete", &ImproperUniformDistribution::IsDiscrete)
 		.def("getDistName", &ImproperUniformDistribution::GetDistributionName)
@@ -217,7 +216,6 @@ BOOST_PYTHON_MODULE(_ProbDist)
 		.def("getRelativeLnPDF", &ImproperUniformDistribution::GetRelativeLnPDF)
 		.def("setMeanAndVariance", &ImproperUniformDistribution::SetMeanAndVariance)
 		;
-#endif
 	class_<UniformDistribution, bases<ProbabilityDistribution, AdHocDensity> >("UniformDistBase")
 		.def(init<double, double>())
 		.def("isDiscrete", &UniformDistribution::IsDiscrete)

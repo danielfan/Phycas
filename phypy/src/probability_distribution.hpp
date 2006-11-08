@@ -205,7 +205,6 @@ class BetaDistribution  : public ProbabilityDistribution
 		void 			SetMeanAndVariance(double m, double v);
 	};
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	A uniform probability distribution with left bound 0.0 and right bound infinity. This is an improper distribution 
 |	(the area under its density curve is infinite).
@@ -228,7 +227,6 @@ class ImproperUniformDistribution : public ProbabilityDistribution
 		double		GetRelativeLnPDF(double x) const; 
 		void		SetMeanAndVariance(double mean, double var);
 	};
-#endif
 	
 /*------------------------------------------------------------------------------------------------------------------------------------------------------------------
 |	Encapsulates the continuous uniform probability distribution with left bound a and right bound b.

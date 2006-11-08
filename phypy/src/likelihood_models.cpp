@@ -166,7 +166,6 @@ void Model::createParameters(
 		}
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Stores a flattened version of the supplied 2-dimensional array `twoDarr', storing the result in the supplied VecDbl
 |	reference variable `p'. The supplied `twoDarr' should be laid out so that rows occupy contiguous memory.
@@ -179,7 +178,6 @@ inline void Model::flattenTwoDMatrix(VecDbl & p, double * * twoDarr, unsigned di
 	double * twoD_end   = twoD_begin + flat_length;
 	std::copy(twoD_begin, twoD_end, p.begin());
 	}
-#endif
 	
 #if defined(PYTHON_ONLY)
 #if defined(USING_NUMARRAY)
@@ -193,17 +191,8 @@ boost::python::numeric::array Model::getPMatrix(double edgeLength) const
 	double * * pMat = NewTwoDArray<double>(num_states, num_states);
 	calcPMat(pMat, edgeLength);
 
-#if POLPY_NEWWAY
 	VecDbl p;
 	flattenTwoDMatrix(p, pMat, num_states);
-#else
-	// copy to a vector so that we can delete pMat
-	unsigned flat_length = num_states*num_states;
-	std::vector<double> p(flat_length, 0.0);
-	double * pMat_begin = &pMat[0][0];
-	double * pMat_end   = pMat_begin + flat_length;
-	std::copy(pMat_begin, pMat_end, p.begin());
-#endif
 
 	DeleteTwoDArray<double>(pMat);
 
@@ -229,17 +218,8 @@ VecDbl Model::getPMatrix(double edgeLength) const
 	double * * pMat = NewTwoDArray<double>(num_states, num_states);
 	calcPMat(pMat, edgeLength);
 
-#if POLPY_NEWWAY
 	VecDbl p;
 	flattenTwoDMatrix(p, pMat, num_states);
-#else
-	// copy to a vector so that we can delete pMat
-	unsigned flat_length = num_states*num_states;
-	std::vector<double> p(flat_length, 0.0);
-	double * pMat_begin = &pMat[0][0];
-	double * pMat_end   = pMat_begin + flat_length;
-	std::copy(pMat_begin, pMat_end, p.begin());
-#endif
 
 	DeleteTwoDArray<double>(pMat);
 

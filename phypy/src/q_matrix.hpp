@@ -94,9 +94,7 @@ class QMatrix
 		void							redimension(unsigned new_dim);
 		std::string						showMatrixImpl(const double * q) const;
 
-#if POLPY_NEWWAY
 		void							flattenTwoDMatrix(VecDbl & p, double * * twoDarr, unsigned dim) const;
-#endif
 
 	private:
 

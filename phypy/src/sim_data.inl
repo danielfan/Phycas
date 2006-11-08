@@ -25,9 +25,6 @@ namespace phycas
 */
 inline SimData::SimData()
   : total_count(0.0), pattern_length(0)
-#if POLPY_NEWWAY
-	//, num_additions(0)
-#endif
 	{
 	}
 
@@ -40,9 +37,6 @@ inline void SimData::clear()
 	sim_pattern_map.clear();
 	total_count = 0.0;
 	pattern_length = 0;
-#if POLPY_NEWWAY
-	//num_additions = 0;
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -120,7 +114,6 @@ inline void SimData::appendCountsToFile(std::string fn, bool binary)
 	outf.close();
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Saves all counts as a tab-delimited row appended to the file whose name is 'fn'. Note: no header is output
 |	identifying which pattern goes with each count, so this will not be useful unless only the unidentified counts are 
@@ -131,7 +124,7 @@ inline void SimData::debugAppendCountsToFile(std::string row_name, std::string f
 	std::ofstream outf(fn.c_str(), std::ios::out | std::ios::app);
 	outf << row_name;
 
-#if 1
+#if 0
 
 	for (unsigned i = 0; i < 4; ++i)
 		{
@@ -175,7 +168,6 @@ inline void SimData::debugAppendCountsToFile(std::string row_name, std::string f
 	outf << std::endl;
 	outf.close();
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns a vector of patterns, each represented as a string. The patterns are in the same order as the counts 
@@ -286,27 +278,6 @@ inline PatternCountType SimData::getTotalCount()
 	return total_count;
 	}
 
-#if 0 && POLPY_NEWWAY
-/*----------------------------------------------------------------------------------------------------------------------
-|	Sets the value of the 'num_additions' data member to the supplied value 'n'.
-*/
-inline void SimData::setNumAdditions(unsigned n)
-	{
-	num_additions = n;
-	}
-#endif
-
-#if 0 && POLPY_NEWWAY
-/*----------------------------------------------------------------------------------------------------------------------
-|	Returns the value of the 'num_additions' data member.
-*/
-inline unsigned SimData::getNumAdditions()
-	{
-	return num_additions;
-	}
-#endif
-
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the value of the `total_count' data member, which represents the sum of all pattern counts (not 
 |	`sim_pattern_map'.size()).
@@ -315,7 +286,6 @@ inline void SimData::setTotalCount(PatternCountType total)
 	{
 	total_count = total;
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the value `sim_pattern_map'.size(), the number of unique patterns currently stored.
