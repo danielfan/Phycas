@@ -1,7 +1,7 @@
 @echo off
 
 REM set PATH=%PATH%;%HOMEDRIVE%\boost_1_33_1\tools\build\jam_src\bin.ntx86
-set PHYCAS_ROOT=%HOMEDRIVE%\Synchronized\Projects\ggmods_branch
+REM set PHYCAS_ROOT=%HOMEDRIVE%\Synchronized\Projects\ggmods_branch
 REM set PYTHON_ROOT=%HOMEDRIVE%\Python24
 REM set PYTHON_VERSION=2.4
 REM set BOOST_ROOT=$HOMEDRIVE\boost_1_33_1

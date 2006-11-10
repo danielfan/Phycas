@@ -9,7 +9,7 @@ class DataMatrix(DataMatrixBase):
 
     >>> from phypy import *
     >>> r = ReadNexus.NexusReader()
-    >>> r.readFile('../Examples/Data/nyldna4.nex')
+    >>> r.readFile('../Tests/Data/nyldna4.nex')
     >>> m = ReadNexus.getDiscreteMatrix(r, 0)
 
     """
@@ -20,7 +20,7 @@ class DataMatrix(DataMatrixBase):
 
         >>> from phypy import *
         >>> r = ReadNexus.NexusReader()
-        >>> r.readFile('../Examples/Data/nyldna4.nex')
+        >>> r.readFile('../Tests/Data/nyldna4.nex')
         >>> m = ReadNexus.getDiscreteMatrix(r, 0)
         >>> m.getNChar()
         3080
@@ -35,7 +35,7 @@ class DataMatrix(DataMatrixBase):
 
         >>> from phypy import *
         >>> r = ReadNexus.NexusReader()
-        >>> r.readFile('../Examples/Data/nyldna4.nex')
+        >>> r.readFile('../Tests/Data/nyldna4.nex')
         >>> m = ReadNexus.getDiscreteMatrix(r, 0)
         >>> m.getNTax()
         4
@@ -52,7 +52,7 @@ class DataMatrix(DataMatrixBase):
 
         >>> from phypy import *
         >>> r = ReadNexus.NexusReader()
-        >>> r.readFile('../Examples/Data/nyldna4.nex')
+        >>> r.readFile('../Tests/Data/nyldna4.nex')
         >>> m = ReadNexus.getDiscreteMatrix(r, 0)
         >>> m.getNStates()
         4
@@ -69,7 +69,7 @@ class DataMatrix(DataMatrixBase):
 
         >>> from phypy import *
         >>> r = ReadNexus.NexusReader()
-        >>> r.readFile('../Examples/Data/nyldna4.nex')
+        >>> r.readFile('../Tests/Data/nyldna4.nex')
         >>> m = ReadNexus.getDiscreteMatrix(r, 0)
         >>> print m.getSymbolsList()
         ACGT?N
@@ -89,7 +89,7 @@ class DataMatrix(DataMatrixBase):
 
         >>> from phypy import *
         >>> r = ReadNexus.NexusReader()
-        >>> r.readFile('../Examples/Data/nyldna4.nex')
+        >>> r.readFile('../Tests/Data/nyldna4.nex')
         >>> m = ReadNexus.getDiscreteMatrix(r, 0)
         >>> print m.getStateList()
         (1, 0, 1, 1, 1, 2, 1, 3, 5, -1, 0, 1, 2, 3, 4, 0, 1, 2, 3)
@@ -134,7 +134,7 @@ class DataMatrix(DataMatrixBase):
 
         >>> from phypy import *
         >>> r = ReadNexus.NexusReader()
-        >>> r.readFile('../Examples/Data/nyldna4.nex')
+        >>> r.readFile('../Tests/Data/nyldna4.nex')
         >>> m = ReadNexus.getDiscreteMatrix(r, 0)
         >>> print m.getStateListPos()
         (0, 2, 4, 6, 8, 14)

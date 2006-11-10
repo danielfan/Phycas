@@ -22,7 +22,7 @@ class Phycas:
     >>> from phypy import *
     >>> mcmc = Phycas()
     >>> mcmc.data_source = 'file'
-    >>> mcmc.data_file_name = '../Examples/Data/nyldna4.nex'
+    >>> mcmc.data_file_name = '../Tests/Data/nyldna4.nex'
     >>> mcmc.starting_tree_source = 'random'
     >>> mcmc.ls_move_weight = 10
     >>> mcmc.slice_weight = 1
@@ -35,7 +35,7 @@ class Phycas:
     >>> mcmc.verbose = True
     >>> mcmc.setup()
     >>> mcmc.run() # doctest:+ELLIPSIS
-    Data source:    ../Examples/Data/nyldna4.nex
+    Data source:    ../Tests/Data/nyldna4.nex
     No. cycles:     100
     Sample every:   10
     Starting tree:  (1:0.04536,(2:0.01124,4:0.17084):0.02834,3:0.00102)
@@ -1144,8 +1144,8 @@ if __name__ == '__main__':
         # set above to True for normal operation
         mcmc.random_seed = '13579'
         mcmc.data_source = 'file'
-        mcmc.data_file_name = '../Examples/Data/green.nex'
-        #mcmc.data_file_name = '../Examples/Data/nyldna4.nex'
+        mcmc.data_file_name = '../Tests/Data/green.nex'
+        #mcmc.data_file_name = '../Tests/Data/nyldna4.nex'
         mcmc.starting_tree_source = 'random'
         mcmc.ncycles = 200
         mcmc.sample_every = 10
@@ -1165,7 +1165,7 @@ if __name__ == '__main__':
 
     if False:
         # for Tallahassee session
-        mcmc.data_file_name = '../Examples/Data/nyldna4.nex'
+        mcmc.data_file_name = '../Tests/Data/nyldna4.nex'
 
     mcmc.setup()
     mcmc.run()

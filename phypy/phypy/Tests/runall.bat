@@ -2,7 +2,7 @@
 if exist runall_diffs.txt del runall_diffs.txt
 
 set TESTDIR=%CD%
-cd ..\Examples
+cd %TESTDIR%
 
 echo ****************************
 echo *** Running ExplorePrior ***

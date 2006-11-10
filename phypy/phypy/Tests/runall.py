@@ -49,7 +49,7 @@ scriptPar = os.path.split(os.path.abspath(sys.argv[0]))[0]
 outFile = os.path.join(scriptPar, "runall_diffs.txt")
 removeFilesIfTheyExist(scriptPar, [outFile])
 
-os.chdir(os.path.join(os.path.split(scriptPar)[0], "Examples"))
+# os.chdir(os.path.join(os.path.split(scriptPar)[0], "Examples"))
 
 runTest(outFile, "ExplorePrior", mcmcOutputs(["nodata.nex"]))
 runTest(outFile, "FixedParams", ["params.p", "trees.t"])
@@ -59,3 +59,5 @@ runTest(outFile, "Polytomies", ["simHKY.nex"] + mcmcOutputs(["analHKY.nex"]))
 runTest(outFile, "Simulator", ["simulated.nex"])
 #runTest(outFile, "Phycas", mcmcOutputs(["green.nex"]))
 
+raw_input('Press any key to quit')
+    

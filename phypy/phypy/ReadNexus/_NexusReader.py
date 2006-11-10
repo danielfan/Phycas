@@ -13,7 +13,7 @@ class NexusReader(NexusReaderBase):
 
         >>> from phypy import *
         >>> reader = ReadNexus.NexusReader()
-        >>> reader.readFile('../Examples/Data/nyldna4.nex')
+        >>> reader.readFile('../Tests/Data/nyldna4.nex')
         >>> print reader.getNChar()
         3080
 

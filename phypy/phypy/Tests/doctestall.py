@@ -8,4 +8,4 @@ phypy.DataMatrix.testExamples()
 phypy.Likelihood.testExamples()
 doctest.testfile('../Phycas/Phycas.py')
 
-print 'Finished testing examples'
+raw_input('Finished testing examples\nPress any key to quit')

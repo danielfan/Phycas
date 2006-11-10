@@ -74,7 +74,7 @@ class SimData(SimDataBase):
     >>> phycas = Phycas()
     >>> 
     >>> # Read a data file
-    >>> phycas.reader.readFile('../Examples/Data/nyldna4.nex')
+    >>> phycas.reader.readFile('../Tests/Data/nyldna4.nex')
     >>> phycas.data_matrix = ReadNexus.getDiscreteMatrix(phycas.reader, 0)
     >>> phycas.ntax = phycas.data_matrix.getNTax()
     >>> taxon_names = phycas.reader.getTaxLabels()
