@@ -99,7 +99,7 @@ currently built into Phycas.
 
 setupArgs = {
     'name':'Phycas',
-    'version':'1.0',
+    'version':'0.11.0',
     'description':'Phycas: Python Software for Phylogenetic Analysis',
     'author':'Phycas Development Team',
     'author_email':'phycas@phypy.org',
