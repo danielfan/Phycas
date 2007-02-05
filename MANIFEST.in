@@ -44,10 +44,22 @@ include phypy/phypy/Examples/Paradox/Paradox.py
 include phypy/phypy/Examples/Paradox/ShoupLewis.nex
 include phypy/phypy/Tests/runall.py
 
+include phypy/phypy/Tests/ExplorePrior *.py
 recursive-include phypy/phypy/Tests/ExplorePrior/reference_output *
+
+include phypy/phypy/Tests/FixedParams *.py
 recursive-include phypy/phypy/Tests/FixedParams/reference_output *
+
+include phypy/phypy/Tests/GelfandGhosh *.py
 recursive-include phypy/phypy/Tests/GelfandGhosh/reference_output *
+
+include phypy/phypy/Tests/LikelihoodTest *.py
 recursive-include phypy/phypy/Tests/LikelihoodTest/reference_output *
+
+include phypy/phypy/Tests/Polytomies *.py
 recursive-include phypy/phypy/Tests/Polytomies/reference_output *
+
+include phypy/phypy/Tests/Simulator *.py
 recursive-include phypy/phypy/Tests/Simulator/reference_output *
+
 recursive-include phypy/src *.h *.hpp *.inl *.c *.cpp
