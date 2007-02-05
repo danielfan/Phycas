@@ -17,10 +17,9 @@ phycas = Phycas()
 phycas.model_type = 'hky'   # use the Hasegawa-Kishino-Yano (1985) model
 phycas.num_rates = 4        # add discrete gamma rate heterogeneity with 4 rate categories
 
-# Set prior on the gamma shape parameter to be an exponential distribution having mean 1
-# Note that the value in parentheses is the inverse of the mean, not the mean. It makes
-# no difference in this case, but it will if you change the value!
-phycas.gamma_shape_prior = ProbDist.ExponentialDist(1.0)
+# Set prior on the gamma shape parameter to be an exponential distribution having mean 0.5
+# Note that the value in parentheses is the inverse of the mean, not the mean.
+phycas.gamma_shape_prior = ProbDist.ExponentialDist(2.0)
 
 # Set the prior for the base frequency parameters. The base frequency parameters in Phycas
 # are only proportional to the base frequencies (i.e. they often add up to a value greater

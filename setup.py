@@ -3,7 +3,6 @@
 # This will create two directories: build and dist
 # The installer will be placed in dist, build can be deleted
 
-
 import sys
 fakeCompilingExtensions = sys.platform == 'darwin'
 if fakeCompilingExtensions:

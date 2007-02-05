@@ -1,0 +1,14 @@
+Before first release:
+
+o should use kappa_prior rather than relrate_prior for HKY model
+  (see Examples/Paradox.py)
+  
+o  need default constructors for each ProbabilityDistribution-derived class
+  (see Examples/Paradox.py)
+
+o slice_max_units needs to be 0 by default - too complicated to explain in examples
+  (see Examples/Paradox.py) 
+  
+o need to be able to restart an analysis from where it left off
+
+
