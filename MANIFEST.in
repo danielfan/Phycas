@@ -1,8 +1,7 @@
 include LICENSE
 include CHANGES
 include phypy/INSTALL
-include phypy/dojam.sh
-include phypy/dojam.bat
+include phypy/dojam.py
 include phypy/clean.sh
 include phypy/clean.bat
 
@@ -41,12 +40,14 @@ include phypy/VC/test/test.vcproj
 include phypy/VC/test/test.hpp
 include phypy/VC/test/test.cpp
 
-recursive-include phypy/phypy/Examples *.py *.nex
-recursive-include phypy/phypy/Examples/ExplorePrior/reference_output *
-recursive-include phypy/phypy/Examples/FixedParams/reference_output *
-recursive-include phypy/phypy/Examples/GelfandGhosh/reference_output *
-recursive-include phypy/phypy/Examples/LikelihoodTest/reference_output *
-recursive-include phypy/phypy/Examples/Polytomies/reference_output *
-recursive-include phypy/phypy/Examples/Simulator/reference_output *
-recursive-include phypy/phypy/Tests *.py *.bat *.sh
+include phypy/phypy/Examples/Paradox/Paradox.py
+include phypy/phypy/Examples/Paradox/ShoupLewis.nex
+include phypy/phypy/Tests/runall.py
+
+recursive-include phypy/phypy/Tests/ExplorePrior/reference_output *
+recursive-include phypy/phypy/Tests/FixedParams/reference_output *
+recursive-include phypy/phypy/Tests/GelfandGhosh/reference_output *
+recursive-include phypy/phypy/Tests/LikelihoodTest/reference_output *
+recursive-include phypy/phypy/Tests/Polytomies/reference_output *
+recursive-include phypy/phypy/Tests/Simulator/reference_output *
 recursive-include phypy/src *.h *.hpp *.inl *.c *.cpp
