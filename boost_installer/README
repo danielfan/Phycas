@@ -1,0 +1,13 @@
+This directory holds scripts for creating installers for the libboost_python
+	shared object library that Phycas relies on.
+	
+On Windows this is not needed because Paul has figured out how to move the
+	DLL to an appropriate places during Phycas' installation procedure.
+
+On Linux we will require users to build and install libboost_python first.
+
+On Mac we will distribute an dmg file that has an installer that puts the 
+	library in /usr/local/lib/
+
+Unfortunately this needs to be compiled for both PowerPC and Intel and for each 
+	supported version of python.
