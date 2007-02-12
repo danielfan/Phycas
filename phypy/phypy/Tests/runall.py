@@ -59,5 +59,6 @@ runTest(outFile, "Polytomies", ["simHKY.nex"] + mcmcOutputs(["analHKY.nex"]))
 runTest(outFile, "Simulator", ["simulated.nex"])
 #runTest(outFile, "Phycas", mcmcOutputs(["green.nex"]))
 
-raw_input('Press any key to quit')
+if sys.platform == "win32":
+    raw_input('Press any key to quit')
     

@@ -1,3 +1,4 @@
+import sys
 import doctest
 import phypy
 
@@ -8,4 +9,7 @@ phypy.DataMatrix.testExamples()
 phypy.Likelihood.testExamples()
 doctest.testfile('../Phycas/Phycas.py')
 
-raw_input('Finished testing examples\nPress any key to quit')
+print "Finished testing examples"
+if sys.platform == "win32":
+    raw_input("Press any key to quit")
+
