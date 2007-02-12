@@ -17,7 +17,6 @@ is_windows = sys.platform.upper().startswith('WIN')
 is_mac = sys.platform.upper() == 'DARWIN'
 _parent_dir, _prog = os.path.split(sys.argv[0])
 _parent_dir = os.path.abspath(_parent_dir)
-phycas_root = os.path.join(_parent_dir, bundled_phycas)
 
 ################################################################################
 # Minimal logging functions
@@ -136,10 +135,14 @@ def write_phycas_build_sh(phypy_dir, bjam_path, env):
         os.chdir(former_dir)
     
 if __name__ == '__main__':
+    ld_lib_path_var = is_mac and "DYLD_LIBRARY_PATH" or "LD_LIBRARY_PATH"
+
     starting_dir = os.curdir
     os.chdir(_parent_dir)
 
     env = os.environ
+    init_pythonpath = env.get("PYTHONPATH")
+    init_ld_lib_path = env.get(ld_lib_path_var)
     added_to_env = {}
     boost_root = env.get("BOOST_ROOT")
     if boost_root:
@@ -163,15 +166,29 @@ if __name__ == '__main__':
     tools = is_mac and "darwin" or "gcc"
     set_env("TOOLS", tools, env, added_to_env)
     
-    set_env("PHYCAS_ROOT", phycas_root, env, added_to_env)
+    phycas_root = env.get("PHYCAS_ROOT")
+    if phycas_root:
+        info_message("PHYCAS_ROOT set to %s" % phycas_root)
+    else:
+        phycas_root = os.path.join(_parent_dir, bundled_phycas)
+        set_env("PHYCAS_ROOT", phycas_root, env, added_to_env)
     phypy_dir = os.path.join("$PHYCAS_ROOT", "phypy")
     expanded_phypy_dir = os.path.expandvars(phypy_dir)
+    
+    
+    # write the build script
     phypy_build_sh = os.path.join(expanded_phypy_dir, "build.sh")
     if not os.path.exists(phypy_build_sh):
         write_phycas_build_sh(phypy_dir, bjam_path, env)
+    
+    # do the build
     if subprocess.call(["/bin/sh", phypy_build_sh]) != 0:
         error("Could not build using %s" % phypy_build_sh)
     
+    
+    
+    #write the env scripts
+    os.chdir(_parent_dir)
     bash_vars = True
     shell_var = os.path.split(env["SHELL"])[-1]
     if shell_var == "csh" or shell_var == "tcsh":
@@ -200,13 +217,15 @@ if __name__ == '__main__':
         sys.exit(m)
 
     suffix = bash_vars and ".sh" or ".csh"
-    to_source = "phycas_env_" + phycas_version_str + 
+    to_source = "phycas_env" + suffix
+    test_file = "test_phycas" + suffix
     rc_file = bash_vars and ".profile" or ".cshrc"
     source_cmd = 'source "%s"' % os.path.abspath(to_source)
+    tests_dir = os.path.join(expanded_phypy_dir, "phypy", "Tests")
     test_cmd = """cd %s
     python runall.py
     python doctestall.py
-   """
+    """ % tests_dir
     print """
 To use Phycas, you will have to add the update the PYTHONPATH and variables 
 in your environment. You can do this by "sourcing" the file %s
@@ -233,62 +252,43 @@ errors:
 
 The more rigorous, but time-consuming tests can be invoked with:
     
-    
+    %s
 
-This should produce output like:
-
-****************************
-*** Running ExplorePrior ***
-****************************
- 
-***************************
-*** Running FixedParams ***
-***************************
- 
-****************************
-*** Running GelfandGhosh ***
-****************************
- 
-******************************
-*** Running LikelihoodTest ***
-******************************
- 
-**************************
-*** Running Polytomies ***
-**************************
- 
-*************************
-*** Running Simulator ***
-*************************
-
-Finished testing examples
-Press any key to quit
 """ % ( to_source,
-        os.path.join(expanded_phypy_dir, "phypy", "Test")
-
-    ld_lib_path_var = is_mac and "DYLD_LIBRARY_PATH" or "LD_LIBRARY_PATH"
-    if ld_lib_path_var in env:
-        old_ld_lib_path = "%s${%s}" % (os.pathsep, ld_lib_path_var)
-    else:
-        old_ld_lib_path = ""
+        tests_dir,
+        test_cmd,
+      )
+    
+    old_ld_lib_path = "%s${%s}" % (os.pathsep, ld_lib_path_var)
     full_ld_lib_path = "%s%s" % (exp_libboost_par, old_ld_lib_path)
     if bash_vars:
-        l = '%s="%s"; export %s' % (ld_lib_path_var,
+        lib_setting = '%s="%s"; export %s' % (ld_lib_path_var,
                                     full_ld_lib_path,
                                     ld_lib_path_var)
     else:
-        l = 'setenv %s "%s"' % (ld_lib_path_var, full_ld_lib_path)
-    print l
+        lib_setting = 'setenv %s "%s"' % (ld_lib_path_var, full_ld_lib_path)
+    print lib_setting
 
-    if "PYTHONPATH" in env:
-        otherpp = os.pathsep + "${PYTHONPATH}"
-    else:
-        otherpp = ""
+    otherpp = os.pathsep + "${PYTHONPATH}"
     fullpp = "%s%s" % (expanded_phypy_dir, otherpp)
     if bash_vars:
-        s = 'PYTHONPATH="%s"; export PYTHONPATH' % fullpp
+        pypath_setting = 'PYTHONPATH="%s"; export PYTHONPATH' % fullpp
     else:
-        s = 'setenv PYTHONPATH "%s"' % fullpp
-    print s
+        pypath_setting = 'setenv PYTHONPATH "%s"' % fullpp
+    print pypath_setting
     
-        f = open("phycas_env.sh", "w"
+    if os.path.exists(to_source):
+        info_message("%s found.  It will not be replaced." % to_source)
+    else:
+        f = open(to_source, "w")
+        f.write("#! /bin/sh\n%s\n%s\n" % (pypath_setting, lib_setting))
+        f.close()
+        info_message("%s written." % to_source)
+
+    if os.path.exists(test_file):
+        info_message("%s found.  It will not be replaced." % test_file)
+    else:
+        f = open(test_file, "w")
+        f.write("#! /bin/sh\n%s\n" % test_cmd)
+        f.close()
+        info_message("%s written." % test_file)
