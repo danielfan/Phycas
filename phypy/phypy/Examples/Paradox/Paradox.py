@@ -14,7 +14,7 @@ phycas = Phycas()
 #   phypy/Phycas/Phycas.py            <- here is Phycas.py
 
 # Set up the substitution model
-phycas.model_type = 'hky'   # use the Hasegawa-Kishino-Yano (1985) model
+phycas.default_model = 'hky'   # use the Hasegawa-Kishino-Yano (1985) model
 phycas.num_rates = 4        # add discrete gamma rate heterogeneity with 4 rate categories
 
 # Set prior on the gamma shape parameter to be an exponential distribution having mean 0.5

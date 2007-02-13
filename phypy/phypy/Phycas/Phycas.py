@@ -31,7 +31,7 @@ class Phycas:
     >>> mcmc.report_every = 10
     >>> mcmc.adapt_first = 25
     >>> mcmc.random_seed = '13579'
-    >>> mcmc.model_type = 'hky'
+    >>> mcmc.default_model = 'hky'
     >>> mcmc.verbose = True
     >>> mcmc.setup()
     >>> mcmc.run() # doctest:+ELLIPSIS
@@ -146,7 +146,7 @@ class Phycas:
         will be used as the mean of an exponential prior distribution for
         edge lengths.
 
-        Substitution Model. The HKY model is used by default; set model_type
+        Substitution Model. The HKY model is used by default; set default_model
         to 'jc' to use the JC model instead.
 
         Pseudorandom Number Generation. The variable random_seed is 0
@@ -210,7 +210,7 @@ class Phycas:
         self.starting_edgelen_dist  = ExponentialDist(10.0) # Used to select the starting edge lengths when starting_tree_source is 'random'
         
         # Variables associated with substitution models
-        self.model_type             = 'hky'     # Can be 'jc', 'hky' or 'gtr'
+        self.default_model          = 'hky'     # Can be 'jc', 'hky' or 'gtr'
         self.num_rates              = 1         # default is rate homogeneity (1 rate)
         self.relrate_prior          = ExponentialDist(1.0)
         self.base_freq_param_prior  = ExponentialDist(1.0)
@@ -296,12 +296,12 @@ class Phycas:
         self.starting_edgelen_dist.setLot(self.r)
         
         # Create a substitution model and define priors for the model parameters
-        if self.model_type == 'gtr':
+        if self.default_model == 'gtr':
             self.model = GTRModel()
             self.model.setRelRates([1.0, 4.0, 1.0, 1.0, 4.0, 1.0])
             self.model.setRelRatePrior(self.relrate_prior)
             self.model.setBaseFreqParamPrior(self.base_freq_param_prior)
-        elif self.model_type == 'hky':
+        elif self.default_model == 'hky':
             self.model = HKYModel()
             self.model.setKappa(4.0)
             self.model.setKappaPrior(self.relrate_prior)
@@ -1150,7 +1150,7 @@ if __name__ == '__main__':
         mcmc.ncycles = 200
         mcmc.sample_every = 10
         mcmc.adapt_first = 10
-        mcmc.model_type = 'hky'
+        mcmc.default_model = 'hky'
         mcmc.ls_move_weight = 10
         mcmc.slice_max_units = 0
         mcmc.verbose = True

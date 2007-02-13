@@ -27,7 +27,7 @@ def commonSetup():
     phycas.gg_outfile = None
     phycas.starting_tree_source = 'usertree'
     phycas.starting_tree = '(1:0.2,2:0.02,(3:0.2,4:0.02):0.02)'
-    phycas.model_type = 'hky'
+    phycas.default_model = 'hky'
     phycas.data_source = 'memory'
     phycas.estimate_pinvar = False
     phycas.use_flex_model = False

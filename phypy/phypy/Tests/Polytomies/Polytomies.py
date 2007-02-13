@@ -21,7 +21,7 @@ phycas.tree_topology = '(1:0.1,2:0.1,(3:0.1,4:0.1,5:0.1):0.1)'
 phycas.tree.buildFromString(phycas.tree_topology)
 
 # Create a model
-phycas.model_type = 'hky'
+phycas.default_model = 'hky'
 phycas.model = Likelihood.HKYModel()
 phycas.model.setKappa(4.0)
 phycas.model.setKappaPrior(ProbDist.ExponentialDist(1.0))

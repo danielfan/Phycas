@@ -16,7 +16,7 @@ if __name__ == "__main__":
     phycas.report_every             = phycas.ncycles//100
     phycas.adapt_first              = 100
     phycas.random_seed              = '463859'
-    phycas.model_type               = 'hky'
+    phycas.default_model            = 'hky'
     phycas.using_hyperprior         = True
     phycas.num_rates                = 4
     phycas.use_flex_model           = True
