@@ -23,13 +23,14 @@ For example:
 """)
 print "PYTHON_VERSION =", env["PYTHON_VERSION"]
 
-if "BOOST_ROOT" not in env:
-    sys.exit("""Please define BOOST_ROOT environmental variable as path to boost directory
-For example:
-  if using bash: export BOOST_ROOT=$HOME/boost_1_33_1
-  if using tcsh: setenv BOOST_ROOT $HOME/boost_1_33_1
-""")
-print "BOOST_ROOT =", env["BOOST_ROOT"]
+if False:
+    if "BOOST_ROOT" not in env:
+        sys.exit("""Please define BOOST_ROOT environmental variable as path to boost directory
+    For example:
+      if using bash: export BOOST_ROOT=$HOME/boost_1_33_1
+      if using tcsh: setenv BOOST_ROOT $HOME/boost_1_33_1
+    """)
+    print "BOOST_ROOT =", env["BOOST_ROOT"]
 
 if "PHYCAS_ROOT" not in env:
     env["PHYCAS_ROOT"] = os.path.split(scriptPar)[0]

@@ -1,7 +1,6 @@
 include LICENSE
 include CHANGES
 include phypy/INSTALL
-include phypy/dojam.py
 include phypy/clean.sh
 include phypy/clean.bat
 

@@ -4,7 +4,10 @@
 # The installer will be placed in dist, build can be deleted
 
 import sys
-fakeCompilingExtensions = sys.platform == 'darwin'
+
+fakeCompilingExtensions = False # deprecated
+compilingExt = sys.platform == "darwin"
+
 if fakeCompilingExtensions:
     import distutils.ccompiler
     distutils.ccompiler.compiler_class['fake'] = ('ccompiler', 'FakeCompiler', "Dummy for a compiler that clones already built sources")
@@ -147,13 +150,20 @@ else:
     setupArgs.update({
         'package_data' : _pack_data,
         })
-    
+    parent_dir = os.path.split(sys.argv[0])[0]
+    include_dirs = [
+        "/usr/include",
+        "/usr/local/include/boost-1_33_1", 
+        os.path.abspath(parent_dir),
+        os.path.abspath(os.path.join(parent_dir, "phypy", "src")),
+        ]
+    libraries=["boost_python"]
+    library_dirs=['/usr/local/lib']
 
-if fakeCompilingExtensions:
-    setupArgs.update({
-        'ext_package':'phypy',
-        'ext_modules':[
-           Extension('Conversions._Conversions', ['phypy/src/conversions_pymod.cpp'], 
+if compilingExt:
+    if fakeCompilingExtensions:
+        em = [Extension('Conversions._Conversions', ['phypy/src/conversions_pymod.cpp'], 
+                    
                     extra_link_args = [
                         #'--colocate-lib=libboost_python.dylib',
                         '--built-under=phypy',
@@ -178,7 +188,194 @@ if fakeCompilingExtensions:
                     extra_link_args = [
                         '--built-under=phypy',
                         '--path-from-package=phypy/ReadNexus', ]),
-            ],
+            ]
+    else:
+        import subprocess
+        arch = subprocess.Popen(["arch"], stdout=subprocess.PIPE).communicate()[0].strip()
+        argDict = {
+                "library_dirs": library_dirs,
+                "libraries": libraries,
+                "include_dirs": include_dirs,
+                "depends": [],
+                "extra_compile_args": [
+                        "-include", 
+                        "phypy/src/phypy_config.h", 
+                        "-arch", 
+                        arch,
+                        "-ftemplate-depth-256",
+                        "-finline-functions",
+                        "-Wno-inline",
+                        "-fPIC",
+                        "-Wall",
+                        "-Wno-four-char-constants",
+                        "-Wno-unknown-pragmas",
+                        "-F/Library/Frameworks",
+                        ],
+                "extra_link_args": [
+                        "-arch", 
+                        arch,
+                        "-Wl,-x",
+                        "-multiply_defined",
+                        "suppress",
+                        "-twolevel_namespace",
+                        "-F/Library/Frameworks",
+                        "-framework",
+                        "Python",
+                        ],
+                "define_macros":[
+                        ('NDEBUG', '1'),
+                        ("BOOST_PYTHON_DYNAMIC_LIB", "1"),
+                        ],
+                 }
+        
+        em = [
+              Extension('Conversions._Conversions', 
+                    [
+                    "phypy/src/conversions_pymod.cpp",
+                    "phypy/src/boost_assertion_failed.cpp",
+                    "phypy/src/basic_tree.cpp",
+                    "phypy/src/basic_tree_node.cpp",
+                    "phypy/src/phypy_string.cpp"
+                    ], **argDict),
+              Extension("DataMatrix._DataMatrixBase", 
+                    [
+                    "phypy/src/data_matrix_pymod.cpp",
+                    "phypy/src/boost_assertion_failed.cpp",
+                    "phypy/src/cipres/CipresDataMatrixHelper.cpp",
+                    ],**argDict),
+              Extension('Likelihood._LikelihoodBase', 
+                    [
+                    'phypy/src/basic_lot.cpp',
+                    'phypy/src/basic_tree.cpp',
+                    'phypy/src/basic_tree_node.cpp',
+                    'phypy/src/boost_assertion_failed.cpp',
+                    'phypy/src/bush_move.cpp',
+                    'phypy/src/cipres/CipresDataMatrixHelper.cpp',
+                    'phypy/src/cond_likelihood_storage.cpp',
+                    'phypy/src/thirdparty/dcdflib/src/dcdflib.cpp',
+                    'phypy/src/thirdparty/dcdflib/src/ipmpar.cpp',
+                    'phypy/src/edge_move.cpp',
+                    'phypy/src/internal_data.cpp',
+                    'phypy/src/larget_simon_move.cpp',
+                    'phypy/src/likelihood_loops.cpp',
+                    'phypy/src/likelihood_models.cpp',
+                    'phypy/src/likelihood_pymod.cpp',
+                    'phypy/src/model_pymod.cpp',
+                    'phypy/src/linalg.cpp',
+                    'phypy/src/mcmc_chain_manager.cpp',
+                    'phypy/src/mcmc_param.cpp',
+                    'phypy/src/mcmc_flexcat_param.cpp',
+                    'phypy/src/mcmc_updater.cpp',
+                    'phypy/src/ncat_move.cpp',
+                    'phypy/src/phypy_string.cpp',
+                    'phypy/src/q_matrix.cpp',
+                    'phypy/src/sim_data.cpp',
+                    'phypy/src/slice_sampler.cpp',
+                    'phypy/src/tip_data.cpp',
+                    'phypy/src/topo_prior_calculator.cpp',
+                    'phypy/src/tree_likelihood.cpp',
+                    'phypy/src/tree_manip.cpp',
+                    'phypy/src/underflow_policy.cpp',
+                    'phypy/src/updater_pymod.cpp',
+                    ], **argDict),
+              Extension('Phylogeny._Phylogeny', 
+                    [
+                    'phypy/src/phylogeny_pymod.cpp',
+                    'phypy/src/boost_assertion_failed.cpp',
+                    'phypy/src/basic_tree.cpp',
+                    'phypy/src/basic_tree_node.cpp',
+                    'phypy/src/tree_manip.cpp',
+                    'phypy/src/basic_lot.cpp',
+                    'phypy/src/thirdparty/dcdflib/src/dcdflib.cpp',
+                    'phypy/src/thirdparty/dcdflib/src/ipmpar.cpp',
+                    'phypy/src/basic_cdf.cpp',
+                    'phypy/src/phypy_string.cpp', 
+                    ],**argDict),
+              Extension('ProbDist._ProbDist', 
+                    [
+                    'phypy/src/probdist_pymod.cpp',
+                    'phypy/src/boost_assertion_failed.cpp',
+                    'phypy/src/phypy_string.cpp',
+                    'phypy/src/basic_lot.cpp',
+                    'phypy/src/thirdparty/dcdflib/src/dcdflib.cpp',
+                    'phypy/src/thirdparty/dcdflib/src/ipmpar.cpp',
+                    'phypy/src/probability_distribution.cpp',
+                    'phypy/src/slice_sampler.cpp',
+                    ],**argDict),
+              Extension('ReadNexus._ReadNexus', 
+                    [
+                    'phypy/src/read_nexus_pymod.cpp',
+                    'phypy/src/boost_assertion_failed.cpp',
+                    'phypy/src/cipres/CipresDataMatrixHelper.cpp',
+                    'phypy/src/cipres/cipres_nexus_reader.cpp',
+                    'phypy/src/ncl/nxs_basic_manager.cpp',
+                    'phypy/src/ncl/nxs_block.cpp',
+                    'phypy/src/ncl/nxs_exception.cpp',
+                    'phypy/src/ncl/nxs_reader.cpp',
+                    'phypy/src/ncl/nxs_token.cpp',
+                    'phypy/src/ncl/characters/nxs_char_listener.cpp',
+                    'phypy/src/ncl/characters/nxs_characters_block.cpp',
+                    'phypy/src/ncl/characters/nxs_characters_block_commands.cpp',
+                    'phypy/src/ncl/characters/nxs_characters_manager.cpp',
+                    'phypy/src/ncl/command/nxs_auto_command.cpp',
+                    'phypy/src/ncl/command/nxs_choice_cmd_param.cpp',
+                    'phypy/src/ncl/command/nxs_cmd_param.cpp',
+                    'phypy/src/ncl/command/nxs_command.cpp',
+                    'phypy/src/ncl/command/nxs_command_manager.cpp',
+                    'phypy/src/ncl/command/nxs_command_output.cpp',
+                    'phypy/src/ncl/command/nxs_file_cmd_param.cpp',
+                    'phypy/src/ncl/command/nxs_mixed_cmd_param.cpp',
+                    'phypy/src/ncl/command/nxs_primitive_cmd_param.cpp',
+                    'phypy/src/ncl/command/nxs_restricted_string_cmd_param.cpp',
+                    'phypy/src/ncl/command/nxs_set_cmd_param.cpp',
+                    'phypy/src/ncl/misc/arg_stream.cpp',
+                    'phypy/src/ncl/misc/nxs_data_type.cpp',
+                    'phypy/src/ncl/misc/eliminated_index_slider.cpp',
+                    'phypy/src/ncl/misc/nxs_discrete_matrix.cpp',
+                    'phypy/src/ncl/misc/nxs_file_path.cpp',
+                    'phypy/src/ncl/misc/nxs_index_set.cpp',
+                    'phypy/src/ncl/misc/nxs_test.cpp',
+                    'phypy/src/ncl/misc/string_extensions.cpp',
+                    'phypy/src/ncl/output/nxs_output_stream_wrapper.cpp',
+                    'phypy/src/ncl/output/generic_output_classes.cpp',
+                    'phypy/src/ncl/output/nxs_console_out_stream_impl.cpp',
+                    'phypy/src/ncl/output/nxs_input.cpp',
+                    'phypy/src/ncl/output/nxs_table.cpp',
+                    'phypy/src/ncl/output/nxs_table_cell.cpp',
+                    'phypy/src/ncl/output/nxs_typist.cpp',
+                    'phypy/src/ncl/output/nxs_user_query.cpp',
+                    'phypy/src/ncl/output/nxs_xml_socket_output_stream.cpp',
+                    'phypy/src/ncl/taxa/base_taxa_manager.cpp',
+                    'phypy/src/ncl/taxa/nxs_alternative_taxa_block.cpp',
+                    'phypy/src/ncl/taxa/nxs_taxa_block.cpp',
+                    'phypy/src/ncl/taxa/nxs_taxa_listener.cpp',
+                    'phypy/src/ncl/taxa/nxs_taxa_manager.cpp',
+                    'phypy/src/ncl/trees/newick_verifier.cpp',
+                    'phypy/src/ncl/trees/nxs_tree_listener.cpp',
+                    'phypy/src/ncl/trees/nxs_trees_block.cpp',
+                    'phypy/src/ncl/trees/nxs_trees_manager.cpp',
+                    'phypy/src/oldphycas/characters_manager.cpp',
+                    'phypy/src/oldphycas/const_site_info.cpp',
+                    'phypy/src/oldphycas/multiline_bound.cpp',
+                    'phypy/src/probability_distribution.cpp',
+                    'phypy/src/oldphycas/distribution_command_param.cpp',
+                    'phypy/src/oldphycas/distribution_description.cpp',
+                    'phypy/src/basic_lot.cpp',
+                    'phypy/src/thirdparty/dcdflib/src/dcdflib.cpp',
+                    'phypy/src/thirdparty/dcdflib/src/ipmpar.cpp',
+                    'phypy/src/oldphycas/taxa_manager.cpp',
+                    'phypy/src/oldphycas/draw_context.cpp',
+                    'phypy/src/oldphycas/draw_tree.cpp',
+                    'phypy/src/oldphycas/tree_manip.cpp',
+                    'phypy/src/oldphycas/tree_node.cpp',
+                    'phypy/src/oldphycas/tree.cpp',
+                    'phypy/src/oldphycas/trees_manager.cpp',
+                    'phypy/src/oldphycas/split.cpp',
+                    ],**argDict),
+              ]
+    setupArgs.update({
+        'ext_package':'phypy',
+        'ext_modules':em,
         })
 
 setup(**setupArgs)
