@@ -1,2 +1,0 @@
-python doctestall.py
-pause

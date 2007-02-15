@@ -1,5 +1,5 @@
 #!python
-"""This is the --install-script used for the windows installer for phypy"""
+"""This is the --install-script used for the windows installer for phycas"""
 
 import sys,os,distutils.file_util
 
@@ -13,34 +13,34 @@ if len(sys.argv) > 0 and sys.argv[1] == '-install':
         os.mkdir(Phycas_shortcuts)
         directory_created(Phycas_shortcuts)
 
-    # Create shortcut to phypy installation directory
-    target = os.path.join(site_packages, 'phypy')
+    # Create shortcut to phycas installation directory
+    target = os.path.join(site_packages, 'phycas')
     description = 'Shortcut to folder into which Phycas was installed'
     filename = 'Phycas Installation Folder.lnk'
     arguments = ''
-    workdir = os.path.join(site_packages, 'phypy')
+    workdir = os.path.join(site_packages, 'phycas')
     create_shortcut(target, description, filename, arguments, workdir)
     dest_name, ok = distutils.file_util.copy_file(filename, Phycas_shortcuts)
     file_created(os.path.join(Phycas_shortcuts, filename))
     os.remove(filename)
 
     # Create shortcut to runall.bat file
-    target = os.path.join(site_packages, 'phypy', 'Tests', 'runall.bat')
+    target = os.path.join(site_packages, 'phycas', 'Tests', 'runall.bat')
     description = 'Batch file that tests examples that come with Phycas'
     filename = 'Test Phycas Example Scripts.lnk'
     arguments = ''
-    workdir = os.path.join(site_packages, 'phypy', 'Tests')
+    workdir = os.path.join(site_packages, 'phycas', 'Tests')
     create_shortcut(target, description, filename, arguments, workdir)
     dest_name, ok = distutils.file_util.copy_file(filename, Phycas_shortcuts)
     file_created(os.path.join(Phycas_shortcuts, filename))
     os.remove(filename)
 
     # Create shortcut to doctestall.bat file
-    target = os.path.join(site_packages, 'phypy', 'Tests', 'doctestall.bat')
+    target = os.path.join(site_packages, 'phycas', 'Tests', 'doctestall.bat')
     description = 'Batch file that tests examples embedded within Phycas online documentation'
     filename = 'Test Examples Within Phycas Documentation.lnk'
     arguments = ''
-    workdir = os.path.join(site_packages, 'phypy', 'Tests')
+    workdir = os.path.join(site_packages, 'phycas', 'Tests')
     create_shortcut(target, description, filename, arguments, workdir)
     dest_name, ok = distutils.file_util.copy_file(filename, Phycas_shortcuts)
     file_created(os.path.join(Phycas_shortcuts, filename))

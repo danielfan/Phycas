@@ -106,10 +106,10 @@ def build_bjam(boost_root):
     finally:
         os.chdir(former_dir)
 
-def write_phycas_build_sh(phypy_dir, bjam_path, env):
+def write_phycas_build_sh(phycas_dir, bjam_path, env):
     former_dir = os.curdir
-    expanded_phypy_dir = os.path.expandvars(phypy_dir)
-    os.chdir(expanded_phypy_dir)
+    expanded_phycas_dir = os.path.expandvars(phycas_dir)
+    os.chdir(expanded_phycas_dir)
     try:
         f = file("build_env.sh", "w")
         f.write("#!/bin/sh\n\n")
@@ -126,11 +126,11 @@ def write_phycas_build_sh(phypy_dir, bjam_path, env):
         k = "PHYCAS_ROOT"
         v = env[k]
         f.write('%s="%s"\nexport %s\n' % (k, v, k))
-        f.write('\nsource "%s" || exit\n' % os.path.join(phypy_dir, "build_env.sh"))
-        f.write('\nexec python "%s"\n' % os.path.join(phypy_dir, "dojam.py"))
+        f.write('\nsource "%s" || exit\n' % os.path.join(phycas_dir, "build_env.sh"))
+        f.write('\nexec python "%s"\n' % os.path.join(phycas_dir, "dojam.py"))
 
         subprocess.call(["chmod", "775", "build.sh"])
-        return os.path.join(phypy_dir, "build.sh")
+        return os.path.join(phycas_dir, "build.sh")
     finally:
         os.chdir(former_dir)
     
@@ -172,18 +172,18 @@ if __name__ == '__main__':
     else:
         phycas_root = os.path.join(_parent_dir, bundled_phycas)
         set_env("PHYCAS_ROOT", phycas_root, env, added_to_env)
-    phypy_dir = os.path.join("$PHYCAS_ROOT", "phypy")
-    expanded_phypy_dir = os.path.expandvars(phypy_dir)
+    phycas_dir = os.path.join("$PHYCAS_ROOT", ".")
+    expanded_phycas_dir = os.path.expandvars(phycas_dir)
     
     
     # write the build script
-    phypy_build_sh = os.path.join(expanded_phypy_dir, "build.sh")
-    if not os.path.exists(phypy_build_sh):
-        write_phycas_build_sh(phypy_dir, bjam_path, env)
+    phycas_build_sh = os.path.join(expanded_phycas_dir, "build.sh")
+    if not os.path.exists(phycas_build_sh):
+        write_phycas_build_sh(phycas_dir, bjam_path, env)
     
     # do the build
-    if subprocess.call(["/bin/sh", phypy_build_sh]) != 0:
-        error("Could not build using %s" % phypy_build_sh)
+    if subprocess.call(["/bin/sh", phycas_build_sh]) != 0:
+        error("Could not build using %s" % phycas_build_sh)
     
     
     
@@ -198,7 +198,7 @@ if __name__ == '__main__':
     #  dynamically
     lb_ext = is_mac and "dylib" or "so"
     lb_name = "libboost_python." + lb_ext
-    p = [phypy_dir, 
+    p = [phycas_dir, 
          "bin", 
          "boost", 
          "libs", 
@@ -221,7 +221,7 @@ if __name__ == '__main__':
     test_file = "test_phycas" + suffix
     rc_file = bash_vars and ".profile" or ".cshrc"
     source_cmd = 'source "%s"' % os.path.abspath(to_source)
-    tests_dir = os.path.join(expanded_phypy_dir, "phypy", "Tests")
+    tests_dir = os.path.join(expanded_phycas_dir, "phycas", "Tests")
     test_cmd = """cd %s
     python runall.py
     python doctestall.py
@@ -248,7 +248,7 @@ IMPORTANT:
     
 After sourcing %s you should be able to run the following command without
 errors:
-    python -c "import phypy"
+    python -c "import phycas"
 
 The more rigorous, but time-consuming tests can be invoked with:
     
@@ -270,7 +270,7 @@ The more rigorous, but time-consuming tests can be invoked with:
     print lib_setting
 
     otherpp = os.pathsep + "${PYTHONPATH}"
-    fullpp = "%s%s" % (expanded_phypy_dir, otherpp)
+    fullpp = "%s%s" % (expanded_phycas_dir, otherpp)
     if bash_vars:
         pypath_setting = 'PYTHONPATH="%s"; export PYTHONPATH' % fullpp
     else:

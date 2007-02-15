@@ -1,66 +1,64 @@
 include LICENSE
 include CHANGES
-include phypy/INSTALL
-include phypy/clean.sh
-include phypy/clean.bat
+include INSTALL
 
-include phypy/Jamfile
-include phypy/Jamrules
+include Jamfile
+include Jamrules
 
-include phypy/conversions/VC/conversions.sln
-include phypy/conversions/VC/conversions.vcproj
-include phypy/conversions/Jamfile
+include conversions/VC/conversions.sln
+include conversions/VC/conversions.vcproj
+include conversions/Jamfile
 
-include phypy/data_matrix/VC/data_matrix.sln
-include phypy/data_matrix/VC/data_matrix.vcproj
-include phypy/data_matrix/Jamfile
+include data_matrix/VC/data_matrix.sln
+include data_matrix/VC/data_matrix.vcproj
+include data_matrix/Jamfile
 
-include phypy/likelihood/VC/likelihood.sln
-include phypy/likelihood/VC/likelihood.vcproj
-include phypy/likelihood/Jamfile
+include likelihood/VC/likelihood.sln
+include likelihood/VC/likelihood.vcproj
+include likelihood/Jamfile
 
-include phypy/phylogeny/VC/phylogeny.sln
-include phypy/phylogeny/VC/phylogeny.vcproj
-include phypy/phylogeny/Jamfile
+include phylogeny/VC/phylogeny.sln
+include phylogeny/VC/phylogeny.vcproj
+include phylogeny/Jamfile
 
-include phypy/prob_dist/VC/prob_dist.sln
-include phypy/prob_dist/VC/prob_dist.vcproj
-include phypy/prob_dist/Jamfile
+include prob_dist/VC/prob_dist.sln
+include prob_dist/VC/prob_dist.vcproj
+include prob_dist/Jamfile
 
-include phypy/read_nexus/VC/read_nexus.sln
-include phypy/read_nexus/VC/read_nexus.vcproj
-include phypy/read_nexus/Jamfile
+include read_nexus/VC/read_nexus.sln
+include read_nexus/VC/read_nexus.vcproj
+include read_nexus/Jamfile
 
-include phypy/VC/phypy.sln
-include phypy/VC/profiling/profiling.vcproj
-include phypy/VC/profiling/profiling.cpp
-include phypy/VC/profiling/pol_profiling_config.h
-include phypy/VC/test/test.vcproj
-include phypy/VC/test/test.hpp
-include phypy/VC/test/test.cpp
+include VC/phycas.sln
+include VC/profiling/profiling.vcproj
+include VC/profiling/profiling.cpp
+include VC/profiling/pol_profiling_config.h
+include VC/test/test.vcproj
+include VC/test/test.hpp
+include VC/test/test.cpp
 
-include phypy/phypy/Examples/Paradox/Paradox.py
-include phypy/phypy/Examples/Paradox/ShoupLewis.nex
-include phypy/phypy/Tests/runall.py
+include phycas/Examples/Paradox/Paradox.py
+include phycas/Examples/Paradox/ShoupLewis.nex
+include phycas/Tests/runall.py
 
-recursive-include phypy/phypy/Tests/Data *.nex
+recursive-include phycas/Tests/Data *.nex
 
-recursive-include phypy/phypy/Tests/ExplorePrior *.py
-recursive-include phypy/phypy/Tests/ExplorePrior/reference_output *
+recursive-include phycas/Tests/ExplorePrior *.py
+recursive-include phycas/Tests/ExplorePrior/reference_output *
 
-recursive-include phypy/phypy/Tests/FixedParams *.py
-recursive-include phypy/phypy/Tests/FixedParams/reference_output *
+recursive-include phycas/Tests/FixedParams *.py
+recursive-include phycas/Tests/FixedParams/reference_output *
 
-recursive-include phypy/phypy/Tests/GelfandGhosh *.py
-recursive-include phypy/phypy/Tests/GelfandGhosh/reference_output *
+recursive-include phycas/Tests/GelfandGhosh *.py
+recursive-include phycas/Tests/GelfandGhosh/reference_output *
 
-recursive-include phypy/phypy/Tests/LikelihoodTest *.py
-recursive-include phypy/phypy/Tests/LikelihoodTest/reference_output *
+recursive-include phycas/Tests/LikelihoodTest *.py
+recursive-include phycas/Tests/LikelihoodTest/reference_output *
 
-recursive-include phypy/phypy/Tests/Polytomies *.py
-recursive-include phypy/phypy/Tests/Polytomies/reference_output *
+recursive-include phycas/Tests/Polytomies *.py
+recursive-include phycas/Tests/Polytomies/reference_output *
 
-recursive-include phypy/phypy/Tests/Simulator *.py
-recursive-include phypy/phypy/Tests/Simulator/reference_output *
+recursive-include phycas/Tests/Simulator *.py
+recursive-include phycas/Tests/Simulator/reference_output *
 
-recursive-include phypy/src *.h *.hpp *.inl *.c *.cpp
+recursive-include phycas/src *.h *.hpp *.inl *.c *.cpp
