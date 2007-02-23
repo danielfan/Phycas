@@ -1045,8 +1045,8 @@ double TreeLikelihood::calcLnL(
 		// If no likelihood_root has been specified, invalidate the entire tree to be safe
 		nd = storeAllCLAs(t);
 
-		// The subroot node is the new likelihood_root
-		likelihood_root = nd;
+		// The subroot node will be the new likelihood_root
+		likelihood_root = nd; //@POL this line does nothing
 #endif
 		}
 
