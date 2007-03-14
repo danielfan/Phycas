@@ -224,7 +224,7 @@ class Phycas:
         self.data_file_name         = ''        # will hold actual data file name
 
         # Variables associated with the source of starting tree
-        self.starting_tree_source   = 'random'  # source of starting tree topology
+        self.starting_tree_source   = 'random'  # source of starting tree topology: can be either 'random' or 'usertree'
         self.tree_topology          = ''        # unused unless starting_tree_source is 'usertree'
 
         # Variables associated with Gelfand-Ghosh calculation
@@ -1137,6 +1137,16 @@ class Phycas:
                     ggf.write('%d\t%f\t1.0\n' % (i, t))
                 ggf.close()
                 
+    def mcmc(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Runs the Markov chain. Equivalent to calling setup() followed by
+        run().
+        
+        """
+        self.setup()
+        self.run()
+        
 if __name__ == '__main__':
     mcmc = Phycas()
 
