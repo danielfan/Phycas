@@ -42,6 +42,7 @@ include phycas/Examples/Simplest/green.nex
 include phycas/Examples/Paradox/Paradox.py
 include phycas/Examples/Paradox/ShoupLewis.nex
 include phycas/Tests/runall.py
+include phycas/Tests/doctestall.py
 
 recursive-include phycas/Tests/Data *.nex
 

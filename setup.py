@@ -102,7 +102,7 @@ applications or to extend the current functionality.
 
 setupArgs = {
     'name':'Phycas',
-    'version':'0.11.340',
+    'version':'0.11.341',
     'description':'Phycas: Python Software for Phylogenetic Analysis',
     'author':'Phycas Development Team',
     'author_email':'developers@phycas.org',
