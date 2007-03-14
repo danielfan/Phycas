@@ -2,6 +2,7 @@ include LICENSE
 include CHANGES
 include INSTALL
 
+include dojam.py
 include Jamfile
 include Jamrules
 
