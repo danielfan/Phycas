@@ -1492,7 +1492,7 @@ void TreeLikelihood::prepareInternalNodeForLikelihood(
 |	Calls allocateTipData() for all tip nodes and allocateInternalData() for all internal nodes in the supplied Tree. 
 |	Assumes each tip node number in the tree equals the appropriate row in the data matrix. 
 */
-void TreeLikelihood::prepareForLikelihood(
+void TreeLikelihood::prepareForLikelihood( //POLBM TreeLikelihood::prepareForLikelihood
   TreeShPtr t)									/**< is the tree to decorate */
 	{
 	// If no_data is true, it means that calcLnL will always return 0.0 immediately and 
