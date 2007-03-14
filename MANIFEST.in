@@ -37,6 +37,8 @@ include VC/test/test.vcproj
 include VC/test/test.hpp
 include VC/test/test.cpp
 
+include phycas/Examples/Simplest/Simplest.py
+include phycas/Examples/Simplest/green.nex
 include phycas/Examples/Paradox/Paradox.py
 include phycas/Examples/Paradox/ShoupLewis.nex
 include phycas/Tests/runall.py

@@ -56,7 +56,9 @@ data_all = [
           'Tests/Simulator/reference_output/simulated.nex',
           'Tests/*.py',
           'Examples/Paradox/Paradox.py',
-          'Examples/Paradox/ShoupLewis.nex'
+          'Examples/Paradox/ShoupLewis.nex',
+          'Examples/Simplest/Simplest.py',
+          'Examples/Simplest/green.nex'
           ]
 
 data_windows_only = [
@@ -100,7 +102,7 @@ applications or to extend the current functionality.
 
 setupArgs = {
     'name':'Phycas',
-    'version':'0.11.339',
+    'version':'0.11.340',
     'description':'Phycas: Python Software for Phylogenetic Analysis',
     'author':'Phycas Development Team',
     'author_email':'developers@phycas.org',
