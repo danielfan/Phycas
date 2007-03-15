@@ -20,21 +20,6 @@
 #ifndef PHYCAS_CONFIG_H
 #define PHYCAS_CONFIG_H
   
-//
-// below here from old phypy_config.h
-//
-#define PYTHON_ONLY	// for code that only makes sense when exported to Python (most code can be used to construct a pure C++ program)
-#define POL_PHYCAS	// for POL-specific code related to PHYCAS (this one needs to go)
-//#define POL_PYPHY	// for POL-specific code related to boost python (this one needs to go too)
-#define NO_IDL_TYPES
-#define POLPY_NEWWAY  1
-#define POLPY_OLDWAY  !(POLPY_NEWWAY)
-//#define USING_NUMARRAY
-//#define INTERFACE_WITH_CIPRES
-//
-// above here from old phypy_config.h
-//
-
 #if defined(PYTHON_ONLY)
 #	include <Python.h>
 #endif

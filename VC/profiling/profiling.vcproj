@@ -29,7 +29,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="4"
-				ForcedIncludeFiles="$(PHYCAS_ROOT)\VC\profiling\pol_profiling_config.h"/>
+				ForcedIncludeFiles="$(PHYCAS_ROOT)\phycas\src\std_force_include.hpp"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -78,7 +78,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="3"
-				ForcedIncludeFiles="$(PHYCAS_ROOT)\VC\profiling\pol_profiling_config.h"/>
+				ForcedIncludeFiles="$(PHYCAS_ROOT)\phycas\src\std_force_include.hpp"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -634,13 +634,13 @@
 				RelativePath="..\..\src\ncl\output\nxs_xml_socket_output_stream.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\phycas_string.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\probability_distribution.cpp">
 			</File>
 			<File
 				RelativePath=".\profiling.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\phycas_string.cpp">
 			</File>
 			<File
 				RelativePath="..\..\src\sim_data.cpp">

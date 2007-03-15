@@ -29,7 +29,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="4"
-				ForcedIncludeFiles="$(PHYCAS_ROOT)\phycas\src\phycas_config.h"/>
+				ForcedIncludeFiles="$(PHYCAS_ROOT)\phycas\src\std_force_include.hpp"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -83,7 +83,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="3"
-				ForcedIncludeFiles="$(PHYCAS_ROOT)\phycas\src\phycas_config.h"/>
+				ForcedIncludeFiles="$(PHYCAS_ROOT)\phycas\src\std_force_include.hpp"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -235,7 +235,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\phycas\src\phylogeny_pymod.cpp">
+				RelativePath="..\..\phycas\src\phycas_string.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -250,7 +250,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\phycas\src\phycas_string.cpp">
+				RelativePath="..\..\phycas\src\phylogeny_pymod.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool

@@ -57,9 +57,9 @@ variant common :
     <instruction-set>default
     <profiling>off
     <object-model>default
-    <darwin><*><cxxflags>"-include phycas/src/phycas_config.h"
-    <gcc><*><cxxflags>"-include phycas/src/phycas_config.h"
-    <vc-7_1><*><cxxflags>"-FI phycas_config.h"
+    <darwin><*><cxxflags>"-include phycas/src/std_force_include.hpp"
+    <gcc><*><cxxflags>"-include phycas/src/std_force_include.hpp"
+    <vc-7_1><*><cxxflags>"-FI std_force_include.hpp"
     # <vc-7_1><*><cxxflags>"-showIncludes"
     <darwin><*><cxxflags>-Wmost
     <darwin><*><cxxflags>-Wno-four-char-constants

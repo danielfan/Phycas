@@ -28,7 +28,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="4"
-				ForcedIncludeFiles="$(PHYCAS_ROOT)\phycas\src\phycas_config.h"/>
+				ForcedIncludeFiles="$(PHYCAS_ROOT)\phycas\src\std_force_include.hpp"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -79,7 +79,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="3"
-				ForcedIncludeFiles="$(PHYCAS_ROOT)\phycas\src\phycas_config.h"/>
+				ForcedIncludeFiles="$(PHYCAS_ROOT)\phycas\src\std_force_include.hpp"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
