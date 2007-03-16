@@ -39,10 +39,10 @@ void Tree::StoreTreeNode(TreeNode * u)
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Should only be called from within Reroot(). Makes node `m' (the mover) the rightmost child of node `t' (the target).
-|	Assumes both `m' and `t' are non-NULL. Because the purpose of this function is to move nodes below the new root node
-|	to the appropriate point above the new root node, this method also assumes that `t' is always a descendant (perhaps
-|	remote) of `m'.
+|	Should only be called from within RerootAtThisTip() or RerootAtThisInternal. Makes node `m' (the mover) the 
+|	rightmost child of node `t' (the target). Assumes both `m' and `t' are non-NULL. Because the purpose of this 
+|	function is to move nodes below the new root node to the appropriate point above the new root node, this method 
+|	also assumes that `t' is always a descendant (perhaps remote) of `m'.
 */
 void Tree::RerootHelper(TreeNode * m, TreeNode * t)
 	{
@@ -50,21 +50,21 @@ void Tree::RerootHelper(TreeNode * m, TreeNode * t)
 	PHYCAS_ASSERT(t != NULL);
 
 	// Save nodes to which m attaches
-	TreeNode *m_lChild	= m->lChild;
-	TreeNode *m_rSib	= m->rSib;
-	TreeNode *m_par		= m->par;
+	TreeNode * m_lChild	= m->lChild;
+	TreeNode * m_rSib	= m->rSib;
+	TreeNode * m_par		= m->par;
 
 	// Starting with t, walk down tree to identify x, the child of m that is on the path from m to t
-	TreeNode *x = t;
+	TreeNode * x = t;
 	while (x->par != m)
 		{
 		x = x->par;
 		PHYCAS_ASSERT(x != NULL);
 		}
-	TreeNode *x_rSib = x->rSib;
+	TreeNode * x_rSib = x->rSib;
 
 	// identify x_lSib, the immediate left sibling of x (will be NULL if x is lChild of m)
-	TreeNode *x_lSib = NULL;
+	TreeNode * x_lSib = NULL;
 	if (x != m_lChild)
 		{
 		x_lSib = m_lChild;
@@ -145,13 +145,33 @@ void Tree::RerootHelper(TreeNode * m, TreeNode * t)
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
-|	Reroots the tree at the node specified by the TreeNode pointer `nd', which is assumed to be non-NULL and a tip node.
+|	Reroots the tree at the node specified by the TreeNode pointer `nd', which is assumed to be non-NULL and an internal
+|	node. This function is simply a wrapper for the RerootAt function, which does all the work.
 */
-void Tree::RerootAt(TreeNode *nd)
+void Tree::RerootAtThisInternal(TreeNode * nd)
 	{
-	PHYCAS_ASSERT(nd->IsTip()); // can only reroot at a tip
-	TreeNode *t = nd;
-	TreeNode *m = nd->par;
+	PHYCAS_ASSERT(!nd->IsTip());
+	RerootAt(nd);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Reroots the tree at the node specified by the TreeNode pointer `nd', which is assumed to be non-NULL and a tip node.
+|	This function is simply a wrapper for the RerootAt function, which does all the work.
+*/
+void Tree::RerootAtThisTip(TreeNode * nd)
+	{
+	PHYCAS_ASSERT(nd->IsTip());
+	RerootAt(nd);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Reroots the tree at the node specified by the TreeNode pointer `nd', which is assumed to be non-NULL.
+*/
+void Tree::RerootAt(TreeNode * nd)
+	{
+	PHYCAS_ASSERT(nd != NULL);
+	TreeNode * t = nd;
+	TreeNode * m = nd->par;
 	while (!nd->IsRoot())
 		{
 		//std::cerr << "In RerootAt: t = " << t->GetNodeName() << ", m = " << m->GetNodeName() << std::endl; //POL-debug
@@ -169,8 +189,7 @@ void Tree::RerootAt(TreeNode *nd)
 		// the rightmost child of the "target" node t
 		RerootHelper(m, t);
 
-		// The next target node is always the previous mover, and the next mover node
-		// is always nd's parent
+		// The next target node is always the previous mover, and the next mover node is always nd's parent
 		t = m;
 		m = nd->par;
 		}
@@ -198,7 +217,7 @@ void Tree::RerootAtTip(unsigned num)
 		throw XPhylogeny(append_unsigned(workspace, num));
 		}
 	else
-		RerootAt(nd);
+		RerootAtThisTip(nd);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -901,8 +920,8 @@ void Tree::BuildFromString(const std::string &newick)
 			//std::cerr << "Why are we here? nd->NoParent() = " << (nd->NoParent() ? "true" : "false") << std::endl; //POL-debug
 			throw XPhylogeny("too many left parentheses");
 			}
-		//std::cerr << "About to call RerootAt..." << std::endl; //POL-debug
-		RerootAt(first_tip);
+		//std::cerr << "About to call RerootAtThisTip..." << std::endl; //POL-debug
+		RerootAtThisTip(first_tip);
 		}
 	catch(XPhylogeny x)
 		{

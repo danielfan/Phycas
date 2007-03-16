@@ -85,7 +85,9 @@ class Tree
 		double					EdgeLenSum();
 		double					calcTotalHeight();
 		void					SetAllEdgeLens(double v);
-		void					RerootAt(TreeNode *nd);
+		void					RerootAtThisTip(TreeNode * nd);
+		void					RerootAtThisInternal(TreeNode * nd);
+		void					RerootAt(TreeNode * nd);
 		void					RerootAtTip(unsigned num);
 		void					RefreshPreorder(TreeNode *nd = NULL);
 		std::string &			AppendNewick(std::string &);

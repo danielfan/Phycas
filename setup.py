@@ -1,9 +1,12 @@
-# To create a Windows installer...
-#   python setup.py bdist_wininst --title="Phycas 1.0"
-# This will create two directories: build and dist
-# The installer will be placed in dist, build can be deleted
-
 import sys
+
+# If build_number_from_svn_info = True, gleans svn revision from subprocess call to "svn info -r HEAD"
+# if False, need to set svn revision manually in svn_revision
+build_number_from_svn_info = True
+
+# the following setting is only used if build_number_from_svn_info is False, or
+# regular expression search of svn output fails to find pattern 'Revision: (\d+)'
+svn_revision = '343'    
 
 fakeCompilingExtensions = False # deprecated
 compilingExt = sys.platform == "darwin"
@@ -100,9 +103,19 @@ It is also a C++ and Python library that can be used to create new
 applications or to extend the current functionality.
 """
 
+if build_number_from_svn_info:
+    import subprocess, re
+    svnheadinfo = subprocess.Popen('svn info -r HEAD', stdout=subprocess.PIPE).communicate()[0].strip()
+    re_match = re.search('Revision: (\d+)', svnheadinfo)
+    if re_match:
+        svn_revision = re_match.group(1)
+        svninfo = subprocess.Popen('svn status --non-interactive', stdout=subprocess.PIPE).communicate()[0].strip()
+        print 'svn HEAD revision is', svn_revision
+        print 'svn status says', svninfo
+        
 setupArgs = {
     'name':'Phycas',
-    'version':'0.11.342',
+    'version':'0.11.'+svn_revision,
     'description':'Phycas: Python Software for Phylogenetic Analysis',
     'author':'Phycas Development Team',
     'author_email':'developers@phycas.org',
