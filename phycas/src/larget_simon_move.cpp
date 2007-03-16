@@ -140,7 +140,7 @@ void LargetSimonMove::starTreeProposeNewState()
 		{
 		// All nodes have an edge associated with them except for the root
 		//
-		if (!orig_node->IsRoot())
+		if (!orig_node->IsTipRoot())
 			{
 			if (i == k)
 				{
@@ -239,7 +239,7 @@ void LargetSimonMove::defaultProposeNewState()
 	unsigned i = 0;
 	for (ndY = tree->GetFirstPreorder(); ndY != NULL; ndY = ndY->GetNextPreorder())
 		{
-		if (ndY->IsInternal() && !ndY->GetParentConst()->IsRoot())
+		if (ndY->IsInternal() && !ndY->GetParentConst()->IsTipRoot())
 			{
 			if (i == ypos)
 				break;
@@ -248,7 +248,7 @@ void LargetSimonMove::defaultProposeNewState()
 		}
 	PHYCAS_ASSERT(ndY->GetLeftChild() != NULL);
 	PHYCAS_ASSERT(ndY->GetParentConst() != NULL);
-	PHYCAS_ASSERT(!ndY->GetParent()->IsRoot());
+	PHYCAS_ASSERT(!ndY->GetParent()->IsTipRoot());
 
 	// Save ndY's edge length in case revert is needed.
 	//

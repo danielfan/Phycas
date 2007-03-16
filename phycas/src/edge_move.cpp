@@ -85,7 +85,7 @@ void EdgeMove::proposeNewState()
 		{
 		// All nodes have an edge associated with them except for the root
 		//
-		if (!origNode->IsRoot())
+		if (!origNode->IsTipRoot())
 			{
 			if (i == k)
 				{

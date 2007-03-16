@@ -59,7 +59,7 @@ void TreeNode::AppendNodeInfo(std::string &s, bool num_and_name_only)
 
 	if (num_and_name_only)
 		{
-		if (IsRoot())
+		if (IsTipRoot())
 			{
 			s << "{";
 			s << tmpstr;
@@ -101,7 +101,7 @@ void TreeNode::AppendNodeInfo(std::string &s, bool num_and_name_only)
 		s << "\nNode status: ";
 		if (IsTip())
 			s << "tip";
-		else if (IsRoot())
+		else if (IsTipRoot())
 			s << "root";
 		else if (IsInternal())
 			s << "internal";

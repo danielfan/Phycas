@@ -284,7 +284,7 @@ void BushMove::proposeNewState()
 
 		for (nd = tree->GetFirstPreorder(); nd != NULL; nd = nd->GetNextPreorder())
 			{
-			if (nd->IsTip() || nd->GetParent()->IsRoot())
+			if (nd->IsTip() || nd->GetParent()->IsTipRoot())
 				continue;
 
 			if (i == 0)
@@ -449,7 +449,7 @@ void BushMove::refreshPolytomies()
 	polytomies.clear();
 	for (TreeNode *nd = tree->GetFirstPreorder(); nd != NULL; nd = nd->GetNextPreorder())
 		{
-		if (nd->IsRoot())
+		if (nd->IsTipRoot())
 			continue;
 		
 		unsigned s = nd->CountChildren();
@@ -644,7 +644,7 @@ void BushMove::proposeDeleteEdgeMove(TreeNode * u)
 	//
 	orig_par = u->GetParent();
 	PHYCAS_ASSERT(orig_par != NULL);
-	PHYCAS_ASSERT(!orig_par->IsRoot());
+	PHYCAS_ASSERT(!orig_par->IsTipRoot());
 
 	num_polytomies = (unsigned)polytomies.size();
 

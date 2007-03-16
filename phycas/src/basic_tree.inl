@@ -217,7 +217,7 @@ inline void Tree::Reserve(
 */
 inline bool Tree::RootValid() const
 	{
-	return (firstPreorder != NULL && firstPreorder->IsRoot());
+	return (firstPreorder != NULL && firstPreorder->IsTipRoot());
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

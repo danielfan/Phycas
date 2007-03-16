@@ -309,7 +309,7 @@ bool TreeLikelihood::invalidateBothEnds(TreeNode * ref_nd, TreeNode * /* unused 
 */
 bool TreeLikelihood::invalidateNode(TreeNode * ref_nd, TreeNode * neighbor_closer_to_likelihood_root)
 	{
-	if (ref_nd->IsTip() && !ref_nd->IsRoot())
+	if (ref_nd->IsTip() && !ref_nd->IsTipRoot())
 		{
 		TipData * td = ref_nd->GetTipData();
 		if (!td->parWorkingCLA)
@@ -531,7 +531,7 @@ bool TreeLikelihood::restoreFromCacheBothEnds(TreeNode * ref_nd, TreeNode * /* u
 */
 bool TreeLikelihood::restoreFromCacheNode(TreeNode * ref_nd, TreeNode * neighbor_closer_to_likelihood_root)
 	{
-	if (ref_nd->IsTip() && !ref_nd->IsRoot())
+	if (ref_nd->IsTip() && !ref_nd->IsTipRoot())
 		{
 		TipData * td = ref_nd->GetTipData();
 
@@ -628,7 +628,7 @@ class CalcTransitionMatrixForOneNode : public std::unary_function<TreeNode &, vo
 		void operator()(TreeNode & nd)
 			{
 #			error do not use unless root node special case is taken into account
-			if (!nd.IsRoot())
+			if (!nd.IsTipRoot())
 				{
 				double edge_len = nd.GetEdgeLen();
 				if (nd.IsTip())
@@ -1074,7 +1074,7 @@ void TreeLikelihood::debugSaveCLAs(TreeShPtr t, std::string fn, bool overwrite)
 		if (nd->IsTip())
 			{
 			tmpf << "\n\nTip node number " << nd->GetNodeNumber();
-			if (nd->IsRoot())
+			if (nd->IsTipRoot())
                 tmpf << "\n  parent = None";
 			else
                 tmpf << "\n  parent = " << nd->GetParent()->GetNodeNumber();

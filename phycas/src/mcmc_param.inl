@@ -355,7 +355,7 @@ inline EdgeLenMasterParam::EdgeLenMasterParam()
 */
 inline double EdgeLenMasterParam::lnPriorOneEdge(TreeNode & nd) const
 	{
-	if (nd.IsRoot())
+	if (nd.IsTipRoot())
 		return 0.0;
 
 	double v = nd.GetEdgeLen();

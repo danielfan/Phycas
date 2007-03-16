@@ -163,14 +163,14 @@ inline bool TreeNode::NoParent() const
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Returns true if and only if either NoChildren() or IsRoot() returns true. A node is a tip node if it has degree one,
-|	which is true if only one edge connects it to the rest of the tree. This is true for nodes that have no children 
-|	(their only connection to the rest of the tree is through their parent), but is also true for the root node (the 
-|	only node in a tree that has only one child).
+|	Returns true if and only if either NoChildren() or IsTipRoot() returns true. A node is a tip node if it has degree
+|	one, which is true if only one edge connects it to the rest of the tree. This is true for nodes that have no 
+|	children (their only connection to the rest of the tree is through their parent), but is also true for the root node
+|	(the only node in a tree that has only one child).
 */
 inline bool TreeNode::IsTip() const
 	{
-	return NoChildren() || IsRoot();
+	return NoChildren() || IsTipRoot();
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -226,12 +226,25 @@ inline bool TreeNode::EdgeLenNotYetAssigned() const
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Returns true if and only if this is a node with no parent and no siblings. This function does not pay attention to
+|	the number of children. If you know that the root node should be a tip, use TreeNode::IsTipRoot instead (that 
+|	function also requires root to have just one child). If you know that the root node should be an internal node, use
+|	TreeNode::IsInternalRoot instead (that function also requires that the root have at least two children).
+*/
+inline bool TreeNode::IsAnyRoot() const
+	{
+	bool parentless = !par;
+	bool only_child = !rSib;
+	return (parentless && only_child);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Returns true if and only if this is a node with no parent, no siblings and only one child. Use this function if
 |	you specifically want to test for the case where a tip node is serving as the root of the tree. If an internal node
 |	is serving as the root of the tree, it is expected to have more than one child, and the method IsInternalRoot()
 |	should be used instead.
 */
-inline bool TreeNode::IsTipRoot() const
+inline bool TreeNode::IsTipRoot() const	//POL: formerly IsRoot()
 	{
 	bool parentless = !par;
 	bool only_child = !rSib;

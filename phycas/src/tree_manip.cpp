@@ -806,8 +806,8 @@ void TreeManip::DetachSubtree(
   TreeNode * s)	/**< is the root of the subtree to be detached */
 	{
 	PHYCAS_ASSERT(s != NULL);
-	PHYCAS_ASSERT(!s->IsRoot());
-	PHYCAS_ASSERT(!s->GetParent()->IsRoot());
+	PHYCAS_ASSERT(!s->IsTipRoot());
+	PHYCAS_ASSERT(!s->GetParent()->IsTipRoot());
 
 	// Save pointers to relevant nodes
 	//

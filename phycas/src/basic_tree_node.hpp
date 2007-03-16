@@ -58,7 +58,8 @@ class TreeNode
 		bool			NoParent() const;
 		bool			IsTip() const;
 		bool			IsObservable() const;
-		bool			IsTipRoot() const;
+		bool			IsAnyRoot() const;
+		bool			IsTipRoot() const;  //POL: formerly IsRoot()
 		bool			IsInternalRoot() const;
 		bool			IsInternal() const;
 		bool			NumberNotYetAssigned() const;

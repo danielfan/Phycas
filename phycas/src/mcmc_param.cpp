@@ -259,7 +259,7 @@ double EdgeLenParam::operator()(
 
 	if (x > 0.0)
 		{
-		if (nd->IsRoot())
+		if (nd->IsTipRoot())
 			{
 			TreeNode * subroot = nd->GetLeftChild();
 			PHYCAS_ASSERT(subroot);

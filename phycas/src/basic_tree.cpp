@@ -146,33 +146,16 @@ void Tree::RerootHelper(TreeNode * m, TreeNode * t)
 	
 /*----------------------------------------------------------------------------------------------------------------------
 |	Reroots the tree at the node specified by the TreeNode pointer `nd', which is assumed to be non-NULL and an internal
-|	node. This function is simply a wrapper for the RerootAt function, which does all the work.
+|	node. 
 */
 void Tree::RerootAtThisInternal(TreeNode * nd)
 	{
+	//POL: could be merged with RerootAtThisTip, but note that the two use different root test functions: IsTipRoot vs. IsInternalRoot
 	PHYCAS_ASSERT(!nd->IsTip());
-	RerootAt(nd);
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Reroots the tree at the node specified by the TreeNode pointer `nd', which is assumed to be non-NULL and a tip node.
-|	This function is simply a wrapper for the RerootAt function, which does all the work.
-*/
-void Tree::RerootAtThisTip(TreeNode * nd)
-	{
-	PHYCAS_ASSERT(nd->IsTip());
-	RerootAt(nd);
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Reroots the tree at the node specified by the TreeNode pointer `nd', which is assumed to be non-NULL.
-*/
-void Tree::RerootAt(TreeNode * nd)
-	{
 	PHYCAS_ASSERT(nd != NULL);
 	TreeNode * t = nd;
 	TreeNode * m = nd->par;
-	while (!nd->IsRoot())
+	while (!nd->IsInternalRoot())
 		{
 		//std::cerr << "In RerootAt: t = " << t->GetNodeName() << ", m = " << m->GetNodeName() << std::endl; //POL-debug
 		PHYCAS_ASSERT(nd->HasParent());
@@ -200,7 +183,46 @@ void Tree::RerootAt(TreeNode * nd)
 	//std::cerr << "\n\nWalking tree just before leaving RerootAt...\n"; //POL-debug
 	//std::cerr << DebugWalkTree(true, 2) << std::endl; //POL-debug
 	}
-	
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Reroots the tree at the node specified by the TreeNode pointer `nd', which is assumed to be non-NULL and a tip node.
+*/
+void Tree::RerootAtThisTip(TreeNode * nd)
+	{
+	//POL: could be merged with RerootAtThisInternal, but note that the two use different root test functions: IsTipRoot vs. IsInternalRoot
+	PHYCAS_ASSERT(nd->IsTip());
+	PHYCAS_ASSERT(nd != NULL);
+	TreeNode * t = nd;
+	TreeNode * m = nd->par;
+	while (!nd->IsTipRoot())
+		{
+		//std::cerr << "In RerootAt: t = " << t->GetNodeName() << ", m = " << m->GetNodeName() << std::endl; //POL-debug
+		PHYCAS_ASSERT(nd->HasParent());
+
+		// Begin by swapping the mover's edge length with nd's edge length
+		if (HasEdgeLens())
+			{
+			double tmp_edgelen = m->edgeLen;
+			m->edgeLen = nd->edgeLen;
+			nd->edgeLen = tmp_edgelen;
+			}
+
+		// Make the "mover" node m (along with all of its children except nd)
+		// the rightmost child of the "target" node t
+		RerootHelper(m, t);
+
+		// The next target node is always the previous mover, and the next mover node is always nd's parent
+		t = m;
+		m = nd->par;
+		}
+
+	firstPreorder = nd;
+	nd->prevPreorder = NULL;
+
+	//std::cerr << "\n\nWalking tree just before leaving RerootAt...\n"; //POL-debug
+	//std::cerr << DebugWalkTree(true, 2) << std::endl; //POL-debug
+	}
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Searches for tip (degree = 1) node whose `nodeNum' data member equals `num', then reroots the tree at that node. If
 |	a node by that number cannot be found, throws an XPhylogeny exception.
@@ -992,7 +1014,7 @@ std::string &Tree::AppendNewick(std::string &s)
 	// Start with root node, which may actually represent an extant tip (unrooted trees are 
 	// rooted at one of the tips)
 	TreeNode *nd = GetFirstPreorder();
-	PHYCAS_ASSERT(nd->IsRoot());
+	PHYCAS_ASSERT(nd->IsTipRoot());
 
 	if (!rooted)
 		{
@@ -1115,7 +1137,7 @@ std::string &Tree::AppendNewick(std::string &s)
 			PHYCAS_ASSERT(tmpNode != NULL);
 			tmpNode = tmpNode->par;
 			TreeNode *tmpNodePar = tmpNode->par;
-			bool tmpNodeParIsRoot = tmpNodePar->IsRoot();
+			bool tmpNodeParIsRoot = tmpNodePar->IsTipRoot();
 			if (!tmpNode->nodeName.empty())
 				s << tmpNode->nodeName;
 			if (showEdgeLens && !tmpNodeParIsRoot)
