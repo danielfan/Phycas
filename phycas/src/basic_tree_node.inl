@@ -226,14 +226,28 @@ inline bool TreeNode::EdgeLenNotYetAssigned() const
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Returns true if and only if this is a node with no parent, no siblings and only one child.
+|	Returns true if and only if this is a node with no parent, no siblings and only one child. Use this function if
+|	you specifically want to test for the case where a tip node is serving as the root of the tree. If an internal node
+|	is serving as the root of the tree, it is expected to have more than one child, and the method IsInternalRoot()
+|	should be used instead.
 */
-inline bool TreeNode::IsRoot() const
+inline bool TreeNode::IsTipRoot() const
 	{
 	bool parentless = !par;
 	bool only_child = !rSib;
 	bool one_child = (lChild && !(lChild->rSib));
 	return (parentless && only_child && one_child);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns true if and only if this is a node with no parent, no siblings and at least 2 children.
+*/
+inline bool TreeNode::IsInternalRoot() const
+	{
+	bool parentless = !par;
+	bool only_child = !rSib;
+	bool at_least_two_children = (lChild && lChild->rSib);
+	return (parentless && only_child && at_least_two_children);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
