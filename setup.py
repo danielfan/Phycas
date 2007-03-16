@@ -108,10 +108,15 @@ if build_number_from_svn_info:
     svnheadinfo = subprocess.Popen('svn info -r HEAD', stdout=subprocess.PIPE).communicate()[0].strip()
     re_match = re.search('Revision: (\d+)', svnheadinfo)
     if re_match:
-        svn_revision = re_match.group(1)
         svninfo = subprocess.Popen('svn status --non-interactive', stdout=subprocess.PIPE).communicate()[0].strip()
-        print 'svn HEAD revision is', svn_revision
-        print 'svn status says', svninfo
+        if len(svninfo) == 0:
+            # we're up to date
+            svn_revision = re_match.group(1)
+        else:
+            # we're not up to date, once we commit (which hopefully will happen before
+            # any other developer commits!), revision number will increase by 1
+            next_revision_number = 1 + int(re_match.group(1))
+            svn_revision = str(next_revision_number)
         
 setupArgs = {
     'name':'Phycas',
