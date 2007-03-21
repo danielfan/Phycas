@@ -438,6 +438,8 @@ bool isValid(const TreeNode * refNd, const TreeNode * neighborCloserToEffectiveR
 */
 double Tree::calcTotalHeight()
 	{
+	//@POL: this function could be made more general (i.e. right now it depends on the root being a tip)
+	//@POL: this function could be made more efficient
 	PHYCAS_ASSERT(GetFirstPreorder() != NULL);
 	PHYCAS_ASSERT(GetFirstPreorder()->GetNextPreorder() != NULL);
 
