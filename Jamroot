@@ -6,6 +6,8 @@ use-project boost : ../boost_1_34_0 ;
 
 # Tool-specific settings
 alias tool_specific_requirements : : : : <cxxflags>"-include phycas/src/std_force_include.hpp" <toolset>gcc ;
+#alias tool_specific_requirements : : : : <cxxflags>"-include phycas/src/std_force_include.hpp" <toolset>darwin ;
+#alias tool_specific_requirements : : : : <cxxflags>"-FI std_force_include.hpp" <toolset>msvc ;
 
 # Project-wide requirements
 project phycas 
