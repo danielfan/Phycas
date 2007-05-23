@@ -2,12 +2,12 @@
 # for building the Python extensions that constitute Phycas
 
 # The path to the Boost project
-use-project boost : ../boost_1_34_0 ;
+use-project boost : ../../../boost_1_34_0 ;
 
 # Tool-specific settings
-alias tool_specific_requirements : : : : <cxxflags>"-include phycas/src/std_force_include.hpp" <toolset>gcc ;
-#alias tool_specific_requirements : : : : <cxxflags>"-include phycas/src/std_force_include.hpp" <toolset>darwin ;
-#alias tool_specific_requirements : : : : <cxxflags>"-FI std_force_include.hpp" <toolset>msvc ;
+#alias tool_specific_requirements : : : : <toolset>gcc <cxxflags>"-include phycas/src/std_force_include.hpp" ;
+#alias tool_specific_requirements : : : : <toolset>darwin <cxxflags>"-include phycas/src/std_force_include.hpp" ;
+alias tool_specific_requirements : : : : <toolset>msvc <cxxflags>"-FI std_force_include.hpp" ;
 
 # Project-wide requirements
 project phycas 
