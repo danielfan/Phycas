@@ -1,15 +1,36 @@
 # This is the Jamroot file used by the Boost.Build v2 system
 # for building the Python extensions that constitute Phycas
 
-# Tool-specific settings
-#alias tool_specific_requirements : : : : <toolset>gcc <cxxflags>"-include phycas/src/std_force_include.hpp" ;
-#alias tool_specific_requirements : : : : <toolset>darwin <cxxflags>"-include phycas/src/std_force_include.hpp" ;
-alias tool_specific_requirements : : : : <toolset>msvc <cxxflags>"-FI std_force_include.hpp" ;
-
 # Grab the path to the Boost project from the BOOST_ROOT environmental variable
 import os ;
 local BOOST_ROOT = [ os.environ BOOST_ROOT ] ;
 use-project boost : $(BOOST_ROOT) ;
+
+# Tool-specific settings
+echo "Trying to identify the correct toolset. If the incorrect toolset is chosen, you will need"
+echo "to edit the Tool-specific settings section of the Jamroot file..."
+local OSTYPE = [ os.environ OSTYPE ] ;
+local OS = [ os.environ OS ] ;
+if $(OSTYPE) = "linux" {
+  echo "  Looks like this is Linux, so using toolset gcc"
+  alias tool_specific_requirements : : : : <toolset>gcc <cxxflags>"-include phycas/src/std_force_include.hpp" ;
+}
+else {
+  if $(OSTYPE) = "darwin" {
+  echo "  Looks like this is a Mac, so using toolset darwin"
+  alias tool_specific_requirements : : : : <toolset>darwin <cxxflags>"-include phycas/src/std_force_include.hpp" ;
+  }
+  else {
+    if $(OS) = "Windows_NT" {
+      echo "  Looks like this is Windows, so using toolset msvc"
+      alias tool_specific_requirements : : : : <toolset>msvc <cxxflags>"-FI std_force_include.hpp" ;
+    }
+    else {
+      echo "  Could not identify platform, going with toolset gcc just in case that works"
+      alias tool_specific_requirements : : : : <toolset>gcc <cxxflags>"-include phycas/src/std_force_include.hpp" ;
+    }
+  }
+}
 
 # Project-wide requirements
 project phycas 

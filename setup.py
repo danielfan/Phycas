@@ -6,7 +6,7 @@ build_number_from_svn_info = True
 
 # the following setting is only used if build_number_from_svn_info is False, or
 # regular expression search of svn output fails to find pattern 'Revision: (\d+)'
-svn_revision = '343'    
+svn_revision = '355'    
 
 fakeCompilingExtensions = False # deprecated
 compilingExt = sys.platform == "darwin"
@@ -105,10 +105,10 @@ applications or to extend the current functionality.
 
 if build_number_from_svn_info:
     import subprocess, re
-    svnheadinfo = subprocess.Popen('svn info -r HEAD', stdout=subprocess.PIPE).communicate()[0].strip()
+    svnheadinfo = subprocess.Popen('svn info -r HEAD', shell=True, stdout=subprocess.PIPE).communicate()[0].strip()
     re_match = re.search('Revision: (\d+)', svnheadinfo)
     if re_match:
-        svninfo = subprocess.Popen('svn status --non-interactive', stdout=subprocess.PIPE).communicate()[0].strip()
+        svninfo = subprocess.Popen('svn status --non-interactive', shell=True, stdout=subprocess.PIPE).communicate()[0].strip()
         if len(svninfo) == 0:
             # we're up to date
             svn_revision = re_match.group(1)
@@ -209,7 +209,7 @@ if compilingExt:
             ]
     else:
         import subprocess
-        arch = subprocess.Popen(["arch"], stdout=subprocess.PIPE).communicate()[0].strip()
+        arch = subprocess.Popen(["arch"], shell=True, stdout=subprocess.PIPE).communicate()[0].strip()
         argDict = {
                 "library_dirs": library_dirs,
                 "libraries": libraries,
