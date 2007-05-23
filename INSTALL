@@ -54,12 +54,15 @@ Phycas requires the Boost Python library, and this document assumes you are usin
 
 {{important|Note: These instructions will not work for versions of Boost earlier than 1.34.0 because of a major change in the Boost build system between versions 1.33.1 and 1.34.0}}
 
-== Building Python ==
+== Obtaining Python ==
 
 You can skip this section if your computer already has Python 2.3 (or later) installed. 
 
 To determine your Python version, open a terminal window and type 
+
  python -V
+
+If you do not have Python, or if you have an older version, you will need to obtain and install a recent version (preferably 2.5).
 
 Python is freely available from http://www.python.org/
 
@@ -70,60 +73,65 @@ Download the latest version of Boost from http://www.boost.org/. The rest of thi
  <nowiki>curl http://easynews.dl.sourceforge.net/sourceforge/boost/boost_1_34_0.tar.gz > boost_1_34_0.tar.gz</nowiki>
 
 === Unpack Boost ===
+
 Move the archive to your home directory (i.e. the directory to which the environmental variable $HOME refers) and unpack the boost library as follows:
+
  tar zxvf boost_1_34_0.tar.gz
 
 === Build the bjam executable ===
+
 Now build the <tt>bjam</tt> executable, which will be used to compile both the <tt>boost_python</tt> dynamic link library as well as the dynamic link libraries composing the <tt>phycas</tt> package.
+
  cd $HOME/boost_1_34_0/tools/jam/src
  ./build.sh
+
 This creates a directory named <tt>bin.&lt;platform-specifier&gt;</tt> within which the <tt>bjam</tt> executable may be found. Note that <tt>&lt;platform-specifier&gt;</tt> is a placeholder; i.e. you will actually see a directory named <tt>bin.linux</tt>, <tt>bin.linuxx86</tt>, or <tt>bin.macosxx86</tt>, depending on your platform.
 
 === Place bjam in your PATH ===
+
 Find the <tt>bjam</tt> executable and make sure that it is listed your <tt>PATH</tt> environmental variable. You can do this by moving it to a directory that is already on your path. To find out what directories are already in your PATH, type <tt>env | grep PATH</tt> to get a listing of all environmental variables (the grep command filters the output so that only lines containing PATH are shown). Many people put executables in <tt>$HOME/bin</tt> and add that directory to their <tt>PATH</tt>. Alternatively, you can leave <tt>bjam</tt> where it is and put it on your PATH with a command such as the following:
 
  setenv PATH "${PATH}:$HOME/boost_1_34_0/tools/jam/src/bin.linuxx86"
 
+=== Tell bjam where to find the Boost Build system ===
+
+When it starts, bjam needs to know where your Boost build system files are located. One way to tell it is to create an environmental variable named BOOST_BUILD_PATH that points to it. Here is a command that sets this environmental variable:
+
+ setenv BOOST_BUILD_PATH "$HOME/boost_1_34_0/tools/build/v2"
+
+You should also define an environmental variable named BOOST_ROOT that points to the Boost main directory. This will be used by the <tt>Jamroot</tt> file that comes with the Phycas distribution.
+
+ setenv BOOST_ROOT "$HOME/boost_1_34_0"
+
 == Building Phycas ==
+
 === Download Phycas ===
+
 Download Phycas to your home directory. Here's one way to do this using curl:
 
  curl <nowiki>http://www.eeb.uconn.edu/projects/phypy/downloads/Phycas-0.11.351.tar.gz > Phycas-0.11.351.tar.gz</nowiki>
 
 === Unpack Phycas ===
+
 Unpack Phycas from within your home directory as follows:
+
  tar zxvf Phycas-0.11.351.tar.gz
+
 Navigate to the Phycas folder, which contains the file <tt>Jamroot</tt>
+
  cd $HOME/Phycas-0.11.351
 
 === Edit the Jamroot file ===
-There are two lines you will need to change in the file <tt>$HOME/Phycas-0.11.351/Jamroot</tt> depending on your platform and the location where you installed boost.
 
-At the top of the <tt>Jamroot</tt> file, change this line to reflect both your boost version and the location of boost relative to the <tt>Jamroot</tt> file:
-
- use-project boost : ../boost_1_34_0 ;
-
-In this case, we're using Boost version 1.34.0 and it is located at <tt>$HOME/boost_1_34_0</tt>.
-
-Just below this point in <tt>Jamroot</tt>, you will see these statements
+At the top of the <tt>$HOME/Phycas-0.11.351/Jamroot</tt> file, you will see these statements:
 
  #alias tool_specific_requirements : : : : <toolset>gcc ... ;
  #alias tool_specific_requirements : : : : <toolset>darwin ... ;
  #alias tool_specific_requirements : : : : <toolset>msvc ... ;
 
-(Note that the elipses (<tt>...</tt>) are not actually present in these lines, they simply indicate that part of the line was omitted for clarity.) Choose the line most appropriate for your platform (toolset <tt>gcc</tt> should be used for linux and toolset <tt>darwin</tt> should be used for Mac) and uncomment it by removing the initial hash (#) character.
+(Note that the ellipsis (<tt>...</tt>) is not actually present in these lines.) Choose the line most appropriate for your platform (toolset <tt>gcc</tt> should be used for linux and toolset <tt>darwin</tt> should be used for Mac) and uncomment it by removing the initial hash (#) character.
 
 {{important|Mac users: even though you have the gcc compiler on your Mac, use the line specifying toolset darwin}}
-
-=== Edit the <tt>boost-build.jam</tt> file===
-
-You will also need to edit the following line in the <tt>$HOME/Phycas-0.11.351/boost-build.jam</tt> file to reflect your version of Boost and its location:
-
- boost-build ../boost_1_34_0/tools/build/v2 ;
-
-Note: be sure to leave the <tt>/tools/build/v2</tt> part on the end of the path. That tells <tt>bjam</tt> where to find the source code it needs to initiate the build process.
-
-Also, don't be tempted to remove that space beforet the terminating semicolon (;)! The <tt>bjam</tt> program will report an error if separate entities are not separated by spaces.
 
 === Build Phycas ===
 
@@ -146,15 +154,11 @@ If you get an error message saying that <tt>PYTHONPATH</tt> doesn't exist, try t
 
  setenv PYTHONPATH "$HOME/Phycas-0.11.351"
 
-It is a good idea to put this statement in your <tt>$HOME/.tcshrc</tt> so that this environmental variable is defined every time you log in. If you do this, be sure to issue this command to cause your new <tt>setenv</tt> command to take effect:
- 
- source $HOME/.tcshrc
-
 === Tell the operating system how to find the Boost Python shared library ===
 
 This step shouldn't be necessary, and as soon as we figure out how to avoid this we will take this step out of the instructions. For now, however, it appears to be necessary, at least for Linux.
 
-To ensure that the operating system can locate the Boost Python shared library, add the following to your <tt>$HOME/.tcshrc</tt> file (once again, don't forget to <tt>source</tt> your <tt>.tcshrc</tt> file after making this addition):
+To ensure that the operating system can locate the Boost Python shared library, issue the following command:
 
  setenv LD_LIBRARY_PATH "$HOME/Phycas-0.11.351/phycas/Conversions"
 
@@ -221,3 +225,15 @@ This should produce this output if successful:
 === About the included use cases ===
 
 If both of these tests pass, then you are ready to begin using Phycas for analyses. The next step might be to take a look in the $HOME/Phycas-0.11.0/phycas/Examples folder. This folder contains example Python scripts that show you how to perform published analyses on actual datasets. The python scripts are well documented on this web site: click [[Use cases]] in the navigation sidebar to find detailed explanations of these scripts.
+
+== Making it easier to recompile Phycas ==
+
+You created several environmental variables in the process of building Phycas. If you ever need or want to recompile Phycas, you can avoid having to enter these <tt>setenv</tt> commands each time by placing them in your <tt>$HOME/.tcshrc</tt> file, which gets executed every time you log in. Here are the lines you need to add to your <tt>$HOME/.tcshrc</tt>:
+
+ setenv PATH "${PATH}:$HOME/boost_1_34_0/tools/jam/src/bin.linuxx86"
+ setenv BOOST_ROOT "$HOME/boost_1_34_0"
+ setenv BOOST_BUILD_PATH "$HOME/boost_1_34_0/tools/build/v2"
+ setenv PYTHONPATH "$HOME/Phycas-0.11.351"
+ setenv LD_LIBRARY_PATH "$HOME/Phycas-0.11.351/phycas/Conversions"
+
+The new environmental variables will now be in place every time you login.

@@ -1,13 +1,15 @@
 # This is the Jamroot file used by the Boost.Build v2 system
 # for building the Python extensions that constitute Phycas
 
-# The path to the Boost project
-use-project boost : ../../../boost_1_34_0 ;
-
 # Tool-specific settings
 #alias tool_specific_requirements : : : : <toolset>gcc <cxxflags>"-include phycas/src/std_force_include.hpp" ;
 #alias tool_specific_requirements : : : : <toolset>darwin <cxxflags>"-include phycas/src/std_force_include.hpp" ;
 alias tool_specific_requirements : : : : <toolset>msvc <cxxflags>"-FI std_force_include.hpp" ;
+
+# Grab the path to the Boost project from the BOOST_ROOT environmental variable
+import os ;
+local BOOST_ROOT = [ os.environ BOOST_ROOT ] ;
+use-project boost : $(BOOST_ROOT) ;
 
 # Project-wide requirements
 project phycas 
