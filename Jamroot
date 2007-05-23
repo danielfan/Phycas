@@ -1,0 +1,185 @@
+# This is the Jamroot file used by the Boost.Build v2 system
+# for building the Python extensions that constitute Phycas
+
+# The path to the Boost project
+use-project boost : ../boost_1_34_0 ;
+
+# Tool-specific settings
+alias tool_specific_requirements : : : : <cxxflags>"-include phycas/src/std_force_include.hpp" <toolset>gcc ;
+
+# Project-wide requirements
+project phycas 
+  : requirements 
+      <library>/boost/python//boost_python 
+      <include>. 
+      <include>./phycas/src 
+      <link>shared ;
+
+# The rule python-extension is defined in <top-of-boost-build-system>/tools/python.jam
+# The boost-build.jam file in this directory points bjam to <top-of-boost-build-system>
+import python ;
+
+# Build and install the Conversions extension
+alias conversions_sources
+  : phycas/src/conversions_pymod.cpp
+    phycas/src/boost_assertion_failed.cpp
+    phycas/src/basic_tree.cpp
+    phycas/src/basic_tree_node.cpp
+    phycas/src/phycas_string.cpp
+    tool_specific_requirements ;
+python-extension _Conversions : conversions_sources ;
+install Conversions 
+  : _Conversions 
+  : <location>phycas/Conversions 
+    <install-dependencies>on 
+    <install-type>LIB ;  # note: tried using <dll-path> but it seemed to have no effect 
+
+# Build and install the ProbDist extension
+alias probdist_sources
+  : phycas/src/probdist_pymod.cpp 
+    phycas/src/boost_assertion_failed.cpp
+    phycas/src/phycas_string.cpp
+    phycas/src/basic_lot.cpp
+    phycas/src/thirdparty/dcdflib/src/dcdflib.c
+    phycas/src/thirdparty/dcdflib/src/ipmpar.c
+    phycas/src/probability_distribution.cpp
+    phycas/src/slice_sampler.cpp
+    tool_specific_requirements ;
+python-extension _ProbDist : probdist_sources ;
+install ProbDist : _ProbDist : <location>phycas/ProbDist ;
+
+# Build and install the DataMatrix extension
+alias datamatrix_sources
+  : phycas/src/data_matrix_pymod.cpp
+    phycas/src/boost_assertion_failed.cpp
+    phycas/src/cipres/CipresDataMatrixHelper.cpp
+    tool_specific_requirements ;
+python-extension _DataMatrixBase : datamatrix_sources ;
+install DataMatrix : _DataMatrixBase : <location>phycas/DataMatrix ;
+
+# Build and install the Likelihood extension
+alias likelihood_sources
+  : phycas/src/basic_lot.cpp
+    phycas/src/basic_tree.cpp 
+    phycas/src/basic_tree_node.cpp 
+    phycas/src/boost_assertion_failed.cpp
+    phycas/src/bush_move.cpp 
+    phycas/src/cipres/CipresDataMatrixHelper.cpp
+    phycas/src/cond_likelihood_storage.cpp
+    phycas/src/thirdparty/dcdflib/src/dcdflib.c
+    phycas/src/edge_move.cpp 
+    phycas/src/internal_data.cpp 
+    phycas/src/thirdparty/dcdflib/src/ipmpar.c
+    phycas/src/larget_simon_move.cpp 
+    phycas/src/likelihood_loops.cpp
+    phycas/src/likelihood_models.cpp 
+    phycas/src/likelihood_pymod.cpp 
+    phycas/src/model_pymod.cpp
+    phycas/src/linalg.c
+    phycas/src/mcmc_chain_manager.cpp 
+    phycas/src/mcmc_param.cpp 
+    phycas/src/mcmc_flexcat_param.cpp 
+    phycas/src/mcmc_updater.cpp 
+    phycas/src/ncat_move.cpp 
+    phycas/src/phycas_string.cpp 
+    phycas/src/q_matrix.cpp
+    phycas/src/sim_data.cpp 
+    phycas/src/slice_sampler.cpp
+    phycas/src/tip_data.cpp 
+    phycas/src/topo_prior_calculator.cpp 
+    phycas/src/tree_likelihood.cpp 
+    phycas/src/underflow_policy.cpp 
+    phycas/src/updater_pymod.cpp
+    [ obj likelihood_tree_manip_obj : phycas/src/tree_manip.cpp tool_specific_requirements ]
+    tool_specific_requirements ;
+python-extension _LikelihoodBase : likelihood_sources ;
+install Likelihood : _LikelihoodBase : <location>phycas/Likelihood ;
+
+# Build and install the Phylogeny extension
+alias phylogeny_sources
+  : phycas/src/phylogeny_pymod.cpp
+    phycas/src/boost_assertion_failed.cpp
+    phycas/src/basic_tree.cpp 
+    phycas/src/basic_tree_node.cpp
+    [ obj phylogeny_tree_manip_obj : phycas/src/tree_manip.cpp tool_specific_requirements ]
+    phycas/src/basic_lot.cpp
+    phycas/src/thirdparty/dcdflib/src/dcdflib.c
+    phycas/src/thirdparty/dcdflib/src/ipmpar.c
+    phycas/src/basic_cdf.cpp
+    phycas/src/phycas_string.cpp 
+    tool_specific_requirements ;
+python-extension _Phylogeny : phylogeny_sources ;
+install Phylogeny : _Phylogeny : <location>phycas/Phylogeny ;
+
+# Build and install the ReadNexus extension
+alias readnexus_sources
+  : phycas/src/read_nexus_pymod.cpp
+    phycas/src/boost_assertion_failed.cpp
+    phycas/src/cipres/CipresDataMatrixHelper.cpp
+    phycas/src/cipres/cipres_nexus_reader.cpp           #POL 18-Mar-2006 may need to comment out for Mac
+    phycas/src/ncl/nxs_basic_manager.cpp
+    phycas/src/ncl/nxs_block.cpp
+    phycas/src/ncl/nxs_exception.cpp
+    phycas/src/ncl/nxs_reader.cpp
+    phycas/src/ncl/nxs_token.cpp
+    phycas/src/ncl/characters/nxs_char_listener.cpp
+    phycas/src/ncl/characters/nxs_characters_block.cpp  #POL 18-Mar-2006 may need to comment out for Mac
+    phycas/src/ncl/characters/nxs_characters_block_commands.cpp
+    phycas/src/ncl/characters/nxs_characters_manager.cpp
+    phycas/src/ncl/command/nxs_auto_command.cpp
+    phycas/src/ncl/command/nxs_choice_cmd_param.cpp
+    phycas/src/ncl/command/nxs_cmd_param.cpp
+    phycas/src/ncl/command/nxs_command.cpp
+    phycas/src/ncl/command/nxs_command_manager.cpp
+    phycas/src/ncl/command/nxs_command_output.cpp               #POL 18-Mar-2006 may need to comment out for Mac
+    phycas/src/ncl/command/nxs_file_cmd_param.cpp
+    phycas/src/ncl/command/nxs_mixed_cmd_param.cpp
+    phycas/src/ncl/command/nxs_primitive_cmd_param.cpp
+    phycas/src/ncl/command/nxs_restricted_string_cmd_param.cpp
+    phycas/src/ncl/command/nxs_set_cmd_param.cpp
+    phycas/src/ncl/misc/arg_stream.cpp
+    phycas/src/ncl/misc/nxs_data_type.cpp
+    phycas/src/ncl/misc/eliminated_index_slider.cpp
+    phycas/src/ncl/misc/nxs_discrete_matrix.cpp
+    phycas/src/ncl/misc/nxs_file_path.cpp
+    phycas/src/ncl/misc/nxs_index_set.cpp
+    phycas/src/ncl/misc/nxs_test.cpp
+    phycas/src/ncl/misc/string_extensions.cpp
+    phycas/src/ncl/output/nxs_output_stream_wrapper.cpp
+    phycas/src/ncl/output/generic_output_classes.cpp
+    phycas/src/ncl/output/nxs_console_out_stream_impl.cpp
+    phycas/src/ncl/output/nxs_input.cpp
+    phycas/src/ncl/output/nxs_table.cpp
+    phycas/src/ncl/output/nxs_table_cell.cpp
+    phycas/src/ncl/output/nxs_typist.cpp
+    phycas/src/ncl/output/nxs_user_query.cpp
+    phycas/src/ncl/output/nxs_xml_socket_output_stream.cpp
+    phycas/src/ncl/taxa/base_taxa_manager.cpp
+    phycas/src/ncl/taxa/nxs_alternative_taxa_block.cpp
+    phycas/src/ncl/taxa/nxs_taxa_block.cpp
+    phycas/src/ncl/taxa/nxs_taxa_listener.cpp
+    phycas/src/ncl/taxa/nxs_taxa_manager.cpp
+    phycas/src/ncl/trees/newick_verifier.cpp
+    phycas/src/ncl/trees/nxs_tree_listener.cpp
+    phycas/src/ncl/trees/nxs_trees_block.cpp
+    phycas/src/ncl/trees/nxs_trees_manager.cpp
+    phycas/src/oldphycas/characters_manager.cpp
+    phycas/src/oldphycas/const_site_info.cpp
+    phycas/src/oldphycas/multiline_bound.cpp
+    phycas/src/probability_distribution.cpp
+    phycas/src/oldphycas/distribution_command_param.cpp
+    phycas/src/oldphycas/distribution_description.cpp
+    phycas/src/basic_lot.cpp
+    phycas/src/thirdparty/dcdflib/src/dcdflib.c
+    phycas/src/thirdparty/dcdflib/src/ipmpar.c
+    phycas/src/oldphycas/taxa_manager.cpp
+    phycas/src/oldphycas/draw_context.cpp
+    phycas/src/oldphycas/draw_tree.cpp
+    [ obj readnexus_tree_manip_obj : phycas/src/oldphycas/tree_manip.cpp tool_specific_requirements ]
+    phycas/src/oldphycas/tree_node.cpp
+    phycas/src/oldphycas/tree.cpp
+    phycas/src/oldphycas/trees_manager.cpp
+    phycas/src/oldphycas/split.cpp   
+    tool_specific_requirements ;
+python-extension _ReadNexus : readnexus_sources ;
+install ReadNexus : _ReadNexus : <location>phycas/ReadNexus ;

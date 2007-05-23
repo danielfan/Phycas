@@ -2,33 +2,26 @@ include LICENSE
 include CHANGES
 include INSTALL
 
-include dojam.py
-include Jamfile
-include Jamrules
+include boost-build.jam
+include Jamroot
 
 include conversions/VC/conversions.sln
 include conversions/VC/conversions.vcproj
-include conversions/Jamfile
 
 include data_matrix/VC/data_matrix.sln
 include data_matrix/VC/data_matrix.vcproj
-include data_matrix/Jamfile
 
 include likelihood/VC/likelihood.sln
 include likelihood/VC/likelihood.vcproj
-include likelihood/Jamfile
 
 include phylogeny/VC/phylogeny.sln
 include phylogeny/VC/phylogeny.vcproj
-include phylogeny/Jamfile
 
 include prob_dist/VC/prob_dist.sln
 include prob_dist/VC/prob_dist.vcproj
-include prob_dist/Jamfile
 
 include read_nexus/VC/read_nexus.sln
 include read_nexus/VC/read_nexus.vcproj
-include read_nexus/Jamfile
 
 include VC/phycas.sln
 include VC/profiling/profiling.vcproj
