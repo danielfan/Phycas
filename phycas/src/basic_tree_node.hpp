@@ -123,6 +123,7 @@ class TreeNode
 		TreeNode *			prevPreorder;			/**< points to previous node in preorder sequence */
 		bool				observable;				/**< true if data could be observed for this node */
 
+		double				tmp;					/**< temporary non-persistant workspace to be used within individual methods */
 		float				x;						/**< x-coordinate for purposes of drawing the tree */
 		float				y;						/**< y-coordinate for purposes of drawing the tree */
 		bool				selected;				/**< can be used anytime a node needs to be selected for some purpose */

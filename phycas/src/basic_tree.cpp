@@ -412,6 +412,316 @@ void Tree::SelectAllNodes()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Returns pointer to TreeNode representing the deepest point of intersection between the lineage leading to `tip1' and
+|	the lineage leading to `tip2'. Both `tip1' and `tip2' are assumed to be tip nodes, but one or the other could
+|	currently be serving as the root. If either `tip1' or `tip2' is serving as the root, then the node returned is the 
+|	immediate descendant of this node. Otherwise, the chain of parents of both tips is walked until the other tip shows
+|	up as a member of the split of the other.
+*/
+TreeNode * Tree::FindMRCA(unsigned tip1, unsigned tip2)
+	{
+	assert(0);	//POL not yet written
+	return NULL;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Zig-zags up the right side of the clade starting with the node `start' until reaching a tip. This tip node is the 
+|	last node in the clade according to the preorder sequence. Zig-zagging is necessary because there is no pointer to
+|	the right-most child of a node, so we must use FindRightmostChild to move up the clade. Assumes `start' is non-NULL.
+*/
+TreeNode * Tree::FindLastPreorderInClade(
+  TreeNode * start)	/**< is the deepest node belonging to the clade in question */
+	{
+	//@POL This function was stolen from the TreeManip class - makes more sense here
+	PHYCAS_ASSERT(start != NULL);
+	TreeNode * curr = start;
+	TreeNode * rChild = FindRightmostChild(curr);
+	while (rChild != NULL)
+		{
+		curr = rChild;
+		rChild = FindRightmostChild(curr);
+		}
+	return curr;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Begins with left child of parent of `start' and calls GetRightSib() until the left sibling of `start' is located.
+|	Assumes `start' is non-NULL.
+*/
+TreeNode * Tree::FindLeftSib(
+  TreeNode * start)	/**< is the node whose left sibling is sought */
+	{
+	//@POL This function was stolen from the TreeManip class - makes more sense here
+	PHYCAS_ASSERT(start != NULL);
+	TreeNode * nd = start->GetParent();
+
+	// If start has no parent, then there's no way it can have a left sibling
+	if (nd == NULL)
+		return NULL;	
+
+	nd = nd->GetLeftChild();
+
+	// Parent of start should have at least one child
+	PHYCAS_ASSERT(nd != NULL); 
+
+	// If left child of start's parent equals start, then start is an only child and has no siblings
+	if (nd == start)
+		return NULL;	
+
+	TreeNode * leftsib = NULL;
+	while (nd != start)
+		{
+		if (nd == NULL)
+			{
+			throw XPhylogeny("pointer inconsistency in FindLeftSib");
+			}
+		leftsib = nd;
+		nd = nd->GetRightSib();
+		}
+	return leftsib;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Begins with left child of `start'. If left child is NULL, returns NULL, otherwise, returns the rightmost sibling of
+|	the left child of `start'. Assumes `start' is non-NULL.
+*/
+TreeNode * Tree::FindRightmostChild(
+  TreeNode * start)	/**< is the parent node whose children will be searched */
+	{
+	//@POL This function was stolen from the TreeManip class - makes more sense here
+	PHYCAS_ASSERT(start != NULL);
+	TreeNode * curr = start->GetLeftChild();
+	TreeNode * rightmost = NULL;
+	while (curr != NULL)
+		{
+		rightmost = curr;
+		curr = curr->GetRightSib();
+		}
+	return rightmost;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Inserts node 's' as child of 'u' keeping the subtree rooted at `s' intact. Assumes both `s' and `u' are non-NULL. If 
+|	`targetSib' is specified, `s' will become an immediate sibling of `targetSib' (right or left sibling determined by 
+|	`on_right'). If `targetSib' is not specified, `s' will be added as the rightmost or leftmost child of `u' (again,
+|	depending on the value of `on_right').
+*/
+void Tree::InsertSubtree(
+  TreeNode * s,			/**< is the node to be added as a child of u */
+  TreeNode * u,			/**< is the new parent of s */
+  bool on_right,		/**< if true, `s' will be added to the right of `targetSib' or, if` targetSib' is not specified, `s' will become rightmost child of `u' (vice versa if false specified) */
+  TreeNode * targetSib)	/**< if non-NULL, `s' will become an immediate sibling of this node (right or left depending on value of `on_right') */
+	{
+	//@POL This function was stolen from the TreeManip class - makes more sense here
+	PHYCAS_ASSERT(u != NULL);
+	PHYCAS_ASSERT(s != NULL);
+	PHYCAS_ASSERT(targetSib == NULL || (targetSib->par == u));
+
+	TreeNode * slast				= FindLastPreorderInClade(s);
+	TreeNode * u_lChild				= u->lChild;
+	TreeNode * u_rChild				= FindRightmostChild(u);
+	TreeNode * ulast				= FindLastPreorderInClade(u);
+	TreeNode * ulast_nextPreorder	= ulast->nextPreorder;
+	TreeNode * u_nextPreorder		= u->nextPreorder;
+
+	// Identify possible reductions in complexity
+	//
+	if (targetSib != NULL)
+		{
+		if ((!on_right) && (targetSib == u_lChild))
+			targetSib = NULL;
+		if ((on_right) && (targetSib == u_rChild))
+			targetSib = NULL;
+		if ((!on_right) && (targetSib != NULL))
+			{
+			targetSib = FindLeftSib(targetSib);
+			on_right = true;
+			}
+		}
+
+	// Make s a child of u
+	//
+	if (targetSib == NULL)
+		{
+		if (on_right)
+			{
+			s->rSib				= NULL;
+			s->par				= u;
+			s->prevPreorder 	= ulast;
+			slast->nextPreorder = ulast_nextPreorder;
+			ulast->nextPreorder	= s;
+
+			if (ulast_nextPreorder == NULL)
+				this->lastPreorder = slast;
+			else
+				ulast_nextPreorder->prevPreorder = slast;
+
+			if (u_lChild == NULL)
+				u->lChild		= s;
+			else
+				u_rChild->rSib	= s;
+			}
+		else
+			{
+			s->rSib					= u_lChild;
+			s->par					= u;
+			s->prevPreorder 		= u;
+			slast->nextPreorder		= u_nextPreorder;
+
+			if (u_lChild != NULL)
+				u_lChild->prevPreorder	= slast;
+			u->lChild				= s;
+			u->nextPreorder			= s;
+			}
+		}
+	else
+		{
+		// Save pointers to relevant nodes
+		//
+		TreeNode * targetSib_rSib				= targetSib->rSib;
+		TreeNode * targetSiblast				= FindLastPreorderInClade(targetSib);
+		TreeNode * targetSiblast_nextPreorder	= targetSiblast->nextPreorder;
+
+		// Can assume that targetSib is not rightmost child of u and also that on_right == true
+		//
+		s->rSib						= targetSib_rSib;
+		s->par						= u;
+		s->prevPreorder 			= targetSiblast;
+		slast->nextPreorder 		= targetSiblast_nextPreorder;
+		targetSiblast->nextPreorder	= s;
+		targetSib->rSib				= s;
+		}
+
+	// This rearrangement invalidates the TreeID and node counts
+	//
+	this->InvalidateTreeID();
+	this->InvalidateNodeCounts();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Detaches node 's' from tree, keeping intact subtree rooted at `s'. Assumes `s' is non-NULL and is neither the root
+|	node nor the subroot node (i.e. only child of the root node). Sets all pointers of `s' to NULL except `lChild' and 
+|	`nextPreorder'.
+*/
+void Tree::DetachSubtree(
+  TreeNode * s)	/**< is the root of the subtree to be detached */
+	{
+	//@POL This function was stolen from the TreeManip class - makes more sense here
+	PHYCAS_ASSERT(s != NULL);
+	PHYCAS_ASSERT(!s->IsTipRoot());
+	PHYCAS_ASSERT(!s->GetParent()->IsTipRoot());
+	if (s->GetParent()->IsTipRoot())
+		{
+		std::cerr << "oops" << std::endl;
+		}
+
+	// Save pointers to relevant nodes
+	//
+	TreeNode * s_par				= s->par;
+	TreeNode * s_lSib				= FindLeftSib(s);
+	TreeNode * s_rSib				= s->rSib;
+	TreeNode * s_prevPreorder		= s->prevPreorder;
+	TreeNode * slast				= FindLastPreorderInClade(s);
+	TreeNode * slast_nextPreorder	= slast->nextPreorder;
+
+	// Completely detach s and seal up the wound
+	//
+	s->par = NULL;
+
+	s->rSib = NULL;
+	if (s_lSib == NULL)
+		s_par->lChild = s_rSib;
+	else
+		s_lSib->rSib = s_rSib;
+
+	s->prevPreorder = NULL;
+	if (s_prevPreorder == NULL)
+		this->firstPreorder = slast_nextPreorder;
+	else
+		s_prevPreorder->nextPreorder = slast_nextPreorder;
+
+	slast->nextPreorder = NULL;
+	if (slast_nextPreorder == NULL)
+		this->lastPreorder = s_prevPreorder;
+	else
+		slast_nextPreorder->prevPreorder = s_prevPreorder;
+
+	// This rearrangement invalidates the TreeID and node counts
+	//
+	this->InvalidateID();
+	this->InvalidateNodeCounts();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Performs a postorder traversal and, for each internal node visited, sorts clades from smallest to largest. If the
+|	`right' argument is true, then the largest clades will be on the right after ladderization. If the `right' argument
+|	is false, then the leftmost child will be the largest clade.
+*/
+void Tree::Ladderize(
+  bool right)	/**> if true, largest clades will be on right; if false, largest clades will be on left */
+	{
+	for (TreeNode * nd = GetLastPreorder(); nd != NULL; nd = nd->GetNextPostorder())
+		{
+		bool istip = nd->IsTip();
+		TreeNode * par = nd->GetParent();
+		TreeNode * rsib = nd->GetRightSib();
+
+		if (par)
+			{
+			if (istip)
+				{
+				if (rsib)
+					par->tmp += 1.0;
+				else
+					par->tmp = 1.0;
+				}
+			else
+				{
+				if (rsib)
+					par->tmp += nd->tmp;
+				else
+					par->tmp = nd->tmp;
+				}
+			}
+		
+		// If node is an internal node, then reorder its children from smallest (left) to
+		// largest (right) based on the tmp data member of each child
+		if (!istip)
+			{
+			typedef std::multimap< unsigned, TreeNode * > ChildMap;
+			typedef std::pair< unsigned, TreeNode * > ChildMapKeyValuePair;
+			ChildMap childmap;
+			TreeNode * child = nd->GetLeftChild();
+			while (child != NULL)
+				{
+				unsigned clade_size = (unsigned)child->tmp;
+				childmap.insert(ChildMapKeyValuePair(clade_size, child));
+				TreeNode * next_child = child->GetRightSib();
+				DetachSubtree(child);
+				child = next_child;
+				}
+
+			// The childmap is ordered from smallest to largest already, so we need only 
+			// to march down the map adding nodes as we go to the right of the last one
+			if (right)
+				{
+				for (ChildMap::iterator childiter = childmap.begin(); childiter != childmap.end(); ++childiter)
+					{
+					InsertSubtree(childiter->second, nd, true);
+					}
+				}
+			else
+				{
+				for (ChildMap::reverse_iterator childiter = childmap.rbegin(); childiter != childmap.rend(); ++childiter)
+					{
+					InsertSubtree(childiter->second, nd, true);
+					}
+				}
+			}
+		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Follows preorder pointers until a tip (degree = 1) node is encountered with `nodeNum' equal to `num'. Returns a 
 |	pointer to this node, or 0 if a tip node numbered `num' cannot be not found.
 */

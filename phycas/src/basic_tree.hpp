@@ -59,6 +59,7 @@ class Tree
 		//								
 								Tree();
 		virtual					~Tree();
+		
 		// Accessors
 		//
 		unsigned				GetNNodes();
@@ -69,6 +70,7 @@ class Tree
 		TreeNode *				GetLastPreorder();
 		preorder_iterator		begin();
 		preorder_iterator		end();
+		
 		// Predicates
 		//
 		bool					RootValid() const;
@@ -76,6 +78,7 @@ class Tree
 		bool					HasEdgeLens() const;
 		bool					PreorderDirty() const;
 		bool					TipNumbersSetUsingNames() const;
+		
 		// Utilities
 		//
 		void					Clear();
@@ -95,6 +98,9 @@ class Tree
 		TreeNodeVec				GetNodesWithEdges();
 		void					SelectAllNodes();
 		void					UnselectAllNodes();
+		TreeNode *				FindMRCA(unsigned tip1, unsigned tip2);
+		void					Ladderize(bool right);
+
 		// Debugging
 		//
 		std::string				DebugWalkTree(bool preorder = true, unsigned verbosity = 0);
@@ -113,6 +119,12 @@ class Tree
 		void					RefreshNodeCounts();
 		void					InvalidateTreeID();
 		//void					RefreshTreeID();
+
+		TreeNode *				FindLeftSib(TreeNode * start);
+		TreeNode *				FindRightmostChild(TreeNode * start);
+		TreeNode *				FindLastPreorderInClade(TreeNode * start);
+		void					DetachSubtree(TreeNode * s);
+		void					InsertSubtree(TreeNode * s, TreeNode * u, bool on_right,  TreeNode * targetSib = NULL);
 
 	protected:
 

@@ -35,6 +35,7 @@ inline TreeNode::TreeNode()
   nextPreorder(0),
   prevPreorder(0),
   observable(false),
+  tmp(0.0),
   x(0.0),
   y(0.0),
   selected(false),
@@ -64,6 +65,7 @@ inline void TreeNode::Clear()
 	edgeLen			= TreeNode::edgeLenInitValue;
 	nodeName		= "";
 	observable		= false;
+	tmp				= 0.0;
 	x				= 0.0;
 	y				= 0.0;
 	selected		= false;
