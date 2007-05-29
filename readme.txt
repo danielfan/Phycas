@@ -1,4 +1,66 @@
-This is the Phycas/PhyPy readme file for developers with SVN access.
+This is the phycas readme file for developers with SVN access who are 
+building with Boost's bjam tool (this is the recommended build system for
+phycas).
+
+29-May-2007
+-----------
+
+Build Prerequisites
+-------------------
+
+   * You must have the Boost Build v2 version of bjam compiled
+   * BOOST_ROOT must be in your environment and must refer to the top of your
+     boost libraries
+   * The boost build system must be configured. For instance the
+     file  $BOOST_ROOT/tools/build/v2/user-config.jam must contain the correct
+     settings
+   * You should have one of the following settings to indicate your Operating 
+     System:
+     	For linux:     OSTYPE=linux
+		For mac:       OSTYPE=darwin
+        For Windows:   OS=Windows_NT
+
+Building
+--------
+
+Simply type the command:
+   bjam
+   
+
+Prerequisites for Running
+-------------------------
+If you do not install the phycas directory in a standard location (such as
+the site-packages directory in your python library) then you will have to
+add the PHYCAS_ROOT directory (the top level directory that contains the "phycas"
+directory) to your PYTHONPATH environmental setting.
+
+Testing
+-------
+
+Tests can be invoke as shown below (commands after the $ prompt output on the 
+next line:
+
+$ cd phycas/Tests
+$ python doctestall.py
+Finished testing examples
+$ python runall.py
+
+The runall.py script will produce a lot of output.
+
+Miscellaneous information
+-------------------------
+
+The following file contains the "release" history (what features were added when) 
+and shows projections for future feature additions:
+
+  CHANGES
+
+The following files are used by bjam:
+
+  Jamroot
+
+
+
 
 23-Oct-2006
 -----------

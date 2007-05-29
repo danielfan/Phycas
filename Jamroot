@@ -28,7 +28,11 @@ else {
       alias tool_specific_requirements : : : : <toolset>msvc <cxxflags>"-FI std_force_include.hpp" ;
     }
     else {
-      echo "  Could not identify platform, going with toolset gcc just in case that works" ;
+      echo "  Could not identify platform.  Expecting an environmental variable:";
+      echo "  for Linux:   OSTYPE=linux" ;
+      echo "  for Mac:   OSTYPE=darwin" ;
+      echo "  for Windows:   OS=Windows_NT" ;
+      echo "  Going with toolset gcc just in case that works" ;
       alias tool_specific_requirements : : : : <toolset>gcc <cxxflags>"-include phycas/src/std_force_include.hpp" ;
     }
   }
