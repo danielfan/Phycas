@@ -98,7 +98,7 @@ class Tree
 		TreeNodeVec				GetNodesWithEdges();
 		void					SelectAllNodes();
 		void					UnselectAllNodes();
-		TreeNode *				FindMRCA(unsigned tip1, unsigned tip2);
+		//TreeNode *				FindMRCA(unsigned tip1, unsigned tip2);
 		void					Ladderize(bool right);
 
 		// Debugging

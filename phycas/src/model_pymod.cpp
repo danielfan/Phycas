@@ -30,6 +30,17 @@ using namespace phycas;
 
 void model_pymod()
 	{
+#if 1
+	class_<QMatrix, boost::noncopyable>("QMatrixBase")
+		.def("getDimension", &QMatrix::getDimension)
+		.def("setRelativeRates", &QMatrix::setRelativeRates)
+		.def("setStateFreqs", &QMatrix::setStateFreqs)
+		.def("getPMatrix", &QMatrix::getPMatrix)
+		.def("getQMatrix", &QMatrix::getQMatrix)
+		.def("getEigenVectors", &QMatrix::getEigenVectors)
+		.def("getEigenValues", &QMatrix::getEigenValues)
+		;
+#endif
 	class_<phycas::Model, boost::noncopyable>("Model", no_init)
 		.def("fixEdgeLenHyperprior", &phycas::Model::fixEdgeLenHyperprior)
 		.def("freeEdgeLenHyperprior", &phycas::Model::freeEdgeLenHyperprior)

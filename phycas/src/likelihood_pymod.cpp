@@ -187,6 +187,7 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("parentalCLAValid", &InternalData::parentalCLAValid)
 		.def("parentalCLACached", &InternalData::parentalCLACached)
 		;
+#if 0
 	class_<QMatrix, boost::noncopyable>("QMatrixBase")
 		.def("getDimension", &QMatrix::getDimension)
 		.def("setRelativeRates", &QMatrix::setRelativeRates)
@@ -196,6 +197,7 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("getEigenVectors", &QMatrix::getEigenVectors)
 		.def("getEigenValues", &QMatrix::getEigenValues)
 		;
+#endif
 
 	// This function call necessary to avoid fatal error C1204: Compiler limit: internal structure overflow
 	// in VC 7.1 (see http://www.boost.org/libs/python/doc/v2/faq.html#c1204)

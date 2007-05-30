@@ -192,7 +192,7 @@ using namespace boost::python;
         return 0;
       }
       if (ConversionPolicy::check_convertibility_per_element()) {
-        int obj_size = PyObject_Length(obj_ptr);
+        int obj_size = (int)PyObject_Length(obj_ptr);
         if (obj_size < 0) { // must be a measurable sequence
           PyErr_Clear();
           return 0;

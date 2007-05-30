@@ -411,6 +411,7 @@ void Tree::SelectAllNodes()
 		}
 	}
 
+#if 0 // including this function results in this VC error: fatal error C1055: compiler limit : out of keys
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns pointer to TreeNode representing the deepest point of intersection between the lineage leading to `tip1' and
 |	the lineage leading to `tip2'. Both `tip1' and `tip2' are assumed to be tip nodes, but one or the other could
@@ -423,6 +424,7 @@ TreeNode * Tree::FindMRCA(unsigned tip1, unsigned tip2)
 	assert(0);	//POL not yet written
 	return NULL;
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Zig-zags up the right side of the clade starting with the node `start' until reaching a tip. This tip node is the 
