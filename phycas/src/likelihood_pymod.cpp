@@ -89,6 +89,7 @@ class TreeLikelihoodWrapper : public TreeLikelihood
 BOOST_PYTHON_MODULE(_LikelihoodBase)
 {
 #if defined(USING_NUMARRAY)
+#error USING_NUMARRAY defined
 	// these lines required by num_util
 	import_array();
 	numeric::array::set_module_and_type("numarray", "NDArray");
@@ -141,6 +142,7 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("getTotalCount", &phycas::SimData::getTotalCount)
 		;
 #if defined(INTERFACE_WITH_CIPRES)
+#error INTERFACE_WITH_CIPRES defined
 	class_<PhycasIDLishMatrix, boost::noncopyable>("PhycasIDLishMatrix", init<unsigned, unsigned, std::string, int, unsigned>())
 		.def("setCharStateLookup", &PhycasIDLishMatrix::setCharStateLookup)
 		.def("replaceRow", &PhycasIDLishMatrix::replaceRow)
