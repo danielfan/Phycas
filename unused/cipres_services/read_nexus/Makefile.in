@@ -1,2 +1,0 @@
-include @CIPRES_LIB_BUILD_DIR@/config/Makefile
-include RealMakefile

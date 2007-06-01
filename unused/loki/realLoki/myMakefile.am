@@ -1,6 +1,0 @@
-AM_CPPFLAGS = -include @PHYCAS_PREFIX_FILE@
-
-lib_LIBRARIES = libloki.a
-libloki_a_SOURCES = \
-	Singleton.cpp \
-	SmallObj.cpp

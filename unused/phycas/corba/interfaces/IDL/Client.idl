@@ -1,9 +1,0 @@
-module cipresCORBA
-{
-  interface Client
-  {
-  void beNotified(in long code);
-  string requestInterface(in string specs);
-  string getIdentity();
-  };
-};

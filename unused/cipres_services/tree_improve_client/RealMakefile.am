@@ -1,8 +1,0 @@
-AM_LDFLAGS =  $(CIPRES_LIB_LDFLAGS) -L@CIPHYCAS_DIR@
-AM_CXXFLAGS = $(CIPRES_LIB_CXXFLAGS) $(CIPRES_LIB_INC_DIRS) @CXXFLAGS@ @CXXFLAGS_OPTIM_SPEED@ @CXXFLAGS_WARNINGS@ -include @CIPHYCAS_PREFIX_FILE@ 
-bin_PROGRAMS = tree_improve_client
-tree_improve_client_LDADD = $(CIPRES_LIB_LDADD) -l@CIPHYCAS_LIBFLAG@
-tree_improve_client_DEPENDENCIES = @CIPHYCAS_DIR@/libCiphycas.a
-tree_improve_client_SOURCES = \
-	tree_improve_client.cpp
-	

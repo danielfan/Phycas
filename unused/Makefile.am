@@ -1,1 +1,0 @@
-SUBDIRS = ncl loki phycas
