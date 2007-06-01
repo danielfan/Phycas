@@ -21,6 +21,8 @@
 #	pragma warning(disable : 4267) // boost's builtin_converters.hpp casts size_t to int rather than unsigned
 #endif
 
+#include <boost/python.hpp>
+
 //#include "phycas/force_include.h"
 #include "phycas/src/cipres/CipresDataMatrixHelper.h"
 #include "phycas/src/tree_likelihood.hpp"
@@ -30,7 +32,6 @@
 #include "phycas/src/edge_move.hpp"
 #include "phycas/src/topo_prior_calculator.hpp"
 
-#include <boost/python.hpp>
 using namespace boost::python;
 using namespace phycas;
 

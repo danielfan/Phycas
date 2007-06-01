@@ -21,6 +21,8 @@
 #	pragma warning(disable : 4267) // boost's builtin_converters.hpp casts size_t to int rather than unsigned
 #endif
 
+#include <boost/python.hpp>
+
 //#include "phycas/force_include.h"
 
 /*  This file inclusion avoids a bizarre anonymous namespace multiple definition link error that 
@@ -58,8 +60,6 @@
 #	include <boost/python/numeric.hpp>
 #	include "phycas/src/thirdparty/num_util/num_util.h"
 #endif
-
-#include <boost/python.hpp>
 
 using namespace boost::python;
 

@@ -317,7 +317,8 @@ inline void SimData::divideBy(PatternCountType factor)
 */
 inline void SimData::multBy(PatternCountType factor)
 	{
-	PHYCAS_ASSERT(factor > 0.0);
+	if (sim_pattern_map.empty())
+		return;
 
 	total_count *= factor;
 

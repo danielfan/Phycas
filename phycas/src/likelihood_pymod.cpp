@@ -25,6 +25,8 @@
 #	define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
 #endif
 
+#include <boost/python.hpp>
+
 //#include "phycas/force_include.h"
 #include "phycas/src/cipres/CipresDataMatrixHelper.h"
 #include "phycas/src/probability_distribution.hpp"
@@ -47,7 +49,6 @@
 void model_pymod();
 void updater_pymod();
 
-#include <boost/python.hpp>
 using namespace boost::python;
 using namespace phycas;
 

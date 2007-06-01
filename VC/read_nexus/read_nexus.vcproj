@@ -34,9 +34,11 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(PHYCAS_ROOT)\phycas\ReadNexus\_ReadNexus.pyd"
+				AdditionalDependencies="boost_python-vc71-mt-gyd-1_34.lib"
+				OutputFile="$(PHYCAS_ROOT)\phycas\ReadNexus\_ReadNexus_d.pyd"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(BOOST_ROOT)\stage\lib;$(PYTHON_ROOT)\libs"
+				IgnoreDefaultLibraryNames="boost_python-vc71-mt-gd-1_34.lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/read_nexus.pdb"
 				SubSystem="2"
@@ -307,11 +309,23 @@
 						Name="VCCLCompilerTool"
 						ForcedIncludeFiles="$(NOINHERIT)"/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ForcedIncludeFiles="$(NOINHERIT)"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\thirdparty\dcdflib\src\ipmpar.c">
 				<FileConfiguration
 					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ForcedIncludeFiles="$(NOINHERIT)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
 						ForcedIncludeFiles="$(NOINHERIT)"/>

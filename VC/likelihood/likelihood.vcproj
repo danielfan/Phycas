@@ -34,9 +34,11 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(PHYCAS_ROOT)/phycas/Likelihood/_LikelihoodBase.pyd"
+				AdditionalDependencies="boost_python-vc71-mt-gyd-1_34.lib"
+				OutputFile="$(PHYCAS_ROOT)/phycas/Likelihood/_LikelihoodBase_d.pyd"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(BOOST_ROOT)\stage\lib;$(PYTHON_ROOT)\libs"
+				IgnoreDefaultLibraryNames="boost_python-vc71-mt-gd-1_34.lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/likelihood.pdb"
 				SubSystem="2"
@@ -256,6 +258,12 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			<File
+				RelativePath="..\..\phycas\src\sim_data.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\sim_data.inl">
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"

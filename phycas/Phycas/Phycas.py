@@ -759,8 +759,23 @@ class Phycas:
                 # Add the number of patterns in self.tmp_simdata to the gg_npatterns list
                 self.gg_npatterns.append(self.tmp_simdata.getNUniquePatterns())
 
-                # Add the pattern counts for this data set to gg_mu (later the mean counts will be computed)
-                # begin again here
+                # Update running mean vector gg_mu. A running mean is maintained because
+                # it is easy for the number of counts of constant patterns to overflow
+                # if you wait until the end of the MCMC run to divide by the total.
+                # Here is how the running mean is kept. Assume there will be four numbers
+                # (a, b, c, d) averaged. Thus, the desired quantity is (a+b+c+d)/4.
+                #
+                # gg_num_post_pred_reps   self.gg_mu
+                # ------------------------------------------------------------
+                #           1             a                      = (a)/1
+                #           2             (1/2)a + b/2           = (a+b)/2
+                #           3             (2/3)[(a+b)/2] + c/3   = (a+b+c)/3
+                #           4             (3/4)[(a+b+c)/3] + d/4 = (a+b+c+d)/4
+                # ------------------------------------------------------------
+                #
+                # Note that it is ok if gg_num_post_pred_reps = 1 (in which case
+                # gg_mu is multiplied by zero) because the multBy is a no-op in
+                # this case since gg_mu is empty
                 p = 1.0/self.gg_num_post_pred_reps
                 self.gg_mu.multBy(1.0 - p)
                 self.tmp_simdata.multBy(p)

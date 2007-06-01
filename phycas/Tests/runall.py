@@ -1,6 +1,6 @@
 import os, sys
 
-debugging = True
+debugging = False
 diffUtility = sys.platform == 'win32' and 'fc' or 'diff'
 
 def mcmcOutputs(prefList):
@@ -39,7 +39,10 @@ def runTest(outFile, name, results):
     outStream.close()
     prevDir = os.path.abspath(os.curdir)
     os.chdir(name)
-    if os.system('python %s.py' % name) != 0:
+    interpreter = 'python'
+    if sys.platform == 'win32' and debugging:
+        interpreter = 'python_d'
+    if os.system('%s %s.py' % (interpreter,name)) != 0:
         sys.exit("Script aborted because of failed example")
     for f in results:
         runDiff(f, os.path.join('reference_output', f), outFile)

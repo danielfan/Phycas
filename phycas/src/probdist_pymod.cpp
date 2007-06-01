@@ -25,10 +25,11 @@
 #	define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
 #endif
 
+#include <boost/python.hpp>
+
 #include "basic_lot.hpp"
 #include "probability_distribution.hpp"
 #include "slice_sampler.hpp"
-#include <boost/python.hpp>
 #include "xprobdist.hpp"
 
 using namespace boost::python;

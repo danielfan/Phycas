@@ -21,9 +21,10 @@
 #	pragma warning(disable : 4267) // boost's builtin_converters.hpp casts size_t to int rather than unsigned
 #endif
 
+#include <boost/python.hpp>
+
 //#include "phycas/force_include.h"
 #include "phycas/src/basic_tree.hpp"
-#include <boost/python.hpp>
 //#include <boost/python/tuple.hpp>
 //#include <boost/python/numeric.hpp>
 #if defined(USING_NUMARRAY)

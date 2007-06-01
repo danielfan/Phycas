@@ -34,9 +34,11 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(PHYCAS_ROOT)/phycas/DataMatrix/_DataMatrixBase.pyd"
+				AdditionalDependencies="boost_python-vc71-mt-gyd-1_34.lib"
+				OutputFile="$(PHYCAS_ROOT)/phycas/DataMatrix/_DataMatrixBase_d.pyd"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(BOOST_ROOT)\stage\lib;$(PYTHON_ROOT)\libs"
+				IgnoreDefaultLibraryNames="boost_python-vc71-mt-gd-1_34.lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/data_matrix.pdb"
 				SubSystem="2"

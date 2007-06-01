@@ -25,6 +25,8 @@
 #	define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
 #endif
 
+#include <boost/python.hpp>
+
 //#include "phycas/force_include.h"
 #if defined(POL_PHYCAS)
 #	include "phycas/src/basic_lot.hpp"
@@ -40,7 +42,6 @@
 #include "phycas/src/cond_likelihood_storage.hpp"
 #include "phycas/src/tip_data.hpp"
 #include "phycas/src/internal_data.hpp"
-#include <boost/python.hpp>
 
 #include "phycas/src/xphylogeny.hpp"
 
