@@ -300,12 +300,12 @@ class Phycas:
             self.model = GTRModel()
             self.model.setRelRates([1.0, 4.0, 1.0, 1.0, 4.0, 1.0])
             self.model.setRelRatePrior(self.relrate_prior)
-            self.model.setBaseFreqParamPrior(self.base_freq_param_prior)
+            self.model.setStateFreqParamPrior(self.base_freq_param_prior)
         elif self.default_model == 'hky':
             self.model = HKYModel()
             self.model.setKappa(4.0)
             self.model.setKappaPrior(self.relrate_prior)
-            self.model.setBaseFreqParamPrior(self.base_freq_param_prior)
+            self.model.setStateFreqParamPrior(self.base_freq_param_prior)
         else:
             self.model = JCModel()
 

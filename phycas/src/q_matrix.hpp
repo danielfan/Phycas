@@ -52,6 +52,7 @@ namespace phycas
 class QMatrix
 	{
 	friend class GTR;
+	friend class Codon;
 
 	public:
 		

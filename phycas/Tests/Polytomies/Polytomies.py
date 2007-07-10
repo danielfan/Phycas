@@ -25,7 +25,7 @@ phycas.default_model = 'hky'
 phycas.model = Likelihood.HKYModel()
 phycas.model.setKappa(4.0)
 phycas.model.setKappaPrior(ProbDist.ExponentialDist(1.0))
-phycas.model.setBaseFreqParamPrior(ProbDist.ExponentialDist(1.0))
+phycas.model.setStateFreqParamPrior(ProbDist.ExponentialDist(1.0))
 
 # Create a likelihood object to orchestrate both simulations and likelihood calculations
 phycas.likelihood = Likelihood.TreeLikelihood(phycas.model)

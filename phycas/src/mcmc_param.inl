@@ -56,6 +56,32 @@ inline void KappaParam::update()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Constructor calls the base class (MCMCUpdater) constructor and initializes its Codon pointer to NULL. Also sets the
+|	`curr_value' data member to 1.0 and refreshes `curr_ln_prior' accordingly.
+*/
+inline OmegaParam::OmegaParam()
+  : MCMCUpdater(), codon(NULL)
+	{
+	curr_value = 1.0;
+	has_slice_sampler = true;
+	is_move = false;
+	is_master_param = false;
+	is_hyper_param = false;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Calls the sample() member function of the `slice_sampler' data member.
+*/
+inline void OmegaParam::update()
+	{
+	//@POL should probably put next two lines in Model::update and have Model::update call a virtual Model::updateImpl
+	// because it will be hard to remember to put these lines in every overloaded update function
+	if (is_fixed)
+		return;
+	slice_sampler->Sample();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Constructor calls the base class (MCMCUpdater) constructor and initializes its GTR pointer to NULL. Also sets the
 |	`curr_value' data member to 1.0 and refreshes `curr_ln_prior' accordingly. Assumes `w' is greater than or equal to
 |	zero and less than 6.
@@ -283,12 +309,12 @@ inline void FlexProbParam::update()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	The BaseFreqParam constructor requires the caller to specify a value for `which'. `which' is 0, 1, 2 or 3 and 
-|	determines the particular base frequency (A, C, G or T, respectively) this object represents. It calls the base
-|	class (MCMCUpdater) constructor. Also sets the `curr_value' data member to 1.0 and refreshes `curr_ln_prior' 
-|	accordingly.
+|	The StateFreqParam constructor requires the caller to specify a value for `which'. `which' is 0, 1, 2, or 3 for 
+|	nucleotide models and  determines the particular state frequency (e.g. A, C, G, or T, respectively) this object 
+|	represents. It calls the base class (MCMCUpdater) constructor. Also sets the `curr_value' data member to 1.0 and 
+|	refreshes `curr_ln_prior' accordingly.
 */
-inline BaseFreqParam::BaseFreqParam(
+inline StateFreqParam::StateFreqParam(
   unsigned w)		/**< The 0-based index of the base frequency being managed by this object (0=A, 1=C, 2=G and 3=T) */
   : MCMCUpdater(),  which(w)
 	{
@@ -302,7 +328,7 @@ inline BaseFreqParam::BaseFreqParam(
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calls the sample() member function of the `slice_sampler' data member.
 */
-inline void BaseFreqParam::update()
+inline void StateFreqParam::update()
 	{
 	if (is_fixed)
 		return;

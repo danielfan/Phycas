@@ -458,3 +458,254 @@ class GTRModel(GTRModelBase):
         
         """
         GTRModelBase.setPriorOnShapeInverse(self, invert)
+
+class CodonModel(CodonModelBase):
+    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+    """
+    Encapsulates a codon-based substitution model. This model estimates
+    codon frequencies as well as the transition/transversion rate ratio
+    (kappa) and the nonsynonymous/synonymous rate ratio (omega).
+    
+    """
+    def getModelName(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns the name of this model.
+        
+        """
+        return CodonModelBase.getModelName(self)
+
+    def getNStates(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns the number of states, always 61 for this model (64 possible
+        triplets minus the three stop codons, TAA, TAG and TGA).
+        
+        """
+        return CodonModelBase.getNStates(self)
+
+    def getStateFreqs(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns a tuple comprising the 61 state frequencies (64 possible
+        triplets minus the three stop codons, TAA, TAG and TGA).
+        
+        """
+        return CodonModelBase.getStateFreqs(self)
+
+    def setStateFreqUnnorm(self, i, value):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Sets frequency parameter for state i to value. The codon states are
+        in this order: AAA, AAC, AAG, AAT, ACA, ACC, ACG, ACT, ..., TTT (with
+        the exception of the three stop codons, TAA, TAG and TGA, which are
+        never considered. Note that value can be any non-negative number;
+        there is no need to ensure that it is between 0.0 and 1.0 (although
+        there is nothing wrong with providing normalized frequencies). The
+        61 frequency parameters are normalized for use in all calculations
+        involving state frequencies. Thus, specifying 10 for each of the 61
+        state frequency parameters will result in the relative state
+        frequencies being all set to 1/61.
+        
+        """
+        return CodonModelBase.setStateFreqUnnorm(self, i, value)
+
+    def setAllFreqsEqual(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Sets all 61 state frequencies to 1/61 = 0.01639.
+        
+        """
+        return CodonModelBase.setAllFreqsEqual(self)
+
+    def setNucleotideFreqs(self, freqA, freqC, freqG, freqT):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Sets the 61 codon state frequencies to the values expected based on
+        the four base frequencies provided (all four values provided should
+        greater than or equal to 0.0, but do not need to sum to 1.0). The
+        frequency of a codon is, almost, the product of the three component
+        base frequencies: the "almost" qualification being needed because the
+        three stop codons are not included, so each codon frequency must be
+        corrected by dividing by the sum of the 61 non-stop three-nucleotide
+        products. For example, if the specified base freqencies were 0.1, 0.2,
+        0.3 and 0.4, then the frequency of the ACT codon would be the product
+        (0.1)*(0.2)*(0.4) = 0.008, divided by the sum of all 61 such products,
+        which in this case is 0.972, yielding 0.008/0.971 = 0.00823. Note
+        state frequencies set using this function will be obliterated unless
+        state frequencies are fixed using the fixStateFreqs method.
+        
+        """
+        assert freqA >= 0.0 and freqC >= 0.0 and freqG >= 0.0 and freqT >= 0.0, 'supplied nucleotide frequency parameters must all be > 0'
+        return CodonModelBase.setNucleotideFreqs(self, freqA, freqC, freqG, freqT)
+
+    def fixOmega(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Fixes the value of omega, the nonsynonymous/synonymous rate ratio, to
+        prevent it from being updated or estimated in the future.
+        
+        """
+        return CodonModelBase.fixOmega(self)
+
+    def freeOmega(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Frees the value of omega, the nonsynonymous/synonymous rate ratio,
+        allowing it to be updated or estimated in the future.
+        
+        """
+        return CodonModelBase.freeOmega(self)
+
+    def getOmega(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns the current value of omega, the nonsynonymous/synonymous rate
+        ratio.
+        
+        """
+        return CodonModelBase.getOmega(self)
+
+    def setOmega(self, w):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Sets the value of omega, the nonsynonymous/synonymous rate ratio.
+        
+        """
+        return CodonModelBase.setOmega(self, w)
+
+    def getOmegaPrior(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns the prior distribution of omega, the nonsynonymous/synonymous
+        rate ratio.
+        
+        """
+        return CodonModelBase.getOmegaPrior(self)
+
+    def setOmegaPrior(self, w):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Sets the prior distribution for omega, the nonsynonymous/synonymous
+        rate ratio.
+        
+        """
+        CodonModelBase.setOmegaPrior(self, w)
+
+    def fixKappa(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Fixes the value of kappa, the transition/transversion rate ratio, to
+        prevent it from being updated or estimated in the future.
+        
+        """
+        return CodonModelBase.fixKappa(self)
+
+    def freeKappa(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Frees the value of kappa, the transition/transversion rate ratio,
+        allowing it to be updated or estimated in the future.
+        
+        """
+        return CodonModelBase.freeKappa(self)
+
+    def getKappa(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns the current value of kappa, the transition/transversion rate
+        ratio.
+        
+        """
+        return CodonModelBase.getKappa(self)
+
+    def setKappa(self, k):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Sets the value of kappa, the transition/transversion rate ratio.
+        
+        """
+        CodonModelBase.setKappa(self, k)
+
+    def getKappaPrior(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns the prior distribution for kappa, the transition/transversion
+        rate ratio.
+        
+        """
+        return CodonModelBase.getKappaPrior(self)
+
+    def setKappaPrior(self, p):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Sets the prior distribution for kappa, the transition/transversion
+        rate ratio.
+        
+        """
+        CodonModelBase.setKappaPrior(self, p)
+
+    def getStateFreqParamPrior(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns the current prior distribution for the parameters governing
+        state frequencies.
+        
+        """
+        return CodonModelBase.getStateFreqParamPrior(self)
+
+    def setStateFreqParamPrior(self, p):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Sets prior distribution for the parameters governing state
+        frequencies. These parameters represent unnormalized state
+        frequencies, so a Gamma distribution is appropriate.
+        
+        """
+        CodonModelBase.setStateFreqParamPrior(self, p)
+
+    def getNGammaRates(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns the current number of relative rate categories.
+        
+        """
+        return CodonModelBase.getNGammaRates(self)
+
+    def setNGammaRates(self, n):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Sets the number of relative rate categories to n (n should be greater
+        than zero).
+        
+        """
+        return CodonModelBase.setNGammaRates(self, n)
+
+    def getRateProbs(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns a list in which each element is the probability that any given
+        site falls in its particular rate category.
+        
+        """
+        return CodonModelBase.getRateProbs(self)
+
+    def setAllRateProbsEqual(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Sets all rate probabilities to the inverse of the number of rate
+        categories.
+        
+        """
+        return CodonModelBase.setAllRateProbsEqual(self)
+
+    def setPriorOnShapeInverse(self, invert):    
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        If True is specified, then the gamma shape parameter will actually
+        update the inverse of the shape parameter rather than the shape
+        parameter itself.
+        
+        """
+        CodonModelBase.setPriorOnShapeInverse(self, invert)
+        

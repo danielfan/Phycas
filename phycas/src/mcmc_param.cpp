@@ -123,6 +123,56 @@ double GTRRateParam::operator()(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	This override of the base class virtual function uses dynamic_cast to set the `codon' data member from the supplied
+|	model shared pointer. Having a Codon pointer allows this parameter to call Codon-specific member functions that are
+|	not present in the base class Model (such as setOmega).
+*/
+void OmegaParam::setModel(ModelShPtr m)
+	{
+	MCMCUpdater::setModel(m);
+	Model * p = m.get();
+	codon = dynamic_cast<Codon *>(p);	// forces inclusion of "phycas/src/likelihood_models.hpp"
+
+	//POL tried unsuccessfully to get this to compile as an inlined function, but VC gave me this 
+	// error (which makes sense):
+	//
+	// ...mcmc_param.inl(43) : error C2680: 'phycas::Codon *' : 
+	//  invalid target type for dynamic_cast
+	//  'Codon' : class must be defined before using in a dynamic_cast
+	//
+	// Decided to add this comment because otherwise I will forget this and be tempted to move the 
+	// function back to mcmc_param.inl
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	OmegaParam is a functor whose operator() returns a value proportional to the full-conditional posterior probability 
+|	density for a particular value of omega, the nonsynonymous/synonymous rate ratio. If the supplied omega value `w' is
+|	out of bounds (i.e. <= 0.0), the return value is -DBL_MAX (closest we can come to a log posterior equal to negative
+|	infinity).
+*/
+double OmegaParam::operator()(
+  double w)	/**< is a new value for the parameter omega */
+	{
+	curr_ln_like = ln_zero;
+	curr_ln_prior = 0.0;
+
+	if (w > 0.0)
+		{
+		PHYCAS_ASSERT(codon);
+		codon->setOmega(w);
+		curr_value = w;
+		recalcPrior();
+
+		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
+		curr_ln_like = likelihood->calcLnL(tree);
+		ChainManagerShPtr p = chain_mgr.lock();
+		PHYCAS_ASSERT(p);
+		p->setLastLnLike(curr_ln_like);
+		}
+	return curr_ln_like + curr_ln_prior;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	DiscreteGammaShapeParam is a functor whose operator() returns a value proportional to the full-conditional posterior
 |	probability density for a particular value of the gamma shape parameter. If the supplied gamma shape value `a' is
 |	out of bounds (i.e. <= 0.0), the return value is -DBL_MAX (closest we can come to a log posterior equal to negative
@@ -180,14 +230,14 @@ double PinvarParam::operator()(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	BaseFreqParam is a functor whose operator() returns a value proportional to the full-conditional posterior 
+|	StateFreqParam is a functor whose operator() returns a value proportional to the full-conditional posterior 
 |	probability density for a particular value of f, the quantity governing a particular relative base frequency (but 
 |	f is not a relative base frequency itself, as it is not constrained to lie between 0.0 and 1.0, nor is it 
 |	constrained by any of the analogous quantities governing the other three base frequencies. If the supplied base 
 |	frequency parameter value `f' is out of bounds (i.e. <= 0.0), the return value is -DBL_MAX (closest we can come to 
 |	a log posterior equal to negative infinity).
 */
-double BaseFreqParam::operator()(
+double StateFreqParam::operator()(
   double f) /**< is a new value for the base frequency parameter */
 	{
 	curr_ln_like = ln_zero;
@@ -197,8 +247,8 @@ double BaseFreqParam::operator()(
 		{
 		PHYCAS_ASSERT(which < 4);
 		model->setStateFreqUnnorm(which, f);
-		//base_freq.freqs[which] = f;
-        //model.normalizeFreqs(base_freq.freqs);
+		//state_freq.freqs[which] = f;
+        //model.normalizeFreqs(state_freq.freqs);
         curr_value = f;
 		recalcPrior();
 		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs

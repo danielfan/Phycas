@@ -12,7 +12,7 @@ phycas.model.setKappaPrior(ProbDist.ExponentialDist(1.0))
 
 phycas.model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
 phycas.model.fixStateFreqs()
-phycas.model.setBaseFreqParamPrior(ProbDist.ExponentialDist(1.0))
+phycas.model.setStateFreqParamPrior(ProbDist.ExponentialDist(1.0))
 
 phycas.model.setNGammaRates(4)
 phycas.model.setShape(0.14)

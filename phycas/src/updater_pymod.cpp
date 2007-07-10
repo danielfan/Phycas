@@ -69,8 +69,8 @@ void updater_pymod()
 	class_<phycas::GTRRateParam, bases<phycas::MCMCUpdater, AdHocDensity>, 
 		boost::noncopyable, boost::shared_ptr<phycas::GTRRateParam> >("GTRRateParam", init<unsigned>())
 		;
-	class_<phycas::BaseFreqParam, bases<phycas::MCMCUpdater, AdHocDensity>, 
-		boost::noncopyable, boost::shared_ptr<phycas::BaseFreqParam> >("BaseFreqParam", init<unsigned>()) 
+	class_<phycas::StateFreqParam, bases<phycas::MCMCUpdater, AdHocDensity>, 
+		boost::noncopyable, boost::shared_ptr<phycas::StateFreqParam> >("StateFreqParam", init<unsigned>()) 
 		;
 	class_<phycas::HyperPriorParam, bases<phycas::MCMCUpdater, AdHocDensity>, 
 		boost::noncopyable, boost::shared_ptr<phycas::HyperPriorParam> >("HyperPriorParam") 

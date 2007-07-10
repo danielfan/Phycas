@@ -64,6 +64,9 @@ class Model	{
 		virtual std::string				paramHeader() const = 0;
 		virtual std::string				paramReport() const = 0;
 
+		// Query functions
+		bool							isCodonModel() const;
+
 		// Member functions related to relative state frequencies
 		unsigned						getNStates() const;
 		const std::vector<double>	&	getStateFreqs() const;
@@ -160,6 +163,7 @@ protected:
 	mutable MCMCUpdaterVect			edgelen_params;				/**< Vector of shared pointers to the edge length parameters (need to retain pointers to these so that their fixed/free status can be changed) */
 	bool							edge_lengths_fixed;			/**< If true, the value of the edge lengths will not change during MCMC updates */
 	bool							edgelen_hyperprior_fixed;	/**< If true, the value of the edge length hyperprior will not change during MCMC updates */
+	bool							is_codon_model;				/**< If true, nucleotide states will be interpreted as triplets when creating TipData structures for tree */
 	bool							is_pinvar_model;			/**< If true, a parameter for pinvar will be added to MCMC analysis (pinvar_fixed determines whether it is updated or not) */
 	bool							is_flex_model;				/**< If true, the FLEX model of rate heterogeneity will be used instead of the discrete gamma model */
 	mutable double					flex_upper_rate_bound;		/**< Largest possible unnormalized relative rate parameter value (lower bound is always 0.0) */
@@ -225,8 +229,8 @@ class HKY: public Model
 		void						setKappa(double k);
 		void						setKappaPrior(ProbDistShPtr d);
 		ProbDistShPtr				getKappaPrior();
-		void						setBaseFreqParamPrior(ProbDistShPtr d);
-		ProbDistShPtr				getBaseFreqParamPrior();
+		void						setStateFreqParamPrior(ProbDistShPtr d);
+		ProbDistShPtr				getStateFreqParamPrior();
 		void						setKappaFromTRatio(double tratio);
 		double						calcTRatio();
 		virtual std::string			paramHeader() const;
@@ -268,8 +272,8 @@ class GTR: public Model
 		void						setNucleotideFreqs(double freqA, double freqC, double freqG, double freqT);
 		void						setAllFreqsEqual();
 		void						setStateFreqUnnorm(unsigned param_index, double value);
-		void						setBaseFreqParamPrior(ProbDistShPtr d);
-		ProbDistShPtr				getBaseFreqParamPrior();
+		void						setStateFreqParamPrior(ProbDistShPtr d);
+		ProbDistShPtr				getStateFreqParamPrior();
 		virtual std::string			paramHeader() const;
 		virtual std::string			paramReport() const;
 		double						calcTRatio();
@@ -285,6 +289,73 @@ class GTR: public Model
 	};
 
 typedef boost::shared_ptr<GTR> GTRShPtr;
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Specialization of the base class Model that represents a basic codon model. The parameter kappa is the 
+|	transition/transversion rate ratio, and the parameter omega is the nonsynonymous/synonymous rate ratio. This model
+|	also provides parameters for estimating the 61 non-stop-codon frequencies. 
+*/
+class Codon: public Model
+	{
+	public:
+									Codon();
+									~Codon()
+										{
+										//std::cerr << "Codon dying..." << std::endl;
+										}
+
+		virtual std::string			getModelName() const;	//ok
+
+		virtual void				setAllFreqsEqual();	//ok
+		virtual void				setNucleotideFreqs(double freqA, double freqC, double freqG, double freqT);	//ok
+
+		void						fixKappa();	//ok
+		void						freeKappa();	//ok
+
+		void						fixOmega();	//ok
+		void						freeOmega();	//ok
+
+		double						getKappa();	//ok
+		void						setKappa(double k);	//ok
+
+		double						getOmega();	//ok
+		void						setOmega(double w);	//ok
+
+		void						setKappaPrior(ProbDistShPtr d);	//ok
+		ProbDistShPtr				getKappaPrior();	//ok
+
+		void						setOmegaPrior(ProbDistShPtr d);	//ok
+		ProbDistShPtr				getOmegaPrior();	//ok
+
+		void						setStateFreqParamPrior(ProbDistShPtr d);
+		ProbDistShPtr				getStateFreqParamPrior();
+
+		virtual std::string			paramHeader() const;
+		virtual std::string			paramReport() const;
+
+		void						updateQMatrix() const;
+		virtual void				createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterShPtr & edgelen_hyperparam, MCMCUpdaterVect & parameters, bool separate_edgelens) const;
+		void						calcPMat(double * * pMat, double edgeLength) const;
+
+protected:
+	
+	double						kappa;				/**< The transition/transversion rate ratio */
+	ProbDistShPtr				kappa_prior;		/**< The prior distribution governing kappa */
+
+	double						omega;				/**< The nonsynonymous/synonymous rate ratio */
+	ProbDistShPtr				omega_prior;		/**< The prior distribution governing omega */
+
+	ProbDistShPtr				freq_param_prior;	/**< The prior distribution governing each frequency parameter */
+
+	bool						kappa_fixed;		/**< If true, the value of kappa will not change during MCMC updates */
+	bool						omega_fixed;		/**< If true, the value of omega will not change during MCMC updates */
+
+	mutable MCMCUpdaterShPtr	omega_param;		/**< Copy of the omega parameter (saved so that fixed/free status can be changed) */
+	mutable MCMCUpdaterShPtr	kappa_param;		/**< Copy of the kappa parameter (saved so that fixed/free status can be changed) */
+	mutable QMatrix				q_matrix;			/**< A QMatrix object used to compute transition probabilities */
+	};
+
+typedef boost::shared_ptr<Codon> CodonShPtr;
 
 } // namespace phycas
 

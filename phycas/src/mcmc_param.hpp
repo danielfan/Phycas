@@ -62,6 +62,30 @@ class KappaParam : public MCMCUpdater
 		HKY *			hky;
 	};
 
+class Codon;
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Encapsulates the nonsynonymous/synonymous rate ratio parameter of a codon model. This parameter is commonly 
+|	symbolized using the Greek letter omega, hence the name.
+*/
+class OmegaParam : public MCMCUpdater
+	{
+	public:
+						OmegaParam();
+						virtual ~OmegaParam() 
+							{
+							//std::cerr << "OmegaParam dying..." << std::endl;
+							}
+
+		virtual void	setModel(ModelShPtr p);
+		virtual void	update();				// override virtual from MCMCUpdater base class
+		virtual double	operator()(double k);	// override pure virtual from AdHocDensity (base class of MCMCUpdater)
+
+	private:
+
+		Codon *			codon;
+	};
+
 class GTR;
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -181,17 +205,17 @@ class FlexProbParam : public MCMCUpdater
 };
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Encapsulates a base frequency parameter. More precisely, this class encapsulates a parameter that governs a base
-|	frequency. Because all four base frequencies must add to 1.0, the value of this parameter and the other three 
-|	parameter values must be normalized so that the model has a correct set of base frequencies.
+|	Encapsulates a state frequency parameter. More precisely, this class encapsulates a parameter that governs a state
+|	frequency. Because all state frequencies must add to 1.0, the value of this parameter and the other parameter values
+|	must be normalized so that the model has a correct set of state frequencies.
 */
-class BaseFreqParam : public MCMCUpdater
+class StateFreqParam : public MCMCUpdater
 {
 	public:
-							BaseFreqParam(unsigned w);
-							virtual ~BaseFreqParam()
+							StateFreqParam(unsigned w);
+							virtual ~StateFreqParam()
 								{
-								//std::cerr << "BaseFreqParam dying..." << std::endl;
+								//std::cerr << "StateFreqParam dying..." << std::endl;
 								}
 	
 		virtual void		update();				// override virtual from MCMCUpdater base class

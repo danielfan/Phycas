@@ -32,6 +32,74 @@
 #include <numeric>
 #include "phycas/src/edge_iterators.hpp"
 
+static int8_t codon_state_codes[] =
+	{
+	0,  // 0 AAA
+	1,  // 1 AAC
+	2,  // 2 AAG
+	3,  // 3 AAT
+	4,  // 4 ACA
+	5,  // 5 ACC
+	6,  // 6 ACG
+	7,  // 7 ACT
+	8,  // 8 AGA
+	9,  // 9 AGC
+	10, // 10 AGG
+	11, // 11 AGT
+	12, // 12 ATA
+	13, // 13 ATC
+	14, // 14 ATG
+	15, // 15 ATT
+	16, // 16 CAA
+	17, // 17 CAC
+	18, // 18 CAG
+	19, // 19 CAT
+	20, // 20 CCA
+	21, // 21 CCC
+	22, // 22 CCG
+	23, // 23 CCT
+	24, // 24 CGA
+	25, // 25 CGC
+	26, // 26 CGG
+	27, // 27 CGT
+	28, // 28 CTA
+	29, // 29 CTC
+	30, // 30 CTG
+	31, // 31 CTT
+	32, // 32 GAA
+    33, // 33 GAC
+	34, // 34 GAG
+	35, // 35 GAT
+	36, // 36 GCA
+	37, // 37 GCC
+	38, // 38 GCG
+	39, // 39 GCT
+	40, // 40 GGA
+	41, // 41 GGC
+	42, // 42 GGG
+	43, // 43 GGT
+	44, // 44 GTA
+	45, // 45 GTC
+	46, // 46 GTG
+	47, // 47 GTT
+	61, // 48 TAA stop
+	48, // 49 TAC
+	61, // 50 TAG stop
+	49, // 51 TAT
+	50, // 52 TCA
+	51, // 53 TCC
+	52, // 54 TCG
+	53, // 55 TCT
+	61, // 56 TGA stop
+	54, // 57 TGC
+	55, // 58 TGG
+	56, // 59 TGT
+	57, // 60 TTA
+	58, // 61 TTC
+	59, // 62 TTG
+	60  // 63 TTT
+	};
+
 namespace phycas
 {
 
@@ -1189,7 +1257,7 @@ double TreeLikelihood::calcLnLFromNode(
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Allocates the TipData data structure needed to store the data for one tip (the tip corresponding to the supplied
-|	`row' index in the data matrix `mat'. Returns a pointer to the newly-created TipData structure. See documentation 
+|	`row' index in the data matrix `mat'). Returns a pointer to the newly-created TipData structure. See documentation 
 |	for the TipData structure for more explanation.
 */
 TipData * TreeLikelihood::allocateTipData(  //POLBM TreeLikelihood::allocateTipData
@@ -1210,34 +1278,74 @@ TipData * TreeLikelihood::allocateTipData(  //POLBM TreeLikelihood::allocateTipD
 	// determine which local state code it represents, and build up the tipSpecificStateCode array
 	// as we go.
 	unsigned i = 0;
-	for (PatternMapType::const_iterator it = pattern_map.begin(); it != pattern_map.end(); ++it, ++i)
+#if 0
+	if (model->isCodonModel())
 		{
-		const int8_t globalStateCode = (it->first)[row];
+		// Read three nucleotides at a time and interpret the triplet as a codon state
+		//@POL Currently, any ambiguity at any codon position results in a missing data entry for the codon state
+		for (PatternMapType::const_iterator it = pattern_map.begin(); it != pattern_map.end(); ++it, ++i)
+			{
+			const int8_t globalStateCode = (it->first)[row];
 
-		if (globalStateCode < nsPlusOne)
-			{
-			// no partial ambiguity, but may be gap state
-			tipSpecificStateCode[i] = (globalStateCode < 0 ? ns : globalStateCode);
-			}
-		else
-			{
-			// partial ambiguity
-			foundElement = globalToLocal.find(globalStateCode);
-			if (foundElement == globalToLocal.end())
+			if (globalStateCode < nsPlusOne)
 				{
-				// state code needs to be added to map
-				globalToLocal[globalStateCode] = nPartialAmbig + nsPlusOne;
-				stateListVec.push_back(state_list_pos[globalStateCode]);
-				tipSpecificStateCode[i] = nPartialAmbig + nsPlusOne;
-				nPartialAmbig++;
+				// no partial ambiguity, but may be gap state
+				tipSpecificStateCode[i] = (globalStateCode < 0 ? ns : globalStateCode);
 				}
 			else
 				{
-				// state code is already in the map
-				tipSpecificStateCode[i] = foundElement->second;
+				// partial ambiguity
+				foundElement = globalToLocal.find(globalStateCode);
+				if (foundElement == globalToLocal.end())
+					{
+					// state code needs to be added to map
+					globalToLocal[globalStateCode] = nPartialAmbig + nsPlusOne;
+					stateListVec.push_back(state_list_pos[globalStateCode]);
+					tipSpecificStateCode[i] = nPartialAmbig + nsPlusOne;
+					nPartialAmbig++;
+					}
+				else
+					{
+					// state code is already in the map
+					tipSpecificStateCode[i] = foundElement->second;
+					}
 				}
 			}
 		}
+	else
+		{
+#endif
+		for (PatternMapType::const_iterator it = pattern_map.begin(); it != pattern_map.end(); ++it, ++i)
+			{
+			const int8_t globalStateCode = (it->first)[row];
+
+			if (globalStateCode < nsPlusOne)
+				{
+				// no partial ambiguity, but may be gap state
+				tipSpecificStateCode[i] = (globalStateCode < 0 ? ns : globalStateCode);
+				}
+			else
+				{
+				// partial ambiguity
+				foundElement = globalToLocal.find(globalStateCode);
+				if (foundElement == globalToLocal.end())
+					{
+					// state code needs to be added to map
+					globalToLocal[globalStateCode] = nPartialAmbig + nsPlusOne;
+					stateListVec.push_back(state_list_pos[globalStateCode]);
+					tipSpecificStateCode[i] = nPartialAmbig + nsPlusOne;
+					nPartialAmbig++;
+					}
+				else
+					{
+					// state code is already in the map
+					tipSpecificStateCode[i] = foundElement->second;
+					}
+				}
+			}
+#if 0
+		}
+#endif
 
 #	if 0
 		//POL-debug
@@ -1623,42 +1731,105 @@ unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix &
 	typedef std::list<unsigned> IndexList;
 	typedef std::map<VecStateList, IndexList> PatternToIndex;
 	PatternToIndex patternToIndex;
-	
-	// Loop across each site in mat
-	for (unsigned j = 0; j < nchar; ++j)
-		{
-		// Build up a vector representing the pattern of state codes at this site
-		std::vector<int8_t> pattern;
-		for (unsigned i = 0; i < ntax; ++i)
-			{
-			const int8_t * row  = mat.getRow(i);
-			const int8_t   code = row[j];
-			pattern.push_back(code);
-			}
 
-		// Add the pattern to the map if it has not yet been seen, otherwise increment 
-		// the count of this pattern if it is already in the map (see item 24, p. 110, in Meyers' Efficient STL)
-		PatternMapType::iterator lowb = pattern_map.lower_bound(pattern);
-		if (lowb != pattern_map.end() && !(pattern_map.key_comp()(pattern, lowb->first)))
+	if (model->isCodonModel()) //@POL could move this test inside the taxon-loop to avoid being so redundant
+		{
+		// Loop across each triplet of sites in mat
+		for (unsigned j = 0; j < nchar; j += 3)
 			{
-			// pattern is already in pattern_map, increment count
-			lowb->second += 1.0;
+			// Suppose nchar=5 and j=3: not enough sites to make a second codon. In this example,
+			// j+2 = 5, which equals nchar, so break out of loop over sites
+			if (j+2 >= nchar)
+				break;
+
+			// Build up a vector representing the pattern of state codes at this site
+			std::vector<int8_t> pattern;
+			for (unsigned i = 0; i < ntax; ++i)
+				{
+				const int8_t * row  = mat.getRow(i);
+				const int8_t   code1 = row[j];
+				const int8_t   code2 = row[j+1];
+				const int8_t   code3 = row[j+2];
+				bool code1_ok = (code1 >= 0 && code1 < 4);
+				bool code2_ok = (code2 >= 0 && code2 < 4);
+				bool code3_ok = (code3 >= 0 && code3 < 4);
+				if (code1_ok && code2_ok && code3_ok)
+					{
+                    const int8_t code = codon_state_codes[16*code1 + 4*code2 + code3]; // CGT = 27 = 16*1 + 4*2 + 3
+					if (code > 60)
+						throw XLikelihood(str(boost::format("Stop codon encountered for taxon %d at sites %d-%d") % (i+1) % (j+1) % (j+4)));
+					pattern.push_back(code);
+					}
+				else
+					pattern.push_back((int8_t)61);
+				}
+
+			//@POL below here same as the else block
+
+			// Add the pattern to the map if it has not yet been seen, otherwise increment 
+			// the count of this pattern if it is already in the map (see item 24, p. 110, in Meyers' Efficient STL)
+			PatternMapType::iterator lowb = pattern_map.lower_bound(pattern);
+			if (lowb != pattern_map.end() && !(pattern_map.key_comp()(pattern, lowb->first)))
+				{
+				// pattern is already in pattern_map, increment count
+				lowb->second += 1.0;
+				}
+			else
+				{
+				// pattern has not yet been stored in pattern_map
+				pattern_map.insert(lowb, PatternMapType::value_type(pattern, 1));
+				}
+			
+			// Add the pattern to the map if it has not yet been seen, otherwise increment 
+			// the count of this pattern if it is already in the map (see item 24, p. 110, in Meyers' Efficient STL)
+			PatternToIndex::iterator pToILowB = patternToIndex.lower_bound(pattern);
+			if (pToILowB != patternToIndex.end() && !(patternToIndex.key_comp()(pattern, pToILowB->first)))
+				pToILowB->second.push_back(j);
+			else
+				{
+				IndexList ilist(1, j);
+				patternToIndex.insert(pToILowB, PatternToIndex::value_type(pattern, ilist));
+				}
 			}
-		else
+		}
+	else
+		{
+		// Loop across each site in mat
+		for (unsigned j = 0; j < nchar; ++j)
 			{
-			// pattern has not yet been stored in pattern_map
-			pattern_map.insert(lowb, PatternMapType::value_type(pattern, 1));
-			}
-		
-		// Add the pattern to the map if it has not yet been seen, otherwise increment 
-		// the count of this pattern if it is already in the map (see item 24, p. 110, in Meyers' Efficient STL)
-		PatternToIndex::iterator pToILowB = patternToIndex.lower_bound(pattern);
-		if (pToILowB != patternToIndex.end() && !(patternToIndex.key_comp()(pattern, pToILowB->first)))
-			pToILowB->second.push_back(j);
-		else
-			{
-			IndexList ilist(1, j);
-			patternToIndex.insert(pToILowB, PatternToIndex::value_type(pattern, ilist));
+			// Build up a vector representing the pattern of state codes at this site
+			std::vector<int8_t> pattern;
+			for (unsigned i = 0; i < ntax; ++i)
+				{
+				const int8_t * row  = mat.getRow(i);
+				const int8_t   code = row[j];
+				pattern.push_back(code);
+				}
+
+			// Add the pattern to the map if it has not yet been seen, otherwise increment 
+			// the count of this pattern if it is already in the map (see item 24, p. 110, in Meyers' Efficient STL)
+			PatternMapType::iterator lowb = pattern_map.lower_bound(pattern);
+			if (lowb != pattern_map.end() && !(pattern_map.key_comp()(pattern, lowb->first)))
+				{
+				// pattern is already in pattern_map, increment count
+				lowb->second += 1.0;
+				}
+			else
+				{
+				// pattern has not yet been stored in pattern_map
+				pattern_map.insert(lowb, PatternMapType::value_type(pattern, 1));
+				}
+			
+			// Add the pattern to the map if it has not yet been seen, otherwise increment 
+			// the count of this pattern if it is already in the map (see item 24, p. 110, in Meyers' Efficient STL)
+			PatternToIndex::iterator pToILowB = patternToIndex.lower_bound(pattern);
+			if (pToILowB != patternToIndex.end() && !(patternToIndex.key_comp()(pattern, pToILowB->first)))
+				pToILowB->second.push_back(j);
+			else
+				{
+				IndexList ilist(1, j);
+				patternToIndex.insert(pToILowB, PatternToIndex::value_type(pattern, ilist));
+				}
 			}
 		}
 

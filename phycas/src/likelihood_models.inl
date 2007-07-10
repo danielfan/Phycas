@@ -39,6 +39,7 @@ inline Model::Model(
 	state_freq_fixed(false),
 	edge_lengths_fixed(false),	
 	edgelen_hyperprior_fixed(false),
+	is_codon_model(false),
 	is_pinvar_model(false),
 	is_flex_model(false),
 	flex_upper_rate_bound(1.0),
@@ -60,6 +61,14 @@ inline Model::Model(
 inline Model::~Model()
 	{
 	//std::cerr << "Model dying..." << std::endl;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	The virtual destructor does nothing.
+*/
+inline bool Model::isCodonModel() const
+	{
+	return is_codon_model;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -412,7 +421,7 @@ inline void Model::freeEdgeLenHyperprior()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Sets the data member `state_freq_fixed' to true. The fixParameter member function of all BaseFreqParam objects is 
+|	Sets the data member `state_freq_fixed' to true. The fixParameter member function of all StateFreqParam objects is 
 |	either called immediately (if the `freq_params' vector is not empty) or is called in createParameters (when 
 |	`freq_params' is built).
 */
@@ -428,7 +437,7 @@ inline void Model::fixStateFreqs()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Sets the data member `state_freq_fixed' to false. The freeParameter member function of all BaseFreqParam objects is 
+|	Sets the data member `state_freq_fixed' to false. The freeParameter member function of all StateFreqParam objects is 
 |	called immediately if the `freq_params' vector is not empty.
 */
 inline void Model::freeStateFreqs()
@@ -1051,7 +1060,7 @@ inline void	HKY::createParameters(
 
 	PHYCAS_ASSERT(freq_params.empty());
 
-	MCMCUpdaterShPtr freqA_param = MCMCUpdaterShPtr(new BaseFreqParam(0));
+	MCMCUpdaterShPtr freqA_param = MCMCUpdaterShPtr(new StateFreqParam(0));
 	freqA_param->setName("base freq. A");
 	freqA_param->setTree(t);
 	freqA_param->setStartingValue(1.0);
@@ -1061,7 +1070,7 @@ inline void	HKY::createParameters(
 	parameters.push_back(freqA_param);
 	freq_params.push_back(freqA_param);
 
-	MCMCUpdaterShPtr freqC_param = MCMCUpdaterShPtr(new BaseFreqParam(1));
+	MCMCUpdaterShPtr freqC_param = MCMCUpdaterShPtr(new StateFreqParam(1));
 	freqC_param->setName("base freq. C");
 	freqC_param->setTree(t);
 	freqC_param->setStartingValue(1.0);
@@ -1071,7 +1080,7 @@ inline void	HKY::createParameters(
 	parameters.push_back(freqC_param);
 	freq_params.push_back(freqC_param);
 
-	MCMCUpdaterShPtr freqG_param = MCMCUpdaterShPtr(new BaseFreqParam(2));
+	MCMCUpdaterShPtr freqG_param = MCMCUpdaterShPtr(new StateFreqParam(2));
 	freqG_param->setName("base freq. G");
 	freqG_param->setTree(t);
 	freqG_param->setStartingValue(1.0);
@@ -1081,7 +1090,7 @@ inline void	HKY::createParameters(
 	parameters.push_back(freqG_param);
 	freq_params.push_back(freqG_param);
 
-	MCMCUpdaterShPtr freqT_param = MCMCUpdaterShPtr(new BaseFreqParam(3));
+	MCMCUpdaterShPtr freqT_param = MCMCUpdaterShPtr(new StateFreqParam(3));
 	freqT_param->setName("base freq. T");
 	freqT_param->setTree(t);
 	freqT_param->setStartingValue(1.0);
@@ -1228,7 +1237,7 @@ inline void HKY::setKappaPrior(ProbDistShPtr d)
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns current value of data member `freq_param_prior'.
 */
-inline ProbDistShPtr HKY::getBaseFreqParamPrior()
+inline ProbDistShPtr HKY::getStateFreqParamPrior()
  	{
 	return freq_param_prior;
 	}
@@ -1236,7 +1245,7 @@ inline ProbDistShPtr HKY::getBaseFreqParamPrior()
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets `freq_param_prior' data member to the supplied ProbabilityDistribution shared pointer `d'.
 */
-inline void HKY::setBaseFreqParamPrior(ProbDistShPtr d)
+inline void HKY::setStateFreqParamPrior(ProbDistShPtr d)
  	{
 	freq_param_prior = d;
 	}
@@ -1434,7 +1443,7 @@ inline void	GTR::createParameters(
 
 	PHYCAS_ASSERT(freq_params.empty());
 
-	MCMCUpdaterShPtr freqA_param = MCMCUpdaterShPtr(new BaseFreqParam(0));
+	MCMCUpdaterShPtr freqA_param = MCMCUpdaterShPtr(new StateFreqParam(0));
 	freqA_param->setName("base freq. A");
 	freqA_param->setTree(t);
 	freqA_param->setStartingValue(1.0);
@@ -1444,7 +1453,7 @@ inline void	GTR::createParameters(
 	parameters.push_back(freqA_param);
 	freq_params.push_back(freqA_param);
 
-	MCMCUpdaterShPtr freqC_param = MCMCUpdaterShPtr(new BaseFreqParam(1));
+	MCMCUpdaterShPtr freqC_param = MCMCUpdaterShPtr(new StateFreqParam(1));
 	freqC_param->setName("base freq. C");
 	freqC_param->setTree(t);
 	freqC_param->setStartingValue(1.0);
@@ -1454,7 +1463,7 @@ inline void	GTR::createParameters(
 	parameters.push_back(freqC_param);
 	freq_params.push_back(freqC_param);
 
-	MCMCUpdaterShPtr freqG_param = MCMCUpdaterShPtr(new BaseFreqParam(2));
+	MCMCUpdaterShPtr freqG_param = MCMCUpdaterShPtr(new StateFreqParam(2));
 	freqG_param->setName("base freq. G");
 	freqG_param->setTree(t);
 	freqG_param->setStartingValue(1.0);
@@ -1464,7 +1473,7 @@ inline void	GTR::createParameters(
 	parameters.push_back(freqG_param);
 	freq_params.push_back(freqG_param);
 
-	MCMCUpdaterShPtr freqT_param = MCMCUpdaterShPtr(new BaseFreqParam(3));
+	MCMCUpdaterShPtr freqT_param = MCMCUpdaterShPtr(new StateFreqParam(3));
 	freqT_param->setName("base freq. T");
 	freqT_param->setTree(t);
 	freqT_param->setStartingValue(1.0);
@@ -1639,7 +1648,7 @@ inline void GTR::setStateFreqUnnorm(
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns current value of data member `freq_param_prior'.
 */
-inline ProbDistShPtr GTR::getBaseFreqParamPrior()
+inline ProbDistShPtr GTR::getStateFreqParamPrior()
  	{
 	return freq_param_prior;
 	}
@@ -1647,7 +1656,7 @@ inline ProbDistShPtr GTR::getBaseFreqParamPrior()
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets `freq_param_prior' data member to the supplied ProbabilityDistribution shared pointer `d'.
 */
-inline void GTR::setBaseFreqParamPrior(ProbDistShPtr d)
+inline void GTR::setStateFreqParamPrior(ProbDistShPtr d)
  	{
 	freq_param_prior = d;
 	}

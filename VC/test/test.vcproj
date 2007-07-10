@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="phylogeny"
-	ProjectGUID="{38A3E6E4-E1A1-4274-902F-C0F7DC646891}"
+	Name="test"
+	ProjectGUID="{C13B92F4-A091-4D5E-BC9C-C5A3B14FA0DE}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -14,13 +14,13 @@
 			Name="Debug|Win32"
 			OutputDirectory="Debug"
 			IntermediateDirectory="Debug"
-			ConfigurationType="2"
+			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(PYTHON_ROOT)\include;$(PHYCAS_ROOT);$(BOOST_ROOT)"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;PHYLOGENY_EXPORTS"
+				AdditionalIncludeDirectories="&quot;$(CIPRES_LIB_ROOT)\C++&quot;;&quot;$(PYTHON_ROOT)\include&quot;;&quot;$(PHYCAS_ROOT)&quot;;&quot;$(BOOST_ROOT)&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -34,15 +34,13 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="boost_python-vc71-mt-gyd-1_34.lib"
-				OutputFile="$(PHYCAS_ROOT)\phycas\Phylogeny\_Phylogeny_d.pyd"
+				AdditionalDependencies="python24.lib boost_python.lib"
+				OutputFile="$(OutDir)/test.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(BOOST_ROOT)\stage\lib;$(PYTHON_ROOT)\libs"
-				IgnoreDefaultLibraryNames="boost_python-vc71-mt-gd-1_34.lib"
+				AdditionalLibraryDirectories="&quot;$(BOOST_ROOT)\libs\python\build\bin-stage&quot;;$(PYTHON_ROOT)\libs"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/phylogeny.pdb"
-				SubSystem="2"
-				ImportLibrary="$(OutDir)/phylogeny.lib"
+				ProgramDatabaseFile="$(OutDir)/test.pdb"
+				SubSystem="1"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -69,14 +67,12 @@
 			Name="Release|Win32"
 			OutputDirectory="Release"
 			IntermediateDirectory="Release"
-			ConfigurationType="2"
+			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(PYTHON_ROOT)\include;$(PHYCAS_ROOT);$(BOOST_ROOT)"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;PHYLOGENY_EXPORTS"
-				RuntimeLibrary="2"
-				RuntimeTypeInfo="TRUE"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				RuntimeLibrary="4"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
@@ -86,14 +82,12 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(PHYCAS_ROOT)\phycas\Phylogeny\_Phylogeny.pyd"
+				OutputFile="$(OutDir)/test.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(BOOST_ROOT)\stage\lib;$(PYTHON_ROOT)\libs"
 				GenerateDebugInformation="TRUE"
-				SubSystem="2"
+				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				ImportLibrary="$(OutDir)/phylogeny.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -125,31 +119,19 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath="..\..\phycas\src\basic_lot.cpp">
+				RelativePath="..\..\src\boost_assertion_failed.cpp">
 			</File>
 			<File
-				RelativePath="..\..\phycas\src\basic_tree.cpp">
-			</File>
-			<File
-				RelativePath="..\..\phycas\src\basic_tree_node.cpp">
-			</File>
-			<File
-				RelativePath="..\..\phycas\src\boost_assertion_failed.cpp">
-			</File>
-			<File
-				RelativePath="..\..\phycas\src\phycas_string.cpp">
-			</File>
-			<File
-				RelativePath="..\..\phycas\src\phylogeny_pymod.cpp">
-			</File>
-			<File
-				RelativePath="..\..\phycas\src\tree_manip.cpp">
+				RelativePath=".\test.cpp">
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			<File
+				RelativePath=".\test.hpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
@@ -158,5 +140,8 @@
 		</Filter>
 	</Files>
 	<Globals>
+		<Global
+			Name="DevPartner_IsInstrumented"
+			Value="0"/>
 	</Globals>
 </VisualStudioProject>
