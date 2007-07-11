@@ -40,6 +40,7 @@ void TreeManip::setRandomEdgeLens(ProbDistShPtr d)
 		{
 		nd->SetEdgeLen(d->Sample());
 		}
+    tree->hasEdgeLens = true;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

@@ -1,5 +1,4 @@
 import os, sys, time, math, threading
-import os, sys, time, math, threading
 from phycas.Conversions import *
 from phycas.DataMatrix import *
 from phycas.Likelihood import *
@@ -10,118 +9,17 @@ from phycas.ReadNexus import *
 class Phycas:
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
-    Performs a phylogenetic MCMC analysis. The tree topology and edge
-    lengths are updated via the Metropolis-Hastings algorithm (using the
-    Larget-Simon LOCAL move without a molecular clock). Slice sampling is
-    used to update all model parameters except edge lengths.
+    Performs a Bayesian phylogenetic MCMC analysis. The tree topology and
+    edge lengths are updated via the Metropolis-Hastings algorithm (using
+    the Larget-Simon LOCAL move without a molecular clock). Slice 
+    sampling is used to update all model parameters except edge lengths.
 
-    The following example reads a nexus data file, specifies a tree
-    topology and runs a Markov chain sampler for 100 cycles using the HKY
-    model.
+    For examples of how to use Phycas, see the Examples folder:
+    phycas/Phycas/Phycas.py   <-- you are here
+    phycas/Examples           <-- here is the Examples directory
 
-    >>> from phycas import *
-    >>> mcmc = Phycas()
-    >>> mcmc.data_source = 'file'
-    >>> mcmc.data_file_name = '../Tests/Data/nyldna4.nex'
-    >>> mcmc.starting_tree_source = 'random'
-    >>> mcmc.ls_move_weight = 10
-    >>> mcmc.slice_weight = 1
-    >>> mcmc.ncycles = 100
-    >>> mcmc.sample_every = 10
-    >>> mcmc.report_every = 10
-    >>> mcmc.adapt_first = 25
-    >>> mcmc.random_seed = '13579'
-    >>> mcmc.default_model = 'hky'
-    >>> mcmc.verbose = True
-    >>> mcmc.setup()
-    >>> mcmc.run() # doctest:+ELLIPSIS
-    Data source:    ../Tests/Data/nyldna4.nex
-    No. cycles:     100
-    Sample every:   10
-    Starting tree:  (1:0.04536,(2:0.01124,4:0.17084):0.02834,3:0.00102)
-    No. samples:    10
-    ...
-    Tip node numbers were set using the names in the tree description
-    Starting log-likelihood = -7664.64812893
-    Starting log-prior = -8.75513016589
-    Parameter starting values and prior densities:
-      Parameter name:     edge length master parameter
-      Prior distribution: ExponentialDist(2.00000)
-      Master parameter (no current value)
-      Prior log-density:  2.95214240678
-    <BLANKLINE>
-      Parameter name:     edge length hyperprior
-      Prior distribution: InverseGammaDist(2.10000, 0.90909)
-      Current value:      0.1
-      Prior log-density:  -3.70727257267
-    <BLANKLINE>
-      Parameter name:     trs/trv rate ratio
-      Prior distribution: ExponentialDist(1.00000)
-      Current value:      4.0
-      Prior log-density:  -4.0
-    <BLANKLINE>
-      Parameter name:     base freq. A
-      Prior distribution: ExponentialDist(1.00000)
-      Current value:      1.0
-      Prior log-density:  -1.0
-    <BLANKLINE>
-      Parameter name:     base freq. C
-      Prior distribution: ExponentialDist(1.00000)
-      Current value:      1.0
-      Prior log-density:  -1.0
-    <BLANKLINE>
-      Parameter name:     base freq. G
-      Prior distribution: ExponentialDist(1.00000)
-      Current value:      1.0
-      Prior log-density:  -1.0
-    <BLANKLINE>
-      Parameter name:     base freq. T
-      Prior distribution: ExponentialDist(1.00000)
-      Current value:      1.0
-      Prior log-density:  -1.0
-    <BLANKLINE>
-    Topology prior:
-      flat across all fully-resolved tree topologies (polytomies not allowed)
-    <BLANKLINE>
-    Sampling (100 cycles)...
-    <BLANKLINE>
-    cycle = 10, lnL = -7120.68639
-    cycle = 20, lnL = -7110.88061
-    <BLANKLINE>
-    Slice sampler diagnostics:
-      mode=0.23720, avgevals=6.640 (edge length hyperprior)
-      mode=1.83372, avgevals=6.280 (trs/trv rate ratio)
-      mode=0.73221, avgevals=7.880 (base freq. A)
-      mode=0.48452, avgevals=8.080 (base freq. C)
-      mode=0.54534, avgevals=8.200 (base freq. G)
-      mode=0.85928, avgevals=7.080 (base freq. T)
-    <BLANKLINE>
-    cycle = 30, lnL = -7107.71576
-    cycle = 40, lnL = -7111.01488
-    cycle = 50, lnL = -7105.43839
-    cycle = 60, lnL = -7106.21236
-    cycle = 70, lnL = -7109.91097
-    <BLANKLINE>
-    Slice sampler diagnostics:
-      mode=0.19132, avgevals=5.840 (edge length hyperprior)
-      mode=1.94113, avgevals=5.840 (trs/trv rate ratio)
-      mode=1.05523, avgevals=6.120 (base freq. A)
-      mode=0.66567, avgevals=6.040 (base freq. C)
-      mode=0.77854, avgevals=6.240 (base freq. G)
-      mode=1.20334, avgevals=5.580 (base freq. T)
-    <BLANKLINE>
-    cycle = 80, lnL = -7108.00202
-    cycle = 90, lnL = -7105.35931
-    cycle = 100, lnL = -7107.94337
-    <BLANKLINE>
-    Slice sampler diagnostics:
-      mode=0.19132, avgevals=6.240 (edge length hyperprior)
-      mode=1.94113, avgevals=5.680 (trs/trv rate ratio)
-      mode=1.05523, avgevals=6.160 (base freq. A)
-      mode=0.66567, avgevals=5.960 (base freq. C)
-      mode=0.77854, avgevals=6.120 (base freq. G)
-      mode=1.20334, avgevals=5.640 (base freq. T)
-    ...
+    See the __init__ function below for variables that can be modified
+    before Phycas is run.
 
     """
     def __init__(self):
@@ -211,7 +109,7 @@ class Phycas:
         
         # Variables associated with substitution models
         self.default_model          = 'hky'     # Can be 'jc', 'hky' or 'gtr'
-        self.num_rates              = 1         # default is rate homogeneity (1 rate)
+        self.num_rates              = 1         # default is zero rate heterogeneity (1 rate)
         self.relrate_prior          = ExponentialDist(1.0)
         self.base_freq_param_prior  = ExponentialDist(1.0)
         self.gamma_shape_prior      = ExponentialDist(1.0)
@@ -496,10 +394,6 @@ class Phycas:
         taxNames = []
         for i in range(self.ntax):
             taxNames.append(str(i+1))
-        #print 'taxNames =',taxNames
-        #print 'self.tree_topology =', self.tree_topology
-        #print 'self.starting_tree =', self.starting_tree
-        #raw_input('stopped before rectifyNames')
         self.tree.rectifyNames(taxNames)
 
     def showParamInfo(self, p):

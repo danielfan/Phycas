@@ -86,3 +86,25 @@ class TreeManip(TreeManipBase):
         """
         TreeManipBase.randomTree(self, num_tips, rng, edge_len_dist, False)
 
+    def setRandomEdgeLengths(self, edge_len_dist):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Sets edge lengths using random draws from the probability distribution
+        edge_len_dist.
+        
+        >>> from phycas import *
+        >>> t = Phylogeny.Tree()
+        >>> t.buildFromString('(1,(2,5),(3,4))')
+        >>> rng = ProbDist.Lot(13579)
+        >>> dist = ProbDist.ExponentialDist(0.5)
+        >>> dist.setLot(rng)
+        >>> tm = Phylogeny.TreeManip(t)
+        >>> tm.setRandomEdgeLengths(dist)
+        >>> print t.walkPreorder()
+        1 -> [7] -> [5] -> 2 -> 5 -> [6] -> 3 -> 4
+        >>> print t.makeNewick()
+        (1:0.32887,(2:0.02039,5:1.18233):0.90722,(3:3.41679,4:0.72478):0.56683)
+
+        """
+        TreeManipBase.setRandomEdgeLens(self, edge_len_dist)
+
