@@ -28,7 +28,7 @@ else {
       alias tool_specific_requirements : : : : <toolset>msvc <cxxflags>"-FI std_force_include.hpp" ;
     }
     else {
-      echo "  Could not identify platform.  Expecting an environmental variable:";
+      echo "  Could not identify platform.  Expecting an environmental variable:" ;
       echo "  for Linux:   OSTYPE=linux" ;
       echo "  for Mac:   OSTYPE=darwin" ;
       echo "  for Windows:   OS=Windows_NT" ;

@@ -17,7 +17,7 @@ Build Prerequisites
    * You should have one of the following settings to indicate your Operating 
      System:
      	For linux:     OSTYPE=linux
-		For mac:       OSTYPE=darwin
+	For mac:       OSTYPE=darwin
         For Windows:   OS=Windows_NT
 
 Building

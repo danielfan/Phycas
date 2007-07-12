@@ -140,6 +140,9 @@
 				RelativePath="..\..\phycas\src\bush_move.cpp">
 			</File>
 			<File
+				RelativePath="..\..\phycas\src\codon_model.cpp">
+			</File>
+			<File
 				RelativePath="..\..\phycas\src\cond_likelihood_storage.cpp">
 			</File>
 			<File

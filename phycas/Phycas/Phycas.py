@@ -100,10 +100,15 @@ class Phycas:
         #self.adapt_ycond_from_ends  = 0.25
 
         # Variables associated with edge length prior distributions
-        self.using_hyperprior       = True      # If True, a hyperprior will be used to govern the edge length prior; if False, master_edgelen_dist will be used as the edge length prior
-        self.master_edgelen_dist    = ExponentialDist(2.0)  # Used as the edge length prior for all edges if using_hyperprior is False; if using_hyperprior is True, this variable only determines the initial edge length prior
+        # If using_hyperprior is True, a hyperprior will be used to govern the edge length prior
+        # If using_hyperprior is False, master_edgelen_dist (and possibly internal_edgelen_dist) will be used as the edge length priors
+        # If internal_edgelen_dist is None, the prior for all edgelens will be determined by master_edgelen_dist
+        # If internal_edgelen_dist is not None, it will determine the prior on internal edge lengths and master_edgelen_dist will govern terminal edges
+        self.using_hyperprior       = True      
         self.edgelen_hyperprior     = InverseGammaDist(2.1, 0.909)
-
+        self.master_edgelen_dist    = ExponentialDist(2.0)  
+        self.internal_edgelen_dist  = None  #> new
+        
         # Variables associated with initializing the MCMC sampler
         self.starting_edgelen_dist  = ExponentialDist(10.0) # Used to select the starting edge lengths when starting_tree_source is 'random'
         
@@ -232,6 +237,7 @@ class Phycas:
             self.model.setNotPinvarModel()
         
         # Define an edge length prior distribution
+        #> new need setInternalEdgeLenPrior and setExternalEdgeLenPrior rather than setEdgeLenPrior
         self.model.setEdgeLenPrior(self.master_edgelen_dist)
         if self.using_hyperprior:
             # Edge length prior distribution is hierarchical
@@ -246,15 +252,16 @@ class Phycas:
 
     def createChain(self):
         # Create a list of parameters for updating quantities such as kappa and the
-        # base frequencies. 
+        # base frequencies.
         self.chain_manager = MCMCChainManager()
         self.chain_manager.addMCMCUpdaters(self.model,              # substitution model
                                            self.tree,               # tree
                                            self.likelihood,         # likelihood calculation machinery
                                            self.r,                  # pseudorandom number generator
-                                           False,                   # separate_edgelen_params
-                                           self.slice_max_units,    # weight for each parameter added
+                                           False,                   # separate_edgelen_params (deprecated: always False)
+                                           self.slice_max_units,    # maximum number of slice units allowed
                                            self.slice_weight)       # weight for each parameter added
+        #> new addMCMCUpdaters needs to take acocunt of internal_edgelen_dist if it is non-None
 
         # Create a LargetSimonMove object to handle Metropolis-Hastings
         # updates to the tree topology and edge lengths
