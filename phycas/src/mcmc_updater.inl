@@ -41,6 +41,9 @@ inline MCMCUpdater::MCMCUpdater()
   is_master_param(false),
   is_hyper_param(false), 
   is_fixed(false),
+#if POLPY_NEWWAY
+  save_debug_info(false),
+#endif
   slice_max_units(UINT_MAX),
   slice_starting_value(0.1)
 	{
@@ -237,6 +240,34 @@ inline SliceSamplerShPtr MCMCUpdater::getSliceSampler()
 	{
 	return slice_sampler;
 	}
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|   If this function is called with the value true, the string data member `debug_info' will be cleared and filled upon
+|   each update to reflect the last value of the parameter or move. This is useful for debugging for observing exactly
+|   where the MCMC analysis begins to diverge from its behavior prior to a change in the code. Call the public member
+|   function getDebugInfo to retrieve the `debug_info' string. Calling this function with the value false stops the 
+|   saving of debug information, thus increasing the efficiency of the MCMC analysis.
+*/
+inline void MCMCUpdater::setSaveDebugInfo(
+  bool save_info)       /**> is either true (to begin saving debug info) or false (to stop saving debug info) */
+	{
+	save_debug_info = save_info;
+	}
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|   Returns a copy of `debug_info', which holds information about the last update if `save_debug_info' is true. Call
+|   the public member function setSaveDebugInfo to change the state of `save_debug_info'. Note that this function leaves
+|   the `debug_info' string in its current state, so subsequent calls before the next update will return the same 
+|   information.
+*/
+inline std::string MCMCUpdater::getDebugInfo() const
+	{
+	return debug_info;
+	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the `prior' data member, which points to a ProbabilityDistribution object. This accessor will primarily be

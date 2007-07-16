@@ -874,14 +874,16 @@ class Phycas:
         for cycle in range(self.ncycles):
             for p in self.chain_manager.getAllUpdaters():
                 w = p.getWeight()
+                p.setSaveDebugInfo(True)
                 for i,x in enumerate(range(w)):
                     #print 'Cycle %d: updating' % cycle,p.getName(),'for the %dth time' % i
-                    #tmpf = file('tmp.lnLlog.txt', 'a')
-                    #tmpf.write('*** Updating %s...\n' % p.getName())
-                    #tmpf.close()
+                    tmpf = file('tmp.txt', 'a')
+                    tmpf.write('%s\n' % p.getDebugInfo())
+                    tmpf.close()
                     #if cycle == 1 and i == 99 and p.getName() == 'Bush move':
                     #    self.bush_move.viewProposedMove(True)
                     p.update()
+            sys.exit()
             if self.verbose and (cycle + 1) % self.report_every == 0:
                 msg = 'cycle = %d, lnL = %.5f' % (cycle + 1, self.chain_manager.getLastLnLike())
                 if self.use_flex_model:

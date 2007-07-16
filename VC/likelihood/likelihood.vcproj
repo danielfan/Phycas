@@ -262,6 +262,18 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
+				RelativePath="..\..\phycas\src\larget_simon_move.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\larget_simon_move.inl">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\mcmc_updater.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\mcmc_updater.inl">
+			</File>
+			<File
 				RelativePath="..\..\phycas\src\sim_data.hpp">
 			</File>
 			<File

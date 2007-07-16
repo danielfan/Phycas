@@ -62,6 +62,10 @@ void updater_pymod()
 		.def("isFixed", &MCMCUpdater::isFixed)
 		.def("fixParameter", &MCMCUpdater::fixParameter)
 		.def("freeParameter", &MCMCUpdater::freeParameter)
+#if POLPY_NEWWAY
+		.def("getDebugInfo", &MCMCUpdater::getDebugInfo)
+		.def("setSaveDebugInfo", &MCMCUpdater::setSaveDebugInfo)
+#endif
 		;
 	class_<phycas::KappaParam, bases<phycas::MCMCUpdater, AdHocDensity>, 
 		boost::noncopyable, boost::shared_ptr<phycas::KappaParam> >("KappaParam")
