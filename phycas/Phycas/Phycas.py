@@ -883,7 +883,7 @@ class Phycas:
                     tmpf.close()
                     #if cycle == 1 and i == 99 and p.getName() == 'Bush move':
                     #    self.bush_move.viewProposedMove(True)
-            if cycle == 10:
+            if cycle == 21:
                 sys.exit()
             if self.verbose and (cycle + 1) % self.report_every == 0:
                 msg = 'cycle = %d, lnL = %.5f' % (cycle + 1, self.chain_manager.getLastLnLike())
