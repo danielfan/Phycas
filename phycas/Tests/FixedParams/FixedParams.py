@@ -25,7 +25,8 @@ phycas.model.fixPinvar()
 phycas.model.setPinvarPrior(ProbDist.BetaDist(1.0, 1.0))
 
 phycas.model.fixEdgeLengths()
-phycas.model.setEdgeLenPrior(ProbDist.ExponentialDist(10.0))
+phycas.model.setExternalEdgeLenPrior(ProbDist.ExponentialDist(10.0))
+phycas.model.setInternalEdgeLenPrior(ProbDist.ExponentialDist(10.0))
 
 phycas.model.fixEdgeLenHyperprior()
 phycas.model.setEdgeLenHyperPrior(ProbDist.InverseGammaDist(2.1, 0.9090909))

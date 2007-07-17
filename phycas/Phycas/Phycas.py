@@ -100,14 +100,13 @@ class Phycas:
         #self.adapt_ycond_from_ends  = 0.25
 
         # Variables associated with edge length prior distributions
-        # If using_hyperprior is True, a hyperprior will be used to govern the edge length prior
-        # If using_hyperprior is False, master_edgelen_dist (and possibly internal_edgelen_dist) will be used as the edge length priors
-        # If internal_edgelen_dist is None, the prior for all edgelens will be determined by master_edgelen_dist
-        # If internal_edgelen_dist is not None, it will determine the prior on internal edge lengths and master_edgelen_dist will govern terminal edges
+        # If using_hyperprior is True, a hyperprior will be used to govern both edge length priors
+        # If using_hyperprior is False, external_edgelen_dist and internal_edgelen_dist will govern edge length priors
+        # If internal_edgelen_dist is None, the prior for all edgelens will be determined by external_edgelen_dist
         self.using_hyperprior       = True      
         self.edgelen_hyperprior     = InverseGammaDist(2.1, 0.909)
-        self.master_edgelen_dist    = ExponentialDist(2.0)  
-        self.internal_edgelen_dist  = None  #> new
+        self.external_edgelen_dist  = ExponentialDist(2.0)
+        self.internal_edgelen_dist  = ExponentialDist(2.0)
         
         # Variables associated with initializing the MCMC sampler
         self.starting_edgelen_dist  = ExponentialDist(10.0) # Used to select the starting edge lengths when starting_tree_source is 'random'
@@ -195,7 +194,8 @@ class Phycas:
         self.gamma_shape_prior.setLot(self.r)
         self.pinvar_prior.setLot(self.r)
         self.edgelen_hyperprior.setLot(self.r)
-        self.master_edgelen_dist.setLot(self.r)
+        self.external_edgelen_dist.setLot(self.r)
+        self.internal_edgelen_dist.setLot(self.r)
         self.starting_edgelen_dist.setLot(self.r)
         
         # Create a substitution model and define priors for the model parameters
@@ -236,9 +236,9 @@ class Phycas:
         else:
             self.model.setNotPinvarModel()
         
-        # Define an edge length prior distribution
-        #> new need setInternalEdgeLenPrior and setExternalEdgeLenPrior rather than setEdgeLenPrior
-        self.model.setEdgeLenPrior(self.master_edgelen_dist)
+        # Define edge length prior distributions
+        self.model.setExternalEdgeLenPrior(self.external_edgelen_dist)
+        self.model.setInternalEdgeLenPrior(self.internal_edgelen_dist)
         if self.using_hyperprior:
             # Edge length prior distribution is hierarchical
             self.edgelen_hyperprior.setMeanAndVariance(1.0, 10.0)
@@ -369,9 +369,7 @@ class Phycas:
             assert self.ntax > 0, 'expecting ntax to be greater than 0'
             
             # Build a random tree
-            #self.master_edgelen_dist.setLot(self.r)
             self.starting_edgelen_dist.setLot(self.r)
-            #print 'self.r.getSeed() returns',self.r.getSeed()
             TreeManip(self.tree).randomTree(
                 self.ntax,     # number of tips
                 self.r,        # pseudorandom number generator
@@ -874,17 +872,13 @@ class Phycas:
         for cycle in range(self.ncycles):
             for p in self.chain_manager.getAllUpdaters():
                 w = p.getWeight()
-                p.setSaveDebugInfo(True)
+                #p.setSaveDebugInfo(True)
                 for i,x in enumerate(range(w)):
                     p.update()
                     #print 'Cycle %d: updating' % cycle,p.getName(),'for the %dth time' % i
-                    tmpf = file('tmp.txt', 'a')
-                    tmpf.write('%s | %s\n' % (p.getName(), p.getDebugInfo()))
-                    tmpf.close()
-                    #if cycle == 1 and i == 99 and p.getName() == 'Bush move':
-                    #    self.bush_move.viewProposedMove(True)
-            if cycle == 21:
-                sys.exit()
+                    #tmpf = file('tmp.txt', 'a')
+                    #tmpf.write('%s | %s\n' % (p.getName(), p.getDebugInfo()))
+                    #tmpf.close()
             if self.verbose and (cycle + 1) % self.report_every == 0:
                 msg = 'cycle = %d, lnL = %.5f' % (cycle + 1, self.chain_manager.getLastLnLike())
                 if self.use_flex_model:

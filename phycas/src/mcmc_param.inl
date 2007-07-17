@@ -424,10 +424,15 @@ inline void HyperPriorParam::update()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Constructor does nothing except set both `has_slice_sampler' and `is_move' to false.
+|	Constructor sets both `has_slice_sampler' and `is_move' to false. It also sets the value of `edgeLenType' data 
+|   member, which can be `internal', `external' or `both'. If `edgeLenType' is `internal', this EdgeLenMasterParam will
+|   only calculate the prior for internal edges. If `edgeLenType' is `external', this EdgeLenMasterParam will only 
+|   calculate the prior for external edges. If `edgeLenType' is `both', this EdgeLenMasterParam will calculate the 
+|   prior for all edges in the tree.
 */
-inline EdgeLenMasterParam::EdgeLenMasterParam()
-  : MCMCUpdater()
+inline EdgeLenMasterParam::EdgeLenMasterParam(
+  EdgeLenMasterParam::EdgeLenType t)    /**> is the edge length type (internal, external or both) */
+  : MCMCUpdater(), edgeLenType(t)
 	{
 	has_slice_sampler = false;
 	is_move = false;
@@ -441,31 +446,39 @@ inline EdgeLenMasterParam::EdgeLenMasterParam()
 */
 inline double EdgeLenMasterParam::lnPriorOneEdge(TreeNode & nd) const
 	{
-	if (nd.IsTipRoot())
+    bool skip = (nd.IsTipRoot())
+                || ((edgeLenType == EdgeLenMasterParam::internal) && (!nd.IsInternal()))
+                || ((edgeLenType == EdgeLenMasterParam::external) && (nd.IsInternal()));
+	if (skip)
+        {
 		return 0.0;
+        }
+    else
+        {
+        double v = nd.GetEdgeLen();
 
-	double v = nd.GetEdgeLen();
+	    double retval = 0.0;
+	    try 
+		    {
+		    retval = prior->GetLnPDF(v);
+		    }
+	    catch(XProbDist &)
+		    {
+		    retval = prior->GetRelativeLnPDF(v);
+		    }
 
-	double retval = 0.0;
-	try 
-		{
-		retval = prior->GetLnPDF(v);
-		}
-	catch(XProbDist &)
-		{
-		retval = prior->GetRelativeLnPDF(v);
-		}
-
-	return retval;
+	    return retval;
+        }
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Computes the joint log prior over all edges in the associated tree and sets `curr_ln_prior'.
+|	Computes the joint log prior over a set of edges in the associated tree and sets `curr_ln_prior'. The set of edges
+|   included depends on the value of `edgeLenType', which can be `internal', `external' or `both'.
 */
 inline double EdgeLenMasterParam::recalcPrior()
 	{
-	curr_ln_prior = std::accumulate(tree->begin(), tree->end(), 0.0,
-		boost::lambda::_1 += boost::lambda::bind(&EdgeLenParam::lnPriorOneEdge, this, boost::lambda::_2));
+    curr_ln_prior = std::accumulate(tree->begin(), tree->end(), 0.0,
+	    boost::lambda::_1 += boost::lambda::bind(&EdgeLenParam::lnPriorOneEdge, this, boost::lambda::_2));
 
 	return curr_ln_prior;
 	}

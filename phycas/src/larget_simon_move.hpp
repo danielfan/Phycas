@@ -110,7 +110,7 @@ class LargetSimonMove : public MCMCUpdater
 
 		TreeNode *		ndBase;						/**< Most ancestral node involved in the move, used as the center of the likelihood calcuation (and in revert) */
 		TreeNode *		ndX;						/**< Node at one end of segment involved in move; used by Revert to undo a move */
-		TreeNode *		ndY;						/**< One of two node in middle of segment involved in move; used by Revert to undo a move */
+		TreeNode *		ndY;						/**< One of two nodes in the middle of segment involved in move; used by Revert to undo a move */
 		TreeNode *		ndZ;						/**< Node at other end (from ndX) of segment involved in move; used by Revert to undo a move */
 		double			origX;						/**< Original length of ndX's branch; used by Revert to undo a move */
 		double			origY;						/**< Original length of ndX's branch; used by Revert to undo a move */

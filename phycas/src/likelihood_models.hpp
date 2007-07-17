@@ -125,9 +125,13 @@ class Model	{
 
 		// Member functions related to edge lengths
 		void							setEdgeLenHyperPrior(ProbDistShPtr d);
-		void							setEdgeLenPrior(ProbDistShPtr d);
+		//void							setEdgeLenPrior(ProbDistShPtr d);
+		void							setExternalEdgeLenPrior(ProbDistShPtr d);
+		void							setInternalEdgeLenPrior(ProbDistShPtr d);
 		ProbDistShPtr					getEdgeLenHyperPrior();
-		ProbDistShPtr					getEdgeLenPrior();
+		//ProbDistShPtr					getEdgeLenPrior();
+		ProbDistShPtr					getExternalEdgeLenPrior();
+		ProbDistShPtr					getInternalEdgeLenPrior();
 
 		// Utility functions
 		void flattenTwoDMatrix(VecDbl & p, double * * twoDarr, unsigned dim) const;
@@ -149,7 +153,8 @@ protected:
 protected:
 
 	ProbDistShPtr					edgeLenHyperPrior;			/**< The prior distribution governing the mean of the edge length prior if a hierarchical model is used */
-	ProbDistShPtr					edgeLenPrior;				/**< The prior distribution governing all edge lengths */
+	ProbDistShPtr					internalEdgeLenPrior;		/**< The prior distribution governing internal edge lengths */
+	ProbDistShPtr					externalEdgeLenPrior;		/**< The prior distribution governing external edge lengths */
 	unsigned						num_states;					/**< The number of states (e.g. 4 for DNA) */
 	unsigned						num_gamma_rates;			/**< The number of discrete gamma rate categories. If greater than 1, the model becomes a discrete gamma rate heterogeneity ("G") model. */
 	mutable std::vector<double>		gamma_rates_unnorm;			/**< A vector of quantities that yield the relative rates when normalized in recalcRatesAndProbs (length is `num_gamma_rates') */

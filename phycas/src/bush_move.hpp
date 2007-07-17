@@ -128,7 +128,7 @@ class BushMove : public MCMCUpdater
 		double							ln_hastings;						/**< The natural log of the Hastings ratio for the move last proposed */
 
 		CDF								cdf;								/**< CDF object needed for its LnGamma function */
-		std::vector<double>				one_edgelen;						/**< Workspace declared here to avoid unnecessary allocs/deallocs */
+		//std::vector<double>				one_edgelen;						/**< Workspace declared here to avoid unnecessary allocs/deallocs */
 
 		TopoPriorCalculatorShPtr		topo_prior_calculator;				/**< Used to compute the various kinds of topological priors needed for dealing with polytomies */
 

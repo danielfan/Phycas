@@ -89,15 +89,17 @@ void BushMove::update()
 		{
 		double topo_prior_before	= topo_prior_calculator->GetLnTopologyPrior(m - 1);
 		ln_polytomy_prior_ratio		= topo_prior_after - topo_prior_before;
-		one_edgelen[0]				= new_edgelen;
-		curr_ln_prior				= p->partialEdgeLenPrior(one_edgelen);
+		//one_edgelen[0]				= new_edgelen;
+		//curr_ln_prior				= p->partialEdgeLenPrior(one_edgelen);
+		curr_ln_prior				= p->calcInternalEdgeLenPriorUnnorm(new_edgelen);
 		}
 	else
 		{
 		double topo_prior_before	= topo_prior_calculator->GetLnTopologyPrior(m + 1);
 		ln_polytomy_prior_ratio		= topo_prior_after - topo_prior_before;
-		one_edgelen[0]				= orig_edgelen;
-		prev_ln_prior				= p->partialEdgeLenPrior(one_edgelen);
+		//one_edgelen[0]				= orig_edgelen;
+		//prev_ln_prior				= p->partialEdgeLenPrior(one_edgelen);
+		prev_ln_prior				= p->calcInternalEdgeLenPriorUnnorm(orig_edgelen);
 		}
 
 	double prev_posterior = prev_ln_like + prev_ln_prior;

@@ -262,10 +262,91 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
+				RelativePath="..\..\phycas\src\basic_cdf.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\basic_cdf.inl">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\basic_lot.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\basic_lot.inl">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\basic_tree.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\basic_tree.inl">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\basic_tree_node.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\basic_tree_node.inl">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\bush_move.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\bush_move.inl">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\cond_likelihood.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\cond_likelihood.inl">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\cond_likelihood_storage.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\cond_likelihood_storage.inl">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\edge_endpoints.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\edge_iterators.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\edge_move.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\edge_move.inl">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\internal_data.hpp">
+			</File>
+			<File
 				RelativePath="..\..\phycas\src\larget_simon_move.hpp">
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\larget_simon_move.inl">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\likelihood_models.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\likelihood_models.inl">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\mcmc_chain_manager.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\mcmc_chain_manager.inl">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\mcmc_move.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\mcmc_move.inl">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\mcmc_param.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\mcmc_param.inl">
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\mcmc_updater.hpp">
@@ -274,10 +355,88 @@
 				RelativePath="..\..\phycas\src\mcmc_updater.inl">
 			</File>
 			<File
+				RelativePath="..\..\phycas\src\ncat_move.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\ncat_move.inl">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\nopython_force_include.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\phycas_string.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\probability_distribution.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\probability_distribution.inl">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\q_matrix.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\q_matrix.inl">
+			</File>
+			<File
 				RelativePath="..\..\phycas\src\sim_data.hpp">
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\sim_data.inl">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\slice_sampler.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\states_patterns.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\std_force_include.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\tip_data.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\topo_prior_calculator.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\topo_prior_calculator.inl">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\tree_iterators.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\tree_likelihood.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\tree_likelihood.inl">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\tree_manip.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\tree_manip.inl">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\tree_score.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\underflow_policy.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\underflow_policy.inl">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\xlikelihood.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\xphycas.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\xphylogeny.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\xprobdist.hpp">
 			</File>
 		</Filter>
 		<Filter

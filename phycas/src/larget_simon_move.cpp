@@ -63,23 +63,34 @@ void LargetSimonMove::update()
 	double prev_ln_prior = 0.0;
 	if (star_tree_proposal)
 		{
-		one_edgelen[0]		= orig_edge_len;
-		prev_ln_prior		= p->partialEdgeLenPrior(one_edgelen);
+		//one_edgelen[0]		= orig_edge_len;
+		//prev_ln_prior		= p->partialEdgeLenPrior(one_edgelen);
+		prev_ln_prior		= p->calcExternalEdgeLenPriorUnnorm(orig_edge_len);
 
-		one_edgelen[0]		= orig_node->GetEdgeLen();
-		curr_ln_prior		= p->partialEdgeLenPrior(one_edgelen);
+		//one_edgelen[0]		= orig_node->GetEdgeLen();
+		//curr_ln_prior		= p->partialEdgeLenPrior(one_edgelen);
+        double curr_edgelen = orig_node->GetEdgeLen();
+		curr_ln_prior		= p->calcExternalEdgeLenPriorUnnorm(curr_edgelen);
 		}
 	else
 		{
-		three_edgelens[0] = origX;
-		three_edgelens[1] = origY;
-		three_edgelens[2] = origZ;
-		prev_ln_prior = p->partialEdgeLenPrior(three_edgelens);
+		//three_edgelens[0] = origX;
+		//three_edgelens[1] = origY;
+		//three_edgelens[2] = origZ;
+		//prev_ln_prior = p->partialEdgeLenPrior(three_edgelens);
 
-		three_edgelens[0] = ndX->GetEdgeLen();
-		three_edgelens[1] = ndY->GetEdgeLen();
-		three_edgelens[2] = ndZ->GetEdgeLen();
-		curr_ln_prior = p->partialEdgeLenPrior(three_edgelens);
+        assert(ndY->IsInternal());
+        prev_ln_prior  = (ndX->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(origX) : p->calcExternalEdgeLenPriorUnnorm(origX));
+        prev_ln_prior += p->calcInternalEdgeLenPriorUnnorm(origY);
+        prev_ln_prior += (ndZ->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(origZ) : p->calcExternalEdgeLenPriorUnnorm(origZ));
+
+		//three_edgelens[0] = ndX->GetEdgeLen();
+		//three_edgelens[1] = ndY->GetEdgeLen();
+		//three_edgelens[2] = ndZ->GetEdgeLen();
+		//curr_ln_prior = p->partialEdgeLenPrior(three_edgelens);
+		curr_ln_prior  = (ndX->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(ndX->GetEdgeLen()) : p->calcExternalEdgeLenPriorUnnorm(ndX->GetEdgeLen()));
+        curr_ln_prior += p->calcInternalEdgeLenPriorUnnorm(ndY->GetEdgeLen());
+        curr_ln_prior += (ndZ->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(ndZ->GetEdgeLen()) : p->calcExternalEdgeLenPriorUnnorm(ndZ->GetEdgeLen()));
 		}
 
 	double prev_posterior = prev_ln_like + prev_ln_prior;

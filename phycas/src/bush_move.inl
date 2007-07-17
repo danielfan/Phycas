@@ -105,8 +105,8 @@ inline void BushMove::reset()
 	{
 	// Workspace used for computing edge length prior
 	// Should always be length one.
-	if (one_edgelen.empty())
-        one_edgelen.push_back(0.0);
+	//if (one_edgelen.empty())
+    //    one_edgelen.push_back(0.0);
 
 	polytomies.clear();
 

@@ -253,18 +253,32 @@ class HyperPriorParam : public MCMCUpdater
 class EdgeLenMasterParam : public MCMCUpdater
 	{
 	public:
-							EdgeLenMasterParam();
+#if POLPY_NEWWAY
+        enum                EdgeLenType
+                                {
+                                internal,   /**> only computes prior for internal edges */
+                                external,   /**> only computes prior for external edges */
+                                both        /**> computes prior for all edges */
+                                };
+#endif
+
+                            EdgeLenMasterParam(EdgeLenMasterParam::EdgeLenType t = EdgeLenMasterParam::both);
 							virtual ~EdgeLenMasterParam()
 								{
 								//std::cerr << "EdgeLenMasterParam dying..." << std::endl;
 								}
-
 		virtual double		recalcPrior();
 		virtual void		setPriorMeanAndVariance(double m, double v);
 
 	protected:
 
 		double				lnPriorOneEdge(TreeNode & nd) const;
+
+#if POLPY_NEWWAY
+    private:
+
+        EdgeLenType         edgeLenType;    /**> holds the edge length type, which determines for which edge lengths the prior is computed when recalcPrior is called */
+#endif
 	};
 
 /*----------------------------------------------------------------------------------------------------------------------

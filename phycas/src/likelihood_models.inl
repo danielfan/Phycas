@@ -81,12 +81,37 @@ inline void	Model::setEdgeLenHyperPrior(ProbDistShPtr d)
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Sets the data member `edgeLenPrior' to the supplied probability distribution `d'. This prior distribution will 
-|	be used when the model is asked to create parameters.
+|	Accessor function that can be used to copy the `internalEdgeLenPrior' shared pointer.
 */
-inline void	Model::setEdgeLenPrior(ProbDistShPtr d)
+inline ProbDistShPtr Model::getInternalEdgeLenPrior()
 	{
-	edgeLenPrior = d;
+	return internalEdgeLenPrior;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `internalEdgeLenPrior' to the supplied probability distribution `d'. This prior distribution
+|	will be used when the model is asked to create parameters.
+*/
+inline void	Model::setInternalEdgeLenPrior(ProbDistShPtr d)
+	{
+	internalEdgeLenPrior = d;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that can be used to copy the `externalEdgeLenPrior' shared pointer.
+*/
+inline ProbDistShPtr Model::getExternalEdgeLenPrior()
+	{
+	return externalEdgeLenPrior;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `externalEdgeLenPrior' to the supplied probability distribution `d'. This prior distribution
+|	will be used when the model is asked to create parameters.
+*/
+inline void	Model::setExternalEdgeLenPrior(ProbDistShPtr d)
+	{
+	externalEdgeLenPrior = d;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -95,14 +120,6 @@ inline void	Model::setEdgeLenPrior(ProbDistShPtr d)
 inline ProbDistShPtr Model::getEdgeLenHyperPrior()
 	{
 	return edgeLenHyperPrior;
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Accessor function that can be used to copy the `edgeLenPrior' shared pointer.
-*/
-inline ProbDistShPtr Model::getEdgeLenPrior()
-	{
-	return edgeLenPrior;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

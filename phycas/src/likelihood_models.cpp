@@ -57,7 +57,10 @@ void Model::createParameters(
 			std::string nm = str(boost::format("edge length for node %d") % nd->GetNodeNumber());
 			p->setName(nm);
 			p->setTree(t);
-			p->setPrior(edgeLenPrior);
+            if (nd->IsInternal())
+			    p->setPrior(internalEdgeLenPrior);
+            else
+			    p->setPrior(externalEdgeLenPrior);
 			if (edge_lengths_fixed)
 				p->fixParameter();
 			edgelens_vect_ref.push_back(p);
@@ -65,22 +68,35 @@ void Model::createParameters(
 		}
 	else
 		{
-		// Add one edge length parameter to manage the prior for all edge lengths in the tree;
-		// This edge length master parameter does not actually update edge lengths; when 
-		// separate_edgelen_params is false, this means that a Metropolis proposal such as
+		// Add two edge length parameters to manage the priors for all edge lengths in the tree;
+        // One of these two parameters will be in charge of the prior on internal edge lengths,
+        // whereas the other will be in charge of external edge lengths.
+		// These edge length parameters do not actually update any edge lengths; when 
+		// separate_edgelen_params is false, a Metropolis proposal such as
 		// the LargetSimonMove is responsible for updating edge lengths.
-		MCMCUpdaterShPtr p = MCMCUpdaterShPtr(new EdgeLenMasterParam());
-		std::string nm = str(boost::format("edge length master parameter"));
-		p->setName(nm);
-		p->setTree(t);
-		p->setPrior(edgeLenPrior);
+
+        // First the parameter governing external edge length priors
+        MCMCUpdaterShPtr p_external = MCMCUpdaterShPtr(new EdgeLenMasterParam(EdgeLenMasterParam::external));
+		std::string nm_external = str(boost::format("external edge length parameter"));
+		p_external->setName(nm_external);
+		p_external->setTree(t);
+		p_external->setPrior(externalEdgeLenPrior);
 		if (edge_lengths_fixed)
-			p->fixParameter();
-		edgelens_vect_ref.push_back(p);
+			p_external->fixParameter();
+		edgelens_vect_ref.push_back(p_external);
+
+        // Now the parameter governing internal edge length priors
+		MCMCUpdaterShPtr p_internal = MCMCUpdaterShPtr(new EdgeLenMasterParam(EdgeLenMasterParam::internal));
+		std::string nm_internal = str(boost::format("internal edge length parameter"));
+		p_internal->setName(nm_internal);
+		p_internal->setTree(t);
+		p_internal->setPrior(internalEdgeLenPrior);
+		if (edge_lengths_fixed)
+			p_internal->fixParameter();
+		edgelens_vect_ref.push_back(p_internal);
 		}
 
-	// Save a vector of shared pointers to the edge length parameters so that we can modify their
-	// fixed/free status if we need to
+	// Save a vector of shared pointers so that we can modify their fixed/free status if we need to
 	edgelen_params.resize(edgelens_vect_ref.size());
 	std::copy(edgelens_vect_ref.begin(), edgelens_vect_ref.end(), edgelen_params.begin());
 
@@ -95,7 +111,7 @@ void Model::createParameters(
 			p->fixParameter();
 		edgelen_hyperparam_ref = p;
 
-		// Retain a copoy of the shared pointer so that we can later modify the fixed/free status
+		// Retain a copy of the shared pointer so that we can later modify the fixed/free status
 		// of this parameter
 		edgelen_hyper_param = p;
 		}

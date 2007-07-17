@@ -82,7 +82,9 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 		double					getLastLnPrior() const;
 		void					setLastLnPrior(double ln_prior);
 
-		double					partialEdgeLenPrior(const std::vector<double> & edge_len_vect) const;
+        double                  calcExternalEdgeLenPriorUnnorm(double v) const;
+        double                  calcInternalEdgeLenPriorUnnorm(double v) const;
+		//double					partialEdgeLenPrior(const std::vector<double> & edge_len_vect) const;
 		double					calcJointLnPrior();
 
 		double					getLastLnLike() const;

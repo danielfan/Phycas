@@ -97,9 +97,13 @@ void MCMCChainManager::addMCMCUpdaters(
 		{
 		throw XLikelihood("Error in MCMCChainManager::addMCMCUpdaters: no model defined");
 		}
-	if (!m->getEdgeLenPrior())
+	if (!m->getInternalEdgeLenPrior())
 		{
-		throw XLikelihood("Error in MCMCChainManager::addMCMCUpdaters: no edge length prior defined");
+		throw XLikelihood("Error in MCMCChainManager::addMCMCUpdaters: no internal edge length prior defined");
+		}
+	if (!m->getExternalEdgeLenPrior())
+		{
+		throw XLikelihood("Error in MCMCChainManager::addMCMCUpdaters: no external edge length prior defined");
 		}
 
 	MCMCUpdaterIter iter;

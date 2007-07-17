@@ -199,7 +199,7 @@ inline void MCMCChainManager::finalize()
 
 	// Next add the normal edge length parameters
 	edgelens_end = std::copy(edge_len_params.begin(), edge_len_params.end(), moves_end);
-	edgelens_begin = moves_end;
+	edgelens_begin = moves_end;     // POL_BOOKMARK
 
 	// Next add the edge length hyperparameter (if used)
 	hyperparam_end = edgelens_end;
@@ -211,7 +211,7 @@ inline void MCMCChainManager::finalize()
 	model_params_end = std::copy(model_params.begin(), model_params.end(), hyperparam_end);
 	model_params_begin = hyperparam_end;
 
-	params_begin = edgelens_begin;
+	params_begin = edgelens_begin;     // POL_BOOKMARK
 	params_end = model_params_end;
 
 	// Call each updater's setChainManager member function, supplying a shared pointer to this object
@@ -238,57 +238,110 @@ inline void MCMCChainManager::finalize()
 // Using USE_PARTIAL_SUM_FUNCTOR is slightly faster, but makes the assumption that the edge length prior
 // distribution is Exponential, which is not good. This assumption is not necessary, but without it
 // speed suffers and the alternative is preferable.
+// 
+// Note: now that separate priors have been installed for internal and external edges, the PartialPriorSum 
+// approach is even less useful and has been abandoned. I've left the code here in case in case something
+// like this needs to be done elsewhere in the future.
 //#define USE_PARTIAL_SUM_FUNCTOR
 
-#if defined(USE_PARTIAL_SUM_FUNCTOR)
-struct PartialPriorSum : public std::unary_function<double, void>
-	{
-	double sum;
-	ExponentialDistribution & distr;
-
-	PartialPriorSum(ExponentialDistribution & p) : sum(0.0), distr(p) 
-		{}
-
-	void operator()(const double & nxt)
-		{
-	try 
-		{
-		sum += distr.GetLnPDF(nxt);
-		}
-	catch(XProbDist & x)
-		{
-		sum += distr.GetRelativeLnPDF(nxt);
-		}
-		}
-
-	double result()
-		{
-		return sum;
-		}
-	};
-#endif
+//#if defined(USE_PARTIAL_SUM_FUNCTOR)
+//struct PartialPriorSum : public std::unary_function<double, void>
+//	{
+//	double sum;
+//	ExponentialDistribution & distr;
+//
+//	PartialPriorSum(ExponentialDistribution & p) : sum(0.0), distr(p) 
+//		{}
+//
+//	void operator()(const double & nxt)
+//		{
+//	try 
+//		{
+//		sum += distr.GetLnPDF(nxt);
+//		}
+//	catch(XProbDist & x)
+//		{
+//		sum += distr.GetRelativeLnPDF(nxt);
+//		}
+//		}
+//
+//	double result()
+//		{
+//		return sum;
+//		}
+//	};
+//#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Uses first edge length parameter in the `all_updaters' vector to compute the log-prior for each value in the 
+|	Computes the unnormalized prior for the supplied edge length using the prior for external edge lengths.
+*/
+inline double MCMCChainManager::calcExternalEdgeLenPriorUnnorm(double v) const
+	{
+    // The first edge length parameter governs external edge lengths
+	assert(edgelens_end - edgelens_begin == 2);
+	MCMCUpdaterShPtr u = *edgelens_begin;
+	ProbDistShPtr p = u->getPriorDist();
+	double tmp = 0.0;
+	try 
+		{
+		tmp = p->GetLnPDF(v);
+		}
+	catch(XProbDist &)
+		{
+		tmp =  p->GetRelativeLnPDF(v);
+		}
+    return tmp;
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Computes the unnormalized prior for the supplied edge length using the prior for internal edge lengths.
+*/
+inline double MCMCChainManager::calcInternalEdgeLenPriorUnnorm(double v) const
+	{
+    // The second edge length parameter governs internal edge lengths
+	assert(edgelens_end - edgelens_begin == 2);
+	MCMCUpdaterShPtr u = *(edgelens_begin + 1);
+	ProbDistShPtr p = u->getPriorDist();
+	double tmp = 0.0;
+	try 
+		{
+		tmp = p->GetLnPDF(v);
+		}
+	catch(XProbDist &)
+		{
+		tmp =  p->GetRelativeLnPDF(v);
+		}
+    return tmp;
+    }
+
+#if 0
+/*----------------------------------------------------------------------------------------------------------------------
+|	Uses the two edge length parameters in the `all_updaters' vector to compute the log-prior for each value in the 
 |	supplied vector of edge lengths, returning the sum. Useful for efficiency purposes for moves that modify only a few 
 |	edge lengths.
 */
 inline double MCMCChainManager::partialEdgeLenPrior(const std::vector<double> & edge_len_vect) const
 	{
+    // POL_BOOKMARK
+    // To do next: replace all calls to this function (partialEdgeLenPrior) with calls to new functions
+    // named calcInternalEdgeLenPriorUnnorm and calcExternalEdgeLenPriorUnnorm. There are only a couple of places
+    // where the edge_len_vect vector has more than one element, so this function is not saving much
+    // and we don't know which of the edge lengths supplied belong to internal or external edges.
+
 	if (edgelens_end - edgelens_begin == 0)
 		{
 		throw XLikelihood("partialEdgeLenPrior requires a master edge length prior to have been added to the chain manager");
 		}
 
-	MCMCUpdaterShPtr u = *edgelens_begin;
+	MCMCUpdaterShPtr u = *edgelens_begin;     // POL_BOOKMARK
 	ProbDistShPtr p = u->getPriorDist();
 
-#if defined(USE_PARTIAL_SUM_FUNCTOR)
-	ExponentialDistribution * d = dynamic_cast<ExponentialDistribution *>(p.get());
-	PHYCAS_ASSERT(d);
-	//@POL assuming edge length distribution is Exponential for now (allows GetLnPDF to be inlined)
-	return std::for_each(edge_len_vect.begin(), edge_len_vect.end(), PartialPriorSum(*d)).result();
-#else
+//#if defined(USE_PARTIAL_SUM_FUNCTOR)
+//	ExponentialDistribution * d = dynamic_cast<ExponentialDistribution *>(p.get());
+//	PHYCAS_ASSERT(d);
+//	//@POL assuming edge length distribution is Exponential for now (allows GetLnPDF to be inlined)
+//	return std::for_each(edge_len_vect.begin(), edge_len_vect.end(), PartialPriorSum(*d)).result();
+//#else
 	double partial_prior_sum = 0.0;
 	for (std::vector<double>::const_iterator it = edge_len_vect.begin(); it != edge_len_vect.end(); ++it)
 		{
@@ -304,8 +357,9 @@ inline double MCMCChainManager::partialEdgeLenPrior(const std::vector<double> & 
 		partial_prior_sum += tmp;
 		}
 	return partial_prior_sum;
-#endif
+//#endif
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Visits each parameter and calls its getLnPrior function to compute the joint log prior over all parameters. The
@@ -352,7 +406,7 @@ inline double MCMCChainManager::recalcEdgeLenPriors(
 		throw XLikelihood("cannot call MCMCChainManager::recalcEdgeLenPriors before calling MCMCChainManager::finalize");
 		}
 
-	EdgeLenPriorUpdater x = std::for_each(edgelens_begin, edgelens_end, EdgeLenPriorUpdater(mu, var));
+	EdgeLenPriorUpdater x = std::for_each(edgelens_begin, edgelens_end, EdgeLenPriorUpdater(mu, var));     // POL_BOOKMARK
 	return x.ln_prior;
 
 	// old way (rel_0_1_0)

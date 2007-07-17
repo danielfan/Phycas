@@ -125,13 +125,17 @@ void EdgeMove::update()
 
 	proposeNewState();
 
-	one_edgelen[0]				= origEdgelen;
-	double prev_ln_prior		= p->partialEdgeLenPrior(one_edgelen);
+	//one_edgelen[0]				= origEdgelen;
+	//double prev_ln_prior		= p->partialEdgeLenPrior(one_edgelen);
+    bool is_internal_edge       = origNode->IsInternal();
+    double prev_ln_prior		= (is_internal_edge ? p->calcInternalEdgeLenPriorUnnorm(origEdgelen) : p->calcExternalEdgeLenPriorUnnorm(origEdgelen));
 
 	double curr_ln_like			= likelihood->calcLnL(tree);
 
-	one_edgelen[0]				= origNode->GetEdgeLen();
-	double curr_ln_prior		= p->partialEdgeLenPrior(one_edgelen);
+	//one_edgelen[0]				= origNode->GetEdgeLen();
+	//double curr_ln_prior		= p->partialEdgeLenPrior(one_edgelen);
+    double curr_edgelen         = origNode->GetEdgeLen();
+	double curr_ln_prior		= (is_internal_edge ? p->calcInternalEdgeLenPriorUnnorm(curr_edgelen) : p->calcExternalEdgeLenPriorUnnorm(curr_edgelen));
 
 	double prev_posterior		= prev_ln_like + prev_ln_prior;
 	double curr_posterior		= curr_ln_like + curr_ln_prior;
