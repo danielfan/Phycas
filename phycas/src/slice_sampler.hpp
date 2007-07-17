@@ -694,18 +694,11 @@ inline double SliceSampler::Sample()
 		{
 		throw XProbDist("must attach random number generator to slice sampler before attempting to draw samples");
 		}
-#if 0
-	if (probdist == NULL)
-		{
-		throw XProbDist("must attach a probability distribution to slice sampler before attempting to draw samples");
-		}
-#endif
 
 	// We can never be guaranteed that the full conditional density at lastSampled.first has not 
-	// changed since the last call during an MCMC run.
+	// changed since the last call during an MCMC run, so recalculate it now
 	lastSampled.second = (*func)(lastSampled.first);
 	++func_evals;
-	//std::cerr << "~~ should not see this" << std::endl;
 
 	const ParamAndLnProb currentPoint = lastSampled;
 	lastSampled = GetNextSample(currentPoint);

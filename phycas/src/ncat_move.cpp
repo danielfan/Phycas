@@ -116,28 +116,9 @@ void NCatMove::proposeNewState()
 	const CondLikelihoodStorage & clapool = likelihood->getCLAStorage();
 	unsigned old_nr = clapool.getNumRates();
 
-#if defined(OBSOLETE_DEBUGGING_CODE)
-	if (old_nr < ncat_max)
-		{
-		std::cerr << "old_nr < ncat_max (" << old_nr << " > " << ncat_max << "), but they should be the same, no?" << std::endl;
-		}
-#endif
-
 	if (new_nr > old_nr)
 		{
-#if defined(OBSOLETE_DEBUGGING_CODE)
-		std::cerr << "new_nr > old_nr (" << new_nr << " > " << old_nr << "), so recalling all CLAs from tree" << std::endl;
-#endif
-
 		likelihood->storeAllCLAs(tree);
-
-#if defined(OBSOLETE_DEBUGGING_CODE)
-		std::cerr << "Checking tree for CLAs" << std::endl;
-		if (likelihood->debugCheckCLAsRemainInTree(tree))
-			std::cerr << "debugCheckCLAsRemainInTree found dangling CLAs in tree" << std::endl;
-		else
-			std::cerr << "debugCheckCLAsRemainInTree found no CLAs in tree" << std::endl;
-#endif
 		}
 
 	// Renormalize the rates and probs so that we are ready for next likelihood calculation
@@ -149,11 +130,6 @@ void NCatMove::proposeNewState()
 	if (ncat_after > ncat_max)
 		{
 		ncat_max = ncat_after;
-
-#if defined(OBSOLETE_DEBUGGING_CODE)
-		std::cerr << "Calling prepareForLikelihood in NCatMove::proposeNewState..." << std::endl;
-#endif
-
 		likelihood->prepareForLikelihood(tree);
 		}
 	}
@@ -337,15 +313,6 @@ void NCatMove::update()
 
 	proposeNewState();
 
-#if defined(OBSOLETE_DEBUGGING_CODE)
-	const CondLikelihoodStorage & clapool = likelihood->getCLAStorage();
-	unsigned created = clapool.numCLAsCreated();
-	unsigned stored = clapool.numCLAsStored();
-	unsigned kbytes = created*clapool.bytesPerCLA()/1024;
-	std::string msg = str(boost::format("%s: %d evals, %d stored, %d in tree, %d total KB allocated") % (addcat_move_proposed ? "addcat" : "delcat") % likelihood->getNEvals() % stored % (created - stored) % kbytes);
-	std::cerr << msg << std::endl;
-#endif
-
 	likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
 	double curr_ln_like		= likelihood->calcLnL(tree);
 	double ln_like_ratio	= curr_ln_like - prev_ln_like;
@@ -422,7 +389,14 @@ void NCatMove::update()
 	std::cerr << "  u               = " << u << std::endl;
 #endif
 
-	if (ln_accept_ratio >= 0.0 || std::log(u) <= ln_accept_ratio)
+    bool accepted = (ln_accept_ratio >= 0.0 || std::log(u) <= ln_accept_ratio);
+
+    if (save_debug_info)
+        {
+        debug_info = str(boost::format("NCatMove: rate %f, prob %f, %s, %s") % tmp_rate % tmp_prob % (addcat_move_proposed ? "addcat" : "delcat") % (accepted ? "accepted" : "rejected"));
+        }
+
+	if (accepted)
 		{
 #if defined(SHOW_DEBUGGING_OUTPUT)
 		std::cerr << "  " << (addcat_move_proposed ? "ADDCAT" : "DELCAT") << " move accepted" << std::endl;

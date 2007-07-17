@@ -53,6 +53,11 @@ inline void KappaParam::update()
 	if (is_fixed)
 		return;
 	slice_sampler->Sample();
+
+    if (save_debug_info)
+        {
+        debug_info = str(boost::format("KappaParam %f") % (slice_sampler->GetLastSampledXValue()));
+        }
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -79,6 +84,11 @@ inline void OmegaParam::update()
 	if (is_fixed)
 		return;
 	slice_sampler->Sample();
+    
+    if (save_debug_info)
+        {
+        debug_info = str(boost::format("OmegaParam %f") % (slice_sampler->GetLastSampledXValue()));
+        }
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -109,6 +119,11 @@ inline void GTRRateParam::update()
 	if (is_fixed)
 		return;
 	slice_sampler->Sample();
+    
+    if (save_debug_info)
+        {
+        debug_info = str(boost::format("GTRRateParam %f") % (slice_sampler->GetLastSampledXValue()));
+        }
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -135,6 +150,11 @@ inline void DiscreteGammaShapeParam::update()
 		return;
 		}
 	slice_sampler->Sample();
+    
+    if (save_debug_info)
+        {
+        debug_info = str(boost::format("DiscreteGammaShapeParam %f") % (slice_sampler->GetLastSampledXValue()));
+        }
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -158,6 +178,11 @@ inline void PinvarParam::update()
 	if (is_fixed)
 		return;
 	slice_sampler->Sample();
+    
+    if (save_debug_info)
+        {
+        debug_info = str(boost::format("PinvarParam %f") % (slice_sampler->GetLastSampledXValue()));
+        }
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -239,10 +264,10 @@ inline std::string FlexRateParam::getPriorDescr() const
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the order statistics prior used for relative rates in the FLEX model, and sets `curr_ln_prior'. The order 
 |	statistics prior is largest when `curr_value' is between `left_value' and `right_value' and becomes tiny if 
-|	`curr_value' gets close to either `left_value' or `right_value'. Between each pair of rates is an imaginary spacer.
-|	The more spacers lying between each adjacent pair of rates, the harder it is for rates to get close together. The
-|	number of spacers between each adjacent pair is specified by the data member `nspacers', which is set in the 
-|	constructor.
+|	`curr_value' gets close to either `left_value' or `right_value'. Between each pair of rates lies one or more 
+|   imaginary spacers. The more spacers lying between each adjacent pair of rates, the harder it is for rates to get 
+|   close together. The number of spacers between each adjacent pair is specified by the data member `nspacers', which 
+|   is set in the constructor.
 */
 inline double FlexRateParam::recalcPrior()
 	{
@@ -260,6 +285,10 @@ inline void FlexRateParam::update()
 	if (is_fixed)
 		return;
 
+    // Ok, it looks like the following cannot work, but it does! The key is the assignment to `which'
+    // and the fact that SliceSampler::Sample() calls FlexRateParam::operator() repeatedly. Inside
+    // the operator() function, `which' is used to determine which of the relative rates is 
+    // modified. See FlexRateParam::operator() in mcmc_flexcat_param.cpp for details.
 	unsigned nrates = rel_rates.size();
 	for (unsigned i = 0; i < nrates; ++i)
 		{
@@ -268,6 +297,13 @@ inline void FlexRateParam::update()
 		slice_sampler->SetXValue(curr_value);
 		slice_sampler->Sample();
 		}
+
+    if (save_debug_info)
+        {
+        debug_info = "FlexRateParam ";
+    	for (unsigned i = 0; i < nrates; ++i)
+            debug_info += str(boost::format("\n  %d %f") % i % rel_rates[i]);
+        }
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -291,13 +327,18 @@ inline void FlexProbParam::setLot(LotShPtr r)
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Calls the sample() member function of the `slice_sampler' data member.
+|	Calls the sample() member function of the `slice_sampler' data member to update each of the probabilities in the 
+|   vector `rate_probs'.
 */
 inline void FlexProbParam::update()
 	{
 	if (is_fixed)
 		return;
 
+    // Ok, it looks like the following cannot work, but it does! The key is the assignment to `which'
+    // and the fact that SliceSampler::Sample() calls FlexProbParam::operator() repeatedly. Inside
+    // the operator() function, `which' is used to determine which of the rate probabilities is 
+    // modified. See FlexProbParam::operator() in mcmc_flexcat_param.cpp for details.
 	unsigned nrates = rate_probs.size();
 	for (unsigned i = 0; i < nrates; ++i)
 		{
@@ -306,6 +347,13 @@ inline void FlexProbParam::update()
 		slice_sampler->SetXValue(curr_value);
 		slice_sampler->Sample();
 		}
+
+    if (save_debug_info)
+        {
+        debug_info = "FlexProbParam ";
+    	for (unsigned i = 0; i < nrates; ++i)
+            debug_info += str(boost::format("\n  %d %f") % i % rate_probs[i]);
+        }
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -333,6 +381,11 @@ inline void StateFreqParam::update()
 	if (is_fixed)
 		return;
 	slice_sampler->Sample();
+
+    if (save_debug_info)
+        {
+        debug_info = str(boost::format("StateFreqParam %f") % (slice_sampler->GetLastSampledXValue()));
+        }
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -358,9 +411,16 @@ inline void HyperPriorParam::update()
 		return;
 	if (slice_sampler)
 		{
-		//std::cerr << "In HyperPriorParam::update" << std::endl;
 		slice_sampler->Sample();
 		}
+
+    if (save_debug_info)
+        {
+        if (slice_sampler)
+            debug_info = str(boost::format("HyperPriorParam %f") % (slice_sampler->GetLastSampledXValue()));
+        else
+            debug_info = "HyperPriorParam (no slice sampler)";
+        }
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -445,6 +505,11 @@ inline void EdgeLenParam::update()
 	if (is_fixed)
 		return;
 	slice_sampler->Sample();
+
+    if (save_debug_info)
+        {
+        debug_info = str(boost::format("EdgeLenParam %f") % (slice_sampler->GetLastSampledXValue()));
+        }
 	}
 
 } // namespace phycas

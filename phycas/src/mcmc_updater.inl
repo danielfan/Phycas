@@ -85,6 +85,10 @@ inline void MCMCUpdater::freeParameter()
 */
 inline void MCMCUpdater::update()
 	{
+    if (save_debug_info)
+        {
+        debug_info = "In MCMCUpdater::update(): this base class method does nothing";
+        }
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
