@@ -100,13 +100,16 @@ class Phycas:
         #self.adapt_ycond_from_ends  = 0.25
 
         # Variables associated with edge length prior distributions
-        # If using_hyperprior is True, a hyperprior will be used to govern both edge length priors
-        # If using_hyperprior is False, external_edgelen_dist and internal_edgelen_dist will govern edge length priors
-        # If internal_edgelen_dist is None, the prior for all edgelens will be determined by external_edgelen_dist
+        # If using_hyperprior is False, external_edgelen_dist and internal_edgelen_dist will govern
+        # external and internal edge length priors, respectively. If either external_edgelen_dist or
+        # internal_edgelen_dist is None, then whichever prior is defined will govern both internal 
+        # and external edges. If using_hyperprior is True, then hyperparameters will be used to
+        # govern the mean of all edge length priors defined. The same hyperprior will be used for both
+        # hyperparameters (should two hyperparameters be used)
         self.using_hyperprior       = True      
         self.edgelen_hyperprior     = InverseGammaDist(2.1, 0.909)
         self.external_edgelen_dist  = ExponentialDist(2.0)
-        self.internal_edgelen_dist  = ExponentialDist(2.0)
+        self.internal_edgelen_dist  = None
         
         # Variables associated with initializing the MCMC sampler
         self.starting_edgelen_dist  = ExponentialDist(10.0) # Used to select the starting edge lengths when starting_tree_source is 'random'
@@ -152,6 +155,16 @@ class Phycas:
 
         # ***** DO NOT CHANGE ANYTHING BELOW HERE *****
         self.r = Lot()
+        assert self.external_edgelen_dist or self.internal_edgelen_dist, 'external_edgelen_dist and internal_edgelen_dist are both None; a probability distribution must be assigned to at least one of these'
+        self.separate_int_ext_edgelen_priors = True
+        if not self.external_edgelen_dist:
+            # if only one edgelen prior distribution specified, make sure it is external_edgelen_dist
+            self.external_edgelen_dist = self.internal_edgelen_dist
+            self.internal_edgelen_dist = None
+            self.separate_int_ext_edgelen_priors = False
+        elif not self.internal_edgelen_dist:
+            self.separate_int_ext_edgelen_priors = False
+
         self.starting_tree          = ''        # will contain description of actual starting tree used
         self.warn_tip_numbers       = False     # True only if tip numbers were not able to be created using the tip names in the tree description (always False if starting_tree_source == 'random' because BuildTreeFromString is not called in this case)
         self.ntax                   = 0         # will hold the actual number of taxa after data file read
@@ -195,7 +208,8 @@ class Phycas:
         self.pinvar_prior.setLot(self.r)
         self.edgelen_hyperprior.setLot(self.r)
         self.external_edgelen_dist.setLot(self.r)
-        self.internal_edgelen_dist.setLot(self.r)
+        if self.internal_edgelen_dist:
+            self.internal_edgelen_dist.setLot(self.r)
         self.starting_edgelen_dist.setLot(self.r)
         
         # Create a substitution model and define priors for the model parameters
@@ -238,7 +252,10 @@ class Phycas:
         
         # Define edge length prior distributions
         self.model.setExternalEdgeLenPrior(self.external_edgelen_dist)
-        self.model.setInternalEdgeLenPrior(self.internal_edgelen_dist)
+        if self.separate_int_ext_edgelen_priors:
+            self.model.setInternalEdgeLenPrior(self.internal_edgelen_dist)
+        else:
+            self.model.setInternalEdgeLenPrior(self.external_edgelen_dist)
         if self.using_hyperprior:
             # Edge length prior distribution is hierarchical
             self.edgelen_hyperprior.setMeanAndVariance(1.0, 10.0)
