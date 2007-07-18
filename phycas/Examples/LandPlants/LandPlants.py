@@ -48,7 +48,7 @@ phycas.internal_edgelen_dist  = ProbDist.ExponentialDist(1.0/mu_internal)
 # Python allows you to easily include the values of mu_internal and mu_external in
 # the file name - the numbers replace the "%d" placeholders)
 phycas.gg_do = True
-self.gg_nreps = 2
+phycas.gg_nreps = 2
 phycas.gg_outfile = 'ggout.internal_%f.external_%f.txt' % (mu_internal, mu_external)
 
 # Set up the substitution model
