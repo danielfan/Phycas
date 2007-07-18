@@ -74,7 +74,6 @@ inline const MCMCUpdaterVect & MCMCChainManager::getEdgeLenParams() const
 	return edge_len_params;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the `edge_len_hyperparams' data member, which is a shared pointer to a HyperPriorParam.
 |	Returns the `edge_len_hyperparams' data member as a const MCMCUpdaterVect reference. Used so that Python programs 
@@ -85,15 +84,6 @@ inline MCMCUpdaterVect MCMCChainManager::getEdgeLenHyperparams() const
 	{
 	return edge_len_hyperparams;
 	}
-#else
-/*----------------------------------------------------------------------------------------------------------------------
-|	Returns the `edge_len_hyperparam' data member, which is a shared pointer to a HyperPriorParam.
-*/
-inline MCMCUpdaterShPtr MCMCChainManager::getEdgeLenHyperparam()
-	{
-	return edge_len_hyperparam;
-	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Adds a pointer to an MCMCUpdater-derived object to the `moves' vector. The `moves' vector is a vector of shared 
@@ -124,7 +114,6 @@ inline void	MCMCChainManager::addEdgeLenParam(MCMCUpdaterShPtr p)
 	dirty = true;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Adds a HyperPriorParam shared pointer to the `edge_len_hyperparams' vector.
 */
@@ -133,16 +122,6 @@ inline void	MCMCChainManager::addEdgeLenHyperparam(MCMCUpdaterShPtr p)
 	edge_len_hyperparams.push_back(p);
 	dirty = true;
 	}
-#else
-/*----------------------------------------------------------------------------------------------------------------------
-|	Specifies a pointer to a HyperPriorParam to be stored in the `edge_len_hyperparam' data member.
-*/
-inline void	MCMCChainManager::addEdgeLenHyperparam(MCMCUpdaterShPtr p) 
-	{
-	edge_len_hyperparam = p;
-	dirty = true;
-	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the current log likelihood. Each call to an update() member function of one of the updaters refreshes the
@@ -181,7 +160,6 @@ inline double MCMCChainManager::getLastLnPrior() const
 	return last_ln_prior;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Clears all vectors (all_updaters, moves, model_params, edge_len_params and edge_len_hyperparams).
 */
@@ -193,19 +171,6 @@ inline void MCMCChainManager::clear()
 	edge_len_params.clear();
 	edge_len_hyperparams.clear();
 	}
-#else
-/*----------------------------------------------------------------------------------------------------------------------
-|	Clears all vectors (all_updaters, moves, model_params, edge_len_params) and resets edge_len_hyperparam.
-*/
-inline void MCMCChainManager::clear()
-	{
-	all_updaters.clear();
-	moves.clear();
-	model_params.clear();
-	edge_len_params.clear();
-	edge_len_hyperparam.reset();
-	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the `chain_mgr' data member of all parameters so that they can call MCMCChainManager::getLnPrior when any one 
@@ -221,11 +186,7 @@ inline void MCMCChainManager::clear()
 inline void MCMCChainManager::finalize()
 	{
 	// Determine how big the all_updaters vector needs to be
-#if POLPY_NEWWAY
 	unsigned sz = (unsigned)(moves.size() + edge_len_params.size() + model_params.size() + edge_len_hyperparams.size());
-#else
-	unsigned sz = (unsigned)(moves.size() + edge_len_params.size() + model_params.size()) + (edge_len_hyperparam ? 1 : 0);
-#endif
 	if (sz == 0)
 		{
 		throw XLikelihood("must add at least one updater object to the chain manager before calling finalize()");
@@ -243,26 +204,13 @@ inline void MCMCChainManager::finalize()
 	edgelens_end = std::copy(edge_len_params.begin(), edge_len_params.end(), moves_end);
 	edgelens_begin = moves_end;     // POL_BOOKMARK
 
-#if POLPY_NEWWAY
 	// Next add the edge length hyperparameters (if there are any)
 	hyperparams_end = std::copy(edge_len_hyperparams.begin(), edge_len_hyperparams.end(), edgelens_end);
 	hyperparams_begin = edgelens_end;
-#else
-	// Next add the edge length hyperparameter (if used)
-	hyperparam_end = edgelens_end;
-	if (edge_len_hyperparam)
-		*hyperparam_end++ = edge_len_hyperparam;
-	hyperparam_begin = edgelens_end;
-#endif
 
 	// Next add the remaining model parameters
-#if POLPY_NEWWAY
 	model_params_end = std::copy(model_params.begin(), model_params.end(), hyperparams_end);
 	model_params_begin = hyperparams_end;
-#else
-	model_params_end = std::copy(model_params.begin(), model_params.end(), hyperparam_end);
-	model_params_begin = hyperparam_end;
-#endif
 
 	params_begin = edgelens_begin;
 	params_end = model_params_end;
@@ -431,45 +379,6 @@ inline double MCMCChainManager::calcJointLnPrior()
 
 	return last_ln_prior;
 	}
-
-#if POLPY_NEWWAY
-// there is no new way, only an old way
-#else
-struct EdgeLenPriorUpdater
-	{
-	double mu;
-	double var;
-	double ln_prior;
-
-	EdgeLenPriorUpdater(double m, double v) : mu(m), var(v), ln_prior(0.0) {}
-	void operator()(MCMCUpdaterShPtr u)
-		{
-		u->setPriorMeanAndVariance(mu, var);
-		ln_prior += u->recalcPrior();
-		}
-	};
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Visit all EdgeLenParam objects in the `edge_len_params' list and tell each of them to use the supplied new value 
-|	`mu' as the mean of their prior distribution.
-*/
-inline double MCMCChainManager::recalcEdgeLenPriors(
-  double mu,	/**< is a new value for the edge length prior mean */
-  double var)	/**< is a new value for the edge length prior variance */
-	{
-	if (dirty)
-		{
-		throw XLikelihood("cannot call MCMCChainManager::recalcEdgeLenPriors before calling MCMCChainManager::finalize");
-		}
-
-	EdgeLenPriorUpdater x = std::for_each(edgelens_begin, edgelens_end, EdgeLenPriorUpdater(mu, var));     // POL_BOOKMARK
-	return x.ln_prior;
-
-	// old way (rel_0_1_0)
-	//std::for_each(edgelens_begin, edgelens_end,
-	//	boost::lambda::bind(&MCMCUpdater::setPriorMeanAndVariance, *boost::lambda::_1, mu, var));
-	}
-#endif
 
 } // namespace phycas
 

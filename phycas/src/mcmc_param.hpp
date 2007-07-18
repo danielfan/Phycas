@@ -235,14 +235,12 @@ class StateFreqParam : public MCMCUpdater
 class EdgeLenMasterParam : public MCMCUpdater
 	{
 	public:
-#if POLPY_NEWWAY
         enum                EdgeLenType
                                 {
                                 internal,   /**> only computes prior for internal edges */
                                 external,   /**> only computes prior for external edges */
                                 both        /**> computes prior for all edges */
                                 };
-#endif
 
                             EdgeLenMasterParam(EdgeLenMasterParam::EdgeLenType t = EdgeLenMasterParam::both);
 							virtual ~EdgeLenMasterParam()
@@ -256,14 +254,11 @@ class EdgeLenMasterParam : public MCMCUpdater
 
 		double				lnPriorOneEdge(TreeNode & nd) const;
 
-#if POLPY_NEWWAY
     private:
 
         EdgeLenType         edgeLenType;    /**> holds the edge length type, which determines for which edge lengths the prior is computed when recalcPrior is called */
-#endif
 	};
 
-#if POLPY_NEWWAY
 typedef boost::shared_ptr<EdgeLenMasterParam> EdgeLenMasterParamShPtr;
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -288,49 +283,6 @@ class HyperPriorParam : public MCMCUpdater
 
         EdgeLenMasterParamShPtr    edgelen_master_param;   /**> is the edge length master parameter whose prior this parameter controls */
 	};
-#else
-/*----------------------------------------------------------------------------------------------------------------------
-|	Represents the mean of the edge length prior. This parameter is used in models employing a hyperprior governing the
-|	mean of the edge length priors. Whenever the HyperPriorParam value changes, the means of the priors affecting all
-|	EdgeLenParam objects in the MCMCChainManager are reset to this new value.
-*/
-class HyperPriorParam : public MCMCUpdater
-	{
-	public:
-							HyperPriorParam();
-							virtual ~HyperPriorParam()
-								{
-								//std::cerr << "HyperPriorParam dying..." << std::endl;
-								}
-
-		virtual void		update();				// override virtual from MCMCUpdater base class
-		virtual double		operator()(double k);	
-	};
-#endif
-
-#if POLPY_NEWWAY
-#else
-/*----------------------------------------------------------------------------------------------------------------------
-|	Represents the length of the edge associated with the TreeNode `nd'.
-*/
-class EdgeLenParam : public EdgeLenMasterParam
-	{
-	public:
-
-							EdgeLenParam(TreeNode * node);
-							virtual ~EdgeLenParam()
-								{
-								//std::cerr << "EdgeLenParam dying..." << std::endl;
-								}
-
-		void				update();  // override virtual from MCMCUpdater base class
-		virtual double		operator()(double k);
-
-	private:
-
-		TreeNode *			nd;		/**< The node whose edge is being manipulated by this parameter */
-	};
-#endif
 
 } // namespace phycas
 

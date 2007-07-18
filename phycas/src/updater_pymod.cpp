@@ -77,13 +77,6 @@ void updater_pymod()
 	class_<phycas::HyperPriorParam, bases<phycas::MCMCUpdater, AdHocDensity>, 
 		boost::noncopyable, boost::shared_ptr<phycas::HyperPriorParam> >("HyperPriorParam") 
 		;
-#if POLPY_NEWWAY
-    // no new way
-#else
-	class_<phycas::EdgeLenParam, bases<phycas::MCMCUpdater, AdHocDensity>, 
-		boost::noncopyable, boost::shared_ptr<phycas::EdgeLenParam> >("EdgeLenParam", init<TreeNode *>()) 
-		;
-#endif
 	class_<phycas::LargetSimonMove, bases<phycas::MCMCUpdater>, 
 		boost::noncopyable, boost::shared_ptr<phycas::LargetSimonMove> >("LargetSimonMove") 
 		.def("update", &phycas::LargetSimonMove::update)

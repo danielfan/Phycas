@@ -281,7 +281,6 @@ double HyperPriorParam::operator()(
 		curr_value = mu;
 		recalcPrior();
 
-#if POLPY_NEWWAY
 		edgelen_master_param->setPriorMeanAndVariance(mu, mu*mu); //@POL note that this implicitly assumes an exponential edge length prior
         edgeLensLnPrior = edgelen_master_param->recalcPrior();
 
@@ -289,74 +288,9 @@ double HyperPriorParam::operator()(
 		ChainManagerShPtr p = chain_mgr.lock();
 		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
-#else
-		// MCMCChainManager::getLnPrior() just returns the last prior value calculated
-		// by each edge length parameter, so we need to recalculate all of these using 
-		// the new edge length prior parameter value mu so that the call to 
-		// chain_mgr->calcJointLnPrior() will return the correct joint prior
-		ChainManagerShPtr p = chain_mgr.lock();
-		PHYCAS_ASSERT(p);
-		//std::cerr << "  calling MCMCChainManager::recalcEdgeLenPriors" << std::endl;
-		edgeLensLnPrior = p->recalcEdgeLenPriors(mu, mu*mu);	//@POL implicit assumption that edge length prior is exponential
-		p->setLastLnLike(curr_ln_like);
-#endif
 		}
 
 	return curr_ln_like + edgeLensLnPrior + curr_ln_prior;
 	}
-
-#if POLPY_NEWWAY
-// no new way
-#else
-/*----------------------------------------------------------------------------------------------------------------------
-|	EdgeLenParam is a functor whose operator() returns a value proportional to the full-conditional posterior 
-|	probability density for a particular value `x', which is an edge length for the node managed by this EdgeLenParam.
-|	If the supplied value `x' is out of bounds (i.e. <= 0.0), the return value is `ln_zero' (closest we can come to a
-|	log posterior equal to negative infinity).
-*/
-double EdgeLenParam::operator()(
-  double x) /**< is a new edge length for the node being managed by this object */
-	{
-	curr_ln_like = ln_zero;
-	curr_ln_prior = 0.0;
-
-	if (x > 0.0)
-		{
-		if (nd->IsTipRoot())
-			{
-			TreeNode * subroot = nd->GetLeftChild();
-			PHYCAS_ASSERT(subroot);
-			subroot->SetEdgeLen(x);
-
-			//@POL seems like we will be updating subroot once more than every other node
-			likelihood->useAsLikelihoodRoot(subroot);
-			likelihood->invalidateAwayFromNode(*subroot);
-			likelihood->invalidateBothEnds(subroot);	//@POL really just need invalidateParentalOnly function
-			}
-		else
-			{
-			nd->SetEdgeLen(x);
-
-			TreeNode * likeroot = nd;
-			if (nd->IsTip())
-				likeroot = nd->GetParent();
-			PHYCAS_ASSERT(likeroot != NULL);
-
-			likelihood->useAsLikelihoodRoot(likeroot);
-			likelihood->invalidateAwayFromNode(*nd);
-			likelihood->invalidateBothEnds(nd);	//@POL really just need invalidateParentalOnly function
-			}
-
-		curr_ln_like = likelihood->calcLnL(tree);
-		curr_value = x;
-		recalcPrior();
-		ChainManagerShPtr p = chain_mgr.lock();
-		PHYCAS_ASSERT(p);
-		p->setLastLnLike(curr_ln_like);
-		}
-
-	return curr_ln_like + curr_ln_prior;
-	}
-#endif
 
 }	// namespace phycas

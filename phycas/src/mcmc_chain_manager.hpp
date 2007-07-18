@@ -98,17 +98,9 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 		const MCMCUpdaterVect &	getModelParams() const;
 		const MCMCUpdaterVect &	getEdgeLenParams() const;
 
-#if POLPY_NEWWAY
         MCMCUpdaterVect         getEdgeLenHyperparams() const;
-#else
-		MCMCUpdaterShPtr		getEdgeLenHyperparam();
-#endif
 
-#if POLPY_NEWWAY
         void					addMCMCUpdaters(ModelShPtr m, TreeShPtr t, TreeLikeShPtr like, LotShPtr r, unsigned max_units, unsigned weight);
-#else
-		void					addMCMCUpdaters(ModelShPtr m, TreeShPtr t, TreeLikeShPtr like, LotShPtr r, bool separate_edgelen_params, unsigned max_units, unsigned weight);
-#endif
 
 	public:
 		// magic workaround for avoiding bogus error when compiling with darwin GCC 3.3 build 1640: 
@@ -133,13 +125,8 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 		MCMCUpdaterIter			edgelens_begin;			/**< Iterator positioned at the first edge length parameter */
 		MCMCUpdaterIter			edgelens_end;			/**< Iterator positioned just beyond the last edge length parameter */
 
-#if POLPY_NEWWAY
 		MCMCUpdaterIter			hyperparams_begin;		/**< Iterator positioned at the first edge length hyperparameter (equals hyperparams_end() otherwise) */
 		MCMCUpdaterIter			hyperparams_end;		/**< Iterator positioned just beyond the last edge length hyperparameter if any exist (equals hyperparams_begin otherwise) */
-#else
-		MCMCUpdaterIter			hyperparam_begin;		/**< Iterator positioned at the edge length hyperparameter if it exists (equals hyperparam_end() otherwise) */
-		MCMCUpdaterIter			hyperparam_end;			/**< Iterator positioned just beyond the edge length hyperparameter if it exists (equals hyperparam_begin otherwise) */
-#endif
 
 		MCMCUpdaterIter			model_params_begin;		/**< Iterator positioned at the first non-edge-length model parameter */
 		MCMCUpdaterIter			model_params_end;		/**< Iterator positioned just beyond the last non-edge-length model parameter */
@@ -150,11 +137,7 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 		MCMCUpdaterVect			moves;					/**< Vector of moves */
 		MCMCUpdaterVect			model_params;			/**< Vector of model-specific parameters (e.g. kappa) */
 		MCMCUpdaterVect			edge_len_params;		/**< Vector of edge length parameters */
-#if POLPY_NEWWAY
 		MCMCUpdaterVect		    edge_len_hyperparams;	/**< Vector of edge length hyperparameters */
-#else
-		MCMCUpdaterShPtr		edge_len_hyperparam;	/**< Pointer to the edge length hyperparameter */
-#endif
 		MCMCUpdaterVect			all_updaters;			/**< Vector of all updaters (includes moves, model_params, edge_len_params and edge_len_hyperparams); empty until finalize() is called, after which it contains a copy of everything in moves, model_params, edge_len_params and edge_len_hyperparam */
 	};
 

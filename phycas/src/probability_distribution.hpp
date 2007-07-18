@@ -59,7 +59,7 @@ class ProbabilityDistribution : public AdHocDensity
 							virtual ~ProbabilityDistribution() {}
 
 		virtual void		SetLot(Lot * other); //@POL seems like this should be a shared pointer
-		virtual Lot *		GetLot() {return lot;} // temporary!
+		virtual Lot *		GetLot() {return lot;}
 		virtual void		ResetLot();
 		virtual void		SetSeed(unsigned rnseed);
 

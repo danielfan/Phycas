@@ -100,11 +100,6 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		;
 	class_<phycas::MCMCChainManager, boost::noncopyable, boost::shared_ptr<phycas::MCMCChainManager> >("MCMCChainManagerBase")
 		.def("finalize", &MCMCChainManager::finalize)
-#if POLPY_NEWWAY
-// there is no new way, only an old way
-#else
-		.def("recalcEdgeLenPriors", &MCMCChainManager::recalcEdgeLenPriors)
-#endif
 		.def("calcJointLnPrior", &MCMCChainManager::calcJointLnPrior)
 		.def("addMove", &MCMCChainManager::addMove)
 		.def("addModelParam", &MCMCChainManager::addModelParam)
@@ -116,11 +111,7 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
         .def("getMoves", &MCMCChainManager::getMoves, return_value_policy<copy_const_reference>())
         .def("getModelParams", &MCMCChainManager::getModelParams, return_value_policy<copy_const_reference>())
         .def("getEdgeLenParams", &MCMCChainManager::getEdgeLenParams, return_value_policy<copy_const_reference>())
-#if POLPY_NEWWAY
         .def("getEdgeLenHyperparams", &MCMCChainManager::getEdgeLenHyperparams)
-#else
-        .def("getEdgeLenHyperparam", &MCMCChainManager::getEdgeLenHyperparam)
-#endif
 		.def("addMCMCUpdaters", &MCMCChainManager::addMCMCUpdaters)
 		.def("clear", &MCMCChainManager::clear)
 		.def("refreshLastLnLike", &MCMCChainManager::refreshLastLnLike)

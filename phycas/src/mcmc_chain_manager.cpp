@@ -77,10 +77,6 @@ void MCMCChainManager::addMCMCUpdaters(
   TreeShPtr t,						/**< is the tree */
   TreeLikeShPtr like,				/**< is the likelihood calculator */
   LotShPtr r,						/**< is the pseudo-random number generator */
-#if POLPY_NEWWAY
-#else
-  bool separate_edgelen_params,		/**< is true if one EdgeLenParam should be added for every edge and false if a single EdgeLenMasterParam should be added  */
-#endif
   unsigned max_units,				/**< is the maximum number of slice sampler units to use in each update */
   unsigned weight)					/**< is the weight to be used for all parameters added by this function */
 	{
@@ -111,20 +107,12 @@ void MCMCChainManager::addMCMCUpdaters(
 
 	MCMCUpdaterIter iter;
 	MCMCUpdaterVect edgelens;
-#if POLPY_NEWWAY
 	MCMCUpdaterVect edgelen_hyperparams;
-#else
-	MCMCUpdaterShPtr edgelen_hyperparam;
-#endif
 	MCMCUpdaterVect parameters;
 
 	// Ask the model to create the edge length parameters, edge length hyperparameters, and 
 	// its own model-specific parameters.
-#if POLPY_NEWWAY
 	m->createParameters(t, edgelens, edgelen_hyperparams, parameters);
-#else
-	m->createParameters(t, edgelens, edgelen_hyperparam, parameters, separate_edgelen_params);
-#endif
 
 	// Add the edge length parameters (might be master parameters for internal and external edges or, 
     // if separate_edgelen_params is true, one edge length parameter for every edge in the tree)
@@ -137,13 +125,9 @@ void MCMCChainManager::addMCMCUpdaters(
 		p->setTreeLikelihood(like);
 		p->setLot(r);
 		addEdgeLenParam(p);
-
-        //POL temporary!
-        std::cerr << "***** adding an edge length parameter in addMCMCUpdaters *****" << std::endl;
 		}
 
 	// Add the edge length hyperparameters (if any were created)
-#if POLPY_NEWWAY
 	for (iter = edgelen_hyperparams.begin(); iter != edgelen_hyperparams.end(); ++iter)
 		{
 		MCMCUpdaterShPtr p = (*iter);
@@ -153,21 +137,7 @@ void MCMCChainManager::addMCMCUpdaters(
 		p->setTreeLikelihood(like);
 		p->setLot(r);
 		addEdgeLenHyperparam(p);
-
-        //POL temporary!
-        std::cerr << "***** adding an edge length hyperparameter in addMCMCUpdaters *****" << std::endl;
 		}
-#else
-	if (edgelen_hyperparam)
-		{
-		edgelen_hyperparam->setWeight(weight);
-		edgelen_hyperparam->setMaxUnits(max_units);
-		edgelen_hyperparam->setModel(m);
-		edgelen_hyperparam->setTreeLikelihood(like);
-		edgelen_hyperparam->setLot(r);
-		addEdgeLenHyperparam(edgelen_hyperparam);
-		}
-#endif
 
 	for (iter = parameters.begin(); iter != parameters.end(); ++iter)
 		{
