@@ -620,8 +620,8 @@ class Phycas:
         if self.gg_do and cycle > 0:
             for j in range(self.gg_nreps):
                 self.gg_num_post_pred_reps += 1.0
+                
                 # Simulate from the posterior
-                #tmp_simdata = SimData()
                 self.tmp_simdata.clear()
                 self.likelihood.simulate(self.tmp_simdata, self.tree, self.r, self.nchar)
 
@@ -694,8 +694,8 @@ class Phycas:
                 # ------------------------------------------------------------
                 #
                 # Note that it is ok if gg_num_post_pred_reps = 1 (in which case
-                # gg_mu is multiplied by zero) because the multBy is a no-op in
-                # this case since gg_mu is empty
+                # gg_mu is multiplied by zero) because multBy is a no-op in this
+                # case since gg_mu is empty
                 p = 1.0/self.gg_num_post_pred_reps
                 self.gg_mu.multBy(1.0 - p)
                 self.tmp_simdata.multBy(p)
