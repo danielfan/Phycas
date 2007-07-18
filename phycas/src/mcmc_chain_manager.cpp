@@ -67,17 +67,20 @@ void MCMCChainManager::refreshLastLnPrior()
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Adds edge length parameters (if `separate_edgelen_params' is true) and model-specific parameters to the 
-|	`edge_len_params' and `model_params' data members, respectively. Also sets `edge_len_hyperparam' if a prior for one
-|	has been specified in the model. The model-specific parameters are added by calling the model's createParameters() 
-|	member function. Does not call the finalize() function, however, in case other parameters need to be added after 
-|	this function is called.
+|	`edge_len_params' and `model_params' data members, respectively. Also adds edge length hyperparameters to the 
+|   `edge_len_hyperparams' data member if any hyperpriors have been specified. The model-specific parameters are added 
+|   by calling the model's createParameters() member function. This function does not call the finalize() function, 
+|   however, in case other parameters need to be added after this function is called.
 */
 void MCMCChainManager::addMCMCUpdaters(
   ModelShPtr m,						/**< is the substitution model */
   TreeShPtr t,						/**< is the tree */
   TreeLikeShPtr like,				/**< is the likelihood calculator */
   LotShPtr r,						/**< is the pseudo-random number generator */
+#if POLPY_NEWWAY
+#else
   bool separate_edgelen_params,		/**< is true if one EdgeLenParam should be added for every edge and false if a single EdgeLenMasterParam should be added  */
+#endif
   unsigned max_units,				/**< is the maximum number of slice sampler units to use in each update */
   unsigned weight)					/**< is the weight to be used for all parameters added by this function */
 	{
@@ -108,16 +111,23 @@ void MCMCChainManager::addMCMCUpdaters(
 
 	MCMCUpdaterIter iter;
 	MCMCUpdaterVect edgelens;
+#if POLPY_NEWWAY
+	MCMCUpdaterVect edgelen_hyperparams;
+#else
 	MCMCUpdaterShPtr edgelen_hyperparam;
+#endif
 	MCMCUpdaterVect parameters;
 
-	// Ask the model to create the edge length parameters, edge length hyperparameter, and 
-	// its own model-specific parameters. The model is responsible for calling setName, setTree
-	// and setPrior for each parameter it creates.
+	// Ask the model to create the edge length parameters, edge length hyperparameters, and 
+	// its own model-specific parameters.
+#if POLPY_NEWWAY
+	m->createParameters(t, edgelens, edgelen_hyperparams, parameters);
+#else
 	m->createParameters(t, edgelens, edgelen_hyperparam, parameters, separate_edgelen_params);
+#endif
 
-	// Add the edge length parameters (might be a single edge length master parameter 
-	// or, if separate_edgelen_params is true, one edge length parameter for every edge in the tree)
+	// Add the edge length parameters (might be master parameters for internal and external edges or, 
+    // if separate_edgelen_params is true, one edge length parameter for every edge in the tree)
 	for (iter = edgelens.begin(); iter != edgelens.end(); ++iter)
 		{
 		MCMCUpdaterShPtr p = (*iter);
@@ -127,9 +137,27 @@ void MCMCChainManager::addMCMCUpdaters(
 		p->setTreeLikelihood(like);
 		p->setLot(r);
 		addEdgeLenParam(p);
+
+        //POL temporary!
+        std::cerr << "***** adding an edge length parameter in addMCMCUpdaters *****" << std::endl;
 		}
 
-	// Add the edge length hyperparameter (if one was created)
+	// Add the edge length hyperparameters (if any were created)
+#if POLPY_NEWWAY
+	for (iter = edgelen_hyperparams.begin(); iter != edgelen_hyperparams.end(); ++iter)
+		{
+		MCMCUpdaterShPtr p = (*iter);
+		p->setWeight(weight);
+		p->setMaxUnits(max_units);
+		p->setModel(m);
+		p->setTreeLikelihood(like);
+		p->setLot(r);
+		addEdgeLenHyperparam(p);
+
+        //POL temporary!
+        std::cerr << "***** adding an edge length hyperparameter in addMCMCUpdaters *****" << std::endl;
+		}
+#else
 	if (edgelen_hyperparam)
 		{
 		edgelen_hyperparam->setWeight(weight);
@@ -139,6 +167,7 @@ void MCMCChainManager::addMCMCUpdaters(
 		edgelen_hyperparam->setLot(r);
 		addEdgeLenHyperparam(edgelen_hyperparam);
 		}
+#endif
 
 	for (iter = parameters.begin(); iter != parameters.end(); ++iter)
 		{

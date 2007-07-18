@@ -281,6 +281,15 @@ double HyperPriorParam::operator()(
 		curr_value = mu;
 		recalcPrior();
 
+#if POLPY_NEWWAY
+		edgelen_master_param->setPriorMeanAndVariance(mu, mu*mu); //@POL note that this implicitly assumes an exponential edge length prior
+        edgeLensLnPrior = edgelen_master_param->recalcPrior();
+
+        // Store current log-likelihood value (if next updater is a move, it will then not have to calculate it)
+		ChainManagerShPtr p = chain_mgr.lock();
+		PHYCAS_ASSERT(p);
+		p->setLastLnLike(curr_ln_like);
+#else
 		// MCMCChainManager::getLnPrior() just returns the last prior value calculated
 		// by each edge length parameter, so we need to recalculate all of these using 
 		// the new edge length prior parameter value mu so that the call to 
@@ -290,11 +299,15 @@ double HyperPriorParam::operator()(
 		//std::cerr << "  calling MCMCChainManager::recalcEdgeLenPriors" << std::endl;
 		edgeLensLnPrior = p->recalcEdgeLenPriors(mu, mu*mu);	//@POL implicit assumption that edge length prior is exponential
 		p->setLastLnLike(curr_ln_like);
+#endif
 		}
 
 	return curr_ln_like + edgeLensLnPrior + curr_ln_prior;
 	}
 
+#if POLPY_NEWWAY
+// no new way
+#else
 /*----------------------------------------------------------------------------------------------------------------------
 |	EdgeLenParam is a functor whose operator() returns a value proportional to the full-conditional posterior 
 |	probability density for a particular value `x', which is an edge length for the node managed by this EdgeLenParam.
@@ -344,5 +357,6 @@ double EdgeLenParam::operator()(
 
 	return curr_ln_like + curr_ln_prior;
 	}
+#endif
 
 }	// namespace phycas

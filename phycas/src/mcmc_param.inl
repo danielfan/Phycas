@@ -388,6 +388,39 @@ inline void StateFreqParam::update()
         }
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	The constructor of HyperPriorParam simply calls the base class (MCMCUpdater) constructor. Like other parameters,
+|   sets `is_move' to false and `has_slice_sampler' to true. Because this is a hyperparameter, sets `is_hyper_param' to 
+|   true. Also sets `is_master_param' to false and `curr_value' to 0.1.
+*/
+inline HyperPriorParam::HyperPriorParam()
+  : MCMCUpdater()
+	{
+	curr_value = 0.1;
+	has_slice_sampler = true;
+	is_move = false;
+	is_master_param = false;
+	is_hyper_param = true;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	The constructor of HyperPriorParam simply calls the base class (MCMCUpdater) constructor. Like other parameters,
+|   sets `is_move' to false and `has_slice_sampler' to true. Because this is a hyperparameter, sets `is_hyper_param' to 
+|   true. Also sets `is_master_param' to false, `curr_value' to 0.1 and `edgelen_master_param' to the supplied edge
+|   length master parameter shared pointer `p'.
+*/
+inline HyperPriorParam::HyperPriorParam(
+  EdgeLenMasterParamShPtr p)    /**> is the edge length master parameter whose prior this parameter controls */
+  : MCMCUpdater(), edgelen_master_param(p)
+	{
+	curr_value = 0.1;
+	has_slice_sampler = true;
+	is_move = false;
+	is_master_param = false;
+	is_hyper_param = true;
+	}
+#else
 /*----------------------------------------------------------------------------------------------------------------------
 |	The constructor of HyperPriorParam simply calls the base class (MCMCUpdater) constructor. Also sets the `curr_value'
 |	data member to 0.1 and refreshes `curr_ln_prior' accordingly.
@@ -401,6 +434,7 @@ inline HyperPriorParam::HyperPriorParam()
 	is_master_param = false;
 	is_hyper_param = true;
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calls the sample() member function of the `slice_sampler' data member.
@@ -477,8 +511,13 @@ inline double EdgeLenMasterParam::lnPriorOneEdge(TreeNode & nd) const
 */
 inline double EdgeLenMasterParam::recalcPrior()
 	{
+#if POLPY_NEWWAY
+    curr_ln_prior = std::accumulate(tree->begin(), tree->end(), 0.0,
+	    boost::lambda::_1 += boost::lambda::bind(&EdgeLenMasterParam::lnPriorOneEdge, this, boost::lambda::_2));
+#else
     curr_ln_prior = std::accumulate(tree->begin(), tree->end(), 0.0,
 	    boost::lambda::_1 += boost::lambda::bind(&EdgeLenParam::lnPriorOneEdge, this, boost::lambda::_2));
+#endif
 
 	return curr_ln_prior;
 	}
@@ -496,6 +535,9 @@ inline void EdgeLenMasterParam::setPriorMeanAndVariance(double m, double v)
 	recalcPrior();
 	}
 
+#if POLPY_NEWWAY
+// there is no new way, only an old way
+#else
 /*----------------------------------------------------------------------------------------------------------------------
 |	The parameter `node' is the node in the tree associated with the edge whose length is managed by this 
 |	MCMCUpdater-derived object.
@@ -524,6 +566,7 @@ inline void EdgeLenParam::update()
         debug_info = str(boost::format("EdgeLenParam %f") % (slice_sampler->GetLastSampledXValue()));
         }
 	}
+#endif
 
 } // namespace phycas
 

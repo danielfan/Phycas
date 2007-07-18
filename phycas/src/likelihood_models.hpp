@@ -59,8 +59,12 @@ class Model	{
 		virtual void					calcPMat(double * * pMat, double edgeLength) const = 0;
 		void							calcPMatrices(double * * * pMat, const double * edgeLength, unsigned numRates) const;
 		virtual std::string				lookupStateRepr(int state) const;
-		virtual void					createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterShPtr & edgelen_hyperparam, MCMCUpdaterVect & parameters, bool separate_edgelens) const;
-		virtual void					buildStateList(VecStateList &, VecStateListPos &) const;
+#if POLPY_NEWWAY
+        virtual void					createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters) const;
+#else
+        virtual void					createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterShPtr & edgelen_hyperparam, MCMCUpdaterVect & parameters, bool separate_edgelens) const;
+#endif
+        virtual void					buildStateList(VecStateList &, VecStateListPos &) const;
 		virtual std::string				paramHeader() const = 0;
 		virtual std::string				paramReport() const = 0;
 
@@ -133,6 +137,11 @@ class Model	{
 		ProbDistShPtr					getExternalEdgeLenPrior();
 		ProbDistShPtr					getInternalEdgeLenPrior();
 
+#if POLPY_NEWWAY
+        void                            separateInternalExternalEdgeLenPriors(bool separate);
+        bool                            isSeparateInternalExternalEdgeLenPriors() const;
+#endif
+
 		// Utility functions
 		void flattenTwoDMatrix(VecDbl & p, double * * twoDarr, unsigned dim) const;
 
@@ -155,6 +164,9 @@ protected:
 	ProbDistShPtr					edgeLenHyperPrior;			/**< The prior distribution governing the mean of the edge length prior if a hierarchical model is used */
 	ProbDistShPtr					internalEdgeLenPrior;		/**< The prior distribution governing internal edge lengths */
 	ProbDistShPtr					externalEdgeLenPrior;		/**< The prior distribution governing external edge lengths */
+#if POLPY_NEWWAY
+    bool                            separate_int_ext_edgelen_priors;    /**> If true, internal edge lengths have a different prior than external edge lengths */
+#endif
 	unsigned						num_states;					/**< The number of states (e.g. 4 for DNA) */
 	unsigned						num_gamma_rates;			/**< The number of discrete gamma rate categories. If greater than 1, the model becomes a discrete gamma rate heterogeneity ("G") model. */
 	mutable std::vector<double>		gamma_rates_unnorm;			/**< A vector of quantities that yield the relative rates when normalized in recalcRatesAndProbs (length is `num_gamma_rates') */
@@ -164,8 +176,12 @@ protected:
 	std::vector<std::string>		state_repr;					/**< A vector strings representing the states allowed by this model */
 	bool							state_freq_fixed;			/**< If true, the values in `state_freq_params' will not change during MCMC updates */
 	mutable MCMCUpdaterVect			freq_params;				/**< Vector of shared pointers to the state frequency parameters (need to retain pointers to these so that the fixed/free status can be changed) */	
-	mutable MCMCUpdaterShPtr		edgelen_hyper_param;		/**< Shared pointer to the edge length hyperparameter (need to retain a pointer so that the fixed/free status can be changed) */
-	mutable MCMCUpdaterVect			edgelen_params;				/**< Vector of shared pointers to the edge length parameters (need to retain pointers to these so that their fixed/free status can be changed) */
+#if POLPY_NEWWAY
+    mutable MCMCUpdaterVect		    edgelen_hyper_params;		/**< Vector of shared pointers to the edge length hyperparameters (need to retain a pointer so that the fixed/free status can be changed) */
+#else
+    mutable MCMCUpdaterShPtr		edgelen_hyper_param;		/**< Shared pointer to the edge length hyperparameter (need to retain a pointer so that the fixed/free status can be changed) */
+#endif
+    mutable MCMCUpdaterVect			edgelen_params;				/**< Vector of shared pointers to the edge length parameters (need to retain pointers to these so that their fixed/free status can be changed) */
 	bool							edge_lengths_fixed;			/**< If true, the value of the edge lengths will not change during MCMC updates */
 	bool							edgelen_hyperprior_fixed;	/**< If true, the value of the edge length hyperprior will not change during MCMC updates */
 	bool							is_codon_model;				/**< If true, nucleotide states will be interpreted as triplets when creating TipData structures for tree */
@@ -226,8 +242,12 @@ class HKY: public Model
 										}
 
 		virtual std::string			getModelName() const;
-		virtual void				createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterShPtr & edgelen_hyperparam, MCMCUpdaterVect & parameters, bool separate_edgelens) const;
-		void						calcPMat(double * * pMat, double edgeLength) const;
+#if POLPY_NEWWAY
+        virtual void				createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters) const;
+#else
+        virtual void				createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterShPtr & edgelen_hyperparam, MCMCUpdaterVect & parameters, bool separate_edgelens) const;
+#endif
+        void						calcPMat(double * * pMat, double edgeLength) const;
 		void						fixKappa();
 		void						freeKappa();
 		double						getKappa();
@@ -265,7 +285,11 @@ class GTR: public Model
 										}
 
 		virtual std::string			getModelName() const;
+#if POLPY_NEWWAY
+		virtual void				createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters) const;
+#else
 		virtual void				createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterShPtr & edgelen_hyperparam, MCMCUpdaterVect & parameters, bool separate_edgelens) const;
+#endif
 		void						calcPMat(double * * pMat, double edgeLength) const;
 		void						fixRelRates();
 		void						freeRelRates();
@@ -339,7 +363,11 @@ class Codon: public Model
 		virtual std::string			paramReport() const;
 
 		void						updateQMatrix() const;
+#if POLPY_NEWWAY
+		virtual void				createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters) const;
+#else
 		virtual void				createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterShPtr & edgelen_hyperparam, MCMCUpdaterVect & parameters, bool separate_edgelens) const;
+#endif
 		void						calcPMat(double * * pMat, double edgeLength) const;
 
 protected:

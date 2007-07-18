@@ -108,10 +108,7 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		double					getLnPrior() const;
 		virtual std::string 	getPriorDescr() const;
 		LotShPtr				getLot();
-
-#if POLPY_NEWWAY
         std::string             getDebugInfo() const;
-#endif
 
 		// Accessors used only by parameters
 		SliceSamplerShPtr		getSliceSampler();
@@ -129,10 +126,7 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		virtual void			setTreeLikelihood(TreeLikeShPtr p);
 		virtual void			setModel(ModelShPtr p);
 		virtual void			setChainManager(ChainManagerWkPtr p);
-
-#if POLPY_NEWWAY
         void                    setSaveDebugInfo(bool save_info);
-#endif
 
 		// Modifiers used only by parameters
 		virtual void			setStartingValue(double x);
@@ -194,11 +188,8 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		bool					is_fixed;				/**< If true, update returns immediately so parameter is never updated */
 		unsigned				slice_max_units;		/**< Maximum number of units used by `slice_sampler' */
 		double					slice_starting_value;	/**< Starting value used by `slice_sampler' */
-
-#if POLPY_NEWWAY
 		std::string				debug_info;				/**< Information about the last update, only created if save_debug_info is true */
 		bool                    save_debug_info;		/**< If true, information about the last update will be stored in debug_info string */
-#endif
 	};
 
 typedef std::vector<MCMCUpdaterShPtr>		MCMCUpdaterVect;

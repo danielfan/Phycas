@@ -300,14 +300,26 @@ std::string Codon::getModelName() const
 |	supplied `parameters' vector. This incudes the codon frequencies as well as the transition/transversion rate 
 |	ratio kappa and the nonsynonymous/synonymous rate ratio omega.
 */
+#if POLPY_NEWWAY
+void Codon::createParameters(
+  TreeShPtr t,								/**< is the tree (the nodes of which are needed for creating edge length parameters) */
+  MCMCUpdaterVect & edgelens,				/**< is the vector of edge length parameters to fill */
+  MCMCUpdaterVect & edgelen_hyperparams,	/**< is the vector of edge length hyperparameters to fill */
+  MCMCUpdaterVect & parameters) const		/**< is the vector of model-specific parameters to fill */
+#else
 void	Codon::createParameters(
   TreeShPtr t,								/**< is the tree (the nodes of which are needed for creating edge length parameters) */
   MCMCUpdaterVect & edgelens,				/**< is the vector of edge length parameters to fill */
   MCMCUpdaterShPtr & edgelen_hyperparam,	/**< is the edge length hyperparameter */
   MCMCUpdaterVect & parameters,				/**< is the vector of model-specific parameters to fill */
   bool separate_edgelens) const				/**< specifies (if true) that each edge should have its own parameter or (if false) that one edge length master parameter should be created */
+#endif
 	{
+#if POLPY_NEWWAY
+	Model::createParameters(t, edgelens, edgelen_hyperparams, parameters);
+#else
 	Model::createParameters(t, edgelens, edgelen_hyperparam, parameters, separate_edgelens);
+#endif
 
 	PHYCAS_ASSERT(!kappa_param);
 	kappa_param = MCMCUpdaterShPtr(new KappaParam());

@@ -30,22 +30,84 @@ using namespace phycas;
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	The base class version of this function should be called by all derived classes because it is where the edge 
-|	length parameters, edge length hyperparameter and rate heterogeneity (gamma shape and pinvar) parameters are 
+|	length parameters, the edge length hyperparameters and rate heterogeneity (gamma shape and pinvar) parameters are 
 |	created.
 */
+#if POLPY_NEWWAY
 void Model::createParameters(
-  TreeShPtr t,									/**< is the tree (the nodes of which are needed for creating edge length parameters) */
-  MCMCUpdaterVect & edgelens_vect_ref,			/**< is the vector of edge length parameters to fill */
-  MCMCUpdaterShPtr & edgelen_hyperparam_ref,	/**< is the edge length hyperparameter */
-  MCMCUpdaterVect & parameters_vect_ref,		/**< is the vector of model-specific parameters to fill */
-  bool separate_edgelens) const					/**< specifies (if true) that each edge should have its own parameter or (if false) that one edge length master parameter should be created */
-	{
+  TreeShPtr t,									    /**< is the tree (the nodes of which are needed for creating edge length parameters) */
+  MCMCUpdaterVect & edgelens_vect_ref,			    /**< is the vector of edge length parameters to fill */
+  MCMCUpdaterVect & edgelen_hyperparams_vect_ref,	/**< is the vector of edge length hyperparameters to fill */
+  MCMCUpdaterVect & parameters_vect_ref) const	    /**< is the vector of model-specific parameters to fill */
+#else
+void Model::createParameters(
+  TreeShPtr t,									    /**< is the tree (the nodes of which are needed for creating edge length parameters) */
+  MCMCUpdaterVect & edgelens_vect_ref,			    /**< is the vector of edge length parameters to fill */
+  MCMCUpdaterShPtr & edgelen_hyperparam_ref,	    /**< is the edge length hyperparameter */
+  MCMCUpdaterVect & parameters_vect_ref,		    /**< is the vector of model-specific parameters to fill */
+  bool separate_edgelens) const					    /**< specifies (if true) that each edge should have its own parameter or (if false) that one edge length master parameter should be created */
+#endif
+    {
 	PHYCAS_ASSERT(t);
 	PHYCAS_ASSERT(edgelens_vect_ref.empty());
+#if POLPY_NEWWAY
+	PHYCAS_ASSERT(edgelen_hyperparams_vect_ref.empty());
+#else
 	PHYCAS_ASSERT(!edgelen_hyperparam_ref);
+#endif
 	PHYCAS_ASSERT(parameters_vect_ref.empty());
 
 	// Add the edge length parameter(s)
+#if POLPY_NEWWAY
+    if (separate_int_ext_edgelen_priors)
+        {
+	    // Add two edge length parameters to manage the priors for all edge lengths in the tree;
+        // One of these two parameters will be in charge of the prior on internal edge lengths,
+        // whereas the other will be in charge of external edge lengths. These edge length parameters 
+        // do not actually update any edge lengths: a Metropolis proposal such as the LargetSimonMove 
+        // is responsible for updating edge lengths.
+
+        // First the parameter governing external edge length priors
+        MCMCUpdaterShPtr p_external = MCMCUpdaterShPtr(new EdgeLenMasterParam(EdgeLenMasterParam::external));
+	    std::string nm_external = str(boost::format("external edge length parameter"));
+	    p_external->setName(nm_external);
+	    p_external->setTree(t);
+	    p_external->setPrior(externalEdgeLenPrior);
+	    if (edge_lengths_fixed)
+		    p_external->fixParameter();
+	    edgelens_vect_ref.push_back(p_external);
+
+        // Now the parameter governing internal edge length priors
+	    MCMCUpdaterShPtr p_internal = MCMCUpdaterShPtr(new EdgeLenMasterParam(EdgeLenMasterParam::internal));
+	    std::string nm_internal = str(boost::format("internal edge length parameter"));
+	    p_internal->setName(nm_internal);
+	    p_internal->setTree(t);
+	    p_internal->setPrior(internalEdgeLenPrior);
+	    if (edge_lengths_fixed)
+		    p_internal->fixParameter();
+	    edgelens_vect_ref.push_back(p_internal);
+
+        //POL temporary!
+        std::cerr << "***** adding two edge length parameters *****" << std::endl;
+        }
+    else
+        {
+	    // Add one edge length parameter to manage the priors for all edge lengths in the tree. 
+        // This edge length parameter does not actually update any edge lengths: a Metropolis proposal 
+        // such as the LargetSimonMove is responsible for updating edge lengths.
+        MCMCUpdaterShPtr p = MCMCUpdaterShPtr(new EdgeLenMasterParam(EdgeLenMasterParam::both));
+	    std::string nm_external = str(boost::format("master edge length parameter"));
+	    p->setName(nm_external);
+	    p->setTree(t);
+	    p->setPrior(externalEdgeLenPrior);
+	    if (edge_lengths_fixed)
+		    p->fixParameter();
+	    edgelens_vect_ref.push_back(p);
+
+        //POL temporary!
+        std::cerr << "***** adding one edge length parameter *****" << std::endl;
+        }
+#else
 	if (separate_edgelens)
 		{
 		// Add an edge length parameter for every node in the tree that has an edge
@@ -95,14 +157,37 @@ void Model::createParameters(
 			p_internal->fixParameter();
 		edgelens_vect_ref.push_back(p_internal);
 		}
+#endif
 
 	// Save a vector of shared pointers so that we can modify their fixed/free status if we need to
 	edgelen_params.resize(edgelens_vect_ref.size());
 	std::copy(edgelens_vect_ref.begin(), edgelens_vect_ref.end(), edgelen_params.begin());
 
-	// Add the edge length hyperparameter if requested
+	// Add edge length hyperparameters if requested
 	if (edgeLenHyperPrior)
 		{
+#if POLPY_NEWWAY
+        // For each edge length parameter, create an edge length hyperparameter, passing it a shared
+        // pointer to the corresponding edge length parameter 
+        for (MCMCUpdaterVect::iterator it = edgelen_params.begin(); it != edgelen_params.end(); ++it)
+            {
+            EdgeLenMasterParamShPtr pit = boost::shared_dynamic_cast<EdgeLenMasterParam>(*it);
+		    MCMCUpdaterShPtr p = MCMCUpdaterShPtr(new HyperPriorParam(pit));
+		    p->setName(std::string("edge length hyperparameter"));
+		    p->setTree(t);
+		    p->setPrior(edgeLenHyperPrior);
+		    if (edgelen_hyperprior_fixed)
+			    p->fixParameter();
+		    edgelen_hyperparams_vect_ref.push_back(p);
+
+            //POL temporary!
+            std::cerr << "***** adding hyperparameter *****" << std::endl;
+            }
+
+        // Save a vector of shared pointers so that we can modify their fixed/free status if we need to
+	    edgelen_hyper_params.resize(edgelen_hyperparams_vect_ref.size());
+	    std::copy(edgelen_hyperparams_vect_ref.begin(), edgelen_hyperparams_vect_ref.end(), edgelen_hyper_params.begin());
+#else
 		MCMCUpdaterShPtr p = MCMCUpdaterShPtr(new HyperPriorParam());
 		p->setName(std::string("edge length hyperprior"));
 		p->setTree(t);
@@ -114,6 +199,7 @@ void Model::createParameters(
 		// Retain a copy of the shared pointer so that we can later modify the fixed/free status
 		// of this parameter
 		edgelen_hyper_param = p;
+#endif
 		}
 
 	// Create any model-specific parameters and add to the parameters vector

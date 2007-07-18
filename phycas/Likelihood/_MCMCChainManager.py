@@ -91,12 +91,12 @@ class MCMCChainManager(MCMCChainManagerBase):
         """
         return MCMCChainManagerBase.getEdgeLenParams(self)
 
-    def getEdgeLenHyperparam(self):
+    def getEdgeLenHyperparams(self):
         """
         Sorry, no documentation yet.
         
         """
-        return MCMCChainManagerBase.getEdgeLenHyperparam(self)
+        return MCMCChainManagerBase.getEdgeLenHyperparams(self)
 
     #def addMCMCUpdaters(self, model, tree, like, rng, separate_edgelens, max_units, weight):
     #    """

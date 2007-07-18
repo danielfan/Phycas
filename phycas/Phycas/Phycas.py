@@ -155,16 +155,6 @@ class Phycas:
 
         # ***** DO NOT CHANGE ANYTHING BELOW HERE *****
         self.r = Lot()
-        assert self.external_edgelen_dist or self.internal_edgelen_dist, 'external_edgelen_dist and internal_edgelen_dist are both None; a probability distribution must be assigned to at least one of these'
-        self.separate_int_ext_edgelen_priors = True
-        if not self.external_edgelen_dist:
-            # if only one edgelen prior distribution specified, make sure it is external_edgelen_dist
-            self.external_edgelen_dist = self.internal_edgelen_dist
-            self.internal_edgelen_dist = None
-            self.separate_int_ext_edgelen_priors = False
-        elif not self.internal_edgelen_dist:
-            self.separate_int_ext_edgelen_priors = False
-
         self.starting_tree          = ''        # will contain description of actual starting tree used
         self.warn_tip_numbers       = False     # True only if tip numbers were not able to be created using the tip names in the tree description (always False if starting_tree_source == 'random' because BuildTreeFromString is not called in this case)
         self.ntax                   = 0         # will hold the actual number of taxa after data file read
@@ -251,6 +241,7 @@ class Phycas:
             self.model.setNotPinvarModel()
         
         # Define edge length prior distributions
+        self.model.separateInternalExternalEdgeLenPriors(self.separate_int_ext_edgelen_priors)
         self.model.setExternalEdgeLenPrior(self.external_edgelen_dist)
         if self.separate_int_ext_edgelen_priors:
             self.model.setInternalEdgeLenPrior(self.internal_edgelen_dist)
@@ -275,10 +266,9 @@ class Phycas:
                                            self.tree,               # tree
                                            self.likelihood,         # likelihood calculation machinery
                                            self.r,                  # pseudorandom number generator
-                                           False,                   # separate_edgelen_params (deprecated: always False)
+                                           #POLPY_NEWWAY False,                   # separate_edgelen_params (deprecated: always False)
                                            self.slice_max_units,    # maximum number of slice units allowed
                                            self.slice_weight)       # weight for each parameter added
-        #> new addMCMCUpdaters needs to take acocunt of internal_edgelen_dist if it is non-None
 
         # Create a LargetSimonMove object to handle Metropolis-Hastings
         # updates to the tree topology and edge lengths
@@ -512,6 +502,18 @@ class Phycas:
         if self.random_seed != 0:
             self.r.setSeed(int(self.random_seed))
 
+        # Determine the number of edge length priors: one (governs all edge lengths)
+        # or two (one for internal edge lengths, the other for external edge lengths)
+        assert self.external_edgelen_dist or self.internal_edgelen_dist, 'external_edgelen_dist and internal_edgelen_dist are both None; a probability distribution must be assigned to at least one of these'
+        self.separate_int_ext_edgelen_priors = True
+        if not self.external_edgelen_dist:
+            # if only one edgelen prior distribution specified, make sure it is external_edgelen_dist
+            self.external_edgelen_dist = self.internal_edgelen_dist
+            self.internal_edgelen_dist = None
+            self.separate_int_ext_edgelen_priors = False
+        elif not self.internal_edgelen_dist:
+            self.separate_int_ext_edgelen_priors = False
+
         self.setupModel()
 
         #@POL if self.data_source != 'memory':       
@@ -598,8 +600,9 @@ class Phycas:
             self.paramf.write('%d\t%.3f\t%.3f' % (cycle + 1, lnL, self.tree.edgeLenSum()))
             self.paramf.write(self.model.paramReport())
             if self.using_hyperprior:
-                p = self.chain_manager.getEdgeLenHyperparam()
-                self.paramf.write('\t%.5f' % p.getCurrValue())
+                for p in self.chain_manager.getEdgeLenHyperparams():
+                    #p = self.chain_manager.getEdgeLenHyperparam()
+                    self.paramf.write('\t%.5f' % p.getCurrValue())
             if self.use_flex_model:
                 rates_vector = self.likelihood.getRateMeans()
                 for rr in rates_vector:
@@ -655,8 +658,9 @@ class Phycas:
                     simf.write('lnL                    = %f\n' % lnL)
                     simf.write('TL                     = %f\n' % self.tree.edgeLenSum())
                     if self.using_hyperprior:
-                        p = self.chain_manager.getEdgeLenHyperparam()
-                        simf.write('edge length hyperparam = %f\n' % p.getCurrValue())
+                        for p in self.chain_manager.getEdgeLenHyperparams():
+                            #p = self.chain_manager.getEdgeLenHyperparam()
+                            simf.write('edge length hyperparam = %f\n' % p.getCurrValue())
                     simf.write('param headers          = %s\n' % self.model.paramHeader())
                     simf.write('param values           = %s\n' % self.model.paramReport())
                     simf.write(']\n')
@@ -861,9 +865,11 @@ class Phycas:
         print 'Parameter starting values and prior densities:'
         for p in self.chain_manager.getEdgeLenParams():
             self.showParamInfo(p)
-        if self.using_hyperprior:
-            p = self.chain_manager.getEdgeLenHyperparam()
+        for p in self.chain_manager.getEdgeLenHyperparams():
             self.showParamInfo(p)
+        #if self.using_hyperprior:
+        #    p = self.chain_manager.getEdgeLenHyperparam()
+        #    self.showParamInfo(p)
         for p in self.chain_manager.getModelParams():
             self.showParamInfo(p)
 
@@ -896,6 +902,8 @@ class Phycas:
                     #tmpf = file('tmp.txt', 'a')
                     #tmpf.write('%s | %s\n' % (p.getName(), p.getDebugInfo()))
                     #tmpf.close()
+            #if cycle == 21:
+            #    sys.exit()
             if self.verbose and (cycle + 1) % self.report_every == 0:
                 msg = 'cycle = %d, lnL = %.5f' % (cycle + 1, self.chain_manager.getLastLnLike())
                 if self.use_flex_model:

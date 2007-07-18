@@ -37,6 +37,9 @@ inline Model::Model(
 	gamma_rates_unnorm(1, 1.0),
 	gamma_rate_probs(1, 1.0), 
 	state_freq_fixed(false),
+#if POLPY_NEWWAY
+    separate_int_ext_edgelen_priors(false),
+#endif
 	edge_lengths_fixed(false),	
 	edgelen_hyperprior_fixed(false),
 	is_codon_model(false),
@@ -70,6 +73,27 @@ inline bool Model::isCodonModel() const
 	{
 	return is_codon_model;
 	}
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets value of data member `separate_int_ext_edgelen_priors' to supplied value `separate'.
+*/
+inline void Model::separateInternalExternalEdgeLenPriors(
+  bool separate)
+    {
+    separate_int_ext_edgelen_priors = separate;
+    }
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns value of data member `separate_int_ext_edgelen_priors'.
+*/
+inline bool Model::isSeparateInternalExternalEdgeLenPriors() const
+    {
+    return separate_int_ext_edgelen_priors;
+    }
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the data member `edgeLenHyperPrior' to the supplied probability distribution `d'. This prior distribution will 
@@ -418,23 +442,41 @@ inline void Model::freeEdgeLengths()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Sets the data member `edgelen_hyperprior_fixed' to true.
+|	Sets the data member `edgelen_hyperprior_fixed' to true and calls fixParameter() for all edge length 
+|   hyperparameters.
 */
 inline void Model::fixEdgeLenHyperprior()
 	{
 	edgelen_hyperprior_fixed = true;
-	if (edgelen_hyper_param)	//TODO create Model::edgelen_hyper_param and assign it in createParameters
+#if POLPY_NEWWAY
+	if (!edgelen_hyper_params.empty())
+		{
+		for (MCMCUpdaterVect::iterator it = edgelen_hyper_params.begin(); it != edgelen_hyper_params.end(); ++it)
+			(*it)->fixParameter();
+		}
+#else
+	if (edgelen_hyper_param)
 		edgelen_hyper_param->fixParameter();
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Sets the data member `edgelen_hyperprior_fixed' to false.
+|	Sets the data member `edgelen_hyperprior_fixed' to false and calls freeParameter() for all edge length 
+|   hyperparameters.
 */
 inline void Model::freeEdgeLenHyperprior()
 	{
 	edgelen_hyperprior_fixed = false;
+#if POLPY_NEWWAY
+	if (!edgelen_hyper_params.empty())
+		{
+		for (MCMCUpdaterVect::iterator it = edgelen_hyper_params.begin(); it != edgelen_hyper_params.end(); ++it)
+			(*it)->freeParameter();
+		}
+#else
 	if (edgelen_hyper_param)
 		edgelen_hyper_param->freeParameter();
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -1056,14 +1098,26 @@ inline std::string HKY::getModelName() const
 |	supplied `parameters' vector. This incudes the four base frequencies as well as the transition/transversion rate 
 |	ratio kappa.
 */
+#if POLPY_NEWWAY
+inline void	HKY::createParameters(
+  TreeShPtr t,								/**< is the tree (the nodes of which are needed for creating edge length parameters) */
+  MCMCUpdaterVect & edgelens,				/**< is the vector of edge length parameters to fill */
+  MCMCUpdaterVect & edgelen_hyperparams,	/**< is the edge length hyperparameter */
+  MCMCUpdaterVect & parameters) const		/**< is the vector of model-specific parameters to fill */
+#else
 inline void	HKY::createParameters(
   TreeShPtr t,								/**< is the tree (the nodes of which are needed for creating edge length parameters) */
   MCMCUpdaterVect & edgelens,				/**< is the vector of edge length parameters to fill */
   MCMCUpdaterShPtr & edgelen_hyperparam,	/**< is the edge length hyperparameter */
   MCMCUpdaterVect & parameters,				/**< is the vector of model-specific parameters to fill */
   bool separate_edgelens) const				/**< specifies (if true) that each edge should have its own parameter or (if false) that one edge length master parameter should be created */
+#endif
 	{
+#if POLPY_NEWWAY
+	Model::createParameters(t, edgelens, edgelen_hyperparams, parameters);
+#else
 	Model::createParameters(t, edgelens, edgelen_hyperparam, parameters, separate_edgelens);
+#endif
 
 	PHYCAS_ASSERT(!kappa_param);
 	kappa_param = MCMCUpdaterShPtr(new KappaParam());
@@ -1387,14 +1441,26 @@ inline std::string GTR::getModelName() const
 |	parameters related to rate heterogeneity. This function then adds additional GTR-specific parameters to the 
 |	supplied `parameters' vector. This incudes the four base frequencies and six relative rate parameters.
 */
+#if POLPY_NEWWAY
+inline void	GTR::createParameters(
+  TreeShPtr t,								/**< is the tree (the nodes of which are needed for creating edge length parameters) */
+  MCMCUpdaterVect & edgelens,				/**< is the vector of edge length parameters to fill */
+  MCMCUpdaterVect & edgelen_hyperparams,	/**< is the edge length hyperparameter */
+  MCMCUpdaterVect & parameters) const		/**< is the vector of model-specific parameters to fill */
+#else
 inline void	GTR::createParameters(
   TreeShPtr t,								/**< is the tree (the nodes of which are needed for creating edge length parameters) */
   MCMCUpdaterVect & edgelens,				/**< is the vector of edge length parameters to fill */
   MCMCUpdaterShPtr & edgelen_hyperparam,	/**< is the edge length hyperparameter */
   MCMCUpdaterVect & parameters,				/**< is the vector of model-specific parameters to fill */
   bool separate_edgelens) const				/**< specifies (if true) that each edge should have its own parameter or (if false) that one edge length master parameter should be created */
+#endif
 	{
+#if POLPY_NEWWAY
+	Model::createParameters(t, edgelens, edgelen_hyperparams, parameters);
+#else
 	Model::createParameters(t, edgelens, edgelen_hyperparam, parameters, separate_edgelens);
+#endif
 
 	PHYCAS_ASSERT(rel_rate_params.empty());
 

@@ -100,7 +100,6 @@ void LargetSimonMove::update()
 
     bool accepted = (ln_accept_ratio >= 0.0 || std::log(rng->Uniform(FILE_AND_LINE)) <= ln_accept_ratio);
 
-#if POLPY_NEWWAY
     if (save_debug_info)
         {
     	if (star_tree_proposal)
@@ -109,11 +108,9 @@ void LargetSimonMove::update()
             }
         else
             {
-            //debug_info = str(boost::format("LS: %.5f,%.5f,%.5f -> %.5f,%.5f,%.5f (%s)") % origX % origY % origZ % ndX->GetEdgeLen() % ndY->GetEdgeLen() % ndZ->GetEdgeLen() % (accepted ? "accepted" : "rejected"));
             debug_info = str(boost::format("LargetSimonMove: topology %s, origX=%f, origY=%f, origZ=%f, newX=%f, newY=%f, newZ=%f, %s") % (topol_changed ? "changed" : "unchanged") % origX % origY % origZ % (ndX->GetEdgeLen()) % (ndY->GetEdgeLen()) % (ndZ->GetEdgeLen()) %(accepted ? "accepted" : "rejected"));
             }
         }
-#endif
     
     if (accepted)
 		{
