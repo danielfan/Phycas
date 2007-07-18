@@ -42,6 +42,15 @@ phycas = Phycas()
 phycas.external_edgelen_dist  = ProbDist.ExponentialDist(1.0/mu_external)
 phycas.internal_edgelen_dist  = ProbDist.ExponentialDist(1.0/mu_internal)
 
+# Specify that Gelfand-Ghosh measure should be calculated, the number of posterior-
+# predictive simulations that should be performed per MCMC sample (in this case 2),
+# and the name of the file where the Gelfand-Ghosh results will be saved (note how
+# Python allows you to easily include the values of mu_internal and mu_external in
+# the file name - the numbers replace the "%d" placeholders)
+phycas.gg_do = True
+self.gg_nreps = 2
+phycas.gg_outfile = 'ggout.internal_%d.external_%d.txt' % (mu_internal, mu_external)
+
 # Set up the substitution model
 phycas.default_model = 'hky'   # use the Hasegawa-Kishino-Yano (1985) model
 phycas.num_rates = 5           # add discrete gamma rate heterogeneity with 4 rate categories
