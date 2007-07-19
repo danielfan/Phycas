@@ -24,7 +24,7 @@ from math import exp
 # These three variables are provided to make it easy to find and change the internal
 # and external edge length prior means, or to use the edge length hyperprior approach.
 # Note that if use_hyperpriors is True, mu_internal and mu_external will be ignored.
-mu_internal = 0.1
+mu_internal = 0.0001
 mu_external = 0.1
 use_hyperpriors = False
 
@@ -102,8 +102,8 @@ phycas.slice_max_units = 0
 # A cycle involves updating each non-branch-length parameter in the model
 # as well as a certain number of Metropolis-Hastings updates of branch
 # lengths and tree topology.
-phycas.ncycles = 20000
-phycas.sample_every = 10    # save tree and parameters every 10 cycles
+phycas.ncycles = 100000
+phycas.sample_every = 20    # save tree and parameters every 10 cycles
 
 # Finally, call mcmc(), which prepares phycas for the MCMC analysis, taking
 # account of the changed settings above, then performs the actual analysis.
