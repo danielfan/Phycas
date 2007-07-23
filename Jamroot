@@ -121,6 +121,7 @@ alias likelihood_sources
     phycas/src/tip_data.cpp 
     phycas/src/topo_prior_calculator.cpp 
     phycas/src/tree_likelihood.cpp 
+    phycas/src/tree_scaler_move.cpp 
     phycas/src/underflow_policy.cpp 
     phycas/src/updater_pymod.cpp
     [ obj likelihood_tree_manip_obj : phycas/src/tree_manip.cpp tool_specific_requirements ]

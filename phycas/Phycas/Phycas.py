@@ -79,6 +79,9 @@ class Phycas:
         self.ls_move_weight         = 100       # Larget-Simon moves will be performed this many times per cycle
         self.ls_move_debug          = False     # If set to true, TreeViewer will popup on each Larget-Simon move update showing edges affected by the proposed move
         
+        # Variables associated with tree scaler move
+        self.tree_scaler_weight     = 1         # whole-tree scaling will be performed this many times per cycle
+
         # Variables associated with Polytomy (Bush) moves
         self.allow_polytomies       = False     # if True, do Bush moves in addition to Larget-Simon moves; if False, do Larget-Simon moves only
         self.polytomy_prior         = True      # if True, use polytomy prior; if False, use resolution class prior
@@ -269,6 +272,20 @@ class Phycas:
                                            #POLPY_NEWWAY False,                   # separate_edgelen_params (deprecated: always False)
                                            self.slice_max_units,    # maximum number of slice units allowed
                                            self.slice_weight)       # weight for each parameter added
+
+        # Create a TreeScalerMove object to handle scaling the entire tree to allow faster
+        # convergence in edge lengths. This move is unusual in using slice sampling rather
+        # than Metropolis-Hastings updates: most "moves" in Phycas are Metropolis-Hastings.
+        self.tree_scaler_move = TreeScalerMove()
+        self.tree_scaler_move.setName("Tree scaler move")
+        self.larget_simon_move.setWeight(self.tree_scaler_weight)
+        self.tree_scaler_move.setTree(self.tree)
+        self.tree_scaler_move.setModel(self.model)
+        self.tree_scaler_move.setTreeLikelihood(self.likelihood)
+        self.tree_scaler_move.setLot(self.r)
+        if self.model.edgeLengthsFixed():
+            self.tree_scaler_move.fixParameter()
+        self.chain_manager.addMove(self.tree_scaler_move)
 
         # Create a LargetSimonMove object to handle Metropolis-Hastings
         # updates to the tree topology and edge lengths

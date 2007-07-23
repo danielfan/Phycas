@@ -59,7 +59,7 @@ typedef boost::shared_ptr<MCMCUpdater>			MCMCUpdaterShPtr;
 |	override update() to perform a single slice sampling update of the model parameter they are managing. Below is a 
 |	list of some of the differences between moves and parameters:
 |	
-|	Moves have these properties:
+|	Moves usually have these properties:
 |	1) do NOT use the createSliceSampler() or getSliceSampler() member functions and thus leave their `slice_sampler' 
 |		data member empty
 |	2) do NOT use the `curr_value' data member or the getCurrValue() member function
@@ -67,10 +67,10 @@ typedef boost::shared_ptr<MCMCUpdater>			MCMCUpdaterShPtr;
 |	4) do NOT use the operator() member function
 |	5) DO use the getLnHastingsRatio(), getLnJacobian(), proposeNewState(), accept() and revert() member functions
 |	6) some use the `tree_manipulator' data member to effect topological rearrangements
-|	7) the `has_slice_sampler' data member is always false
-|	8) the `is_move' data member is always true
+|	7) the `has_slice_sampler' data member is usually false (exception is TreeScalerMove)
+|	8) the `is_move' data member is true
 |	
-|	Parameters have these properties:
+|	Parameters usually have these properties:
 |	1) do NOT use the createSliceSampler() or getSliceSampler() member functions and thus leave their `slice_sampler' 
 |		data member empty
 |	2) DO use the `curr_value' data member or the getCurrValue() member function
@@ -79,7 +79,7 @@ typedef boost::shared_ptr<MCMCUpdater>			MCMCUpdaterShPtr;
 |	5) do NOT use the getLnHastingsRatio(), getLnJacobian(), proposeNewState(), accept() and revert() member functions
 |	6) never use the `tree_manipulator' data member
 |	7) the `has_slice_sampler' data member is usually true (exception is EdgeLenMasterParam)
-|	8) the `is_move' data member is always false
+|	8) the `is_move' data member is false
 |	
 |	The `weight' data member determines how many times in a single update cycle the update() function of this 
 |	particular MCMCUpdater will be called. Typically, parameters have weight 1 whereas moves (e.g. LargetSimonMove) 

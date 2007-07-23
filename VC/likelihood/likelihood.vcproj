@@ -251,6 +251,9 @@
 				RelativePath="..\..\phycas\src\tree_manip.cpp">
 			</File>
 			<File
+				RelativePath="..\..\phycas\src\tree_scaler_move.cpp">
+			</File>
+			<File
 				RelativePath="..\..\phycas\src\underflow_policy.cpp">
 			</File>
 			<File
@@ -416,6 +419,12 @@
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\tree_manip.inl">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\tree_scaler_move.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\tree_scaler_move.inl">
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\tree_score.hpp">

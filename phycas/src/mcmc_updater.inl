@@ -235,7 +235,7 @@ inline void MCMCUpdater::createSliceSampler()
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the `slice_sampler' data member, which may or may not point to a SliceSampler object. Some MCMCUpdater-
 |	derived classes do not use slice sampling to update their parameter's value, so these have an empty `slice_sampler'
-|	member. Also, MCMCUpdater-derived classes that represent moves rather than parameters will not use their 
+|	member. Also, MCMCUpdater-derived classes that represent moves rather than parameters will generally not use their 
 |	`slice_sampler' data members.
 */
 inline SliceSamplerShPtr MCMCUpdater::getSliceSampler()

@@ -114,6 +114,15 @@ void Model::createParameters(
 	    std::copy(edgelen_hyperparams_vect_ref.begin(), edgelen_hyperparams_vect_ref.end(), edgelen_hyper_params.begin());
 		}
 
+//#if POLPY_NEWWAY  //POL_BOOKMARK probably going to go with a move instead of a parameter for this
+    // Add a whole-tree scaler parameter
+	//MCMCUpdaterShPtr p = MCMCUpdaterShPtr(new TreeScalerParam());
+	//p->setName(std::string("tree scaler"));
+	//p->setTree(t);
+	//p->setPrior(ProbDistShPtr(NULL));
+	//tree_scaler_param = p;
+//#endif
+
 	// Create any model-specific parameters and add to the parameters vector
 	if (is_flex_model)
 		{

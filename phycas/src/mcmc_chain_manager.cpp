@@ -115,7 +115,7 @@ void MCMCChainManager::addMCMCUpdaters(
 	m->createParameters(t, edgelens, edgelen_hyperparams, parameters);
 
 	// Add the edge length parameters (might be master parameters for internal and external edges or, 
-    // if separate_edgelen_params is true, one edge length parameter for every edge in the tree)
+    // one edge length master parameter that governs all edges in the tree)
 	for (iter = edgelens.begin(); iter != edgelens.end(); ++iter)
 		{
 		MCMCUpdaterShPtr p = (*iter);
