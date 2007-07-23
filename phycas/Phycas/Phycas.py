@@ -594,7 +594,11 @@ class Phycas:
         self.paramf.write('[ID: %d]\n' % self.r.getSeed())
         self.paramf.write(self.model.paramHeader())
         if self.using_hyperprior:
-            self.paramf.write('\thyper')
+            if self.separate_int_ext_edgelen_priors:
+                self.paramf.write('\thyper(external)')
+                self.paramf.write('\thyper(internal)')
+            else:
+                self.paramf.write('\thyper(all)')
         if self.use_flex_model:
             self.paramf.write('\trates_probs')
         self.paramf.write('\n')
