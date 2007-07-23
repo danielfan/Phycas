@@ -278,7 +278,7 @@ class Phycas:
         # than Metropolis-Hastings updates: most "moves" in Phycas are Metropolis-Hastings.
         self.tree_scaler_move = TreeScalerMove()
         self.tree_scaler_move.setName("Tree scaler move")
-        self.larget_simon_move.setWeight(self.tree_scaler_weight)
+        self.tree_scaler_move.setWeight(self.tree_scaler_weight)
         self.tree_scaler_move.setTree(self.tree)
         self.tree_scaler_move.setModel(self.model)
         self.tree_scaler_move.setTreeLikelihood(self.likelihood)
