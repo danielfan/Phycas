@@ -72,6 +72,8 @@ class Phycas:
         self.sample_every           = 100                # a new sample will be taken after this many cycles
         self.report_every           = self.ncycles//100  # a progress report will be displayed after this many cycles
         self.verbose                = True               # more output if True
+        self.logfile                = None               # change to filename to save output to file
+        self.quiet                  = False              # if True, only output will be to self.logfile, if defined
         #self.use_tree_viewer        = False             # popup graphical TreeViewer to show trees during run POLPY_NEWWAY
         
         # Variables associated with Larget-Simon moves
@@ -80,7 +82,7 @@ class Phycas:
         self.ls_move_debug          = False     # If set to true, TreeViewer will popup on each Larget-Simon move update showing edges affected by the proposed move
         
         # Variables associated with tree scaler move
-        self.tree_scaler_weight     = 1         # whole-tree scaling will be performed this many times per cycle
+        self.tree_scaler_weight     = 0         # whole-tree scaling will be performed this many times per cycle
 
         # Variables associated with Polytomy (Bush) moves
         self.allow_polytomies       = False     # if True, do Bush moves in addition to Larget-Simon moves; if False, do Larget-Simon moves only
@@ -185,6 +187,24 @@ class Phycas:
         self.gg_spectrum_points     = ''            # used for creating surface plot in Maple for spectrum
         self.gg_spectrum_row        = 0
         self.reader = NexusReader()
+        self.separate_int_ext_edgelen_priors = False
+
+        # open a logfile if requested
+        self.logf = None
+        if self.logfile:
+            # TODO check first to see if it exists before blindly overwriting
+            self.logf = file(self.logfile, 'w')
+
+    def shutdown(self):
+        if self.logf:
+            self.logf.close()
+
+    def output(self, msg = None):
+        if not self.quiet:
+            print msg
+        if self.logf:
+            self.logf.write('%s\n' % msg)
+            self.logf.flush()
 
     def setupModel(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -426,35 +446,35 @@ class Phycas:
         self.tree.rectifyNames(taxNames)
 
     def showParamInfo(self, p):
-        print '  Parameter name:    ', p.getName()
-        print '  Prior distribution:', p.getPriorDescr()
+        self.output('  Parameter name:     %s' % p.getName())
+        self.output('  Prior distribution: %s' % p.getPriorDescr())
         if p.isMasterParameter():
-            print '  Master parameter (no current value)'
+            self.output('  Master parameter (no current value)')
         else:
-            print '  Current value:     ', p.getCurrValue()
-        print '  Prior log-density: ', p.getLnPrior()
-        print
+            self.output('  Current value:      %s' % p.getCurrValue())
+        self.output('  Prior log-density:  %s' % p.getLnPrior())
+        self.output()
                 
     def showTopoPriorInfo(self):
-        print 'Topology prior:'
+        self.output('Topology prior:')
         if not self.allow_polytomies:
-            print '  flat across all fully-resolved tree topologies (polytomies not allowed)'
+            self.output('  flat across all fully-resolved tree topologies (polytomies not allowed)')
         else:            
-            print '  Prior type:',
+            self.output('  Prior type:',)
             if self.topo_prior_calculator.isPolytomyPrior():
-                print 'polytomy prior'
+                self.output('polytomy prior')
             else:
-                print 'resolution class prior'
-            print '  Prior strength (C):',self.topo_prior_calculator.getC()
-            print '  Expected prior probability for each resolution class:'
-            print '   class        prior'
-            print '  -------------------'
+                self.output('resolution class prior')
+            self.output('  Prior strength (C): %s' % self.topo_prior_calculator.getC())
+            self.output('  Expected prior probability for each resolution class:')
+            self.output('   class        prior')
+            self.output('  -------------------')
             topo_priors = self.topo_prior_calculator.getRealizedResClassPriorsVect()
             for i,v in enumerate(topo_priors):
                 if i == 0:
                     denom = v
                 else:
-                    print '%8d %12.5f' % (i,math.exp(v - denom))
+                    self.output('%8d %12.5f' % (i,math.exp(v - denom)))
             print
             #raw_input('stopped after outputting topo prior table')
 
@@ -545,7 +565,7 @@ class Phycas:
 
         # Create parameter and tree file names based on the data file name
         prefix = os.path.abspath(self.data_file_name) #os.path.basename(self.data_file_name)
-        #print 'prefix=',prefix
+        #output('prefix=',prefix)
         self.param_file_name = prefix + '.p'
         self.tree_file_name = prefix + '.t'
 
@@ -773,8 +793,8 @@ class Phycas:
             summary += self.adaptOneSliceSampler(p)
         
         if self.verbose and summary != '':
-            print '\nSlice sampler diagnostics:'
-            print summary
+            self.output('\nSlice sampler diagnostics:')
+            self.output(summary)
             
         self.timer_start = time.clock()
 
@@ -815,24 +835,24 @@ class Phycas:
         
         if self.verbose:
             if not self.data_source:
-                print 'Data source:   ', 'None (running MCMC with no data to explore prior)'
+                self.output('Data source:    None (running MCMC with no data to explore prior)')
             if self.data_source == 'file':
-                print 'Data source:   ', self.data_file_name
+                self.output('Data source:    %s' % self.data_file_name)
             elif self.data_source == 'memory':
-                print 'Data source:   ', 'Data already in memory'
+                self.output('Data source:    Data already in memory')
             else:
-                print 'Data source:   ', "Unknown (something other than 'file' or 'memory' was specified for data_source)"
-            print 'No. cycles:    ', self.ncycles
-            print 'Sample every:  ', self.sample_every
-            print 'Starting tree: ', self.starting_tree
-            print 'No. samples:   ', self.nsamples
-            print 'Sampled trees will be saved in', self.tree_file_name
-            print 'Sampled parameters will be saved in', self.param_file_name
+                self.output("Data source:    Unknown (something other than 'file' or 'memory' was specified for data_source)")
+            self.output('No. cycles:     %s' % self.ncycles)
+            self.output('Sample every:   %s' % self.sample_every)
+            self.output('Starting tree:  %s' % self.starting_tree)
+            self.output('No. samples:    %s' % self.nsamples)
+            self.output('Sampled trees will be saved in %s' % self.tree_file_name)
+            self.output('Sampled parameters will be saved in %s' % self.param_file_name)
 
             if not self.warn_tip_numbers:
-                print 'Tip node numbers were set using the names in the tree description'
+                self.output('Tip node numbers were set using the names in the tree description')
             else:
-                print 'Warning: tip node numbers were NOT set using the names in the tree description'
+                self.output('Warning: tip node numbers were NOT set using the names in the tree description')
 
         if self.gg_do:
             assert self.data_source, 'cannot set gg_do to True and data_source to None'
@@ -878,12 +898,12 @@ class Phycas:
         # Compute the current log-likelihood and log-prior in case first updater 
         # is a move and will thus depend on these quantities being accurate
         self.chain_manager.refreshLastLnLike()
-        print 'Starting log-likelihood =',self.chain_manager.getLastLnLike()
+        self.output('Starting log-likelihood = %s' % self.chain_manager.getLastLnLike())
         self.chain_manager.refreshLastLnPrior()
-        print 'Starting log-prior =',self.chain_manager.getLastLnPrior()
+        self.output('Starting log-prior = %s' % self.chain_manager.getLastLnPrior())
 
         # Show starting parameter info 
-        print 'Parameter starting values and prior densities:'
+        self.output('Parameter starting values and prior densities:')
         for p in self.chain_manager.getEdgeLenParams():
             self.showParamInfo(p)
         for p in self.chain_manager.getEdgeLenHyperparams():
@@ -900,7 +920,7 @@ class Phycas:
         self.elapsed_secs = 0.0
         self.likelihood.resetNEvals()
 
-        print '\nSampling (%d cycles)...' % self.ncycles
+        self.output('\nSampling (%d cycles)...' % self.ncycles)
         if self.verbose:
             print
         self.recordSample(0)
@@ -919,7 +939,7 @@ class Phycas:
                 #p.setSaveDebugInfo(True)
                 for i,x in enumerate(range(w)):
                     p.update()
-                    #print 'Cycle %d: updating' % cycle,p.getName(),'for the %dth time' % i
+                    #self.output('Cycle %d: updating' % cycle,p.getName(),'for the %dth time' % i)
                     #tmpf = file('tmp.txt', 'a')
                     #tmpf.write('%s | %s\n' % (p.getName(), p.getDebugInfo()))
                     #tmpf.close()
@@ -932,7 +952,7 @@ class Phycas:
                     ncreated = self.likelihood.numCLAsCreated()
                     megabytes = ncreated*bytes_per_cla//1048576
                     msg += ', %d rates, %d MB in %d CLAs' % (self.model.getNGammaRates(),megabytes,ncreated)
-                print msg
+                self.output(msg)
                 #if self.use_tree_viewer and self.tree_viewer:
                 #    self.tree_viewer.refresh('Cycle %d' % (cycle + 1))
             if (cycle + 1) % self.sample_every == 0:
@@ -947,9 +967,9 @@ class Phycas:
 
         self.adaptSliceSamplers()
         total_evals = self.likelihood.getNEvals()
-        print '%d likelihood evaluations in %.5f seconds' % (total_evals, self.elapsed_secs)
+        self.output('%d likelihood evaluations in %.5f seconds' % (total_evals, self.elapsed_secs))
         if (self.elapsed_secs > 0.0):
-            print '  = %.5f likelihood evaluations/sec' % (total_evals/self.elapsed_secs)
+            self.output('  = %.5f likelihood evaluations/sec' % (total_evals/self.elapsed_secs))
 
         if self.treef:
             self.treeFileClose()
@@ -1107,35 +1127,34 @@ class Phycas:
         self.run()
         
 if __name__ == '__main__':
-    mcmc = Phycas()
+    phycas = Phycas()
 
     if True:
         # set above to True for normal operation
-        mcmc.random_seed = '13579'
-        mcmc.data_source = 'file'
-        mcmc.data_file_name = '../Tests/Data/green.nex'
-        #mcmc.data_file_name = '../Tests/Data/nyldna4.nex'
-        mcmc.starting_tree_source = 'random'
-        mcmc.ncycles = 200
-        mcmc.sample_every = 10
-        mcmc.adapt_first = 10
-        mcmc.default_model = 'hky'
-        mcmc.ls_move_weight = 10
-        mcmc.slice_max_units = 0
-        mcmc.verbose = True
+        phycas.random_seed = '13579'
+        phycas.data_source = 'file'
+        phycas.data_file_name = '../Tests/Data/green.nex'
+        #phycas.data_file_name = '../Tests/Data/nyldna4.nex'
+        phycas.starting_tree_source = 'random'
+        phycas.ncycles = 200
+        phycas.sample_every = 10
+        phycas.adapt_first = 10
+        phycas.default_model = 'hky'
+        phycas.ls_move_weight = 10
+        phycas.slice_max_units = 0
+        phycas.verbose = True
 
     if False:
         # for timing
-        mcmc.ncycles = 2000
-        mcmc.report_every = 500
-        mcmc.ls_move_weight = 100
-        mcmc.ls_move_debug = False
-        mcmc.uf_num_edges = 50
+        phycas.ncycles = 2000
+        phycas.report_every = 500
+        phycas.ls_move_weight = 100
+        phycas.ls_move_debug = False
+        phycas.uf_num_edges = 50
 
     if False:
         # for Tallahassee session
-        mcmc.data_file_name = '../Tests/Data/nyldna4.nex'
+        phycas.data_file_name = '../Tests/Data/nyldna4.nex'
 
-    mcmc.setup()
-    mcmc.run()
-    
+    phycas.mcmc()
+    phycas.shutdown()    

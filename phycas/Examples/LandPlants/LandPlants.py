@@ -36,6 +36,9 @@ phycas = Phycas()
 #   phycas/Examples/LandPlants/LandPlants.py <- you are here
 #   phycas/Phycas/Phycas.py                  <- here is Phycas.py
 
+# Write output to file as well as console
+phycas.logfile = 'output.txt'
+
 # Set up the edge length prior means. You can force Phycas to use just one prior for
 # all edge lengths (the default) by setting one of these to None instead of to a
 # probability distribution
