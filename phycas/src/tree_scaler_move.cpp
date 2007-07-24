@@ -59,7 +59,7 @@ void TreeScalerMove::update()
     prev_value = 1.0;
     slice_sampler->Sample();
 
-#if POLPY_NEWWAY
+#if 0
     //POL temporary!
     double v = slice_sampler->GetLastSampledXValue();
     if (v > 20.0)
