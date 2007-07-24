@@ -188,7 +188,7 @@ class Phycas:
         self.gg_spectrum_row        = 0
         self.reader = NexusReader()
         self.separate_int_ext_edgelen_priors = False
-
+        self.logf = None
 
     def shutdown(self):
         if self.logf:
@@ -535,7 +535,6 @@ class Phycas:
             self.r.setSeed(int(self.random_seed))
 
         # open a logfile if requested
-        self.logf = None
         if self.logfile:
             # TODO check first to see if it exists before blindly overwriting
             self.logf = file(self.logfile, 'w')
