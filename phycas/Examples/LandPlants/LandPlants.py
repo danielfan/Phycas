@@ -24,7 +24,7 @@ from math import exp
 # These three variables are provided to make it easy to find and change the internal
 # and external edge length prior means, or to use the edge length hyperprior approach.
 # Note that if use_hyperpriors is True, mu_internal and mu_external will be ignored.
-mu_internal = 0.0001
+mu_internal = 0.00001
 mu_external = 0.1
 use_hyperpriors = False
 
@@ -38,6 +38,10 @@ phycas = Phycas()
 
 # Write output to file as well as console
 phycas.logfile = 'output.txt'
+phycas.quiet = True
+
+# Enable the tree scaler move
+phycas.tree_scaler_weight = 1
 
 # Set up the edge length prior means. You can force Phycas to use just one prior for
 # all edge lengths (the default) by setting one of these to None instead of to a
@@ -50,7 +54,7 @@ phycas.internal_edgelen_dist  = ProbDist.ExponentialDist(1.0/mu_internal)
 # and the name of the file where the Gelfand-Ghosh results will be saved (note how
 # Python allows you to easily include the values of mu_internal and mu_external in
 # the file name - the numbers replace the "%d" placeholders)
-phycas.gg_do = True
+phycas.gg_do = False
 phycas.gg_nreps = 2
 phycas.gg_outfile = 'ggout.internal_%f.external_%f.txt' % (mu_internal, mu_external)
 
@@ -98,16 +102,20 @@ phycas.starting_tree_source = 'random'
 phycas.data_file_name = 'Yang_and_Rannala_Karol.nex'
 
 # Let slice sampler have maximum freedom to extend slice
-phycas.slice_max_units = 0
+#phycas.slice_max_units = 0
 
-# Tell phycas that we want to run the MCMC analysis for 20000 cycles.
+# Tell phycas that we want to run the MCMC analysis for 25000 cycles.
 # Note that a cycle in Phycas differs from a generation in MrBayes.
 # A cycle involves updating each non-branch-length parameter in the model
 # as well as a certain number of Metropolis-Hastings updates of branch
 # lengths and tree topology.
-phycas.ncycles = 100000
-phycas.sample_every = 20    # save tree and parameters every 10 cycles
+phycas.ncycles = 25000
+phycas.sample_every = 10    # save tree and parameters every 10 cycles
 
-# Finally, call mcmc(), which prepares phycas for the MCMC analysis, taking
+# Call mcmc(), which prepares phycas for the MCMC analysis, taking
 # account of the changed settings above, then performs the actual analysis.
 phycas.mcmc()
+
+# Call shutdown to close the log file
+phycas.shutdown()
+

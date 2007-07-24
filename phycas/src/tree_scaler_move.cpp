@@ -62,19 +62,20 @@ void TreeScalerMove::update()
 #if POLPY_NEWWAY
     //POL temporary!
     double v = slice_sampler->GetLastSampledXValue();
-    if (v > 2.0)
+    if (v > 20.0)
         {
         // plot a series of values to see why the scaler is able to get so large
         std::ofstream outf("treescaler.txt", std::ios::out | std::ios::app);
         outf.setf(std::ios::floatfield, std::ios::fixed);
         outf.setf(std::ios::showpoint);
         outf << "\nTree scaler too large: " << v << ":" << std::endl;
-        for (double x = 0.01; x < 5.0; x += 0.01)
+        for (double x = 0.1; x < 50.0; x += 0.1)
             {
             double ln_posterior = this->operator()(x);
             outf << x << '\t' << ln_posterior << '\n';
             }
         outf.close();
+	curr_value = v;
         }
 #endif
 

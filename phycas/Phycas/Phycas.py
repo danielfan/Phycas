@@ -189,11 +189,6 @@ class Phycas:
         self.reader = NexusReader()
         self.separate_int_ext_edgelen_priors = False
 
-        # open a logfile if requested
-        self.logf = None
-        if self.logfile:
-            # TODO check first to see if it exists before blindly overwriting
-            self.logf = file(self.logfile, 'w')
 
     def shutdown(self):
         if self.logf:
@@ -538,6 +533,12 @@ class Phycas:
         # Set seed if user has supplied one
         if self.random_seed != 0:
             self.r.setSeed(int(self.random_seed))
+
+        # open a logfile if requested
+        self.logf = None
+        if self.logfile:
+            # TODO check first to see if it exists before blindly overwriting
+            self.logf = file(self.logfile, 'w')
 
         # Determine the number of edge length priors: one (governs all edge lengths)
         # or two (one for internal edge lengths, the other for external edge lengths)
