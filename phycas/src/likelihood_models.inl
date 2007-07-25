@@ -32,11 +32,11 @@ namespace phycas
 inline Model::Model(
   unsigned numStates)	/**< is the number of basic states (e.g. 4 for DNA) */
 	:
+    	separate_int_ext_edgelen_priors(false),
 	num_states(numStates), //@POL 31-Oct-2005 what about morphological models, is numStates in this case the maximum number of states allowed?
 	num_gamma_rates(1), 
 	gamma_rates_unnorm(1, 1.0),
 	gamma_rate_probs(1, 1.0), 
-    separate_int_ext_edgelen_priors(false),
 	state_freq_fixed(false),
 	edge_lengths_fixed(false),	
 	edgelen_hyperprior_fixed(false),

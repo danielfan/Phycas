@@ -93,6 +93,7 @@ static char * codon_code_to_triplet[] =
 	"TTT"
 	};
 
+#if 0
 static char * codon_code_to_aa_name[] =
 	{
 	"Lys", //  0 AAA
@@ -128,7 +129,7 @@ static char * codon_code_to_aa_name[] =
 	"Leu", // 30 CTG
 	"Leu", // 31 CTT
 	"Glu", // 32 GAA
-    "Asp", // 33 GAC
+	"Asp", // 33 GAC
 	"Glu", // 34 GAG
 	"Asp", // 35 GAT
 	"Ala", // 36 GCA
@@ -157,6 +158,7 @@ static char * codon_code_to_aa_name[] =
 	"Leu", // 59 TTG
 	"Phe"  // 60 TTT
 	};
+#endif
 
 //    0    Ala     A       Alanine
 //    1    Arg     R       Arginine
@@ -571,7 +573,6 @@ inline void Codon::setNucleotideFreqs(
 	PHYCAS_ASSERT(freqG >= 0.0);
 	PHYCAS_ASSERT(freqT >= 0.0);
 	PHYCAS_ASSERT(state_freq_unnorm.size() == 61);
-	double sum = 0.0;
 	state_freq_unnorm[0]  = freqA*freqA*freqA;	// 0 AAA
 	state_freq_unnorm[1]  = freqA*freqA*freqC;	// 1 AAC
 	state_freq_unnorm[2]  = freqA*freqA*freqG;	// 2 AAG
