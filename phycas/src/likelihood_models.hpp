@@ -83,16 +83,14 @@ class Model	{
 		void							setAllGammaRateProbsEqual();
 		void							recalcRatesAndProbs(std::vector<double> & rates, std::vector<double> & probs) const;
 		void							recalcGammaRatesAndBoundaries(std::vector<double> & rates, std::vector<double> & boundaries) const;
-		bool							edgeLengthsFixed() const;
-		void							fixEdgeLengths();
-		void							freeEdgeLengths();
-		bool							edgeLenHyperParamFixed() const;
-		void							fixEdgeLenHyperprior();
-		void							freeEdgeLenHyperprior();
-		bool							stateFreqsFixed() const;
+		
+		// Member functions related to state frequencies
+        bool							stateFreqsFixed() const;
 		void							fixStateFreqs();
 		void							freeStateFreqs();
-		void							setFlexRateUpperBound(double new_upper_bound);
+		
+		// Member functions related to the flexcat model
+        void							setFlexRateUpperBound(double new_upper_bound);
 		void							setNumFlexSpacers(unsigned s);
 		void							setFlexModel();
 		void							setNotFlexModel();
@@ -105,7 +103,9 @@ class Model	{
 		virtual void					setFlexRateUnnorm(unsigned param_index, double value);
 		virtual void					setFlexProbUnnorm(unsigned param_index, double value);
 		void							normalizeRatesAndProbs(std::vector<double> & rates, std::vector<double> & probs) const;
-		void							setPinvarModel();
+		
+		// Member functions related to proportion of invariable sites
+        void							setPinvarModel();
 		void							setNotPinvarModel();
 		bool							pinvarFixed() const;
 		void							fixPinvar();
@@ -114,6 +114,8 @@ class Model	{
 		void							setPinvar(double pinv);
 		void							setPinvarPrior(ProbDistShPtr d);
 		ProbDistShPtr					getPinvarPrior();
+
+		// Member functions related to discrete gamma shape
 		bool							shapeFixed() const;
 		void							fixShape();
 		void							freeShape();
@@ -124,6 +126,12 @@ class Model	{
 		ProbDistShPtr					getDiscreteGammaShapePrior();
 
 		// Member functions related to edge lengths
+        bool							edgeLengthsFixed() const;
+		void							fixEdgeLengths();
+		void							freeEdgeLengths();
+		bool							edgeLenHyperParamFixed() const;
+		void							fixEdgeLenHyperprior();
+		void							freeEdgeLenHyperprior();
 		void							setEdgeLenHyperPrior(ProbDistShPtr d);
 		//void							setEdgeLenPrior(ProbDistShPtr d);
 		void							setExternalEdgeLenPrior(ProbDistShPtr d);

@@ -70,7 +70,12 @@ class Tree
 		TreeNode *				GetLastPreorder();
 		preorder_iterator		begin();
 		preorder_iterator		end();
-		
+
+#if POLPY_NEWWAY
+        void                    SetTreeScale(double scale);
+        double                  GetTreeScale();
+#endif
+	
 		// Predicates
 		//
 		bool					RootValid() const;
@@ -140,6 +145,9 @@ class Tree
 		bool					preorderDirty;			/**< Set to false when preorder traversal pointers are set, but a function should set to true if it modifies the tree and does not leave the preorder traversal pointers valid */
 		bool					nodeCountsValid;		/**< If false, causes functions that depend on accurate node counts, such as GetNTips(), GetNNodes(), GetNInternals() and GetNObservables(), to recompute nTips and nInternals */
 		bool					numbers_from_names;		/**< True if tip node numbers were set using tip node names in tree description. */
+#if POLPY_NEWWAY
+        double                  tree_scale;             /**> Multiplier that converts stored edge lengths into expected number of substitutions. Starts out 1.0 but is modified by TreeScalerMove. */
+#endif
 
 	private:
 

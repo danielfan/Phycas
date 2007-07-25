@@ -69,6 +69,9 @@ inline void TreeNode::Clear()
 	x				= 0.0;
 	y				= 0.0;
 	selected		= false;
+#if POLPY_NEWWAY
+    //tree.reset(); //@POL not sure this should be here, so it is currently commented out 
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -79,6 +82,18 @@ inline TreeNode::~TreeNode()
 	ResetInternalData();
 	ResetTipData();
 	}
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the `tree' share pointer data member to the supplied value `t'. This allows subsequent access to the tree of
+|   which this node is a part in order to, for example, gain access to the whole-tree scaling factor.
+*/
+inline void TreeNode::SetTreeShPtr(
+  TreeShPtr t) /**> is a pointer to the tree (should be called just after a node is created) */
+	{
+	tree = t;
+	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the current value of the data member `x'.
@@ -265,6 +280,7 @@ inline bool TreeNode::IsInternalRoot() const
 	return (parentless && only_child && at_least_two_children);
 	}
 
+#if POLPY_OLDWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the edge length (value of `edgeLen' data member).
 */
@@ -272,6 +288,7 @@ inline double TreeNode::GetEdgeLen() const
 	{
 	return edgeLen;
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the edge length (value of `nodeNum' data member).
@@ -317,6 +334,7 @@ inline void TreeNode::UnselectNode()
 	selected = false;
 	}
 
+#if POLPY_OLDWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Allows write access to protected data member `edgeLen'.
 */
@@ -325,6 +343,7 @@ inline void TreeNode::SetEdgeLen(
 	{
 	//@POL will this next line throw off Hastings ratios involving branch lengths?
 	edgeLen = (x < TreeNode::edgeLenEpsilon ? TreeNode::edgeLenEpsilon : x);
+
 #if 0	// if reinstated, also reinstate code in TreeLikelihood::calcLnL
 	if (IsInternal())
 		{
@@ -341,6 +360,7 @@ inline void TreeNode::SetEdgeLen(
 		}
 #endif
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the `tipData' data member.

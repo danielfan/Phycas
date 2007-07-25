@@ -37,7 +37,9 @@ namespace phycas
 TreeScalerMove::TreeScalerMove() : MCMCUpdater()
 	{
 	curr_value = 1.0;
+#if POLPY_OLDWAY
     prev_value = 1.0;
+#endif
 	has_slice_sampler = true;
 	is_move = true;
 	is_master_param = false;
@@ -52,11 +54,13 @@ void TreeScalerMove::update()
 	if (is_fixed)
 		return;
 
+#if POLPY_OLDWAY
     // Each time the update function is called, we assume that the current scale is 1.0
     // The Sample() function will call operator() many times with new curr_value values
     // each of which will be relative to the starting scale.
     curr_value = 1.0;
     prev_value = 1.0;
+#endif
     slice_sampler->Sample();
 
 #if 0
@@ -98,9 +102,15 @@ double TreeScalerMove::operator()(
 
 	if (f > 0.0)
 		{
+#if POLPY_OLDWAY
         prev_value = curr_value;
+#endif
 		curr_value = f;
+#if POLPY_NEWWAY
+        tree->SetTreeScale(f);
+#else
         scaleAllEdgeLengths();
+#endif
 		recalcPrior();
 
 		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
@@ -112,6 +122,7 @@ double TreeScalerMove::operator()(
 	return curr_ln_like + curr_ln_prior;
 	}
 
+#if POLPY_OLDWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Scales all edge lengths in the tree so that the tree is now different from its original length by a factor of 
 |   `curr_value'.
@@ -139,6 +150,7 @@ void TreeScalerMove::scaleAllEdgeLengths()
 			}
 		}
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the joint log prior over all edges in the associated tree and sets `curr_ln_prior'.

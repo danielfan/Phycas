@@ -21,12 +21,59 @@
 #include "phycas/src/basic_tree_node.hpp"
 #include "phycas/src/phycas_string.hpp"
 
+#if POLPY_NEWWAY
+#include "phycas/src/basic_tree.hpp"
+#endif
+
 using namespace phycas;
 
 const double TreeNode::edgeLenEpsilon = 1.e-8;
 const double TreeNode::edgeLenDefault = 0.1;
 const double TreeNode::edgeLenInitValue = DBL_MAX;
 const unsigned TreeNode::nodeNumInitValue = UINT_MAX;
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the edge length (value of `edgeLen' data member multiplied by the tree's scaler value).
+*/
+double TreeNode::GetEdgeLen() const
+	{
+    double scale = tree->GetTreeScale();
+	return edgeLen*scale;
+	}
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Allows write access to protected data member `edgeLen'.
+*/
+void TreeNode::SetEdgeLen(
+  double x)							/**< is the new edge length value */
+	{
+    // The outside world doesn't know about the tree scaling factor, so the value x
+    // will be an unscaled edge length
+    double scale = tree->GetTreeScale();
+    PHYCAS_ASSERT(scale > 0.0);
+    double newlen = x/scale;
+	edgeLen = (newlen < TreeNode::edgeLenEpsilon ? TreeNode::edgeLenEpsilon : newlen);
+
+#if 0	// if reinstated, also reinstate code in TreeLikelihood::calcLnL
+	if (IsInternal())
+		{
+		SelectNode();
+		}
+	else
+		{
+		// Internal nodes are the only ones that matter during the likelihood calculation,
+		// so make sure at least one internal node gets selected. It is possible that this
+		// tip node is serving as the root node, so need to make sure it has a parent before
+		// trying to select the parent.
+		if (par)
+			par->SelectNode();
+		}
+#endif
+	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns number of immediate descendants (should be 0 for a tip node, 1 for the root (tip) node, and 2 or more for

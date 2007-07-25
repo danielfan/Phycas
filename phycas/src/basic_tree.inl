@@ -170,6 +170,9 @@ inline void Tree::Clear()
 	nodeCountsValid		= false;
 	treeid_valid		= false;
 	numbers_from_names	= false;
+#if POLPY_NEWWAY
+    tree_scale          = 1.0;
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -177,12 +180,15 @@ inline void Tree::Clear()
 |	is known in advance how many nodes will be needed, Reserve() can be called to create all nodes needed, storing them
 |	in `nodeStorage'.
 */
-inline TreeNode *Tree::GetNewNode()
+inline TreeNode * Tree::GetNewNode()
 	{
-	TreeNode *nd = NULL;
+	TreeNode * nd = NULL;
 	if (nodeStorage.empty())
 		{
 		nd = new TreeNode();
+#if POLPY_NEWWAY
+        nd->SetTreeShPtr(TreeShPtr(this));
+#endif
 		}
 	else
 		{
@@ -208,9 +214,36 @@ inline void Tree::Reserve(
 	unsigned num_nodes_needed = n - num_existing_nodes;
 	for (unsigned i = 0; i < num_nodes_needed; ++i)
 		{
+#if POLPY_NEWWAY
+        TreeNode * nd = new TreeNode();
+        nd->SetTreeShPtr(TreeShPtr(this));
+		nodeStorage.push_back(nd);
+#else
 		nodeStorage.push_back(new TreeNode());
+#endif
 		}
 	}
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the `tree_scale' data member to the supplied value `scale'.
+*/
+inline void Tree::SetTreeScale(
+  double scale) /**> is the new scaling factor by which all edge lengths will be multiplied */
+	{
+	tree_scale = scale;
+	}
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns the current value of the `tree_scale' parameter.
+*/
+inline double Tree::GetTreeScale()
+	{
+	return tree_scale;
+	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns true if `firstPreorder' points to a node having no parent, no right sibling and only one child.

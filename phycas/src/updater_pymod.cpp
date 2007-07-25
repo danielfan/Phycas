@@ -27,9 +27,7 @@
 #include "phycas/src/cipres/CipresDataMatrixHelper.h"
 #include "phycas/src/tree_likelihood.hpp"
 #include "phycas/src/larget_simon_move.hpp"
-#if POLPY_NEWWAY
 #include "phycas/src/tree_scaler_move.hpp"
-#endif
 #include "phycas/src/ncat_move.hpp"
 #include "phycas/src/bush_move.hpp"
 #include "phycas/src/edge_move.hpp"
@@ -88,12 +86,10 @@ void updater_pymod()
 		.def("topologyChanged", &phycas::LargetSimonMove::topologyChanged)
 		.def("viewProposedMove", &phycas::LargetSimonMove::viewProposedMove)
 		;
-#if POLPY_NEWWAY
 	class_<phycas::TreeScalerMove, bases<phycas::MCMCUpdater>, 
 		boost::noncopyable, boost::shared_ptr<phycas::TreeScalerMove> >("TreeScalerMove") 
 		.def("update", &phycas::TreeScalerMove::update)
 		;
-#endif
 	class_<TopoPriorCalculator, boost::noncopyable, 
 		boost::shared_ptr<phycas::TopoPriorCalculator> >("TopoPriorCalculatorBase")
 		.def("setNTax", &TopoPriorCalculator::SetNTax)
