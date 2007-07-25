@@ -41,9 +41,9 @@ inline MCMCUpdater::MCMCUpdater()
   is_master_param(false),
   is_hyper_param(false), 
   is_fixed(false),
-  save_debug_info(false),
   slice_max_units(UINT_MAX),
-  slice_starting_value(0.1)
+  slice_starting_value(0.1),
+  save_debug_info(false)
 	{
 	//ln_zero = std::log(std::numeric_limits<double>::denorm_min()); // this doesn't work, lnL can get much lower than the log of dnorm_min!
 	ln_zero = -DBL_MAX;
