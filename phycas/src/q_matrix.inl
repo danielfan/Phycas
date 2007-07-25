@@ -297,3 +297,4 @@ inline void QMatrix::flattenTwoDMatrix(VecDbl & p, double * * twoDarr, unsigned 
 	}
 	
 } // namespace phycas
+

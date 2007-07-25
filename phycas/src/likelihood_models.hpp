@@ -378,3 +378,4 @@ typedef boost::shared_ptr<Codon> CodonShPtr;
 #include "phycas/src/likelihood_models.inl"
 
 #endif
+

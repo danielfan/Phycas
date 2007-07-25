@@ -132,4 +132,4 @@ class QMatrix
 #include "phycas/src/q_matrix.inl"
 
 #endif
-	
+
