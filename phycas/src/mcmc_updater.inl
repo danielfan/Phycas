@@ -42,7 +42,9 @@ inline MCMCUpdater::MCMCUpdater()
   is_hyper_param(false), 
   is_fixed(false),
   slice_max_units(UINT_MAX),
+#if 1 || POLPY_OLDWAY   //POL_BOOKMARK
   slice_starting_value(0.1),
+#endif
   save_debug_info(false)
 	{
 	//ln_zero = std::log(std::numeric_limits<double>::denorm_min()); // this doesn't work, lnL can get much lower than the log of dnorm_min!
@@ -229,7 +231,11 @@ inline void MCMCUpdater::createSliceSampler()
 	PHYCAS_ASSERT(!slice_sampler);	// don't want to do this more than once
 	slice_sampler.reset(new SliceSampler(rng, shared_from_this())); // forces inclusion of "phycas/src/slice_sampler.hpp"
 	slice_sampler->SetMaxUnits(slice_max_units);
+#if 0 && POLPY_NEWWAY   //POL_BOOKMARK
+	slice_sampler->SetXValue(curr_value);
+#else
 	slice_sampler->SetXValue(slice_starting_value);
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -398,6 +404,16 @@ inline void MCMCUpdater::setPrior(ProbDistShPtr p)
 	prior = p;
 	}
 
+#if 0 && POLPY_NEWWAY   //POL_BOOKMARK
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the current value to the supplied value `x'. The value is stored in the data member `curr_value' and passed to
+|   the slice sampler if and when it is created in the member function MCMCUpdater::createSliceSampler().
+*/
+inline void MCMCUpdater::setStartingValue(double x)
+	{
+    curr_value = x;
+	}
+#else
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the starting value of the slice sampler to the supplied value `x'. The value is stored in the data member
 |	`slice_starting_value' and passed to the slice sampler if and when it is created in the member function
@@ -405,8 +421,9 @@ inline void MCMCUpdater::setPrior(ProbDistShPtr p)
 */
 inline void MCMCUpdater::setStartingValue(double x)
 	{
-	slice_starting_value = x;
+    slice_starting_value = x;
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	If data member `prior' actually points to a ProbabilityDistribution object, this function calls the 

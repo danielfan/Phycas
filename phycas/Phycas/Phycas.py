@@ -291,16 +291,17 @@ class Phycas:
         # Create a TreeScalerMove object to handle scaling the entire tree to allow faster
         # convergence in edge lengths. This move is unusual in using slice sampling rather
         # than Metropolis-Hastings updates: most "moves" in Phycas are Metropolis-Hastings.
-        self.tree_scaler_move = TreeScalerMove()
-        self.tree_scaler_move.setName("Tree scaler move")
-        self.tree_scaler_move.setWeight(self.tree_scaler_weight)
-        self.tree_scaler_move.setTree(self.tree)
-        self.tree_scaler_move.setModel(self.model)
-        self.tree_scaler_move.setTreeLikelihood(self.likelihood)
-        self.tree_scaler_move.setLot(self.r)
-        if self.model.edgeLengthsFixed():
-            self.tree_scaler_move.fixParameter()
-        self.chain_manager.addMove(self.tree_scaler_move)
+        if self.tree_scaler_weight > 0:
+            self.tree_scaler_move = TreeScalerMove()
+            self.tree_scaler_move.setName("Tree scaler move")
+            self.tree_scaler_move.setWeight(self.tree_scaler_weight)
+            self.tree_scaler_move.setTree(self.tree)
+            self.tree_scaler_move.setModel(self.model)
+            self.tree_scaler_move.setTreeLikelihood(self.likelihood)
+            self.tree_scaler_move.setLot(self.r)
+            if self.model.edgeLengthsFixed():
+                self.tree_scaler_move.fixParameter()
+            self.chain_manager.addMove(self.tree_scaler_move)
 
         # Create a LargetSimonMove object to handle Metropolis-Hastings
         # updates to the tree topology and edge lengths
