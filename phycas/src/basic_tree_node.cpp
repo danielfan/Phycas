@@ -20,10 +20,7 @@
 #include <cfloat>
 #include "phycas/src/basic_tree_node.hpp"
 #include "phycas/src/phycas_string.hpp"
-
-#if POLPY_NEWWAY
 #include "phycas/src/basic_tree.hpp"
-#endif
 
 using namespace phycas;
 
@@ -32,7 +29,6 @@ const double TreeNode::edgeLenDefault = 0.1;
 const double TreeNode::edgeLenInitValue = DBL_MAX;
 const unsigned TreeNode::nodeNumInitValue = UINT_MAX;
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the edge length (value of `edgeLen' data member multiplied by the tree's scaler value).
 */
@@ -41,9 +37,7 @@ double TreeNode::GetEdgeLen() const
     double scale = tree->GetTreeScale();
 	return edgeLen*scale;
 	}
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Allows write access to protected data member `edgeLen'.
 */
@@ -73,7 +67,6 @@ void TreeNode::SetEdgeLen(
 		}
 #endif
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns number of immediate descendants (should be 0 for a tip node, 1 for the root (tip) node, and 2 or more for

@@ -31,10 +31,8 @@ namespace phycas
 class TipData;
 class InternalData;
 
-#if POLPY_NEWWAY
 class Tree;
 typedef boost::shared_ptr<Tree> TreeShPtr;
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Encapsulates a node (i.e. vertex) of a tree, with pointers to other nodes for navigation purposes, a branch length
@@ -101,9 +99,7 @@ class TreeNode
 		void			SetNodeName(std::string name);
 		void			SetNodeNum(unsigned num);
 
-#if POLPY_NEWWAY
         void            SetTreeShPtr(TreeShPtr t);
-#endif
 
 		void			ResetTipData();
 		void			SetTipData(TipData * d, TreeNode::TipDataDeleter f);
@@ -132,9 +128,7 @@ class TreeNode
 		TreeNode *			prevPreorder;			/**< points to previous node in preorder sequence */
 		bool				observable;				/**< true if data could be observed for this node */
 
-#if POLPY_NEWWAY
         TreeShPtr           tree;                   /**> Points to tree of which this node is part */
-#endif
 
         double				tmp;					/**< temporary non-persistant workspace to be used within individual methods */
 		float				x;						/**< x-coordinate for purposes of drawing the tree */

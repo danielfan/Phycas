@@ -53,12 +53,9 @@ class TreeScalerMove : public MCMCUpdater
 		virtual double	operator()(double f);	// override pure virtual from AdHocDensity (base class of MCMCUpdater)
 		virtual double	recalcPrior();			// override virtual from MCMCUpdater base class
 
-#if POLPY_OLDWAY
     private:
 
         void            scaleAllEdgeLengths();
-        double          prev_value;
-#endif
 	};
 
 } // namespace phycas
