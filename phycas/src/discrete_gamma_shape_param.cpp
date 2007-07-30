@@ -22,29 +22,14 @@
 namespace phycas
 {
 
-#if POLPY_NEWWAY    //comment only
 /*----------------------------------------------------------------------------------------------------------------------
 |	Constructor calls the base class (MCMCUpdater) constructor. Also sets the `curr_value' data member to 0.5 (or 2.0
 |	if `invert' is true. Sets `invert_shape' to the value of `invert'.
 */
-#else
-/*----------------------------------------------------------------------------------------------------------------------
-|	Constructor calls the base class (MCMCUpdater) constructor. Also sets the `curr_value' data member to 0.5 (or 2.0
-|	if `invert' is true. Sets `shape_inverted' to the value of `invert'.
-*/
-#endif
 DiscreteGammaShapeParam::DiscreteGammaShapeParam(bool invert)
-#if POLPY_NEWWAY //name change only
   : MCMCUpdater(), shape_inverted(invert)
-#else
-  : MCMCUpdater(), invert_shape(invert)
-#endif
 	{
-#if POLPY_NEWWAY    //name change only
     curr_value = (shape_inverted ? 2.0 : 0.5);
-#else
-    curr_value = (invert_shape ? 2.0 : 0.5);
-#endif
 	has_slice_sampler = true;
 	is_move = false;
 	is_master_param = false;

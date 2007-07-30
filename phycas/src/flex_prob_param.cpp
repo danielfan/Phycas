@@ -30,11 +30,7 @@ FlexProbParam::FlexProbParam(
   std::vector<double> & rp)		/**< is the category probability parameter vector */
   : MCMCUpdater(), which(0), rate_probs(rp)
 	{
-#if POLPY_OLDWAY    // curr_value
-	curr_value = 1.0;
-#else
 	curr_value = rate_probs[0];
-#endif
 	has_slice_sampler = true;
 	is_move = false;
 	is_master_param = false;

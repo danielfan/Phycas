@@ -37,9 +37,6 @@ namespace phycas
 TreeScalerMove::TreeScalerMove() : MCMCUpdater()
 	{
 	curr_value = 1.0;
-#if POLPY_OLDWAY    // curr_value
-    slice_starting_value = 1.0; 
-#endif
 	has_slice_sampler = true;
 	is_move = true;
 	is_master_param = false;

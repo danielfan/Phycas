@@ -50,10 +50,8 @@ inline Model::Model(
 	pinvar_fixed(false),
 	pinvar(0.0), 
 	gamma_shape_fixed(false),
-	gamma_shape(0.5)
-#if POLPY_NEWWAY //shape
-    , invert_shape(false)
-#endif
+	gamma_shape(0.5),
+    invert_shape(false)
 	{
 	PHYCAS_ASSERT(num_states > 0);
 	setAllFreqsEqual();

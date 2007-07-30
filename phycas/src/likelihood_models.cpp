@@ -161,9 +161,7 @@ void Model::createParameters(
 		PHYCAS_ASSERT(!gamma_shape_param);
 		gamma_shape_param = MCMCUpdaterShPtr(new DiscreteGammaShapeParam(invert_shape));
 		gamma_shape_param->setName("Discrete gamma shape"); //@POL shouldn't this be done in the constructor?
-#if POLPY_NEWWAY    //shape
         gamma_shape_param->setStartingValue(gamma_shape);
-#endif
 		gamma_shape_param->setTree(t);
 		gamma_shape_param->setPrior(gamma_shape_prior);
 		if (gamma_shape_fixed)
@@ -176,9 +174,7 @@ void Model::createParameters(
 		PHYCAS_ASSERT(!pinvar_param);
 		pinvar_param = MCMCUpdaterShPtr(new PinvarParam());
 		pinvar_param->setName("Proportion of invariable sites");
-#if POLPY_NEWWAY    //pinvar
         pinvar_param->setStartingValue(pinvar);
-#endif
 		pinvar_param->setTree(t);
 		pinvar_param->setPrior(pinvar_prior);
 		if (pinvar_fixed)
