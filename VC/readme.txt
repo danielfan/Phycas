@@ -1,4 +1,4 @@
-Last updated 31-May-2007 by Paul O. Lewis
+Last updated 27-July-2007 by Paul O. Lewis
 
 First, note that the *proper* way to build Phycas is using bjam from the directory containing
 the file Jamroot (i.e. the parent of this directory). There is really only one good reason 
@@ -182,4 +182,9 @@ After compilation
 -----------------
 After the phycas python extensions have compiled, you should be able to start the debug version of python (python_d.exe)
 and import phycas. 
+
+Deja vu
+-------
+o "Compiler out of keys" errors in VC debug builds seem to arise from assert calls. 
+Change the offending assert to a PHYCAS_ASSERT and the build will succeed.
 

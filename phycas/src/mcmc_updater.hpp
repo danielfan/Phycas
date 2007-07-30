@@ -187,7 +187,7 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		bool					is_hyper_param;			/**< True if this updater represents a hyperparameter (a model parameter that is part of the prior specification but not the likelihood function) */
 		bool					is_fixed;				/**< If true, update returns immediately so parameter is never updated */
 		unsigned				slice_max_units;		/**< Maximum number of units used by `slice_sampler' */
-#if 1 || POLPY_OLDWAY   //POL_BOOKMARK
+#if POLPY_OLDWAY //curr_value
         double					slice_starting_value;	/**< Starting value used by `slice_sampler' */
 #endif
         std::string				debug_info;				/**< Information about the last update, only created if save_debug_info is true */

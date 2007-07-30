@@ -121,14 +121,15 @@ void Model::createParameters(
 		PHYCAS_ASSERT(flex_rate_params.empty());
 		PHYCAS_ASSERT(flex_prob_params.empty());
 		for (unsigned i = 0; i < num_gamma_rates; ++i)
-			{
+			{ //POL_BOOKMARK
 			// start with rates drawn from Uniform(0.0, flex_upper_rate_bound)
-			//@POL to do this right, need to draw from prior, but this will be close if number of spacers is small
+			//@POL to do this right, need to draw from prior, but if number of spacers is small, drawing from
+            // Uniform(0,flex_upper_rate_bound) will give almost the same results
 			double u = flex_prob_param_prior->GetLot()->Uniform(FILE_AND_LINE);
 			gamma_rates_unnorm[i] = flex_upper_rate_bound*u;
 			//old way: gamma_rates_unnorm[i] = flex_upper_rate_bound*(double)(i + 1)/(double)(num_gamma_rates + 1);
 
-			// start with probabilities all equal
+			// start with probabilities drawn from the prior
 			PHYCAS_ASSERT(flex_prob_param_prior);
 			gamma_rate_probs[i] = flex_prob_param_prior->Sample();
 			}
@@ -160,6 +161,9 @@ void Model::createParameters(
 		PHYCAS_ASSERT(!gamma_shape_param);
 		gamma_shape_param = MCMCUpdaterShPtr(new DiscreteGammaShapeParam(invert_shape));
 		gamma_shape_param->setName("Discrete gamma shape"); //@POL shouldn't this be done in the constructor?
+#if POLPY_NEWWAY    //shape
+        gamma_shape_param->setStartingValue(gamma_shape);
+#endif
 		gamma_shape_param->setTree(t);
 		gamma_shape_param->setPrior(gamma_shape_prior);
 		if (gamma_shape_fixed)
@@ -172,6 +176,9 @@ void Model::createParameters(
 		PHYCAS_ASSERT(!pinvar_param);
 		pinvar_param = MCMCUpdaterShPtr(new PinvarParam());
 		pinvar_param->setName("Proportion of invariable sites");
+#if POLPY_NEWWAY    //pinvar
+        pinvar_param->setStartingValue(pinvar);
+#endif
 		pinvar_param->setTree(t);
 		pinvar_param->setPrior(pinvar_prior);
 		if (pinvar_fixed)

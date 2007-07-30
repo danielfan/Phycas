@@ -637,6 +637,8 @@ class Phycas:
         this end.
         
         """
+        #if cycle == 0:
+        #    print '##### spitting out first line to paramf #####'
         # Add line to parameter file if it exists
         if self.paramf:
             self.paramf.write('%d\t%.3f\t%.3f' % (cycle + 1, lnL, self.tree.edgeLenSum()))
@@ -649,9 +651,13 @@ class Phycas:
                 rates_vector = self.likelihood.getRateMeans()
                 for rr in rates_vector:
                     self.paramf.write('\t%.5f' % rr)
+                    #if cycle == 0:
+                    #    print '  rate = %f' % rr 
                 probs_vector = self.likelihood.getRateProbs()
                 for rp in probs_vector:
                     self.paramf.write('\t%.5f' % rp)
+                    #if cycle == 0:
+                    #    print '  prob = %f' % rp 
             self.paramf.write('\n')
         
         # Add line to tree file if it exists

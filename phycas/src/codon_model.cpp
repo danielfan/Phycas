@@ -684,7 +684,8 @@ void Codon::updateQMatrix() const
 			//outf << nchanges << '\t';
 
 			double rel_rate = 0.0;
-			assert(nchanges > 0);
+			//assert(nchanges > 0);
+            PHYCAS_ASSERT(nchanges > 0);
 			if (nchanges == 1)
 				{
 				// Determine transition vs. transversion

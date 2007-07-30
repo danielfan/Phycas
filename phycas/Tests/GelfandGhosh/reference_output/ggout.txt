@@ -18,9 +18,9 @@ Gelfand-Ghosh calculation for HKY analysis:
 
 Gelfand-Ghosh calculation for HKY+G analysis:
        k           Pm           Gm           Dm
-     0.5    215.65568     59.70106    275.35675
-     1.0    215.65568     94.82398    310.47966
-     2.0    215.65568    138.40096    354.05665
+     0.5    215.03351     60.03478    275.06829
+     1.0    215.03351     95.15267    310.18618
+     2.0    215.03351    138.59200    353.62552
 
 Gelfand-Ghosh calculation for HKY+FLEX analysis:
        k           Pm           Gm           Dm
@@ -30,41 +30,41 @@ Gelfand-Ghosh calculation for HKY+FLEX analysis:
 
 Penalty rankings (best listed first):
      HKYFLEX    213.69614
-        HKYg    215.65568
+        HKYg    215.03351
          HKY    217.97969
 
 For k = 0.5:
 
   Goodness-of-fit rankings (best listed first):
      HKYFLEX     59.32419
-        HKYg     59.70106
+        HKYg     60.03478
          HKY     60.42937
 
   Overall rankings (best listed first):
      HKYFLEX    273.02033
-        HKYg    275.35675
+        HKYg    275.06829
          HKY    278.40907
 
 For k = 1.0:
 
   Goodness-of-fit rankings (best listed first):
      HKYFLEX     93.89556
-        HKYg     94.82398
+        HKYg     95.15267
          HKY     95.91860
 
   Overall rankings (best listed first):
      HKYFLEX    307.59170
-        HKYg    310.47966
+        HKYg    310.18618
          HKY    313.89829
 
 For k = 2.0:
 
   Goodness-of-fit rankings (best listed first):
      HKYFLEX    136.50689
-        HKYg    138.40096
+        HKYg    138.59200
          HKY    139.88794
 
   Overall rankings (best listed first):
      HKYFLEX    350.20303
-        HKYg    354.05665
+        HKYg    353.62552
          HKY    357.86763

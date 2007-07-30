@@ -79,7 +79,8 @@ void LargetSimonMove::update()
 		//three_edgelens[2] = origZ;
 		//prev_ln_prior = p->partialEdgeLenPrior(three_edgelens);
 
-        assert(ndY->IsInternal());
+        //assert(ndY->IsInternal());
+        PHYCAS_ASSERT(ndY->IsInternal());
         prev_ln_prior  = (ndX->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(origX) : p->calcExternalEdgeLenPriorUnnorm(origX));
         prev_ln_prior += p->calcInternalEdgeLenPriorUnnorm(origY);
         prev_ln_prior += (ndZ->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(origZ) : p->calcExternalEdgeLenPriorUnnorm(origZ));

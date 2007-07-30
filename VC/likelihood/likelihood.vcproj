@@ -161,7 +161,25 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\phycas\src\discrete_gamma_shape_param.cpp">
+			</File>
+			<File
 				RelativePath="..\..\phycas\src\edge_move.cpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\edgelen_master_param.cpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\flex_prob_param.cpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\flex_rate_param.cpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\gtr_rate_param.cpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\hyperprior_param.cpp">
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\internal_data.cpp">
@@ -180,6 +198,9 @@
 						Name="VCCLCompilerTool"
 						ForcedIncludeFiles="$(NOINHERIT)"/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\kappa_param.cpp">
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\larget_simon_move.cpp">
@@ -227,7 +248,13 @@
 				RelativePath="..\..\phycas\src\ncat_move.cpp">
 			</File>
 			<File
+				RelativePath="..\..\phycas\src\omega_param.cpp">
+			</File>
+			<File
 				RelativePath="..\..\phycas\src\phycas_string.cpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\pinvar_param.cpp">
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\q_matrix.cpp">
@@ -237,6 +264,9 @@
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\slice_sampler.cpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\state_freq_param.cpp">
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\tip_data.cpp">

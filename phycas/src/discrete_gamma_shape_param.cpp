@@ -17,51 +17,55 @@
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#if ! defined(TREE_SCALER_MOVE_HPP)
-#define TREE_SCALER_MOVE_HPP
-
-#include <vector>									// for std::vector
-#include <boost/shared_ptr.hpp>						// for boost::shared_ptr
-#include <boost/weak_ptr.hpp>						// for boost::weak_ptr
-//#include <boost/enable_shared_from_this.hpp>		// for boost::enable_shared_from_this
-#include "phycas/src/mcmc_updater.hpp"		// for base class MCMCUpdater
+#include "mcmc_param.hpp"
 
 namespace phycas
 {
 
-class MCMCChainManager;
-typedef boost::weak_ptr<MCMCChainManager>			ChainManagerWkPtr;
+#if POLPY_NEWWAY    //comment only
+/*----------------------------------------------------------------------------------------------------------------------
+|	Constructor calls the base class (MCMCUpdater) constructor. Also sets the `curr_value' data member to 0.5 (or 2.0
+|	if `invert' is true. Sets `invert_shape' to the value of `invert'.
+*/
+#else
+/*----------------------------------------------------------------------------------------------------------------------
+|	Constructor calls the base class (MCMCUpdater) constructor. Also sets the `curr_value' data member to 0.5 (or 2.0
+|	if `invert' is true. Sets `shape_inverted' to the value of `invert'.
+*/
+#endif
+DiscreteGammaShapeParam::DiscreteGammaShapeParam(bool invert)
+#if POLPY_NEWWAY //name change only
+  : MCMCUpdater(), shape_inverted(invert)
+#else
+  : MCMCUpdater(), invert_shape(invert)
+#endif
+	{
+#if POLPY_NEWWAY    //name change only
+    curr_value = (shape_inverted ? 2.0 : 0.5);
+#else
+    curr_value = (invert_shape ? 2.0 : 0.5);
+#endif
+	has_slice_sampler = true;
+	is_move = false;
+	is_master_param = false;
+	is_hyper_param = false;
+	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Encapsulates a whole-tree-scaling move. Each update scales all edge lengths by a common factor. Useful for moving
-|   quickly to an appropriate scale for the tree. Depending on the LargetSimonMove alone sometimes requires a long
-|   burn-in period due to the fact that each LargetSimonMove update only affects three edges.
-|>
+|	Calls the sample() member function of the `slice_sampler' data member.
 */
-class TreeScalerMove : public MCMCUpdater
+void DiscreteGammaShapeParam::update()
 	{
-	public:
-						TreeScalerMove();
-						virtual ~TreeScalerMove() 
-							{
-							//std::cerr << "TreeScalerMove dying..." << std::endl;
-							}
+	if (is_fixed)
+		{
+		return;
+		}
+	slice_sampler->Sample();
+    
+    if (save_debug_info)
+        {
+        debug_info = str(boost::format("DiscreteGammaShapeParam %f") % (slice_sampler->GetLastSampledXValue()));
+        }
+	}
 
-		// These are virtual functions in the MCMCUpdater base class
-		//
-		virtual void	update();
-		virtual double	operator()(double f);	// override pure virtual from AdHocDensity (base class of MCMCUpdater)
-		virtual double	recalcPrior();			// override virtual from MCMCUpdater base class
-
-    private:
-
-#if 0 
-        void            scaleAllEdgeLengths();
-#endif
-	};
-
-} // namespace phycas
-
-#include "phycas/src/tree_scaler_move.inl"
-
-#endif
+}

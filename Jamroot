@@ -99,25 +99,35 @@ alias likelihood_sources
     phycas/src/cipres/CipresDataMatrixHelper.cpp
 	phycas/src/codon_model.cpp
     phycas/src/cond_likelihood_storage.cpp
+	phycas/src/discrete_gamma_shape_param.cpp
     phycas/src/thirdparty/dcdflib/src/dcdflib.c
+	phycas/src/edgelen_master_param.cpp
     phycas/src/edge_move.cpp 
+    phycas/src/flex_prob_param.cpp
+    phycas/src/flex_rate_param.cpp 
+    phycas/src/gtr_rate_param.cpp 
+    phycas/src/hyperprior_param.cpp 
+    phycas/src/kappa_param.cpp 
     phycas/src/internal_data.cpp 
     phycas/src/thirdparty/dcdflib/src/ipmpar.c
     phycas/src/larget_simon_move.cpp 
     phycas/src/likelihood_loops.cpp
     phycas/src/likelihood_models.cpp 
     phycas/src/likelihood_pymod.cpp 
-    phycas/src/model_pymod.cpp
     phycas/src/linalg.c
+    phycas/src/model_pymod.cpp
     phycas/src/mcmc_chain_manager.cpp 
     phycas/src/mcmc_param.cpp 
     phycas/src/mcmc_flexcat_param.cpp 
     phycas/src/mcmc_updater.cpp 
     phycas/src/ncat_move.cpp 
+    phycas/src/omega_param.cpp 
     phycas/src/phycas_string.cpp 
+    phycas/src/pinvar_param.cpp 
     phycas/src/q_matrix.cpp
     phycas/src/sim_data.cpp 
     phycas/src/slice_sampler.cpp
+    phycas/src/state_freq_param.cpp
     phycas/src/tip_data.cpp 
     phycas/src/topo_prior_calculator.cpp 
     phycas/src/tree_likelihood.cpp 

@@ -63,6 +63,8 @@ def runHKYg(rnseed):
     phycas.data_file_name = 'analHKYg.nex'
     phycas.num_rates = 4
 
+    #raw_input('start debugging')
+    
     phycas.setup()
     phycas.run()
 

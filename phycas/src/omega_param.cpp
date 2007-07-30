@@ -17,16 +17,40 @@
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#if !defined(MCMC_PARAM_INL)
-#define MCMC_PARAM_INL
-
-#include <limits>										// for std::numeric_limits
-#include <boost/lambda/lambda.hpp>						// for boost::lambda::_1, boost::lambda::_2
-#include <boost/lambda/bind.hpp>						// for boost::lambda::bind
+#include "mcmc_param.hpp"
 
 namespace phycas
 {
 
-} // namespace phycas
+/*----------------------------------------------------------------------------------------------------------------------
+|	Constructor calls the base class (MCMCUpdater) constructor and initializes its Codon pointer to NULL. Also sets the
+|	`curr_value' data member to 1.0 and refreshes `curr_ln_prior' accordingly.
+*/
+OmegaParam::OmegaParam()
+  : MCMCUpdater(), codon(NULL)
+	{
+	curr_value = 1.0;
+	has_slice_sampler = true;
+	is_move = false;
+	is_master_param = false;
+	is_hyper_param = false;
+	}
 
-#endif
+/*----------------------------------------------------------------------------------------------------------------------
+|	Calls the sample() member function of the `slice_sampler' data member.
+*/
+void OmegaParam::update()
+	{
+	//@POL should probably put next two lines in Model::update and have Model::update call a virtual Model::updateImpl
+	// because it will be hard to remember to put these lines in every overloaded update function
+	if (is_fixed)
+		return;
+	slice_sampler->Sample();
+    
+    if (save_debug_info)
+        {
+        debug_info = str(boost::format("OmegaParam %f") % (slice_sampler->GetLastSampledXValue()));
+        }
+	}
+
+}

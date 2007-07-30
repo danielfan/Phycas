@@ -51,6 +51,9 @@ inline Model::Model(
 	pinvar(0.0), 
 	gamma_shape_fixed(false),
 	gamma_shape(0.5)
+#if POLPY_NEWWAY //shape
+    , invert_shape(false)
+#endif
 	{
 	PHYCAS_ASSERT(num_states > 0);
 	setAllFreqsEqual();
@@ -1750,69 +1753,37 @@ inline std::string GTR::paramReport() const
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-
 |	Calculates the transition/transversion ratio given the six relative rates stored in the `rel_rates' vector, and the 
-
 |	relative base frequencies, which are stored in the `state_freqs' vector. Here are the details of the calculation 
-
 |	(for brevity, `state_freqs'[0] has been symbolized piA, `state_freqs'[1] by piC, `state_freqs'[2] by piG and 
-
 |	`state_freqs'[3] by piT, `rel_rates'[0] by rAC, `rel_rates'[1] by rAG `rel_rates'[2] by rAT, `rel_rates'[3] by rCG, 
-
 |	`rel_rates'[4] by rCT and `rel_rates'[5] by rGT):
-
 |>
-
 |	Pr(any transition | dt)   = Pr(AG) + Pr(CT) + Pr(GA) + Pr(TC) 
-
 |	                          = (piA piG rAG dt) + (piC piT rCT dt) + (piG piA rAG dt) + (piT piC rCT dt)
-
 |	                          = 2 dt (piA piG rAG + piT piC rCT dt)
-
 |	
-
 |	Pr(any transversion | dt) = Pr(AC) + Pr(AT) + Pr(CA) + Pr(CG) + Pr(GC) + Pr(GT) + Pr(TA) + Pr(TG)
-
 |	                          = (piA piC rAC dt) + (piA piT rAT dt) + (piC piA rAC dt) + (piC piG rCG dt)
-
 |	                            + (piG piC rCG dt) + (piG piT rGT dt) + (piT piA rAT dt) + (piT piG rGT dt)
-
 |	                          = 2 dt (piA piC rAC + piA piT rAT + piC piG rCG +  + piG piT rGT)
-
 |	
-
 |	                      2 dt (piA piG rAG + piT piC rCT)
-
 |	TRatio = ------------------------------------------------------------
-
 |	         2 dt (piA piC rAC + piA piT rAT + piC piG rCG + piG piT rGT)
-
 |	
-
 |	                     piA piG rAG + piT piC rCT
-
 |	       = -----------------------------------------------------
-
 |	         piA piC rAC + piA piT rAT + piC piG rCG + piG piT rGT
-
 |<
-
 */
-
 inline double GTR::calcTRatio()
-
 	{
-
 	double numerator = state_freqs[0]*state_freqs[2]*rel_rates[1] + state_freqs[3]*state_freqs[1]*rel_rates[4];
-
-	double denominator = state_freqs[0]*state_freqs[1]*rel_rates[0] + state_freqs[0]*state_freqs[3]*rel_rates[2] + state_freqs[1]*state_freqs[2]*rel_rates[3] + state_freqs[2]*state_freqs[3]*rel_rates[5];
-
+    double denominator = state_freqs[0]*state_freqs[1]*rel_rates[0] + state_freqs[0]*state_freqs[3]*rel_rates[2] + state_freqs[1]*state_freqs[2]*rel_rates[3] + state_freqs[2]*state_freqs[3]*rel_rates[5];
 	PHYCAS_ASSERT(denominator != 0.0);
-
 	double tratio = numerator/denominator;
-
 	return tratio;
-
 	}
 
 }	// namespace phycas

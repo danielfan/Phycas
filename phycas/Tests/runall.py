@@ -56,11 +56,10 @@ removeFilesIfTheyExist(scriptPar, [outFile])
 
 runTest(outFile, "ExplorePrior", mcmcOutputs(["nodata.nex"]))
 runTest(outFile, "FixedParams", ["params.p", "trees.t"])
-runTest(outFile, "GelfandGhosh", ["ggout.txt"])
+runTest(outFile, "GelfandGhosh", ["ggout.txt", "analHKY.nex.p", "analHKY.nex.t", "analHKYflex.nex.p", "analHKYflex.nex.t", "analHKYg.nex.p", "analHKYg.nex.t"])
 runTest(outFile, "LikelihoodTest", ["simulated.nex", "check.nex"])
 runTest(outFile, "Polytomies", ["simHKY.nex"] + mcmcOutputs(["analHKY.nex"]))
 runTest(outFile, "Simulator", ["simulated.nex"])
-#runTest(outFile, "Phycas", mcmcOutputs(["green.nex"]))
 
 if sys.platform == "win32":
     raw_input('Press any key to quit')

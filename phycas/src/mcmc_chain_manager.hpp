@@ -146,6 +146,6 @@ typedef boost::weak_ptr<MCMCChainManager>		ChainManagerWkPtr;
 
 } // namespace phycas
 
-#include "phycas/src/mcmc_chain_manager.inl"
+//#include "phycas/src/mcmc_chain_manager.inl"
 
 #endif

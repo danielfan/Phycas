@@ -42,7 +42,7 @@ inline MCMCUpdater::MCMCUpdater()
   is_hyper_param(false), 
   is_fixed(false),
   slice_max_units(UINT_MAX),
-#if 1 || POLPY_OLDWAY   //POL_BOOKMARK
+#if POLPY_OLDWAY // curr_value  
   slice_starting_value(0.1),
 #endif
   save_debug_info(false)
@@ -231,7 +231,7 @@ inline void MCMCUpdater::createSliceSampler()
 	PHYCAS_ASSERT(!slice_sampler);	// don't want to do this more than once
 	slice_sampler.reset(new SliceSampler(rng, shared_from_this())); // forces inclusion of "phycas/src/slice_sampler.hpp"
 	slice_sampler->SetMaxUnits(slice_max_units);
-#if 0 && POLPY_NEWWAY   //POL_BOOKMARK
+#if POLPY_NEWWAY   //curr_value
 	slice_sampler->SetXValue(curr_value);
 #else
 	slice_sampler->SetXValue(slice_starting_value);
@@ -404,7 +404,7 @@ inline void MCMCUpdater::setPrior(ProbDistShPtr p)
 	prior = p;
 	}
 
-#if 0 && POLPY_NEWWAY   //POL_BOOKMARK
+#if POLPY_NEWWAY    //curr_value
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the current value to the supplied value `x'. The value is stored in the data member `curr_value' and passed to
 |   the slice sampler if and when it is created in the member function MCMCUpdater::createSliceSampler().

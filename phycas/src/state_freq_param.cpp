@@ -17,16 +17,41 @@
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#if !defined(MCMC_PARAM_INL)
-#define MCMC_PARAM_INL
-
-#include <limits>										// for std::numeric_limits
-#include <boost/lambda/lambda.hpp>						// for boost::lambda::_1, boost::lambda::_2
-#include <boost/lambda/bind.hpp>						// for boost::lambda::bind
+#include "mcmc_param.hpp"
 
 namespace phycas
 {
 
-} // namespace phycas
+/*----------------------------------------------------------------------------------------------------------------------
+|	The StateFreqParam constructor requires the caller to specify a value for `which'. `which' is 0, 1, 2, or 3 for 
+|	nucleotide models and  determines the particular state frequency (e.g. A, C, G, or T, respectively) this object 
+|	represents. It calls the base class (MCMCUpdater) constructor. Also sets the `curr_value' data member to 1.0 and 
+|	refreshes `curr_ln_prior' accordingly.
+*/
+StateFreqParam::StateFreqParam(
+  unsigned w)		/**< The 0-based index of the base frequency being managed by this object (0=A, 1=C, 2=G and 3=T) */
+  : MCMCUpdater(),  which(w)
+	{
+	curr_value = 1.0;
+	has_slice_sampler = true;
+	is_move = false;
+	is_master_param = false;
+	is_hyper_param = false;
+	}
 
-#endif
+/*----------------------------------------------------------------------------------------------------------------------
+|	Calls the sample() member function of the `slice_sampler' data member.
+*/
+void StateFreqParam::update()
+	{
+	if (is_fixed)
+		return;
+	slice_sampler->Sample();
+
+    if (save_debug_info)
+        {
+        debug_info = str(boost::format("StateFreqParam %f") % (slice_sampler->GetLastSampledXValue()));
+        }
+	}
+
+}

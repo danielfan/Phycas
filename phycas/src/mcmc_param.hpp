@@ -127,7 +127,11 @@ class DiscreteGammaShapeParam : public MCMCUpdater
 
 	private:
 
+#if POLPY_NEWWAY    //name change only
+		bool			shape_inverted;	/**< If true, inverse of shape parameter (rather than the shape parameter itself) is managed by this updater */
+#else
 		bool			invert_shape;	/**< If true, inverse of shape parameter (rather than the shape parameter itself) is managed by this updater */
+#endif
 	};
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -174,7 +178,11 @@ class FlexRateParam : public MCMCUpdater
 
 		unsigned &					nspacers;
 		double &					upper_bound;
+#if POLPY_NEWWAY    //name change only
+		std::vector<double>	&		flex_rates;
+#else
 		std::vector<double>	&		rel_rates;
+#endif
 		double						left_value;
 		double						right_value;
 		unsigned					which;
@@ -286,6 +294,6 @@ class HyperPriorParam : public MCMCUpdater
 
 } // namespace phycas
 
-#include "phycas/src/mcmc_param.inl"
+//#include "phycas/src/mcmc_param.inl"
 
 #endif

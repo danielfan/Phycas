@@ -37,7 +37,9 @@ namespace phycas
 TreeScalerMove::TreeScalerMove() : MCMCUpdater()
 	{
 	curr_value = 1.0;
-    slice_starting_value = 1.0;
+#if POLPY_OLDWAY    // curr_value
+    slice_starting_value = 1.0; 
+#endif
 	has_slice_sampler = true;
 	is_move = true;
 	is_master_param = false;
@@ -55,7 +57,6 @@ void TreeScalerMove::update()
     slice_sampler->Sample();
 
 #if 0
-    //POL temporary!
     double v = slice_sampler->GetLastSampledXValue();
     std::ofstream outf("treescaler.txt", std::ios::out | std::ios::app);
     outf.setf(std::ios::floatfield, std::ios::fixed);
@@ -96,6 +97,7 @@ double TreeScalerMove::operator()(
 	return curr_ln_like + curr_ln_prior;
 	}
 
+#if 0
 /*----------------------------------------------------------------------------------------------------------------------
 |	Scales all edge lengths in the tree so that the tree is now different from its original length by a factor of 
 |   `curr_value'.
@@ -123,6 +125,7 @@ void TreeScalerMove::scaleAllEdgeLengths()
 			}
 		}
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the joint log prior over all edges in the associated tree and sets `curr_ln_prior'.

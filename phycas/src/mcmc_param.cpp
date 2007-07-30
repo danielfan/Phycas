@@ -188,7 +188,11 @@ double DiscreteGammaShapeParam::operator()(
 		{
 		curr_value = a;
 		recalcPrior(); // base class function that recomputes curr_ln_prior for the value curr_value
+#if POLPY_NEWWAY    //name change only
+		if (shape_inverted)
+#else
 		if (invert_shape)
+#endif
 			model->setShape(1.0/a);	// change the gamma shape parameter in the model
 		else
 			model->setShape(a);	// change the gamma shape parameter in the model
