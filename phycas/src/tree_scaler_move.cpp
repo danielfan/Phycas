@@ -103,6 +103,8 @@ double TreeScalerMove::operator()(
 void TreeScalerMove::rescaleAllEdgeLengths()
 	{
     double scaling_factor = curr_value;
+    curr_value = 1.0;
+    tree->SetTreeScale(1.0);
 
     // Change the edge lengths
 	for (TreeNode * nd = tree->GetFirstPreorder(); nd != NULL; nd = nd->GetNextPreorder())
@@ -117,9 +119,6 @@ void TreeScalerMove::rescaleAllEdgeLengths()
 			}
 		}
 
-    // Scaling factor is now 1.0 again
-    curr_value = 1.0;
-    tree->SetTreeScale(1.0);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
