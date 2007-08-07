@@ -24,7 +24,7 @@ from math import exp
 # These three variables are provided to make it easy to find and change the internal
 # and external edge length prior means, or to use the edge length hyperprior approach.
 # Note that if use_hyperpriors is True, mu_internal and mu_external will be ignored.
-mu_internal = 0.00001
+mu_internal = 0.0001
 mu_external = 0.1
 use_hyperpriors = False
 
@@ -48,15 +48,6 @@ phycas.tree_scaler_weight = 1
 # probability distribution
 phycas.external_edgelen_dist  = ProbDist.ExponentialDist(1.0/mu_external)
 phycas.internal_edgelen_dist  = ProbDist.ExponentialDist(1.0/mu_internal)
-
-# Specify that Gelfand-Ghosh measure should be calculated, the number of posterior-
-# predictive simulations that should be performed per MCMC sample (in this case 2),
-# and the name of the file where the Gelfand-Ghosh results will be saved (note how
-# Python allows you to easily include the values of mu_internal and mu_external in
-# the file name - the numbers replace the "%d" placeholders)
-phycas.gg_do = False
-phycas.gg_nreps = 2
-phycas.gg_outfile = 'ggout.internal_%f.external_%f.txt' % (mu_internal, mu_external)
 
 # Set up the substitution model
 phycas.default_model = 'hky'   # use the Hasegawa-Kishino-Yano (1985) model
@@ -99,17 +90,17 @@ phycas.starting_tree_source = 'random'
 # If you need to specify a data file in a directory that is not the same as the
 # one in which this script resides, you can do so, but always use forward slashes
 # ('/') to separate file path elements even if running under Windows.
-phycas.data_file_name = 'Yang_and_Rannala_Karol.nex'
+phycas.data_file_name = 'Yang_and_Rannala_Karol_nomissambig.nex'
 
 # Let slice sampler have maximum freedom to extend slice
-#phycas.slice_max_units = 0
+phycas.slice_max_units = 0
 
 # Tell phycas that we want to run the MCMC analysis for 25000 cycles.
 # Note that a cycle in Phycas differs from a generation in MrBayes.
 # A cycle involves updating each non-branch-length parameter in the model
 # as well as a certain number of Metropolis-Hastings updates of branch
 # lengths and tree topology.
-phycas.ncycles = 25000
+phycas.ncycles = 51000
 phycas.sample_every = 10    # save tree and parameters every 10 cycles
 
 # Call mcmc(), which prepares phycas for the MCMC analysis, taking

@@ -66,6 +66,8 @@ void TreeScalerMove::update()
         {
         debug_info = str(boost::format("TreeScalerMove %f") % (slice_sampler->GetLastSampledXValue()));
         }
+
+    rescaleAllEdgeLengths();
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -94,20 +96,13 @@ double TreeScalerMove::operator()(
 	return curr_ln_like + curr_ln_prior;
 	}
 
-#if 0
 /*----------------------------------------------------------------------------------------------------------------------
 |	Scales all edge lengths in the tree so that the tree is now different from its original length by a factor of 
 |   `curr_value'.
 */
-void TreeScalerMove::scaleAllEdgeLengths()
+void TreeScalerMove::rescaleAllEdgeLengths()
 	{
-    // Suppose we have a tree length (TL) equal to 10 at the start.
-    // In the first call to operator(), the tree is scaled by factor 0.5, yielding TL = 5
-    // In the next call to operator(), suppose the scaling factor (curr_value) becomes 0.2
-    // We cannot simply multiply all edges in the tree by 0.2 because the tree has been scaled previously
-    // and is now half as long as it was at the start. Need to scale by 0.2/0.5 (curr_value/prev_value),
-    // which yields (5)(0.2)/0.5 = 2.
-    double scaling_factor = curr_value/prev_value;
+    double scaling_factor = curr_value;
 
     // Change the edge lengths
 	for (TreeNode * nd = tree->GetFirstPreorder(); nd != NULL; nd = nd->GetNextPreorder())
@@ -121,8 +116,11 @@ void TreeScalerMove::scaleAllEdgeLengths()
             nd->SetEdgeLen(new_edgelen);
 			}
 		}
+
+    // Scaling factor is now 1.0 again
+    curr_value = 1.0;
+    tree->SetTreeScale(1.0);
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the joint log prior over all edges in the associated tree and sets `curr_ln_prior'.

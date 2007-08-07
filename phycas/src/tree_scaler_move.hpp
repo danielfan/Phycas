@@ -55,9 +55,7 @@ class TreeScalerMove : public MCMCUpdater
 
     private:
 
-#if 0 
-        void            scaleAllEdgeLengths();
-#endif
+        void            rescaleAllEdgeLengths();
 	};
 
 } // namespace phycas

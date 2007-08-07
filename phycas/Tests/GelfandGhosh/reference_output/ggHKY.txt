@@ -1,0 +1,50 @@
+Gelfand-Ghosh Analysis
+
+  data file:          simHKYg.nex
+  parameter file:     analHKY.nex.p
+  tree file:          analHKY.nex.t
+  sims/sample:        5
+  k values:
+    0.500000
+    1.000000
+    2.000000
+  samples skipped:    2
+  random number seed: 15397
+
+  Information about the substitution model:
+
+    model name:  HKY
+
+  Information about the data:
+
+    number of taxa:         4
+    number of characters:   2000
+    number of patterns:     107
+
+  Information about the sampled trees:
+
+    number of trees skipped:  2
+    number of trees included: 99
+    total trees in file:      101
+
+# Pm = 2003.726946
+# k = 0.500000:
+#   Gm = 266.633598
+#   Dm = 2270.360545
+# k = 1.000000:
+#   Gm = 416.397550
+#   Dm = 2420.124496
+# k = 2.000000:
+#   Gm = 591.902521
+#   Dm = 2595.629467
+
+# no. patterns in original dataset   = 107
+# no. patterns in mean dataset       = 256
+# mean no. patterns across datasets  = 85.856566
+# t for original dataset             = -2.560663
+# t for mean dataset                 = -2.997372
+# mean of t across datasets          = -2.496440
+# std. dev. of t across datasets     = 7.434242
+# t of compromise action (k = 0.500000) = -2.896241
+# t of compromise action (k = 1.000000) = -2.831067
+# t of compromise action (k = 2.000000) = -2.755558

@@ -86,6 +86,7 @@ BOOST_PYTHON_MODULE(_ReadNexus)
 
 	class_<std::vector<FullTreeDescription> >("VecFullTreeDescription", no_init)
 		.def("__iter__",  iterator<std::vector<FullTreeDescription> >())
+        .def("size", &std::vector<FullTreeDescription>::size)
 		;
    
 	class_<CipresNexusReader>("NexusReaderBase", init<int>())

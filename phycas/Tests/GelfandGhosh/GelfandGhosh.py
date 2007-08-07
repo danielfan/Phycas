@@ -17,16 +17,16 @@ def commonSetup():
     phycas.adapt_first = 10
     phycas.verbose = True
     phycas.ls_move_weight = 100
+    phycas.tree_scaler_weight = 0
     phycas.slice_weight = 1
-    phycas.gg_do = True
-    phycas.gg_nreps = 5 # was 1
+    phycas.gg_nreps = 5
     phycas.gg_kvect = [0.5, 1.0, 2.0]
     phycas.slice_max_units = 0
     phycas.use_inverse_shape = False
     phycas.using_hyperprior = True
     phycas.gg_outfile = None
     phycas.starting_tree_source = 'usertree'
-    phycas.starting_tree = '(1:0.2,2:0.02,(3:0.2,4:0.02):0.02)'
+    phycas.starting_tree = '(1:0.04,2:0.02,(3:0.04,4:0.02):0.02)'
     phycas.default_model = 'hky'
     phycas.data_source = 'memory'
     phycas.estimate_pinvar = False
@@ -41,15 +41,17 @@ def runHKY(rnseed):
     commonSetup()
 
     phycas.random_seed = rnseed
-    phycas.data_file_name = 'analHKY.nex'
+    phycas.outfile_prefix = 'analHKY.nex'
 
-    phycas.setup()
-    phycas.run()
+    phycas.mcmc()
 
     global hky_p, hky_g, hky_d
-    hky_p = phycas.gg_Pm
-    hky_g = phycas.gg_Gm
-    hky_d = phycas.gg_Dm
+    phycas.data_file_name = 'simHKYg.nex'
+    phycas.gg_burnin = 2
+    phycas.gg_pfile = 'analHKY.nex.p'
+    phycas.gg_tfile = 'analHKY.nex.t'
+    phycas.gg_outfile = None # 'ggHKY.txt'
+    hky_p, hky_g, hky_d = phycas.gg()
 
 def runHKYg(rnseed):
     print
@@ -60,18 +62,18 @@ def runHKYg(rnseed):
     commonSetup()
 
     phycas.random_seed = rnseed
-    phycas.data_file_name = 'analHKYg.nex'
+    phycas.data_file_name = 'simHKYg.nex'
+    phycas.outfile_prefix = 'analHKYg.nex'
     phycas.num_rates = 4
 
-    #raw_input('start debugging')
-    
-    phycas.setup()
-    phycas.run()
+    phycas.mcmc()
 
     global hkyg_p, hkyg_g, hkyg_d
-    hkyg_p = phycas.gg_Pm
-    hkyg_g = phycas.gg_Gm
-    hkyg_d = phycas.gg_Dm
+    phycas.gg_burnin = 2
+    phycas.gg_pfile = 'analHKYg.nex.p'
+    phycas.gg_tfile = 'analHKYg.nex.t'
+    phycas.gg_outfile = None # 'ggHKYg.txt'
+    hkyg_p, hkyg_g, hkyg_d = phycas.gg()
 
 def runHKYFLEX(rnseed):
     print
@@ -82,7 +84,7 @@ def runHKYFLEX(rnseed):
     commonSetup()
 
     phycas.random_seed            = rnseed
-    phycas.data_file_name         = 'analHKYflex.nex'
+    phycas.outfile_prefix         = 'analHKYflex.nex'
     phycas.num_rates              = 1
     phycas.use_flex_model         = True
     phycas.flex_ncat_move_weight  = 1
@@ -92,19 +94,21 @@ def runHKYFLEX(rnseed):
     phycas.flex_lambda            = 1.0 
     phycas.flex_prob_param_prior  = ProbDist.ExponentialDist(1.0)
 
-    phycas.setup()
-    phycas.run()
+    phycas.mcmc()
 
     global hkyflex_p, hkyflex_g, hkyflex_d
-    hkyflex_p = phycas.gg_Pm
-    hkyflex_g = phycas.gg_Gm
-    hkyflex_d = phycas.gg_Dm
+    phycas.data_file_name = 'simHKYg.nex'
+    phycas.gg_burnin = 2
+    phycas.gg_pfile = 'analHKYflex.nex.p'
+    phycas.gg_tfile = 'analHKYflex.nex.t'
+    phycas.gg_outfile = None # 'ggFLEX.txt'
+    hkyflex_p, hkyflex_g, hkyflex_d = phycas.gg()
 
 if __name__ == "__main__":
     phycas = Phycas()
 
     # Simulation settings
-    master_seed = 15397  # was 13579
+    master_seed = 36307 # was 15397  # was 13579
     phycas.r.setSeed(master_seed)
     num_sites = 2000    # was 1000
 
@@ -114,7 +118,7 @@ if __name__ == "__main__":
     # Create a model tree
     phycas.ntax = 4
     phycas.tree = Phylogeny.Tree()
-    phycas.tree_topology = '(1:0.2,2:0.02,(3:0.2,4:0.02):0.02)'
+    phycas.tree_topology = '(1:0.04,2:0.02,(3:0.04,4:0.02):0.02)'
     phycas.tree.buildFromString(phycas.tree_topology)
 
     # Create a model
@@ -158,7 +162,7 @@ if __name__ == "__main__":
     runHKY(master_seed)
     runHKYg(master_seed)
     runHKYFLEX(master_seed)
-    
+
     # Output results
     outf = file('ggout.txt','w')
 

@@ -26,7 +26,7 @@ class Phycas:
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Initializes the object with some default values. If these defaults do
-        not suit, they can be changed before run() is called.
+        not suit, they can be changed before mcmc() is called.
 
         Starting Tree. The variable starting_tree_source is equal to 'random'
         by default, which mean that the program will generate a random tree
@@ -64,17 +64,18 @@ class Phycas:
         self.metropolis_weight = 0
 
         # Variables associated with underflow protection                
-        self.uf_num_edges           = 50                 # number of edges to traverse before taking action to prevent underflow
+        self.uf_num_edges           = 50        # number of edges to traverse before taking action to prevent underflow
         
         # Variables controlling the MCMC analysis and progress reporting
-        self.random_seed            = 0                  # determines random number seed (0 means autogenerate)
-        self.ncycles                = 10000              # the number of cycles through all parameters
-        self.sample_every           = 100                # a new sample will be taken after this many cycles
-        self.report_every           = self.ncycles//100  # a progress report will be displayed after this many cycles
-        self.verbose                = True               # more output if True
-        self.logfile                = None               # change to filename to save output to file
-        self.quiet                  = False              # if True, only output will be to self.logfile, if defined
-        #self.use_tree_viewer        = False             # popup graphical TreeViewer to show trees during run POLPY_NEWWAY
+        self.random_seed            = 0         # determines random number seed (0 means autogenerate)
+        self.ncycles                = 10000     # the number of cycles through all parameters
+        self.sample_every           = 100       # a new sample will be taken after this many cycles
+        self.report_every           = 100       # a progress report will be displayed after this many cycles
+        self.verbose                = True      # more output if True
+        self.logfile                = None      # change to filename to save output to file
+        self.quiet                  = False     # if True, only output will be to self.logfile, if defined
+        #self.use_tree_viewer        = False    # popup graphical TreeViewer to show trees during run POLPY_NEWWAY
+        self.outfile_prefix         = None      # If None, parameter and tree files created will start with the name of the data file; if provided, this prefix will form the first part of the parameter and tree file names
         
         # Variables associated with Larget-Simon moves
         self.ls_move_lambda         = 0.2       # The value of the tuning parameter for the Larget-Simon move
@@ -138,16 +139,17 @@ class Phycas:
         self.tree_topology          = ''        # unused unless starting_tree_source is 'usertree'
 
         # Variables associated with Gelfand-Ghosh calculation
-        self.gg_do                  = False         # gather GG statistics during MCMC run if True
-        self.gg_outfile             = 'ggout.txt'   # file in which to save gg results (use None to not save results)
-        self.gg_nreps               = 1             # the number of replicate simulations to do every MCMC sample
-        self.gg_kvect               = [1.0]         # vector of k values to use when computing Gm and Dm
-        self.gg_save_postpreds      = False         # if True, all posterior predictive data sets will be saved
-        self.gg_postpred_prefix     = 'postpred'    # prefix to use for posterior predictive dataset filenames (only used if gg_save_postpreds is True)
-        self.gg_save_spectra        = False         # adds all 256 counts for posterior predictive simulated data sets to a file named spectra.txt, with counts separated by tabs (only use for four-taxon problems)
-
-        # Gelfand-Ghosh experimental
-        self.gg_bin_patterns        = False         # if True, patterns will be classified into 7 bins, corresponding to 'A only', 'C only', 'G only', 'T only', 'any 2 states', 'any 3 states' and 'any 4 states'. Gelfand-Ghosh statistics will be computed on this vector of counts instead of the complete vector of pattern counts. Can only be used for DNA/RNA data.
+        #self.gg_do                  = False    # gather GG statistics during MCMC run if True
+        self.gg_outfile             = 'gg.txt'  # file in which to save gg results (use None to not save results)
+        self.gg_nreps               = 1         # the number of replicate simulations to do every MCMC sample
+        self.gg_kvect               = [1.0]     # vector of k values to use when computing Gm and Dm
+        self.gg_save_postpreds      = False     # if True, all posterior predictive data sets will be saved
+        self.gg_postpred_prefix     = 'pp'      # prefix to use for posterior predictive dataset filenames (only used if gg_save_postpreds is True)
+        #self.gg_save_spectra        = False    # adds all 256 counts for posterior predictive simulated data sets to a file named spectra.txt, with counts separated by tabs (only use for four-taxon problems)
+        self.gg_burnin              = 1         # number of starting samples to skip when computing Gelfand-Ghosh measures
+        self.gg_pfile               = None      # name of parameter file to use for Gelfand-Ghosh calculations
+        self.gg_tfile               = None      # name of tree file to use for Gelfand-Ghosh calculations
+        self.gg_bin_patterns        = False     # if True, patterns will be classified into 7 bins, corresponding to 'A only', 'C only', 'G only', 'T only', 'any 2 states', 'any 3 states' and 'any 4 states'. Gelfand-Ghosh statistics will be computed on this vector of counts instead of the complete vector of pattern counts. Can only be used for DNA/RNA data.
 
         # Variables associated with the FLEXCAT model
         self.use_flex_model         = False
@@ -169,23 +171,23 @@ class Phycas:
         self.paramf                 = None
         self.treef                  = None
         self.tmp_simdata            = SimData()
-        self.gg_num_post_pred_reps  = 0.0
-        self.gg_y                   = SimData()  # observed dataset
-        self.gg_mu                  = SimData()  # mean of all posterior predictive datasets
-        self.gg_a                   = []            # vector of compromise actions (one for each k in gg_kvect)
-        self.gg_npatterns           = []            # vector containing the number of patterns in each posterior predictive dataset
-        self.gg_t                   = []            # vector of t values computed from posterior predictive datasets
-        self.gg_total               = 0
-        self.gg_t_y                 = 0.0           # t for original dataset
-        self.gg_t_mean              = 0.0           # mean of t over all posterior predictive datasets
-        self.gg_t_mu                = 0.0           # t of mean over all posterior predictive datasets
-        self.gg_t_a                 = []            # vector of t values computed from compromise action (one for each k in gg_kvect)
-        self.gg_Gm                  = []            # vector of goodness-of-fit components (one for each k in gg_kvect)
-        self.gg_Pm                  = 0.0           # penalty component (same for all k)
-        self.gg_Dm                  = []            # vector of overall measures (one for each k in gg_kvect)
-        self.gg_spectrum            = SimData()  # workspace used if gg_save_spectra is True
-        self.gg_spectrum_points     = ''            # used for creating surface plot in Maple for spectrum
-        self.gg_spectrum_row        = 0
+        #self.gg_num_post_pred_reps  = 0.0
+        #self.gg_y                  = SimData() # observed dataset
+        #self.gg_mu                 = SimData() # mean of all posterior predictive datasets
+        #self.gg_a                  = []        # vector of compromise actions (one for each k in gg_kvect)
+        #self.gg_npatterns          = []        # vector containing the number of patterns in each posterior predictive dataset
+        #self.gg_t                  = []        # vector of t values computed from posterior predictive datasets
+        #self.gg_total              = 0
+        #self.gg_t_y                = 0.0       # t for original dataset
+        #self.gg_t_mean             = 0.0       # mean of t over all posterior predictive datasets
+        #self.gg_t_mu               = 0.0       # t of mean over all posterior predictive datasets
+        #self.gg_t_a                = []        # vector of t values computed from compromise action (one for each k in gg_kvect)
+        self.gg_Pm                 = 0.0       # penalty component (same for all k)
+        self.gg_Gm                 = []        # vector of goodness-of-fit components (one for each k in gg_kvect)
+        self.gg_Dm                 = []        # vector of overall measures (one for each k in gg_kvect)
+        #self.gg_spectrum           = SimData() # workspace used if gg_save_spectra is True
+        #self.gg_spectrum_points    = ''        # used for creating surface plot in Maple for spectrum
+        #self.gg_spectrum_row       = 0
         self.reader = NexusReader()
         self.separate_int_ext_edgelen_priors = False
         self.logf = None
@@ -554,9 +556,16 @@ class Phycas:
 
         self.setupModel()
 
-        #@POL if self.data_source != 'memory':       
-        if self.__dict__.get('likelihood') is None:
+        #NEWWAY
+        if self.data_source == 'memory':
+            assert self.__dict__.get('likelihood') is not None, "data_source == 'memory' implies that likelihood object exists"
+            self.likelihood.replaceModel(self.model)
+        else:
             self.setupLikelihood()
+        
+        #OLDWAY
+        #if self.__dict__.get('likelihood') is None:
+        #    self.setupLikelihood()
 
         self.copyDataMatrix();            
         self.npatterns = self.likelihood.getNPatterns()
@@ -566,7 +575,8 @@ class Phycas:
 
         # Create parameter and tree file names based on the data file name
         prefix = os.path.abspath(self.data_file_name) #os.path.basename(self.data_file_name)
-        #output('prefix=',prefix)
+        if self.outfile_prefix:
+            prefix = self.outfile_prefix
         self.param_file_name = prefix + '.p'
         self.tree_file_name = prefix + '.t'
 
@@ -665,94 +675,94 @@ class Phycas:
             self.treef.write('   tree rep.%d = %s;\n' % (cycle + 1, self.tree.makeNewick()))
 
         # Perform posterior predictive simulations if Gelfand-Ghosh statistics requested
-        if self.gg_do and cycle > 0:
-            for j in range(self.gg_nreps):
-                self.gg_num_post_pred_reps += 1.0
-                
-                # Simulate from the posterior
-                self.tmp_simdata.clear()
-                self.likelihood.simulate(self.tmp_simdata, self.tree, self.r, self.nchar)
-
-                if self.gg_save_spectra:
-                    self.gg_spectrum.zeroCounts()
-                    self.tmp_simdata.addDataTo(self.gg_spectrum, 1.0)
-                    self.gg_spectrum_points += ','
-                    self.gg_spectrum_points += self.gg_spectrum.createMapleTuples(self.gg_spectrum_row, 100)
-                    self.gg_spectrum_row += 1
-                    self.gg_spectrum.appendCountsToFile('spectra.txt', False)
-
-                # Save the simulated data set if desired
-                if self.gg_save_postpreds:
-                    fn = '%s_cycle%d_rep%d.nex' % (self.gg_postpred_prefix, cycle, j)
-                    self.tmp_simdata.saveToNexusFile(fn, self.taxon_labels, 'dna', ('a','c','g','t'))
-                    simf = file(fn, 'a')
-                    simf.write('\nbegin trees;\n')
-                    simf.write('  translate\n')
-                    for num,name in enumerate(self.taxon_labels):
-                        simf.write("  %d '%s'%s\n" % (num + 1, name, num == self.ntax - 1 and ';' or ','))
-                    simf.write('  ;\n')
-                    simf.write('  utree one = %s;\n' % self.tree.makeNewick())
-                    simf.write('end;\n')
-                    simf.write('\nbegin paup;\n')
-                    simf.write('  log file=%s.log start replace;\n' % fn)
-                    simf.write('  lset nst=6 basefreq=estimate rmatrix=estimate pinvar=0.0 rates=gamma shape=estimate;\n')
-                    simf.write('  lscores 1;\n')
-                    simf.write('  log stop;\n')
-                    simf.write('  quit;\n')
-                    simf.write('end;\n')
-                    simf.write('[\n')
-                    simf.write('\n')
-                    simf.write('cycle                  = %d\n' % cycle)
-                    simf.write('lnL                    = %f\n' % lnL)
-                    simf.write('TL                     = %f\n' % self.tree.edgeLenSum())
-                    if self.using_hyperprior:
-                        for p in self.chain_manager.getEdgeLenHyperparams():
-                            #p = self.chain_manager.getEdgeLenHyperparam()
-                            simf.write('edge length hyperparam = %f\n' % p.getCurrValue())
-                    simf.write('param headers          = %s\n' % self.model.paramHeader())
-                    simf.write('param values           = %s\n' % self.model.paramReport())
-                    simf.write(']\n')
-                    simf.close()
-
-                if self.gg_bin_patterns:
-                    # Compute the t function for the simulated dataset                
-                    curr_t = self.tmp_simdata.calctBinned(4)
-                else:
-                    # Compute the t function for the simulated dataset                
-                    curr_t = self.tmp_simdata.calct(4)
-
-                # Add this value of t to the list (later the mean t will be computed)                
-                self.gg_t.append(curr_t)
-
-                # Add the number of patterns in self.tmp_simdata to the gg_npatterns list
-                self.gg_npatterns.append(self.tmp_simdata.getNUniquePatterns())
-
-                # Update running mean vector gg_mu. A running mean is maintained because
-                # it is easy for the number of counts of constant patterns to overflow
-                # if you wait until the end of the MCMC run to divide by the total.
-                # Here is how the running mean is kept. Assume there will be four numbers
-                # (a, b, c, d) averaged. Thus, the desired quantity is (a+b+c+d)/4.
-                #
-                # gg_num_post_pred_reps   self.gg_mu
-                # ------------------------------------------------------------
-                #           1             a                      = (a)/1
-                #           2             (1/2)a + b/2           = (a+b)/2
-                #           3             (2/3)[(a+b)/2] + c/3   = (a+b+c)/3
-                #           4             (3/4)[(a+b+c)/3] + d/4 = (a+b+c+d)/4
-                # ------------------------------------------------------------
-                #
-                # Note that it is ok if gg_num_post_pred_reps = 1 (in which case
-                # gg_mu is multiplied by zero) because multBy is a no-op in this
-                # case since gg_mu is empty
-                p = 1.0/self.gg_num_post_pred_reps
-                self.gg_mu.multBy(1.0 - p)
-                self.tmp_simdata.multBy(p)
-                self.tmp_simdata.addDataTo(self.gg_mu, 1.0)
-
-                # Increment count of the total number of simulated datasets created
-                # This value is used to later compute the mean t for all simulated datasets
-                # and the mean counts for all simulated data sets
-                self.gg_total += 1
+        #if self.gg_do and cycle > 0:
+        #    for j in range(self.gg_nreps):
+        #        self.gg_num_post_pred_reps += 1.0
+        #        
+        #        # Simulate from the posterior
+        #        self.tmp_simdata.clear()
+        #        self.likelihood.simulate(self.tmp_simdata, self.tree, self.r, self.nchar)
+        #
+        #        if self.gg_save_spectra:
+        #            self.gg_spectrum.zeroCounts()
+        #            self.tmp_simdata.addDataTo(self.gg_spectrum, 1.0)
+        #            self.gg_spectrum_points += ','
+        #            self.gg_spectrum_points += self.gg_spectrum.createMapleTuples(self.gg_spectrum_row, 100)
+        #            self.gg_spectrum_row += 1
+        #            self.gg_spectrum.appendCountsToFile('spectra.txt', False)
+        #
+        #        # Save the simulated data set if desired
+        #        if self.gg_save_postpreds:
+        #            fn = '%s_cycle%d_rep%d.nex' % (self.gg_postpred_prefix, cycle, j)
+        #            self.tmp_simdata.saveToNexusFile(fn, self.taxon_labels, 'dna', ('a','c','g','t'))
+        #            simf = file(fn, 'a')
+        #            simf.write('\nbegin trees;\n')
+        #            simf.write('  translate\n')
+        #            for num,name in enumerate(self.taxon_labels):
+        #                simf.write("  %d '%s'%s\n" % (num + 1, name, num == self.ntax - 1 and ';' or ','))
+        #            simf.write('  ;\n')
+        #            simf.write('  utree one = %s;\n' % self.tree.makeNewick())
+        #            simf.write('end;\n')
+        #            simf.write('\nbegin paup;\n')
+        #            simf.write('  log file=%s.log start replace;\n' % fn)
+        #            simf.write('  lset nst=6 basefreq=estimate rmatrix=estimate pinvar=0.0 rates=gamma shape=estimate;\n')
+        #            simf.write('  lscores 1;\n')
+        #            simf.write('  log stop;\n')
+        #            simf.write('  quit;\n')
+        #            simf.write('end;\n')
+        #            simf.write('[\n')
+        #            simf.write('\n')
+        #            simf.write('cycle                  = %d\n' % cycle)
+        #            simf.write('lnL                    = %f\n' % lnL)
+        #            simf.write('TL                     = %f\n' % self.tree.edgeLenSum())
+        #            if self.using_hyperprior:
+        #                for p in self.chain_manager.getEdgeLenHyperparams():
+        #                    #p = self.chain_manager.getEdgeLenHyperparam()
+        #                    simf.write('edge length hyperparam = %f\n' % p.getCurrValue())
+        #            simf.write('param headers          = %s\n' % self.model.paramHeader())
+        #            simf.write('param values           = %s\n' % self.model.paramReport())
+        #            simf.write(']\n')
+        #            simf.close()
+        #
+        #        if self.gg_bin_patterns:
+        #            # Compute the t function for the simulated dataset                
+        #            curr_t = self.tmp_simdata.calctBinned(4)
+        #        else:
+        #            # Compute the t function for the simulated dataset                
+        #            curr_t = self.tmp_simdata.calct(4)
+        #
+        #        # Add this value of t to the list (later the mean t will be computed)                
+        #        self.gg_t.append(curr_t)
+        #
+        #        # Add the number of patterns in self.tmp_simdata to the gg_npatterns list
+        #        self.gg_npatterns.append(self.tmp_simdata.getNUniquePatterns())
+        #
+        #        # Update running mean vector gg_mu. A running mean is maintained because
+        #        # it is easy for the number of counts of constant patterns to overflow
+        #        # if you wait until the end of the MCMC run to divide by the total.
+        #        # Here is how the running mean is kept. Assume there will be four numbers
+        #        # (a, b, c, d) averaged. Thus, the desired quantity is (a+b+c+d)/4.
+        #        #
+        #        # gg_num_post_pred_reps   self.gg_mu
+        #        # ------------------------------------------------------------
+        #        #           1             a                      = (a)/1
+        #        #           2             (1/2)a + b/2           = (a+b)/2
+        #        #           3             (2/3)[(a+b)/2] + c/3   = (a+b+c)/3
+        #        #           4             (3/4)[(a+b+c)/3] + d/4 = (a+b+c+d)/4
+        #        # ------------------------------------------------------------
+        #        #
+        #        # Note that it is ok if gg_num_post_pred_reps = 1 (in which case
+        #        # gg_mu is multiplied by zero) because multBy is a no-op in this
+        #        # case since gg_mu is empty
+        #        p = 1.0/self.gg_num_post_pred_reps
+        #        self.gg_mu.multBy(1.0 - p)
+        #        self.tmp_simdata.multBy(p)
+        #        self.tmp_simdata.addDataTo(self.gg_mu, 1.0)
+        #
+        #        # Increment count of the total number of simulated datasets created
+        #        # This value is used to later compute the mean t for all simulated datasets
+        #        # and the mean counts for all simulated data sets
+        #        self.gg_total += 1
 
     def sliceSamplerReport(self, s, nm):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -805,26 +815,26 @@ class Phycas:
             
         self.timer_start = time.clock()
 
-    def fillSpectrum(self):
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
-        """
-        Only used for 4-taxon problems where there are 256 possible patterns
-        for DNA data. Creates a SimData object with 256 patterns. This object
-        is used as a workspace for saving pattern spectra if gg_save_spectra
-        is True.
-        
-        """
-        self.gg_spectrum_row = 0
-        self.gg_spectrum.resetPatternLength(4)
-        for i in range(4):        
-            for j in range(4):        
-                for k in range(4):        
-                    for m in range(4):
-                        self.gg_spectrum.setState(0, i)
-                        self.gg_spectrum.setState(1, j)
-                        self.gg_spectrum.setState(2, k)
-                        self.gg_spectrum.setState(3, m)
-                        self.gg_spectrum.insertPattern(1.0)
+    #def fillSpectrum(self):
+    #    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+    #    """
+    #    Only used for 4-taxon problems where there are 256 possible patterns
+    #    for DNA data. Creates a SimData object with 256 patterns. This object
+    #    is used as a workspace for saving pattern spectra if gg_save_spectra
+    #    is True.
+    #    
+    #    """
+    #    self.gg_spectrum_row = 0
+    #    self.gg_spectrum.resetPatternLength(4)
+    #    for i in range(4):        
+    #        for j in range(4):        
+    #            for k in range(4):        
+    #                for m in range(4):
+    #                    self.gg_spectrum.setState(0, i)
+    #                    self.gg_spectrum.setState(1, j)
+    #                    self.gg_spectrum.setState(2, k)
+    #                    self.gg_spectrum.setState(3, m)
+    #                    self.gg_spectrum.insertPattern(1.0)
             
     def run(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -861,42 +871,42 @@ class Phycas:
             else:
                 self.output('Warning: tip node numbers were NOT set using the names in the tree description')
 
-        if self.gg_do:
-            assert self.data_source, 'cannot set gg_do to True and data_source to None'
-            assert self.nchar > 0, 'nchar not set, required for Gelfand-Ghosh calculation'
-
-            # Clear gg_y and let it contain the observed pattern counts            
-            self.gg_y.clear()
-            self.likelihood.addDataTo(self.gg_y)
-
-            # If saving spectra, save the spectrum from the original data set
-            if self.gg_save_spectra:
-                assert self.ntax == 4, 'gg_save_spectra is designed for 4-taxon problems only (i.e. ntax = 4); ntax is %d in this case' % self.ntax
-                self.fillSpectrum()
-                self.gg_spectrum.zeroCounts()
-                self.gg_y.addDataTo(self.gg_spectrum, 1.0)
-                yobs_row = self.gg_spectrum.createMapleTuples(self.gg_spectrum_row, 100)
-                self.gg_spectrum_points += yobs_row
-                self.gg_spectrum_row += 1
-                self.gg_spectrum.appendCountsToFile('spectra.txt', False)
-                for z in range(9):
-                    self.gg_spectrum_points += ','
-                    self.gg_spectrum_points += yobs_row
-                    self.gg_spectrum_row += 1
-                    self.gg_spectrum.appendCountsToFile('spectra.txt', False)
-
-            # Clear the other quantities that will depend on posterior simulations            
-            self.gg_t_mean = 0.0
-            self.gg_t_mu = 0.0
-            self.gg_t = []
-            self.gg_a = []
-            self.gg_t_a = []
-            self.gg_Pm = 0.0
-            self.gg_Gm = []
-            self.gg_Dm = []
-            self.gg_mu.clear()
-            self.gg_total = 0
-            self.gg_num_post_pred_reps = 0.0
+        #if self.gg_do:
+        #    assert self.data_source, 'cannot set gg_do to True and data_source to None'
+        #    assert self.nchar > 0, 'nchar not set, required for Gelfand-Ghosh calculation'
+        #
+        #    # Clear gg_y and let it contain the observed pattern counts            
+        #    self.gg_y.clear()
+        #    self.likelihood.addDataTo(self.gg_y)
+        #
+        #    # If saving spectra, save the spectrum from the original data set
+        #    if self.gg_save_spectra:
+        #        assert self.ntax == 4, 'gg_save_spectra is designed for 4-taxon problems only (i.e. ntax = 4); ntax is %d in this case' % self.ntax
+        #        self.fillSpectrum()
+        #        self.gg_spectrum.zeroCounts()
+        #        self.gg_y.addDataTo(self.gg_spectrum, 1.0)
+        #        yobs_row = self.gg_spectrum.createMapleTuples(self.gg_spectrum_row, 100)
+        #        self.gg_spectrum_points += yobs_row
+        #        self.gg_spectrum_row += 1
+        #        self.gg_spectrum.appendCountsToFile('spectra.txt', False)
+        #        for z in range(9):
+        #            self.gg_spectrum_points += ','
+        #            self.gg_spectrum_points += yobs_row
+        #            self.gg_spectrum_row += 1
+        #            self.gg_spectrum.appendCountsToFile('spectra.txt', False)
+        #
+        #    # Clear the other quantities that will depend on posterior simulations            
+        #    self.gg_t_mean = 0.0
+        #    self.gg_t_mu = 0.0
+        #    self.gg_t = []
+        #    self.gg_a = []
+        #    self.gg_t_a = []
+        #    self.gg_Pm = 0.0
+        #    self.gg_Gm = []
+        #    self.gg_Dm = []
+        #    self.gg_mu.clear()
+        #    self.gg_total = 0
+        #    self.gg_num_post_pred_reps = 0.0
 
         # Create a single Markov chain and add the parameters needed by the
         # model (as well as Metropolis moves to modify the topology)
@@ -983,185 +993,163 @@ class Phycas:
         if self.paramf:
             self.paramFileClose()
 
-        if self.gg_do:
-            two_n = 2.0*float(self.nchar)
-
-            # Compute the t function for the observed dataset
-            if self.gg_bin_patterns:
-                self.gg_t_y = self.gg_y.calctBinned(4)
-            else:                
-                self.gg_t_y = self.gg_y.calct(4)
-
-            # gg_mu is the mean of all the posterior predictive datasets.
-            # Compute the t function for the mean dataset
-            if self.gg_bin_patterns:
-                self.gg_t_mu = self.gg_mu.calctBinned(4)
-            else:
-                self.gg_t_mu = self.gg_mu.calct(4)
-                
-            # If saving spectra, save the spectrum from the original data set
-            if self.gg_save_spectra:
-                self.gg_spectrum.zeroCounts()
-                self.gg_mu.addDataTo(self.gg_spectrum, 1.0)
-                self.gg_spectrum_points += ','
-                self.gg_spectrum_points += self.gg_spectrum.createMapleTuples(self.gg_spectrum_row, 100)
-                self.gg_spectrum_row += 1
-                self.gg_spectrum.appendCountsToFile('spectra.txt', False)
-
-                # get patterns
-                patterns = self.gg_spectrum.getPatterns(['A','C','G','T'])
-                spectf = file('spectra.txt', 'a')
-                for i in range(4):
-                    for j,p in enumerate(patterns):
-                        entry = '%s%s' % ((j == 0 and '' or '\t'), p[i])
-                        spectf.write(entry)
-                    spectf.write('\n')
-                spectf.close()
-
-                # write out the maple_commands file now
-                maplef = file('maple_commands', 'w')
-                maplef.write('with(linalg);\n')
-                maplef.write('with(plots);\n')
-                maplef.write('points := [')
-                maplef.write(self.gg_spectrum_points)
-                maplef.write('];\n')
-                maplef.write('surfdata(points, style=patchnogrid, axes=framed, labels=["sim", "pattern", "freq"]);\n')
-                maplef.close()
-
-            # Compute the mean of the t values computed for individual posterior
-            # predictive datasets
-            self.gg_t_mean = sum(self.gg_t)/float(self.gg_total)
-
-            # Compute the penalty term. Guaranteed to be positive by Jensen's
-            # inequality and the convexity of the t function.
-            self.gg_Pm = two_n*(self.gg_t_mean - self.gg_t_mu)
-
-            # Loop over k values, computing Gm and Dm for each k value in gg_kvect
-            for k in self.gg_kvect:
-                # Create a dataset representing the compromise "action"
-                a = SimData()
-                self.gg_mu.addDataTo(a, 1.0)
-                self.gg_y.addDataTo(a, k)
-                a.divideBy(k + 1.0)
-                if self.gg_bin_patterns:
-                    t_a = a.calctBinned(4)
-                else:
-                    t_a = a.calct(4)
-                self.gg_t_a.append(t_a)
-                self.gg_a.append(a)
-
-                # Compute the goodness-of-fit term
-                Gkm = (float(k) + 1.0)*two_n*((self.gg_t_mu + k*self.gg_t_y)/(k + 1.0) - t_a)
-                self.gg_Gm.append(Gkm)
-
-                # Compute the overall measure            
-                Dkm = self.gg_Pm + Gkm
-                self.gg_Dm.append(Dkm)
-
-            if self.gg_outfile:
-                ggf = file(self.gg_outfile,'w')
-                ggf.write('# Pm = %f\n' % self.gg_Pm)
-                for i,k in enumerate(self.gg_kvect):
-                    ggf.write('# k = %f:\n' % k)
-                    ggf.write('#   Gm = %f\n' % self.gg_Gm[i])
-                    ggf.write('#   Dm = %f\n' % self.gg_Dm[i])
-                ggf.write('\n')
-
-                ggf.write('# no. patterns in original dataset                        = %d\n' % self.gg_y.getNUniquePatterns())
-                ggf.write('# no. patterns in mean over posterior preditive datasets  = %d\n' % self.gg_mu.getNUniquePatterns())
-                sum_npat = 0.0
-                for npat in self.gg_npatterns:
-                    sum_npat += float(npat)
-                ggf.write('# mean no. patterns over posterior preditive datasets     = %f\n' % (sum_npat/float(len(self.gg_npatterns))))
-
-                ggf.write('# t calculated for original dataset                       = %f\n' % self.gg_t_y)
-                ggf.write('# t calculated for mean over posterior preditive datasets = %f\n' % self.gg_t_mu)
-                ggf.write('# mean of t over posterior preditive datasets             = %f\n' % self.gg_t_mean)
-                ttotal = len(self.gg_t)
-                assert ttotal == self.gg_total, 'mismatch between self.gg_total and len(self.gg_t)'
-                tsumsq = 0.0
-                for t in self.gg_t:
-                    tsumsq += t*t
-                tvar = tsumsq - float(ttotal)*self.gg_t_mean*self.gg_t_mean
-                ggf.write('# std. dev. of t over posterior preditive datasets        = %f\n' % math.sqrt(tvar))
-                for i,k in enumerate(self.gg_kvect):
-                    ggf.write('# t of compromise action for k = %6f                   = %f\n' % (k, self.gg_t_a[i]))
-
-                ggf.write('\n# GnuPlot commands for making a plot of t values:\n')
-                ggf.write('set title "%s"\n' % (self.gg_outfile))                                                           
-                ggf.write('\n')
-                arrow_number = 1
-                ggf.write('# t_y\n')
-                ggf.write('set arrow %d from %f,0.95 to %f,1.0 lw 2 lt %d\n' % (arrow_number, self.gg_t_y, self.gg_t_y, arrow_number))
-                ggf.write('set label %d "t_y" at %f,0.925\n' % (arrow_number, self.gg_t_y))
-                ggf.write('\n')
-                arrow_number = 2
-                ggf.write('# t_mean\n')
-                ggf.write('set arrow %d from %f,0.95 to %f,1.0 lw 1 lt %d\n' % (arrow_number, self.gg_t_mean, self.gg_t_mean, arrow_number))
-                ggf.write('set label %d "t_mean" at %f,0.9125\n' % (arrow_number, self.gg_t_mean))
-                ggf.write('\n')
-                arrow_number = 3
-                ggf.write('# t_mu\n')
-                ggf.write('set arrow %d from %f,0.95 to %f,1.0 lw 2 lt %d\n' % (arrow_number, self.gg_t_mu, self.gg_t_mu, arrow_number))
-                ggf.write('set label %d "t_mu" at %f,0.925\n' % (arrow_number, self.gg_t_mu))
-                ggf.write('\n')
-                tmin = min(self.gg_t)
-                tmax = max(self.gg_t)
-                xtremes = [tmin, tmax, self.gg_t_y, self.gg_t_mu, self.gg_t_mean] 
-                for i,k in enumerate(self.gg_kvect):
-                    arrow_number = 4 + i
-                    ggf.write('# t_a (k=%f)\n' % (k))
-                    ggf.write('#set arrow %d from %f,0.95 to %f,1.0 lw 2 lt %d\n' % (arrow_number, self.gg_t_a[i], self.gg_t_a[i], arrow_number))
-                    ggf.write('#set label %d "t_a" at %f,0.925\n' % (arrow_number, self.gg_t_a[i]))
-                    xtremes.append(self.gg_t_a[i])
-                ggf.write('\n')
-                ggf.write('set nokey\n')
-                ggf.write('plot [%f:%f][0.8:1.2] "%s" using 2:3 with points\n' % (min(xtremes), max(xtremes),self.gg_outfile))
-                ggf.write('pause -1 "Press return to continue..."\n')
-                ggf.write('\n# GnuPlot data:\n')
-                for i,t in enumerate(self.gg_t):
-                    ggf.write('%d\t%f\t1.0\n' % (i, t))
-                ggf.close()
+        #if self.gg_do:
+        #    two_n = 2.0*float(self.nchar)
+        #
+        #    # Compute the t function for the observed dataset
+        #    if self.gg_bin_patterns:
+        #        self.gg_t_y = self.gg_y.calctBinned(4)
+        #    else:                
+        #        self.gg_t_y = self.gg_y.calct(4)
+        #
+        #    # gg_mu is the mean of all the posterior predictive datasets.
+        #    # Compute the t function for the mean dataset
+        #    if self.gg_bin_patterns:
+        #        self.gg_t_mu = self.gg_mu.calctBinned(4)
+        #    else:
+        #        self.gg_t_mu = self.gg_mu.calct(4)
+        #
+        #    # If saving spectra, save the spectrum from the original data set
+        #    if self.gg_save_spectra:
+        #        self.gg_spectrum.zeroCounts()
+        #        self.gg_mu.addDataTo(self.gg_spectrum, 1.0)
+        #        self.gg_spectrum_points += ','
+        #        self.gg_spectrum_points += self.gg_spectrum.createMapleTuples(self.gg_spectrum_row, 100)
+        #        self.gg_spectrum_row += 1
+        #        self.gg_spectrum.appendCountsToFile('spectra.txt', False)
+        #
+        #        # get patterns
+        #        patterns = self.gg_spectrum.getPatterns(['A','C','G','T'])
+        #        spectf = file('spectra.txt', 'a')
+        #        for i in range(4):
+        #            for j,p in enumerate(patterns):
+        #                entry = '%s%s' % ((j == 0 and '' or '\t'), p[i])
+        #                spectf.write(entry)
+        #            spectf.write('\n')
+        #        spectf.close()
+        #
+        #        # write out the maple_commands file now
+        #        maplef = file('maple_commands', 'w')
+        #        maplef.write('with(linalg);\n')
+        #        maplef.write('with(plots);\n')
+        #        maplef.write('points := [')
+        #        maplef.write(self.gg_spectrum_points)
+        #        maplef.write('];\n')
+        #        maplef.write('surfdata(points, style=patchnogrid, axes=framed, labels=["sim", "pattern", "freq"]);\n')
+        #        maplef.close()
+        #
+        #    # Compute the mean of the t values computed for individual posterior
+        #    # predictive datasets
+        #    self.gg_t_mean = sum(self.gg_t)/float(self.gg_total)
+        #
+        #    # Compute the penalty term. Guaranteed to be positive by Jensen's
+        #    # inequality and the convexity of the t function.
+        #    self.gg_Pm = two_n*(self.gg_t_mean - self.gg_t_mu)
+        #
+        #    # Loop over k values, computing Gm and Dm for each k value in gg_kvect
+        #    for k in self.gg_kvect:
+        #        # Create a dataset representing the compromise "action"
+        #        a = SimData()
+        #        self.gg_mu.addDataTo(a, 1.0)
+        #        self.gg_y.addDataTo(a, k)
+        #        a.divideBy(k + 1.0)
+        #        if self.gg_bin_patterns:
+        #            t_a = a.calctBinned(4)
+        #        else:
+        #            t_a = a.calct(4)
+        #        self.gg_t_a.append(t_a)
+        #        self.gg_a.append(a)
+        #
+        #        # Compute the goodness-of-fit term
+        #        Gkm = (float(k) + 1.0)*two_n*((self.gg_t_mu + k*self.gg_t_y)/(k + 1.0) - t_a)
+        #        self.gg_Gm.append(Gkm)
+        #
+        #        # Compute the overall measure            
+        #        Dkm = self.gg_Pm + Gkm
+        #        self.gg_Dm.append(Dkm)
+        #
+        #    if self.gg_outfile:
+        #        ggf = file(self.gg_outfile,'w')
+        #        ggf.write('# Pm = %f\n' % self.gg_Pm)
+        #        for i,k in enumerate(self.gg_kvect):
+        #            ggf.write('# k = %f:\n' % k)
+        #            ggf.write('#   Gm = %f\n' % self.gg_Gm[i])
+        #            ggf.write('#   Dm = %f\n' % self.gg_Dm[i])
+        #        ggf.write('\n')
+        #
+        #        ggf.write('# no. patterns in original dataset                        = %d\n' % self.gg_y.getNUniquePatterns())
+        #        ggf.write('# no. patterns in mean over posterior preditive datasets  = %d\n' % self.gg_mu.getNUniquePatterns())
+        #        sum_npat = 0.0
+        #        for npat in self.gg_npatterns:
+        #            sum_npat += float(npat)
+        #        ggf.write('# mean no. patterns over posterior preditive datasets     = %f\n' % (sum_npat/float(len(self.gg_npatterns))))
+        #
+        #        ggf.write('# t calculated for original dataset                       = %f\n' % self.gg_t_y)
+        #        ggf.write('# t calculated for mean over posterior preditive datasets = %f\n' % self.gg_t_mu)
+        #        ggf.write('# mean of t over posterior preditive datasets             = %f\n' % self.gg_t_mean)
+        #        ttotal = len(self.gg_t)
+        #        assert ttotal == self.gg_total, 'mismatch between self.gg_total and len(self.gg_t)'
+        #        tsumsq = 0.0
+        #        for t in self.gg_t:
+        #            tsumsq += t*t
+        #        tvar = tsumsq - float(ttotal)*self.gg_t_mean*self.gg_t_mean
+        #        ggf.write('# std. dev. of t over posterior preditive datasets        = %f\n' % math.sqrt(tvar))
+        #        for i,k in enumerate(self.gg_kvect):
+        #            ggf.write('# t of compromise action for k = %6f                   = %f\n' % (k, self.gg_t_a[i]))
+        #
+        #        ggf.write('\n# GnuPlot commands for making a plot of t values:\n')
+        #        ggf.write('set title "%s"\n' % (self.gg_outfile))                                                           
+        #        ggf.write('\n')
+        #        arrow_number = 1
+        #        ggf.write('# t_y\n')
+        #        ggf.write('set arrow %d from %f,0.95 to %f,1.0 lw 2 lt %d\n' % (arrow_number, self.gg_t_y, self.gg_t_y, arrow_number))
+        #        ggf.write('set label %d "t_y" at %f,0.925\n' % (arrow_number, self.gg_t_y))
+        #        ggf.write('\n')
+        #        arrow_number = 2
+        #        ggf.write('# t_mean\n')
+        #        ggf.write('set arrow %d from %f,0.95 to %f,1.0 lw 1 lt %d\n' % (arrow_number, self.gg_t_mean, self.gg_t_mean, arrow_number))
+        #        ggf.write('set label %d "t_mean" at %f,0.9125\n' % (arrow_number, self.gg_t_mean))
+        #        ggf.write('\n')
+        #        arrow_number = 3
+        #        ggf.write('# t_mu\n')
+        #        ggf.write('set arrow %d from %f,0.95 to %f,1.0 lw 2 lt %d\n' % (arrow_number, self.gg_t_mu, self.gg_t_mu, arrow_number))
+        #        ggf.write('set label %d "t_mu" at %f,0.925\n' % (arrow_number, self.gg_t_mu))
+        #        ggf.write('\n')
+        #        tmin = min(self.gg_t)
+        #        tmax = max(self.gg_t)
+        #        xtremes = [tmin, tmax, self.gg_t_y, self.gg_t_mu, self.gg_t_mean] 
+        #        for i,k in enumerate(self.gg_kvect):
+        #            arrow_number = 4 + i
+        #            ggf.write('# t_a (k=%f)\n' % (k))
+        #            ggf.write('#set arrow %d from %f,0.95 to %f,1.0 lw 2 lt %d\n' % (arrow_number, self.gg_t_a[i], self.gg_t_a[i], arrow_number))
+        #            ggf.write('#set label %d "t_a" at %f,0.925\n' % (arrow_number, self.gg_t_a[i]))
+        #            xtremes.append(self.gg_t_a[i])
+        #        ggf.write('\n')
+        #        ggf.write('set nokey\n')
+        #        ggf.write('plot [%f:%f][0.8:1.2] "%s" using 2:3 with points\n' % (min(xtremes), max(xtremes),self.gg_outfile))
+        #        ggf.write('pause -1 "Press return to continue..."\n')
+        #        ggf.write('\n# GnuPlot data:\n')
+        #        for i,t in enumerate(self.gg_t):
+        #            ggf.write('%d\t%f\t1.0\n' % (i, t))
+        #        ggf.close()
                 
     def mcmc(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Runs the Markov chain. Equivalent to calling setup() followed by
-        run().
+        Performs an MCMC analysis.
         
         """
         self.setup()
         self.run()
+
+    def gg(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Computes Gelfand-Ghosh on a pre-existing MCMC sample defined in the
+        files self.gg_pfile and self.gg_tfile.
         
-if __name__ == '__main__':
-    phycas = Phycas()
-
-    if True:
-        # set above to True for normal operation
-        phycas.random_seed = '13579'
-        phycas.data_source = 'file'
-        phycas.data_file_name = '../Tests/Data/green.nex'
-        #phycas.data_file_name = '../Tests/Data/nyldna4.nex'
-        phycas.starting_tree_source = 'random'
-        phycas.ncycles = 200
-        phycas.sample_every = 10
-        phycas.adapt_first = 10
-        phycas.default_model = 'hky'
-        phycas.ls_move_weight = 10
-        phycas.slice_max_units = 0
-        phycas.verbose = True
-
-    if False:
-        # for timing
-        phycas.ncycles = 2000
-        phycas.report_every = 500
-        phycas.ls_move_weight = 100
-        phycas.ls_move_debug = False
-        phycas.uf_num_edges = 50
-
-    if False:
-        # for Tallahassee session
-        phycas.data_file_name = '../Tests/Data/nyldna4.nex'
-
-    phycas.mcmc()
-    phycas.shutdown()    
+        """
+        import GGImpl
+        gelfand_ghosh = GGImpl.GelfandGhosh(self)
+        self.gg_Pm, self.gg_Gm, self.gg_Dm = gelfand_ghosh.run()
+        return (self.gg_Pm, self.gg_Gm, self.gg_Dm)

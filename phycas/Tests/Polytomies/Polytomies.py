@@ -79,7 +79,7 @@ phycas.topo_prior_C     = 2.0
 
 # Start with a random tree
 phycas.starting_tree_source = 'random'
-phycas.data_file_name = 'analHKY.nex'
+phycas.outfile_prefix = 'HKYpolytomy'
 
 # By default, Phycas assumes slice_max_units = 1000, but here we will let the maximum
 # number of slice sampler units be the largest possible unsigned int. To do this, set
@@ -90,6 +90,5 @@ phycas.ncycles = 200
 phycas.sample_every = 10
 phycas.adapt_first = 100
 
-phycas.setup()
-phycas.run()
+phycas.mcmc()
 
