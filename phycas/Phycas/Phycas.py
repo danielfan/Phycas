@@ -962,6 +962,7 @@ class Phycas:
                     #tmpf.close()
             #if cycle == 21:
             #    sys.exit()
+            #raw_input('stopped after cycle %d' % cycle)
             if self.verbose and (cycle + 1) % self.report_every == 0:
                 msg = 'cycle = %d, lnL = %.5f' % (cycle + 1, self.chain_manager.getLastLnLike())
                 if self.use_flex_model:
