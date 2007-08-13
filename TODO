@@ -1,14 +1,23 @@
-Before first release:
-
-o should use kappa_prior rather than relrate_prior for HKY model
-  (see Examples/Paradox.py)
-  
-o  need default constructors for each ProbabilityDistribution-derived class
-  (see Examples/Paradox.py)
-
-o slice_max_units needs to be 0 by default - too complicated to explain in examples
-  (see Examples/Paradox.py) 
-  
+The TO DO list (roughly in order of importance):
+o write a user manual and tutorial
+o add a sumt equivalent so that runs involving polytomies can be easily summarized
+o add a sump equivalent so that runs involving FLEXCAT model can be summarized
+o should use kappa_prior rather than relrate_prior for HKY model (see Examples/Paradox.py)
+o need default constructors for each ProbabilityDistribution-derived class (see Examples/Paradox.py)
+o slice_max_units needs to be 0 by default - too complicated to explain in examples (see Examples/Paradox.py) 
+o finish implementing codon model
 o need to be able to restart an analysis from where it left off
+o add ASCII tree drawing to Tree class
+o add no-data run to test polytomy prior to existing Polytomy.py example
+o add Metropolis-coupled chains
+o allow data partitioning
+o add Newton-Raphson for finding MLEs of edge lengths
+o add Brent method for finding MLEs of model parameters
+o add NNI, SPR and TBR branch swapping 
+o ensure that slice sampler doesn't get stuck (e.g. no rate heterogeneity combined with vague prior on shape parameter)
+o standard Mkv morphology model
+o "episodic rates" version of the Mk model
+o ensure that all routines called from python are represented in *.py wrappers
+o transfer exception handling from C++ code to Python wrappers where possible, replacing exceptions	with asserts on the C++ site
 
 

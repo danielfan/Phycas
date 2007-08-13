@@ -470,17 +470,30 @@ std::vector<double> TopoPriorCalculator::GetRealizedResClassPriorsVect()
 	v.reserve(topology_prior.size());
 	v.push_back(0.0);
 
-	//@POL could use a version of the transform algorithm here
-	double total = 0.0;
 	unsigned sz = (unsigned)topology_prior.size();
+
+    // First loop will be to determine largest value, which will be factored out
+    // the second time through so that the total does not overflow
+    double log_factored_out = 0.0;
 	for (unsigned i = 1; i < sz; ++i)
 		{
-        double log_Tnm = std::log(counts[i - 1]) + log_scaling_factor*(double)nfactors[i - 1];
+        double c = counts[i - 1];
+        double nf = (double)nfactors[i - 1];
+        double log_Tnm = log(c) + log_scaling_factor*nf;
 		double log_prior = log_Tnm + topology_prior[i];
 		v.push_back(log_prior);
-		total += std::exp(log_prior);
+        if (log_prior > log_factored_out)
+            log_factored_out = log_prior;
 		}
-	v[0] = std::log(total);
+
+    // Now we can compute the total
+    double total = 0.0;
+    std::vector<double>::const_iterator it = v.begin();
+    for (++it; it != v.end(); ++it)
+		{
+		total += exp((*it) - log_factored_out);
+		}
+	v[0] = log(total) + log_factored_out;
 
 	return v;
 	}

@@ -1,5 +1,62 @@
-This document describes some of the nastier bugs (ones that have taken several days to figure out).
-The hope is that if these are recorded somewhere, then history will not repeat itself!
+This file documents major bugs in Phycas. A major bug is loosely defined as something
+that prevents a user from using Phycas to analyze a particular data set, or something
+that causes Phycas to generate incorrect results. Major bugs usually take a day or more
+to fix, and documenting them helps to avoid repeating history. Minor bugs represent 
+cosmetic glitches that are easy to work around and do not take long to fix. Minor bugs 
+are best documented in SVN comments.
+
+Bug 2: the "topology prior table" bug (fixed in revision 421 on 13-Aug-2007)
+----------------------------------------------------------------------------
+This bug was first reported by Stephano Mona on 21 July 2007.
+Using the polytomy model with a data set of 186 taxa resulted in this error:
+
+Topology prior:
+  Prior type:
+polytomy prior
+  Prior strength (C): 2.71828182846
+  Expected prior probability for each resolution class:
+   class        prior
+  -------------------
+       1      0.00000
+       2      0.00000
+...
+      38      0.00000
+      39      0.00000
+Traceback (most recent call last):
+  File "mona.py", line 89, in <module>
+    phycas.run()
+  File "C:\Synchronized\Projects\phycasdev_trunk\phycas\Phycas\Phycas.py", line 935, in run
+    self.showTopoPriorInfo()
+  File "C:\Synchronized\Projects\phycasdev_trunk\phycas\Phycas\Phycas.py", line 475, in showTopoPriorInfo
+    self.output('%8d %12.5f' % (i,math.exp(v - denom)))
+ValueError: math domain error
+
+Resolution:
+-----------
+The problem was in the display of the realized prior probabilities for topologies. The numerator 
+of each of these probabilities can get large because it involves the number of tree topologies 
+for a given number of internal nodes. For this problem (186 taxa), the numerator overflowed for 
+trees having more than 39 internal nodes and the crash occurred when it tried to subtract 
+1.#INF from 1.#INF.
+
+Fixing the bug required reworking parts of the TopoPriorCalculator class 
+(phycas/src/topo_prior_calculator.cpp). In particular, the RecalcCountsAndPriorsImpl function was
+reworked so that the vector counts is now associated with a vector nfactors, the ith element of 
+which contains the number of times a factor needed to be removed in order to keep the magnitude
+of counts[i] reasonable. The factor taken out is scaling_factor (saved as the log in a new variable
+named log_scaling_factor). Thus, if scaling_factor = 10, nfactors[i] = 3, and counts[i] = 1.5, the 
+value of the log_scaling_factor variable would be log(10) and the actual count would be 1.5*10^3.
+Even with this system, the log of the total topology count is still difficult to obtain because
+each log count must be exponentiated in order to add it to the sum. Thus, the largest log count is
+determined and factored out of the sum, then its log is added back in at the end. Many of the 
+smaller counts will disappear, but they are negligible anyway given that the total is never used 
+in any MCMC calculations. A similar factoring out of the largest value was required in the function 
+GetRealizedResClassPriorsVect. Now, a valid table of resolution class priors is presented to the
+user prior to an analysis involving polytomies. For large numbers of taxa (e.g. 186), many of the
+values will appear to be zero. A note has been added to the output apprising users of the fact that
+even though probabilities are reported as 0.00000000, they are not in fact exactly zero and this
+result simply means that the value is less than 0.000000005 and rounds off to zero when only 8
+decimal places are used.
 
 Bug 1: the "total_count" bug (fixed in revision 292 on 3-Nov-2006)
 ------------------------------------------------------------------
@@ -86,7 +143,7 @@ mu = [ 195, 143.5, 161.5,   0 ] =>   [ 195*(1-p), 143.5*(1-p), 161.5*(1-p), 0*(1
 r3 = [ 103,     0,    97, 300 ] => + [     103*p,         0*p,        97*p,   300*p ]
                             new mu = [   164.333,      95.667,         140,     100 ]
 
-To implement the above averaging scheme required chainging only four lines, all 
+To implement the above averaging scheme required changing only four lines, all 
 in Phycas.py. These three lines were added just before the contents of tmp_simdata
 are added to gg_mu in the recordSample function:
 

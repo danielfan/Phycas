@@ -198,9 +198,14 @@ class Phycas:
 
     def output(self, msg = None):
         if not self.quiet:
-            print msg
+            if msg:
+                print msg
+            else:
+                print
         if self.logf:
-            self.logf.write('%s\n' % msg)
+            if not msg:
+                msg = ''
+            self.logf.write('%s\n' % (msg))
             self.logf.flush()
 
     def setupModel(self):
@@ -465,17 +470,18 @@ class Phycas:
                 self.output('  Prior type: resolution class prior')
             self.output('  Prior strength (C): %s' % self.topo_prior_calculator.getC())
             self.output('  Prior probability for each resolution class:')
-            self.output('   class        prior')
-            self.output('  -------------------')
+            self.output('  Note: 0.00000000 does *not* mean that the prior is zero! It simply')
+            self.output('        indicates that the prior is less than 0.000000005\n')
+            self.output('%20s %20s' % ('internal nodes', 'prior probability'))
+            self.output('%20s %20s' % ('--------------', '-----------------'))
             topo_priors = self.topo_prior_calculator.getRealizedResClassPriorsVect()
             for i,v in enumerate(topo_priors):
                 if i == 0:
                     denom = v   # first element of vector is log of normalization constant (sum of all other elements)
-                    #self.output('%8d %12.5f (log of normalizing constant)' % (i, v))
                 else:
-                    self.output('%8d %12.5f' % (i,math.exp(v - denom)))
-                    #self.output('%8d %12.5f (%.5f)' % (i, v, v - denom))
-            print
+                    topo_prior = math.exp(v - denom)
+                    self.output('%20d %20.8f' % (i,topo_prior))
+            self.output()
 
     def setupLikelihood(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
