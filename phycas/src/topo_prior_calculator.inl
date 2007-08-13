@@ -34,10 +34,8 @@ inline TopoPriorCalculator::TopoPriorCalculator()
 	is_resolution_class_prior	= true;
 	C							= 1.0;
 	ntax						= 4;
-#if POLPY_NEWWAY
     counts_dirty                = true;
     log_scaling_factor          = 10.0;
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -47,9 +45,7 @@ inline TopoPriorCalculator::~TopoPriorCalculator()
 	{
 	counts.clear();
 	topology_prior.clear();
-#if POLPY_NEWWAY
 	nfactors.clear();
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -114,7 +110,6 @@ inline void TopoPriorCalculator::ChooseUnrooted()
 		}
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns copy of the `counts' vector, which contains in its (m-1)th element the number of tree topologies having 
 |   exactly m internal nodes. Note that you will need to also call GetNFactorsVect if there is any chance that some of
@@ -140,20 +135,6 @@ inline std::vector<int> TopoPriorCalculator::GetNFactorsVect()
 		Reset();
 	return nfactors;
 	}
-#else
-/*----------------------------------------------------------------------------------------------------------------------
-|	Returns copy of the `counts' vector, which contains in its first element the natural log of the total number of 
-|   tree topologies having any number of internal nodes, and which contains in its mth element (m > 0) the log of the
-|   number of tree topologies having exactly m internal nodes.
-*/
-inline std::vector<double> TopoPriorCalculator::GetCountsVect()
-	{
-	//@POL this function could be const were it not for lazy evaluation
-	if (topo_priors_dirty)
-		Reset();
-	return counts;
-	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets `is_resolution_class_prior' data member to true.
@@ -200,7 +181,6 @@ inline double TopoPriorCalculator::GetC() const
 	return C;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets `log_scaling_factor' data member to the supplied value `lnf'.
 */
@@ -222,7 +202,6 @@ inline double TopoPriorCalculator::GetLnScalingFactor() const
 	{
 	return log_scaling_factor;
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns copy of the `topology_prior' vector, which contains in its mth element the unnormalized prior for tree 

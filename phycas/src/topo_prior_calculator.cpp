@@ -27,7 +27,6 @@
 namespace phycas
 {
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Recomputes `counts' vector for the supplied number of internal nodes (`n') using the method outlined by Joe 
 |	Felsenstein in his 2004 book and also in Felsenstein (1978) and Felsenstein (1981). 
@@ -169,88 +168,6 @@ void TopoPriorCalculator::RecalcCountsAndPriorsImpl(
 
 	topo_priors_dirty = false;
 	}
-#else
-/*----------------------------------------------------------------------------------------------------------------------
-|	Recomputes `counts' vector for the supplied number of internal nodes (`n') using the method outlined by Joe 
-|	Felsenstein in his 2004 book and also in Felsenstein (1978) and Felsenstein (1981). 
-|	
-|	Felsenstein, J. 1978. The number of evolutionary trees. Syst. Zool. 27: 27-33.
-|	Felsenstein, J. 1981. Syst. Zool. 30: 122. 
-|	
-|	As an example, if `n' equals 4, the `counts' vector would look like this when the function returned:
-|>
-|	      0          1         2          3          4      
-|	+----------+----------+----------+----------+----------+
-|	|   236.0  |    1.0   |   25.0   |   105.0  |   105.0  |
-|	+----------+----------+----------+----------+----------+
-|>
-|	For fully-resolved, unrooted trees, there are 4 internal nodes for 6 taxa, so `counts' needs only be computed up to 
-|	`counts'[4]. `counts'[0] equals the sum of all the other elements (i.e. 236 = 1 + 25 + 105 + 105). Thus, there are 
-|	105 unrooted tree topologies having 6 taxa and m = 3 interior nodes. The number of fully-resolved, unrooted trees 
-|	for 6 taxa is the last entry, `counts'[4] = 105.
-|	
-|	If `n' equals 5, the `counts' vector would look like this when the function returned:
-|>
-|	      0          1         2          3          4          5 
-|	+----------+----------+----------+----------+----------+----------+
-|	|  2752.0  |    1.0   |   56.0   |   490.0  |  1260.0  |   945.0  |
-|	+----------+----------+----------+----------+----------+----------+
-|>
-|	For fully-resolved, rooted trees, there are 5 internal nodes for 6 taxa, so `counts' needs only be computed up to 
-|	`counts'[5]. `counts'[0] equals the sum of all the other elements (i.e. 2752 = 1 + 56 + 490 + 1260 + 945). Thus, 
-|	there are 490 rooted tree topologies having 6 taxa and m = 3 interior nodes. The number of fully-resolved, rooted
-|	trees for 6 taxa is the last entry, `counts'[5] = 945.
-*/
-void TopoPriorCalculator::RecalcCountsAndPriorsImpl(
-  unsigned n) /**< is the number of internal nodes (equals ntax - 1 for rooted trees and ntax - 2 for unrooted trees) */
-	{
-	counts.clear();
-	counts.push_back(0.0); // This element will hold sum of all other elements in the end
-	counts.push_back(1.0); // m = 1
-
-	for (unsigned m = 2; m <= n; ++m)
-		{
-		AddNextCount(m);
-		}
-
-	// Recalculate the `topology_prior' vector too
-	RecalcPriorsImpl();
-
-	topo_priors_dirty = false;
-	}
-#endif
-
-#if POLPY_OLDWAY
-/*----------------------------------------------------------------------------------------------------------------------
-|	Adds element to `counts' vector representing `m' internal nodes given that it is already correctly computed for `m'
-|	minus 1 internal nodes. On entry, assumes that the size of the `counts' vector is `m'. One new element is added to 
-|	the `counts' vector by this function, so upon exit, `counts' has length `m' + 1 (the first element of `counts' is
-|	reserved for holding the sum of all other elements. Assumes that `m' is greater than 1.
-*/
-void TopoPriorCalculator::AddNextCount(
-  unsigned m)	/**< is the number of internal nodes (should equal current length of `counts' vector) */
-	{
-	PHYCAS_ASSERT(m > 1);
-	PHYCAS_ASSERT(counts.size() == m);
-	counts.push_back(0.0);
-
-	// This will probably not make any sense at all unless you read the section on computing numbers of trees
-	// in Joe Felsenstein's 2004 book
-	counts[0] = 1.0;
-	counts[1] = 1.0;
-	double a = 1.0;
-	for (unsigned k = 2; k <= m; ++k)
-		{
-		double b = counts[k];
-		double c = a*(m + k - 1);
-		if (k < m)
-			c += b*k;
-		counts[k] = c;
-		counts[0] += c;
-		a = b;
-		}
-	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Recomputes `topology_prior' vector for the supplied number of internal nodes (`n'). The element `topology_prior'[m]
@@ -291,7 +208,6 @@ void TopoPriorCalculator::AddNextCount(
 |	            (no easy formula)           8.189   topology_prior[0] = ln(8.189) =  2.103
 |>												    
 */											
-#if POLPY_NEWWAY
 void TopoPriorCalculator::RecalcPriorsImpl()	 
 	{
 	topology_prior.clear();
@@ -330,38 +246,12 @@ void TopoPriorCalculator::RecalcPriorsImpl()
 	    topology_prior[0] = std::log(total);
         }
     }
-#else
-void TopoPriorCalculator::RecalcPriorsImpl()	 
-	{
-	topology_prior.clear();
-	topology_prior.push_back(0.0);	// This will hold the normalizing constant in the end
-
-	// Figure out the maximum possible value for m, the number of internal nodes
-	unsigned maxm = ntax - (is_rooted ? 1 : 2);
-
-	// counts vector should have length equal to maxm - 1 if everything is ok
-	PHYCAS_ASSERT(maxm == (unsigned)counts.size() - 1);
-
-	double total = 0.0;
-	double logC = std::log(C);
-	for (unsigned m = 1; m <= maxm; ++m)
-		{
-		double logCterm = (double)(maxm - m)*logC;
-		double log_count_m = (is_resolution_class_prior ? std::log(counts[m]) : 0.0);
-		double log_v = logCterm - log_count_m;
-		total += std::exp(log_v);
-		topology_prior.push_back(log_v);
-		}
-	topology_prior[0] = std::log(total);
-	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the natural log of the number of trees having `n' taxa and `m' internal nodes. Calls RecalcCountsAndPriors
 |   function if `n' is not equal to `ntax'. Assumes `m' is greater than 0. If `is_rooted' is true, assumes `m' is less
 |   than `ntax'. If `is_rooted' is false, assumes `m' less than `ntax' - 1. 
 */
-#if POLPY_NEWWAY
 double TopoPriorCalculator::GetLnCount(
   unsigned n,	/**< is the number of taxa */
   unsigned m)	/**< is the number of internal nodes */
@@ -375,25 +265,11 @@ double TopoPriorCalculator::GetLnCount(
     double log_count = nf*log_scaling_factor + log(counts[m - 1]);
 	return log_count;
 	}
-#else
-double TopoPriorCalculator::GetCount(
-  unsigned n,	/**< is the number of taxa */
-  unsigned m)	/**< is the number of internal nodes */
-	{
-	PHYCAS_ASSERT((is_rooted && (m < n)) || (!is_rooted && (m < n - 1)));
-	if (n != ntax)
-		SetNTax(n);
-	if (topo_priors_dirty)
-		Reset();
-	return counts[m];
-	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the number of saturated (i.e. fully-resolved and thus having as many internal nodes as possible) trees 
 |	of `n' taxa. Calls RecalcCountsAndPriors function if `n' is not equal to `ntax'.
 */
-#if POLPY_NEWWAY
 double TopoPriorCalculator::GetLnSaturatedCount(
   unsigned n)	/**< is the number of taxa */
 	{
@@ -406,19 +282,7 @@ double TopoPriorCalculator::GetLnSaturatedCount(
     double log_count = nf*log_scaling_factor + log(counts[last]);
 	return log_count;
 	}
-#else
-double TopoPriorCalculator::GetSaturatedCount(
-  unsigned n)	/**< is the number of taxa */
-	{
-	if (n != ntax)
-		SetNTax(n);
-	if (topo_priors_dirty)
-		Reset();
-	return counts[counts.size() - 1];
-	}
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the natural log of the total number of trees for `n' taxa, including all resolution classes from the star 
 |   tree to fully resolved (saturated) trees. Calls RecalcCountsAndPriors function if `n' is not equal to `ntax' or if
@@ -433,23 +297,7 @@ double TopoPriorCalculator::GetLnTotalCount(
 		Reset();
 	return log_total_count;
 	}
-#else
-/*----------------------------------------------------------------------------------------------------------------------
-|	Returns the total number of trees for `n' taxa, including all resolution classes from the star tree to fully 
-|   resolved (saturated) trees.	Calls RecalcCountsAndPriors function if `n' is not equal to `ntax'.
-*/
-double TopoPriorCalculator::GetTotalCount(
-  unsigned n)	/**< is the number of taxa */
-	{
-	if (n != ntax)
-		SetNTax(n);
-	if (topo_priors_dirty)
-		Reset();
-	return counts[0];
-	}
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Constructs a vector of realized resolution class priors from the values in the `topology_prior' vector. If 
 |	`topo_priors_dirty' is true, it recomputes the `topology_prior' vectors first. The mth element of the
@@ -497,42 +345,7 @@ std::vector<double> TopoPriorCalculator::GetRealizedResClassPriorsVect()
 
 	return v;
 	}
-#else
-/*----------------------------------------------------------------------------------------------------------------------
-|	Constructs a vector of realized resolution class priors from the values in the `topology_prior' vector. If 
-|	`topo_priors_dirty' is true, it recomputes the `counts' and `topology_prior' vectors first. The mth element of the
-|	returned vector is set to T_{n,m}*`topology_prior'[m] for m > 0. The 0th element of the returned vector holds the
-|	normalization constant (sum of all other elements). This function is not efficient because it is intended only to 
-|	be used for providing information to the user on request. Table 2, p. 248, in our "Polytomies and Bayesian 
-|	Phylogenetic Inference" paper (Lewis, P. O., M. T. Holder and K. E. Holsinger. 2005. Systematic Biology 54(2):
-|	241-253) presented (normalized) values from this vector.
-*/
-std::vector<double> TopoPriorCalculator::GetRealizedResClassPriorsVect()
-	{
-	if (topo_priors_dirty)
-		Reset();
 
-	std::vector<double> v;
-	v.reserve(topology_prior.size());
-	v.push_back(0.0);
-
-	//@POL should use a version of the transform algorithm here
-	double total = 0.0;
-	unsigned sz = (unsigned)topology_prior.size();
-	for (unsigned i = 1; i < sz; ++i)
-		{
-		double log_Tnm = std::log(counts[i]);
-		double log_prior = log_Tnm + topology_prior[i];
-		v.push_back(log_prior);
-		total += std::exp(log_prior);
-		}
-	v[0] = std::log(total);
-
-	return v;
-	}
-#endif
-
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Constructs a vector in which the element having index m (i = 0, 1, ..., max. num. internal nodes) represents the
 |   natural logarithm of the number of tree topologies having m internal nodes. If `counts_dirty' is true, it recomputes
@@ -561,6 +374,5 @@ std::vector<double> TopoPriorCalculator::GetLnCounts()
 
 	return v;
 	}
-#endif
 
 }	// namespace phycas
