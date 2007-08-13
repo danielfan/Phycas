@@ -43,8 +43,8 @@ class AdHocDensity(AdHocDensityBase):
 # implements a mixture of two Beta distributions, and thus is not represented
 # by any of the distributions in ProbDist. When rolling your own probability
 # distributions like this, it is important to return a very large negative number
-# if the parameter is out of range. Here, the constructor queries SliceSampler
-# for a suitable number (returned by the getLnZero function)
+# if the parameter is out of range. Here, the constructor queries ProbDist
+# for a suitable number (returned by the getEffectiveLnZero function)
 class MyBimodalDist:
     def __init__(self):
         self.b1 = BetaDist(2,19)

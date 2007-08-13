@@ -24,9 +24,8 @@ namespace phycas
 {
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Constructor sets `is_rooted' to true, `is_resolution_class_prior' to true, `C' to 1.0 and `ntax' to 4. Then calls
-|	Reset(), which calculates the `counts' and `topology_prior' vectors to reflect the resolution class topology priors
-|	for unrooted trees with 4 taxa. 
+|	Constructor sets `is_rooted' to false, `is_resolution_class_prior' to true, `C' to 1.0, `ntax' to 4, and
+|   `topo_priors_dirty' to true.
 */
 inline TopoPriorCalculator::TopoPriorCalculator() 
 	{
@@ -35,15 +34,22 @@ inline TopoPriorCalculator::TopoPriorCalculator()
 	is_resolution_class_prior	= true;
 	C							= 1.0;
 	ntax						= 4;
+#if POLPY_NEWWAY
+    counts_dirty                = true;
+    log_scaling_factor          = 10.0;
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Destructor clears the vectors `counts' and `topology_prior'.
+|	Destructor clears the vectors `counts', `nfactors' and `topology_prior'.
 */
 inline TopoPriorCalculator::~TopoPriorCalculator() 
 	{
 	counts.clear();
 	topology_prior.clear();
+#if POLPY_NEWWAY
+	nfactors.clear();
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -65,8 +71,8 @@ inline void TopoPriorCalculator::SetNTax(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Forces recalculation of `counts' and `polytomy_prior' vectors using current values of `ntax', `is_rooted' and 
-|	`is_resolution_class_prior'.
+|	Forces recalculation of `polytomy_prior' if `is_resolution_class_prior' is false, and both `counts' and 
+|   `polytomy_prior' if `is_resolution_class_prior' is true (or if `counts_dirty' is true).
 */
 inline void TopoPriorCalculator::Reset()
 	{
@@ -108,10 +114,37 @@ inline void TopoPriorCalculator::ChooseUnrooted()
 		}
 	}
 
+#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
-|	Returns copy of the `counts' vector, which contains in its first element the total number of tree topologies having
-|	any number of internal nodes, and which contains in its mth element (m > 0) the number of tree topologies having 
-|	exactly m internal nodes.
+|	Returns copy of the `counts' vector, which contains in its (m-1)th element the number of tree topologies having 
+|   exactly m internal nodes. Note that you will need to also call GetNFactorsVect if there is any chance that some of
+|   the counts are larger than exp(log_scaling_factor). In such cases, the actual log count is 
+|   log count = `nfactors[m]'*`log_scaling_factor' + log(`count[m - 1]')
+*/
+inline std::vector<double> TopoPriorCalculator::GetCountsVect()
+	{
+	//@POL this function could be const were it not for lazy evaluation
+	if (counts_dirty)
+		Reset();
+	return counts;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns copy of the `nfactors' vector, which contains in its (m-1)th element the number of times counts[m] has been
+|   rescaled by dividing by the scaling factor (the log of which is `log_scaling_factor').
+*/
+inline std::vector<int> TopoPriorCalculator::GetNFactorsVect()
+	{
+	//@POL this function could be const were it not for lazy evaluation
+	if (counts_dirty)
+		Reset();
+	return nfactors;
+	}
+#else
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns copy of the `counts' vector, which contains in its first element the natural log of the total number of 
+|   tree topologies having any number of internal nodes, and which contains in its mth element (m > 0) the log of the
+|   number of tree topologies having exactly m internal nodes.
 */
 inline std::vector<double> TopoPriorCalculator::GetCountsVect()
 	{
@@ -120,6 +153,7 @@ inline std::vector<double> TopoPriorCalculator::GetCountsVect()
 		Reset();
 	return counts;
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets `is_resolution_class_prior' data member to true.
@@ -165,6 +199,30 @@ inline double TopoPriorCalculator::GetC() const
 	{
 	return C;
 	}
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets `log_scaling_factor' data member to the supplied value `lnf'.
+*/
+inline void TopoPriorCalculator::SetLnScalingFactor(double lnf)
+	{
+	PHYCAS_ASSERT(lnf > 0.0);
+	if (lnf != log_scaling_factor)
+		{
+		log_scaling_factor = lnf;
+		counts_dirty = true;
+		topo_priors_dirty = true;
+		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns current value of the `log_scaling_factor' data member.
+*/
+inline double TopoPriorCalculator::GetLnScalingFactor() const
+	{
+	return log_scaling_factor;
+	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns copy of the `topology_prior' vector, which contains in its mth element the unnormalized prior for tree 

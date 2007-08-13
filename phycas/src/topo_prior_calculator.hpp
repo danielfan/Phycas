@@ -30,8 +30,7 @@ typedef boost::shared_ptr<Tree> TreeShPtr;
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes topological priors used by BushMove to handle polytomous trees in MCMC analyses. Also provides several
-|	utility functions for computing the number of tree topologies with varying degrees of resolution. This class 
-|	combines functions from two classes used in the former non-Python version of Phycas, TreeCounter and PriorSummary.
+|	utility functions for computing the number of tree topologies with varying degrees of resolution.
 */
 class TopoPriorCalculator
 	{
@@ -51,9 +50,17 @@ class TopoPriorCalculator
 		void							ChooseRooted();
 		void							ChooseUnrooted();
 
+#if POLPY_NEWWAY
+		double							GetLnCount(unsigned n, unsigned m);
+		double							GetLnSaturatedCount(unsigned n);
+		double							GetLnTotalCount(unsigned n);
+		std::vector<int>			    GetNFactorsVect();
+		std::vector<double>				GetLnCounts();
+#else
 		double							GetCount(unsigned n, unsigned m);
 		double							GetSaturatedCount(unsigned n);
 		double							GetTotalCount(unsigned n);
+#endif
 
 		std::vector<double>				GetCountsVect();
 
@@ -62,6 +69,11 @@ class TopoPriorCalculator
 
 		void							SetC(double c);
 		double							GetC() const;
+
+#if POLPY_NEWWAY
+		void							SetLnScalingFactor(double lnf);
+		double							GetLnScalingFactor() const;
+#endif
 
 		double							GetLnTopologyPrior(unsigned m);
 		double							GetLnNormalizedTopologyPrior(unsigned m);
@@ -74,8 +86,10 @@ class TopoPriorCalculator
 
 	private:
 
-		void							RecalcCountsAndPriorsImpl(unsigned n); // clears topo_priors_dirty
+		void							RecalcCountsAndPriorsImpl(unsigned n);
+#if POLPY_OLDWAY
 		void							AddNextCount(unsigned k);
+#endif
 		void							RecalcPriorsImpl();
 
 		unsigned						ntax;						/**< TopoPriorCalculator is currently holding counts for this number of taxa */
@@ -85,7 +99,13 @@ class TopoPriorCalculator
 
 		bool							topo_priors_dirty;			/**< True if `ntax', `C', `is_rooted', or `is_resolution_class_prior' has changed since Reset was last called. Causes Reset to be called if any function is called that requires access to either `counts' or `polytomy_prior' */
 
-		std::vector<double> 			counts;						/**< Vector of length `ntax' holding counts for trees having all possible numbers of internal nodes */
+#if POLPY_NEWWAY
+        double							log_scaling_factor;			/**< The natural log of the base scaling factor; the scaling factor raised to some power is removed from each count in `counts' for large numbers of taxa */
+        std::vector<int>			    nfactors;				    /**< Holds, for each count in `counts', the number of times a factor `scaling_factor' needed to be removed from the count (count i is thus counts[i]*(scaling_factor^nfactors[i])) */
+        double							log_total_count;			/**< Holds the natural log of the sum of all counts (useful for normalizing) */
+		bool							counts_dirty;			    /**< True if counts need to be recalculated */
+#endif
+		std::vector<double> 			counts;						/**< Vector of length `ntax' holding counts for trees having all possible numbers of internal nodes for ntax taxa (note: counts might be scaled; see `scaling_factor' and the `nfactors' vector) */
 		std::vector<double>				topology_prior;				/**< Vector the mth element of which holds the unnormalized prior probability of a tree with m internal nodes; the 0th element holds the normalizing constant */
 	};
 

@@ -54,7 +54,7 @@ class TopoPriorCalculator(TopoPriorCalculatorBase):
     >>> c1 = [i+1 for i in range(15)]
     >>> 
     >>> # compute counts of trees in different resolution classes
-    >>> c2 = tpc.getCountsVect()
+    >>> c2 = tpc.getLnCounts()
     >>> 
     >>> # compute polytomy prior with C = 1
     >>> tpc.setC(1.0)
@@ -87,7 +87,7 @@ class TopoPriorCalculator(TopoPriorCalculatorBase):
     >>> for m in c1:
     ...     s = '%6d %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f' % (
     ...        m,
-    ...        math.log(c2[m], 10),
+    ...        c2[m]/math.log(10.0),
     ...        math.exp(c3[m] - c3[0]),
     ...        math.exp(c4[m] - c4[0]),
     ...        math.exp(c5[m] - c5[0]),

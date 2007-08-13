@@ -455,26 +455,27 @@ class Phycas:
                 
     def showTopoPriorInfo(self):
         self.output('Topology prior:')
+        #raw_input('stopped in showTopoPriorInfo')
         if not self.allow_polytomies:
             self.output('  flat across all fully-resolved tree topologies (polytomies not allowed)')
         else:            
-            self.output('  Prior type:',)
             if self.topo_prior_calculator.isPolytomyPrior():
-                self.output('polytomy prior')
+                self.output('  Prior type: polytomy prior')
             else:
-                self.output('resolution class prior')
+                self.output('  Prior type: resolution class prior')
             self.output('  Prior strength (C): %s' % self.topo_prior_calculator.getC())
-            self.output('  Expected prior probability for each resolution class:')
+            self.output('  Prior probability for each resolution class:')
             self.output('   class        prior')
             self.output('  -------------------')
             topo_priors = self.topo_prior_calculator.getRealizedResClassPriorsVect()
             for i,v in enumerate(topo_priors):
                 if i == 0:
-                    denom = v
+                    denom = v   # first element of vector is log of normalization constant (sum of all other elements)
+                    #self.output('%8d %12.5f (log of normalizing constant)' % (i, v))
                 else:
                     self.output('%8d %12.5f' % (i,math.exp(v - denom)))
+                    #self.output('%8d %12.5f (%.5f)' % (i, v, v - denom))
             print
-            #raw_input('stopped after outputting topo prior table')
 
     def setupLikelihood(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
