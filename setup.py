@@ -36,6 +36,10 @@ data_all = [
           'Tests/FixedParams/FixedParams.py',
           'Tests/FixedParams/reference_output/params.p',
           'Tests/FixedParams/reference_output/trees.t',
+          'Tests/GTRTest/__init__.py',
+          'Tests/GTRTest/GTRTest.py',
+          'Tests/GTRTest/reference_output/gtr_test.p',
+          'Tests/GTRTest/reference_output/gtr_test.t',
           'Tests/GelfandGhosh/__init__.py',
           'Tests/GelfandGhosh/GelfandGhosh.py',
           'Tests/GelfandGhosh/reference_output/analHKY.nex.p',
@@ -51,8 +55,8 @@ data_all = [
           'Tests/LikelihoodTest/reference_output/simulated.nex',
           'Tests/Polytomies/__init__.py',
           'Tests/Polytomies/Polytomies.py',
-          'Tests/Polytomies/reference_output/analHKY.nex.p',
-          'Tests/Polytomies/reference_output/analHKY.nex.t',
+          'Tests/Polytomies/reference_output/HKYpolytomy.p',
+          'Tests/Polytomies/reference_output/HKYpolytomy.t',
           'Tests/Polytomies/reference_output/simHKY.nex',
           'Tests/Simulator/__init__.py',
           'Tests/Simulator/Simulator.py',
@@ -64,12 +68,12 @@ data_all = [
           'Examples/Simplest/green.nex'
           ]
 
-data_windows_only = [
-                  'Tests/cleanall.bat',
-                  'Tests/doctestall.bat',
-                  'Tests/runall.bat'
-                  ]
-data_windows_only.extend(data_all)
+#data_windows_only = [
+#                  'Tests/cleanall.bat',
+#                  'Tests/doctestall.bat',
+#                  'Tests/runall.bat'
+#                  ]
+#data_windows_only.extend(data_all)
 
 windows_package_data = {
                     'phycas.Conversions': ['*.pyd','*.dll'],
@@ -79,7 +83,8 @@ windows_package_data = {
                     'phycas.Phylogeny': ['*.pyd'],
                     'phycas.ReadNexus': ['*.pyd']
                     }
-windows_package_data.update({'phycas': data_windows_only})
+#windows_package_data.update({'phycas': data_windows_only})
+windows_package_data.update({'phycas': data_all})
 
 isWin = sys.platform == 'win32'
 

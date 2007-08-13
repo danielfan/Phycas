@@ -48,6 +48,9 @@ recursive-include phycas/Tests/FixedParams/reference_output *
 recursive-include phycas/Tests/GelfandGhosh *.py
 recursive-include phycas/Tests/GelfandGhosh/reference_output *
 
+recursive-include phycas/Tests/GTRTest *.py
+recursive-include phycas/Tests/GTRTest/reference_output *
+
 recursive-include phycas/Tests/LikelihoodTest *.py
 recursive-include phycas/Tests/LikelihoodTest/reference_output *
 

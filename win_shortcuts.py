@@ -24,8 +24,8 @@ if len(sys.argv) > 0 and sys.argv[1] == '-install':
     file_created(os.path.join(Phycas_shortcuts, filename))
     os.remove(filename)
 
-    # Create shortcut to runall.bat file
-    target = os.path.join(site_packages, 'phycas', 'Tests', 'runall.bat')
+    # Create shortcut to runall.py file
+    target = os.path.join(site_packages, 'phycas', 'Tests', 'runall.py')
     description = 'Batch file that tests examples that come with Phycas'
     filename = 'Test Phycas Example Scripts.lnk'
     arguments = ''
@@ -35,8 +35,8 @@ if len(sys.argv) > 0 and sys.argv[1] == '-install':
     file_created(os.path.join(Phycas_shortcuts, filename))
     os.remove(filename)
 
-    # Create shortcut to doctestall.bat file
-    target = os.path.join(site_packages, 'phycas', 'Tests', 'doctestall.bat')
+    # Create shortcut to doctestall.py file
+    target = os.path.join(site_packages, 'phycas', 'Tests', 'doctestall.py')
     description = 'Batch file that tests examples embedded within Phycas online documentation'
     filename = 'Test Examples Within Phycas Documentation.lnk'
     arguments = ''

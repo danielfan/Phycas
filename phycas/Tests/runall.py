@@ -62,6 +62,5 @@ runTest(outFile, "LikelihoodTest", ["simulated.nex", "check.nex"])
 runTest(outFile, "Polytomies", ["simHKY.nex"] + mcmcOutputs(["HKYpolytomy"]))
 runTest(outFile, "Simulator", ["simulated.nex"])
 
-if sys.platform == "win32":
+if sys.platform == 'win32':
     raw_input('Press any key to quit')
-    
