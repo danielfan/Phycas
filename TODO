@@ -1,4 +1,5 @@
 The TO DO list (roughly in order of importance):
+o run times overflow currently if the run is longer than about an hour, sometimes yielding negative run times!
 o write a user manual and tutorial
 o add a sumt equivalent so that runs involving polytomies can be easily summarized
 o add a sump equivalent so that runs involving FLEXCAT model can be summarized

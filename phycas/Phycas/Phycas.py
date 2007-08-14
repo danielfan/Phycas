@@ -192,6 +192,11 @@ class Phycas:
         self.separate_int_ext_edgelen_priors = False
         self.logf = None
 
+    def updateElapsedSecs(self):        
+        self.timer_stop = time.clock()
+        self.elapsed_secs += self.timer_stop - self.timer_start
+        self.timer_start = time.clock()
+
     def shutdown(self):
         if self.logf:
             self.logf.close()
@@ -563,17 +568,12 @@ class Phycas:
 
         self.setupModel()
 
-        #NEWWAY
         if self.data_source == 'memory':
             assert self.__dict__.get('likelihood') is not None, "data_source == 'memory' implies that likelihood object exists"
             self.likelihood.replaceModel(self.model)
         else:
             self.setupLikelihood()
         
-        #OLDWAY
-        #if self.__dict__.get('likelihood') is None:
-        #    self.setupLikelihood()
-
         self.copyDataMatrix();            
         self.npatterns = self.likelihood.getNPatterns()
 
@@ -809,8 +809,8 @@ class Phycas:
         using experience from past sampling attempts.
         
         """
-        self.timer_stop = time.clock()
-        self.elapsed_secs += self.timer_stop - self.timer_start
+        #self.timer_stop = time.clock()
+        #self.elapsed_secs += self.timer_stop - self.timer_start
 
         summary = ''
         for p in self.chain_manager.getAllUpdaters():
@@ -820,7 +820,7 @@ class Phycas:
             self.output('\nSlice sampler diagnostics:')
             self.output(summary)
             
-        self.timer_start = time.clock()
+        #self.timer_start = time.clock()
 
     #def fillSpectrum(self):
     #    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -971,7 +971,8 @@ class Phycas:
             #    sys.exit()
             #raw_input('stopped after cycle %d' % cycle)
             if self.verbose and (cycle + 1) % self.report_every == 0:
-                msg = 'cycle = %d, lnL = %.5f' % (cycle + 1, self.chain_manager.getLastLnLike())
+                self.updateElapsedSecs()
+                msg = 'cycle = %d, lnL = %.5f, (%.5f secs)' % (cycle + 1, self.chain_manager.getLastLnLike(), self.elapsed_secs)
                 if self.use_flex_model:
                     bytes_per_cla = self.likelihood.bytesPerCLA()
                     ncreated = self.likelihood.numCLAsCreated()
@@ -982,6 +983,7 @@ class Phycas:
                 #    self.tree_viewer.refresh('Cycle %d' % (cycle + 1))
             if (cycle + 1) % self.sample_every == 0:
                 self.recordSample(cycle, self.chain_manager.getLastLnLike())
+                self.updateElapsedSecs()
             if (cycle + 1) % next_adaptation == 0:
                 self.adaptSliceSamplers()
                 next_adaptation += 2*(next_adaptation - last_adaptation)
