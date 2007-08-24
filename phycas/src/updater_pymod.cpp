@@ -65,6 +65,15 @@ void updater_pymod()
 		.def("freeParameter", &MCMCUpdater::freeParameter)
 		.def("getDebugInfo", &MCMCUpdater::getDebugInfo)
 		.def("setSaveDebugInfo", &MCMCUpdater::setSaveDebugInfo)
+#if POLPY_NEWWAY
+		.def("setPower", &MCMCUpdater::setPower)
+		.def("getPower", &MCMCUpdater::getPower)
+		.def("setStandardHeating", &MCMCUpdater::setStandardHeating)
+		.def("setLikelihoodHeating", &MCMCUpdater::setLikelihoodHeating)
+		.def("isStandardHeating", &MCMCUpdater::isStandardHeating)
+		.def("isLikelihoodHeating", &MCMCUpdater::isLikelihoodHeating)
+		.def("isNoHeating", &MCMCUpdater::isNoHeating)
+#endif
 		;
 	class_<phycas::KappaParam, bases<phycas::MCMCUpdater, AdHocDensity>, 
 		boost::noncopyable, boost::shared_ptr<phycas::KappaParam> >("KappaParam")

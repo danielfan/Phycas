@@ -4,15 +4,17 @@ from phycas import *
 
 phycas = Phycas()
 phycas.outfile_prefix = 'gtr_test'
+phycas.nchains = 1
 phycas.ncycles = 100
-phycas.sample_every = 5 
-phycas.report_every = 20 
+phycas.sample_every = 5
+phycas.report_every = 20
 phycas.adapt_first = 10
 phycas.verbose = True
 phycas.ls_move_weight = 100
 phycas.tree_scaler_weight = 1
 phycas.slice_weight = 1
 phycas.slice_max_units = 0
+phycas.starting_shape = 2.0
 phycas.use_inverse_shape = True
 phycas.using_hyperprior = True
 phycas.starting_tree_source = 'random'

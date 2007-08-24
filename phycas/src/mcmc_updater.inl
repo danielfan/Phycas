@@ -42,6 +42,10 @@ inline MCMCUpdater::MCMCUpdater()
   is_hyper_param(false), 
   is_fixed(false),
   slice_max_units(UINT_MAX),
+#if POLPY_NEWWAY
+  heating_power(1.0),
+  is_standard_heating(true),
+#endif
   save_debug_info(false)
 	{
 	//ln_zero = std::log(std::numeric_limits<double>::denorm_min()); // this doesn't work, lnL can get much lower than the log of dnorm_min!
@@ -287,6 +291,26 @@ inline void MCMCUpdater::setChainManager(
 	if (has_slice_sampler)
 		createSliceSampler();
 	}
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Useful primarily for debugging, this function uses the supplied value `x' rather than `curr_value' to set the value
+|   of `curr_ln_prior' for this updater.
+*/
+inline double MCMCUpdater::setCurrLnPrior(
+  double x) /**< is the value to use, temporarily, to set the prior */
+    {
+	try 
+		{
+		curr_ln_prior = prior->GetLnPDF(x);
+		}
+	catch(XProbDist &)
+		{
+		curr_ln_prior = prior->GetRelativeLnPDF(x);
+		}
+	return curr_ln_prior;
+    }
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calls `prior'->GetLnPDF(`curr_value') to recalculate `curr_ln_prior'. This function is important because the 

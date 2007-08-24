@@ -202,6 +202,7 @@ class TreeLikelihood
 		VecStateList					state_list;				/**< The global lookup table for decoding coded states */
 		VecStateListPos					state_list_pos;			/**< The vector of positions of states in `state_list' */
 
+        //POL_BOOKMARK
 		std::vector<double>				rate_means;				/**< Vector of relative rates */
 		std::vector<double>				rate_probs;				/**< Vector of relative rate probabilities */
 

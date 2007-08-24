@@ -28,6 +28,50 @@
 using std::cout;
 using namespace phycas;
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the value of `gamma_rates_unnorm[param_index]'.
+*/
+double Model::getFlexRateUnnorm(
+  unsigned param_index)		/**< the 0-based index into the `gamma_rates_unnorm' vector of the element to return */
+	{
+	return gamma_rates_unnorm[param_index];
+	}
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the value of `gamma_rate_probs[param_index]'.
+*/
+double Model::getFlexProbUnnorm(
+  unsigned param_index)		/**< the 0-based index into the `gamma_rate_probs' vector of the element to return */
+	{
+	return gamma_rate_probs[param_index];
+	}
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the value of `rel_rates[param_index]'.
+*/
+double GTR::getRelRateUnnorm(
+  unsigned param_index)		/**< the 0-based index into the `gamma_rate_probs' vector of the element to return */
+	{
+	return rel_rates[param_index];
+	}
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the value of `state_freq_unnorm[param_index]'.
+*/
+double Model::getStateFreqUnnorm(
+  unsigned param_index)		/**< the 0-based index into the `state_freq_unnorm' vector of the element to return */
+	{
+	return state_freq_unnorm[param_index];
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	The base class version of this function should be called by all derived classes because it is where the edge 
 |	length parameters, the edge length hyperparameters and rate heterogeneity (gamma shape and pinvar) parameters are 
@@ -160,7 +204,14 @@ void Model::createParameters(
 		PHYCAS_ASSERT(num_gamma_rates > 1);
 		PHYCAS_ASSERT(!gamma_shape_param);
 		gamma_shape_param = MCMCUpdaterShPtr(new DiscreteGammaShapeParam(invert_shape));
+#if POLPY_NEWWAY
+        if (invert_shape)
+    		gamma_shape_param->setName("Discrete gamma variance"); //@POL shouldn't this be done in the constructor?
+        else
+    		gamma_shape_param->setName("Discrete gamma shape"); //@POL shouldn't this be done in the constructor?
+#else
 		gamma_shape_param->setName("Discrete gamma shape"); //@POL shouldn't this be done in the constructor?
+#endif
         gamma_shape_param->setStartingValue(gamma_shape);
 		gamma_shape_param->setTree(t);
 		gamma_shape_param->setPrior(gamma_shape_prior);

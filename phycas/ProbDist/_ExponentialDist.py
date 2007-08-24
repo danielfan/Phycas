@@ -26,6 +26,14 @@ class ExponentialDist(ExponentialDistBase):
         """
         ExponentialDistBase.__init__(self, hazard)
         
+    def clone(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Creates a copy of this Exponential distribution.
+        
+        """
+        return ExponentialDistBase.clone(self)
+        
     def isDiscrete(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """

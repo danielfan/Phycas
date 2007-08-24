@@ -4,6 +4,7 @@ warnings.filterwarnings('ignore', '.*second conversion method ignored.*', Runtim
 from phycas.Conversions import *
 from _ProbDist import *
 from _Lot import *
+from _StopWatch import *
 from _SliceSampler import *
 from _NormalDist import *
 from _GammaDist import *
@@ -28,6 +29,7 @@ def testExamples():
     doctest.testfile('_GammaDist.py')
     doctest.testfile('_InverseGammaDist.py')
     doctest.testfile('_Lot.py')
+    doctest.testfile('_StopWatch.py')
     doctest.testfile('_SliceSampler.py')
     doctest.testfile('_UniformDist.py')
     doctest.testfile('_ImproperUniformDist.py')

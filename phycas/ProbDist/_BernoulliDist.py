@@ -22,6 +22,14 @@ class BernoulliDist(BernoulliDistBase):
         """
         BernoulliDistBase.__init__(self, p)
         
+    def clone(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Creates a copy of this Bernoulli distribution.
+        
+        """
+        return BernoulliDistBase.clone(self)
+        
     def isDiscrete(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """

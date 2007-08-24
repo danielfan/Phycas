@@ -48,17 +48,10 @@ TreeScalerMove::TreeScalerMove() : MCMCUpdater()
 */
 void TreeScalerMove::update()
 	{
-    //temporary!
-    //std::cerr << "\nUpdating tree scaler:" << std::endl;
-    //std::cerr << "  before: " << curr_value << std::endl;
-
     if (is_fixed)
 		return;
 
     slice_sampler->Sample();
-
-    //temporary!
-    //std::cerr << "  after: " << curr_value << std::endl;
 
 #if 0
     double v = slice_sampler->GetLastSampledXValue();
@@ -94,16 +87,21 @@ double TreeScalerMove::operator()(
         tree->SetTreeScale(f);
 		recalcPrior();
 
-        //temporary!
-        //std::cerr << "    trying: " << curr_value << std::endl;
-
         likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
 		curr_ln_like = likelihood->calcLnL(tree);
 		ChainManagerShPtr p = chain_mgr.lock();
 		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
 		}
+
+#if POLPY_NEWWAY
+    if (is_standard_heating)
+        return heating_power*(curr_ln_like + curr_ln_prior);
+    else
+        return heating_power*curr_ln_like + curr_ln_prior;
+#else
 	return curr_ln_like + curr_ln_prior;
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -112,14 +110,7 @@ double TreeScalerMove::operator()(
 */
 void TreeScalerMove::rescaleAllEdgeLengths()
 	{
-    //temporary!
-    //double lnLbefore = curr_ln_like;
-    //double lnPriorBefore = curr_ln_prior;
-
     double scaling_factor = curr_value;
-
-    //temporary!
-    //std::cerr << "  scaling edges by a factor of: " << scaling_factor << std::endl;
 
     curr_value = 1.0;
     tree->SetTreeScale(1.0);
@@ -137,16 +128,6 @@ void TreeScalerMove::rescaleAllEdgeLengths()
             nd->SetEdgeLen(new_edgelen);
 			}
 		}
-
-    //temporary!
-	//recalcPrior();
-	//likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
-    //double lnLafter = likelihood->calcLnL(tree);;
-    //double lnPriorAfter = curr_ln_prior;
-    //std::cerr << "      lnPrior before: " << lnPriorBefore << std::endl;
-    //std::cerr << "      lnPrior after:  " << lnPriorAfter << std::endl;
-    //std::cerr << "      lnL before: " << lnLbefore << std::endl;
-    //std::cerr << "      lnL after:  " << lnLafter << std::endl;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

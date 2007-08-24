@@ -315,8 +315,8 @@ void NCatMove::update()
 
 	likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
 	double curr_ln_like		= likelihood->calcLnL(tree);
-	double ln_like_ratio	= curr_ln_like - prev_ln_like;
-	double ln_prior_ratio	= 0.0;
+    double ln_like_ratio	= curr_ln_like - prev_ln_like;
+    double ln_prior_ratio	= 0.0;
 
 	if (addcat_move_proposed)
 		{
@@ -374,6 +374,14 @@ void NCatMove::update()
 
 		ln_prior_ratio = ln_ncat_prior_ratio + ln_rates_prior_ratio + ln_probs_prior_ratio;
 		}
+
+#if POLPY_NEWWAY
+    ln_like_ratio *= heating_power;
+    if (is_standard_heating)
+        {
+        ln_prior_ratio *= heating_power;
+        }
+#endif
 
 	double ln_accept_ratio = ln_like_ratio + ln_prior_ratio + ln_hastings + ln_jacobian;
 	double u = rng->Uniform(FILE_AND_LINE);

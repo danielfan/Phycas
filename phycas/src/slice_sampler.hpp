@@ -399,7 +399,8 @@ inline double SliceSampler::CalcW(double y0) const
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Returns current estimate of mode based on previous sampling. 
+|	Returns current estimate of mode based on previous sampling. Note that this is not the marginal mode! Mode here 
+|   means simply the value corresponding to the highest function value seen thus far. 
 */
 inline double SliceSampler::GetMode() const
 	{
@@ -569,8 +570,10 @@ inline void SliceSampler::SetXValue(double x)
 	if (x != lastSampled.first)
 		{
 		lastSampled.first = x;
+#if POLPY_OLDWAY
 		PHYCAS_ASSERT(func);
 		lastSampled.second = (*func)(x);
+#endif
 		}
 	}
 
@@ -583,10 +586,17 @@ inline double SliceSampler::GetLastSampledXValue()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Returns the value of `lastSampled.second'.
+|	Returns the value of `lastSampled.second'. Note: causes function to be evaluated because, in general, we can never
+|   be sure that the current value stored in lastSampled.second is correct (e.g. if func represents a posterior density,
+|   then changes in other model parameters will cause the posterior density of lastSampled.first to be different than
+|   it was when lastSampled.first was first evaluated).
 */
 inline double SliceSampler::GetLastSampledYValue()
 	{
+#if POLPY_NEWWAY
+	PHYCAS_ASSERT(func);
+	lastSampled.second = (*func)(lastSampled.first);
+#endif
 	return lastSampled.second;
 	}
 
@@ -703,7 +713,7 @@ inline double SliceSampler::Sample()
 	const ParamAndLnProb currentPoint = lastSampled;
 	lastSampled = GetNextSample(currentPoint);
 
-	// Let the new sampled value be the starting point for the next sample
+    // Let the new sampled value be the starting point for the next sample
 	//
 	return lastSampled.first;
 	}

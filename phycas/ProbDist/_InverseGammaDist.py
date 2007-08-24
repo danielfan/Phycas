@@ -39,6 +39,14 @@ class InverseGammaDist(InverseGammaDistBase):
         """
         InverseGammaDistBase.__init__(self, shape, scale)
         
+    def clone(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Creates a copy of this Inverse Gamma distribution.
+        
+        """
+        return InverseGammaDistBase.clone(self)
+        
     def isDiscrete(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """

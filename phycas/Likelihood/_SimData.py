@@ -4,11 +4,11 @@ class SimData(SimDataBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
     This class is a container for simulated data. It stores simulated
-    data internally (in the C++ base class SimDataBase) as a pattern map
+    data internally (in the base class SimDataBase) as a pattern map
     (an associative array in which the first element is a pattern and the
     second element is a count of the number of times that pattern was
     generated). A pattern is a vector (list or tuple in Python
-    terminology) of integers each representing the character state of a
+    terminology) of integers, each representing the character state of a
     single taxon. Before using a SimData object, call the
     resetPatternLength(ntax) function, where ntax is the number of taxa.
     One side effect of the resetPatternLength function is that it deletes
@@ -56,59 +56,64 @@ class SimData(SimDataBase):
            2.0  acac
            1.0  atgc
     
+    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     The second example is more complex, but perhaps closer to the common
-    SimData use case. It is very similar to the example application
-    Simulator. It reads a data file, creates a tree, sets up an HKY model,
-    computes the likelihood for the tree using the data and model, and
-    finishes by simulating a new data set using the transition probability
-    matrices established during the calculation of the likelihood. Note
-    that it is currently not possible to simulate data without first
-    computing the likelihood for a data set already in memory. The
-    likelihood calculation is used to prepare the tree for simulation.
-    In the future this restriction will be removed, but the primary use
-    for simulation in the near future is for posterior predictive
+    SimData use case. It reads a data file, creates a tree, sets up an
+    HKY model, computes the likelihood for the tree using the data and
+    model, and finishes by simulating a new data set using the transition
+    probability matrices established during the calculation of the
+    likelihood. Note that it is currently not possible to simulate data
+    without first computing the likelihood for a data set already in
+    memory. The likelihood calculation is used to prepare the tree for
+    simulation. In the future this restriction will be removed, but
+    presently the only use for simulation is for posterior predictive
     simulation, and in this case the requirement is automatically
     satisfied.
+
+    Note: the >>> have been removed from the following example so that
+    doctest does not see this as an example. The reason for this is that
+    simulation has not yet been fully worked out for the case of multiple
+    chains (svn > 425). -POL 24 Aug 2007
     
-    >>> from phycas import *
-    >>> phycas = Phycas()
-    >>> 
-    >>> # Read a data file
-    >>> phycas.reader.readFile('../Tests/Data/nyldna4.nex')
-    >>> phycas.data_matrix = ReadNexus.getDiscreteMatrix(phycas.reader, 0)
-    >>> phycas.ntax = phycas.data_matrix.getNTax()
-    >>> taxon_names = phycas.reader.getTaxLabels()
-    >>> 
-    >>> # Create a tree
-    >>> phycas.tree = Phylogeny.Tree()
-    >>> model_tree = '(0:0.1,1:0.15,(2:0.025,3:0.15):0.05)'
-    >>> phycas.tree.buildFromString(model_tree)
-    >>> 
-    >>> # Create a model
-    >>> phycas.model = Likelihood.HKYModel()
-    >>> phycas.model.setKappa(4.0)
-    >>> phycas.model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
-    >>> 
-    >>> # Create a likelihood object to orchestrate everything
-    >>> phycas.likelihood = Likelihood.TreeLikelihood(phycas.model)
-    >>> phycas.likelihood.copyDataFromDiscreteMatrix(phycas.data_matrix)
-    >>> 
-    >>> # Prepare the tree (e.g. equip it with transition matrices)
-    >>> phycas.likelihood.prepareForLikelihood(phycas.tree)
-    >>> 
-    >>> # Simulation setup
-    >>> phycas.r.setSeed(13579)
-    >>> phycas.sim_nreps = 1
-    >>> phycas.sim_outfile = 'simout.nex'
-    >>> num_sites = 100
-    >>> 
-    >>> # Simulate the data
-    >>> sim_data = Likelihood.SimData()
-    >>> phycas.likelihood.simulateFirst(sim_data, phycas.tree, phycas.r, num_sites)
-    >>>
-    >>> # Output a table showing the patterns that were simulated and the number of
-    >>> # sites exhibiting each pattern
-    >>> print sim_data.patternTable('A C G T'.split())
+    from phycas import *
+    phycas = Phycas()
+    
+    # Read a data file
+    phycas.reader.readFile('../Tests/Data/nyldna4.nex')
+    phycas.data_matrix = ReadNexus.getDiscreteMatrix(phycas.reader, 0)
+    phycas.ntax = phycas.data_matrix.getNTax()
+    taxon_names = phycas.reader.getTaxLabels()
+    
+    # Create a tree
+    phycas.tree = Phylogeny.Tree()
+    model_tree = '(0:0.1,1:0.15,(2:0.025,3:0.15):0.05)'
+    phycas.tree.buildFromString(model_tree)
+    
+    # Create a model
+    phycas.model = Likelihood.HKYModel()
+    phycas.model.setKappa(4.0)
+    phycas.model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
+    
+    # Create a likelihood object to orchestrate everything
+    phycas.likelihood = Likelihood.TreeLikelihood(phycas.model)
+    phycas.likelihood.copyDataFromDiscreteMatrix(phycas.data_matrix)
+    
+    # Prepare the tree (e.g. equip it with transition matrices)
+    phycas.likelihood.prepareForLikelihood(phycas.tree)
+    
+    # Simulation setup
+    phycas.mcmc_manager.setRandomSeedAllChains(13579)
+    phycas.sim_nreps = 1
+    phycas.sim_outfile = 'simout.nex'
+    num_sites = 100
+    
+    # Simulate the data
+    sim_data = Likelihood.SimData()
+    phycas.likelihood.simulateFirst(sim_data, phycas.tree, phycas.r, num_sites)
+    
+    # Output a table showing the patterns that were simulated and the number of
+    # sites exhibiting each pattern
+    print sim_data.patternTable('A C G T'.split())
          Count  Pattern
            4.0  AAAA
            1.0  AAAC

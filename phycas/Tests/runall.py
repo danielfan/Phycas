@@ -55,12 +55,12 @@ removeFilesIfTheyExist(scriptPar, [outFile])
 # os.chdir(os.path.join(os.path.split(scriptPar)[0], "Examples"))
 
 runTest(outFile, "ExplorePrior", mcmcOutputs(["nodata.nex"]))
-runTest(outFile, "FixedParams", ["params.p", "trees.t"])
-runTest(outFile, "GelfandGhosh", ["ggout.txt", "analHKY.nex.p", "analHKY.nex.t", "analHKYflex.nex.p", "analHKYflex.nex.t", "analHKYg.nex.p", "analHKYg.nex.t"])
+runTest(outFile, "FixedParams", ["fixed.p", "fixed.t"])
+#runTest(outFile, "GelfandGhosh", ["ggout.txt", "analHKY.nex.p", "analHKY.nex.t", "analHKYflex.nex.p", "analHKYflex.nex.t", "analHKYg.nex.p", "analHKYg.nex.t"])
 runTest(outFile, "GTRTest", ["gtr_test.p", "gtr_test.t"])
-runTest(outFile, "LikelihoodTest", ["simulated.nex", "check.nex"])
-runTest(outFile, "Polytomies", ["simHKY.nex"] + mcmcOutputs(["HKYpolytomy"]))
-runTest(outFile, "Simulator", ["simulated.nex"])
+#runTest(outFile, "LikelihoodTest", ["simulated.nex", "check.nex"])
+#runTest(outFile, "Polytomies", ["simHKY.nex"] + mcmcOutputs(["HKYpolytomy"]))
+#runTest(outFile, "Simulator", ["simulated.nex"])
 
 if sys.platform == 'win32':
     raw_input('Press any key to quit')

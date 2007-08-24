@@ -51,6 +51,16 @@ void KappaParam::setModel(ModelShPtr m)
 	// function back to mcmc_param.inl
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Overrides base class version to set `curr_value' to the kappa value in `model'.
+*/
+void KappaParam::setCurrValueFromModel()
+	{
+    curr_value = hky->getKappa();
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	KappaParam is a functor whose operator() returns a value proportional to the full-conditional posterior probability 
 |	density for a particular value of kappa, the transition/transversion rate ratio. If the supplied kappa value `k' is
@@ -76,7 +86,15 @@ double KappaParam::operator()(
 		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
 		}
-	return curr_ln_like + curr_ln_prior;
+
+#if POLPY_NEWWAY
+    if (is_standard_heating)
+        return heating_power*(curr_ln_like + curr_ln_prior);
+    else
+        return heating_power*curr_ln_like + curr_ln_prior;
+#else
+    return curr_ln_like + curr_ln_prior;
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -92,6 +110,16 @@ void GTRRateParam::setModel(ModelShPtr m)
 
 	// If tempted to move this to mcmc_param.inl, see comment in KappaParam::setModel function
 	}
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Overrides base class version to set `curr_value' to the corresponding relative rate value in `model'.
+*/
+void GTRRateParam::setCurrValueFromModel()
+	{
+    curr_value = gtr->getRelRateUnnorm(which);
+	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	GTRRateParam is a functor whose operator() returns a value proportional to the full-conditional posterior 
@@ -119,7 +147,14 @@ double GTRRateParam::operator()(
 		p->setLastLnLike(curr_ln_like);
 		}
 
-	return curr_ln_like + curr_ln_prior;
+#if POLPY_NEWWAY
+    if (is_standard_heating)
+        return heating_power*(curr_ln_like + curr_ln_prior);
+    else
+        return heating_power*curr_ln_like + curr_ln_prior;
+#else
+    return curr_ln_like + curr_ln_prior;
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -143,6 +178,16 @@ void OmegaParam::setModel(ModelShPtr m)
 	// Decided to add this comment because otherwise I will forget this and be tempted to move the 
 	// function back to mcmc_param.inl
 	}
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Overrides base class version to set `curr_value' to the value of `omega' in `model'.
+*/
+void OmegaParam::setCurrValueFromModel()
+	{
+    curr_value = codon->getOmega();
+	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	OmegaParam is a functor whose operator() returns a value proportional to the full-conditional posterior probability 
@@ -169,8 +214,26 @@ double OmegaParam::operator()(
 		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
 		}
-	return curr_ln_like + curr_ln_prior;
+
+#if POLPY_NEWWAY
+    if (is_standard_heating)
+        return heating_power*(curr_ln_like + curr_ln_prior);
+    else
+        return heating_power*curr_ln_like + curr_ln_prior;
+#else
+    return curr_ln_like + curr_ln_prior;
+#endif
 	}
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Overrides base class version to set `curr_value' to the value of `gamma_shape' in `model'.
+*/
+void DiscreteGammaShapeParam::setCurrValueFromModel()
+	{
+    curr_value = model->getShape();
+	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	DiscreteGammaShapeParam is a functor whose operator() returns a value proportional to the full-conditional posterior
@@ -199,8 +262,26 @@ double DiscreteGammaShapeParam::operator()(
 		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
 		}
-	return curr_ln_like + curr_ln_prior;
+
+#if POLPY_NEWWAY
+    if (is_standard_heating)
+        return heating_power*(curr_ln_like + curr_ln_prior);
+    else
+        return heating_power*curr_ln_like + curr_ln_prior;
+#else
+    return curr_ln_like + curr_ln_prior;
+#endif
 	}
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Overrides base class version to set `curr_value' to the value of `pinvar' in `model'.
+*/
+void PinvarParam::setCurrValueFromModel()
+	{
+    curr_value = model->getPinvar();
+	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	PinvarParam is a functor whose operator() returns a value proportional to the full-conditional posterior
@@ -226,8 +307,26 @@ double PinvarParam::operator()(
 		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
 		}
-	return curr_ln_like + curr_ln_prior;
+
+#if POLPY_NEWWAY
+    if (is_standard_heating)
+        return heating_power*(curr_ln_like + curr_ln_prior);
+    else
+        return heating_power*curr_ln_like + curr_ln_prior;
+#else
+    return curr_ln_like + curr_ln_prior;
+#endif
 	}
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Overrides base class version to set `curr_value' to the corresponding value of the `pinvar' in `model'.
+*/
+void StateFreqParam::setCurrValueFromModel()
+	{
+    curr_value = model->getStateFreqUnnorm(which);
+	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	StateFreqParam is a functor whose operator() returns a value proportional to the full-conditional posterior 
@@ -258,8 +357,26 @@ double StateFreqParam::operator()(
 		p->setLastLnLike(curr_ln_like);
 		}
 
-	return curr_ln_like + curr_ln_prior;
+
+#if POLPY_NEWWAY
+    if (is_standard_heating)
+        return heating_power*(curr_ln_like + curr_ln_prior);
+    else
+        return heating_power*curr_ln_like + curr_ln_prior;
+#else
+    return curr_ln_like + curr_ln_prior;
+#endif
 	}
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Overrides base class version to set `curr_value' to the corresponding value of the `pinvar' in `model'.
+*/
+void HyperPriorParam::setCurrValueFromModel()
+	{
+    //@POL hyperparameters should be part of the model, but currently they are not
+	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	HyperPriorParam is a functor whose operator() returns a value proportional to the full-conditional posterior 
@@ -276,7 +393,7 @@ double HyperPriorParam::operator()(
 
 	if (mu > 0.0)
 		{
-		// no need to invalidate all CLAs because ony the prior is changing
+		// no need to invalidate all CLAs because only the prior is changing
 		curr_ln_like = likelihood->calcLnL(tree);
 		curr_value = mu;
 		recalcPrior();
@@ -290,7 +407,14 @@ double HyperPriorParam::operator()(
 		p->setLastLnLike(curr_ln_like);
 		}
 
+#if POLPY_NEWWAY
+    if (is_standard_heating)
+        return heating_power*(curr_ln_like + edgeLensLnPrior + curr_ln_prior);
+    else
+        return heating_power*curr_ln_like + edgeLensLnPrior + curr_ln_prior;
+#else
 	return curr_ln_like + edgeLensLnPrior + curr_ln_prior;
+#endif
 	}
 
 }	// namespace phycas

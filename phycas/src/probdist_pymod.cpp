@@ -29,6 +29,11 @@
 
 #include "basic_lot.hpp"
 #include "probability_distribution.hpp"
+
+#if POLPY_NEWWAY
+#include "stop_watch.hpp"
+#endif
+
 #include "slice_sampler.hpp"
 #include "xprobdist.hpp"
 
@@ -112,6 +117,18 @@ BOOST_PYTHON_MODULE(_ProbDist)
 		.def("setXValue", &SliceSampler::SetXValue)
 		;
 
+#if POLPY_NEWWAY
+	class_<phycas::StopWatch, boost::shared_ptr<phycas::StopWatch>, boost::noncopyable>("StopWatchBase")
+		.def("start", &phycas::StopWatch::start)
+		.def("stop", &phycas::StopWatch::stop)
+		.def("reset", &phycas::StopWatch::reset)
+		.def("normalize", &phycas::StopWatch::normalize)
+		.def("elapsedSeconds", &phycas::StopWatch::elapsedSeconds)
+		.def("stopTicks", &phycas::StopWatch::stopTicks)
+		.def("doofus", &phycas::StopWatch::doofus)
+		;
+#endif
+
 //We tell boost::python the smart pointer type we're using, like this:
 //class_<DrawableInterface, DrawablePtr, boost::noncopyable>
 //("DrawableInterface", no_init)
@@ -128,6 +145,10 @@ BOOST_PYTHON_MODULE(_ProbDist)
 
 	class_<DirichletDistribution>("DirichletDistBase")
 		.def(init<const std::vector<double> &>())
+#if POLPY_NEWWAY
+		.def(init<const DirichletDistribution &>())
+		.def("clone", &DirichletDistribution::Clone, return_value_policy<manage_new_object>())
+#endif
 		.def("isDiscrete", &DirichletDistribution::IsDiscrete)
 		.def("getDistName", &DirichletDistribution::GetDistributionName)
 		.def("__str__", &DirichletDistribution::GetDescriptionForPython)
@@ -148,6 +169,10 @@ BOOST_PYTHON_MODULE(_ProbDist)
 		;
 	class_<BetaDistribution, bases<ProbabilityDistribution, AdHocDensity> >("BetaDistBase")
 		.def(init<double, double>())
+#if POLPY_NEWWAY
+		.def(init<const BetaDistribution &>())
+		.def("clone", &BetaDistribution::Clone, return_value_policy<manage_new_object>())
+#endif
 		.def("isDiscrete", &BetaDistribution::IsDiscrete)
 		.def("getDistName", &BetaDistribution::GetDistributionName)
 		.def("__str__", &BetaDistribution::GetDistributionDescription)
@@ -166,6 +191,10 @@ BOOST_PYTHON_MODULE(_ProbDist)
 		;
 	class_<BernoulliDistribution, bases<ProbabilityDistribution> >("BernoulliDistBase")
 		.def(init<double>())
+#if POLPY_NEWWAY
+		.def(init<const BernoulliDistribution &>())
+		.def("clone", &BernoulliDistribution::Clone, return_value_policy<manage_new_object>())
+#endif
 		.def("isDiscrete", &BernoulliDistribution::IsDiscrete)
 		.def("getDistName", &BernoulliDistribution::GetDistributionName)
 		.def("__str__", &BernoulliDistribution::GetDistributionDescription)
@@ -184,6 +213,10 @@ BOOST_PYTHON_MODULE(_ProbDist)
 		;
 	class_<BinomialDistribution, bases<ProbabilityDistribution> >("BinomialDistBase")
 		.def(init<double, double>())
+#if POLPY_NEWWAY
+		.def(init<const BinomialDistribution &>())
+		.def("clone", &BinomialDistribution::Clone, return_value_policy<manage_new_object>())
+#endif
 		.def("isDiscrete", &BinomialDistribution::IsDiscrete)
 		.def("getDistName", &BinomialDistribution::GetDistributionName)
 		.def("__str__", &BinomialDistribution::GetDistributionDescription)
@@ -201,6 +234,10 @@ BOOST_PYTHON_MODULE(_ProbDist)
 		.def("setMeanAndVariance", &BernoulliDistribution::SetMeanAndVariance)
 		;
 	class_<ImproperUniformDistribution, bases<ProbabilityDistribution, AdHocDensity> >("ImproperUniformDistBase")
+#if POLPY_NEWWAY
+		.def(init<const ImproperUniformDistribution &>())
+		.def("clone", &ImproperUniformDistribution::Clone, return_value_policy<manage_new_object>())
+#endif
 		.def("isDiscrete", &ImproperUniformDistribution::IsDiscrete)
 		.def("getDistName", &ImproperUniformDistribution::GetDistributionName)
 		.def("__str__", &ImproperUniformDistribution::GetDistributionDescription)
@@ -219,6 +256,10 @@ BOOST_PYTHON_MODULE(_ProbDist)
 		;
 	class_<UniformDistribution, bases<ProbabilityDistribution, AdHocDensity> >("UniformDistBase")
 		.def(init<double, double>())
+#if POLPY_NEWWAY
+		.def(init<const UniformDistribution &>())
+		.def("clone", &UniformDistribution::Clone, return_value_policy<manage_new_object>())
+#endif
 		.def("isDiscrete", &UniformDistribution::IsDiscrete)
 		.def("getDistName", &UniformDistribution::GetDistributionName)
 		.def("__str__", &UniformDistribution::GetDistributionDescription)
@@ -237,6 +278,10 @@ BOOST_PYTHON_MODULE(_ProbDist)
 		;
 	class_<GammaDistribution, bases<ProbabilityDistribution, AdHocDensity> >("GammaDistBase")
 		.def(init<double, double>())
+#if POLPY_NEWWAY
+		.def(init<const GammaDistribution &>())
+		.def("clone", &GammaDistribution::Clone, return_value_policy<manage_new_object>())
+#endif
 		.def("isDiscrete", &GammaDistribution::IsDiscrete)
 		.def("getDistName", &GammaDistribution::GetDistributionName)
 		.def("__str__", &GammaDistribution::GetDistributionDescription)
@@ -255,6 +300,10 @@ BOOST_PYTHON_MODULE(_ProbDist)
 		;
 	class_<ExponentialDistribution, bases<GammaDistribution, ProbabilityDistribution, AdHocDensity> >("ExponentialDistBase")
 		.def(init<double>())
+#if POLPY_NEWWAY
+		.def(init<const ExponentialDistribution &>())
+		.def("clone", &ExponentialDistribution::Clone, return_value_policy<manage_new_object>())
+#endif
 		.def("isDiscrete", &ExponentialDistribution::IsDiscrete)
 		.def("getDistName", &ExponentialDistribution::GetDistributionName)
 		.def("__str__", &ExponentialDistribution::GetDistributionDescription)
@@ -273,6 +322,10 @@ BOOST_PYTHON_MODULE(_ProbDist)
 		;
 	class_<InverseGammaDistribution, bases<ProbabilityDistribution, AdHocDensity> >("InverseGammaDistBase")
 		.def(init<double, double>())
+#if POLPY_NEWWAY
+		.def(init<const InverseGammaDistribution &>())
+		.def("clone", &InverseGammaDistribution::Clone, return_value_policy<manage_new_object>())
+#endif
 		.def("isDiscrete", &InverseGammaDistribution::IsDiscrete)
 		.def("getDistName", &InverseGammaDistribution::GetDistributionName)
 		.def("__str__", &InverseGammaDistribution::GetDistributionDescription)
@@ -291,6 +344,10 @@ BOOST_PYTHON_MODULE(_ProbDist)
 		;
 	class_<NormalDistribution, bases<ProbabilityDistribution, AdHocDensity> >("NormalDistBase")
 		.def(init<double, double>())
+#if POLPY_NEWWAY
+		.def(init<const NormalDistribution &>())
+		.def("clone", &NormalDistribution::Clone, return_value_policy<manage_new_object>())
+#endif
 		.def("isDiscrete", &NormalDistribution::IsDiscrete)
 		.def("getDistName", &NormalDistribution::GetDistributionName)
 		.def("__str__", &NormalDistribution::GetDistributionDescription)

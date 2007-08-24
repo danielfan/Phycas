@@ -22,6 +22,14 @@ class NormalDist(NormalDistBase):
         """
         NormalDistBase.__init__(self, mean, stddev)
         
+    def clone(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Creates a copy of this Normal distribution.
+        
+        """
+        return NormalDistBase.clone(self)
+        
     def isDiscrete(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """

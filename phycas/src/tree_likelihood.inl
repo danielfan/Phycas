@@ -45,7 +45,7 @@ inline TreeLikelihood::TreeLikelihood(
   num_states(mod->getNStates()),
   num_rates(mod->getNRatesTotal()),
   model(mod), 
-  rate_means(mod->getNRatesTotal(), 1.0), 
+  rate_means(mod->getNRatesTotal(), 1.0), //POL_BOOKMARK
   rate_probs(mod->getNRatesTotal(), 1.0), 
   nevals(0)
 	{
@@ -393,7 +393,7 @@ inline void TreeLikelihood::recalcRelativeRates()
 	{
 	num_states = model->getNStates();
 	num_rates = model->getNRatesTotal();
-	model->recalcRatesAndProbs(rate_means, rate_probs);
+	model->recalcRatesAndProbs(rate_means, rate_probs); //POL_BOOKMARK
 	likelihood_rate_site.resize(num_rates*num_patterns, 0.0);
 	if (!no_data)
 		cla_pool.setCondLikeDimensions(num_patterns, num_rates, num_states);
@@ -471,7 +471,7 @@ inline const VecStateListPos & TreeLikelihood::getStateListPos() const
 */
 inline const std::vector<double> & TreeLikelihood::getRateMeans() const
 	{
-	return rate_means;
+	return rate_means; //POL_BOOKMARK
 	}
 
 

@@ -20,6 +20,14 @@ class DirichletDist(DirichletDistBase):
         """
         DirichletDistBase.__init__(self, c)
         
+    def clone(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Creates a copy of this Dirichlet distribution.
+        
+        """
+        return DirichletDistBase.clone(self)
+        
     def isDiscrete(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -126,7 +134,7 @@ class DirichletDist(DirichletDistBase):
         this point, calling setSeed is pointless because you have already
         replaced the random number generator for which you are setting the
         seed! If you have already called setLot, you probably want to call
-        the setSeed function of that Lot ojbect. e.g.,
+        the setSeed function of that Lot ojbect.
 
         >>> from phycas.ProbDist import *
         >>> d = DirichletDist((1,2,3,4))

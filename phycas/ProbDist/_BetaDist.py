@@ -27,6 +27,25 @@ class BetaDist(BetaDistBase):
         """
         BetaDistBase.__init__(self, a, b)
         
+    def clone(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Creates a copy of this Beta distribution.
+
+        >>> from phycas.ProbDist import *
+        >>> d1 = BetaDist(2, 3)
+        >>> print d1.getMean()
+        0.4
+        >>> d2 = d1.clone()
+        >>> d2.setMeanAndVariance(0.5, 0.125)
+        >>> print 'd1 mean = %.1f' % d1.getMean()
+        d1 mean = 0.4
+        >>> print 'd2 mean = %.1f' % d2.getMean()
+        d2 mean = 0.5
+        
+        """
+        return BetaDistBase.clone(self)
+        
     def isDiscrete(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -280,7 +299,22 @@ class BetaDist(BetaDistBase):
     def setMeanAndVariance(self, mean, var):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Sets the mean and variance of this distribution. 
+        Sets the mean and variance of this Beta distribution. The values of
+        parameters a and b can be determined from mean and var as follows:
+           a = phi*mean
+           b = phi*(1 - mean)
+           phi = [mean*(1 - mean)/var] - 1
+        So if mean = 0.25, var = 0.0275, we have:
+           phi = 0.25*0.75/0.0275 - 1 = 5.81818
+           a = 5.81818*0.25 = 1.45455
+           b = 5.81818*0.75 = 4.36364
+        Check:
+           mean = a/(a + b)
+                = 1.45455/(1.45455 + 4.36364)
+                = 0.25
+           var  = ab/{[(a + b)^2]*(a + b + 1)}
+                = 6.347132562/(33.8513348761*6.81819)
+                = 0.0275
 
         >>> from phycas.ProbDist import *
         >>> d = BetaDist(2, 3)

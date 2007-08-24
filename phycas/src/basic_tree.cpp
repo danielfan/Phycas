@@ -1308,7 +1308,8 @@ void Tree::BuildFromString(const std::string &newick)
 |	the Newick description. Any nodes having non-empty node names are named in the Newick description. If a tip node
 |	having node number x lacks a name, the "name" used for it in the tree description is x + 1.
 */
-std::string &Tree::AppendNewick(std::string &s)
+std::string & Tree::AppendNewick(
+  std::string & s)  /**< */
 	{
 	if (preorderDirty)
 		RefreshPreorder();

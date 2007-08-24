@@ -25,6 +25,14 @@ class ImproperUniformDist(ImproperUniformDistBase):
         """
         ImproperUniformDistBase.__init__(self)
         
+    def clone(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Creates a copy of this Improper Uniform distribution.
+        
+        """
+        return ImproperUniformDistBase.clone(self)
+        
     def isDiscrete(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """

@@ -23,6 +23,14 @@ class UniformDist(UniformDistBase):
         """
         UniformDistBase.__init__(self, a, b)
         
+    def clone(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Creates a copy of this Uniform distribution.
+        
+        """
+        return UniformDistBase.clone(self)
+        
     def isDiscrete(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """

@@ -94,7 +94,7 @@ class Tree
 		void					RerootAtThisTip(TreeNode * nd);
 		void					RerootAtThisInternal(TreeNode * nd);
 		void					RerootAtTip(unsigned num);
-		void					RefreshPreorder(TreeNode *nd = NULL);
+		void					RefreshPreorder(TreeNode * nd = NULL);
 		std::string &			AppendNewick(std::string &);
 		std::string				MakeNewick();
 		bool					SetNumberFromName(TreeNode * nd, std::set<unsigned> & used);

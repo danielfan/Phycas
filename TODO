@@ -20,5 +20,7 @@ o standard Mkv morphology model
 o "episodic rates" version of the Mk model
 o ensure that all routines called from python are represented in *.py wrappers
 o transfer exception handling from C++ code to Python wrappers where possible, replacing exceptions	with asserts on the C++ site
-
-
+o should allow starting trees to be in a different file than the data file (see Phycas.setupTree)
+o should allow nchains starting trees to be specified rather than just using the first one for all chains
+o need a phycas_assert function in Phycas.py that provides less confusing error messages than the standard Python assert
+o 

@@ -30,6 +30,14 @@ class GammaDist(GammaDistBase):
         """
         GammaDistBase.__init__(self, shape, scale)
         
+    def clone(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Creates a copy of this Gamma distribution.
+        
+        """
+        return GammaDistBase.clone(self)
+        
     def isDiscrete(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """

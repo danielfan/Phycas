@@ -73,6 +73,9 @@ class Model	{
 		virtual void					setNucleotideFreqs(double freqA, double freqC, double freqG, double freqT);
 		virtual void					setAllFreqsEqual();
 		virtual void					setStateFreqUnnorm(unsigned param_index, double value);
+#if POLPY_NEWWAY
+        double						    getStateFreqUnnorm(unsigned param_index);
+#endif
 		void							normalizeFreqs();
 
 		// Member functions related to relative rates
@@ -102,6 +105,10 @@ class Model	{
 		ProbDistShPtr					getFLEXProbParamPrior();
 		virtual void					setFlexRateUnnorm(unsigned param_index, double value);
 		virtual void					setFlexProbUnnorm(unsigned param_index, double value);
+#if POLPY_NEWWAY
+		double                          getFlexRateUnnorm(unsigned param_index);
+		double					        getFlexProbUnnorm(unsigned param_index);
+#endif
 		void							normalizeRatesAndProbs(std::vector<double> & rates, std::vector<double> & probs) const;
 		
 		// Member functions related to proportion of invariable sites
@@ -283,12 +290,15 @@ class GTR: public Model
 		std::vector<double>			getRelRates();
 		void						setRelRates(const std::vector<double> & rates);	
 		void						setRelRateUnnorm(unsigned param_index, double value);
+#if POLPY_NEWWAY
+		double						getRelRateUnnorm(unsigned param_index);
+#endif
 		void						setRelRatePrior(ProbDistShPtr d);
 		ProbDistShPtr				getRelRatePrior();
 		void						setNucleotideFreqs(double freqA, double freqC, double freqG, double freqT);
 		void						setAllFreqsEqual();
 		void						setStateFreqUnnorm(unsigned param_index, double value);
-		void						setStateFreqParamPrior(ProbDistShPtr d);
+        void						setStateFreqParamPrior(ProbDistShPtr d);
 		ProbDistShPtr				getStateFreqParamPrior();
 		virtual std::string			paramHeader() const;
 		virtual std::string			paramReport() const;

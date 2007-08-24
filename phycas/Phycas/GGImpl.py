@@ -15,18 +15,18 @@ class GelfandGhosh():
         
         """
         # copy relevant setup information from phycas object
-        self.outfname = phycas.gg_outfile
-        self.datafname = phycas.data_file_name
-        self.paramfname = phycas.gg_pfile
-        self.treefname = phycas.gg_tfile
-        self.gg_nreps = phycas.gg_nreps
-        self.gg_kvect = phycas.gg_kvect
-        self.gg_burnin = phycas.gg_burnin
-        self.rnseed = phycas.random_seed
-        self.num_rates = phycas.num_rates
-        self.gg_bin_patterns = phycas.gg_bin_patterns
-        self.gg_save_postpreds = phycas.gg_save_postpreds
-        self.gg_postpred_prefix = phycas.gg_postpred_prefix
+        self.outfname               = phycas.gg_outfile
+        self.datafname              = phycas.data_file_name
+        self.paramfname             = phycas.gg_pfile
+        self.treefname              = phycas.gg_tfile
+        self.gg_nreps               = phycas.gg_nreps
+        self.gg_kvect               = phycas.gg_kvect
+        self.gg_burnin              = phycas.gg_burnin
+        self.rnseed                 = phycas.random_seed
+        self.num_rates              = phycas.num_rates
+        self.gg_bin_patterns        = phycas.gg_bin_patterns
+        self.gg_save_postpreds      = phycas.gg_save_postpreds
+        self.gg_postpred_prefix     = phycas.gg_postpred_prefix
 
         # for debugging and research
         self.gg_save_spectra        = False    # adds all 256 counts for posterior predictive simulated data sets to a file named spectra.txt, with counts separated by tabs (only use for four-taxon problems)

@@ -137,8 +137,23 @@ void EdgeMove::update()
     double curr_edgelen         = origNode->GetEdgeLen();
 	double curr_ln_prior		= (is_internal_edge ? p->calcInternalEdgeLenPriorUnnorm(curr_edgelen) : p->calcExternalEdgeLenPriorUnnorm(curr_edgelen));
 
-	double prev_posterior		= prev_ln_like + prev_ln_prior;
-	double curr_posterior		= curr_ln_like + curr_ln_prior;
+#if POLPY_NEWWAY
+    double prev_posterior = 0.0;
+	double curr_posterior = 0.0;
+    if (is_standard_heating)
+        {
+        prev_posterior = heating_power*(prev_ln_like + prev_ln_prior);
+	    curr_posterior = heating_power*(curr_ln_like + curr_ln_prior);
+        }
+    else
+        {
+        prev_posterior = heating_power*prev_ln_like + prev_ln_prior;
+	    curr_posterior = heating_power*curr_ln_like + curr_ln_prior;
+        }
+#else
+	double prev_posterior = prev_ln_like + prev_ln_prior;
+	double curr_posterior = curr_ln_like + curr_ln_prior;
+#endif
 
 	double ln_hastings			= getLnHastingsRatio();
 

@@ -20,6 +20,14 @@ class BinomialDist(BinomialDistBase):
         """
         BinomialDistBase.__init__(self, n, p)
         
+    def clone(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Creates a copy of this Binomial distribution.
+        
+        """
+        return BinomialDistBase.clone(self)
+        
     def isDiscrete(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """

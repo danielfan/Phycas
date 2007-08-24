@@ -1,57 +1,46 @@
 from phycas import *
 
-phycas = Phycas()
-phycas.r.setSeed(13579)
+phycas                              = Phycas()
 
-# set up HKY model
-phycas.model = Likelihood.HKYModel()
+phycas.nchains                      = 1
 
-phycas.model.setKappa(4.0)
-phycas.model.fixKappa()
-phycas.model.setKappaPrior(ProbDist.ExponentialDist(1.0))
+phycas.random_seed                  = 13579
+phycas.default_model                = 'hky'
 
-phycas.model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
-phycas.model.fixStateFreqs()
-phycas.model.setStateFreqParamPrior(ProbDist.ExponentialDist(1.0))
+phycas.starting_kappa               = 4.0
+phycas.fix_kappa                    = True
+phycas.kappa_prior                  = ProbDist.ExponentialDist(1.0)
 
-phycas.model.setNGammaRates(4)
-phycas.model.setShape(0.14)
-phycas.model.fixShape()
-phycas.model.setDiscreteGammaShapePrior(ProbDist.ExponentialDist(1.0))
+phycas.starting_freqs               = [0.1, 0.2, 0.3, 0.4]
+phycas.fix_freqs                    = True
+phycas.base_freq_param_prior        = ProbDist.ExponentialDist(1.0)
 
-phycas.model.setPinvarModel()
-phycas.model.setPinvar(0.27)
-phycas.model.fixPinvar()
-phycas.model.setPinvarPrior(ProbDist.BetaDist(1.0, 1.0))
+phycas.num_rates                    = 4
+phycas.starting_shape               = 0.14
+phycas.fix_shape                    = True
+phycas.use_inverse_shape            = False
+phycas.gamma_shape_prior            = ProbDist.ExponentialDist(1.0)
 
-phycas.model.fixEdgeLengths()
-phycas.model.setExternalEdgeLenPrior(ProbDist.ExponentialDist(10.0))
-phycas.model.setInternalEdgeLenPrior(ProbDist.ExponentialDist(10.0))
+phycas.estimate_pinvar              = True
+phycas.starting_pinvar              = 0.27
+phycas.fix_pinvar                   = True
+phycas.pinvar_prior                 = ProbDist.BetaDist(1.0, 1.0)
 
-phycas.model.fixEdgeLenHyperprior()
-phycas.model.setEdgeLenHyperPrior(ProbDist.InverseGammaDist(2.1, 0.9090909))
+phycas.fix_edgelens                 = True
+phycas.external_edgelen_dist        = ProbDist.ExponentialDist(10.0)
+phycas.internal_edgelen_dist        = None # ProbDist.ExponentialDist(10.0)
 
-# create a likelihood object and prepare the tree
-phycas.setupLikelihood()
+phycas.using_hyperprior             = True
+phycas.starting_edgelen_hyperparam  = 0.05
+phycas.fix_edgelen_hyperparam       = True
+phycas.edgelen_hyperprior           = ProbDist.InverseGammaDist(2.1, 0.9090909)
 
-# read data file
-phycas.data_source = 'file'
-phycas.readNexusFile('../Data/nyldna4.nex')
+phycas.data_source                  = 'file'
+phycas.data_file_name               = '../Data/nyldna4.nex'
 
-# create a random starting tree
-phycas.setupTree('random')
+phycas.starting_tree_source         = 'random'
 
-# TODO move both of these inside run()
-phycas.likelihood.recalcRelativeRates()
-phycas.likelihood.prepareForLikelihood(phycas.tree)
+phycas.outfile_prefix               = 'fixed'
 
-# Open new parameter and tree files
-# TODO move paramFileOpen and treeFileOpen calls inside run()
-phycas.param_file_name = 'params.p'
-phycas.paramFileOpen()
-phycas.tree_file_name = 'trees.t'
-phycas.taxon_labels = phycas.reader.getTaxLabels() 
-phycas.treeFileOpen()
-
-phycas.ncycles = 2500
-phycas.run()
+phycas.ncycles                      = 2500
+phycas.mcmc()
