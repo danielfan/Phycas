@@ -21,72 +21,20 @@ class MarkovChain:
         """
         self.phycas                             = phycas
         self.heating_power                      = power
-        self.random_seed                        = self.phycas.random_seed
-        self.default_model                      = self.phycas.default_model
-
         self.relrate_prior                      = cloneDistribution(self.phycas.relrate_prior)
-        self.starting_relrates                  = self.phycas.starting_relrates[:]
-        self.fix_relrates                       = self.phycas.fix_relrates
-
         self.base_freq_param_prior              = cloneDistribution(self.phycas.base_freq_param_prior)
-        self.starting_freqs                     = self.phycas.starting_freqs[:]
-        self.fix_freqs                          = self.phycas.fix_freqs
-
         self.gamma_shape_prior                  = cloneDistribution(self.phycas.gamma_shape_prior)
-        self.fix_shape                          = self.phycas.fix_shape
-
-        self.using_hyperprior                   = self.phycas.using_hyperprior
         self.edgelen_hyperprior                 = cloneDistribution(self.phycas.edgelen_hyperprior)
-        self.starting_edgelen_hyperparam        = self.phycas.starting_edgelen_hyperparam
-        self.fix_edgelen_hyperparam             = self.phycas.fix_edgelen_hyperparam
-
         self.external_edgelen_dist              = cloneDistribution(self.phycas.external_edgelen_dist)
         self.internal_edgelen_dist              = cloneDistribution(self.phycas.internal_edgelen_dist)
         self.starting_edgelen_dist              = cloneDistribution(self.phycas.starting_edgelen_dist)
-        self.separate_int_ext_edgelen_priors    = self.phycas.separate_int_ext_edgelen_priors
-        self.fix_edgelens                          = self.phycas.fix_edgelens
-
-        self.starting_relrates                  = self.phycas.starting_relrates
-        self.fix_relrates                       = self.phycas.fix_relrates
-
         self.kappa_prior                        = cloneDistribution(self.phycas.kappa_prior)
-        self.starting_kappa                     = self.phycas.starting_kappa
-        self.fix_kappa                          = self.phycas.fix_kappa
-
-        self.num_rates                          = self.phycas.num_rates
-        self.starting_shape                     = self.phycas.starting_shape
-        self.use_inverse_shape                  = self.phycas.use_inverse_shape
-
-        self.estimate_pinvar                    = self.phycas.estimate_pinvar
         self.pinvar_prior                       = cloneDistribution(self.phycas.pinvar_prior)
-        self.starting_pinvar                    = self.phycas.starting_pinvar
-        self.fix_pinvar                          = self.phycas.fix_pinvar
-
-        self.use_flex_model                     = self.phycas.use_flex_model
         self.flex_prob_param_prior              = cloneDistribution(self.phycas.flex_prob_param_prior)
-        self.flex_L                             = self.phycas.flex_L
-        self.flex_num_spacers                   = self.phycas.flex_num_spacers
-        self.flex_lambda                        = self.phycas.flex_lambda
-        self.flex_phi                           = self.phycas.flex_phi
-        self.flex_ncat_move_weight              = self.phycas.flex_ncat_move_weight
-
-        self.uf_num_edges                       = self.phycas.uf_num_edges
-        self.ntax                               = self.phycas.ntax
         self.r                                  = ProbDist.Lot()
         self.model                              = None
         self.likelihood                         = None
         self.chain_manager                      = None
-        self.slice_max_units                    = self.phycas.slice_max_units
-        self.slice_weight                       = self.phycas.slice_weight
-        self.tree_scaler_weight                 = self.phycas.tree_scaler_weight
-        self.ls_move_weight                     = self.phycas.ls_move_weight
-        self.ls_move_lambda                     = self.phycas.ls_move_lambda
-        self.ls_move_debug                      = self.phycas.ls_move_debug
-        self.allow_polytomies                   = self.phycas.allow_polytomies
-        #self.xxxxxxxxx                          = self.phycas.xxxxx
-        #self.xxxxxxxxx                          = self.phycas.xxxxx
-        #self.xxxxxxxxx                          = self.phycas.xxxxx
-        #self.xxxxxxxxx                          = self.phycas.xxxxx
 
     def resetNEvals(self):
         return self.likelihood.resetNEvals()
@@ -97,13 +45,13 @@ class MarkovChain:
     def paramFileHeader(self, paramf):
         paramf.write('[ID: %d]\n' % self.r.getInitSeed())
         paramf.write(self.model.paramHeader())
-        if self.using_hyperprior:
-            if self.separate_int_ext_edgelen_priors:
+        if self.phycas.using_hyperprior:
+            if self.phycas.separate_int_ext_edgelen_priors:
                 paramf.write('\thyper(external)')
                 paramf.write('\thyper(internal)')
             else:
                 paramf.write('\thyper(all)')
-        if self.use_flex_model:
+        if self.phycas.use_flex_model:
             paramf.write('\trates_probs')
 
     def treeFileHeader(self, treef):
@@ -111,13 +59,13 @@ class MarkovChain:
         treef.write('[ID: %d]\n' % self.r.getInitSeed())
         treef.write('begin trees;\n')
         treef.write('   translate\n')
-        for i in range(self.ntax):
+        for i in range(self.phycas.ntax):
             if self.phycas.taxon_labels[i].find(' ') < 0:
                 # no spaces found in name
-                treef.write('       %d %s%s\n' % (i + 1, self.phycas.taxon_labels[i], i == self.ntax - 1 and ';' or ','))
+                treef.write('       %d %s%s\n' % (i + 1, self.phycas.taxon_labels[i], i == self.phycas.ntax - 1 and ';' or ','))
             else:
                 # at least one space in taxon name, so enclose name in quotes
-                treef.write("       %d '%s'%s\n" % (i + 1, self.phycas.taxon_labels[i], i == self.ntax - 1 and ';' or ','))
+                treef.write("       %d '%s'%s\n" % (i + 1, self.phycas.taxon_labels[i], i == self.phycas.ntax - 1 and ';' or ','))
 
     def setPower(self, power):
         self.heating_power = power
@@ -127,27 +75,12 @@ class MarkovChain:
     def setupChain(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Previous:
-            - r.setSeed(int(self.random_seed))
-            - setupModel()
-            - setupLikelihood()
-            - copyDataMatrix();
-            - * setupTree()
-            - prepareForLikelihood(self.tree)
-            - addMCMCUpdaters
-        Current:
-            - self.r.setSeed(int(self.random_seed))
-            - setup model
-            - * setup tree
-            - setup likelihood
-            - copy data matrix
-            - prepareForLikelihood
-            - addMCMCUpdaters
+        Not yet documented.
         
         """
         # Set seed if user has supplied one
-        if self.random_seed != 0:
-            self.r.setSeed(int(self.random_seed))
+        if self.phycas.random_seed != 0:
+            self.r.setSeed(int(self.phycas.random_seed))
 
         # Make sure that each is using the same pseudorandom number generator object
         self.relrate_prior.setLot(self.r)
@@ -162,82 +95,82 @@ class MarkovChain:
         self.starting_edgelen_dist.setLot(self.r)
         
         # Create a substitution model and define priors for the model parameters
-        if self.default_model in ['gtr','hky']:
-            if self.default_model == 'gtr':
+        if self.phycas.default_model in ['gtr','hky']:
+            if self.phycas.default_model == 'gtr':
                 self.model = Likelihood.GTRModel()
-                self.model.setRelRates(self.starting_relrates)
+                self.model.setRelRates(self.phycas.starting_relrates)
                 self.model.setRelRatePrior(self.relrate_prior)
-                if self.fix_relrates:
+                if self.phycas.fix_relrates:
                     self.model.fixRelRates()
             else:
                 self.model = Likelihood.HKYModel()
-                self.model.setKappa(self.starting_kappa)
-                if self.fix_kappa:
+                self.model.setKappa(self.phycas.starting_kappa)
+                if self.phycas.fix_kappa:
                     self.model.fixKappa()
                 self.model.setKappaPrior(self.kappa_prior)
             self.model.setStateFreqParamPrior(self.base_freq_param_prior)   #POL should be named state_freq_param_prior
-            self.phycas.phycassert(self.starting_freqs, 'starting_freqs is None, but should be a list containing 4 (unnormalized) relative base frequencies')
-            self.phycas.phycassert(len(self.starting_freqs) == 4, 'starting_freqs should be a list containing exactly 4 base frequencies; instead, it contains %d values' % len(self.starting_freqs))
-            self.phycas.phycassert(self.starting_freqs[0] >= 0.0, 'starting_freqs[0] cannot be negative (%f was specified)' % self.starting_freqs[0])
-            self.phycas.phycassert(self.starting_freqs[1] >= 0.0, 'starting_freqs[1] cannot be negative (%f was specified)' % self.starting_freqs[1])
-            self.phycas.phycassert(self.starting_freqs[2] >= 0.0, 'starting_freqs[2] cannot be negative (%f was specified)' % self.starting_freqs[2])
-            self.phycas.phycassert(self.starting_freqs[3] >= 0.0, 'starting_freqs[3] cannot be negative (%f was specified)' % self.starting_freqs[3])
-            self.model.setNucleotideFreqs(self.starting_freqs[0], self.starting_freqs[1], self.starting_freqs[2], self.starting_freqs[3])  #POL should be named setStateFreqs?
-            if self.fix_freqs:
+            self.phycas.phycassert(self.phycas.starting_freqs, 'starting_freqs is None, but should be a list containing 4 (unnormalized) relative base frequencies')
+            self.phycas.phycassert(len(self.phycas.starting_freqs) == 4, 'starting_freqs should be a list containing exactly 4 base frequencies; instead, it contains %d values' % len(self.phycas.starting_freqs))
+            self.phycas.phycassert(self.phycas.starting_freqs[0] >= 0.0, 'starting_freqs[0] cannot be negative (%f was specified)' % self.phycas.starting_freqs[0])
+            self.phycas.phycassert(self.phycas.starting_freqs[1] >= 0.0, 'starting_freqs[1] cannot be negative (%f was specified)' % self.phycas.starting_freqs[1])
+            self.phycas.phycassert(self.phycas.starting_freqs[2] >= 0.0, 'starting_freqs[2] cannot be negative (%f was specified)' % self.phycas.starting_freqs[2])
+            self.phycas.phycassert(self.phycas.starting_freqs[3] >= 0.0, 'starting_freqs[3] cannot be negative (%f was specified)' % self.phycas.starting_freqs[3])
+            self.model.setNucleotideFreqs(self.phycas.starting_freqs[0], self.phycas.starting_freqs[1], self.phycas.starting_freqs[2], self.phycas.starting_freqs[3])  #POL should be named setStateFreqs?
+            if self.phycas.fix_freqs:
                 self.model.fixStateFreqs()
         else:
             self.model = Likelihood.JCModel()
 
         # If rate heterogeneity is to be assumed, add it to the model here
         # Note must defer setting up pattern specific rates model until we know number of patterns
-        if self.use_flex_model:
-            self.model.setNGammaRates(self.num_rates)
+        if self.phycas.use_flex_model:
+            self.model.setNGammaRates(self.phycas.num_rates)
             self.model.setFlexModel()
-            self.model.setFlexRateUpperBound(self.flex_L)
-            self.model.setNumFlexSpacers(self.flex_num_spacers)
+            self.model.setFlexRateUpperBound(self.phycas.flex_L)
+            self.model.setNumFlexSpacers(self.phycas.flex_num_spacers)
             self.model.setFLEXProbParamPrior(self.flex_prob_param_prior)
-        elif self.num_rates > 1:
-            self.model.setNGammaRates(self.num_rates)
-            self.model.setPriorOnShapeInverse(self.use_inverse_shape)
-            self.model.setShape(self.starting_shape)
-            if self.fix_shape:
+        elif self.phycas.num_rates > 1:
+            self.model.setNGammaRates(self.phycas.num_rates)
+            self.model.setPriorOnShapeInverse(self.phycas.use_inverse_shape)
+            self.model.setShape(self.phycas.starting_shape)
+            if self.phycas.fix_shape:
                 self.model.fixShape()
             self.model.setDiscreteGammaShapePrior(self.gamma_shape_prior)
         else:
             self.model.setNGammaRates(1)
             
-        if self.estimate_pinvar:
-            assert not self.use_flex_model, 'Cannot currently use flex model with pinvar'
+        if self.phycas.estimate_pinvar:
+            assert not self.phycas.use_flex_model, 'Cannot currently use flex model with pinvar'
             self.model.setPinvarModel()
-            self.model.setPinvar(self.starting_pinvar)
-            if self.fix_pinvar:
+            self.model.setPinvar(self.phycas.starting_pinvar)
+            if self.phycas.fix_pinvar:
                 self.model.fixPinvar()
             self.model.setPinvarPrior(self.pinvar_prior)
         else:
             self.model.setNotPinvarModel()
         
         # Define edge length prior distributions
-        self.model.separateInternalExternalEdgeLenPriors(self.separate_int_ext_edgelen_priors)
+        self.model.separateInternalExternalEdgeLenPriors(self.phycas.separate_int_ext_edgelen_priors)
         self.model.setExternalEdgeLenPrior(self.external_edgelen_dist)
-        if self.separate_int_ext_edgelen_priors:
+        if self.phycas.separate_int_ext_edgelen_priors:
             self.model.setInternalEdgeLenPrior(self.internal_edgelen_dist)
         else:
             self.model.setInternalEdgeLenPrior(self.external_edgelen_dist)
-        if self.fix_edgelens:
+        if self.phycas.fix_edgelens:
             self.model.fixEdgeLengths()
             
-        if self.using_hyperprior:
+        if self.phycas.using_hyperprior:
             #self.edgelen_hyperprior.setMeanAndVariance(1.0, 10.0)
             self.model.setEdgeLenHyperPrior(self.edgelen_hyperprior)
             #todo self.model.starting_edgelen_hyperparam
-            if self.fix_edgelen_hyperparam:
+            if self.phycas.fix_edgelen_hyperparam:
                 self.model.fixEdgeLenHyperprior()   #POL should be named fixEdgeLenHyperparam
         else:
             self.model.setEdgeLenHyperPrior(None)
 
         # Create the likelihood object (formerly the Phycas.setupLikelihood function)
         self.likelihood = Likelihood.TreeLikelihood(self.model)
-        self.likelihood.setUFNumEdges(self.uf_num_edges)
+        self.likelihood.setUFNumEdges(self.phycas.uf_num_edges)
         if self.phycas.data_source == 'file':
             self.likelihood.copyDataFromDiscreteMatrix(self.phycas.data_matrix)
             self.npatterns = self.likelihood.getNPatterns()
@@ -247,7 +180,7 @@ class MarkovChain:
         if self.phycas.starting_tree == None:
             # Build a random tree
             Phylogeny.TreeManip(self.tree).randomTree(
-                self.ntax,                  # number of tips
+                self.phycas.ntax,                  # number of tips
                 self.r,                     # pseudorandom number generator
                 self.starting_edgelen_dist, # distribution from which to draw starting edge lengths
                 False)                      # Yule tree if True, edge lengths independent if False
@@ -272,16 +205,16 @@ class MarkovChain:
             self.likelihood,         # likelihood calculation machinery
             self.r,                  # pseudorandom number generator
             #POLPY_NEWWAY False,     # separate_edgelen_params (deprecated: always False)
-            self.slice_max_units,    # maximum number of slice units allowed
-            self.slice_weight)       # weight for each parameter added
+            self.phycas.slice_max_units,    # maximum number of slice units allowed
+            self.phycas.slice_weight)       # weight for each parameter added
 
         # Create a TreeScalerMove object to handle scaling the entire tree to allow faster
         # convergence in edge lengths. This move is unusual in using slice sampling rather
         # than Metropolis-Hastings updates: most "moves" in Phycas are Metropolis-Hastings.
-        if self.tree_scaler_weight > 0:
+        if self.phycas.tree_scaler_weight > 0:
             self.tree_scaler_move = Likelihood.TreeScalerMove()
             self.tree_scaler_move.setName("Tree scaler move")
-            self.tree_scaler_move.setWeight(self.tree_scaler_weight)
+            self.tree_scaler_move.setWeight(self.phycas.tree_scaler_weight)
             self.tree_scaler_move.setTree(self.tree)
             self.tree_scaler_move.setModel(self.model)
             self.tree_scaler_move.setTreeLikelihood(self.likelihood)
@@ -294,32 +227,32 @@ class MarkovChain:
         # updates to the tree topology and edge lengths
         self.larget_simon_move = Likelihood.LargetSimonMove()
         self.larget_simon_move.setName("Larget-Simon move")
-        self.larget_simon_move.setWeight(self.ls_move_weight)
+        self.larget_simon_move.setWeight(self.phycas.ls_move_weight)
         self.larget_simon_move.setTree(self.tree)
         self.larget_simon_move.setModel(self.model)
         self.larget_simon_move.setTreeLikelihood(self.likelihood)
         self.larget_simon_move.setLot(self.r)
-        self.larget_simon_move.setLambda(self.ls_move_lambda)
-        self.larget_simon_move.viewProposedMove(self.ls_move_debug)
+        self.larget_simon_move.setLambda(self.phycas.ls_move_lambda)
+        self.larget_simon_move.viewProposedMove(self.phycas.ls_move_debug)
         if self.model.edgeLengthsFixed():
             self.larget_simon_move.fixParameter()
         self.chain_manager.addMove(self.larget_simon_move)
 
         # If requested, create an NCatMove object to allow the number of rate categories to change
-        if self.use_flex_model:
+        if self.phycas.use_flex_model:
             # Create an NCatMove object
             self.ncat_move = Likelihood.NCatMove()
             
             # Set up features specific to NCatMove
             self.ncat_move.setCatProbPrior(self.flex_prob_param_prior)
-            self.ncat_move.setL(self.flex_L)
-            self.ncat_move.setS(self.flex_num_spacers)
-            self.ncat_move.setLambda(self.flex_lambda)
-            self.ncat_move.setPhi(self.flex_phi)
+            self.ncat_move.setL(self.phycas.flex_L)
+            self.ncat_move.setS(self.phycas.flex_num_spacers)
+            self.ncat_move.setLambda(self.phycas.flex_lambda)
+            self.ncat_move.setPhi(self.phycas.flex_phi)
 
             # Continue setting up NCatMove object
             self.ncat_move.setName("NCat move")
-            self.ncat_move.setWeight(self.flex_ncat_move_weight)
+            self.ncat_move.setWeight(self.phycas.flex_ncat_move_weight)
             self.ncat_move.setTree(self.tree)
             self.ncat_move.setModel(self.model)
             self.ncat_move.setTreeLikelihood(self.likelihood)
@@ -328,7 +261,7 @@ class MarkovChain:
             self.chain_manager.addMove(self.ncat_move)
             
         # If requested, create a BushMove object to allow polytomous trees
-        if self.allow_polytomies:
+        if self.phycas.allow_polytomies:
             # Create a BushMove object
             self.bush_move = Likelihood.BushMove()
 
