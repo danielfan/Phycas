@@ -7,7 +7,107 @@ def cloneDistribution(d):
     else:
         return d.clone()
 
-class MarkovChain:
+class LikelihoodCore:
+    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+    """
+    Not yet documented.
+    
+    """
+    def __init__(self, phycas, power):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Not yet documented.
+        
+        """
+        self.model                              = None
+        self.likelihood                         = None
+    
+    def setupCoreA(self):
+        # Set seed if user has supplied one
+        if self.phycas.random_seed != 0:
+            self.r.setSeed(int(self.phycas.random_seed))
+
+    def setupCoreB(self):
+        # Create a substitution model
+        if self.phycas.default_model in ['gtr','hky']:
+            if self.phycas.default_model == 'gtr':
+                self.model = Likelihood.GTRModel()
+                self.model.setRelRates(self.phycas.starting_relrates)
+                if self.phycas.fix_relrates:
+                    self.model.fixRelRates()
+            else:
+                self.model = Likelihood.HKYModel()
+                self.model.setKappa(self.phycas.starting_kappa)
+                if self.phycas.fix_kappa:
+                    self.model.fixKappa()
+            self.phycas.phycassert(self.phycas.starting_freqs, 'starting_freqs is None, but should be a list containing 4 (unnormalized) relative base frequencies')
+            self.phycas.phycassert(len(self.phycas.starting_freqs) == 4, 'starting_freqs should be a list containing exactly 4 base frequencies; instead, it contains %d values' % len(self.phycas.starting_freqs))
+            self.phycas.phycassert(self.phycas.starting_freqs[0] >= 0.0, 'starting_freqs[0] cannot be negative (%f was specified)' % self.phycas.starting_freqs[0])
+            self.phycas.phycassert(self.phycas.starting_freqs[1] >= 0.0, 'starting_freqs[1] cannot be negative (%f was specified)' % self.phycas.starting_freqs[1])
+            self.phycas.phycassert(self.phycas.starting_freqs[2] >= 0.0, 'starting_freqs[2] cannot be negative (%f was specified)' % self.phycas.starting_freqs[2])
+            self.phycas.phycassert(self.phycas.starting_freqs[3] >= 0.0, 'starting_freqs[3] cannot be negative (%f was specified)' % self.phycas.starting_freqs[3])
+            self.model.setNucleotideFreqs(self.phycas.starting_freqs[0], self.phycas.starting_freqs[1], self.phycas.starting_freqs[2], self.phycas.starting_freqs[3])  #POL should be named setStateFreqs?
+            if self.phycas.fix_freqs:
+                self.model.fixStateFreqs()
+        else:
+            self.model = Likelihood.JCModel()
+
+        # If rate heterogeneity is to be assumed, add it to the model here
+        # Note must defer setting up pattern specific rates model until we know number of patterns
+        if self.phycas.use_flex_model:
+            self.model.setNGammaRates(self.phycas.num_rates)
+            self.model.setFlexModel()
+            self.model.setFlexRateUpperBound(self.phycas.flex_L)
+        elif self.phycas.num_rates > 1:
+            self.model.setNGammaRates(self.phycas.num_rates)
+            self.model.setPriorOnShapeInverse(self.phycas.use_inverse_shape)    #POL should be named useInverseShape rather than setPriorOnShapeInverse
+            self.model.setShape(self.phycas.starting_shape)
+            if self.phycas.fix_shape:
+                self.model.fixShape()
+        else:
+            self.model.setNGammaRates(1)
+            
+        if self.phycas.estimate_pinvar:
+            assert not self.phycas.use_flex_model, 'Cannot currently use flex model with pinvar'
+            self.model.setPinvarModel()
+            self.model.setPinvar(self.phycas.starting_pinvar)
+            if self.phycas.fix_pinvar:
+                self.model.fixPinvar()
+        else:
+            self.model.setNotPinvarModel()
+
+        if self.phycas.fix_edgelens:
+            self.model.fixEdgeLengths()
+            
+    def setupCoreC(self):
+        # Create the likelihood object (formerly the Phycas.setupLikelihood function)
+        self.likelihood = Likelihood.TreeLikelihood(self.model)
+        self.likelihood.setUFNumEdges(self.phycas.uf_num_edges)
+        if self.phycas.data_source == 'file':
+            self.likelihood.copyDataFromDiscreteMatrix(self.phycas.data_matrix)
+            self.npatterns = self.likelihood.getNPatterns()
+
+        # Build the starting tree
+        self.tree = Phylogeny.Tree()
+        if self.phycas.starting_tree == None:
+            # Build a random tree
+            Phylogeny.TreeManip(self.tree).randomTree(
+                self.phycas.ntax,                  # number of tips
+                self.r,                     # pseudorandom number generator
+                self.starting_edgelen_dist, # distribution from which to draw starting edge lengths
+                False)                      # Yule tree if True, edge lengths independent if False
+            self.phycas.warn_tip_numbers = False
+            self.phycas.starting_tree = self.tree.makeNewick()
+        else:
+            # Build user-specified tree
+            self.tree.buildFromString(self.starting_tree)
+            if not self.tree.tipNumbersSetUsingNames():
+                self.phycas.warn_tip_numbers = True
+
+        # Add data structures to nodes to facilitate likelihood calculations
+        self.likelihood.prepareForLikelihood(self.tree)
+        
+class MarkovChain(LikelihoodCore):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
     Not yet documented.
@@ -32,8 +132,6 @@ class MarkovChain:
         self.pinvar_prior                       = cloneDistribution(self.phycas.pinvar_prior)
         self.flex_prob_param_prior              = cloneDistribution(self.phycas.flex_prob_param_prior)
         self.r                                  = ProbDist.Lot()
-        self.model                              = None
-        self.likelihood                         = None
         self.chain_manager                      = None
 
     def resetNEvals(self):
@@ -78,10 +176,8 @@ class MarkovChain:
         Not yet documented.
         
         """
-        # Set seed if user has supplied one
-        if self.phycas.random_seed != 0:
-            self.r.setSeed(int(self.phycas.random_seed))
-
+        LikelihoodCore.setupCoreA(self)
+        
         # Make sure that each is using the same pseudorandom number generator object
         self.relrate_prior.setLot(self.r)
         self.base_freq_param_prior.setLot(self.r)
@@ -94,60 +190,24 @@ class MarkovChain:
             self.internal_edgelen_dist.setLot(self.r)
         self.starting_edgelen_dist.setLot(self.r)
         
-        # Create a substitution model and define priors for the model parameters
-        if self.phycas.default_model in ['gtr','hky']:
-            if self.phycas.default_model == 'gtr':
-                self.model = Likelihood.GTRModel()
-                self.model.setRelRates(self.phycas.starting_relrates)
-                self.model.setRelRatePrior(self.relrate_prior)
-                if self.phycas.fix_relrates:
-                    self.model.fixRelRates()
-            else:
-                self.model = Likelihood.HKYModel()
-                self.model.setKappa(self.phycas.starting_kappa)
-                if self.phycas.fix_kappa:
-                    self.model.fixKappa()
-                self.model.setKappaPrior(self.kappa_prior)
-            self.model.setStateFreqParamPrior(self.base_freq_param_prior)   #POL should be named state_freq_param_prior
-            self.phycas.phycassert(self.phycas.starting_freqs, 'starting_freqs is None, but should be a list containing 4 (unnormalized) relative base frequencies')
-            self.phycas.phycassert(len(self.phycas.starting_freqs) == 4, 'starting_freqs should be a list containing exactly 4 base frequencies; instead, it contains %d values' % len(self.phycas.starting_freqs))
-            self.phycas.phycassert(self.phycas.starting_freqs[0] >= 0.0, 'starting_freqs[0] cannot be negative (%f was specified)' % self.phycas.starting_freqs[0])
-            self.phycas.phycassert(self.phycas.starting_freqs[1] >= 0.0, 'starting_freqs[1] cannot be negative (%f was specified)' % self.phycas.starting_freqs[1])
-            self.phycas.phycassert(self.phycas.starting_freqs[2] >= 0.0, 'starting_freqs[2] cannot be negative (%f was specified)' % self.phycas.starting_freqs[2])
-            self.phycas.phycassert(self.phycas.starting_freqs[3] >= 0.0, 'starting_freqs[3] cannot be negative (%f was specified)' % self.phycas.starting_freqs[3])
-            self.model.setNucleotideFreqs(self.phycas.starting_freqs[0], self.phycas.starting_freqs[1], self.phycas.starting_freqs[2], self.phycas.starting_freqs[3])  #POL should be named setStateFreqs?
-            if self.phycas.fix_freqs:
-                self.model.fixStateFreqs()
-        else:
-            self.model = Likelihood.JCModel()
+        LikelihoodCore.setupCoreB(self)
 
-        # If rate heterogeneity is to be assumed, add it to the model here
-        # Note must defer setting up pattern specific rates model until we know number of patterns
+        # define priors for the model parameters
+        if self.phycas.default_model == 'gtr':
+            self.model.setRelRatePrior(self.relrate_prior)
+            self.model.setStateFreqParamPrior(self.base_freq_param_prior)   #POL should be named state_freq_param_prior
+        elif self.phycas.default_model == 'hky':
+            self.model.setKappaPrior(self.kappa_prior)
+            self.model.setStateFreqParamPrior(self.base_freq_param_prior)   #POL should be named state_freq_param_prior
+
+        # If rate heterogeneity is to be assumed, add priors for these model parameters here
         if self.phycas.use_flex_model:
-            self.model.setNGammaRates(self.phycas.num_rates)
-            self.model.setFlexModel()
-            self.model.setFlexRateUpperBound(self.phycas.flex_L)
             self.model.setNumFlexSpacers(self.phycas.flex_num_spacers)
             self.model.setFLEXProbParamPrior(self.flex_prob_param_prior)
         elif self.phycas.num_rates > 1:
-            self.model.setNGammaRates(self.phycas.num_rates)
-            self.model.setPriorOnShapeInverse(self.phycas.use_inverse_shape)
-            self.model.setShape(self.phycas.starting_shape)
-            if self.phycas.fix_shape:
-                self.model.fixShape()
             self.model.setDiscreteGammaShapePrior(self.gamma_shape_prior)
-        else:
-            self.model.setNGammaRates(1)
-            
         if self.phycas.estimate_pinvar:
-            assert not self.phycas.use_flex_model, 'Cannot currently use flex model with pinvar'
-            self.model.setPinvarModel()
-            self.model.setPinvar(self.phycas.starting_pinvar)
-            if self.phycas.fix_pinvar:
-                self.model.fixPinvar()
             self.model.setPinvarPrior(self.pinvar_prior)
-        else:
-            self.model.setNotPinvarModel()
         
         # Define edge length prior distributions
         self.model.separateInternalExternalEdgeLenPriors(self.phycas.separate_int_ext_edgelen_priors)
@@ -156,9 +216,7 @@ class MarkovChain:
             self.model.setInternalEdgeLenPrior(self.internal_edgelen_dist)
         else:
             self.model.setInternalEdgeLenPrior(self.external_edgelen_dist)
-        if self.phycas.fix_edgelens:
-            self.model.fixEdgeLengths()
-            
+
         if self.phycas.using_hyperprior:
             #self.edgelen_hyperprior.setMeanAndVariance(1.0, 10.0)
             self.model.setEdgeLenHyperPrior(self.edgelen_hyperprior)
@@ -168,32 +226,9 @@ class MarkovChain:
         else:
             self.model.setEdgeLenHyperPrior(None)
 
-        # Create the likelihood object (formerly the Phycas.setupLikelihood function)
-        self.likelihood = Likelihood.TreeLikelihood(self.model)
-        self.likelihood.setUFNumEdges(self.phycas.uf_num_edges)
-        if self.phycas.data_source == 'file':
-            self.likelihood.copyDataFromDiscreteMatrix(self.phycas.data_matrix)
-            self.npatterns = self.likelihood.getNPatterns()
+        LikelihoodCore.setupCoreC(self)
+        self.likelihood.replaceModel(self.model)            
 
-        # Build the starting tree
-        self.tree = Phylogeny.Tree()
-        if self.phycas.starting_tree == None:
-            # Build a random tree
-            Phylogeny.TreeManip(self.tree).randomTree(
-                self.phycas.ntax,                  # number of tips
-                self.r,                     # pseudorandom number generator
-                self.starting_edgelen_dist, # distribution from which to draw starting edge lengths
-                False)                      # Yule tree if True, edge lengths independent if False
-            self.phycas.warn_tip_numbers = False
-            self.phycas.starting_tree = self.tree.makeNewick()
-        else:
-            # Build user-specified tree
-            self.tree.buildFromString(self.starting_tree)
-            if not self.tree.tipNumbersSetUsingNames():
-                self.phycas.warn_tip_numbers = True
-
-        # Add data structures to nodes to facilitate likelihood calculations
-        self.likelihood.prepareForLikelihood(self.tree)
         if self.phycas.data_source == None:
             self.likelihood.setNoData() # user wants to run MCMC with no data
         
