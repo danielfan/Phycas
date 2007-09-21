@@ -188,3 +188,10 @@ Deja vu
 o "Compiler out of keys" errors in VC debug builds seem to arise from assert calls. 
 Change the offending assert to a PHYCAS_ASSERT and the build will succeed.
 
+o "Compiler out of keys" errors in VC debug builds can also arise from the following (in probability_distribution.cpp):
+#	if defined NCL_NXS_THROW_UNDEFINED
+		if (params.size() < 2)
+			throw NxsX_UndefinedException("Illegal Dirichlet", __FILE__, __LINE__);
+#	endif
+
+

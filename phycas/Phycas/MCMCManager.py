@@ -13,21 +13,31 @@ class LikelihoodCore:
     Not yet documented.
     
     """
-    def __init__(self, phycas, power):
+    def __init__(self, phycas):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Not yet documented.
         
         """
+        self.phycas                             = phycas
         self.model                              = None
         self.likelihood                         = None
+        self.tree                               = Phylogeny.Tree()
+        self.r                                  = ProbDist.Lot()
+        self.starting_edgelen_dist              = cloneDistribution(self.phycas.starting_edgelen_dist)
     
-    def setupCoreA(self):
+    def setupCore(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Not yet documented.
+        
+        """
         # Set seed if user has supplied one
         if self.phycas.random_seed != 0:
             self.r.setSeed(int(self.phycas.random_seed))
 
-    def setupCoreB(self):
+        self.starting_edgelen_dist.setLot(self.r)
+
         # Create a substitution model
         if self.phycas.default_model in ['gtr','hky']:
             if self.phycas.default_model == 'gtr':
@@ -79,20 +89,21 @@ class LikelihoodCore:
         if self.phycas.fix_edgelens:
             self.model.fixEdgeLengths()
             
-    def setupCoreC(self):
         # Create the likelihood object (formerly the Phycas.setupLikelihood function)
         self.likelihood = Likelihood.TreeLikelihood(self.model)
         self.likelihood.setUFNumEdges(self.phycas.uf_num_edges)
         if self.phycas.data_source == 'file':
             self.likelihood.copyDataFromDiscreteMatrix(self.phycas.data_matrix)
             self.npatterns = self.likelihood.getNPatterns()
+        elif not self.phycas.data_source:
+            self.phycas.phycassert(self.phycas.ntax > 0, 'data_source is None, which indicates data will be simulated, but in this case sim_taxon_labels should not be an empty list')
 
         # Build the starting tree
-        self.tree = Phylogeny.Tree()
+        #raw_input('stopped in LikelihoodCore::setupCore')
         if self.phycas.starting_tree == None:
             # Build a random tree
             Phylogeny.TreeManip(self.tree).randomTree(
-                self.phycas.ntax,                  # number of tips
+                self.phycas.ntax,           # number of tips
                 self.r,                     # pseudorandom number generator
                 self.starting_edgelen_dist, # distribution from which to draw starting edge lengths
                 False)                      # Yule tree if True, edge lengths independent if False
@@ -100,12 +111,49 @@ class LikelihoodCore:
             self.phycas.starting_tree = self.tree.makeNewick()
         else:
             # Build user-specified tree
-            self.tree.buildFromString(self.starting_tree)
+            self.tree.buildFromString(self.phycas.starting_tree)
             if not self.tree.tipNumbersSetUsingNames():
                 self.phycas.warn_tip_numbers = True
 
-        # Add data structures to nodes to facilitate likelihood calculations
+    def prepareForSimulation(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Adds data structures (conditional likelihood arrays and transition
+        probability matrices) to nodes in tree to facilitate simulating data.
+        Unlike prepareForLikelihood function, does not add data to the tips.
+        
+        """
+        self.likelihood.prepareForSimulation(self.tree)
+        
+    def simulate(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Performs a simulation, returning a new SimData object containing the
+        simulated data.
+        
+        """
+        sim_data = Likelihood.SimData()
+        self.phycas.phycassert(self.phycas.sim_nchar > 0, 'sim_nchar must be greater than zero in order to perform simulations')
+        self.likelihood.simulateFirst(sim_data, self.tree, self.r, self.phycas.sim_nchar)
+        return sim_data
+        
+    def prepareForLikelihood(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Adds data structures (conditional likelihood arrays and transition
+        probability matrices) to nodes in tree to facilitate likelihood
+        calculations. Also adds the data to the tip nodes.
+        
+        """
         self.likelihood.prepareForLikelihood(self.tree)
+        
+    def calcLnLikelihood(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Computes and returns the log-likelihood.
+        
+        """
+        return self.likelihood.calcLnL(self.tree)
         
 class MarkovChain(LikelihoodCore):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -119,6 +167,8 @@ class MarkovChain(LikelihoodCore):
         Not yet documented.
         
         """
+        LikelihoodCore.__init__(self, phycas)
+        
         self.phycas                             = phycas
         self.heating_power                      = power
         self.relrate_prior                      = cloneDistribution(self.phycas.relrate_prior)
@@ -127,11 +177,9 @@ class MarkovChain(LikelihoodCore):
         self.edgelen_hyperprior                 = cloneDistribution(self.phycas.edgelen_hyperprior)
         self.external_edgelen_dist              = cloneDistribution(self.phycas.external_edgelen_dist)
         self.internal_edgelen_dist              = cloneDistribution(self.phycas.internal_edgelen_dist)
-        self.starting_edgelen_dist              = cloneDistribution(self.phycas.starting_edgelen_dist)
         self.kappa_prior                        = cloneDistribution(self.phycas.kappa_prior)
         self.pinvar_prior                       = cloneDistribution(self.phycas.pinvar_prior)
         self.flex_prob_param_prior              = cloneDistribution(self.phycas.flex_prob_param_prior)
-        self.r                                  = ProbDist.Lot()
         self.chain_manager                      = None
 
     def resetNEvals(self):
@@ -176,7 +224,8 @@ class MarkovChain(LikelihoodCore):
         Not yet documented.
         
         """
-        LikelihoodCore.setupCoreA(self)
+        LikelihoodCore.setupCore(self)
+        LikelihoodCore.prepareForLikelihood(self)
         
         # Make sure that each is using the same pseudorandom number generator object
         self.relrate_prior.setLot(self.r)
@@ -188,10 +237,7 @@ class MarkovChain(LikelihoodCore):
         self.external_edgelen_dist.setLot(self.r)
         if self.phycas.internal_edgelen_dist:
             self.internal_edgelen_dist.setLot(self.r)
-        self.starting_edgelen_dist.setLot(self.r)
         
-        LikelihoodCore.setupCoreB(self)
-
         # define priors for the model parameters
         if self.phycas.default_model == 'gtr':
             self.model.setRelRatePrior(self.relrate_prior)
@@ -226,7 +272,6 @@ class MarkovChain(LikelihoodCore):
         else:
             self.model.setEdgeLenHyperPrior(None)
 
-        LikelihoodCore.setupCoreC(self)
         self.likelihood.replaceModel(self.model)            
 
         if self.phycas.data_source == None:

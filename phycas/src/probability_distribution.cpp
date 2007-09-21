@@ -30,6 +30,18 @@ namespace phycas
 
 #if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
+|	Returns the natural logarithm of the gamma function evaluated at the supplied value `x'. This function is a wrapper
+|   around CDF::LnGamma.
+*/
+double ProbabilityDistribution::LnGamma(
+  double x)
+    {
+    return cdf.LnGamma(x);
+    }
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
 |	Initializes the shape and scale parameters of the underlying gamma distribution to those of the supplied 
 |   distribution `other'.
 */
@@ -1605,6 +1617,10 @@ void InverseGammaDistribution::SetMeanAndVariance(
   	beta	= 1.0/(mean + mean*epsilon);
 	}
 
+//#######################################################################################
+//###### DIRICHLET DISTRIBUTION MEMBER FUNCTIONS ########################################
+//#######################################################################################
+
 const GammaDistribution &DirichletDistribution::GetDistributionOnParameter(
   unsigned i) const
   	{
@@ -1649,10 +1665,12 @@ DirichletDistribution::DirichletDistribution(const std::vector<double> &params)
 	scratchSpace.reserve(params_size);
 	paramDistributions.reserve(params_size);
 
+#if 0   //@POL Mark, this causes an "out of keys" compiler error on VC
 #	if defined NCL_NXS_THROW_UNDEFINED
 		if (params.size() < 2)
 			throw NxsX_UndefinedException("Illegal Dirichlet", __FILE__, __LINE__);
 #	endif
+#endif
 
 	std::vector<double>::const_iterator iter;
 	for (iter = params.begin(); iter != params.end(); ++iter)

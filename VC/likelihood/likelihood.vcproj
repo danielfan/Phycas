@@ -257,6 +257,9 @@
 				RelativePath="..\..\phycas\src\pinvar_param.cpp">
 			</File>
 			<File
+				RelativePath="..\..\phycas\src\probability_distribution.cpp">
+			</File>
+			<File
 				RelativePath="..\..\phycas\src\q_matrix.cpp">
 			</File>
 			<File

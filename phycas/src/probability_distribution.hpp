@@ -58,6 +58,10 @@ class ProbabilityDistribution : public AdHocDensity
 							ProbabilityDistribution() {lot = &myLot;}
 							virtual ~ProbabilityDistribution() {}
 
+#if POLPY_NEWWAY
+        double              LnGamma(double x);
+#endif
+
 		virtual void		SetLot(Lot * other); //@POL seems like this should be a shared pointer
 		virtual Lot *		GetLot() {return lot;}
 		virtual void		ResetLot();

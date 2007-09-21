@@ -3,7 +3,7 @@
 # approximate the joint prior distribution.
 
 from phycas import *
-
+#raw_input('doof')
 phycas = Phycas()
 
 phycas.data_source              = None

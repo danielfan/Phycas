@@ -1,5 +1,5 @@
 import os, sys, math, threading
-import MCMCManager
+import MCMCManager  # poorly named, as MCMCManager is now only one of many classes within
 from phycas.Conversions import *
 from phycas.DataMatrix import *
 from phycas.Likelihood import *
@@ -67,8 +67,13 @@ class Phycas:
         self.fix_freqs              = False # new
 
         # Variables associated with the source of data        
-        self.data_source            = 'file'    # If None, MCMC will explore the joint prior; if 'file', self.data_file_name should be a valid nexus file name
+        self.data_source            = 'file'    # Specify None to explore the joint prior or to simulate data; if 'file', self.data_file_name should be a valid nexus file name
         self.data_file_name         = ''        # will hold actual data file name
+
+        # Variables associated with simulating data (see function simulateDNA below)
+        self.sim_file_name          = 'simulated.nex'   # name of file in which to save simulated data
+        self.sim_taxon_labels       = ['taxon1', 'taxon2', 'taxon3', 'taxon4']  # names to use for taxa in simulated data set (number of labels defined determines the number of taxa in the simulated dataset)
+        self.sim_nchar              = 1000      # number of characters to generate
 
         # Variables associated with the source of starting tree
         self.starting_tree_source   = 'random'  # source of starting tree topology: can be either 'random' or 'usertree'
@@ -150,6 +155,8 @@ class Phycas:
         self.uf_num_edges           = 50        # number of edges to traverse before taking action to prevent underflow
         
         # ***** DO NOT CHANGE ANYTHING BELOW HERE *****
+        self.data_matrix            = None
+        self.file_name_data_stored  = None
         self.do_marginal_like       = False
         self.mcmc_manager           = MCMCManager.MCMCManager(self)
         self.heat_vector            = None      # leave set to None unless you are implementing some ad hoc heating scheme. This vector ordinarily computed using self.nchains and self.heating_lambda
@@ -429,11 +436,11 @@ class Phycas:
             self.output('\nSlice sampler diagnostics:')
             self.output(summary)
 
-    def run(self):
+    def runMCMC(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Runs the Markov chain. Assumes setup() has been called (or that the
-        equivalent work has been done)
+        Performs the MCMC analysis. Assumes setupMCMC() has already been
+        called.
         
         """
         # Tell TreeLikelihood object if user wants to run with no data
@@ -552,7 +559,16 @@ class Phycas:
         if self.paramf:
             self.paramFileClose()
 
-    def setup(self):
+    def readDataFromFile(self):
+        if not self.file_name_data_stored or (self.data_file_name != self.file_name_data_stored):
+            self.reader.readFile(self.data_file_name)
+            self.taxon_labels = self.reader.getTaxLabels()
+            self.data_matrix = getDiscreteMatrix(self.reader, 0)
+            self.ntax = self.data_matrix.getNTax()
+            self.nchar = self.data_matrix.getNChar() # used for Gelfand-Ghosh simulations only
+            self.file_name_data_stored = self.data_file_name    # prevents rereading same data file later
+
+    def setupMCMC(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         This function is for parts of the setup that should occur right before
@@ -584,13 +600,14 @@ class Phycas:
         #else:
         #    self.setupLikelihood() # now gone, moved to MCMCChain.setupModel
 
-        # Read the data        
+        # Read the data
         if self.data_source == 'file':
-            self.reader.readFile(self.data_file_name)
-            self.taxon_labels = self.reader.getTaxLabels()
-            self.data_matrix = getDiscreteMatrix(self.reader, 0)
-            self.ntax = self.data_matrix.getNTax()
-            self.nchar = self.data_matrix.getNChar() # used for Gelfand-Ghosh simulations only
+            self.readDataFromFile()
+            #self.reader.readFile(self.data_file_name)
+            #self.taxon_labels = self.reader.getTaxLabels()
+            #self.data_matrix = getDiscreteMatrix(self.reader, 0)
+            #self.ntax = self.data_matrix.getNTax()
+            #self.nchar = self.data_matrix.getNChar() # used for Gelfand-Ghosh simulations only
             #self.likelihood.copyDataFromDiscreteMatrix(self.data_matrix)
         #elif self.data_source == 'memory':
         #    assert self.ntax > 0
@@ -678,9 +695,40 @@ class Phycas:
         Performs an MCMC analysis.
         
         """
-        self.setup()
-        self.run()
+        self.setupMCMC()
+        self.runMCMC()
 
+    def simulateDNA(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Simulates a DNA dataset and stores it in NEXUS format in the supplied
+        filename.
+        
+        """
+        self.starting_tree = self.tree_topology
+        self.phycassert(self.data_source == None, 'set data_source to None before calling simulateDNA')
+        self.ntax = len(self.sim_taxon_labels)
+        core = MCMCManager.LikelihoodCore(self)
+        core.setupCore()
+        core.prepareForSimulation()
+        sim_data = core.simulate()
+        sim_data.saveToNexusFile(self.sim_file_name, self.sim_taxon_labels, 'dna', ('a','c','g','t'))
+        
+    def likelihood(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Computes the log-likelihood based on the current tree and current
+        model.
+        
+        """
+        self.starting_tree = self.tree_topology
+        self.phycassert(self.data_source == 'file', "set data_source to 'file' and specify data_file_name before calling the likelihood function")
+        self.readDataFromFile()
+        core = MCMCManager.LikelihoodCore(self)
+        core.setupCore()
+        core.prepareForLikelihood()
+        return core.calcLnLikelihood()
+        
     def gg(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """

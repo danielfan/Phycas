@@ -77,7 +77,7 @@ double Lot::Uniform(const char * file, int line)
 	curr_seed = (((xalo - leftlo * b16) - p) + (fhi - k * b15) * b16) + k;
 	if (curr_seed & MASKSIGNBIT) 
 		curr_seed = unsigned (((int)curr_seed) + p);
-#if 1 || defined(NDEBUG)
+#if defined(NDEBUG)
 	return curr_seed * 4.6566128575e-10;
 #else
 	double retval = curr_seed * 4.6566128575e-10;

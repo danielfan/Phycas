@@ -82,6 +82,9 @@ BOOST_PYTHON_MODULE(_ProbDist)
 		;
 
 	class_<ProbabilityDistribution, bases<AdHocDensity>, boost::shared_ptr<ProbabilityDistribution>, boost::noncopyable>("ProbabilityDistribution", no_init)
+#if POLPY_NEWWAY
+        .def("lnGamma", &ProbabilityDistribution::LnGamma)
+#endif
 		;
 
 	class_<SliceSampler, boost::shared_ptr<SliceSampler> >("SliceSamplerBase")

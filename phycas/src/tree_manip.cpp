@@ -333,7 +333,12 @@ void TreeManip::randomTree(
 	//@POL should assert that edge_len_dist is of type ExponentialDist if yule is true?
 	PHYCAS_ASSERT(edge_len_dist);
 	PHYCAS_ASSERT(tree);
+
+    // Empty the tree of everything and simply return if ntips is 0
 	tree->Clear();
+    if (ntips == 0)
+        return;
+
 	tree->hasEdgeLens = true;
 
 	unsigned i, j, k;

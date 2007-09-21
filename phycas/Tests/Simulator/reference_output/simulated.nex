@@ -30,4 +30,5 @@ begin paup;
   lscores 1 / userbrlen;
   lset basefreq=estimate tratio=estimate;
   lscores 1 / nouserbrlen;
+  describe 1 / brlens;
 end;
