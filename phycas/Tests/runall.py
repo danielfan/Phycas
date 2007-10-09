@@ -49,7 +49,7 @@ def runTest(outFile, name, results):
     os.chdir(prevDir)
     
 scriptPar = os.path.split(os.path.abspath(sys.argv[0]))[0]
-outFile = os.path.join(scriptPar, "runall_diffs.txt")
+outFile = os.path.join(scriptPar, "diffs.txt")
 removeFilesIfTheyExist(scriptPar, [outFile])
 
 # os.chdir(os.path.join(os.path.split(scriptPar)[0], "Examples"))
