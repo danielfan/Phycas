@@ -83,5 +83,4 @@ phycas.sample_every = 10    # save tree and parameters every 10 cycles
 # Finally, call setup(), which prepares phycas for the MCMC analysis, taking
 # account of the changed settings above, then call run() which does the
 # actual analysis.
-phycas.setup()
-phycas.run()
+phycas.mcmc()

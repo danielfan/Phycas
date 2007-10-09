@@ -348,21 +348,21 @@ class MarkovChain(LikelihoodCore):
             # Set up the topology prior
             self.topo_prior_calculator = self.bush_move.getTopoPriorCalculator()
             self.topo_prior_calculator.chooseUnrooted()
-            self.topo_prior_calculator.setC(self.topo_prior_C)
-            if self.polytomy_prior:
+            self.topo_prior_calculator.setC(self.phycas.topo_prior_C)
+            if self.phycas.polytomy_prior:
                 self.topo_prior_calculator.choosePolytomyPrior()
             else:
                 self.topo_prior_calculator.chooseResolutionClassPrior()
                 
             # Continue setting up BushMove object
             self.bush_move.setName("Bush move")
-            self.bush_move.setWeight(self.bush_move_weight)
+            self.bush_move.setWeight(self.phycas.bush_move_weight)
             self.bush_move.setTree(self.tree)
             self.bush_move.setModel(self.model)
             self.bush_move.setTreeLikelihood(self.likelihood)
             self.bush_move.setLot(self.r)
-            self.bush_move.setEdgeLenDistMean(self.bush_move_edgelen_mean)
-            self.bush_move.viewProposedMove(self.bush_move_debug)
+            self.bush_move.setEdgeLenDistMean(self.phycas.bush_move_edgelen_mean)
+            self.bush_move.viewProposedMove(self.phycas.bush_move_debug)
             if self.model.edgeLengthsFixed():
                 self.bush_move.fixParameter()
             self.bush_move.finalize()

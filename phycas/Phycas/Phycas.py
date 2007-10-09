@@ -210,21 +210,22 @@ class Phycas:
         self.output()
                 
     def showTopoPriorInfo(self):
+        m = self.mcmc_manager.getColdChain()
         self.output('Topology prior:')
         if not self.allow_polytomies:
             self.output('  flat across all fully-resolved tree topologies (polytomies not allowed)')
         else:            
-            if self.topo_prior_calculator.isPolytomyPrior():
+            if m.topo_prior_calculator.isPolytomyPrior():
                 self.output('  Prior type: polytomy prior')
             else:
                 self.output('  Prior type: resolution class prior')
-            self.output('  Prior strength (C): %s' % self.topo_prior_calculator.getC())
+            self.output('  Prior strength (C): %s' % m.topo_prior_calculator.getC())
             self.output('  Prior probability for each resolution class:')
             self.output('  Note: 0.00000000 does *not* mean that the prior is zero! It simply')
             self.output('        indicates that the prior is less than 0.000000005\n')
             self.output('%20s %20s' % ('internal nodes', 'prior probability'))
             self.output('%20s %20s' % ('--------------', '-----------------'))
-            topo_priors = self.topo_prior_calculator.getRealizedResClassPriorsVect()
+            topo_priors = m.topo_prior_calculator.getRealizedResClassPriorsVect()
             for i,v in enumerate(topo_priors):
                 if i == 0:
                     denom = v   # first element of vector is log of normalization constant (sum of all other elements)
