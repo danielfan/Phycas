@@ -5,6 +5,20 @@ to fix, and documenting them helps to avoid repeating history. Minor bugs repres
 cosmetic glitches that are easy to work around and do not take long to fix. Minor bugs 
 are best documented in SVN comments.
 
+Bug 3: the "Rota" bug (fixed in revision 434 on 19-Oct-2007)
+------------------------------------------------------------
+Named for the person (Jadranka Rota) whose data set triggered this investigation.
+A combination of high rate heterogeneity, small branch lengths and quite unequal
+base frequencies caused phycas to hang during MCMC analyses involving models that
+allowed base frequencies to be unequal. Checks were in place to prevent edge lengths
+from becomming too small (see TreeNode::SetEdgeLen), but when there is high rate
+heterogeneity, these already small edge lengths are multiplied by a relative rate
+that results in a really tiny edge length for the first rate category. This, in
+combination with quite unequal base frequencies can lead to very small negative 
+transition probabilities in HKY::calcPMat and QMatrix::recalcPMat. The fix was to
+check edge lengths in HKY::calcPMat and QMatrix::recalcPMat, as that is where
+the minimum edge length should be enforced.
+
 Bug 2: the "topology prior table" bug (fixed in revision 421 on 13-Aug-2007)
 ----------------------------------------------------------------------------
 This bug was first reported by Stephano Mona on 21 July 2007.

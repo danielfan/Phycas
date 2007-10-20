@@ -47,7 +47,10 @@ inline TreeLikelihood::TreeLikelihood(
   model(mod), 
   rate_means(mod->getNRatesTotal(), 1.0), //POL_BOOKMARK
   rate_probs(mod->getNRatesTotal(), 1.0), 
-  nevals(0)
+  nevals(0),
+#if POLPY_NEWWAY
+  debugging_now(false)
+#endif
 	{
 	mod->recalcRatesAndProbs(rate_means, rate_probs);
 	underflow_policy.setTriggerSensitivity(50);

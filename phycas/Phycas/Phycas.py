@@ -154,7 +154,8 @@ class Phycas:
         # Variables associated with underflow protection                
         self.uf_num_edges           = 50        # number of edges to traverse before taking action to prevent underflow
         
-        # ***** DO NOT CHANGE ANYTHING BELOW HERE *****
+        # ***** IT IS BEST NOT TO CHANGE ANYTHING BELOW HERE *****
+        self.debugging              = False      # if set to True expect lots of debug output (e.g. data pattern table)
         self.data_matrix            = None
         self.file_name_data_stored  = None
         self.do_marginal_like       = False
@@ -495,9 +496,16 @@ class Phycas:
         for p in cold_chain_manager.getModelParams():
             self.showParamInfo(p)
 
+        # Debugging: show data patterns
+        if self.debugging:
+            cold_chain = self.mcmc_manager.getColdChain()
+            s = cold_chain.likelihood.listPatterns()
+            print '\nDebug Info: List of data patterns and their frequencies:'
+            print s
+
         # Show information about topology prior to be used
         self.showTopoPriorInfo()
-            
+
         self.stopwatch.start()
         self.mcmc_manager.resetNEvals()
         #self.likelihood.resetNEvals()
@@ -515,16 +523,21 @@ class Phycas:
         #    self.tree_viewer.start() # POLPY_NEWWAY
 
         for cycle in range(self.ncycles):
-            for c in self.mcmc_manager.chains:
-                #tmpf = file('debug_info.txt', 'a')
+            for i,c in enumerate(self.mcmc_manager.chains):
+                #tmpf = file('debug_info.txt', 'a') # comment out for release
+                tmpf.write('************** cycle=%d, chain=%d\n' % (cycle,i))
                 for p in c.chain_manager.getAllUpdaters():
                     w = p.getWeight()
                     for x in range(w):
-                        #p.setSaveDebugInfo(True)
+                        #p.setSaveDebugInfo(True)  # comment out for release
+                        if cycle == 3 and p.getName() == 'Discrete gamma shape':
+                            #raw_input('cycle 3, Discrete gamma shape')
+                            self.mcmc_manager.getColdChain().likelihood.setDebug(True)
+                        # print p.getName()
                         p.update()
-                        #tmpf.write('%s | %s\n' % (p.getName(), p.getDebugInfo()))
-                #tmpf.close()
-                #sys.exit('debug kill')
+                        #tmpf.write('%s | %s\n' % (p.getName(), p.getDebugInfo()))  # comment out for release
+                #tmpf.close()  # comment out for release
+                # sys.exit('debug kill')  # comment out for release
             if self.verbose and (cycle + 1) % self.report_every == 0:
                 self.stopwatch.normalize()
                 cold_chain_manager = self.mcmc_manager.getColdChainManager()

@@ -208,6 +208,29 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 				}
 			}
 		}
+
+#if 0 && POLPY_NEWWAY
+    // Turn this section on for debugging purposes only! Walks through conditional likelihood arrays
+    // for this node looking for any conditional likelihood that is negative. Negative cond. likes
+    // have shown up in the past (18 Oct 2007) for the GTR model, which results in a NaN (represented
+    // as -1.#IND in the VC compiler when the log of the site likelihood is taken.
+	LikeFltType * cla = ndCondLike->getCLA();
+	for (unsigned i = 0; i < num_rates; ++i)
+		{
+	    for (unsigned j = 0; j < num_patterns; ++j)
+		    {
+	        for (unsigned k = 0; k < num_states; ++k)
+		        {
+                if (*cla++ < 0.0)
+                    {
+                    std::cerr << "*** Doh! cla negative for rate = " << i << ", pattern = " << j << ", state = " << k << " ***" << std::endl;
+                    std::exit(0);
+                    }
+		        }
+	        }
+        }
+
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -1903,6 +1926,17 @@ unsigned TreeLikelihood::getNEvals()
 	{
 	return nevals;
 	}
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the boolean data member `debugging_now' to the value specified.
+*/
+void TreeLikelihood::setDebug(
+  bool on)  /**< is the value to which `debugging_now' should be set */
+    {
+    debugging_now = on;
+    }
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Assuming TreeLikelihood::compressDataMatrix has been called, so that `pattern_map' is up-to-date, returns a string 

@@ -107,6 +107,11 @@ void QMatrix::recalcPMat(
 	// implied by the Q matrix is not unity
 	double v = edgelen*edgelen_scaler;
 
+#if POLPY_NEWWAY    // Rota bug
+    if (v < 1.e-8)
+        v = 1.e-8; //TreeNode::edgeLenEpsilon;
+#endif
+
 	// Exponentiate eigenvalues and put everything back together again
 	for (unsigned i = 0; i < dimension; ++i)
 		{

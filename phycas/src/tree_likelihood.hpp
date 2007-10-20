@@ -166,6 +166,10 @@ class TreeLikelihood
 		std::string						listPatterns(bool translate);
 		std::string						getStateStr(int8_t state) const;
 
+#if POLPY_NEWWAY
+        void                            setDebug(bool on);
+#endif
+
 		void							simulateFirst(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar);
 		void							simulate(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar);
 
@@ -206,7 +210,11 @@ class TreeLikelihood
 		std::vector<double>				rate_means;				/**< Vector of relative rates */
 		std::vector<double>				rate_probs;				/**< Vector of relative rate probabilities */
 
-		unsigned						nevals;					/**> For debugging, records the number of times calcLnL() is called */
+		unsigned						nevals;					/**< For debugging, records the number of times calcLnL() is called */
+
+#if POLPY_NEWWAY
+        bool                            debugging_now;          /**< For debugging, indicates whether user wants to see debugging output */
+#endif
 
 	protected:
 

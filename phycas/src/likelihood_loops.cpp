@@ -159,6 +159,21 @@ void TreeLikelihood::calcPMatTranspose(
 	{
 	calcPMatCommon(transPMats,  edgeLength);
 
+#if 0 && POLPY_NEWWAY    // Rota bug
+    if (debugging_now)
+        {
+        std::cerr << "*** After calcPMatCommon, edgeLength = " << edgeLength << " ***" << std::endl;
+        for (unsigned r = 0; r < num_rates; ++r)
+            {
+            std::cerr << "rate " << r << std::endl;
+            std::cerr << str(boost::format("%12.5f %12.5f %12.5f %12.5f") % transPMats[r][0][0] % transPMats[r][0][1] % transPMats[r][0][2] % transPMats[r][0][3]) << std::endl;
+            std::cerr << str(boost::format("%12.5f %12.5f %12.5f %12.5f") % transPMats[r][1][0] % transPMats[r][1][1] % transPMats[r][1][2] % transPMats[r][1][3]) << std::endl;
+            std::cerr << str(boost::format("%12.5f %12.5f %12.5f %12.5f") % transPMats[r][2][0] % transPMats[r][2][1] % transPMats[r][2][2] % transPMats[r][2][3]) << std::endl;
+            std::cerr << str(boost::format("%12.5f %12.5f %12.5f %12.5f") % transPMats[r][3][0] % transPMats[r][3][1] % transPMats[r][3][2] % transPMats[r][3][3]) << std::endl;
+            }
+        }
+#endif
+
 	// For each rate category, transpose the num_states x num_states portion of the matrices
 	// and fill in the ambiguity codes by summing columns
 	const unsigned nPartialAmbigs = (unsigned)stateListPosVec.size();
@@ -208,8 +223,23 @@ void TreeLikelihood::calcCLATwoTips(
 			{
 			const double * leftPMatTRow = leftPMatT[leftStateCodes[p]];
 			const double * rightPMatTRow = rightPMatT[rightStateCodes[p]];
-			for (unsigned s = 0; s < num_states; ++s)
+            for (unsigned s = 0; s < num_states; ++s)
+#if 0 && POLPY_NEWWAY    // Rota bug
 				cla[s] = leftPMatTRow[s]*rightPMatTRow[s];
+#else
+                {
+                //if (debugging_now && r == 0 && p == 162 && s == 1)
+                //    {
+                //    std::cerr << "*** rate = " << r << ", pattern = " << p << ", state = " << s << " ***" << std::endl;
+                //    }
+				cla[s] = leftPMatTRow[s]*rightPMatTRow[s];
+                if (cla[s] < 0.0)
+                    {
+                    std::cerr << "*** Doh! cla negative in calcCLATwoTips for rate = " << r << ", pattern = " << p << ", state = " << s << " ***" << std::endl;
+                    std::exit(0);
+                    }
+                }
+#endif
 			}
 		}
 #if defined(DO_UNDERFLOW_POLICY)

@@ -707,7 +707,7 @@ inline double SliceSampler::Sample()
 
 	// We can never be guaranteed that the full conditional density at lastSampled.first has not 
 	// changed since the last call during an MCMC run, so recalculate it now
-	lastSampled.second = (*func)(lastSampled.first);
+    lastSampled.second = (*func)(lastSampled.first);
 	++func_evals;
 
 	const ParamAndLnProb currentPoint = lastSampled;

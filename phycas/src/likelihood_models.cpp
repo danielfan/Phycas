@@ -358,6 +358,10 @@ void HKY::calcPMat(double * * pMat, double edgeLength) const
 	double bigPiInvT = 1.0/PiT;
 
 	double t = edgeLength;
+#if POLPY_NEWWAY    // Rota bug
+    if (t < 1.e-8)
+        t = 1.e-8; //TreeNode::edgeLenEpsilon;
+#endif
 	double ta, tb, tc, td, y;
 	double denom = ((piA + piG)*(piC + piT) + kappa*((piA*piG) + (piC*piT)));
 	double beta = 0.5/denom;
@@ -406,4 +410,15 @@ void HKY::calcPMat(double * * pMat, double edgeLength) const
 	pMat[1][3] = piT + (x*ta) - (y*tc);
 	pMat[2][3] = pMat[0][3];
 	pMat[3][3] = piT + (x*ta) + (y*tb);
+
+#if 1 || POLPY_NEWWAY    // Rota bug
+    for (unsigned i = 0; i < 4; ++i)
+        {
+        for (unsigned j = 0; j < 4; ++j)
+            {
+            if (pMat[i][j] < 0.0)
+                std::cerr << "negative transition probability encountered" << std::endl;
+            }
+        }
+#endif
 	}
