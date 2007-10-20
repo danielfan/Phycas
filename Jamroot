@@ -20,7 +20,7 @@ if $(OSTYPE) = "linux" {
 else {
   if $(OSTYPE) = "darwin" {
   echo "  Looks like this is a Mac, so using toolset darwin" ;
-#  using darwin ;
+  using darwin ;
   alias tool_specific_requirements : : : : <toolset>darwin <cxxflags>"-include phycas/src/std_force_include.hpp" ;
   }
   else {
