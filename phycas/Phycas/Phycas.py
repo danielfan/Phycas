@@ -525,7 +525,7 @@ class Phycas:
         for cycle in range(self.ncycles):
             for i,c in enumerate(self.mcmc_manager.chains):
                 #tmpf = file('debug_info.txt', 'a') # comment out for release
-                tmpf.write('************** cycle=%d, chain=%d\n' % (cycle,i))
+                #tmpf.write('************** cycle=%d, chain=%d\n' % (cycle,i))  # comment out for release
                 for p in c.chain_manager.getAllUpdaters():
                     w = p.getWeight()
                     for x in range(w):
