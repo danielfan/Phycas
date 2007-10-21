@@ -38,5 +38,6 @@ BOOST_PYTHON_MODULE(_DataMatrixBase)
 		.def("getStateList", &CipresNative::DiscreteMatrix::getStateList, return_value_policy<copy_const_reference>())
 		.def("getStateListPos", &CipresNative::DiscreteMatrix::getStateListPos, return_value_policy<copy_const_reference>())
 		.def("getCodedDataMatrix", &CipresNative::DiscreteMatrix::getConstNativeC, return_value_policy<copy_const_reference>())
+		.def("getRow", &CipresNative::DiscreteMatrix::getRowAsVector)
 		;
 }

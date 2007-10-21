@@ -85,6 +85,16 @@
 				PHYCAS_ASSERT(i < nativeCMatrix.nTax);
 				return nativeCMatrix.matrix[i];
 				}
+			const std::vector<int8_t> getRowAsVector(unsigned i) const 
+				{
+				PHYCAS_ASSERT(i < nativeCMatrix.nTax);
+				std::vector<int8_t> v;
+				for (unsigned j = 0; j < nativeCMatrix.nChar; j++)
+					{
+					v.push_back(nativeCMatrix.matrix[i][j]);
+					}
+				return v;
+				}
 			const CIPR_StateSet_t * const * getMatrix() const 
 				{
 				return nativeCMatrix.matrix;
