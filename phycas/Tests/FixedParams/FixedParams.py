@@ -27,8 +27,7 @@ phycas.fix_pinvar                   = True
 phycas.pinvar_prior                 = ProbDist.BetaDist(1.0, 1.0)
 
 phycas.fix_edgelens                 = True
-phycas.external_edgelen_dist        = ProbDist.ExponentialDist(10.0)
-phycas.internal_edgelen_dist        = None # ProbDist.ExponentialDist(10.0)
+phycas.edgelen_dist                 = ProbDist.ExponentialDist(10.0)
 
 phycas.using_hyperprior             = True
 phycas.starting_edgelen_hyperparam  = 0.05

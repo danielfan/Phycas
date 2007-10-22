@@ -43,7 +43,7 @@ def runTest(outFile, name, results):
     if sys.platform == 'win32' and debugging:
         interpreter = 'python_d'
     if os.system('%s %s.py' % (interpreter,name)) != 0:
-        sys.exit("Script aborted because of failed example")
+       sys.exit("Script aborted because of failed example")
     for f in results:
         runDiff(f, os.path.join('reference_output', f), outFile)
     os.chdir(prevDir)

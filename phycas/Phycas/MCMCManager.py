@@ -192,11 +192,11 @@ class MarkovChain(LikelihoodCore):
         paramf.write('[ID: %d]\n' % self.r.getInitSeed())
         paramf.write(self.model.paramHeader())
         if self.phycas.using_hyperprior:
-            if self.phycas.separate_int_ext_edgelen_priors:
+            if self.phycas.internal_edgelen_dist is self.phycas.external_edgelen_dist:
+                paramf.write('\thyper(all)')
+            else:
                 paramf.write('\thyper(external)')
                 paramf.write('\thyper(internal)')
-            else:
-                paramf.write('\thyper(all)')
         if self.phycas.use_flex_model:
             paramf.write('\trates_probs')
 
@@ -256,12 +256,10 @@ class MarkovChain(LikelihoodCore):
             self.model.setPinvarPrior(self.pinvar_prior)
         
         # Define edge length prior distributions
-        self.model.separateInternalExternalEdgeLenPriors(self.phycas.separate_int_ext_edgelen_priors)
+        separate_edge_len_dists = self.phycas.internal_edgelen_dist is not self.phycas.internal_edgelen_dist
+        self.model.separateInternalExternalEdgeLenPriors(separate_edge_len_dists)
         self.model.setExternalEdgeLenPrior(self.external_edgelen_dist)
-        if self.phycas.separate_int_ext_edgelen_priors:
-            self.model.setInternalEdgeLenPrior(self.internal_edgelen_dist)
-        else:
-            self.model.setInternalEdgeLenPrior(self.external_edgelen_dist)
+        self.model.setInternalEdgeLenPrior(self.internal_edgelen_dist)
 
         if self.phycas.using_hyperprior:
             #self.edgelen_hyperprior.setMeanAndVariance(1.0, 10.0)
