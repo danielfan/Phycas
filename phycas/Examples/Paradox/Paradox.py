@@ -31,7 +31,7 @@ phycas.gamma_shape_prior = ProbDist.ExponentialDist(2.0)
 phycas.base_freq_param_prior = ProbDist.GammaDist(1.0, 1.0)
 
 # Set the prior for kappa, the ratio of the rate of transitions to the rate of transversions
-phycas.relrate_prior = ProbDist.ExponentialDist(1.0)
+phycas.kappa_prior = ProbDist.ExponentialDist(1.0)
 
 # Use a hyperparameter to govern the mean of the branch length prior
 # Instead of specifying, say, ExponentialDist(10.0) for branch lengths, this
