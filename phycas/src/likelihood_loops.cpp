@@ -159,7 +159,7 @@ void TreeLikelihood::calcPMatTranspose(
 	{
 	calcPMatCommon(transPMats,  edgeLength);
 
-#if 0 && POLPY_NEWWAY    // Rota bug
+#if 0 // POLPY_NEWWAY    // Rota bug
     if (debugging_now)
         {
         std::cerr << "*** After calcPMatCommon, edgeLength = " << edgeLength << " ***" << std::endl;
@@ -224,7 +224,7 @@ void TreeLikelihood::calcCLATwoTips(
 			const double * leftPMatTRow = leftPMatT[leftStateCodes[p]];
 			const double * rightPMatTRow = rightPMatT[rightStateCodes[p]];
             for (unsigned s = 0; s < num_states; ++s)
-#if 0 && POLPY_NEWWAY    // Rota bug
+#if 1 // POLPY_NEWWAY    // Rota bug
 				cla[s] = leftPMatTRow[s]*rightPMatTRow[s];
 #else
                 {

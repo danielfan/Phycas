@@ -586,10 +586,10 @@ class Phycas:
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
 		"""
 		This function is for parts of the setup that should occur right before
-		run() is called. Setup is deferred until this point to give the user
-		a chance to change the default settings before the call to run(). A
-		call to the MCMCManager's createChains function is the last thing done
-		by this function.
+		runMCMC() is called. Setup is deferred until this point to give the 
+		user a chance to change the default settings before the call to run().
+		A call to the MCMCManager's createChains function is the last thing
+		done by this function.
 		
 		"""
 		# Open a logfile if requested

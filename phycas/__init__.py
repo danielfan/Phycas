@@ -17,6 +17,5 @@ import Phylogeny
 import ProbDist
 import ReadNexus
 from Phycas import Phycas
-from Constants import *
 
 #print 'importing phycas...'
