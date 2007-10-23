@@ -34,7 +34,7 @@ print sys.prefix
 
 p = Phycas()
 p.data_file_name = "../Data/green.nex"
-p.default_model = 'gtr'
+p.default_model = 'jc'
 p.ncycles = 100000
 
 #p.readDataFromFile()

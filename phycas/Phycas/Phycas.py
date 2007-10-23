@@ -493,9 +493,10 @@ class Phycas(object):
         addseq = self.addition_sequence
         max_level = len(addseq) - 4
         counts = [0]*(max_level + 1)
-        for cycle in xrange(self.ncycles):
+        for cycle in range(1): ##@ xrange(self.ncycles):
             # proposal for changing current level
             u = random.random()
+            u = 0.5 ##@ TEMP
             proposed_level = current_level
             if u < 1.0/3.0:
                 if current_level > 0:
@@ -505,14 +506,23 @@ class Phycas(object):
                 if current_level < max_level:
                     proposed_level = current_level + 1
                 
-#             if proprosed_level == current_level:
+#             if proposed_level == current_level:
 #                 do_larget_simon_move(\)
-#             elif proprosed_level > current_level:
+#             elif proposed_level > current_level:
 #                 do_extrapolation_move()
 #             else:
 #                 do_projection_move()
 
             #print proposed_level,
+            
+            
+            m = self.mcmc_manager.getColdChain()
+            print "model from getmodel = ", m.model.getModelName()
+            lnL = m.calcLnLikelihood()
+            print "lnL =", lnL
+            
+            
+            
             current_level = proposed_level ##@TEMP
             counts[current_level] += 1
         print "counts = ", counts
@@ -579,8 +589,8 @@ class Phycas(object):
         addseq = self.addition_sequence
         brlens = [self.starting_edgelen_dist.sample() for i in range(5)]
         self.tree_topology = "((%d:%.5f,%d:%.5f):%.5f,%d:%.5f,%d:%.5f)" % (
-                             addseq[0], brlens[0], addseq[1], brlens[1], brlens[4], addseq[2],
-                             brlens[2], addseq[3], brlens[3])
+                             addseq[0] + 1, brlens[0], addseq[1] + 1, brlens[1], brlens[4], addseq[2] + 1,
+                             brlens[2], addseq[3] + 1, brlens[3])
         self.starting_tree_source = 'usertree'
         self.starting_tree = self.tree_topology
         print "starting tree = ", self.tree_topology

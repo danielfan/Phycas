@@ -1269,9 +1269,9 @@ void Tree::BuildFromString(const std::string &newick)
 	if (tip_numbers_equal_names)
 		{
 		PHYCAS_ASSERT(!numbers_used.empty());
-		if (numbers_used.find(0) == numbers_used.end())
-			{
-			// 0 has not been used as a tip node number, so assume that tip node numbers started at 1
+//		if (numbers_used.find(0) == numbers_used.end())
+//			{
+//			// 0 has not been used as a tip node number, so assume that tip node numbers started at 1
 			for (preorder_iterator nd = begin(); nd != end(); ++nd)
 				{
 				if (nd->IsTip())
@@ -1280,20 +1280,20 @@ void Tree::BuildFromString(const std::string &newick)
 					PHYCAS_ASSERT(nd->nodeNum >= 0);
 					}
 				}
-			}
+//			}
 		}
 
 	// Renumber internal nodes so that they do not overlap with numbers of tip nodes
 	//@POL should use for_each
 	//std::cerr << "ADDING " << nTips << " to each internal node number" << std::endl; //POL temp		
-	for (preorder_iterator nd = begin(); nd != end(); ++nd)
-		{
-		if (nd->IsInternal())
-			{
-			//std::cerr << "RENUMBERING internal node " << nd->nodeNum << " (new number is " << (nd->nodeNum + nTips) << ")" << std::endl; //POL temp		
-			nd->nodeNum = nd->nodeNum + nTips;
-			}
-		}
+// 	for (preorder_iterator nd = begin(); nd != end(); ++nd)
+// 		{
+// 		if (nd->IsInternal())
+// 			{
+// 			//std::cerr << "RENUMBERING internal node " << nd->nodeNum << " (new number is " << (nd->nodeNum + nTips) << ")" << std::endl; //POL temp		
+// 			nd->nodeNum = nd->nodeNum + nTips;
+// 			}
+// 		}
 	
 
 	//@POL: should check to make sure tip node numbers form a sequence between 0 and ntax-1

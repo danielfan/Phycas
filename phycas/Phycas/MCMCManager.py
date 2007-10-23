@@ -111,7 +111,6 @@ class LikelihoodCore:
             self.phycas.starting_tree = self.tree.makeNewick()
         else:
             # Build user-specified tree
-            raw_input('debug stop: building this tree => %s' % self.phycas.starting_tree)
             self.tree.buildFromString(self.phycas.starting_tree)
             if not self.tree.tipNumbersSetUsingNames():
                 self.phycas.warn_tip_numbers = True
