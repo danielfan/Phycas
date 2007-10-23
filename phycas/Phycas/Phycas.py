@@ -456,9 +456,11 @@ class Phycas(object):
         # temp del: current_tree = make_random_4taxon_tree(addition_sequence[:4])
         current_level = 0
         addseq = self.addition_sequence
+        chain = self.mcmc_manager.getColdChain()
+        ls = chain.larget_simon_move
         max_level = len(addseq) - 4
         counts = [0]*(max_level + 1)
-        for cycle in range(1): ##@ xrange(self.ncycles):
+        for cycle in xrange(self.ncycles):
             # proposal for changing current level
             u = random.random()
             u = 0.5 ##@ TEMP
@@ -471,8 +473,10 @@ class Phycas(object):
                 if current_level < max_level:
                     proposed_level = current_level + 1
                 
-#             if proposed_level == current_level:
-#                 do_larget_simon_move(\)
+            if proposed_level == current_level:
+                ls.setSaveDebugInfo(True)
+                ls.update()
+                print '%s | %s\n' % (ls.getName(), ls.getDebugInfo())
 #             elif proposed_level > current_level:
 #                 do_extrapolation_move()
 #             else:
@@ -481,9 +485,7 @@ class Phycas(object):
             #print proposed_level,
             
             
-            m = self.mcmc_manager.getColdChain()
-            print "model from getmodel = ", m.model.getModelName()
-            lnL = m.calcLnLikelihood()
+            lnL = chain.calcLnLikelihood()
             print "lnL =", lnL
             
             current_level = proposed_level ##@TEMP

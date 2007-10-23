@@ -124,7 +124,8 @@ void LargetSimonMove::update()
             }
         else
             {
-            debug_info = str(boost::format("LargetSimonMove: topology %s, origX=%f, origY=%f, origZ=%f, newX=%f, newY=%f, newZ=%f, %s") % (topol_changed ? "changed" : "unchanged") % origX % origY % origZ % (ndX->GetEdgeLen()) % (ndY->GetEdgeLen()) % (ndZ->GetEdgeLen()) %(accepted ? "accepted" : "rejected"));
+//            debug_info = str(boost::format("LargetSimonMove: topology %s, origX=%f, origY=%f, origZ=%f, newX=%f, newY=%f, newZ=%f, %s") % (topol_changed ? "changed" : "unchanged") % origX % origY % origZ % (ndX->GetEdgeLen()) % (ndY->GetEdgeLen()) % (ndZ->GetEdgeLen()) %(accepted ? "accepted" : "rejected"));
+            debug_info = str(boost::format("LargetSimonMove: curr_posterior=%f prev_posterior=%f getLnHastingsRatio()=%f ln_accept_ratio=%f") % curr_posterior % prev_posterior % getLnHastingsRatio() % ln_accept_ratio);
             }
         }
     
