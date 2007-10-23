@@ -275,41 +275,6 @@ class Phycas(object):
     def paramFileClose(self):
         self.paramf.close()
 
-    #def recordSample(self, cycle, lnL = 0.0):
-    #    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
-    #    """
-    #    Records current tree topology and edge lengths by adding a line to
-    #    the tree file, and records tree length and substitution parameters
-    #    by adding a line to the parameter file.
-    #    
-    #    """
-    #
-    #    # Add line to parameter file if it exists
-    #    if self.paramf:
-    #        self.paramf.write('%d\t%.3f\t%.3f' % (cycle + 1, lnL, self.tree.edgeLenSum()))
-    #        self.paramf.write(self.model.paramReport())
-    #        if self.using_hyperprior:
-    #            self.chain_manager = self.mcmc_manager.getColdChainManager()
-    #            for p in self.chain_manager.getEdgeLenHyperparams():
-    #                #p = self.chain_manager.getEdgeLenHyperparam()
-    #                self.paramf.write('\t%.5f' % p.getCurrValue())
-    #        if self.use_flex_model:
-    #            rates_vector = self.likelihood.getRateMeans()
-    #            for rr in rates_vector:
-    #                self.paramf.write('\t%.5f' % rr)
-    #                #if cycle == 0:
-    #                #    print '  rate = %f' % rr 
-    #            probs_vector = self.likelihood.getRateProbs()
-    #            for rp in probs_vector:
-    #                self.paramf.write('\t%.5f' % rp)
-    #                #if cycle == 0:
-    #                #    print '  prob = %f' % rp 
-    #        self.paramf.write('\n')
-    #    
-    #    # Add line to tree file if it exists
-    #    if self.treef:
-    #        self.treef.write('   tree rep.%d = %s;\n' % (cycle + 1, self.tree.makeNewick()))
-
     def sliceSamplerReport(self, s, nm):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -521,8 +486,6 @@ class Phycas(object):
             lnL = m.calcLnLikelihood()
             print "lnL =", lnL
             
-            
-            
             current_level = proposed_level ##@TEMP
             counts[current_level] += 1
         print "counts = ", counts
@@ -586,6 +549,11 @@ class Phycas(object):
             print "level", level, " self.addition_sequence =>", self.addition_sequence
             
     def getSamcStartingTree(self):
+        #POL TEMP: not the best way to deal with this. See LikelihoodCore.__init__()
+        r = Lot()
+        r.setSeed(int(self.random_seed))
+        self.starting_edgelen_dist.setLot(r)
+
         addseq = self.addition_sequence
         brlens = [self.starting_edgelen_dist.sample() for i in range(5)]
         self.tree_topology = "((%d:%.5f,%d:%.5f):%.5f,%d:%.5f,%d:%.5f)" % (
@@ -596,7 +564,6 @@ class Phycas(object):
         print "starting tree = ", self.tree_topology
         
     def setupSAMC(self):
-    
         # Read the data
         self.phycassert(self.data_source == 'file', "This only works for data read from a file (specify data_source == 'file')")
         self.readDataFromFile()
@@ -615,9 +582,10 @@ class Phycas(object):
         # Set up MCMC chain
         self.heat_vector = [1.0]
         self.mcmc_manager.createChains()
+        m = self.mcmc_manager.getColdChain()
+        print 'Larget-Simon updater name:',m.larget_simon_move.getName()
 
         self.openParameterAndTreeFiles()
-        
         
     def setLogFile(self, filename):
         # Open a log file if requested

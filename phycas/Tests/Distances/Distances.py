@@ -4,7 +4,7 @@ import sys
 from phycas import *
 #from phycas.Constants import *
 
-print sys.prefix
+#print sys.prefix
 
 
 # def calcDistanceMatrix():
@@ -36,6 +36,7 @@ p = Phycas()
 p.data_file_name = "../Data/green.nex"
 p.default_model = 'jc'
 p.ncycles = 100000
+p.random_seed = 13579
 
 #p.readDataFromFile()
 # p.calcDistances()

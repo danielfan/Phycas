@@ -99,7 +99,6 @@ class LikelihoodCore:
             self.phycas.phycassert(self.phycas.ntax > 0, 'data_source is None, which indicates data will be simulated, but in this case sim_taxon_labels should not be an empty list')
 
         # Build the starting tree
-        #raw_input('stopped in LikelihoodCore::setupCore')
         if self.phycas.starting_tree == None:
             # Build a random tree
             Phylogeny.TreeManip(self.tree).randomTree(
@@ -227,7 +226,6 @@ class MarkovChain(LikelihoodCore):
         
         """
         LikelihoodCore.setupCore(self)
-        # raw_input('debug stop')
         LikelihoodCore.prepareForLikelihood(self)
         
         # Make sure that each is using the same pseudorandom number generator object
