@@ -35,6 +35,7 @@ print sys.prefix
 p = Phycas()
 p.data_file_name = "../Data/green.nex"
 p.default_model = 'gtr'
+p.ncycles = 100000
 
 #p.readDataFromFile()
 # p.calcDistances()

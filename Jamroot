@@ -128,6 +128,7 @@ alias likelihood_sources
     phycas/src/pinvar_param.cpp 
     phycas/src/probability_distribution.cpp 
     phycas/src/q_matrix.cpp
+    phycas/src/samc_move.cpp 
     phycas/src/sim_data.cpp 
     phycas/src/slice_sampler.cpp
     phycas/src/state_freq_param.cpp

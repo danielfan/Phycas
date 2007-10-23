@@ -24,8 +24,7 @@
 #include "phycas/src/tree_likelihood.hpp"
 #include "phycas/src/xlikelihood.hpp"
 #include "phycas/src/mcmc_chain_manager.hpp"
-#include "phycas/src/bush_move.hpp"
-#include "phycas/src/topo_prior_calculator.hpp"
+#include "phycas/src/samc_move.hpp"
 #include "phycas/src/basic_tree.hpp"
 #include "phycas/src/tree_manip.hpp"
 
@@ -36,14 +35,14 @@ using namespace phycas;
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	The constructor sets `num_taxa' and `num_nodes_in_fully_resolved_tree', computes the polytomy distribution, and 
-|	finally calls BushMove::reset to re-initialize all other variables.
+|	finally calls SamcMove::reset to re-initialize all other variables.
 */
-BushMove::BushMove()
+SamcMove::SamcMove()
   :MCMCUpdater(),
   view_proposed_move(false)
 	{
 	edgelen_mean = 1.0;
-	topo_prior_calculator = TopoPriorCalculatorShPtr(new TopoPriorCalculator());
+	//@ topo_prior_calculator = TopoPriorCalculatorShPtr(new TopoPriorCalculator());
 
 	num_taxa = 0;
 	num_nodes_in_fully_resolved_tree = 0;
@@ -55,16 +54,16 @@ BushMove::BushMove()
 |	Calls proposeNewState(), then decides whether to accept or reject the proposed new state, calling accept() or 
 |	revert(), whichever is appropriate.
 */
-void BushMove::update()
+void SamcMove::update()
 	{
 	// The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
-	// A proposed BushMove cannot be accepted without changing edge lengths, so it is best to bail out now.
+	// A proposed SamcMove cannot be accepted without changing edge lengths, so it is best to bail out now.
 	if (is_fixed)
 		return;
 
 	if (num_taxa == 0)
 		{
-		throw XLikelihood("Must call finalize() before calling update() for BushMove");
+		throw XLikelihood("Must call finalize() before calling update() for SamcMove");
 		}
 
 	ChainManagerShPtr p = chain_mgr.lock();
@@ -83,42 +82,27 @@ void BushMove::update()
 	double ln_polytomy_prior_ratio	= 0.0;
 
 	unsigned m						= tree->GetNInternals();
-	double topo_prior_after			= topo_prior_calculator->GetLnTopologyPrior(m);
+//@	double topo_prior_after			= topo_prior_calculator->GetLnTopologyPrior(m);
 
 	if (add_edge_move_proposed)
 		{
-		double topo_prior_before	= topo_prior_calculator->GetLnTopologyPrior(m - 1);
-		ln_polytomy_prior_ratio		= topo_prior_after - topo_prior_before;
+//@		double topo_prior_before	= topo_prior_calculator->GetLnTopologyPrior(m - 1);
+//@		ln_polytomy_prior_ratio		= topo_prior_after - topo_prior_before;
 		//one_edgelen[0]				= new_edgelen;
 		//curr_ln_prior				= p->partialEdgeLenPrior(one_edgelen);
 		curr_ln_prior				= p->calcInternalEdgeLenPriorUnnorm(new_edgelen);
 		}
 	else
 		{
-		double topo_prior_before	= topo_prior_calculator->GetLnTopologyPrior(m + 1);
-		ln_polytomy_prior_ratio		= topo_prior_after - topo_prior_before;
+//@		double topo_prior_before	= topo_prior_calculator->GetLnTopologyPrior(m + 1);
+//@		ln_polytomy_prior_ratio		= topo_prior_after - topo_prior_before;
 		//one_edgelen[0]				= orig_edgelen;
 		//prev_ln_prior				= p->partialEdgeLenPrior(one_edgelen);
 		prev_ln_prior				= p->calcInternalEdgeLenPriorUnnorm(orig_edgelen);
 		}
 
-#if POLPY_NEWWAY
-    double prev_posterior = 0.0;
-	double curr_posterior = 0.0;
-    if (is_standard_heating)
-        {
-        prev_posterior = heating_power*(prev_ln_like + prev_ln_prior);
-	    curr_posterior = heating_power*(curr_ln_like + curr_ln_prior);
-        }
-    else
-        {
-        prev_posterior = heating_power*prev_ln_like + prev_ln_prior;
-	    curr_posterior = heating_power*curr_ln_like + curr_ln_prior;
-        }
-#else
     double prev_posterior = prev_ln_like + prev_ln_prior;
 	double curr_posterior = curr_ln_like + curr_ln_prior;
-#endif
 
 	double ln_accept_ratio = curr_posterior - prev_posterior + ln_hastings + ln_jacobian + ln_polytomy_prior_ratio;
 
@@ -141,7 +125,7 @@ void BushMove::update()
 |	edge) with equal probability. If tree is currently fully-resolved, proposes only a delete-edge move. If tree is 
 |	currently the star tree, proposes only an add-edge move.
 */
-void BushMove::proposeNewState()
+void SamcMove::proposeNewState()
 	{
 	unsigned nnodes = tree->GetNNodes();
 	const bool fully_resolved_before = (num_nodes_in_fully_resolved_tree == nnodes);	
@@ -188,7 +172,7 @@ void BushMove::proposeNewState()
 		//   4) choosing U ~ Uniform(0,1) to determine the new edge length (probability density is 1).
 		// The probability of steps 2 and 3 are easier to compute jointly because of some convenient cancellation:
 		// For step 2, assuming x spokes out of n total are moved, the probability is (see explanation in 
-		// documentation for BushMove::computePolytomyDistribution):
+		// documentation for SamcMove::computePolytomyDistribution):
 		//
 		//              {n choose x} + {n choose (n-x)}
 		// Pr(step 2) = -------------------------------
@@ -367,7 +351,7 @@ void BushMove::proposeNewState()
 |	Sets `num_taxa' to the number of tips in `tree', computes the polytomy distribution, and sets the number of taxa for the
 |	`topo_prior_calculator' object to `num_taxa'.
 */
-void BushMove::finalize()
+void SamcMove::finalize()
 	{
 	num_taxa = tree->GetNTips();
 	num_nodes_in_fully_resolved_tree = 2*(num_taxa - 1);
@@ -376,13 +360,13 @@ void BushMove::finalize()
 
 	// Ensure that the TopoPriorCalculator has computed the prior based on the correct number of taxa,
 	// but otherwise leave it alone (the user is expected to configure the prior beforehand)
-	topo_prior_calculator->SetNTax(num_taxa);
+//@	topo_prior_calculator->SetNTax(num_taxa);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Called if the proposed move is rejected. Causes tree to be returned to its state just prior to proposing the move.
 */
-void BushMove::revert()
+void SamcMove::revert()
 	{
 	if (add_edge_move_proposed)
 		{
@@ -460,7 +444,7 @@ void BushMove::revert()
 |	Clears the `polytomies' vector, then walks the tree adding nodes that represent polytomies (more than two children)
 |	to the `polytomies' vector.
 */
-void BushMove::refreshPolytomies()
+void SamcMove::refreshPolytomies()
 	{
 	//@POL should keep polytomies list up to date rather than building anew
 	polytomies.clear();
@@ -494,7 +478,7 @@ void BushMove::refreshPolytomies()
 |	                2^nspokes - 2*(nspokes + 1)
 |>
 */
-const VecPolytomyDistr & BushMove::computePolytomyDistribution(unsigned nspokes)
+const VecPolytomyDistr & SamcMove::computePolytomyDistribution(unsigned nspokes)
 	{
 	PHYCAS_ASSERT(nspokes > 2);
 	std::pair<PolytomyDistrMap::const_iterator, bool> retval;
@@ -524,7 +508,7 @@ const VecPolytomyDistr & BushMove::computePolytomyDistribution(unsigned nspokes)
 |	Split up the polytomy at `u' by creating a new internal node v and a new edge connecting u with v. Node u is saved
 |	as `orig_par' and node v is saved as `orig_lchild' in case we need to revert the proposed move.
 */
-void BushMove::proposeAddEdgeMove(TreeNode * u)
+void SamcMove::proposeAddEdgeMove(TreeNode * u)
 	{
 	PHYCAS_ASSERT(u != NULL);
 	polytomy_size = 1 + u->CountChildren();
@@ -642,7 +626,7 @@ void BushMove::proposeAddEdgeMove(TreeNode * u)
 |	Returns the number of polytomies in the tree after the proposed delete-edge move. The return value will be incorrect if 
 |	the polytomies vector is not up-to-date.
 */
-void BushMove::proposeDeleteEdgeMove(TreeNode * u)
+void SamcMove::proposeDeleteEdgeMove(TreeNode * u)
 	{
 	// Node u will be stored, so get rid of any CLAs
 	//@POL should not discard cache here in case move is reverted - right now we're discarding because
@@ -708,3 +692,110 @@ void BushMove::proposeDeleteEdgeMove(TreeNode * u)
 	tree->InvalidateNodeCounts();
 	}
 
+/*----------------------------------------------------------------------------------------------------------------------
+|	If `yes' is true, subsequent calls to SamcMove::update will pop up a graphical tree viewer to show the edges 
+|	affected by the move.
+*/
+void SamcMove::viewProposedMove(bool yes)
+	{
+	view_proposed_move = yes;
+	}
+
+/*--------------------------------------------------------------------------------------------------------------------------
+|	Setup `edgelen_dist' data member.
+*/
+void SamcMove::setEdgeLenDistMean(
+  double mean)
+	{
+	PHYCAS_ASSERT(mean > 0.0);
+	if (rng)
+		{
+		edgelen_mean = mean;
+		edgelen_dist = ExponentialDistributionShPtr(new phycas::ExponentialDistribution(1.0/edgelen_mean));
+		edgelen_dist->SetMeanAndVariance(edgelen_mean, edgelen_mean);
+		edgelen_dist->SetLot(rng.get());  //@POL should just be able to pass in the shared_ptr rather than a raw pointer
+		}
+	else
+		{
+		throw XLikelihood("Must set the pseudorandom number generator before calling setEdgeLenDistMean");
+		}
+	}
+
+/*--------------------------------------------------------------------------------------------------------------------------
+|	Called if the move is accepted.
+*/
+void SamcMove::accept()
+	{
+	if (add_edge_move_proposed)
+		{
+		// Keeping added edge, where orig_par was original polytomous node and orig_lchild was the added node
+		likelihood->useAsLikelihoodRoot(orig_lchild);
+		likelihood->discardCacheAwayFromNode(*orig_lchild);
+		likelihood->discardCacheBothEnds(orig_lchild);
+
+		if (view_proposed_move)
+			likelihood->startTreeViewer(tree, "Add edge move ACCEPTED");
+		}
+	else
+		{
+		// Keeping edge deletion, orig_par is the new polytomous node
+		likelihood->useAsLikelihoodRoot(orig_par);
+		likelihood->discardCacheAwayFromNode(*orig_par);
+
+		if (view_proposed_move)
+			likelihood->startTreeViewer(tree, "Delete edge move ACCEPTED");
+		}
+
+	reset();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns current value of `add_edge_move_proposed' data member, which is true if the last move proposed was an
+|	add-edge move and false if last move proposed was a delete-edge move.
+*/
+bool SamcMove::addEdgeMoveProposed() const
+	{
+	return add_edge_move_proposed;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Re-initializes all data members that are recomputed each time ProposeNewState is called.
+*/
+void SamcMove::reset()
+	{
+	// Workspace used for computing edge length prior
+	// Should always be length one.
+	//if (one_edgelen.empty())
+    //    one_edgelen.push_back(0.0);
+
+	polytomies.clear();
+
+	add_edge_move_proposed	= false;
+	orig_edgelen			= 0.0;
+	orig_lchild				= NULL;
+	orig_rchild				= NULL;
+	orig_par				= NULL;
+	ln_jacobian				= 0.0;
+	ln_hastings				= 0.0;
+	new_edgelen				= 0.0;
+	polytomy_size			= 0;
+	num_polytomies			= 0;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the value of `ln_hastings', which is the natural log of the Hastings ratio for this move and which is 
+|	computed in both SamcMove::ProposeAddEdgeMove and SamcMove::ProposeDeleteEdgeMove.
+*/
+double SamcMove::getLnHastingsRatio() const
+	{
+	return ln_hastings;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the value of `ln_jacobian', which is the natural log of the Jacobian for this move and which is computed in
+|	both SamcMove::ProposeAddEdgeMove and SamcMove::ProposeDeleteEdgeMove.
+*/
+double SamcMove::getLnJacobian() const
+	{
+	return ln_jacobian;
+	}

@@ -17,8 +17,8 @@
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#if ! defined(BUSH_MOVE_HPP)
-#define BUSH_MOVE_HPP
+#if ! defined(SAMC_MOVE_HPP)
+#define SAMC_MOVE_HPP
 
 #include <vector>									// for std::vector
 #include <boost/shared_ptr.hpp>						// for boost::shared_ptr
@@ -36,20 +36,6 @@ namespace phycas
 class ExponentialDistribution;
 typedef boost::shared_ptr<ExponentialDistribution>	ExponentialDistributionShPtr;
 
-//class TreeNode;
-
-//class Tree;
-//typedef boost::shared_ptr<Tree>					TreeShPtr;
-
-//class Model;
-//typedef boost::shared_ptr<Model>					ModelShPtr;
-
-//class TreeLikelihood;
-//typedef boost::shared_ptr<TreeLikelihood>			TreeLikeShPtr;
-
-class TopoPriorCalculator;
-typedef boost::shared_ptr<TopoPriorCalculator>		TopoPriorCalculatorShPtr;
-
 class MCMCChainManager;
 typedef boost::weak_ptr<MCMCChainManager>			ChainManagerWkPtr;
 
@@ -59,15 +45,15 @@ typedef std::map<unsigned, std::vector<double> > PolytomyDistrMap;
 typedef std::vector<double> VecPolytomyDistr;
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Encapsulates the Larget-Simon local move.
+|	Encapsulates the SAMC dimension-change move
 */
-class BushMove : public MCMCUpdater
+class SamcMove : public MCMCUpdater
 	{
 	public:
-									BushMove();
-									virtual ~BushMove() 
+									SamcMove();
+									virtual ~SamcMove() 
 										{
-										//std::cerr << "BushMove dying..." << std::endl;
+										//std::cerr << "SamcMove dying..." << std::endl;
 										}
 
 		// Accessors
@@ -77,7 +63,6 @@ class BushMove : public MCMCUpdater
 		// Modifiers
 		//
 		void						setEdgeLenDistMean(double mean);
-		TopoPriorCalculatorShPtr	getTopoPriorCalculator();
 
 		// Utilities
 		//
@@ -101,7 +86,7 @@ class BushMove : public MCMCUpdater
 		void						proposeDeleteEdgeMove(TreeNode * nd);
 		const VecPolytomyDistr &	computePolytomyDistribution(unsigned nspokes);
 		void						refreshPolytomies();
-		BushMove &					operator=(const BushMove &);	// never use - don't define
+		SamcMove &					operator=(const SamcMove &);	// never use - don't define
 
 	private:
 
@@ -128,15 +113,12 @@ class BushMove : public MCMCUpdater
 		double							ln_hastings;						/**< The natural log of the Hastings ratio for the move last proposed */
 
 		CDF								cdf;								/**< CDF object needed for its LnGamma function */
-		//std::vector<double>				one_edgelen;						/**< Workspace declared here to avoid unnecessary allocs/deallocs */
-
-		TopoPriorCalculatorShPtr		topo_prior_calculator;				/**< Used to compute the various kinds of topological priors needed for dealing with polytomies */
 
 		bool							view_proposed_move;					/**< If set to true, graphical tree viewer will pop up showing edges affected by the next proposed Bush move */
 	};
 
 } // namespace phycas
 
-#include "phycas/src/bush_move.inl"
+#include "phycas/src/samc_move.inl"
 
 #endif

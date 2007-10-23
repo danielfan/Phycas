@@ -30,6 +30,7 @@
 #include "phycas/src/tree_scaler_move.hpp"
 #include "phycas/src/ncat_move.hpp"
 #include "phycas/src/bush_move.hpp"
+#include "phycas/src/samc_move.hpp"
 #include "phycas/src/edge_move.hpp"
 #include "phycas/src/topo_prior_calculator.hpp"
 
@@ -135,6 +136,15 @@ void updater_pymod()
 		.def("finalize", &phycas::BushMove::finalize)
 		.def("getTopoPriorCalculator", &phycas::BushMove::getTopoPriorCalculator)
 		.def("viewProposedMove", &phycas::BushMove::viewProposedMove)
+		;
+	class_<phycas::SamcMove, bases<phycas::MCMCUpdater>, 
+		boost::noncopyable, boost::shared_ptr<phycas::SamcMove> >("SamcMove") 
+		.def("update", &phycas::SamcMove::update)
+		.def("addEdgeMoveProposed", &phycas::SamcMove::addEdgeMoveProposed)
+		.def("setEdgeLenDistMean", &phycas::SamcMove::setEdgeLenDistMean)
+		.def("finalize", &phycas::SamcMove::finalize)
+		.def("getTopoPriorCalculator", &phycas::SamcMove::getTopoPriorCalculator)
+		.def("viewProposedMove", &phycas::SamcMove::viewProposedMove)
 		;
 	class_<phycas::NCatMove, bases<phycas::MCMCUpdater>, 
 		boost::noncopyable, boost::shared_ptr<phycas::NCatMove> >("NCatMove") 

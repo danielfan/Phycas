@@ -1,4 +1,4 @@
-import os, sys, math, threading
+import os, sys, math, threading, random
 import MCMCManager  # poorly named, as MCMCManager is now only one of many classes within
 from phycas.Conversions import *
 from phycas.DataMatrix import *
@@ -36,8 +36,7 @@ class Phycas(object):
         self.sample_every           = 100       # a new sample of tree topology and model parameters will be taken after this many cycles
         self.report_every           = 100       # a progress report will be displayed after this many cycles
         self.verbose                = True      # you will get more output if True, less output if False
-        self.quiet                  = False     # if True, output will only be send to self.logfile, if defined (see below); if False, output will be sent to the console as well
-        self.logfile                = None      # specify a filename to save output to file 
+        self.quiet                  = False     # if True, output will only be sent to the log file if open (see below); if False, output will be sent to the console as well
         self.outfile_prefix         = None      # If None, parameter and tree files created will have a name beginning with the name of the data file; if provided, this prefix will form the first part of the parameter and tree file names
         self.doing_samc             = False     # if True, using Cheon and Liang "SSAMC" method
         # Variables associated with substitution models (except for edge lengths)
@@ -176,7 +175,9 @@ class Phycas(object):
         self.gg_Dm                  = []        # vector of overall measures (one for each k in gg_kvect)
         self.reader                 = NexusReader()
         self.logf                   = None
+        self._logFileName           = None
         #self.use_tree_viewer        = False    # popup graphical TreeViewer to show trees during run POLPY_NEWWAY
+        self.addition_sequence      = []        # list of taxon numbers for addition sequence
 
     def phycassert(self, assumption, msg):
         if not assumption:
@@ -569,6 +570,43 @@ class Phycas(object):
         if self.paramf:
             self.paramFileClose()
 
+    def runSAMC(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Performs the SSAMC analysis.
+        
+        """
+        # temp del: current_tree = make_random_4taxon_tree(addition_sequence[:4])
+        current_level = 0
+        addseq = self.addition_sequence
+        max_level = len(addseq) - 4
+        counts = [0]*(max_level + 1)
+        for cycle in xrange(self.ncycles):
+            # proposal for changing current level
+            u = random.random()
+            proposed_level = current_level
+            if u < 1.0/3.0:
+                if current_level > 0:
+                    proposed_level = current_level - 1
+                
+            elif u > 2.0/3.0:
+                if current_level < max_level:
+                    proposed_level = current_level + 1
+                
+#             if proprosed_level == current_level:
+#                 do_larget_simon_move(\)
+#             elif proprosed_level > current_level:
+#                 do_extrapolation_move()
+#             else:
+#                 do_projection_move()
+
+            #print proposed_level,
+            current_level = proposed_level ##@TEMP
+            counts[current_level] += 1
+        print "counts = ", counts
+        print "mean   = ", sum(counts)/float(len(counts))
+    
+    
     def readDataFromFile(self):
         if not self.file_name_data_stored or (self.data_file_name != self.file_name_data_stored):
             self.reader.readFile(self.data_file_name)
@@ -592,17 +630,12 @@ class Phycas(object):
                 min_dist = d_i
         return min_dist
          
-    
-    def init_samc(self):
-    
-        if self.nchains != 1:
-            print "Note: nchains reset to 1 for SSAMC"
-            self.nchains = 1
 
-        # Get a distance matrix
-        d = self.calcDistances()
-        n = self.ntax
+    def getSamcAdditionSequence(self):
         
+        n = self.ntax
+        d = self.calcDistances()
+
         # Compute the addition order.  First find the most distant pair.
         max_dist = -1.0
         for i in range(n):
@@ -610,27 +643,91 @@ class Phycas(object):
                 dij = d[i][j]
                 if dij > max_dist:
                     max_dist = dij
-                    addition_sequence = [i,j]
+                    self.addition_sequence = [i,j]
         
-        # level_set = [addition_sequence]
+
+        # level_set = [self.addition_sequence]
         available_set = range(n)
-        available_set.remove(addition_sequence[0])
-        available_set.remove(addition_sequence[1])
-        print "level 2 addition_sequence =>", addition_sequence
+        available_set.remove(self.addition_sequence[0])
+        available_set.remove(self.addition_sequence[1])
+        # print "level 2 self.addition_sequence =>", self.addition_sequence
 
         for level in range(2,n):
             max_dist = -1.0
             for i in available_set:
-                d_to_set = self.distanceToTaxaSet(i, addition_sequence, d)
+                d_to_set = self.distanceToTaxaSet(i, self.addition_sequence, d)
                 if d_to_set > max_dist:
                     max_dist = d_to_set
                     next_i = i
-            addition_sequence.append(next_i)
+            self.addition_sequence.append(next_i)
             available_set.remove(next_i)
-            print "level", level, " addition_sequence =>", addition_sequence
+            print "level", level, " self.addition_sequence =>", self.addition_sequence
+            
+    def getSamcStartingTree(self):
+        addseq = self.addition_sequence
+        brlens = [self.starting_edgelen_dist.sample() for i in range(5)]
+        self.tree_topology = "((%d:%.5f,%d:%.5f):%.5f,%d:%.5f,%d:%.5f)" % (
+                             addseq[0], brlens[0], addseq[1], brlens[1], brlens[4], addseq[2],
+                             brlens[2], addseq[3], brlens[3])
+        print "starting tree = ", self.tree_topology
         
-        
+    def setupSAMC(self):
     
+        # Read the data
+        self.phycassert(self.data_source == 'file', "This only works for data read from a file (specify data_source == 'file')")
+        self.readDataFromFile()
+        self.phycassert(len(self.taxon_labels) == self.ntax, "Number of taxon labels does not match number of taxa.")
+
+        if self.nchains != 1:
+            print "Note: nchains reset to 1 for SSAMC"
+            self.nchains = 1
+
+        if not self.addition_sequence:
+            self.getSamcAdditionSequence()
+            
+        if not self.tree_topology:
+            self.getSamcStartingTree()
+        
+        # Set up MCMC chain
+        self.heat_vector = [1.0]
+        self.mcmc_manager.createChains()
+
+        self.openParameterAndTreeFiles()
+        
+        
+    def setLogFile(self, filename):
+        # Open a log file if requested
+        if self.logf:
+            self.logf.close()
+            self.logf = None
+        if not filename:
+            self._logFileName = None
+        else:
+            # TODO check first to see if it exists before blindly overwriting
+            self.logf = file(filename, 'w')
+            self._logFileName = filename
+
+    def getLogFile(self):
+        return self._logFileName
+        
+    log_file_name = property(getLogFile, setLogFile)
+    
+    def openParameterAndTreeFiles(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Creates parameter and tree file names based on the data file name or the
+        user-supplied prefix and opens the files
+        
+        """
+        prefix = os.path.abspath(self.data_file_name) #os.path.basename(self.data_file_name)
+        if self.outfile_prefix:
+            prefix = self.outfile_prefix
+        self.param_file_name = prefix + '.p'
+        self.tree_file_name = prefix + '.t'
+
+        self.paramFileOpen()
+        self.treeFileOpen()
+
     
     def setupMCMC(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -642,10 +739,6 @@ class Phycas(object):
         last thing done by this function.
         
         """
-        # Open a logfile if requested
-        if self.logfile:
-            # TODO check first to see if it exists before blindly overwriting
-            self.logf = file(self.logfile, 'w')
 
         # Read the data
         self.phycassert(self.data_source == 'file', "This only works for data read from a file (specify data_source == 'file')")
@@ -672,8 +765,6 @@ class Phycas(object):
             self.phycassert(False, "starting_tree_source should equal 'random', 'file', or 'usertree', but instead it was this: %s" % self.starting_tree_source)
         
         # Determine heating levels if multiple chains
-        if self.doing_samc:
-            self.init_samc()
         if self.heat_vector == None:
             if self.nchains == 1:
                 self.heat_vector = [1.0]
@@ -708,19 +799,8 @@ class Phycas(object):
         # Call MCMCManager's createChains function
         self.mcmc_manager.createChains()
         
-        # Create parameter and tree file names based on the data file name or the user-supplied prefix
-        prefix = os.path.abspath(self.data_file_name) #os.path.basename(self.data_file_name)
-        if self.outfile_prefix:
-            prefix = self.outfile_prefix
-        self.param_file_name = prefix + '.p'
-        self.tree_file_name = prefix + '.t'
-
-        # Open the parameter file for writing
-        self.paramFileOpen()
- 
-        # Open the tree file
-        self.treeFileOpen()
-
+        self.openParameterAndTreeFiles()
+        
     def mcmc(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -737,7 +817,8 @@ class Phycas(object):
         
         """
         self.doing_samc = True;
-        self.mcmc()
+        self.setupSAMC()
+        self.runSAMC()
 
     def simulateDNA(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -823,3 +904,6 @@ class Phycas(object):
             print
 
         return distance
+
+if __name__ == '__main__':
+    print "Dumbass."

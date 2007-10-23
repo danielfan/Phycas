@@ -52,6 +52,7 @@ class Tree
 
 		friend class TreeManip;
 		friend class BushMove;
+		friend class SamcMove;
 
 		typedef std::vector<TreeNode *> TreeNodeVec;
 
