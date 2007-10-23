@@ -457,9 +457,12 @@ class Phycas(object):
         current_level = 0
         addseq = self.addition_sequence
         chain = self.mcmc_manager.getColdChain()
+        mgr = self.mcmc_manager.getColdChainManager()
         ls = chain.larget_simon_move
         max_level = len(addseq) - 4
         counts = [0]*(max_level + 1)
+        mgr.refreshLastLnPrior()
+        mgr.refreshLastLnLike()
         for cycle in xrange(self.ncycles):
             # proposal for changing current level
             u = random.random()
