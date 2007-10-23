@@ -874,11 +874,7 @@ class Phycas(object):
         matrix = []
         
         for i in range(self.ntax):
-            print "%-20s" % self.taxon_labels[i]
-            dataRow = self.data_matrix.getRow(i)
-            for d in dataRow:
-                print d,
-            matrix.append(dataRow)
+            matrix.append(self.data_matrix.getRow(i))
         
         distance = []
         for i in range(self.ntax):
@@ -898,10 +894,10 @@ class Phycas(object):
                 distance_i.append(diff)
             distance.append(distance_i)
             
-        for i in range(self.ntax):
-            for j in range(self.ntax):
-                print "%10f" % distance[i][j],
-            print
+#         for i in range(self.ntax):
+#             for j in range(self.ntax):
+#                 print "%10f" % distance[i][j],
+#             print
 
         return distance
 

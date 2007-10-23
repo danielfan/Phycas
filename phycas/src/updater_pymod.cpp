@@ -143,7 +143,6 @@ void updater_pymod()
 		.def("addEdgeMoveProposed", &phycas::SamcMove::addEdgeMoveProposed)
 		.def("setEdgeLenDistMean", &phycas::SamcMove::setEdgeLenDistMean)
 		.def("finalize", &phycas::SamcMove::finalize)
-		.def("getTopoPriorCalculator", &phycas::SamcMove::getTopoPriorCalculator)
 		.def("viewProposedMove", &phycas::SamcMove::viewProposedMove)
 		;
 	class_<phycas::NCatMove, bases<phycas::MCMCUpdater>, 
