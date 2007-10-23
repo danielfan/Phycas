@@ -179,8 +179,14 @@ class Phycas(object):
         #self.use_tree_viewer        = False    # popup graphical TreeViewer to show trees during run POLPY_NEWWAY
         self.addition_sequence      = []        # list of taxon numbers for addition sequence
 
+    # by default phycassert sys.exit.
+    # When debugging, it is nice to set this to True so that you can see the stack trace
+    PhycassertRaisesException = False
+
     def phycassert(self, assumption, msg):
         if not assumption:
+            if Phycas.PhycassertRaisesException:
+                raise AssertionError(msg)
             sys.exit('Error: ' + msg)
 
     def setEdgelenDist(self, dist):
@@ -808,6 +814,10 @@ class Phycas(object):
 #             print
 
         return distance
+
+    def PhycassertShouldRaiseException(v):
+        Phycas.PhycassertRaisesException = v
+    PhycassertShouldRaiseException = staticmethod(PhycassertShouldRaiseException)
 
 if __name__ == '__main__':
     print "Dumbass."
