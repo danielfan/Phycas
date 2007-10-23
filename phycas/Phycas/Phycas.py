@@ -445,6 +445,22 @@ class Phycas(object):
             self.output('\nSlice sampler diagnostics:')
             self.output(summary)
 
+    def updateAllUpdaters(self, chain, chain_index, cycle):
+        if self.debugging:
+            tmpf = file('debug_info.txt', 'a')
+            tmpf.write('************** cycle=%d, chain=%d\n' % (cycle,chain_index))
+        for p in chain.chain_manager.getAllUpdaters():
+            w = p.getWeight()
+            for x in range(w):
+                if self.debugging:
+                    p.setSaveDebugInfo(True)
+                p.update()
+                if self.debugging:
+                    tmpf.write('%s | %s\n' % (p.getName(), p.getDebugInfo()))
+        
+        if self.debugging:
+            tmpf.close()
+
     def runMCMC(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -457,15 +473,12 @@ class Phycas(object):
         #    self.likelihood.setNoData()
 
         self.nsamples = self.ncycles//self.sample_every
-        #assert self.metropolis_weight == 0, 'deprecated variable metropolis_weight was used'
         
         if self.verbose:
             if self.data_source == None:
                 self.output('Data source:    None (running MCMC with no data to explore prior)')
             elif self.data_source == 'file':
                 self.output('Data source:    %s' % self.data_file_name)
-            #elif self.data_source == 'memory':
-            #    self.output('Data source:    Data already in memory')
             else:
                 self.output("Data source:    Unknown (something other than 'file' or None was specified for data_source)")
             self.output('No. cycles:     %s' % self.ncycles)
@@ -515,7 +528,6 @@ class Phycas(object):
 
         self.stopwatch.start()
         self.mcmc_manager.resetNEvals()
-        #self.likelihood.resetNEvals()
 
         self.output('\nSampling (%d cycles)...' % self.ncycles)
         if self.verbose:
@@ -527,36 +539,16 @@ class Phycas(object):
         #if self.use_tree_viewer:
         #    self.tree_mutex = threading.Lock()
         #    self.tree_viewer = TreeViewer.TreeViewer(tree=self.tree, mutex=self.tree_mutex) # POLPY_NEWWAY
-        #    self.tree_viewer.start() # POLPY_NEWWAY
-
-        for cycle in range(self.ncycles):
+        #    self.tree_viewer.start() # POLPY_NEWWAY    
+    
+        for cycle in xrange(self.ncycles):
             for i,c in enumerate(self.mcmc_manager.chains):
-                #tmpf = file('debug_info.txt', 'a') # comment out for release
-                #tmpf.write('************** cycle=%d, chain=%d\n' % (cycle,i))  # comment out for release
-                for p in c.chain_manager.getAllUpdaters():
-                    w = p.getWeight()
-                    for x in range(w):
-                        #p.setSaveDebugInfo(True)  # comment out for release
-                        if cycle == 3 and p.getName() == 'Discrete gamma shape':
-                            #raw_input('cycle 3, Discrete gamma shape')
-                            self.mcmc_manager.getColdChain().likelihood.setDebug(True)
-                        # print p.getName()
-                        p.update()
-                        #tmpf.write('%s | %s\n' % (p.getName(), p.getDebugInfo()))  # comment out for release
-                #tmpf.close()  # comment out for release
-                # sys.exit('debug kill')  # comment out for release
+                self.updateAllUpdaters(c, i, cycle)
             if self.verbose and (cycle + 1) % self.report_every == 0:
                 self.stopwatch.normalize()
                 cold_chain_manager = self.mcmc_manager.getColdChainManager()
                 msg = 'cycle = %d, lnL = %.5f (%.5f secs)' % (cycle + 1, cold_chain_manager.getLastLnLike(), self.stopwatch.elapsedSeconds())
-                #if self.use_flex_model:
-                #    bytes_per_cla = self.likelihood.bytesPerCLA()
-                #    ncreated = self.likelihood.numCLAsCreated()
-                #    megabytes = ncreated*bytes_per_cla//1048576
-                #    msg += ', %d rates, %d MB in %d CLAs' % (self.model.getNGammaRates(),megabytes,ncreated)
                 self.output(msg)
-                #if self.use_tree_viewer and self.tree_viewer:
-                #    self.tree_viewer.refresh('Cycle %d' % (cycle + 1))
             if (cycle + 1) % self.sample_every == 0:
                 self.mcmc_manager.recordSample(cycle)
                 self.stopwatch.normalize()
@@ -564,9 +556,6 @@ class Phycas(object):
                 self.adaptSliceSamplers()
                 next_adaptation += 2*(next_adaptation - last_adaptation)
                 last_adaptation = cycle + 1
-
-        #if self.use_tree_viewer and self.tree_viewer:
-        #    self.tree_viewer.close() # POLPY_NEWWAY
 
         self.adaptSliceSamplers()
         total_evals = self.mcmc_manager.getTotalEvals() #self.likelihood.getNEvals()
@@ -589,6 +578,60 @@ class Phycas(object):
             self.nchar = self.data_matrix.getNChar() # used for Gelfand-Ghosh simulations only
             self.file_name_data_stored = self.data_file_name    # prevents rereading same data file later
 
+    def distanceToTaxaSet(self, leaf, taxon_set, d):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Finds the minimum distance between a leaf and the members of a set of
+        taxa.
+        """
+        
+        min_dist = float('Infinity')
+        for i in taxon_set:
+            d_i = d[leaf][i]
+            if d_i < min_dist:
+                min_dist = d_i
+        return min_dist
+         
+    
+    def init_samc(self):
+    
+        if self.nchains != 1:
+            print "Note: nchains reset to 1 for SSAMC"
+            self.nchains = 1
+
+        # Get a distance matrix
+        d = self.calcDistances()
+        n = self.ntax
+        
+        # Compute the addition order.  First find the most distant pair.
+        max_dist = -1.0
+        for i in range(n):
+            for j in range(i+1,n):
+                dij = d[i][j]
+                if dij > max_dist:
+                    max_dist = dij
+                    addition_sequence = [i,j]
+        
+        # level_set = [addition_sequence]
+        available_set = range(n)
+        available_set.remove(addition_sequence[0])
+        available_set.remove(addition_sequence[1])
+        print "level 2 addition_sequence =>", addition_sequence
+
+        for level in range(2,n):
+            max_dist = -1.0
+            for i in available_set:
+                d_to_set = self.distanceToTaxaSet(i, addition_sequence, d)
+                if d_to_set > max_dist:
+                    max_dist = d_to_set
+                    next_i = i
+            addition_sequence.append(next_i)
+            available_set.remove(next_i)
+            print "level", level, " addition_sequence =>", addition_sequence
+        
+        
+    
+    
     def setupMCMC(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -605,25 +648,16 @@ class Phycas(object):
             self.logf = file(self.logfile, 'w')
 
         # Read the data
-        if self.data_source == 'file':
-            self.readDataFromFile()
-            #self.reader.readFile(self.data_file_name)
-            #self.taxon_labels = self.reader.getTaxLabels()
-            #self.data_matrix = getDiscreteMatrix(self.reader, 0)
-            #self.ntax = self.data_matrix.getNTax()
-            #self.nchar = self.data_matrix.getNChar() # used for Gelfand-Ghosh simulations only
-            #self.likelihood.copyDataFromDiscreteMatrix(self.data_matrix)
-        #elif self.data_source == 'memory':
-        #    assert self.ntax > 0
-        #    assert self.nchar > 0
-            
-        #self.npatterns = self.likelihood.getNPatterns()
+        self.phycassert(self.data_source == 'file', "This only works for data read from a file (specify data_source == 'file')")
+        self.readDataFromFile()
+        self.phycassert(len(self.taxon_labels) == self.ntax, "Number of taxon labels does not match number of taxa.")
 
         # Create a tree description to be used for building starting trees (formerly Phycas.setupTree function)
         if self.starting_tree_source == 'file':
             self.phycassert(self.data_source, "Specified starting_tree_source to be 'file' when data_source was None (file was not read)")
 
             # Grab first tree description in the data file
+            # TODO allow some other tree than the first
             newicks = []
             for t in self.reader.getTrees():
                 newicks.append(t.newick)
@@ -635,11 +669,11 @@ class Phycas(object):
             self.phycassert(self.ntax > 0, 'expecting ntax to be greater than 0')
             self.starting_tree = None
         else:
-            self.phycassert(False, 'starting_tree_source should equal random, file, or usertree, but instead it was this: %s' % self.starting_tree_source)
+            self.phycassert(False, "starting_tree_source should equal 'random', 'file', or 'usertree', but instead it was this: %s" % self.starting_tree_source)
         
-        #self.likelihood.prepareForLikelihood(self.tree)
-
         # Determine heating levels if multiple chains
+        if self.doing_samc:
+            self.init_samc()
         if self.heat_vector == None:
             if self.nchains == 1:
                 self.heat_vector = [1.0]
@@ -656,7 +690,7 @@ class Phycas(object):
                         self.heat_vector.append(temp)
                 else:
                     for i in range(self.nchains):
-                        self.self.do_marginal_like = True
+                        self.do_marginal_like = True
                         # Likelihood heating for thermodynamic integration
                         # 0 1.000 = (3-0)/3 cold chain explores posterior
                         # 1 0.667 = (3-1)/3
@@ -681,15 +715,9 @@ class Phycas(object):
         self.param_file_name = prefix + '.p'
         self.tree_file_name = prefix + '.t'
 
-        # Open the parameter file
+        # Open the parameter file for writing
         self.paramFileOpen()
-        
-        # Store (and create, if necessary) list of taxon labels
-        if (not self.data_source) or (len(self.taxon_labels) != self.ntax):
-            for i in range(self.ntax):
-                s = 'taxon_%d' % (i + 1)
-                self.taxon_labels.append(s)
-
+ 
         # Open the tree file
         self.treeFileOpen()
 
@@ -761,6 +789,37 @@ class Phycas(object):
         
         """
         self.phycassert(self.data_source == 'file', "data_source variable must be defined to 'file'")
-        #self.readDataFromFile()
-        #for i in range(self.ntax):
-        #   print "%s" % self.taxon_labels[i]
+
+        matrix = []
+        
+        for i in range(self.ntax):
+            print "%-20s" % self.taxon_labels[i]
+            dataRow = self.data_matrix.getRow(i)
+            for d in dataRow:
+                print d,
+            matrix.append(dataRow)
+        
+        distance = []
+        for i in range(self.ntax):
+            distance_i = []
+            for j in range(self.ntax):
+                diff = 0.0
+                if i < j:
+                    diff = 0.0
+                    for k in range(self.nchar):
+                        xik = matrix[i][k]
+                        xjk = matrix[j][k]
+                        if xik != xjk:
+                            diff += 1.0
+                elif i > j:
+                    diff = distance[j][i]
+                
+                distance_i.append(diff)
+            distance.append(distance_i)
+            
+        for i in range(self.ntax):
+            for j in range(self.ntax):
+                print "%10f" % distance[i][j],
+            print
+
+        return distance

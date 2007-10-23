@@ -182,6 +182,8 @@ class MarkovChain(LikelihoodCore):
         self.flex_prob_param_prior              = cloneDistribution(self.phycas.flex_prob_param_prior)
         self.chain_manager                      = None
 
+        self.setupChain()
+
     def resetNEvals(self):
         return self.likelihood.resetNEvals()
     
@@ -420,7 +422,6 @@ class MCMCManager:
         """
         for heating_power in self.phycas.heat_vector:
             markov_chain = MarkovChain(self.phycas, heating_power)
-            markov_chain.setupChain()
             self.chains.append(markov_chain)
 
     def getNumChains(self):
