@@ -263,6 +263,9 @@
 				RelativePath="..\..\phycas\src\q_matrix.cpp">
 			</File>
 			<File
+				RelativePath="..\..\phycas\src\samc_move.cpp">
+			</File>
+			<File
 				RelativePath="..\..\phycas\src\sim_data.cpp">
 			</File>
 			<File

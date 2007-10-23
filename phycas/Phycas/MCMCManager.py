@@ -111,6 +111,7 @@ class LikelihoodCore:
             self.phycas.starting_tree = self.tree.makeNewick()
         else:
             # Build user-specified tree
+            raw_input('debug stop: building this tree => %s' % self.phycas.starting_tree)
             self.tree.buildFromString(self.phycas.starting_tree)
             if not self.tree.tipNumbersSetUsingNames():
                 self.phycas.warn_tip_numbers = True
@@ -227,6 +228,7 @@ class MarkovChain(LikelihoodCore):
         
         """
         LikelihoodCore.setupCore(self)
+        # raw_input('debug stop')
         LikelihoodCore.prepareForLikelihood(self)
         
         # Make sure that each is using the same pseudorandom number generator object

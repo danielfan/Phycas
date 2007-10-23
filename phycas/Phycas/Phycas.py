@@ -243,100 +243,6 @@ class Phycas(object):
                     self.output('%20d %20.8f' % (i,topo_prior))
             self.output()
 
-    #def readNexusFile(self, fn):            
-    #    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
-    #    """
-    #    Sets self.data_file_name to supplied filename fn, calls the
-    #    self.reader.readFile function, storing the data matrix in 
-    #    self.data_matrix. Also sets self.ntax and self.nchar accordingly.
-    #    
-    #    """
-    #    assert self.data_source == 'file', "set data_source to 'file' before calling readNexusFile"
-    #    if not self.data_file_name == fn:
-    #        self.data_file_name = fn
-    #    self.reader.readFile(self.data_file_name)
-    #    self.data_matrix = getDiscreteMatrix(self.reader, 0)
-    #    self.ntax = self.data_matrix.getNTax()
-    #    self.nchar = self.data_matrix.getNChar() # used for Gelfand-Ghosh simulations only
-    #    # used to avoid next two lines if self.data_source was None, but we have to
-    #    # copy over the data from data_matrix to set self.npatterns, so without the
-    #    # next two lines, we would not be able to run the pattern-specific rates model
-    #    # without data because we would not know how many rate parameters to create
-    #    assert self.likelihood, 'call Phycas.setupLikelihood before calling Phycas.readNexusFile'
-    #    self.likelihood.copyDataFromDiscreteMatrix(self.data_matrix)
-    #    self.npatterns = self.likelihood.getNPatterns()
-
-    #def setupTree(self, source = None):
-    #    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
-    #    """
-    #    The purpose of setupTree is to create a string description of the
-    #    starting tree that can be handed to each chain for purposes of
-    #    building the starting tree. If starting_tree_source equals 'file',
-    #    then the first newick tree description that appears in the data file
-    #    is used. In this case, the program will abort if there are no trees
-    #    stored in the specified data file. If starting_tree_source is equal
-    #    to 'random', then a random starting tree will be used (with edge
-    #    lengths drawn from self.starting_edgelen_dist. If starting_tree_source
-    #    is 'usertree', it is assumed that self.tree_topology contains a
-    #    valid newick tree description.
-    #    
-    #    """
-    #    if source:
-    #        self.starting_tree_source = source
-    #        
-    #    # If user requested using a tree from the data file, grab the first one stored there
-    #    self.tree = Tree()
-    #    if self.starting_tree_source == 'file':
-    #        assert self.data_source, "Specified starting_tree_source to be 'file' when data_source was None (file was not read)"
-    #        
-    #        # Grab first tree description in the data file
-    #        newicks = []
-    #        for t in self.reader.getTrees():
-    #            newicks.append(t.newick)
-    #        assert len(newicks) > 0, 'Error: a trees block defining at least one tree must be stored in the nexus data file'
-    #        self.starting_tree = newicks[0]
-    #
-    #        # Build a Tree object from the description stored in the data file
-    #        self.tree.buildFromString(self.starting_tree)
-    #        if not self.tree.tipNumbersSetUsingNames():
-    #            self.warn_tip_numbers = True
-    #        
-    #    elif self.starting_tree_source == 'usertree':
-    #        # self.tree_topology should already be created
-    #        self.starting_tree = self.tree_topology
-    #
-    #        # Build a Tree object from the description stored in self.starting_tree
-    #        self.tree.buildFromString(self.starting_tree)
-    #        if not self.tree.tipNumbersSetUsingNames():
-    #            self.warn_tip_numbers = True
-    #        
-    #    elif self.starting_tree_source == 'random':
-    #        assert self.ntax > 0, 'expecting ntax to be greater than 0'
-    #        
-    #        # Build a random tree
-    #        self.starting_edgelen_dist.setLot(self.r)
-    #        TreeManip(self.tree).randomTree(
-    #            self.ntax,     # number of tips
-    #            self.r,        # pseudorandom number generator
-    #            self.starting_edgelen_dist, # distribution from which to draw starting edge lengths
-    #            False)         # Yule tree if True, edge lengths independent if False
-    #        self.starting_tree = self.tree.makeNewick()
-    #        self.warn_tip_numbers = False
-    #        
-    #    else:
-    #        # throw exception
-    #        assert False, 'starting_tree_source should equal random, file, or usertree, but instead it was this: %s' % self.starting_tree_source
-    #
-    #    # Make sure that names of tips equal the string equivalent of the tip node number plus 1
-    #    # This means that when tree topologies are sampled, the tree definitions that are output
-    #    # to the .t file will be similar to MrBayes output
-    #    assert self.ntax > 0, 'expecting ntax to be greater than 0'
-    #    self.nedges = 2*self.ntax - 3
-    #    taxNames = []
-    #    for i in range(self.ntax):
-    #        taxNames.append(str(i+1))
-    #    self.tree.rectifyNames(taxNames)
-
     def treeFileOpen(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -623,7 +529,7 @@ class Phycas(object):
         taxa.
         """
         
-        min_dist = float('Infinity')
+        min_dist = float('1e3000')
         for i in taxon_set:
             d_i = d[leaf][i]
             if d_i < min_dist:
@@ -669,6 +575,8 @@ class Phycas(object):
         self.tree_topology = "((%d:%.5f,%d:%.5f):%.5f,%d:%.5f,%d:%.5f)" % (
                              addseq[0], brlens[0], addseq[1], brlens[1], brlens[4], addseq[2],
                              brlens[2], addseq[3], brlens[3])
+        self.starting_tree_source = 'usertree'
+        self.starting_tree = self.tree_topology
         print "starting tree = ", self.tree_topology
         
     def setupSAMC(self):
