@@ -61,10 +61,10 @@ HyperPriorParam::HyperPriorParam(
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calls the sample() member function of the `slice_sampler' data member.
 */
-void HyperPriorParam::update()
+bool HyperPriorParam::update()
 	{
 	if (is_fixed)
-		return;
+		return false;
 	if (slice_sampler)
 		{
 		slice_sampler->Sample();
@@ -77,6 +77,6 @@ void HyperPriorParam::update()
         else
             debug_info = "HyperPriorParam (no slice sampler)";
         }
+	return true;
 	}
-
 }

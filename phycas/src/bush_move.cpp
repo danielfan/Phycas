@@ -55,12 +55,12 @@ BushMove::BushMove()
 |	Calls proposeNewState(), then decides whether to accept or reject the proposed new state, calling accept() or 
 |	revert(), whichever is appropriate.
 */
-void BushMove::update()
+bool BushMove::update()
 	{
 	// The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
 	// A proposed BushMove cannot be accepted without changing edge lengths, so it is best to bail out now.
 	if (is_fixed)
-		return;
+		return false;
 
 	if (num_taxa == 0)
 		{
@@ -127,12 +127,14 @@ void BushMove::update()
 		p->setLastLnPrior(curr_ln_prior);
 		p->setLastLnLike(curr_ln_like);
 		accept();
+		return true;
 		}
 	else
 		{
 		curr_ln_like	= p->getLastLnLike();
 		curr_ln_prior	= p->getLastLnPrior();
 		revert();
+		return false;
 		}
 	}
 
@@ -406,7 +408,7 @@ void BushMove::revert()
 		// Now delete orig_lchild
 		//
 		tree_manipulator.DetachSubtree(orig_lchild);
-		tree->StoreTreeNode(orig_lchild);
+		tree->StoreInternalNode(orig_lchild);
 
 		likelihood->useAsLikelihoodRoot(orig_par);
 		likelihood->restoreFromCacheAwayFromNode(*orig_par);

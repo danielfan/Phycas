@@ -76,7 +76,7 @@ class NCatMove : public MCMCUpdater
 
 		// These are virtual functions in the MCMCUpdater base class
 		//
-		virtual void					update();
+		virtual bool					update();
 		virtual double					getLnHastingsRatio() const;
 		virtual double					getLnJacobian() const;
 		virtual void					proposeNewState();

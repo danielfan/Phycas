@@ -46,10 +46,10 @@ void FlexProbParam::setLot(LotShPtr r)
 |	Calls the sample() member function of the `slice_sampler' data member to update each of the probabilities in the 
 |   vector `rate_probs'.
 */
-void FlexProbParam::update()
+bool FlexProbParam::update()
 	{
 	if (is_fixed)
-		return;
+		return false;
 
     // Ok, it looks like the following cannot work, but it does! The key is the assignment to `which'
     // and the fact that SliceSampler::Sample() calls FlexProbParam::operator() repeatedly. Inside
@@ -70,6 +70,7 @@ void FlexProbParam::update()
     	for (unsigned i = 0; i < nrates; ++i)
             debug_info += str(boost::format("\n  %d %f") % i % rate_probs[i]);
         }
+    return true;
 	}
 
 }

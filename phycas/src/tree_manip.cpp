@@ -931,8 +931,19 @@ void TreeManip::DeleteLeaf(
 	u->par			= NULL;
 	u->prevPreorder = NULL;
 	u->nextPreorder = NULL;
-	tree->StoreTreeNode(u);
+	tree->StoreLeafNode(u);
 
+	if (u_par->CountChildren() == 1)
+		{
+		double edge_len = u_par->GetEdgeLen();
+		TreeNode * lchild = u_par->GetLeftChild();
+		lchild->SetEdgeLen(edge_len + lchild->GetEdgeLen());
+		lchild->rSib = u_par->rSib;
+		lchild->par = u_par->par;
+		lchild->prevPreorder = u_par->prevPreorder;
+		u_par->par->nextPreorder = lchild;
+		tree->StoreInternalNode(u_par);
+		}
 	// This rearrangement invalidates the TreeID and node counts
 	//
 	tree->InvalidateID();

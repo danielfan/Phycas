@@ -84,12 +84,13 @@ inline void MCMCUpdater::freeParameter()
 |	state, and deciding whether to accept or reject the proposed move. For parameters, this involves choosing the next
 |	parameter value by slice sampling. This base class version does nothing
 */
-inline void MCMCUpdater::update()
+inline bool MCMCUpdater::update()
 	{
     if (save_debug_info)
         {
         debug_info = "In MCMCUpdater::update(): this base class method does nothing";
         }
+    return false;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

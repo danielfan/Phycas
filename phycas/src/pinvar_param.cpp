@@ -38,16 +38,16 @@ PinvarParam::PinvarParam()
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calls the sample() member function of the `slice_sampler' data member.
 */
-void PinvarParam::update()
+bool PinvarParam::update()
 	{
 	if (is_fixed)
-		return;
+		return false;
 	slice_sampler->Sample();
     
     if (save_debug_info)
         {
         debug_info = str(boost::format("PinvarParam %f") % (slice_sampler->GetLastSampledXValue()));
         }
+	return true;
 	}
-
 }

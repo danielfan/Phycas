@@ -39,11 +39,11 @@ DiscreteGammaShapeParam::DiscreteGammaShapeParam(bool invert)
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calls the sample() member function of the `slice_sampler' data member.
 */
-void DiscreteGammaShapeParam::update()
+bool DiscreteGammaShapeParam::update()
 	{
 	if (is_fixed)
 		{
-		return;
+		return false;
 		}
 	slice_sampler->Sample();
     
@@ -51,6 +51,6 @@ void DiscreteGammaShapeParam::update()
         {
         debug_info = str(boost::format("DiscreteGammaShapeParam %f") % (slice_sampler->GetLastSampledXValue()));
         }
+	return true;
 	}
-
 }

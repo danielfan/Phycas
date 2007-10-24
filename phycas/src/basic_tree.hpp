@@ -117,8 +117,8 @@ class Tree
 		void					RerootHelper(TreeNode *m, TreeNode *t);
 		void					GetNextNewickToken(const std::string &newick, unsigned start_pos);
 		TreeNode *				GetNewNode();
-		void					StoreTreeNode(TreeNode * u);
-        void                    AddToTipStorage(TreeNode * u);
+		void					StoreInternalNode(TreeNode * u);
+        void                    StoreLeafNode(TreeNode * u);
 		void					Reserve(unsigned n);
 		void					InvalidateID();
 		void					InvalidateNodeCounts();	
@@ -137,7 +137,7 @@ class Tree
 		//TreeID					tree_id;			/**< A vector of splits that uniquely identify the tree topology */
 		bool					treeid_valid;			/**< True if the tree_id data member is valid; if false, call RefreshTreeID to make it valid again */
 		TreeNodeVec				tipStorage;			    /**< A vector of pointers to (tip) TreeNode objects */
-		TreeNodeVec				nodeStorage;			/**< A vector of pointers to (internal) TreeNode objects */
+		TreeNodeVec				internalNodeStorage;	/**< A vector of pointers to (internal) TreeNode objects */
 		TreeNode *				firstPreorder;			/**< Pointer to the first preorder node (equals last postorder node) */
 		TreeNode *				lastPreorder;			/**< Pointer to the last preorder node (equals first postorder node) */	
 		unsigned				nTips;					/**< Total number of tip (degree = 1) nodes in the tree */

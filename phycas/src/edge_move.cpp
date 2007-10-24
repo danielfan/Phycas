@@ -111,12 +111,12 @@ void EdgeMove::proposeNewState()
 |	Calls proposeNewState(), then decides whether to accept or reject the proposed new state, calling accept() or 
 |	revert(), whichever is appropriate.
 */
-void EdgeMove::update()
+bool EdgeMove::update()
 	{
 	// The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
 	// A proposed EdgeMove cannot be accepted without changing edge lengths, so it is best to just bail out now.
 	if (is_fixed)
-		return;
+		return false;
 
 	ChainManagerShPtr p = chain_mgr.lock();
 	PHYCAS_ASSERT(p);
@@ -164,12 +164,14 @@ void EdgeMove::update()
 		p->setLastLnPrior(curr_ln_prior);
 		p->setLastLnLike(curr_ln_like);
 		accept();
+		return true;
 		}
 	else
 		{
 		curr_ln_like	= p->getLastLnLike();
 		curr_ln_prior	= p->getLastLnPrior();
 		revert();
+		return false;
 		}
 	}
 

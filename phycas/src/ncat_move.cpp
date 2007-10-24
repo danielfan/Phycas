@@ -300,12 +300,12 @@ void NCatMove::revert()
 |	Calls proposeNewState(), then decides whether to accept or reject the proposed new state, calling accept() or 
 |	revert(), whichever is appropriate.
 */
-void NCatMove::update()
+bool NCatMove::update()
 	{
 	total_updates++;
 
 	if (is_fixed)
-		return;
+		return false;
 
 	ChainManagerShPtr p = chain_mgr.lock();
 	PHYCAS_ASSERT(p);
@@ -447,4 +447,5 @@ void NCatMove::update()
 
 	std::cerr << "\n" << std::endl;
 #endif
+	return accepted;
 	}

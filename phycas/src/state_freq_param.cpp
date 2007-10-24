@@ -42,16 +42,16 @@ StateFreqParam::StateFreqParam(
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calls the sample() member function of the `slice_sampler' data member.
 */
-void StateFreqParam::update()
+bool StateFreqParam::update()
 	{
 	if (is_fixed)
-		return;
+		return false;
 	slice_sampler->Sample();
 
     if (save_debug_info)
         {
         debug_info = str(boost::format("StateFreqParam %f") % (slice_sampler->GetLastSampledXValue()));
         }
+	return true;
 	}
-
 }

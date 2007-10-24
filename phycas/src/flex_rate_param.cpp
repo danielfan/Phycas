@@ -119,10 +119,10 @@ double FlexRateParam::recalcPrior()
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calls the sample() member function of the `slice_sampler' data member.
 */
-void FlexRateParam::update()
+bool FlexRateParam::update()
 	{
 	if (is_fixed)
-		return;
+		return false;
 
     // Ok, it looks like the following cannot work, but it does! The key is the assignment to `which'
     // and the fact that SliceSampler::Sample() calls FlexRateParam::operator() repeatedly. Inside
@@ -143,6 +143,6 @@ void FlexRateParam::update()
     	for (unsigned i = 0; i < nrates; ++i)
             debug_info += str(boost::format("\n  %d %f") % i % flex_rates[i]);
         }
+	return true;
 	}
-
 }

@@ -36,13 +36,13 @@ inline Tree::Tree()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Calls Clear() to store all nodes and delete all other allocated memory, then erases `nodeStorage' to eliminate the
+|	Calls Clear() to store all nodes and delete all other allocated memory, then erases `internalNodeStorage' to eliminate the
 |	memory allocated for TreeNode objects.
 */
 inline Tree::~Tree()
 	{
 	Clear(); //@ not too efficient to store nodes and then immediately delete them all
-	nodeStorage.erase(nodeStorage.begin(), nodeStorage.end());
+	internalNodeStorage.erase(internalNodeStorage.begin(), internalNodeStorage.end());
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -141,7 +141,7 @@ inline void Tree::SetAllEdgeLens(double v)
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns Tree object to just-constructed state. If preorder pointers are valid, walks tree in postorder fashion 
-|	storing nodes as they are visited in `nodeStorage'. If the preorder pointers are not valid, first calls 
+|	storing nodes as they are visited in `internalNodeStorage'. If the preorder pointers are not valid, first calls 
 |	RefreshPreorder() to remedy this. If `firstPreorder' is NULL, assumes that tree has just been constructed and there
 |	are thus no nodes to store.
 */
@@ -154,7 +154,7 @@ inline void Tree::Clear()
 			{
 			TreeNode *next = nd->GetNextPostorder();
 			nd->Clear();
-			nodeStorage.push_back(nd);
+			internalNodeStorage.push_back(nd);
 			nd = next;
 			}
 
@@ -174,36 +174,36 @@ inline void Tree::Clear()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Pulls a node out of storage, if `nodeStorage' is not empty; otherwise, allocates memory for a new TreeNode. If it
+|	Pulls a node out of storage, if `internalNodeStorage' is not empty; otherwise, allocates memory for a new TreeNode. If it
 |	is known in advance how many nodes will be needed, Reserve() can be called to create all nodes needed, storing them
-|	in `nodeStorage'.
+|	in `internalNodeStorage'.
 */
 inline TreeNode * Tree::GetNewNode()
 	{
 	TreeNode * nd = NULL;
-	if (nodeStorage.empty())
+	if (internalNodeStorage.empty())
 		{
 		nd = new TreeNode();
         nd->SetTreeShPtr(TreeShPtr(this));
 		}
 	else
 		{
-		nd = nodeStorage.back();
-		nodeStorage.pop_back();
+		nd = internalNodeStorage.back();
+		internalNodeStorage.pop_back();
 		}
 	return nd;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Allocates memory for `n' TreeNode objects and stores pointers to these in the `nodeStorage' vector. If some nodes
-|	are already in `nodeStorage', only allocates enough new nodes to make the length of `nodeStorage' equal to `n'.
-|	If the length of `nodeStorage' already equals or exceeds `n', returns immediately without allocating any new nodes.
+|	Allocates memory for `n' TreeNode objects and stores pointers to these in the `internalNodeStorage' vector. If some nodes
+|	are already in `internalNodeStorage', only allocates enough new nodes to make the length of `internalNodeStorage' equal to `n'.
+|	If the length of `internalNodeStorage' already equals or exceeds `n', returns immediately without allocating any new nodes.
 */
 inline void Tree::Reserve(
-  unsigned n)	/**< is the desired length of the `nodeStorage' vector */
+  unsigned n)	/**< is the desired length of the `internalNodeStorage' vector */
 	{
 	PHYCAS_ASSERT(n > 0);
-	unsigned num_existing_nodes = (unsigned)nodeStorage.size();
+	unsigned num_existing_nodes = (unsigned)internalNodeStorage.size();
 	if (num_existing_nodes >= n)
 		return;
 	
@@ -212,7 +212,7 @@ inline void Tree::Reserve(
 		{
         TreeNode * nd = new TreeNode();
         nd->SetTreeShPtr(TreeShPtr(this));
-		nodeStorage.push_back(nd);
+		internalNodeStorage.push_back(nd);
 		}
 	}
 

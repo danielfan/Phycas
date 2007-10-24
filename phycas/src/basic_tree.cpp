@@ -30,18 +30,18 @@
 using namespace phycas;
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Push node onto end of `nodeStorage' vector (nodes are stored rather than deleted to save having to reallocate them
+|	Push node onto end of `internalNodeStorage' vector (nodes are stored rather than deleted to save having to reallocate them
 |	later.
 */
-void Tree::StoreTreeNode(TreeNode * u)
+void Tree::StoreInternalNode(TreeNode * u)
 	{
-	nodeStorage.push_back(u);
+	internalNodeStorage.push_back(u);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Push node onto end of `tipStorage' vector.
 */
-void Tree::AddToTipStorage(TreeNode * u)
+void Tree::StoreLeafNode(TreeNode * u)
 	{
 	tipStorage.push_back(u);
 	}
@@ -1309,7 +1309,7 @@ void Tree::BuildFromString(
 	// If not, then it may mean that the tree descriptions left out some taxa from the data matrix
 	// which is a situation that I need to deal with
 
-	//std::cerr << "Leaving BuildFromString: nodeStorage now has " << (unsigned)nodeStorage.size() << " nodes" << std::endl; //POL-debug
+	//std::cerr << "Leaving BuildFromString: internalNodeStorage now has " << (unsigned)internalNodeStorage.size() << " nodes" << std::endl; //POL-debug
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

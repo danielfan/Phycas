@@ -139,6 +139,8 @@ void updater_pymod()
 		;
 	class_<phycas::SamcMove, bases<phycas::MCMCUpdater>, 
 		boost::noncopyable, boost::shared_ptr<phycas::SamcMove> >("SamcMove") 
+		.def("extrapolate", &phycas::SamcMove::extrapolate)
+		.def("project", &phycas::SamcMove::project)
 		.def("update", &phycas::SamcMove::update)
 		.def("addEdgeMoveProposed", &phycas::SamcMove::addEdgeMoveProposed)
 		.def("setEdgeLenDistMean", &phycas::SamcMove::setEdgeLenDistMean)

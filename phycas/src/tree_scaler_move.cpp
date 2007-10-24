@@ -46,10 +46,10 @@ TreeScalerMove::TreeScalerMove() : MCMCUpdater()
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calls the sample() member function of the `slice_sampler' data member.
 */
-void TreeScalerMove::update()
+bool TreeScalerMove::update()
 	{
     if (is_fixed)
-		return;
+		return false;
 
     slice_sampler->Sample();
 
@@ -68,6 +68,7 @@ void TreeScalerMove::update()
         }
 
     rescaleAllEdgeLengths();
+    return true;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

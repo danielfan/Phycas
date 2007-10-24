@@ -39,13 +39,14 @@ inline MCMCMove::MCMCMove() : curr_ln_prior(0.0), curr_ln_like(0.0)
 |	Performs a Metropolis-Hastings update, which involves calling proposeNewState, computing the posterior density of
 |	the new state, and deciding whether to accept or reject the proposed move.
 */
-inline void MCMCMove::update()
+inline bool MCMCMove::update()
 	{
 	// TODO: let MCMCMove objects be stored in the MCMCChainManager
 	// TODO: give each MCMCMove or MCMCParam stored in the MCMCChainManager an unsigned weight that equals the number
 	//       of times to update that move or parameter 
 	// TODO: always store last calculated posterior density in MCMCChainManager for easy reference
 	// MCMCChainManager will eventually encapsulate an individual chain (of perhaps several coupled chains)
+	return false;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

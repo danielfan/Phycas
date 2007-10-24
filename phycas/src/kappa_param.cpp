@@ -39,18 +39,18 @@ KappaParam::KappaParam()
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calls the sample() member function of the `slice_sampler' data member.
 */
-void KappaParam::update()
+bool KappaParam::update()
 	{
 	//@POL should probably put next two lines in Model::update and have Model::update call a virtual Model::updateImpl
 	// because it will be hard to remember to put these lines in every overloaded update function
 	if (is_fixed)
-		return;
+		return false;
 	slice_sampler->Sample();
 
     if (save_debug_info)
         {
         debug_info = str(boost::format("KappaParam %f") % (slice_sampler->GetLastSampledXValue()));
         }
+	return true;
 	}
-
 }

@@ -39,12 +39,12 @@ namespace phycas
 |	Calls proposeNewState(), then decides whether to accept or reject the proposed new state, calling accept() or 
 |	revert(), whichever is appropriate.
 */
-void LargetSimonMove::update()
+bool LargetSimonMove::update()
 	{
 	// The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
 	// A proposed LargetSimonMove cannot be accepted without changing edge lengths, so it is best to bail out now.
 	if (is_fixed)
-		return;
+		return false;
 
 	ChainManagerShPtr p = chain_mgr.lock();
 	PHYCAS_ASSERT(p);
@@ -134,6 +134,7 @@ void LargetSimonMove::update()
 		p->setLastLnPrior(curr_ln_prior);
 		p->setLastLnLike(curr_ln_like);
 		accept();
+		return true;
 		}
 	else
 		{
@@ -141,6 +142,7 @@ void LargetSimonMove::update()
 		curr_ln_prior	= p->getLastLnPrior();
 		revert();
 		likelihood->useAsLikelihoodRoot(prev_likelihood_root);
+		return false;
 		}
 	}
 

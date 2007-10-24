@@ -1630,7 +1630,7 @@ void TreeLikelihood::addOrphanTip(
 	TipData * td = allocateTipData(row);
     TreeNode * nd = t->GetNewNode();
 	nd->SetTipData(td, td_deleter);
-    t->AddToTipStorage(nd);
+    t->StoreLeafNode(nd);
     }
 
 /*----------------------------------------------------------------------------------------------------------------------

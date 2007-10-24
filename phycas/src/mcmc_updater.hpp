@@ -151,7 +151,7 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 
 
 		// Utilities
-		virtual void			update();
+		virtual bool			update();
 		virtual double			recalcLike();
 
 		// Utilities used only by parameters

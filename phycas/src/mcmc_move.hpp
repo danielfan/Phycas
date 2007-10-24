@@ -78,7 +78,7 @@ class MCMCMove : public boost::enable_shared_from_this<MCMCMove>
 		virtual void			setChainManager(ChainManagerWkPtr p);
 
 		// Utilities
-		virtual void			update();
+		virtual bool			update();
 
 	protected:
 

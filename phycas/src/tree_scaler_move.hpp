@@ -49,7 +49,7 @@ class TreeScalerMove : public MCMCUpdater
 
 		// These are virtual functions in the MCMCUpdater base class
 		//
-		virtual void	update();
+		virtual bool	update();
 		virtual double	operator()(double f);	// override pure virtual from AdHocDensity (base class of MCMCUpdater)
 		virtual double	recalcPrior();			// override virtual from MCMCUpdater base class
 
