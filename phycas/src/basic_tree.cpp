@@ -39,6 +39,14 @@ void Tree::StoreTreeNode(TreeNode * u)
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Push node onto end of `tipStorage' vector.
+*/
+void Tree::AddToTipStorage(TreeNode * u)
+	{
+	tipStorage.push_back(u);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Should only be called from within RerootAtThisTip() or RerootAtThisInternal. Makes node `m' (the mover) the 
 |	rightmost child of node `t' (the target). Assumes both `m' and `t' are non-NULL. Because the purpose of this 
 |	function is to move nodes below the new root node to the appropriate point above the new root node, this method 

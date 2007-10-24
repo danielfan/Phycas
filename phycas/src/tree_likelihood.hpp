@@ -128,6 +128,7 @@ class TreeLikelihood
 		void							setHaveData();
 
 		// Utilities
+        void                            addOrphanTip(TreeShPtr t, unsigned row);
 		void							prepareForSimulation(TreeShPtr);
 		void							prepareForLikelihood(TreeShPtr);
 		void							prepareInternalNodeForLikelihood(TreeNode * nd);

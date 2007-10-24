@@ -1620,6 +1620,20 @@ void TreeLikelihood::prepareInternalNodeForLikelihood(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Decorates a tip node with data and add to the tree's tipStorage vector.
+*/
+void TreeLikelihood::addOrphanTip(
+  TreeShPtr t,		/**< is the tree to decorate */
+  unsigned row)		/**< is the row in the data matrix to associate with the added tip */
+	{
+	//TreeNode::TipDataDeleter td_deleter	= &deallocateTipData;
+	//TipData * td = allocateTipData(row);
+    //TreeNode * nd = t->GetNewNode()
+	//nd->SetTipData(td, td_deleter);
+    //t->addToTipStorage(nd);
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Calls allocateTipData() for all tip nodes and allocateInternalData() for all internal nodes in the supplied Tree. 
 |	Assumes each tip node number in the tree equals the appropriate row in the data matrix. 
 */
