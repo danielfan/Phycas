@@ -53,6 +53,7 @@ class Tree
 		friend class TreeManip;
 		friend class BushMove;
 		friend class SamcMove;
+		friend class TreeLikelihood;
 
 		typedef std::vector<TreeNode *> TreeNodeVec;
 
@@ -86,7 +87,7 @@ class Tree
 		// Utilities
 		//
 		void					Clear();
-		void					BuildFromString(const std::string &newick); // throws XPhylogeny
+		void					BuildFromString(const std::string & newick); // throws XPhylogeny
 		void					RectifyNumbers(std::vector<std::string> name_vector); // throws XPhylogeny
 		void					RectifyNames(std::vector<std::string> name_vector); // throws XPhylogeny
 		double					EdgeLenSum();

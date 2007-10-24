@@ -968,7 +968,8 @@ void Tree::RefreshNodeCounts()
 |	and an XPhylogeny exception will be thrown if such a mixture is detected, or if a node number ends up being 
 |	duplicated or out of range.
 */
-void Tree::BuildFromString(const std::string &newick)
+void Tree::BuildFromString(
+  const std::string & newick)   /**< is the tree description */
 	{
 	PHYCAS_ASSERT(newick.length() > 0);
 

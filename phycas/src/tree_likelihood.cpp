@@ -1626,11 +1626,11 @@ void TreeLikelihood::addOrphanTip(
   TreeShPtr t,		/**< is the tree to decorate */
   unsigned row)		/**< is the row in the data matrix to associate with the added tip */
 	{
-	//TreeNode::TipDataDeleter td_deleter	= &deallocateTipData;
-	//TipData * td = allocateTipData(row);
-    //TreeNode * nd = t->GetNewNode()
-	//nd->SetTipData(td, td_deleter);
-    //t->addToTipStorage(nd);
+	TreeNode::TipDataDeleter td_deleter	= &deallocateTipData;
+	TipData * td = allocateTipData(row);
+    TreeNode * nd = t->GetNewNode();
+	nd->SetTipData(td, td_deleter);
+    t->AddToTipStorage(nd);
     }
 
 /*----------------------------------------------------------------------------------------------------------------------

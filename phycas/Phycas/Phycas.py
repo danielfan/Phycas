@@ -587,8 +587,12 @@ class Phycas(object):
         # Set up MCMC chain
         self.heat_vector = [1.0]
         self.mcmc_manager.createChains()
+
+        # Create tip nodes not already in tree and add them to tree's
+        # tip node storage vector in reverse order
         m = self.mcmc_manager.getColdChain()
-        print 'Larget-Simon updater name:',m.larget_simon_move.getName()
+        for row in self.addition_sequence[-1:3:-1]:
+            m.likelihood.addOrphanTip(m.tree, row) 
 
         self.openParameterAndTreeFiles()
         
