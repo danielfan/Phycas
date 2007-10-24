@@ -56,6 +56,7 @@ SamcMove::SamcMove()
 */
 bool SamcMove::project(unsigned leaf_num)
 	{
+	last_move_projection = true;
 	// The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
 	// A proposed SamcMove cannot be accepted without changing edge lengths, so it is best to bail out now.
 	if (is_fixed)
@@ -83,143 +84,47 @@ bool SamcMove::project(unsigned leaf_num)
 	leaf_sib = parent->GetLeftChild();
 	if (leaf_sib == leaf)
 		leaf_sib = leaf->GetRightSib();
+	double prev_leaf_sib_edge_len = leaf_sib->GetEdgeLen();
 	
 	tree_manipulator.DeleteLeaf(leaf);
 	likelihood->useAsLikelihoodRoot(leaf_sib->GetParent())
 	likelihood->invalidateAwayFromNode(leaf_sib->GetParent());
 	tree->InvalidateNodeCounts();
 	
-	code 
-			here
-	
-	
-	
-	
-	
-	
-	
-	
-		
-
-	// Choose an internal node at random (but not the only child of the root node)
-	// and delete its edge to create a polytomy (or a bigger polytomy if there is 
-	// already a polytomy)
-	//
-	unsigned num_internals = nnodes - num_taxa - 1;
-	PHYCAS_ASSERT(num_internals > 0);
-	PHYCAS_ASSERT(num_internals < num_taxa);
-	unsigned i = rng->SampleUInt(num_internals);
-
-	for (nd = tree->GetFirstPreorder(); nd != NULL; nd = nd->GetNextPreorder())
-		{
-		if (nd->IsTip() || nd->GetParent()->IsTipRoot())
-			continue;
-
-		if (i == 0)
-			break;
-		else
-			--i;
-		}
-	proposeDeleteEdgeMove(nd);
-
-	// The Jacobian is the matrix of the derivatives of all post-move quantities with respect to all
-	// pre-move quantities. In this case, there is only one pre-move quantity (v) and only one post-move
-	// quantity (U), so the Jacobian is a 1x1 matrix consisting only of the derivative of U with respect
-	// to v. U = 1 - exp{-theta*v}, so the Jacobian for this delete-edge move is theta*exp(-theta*v), 
-	// where v is the length of the edge being deleted and theta = 1/edgelen_mean is the hazard parameter 
-	// of the exponential distribution used for sampling new edge lengths. Thus,
-	//
-	// ln_jacobian = log[theta*exp(-theta*v)]
-	//             = log[exp(-v/edgelen_mean)/edgelen_mean]
-	//             = -(v/edgelen_mean) - log(edgelen_mean)
-	//
-	// Note that v = orig_edgelen; orig_edgelen was set in ProposeDeleteEdgeMove.
-	ln_jacobian = -orig_edgelen/edgelen_mean - log(edgelen_mean);
-
-	// Hastings ratio is inverse of that for the add-edge move (see extensive notes above), but be
-	// careful to use the number of polytomies in tree *after* a delete-edge move and the number of internal 
-	// edges *before* a delete-edge move in the formula. Here, n is the number of spokes in the polytomy
-	// created by the delete-edge move. Both polytomy_size and num_polytomies are correctly computed by 
-	// ProposeDeleteEdgeMove.
-	//
-	//  Pr(add-edge move that reverts proposed delete-edge move)         num_internal_edges_before  
-	//  -------------------------------------------------------- = -----------------------------------------
-	//                Pr(proposed delete-edge move)                 num_polytomies_after * [2^(n-1) - n - 1]   
-	//
-	// If the proposed state is the star tree, then the Hastings ratio must account for the fact that
-	// the forward move is only attempted half the time whereas the reverse move is the only move possible
-	// for the star tree. Thus, if the number of nodes in the tree after the proposal is 1 more than the 
-	// number of taxa, the Hastings ratio as computed above must be multiplied by 2.0. If the proposal takes
-	// us away from the star tree, then the Hastings ratio must be divided by 2.0.
-	//
-	double nspokes = (double)polytomy_size;
-
-	// Compute the log of the Hastings ratio 
-	ln_hastings = log((double)num_internal_edges_before);
-	ln_hastings -= log((double)num_polytomies);
-	ln_hastings -= log(pow(2.0, nspokes - 1.0) - nspokes - 1.0);
-
-	// Now multiply by the value of the quantity labeled gamma_d in the paper
-	nnodes = tree->GetNNodes();
-	const bool star_tree_after = (nnodes == num_taxa + 1);
-	if (fully_resolved_before && !star_tree_after)
-		{
-		ln_hastings -= log(2.0);
-		}
-	else if (star_tree_after && !fully_resolved_before)
-		{
-		ln_hastings += log(2.0);
-		}
-	//@POL the pow will be problematic for large polytomies
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	double curr_ln_like				= likelihood->calcLnL(tree);
+	//@MTH -- Tuesday night
+	double curr_ln_like = likelihood->calcLnL(tree);
 
 	if (view_proposed_move)
 		likelihood->startTreeViewer(tree, str(boost::format("Samc move PROPOSED (%s)") % (add_edge_move_proposed ? "add edge" : "delete edge")));
 
-	double curr_ln_prior			= 0.0;
-	double prev_ln_prior			= 0.0;
-	double ln_polytomy_prior_ratio	= 0.0;
-
-	unsigned m						= tree->GetNInternals();
-//@	double topo_prior_after			= topo_prior_calculator->GetLnTopologyPrior(m);
-
-	if (add_edge_move_proposed)
+	double curr_ln_prior = 0.0;
+	double prev_ln_prior = p->calcTerminalEdgeLenPriorUnnorm(orig_edgelen)
+	prev_ln_prior += p->calcInternalEdgeLenPriorUnnorm(par_orig_edgelen)
+	if (leaf_sib->IsLeaf())
 		{
-//@		double topo_prior_before	= topo_prior_calculator->GetLnTopologyPrior(m - 1);
-//@		ln_polytomy_prior_ratio		= topo_prior_after - topo_prior_before;
-		//one_edgelen[0]				= new_edgelen;
-		//curr_ln_prior				= p->partialEdgeLenPrior(one_edgelen);
-		curr_ln_prior				= p->calcInternalEdgeLenPriorUnnorm(new_edgelen);
+		prev_ln_prior += p->calcTerminalEdgeLenPriorUnnorm(prev_leaf_sib_edge_len);
+		curr_ln_prior += p->calcTerminalEdgeLenPriorUnnorm(leaf_sib->GetEdgeLen());
 		}
 	else
 		{
-//@		double topo_prior_before	= topo_prior_calculator->GetLnTopologyPrior(m + 1);
-//@		ln_polytomy_prior_ratio		= topo_prior_after - topo_prior_before;
-		//one_edgelen[0]				= orig_edgelen;
-		//prev_ln_prior				= p->partialEdgeLenPrior(one_edgelen);
-		prev_ln_prior				= p->calcInternalEdgeLenPriorUnnorm(orig_edgelen);
+		prev_ln_prior += p->calcInternalEdgeLenPriorUnnorm(prev_leaf_sib_edge_len);
+		curr_ln_prior += p->calcInternalEdgeLenPriorUnnorm(leaf_sib->GetEdgeLen());
 		}
-
     double prev_posterior = prev_ln_like + prev_ln_prior;
 	double curr_posterior = curr_ln_like + curr_ln_prior;
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
-	double ln_accept_ratio = curr_posterior - prev_posterior + ln_hastings + ln_jacobian + ln_polytomy_prior_ratio;
-
-	if (ln_accept_ratio >= 0.0 || std::log(rng->Uniform(FILE_AND_LINE)) <= ln_accept_ratio)
+	double ln_accept_ratio = curr_posterior - prev_posterior + ln_hastings  + ln_polytomy_prior_ratio;
+	const bool accepted = (ln_accept_ratio >= 0.0 || std::log(rng->Uniform(FILE_AND_LINE)) <= ln_accept_ratio);
+	if (accepted)
 		{
 		p->setLastLnPrior(curr_ln_prior);
 		p->setLastLnLike(curr_ln_like);
@@ -231,6 +136,7 @@ bool SamcMove::project(unsigned leaf_num)
 		curr_ln_prior	= p->getLastLnPrior();
 		revert();
 		}
+	return accepted;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

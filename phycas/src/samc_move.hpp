@@ -113,7 +113,7 @@ class SamcMove : public MCMCUpdater
 		TreeNode *						orig_rchild;						/**< Rightmost child of deleted node (in case revert of delete-edge move is necessary) */
 		double							ln_jacobian;						/**< The natural log of the Jacobian for the move last proposed */
 		double							ln_hastings;						/**< The natural log of the Hastings ratio for the move last proposed */
-
+		bool							last_move_projection;				/**< true if project was the last move*/
 		CDF								cdf;								/**< CDF object needed for its LnGamma function */
 
 		bool							view_proposed_move;					/**< If set to true, graphical tree viewer will pop up showing edges affected by the next proposed Bush move */
