@@ -54,7 +54,10 @@ SamcMove::SamcMove()
 |	Calls proposeNewState(), then decides whether to accept or reject the proposed new state, calling accept() or 
 |	revert(), whichever is appropriate.
 */
-bool SamcMove::project(unsigned leaf_num)
+bool SamcMove::project(
+	unsigned leaf_num, 
+	double theta_diff, /*the differences in the thetas (this appears in the acceptance probability calculation and is a function of the weights in the SAMC algorithm) */
+	double ln_proposal_ratio) /* the ratio of proposing a projection rather than an extrapolation. */
 	{
 	last_move_projection = true;
 	// The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
@@ -81,14 +84,17 @@ bool SamcMove::project(unsigned leaf_num)
 	par_orig_edgelen = parent->GetEdgeLen();
 
 	PHYCAS_ASSERT(parent->CountChildren() == 2); // generalize when/if we use this with the BushMove
-	leaf_sib = parent->GetLeftChild();
-	if (leaf_sib == leaf)
-		leaf_sib = leaf->GetRightSib();
+	leaf_sib = leaf->GetNextSib();
 	double prev_leaf_sib_edge_len = leaf_sib->GetEdgeLen();
 	
+	TreeNode * new_leaf_sib_parent = leaf_sib->GetParent();
+	
+	/* This DeleteLeaf call will also delete parent and set leaf_sib's edge len
+		to the sum of it's edge len and the parent's.
+	*/
 	tree_manipulator.DeleteLeaf(leaf);
-	likelihood->useAsLikelihoodRoot(leaf_sib->GetParent())
-	likelihood->invalidateAwayFromNode(leaf_sib->GetParent());
+	
+	likelihood->useAsLikelihoodRoot(new_leaf_sib_parent)
 	tree->InvalidateNodeCounts();
 	
 	//@MTH -- Tuesday night
@@ -112,23 +118,14 @@ bool SamcMove::project(unsigned leaf_num)
 		}
     double prev_posterior = prev_ln_like + prev_ln_prior;
 	double curr_posterior = curr_ln_like + curr_ln_prior;
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-	double ln_accept_ratio = curr_posterior - prev_posterior + ln_hastings  + ln_polytomy_prior_ratio;
+	double ln_accept_ratio = theta_diff + curr_posterior - prev_posterior;
 	const bool accepted = (ln_accept_ratio >= 0.0 || std::log(rng->Uniform(FILE_AND_LINE)) <= ln_accept_ratio);
 	if (accepted)
 		{
 		p->setLastLnPrior(curr_ln_prior);
 		p->setLastLnLike(curr_ln_like);
 		accept();
+		likelihood->invalidateAwayFromNode(new_leaf_sib_parent);
 		}
 	else
 		{

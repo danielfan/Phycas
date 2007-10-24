@@ -24,6 +24,21 @@ namespace phycas
 {
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Returns the rSib or the parent's left child.
+|	Returns NULL if the parent has only one child.
+*/
+inline TreeNode * TreeNode::FindNextSib()
+	{
+	if (rSib != NULL)
+		return rSib;
+	PHYCAS_ASSERT(par);
+	if (par->lChild == this)
+		return NULL;
+	return par->lChild;
+	}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Initializes all pointers to 0, nodeNum to TreeNode::nodeNumInitValue, and edgeLen to TreeNode::edgeLenInitValue.
 */
 inline TreeNode::TreeNode() 

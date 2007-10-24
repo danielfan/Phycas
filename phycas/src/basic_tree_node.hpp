@@ -113,8 +113,9 @@ class TreeNode
 
 		// Utilities
 		//
-		unsigned		CountChildren() const;
 		void			AppendNodeInfo(std::string &s, bool num_and_name_only = false);
+		unsigned		CountChildren() const;
+		TreeNode *		FindNextSib();
 
 	protected:
 

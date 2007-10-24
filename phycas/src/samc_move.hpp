@@ -69,7 +69,7 @@ class SamcMove : public MCMCUpdater
 		void						finalize();
 
 		bool 						extrapolate();
-		bool 						project(unsigned leaf_num);
+		bool 						project(unsigned leaf_num, double theta_diff);
 		// These are virtual functions in the MCMCUpdater base class
 		//
 		virtual bool				update();
