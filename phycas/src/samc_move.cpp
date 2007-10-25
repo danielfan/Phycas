@@ -99,7 +99,9 @@ bool SamcMove::extrapolate(
 	{
 	last_move_projection = false;
 
-	// The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
+    std::cerr << "*** extrapolate before doing anything: " << tree->DebugWalkTree(true, 1) << std::endl; //temporary
+
+    // The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
 	// A proposed SamcMove cannot be accepted without changing edge lengths, so it is best to bail out now.
 	if (is_fixed)
 		return false;
@@ -108,7 +110,7 @@ bool SamcMove::extrapolate(
 	PHYCAS_ASSERT(p);
 	double prev_ln_like = p->getLastLnLike();
 
-	likelihood->startTreeViewer(tree, "Start of extrapolate move");
+	//likelihood->startTreeViewer(tree, "Start of extrapolate move");
 
     leaf = tree->PopLeafNode();
 	PHYCAS_ASSERT(leaf->GetNodeNumber() == leaf_num);
@@ -154,6 +156,7 @@ bool SamcMove::extrapolate(
 	double log_pkl_blk_ratio = log(getPkl(leaf_num, leaf_sib)) - log(leaf_sib_orig_edgelen);
 	double ln_accept_ratio = theta_diff + curr_posterior - prev_posterior - log_pkl_blk_ratio + ln_proposal_ratio;
 	const bool accepted = (ln_accept_ratio >= 0.0 || std::log(rng->Uniform(FILE_AND_LINE)) <= ln_accept_ratio);
+    std::cerr << "*** extrapolate before revert: " << tree->DebugWalkTree(true, 1) << std::endl; //temporary
 	if (accepted)
 		{
 		p->setLastLnPrior(curr_ln_prior);
@@ -165,8 +168,6 @@ bool SamcMove::extrapolate(
 		curr_ln_like	= p->getLastLnLike();
 		curr_ln_prior	= p->getLastLnPrior();
 		revert();
-		likelihood->invalidateAwayFromNode(*leaf_sib);
-		likelihood->invalidateBothEnds(leaf_sib);	
 		}
 	return accepted;
 
@@ -322,9 +323,12 @@ void SamcMove::revert()
 
 		if (view_proposed_move)
 			likelihood->startTreeViewer(tree, "Extrapolate move REVERTED");
+		likelihood->invalidateAwayFromNode(*leaf_sib);
+		likelihood->invalidateBothEnds(leaf_sib);	
 		}
 	tree->InvalidateNodeCounts();
 	reset();
+    std::cerr << "*** after revert: " << tree->DebugWalkTree(true, 1) << std::endl; //temporary
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

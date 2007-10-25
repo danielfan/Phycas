@@ -1622,6 +1622,19 @@ void TreeLikelihood::prepareInternalNodeForLikelihood(
 /*----------------------------------------------------------------------------------------------------------------------
 |	Decorates a tip node with data and add to the tree's tipStorage vector.
 */
+void TreeLikelihood::addDecoratedInternalNode(
+  TreeShPtr t)		/**< is the tree to decorate */
+	{
+	TreeNode::InternalDataDeleter	cl_deleter	= &deallocateInternalData;
+	InternalData * cl = allocateInternalData();
+    TreeNode * nd = t->GetNewNode();
+	nd->SetInternalData(cl, cl_deleter);
+    t->StoreInternalNode(nd);
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Decorates a tip node with data and add to the tree's tipStorage vector.
+*/
 void TreeLikelihood::addOrphanTip(
   TreeShPtr t,		/**< is the tree to decorate */
   unsigned row)		/**< is the row in the data matrix to associate with the added tip */
@@ -1667,6 +1680,9 @@ void TreeLikelihood::prepareForLikelihood( //POLBM TreeLikelihood::prepareForLik
 			nd->SetInternalData(cl, cl_deleter);
 			}
 		}
+
+    //@POL  should decorate any nodes in tipStorage and nodeStorage now, but should wait until those 
+    // are changed to vectors
 	}
 
 #if defined(INTERFACE_WITH_CIPRES)

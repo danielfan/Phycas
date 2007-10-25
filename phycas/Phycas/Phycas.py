@@ -1,4 +1,4 @@
-import os, sys, math, threading, random
+import os, sys, math, threading
 import MCMCManager  # poorly named, as MCMCManager is now only one of many classes within
 from phycas.Conversions import *
 from phycas.DataMatrix import *
@@ -473,7 +473,7 @@ class Phycas(object):
         ln_proposal_ratio = 0.0 # always 0.0 because \tilde{T}_{m,m-1} = \tilde{T}_{m,m+1} = 1/3
         for cycle in xrange(self.ncycles):
             # proposal for changing current level
-            u = random.random()
+            u = chain.r.uniform()
             proposed_level = current_level
             if u < 1.0/3.0:
                 if current_level > 0:
@@ -604,11 +604,16 @@ class Phycas(object):
         self.heat_vector = [1.0]
         self.mcmc_manager.createChains()
 
+        # TODO: createChains, when it calls prepareForLikelihood, should add all tips
+        # and all internal nodes to vectors (not stacks) and use pointers to the appropriate
+        # elements in the tree itself
+
         # Create tip nodes not already in tree and add them to tree's
         # tip node storage vector in reverse order
         m = self.mcmc_manager.getColdChain()
         for row in self.addition_sequence[-1:3:-1]:
-            m.likelihood.addOrphanTip(m.tree, row) 
+            m.likelihood.addOrphanTip(m.tree, row)
+            m.likelihood.addDecoratedInternalNode(m.tree)
 
         self.openParameterAndTreeFiles()
         

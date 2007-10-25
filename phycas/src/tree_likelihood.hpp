@@ -129,7 +129,8 @@ class TreeLikelihood
 
 		// Utilities
         void                            addOrphanTip(TreeShPtr t, unsigned row);
-		void							prepareForSimulation(TreeShPtr);
+        void                            addDecoratedInternalNode(TreeShPtr t);
+        void							prepareForSimulation(TreeShPtr);
 		void							prepareForLikelihood(TreeShPtr);
 		void							prepareInternalNodeForLikelihood(TreeNode * nd);
 
