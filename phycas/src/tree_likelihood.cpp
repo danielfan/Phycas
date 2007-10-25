@@ -1137,7 +1137,7 @@ double TreeLikelihood::calcLnL(
 		nd = storeAllCLAs(t);
 
 		// The subroot node will be the new likelihood_root
-		likelihood_root = nd; //@POL this line does nothing
+		likelihood_root = nd;
 #endif
 		}
 
@@ -1629,12 +1629,7 @@ void TreeLikelihood::addDecoratedInternalNode(
 	InternalData * cl = allocateInternalData();
     TreeNode * nd = t->AllocNewNode();
 	nd->SetInternalData(cl, cl_deleter);
-    unsigned ninternals_alloced = t->GetNInternalsAllocated();
-    std::cerr << "*** addDecoratedInternalNode: ninternals_alloced before push=  " << ninternals_alloced << std::endl; //temporary
     t->StoreInternalNode(nd);
-    ninternals_alloced = t->GetNInternalsAllocated();
-    std::cerr << "*** addDecoratedInternalNode: ninternals_alloced =  " << ninternals_alloced << std::endl; //temporary
-
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -1646,7 +1641,7 @@ void TreeLikelihood::addOrphanTip(
 	{
 	TreeNode::TipDataDeleter td_deleter	= &deallocateTipData;
 	TipData * td = allocateTipData(row);
-    TreeNode * nd = t->GetNewNode();
+    TreeNode * nd = t->AllocNewNode();
 	nd->SetTipData(td, td_deleter);
     nd->SetNodeNum(row);
     t->StoreLeafNode(nd);
