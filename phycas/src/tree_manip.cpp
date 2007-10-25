@@ -961,7 +961,7 @@ void TreeManip::DeleteLeaf(
 		lchild->rSib = u_par->rSib;
 		lchild->par = u_par->par;
 		lchild->prevPreorder = u_par->prevPreorder;
-		u_par->par->nextPreorder = lchild;
+		u_par->prevPreorder->nextPreorder = lchild;
 		tree->StoreInternalNode(u_par);
 		}
 
