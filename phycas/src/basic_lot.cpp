@@ -59,11 +59,7 @@ Lot::~Lot()
 |	University. Originally from Schrage, ACM Trans. Math. Software 5:132-138 (1979). Translated to C by Paul O. Lewis, 
 |	Dec. 10, 1992.
 */
-#if defined(NDEBUG)
 	double Lot::Uniform()
-#else
-	double Lot::Uniform(const char * file, int line)
-#endif
 	{
 	const unsigned a = 16807U;
 	const unsigned b15 = 32768U;
@@ -97,7 +93,7 @@ unsigned Lot::SampleUInt(unsigned max)
 	unsigned samples_uint = max;
 	while(samples_uint == max) 
 		{
-		double r = Uniform(FILE_AND_LINE);
+		double r = Uniform();
 		samples_uint = (unsigned)((double)max*r);
 		}
 

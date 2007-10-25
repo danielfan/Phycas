@@ -169,7 +169,7 @@ void Model::createParameters(
 			// start with rates drawn from Uniform(0.0, flex_upper_rate_bound)
 			//@POL to do this right, need to draw from prior, but if number of spacers is small, drawing from
             // Uniform(0,flex_upper_rate_bound) will give almost the same results
-			double u = flex_prob_param_prior->GetLot()->Uniform(FILE_AND_LINE);
+			double u = flex_prob_param_prior->GetLot()->Uniform();
 			gamma_rates_unnorm[i] = flex_upper_rate_bound*u;
 			//old way: gamma_rates_unnorm[i] = flex_upper_rate_bound*(double)(i + 1)/(double)(num_gamma_rates + 1);
 

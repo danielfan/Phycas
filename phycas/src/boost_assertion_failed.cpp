@@ -28,5 +28,6 @@ void boost::assertion_failed(char const *expr, char const *function, char const 
 	std::cerr << "\n  file: " << file;
 	std::cerr << "\n  line: " << line;
 	std::cerr << std::endl;
+    std::exit(1);
 	}
 #endif

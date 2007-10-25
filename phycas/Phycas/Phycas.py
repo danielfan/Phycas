@@ -823,7 +823,7 @@ class Phycas(object):
     # by default phycassert sys.exit.
     # When debugging, it is nice to set this to True so that you can see the stack trace
     PhycassertRaisesException = False
-    CPPWasCompiledInDebug = False
+    CPPCompiledInDebug = False
 
 if __name__ == '__main__':
     print "Dumbass."

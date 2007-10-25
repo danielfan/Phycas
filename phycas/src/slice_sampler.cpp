@@ -53,7 +53,7 @@ ParamAndLnProb SliceSampler::GetNextOverrelaxedSample(const ParamAndLnProb initi
 	//
 	const double initialLnfX = initialPair.second;
 	const double initialX = initialPair.first;
-	double exponential_deviate = -log(r->Uniform(FILE_AND_LINE));
+	double exponential_deviate = -log(r->Uniform());
 	ln_y = initialLnfX - exponential_deviate;
 
 	// Step 2: Find slice interval at height y
@@ -127,7 +127,7 @@ ParamAndLnProb SliceSampler::GetNextSample(const ParamAndLnProb initialPair)
 	//
 	const double initialLnfX = initialPair.second;
 	const double initialX = initialPair.first;
-	double exponential_deviate = -log(r->Uniform(FILE_AND_LINE));
+	double exponential_deviate = -log(r->Uniform());
 	ln_y = initialLnfX - exponential_deviate;
 	//std::cerr << "~~ ln_y = " << ln_y << std::endl;
 
@@ -140,7 +140,7 @@ ParamAndLnProb SliceSampler::GetNextSample(const ParamAndLnProb initialPair)
 
 	// Step 2: randomly place interval of width w around initialX (see Fig. 3, p. 715)
 	//
-	double U	= r->Uniform(FILE_AND_LINE);
+	double U	= r->Uniform();
 	left_edge	= initialX - w*U;
 	right_edge	= left_edge + w;
 	++realized_m;
@@ -148,7 +148,7 @@ ParamAndLnProb SliceSampler::GetNextSample(const ParamAndLnProb initialPair)
 	// Step 3: choose maximum number of units on left (J) and right (K)
 	// by dividing up the maxUnits total units randomly (see Fig. 3, p. 715)
 	//
-	double V	= r->Uniform(FILE_AND_LINE);
+	double V	= r->Uniform();
 	unsigned J	= (unsigned)(maxUnits*V);
 	unsigned K	= (maxUnits - 1) - J;
 
@@ -213,7 +213,7 @@ ParamAndLnProb SliceSampler::GetNextSample(const ParamAndLnProb initialPair)
 	ParamAndLnProb p;
 	for(;;)
 		{
-		double x = left_edge + ((right_edge - left_edge) * r->Uniform(FILE_AND_LINE));
+		double x = left_edge + ((right_edge - left_edge) * r->Uniform());
 
 		double ln_fx = (*func)(x);
 		//std::cerr << "~~ x = " << x << ", ln_fx = " << ln_fx << std::endl;

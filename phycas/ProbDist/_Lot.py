@@ -79,7 +79,5 @@ class Lot(LotBase):
 
         """
         from phycas import Phycas
-        if Phycas.CPPCompiledInDebug:
-            return LotBase.uniform(self, "PythonCode", -1)
         return LotBase.uniform(self)
     

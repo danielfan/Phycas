@@ -906,11 +906,11 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 			{
 			// warning: removing the if statement will invalidate all examples involving simulated data with rate
 			// homogeneity because of the call to rng->Uniform here!
-			r = (unsigned)(std::lower_bound(cum_rate_probs.begin(), cum_rate_probs.end(), rng->Uniform(FILE_AND_LINE)) - cum_rate_probs.begin());
+			r = (unsigned)(std::lower_bound(cum_rate_probs.begin(), cum_rate_probs.end(), rng->Uniform()) - cum_rate_probs.begin());
 			}
 
 		// Generate the starting state
-		int8_t j = (unsigned)(std::lower_bound(cum_freqs.begin(), cum_freqs.end(), rng->Uniform(FILE_AND_LINE)) - cum_freqs.begin());
+		int8_t j = (unsigned)(std::lower_bound(cum_freqs.begin(), cum_freqs.end(), rng->Uniform()) - cum_freqs.begin());
 
 		// Assign starting state to the tip node currently serving as the root of the tree
 		preorder_iterator nd = t->begin();
@@ -928,7 +928,7 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 		double * * Tmatrix = rootTD.pMatrixTranspose[r];
 
 		// Choose a uniform random deviate
-		double u = rng->Uniform(FILE_AND_LINE);
+		double u = rng->Uniform();
 
 		// Spin the roulette wheel to choose a state for the subroot node
 		double cum = 0.0;
@@ -975,7 +975,7 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 				double * * Tmatrix = ndTD.pMatrixTranspose[r];
 
 				// Choose a uniform random deviate
-				double u = rng->Uniform(FILE_AND_LINE);
+				double u = rng->Uniform();
 
 				// Spin the roulette wheel and assign a state to nd
 				double cum = 0.0;
@@ -1000,7 +1000,7 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 				double * * Pmatrix = ndID.pMatrices[r];
 
 				// Choose a uniform random deviate
-				double u = rng->Uniform(FILE_AND_LINE);
+				double u = rng->Uniform();
 
 				// Spin the roulette wheel and assign a state to nd
 				double cum = 0.0;

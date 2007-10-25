@@ -100,7 +100,7 @@ bool SamcMove::extrapolate(
 	last_move_projection = false;
 	tree->DebugCheckTree(false, 1);
     std::cerr << "*** extrapolate before doing anything: " << tree->DebugWalkTree(true, 1) << std::endl; //temporary
-
+	//likelihood->startTreeViewer(tree, "Start of extrapolate move");
 
     // The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
 	// A proposed SamcMove cannot be accepted without changing edge lengths, so it is best to bail out now.
@@ -110,9 +110,6 @@ bool SamcMove::extrapolate(
 	ChainManagerShPtr p = chain_mgr.lock();
 	PHYCAS_ASSERT(p);
 	double prev_ln_like = p->getLastLnLike();
-
-	//likelihood->startTreeViewer(tree, "Start of extrapolate move");
-
 
     leaf = tree->PopLeafNode();
 	PHYCAS_ASSERT(leaf->GetNodeNumber() == leaf_num);
@@ -157,7 +154,7 @@ bool SamcMove::extrapolate(
 	const double curr_posterior = curr_ln_like + curr_ln_prior;
 	double log_pkl_blk_ratio = log(getPkl(leaf_num, leaf_sib)) - log(leaf_sib_orig_edgelen);
 	double ln_accept_ratio = theta_diff + curr_posterior - prev_posterior - log_pkl_blk_ratio + ln_proposal_ratio;
-	const bool accepted = (ln_accept_ratio >= 0.0 || std::log(rng->Uniform(FILE_AND_LINE)) <= ln_accept_ratio);
+	const bool accepted = (ln_accept_ratio >= 0.0 || std::log(rng->Uniform()) <= ln_accept_ratio);
     std::cerr << "*** extrapolate before revert: " << tree->DebugWalkTree(true, 1) << std::endl; //temporary
 	tree->DebugCheckTree(false, 1);
 
@@ -255,7 +252,7 @@ bool SamcMove::project(
 	double curr_posterior = curr_ln_like + curr_ln_prior;
 	double log_pkl_blk_ratio = log(getPkl(leaf_num, leaf_sib)) - log(new_leaf_sib_edgelen);
 	double ln_accept_ratio = theta_diff + curr_posterior - prev_posterior + log_pkl_blk_ratio + ln_proposal_ratio;
-	const bool accepted = (ln_accept_ratio >= 0.0 || std::log(rng->Uniform(FILE_AND_LINE)) <= ln_accept_ratio);
+	const bool accepted = (ln_accept_ratio >= 0.0 || std::log(rng->Uniform()) <= ln_accept_ratio);
 	if (accepted)
 		{
 		p->setLastLnPrior(curr_ln_prior);

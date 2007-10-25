@@ -76,7 +76,7 @@ inline unsigned Lot::GetRandBits(unsigned nbits)
 	PHYCAS_ASSERT(nbits > 0);
 	PHYCAS_ASSERT(nbits < 32);
 
-	double u = Uniform(FILE_AND_LINE);
+	double u = Uniform();
 
 	if (u == 0.0)
 		{
