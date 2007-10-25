@@ -42,7 +42,9 @@ inline Tree::Tree()
 inline Tree::~Tree()
 	{
 	Clear(); //@ not too efficient to store nodes and then immediately delete them all
-	internalNodeStorage.erase(internalNodeStorage.begin(), internalNodeStorage.end());
+	while (!internalNodeStorage.empty()) 
+		internalNodeStorage.pop();
+		
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -154,7 +156,7 @@ inline void Tree::Clear()
 			{
 			TreeNode *next = nd->GetNextPostorder();
 			nd->Clear();
-			internalNodeStorage.push_back(nd);
+			internalNodeStorage.push(nd);
 			nd = next;
 			}
 
@@ -188,8 +190,8 @@ inline TreeNode * Tree::GetNewNode()
 		}
 	else
 		{
-		nd = internalNodeStorage.back();
-		internalNodeStorage.pop_back();
+		nd = internalNodeStorage.top();
+		internalNodeStorage.pop();
 		}
 	return nd;
 	}
@@ -212,7 +214,7 @@ inline void Tree::Reserve(
 		{
         TreeNode * nd = new TreeNode();
         nd->SetTreeShPtr(TreeShPtr(this));
-		internalNodeStorage.push_back(nd);
+		internalNodeStorage.push(nd);
 		}
 	}
 

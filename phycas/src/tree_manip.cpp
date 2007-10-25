@@ -119,7 +119,7 @@ TreeNode * TreeManip::FindLastPreorderInClade(
 /*----------------------------------------------------------------------------------------------------------------------
 |	Inserts `subtree' into the edge owned by `edge_nd', adding an internal node.
 */
-void InsertSubtreeIntoEdge(
+void TreeManip::InsertSubtreeIntoEdge(
   TreeNode * subtree, /**< */
   TreeNode * edge_nd) /**< */
     {

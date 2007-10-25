@@ -112,7 +112,7 @@ unsigned Lot::MultinomialDraw(const double * probs, unsigned n)
 	{
     PHYCAS_ASSERT(probs != NULL);
     PHYCAS_ASSERT(n > 0);
-    double u = uniform();
+    double u = Uniform();
     for (unsigned i = 0; i < n; ++i)
         {
         u -= probs[i];

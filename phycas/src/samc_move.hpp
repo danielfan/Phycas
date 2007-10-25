@@ -1,20 +1,20 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-|  Phycas: Python software for phylogenetic analysis                          |
-|  Copyright (C) 2006 Mark T. Holder, Paul O. Lewis and David L. Swofford     |
-|                                                                             |
-|  This program is free software; you can redistribute it and/or modify       |
-|  it under the terms of the GNU General Public License as published by       |
-|  the Free Software Foundation; either version 2 of the License, or          |
-|  (at your option) any later version.                                        |
-|                                                                             |
-|  This program is distributed in the hope that it will be useful,            |
-|  but WITHOUT ANY WARRANTY; without even the implied warranty of             |
-|  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              |
-|  GNU General Public License for more details.                               |
-|                                                                             |
-|  You should have received a copy of the GNU General Public License along    |
-|  with this program; if not, write to the Free Software Foundation, Inc.,    |
-|  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
+|  Phycas: Python software for phylogenetic analysis						  |
+|  Copyright (C) 2006 Mark T. Holder, Paul O. Lewis and David L. Swofford	  |
+|																			  |
+|  This program is free software; you can redistribute it and/or modify		  |
+|  it under the terms of the GNU General Public License as published by		  |
+|  the Free Software Foundation; either version 2 of the License, or		  |
+|  (at your option) any later version.										  |
+|																			  |
+|  This program is distributed in the hope that it will be useful,			  |
+|  but WITHOUT ANY WARRANTY; without even the implied warranty of			  |
+|  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the			  |
+|  GNU General Public License for more details.								  |
+|																			  |
+|  You should have received a copy of the GNU General Public License along	  |
+|  with this program; if not, write to the Free Software Foundation, Inc.,	  |
+|  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.				  |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #if ! defined(SAMC_MOVE_HPP)
@@ -50,16 +50,10 @@ typedef std::vector<double> VecPolytomyDistr;
 class SamcMove : public MCMCUpdater
 	{
 	public:
-									SamcMove();
+									SamcMove(ProbDistShPtr);
 									virtual ~SamcMove() 
 										{
-										//std::cerr << "SamcMove dying..." << std::endl;
 										}
-
-		// Accessors
-		//
-		bool						addEdgeMoveProposed() const;
-
 		// Modifiers
 		//
 		void						setEdgeLenDistMean(double mean);
@@ -68,14 +62,11 @@ class SamcMove : public MCMCUpdater
 		//
 		void						finalize();
 
-		bool 						extrapolate();
-		bool 						project(unsigned leaf_num, double theta_diff);
+		bool						extrapolate(unsigned leaf_num, double theta_diff, double ln_proposal_ratio);
+		bool						project(unsigned leaf_num, double theta_diff, double ln_proposal_ratio);
 		// These are virtual functions in the MCMCUpdater base class
 		//
 		virtual bool				update();
-		virtual double				getLnHastingsRatio() const;
-		virtual double				getLnJacobian() const;
-		virtual void				proposeNewState();
 		virtual void				revert();
 		virtual void				accept();
 
@@ -84,39 +75,16 @@ class SamcMove : public MCMCUpdater
 	private:
 
 		void						reset();
-		void						proposeAddEdgeMove(TreeNode * nd);
-		void						proposeDeleteEdgeMove(TreeNode * nd);
-		const VecPolytomyDistr &	computePolytomyDistribution(unsigned nspokes);
-		void						refreshPolytomies();
 		SamcMove &					operator=(const SamcMove &);	// never use - don't define
 
-        //new stuff
-        void                        calcPk(unsigned leaf_k);
-        double                      getPkl(unsigned leaf_k, TreeNode * nd_l);
-
+		//new stuff
+		void						calcPk(unsigned leaf_k);
+		double						getPkl(unsigned leaf_k, TreeNode * nd_l);
+		TreeNode *					chooseRandomAttachmentNode(unsigned leaf_k);
 	private:
 
 		unsigned						num_taxa;							/**< The number of taxa */
-		unsigned						num_nodes_in_fully_resolved_tree;	/**< Total number of nodes in a fully resolved tree having the same number of taxa, N (= 2N - 2) */
-		bool							add_edge_move_proposed;				/**< True if last move proposed was an add-edge move; false otherwise */
-
-		double							edgelen_mean;						/**< The mean of the exponential distribution governing new edge lengths */
-		ExponentialDistributionShPtr	edgelen_dist;						/**< The distribution from which new edge lengths are chosen */
-
-		PolytomyDistrMap				poly_prob;							/**< Map of probability distributions for x where x is the number of spokes split off in an add-edge move that divides the spokes of a polytomy of size n into two groups. A polytomy with n spokes is split into two nodes, with x spokes going to one node and n - x remaining with the other node. polyProb[n][x] is prob(x|n). */
-
-		double							new_edgelen;						/**< Stores new edge length created by an add-edge move */
-		unsigned						polytomy_size;						/**< Stores number of spokes in polytomy broken by last proposed add-edge move */
-		unsigned						num_polytomies;						/**< Stores number of polytomies in tree */
-
-		TreeNode *						orig_par;							/**< Parent of deleted node (in case revert of delete-edge move is necessary) */
-		TreeNode *						orig_lchild;						/**< Leftmost child of deleted node (in case revert of delete-edge move is necessary) */
-		TreeNode *						orig_rchild;						/**< Rightmost child of deleted node (in case revert of delete-edge move is necessary) */
-		double							ln_jacobian;						/**< The natural log of the Jacobian for the move last proposed */
-		double							ln_hastings;						/**< The natural log of the Hastings ratio for the move last proposed */
-		CDF								cdf;								/**< CDF object needed for its LnGamma function */
-
-        // new stuff
+		// new stuff
 		TreeNode *						leaf_sib;
 		TreeNode *						leaf;
 		TreeNode *						parent;
@@ -124,9 +92,9 @@ class SamcMove : public MCMCUpdater
 		double							orig_edgelen;						/**< Length of deleted edge saved (in case revert of delete-edge move is necessary) */
 		double							par_orig_edgelen;					/**< Length of deleted parent edge saved (in case revert of delete-edge move is necessary) */
 		bool							last_move_projection;				/**< true if project was the last move*/
-        std::vector<double>				pvect;								/**< vector of pkl values in preorder sequence */
-        TreeNode *                      new_leaf_sib_parent;                /**< node serving as likelihood root after projection */
-
+		std::vector<double>				pvect;								/**< vector of pkl values in preorder sequence */
+		TreeNode *						new_leaf_sib_parent;				/**< node serving as likelihood root after projection */
+		ProbDistShPtr					term_edge_dist;						/**< Probability distribution for proposing new edge lengths during the extrapolate move*/
 		bool							view_proposed_move;					/**< If set to true, graphical tree viewer will pop up showing edges affected by the next proposed Bush move */
 	};
 

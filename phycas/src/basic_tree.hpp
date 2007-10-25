@@ -21,6 +21,7 @@
 #define PYPHY_BASIC_TREE_HPP
 
 #include <string>
+#include <stack>
 #include <vector>
 #include <set>
 #include <iostream>
