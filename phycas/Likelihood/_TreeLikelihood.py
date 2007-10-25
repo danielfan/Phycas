@@ -358,6 +358,7 @@ class TreeLikelihood(TreeLikelihoodBase):
         TreeLikelihoodBase.setUFNumEdges(self, nedges)
         
     def startTreeViewer(self, t, s):
+        raw_input('about to import TreeViewer')
         import TreeViewer
         tv = TreeViewer.TreeViewer(tree=t, msg=s)
         tv.setLikelihoodRoot(TreeLikelihoodBase.getLikelihoodRootNodeNum(self))

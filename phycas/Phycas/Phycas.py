@@ -97,6 +97,7 @@ class Phycas(object):
         self.samc_move_weight       = 100       # 
         self.samc_move_edgelen_mean = 1.0       # specifies mean of exponential edge length generation distribution used by SamcMove when new edges are created
         self.samc_move_debug        = False     # If set to true, TreeViewer will pop up on each Samc move update showing edges affected by the proposed move
+        self.samc_t0                = 10000.0   # samc_gain_factor = samc_t0/max(samc_t0, cycle)
 
         # Variables associated with slice samplers
         self.slice_weight           = 1         # Slice sampled parameters will be updated this many times per cycle
@@ -182,6 +183,7 @@ class Phycas(object):
         self._logFileName           = None
         #self.use_tree_viewer        = False    # popup graphical TreeViewer to show trees during run POLPY_NEWWAY
         self.addition_sequence      = []        # list of taxon numbers for addition sequence
+        self.samc_theta             = []        # normalizing factors (will have length ntax - 3 because levels with 1, 2 or 3 taxa are not examined)
 
     # by default phycassert sys.exit.
     # When debugging, it is nice to set this to True so that you can see the stack trace
@@ -468,41 +470,43 @@ class Phycas(object):
         counts = [0]*(max_level + 1)
         mgr.refreshLastLnPrior()
         mgr.refreshLastLnLike()
+        ln_proposal_ratio = 0.0 # always 0.0 because \tilde{T}_{m,m-1} = \tilde{T}_{m,m+1} = 1/3
         for cycle in xrange(self.ncycles):
             # proposal for changing current level
             u = random.random()
-            u = 0.5 ##@ TEMP
             proposed_level = current_level
             if u < 1.0/3.0:
                 if current_level > 0:
                     proposed_level = current_level - 1
-                
             elif u > 2.0/3.0:
                 if current_level < max_level:
                     proposed_level = current_level + 1
-                
+                    
             if proposed_level == current_level:
                 ls.setSaveDebugInfo(True)
                 ls.update()
                 print '%s | %s\n' % (ls.getName(), ls.getDebugInfo())
             elif proposed_level > current_level:
-                if  samc_move.extrapolate():
+                leaf_num = self.addition_sequence[proposed_level + 3]
+                theta_diff = self.samc_theta[current_level] - self.samc_theta[proposed_level]
+                if samc_move.extrapolate(leaf_num, theta_diff, ln_proposal_ratio):
                     current_level = proposed_level
-                
-#             else:
-#                 do_projection_move()
+            else:
+                leaf_num = self.addition_sequence[current_level + 3]
+                theta_diff = self.samc_theta[current_level] - self.samc_theta[proposed_level]
+                if samc_move.project(leaf_num, theta_diff, ln_proposal_ratio):
+                    current_level = proposed_level
 
-            #print proposed_level,
-            
-            
+            # bump up the normalizing constant for the current level
+            gain_factor = self.samc_t0/max([self.samc_t0, float(cycle)])
+            self.samc_theta[current_level] += gain_factor
+
             lnL = chain.calcLnLikelihood()
-            print "lnL =", lnL
+            print "level = %d: lnL =", (proposed_level, lnL)
             
-            current_level = proposed_level ##@TEMP
             counts[current_level] += 1
         print "counts = ", counts
         print "mean   = ", sum(counts)/float(len(counts))
-    
     
     def readDataFromFile(self):
         if not self.file_name_data_stored or (self.data_file_name != self.file_name_data_stored):
@@ -526,8 +530,7 @@ class Phycas(object):
             if d_i < min_dist:
                 min_dist = d_i
         return min_dist
-         
-
+        
     def getSamcAdditionSequence(self):
         
         n = self.ntax
@@ -576,6 +579,7 @@ class Phycas(object):
         print "starting tree = ", self.tree_topology
         
     def setupSAMC(self):
+        raw_input('debug stop')
         # Read the data
         self.phycassert(self.data_source == 'file', "This only works for data read from a file (specify data_source == 'file')")
         self.readDataFromFile()
@@ -590,6 +594,11 @@ class Phycas(object):
             
         if not self.tree_topology:
             self.getSamcStartingTree()
+
+        # Initialize vector of normalizing constant parameters
+        # Subtract 3 because never examine levels in which number of taxa < 4
+        nlevels = len(self.addition_sequence) - 3
+        self.samc_theta = [0.0]*(nlevels)
         
         # Set up MCMC chain
         self.heat_vector = [1.0]

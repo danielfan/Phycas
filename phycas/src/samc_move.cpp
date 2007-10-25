@@ -108,7 +108,9 @@ bool SamcMove::extrapolate(
 	PHYCAS_ASSERT(p);
 	double prev_ln_like = p->getLastLnLike();
 
-	leaf = tree->PopLeafNode();
+	likelihood->startTreeViewer(tree, "Start of extrapolate move");
+
+    leaf = tree->PopLeafNode();
 	PHYCAS_ASSERT(leaf->GetNodeNumber() == leaf_num);
 	leaf_sib = chooseRandomAttachmentNode(leaf_num);
 	tree_manipulator.InsertSubtreeIntoEdge(leaf, leaf_sib);
@@ -167,6 +169,11 @@ bool SamcMove::extrapolate(
 		likelihood->invalidateBothEnds(leaf_sib);	
 		}
 	return accepted;
+
+    if (save_debug_info)
+        {
+        debug_info = str(boost::format("SAMC Extrapolation: deleting %d, curr_post = %f, prev_post = %f, %s") % leaf_num % curr_posterior % prev_posterior % (accepted ? "accepted" : "rejected"));
+        }
 
 	}
 
@@ -253,7 +260,13 @@ bool SamcMove::project(
 		curr_ln_prior	= p->getLastLnPrior();
 		revert();
 		}
-	return accepted;
+
+    if (save_debug_info)
+        {
+        debug_info = str(boost::format("SAMC Projection: deleting %d, curr_post = %f, prev_post = %f, %s") % leaf_num % curr_posterior % prev_posterior % (accepted ? "accepted" : "rejected"));
+        }
+
+    return accepted;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
