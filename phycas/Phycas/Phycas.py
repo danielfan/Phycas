@@ -612,7 +612,7 @@ class Phycas(object):
         for row in self.addition_sequence[-1:3:-1]:
             m.likelihood.addOrphanTip(m.tree, row)
             m.likelihood.addDecoratedInternalNode(m.tree)
-
+        sys.exit(0)
         self.openParameterAndTreeFiles()
         
     def setLogFile(self, filename):

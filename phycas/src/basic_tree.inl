@@ -184,6 +184,11 @@ inline TreeNode * Tree::GetNewNode()
 	{
 	if (!internalNodeStorage.empty())
 		return PopInternalNode();
+	return AllocNewNode();
+	}
+	
+inline TreeNode * Tree::AllocNewNode()
+	{
 	TreeNode * nd = new TreeNode();
 	nd->SetTreeShPtr(TreeShPtr(this));
 	return nd;
@@ -293,6 +298,7 @@ inline unsigned Tree::GetNNodes()
 */
 inline unsigned Tree::GetNInternalsAllocated()
 	{
+	RefreshNodeCounts(); //temp
 	return internalNodeStorage.size() + GetNInternals();
 	}
 

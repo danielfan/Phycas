@@ -116,7 +116,7 @@ class Tree
 		void					DebugHere(std::string s);
 
 	protected:
-
+		TreeNode * 				AllocNewNode();
 		TreeNode *				FindTipNode(unsigned num);
 		void					RerootHelper(TreeNode *m, TreeNode *t);
 		void					GetNextNewickToken(const std::string &newick, unsigned start_pos);

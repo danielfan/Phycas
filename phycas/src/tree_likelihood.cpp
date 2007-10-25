@@ -1620,16 +1620,21 @@ void TreeLikelihood::prepareInternalNodeForLikelihood(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Decorates a tip node with data and add to the tree's tipStorage vector.
+|	Decorates a tip node with data and add to the tree's StoreInternalNode vector.
 */
 void TreeLikelihood::addDecoratedInternalNode(
   TreeShPtr t)		/**< is the tree to decorate */
 	{
 	TreeNode::InternalDataDeleter	cl_deleter	= &deallocateInternalData;
 	InternalData * cl = allocateInternalData();
-    TreeNode * nd = t->GetNewNode();
+    TreeNode * nd = t->AllocNewNode();
 	nd->SetInternalData(cl, cl_deleter);
+    unsigned ninternals_alloced = t->GetNInternalsAllocated();
+    std::cerr << "*** addDecoratedInternalNode: ninternals_alloced before push=  " << ninternals_alloced << std::endl; //temporary
     t->StoreInternalNode(nd);
+    ninternals_alloced = t->GetNInternalsAllocated();
+    std::cerr << "*** addDecoratedInternalNode: ninternals_alloced =  " << ninternals_alloced << std::endl; //temporary
+
     }
 
 /*----------------------------------------------------------------------------------------------------------------------

@@ -101,6 +101,7 @@ bool SamcMove::extrapolate(
 	const unsigned ninternals_alloced = tree->GetNInternalsAllocated();
 	last_move_projection = false;
     std::cerr << "*** extrapolate: before doing anything: " << tree->DebugWalkTree(true, 1) << std::endl; //temporary
+    std::cerr << "*** ninternals_alloced =  " << ninternals_alloced << std::endl; //temporary
 	tree->DebugCheckTree(false, true, 2);
 	std::cerr << "*** extrapolate: in tree checked" << std::endl; //temporary
 	//likelihood->startTreeViewer(tree, "Start of extrapolate move");
