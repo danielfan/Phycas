@@ -90,6 +90,10 @@ class SamcMove : public MCMCUpdater
 		void						refreshPolytomies();
 		SamcMove &					operator=(const SamcMove &);	// never use - don't define
 
+        //new stuff
+        void                        calcPk(unsigned leaf_k);
+        double                      getPkl(unsigned leaf_k, TreeNode * nd_l);
+
 	private:
 
 		unsigned						num_taxa;							/**< The number of taxa */
@@ -101,20 +105,27 @@ class SamcMove : public MCMCUpdater
 
 		PolytomyDistrMap				poly_prob;							/**< Map of probability distributions for x where x is the number of spokes split off in an add-edge move that divides the spokes of a polytomy of size n into two groups. A polytomy with n spokes is split into two nodes, with x spokes going to one node and n - x remaining with the other node. polyProb[n][x] is prob(x|n). */
 
-		TreeNode *						leaf_sib;
 		double							new_edgelen;						/**< Stores new edge length created by an add-edge move */
 		unsigned						polytomy_size;						/**< Stores number of spokes in polytomy broken by last proposed add-edge move */
 		unsigned						num_polytomies;						/**< Stores number of polytomies in tree */
 
-		double							orig_edgelen;						/**< Length of deleted edge saved (in case revert of delete-edge move is necessary) */
-		double							par_orig_edgelen;					/**< Length of deleted parent edge saved (in case revert of delete-edge move is necessary) */
 		TreeNode *						orig_par;							/**< Parent of deleted node (in case revert of delete-edge move is necessary) */
 		TreeNode *						orig_lchild;						/**< Leftmost child of deleted node (in case revert of delete-edge move is necessary) */
 		TreeNode *						orig_rchild;						/**< Rightmost child of deleted node (in case revert of delete-edge move is necessary) */
 		double							ln_jacobian;						/**< The natural log of the Jacobian for the move last proposed */
 		double							ln_hastings;						/**< The natural log of the Hastings ratio for the move last proposed */
-		bool							last_move_projection;				/**< true if project was the last move*/
 		CDF								cdf;								/**< CDF object needed for its LnGamma function */
+
+        // new stuff
+		TreeNode *						leaf_sib;
+		TreeNode *						leaf;
+		TreeNode *						parent;
+		double							leaf_sib_orig_edgelen;				/**<  */
+		double							orig_edgelen;						/**< Length of deleted edge saved (in case revert of delete-edge move is necessary) */
+		double							par_orig_edgelen;					/**< Length of deleted parent edge saved (in case revert of delete-edge move is necessary) */
+		bool							last_move_projection;				/**< true if project was the last move*/
+        std::vector<double>				pvect;								/**< vector of pkl values in preorder sequence */
+        TreeNode *                      new_leaf_sib_parent;                /**< node serving as likelihood root after projection */
 
 		bool							view_proposed_move;					/**< If set to true, graphical tree viewer will pop up showing edges affected by the next proposed Bush move */
 	};

@@ -78,6 +78,7 @@ class TreeManip
 		void		InsertSubtree(TreeNode * s, TreeNode * u, InsertMode m, TreeNode * targetSib = NULL);
 
 		void		DeleteLeaf(TreeNode * u);
+		void		InsertSubtreeIntoEdge(TreeNode * subtree, TreeNode * edge_nd);
 
 		void		LChildToLSib(TreeNode * u, TreeNode * w);
 		void		RChildToRSib(TreeNode * u, TreeNode * w);

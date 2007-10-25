@@ -33,9 +33,33 @@ using namespace phycas;
 |	Push node onto end of `internalNodeStorage' vector (nodes are stored rather than deleted to save having to reallocate them
 |	later.
 */
+TreeNode * Tree::PopLeafNode()
+	{
+    PHYCAS_ASSERT(tipStorage.empty());
+	TreeNode * nd = tipStorage.top();
+	tipStorage.pop();
+    return nd;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Push node onto end of `internalNodeStorage' vector (nodes are stored rather than deleted to save having to reallocate them
+|	later.
+*/
+TreeNode * Tree::PopInternalNode()
+	{
+    PHYCAS_ASSERT(internalNodeStorage.empty());
+	TreeNode * nd = internalNodeStorage.top();
+	internalNodeStorage.pop();
+    return nd;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Push node onto end of `internalNodeStorage' vector (nodes are stored rather than deleted to save having to reallocate them
+|	later.
+*/
 void Tree::StoreInternalNode(TreeNode * u)
 	{
-	internalNodeStorage.push_back(u);
+	internalNodeStorage.push(u);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -43,7 +67,7 @@ void Tree::StoreInternalNode(TreeNode * u)
 */
 void Tree::StoreLeafNode(TreeNode * u)
 	{
-	tipStorage.push_back(u);
+	tipStorage.push(u);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

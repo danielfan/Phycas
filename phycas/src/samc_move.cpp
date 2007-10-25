@@ -37,7 +37,8 @@ using namespace phycas;
 |	The constructor sets `num_taxa' and `num_nodes_in_fully_resolved_tree', computes the polytomy distribution, and 
 |	finally calls SamcMove::reset to re-initialize all other variables.
 */
-SamcMove::SamcMove()
+SamcMove::SamcMove(
+  ProbDistShPtr d)  /**< is the distribution to use for generating new edge lengths */
   :MCMCUpdater(),
   view_proposed_move(false)
 	{
@@ -51,8 +52,76 @@ SamcMove::SamcMove()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Calls proposeNewState(), then decides whether to accept or reject the proposed new state, calling accept() or 
-|	revert(), whichever is appropriate.
+|   
+*/
+void SamcMove::calcPk(
+  unsigned leaf_k)  /**< is the leaf we are adding (for extrapolation) or subtracting (for projection) */
+    {
+    //@POL assumes temperature is infinity, need to rewrite for more reasonable behavior
+    pvect.clear();
+    unsigned n = tree->GetNNodes() - 1;
+    double p = 1.0/(double)n;
+    pvect.resize(n, p);
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
+|   
+*/
+double SamcMove::getPkl(
+  unsigned leaf_k,    /**< is the leaf we are adding (for extrapolation) or subtracting (for projection) */
+  TreeNode * nd_l)    /**< is the leaf we are adding (for extrapolation) or subtracting (for projection) */
+    {
+    calcPk(leaf_k);
+    return pvect[0];    //@POL this will not stand!
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
+|   
+*/
+TreeNode * SamcMove::chooseRandomAttachmentNode(
+  unsigned leaf_k)    /**< is the leaf we are adding (for extrapolation) or subtracting (for projection) */
+    {
+    calcPk(leaf_k);
+    unsigned i = rng->MultinomialDraw(&pvect[0], pvect.size());
+    unsigned curr = 0;
+    for (preorder_iterator nd = begin(); nd != end(); ++nd, ++curr)
+        {
+        if (curr == i)
+            return *nd;
+        }
+    PHYCAS_ASSERT(0);
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	.
+*/
+bool SamcMove::extrapolate(
+	unsigned leaf_num, /**< */
+	double theta_diff,        /**< the differences in the thetas (this appears in the acceptance probability calculation and is a function of the weights in the SAMC algorithm) */
+	double ln_proposal_ratio) /**< the ratio of proposing a projection rather than an extrapolation. */
+    {
+	last_move_projection = false;
+
+    // The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
+	// A proposed SamcMove cannot be accepted without changing edge lengths, so it is best to bail out now.
+	if (is_fixed)
+		return false;
+
+	ChainManagerShPtr p = chain_mgr.lock();
+	PHYCAS_ASSERT(p);
+	double prev_ln_like = p->getLastLnLike();
+    leaf = PopLeafNode();
+	PHYCAS_ASSERT(leaf->GetNodeNumber() == leaf_num);
+    leaf_sib = chooseRandomAttachmentNode(leaf_num);
+    InsertSubtreeIntoEdge(leaf, leaf_sib);
+    leaf_sib_orig_edgelen = leaf_sib->GetEdgeLen();
+    double u = rng->uniform();
+    leaf_sib->SetEdgeLen(u*leaf_sib_orig_edgelen);
+    leaf_sib->par->SetEdgeLen((1.0 - u)*leaf_sib_orig_edgelen);
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	.
 */
 bool SamcMove::project(
 	unsigned leaf_num, 
@@ -60,6 +129,7 @@ bool SamcMove::project(
 	double ln_proposal_ratio) /* the ratio of proposing a projection rather than an extrapolation. */
 	{
 	last_move_projection = true;
+
 	// The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
 	// A proposed SamcMove cannot be accepted without changing edge lengths, so it is best to bail out now.
 	if (is_fixed)
@@ -74,12 +144,11 @@ bool SamcMove::project(
 	PHYCAS_ASSERT(p);
 	double prev_ln_like = p->getLastLnLike();
 
-
-	TreeNode * leaf = tree->FindTipNode(leaf_num)
+	leaf = tree->FindTipNode(leaf_num);
 	PHYCAS_ASSERT(leaf != NULL);
 	orig_edgelen = leaf->GetEdgeLen();
 	
-	TreeNode * parent = leaf->GetParent();
+	parent = leaf->GetParent();
 	PHYCAS_ASSERT(parent != NULL);
 	par_orig_edgelen = parent->GetEdgeLen();
 
@@ -87,7 +156,7 @@ bool SamcMove::project(
 	leaf_sib = leaf->GetNextSib();
 	double prev_leaf_sib_edge_len = leaf_sib->GetEdgeLen();
 	
-	TreeNode * new_leaf_sib_parent = leaf_sib->GetParent();
+	new_leaf_sib_parent = leaf_sib->GetParent();
 	
 	/* This DeleteLeaf call will also delete parent and set leaf_sib's edge len
 		to the sum of it's edge len and the parent's.
@@ -97,7 +166,6 @@ bool SamcMove::project(
 	likelihood->useAsLikelihoodRoot(new_leaf_sib_parent)
 	tree->InvalidateNodeCounts();
 	
-	//@MTH -- Tuesday night
 	double curr_ln_like = likelihood->calcLnL(tree);
 
 	if (view_proposed_move)
@@ -106,19 +174,21 @@ bool SamcMove::project(
 	double curr_ln_prior = 0.0;
 	double prev_ln_prior = p->calcTerminalEdgeLenPriorUnnorm(orig_edgelen)
 	prev_ln_prior += p->calcInternalEdgeLenPriorUnnorm(par_orig_edgelen)
+    double new_leaf_sib_edgelen = leaf_sib->GetEdgeLen();
 	if (leaf_sib->IsLeaf())
 		{
 		prev_ln_prior += p->calcTerminalEdgeLenPriorUnnorm(prev_leaf_sib_edge_len);
-		curr_ln_prior += p->calcTerminalEdgeLenPriorUnnorm(leaf_sib->GetEdgeLen());
+		curr_ln_prior += p->calcTerminalEdgeLenPriorUnnorm(new_leaf_sib_edgelen);
 		}
 	else
 		{
 		prev_ln_prior += p->calcInternalEdgeLenPriorUnnorm(prev_leaf_sib_edge_len);
-		curr_ln_prior += p->calcInternalEdgeLenPriorUnnorm(leaf_sib->GetEdgeLen());
+		curr_ln_prior += p->calcInternalEdgeLenPriorUnnorm(new_leaf_sib_edgelen);
 		}
     double prev_posterior = prev_ln_like + prev_ln_prior;
 	double curr_posterior = curr_ln_like + curr_ln_prior;
-	double ln_accept_ratio = theta_diff + curr_posterior - prev_posterior;
+    double log_pkl_blk_ratio = log(getPkl(leaf_num, leaf_sib)) - log(new_leaf_sib_edgelen);
+	double ln_accept_ratio = theta_diff + curr_posterior - prev_posterior + log_pkl_blk_ratio + ln_proposal_ratio;
 	const bool accepted = (ln_accept_ratio >= 0.0 || std::log(rng->Uniform(FILE_AND_LINE)) <= ln_accept_ratio);
 	if (accepted)
 		{
@@ -158,7 +228,7 @@ void SamcMove::proposeNewState()
 	add_edge_move_proposed = (!fully_resolved_before) && (star_tree_before || rng->Uniform(FILE_AND_LINE) < 0.5);
 	
 	refreshPolytomies();
-	num_polytomies = (unsigned)polytomies.size();
+	//num_polytomies = (unsigned)polytomies.size();
 
 	// One internal edge leads to the tip node serving as the root, but that one doesn't count
 	const unsigned num_internal_edges_before = tree->GetNInternals() - 1;
@@ -320,7 +390,29 @@ void SamcMove::finalize()
 */
 void SamcMove::revert()
 	{
-	if (add_edge_move_proposed)
+	if (last_move_projection)
+		{
+		TreeNode * leafnd = tree->PopLeafNode();
+        PHYCAS_ASSERT(leafnd == leaf);
+        tree_manipulator.InsertSubtreeIntoEdge(leafnd, leaf_sib);
+
+		leaf_sib->SetEdgeLen(leaf_sib->GetEdgeLen() - par_orig_edgelen);
+		leaf->SetEdgeLen(orig_edgelen);
+		leaf_sib->GetParent()->SetEdgeLen(par_orig_edgelen);
+
+		likelihood->useAsLikelihoodRoot(new_leaf_sib_parent);
+		//likelihood->restoreFromCacheAwayFromNode(*orig_lchild);
+		//likelihood->restoreFromCacheParentalOnly(orig_lchild);
+
+		//if (view_proposed_move)
+		//	{
+		//	orig_par->UnselectNode();
+		//	likelihood->startTreeViewer(tree, "Delete edge move REVERTED");
+		//	}
+
+		tree->InvalidateNodeCounts();
+		}
+	else
 		{
 		// An add-edge move was previously proposed, which means a new internal node (orig_lchild) and its edge were created. 
 		// orig_lchild's parent is known as orig_par. The children of orig_lchild represent a subset of the original children 
@@ -349,42 +441,6 @@ void SamcMove::revert()
 
 		if (view_proposed_move)
 			likelihood->startTreeViewer(tree, "Add edge move REVERTED");
-
-		tree->InvalidateNodeCounts();
-		}
-	else
-		{
-		// A delete-edge move was proposed, which means an internal node and its edge have been deleted. This deleted
-		// node's parent is known as orig_par. The children of the deleted node have been added as children of orig_par,
-		// with the first being identified now as orig_lchild and the last in the series now pointed to by orig_rchild.
-		// To revert the delete-edge move, create a new child of orig_par having edgelen equal to orig_edgelen, then transfer
-		// the nodes from orig_lchild to orig_rchild (following rSib pointers, and including both orig_lchild and 
-		// orig_rchild) to the new node.
-		//
-		TreeNode * u = tree->GetNewNode();
-		u->SetEdgeLen(orig_edgelen);
-		tree_manipulator.InsertSubtree(u, orig_par, TreeManip::kOnRight);
-
-		TreeNode * nd = orig_lchild;
-		for (;;)
-			{
-			TreeNode * s = nd;
-			PHYCAS_ASSERT(s != NULL);
-			nd = nd->GetRightSib();
-			tree_manipulator.SibToChild(u, s, TreeManip::kOnRight);
-			if (s == orig_rchild)
-				break;
-			}
-
-		likelihood->useAsLikelihoodRoot(orig_par);
-		likelihood->restoreFromCacheAwayFromNode(*orig_lchild);
-		likelihood->restoreFromCacheParentalOnly(orig_lchild);
-
-		if (view_proposed_move)
-			{
-			orig_par->UnselectNode();
-			likelihood->startTreeViewer(tree, "Delete edge move REVERTED");
-			}
 
 		tree->InvalidateNodeCounts();
 		}
@@ -678,7 +734,16 @@ void SamcMove::setEdgeLenDistMean(
 */
 void SamcMove::accept()
 	{
-	if (add_edge_move_proposed)
+	if (last_move_projection)
+		{
+		// Keeping node deletion
+		likelihood->useAsLikelihoodRoot(new_leaf_sib_parent);
+		likelihood->discardCacheAwayFromNode(*new_leaf_sib_parent);
+
+		if (view_proposed_move)
+			likelihood->startTreeViewer(tree, "Delete edge move ACCEPTED");
+		}
+	else
 		{
 		// Keeping added edge, where orig_par was original polytomous node and orig_lchild was the added node
 		likelihood->useAsLikelihoodRoot(orig_lchild);
@@ -687,15 +752,6 @@ void SamcMove::accept()
 
 		if (view_proposed_move)
 			likelihood->startTreeViewer(tree, "Add edge move ACCEPTED");
-		}
-	else
-		{
-		// Keeping edge deletion, orig_par is the new polytomous node
-		likelihood->useAsLikelihoodRoot(orig_par);
-		likelihood->discardCacheAwayFromNode(*orig_par);
-
-		if (view_proposed_move)
-			likelihood->startTreeViewer(tree, "Delete edge move ACCEPTED");
 		}
 
 	reset();

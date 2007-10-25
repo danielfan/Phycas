@@ -117,6 +117,26 @@ TreeNode * TreeManip::FindLastPreorderInClade(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Inserts `subtree' into the edge owned by `edge_nd', adding an internal node.
+*/
+void InsertSubtreeIntoEdge(
+  TreeNode * subtree, /**< */
+  TreeNode * edge_nd) /**< */
+    {
+    // get new_node from internal node storage
+    TreeNode * new_node = tree->GetNewNode();
+
+    // add new_node to edge_nd->par
+    InsertSubtree(new_node, edge_nd->par, TreeManip::kOnRight);
+
+    // add subtree to new_node
+    InsertSubtree(subtree, new_node, TreeManip::kOnRight);
+
+    // make edge_nd a child of new_node
+    SibToChild(new_node, edge_nd,  TreeManip::kOnRight);
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Inserts node 's' as child of 'u' keeping the subtree rooted at `s' intact. Assumes both `s' and `u' are non-NULL. If 
 |	`targetSib' is specified, `s' will become an immediate sibling of `targetSib' (right or left sibling determined by 
 |	`m'). If `targetSib' is not specified, `s' will be added as the rightmost or leftmost child of `u' (again, depending
@@ -944,6 +964,7 @@ void TreeManip::DeleteLeaf(
 		u_par->par->nextPreorder = lchild;
 		tree->StoreInternalNode(u_par);
 		}
+
 	// This rearrangement invalidates the TreeID and node counts
 	//
 	tree->InvalidateID();
