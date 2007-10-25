@@ -470,7 +470,8 @@ class Phycas(object):
         for cycle in xrange(self.ncycles):
             # proposal for changing current level
             u = chain.r.uniform()
-            chain.tree.debugCheckTree(False, 1)
+            print "uniform for cycle =", cycle, "is", u
+            chain.tree.debugCheckTree(False, True, 1)
             proposed_level = current_level
             if u < 1.0/3.0:
                 if current_level > 0:

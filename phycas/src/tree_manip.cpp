@@ -128,9 +128,13 @@ void TreeManip::InsertSubtreeIntoEdge(
 
     // add new_node to edge_nd->par
     InsertSubtree(new_node, edge_nd->par, TreeManip::kOnRight);
+	std::cerr << "*** InsertSubtreeIntoEdge:  add new_node to edge_nd->par" << std::endl; //temporary
+	tree->DebugCheckTree(false, false, 2);
 
     // add subtree to new_node
     InsertSubtree(subtree, new_node, TreeManip::kOnRight);
+	std::cerr << "*** InsertSubtreeIntoEdge:  add subtree to new_node" << std::endl; //temporary
+	tree->DebugCheckTree(true, true, 2);
 
     // make edge_nd a child of new_node
     SibToChild(new_node, edge_nd,  TreeManip::kOnRight);

@@ -111,7 +111,7 @@ class Tree
 		// Debugging
 		//
 		std::string				DebugWalkTree(bool preorder = true, unsigned verbosity = 0);
-		bool					DebugCheckTree(bool allowDegTwo, int verbosity) const;
+		bool					DebugCheckTree(bool allowDegTwo, bool checkDataPointers, int verbosity) const;
 		void					DebugHere(std::string s);
 
 	protected:

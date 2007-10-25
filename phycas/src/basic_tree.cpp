@@ -38,6 +38,7 @@ TreeNode * Tree::PopLeafNode()
     PHYCAS_ASSERT(!tipStorage.empty());
 	TreeNode * nd = tipStorage.top();
 	tipStorage.pop();
+	nd->par = nd->lChild = nd->rSib = nd->nextPreorder = nd->prevPreorder = NULL;
     return nd;
 	}
 
@@ -50,6 +51,7 @@ TreeNode * Tree::PopInternalNode()
     PHYCAS_ASSERT(internalNodeStorage.empty());
 	TreeNode * nd = internalNodeStorage.top();
 	internalNodeStorage.pop();
+	nd->par = nd->lChild = nd->rSib = nd->nextPreorder = nd->prevPreorder = NULL;
     return nd;
 	}
 
@@ -888,7 +890,7 @@ std::string Tree::DebugWalkTree(bool preorder, unsigned verbosity)
 	return s;
 	}
 
-bool Tree::DebugCheckTree(bool allowDegTwo, int verbosity) const
+bool Tree::DebugCheckTree(bool allowDegTwo, bool checkDataPointers, int verbosity) const
 	{
 	const TreeNode * root = firstPreorder;
 	PHYCAS_ASSERT(root);
@@ -933,15 +935,26 @@ bool Tree::DebugCheckTree(bool allowDegTwo, int verbosity) const
 			nextNd = currNd->lChild;
 			next_level = curr_level + 1;
 			if (!preorderDirty)
+				{
 				PHYCAS_ASSERT(currNd->nextPreorder == currNd->lChild);
+				}
 			if (currNd->par)
 				{
 				if ((!allowDegTwo) && currNd->par)
+					{
 					PHYCAS_ASSERT(currNd->lChild->rSib);
-				if (shouldHaveData)
-					PHYCAS_ASSERT(currNd->internalData);
-				else
-					PHYCAS_ASSERT(currNd->internalData == NULL);
+					}
+				if (checkDataPointers)
+					{
+					if (shouldHaveData)
+						{
+						PHYCAS_ASSERT(currNd->internalData);
+						}
+					else
+						{
+						PHYCAS_ASSERT(currNd->internalData == NULL);
+						}
+					}
 				}
 			}
 		else
@@ -965,10 +978,17 @@ bool Tree::DebugCheckTree(bool allowDegTwo, int verbosity) const
 					level_stack.pop();
 					}
 				}
-			if (shouldHaveData)
-				PHYCAS_ASSERT(currNd->tipData);
-			else
-				PHYCAS_ASSERT(currNd->tipData == NULL);
+			if (checkDataPointers)
+				{
+				if (shouldHaveData)
+					{
+					PHYCAS_ASSERT(currNd->tipData);
+					}
+				else
+					{
+					PHYCAS_ASSERT(currNd->tipData == NULL);
+					}
+				}
 			}
 		if (currNd->rSib)
 			{
