@@ -369,7 +369,7 @@ class MarkovChain(LikelihoodCore):
             self.chain_manager.addMove(self.bush_move)
 
         if self.phycas.doing_samc:
-            self.samc_move = Likelihood.SamcMove()
+            self.samc_move = Likelihood.SamcMove(self.phycas.starting_edgelen_dist)
 
             # Continue setting up BushMove object
             self.samc_move.setName("SAMC move")
@@ -378,13 +378,11 @@ class MarkovChain(LikelihoodCore):
             self.samc_move.setModel(self.model)
             self.samc_move.setTreeLikelihood(self.likelihood)
             self.samc_move.setLot(self.r)
-            self.samc_move.setEdgeLenDistMean(self.phycas.samc_move_edgelen_mean)
             self.samc_move.viewProposedMove(self.phycas.samc_move_debug)
             if self.model.edgeLengthsFixed():
                 self.samc_move.fixParameter()
             self.samc_move.finalize()
-            
-            self.chain_manager.addMove(self.bush_move)
+            self.chain_manager.addMove(self.samc_move)
 
         self.chain_manager.finalize()
 
