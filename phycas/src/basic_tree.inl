@@ -182,17 +182,10 @@ inline void Tree::Clear()
 */
 inline TreeNode * Tree::GetNewNode()
 	{
-	TreeNode * nd = NULL;
-	if (internalNodeStorage.empty())
-		{
-		nd = new TreeNode();
-        nd->SetTreeShPtr(TreeShPtr(this));
-		}
-	else
-		{
-		nd = internalNodeStorage.top();
-		internalNodeStorage.pop();
-		}
+	if (!internalNodeStorage.empty())
+		PopInternalNode();
+	TreeNode * nd = new TreeNode();
+	nd->SetTreeShPtr(TreeShPtr(this));
 	return nd;
 	}
 
