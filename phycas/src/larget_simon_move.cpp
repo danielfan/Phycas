@@ -141,6 +141,7 @@ bool LargetSimonMove::update()
 		curr_ln_like	= p->getLastLnLike();
 		curr_ln_prior	= p->getLastLnPrior();
 		revert();
+		PHYCAS_ASSERT(prev_likelihood_root->IsInternal());
 		likelihood->useAsLikelihoodRoot(prev_likelihood_root);
 		return false;
 		}
@@ -203,7 +204,9 @@ void LargetSimonMove::starTreeProposeNewState()
 
 	// Invalidate CLAs to ensure next likelihood calculation will be correct
 	orig_node->SelectNode();
-	likelihood->useAsLikelihoodRoot(orig_node->IsTip() ? orig_node->GetParent() : orig_node);
+	TreeNode * nd = orig_node->IsTip() ? orig_node->GetParent() : orig_node;
+	PHYCAS_ASSERT(nd->IsInternal());
+	likelihood->useAsLikelihoodRoot(nd);
 	likelihood->invalidateAwayFromNode(*orig_node);
 	likelihood->invalidateBothEnds(orig_node);
 	}
@@ -445,6 +448,7 @@ void LargetSimonMove::defaultProposeNewState()
 	ndX->SelectNode();
 	ndY->SelectNode();
 	ndZ->SelectNode();
+	PHYCAS_ASSERT(ndY->IsInternal());
 	likelihood->useAsLikelihoodRoot(ndY);
 	likelihood->invalidateAwayFromNode(*ndY);
 	likelihood->invalidateBothEnds(ndY);
@@ -459,8 +463,9 @@ void LargetSimonMove::revert()
 	if (star_tree_proposal)
 		{
 		orig_node->SetEdgeLen(orig_edge_len);
-
-		likelihood->useAsLikelihoodRoot(orig_node->IsTip() ? orig_node->GetParent() : orig_node);
+		TreeNode * nd = orig_node->IsTip() ? orig_node->GetParent() : orig_node;
+		PHYCAS_ASSERT(nd->IsInternal());
+		likelihood->useAsLikelihoodRoot(nd);
 		likelihood->restoreFromCacheAwayFromNode(*orig_node);
 		likelihood->restoreFromCacheParentalOnly(orig_node);
 
@@ -495,7 +500,7 @@ void LargetSimonMove::revert()
 		ndX->SetEdgeLen(origX);
 		ndY->SetEdgeLen(origY);
 		ndZ->SetEdgeLen(origZ);
-
+		PHYCAS_ASSERT(ndY->IsInternal());
 		likelihood->useAsLikelihoodRoot(ndY);
 		likelihood->restoreFromCacheAwayFromNode(*ndY);
 		likelihood->restoreFromCacheParentalOnly(ndY);
@@ -518,7 +523,9 @@ void LargetSimonMove::accept()
 	{
 	if (star_tree_proposal)
 		{
-		likelihood->useAsLikelihoodRoot(orig_node->IsTip() ? orig_node->GetParent() : orig_node);
+		TreeNode * nd = orig_node->IsTip() ? orig_node->GetParent() : orig_node;
+		PHYCAS_ASSERT(nd->IsInternal());
+		likelihood->useAsLikelihoodRoot(nd);
 		likelihood->discardCacheAwayFromNode(*orig_node);
 		likelihood->discardCacheBothEnds(orig_node);
 
@@ -529,6 +536,8 @@ void LargetSimonMove::accept()
 		}
 	else
 		{
+		
+		PHYCAS_ASSERT(ndY->IsInternal());
 		likelihood->useAsLikelihoodRoot(ndY);
 		likelihood->discardCacheAwayFromNode(*ndY);
 		likelihood->discardCacheBothEnds(ndY);
