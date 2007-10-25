@@ -183,7 +183,7 @@ inline void Tree::Clear()
 inline TreeNode * Tree::GetNewNode()
 	{
 	if (!internalNodeStorage.empty())
-		PopInternalNode();
+		return PopInternalNode();
 	TreeNode * nd = new TreeNode();
 	nd->SetTreeShPtr(TreeShPtr(this));
 	return nd;
@@ -287,6 +287,15 @@ inline unsigned Tree::GetNNodes()
 		RefreshNodeCounts();
 	return (nTips + nInternals);
 	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	return
+*/
+inline unsigned Tree::GetNInternalsAllocated()
+	{
+	return internalNodeStorage.size() + GetNInternals();
+	}
+
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the number of tip nodes currently composing the tree. The data member `nTips' stores the number of degree 

@@ -114,7 +114,7 @@ void TopoPriorCalculator::RecalcCountsAndPriorsImpl(
                     }
                 if (c > scaling_factor)
                     {
-                    unsigned prev_nfactors = nfactors[m];
+                    //unsigned prev_nfactors = nfactors[m];
                     double incr = floor(log(c - epsilon)/log_scaling_factor);
                     nfactors[m] += (unsigned)incr;
                     last_factor = nfactors[m];
@@ -365,7 +365,6 @@ std::vector<double> TopoPriorCalculator::GetLnCounts()
 	v.push_back(log_total_count);
 
 	//@POL could use a version of the transform algorithm here
-	double total = 0.0;
 	for (unsigned i = 1; i < sz; ++i)
 		{
         double log_Tnm = log(counts[i - 1]) + log_scaling_factor*(double)(nfactors[i - 1]);

@@ -80,7 +80,8 @@ TreeNode * SamcMove::chooseRandomAttachmentNode(
 	calcPk(leaf_k);
 	unsigned i = rng->MultinomialDraw(&pvect[0], pvect.size());
 	unsigned curr = 0;
-	for (preorder_iterator nd = tree->begin(); nd != tree->end(); ++nd, ++curr)
+	preorder_iterator nd = tree->begin();
+	for (++nd; nd != tree->end(); ++nd, ++curr)
 		{
 		if (curr == i)
 			return &(*nd);
@@ -97,6 +98,7 @@ bool SamcMove::extrapolate(
 	double theta_diff,		  /**< the differences in the thetas (this appears in the acceptance probability calculation and is a function of the weights in the SAMC algorithm) */
 	double ln_proposal_ratio) /**< the ratio of proposing a projection rather than an extrapolation. */
 	{
+	const unsigned ninternals_alloced = GetNInternalsAllocated();
 	last_move_projection = false;
     std::cerr << "*** extrapolate: before doing anything: " << tree->DebugWalkTree(true, 1) << std::endl; //temporary
 	tree->DebugCheckTree(false, true, 2);
@@ -186,6 +188,7 @@ bool SamcMove::extrapolate(
 
         }
 
+	PHYCAS_ASSERT(ninternals_alloced == GetNInternalsAllocated());
 	return accepted;
 
 
@@ -234,7 +237,7 @@ bool SamcMove::project(
 	*/
 	tree_manipulator.DeleteLeaf(leaf);
 	
-	likelihood->useAsLikelihoodRoot(new_leaf_sib_parent);
+	likelihood->useAsLikelihoodRoot(leaf_sib);
 	tree->InvalidateNodeCounts();
 	
 	double curr_ln_like = likelihood->calcLnL(tree);
@@ -336,8 +339,10 @@ void SamcMove::revert()
 		{
 		tree_manipulator.DeleteLeaf(leaf);
 		leaf_sib->SetEdgeLen(leaf_sib_orig_edgelen);
-		likelihood->useAsLikelihoodRoot(leaf_sib->GetParent());
-		likelihood->restoreFromCacheAwayFromNode(*(leaf_sib->GetParent()));
+		TreeNode * lr = (leaf_sib->IsInternal() ? leaf_sib : leaf_sib->GetParent());
+		PHYCAS_ASSERT(lr);
+		likelihood->useAsLikelihoodRoot(lr);
+		likelihood->restoreFromCacheAwayFromNode(*lr);
 
 		if (view_proposed_move)
 			likelihood->startTreeViewer(tree, "Extrapolate move REVERTED");
@@ -366,9 +371,8 @@ void SamcMove::accept()
 	{
 	if (last_move_projection)
 		{
-		// Keeping node deletion
-		likelihood->useAsLikelihoodRoot(new_leaf_sib_parent);
-		likelihood->discardCacheAwayFromNode(*new_leaf_sib_parent);
+		likelihood->useAsLikelihoodRoot(leaf_sib);
+		likelihood->discardCacheAwayFromNode(*leaf_sib);
 
 		if (view_proposed_move)
 			likelihood->startTreeViewer(tree, "Delete edge move ACCEPTED");

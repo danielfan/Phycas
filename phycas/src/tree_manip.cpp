@@ -129,6 +129,8 @@ void TreeManip::InsertSubtreeIntoEdge(
     // add new_node to edge_nd->par
     std::cerr << "*** InsertSubtreeIntoEdge:  add new_node to edge_nd->par" << std::endl; //temporary
 	std::cerr << "new_node" << new_node->oneLineDebugReport() << std::endl;
+	std::cerr << "edge_nd" << edge_nd->oneLineDebugReport() << std::endl;
+	PHYCAS_ASSERT(edge_nd->par);
 	InsertSubtree(new_node, edge_nd->par, TreeManip::kOnRight);
 	tree->DebugCheckTree(false, false, 2);
 
@@ -965,6 +967,9 @@ void TreeManip::DeleteLeaf(
 		TreeNode * u_par_lSib	= FindLeftSib(u_par);
 		if (u_par_lSib)
 			u_par_lSib->rSib = lchild;
+		else
+			u_par->par->lChild = u_par->lChild;
+
 		lchild->SetEdgeLen(edge_len + lchild->GetEdgeLen());
 		lchild->rSib = u_par->rSib;
 		lchild->par = u_par->par;

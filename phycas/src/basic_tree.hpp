@@ -69,6 +69,7 @@ class Tree
 		unsigned				GetNNodes();
 		unsigned				GetNTips();
 		unsigned				GetNInternals();
+		unsigned 				GetNInternalsAllocated();
 		unsigned				GetNObservables();
 		TreeNode *				GetFirstPreorder();
 		TreeNode *				GetLastPreorder();

@@ -48,7 +48,7 @@ TreeNode * Tree::PopLeafNode()
 */
 TreeNode * Tree::PopInternalNode()
 	{
-    PHYCAS_ASSERT(internalNodeStorage.empty());
+    PHYCAS_ASSERT(!internalNodeStorage.empty());
 	TreeNode * nd = internalNodeStorage.top();
 	internalNodeStorage.pop();
 	nd->par = nd->lChild = nd->rSib = nd->nextPreorder = nd->prevPreorder = NULL;
