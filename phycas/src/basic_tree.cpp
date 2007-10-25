@@ -35,7 +35,7 @@ using namespace phycas;
 */
 TreeNode * Tree::PopLeafNode()
 	{
-    PHYCAS_ASSERT(tipStorage.empty());
+    PHYCAS_ASSERT(!tipStorage.empty());
 	TreeNode * nd = tipStorage.top();
 	tipStorage.pop();
     return nd;
