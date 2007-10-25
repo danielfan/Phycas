@@ -98,7 +98,7 @@ bool SamcMove::extrapolate(
 	double theta_diff,		  /**< the differences in the thetas (this appears in the acceptance probability calculation and is a function of the weights in the SAMC algorithm) */
 	double ln_proposal_ratio) /**< the ratio of proposing a projection rather than an extrapolation. */
 	{
-	const unsigned ninternals_alloced = GetNInternalsAllocated();
+	const unsigned ninternals_alloced = tree->GetNInternalsAllocated();
 	last_move_projection = false;
     std::cerr << "*** extrapolate: before doing anything: " << tree->DebugWalkTree(true, 1) << std::endl; //temporary
 	tree->DebugCheckTree(false, true, 2);
@@ -125,6 +125,7 @@ bool SamcMove::extrapolate(
 	tree_manipulator.InsertSubtreeIntoEdge(leaf, leaf_sib);
 	std::cerr << "*** extrapolate:  tree structure changed" << std::endl; //temporary
 	tree->DebugCheckTree(false, true, 2);
+	PHYCAS_ASSERT(ninternals_alloced == tree->GetNInternalsAllocated());
 	
 	leaf_sib_orig_edgelen = leaf_sib->GetEdgeLen();
 	double u = rng->Uniform();
@@ -141,6 +142,7 @@ bool SamcMove::extrapolate(
 	likelihood->invalidateBothEnds(leaf_sib);	
 	likelihood->invalidateBothEnds(parent);	
 	tree->InvalidateNodeCounts();
+	PHYCAS_ASSERT(ninternals_alloced == tree->GetNInternalsAllocated());
 	
 	double curr_ln_like = likelihood->calcLnL(tree);
 
@@ -188,7 +190,7 @@ bool SamcMove::extrapolate(
 
         }
 
-	PHYCAS_ASSERT(ninternals_alloced == GetNInternalsAllocated());
+	PHYCAS_ASSERT(ninternals_alloced == tree->GetNInternalsAllocated());
 	return accepted;
 
 
