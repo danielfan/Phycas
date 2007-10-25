@@ -30,8 +30,7 @@
 #elif defined(_MSC_VER) // Microsoft Visual Studio C++ compiler issues error C1055 "out of keys" unless __LINE__ is not used in asserts or phycas::Uniform constructor
 #	define FILE_AND_LINE
 #	include <boost/assert.hpp>
-//#	define PHYCAS_ASSERT(expr)  if (!(expr)) boost::assertion_failed((const char *)#expr, (const char *)__FUNCTION__, (const char *)"" /* __FILE__ */, 0L /* __LINE__*/)
-#	define PHYCAS_ASSERT(expr)  assert(expr)
+#	define PHYCAS_ASSERT(expr)  if (!(expr)) boost::assertion_failed((const char *)#expr, (const char *)__FUNCTION__, (const char *)"" /* __FILE__ */, 0L /* __LINE__*/)
 #	define IGNORE_NXS_ASSERT	// used in nxs_defs.hpp to cause NXS_ASSERT to expand to nothing
 #else
 #	define FILE_AND_LINE  __FILE__,__LINE__

@@ -238,6 +238,12 @@
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\oldphycas\distribution_command_param.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						GeneratePreprocessedFile="0"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\oldphycas\distribution_description.cpp">

@@ -268,7 +268,6 @@ bool SamcMove::project(
 		p->setLastLnPrior(curr_ln_prior);
 		p->setLastLnLike(curr_ln_like);
 		accept();
-		likelihood->invalidateAwayFromNode(*new_leaf_sib_parent);
 		}
 	else
 		{
@@ -386,7 +385,7 @@ void SamcMove::accept()
 		if (view_proposed_move)
 			likelihood->startTreeViewer(tree, "extrapolate move ACCEPTED");
 		}
-
+	likelihood->invalidateAwayFromNode(*new_leaf_sib_parent);
 	reset();
 	}
 
