@@ -187,7 +187,6 @@ bool SamcMove::extrapolate(
         {
         debug_info = str(boost::format("SAMC Extrapolation: deleting %d, curr_post = %f, prev_post = %f, %s") % leaf_num % curr_posterior % prev_posterior % (accepted ? "accepted" : "rejected"));
         }
-	 std::cerr << "Likelihood root = " << likelihood->getLikelihoodRoot()->oneLineDebugReport() << std::endl;
 	PHYCAS_ASSERT(ninternals_alloced == tree->GetNInternalsAllocated());
 	return accepted;
 

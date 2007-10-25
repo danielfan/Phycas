@@ -139,7 +139,6 @@ inline unsigned TreeLikelihood::numCLAsStored() const
 inline TreeNode * TreeLikelihood::getLikelihoodRoot()
 
 	{
-
 	return likelihood_root;
 
 	}
@@ -159,6 +158,8 @@ inline void	TreeLikelihood::useAsLikelihoodRoot(
   TreeNode * nd)
 
 	{
+	if (nd)
+		std::cerr << "Setting Likelihood root = " << nd->oneLineDebugReport() << std::endl;
 
 	likelihood_root = nd;
 
