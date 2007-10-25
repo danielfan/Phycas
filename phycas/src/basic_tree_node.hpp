@@ -119,6 +119,9 @@ class TreeNode
 		unsigned		CountChildren() const;
 		TreeNode *		FindNextSib();
 
+		std::string		briefDebugReport() const;
+		std::string		oneLineDebugReport() const;
+		std::string		longDebugReport() const;
 	protected:
 
 		std::string			nodeName;				/**< name of node */

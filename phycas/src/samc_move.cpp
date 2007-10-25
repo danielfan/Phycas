@@ -98,8 +98,9 @@ bool SamcMove::extrapolate(
 	double ln_proposal_ratio) /**< the ratio of proposing a projection rather than an extrapolation. */
 	{
 	last_move_projection = false;
-	tree->DebugCheckTree(false, 1);
     std::cerr << "*** extrapolate before doing anything: " << tree->DebugWalkTree(true, 1) << std::endl; //temporary
+	tree->DebugCheckTree(false, 2);
+	std::cerr << "*** extrapolate in tree checked" << std::endl; //temporary
 	//likelihood->startTreeViewer(tree, "Start of extrapolate move");
 
     // The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
@@ -156,7 +157,7 @@ bool SamcMove::extrapolate(
 	double ln_accept_ratio = theta_diff + curr_posterior - prev_posterior - log_pkl_blk_ratio + ln_proposal_ratio;
 	const bool accepted = (ln_accept_ratio >= 0.0 || std::log(rng->Uniform()) <= ln_accept_ratio);
     std::cerr << "*** extrapolate before revert: " << tree->DebugWalkTree(true, 1) << std::endl; //temporary
-	tree->DebugCheckTree(false, 1);
+	tree->DebugCheckTree(false, 2);
 
 	if (accepted)
 		{
@@ -339,7 +340,7 @@ void SamcMove::revert()
 	tree->InvalidateNodeCounts();
 	reset();
     std::cerr << "*** after revert: " << tree->DebugWalkTree(true, 1) << std::endl; //temporary
-	tree->DebugCheckTree(false, 1);
+	tree->DebugCheckTree(false, 2);
 
 	}
 

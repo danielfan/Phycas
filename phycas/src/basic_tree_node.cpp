@@ -201,3 +201,45 @@ void TreeNode::AppendNodeInfo(std::string &s, bool num_and_name_only) const
 			s << "<no edge length>";
 		}
 	}
+
+std::string	TreeNode::briefDebugReport() const
+	{
+	std::string nm = GetNodeName();
+	std::string tmpstr = str(boost::format("%d") % GetNodeNumber());
+	if (nm.length() == 0)
+		nm = "?";
+	if (IsTip())
+		return str(boost::format("%s(%d)") % nm % GetNodeNumber());
+	return str(boost::format("%s[%d]") % nm % GetNodeNumber());
+	}
+
+std::string	TreeNode::oneLineDebugReport() const
+	{
+	const std::string self_str = this->briefDebugReport();
+	std::string lch_str;
+	if (lChild)
+		lch_str = lChild->briefDebugReport();
+	else
+		lch_str = "NULL";
+	std::string par_str;
+	if (par)
+		par_str = par->briefDebugReport();
+	else
+		par_str = "NULL";
+	std::string sib_str;
+	if (rSib)
+		sib_str = rSib->briefDebugReport();
+	else
+		sib_str = "NULL";
+	std::string n_str;
+	if (nextPreorder)
+		n_str = nextPreorder->briefDebugReport();
+	else
+		n_str = "NULL";
+	std::string prev_str;
+	if (prevPreorder)
+		prev_str = prevPreorder->briefDebugReport();
+	else
+		prev_str = "NULL";
+	return str(boost::format("%s | lchild=%s | par=%s | rsib=%s | next=%s | prev=%s") % self_str % lch_str % par_str % sib_str % n_str % prev_str);
+	}

@@ -957,6 +957,9 @@ void TreeManip::DeleteLeaf(
 		{
 		double edge_len = u_par->GetEdgeLen();
 		TreeNode * lchild = u_par->GetLeftChild();
+		TreeNode * u_par_lSib	= FindLeftSib(u_par);
+		if (u_par_lSib)
+			u_par_lSib->rSib = lchild;
 		lchild->SetEdgeLen(edge_len + lchild->GetEdgeLen());
 		lchild->rSib = u_par->rSib;
 		lchild->par = u_par->par;

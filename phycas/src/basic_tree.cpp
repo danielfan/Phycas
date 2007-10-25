@@ -855,67 +855,20 @@ std::string Tree::DebugWalkTree(bool preorder, unsigned verbosity)
 #		if defined(TESTING_TOWARD_NODE_ITERATOR)
 			TreeNode * nd = i->first;
 #		endif
-		if (verbosity == 2)
+		if (verbosity > 2)
 			{
 			s << "\n";
 			nd->AppendNodeInfo(s);
 			}
 		else
 			{
-			// Gather information about node name and number
-			const std::string &nm = nd->GetNodeName();
-			std::string tmpstr = str(boost::format("%d") % nd->GetNodeNumber());
-
-			// Output the node name
-			if (verbosity == 0)
+			if (verbosity < 2)
 				{
-				if (nm.length() > 0)
-					{
-					// output node name
-					s << nm;
-					}
-				else
-					{
-					// output node number
-					if (nd->IsTip())
-						{
-						s << "(";
-						s << tmpstr;
-						s << ")";
-						}
-					else
-						{
-						s << "[";
-						s << tmpstr;
-						s << "]";
-						}
-					}
+				s << nd->briefDebugReport();
 				}
-			else // verbosity == 1
+			else
 				{
-				if (nm.length() > 0)
-					{
-					// output node name
-					s << nm;
-					}
-				else
-					{
-					s << "?";
-					}
-
-				// Output the node number
-				if (nd->IsTip())
-					{
-					s << " (";
-					s << tmpstr;
-					s << ")";
-					}
-				else
-					{
-					s << " [";
-					s << tmpstr;
-					s << "]";
-					}
+				s << nd->oneLineDebugReport();
 				}
 
 			// Output an arrow if not the last node in the series
@@ -961,19 +914,10 @@ bool Tree::DebugCheckTree(bool allowDegTwo, int verbosity) const
 			for (int i = 0; i < curr_level; ++i)
 				std::cerr << "  ";
 			if (verbosity == 1)
-				{
-				const std::string &nm = currNd->GetNodeName();
-				std::string tmpstr = str(boost::format("%d") % currNd->GetNodeNumber());
-				if (nm.length() > 0)
-					std::cerr << nm;
-				else
-					std::cerr << "?";
-				if (currNd->IsTip())
-					std::cerr << " (" << tmpstr << ")";
-				else
-					std::cerr << " [" << tmpstr << "]";
-				}
-			else if (verbosity > 1)
+				std::cerr << currNd->briefDebugReport();
+			else if (verbosity == 2)
+				std::cerr << currNd->oneLineDebugReport();
+			else
 				{
 				std::string s;
 				currNd->AppendNodeInfo(s);
@@ -1014,7 +958,7 @@ bool Tree::DebugCheckTree(bool allowDegTwo, int verbosity) const
 				else
 					{
 					nextNd = next_pre_order_stack.top();
-					curr_level = level_stack.top();
+					next_level = level_stack.top();
 					if (!preorderDirty)
 						PHYCAS_ASSERT(currNd->nextPreorder == next_pre_order_stack.top());
 					next_pre_order_stack.pop();
@@ -1055,6 +999,7 @@ bool Tree::DebugCheckTree(bool allowDegTwo, int verbosity) const
 			PHYCAS_ASSERT(countedNNodes <= nTips + nInternals);
 			}
 		}
+	PHYCAS_ASSERT(level_stack.empty());
 	if (nodeCountsValid)
 		{
 		PHYCAS_ASSERT(countedNLeaves == expectedNLeaves);
