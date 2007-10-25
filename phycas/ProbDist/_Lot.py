@@ -1,5 +1,4 @@
 from _ProbDist import *
-
 class Lot(LotBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
@@ -79,5 +78,8 @@ class Lot(LotBase):
         Returns a pseudorandom number between 0.0 and 1.0.
 
         """
+        from phycas import Phycas
+        if Phycas.CPPCompiledInDebug:
+            return LotBase.uniform(self, "PythonCode", -1)
         return LotBase.uniform(self)
     

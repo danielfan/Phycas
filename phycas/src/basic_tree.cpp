@@ -935,6 +935,138 @@ std::string Tree::DebugWalkTree(bool preorder, unsigned verbosity)
 	return s;
 	}
 
+bool Tree::DebugCheckTree(bool allowDegTwo, int verbosity) const
+	{
+	const TreeNode * root = firstPreorder;
+	PHYCAS_ASSERT(root);
+	PHYCAS_ASSERT(root->par == NULL);
+	PHYCAS_ASSERT(root->lChild != NULL);
+	const TreeNode * currNd = root;
+	const TreeNode * prevNd = NULL;
+	const bool shouldHaveData = root->tipData != NULL;
+	std::stack<const TreeNode *> next_pre_order_stack;
+	std::stack<int> level_stack;
+	int curr_level = 0;
+	int next_level = 0;
+	unsigned countedNNodes = 0;
+	unsigned countedNLeaves = 1;
+	
+	const unsigned expectedNLeaves = nTips; // +tipStorage.size()
+	const unsigned expectedNNodes = expectedNLeaves + nInternals; // + internalNodeStorage.size()
+	std::string indent;
+	while (currNd)
+		{
+		if (verbosity)
+			{
+			for (int i = 0; i < curr_level; ++i)
+				std::cerr << "  ";
+			if (verbosity == 1)
+				{
+				const std::string &nm = currNd->GetNodeName();
+				std::string tmpstr = str(boost::format("%d") % currNd->GetNodeNumber());
+				if (nm.length() > 0)
+					std::cerr << nm;
+				else
+					std::cerr << "?";
+				if (currNd->IsTip())
+					std::cerr << " (" << tmpstr << ")";
+				else
+					std::cerr << " [" << tmpstr << "]";
+				}
+			else if (verbosity > 1)
+				{
+				std::string s;
+				currNd->AppendNodeInfo(s);
+				std::cerr << s;
+				}
+			std::cerr << std::endl;
+			}
+		const TreeNode *nextNd = NULL;
+		countedNNodes++;
+		if (currNd->lChild) 
+			{
+			PHYCAS_ASSERT(currNd->lChild->par == currNd);
+			nextNd = currNd->lChild;
+			next_level = curr_level + 1;
+			if (!preorderDirty)
+				PHYCAS_ASSERT(currNd->nextPreorder == currNd->lChild);
+			if (currNd->par)
+				{
+				if ((!allowDegTwo) && currNd->par)
+					PHYCAS_ASSERT(currNd->lChild->rSib);
+				if (shouldHaveData)
+					PHYCAS_ASSERT(currNd->internalData);
+				else
+					PHYCAS_ASSERT(currNd->internalData == NULL);
+				}
+			}
+		else
+			{
+			countedNLeaves++;
+			if (currNd->rSib == NULL)
+				{
+				if (next_pre_order_stack.empty())
+					{
+					nextNd = NULL;
+					if (!preorderDirty)
+						PHYCAS_ASSERT(currNd->nextPreorder == NULL);
+					}
+				else
+					{
+					nextNd = next_pre_order_stack.top();
+					curr_level = level_stack.top();
+					if (!preorderDirty)
+						PHYCAS_ASSERT(currNd->nextPreorder == next_pre_order_stack.top());
+					next_pre_order_stack.pop();
+					level_stack.pop();
+					}
+				}
+			if (shouldHaveData)
+				PHYCAS_ASSERT(currNd->tipData);
+			else
+				PHYCAS_ASSERT(currNd->tipData == NULL);
+			}
+		if (currNd->rSib)
+			{
+			PHYCAS_ASSERT(currNd->rSib->par == currNd->par);
+			if (currNd->lChild)
+				{
+				next_pre_order_stack.push(currNd->rSib);
+				level_stack.push(curr_level);
+				}
+			else
+				{
+				nextNd = currNd->rSib;
+				next_level = curr_level;
+				if (!preorderDirty)
+					PHYCAS_ASSERT(currNd->rSib == currNd->nextPreorder);
+				}
+			}
+		PHYCAS_ASSERT(&*currNd->tree == this);
+		if (!preorderDirty) 
+			{
+			PHYCAS_ASSERT(currNd->prevPreorder == prevNd);
+			}
+		prevNd = currNd;
+		currNd = nextNd;
+		curr_level = next_level;
+		if (nodeCountsValid)
+			{
+			PHYCAS_ASSERT(countedNNodes <= nTips + nInternals);
+			}
+		}
+	if (nodeCountsValid)
+		{
+		PHYCAS_ASSERT(countedNLeaves == expectedNLeaves);
+		PHYCAS_ASSERT(countedNNodes == expectedNNodes);
+		}
+	if (!preorderDirty)
+		{
+		PHYCAS_ASSERT(lastPreorder == prevNd);
+		}
+	return true;
+	}
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the sum of all edge lengths in the tree.  Uses preorder pointers to walk through tree, calling 
 |	RefreshPreorder() if these pointers have never been set or have been invalidated.

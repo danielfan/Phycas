@@ -83,7 +83,7 @@ unsigned TreeNode::CountChildren() const
 /*----------------------------------------------------------------------------------------------------------------------
 |	Not yet documented.
 */
-void TreeNode::AppendNodeInfo(std::string &s, bool num_and_name_only)
+void TreeNode::AppendNodeInfo(std::string &s, bool num_and_name_only) const
 	{
 	std::string tmpstr;
 	const std::string &nm = GetNodeName();
@@ -157,35 +157,35 @@ void TreeNode::AppendNodeInfo(std::string &s, bool num_and_name_only)
 
 		// lChild
 		s << "\nLeft child: ";
-		if (GetLeftChild() != NULL)
+		if (GetLeftChildConst() != NULL)
 			lChild->AppendNodeInfo(s, true);
 		else
 			s << "<no left child>";
 
 		// rSib
 		s << "\nRight sibling: ";
-		if (GetRightSib() != NULL)
+		if (GetRightSibConst() != NULL)
 			rSib->AppendNodeInfo(s, true);
 		else
 			s << "<no right sib>";
 
 		// par
 		s << "\nParent: ";
-		if (GetParent() != NULL)
+		if (GetParentConst() != NULL)
 			par->AppendNodeInfo(s, true);
 		else
 			s << "<no parent>";
 
 		// nextPreorder
 		s << "\nNext preordert: ";
-		if (GetNextPreorder() != NULL)
+		if (GetNextPreorderConst() != NULL)
 			nextPreorder->AppendNodeInfo(s, true);
 		else
 			s << "<no next preorder>";
 
 		// prevPreorder
 		s << "\nNext postorder: ";
-		if (GetNextPostorder() != NULL)
+		if (GetNextPostorderConst() != NULL)
 			prevPreorder->AppendNodeInfo(s, true);
 		else
 			s << "<no next postorder>";

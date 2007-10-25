@@ -82,7 +82,9 @@ class TreeNode
 		TreeNode *				GetParent();
 		const TreeNode *		GetParentConst() const;
 		TreeNode *				GetNextPreorder();
+		const TreeNode *		GetNextPreorderConst() const;
 		TreeNode *				GetNextPostorder();
+		const TreeNode *		GetNextPostorderConst() const;
 		double					GetEdgeLen() const;
 		TipData *				GetTipData();
 		InternalData *			GetInternalData();
@@ -113,7 +115,7 @@ class TreeNode
 
 		// Utilities
 		//
-		void			AppendNodeInfo(std::string &s, bool num_and_name_only = false);
+		void			AppendNodeInfo(std::string &s, bool num_and_name_only = false) const;
 		unsigned		CountChildren() const;
 		TreeNode *		FindNextSib();
 

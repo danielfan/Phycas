@@ -98,8 +98,9 @@ bool SamcMove::extrapolate(
 	double ln_proposal_ratio) /**< the ratio of proposing a projection rather than an extrapolation. */
 	{
 	last_move_projection = false;
-
+	tree->DebugCheckTree(false, 1);
     std::cerr << "*** extrapolate before doing anything: " << tree->DebugWalkTree(true, 1) << std::endl; //temporary
+
 
     // The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
 	// A proposed SamcMove cannot be accepted without changing edge lengths, so it is best to bail out now.
@@ -111,6 +112,7 @@ bool SamcMove::extrapolate(
 	double prev_ln_like = p->getLastLnLike();
 
 	//likelihood->startTreeViewer(tree, "Start of extrapolate move");
+
 
     leaf = tree->PopLeafNode();
 	PHYCAS_ASSERT(leaf->GetNodeNumber() == leaf_num);
@@ -157,6 +159,8 @@ bool SamcMove::extrapolate(
 	double ln_accept_ratio = theta_diff + curr_posterior - prev_posterior - log_pkl_blk_ratio + ln_proposal_ratio;
 	const bool accepted = (ln_accept_ratio >= 0.0 || std::log(rng->Uniform(FILE_AND_LINE)) <= ln_accept_ratio);
     std::cerr << "*** extrapolate before revert: " << tree->DebugWalkTree(true, 1) << std::endl; //temporary
+	tree->DebugCheckTree(false, 1);
+
 	if (accepted)
 		{
 		p->setLastLnPrior(curr_ln_prior);
@@ -169,12 +173,16 @@ bool SamcMove::extrapolate(
 		curr_ln_prior	= p->getLastLnPrior();
 		revert();
 		}
+    if (save_debug_info)
+
+        {
+
+        debug_info = str(boost::format("SAMC Extrapolation: deleting %d, curr_post = %f, prev_post = %f, %s") % leaf_num % curr_posterior % prev_posterior % (accepted ? "accepted" : "rejected"));
+
+        }
+
 	return accepted;
 
-    if (save_debug_info)
-        {
-        debug_info = str(boost::format("SAMC Extrapolation: deleting %d, curr_post = %f, prev_post = %f, %s") % leaf_num % curr_posterior % prev_posterior % (accepted ? "accepted" : "rejected"));
-        }
 
 	}
 
@@ -262,10 +270,15 @@ bool SamcMove::project(
 		revert();
 		}
 
+
     if (save_debug_info)
+
         {
+
         debug_info = str(boost::format("SAMC Projection: deleting %d, curr_post = %f, prev_post = %f, %s") % leaf_num % curr_posterior % prev_posterior % (accepted ? "accepted" : "rejected"));
+
         }
+
 
     return accepted;
 	}
@@ -329,6 +342,8 @@ void SamcMove::revert()
 	tree->InvalidateNodeCounts();
 	reset();
     std::cerr << "*** after revert: " << tree->DebugWalkTree(true, 1) << std::endl; //temporary
+	tree->DebugCheckTree(false, 1);
+
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

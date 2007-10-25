@@ -51,7 +51,7 @@ class Lot
 		unsigned 				SampleUInt(unsigned);
 		unsigned				GetRandBits(unsigned nbits);
 
-#if 1 || defined(NDEBUG)
+#if defined(NDEBUG)
 		double 					Uniform();
 #else
 		double 					Uniform(const char * file = "", int line = 0);

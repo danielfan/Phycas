@@ -185,10 +185,6 @@ class Phycas(object):
         self.addition_sequence      = []        # list of taxon numbers for addition sequence
         self.samc_theta             = []        # normalizing factors (will have length ntax - 3 because levels with 1, 2 or 3 taxa are not examined)
 
-    # by default phycassert sys.exit.
-    # When debugging, it is nice to set this to True so that you can see the stack trace
-    PhycassertRaisesException = False
-
     def phycassert(self, assumption, msg):
         if not assumption:
             if Phycas.PhycassertRaisesException:
@@ -474,6 +470,7 @@ class Phycas(object):
         for cycle in xrange(self.ncycles):
             # proposal for changing current level
             u = chain.r.uniform()
+            chain.tree.debugCheckTree(False, 1)
             proposed_level = current_level
             if u < 1.0/3.0:
                 if current_level > 0:
@@ -823,9 +820,10 @@ class Phycas(object):
 
         return distance
 
-    def PhycassertShouldRaiseException(v):
-        Phycas.PhycassertRaisesException = v
-    PhycassertShouldRaiseException = staticmethod(PhycassertShouldRaiseException)
+    # by default phycassert sys.exit.
+    # When debugging, it is nice to set this to True so that you can see the stack trace
+    PhycassertRaisesException = False
+    CPPWasCompiledInDebug = False
 
 if __name__ == '__main__':
     print "Dumbass."

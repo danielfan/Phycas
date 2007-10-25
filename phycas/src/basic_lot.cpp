@@ -59,10 +59,10 @@ Lot::~Lot()
 |	University. Originally from Schrage, ACM Trans. Math. Software 5:132-138 (1979). Translated to C by Paul O. Lewis, 
 |	Dec. 10, 1992.
 */
-#if 1 || defined(NDEBUG)
-double Lot::Uniform()
+#if defined(NDEBUG)
+	double Lot::Uniform()
 #else
-double Lot::Uniform(const char * file, int line)
+	double Lot::Uniform(const char * file, int line)
 #endif
 	{
 	const unsigned a = 16807U;

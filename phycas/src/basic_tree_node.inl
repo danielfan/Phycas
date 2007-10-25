@@ -487,6 +487,21 @@ inline TreeNode	* TreeNode::GetNextPostorder()
 	{
 	return prevPreorder;
 	}
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the value of the data member `nextPreorder'.
+*/
+inline const TreeNode	* TreeNode::GetNextPreorderConst() const 
+	{
+	return nextPreorder;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the value of the data member `prevPreorder'.
+*/
+inline const TreeNode	* TreeNode::GetNextPostorderConst() const 
+	{
+	return prevPreorder;
+	}
 
 } // namespace phycas
 
