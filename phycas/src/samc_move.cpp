@@ -245,11 +245,12 @@ bool SamcMove::project(
 		to the sum of it's edge len and the parent's.
 	*/
 	tree_manipulator.DeleteLeaf(leaf);
-	TreeNode *lr = 	(leaf_sib->IsInternal() ? leaf_sib : leaf_sib->GetParent());
+	TreeNode *lr = 	leaf_sib->GetParent();
+	if (!lr->IsInternal())
+		lr = leaf_sib;
 	likelihood->useAsLikelihoodRoot(lr);
 
 	tree->InvalidateNodeCounts();
-	likelihood->invalidateBothEnds(leaf_sib); //@this invalidateBothEnds should not be necessary
 	double curr_ln_like = likelihood->calcLnL(tree);
 
 	if (view_proposed_move)
