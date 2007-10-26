@@ -249,7 +249,7 @@ bool SamcMove::project(
 	likelihood->useAsLikelihoodRoot(lr);
 
 	tree->InvalidateNodeCounts();
-	
+	likelihood->invalidateBothEnds(leaf_sib); //@this invalidateBothEnds should not be necessary
 	double curr_ln_like = likelihood->calcLnL(tree);
 
 	if (view_proposed_move)

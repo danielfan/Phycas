@@ -1112,6 +1112,7 @@ bool TreeLikelihood::debugCheckCLAsRemainInTree(
 	return false;
 	}
 
+int calcLnLLevel = 0;
 /*----------------------------------------------------------------------------------------------------------------------
 |	This is the function that needs to be called to recompute the log-likelihood. If `likelihood_root' is not NULL, 
 |	the calculation will use that node as the root of the likelihood calculation, and it will be assumed that all
@@ -1124,7 +1125,6 @@ double TreeLikelihood::calcLnL(
 	{
 	if (no_data)
 		return 0.0;
-
 	// Compute likelihood using likelihood_root if specified
 	// Assume that if likelihood_root has been specified, then the necessary 
 	// CLA invalidations have already been performed.
@@ -1164,7 +1164,14 @@ double TreeLikelihood::calcLnL(
 
 	// Calculate log-likelihood using nd as the likelihood root
 	double lnL = calcLnLFromNode(*nd);
-
+	if (calcLnLLevel == 0)
+		{
+		calcLnLLevel = 1;
+		storeAllCLAs(t);
+		double lnLRecalc = calcLnL(t);
+		PHYCAS_ASSERT(fabs(lnL-lnLRecalc) < 0.000001);
+		calcLnLLevel = 0;
+		}
 	return lnL;
 	}
 
