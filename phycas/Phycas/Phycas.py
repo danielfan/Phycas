@@ -482,14 +482,17 @@ class Phycas(object):
                     
             if proposed_level == current_level:
                 #ls.setSaveDebugInfo(True)
+                c = "*"
                 ls.update()
                 #print '%s | %s\n' % (ls.getName(), ls.getDebugInfo())
             elif proposed_level > current_level:
+                c = "+"
                 leaf_num = self.addition_sequence[proposed_level + 3]
                 theta_diff = self.samc_theta[current_level] - self.samc_theta[proposed_level]
                 if samc_move.extrapolate(leaf_num, theta_diff, ln_proposal_ratio):
                     current_level = proposed_level
             else:
+                c = "-"
                 leaf_num = self.addition_sequence[current_level + 3]
                 theta_diff = self.samc_theta[current_level] - self.samc_theta[proposed_level]
                 if samc_move.project(leaf_num, theta_diff, ln_proposal_ratio):
@@ -498,9 +501,11 @@ class Phycas(object):
             # bump up the normalizing constant for the current level
             gain_factor = self.samc_t0/max([self.samc_t0, float(cycle)])
             self.samc_theta[current_level] += gain_factor
-
             lnL = chain.calcLnLikelihood()
-            print "level = %d: lnL =%*f" % (current_level, 15*current_level, lnL)
+
+            if current_level == 6:
+                self.mcmc_manager.recordSample(cycle)
+            print "level = %d: lnL =%*f %s" % (current_level, 15*current_level, lnL, c)
             
             counts[current_level] += 1
         print "counts = ", counts
