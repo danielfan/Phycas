@@ -104,6 +104,24 @@ namespace phycas
 {
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Specifies the (internal) node to use as the likelihood root (it will be stored in the `likelihood_root' data member). 
+|	The likelihood root is separate from the actual root of the tree, and specifies the node used when harvesting the 
+|	log-likelihood from surrounding conditional likelihood arrays (CLAs). It behooves one to set the likelihood root to 
+|	that node requiring the fewest CLA recalculations. Specifying NULL for the likelihood root will result in the 
+|	unconditional recalculation of all CLAs in the entire tree, and subsequently the likelihood root will be set to the
+|	subroot node of the tree (the only child of the root).
+*/
+void	TreeLikelihood::useAsLikelihoodRoot(
+  TreeNode * nd)
+	{
+	if (Tree::gDebugOutput && nd)
+		std::cerr << "Setting Likelihood root = " << nd->oneLineDebugReport() << std::endl;
+	likelihood_root = nd;
+	}
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Updates the conditional likelihood array for `nd' in a direction away from `avoid'. All adjacent nodes (other than 
 |	`avoid') are assumed to be valid.
 */

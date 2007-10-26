@@ -100,10 +100,13 @@ bool SamcMove::extrapolate(
 	{
 	const unsigned ninternals_alloced = tree->GetNInternalsAllocated();
 	last_move_projection = false;
-    std::cerr << "*** extrapolate: before doing anything: " << tree->DebugWalkTree(true, 1) << std::endl; //temporary
-    std::cerr << "*** ninternals_alloced =  " << ninternals_alloced << std::endl; //temporary
-	tree->DebugCheckTree(false, true, 2);
-	std::cerr << "*** extrapolate: in tree checked" << std::endl; //temporary
+    if (Tree::gDebugOutput)
+    	{
+    	std::cerr << "*** extrapolate: before doing anything: " << tree->DebugWalkTree(true, 1) << std::endl; //temporary
+	    std::cerr << "*** ninternals_alloced =  " << ninternals_alloced << std::endl; //temporary
+		tree->DebugCheckTree(false, true, 2);
+		std::cerr << "*** extrapolate: in tree checked" << std::endl; //temporary
+		}
 	//likelihood->startTreeViewer(tree, "Start of extrapolate move");
 
     // The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
@@ -119,13 +122,18 @@ bool SamcMove::extrapolate(
 	PHYCAS_ASSERT(leaf->GetNodeNumber() == leaf_num);
 	leaf_sib = chooseRandomAttachmentNode(leaf_num);
 
-	std::cerr << "*** extrapolate:  nodes chosen(but unmodified):" << std::endl; //temporary
-	std::cerr << "    leaf: "<< leaf->oneLineDebugReport() << std::endl; //temporary
-	std::cerr << "    leaf_sib: "<< leaf_sib->oneLineDebugReport() << std::endl; //temporary
-	
+	if (Tree::gDebugOutput)
+    	{
+		std::cerr << "*** extrapolate:  nodes chosen(but unmodified):" << std::endl; //temporary
+		std::cerr << "    leaf: "<< leaf->oneLineDebugReport() << std::endl; //temporary
+		std::cerr << "    leaf_sib: "<< leaf_sib->oneLineDebugReport() << std::endl; //temporary
+		}
 	tree_manipulator.InsertSubtreeIntoEdge(leaf, leaf_sib);
-	std::cerr << "*** extrapolate:  tree structure changed" << std::endl; //temporary
-	tree->DebugCheckTree(false, true, 2);
+	if (Tree::gDebugOutput)
+    	{
+		std::cerr << "*** extrapolate:  tree structure changed" << std::endl; //temporary
+		tree->DebugCheckTree(false, true, 2);
+		}
 	PHYCAS_ASSERT(ninternals_alloced == tree->GetNInternalsAllocated());
 	
 	leaf_sib_orig_edgelen = leaf_sib->GetEdgeLen();
@@ -133,7 +141,7 @@ bool SamcMove::extrapolate(
 	double new_leaf_sib_edgelen = u*leaf_sib_orig_edgelen;
 	double parent_edgelen = leaf_sib_orig_edgelen - new_leaf_sib_edgelen;
 	leaf_sib->SetEdgeLen(new_leaf_sib_edgelen);
-	parent = leaf_sib->GetParent();
+	new_leaf_sib_parent = parent = leaf_sib->GetParent();
 	parent->SetEdgeLen(parent_edgelen);
 	double leaf_edgelen = term_edge_dist->Sample();
 	leaf->SetEdgeLen(leaf_edgelen);
@@ -168,9 +176,11 @@ bool SamcMove::extrapolate(
 	double log_pkl_blk_ratio = log(getPkl(leaf_num, leaf_sib)) - log(leaf_sib_orig_edgelen);
 	double ln_accept_ratio = theta_diff + curr_posterior - prev_posterior - log_pkl_blk_ratio + ln_proposal_ratio;
 	const bool accepted = (ln_accept_ratio >= 0.0 || std::log(rng->Uniform()) <= ln_accept_ratio);
-    std::cerr << "*** extrapolate before revert: " << tree->DebugWalkTree(true, 1) << std::endl; //temporary
-	tree->DebugCheckTree(false, true, 2);
-
+	if (Tree::gDebugOutput)
+    	{
+		std::cerr << "*** extrapolate before revert: " << tree->DebugWalkTree(true, 1) << std::endl; //temporary
+		tree->DebugCheckTree(false, true, 2);
+		}
 	if (accepted)
 		{
 		p->setLastLnPrior(curr_ln_prior);
@@ -235,8 +245,9 @@ bool SamcMove::project(
 		to the sum of it's edge len and the parent's.
 	*/
 	tree_manipulator.DeleteLeaf(leaf);
-	
-	likelihood->useAsLikelihoodRoot(leaf_sib);
+	TreeNode *lr = 	(leaf_sib->IsInternal() ? leaf_sib : leaf_sib->GetParent());
+	likelihood->useAsLikelihoodRoot(lr);
+
 	tree->InvalidateNodeCounts();
 	
 	double curr_ln_like = likelihood->calcLnL(tree);
@@ -349,9 +360,11 @@ void SamcMove::revert()
 		}
 	tree->InvalidateNodeCounts();
 	reset();
-    std::cerr << "*** after revert: " << tree->DebugWalkTree(true, 1) << std::endl; //temporary
-	tree->DebugCheckTree(false, true, 2);
-
+	if (Tree::gDebugOutput)
+    	{
+		std::cerr << "*** after revert: " << tree->DebugWalkTree(true, 1) << std::endl; //temporary
+		tree->DebugCheckTree(false, true, 2);
+		}
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -369,11 +382,13 @@ void SamcMove::accept()
 	{
 	if (last_move_projection)
 		{
-		likelihood->useAsLikelihoodRoot(leaf_sib);
+		TreeNode *lr = 	(leaf_sib->IsInternal() ? leaf_sib : leaf_sib->GetParent());
+		likelihood->useAsLikelihoodRoot(lr);
 		likelihood->discardCacheAwayFromNode(*leaf_sib);
 
 		if (view_proposed_move)
 			likelihood->startTreeViewer(tree, "Delete edge move ACCEPTED");
+
 		}
 	else
 		{

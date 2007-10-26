@@ -63,6 +63,7 @@ typedef boost::shared_ptr<Lot>	LotShPtr;
 class PhycasIDLishMatrix
 	{
 	friend class TreeLikelihood;
+
 	public:
 		typedef std::vector<CIPR_State_t> CIPRStateVect;
 

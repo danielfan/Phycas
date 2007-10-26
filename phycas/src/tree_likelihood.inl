@@ -146,28 +146,6 @@ inline TreeNode * TreeLikelihood::getLikelihoodRoot()
 
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Specifies the (internal) node to use as the likelihood root (it will be stored in the `likelihood_root' data member). 
-|	The likelihood root is separate from the actual root of the tree, and specifies the node used when harvesting the 
-|	log-likelihood from surrounding conditional likelihood arrays (CLAs). It behooves one to set the likelihood root to 
-|	that node requiring the fewest CLA recalculations. Specifying NULL for the likelihood root will result in the 
-|	unconditional recalculation of all CLAs in the entire tree, and subsequently the likelihood root will be set to the
-|	subroot node of the tree (the only child of the root).
-*/
-inline void	TreeLikelihood::useAsLikelihoodRoot(
-
-  TreeNode * nd)
-
-	{
-	if (nd)
-		std::cerr << "Setting Likelihood root = " << nd->oneLineDebugReport() << std::endl;
-
-	likelihood_root = nd;
-
-	}
-
-
-
-/*----------------------------------------------------------------------------------------------------------------------
 |	Returns the number of the node currently serving as the likelihood root. If `likelihood_root' is NULL, returns -1
 |	instead to indicate that no node is currently designated as the likelihood root. This function was written primarily
 |	for use by the TreeViewer.py application for debugging purposes.

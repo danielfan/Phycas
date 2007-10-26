@@ -470,7 +470,7 @@ class Phycas(object):
         for cycle in xrange(self.ncycles):
             # proposal for changing current level
             u = chain.r.uniform()
-            print "uniform for cycle =", cycle, "is", u
+            #print "uniform for cycle =", cycle, "is", u
             chain.tree.debugCheckTree(False, True, 1)
             proposed_level = current_level
             if u < 1.0/3.0:
@@ -481,9 +481,9 @@ class Phycas(object):
                     proposed_level = current_level + 1
                     
             if proposed_level == current_level:
-                ls.setSaveDebugInfo(True)
+                #ls.setSaveDebugInfo(True)
                 ls.update()
-                print '%s | %s\n' % (ls.getName(), ls.getDebugInfo())
+                #print '%s | %s\n' % (ls.getName(), ls.getDebugInfo())
             elif proposed_level > current_level:
                 leaf_num = self.addition_sequence[proposed_level + 3]
                 theta_diff = self.samc_theta[current_level] - self.samc_theta[proposed_level]
@@ -500,7 +500,7 @@ class Phycas(object):
             self.samc_theta[current_level] += gain_factor
 
             lnL = chain.calcLnLikelihood()
-            print "level = %d: lnL =", (proposed_level, lnL)
+            print "level = %d: lnL =%*f" % (current_level, 15*current_level, lnL)
             
             counts[current_level] += 1
         print "counts = ", counts

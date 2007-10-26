@@ -50,6 +50,8 @@ namespace phycas{
 class Tree
 	{
 	public:
+		static bool gDebugOutput;
+
 
 		friend class TreeManip;
 		friend class BushMove;

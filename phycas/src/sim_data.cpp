@@ -77,11 +77,11 @@ namespace phycas
 double SimData::calctBinned(unsigned nstates)
 	{
 	// m is the number of distinct patterns
-	double m					= (double)sim_pattern_map.size();
+	//double m					= (double)sim_pattern_map.size();
 
 	// s is the number of character states
-	double s					= (double)nstates;
-	double log_s				= std::log(s);
+	//double s					= (double)nstates;
+	//double log_s				= std::log(s);
 
 	// n is the number of characters (i.e. sum of counts of all distinct patterns)
 	double n					= (double)total_count;
