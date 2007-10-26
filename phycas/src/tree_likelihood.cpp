@@ -1164,14 +1164,16 @@ double TreeLikelihood::calcLnL(
 
 	// Calculate log-likelihood using nd as the likelihood root
 	double lnL = calcLnLFromNode(*nd);
-	if (calcLnLLevel == 0)
-		{
-		calcLnLLevel = 1;
-		storeAllCLAs(t);
-		double lnLRecalc = calcLnL(t);
-		PHYCAS_ASSERT(fabs(lnL-lnLRecalc) < 0.000001);
-		calcLnLLevel = 0;
-		}
+#	if !defined(NDEBUG)	
+		if (calcLnLLevel == 0)
+			{
+			calcLnLLevel = 1;
+			storeAllCLAs(t);
+			double lnLRecalc = calcLnL(t);
+			PHYCAS_ASSERT(fabs(lnL-lnLRecalc) < 0.000001);
+			calcLnLLevel = 0;
+			}
+#	endif
 	return lnL;
 	}
 
