@@ -221,7 +221,7 @@ alias readnexus_sources
     [ obj readnexus_tree_manip_obj : phycas/src/oldphycas/tree_manip.cpp tool_specific_requirements ]
     phycas/src/oldphycas/tree_node.cpp
     phycas/src/oldphycas/tree.cpp
-    phycas/src/oldphycas/trees_manager.cpp
+    phycas/src/cipres/trees_manager.cpp
     phycas/src/oldphycas/split.cpp   
     tool_specific_requirements ;
 python-extension _ReadNexus : readnexus_sources ;

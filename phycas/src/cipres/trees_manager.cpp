@@ -16,11 +16,10 @@
 |  with this program; if not, write to the Free Software Foundation, Inc.,    |
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
+#if defined(USING_OLDPHYCAS) || 1
 //#include "phycas/force_include.h"
 #include "phycas/src/oldphycas/taxa_manager.hpp"
-#include "phycas/src/oldphycas/trees_manager.hpp"
-#include "phycas/src/oldphycas/tree.hpp"
+#include "phycas/src/cipres/trees_manager.hpp"
 #include "phycas/src/ncl/output/nxs_output.hpp"
 using ncl::flush;
 
@@ -36,15 +35,6 @@ PhoTreesManager::PhoTreesManager(PhoTaxaManager & taxaMgr)
 		return kCmdSucceeded;
 		}
 #endif
-
-
-TreeID PhoTreesManager::GetIDFromDescription(const FullTreeDescription &ftd)
-	{
-	Tree refTree;
-	refTree.BuildTreeFromDescription(ftd);
-	refTree.RefreshID();
-	return refTree.GetID();	
-	}
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	displays info on currently known trees to the user.
@@ -121,3 +111,4 @@ CmdResult PhoTreesManager::HandleTreeStatus() const
 		return kCmdSucceeded;
 		}
 #endif
+#endif // defined(USING_OLDPHYCAS)

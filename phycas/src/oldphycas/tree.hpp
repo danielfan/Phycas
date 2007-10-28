@@ -16,7 +16,7 @@
 |  with this program; if not, write to the Free Software Foundation, Inc.,    |
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
+#if defined(USING_OLDPHYCAS) || 1
 #if !defined(PHO_TREE_H)
 #define PHO_TREE_H
 
@@ -432,3 +432,4 @@ inline Tree &Tree::operator=(const Tree &r)
 //POL 2-Dec-2004 added useTaxonNames to CreateNewickRepresentation
 		
 #endif
+#endif defined(USING_OLDPHYCAS)

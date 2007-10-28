@@ -16,12 +16,11 @@
 |  with this program; if not, write to the Free Software Foundation, Inc.,    |
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
+#if defined(USING_OLDPHYCAS) || 1
 #ifndef PHO_TREE_MANAGER_H
 #define PHO_TREE_MANAGER_H
 
 #include "phycas/src/ncl/trees/nxs_trees_manager.hpp"
-#include "phycas/src/oldphycas/tree_id.hpp"	// for the GetIDFromDescription function, perhaps we should move it.
 class NxsCommandManager;
 /*----------------------------------------------------------------------------------------------------------------------
 |	NxsTreesManager with a programmatic interface for adding new tree descriptions and the ability to handle a 
@@ -35,10 +34,8 @@ class PhoTreesManager :
 		CmdResult			HandleTreeStatus() const;
 #		if defined(SUPPORT_GETTREES)
 			void				SetupClearTrees(NxsCommandManager *);
-//			CmdResult			HandleClearTrees(ClearTreesSettings *);
 			CmdResult			ClearTrees(const NxsIndexSet &toClear);
 #		endif		
-		STATIC_DATA_FUNC TreeID		GetIDFromDescription(const FullTreeDescription &);
 	
 		PhoTreesManager(PhoTaxaManager & taxaMgr);
 		virtual ~PhoTreesManager(){}
@@ -56,4 +53,4 @@ inline CmdResult PhoTreesManager::AddNewTrees(const std::vector<FullTreeDescript
 	}
 	
 #endif
-
+#endif //defined(USING_OLDPHYCAS)
