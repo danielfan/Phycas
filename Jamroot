@@ -213,14 +213,11 @@ alias readnexus_sources
     phycas/src/ncl/trees/nxs_trees_manager.cpp
     phycas/src/oldphycas/characters_manager.cpp
     phycas/src/oldphycas/const_site_info.cpp
-    phycas/src/oldphycas/multiline_bound.cpp
     phycas/src/probability_distribution.cpp
     phycas/src/basic_lot.cpp
     phycas/src/thirdparty/dcdflib/src/dcdflib.c
     phycas/src/thirdparty/dcdflib/src/ipmpar.c
     phycas/src/oldphycas/taxa_manager.cpp
-    phycas/src/oldphycas/draw_context.cpp
-    phycas/src/oldphycas/draw_tree.cpp
     [ obj readnexus_tree_manip_obj : phycas/src/oldphycas/tree_manip.cpp tool_specific_requirements ]
     phycas/src/oldphycas/tree_node.cpp
     phycas/src/oldphycas/tree.cpp
