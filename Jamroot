@@ -215,8 +215,6 @@ alias readnexus_sources
     phycas/src/oldphycas/const_site_info.cpp
     phycas/src/oldphycas/multiline_bound.cpp
     phycas/src/probability_distribution.cpp
-    phycas/src/oldphycas/distribution_command_param.cpp
-    phycas/src/oldphycas/distribution_description.cpp
     phycas/src/basic_lot.cpp
     phycas/src/thirdparty/dcdflib/src/dcdflib.c
     phycas/src/thirdparty/dcdflib/src/ipmpar.c

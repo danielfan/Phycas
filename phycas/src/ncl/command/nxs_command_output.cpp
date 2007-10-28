@@ -42,41 +42,6 @@
 			}
 		}
 		
-	void DistributionCmdOption::WriteTypeInfoStateElement(NxsXMLSocketOutputStream & outStream) const
-		{
-		const ClassOfDistribution distClass = this->classOfDistribution;
-		const std::string s = (distClass & kDiscrete ? (distClass & kContinuous ? "Any" : "Discrete") : "Continuous");
-		VecNxsSAXAttribute attr(1, NxsSAXAttribute("distrib_class", s));
-		if (this->nVariates != 0)
-			{
-			std::string nv;
-			nv << this->nVariates;
-			attr.push_back(NxsSAXAttribute("num_variates", nv));
-			}
-		NxsSaxOutputWrapper tiWrapper(outStream, "distribution_type_info", attr);
-			// currently ncl does not support min and max other than 0 and 1, so this code doesn't handle 
-			// all of the elements in the command_state schema (e.g. we don't worry about min_val, max_val) - we never get "Bounded" or "Unbounded" range constraints
-		std::string range_constraint_enum;
-		if (distClass == kDiscreteOrContinuous || distClass == kDiscrete || distClass == kContinuous)
-			range_constraint_enum = "Any"; //@ ncl doesn't discriminate between accepting distributions with any range and _requiring_ unbounded distribution
-		else 
-			{   // order is important in this if/else (e.g. SumToOne overrides ZeroToOne)
-			if (distClass & kSumToOneConstraintBit)
-				range_constraint_enum = "SumToOne";
-			else if (distClass & kZeroToOneBit)
-				range_constraint_enum = "ZeroToOne";
-			else if (distClass & kNonNegativeBit)
-				range_constraint_enum = "NonNegative";
-			else
-				{
-				NXS_ASSERT(0);
-				range_constraint_enum = "Any";
-				}
-			}
-		VecNxsSAXAttribute rcAttr(1, NxsSAXAttribute("constraint", range_constraint_enum));
-		NxsSaxOutputWrapper rcWrapper(outStream, "range_constraint", rcAttr);
-		}
-		
 	void NxsInFileCmdOption::WriteTypeInfoStateElement(NxsXMLSocketOutputStream & outStream) const
 		{
 		VecNxsSAXAttribute attr(1, NxsSAXAttribute("default", GetCurrentValueAsString()));
@@ -185,10 +150,6 @@
 #else //if defined(NCL_SOCKET_IO)
 
 	void NxsChoiceCmdOption::WriteTypeInfoStateElement(NxsHiddenQueryStream & ) const
-		{
-		}
-		
-	void DistributionCmdOption::WriteTypeInfoStateElement(NxsHiddenQueryStream &) const
 		{
 		}
 		
