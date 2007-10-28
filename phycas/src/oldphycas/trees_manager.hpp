@@ -22,7 +22,6 @@
 
 #include "phycas/src/ncl/trees/nxs_trees_manager.hpp"
 #include "phycas/src/oldphycas/tree_id.hpp"	// for the GetIDFromDescription function, perhaps we should move it.
-class ClearTreesSettings;
 class NxsCommandManager;
 /*----------------------------------------------------------------------------------------------------------------------
 |	NxsTreesManager with a programmatic interface for adding new tree descriptions and the ability to handle a 
@@ -36,7 +35,7 @@ class PhoTreesManager :
 		CmdResult			HandleTreeStatus() const;
 #		if defined(SUPPORT_GETTREES)
 			void				SetupClearTrees(NxsCommandManager *);
-			CmdResult			HandleClearTrees(ClearTreesSettings *);
+//			CmdResult			HandleClearTrees(ClearTreesSettings *);
 			CmdResult			ClearTrees(const NxsIndexSet &toClear);
 #		endif		
 		STATIC_DATA_FUNC TreeID		GetIDFromDescription(const FullTreeDescription &);

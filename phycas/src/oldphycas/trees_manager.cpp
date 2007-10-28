@@ -22,7 +22,6 @@
 #include "phycas/src/oldphycas/trees_manager.hpp"
 #include "phycas/src/oldphycas/tree.hpp"
 #include "phycas/src/ncl/output/nxs_output.hpp"
-#include "phycas/src/oldphycas/cleartrees_settings.hpp"
 using ncl::flush;
 
 #undef CONSTRUCT_TREES_ON_INPUT
@@ -32,11 +31,6 @@ PhoTreesManager::PhoTreesManager(PhoTaxaManager & taxaMgr)
 	{} //wrap_scm.cpp is the only non-singelton instantiation
 
 #if defined(SUPPORT_GETTREES)
-	CmdResult PhoTreesManager::HandleClearTrees(ClearTreesSettings *s)
-		{
-		NXS_ASSERT(s != NULL);
-		return ClearTrees(s->toClear);
-		}
 	CmdResult PhoTreesManager::ClearTrees(const NxsIndexSet & s)
 		{
 		return kCmdSucceeded;
