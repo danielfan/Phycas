@@ -24,12 +24,11 @@
 #include <fstream>
 #include <map>
 #include "phycas/src/cipres/cipres_nexus_reader.hpp"
-#include "phycas/src/oldphycas/taxa_manager.hpp"
-#include "phycas/src/cipres/trees_manager.hpp"
-#include "phycas/src/oldphycas/characters_manager.hpp"
+#include "phycas/src/ncl/taxa/nxs_taxa_manager.hpp"
 #include "phycas/src/ncl/characters/nxs_characters_block.hpp"
 #include "phycas/src/ncl/taxa/nxs_taxa_block.hpp"
 #include "phycas/src/ncl/trees/nxs_trees_block.hpp"
+#include "phycas/src/ncl/trees/nxs_trees_manager.hpp"
 #include "phycas/src/ncl/misc/string_extensions.hpp"
 #include "phycas/src/ncl/nxs_token.hpp"
 #include "phycas/src/cipres/CipresDataMatrixHelper.h"
@@ -61,20 +60,20 @@ const unsigned MAX_CIPR_MATRIX_ELEMENT = (1 << ((sizeof(CIPR_StateSet_t) * 8) - 
 
 const std::vector<FullTreeDescription> & CipresNexusReader::GetTrees() const
 	{
-	PHYCAS_ASSERT(phoTreesMgr);
-	return phoTreesMgr->GetTrees();
+	PHYCAS_ASSERT(treesMgr);
+	return treesMgr->GetTrees();
 	}
 
 #if defined(POL_PHYCAS) //@POL 10-Nov-2005 added
 vector<string> CipresNexusReader::GetTaxLabels() const
 	{
-	PHYCAS_ASSERT(phoTaxaMgr);
-	unsigned ntaxa = phoTaxaMgr->GetNumTaxa();
+	PHYCAS_ASSERT(taxaMgr);
+	unsigned ntaxa = taxaMgr->GetNumTaxa();
 	vector<string> tax_labels;
 	tax_labels.reserve(ntaxa);
 	for (unsigned i = 0; i < ntaxa; ++i)
 		{
-		tax_labels.push_back(phoTaxaMgr->GetUserSuppliedLabel(i));
+		tax_labels.push_back(taxaMgr->GetUserSuppliedLabel(i));
 		}
 	return tax_labels;
 	}
@@ -587,15 +586,15 @@ CipresNative::DiscreteMatrix * createNativeDiscreteMatrix(const CipresNexusReade
 
 CipresNexusReader::CipresNexusReader(const int blockCode)
 	{
-	phoTaxaMgr = boost::shared_ptr<PhoTaxaManager>(new PhoTaxaManager());
-	phoTaxaMgr->WarnBeforeClearing(false);
-	//PhoTreesManager::gTaxaMgr = phoTaxaMgr;
-	phoTreesMgr = boost::shared_ptr<PhoTreesManager>(new PhoTreesManager(*phoTaxaMgr.get()));
-	charactersMgr = boost::shared_ptr<NxsCharactersManager>(new NxsCharactersManager(*phoTaxaMgr.get()));
-	NxsReader::Add(phoTaxaMgr->GetTaxaBlockReader()); // always add taxa block because other blocks rely on taxa
+	taxaMgr = boost::shared_ptr<NxsTaxaManager>(new NxsTaxaManager());
+	taxaMgr->WarnBeforeClearing(false);
+	//NxsTreesManager::gTaxaMgr = taxaMgr;
+	treesMgr = boost::shared_ptr<NxsTreesManager>(new NxsTreesManager(*taxaMgr.get()));
+	charactersMgr = boost::shared_ptr<NxsCharactersManager>(new NxsCharactersManager(*taxaMgr.get()));
+	NxsReader::Add(taxaMgr->GetTaxaBlockReader()); // always add taxa block because other blocks rely on taxa
 	if (blockCode & (int)NEXUS_TREES_BLOCK_BIT)
 		{
-		TreesBlockShPtr treesBlock = phoTreesMgr->GetTreesBlockReader();
+		TreesBlockShPtr treesBlock = treesMgr->GetTreesBlockReader();
 		treesBlock->AllowImplicitNames();
 		NxsReader::Add(treesBlock);
 		}

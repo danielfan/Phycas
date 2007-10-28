@@ -26,8 +26,8 @@
 #include "phycas/src/ncl/nxs_reader.hpp"
 #include "phycas/src/cipres/CipresNativeC.h"
 
-class PhoTaxaManager;
-class PhoTreesManager;
+class NxsTaxaManager;
+class NxsTreesManager;
 class NxsCharactersManager;
 
 #if defined(POL_PHYCAS)
@@ -63,13 +63,13 @@ class CipresNexusReader: public NxsReader
 			}
 #		endif
 
-		boost::shared_ptr<const PhoTaxaManager> GetTaxaManager() const
+		boost::shared_ptr<const NxsTaxaManager> GetTaxaManager() const
 			{
-			return phoTaxaMgr;
+			return taxaMgr;
 			}
-		boost::shared_ptr<const PhoTreesManager> GetTreesManager() const
+		boost::shared_ptr<const NxsTreesManager> GetTreesManager() const
 			{
-			return phoTreesMgr;
+			return treesMgr;
 			}
 		boost::shared_ptr<const NxsCharactersManager> GetCharactersManager() const
 			{
@@ -86,8 +86,8 @@ class CipresNexusReader: public NxsReader
 
 		void	ReadNxsTokenStream(NxsToken & tokenStream);
 		
-		boost::shared_ptr<PhoTaxaManager> phoTaxaMgr;
-		boost::shared_ptr<PhoTreesManager> phoTreesMgr;
+		boost::shared_ptr<NxsTaxaManager> taxaMgr;
+		boost::shared_ptr<NxsTreesManager> treesMgr;
 		boost::shared_ptr<NxsCharactersManager> charactersMgr;
 		std::string errorMsg;
 		file_pos	filePositionOfError;

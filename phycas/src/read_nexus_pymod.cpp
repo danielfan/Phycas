@@ -40,8 +40,6 @@
 #if defined(PYPHY_INCLUDE_TO_AVOID_LINK_ERROR)
 #	warning using macro to include cipres_nexus_reader.cpp TEMPORARY HACK!
 #	include "phycas/src/cipres/cipres_nexus_reader.cpp"
-#	warning using macro to include nxs_charcters_block.cpp TEMPORARY HACK!
-#	include "phycas/src/oldphycas/nxs_characters_block.cpp"
 #	warning using macro to include nxs_command_output.cpp TEMPORARY HACK!
 #	include "phycas/src/ncl/command/nxs_command_output.cpp"
 #else

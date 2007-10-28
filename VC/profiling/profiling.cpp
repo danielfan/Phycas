@@ -8,7 +8,6 @@
 #include "phycas/src/larget_simon_move.hpp"
 #include "phycas/src/mcmc_chain_manager.hpp"
 #include "phycas/src/probability_distribution.hpp"
-#include "phycas/src/oldphycas/characters_manager.hpp"
 
 using namespace phycas;
 
