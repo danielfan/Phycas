@@ -14,7 +14,7 @@ using namespace phycas;
 
 int	CipresNexusReader::GetNChar()
 	{
-	return phoCharactersMgr->GetNumChars();
+	return charactersMgr->GetNumChars();
 	}
 
 int main()

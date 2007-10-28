@@ -565,7 +565,7 @@ void freeCIPRMatrix(CIPR_Matrix & mat)
 
 CipresNative::DiscreteMatrix * createNativeDiscreteMatrix(const CipresNexusReader & nexusReader, unsigned int charBlockIndex)
 	{
-	boost::shared_ptr<const PhoCharactersManager> charMgr = nexusReader.GetCharactersManager();
+	boost::shared_ptr<const NxsCharactersManager> charMgr = nexusReader.GetCharactersManager();
 	boost::shared_ptr<const ncl::StoredMatrix> rawMatrix = charMgr->GetMatrix((unsigned) charBlockIndex);
 	if (rawMatrix && rawMatrix->matrix)
 		{
@@ -591,7 +591,7 @@ CipresNexusReader::CipresNexusReader(const int blockCode)
 	phoTaxaMgr->WarnBeforeClearing(false);
 	//PhoTreesManager::gTaxaMgr = phoTaxaMgr;
 	phoTreesMgr = boost::shared_ptr<PhoTreesManager>(new PhoTreesManager(*phoTaxaMgr.get()));
-	phoCharactersMgr = boost::shared_ptr<PhoCharactersManager>(new PhoCharactersManager(*phoTaxaMgr.get()));
+	charactersMgr = boost::shared_ptr<NxsCharactersManager>(new NxsCharactersManager(*phoTaxaMgr.get()));
 	NxsReader::Add(phoTaxaMgr->GetTaxaBlockReader()); // always add taxa block because other blocks rely on taxa
 	if (blockCode & (int)NEXUS_TREES_BLOCK_BIT)
 		{
@@ -600,7 +600,7 @@ CipresNexusReader::CipresNexusReader(const int blockCode)
 		NxsReader::Add(treesBlock);
 		}
 	if (blockCode & (int)NEXUS_CHARACTERS_BLOCK_BIT)
-		NxsReader::Add(phoCharactersMgr->GetCharsBlockReader());
+		NxsReader::Add(charactersMgr->GetCharsBlockReader());
 	}
 
 void CipresNexusReader::NexusError(const std::string &msg, file_pos pos, unsigned line, unsigned col, CmdResult , NxsBlock* )

@@ -28,7 +28,7 @@
 
 class PhoTaxaManager;
 class PhoTreesManager;
-class PhoCharactersManager;
+class NxsCharactersManager;
 
 #if defined(POL_PHYCAS)
 struct my_exception // : std::exception
@@ -71,9 +71,9 @@ class CipresNexusReader: public NxsReader
 			{
 			return phoTreesMgr;
 			}
-		boost::shared_ptr<const PhoCharactersManager> GetCharactersManager() const
+		boost::shared_ptr<const NxsCharactersManager> GetCharactersManager() const
 			{
-			return phoCharactersMgr;
+			return charactersMgr;
 			}
 			
 		const std::vector<FullTreeDescription> & GetTrees() const;
@@ -88,7 +88,7 @@ class CipresNexusReader: public NxsReader
 		
 		boost::shared_ptr<PhoTaxaManager> phoTaxaMgr;
 		boost::shared_ptr<PhoTreesManager> phoTreesMgr;
-		boost::shared_ptr<PhoCharactersManager> phoCharactersMgr;
+		boost::shared_ptr<NxsCharactersManager> charactersMgr;
 		std::string errorMsg;
 		file_pos	filePositionOfError;
 		long		lineOfError;

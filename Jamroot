@@ -211,8 +211,6 @@ alias readnexus_sources
     phycas/src/ncl/trees/nxs_tree_listener.cpp
     phycas/src/ncl/trees/nxs_trees_block.cpp
     phycas/src/ncl/trees/nxs_trees_manager.cpp
-    phycas/src/oldphycas/characters_manager.cpp
-    phycas/src/oldphycas/const_site_info.cpp
     phycas/src/probability_distribution.cpp
     phycas/src/basic_lot.cpp
     phycas/src/thirdparty/dcdflib/src/dcdflib.c

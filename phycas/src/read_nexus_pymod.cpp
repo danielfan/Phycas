@@ -47,7 +47,7 @@
 #else
 #	include "phycas/src/cipres/cipres_nexus_reader.hpp"
 #endif
-#include "phycas/src/oldphycas/characters_manager.hpp"
+#include "phycas/src/ncl/characters/nxs_characters_manager.hpp"
 #include "phycas/src/cipres/CipresDataMatrixHelper.h"
 #include "phycas/src/ncl/nxs_exception.hpp"
 #include "phycas/src/ncl/trees/full_tree_description.hpp"
@@ -66,7 +66,7 @@ using namespace boost::python;
 
 int	CipresNexusReader::GetNChar()
 	{
-	return phoCharactersMgr->GetNumChars();
+	return charactersMgr->GetNumChars();
 	}
 
 void translate(const NxsException & e)
