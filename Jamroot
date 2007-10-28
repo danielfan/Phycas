@@ -218,11 +218,7 @@ alias readnexus_sources
     phycas/src/thirdparty/dcdflib/src/dcdflib.c
     phycas/src/thirdparty/dcdflib/src/ipmpar.c
     phycas/src/oldphycas/taxa_manager.cpp
-    [ obj readnexus_tree_manip_obj : phycas/src/oldphycas/tree_manip.cpp tool_specific_requirements ]
-    phycas/src/oldphycas/tree_node.cpp
-    phycas/src/oldphycas/tree.cpp
     phycas/src/cipres/trees_manager.cpp
-    phycas/src/oldphycas/split.cpp   
     tool_specific_requirements ;
 python-extension _ReadNexus : readnexus_sources ;
 install ReadNexus : _ReadNexus : <location>phycas/ReadNexus ;

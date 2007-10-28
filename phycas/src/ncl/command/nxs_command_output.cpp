@@ -26,7 +26,6 @@
 #include "phycas/src/ncl/command/nxs_file_cmd_param.hpp"
 #include "phycas/src/ncl/command/nxs_mixed_cmd_param.hpp"
 #include "phycas/src/ncl/command/nxs_restricted_string_cmd_param.hpp"
-#include "phycas/src/oldphycas/distribution_command_param.hpp"
 #include "phycas/src/ncl/command/nxs_set_cmd_param.hpp"
 
 #if defined(NCL_SOCKET_IO)

@@ -27,9 +27,6 @@
 using std::vector;
 using std::string;
 #define MTH_MARCH_3_2005_DEBUG
-#if defined(MTH_MARCH_3_2005_DEBUG)
-#	include "phycas/src/oldphycas/tree.hpp"
-#endif
 
 FullTreeDescription   NxsTreesManager::GetTree(unsigned i) const
 	{
@@ -89,7 +86,7 @@ CmdResult NxsTreesManager::AddNewTrees(const vector<FullTreeDescription> &v, uns
 		defaultTree = (unsigned)treeDescriptions.size() + def;
 	treeDescriptions.reserve(treeDescriptions.size() + v.size());
 	bool somePartialBrLens = false;
-	Split::CalcStatics(taxaMgr.GetSize()); //@shouldn't be necessary
+//	Split::CalcStatics(taxaMgr.GetSize()); //@shouldn't be necessary
 
 	for (vector<FullTreeDescription>::const_iterator vIt = v.begin(); vIt != v.end(); ++vIt)
 		{

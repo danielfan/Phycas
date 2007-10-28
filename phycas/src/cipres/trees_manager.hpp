@@ -30,6 +30,7 @@ class PhoTreesManager :
   public NxsTreesManager
   	{
 	public:
+
 		CmdResult			AddNewTrees(const std::vector<FullTreeDescription> &v, unsigned d = UINT_MAX);
 		CmdResult			HandleTreeStatus() const;
 #		if defined(SUPPORT_GETTREES)
@@ -39,6 +40,7 @@ class PhoTreesManager :
 	
 		PhoTreesManager(PhoTaxaManager & taxaMgr);
 		virtual ~PhoTreesManager(){}
+		
 	};
 
 /*----------------------------------------------------------------------------------------------------------------------

@@ -25,8 +25,7 @@
 #include <map>
 #include "phycas/src/cipres/cipres_nexus_reader.hpp"
 #include "phycas/src/oldphycas/taxa_manager.hpp"
-#include "phycas/src/oldphycas/tree_node.hpp"
-#include "phycas/src/oldphycas/trees_manager.hpp"
+#include "phycas/src/cipres/trees_manager.hpp"
 #include "phycas/src/oldphycas/characters_manager.hpp"
 #include "phycas/src/ncl/characters/nxs_characters_block.hpp"
 #include "phycas/src/ncl/taxa/nxs_taxa_block.hpp"
@@ -590,7 +589,7 @@ CipresNexusReader::CipresNexusReader(const int blockCode)
 	{
 	phoTaxaMgr = boost::shared_ptr<PhoTaxaManager>(new PhoTaxaManager());
 	phoTaxaMgr->WarnBeforeClearing(false);
-	TreeNode::gTaxaMgr = phoTaxaMgr;
+	//PhoTreesManager::gTaxaMgr = phoTaxaMgr;
 	phoTreesMgr = boost::shared_ptr<PhoTreesManager>(new PhoTreesManager(*phoTaxaMgr.get()));
 	phoCharactersMgr = boost::shared_ptr<PhoCharactersManager>(new PhoCharactersManager(*phoTaxaMgr.get()));
 	NxsReader::Add(phoTaxaMgr->GetTaxaBlockReader()); // always add taxa block because other blocks rely on taxa
