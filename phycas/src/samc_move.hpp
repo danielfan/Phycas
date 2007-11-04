@@ -72,6 +72,12 @@ class SamcMove : public MCMCUpdater
 
 		void						viewProposedMove(bool yes);
 
+#if POLPY_NEWWAY    //SAMC
+        void                        samcDebug(bool turn_on_debugging) {samc_debug_mode = turn_on_debugging;}
+        bool                        goof() {return goofed;}
+        void                        ungoof() {goofed = false;}
+#endif
+
 	private:
 
 		void						reset();
@@ -81,7 +87,13 @@ class SamcMove : public MCMCUpdater
 		void						calcPk(unsigned leaf_k);
 		double						getPkl(unsigned leaf_k, TreeNode * nd_l);
 		TreeNode *					chooseRandomAttachmentNode(unsigned leaf_k);
-	private:
+
+    private:
+
+#if POLPY_NEWWAY    //SAMC
+        bool                            goofed;
+        bool                            samc_debug_mode;
+#endif
 
 		unsigned						num_taxa;							/**< The number of taxa */
 		// new stuff

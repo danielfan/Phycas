@@ -634,7 +634,6 @@ double TreeLikelihood::harvestLnL(
 	PHYCAS_ASSERT(focal_neighbor != NULL);
 
 	// Recompute the conditional likelihood array of the focal node
-	// The focal neighbor is closer to the likelihood root than the focal_node
 	refreshCLA(*focal_node, focal_neighbor);
 	ConstEdgeEndpoints c(focal_node, focal_neighbor);
 	return harvestLnLFromValidEdge(c);

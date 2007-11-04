@@ -38,7 +38,6 @@ class Phycas(object):
         self.verbose                = True      # you will get more output if True, less output if False
         self.quiet                  = False     # if True, output will only be sent to the log file if open (see below); if False, output will be sent to the console as well
         self.outfile_prefix         = None      # If None, parameter and tree files created will have a name beginning with the name of the data file; if provided, this prefix will form the first part of the parameter and tree file names
-        self.doing_samc             = False     # if True, using Cheon and Liang "SSAMC" method
         # Variables associated with substitution models (except for edge lengths)
         self.default_model          = 'hky'     # Can be 'jc', 'hky' or 'gtr'
 
@@ -94,10 +93,11 @@ class Phycas(object):
         self.bush_move_weight       = 100       # Bush moves will be performed this many times per cycle if
         self.bush_move_debug        = False     # If set to true, TreeViewer will pop up on each Bush move update showing edges affected by the proposed move
 
-        self.samc_move_weight       = 100       # 
+        self.doing_samc             = False     # if True, using Cheon and Liang "SSAMC" method
         self.samc_move_edgelen_mean = 1.0       # specifies mean of exponential edge length generation distribution used by SamcMove when new edges are created
         self.samc_move_debug        = False     # If set to true, TreeViewer will pop up on each Samc move update showing edges affected by the proposed move
         self.samc_t0                = 10000.0   # samc_gain_factor = samc_t0/max(samc_t0, cycle)
+        self.samc_move_weight       = 1         # number of times per cycle that SAMC moves will be performed (currently unused because SAMC moves are not used in standard MCMC analyses)
 
         # Variables associated with slice samplers
         self.slice_weight           = 1         # Slice sampled parameters will be updated this many times per cycle
@@ -457,17 +457,26 @@ class Phycas(object):
         """
         # temp del: current_tree = make_random_4taxon_tree(addition_sequence[:4])
         current_level = 0
+        prev_level = 0
         addseq = self.addition_sequence
         chain = self.mcmc_manager.getColdChain()
         mgr = self.mcmc_manager.getColdChainManager()
         ls = chain.larget_simon_move
         samc_move = chain.samc_move
         max_level = len(addseq) - 4
+        num_levels = len(addseq) - 3
         counts = [0]*(max_level + 1)
         mgr.refreshLastLnPrior()
         mgr.refreshLastLnLike()
         ln_proposal_ratio = 0.0 # always 0.0 because \tilde{T}_{m,m-1} = \tilde{T}_{m,m+1} = 1/3
+        ls_accepted = [0]*num_levels
+        ls_tried = [0]*num_levels
+        doof = file('cf.txt', 'r').readlines()
         for cycle in xrange(self.ncycles):
+            # POL temporary
+            if cycle == 727:
+                samc_move.samcDebug(True)
+                raw_input('stopped at beginning of cycle 727')
             # proposal for changing current level
             u = chain.r.uniform()
             #print "uniform for cycle =", cycle, "is", u
@@ -481,33 +490,61 @@ class Phycas(object):
                     proposed_level = current_level + 1
                     
             if proposed_level == current_level:
-                #ls.setSaveDebugInfo(True)
                 c = "*"
-                ls.update()
+                #ls.setSaveDebugInfo(True)
+                samc_move.setSaveDebugInfo(True)
+                if ls.update():
+                    ls_accepted[current_level] += 1
+                    ls_tried[current_level] += 1
+                    c = "*"
+                else:
+                    ls_tried[current_level] += 1
+                    c = "* :("
                 #print '%s | %s\n' % (ls.getName(), ls.getDebugInfo())
             elif proposed_level > current_level:
-                c = "+"
                 leaf_num = self.addition_sequence[proposed_level + 3]
                 theta_diff = self.samc_theta[current_level] - self.samc_theta[proposed_level]
                 if samc_move.extrapolate(leaf_num, theta_diff, ln_proposal_ratio):
                     current_level = proposed_level
+                    c = "+"
+                else:
+                    c = "+ :("                    
             else:
-                c = "-"
                 leaf_num = self.addition_sequence[current_level + 3]
                 theta_diff = self.samc_theta[current_level] - self.samc_theta[proposed_level]
                 if samc_move.project(leaf_num, theta_diff, ln_proposal_ratio):
                     current_level = proposed_level
+                    c = "-"
+                else:
+                    c = "- :("                    
 
             # bump up the normalizing constant for the current level
             gain_factor = self.samc_t0/max([self.samc_t0, float(cycle)])
             self.samc_theta[current_level] += gain_factor
             lnL = chain.calcLnLikelihood()
 
-            if current_level == 6:
-                self.mcmc_manager.recordSample(cycle)
-            print "level = %d: lnL =%*f %s" % (current_level, 15*current_level, lnL, c)
-            
+            #if current_level == 6:  # instead of 6, should be highest level
+            self.mcmc_manager.recordSample(cycle)
+
+            if samc_move.goofed():
+                raw_input('prev_ln_like incorrect in SAMC move')
+                samc_move.ungoof()
+
+            if ls.goofed():
+                raw_input('prev_ln_like incorrect in LS move')
+                ls.ungoof()
+
+            outstr = "cycle = %d, level = %d: lnL =%*f %s" % (cycle, current_level, 15*current_level, lnL, c)
+            print outstr
+            if doof[cycle].strip() != outstr:
+                print doof[cycle].strip(),' <-- expected'
+                sys.exit('output differs from expected at cycle %d' % cycle)
+            # doof.write("cycle = %d, level = %d: lnL =%*f %s\n" % (cycle, current_level, 15*current_level, lnL, c))
+            prev_level = current_level
             counts[current_level] += 1
+        # doof.close()
+        print "ls accept pct =", [n > 0 and (100.0*float(a)/float(n) or 0) for a,n in zip(ls_accepted,ls_tried)]
+        print "theta vector = ", self.samc_theta
         print "counts = ", counts
         print "mean   = ", sum(counts)/float(len(counts))
     
@@ -582,7 +619,7 @@ class Phycas(object):
         print "starting tree = ", self.tree_topology
         
     def setupSAMC(self):
-        raw_input('debug stop')
+        # raw_input('debug stop')
         # Read the data
         self.phycassert(self.data_source == 'file', "This only works for data read from a file (specify data_source == 'file')")
         self.readDataFromFile()
@@ -613,10 +650,12 @@ class Phycas(object):
 
         # Create tip nodes not already in tree and add them to tree's
         # tip node storage vector in reverse order
+        internal_node_number = self.ntax
         m = self.mcmc_manager.getColdChain()
         for row in self.addition_sequence[-1:3:-1]:
-            m.likelihood.addOrphanTip(m.tree, row)
-            m.likelihood.addDecoratedInternalNode(m.tree)
+            m.likelihood.addOrphanTip(m.tree, row, '%d' % (row+1))
+            m.likelihood.addDecoratedInternalNode(m.tree, internal_node_number)
+            internal_node_number += 1
         self.openParameterAndTreeFiles()
         
     def setLogFile(self, filename):
@@ -665,8 +704,15 @@ class Phycas(object):
         """
 
         # Read the data
-        self.phycassert(self.data_source == 'file', "This only works for data read from a file (specify data_source == 'file')")
-        self.readDataFromFile()
+        #self.phycassert(self.data_source == 'file', "This only works for data read from a file (specify data_source == 'file')")
+        if self.data_source == 'file':
+            self.readDataFromFile()
+                # Store (and create, if necessary) list of taxon labels
+        elif (len(self.taxon_labels) != self.ntax):
+            for i in range(self.ntax):
+                s = 'taxon_%d' % (i + 1)
+                self.taxon_labels.append(s)
+
         self.phycassert(len(self.taxon_labels) == self.ntax, "Number of taxon labels does not match number of taxa.")
 
         # Create a tree description to be used for building starting trees (formerly Phycas.setupTree function)

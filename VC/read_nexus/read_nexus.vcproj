@@ -228,55 +228,6 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="OldPhycas Source Files"
-			Filter="">
-			<File
-				RelativePath="..\..\phycas\src\oldphycas\characters_manager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\phycas\src\oldphycas\const_site_info.cpp">
-			</File>
-			<File
-				RelativePath="..\..\phycas\src\oldphycas\distribution_command_param.cpp">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						GeneratePreprocessedFile="0"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\phycas\src\oldphycas\distribution_description.cpp">
-			</File>
-			<File
-				RelativePath="..\..\phycas\src\oldphycas\draw_context.cpp">
-			</File>
-			<File
-				RelativePath="..\..\phycas\src\oldphycas\draw_tree.cpp">
-			</File>
-			<File
-				RelativePath="..\..\phycas\src\oldphycas\multiline_bound.cpp">
-			</File>
-			<File
-				RelativePath="..\..\phycas\src\oldphycas\split.cpp">
-			</File>
-			<File
-				RelativePath="..\..\phycas\src\oldphycas\taxa_manager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\phycas\src\oldphycas\tree.cpp">
-			</File>
-			<File
-				RelativePath="..\..\phycas\src\oldphycas\tree_manip.cpp">
-			</File>
-			<File
-				RelativePath="..\..\phycas\src\oldphycas\tree_node.cpp">
-			</File>
-			<File
-				RelativePath="..\..\phycas\src\oldphycas\trees_manager.cpp">
-			</File>
-		</Filter>
-		<Filter
 			Name="NCL Misc Source Files"
 			Filter="">
 			<File

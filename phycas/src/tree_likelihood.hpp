@@ -129,8 +129,8 @@ class TreeLikelihood
 		void							setHaveData();
 
 		// Utilities
-        void                            addOrphanTip(TreeShPtr t, unsigned row);
-        void                            addDecoratedInternalNode(TreeShPtr t);
+        void                            addOrphanTip(TreeShPtr t, unsigned row, std::string name);
+        void                            addDecoratedInternalNode(TreeShPtr t, unsigned num = UINT_MAX);
         void							prepareForSimulation(TreeShPtr);
 		void							prepareForLikelihood(TreeShPtr);
 		void							prepareInternalNodeForLikelihood(TreeNode * nd);

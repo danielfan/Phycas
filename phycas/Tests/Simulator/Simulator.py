@@ -10,7 +10,7 @@ phycas.sim_taxon_labels = ['P. parksii', 'P. articulata', 'P._gracilis', 'P. mac
 
 # Create a model tree
 phycas.starting_tree_source = 'usertree'
-phycas.tree_topology = '(0:0.1,1:0.15,(2:0.025,3:0.15):0.05)'
+phycas.tree_topology = '(1:0.1,2:0.15,(3:0.025,4:0.15):0.05)'
 
 # Create a model
 phycas.default_model = 'hky'

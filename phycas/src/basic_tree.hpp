@@ -117,6 +117,10 @@ class Tree
 		bool					DebugCheckTree(bool allowDegTwo, bool checkDataPointers, int verbosity) const;
 		void					DebugHere(std::string s);
 
+#if POLPY_NEWWAY
+        void                    debugMode(bool turn_on);
+#endif
+
 	protected:
 		TreeNode * 				AllocNewNode();
 		TreeNode *				FindTipNode(unsigned num);

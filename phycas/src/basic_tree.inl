@@ -299,7 +299,7 @@ inline unsigned Tree::GetNNodes()
 inline unsigned Tree::GetNInternalsAllocated()
 	{
 	RefreshNodeCounts(); //temp
-	return internalNodeStorage.size() + GetNInternals();
+	return (unsigned)(internalNodeStorage.size() + GetNInternals());
 	}
 
 

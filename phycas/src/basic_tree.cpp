@@ -890,6 +890,14 @@ std::string Tree::DebugWalkTree(bool preorder, unsigned verbosity)
 	return s;
 	}
 
+#if POLPY_NEWWAY
+void Tree::debugMode(bool turn_on)
+	{
+	Tree::gDebugOutput = turn_on;
+	std::cerr << ">>>>> debugMode(" << (turn_on ? "True" : "False") << ") <<<<<" << std::endl;
+	}
+#endif
+
 bool Tree::DebugCheckTree(bool allowDegTwo, bool checkDataPointers, int verbosity) const
 	{
 	/**temp*/
@@ -910,7 +918,9 @@ bool Tree::DebugCheckTree(bool allowDegTwo, bool checkDataPointers, int verbosit
 	unsigned countedNLeaves = 1;
 	
 	const unsigned expectedNLeaves = nTips; // +tipStorage.size()
+#   if !defined(NDEBUG)
 	const unsigned expectedNNodes = expectedNLeaves + nInternals; // + internalNodeStorage.size()
+#   endif
 	std::string indent;
 	while (currNd)
 		{
@@ -969,14 +979,18 @@ bool Tree::DebugCheckTree(bool allowDegTwo, bool checkDataPointers, int verbosit
 					{
 					nextNd = NULL;
 					if (!preorderDirty)
+                        {
 						PHYCAS_ASSERT(currNd->nextPreorder == NULL);
+                        }
 					}
 				else
 					{
 					nextNd = next_pre_order_stack.top();
 					next_level = level_stack.top();
 					if (!preorderDirty)
+                        {
 						PHYCAS_ASSERT(currNd->nextPreorder == next_pre_order_stack.top());
+                        }
 					next_pre_order_stack.pop();
 					level_stack.pop();
 					}
@@ -1006,7 +1020,9 @@ bool Tree::DebugCheckTree(bool allowDegTwo, bool checkDataPointers, int verbosit
 				nextNd = currNd->rSib;
 				next_level = curr_level;
 				if (!preorderDirty)
+                    {
 					PHYCAS_ASSERT(currNd->rSib == currNd->nextPreorder);
+                    }
 				}
 			}
 		PHYCAS_ASSERT(&*currNd->tree == this);
@@ -1418,16 +1434,15 @@ void Tree::BuildFromString(
 
 	// Renumber internal nodes so that they do not overlap with numbers of tip nodes
 	//@POL should use for_each
-	//std::cerr << "ADDING " << nTips << " to each internal node number" << std::endl; //POL temp		
-// 	for (preorder_iterator nd = begin(); nd != end(); ++nd)
-// 		{
-// 		if (nd->IsInternal())
-// 			{
-// 			//std::cerr << "RENUMBERING internal node " << nd->nodeNum << " (new number is " << (nd->nodeNum + nTips) << ")" << std::endl; //POL temp		
-// 			nd->nodeNum = nd->nodeNum + nTips;
-// 			}
-// 		}
-	
+	//std::cerr << "ADDING " << nTips << " to each internal node number" << std::endl; //POL temp
+ 	//for (preorder_iterator nd = begin(); nd != end(); ++nd)
+ 	//	{
+ 	//	if (nd->IsInternal())
+ 	//		{
+ 	//		//std::cerr << "RENUMBERING internal node " << nd->nodeNum << " (new number is " << (nd->nodeNum + nTips) << ")" << std::endl; //POL temp		
+ 	//		nd->nodeNum = nd->nodeNum + nTips;
+ 	//		}
+ 	//	}
 
 	//@POL: should check to make sure tip node numbers form a sequence between 0 and ntax-1
 	// If not, then it may mean that the tree descriptions left out some taxa from the data matrix

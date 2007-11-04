@@ -110,6 +110,9 @@ BOOST_PYTHON_MODULE(_Phylogeny)
 		.def("unselectAllNodes", &Tree::UnselectAllNodes)
 		.def("calcTotalHeight", &Tree::calcTotalHeight)
 		.def("here", &Tree::DebugHere)
+#if POLPY_NEWWAY
+		.def("debugMode", &phycas::Tree::debugMode)
+#endif
 		;
 
 	class_<TreeManip>("TreeManipBase", init<boost::shared_ptr<Tree> >())

@@ -104,7 +104,16 @@ class LargetSimonMove : public MCMCUpdater
 		virtual void	revert();
 		virtual void	accept();
 
+#if POLPY_NEWWAY
+        bool            goof() {return goofed;}
+        void            ungoof() {goofed = false;}
+#endif
+
 	private:
+
+#if POLPY_NEWWAY
+        bool            goofed;
+#endif
 
 		double			lambda;						/**< Factor used in modifying backbone length */
 

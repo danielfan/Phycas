@@ -31,7 +31,10 @@ phylogeny_pymod.obj : error LNK2001: unresolved external symbol __imp___Py_RefTo
 To build it yourself, go to the directory C:\Python-2.5.1\PCbuild and open the pcbuild.sln file, 
 choose Debug version and then build the python project (this is the only project you need to build).
 After it is built, move python_d.exe and python25_d.dll to the C:\Python25 directory, and move
-python25_d.lib to the C:\Python25\libs directory.
+python25_d.lib to the C:\Python25\libs directory. 
+
+To use Tkinter in debug mode, follow the directions for building the _tkinter subproject in 
+C:\Python-2.5.1\PCbuild\readme.txt.
 
 Building the Debug version of the Boost Python DLL
 --------------------------------------------------

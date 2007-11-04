@@ -95,6 +95,10 @@ void updater_pymod()
 		.def("getLambda", &phycas::LargetSimonMove::getLambda)
 		.def("topologyChanged", &phycas::LargetSimonMove::topologyChanged)
 		.def("viewProposedMove", &phycas::LargetSimonMove::viewProposedMove)
+#if POLPY_NEWWAY
+		.def("goofed", &phycas::LargetSimonMove::goof)
+		.def("ungoof", &phycas::LargetSimonMove::ungoof)
+#endif
 		;
 	class_<phycas::TreeScalerMove, bases<phycas::MCMCUpdater>, 
 		boost::noncopyable, boost::shared_ptr<phycas::TreeScalerMove> >("TreeScalerMove") 
@@ -144,6 +148,11 @@ void updater_pymod()
 		.def("update", &phycas::SamcMove::update)
 		.def("finalize", &phycas::SamcMove::finalize)
 		.def("viewProposedMove", &phycas::SamcMove::viewProposedMove)
+#if POLPY_NEWWAY
+		.def("goofed", &phycas::SamcMove::goof)
+		.def("ungoof", &phycas::SamcMove::ungoof)
+		.def("samcDebug", &phycas::SamcMove::samcDebug)
+#endif
 		;
 	class_<phycas::NCatMove, bases<phycas::MCMCUpdater>, 
 		boost::noncopyable, boost::shared_ptr<phycas::NCatMove> >("NCatMove") 

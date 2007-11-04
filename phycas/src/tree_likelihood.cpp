@@ -1162,9 +1162,12 @@ double TreeLikelihood::calcLnL(
 	PHYCAS_ASSERT(nd);
 	PHYCAS_ASSERT(nd->IsInternal());
 
+    // Uncomment line below to force recalculation of all CLAs
+#if 0 && POLPY_NEWWAY    // store test    storeAllCLAs(t);
+#endif
 	// Calculate log-likelihood using nd as the likelihood root
 	double lnL = calcLnLFromNode(*nd);
-#	if !defined(NDEBUG)	
+#	if 0 // !defined(NDEBUG)	
 		if (calcLnLLevel == 0)
 			{
 			calcLnLLevel = 1;
@@ -1647,14 +1650,17 @@ void TreeLikelihood::prepareInternalNodeForLikelihood(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Decorates a tip node with data and add to the tree's StoreInternalNode vector.
+|	Decorates an interior node with conditional likelihood and transition probability structures and add to the tree's
+|   StoreInternalNode vector.
 */
 void TreeLikelihood::addDecoratedInternalNode(
-  TreeShPtr t)		/**< is the tree to decorate */
+  TreeShPtr t,		/**< is the tree to decorate */
+  unsigned num)     /**< is the number to assign to this node */
 	{
 	TreeNode::InternalDataDeleter	cl_deleter	= &deallocateInternalData;
 	InternalData * cl = allocateInternalData();
     TreeNode * nd = t->AllocNewNode();
+    nd->SetNodeNum(num);
 	nd->SetInternalData(cl, cl_deleter);
     t->StoreInternalNode(nd);
     }
@@ -1664,13 +1670,15 @@ void TreeLikelihood::addDecoratedInternalNode(
 */
 void TreeLikelihood::addOrphanTip(
   TreeShPtr t,		/**< is the tree to decorate */
-  unsigned row)		/**< is the row in the data matrix to associate with the added tip */
+  unsigned row,		/**< is the row in the data matrix to associate with the added tip */
+  std::string name) /**< is the taxon name */
 	{
 	TreeNode::TipDataDeleter td_deleter	= &deallocateTipData;
 	TipData * td = allocateTipData(row);
     TreeNode * nd = t->AllocNewNode();
 	nd->SetTipData(td, td_deleter);
     nd->SetNodeNum(row);
+    nd->SetNodeName(name);
     t->StoreLeafNode(nd);
     }
 
