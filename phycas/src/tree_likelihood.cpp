@@ -114,8 +114,8 @@ namespace phycas
 void	TreeLikelihood::useAsLikelihoodRoot(
   TreeNode * nd)
 	{
-	if (Tree::gDebugOutput && nd)
-		std::cerr << "Setting Likelihood root = " << nd->oneLineDebugReport() << std::endl;
+	//if (Tree::gDebugOutput && nd)
+	//	std::cerr << "Setting Likelihood root = " << nd->oneLineDebugReport() << std::endl;
 	likelihood_root = nd;
 	}
 
@@ -1112,6 +1112,86 @@ bool TreeLikelihood::debugCheckCLAsRemainInTree(
 	return false;
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|   Scans tree for cached CLAs. If any are found, returns true. If no CLAs are currently cached, returns false. False is
+|   the expected result, because there should only be cached CLAs in the tree if we are in the middle of performing a 
+|   Metropolis-Hastings move. If a move has been proposed, but not yet accepted or rejected, cached CLAs provide a way
+|   to return to the pre-move state after rejection without having to recalculate the likelihood.
+*/
+bool TreeLikelihood::debugCheckForUncachedCLAs(
+  TreeShPtr t)   /**< is the tree to check */
+  const
+    {
+    bool cached_CLAs_found = false;
+	for (TreeNode * nd = t->GetFirstPreorder(); nd != NULL; nd = nd->GetNextPreorder())
+        {
+		if (nd->IsTip())
+			{
+			TipData * td = nd->GetTipData();
+			if (td != NULL)
+				{
+				if (td->parCachedCLA)
+                    {
+					cached_CLAs_found = true;
+                    break;
+                    }
+				}
+			}
+		else
+			{
+			InternalData * id = nd->GetInternalData();
+			if (id != NULL)
+				{
+				if (id->parCachedCLA)
+                    {
+					cached_CLAs_found = true;
+                    break;
+                    }
+
+				if (id->childCachedCLA)
+                    {
+					cached_CLAs_found = true;
+                    break;
+                    }
+				}
+			}
+        }   // preorder loop over all nodes
+    return cached_CLAs_found;
+    }
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|   Scans node for CLAs. If any are found, returns true. If no CLAs are found, returns false.
+*/
+bool TreeLikelihood::debugCheckCLAsRemainInNode(
+  TreeNode * nd)   /**< is the node to check */
+  const
+    {
+    bool CLAs_found = false;
+	if (nd->IsTip())
+		{
+		TipData * td = nd->GetTipData();
+		if (td != NULL)
+			{
+			if (td->parWorkingCLA || td->parCachedCLA)
+				CLAs_found = true;
+			}
+		}
+	else
+		{
+		InternalData * id = nd->GetInternalData();
+		if (id != NULL)
+			{
+			if (id->parWorkingCLA || id->parCachedCLA || id->childWorkingCLA || id->childCachedCLA)
+				CLAs_found = true;
+			}
+		}
+    return CLAs_found;
+    }
+#endif
+
 int calcLnLLevel = 0;
 /*----------------------------------------------------------------------------------------------------------------------
 |	This is the function that needs to be called to recompute the log-likelihood. If `likelihood_root' is not NULL, 
@@ -1163,7 +1243,8 @@ double TreeLikelihood::calcLnL(
 	PHYCAS_ASSERT(nd->IsInternal());
 
     // Uncomment line below to force recalculation of all CLAs
-#if 0 && POLPY_NEWWAY    // store test    storeAllCLAs(t);
+#if POLPY_NEWWAY    // store test
+    //storeAllCLAs(t);
 #endif
 	// Calculate log-likelihood using nd as the likelihood root
 	double lnL = calcLnLFromNode(*nd);
@@ -1994,14 +2075,14 @@ unsigned TreeLikelihood::getNEvals()
 	}
 
 #if POLPY_NEWWAY
-/*----------------------------------------------------------------------------------------------------------------------
-|	Sets the boolean data member `debugging_now' to the value specified.
-*/
-void TreeLikelihood::setDebug(
-  bool on)  /**< is the value to which `debugging_now' should be set */
-    {
-    debugging_now = on;
-    }
+///*----------------------------------------------------------------------------------------------------------------------
+//|	Sets the boolean data member `debugging_now' to the value specified.
+//*/
+//void TreeLikelihood::setDebug(
+//  bool on)  /**< is the value to which `debugging_now' should be set */
+//    {
+//    debugging_now = on;
+//    }
 #endif
 
 /*----------------------------------------------------------------------------------------------------------------------

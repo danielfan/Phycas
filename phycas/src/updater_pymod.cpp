@@ -151,7 +151,7 @@ void updater_pymod()
 #if POLPY_NEWWAY
 		.def("goofed", &phycas::SamcMove::goof)
 		.def("ungoof", &phycas::SamcMove::ungoof)
-		.def("samcDebug", &phycas::SamcMove::samcDebug)
+		//.def("samcDebug", &phycas::SamcMove::samcDebug)
 #endif
 		;
 	class_<phycas::NCatMove, bases<phycas::MCMCUpdater>, 

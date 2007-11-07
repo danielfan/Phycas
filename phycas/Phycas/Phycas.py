@@ -455,6 +455,7 @@ class Phycas(object):
         Performs the SSAMC analysis.
         
         """
+        stop_at_cycle = -1
         # temp del: current_tree = make_random_4taxon_tree(addition_sequence[:4])
         current_level = 0
         prev_level = 0
@@ -471,16 +472,23 @@ class Phycas(object):
         ln_proposal_ratio = 0.0 # always 0.0 because \tilde{T}_{m,m-1} = \tilde{T}_{m,m+1} = 1/3
         ls_accepted = [0]*num_levels
         ls_tried = [0]*num_levels
-        doof = file('cf.txt', 'r').readlines()
+        doofvect = None
+        if os.path.exists('cf.txt'):
+            doofvect = file('cf.txt', 'r').readlines()
+            #raw_input('cf.txt found')
+        else:
+            dooffile = file('cf.txt', 'w')
+            #raw_input('cf.txt NOT found, recreating it')
         for cycle in xrange(self.ncycles):
             # POL temporary
-            if cycle == 727:
-                samc_move.samcDebug(True)
-                raw_input('stopped at beginning of cycle 727')
+            chain.tree.debugMode(False)
+            if cycle == stop_at_cycle:
+                chain.tree.debugMode(True)
+                raw_input('stopped at beginning of cycle %d' % stop_at_cycle)
             # proposal for changing current level
             u = chain.r.uniform()
             #print "uniform for cycle =", cycle, "is", u
-            chain.tree.debugCheckTree(False, True, 1)
+            #chain.tree.debugCheckTree(False, True, 1)
             proposed_level = current_level
             if u < 1.0/3.0:
                 if current_level > 0:
@@ -529,6 +537,7 @@ class Phycas(object):
             if samc_move.goofed():
                 raw_input('prev_ln_like incorrect in SAMC move')
                 samc_move.ungoof()
+                sys.exit('aborted due to goof')
 
             if ls.goofed():
                 raw_input('prev_ln_like incorrect in LS move')
@@ -536,13 +545,18 @@ class Phycas(object):
 
             outstr = "cycle = %d, level = %d: lnL =%*f %s" % (cycle, current_level, 15*current_level, lnL, c)
             print outstr
-            if doof[cycle].strip() != outstr:
-                print doof[cycle].strip(),' <-- expected'
-                sys.exit('output differs from expected at cycle %d' % cycle)
-            # doof.write("cycle = %d, level = %d: lnL =%*f %s\n" % (cycle, current_level, 15*current_level, lnL, c))
+            if chain.debugCheckForUncachedCLAs():
+                sys.exit('cached CLAs found at cycle %d' % cycle)
+            if doofvect:
+                if doofvect[cycle].strip() != outstr:
+                    print doofvect[cycle].strip(),' <-- expected'
+                    sys.exit('output differs from expected at cycle %d' % cycle)
+            else:
+                dooffile.write('%s\n' % outstr)
             prev_level = current_level
             counts[current_level] += 1
-        # doof.close()
+        if not doofvect:
+            dooffile.close()
         print "ls accept pct =", [n > 0 and (100.0*float(a)/float(n) or 0) for a,n in zip(ls_accepted,ls_tried)]
         print "theta vector = ", self.samc_theta
         print "counts = ", counts

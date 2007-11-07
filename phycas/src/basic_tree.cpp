@@ -28,7 +28,7 @@
 #	include "phycas/src/edge_iterators.hpp"
 #endif
 using namespace phycas;
-bool Tree::gDebugOutput = false;
+//bool Tree::gDebugOutput = true;
 /*----------------------------------------------------------------------------------------------------------------------
 |	Push node onto end of `internalNodeStorage' vector (nodes are stored rather than deleted to save having to reallocate them
 |	later.
@@ -893,16 +893,19 @@ std::string Tree::DebugWalkTree(bool preorder, unsigned verbosity)
 #if POLPY_NEWWAY
 void Tree::debugMode(bool turn_on)
 	{
-	Tree::gDebugOutput = turn_on;
-	std::cerr << ">>>>> debugMode(" << (turn_on ? "True" : "False") << ") <<<<<" << std::endl;
+	//Tree::gDebugOutput = turn_on;
+	debugOutput = turn_on;
+	//std::cerr << "@@@@@ debugMode(" << (turn_on ? "True" : "False") << ") @@@@@" << std::endl;
 	}
 #endif
 
 bool Tree::DebugCheckTree(bool allowDegTwo, bool checkDataPointers, int verbosity) const
 	{
 	/**temp*/
-	if (!Tree::gDebugOutput)
-		return true;
+	//if (!Tree::gDebugOutput)
+	//	return true;
+    if (!debugOutput)
+        return true;
 	const TreeNode * root = firstPreorder;
 	PHYCAS_ASSERT(root);
 	PHYCAS_ASSERT(root->par == NULL);

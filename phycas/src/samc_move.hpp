@@ -73,7 +73,7 @@ class SamcMove : public MCMCUpdater
 		void						viewProposedMove(bool yes);
 
 #if POLPY_NEWWAY    //SAMC
-        void                        samcDebug(bool turn_on_debugging) {samc_debug_mode = turn_on_debugging;}
+        //void                        samcDebug(bool turn_on_debugging) {samc_debug_mode = turn_on_debugging;}
         bool                        goof() {return goofed;}
         void                        ungoof() {goofed = false;}
 #endif
@@ -92,7 +92,8 @@ class SamcMove : public MCMCUpdater
 
 #if POLPY_NEWWAY    //SAMC
         bool                            goofed;
-        bool                            samc_debug_mode;
+        //bool                            samc_debug_mode;
+        double                          prev_ln_like;
 #endif
 
 		unsigned						num_taxa;							/**< The number of taxa */

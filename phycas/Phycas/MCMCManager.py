@@ -153,6 +153,20 @@ class LikelihoodCore:
         
         """
         return self.likelihood.calcLnL(self.tree)
+
+    def debugCheckForUncachedCLAs(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Scans tree for cached CLAs. If any are found, returns True. If no CLAs
+        are currently cached, returns False. False is the expected result,
+        because there should only be cached CLAs in the tree if we are in the
+        middle of performing a Metropolis-Hastings move. If a move has been
+        proposed, but not yet accepted or rejected, cached CLAs provide a way
+        to return to the pre-move state after rejection without having to
+        recalculate the likelihood.
+        
+        """
+        return self.likelihood.debugCheckForUncachedCLAs(self.tree)
         
 class MarkovChain(LikelihoodCore):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

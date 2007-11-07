@@ -47,7 +47,8 @@ SamcMove::SamcMove(
 	reset();
 #if POLPY_NEWWAY    //SAMC
     goofed = false;
-    samc_debug_mode = false;
+    //samc_debug_mode = false;
+    prev_ln_like = 0.0;
 #endif
 	}
 
@@ -95,7 +96,7 @@ TreeNode * SamcMove::chooseRandomAttachmentNode(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	.
+|	
 */
 bool SamcMove::extrapolate(
 	unsigned leaf_num, /**< */
@@ -104,13 +105,13 @@ bool SamcMove::extrapolate(
 	{
 	const unsigned ninternals_alloced = tree->GetNInternalsAllocated();
 	last_move_projection = false;
-    if (Tree::gDebugOutput)
-    	{
-    	std::cerr << "*** extrapolate: before doing anything: " << tree->DebugWalkTree(true, 1) << std::endl; //temporary
-	    std::cerr << "*** ninternals_alloced =  " << ninternals_alloced << std::endl; //temporary
-		tree->DebugCheckTree(false, true, 2);
-		std::cerr << "*** extrapolate: in tree checked" << std::endl; //temporary
-		}
+    //if (Tree::gDebugOutput)
+    //	{
+    //	std::cerr << "*** extrapolate: before doing anything: " << tree->DebugWalkTree(true, 1) << std::endl; //temporary
+	//    std::cerr << "*** ninternals_alloced =  " << ninternals_alloced << std::endl; //temporary
+	//	tree->DebugCheckTree(false, true, 2);
+	//	std::cerr << "*** extrapolate: in tree checked" << std::endl; //temporary
+	//	}
 
     // The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
 	// A proposed SamcMove cannot be accepted without changing edge lengths, so it is best to bail out now.
@@ -119,30 +120,30 @@ bool SamcMove::extrapolate(
 
 	ChainManagerShPtr p = chain_mgr.lock();
 	PHYCAS_ASSERT(p);
-	double prev_ln_like = p->getLastLnLike();
+	prev_ln_like = p->getLastLnLike();
 
     //POL temporary!
-    if (samc_debug_mode)
+    if (tree->debugOutput)
     	{
-        likelihood->startTreeViewer(tree, str(boost::format("SamcMove extrapolate (start): leaf_num = %d, prev_ln_like = %f") % leaf_num % prev_ln_like));
+        likelihood->startTreeViewer(tree, str(boost::format("SamcMove extrapolate (start!): leaf_num = %d, prev_ln_like = %f") % leaf_num % prev_ln_like));
         }
 
     leaf = tree->PopLeafNode();
     PHYCAS_ASSERT(leaf->GetNodeNumber() == leaf_num);
     leaf_sib = chooseRandomAttachmentNode(leaf_num);
     
-    if (Tree::gDebugOutput)
-        {
-        std::cerr << "*** extrapolate:  nodes chosen(but unmodified):" << std::endl; //temporary
-        std::cerr << "    leaf: "<< leaf->oneLineDebugReport() << std::endl; //temporary
-        std::cerr << "    leaf_sib: "<< leaf_sib->oneLineDebugReport() << std::endl; //temporary
-        }
+    //if (Tree::gDebugOutput)
+    //    {
+    //    std::cerr << "*** extrapolate:  nodes chosen(but unmodified):" << std::endl; //temporary
+    //    std::cerr << "    leaf: "<< leaf->oneLineDebugReport() << std::endl; //temporary
+    //    std::cerr << "    leaf_sib: "<< leaf_sib->oneLineDebugReport() << std::endl; //temporary
+    //    }
     tree_manipulator.InsertSubtreeIntoEdge(leaf, leaf_sib);
-    if (Tree::gDebugOutput)
-        {
-        std::cerr << "*** extrapolate:  tree structure changed" << std::endl; //temporary
-        tree->DebugCheckTree(false, true, 2);
-        }
+    //if (Tree::gDebugOutput)
+    //    {
+    //    std::cerr << "*** extrapolate:  tree structure changed" << std::endl; //temporary
+    //    tree->DebugCheckTree(false, true, 2);
+    //    }
     PHYCAS_ASSERT(ninternals_alloced == tree->GetNInternalsAllocated());
     
     leaf_sib_orig_edgelen = leaf_sib->GetEdgeLen();
@@ -156,7 +157,7 @@ bool SamcMove::extrapolate(
     leaf->SetEdgeLen(leaf_edgelen);
     
     //POL temporary!
-    if (samc_debug_mode)
+    if (tree->debugOutput)
         {
         leaf_sib->SelectNode();
         parent->SelectNode();
@@ -168,12 +169,12 @@ bool SamcMove::extrapolate(
     likelihood->useAsLikelihoodRoot(parent);
     likelihood->invalidateAwayFromNode(*parent);
     likelihood->invalidateBothEnds(leaf_sib);
-    likelihood->invalidateBothEnds(parent);
+    likelihood->invalidateBothEndsDiscardCache(parent); // wouldn't be necessary if nodes retrieved from storage were guaranteed to be clean
     tree->InvalidateNodeCounts();
     PHYCAS_ASSERT(ninternals_alloced == tree->GetNInternalsAllocated());
 
     //POL temporary!
-    if (samc_debug_mode)
+    if (tree->debugOutput)
         {
         likelihood->startTreeViewer(tree, str(boost::format("SamcMove extrapolate (before calcLnL): leaf = %d, leaf_sib = %d") % leaf->GetNodeNumber() % leaf_sib->GetNodeNumber()));
         }
@@ -181,7 +182,7 @@ bool SamcMove::extrapolate(
     double curr_ln_like = likelihood->calcLnL(tree);
 
     //POL temporary!
-    if (samc_debug_mode)
+    if (tree->debugOutput)
         {
         likelihood->startTreeViewer(tree, str(boost::format("SamcMove extrapolate (after calcLnL): curr_ln_like = %f") % curr_ln_like));
         }
@@ -204,11 +205,11 @@ bool SamcMove::extrapolate(
     double log_pkl_blk_ratio = log(getPkl(leaf_num, leaf_sib)) - log(leaf_sib_orig_edgelen);
     double ln_accept_ratio = theta_diff + curr_posterior - prev_posterior - log_pkl_blk_ratio + ln_proposal_ratio;
     const bool accepted = (ln_accept_ratio >= 0.0 || std::log(rng->Uniform()) <= ln_accept_ratio);
-    if (Tree::gDebugOutput)
-        {
-        std::cerr << "*** extrapolate before revert: " << tree->DebugWalkTree(true, 1) << std::endl; //temporary
-        tree->DebugCheckTree(false, true, 2);
-        }
+    //if (Tree::gDebugOutput)
+    //    {
+    //    std::cerr << "*** extrapolate before revert: " << tree->DebugWalkTree(true, 1) << std::endl; //temporary
+    //    tree->DebugCheckTree(false, true, 2);
+    //    }
     if (accepted)
         {
         p->setLastLnPrior(curr_ln_prior);
@@ -250,8 +251,16 @@ bool SamcMove::project(
     
     ChainManagerShPtr p = chain_mgr.lock();
     PHYCAS_ASSERT(p);
-    double prev_ln_like = p->getLastLnLike();
+    prev_ln_like = p->getLastLnLike();
     
+    if (tree->debugOutput)
+        {
+        likelihood->startTreeViewer(tree, str(boost::format("project (start): leaf_num = %d, prev_ln_like = %f") % leaf_num % prev_ln_like));
+        }
+
+    // The next line assumes that tip serving as root will never be chosen. This is (currently) guaranteed 
+    // by the fact that the tip node serving as the root is one of the original four taxa used to build
+    // the starting tree for SAMC and is never removed because the lowest level is the four-taxon level.
     leaf = tree->FindTipNode(leaf_num);
     PHYCAS_ASSERT(leaf != NULL);
     orig_edgelen = leaf->GetEdgeLen();
@@ -264,19 +273,36 @@ bool SamcMove::project(
     leaf_sib = leaf->FindNextSib();
     leaf_sib_orig_edgelen = leaf_sib->GetEdgeLen();
     
-    new_leaf_sib_parent = leaf_sib->GetParent();
-    
-    // This DeleteLeaf call will also delete parent and set leaf_sib's edge len
-    // 	to the sum of it's edge len and the parent's.
+    if (tree->debugOutput)
+        {
+        likelihood->startTreeViewer(tree, str(boost::format("project (before DeleteLeaf): leaf = %d, leaf_sib = %d, parent = %d") % leaf->GetNodeNumber() % leaf_sib->GetNodeNumber() % parent->GetNodeNumber()));
+        }
+
+    // This DeleteLeaf call will also delete parent and will add parent's edge len to leaf_sib's edge len
     tree_manipulator.DeleteLeaf(leaf);
-    TreeNode *lr = 	leaf_sib->GetParent();
-    if (!lr->IsInternal())
-        lr = leaf_sib;
-    likelihood->useAsLikelihoodRoot(lr);
-    
+    new_leaf_sib_parent = leaf_sib->GetParent();
+    if (!new_leaf_sib_parent->IsInternal())
+        new_leaf_sib_parent = leaf_sib;
+    if (tree->debugOutput)
+        {
+        likelihood->startTreeViewer(tree, str(boost::format("project (after DeleteLeaf, before invalidate): leaf = %d, leaf_sib = %d, new_leaf_sib_parent = %d") % leaf->GetNodeNumber() % leaf_sib->GetNodeNumber() % new_leaf_sib_parent->GetNodeNumber()));
+        }
+    likelihood->useAsLikelihoodRoot(new_leaf_sib_parent);
+    likelihood->invalidateAwayFromNode(*new_leaf_sib_parent);
     tree->InvalidateNodeCounts();
+
+    if (tree->debugOutput)
+        {
+        likelihood->startTreeViewer(tree, str(boost::format("project (before calcLnL): leaf = %d, leaf_sib = %d, new_leaf_sib_parent = %d") % leaf->GetNodeNumber() % leaf_sib->GetNodeNumber() % new_leaf_sib_parent->GetNodeNumber()));
+        }
+
     double curr_ln_like = likelihood->calcLnL(tree);
     
+    if (tree->debugOutput)
+        {
+        likelihood->startTreeViewer(tree, str(boost::format("project (after calcLnL): leaf = %d, leaf_sib = %d, new_leaf_sib_parent = %d") % leaf->GetNodeNumber() % leaf_sib->GetNodeNumber() % new_leaf_sib_parent->GetNodeNumber()));
+        }
+
     double curr_ln_prior = 0.0;
     double prev_ln_prior = p->calcExternalEdgeLenPriorUnnorm(orig_edgelen);
     prev_ln_prior += p->calcInternalEdgeLenPriorUnnorm(par_orig_edgelen);
@@ -340,49 +366,78 @@ void SamcMove::revert()
     {
     if (last_move_projection)
         {
+        if (tree->debugOutput)
+            {
+            likelihood->startTreeViewer(tree, str(boost::format("SamcMove project (before revert): new_leaf_sib_parent = %d") % new_leaf_sib_parent->GetNodeNumber()));
+            }
+
+        // Restore from cache before performing the reverse move because we originally invalidated after the forward move
+        likelihood->restoreFromCacheAwayFromNode(*new_leaf_sib_parent);
+
+        // Reverse move
         TreeNode * leafnd = tree->PopLeafNode();
         PHYCAS_ASSERT(leafnd == leaf);
         tree_manipulator.InsertSubtreeIntoEdge(leafnd, leaf_sib);
         leaf_sib->SetEdgeLen(leaf_sib->GetEdgeLen() - par_orig_edgelen);
         leaf->SetEdgeLen(orig_edgelen);
         leaf_sib->GetParent()->SetEdgeLen(par_orig_edgelen);
-        likelihood->useAsLikelihoodRoot(new_leaf_sib_parent);
-        //likelihood->restoreFromCacheAwayFromNode(*orig_lchild);
-        //likelihood->restoreFromCacheParentalOnly(orig_lchild);
-        //if (view_proposed_move)
-        //	{
-        //	orig_par->UnselectNode();
-        //	likelihood->startTreeViewer(tree, "Delete edge move REVERTED");
-        //	}
+
+        // Be sure to invalidate both ends of node used as likelihood root in case one or both of these CLAs were 
+        // invalid before the forward move and are now valid as a result of computing the likelihood after the forward move
+        likelihood->invalidateBothEndsDiscardCache(new_leaf_sib_parent);
+        if (tree->debugOutput)
+            {
+            likelihood->startTreeViewer(tree, str(boost::format("SamcMove project (after revert): new_leaf_sib_parent = %d") % new_leaf_sib_parent->GetNodeNumber()));
+            }
+
+#if 0 && POLPY_NEWWAY
+        likelihood->storeAllCLAs(tree);
+        double cfLnL = likelihood->calcLnL(tree);
+        if (fabs(cfLnL - prev_ln_like) > 1.e-8)
+            {
+            std::cerr << "*** goofed reverting projection move ***" << std::endl;
+            goofed = true;
+            }
+#endif
         }
     else
         {
         //POL temporary!
-        if (samc_debug_mode)
+        if (tree->debugOutput)
             {
-            likelihood->startTreeViewer(tree, str(boost::format("SamcMove extrapolate (before revert): curr_ln_like = %f") % curr_ln_like));
+            likelihood->startTreeViewer(tree, str(boost::format("SamcMove extrapolate (before revert): curr_ln_like = %f, parent = %d") % curr_ln_like % parent->GetNodeNumber()));
             }
+        likelihood->restoreFromCacheAwayFromNode(*parent);
+        likelihood->restoreFromCacheBothEnds(leaf_sib);
         tree_manipulator.DeleteLeaf(leaf);
         leaf_sib->SetEdgeLen(leaf_sib_orig_edgelen);
         TreeNode * lr = (leaf_sib->IsInternal() ? leaf_sib : leaf_sib->GetParent());
         PHYCAS_ASSERT(lr);
         likelihood->useAsLikelihoodRoot(lr);
-        //likelihood->restoreFromCacheAwayFromNode(*lr);
-        likelihood->invalidateAwayFromNode(*leaf_sib);
-        likelihood->invalidateBothEnds(leaf_sib);
+        //likelihood->invalidateAwayFromNode(*leaf_sib);
+        //likelihood->invalidateBothEnds(leaf_sib);
+#if 0 && POLPY_NEWWAY
+        likelihood->storeAllCLAs(tree);
+        double cfLnL = likelihood->calcLnL(tree);
+        if (fabs(cfLnL - prev_ln_like) > 1.e-8)
+            {
+            std::cerr << "*** goofed reverting extrapolate move ***" << std::endl;
+            goofed = true;
+            }
+#endif
         //POL temporary!
-        if (samc_debug_mode)
+        if (tree->debugOutput)
             {
             likelihood->startTreeViewer(tree, str(boost::format("SamcMove extrapolate (after revert): curr_ln_like = %f") % curr_ln_like));
             }
         }
     tree->InvalidateNodeCounts();
     reset();
-    if (Tree::gDebugOutput)
-        {
-        std::cerr << "*** after revert: " << tree->DebugWalkTree(true, 1) << std::endl; //temporary
-        tree->DebugCheckTree(false, true, 2);
-        }
+    //if (Tree::gDebugOutput)
+    //    {
+    //    std::cerr << "*** after revert: " << tree->DebugWalkTree(true, 1) << std::endl; //temporary
+    //    tree->DebugCheckTree(false, true, 2);
+    //    }
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -401,22 +456,36 @@ void SamcMove::accept()
     {
     if (last_move_projection)
         {
-        TreeNode *lr = 	(leaf_sib->IsInternal() ? leaf_sib : leaf_sib->GetParent());
-        likelihood->useAsLikelihoodRoot(lr);
-        likelihood->discardCacheAwayFromNode(*leaf_sib);
-        if (view_proposed_move)
-            likelihood->startTreeViewer(tree, "Delete edge move ACCEPTED");
+        //TreeNode * lr = 	(leaf_sib->IsInternal() ? leaf_sib : leaf_sib->GetParent());
+        if (tree->debugOutput)
+            {
+            likelihood->startTreeViewer(tree, str(boost::format("project before accept: leaf_sib = %d, new_leaf_sib_parent = %d") % leaf_sib->GetNodeNumber() % new_leaf_sib_parent->GetNodeNumber()));
+            }
+        //likelihood->useAsLikelihoodRoot(lr);
+        likelihood->discardCacheBothEnds(new_leaf_sib_parent);
+        likelihood->discardCacheAwayFromNode(*new_leaf_sib_parent); // POL was leaf_sib but that was incorrect(?)
+        if (tree->debugOutput)
+            {
+            likelihood->startTreeViewer(tree, "project after accept");
+            }
         }
     else
         {
+        if (tree->debugOutput)
+            {
+            likelihood->startTreeViewer(tree, str(boost::format("extrapolate before accept: leaf_sib = %d, parent = %d") % leaf_sib->GetNodeNumber() % parent->GetNodeNumber()));
+            }
         // Keeping added edge, where orig_par was original polytomous node and orig_lchild was the added node
         likelihood->useAsLikelihoodRoot(leaf_sib->GetParent());
-        likelihood->discardCacheAwayFromNode(*leaf_sib);
+        //likelihood->discardCacheAwayFromNode(*leaf_sib);
+        likelihood->discardCacheAwayFromNode(*parent);
         likelihood->discardCacheBothEnds(leaf_sib);
-        if (view_proposed_move)
-            likelihood->startTreeViewer(tree, "extrapolate move ACCEPTED");
+        if (tree->debugOutput)
+            {
+            likelihood->startTreeViewer(tree, "extrapolate move after extrapolate move accepted");
+            }
         }
-    likelihood->invalidateAwayFromNode(*new_leaf_sib_parent);
+    //likelihood->invalidateAwayFromNode(*new_leaf_sib_parent);
     reset();
     }
 

@@ -173,6 +173,9 @@ inline void Tree::Clear()
 	treeid_valid		= false;
 	numbers_from_names	= false;
     tree_scale          = 1.0;
+#if POLPY_NEWWAY
+    debugOutput         = false;
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

@@ -30,6 +30,9 @@ namespace phycas
 */
 inline LargetSimonMove::LargetSimonMove() : MCMCUpdater()
 	{
+#if POLPY_NEWWAY
+    goofed = false;
+#endif
 	topol_changed	= false;
 	lambda			= 0.2;
 	m				= 0.0;

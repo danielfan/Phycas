@@ -160,6 +160,10 @@ class TreeLikelihood
 
 		TreeNode *						storeAllCLAs(TreeShPtr t);
 		bool							debugCheckCLAsRemainInTree(TreeShPtr t) const;
+#if POLPY_NEWWAY
+        bool                            debugCheckForUncachedCLAs(TreeShPtr t) const;
+        bool                            debugCheckCLAsRemainInNode(TreeNode * nd) const;
+#endif
 
 		bool							isValid(const TreeNode *focal, const TreeNode *avoidNd);
 		void 							refreshCLA(TreeNode & nd, const TreeNode * avoid);

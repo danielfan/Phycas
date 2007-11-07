@@ -127,23 +127,23 @@ void TreeManip::InsertSubtreeIntoEdge(
     TreeNode * new_node = tree->GetNewNode();
 
     // add new_node to edge_nd->par
-	if (Tree::gDebugOutput)
-    	{
-		std::cerr << "*** InsertSubtreeIntoEdge:  add new_node to edge_nd->par" << std::endl; //temporary
-		std::cerr << "new_node" << new_node->oneLineDebugReport() << std::endl;
-		std::cerr << "edge_nd" << edge_nd->oneLineDebugReport() << std::endl;
-		}
+	//if (Tree::gDebugOutput)
+    //	{
+	//	std::cerr << "*** InsertSubtreeIntoEdge:  add new_node to edge_nd->par" << std::endl; //temporary
+	//	std::cerr << "new_node" << new_node->oneLineDebugReport() << std::endl;
+	//	std::cerr << "edge_nd" << edge_nd->oneLineDebugReport() << std::endl;
+	//	}
 	PHYCAS_ASSERT(edge_nd->par);
 	InsertSubtree(new_node, edge_nd->par, TreeManip::kOnRight);
 	tree->DebugCheckTree(false, false, 2);
 
     // add subtree to new_node
     InsertSubtree(subtree, new_node, TreeManip::kOnRight);
-	if (Tree::gDebugOutput)
-    	{
-		std::cerr << "*** InsertSubtreeIntoEdge:  add subtree to new_node" << std::endl; //temporary
-		tree->DebugCheckTree(true, true, 2);
-		}
+	//if (Tree::gDebugOutput)
+    //	{
+	//	std::cerr << "*** InsertSubtreeIntoEdge:  add subtree to new_node" << std::endl; //temporary
+	//	tree->DebugCheckTree(true, true, 2);
+	//	}
     // make edge_nd a child of new_node
     SibToChild(new_node, edge_nd,  TreeManip::kOnRight);
     }
@@ -980,6 +980,13 @@ void TreeManip::DeleteLeaf(
 		lchild->par = u_par->par;
 		lchild->prevPreorder = u_par->prevPreorder;
 		u_par->prevPreorder->nextPreorder = lchild;
+
+        // Detach and then delete u_par
+	    u_par->lChild       = NULL;
+	    u_par->rSib			= NULL;
+	    u_par->par			= NULL;
+	    u_par->prevPreorder = NULL;
+	    u_par->nextPreorder = NULL;
 		tree->StoreInternalNode(u_par);
 		}
 
@@ -1141,11 +1148,11 @@ void TreeManip::BuildTreeFromID(
 	tree->firstPreorder = rootNode;
 	tree->TraverseTree();
 
-	if (Tree::gDebugOutput)
-    	{
-		std::cerr << "GetNLeaves() = " << tree->GetNLeaves() << std::endl;
-		std::cerr << "nlvs = " << nlvs << std::endl;
-		}
+	//if (Tree::gDebugOutput)
+    //	{
+	//	std::cerr << "GetNLeaves() = " << tree->GetNLeaves() << std::endl;
+	//	std::cerr << "nlvs = " << nlvs << std::endl;
+	//	}
 	PHYCAS_ASSERT(tree->GetNLeaves() == nlvs);
 	PHYCAS_ASSERT(rootNode == tree->GetFirstPreorder());
 
@@ -1300,11 +1307,11 @@ void TreeManip::SimpleBuildTreeFromID(
 	tree->firstPreorder = rootNode;
 	tree->TraverseTree();
 
-	if (Tree::gDebugOutput)
-    	{
-		std::cerr << "GetNLeaves() = " << tree->GetNLeaves() << std::endl;
-		std::cerr << "nlvs = " << nlvs << std::endl;
-		}
+	//if (Tree::gDebugOutput)
+    //	{
+	//	std::cerr << "GetNLeaves() = " << tree->GetNLeaves() << std::endl;
+	//	std::cerr << "nlvs = " << nlvs << std::endl;
+	//	}
 	//PHYCAS_ASSERT(tree->GetNLeaves() == nlvs);
 	PHYCAS_ASSERT(rootNode == tree->GetFirstPreorder());
 
