@@ -383,7 +383,7 @@ class MarkovChain(LikelihoodCore):
             self.chain_manager.addMove(self.bush_move)
 
         if self.phycas.doing_samc:
-            self.samc_move = Likelihood.SamcMove(self.phycas.starting_edgelen_dist)
+            self.samc_move = Likelihood.SamcMove(self.starting_edgelen_dist)
 
             # Continue setting up SAMC move object
             self.samc_move.setName("SAMC move")

@@ -8,8 +8,8 @@ try:
 except NameError:
     p.data_file_name = os.path.join("phycas", "Tests","Data", "green.nex")
 p.default_model = 'jc'
-p.ncycles = 20000
-p.random_seed = 47383
+p.ncycles = 100 # 20000
+p.random_seed = 39599
 p.outfile_prefix = 'samc_output'
 p.samc()
 

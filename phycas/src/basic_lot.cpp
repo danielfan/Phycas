@@ -77,7 +77,7 @@ Lot::~Lot()
 	return curr_seed * 4.6566128575e-10;
 #else
 	double retval = curr_seed * 4.6566128575e-10;
-	std::cerr << num_seeds_generated << " -> " << retval << "(" << file << ":" << line << ")" << std::endl;
+	std::cerr << num_seeds_generated << " -> " << retval << std::endl;
 	num_seeds_generated++;
 	return retval;
 #endif

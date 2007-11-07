@@ -83,6 +83,7 @@ TreeNode * SamcMove::chooseRandomAttachmentNode(
   unsigned leaf_k)	  /**< is the leaf we are adding (for extrapolation) or subtracting (for projection) */
 	{
 	calcPk(leaf_k);
+    std::cerr << "****** SamcMove::chooseRandomAttachmentNode: rng->MultinomialDraw ********" << std::endl;
 	unsigned i = rng->MultinomialDraw(&pvect[0], pvect.size());
 	unsigned curr = 0;
 	preorder_iterator nd = tree->begin();
@@ -147,12 +148,14 @@ bool SamcMove::extrapolate(
     PHYCAS_ASSERT(ninternals_alloced == tree->GetNInternalsAllocated());
     
     leaf_sib_orig_edgelen = leaf_sib->GetEdgeLen();
+    std::cerr << "****** SamcMove::extrapolate 1: rng->Uniform ********" << std::endl;
     double u = rng->Uniform();
     double new_leaf_sib_edgelen = u*leaf_sib_orig_edgelen;
     double parent_edgelen = leaf_sib_orig_edgelen - new_leaf_sib_edgelen;
     leaf_sib->SetEdgeLen(new_leaf_sib_edgelen);
     new_leaf_sib_parent = parent = leaf_sib->GetParent();
     parent->SetEdgeLen(parent_edgelen);
+    std::cerr << "****** SamcMove::extrapolate: term_edge_dist->Sample() ********" << std::endl;
     double leaf_edgelen = term_edge_dist->Sample();
     leaf->SetEdgeLen(leaf_edgelen);
     
@@ -204,6 +207,8 @@ bool SamcMove::extrapolate(
     const double curr_posterior = curr_ln_like + curr_ln_prior;
     double log_pkl_blk_ratio = log(getPkl(leaf_num, leaf_sib)) - log(leaf_sib_orig_edgelen);
     double ln_accept_ratio = theta_diff + curr_posterior - prev_posterior - log_pkl_blk_ratio + ln_proposal_ratio;
+    if (ln_accept_ratio < 0.0)
+        std::cerr << "****** SamcMove::extrapolate 2: rng->Uniform ********" << std::endl;
     const bool accepted = (ln_accept_ratio >= 0.0 || std::log(rng->Uniform()) <= ln_accept_ratio);
     //if (Tree::gDebugOutput)
     //    {
@@ -321,6 +326,8 @@ bool SamcMove::project(
     double curr_posterior = curr_ln_like + curr_ln_prior;
     double log_pkl_blk_ratio = log(getPkl(leaf_num, leaf_sib)) - log(new_leaf_sib_edgelen);
     double ln_accept_ratio = theta_diff + curr_posterior - prev_posterior + log_pkl_blk_ratio + ln_proposal_ratio;
+    if (ln_accept_ratio < 0.0)
+        std::cerr << "****** SamcMove::project: rng->Uniform ********" << std::endl;
     const bool accepted = (ln_accept_ratio >= 0.0 || std::log(rng->Uniform()) <= ln_accept_ratio);
     if (accepted)
         {
