@@ -39,8 +39,7 @@ using namespace phycas;
 |	finally calls BushMove::reset to re-initialize all other variables.
 */
 BushMove::BushMove()
-  :MCMCUpdater(),
-  view_proposed_move(false)
+  :MCMCUpdater()
 	{
 	edgelen_mean = 1.0;
 	topo_prior_calculator = TopoPriorCalculatorShPtr(new TopoPriorCalculator());
@@ -75,8 +74,7 @@ bool BushMove::update()
 
 	double curr_ln_like				= likelihood->calcLnL(tree);
 
-	if (view_proposed_move)
-		likelihood->startTreeViewer(tree, str(boost::format("Bush move PROPOSED (%s)") % (add_edge_move_proposed ? "add edge" : "delete edge")));
+	//likelihood->startTreeViewer(tree, str(boost::format("Bush move PROPOSED (%s)") % (add_edge_move_proposed ? "add edge" : "delete edge")));
 
 	double curr_ln_prior			= 0.0;
 	double prev_ln_prior			= 0.0;
@@ -413,8 +411,7 @@ void BushMove::revert()
 		likelihood->useAsLikelihoodRoot(orig_par);
 		likelihood->restoreFromCacheAwayFromNode(*orig_par);
 
-		if (view_proposed_move)
-			likelihood->startTreeViewer(tree, "Add edge move REVERTED");
+		//likelihood->startTreeViewer(tree, "Add edge move REVERTED");
 
 		tree->InvalidateNodeCounts();
 		}
@@ -446,11 +443,8 @@ void BushMove::revert()
 		likelihood->restoreFromCacheAwayFromNode(*orig_lchild);
 		likelihood->restoreFromCacheParentalOnly(orig_lchild);
 
-		if (view_proposed_move)
-			{
-			orig_par->UnselectNode();
-			likelihood->startTreeViewer(tree, "Delete edge move REVERTED");
-			}
+		//orig_par->UnselectNode();
+		//likelihood->startTreeViewer(tree, "Delete edge move REVERTED");
 
 		tree->InvalidateNodeCounts();
 		}
@@ -614,8 +608,7 @@ void BushMove::proposeAddEdgeMove(TreeNode * u)
 			}
 		}
 
-	if (view_proposed_move)
-		orig_lchild->SelectNode();
+	//orig_lchild->SelectNode();
 
 	likelihood->useAsLikelihoodRoot(orig_lchild);
 	likelihood->invalidateAwayFromNode(*orig_lchild);
@@ -702,8 +695,8 @@ void BushMove::proposeDeleteEdgeMove(TreeNode * u)
 
 	tree_manipulator.DeleteLeaf(u);
 
-	if (view_proposed_move)
-		orig_par->SelectNode();
+	//orig_par->SelectNode();
+
 	likelihood->useAsLikelihoodRoot(orig_par);
 	likelihood->invalidateAwayFromNode(*orig_par);
 

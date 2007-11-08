@@ -326,7 +326,6 @@ class MarkovChain(LikelihoodCore):
         self.larget_simon_move.setTreeLikelihood(self.likelihood)
         self.larget_simon_move.setLot(self.r)
         self.larget_simon_move.setLambda(self.phycas.ls_move_lambda)
-        self.larget_simon_move.viewProposedMove(self.phycas.ls_move_debug)
         if self.model.edgeLengthsFixed():
             self.larget_simon_move.fixParameter()
         self.chain_manager.addMove(self.larget_simon_move)
@@ -392,7 +391,6 @@ class MarkovChain(LikelihoodCore):
             self.samc_move.setModel(self.model)
             self.samc_move.setTreeLikelihood(self.likelihood)
             self.samc_move.setLot(self.r)
-            self.samc_move.viewProposedMove(self.phycas.samc_move_debug)
             if self.model.edgeLengthsFixed():
                 self.samc_move.fixParameter()
             self.samc_move.finalize()

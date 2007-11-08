@@ -30,25 +30,12 @@ namespace phycas
 */
 inline LargetSimonMove::LargetSimonMove() : MCMCUpdater()
 	{
-#if POLPY_NEWWAY
-    goofed = false;
-#endif
 	topol_changed	= false;
 	lambda			= 0.2;
 	m				= 0.0;
 	mstar			= 0.0;
 	three_edgelens.reserve(3);
-	view_proposed_move = false;
 	reset();
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	If `yes' is true, subsequent calls to LargetSimonMove::update will pop up a graphical tree viewer to show the edges
-|	affected by the move.
-*/
-inline void LargetSimonMove::viewProposedMove(bool yes)
-	{
-	view_proposed_move = yes;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

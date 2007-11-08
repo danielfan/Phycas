@@ -94,11 +94,6 @@ void updater_pymod()
 		.def("setLambda", &phycas::LargetSimonMove::setLambda)
 		.def("getLambda", &phycas::LargetSimonMove::getLambda)
 		.def("topologyChanged", &phycas::LargetSimonMove::topologyChanged)
-		.def("viewProposedMove", &phycas::LargetSimonMove::viewProposedMove)
-#if POLPY_NEWWAY
-		.def("goofed", &phycas::LargetSimonMove::goof)
-		.def("ungoof", &phycas::LargetSimonMove::ungoof)
-#endif
 		;
 	class_<phycas::TreeScalerMove, bases<phycas::MCMCUpdater>, 
 		boost::noncopyable, boost::shared_ptr<phycas::TreeScalerMove> >("TreeScalerMove") 
@@ -139,7 +134,6 @@ void updater_pymod()
 		.def("setEdgeLenDistMean", &phycas::BushMove::setEdgeLenDistMean)
 		.def("finalize", &phycas::BushMove::finalize)
 		.def("getTopoPriorCalculator", &phycas::BushMove::getTopoPriorCalculator)
-		.def("viewProposedMove", &phycas::BushMove::viewProposedMove)
 		;
 	class_<phycas::SamcMove, bases<phycas::MCMCUpdater>, 
 		boost::noncopyable, boost::shared_ptr<phycas::SamcMove> >("SamcMove", init<ProbDistShPtr>()) 
@@ -147,12 +141,6 @@ void updater_pymod()
 		.def("project", &phycas::SamcMove::project)
 		.def("update", &phycas::SamcMove::update)
 		.def("finalize", &phycas::SamcMove::finalize)
-		.def("viewProposedMove", &phycas::SamcMove::viewProposedMove)
-#if POLPY_NEWWAY
-		.def("goofed", &phycas::SamcMove::goof)
-		.def("ungoof", &phycas::SamcMove::ungoof)
-		//.def("samcDebug", &phycas::SamcMove::samcDebug)
-#endif
 		;
 	class_<phycas::NCatMove, bases<phycas::MCMCUpdater>, 
 		boost::noncopyable, boost::shared_ptr<phycas::NCatMove> >("NCatMove") 

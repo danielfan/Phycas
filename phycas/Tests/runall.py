@@ -61,6 +61,7 @@ runTest(outFile, "GTRTest", ["gtr_test.p", "gtr_test.t"])
 #runTest(outFile, "LikelihoodTest", ["simulated.nex", "check.nex"])
 #runTest(outFile, "Polytomies", ["simHKY.nex"] + mcmcOutputs(["HKYpolytomy"]))
 runTest(outFile, "Simulator", ["simulated.nex"])
+runTest(outFile, "SAMCTest", ["cf.txt", "samc_output.p", "samc_output.t"])
 
 if sys.platform == 'win32':
     raw_input('Press any key to quit')

@@ -32,15 +32,6 @@ inline TopoPriorCalculatorShPtr BushMove::getTopoPriorCalculator()
 	return topo_prior_calculator;
 	}
 
-/*----------------------------------------------------------------------------------------------------------------------
-|	If `yes' is true, subsequent calls to BushMove::update will pop up a graphical tree viewer to show the edges 
-|	affected by the move.
-*/
-inline void BushMove::viewProposedMove(bool yes)
-	{
-	view_proposed_move = yes;
-	}
-
 /*--------------------------------------------------------------------------------------------------------------------------
 |	Setup `edgelen_dist' data member.
 */
@@ -73,8 +64,7 @@ inline void BushMove::accept()
 		likelihood->discardCacheAwayFromNode(*orig_lchild);
 		likelihood->discardCacheBothEnds(orig_lchild);
 
-		if (view_proposed_move)
-			likelihood->startTreeViewer(tree, "Add edge move ACCEPTED");
+		//likelihood->startTreeViewer(tree, "Add edge move ACCEPTED");
 		}
 	else
 		{
@@ -82,8 +72,7 @@ inline void BushMove::accept()
 		likelihood->useAsLikelihoodRoot(orig_par);
 		likelihood->discardCacheAwayFromNode(*orig_par);
 
-		if (view_proposed_move)
-			likelihood->startTreeViewer(tree, "Delete edge move ACCEPTED");
+		//likelihood->startTreeViewer(tree, "Delete edge move ACCEPTED");
 		}
 
 	reset();

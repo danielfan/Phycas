@@ -55,10 +55,7 @@ bool LargetSimonMove::update()
 
 	curr_ln_like = likelihood->calcLnL(tree);
 
-	if (view_proposed_move)
-		{
-		likelihood->startTreeViewer(tree, str(boost::format("Larget-Simon move PROPOSED (topology %s)") % (topol_changed ? "changed" : "unchanged")));
-		}
+	//likelihood->startTreeViewer(tree, str(boost::format("Larget-Simon move PROPOSED (topology %s)") % (topol_changed ? "changed" : "unchanged")));
 
 	double prev_ln_prior = 0.0;
 	if (star_tree_proposal)
@@ -505,8 +502,7 @@ void LargetSimonMove::revert()
 		likelihood->restoreFromCacheAwayFromNode(*ndY);
 		likelihood->restoreFromCacheParentalOnly(ndY);
 
-		if (view_proposed_move)
-			likelihood->startTreeViewer(tree, "Larget-Simon move REVERTED");
+		//likelihood->startTreeViewer(tree, "Larget-Simon move REVERTED");
 
 		ndX->UnselectNode();
 		ndY->UnselectNode();
@@ -529,8 +525,7 @@ void LargetSimonMove::accept()
 		likelihood->discardCacheAwayFromNode(*orig_node);
 		likelihood->discardCacheBothEnds(orig_node);
 
-		if (view_proposed_move)
-			likelihood->startTreeViewer(tree, "Larget-Simon move ACCEPTED");
+		//likelihood->startTreeViewer(tree, "Larget-Simon move ACCEPTED");
 
 		orig_node->UnselectNode();
 		}
@@ -542,8 +537,7 @@ void LargetSimonMove::accept()
 		likelihood->discardCacheAwayFromNode(*ndY);
 		likelihood->discardCacheBothEnds(ndY);
 
-		if (view_proposed_move)
-			likelihood->startTreeViewer(tree, "Larget-Simon move ACCEPTED");
+		//likelihood->startTreeViewer(tree, "Larget-Simon move ACCEPTED");
 
 		ndX->UnselectNode();
 		ndY->UnselectNode();

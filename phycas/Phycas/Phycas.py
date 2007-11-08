@@ -38,31 +38,32 @@ class Phycas(object):
         self.verbose                = True      # you will get more output if True, less output if False
         self.quiet                  = False     # if True, output will only be sent to the log file if open (see below); if False, output will be sent to the console as well
         self.outfile_prefix         = None      # If None, parameter and tree files created will have a name beginning with the name of the data file; if provided, this prefix will form the first part of the parameter and tree file names
+
         # Variables associated with substitution models (except for edge lengths)
         self.default_model          = 'hky'     # Can be 'jc', 'hky' or 'gtr'
 
         self.relrate_prior          = ExponentialDist(1.0)
         self.starting_relrates      = [1.0, 4.0, 1.0, 1.0, 4.0, 1.0]
-        self.fix_relrates           = False # new
+        self.fix_relrates           = False 
 
-        self.kappa_prior            = ExponentialDist(1.0) # new
+        self.kappa_prior            = ExponentialDist(1.0) 
         self.starting_kappa         = 4.0
-        self.fix_kappa              = False # new
+        self.fix_kappa              = False 
 
         self.num_rates              = 1         # default is no rate heterogeneity (i.e. 1 rate)
         self.gamma_shape_prior      = ExponentialDist(1.0)
         self.starting_shape         = 0.5
-        self.fix_shape              = False # new
+        self.fix_shape              = False 
         self.use_inverse_shape      = False      # if True, gamma_shape_prior is applied to 1/shape rather than shape
 
         self.estimate_pinvar        = False
         self.pinvar_prior           = BetaDist(1.0, 1.0)
         self.starting_pinvar        = 0.2
-        self.fix_pinvar             = False # new
+        self.fix_pinvar             = False 
 
         self.base_freq_param_prior  = ExponentialDist(1.0)
-        self.starting_freqs         = [1.0, 1.0, 1.0, 1.0] # new
-        self.fix_freqs              = False # new
+        self.starting_freqs         = [1.0, 1.0, 1.0, 1.0] 
+        self.fix_freqs              = False 
 
         # Variables associated with the source of data        
         self.data_source            = 'file'    # Specify None to explore the joint prior or to simulate data; if 'file', self.data_file_name should be a valid nexus file name
@@ -93,9 +94,10 @@ class Phycas(object):
         self.bush_move_weight       = 100       # Bush moves will be performed this many times per cycle if
         self.bush_move_debug        = False     # If set to true, TreeViewer will pop up on each Bush move update showing edges affected by the proposed move
 
+        # Variables associated with SAMC analyses
         self.doing_samc             = False     # if True, using Cheon and Liang "SSAMC" method
         self.samc_move_edgelen_mean = 1.0       # specifies mean of exponential edge length generation distribution used by SamcMove when new edges are created
-        self.samc_move_debug        = False     # If set to true, TreeViewer will pop up on each Samc move update showing edges affected by the proposed move
+        self.samc_move_debug        = False     # If set to True, output will be saved to a file named cf.txt (if it doesn't exist) or, if cf.txt already exists, the output will be compared to cf.txt and the program will halt if a discrepency is found
         self.samc_t0                = 10000.0   # samc_gain_factor = samc_t0/max(samc_t0, cycle)
         self.samc_move_weight       = 1         # number of times per cycle that SAMC moves will be performed (currently unused because SAMC moves are not used in standard MCMC analyses)
 
@@ -120,11 +122,11 @@ class Phycas(object):
         # hyperparameters (should two hyperparameters be used)
         self.using_hyperprior       = True      
         self.edgelen_hyperprior     = InverseGammaDist(2.1, 1.0/1.1)
-        self.starting_edgelen_hyperparam = 0.05 # new  #POL doesn't do anything! currently ignored
-        self.fix_edgelen_hyperparam = False # new
+        self.starting_edgelen_hyperparam = 0.05 #POL doesn't do anything! currently ignored
+        self.fix_edgelen_hyperparam = False 
         
         self.edgelen_dist           = ExponentialDist(2.0)
-        self.fix_edgelens           = False # new
+        self.fix_edgelens           = False 
         
         # Variables associated with initializing the MCMC sampler
         self.starting_edgelen_dist  = ExponentialDist(10.0) # Used to select the starting edge lengths when starting_tree_source is 'random'
@@ -455,8 +457,9 @@ class Phycas(object):
         Performs the SSAMC analysis.
         
         """
-        stop_at_cycle = -1
-        # temp del: current_tree = make_random_4taxon_tree(addition_sequence[:4])
+        if self.samc_move_debug:
+            stop_at_cycle = -1  # set this to the cycle you want to examine in detail, or -1 to ignore
+
         current_level = 0
         prev_level = 0
         addseq = self.addition_sequence
@@ -472,23 +475,24 @@ class Phycas(object):
         ln_proposal_ratio = 0.0 # always 0.0 because \tilde{T}_{m,m-1} = \tilde{T}_{m,m+1} = 1/3
         ls_accepted = [0]*num_levels
         ls_tried = [0]*num_levels
-        doofvect = None
-        if os.path.exists('cf.txt'):
-            doofvect = file('cf.txt', 'r').readlines()
-            #raw_input('cf.txt found')
-        else:
-            dooffile = file('cf.txt', 'w')
-            #raw_input('cf.txt NOT found, recreating it')
+        if self.samc_move_debug:
+            outvect = None
+            if os.path.exists('cf.txt'):
+                outvect = file('cf.txt', 'r').readlines()
+            else:
+                outfile = file('cf.txt', 'w')
+
+        # Start of the main SAMC loop        
         for cycle in xrange(self.ncycles):
-            # POL temporary
-            chain.tree.debugMode(False)
-            if cycle == stop_at_cycle:
-                chain.tree.debugMode(True)
-                raw_input('stopped at beginning of cycle %d' % stop_at_cycle)
+
+            if self.samc_move_debug:
+                chain.tree.debugMode(False)
+                if cycle == stop_at_cycle:
+                    chain.tree.debugMode(True)
+                    raw_input('Stopped at beginning of cycle %d. Press enter to continue...' % stop_at_cycle)
+
             # proposal for changing current level
             u = chain.r.uniform()
-            #print "uniform for cycle =", cycle, "is", u
-            #chain.tree.debugCheckTree(False, True, 1)
             proposed_level = current_level
             if u < 1.0/3.0:
                 if current_level > 0:
@@ -499,7 +503,6 @@ class Phycas(object):
                     
             if proposed_level == current_level:
                 c = "*"
-                #ls.setSaveDebugInfo(True)
                 samc_move.setSaveDebugInfo(True)
                 if ls.update():
                     ls_accepted[current_level] += 1
@@ -508,7 +511,6 @@ class Phycas(object):
                 else:
                     ls_tried[current_level] += 1
                     c = "* :("
-                #print '%s | %s\n' % (ls.getName(), ls.getDebugInfo())
             elif proposed_level > current_level:
                 leaf_num = self.addition_sequence[proposed_level + 3]
                 theta_diff = self.samc_theta[current_level] - self.samc_theta[proposed_level]
@@ -526,41 +528,41 @@ class Phycas(object):
                 else:
                     c = "- :("                    
 
-            # bump up the normalizing constant for the current level
+            # Bump up the normalizing constant for the current level
             gain_factor = self.samc_t0/max([self.samc_t0, float(cycle)])
             self.samc_theta[current_level] += gain_factor
             lnL = chain.calcLnLikelihood()
 
-            #if current_level == 6:  # instead of 6, should be highest level
             self.mcmc_manager.recordSample(cycle)
-
-            if samc_move.goofed():
-                raw_input('prev_ln_like incorrect in SAMC move')
-                samc_move.ungoof()
-                sys.exit('aborted due to goof')
-
-            if ls.goofed():
-                raw_input('prev_ln_like incorrect in LS move')
-                ls.ungoof()
 
             outstr = "cycle = %d, level = %d: lnL =%*f %s" % (cycle, current_level, 15*current_level, lnL, c)
             print outstr
-            if chain.debugCheckForUncachedCLAs():
-                sys.exit('cached CLAs found at cycle %d' % cycle)
-            if doofvect:
-                if doofvect[cycle].strip() != outstr:
-                    print doofvect[cycle].strip(),' <-- expected'
-                    sys.exit('output differs from expected at cycle %d' % cycle)
-            else:
-                dooffile.write('%s\n' % outstr)
+
+            if self.samc_move_debug:
+                #if chain.debugCheckForUncachedCLAs():
+                #    sys.exit('cached CLAs found at cycle %d' % cycle)
+                if outvect:
+                    if outvect[cycle].strip() != outstr:
+                        print outvect[cycle].strip(),' <-- expected'
+                        sys.exit('output differs from expected at cycle %d' % cycle)
+                else:
+                    outfile.write('%s\n' % outstr)
+
             prev_level = current_level
             counts[current_level] += 1
-        if not doofvect:
-            dooffile.close()
+            
+        if self.samc_move_debug and not outvect:
+            outfile.close()
+            
         print "ls accept pct =", [n > 0 and (100.0*float(a)/float(n) or 0) for a,n in zip(ls_accepted,ls_tried)]
         print "theta vector = ", self.samc_theta
         print "counts = ", counts
-        print "mean   = ", sum(counts)/float(len(counts))
+        avg_count = float(sum(counts))/float(len(counts))
+        normalized_counts = [100.0*float(c)/avg_count for c in counts]
+        print "normalized_counts = [%.1f" % normalized_counts[0],
+        for c in normalized_counts[1:]:
+            print ', %.1f' % c,
+        print ']'
     
     def readDataFromFile(self):
         if not self.file_name_data_stored or (self.data_file_name != self.file_name_data_stored):

@@ -70,14 +70,6 @@ class SamcMove : public MCMCUpdater
 		virtual void				revert();
 		virtual void				accept();
 
-		void						viewProposedMove(bool yes);
-
-#if POLPY_NEWWAY    //SAMC
-        //void                        samcDebug(bool turn_on_debugging) {samc_debug_mode = turn_on_debugging;}
-        bool                        goof() {return goofed;}
-        void                        ungoof() {goofed = false;}
-#endif
-
 	private:
 
 		void						reset();
@@ -91,8 +83,6 @@ class SamcMove : public MCMCUpdater
     private:
 
 #if POLPY_NEWWAY    //SAMC
-        bool                            goofed;
-        //bool                            samc_debug_mode;
         double                          prev_ln_like;
 #endif
 
@@ -108,7 +98,6 @@ class SamcMove : public MCMCUpdater
 		std::vector<double>				pvect;								/**< vector of pkl values in preorder sequence */
 		TreeNode *						new_leaf_sib_parent;				/**< node serving as likelihood root after projection */
 		ProbDistShPtr					term_edge_dist;						/**< Probability distribution for proposing new edge lengths during the extrapolate move*/
-		bool							view_proposed_move;					/**< If set to true, graphical tree viewer will pop up showing edges affected by the next proposed Bush move */
 	};
 
 } // namespace phycas

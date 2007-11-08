@@ -93,8 +93,6 @@ class LargetSimonMove : public MCMCUpdater
 		void			defaultProposeNewState();
 		void			starTreeProposeNewState();
 
-		void			viewProposedMove(bool yes);
-
 		// These are virtual functions in the MCMCUpdater base class
 		//
 		virtual bool	update();
@@ -104,16 +102,7 @@ class LargetSimonMove : public MCMCUpdater
 		virtual void	revert();
 		virtual void	accept();
 
-#if POLPY_NEWWAY
-        bool            goof() {return goofed;}
-        void            ungoof() {goofed = false;}
-#endif
-
 	private:
-
-#if POLPY_NEWWAY
-        bool            goofed;
-#endif
 
 		double			lambda;						/**< Factor used in modifying backbone length */
 
@@ -138,8 +127,6 @@ class LargetSimonMove : public MCMCUpdater
 		void			reset();					/**< Returns variables involved with reversing a proposed move to the state needed for the start of another proposal */
 
 		bool			star_tree_proposal;			/**< True if last proposed move was on a star tree (only one randomly-chosen edge changed); False if last proposed move was not on a star tree */
-
-		bool			view_proposed_move;			/**< If set to true, graphical tree viewer will pop up showing edges affected by the next proposed Larget-Simon move */
 
 		// These are needed for the star tree exception
 		double						orig_edge_len;	/**< Length of modified edge saved (in case revert is necessary) */
