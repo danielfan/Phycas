@@ -148,6 +148,7 @@ alias phylogeny_sources
   : phycas/src/phylogeny_pymod.cpp
     phycas/src/boost_assertion_failed.cpp
     phycas/src/basic_tree.cpp 
+    phycas/src/split.cpp 
     phycas/src/basic_tree_node.cpp
     [ obj phylogeny_tree_manip_obj : phycas/src/tree_manip.cpp tool_specific_requirements ]
     phycas/src/basic_lot.cpp

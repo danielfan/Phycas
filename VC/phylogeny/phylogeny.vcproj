@@ -143,6 +143,9 @@
 				RelativePath="..\..\phycas\src\phylogeny_pymod.cpp">
 			</File>
 			<File
+				RelativePath="..\..\phycas\src\split.cpp">
+			</File>
+			<File
 				RelativePath="..\..\phycas\src\tree_manip.cpp">
 			</File>
 		</Filter>
@@ -150,6 +153,12 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			<File
+				RelativePath="..\..\phycas\src\basic_tree.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\split_prior.hpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"

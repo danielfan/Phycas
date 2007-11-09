@@ -17,12 +17,10 @@
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-//#include "phycas/force_include.h"
-#include "phycas/src/topo_prior_calculator.hpp"
-#include "phycas/src/basic_tree.hpp"
-//#include "boost/shared_ptr.hpp"
 #include <cmath>
 #include <limits>
+#include "phycas/src/topo_prior_calculator.hpp"
+#include "phycas/src/basic_tree.hpp"
 
 namespace phycas
 {

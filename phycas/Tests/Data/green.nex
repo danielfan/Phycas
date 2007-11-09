@@ -36,10 +36,3 @@ begin characters;
     ;
 end;
 
-begin paup;
-  log file=green.paup.log start replace;
-  gettrees file=greenGarli.best.tre storebrlen;
-  lset nst=6 basefreq=estimate tratio=estimate rates=gamma shape=estimate; 
-  lscores 1 / userbrlen;
-  log stop;
-end;

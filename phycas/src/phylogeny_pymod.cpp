@@ -45,6 +45,10 @@
 
 #include "phycas/src/xphylogeny.hpp"
 
+#if POLPY_NEWWAY
+#include "phycas/src/split.hpp"
+#endif
+
 using namespace boost::python;
 using namespace phycas;
 
@@ -121,5 +125,32 @@ BOOST_PYTHON_MODULE(_Phylogeny)
 		.def("setRandomEdgeLens", &TreeManip::setRandomEdgeLens)
 		;
 
-	register_exception_translator<XPhylogeny>(&translateXPhylogeny);
+#if POLPY_NEWWAY
+	class_<Split, boost::shared_ptr<Split> >("SplitBase")
+		.def("setBit", &Split::SetBit)
+		.def("unsetBit", &Split::UnsetBit)
+		.def("isBitSet", &Split::IsBitSet)
+		.def("invertSplit", &Split::InvertSplit)
+		.def("calcComplexity", &Split::CalcComplexity)
+		.def("countOnBits", &Split::CountOnBits)
+		.def("createNewickRepresentation", &Split::CreateNewickRepresentation)
+		.def("equals", &Split::Equals)
+		.def("isCompatible", &Split::IsCompatible)
+		.def("subsumedIn", &Split::SubsumedIn)
+		.def("createPatternRepresentation", &Split::CreatePatternRepresentation)
+		.def("createFromPattern", &Split::CreateFromPattern)
+		.def("getOnList", &Split::GetOnList)
+		.def("getOffList", &Split::GetOffList)
+        .def("getExcludedList", &Split::GetExcludedList)
+		.def("setExcluded", &Split::SetExcluded)
+		.def("getExcludedSymbol", &Split::GetExcludedSymbol)
+		.def("getOnSymbol", &Split::GetOnSymbol)
+		.def("getOffSymbol", &Split::GetOffSymbol)
+		.def("setExcludedSymbol", &Split::SetExcludedSymbol)
+		.def("setOnSymbol", &Split::SetOnSymbol)
+		.def("setOffSymbol", &Split::SetOffSymbol)
+		;
+#endif
+
+    register_exception_translator<XPhylogeny>(&translateXPhylogeny);
 }
