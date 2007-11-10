@@ -53,6 +53,7 @@ class Split
         void                    CreateFromPattern(std::string s);
 		void	 			    CreateAndAppendPatternRepresentation(std::string &) const;
 		unsigned			    CountOnBits() const;
+		unsigned			    CountOffBits() const;
 		std::string			    CreateIdRepresentation() const;
 		std::string			    CreatePatternRepresentation() const;
         std::string             CreateNewickRepresentation() const;
@@ -91,7 +92,9 @@ class Split
 		void 				    IntersectWith(const Split & other);
 
 		void 				    SetBit(unsigned t);
+        void 				    SetBits(const std::vector<unsigned> bits_to_set);
 		void 				    UnsetBit(unsigned t);
+        void 				    UnsetBits(const std::vector<unsigned> bits_to_unset);
 
 		void 				    InvertSplit();
 			
@@ -113,7 +116,7 @@ class Split
 		char			        off_symbol;		/**< is the symbol used to represent bits that have been cleared (i.e. "off") */
 		char			        excl_symbol;	/**< is the symbol used to represent bits that have been excluded (i.e. should not be considered off or on) */
 		split_t			        mask;			/**< a split_t variable used to exclude the remainder bits at the end of the final unit when `split_ntax' modulo `bits_per_unit' is not 0 */
-        std::vector<unsigned>   excl_bits;      /**< is a vector containing bit positions corresponding to excluded taxa (starting at 0) */
+        std::vector<unsigned>   excl_bits;      /**< is a sorted vector containing bit positions corresponding to excluded taxa (lowest possible value is 0) */
 	};
 
 typedef std::set<Split> SplitSet;

@@ -37,6 +37,22 @@ class Split(SplitBase):
         """
         SplitBase.setBit(self, b)
 
+    def setBits(self, bits_to_set):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Sets bits in tuple bits_to_set, where each value b in bits_to_set
+        obeys 0 <= b < number of taxa. The following example sets the first
+        two bits (out of 4, which is the default number of taxa).
+
+        >>> from phycas.Phylogeny import *
+        >>> s = Split()
+        >>> s.setBits((0,1))
+        >>> print s.createPatternRepresentation()
+        **--
+
+        """
+        SplitBase.setBits(self, bits_to_set)
+
     def unsetBit(self, taxon):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -59,6 +75,26 @@ class Split(SplitBase):
 
         """
         SplitBase.unsetBit(self, taxon)
+
+    def unsetBits(self, bits_to_unset):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Clears (unsets) bits in tuple bits_to_unset, where each value b in
+        bits_to_unset obeys 0 <= b < number of taxa. The following example
+        all 4 bits (4 is is the default number of taxa), then clears bits 0
+        and 3.
+
+        >>> from phycas.Phylogeny import *
+        >>> s = Split()
+        >>> s.setBits((0,1,2,3))
+        >>> print s.createPatternRepresentation()
+        ****
+        >>> s.unsetBits((0,3))
+        >>> print s.createPatternRepresentation()
+        -**-
+
+        """
+        SplitBase.unsetBits(self, bits_to_unset)
 
     def isBitSet(self, b):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -119,12 +155,27 @@ class Split(SplitBase):
 
         >>> from phycas.Phylogeny import *
         >>> s = Split()
-        >>> s.createFromPattern('-*--*---****')
+        >>> s.createFromPattern('-*--*---***-*')
         >>> print s.countOnBits()
         6
 
         """
         return SplitBase.countOnBits(self)
+
+    def countOffBits(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns the number of bits that are currently unset. This function
+        will be slower than countOnBits if some bits have been excluded.
+
+        >>> from phycas.Phylogeny import *
+        >>> s = Split()
+        >>> s.createFromPattern('-*--*---***-*')
+        >>> print s.countOffBits()
+        7
+
+        """
+        return SplitBase.countOffBits(self)
 
     def createNewickRepresentation(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

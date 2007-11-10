@@ -277,10 +277,10 @@ void Split::CreateAndAppendPatternRepresentation(
 				{
                 split_t bitmask = (split_unity << j);
 				bool bit_is_set = ((unit[i] & bitmask) > (split_t)0);
-                if (bit_is_set)
-                    s += on_symbol;
-                else if (!excl_bits.empty() && std::binary_search(excl_bits.begin(), excl_bits.end(), ntax_added))
+                if (!excl_bits.empty() && std::binary_search(excl_bits.begin(), excl_bits.end(), ntax_added))
                     s += excl_symbol;
+                else if (bit_is_set)
+                    s += on_symbol;
                 else
                     s += off_symbol;
 				if (++ntax_added == split_ntax)
@@ -412,15 +412,59 @@ unsigned Split::CountOnBits() const
     }
 	
 /*----------------------------------------------------------------------------------------------------------------------
+|	Returns the number of bits that are set to zero (i.e. are "off") in the Split. This function is slower than the
+|   function CountOnBits unless `excl_bits' is empty, in which case the two functions will be essentially equal in speed.
+|   The problem is that CountOnBits does not need to check for excluded bits because excluded bits are guaranteed to be
+|   off. If the `excl_bits' vector is empty, then CountOffBits is slower only because it needs to invert a temporary
+|   copy of each unit.
+*/
+unsigned Split::CountOffBits() const
+	{
+    // This assumes that the unused bits in the last unit are all 0.
+    unsigned num_bits_unset = 0;
+
+    // Pretend that there are no excluded bits
+    for (SplitTVect::const_iterator i = unit.begin(); i != unit.end(); ++i)
+        {
+        // Set comment in CountOnBits about this Kernighan bit-counting algorithm
+        split_t v = ~(*i);
+        unsigned c = 0;
+        for (; v; ++c)
+            {
+            v &= v - 1;
+            }
+        num_bits_unset += c;
+        }
+
+    if (!excl_bits.empty())
+        {
+        // Correct count to account for excluded bits
+        for (std::vector<unsigned>::const_iterator i = excl_bits.begin(); i != excl_bits.end(); ++i)
+            {
+            // Subtract one for every bit that is unset (remember that bits that are unset in this split
+            // are set in its inverse)
+            if (!IsBitSet(*i))
+                --num_bits_unset;
+            }
+        }
+
+    // Account for irrelevant bits at the end
+    unsigned num_irrelevant = (nunits*bits_per_unit - split_ntax);
+    num_bits_unset -= num_irrelevant;
+
+    return num_bits_unset;
+    }
+	
+/*----------------------------------------------------------------------------------------------------------------------
 |	Returns min(n,m), where n is the number of taxa on one side of the split and m is the number on the other side.
 |	Trivial splits have m=1 or n=1, and thus have compexity 1, whereas the most complex split has complexity 
 |	split_ntax/2 (note that this maximum holds whether or not split_ntax is even or odd).
 */
 unsigned Split::CalcComplexity() const
 	{
-	const unsigned complexity = CountOnBits();
-	const unsigned complement_complexity = split_ntax - complexity;
-	return (complexity > complement_complexity ? complement_complexity : complexity);
+	const unsigned on_bits = CountOnBits();
+	const unsigned off_bits = CountOffBits();
+	return (on_bits < off_bits ? on_bits : off_bits);
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
@@ -482,6 +526,23 @@ void Split::SetBit(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Sets all bits corresponding to values in the supplied vector `bits_to_set'. Values in `bits_to_set' are 0-based
+|   indices (i.e. use 0 to set the first bit).
+*/
+void Split::SetBits(
+  const std::vector<unsigned> bits_to_set)	/**< the bits to set */
+	{
+    for (std::vector<unsigned>::const_iterator it = bits_to_set.begin(); it != bits_to_set.end(); ++it)
+        {
+        unsigned value = *it;
+	    PHYCAS_ASSERT(value < split_ntax);
+    	unsigned i = value/bits_per_unit;
+	    unsigned j = value % bits_per_unit;
+	    unit[i] |= (split_unity << j);
+        }
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Unsets the bit corresponding to taxon `t', where `t' = 0 corresponds to the first taxon.
 */
 void Split::UnsetBit(
@@ -491,6 +552,23 @@ void Split::UnsetBit(
 	unsigned i = t/bits_per_unit;	 
 	unsigned j = t % bits_per_unit; 
 	unit[i] &= (~(split_unity << j));
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Unsets (i.e. clears) all bits corresponding to values in the supplied vector `bits_to_unset'. Values in 
+|   `bits_to_unset' are 0-based indices (i.e. use 0 to unset the first bit).
+*/
+void Split::UnsetBits(
+  const std::vector<unsigned> bits_to_unset)	/**< the bits to unset */
+	{
+    for (std::vector<unsigned>::const_iterator it = bits_to_unset.begin(); it != bits_to_unset.end(); ++it)
+        {
+        unsigned value = *it;
+	    PHYCAS_ASSERT(value < split_ntax);
+    	unsigned i = value/bits_per_unit;
+	    unsigned j = value % bits_per_unit;
+    	unit[i] &= (~(split_unity << j));
+        }
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -611,6 +689,11 @@ void Split::InvertSplit()
 		*i = ~x;
 		}
 	unit[nunits - 1] &= mask;
+
+    // Must ensure that none of the bits now set corresponds to an excluded bit (cannot use the fast version of
+    // CountOnBits unless all excluded bits have been cleared)
+    if (!excl_bits.empty())
+        UnsetBits(excl_bits);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -805,7 +888,8 @@ unsigned Split::GetNTaxa()
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Returns vector of unsigned integers each of which represents a bit that is set in this split (first is 0).
+|	Returns vector of unsigned integers each of which represents a bit that is set in this split (first is 0). This
+|   function removes values corresponding to excluded taxa before returning the list.
 */
 std::vector<unsigned> Split::GetOnList() const
     {
@@ -823,12 +907,19 @@ std::vector<unsigned> Split::GetOnList() const
                 break;
             }
         }
+
+    // Eliminate values also in excl_bits vector
+    if (!excl_bits.empty())
+        {
+        std::vector<unsigned>::iterator last = std::set_difference(v.begin(), v.end(), excl_bits.begin(), excl_bits.end(), v.begin());
+        v.erase(last, v.end());
+        }
     return v;
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns vector of unsigned integers each of which represents a bit that is not set in this split (first is 0). This
-|   function removes from the list values corresponding to excluded taxa before returning.
+|   function removes values corresponding to excluded taxa before returning the list.
 */
 std::vector<unsigned> Split::GetOffList() const
     {
@@ -889,6 +980,14 @@ void Split::SetExcluded(const std::vector<unsigned> excl)
         {
         excl_bits.resize(excl.size(), 0);
         std::copy(excl.begin(), excl.end(), excl_bits.begin());
+
+        // Must ensure excl_bits is sorted because binary_search algorithm (used in CreateAndAppendPatternRepresentation)
+        // and set_difference algorithm (used in GetOnBits and GetOffBits) require it
+        std::sort(excl_bits.begin(), excl_bits.end()); 
+
+        // Also ensure that none of the bits now set corresponds to an excluded bit (cannot use the fast version of
+        // CountOnBits unless all excluded bits have been cleared)
+        UnsetBits(excl_bits);
         }
     }
 
@@ -945,4 +1044,3 @@ char Split::GetExcludedSymbol() const
     {
     return excl_symbol;
     }
-
