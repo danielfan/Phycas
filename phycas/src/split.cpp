@@ -40,8 +40,8 @@ Split::Split()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Sets `split_ntax' to 4, `nunits' to 1, `on_symbol' to an asterisk, `off_symbol' to hyphen, `excl_symbol' to x, 
-|   `mask' to 0 and resizes the `units' vector to have a length of `nunits' and fills it with 0s.
+|	Sets `split_ntax' to 4, `nunits' to 1, `on_symbol' to an asterisk, `off_symbol' to hyphen, `excl_symbol' to x and 
+|   resizes the `units' vector to have a length of `nunits' and fills it with 0s.
 */
 void Split::Clear()
 	{
@@ -50,7 +50,6 @@ void Split::Clear()
     on_symbol		= '*';
     off_symbol		= '-';
     excl_symbol		= 'x';
-    mask			= (split_t)0;
 	unit.resize(nunits, (split_t)0);
 	}
 
@@ -75,7 +74,6 @@ Split & Split::operator=(
     on_symbol		= other.on_symbol;
     off_symbol		= other.off_symbol;
     excl_symbol		= other.excl_symbol;
-    mask			= other.mask;
 	unit.resize(nunits, (split_t)0);
 	std::copy(other.unit.begin(), other.unit.end(), unit.begin());
 	return *this;
@@ -92,8 +90,7 @@ Split::~Split()
 |	Sets non-constant data members using a pattern supplied in the form of the string `s' comprising a sequence of 
 |   `on_symbol', `off_symbol' and (possibly) `excl_symbol' characters. The data members `on_symbol', `off_symbol' and
 |   `excl_symbol' are not modified. For example, assuming `bits_per_unit' = 8, calling the function with the pattern 
-|   "--*---***-" sets `split_ntax' to 10, `nunits' to 2,  `mask' to 3 (binary 00000011), `unit'[0] to 142 (binary 
-|   10001110), and `unit'[1] to 0.
+|   "--*---***-" sets `split_ntax' to 10, `nunits' to 2,  `unit'[0] to 142 (binary 10001110), and `unit'[1] to 0.
 */
 void Split::CreateFromPattern(
   std::string s)    /**< is the string containing the pattern to use in constructing split */
@@ -111,7 +108,7 @@ void Split::CreateFromPattern(
         }
 
     // No funny characters were found in the supplied pattern string, so we have a green light to build the split
-    CalcNUnits(slen);   // sets split_ntax, nunits, and mask
+    CalcNUnits(slen);   // sets split_ntax and nunits
 	unit.resize(nunits, (split_t)0);
     for (std::vector<unsigned>::const_iterator it = on_bits.begin(); it != on_bits.end(); ++it)
         {
@@ -123,12 +120,9 @@ void Split::CreateFromPattern(
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Recomputes those data members (`split_ntax', `nunits', and `mask') that depend on the number of taxa in the tree. 
-|   The data member `split_ntax' is set to the specified number of taxa `ntax'. The data member `nunits' equals the 
-|   number of units (each holding `bits_per_unit' bits) needed to accommodate `split_ntax' taxa. Finally, low-order bits
-|    in `mask' are set so that `mask' can be used to "see" only the relevant bits in the final unit (usually ntax does
-|   not divide evenly into `bits_per_unit', so some bits are inevitably wasted and `mask' makes it easy to ensure that
-|   we never pay attention to those bits.
+|	Recomputes those data members (`split_ntax' and `nunits') that depend on the number of taxa in the tree. The data 
+|   member `split_ntax' is set to the specified number of taxa `ntax'. The data member `nunits' equals the number of 
+|   units (each holding `bits_per_unit' bits) needed to accommodate `split_ntax' taxa.
 */
 void Split::CalcNUnits(
   unsigned ntax)    /**< is the number of taxa in the tree */
@@ -137,7 +131,6 @@ void Split::CalcNUnits(
 		{
 	    split_ntax = 0;
 		nunits = 1;
-		mask = (split_t)0;
 		}
     else
         {
@@ -148,33 +141,6 @@ void Split::CalcNUnits(
         //   8 taxa requires 1 unit  ==> 1 + (8-1)/8 = 1 + 7/8 = 1 + 0 = 1
         //   9 taxa requires 2 units ==> 1 + (9-1)/8 = 1 + 8/8 = 1 + 1 = 2
 	    nunits = 1 + ((split_ntax - 1)/bits_per_unit);
-
-        // The remainder of this function is concerned with setting up the mask,
-        // which has 0s for bits that are not used, and 1s for the ntax bits that
-        // are used, in the final element of the units vector. For example, for 
-        // bits_per_unit = 8, the last_bit value and the mask would look like this 
-        // for several example ntax values:
-        //
-        //                     76543210
-        //   ntax =  7  mask = 01111111  last_bit = 6
-        //   ntax =  8  mask = 11111111  last_bit = 7
-        //   ntax =  9  mask = 00000001  last_bit = 0
-        //   ntax = 10  mask = 00000011  last_bit = 1
-        //
-	    unsigned num_unused_bits = (nunits*bits_per_unit) % split_ntax;
-	    unsigned last_bit = bits_per_unit - num_unused_bits - 1;
-
-        //@POL  I don't think this is necessary after all
-	    // The following is necessary for the case in which split_ntax < bits_per_unit
-	    //if (last_bit > ntax - 1)
-		//    last_bit = ntax - 1;
-
-	    mask = split_unity;
-	    for (unsigned i = 0; i < last_bit; ++i) 
-		    {
-		    mask <<= 1;
-		    mask |= split_unity;
-		    }
         }
 	}
 
@@ -182,9 +148,8 @@ void Split::CalcNUnits(
 |	Serializes a Split object to a string `out', then returns a reference to `out'. Split objects output using this 
 |   operator can be input using the corresponding operator>>. The information from `s' is space-delimited, and in the
 |   following order: `bits_per_unit', `split_ntax', `on_symbol', `off_symbol', `excl_symbol', `unit[0]', `unit[1]', ..., 
-|   `unit[nunits-1]'. Neither `nunits' nor `mask' are included because these can be recalculated from knowledge of
-|   `bits_per_unit' and `split_ntax' using the function CalcNUnits. Note that `out' is cleared before any values are
-|   appended.
+|   `unit[nunits-1]'. `nunits' is not included because it can be recalculated from knowledge of `bits_per_unit' and 
+|   `split_ntax' using the function CalcNUnits. Note that `out' is cleared before any values are appended.
 */
 std::string & operator<<(
   std::string & out, /**< is the string on which to append the bit representation */
@@ -219,7 +184,7 @@ std::istream & operator>>(
     if (b != tmp.bits_per_unit)
         throw XPhylogeny(str(boost::format("the number of bits per unit differs on the system being used to read a split object (%d) compared to the system used to save the split object (%d)") % tmp.bits_per_unit % b));
 
-    tmp.CalcNUnits(tmp.split_ntax); // builds mask and sets value of nunits
+    tmp.CalcNUnits(tmp.split_ntax); // sets value of nunits
     tmp.unit.resize(tmp.nunits, (split_t)0);
 
 	for (unsigned j = 0; j < s.nunits; ++j)
@@ -468,13 +433,13 @@ unsigned Split::CalcComplexity() const
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
-|	Records the current values of the data members `bits_per_unit', `split_ntax', `nunits', and `mask', along with the
-|   size of a split_t object on the current system, to a string object, which is returned.
+|	Records the current values of the data members `bits_per_unit', `split_ntax' and `nunits', along with the size of a
+|   split_t object on the current system, to a string object, which is returned.
 */
 std::string Split::GetDimensionInfo()
 	{
-    return str(boost::format("Split information:\n  bits_per_unit = %d\n  split_ntax = %d\n  nunits = %d\n  mask = %d\n  sizeof(split_t) = %d") 
-        % bits_per_unit % split_ntax % nunits % mask % sizeof(split_t));
+    return str(boost::format("Split information:\n  bits_per_unit = %d\n  split_ntax = %d\n  nunits = %d\n  sizeof(split_t) = %d") 
+        % bits_per_unit % split_ntax % nunits % sizeof(split_t));
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -664,16 +629,9 @@ bool Split::IsCompatible(
 |	      unit[1]           unit[0]
 |>
 |	The three most significant (i.e. left-most) bits in unit[1] in this case are irrelevant because there are 8 bits
-|	total and only 5 of them are used to store information. The mask is used to clear these irrelevant bits in unit[1].
-|	In this example, mask would look like this:
-|>
-|	+---+---+---+---+
-|	| 0 | 0 | 0 | 1 |
-|	+---+---+---+---+
-|	      mask
-|>
-|	Note that ordinarily `bits_per_unit' would be greater than 4 (32 or 64 are common values for 32-bit or 64-bit
-|   systems, respectively). The `unit' vector after this method is called would be:
+|	total and only 5 of them are used to store information. Note that ordinarily `bits_per_unit' would be greater than 
+|   4 (32 or 64 are common values for 32-bit or 64-bit systems, respectively). The `unit' vector shown above after 
+|   Split::InvertSplit is called would be:
 |>
 |	+---+---+---+---+  +---+---+---+---+
 |	| 0 | 0 | 0 | 0 |  | 0 | 0 | 1 | 1 |
@@ -688,7 +646,11 @@ void Split::InvertSplit()
 		split_t x = *i;
 		*i = ~x;
 		}
-	unit[nunits - 1] &= mask;
+
+    // Unset the irrelevant bits at the end that do not correspond to any taxon
+    split_t v = (split_t)(-1);          // v = 1111 (for example above); assumes split_t is an unsigned integer type
+    v <<= (split_ntax%bits_per_unit);   // v = 1110 (introduce zeros for bits that are used)
+    unit[nunits - 1] &= ~v;             // unit[1] = 1110, ~v = 0001, unit[1] & ~v = 0000
 
     // Must ensure that none of the bits now set corresponds to an excluded bit (cannot use the fast version of
     // CountOnBits unless all excluded bits have been cleared)
