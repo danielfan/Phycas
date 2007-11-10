@@ -9,7 +9,11 @@ class TreeLikelihood(TreeLikelihoodBase):
     computing likelihoods) and for computing likelihoods on trees once
     the trees have been equipped with these data structures. The following
     example illustrates how to open a nexus data file containing both
-    data and trees, and compute the likelihood for the first tree.
+    data and trees, and compute the likelihood for the first tree. The
+    reason True was supplied as the second argument to buildFromString
+    is that tip nodes in tree descriptions read from a file start at 0,
+    not 1. The True second argument informs buildFromString that the tip
+    nodes are 0-based rather than the default 1-based.
 
     >>> from phycas import *
     >>> import time
@@ -34,7 +38,7 @@ class TreeLikelihood(TreeLikelihoodBase):
     >>> likelihood.copyDataFromDiscreteMatrix(data_matrix)
     >>> for t in reader.getTrees():
     ...     tree = Phylogeny.Tree()
-    ...     tree.buildFromString(t.newick)
+    ...     tree.buildFromString(t.newick, True)    # see note above
     ...     likelihood.prepareForLikelihood(tree)
     ...     lnL = likelihood.calcLnL(tree)
     ...     print '%.5f' % lnL

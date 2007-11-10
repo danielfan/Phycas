@@ -1243,7 +1243,7 @@ double TreeLikelihood::calcLnL(
 	PHYCAS_ASSERT(nd->IsInternal());
 
     // Uncomment line below to force recalculation of all CLAs
-#if POLPY_NEWWAY    // store test
+#if POLPY_NEWWAY 
     //storeAllCLAs(t);
 #endif
 	// Calculate log-likelihood using nd as the likelihood root

@@ -113,7 +113,7 @@ class Tree(TreeBase):
                 yield nd
             nd = nd.getNextPreorder()
         
-    def buildFromString(self, newick):
+    def buildFromString(self, newick, zero_based_tips = False):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Builds a tree from a newick tree description. If edge lengths are
@@ -126,10 +126,10 @@ class Tree(TreeBase):
         >>> t2 = Tree()
         >>> t2.buildFromString('(c,d,(a, b))')
         >>> print t2.walkPreorder()
-        c -> [5] -> d -> [4] -> a -> b
+        c -> [1] -> d -> [0] -> a -> b
 
         """
-        TreeBase.buildFromString(self ,newick)
+        TreeBase.buildFromString(self ,newick, zero_based_tips)
 
     def clear(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -260,7 +260,7 @@ class Tree(TreeBase):
         >>> t9 = Tree()
         >>> t9.buildFromString('(fish,shark,(bird, mammal))')
         >>> print t9.walkPreorder()
-        fish -> [5] -> shark -> [4] -> bird -> mammal
+        fish -> [1] -> shark -> [0] -> bird -> mammal
 
         """
         return TreeBase.debugWalkTree(self, True, verbosity)
@@ -281,7 +281,7 @@ class Tree(TreeBase):
         >>> tA = Tree()
         >>> tA.buildFromString('(fish,shark,(bird, mammal))')
         >>> print tA.walkPostorder()
-        mammal -> bird -> [4] -> shark -> [5] -> fish
+        mammal -> bird -> [0] -> shark -> [1] -> fish
 
         """
         return TreeBase.debugWalkTree(self, False, verbosity)
@@ -296,14 +296,14 @@ class Tree(TreeBase):
         >>> tC = Tree()
         >>> tC.buildFromString('((a,b),c,(d,e))')
         >>> print tC.walkPreorder()
-        a -> [5] -> b -> [7] -> c -> [6] -> d -> e
+        a -> [0] -> b -> [2] -> c -> [1] -> d -> e
         >>> tC.rerootAtTip(5)
         Traceback (most recent call last):
             ...
         Exception: there is no tip node having number 5
         >>> tC.rerootAtTip(4)
         >>> print tC.walkPreorder()
-        e -> [6] -> d -> [7] -> c -> [5] -> b -> a
+        e -> [1] -> d -> [2] -> c -> [0] -> b -> a
 
         """
         return TreeBase.rerootAtTip(self, num)
@@ -356,10 +356,10 @@ class Tree(TreeBase):
         >>> t = Tree()
         >>> t.buildFromString('((a,b),c,(d,e))')
         >>> print t.walkPreorder(verbosity=1)
-        a (0) -> ? [5] -> b (1) -> ? [7] -> c (2) -> ? [6] -> d (3) -> e (4)
+        a (0) -> ? [0] -> b (1) -> ? [2] -> c (2) -> ? [1] -> d (3) -> e (4)
         >>> t.rectifyNumbers(['e','d','c','b','a'])
         >>> print t.walkPreorder(verbosity=1)
-        a (4) -> ? [5] -> b (3) -> ? [7] -> c (2) -> ? [6] -> d (1) -> e (0)
+        a (4) -> ? [0] -> b (3) -> ? [2] -> c (2) -> ? [1] -> d (1) -> e (0)
 
         """
         return TreeBase.rectifyNumbers(self, taxon_names)
@@ -375,10 +375,10 @@ class Tree(TreeBase):
         >>> t = Tree()
         >>> t.buildFromString('((a,b),c,(d,e))')
         >>> print t.walkPreorder(verbosity=1)
-        a (0) -> ? [5] -> b (1) -> ? [7] -> c (2) -> ? [6] -> d (3) -> e (4)
+        a (0) -> ? [0] -> b (1) -> ? [2] -> c (2) -> ? [1] -> d (3) -> e (4)
         >>> t.rectifyNames(['e','d','c','b','a'])
         >>> print t.walkPreorder(verbosity=1)
-        e (0) -> ? [5] -> d (1) -> ? [7] -> c (2) -> ? [6] -> b (3) -> a (4)
+        e (0) -> ? [0] -> d (1) -> ? [2] -> c (2) -> ? [1] -> b (3) -> a (4)
 
         """
         return TreeBase.rectifyNames(self, taxon_names)

@@ -866,9 +866,9 @@ std::string Tree::DebugWalkTree(bool preorder, unsigned verbosity)
 			{
 			if (verbosity < 2)
 				{
-				s << nd->briefDebugReport();
+				s << nd->briefDebugReport(verbosity);
 				}
-			else
+			else    // verbosity == 2
 				{
 				s << nd->oneLineDebugReport();
 				}
@@ -1112,19 +1112,19 @@ void Tree::RefreshNodeCounts()
 |	duplicated or out of range.
 */
 void Tree::BuildFromString(
-  const std::string & newick)   /**< is the tree description */
+  const std::string & newick, /**< is the tree description */
+  bool zero_based_tips)       /**< is true if tip node numbers used in the tree description start at zero */
 	{
 	PHYCAS_ASSERT(newick.length() > 0);
 
-	// Assume tip node names represent the 0-offset index of the taxon represented by the tip in the data matrix
-	// and thus that tip node numbers should be set to the tip node name after converting it to an integer. This
+	// Assume tip node names represent the index of the taxon represented by the tip in the data matrix
+	// and thus that tip node numbers should be set to the tip node name after converting it to an integer.
+    // If zero_based_tips is false, then tip node numbers are set to the converted node name minus 1. This
 	// saves having to call RectifyNumbers() for the common case of tree descriptions in which taxon names have
 	// been replaced by their indices.
 	//
 	bool tip_numbers_equal_names = true;
 	std::set<unsigned> numbers_used;
-
-	//std::cerr << "About to build this tree: " << newick << std::endl; //POL-debug
 
 	// Stow away any existing nodes, reset nTips and nInternals to 0, and reset data members
 	//
@@ -1154,13 +1154,6 @@ void Tree::BuildFromString(
 			};
 		unsigned previous = Prev_Tok_LParen;
 
-		//std::cerr << "Prev_Tok_LParen  =" << Prev_Tok_LParen << std::endl;	// decimal 1 //POL-debug
-		//std::cerr << "Prev_Tok_RParen  =" << Prev_Tok_RParen << std::endl;	// decimal 2 //POL-debug
-		//std::cerr << "Prev_Tok_Colon   =" << Prev_Tok_Colon << std::endl;		// decimal 4 //POL-debug
-		//std::cerr << "Prev_Tok_Comma   =" << Prev_Tok_Comma << std::endl;		// decimal 8 //POL-debug
-		//std::cerr << "Prev_Tok_Name    =" << Prev_Tok_Name << std::endl;		// decimal 16 //POL-debug
-		//std::cerr << "Prev_Tok_EdgeLen =" << Prev_Tok_EdgeLen << std::endl;	// decimal 32 //POL-debug
-
 		// Some useful flag combinations 
 		unsigned LParen_Valid = (Prev_Tok_LParen | Prev_Tok_Comma);
 		unsigned RParen_Valid = (Prev_Tok_RParen | Prev_Tok_Name | Prev_Tok_EdgeLen);
@@ -1172,9 +1165,7 @@ void Tree::BuildFromString(
 		std::string::const_iterator i = newick.begin();
 		for (; i != newick.end(); ++i)
 			{
-			//std::cerr << (i == newick.end() ? "### how can we be here ###" : "### not yet at end ###") << std::endl; //POL-debug
 			char ch = *i;
-			//std::cerr << "[" << ch << "]" << std::endl; //POL-debug
 			if (iswspace(ch))
 				continue;
 			switch(ch)
@@ -1194,7 +1185,6 @@ void Tree::BuildFromString(
 					if (nd->IsInternal() && nd->NumberNotYetAssigned())
 						{
 						nd->nodeNum = nInternals++;
-						//std::cerr << "1> nInternals now " << nInternals << std::endl; //POL-debug
 						}
 					// Go down a level
 					nd = nd->GetParent();
@@ -1217,7 +1207,6 @@ void Tree::BuildFromString(
 					if (nd->IsInternal() && nd->NumberNotYetAssigned())
 						{
 						nd->nodeNum = nInternals++;
-						//std::cerr << "2> nInternals now " << nInternals << std::endl; //POL-debug
 						}
 					// Create the sibling
 					nd->rSib = GetNewNode();
@@ -1270,7 +1259,6 @@ void Tree::BuildFromString(
 						throw XPhylogeny(workspace);
 						}
 
-					//std::cerr << "1> node name = " << nd->nodeName << std::endl; //POL-debug
 					if (nd->IsTip())
 						{
 						if (first_tip == NULL)
@@ -1288,7 +1276,6 @@ void Tree::BuildFromString(
 							nd->nodeNum = nTips;
 						++nTips;
 						nd->SetObservable(true);
-						//std::cerr << "1> nTips now " << nTips << std::endl; //POL-debug
 						}
 
 					previous = Prev_Tok_Name;
@@ -1313,9 +1300,7 @@ void Tree::BuildFromString(
 								throw XPhylogeny("invalid branch length character");
 							workspace << ch;
 							}
-						//std::cerr << "edge length string = " << workspace << std::endl; //POL-debug
 						double brlen = atof(workspace.c_str());
-						//std::cerr << "edge length = " << brlen << std::endl; //POL-debug
 						nd->SetEdgeLen(brlen);
 
 						++nEdgeLengths;
@@ -1325,30 +1310,23 @@ void Tree::BuildFromString(
 						{
 						// Get the node name
 						nd->nodeName.clear();
-						//std::cerr << "\nBuilding up node name:" << std::endl; //POL-debug
 						for (; i != newick.end(); ++i)
 							{
 							ch = *i;
-							//std::cerr << "\n  ch = " << ch << std::endl; //POL-debug
 							if (ch == '(')
 								throw XPhylogeny("unexpected left parenthesis inside node name");
 							if (iswspace(ch) || ch == ':' || ch == ',' || ch == ')')
 								{
 								--i;
-								//std::cerr << "\n  backing up, *i = " << (*i) << std::endl; //POL-debug
 								break;
 								}
 							nd->nodeName << ch;
-							//std::cerr << "\n  nd->nodeName = " << nd->nodeName << std::endl; //POL-debug
 							}
-						//std::cerr << "2> node name = " << nd->nodeName << std::endl; //POL-debug
-						//std::cerr << (i == newick.end() ? "*** at end of newick ***" : "*** not yet at end ***") << std::endl; //POL-debug
 
 						// Expect node name only after a left paren (child's name), a comma (sib's name)
 						// or a right paren (parent's name)
 						if (!(previous & Name_Valid))
 							{
-							//std::cerr << "previous =" << previous << ", ch =" << ch << std::endl; //POL-debug
 							workspace.clear();
 							workspace << "unexpected node name (";
 							workspace << nd->nodeName;
@@ -1373,7 +1351,6 @@ void Tree::BuildFromString(
 								nd->nodeNum = nTips;
 							++nTips;
 							nd->SetObservable(true);
-							//std::cerr << "2> nTips now " << nTips << std::endl; //POL-debug
 							}
 
 						previous = Prev_Tok_Name;
@@ -1381,7 +1358,6 @@ void Tree::BuildFromString(
 				}
 				if (i == newick.end())
 					{
-					//std::cerr << "@@@ At end of newick string, breaking main loop @@@" << std::endl; //POL-debug
 					break;
 					}
 
@@ -1390,10 +1366,7 @@ void Tree::BuildFromString(
 		if (firstPreorder->NumberNotYetAssigned())
 			{
 			firstPreorder->nodeNum = nInternals++;
-			//std::cerr << "3> nInternals now " << nInternals << std::endl; //POL-debug
 			}
-		//std::cerr << "4> nInternals now " << nInternals << std::endl; //POL-debug
-		//std::cerr << "4> nTips now " << nTips << std::endl; //POL-debug
 		firstPreorder->SetEdgeLen(0.0);
 		if (nEdgeLengths > 0)
 			{
@@ -1405,15 +1378,12 @@ void Tree::BuildFromString(
 			hasEdgeLens = false;
 		if (!nd->NoParent())
 			{
-			//std::cerr << "Why are we here? nd->NoParent() = " << (nd->NoParent() ? "true" : "false") << std::endl; //POL-debug
 			throw XPhylogeny("too many left parentheses");
 			}
-		//std::cerr << "About to call RerootAtThisTip..." << std::endl; //POL-debug
 		RerootAtThisTip(first_tip);
 		}
 	catch(XPhylogeny x)
 		{
-		//std::cerr << "***" << std::endl; //POL-debug
 		Clear();
 		throw x;
 		}
@@ -1421,18 +1391,18 @@ void Tree::BuildFromString(
 	if (tip_numbers_equal_names)
 		{
 		PHYCAS_ASSERT(!numbers_used.empty());
-//		if (numbers_used.find(0) == numbers_used.end())
-//			{
-//			// 0 has not been used as a tip node number, so assume that tip node numbers started at 1
+		if (!zero_based_tips)
+			{
+			// Assuming that tip node numbers start at 1
 			for (preorder_iterator nd = begin(); nd != end(); ++nd)
 				{
 				if (nd->IsTip())
 					{
 					nd->nodeNum = nd->nodeNum - 1;
-					PHYCAS_ASSERT(nd->nodeNum >= 0);
+					PHYCAS_ASSERT(nd->nodeNum < UINT_MAX);
 					}
 				}
-//			}
+			}
 		}
 
 	// Renumber internal nodes so that they do not overlap with numbers of tip nodes
@@ -1446,12 +1416,6 @@ void Tree::BuildFromString(
  	//		nd->nodeNum = nd->nodeNum + nTips;
  	//		}
  	//	}
-
-	//@POL: should check to make sure tip node numbers form a sequence between 0 and ntax-1
-	// If not, then it may mean that the tree descriptions left out some taxa from the data matrix
-	// which is a situation that I need to deal with
-
-	//std::cerr << "Leaving BuildFromString: internalNodeStorage now has " << (unsigned)internalNodeStorage.size() << " nodes" << std::endl; //POL-debug
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

@@ -893,4 +893,15 @@ class Phycas(object):
     CPPCompiledInDebug = False
 
 if __name__ == '__main__':
-    print "Dumbass."
+    print "The Phycas.py file should be imported, not run directly. To import it,"
+    print "create a python script (i.e. a file with a name ending in .py) with the"
+    print "following text:"
+    print
+    print "from phycas import *"
+    print "myphycas = Phycas()"
+    print "..."
+    print
+    print "See examples in the Examples and Tests folders for more information, or"
+    print "consult the PDF manual."
+    print
+    raw_input('Press the enter key when finished reading the lecture')

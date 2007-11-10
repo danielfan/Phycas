@@ -202,15 +202,35 @@ void TreeNode::AppendNodeInfo(std::string &s, bool num_and_name_only) const
 		}
 	}
 
-std::string	TreeNode::briefDebugReport() const
+std::string	TreeNode::briefDebugReport(
+  unsigned verbosity) const
 	{
 	std::string nm = GetNodeName();
-	std::string tmpstr = str(boost::format("%d") % GetNodeNumber());
-	if (nm.length() == 0)
-		nm = "?";
-	if (IsTip())
-		return str(boost::format("%s(%d)") % nm % GetNodeNumber());
-	return str(boost::format("%s[%d]") % nm % GetNodeNumber());
+	std::string tmpstr;
+    unsigned namelen = nm.length();
+
+    if (verbosity == 0)
+        {
+        if (namelen == 0)
+            {
+		    if (IsTip())
+                tmpstr = str(boost::format("(%d)") % GetNodeNumber());
+            else
+                tmpstr = str(boost::format("[%d]") % GetNodeNumber());
+            }
+        }
+    else    // verbosity > 0
+        {
+        //     a (0) -> ? [5] -> b (1) -> ? [7] -> c (2) -> ? [6] -> d (3) -> e (4)
+        if (namelen == 0)
+            nm = "?";
+		if (IsTip())
+            tmpstr = str(boost::format(" (%d)") % GetNodeNumber());
+        else
+            tmpstr = str(boost::format(" [%d]") % GetNodeNumber());
+        }
+
+	return str(boost::format("%s%s") % nm % tmpstr);
 	}
 
 std::string	TreeNode::oneLineDebugReport() const

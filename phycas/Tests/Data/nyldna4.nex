@@ -12,15 +12,22 @@ Begin data;
 End;
 
 
-begin _paup;
+begin paup;
 	set storebrlens;
 end; 
 
 begin trees;
-	tree one = [&U] (Synergus:0.02,Periclistus:0.05,(Aylax:0.03,Ibalia:0.04):0.07);
+  translate
+    1 Synergus,
+    2 Periclistus,
+    3 Aylax,
+    4 Ibalia;
+  tree one = [&U] (1:0.02,2:0.05,(3:0.03,4:0.04):0.07);
+  [tree one = (Synergus:0.02,Periclistus:0.05,(Aylax:0.03,Ibalia:0.04):0.07);]
 end;
 
-begin _paup;
-	lset basefreq = (.1 .2 .3) userbr trat = 2;
-	lscore /sitelike LongFmt;
+begin paup;
+	lset basefreq = (0.1 0.2 0.3) userbr tratio=2;
+	lscore 1 / nositelike;
+	[lscore /sitelike LongFmt;]
 end;

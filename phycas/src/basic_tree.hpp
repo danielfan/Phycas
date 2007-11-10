@@ -92,7 +92,7 @@ class Tree
 		// Utilities
 		//
 		void					Clear();
-		void					BuildFromString(const std::string & newick); // throws XPhylogeny
+		void					BuildFromString(const std::string & newick, bool zero_based_tips = false); // throws XPhylogeny
 		void					RectifyNumbers(std::vector<std::string> name_vector); // throws XPhylogeny
 		void					RectifyNames(std::vector<std::string> name_vector); // throws XPhylogeny
 		double					EdgeLenSum();
