@@ -50,7 +50,17 @@ void Split::Clear()
     on_symbol		= '*';
     off_symbol		= '-';
     excl_symbol		= 'x';
+    excl_bits.clear();
 	unit.resize(nunits, (split_t)0);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets each bit in the `units' vector to 0 (unset state), but does not change anything else. Useful for cleaning the
+|   slate without affecting the dimensions (i.e. data members `split_ntax' and `nunits' are not changed).
+*/
+void Split::Reset()
+	{
+    std::fill(unit.begin(), unit.end(), (split_t)0);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -64,18 +74,29 @@ Split::Split(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Creates a copy of the Split object `other', then returns reference to *this.
+|	Creates a copy of the supplied `other' Split object.
 */
-Split & Split::operator=(
-  const Split & other)  /**< is the Split object to be copied */
+void Split::Copy(
+  const Split & other) /**< is the Split object to be copied */
 	{
     split_ntax		= other.split_ntax;
     nunits			= other.nunits;
     on_symbol		= other.on_symbol;
     off_symbol		= other.off_symbol;
     excl_symbol		= other.excl_symbol;
+	excl_bits.resize(other.excl_bits.size(), (split_t)0);
+	std::copy(other.excl_bits.begin(), other.excl_bits.end(), excl_bits.begin());
 	unit.resize(nunits, (split_t)0);
 	std::copy(other.unit.begin(), other.unit.end(), unit.begin());
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Creates a copy of the Split object `other' by calling Split::Copy, then returns reference to *this.
+*/
+Split & Split::operator=(
+  const Split & other)  /**< is the Split object to be copied */
+	{
+    Copy(other);
 	return *this;
 	}
 
@@ -257,54 +278,45 @@ void Split::CreateAndAppendPatternRepresentation(
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Creates a newick tree description representing the split and returns as a string. Each taxon is represented by an
-|   integer starting at 1 (not 0!). The taxa representing "on" bits are listed first in the tree description. Thus, if
-|   bits 1, 7 and 9 were "on", and 0, 2-6, and 8 were "off", the tree description would look like this:
+|   integer starting at 0 (if `zero_based' is True) or 1 (if `zero_based' is false). The taxa representing "on" bits are
+|   listed first in the tree description. Thus, if bits 1, 7 and 9 were "on", and 0, 2-6, and 8 were "off", the tree 
+|   description would look like this if `zero_based' was false:
 |>
 |   (2,8,10,(1,3,4,5,6,7,9))
 |>
-|   Note the lack of a terminating semicolon.
+|   Note that no terminating semicolon is added by this function.
 */
-std::string Split::CreateNewickRepresentation() const
+std::string Split::CreateNewickRepresentation(
+  bool zero_based) const    /**< should be true if taxon numbers are to start at 0, and false if they are to begin at 1 */
 	{
+    unsigned taxon_number, taxon_index;
 	std::string s;
 	s += '(';
-    // Spit out "on" bits first, but build a vector of off bits for later use
-    std::vector<unsigned> off;
-    unsigned ntax_added = 0;
-    for (unsigned i = 0; i < nunits; ++i)
+
+    // Spit out "on" bits first
+    std::vector<unsigned> on_bits;
+    GetOnListImpl(on_bits);
+    for (std::vector<unsigned>::const_iterator i = on_bits.begin(); i != on_bits.end(); ++i)
         {
-		for (unsigned j = 0; j < bits_per_unit; ++j) 
-			{
-            split_t bitmask = (split_unity << j);
-			bool bit_is_set = ((unit[i] & bitmask) > (split_t)0);
-            //
-            // i   j
-            // 0   0  1  2  3  4  5  6  7
-            // ==> 1  2  3  4  5  6  7  8 <== taxon_number
-            //
-            // i   j
-            // 1   0  1  2  3  4  5  6  7
-            // ==> 9 10 11 12 13 14 15 16 <== taxon_number
-            //
-            unsigned taxon_number = i*bits_per_unit + j + 1;
-            if (bit_is_set)
-                {
-                s += str(boost::format("%d,") % taxon_number);
-                }
-            else
-                off.push_back(taxon_number);
-			if (++ntax_added == split_ntax)
-				break;
-			}
+        taxon_index = *i;
+        taxon_number = (zero_based ? taxon_index : taxon_index + 1);
+        s += str(boost::format("%d,") % taxon_number);
         }
-	s += '(';
+
+    s += '(';
 
     // Now for the "off" bits
-    std::vector<unsigned>::const_iterator it = off.begin();
-    s += str(boost::format("%d") % (*it));
-    for (++it; it != off.end(); ++it)
+    std::vector<unsigned> off_bits;
+    GetOffListImpl(off_bits);
+    std::vector<unsigned>::const_iterator j = off_bits.begin();
+    taxon_index = *j;
+    taxon_number = (zero_based ? taxon_index : taxon_index + 1);
+    s += str(boost::format("%d") % taxon_number);
+    for (++j; j != off_bits.end(); ++j)
         {
-        s += str(boost::format(",%d") % (*it));
+        taxon_index = *j;
+        taxon_number = (zero_based ? taxon_index : taxon_index + 1);
+        s += str(boost::format(",%d") % taxon_number);
         }
 	s += "))";
 	return s;
@@ -850,13 +862,15 @@ unsigned Split::GetNTaxa()
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Returns vector of unsigned integers each of which represents a bit that is set in this split (first is 0). This
-|   function removes values corresponding to excluded taxa before returning the list.
+|	Builds vector of unsigned integers each of which represents a bit that is "on" (i.e. set to 1) in this split. The
+|   value 0 refers to the first bit. This function removes values corresponding to excluded taxa before returning. This
+|   function is utilized by both Split::GetOnList and Split::CreateNewickRepresentation. Note that the supplied vector
+|   `v' is cleared at the beginning of this function.
 */
-std::vector<unsigned> Split::GetOnList() const
+void Split::GetOnListImpl(std::vector<unsigned> & v) const
     {
+    v.clear();
     unsigned k = 0;
-    std::vector<unsigned> v;
     for (unsigned i = 0; i < nunits; ++i)
         {
         for (unsigned j = 0; j < bits_per_unit; ++j)
@@ -876,17 +890,30 @@ std::vector<unsigned> Split::GetOnList() const
         std::vector<unsigned>::iterator last = std::set_difference(v.begin(), v.end(), excl_bits.begin(), excl_bits.end(), v.begin());
         v.erase(last, v.end());
         }
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns vector of unsigned integers each of which represents a bit that is "on" (i.e. set to 1) in this split. The
+|   value 0 refers to the first bit. This function removes values corresponding to excluded taxa before returning the
+|   vector.
+*/
+std::vector<unsigned> Split::GetOnList() const
+    {
+    unsigned k = 0;
+    std::vector<unsigned> v;
+    GetOnListImpl(v);
     return v;
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Returns vector of unsigned integers each of which represents a bit that is not set in this split (first is 0). This
-|   function removes values corresponding to excluded taxa before returning the list.
+|	Builds vector of unsigned integers each of which represents a bit that is "off" (i.e. set to 0) in this split. The
+|   value 0 represents the first bit. This function removes values corresponding to excluded taxa before returning. Note
+|   that the supplied vector `v' is cleared at the beginning of this function.
 */
-std::vector<unsigned> Split::GetOffList() const
+void Split::GetOffListImpl(std::vector<unsigned> & v) const
     {
+    v.clear();
     unsigned k = 0;
-    std::vector<unsigned> v;
     for (unsigned i = 0; i < nunits; ++i)
         {
         for (unsigned j = 0; j < bits_per_unit; ++j)
@@ -906,6 +933,18 @@ std::vector<unsigned> Split::GetOffList() const
         std::vector<unsigned>::iterator last = std::set_difference(v.begin(), v.end(), excl_bits.begin(), excl_bits.end(), v.begin());
         v.erase(last, v.end());
         }
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns vector of unsigned integers each of which represents a bit that is "off" (i.e. set to 0) in this split. The
+|   value 0 represents the first bit. This function removes values corresponding to excluded taxa before returning the
+|   list.
+*/
+std::vector<unsigned> Split::GetOffList() const
+    {
+    unsigned k = 0;
+    std::vector<unsigned> v;
+    GetOffListImpl(v);
     return v;
     }
 
@@ -944,7 +983,7 @@ void Split::SetExcluded(const std::vector<unsigned> excl)
         std::copy(excl.begin(), excl.end(), excl_bits.begin());
 
         // Must ensure excl_bits is sorted because binary_search algorithm (used in CreateAndAppendPatternRepresentation)
-        // and set_difference algorithm (used in GetOnBits and GetOffBits) require it
+        // and set_difference algorithm (used in GetOnList and GetOffList) require it
         std::sort(excl_bits.begin(), excl_bits.end()); 
 
         // Also ensure that none of the bits now set corresponds to an excluded bit (cannot use the fast version of

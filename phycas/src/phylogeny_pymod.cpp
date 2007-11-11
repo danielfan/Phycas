@@ -127,6 +127,8 @@ BOOST_PYTHON_MODULE(_Phylogeny)
 
 #if POLPY_NEWWAY
 	class_<Split, boost::shared_ptr<Split> >("SplitBase")
+        .def("copy", &Split::Copy)
+        .def("reset", &Split::Reset)
 		.def("setBit", &Split::SetBit)
 		.def("setBits", &Split::SetBits)
 		.def("unsetBit", &Split::UnsetBit)

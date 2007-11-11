@@ -43,6 +43,8 @@ class Split
 							    Split();
 							    Split(const Split & other);
 							    ~Split();
+
+        void                    Copy(const Split & other);
 		
 		std::string 	        GetDimensionInfo();
 		unsigned 		        GetNTaxa();
@@ -56,7 +58,7 @@ class Split
 		unsigned			    CountOffBits() const;
 		std::string			    CreateIdRepresentation() const;
 		std::string			    CreatePatternRepresentation() const;
-        std::string             CreateNewickRepresentation() const;
+        std::string             CreateNewickRepresentation(bool zero_based = false) const;
 		bool 				    Equals(const Split & other) const;
 		bool 				    IsBitSet(unsigned t) const;
 		bool				    IsCompatible(const Split & other) const;
@@ -88,6 +90,8 @@ class Split
 		Split &                 operator=(const Split & other);
 
 		void 				    Clear();
+        void                    Reset();
+
 		void 				    CombineWith(const Split & other);
 		void 				    IntersectWith(const Split & other);
 
@@ -100,6 +104,8 @@ class Split
 			
 	private:
 
+        void                    GetOnListImpl(std::vector<unsigned> & v) const;
+        void                    GetOffListImpl(std::vector<unsigned> & v) const;
 		void 				    Resize();
 		
 		friend std::istream &   operator>>(std::istream & in, Split & s);

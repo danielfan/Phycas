@@ -3,14 +3,14 @@ from phycas.Phylogeny import *
 outf = file('out.txt', 'w')
 
 z = '-**---****-----******------*'
-outf.write('pattern = %s\n' % z)
+outf.write('s = %s\n' % z)
 
 s = Split();
 s.createFromPattern(z)
-outf.write('pattern = %s (after Split construction)\n' % s.createPatternRepresentation())
+outf.write('s = %s (after Split construction)\n' % s.createPatternRepresentation())
 
 s.setExcluded([1,3,5,7,9])
-outf.write('pattern = %s (after excluding 1,3,5,7,9)\n' % s.createPatternRepresentation())
+outf.write('s = %s (after excluding 1,3,5,7,9)\n' % s.createPatternRepresentation())
 
 on_list = s.getOnList()
 outf.write('list of bits set:')
@@ -33,33 +33,44 @@ outf.write('\n')
 s.setOnSymbol('^')
 s.setOffSymbol('~')
 s.setExcludedSymbol('!')
-outf.write('pattern = %s (on = %s, off = %s, excluded = %s)\n' % (s.createPatternRepresentation(), s.getOnSymbol(), s.getOffSymbol(), s.getExcludedSymbol()))
+outf.write('s = %s (on = %s, off = %s, excluded = %s)\n' % (s.createPatternRepresentation(), s.getOnSymbol(), s.getOffSymbol(), s.getExcludedSymbol()))
 
 s.setOnSymbol('*')
 s.setOffSymbol('-')
 s.setExcludedSymbol('x')
-outf.write('pattern = %s (on = %s, off = %s, excluded = %s)\n' % (s.createPatternRepresentation(), s.getOnSymbol(), s.getOffSymbol(), s.getExcludedSymbol()))
+outf.write('s = %s (on = %s, off = %s, excluded = %s)\n' % (s.createPatternRepresentation(), s.getOnSymbol(), s.getOffSymbol(), s.getExcludedSymbol()))
 
 num_on_bits = s.countOnBits()
-outf.write('pattern = %s (number of set bits is %d)\n' % (s.createPatternRepresentation(), num_on_bits))
+outf.write('s = %s (number of set bits is %d)\n' % (s.createPatternRepresentation(), num_on_bits))
 num_off_bits = s.countOffBits()
-outf.write('pattern = %s (number of unset bits is %d)\n' % (s.createPatternRepresentation(), num_off_bits))
+outf.write('s = %s (number of unset bits is %d)\n' % (s.createPatternRepresentation(), num_off_bits))
+r = Split()
+r.copy(s)
+outf.write('r = %s (copy of split s before inverting s)\n' % r.createPatternRepresentation())
 s.invertSplit()
 num_on_bits_inv = s.countOnBits()
-outf.write('pattern = %s (after inverting, number of set bits now %d)\n' % (s.createPatternRepresentation(), num_on_bits_inv))
+outf.write('s = %s (after inverting, number of set bits now %d)\n' % (s.createPatternRepresentation(), num_on_bits_inv))
 complexity = s.calcComplexity()
 outf.write('Complexity is %d (minimum of %d and %d)\n' % (complexity, num_on_bits, num_off_bits))
-
-# These have yet to be tested in this file
-#
-#setBit(self, b):
-#setBits(self, btuple):
-#unsetBit(self, b):
-#unsetBits(self, btuple):
-#isBitSet(self, b):
-#createNewickRepresentation(self):
-#equals(self, other_split):
-#isCompatible(self, other_split):
-#subsumedIn(self, other_split):
+outf.write('First bit of r %s set\n' % (r.isBitSet(0) and 'is' or 'is not'))
+outf.write('First bit of s %s set\n' % (s.isBitSet(0) and 'is' or 'is not'))
+outf.write('r %s equal to s\n' % (r.equals(s) and 'is' or 'is not'))
+t = Split()
+t.copy(r)
+t.unsetBit(2)
+outf.write('t = %s (copy of split r but with bit 2 unset)\n' % t.createPatternRepresentation())
+r.setBit(4)
+outf.write('r = %s (with bit 4 set)\n' % r.createPatternRepresentation())
+outf.write('t %s subsumed in r\n' % (t.subsumedIn(r) and 'is' or 'is not'))
+outf.write('r %s subsumed in t\n' % (r.subsumedIn(t) and 'is' or 'is not'))
+outf.write('t %s compatible with r\n' % (t.isCompatible(r) and 'is' or 'is not'))
+outf.write('r %s compatible with t\n' % (r.isCompatible(t) and 'is' or 'is not'))
+outf.write('t in newick tree format: %s\n' % t.createNewickRepresentation())
+t.unsetBits((15,16,17,18,19,20))
+outf.write('t = %s (after unsetting bits 15 through 20)\n' % t.createPatternRepresentation())
+t.setBits((21,22,23,24,25,26))
+outf.write('t = %s (after setting bits 21 through 26)\n' % t.createPatternRepresentation())
+t.reset()
+outf.write('t = %s (after calling reset)\n' % t.createPatternRepresentation())
 
 outf.close()

@@ -13,14 +13,46 @@ class Split(SplitBase):
 
         >>> from phycas.Phylogeny import *
         >>> s = Split()
-        >>> s.setBit(1)
-        >>> s.setBit(3)
+        >>> s.setBits((0,1))
         >>> print s.createPatternRepresentation()
-        -*-*
+        **--
 
         """
         SplitBase.__init__(self)
         
+    def copy(self, other):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Makes this split a copy of other.
+
+        >>> from phycas.Phylogeny import *
+        >>> s = Split()
+        >>> s.createFromPattern('-*--*---*')
+        >>> r = Split()
+        >>> r.copy(s)
+        >>> print r.createPatternRepresentation()
+        -*--*---*
+
+        """
+        SplitBase.copy(self, other)
+
+    def reset(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Sets all bits to 0, but does not change anything else.
+
+        >>> from phycas.Phylogeny import *
+        >>> s = Split()
+        >>> s.createFromPattern('-*--*---*')
+        >>> s.countOnBits()
+        3
+        >>> s.reset()
+        >>> s.countOnBits()
+        0
+ 
+        """
+        SplitBase.reset(self)
+
     def setBit(self, b):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -195,7 +227,7 @@ class Split(SplitBase):
         (2,5,9,10,11,12,(1,3,4,6,7,8))
 
         """
-        return SplitBase.createNewickRepresentation(self)
+        return SplitBase.createNewickRepresentation(self, False)
 
     def createPatternRepresentation(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
