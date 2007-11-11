@@ -492,3 +492,91 @@ class Split(SplitBase):
         """
         SplitBase.setExcludedSymbol(self, c)
 
+    def write(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Saves this split as a string. All information needed to restore a
+        string is saved. Here are the fields in the order in which they are
+        saved. Note that because the first three fields are single
+        characters, no delimiter is needed. To extract just the pattern, use
+        a slice (see example below).
+
+        o the symbol used to indicate bits that are set
+        o the symbol used to indicate bits that are unset
+        o the symbol used to indicate bits that are excluded
+        o a sequence of characters showing bits that are set, unset
+          and excluded (using the three previously-defined symbols)
+        
+        >>> from phycas.Phylogeny import *
+        >>> s = Split()
+        >>> s.createFromPattern('-***xx*-xx')
+        >>> split_string = s.write()
+        >>> print split_string
+        *-x-***xx*-xx
+        >>> print split_string[3:]
+        -***xx*-xx
+        >>> r = Split()
+        >>> r.read(split_string)
+        >>> print r.createPatternRepresentation()
+        -***xx*-xx
+
+        """
+        return SplitBase.write(self)
+
+    def readDoof(self, s):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Builds this split from information read from s. The string s should
+        have been previously created using the write function. See write
+        function for details about how a split is stored as a string.
+
+        >>> from phycas.Phylogeny import *
+        >>> s = Split()
+        >>> s.createFromPattern('-***xx*-xx')
+        >>> split_string = s.write()
+        >>> print split_string
+        *-x-***xx*-xx
+        >>> print split_string[3:]
+        -***xx*-xx
+        >>> r = Split()
+        >>> r.read(split_string)
+        >>> print r.createPatternRepresentation()
+        -***xx*-xx
+
+        """
+        SplitBase.read(self, s)
+
+    def getNTaxa(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns the number of taxa currently supported by this Split object.
+
+        >>> from phycas.Phylogeny import *
+        >>> s = Split()
+        >>> s.createFromPattern('-***xx*-xx')
+        >>> print s.getNTaxa()
+        10
+
+        """
+        return SplitBase.getNTaxa(self)
+
+    def setNTaxa(self, n):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Sets the number of taxa currently supported by this Split object to n.
+        Note that this function clears the object (erases all information
+        previously stored in it), even if n equals the number of taxa
+        currently supported by the split.
+
+        >>> from phycas.Phylogeny import *
+        >>> s = Split()
+        >>> s.createFromPattern('-***xx*-xx')
+        >>> print s.createPatternRepresentation()
+        -***xx*-xx
+        >>> s.setNTaxa(6)
+        >>> print s.createPatternRepresentation()
+        ------
+
+        """
+        SplitBase.setNTaxa(self, n)
+

@@ -21,6 +21,7 @@
 #define PHYCAS_SPLIT_H
 
 #include <vector>
+#include <set>
 
 namespace phycas
 {
@@ -47,18 +48,23 @@ class Split
         void                    Copy(const Split & other);
 		
 		std::string 	        GetDimensionInfo();
-		unsigned 		        GetNTaxa();
+		unsigned 		        GetNTaxa() const;
+		void                    SetNTaxa(unsigned n);
 		void 			        CalcNUnits(unsigned ntax);
 
 		unsigned			    CalcComplexity() const;
-		
+
+        std::string             Write() const;
+        void                    Read(const std::string s);
+
         void                    CreateFromPattern(std::string s);
 		void	 			    CreateAndAppendPatternRepresentation(std::string &) const;
-		unsigned			    CountOnBits() const;
-		unsigned			    CountOffBits() const;
 		std::string			    CreateIdRepresentation() const;
 		std::string			    CreatePatternRepresentation() const;
         std::string             CreateNewickRepresentation(bool zero_based = false) const;
+
+        unsigned			    CountOnBits() const;
+		unsigned			    CountOffBits() const;
 		bool 				    Equals(const Split & other) const;
 		bool 				    IsBitSet(unsigned t) const;
 		bool				    IsCompatible(const Split & other) const;
@@ -89,6 +95,9 @@ class Split
 		bool				    operator==(const Split & other) const;
 		Split &                 operator=(const Split & other);
 
+		friend std::istream &   operator>>(std::istream & in, Split & s);
+        friend std::string &    operator<<(std::string & out, const Split & s);
+
 		void 				    Clear();
         void                    Reset();
 
@@ -104,13 +113,14 @@ class Split
 			
 	private:
 
+		void 				    Resize();
+
         void                    GetOnListImpl(std::vector<unsigned> & v) const;
         void                    GetOffListImpl(std::vector<unsigned> & v) const;
-		void 				    Resize();
-		
-		friend std::istream &   operator>>(std::istream & in, Split & s);
-		friend std::string &    operator<<(std::string & out, const Split & s);
 
+        void                    WriteImpl(std::string & out) const;
+        void                    ReadImpl(std::istream & in);
+		
     public:
 
 		SplitTVect              unit;			/**< is the vector of split units */

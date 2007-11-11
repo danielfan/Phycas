@@ -21,6 +21,7 @@
 #include <set>
 #include <limits>
 #include <algorithm>
+#include <strstream>
 #include <boost/format.hpp>
 #include "phycas/src/split.hpp"
 #include "phycas/src/xphylogeny.hpp"
@@ -52,6 +53,7 @@ void Split::Clear()
     excl_symbol		= 'x';
     excl_bits.clear();
 	unit.resize(nunits, (split_t)0);
+    std::fill(unit.begin(), unit.end(), (split_t)0);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -116,7 +118,7 @@ Split::~Split()
 void Split::CreateFromPattern(
   std::string s)    /**< is the string containing the pattern to use in constructing split */
     {
-    unsigned slen = s.size();
+    unsigned slen = (unsigned)s.size();
     std::vector<unsigned> on_bits;
     for (unsigned k = 0; k < slen; ++k)
         {
@@ -166,57 +168,90 @@ void Split::CalcNUnits(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Serializes a Split object to a string `out', then returns a reference to `out'. Split objects output using this 
-|   operator can be input using the corresponding operator>>. The information from `s' is space-delimited, and in the
-|   following order: `bits_per_unit', `split_ntax', `on_symbol', `off_symbol', `excl_symbol', `unit[0]', `unit[1]', ..., 
-|   `unit[nunits-1]'. `nunits' is not included because it can be recalculated from knowledge of `bits_per_unit' and 
-|   `split_ntax' using the function CalcNUnits. Note that `out' is cleared before any values are appended.
+|	Serializes a Split object to the supplied string `out', the original contents of which are lost in the process. 
+|   Split objects output using this method can be input using the corresponding function ReadImpl. The information from
+|   `s' is space-delimited, and in the following order: `bits_per_unit', `split_ntax', `on_symbol', `off_symbol',
+|   `excl_symbol', pattern representing `unit' vector. `nunits' is not included because it can be recalculated from 
+|   knowledge of `bits_per_unit' and `split_ntax' using the function CalcNUnits. Likewise, the `unit' and `excl_bits' 
+|   vectors are not output explicitly because they can be constructed from the pattern that is output (and the pattern
+|   has the addition benefit of being human-readable). Note that `out' is cleared before any values are appended.
 */
-std::string & operator<<(
+void Split::WriteImpl(
+  std::string & out) const /**< is the string on which to append the bit representation */
+	{
+    out = str(boost::format("%c%c%c") % on_symbol % off_symbol % excl_symbol);
+    out += CreatePatternRepresentation();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Calls Split::WriteImpl, then returns the resulting string. See Split::WriteImpl for details.
+*/
+std::string Split::Write() const
+    {
+    std::string out;
+    WriteImpl(out);
+	return out;
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Calls Split::WriteImpl on `s', then returns `out'. See Split::WriteImpl for details.
+*/
+std::string & phycas::operator<<(
   std::string & out, /**< is the string on which to append the bit representation */
   const Split & s)   /**< is the Split object for which we want a string representation */
 	{
-    out = str(boost::format("%d %d %c %c %c") % s.bits_per_unit % s.split_ntax % s.on_symbol % s.off_symbol % s.excl_symbol);
-	for (unsigned j = 0; j < s.nunits; ++j)
-		{
-        out += str(boost::format(" %d") % s.unit[j]);
-		}
+    s.WriteImpl(out);
 	return out;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Inputs from supplied stream `in' all the information needed to fully construct a Split object. Use the 
+|   corresponding Split::WriteImpl, Split::Write, or operator<< functions to save splits in a format so that they can be
+|   read in using this operator. On failure, an XPhylogeny exception will be thrown and `s' will be cleared (i.e. 
+|   returned to a state identical to a default-constructed Split object).
+*/
+void Split::ReadImpl(
+ std::istream & in) /**< is the stream from which to read the split */
+	{
+    std::string s;
+    in >> s;
+
+    // If the above read operation failed, bail out now
+    if (!in)
+        throw XPhylogeny("problem reading split from input stream");
+
+    if (s.size() < 3)
+        throw XPhylogeny(str(boost::format("split definition read from input stream (%s) was too short (i.e. at minimum, the on, off and excluded symbols must be present)") % s));
+    on_symbol = s[0];
+    off_symbol = s[1];
+    excl_symbol = s[2];
+
+    s.erase(s.begin(), s.begin() + 3);
+
+    CreateFromPattern(s);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Creates an input string stream from `in', then calls Split::ReadImpl. See Split::ReadImpl for details.
+*/
+void Split::Read(
+  const std::string in)
+    {
+    std::istrstream inss(in.c_str());
+    ReadImpl(inss);
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Inputs from supplied ifstream `in' all the information needed to fully construct the Split `s'. Use operator<< to 
 |   output Split objects so that they can be read in using this operator. On failure, an XPhylogeny exception will be
-|   thrown and `s' will remain unaffected.
+|   thrown and `s' will be cleared (returned to a state identical to a default-constructed Split object).
 */
-std::istream & operator>>(
+std::istream & phycas::operator>>(
   std::istream & in,    /**< is the ifstream from which to read the information needed for constructing a Split */
   Split & s)            /**< is the Split object that will be built from the information read from `in' */
 	{
-    Split tmp;
-    unsigned b;
-    in >> b >> tmp.split_ntax >> tmp.on_symbol >> tmp.off_symbol >> tmp.excl_symbol;
-
-    // If any of the above read operations failed, bail out now
-    if (!in)
-        throw XPhylogeny("problem reading split dimensions from input stream");
-
-    // Check to make sure the size of the type split_t is the same now as when the data was saved
-    if (b != tmp.bits_per_unit)
-        throw XPhylogeny(str(boost::format("the number of bits per unit differs on the system being used to read a split object (%d) compared to the system used to save the split object (%d)") % tmp.bits_per_unit % b));
-
-    tmp.CalcNUnits(tmp.split_ntax); // sets value of nunits
-    tmp.unit.resize(tmp.nunits, (split_t)0);
-
-	for (unsigned j = 0; j < s.nunits; ++j)
-		{
-		in >> tmp.unit[j];
-		}
-
-    if (!in)
-        throw XPhylogeny("problem reading split data from input stream");
-
-	return in;
+    s.ReadImpl(in);
+    return in;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -854,14 +889,6 @@ void Split::IntersectWith(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Returns the current value of the data member `split_ntax'.
-*/
-unsigned Split::GetNTaxa() 
-    {
-    return split_ntax;
-    }
-
-/*----------------------------------------------------------------------------------------------------------------------
 |	Builds vector of unsigned integers each of which represents a bit that is "on" (i.e. set to 1) in this split. The
 |   value 0 refers to the first bit. This function removes values corresponding to excluded taxa before returning. This
 |   function is utilized by both Split::GetOnList and Split::CreateNewickRepresentation. Note that the supplied vector
@@ -1044,4 +1071,24 @@ char Split::GetOffSymbol() const
 char Split::GetExcludedSymbol() const
     {
     return excl_symbol;
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
+|   Returns current value of the data member `split_ntax', which is the total number of taxa (counting both included and 
+|   excluded bits) that can be represented by this Split object.
+*/
+unsigned Split::GetNTaxa() const
+    {
+    return split_ntax;
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
+|   Sets the value of the data member `split_ntax' to the supplied value `n', which results in the complete removal of
+|   all information previously stored in the Split object (the member function Clear is called even if `n' is identical
+|   to the current value of `split_ntax').
+*/
+void Split::SetNTaxa(unsigned n)
+    {
+    Clear();
+    CalcNUnits(n);
     }

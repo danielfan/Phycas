@@ -18,9 +18,10 @@
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #if !defined(NDEBUG)
+#include <iostream>
 #include <boost/assert.hpp>
 
-void boost::assertion_failed(char const *expr, char const *function, char const *file, long line)
+void boost::assertion_failed(char const * expr, char const * function, char const * file, long line)
 	{
 	std::cerr << "\nBoost assertion failed:";
 	std::cerr << "\n  expr: " << expr;
