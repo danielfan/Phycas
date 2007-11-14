@@ -1,7 +1,7 @@
 import os,sys,math
 from phycas import *
 
-class GelfandGhosh():
+class GelfandGhosh(object):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
     Computes Gelfand-Ghosh on a pre-existing MCMC sample.
@@ -57,6 +57,7 @@ class GelfandGhosh():
         if self.rnseed != 0:
             self.lot.setSeed(self.rnseed)
             self.rnseed = self.lot.getSeed()
+            
         self.outfile = None
         self.pfile = None
         self.tfile = None
@@ -445,7 +446,13 @@ class GelfandGhosh():
                 # build the next tree
                 tree_name = t.name
                 tree_rooted = t.rooted
-                tree.buildFromString(tree_description)
+                
+                # Second argument (zero-based tip node numbers) must be True
+                # because we read these tree descriptions from a nexus file, and
+                # the nexus reader always returns zero-based tree descriptions
+                tree.buildFromString(tree_description, True) 
+
+                #print '*** simulating from tree %s: %s' % (tree_name, tree_description)
 
                 # set up for simulation
                 self.parameterizeModelForSimulation(i)

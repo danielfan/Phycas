@@ -567,7 +567,7 @@ if __name__ == '__main__':
     # Create a model tree
     phycas.tree = Phylogeny.Tree()
     model_tree = '(0:0.1,1:0.15,(2:0.025,3:0.15):0.05)'
-    phycas.tree.buildFromString(model_tree)
+    phycas.tree.buildFromString(model_tree, True)   # 2nd arg. is zero_based_tips
 
     #m = Lock()
     #tv = TreeViewer(tree=phycas.tree, mutex=m)

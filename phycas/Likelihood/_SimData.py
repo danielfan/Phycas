@@ -87,7 +87,7 @@ class SimData(SimDataBase):
     # Create a tree
     phycas.tree = Phylogeny.Tree()
     model_tree = '(0:0.1,1:0.15,(2:0.025,3:0.15):0.05)'
-    phycas.tree.buildFromString(model_tree)
+    phycas.tree.buildFromString(model_tree, True)
     
     # Create a model
     phycas.model = Likelihood.HKYModel()

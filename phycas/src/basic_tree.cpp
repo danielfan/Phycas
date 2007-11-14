@@ -1387,28 +1387,31 @@ void Tree::BuildFromString(
 			throw XPhylogeny("too many left parentheses");
 			}
 		RerootAtThisTip(first_tip);
+
+	    if (tip_numbers_equal_names)
+		    {
+		    PHYCAS_ASSERT(!numbers_used.empty());
+		    if (!zero_based_tips)
+			    {
+			    // Assuming that tip node numbers start at 1
+			    for (preorder_iterator nd = begin(); nd != end(); ++nd)
+				    {
+				    if (nd->IsTip())
+					    {
+                        if (nd->nodeNum == 0)
+                            {
+                            throw XPhylogeny("assuming that tip node numbers start at 1, but found a tip node number equal to 0");
+                            }
+					    nd->nodeNum = nd->nodeNum - 1;
+					    }
+				    }
+			    }
+		    }
 		}
 	catch(XPhylogeny x)
 		{
 		Clear();
 		throw x;
-		}
-
-	if (tip_numbers_equal_names)
-		{
-		PHYCAS_ASSERT(!numbers_used.empty());
-		if (!zero_based_tips)
-			{
-			// Assuming that tip node numbers start at 1
-			for (preorder_iterator nd = begin(); nd != end(); ++nd)
-				{
-				if (nd->IsTip())
-					{
-					nd->nodeNum = nd->nodeNum - 1;
-					PHYCAS_ASSERT(nd->nodeNum < UINT_MAX);
-					}
-				}
-			}
 		}
 
 	// Renumber internal nodes so that they do not overlap with numbers of tip nodes

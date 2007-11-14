@@ -10,6 +10,7 @@
 
 from phycas import *
 from math import exp
+import shutil
 
 # Here are some numbers we will use later on in this script. They are defined
 # here to make it easy to find later should we wish to run the script again
@@ -18,16 +19,16 @@ rnseed = 7654321
 num_sites = 2000
 ncycles = 20000
 true_edgelen_mean = 0.1
-analysis_prior_means = [0.00001, 0.01, 1000.0]
-#analysis_prior_means = [0.00001, 0.00005, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0, 5.0, 10.0, 50.0, 100.0, 500.0, 1000.0]
+analysis_prior_means = [0.00001, 0.00005, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0, 5.0, 10.0, 50.0, 100.0, 500.0, 1000.0]
+sim_file_name = 'simulated.nex'
 
 #############################################################
 #################### Simulate a data set ####################
 #############################################################
-def simulate(file_name):
+def simulate():
     # Create a Phycas object named simulator. Note that simulator is local to this
     # function and will be destroyed before the function returns. This is ok because
-    # by that point the simulated data will be saved in a file named file_name.
+    # by that point the simulated data will be saved in a file named sim_file_name.
     simulator = Phycas()
     simulator.random_seed = rnseed
     simulator.default_model = 'jc'
@@ -36,7 +37,7 @@ def simulate(file_name):
     simulator.tree_topology = '(1,2,(3,4))'
     simulator.starting_edgelen_dist = ProbDist.ExponentialDist(1.0/true_edgelen_mean)
     simulator.sim_taxon_labels = ['A', 'B', 'C', 'D']
-    simulator.sim_file_name = file_name
+    simulator.sim_file_name = sim_file_name
     simulator.sim_nchar = num_sites
     simulator.data_source = None
     simulator.simulateDNA()    
@@ -44,7 +45,7 @@ def simulate(file_name):
     # Add a paup block to the end of the simulated data file to make it easy to
     # verify that the simulation worked. The function simulateDNA() stores the
     # tree actually used for the simulation in the variable sim_model_tree.
-    sim_file = file(file_name, 'a') # the 'a' means open for appending
+    sim_file = file(sim_file_name, 'a') # the 'a' means open for appending
     sim_file.write('\nbegin trees;\n')
     sim_file.write('  utree truth = %s;\n' % (simulator.sim_model_tree.makeNewick()))
     sim_file.write('end;\n\n')
@@ -84,14 +85,14 @@ def analyze(prior_mean):
     # about are the edge length priors. The master_edgelen_dist specifies the prior used
     # for all edge lengths. Tell Phycas to not use a hyperprior for edge lengths, otherwise
     # it will ignore your master_edgelen_dist specification.
-    analyzer.master_edgelen_dist = ProbDist.ExponentialDist(1.0/prior_mean)
+    analyzer.edgelen_dist = ProbDist.ExponentialDist(1.0/prior_mean)
     analyzer.using_hyperprior = False 
 
     # Don't allow polytomies
     analyzer.allow_polytomies = False
 
     # Specify the data file
-    analyzer.data_file_name = 'simulated.nex'
+    analyzer.data_file_name = sim_file_name
 
     # Start with a random tree
     analyzer.starting_tree_source = 'random'
@@ -116,6 +117,11 @@ def analyze(prior_mean):
 
     # Finally, call the gg method, which computes the Gelfand-Ghosh statistics using the files
     # output from the mcmc analysis
+    analyzer.gg_pfile = sim_file_name + '.p'
+    analyzer.gg_tfile = sim_file_name + '.t'
+    # copy p and t files so they will not be overwritten
+    shutil.copyfile(analyzer.gg_pfile, '%f_%s' % (prior_mean,analyzer.gg_pfile))
+    shutil.copyfile(analyzer.gg_tfile, '%f_%s' % (prior_mean,analyzer.gg_tfile))
     analyzer.gg()
 
     # Return a tuple (a type of list, in this case consisting of two values)
@@ -129,8 +135,8 @@ def analyze(prior_mean):
 
 if __name__ == '__main__':
     # Call the simulate function (defined above) to simulate a data set and save it
-    # in the file named 'simulated.nex'
-    simulate('simulated.nex')
+    # in the file named sim_file_name
+    simulate()
 
     # Open a file that will save the Gelfand-Ghosh values
     outf = file('output.txt', 'w')  # the 'w' means "open the file for writing"

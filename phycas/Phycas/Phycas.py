@@ -125,7 +125,9 @@ class Phycas(object):
         self.edgelen_hyperprior     = InverseGammaDist(2.1, 1.0/1.1)
         self.starting_edgelen_hyperparam = 0.05 #POL doesn't do anything! currently ignored
         self.fix_edgelen_hyperparam = False 
-        
+
+        # Note that edgelen_dist is a property: its setter function (setEdgelenDist) sets
+        # both internal_edgelen_dist and external_edgelen_dist to the value specified
         self.edgelen_dist           = ExponentialDist(2.0)
         self.fix_edgelens           = False 
         
@@ -860,6 +862,8 @@ class Phycas(object):
         files self.gg_pfile and self.gg_tfile.
         
         """
+        self.phycassert(self.gg_pfile, 'gg_pfile cannot be None if gg function called')
+        self.phycassert(self.gg_tfile, 'gg_pfile cannot be None if gg function called')
         import GGImpl
         gelfand_ghosh = GGImpl.GelfandGhosh(self)
         self.gg_Pm, self.gg_Gm, self.gg_Dm = gelfand_ghosh.run()
