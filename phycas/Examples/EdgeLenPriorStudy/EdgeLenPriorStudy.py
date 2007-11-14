@@ -38,6 +38,7 @@ def simulate(file_name):
     simulator.sim_taxon_labels = ['A', 'B', 'C', 'D']
     simulator.sim_file_name = file_name
     simulator.sim_nchar = num_sites
+    simulator.data_source = None
     simulator.simulateDNA()    
 
     # Add a paup block to the end of the simulated data file to make it easy to

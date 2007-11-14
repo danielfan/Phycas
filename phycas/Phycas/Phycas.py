@@ -831,7 +831,7 @@ class Phycas(object):
         core = MCMCManager.LikelihoodCore(self)
         core.setupCore()
         if not core.tree.hasEdgeLens():
-            tm = Phylogeny.TreeManip(core.tree)
+            tm = TreeManip(core.tree)
             tm.setRandomEdgeLengths(self.starting_edgelen_dist)
         self.sim_model_tree = core.tree
         core.prepareForSimulation()
