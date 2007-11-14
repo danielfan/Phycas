@@ -66,6 +66,9 @@ BOOST_PYTHON_MODULE(_Phylogeny)
 	const InternalData *	(TreeNode::*GetInternalDataConst)()	const	= &TreeNode::GetInternalData;
 
 	class_<TreeNode>("TreeNodeBase", no_init)
+#if POLPY_NEWWAY
+		.def("getSplit", &TreeNode::GetSplit, return_internal_reference<>())
+#endif
 		.def("getX", &TreeNode::GetX)
 		.def("getY", &TreeNode::GetY)
 		.def("setX", &TreeNode::SetX)
@@ -81,6 +84,7 @@ BOOST_PYTHON_MODULE(_Phylogeny)
 		.def("getParent", &TreeNode::GetParent, return_internal_reference<>())
 		.def("getNodeNumber", &TreeNode::GetNodeNumber)
 		.def("getNodeName", &TreeNode::GetNodeName, return_value_policy<copy_const_reference>())
+        .def("setNodeName", &TreeNode::SetNodeName)
 		.def("getEdgeLen", &TreeNode::GetEdgeLen)
 		.def("setEdgeLen", &TreeNode::SetEdgeLen)
 		.def("getNextPreorder", &TreeNode::GetNextPreorder, return_internal_reference<>())
@@ -116,6 +120,8 @@ BOOST_PYTHON_MODULE(_Phylogeny)
 		.def("here", &Tree::DebugHere)
 #if POLPY_NEWWAY
 		.def("debugMode", &phycas::Tree::debugMode)
+		.def("recalcAllSplits", &phycas::Tree::RecalcAllSplits)
+        
 #endif
 		;
 

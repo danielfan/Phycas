@@ -38,6 +38,7 @@ typedef std::vector<split_t>    SplitTVect;
 class Split
 	{
     friend class Tree;
+    friend class SamcMove;
 
 	public:
 
@@ -96,7 +97,10 @@ class Split
 		Split &                 operator=(const Split & other);
 
 		friend std::istream &   operator>>(std::istream & in, Split & s);
-        friend std::string &    operator<<(std::string & out, const Split & s);
+
+        //@POL 13-Nov-2007 it is currently a mystery why uncommenting the line below leads to hundreds of VC error C2679 messages: 
+        // binary '<<' : no operator found which takes a right-hand operand of type <whatever> (or there is no acceptable conversion)
+        //friend std::string &    operator<<(std::string & out, const Split & s);
 
 		void 				    Clear();
         void                    Reset();

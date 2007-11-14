@@ -98,6 +98,9 @@ class Tree
 		double					EdgeLenSum();
 		double					calcTotalHeight();
 		void					SetAllEdgeLens(double v);
+#if POLPY_NEWWAY
+		void					RecalcAllSplits(unsigned max_nbits);
+#endif
 		void					RerootAtThisTip(TreeNode * nd);
 		void					RerootAtThisInternal(TreeNode * nd);
 		void					RerootAtTip(unsigned num);
@@ -170,6 +173,6 @@ typedef boost::shared_ptr<Tree> TreeShPtr;
 
 }	// namespace phycas
 
-#include "phycas/src/basic_tree.inl"
+//#include "phycas/src/basic_tree.inl"
 
 #endif

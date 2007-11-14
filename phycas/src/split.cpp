@@ -193,6 +193,9 @@ std::string Split::Write() const
 	return out;
     }
 
+#if 0
+//@POL 13-Nov-2007 it is currently a mystery why uncommenting the line below leads to hundreds of VC error C2679 messages: 
+// binary '<<' : no operator found which takes a right-hand operand of type <whatever> (or there is no acceptable conversion)
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calls Split::WriteImpl on `s', then returns `out'. See Split::WriteImpl for details.
 */
@@ -203,6 +206,7 @@ std::string & phycas::operator<<(
     s.WriteImpl(out);
 	return out;
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Inputs from supplied stream `in' all the information needed to fully construct a Split object. Use the 

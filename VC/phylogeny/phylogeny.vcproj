@@ -157,6 +157,9 @@
 				RelativePath="..\..\phycas\src\basic_tree.hpp">
 			</File>
 			<File
+				RelativePath="..\..\phycas\src\basic_tree_node.hpp">
+			</File>
+			<File
 				RelativePath="..\..\phycas\src\split_prior.hpp">
 			</File>
 		</Filter>

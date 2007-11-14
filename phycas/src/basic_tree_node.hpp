@@ -23,6 +23,10 @@
 #include <string>
 #include <boost/function.hpp>
 
+#if POLPY_NEWWAY
+#include "phycas/src/split.hpp"
+#endif
+
 namespace phycas
 {
 
@@ -91,6 +95,10 @@ class TreeNode
 		const TipData *			GetTipData() const;
 		const InternalData *	GetInternalData() const;
 
+#if POLPY_NEWWAY
+        Split &                 GetSplit();
+#endif
+
 		// Modifiers
 		//
 		void			SetX(float xx);
@@ -148,6 +156,10 @@ class TreeNode
 		TipDataDeleter		tipDataDeleter;			/**< function object used to delete memory allocated for tipData */
 		InternalData *		internalData;			/**< is a pointer to a structure used to store data for internal nodes */
 		InternalDataDeleter	internalDataDeleter;	/**< function object used to delete memory allocated for `internalData' */
+
+#if POLPY_NEWWAY
+        Split               split;                  /**< is the object that keeps track of the taxon bipartition implied by this node's edge */
+#endif
 
 	public:
 

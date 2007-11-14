@@ -36,24 +36,157 @@ using namespace phycas;
 SamcMove::SamcMove(
   ProbDistShPtr d)	/**< is the distribution to use for generating new edge lengths */
   :MCMCUpdater(),
-  term_edge_dist(d)
+  term_edge_dist(d),
+  temperature_threshhold(100.0)
 	{
 	num_taxa = 0;
 	reset();
+#if POLPY_NEWWAY
     prev_ln_like = 0.0;
+    infinite_temperature = false;
+    temperature = 0.6;
+#endif
 	}
 
+#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
-|	
+|   Sets the maximum number of taxa. This is used to ensure that Split objects in the tree have enough bits to 
+|   accommodate any combination of taxa that could appear in the tree at the same time.
+*/
+void SamcMove::setNTax(
+  unsigned ntax)   /**< is the maximum number of taxa that could appear in the tree */
+    {
+    num_taxa = ntax;
+    }
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|   Returns the current value of the data member `num_taxa'.
+*/
+unsigned SamcMove::getNTax()
+    {
+    return num_taxa;
+    }
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Computes the least squares length (v_i) of an edge connecting `leaf_k' to the edge subtending node `nd'. The formula
+|   used is eq. 4 from Rzhetsky and Nei (1993. MBE 10:1074). This is used by SamcMove::calcPk to compute the probability
+|   of selecting a node in the tree (or rather an edge in the tree) to which the new leaf will be attached in an 
+|   extrapolate proposal.
+*/
+double SamcMove::calcLeafEdgeLen(
+  unsigned leaf_k,  /**< is the leaf we are adding in an extrapolation move */
+  TreeNode * nd)	/**< is the putative attachment node */
+	{
+    // Start by getting the set of all nodes above nd in the tree
+    std::vector<unsigned> nodes_above;
+    nd->GetSplit().GetOnListImpl(nodes_above);
+    PHYCAS_ASSERT(nodes_above.size() > 0);
+    double na = (double)nodes_above.size();
+
+    //std::cerr << "  leaf_k = " << leaf_k << "\n";
+    //std::cerr << "   " << na << " nodes above: ";
+    //std::copy(nodes_above.begin(), nodes_above.end(), std::ostream_iterator<double>(std::cerr," "));
+    //std::cerr << std::endl;
+
+    // Now get the set of all nodes below nd in the tree
+    std::vector<unsigned> nodes_below;
+    nd->GetSplit().GetOffListImpl(nodes_below);
+    PHYCAS_ASSERT(nodes_below.size() > 0);
+    double nb = (double)nodes_below.size();
+
+    //std::cerr << "   " << nb << " nodes below: ";
+    //std::copy(nodes_below.begin(), nodes_below.end(), std::ostream_iterator<double>(std::cerr," "));
+    //std::cerr << std::endl;
+
+    // Calculate sum of all nabove distances between leaf_k and each node in nodes_above vector
+    // At same time, compute ntotal distances between each node in nodes_above vector with each node in
+    // the nodes_below vector
+    double d_xa = 0.0;
+    double d_ab = 0.0;
+    for (std::vector<unsigned>::const_iterator ait = nodes_above.begin(); ait != nodes_above.end(); ++ait)
+        {
+        d_xa += distance_matrix[leaf_k][*ait];
+        for (std::vector<unsigned>::const_iterator bit = nodes_below.begin(); bit != nodes_below.end(); ++bit)
+            {
+            d_ab += distance_matrix[*ait][*bit];
+            }
+        }
+
+    // Calculate sum of all nbelow distances between leaf_k and each node in nodes_below vector
+    double d_xb = 0.0;
+    for (std::vector<unsigned>::const_iterator bit = nodes_below.begin(); bit != nodes_below.end(); ++bit)
+        {
+        d_xb += distance_matrix[leaf_k][*bit];
+        }
+
+    // Now in a position to compute the least squares length of the edge subtending leaf_k if it were
+    // added to the tree on the edge below node nd
+    double d = (d_xa/na + d_xb/nb - d_ab/(na*nb))/2.0;
+
+    //std::cerr << "   d_xa = " << d_xa << std::endl;
+    //std::cerr << "   d_xb = " << d_xb << std::endl;
+    //std::cerr << "   d_ab = " << d_ab << std::endl;
+    //std::cerr << "   d    = " << d << std::endl;
+
+    return d;
+	}
+#endif
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Computes the length (v_i) of the edge connecting `leak_k' to every existing edge i in the tree. The formula used is
+|   eq. 4 from Rzhetsky and Nei (1993. MBE 10:1074). A better method would be to compute the minimum evolution score
+|   resulting from attaching `leaf_k' to every possible edge in the existing tree, but would be much more expensive so
+|   the approximation is used instead. For each i, this function then computes the relative probability of insertion 
+|   p*_i = exp{-v_i/tau_s}, where tau_s is the temperature parameter. The normalized values p_i = p*_i/sum_i(p*_i) are
+|   stored in the vector `pvect' for use by SamcMove::chooseRandomAttachmentNode in selecting a node in the tree (or 
+|   rather an edge in the tree) to which the new `leaf_k' will be attached in an extrapolate proposal.
 */
 void SamcMove::calcPk(
   unsigned leaf_k)	/**< is the leaf we are adding (for extrapolation) or subtracting (for projection) */
 	{
-	//@POL assumes temperature is infinity, need to rewrite for more reasonable behavior
 	pvect.clear();
+#if POLPY_NEWWAY
+    tree->RecalcAllSplits(num_taxa);
+    if (infinite_temperature)
+        {
+	    // Efficient version when temperature is infinity
+	    unsigned n = tree->GetNNodes() - 1;
+	    double p = 1.0/(double)n;
+    	pvect.resize(n, p);
+        }
+    else
+        {
+        //std::cerr << "\nCURRENT TREE: " << tree->MakeNewick() << std::endl;
+	    TreeNode * nd = tree->GetFirstPreorder();
+	    for (nd = nd->GetNextPreorder(); nd != NULL; nd = nd->GetNextPreorder())
+		    {
+            //std::cerr << "***** calcLeafEdgeLen: leaf_k = " << leaf_k << ", nd = " << nd->GetNodeNumber() << std::endl;
+            double d = calcLeafEdgeLen(leaf_k, nd);
+            double p = std::exp(-d/temperature);
+            pvect.push_back(p);
+		    }
+
+        //std::cerr << "\npvect before normalizing:" << std::endl;
+        //std::copy(pvect.begin(), pvect.end(), std::ostream_iterator<double>(std::cerr,"|"));
+
+        PHYCAS_ASSERT(pvect.size() == tree->GetNNodes() - 1);
+    	double total = std::accumulate(pvect.begin(), pvect.end(), 0.0, std::plus<double>());
+        std::for_each(pvect.begin(), pvect.end(), boost::lambda::_1 /= total);
+
+        //std::cerr << "\n\npvect after normalizing:" << std::endl;
+        //std::copy(pvect.begin(), pvect.end(), std::ostream_iterator<double>(std::cerr,"|"));
+        //std::cerr << std::endl;
+        }
+#else
+	// Efficient version when temperature is infinity
 	unsigned n = tree->GetNNodes() - 1;
 	double p = 1.0/(double)n;
 	pvect.resize(n, p);
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -276,10 +409,10 @@ bool SamcMove::update()
 |	Sets `num_taxa' to the number of tips in `tree', computes the polytomy distribution, and sets the number of taxa for the
 |	`topo_prior_calculator' object to `num_taxa'.
 */
-void SamcMove::finalize()
-    {
-    num_taxa = tree->GetNTips();
-    }
+//void SamcMove::finalize()
+//    {
+//    num_taxa = tree->GetNTips();
+//    }
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Called if the proposed move is rejected. Causes tree to be returned to its state just prior to proposing the move.
@@ -348,3 +481,43 @@ void SamcMove::reset()
     pvect.clear();
     new_leaf_sib_parent = NULL;
     }
+
+#if POLPY_NEWWAY    //SAMC
+/*----------------------------------------------------------------------------------------------------------------------
+|	Saves one row of the distance matrix to the data member `distance_matrix'.
+*/
+void SamcMove::setDistanceMatrixRow(
+  const DistanceMatrixRow & row)    /**< is the row to save */
+    {
+    DistanceMatrixRow r;
+    r.resize(row.size(), 0);
+    std::copy(row.begin(), row.end(), r.begin());
+    distance_matrix.push_back(r);
+    }
+#endif
+
+#if POLPY_NEWWAY    //SAMC
+/*----------------------------------------------------------------------------------------------------------------------
+|	Setter for data member `temperature'.
+*/
+void SamcMove::setTemperature(
+  double temp)  /**< is the new temperature */
+    {
+    PHYCAS_ASSERT(temp > 0.0);
+    temperature = temp;
+    if (temperature > temperature_threshhold)
+        infinite_temperature = true;
+    else
+        infinite_temperature = false;
+    }
+#endif
+
+#if POLPY_NEWWAY    //SAMC
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor for data member `temperature'.
+*/
+double SamcMove::getTemperature() const
+    {
+    return temperature;
+    }
+#endif

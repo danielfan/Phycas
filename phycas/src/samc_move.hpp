@@ -44,6 +44,10 @@ typedef boost::weak_ptr<MCMCChainManager>			ChainManagerWkPtr;
 typedef std::map<unsigned, std::vector<double> > PolytomyDistrMap;
 typedef std::vector<double> VecPolytomyDistr;
 
+#if POLPY_NEWWAY    //SAMC
+typedef std::vector<double> DistanceMatrixRow;
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Encapsulates the SAMC dimension-change move
 */
@@ -60,22 +64,33 @@ class SamcMove : public MCMCUpdater
 
 		// Utilities
 		//
-		void						finalize();
+		//void						finalize();
 
 		bool						extrapolate(unsigned leaf_num, double theta_diff, double ln_proposal_ratio);
 		bool						project(unsigned leaf_num, double theta_diff, double ln_proposal_ratio);
+
 		// These are virtual functions in the MCMCUpdater base class
 		//
 		virtual bool				update();
 		virtual void				revert();
 		virtual void				accept();
 
+#if POLPY_NEWWAY    //SAMC
+        unsigned                    getNTax();
+        void                        setNTax(unsigned ntax);
+
+        void                        setDistanceMatrixRow(const DistanceMatrixRow & row);
+        double                      calcLeafEdgeLen(unsigned leaf_k, TreeNode * nd);
+
+        void                        setTemperature(double temp);
+        double                      getTemperature() const;
+#endif
+
 	private:
 
 		void						reset();
 		SamcMove &					operator=(const SamcMove &);	// never use - don't define
 
-		//new stuff
 		void						calcPk(unsigned leaf_k);
 		double						getPkl(unsigned leaf_k, TreeNode * nd_l);
 		TreeNode *					chooseRandomAttachmentNode(unsigned leaf_k);
@@ -83,11 +98,14 @@ class SamcMove : public MCMCUpdater
     private:
 
 #if POLPY_NEWWAY    //SAMC
+        bool                            infinite_temperature;               /**< if true, uses a discrete uniform distribution for selecting attachment node during extrapolate moves; if false, uses less efficient but more reasonable method based on least squares length of edge of attached leaf */
+        const double                    temperature_threshhold;             /**< temperatures above this value trigger setting infinite_temperature to true */
+        double                          temperature;                        /**< assuming infinite_temperatore is false, determines the temperature used for computing insertion probabilities for extrapolate moves */
         double                          prev_ln_like;
+        std::vector<DistanceMatrixRow>  distance_matrix;
 #endif
 
 		unsigned						num_taxa;							/**< The number of taxa */
-		// new stuff
 		TreeNode *						leaf_sib;
 		TreeNode *						leaf;
 		TreeNode *						parent;

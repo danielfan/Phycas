@@ -393,7 +393,7 @@ class MarkovChain(LikelihoodCore):
             self.samc_move.setLot(self.r)
             if self.model.edgeLengthsFixed():
                 self.samc_move.fixParameter()
-            self.samc_move.finalize()
+            #self.samc_move.finalize()
             self.chain_manager.addMove(self.samc_move)
 
         self.chain_manager.finalize()

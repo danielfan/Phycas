@@ -21,6 +21,10 @@
 #include "mcmc_param.hpp"
 #include "phycas/src/basic_tree.hpp"				// for Tree::begin() and Tree::end()
 
+// these were at the top of basic_tree.inl
+#include <boost/lambda/lambda.hpp>
+#include <boost/lambda/bind.hpp>
+
 namespace phycas
 {
 

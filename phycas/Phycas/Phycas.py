@@ -100,6 +100,7 @@ class Phycas(object):
         self.samc_move_debug        = False     # If set to True, output will be saved to a file named cf.txt (if it doesn't exist) or, if cf.txt already exists, the output will be compared to cf.txt and the program will halt if a discrepency is found
         self.samc_t0                = 10000.0   # samc_gain_factor = samc_t0/max(samc_t0, cycle)
         self.samc_move_weight       = 1         # number of times per cycle that SAMC moves will be performed (currently unused because SAMC moves are not used in standard MCMC analyses)
+        self.samc_temperature       = 0.6       # temperature used in extrapolate move to smooth out differences in probabilities of different possible attachment points
 
         # Variables associated with slice samplers
         self.slice_weight           = 1         # Slice sampled parameters will be updated this many times per cycle
@@ -186,6 +187,7 @@ class Phycas(object):
         #self.use_tree_viewer        = False    # popup graphical TreeViewer to show trees during run POLPY_NEWWAY
         self.addition_sequence      = []        # list of taxon numbers for addition sequence
         self.samc_theta             = []        # normalizing factors (will have length ntax - 3 because levels with 1, 2 or 3 taxa are not examined)
+        self.samc_distance_matrix   = None      # holds ntax x ntax hamming distance matrix used by SamcMove
 
     def phycassert(self, assumption, msg):
         if not assumption:
@@ -591,6 +593,7 @@ class Phycas(object):
         
         n = self.ntax
         d = self.calcDistances()
+        self.samc_distance_matrix = d
 
         # Compute the addition order.  First find the most distant pair.
         max_dist = -1.0
@@ -600,7 +603,6 @@ class Phycas(object):
                 if dij > max_dist:
                     max_dist = dij
                     self.addition_sequence = [i,j]
-        
 
         # level_set = [self.addition_sequence]
         available_set = range(n)
@@ -635,7 +637,6 @@ class Phycas(object):
         print "starting tree = ", self.tree_topology
         
     def setupSAMC(self):
-        # raw_input('debug stop')
         # Read the data
         self.phycassert(self.data_source == 'file', "This only works for data read from a file (specify data_source == 'file')")
         self.readDataFromFile()
@@ -672,6 +673,17 @@ class Phycas(object):
             m.likelihood.addOrphanTip(m.tree, row, '%d' % (row+1))
             m.likelihood.addDecoratedInternalNode(m.tree, internal_node_number)
             internal_node_number += 1
+
+        # samc_move needs a copy of the distance matrix for purposes of selecting
+        # a node to which to join the next taxon in the addition sequence in
+        # extrapolate moves
+        for row in self.samc_distance_matrix:
+            m.samc_move.setDistanceMatrixRow(row)
+
+        # Set the number of taxa and temperature
+        m.samc_move.setNTax(self.ntax)
+        m.samc_move.setTemperature(self.samc_temperature)
+
         self.openParameterAndTreeFiles()
         
     def setLogFile(self, filename):
@@ -855,13 +867,15 @@ class Phycas(object):
         Computes a matrix of pairwise distances between sequences.
         
         """
-        self.phycassert(self.data_source == 'file', "data_source variable must be defined to 'file'")
+        self.phycassert(self.data_source == 'file', "data_source variable must equal 'file'")
 
+        # matrix holds the data matrix
         matrix = []
-        
         for i in range(self.ntax):
             matrix.append(self.data_matrix.getRow(i))
-        
+
+        # distance holds the JC69 distance matrix
+        # Note: currently assumes no missing or ambiguous data (i.e. A vs. ? treated as difference)
         distance = []
         for i in range(self.ntax):
             distance_i = []
@@ -874,10 +888,17 @@ class Phycas(object):
                         xjk = matrix[j][k]
                         if xik != xjk:
                             diff += 1.0
+                    p = diff/float(self.nchar)
+                    if p > 0.74999:
+                        p = 0.74999
+                    jc = -0.75*math.log(1.0 - 4.0*p/3.0)
+                    distance_i.append(jc)
+                    #print 'saving distance[%d][%d] = %f' % (i,j,jc)
                 elif i > j:
-                    diff = distance[j][i]
-                
-                distance_i.append(diff)
+                    #print 'accessing [%d][%d] = %f' % (j,i,distance[j][i])
+                    distance_i.append(distance[j][i])
+                else:
+                    distance_i.append(0.0)
             distance.append(distance_i)
             
 #         for i in range(self.ntax):

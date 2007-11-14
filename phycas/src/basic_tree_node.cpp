@@ -38,6 +38,16 @@ double TreeNode::GetEdgeLen() const
 	return edgeLen*scale;
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the split associated with this node.
+*/
+Split & TreeNode::GetSplit()
+	{
+	return split;
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Allows write access to protected data member `edgeLen'.
 */
@@ -207,7 +217,7 @@ std::string	TreeNode::briefDebugReport(
 	{
 	std::string nm = GetNodeName();
 	std::string tmpstr;
-    unsigned namelen = nm.length();
+    unsigned namelen = (unsigned)nm.length();
 
     if (verbosity == 0)
         {

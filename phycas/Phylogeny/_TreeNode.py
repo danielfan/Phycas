@@ -137,6 +137,14 @@ class TreeNode(TreeNodeBase):
         """
         return TreeNodeBase.getNodeName(self)
     
+    def setNodeName(self, s):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Sets the node name to the supplied value s.
+
+        """
+        TreeNodeBase.setNodeName(self, s)
+    
     def getEdgeLen(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """

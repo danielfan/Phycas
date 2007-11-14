@@ -140,7 +140,12 @@ void updater_pymod()
 		.def("extrapolate", &phycas::SamcMove::extrapolate)
 		.def("project", &phycas::SamcMove::project)
 		.def("update", &phycas::SamcMove::update)
-		.def("finalize", &phycas::SamcMove::finalize)
+		//.def("finalize", &phycas::SamcMove::finalize)
+		.def("setDistanceMatrixRow", &phycas::SamcMove::setDistanceMatrixRow)
+		.def("setTemperature", &phycas::SamcMove::setTemperature)
+		.def("getTemperature", &phycas::SamcMove::getTemperature)
+		.def("setNTax", &phycas::SamcMove::setNTax)
+		.def("getNTax", &phycas::SamcMove::getNTax)
 		;
 	class_<phycas::NCatMove, bases<phycas::MCMCUpdater>, 
 		boost::noncopyable, boost::shared_ptr<phycas::NCatMove> >("NCatMove") 

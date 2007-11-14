@@ -272,6 +272,9 @@
 				RelativePath="..\..\phycas\src\slice_sampler.cpp">
 			</File>
 			<File
+				RelativePath="..\..\phycas\src\split.cpp">
+			</File>
+			<File
 				RelativePath="..\..\phycas\src\state_freq_param.cpp">
 			</File>
 			<File

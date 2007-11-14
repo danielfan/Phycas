@@ -27,7 +27,9 @@ class Tree(TreeBase):
     def __iter__(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Returns nodes in preorder sequence.
+        Returns nodes in preorder sequence. The tip node named "a" appears
+        first in the example below because the tree is rooted at the first
+        tip node for "unrooted" trees.
 
         >>> from phycas.Phylogeny import *
         >>> tree = Tree()
