@@ -168,7 +168,7 @@ class Phycas(object):
         self.mcmc_manager           = MCMCManager.MCMCManager(self)
         self.heat_vector            = None      # leave set to None unless you are implementing some ad hoc heating scheme. This vector ordinarily computed using self.nchains and self.heating_lambda
         self.stopwatch              = StopWatch()
-        #self.r                      = Lot()     #POL still being used?
+        self.sim_model_tree         = None      # will hold the model tree used by simulateDNA 
         self.starting_tree          = None      # will contain description of actual starting tree used
         self.warn_tip_numbers       = False     # True only if tip numbers were not able to be created using the tip names in the tree description (always False if starting_tree_source == 'random' because BuildTreeFromString is not called in this case)
         self.ntax                   = 0         # will hold the actual number of taxa after data file read
@@ -188,7 +188,7 @@ class Phycas(object):
         self.addition_sequence      = []        # list of taxon numbers for addition sequence
         self.samc_theta             = []        # normalizing factors (will have length ntax - 3 because levels with 1, 2 or 3 taxa are not examined)
         self.samc_distance_matrix   = None      # holds ntax x ntax hamming distance matrix used by SamcMove
-
+        
     def phycassert(self, assumption, msg):
         if not assumption:
             if Phycas.PhycassertRaisesException:
@@ -830,6 +830,10 @@ class Phycas(object):
         self.ntax = len(self.sim_taxon_labels)
         core = MCMCManager.LikelihoodCore(self)
         core.setupCore()
+        if not core.tree.hasEdgeLens():
+            tm = Phylogeny.TreeManip(core.tree)
+            tm.setRandomEdgeLengths(self.starting_edgelen_dist)
+        self.sim_model_tree = core.tree
         core.prepareForSimulation()
         sim_data = core.simulate()
         sim_data.saveToNexusFile(self.sim_file_name, self.sim_taxon_labels, 'dna', ('a','c','g','t'))

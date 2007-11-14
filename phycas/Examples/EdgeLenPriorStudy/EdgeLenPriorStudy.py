@@ -1,11 +1,11 @@
 # This example program simulates data from a four-taxon tree using the JC model,
-# drawing edge lengths in the model tree from an exponential distribution with mean
-# 0.02. These data are then analyzed by a model having a different edge length
-# prior mean and the Gelfand-Ghosh measure is computed so that the model used 
-# for the analysis can be compared to other models.
+# drawing edge lengths in the model tree from an exponential distribution with a
+# mean set to true_edgelen_mean. These data are then analyzed by a model having
+# different edge length prior means (see the analysis_prior_means list) and the
+# marginal likelihoods and Gelfand-Ghosh measures are computed so that the model
+# used for the analysis can be compared to other models.
 #
-# This is a more advanced example that involves more than simply changing
-# default values and saying go. If this is the first example you have looked at,
+# This is a more advanced example. If this is the first example you have looked at,
 # you might want to consider looking at Simplest or Paradox first.
 
 from phycas import *
@@ -18,7 +18,8 @@ rnseed = 7654321
 num_sites = 2000
 ncycles = 20000
 true_edgelen_mean = 0.1
-analysis_prior_means = [0.00001, 0.00005, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0, 5.0, 10.0, 50.0, 100.0, 500.0, 1000.0]
+analysis_prior_means = [0.00001, 0.01, 1000.0]
+#analysis_prior_means = [0.00001, 0.00005, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0, 5.0, 10.0, 50.0, 100.0, 500.0, 1000.0]
 
 #############################################################
 #################### Simulate a data set ####################
@@ -26,57 +27,25 @@ analysis_prior_means = [0.00001, 0.00005, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.
 def simulate(file_name):
     # Create a Phycas object named simulator. Note that simulator is local to this
     # function and will be destroyed before the function returns. This is ok because
-    # by that point the simulated data will be saved in a file.
+    # by that point the simulated data will be saved in a file named file_name.
     simulator = Phycas()
-
-    # Create a pseudorandom number generator
-    rng = ProbDist.Lot()
-    rng.setSeed(rnseed)
-
-    # Set up the substitution model that will be used for both simulation and the MCMC analysis
-    jcmodel = Likelihood.JCModel() # use the Jukes-Cantor (1969) model
-    jcmodel.setNGammaRates(1)      # specifying one rate means *no* rate heterogeneity
-
-    # Create a tree
-    true_tree = Phylogeny.Tree()
-    true_tree.buildFromString('(1,2,(3,4))')
-
-    # Create a true edge length probability distribution
-    # If setLot were not called, true_edgelen_dist would use its own random number generator
-    # and the edge lengths generated would be different each time this script is run
-    true_edgelen_dist = ProbDist.ExponentialDist(1.0/true_edgelen_mean)
-    true_edgelen_dist.setLot(rng)
-
-    # Now use true_edgelen_dist to assign random edge lengths to the tree
-    tm = Phylogeny.TreeManip(true_tree)
-    tm.setRandomEdgeLengths(true_edgelen_dist)
-
-    # Create a likelihood object to orchestrate both simulations and likelihood calculations
-    simulator.likelihood = Likelihood.TreeLikelihood(jcmodel)
-
-    # Prepare the tree for simulation (i.e. equip nodes with transition matrices)
-    simulator.likelihood.prepareForSimulation(true_tree)
-
-    # Create a SimData object to hold the simulated data
-    sim_data = Likelihood.SimData()
-
-    # Simulate num_sites of data and store in sim_data
-    # Use the function simulateFirst (rather than just simulate) in order
-    # to force calculation of transition probabilities
-    simulator.likelihood.simulateFirst(sim_data, true_tree, rng, num_sites)
-
-    # Define the names of the taxa to use when the simulated data set is saved to a file
-    taxon_labels = ['A', 'B', 'C', 'D']
-
-    # Save simulated data to a NEXUS file using taxon_labels, datatype=dna and
-    # using the symbols a, c, g, and t to represent the nucleotides
-    sim_data.saveToNexusFile(file_name, taxon_labels, 'dna', ('a','c','g','t'))
+    simulator.random_seed = rnseed
+    simulator.default_model = 'jc'
+    simulator.num_rates = 1
+    simulator.starting_tree_source = 'usertree'
+    simulator.tree_topology = '(1,2,(3,4))'
+    simulator.starting_edgelen_dist = ProbDist.ExponentialDist(1.0/true_edgelen_mean)
+    simulator.sim_taxon_labels = ['A', 'B', 'C', 'D']
+    simulator.sim_file_name = file_name
+    simulator.sim_nchar = num_sites
+    simulator.simulateDNA()    
 
     # Add a paup block to the end of the simulated data file to make it easy to
-    # verify that the simulation worked
+    # verify that the simulation worked. The function simulateDNA() stores the
+    # tree actually used for the simulation in the variable sim_model_tree.
     sim_file = file(file_name, 'a') # the 'a' means open for appending
     sim_file.write('\nbegin trees;\n')
-    sim_file.write('  utree truth = %s;\n' % (true_tree.makeNewick()))
+    sim_file.write('  utree truth = %s;\n' % (simulator.sim_model_tree.makeNewick()))
     sim_file.write('end;\n\n')
     sim_file.write('begin paup;\n')
     sim_file.write('  set criterion=likelihood;\n')
@@ -89,14 +58,19 @@ def simulate(file_name):
 ####################################################################
 def analyze(prior_mean):
     # Create a Phycas object named analyzer. Note that analyzer is local to this
-    # function and will be destroyed before the analyze function returns.
+    # function and will be destroyed before the analyze function returns. That is
+    # ok because the important results of the analysis will be saved by that time.
     analyzer = Phycas()
 
-    # Set various options before starting the MCMC run. To see all available options, you
-    # can go to the source: take a look at the beginning part (the __init__ function)
-    # of the Phycas.py file
+    # Set various options before starting the MCMC run. To see all available options, 
+    # you can go to the source: take a look at the beginning part (the __init__ function)
+    # of the Phycas.py file:
+    #
     #   phycas/Examples/GelfandGhosh/GelfandGhosh.py  <-- you are here
     #   phycas/Phycas/Phycas.py                       <-- here is Phycas.py
+    #
+    # Do not change anything in Phycas.py, however! You can modify any of the variables
+    # defined in Phycas.p in your own Python scripts.
 
     # Use the same random number seed in the analysis that we used for the simulation
     analyzer.random_seed = rnseed
@@ -109,8 +83,8 @@ def analyze(prior_mean):
     # about are the edge length priors. The master_edgelen_dist specifies the prior used
     # for all edge lengths. Tell Phycas to not use a hyperprior for edge lengths, otherwise
     # it will ignore your master_edgelen_dist specification.
-    analyzer.using_hyperprior = False 
     analyzer.master_edgelen_dist = ProbDist.ExponentialDist(1.0/prior_mean)
+    analyzer.using_hyperprior = False 
 
     # Don't allow polytomies
     analyzer.allow_polytomies = False
@@ -121,7 +95,8 @@ def analyze(prior_mean):
     # Start with a random tree
     analyzer.starting_tree_source = 'random'
 
-    # Tell analyzer that we want to run the MCMC analysis for 20000 cycles.
+    # Specify details of the MCMC run
+    analyzer.nchains = 1
     analyzer.ncycles = ncycles
     analyzer.sample_every = 10          # save tree and parameters every 10 cycles
     analyzer.report_every = ncycles/20  # report progress only 20 times during the run
@@ -135,12 +110,16 @@ def analyze(prior_mean):
     analyzer.gg_kvect = [1.0]   # could be, e.g. [0.5, 1.0, 2.0] if you wanted to try three different k values
     analyzer.gg_outfile = None  # do not need to save a file of Gelfand-Ghosh results
 
-    # Finally, call the mcmc method, which prepares and then runs the MCMC sampler
+    # Call the mcmc method, which prepares and then runs the MCMC sampler
     analyzer.mcmc()
 
-    # This function returns a tuple (a type of list, in this case consisting of two values)
+    # Finally, call the gg method, which computes the Gelfand-Ghosh statistics using the files
+    # output from the mcmc analysis
+    analyzer.gg()
+
+    # Return a tuple (a type of list, in this case consisting of two values)
     # The first element of the tuple is Pm, and the other value is Gm. The sum of these
-    # two values is GGCm, the overall Gelfand-Ghosh value, but this need not be saved.
+    # two values is the overall Gelfand-Ghosh value, but this need not be saved.
     # The [0] after gg_Gm is necessary because Gm is different for each value of k.
     # We specified only one value for k (i.e. 1.0), so only one value of Gm has been
     # computed and gg_Gm is thus a list containing only one element; nevertheless,
@@ -154,12 +133,12 @@ if __name__ == '__main__':
 
     # Open a file that will save the Gelfand-Ghosh values
     outf = file('output.txt', 'w')  # the 'w' means "open the file for writing"
-    outf.write('prior mean\tPm\tGm\tGGCm\n')    # '\t' means tab, '\n' means newline
+    outf.write('prior mean\tPm\tGm\tDm\n')    # '\t' means tab, '\n' means newline
 
     # For each value of prior mean, perform an MCMC analysis
     for m in analysis_prior_means:
         Pm, Gm = analyze(m)
-        GGCm = Pm + Gm
+        Dm = Pm + Gm
         print '**'
         print '** Analysis with prior mean',m,'yielded Pm =',Pm,', Gm =',Gm
         print '**'
@@ -167,7 +146,7 @@ if __name__ == '__main__':
         # Write out a line comprising four values separated by tabs
         # Each %f represents one floating point value from the 4-valued tuple that follows
         # Each '\t' is a tab character, and the final '\n' starts a new line in the file
-        outf.write('%f\t%f\t%f\t%f\n' % (m, Pm, Gm, GGCm))
+        outf.write('%f\t%f\t%f\t%f\n' % (m, Pm, Gm, Dm))
 
     # Close the file and we're done!
     outf.close()
