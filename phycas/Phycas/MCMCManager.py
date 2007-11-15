@@ -524,18 +524,30 @@ class MCMCManager:
         path sampling, stores log-likelihoods of all chains.
         
         """
-        # Gather log-likelihoods if path sampling
-        if self.phycas.nchains > 1 and not self.phycas.is_standard_heating:
-            for i,c in enumerate(self.chains):
-                self.phycas.path_sample[i].append(c.chain_manager.getLastLnLike())
+        # Gather log-likelihoods, and if path sampling save in path_sample list for later
+        lnLikes = []
+        doing_path_sampling = self.phycas.nchains > 1 and not self.phycas.is_standard_heating
+        for i,c in enumerate(self.chains):
+            lnLi = c.chain_manager.getLastLnLike()
+            lnLikes.append(lnLi)
+            if doing_path_sampling:
+                self.phycas.path_sample[i].append(lnLi)
         
         # Only record samples from the current cold chain
         cold_chain = self.phycas.mcmc_manager.getColdChain()
         
         # Add line to parameter file if it exists
         if self.phycas.paramf:
-            lnL = cold_chain.chain_manager.getLastLnLike()
-            self.phycas.paramf.write('%d\t%.3f\t%.3f' % (cycle + 1, lnL, cold_chain.tree.edgeLenSum()))
+            # old way: cycle, lnL_1, TL
+            #lnL = cold_chain.chain_manager.getLastLnLike()
+            #self.phycas.paramf.write('%d\t%.3f\t%.3f' % (cycle + 1, lnL, cold_chain.tree.edgeLenSum()))
+            
+            # new way: cycle, lnL_1, lnL_2, ..., lnL_nchains, TL
+            self.phycas.paramf.write('%d\t' % (cycle + 1))
+            for lnl in lnLikes:
+                self.phycas.paramf.write('%.3f\t' % lnl)
+            self.phycas.paramf.write('%.3f' % cold_chain.tree.edgeLenSum())
+            
             self.phycas.paramf.write(cold_chain.model.paramReport())
             if self.phycas.using_hyperprior:
                 for p in cold_chain.chain_manager.getEdgeLenHyperparams():

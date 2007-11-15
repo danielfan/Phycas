@@ -463,6 +463,23 @@ class Phycas(object):
         if self.paramf:
             self.paramFileClose()
 
+        # If we have been path sampling, compute marginal likelihood using lnL values
+        # for each chain stored in self.path_sample
+        if self.nchains > 1 and not self.is_standard_heating:
+            C = self.nchains
+            marginal_like = 0.0
+            self.output('\nCalculation of marginal likelihood:')
+            self.output('%12s%12s' % ('chain', 'avg. lnL'))
+            for i,v in enumerate(self.path_sample):
+                n = len(v)
+                avg = sum(v)/float(n)
+                self.output('%12d%12.5f' % (i, avg))
+                if (i == 0) or (i == C - 1):
+                    avg /= 2.0
+                marginal_like += avg
+            marginal_like /= float(C)
+            self.output('  Marginal likelihood = %f' % marginal_like)
+
     def runSAMC(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -777,8 +794,11 @@ class Phycas(object):
             if self.nchains == 1:
                 self.heat_vector = [1.0]
             else:
-                assert(0), 'begin again here'
-                #self.path_sample = [[]]*self.nchains
+                # Create a list for each chain to hold sampled lnL values
+                self.path_sample = []
+                for i in range(self.nchains):
+                    self.path_sample.append([])
+                    
                 self.heat_vector = []
                 if self.is_standard_heating:
                     for i in range(self.nchains):
