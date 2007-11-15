@@ -119,14 +119,16 @@ def analyze(prior_mean):
     analyzer.sample_every = 1
     analyzer.mcmc()
 
+    # Provide the names of the parameter and tree files to be used by gg()
+    analyzer.gg_pfile = sim_file_name + '.p'
+    analyzer.gg_tfile = sim_file_name + '.t'
+
     # Copy p and t files so they will not be overwritten
     shutil.copyfile(analyzer.gg_pfile, '%f_%s' % (prior_mean,analyzer.gg_pfile))
     shutil.copyfile(analyzer.gg_tfile, '%f_%s' % (prior_mean,analyzer.gg_tfile))
 
     # Finally, call the gg method, which computes the Gelfand-Ghosh statistics using the files
     # output from the mcmc analysis
-    analyzer.gg_pfile = sim_file_name + '.p'
-    analyzer.gg_tfile = sim_file_name + '.t'
     analyzer.gg()
 
     # Return a tuple (a type of list, in this case consisting of two values)
