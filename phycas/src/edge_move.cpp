@@ -70,7 +70,7 @@ void EdgeMove::revert()
 |	Chooses a random edge and changes its current length m to a new length m* using the following formula, where `lambda' is
 |	a tuning parameter.
 |>
-|	m* = m*exp(lambda*(r.Uniform() - 0.5))
+|	m* = m*exp(lambda*(r.Uniform(FILE_AND_LINE) - 0.5))
 |>
 */
 void EdgeMove::proposeNewState()
@@ -99,7 +99,7 @@ void EdgeMove::proposeNewState()
 	// Modify the edge
 	//
 	double m		= origNode->GetEdgeLen();
-	double mstar	= m*std::exp(lambda*(rng->Uniform() - 0.5));
+	double mstar	= m*std::exp(lambda*(rng->Uniform(FILE_AND_LINE) - 0.5));
 	origNode->SetEdgeLen(mstar);
 
 	likelihood->useAsLikelihoodRoot(origNode);
@@ -159,7 +159,7 @@ bool EdgeMove::update()
 
 	double ln_accept_ratio		= curr_posterior - prev_posterior + ln_hastings;
 
-	if (ln_accept_ratio >= 0.0 || std::log(rng->Uniform()) <= ln_accept_ratio)
+	if (ln_accept_ratio >= 0.0 || std::log(rng->Uniform(FILE_AND_LINE)) <= ln_accept_ratio)
 		{
 		p->setLastLnPrior(curr_ln_prior);
 		p->setLastLnLike(curr_ln_like);

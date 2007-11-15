@@ -51,7 +51,11 @@ class Lot
 		unsigned 				SampleUInt(unsigned);
 		unsigned				GetRandBits(unsigned nbits);
 
+#if defined(LOG_LOT_UNIFORM_CALLS)
+		double 					Uniform(const char * file, const int line);
+#else
 		double 					Uniform();
+#endif
 
 	private:    	
 

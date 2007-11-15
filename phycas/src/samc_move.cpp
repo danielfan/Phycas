@@ -256,7 +256,7 @@ bool SamcMove::extrapolate(
     PHYCAS_ASSERT(ninternals_alloced == tree->GetNInternalsAllocated());
     
     leaf_sib_orig_edgelen = leaf_sib->GetEdgeLen();
-    double u = rng->Uniform();
+    double u = rng->Uniform(FILE_AND_LINE);
     double new_leaf_sib_edgelen = u*leaf_sib_orig_edgelen;
     double parent_edgelen = leaf_sib_orig_edgelen - new_leaf_sib_edgelen;
     leaf_sib->SetEdgeLen(new_leaf_sib_edgelen);
@@ -291,7 +291,7 @@ bool SamcMove::extrapolate(
     const double curr_posterior = curr_ln_like + curr_ln_prior;
     double log_pkl_blk_ratio = log(getPkl(leaf_num, leaf_sib)) - log(leaf_sib_orig_edgelen);
     double ln_accept_ratio = theta_diff + curr_posterior - prev_posterior - log_pkl_blk_ratio + ln_proposal_ratio;
-    const bool accepted = (ln_accept_ratio >= 0.0 || std::log(rng->Uniform()) <= ln_accept_ratio);
+    const bool accepted = (ln_accept_ratio >= 0.0 || std::log(rng->Uniform(FILE_AND_LINE)) <= ln_accept_ratio);
     if (accepted)
         {
         p->setLastLnPrior(curr_ln_prior);
@@ -378,7 +378,7 @@ bool SamcMove::project(
     double curr_posterior = curr_ln_like + curr_ln_prior;
     double log_pkl_blk_ratio = log(getPkl(leaf_num, leaf_sib)) - log(new_leaf_sib_edgelen);
     double ln_accept_ratio = theta_diff + curr_posterior - prev_posterior + log_pkl_blk_ratio + ln_proposal_ratio;
-    const bool accepted = (ln_accept_ratio >= 0.0 || std::log(rng->Uniform()) <= ln_accept_ratio);
+    const bool accepted = (ln_accept_ratio >= 0.0 || std::log(rng->Uniform(FILE_AND_LINE)) <= ln_accept_ratio);
     if (accepted)
         {
         p->setLastLnPrior(curr_ln_prior);

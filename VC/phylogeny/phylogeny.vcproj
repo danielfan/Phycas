@@ -28,7 +28,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="4"
+				DebugInformationFormat="3"
 				ForcedIncludeFiles="$(PHYCAS_ROOT)\phycas\src\std_force_include.hpp"/>
 			<Tool
 				Name="VCCustomBuildTool"/>

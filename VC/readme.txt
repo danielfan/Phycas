@@ -1,4 +1,4 @@
-Last updated 27-July-2007 by Paul O. Lewis
+Last updated 15 Nov 2007 by Paul O. Lewis
 
 First, note that the *proper* way to build Phycas is using bjam from the directory containing
 the file Jamroot (i.e. the parent of this directory). There is really only one good reason 
@@ -188,13 +188,10 @@ and import phycas.
 
 Deja vu
 -------
-o "Compiler out of keys" errors in VC debug builds seem to arise from assert calls. 
-Change the offending assert to a PHYCAS_ASSERT and the build will succeed.
+o "Compiler out of keys" errors in VC debug builds arise from using __FILE__ and __LINE__ macros with the 
+compiler option /FI (). I have changed /FI to /Fi in every project and now the error no longer arises.
+Note that even if you do not use __FILE__ and __LINE__ explicitly in your code, these macros are still
+being used if you use other macros that employ them (e.g. assert).
 
-o "Compiler out of keys" errors in VC debug builds can also arise from the following (in probability_distribution.cpp):
-#	if defined NCL_NXS_THROW_UNDEFINED
-		if (params.size() < 2)
-			throw NxsX_UndefinedException("Illegal Dirichlet", __FILE__, __LINE__);
-#	endif
 
 

@@ -120,7 +120,7 @@ bool BushMove::update()
 
 	double ln_accept_ratio = curr_posterior - prev_posterior + ln_hastings + ln_jacobian + ln_polytomy_prior_ratio;
 
-	if (ln_accept_ratio >= 0.0 || std::log(rng->Uniform()) <= ln_accept_ratio)
+	if (ln_accept_ratio >= 0.0 || std::log(rng->Uniform(FILE_AND_LINE)) <= ln_accept_ratio)
 		{
 		p->setLastLnPrior(curr_ln_prior);
 		p->setLastLnLike(curr_ln_like);
@@ -146,7 +146,7 @@ void BushMove::proposeNewState()
 	unsigned nnodes = tree->GetNNodes();
 	const bool fully_resolved_before = (num_nodes_in_fully_resolved_tree == nnodes);	
 	const bool star_tree_before = (nnodes == num_taxa + 1);
-	add_edge_move_proposed = (!fully_resolved_before) && (star_tree_before || rng->Uniform() < 0.5);
+	add_edge_move_proposed = (!fully_resolved_before) && (star_tree_before || rng->Uniform(FILE_AND_LINE) < 0.5);
 	
 	refreshPolytomies();
 	num_polytomies = (unsigned)polytomies.size();
@@ -529,7 +529,7 @@ void BushMove::proposeAddEdgeMove(TreeNode * u)
 
 	// Select number of spokes to move over to new node
 	unsigned x;
-	double p = rng->Uniform();
+	double p = rng->Uniform(FILE_AND_LINE);
 	double cum = 0.0;
 	for (unsigned k = 0; k <= polytomy_size - 4; ++k)
 		{

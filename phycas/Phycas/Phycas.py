@@ -7,6 +7,9 @@ from phycas.Phylogeny import *
 from phycas.ProbDist import *
 from phycas.ReadNexus import *
 
+# see http://mail.python.org/pipermail/python-list/2002-January/121376.html
+import inspect
+
 class Phycas(object):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
@@ -190,7 +193,12 @@ class Phycas(object):
         self.addition_sequence      = []        # list of taxon numbers for addition sequence
         self.samc_theta             = []        # normalizing factors (will have length ntax - 3 because levels with 1, 2 or 3 taxa are not examined)
         self.samc_distance_matrix   = None      # holds ntax x ntax hamming distance matrix used by SamcMove
+        self.path_sample            = None
         
+    # see http://mail.python.org/pipermail/python-list/2002-January/121376.html
+    def source_line():
+        return inspect.getouterframes(inspect.currentframe())[1][2]
+    
     def phycassert(self, assumption, msg):
         if not assumption:
             if Phycas.PhycassertRaisesException:
@@ -769,6 +777,8 @@ class Phycas(object):
             if self.nchains == 1:
                 self.heat_vector = [1.0]
             else:
+                assert(0), 'begin again here'
+                #self.path_sample = [[]]*self.nchains
                 self.heat_vector = []
                 if self.is_standard_heating:
                     for i in range(self.nchains):
@@ -834,7 +844,7 @@ class Phycas(object):
         core.setupCore()
         if not core.tree.hasEdgeLens():
             tm = TreeManip(core.tree)
-            tm.setRandomEdgeLengths(self.starting_edgelen_dist)
+            tm.setRandomEdgeLengths(core.starting_edgelen_dist)
         self.sim_model_tree = core.tree
         core.prepareForSimulation()
         sim_data = core.simulate()

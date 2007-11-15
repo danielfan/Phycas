@@ -73,7 +73,7 @@ void NCatMove::reset()
 void NCatMove::proposeNewState()
 	{
 	ncat_before = model->getNGammaRates();
-	addcat_move_proposed = (ncat_before == 1 ? true : (bool)(rng->Uniform() < phi));
+	addcat_move_proposed = (ncat_before == 1 ? true : (bool)(rng->Uniform(FILE_AND_LINE) < phi));
 
 	// Make sure model is using the same upper bound on unnormalized rates that we are
 	model->setFlexRateUpperBound(L);
@@ -140,7 +140,7 @@ void NCatMove::proposeNewState()
 void NCatMove::proposeAddCatMove()
 	{
 	// Choose a new rate
-	u1 = rng->Uniform();
+	u1 = rng->Uniform(FILE_AND_LINE);
 	tmp_rate = u1*L;
 
 	// Find which "rates" are on either side of the new rate. The quotes are there because the "rate" on the
@@ -210,7 +210,7 @@ void NCatMove::proposeAddCatMove()
 void NCatMove::proposeDelCatMove()
 	{
 	// Select rate/prob to delete
-	u1 = rng->Uniform();
+	u1 = rng->Uniform(FILE_AND_LINE);
 	unsigned which = (unsigned)(u1*ncat_before);
 
 	// Save rate value, then remove from vector
@@ -384,7 +384,7 @@ bool NCatMove::update()
 #endif
 
 	double ln_accept_ratio = ln_like_ratio + ln_prior_ratio + ln_hastings + ln_jacobian;
-	double u = rng->Uniform();
+	double u = rng->Uniform(FILE_AND_LINE);
 
 #if defined(SHOW_DEBUGGING_OUTPUT)
 	std::cerr << "\n*********** In NCatMove::update() ***********" << std::endl;

@@ -17,9 +17,12 @@ import shutil
 # with different values.
 rnseed = 7654321
 num_sites = 2000
-ncycles = 20000
+ncycles = 50
+#ncycles = 20000
+samplefreq = 5
 true_edgelen_mean = 0.1
-analysis_prior_means = [0.00001, 0.00005, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0, 5.0, 10.0, 50.0, 100.0, 500.0, 1000.0]
+analysis_prior_means = [0.1]
+#analysis_prior_means = [0.00001, 0.00005, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0, 5.0, 10.0, 50.0, 100.0, 500.0, 1000.0]
 sim_file_name = 'simulated.nex'
 
 #############################################################
@@ -30,6 +33,11 @@ def simulate():
     # function and will be destroyed before the function returns. This is ok because
     # by that point the simulated data will be saved in a file named sim_file_name.
     simulator = Phycas()
+    
+    tmpf = file('uniform.txt','a')
+    tmpf.write('***** after simulator = Phycas() *****\n')
+    tmpf.close()
+    
     simulator.random_seed = rnseed
     simulator.default_model = 'jc'
     simulator.num_rates = 1
@@ -41,6 +49,10 @@ def simulate():
     simulator.sim_nchar = num_sites
     simulator.data_source = None
     simulator.simulateDNA()    
+
+    tmpf = file('uniform.txt','a')
+    tmpf.write('***** simulation model tree = %s  *****\n' % simulator.sim_model_tree.makeNewick())
+    tmpf.close()
 
     # Add a paup block to the end of the simulated data file to make it easy to
     # verify that the simulation worked. The function simulateDNA() stores the
@@ -63,6 +75,10 @@ def analyze(prior_mean):
     # function and will be destroyed before the analyze function returns. That is
     # ok because the important results of the analysis will be saved by that time.
     analyzer = Phycas()
+
+    tmpf = file('uniform.txt','a')
+    tmpf.write('***** after analyzer = Phycas() *****\n')
+    tmpf.close()
 
     # Set various options before starting the MCMC run. To see all available options, 
     # you can go to the source: take a look at the beginning part (the __init__ function)
@@ -100,7 +116,7 @@ def analyze(prior_mean):
     # Specify details of the MCMC run
     analyzer.nchains = 1
     analyzer.ncycles = ncycles
-    analyzer.sample_every = 10          # save tree and parameters every 10 cycles
+    analyzer.sample_every = samplefreq          # save tree and parameters every 10 cycles
     analyzer.report_every = ncycles/20  # report progress only 20 times during the run
 
     # Tell analyzer to calculate the Gelfand-Ghosh measure as the MCMC analysis runs
@@ -112,8 +128,19 @@ def analyze(prior_mean):
     analyzer.gg_kvect = [1.0]   # could be, e.g. [0.5, 1.0, 2.0] if you wanted to try three different k values
     analyzer.gg_outfile = None  # do not need to save a file of Gelfand-Ghosh results
 
+    tmpf = file('uniform.txt','a')
+    tmpf.write('***** About to call mcmc() *****\n')
+    tmpf.close()
+    raw_input('debug stop before mcmc call')
+
     # Call the mcmc method, which prepares and then runs the MCMC sampler
+    analyzer.ls_move_weight = 1
+    analyzer.sample_every = 1
     analyzer.mcmc()
+
+    tmpf = file('uniform.txt','a')
+    tmpf.write('***** About to call gg() *****\n')
+    tmpf.close()
 
     # Finally, call the gg method, which computes the Gelfand-Ghosh statistics using the files
     # output from the mcmc analysis

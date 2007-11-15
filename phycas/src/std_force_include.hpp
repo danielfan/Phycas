@@ -32,6 +32,23 @@
 //#define USING_NUMARRAY
 //#define INTERFACE_WITH_CIPRES
 
+// Uncommenting LOG_LOT_UNIFORM_CALLS macro results in a file named uniform.txt being saved that contains
+// a record of every random number generated in Lot::Uniform() showing the file and line on which the call
+// was made (extremely useful for tracking down where the sequence of random numbers begins to diverge)
+//#define LOG_LOT_UNIFORM_CALLS
+#if defined(LOG_LOT_UNIFORM_CALLS)
+#   define FILE_AND_LINE __FILE__,__LINE__
+#else
+#   define FILE_AND_LINE
+#endif
+
+#if defined(_MSC_VER)
+// The macros below allows you to insert #pragma TODO("fix this") in C++ code and have it show up in the Visual Studio IDE
+// see http://mail.python.org/pipermail/python-list/2002-January/121346.html
+#   define __STRINGIZE__(x) #x
+#   define TODO(x) message(__FILE__"("__STRINGIZE__(__LINE__)") : " "TODO: "#x) 
+#endif
+
 #include "phycas/src/phycas_config.h"
 
 #endif

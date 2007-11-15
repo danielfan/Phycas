@@ -25,18 +25,19 @@
 #endif
 
 #if defined(NDEBUG)
-#	define FILE_AND_LINE
+// no asserts in release version
 #	define PHYCAS_ASSERT(expr)
-#elif defined(_MSC_VER) // Microsoft Visual Studio C++ compiler issues error C1055 "out of keys" unless __LINE__ is not used in asserts or phycas::Uniform constructor
-#	define FILE_AND_LINE
-#	include <boost/assert.hpp>
-#	define PHYCAS_ASSERT(expr)  if (!(expr)) boost::assertion_failed((const char *)#expr, (const char *)__FUNCTION__, (const char *)"" /* __FILE__ */, 0L /* __LINE__*/)
-#	define IGNORE_NXS_ASSERT	// used in nxs_defs.hpp to cause NXS_ASSERT to expand to nothing
 #else
-#	define FILE_AND_LINE  __FILE__,__LINE__
-#	include <cassert>
-#	define PHYCAS_ASSERT(expr)  assert(expr)
+// debug versions use boost's assert, making it easy to set a breakpoint in 
+// boost_assertion_failed.cpp and inspect the call stack
+#	include <boost/assert.hpp>  
+#	define PHYCAS_ASSERT(expr)  if (!(expr)) boost::assertion_failed((const char *)#expr, (const char *)__FUNCTION__, __FILE__, __LINE__)
+#	define IGNORE_NXS_ASSERT	// used in nxs_defs.hpp to cause NXS_ASSERT to expand to nothing
 #endif
+
+// old way just turned PHYCAS_ASSERT calls into assert calls for debug versions
+//#	include <cassert>
+//#	define PHYCAS_ASSERT(expr)  assert(expr)
 
 #define NXS_SUPPRESS_OUTPUT
 

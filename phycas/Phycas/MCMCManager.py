@@ -520,10 +520,15 @@ class MCMCManager:
         """
         Records current tree topology and edge lengths by adding a line to
         the tree file, and records tree length and substitution parameters
-        by adding a line to the parameter file.
+        by adding a line to the parameter file. If multiple chains and doing
+        path sampling, stores log-likelihoods of all chains.
         
         """
-
+        # Gather log-likelihoods if path sampling
+        if self.phycas.nchains > 1 and not self.phycas.is_standard_heating:
+            for i,c in enumerate(self.chains):
+                self.phycas.path_sample[i].append(c.chain_manager.getLastLnLike())
+        
         # Only record samples from the current cold chain
         cold_chain = self.phycas.mcmc_manager.getColdChain()
         
