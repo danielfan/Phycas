@@ -85,16 +85,14 @@ double KappaParam::operator()(
 		ChainManagerShPtr p = chain_mgr.lock();
 		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
-		}
 
-#if POLPY_NEWWAY
-    if (is_standard_heating)
-        return heating_power*(curr_ln_like + curr_ln_prior);
+        if (is_standard_heating)
+            return heating_power*(curr_ln_like + curr_ln_prior);
+        else
+            return heating_power*curr_ln_like + curr_ln_prior;
+		}
     else
-        return heating_power*curr_ln_like + curr_ln_prior;
-#else
-    return curr_ln_like + curr_ln_prior;
-#endif
+        return ln_zero;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -145,16 +143,14 @@ double GTRRateParam::operator()(
 		ChainManagerShPtr p = chain_mgr.lock();
 		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
-		}
 
-#if POLPY_NEWWAY
-    if (is_standard_heating)
-        return heating_power*(curr_ln_like + curr_ln_prior);
+        if (is_standard_heating)
+            return heating_power*(curr_ln_like + curr_ln_prior);
+        else
+            return heating_power*curr_ln_like + curr_ln_prior;
+		}
     else
-        return heating_power*curr_ln_like + curr_ln_prior;
-#else
-    return curr_ln_like + curr_ln_prior;
-#endif
+        return ln_zero;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -213,16 +209,14 @@ double OmegaParam::operator()(
 		ChainManagerShPtr p = chain_mgr.lock();
 		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
-		}
 
-#if POLPY_NEWWAY
-    if (is_standard_heating)
-        return heating_power*(curr_ln_like + curr_ln_prior);
+        if (is_standard_heating)
+            return heating_power*(curr_ln_like + curr_ln_prior);
+        else
+            return heating_power*curr_ln_like + curr_ln_prior;
+		}
     else
-        return heating_power*curr_ln_like + curr_ln_prior;
-#else
-    return curr_ln_like + curr_ln_prior;
-#endif
+        return ln_zero;
 	}
 
 #if POLPY_NEWWAY
@@ -261,16 +255,14 @@ double DiscreteGammaShapeParam::operator()(
 		ChainManagerShPtr p = chain_mgr.lock();
 		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
-		}
 
-#if POLPY_NEWWAY
-    if (is_standard_heating)
-        return heating_power*(curr_ln_like + curr_ln_prior);
+        if (is_standard_heating)
+            return heating_power*(curr_ln_like + curr_ln_prior);
+        else
+            return heating_power*curr_ln_like + curr_ln_prior;
+		}
     else
-        return heating_power*curr_ln_like + curr_ln_prior;
-#else
-    return curr_ln_like + curr_ln_prior;
-#endif
+        return ln_zero;
 	}
 
 #if POLPY_NEWWAY
@@ -306,16 +298,14 @@ double PinvarParam::operator()(
 		ChainManagerShPtr p = chain_mgr.lock();
 		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
-		}
 
-#if POLPY_NEWWAY
-    if (is_standard_heating)
-        return heating_power*(curr_ln_like + curr_ln_prior);
+        if (is_standard_heating)
+            return heating_power*(curr_ln_like + curr_ln_prior);
+        else
+            return heating_power*curr_ln_like + curr_ln_prior;
+		}
     else
-        return heating_power*curr_ln_like + curr_ln_prior;
-#else
-    return curr_ln_like + curr_ln_prior;
-#endif
+        return ln_zero;
 	}
 
 #if POLPY_NEWWAY
@@ -355,17 +345,14 @@ double StateFreqParam::operator()(
 		ChainManagerShPtr p = chain_mgr.lock();
 		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
+
+        if (is_standard_heating)
+            return heating_power*(curr_ln_like + curr_ln_prior);
+        else
+            return heating_power*curr_ln_like + curr_ln_prior;
 		}
-
-
-#if POLPY_NEWWAY
-    if (is_standard_heating)
-        return heating_power*(curr_ln_like + curr_ln_prior);
     else
-        return heating_power*curr_ln_like + curr_ln_prior;
-#else
-    return curr_ln_like + curr_ln_prior;
-#endif
+        return ln_zero;
 	}
 
 #if POLPY_NEWWAY
@@ -405,16 +392,14 @@ double HyperPriorParam::operator()(
 		ChainManagerShPtr p = chain_mgr.lock();
 		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
-		}
 
-#if POLPY_NEWWAY
-    if (is_standard_heating)
-        return heating_power*(curr_ln_like + edgeLensLnPrior + curr_ln_prior);
+        if (is_standard_heating)
+            return heating_power*(curr_ln_like + edgeLensLnPrior + curr_ln_prior);
+        else
+            return heating_power*curr_ln_like + edgeLensLnPrior + curr_ln_prior;
+		}
     else
-        return heating_power*curr_ln_like + edgeLensLnPrior + curr_ln_prior;
-#else
-	return curr_ln_like + edgeLensLnPrior + curr_ln_prior;
-#endif
+        return ln_zero;
 	}
 
 }	// namespace phycas

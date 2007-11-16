@@ -65,16 +65,14 @@ double FlexRateParam::operator()(
 		ChainManagerShPtr p = chain_mgr.lock();
 		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
-		}
 
-#if POLPY_NEWWAY
-    if (is_standard_heating)
-        return heating_power*(curr_ln_like + curr_ln_prior);
+        if (is_standard_heating)
+            return heating_power*(curr_ln_like + curr_ln_prior);
+        else
+            return heating_power*curr_ln_like + curr_ln_prior;
+		}
     else
-        return heating_power*curr_ln_like + curr_ln_prior;
-#else
-    return curr_ln_like + curr_ln_prior;
-#endif
+        return ln_zero;
 	}
 
 #if POLPY_NEWWAY
@@ -111,16 +109,14 @@ double FlexProbParam::operator()(
 		ChainManagerShPtr p = chain_mgr.lock();
 		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
-		}
 
-#if POLPY_NEWWAY
-    if (is_standard_heating)
-        return heating_power*(curr_ln_like + curr_ln_prior);
+        if (is_standard_heating)
+            return heating_power*(curr_ln_like + curr_ln_prior);
+        else
+            return heating_power*curr_ln_like + curr_ln_prior;
+		}
     else
-        return heating_power*curr_ln_like + curr_ln_prior;
-#else
-    return curr_ln_like + curr_ln_prior;
-#endif
+        return ln_zero;
 	}
 
 }	// namespace phycas
