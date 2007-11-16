@@ -492,7 +492,7 @@ class Phycas(object):
                 else:
                     self.output('warning: ignoring large diff (%f) in harmonic mean calculation' % diff)
             log_harmonic_mean = math.log(sample_size) + min_lnL - math.log(sum_diffs)
-            self.output('  Marginal likelihood(harmonic mean method)= %f' % marginal_like)
+            self.output('  Marginal likelihood(harmonic mean method)= %f' % log_harmonic_mean)
 
     def runSAMC(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
