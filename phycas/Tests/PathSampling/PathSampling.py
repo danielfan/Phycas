@@ -3,6 +3,7 @@ from phycas import *
 phycas = Phycas()
 phycas.outfile_prefix = 'path_sampling'
 phycas.nchains = 4
+phycas.is_standard_heating = False
 phycas.ncycles = 10000
 phycas.sample_every = 5
 phycas.report_every = 500

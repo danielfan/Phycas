@@ -466,6 +466,7 @@ class Phycas(object):
         # If we have been path sampling, compute marginal likelihood using lnL values
         # for each chain stored in self.path_sample
         if self.nchains > 1 and not self.is_standard_heating:
+            # Calculate marginal likelihood using path sampling
             C = self.nchains
             marginal_like = 0.0
             self.output('\nCalculation of marginal likelihood:')
@@ -478,7 +479,20 @@ class Phycas(object):
                     avg /= 2.0
                 marginal_like += avg
             marginal_like /= float(C)
-            self.output('  Marginal likelihood = %f' % marginal_like)
+            self.output('  Marginal likelihood (path sampling method) = %f' % marginal_like)
+            
+            # Calculate marginal likelihood using harmonic mean method on cold chain
+            sample_size = len(self.path_sample[0])
+            min_lnL = min(self.path_sample[0])
+            sum_diffs = 0.0
+            for lnl in self.path_sample[0]:
+                diff = lnl - min_lnL
+                if diff < 500.0:
+                    sum_diffs += math.exp(-diff)
+                else:
+                    self.output('warning: ignoring large diff (%f) in harmonic mean calculation' % diff)
+            log_harmonic_mean = math.log(sample_size) + min_lnL - math.log(sum_diffs)
+            self.output('  Marginal likelihood(harmonic mean method)= %f' % marginal_like)
 
     def runSAMC(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
