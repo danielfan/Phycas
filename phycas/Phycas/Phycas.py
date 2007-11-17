@@ -470,7 +470,7 @@ class Phycas(object):
         # for each chain stored in self.path_sample
         if self.nchains > 1 and not self.is_standard_heating:
             # Calculate marginal likelihood using path sampling
-            C = self.nchains
+            C = self.nchains - 1
             marginal_like = 0.0
             self.output('\nCalculation of marginal likelihood:')
             self.output('%12s%12s' % ('chain', 'avg. lnL'))
@@ -478,7 +478,7 @@ class Phycas(object):
                 n = len(v)
                 avg = sum(v)/float(n)
                 self.output('%12d%12.5f' % (i, avg))
-                if (i == 0) or (i == C - 1):
+                if (i == 0) or (i == C):
                     avg /= 2.0
                 marginal_like += avg
             marginal_like /= float(C)
