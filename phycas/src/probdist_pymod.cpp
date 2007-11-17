@@ -118,6 +118,9 @@ BOOST_PYTHON_MODULE(_ProbDist)
 		.def("getLastSampledXValue", &SliceSampler::GetLastSampledXValue)
 		.def("getLastSampledYValue", &SliceSampler::GetLastSampledYValue)
 		.def("setXValue", &SliceSampler::SetXValue)
+#if POLPY_NEWWAY
+		.def("useDoublingMethod", &SliceSampler::UseDoublingMethod)
+#endif
 		;
 
 #if POLPY_NEWWAY

@@ -26,7 +26,7 @@ class LikelihoodCore:
         self.r                                  = ProbDist.Lot()
         self.starting_edgelen_dist              = cloneDistribution(self.phycas.starting_edgelen_dist)
     
-    def setupCore(self):
+    def setupCore(self, zero_based_tips = False):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Not yet documented.
@@ -110,7 +110,7 @@ class LikelihoodCore:
             self.phycas.starting_tree = self.tree.makeNewick()
         else:
             # Build user-specified tree
-            self.tree.buildFromString(self.phycas.starting_tree)
+            self.tree.buildFromString(self.phycas.starting_tree, zero_based_tips)
             if not self.tree.tipNumbersSetUsingNames():
                 self.phycas.warn_tip_numbers = True
 

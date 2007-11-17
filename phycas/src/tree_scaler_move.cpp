@@ -51,6 +51,8 @@ bool TreeScalerMove::update()
     if (is_fixed)
 		return false;
 
+    //std::cerr << "~~~~~~ TreeScalerMove::update()" << std::endl;
+
     slice_sampler->Sample();
 
 #if 0

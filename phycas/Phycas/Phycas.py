@@ -80,6 +80,7 @@ class Phycas(object):
         # Variables associated with the source of starting tree
         self.starting_tree_source   = 'random'  # source of starting tree topology: can be either 'random' or 'usertree'
         self.tree_topology          = None      # unused unless starting_tree_source is 'usertree'
+        self.tree_file_name         = ''        # will hold tree file name
 
         # Variables associated with Larget-Simon moves
         self.ls_move_lambda         = 0.2       # The value of the tuning parameter for the Larget-Simon move
@@ -169,6 +170,7 @@ class Phycas(object):
         self.debugging              = False      # if set to True expect lots of debug output (e.g. data pattern table)
         self.data_matrix            = None
         self.file_name_data_stored  = None
+        self.file_name_trees_stored = None
         self.do_marginal_like       = False
         self.mcmc_manager           = MCMCManager.MCMCManager(self)
         self.heat_vector            = None      # leave set to None unless you are implementing some ad hoc heating scheme. This vector ordinarily computed using self.nchains and self.heating_lambda
@@ -194,6 +196,7 @@ class Phycas(object):
         self.samc_theta             = []        # normalizing factors (will have length ntax - 3 because levels with 1, 2 or 3 taxa are not examined)
         self.samc_distance_matrix   = None      # holds ntax x ntax hamming distance matrix used by SamcMove
         self.path_sample            = None
+        self.stored_newicks         = None
         
     # see http://mail.python.org/pipermail/python-list/2002-January/121376.html
     def source_line():
@@ -616,6 +619,15 @@ class Phycas(object):
             self.nchar = self.data_matrix.getNChar() # used for Gelfand-Ghosh simulations only
             self.file_name_data_stored = self.data_file_name    # prevents rereading same data file later
 
+    def readTreesFromFile(self):
+        if not self.file_name_trees_stored or (self.tree_file_name != self.file_name_trees_stored):
+            self.reader.readFile(self.tree_file_name)
+            self.stored_newicks = []
+            for t in self.reader.getTrees():
+                self.stored_newicks.append(t.newick)
+            self.phycassert(len(self.stored_newicks) > 0, 'expecting a trees block defining at least one tree in the nexus data file %s' % self.tree_file_name)
+            self.file_name_trees_stored = self.tree_file_name    # prevents rereading same tree file later
+
     def distanceToTaxaSet(self, leaf, taxon_set, d):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -898,6 +910,24 @@ class Phycas(object):
         core.setupCore()
         core.prepareForLikelihood()
         return core.calcLnLikelihood()
+        
+    def likelihoods(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Computes the log-likelihood based on the current model of all trees
+        in the file whose name is stored in tree_file_name.
+        
+        """
+        self.phycassert(len(self.tree_file_name) > 0, 'specify tree_file_name before calling the likelihoods function')
+        self.readTreesFromFile()
+        self.phycassert(self.data_source == 'file', "set data_source to 'file' and specify data_file_name before calling the likelihoods function")
+        self.readDataFromFile()
+        for t,topology in enumerate(self.stored_newicks):
+            self.starting_tree = topology
+            core = MCMCManager.LikelihoodCore(self)
+            core.setupCore(True)    # specify zero_based_tips = True because topology came from file
+            core.prepareForLikelihood()
+            print 'log-likelihood of tree %d = %.5f' % (t, core.calcLnLikelihood())
         
     def gg(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

@@ -75,9 +75,17 @@ double MCMCUpdater::getLnPrior() const
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the power used in heating (variable `heating_power') to the specified value `p'.
 */
-void MCMCUpdater::setPower(double p)
+void MCMCUpdater::setPower(
+  double p)
 	{
 	heating_power = p;
+    if (slice_sampler)
+        {
+        if (heating_power > 0.0)
+            slice_sampler->UseDoublingMethod(false);
+        else
+            slice_sampler->UseDoublingMethod(true);
+        }
 	}
 #endif
 
