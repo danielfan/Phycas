@@ -1,13 +1,13 @@
 from phycas import *
 
-nchains = 8
+#nchains = 8
 prior_mean = 100000.0
 
 phycas = Phycas()
 phycas.random_seed = 13579
 phycas.data_file_name = '../Data/nyldna4.nex'
 phycas.outfile_prefix = 'path_sampling'
-phycas.nchains = nchains
+#phycas.nchains = nchains
 phycas.is_standard_heating = False
 phycas.ncycles = 10000
 phycas.sample_every = 5
@@ -24,6 +24,11 @@ phycas.default_model = 'jc'
 phycas.num_rates = 1
 phycas.estimate_pinvar = False
 phycas.use_flex_model = False
-phycas.mcmc()
+#phycas.mcmc()
+phycas.ps_toward_posterior = False
+phycas.ps_burnin = 1000
+phycas.ps_Q = 500
+phycas.ps_nbetaincr = 200
+phycas.pathsampling()
 print 'nchains =',nchains
 print 'prior_mean =',prior_mean

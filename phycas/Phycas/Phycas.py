@@ -143,6 +143,14 @@ class Phycas(object):
         self.nchains                = 4
         self.is_standard_heating    = True
         
+        # Variables associated with path sampling (i.e. thermodynamic integration)
+        # If pathsampling() function called, ncycles will be ignored and instead the number of cycles
+        # will be ps_burnin + (ps_Q*ps_nincr)
+        self.ps_toward_posterior    = True      # if True, chain will start with beta = 0.0 (exploring prior) and end up exploring posterior; otherwise, chain will begin by exploring posterior and end exploring prior
+        self.ps_burnin              = 1000      # number of cycles used to equilibrate before increasing beta
+        self.ps_Q                   = 100       # number of cycles between changes in beta
+        self.ps_nbetaincr           = 100       # ps_delta_beta = 1/ps_nbetaincr
+        
         # Variables associated with Gelfand-Ghosh calculation
         self.gg_outfile             = 'gg.txt'  # file in which to save gg results (use None to not save results)
         self.gg_nreps               = 1         # the number of replicate simulations to do every MCMC sample
@@ -197,6 +205,8 @@ class Phycas(object):
         self.samc_distance_matrix   = None      # holds ntax x ntax hamming distance matrix used by SamcMove
         self.path_sample            = None
         self.stored_newicks         = None
+        self.ps_delta_beta          = 0.0
+        self.doing_path_sampling    = False
         
     # see http://mail.python.org/pipermail/python-list/2002-January/121376.html
     def source_line():
@@ -436,8 +446,20 @@ class Phycas(object):
         #if self.use_tree_viewer:
         #    self.tree_mutex = threading.Lock()
         #    self.tree_viewer = TreeViewer.TreeViewer(tree=self.tree, mutex=self.tree_mutex) # POLPY_NEWWAY
-        #    self.tree_viewer.start() # POLPY_NEWWAY    
-    
+        #    self.tree_viewer.start() # POLPY_NEWWAY
+
+        if self.doing_path_sampling:
+            self.path_sample = []
+            chain = self.mcmc_manager.chains[0]
+            ps_Qsum = 0.0
+            ps_Qnum = 0
+            if self.ps_toward_posterior:
+                ps_beta = 0.0
+            else:
+                ps_beta = 1.0
+            chain.setPower(ps_beta)
+            print 'Chain power set to %.3f' % ps_beta
+
         for cycle in xrange(self.ncycles):
             for i,c in enumerate(self.mcmc_manager.chains):
                 self.updateAllUpdaters(c, i, cycle)
@@ -446,7 +468,21 @@ class Phycas(object):
                 cold_chain_manager = self.mcmc_manager.getColdChainManager()
                 msg = 'cycle = %d, lnL = %.5f (%.5f secs)' % (cycle + 1, cold_chain_manager.getLastLnLike(), self.stopwatch.elapsedSeconds())
                 self.output(msg)
-            if (cycle + 1) % self.sample_every == 0:
+            if self.doing_path_sampling and cycle + 1 > self.ps_burnin:
+                ps_Qsum += cold_chain_manager.getLastLnLike()
+                ps_Qnum += 1
+                if ps_Qnum == self.ps_Q:
+                    avg = ps_Qsum/float(self.ps_Q)
+                    self.path_sample.append(avg)
+                    ps_Qsum = 0.0
+                    ps_Qnum = 0
+                    if self.ps_toward_posterior:
+                        ps_beta += self.ps_delta_beta
+                    else:
+                        ps_beta -= self.ps_delta_beta
+                    chain.setPower(ps_beta)
+                    print 'Chain power set to %.3f' % ps_beta
+            elif (cycle + 1) % self.sample_every == 0:
                 self.mcmc_manager.recordSample(cycle)
                 self.stopwatch.normalize()
             if (cycle + 1) % next_adaptation == 0:
@@ -468,10 +504,23 @@ class Phycas(object):
 
         # If we have been path sampling, compute marginal likelihood using lnL values
         # for each chain stored in self.path_sample
-        if self.nchains > 1 and not self.is_standard_heating:
-            # Calculate marginal likelihood using path sampling
+        self.calcMarginalLikelihood()
+
+    def calcMarginalLikelihood(self):
+        marginal_like = 0.0
+        if self.doing_path_sampling:
+            # Calculate marginal likelihood using continuous path sampling
+            # The path_sampling vector is 1-dimensional, each element holds average for one increment
+            C = len(self.path_sample) - 1
+            marginal_like += (self.path_sample[0] + self.path_sample[-1])/2.0
+            for v in self.path_sample[1:-1]:
+                marginal_like += v
+            marginal_like /= float(C)
+            self.output('Marginal likelihood (continuous path sampling method) = %f' % marginal_like)
+        elif self.nchains > 1 and not self.is_standard_heating:
+            # Calculate marginal likelihood using discrete path sampling
+            # The path_sampling vector is 2-dimensional, each element holds samples from one chain
             C = self.nchains - 1
-            marginal_like = 0.0
             self.output('\nCalculation of marginal likelihood:')
             self.output('%12s%12s' % ('chain', 'avg. lnL'))
             for i,v in enumerate(self.path_sample):
@@ -482,7 +531,7 @@ class Phycas(object):
                     avg /= 2.0
                 marginal_like += avg
             marginal_like /= float(C)
-            self.output('  Marginal likelihood (path sampling method) = %f' % marginal_like)
+            self.output('  Marginal likelihood (discrete path sampling method) = %f' % marginal_like)
             
             # Calculate marginal likelihood using harmonic mean method on cold chain
             sample_size = len(self.path_sample[0])
@@ -785,10 +834,9 @@ class Phycas(object):
         """
 
         # Read the data
-        #self.phycassert(self.data_source == 'file', "This only works for data read from a file (specify data_source == 'file')")
         if self.data_source == 'file':
             self.readDataFromFile()
-                # Store (and create, if necessary) list of taxon labels
+        # Store (and create, if necessary) list of taxon labels
         elif (len(self.taxon_labels) != self.ntax):
             for i in range(self.ntax):
                 s = 'taxon_%d' % (i + 1)
@@ -863,6 +911,23 @@ class Phycas(object):
         Performs an MCMC analysis.
         
         """
+        self.setupMCMC()
+        self.runMCMC()
+
+    def pathsampling(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Performs an MCMC analysis the purpose of which is to obtain an
+        accurate estimate of the marginal likelihood of the model by path
+        sampling. See Lartillot, N., and H. Philippe. 2006. Syst. Biol. 55(2):
+        195-207.
+        
+        """
+        self.nchains = 1
+        self.sample_every = 1
+        self.ncycles = self.ps_burnin + (self.ps_Q*self.ps_nbetaincr)
+        self.ps_delta_beta = 1.0/self.ps_nbetaincr
+        self.doing_path_sampling = True
         self.setupMCMC()
         self.runMCMC()
 
