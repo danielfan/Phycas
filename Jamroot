@@ -68,6 +68,18 @@ install Conversions
     <install-dependencies>on 
     <install-type>LIB ;  # note: tried using <dll-path> but it seemed to have no effect 
 
+# Build and install the PDFGen extension
+# Note: commented out because currently no C++ code is used in generating PDF files from phycas
+#       It is anticipated, however, that in the future we will want to have such capability
+#       on both the C++ and Python side. The basic framework is now in place for this.
+#alias pdfgen_sources
+#  : phycas/src/pdfgen_pymod.cpp
+#    phycas/src/boost_assertion_failed.cpp
+#    phycas/src/pdfgen.cpp
+#    tool_specific_requirements ;
+#python-extension _PDFGen : pdfgen_sources ;
+#install PDFGen : _PDFGen : <location>phycas/PDFGen ;
+
 # Build and install the ProbDist extension
 alias probdist_sources
   : phycas/src/probdist_pymod.cpp 

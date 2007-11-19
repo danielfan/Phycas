@@ -3,6 +3,7 @@
 #    'Conversions',
 #    'DataMatrix', 
 #    'Likelihood', 
+#    'PDFGen',
 #    'Phylogeny',
 #    'ProbDist', 
 #    'ReadNexus', 
@@ -13,6 +14,7 @@
 import Conversions
 import DataMatrix
 import Likelihood
+import PDFGen
 import Phylogeny
 import ProbDist
 import ReadNexus
