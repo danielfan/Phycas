@@ -17,6 +17,13 @@
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+// NOTE: This file is currently (19-Nov-2007) not being used in Phycas. All PDF generation is done in 
+// pure Python. It is still here, however, because it is anticipated that at some point we will want to 
+// be able to generate PDF files from the C++ side directly, at which point the Python code currently 
+// in _PDFGenerator.py will need to be translated to C++. With the stubs pdfgen.cpp, pdfgen.hpp and 
+// pdfgen_pymod.cpp in place, along with (currently-disabled) code in Jamroot and the (currently-unused)
+// VC project named pdfgen, it will not be (as) hard to get C++ PDF generation working.
+
 #include "phycas/src/pdfgen.hpp"
 
 namespace phycas

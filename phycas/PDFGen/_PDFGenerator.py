@@ -147,10 +147,43 @@ class PDFTextObject(PDFObject):
         outf.write(outstr)
         return len(outstr)
 
+class PDFLineObject(PDFObject):
+    def __init__(self, pdf_generator, x0, y0, x1, y1, line_width):
+        PDFObject.__init__(self, pdf_generator, 'Line')
+        self.x0 = x0
+        self.y0 = y0
+        self.x1 = x1
+        self.y1 = y1
+        self.width = line_width
+        self.line_cap_style = 1 # 0 = square ends; 1 = rounded ends; 2 = projecting square ends 
+
+    def write(self, outf, terminator):
+        objstr  = '    %d w%c' % (self.width, terminator)
+        objstr += '    %d J%c' % (self.line_cap_style, terminator)
+        objstr += '    %d %d m%c' % (self.x0, self.y0, terminator)
+        objstr += '    %d %d l%c' % (self.x1, self.y1, terminator)
+        objstr += '    S'
+        
+        outstr = '%d 0 obj%c' % (self.number, terminator)
+        outstr += '    <<%c' % terminator
+        outstr += '        /Length %d%c' % (len(objstr), terminator)
+        outstr += '    >>%c' % terminator
+        outstr += 'stream%c' % terminator
+        outstr += '%s%c' % (objstr, terminator)
+        outstr += 'endstream%c' % terminator
+        outstr += '    endobj%c' % terminator
+        outf.write(outstr)
+        return len(outstr)
+
 class PDFGenerator(object):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
-    Class that is responsible for creating PDF files.
+    Class that is responsible for creating PDF files. This PDF generator
+    is very lightweight, having only the capabilities needed to draw
+    trees. It is also not very efficient (separate objects are created
+    for each line, text string, etc., rather than combining them into one
+    stream object. It would not be too difficult, however, to join
+    objects if efficiency becomes a problem.
 
     """
     def __init__(self):
@@ -193,8 +226,13 @@ class PDFGenerator(object):
 
     def addText(self, x, y, font_family, font_size, text):
         assert self.curr_page, 'call newPage() function before adding first content'
-        t = PDFTextObject(self, x, y, font_family, font_size, text)
-        self.curr_page.addContent(t)
+        text = PDFTextObject(self, x, y, font_family, font_size, text)
+        self.curr_page.addContent(text)
+
+    def addLine(self, x0, y0, x1, y1, line_width):
+        assert self.curr_page, 'call newPage() function before adding first content'
+        line = PDFLineObject(self, x0, y0, x1, y1, line_width)
+        self.curr_page.addContent(line)
 
     def getNextObjectNumber(self):
         return len(self.objects) + 1
@@ -253,4 +291,5 @@ if __name__ == '__main__':
     pdf.overwrite = True
     pdf.newPage()
     pdf.addText(4*inch, 6*inch, 'Helvetica', 6, 'Hello World!')
-    pdf.saveDocument('doofus.pdf')
+    pdf.addLine(2*inch, 2*inch, 6*inch, 2*inch, 4)
+    pdf.saveDocument('test.pdf')
