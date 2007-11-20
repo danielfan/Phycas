@@ -3,6 +3,7 @@ import doctest
 import phycas
 
 phycas.ProbDist.testExamples()
+phycas.PDFGen.testExamples()
 phycas.Phylogeny.testExamples()
 phycas.ReadNexus.testExamples()
 phycas.DataMatrix.testExamples()

@@ -125,8 +125,8 @@ class PDFTextObject(PDFObject):
         PDFObject.__init__(self, pdf_generator, 'Text')
         self.font_num, self.font_obj = self.pdf.findFont(font_family)
         self.font_size = font_size
-        self.x = x
-        self.y = y
+        self.x = int(x)
+        self.y = int(y)
         self.text = text
 
     def write(self, outf, terminator):
@@ -150,18 +150,18 @@ class PDFTextObject(PDFObject):
 class PDFLineObject(PDFObject):
     def __init__(self, pdf_generator, x0, y0, x1, y1, line_width):
         PDFObject.__init__(self, pdf_generator, 'Line')
-        self.x0 = x0
-        self.y0 = y0
-        self.x1 = x1
-        self.y1 = y1
-        self.width = line_width
+        self.x0 = float(x0)
+        self.y0 = float(y0)
+        self.x1 = float(x1)
+        self.y1 = float(y1)
+        self.width = float(line_width)
         self.line_cap_style = 1 # 0 = square ends; 1 = rounded ends; 2 = projecting square ends 
 
     def write(self, outf, terminator):
-        objstr  = '    %d w%c' % (self.width, terminator)
+        objstr  = '    %.1f w%c' % (self.width, terminator)
         objstr += '    %d J%c' % (self.line_cap_style, terminator)
-        objstr += '    %d %d m%c' % (self.x0, self.y0, terminator)
-        objstr += '    %d %d l%c' % (self.x1, self.y1, terminator)
+        objstr += '    %.1f %.1f m%c' % (self.x0, self.y0, terminator)
+        objstr += '    %.1f %.1f l%c' % (self.x1, self.y1, terminator)
         objstr += '    S'
         
         outstr = '%d 0 obj%c' % (self.number, terminator)
@@ -191,9 +191,14 @@ class PDFGenerator(object):
         """
         Initializes data members.
 
-        >>> from phycas.PDFGen import *
-        >>> pdf = PDFGen()
-        >>> s.createDocument()
+        >>> from phycas import *
+        >>> inch = 72.0
+        >>> pdf = PDFGen.PDFGenerator()
+        >>> pdf.overwrite = True
+        >>> pdf.newPage()
+        >>> pdf.addText(3.0*inch, 6.0*inch, 'Times-Italic', 36, 'Hello, World!')
+        >>> pdf.addLine(3.0*inch, 5.9*inch, 5.8*inch, 5.9*inch, 4)
+        >>> pdf.saveDocument('test.pdf')
 
         """
         self.objects     = []
@@ -286,10 +291,15 @@ class PDFGenerator(object):
         outf.close()
 
 if __name__ == '__main__':
+    # The 14 standard fonts guaranteed to be available in all PDF consumer applications:
+    #   Times-Roman      Helvetica             Courier             Symbol
+    #   Times-Bold       Helvetica-Bold        Courier-Bold        ZapfDingbats
+    #   Times-Italic     Helvetica-Oblique     Courier-Oblique
+    #   Times-BoldItalic Helvetica-BoldOblique Courier-BoldOblique
     inch = 72
     pdf = PDFGenerator()
     pdf.overwrite = True
     pdf.newPage()
-    pdf.addText(4*inch, 6*inch, 'Helvetica', 6, 'Hello World!')
-    pdf.addLine(2*inch, 2*inch, 6*inch, 2*inch, 4)
+    pdf.addText(3*inch, 6*inch, 'Times-Italic', 36, 'Hello, World!')
+    pdf.addLine(3*inch, 5.9*inch, 5.8*inch, 5.9*inch, 4)
     pdf.saveDocument('test.pdf')

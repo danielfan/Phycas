@@ -3,6 +3,7 @@ import MCMCManager  # poorly named, as MCMCManager is now only one of many class
 from phycas.Conversions import *
 from phycas.DataMatrix import *
 from phycas.Likelihood import *
+from phycas.PDFGen import *
 from phycas.Phylogeny import *
 from phycas.ProbDist import *
 from phycas.ReadNexus import *
@@ -90,6 +91,13 @@ class Phycas(object):
         # Variables associated with tree scaler move
         self.tree_scaler_weight     = 0         # whole-tree scaling will be performed this many times per cycle
 
+        # Variables associated with PDF tree drawing (used in pdftree() function)
+        self.pdf_line_width         = 1.0       # width of lines representing edges in the tree
+        self.pdf_left_margin        = 1.0       # left margin in inches (1 inch = 72 points)
+        self.pdf_right_margin       = 1.0       # right margin in inches (1 inch = 72 points)
+        self.pdf_top_margin         = 1.0       # top margin in inches (1 inch = 72 points)
+        self.pdf_bottom_margin      = 1.0       # bottom margin in inches (1 inch = 72 points)
+        
         # Variables associated with Polytomy (Bush) moves
         self.allow_polytomies       = False     # if True, do Bush moves in addition to Larget-Simon moves; if False, do Larget-Simon moves only
         self.polytomy_prior         = True      # if True, use polytomy prior; if False, use resolution class prior
@@ -1055,6 +1063,221 @@ class Phycas(object):
 
         return distance
 
+    def pdftree(self):
+        pdf = PDFGenerator()
+        pdf.overwrite = True
+        pdf.newPage()
+        self.tree2pdf(pdf, self.tree_topology)
+        pdf.saveDocument('test.pdf')
+        
+    def obsoletetree2pdf(self, pdf, newick):
+        # Build user-specified tree
+        tree = Tree()
+        tree.buildFromString(newick, False)
+        tips = []
+        internals = []
+
+        # Record information about the tip serving as the root    
+        nd = tree.getFirstPreorder()
+        assert nd.isRoot(), 'first preorder node should be the root'
+        number = nd.getNodeNumber()
+        parent = nd.getLeftChild().getNodeNumber()
+        name = nd.getNodeName()
+        edgelen = nd.getLeftChild().getEdgeLen()
+        height = edgelen
+        tips.append((number, name, parent, edgelen, height))
+        
+        # Record information about the internal node serving as the subroot
+        nd = nd.getNextPreorder()
+        assert nd.getParent().isRoot(), 'second preorder node should be the subroot'
+        number = nd.getNodeNumber()
+        parent = -1
+        name = nd.getNodeName()
+        edgelen = 0.0
+        height = 0.0
+        internals.append((number, name, parent, edgelen, height))
+        
+        # Record information about the remaining nodes in the tree
+        while True:
+            nd = nd.getNextPreorder()
+            if not nd:
+                break
+            number = nd.getNodeNumber()
+            parent = nd.getParent().getNodeNumber()
+            name = nd.getNodeName()
+            edgelen = nd.getEdgeLen()
+            height = edgelen
+            if parent >= 0:
+                height += nd.getParent().getEdgeLen()
+            if nd.isTip():
+                tips.append((number, name, parent, edgelen, height))
+            else:
+                internals.append((number, name, parent, edgelen, height))
+
+        max_height = 0.0
+        for nd in tips:
+            num, name, par, edge, ht = nd
+            if ht > max_height:
+                max_height = ht
+
+        inch = 72.0
+        ntips = len(tips)
+        right_margin = int(1.5*inch)
+        left_margin = top_margin = bottom_margin = int(1.0*inch)
+        spacer = 5
+        plot_top = 8.5*inch
+        plot_width = plot_top - left_margin - right_margin
+        plot_right = 11.0*inch
+        plot_height = plot_right - top_margin - bottom_margin
+        xscaler = plot_width/max_height
+        yscaler = plot_height/float(ntips)
+        for i,nd in enumerate(internals):
+            num, name, par, edge, ht = nd
+            node_x = left_margin + ht*xscaler
+            node_y = plot_top - top_margin - float(i)*yscaler
+            brlen = xscaler*edge
+            #pdf.addText(node_x + spacer, node_y, 'Times-Italic', 12, name)
+            pdf.addLine(node_x, node_y, node_x - brlen, node_y, 1)
+        for i,nd in enumerate(tips):
+            num, name, par, edge, ht = nd
+            node_x = left_margin + ht*xscaler
+            node_y = plot_top - top_margin - float(i)*yscaler
+            brlen = xscaler*edge
+            pdf.addText(node_x + spacer, node_y, 'Times-Italic', 12, name)
+            pdf.addLine(node_x, node_y, node_x - brlen, node_y, 1)
+            pdf.addLine(node_x - brlen, node_y, node_x - brlen, node_y, 1)
+                    
+    def tree2pdf(self, pdf, newick):
+        # Build user-specified tree
+        tree = Tree()
+        tree.buildFromString(newick, False)
+
+        nodes = []
+
+        # Perform a preorder traversal:
+        # 1) for each node, set x-value to height above root (in units of edge length)
+        # 2) for each tip, set y-value to tip index, with root tip being 0, and other
+        #    tips being numbered from left to right
+        # 3) for each internal, just set y-value to 0.0 for now; these internal y-values
+        #    will be calculated on the subsequent postorder traversal
+
+        # Record information about the tip serving as the root
+        nd = tree.getFirstPreorder()
+        assert nd.isRoot(), 'first preorder node should be the root'
+        nodes.append(nd)
+        subroot = nd.getLeftChild()
+        height = subroot.getEdgeLen()
+        nd.setX(height)
+        nd.setY(0.0)
+        ntips = 1.0
+        max_height = height
+        #print '%20s: x = %f, y = %f' % (nd.getNodeName(), nd.getX(), nd.getY())
+        
+        # Record information about the internal node serving as the subroot
+        nd = nd.getNextPreorder()
+        assert nd.getParent().isRoot(), 'second preorder node should be the subroot'
+        nodes.append(nd)
+        nd.setX(0.0)
+        nd.setY(0.0)
+        subroot = nd
+        #print '%20s: x = %f, y = %f' % (nd.getNodeName(), nd.getX(), nd.getY())
+        
+        # Record information about the remaining nodes in the tree
+        while True:
+            nd = nd.getNextPreorder()
+            if not nd:
+                break
+            else:
+                ndpar = nd.getParent()
+                nodes.append(nd)
+                height = nd.getEdgeLen() + ndpar.getX()
+                nd.setX(height)
+                if height > max_height:
+                    max_height = height
+                if nd.isTip():
+                    nd.setY(ntips)
+                    ntips += 1.0
+                    #print '%20s: x = %f, y = %f' % (nd.getNodeName(), nd.getX(), nd.getY())
+                else:
+                    nd.setY(0.0)
+                    #print '%20s: x = %f, y = %f' % (nd.getNodeName(), nd.getX(), nd.getY())
+
+        inch = 72.0
+        ntips = tree.getNTips()
+        right_margin  = self.pdf_right_margin*inch
+        left_margin   = self.pdf_left_margin*inch
+        top_margin    = self.pdf_top_margin*inch
+        bottom_margin = self.pdf_bottom_margin*inch
+        spacer = 5.0
+        plot_right = 8.5*inch
+        plot_width = plot_right - left_margin - right_margin
+        plot_top = 11.0*inch
+        plot_height = plot_top - top_margin - bottom_margin
+        xscaler = plot_width/max_height
+        yscaler = plot_height/float(ntips - 1) 
+        #print
+        #print 'plot_right    = %f' % plot_right
+        #print 'left_margin   = %f' % left_margin
+        #print 'right_margin  = %f' % right_margin
+        #print
+        #print 'plot_top      = %f' % plot_top
+        #print 'top_margin    = %f' % top_margin
+        #print 'bottom_margin = %f' % bottom_margin
+        #print
+        #print 'plot_width    = %f' % plot_width
+        #print 'max_height    = %f' % max_height
+        #print 'xscaler       = %f' % xscaler
+        #print
+        #print 'plot_height   = %f' % plot_height
+        #print 'ntips         = %f' % float(ntips)
+        #print 'yscaler       = %f' % yscaler
+
+        # Perform a postorder traversal:
+        # 1) scale each x-value
+        # 2) calculate y-value of each internal node as the average y-value of its children
+        # 3) scale each y-value
+        # 4) plot each edge
+        # 5) plot names of tips
+        # 6) for each internal node, draw shoulder from leftmost child to rightmost
+        #print '\nNow for the postorder traversal...'
+        nodes.reverse()
+        for nd in nodes:
+            node_x = left_margin + nd.getX()*xscaler
+            if nd.isTip():
+                #print '%20s: x = %f, y = %f' % (nd.getNodeName(), nd.getX(), nd.getY())
+                node_y = plot_top - top_margin - nd.getY()*yscaler
+                brlen = nd.isRoot() and xscaler*nd.getX() or xscaler*nd.getEdgeLen()
+                pdf.addText(node_x + spacer, node_y, 'Times-Italic', 12, nd.getNodeName())
+                #print '  label "%s" at (%d,%d)' % (nd.getNodeName(), int(node_x + spacer), int(node_y))
+                pdf.addLine(node_x, node_y, node_x - brlen, node_y, self.pdf_line_width)
+                #print '  line from (%d,%d) to (%d,%d)' % (int(node_x), int(node_y), int(node_x - brlen), int(node_y))
+            else:
+                nchildren = 1.0
+                child = nd.getLeftChild()
+                left_child = child
+                childY = child.getY()
+                while True:
+                    child = child.getRightSib()
+                    if child:
+                        right_child = child
+                        childY += child.getY()
+                        nchildren += 1.0
+                    else:
+                        break
+                if nd is subroot:
+                    left_child = nd.getParent()
+                else:
+                    nd.setY(childY/nchildren)
+                    #print '%20s: x = %f, y = %f' % (nd.getNodeName(), nd.getX(), nd.getY())
+                    node_y = plot_top - top_margin - childY*yscaler/nchildren
+                    brlen = xscaler*nd.getEdgeLen()
+                    pdf.addLine(node_x, node_y, node_x - brlen, node_y, self.pdf_line_width)
+                    #print '  line from (%d,%d) to (%d,%d)' % (int(node_x), int(node_y), int(node_x - brlen), int(node_y))
+                left_y = plot_top - top_margin - left_child.getY()*yscaler
+                right_y = plot_top - top_margin - right_child.getY()*yscaler
+                pdf.addLine(node_x, left_y, node_x, right_y, self.pdf_line_width)
+                #print '  line from (%d,%d) to (%d,%d)' % (int(node_x), int(left_y), int(node_x), int(right_y))
+                    
     # by default phycassert sys.exit.
     # When debugging, it is nice to set this to True so that you can see the stack trace
     PhycassertRaisesException = False
