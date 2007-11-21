@@ -92,11 +92,23 @@ class Phycas(object):
         self.tree_scaler_weight     = 0         # whole-tree scaling will be performed this many times per cycle
 
         # Variables associated with PDF tree drawing (used in pdftree() function)
-        self.pdf_line_width         = 1.0       # width of lines representing edges in the tree
-        self.pdf_left_margin        = 1.0       # left margin in inches (1 inch = 72 points)
-        self.pdf_right_margin       = 1.0       # right margin in inches (1 inch = 72 points)
-        self.pdf_top_margin         = 1.0       # top margin in inches (1 inch = 72 points)
-        self.pdf_bottom_margin      = 1.0       # bottom margin in inches (1 inch = 72 points)
+        # The 14 standard fonts guaranteed to be available in all PDF consumer applications:
+        #   Times-Roman      Helvetica             Courier             Symbol
+        #   Times-Bold       Helvetica-Bold        Courier-Bold        ZapfDingbats
+        #   Times-Italic     Helvetica-Oblique     Courier-Oblique
+        #   Times-BoldItalic Helvetica-BoldOblique Courier-BoldOblique
+        self.pdf_filename           = 'trees.pdf' # set to desired name of pdf file to create
+        self.pdf_tip_label_font = 'Times-Italic'  # should be one of the 14 standard fonts listed above
+        self.pdf_tip_label_height   = 12          # font height in points
+        self.pdf_page_width         = 8.5         # page width in inches
+        self.pdf_page_height        = 11.0        # page length in inches
+        self.pdf_line_width         = 1.0         # width of lines representing edges in the tree
+        self.pdf_left_margin        = 1.0         # left margin in inches (1 inch = 72 points)
+        self.pdf_right_margin       = 1.0         # right margin in inches (1 inch = 72 points)
+        self.pdf_top_margin         = 1.0         # top margin in inches (1 inch = 72 points)
+        self.pdf_bottom_margin      = 1.0         # bottom margin in inches (1 inch = 72 points)
+        self.pdf_treefile           = None        # set to tree file name if you want to make one pdf file with each tree from tree file on a separate page
+        self.pdf_newick             = None        # set to the tree description to print if only want to save one tree to a pdf file
         
         # Variables associated with Polytomy (Bush) moves
         self.allow_polytomies       = False     # if True, do Bush moves in addition to Larget-Simon moves; if False, do Larget-Simon moves only
@@ -490,7 +502,7 @@ class Phycas(object):
                         ps_beta -= self.ps_delta_beta
                     chain.setPower(ps_beta)
                     print 'Chain power set to %.3f' % ps_beta
-            elif (cycle + 1) % self.sample_every == 0:
+            if (cycle + 1) % self.sample_every == 0:
                 self.mcmc_manager.recordSample(cycle)
                 self.stopwatch.normalize()
             if (cycle + 1) % next_adaptation == 0:
@@ -679,6 +691,7 @@ class Phycas(object):
     def readTreesFromFile(self):
         if not self.file_name_trees_stored or (self.tree_file_name != self.file_name_trees_stored):
             self.reader.readFile(self.tree_file_name)
+            self.taxon_labels = self.reader.getTaxLabels()  # shouldn't overwrite taxon_labels stored previously
             self.stored_newicks = []
             for t in self.reader.getTrees():
                 self.stored_newicks.append(t.newick)
@@ -932,7 +945,7 @@ class Phycas(object):
         
         """
         self.nchains = 1
-        self.sample_every = 1
+        #self.sample_every = 1
         self.ncycles = self.ps_burnin + (self.ps_Q*self.ps_nbetaincr)
         self.ps_delta_beta = 1.0/self.ps_nbetaincr
         self.doing_path_sampling = True
@@ -1064,101 +1077,54 @@ class Phycas(object):
         return distance
 
     def pdftree(self):
-        pdf = PDFGenerator()
-        pdf.overwrite = True
-        pdf.newPage()
-        self.tree2pdf(pdf, self.tree_topology)
-        pdf.saveDocument('test.pdf')
+        assert (self.pdf_treefile and not self.pdf_newick) or (self.pdf_newick and not self.pdf_treefile), 'set either pdf_newick or pdf_treefile, but not both'
+        if self.pdf_newick:        
+            # Build tree the newick description of which is in self.newick
+            tree = Tree()
+            tree.buildFromString(self.pdf_newick, False)
+
+            # Save tree in PDF  
+            pdf = PDFGenerator(self.pdf_page_width, self.pdf_page_height)
+            pdf.overwrite = True
+            pdf.newPage()
+            self.tree2pdf(pdf, tree)
+            pdf.saveDocument(self.pdf_filename)
+        else:
+            # Open pdf_treefile and read trees therein
+            self.tree_file_name = self.pdf_treefile
+            self.readTreesFromFile()
+
+            # Build each tree and determine its height
+            tree = Tree()
+            max_height = 0.0
+            for newick in self.stored_newicks:
+                tree.buildFromString(newick, True)
+                h = tree.calcTotalHeight()
+                if h > max_height:
+                    max_height = h
+
+            # Build each tree again and save in PDF file            
+            pdf = PDFGenerator(self.pdf_page_width, self.pdf_page_height)
+            pdf.overwrite = True
+            for newick in self.stored_newicks:
+                tree.buildFromString(newick, True)
+                tree.rectifyNames(self.taxon_labels)
+                pdf.newPage()
+                self.tree2pdf(pdf, tree, max_height)
+            pdf.saveDocument(self.pdf_filename)
         
-    def obsoletetree2pdf(self, pdf, newick):
-        # Build user-specified tree
-        tree = Tree()
-        tree.buildFromString(newick, False)
-        tips = []
-        internals = []
-
-        # Record information about the tip serving as the root    
-        nd = tree.getFirstPreorder()
-        assert nd.isRoot(), 'first preorder node should be the root'
-        number = nd.getNodeNumber()
-        parent = nd.getLeftChild().getNodeNumber()
-        name = nd.getNodeName()
-        edgelen = nd.getLeftChild().getEdgeLen()
-        height = edgelen
-        tips.append((number, name, parent, edgelen, height))
-        
-        # Record information about the internal node serving as the subroot
-        nd = nd.getNextPreorder()
-        assert nd.getParent().isRoot(), 'second preorder node should be the subroot'
-        number = nd.getNodeNumber()
-        parent = -1
-        name = nd.getNodeName()
-        edgelen = 0.0
-        height = 0.0
-        internals.append((number, name, parent, edgelen, height))
-        
-        # Record information about the remaining nodes in the tree
-        while True:
-            nd = nd.getNextPreorder()
-            if not nd:
-                break
-            number = nd.getNodeNumber()
-            parent = nd.getParent().getNodeNumber()
-            name = nd.getNodeName()
-            edgelen = nd.getEdgeLen()
-            height = edgelen
-            if parent >= 0:
-                height += nd.getParent().getEdgeLen()
-            if nd.isTip():
-                tips.append((number, name, parent, edgelen, height))
-            else:
-                internals.append((number, name, parent, edgelen, height))
-
-        max_height = 0.0
-        for nd in tips:
-            num, name, par, edge, ht = nd
-            if ht > max_height:
-                max_height = ht
-
-        inch = 72.0
-        ntips = len(tips)
-        right_margin = int(1.5*inch)
-        left_margin = top_margin = bottom_margin = int(1.0*inch)
-        spacer = 5
-        plot_top = 8.5*inch
-        plot_width = plot_top - left_margin - right_margin
-        plot_right = 11.0*inch
-        plot_height = plot_right - top_margin - bottom_margin
-        xscaler = plot_width/max_height
-        yscaler = plot_height/float(ntips)
-        for i,nd in enumerate(internals):
-            num, name, par, edge, ht = nd
-            node_x = left_margin + ht*xscaler
-            node_y = plot_top - top_margin - float(i)*yscaler
-            brlen = xscaler*edge
-            #pdf.addText(node_x + spacer, node_y, 'Times-Italic', 12, name)
-            pdf.addLine(node_x, node_y, node_x - brlen, node_y, 1)
-        for i,nd in enumerate(tips):
-            num, name, par, edge, ht = nd
-            node_x = left_margin + ht*xscaler
-            node_y = plot_top - top_margin - float(i)*yscaler
-            brlen = xscaler*edge
-            pdf.addText(node_x + spacer, node_y, 'Times-Italic', 12, name)
-            pdf.addLine(node_x, node_y, node_x - brlen, node_y, 1)
-            pdf.addLine(node_x - brlen, node_y, node_x - brlen, node_y, 1)
-                    
-    def tree2pdf(self, pdf, newick):
-        # Build user-specified tree
-        tree = Tree()
-        tree.buildFromString(newick, False)
-
+    def tree2pdf(self, pdf, tree, xscalemax = 0.0):
+        # Note: max_label_points should be calculated outside this function and passed in as an argument
+        max_label_points = 0.0
         nodes = []
 
         # Perform a preorder traversal:
         # 1) for each node, set x-value to height above root (in units of edge length)
         # 2) for each tip, set y-value to tip index, with root tip being 0, and other
         #    tips being numbered from left to right
-        # 3) for each internal, just set y-value to 0.0 for now; these internal y-values
+        # 3) find the length of the longest taxon label as it will be rendered in the
+        #    PDF file so that the margin calculations can be made
+        # 4) for each internal, just set y-value to 0.0 for now; these internal y-values
         #    will be calculated on the subsequent postorder traversal
 
         # Record information about the tip serving as the root
@@ -1171,7 +1137,10 @@ class Phycas(object):
         nd.setY(0.0)
         ntips = 1.0
         max_height = height
-        #print '%20s: x = %f, y = %f' % (nd.getNodeName(), nd.getX(), nd.getY())
+        taxon_label = nd.getNodeName()
+        label_width = float(self.pdf_tip_label_height)*pdf.calcStringWidth(self.pdf_tip_label_font, taxon_label)
+        if label_width > max_label_points:
+            max_label_points = label_width
         
         # Record information about the internal node serving as the subroot
         nd = nd.getNextPreorder()
@@ -1180,7 +1149,6 @@ class Phycas(object):
         nd.setX(0.0)
         nd.setY(0.0)
         subroot = nd
-        #print '%20s: x = %f, y = %f' % (nd.getNodeName(), nd.getX(), nd.getY())
         
         # Record information about the remaining nodes in the tree
         while True:
@@ -1197,40 +1165,55 @@ class Phycas(object):
                 if nd.isTip():
                     nd.setY(ntips)
                     ntips += 1.0
-                    #print '%20s: x = %f, y = %f' % (nd.getNodeName(), nd.getX(), nd.getY())
+                    taxon_label = nd.getNodeName()
+                    label_width = float(self.pdf_tip_label_height)*pdf.calcStringWidth(self.pdf_tip_label_font, taxon_label)
+                    if label_width > max_label_points:
+                        max_label_points = label_width
                 else:
                     nd.setY(0.0)
-                    #print '%20s: x = %f, y = %f' % (nd.getNodeName(), nd.getX(), nd.getY())
 
         inch = 72.0
+        spacer = 5.0
+        half_xheight = float(self.pdf_tip_label_height)*pdf.getXHeight(self.pdf_tip_label_font) /2.0
         ntips = tree.getNTips()
+        label_margin  = max_label_points + spacer
         right_margin  = self.pdf_right_margin*inch
         left_margin   = self.pdf_left_margin*inch
         top_margin    = self.pdf_top_margin*inch
         bottom_margin = self.pdf_bottom_margin*inch
-        spacer = 5.0
-        plot_right = 8.5*inch
+        plot_right = self.pdf_page_width*inch
         plot_width = plot_right - left_margin - right_margin
-        plot_top = 11.0*inch
+        plot_top = self.pdf_page_height*inch
         plot_height = plot_top - top_margin - bottom_margin
-        xscaler = plot_width/max_height
-        yscaler = plot_height/float(ntips - 1) 
-        #print
-        #print 'plot_right    = %f' % plot_right
-        #print 'left_margin   = %f' % left_margin
-        #print 'right_margin  = %f' % right_margin
-        #print
-        #print 'plot_top      = %f' % plot_top
-        #print 'top_margin    = %f' % top_margin
-        #print 'bottom_margin = %f' % bottom_margin
-        #print
-        #print 'plot_width    = %f' % plot_width
-        #print 'max_height    = %f' % max_height
-        #print 'xscaler       = %f' % xscaler
-        #print
-        #print 'plot_height   = %f' % plot_height
-        #print 'ntips         = %f' % float(ntips)
-        #print 'yscaler       = %f' % yscaler
+        if xscalemax == 0.0:
+            xscalemax = max_height
+        xscaler = (plot_width - label_margin)/xscalemax
+        yscaler = plot_height/float(ntips - 1)
+
+        # compute length represented by scale bar (round xscalemax down)
+        log_xscalemax = math.log10(xscalemax)
+        ten_to_power = 10**math.floor(log_xscalemax)
+        scalebar = ten_to_power*math.floor(xscalemax/ten_to_power)
+        scalebar_str = '%f' % scalebar
+        scalebar_str_extent = float(self.pdf_tip_label_height)*pdf.calcStringWidth(self.pdf_tip_label_font, scalebar_str)
+        scalebar_w = scalebar*xscaler
+        #raw_input('scalebar_w = %f, scalebar_str_extent = %f' % (scalebar_w,scalebar_str_extent))
+        scalebar_x = left_margin + (scalebar_w - scalebar_str_extent)/2.0
+        scalebar_y = bottom_margin + spacer
+        pdf.addText(scalebar_x, scalebar_y, self.pdf_tip_label_font, self.pdf_tip_label_height, '%f' % scalebar)
+        pdf.addLine(left_margin, bottom_margin, left_margin + scalebar_w, bottom_margin, self.pdf_line_width)
+
+        # add enough to left margin to center smaller trees horizontally
+        left_margin += (xscaler*(xscalemax - max_height) + label_margin*(1.0 - max_height/xscalemax))/2.0
+
+        # add enough to the top margin to center smaller trees vertically
+        top_margin += (plot_height*(1.0 - max_height/xscalemax))/2.0
+
+        # adjust yscaler to keep vertical tree dimension proportional to its horizontal dimension
+        yscaler *= max_height/xscalemax
+
+        # adjust tip label height (in points) to make size of tip labels commensurate with size of tree
+        tip_font_points = self.pdf_tip_label_height*max_height/xscalemax
 
         # Perform a postorder traversal:
         # 1) scale each x-value
@@ -1239,18 +1222,14 @@ class Phycas(object):
         # 4) plot each edge
         # 5) plot names of tips
         # 6) for each internal node, draw shoulder from leftmost child to rightmost
-        #print '\nNow for the postorder traversal...'
         nodes.reverse()
         for nd in nodes:
             node_x = left_margin + nd.getX()*xscaler
             if nd.isTip():
-                #print '%20s: x = %f, y = %f' % (nd.getNodeName(), nd.getX(), nd.getY())
                 node_y = plot_top - top_margin - nd.getY()*yscaler
                 brlen = nd.isRoot() and xscaler*nd.getX() or xscaler*nd.getEdgeLen()
-                pdf.addText(node_x + spacer, node_y, 'Times-Italic', 12, nd.getNodeName())
-                #print '  label "%s" at (%d,%d)' % (nd.getNodeName(), int(node_x + spacer), int(node_y))
+                pdf.addText(node_x + spacer, node_y - half_xheight, self.pdf_tip_label_font, tip_font_points, nd.getNodeName())
                 pdf.addLine(node_x, node_y, node_x - brlen, node_y, self.pdf_line_width)
-                #print '  line from (%d,%d) to (%d,%d)' % (int(node_x), int(node_y), int(node_x - brlen), int(node_y))
             else:
                 nchildren = 1.0
                 child = nd.getLeftChild()
@@ -1268,15 +1247,12 @@ class Phycas(object):
                     left_child = nd.getParent()
                 else:
                     nd.setY(childY/nchildren)
-                    #print '%20s: x = %f, y = %f' % (nd.getNodeName(), nd.getX(), nd.getY())
                     node_y = plot_top - top_margin - childY*yscaler/nchildren
                     brlen = xscaler*nd.getEdgeLen()
                     pdf.addLine(node_x, node_y, node_x - brlen, node_y, self.pdf_line_width)
-                    #print '  line from (%d,%d) to (%d,%d)' % (int(node_x), int(node_y), int(node_x - brlen), int(node_y))
                 left_y = plot_top - top_margin - left_child.getY()*yscaler
                 right_y = plot_top - top_margin - right_child.getY()*yscaler
                 pdf.addLine(node_x, left_y, node_x, right_y, self.pdf_line_width)
-                #print '  line from (%d,%d) to (%d,%d)' % (int(node_x), int(left_y), int(node_x), int(right_y))
                     
     # by default phycassert sys.exit.
     # When debugging, it is nice to set this to True so that you can see the stack trace

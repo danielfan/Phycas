@@ -1,4 +1,4 @@
-import os.path
+import os.path, re
 
 class PDFObject(object):
     def __init__(self, pdf_generator, object_type):
@@ -186,14 +186,14 @@ class PDFGenerator(object):
     objects if efficiency becomes a problem.
 
     """
-    def __init__(self):
+    def __init__(self, page_width_inches, page_height_inches):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Initializes data members.
 
         >>> from phycas import *
         >>> inch = 72.0
-        >>> pdf = PDFGen.PDFGenerator()
+        >>> pdf = PDFGen.PDFGenerator(8.5, 11.0)
         >>> pdf.overwrite = True
         >>> pdf.newPage()
         >>> pdf.addText(3.0*inch, 6.0*inch, 'Times-Italic', 36, 'Hello, World!')
@@ -203,11 +203,14 @@ class PDFGenerator(object):
         """
         self.objects     = []
         self.fonts       = []
+        self.char_width  = {}
+        self.xheight     = {}
         self.filename    = None
         self.overwrite   = False
         self.terminator  = '\x0A' # line feed
-        self.page_width  = 612  # equals (72 points/inch)*(8.5 inches)
-        self.page_height = 792  # equals (72 points/inch)*(11 inches)
+        self.inch        = 72.0
+        self.page_width  = int(self.inch*page_width_inches)   # 612 equals (72 points/inch)*(8.5 inches)
+        self.page_height = int(self.inch*page_height_inches)  # 792 equals (72 points/inch)*(11 inches)
 
         # Create a catalog object        
         self.catalog    = PDFCatalogObject(self)
@@ -256,6 +259,54 @@ class PDFGenerator(object):
         f = PDFFontObject(self, font_family)
         return (f.font_num, f.number)
 
+    def getXHeight(self, font_face):
+        if not font_face in self.xheight:
+            self.loadAFMFile(font_face)
+        return self.xheight[font_face]
+        
+    def calcStringWidth(self, font_face, s):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Computes the width of string s using the specified font_face, which
+        should be one of the standard 14 fonts: Times-Roman, Helvetica,
+        Courier, Symbol, Times-Bold, Helvetica-Bold, Courier-Bold,
+        ZapfDingbats, Times-Italic, Helvetica-Oblique, Courier-Oblique,
+        Times-BoldItalic, Helvetica-BoldOblique, or Courier-BoldOblique.
+
+        """
+        if not font_face in self.char_width:
+            self.loadAFMFile(font_face)
+        wdict = self.char_width[font_face]
+        wx = 0.0
+        for c in s:
+            #print c,'=',wdict[ord(c)],'-->',25.4*36.0*wdict[ord(c)]/72.0,'mm'
+            wx += wdict[ord(c)]
+        return wx
+
+    def loadAFMFile(self, font_face):
+        if font_face in self.char_width:
+            assert font_face in self.xheight, 'character widths for font %s loaded but not xheight' % font_face
+            return  # already been loaded
+        mydir = os.path.dirname(os.path.abspath(__file__))
+        filename = '%s/AFM/%s.afm' % (mydir,font_face)
+        afmdata = open(filename,'r').read()
+        # Find the xheight and store
+        r = re.compile('XHeight (\d+)', re.MULTILINE)
+        m = r.search(afmdata)
+        self.xheight[font_face] = float(m.group(1))/1000.0
+        # Get all lines representing individual character metrics
+        r = re.compile('StartCharMetrics\s+\d+(.+)EndCharMetrics', re.MULTILINE | re.DOTALL)
+        m = r.search(afmdata)
+        metrics = m.group(1) #.splitlines()
+        r = re.compile('C (\d+) ; WX (\d+)', re.MULTILINE)
+        m = r.findall(metrics)
+        self.char_width[font_face] = {}
+        for x in m:
+            i = int(x[0])
+            w = float(x[1])/1000.0
+            if i > 0:
+                self.char_width[font_face][i] = w
+
     def saveDocument(self, filename):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -296,10 +347,14 @@ if __name__ == '__main__':
     #   Times-Bold       Helvetica-Bold        Courier-Bold        ZapfDingbats
     #   Times-Italic     Helvetica-Oblique     Courier-Oblique
     #   Times-BoldItalic Helvetica-BoldOblique Courier-BoldOblique
-    inch = 72
-    pdf = PDFGenerator()
-    pdf.overwrite = True
-    pdf.newPage()
-    pdf.addText(3*inch, 6*inch, 'Times-Italic', 36, 'Hello, World!')
-    pdf.addLine(3*inch, 5.9*inch, 5.8*inch, 5.9*inch, 4)
-    pdf.saveDocument('test.pdf')
+    inch = 72.0
+    page_width = 8.5*inch
+    page_height = 11.0*inch
+    pdf = PDFGenerator(page_width, page_height)
+    #pdf.overwrite = True
+    #pdf.newPage()
+    #pdf.addText(3*inch, 6*inch, 'Times-Italic', 36, 'Hello, World!')
+    #pdf.addLine(3*inch, 5.9*inch, 5.8*inch, 5.9*inch, 4)
+    #pdf.saveDocument('test.pdf')
+    print 'width of "Hello there!" in 12 pt Times-Italic',12.0*pdf.calcStringWidth('Times-Italic','Hello there!')
+    print 'width of "Hello there!" in 12 pt Helvetica',12.0*pdf.calcStringWidth('Helvetica','Hello there!')
