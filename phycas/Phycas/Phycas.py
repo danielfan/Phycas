@@ -14,7 +14,7 @@ import inspect
 class Phycas(object):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
-    Performs a Bayesian phylogenetic MCMC analysis. The tree topology and
+    Performs Bayesian phylogenetic MCMC analyses. The tree topology and
     edge lengths are updated via the Metropolis-Hastings algorithm (using
     the Larget-Simon LOCAL move without a molecular clock). Slice 
     sampling is used to update all model parameters except edge lengths.
@@ -575,6 +575,8 @@ class Phycas(object):
         if self.samc_move_debug:
             stop_at_cycle = -1  # set this to the cycle you want to examine in detail, or -1 to ignore
 
+        nsamples = 0
+        max_lnL = None
         current_level = 0
         prev_level = 0
         addseq = self.addition_sequence
@@ -596,6 +598,9 @@ class Phycas(object):
                 outvect = file('cf.txt', 'r').readlines()
             else:
                 outfile = file('cf.txt', 'w')
+
+        self.stopwatch.start()
+        self.mcmc_manager.resetNEvals()
 
         # Start of the main SAMC loop        
         for cycle in xrange(self.ncycles):
@@ -648,10 +653,18 @@ class Phycas(object):
             self.samc_theta[current_level] += gain_factor
             lnL = chain.calcLnLikelihood()
 
-            self.mcmc_manager.recordSample(cycle)
-
-            outstr = "cycle = %d, level = %d: lnL =%*f %s" % (cycle, current_level, 15*current_level, lnL, c)
-            print outstr
+            if current_level == max_level:
+                nsamples += 1
+                if not max_lnL or lnL > max_lnL:
+                    max_lnL = lnL
+                self.mcmc_manager.recordSample(cycle)
+                outstr = "nsamples = %d, cycle = %d, lnL = %f, best = %f" % (nsamples,cycle,lnL,max_lnL)
+                print outstr
+            else:
+                assert current_level < max_level, 'max_level is not max. level'
+                #print '%*d' % (current_level,current_level)
+            #outstr = "cycle = %d, level = %d: lnL =%*f %s" % (cycle, current_level, 15*current_level, lnL, c)
+            #print outstr
 
             if self.samc_move_debug:
                 #if chain.debugCheckForUncachedCLAs():
@@ -678,6 +691,12 @@ class Phycas(object):
         for c in normalized_counts[1:]:
             print ', %.1f' % c,
         print ']'
+
+        total_evals = self.mcmc_manager.getTotalEvals() #self.likelihood.getNEvals()
+        total_secs = self.stopwatch.elapsedSeconds()
+        self.output('%d likelihood evaluations in %.5f seconds' % (total_evals, total_secs))
+        if (total_secs > 0.0):
+            self.output('  = %.5f likelihood evaluations/sec' % (total_evals/total_secs))
     
     def readDataFromFile(self):
         if not self.file_name_data_stored or (self.data_file_name != self.file_name_data_stored):

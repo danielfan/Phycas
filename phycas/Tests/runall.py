@@ -58,7 +58,7 @@ runTest(outFile, "ExplorePrior", mcmcOutputs(["nodata.nex"]))
 runTest(outFile, "FixedParams", ["fixed.p", "fixed.t"])
 runTest(outFile, "GTRTest", ["gtr_test.p", "gtr_test.t"])
 runTest(outFile, "Simulator", ["simulated.nex"])
-runTest(outFile, "SAMCTest", ["cf.txt", "samc_output.p", "samc_output.t"])
+#runTest(outFile, "SAMCTest", ["cf.txt", "samc_output.p", "samc_output.t"])
 runTest(outFile, "SplitTest", ["out.txt"])
 runTest(outFile, "PDFTree", ["test.pdf"])
 
