@@ -111,15 +111,13 @@ namespace phycas
 |	unconditional recalculation of all CLAs in the entire tree, and subsequently the likelihood root will be set to the
 |	subroot node of the tree (the only child of the root).
 */
-void	TreeLikelihood::useAsLikelihoodRoot(
+void TreeLikelihood::useAsLikelihoodRoot(
   TreeNode * nd)
 	{
 	//if (Tree::gDebugOutput && nd)
 	//	std::cerr << "Setting Likelihood root = " << nd->oneLineDebugReport() << std::endl;
 	likelihood_root = nd;
 	}
-
-
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Updates the conditional likelihood array for `nd' in a direction away from `avoid'. All adjacent nodes (other than 

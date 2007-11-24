@@ -36,10 +36,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="boost_python-vc71-mt-gyd-1_34.lib"
-				OutputFile="$(PHYCAS_ROOT)\phycas\Phylogeny\_PDFGen_d.pyd"
+				OutputFile="$(PHYCAS_ROOT)\phycas\PDFGen\_PDFGen_d.pyd"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(BOOST_ROOT)\stage\lib;$(PYTHON_ROOT)\libs"
-				IgnoreDefaultLibraryNames="boost_python-vc71-mt-gyd-1_34.lib"
+				IgnoreDefaultLibraryNames="boost_python-vc71-mt-gd-1_34.lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/pdfgen.pdb"
 				SubSystem="2"

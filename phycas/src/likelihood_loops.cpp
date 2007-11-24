@@ -673,7 +673,7 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 
 #if defined(LOG_SITELIKES)
 	std::ofstream tmpf("doof.txt", std::ios::out | std::ios::app);
-	tmpf << "tip\tpat\tuncorr\tcorr\tcount\tlnL" << std::endl;
+	tmpf << "pat\tfreqA\tCLAA\tPrA\tfreqC\tCLAC\tPrC\tfreqG\tCLAG\tPrG\tfreqT\tCLAT\tPrT\tuncorr\tcorr\tcount\tlnL" << std::endl;
 #endif
 
 	double lnLikelihood = 0.0;
@@ -690,22 +690,31 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 			
 		for (unsigned pat = 0; pat < num_patterns; ++pat)
 			{
+#if defined(LOG_SITELIKES)
+			tmpf << pat << '\t';
+#endif
 			double siteLike = 0.0;
 			for (unsigned r = 0; r < num_rates; ++r)
 				{
 				const double * const * const tipPMatrixT = tipPMatricesTrans[r];
 				const double * tipPMatT_pat = tipPMatrixT[tipStateCodes[pat]];
 				double siteRateLike = 0.0;
-				for (unsigned i = 0; i < num_states; ++i)
+                for (unsigned i = 0; i < num_states; ++i)
+                    {
+#if defined(LOG_SITELIKES)
+        			tmpf << stateFreq[i] << '\t';
+		        	tmpf << focalNdCLAPtr[r][i] << '\t';
+			        tmpf << tipPMatT_pat[i] << '\t';
+			        tmpf << (stateFreq[i]*focalNdCLAPtr[r][i]*tipPMatT_pat[i]) << '\t';
+#endif
 					siteRateLike += stateFreq[i] * focalNdCLAPtr[r][i] * tipPMatT_pat[i];
+                    }
 				siteLike += rateCatProbArray[r] * siteRateLike;
 				focalNdCLAPtr[r] += num_states;
 				}
 			double site_lnL = std::log(siteLike);
 
 #if defined(LOG_SITELIKES)
-			tmpf << '\t';
-			tmpf << pat << '\t';
 			tmpf << site_lnL << '\t';
 #endif
 

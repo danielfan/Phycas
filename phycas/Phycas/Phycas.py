@@ -1032,6 +1032,9 @@ class Phycas(object):
             core = MCMCManager.LikelihoodCore(self)
             core.setupCore(True)    # specify zero_based_tips = True because topology came from file
             core.prepareForLikelihood()
+            print 'Setting all edge lengths to 0.1'
+            core.tree.setAllEdgeLens(0.1)
+            print 'length of tree %d = %.5f' % (t,core.tree.edgeLenSum())
             print 'log-likelihood of tree %d = %.5f' % (t, core.calcLnLikelihood())
         
     def gg(self):

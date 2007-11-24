@@ -196,8 +196,8 @@ class TreeLikelihood
 
 	protected:
 
-		NaiveUnderflowPolicy			underflow_policy;		/**< The object that takes care of underflow correction when computing likelihood for large trees */
-		//SimpleUnderflowPolicy			underflow_policy;		/**< The object that takes care of underflow correction when computing likelihood for large trees */
+		//NaiveUnderflowPolicy			underflow_policy;		/**< The object that takes care of underflow correction when computing likelihood for large trees */
+		SimpleUnderflowPolicy			underflow_policy;		/**< The object that takes care of underflow correction when computing likelihood for large trees */
 
 		TreeNode *						likelihood_root;		/**< If not NULL< calcLnL will use this node as the likelihood root, then reset it to NULL before returning */
 		CondLikelihoodStorage			cla_pool;				/**< Stores currently unused CondLikelihood objects */
