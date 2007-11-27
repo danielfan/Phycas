@@ -24,6 +24,8 @@
 #include "phycas/src/basic_tree.hpp"
 #include "phycas/src/xphylogeny.hpp"
 
+#include <boost/format.hpp>
+
 // these were at the top of basic_tree.inl
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
@@ -1523,7 +1525,12 @@ std::string & Tree::AppendNewick(
 		TreeNode *onlyChild = nd->GetLeftChild();
 		PHYCAS_ASSERT(onlyChild != NULL);
 		PHYCAS_ASSERT(onlyChild->rSib == NULL);
-		df.FormatDouble(s, onlyChild->GetEdgeLen());
+        double e = onlyChild->GetEdgeLen();
+        double log10e = floor(std::log10(e));
+        unsigned ndecimals = (log10e < 0.0 ? (unsigned)(-log10e) : 5);
+        std::string formatstr = str(boost::format("%%.%df") % ndecimals);
+        s << str(boost::format(formatstr) % e);
+		//df.FormatDouble(s, e);
 		}
 
 	nd = nd->GetNextPreorder();

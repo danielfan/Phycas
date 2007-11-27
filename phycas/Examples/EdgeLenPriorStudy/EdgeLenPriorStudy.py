@@ -18,7 +18,8 @@ import shutil
 rnseed = 7654321
 num_sites = 2000
 ncycles = 20000
-samplefreq = 5
+sample_every = 20
+ls_move_weight = 100
 true_edgelen_mean = 0.1
 analysis_prior_means = [0.00001, 0.00005, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0, 5.0, 10.0, 50.0, 100.0, 500.0, 1000.0]
 sim_file_name = 'simulated.nex'
@@ -105,18 +106,9 @@ def analyze(prior_mean):
     analyzer.sample_every = samplefreq          # save tree and parameters every 10 cycles
     analyzer.report_every = ncycles/20  # report progress only 20 times during the run
 
-    # Tell analyzer to calculate the Gelfand-Ghosh measure as the MCMC analysis runs
-    # gg_kvect is a list containing all the values of k for which you wish to calculate the
-    # Gelfand-Ghosh measure. The value of k is the relative importance given to goodness-of-fit
-    # as opposed to predictive variance. Here we weight them equally by supplying only the
-    # value 1.0 for k.
-    analyzer.gg_do = True       # if False, no posterior predictive simulations would be performed 
-    analyzer.gg_kvect = [1.0]   # could be, e.g. [0.5, 1.0, 2.0] if you wanted to try three different k values
-    analyzer.gg_outfile = None  # do not need to save a file of Gelfand-Ghosh results
-
     # Call the mcmc method, which prepares and then runs the MCMC sampler
-    analyzer.ls_move_weight = 1
-    analyzer.sample_every = 1
+    analyzer.ls_move_weight = ls_move_weight
+    analyzer.sample_every = sample_every
     analyzer.mcmc()
 
     # Provide the names of the parameter and tree files to be used by gg()
@@ -126,6 +118,13 @@ def analyze(prior_mean):
     # Copy p and t files so they will not be overwritten
     shutil.copyfile(analyzer.gg_pfile, '%f_%s' % (prior_mean,analyzer.gg_pfile))
     shutil.copyfile(analyzer.gg_tfile, '%f_%s' % (prior_mean,analyzer.gg_tfile))
+
+    # gg_kvect is a list containing all the values of k for which you wish to calculate the
+    # Gelfand-Ghosh measure. The value of k is the relative importance given to goodness-of-fit
+    # as opposed to predictive variance. Here we weight them equally by supplying only the
+    # value 1.0 for k.
+    analyzer.gg_kvect = [1.0]   # could be, e.g. [0.5, 1.0, 2.0] if you wanted to try three different k values
+    analyzer.gg_outfile = None  # do not need to save a file of Gelfand-Ghosh results
 
     # Finally, call the gg method, which computes the Gelfand-Ghosh statistics using the files
     # output from the mcmc analysis

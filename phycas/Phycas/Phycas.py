@@ -662,7 +662,7 @@ class Phycas(object):
                 print outstr
             else:
                 assert current_level < max_level, 'max_level is not max. level'
-                #print '%*d' % (current_level,current_level)
+                outstr = "cycle = %d, level = %d: lnL =%f %s" % (cycle, current_level, lnL, c)
             #outstr = "cycle = %d, level = %d: lnL =%*f %s" % (cycle, current_level, 15*current_level, lnL, c)
             #print outstr
 
@@ -761,7 +761,7 @@ class Phycas(object):
                     next_i = i
             self.addition_sequence.append(next_i)
             available_set.remove(next_i)
-            print "level", level, " self.addition_sequence =>", self.addition_sequence
+            #print "level", level, " self.addition_sequence =>", self.addition_sequence
             
     def getSamcStartingTree(self):
         #POL TEMP: not the best way to deal with this. See LikelihoodCore.__init__()
@@ -1136,7 +1136,9 @@ class Phycas(object):
             pdf.saveDocument(self.pdf_filename)
         
     def tree2pdf(self, pdf, tree, xscalemax = 0.0):
-        # Note: max_label_points should be calculated outside this function and passed in as an argument
+        # TODO: max_label_points should be calculated outside this function and passed in as an argument
+        inch = 72.0
+        spacer = 5.0
         max_label_points = 0.0
         nodes = []
 
@@ -1194,11 +1196,32 @@ class Phycas(object):
                 else:
                     nd.setY(0.0)
 
-        inch = 72.0
-        spacer = 5.0
-        half_xheight = float(self.pdf_tip_label_height)*pdf.getXHeight(self.pdf_tip_label_font) /2.0
+        # Compute length represented by scale bar. For example,
+        #  xscalemax     = 0.00275
+        #  log_xscalemax = -2.56
+        #  ten_to_power  = 10^floor(-2.56)
+        #                = 10^{-3}
+        #                = 0.001
+        #  scalebar      = 0.001*floor(0.00275/0.001)
+        #                = 0.001*floor(2.75)
+        #                = 0.002
+        #  ndecimals     = -floor(-2.56)
+        #                = 3.0
+        if xscalemax == 0.0:
+            xscalemax = max_height
+        log_xscalemax = math.log10(xscalemax)
+        ten_to_power = 10**math.floor(log_xscalemax)
+        scalebar = ten_to_power*math.floor(xscalemax/ten_to_power)
+        ndecimals = -int(math.floor(log_xscalemax))
+        format_str = '%%.%df' % (ndecimals)
+        scalebar_str = format_str % scalebar
+        scalebar_str_extent = float(self.pdf_tip_label_height)*pdf.calcStringWidth(self.pdf_tip_label_font, scalebar_str)
+        scalebar_height = float(self.pdf_tip_label_height) + 2*spacer + self.pdf_line_width
+
+        xheight = float(self.pdf_tip_label_height)*pdf.getXHeight(self.pdf_tip_label_font)
+        half_xheight = xheight/2.0
         ntips = tree.getNTips()
-        label_margin  = max_label_points + spacer
+        label_width   = max_label_points + spacer
         right_margin  = self.pdf_right_margin*inch
         left_margin   = self.pdf_left_margin*inch
         top_margin    = self.pdf_top_margin*inch
@@ -1207,26 +1230,21 @@ class Phycas(object):
         plot_width = plot_right - left_margin - right_margin
         plot_top = self.pdf_page_height*inch
         plot_height = plot_top - top_margin - bottom_margin
-        if xscalemax == 0.0:
-            xscalemax = max_height
-        xscaler = (plot_width - label_margin)/xscalemax
-        yscaler = plot_height/float(ntips - 1)
+        tree_width = plot_width - label_width
+        xscaler = tree_width/xscalemax
+        yscaler = (plot_height - scalebar_height)/float(ntips - 1)
 
-        # compute length represented by scale bar (round xscalemax down)
-        log_xscalemax = math.log10(xscalemax)
-        ten_to_power = 10**math.floor(log_xscalemax)
-        scalebar = ten_to_power*math.floor(xscalemax/ten_to_power)
-        scalebar_str = '%f' % scalebar
-        scalebar_str_extent = float(self.pdf_tip_label_height)*pdf.calcStringWidth(self.pdf_tip_label_font, scalebar_str)
-        scalebar_w = scalebar*xscaler
-        #raw_input('scalebar_w = %f, scalebar_str_extent = %f' % (scalebar_w,scalebar_str_extent))
-        scalebar_x = left_margin + (scalebar_w - scalebar_str_extent)/2.0
+        # Draw scalebar horizontally starting at bottom left corner
+        scalebar_width = scalebar*xscaler
+        pdf.addLine(left_margin, bottom_margin, left_margin + scalebar_width, bottom_margin, self.pdf_line_width)
+
+        # Draw scalebar text centered above the scalebar
+        scalebar_x = left_margin + (scalebar_width - scalebar_str_extent)/2.0
         scalebar_y = bottom_margin + spacer
-        pdf.addText(scalebar_x, scalebar_y, self.pdf_tip_label_font, self.pdf_tip_label_height, '%f' % scalebar)
-        pdf.addLine(left_margin, bottom_margin, left_margin + scalebar_w, bottom_margin, self.pdf_line_width)
+        pdf.addText(scalebar_x, scalebar_y, self.pdf_tip_label_font, self.pdf_tip_label_height, scalebar_str)
 
         # add enough to left margin to center smaller trees horizontally
-        left_margin += (xscaler*(xscalemax - max_height) + label_margin*(1.0 - max_height/xscalemax))/2.0
+        left_margin += (xscaler*(xscalemax - max_height) + label_width*(1.0 - max_height/xscalemax))/2.0
 
         # add enough to the top margin to center smaller trees vertically
         top_margin += (plot_height*(1.0 - max_height/xscalemax))/2.0

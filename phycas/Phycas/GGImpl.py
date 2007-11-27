@@ -261,6 +261,10 @@ class GelfandGhosh(object):
         else:                
             self.gg_t_y = self.gg_y.calct(4)
 
+        # temporary debugging code
+        print 't for observed data =',self.gg_t_y
+        print self.gg_y.patternTable('A C G T'.split())
+
         # gg_mu is the mean of all the posterior predictive datasets.
         # Compute the t function for the mean dataset
         if self.gg_bin_patterns:
@@ -489,7 +493,7 @@ class GelfandGhosh(object):
 
                     # Save the simulated data set if desired
                     if self.gg_save_postpreds:
-                        fn = '%s_cycle%d_rep%d.nex' % (self.gg_postpred_prefix, cycle, j)
+                        fn = '%s_cycle%d_rep%d.nex' % (self.gg_postpred_prefix, i+1, j)
                         self.gg_simdata.saveToNexusFile(fn, self.taxon_labels, 'dna', ('a','c','g','t'))
                         self.addPaupBlock(fn, tree, self.params[1], self.params[i+2])
                         
@@ -499,6 +503,10 @@ class GelfandGhosh(object):
                     else:
                         # Compute the t function for the simulated dataset                
                         curr_t = self.gg_simdata.calct(4)
+
+                    # temporary debugging code
+                    print '\nt =',curr_t,', patterns =',self.gg_simdata.getNUniquePatterns()
+                    print self.gg_simdata.patternTable('A C G T'.split())
 
                     # Add this value of t to the list (later the mean t will be computed)                
                     self.gg_t.append(curr_t)

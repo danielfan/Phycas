@@ -235,14 +235,26 @@ bool SamcMove::extrapolate(
 	if (is_fixed)
 		return false;
 
+#if POLPY_NEWWAY
+    std::cerr << "Entering SamcMove::extrapolate..." << std::endl;
+#endif
+
 	ChainManagerShPtr p = chain_mgr.lock();
 	PHYCAS_ASSERT(p);
 	prev_ln_like = p->getLastLnLike();
+
+#if POLPY_NEWWAY
+    std::cerr << "  prev_ln_like = " << prev_ln_like << std::endl;
+#endif
 
     leaf = tree->PopLeafNode();
     PHYCAS_ASSERT(leaf->GetNodeNumber() == leaf_num);
     leaf_sib = chooseRandomAttachmentNode(leaf_num);
     
+#if POLPY_NEWWAY
+    std::cerr << "  leaf_sib->GetNodeNumber() = " << leaf_sib->GetNodeNumber() << std::endl;
+#endif
+
     // Examples of debugging tools:
     // if (tree->debugOutput)
     //   {
@@ -265,6 +277,10 @@ bool SamcMove::extrapolate(
     double leaf_edgelen = term_edge_dist->Sample();
     leaf->SetEdgeLen(leaf_edgelen);
     
+#if POLPY_NEWWAY
+    std::cerr << "  leaf_edgelen = " << leaf_edgelen << std::endl;
+#endif
+
     likelihood->useAsLikelihoodRoot(parent);
     likelihood->invalidateAwayFromNode(*parent);
     likelihood->invalidateBothEnds(leaf_sib);
@@ -274,8 +290,17 @@ bool SamcMove::extrapolate(
 
     double curr_ln_like = likelihood->calcLnL(tree);
 
+#if POLPY_NEWWAY
+    std::cerr << "  curr_ln_like = " << curr_ln_like << std::endl;
+#endif
+
     double curr_ln_prior = p->calcInternalEdgeLenPriorUnnorm(parent_edgelen);
     curr_ln_prior += p->calcExternalEdgeLenPriorUnnorm(leaf_edgelen);
+
+#if POLPY_NEWWAY
+    std::cerr << "  curr_ln_prior = " << curr_ln_prior << std::endl;
+#endif
+
     double prev_ln_prior = 0.0;
     if (leaf_sib->IsTip())
         {
@@ -291,15 +316,26 @@ bool SamcMove::extrapolate(
     const double curr_posterior = curr_ln_like + curr_ln_prior;
     double log_pkl_blk_ratio = log(getPkl(leaf_num, leaf_sib)) - log(leaf_sib_orig_edgelen);
     double ln_accept_ratio = theta_diff + curr_posterior - prev_posterior - log_pkl_blk_ratio + ln_proposal_ratio;
+
+#if POLPY_NEWWAY
+    std::cerr << "  ln_accept_ratio = " << ln_accept_ratio << std::endl;
+#endif
+
     const bool accepted = (ln_accept_ratio >= 0.0 || std::log(rng->Uniform(FILE_AND_LINE)) <= ln_accept_ratio);
     if (accepted)
         {
+#if POLPY_NEWWAY
+        std::cerr << "  accepted" << std::endl;
+#endif
         p->setLastLnPrior(curr_ln_prior);
         p->setLastLnLike(curr_ln_like);
         accept();
         }
     else
         {
+#if POLPY_NEWWAY
+        std::cerr << "  reverting" << std::endl;
+#endif
         revert();
         }
     if (save_debug_info)

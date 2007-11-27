@@ -2,7 +2,7 @@ import sys,os
 from phycas import *
 
 p = Phycas()
-#raw_input('debug stop')
+raw_input('debug stop')
 p.data_file_name = "greenrbcl.nex"
 p.default_model = 'jc'
 p.ncycles = 1000000
