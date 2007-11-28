@@ -121,7 +121,7 @@ BOOST_PYTHON_MODULE(_Phylogeny)
 #if POLPY_NEWWAY
 		.def("debugMode", &phycas::Tree::debugMode)
 		.def("recalcAllSplits", &phycas::Tree::RecalcAllSplits)
-        
+		.def("ladderize", &phycas::Tree::Ladderize)
 #endif
 		;
 

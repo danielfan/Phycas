@@ -97,18 +97,24 @@ class Phycas(object):
         #   Times-Bold       Helvetica-Bold        Courier-Bold        ZapfDingbats
         #   Times-Italic     Helvetica-Oblique     Courier-Oblique
         #   Times-BoldItalic Helvetica-BoldOblique Courier-BoldOblique
-        self.pdf_filename           = 'trees.pdf' # set to desired name of pdf file to create
-        self.pdf_tip_label_font = 'Times-Italic'  # should be one of the 14 standard fonts listed above
-        self.pdf_tip_label_height   = 12          # font height in points
-        self.pdf_page_width         = 8.5         # page width in inches
-        self.pdf_page_height        = 11.0        # page length in inches
-        self.pdf_line_width         = 1.0         # width of lines representing edges in the tree
-        self.pdf_left_margin        = 1.0         # left margin in inches (1 inch = 72 points)
-        self.pdf_right_margin       = 1.0         # right margin in inches (1 inch = 72 points)
-        self.pdf_top_margin         = 1.0         # top margin in inches (1 inch = 72 points)
-        self.pdf_bottom_margin      = 1.0         # bottom margin in inches (1 inch = 72 points)
-        self.pdf_treefile           = None        # set to tree file name if you want to make one pdf file with each tree from tree file on a separate page
-        self.pdf_newick             = None        # set to the tree description to print if only want to save one tree to a pdf file
+        self.pdf_filename              = 'trees.pdf'    # set to desired name of pdf file to create
+        self.pdf_tip_label_font        = 'Times-Italic' # font used for tip node names; should be one of the 14 standard fonts listed above
+        self.pdf_tip_label_height      = 12             # height in points of tip node name font
+        self.pdf_scalebar_position     = 'bottom'       # valid values are 'top', 'bottom' or None
+        self.pdf_scalebar_label_font   = 'Times-Roman'  # font used for scalebar text; should be one of the 14 standard fonts listed above
+        self.pdf_scalebar_label_height = 10             # height in points of scalebar text font
+        self.pdf_support_label_font    = 'Times-Roman'  # font used for edge support values; should be one of the 14 standard fonts listed above
+        self.pdf_support_label_height  = 10             # height in points of edge support font
+        self.pdf_ladderize             = 'right'        # valid values are 'right', 'left' or None
+        self.pdf_page_width            = 8.5            # page width in inches
+        self.pdf_page_height           = 11.0           # page length in inches
+        self.pdf_line_width            = 1.0            # width of lines representing edges in the tree
+        self.pdf_left_margin           = 1.0            # left margin in inches (1 inch = 72 points)
+        self.pdf_right_margin          = 1.0            # right margin in inches (1 inch = 72 points)
+        self.pdf_top_margin            = 1.0            # top margin in inches (1 inch = 72 points)
+        self.pdf_bottom_margin         = 1.0            # bottom margin in inches (1 inch = 72 points)
+        self.pdf_treefile              = None           # set to tree file name if you want to make one pdf file with each tree from tree file on a separate page
+        self.pdf_newick                = None           # set to the tree description to print if only want to save one tree to a pdf file
         
         # Variables associated with Polytomy (Bush) moves
         self.allow_polytomies       = False     # if True, do Bush moves in addition to Larget-Simon moves; if False, do Larget-Simon moves only
@@ -1104,6 +1110,11 @@ class Phycas(object):
             # Build tree the newick description of which is in self.newick
             tree = Tree()
             tree.buildFromString(self.pdf_newick, False)
+            if self.pdf_ladderize:
+                if self.pdf_ladderize == 'right':
+                    tree.ladderizeRight()
+                else:
+                    tree.ladderizeLeft()
 
             # Save tree in PDF  
             pdf = PDFGenerator(self.pdf_page_width, self.pdf_page_height)
@@ -1130,6 +1141,11 @@ class Phycas(object):
             pdf.overwrite = True
             for newick in self.stored_newicks:
                 tree.buildFromString(newick, True)
+                if self.pdf_ladderize:
+                    if self.pdf_ladderize == 'right':
+                        tree.ladderizeRight()
+                    else:
+                        tree.ladderizeLeft()
                 tree.rectifyNames(self.taxon_labels)
                 pdf.newPage()
                 self.tree2pdf(pdf, tree, max_height)
@@ -1158,8 +1174,13 @@ class Phycas(object):
         subroot = nd.getLeftChild()
         height = subroot.getEdgeLen()
         nd.setX(height)
-        nd.setY(0.0)
-        ntips = 1.0
+        if self.pdf_ladderize and self.pdf_ladderize == 'left':
+            last_tip_index = float(tree.getNTips() - 1)
+            nd.setY(last_tip_index)
+            ntips = 0.0
+        else:
+            nd.setY(0.0)
+            ntips = 1.0
         max_height = height
         taxon_label = nd.getNodeName()
         label_width = float(self.pdf_tip_label_height)*pdf.calcStringWidth(self.pdf_tip_label_font, taxon_label)
@@ -1209,15 +1230,18 @@ class Phycas(object):
         #                = 3.0
         if xscalemax == 0.0:
             xscalemax = max_height
-        log_xscalemax = math.log10(xscalemax)
+        half_xscalemax = xscalemax/2.0
+        log_xscalemax = math.log10(half_xscalemax)
         ten_to_power = 10**math.floor(log_xscalemax)
-        scalebar = ten_to_power*math.floor(xscalemax/ten_to_power)
+        scalebar = ten_to_power*math.floor(half_xscalemax/ten_to_power)
         ndecimals = -int(math.floor(log_xscalemax))
         format_str = '%%.%df' % (ndecimals)
         scalebar_str = format_str % scalebar
-        scalebar_str_extent = float(self.pdf_tip_label_height)*pdf.calcStringWidth(self.pdf_tip_label_font, scalebar_str)
-        scalebar_height = float(self.pdf_tip_label_height) + 2*spacer + self.pdf_line_width
+        scalebar_str_extent = float(self.pdf_scalebar_label_height)*pdf.calcStringWidth(self.pdf_scalebar_label_font, scalebar_str)
+        scalebar_height = float(self.pdf_scalebar_label_height) + 2*spacer + self.pdf_line_width
 
+        # Find xscaler (amount by which branch lengths must be multiplied to give x-coordinate)
+        # and yscaler (amount by which the tip position must be multiplied to give y-coordinate).
         xheight = float(self.pdf_tip_label_height)*pdf.getXHeight(self.pdf_tip_label_font)
         half_xheight = xheight/2.0
         ntips = tree.getNTips()
@@ -1232,16 +1256,31 @@ class Phycas(object):
         plot_height = plot_top - top_margin - bottom_margin
         tree_width = plot_width - label_width
         xscaler = tree_width/xscalemax
-        yscaler = (plot_height - scalebar_height)/float(ntips - 1)
+        if self.pdf_scalebar_position:
+            yscaler = (plot_height - scalebar_height)/float(ntips - 1)
+        else:
+            yscaler = plot_height/float(ntips - 1)
 
-        # Draw scalebar horizontally starting at bottom left corner
-        scalebar_width = scalebar*xscaler
-        pdf.addLine(left_margin, bottom_margin, left_margin + scalebar_width, bottom_margin, self.pdf_line_width)
+        if self.pdf_scalebar_position:
+            if self.pdf_scalebar_position == 'top':
+                # Draw scalebar horizontally starting at top left corner
+                scalebar_width = scalebar*xscaler
+                scalebar_y = plot_top - top_margin - scalebar_height + spacer
+                pdf.addLine(left_margin, scalebar_y, left_margin + scalebar_width, scalebar_y, self.pdf_line_width)
 
-        # Draw scalebar text centered above the scalebar
-        scalebar_x = left_margin + (scalebar_width - scalebar_str_extent)/2.0
-        scalebar_y = bottom_margin + spacer
-        pdf.addText(scalebar_x, scalebar_y, self.pdf_tip_label_font, self.pdf_tip_label_height, scalebar_str)
+                # Draw scalebar text centered above the scalebar
+                scalebar_x = left_margin + (scalebar_width - scalebar_str_extent)/2.0
+                scalebar_y = plot_top - top_margin - float(self.pdf_scalebar_label_height)
+                pdf.addText(scalebar_x, scalebar_y, self.pdf_scalebar_label_font, self.pdf_scalebar_label_height, scalebar_str)
+            else:
+                # Draw scalebar horizontally starting at bottom left corner
+                scalebar_width = scalebar*xscaler
+                pdf.addLine(left_margin, bottom_margin, left_margin + scalebar_width, bottom_margin, self.pdf_line_width)
+
+                # Draw scalebar text centered above the scalebar
+                scalebar_x = left_margin + (scalebar_width - scalebar_str_extent)/2.0
+                scalebar_y = bottom_margin + spacer
+                pdf.addText(scalebar_x, scalebar_y, self.pdf_scalebar_label_font, self.pdf_scalebar_label_height, scalebar_str)
 
         # add enough to left margin to center smaller trees horizontally
         left_margin += (xscaler*(xscalemax - max_height) + label_width*(1.0 - max_height/xscalemax))/2.0
@@ -1267,8 +1306,12 @@ class Phycas(object):
             node_x = left_margin + nd.getX()*xscaler
             if nd.isTip():
                 node_y = plot_top - top_margin - nd.getY()*yscaler
+                if self.pdf_scalebar_position and self.pdf_scalebar_position == 'top':
+                    node_y -= scalebar_height
                 brlen = nd.isRoot() and xscaler*nd.getX() or xscaler*nd.getEdgeLen()
+                # draw tip node name
                 pdf.addText(node_x + spacer, node_y - half_xheight, self.pdf_tip_label_font, tip_font_points, nd.getNodeName())
+                # draw line representing edge leading to tip node
                 pdf.addLine(node_x, node_y, node_x - brlen, node_y, self.pdf_line_width)
             else:
                 nchildren = 1.0
@@ -1284,14 +1327,24 @@ class Phycas(object):
                     else:
                         break
                 if nd is subroot:
-                    left_child = nd.getParent()
+                    if self.pdf_ladderize and self.pdf_ladderize == 'left':
+                        right_child = nd.getParent()
+                    else:
+                        left_child = nd.getParent()
                 else:
                     nd.setY(childY/nchildren)
                     node_y = plot_top - top_margin - childY*yscaler/nchildren
+                    if self.pdf_scalebar_position and self.pdf_scalebar_position == 'top':
+                        node_y -= scalebar_height
                     brlen = xscaler*nd.getEdgeLen()
+                    # draw line representing edge leading to internal node
                     pdf.addLine(node_x, node_y, node_x - brlen, node_y, self.pdf_line_width)
                 left_y = plot_top - top_margin - left_child.getY()*yscaler
                 right_y = plot_top - top_margin - right_child.getY()*yscaler
+                if self.pdf_scalebar_position and self.pdf_scalebar_position == 'top':
+                    left_y -= scalebar_height
+                    right_y -= scalebar_height
+                # draw line representing shoulders of internal node
                 pdf.addLine(node_x, left_y, node_x, right_y, self.pdf_line_width)
                     
     # by default phycassert sys.exit.

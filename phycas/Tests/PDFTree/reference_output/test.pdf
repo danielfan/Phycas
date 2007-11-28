@@ -27,44 +27,45 @@
         /Type /Page
         /Parent 4 0 R
         /MediaBox [ 0 0 612 792 ]
-        /Contents [ 6 0 R 8 0 R 9 0 R 10 0 R 11 0 R 12 0 R 13 0 R 14 0 R 15 0 R 16 0 R 17 0 R 18 0 R 19 0 R 20 0 R 21 0 R 22 0 R 23 0 R 24 0 R 25 0 R 26 0 R 27 0 R 28 0 R 29 0 R 30 0 R 31 0 R 32 0 R 33 0 R 34 0 R 35 0 R ]
+        /Contents [ 6 0 R 7 0 R 9 0 R 11 0 R 12 0 R 13 0 R 14 0 R 15 0 R 16 0 R 17 0 R 18 0 R 19 0 R 20 0 R 21 0 R 22 0 R 23 0 R 24 0 R 25 0 R 26 0 R 27 0 R 28 0 R 29 0 R 30 0 R 31 0 R 32 0 R 33 0 R 34 0 R 35 0 R 36 0 R ]
         /Resources << /ProcSet 3 0 R
-                      /Font << /F1 7 0 R >>
+                      /Font << /F1 8 0 R >>
+                      /Font << /F2 10 0 R >>
                    >>
     >>
     endobj
 6 0 obj
     <<
-        /Length 52
-    >>
-stream
-BT
-    /F1 24 Tf
-    173 113 Td
-    (0.200000) Tj
-ET
-endstream
-    endobj
-7 0 obj
-    <<
-        /Type /Font
-        /Subtype /Type1
-        /Name /F1
-        /BaseFont /Times-Italic
-        /Encoding /MacRomanEncoding
-    >>
-    endobj
-8 0 obj
-    <<
-        /Length 59
+        /Length 56
     >>
 stream
     2.0 w
     1 J
-    108.0 108.0 m
-    328.9 108.0 l
+    72.0 72.0 m
+    215.2 72.0 l
     S
 endstream
+    endobj
+7 0 obj
+    <<
+        /Length 46
+    >>
+stream
+BT
+    /F1 10 Tf
+    137 77 Td
+    (0.1) Tj
+ET
+endstream
+    endobj
+8 0 obj
+    <<
+        /Type /Font
+        /Subtype /Type1
+        /Name /F1
+        /BaseFont /Times-Roman
+        /Encoding /MacRomanEncoding
+    >>
     endobj
 9 0 obj
     <<
@@ -72,58 +73,55 @@ endstream
     >>
 stream
 BT
-    /F1 23 Tf
-    356 102 Td
-    (P. polygama) Tj
+    /F2 23 Tf
+    392 88 Td
+    (P. basiramia) Tj
 ET
 endstream
     endobj
 10 0 obj
     <<
-        /Length 59
+        /Type /Font
+        /Subtype /Type1
+        /Name /F2
+        /BaseFont /Times-Italic
+        /Encoding /MacRomanEncoding
     >>
-stream
-    2.0 w
-    1 J
-    351.0 108.0 m
-    251.6 108.0 l
-    S
-endstream
     endobj
 11 0 obj
     <<
-        /Length 56
-    >>
-stream
-BT
-    /F1 23 Tf
-    356 184 Td
-    (P. basiramia) Tj
-ET
-endstream
-    endobj
-12 0 obj
-    <<
-        /Length 59
+        /Length 57
     >>
 stream
     2.0 w
     1 J
-    351.0 190.3 m
-    317.9 190.3 l
+    387.0 94.0 m
+    344.1 94.0 l
     S
 endstream
     endobj
-13 0 obj
+12 0 obj
     <<
         /Length 54
     >>
 stream
 BT
-    /F1 23 Tf
-    344 267 Td
+    /F2 23 Tf
+    377 178 Td
     (P. ciliata) Tj
 ET
+endstream
+    endobj
+13 0 obj
+    <<
+        /Length 59
+    >>
+stream
+    2.0 w
+    1 J
+    372.7 183.4 m
+    344.1 183.4 l
+    S
 endstream
     endobj
 14 0 obj
@@ -133,45 +131,45 @@ endstream
 stream
     2.0 w
     1 J
-    340.0 272.6 m
-    317.9 272.6 l
+    344.1 138.7 m
+    272.5 138.7 l
     S
 endstream
     endobj
 15 0 obj
     <<
-        /Length 59
+        /Length 58
     >>
 stream
     2.0 w
     1 J
-    317.9 231.4 m
-    262.6 231.4 l
+    344.1 183.4 m
+    344.1 94.0 l
     S
 endstream
     endobj
 16 0 obj
     <<
+        /Length 55
+    >>
+stream
+BT
+    /F2 23 Tf
+    392 267 Td
+    (P. gracilis) Tj
+ET
+endstream
+    endobj
+17 0 obj
+    <<
         /Length 59
     >>
 stream
     2.0 w
     1 J
-    317.9 272.6 m
-    317.9 190.3 l
+    387.0 272.9 m
+    272.5 272.9 l
     S
-endstream
-    endobj
-17 0 obj
-    <<
-        /Length 55
-    >>
-stream
-BT
-    /F1 23 Tf
-    356 349 Td
-    (P. gracilis) Tj
-ET
 endstream
     endobj
 18 0 obj
@@ -181,8 +179,8 @@ endstream
 stream
     2.0 w
     1 J
-    351.0 354.9 m
-    262.6 354.9 l
+    272.5 205.8 m
+    258.1 205.8 l
     S
 endstream
     endobj
@@ -193,21 +191,21 @@ endstream
 stream
     2.0 w
     1 J
-    262.6 293.1 m
-    251.6 293.1 l
+    272.5 272.9 m
+    272.5 138.7 l
     S
 endstream
     endobj
 20 0 obj
     <<
-        /Length 59
+        /Length 55
     >>
 stream
-    2.0 w
-    1 J
-    262.6 354.9 m
-    262.6 231.4 l
-    S
+BT
+    /F2 23 Tf
+    392 356 Td
+    (P. polygama) Tj
+ET
 endstream
     endobj
 21 0 obj
@@ -217,8 +215,8 @@ endstream
 stream
     2.0 w
     1 J
-    251.6 200.6 m
-    185.3 200.6 l
+    387.0 362.3 m
+    258.1 362.3 l
     S
 endstream
     endobj
@@ -229,33 +227,33 @@ endstream
 stream
     2.0 w
     1 J
-    251.6 293.1 m
-    251.6 108.0 l
+    258.1 284.0 m
+    172.2 284.0 l
     S
 endstream
     endobj
 23 0 obj
-    <<
-        /Length 58
-    >>
-stream
-BT
-    /F1 23 Tf
-    344 431 Td
-    (P. macrophylla) Tj
-ET
-endstream
-    endobj
-24 0 obj
     <<
         /Length 59
     >>
 stream
     2.0 w
     1 J
-    340.0 437.1 m
-    185.3 437.1 l
+    258.1 362.3 m
+    258.1 205.8 l
     S
+endstream
+    endobj
+24 0 obj
+    <<
+        /Length 58
+    >>
+stream
+BT
+    /F2 23 Tf
+    377 446 Td
+    (P. macrophylla) Tj
+ET
 endstream
     endobj
 25 0 obj
@@ -265,69 +263,69 @@ endstream
 stream
     2.0 w
     1 J
-    185.3 318.9 m
-    108.0 318.9 l
+    372.7 451.7 m
+    172.2 451.7 l
     S
 endstream
     endobj
 26 0 obj
     <<
-        /Length 59
+        /Length 58
     >>
 stream
     2.0 w
     1 J
-    185.3 437.1 m
-    185.3 200.6 l
+    172.2 367.9 m
+    72.0 367.9 l
     S
 endstream
     endobj
 27 0 obj
     <<
+        /Length 59
+    >>
+stream
+    2.0 w
+    1 J
+    172.2 451.7 m
+    172.2 284.0 l
+    S
+endstream
+    endobj
+28 0 obj
+    <<
         /Length 54
     >>
 stream
 BT
-    /F1 23 Tf
-    267 514 Td
+    /F2 23 Tf
+    277 535 Td
     (P. parksii) Tj
 ET
 endstream
     endobj
-28 0 obj
+29 0 obj
     <<
         /Length 59
     >>
 stream
     2.0 w
     1 J
-    262.6 519.4 m
-    218.5 519.4 l
+    272.5 541.1 m
+    215.2 541.1 l
     S
 endstream
     endobj
-29 0 obj
+30 0 obj
     <<
         /Length 57
     >>
 stream
 BT
-    /F1 23 Tf
-    322 596 Td
+    /F2 23 Tf
+    349 625 Td
     (P. articulata) Tj
 ET
-endstream
-    endobj
-30 0 obj
-    <<
-        /Length 59
-    >>
-stream
-    2.0 w
-    1 J
-    317.9 601.7 m
-    218.5 601.7 l
-    S
 endstream
     endobj
 31 0 obj
@@ -337,20 +335,20 @@ endstream
 stream
     2.0 w
     1 J
-    218.5 560.6 m
-    108.0 560.6 l
+    344.1 630.6 m
+    215.2 630.6 l
     S
 endstream
     endobj
 32 0 obj
     <<
-        /Length 59
+        /Length 58
     >>
 stream
     2.0 w
     1 J
-    218.5 601.7 m
-    218.5 519.4 l
+    215.2 585.9 m
+    72.0 585.9 l
     S
 endstream
     endobj
@@ -361,77 +359,90 @@ endstream
 stream
     2.0 w
     1 J
-    108.0 684.0 m
-    108.0 318.9 l
+    215.2 630.6 m
+    215.2 541.1 l
     S
 endstream
     endobj
 34 0 obj
     <<
-        /Length 56
-    >>
-stream
-BT
-    /F1 23 Tf
-    223 678 Td
-    (P. fimbriata) Tj
-ET
-endstream
-    endobj
-35 0 obj
-    <<
-        /Length 59
+        /Length 57
     >>
 stream
     2.0 w
     1 J
-    218.5 684.0 m
-    108.0 684.0 l
+    72.0 720.0 m
+    72.0 367.9 l
+    S
+endstream
+    endobj
+35 0 obj
+    <<
+        /Length 56
+    >>
+stream
+BT
+    /F2 23 Tf
+    220 714 Td
+    (P. fimbriata) Tj
+ET
+endstream
+    endobj
+36 0 obj
+    <<
+        /Length 58
+    >>
+stream
+    2.0 w
+    1 J
+    215.2 720.0 m
+    72.0 720.0 l
     S
 endstream
     endobj
 xref
-0 36
+0 37
 0000000000 65535 f 
 0000000009 00000 n 
 0000000110 00000 n 
 0000000184 00000 n 
 0000000220 00000 n 
 0000000315 00000 n 
-0000000749 00000 n 
-0000000871 00000 n 
-0000001034 00000 n 
-0000001163 00000 n 
-0000001288 00000 n 
-0000001418 00000 n 
-0000001545 00000 n 
-0000001675 00000 n 
-0000001800 00000 n 
-0000001930 00000 n 
-0000002060 00000 n 
-0000002190 00000 n 
-0000002316 00000 n 
-0000002446 00000 n 
-0000002576 00000 n 
-0000002706 00000 n 
-0000002836 00000 n 
-0000002966 00000 n 
-0000003095 00000 n 
-0000003225 00000 n 
-0000003355 00000 n 
-0000003485 00000 n 
-0000003610 00000 n 
-0000003740 00000 n 
-0000003868 00000 n 
-0000003998 00000 n 
-0000004128 00000 n 
-0000004258 00000 n 
-0000004388 00000 n 
-0000004515 00000 n 
+0000000794 00000 n 
+0000000920 00000 n 
+0000001036 00000 n 
+0000001198 00000 n 
+0000001323 00000 n 
+0000001487 00000 n 
+0000001615 00000 n 
+0000001740 00000 n 
+0000001870 00000 n 
+0000002000 00000 n 
+0000002129 00000 n 
+0000002255 00000 n 
+0000002385 00000 n 
+0000002515 00000 n 
+0000002645 00000 n 
+0000002771 00000 n 
+0000002901 00000 n 
+0000003031 00000 n 
+0000003161 00000 n 
+0000003290 00000 n 
+0000003420 00000 n 
+0000003549 00000 n 
+0000003679 00000 n 
+0000003804 00000 n 
+0000003934 00000 n 
+0000004062 00000 n 
+0000004192 00000 n 
+0000004321 00000 n 
+0000004451 00000 n 
+0000004579 00000 n 
+0000004706 00000 n 
 trailer
-    << /Size 36
+    << /Size 37
        /Root 1 0 R
     >>
 startxref
-4645
+4835
 %%EOF

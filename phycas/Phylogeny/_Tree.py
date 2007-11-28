@@ -421,3 +421,21 @@ class Tree(TreeBase):
 
         """
         return TreeBase.getFirstPostorder(self)
+
+    def ladderizeRight(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Rearranges tree so that for each internal node, the child with the
+        most descendants is on the right.
+
+        """
+        return TreeBase.ladderize(self, True)
+
+    def ladderizeLeft(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Rearranges tree so that for each internal node, the child with the
+        most descendants is on the left.
+
+        """
+        return TreeBase.ladderize(self, False)

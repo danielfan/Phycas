@@ -1526,11 +1526,12 @@ std::string & Tree::AppendNewick(
 		PHYCAS_ASSERT(onlyChild != NULL);
 		PHYCAS_ASSERT(onlyChild->rSib == NULL);
         double e = onlyChild->GetEdgeLen();
-        double log10e = floor(std::log10(e));
-        unsigned ndecimals = (log10e < 0.0 ? (unsigned)(-log10e) : 5);
-        std::string formatstr = str(boost::format("%%.%df") % ndecimals);
-        s << str(boost::format(formatstr) % e);
-		//df.FormatDouble(s, e);
+        //double log10e = floor(std::log10(e));
+        //unsigned ndecimals = (log10e < 0.0 ? (unsigned)(-log10e) : 5);
+        //std::cerr << "e = " << e << ", ndecimals = " << ndecimals << std::endl;
+        //std::string formatstr = str(boost::format("%%.%df") % ndecimals);
+        //s << boost::str(boost::format(formatstr) % e);
+		df.FormatDouble(s, e);
 		}
 
 	nd = nd->GetNextPreorder();
