@@ -115,6 +115,7 @@ class Phycas(object):
         self.pdf_bottom_margin         = 1.0            # bottom margin in inches (1 inch = 72 points)
         self.pdf_treefile              = None           # set to tree file name if you want to make one pdf file with each tree from tree file on a separate page
         self.pdf_newick                = None           # set to the tree description to print if only want to save one tree to a pdf file
+        self.pdf_outgroup_taxon        = None           # set to taxon name of tip serving as the outgroup for display rooting purposes (note: at this time outgroup can consist of just one taxon)
         
         # Variables associated with Polytomy (Bush) moves
         self.allow_polytomies       = False     # if True, do Bush moves in addition to Larget-Simon moves; if False, do Larget-Simon moves only
@@ -1110,6 +1111,10 @@ class Phycas(object):
             # Build tree the newick description of which is in self.newick
             tree = Tree()
             tree.buildFromString(self.pdf_newick, False)
+            if self.pdf_outgroup_taxon:
+                num = tree.findTipByName(self.pdf_outgroup_taxon)
+                self.phycassert(num, 'could not root tree using specified outgroup: no tip having name "%s" could be found' % self.pdf_outgroup_taxon)
+                tree.rerootAtTip(num)
             if self.pdf_ladderize:
                 if self.pdf_ladderize == 'right':
                     tree.ladderizeRight()
@@ -1132,6 +1137,10 @@ class Phycas(object):
             max_height = 0.0
             for newick in self.stored_newicks:
                 tree.buildFromString(newick, True)
+                if self.pdf_outgroup_taxon:
+                    num = tree.findTipByName(self.pdf_outgroup_taxon)
+                    self.phycassert(num, 'could not root tree using specified outgroup: no tip having name "%s" could be found' % self.pdf_outgroup_taxon)
+                    tree.rerootAtTip(num)
                 h = tree.calcTotalHeight()
                 if h > max_height:
                     max_height = h
@@ -1141,6 +1150,9 @@ class Phycas(object):
             pdf.overwrite = True
             for newick in self.stored_newicks:
                 tree.buildFromString(newick, True)
+                if self.pdf_outgroup_taxon:
+                    num = tree.findTipByName(self.pdf_outgroup_taxon)
+                    tree.rerootAtTip(num)
                 if self.pdf_ladderize:
                     if self.pdf_ladderize == 'right':
                         tree.ladderizeRight()

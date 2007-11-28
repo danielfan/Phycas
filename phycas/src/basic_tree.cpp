@@ -1691,6 +1691,24 @@ Tree::~Tree()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Attempts to locate a tip having the name `tipname'. If one can be found, its node number is returned. If no tip by
+|   that name can be found, returns UINT_MAX.
+*/
+unsigned Tree::FindTipByName(
+  std::string tipname)  /**< is the name to look for amongst tip nodes in the tree */
+    {
+	for (preorder_iterator nd = this->begin(); nd != this->end(); ++nd)
+		{
+		if (nd->IsTip())
+			{
+            if (tipname.compare(nd->GetNodeName()) == 0)
+                return nd->GetNodeNumber();
+			}
+        }
+    return UINT_MAX;
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Attempts to convert the name of `nd' to an integer (call it x) and then use x as the node number for `nd'. The 
 |	supplied set `used' is consulted to ensure that no two nodes are given the same number. If conversion of the name to
 |	the integer value x is successful, and if x is not in the set `used', then: (1) the node number of `nd' is set to x;

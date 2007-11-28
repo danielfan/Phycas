@@ -106,6 +106,7 @@ class Tree
 		std::string &			AppendNewick(std::string &);
 		std::string				MakeNewick();
 		bool					SetNumberFromName(TreeNode * nd, std::set<unsigned> & used);
+        unsigned                FindTipByName(std::string tipname);
 		TreeNodeVec				GetNodesWithEdges();
 		void					SelectAllNodes();
 		void					UnselectAllNodes();

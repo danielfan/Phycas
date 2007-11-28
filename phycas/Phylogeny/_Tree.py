@@ -150,6 +150,19 @@ class Tree(TreeBase):
         """
         TreeBase.clear(self)
 
+    def findTipByName(self, tipname):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns the node number of a tip node named tipname, if one can be
+        found. Otherwise, returns None.
+
+        """
+        n = TreeBase.findTipByName(self, tipname)
+        if n < self.getNTips():
+            return n
+        else:
+            return None
+
     def getNInternals(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
