@@ -28,7 +28,6 @@
 namespace phycas
 {
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the natural logarithm of the gamma function evaluated at the supplied value `x'. This function is a wrapper
 |   around CDF::LnGamma.
@@ -38,9 +37,7 @@ double ProbabilityDistribution::LnGamma(
     {
     return cdf.LnGamma(x);
     }
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Initializes the shape and scale parameters of the underlying gamma distribution to those of the supplied 
 |   distribution `other'.
@@ -254,8 +251,6 @@ DirichletDistribution * DirichletDistribution::Clone() const
 	{
     return new DirichletDistribution(dirParams);
     }
-
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	The () operator calls the member function GetRelativeLnPDF.
@@ -1642,12 +1637,10 @@ DirichletDistribution::DirichletDistribution()
 	scratchSpace.push_back(0.0);
 	paramDistributions.push_back(GammaDistribution(1.0, 1.0));
 	paramDistributions.push_back(GammaDistribution(1.0, 1.0));
-#if POLPY_NEWWAY
 	for (unsigned i = 0; i < paramDistributions.size(); ++i)
 		{
 		paramDistributions[i].SetLot(&myLot);
 		}
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -1678,21 +1671,13 @@ DirichletDistribution::DirichletDistribution(const std::vector<double> &params)
 		double c_i = *iter;
 		dirParams.push_back(c_i);
 		scratchSpace.push_back(0.0);
-#if POLPY_NEWWAY
     	paramDistributions.push_back(GammaDistribution(c_i, 1.0));
-#else
-		GammaDistribution gamma_i = GammaDistribution(c_i, 1.0);
-		gamma_i.SetLot(&myLot);	// ensure that they all use same random number generator
-		paramDistributions.push_back(gamma_i);
-#endif
 		}
 
-#if POLPY_NEWWAY
 	for (unsigned i = 0; i < paramDistributions.size(); ++i)
 		{
 		paramDistributions[i].SetLot(&myLot);
 		}
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

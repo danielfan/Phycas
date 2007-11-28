@@ -58,9 +58,7 @@ class ProbabilityDistribution : public AdHocDensity
 							ProbabilityDistribution() {lot = &myLot;}
 							virtual ~ProbabilityDistribution() {}
 
-#if POLPY_NEWWAY
         double              LnGamma(double x);
-#endif
 
 		virtual void		SetLot(Lot * other); //@POL seems like this should be a shared pointer
 		virtual Lot *		GetLot() {return lot;}
@@ -137,14 +135,10 @@ class BernoulliDistribution : public ProbabilityDistribution
 	public:
 							BernoulliDistribution();
 							BernoulliDistribution(double prob_success);
-#if POLPY_NEWWAY
 							BernoulliDistribution(const BernoulliDistribution & other);
-#endif
 							~BernoulliDistribution();
 
-#if POLPY_NEWWAY
         BernoulliDistribution * Clone() const;
-#endif
 		virtual	bool		IsDiscrete() const;
 		virtual std::string	GetDistributionName() const;
 		virtual std::string	GetDistributionDescription() const;
@@ -166,14 +160,10 @@ class BinomialDistribution : public BernoulliDistribution
 	public:
 							BinomialDistribution();
 							BinomialDistribution(double sample_size, double prob_success);
-#if POLPY_NEWWAY
 							BinomialDistribution(const BinomialDistribution & other);
-#endif
 							~BinomialDistribution();
 
-#if POLPY_NEWWAY
         BinomialDistribution * Clone() const;
-#endif
 		virtual	bool		IsDiscrete() const;
 		virtual std::string	GetDistributionName() const;
 		virtual std::string	GetDistributionDescription() const;
@@ -206,14 +196,10 @@ class BetaDistribution  : public ProbabilityDistribution
 	public:
 						BetaDistribution() : alphaParam(1.0), betaParam(1.0) {}
 						BetaDistribution(double a, double b);
-#if POLPY_NEWWAY
 						BetaDistribution(const BetaDistribution & other);
-#endif
 						~BetaDistribution();
 
-#if POLPY_NEWWAY
         BetaDistribution * Clone() const;
-#endif
 		bool			IsDiscrete() const;
 		std::string 	GetDistributionName() const;
 		std::string 	GetDistributionDescription() const;
@@ -235,14 +221,10 @@ class ImproperUniformDistribution : public ProbabilityDistribution
 	{
 	public:
 					ImproperUniformDistribution();
-#if POLPY_NEWWAY
 					ImproperUniformDistribution(const ImproperUniformDistribution & other);
-#endif
 					~ImproperUniformDistribution();
 
-#if POLPY_NEWWAY
         ImproperUniformDistribution * Clone() const;
-#endif
 		bool		IsDiscrete() const;
 		std::string	GetDistributionName() const;
 		std::string	GetDistributionDescription() const;
@@ -264,14 +246,10 @@ class UniformDistribution : public ProbabilityDistribution
 	public:
 					UniformDistribution();
 					UniformDistribution(double left_bound, double right_bound);
-#if POLPY_NEWWAY
 					UniformDistribution(const UniformDistribution & other);
-#endif
 					~UniformDistribution();
 
-#if POLPY_NEWWAY
         UniformDistribution * Clone() const;
-#endif
 		bool		IsDiscrete() const;
 		std::string	GetDistributionName() const;
 		std::string	GetDistributionDescription() const;
@@ -299,14 +277,10 @@ class GammaDistribution : public ProbabilityDistribution
 	public:
 						GammaDistribution();
 						GammaDistribution(double shape, double scale);
-#if POLPY_NEWWAY
 					    GammaDistribution(const GammaDistribution & other);
-#endif
 						~GammaDistribution();
 
-#if POLPY_NEWWAY
         GammaDistribution * Clone() const;
-#endif
 		bool			IsDiscrete() const;
 		std::string		GetDistributionName() const;
 		std::string		GetDistributionDescription() const;
@@ -337,14 +311,10 @@ class InverseGammaDistribution : public GammaDistribution
 	public:
 					InverseGammaDistribution();
 					InverseGammaDistribution(double shape, double scale);
-#if POLPY_NEWWAY
 					InverseGammaDistribution(const InverseGammaDistribution & other);
-#endif
 					~InverseGammaDistribution();
 
-#if POLPY_NEWWAY
         InverseGammaDistribution * Clone() const;
-#endif
 		bool		IsDiscrete() const;
 		std::string	GetDistributionName() const;
 		std::string	GetDistributionDescription() const;
@@ -366,14 +336,10 @@ class ExponentialDistribution : public GammaDistribution
 	public :
 					ExponentialDistribution();
 					ExponentialDistribution(double lambda);
-#if POLPY_NEWWAY
                     ExponentialDistribution(const ExponentialDistribution & other);
-#endif
 					~ExponentialDistribution();
 
-#if POLPY_NEWWAY
         ExponentialDistribution * Clone() const;
-#endif
 		bool		IsDiscrete() const;
 		std::string	GetDistributionName() const;
 		std::string	GetDistributionDescription() const;
@@ -389,14 +355,10 @@ class NormalDistribution : public ProbabilityDistribution
 	public:
 					NormalDistribution();
 					NormalDistribution(double mean, double stddev);
-#if POLPY_NEWWAY
 					NormalDistribution(const NormalDistribution & other);
-#endif
 					~NormalDistribution();
 
-#if POLPY_NEWWAY
         NormalDistribution * Clone() const;
-#endif
 		bool		IsDiscrete() const;
 		std::string	GetDistributionName() const;
 		std::string	GetDistributionDescription() const;
@@ -426,14 +388,10 @@ class DirichletDistribution : public MultivariateProbabilityDistribution
 	public:
 											DirichletDistribution();
 											DirichletDistribution(const std::vector<double> & params);
-#if POLPY_NEWWAY
                         					DirichletDistribution(const DirichletDistribution & other);
-#endif
 											~DirichletDistribution() {}
 	
-#if POLPY_NEWWAY
         DirichletDistribution * Clone() const;
-#endif
 		void								SetLot(Lot * other);
 		void								ResetLot();
 		void								SetSeed(unsigned rnseed);

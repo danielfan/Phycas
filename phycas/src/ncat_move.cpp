@@ -375,13 +375,11 @@ bool NCatMove::update()
 		ln_prior_ratio = ln_ncat_prior_ratio + ln_rates_prior_ratio + ln_probs_prior_ratio;
 		}
 
-#if POLPY_NEWWAY
     ln_like_ratio *= heating_power;
     if (is_standard_heating)
         {
         ln_prior_ratio *= heating_power;
         }
-#endif
 
 	double ln_accept_ratio = ln_like_ratio + ln_prior_ratio + ln_hastings + ln_jacobian;
 	double u = rng->Uniform(FILE_AND_LINE);

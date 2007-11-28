@@ -42,12 +42,8 @@
 #include "phycas/src/cond_likelihood_storage.hpp"
 #include "phycas/src/tip_data.hpp"
 #include "phycas/src/internal_data.hpp"
-
 #include "phycas/src/xphylogeny.hpp"
-
-#if POLPY_NEWWAY
 #include "phycas/src/split.hpp"
-#endif
 
 using namespace boost::python;
 using namespace phycas;
@@ -66,9 +62,7 @@ BOOST_PYTHON_MODULE(_Phylogeny)
 	const InternalData *	(TreeNode::*GetInternalDataConst)()	const	= &TreeNode::GetInternalData;
 
 	class_<TreeNode>("TreeNodeBase", no_init)
-#if POLPY_NEWWAY
 		.def("getSplit", &TreeNode::GetSplit, return_internal_reference<>())
-#endif
 		.def("getX", &TreeNode::GetX)
 		.def("getY", &TreeNode::GetY)
 		.def("setX", &TreeNode::SetX)
@@ -118,11 +112,9 @@ BOOST_PYTHON_MODULE(_Phylogeny)
 		.def("unselectAllNodes", &Tree::UnselectAllNodes)
 		.def("calcTotalHeight", &Tree::calcTotalHeight)
 		.def("here", &Tree::DebugHere)
-#if POLPY_NEWWAY
 		.def("debugMode", &phycas::Tree::debugMode)
 		.def("recalcAllSplits", &phycas::Tree::RecalcAllSplits)
 		.def("ladderize", &phycas::Tree::Ladderize)
-#endif
 		;
 
 	class_<TreeManip>("TreeManipBase", init<boost::shared_ptr<Tree> >())
@@ -131,7 +123,6 @@ BOOST_PYTHON_MODULE(_Phylogeny)
 		.def("setRandomEdgeLens", &TreeManip::setRandomEdgeLens)
 		;
 
-#if POLPY_NEWWAY
 	class_<Split, boost::shared_ptr<Split> >("SplitBase")
         .def("getNTaxa", &Split::GetNTaxa)
         .def("setNTaxa", &Split::SetNTaxa)
@@ -165,7 +156,6 @@ BOOST_PYTHON_MODULE(_Phylogeny)
 		.def("read", &Split::Read)
 		.def("write", &Split::Write)
 		;
-#endif
 
     register_exception_translator<XPhylogeny>(&translateXPhylogeny);
 }

@@ -91,10 +91,7 @@ class SliceSampler
 		double					GetSliceYValue();
 
 		double					GetLnZero() const {return -DBL_MAX;}
-
-#if POLPY_NEWWAY
         void                    UseDoublingMethod(bool d);
-#endif
 		
 		// For diagnosing inefficiency
 		//
@@ -156,9 +153,7 @@ class SliceSampler
 		// These are for overrelaxed sampling
 		unsigned				num_overrelaxed_samples;	/**< counts number of times GetNextOverrelaxedSample called */
 
-#if POLPY_NEWWAY
         bool                    doubling;           /**< if true, doubling method will be used to increase slice interval */
-#endif
 	};
 
 typedef boost::shared_ptr<SliceSampler> SliceSamplerShPtr;

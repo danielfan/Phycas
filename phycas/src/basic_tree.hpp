@@ -98,9 +98,7 @@ class Tree
 		double					EdgeLenSum();
 		double					calcTotalHeight();
 		void					SetAllEdgeLens(double v);
-#if POLPY_NEWWAY
 		void					RecalcAllSplits(unsigned max_nbits);
-#endif
 		void					RerootAtThisTip(TreeNode * nd);
 		void					RerootAtThisInternal(TreeNode * nd);
 		void					RerootAtTip(unsigned num);
@@ -120,9 +118,7 @@ class Tree
 		bool					DebugCheckTree(bool allowDegTwo, bool checkDataPointers, int verbosity) const;
 		void					DebugHere(std::string s);
 
-#if POLPY_NEWWAY
         void                    debugMode(bool turn_on);
-#endif
 
 	protected:
 		TreeNode * 				AllocNewNode();

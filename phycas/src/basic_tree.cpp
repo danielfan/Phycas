@@ -804,7 +804,6 @@ double Tree::calcTotalHeight()
 	typedef std::map<unsigned, double> HeightMap;
 	HeightMap hmap;
 
-#if POLPY_NEWWAY
 	// Walk through nodes in postorder fashion, skipping only the root tip node and its only child, the subroot node. 
     // For each tip node, record the tip's edge length in hmap[parent] if hmap[parent] does not yet exist or 
     // if the edge length is greater than the value already stored in hmap[parent]. Do the same for internal 
@@ -849,37 +848,6 @@ double Tree::calcTotalHeight()
     // would be if the root tip edge (which is actually subroot's edge) was itself longer than hmap[subroot_ndnum]
     // in which case the tip root's edge length should be returned
     return (subroot_height > height_above_subroot ? subroot_height : height_above_subroot);
-#else
-	// Walk through nodes in postorder fashion, for each internal node adding an entry to hmap
-	for (TreeNode * nd = GetLastPreorder(); nd != NULL; nd = nd->GetNextPostorder())
-		{
-		if (nd->IsInternal())
-			{
-			// Figure out which path above this node is greatest and insert that value into hmap
-			double max_child_height = 0.0;
-			for (TreeNode * child = nd->GetLeftChild(); child != NULL; child = child->GetRightSib())
-				{
-				// height for child is really child's edge length plus the maximum height above child,
-				// which is stored in hmap if child is an internal node
-				double h = (hasEdgeLens ? child->GetEdgeLen() : 1.0);
-				unsigned child_nodenum = child->GetNodeNumber();
-				if (child->IsInternal())
-					h += hmap[child_nodenum];
-				if (h > max_child_height)
-					max_child_height = h;
-				}
-			unsigned nd_nodenum = nd->GetNodeNumber();
-			hmap.insert(HeightMap::value_type(nd_nodenum,max_child_height));
-			}
-		}
-
-    // Maximum tree height is now equal to the maximum height above the subroot plus the subroot's edge length
-	TreeNode * subroot = GetFirstPreorder()->GetNextPreorder();
-	unsigned subroot_nodenum = subroot->GetNodeNumber();
-	double subroot_height = (hasEdgeLens ? subroot->GetEdgeLen() : 1.0);
-	double height_above_subroot = hmap[subroot_nodenum];
-	return subroot_height + height_above_subroot;
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -948,14 +916,12 @@ std::string Tree::DebugWalkTree(bool preorder, unsigned verbosity)
 	return s;
 	}
 
-#if POLPY_NEWWAY
 void Tree::debugMode(bool turn_on)
 	{
 	//Tree::gDebugOutput = turn_on;
 	debugOutput = turn_on;
 	//std::cerr << "@@@@@ debugMode(" << (turn_on ? "True" : "False") << ") @@@@@" << std::endl;
 	}
-#endif
 
 bool Tree::DebugCheckTree(bool allowDegTwo, bool checkDataPointers, int verbosity) const
 	{
@@ -1647,7 +1613,6 @@ std::string & Tree::AppendNewick(
 	return s;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Performs a postorder traversal, recalculating every split to reflect the nodes above and below the node being 
 |   visited.
@@ -1701,7 +1666,6 @@ void Tree::RecalcAllSplits(
             }
         }
     }
-#endif
 
 // below here lies previous contents of basic_tree.inl
 
@@ -1852,9 +1816,7 @@ void Tree::Clear()
 	treeid_valid		= false;
 	numbers_from_names	= false;
     tree_scale          = 1.0;
-#if POLPY_NEWWAY
     debugOutput         = false;
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

@@ -160,10 +160,8 @@ class TreeLikelihood
 
 		TreeNode *						storeAllCLAs(TreeShPtr t);
 		bool							debugCheckCLAsRemainInTree(TreeShPtr t) const;
-#if POLPY_NEWWAY
         bool                            debugCheckForUncachedCLAs(TreeShPtr t) const;
         bool                            debugCheckCLAsRemainInNode(TreeNode * nd) const;
-#endif
 
 		bool							isValid(const TreeNode *focal, const TreeNode *avoidNd);
 		void 							refreshCLA(TreeNode & nd, const TreeNode * avoid);
@@ -173,9 +171,7 @@ class TreeLikelihood
 		std::string						listPatterns(bool translate);
 		std::string						getStateStr(int8_t state) const;
 
-#if POLPY_NEWWAY
         void                            setDebug(bool on);
-#endif
 
 		void							simulateFirst(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar);
 		void							simulate(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar);
@@ -219,9 +215,7 @@ class TreeLikelihood
 
 		unsigned						nevals;					/**< For debugging, records the number of times calcLnL() is called */
 
-#if POLPY_NEWWAY
         bool                            debugging_now;          /**< For debugging, indicates whether user wants to see debugging output */
-#endif
 
 	protected:
 

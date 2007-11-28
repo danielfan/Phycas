@@ -28,7 +28,6 @@
 using std::cout;
 using namespace phycas;
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the value of `gamma_rates_unnorm[param_index]'.
 */
@@ -37,9 +36,7 @@ double Model::getFlexRateUnnorm(
 	{
 	return gamma_rates_unnorm[param_index];
 	}
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the value of `gamma_rate_probs[param_index]'.
 */
@@ -48,9 +45,7 @@ double Model::getFlexProbUnnorm(
 	{
 	return gamma_rate_probs[param_index];
 	}
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the value of `rel_rates[param_index]'.
 */
@@ -59,9 +54,7 @@ double GTR::getRelRateUnnorm(
 	{
 	return rel_rates[param_index];
 	}
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the value of `state_freq_unnorm[param_index]'.
 */
@@ -70,7 +63,6 @@ double Model::getStateFreqUnnorm(
 	{
 	return state_freq_unnorm[param_index];
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	The base class version of this function should be called by all derived classes because it is where the edge 
@@ -204,14 +196,10 @@ void Model::createParameters(
 		PHYCAS_ASSERT(num_gamma_rates > 1);
 		PHYCAS_ASSERT(!gamma_shape_param);
 		gamma_shape_param = MCMCUpdaterShPtr(new DiscreteGammaShapeParam(invert_shape));
-#if POLPY_NEWWAY
         if (invert_shape)
     		gamma_shape_param->setName("Discrete gamma variance"); //@POL shouldn't this be done in the constructor?
         else
     		gamma_shape_param->setName("Discrete gamma shape"); //@POL shouldn't this be done in the constructor?
-#else
-		gamma_shape_param->setName("Discrete gamma shape"); //@POL shouldn't this be done in the constructor?
-#endif
         gamma_shape_param->setStartingValue(gamma_shape);
 		gamma_shape_param->setTree(t);
 		gamma_shape_param->setPrior(gamma_shape_prior);
@@ -358,10 +346,6 @@ void HKY::calcPMat(double * * pMat, double edgeLength) const
 	double bigPiInvT = 1.0/PiT;
 
 	double t = edgeLength;
-#if 0 // POLPY_NEWWAY    // Rota bug
-    if (t < 1.e-8)
-        t = 1.e-8; //TreeNode::edgeLenEpsilon;
-#endif
 	double ta, tb, tc, td, y;
 	double denom = ((piA + piG)*(piC + piT) + kappa*((piA*piG) + (piC*piT)));
 	double beta = 0.5/denom;
@@ -410,15 +394,4 @@ void HKY::calcPMat(double * * pMat, double edgeLength) const
 	pMat[1][3] = piT + (x*ta) - (y*tc);
 	pMat[2][3] = pMat[0][3];
 	pMat[3][3] = piT + (x*ta) + (y*tb);
-
-#if 0 // POLPY_NEWWAY    // Rota bug
-    for (unsigned i = 0; i < 4; ++i)
-        {
-        for (unsigned j = 0; j < 4; ++j)
-            {
-            if (pMat[i][j] < 0.0)
-                std::cerr << "negative transition probability encountered" << std::endl;
-            }
-        }
-#endif
 	}

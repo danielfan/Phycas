@@ -29,7 +29,6 @@
 namespace phycas
 {
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Overrides base class version to set `curr_value' to the corresponding value in the `gamma_rates_unnorm' vector in 
 |   `model'.
@@ -38,7 +37,6 @@ void FlexRateParam::setCurrValueFromModel()
 	{
     curr_value = model->getFlexRateUnnorm(which);
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	FlexRateParam is a functor whose operator() returns a value proportional to the full-conditional posterior
@@ -75,7 +73,6 @@ double FlexRateParam::operator()(
         return ln_zero;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Overrides base class version to set `curr_value' to the corresponding value in the `gamma_rate_probs' vector in 
 |   `model'.
@@ -84,7 +81,6 @@ void FlexProbParam::setCurrValueFromModel()
 	{
     curr_value = model->getFlexProbUnnorm(which);
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	FlexProbParam is a functor whose operator() returns a value proportional to the full-conditional posterior

@@ -160,7 +160,6 @@ ParamAndLnProb SliceSampler::GetNextSample(const ParamAndLnProb initialPair)
 	//std::cerr << std::endl;
 	//int ch = scanf("%c");
 
-#if POLPY_NEWWAY
     if (doubling)
         {
         // Grow interval by adding the current interval width to the left or right (determined randomly)
@@ -239,50 +238,6 @@ ParamAndLnProb SliceSampler::GetNextSample(const ParamAndLnProb initialPair)
 		    ++realized_m;
 		    }
         }
-#else
-	// Step 4: Grow interval to the left until left edge is not in the slice
-	// or J units have been added, whichever comes first
-	//
-	for (;;)
-		{
-		double left_edge_ln_y = (*func)(left_edge);
-		//std::cerr << "~~ left edge = " << left_edge << ", left_edge_ln_y = " << left_edge_ln_y << std::endl;
-		++func_evals;
-		if (left_edge_ln_y < ln_y || J == 0)
-			break;
-
-		left_edge -= w;
-		--J;
-		++realized_m;
-		}
-
-	// Step 5: Grow interval to the right until right edge is not in the slice 
-	// or K units have been added, whichever comes first
-	//
-	for (;;)
-		{
-		double right_edge_ln_y = (*func)(right_edge);
-		++func_evals;
-		//std::cerr << "~~ right edge = " << right_edge << ", right_edge_ln_y = " << right_edge_ln_y << std::endl;
-		if (right_edge_ln_y < ln_y || K == 0)
-			break;
-
-		right_edge += w;
-		--K;
-		++realized_m;
-		}
-#endif
-
-#if 0
-	if (K == 0)
-		{
-		std::cerr << "\n*** K = 0 in SliceSampler::GetNextSample ***\n" << std::endl;
-		}
-	else if (J == 0)
-		{
-		std::cerr << "\n*** J = 0 in SliceSampler::GetNextSample ***\n" << std::endl;
-		}
-#endif
 
 	orig_left_edge = left_edge;
 	orig_right_edge = right_edge;
@@ -393,9 +348,7 @@ void SliceSampler::Init()
 	mode.second			= -DBL_MAX;
 	ycond_multiplier	= 1.0;
 
-#if POLPY_NEWWAY
     doubling            = false;
-#endif
 
 	ResetDiagnostics();
 	}
@@ -789,10 +742,8 @@ double SliceSampler::GetLastSampledXValue()
 */
 double SliceSampler::GetLastSampledYValue()
 	{
-#if POLPY_NEWWAY
 	PHYCAS_ASSERT(func);
 	lastSampled.second = (*func)(lastSampled.first);
-#endif
 	return lastSampled.second;
 	}
 
@@ -977,7 +928,6 @@ VecDbl SliceSampler::DebugSample()
 	return v;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |   Sets the data member `doubling' to the value specified.
 */
@@ -986,4 +936,3 @@ void SliceSampler::UseDoublingMethod(
     {
     doubling = d;
     }
-#endif

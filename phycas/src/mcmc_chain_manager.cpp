@@ -344,12 +344,10 @@ void MCMCChainManager::finalize()
 	std::for_each(all_updaters.begin(), all_updaters.end(), 
 		boost::lambda::bind(&MCMCUpdater::setChainManager, *boost::lambda::_1, ChainManagerWkPtr(shared_from_this())));
 
-#if POLPY_NEWWAY
 	// Call each parameter's setCurrValueFromModel member function to make sure that their 
     // curr_value data members are up to date
 	std::for_each(params_begin, params_end, 
 		boost::lambda::bind(&MCMCUpdater::setCurrValueFromModel, *boost::lambda::_1));
-#endif
 
 	// Call each parameter's recalcPrior member function to make sure their curr_ln_prior data members are
 	// up to date

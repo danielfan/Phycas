@@ -53,9 +53,7 @@ class KappaParam : public MCMCUpdater
 							//std::cerr << "KappaParam dying..." << std::endl;
 							}
 
-#if POLPY_NEWWAY
         virtual void    setCurrValueFromModel();
-#endif
 		virtual void	setModel(ModelShPtr p);
 		virtual bool	update();				// override virtual from MCMCUpdater base class
 		virtual double	operator()(double k);	// override pure virtual from AdHocDensity (base class of MCMCUpdater)
@@ -80,9 +78,7 @@ class OmegaParam : public MCMCUpdater
 							//std::cerr << "OmegaParam dying..." << std::endl;
 							}
 
-#if POLPY_NEWWAY
         virtual void    setCurrValueFromModel();
-#endif
 		virtual void	setModel(ModelShPtr p);
 		virtual bool	update();				// override virtual from MCMCUpdater base class
 		virtual double	operator()(double k);	// override pure virtual from AdHocDensity (base class of MCMCUpdater)
@@ -106,9 +102,7 @@ class GTRRateParam : public MCMCUpdater
 							//std::cerr << "GTRRateParam dying..." << std::endl;
 							}
 
-#if POLPY_NEWWAY
         virtual void    setCurrValueFromModel();
-#endif
 		virtual void	setModel(ModelShPtr p);
 		virtual bool	update();				// override virtual from MCMCUpdater base class
 		virtual double	operator()(double k);	// override pure virtual from AdHocDensity (base class of MCMCUpdater)
@@ -131,9 +125,7 @@ class DiscreteGammaShapeParam : public MCMCUpdater
 							//std::cerr << "DiscreteGammaShapeParam dying..." << std::endl;
 							}
 
-#if POLPY_NEWWAY
         virtual void    setCurrValueFromModel();
-#endif
 		virtual bool	update();				// override virtual from MCMCUpdater base class
 		virtual double	operator()(double k);	// override pure virtual from AdHocDensity (base class of MCMCUpdater)
 
@@ -154,9 +146,7 @@ class PinvarParam : public MCMCUpdater
 							//std::cerr << "PinvarParam dying..." << std::endl;
 							}
 
-#if POLPY_NEWWAY
         virtual void    setCurrValueFromModel();
-#endif
 		virtual bool	update();				// override virtual from MCMCUpdater base class
 		virtual double	operator()(double k);	// override pure virtual from AdHocDensity (base class of MCMCUpdater)
 	};
@@ -175,9 +165,7 @@ class FlexRateParam : public MCMCUpdater
 										//std::cerr << "FlexRateParam dying..." << std::endl;
 										}
 	
-#if POLPY_NEWWAY
         virtual void                setCurrValueFromModel();
-#endif
 		virtual bool				update();				// override virtual from MCMCUpdater base class
 		virtual std::string			getPriorDescr() const;	// override virtual from MCMCUpdater base class
 		virtual double				recalcPrior();			// override virtual from MCMCUpdater base class
@@ -212,9 +200,7 @@ class FlexProbParam : public MCMCUpdater
 									//std::cerr << "FlexProbParam dying..." << std::endl;
 									}
 	
-#if POLPY_NEWWAY
         virtual void            setCurrValueFromModel();
-#endif
 		virtual bool			update();				// override virtual from MCMCUpdater base class
 		virtual void			setLot(LotShPtr r);
 		virtual double			operator()(double f);
@@ -239,9 +225,7 @@ class StateFreqParam : public MCMCUpdater
 								//std::cerr << "StateFreqParam dying..." << std::endl;
 								}
 	
-#if POLPY_NEWWAY
-        virtual void            setCurrValueFromModel();
-#endif
+        virtual void        setCurrValueFromModel();
 		virtual bool		update();				// override virtual from MCMCUpdater base class
 		virtual double		operator()(double k);
 
@@ -300,9 +284,7 @@ class HyperPriorParam : public MCMCUpdater
 								//std::cerr << "HyperPriorParam dying..." << std::endl;
 								}
 
-#if POLPY_NEWWAY
         virtual void        setCurrValueFromModel();
-#endif
 		virtual bool		update();				// override virtual from MCMCUpdater base class
 		virtual double		operator()(double k);	
 

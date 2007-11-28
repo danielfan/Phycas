@@ -180,10 +180,8 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("bytesPerCLA", &TreeLikelihood::bytesPerCLA)
 		.def("numCLAsCreated", &TreeLikelihood::numCLAsCreated)
 		.def("numCLAsStored", &TreeLikelihood::numCLAsStored)
-#if POLPY_NEWWAY
 		//.def("setDebug", &TreeLikelihood::setDebug)
 		.def("debugCheckForUncachedCLAs", &TreeLikelihood::debugCheckForUncachedCLAs)
-#endif
 		;
 	class_<TipData, boost::noncopyable>("TipData", no_init)
 		.def("parentalCLAValid", &TipData::parentalCLAValid)

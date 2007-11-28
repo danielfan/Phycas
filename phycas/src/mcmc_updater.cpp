@@ -28,7 +28,6 @@
 namespace phycas
 {
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |   Set `curr_value' data member to the supplied value `x'. Not ordinarily used, but useful for debugging.
 */
@@ -45,7 +44,6 @@ void MCMCUpdater::setCurrValue(
 void MCMCUpdater::setCurrValueFromModel()
 	{
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calls `likelihood'->calcLnL(`tree') to recalculate `curr_ln_like'. This function is important because the 
@@ -71,7 +69,6 @@ double MCMCUpdater::getLnPrior() const
 	return curr_ln_prior;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the power used in heating (variable `heating_power') to the specified value `p'.
 */
@@ -87,9 +84,7 @@ void MCMCUpdater::setPower(
             slice_sampler->UseDoublingMethod(true);
         }
 	}
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the power used in heating (variable `heating_power').
 */
@@ -97,9 +92,7 @@ double MCMCUpdater::getPower() const
 	{
 	return heating_power;
 	}
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the data member `is_standard_heating' to true.
 */
@@ -107,9 +100,7 @@ void MCMCUpdater::setStandardHeating()
 	{
 	is_standard_heating = true;
 	}
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the data member `is_standard_heating' to false.
 */
@@ -117,9 +108,7 @@ void MCMCUpdater::setLikelihoodHeating()
 	{
 	is_standard_heating = false;
 	}
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns true if the data member `is_standard_heating' is true.
 */
@@ -127,9 +116,7 @@ bool MCMCUpdater::isStandardHeating() const
 	{
 	return is_standard_heating;
 	}
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns true if the data member `is_standard_heating' is false.
 */
@@ -137,9 +124,7 @@ bool MCMCUpdater::isLikelihoodHeating() const
 	{
 	return !is_standard_heating;
 	}
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns true if and only if the data member `heating_power' is set to exactly 1.0.
 */
@@ -147,6 +132,4 @@ bool MCMCUpdater::isNoHeating() const
 	{
 	return (heating_power == 1.0);
 	}
-#endif
-
 }	// namespace phycas

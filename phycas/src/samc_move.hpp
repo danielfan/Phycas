@@ -43,10 +43,7 @@ typedef boost::weak_ptr<MCMCChainManager>			ChainManagerWkPtr;
 
 typedef std::map<unsigned, std::vector<double> > PolytomyDistrMap;
 typedef std::vector<double> VecPolytomyDistr;
-
-#if POLPY_NEWWAY    //SAMC
 typedef std::vector<double> DistanceMatrixRow;
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Encapsulates the SAMC dimension-change move
@@ -75,7 +72,6 @@ class SamcMove : public MCMCUpdater
 		virtual void				revert();
 		virtual void				accept();
 
-#if POLPY_NEWWAY    //SAMC
         unsigned                    getNTax();
         void                        setNTax(unsigned ntax);
 
@@ -84,7 +80,6 @@ class SamcMove : public MCMCUpdater
 
         void                        setTemperature(double temp);
         double                      getTemperature() const;
-#endif
 
 	private:
 
@@ -97,14 +92,11 @@ class SamcMove : public MCMCUpdater
 
     private:
 
-#if POLPY_NEWWAY    //SAMC
         bool                            infinite_temperature;               /**< if true, uses a discrete uniform distribution for selecting attachment node during extrapolate moves; if false, uses less efficient but more reasonable method based on least squares length of edge of attached leaf */
         const double                    temperature_threshhold;             /**< temperatures above this value trigger setting infinite_temperature to true */
         double                          temperature;                        /**< assuming infinite_temperatore is false, determines the temperature used for computing insertion probabilities for extrapolate moves */
         double                          prev_ln_like;
         std::vector<DistanceMatrixRow>  distance_matrix;
-#endif
-
 		unsigned						num_taxa;							/**< The number of taxa */
 		TreeNode *						leaf_sib;
 		TreeNode *						leaf;

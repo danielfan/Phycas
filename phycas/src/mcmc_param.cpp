@@ -51,7 +51,6 @@ void KappaParam::setModel(ModelShPtr m)
 	// function back to mcmc_param.inl
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Overrides base class version to set `curr_value' to the kappa value in `model'.
 */
@@ -59,7 +58,6 @@ void KappaParam::setCurrValueFromModel()
 	{
     curr_value = hky->getKappa();
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	KappaParam is a functor whose operator() returns a value proportional to the full-conditional posterior probability 
@@ -109,7 +107,6 @@ void GTRRateParam::setModel(ModelShPtr m)
 	// If tempted to move this to mcmc_param.inl, see comment in KappaParam::setModel function
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Overrides base class version to set `curr_value' to the corresponding relative rate value in `model'.
 */
@@ -117,7 +114,6 @@ void GTRRateParam::setCurrValueFromModel()
 	{
     curr_value = gtr->getRelRateUnnorm(which);
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	GTRRateParam is a functor whose operator() returns a value proportional to the full-conditional posterior 
@@ -175,7 +171,6 @@ void OmegaParam::setModel(ModelShPtr m)
 	// function back to mcmc_param.inl
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Overrides base class version to set `curr_value' to the value of `omega' in `model'.
 */
@@ -183,7 +178,6 @@ void OmegaParam::setCurrValueFromModel()
 	{
     curr_value = codon->getOmega();
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	OmegaParam is a functor whose operator() returns a value proportional to the full-conditional posterior probability 
@@ -219,7 +213,6 @@ double OmegaParam::operator()(
         return ln_zero;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Overrides base class version to set `curr_value' to the value of `gamma_shape' in `model'.
 */
@@ -227,7 +220,6 @@ void DiscreteGammaShapeParam::setCurrValueFromModel()
 	{
     curr_value = model->getShape();
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	DiscreteGammaShapeParam is a functor whose operator() returns a value proportional to the full-conditional posterior
@@ -265,7 +257,6 @@ double DiscreteGammaShapeParam::operator()(
         return ln_zero;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Overrides base class version to set `curr_value' to the value of `pinvar' in `model'.
 */
@@ -273,7 +264,6 @@ void PinvarParam::setCurrValueFromModel()
 	{
     curr_value = model->getPinvar();
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	PinvarParam is a functor whose operator() returns a value proportional to the full-conditional posterior
@@ -308,7 +298,6 @@ double PinvarParam::operator()(
         return ln_zero;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Overrides base class version to set `curr_value' to the corresponding value of the `pinvar' in `model'.
 */
@@ -316,7 +305,6 @@ void StateFreqParam::setCurrValueFromModel()
 	{
     curr_value = model->getStateFreqUnnorm(which);
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	StateFreqParam is a functor whose operator() returns a value proportional to the full-conditional posterior 
@@ -355,7 +343,6 @@ double StateFreqParam::operator()(
         return ln_zero;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Overrides base class version to set `curr_value' to the corresponding value of the `pinvar' in `model'.
 */
@@ -363,7 +350,6 @@ void HyperPriorParam::setCurrValueFromModel()
 	{
     //@POL hyperparameters should be part of the model, but currently they are not
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	HyperPriorParam is a functor whose operator() returns a value proportional to the full-conditional posterior 

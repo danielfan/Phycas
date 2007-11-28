@@ -38,7 +38,6 @@ double TreeNode::GetEdgeLen() const
 	return edgeLen*scale;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the split associated with this node.
 */
@@ -46,7 +45,6 @@ Split & TreeNode::GetSplit()
 	{
 	return split;
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Allows write access to protected data member `edgeLen'.

@@ -225,7 +225,7 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 			}
 		}
 
-#if 0 && POLPY_NEWWAY
+#if 0
     // Turn this section on for debugging purposes only! Walks through conditional likelihood arrays
     // for this node looking for any conditional likelihood that is negative. Negative cond. likes
     // have shown up in the past (18 Oct 2007) for the GTR model, which results in a NaN (represented
@@ -1110,7 +1110,6 @@ bool TreeLikelihood::debugCheckCLAsRemainInTree(
 	return false;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |   Scans tree for cached CLAs. If any are found, returns true. If no CLAs are currently cached, returns false. False is
 |   the expected result, because there should only be cached CLAs in the tree if we are in the middle of performing a 
@@ -1157,9 +1156,7 @@ bool TreeLikelihood::debugCheckForUncachedCLAs(
         }   // preorder loop over all nodes
     return cached_CLAs_found;
     }
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |   Scans node for CLAs. If any are found, returns true. If no CLAs are found, returns false.
 */
@@ -1188,7 +1185,6 @@ bool TreeLikelihood::debugCheckCLAsRemainInNode(
 		}
     return CLAs_found;
     }
-#endif
 
 int calcLnLLevel = 0;
 /*----------------------------------------------------------------------------------------------------------------------
@@ -1241,10 +1237,9 @@ double TreeLikelihood::calcLnL(
 	PHYCAS_ASSERT(nd->IsInternal());
 
     // Uncomment line below to force recalculation of all CLAs
-#if POLPY_NEWWAY 
     //storeAllCLAs(t);
-#endif
-	// Calculate log-likelihood using nd as the likelihood root
+
+    // Calculate log-likelihood using nd as the likelihood root
 	double lnL = calcLnLFromNode(*nd);
 #	if 0 // !defined(NDEBUG)	
 		if (calcLnLLevel == 0)
@@ -2071,17 +2066,6 @@ unsigned TreeLikelihood::getNEvals()
 	{
 	return nevals;
 	}
-
-#if POLPY_NEWWAY
-///*----------------------------------------------------------------------------------------------------------------------
-//|	Sets the boolean data member `debugging_now' to the value specified.
-//*/
-//void TreeLikelihood::setDebug(
-//  bool on)  /**< is the value to which `debugging_now' should be set */
-//    {
-//    debugging_now = on;
-//    }
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Assuming TreeLikelihood::compressDataMatrix has been called, so that `pattern_map' is up-to-date, returns a string 

@@ -109,8 +109,6 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		virtual std::string 	getPriorDescr() const;
 		LotShPtr				getLot();
         std::string             getDebugInfo() const;
-
-#if POLPY_NEWWAY
         void                    setPower(double p);
         double                  getPower() const;
         void                    setStandardHeating();
@@ -119,7 +117,6 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
         bool                    isLikelihoodHeating() const;
         bool                    isNoHeating() const;
         double                  setCurrLnPrior(double x);
-#endif
 
 		// Accessors used only by parameters
 		SliceSamplerShPtr		getSliceSampler();
@@ -144,10 +141,8 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		virtual void			setPrior(ProbDistShPtr p);
 		virtual void			setPriorMeanAndVariance(double m, double v);
 		virtual double			recalcPrior();
-#if POLPY_NEWWAY
         virtual void            setCurrValue(double x);
         virtual void            setCurrValueFromModel();
-#endif
 
 
 		// Utilities
@@ -204,10 +199,8 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		bool					is_fixed;				/**< If true, update returns immediately so parameter is never updated */
 		unsigned				slice_max_units;		/**< Maximum number of units used by `slice_sampler' */
         std::string				debug_info;				/**< Information about the last update, only created if save_debug_info is true */
-#if POLPY_NEWWAY
         double                  heating_power;          /**< The power to which the posterior (in standard heating) or just the likelihood (in likelihood heating) is raised. To not heat, specify 1.0. */
         bool                    is_standard_heating;    /**< If true, standard heating is used (posterior is raised to the power `heating_power'); otherwise, likelihood heating is used (just the likelihood is raised to the power `heating_power') */
-#endif
 		bool                    save_debug_info;		/**< If true, information about the last update will be stored in debug_info string */
 	};
 

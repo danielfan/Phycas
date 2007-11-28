@@ -41,14 +41,11 @@ SamcMove::SamcMove(
 	{
 	num_taxa = 0;
 	reset();
-#if POLPY_NEWWAY
     prev_ln_like = 0.0;
     infinite_temperature = false;
     temperature = 0.6;
-#endif
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |   Sets the maximum number of taxa. This is used to ensure that Split objects in the tree have enough bits to 
 |   accommodate any combination of taxa that could appear in the tree at the same time.
@@ -58,9 +55,7 @@ void SamcMove::setNTax(
     {
     num_taxa = ntax;
     }
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |   Returns the current value of the data member `num_taxa'.
 */
@@ -68,9 +63,7 @@ unsigned SamcMove::getNTax()
     {
     return num_taxa;
     }
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the least squares length (v_i) of an edge connecting `leaf_k' to the edge subtending node `nd'. The formula
 |   used is eq. 4 from Rzhetsky and Nei (1993. MBE 10:1074). This is used by SamcMove::calcPk to compute the probability
@@ -134,7 +127,6 @@ double SamcMove::calcLeafEdgeLen(
 
     return d;
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the length (v_i) of the edge connecting `leak_k' to every existing edge i in the tree. The formula used is
@@ -149,7 +141,6 @@ void SamcMove::calcPk(
   unsigned leaf_k)	/**< is the leaf we are adding (for extrapolation) or subtracting (for projection) */
 	{
 	pvect.clear();
-#if POLPY_NEWWAY
     tree->RecalcAllSplits(num_taxa);
     if (infinite_temperature)
         {
@@ -181,12 +172,6 @@ void SamcMove::calcPk(
         //std::copy(pvect.begin(), pvect.end(), std::ostream_iterator<double>(std::cerr,"|"));
         //std::cerr << std::endl;
         }
-#else
-	// Efficient version when temperature is infinity
-	unsigned n = tree->GetNNodes() - 1;
-	double p = 1.0/(double)n;
-	pvect.resize(n, p);
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -235,26 +220,14 @@ bool SamcMove::extrapolate(
 	if (is_fixed)
 		return false;
 
-#if POLPY_NEWWAY
-    std::cerr << "Entering SamcMove::extrapolate..." << std::endl;
-#endif
-
 	ChainManagerShPtr p = chain_mgr.lock();
 	PHYCAS_ASSERT(p);
 	prev_ln_like = p->getLastLnLike();
-
-#if POLPY_NEWWAY
-    std::cerr << "  prev_ln_like = " << prev_ln_like << std::endl;
-#endif
 
     leaf = tree->PopLeafNode();
     PHYCAS_ASSERT(leaf->GetNodeNumber() == leaf_num);
     leaf_sib = chooseRandomAttachmentNode(leaf_num);
     
-#if POLPY_NEWWAY
-    std::cerr << "  leaf_sib->GetNodeNumber() = " << leaf_sib->GetNodeNumber() << std::endl;
-#endif
-
     // Examples of debugging tools:
     // if (tree->debugOutput)
     //   {
@@ -277,10 +250,6 @@ bool SamcMove::extrapolate(
     double leaf_edgelen = term_edge_dist->Sample();
     leaf->SetEdgeLen(leaf_edgelen);
     
-#if POLPY_NEWWAY
-    std::cerr << "  leaf_edgelen = " << leaf_edgelen << std::endl;
-#endif
-
     likelihood->useAsLikelihoodRoot(parent);
     likelihood->invalidateAwayFromNode(*parent);
     likelihood->invalidateBothEnds(leaf_sib);
@@ -290,16 +259,8 @@ bool SamcMove::extrapolate(
 
     double curr_ln_like = likelihood->calcLnL(tree);
 
-#if POLPY_NEWWAY
-    std::cerr << "  curr_ln_like = " << curr_ln_like << std::endl;
-#endif
-
     double curr_ln_prior = p->calcInternalEdgeLenPriorUnnorm(parent_edgelen);
     curr_ln_prior += p->calcExternalEdgeLenPriorUnnorm(leaf_edgelen);
-
-#if POLPY_NEWWAY
-    std::cerr << "  curr_ln_prior = " << curr_ln_prior << std::endl;
-#endif
 
     double prev_ln_prior = 0.0;
     if (leaf_sib->IsTip())
@@ -317,25 +278,15 @@ bool SamcMove::extrapolate(
     double log_pkl_blk_ratio = log(getPkl(leaf_num, leaf_sib)) - log(leaf_sib_orig_edgelen);
     double ln_accept_ratio = theta_diff + curr_posterior - prev_posterior - log_pkl_blk_ratio + ln_proposal_ratio;
 
-#if POLPY_NEWWAY
-    std::cerr << "  ln_accept_ratio = " << ln_accept_ratio << std::endl;
-#endif
-
     const bool accepted = (ln_accept_ratio >= 0.0 || std::log(rng->Uniform(FILE_AND_LINE)) <= ln_accept_ratio);
     if (accepted)
         {
-#if POLPY_NEWWAY
-        std::cerr << "  accepted" << std::endl;
-#endif
         p->setLastLnPrior(curr_ln_prior);
         p->setLastLnLike(curr_ln_like);
         accept();
         }
     else
         {
-#if POLPY_NEWWAY
-        std::cerr << "  reverting" << std::endl;
-#endif
         revert();
         }
     if (save_debug_info)
@@ -518,7 +469,6 @@ void SamcMove::reset()
     new_leaf_sib_parent = NULL;
     }
 
-#if POLPY_NEWWAY    //SAMC
 /*----------------------------------------------------------------------------------------------------------------------
 |	Saves one row of the distance matrix to the data member `distance_matrix'.
 */
@@ -530,9 +480,7 @@ void SamcMove::setDistanceMatrixRow(
     std::copy(row.begin(), row.end(), r.begin());
     distance_matrix.push_back(r);
     }
-#endif
 
-#if POLPY_NEWWAY    //SAMC
 /*----------------------------------------------------------------------------------------------------------------------
 |	Setter for data member `temperature'.
 */
@@ -546,9 +494,7 @@ void SamcMove::setTemperature(
     else
         infinite_temperature = false;
     }
-#endif
 
-#if POLPY_NEWWAY    //SAMC
 /*----------------------------------------------------------------------------------------------------------------------
 |	Accessor for data member `temperature'.
 */
@@ -556,4 +502,3 @@ double SamcMove::getTemperature() const
     {
     return temperature;
     }
-#endif

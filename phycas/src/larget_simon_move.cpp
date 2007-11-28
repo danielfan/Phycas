@@ -91,7 +91,6 @@ bool LargetSimonMove::update()
         curr_ln_prior += (ndZ->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(ndZ->GetEdgeLen()) : p->calcExternalEdgeLenPriorUnnorm(ndZ->GetEdgeLen()));
 		}
 
-#if POLPY_NEWWAY
     double prev_posterior = 0.0;
 	double curr_posterior = 0.0;
     if (is_standard_heating)
@@ -104,10 +103,6 @@ bool LargetSimonMove::update()
         prev_posterior = heating_power*prev_ln_like + prev_ln_prior;
 	    curr_posterior = heating_power*curr_ln_like + curr_ln_prior;
         }
-#else
-	double prev_posterior = prev_ln_like + prev_ln_prior;
-	double curr_posterior = curr_ln_like + curr_ln_prior;
-#endif
 
 	double ln_accept_ratio = curr_posterior - prev_posterior + getLnHastingsRatio() + getLnJacobian();
 
