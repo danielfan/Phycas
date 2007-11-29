@@ -98,6 +98,7 @@ class Phycas(object):
         #   Times-Italic     Helvetica-Oblique     Courier-Oblique
         #   Times-BoldItalic Helvetica-BoldOblique Courier-BoldOblique
         self.pdf_filename              = 'trees.pdf'    # set to desired name of pdf file to create
+        self.pdf_edge_support_file     = None           # file containing PAUP* output with table of support values; if specified, the support values will be shown on trees plotted
         self.pdf_tip_label_font        = 'Times-Italic' # font used for tip node names; should be one of the 14 standard fonts listed above
         self.pdf_tip_label_height      = 12             # height in points of tip node name font
         self.pdf_scalebar_position     = 'bottom'       # valid values are 'top', 'bottom' or None
@@ -234,6 +235,7 @@ class Phycas(object):
         self.stored_newicks         = None
         self.ps_delta_beta          = 0.0
         self.doing_path_sampling    = False
+        self.pdf_splits_to_plot     = None
         
     # see http://mail.python.org/pipermail/python-list/2002-January/121376.html
     def source_line():
@@ -1107,14 +1109,25 @@ class Phycas(object):
 
     def pdftree(self):
         assert (self.pdf_treefile and not self.pdf_newick) or (self.pdf_newick and not self.pdf_treefile), 'set either pdf_newick or pdf_treefile, but not both'
+        if self.pdf_edge_support_file and os.path.exists(self.pdf_edge_support_file):
+            # Read splits file and store all splits found along with their frequencies
+            contents_of_file = open(self.pdf_edge_support_file,'r').read()
+            regex = re.compile('([*.]+)\s+([0-9.]+)', re.M)
+            matches = regex.findall(contents_of_file)
+            self.phycassert(matches, 'could not find any splits defined in the pdf_edge_support_file named %s' % self.pdf_edge_support_file)
+            self.pdf_splits_to_plot = {}
+            for p,f in matches:
+                self.pdf_splits_to_plot[p] = float(f)
         if self.pdf_newick:        
             # Build tree the newick description of which is in self.newick
             tree = Tree()
             tree.buildFromString(self.pdf_newick, False)
+            
             if self.pdf_outgroup_taxon:
                 num = tree.findTipByName(self.pdf_outgroup_taxon)
                 self.phycassert(num, 'could not root tree using specified outgroup: no tip having name "%s" could be found' % self.pdf_outgroup_taxon)
                 tree.rerootAtTip(num)
+                
             if self.pdf_ladderize:
                 if self.pdf_ladderize == 'right':
                     tree.ladderizeRight()
@@ -1162,6 +1175,9 @@ class Phycas(object):
                 pdf.newPage()
                 self.tree2pdf(pdf, tree, max_height)
             pdf.saveDocument(self.pdf_filename)
+            
+        # Prevent unintentional spillover
+        self.pdf_splits_to_plot = None
         
     def tree2pdf(self, pdf, tree, xscalemax = 0.0):
         # TODO: max_label_points should be calculated outside this function and passed in as an argument
@@ -1179,6 +1195,9 @@ class Phycas(object):
         # 4) for each internal, just set y-value to 0.0 for now; these internal y-values
         #    will be calculated on the subsequent postorder traversal
 
+        if self.pdf_splits_to_plot:
+            tree.recalcAllSplits(tree.getNTips())
+            
         # Record information about the tip serving as the root
         nd = tree.getFirstPreorder()
         assert nd.isRoot(), 'first preorder node should be the root'
@@ -1247,6 +1266,8 @@ class Phycas(object):
         ten_to_power = 10**math.floor(log_xscalemax)
         scalebar = ten_to_power*math.floor(half_xscalemax/ten_to_power)
         ndecimals = -int(math.floor(log_xscalemax))
+        if ndecimals < 0:
+            ndecimals = 0
         format_str = '%%.%df' % (ndecimals)
         scalebar_str = format_str % scalebar
         scalebar_str_extent = float(self.pdf_scalebar_label_height)*pdf.calcStringWidth(self.pdf_scalebar_label_font, scalebar_str)
@@ -1328,7 +1349,7 @@ class Phycas(object):
             else:
                 nchildren = 1.0
                 child = nd.getLeftChild()
-                left_child = child
+                left_child = right_child = child
                 childY = child.getY()
                 while True:
                     child = child.getRightSib()
@@ -1351,13 +1372,28 @@ class Phycas(object):
                     brlen = xscaler*nd.getEdgeLen()
                     # draw line representing edge leading to internal node
                     pdf.addLine(node_x, node_y, node_x - brlen, node_y, self.pdf_line_width)
+
+                # draw line representing shoulders of internal node
                 left_y = plot_top - top_margin - left_child.getY()*yscaler
                 right_y = plot_top - top_margin - right_child.getY()*yscaler
                 if self.pdf_scalebar_position and self.pdf_scalebar_position == 'top':
                     left_y -= scalebar_height
                     right_y -= scalebar_height
-                # draw line representing shoulders of internal node
                 pdf.addLine(node_x, left_y, node_x, right_y, self.pdf_line_width)
+
+                # if specified, plot support value
+                if self.pdf_splits_to_plot:
+                    for p in self.pdf_splits_to_plot.keys():
+                        s = Split()
+                        s.setOnSymbol('*')
+                        s.setOffSymbol('.')
+                        s.createFromPattern(p)
+                        if s.equals(nd.getSplit()):
+                            support_x = node_x + spacer
+                            support_y = (left_y + right_y)/2.0 - half_xheight
+                            support_str = '%.1f' % self.pdf_splits_to_plot[p]
+                            pdf.addText(support_x, support_y, self.pdf_support_label_font, self.pdf_support_label_height, support_str)
+                            break
                     
     # by default phycassert sys.exit.
     # When debugging, it is nice to set this to True so that you can see the stack trace
