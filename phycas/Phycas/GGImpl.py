@@ -262,8 +262,8 @@ class GelfandGhosh(object):
             self.gg_t_y = self.gg_y.calct(4)
 
         # temporary debugging code
-        print 't for observed data =',self.gg_t_y
-        print self.gg_y.patternTable('A C G T'.split())
+        #print 't for observed data =',self.gg_t_y
+        #print self.gg_y.patternTable('A C G T'.split())
 
         # gg_mu is the mean of all the posterior predictive datasets.
         # Compute the t function for the mean dataset

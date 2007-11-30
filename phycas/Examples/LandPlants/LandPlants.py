@@ -30,7 +30,7 @@ def analyze(prior_mean):
     analyzer.gg_kvect = [1.0]
     analyzer.gg_outfile = None
     analyzer.ls_move_weight = lsweight
-    analyzer.mcmc()
+    #analyzer.mcmc()
     analyzer.gg_bin_patterns = True
     analyzer.gg_nreps = nreps
     analyzer.gg_pfile = data_file_name + '.p'
