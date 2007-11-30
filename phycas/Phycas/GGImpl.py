@@ -505,8 +505,8 @@ class GelfandGhosh(object):
                         curr_t = self.gg_simdata.calct(4)
 
                     # temporary debugging code
-                    print '\nt =',curr_t,', patterns =',self.gg_simdata.getNUniquePatterns()
-                    print self.gg_simdata.patternTable('A C G T'.split())
+                    #print '\nt =',curr_t,', patterns =',self.gg_simdata.getNUniquePatterns()
+                    #print self.gg_simdata.patternTable('A C G T'.split())
 
                     # Add this value of t to the list (later the mean t will be computed)                
                     self.gg_t.append(curr_t)
