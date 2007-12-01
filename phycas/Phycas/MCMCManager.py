@@ -271,7 +271,7 @@ class MarkovChain(LikelihoodCore):
             self.model.setPinvarPrior(self.pinvar_prior)
         
         # Define edge length prior distributions
-        separate_edge_len_dists = self.phycas.internal_edgelen_dist is not self.phycas.internal_edgelen_dist
+        separate_edge_len_dists = self.phycas.internal_edgelen_dist is not self.phycas.external_edgelen_dist
         self.model.separateInternalExternalEdgeLenPriors(separate_edge_len_dists)
         self.model.setExternalEdgeLenPrior(self.external_edgelen_dist)
         self.model.setInternalEdgeLenPrior(self.internal_edgelen_dist)

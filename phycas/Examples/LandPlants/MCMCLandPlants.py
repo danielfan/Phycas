@@ -16,7 +16,6 @@ def analyze(internal_prior_mean):
     analyzer.num_rates = 3
     analyzer.external_edgelen_dist = ProbDist.ExponentialDist(1.0/external_prior_mean)
     analyzer.internal_edgelen_dist = ProbDist.ExponentialDist(1.0/internal_prior_mean)
-    #analyzer.edgelen_dist = ProbDist.ExponentialDist(1.0/internal_prior_mean)
     analyzer.using_hyperprior = False 
     analyzer.allow_polytomies = False
     analyzer.data_file_name = data_file_name
@@ -26,6 +25,7 @@ def analyze(internal_prior_mean):
     analyzer.sample_every = samplefreq
     analyzer.report_every = ncycles/20
     analyzer.ls_move_weight = lsweight
+    raw_input('debug stop')
     analyzer.mcmc()
     shutil.copyfile('%s.p' % data_file_name, '%.9f_%s.p' % (internal_prior_mean, data_file_name))
     shutil.copyfile('%s.t' % data_file_name, '%.9f_%s.t' % (internal_prior_mean, data_file_name))
