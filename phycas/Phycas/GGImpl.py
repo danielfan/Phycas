@@ -442,8 +442,10 @@ class GelfandGhosh(object):
         #            self.gg_spectrum.appendCountsToFile('spectra.txt', False)
 
         print 'Performing posterior-predictive simulations:'        
-
         prev_pct_done = 0.0        
+        stopwatch = ProbDist.StopWatch()
+        stopwatch.start()
+        prev_secs = 0.0
         for i,t in enumerate(self.trees):
             if i >= self.gg_burnin:
                 tree_description = t.newick
@@ -465,7 +467,9 @@ class GelfandGhosh(object):
                 pct_done = 100.0*float(i - self.gg_burnin + 1)/float(self.ntrees)
                 if pct_done - prev_pct_done >= 10.0:
                     prev_pct_done = pct_done
-                    print '  %.0f%% done...' % (pct_done)
+                    secs = stopwatch.elapsedSeconds()
+                    print '  %.0f%% done (%.1fs)...' % (pct_done,secs - prev_secs)
+                    prev_secs = secs
 
                 # TreeLikelihood object needs to be informed that model has changed
                 self.likelihood.replaceModel(self.model)
