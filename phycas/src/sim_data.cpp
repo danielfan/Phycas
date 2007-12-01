@@ -50,6 +50,28 @@ namespace phycas
 {
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Returns the vector of counts (`binv') that is created in the calctBinned function. The table below shows the 
+|   identity of each bin for the case of 4 states. The length of `binv' is 2k - 1, where k is the number of states.
+|   The number of states can thus be obtained as (sz + 1)/2, where sz is the length of `binv'.
+|>
+|	Count   Bin description                 
+|   ----------------------------------------
+|	n_0     all patterns containing only A  
+|	n_1     all patterns containing only C  
+|	n_2     all patterns containing only G  
+|	n_3     all patterns containing only T  
+|	n_4     patterns containing any 2 states
+|	n_5     patterns containing any 3 states
+|	n_6     patterns containing any 4 states
+|   ----------------------------------------
+|>
+*/
+std::vector<double> SimData::getBinnedCounts()
+	{
+    return binv;
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Calculates the binned t function used in the Gelfand-Ghosh measure for the patterns currently stored in this 
 |	object. The binned t function looks like this for multinomial data, 4 DNA states and 4 taxa:
 |>
@@ -92,8 +114,9 @@ double SimData::calctBinned(unsigned nstates)
 	unsigned nbins				= 2*nstates - 1;
 	double epsilon				= 1.0/(double)nbins;
 
-	// classify patterns and build up v, the vector of bin counts
-	std::vector<double> v(nbins, 0.0);
+	// classify patterns and build up bin, the vector of bin counts
+    binv.clear();
+	binv.resize(nbins, 0.0);
 	std::set<int8_t> state_set;
 	for (SimPatternMapType::iterator it = sim_pattern_map.begin(); it != sim_pattern_map.end(); ++it)
 		{
@@ -123,12 +146,12 @@ double SimData::calctBinned(unsigned nstates)
 		if (sz == 1)
 			{
 			// pattern had only one state, so add pattern count to appropriate constant site bin
-			v[last_state] += this_count;
+			binv[last_state] += this_count;
 			}
 		else
 			{
 			// pattern had sz states, so add pattern count to appropriate variable site bin
-			v[nstates + sz - 2] += this_count;
+			binv[nstates + sz - 2] += this_count;
 			}
 		}
 
@@ -139,7 +162,7 @@ double SimData::calctBinned(unsigned nstates)
 	// now accumulate t by summing over bins
 	double t = 0.0;
 	//double total_check = 0.0;
-	for (std::vector<double>::iterator vit = v.begin(); vit != v.end(); ++vit)
+	for (std::vector<double>::iterator vit = binv.begin(); vit != binv.end(); ++vit)
 		{
 		double count				= (*vit);
 		double count_plus_epsilon	= count + epsilon;

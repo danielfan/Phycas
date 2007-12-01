@@ -232,6 +232,7 @@ class Phycas(object):
         self.samc_theta             = []        # normalizing factors (will have length ntax - 3 because levels with 1, 2 or 3 taxa are not examined)
         self.samc_distance_matrix   = None      # holds ntax x ntax hamming distance matrix used by SamcMove
         self.path_sample            = None
+        self.stored_treenames       = None
         self.stored_newicks         = None
         self.ps_delta_beta          = 0.0
         self.doing_path_sampling    = False
@@ -720,8 +721,10 @@ class Phycas(object):
         if not self.file_name_trees_stored or (self.tree_file_name != self.file_name_trees_stored):
             self.reader.readFile(self.tree_file_name)
             self.taxon_labels = self.reader.getTaxLabels()  # shouldn't overwrite taxon_labels stored previously
+            self.stored_treenames = []
             self.stored_newicks = []
             for t in self.reader.getTrees():
+                self.stored_treenames.append(t.name) # should use hash to store both names and newicks
                 self.stored_newicks.append(t.newick)
             self.phycassert(len(self.stored_newicks) > 0, 'expecting a trees block defining at least one tree in the nexus data file %s' % self.tree_file_name)
             self.file_name_trees_stored = self.tree_file_name    # prevents rereading same tree file later
@@ -1150,6 +1153,7 @@ class Phycas(object):
             max_height = 0.0
             for newick in self.stored_newicks:
                 tree.buildFromString(newick, True)
+                tree.rectifyNames(self.taxon_labels)
                 if self.pdf_outgroup_taxon:
                     num = tree.findTipByName(self.pdf_outgroup_taxon)
                     self.phycassert(num, 'could not root tree using specified outgroup: no tip having name "%s" could be found' % self.pdf_outgroup_taxon)
@@ -1163,6 +1167,7 @@ class Phycas(object):
             pdf.overwrite = True
             for newick in self.stored_newicks:
                 tree.buildFromString(newick, True)
+                tree.rectifyNames(self.taxon_labels)
                 if self.pdf_outgroup_taxon:
                     num = tree.findTipByName(self.pdf_outgroup_taxon)
                     tree.rerootAtTip(num)

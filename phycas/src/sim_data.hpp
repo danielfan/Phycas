@@ -56,6 +56,7 @@ class SimData
 
 		double						calct(unsigned nstates);
 		double						calctBinned(unsigned nstates);
+		std::vector<double>		    getBinnedCounts();
 		void						includeDataFrom(SimData &);
 		unsigned					getPatternLength();
 		VecStateList &				getCurrPattern();
@@ -86,6 +87,7 @@ class SimData
 		SimPatternMapType			sim_pattern_map;		/**< Keys are patterns, values are pattern counts */
 		VecStateList				tmp_pattern;			/**< Workspace for building up a pattern */
 		std::string					outstr;					/**< Workspace for building up a tabular representation of `sim_pattern_map' (used by showPatternMap function) */
+        std::vector<double>         binv;                   /**< Stores binned counts if calctBinned is called; otherwise, will be an empty vector. */
 	};
 
 typedef boost::shared_ptr<SimData>	SimDataShPtr;

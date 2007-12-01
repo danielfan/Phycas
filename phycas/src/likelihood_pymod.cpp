@@ -140,6 +140,7 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("debugAppendCountsToFile", &phycas::SimData::debugAppendCountsToFile)
 		.def("calctBinned", &phycas::SimData::calctBinned)
 		.def("getTotalCount", &phycas::SimData::getTotalCount)
+        .def("getBinnedCounts", &phycas::SimData::getBinnedCounts)
 		;
 #if defined(INTERFACE_WITH_CIPRES)
 #error INTERFACE_WITH_CIPRES defined

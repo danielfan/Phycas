@@ -421,9 +421,13 @@ class GelfandGhosh(object):
         
         """
         tree = Phylogeny.Tree()
-        
+
         # Let gg_y contain the observed pattern counts            
         self.likelihood.addDataTo(self.gg_y)
+
+        if self.gg_bin_patterns:
+            # temporary
+            binf = open('bins.txt','w')
 
         #    # If saving spectra, save the spectrum from the original data set
         #    if self.gg_save_spectra:
@@ -498,6 +502,11 @@ class GelfandGhosh(object):
                         self.addPaupBlock(fn, tree, self.params[1], self.params[i+2])
                         
                     if self.gg_bin_patterns:
+                        # temporary
+                        b = self.gg_simdata.getBinnedCounts()
+                        bstr = ['%.1f' % x for x in b]
+                        binf.write('%s\tpostpred rep.\n' % '\t'.join(bstr))
+                        
                         # Compute the t function for the simulated dataset                
                         curr_t = self.gg_simdata.calctBinned(4)
                     else:
@@ -548,6 +557,13 @@ class GelfandGhosh(object):
         self.tfile.close()
         if self.outfile:
             self.outfile.close()
+
+        if self.gg_bin_patterns:
+            # temporary
+            b = self.gg_y.getBinnedCounts()
+            bstr = ['%.1f' % x for x in b]
+            binf.write('%s\t(observed)\n' % '\t'.join(bstr))
+            binf.close()
 
         return (self.gg_Pm, self.gg_Gm, self.gg_Dm);        
         
