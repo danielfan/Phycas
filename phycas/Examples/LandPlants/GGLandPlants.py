@@ -17,6 +17,7 @@ for mean in internal_prior_means:
     analyzer.ls_move_weight = lsweight
     analyzer.gg_burnin = 10
     analyzer.gg_bin_patterns = True
+    analyzer.gg_bincount_filename = None
     analyzer.gg_nreps = 1
     analyzer.gg_pfile = '%.9f_%s.p' % (mean, data_file_name)
     analyzer.gg_tfile = '%.9f_%s.t' % (mean, data_file_name)

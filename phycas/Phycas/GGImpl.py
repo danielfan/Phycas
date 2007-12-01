@@ -25,6 +25,7 @@ class GelfandGhosh(object):
         self.rnseed                 = phycas.random_seed
         self.num_rates              = phycas.num_rates
         self.gg_bin_patterns        = phycas.gg_bin_patterns
+        self.gg_bincount_filename   = phycas.gg_bincount_filename
         self.gg_save_postpreds      = phycas.gg_save_postpreds
         self.gg_postpred_prefix     = phycas.gg_postpred_prefix
 
@@ -261,10 +262,6 @@ class GelfandGhosh(object):
         else:                
             self.gg_t_y = self.gg_y.calct(4)
 
-        # temporary debugging code
-        #print 't for observed data =',self.gg_t_y
-        #print self.gg_y.patternTable('A C G T'.split())
-
         # gg_mu is the mean of all the posterior predictive datasets.
         # Compute the t function for the mean dataset
         if self.gg_bin_patterns:
@@ -425,9 +422,8 @@ class GelfandGhosh(object):
         # Let gg_y contain the observed pattern counts            
         self.likelihood.addDataTo(self.gg_y)
 
-        if self.gg_bin_patterns:
-            # temporary
-            binf = open('bins.txt','w')
+        if self.gg_bin_patterns and self.gg_bincount_filename:
+            binf = open(self.gg_bincount_filename,'w')
 
         #    # If saving spectra, save the spectrum from the original data set
         #    if self.gg_save_spectra:
@@ -501,8 +497,7 @@ class GelfandGhosh(object):
                         self.gg_simdata.saveToNexusFile(fn, self.taxon_labels, 'dna', ('a','c','g','t'))
                         self.addPaupBlock(fn, tree, self.params[1], self.params[i+2])
                         
-                    if self.gg_bin_patterns:
-                        # temporary
+                    if self.gg_bin_patterns and self.gg_bincount_filename:
                         b = self.gg_simdata.getBinnedCounts()
                         bstr = ['%.1f' % x for x in b]
                         binf.write('%s\tpostpred rep.\n' % '\t'.join(bstr))
@@ -558,8 +553,7 @@ class GelfandGhosh(object):
         if self.outfile:
             self.outfile.close()
 
-        if self.gg_bin_patterns:
-            # temporary
+        if self.gg_bin_patterns and self.gg_bincount_filename:
             b = self.gg_y.getBinnedCounts()
             bstr = ['%.1f' % x for x in b]
             binf.write('%s\t(observed)\n' % '\t'.join(bstr))

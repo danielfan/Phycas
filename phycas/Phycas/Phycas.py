@@ -189,6 +189,7 @@ class Phycas(object):
         self.gg_pfile               = None      # name of parameter file to use for Gelfand-Ghosh calculations
         self.gg_tfile               = None      # name of tree file to use for Gelfand-Ghosh calculations
         self.gg_bin_patterns        = False     # if True, patterns will be classified into 7 bins, corresponding to 'A only', 'C only', 'G only', 'T only', 'any 2 states', 'any 3 states' and 'any 4 states'. Gelfand-Ghosh statistics will be computed on this vector of counts instead of the complete vector of pattern counts. Can only be used for DNA/RNA data.
+        self.gg_bincount_filename   = None      # if not None, and if gg_bin_patterns is True, the binned counts for the original dataset and all posterior predictive data sets will be saved to a file by this name
 
         # Variables associated with the FLEXCAT model
         self.use_flex_model         = False

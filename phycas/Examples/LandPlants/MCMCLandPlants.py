@@ -7,7 +7,7 @@ ncycles = 21000
 samplefreq = 10
 lsweight = 100
 external_prior_mean = 0.1
-internal_prior_means = [10**x for x in range(-4,0)]
+internal_prior_means = [10**x for x in range(-8,4)]
 
 def analyze(internal_prior_mean):
     analyzer = Phycas()
