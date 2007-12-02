@@ -1,8 +1,7 @@
 from phycas import *
 
 data_file_name = 'Yang_and_Rannala_Karol.nex'
-internal_prior_means = [10**-8]
-#internal_prior_means = [10**x for x in range(-8,-6)]
+internal_prior_means = [10**x for x in (-8,-7,-6,-5,-4,-3,-2,-1,0,4)]
 
 outf = open('output.txt', 'w')
 outf.write('prior mean\tPm\tGm\tDm\n')
@@ -12,7 +11,7 @@ for mean in internal_prior_means:
     analyzer = Phycas()
     analyzer.data_file_name = data_file_name
     analyzer.default_model = 'hky'
-    analyzer.num_rates = 5
+    analyzer.num_rates = 3
     analyzer.using_hyperprior = False 
     analyzer.nchains = 1
     analyzer.gg_kvect = [1.0]

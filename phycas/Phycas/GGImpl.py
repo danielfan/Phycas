@@ -501,13 +501,14 @@ class GelfandGhosh(object):
                         self.gg_simdata.saveToNexusFile(fn, self.taxon_labels, 'dna', ('a','c','g','t'))
                         self.addPaupBlock(fn, tree, self.params[1], self.params[i+2])
                         
-                    if self.gg_bin_patterns and self.gg_bincount_filename:
-                        b = self.gg_simdata.getBinnedCounts()
-                        bstr = ['%.1f' % x for x in b]
-                        binf.write('%s\tpostpred rep.\n' % '\t'.join(bstr))
-                        
+                    if self.gg_bin_patterns:
                         # Compute the t function for the simulated dataset                
                         curr_t = self.gg_simdata.calctBinned(4)
+
+                        if self.gg_bincount_filename:
+                            b = self.gg_simdata.getBinnedCounts()
+                            bstr = ['%.1f' % x for x in b]
+                            binf.write('%s\tpostpred rep.\n' % '\t'.join(bstr))
                     else:
                         # Compute the t function for the simulated dataset                
                         curr_t = self.gg_simdata.calct(4)
