@@ -173,12 +173,13 @@ class Phycas(object):
         
         # Variables associated with path sampling (i.e. thermodynamic integration)
         # If pathsampling() function called, ncycles will be ignored and instead the number of cycles
-        # will be ps_burnin + (ps_Q*ps_nincr)
+        # will be ps_burnin + (ps_Q*ps_nbetaincr)
         self.ps_toward_posterior    = True      # if True, chain will start with beta = 0.0 (exploring prior) and end up exploring posterior; otherwise, chain will begin by exploring posterior and end exploring prior
         self.ps_burnin              = 1000      # number of cycles used to equilibrate before increasing beta
         self.ps_Q                   = 100       # number of cycles between changes in beta
-        self.ps_nbetaincr           = 100       # ps_delta_beta = 1/ps_nbetaincr
-        
+        self.ps_nbetaincr           = 10        # the number of values beta will take on during the run; for example, if this value is 4, then beta will take on these values: 0, 1/3, 2/3, 1
+        self.ps_filename            = None      # if defined, a file by this name will be created containing the intermediate results (average log-likelihood at each step of the path)
+
         # Variables associated with Gelfand-Ghosh calculation
         self.gg_outfile             = 'gg.txt'  # file in which to save gg results (use None to not save results)
         self.gg_nreps               = 1         # the number of replicate simulations to do every MCMC sample
@@ -237,6 +238,7 @@ class Phycas(object):
         self.stored_newicks         = None
         self.ps_delta_beta          = 0.0
         self.doing_path_sampling    = False
+        self.psf                    = None
         self.pdf_splits_to_plot     = None
         
     # see http://mail.python.org/pipermail/python-list/2002-January/121376.html
@@ -489,8 +491,10 @@ class Phycas(object):
             else:
                 ps_beta = 1.0
             chain.setPower(ps_beta)
-            print 'Chain power set to %.3f' % ps_beta
-
+            if self.ps_filename:
+                self.psf = open(self.ps_filename,'w')
+                self.psf.write('beta\tavglnL\n')
+            
         for cycle in xrange(self.ncycles):
             for i,c in enumerate(self.mcmc_manager.chains):
                 self.updateAllUpdaters(c, i, cycle)
@@ -505,6 +509,8 @@ class Phycas(object):
                 if ps_Qnum == self.ps_Q:
                     avg = ps_Qsum/float(self.ps_Q)
                     self.path_sample.append(avg)
+                    if self.ps_filename:
+                        self.psf.write('%.3f\t%.5f\n' % (ps_beta,avg))
                     ps_Qsum = 0.0
                     ps_Qnum = 0
                     if self.ps_toward_posterior:
@@ -512,7 +518,6 @@ class Phycas(object):
                     else:
                         ps_beta -= self.ps_delta_beta
                     chain.setPower(ps_beta)
-                    print 'Chain power set to %.3f' % ps_beta
             if (cycle + 1) % self.sample_every == 0:
                 self.mcmc_manager.recordSample(cycle)
                 self.stopwatch.normalize()
@@ -547,6 +552,9 @@ class Phycas(object):
             for v in self.path_sample[1:-1]:
                 marginal_like += v
             marginal_like /= float(C)
+            if self.ps_filename:
+                self.psf.write('%s\t%.5f\n' % ('-->',marginal_like))
+                self.psf.close()
             self.output('Marginal likelihood (continuous path sampling method) = %f' % marginal_like)
         elif self.nchains > 1 and not self.is_standard_heating:
             # Calculate marginal likelihood using discrete path sampling
@@ -977,9 +985,8 @@ class Phycas(object):
         
         """
         self.nchains = 1
-        #self.sample_every = 1
         self.ncycles = self.ps_burnin + (self.ps_Q*self.ps_nbetaincr)
-        self.ps_delta_beta = 1.0/self.ps_nbetaincr
+        self.ps_delta_beta = 1.0/float(self.ps_nbetaincr - 1)
         self.doing_path_sampling = True
         self.setupMCMC()
         self.runMCMC()
@@ -1219,10 +1226,11 @@ class Phycas(object):
             nd.setY(0.0)
             ntips = 1.0
         max_height = height
-        taxon_label = nd.getNodeName()
-        label_width = float(self.pdf_tip_label_height)*pdf.calcStringWidth(self.pdf_tip_label_font, taxon_label)
-        if label_width > max_label_points:
-            max_label_points = label_width
+        if self.pdf_tip_label_font:
+            taxon_label = nd.getNodeName()
+            label_width = float(self.pdf_tip_label_height)*pdf.calcStringWidth(self.pdf_tip_label_font, taxon_label)
+            if label_width > max_label_points:
+                max_label_points = label_width
         
         # Record information about the internal node serving as the subroot
         nd = nd.getNextPreorder()
@@ -1247,10 +1255,11 @@ class Phycas(object):
                 if nd.isTip():
                     nd.setY(ntips)
                     ntips += 1.0
-                    taxon_label = nd.getNodeName()
-                    label_width = float(self.pdf_tip_label_height)*pdf.calcStringWidth(self.pdf_tip_label_font, taxon_label)
-                    if label_width > max_label_points:
-                        max_label_points = label_width
+                    if self.pdf_tip_label_font:
+                        taxon_label = nd.getNodeName()
+                        label_width = float(self.pdf_tip_label_height)*pdf.calcStringWidth(self.pdf_tip_label_font, taxon_label)
+                        if label_width > max_label_points:
+                            max_label_points = label_width
                 else:
                     nd.setY(0.0)
 
@@ -1281,7 +1290,9 @@ class Phycas(object):
 
         # Find xscaler (amount by which branch lengths must be multiplied to give x-coordinate)
         # and yscaler (amount by which the tip position must be multiplied to give y-coordinate).
-        xheight = float(self.pdf_tip_label_height)*pdf.getXHeight(self.pdf_tip_label_font)
+        xheight = 0.0
+        if self.pdf_tip_label_font:
+            xheight = float(self.pdf_tip_label_height)*pdf.getXHeight(self.pdf_tip_label_font)
         half_xheight = xheight/2.0
         ntips = tree.getNTips()
         label_width   = max_label_points + spacer
@@ -1349,7 +1360,8 @@ class Phycas(object):
                     node_y -= scalebar_height
                 brlen = nd.isRoot() and xscaler*nd.getX() or xscaler*nd.getEdgeLen()
                 # draw tip node name
-                pdf.addText(node_x + spacer, node_y - half_xheight, self.pdf_tip_label_font, tip_font_points, nd.getNodeName())
+                if self.pdf_tip_label_font:
+                    pdf.addText(node_x + spacer, node_y - half_xheight, self.pdf_tip_label_font, tip_font_points, nd.getNodeName())
                 # draw line representing edge leading to tip node
                 pdf.addLine(node_x, node_y, node_x - brlen, node_y, self.pdf_line_width)
             else:

@@ -441,6 +441,12 @@ class GelfandGhosh(object):
         #            self.gg_spectrum_row += 1
         #            self.gg_spectrum.appendCountsToFile('spectra.txt', False)
 
+        #swtmp = ProbDist.StopWatch()
+        #swtmp.start()
+        #swtmp.stop()
+        #cum_caltbinned_secs += swtmp.elapsedSeconds()
+        #cum_caltbinned_secs = 0.0
+        
         print 'Performing posterior-predictive simulations:'        
         prev_pct_done = 0.0        
         stopwatch = ProbDist.StopWatch()
@@ -470,6 +476,7 @@ class GelfandGhosh(object):
                     secs = stopwatch.elapsedSeconds()
                     print '  %.0f%% done (%.1fs)...' % (pct_done,secs - prev_secs)
                     prev_secs = secs
+                    cum_caltbinned_secs = 0.0
 
                 # TreeLikelihood object needs to be informed that model has changed
                 self.likelihood.replaceModel(self.model)
@@ -500,7 +507,7 @@ class GelfandGhosh(object):
                         fn = '%s_cycle%d_rep%d.nex' % (self.gg_postpred_prefix, i+1, j)
                         self.gg_simdata.saveToNexusFile(fn, self.taxon_labels, 'dna', ('a','c','g','t'))
                         self.addPaupBlock(fn, tree, self.params[1], self.params[i+2])
-                        
+
                     if self.gg_bin_patterns:
                         # Compute the t function for the simulated dataset                
                         curr_t = self.gg_simdata.calctBinned(4)
