@@ -137,6 +137,7 @@ setupArgs = {
      'phycas.Conversions',
      'phycas.DataMatrix',
      'phycas.Likelihood',
+     'phycas.PDFGen',
      'phycas.ProbDist',
      'phycas.Phycas',
      'phycas.Phylogeny',
