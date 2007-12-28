@@ -346,6 +346,9 @@ void HKY::calcPMat(double * * pMat, double edgeLength) const
 	double bigPiInvT = 1.0/PiT;
 
 	double t = edgeLength;
+    // The next two lines fix the "Rota" bug; see BUGS file for details
+    if (t < 1.e-8) 
+        t = 1.e-8; //TreeNode::edgeLenEpsilon;
 	double ta, tb, tc, td, y;
 	double denom = ((piA + piG)*(piC + piT) + kappa*((piA*piG) + (piC*piT)));
 	double beta = 0.5/denom;
