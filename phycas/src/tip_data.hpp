@@ -76,7 +76,7 @@ typedef std::vector<unsigned int> StateListPos;
 |	The table below explains this enigmatic global state list. The asterisks in the first column mark the elements of 
 |	the global state list position vector given above. The second column is the global state list, which is also given 
 |	above. The third column contains the codes used for states internally. Finally, the last column relates	these global 
-|	state codes to the representation in the original nexus file. Horizonatal lines mark the boundaries between states. 
+|	state codes to the representation in the original nexus file. Horizontal lines mark the boundaries between states. 
 |	The first state list element in each section holds the number of subsequent state list elements that need to be read
 |	in order to fully characterize the state or state combination. The unambiguous states come first, followed by the 
 |	state code representing complete ambiguity (corresponding to the missing data symbol - usually ? - in the nexus data
@@ -137,7 +137,7 @@ typedef std::vector<unsigned int> StateListPos;
 |	conditional likelihood arrays, and it could be quite inefficient if these augmented matrices had many unnecessary 
 |	rows. Thus, when a row in the global matrix is copied to the tip of a tree, where it is used to compute likelihoods,
 |	a translation is done into local state codes. The local codes are identical to the global codes for the primary states
-|	and the state repreenting complete ambiguity, but may differ from the global codes for codes representing partial
+|	and the state representing complete ambiguity, but may differ from the global codes for codes representing partial
 |	ambiguities. To illustrate, consider taxon4 in the example. It has these states in the NEXUS data file:
 |	  A  C  T  R  Y
 |	which translate to these global state codes:

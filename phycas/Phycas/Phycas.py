@@ -58,7 +58,7 @@ class Phycas(object):
         self.gamma_shape_prior      = ExponentialDist(1.0)
         self.starting_shape         = 0.5
         self.fix_shape              = False 
-        self.use_inverse_shape      = False      # if True, gamma_shape_prior is applied to 1/shape rather than shape
+        self.use_inverse_shape      = False     # if True, gamma_shape_prior is applied to 1/shape rather than shape
 
         self.estimate_pinvar        = False
         self.pinvar_prior           = BetaDist(1.0, 1.0)
@@ -118,6 +118,12 @@ class Phycas(object):
         self.pdf_newick                = None           # set to the tree description to print if only want to save one tree to a pdf file
         self.pdf_outgroup_taxon        = None           # set to taxon name of tip serving as the outgroup for display rooting purposes (note: at this time outgroup can consist of just one taxon)
         
+        # Variables associated with the sumt command
+        self.sumt_outgroup_taxon       = None           # set to taxon name of tip serving as the outgroup for display rooting purposes (note: at this time outgroup can consist of just one taxon)
+        self.sumt_tfile_name           = None           # set to name of the t file; default is getPrefix()+'.p')
+        self.sumt_contree_pdf_file     = None           # name of pdf file in which to save graphical representation of consensus tree
+        self.sumt_burnin               = 1              # number of trees to skip in sumt_tfile_name
+
         # Variables associated with Polytomy (Bush) moves
         self.allow_polytomies       = False     # if True, do Bush moves in addition to Larget-Simon moves; if False, do Larget-Simon moves only
         self.polytomy_prior         = True      # if True, use polytomy prior; if False, use resolution class prior
@@ -865,6 +871,12 @@ class Phycas(object):
         return self._logFileName
         
     log_file_name = property(getLogFile, setLogFile)
+
+    def getPrefix(self):
+        prefix = os.path.abspath(self.data_file_name) #os.path.basename(self.data_file_name)
+        if self.outfile_prefix:
+            prefix = self.outfile_prefix
+        return prefix
     
     def openParameterAndTreeFiles(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -873,9 +885,7 @@ class Phycas(object):
         user-supplied prefix and opens the files
         
         """
-        prefix = os.path.abspath(self.data_file_name) #os.path.basename(self.data_file_name)
-        if self.outfile_prefix:
-            prefix = self.outfile_prefix
+        prefix = selfgetPrefix()
         self.param_file_name = prefix + '.p'
         self.tree_file_name = prefix + '.t'
 
@@ -1070,6 +1080,11 @@ class Phycas(object):
         gelfand_ghosh = GGImpl.GelfandGhosh(self)
         self.gg_Pm, self.gg_Gm, self.gg_Dm = gelfand_ghosh.run()
         return (self.gg_Pm, self.gg_Gm, self.gg_Dm)
+
+    def sumt(self):
+        import SumTImpl
+        tree_summarizer = SumTImpl.TreeSummarizer(self)
+        tree_summarizer.consensus()
 
     def calcDistances(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

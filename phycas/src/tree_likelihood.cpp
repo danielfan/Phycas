@@ -1955,7 +1955,7 @@ unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix &
 				}
 			}
 		}
-	else
+	else    // not codon model
 		{
 		// Loop across each site in mat
 		for (unsigned j = 0; j < nchar; ++j)
