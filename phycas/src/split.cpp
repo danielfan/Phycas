@@ -53,9 +53,8 @@ void Split::Clear()
     excl_symbol		= 'x';
     excl_bits.clear();
 	unit.resize(nunits, (split_t)0);
-    // std::fill seems to have a bug on Microsoft Visual C++ 7.1.6030 - doesn't fill the last element
-    //std::fill(unit.begin(), unit.end(), (split_t)0);
-    std::fill_n(unit.begin(), nunits, (split_t)0);
+    std::fill(unit.begin(), unit.end(), (split_t)0);
+    //std::fill_n(unit.begin(), nunits, (split_t)0);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -64,9 +63,8 @@ void Split::Clear()
 */
 void Split::Reset()
 	{
-    // std::fill seems to have a bug on Microsoft Visual C++ 7.1.6030 - doesn't fill the last element
-    //std::fill(unit.begin(), unit.end(), (split_t)0);
-    std::fill_n(unit.begin(), nunits, (split_t)0);
+    std::fill(unit.begin(), unit.end(), (split_t)0);
+    //std::fill_n(unit.begin(), nunits, (split_t)0);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -1099,4 +1097,5 @@ void Split::SetNTaxa(unsigned n)
     {
     Clear();
     CalcNUnits(n);
+    Resize();
     }
