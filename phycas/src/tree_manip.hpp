@@ -58,6 +58,7 @@ class TreeManip
 
 		void		setRandomEdgeLens(ProbDistShPtr d);
 
+        void        buildTreeFromSplitVector(const std::vector<std::string> & split_vect, ProbDistShPtr edge_len_dist);
 		//void		BuildTreeFromID(NxsTaxaManager *tm,const TreeID& tree_id, unsigned root_at = 0);
 		//void		SimpleBuildTreeFromID(unsigned nlvs, const TreeIDShPtr tree_id, unsigned root_at = 0);
 

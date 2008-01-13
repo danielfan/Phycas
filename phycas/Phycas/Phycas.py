@@ -121,7 +121,8 @@ class Phycas(object):
         # Variables associated with the sumt command
         self.sumt_outgroup_taxon       = None           # set to taxon name of tip serving as the outgroup for display rooting purposes (note: at this time outgroup can consist of just one taxon)
         self.sumt_tfile_name           = None           # set to name of the t file; default is getPrefix()+'.p')
-        self.sumt_contree_pdf_file     = None           # name of pdf file in which to save graphical representation of consensus tree
+        self.sumt_majrule_pdf_file     = None           # name of pdf file in which to save graphical representation of the majority-rule consensus tree
+        self.sumt_majrule_tree_file    = None           # name of tree file in which to save the majority-rule consensus tree
         self.sumt_burnin               = 1              # number of trees to skip in sumt_tfile_name
 
         # Variables associated with Polytomy (Bush) moves

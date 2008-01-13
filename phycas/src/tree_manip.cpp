@@ -996,6 +996,103 @@ void TreeManip::DeleteLeaf(
 	tree->InvalidateNodeCounts();
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|   Builds a star tree with the number of taxa implied by the first element of `split_vect', then applies each aplit
+|   from `split_vect' in turn until finished. Assumes all splits are mutually compatible, that none are trivial splits,
+|   and that each split is represented by a string of '-' and '*' characters.
+*/
+void TreeManip::buildTreeFromSplitVector(
+    const std::vector<std::string> & split_vect,	/**> is the vector of string representations of splits specifying the edges in the tree */
+    ProbDistShPtr edge_len_dist)	                /**< is the probability distribution from which to draw the edge lengths */
+	{
+	//std::ofstream tmpf("idbuild.txt");
+
+    // Bail out now if user has supplied an empty split_vect
+	if (split_vect.empty())
+		{
+		//tmpf << "split vector empty" << std::endl;
+        throw XPhylogeny("could not build tree from empty split vector");
+		}
+
+    // Create a vector of split objects from the supplied vector of split representations
+    // Determine number of taxa from first element of split_vect.
+    std::vector<Split> splits;
+    splits.resize(split_vect.size());
+    std::vector<std::string>::const_iterator sit = split_vect.begin();
+    unsigned ntips = sit->length();
+    unsigned i = 0;
+    for (; sit != split_vect.end(); ++sit, ++i)
+        {
+        // Create a Split object from the pattern representation
+        Split & s = splits[i];
+        s.CreateFromPattern(*sit);
+        PHYCAS_ASSERT(s.GetNTaxa() == ntips);
+        PHYCAS_ASSERT(s.CountOnBits() < ntips - 1); // no trivial splits allowed
+        PHYCAS_ASSERT(s.CountOnBits() > 1); // no trivial splits allowed
+        if (s.IsBitSet(0))
+            s.InvertSplit();    // ensure all splits are oriented correctly
+        }
+
+    // Sort the split objects from smallest to largest so that more inclusive splits will
+    // follow the less inclusive splits
+    std::sort(splits.begin(), splits.end());
+
+    // Build a star tree to begin with
+    starTree(ntips, edge_len_dist); 
+
+    TreeNode * root = tree->GetFirstPreorder();
+    TreeNode * subroot = root->GetNextPreorder();
+    PHYCAS_ASSERT(root != NULL);
+    PHYCAS_ASSERT(subroot != NULL);
+
+    // Loop over all splits
+    for (std::vector<Split>::iterator splitit = splits.begin(); splitit != splits.end(); ++splitit)
+        {
+        Split & s = *splitit;
+
+        // Create a new node to hold the taxa in the current split
+       	TreeNode * newNd = tree->GetNewNode();
+	    double newNdLen = edge_len_dist->Sample();
+	    newNd->SetEdgeLen(newNdLen);
+        
+        tree->RecalcAllSplits(ntips);
+
+        if (subroot->GetSplit().SubsumedIn(s))
+            continue;
+
+        // Identify all nodes that should be detached, but don't detach them just yet
+        std::vector<TreeNode *> prune_list; 
+        for (TreeNode * nd = subroot->GetNextPreorder(); nd != NULL; nd = nd->GetNextPreorder())
+            {
+            Split & ss = nd->GetSplit();
+            TreeNode * next = NULL;
+            if (ss.SubsumedIn(s))
+                {
+                prune_list.push_back(nd);
+                nd = tree->FindLastPreorderInClade(nd);
+                }
+            }
+
+        PHYCAS_ASSERT(!prune_list.empty());
+        
+        // Now detach all nodes in prune_list and add each to newNd
+        
+        for (std::vector<TreeNode *>::iterator nit = prune_list.begin(); nit != prune_list.end(); ++nit)
+            {
+            TreeNode * nd = *nit;
+            DetachSubtree(*nit);
+            InsertSubtree(*nit, newNd, TreeManip::kOnRight);
+            }
+
+        // Add newNd to subroot (only descendant of tip serving as the root)
+        InsertSubtree(newNd, subroot, TreeManip::kOnRight);
+
+        tree->DebugCheckTree(false, false, 2);
+        }
+	}
+#endif
+
 // *********************************************************************************************************************
 // *********************************************************************************************************************
 // ************************************ Phycas not yet ready for functions below here **********************************
@@ -1154,165 +1251,6 @@ void TreeManip::BuildTreeFromID(
 	//	std::cerr << "nlvs = " << nlvs << std::endl;
 	//	}
 	PHYCAS_ASSERT(tree->GetNLeaves() == nlvs);
-	PHYCAS_ASSERT(rootNode == tree->GetFirstPreorder());
-
-	tree->RefreshFullID();
-	tree->DebugCheckTreeStructure();
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Expects splits in tree_id to be ordered from smallest (least inclusive) to largest. All nodes in tree have branch 
-|	lengths equal to 1.0 after this function. Use SplitManager::SetBrlensFromSplits function to assign branch lengths
-|	based on splits in SplitManager. No TreeID is made here, so if SplitManager::SetBrlensFromSplits is not called 
-|	(it creates a TreeID), you should call CreateID explicitly after building the tree.
-|	Note that there is a nearly identical method called TreeManip::BuildTreeFromID that takes a reference to a
-|	NxsTaxaManager as its first argument. This allows it to handle cases in which fewer taxa are in the tree 
-|	specified by the tree_id than are in the data matrix. Also, handles case in which user has excluded some taxa.
-|	Because it is never safe to assume that no taxa have been excluded, this version should be deprecated soon.
-*/
-void TreeManip::SimpleBuildTreeFromID(
-  unsigned nlvs,			/* the number of leaves in the tree */
-  const TreeID& tree_id,	/* the TreeID object specifying the splits to be used in constructing the tree */
-  unsigned root_at)			/* the index of the tip node serving as the root */	//POL added 22-Oct-2004
-	{
-	const double commonDefEdgeLen = 1.0;
-	unsigned nextInternalNodeNum = nlvs;
-
-	SplitSet const &ss = tree_id.GetSplitSet();
-
-#if defined(DEBUG_BUILD_TREE_FROM_ID)
-	std::ofstream tmpf("idbuild.txt");
-#endif
-
-	if (ss.empty())
-		{
-#if defined(DEBUG_BUILD_TREE_FROM_ID)
-		tmpf << "split set empty, building star tree" << std::endl;
-#endif
-
-		SimpleBuildStarTree(nlvs, root_at);	//POL 22-Oct-2004 added root_at
-		return;
-		}
-
-	typedef list<TreeNode *> NodeList;
-	NodeList nodes;
-	for (unsigned leaf = 0; leaf < nlvs; ++leaf)
-		{
-		if (leaf != root_at)
-			{
-			TreeNode *leafNode = tree->CreateTreeNode(leaf, commonDefEdgeLen, true);
-#if defined(DEBUG_BUILD_TREE_FROM_ID)
-			tmpf << "Adding node number " << leaf << " to node list" << std::endl;
-#endif
-			nodes.push_back(leafNode);
-			}
-		}
-
-	std::string tmps;
-	TreeNode *lastNode = NULL;
-	NodeList::iterator tmp;
-	for (SplitSet::const_iterator ssi = ss.begin(); ssi != ss.end(); ++ssi)
-		{
-		const Split &s = (*ssi);
-
-#if defined(DEBUG_BUILD_TREE_FROM_ID)
-		tmpf << "\n" << std::setw(6) << "s";
-		tmpf << " --> ";
-		tmps.clear();
-		s.CreateAndAppendPatternRepresentation(&tmps);
-		tmpf << tmps << std::endl;
-#endif
-
-		TreeNode *newnd = tree->CreateTreeNode(nextInternalNodeNum++, commonDefEdgeLen, false);
-		NodeList::iterator it = nodes.begin();
-		for (; it != nodes.end();)
-			{
-			TreeNode *child = (*it);
-
-#if defined(DEBUG_BUILD_TREE_FROM_ID)
-			tmpf << std::setw(6) << child->GetNodeNumber() << " --> ";
-			tmps.clear();
-			child->split.CreateAndAppendPatternRepresentation(&tmps);
-			tmpf << tmps;
-#endif
-
-			bool subsumed = child->split.SubsumedIn(s);
-			if (subsumed)
-				{
-				InsertSubtree(child, newnd, TreeManip::kOnRight);
-				newnd->split.CombineWith(child->split);
-
-#if defined(DEBUG_BUILD_TREE_FROM_ID)
-				tmpf << " ==> subsumed in s, deleting node";
-#endif
-
-				tmp = it++;
-				nodes.erase(tmp);
-				}
-			else
-				++it;
-
-#if defined(DEBUG_BUILD_TREE_FROM_ID)
-			tmpf << std::endl;
-#endif
-			}
-
-#if defined(DEBUG_BUILD_TREE_FROM_ID)
-		tmpf << "\nAdding node number " << newnd->GetNodeNumber() << " to node list" << std::endl;
-#endif
-
-		lastNode = newnd;
-		nodes.push_back(newnd);
-
-#if defined(DEBUG_BUILD_TREE_FROM_ID)
-		tmpf << "Node list now: ";
-		for (tmp = nodes.begin(); tmp != nodes.end(); ++tmp)
-			{
-			tmpf << (*tmp)->GetNodeNumber() << " ";
-			}
-		tmpf << "\n" << std::endl;
-#endif
-		}
-
-#if defined(DEBUG_BUILD_TREE_FROM_ID)
-	tmpf << "\n\nAll remaining nodes ";
-	for (NodeList::iterator it = nodes.begin(); it != nodes.end(); ++it)
-		{
-		tmpf << "[" << (*it)->GetNodeNumber() << "]";
-		}
-	tmpf << std::endl;
-	//tmpf << " will be added to root (taxon 0):\n  ";
-	tmpf << " will be added to root (taxon " << root_at << "):\n  "; //POL 22-Oct-2004
-
-	tmpf.close();
-#endif
-
-#if 1
-	// Create the root node
-	//
-	TreeNode *rootNode = tree->CreateTreeNode(root_at, 0.0, false);	//POL 22-Oct-2004
-
-	// Want to add lastNode to rootNode.
-	//
-	InsertSubtree(lastNode, rootNode, TreeManip::kOnRight);
-	rootNode->split.CombineWith(lastNode->split);
-#else
-	tmp = nodes.begin();
-	TreeNode *lastNode = *tmp;
-	//TreeNode *rootNode = tree->CreateTreeNode(0,0.0, false);
-	TreeNode *rootNode = tree->CreateTreeNode(root_at, 0.0, false);	//POL 22-Oct-2004
-	InsertSubtree(lastNode, rootNode, TreeManip::kOnRight);
-#endif
-
-	tree->firstPreorder = rootNode;
-	tree->TraverseTree();
-
-	//if (Tree::gDebugOutput)
-    //	{
-	//	std::cerr << "GetNLeaves() = " << tree->GetNLeaves() << std::endl;
-	//	std::cerr << "nlvs = " << nlvs << std::endl;
-	//	}
-	//PHYCAS_ASSERT(tree->GetNLeaves() == nlvs);
 	PHYCAS_ASSERT(rootNode == tree->GetFirstPreorder());
 
 	tree->RefreshFullID();

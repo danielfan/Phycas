@@ -119,6 +119,9 @@ BOOST_PYTHON_MODULE(_Phylogeny)
 		;
 
 	class_<TreeManip>("TreeManipBase", init<boost::shared_ptr<Tree> >())
+#if POLPY_NEWWAY
+		.def("buildTreeFromSplitVector", &TreeManip::buildTreeFromSplitVector)
+#endif
 		.def("starTree", &TreeManip::starTree)
 		.def("randomTree", &TreeManip::randomTree)
 		.def("setRandomEdgeLens", &TreeManip::setRandomEdgeLens)

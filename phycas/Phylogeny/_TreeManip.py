@@ -22,7 +22,27 @@ class TreeManip(TreeManipBase):
 
         """
         TreeManipBase.__init__(self, t)
+
+    # POLPY_NEWWAY        
+    def buildTreeFromSplitVector(self, split_vect, edge_len_dist):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Creates a tree having the splits defined in split_vect, which should
+        be a list or tuple of string representations of splits. All splits in
+        split_vect should be compatible. Later splits not compatible with
+        earlier ones already in the tree will be ignored.
         
+        >>> from phycas import *
+        >>> t = Phylogeny.Tree()
+        >>> tm = Phylogeny.TreeManip(t)
+        >>> v = ['-*****','--****', '--**--', '----**']
+        >>> tm.buildTreeFromSplitVector(v, ProbDist.ExponentialDist(10.0))
+        >>> print t.walkPreorder()
+        (0) -> [5] -> (4) -> (3) -> (2) -> (1)
+
+        """
+        TreeManipBase.buildTreeFromSplitVector(self, split_vect, edge_len_dist)
+
     def starTree(self, num_tips, edge_len_dist):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
