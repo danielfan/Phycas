@@ -38,7 +38,7 @@ class TreeManip(TreeManipBase):
         >>> v = ['-*****','--****', '--**--', '----**']
         >>> tm.buildTreeFromSplitVector(v, ProbDist.ExponentialDist(10.0))
         >>> print t.walkPreorder()
-        (0) -> [5] -> (4) -> (3) -> (2) -> (1)
+        (0) -> [6] -> (1) -> [4294967295] -> [4294967295] -> (3) -> (2) -> [4294967295] -> (5) -> (4)
 
         """
         TreeManipBase.buildTreeFromSplitVector(self, split_vect, edge_len_dist)

@@ -1,0 +1,47 @@
+#nexus
+
+begin trees;
+  translate
+  1 '1 Arabidopsis thaliana',
+  2 '2 Taxus baccata',
+  3 '3 Huperzia lucidula',
+  4 '4 Psilotum nudum',
+  5 '5 Dicksonia antarctica',
+  6 '6 Sphagnum palustre',
+  7 '7 Anthoceros formosae',
+  8 '8 Marchantia polymorpha',
+  9 '9 Chara connivens',
+  10 '10 Lamprothamnium macropogon',
+  11 '11 Lychnothamnus barbatus',
+  12 '12 Nitellopsis obtusa',
+  13 '13 Nitella opaca',
+  14 '14 Tolypella int prolifera',
+  15 '15 Coleochaete orbicularis',
+  16 '16 Coleochaete soluta 32d1',
+  17 '17 Coleochaete irregularis',
+  18 '18 Coleochaete sieminskiana',
+  19 '19 Chaet globosum SAG2698',
+  20 '20 Chaet oval',
+  21 '21 Onychonema sp',
+  22 '22 Cosmocladium perissum',
+  23 '23 Gonatozygon monotaenium',
+  24 '24 Spirogyra maxima 2495',
+  25 '25 Mesotaenium caldariorum',
+  26 '26 Zygnema peliosporum 45',
+  27 '27 Mougeotia sp 758',
+  28 '28 Klebsormidium flaccidum',
+  29 '29 Klebsormidium subtilissimum',
+  30 '30 Klebsormidium nitens',
+  31 '31 Entransia fimbriata',
+  32 '32 Chlorokybus atmosphyticus',
+  33 '33 Mesostigma viride',
+  34 '34 Mesostigma viride NIES',
+  35 '35 Volvox carteri',
+  36 '36 Chlamydomonas reinhardtii',
+  37 '37 Paulschulzia pseudovolvox',
+  38 '38 Pteromonas angulos',
+  39 '39 Nephroselmis olivacea',
+  40 '40 Cyanophora paradoxa'
+  ;
+  tree majrule = [&U] (1:0.12878,2:0.03217,((5:0.01106,4:0.00023):0.03036,(3:0.17282,(6:0.02039,(7:0.06534,(8:0.04059,((((10:0.01815,9:0.21232):0.21124,(12:0.13342,11:0.00405):0.03077):0.01203,(14:0.02923,13:0.07497):0.05955):0.25666,((((16:0.11858,15:0.04183):0.03122,(18:0.04748,17:0.06941):0.10433):0.03060,(20:0.01896,19:0.37794):0.01361):0.37991,(((23:0.07998,(22:0.10120,21:0.09611):0.11369):0.26608,((26:0.21592,24:0.29192):0.04258,(27:0.01027,25:0.18837):0.16984):0.19336):0.03517,((31:0.01809,(28:0.18901,(30:0.16556,29:0.02259):0.09142):0.22834):0.11825,(32:0.15834,((34:0.01290,33:0.19708):0.09651,(40:0.03964,(39:0.07104,(38:0.05459,(37:0.01771,(36:0.19112,35:0.06298):0.09953):0.01783):0.00379):0.07738):0.06864):0.06896):0.06174):0.09744):0.24388):0.03055):0.20459):0.08328):0.11872):0.11278):0.11805):0.04157);
+end;

@@ -886,7 +886,7 @@ class Phycas(object):
         user-supplied prefix and opens the files
         
         """
-        prefix = selfgetPrefix()
+        prefix = self.getPrefix()
         self.param_file_name = prefix + '.p'
         self.tree_file_name = prefix + '.t'
 

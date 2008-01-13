@@ -61,6 +61,7 @@ runTest(outFile, "Simulator", ["simulated.nex"])
 #runTest(outFile, "SAMCTest", ["cf.txt", "samc_output.p", "samc_output.t"])
 runTest(outFile, "SplitTest", ["out.txt"])
 runTest(outFile, "PDFTree", ["test.pdf"])
+#runTest(outFile, "SumT", ["contree.tre","logfile.txt"])
 
 # Still need to get these working...
 #runTest(outFile, "GelfandGhosh", ["ggout.txt", "analHKY.nex.p", "analHKY.nex.t", "analHKYflex.nex.p", "analHKYflex.nex.t", "analHKYg.nex.p", "analHKYg.nex.t"])
