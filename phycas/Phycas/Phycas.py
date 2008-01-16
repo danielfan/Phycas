@@ -101,11 +101,15 @@ class Phycas(object):
         self.pdf_edge_support_file     = None           # file containing PAUP* output with table of support values; if specified, the support values will be shown on trees plotted
         self.pdf_tip_label_font        = 'Times-Italic' # font used for tip node names; should be one of the 14 standard fonts listed above
         self.pdf_tip_label_height      = 12             # height in points of tip node name font
+        self.pdf_title_font            = 'Helvetica'    # font used for scalebar text; should be one of the 14 standard fonts listed above
+        self.pdf_title_height          = 14             # height in points of scalebar text font
         self.pdf_scalebar_position     = 'bottom'       # valid values are 'top', 'bottom' or None
-        self.pdf_scalebar_label_font   = 'Times-Roman'  # font used for scalebar text; should be one of the 14 standard fonts listed above
+        self.pdf_scalebar_label_font   = 'Helvetica'    # font used for scalebar text; should be one of the 14 standard fonts listed above
         self.pdf_scalebar_label_height = 10             # height in points of scalebar text font
         self.pdf_support_label_font    = 'Times-Roman'  # font used for edge support values; should be one of the 14 standard fonts listed above
-        self.pdf_support_label_height  = 10             # height in points of edge support font
+        self.pdf_support_label_height  = 8              # height in points of edge support font
+        self.pdf_support_as_percent    = True           # if True, support values will be shown as percentages (e.g. 93.1) rather than proportions (e.g. 0.931)
+        self.pdf_support_decimals      = 1              # the number of decimal places shown in support values (e.g. to get 93.7, specify 1; to round up to 94, specify 0)
         self.pdf_ladderize             = 'right'        # valid values are 'right', 'left' or None
         self.pdf_page_width            = 8.5            # page width in inches
         self.pdf_page_height           = 11.0           # page length in inches
@@ -120,10 +124,12 @@ class Phycas(object):
         
         # Variables associated with the sumt command
         self.sumt_outgroup_taxon       = None           # set to taxon name of tip serving as the outgroup for display rooting purposes (note: at this time outgroup can consist of just one taxon)
-        self.sumt_tfile_name           = None           # set to name of the t file; default is getPrefix()+'.p')
-        self.sumt_majrule_pdf_file     = None           # name of pdf file in which to save graphical representation of the majority-rule consensus tree
-        self.sumt_majrule_tree_file    = None           # name of tree file in which to save the majority-rule consensus tree
-        self.sumt_burnin               = 1              # number of trees to skip in sumt_tfile_name
+        self.sumt_input_tree_file      = None           # set to name of the input tree file
+        self.sumt_output_tree_file     = None           # set to name of the output tree file in which all distinct tree topologies are saved along with the majority-rule consensus tree; default is getPrefix()+'.distinct.t'
+        self.sumt_output_pdf_file      = None           # set to name of the pdf file in which all distinct tree topologies are saved along with the majority-rule consensus tree
+        self.sumt_output_replace       = False          # if True, sumt_output_tree_file and sumt_output_pdf_file will be replaced automatically if they exist; if False, a random integer will be added to the name so that the name no longer matches an existing file
+        self.sumt_burnin               = 1              # number of trees to skip in sumt_input_tree_file
+        self.sumt_equal_brlens         = False          # if True, trees in pdf file will be drawn with branch lengths equal, making support values easier to see; if set to True, consider setting pdf_scalebar_position = None (scalebar is irrelevant in this case)
 
         # Variables associated with Polytomy (Bush) moves
         self.allow_polytomies       = False     # if True, do Bush moves in addition to Larget-Simon moves; if False, do Larget-Simon moves only
@@ -1202,13 +1208,26 @@ class Phycas(object):
                         tree.ladderizeLeft()
                 tree.rectifyNames(self.taxon_labels)
                 pdf.newPage()
-                self.tree2pdf(pdf, tree, max_height)
+                self.tree2pdf(pdf, tree, None, max_height)
             pdf.saveDocument(self.pdf_filename)
             
         # Prevent unintentional spillover
         self.pdf_splits_to_plot = None
         
-    def tree2pdf(self, pdf, tree, xscalemax = 0.0):
+    def tree2pdf(self, pdf, tree, title = None, xscalemax = 0.0, show_support = False):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Prints tree on a pdf object (instance of class PDFGenerator). If title
+        is specified, the supplied string will be centered at the top of the
+        page. The optional argument xscalemax represents the maximum height
+        of a group of trees being printed on separate pages in the same pdf
+        document. If xscalemax is left unspecified, each tree will be scaled
+        to fit the page and the scalebar will be adjusted accordingly. If
+        xscalemax is specified, it will be used to determine the scalebar, and
+        the scalebar will remain the same size for all trees printed with the
+        same xcalemax value.
+        
+        """
         # TODO: max_label_points should be calculated outside this function and passed in as an argument
         inch = 72.0
         spacer = 5.0
@@ -1320,23 +1339,41 @@ class Phycas(object):
         plot_width = plot_right - left_margin - right_margin
         plot_top = self.pdf_page_height*inch
         plot_height = plot_top - top_margin - bottom_margin
+
         tree_width = plot_width - label_width
-        xscaler = tree_width/xscalemax
+        tree_height = plot_height
         if self.pdf_scalebar_position:
-            yscaler = (plot_height - scalebar_height)/float(ntips - 1)
-        else:
-            yscaler = plot_height/float(ntips - 1)
+            tree_height -= scalebar_height
+        if title:
+            tree_height -= 3.0*float(self.pdf_title_height)
+        tree_x0 = left_margin
+        tree_y0 = bottom_margin + scalebar_height
+
+        xscaler = tree_width/xscalemax
+        yscaler = tree_height/float(ntips - 1)
+
+        #pdf.addRectangle(left_margin, bottom_margin, plot_width, plot_height, 1, 'dotted')
+
+        if title and self.pdf_title_height > 0:
+            # Draw title centered at top of page
+            title_str_extent = float(self.pdf_title_height)*pdf.calcStringWidth(self.pdf_title_font, title)
+            title_x = left_margin + (plot_width - title_str_extent)/2.0
+            title_y = tree_y0 + tree_height + 2.0*float(self.pdf_title_height)
+            #title_y = plot_top - top_margin
+            pdf.addText(title_x, title_y, self.pdf_title_font, self.pdf_title_height, title)
 
         if self.pdf_scalebar_position:
             if self.pdf_scalebar_position == 'top':
                 # Draw scalebar horizontally starting at top left corner
                 scalebar_width = scalebar*xscaler
-                scalebar_y = plot_top - top_margin - scalebar_height + spacer
+                scalebar_y = tree_x0 + tree_height - scalebar_height + spacer
+                #scalebar_y = plot_top - top_margin - scalebar_height + spacer
                 pdf.addLine(left_margin, scalebar_y, left_margin + scalebar_width, scalebar_y, self.pdf_line_width)
 
                 # Draw scalebar text centered above the scalebar
                 scalebar_x = left_margin + (scalebar_width - scalebar_str_extent)/2.0
-                scalebar_y = plot_top - top_margin - float(self.pdf_scalebar_label_height)
+                scalebar_y = tree_x0 + tree_height - float(self.pdf_scalebar_label_height)
+                #scalebar_y = plot_top - top_margin - float(self.pdf_scalebar_label_height)
                 pdf.addText(scalebar_x, scalebar_y, self.pdf_scalebar_label_font, self.pdf_scalebar_label_height, scalebar_str)
             else:
                 # Draw scalebar horizontally starting at bottom left corner
@@ -1352,7 +1389,8 @@ class Phycas(object):
         left_margin += (xscaler*(xscalemax - max_height) + label_width*(1.0 - max_height/xscalemax))/2.0
 
         # add enough to the top margin to center smaller trees vertically
-        top_margin += (plot_height*(1.0 - max_height/xscalemax))/2.0
+        top_margin += (tree_height*(1.0 - max_height/xscalemax))/2.0
+        #top_margin += (plot_height*(1.0 - max_height/xscalemax))/2.0
 
         # adjust yscaler to keep vertical tree dimension proportional to its horizontal dimension
         yscaler *= max_height/xscalemax
@@ -1371,7 +1409,8 @@ class Phycas(object):
         for nd in nodes:
             node_x = left_margin + nd.getX()*xscaler
             if nd.isTip():
-                node_y = plot_top - top_margin - nd.getY()*yscaler
+                node_y = tree_y0 + tree_height - nd.getY()*yscaler
+                #node_y = plot_top - top_margin - nd.getY()*yscaler
                 if self.pdf_scalebar_position and self.pdf_scalebar_position == 'top':
                     node_y -= scalebar_height
                 brlen = nd.isRoot() and xscaler*nd.getX() or xscaler*nd.getEdgeLen()
@@ -1400,7 +1439,8 @@ class Phycas(object):
                         left_child = nd.getParent()
                 else:
                     nd.setY(childY/nchildren)
-                    node_y = plot_top - top_margin - childY*yscaler/nchildren
+                    node_y = tree_y0 + tree_height - childY*yscaler/nchildren
+                    #node_y = plot_top - top_margin - childY*yscaler/nchildren
                     if self.pdf_scalebar_position and self.pdf_scalebar_position == 'top':
                         node_y -= scalebar_height
                     brlen = xscaler*nd.getEdgeLen()
@@ -1408,15 +1448,17 @@ class Phycas(object):
                     pdf.addLine(node_x, node_y, node_x - brlen, node_y, self.pdf_line_width)
 
                 # draw line representing shoulders of internal node
-                left_y = plot_top - top_margin - left_child.getY()*yscaler
-                right_y = plot_top - top_margin - right_child.getY()*yscaler
+                left_y = tree_y0 + tree_height - left_child.getY()*yscaler
+                #left_y = plot_top - top_margin - left_child.getY()*yscaler
+                right_y = tree_y0 + tree_height - right_child.getY()*yscaler
+                #right_y = plot_top - top_margin - right_child.getY()*yscaler
                 if self.pdf_scalebar_position and self.pdf_scalebar_position == 'top':
                     left_y -= scalebar_height
                     right_y -= scalebar_height
                 pdf.addLine(node_x, left_y, node_x, right_y, self.pdf_line_width)
 
                 # if specified, plot support value
-                if self.pdf_splits_to_plot:
+                if show_support and self.pdf_splits_to_plot:
                     for p in self.pdf_splits_to_plot.keys():
                         s = Split()
                         s.setOnSymbol('*')
@@ -1428,6 +1470,17 @@ class Phycas(object):
                             support_str = '%.1f' % self.pdf_splits_to_plot[p]
                             pdf.addText(support_x, support_y, self.pdf_support_label_font, self.pdf_support_label_height, support_str)
                             break
+                elif show_support and nd is not subroot:
+                    # Expecting each node's support data member to be set already
+                    support_format = '%%.%df' % self.pdf_support_decimals
+                    if self.pdf_support_as_percent:
+                        support_str = support_format % (100.0*nd.getSupport(),)
+                    else:
+                        support_str = support_format % (nd.getSupport(),)
+                    support_str_extent = float(self.pdf_support_label_height)*pdf.calcStringWidth(self.pdf_support_label_font, support_str)
+                    support_x = node_x - (brlen + support_str_extent)/2.0
+                    support_y = (left_y + right_y)/2.0 + half_xheight
+                    pdf.addText(support_x, support_y, self.pdf_support_label_font, self.pdf_support_label_height, support_str)
                     
     # by default phycassert sys.exit.
     # When debugging, it is nice to set this to True so that you can see the stack trace

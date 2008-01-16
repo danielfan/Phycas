@@ -50,6 +50,9 @@ inline TreeNode::TreeNode()
   nextPreorder(0),
   prevPreorder(0),
   observable(false),
+#if POLPY_NEWWAY
+  support(0.0),
+#endif
   tmp(0.0),
   x(0.0),
   y(0.0),
@@ -80,6 +83,9 @@ inline void TreeNode::Clear()
 	edgeLen			= TreeNode::edgeLenInitValue;
 	nodeName		= "";
 	observable		= false;
+#if POLPY_NEWWAY
+	support			= 0.0;
+#endif
 	tmp				= 0.0;
 	x				= 0.0;
 	y				= 0.0;
@@ -105,6 +111,16 @@ inline void TreeNode::SetTreeShPtr(
 	tree = t;
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the current value of the data member `support'.
+*/
+inline float TreeNode::GetSupport()
+	{
+	return support;
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the current value of the data member `x'.
 */
@@ -112,6 +128,17 @@ inline float TreeNode::GetX()
 	{
 	return x;
 	}
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `support' to the value `x'.
+*/
+inline void TreeNode::SetSupport(
+  float x)						/**< is the new support value */
+	{
+	support = x;
+	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the data member `x' to the value `xx'.

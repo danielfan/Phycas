@@ -14,6 +14,24 @@ class TreeNode(TreeNodeBase):
         """
         TreeNodeBase.__init__(self)
 
+    # POLPY_NEWWAY
+    def getSupport(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns the current support for this node.
+
+        """
+        return TreeNodeBase.getSupport(self)
+    
+    # POLPY_NEWWAY
+    def setSupport(self, x):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Sets the current support for this node to the supplied value x.
+
+        """
+        TreeNodeBase.setSupport(self, x)
+    
     def getX(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """

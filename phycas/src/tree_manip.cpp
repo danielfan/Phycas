@@ -265,6 +265,9 @@ void TreeManip::starTree(
 	TreeNode * rootNd = tree->GetNewNode();
 	rootNd->SetEdgeLen(0.0);
 	rootNd->SetNodeNum(0);
+#if POLPY_NEWWAY
+    rootNd->SetObservable(true);
+#endif
 	tree->firstPreorder = rootNd;
 
 	// Create the hub node
@@ -281,6 +284,9 @@ void TreeManip::starTree(
 		TreeNode * nd = tree->GetNewNode();
 		nd->SetEdgeLen(ndEdgeLen);
 		nd->SetNodeNum(i);
+#if POLPY_NEWWAY
+        nd->SetObservable(true);
+#endif
 		InsertSubtree(nd, hub, TreeManip::kOnLeft);
 		}
 	}

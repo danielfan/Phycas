@@ -354,6 +354,20 @@ void Tree::RefreshPreorder(TreeNode *nd)
 		preorderDirty = false;
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets all node names to the empty string "". This forces MakeNewick, for example, to use node numbers as the names of
+|   tip nodes.
+*/
+void Tree::stripNodeNames()
+	{
+    for (preorder_iterator nd = begin(); nd != end(); ++nd)
+        {
+        nd->SetNodeName("");
+        }
+    }
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	The supplied `name_vector' should be a vector of observable tip names. Assumes that observable nodes in the tree 
 |	already have names, and the goal is to number them appropriately (i.e. set their `nodeNum' to the position of their 

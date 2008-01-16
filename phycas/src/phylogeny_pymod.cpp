@@ -63,6 +63,10 @@ BOOST_PYTHON_MODULE(_Phylogeny)
 
 	class_<TreeNode>("TreeNodeBase", no_init)
 		.def("getSplit", &TreeNode::GetSplit, return_internal_reference<>())
+#if POLPY_NEWWAY
+		.def("getSupport", &TreeNode::GetSupport)
+		.def("setSupport", &TreeNode::SetSupport)
+#endif
 		.def("getX", &TreeNode::GetX)
 		.def("getY", &TreeNode::GetY)
 		.def("setX", &TreeNode::SetX)
@@ -103,6 +107,9 @@ BOOST_PYTHON_MODULE(_Phylogeny)
 		.def("debugWalkTree", &Tree::DebugWalkTree)
 		.def("debugCheckTree", &Tree::DebugCheckTree)
 		.def("rerootAtTip", &Tree::RerootAtTip)
+#if POLPY_NEWWAY
+		.def("stripNodeNames", &Tree::stripNodeNames)
+#endif
 		.def("makeNewick", &Tree::MakeNewick)
 		.def("tipNumbersSetUsingNames", &Tree::TipNumbersSetUsingNames)
 		.def("findTipByName", &Tree::FindTipByName)

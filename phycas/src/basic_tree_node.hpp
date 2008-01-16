@@ -72,6 +72,9 @@ class TreeNode
 
 		// Accessors
 		//
+#if POLPY_NEWWAY
+		float			        GetSupport();
+#endif
 		float					GetX();
 		float					GetY();
 		const std::string &		GetNodeName() const;
@@ -95,6 +98,9 @@ class TreeNode
 
 		// Modifiers
 		//
+#if POLPY_NEWWAY
+		void			SetSupport(float x);
+#endif
 		void			SetX(float xx);
 		void			SetY(float yy);
 		void			SelectNode();
@@ -139,6 +145,9 @@ class TreeNode
 
         TreeShPtr           tree;                   /**> Points to tree of which this node is part */
 
+#if POLPY_NEWWAY
+        float               support;				/**< used to hold support value (bootstrap proportion or Bayesian posterior probability */
+#endif
         double				tmp;					/**< temporary non-persistant workspace to be used within individual methods */
 		float				x;						/**< x-coordinate for purposes of drawing the tree */
 		float				y;						/**< y-coordinate for purposes of drawing the tree */

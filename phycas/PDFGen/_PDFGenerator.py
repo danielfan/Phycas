@@ -92,8 +92,13 @@ class PDFPageObject(PDFObject):
             outstr += '        /Contents [ %s ]%c' % (' '.join(self.contents), terminator)
         outstr += '        /Resources << /ProcSet %d 0 R%c' % (self.pdf.getProcSetObjNumber(), terminator)
         if len(self.fonts_used) > 0:
+            # Note: do not use separate /Font entries for each font. Instead, put them all in one /Font entry
+            # Using separate /Font entries will result in a message like this in Acrobat Reader:
+            # "Can not find a font in the Resource dictionary - using Helvetica instead"
+            outstr += '                      /Font << %c' % terminator
             for fnum,onum in self.fonts_used.keys():
-                outstr += '                      /Font << /F%d %d 0 R >>%c' % (fnum, onum, terminator)
+                outstr += '                               /F%d %d 0 R%c' % (fnum, onum, terminator)
+            outstr += '                            >>%c' % terminator
         outstr += '                   >>%c' % terminator
         outstr += '    >>%c' % terminator
         outstr += '    endobj%c' % terminator
@@ -114,7 +119,8 @@ class PDFFontObject(PDFObject):
         outstr += '        /Subtype /Type1%c' % terminator
         outstr += '        /Name /F%d%c' % (self.font_num, terminator)
         outstr += '        /BaseFont /%s%c' % (self.font_family, terminator)
-        outstr += '        /Encoding /MacRomanEncoding%c' % terminator
+        #outstr += '        /Encoding /MacRomanEncoding%c' % terminator
+        outstr += '        /Encoding /WinANSIEncoding%c' % terminator
         outstr += '    >>%c' % terminator
         outstr += '    endobj%c' % terminator
         outf.write(outstr)
@@ -148,20 +154,51 @@ class PDFTextObject(PDFObject):
         return len(outstr)
 
 class PDFLineObject(PDFObject):
-    def __init__(self, pdf_generator, x0, y0, x1, y1, line_width):
+    def __init__(self, pdf_generator, x0, y0, x1, y1, line_width, line_style):
         PDFObject.__init__(self, pdf_generator, 'Line')
         self.x0 = float(x0)
         self.y0 = float(y0)
         self.x1 = float(x1)
         self.y1 = float(y1)
         self.width = float(line_width)
+        self.dash_pattern = line_style == 'dotted' and '[3] 0 d' or '[] 0 d'
         self.line_cap_style = 1 # 0 = square ends; 1 = rounded ends; 2 = projecting square ends 
 
     def write(self, outf, terminator):
         objstr  = '    %.1f w%c' % (self.width, terminator)
+        objstr += '    %s%c' % (self.dash_pattern, terminator)
         objstr += '    %d J%c' % (self.line_cap_style, terminator)
         objstr += '    %.1f %.1f m%c' % (self.x0, self.y0, terminator)
         objstr += '    %.1f %.1f l%c' % (self.x1, self.y1, terminator)
+        objstr += '    S'
+        
+        outstr = '%d 0 obj%c' % (self.number, terminator)
+        outstr += '    <<%c' % terminator
+        outstr += '        /Length %d%c' % (len(objstr), terminator)
+        outstr += '    >>%c' % terminator
+        outstr += 'stream%c' % terminator
+        outstr += '%s%c' % (objstr, terminator)
+        outstr += 'endstream%c' % terminator
+        outstr += '    endobj%c' % terminator
+        outf.write(outstr)
+        return len(outstr)
+
+class PDFRectangleObject(PDFObject):
+    def __init__(self, pdf_generator, x0, y0, width, height, line_width, line_style):
+        PDFObject.__init__(self, pdf_generator, 'Rectangle')
+        self.x0 = float(x0)
+        self.y0 = float(y0)
+        self.w = float(width)
+        self.h = float(height)
+        self.lw = float(line_width)
+        self.dash_pattern = line_style == 'dotted' and '[3] 0 d' or '[] 0 d'
+        self.line_cap_style = 1 # 0 = square ends; 1 = rounded ends; 2 = projecting square ends 
+
+    def write(self, outf, terminator):
+        objstr  = '    %.1f w%c' % (self.lw, terminator)
+        objstr += '    %d J%c' % (self.line_cap_style, terminator)
+        objstr += '    %s%c' % (self.dash_pattern, terminator)
+        objstr += '    %.1f %.1f %.1f %.1f re%c' % (self.x0, self.y0, self.w, self.h, terminator)
         objstr += '    S'
         
         outstr = '%d 0 obj%c' % (self.number, terminator)
@@ -237,10 +274,15 @@ class PDFGenerator(object):
         text = PDFTextObject(self, x, y, font_family, font_size, text)
         self.curr_page.addContent(text)
 
-    def addLine(self, x0, y0, x1, y1, line_width):
+    def addLine(self, x0, y0, x1, y1, line_width, line_style = 'solid'):
         assert self.curr_page, 'call newPage() function before adding first content'
-        line = PDFLineObject(self, x0, y0, x1, y1, line_width)
+        line = PDFLineObject(self, x0, y0, x1, y1, line_width, line_style)
         self.curr_page.addContent(line)
+
+    def addRectangle(self, x0, y0, w, h, line_width = 1, line_style = 'solid'):
+        assert self.curr_page, 'call newPage() function before adding first content'
+        rect = PDFRectangleObject(self, x0, y0, w, h, line_width, line_style)
+        self.curr_page.addContent(rect)
 
     def getNextObjectNumber(self):
         return len(self.objects) + 1
@@ -289,11 +331,16 @@ class PDFGenerator(object):
             return  # already been loaded
         mydir = os.path.dirname(os.path.abspath(__file__))
         filename = '%s/AFM/%s.afm' % (mydir,font_face)
+        assert os.path.exists(filename), 'Font metrics file %s not found' % filename
         afmdata = open(filename,'r').read()
         # Find the xheight and store
         r = re.compile('XHeight (\d+)', re.MULTILINE)
         m = r.search(afmdata)
-        self.xheight[font_face] = float(m.group(1))/1000.0
+        if m:
+            xheight = float(m.group(1))/1000.0
+        else:
+            xheight = 0.450 # use value for Times-Roman as default
+        self.xheight[font_face] = xheight
         # Get all lines representing individual character metrics
         r = re.compile('StartCharMetrics\s+\d+(.+)EndCharMetrics', re.MULTILINE | re.DOTALL)
         m = r.search(afmdata)
