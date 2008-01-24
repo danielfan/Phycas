@@ -389,9 +389,12 @@ class PDFGenerator(object):
         outf.close()
 
     def scatterPlot(self, data,
+                    title = '',
                     xinfo = (0.0, 1.0, 10, 1),  # (min, max, divisions, precision)
                     yinfo = (0.0, 1.0, 10, 1),  # (min, max, divisions, precision)
                     lines = True,
+                    title_font = 'Helvetica',
+                    title_font_height = 14,
                     label_font = 'Helvetica',
                     font_height = 12,
                     line_width = 1,
@@ -441,6 +444,12 @@ class PDFGenerator(object):
         spacer        = 5.0
         half_tick     = 2.0
 
+        title_height = 0.0
+        title_width = 0.0
+        if len(title) > 0:
+            title_height = title_font_height*self.getXHeight(title_font)
+            title_width = title_font_height*self.calcStringWidth(title_font, title)
+
         xlabel_height = font_height*self.getXHeight(label_font)
         xlabel_width = 0.0
         for label in xlabels:
@@ -462,10 +471,13 @@ class PDFGenerator(object):
         plot_bottom   = bottom_margin + xlabel_height + 2.0*spacer
         plot_left     = left_margin + ylabel_width + spacer
         plot_width    = inch*paper_width_inches - plot_left - right_margin - xlabel_width/2.0
-        plot_height   = inch*paper_height_inches - plot_bottom - top_margin - xlabel_height/2.0
+        plot_height   = inch*paper_height_inches - plot_bottom - top_margin - xlabel_height/2.0 - 3.0*title_height
 
         #self.addRectangle(left_margin, bottom_margin, inch*paper_width_inches - left_margin - right_margin, inch*paper_height_inches - top_margin - bottom_margin, 1, 'dotted')
 
+        # draw the title
+        self.addText(plot_left + (plot_width - title_width)/2.0, plot_bottom + plot_height + 2.0*title_height, title_font, title_font_height, title)
+        
         # draw the x-axis
         self.addLine(plot_left, plot_bottom, plot_left + plot_width, plot_bottom, line_width)
 

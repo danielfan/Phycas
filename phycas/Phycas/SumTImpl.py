@@ -139,105 +139,41 @@ class TreeSummarizer(object):
         treef.write('end;\n')
         treef.close()
 
-    def obsoletePDFScatterPlot(self, pdf, xinfo, yinfo, data, lines = True, w = 11.0, h = 8.5):
-        xmin    = xinfo[0]
-        xmax    = xinfo[1]
-        xdiff   = xmax - xmin
-        xdiv = xinfo[2]
-        xfmt = '%%.%df' % xinfo[3]
-        xlabels = [xfmt % (xmin + xdiff*float(i)/float(xdiv)) for i in range(xdiv + 1)]
-        print 'xlabels =',xlabels
+    def awtyPlot(self, split_vect, ntrees, ndivisions = 10):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        The supplied split_vect is a vector of key,value pairs, where the key
+        is a split pattern string and v=value[2:] is a list of samples in
+        which the split was found. The minimum possible value in v is 1, and
+        the maximum possible value is ntrees. Consider the following
+        oversimplified example involving a split with posterior probability
+        0.6 (v has length 6 and ntrees = 10): v = [3,4,5,7,9,10]. Suppose we
+        wish to plot the cumulative posterior probability of this split at
+        five, evenly-spaced points. Dividing ntrees by 5 gives 2, and these
+        are thus the values to be plotted:
+        x     y
+        --------   x = range(0, ntrees + 1, ntrees//ndivisions) 
+        0    0.0     = [0, 2, 4, 6, 8, 10]
+        2    0.0   
+        4    0.5   To calculate y, let k track the number of values in v
+        6    0.5   that are less than x
+        8    0.5     
+        10   0.6    
+        --------
+        The vector x can be calculated using the range function; however,
+        computing y requires a loop:
+        i  x[i]  k  v[k]  y = k/x[i] except first
+        ----------------------------
+        0    0   0   3           0.0 <- this one always 0.0
+        1    2   0   3    0/2  = 0.0
+        2    4   2   5    2/4  = 0.5
+        3    6   3   7    3/6  = 0.5
+        4    8   4   9    4/8  = 0.5
+        5   10   6   -    6/10 = 0.6
+        ----------------------------
         
-        ymin    = yinfo[0]
-        ymax    = yinfo[1]
-        ydiff   = ymax - ymin
-        ydiv = yinfo[2]
-        yfmt = '%%.%df' % yinfo[3]
-        ylabels = [yfmt % (ymin + ydiff*float(i)/float(ydiv)) for i in range(ydiv + 1)]
-        print 'ylabels =',ylabels
-        
-        pdf.newPage()
-        
-        inch          = 72.0
-        spacer        = 5.0
-        half_tick     = 2.0
-        font_height   = float(self.phycas.pdf_plot_label_height)
-        label_font    = self.phycas.pdf_plot_label_font
-        line_width    = self.phycas.pdf_line_width
-
-        xlabel_height = font_height*pdf.getXHeight(label_font)
-        xlabel_width = 0.0
-        for label in xlabels:
-            width = font_height*pdf.calcStringWidth(label_font, label)
-            if width > xlabel_width:
-                xlabel_width = width
-
-        ylabel_width = 0.0
-        for label in ylabels:
-            width = font_height*pdf.calcStringWidth(label_font, label)
-            if width > ylabel_width:
-                ylabel_width = width
-        
-        right_margin  = inch*self.phycas.pdf_right_margin
-        left_margin   = inch*self.phycas.pdf_left_margin
-        top_margin    = inch*self.phycas.pdf_top_margin
-        bottom_margin = inch*self.phycas.pdf_bottom_margin
-
-        plot_bottom   = bottom_margin + xlabel_height + 2.0*spacer
-        plot_left     = left_margin + ylabel_width + spacer
-        plot_width    = inch*w - plot_left - right_margin - xlabel_width/2.0
-        plot_height   = inch*h - plot_bottom - top_margin - xlabel_height/2.0
-
-        #pdf.addRectangle(left_margin, bottom_margin, inch*w - left_margin - right_margin, inch*h - top_margin - bottom_margin, 1, 'dotted')
-
-        # draw the x-axis
-        pdf.addLine(plot_left, plot_bottom, plot_left + plot_width, plot_bottom, line_width)
-
-        # draw the x-axis tick marks and labels for 0, ..., ntrees
-        for i,label in enumerate(xlabels):
-            x = plot_width*float(i)/float(len(xlabels) - 1)
-            half_width = font_height*pdf.calcStringWidth(label_font, label)/2.0
-            pdf.addText(plot_left + x - half_width, plot_bottom - xlabel_height - 2.0*spacer, label_font, font_height, label)
-            pdf.addLine(plot_left + x, plot_bottom - half_tick, plot_left + x, plot_bottom + half_tick, line_width)
-        
-        # draw the y-axis
-        pdf.addLine(plot_left, plot_bottom, plot_left, plot_bottom + plot_height, line_width)
-
-        # draw the y-axis tick marks and labels for 0.0, 0.1, ..., 1.0
-        for i,label in enumerate(ylabels):
-            y = plot_height*float(i)/float(len(ylabels) - 1)
-            ylabel = y - xlabel_height/2.0
-            pdf.addText(left_margin, plot_bottom + ylabel, label_font, font_height, label)
-            pdf.addLine(plot_left - half_tick, plot_bottom + y, plot_left + half_tick, plot_bottom + y, line_width)
-            
-        # draw points or lines
-        # data should be in the form of a list of lists of tuples
-        # - each outer list defines a separate line in the plot
-        #     e.g. [line1,line2,line3]
-        # - the next level defines the points in a line
-        #     e.g. line1 = [point1, point2, point3]
-        # - the final level defines the x- and y-coordinates of a point
-        #     e.g. point1 = (x,y)
-        #     x and y should be in the same units used to label the axes. That is, if 
-        #     xmin = 0.0 and xmax = 1.0, then the x values should be between 0.0 and 1.0
-        for line_data in data:
-            first_point = True
-            for point in line_data:
-                if first_point:
-                    x0 = plot_width*(point[0] - xmin)/xdiff
-                    y0 = plot_height*(point[1] - ymin)/ydiff
-                    #print 'x0 =',point[0],', y0 =',point[1]
-                    first_point = False
-                else:
-                    x = plot_width*(point[0] - xmin)/xdiff
-                    y = plot_height*(point[1] - ymin)/ydiff
-                    pdf.addLine(plot_left + x0, plot_bottom + y0, plot_left + x, plot_bottom + y, line_width)
-                    #print 'x  =',point[0],', y  =',point[1]
-                    x0 = x
-                    y0 = y
-            #raw_input('check')
-
-    def awtyPlot(self, split_vect, ntrees):
+        """
+        # candidates for phycas variable status
         splits_to_plot = 1000
         ignore_uninteresting = True
 
@@ -248,117 +184,56 @@ class TreeSummarizer(object):
         trivial_ignored = 0
         uninteresting_ignored = 0
         data = []
-        for i,(k,v) in enumerate(split_vect):
-            if len(v) == 2:
-                trivial_ignored += 1
-                continue
-            if ignore_uninteresting and v[0] == ntrees:
-                uninteresting_ignored += 1
-                continue
-            line_data = [(0.0,0.0)]
-            for j,m in enumerate(v[2:]):
-                x = float(m)
-                y = float(j + 1)/float(m)
+        if True:
+            xvect = range(0, ntrees + 1, ntrees//ndivisions)
+            #print 'xvect =',xvect
+            for k,value in split_vect:
+                if len(value) == 2:
+                    trivial_ignored += 1
+                    continue
+                if ignore_uninteresting and value[0] == ntrees:
+                    uninteresting_ignored += 1
+                    continue
+                line_data = [(0.0,0.0)]
+                v = value[2:]
+                #print '\nv =',v
+                k = 0
+                for i,x in enumerate(xvect[1:]):
+                    while k < len(v) and v[k] <= x:
+                        k += 1
+                    y = float(k)/float(x)
+                    line_data.append((x,y))
+                    #print '  x =',x,', y =',y
+                data.append(line_data)
+                
+                splits_plotted += 1
+                if splits_plotted == splits_to_plot:
+                    break
+                #raw_input('check')
+        else:
+            # old way
+            for i,(k,v) in enumerate(split_vect):
+                if len(v) == 2:
+                    trivial_ignored += 1
+                    continue
+                if ignore_uninteresting and v[0] == ntrees:
+                    uninteresting_ignored += 1
+                    continue
+                line_data = [(0.0,0.0)]
+                for j,m in enumerate(v[2:]):
+                    x = float(m)
+                    y = float(j + 1)/float(m)
+                    line_data.append((x,y))
+                x = ntrees
+                y = float(v[0])/float(ntrees)
                 line_data.append((x,y))
-            x = ntrees
-            y = float(v[0])/float(ntrees)
-            line_data.append((x,y))
-            data.append(line_data)
-            
-            splits_plotted += 1
-            if splits_plotted == splits_to_plot:
-                break
+                data.append(line_data)
+                
+                splits_plotted += 1
+                if splits_plotted == splits_to_plot:
+                    break
 
-        pdf.scatterPlot(data, xinfo = (0,ntrees,10,0), yinfo = (0.0,1.0,10,1))
-        pdf.saveDocument('awty.pdf')
-        if trivial_ignored + uninteresting_ignored > 0:
-            self.phycas.output('%d trivial and %d uninteresting splits were ignored.' % (trivial_ignored, uninteresting_ignored))
-        
-    def obsoleteAWTYPlot(self, split_vect, ntrees):
-        #pdf = PDFGenerator(self.phycas.pdf_page_width, self.phycas.pdf_page_height)
-        w             = 11.0
-        h             = 8.5
-        pdf = PDFGenerator(w, h)
-        pdf.overwrite = True
-        pdf.newPage()
-
-        splits_to_plot = 1000
-        ignore_uninteresting = True
-
-        inch          = 72.0
-        spacer        = 5.0
-        half_tick     = 2.0
-        font_height   = float(self.phycas.pdf_plot_label_height)
-        label_font    = self.phycas.pdf_plot_label_font
-        line_width    = self.phycas.pdf_line_width
-
-        xlabel_height = font_height*pdf.getXHeight(label_font)
-        ylabel_width  = font_height*pdf.calcStringWidth(label_font, '0.0')
-        
-        right_margin  = inch*self.phycas.pdf_right_margin
-        left_margin   = inch*self.phycas.pdf_left_margin
-        top_margin    = inch*self.phycas.pdf_top_margin
-        bottom_margin = inch*self.phycas.pdf_bottom_margin
-
-        plot_bottom   = bottom_margin + xlabel_height + 2.0*spacer
-        plot_left     = left_margin + ylabel_width + spacer
-        plot_width    = inch*w - plot_left - right_margin
-        plot_height   = inch*h - plot_bottom - top_margin
-
-        #pdf.addRectangle(left_margin, bottom_margin, inch*w - left_margin - right_margin, inch*h - top_margin - bottom_margin, 1, 'dotted')
-
-        # draw the x-axis
-        pdf.addLine(plot_left, plot_bottom, plot_left + plot_width, plot_bottom, line_width)
-
-        # draw the x-axis tick marks and labels for 0, ..., ntrees
-        for i in range(11):
-            v = math.ceil(float(i*ntrees)/10.0)
-            x = plot_width*float(i)/10.0
-            half_width = font_height*pdf.calcStringWidth(label_font, '%d' % v)/2.0
-            pdf.addText(plot_left + x - half_width, plot_bottom - xlabel_height - 2.0*spacer, label_font, font_height, '%d' % v)
-            pdf.addLine(plot_left + x, plot_bottom - half_tick, plot_left + x, plot_bottom + half_tick, line_width)
-        
-        # draw the y-axis
-        pdf.addLine(plot_left, plot_bottom, plot_left, plot_bottom + plot_height, line_width)
-
-        # draw the y-axis tick marks and labels for 0.0, 0.1, ..., 1.0
-        for i in range(11):
-            v = 0.1*float(i)
-            y = v*plot_height
-            ylabel = y - xlabel_height/2.0
-            pdf.addText(left_margin, plot_bottom + ylabel, label_font, font_height, '%.1f' % v)
-            pdf.addLine(plot_left - half_tick, plot_bottom + y, plot_left + half_tick, plot_bottom + y, line_width)
-            
-        # draw lines for each split
-        splits_plotted = 0
-        trivial_ignored = 0
-        uninteresting_ignored = 0
-        for i,(k,v) in enumerate(split_vect):
-            if len(v) == 2:
-                trivial_ignored += 1
-                continue
-            if ignore_uninteresting and v[0] == ntrees:
-                uninteresting_ignored += 1
-                continue
-            x0 = 0.0
-            y0 = 0.0
-            for j,m in enumerate(v[2:]):
-                x = plot_width*float(m)/float(ntrees)
-                y = plot_height*float(j + 1)/float(m)
-                pdf.addLine(plot_left + x0, plot_bottom + y0, plot_left + x, plot_bottom + y, line_width)
-                x0 = x
-                y0 = y
-            split_postprob = float(v[0])/float(ntrees)
-            #self.phycas.output('%6d %6d %.3f %6d %s' % (i,v[0],split_postprob,len(v), k))
-            x = plot_width
-            y = plot_height*split_postprob
-            pdf.addLine(plot_left + x0, plot_bottom + y0, plot_left + x, plot_bottom + y, line_width)
-            #pdf.addText(plot_left + plot_width, plot_bottom + y, label_font, font_height, '%.3f' % split_postprob)
-            
-            splits_plotted += 1
-            if splits_plotted == splits_to_plot:
-                break
-
+        pdf.scatterPlot(data, title = 'Split Probabilities Through Time', xinfo = (0,ntrees,10,0), yinfo = (0.0,1.0,10,1))
         pdf.saveDocument('awty.pdf')
         if trivial_ignored + uninteresting_ignored > 0:
             self.phycas.output('%d trivial and %d uninteresting splits were ignored.' % (trivial_ignored, uninteresting_ignored))
