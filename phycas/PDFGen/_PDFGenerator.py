@@ -388,6 +388,122 @@ class PDFGenerator(object):
         outf.write('%%EOF')
         outf.close()
 
+    def scatterPlot(self, data,
+                    xinfo = (0.0, 1.0, 10, 1),  # (min, max, divisions, precision)
+                    yinfo = (0.0, 1.0, 10, 1),  # (min, max, divisions, precision)
+                    lines = True,
+                    label_font = 'Helvetica',
+                    font_height = 12,
+                    line_width = 1,
+                    paper_width_inches = 11.0,
+                    paper_height_inches = 8.5,
+                    right_margin_inches = 1.0,
+                    left_margin_inches = 1.0,
+                    top_margin_inches = 1.0,
+                    bottom_margin_inches = 1.0):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Creates a scatter plot using the supplied data. The xinfo and yinfo
+        variables should both be 4-tuples of the form (minimum value, maximum
+        value, number of divisions, number of decimal places). This
+        information will be used to label the corresponding axis. For example,
+        if xinfo = (0.0, 1.0, 10, 1) these labels would be evenly spaced along
+        the x-axis: '0.0', '0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7',
+        '0.8', '0.9', '1.0'. The data variable should be in the form of a list
+        of lists of tuples. Each outer list defines a separate line in the
+        plot; e.g. [line1,line2,line3]. The next level defines the points in a
+        line; e.g. line1 = [point1, point2, point3]. The final level defines
+        the x- and y-coordinates of a point; e.g. point1 = (x,y). The values
+        x and y should be in the same units used to label the axes. That is,
+        if xmin = 0.0 and xmax = 1.0, then the x values should be between 0.0
+        and 1.0.
+
+        """
+        xmin    = xinfo[0]
+        xmax    = xinfo[1]
+        xdiff   = xmax - xmin
+        xdiv = xinfo[2]
+        xfmt = '%%.%df' % xinfo[3]
+        xlabels = [xfmt % (xmin + xdiff*float(i)/float(xdiv)) for i in range(xdiv + 1)]
+        #print 'xlabels =',xlabels
+        
+        ymin    = yinfo[0]
+        ymax    = yinfo[1]
+        ydiff   = ymax - ymin
+        ydiv = yinfo[2]
+        yfmt = '%%.%df' % yinfo[3]
+        ylabels = [yfmt % (ymin + ydiff*float(i)/float(ydiv)) for i in range(ydiv + 1)]
+        #print 'ylabels =',ylabels
+        
+        self.newPage()
+        
+        inch          = 72.0
+        spacer        = 5.0
+        half_tick     = 2.0
+
+        xlabel_height = font_height*self.getXHeight(label_font)
+        xlabel_width = 0.0
+        for label in xlabels:
+            width = font_height*self.calcStringWidth(label_font, label)
+            if width > xlabel_width:
+                xlabel_width = width
+
+        ylabel_width = 0.0
+        for label in ylabels:
+            width = font_height*self.calcStringWidth(label_font, label)
+            if width > ylabel_width:
+                ylabel_width = width
+        
+        right_margin  = inch*right_margin_inches
+        left_margin   = inch*left_margin_inches
+        top_margin    = inch*top_margin_inches
+        bottom_margin = inch*bottom_margin_inches
+
+        plot_bottom   = bottom_margin + xlabel_height + 2.0*spacer
+        plot_left     = left_margin + ylabel_width + spacer
+        plot_width    = inch*paper_width_inches - plot_left - right_margin - xlabel_width/2.0
+        plot_height   = inch*paper_height_inches - plot_bottom - top_margin - xlabel_height/2.0
+
+        #self.addRectangle(left_margin, bottom_margin, inch*paper_width_inches - left_margin - right_margin, inch*paper_height_inches - top_margin - bottom_margin, 1, 'dotted')
+
+        # draw the x-axis
+        self.addLine(plot_left, plot_bottom, plot_left + plot_width, plot_bottom, line_width)
+
+        # draw the x-axis tick marks and labels for 0, ..., ntrees
+        for i,label in enumerate(xlabels):
+            x = plot_width*float(i)/float(len(xlabels) - 1)
+            half_width = font_height*self.calcStringWidth(label_font, label)/2.0
+            self.addText(plot_left + x - half_width, plot_bottom - xlabel_height - 2.0*spacer, label_font, font_height, label)
+            self.addLine(plot_left + x, plot_bottom - half_tick, plot_left + x, plot_bottom + half_tick, line_width)
+        
+        # draw the y-axis
+        self.addLine(plot_left, plot_bottom, plot_left, plot_bottom + plot_height, line_width)
+
+        # draw the y-axis tick marks and labels for 0.0, 0.1, ..., 1.0
+        for i,label in enumerate(ylabels):
+            y = plot_height*float(i)/float(len(ylabels) - 1)
+            ylabel = y - xlabel_height/2.0
+            self.addText(left_margin, plot_bottom + ylabel, label_font, font_height, label)
+            self.addLine(plot_left - half_tick, plot_bottom + y, plot_left + half_tick, plot_bottom + y, line_width)
+            
+        # draw points or lines
+        for line_data in data:
+            first_point = True
+            for point in line_data:
+                if first_point:
+                    x0 = plot_width*(point[0] - xmin)/xdiff
+                    y0 = plot_height*(point[1] - ymin)/ydiff
+                    #print 'x0 =',point[0],', y0 =',point[1]
+                    first_point = False
+                else:
+                    x = plot_width*(point[0] - xmin)/xdiff
+                    y = plot_height*(point[1] - ymin)/ydiff
+                    self.addLine(plot_left + x0, plot_bottom + y0, plot_left + x, plot_bottom + y, line_width)
+                    #print 'x  =',point[0],', y  =',point[1]
+                    x0 = x
+                    y0 = y
+            #raw_input('check')
+
 if __name__ == '__main__':
     # The 14 standard fonts guaranteed to be available in all PDF consumer applications:
     #   Times-Roman      Helvetica             Courier             Symbol

@@ -1,4 +1,4 @@
-import os, sys, math, threading
+import os, sys, math, threading, types
 import MCMCManager  # poorly named, as MCMCManager is now only one of many classes within
 from phycas.Conversions import *
 from phycas.DataMatrix import *
@@ -46,41 +46,41 @@ class Phycas(object):
         # Variables associated with substitution models (except for edge lengths)
         self.default_model          = 'hky'     # Can be 'jc', 'hky' or 'gtr'
 
-        self.relrate_prior          = ExponentialDist(1.0)
-        self.starting_relrates      = [1.0, 4.0, 1.0, 1.0, 4.0, 1.0]
-        self.fix_relrates           = False 
+        self.relrate_prior          = ExponentialDist(1.0)              # the prior distribution for individual GTR relative rate parameters
+        self.starting_relrates      = [1.0, 4.0, 1.0, 1.0, 4.0, 1.0]    # the starting values for GTR relative rates
+        self.fix_relrates           = False                             # if True, GTR relative rates will not be modified during the course of an MCMC analysis
 
-        self.kappa_prior            = ExponentialDist(1.0) 
-        self.starting_kappa         = 4.0
-        self.fix_kappa              = False 
+        self.kappa_prior            = ExponentialDist(1.0)      # the prior distribution for the kappa parameter in an HKY model
+        self.starting_kappa         = 4.0                       # the starting value for the kappa parameter in an HKY model
+        self.fix_kappa              = False                     # if True, the HKY kappa parameter will not be modified during the course of an MCMC analysis
 
-        self.num_rates              = 1         # default is no rate heterogeneity (i.e. 1 rate)
-        self.gamma_shape_prior      = ExponentialDist(1.0)
-        self.starting_shape         = 0.5
-        self.fix_shape              = False 
-        self.use_inverse_shape      = False     # if True, gamma_shape_prior is applied to 1/shape rather than shape
+        self.num_rates              = 1                     # the number of relative rates used for the discrete gamma rate heterogeneity submodel; default is rate homogeneity (i.e. 1 rate)
+        self.gamma_shape_prior      = ExponentialDist(1.0)  # the prior distribution for the shape parameter of the gamma among-site rate distribution
+        self.starting_shape         = 0.5                   # the starting value for the gamma shape parameter
+        self.fix_shape              = False                 # if True, the gamma shape parameter will not be modified during the course of an MCMC analysis
+        self.use_inverse_shape      = False                 # if True, gamma_shape_prior is applied to 1/shape rather than shape
 
-        self.estimate_pinvar        = False
-        self.pinvar_prior           = BetaDist(1.0, 1.0)
-        self.starting_pinvar        = 0.2
-        self.fix_pinvar             = False 
+        self.estimate_pinvar        = False                 # if True, an invariable sites submodel will be applied and the parameter representing the proportion of invariable sites will be estimated
+        self.pinvar_prior           = BetaDist(1.0, 1.0)    # the prior distribution for pinvar, the proportion of invariable sites parameter
+        self.starting_pinvar        = 0.2                   # the starting value of pinvar, the proportion of invariable sites parameter
+        self.fix_pinvar             = False                 # if True, the proportion of invariable sites parameter (pinvar) will not be modified during the course of an MCMC analysis
 
-        self.base_freq_param_prior  = ExponentialDist(1.0)
-        self.starting_freqs         = [1.0, 1.0, 1.0, 1.0] 
-        self.fix_freqs              = False 
+        self.base_freq_param_prior  = ExponentialDist(1.0)  # the prior distribution for the individual base frequency parameters; these parameters, when normalized to sum to 1, represent the equilibrium proportions of the nucleotide states
+        self.starting_freqs         = [1.0, 1.0, 1.0, 1.0]  # the starting values for the four base frequency parameters
+        self.fix_freqs              = False                 # if True, the base frequencies will not be modified during the course of an MCMC analysis
 
         # Variables associated with the source of data        
         self.data_source            = 'file'    # Specify None to explore the joint prior or to simulate data; if 'file', self.data_file_name should be a valid nexus file name
         self.data_file_name         = ''        # will hold actual data file name
 
         # Variables associated with simulating data (see function simulateDNA below)
-        self.sim_file_name          = 'simulated.nex'   # name of file in which to save simulated data
+        self.sim_file_name          = 'simulated.nex'                           # name of file in which to save simulated data
         self.sim_taxon_labels       = ['taxon1', 'taxon2', 'taxon3', 'taxon4']  # names to use for taxa in simulated data set (number of labels defined determines the number of taxa in the simulated dataset)
-        self.sim_nchar              = 1000      # number of characters to generate
+        self.sim_nchar              = 1000                                      # number of characters to generate
 
         # Variables associated with the source of starting tree
         self.starting_tree_source   = 'random'  # source of starting tree topology: can be either 'random' or 'usertree'
-        self.tree_topology          = None      # unused unless starting_tree_source is 'usertree'
+        self.tree_topology          = None      # unused unless starting_tree_source is 'usertree', in which case this should be a standard newick string representation of the tree topology; e.g. '(A:0.01,B:0.071,(C:0.013,D:0.021):0.037)'
         self.tree_file_name         = ''        # will hold tree file name
 
         # Variables associated with Larget-Simon moves
@@ -101,6 +101,8 @@ class Phycas(object):
         self.pdf_edge_support_file     = None           # file containing PAUP* output with table of support values; if specified, the support values will be shown on trees plotted
         self.pdf_tip_label_font        = 'Times-Italic' # font used for tip node names; should be one of the 14 standard fonts listed above
         self.pdf_tip_label_height      = 12             # height in points of tip node name font
+        self.pdf_plot_label_font       = 'Helvetica'    # font used for plot axis labels; should be one of the 14 standard fonts listed above
+        self.pdf_plot_label_height     = 12             # height in points of plot axis label font
         self.pdf_title_font            = 'Helvetica'    # font used for scalebar text; should be one of the 14 standard fonts listed above
         self.pdf_title_height          = 14             # height in points of scalebar text font
         self.pdf_scalebar_position     = 'bottom'       # valid values are 'top', 'bottom' or None
@@ -1141,7 +1143,10 @@ class Phycas(object):
         return distance
 
     def pdftree(self):
-        assert (self.pdf_treefile and not self.pdf_newick) or (self.pdf_newick and not self.pdf_treefile), 'set either pdf_newick or pdf_treefile, but not both'
+        #complex_outgroup = type(self.pdf_outgroup_taxon) in (types.ListType,types.TupleType)
+        simple_outgroup = type(self.pdf_outgroup_taxon) == types.StringType
+        self.phycassert(simple_outgroup, 'Phycas cannot yet deal with pdf_outgroup_taxon containing more than one outgroup taxon')
+        self.phycassert((self.pdf_treefile and not self.pdf_newick) or (self.pdf_newick and not self.pdf_treefile), 'set either pdf_newick or pdf_treefile, but not both')
         if self.pdf_edge_support_file and os.path.exists(self.pdf_edge_support_file):
             # Read splits file and store all splits found along with their frequencies
             contents_of_file = open(self.pdf_edge_support_file,'r').read()
