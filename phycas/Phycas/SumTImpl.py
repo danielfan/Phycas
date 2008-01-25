@@ -116,13 +116,15 @@ class TreeSummarizer(object):
         for short,full,tree in zip(short_names, full_names, trees):
             # Reroot (if requested) tree and output newick description to tree file
             if self.phycas.sumt_outgroup_taxon:
-                num = list(self.taxon_labels).index(self.phycas.sumt_outgroup_taxon)
-                if num == len(self.taxon_labels):
+                try:
+                    num = list(self.taxon_labels).index(self.phycas.sumt_outgroup_taxon)
+                except ValueError:
                     self.phycas.output('Warning: could not root tree using specified outgroup: no tip having name "%s" could be found' % self.phycas.sumt_outgroup_taxon)
                     self.phycas.output('Here is the list of all taxon labels:')
                     for label in self.taxon_labels:
                         self.phycas.output('  %s' % label)
-                tree.rerootAtTip(num)
+                else:
+                    tree.rerootAtTip(num)
             treef.write('  tree %s = [&U] %s;\n' % (short, tree.makeNewick()))
 
             # Add taxon names to tip nodes and output to pdf file
@@ -139,7 +141,7 @@ class TreeSummarizer(object):
         treef.write('end;\n')
         treef.close()
 
-    def awtyPlot(self, split_vect, ntrees, ndivisions = 10):
+    def awtyPlot(self, pdf, split_vect, ntrees, ndivisions = 10):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         The supplied split_vect is a vector of key,value pairs, where the key
@@ -177,64 +179,98 @@ class TreeSummarizer(object):
         splits_to_plot = 1000
         ignore_uninteresting = True
 
-        pdf = PDFGenerator(11.0, 8.5)
-        pdf.overwrite = True
-        
         splits_plotted = 0
         trivial_ignored = 0
         uninteresting_ignored = 0
         data = []
-        if True:
-            xvect = range(0, ntrees + 1, ntrees//ndivisions)
-            #print 'xvect =',xvect
-            for k,value in split_vect:
-                if len(value) == 2:
-                    trivial_ignored += 1
-                    continue
-                if ignore_uninteresting and value[0] == ntrees:
-                    uninteresting_ignored += 1
-                    continue
-                line_data = [(0.0,0.0)]
-                v = value[2:]
-                #print '\nv =',v
-                k = 0
-                for i,x in enumerate(xvect[1:]):
-                    while k < len(v) and v[k] <= x:
-                        k += 1
-                    y = float(k)/float(x)
-                    line_data.append((x,y))
-                    #print '  x =',x,', y =',y
-                data.append(line_data)
-                
-                splits_plotted += 1
-                if splits_plotted == splits_to_plot:
-                    break
-                #raw_input('check')
-        else:
-            # old way
-            for i,(k,v) in enumerate(split_vect):
-                if len(v) == 2:
-                    trivial_ignored += 1
-                    continue
-                if ignore_uninteresting and v[0] == ntrees:
-                    uninteresting_ignored += 1
-                    continue
-                line_data = [(0.0,0.0)]
-                for j,m in enumerate(v[2:]):
-                    x = float(m)
-                    y = float(j + 1)/float(m)
-                    line_data.append((x,y))
-                x = ntrees
-                y = float(v[0])/float(ntrees)
+        xvect = range(0, ntrees + 1, ntrees//ndivisions)
+        for k,value in split_vect:
+            if len(value) == 2:
+                trivial_ignored += 1
+                continue
+            if ignore_uninteresting and value[0] == ntrees:
+                uninteresting_ignored += 1
+                continue
+            line_data = [(0.0,0.0)]
+            v = value[2:]
+            k = 0
+            for i,x in enumerate(xvect[1:]):
+                while k < len(v) and v[k] <= x:
+                    k += 1
+                y = float(k)/float(x)
                 line_data.append((x,y))
-                data.append(line_data)
-                
-                splits_plotted += 1
-                if splits_plotted == splits_to_plot:
-                    break
+            data.append(line_data)
+            
+            splits_plotted += 1
+            if splits_plotted == splits_to_plot:
+                break
 
         pdf.scatterPlot(data, title = 'Split Probabilities Through Time', xinfo = (0,ntrees,10,0), yinfo = (0.0,1.0,10,1))
-        pdf.saveDocument('awty.pdf')
+        if trivial_ignored + uninteresting_ignored > 0:
+            self.phycas.output('%d trivial and %d uninteresting splits were ignored.' % (trivial_ignored, uninteresting_ignored))
+        
+    def sojournPlot(self, pdf, split_vect, ntrees):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Creates a plot comprising numerous horizontal lines, each representing
+        the trajectory of a non-trivial, "interesting" split throughout the
+        MCMC simulation. Trivial splits are those separating a terminal taxon
+        from the other taxa, and are aways present. "Interesting" splits are
+        those that were absent during some of the non-burn-in period. This
+        plot provides a visual picture of mixing in the Markov chain with
+        respect to splits.
+        
+        """
+        # candidates for phycas variable status
+        splits_to_plot = 1000
+        ignore_uninteresting = True
+
+        trivial_ignored = 0
+        uninteresting_ignored = 0
+
+        # First, save the sojourn vectors of all the splits to be plotted
+        v = []
+        splits_plotted = 0
+        for k,value in split_vect:
+            if len(value) == 2:
+                trivial_ignored += 1
+                continue
+            if ignore_uninteresting and value[0] == ntrees:
+                uninteresting_ignored += 1
+                continue
+            v.append(value[2:])
+            splits_plotted += 1
+            if splits_plotted == splits_to_plot:
+                break
+
+        # Now create the plot data
+        data = []
+        for i,s in enumerate(v):
+            y = float(i + 1)
+            prev_x = s[0]
+            line_data = [(prev_x,y)]
+            for x in s[1:]:
+                if x - prev_x > 1:
+                    # a gap has appeared, start a new line and close old one
+                    data.append(line_data)
+                    line_data = [(x,y)]
+                else:
+                    line_data.append((x,y))
+                prev_x = x
+            data.append(line_data)
+
+        # Determine y-axis info (ymax and ydivs) such that ydivs is as close as possible to
+        # 10 but divides evenly into ymax - ymin so that there are no fractional y-axis labels
+        splits_per_tick = splits_plotted//10
+        if splits_per_tick < 2:
+            splits_per_tick = 2
+        min_ticks = math.ceil(float(splits_plotted)/float(splits_per_tick))
+        ymax = float(splits_per_tick)*min_ticks
+        ydivs = int(ymax)//splits_per_tick
+        if splits_plotted <= 10:
+            ydivs = int(ymax)
+
+        pdf.scatterPlot(data, points = False, line_width = 3, line_cap_style = 'square', title = 'Split Sojourns', xinfo = (0,ntrees,10,0), yinfo = (0.0,float(ymax),ydivs,0))
         if trivial_ignored + uninteresting_ignored > 0:
             self.phycas.output('%d trivial and %d uninteresting splits were ignored.' % (trivial_ignored, uninteresting_ignored))
         
@@ -507,7 +543,15 @@ class TreeSummarizer(object):
         self.phycas.output('\nSaving tree topologies in file %s...' % self.phycas.sumt_output_tree_file)
         self.save_trees(self.phycas.sumt_output_tree_file, self.phycas.sumt_output_pdf_file, summary_short_name_list, summary_full_name_list, summary_tree_list)
 
+        pdf = PDFGenerator(11.0, 8.5)
+        pdf.overwrite = True
+        
         self.phycas.output('\nSaving AWTY plot in file awty.pdf...')
-        self.awtyPlot(split_vect, num_trees_considered)
+        self.awtyPlot(pdf, split_vect, num_trees_considered)
+
+        self.phycas.output('\nSaving Sojourn plot in file awty.pdf...')
+        self.sojournPlot(pdf, split_vect, num_trees_considered)
+
+        pdf.saveDocument('awty.pdf')
 
         self.phycas.output('\nSumT finished.')

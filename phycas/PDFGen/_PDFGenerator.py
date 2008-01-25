@@ -154,7 +154,7 @@ class PDFTextObject(PDFObject):
         return len(outstr)
 
 class PDFLineObject(PDFObject):
-    def __init__(self, pdf_generator, x0, y0, x1, y1, line_width, line_style):
+    def __init__(self, pdf_generator, x0, y0, x1, y1, line_width, line_style, cap_style):
         PDFObject.__init__(self, pdf_generator, 'Line')
         self.x0 = float(x0)
         self.y0 = float(y0)
@@ -162,7 +162,7 @@ class PDFLineObject(PDFObject):
         self.y1 = float(y1)
         self.width = float(line_width)
         self.dash_pattern = line_style == 'dotted' and '[3] 0 d' or '[] 0 d'
-        self.line_cap_style = 1 # 0 = square ends; 1 = rounded ends; 2 = projecting square ends 
+        self.line_cap_style = cap_style == 'rounded' and 1 or 0  # 0 = square ends; 1 = rounded ends; 2 = projecting square ends 
 
     def write(self, outf, terminator):
         objstr  = '    %.1f w%c' % (self.width, terminator)
@@ -274,9 +274,9 @@ class PDFGenerator(object):
         text = PDFTextObject(self, x, y, font_family, font_size, text)
         self.curr_page.addContent(text)
 
-    def addLine(self, x0, y0, x1, y1, line_width, line_style = 'solid'):
+    def addLine(self, x0, y0, x1, y1, line_width, line_style = 'solid', cap_style = 'rounded'):
         assert self.curr_page, 'call newPage() function before adding first content'
-        line = PDFLineObject(self, x0, y0, x1, y1, line_width, line_style)
+        line = PDFLineObject(self, x0, y0, x1, y1, line_width, line_style, cap_style)
         self.curr_page.addContent(line)
 
     def addRectangle(self, x0, y0, w, h, line_width = 1, line_style = 'solid'):
@@ -393,11 +393,13 @@ class PDFGenerator(object):
                     xinfo = (0.0, 1.0, 10, 1),  # (min, max, divisions, precision)
                     yinfo = (0.0, 1.0, 10, 1),  # (min, max, divisions, precision)
                     lines = True,
+                    points = True,
                     title_font = 'Helvetica',
                     title_font_height = 14,
                     label_font = 'Helvetica',
                     font_height = 12,
                     line_width = 1,
+                    line_cap_style = 'rounded',
                     paper_width_inches = 11.0,
                     paper_height_inches = 8.5,
                     right_margin_inches = 1.0,
@@ -436,7 +438,6 @@ class PDFGenerator(object):
         ydiv = yinfo[2]
         yfmt = '%%.%df' % yinfo[3]
         ylabels = [yfmt % (ymin + ydiff*float(i)/float(ydiv)) for i in range(ydiv + 1)]
-        #print 'ylabels =',ylabels
         
         self.newPage()
         
@@ -485,51 +486,57 @@ class PDFGenerator(object):
         #self.addText(plot_left + (plot_width - title_width)/2.0, plot_bottom + plot_height + title_height, 'Symbol', title_font_height, test_str)
         
         # draw the x-axis
-        self.addLine(plot_left, plot_bottom, plot_left + plot_width, plot_bottom, line_width)
+        self.addLine(plot_left, plot_bottom, plot_left + plot_width, plot_bottom, line_width = 1, cap_style = line_cap_style)
 
-        # draw the x-axis tick marks and labels for 0, ..., ntrees
+        # draw the x-axis tick marks and labels
         for i,label in enumerate(xlabels):
             x = plot_width*float(i)/float(len(xlabels) - 1)
             half_width = font_height*self.calcStringWidth(label_font, label)/2.0
             self.addText(plot_left + x - half_width, plot_bottom - xlabel_height - 2.0*spacer, label_font, font_height, label)
-            self.addLine(plot_left + x, plot_bottom - half_tick, plot_left + x, plot_bottom + half_tick, line_width)
+            self.addLine(plot_left + x, plot_bottom - half_tick, plot_left + x, plot_bottom + half_tick, line_width = 1, cap_style = line_cap_style)
         
         # draw the y-axis
-        self.addLine(plot_left, plot_bottom, plot_left, plot_bottom + plot_height, line_width)
+        self.addLine(plot_left, plot_bottom, plot_left, plot_bottom + plot_height, line_width = 1, cap_style = line_cap_style)
 
-        # draw the y-axis tick marks and labels for 0.0, 0.1, ..., 1.0
+        # draw the y-axis tick marks and labels
         for i,label in enumerate(ylabels):
             y = plot_height*float(i)/float(len(ylabels) - 1)
             ylabel = y - xlabel_height/2.0
             self.addText(left_margin, plot_bottom + ylabel, label_font, font_height, label)
-            self.addLine(plot_left - half_tick, plot_bottom + y, plot_left + half_tick, plot_bottom + y, line_width)
+            self.addLine(plot_left - half_tick, plot_bottom + y, plot_left + half_tick, plot_bottom + y, line_width = 1, cap_style = line_cap_style)
             
-        # draw points or lines
+        # draw points and/or lines
         for line_data in data:
             first_point = True
+            only_point = (len(line_data) == 1)
             for point in line_data:
                 if first_point:
                     x0 = plot_width*(point[0] - xmin)/xdiff
                     y0 = plot_height*(point[1] - ymin)/ydiff
-                    self.addRectangle(plot_left + x0 - spacer/2.0,
-                                      plot_bottom + y0 - spacer/2.0,
-                                      spacer,
-                                      spacer,
-                                      1,
-                                      'solid')
+                    if points:
+                        self.addRectangle(plot_left + x0 - spacer/2.0,
+                                          plot_bottom + y0 - spacer/2.0,
+                                          spacer,
+                                          spacer,
+                                          1,
+                                          'solid')
+                    if lines and only_point and not points:
+                        # show something, if only just a line so short that it is effectively a point
+                        self.addLine(plot_left + x0, plot_bottom + y0, plot_left + x0 + line_width/2.0, plot_bottom + y0, line_width = line_width, cap_style = line_cap_style)
                     #print 'x0 =',point[0],', y0 =',point[1]
                     first_point = False
                 else:
                     x = plot_width*(point[0] - xmin)/xdiff
                     y = plot_height*(point[1] - ymin)/ydiff
                     if lines:
-                        self.addLine(plot_left + x0, plot_bottom + y0, plot_left + x, plot_bottom + y, line_width)
-                    self.addRectangle(plot_left + x - spacer/2.0,
-                                      plot_bottom + y - spacer/2.0,
-                                      spacer,
-                                      spacer,
-                                      1,
-                                      'solid')
+                        self.addLine(plot_left + x0, plot_bottom + y0, plot_left + x, plot_bottom + y, line_width = line_width, cap_style = line_cap_style)
+                    if points:
+                        self.addRectangle(plot_left + x - spacer/2.0,
+                                          plot_bottom + y - spacer/2.0,
+                                          spacer,
+                                          spacer,
+                                          1,
+                                          'solid')
                     #print 'x  =',point[0],', y  =',point[1]
                     x0 = x
                     y0 = y
