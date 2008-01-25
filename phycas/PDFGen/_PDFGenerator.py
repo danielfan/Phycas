@@ -444,6 +444,9 @@ class PDFGenerator(object):
         spacer        = 5.0
         half_tick     = 2.0
 
+        symbol_height = 12.0*self.getXHeight('Symbol')
+        symbol_width = 12.0*self.calcStringWidth('Symbol', '\xc4')
+
         title_height = 0.0
         title_width = 0.0
         if len(title) > 0:
@@ -477,6 +480,9 @@ class PDFGenerator(object):
 
         # draw the title
         self.addText(plot_left + (plot_width - title_width)/2.0, plot_bottom + plot_height + 2.0*title_height, title_font, title_font_height, title)
+
+        #test_str = '\xc4\xc5\xa7\xa8\xa9\xaa'
+        #self.addText(plot_left + (plot_width - title_width)/2.0, plot_bottom + plot_height + title_height, 'Symbol', title_font_height, test_str)
         
         # draw the x-axis
         self.addLine(plot_left, plot_bottom, plot_left + plot_width, plot_bottom, line_width)
@@ -505,12 +511,25 @@ class PDFGenerator(object):
                 if first_point:
                     x0 = plot_width*(point[0] - xmin)/xdiff
                     y0 = plot_height*(point[1] - ymin)/ydiff
+                    self.addRectangle(plot_left + x0 - spacer/2.0,
+                                      plot_bottom + y0 - spacer/2.0,
+                                      spacer,
+                                      spacer,
+                                      1,
+                                      'solid')
                     #print 'x0 =',point[0],', y0 =',point[1]
                     first_point = False
                 else:
                     x = plot_width*(point[0] - xmin)/xdiff
                     y = plot_height*(point[1] - ymin)/ydiff
-                    self.addLine(plot_left + x0, plot_bottom + y0, plot_left + x, plot_bottom + y, line_width)
+                    if lines:
+                        self.addLine(plot_left + x0, plot_bottom + y0, plot_left + x, plot_bottom + y, line_width)
+                    self.addRectangle(plot_left + x - spacer/2.0,
+                                      plot_bottom + y - spacer/2.0,
+                                      spacer,
+                                      spacer,
+                                      1,
+                                      'solid')
                     #print 'x  =',point[0],', y  =',point[1]
                     x0 = x
                     y0 = y
