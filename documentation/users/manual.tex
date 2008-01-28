@@ -1,0 +1,313 @@
+\documentclass[10pt]{article}
+\setlength{\oddsidemargin}{0.in}
+\setlength{\textwidth}{6.5in}
+\setlength{\topmargin}{-0.25in}
+\setlength{\textheight}{8.25in}
+
+% Skip space between paragraphs
+\setlength{\parskip}{.0in}
+
+% Do not put numbers in section headings
+\setcounter{secnumdepth}{3}
+
+% Indent paragraphs 2ex
+\setlength{\parindent}{2ex}
+
+% Use the natbib package for the bibliography
+\usepackage[round]{natbib}
+\bibliographystyle{sysbio}
+
+% Use the graphicx package to incorporate and scale
+% encapsulated postscript figures
+\usepackage{graphicx}
+
+% Make document single-spaced
+\renewcommand{\baselinestretch}{1.0}
+
+\usepackage{courier}	% http://www-h.eng.cam.ac.uk/help/tpl/textprocessing/fonts.html
+%\usepackage{upquote}
+%\newfont{\mytt}{cmtt10 at 10pt}
+
+\newcommand{\trademark}[1]{#1${}^{\mbox{\tiny TM}}$}
+\newcommand{\pathname}[1]{{\em #1}}
+\newcommand{\menu}[1]{{\sf #1}}
+\newcommand{\code}[1]{{\tt #1}}
+\newcommand{\term}[1]{{\bfseries #1}\index{#1}}
+\newcommand{\setting}[1]{{\tt \small #1}\index{#1}}
+
+% Use a small font for the verbatim environment
+\makeatletter  % makes '@' an ordinary character
+\renewcommand{\verbatim@font}{%
+  \ttfamily\small\catcode`\<=\active\catcode`\>=\active%
+}
+\makeatother   % makes '@' a special symbol again
+
+% for index
+\usepackage{makeidx}
+\makeindex
+%\index{cheese}			index entry
+%\index{cheese!gouda} 		index subentry
+%\index{cheese!gouda!brie}	index subsubentry
+%\index{cheese|see{crackers}}	"see" entries
+%\index{Kraft@\textit{Kraft}}	change font
+%\index{cheese@gouda}		gouda right next to cheese, as if gouda were spelled cheese
+
+% Keep hyperref last among includes
+\usepackage{hyperref}
+\hypersetup{backref, urlcolor=blue, colorlinks=true, citecolor=blue, hyperindex=true, 
+pdfstartview=FitB, 
+pdftitle={Phycas User Manual},
+pdfauthor={Paul O. Lewis, Mark T. Holder, and David L. Swofford}, 
+pdfsubject={Phycas User Manual},
+pdfkeywords={phylogenetics, Bayesian, Markov chain Monte Carlo, MCMC}}
+% pdfpagemode=FullScreen,  
+
+\begin{document}
+
+\title{Phycas User Manual}
+\author{Paul O. Lewis, Mark. T. Holder, and David L. Swofford}
+\date{\today}
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+
+Phycas (\url{http://phycas.org}) is a Python (\url{http://www.python.org}) extension that allows Python to read nexus-formatted data files, run MCMC analyses, and summarize the results. In order to use Phycas, you need to first have Python installed on your computer. Please see section~\ref{sec:install} entitled ``Installing Phycas'' (p.~\pageref{sec:install}) for detailed installation instructions and useful information on topics important for using Phycas, such as how to obtain a command prompt for the operating system you are using. The following sections assume that you have successfully installed Phycas and have read section~\ref{sec:install}.
+
+This manual begins by showing you how to perform a simple analysis, but does not attempt to explain all possible settings. The purpose is to quickly show you how to run the program, allowing later sections to provide detail. 
+
+\section{A basic analysis} \label{sec:basic}
+
+Phycas is an extension of Python, so to use it you must create a Python \term{script}. A Python script is a file containing Python source code. When submitted to the Python interpreter (a computer program), the commands in the script file are read and executed. The relationship between a Python script and the Python interpreter is much the same as the relationship between a nexus file (containing a PAUP block) and the program PAUP*. PAUP* acts as the interpreter for the commands in the file. Here is a simple Python script that invokes Phycas:
+
+\subsection{Example script}
+
+\begin{verbatim}
+from phycas import *
+phycas = Phycas()
+phycas.data_file_name = 'green.nex'
+phycas.log_file_name = 'basic.log'
+phycas.ncycles = 2000
+phycas.sample_every = 10
+phycas.mcmc()
+\end{verbatim}
+
+\subsection{Line-by-line explanation} \label{subsec:basicpyexplanation}
+
+\begin{verbatim}
+from phycas import *
+\end{verbatim}
+%
+This tells the Python interpreter to import everything from the \code{phycas} module. This line should start every Phycas script you create.
+%
+\begin{verbatim}
+phycas = Phycas()
+\end{verbatim}
+%
+This line should always immediately follow the import line. It tells the Python interpreter that you wish to create a Phycas \term{object}\footnote{
+%
+In object-oriented computing languages such as Python, {\em object} is the name given to code that is meant to represent a real-world object. To that end, objects have {\em attributes} that store information and {\em methods} that allow them to do things. Like all Python objects, a {\em Phycas object} has attributes (called settings in this manual) and methods (e.g. \code{mcmc()}, \code{sumt()}, etc.). Python objects are instances of more general entities known as {\em classes}. When you create a Phycas object, you are creating an instance of the Phycas class. While it is usually necessary to create only one Phycas object in your scripts, nothing prevents you from creating several different Phycas objects with different attributes. The source code for the Phycas class resides in the file \pathname{Phycas.py} if you want to view it.} 
+%
+named \code{phycas}.
+You can choose any name you like for the \code{Phycas} object: for example, this line could have been \code{ficus = Phycas()}. The parentheses after the word \code{Phycas} are important: they cause the Python interpreter to run the main initialization method that creates a \code{Phycas} object in your computer's memory.
+%
+\begin{verbatim}
+phycas.data_file_name = 'green.nex'
+\end{verbatim}
+%
+This line tells \code{phycas} to read data from the file named {\tt green.nex}. If {\tt green.nex} is not in the same directory as this script, then you will need to specify a relative or absolute path to the file\footnote{
+%
+For example, if the data file was in a directory named {\tt xyz} at the same level as the directory containing the script, set \setting{data\_file\_name} to {\tt '../xyz/green.nex'} }.
+%
+Phycas does not do anything at this point in the script except set its \setting{data\_file\_name} setting to the string \code{green.nex}. You can surround the file name with either single (e.g. \code{'green.nex'}) or double (e.g. \code{"green.nex"}) quotes, but you {\em must use quotes here} or the Python interpreter will complain. Quotes in Python inform the interpreter that you are specifying a value that is a string of text characters.
+%
+\begin{verbatim}
+phycas.log_file_name = 'basic.log'
+\end{verbatim}
+%
+This line starts a log file, which captures all output sent to the console. Some consoles do not have a large buffer, and it is possible to lose the beginning of the output if an analysis runs for a long time. Note that the name of the log file must be in the form of a Python string: that is, failing to surround the file name with quotes will result in an error.
+%
+\begin{verbatim}
+phycas.ncycles = 2000
+\end{verbatim}
+%
+The setting \setting{ncycles} determines the length of the MCMC run. Cycles in Phycas are not the same as generations in MrBayes. About two orders of magnitude {\em fewer} cycles are needed than generations, so a 2000 cycle Phycas run corresponds (roughly) to a 200,000 generation MrBayes run. 
+%
+\begin{verbatim}
+phycas.sample_every = 10
+\end{verbatim}
+%
+The setting \setting{sample\_every} determines how many cycles elapse before the tree and model parameters are sampled. In this case, a sample is saved every 10 cycles, so a total of 200 trees (and 200 values from each model parameter) will be saved from this run.
+%
+\begin{verbatim}
+phycas.mcmc()
+\end{verbatim}
+%
+This calls the \code{mcmc} method of the \code{Phycas} object known as \code{phycas}. This begins an MCMC analysis using defaults for everything except the three settings that were modified (\setting{data\_file\_name}, \setting{log\_file\_name}, \setting{ncycles} and \setting{sample\_every}). To see what additional settings can be changed before calling the \code{mcmc} method, see section~\ref{subsec:mcmcsettings} entitled ``Phycas settings'' on page~\pageref{subsec:mcmcsettings}.
+
+\subsection{Running Phycas}
+
+Save the seven lines of this simple example in a plain text file\footnote{
+%
+It is important to save the file using plain text format. Most word processing programs, such as \trademark{Microsoft} \trademark{Word}, save files by default in a format that contains a lot of extra, proprietary information. All such programs have the option to save the file as plain text. It is best to create Python scripts using an editor that {\em only} saves files as plain text. Examples (for \trademark{Windows}) include Notepad++ and Pythonwin (or the simple Notepad program that comes with \trademark{Windows}). For Macs, Text Wrangler or BBEdit are good choices. Python comes with its own editor, named Idle, that is also a good (if slightly sluggish) choice.}.
+%
+named, for example, {\tt basic.py}. Be sure to save your script in the {\em same directory as the data file} if you want to use the example as it is written. The {\tt green.nex} data file is located here:
+%
+\begin{verbatim}
+<phycas install directory>/phycas/Tests/Data
+\end{verbatim}
+%
+It is probably best to copy the data file to an empty directory (which also contains your script) to avoid accidentally corrupting the data file.
+
+To execute the script, open a command console, navigate to the directory containing the script and type the following at the command prompt:
+%
+\begin{verbatim}
+python basic.py
+\end{verbatim}
+%
+The program should run for a few minutes, creating three files (\pathname{basic.log}, \pathname{green.nex.t} and \pathname{green.nex.p}) as it runs. The file \pathname{green.nex.t} is the tree file containing the trees sampled during the MCMC run, while \pathname{green.nex.p} is the parameter file containing samples of model parameters. These files are equivalent to their counterparts in MrBayes.
+
+\section{Summarizing tree files}
+
+Phycas provides the {\tt sumt()} method for summarizing an input tree file. While analogous, Phycas' {\tt sumt()} method differs somewhat from the MrBayes sumt command. The example below stands alone, however there is nothing wrong with tacking on these statements after the {\tt mcmc()} call in the previous \pathname{basic.py} example.
+
+\subsection{Example script}
+
+\begin{verbatim}
+from phycas import *
+phycas = Phycas()
+phycas.sumt_input_tree_file = 'green.nex.t'
+phycas.sumt_trees_prefix = 'trees'
+phycas.sumt_splits_prefix = 'splits'
+phycas.sumt_burnin = 1
+phycas.sumt()
+\end{verbatim}
+
+\subsection{Line-by-line explanation}
+
+\begin{verbatim}
+from phycas import *
+phycas = Phycas()
+\end{verbatim}
+%
+These two lines were explained previously in the explanation of the \pathname{basic.py} script on page~\pageref{subsec:basicpyexplanation}.
+%
+\begin{verbatim}
+phycas.sumt_input_tree_file = 'green.nex.t'
+\end{verbatim}
+%
+The setting \setting{sumt\_input\_tree\_file} specifies the name of the tree file to be analyzed. Here, we are specifying the tree file produced by the analysis performed by \pathname{basic.py}. The file named here should be a valid nexus tree file, but need not be a file produced by Phycas.
+%
+\begin{verbatim}
+phycas.sumt_trees_prefix = 'trees'
+\end{verbatim}
+%
+The setting \setting{sumt\_trees\_prefix} specifies the prefix used to create file names for a tree file (prefix + \pathname{.tre}) and a pdf file (prefix + \pathname{.pdf}). Both files will contain the same trees, but the trees in the pdf file are graphically represented whereas those in the tree file are in the form of newick (nested parentheses) tree descriptions. The first tree in each file is the 50\% majority-rule consensus tree, followed by all distinct tree topologies sampled during the course of the MCMC analysis. The graphical versions in the pdf file have edge lengths drawn proportional to their posterior means and with posterior probability support values shown above each edge. With the exception of the majority rule consensus tree, the titles of trees reflect their frequency amongst the samples. 
+%
+\begin{verbatim}
+phycas.sumt_splits_prefix = 'splits'
+\end{verbatim}
+%
+The setting \setting{sumt\_splits\_prefix} specifies the prefix used to create a file name for a pdf file containing two plots. The first plot in the file is similar to an AWTY (\url{http://king2.scs.fsu.edu/CEBProjects/awty/awty_start.php}) cumulative plot. It shows the split posterior probability calculated at evenly-spaced points throughout the MCMC run (as if the MCMC run were stopped and split posteriors computed at that point in the run). This kind of plot gives you information about whether the Markov chain converged with respect to split posteriors. (Often, when plots of log-likelihoods or model parameters show apparent convergence, split posteriors are still changing, making this type of plot a better indicator of convergence.) This first plot is not identical to an AWTY cumulative plot. The most striking difference is the fact that the lines plotted all originate at zero (AWTY does not plot these lines). Also, in AWTY the x-axis is labeled in terms of generations, whereas the Phycas equivalent labels the x-axis in terms of samples. The second plot in this file shows split sojourns. A split sojourn is a sequence of successive samples in which the split is present in the sampled tree, preceded and followed by an absense of the split. The number and duration of split sojourns gives an indication of how well the Markov chain is mixing, and this plot shows the results graphically. Neither plot in this file shows results for trivial splits (the split separating a single taxon from all other taxa; such splits are always present and are thus guaranteed to have split posterior 1.0) or for splits that were present in every sample (these are not useful from the standpoint of assessing convergence or mixing, except that poor mixing might be indicated if very few splits are plotted).
+%
+\begin{verbatim}
+phycas.sumt_burnin = 1
+\end{verbatim}
+%
+The setting \setting{sumt\_burnin} is the number of sampled tree topologies to skip. This value should always be at least 1, because the first tree in the tree file is the starting tree, which is never a valid sample from the posterior distribution. All statistics computed by the {\tt sumt()} method are based on the number of sampled trees remaining after the burn-in trees have been removed from consideration. For example, if there are 101 trees in the input tree file, and \setting{sumt\_burnin} is 1, all posterior probabilities will be computed using 100 in the denominator (not 101).
+%
+\begin{verbatim}
+phycas.sumt()
+\end{verbatim}
+%
+The {\tt sumt()} method call begins the analysis of the input tree file. Besides the three files produced containing trees and plots, output is generated by this method summarizing the tree topologies and splits discovered. Each summary table includes the following information:
+\begin{description}
+\item[freq.] The number of trees in which the split or topology was found
+\item[prob.] The frequency divided by the total number of trees sampled
+\item[cum] For topologies, the cumulative posterior probability over all tree topologies sorted from most to least probable. This column aids in finding credible sets of trees. For example, the 95\% credible set of tree topologies would be all those above (and including) the first one having a cumulative probability at least 0.95.
+\item[weight] In the case of splits, this is the posterior mean edge length of the split, obtained by averaging the edge length associated with the split over all sampled trees in which the split was found
+\item[TL] In the case of tree topologies, this is the posterior mean tree length associated with a topology, obtained by averaging the tree length associated with the topology over all sampled trees having that topology
+\item[s0] This is the first sample in which the split or tree topology appeared. The minimum possible value of this quantity is 1, and the maximum is the number of trees sampled.
+\item[sk] This is the last sample in which the split or tree topology appeared. The minimum possible value of this quantity is 1, and the maximum is the number of trees sampled.
+\item[k] This is the number of sojourns made by the split or tree topology. A sojourn is a sequence of sampled trees in which the split or topology appears, preceded and followed by a sampled tree lacking that split or topology.
+\end{description}
+
+\section{Installing Phycas}\label{sec:install}
+\subsection{Instructions for Windows Users} 
+
+These instructions assume you are using \trademark{Windows} \trademark{XP} or \trademark{Vista}.
+
+\subsubsection{\trademark{Windows} console}
+
+One very handy feature that does not come with \trademark{Windows} is the ability to open a command console by using the right-click speed menu in \trademark{Explorer}. The web site \url{http://www.commandline.co.uk/cmdhere/} makes this feature easy to add and will make Phycas {\em much} easier to use. 
+
+\subsubsection{Installing Python}
+
+Before you go to the trouble of downloading and installing Python, make sure you do not already have Python installed on your Windows system. From the Start button, choose \menu{All Programs}, then \menu{Accessories} and finally \menu{Command Prompt}. Type \code{python -V} in the console window that appears, and if a phrase such as \code{Python 2.5.1} appears, then you already have Python installed! Most Windows users will probably see \code{'python' is not recognized as an internal or external command, operable program or batch file.} In this case, you need to visit \url{http://python.org} and download and install the latest version of Python.
+
+\subsubsection{Installing Phycas}
+
+Visit the Download section of the Phycas web site \url{http://phycas.org} and download the Windows installer. If you are using Windows XP, double-click the installer to install Phycas. If using Vista, right-click the installer and choose to install as Administrator. The installer will attempt to identify the location of Python on your system, and if it fails to find Python will abort the installation. Assuming it can find Python, it will install Phycas into the \pathname{Lib/site-packages} directory of that Python installation. You will also find a Phycas section in the menu that appears when you choose \menu{Start} and \menu{All Programs}.
+
+NEEDS WORK
+
+\subsection{Instructions for MacIntosh Users}
+
+NEEDS WORK
+
+\section{Phycas features}
+
+Phycas differs in some ways from other programs that conduct Bayesian phylogenetic analyses. Phycas does not attempt to do everything, but does provide some features not found in any other software. The following sections are meant to highlight some of the features present in Phycas that are uncommon in other programs.
+
+\subsection{Slice sampling}
+
+Phycas makes extensive use of an MCMC method known as \term{slice sampling} \citep{Neal2003a}, whereas many programs use Metropolis-Hastings (MH) proposals to update model parameters during an MCMC analysis. The decision to use slice sampling in Phycas was based on tunability: the efficiency of slice samplers can be tuned as they run. In contrast, MH depends on tuning parameters that must be adjusted prior to sampling, an activity almost never performed in practice, leading to inefficient MCMC sampling for data sets that are not like those used when decisions were being made about default values of tuning parameters. In the final tally, a program using slice sampling behaves nearly identically to one using MH if the program using MH has been tuned prior to the analysis; however, Phycas saves you from having to worry about tuning by doing it automatically during the run. 
+
+Phycas first attempts to adapt its slice samplers (one slice sampler is assigned to each model parameter) at the cycle specified by the setting \setting{adapt\_first}. Each subsequent adaptation occurs after twice as many cycles as the previous adaptation. After the first few adaptations there is usually little to be gained by adapting the slice samplers further, hence the increasingly long time periods between adaptations. 
+
+Slice sampling can be used only for continuous model parameters, not for updating the tree topology. Phycas uses the \citet{LargetSimon1999} ``LOCAL move without a molecular clock'' to propose simultaneous changes in tree topology and edge lengths. Because edge length parameters are closely tied to the topology (and because there are so many of them!), it appears to be more efficient to use the LOCAL move rather than slice samplers to update edge lengths.
+
+\subsection{Hierarchical models}
+
+It is common still in Bayesian phylogenetics to use non-hierarchical models. In a non-hierarchical model, all parameters in the model can be found in the likelihood function. Edge lengths are parameters found in the likelihood function and, typically, a single Exponential distribution is used as the prior distribution for all edge lengths. The problem with this is that the edge length prior often has more of an effect than intended (the average tree length often responds to changes in the edge length prior mean) and researchers are often at a loss when deciding on an appropriate prior mean for edge lengths. It is possible to take an empirical Bayes approach, which involves estimating edge lengths under maximum likelihood and using the average estimated edge length as the mean of the prior. Bayesian purists eschew this peeking at the data to help determine the prior, but how should one choose an appropriate prior distribution without using estimates? 
+
+Phycas provides for the use of hierarchical models to solve this problem in a purely Bayesian way. In a hierarchical model, some parameters (called \term{hyperparameters}) are not found in the likelihood function. They are in this sense one level removed from the data, hence the use of the term ``hierarchical.'' In the case of edge lengths, Phycas can use a hyperparameter to determine the mean of the edge length prior distribution, taking this responsibility away from the researcher, who is relieved to learn that she now only needs to specify the parameters of the \term{hyperprior} --- the prior distribution of the hyperparameter. Because hyperparameters are one level (or more) removed from the data, the effects of arbitrary choices in the specification of the hyperprior is much less pronounced. In fact, just letting Phycas use its default hyperprior works well because it is vague enough that the hyperprior (determining edge length prior means) will begin to hover around a value appropriate for the data at hand. The effect is similar to the empirical Bayes approach, but you need not compromise any Bayesian principles and, rather than fixing the mean of the edge length prior, you are effectively estimating it as the MCMC analysis progresses.
+
+To tell Phycas to use a hierarchical model for edge lengths, you need only set \setting{using\_hyperprior} to \code{True}. The hyperprior distribution is determined by the setting \setting{edgelen\_hyperprior}.
+
+\subsection{Polytomy priors}
+
+A solution to the ``Star Tree Paradox'' problem was proposed by \citet{LewisHolderHolsinger2005}. Their solution was to use reversible-jump MCMC to allow unresolved tree topologies to be sampled during the course of a Bayesian phylogenetic analysis in addition to fully-resolved tree topologies. If the time between speciation events is so short (or the substitution rate so low) that no substitutions occurred along a particular internal edge in the true tree, then use of the \term{polytomy prior} proposed by \citet{LewisHolderHolsinger2005} can improve inference by giving the Bayesian model a ``way out.'' That is, it is not required to find a fully resolved tree, but can drop back and punt, so to speak, by placing a lot of posterior mass on a less-than-fully-resolved topology. Please refer to the \citet{LewisHolderHolsinger2005} paper for details.
+
+To use the polytomy prior in an analysis, be sure that \setting{allow\_polytomies} and \setting{polytomy\_prior}are both \code{True}. The setting \setting{topo\_prior\_C} determines the strength of the polytomy prior. Setting \setting{topo\_prior\_C} to 1.0 results in a flat prior (all topologies have identical prior probabilities, and thus unresolved topologies get no more or less weight than fully-resolved topologies). Setting \setting{topo\_prior\_C} greater than 1.0 favors less resolved topologies more than fully-resolved ones. This is usually what is desired; even with a prior that favors unresolved trees, a fully-resolved topology can easily win out over a less-resolved one if there is even scant evidence for substitution along the relevant edge. In the paper, this value was set to the value $e$ (the base of the natural logarithms). To do this in Phycas, set \setting{topo\_prior\_C} equal \code{math.exp(1.0)}.
+
+\section{Phycas settings}\label{sec:phycassettings}
+
+This section lists all currently available Phycas settings. You will find more if you look at the \code{Phycas.\_\_init\_\_} method in the \pathname{Phycas.py} file, but be forewarned that settings found in \pathname{Phycas.py} but not listed here are experimental and not fully tested --- use at your own risk. Please do not ask for help with undocumented settings: we will document them here when we feel they are ready to be used.
+
+\subsection{Settings used by \code{mcmc()}}\label{subsec:mcmcsettings}
+\input{mcmc}
+
+\subsection{Settings used by \code{sumt()}}\label{subsec:sumtsettings}
+\input{sumt}
+
+\subsection{Settings related to edges}\label{subsec:edgesettings}
+\input{edges}
+
+%
+% Figure "felsenstein"
+%
+%\clearpage
+%\begin{figure}
+%\centering
+%\hfil\includegraphics[scale=0.7]{felsenzone.eps}\hfil
+%\end{figure}
+
+\section{References}
+\renewcommand{\bibsection}{}
+\bibliography{manual}
+
+\printindex
+
+\end{document}

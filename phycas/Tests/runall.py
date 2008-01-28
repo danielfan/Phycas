@@ -60,7 +60,7 @@ runTest(outFile, "GTRTest", ["gtr_test.p", "gtr_test.t"])
 runTest(outFile, "Simulator", ["simulated.nex"])
 runTest(outFile, "SplitTest", ["out.txt"])
 runTest(outFile, "PDFTree", ["test.pdf"])
-runTest(outFile, "SumT", ["contree.tre","contree.pdf","logfile.txt"])
+runTest(outFile, "SumT", ["trees.tre","trees.pdf","splits.pdf","logfile.txt"])
 
 # Still need to get these working...
 #runTest(outFile, "SAMCTest", ["cf.txt", "samc_output.p", "samc_output.t"])

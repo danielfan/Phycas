@@ -1,4 +1,4 @@
-import os, sys, math, threading, types
+import os, sys, math, threading, types, copy
 import MCMCManager  # poorly named, as MCMCManager is now only one of many classes within
 from phycas.Conversions import *
 from phycas.DataMatrix import *
@@ -35,53 +35,53 @@ class Phycas(object):
         
         """
         # Variables controlling the MCMC analysis and progress reporting
-        self.random_seed            = 0         # determines random number seed (0 means generate seed automatically)
-        self.ncycles                = 10000     # the number of update cycles (a cycle is analogous to, but different than, a "generation" in MrBayes)
-        self.sample_every           = 100       # a new sample of tree topology and model parameters will be taken after this many cycles
-        self.report_every           = 100       # a progress report will be displayed after this many cycles
-        self.verbose                = True      # you will get more output if True, less output if False
-        self.quiet                  = False     # if True, output will only be sent to the log file if open (see below); if False, output will be sent to the console as well
-        self.outfile_prefix         = None      # If None, parameter and tree files created will have a name beginning with the name of the data file; if provided, this prefix will form the first part of the parameter and tree file names
+        self.random_seed            = 0         # Determines the random number seed used (specify either 0 or a positive integer; 0 means generate seed automatically from system clock)
+        self.ncycles                = 10000     # The number of update cycles (a cycle is analogous to, but different than, a "generation" in MrBayes; Phycas does in one cycle what MrBayes does in about 100 generations for a simple model such as JC)
+        self.sample_every           = 100       # The current tree topology and model parameter values will be sampled after this many cycles have elapsed since the last sample was taken
+        self.report_every           = 100       # A progress report will be displayed after this many cycles have elapsed since the last progress report
+        self.verbose                = True      # You will get more output if True, less output if False
+        self.quiet                  = False     # If True, output will only be sent to the log file if open (see below); if False, output will be sent to the console as well
+        self.outfile_prefix         = None      # If None, parameter and tree files created will have a name beginning with the name of the data file; if provided, this prefix will form the first part of the parameter (e.g. <outfile_prefix>.p) and tree file (e.g. <outfile_prefix>.t) names
 
         # Variables associated with substitution models (except for edge lengths)
         self.default_model          = 'hky'     # Can be 'jc', 'hky' or 'gtr'
 
-        self.relrate_prior          = ExponentialDist(1.0)              # the prior distribution for individual GTR relative rate parameters
-        self.starting_relrates      = [1.0, 4.0, 1.0, 1.0, 4.0, 1.0]    # the starting values for GTR relative rates
-        self.fix_relrates           = False                             # if True, GTR relative rates will not be modified during the course of an MCMC analysis
+        self.relrate_prior          = ExponentialDist(1.0)              # The prior distribution for individual GTR relative rate parameters
+        self.starting_relrates      = [1.0, 4.0, 1.0, 1.0, 4.0, 1.0]    # The starting values for GTR relative rates
+        self.fix_relrates           = False                             # If True, GTR relative rates will not be modified during the course of an MCMC analysis
 
-        self.kappa_prior            = ExponentialDist(1.0)      # the prior distribution for the kappa parameter in an HKY model
-        self.starting_kappa         = 4.0                       # the starting value for the kappa parameter in an HKY model
-        self.fix_kappa              = False                     # if True, the HKY kappa parameter will not be modified during the course of an MCMC analysis
+        self.kappa_prior            = ExponentialDist(1.0)      # The prior distribution for the kappa parameter in an HKY model
+        self.starting_kappa         = 4.0                       # Tthe starting value for the kappa parameter in an HKY model
+        self.fix_kappa              = False                     # If True, the HKY kappa parameter will not be modified during the course of an MCMC analysis
 
-        self.num_rates              = 1                     # the number of relative rates used for the discrete gamma rate heterogeneity submodel; default is rate homogeneity (i.e. 1 rate)
-        self.gamma_shape_prior      = ExponentialDist(1.0)  # the prior distribution for the shape parameter of the gamma among-site rate distribution
-        self.starting_shape         = 0.5                   # the starting value for the gamma shape parameter
-        self.fix_shape              = False                 # if True, the gamma shape parameter will not be modified during the course of an MCMC analysis
-        self.use_inverse_shape      = False                 # if True, gamma_shape_prior is applied to 1/shape rather than shape
+        self.num_rates              = 1                     # Tthe number of relative rates used for the discrete gamma rate heterogeneity submodel; default is rate homogeneity (i.e. 1 rate)
+        self.gamma_shape_prior      = ExponentialDist(1.0)  # The prior distribution for the shape parameter of the gamma among-site rate distribution
+        self.starting_shape         = 0.5                   # The starting value for the gamma shape parameter
+        self.fix_shape              = False                 # If True, the gamma shape parameter will not be modified during the course of an MCMC analysis
+        self.use_inverse_shape      = False                 # If True, gamma_shape_prior is applied to 1/shape rather than shape
 
-        self.estimate_pinvar        = False                 # if True, an invariable sites submodel will be applied and the parameter representing the proportion of invariable sites will be estimated
-        self.pinvar_prior           = BetaDist(1.0, 1.0)    # the prior distribution for pinvar, the proportion of invariable sites parameter
-        self.starting_pinvar        = 0.2                   # the starting value of pinvar, the proportion of invariable sites parameter
-        self.fix_pinvar             = False                 # if True, the proportion of invariable sites parameter (pinvar) will not be modified during the course of an MCMC analysis
+        self.estimate_pinvar        = False                 # If True, an invariable sites submodel will be applied and the parameter representing the proportion of invariable sites will be estimated
+        self.pinvar_prior           = BetaDist(1.0, 1.0)    # The prior distribution for pinvar, the proportion of invariable sites parameter
+        self.starting_pinvar        = 0.2                   # The starting value of pinvar, the proportion of invariable sites parameter
+        self.fix_pinvar             = False                 # If True, the proportion of invariable sites parameter (pinvar) will not be modified during the course of an MCMC analysis
 
-        self.base_freq_param_prior  = ExponentialDist(1.0)  # the prior distribution for the individual base frequency parameters; these parameters, when normalized to sum to 1, represent the equilibrium proportions of the nucleotide states
-        self.starting_freqs         = [1.0, 1.0, 1.0, 1.0]  # the starting values for the four base frequency parameters
-        self.fix_freqs              = False                 # if True, the base frequencies will not be modified during the course of an MCMC analysis
+        self.base_freq_param_prior  = ExponentialDist(1.0)  # The prior distribution for the individual base frequency parameters; these parameters, when normalized to sum to 1, represent the equilibrium proportions of the nucleotide states
+        self.starting_freqs         = [1.0, 1.0, 1.0, 1.0]  # The starting values for the four base frequency parameters
+        self.fix_freqs              = False                 # If True, the base frequencies will not be modified during the course of an MCMC analysis
 
         # Variables associated with the source of data        
-        self.data_source            = 'file'    # Specify None to explore the joint prior or to simulate data; if 'file', self.data_file_name should be a valid nexus file name
-        self.data_file_name         = ''        # will hold actual data file name
+        self.data_source            = 'file'    # Specify None to explore the joint prior or to simulate data; if 'file', data_file_name should be a valid nexus file name
+        self.data_file_name         = ''        # Used to specify the nexus data file name to be used for subsequent analyses
 
         # Variables associated with simulating data (see function simulateDNA below)
-        self.sim_file_name          = 'simulated.nex'                           # name of file in which to save simulated data
-        self.sim_taxon_labels       = ['taxon1', 'taxon2', 'taxon3', 'taxon4']  # names to use for taxa in simulated data set (number of labels defined determines the number of taxa in the simulated dataset)
-        self.sim_nchar              = 1000                                      # number of characters to generate
+        self.sim_file_name          = 'simulated.nex'                           # Name of file in which to save simulated data
+        self.sim_taxon_labels       = ['taxon1', 'taxon2', 'taxon3', 'taxon4']  # Mames to use for taxa in simulated data set (number of labels defined determines the number of taxa in the simulated dataset)
+        self.sim_nchar              = 1000                                      # Number of characters to generate
 
         # Variables associated with the source of starting tree
-        self.starting_tree_source   = 'random'  # source of starting tree topology: can be either 'random' or 'usertree'
-        self.tree_topology          = None      # unused unless starting_tree_source is 'usertree', in which case this should be a standard newick string representation of the tree topology; e.g. '(A:0.01,B:0.071,(C:0.013,D:0.021):0.037)'
-        self.tree_file_name         = ''        # will hold tree file name
+        self.starting_tree_source   = 'random'  # Source of the starting tree topology: can be either 'random' or 'usertree'. Note that this setting does not determine the edge lengths in the starting tree, only the topology. Starting edge lengths are determined by the probability distribution specified in starting_edgelen_dist
+        self.tree_topology          = None      # Unused unless starting_tree_source is 'usertree', in which case this should be a standard newick string representation of the tree topology; e.g. '(A:0.01,B:0.071,(C:0.013,D:0.021):0.037)'
+        self.tree_file_name         = ''        # Will hold tree file name
 
         # Variables associated with Larget-Simon moves
         self.ls_move_lambda         = 0.2       # The value of the tuning parameter for the Larget-Simon move
@@ -89,7 +89,7 @@ class Phycas(object):
         self.ls_move_debug          = False     # If set to true, TreeViewer will popup on each Larget-Simon move update showing edges affected by the proposed move
         
         # Variables associated with tree scaler move
-        self.tree_scaler_weight     = 0         # whole-tree scaling will be performed this many times per cycle
+        self.tree_scaler_weight     = 0         # Whole-tree scaling will be performed this many times per cycle
 
         # Variables associated with PDF tree drawing (used in pdftree() function)
         # The 14 standard fonts guaranteed to be available in all PDF consumer applications:
@@ -97,57 +97,57 @@ class Phycas(object):
         #   Times-Bold       Helvetica-Bold        Courier-Bold        ZapfDingbats
         #   Times-Italic     Helvetica-Oblique     Courier-Oblique
         #   Times-BoldItalic Helvetica-BoldOblique Courier-BoldOblique
-        self.pdf_filename              = 'trees.pdf'    # set to desired name of pdf file to create
-        self.pdf_edge_support_file     = None           # file containing PAUP* output with table of support values; if specified, the support values will be shown on trees plotted
-        self.pdf_tip_label_font        = 'Times-Italic' # font used for tip node names; should be one of the 14 standard fonts listed above
-        self.pdf_tip_label_height      = 12             # height in points of tip node name font
-        self.pdf_plot_label_font       = 'Helvetica'    # font used for plot axis labels; should be one of the 14 standard fonts listed above
-        self.pdf_plot_label_height     = 12             # height in points of plot axis label font
-        self.pdf_title_font            = 'Helvetica'    # font used for scalebar text; should be one of the 14 standard fonts listed above
-        self.pdf_title_height          = 14             # height in points of scalebar text font
-        self.pdf_scalebar_position     = 'bottom'       # valid values are 'top', 'bottom' or None
-        self.pdf_scalebar_label_font   = 'Helvetica'    # font used for scalebar text; should be one of the 14 standard fonts listed above
-        self.pdf_scalebar_label_height = 10             # height in points of scalebar text font
-        self.pdf_support_label_font    = 'Times-Roman'  # font used for edge support values; should be one of the 14 standard fonts listed above
-        self.pdf_support_label_height  = 8              # height in points of edge support font
-        self.pdf_support_as_percent    = True           # if True, support values will be shown as percentages (e.g. 93.1) rather than proportions (e.g. 0.931)
-        self.pdf_support_decimals      = 1              # the number of decimal places shown in support values (e.g. to get 93.7, specify 1; to round up to 94, specify 0)
-        self.pdf_ladderize             = 'right'        # valid values are 'right', 'left' or None
-        self.pdf_page_width            = 8.5            # page width in inches
-        self.pdf_page_height           = 11.0           # page length in inches
-        self.pdf_line_width            = 1.0            # width of lines representing edges in the tree
-        self.pdf_left_margin           = 1.0            # left margin in inches (1 inch = 72 points)
-        self.pdf_right_margin          = 1.0            # right margin in inches (1 inch = 72 points)
-        self.pdf_top_margin            = 1.0            # top margin in inches (1 inch = 72 points)
-        self.pdf_bottom_margin         = 1.0            # bottom margin in inches (1 inch = 72 points)
-        self.pdf_treefile              = None           # set to tree file name if you want to make one pdf file with each tree from tree file on a separate page
-        self.pdf_newick                = None           # set to the tree description to print if only want to save one tree to a pdf file
-        self.pdf_outgroup_taxon        = None           # set to taxon name of tip serving as the outgroup for display rooting purposes (note: at this time outgroup can consist of just one taxon)
+        self.pdf_filename              = 'trees.pdf'    # Set to desired name of pdf file to create
+        self.pdf_edge_support_file     = None           # File containing PAUP* output with table of support values; if specified, the support values will be shown on trees plotted
+        self.pdf_tip_label_font        = 'Times-Italic' # Font used for tip node names; should be one of the 14 standard fonts listed above
+        self.pdf_tip_label_height      = 12             # Height in points of tip node name font
+        self.pdf_plot_label_font       = 'Helvetica'    # Font used for plot axis labels; should be one of the 14 standard fonts listed above
+        self.pdf_plot_label_height     = 12             # Height in points of plot axis label font
+        self.pdf_title_font            = 'Helvetica'    # Font used for scalebar text; should be one of the 14 standard fonts listed above
+        self.pdf_title_height          = 14             # Height in points of scalebar text font
+        self.pdf_scalebar_position     = 'bottom'       # Valid values are 'top', 'bottom' or None
+        self.pdf_scalebar_label_font   = 'Helvetica'    # Font used for scalebar text; should be one of the 14 standard fonts listed above
+        self.pdf_scalebar_label_height = 10             # Height in points of scalebar text font
+        self.pdf_support_label_font    = 'Times-Roman'  # Font used for edge support values; should be one of the 14 standard fonts listed above
+        self.pdf_support_label_height  = 8              # Height in points of edge support font
+        self.pdf_support_as_percent    = True           # If True, support values will be shown as percentages (e.g. 93.1) rather than proportions (e.g. 0.931)
+        self.pdf_support_decimals      = 1              # The number of decimal places shown in support values (e.g. to get 93.7, specify 1; to round up to 94, specify 0)
+        self.pdf_ladderize             = 'right'        # Valid values are 'right', 'left' or None
+        self.pdf_page_width            = 8.5            # Page width in inches
+        self.pdf_page_height           = 11.0           # Page length in inches
+        self.pdf_line_width            = 1.0            # Width of lines representing edges in the tree
+        self.pdf_left_margin           = 1.0            # Left margin in inches (1 inch = 72 points)
+        self.pdf_right_margin          = 1.0            # Right margin in inches (1 inch = 72 points)
+        self.pdf_top_margin            = 1.0            # Top margin in inches (1 inch = 72 points)
+        self.pdf_bottom_margin         = 1.0            # Bottom margin in inches (1 inch = 72 points)
+        self.pdf_treefile              = None           # Set to tree file name if you want to make one pdf file with each tree from tree file on a separate page
+        self.pdf_newick                = None           # Set to the tree description to print if only want to save one tree to a pdf file
+        self.pdf_outgroup_taxon        = None           # Set to taxon name of tip serving as the outgroup for display rooting purposes (note: at this time outgroup can consist of just one taxon)
         
         # Variables associated with the sumt command
-        self.sumt_outgroup_taxon       = None           # set to taxon name of tip serving as the outgroup for display rooting purposes (note: at this time outgroup can consist of just one taxon)
-        self.sumt_input_tree_file      = None           # set to name of the input tree file
-        self.sumt_output_tree_file     = None           # set to name of the output tree file in which all distinct tree topologies are saved along with the majority-rule consensus tree; default is getPrefix()+'.distinct.t'
-        self.sumt_output_pdf_file      = None           # set to name of the pdf file in which all distinct tree topologies are saved along with the majority-rule consensus tree
-        self.sumt_output_replace       = False          # if True, sumt_output_tree_file and sumt_output_pdf_file will be replaced automatically if they exist; if False, a random integer will be added to the name so that the name no longer matches an existing file
-        self.sumt_burnin               = 1              # number of trees to skip in sumt_input_tree_file
-        self.sumt_equal_brlens         = False          # if True, trees in pdf file will be drawn with branch lengths equal, making support values easier to see; if set to True, consider setting pdf_scalebar_position = None (scalebar is irrelevant in this case)
+        self.sumt_outgroup_taxon       = None           # Set to the taxon name of the tip serving as the outgroup for display rooting purposes (note: at this time outgroup can consist of just one taxon)
+        self.sumt_input_tree_file      = None           # Set to the name of the input tree file. This setting should not be None at the time the sumt method is called.
+        self.sumt_trees_prefix         = 'sumt_trees'   # The output tree file in which all distinct tree topologies are saved along with the majority-rule consensus tree will be named <sumt_trees_prefix>.tre and the corresponding pdf file containing graphical representations of these trees will be named <sumt_trees_prefix>.pdf. This setting cannot be None when the sumt method is called.
+        self.sumt_splits_prefix        = 'sumt_splits'  # The pdf file showing plots depicting split posteriors through time and split sojourns will be named <sumt_splits_prefix>.pdf. If None, this analysis will be skipped.
+        self.sumt_output_replace       = False          # If True, output files will be replaced automatically if they exist; if False, a random integer will be added to the name so that the name no longer matches an existing file
+        self.sumt_burnin               = 1              # Number of trees to skip in sumt_input_tree_file
+        self.sumt_equal_brlens         = False          # If True, trees in pdf file will be drawn with branch lengths equal, making support values easier to see; if set to True, consider setting pdf_scalebar_position = None (scalebar is irrelevant in this case)
 
         # Variables associated with Polytomy (Bush) moves
-        self.allow_polytomies       = False     # if True, do Bush moves in addition to Larget-Simon moves; if False, do Larget-Simon moves only
-        self.polytomy_prior         = True      # if True, use polytomy prior; if False, use resolution class prior
-        self.topo_prior_C           = 2.0       # specifies the strength of the prior (C = 1 is flat prior; C > 1 favors less resolved topologies)
-        self.bush_move_edgelen_mean = 1.0       # specifies mean of exponential edge length generation distribution used by BushMove when new edges are created
+        self.allow_polytomies       = False     # If True, do Bush moves in addition to Larget-Simon moves; if False, do Larget-Simon moves only
+        self.polytomy_prior         = True      # If True, use polytomy prior; if False, use resolution class prior
+        self.topo_prior_C           = 2.0       # Specifies the strength of the prior (C = 1 is flat prior; C > 1 favors less resolved topologies)
+        self.bush_move_edgelen_mean = 1.0       # Specifies mean of exponential edge length generation distribution used by BushMove when new edges are created
         self.bush_move_weight       = 100       # Bush moves will be performed this many times per cycle if
         self.bush_move_debug        = False     # If set to true, TreeViewer will pop up on each Bush move update showing edges affected by the proposed move
 
         # Variables associated with SAMC analyses
-        self.doing_samc             = False     # if True, using Cheon and Liang "SSAMC" method
-        self.samc_move_edgelen_mean = 1.0       # specifies mean of exponential edge length generation distribution used by SamcMove when new edges are created
+        self.doing_samc             = False     # If True, using Cheon and Liang "SSAMC" method
+        self.samc_move_edgelen_mean = 1.0       # Specifies mean of exponential edge length generation distribution used by SamcMove when new edges are created
         self.samc_move_debug        = False     # If set to True, output will be saved to a file named cf.txt (if it doesn't exist) or, if cf.txt already exists, the output will be compared to cf.txt and the program will halt if a discrepency is found
-        self.samc_t0                = 10000.0   # samc_gain_factor = samc_t0/max(samc_t0, cycle)
-        self.samc_move_weight       = 1         # number of times per cycle that SAMC moves will be performed (currently unused because SAMC moves are not used in standard MCMC analyses)
-        self.samc_temperature       = 0.6       # temperature used in extrapolate move to smooth out differences in probabilities of different possible attachment points
+        self.samc_t0                = 10000.0   # Samc_gain_factor = samc_t0/max(samc_t0, cycle)
+        self.samc_move_weight       = 1         # Number of times per cycle that SAMC moves will be performed (currently unused because SAMC moves are not used in standard MCMC analyses)
+        self.samc_temperature       = 0.6       # Temperature used in extrapolate move to smooth out differences in probabilities of different possible attachment points
 
         # Variables associated with slice samplers
         self.slice_weight           = 1         # Slice sampled parameters will be updated this many times per cycle
@@ -169,13 +169,15 @@ class Phycas(object):
         # govern the mean of all edge length priors defined. The same hyperprior will be used for both
         # hyperparameters (should two hyperparameters be used)
         self.using_hyperprior       = True      
-        self.edgelen_hyperprior     = InverseGammaDist(2.1, 1.0/1.1)
+        self.edgelen_hyperprior     = InverseGammaDist(2.1,1.0/1.1)
         self.starting_edgelen_hyperparam = 0.05 #POL doesn't do anything! currently ignored
         self.fix_edgelen_hyperparam = False 
 
         # Note that edgelen_dist is a property: its setter function (setEdgelenDist) sets
         # both internal_edgelen_dist and external_edgelen_dist to the value specified
-        self.edgelen_dist           = ExponentialDist(2.0)
+        self.internal_edgelen_dist  = None                  # Can be used to set a prior distribution for internal edges that differs from that applied to external edges. If this is set to something besides None, you should also set external_edgelen_dist appropriately. Setting the edgelen_dist property sets both external_edgelen_dist and internal_edgelen_dist to the same value
+        self.external_edgelen_dist  = None                  # Can be used to set a prior distribution for external edges that differs from that applied to internal edges. If this is set to something besides None, you should also set internal_edgelen_dist appropriately. Setting the edgelen_dist property sets both external_edgelen_dist and internal_edgelen_dist to the same value
+        self.edgelen_dist           = ExponentialDist(2.0)  # Sets both internal_edgelen_dist and external_edgelen_dist to the supplied value. Use this setting if you want all edges in the tree to have the same prior distribution. Using this setting will overwrite any values previously supplied for internal_edgelen_dist and external_edgelen_dist
         self.fix_edgelens           = False 
         
         # Variables associated with initializing the MCMC sampler
@@ -183,71 +185,71 @@ class Phycas(object):
 
         # Variables associated with Metropolis coupling (heated chains)
         self.heating_lambda         = 0.2
-        self.nchains                = 4
+        self.nchains                = 1
         self.is_standard_heating    = True
         
         # Variables associated with path sampling (i.e. thermodynamic integration)
         # If pathsampling() function called, ncycles will be ignored and instead the number of cycles
         # will be ps_burnin + (ps_Q*ps_nbetaincr)
-        self.ps_toward_posterior    = True      # if True, chain will start with beta = 0.0 (exploring prior) and end up exploring posterior; otherwise, chain will begin by exploring posterior and end exploring prior
-        self.ps_burnin              = 1000      # number of cycles used to equilibrate before increasing beta
-        self.ps_Q                   = 100       # number of cycles between changes in beta
-        self.ps_nbetaincr           = 10        # the number of values beta will take on during the run; for example, if this value is 4, then beta will take on these values: 0, 1/3, 2/3, 1
-        self.ps_filename            = None      # if defined, a file by this name will be created containing the intermediate results (average log-likelihood at each step of the path)
+        self.ps_toward_posterior    = True      # If True, chain will start with beta = 0.0 (exploring prior) and end up exploring posterior; otherwise, chain will begin by exploring posterior and end exploring prior
+        self.ps_burnin              = 1000      # Number of cycles used to equilibrate before increasing beta
+        self.ps_Q                   = 100       # Number of cycles between changes in beta
+        self.ps_nbetaincr           = 10        # The number of values beta will take on during the run; for example, if this value is 4, then beta will take on these values: 0, 1/3, 2/3, 1
+        self.ps_filename            = None      # If defined, a file by this name will be created containing the intermediate results (average log-likelihood at each step of the path)
 
         # Variables associated with Gelfand-Ghosh calculation
-        self.gg_outfile             = 'gg.txt'  # file in which to save gg results (use None to not save results)
-        self.gg_nreps               = 1         # the number of replicate simulations to do every MCMC sample
-        self.gg_kvect               = [1.0]     # vector of k values to use when computing Gm and Dm
-        self.gg_save_postpreds      = False     # if True, all posterior predictive data sets will be saved
-        self.gg_postpred_prefix     = 'pp'      # prefix to use for posterior predictive dataset filenames (only used if gg_save_postpreds is True)
-        self.gg_burnin              = 1         # number of starting samples to skip when computing Gelfand-Ghosh measures
-        self.gg_pfile               = None      # name of parameter file to use for Gelfand-Ghosh calculations
-        self.gg_tfile               = None      # name of tree file to use for Gelfand-Ghosh calculations
-        self.gg_bin_patterns        = False     # if True, patterns will be classified into 7 bins, corresponding to 'A only', 'C only', 'G only', 'T only', 'any 2 states', 'any 3 states' and 'any 4 states'. Gelfand-Ghosh statistics will be computed on this vector of counts instead of the complete vector of pattern counts. Can only be used for DNA/RNA data.
-        self.gg_bincount_filename   = None      # if not None, and if gg_bin_patterns is True, the binned counts for the original dataset and all posterior predictive data sets will be saved to a file by this name
+        self.gg_outfile             = 'gg.txt'  # File in which to save gg results (use None to not save results)
+        self.gg_nreps               = 1         # The number of replicate simulations to do every MCMC sample
+        self.gg_kvect               = [1.0]     # Vector of k values to use when computing Gm and Dm
+        self.gg_save_postpreds      = False     # If True, all posterior predictive data sets will be saved
+        self.gg_postpred_prefix     = 'pp'      # Prefix to use for posterior predictive dataset filenames (only used if gg_save_postpreds is True)
+        self.gg_burnin              = 1         # Number of starting samples to skip when computing Gelfand-Ghosh measures
+        self.gg_pfile               = None      # Name of parameter file to use for Gelfand-Ghosh calculations
+        self.gg_tfile               = None      # Name of tree file to use for Gelfand-Ghosh calculations
+        self.gg_bin_patterns        = False     # If True, patterns will be classified into 7 bins, corresponding to 'A only', 'C only', 'G only', 'T only', 'any 2 states', 'any 3 states' and 'any 4 states'. Gelfand-Ghosh statistics will be computed on this vector of counts instead of the complete vector of pattern counts. Can only be used for DNA/RNA data.
+        self.gg_bincount_filename   = None      # If not None, and if gg_bin_patterns is True, the binned counts for the original dataset and all posterior predictive data sets will be saved to a file by this name
 
         # Variables associated with the FLEXCAT model
         self.use_flex_model         = False
-        self.flex_ncat_move_weight  = 1         # number of times each cycle to attempt an ncat move
-        self.flex_num_spacers       = 1         # number of fake rates between each adjacent pair of real rates
-        self.flex_phi               = 0.25      # proportion of ncat moves in which ncat is incremented (ncat is decremented with probability 1 - flex_phi)
-        self.flex_L                 = 1.0       # upper bound of interval used for unnormalized relative rate parameter values
-        self.flex_lambda            = 1.0       # parameter of Poisson prior on the number of extra categories
+        self.flex_ncat_move_weight  = 1         # Number of times each cycle to attempt an ncat move
+        self.flex_num_spacers       = 1         # Number of fake rates between each adjacent pair of real rates
+        self.flex_phi               = 0.25      # Proportion of ncat moves in which ncat is incremented (ncat is decremented with probability 1 - flex_phi)
+        self.flex_L                 = 1.0       # Upper bound of interval used for unnormalized relative rate parameter values
+        self.flex_lambda            = 1.0       # Parameter of Poisson prior on the number of extra categories
         self.flex_prob_param_prior  = ExponentialDist(1.0)
 
         # Variables associated with underflow protection                
-        self.uf_num_edges           = 50        # number of edges to traverse before taking action to prevent underflow
+        self.uf_num_edges           = 50        # Number of edges to traverse before taking action to prevent underflow
         
         # ***** IT IS BEST NOT TO CHANGE ANYTHING BELOW HERE *****
-        self.debugging              = False      # if set to True expect lots of debug output (e.g. data pattern table)
+        self.debugging              = False      # If set to True expect lots of debug output (e.g. data pattern table)
         self.data_matrix            = None
         self.file_name_data_stored  = None
         self.file_name_trees_stored = None
         self.do_marginal_like       = False
         self.mcmc_manager           = MCMCManager.MCMCManager(self)
-        self.heat_vector            = None      # leave set to None unless you are implementing some ad hoc heating scheme. This vector ordinarily computed using self.nchains and self.heating_lambda
+        self.heat_vector            = None      # Leave set to None unless you are implementing some ad hoc heating scheme. This vector ordinarily computed using self.nchains and self.heating_lambda
         self.stopwatch              = StopWatch()
-        self.sim_model_tree         = None      # will hold the model tree used by simulateDNA 
-        self.starting_tree          = None      # will contain description of actual starting tree used
+        self.sim_model_tree         = None      # Will hold the model tree used by simulateDNA 
+        self.starting_tree          = None      # Will contain description of actual starting tree used
         self.warn_tip_numbers       = False     # True only if tip numbers were not able to be created using the tip names in the tree description (always False if starting_tree_source == 'random' because BuildTreeFromString is not called in this case)
-        self.ntax                   = 0         # will hold the actual number of taxa after data file read
-        self.nchar                  = 0         # will hold the actual number of characters after data file has been read
-        self.npatterns              = 0         # will hold the actual number of patterns after data file has been read
-        self.taxon_labels           = []        # will hold taxon labels from data file or default names if self.data_source equals None
+        self.ntax                   = 0         # Will hold the actual number of taxa after data file read
+        self.nchar                  = 0         # Will hold the actual number of characters after data file has been read
+        self.npatterns              = 0         # Will hold the actual number of patterns after data file has been read
+        self.taxon_labels           = []        # Will hold taxon labels from data file or default names if self.data_source equals None
         self.paramf                 = None
         self.treef                  = None
         self.tmp_simdata            = SimData()
-        self.gg_Pm                  = 0.0       # penalty component (same for all k)
-        self.gg_Gm                  = []        # vector of goodness-of-fit components (one for each k in gg_kvect)
-        self.gg_Dm                  = []        # vector of overall measures (one for each k in gg_kvect)
+        self.gg_Pm                  = 0.0       # Penalty component (same for all k)
+        self.gg_Gm                  = []        # Vector of goodness-of-fit components (one for each k in gg_kvect)
+        self.gg_Dm                  = []        # Vector of overall measures (one for each k in gg_kvect)
         self.reader                 = NexusReader()
         self.logf                   = None
         self._logFileName           = None
-        #self.use_tree_viewer        = False    # popup graphical TreeViewer to show trees during run POLPY_NEWWAY
-        self.addition_sequence      = []        # list of taxon numbers for addition sequence
-        self.samc_theta             = []        # normalizing factors (will have length ntax - 3 because levels with 1, 2 or 3 taxa are not examined)
-        self.samc_distance_matrix   = None      # holds ntax x ntax hamming distance matrix used by SamcMove
+        #self.use_tree_viewer        = False    # Popup graphical TreeViewer to show trees during run POLPY_NEWWAY
+        self.addition_sequence      = []        # List of taxon numbers for addition sequence
+        self.samc_theta             = []        # Normalizing factors (will have length ntax - 3 because levels with 1, 2 or 3 taxa are not examined)
+        self.samc_distance_matrix   = None      # Holds ntax x ntax hamming distance matrix used by SamcMove
         self.path_sample            = None
         self.stored_treenames       = None
         self.stored_newicks         = None
@@ -255,11 +257,20 @@ class Phycas(object):
         self.doing_path_sampling    = False
         self.psf                    = None
         self.pdf_splits_to_plot     = None
+
+        self.dict_keys              = copy.copy(self.__dict__.keys())        
         
     # see http://mail.python.org/pipermail/python-list/2002-January/121376.html
     def source_line():
         return inspect.getouterframes(inspect.currentframe())[1][2]
-    
+
+    def check_settings(self):
+        if len(self.__dict__) > len(self.dict_keys) + 1:
+            for k in self.__dict__.keys():
+                if k not in self.dict_keys and not k == 'dict_keys':
+                    print 'Error:',k,'is not a valid Phycas setting'
+                    sys.exit(0)
+        
     def phycassert(self, assumption, msg):
         if not assumption:
             if Phycas.PhycassertRaisesException:
@@ -991,6 +1002,7 @@ class Phycas(object):
         Performs an MCMC analysis.
         
         """
+        self.check_settings()
         self.setupMCMC()
         self.runMCMC()
 
@@ -1003,6 +1015,7 @@ class Phycas(object):
         195-207.
         
         """
+        self.check_settings()
         self.nchains = 1
         self.ncycles = self.ps_burnin + (self.ps_Q*self.ps_nbetaincr)
         self.ps_delta_beta = 1.0/float(self.ps_nbetaincr - 1)
@@ -1016,6 +1029,7 @@ class Phycas(object):
         Performs a sequential stochastic Markov chain analysis.
         
         """
+        self.check_settings()
         self.doing_samc = True;
         self.setupSAMC()
         self.runSAMC()
@@ -1027,6 +1041,7 @@ class Phycas(object):
         filename.
         
         """
+        self.check_settings()
         self.starting_tree = self.tree_topology
         self.phycassert(self.data_source == None, 'set data_source to None before calling simulateDNA')
         self.ntax = len(self.sim_taxon_labels)
@@ -1047,6 +1062,7 @@ class Phycas(object):
         model.
         
         """
+        self.check_settings()
         self.starting_tree = self.tree_topology
         self.phycassert(self.data_source == 'file', "set data_source to 'file' and specify data_file_name before calling the likelihood function")
         self.readDataFromFile()
@@ -1062,6 +1078,7 @@ class Phycas(object):
         in the file whose name is stored in tree_file_name.
         
         """
+        self.check_settings()
         self.phycassert(len(self.tree_file_name) > 0, 'specify tree_file_name before calling the likelihoods function')
         self.readTreesFromFile()
         self.phycassert(self.data_source == 'file', "set data_source to 'file' and specify data_file_name before calling the likelihoods function")
@@ -1083,6 +1100,7 @@ class Phycas(object):
         files self.gg_pfile and self.gg_tfile.
         
         """
+        self.check_settings()
         self.phycassert(self.gg_pfile, 'gg_pfile cannot be None if gg function called')
         self.phycassert(self.gg_tfile, 'gg_pfile cannot be None if gg function called')
         import GGImpl
@@ -1091,6 +1109,7 @@ class Phycas(object):
         return (self.gg_Pm, self.gg_Gm, self.gg_Dm)
 
     def sumt(self):
+        self.check_settings()
         import SumTImpl
         tree_summarizer = SumTImpl.TreeSummarizer(self)
         tree_summarizer.consensus()
@@ -1101,6 +1120,7 @@ class Phycas(object):
         Computes a matrix of pairwise distances between sequences.
         
         """
+        self.check_settings()
         self.phycassert(self.data_source == 'file', "data_source variable must equal 'file'")
 
         # matrix holds the data matrix
@@ -1144,6 +1164,7 @@ class Phycas(object):
 
     def pdftree(self):
         #complex_outgroup = type(self.pdf_outgroup_taxon) in (types.ListType,types.TupleType)
+        self.check_settings()
         simple_outgroup = type(self.pdf_outgroup_taxon) == types.StringType
         self.phycassert(simple_outgroup, 'Phycas cannot yet deal with pdf_outgroup_taxon containing more than one outgroup taxon')
         self.phycassert((self.pdf_treefile and not self.pdf_newick) or (self.pdf_newick and not self.pdf_treefile), 'set either pdf_newick or pdf_treefile, but not both')

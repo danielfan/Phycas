@@ -17,10 +17,6 @@ class TreeSummarizer(object):
         
         """
         self.phycas = phycas
-        if not self.phycas.sumt_input_tree_file:
-            self.phycas.sumt_input_tree_file = self.phycas.getPrefix()+'.t'
-        if not self.phycas.sumt_output_tree_file:
-            self.phycas.sumt_output_tree_file = self.phycas.getPrefix()+'.distinct.t'
 
     def readTreesFromFile(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -243,6 +239,10 @@ class TreeSummarizer(object):
             if splits_plotted == splits_to_plot:
                 break
 
+        if splits_plotted == 0:
+            self.phycas.output('No sojourn plot created because all non-trivial splits had posterior probability 1.0')
+            return
+
         # Now create the plot data
         data = []
         for i,s in enumerate(v):
@@ -283,6 +283,14 @@ class TreeSummarizer(object):
         saved to the file sumt_output_tree_file if this variable is not None.
         
         """
+        # Check to make sure user specified an input tree file
+        self.phycas.phycassert(self.phycas.sumt_input_tree_file, 'sumt_input_tree_file must be specified before sumt method is called')
+        self.phycas.phycassert(self.phycas.sumt_trees_prefix, 'sumt_trees_prefix must be specified before sumt method is called')
+        self.phycas.phycassert(self.phycas.sumt_trees_prefix != self.phycas.sumt_splits_prefix, 'sumt_trees_prefix must differ from sumt_splits_prefix')
+            
+        treefname = '%s.tre' % self.phycas.sumt_trees_prefix
+        pdffname = '%s.pdf' % self.phycas.sumt_trees_prefix
+
         num_trees = 0
         num_trees_considered = 0
         split_map = {}
@@ -474,7 +482,7 @@ class TreeSummarizer(object):
             self.phycas.output('%6d %s %s %10.5f %10.5f %s %s %s' % (i + 1, split_str, freq_str, split_posterior, split_weight, s0_str, sk_str, k_str))
 
         # Build 50% majority rule tree if requested
-        self.phycas.output('\nSaving majority-rule consensus tree to file %s' % self.phycas.sumt_output_tree_file)
+        self.phycas.output('\nSaving majority-rule consensus tree...')
         majrule = Phylogeny.Tree()
         tm = Phylogeny.TreeManip(majrule)
         majrule_splits = []
@@ -530,28 +538,28 @@ class TreeSummarizer(object):
             self.phycas.output('%8d %s %10.5f %s %s %s %10.5f %10.5f' % (i+1, freq_str, avgTL, s0_str, sk_str, k_str, post_prob, cum_prob))
 
             # Save the tree topology (decorated with posterior mean edge lengths) to the tree file
-            if self.phycas.sumt_output_tree_file:
-                t = Phylogeny.Tree()
-                t.buildFromString(v[1], True)   # these trees come from a nexus file, so taxon numbers will start at 0, hence the True second argument
-                self.assignEdgeLensAndSupportValues(t, split_map, num_trees_considered)
-                t.stripNodeNames()
-                summary_short_name_list.append('%d_%d_of_%d' % (i+1,v[0],num_trees_considered))
-                summary_full_name_list.append('Frequency %d of %d' % (v[0],num_trees_considered))
-                summary_tree_list.append(t)
-        self.phycas.phycassert(self.phycas.sumt_output_tree_file, 'sumt_output_tree_file should not be None')
+            t = Phylogeny.Tree()
+            t.buildFromString(v[1], True)   # these trees come from a nexus file, so taxon numbers will start at 0, hence the True second argument
+            self.assignEdgeLensAndSupportValues(t, split_map, num_trees_considered)
+            t.stripNodeNames()
+            summary_short_name_list.append('%d_%d_of_%d' % (i+1,v[0],num_trees_considered))
+            summary_full_name_list.append('Frequency %d of %d' % (v[0],num_trees_considered))
+            summary_tree_list.append(t)
 
-        self.phycas.output('\nSaving tree topologies in file %s...' % self.phycas.sumt_output_tree_file)
-        self.save_trees(self.phycas.sumt_output_tree_file, self.phycas.sumt_output_pdf_file, summary_short_name_list, summary_full_name_list, summary_tree_list)
+        self.phycas.output('\nSaving distinct tree topologies...')
+        self.save_trees(treefname, pdffname, summary_short_name_list, summary_full_name_list, summary_tree_list)
 
-        pdf = PDFGenerator(11.0, 8.5)
-        pdf.overwrite = True
-        
-        self.phycas.output('\nSaving AWTY plot in file awty.pdf...')
-        self.awtyPlot(pdf, split_vect, num_trees_considered)
+        if self.phycas.sumt_splits_prefix:
+            fn = '%s.pdf' % self.phycas.sumt_splits_prefix
+            pdf = PDFGenerator(11.0, 8.5)
+            pdf.overwrite = True
+            
+            self.phycas.output('\nSaving AWTY plot in file %s...' % fn)
+            self.awtyPlot(pdf, split_vect, num_trees_considered)
 
-        self.phycas.output('\nSaving Sojourn plot in file awty.pdf...')
-        self.sojournPlot(pdf, split_vect, num_trees_considered)
+            self.phycas.output('\nSaving Sojourn plot in file %s...' % fn)
+            self.sojournPlot(pdf, split_vect, num_trees_considered)
 
-        pdf.saveDocument('awty.pdf')
+            pdf.saveDocument(fn)
 
         self.phycas.output('\nSumT finished.')
