@@ -64,12 +64,20 @@ pdfkeywords={phylogenetics, Bayesian, Markov chain Monte Carlo, MCMC}}
 
 \tableofcontents
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% Introduction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
 Phycas (\url{http://phycas.org}) is a Python (\url{http://www.python.org}) extension that allows Python to read nexus-formatted data files, run MCMC analyses, and summarize the results. In order to use Phycas, you need to first have Python installed on your computer. Please see section~\ref{sec:install} entitled ``Installing Phycas'' (p.~\pageref{sec:install}) for detailed installation instructions and useful information on topics important for using Phycas, such as how to obtain a command prompt for the operating system you are using. The following sections assume that you have successfully installed Phycas and have read section~\ref{sec:install}.
 
-This manual begins by showing you how to perform a simple analysis, but does not attempt to explain all possible settings. The purpose is to quickly show you how to run the program, allowing later sections to provide detail. 
+\subsection{How to use this manual}
 
+This manual begins as a tutorial by showing you how to perform a simple analysis, but does not attempt to explain all possible settings. The purpose is to quickly show you how to run the program, allowing later sections to provide detail. After the initial sections, the manual switches more to a reference style, detailing how to select models (section~\ref{sec:models}, p.~\pageref{sec:models}) and highlighting some of the features that set Phycas apart from other Bayesian phylogenetics software (section~\ref{sec:features}, p.~\pageref{sec:features}). Toward the end you will find a discussion of design principles (e.g. Why did we decide to extend Python rather than write a stand-alone program? Why is there no graphical interface?) in section~\ref{sec:designprinciples} (p.~\pageref{sec:designprinciples}) followed by an annotated listing of Phycas settings (section~\ref{sec:phycassettings}, p.~\pageref{sec:phycassettings}). The final section (section~\ref{sec:install}, p.~\pageref{sec:install}) is devoted to the details of getting Phycas (and Python) installed on your computer system.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% A basic analysis %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{A basic analysis} \label{sec:basic}
 
 Phycas is an extension of Python, so to use it you must create a Python \term{script}. A Python script is a file containing Python source code. When submitted to the Python interpreter (a computer program), the commands in the script file are read and executed. The relationship between a Python script and the Python interpreter is much the same as the relationship between a nexus file (containing a PAUP block) and the program PAUP*. PAUP* acts as the interpreter for the commands in the file. Here is a simple Python script that invokes Phycas:
@@ -161,6 +169,9 @@ python basic.py
 %
 The program should run for a few minutes, creating three files (\pathname{basic.log}, \pathname{green.nex.t} and \pathname{green.nex.p}) as it runs. The file \pathname{green.nex.t} is the tree file containing the trees sampled during the MCMC run, while \pathname{green.nex.p} is the parameter file containing samples of model parameters. These files are equivalent to their counterparts in MrBayes.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% Summarizing tree files %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Summarizing tree files}
 
 Phycas provides the {\tt sumt()} method for summarizing an input tree file. While analogous, Phycas' {\tt sumt()} method differs somewhat from the MrBayes sumt command. The example below stands alone, however there is nothing wrong with tacking on these statements after the {\tt mcmc()} call in the previous \pathname{basic.py} example.
@@ -202,7 +213,9 @@ The setting \setting{sumt\_trees\_prefix} specifies the prefix used to create fi
 phycas.sumt_splits_prefix = 'splits'
 \end{verbatim}
 %
-The setting \setting{sumt\_splits\_prefix} specifies the prefix used to create a file name for a pdf file containing two plots. The first plot in the file is similar to an AWTY (\url{http://king2.scs.fsu.edu/CEBProjects/awty/awty_start.php}) cumulative plot. It shows the split posterior probability calculated at evenly-spaced points throughout the MCMC run (as if the MCMC run were stopped and split posteriors computed at that point in the run). This kind of plot gives you information about whether the Markov chain converged with respect to split posteriors. (Often, when plots of log-likelihoods or model parameters show apparent convergence, split posteriors are still changing, making this type of plot a better indicator of convergence.) This first plot is not identical to an AWTY cumulative plot. The most striking difference is the fact that the lines plotted all originate at zero (AWTY does not plot these lines). Also, in AWTY the x-axis is labeled in terms of generations, whereas the Phycas equivalent labels the x-axis in terms of samples. The second plot in this file shows split sojourns. A split sojourn is a sequence of successive samples in which the split is present in the sampled tree, preceded and followed by an absense of the split. The number and duration of split sojourns gives an indication of how well the Markov chain is mixing, and this plot shows the results graphically. Neither plot in this file shows results for trivial splits (the split separating a single taxon from all other taxa; such splits are always present and are thus guaranteed to have split posterior 1.0) or for splits that were present in every sample (these are not useful from the standpoint of assessing convergence or mixing, except that poor mixing might be indicated if very few splits are plotted).
+The setting \setting{sumt\_splits\_prefix} specifies the prefix used to create a file name for a pdf file containing two plots. The first plot in the file is similar to an AWTY (\url{http://king2.scs.fsu.edu/CEBProjects/awty/awty_start.php}) cumulative plot. It shows the split posterior probability calculated at evenly-spaced points throughout the MCMC run (as if the MCMC run were stopped and split posteriors computed at that point in the run). This kind of plot gives you information about whether the Markov chain converged with respect to split posteriors. (Often, when plots of log-likelihoods or model parameters show apparent convergence, split posteriors are still changing, making this type of plot a better indicator of convergence.) This first plot is not identical to an AWTY cumulative plot. The most striking difference is the fact that the lines plotted all originate at zero (AWTY does not plot these lines). Also, in AWTY the x-axis is labeled in terms of generations, whereas the Phycas equivalent labels the x-axis in terms of samples. 
+
+The second plot in this file shows split sojourns. A split sojourn is a sequence of successive samples in which the split is present in the sampled tree, preceded and followed by an absense of the split. The number and duration of split sojourns gives an indication of how well the Markov chain is mixing, and this plot shows the results graphically. Neither plot in this file shows results for trivial splits (the split separating a single taxon from all other taxa; such splits are always present and are thus guaranteed to have split posterior 1.0) or for splits that were present in every sample (these are not useful from the standpoint of assessing convergence or mixing, except that poor mixing might be indicated if very few splits are plotted). See \citet{LewisLewis2005} for an example of the use of split sojourns to assess convergence. 
 %
 \begin{verbatim}
 phycas.sumt_burnin = 1
@@ -226,30 +239,17 @@ The {\tt sumt()} method call begins the analysis of the input tree file. Besides
 \item[k] This is the number of sojourns made by the split or tree topology. A sojourn is a sequence of sampled trees in which the split or topology appears, preceded and followed by a sampled tree lacking that split or topology.
 \end{description}
 
-\section{Installing Phycas}\label{sec:install}
-\subsection{Instructions for Windows Users} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% Models %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Models}\label{sec:models}
 
-These instructions assume you are using \trademark{Windows} \trademark{XP} or \trademark{Vista}.
+TO BE WRITTEN
 
-\subsubsection{\trademark{Windows} console}
-
-One very handy feature that does not come with \trademark{Windows} is the ability to open a command console by using the right-click speed menu in \trademark{Explorer}. The web site \url{http://www.commandline.co.uk/cmdhere/} makes this feature easy to add and will make Phycas {\em much} easier to use. 
-
-\subsubsection{Installing Python}
-
-Before you go to the trouble of downloading and installing Python, make sure you do not already have Python installed on your Windows system. From the Start button, choose \menu{All Programs}, then \menu{Accessories} and finally \menu{Command Prompt}. Type \code{python -V} in the console window that appears, and if a phrase such as \code{Python 2.5.1} appears, then you already have Python installed! Most Windows users will probably see \code{'python' is not recognized as an internal or external command, operable program or batch file.} In this case, you need to visit \url{http://python.org} and download and install the latest version of Python.
-
-\subsubsection{Installing Phycas}
-
-Visit the Download section of the Phycas web site \url{http://phycas.org} and download the Windows installer. If you are using Windows XP, double-click the installer to install Phycas. If using Vista, right-click the installer and choose to install as Administrator. The installer will attempt to identify the location of Python on your system, and if it fails to find Python will abort the installation. Assuming it can find Python, it will install Phycas into the \pathname{Lib/site-packages} directory of that Python installation. You will also find a Phycas section in the menu that appears when you choose \menu{Start} and \menu{All Programs}.
-
-NEEDS WORK
-
-\subsection{Instructions for MacIntosh Users}
-
-NEEDS WORK
-
-\section{Phycas features}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% Features %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Features}\label{sec:features}
 
 Phycas differs in some ways from other programs that conduct Bayesian phylogenetic analyses. Phycas does not attempt to do everything, but does provide some features not found in any other software. The following sections are meant to highlight some of the features present in Phycas that are uncommon in other programs.
 
@@ -275,7 +275,44 @@ A solution to the ``Star Tree Paradox'' problem was proposed by \citet{LewisHold
 
 To use the polytomy prior in an analysis, be sure that \setting{allow\_polytomies} and \setting{polytomy\_prior}are both \code{True}. The setting \setting{topo\_prior\_C} determines the strength of the polytomy prior. Setting \setting{topo\_prior\_C} to 1.0 results in a flat prior (all topologies have identical prior probabilities, and thus unresolved topologies get no more or less weight than fully-resolved topologies). Setting \setting{topo\_prior\_C} greater than 1.0 favors less resolved topologies more than fully-resolved ones. This is usually what is desired; even with a prior that favors unresolved trees, a fully-resolved topology can easily win out over a less-resolved one if there is even scant evidence for substitution along the relevant edge. In the paper, this value was set to the value $e$ (the base of the natural logarithms). To do this in Phycas, set \setting{topo\_prior\_C} equal \code{math.exp(1.0)}.
 
-\section{Phycas settings}\label{sec:phycassettings}
+The example \pathname{<phycas install directory>/phycas/Examples/Paradox/Paradox.py} shows a complete example of an analysis using the polytomy prior. If executed, this example script will recreate the analysis presented in Figure 4 of the \citet{LewisHolderHolsinger2005} paper.
+
+\subsection{Model selection}
+
+TO BE WRITTEN 
+
+\subsection{PDF figures}
+
+TO BE WRITTEN 
+
+\subsection{The FlexCat model}
+
+TO BE WRITTEN 
+
+%\subsection{SAMC}
+%
+%TO BE WRITTEN 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% Design principles %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Design principles}\label{sec:designprinciples}
+
+The design principles underlying Phycas are presented best as a series of questions and answers.
+
+\subsection{Why was Phycas written as an extension to Python?}
+Most phylogenetic analyses take a considerable amount of time to run, and thus most phylogenetic analysis software provides a mechanism for batch processing. Batch processing is ordinarily accomplished through the use of a programming language of some sort that allows the user to specify the sequence of commands to run. For example, PAUP* allows PAUP blocks to be placed in nexus files. The user can run an analysis without manual intervention by simply executing such a file containing PAUP* commands. This mode has the added benefit of creating a record of exactly the analysis performed, so that later on when the reviews come back and you are trying to respond to reviewers' concerns, you can actually recall what you did! Using menu-driven programs makes this difficult unless the software saves a history of all keystrokes and menu selections. Other popular programs have their own, proprietary command languages. For example, MrBayes uses MRBAYES blocks in nexus files, Hy-Phy uses a C-like language, and Beast uses xml as its medium for communicating commands. The problem (as we see it) with all of these is that the language used to communicate with the program is: (1) proprietary, (2) unique, and (3) incomplete. The proprietary and unique nature of these languages means you have only the documentation provided by the program's authors to guide you. Once that is exhausted, you must resort to emailing the authors, who are often so swamped with requests for information that they can only respond to a small fraction of requests. The incomplete nature of these languages means that many things one would like to do are not possible. The reason we chose to extent Python is so that we could use an existing, well-documented, widely-available computing language as the command language for Phycas. There are many books available on using Python, which means we do not have to provide all the details, and Python is a very powerful computing language, meaning you can write very sophisticated scripts that do anything your heart desires in your phylogenetic analysis. With the phylogenetic library of tools supplied by Phycas, you can even invent new phylogenetic methods if you are so inclined. There is, of course, some program-specific learning you must do in order to use Phycas; just having a prior knowledge of Python will not save you from reading this manual to learn what Phycas offers and how to access those features. We feel, however, that using a powerful, existing computing language to communicate with Phycas instead of ``rolling our own'' program-specific language was a very good idea.
+
+\subsection{Why is there no graphical user interface (GUI)?}
+Due to the large scale at which DNA sequencing is performed these days, and the increasing desire to ``pipeline'' analyses, we felt that using a script-based approach would best serve the needs of potential users in the near and distant future. Python is already installed on most unix-based operating systems (including Linux and MacIntosh OSX), and thus Phycas can be easily inserted in to bioinformatics pipeline applications. Although it does not come pre-installed on new systems, Python is easy to install on \trademark{Windows}-based PCs, and thus Phycas can be used easily on any workstation or laptop. While many users like user-friendly GUIs with pull-down menus and dialog boxes, software that depends only on a GUI has certain disadvantages: (1) cannot be pipelined easily; (2) cannot be run on a remote cluster; and (3) often does not allow one to save a record of the exact analysis performed. One of the strong benefits of a GUI is that it allows experimentation and visualization. Phycas provides for visualization by outputting trees and plots in the form of PDF files. While not quite as appealing as an on-screen visual representation, PDF files provide what most of us really need: the ability to insert a publication-quality figure into a manuscript, or load artwork into other programs for manipulation. Now for the selfish reason for not creating a GUI for Phycas: GUIs present a lot of problems these days for developers, who must keep up with rapidly-changing operating systems and processor hardware, and avoiding a GUI allows us more time to work on keeping up with phylogenetics! 
+
+\subsection{Why is a lot of Phycas written in C++?}
+All scripting-based languages (R, Python, Perl, Ruby) are relatively slow compared to compiled languages such as C and C++. Fortunately, the Boost Python library (\url{http://www.boost.org/libs/python/doc/}) has made it easy to write the parts of Phycas that need to be fast in C++ and export these routines so that they can be called from Python. As a result, Phycas is as fast or faster than any phylogenetic software application out there. If you make comparisons of Phycas to other programs, be sure to compare them in a fair way. Phycas uses a different definition of ``generation'' than does MrBayes, for example. Because a ``cycle'' in Phycas is equivalent to more than 100 ``generations'' in MrBayes, it is easy to conclude that Phycas is slow compared to MrBayes. To be fair, compare instead the time required for some (large) number likelihood calculations under comparable models. Phycas makes this easy by reporting the number of likelihood calculations performed and the time required at the end of an MCMC analysis.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% Settings %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Settings}\label{sec:phycassettings}
 
 This section lists all currently available Phycas settings. You will find more if you look at the \code{Phycas.\_\_init\_\_} method in the \pathname{Phycas.py} file, but be forewarned that settings found in \pathname{Phycas.py} but not listed here are experimental and not fully tested --- use at your own risk. Please do not ask for help with undocumented settings: we will document them here when we feel they are ready to be used.
 
@@ -288,6 +325,54 @@ This section lists all currently available Phycas settings. You will find more i
 \subsection{Settings related to edges}\label{subsec:edgesettings}
 \input{edges}
 
+\subsection{Settings related to models}\label{subsec:modelsettings}
+NOT YET WRITTEN
+%\input{models}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% Installing Phycas %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Installing Phycas}\label{sec:install}
+\subsection{Instructions for \trademark{Windows} users} 
+
+These instructions assume you are using \trademark{Windows} \trademark{XP} or \trademark{Vista}.
+
+\subsubsection{\trademark{Windows} console}
+
+One very handy feature that does not come with \trademark{Windows} is the ability to open a command console by using the right-click speed menu in \trademark{Explorer}. The web site \url{http://www.commandline.co.uk/cmdhere/} makes this feature easy to add and will make Phycas {\em much} easier to use (it is not required, however, in order to use Phycas). The basic procedure is to create a file named \pathname{cmdhere.reg} with the following text (or download the file from the web site above):
+%
+\begin{verbatim}
+REGEDIT4
+
+[HKEY_CLASSES_ROOT\*\shell\cmdhere]
+@="Cmd&Here"
+
+[HKEY_CLASSES_ROOT\*\shell\cmdhere\command]
+@="cmd.exe /c start cmd.exe /k pushd \"%L\\..\""
+
+[HKEY_CLASSES_ROOT\Folder\shell\cmdhere]
+@="Cmd&Here"
+
+[HKEY_CLASSES_ROOT\Folder\shell\cmdhere\command]
+@="cmd.exe /c start cmd.exe /k pushd \"%L\""
+\end{verbatim}
+%
+Assuming that you saved this file with the extension \pathname{.reg}, the \trademark{Windows} operating system will know what to do with it. Double-click the name of the file in \trademark{Windows} \trademark{Explorer}, and the required registry entry will be made. {\bfseries Warning:} {\em making changes to your system's registry is a bit risky, and we take no responsibility for any damage your system may incurr by following these directions!} That said, this worked fine for us and saves an enormous amount of time. \trademark{Windows} offers a PowerToy (\url{http://www.microsoft.com/windowsxp/downloads/powertoys/xppowertoys.mspx}) for \trademark{XP} that does something similar. While perhaps safer to install, it is somewhat frustrating to use because if you are already inside a directory in which you want to open a console, you must first go up one level in order to open a console window for that directory.
+
+\subsubsection{Installing Python}
+
+Before you go to the trouble of downloading and installing Python, make sure you do not already have Python installed on your Windows system. From the Start button, choose \menu{All Programs}, then \menu{Accessories} and finally \menu{Command Prompt}. Type \code{python -V} in the console window that appears, and if a phrase such as \code{Python 2.5.1} appears, then you already have Python installed! Most Windows users will probably see \code{'python' is not recognized as an internal or external command, operable program or batch file.} In this case, you need to visit \url{http://python.org} and download and install the latest version of Python.
+
+\subsubsection{Installing Phycas}
+
+Visit the Download section of the Phycas web site \url{http://phycas.org} and download the Windows installer. If you are using Windows XP, double-click the installer to install Phycas. If using Vista, right-click the installer and choose to install as Administrator. The installer will attempt to identify the location of Python on your system, and if it fails to find Python will abort the installation. Assuming it can find Python, it will install Phycas into the \pathname{Lib/site-packages} directory of that Python installation. You will also find a Phycas section in the menu that appears when you choose \menu{Start} and \menu{All Programs}.
+
+NEEDS WORK
+
+\subsection{Instructions for MacIntosh Users}
+
+TO BE WRITTEN
+
 %
 % Figure "felsenstein"
 %
@@ -297,6 +382,16 @@ This section lists all currently available Phycas settings. You will find more i
 %\hfil\includegraphics[scale=0.7]{felsenzone.eps}\hfil
 %\end{figure}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% Acknowledgements %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Acknowledgements}\addcontentsline{toc}{section}{Acknowledgements}
+
+TO BE WRITTEN
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% References %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{References}\addcontentsline{toc}{section}{References}
 \renewcommand{\bibsection}{}
 \bibliography{manual}
