@@ -42,7 +42,7 @@
 }
 \makeatother   % makes '@' a special symbol again
 
-% for index
+% index stuff
 \usepackage{makeidx}
 \makeindex
 %\index{cheese}			index entry
@@ -51,6 +51,7 @@
 %\index{cheese|see{crackers}}	"see" entries
 %\index{Kraft@\textit{Kraft}}	change font
 %\index{cheese@gouda}		gouda right next to cheese, as if gouda were spelled cheese
+\usepackage{phycas}
 
 % Keep hyperref last among includes
 \usepackage{hyperref}\hypersetup{backref, urlcolor=blue, colorlinks=true, citecolor=blue, hyperindex=true, 
@@ -303,7 +304,7 @@ This section lists all currently available Phycas settings. You will find more i
 %\hfil\includegraphics[scale=0.7]{felsenzone.eps}\hfil
 %\end{figure}
 
-\section{References}
+\section*{References}\addcontentsline{toc}{section}{References}
 \renewcommand{\bibsection}{}
 \bibliography{manual}
 
