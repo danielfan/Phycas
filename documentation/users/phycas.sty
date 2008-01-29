@@ -1,3 +1,11 @@
+% Use a small font for the verbatim environment
+%\makeatletter  % makes '@' an ordinary character
+\renewcommand{\verbatim@font}{%
+  \ttfamily\small\catcode`\<=\active\catcode`\>=\active%
+}
+%\makeatother   % makes '@' a special symbol again
+
+% redefine theindex environment, adding \addcontentsline command to produce contents entry for the index
 \renewenvironment{theindex}
                {\if@twocolumn
                   \@restonecolfalse

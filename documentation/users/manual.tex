@@ -35,13 +35,6 @@
 \newcommand{\term}[1]{{\bfseries #1}\index{#1}}
 \newcommand{\setting}[1]{{\tt \small #1}\index{#1}}
 
-% Use a small font for the verbatim environment
-\makeatletter  % makes '@' an ordinary character
-\renewcommand{\verbatim@font}{%
-  \ttfamily\small\catcode`\<=\active\catcode`\>=\active%
-}
-\makeatother   % makes '@' a special symbol again
-
 % index stuff
 \usepackage{makeidx}
 \makeindex
@@ -54,7 +47,7 @@
 \usepackage{phycas}
 
 % Keep hyperref last among includes
-\usepackage{hyperref}\hypersetup{backref, urlcolor=blue, colorlinks=true, citecolor=blue, hyperindex=true, 
+\usepackage{hyperref}\hypersetup{backref, linkcolor=blue, urlcolor=blue, colorlinks=true, citecolor=blue, hyperindex=true, 
 pdfstartview=FitB, 
 pdftitle={Phycas User Manual},
 pdfauthor={Paul O. Lewis, Mark T. Holder, and David L. Swofford}, 
