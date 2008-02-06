@@ -54,6 +54,8 @@ class TreeSummarizer(object):
             if not nd:
                 break
             s = nd.getSplit()
+            if s.isBitSet(0):
+                s.invertSplit()
             ss = s.createPatternRepresentation()
             v = split_map[ss]
             assert v, 'could not find edge length information for the split %s' % ss
