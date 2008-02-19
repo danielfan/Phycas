@@ -95,40 +95,40 @@ class GelfandGhosh(object):
         self.getTrees()
 
     def outputHeader(self):
-        self.phycas.output('Gelfand-Ghosh Analysis\n\n')
-        self.phycas.output('  data file:          %s\n' % self.datafname)
-        self.phycas.output('  parameter file:     %s\n' % self.paramfname)
-        self.phycas.output('  tree file:          %s\n' % self.treefname)
-        self.phycas.output('  sims/sample:        %d\n' % self.gg_nreps)
-        self.phycas.output('  k values:\n')
+        self.phycas.output('Gelfand-Ghosh Analysis\n')
+        self.phycas.output('  data file:          %s' % self.datafname)
+        self.phycas.output('  parameter file:     %s' % self.paramfname)
+        self.phycas.output('  tree file:          %s' % self.treefname)
+        self.phycas.output('  sims/sample:        %d' % self.gg_nreps)
+        self.phycas.output('  k values:')
         for kvalue in self.gg_kvect:
-            self.phycas.output('    %f\n' % kvalue)
-        self.phycas.output('  samples skipped:    %d\n' % self.gg_burnin)
-        self.phycas.output('  random number seed: %d\n' % self.rnseed)
-        self.phycas.output('\n')
+            self.phycas.output('    %f' % kvalue)
+        self.phycas.output('  samples skipped:    %d' % self.gg_burnin)
+        self.phycas.output('  random number seed: %d' % self.rnseed)
+        self.phycas.output()
 
     def outputDataInfo(self):
-        self.phycas.output('  Information about the data:\n\n')
-        self.phycas.output('    number of taxa:         %d\n' % self.ntax)
-        self.phycas.output('    number of characters:   %d\n' % self.nchar)
-        self.phycas.output('    number of patterns:     %d\n' % self.npatterns)
-        self.phycas.output('\n')
+        self.phycas.output('  Information about the data:\n')
+        self.phycas.output('    number of taxa:         %d' % self.ntax)
+        self.phycas.output('    number of characters:   %d' % self.nchar)
+        self.phycas.output('    number of patterns:     %d' % self.npatterns)
+        self.phycas.output()
         
     def outputTreesInfo(self):
-        self.phycas.output('  Information about the sampled trees:\n\n')
-        self.phycas.output('    number of trees skipped:  %d\n' % self.gg_burnin)
-        self.phycas.output('    number of trees included: %d\n' % self.ntrees)
-        self.phycas.output('    total trees in file:      %d\n' % (self.gg_burnin + self.ntrees))
-        self.phycas.output('\n')
+        self.phycas.output('  Information about the sampled trees:\n')
+        self.phycas.output('    number of trees skipped:  %d' % self.gg_burnin)
+        self.phycas.output('    number of trees included: %d' % self.ntrees)
+        self.phycas.output('    total trees in file:      %d' % (self.gg_burnin + self.ntrees))
+        self.phycas.output()
 
     def outputModelInfo(self):
         pinvar_str = self.is_invariable_sites_model and '+I' or ''
         dgamma_str = self.is_discrete_gamma_model and '+G' or ''
         flex_str = self.is_flex_model and '+FLEX' or ''
         model_str = '%s%s%s%s' % (self.model_type, pinvar_str, dgamma_str, flex_str)
-        self.phycas.output('  Information about the substitution model:\n\n')
-        self.phycas.output('    model name:  %s\n' % model_str)
-        self.phycas.output('\n')
+        self.phycas.output('  Information about the substitution model:\n')
+        self.phycas.output('    model name:  %s' % model_str)
+        self.phycas.output()
 
     def getData(self):
         data_reader = ReadNexus.NexusReader()
@@ -298,25 +298,25 @@ class GelfandGhosh(object):
             Dkm = self.gg_Pm + Gkm
             self.gg_Dm.append(Dkm)
 
-        self.phycas.output('Pm = %f\n' % self.gg_Pm)
+        self.phycas.output('Pm = %f' % self.gg_Pm)
         for i,k in enumerate(self.gg_kvect):
-            self.phycas.output('k = %f:\n' % k)
-            self.phycas.output('  Gm = %f\n' % self.gg_Gm[i])
-            self.phycas.output('  Dm = %f\n' % self.gg_Dm[i])
-        self.phycas.output('\n')
+            self.phycas.output('k = %f:' % k)
+            self.phycas.output('  Gm = %f' % self.gg_Gm[i])
+            self.phycas.output('  Dm = %f' % self.gg_Dm[i])
+        self.phycas.output()
 
-        self.phycas.output('no. patterns in original dataset   = %d\n' % self.gg_y.getNUniquePatterns())
-        self.phycas.output('no. patterns in mean dataset       = %d\n' % self.gg_mu.getNUniquePatterns())
+        self.phycas.output('no. patterns in original dataset   = %d' % self.gg_y.getNUniquePatterns())
+        self.phycas.output('no. patterns in mean dataset       = %d' % self.gg_mu.getNUniquePatterns())
         sum_npat = 0.0
         for npat in self.gg_npatterns:
             sum_npat += float(npat)
-        self.phycas.output('mean no. patterns across datasets  = %f\n' % (sum_npat/float(len(self.gg_npatterns))))
+        self.phycas.output('mean no. patterns across datasets  = %f' % (sum_npat/float(len(self.gg_npatterns))))
 
-        self.phycas.output('t for original dataset             = %f\n' % self.gg_t_y)
-        self.phycas.output('t for mean dataset                 = %f\n' % self.gg_t_mu)
-        self.phycas.output('mean of t across datasets          = %f\n' % self.gg_t_mean)
+        self.phycas.output('t for original dataset             = %f' % self.gg_t_y)
+        self.phycas.output('t for mean dataset                 = %f' % self.gg_t_mu)
+        self.phycas.output('mean of t across datasets          = %f' % self.gg_t_mean)
         for i,k in enumerate(self.gg_kvect):
-            self.phycas.output('t of compromise action for k = %.1f = %f\n' % (k,self.gg_t_a[i]))
+            self.phycas.output('t of compromise action for k = %.1f = %f' % (k,self.gg_t_a[i]))
             
         ttotal = len(self.gg_t)
         assert ttotal == self.gg_total, 'mismatch between self.gg_total and len(self.gg_t)'
@@ -324,9 +324,9 @@ class GelfandGhosh(object):
         for t in self.gg_t:
             tsumsq += t*t
         tvar = tsumsq - float(ttotal)*self.gg_t_mean*self.gg_t_mean
-        self.phycas.output('std. dev. of t across datasets     = %f\n' % math.sqrt(tvar))
+        self.phycas.output('std. dev. of t across datasets     = %f' % math.sqrt(tvar))
         for i,k in enumerate(self.gg_kvect):
-            self.phycas.output('t of compromise action (k = %6f) = %f\n' % (k, self.gg_t_a[i]))
+            self.phycas.output('t of compromise action (k = %6f) = %f' % (k, self.gg_t_a[i]))
 
     def addPaupBlock(self, fn, tree, pheaders, pvalues):
         # this function not yet tested

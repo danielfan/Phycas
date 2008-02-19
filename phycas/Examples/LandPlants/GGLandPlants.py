@@ -1,8 +1,7 @@
 from phycas import *
 
 data_file_name = 'Yang_and_Rannala_Karol.nex'
-#internal_prior_means = [10**x for x in [-5,-4,-3,-2,-1,0,1,2,3,4,5]]
-internal_prior_means = [10**x for x in [0]]
+internal_prior_means = [10**x for x in [-5,-4,-3,-2,-1,0,1,2,3,4,5]]
 
 outf = open('output.txt', 'w')
 outf.write('prior mean\tPm\tGm\tDm\n')
@@ -13,13 +12,13 @@ for mean in internal_prior_means:
     print '***** Beginning analysis with internal prior mean',mean
     print '*****'
     analyzer = Phycas()
+    analyzer.log_file_name = '%.9f_gg.log' % mean
     analyzer.data_file_name = data_file_name
     analyzer.default_model = 'hky'
     analyzer.num_rates = 5
     analyzer.using_hyperprior = False 
     analyzer.nchains = 1
     analyzer.gg_kvect = [1.0]
-    analyzer.gg_outfile = '%.9f_ggoutfile.txt' % mean
     analyzer.gg_burnin = 556
     analyzer.gg_bin_patterns = True
     analyzer.gg_bincount_filename = '%.9f_bincounts.txt' % mean
