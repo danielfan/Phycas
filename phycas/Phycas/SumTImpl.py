@@ -507,46 +507,54 @@ class TreeSummarizer(object):
         k_str = sojourn_label_fmt_str % 'k'
         self.phycas.output('%8s %s %10s %s %s %s %10s %10s' % ('topology', freq_str, 'TL', s0_str, sk_str, k_str, 'prob.', 'cum.'))
         cum_prob = 0.0
+        done = False
         tree_vect = tree_map.items()
         tree_vect.sort(cmp = lambda x,y: cmp(y[1][0], x[1][0]))
-        for i,(k,v) in enumerate(tree_vect):
-            # Determine the posterior probability and cumulative posterior probability
-            post_prob = float(v[0])/float(num_trees_considered)
-            cum_prob += post_prob
+        if self.phycas.sumt_tree_credible_prob > 0.0:
+            for i,(k,v) in enumerate(tree_vect):
+                if done:
+                    break
+                
+                # Determine the posterior probability and cumulative posterior probability
+                post_prob = float(v[0])/float(num_trees_considered)
+                cum_prob += post_prob
+                if cum_prob > self.phycas.sumt_tree_credible_prob:
+                    # stop after the current tree
+                    done = True
 
-            # Determine the average tree length of this tree topology
-            avgTL = v[2]/float(v[0])
+                # Determine the average tree length of this tree topology
+                avgTL = v[2]/float(v[0])
 
-            # Determine the sampled tree that began the first sojourn (the third element of the list)
-            first_sojourn_start = v[3]
-            
-            # Determine the sampled tree that ended the last sojourn (the final element of the list)
-            last_sojourn_end = v[-1]
+                # Determine the sampled tree that began the first sojourn (the third element of the list)
+                first_sojourn_start = v[3]
+                
+                # Determine the sampled tree that ended the last sojourn (the final element of the list)
+                last_sojourn_end = v[-1]
 
-            # Determine the number of sojourns (this must be counted)
-            num_sojourns = 1
-            in_sojourn = True
-            prev = v[3]
-            for curr in v[4:]:
-                if curr - prev > 1:
-                    num_sojourns += 1
-                prev = curr
+                # Determine the number of sojourns (this must be counted)
+                num_sojourns = 1
+                in_sojourn = True
+                prev = v[3]
+                for curr in v[4:]:
+                    if curr - prev > 1:
+                        num_sojourns += 1
+                    prev = curr
 
-            # Output summary line for this tree topology                
-            freq_str = sojourn_fmt_str % v[0]
-            s0_str = sojourn_fmt_str % first_sojourn_start
-            sk_str = sojourn_fmt_str % last_sojourn_end
-            k_str = sojourn_fmt_str % num_sojourns
-            self.phycas.output('%8d %s %10.5f %s %s %s %10.5f %10.5f' % (i+1, freq_str, avgTL, s0_str, sk_str, k_str, post_prob, cum_prob))
+                # Output summary line for this tree topology                
+                freq_str = sojourn_fmt_str % v[0]
+                s0_str = sojourn_fmt_str % first_sojourn_start
+                sk_str = sojourn_fmt_str % last_sojourn_end
+                k_str = sojourn_fmt_str % num_sojourns
+                self.phycas.output('%8d %s %10.5f %s %s %s %10.5f %10.5f' % (i+1, freq_str, avgTL, s0_str, sk_str, k_str, post_prob, cum_prob))
 
-            # Save the tree topology (decorated with posterior mean edge lengths) to the tree file
-            t = Phylogeny.Tree()
-            t.buildFromString(v[1], True)   # these trees come from a nexus file, so taxon numbers will start at 0, hence the True second argument
-            self.assignEdgeLensAndSupportValues(t, split_map, num_trees_considered)
-            t.stripNodeNames()
-            summary_short_name_list.append('%d_%d_of_%d' % (i+1,v[0],num_trees_considered))
-            summary_full_name_list.append('Frequency %d of %d' % (v[0],num_trees_considered))
-            summary_tree_list.append(t)
+                # Save the tree topology (decorated with posterior mean edge lengths) to the tree file
+                t = Phylogeny.Tree()
+                t.buildFromString(v[1], True)   # these trees come from a nexus file, so taxon numbers will start at 0, hence the True second argument
+                self.assignEdgeLensAndSupportValues(t, split_map, num_trees_considered)
+                t.stripNodeNames()
+                summary_short_name_list.append('%d_%d_of_%d' % (i+1,v[0],num_trees_considered))
+                summary_full_name_list.append('Frequency %d of %d' % (v[0],num_trees_considered))
+                summary_tree_list.append(t)
 
         self.phycas.output('\nSaving distinct tree topologies...')
         self.save_trees(treefname, pdffname, summary_short_name_list, summary_full_name_list, summary_tree_list)

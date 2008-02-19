@@ -132,6 +132,7 @@ class Phycas(object):
         self.sumt_output_replace       = False          # If True, output files will be replaced automatically if they exist; if False, a random integer will be added to the name so that the name no longer matches an existing file
         self.sumt_burnin               = 1              # Number of trees to skip in sumt_input_tree_file
         self.sumt_equal_brlens         = False          # If True, trees in pdf file will be drawn with branch lengths equal, making support values easier to see; if set to True, consider setting pdf_scalebar_position = None (scalebar is irrelevant in this case)
+        self.sumt_tree_credible_prob   = 0.95           # Include just enough trees in the <sumt_trees_prefix>.tre and <sumt_trees_prefix>.pdf files such that the cumulative posterior probability is greater than this value
 
         # Variables associated with Polytomy (Bush) moves
         self.allow_polytomies       = False     # If True, do Bush moves in addition to Larget-Simon moves; if False, do Larget-Simon moves only

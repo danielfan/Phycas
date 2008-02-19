@@ -330,32 +330,35 @@ class GelfandGhosh(object):
 
         if self.outfile:
             assert not self.outfile.closed, 'Error: could not save results because the output file is closed'
-            self.outfile.write('# Pm = %f\n' % self.gg_Pm)
+            self.outfile.write('Pm = %f\n' % self.gg_Pm)
             for i,k in enumerate(self.gg_kvect):
-                self.outfile.write('# k = %f:\n' % k)
-                self.outfile.write('#   Gm = %f\n' % self.gg_Gm[i])
-                self.outfile.write('#   Dm = %f\n' % self.gg_Dm[i])
+                self.outfile.write('k = %f:\n' % k)
+                self.outfile.write('  Gm = %f\n' % self.gg_Gm[i])
+                self.outfile.write('  Dm = %f\n' % self.gg_Dm[i])
             self.outfile.write('\n')
 
-            self.outfile.write('# no. patterns in original dataset   = %d\n' % self.gg_y.getNUniquePatterns())
-            self.outfile.write('# no. patterns in mean dataset       = %d\n' % self.gg_mu.getNUniquePatterns())
+            self.outfile.write('no. patterns in original dataset   = %d\n' % self.gg_y.getNUniquePatterns())
+            self.outfile.write('no. patterns in mean dataset       = %d\n' % self.gg_mu.getNUniquePatterns())
             sum_npat = 0.0
             for npat in self.gg_npatterns:
                 sum_npat += float(npat)
-            self.outfile.write('# mean no. patterns across datasets  = %f\n' % (sum_npat/float(len(self.gg_npatterns))))
+            self.outfile.write('mean no. patterns across datasets  = %f\n' % (sum_npat/float(len(self.gg_npatterns))))
 
-            self.outfile.write('# t for original dataset             = %f\n' % self.gg_t_y)
-            self.outfile.write('# t for mean dataset                 = %f\n' % self.gg_t_mu)
-            self.outfile.write('# mean of t across datasets          = %f\n' % self.gg_t_mean)
+            self.outfile.write('t for original dataset             = %f\n' % self.gg_t_y)
+            self.outfile.write('t for mean dataset                 = %f\n' % self.gg_t_mu)
+            self.outfile.write('mean of t across datasets          = %f\n' % self.gg_t_mean)
+            for i,k in enumerate(self.gg_kvect):
+                self.outfile.write('t of compromise action for k = %.1f = %f\n' % (k,self.gg_t_a[i]))
+                
             ttotal = len(self.gg_t)
             assert ttotal == self.gg_total, 'mismatch between self.gg_total and len(self.gg_t)'
             tsumsq = 0.0
             for t in self.gg_t:
                 tsumsq += t*t
             tvar = tsumsq - float(ttotal)*self.gg_t_mean*self.gg_t_mean
-            self.outfile.write('# std. dev. of t across datasets     = %f\n' % math.sqrt(tvar))
+            self.outfile.write('std. dev. of t across datasets     = %f\n' % math.sqrt(tvar))
             for i,k in enumerate(self.gg_kvect):
-                self.outfile.write('# t of compromise action (k = %6f) = %f\n' % (k, self.gg_t_a[i]))
+                self.outfile.write('t of compromise action (k = %6f) = %f\n' % (k, self.gg_t_a[i]))
 
     def addPaupBlock(self, fn, tree, pheaders, pvalues):
         # this function not yet tested
@@ -515,7 +518,7 @@ class GelfandGhosh(object):
                         if self.gg_bincount_filename:
                             b = self.gg_simdata.getBinnedCounts()
                             bstr = ['%.1f' % x for x in b]
-                            binf.write('%s\tpostpred rep.\n' % '\t'.join(bstr))
+                            binf.write('%s\tposterior predictive replicate\n' % '\t'.join(bstr))
                     else:
                         # Compute the t function for the simulated dataset                
                         curr_t = self.gg_simdata.calct(4)
@@ -566,9 +569,22 @@ class GelfandGhosh(object):
             self.outfile.close()
 
         if self.gg_bin_patterns and self.gg_bincount_filename:
+            # write observed bin counts
             b = self.gg_y.getBinnedCounts()
             bstr = ['%.1f' % x for x in b]
-            binf.write('%s\t(observed)\n' % '\t'.join(bstr))
+            binf.write('%s\tobserved\n' % '\t'.join(bstr))
+
+            # write mu bin counts
+            b = self.gg_mu.getBinnedCounts()
+            bstr = ['%.1f' % x for x in b]
+            binf.write('%s\tmu\n' % '\t'.join(bstr))
+
+            # write compromise action bin counts
+            for i,k in enumerate(gg_kvect):
+                b = self.gg_a[0].getBinnedCounts()
+                bstr = ['%.1f' % x for x in b]
+                binf.write('%s\ta for k=%.1f\n' % ('\t'.join(bstr),k))
+
             binf.close()
 
         return (self.gg_Pm, self.gg_Gm, self.gg_Dm);        
