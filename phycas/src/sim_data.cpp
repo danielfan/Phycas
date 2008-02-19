@@ -68,8 +68,79 @@ namespace phycas
 */
 std::vector<double> SimData::getBinnedCounts()
 	{
+#if POLPY_NEWWAY
+    if (binv.empty())
+        {
+        buildBinVector(4);  //POL: not good to assume 4 states here - SimData object should know number of states
+        }
+#endif
     return binv;
     }
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|   Builds up the `binv' vector by classifying stored site patterns into the following categories (bins):
+|>
+|	Count   Bin description                 
+|   ----------------------------------------
+|	n_0     all patterns containing only A  
+|	n_1     all patterns containing only C  
+|	n_2     all patterns containing only G  
+|	n_3     all patterns containing only T  
+|	n_4     patterns containing any 2 states
+|	n_5     patterns containing any 3 states
+|	n_6     patterns containing any 4 states
+|   ----------------------------------------
+|>
+|	Warning: this function currently assumes no missing data! A missing state is treated as if it were one of the
+|	other states in the pattern. For example, the count for the pattern 'AAACA?GAA' would be stuffed into the 3-state
+|	bin, with the implicit assumption being that the ? equals either A, C or G.
+*/
+void SimData::buildBinVector(
+  unsigned nstates)   /**< is the number of states */
+	{
+	unsigned nbins = 2*nstates - 1;
+    binv.clear();
+	binv.resize(nbins, 0.0);
+	std::set<int8_t> state_set;
+	for (SimPatternMapType::iterator it = sim_pattern_map.begin(); it != sim_pattern_map.end(); ++it)
+		{
+		//POL for speed, should classify patterns as they are added to SimData in the first place!
+		const VecStateList & p = it->first;
+		//std::cerr << "\npattern is";
+		state_set.clear();
+		unsigned last_state = UINT_MAX;
+		for (VecStateList::const_iterator pit = p.begin(); pit != p.end(); ++pit)
+			{
+			int8_t curr_state = *pit;
+			int cs = (int)curr_state;
+			if (cs >= 0 && cs < (int)nstates)
+				{
+				// state is not a gap (-1), missing (nstates), or an ambiguity code (> nstates), so add to set
+				//std::cerr << " " << (int)curr_state;
+				state_set.insert(curr_state);
+				last_state = cs;
+				}
+			}
+		unsigned sz = (unsigned)state_set.size();
+		//std::cerr << "\n  num. states in pattern = " << sz;
+		PHYCAS_ASSERT(sz > 0);
+		PHYCAS_ASSERT(sz <= nstates);
+
+		double this_count = (double)(it->second);
+		if (sz == 1)
+			{
+			// pattern had only one state, so add pattern count to appropriate constant site bin
+			binv[last_state] += this_count;
+			}
+		else
+			{
+			// pattern had sz states, so add pattern count to appropriate variable site bin
+			binv[nstates + sz - 2] += this_count;
+			}
+		}
+    }
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calculates the binned t function used in the Gelfand-Ghosh measure for the patterns currently stored in this 
@@ -115,6 +186,9 @@ double SimData::calctBinned(unsigned nstates)
 	double epsilon				= 1.0/(double)nbins;
 
 	// classify patterns and build up bin, the vector of bin counts
+#if POLPY_NEWWAY
+    buildBinVector(nstates);
+#else
     binv.clear();
 	binv.resize(nbins, 0.0);
 	std::set<int8_t> state_set;
@@ -154,6 +228,7 @@ double SimData::calctBinned(unsigned nstates)
 			binv[nstates + sz - 2] += this_count;
 			}
 		}
+#endif
 
 	std::ofstream f("bins.txt", std::ios::out | std::ios::app);
 	f.setf(std::ios::floatfield, std::ios::fixed);

@@ -15,7 +15,7 @@ class GelfandGhosh(object):
         
         """
         # copy relevant setup information from phycas object
-        self.outfname               = phycas.gg_outfile
+        self.phycas                 = phycas
         self.datafname              = phycas.data_file_name
         self.paramfname             = phycas.gg_pfile
         self.treefname              = phycas.gg_tfile
@@ -29,13 +29,13 @@ class GelfandGhosh(object):
         self.gg_save_postpreds      = phycas.gg_save_postpreds
         self.gg_postpred_prefix     = phycas.gg_postpred_prefix
 
-        # for debugging and research
-        self.gg_save_spectra        = False    # adds all 256 counts for posterior predictive simulated data sets to a file named spectra.txt, with counts separated by tabs (only use for four-taxon problems)
-
         # initialize quantities used in Gelfand-Ghosh calculations
         self.gg_simdata             = Likelihood.SimData()     # temporary container used to hold nascent posterior predictive simulation results until they have been analyzed
+        self.gg_binned_simdata      = [0.0]*7                  # if self.gg_bin_patterns is True, this vector of 7 floats is used to summarize the counts in self.gg_simdata
         self.gg_y                   = Likelihood.SimData()     # observed dataset
+        self.gg_binned_y            = [0.0]*7                  # if self.gg_bin_patterns is True, this vector of 7 floats is used instead of self.gg_y
         self.gg_mu                  = Likelihood.SimData()     # mean of all posterior predictive datasets
+        self.gg_binned_mu           = [0.0]*7                  # if self.gg_bin_patterns is True, this vector of 7 floats is used instead of self.gg_mu
         self.gg_a                   = []            # vector of compromise actions (one for each k in gg_kvect)
         self.gg_npatterns           = []            # vector containing the number of patterns in each posterior predictive dataset
         self.gg_t                   = []            # vector of t values computed from posterior predictive datasets
@@ -49,17 +49,11 @@ class GelfandGhosh(object):
         self.gg_num_post_pred_reps  = 0.0           # counts total number of posterior predictive simulations performed
         self.gg_total               = 0
 
-        # initialize quantities used for debugging/research code
-        self.gg_spectrum           = Likelihood.SimData() # workspace used if gg_save_spectra is True
-        self.gg_spectrum_points    = ''        # used for creating surface plot in Maple for spectrum
-        self.gg_spectrum_row       = 0
-
         self.lot = ProbDist.Lot()
         if self.rnseed != 0:
             self.lot.setSeed(self.rnseed)
             self.rnseed = self.lot.getSeed()
             
-        self.outfile = None
         self.pfile = None
         self.tfile = None
         self.model = None
@@ -81,15 +75,6 @@ class GelfandGhosh(object):
         self.taxon_labels = []
 
         self.ok = True
-        if self.outfname:
-            if os.path.exists(self.outfname):
-                self.ok = False
-                print 'Output file name (%s) specified for Gelfand-Ghosh analysis already exists' % self.outfname
-                print 'Remove or rename it and try again'
-                sys.exit()
-            else:
-                self.outfile = file(self.outfname, 'w')
-                self.outputHeader()
         if self.ok:
             if os.path.exists(self.paramfname):
                 self.pfile = file(self.paramfname, 'r')
@@ -104,49 +89,46 @@ class GelfandGhosh(object):
                 self.ok = False
                 print 'Tree file specified (%s) does not exist' % self.treefname
                 sys.exit()
+                
         self.setupModel()
         self.getData()
         self.getTrees()
 
     def outputHeader(self):
-        if self.outfile:
-            self.outfile.write('Gelfand-Ghosh Analysis\n\n')
-            self.outfile.write('  data file:          %s\n' % self.datafname)
-            self.outfile.write('  parameter file:     %s\n' % self.paramfname)
-            self.outfile.write('  tree file:          %s\n' % self.treefname)
-            self.outfile.write('  sims/sample:        %d\n' % self.gg_nreps)
-            self.outfile.write('  k values:\n')
-            for kvalue in self.gg_kvect:
-                self.outfile.write('    %f\n' % kvalue)
-            self.outfile.write('  samples skipped:    %d\n' % self.gg_burnin)
-            self.outfile.write('  random number seed: %d\n' % self.rnseed)
-            self.outfile.write('\n')
+        self.phycas.output('Gelfand-Ghosh Analysis\n\n')
+        self.phycas.output('  data file:          %s\n' % self.datafname)
+        self.phycas.output('  parameter file:     %s\n' % self.paramfname)
+        self.phycas.output('  tree file:          %s\n' % self.treefname)
+        self.phycas.output('  sims/sample:        %d\n' % self.gg_nreps)
+        self.phycas.output('  k values:\n')
+        for kvalue in self.gg_kvect:
+            self.phycas.output('    %f\n' % kvalue)
+        self.phycas.output('  samples skipped:    %d\n' % self.gg_burnin)
+        self.phycas.output('  random number seed: %d\n' % self.rnseed)
+        self.phycas.output('\n')
 
     def outputDataInfo(self):
-        if self.outfile:
-            self.outfile.write('  Information about the data:\n\n')
-            self.outfile.write('    number of taxa:         %d\n' % self.ntax)
-            self.outfile.write('    number of characters:   %d\n' % self.nchar)
-            self.outfile.write('    number of patterns:     %d\n' % self.npatterns)
-            self.outfile.write('\n')
+        self.phycas.output('  Information about the data:\n\n')
+        self.phycas.output('    number of taxa:         %d\n' % self.ntax)
+        self.phycas.output('    number of characters:   %d\n' % self.nchar)
+        self.phycas.output('    number of patterns:     %d\n' % self.npatterns)
+        self.phycas.output('\n')
         
     def outputTreesInfo(self):
-        if self.outfile:
-            self.outfile.write('  Information about the sampled trees:\n\n')
-            self.outfile.write('    number of trees skipped:  %d\n' % self.gg_burnin)
-            self.outfile.write('    number of trees included: %d\n' % self.ntrees)
-            self.outfile.write('    total trees in file:      %d\n' % (self.gg_burnin + self.ntrees))
-            self.outfile.write('\n')
+        self.phycas.output('  Information about the sampled trees:\n\n')
+        self.phycas.output('    number of trees skipped:  %d\n' % self.gg_burnin)
+        self.phycas.output('    number of trees included: %d\n' % self.ntrees)
+        self.phycas.output('    total trees in file:      %d\n' % (self.gg_burnin + self.ntrees))
+        self.phycas.output('\n')
 
     def outputModelInfo(self):
-        if self.outfile:
-            pinvar_str = self.is_invariable_sites_model and '+I' or ''
-            dgamma_str = self.is_discrete_gamma_model and '+G' or ''
-            flex_str = self.is_flex_model and '+FLEX' or ''
-            model_str = '%s%s%s%s' % (self.model_type, pinvar_str, dgamma_str, flex_str)
-            self.outfile.write('  Information about the substitution model:\n\n')
-            self.outfile.write('    model name:  %s\n' % model_str)
-            self.outfile.write('\n')
+        pinvar_str = self.is_invariable_sites_model and '+I' or ''
+        dgamma_str = self.is_discrete_gamma_model and '+G' or ''
+        flex_str = self.is_flex_model and '+FLEX' or ''
+        model_str = '%s%s%s%s' % (self.model_type, pinvar_str, dgamma_str, flex_str)
+        self.phycas.output('  Information about the substitution model:\n\n')
+        self.phycas.output('    model name:  %s\n' % model_str)
+        self.phycas.output('\n')
 
     def getData(self):
         data_reader = ReadNexus.NexusReader()
@@ -252,51 +234,35 @@ class GelfandGhosh(object):
         elif self.is_discrete_gamma_model:
             self.model.setShape(float(parameters[8]))
             self.model.setNGammaRates(self.num_rates)
+
+    def calcBinnedT(self, v):
+        # Calculate t for the vector v, which should have 7 elements
+        assert len(v) == 7, 'vector supplied to the GGImpl.calcBinnedT function should have 7 elements, in this case it had %d elements' % len(v)
+        t = 0.0
+        n = float(sum(v))
+        lnn = math.log(n + 1.0)
+        eps = 1.0/7.0
+        for x in v:
+            term1 = (x + eps)/(n + 1.0)
+            term2 = math.log(x + eps) - lnn
+            t += term1*term2
+        return t
         
     def ggCalculate(self):
         two_n = 2.0*float(self.nchar)
 
         # Compute the t function for the observed dataset
         if self.gg_bin_patterns:
-            self.gg_t_y = self.gg_y.calctBinned(4)
+            self.gg_t_y = self.calcBinnedT(self.gg_binned_y)
         else:                
             self.gg_t_y = self.gg_y.calct(4)
 
-        # gg_mu is the mean of all the posterior predictive datasets.
-        # Compute the t function for the mean dataset
+        # gg_mu (or gg_binned_mu) represents the mean over all posterior predictive datasets
+        # Compute the t function for this mean dataset
         if self.gg_bin_patterns:
-            self.gg_t_mu = self.gg_mu.calctBinned(4)
+            self.gg_t_mu = self.calcBinnedT(self.gg_binned_mu)
         else:
             self.gg_t_mu = self.gg_mu.calct(4)
-            
-        # If saving spectra, save the spectrum from the original data set
-        if self.gg_save_spectra:
-            self.gg_spectrum.zeroCounts()
-            self.gg_mu.addDataTo(self.gg_spectrum, 1.0)
-            self.gg_spectrum_points += ','
-            self.gg_spectrum_points += self.gg_spectrum.createMapleTuples(self.gg_spectrum_row, 100)
-            self.gg_spectrum_row += 1
-            self.gg_spectrum.appendCountsToFile('spectra.txt', False)
-    
-            # get patterns
-            patterns = self.gg_spectrum.getPatterns(['A','C','G','T'])
-            spectf = file('spectra.txt', 'a')
-            for i in range(4):
-                for j,p in enumerate(patterns):
-                    entry = '%s%s' % ((j == 0 and '' or '\t'), p[i])
-                    spectf.write(entry)
-                spectf.write('\n')
-            spectf.close()
-    
-            # write out the maple_commands file now
-            maplef = file('maple_commands', 'w')
-            maplef.write('with(linalg);\n')
-            maplef.write('with(plots);\n')
-            maplef.write('points := [')
-            maplef.write(self.gg_spectrum_points)
-            maplef.write('];\n')
-            maplef.write('surfdata(points, style=patchnogrid, axes=framed, labels=["sim", "pattern", "freq"]);\n')
-            maplef.close()
         
         # Compute the mean of the t values computed for individual posterior
         # predictive datasets
@@ -309,13 +275,17 @@ class GelfandGhosh(object):
         # Loop over k values, computing Gm and Dm for each k value in gg_kvect
         for k in self.gg_kvect:
             # Create a dataset representing the compromise "action"
-            a = Likelihood.SimData()
-            self.gg_mu.addDataTo(a, 1.0)
-            self.gg_y.addDataTo(a, k)
-            a.divideBy(k + 1.0)
             if self.gg_bin_patterns:
-                t_a = a.calctBinned(4)
+                a = []
+                for b in range(7):
+                    next_a = (self.gg_binned_mu[b] + self.gg_binned_y[b])/(k + 1.0)
+                    a.append(next_a) 
+                t_a = self.calcBinnedT(a)
             else:
+                a = Likelihood.SimData()
+                self.gg_mu.addDataTo(a, 1.0)
+                self.gg_y.addDataTo(a, k)
+                a.divideBy(k + 1.0)
                 t_a = a.calct(4)
             self.gg_t_a.append(t_a)
             self.gg_a.append(a)
@@ -328,37 +298,35 @@ class GelfandGhosh(object):
             Dkm = self.gg_Pm + Gkm
             self.gg_Dm.append(Dkm)
 
-        if self.outfile:
-            assert not self.outfile.closed, 'Error: could not save results because the output file is closed'
-            self.outfile.write('Pm = %f\n' % self.gg_Pm)
-            for i,k in enumerate(self.gg_kvect):
-                self.outfile.write('k = %f:\n' % k)
-                self.outfile.write('  Gm = %f\n' % self.gg_Gm[i])
-                self.outfile.write('  Dm = %f\n' % self.gg_Dm[i])
-            self.outfile.write('\n')
+        self.phycas.output('Pm = %f\n' % self.gg_Pm)
+        for i,k in enumerate(self.gg_kvect):
+            self.phycas.output('k = %f:\n' % k)
+            self.phycas.output('  Gm = %f\n' % self.gg_Gm[i])
+            self.phycas.output('  Dm = %f\n' % self.gg_Dm[i])
+        self.phycas.output('\n')
 
-            self.outfile.write('no. patterns in original dataset   = %d\n' % self.gg_y.getNUniquePatterns())
-            self.outfile.write('no. patterns in mean dataset       = %d\n' % self.gg_mu.getNUniquePatterns())
-            sum_npat = 0.0
-            for npat in self.gg_npatterns:
-                sum_npat += float(npat)
-            self.outfile.write('mean no. patterns across datasets  = %f\n' % (sum_npat/float(len(self.gg_npatterns))))
+        self.phycas.output('no. patterns in original dataset   = %d\n' % self.gg_y.getNUniquePatterns())
+        self.phycas.output('no. patterns in mean dataset       = %d\n' % self.gg_mu.getNUniquePatterns())
+        sum_npat = 0.0
+        for npat in self.gg_npatterns:
+            sum_npat += float(npat)
+        self.phycas.output('mean no. patterns across datasets  = %f\n' % (sum_npat/float(len(self.gg_npatterns))))
 
-            self.outfile.write('t for original dataset             = %f\n' % self.gg_t_y)
-            self.outfile.write('t for mean dataset                 = %f\n' % self.gg_t_mu)
-            self.outfile.write('mean of t across datasets          = %f\n' % self.gg_t_mean)
-            for i,k in enumerate(self.gg_kvect):
-                self.outfile.write('t of compromise action for k = %.1f = %f\n' % (k,self.gg_t_a[i]))
-                
-            ttotal = len(self.gg_t)
-            assert ttotal == self.gg_total, 'mismatch between self.gg_total and len(self.gg_t)'
-            tsumsq = 0.0
-            for t in self.gg_t:
-                tsumsq += t*t
-            tvar = tsumsq - float(ttotal)*self.gg_t_mean*self.gg_t_mean
-            self.outfile.write('std. dev. of t across datasets     = %f\n' % math.sqrt(tvar))
-            for i,k in enumerate(self.gg_kvect):
-                self.outfile.write('t of compromise action (k = %6f) = %f\n' % (k, self.gg_t_a[i]))
+        self.phycas.output('t for original dataset             = %f\n' % self.gg_t_y)
+        self.phycas.output('t for mean dataset                 = %f\n' % self.gg_t_mu)
+        self.phycas.output('mean of t across datasets          = %f\n' % self.gg_t_mean)
+        for i,k in enumerate(self.gg_kvect):
+            self.phycas.output('t of compromise action for k = %.1f = %f\n' % (k,self.gg_t_a[i]))
+            
+        ttotal = len(self.gg_t)
+        assert ttotal == self.gg_total, 'mismatch between self.gg_total and len(self.gg_t)'
+        tsumsq = 0.0
+        for t in self.gg_t:
+            tsumsq += t*t
+        tvar = tsumsq - float(ttotal)*self.gg_t_mean*self.gg_t_mean
+        self.phycas.output('std. dev. of t across datasets     = %f\n' % math.sqrt(tvar))
+        for i,k in enumerate(self.gg_kvect):
+            self.phycas.output('t of compromise action (k = %6f) = %f\n' % (k, self.gg_t_a[i]))
 
     def addPaupBlock(self, fn, tree, pheaders, pvalues):
         # this function not yet tested
@@ -391,27 +359,6 @@ class GelfandGhosh(object):
         simf.write(']\n')
         simf.close()
 
-    def fillSpectrum(self):
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
-        """
-        Only used for 4-taxon problems where there are 256 possible patterns
-        for DNA data. Creates a SimData object with 256 patterns. This object
-        is used as a workspace for saving pattern spectra if gg_save_spectra
-        is True.
-        
-        """
-        self.gg_spectrum_row = 0
-        self.gg_spectrum.resetPatternLength(4)
-        for i in range(4):        
-            for j in range(4):        
-                for k in range(4):        
-                    for m in range(4):
-                        self.gg_spectrum.setState(0, i)
-                        self.gg_spectrum.setState(1, j)
-                        self.gg_spectrum.setState(2, k)
-                        self.gg_spectrum.setState(3, m)
-                        self.gg_spectrum.insertPattern(1.0)
-
     def run(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -424,41 +371,20 @@ class GelfandGhosh(object):
 
         # Let gg_y contain the observed pattern counts            
         self.likelihood.addDataTo(self.gg_y)
+        if self.gg_bin_patterns:
+            self.gg_binned_y = self.gg_y.getBinnedCounts()
 
         if self.gg_bin_patterns and self.gg_bincount_filename:
             binf = open(self.gg_bincount_filename,'w')
 
-        #    # If saving spectra, save the spectrum from the original data set
-        #    if self.gg_save_spectra:
-        #        assert self.ntax == 4, 'gg_save_spectra is designed for 4-taxon problems only (i.e. ntax = 4); ntax is %d in this case' % self.ntax
-        #        self.fillSpectrum()
-        #        self.gg_spectrum.zeroCounts()
-        #        self.gg_y.addDataTo(self.gg_spectrum, 1.0)
-        #        yobs_row = self.gg_spectrum.createMapleTuples(self.gg_spectrum_row, 100)
-        #        self.gg_spectrum_points += yobs_row
-        #        self.gg_spectrum_row += 1
-        #        self.gg_spectrum.appendCountsToFile('spectra.txt', False)
-        #        for z in range(9):
-        #            self.gg_spectrum_points += ','
-        #            self.gg_spectrum_points += yobs_row
-        #            self.gg_spectrum_row += 1
-        #            self.gg_spectrum.appendCountsToFile('spectra.txt', False)
-
-        #swtmp = ProbDist.StopWatch()
-        #swtmp.start()
-        #swtmp.stop()
-        #cum_caltbinned_secs += swtmp.elapsedSeconds()
-        #cum_caltbinned_secs = 0.0
-        
-        print 'Performing posterior-predictive simulations:'        
+        self.phycas.output('Performing posterior-predictive simulations:')
         prev_pct_done = 0.0        
         stopwatch = ProbDist.StopWatch()
         stopwatch.start()
         prev_secs = 0.0
         for i,t in enumerate(self.trees):
-            if i >= self.gg_burnin:
+            if i >= self.gg_burnin:     # POL use slice to get rid of this waste
                 tree_description = t.newick
-                # build the next tree
                 tree_name = t.name
                 tree_rooted = t.rooted
                 
@@ -469,10 +395,10 @@ class GelfandGhosh(object):
 
                 #print '*** simulating from tree %s: %s' % (tree_name, tree_description)
 
-                # set up for simulation
+                # Set up for simulation
                 self.parameterizeModelForSimulation(i)
                     
-                # report progress so user doesn't give up
+                # Report progress so user doesn't give up
                 pct_done = 100.0*float(i - self.gg_burnin + 1)/float(self.ntrees)
                 if pct_done - prev_pct_done >= 10.0:
                     prev_pct_done = pct_done
@@ -496,15 +422,6 @@ class GelfandGhosh(object):
                     self.gg_simdata.clear()
                     self.likelihood.simulateFirst(self.gg_simdata, tree, self.lot, self.nchar)
 
-                    # debugging/research code
-                    if self.gg_save_spectra:
-                        self.gg_spectrum.zeroCounts()
-                        self.gg_simdata.addDataTo(self.gg_spectrum, 1.0)
-                        self.gg_spectrum_points += ','
-                        self.gg_spectrum_points += self.gg_spectrum.createMapleTuples(self.gg_spectrum_row, 100)
-                        self.gg_spectrum_row += 1
-                        self.gg_spectrum.appendCountsToFile('spectra.txt', False)
-
                     # Save the simulated data set if desired
                     if self.gg_save_postpreds:
                         fn = '%s_cycle%d_rep%d.nex' % (self.gg_postpred_prefix, i+1, j)
@@ -514,18 +431,14 @@ class GelfandGhosh(object):
                     if self.gg_bin_patterns:
                         # Compute the t function for the simulated dataset                
                         curr_t = self.gg_simdata.calctBinned(4)
+                        self.gg_binned_simdata = self.gg_simdata.getBinnedCounts()
 
                         if self.gg_bincount_filename:
-                            b = self.gg_simdata.getBinnedCounts()
-                            bstr = ['%.1f' % x for x in b]
+                            bstr = ['%.1f' % x for x in self.gg_binned_simdata]
                             binf.write('%s\tposterior predictive replicate\n' % '\t'.join(bstr))
                     else:
                         # Compute the t function for the simulated dataset                
                         curr_t = self.gg_simdata.calct(4)
-
-                    # temporary debugging code
-                    #print '\nt =',curr_t,', patterns =',self.gg_simdata.getNUniquePatterns()
-                    #print self.gg_simdata.patternTable('A C G T'.split())
 
                     # Add this value of t to the list (later the mean t will be computed)                
                     self.gg_t.append(curr_t)
@@ -548,12 +461,20 @@ class GelfandGhosh(object):
                     # ------------------------------------------------------------
                     #
                     # Note that it is ok if gg_num_post_pred_reps = 1 (in which case
-                    # gg_mu is multiplied by zero) because multBy is a no-op in this
-                    # case since gg_mu is empty
+                    # gg_mu is multiplied by zero). Because gg_mu is empty, multBy is
+                    # a no-op in this case
                     p = 1.0/self.gg_num_post_pred_reps
-                    self.gg_mu.multBy(1.0 - p)
-                    self.gg_simdata.multBy(p)
-                    self.gg_simdata.addDataTo(self.gg_mu, 1.0)
+                    not_p = 1.0 - p
+                    if self.gg_bin_patterns:
+                        assert len(self.gg_binned_mu) == 7, 'expecting gg_binned_mu to have length 7, but instead it was %d' % len(self.gg_binned_mu)
+                        assert len(self.gg_binned_simdata) == 7, 'expecting gg_binned_simdata to have length 7, but instead it was %d' % len(self.gg_binned_simdata)
+                        for b in range(7):
+                            self.gg_binned_mu[b] *= not_p
+                            self.gg_binned_mu[b] += p*self.gg_binned_simdata[b]
+                    else:
+                        self.gg_mu.multBy(1.0 - p)
+                        self.gg_simdata.multBy(p)
+                        self.gg_simdata.addDataTo(self.gg_mu, 1.0)
 
                     # Increment count of the total number of simulated datasets created
                     # This value is used to later compute the mean t for all simulated datasets
@@ -565,24 +486,19 @@ class GelfandGhosh(object):
         # Close files
         self.pfile.close()
         self.tfile.close()
-        if self.outfile:
-            self.outfile.close()
 
         if self.gg_bin_patterns and self.gg_bincount_filename:
             # write observed bin counts
-            b = self.gg_y.getBinnedCounts()
-            bstr = ['%.1f' % x for x in b]
+            bstr = ['%.1f' % x for x in self.gg_binned_y]
             binf.write('%s\tobserved\n' % '\t'.join(bstr))
 
             # write mu bin counts
-            b = self.gg_mu.getBinnedCounts()
-            bstr = ['%.1f' % x for x in b]
+            bstr = ['%.1f' % x for x in self.gg_binned_mu]
             binf.write('%s\tmu\n' % '\t'.join(bstr))
 
             # write compromise action bin counts
             for i,k in enumerate(self.gg_kvect):
-                b = self.gg_a[0].getBinnedCounts()
-                bstr = ['%.1f' % x for x in b]
+                bstr = ['%.1f' % x for x in self.gg_a[i]]
                 binf.write('%s\ta for k=%.1f\n' % ('\t'.join(bstr),k))
 
             binf.close()

@@ -54,9 +54,13 @@ class SimData
 		void						setState(unsigned pos, int8_t state);
 		void						insertPattern(PatternCountType count);
 
-		double						calct(unsigned nstates);
-		double						calctBinned(unsigned nstates);
+#if POLPY_NEWWAY
+        void                        buildBinVector(unsigned nstates);
+#endif
 		std::vector<double>		    getBinnedCounts();
+
+        double						calct(unsigned nstates);
+		double						calctBinned(unsigned nstates);
 		void						includeDataFrom(SimData &);
 		unsigned					getPatternLength();
 		VecStateList &				getCurrPattern();
