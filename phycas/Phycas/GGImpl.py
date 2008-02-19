@@ -580,7 +580,7 @@ class GelfandGhosh(object):
             binf.write('%s\tmu\n' % '\t'.join(bstr))
 
             # write compromise action bin counts
-            for i,k in enumerate(gg_kvect):
+            for i,k in enumerate(self.gg_kvect):
                 b = self.gg_a[0].getBinnedCounts()
                 bstr = ['%.1f' % x for x in b]
                 binf.write('%s\ta for k=%.1f\n' % ('\t'.join(bstr),k))

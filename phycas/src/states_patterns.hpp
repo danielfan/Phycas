@@ -25,7 +25,7 @@
 typedef std::vector<int8_t>				VecStateList;
 typedef std::vector<unsigned>			VecStateListPos;
 
-typedef float										PatternCountType;
+typedef double										PatternCountType;
 typedef	std::map<VecStateList, PatternCountType>	PatternMapType;
 typedef	std::vector<PatternCountType>				CountVectorType;
 

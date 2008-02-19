@@ -155,13 +155,21 @@ double SimData::calctBinned(unsigned nstates)
 			}
 		}
 
-	//std::ofstream f("bins.txt", std::ios::out | std::ios::app);
-	//f.setf(std::ios::floatfield, std::ios::fixed);
-	//f.setf(std::ios::showpoint);
+	std::ofstream f("bins.txt", std::ios::out | std::ios::app);
+	f.setf(std::ios::floatfield, std::ios::fixed);
+	f.setf(std::ios::showpoint);
+    f << "\nStarting calculation of t:\n";
+    f << "\n--------------------------\n" << std::endl;
+    f << "n                  = " << n << "\n";
+    f << "n_plus_one         = " << n_plus_one << "\n";
+    f << "log_n_plus_one     = " << log_n_plus_one << "\n";
+    f << "nbins              = " << nbins << "\n";
+    f << "epsilon            = " << epsilon << "\n";
+    f << std::endl;
 
 	// now accumulate t by summing over bins
 	double t = 0.0;
-	//double total_check = 0.0;
+	double total_check = 0.0;
 	for (std::vector<double>::iterator vit = binv.begin(); vit != binv.end(); ++vit)
 		{
 		double count				= (*vit);
@@ -170,11 +178,19 @@ double SimData::calctBinned(unsigned nstates)
 		double second				= std::log(count_plus_epsilon) - log_n_plus_one;
 		double this_term			= first*second;
 		t += this_term;
-		//f << count << '\t';
-		//total_check += count;
+
+        total_check += count;
+
+        f << "count              = " << count << "\n";
+        f << "count_plus_epsilon = " << count_plus_epsilon << "\n";
+        f << "first              = " << first << "\n";
+        f << "second             = " << second << "\n";
+        f << "this_term          = " << this_term << "\n";
+        f << "t                  = " << t << "\n";
+        f << std::endl;
 		}
-	//f << n << '\t' << n_plus_one << total_check << std::endl;
-	//f.close();
+    f << "total_check        = " << total_check << "\n";
+	f.close();
 
 	return t;
 	}
