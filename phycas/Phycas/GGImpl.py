@@ -95,7 +95,7 @@ class GelfandGhosh(object):
         self.getTrees()
 
     def outputHeader(self):
-        self.phycas.output('Gelfand-Ghosh Analysis\n')
+        self.phycas.output('Gelfand-Ghosh Analysis:')
         self.phycas.output('  data file:          %s' % self.datafname)
         self.phycas.output('  parameter file:     %s' % self.paramfname)
         self.phycas.output('  tree file:          %s' % self.treefname)
@@ -108,14 +108,14 @@ class GelfandGhosh(object):
         self.phycas.output()
 
     def outputDataInfo(self):
-        self.phycas.output('  Information about the data:\n')
+        self.phycas.output('  Information about the data:')
         self.phycas.output('    number of taxa:         %d' % self.ntax)
         self.phycas.output('    number of characters:   %d' % self.nchar)
         self.phycas.output('    number of patterns:     %d' % self.npatterns)
         self.phycas.output()
         
     def outputTreesInfo(self):
-        self.phycas.output('  Information about the sampled trees:\n')
+        self.phycas.output('  Information about the sampled trees:')
         self.phycas.output('    number of trees skipped:  %d' % self.gg_burnin)
         self.phycas.output('    number of trees included: %d' % self.ntrees)
         self.phycas.output('    total trees in file:      %d' % (self.gg_burnin + self.ntrees))
@@ -126,7 +126,7 @@ class GelfandGhosh(object):
         dgamma_str = self.is_discrete_gamma_model and '+G' or ''
         flex_str = self.is_flex_model and '+FLEX' or ''
         model_str = '%s%s%s%s' % (self.model_type, pinvar_str, dgamma_str, flex_str)
-        self.phycas.output('  Information about the substitution model:\n')
+        self.phycas.output('  Information about the substitution model:')
         self.phycas.output('    model name:  %s' % model_str)
         self.phycas.output()
 
@@ -367,6 +367,7 @@ class GelfandGhosh(object):
         object was created.
         
         """
+        self.outputHeader()
         tree = Phylogeny.Tree()
 
         # Let gg_y contain the observed pattern counts            
@@ -403,7 +404,10 @@ class GelfandGhosh(object):
                 if pct_done - prev_pct_done >= 10.0:
                     prev_pct_done = pct_done
                     secs = stopwatch.elapsedSeconds()
-                    print '  %.0f%% done (%.1fs)...' % (pct_done,secs - prev_secs)
+                    proportion_finished = pct_done/100.0
+                    proportion_remaining = 1.0 - proportion_finished
+                    eta = secs*proportion_remaining/proportion_finished
+                    self.phycas.output('  %.0f%% done (%.1fs)...' % (pct_done, eta))
                     prev_secs = secs
                     cum_caltbinned_secs = 0.0
 
