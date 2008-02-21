@@ -90,6 +90,7 @@ class GelfandGhosh(object):
                 print 'Tree file specified (%s) does not exist' % self.treefname
                 sys.exit()
                 
+        self.outputHeader()
         self.setupModel()
         self.getData()
         self.getTrees()
@@ -367,7 +368,6 @@ class GelfandGhosh(object):
         object was created.
         
         """
-        self.outputHeader()
         tree = Phylogeny.Tree()
 
         # Let gg_y contain the observed pattern counts            
@@ -407,7 +407,7 @@ class GelfandGhosh(object):
                     proportion_finished = pct_done/100.0
                     proportion_remaining = 1.0 - proportion_finished
                     eta = secs*proportion_remaining/proportion_finished
-                    self.phycas.output('  %.0f%% done (%.1fs)...' % (pct_done, eta))
+                    self.phycas.output('  %.0f%% done (%.1fs remaining)...' % (pct_done, eta))
                     prev_secs = secs
                     cum_caltbinned_secs = 0.0
 
