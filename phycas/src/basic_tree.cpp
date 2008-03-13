@@ -411,7 +411,8 @@ void Tree::RectifyNumbers(std::vector<std::string> name_vector)
 |	names should be set according to the values supplied in `name_vector'; that is, a node whose number is k will have
 |	its name set to `name_vector'[k]. Any tip having the default number TreeNode::nodeNumInitValue will cause an 
 |	XPhylogeny exception to be thrown. An XPhylogeny exception will also be thrown if the number of tips in the tree 
-|	does not match the length of `name_vector'.
+|	does not match the length of `name_vector'. For rooted trees, no attempt is made to look up the root node in the
+|   `name_vector' because IsObservable() returns false for the root tip in a rooted tree.
 */
 void Tree::RectifyNames(std::vector<std::string> name_vector)
 	{
@@ -1150,8 +1151,8 @@ void Tree::RefreshNodeCounts()
 |	duplicated or out of range.
 */
 void Tree::BuildFromString(
-  const std::string & newick, /**< is the tree description */
-  bool zero_based_tips)       /**< is true if tip node numbers used in the tree description start at zero */
+  const std::string & newick,   /**< is the tree description */
+  bool zero_based_tips)         /**< is true if tip node numbers used in the tree description start at zero */
 	{
 	PHYCAS_ASSERT(newick.length() > 0);
 
@@ -1230,6 +1231,7 @@ void Tree::BuildFromString(
 						throw XPhylogeny("internal node has only one child");
 					previous = Prev_Tok_RParen;
 					break;
+
 				case ':':
 					// Expect colon only after a node name or another right paren
 					if (!(previous & Colon_Valid))
@@ -1418,6 +1420,23 @@ void Tree::BuildFromString(
 			{
 			throw XPhylogeny("too many left parentheses");
 			}
+
+#if POLPY_NEWWAY
+        if (isRooted)
+            {
+            // Add a fake tip node as the left child of the curent root node and let first_tip point to it
+            first_tip = GetNewNode();
+            first_tip->par = firstPreorder;
+            first_tip->rSib = firstPreorder->lChild;
+            first_tip->lChild = NULL;
+            first_tip->nodeNum = nTips;
+            first_tip->nodeName = "root";
+            first_tip->SetUnobservable();
+            first_tip->SetEdgeLen(0.0);
+            firstPreorder->lChild = first_tip;
+            }
+#endif
+  
 		RerootAtThisTip(first_tip);
 
 	    if (tip_numbers_equal_names)
@@ -1689,6 +1708,9 @@ void Tree::RecalcAllSplits(
 Tree::Tree()
   : firstPreorder(NULL)
 	{
+#if POLPY_NEWWAY
+	isRooted			= false;
+#endif
 	Clear();
 	}
 
@@ -1843,13 +1865,43 @@ void Tree::Clear()
 	nTips				= 0;
 	preorderDirty		= true;
 	hasEdgeLens			= false;
+#if POLPY_NEWWAY
+	//isRooted			= false;
+#else
 	isRooted			= false;
+#endif
 	nodeCountsValid		= false;
 	treeid_valid		= false;
 	numbers_from_names	= false;
     tree_scale          = 1.0;
     debugOutput         = false;
 	}
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Converts the tree to a rooted tree (if it is not already a rooted tree) and sets `isRooted' data member to true.
+*/
+void Tree::setRooted()
+	{
+    // Right now, this function can only be called immediately after construction or immediately after a call to Clear()
+    // Much work needs to be done before an existing tree can be safely converted from unrooted to rooted
+    assert(firstPreorder == NULL);
+    isRooted = true;
+    }
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Converts the tree to an unrooted tree (if it is not already unrooted) and sets `isRooted' data member to false.
+*/
+void Tree::setUnrooted()
+	{
+    // Right now, this function can only be called immediately after construction or immediately after a call to Clear()
+    // Much work needs to be done before an existing tree can be safely converted from rooted to unrooted
+    assert(firstPreorder == NULL);
+    isRooted = false;
+    }
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Pulls a node out of storage, if `internalNodeStorage' is not empty; otherwise, allocates memory for a new TreeNode. If it

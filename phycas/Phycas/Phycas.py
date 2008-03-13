@@ -133,6 +133,10 @@ class Phycas(object):
         self.sumt_burnin               = 1              # Number of trees to skip in sumt_input_tree_file
         self.sumt_equal_brlens         = False          # If True, trees in pdf file will be drawn with branch lengths equal, making support values easier to see; if set to True, consider setting pdf_scalebar_position = None (scalebar is irrelevant in this case)
         self.sumt_tree_credible_prob   = 0.95           # Include just enough trees in the <sumt_trees_prefix>.tre and <sumt_trees_prefix>.pdf files such that the cumulative posterior probability is greater than this value
+        self.sumt_rooted               = False          # Set to True if trees in sumt_input_tree_file are rooted; otherwise, leave set to default value of False to assume trees are unrooted
+
+        # Variables associated with the brownian command
+        self.brownian_input_tree_file    = None           # Set to the name of the input tree file. This setting should not be None at the time the brownian method is called.
 
         # Variables associated with Polytomy (Bush) moves
         self.allow_polytomies       = False     # If True, do Bush moves in addition to Larget-Simon moves; if False, do Larget-Simon moves only
@@ -303,6 +307,15 @@ class Phycas(object):
             self.logf.write('%s\n' % (msg))
             self.logf.flush()
 
+    def abort(self, msg):
+        s = '\n***** Fatal error: %s' % msg
+        #self.output(s)
+        sys.exit(s)
+        
+    def warning(self, msg):
+        s = '\n***** Warning: %s' % msg
+        self.output(s)
+        
     def showParamInfo(self, p):
         self.output('  Parameter name:     %s' % p.getName())
         self.output('  Prior distribution: %s' % p.getPriorDescr())
@@ -1114,6 +1127,12 @@ class Phycas(object):
         import SumTImpl
         tree_summarizer = SumTImpl.TreeSummarizer(self)
         tree_summarizer.consensus()
+
+    def brownian(self):
+        self.check_settings()
+        import BrownianImpl
+        brownian = BrownianImpl.Brownian(self)
+        brownian.run()
 
     def calcDistances(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

@@ -131,6 +131,26 @@ inline float TreeNode::GetX()
 
 #if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `observable' to true.
+*/
+inline void TreeNode::SetObservable()
+	{
+	observable = true;
+	}
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `observable' to false.
+*/
+inline void TreeNode::SetUnobservable()
+	{
+	observable = false;
+	}
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
 |	Sets the data member `support' to the value `x'.
 */
 inline void TreeNode::SetSupport(

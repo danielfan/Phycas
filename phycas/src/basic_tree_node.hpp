@@ -99,6 +99,8 @@ class TreeNode
 		// Modifiers
 		//
 #if POLPY_NEWWAY
+		void			SetObservable();
+		void			SetUnobservable();
 		void			SetSupport(float x);
 #endif
 		void			SetX(float xx);

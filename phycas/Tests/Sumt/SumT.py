@@ -9,5 +9,6 @@ if __name__ == '__main__':
     phycas.sumt_burnin = 11
     phycas.sumt_outgroup_taxon = '40 Cyanophora paradoxa'
     phycas.sumt_output_replace = True
+    phycas.sumt_tree_credible_prob = 1.0
     phycas.sumt()
     

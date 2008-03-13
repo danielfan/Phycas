@@ -45,19 +45,19 @@ recursive-include phycas/Tests/ExplorePrior/reference_output *
 recursive-include phycas/Tests/FixedParams *.py
 recursive-include phycas/Tests/FixedParams/reference_output *
 
-recursive-include phycas/Tests/GelfandGhosh *.py
-recursive-include phycas/Tests/GelfandGhosh/reference_output *
-
 recursive-include phycas/Tests/GTRTest *.py
 recursive-include phycas/Tests/GTRTest/reference_output *
 
-recursive-include phycas/Tests/LikelihoodTest *.py
-recursive-include phycas/Tests/LikelihoodTest/reference_output *
-
-recursive-include phycas/Tests/Polytomies *.py
-recursive-include phycas/Tests/Polytomies/reference_output *
-
 recursive-include phycas/Tests/Simulator *.py
 recursive-include phycas/Tests/Simulator/reference_output *
+
+recursive-include phycas/Tests/SplitTest *.py
+recursive-include phycas/Tests/SplitTest/reference_output *
+
+recursive-include phycas/Tests/PDFTree *.py
+recursive-include phycas/Tests/PDFTree/reference_output *
+
+recursive-include phycas/Tests/SumT *.py
+recursive-include phycas/Tests/SumT/reference_output *
 
 recursive-include phycas/src *.h *.hpp *.inl *.c *.cpp

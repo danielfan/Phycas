@@ -1,0 +1,46 @@
+#NEXUS
+
+BEGIN TAXA;
+	TITLE Untitled_Block_of_Taxa;
+	DIMENSIONS NTAX=28;
+	TAXLABELS
+		'L_perugiae' 'L_nigrofasciata' 'L_pauciradiata' 'L_dominicensis' 'L_vittata' 'L_caymanensis' 'L_versicolor' 'L_zonata' 'L_melanogaster' 'Pa_heterandria' 'Pa_araguanensis' 'Pa_minor' 'P_caucana' 'P_orri' 'P_gilli' 'P_sulfuraria' 'P_mexicana' 'P_butleri' 'P_catemaconis' 'P_sphenops' 'P_latipinna' 'P_vellifera' 'P_latipunctata' 'P_petenensis' 'P_vivipara' 'P_picta' 'P_parae' 'P_reticulata' 
+	;
+
+END;
+
+BEGIN TREES;
+	Title 'Trees from "poecilia2.tre"';
+	LINK Taxa = Untitled_Block_of_Taxa;
+	TRANSLATE
+		1 'L_perugiae',
+		2 'L_nigrofasciata',
+		3 'L_pauciradiata',
+		4 'L_dominicensis',
+		5 'L_vittata',
+		6 'L_caymanensis',
+		7 'L_versicolor',
+		8 'L_zonata',
+		9 'L_melanogaster',
+		10 'Pa_heterandria',
+		11 'Pa_araguanensis',
+		12 'Pa_minor',
+		13 'P_caucana',
+		14 'P_orri',
+		15 'P_gilli',
+		16 'P_sulfuraria',
+		17 'P_mexicana',
+		18 'P_butleri',
+		19 'P_catemaconis',
+		20 'P_sphenops',
+		21 'P_latipinna',
+		22 'P_vellifera',
+		23 'P_latipunctata',
+		24 'P_petenensis',
+		25 'P_vivipara',
+		26 'P_picta',
+		27 'P_parae',
+		28 'P_reticulata';
+	TREE 'Limia_Pamphorichthys_Poecilia' = (((((((1:0.6,2:0.5):1.2,(4:0.5,3:0.7):0.6):0.6,(5:0.4,6:0.6):1.8):1.0,((8:1.8,7:1.6):1.0,9:2.4):0.4):1.5,((10:3.7,(11:0.6,12:1.3):5.5):1.0,(13:3.5,(((21:1.2,22:1.0):0.5,(23:1.4,24:1.2):0.7):1.3,((19:1.2,20:0.9):2.0,(18:1.4,((16:0.6,17:0.6):0.3,(15:0.6,14:0.2):0.7):0.7):1.6):0.8):0.4):2.2):0.3):1.1,25:3.1):0.8,((26:4.6,27:5.5):1.5,28:4.9):1.6);
+
+END;

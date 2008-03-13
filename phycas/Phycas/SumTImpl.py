@@ -17,6 +17,11 @@ class TreeSummarizer(object):
         
         """
         self.phycas = phycas
+        self.rooted_trees = phycas.sumt_rooted
+        self.outgroup = phycas.sumt_outgroup_taxon
+        if self.rooted_trees and phycas.sumt_outgroup_taxon:
+            self.outgroup = None
+            self.phycas.warning('Specifying True for sumt_rooted is incompatible with specifying\nsumt_outgroup_taxon; I will pretend that you set sumt_outgroup_taxon to None')
 
     def readTreesFromFile(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -54,11 +59,13 @@ class TreeSummarizer(object):
             if not nd:
                 break
             s = nd.getSplit()
-            if s.isBitSet(0):
+            if self.rooted_trees and s.isBitSet(0):
                 s.invertSplit()
             ss = s.createPatternRepresentation()
-            v = split_map[ss]
-            assert v, 'could not find edge length information for the split %s' % ss
+            try:
+                v = split_map[ss]
+            except KeyError:
+                self.phycas.abort('could not find edge length information for the split %s' % ss)
             support = float(v[0])/float(total_samples)
             nd.setSupport(support)
             if self.phycas.sumt_equal_brlens:
@@ -113,11 +120,11 @@ class TreeSummarizer(object):
         treef.write('  ;\n')
         for short,full,tree in zip(short_names, full_names, trees):
             # Reroot (if requested) tree and output newick description to tree file
-            if self.phycas.sumt_outgroup_taxon:
+            if self.outgroup:
                 try:
-                    num = list(self.taxon_labels).index(self.phycas.sumt_outgroup_taxon)
+                    num = list(self.taxon_labels).index(self.outgroup)
                 except ValueError:
-                    self.phycas.output('Warning: could not root tree using specified outgroup: no tip having name "%s" could be found' % self.phycas.sumt_outgroup_taxon)
+                    self.phycas.output('Warning: could not root tree using specified outgroup: no tip having name "%s" could be found' % self.outgroup)
                     self.phycas.output('Here is the list of all taxon labels:')
                     for label in self.taxon_labels:
                         self.phycas.output('  %s' % label)
@@ -307,6 +314,8 @@ class TreeSummarizer(object):
         # (tree_map), respectively
         self.phycas.output('Compiling lists of tree topologies and splits...')
         t = Phylogeny.Tree()
+        if self.rooted_trees:
+            t.setRooted()
 
         # values used for display purposes
         split_field_width = 0
@@ -372,7 +381,7 @@ class TreeSummarizer(object):
                     
                     # Grab the split and invert it if necessary to attain a standard polarity
                     s = nd.getSplit()
-                    if s.isBitSet(0):
+                    if self.rooted_trees and s.isBitSet(0):
                         s.invertSplit()
                         
                     # Create a string representation of the split
@@ -486,6 +495,8 @@ class TreeSummarizer(object):
         # Build 50% majority rule tree if requested
         self.phycas.output('\nSaving majority-rule consensus tree...')
         majrule = Phylogeny.Tree()
+        if self.rooted_trees:
+            majrule.setRooted()
         tm = Phylogeny.TreeManip(majrule)
         majrule_splits = []
         for k,v in split_vect[:first_below_50]:
@@ -549,6 +560,8 @@ class TreeSummarizer(object):
 
                 # Save the tree topology (decorated with posterior mean edge lengths) to the tree file
                 t = Phylogeny.Tree()
+                if self.rooted_trees:
+                    t.setRooted()
                 t.buildFromString(v[1], True)   # these trees come from a nexus file, so taxon numbers will start at 0, hence the True second argument
                 self.assignEdgeLensAndSupportValues(t, split_map, num_trees_considered)
                 t.stripNodeNames()

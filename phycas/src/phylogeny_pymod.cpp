@@ -99,6 +99,10 @@ BOOST_PYTHON_MODULE(_Phylogeny)
 		.def("getFirstPreorder", &Tree::GetFirstPreorder, return_internal_reference<>())
 		.def("getFirstPostorder", &Tree::GetLastPreorder, return_internal_reference<>())
 		.def("isRooted", &Tree::IsRooted)
+#if POLPY_NEWWAY
+		.def("setRooted", &Tree::setRooted)
+		.def("setUnrooted", &Tree::setUnrooted)
+#endif
 		.def("hasEdgeLens", &Tree::HasEdgeLens)
 		.def("clear", &Tree::Clear)
 		.def("buildFromString", &Tree::BuildFromString)

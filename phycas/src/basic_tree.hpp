@@ -88,6 +88,12 @@ class Tree
 		bool					HasEdgeLens() const;
 		bool					PreorderDirty() const;
 		bool					TipNumbersSetUsingNames() const;
+
+        // Modifiers
+#if POLPY_NEWWAY
+        void                    setRooted();
+        void                    setUnrooted();
+#endif
 		
 		// Utilities
 		//
