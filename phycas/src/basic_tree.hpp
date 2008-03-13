@@ -90,17 +90,13 @@ class Tree
 		bool					TipNumbersSetUsingNames() const;
 
         // Modifiers
-#if POLPY_NEWWAY
         void                    setRooted();
         void                    setUnrooted();
-#endif
 		
 		// Utilities
 		//
 		void					Clear();
-#if POLPY_NEWWAY
         void                    stripNodeNames();
-#endif
 		void					BuildFromString(const std::string & newick, bool zero_based_tips = false); // throws XPhylogeny
 		void					RectifyNumbers(std::vector<std::string> name_vector); // throws XPhylogeny
 		void					RectifyNames(std::vector<std::string> name_vector); // throws XPhylogeny

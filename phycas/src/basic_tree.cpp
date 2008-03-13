@@ -354,7 +354,6 @@ void Tree::RefreshPreorder(TreeNode *nd)
 		preorderDirty = false;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets all node names to the empty string "". This forces MakeNewick, for example, to use node numbers as the names of
 |   tip nodes.
@@ -366,7 +365,6 @@ void Tree::stripNodeNames()
         nd->SetNodeName("");
         }
     }
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	The supplied `name_vector' should be a vector of observable tip names. Assumes that observable nodes in the tree 
@@ -1421,7 +1419,6 @@ void Tree::BuildFromString(
 			throw XPhylogeny("too many left parentheses");
 			}
 
-#if POLPY_NEWWAY
         if (isRooted)
             {
             // Add a fake tip node as the left child of the curent root node and let first_tip point to it
@@ -1435,7 +1432,6 @@ void Tree::BuildFromString(
             first_tip->SetEdgeLen(0.0);
             firstPreorder->lChild = first_tip;
             }
-#endif
   
 		RerootAtThisTip(first_tip);
 
@@ -1708,9 +1704,7 @@ void Tree::RecalcAllSplits(
 Tree::Tree()
   : firstPreorder(NULL)
 	{
-#if POLPY_NEWWAY
-	isRooted			= false;
-#endif
+	isRooted = false;
 	Clear();
 	}
 
@@ -1865,11 +1859,6 @@ void Tree::Clear()
 	nTips				= 0;
 	preorderDirty		= true;
 	hasEdgeLens			= false;
-#if POLPY_NEWWAY
-	//isRooted			= false;
-#else
-	isRooted			= false;
-#endif
 	nodeCountsValid		= false;
 	treeid_valid		= false;
 	numbers_from_names	= false;
@@ -1877,7 +1866,6 @@ void Tree::Clear()
     debugOutput         = false;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Converts the tree to a rooted tree (if it is not already a rooted tree) and sets `isRooted' data member to true.
 */
@@ -1888,9 +1876,7 @@ void Tree::setRooted()
     assert(firstPreorder == NULL);
     isRooted = true;
     }
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Converts the tree to an unrooted tree (if it is not already unrooted) and sets `isRooted' data member to false.
 */
@@ -1901,7 +1887,6 @@ void Tree::setUnrooted()
     assert(firstPreorder == NULL);
     isRooted = false;
     }
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Pulls a node out of storage, if `internalNodeStorage' is not empty; otherwise, allocates memory for a new TreeNode. If it

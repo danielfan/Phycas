@@ -265,9 +265,7 @@ void TreeManip::starTree(
 	TreeNode * rootNd = tree->GetNewNode();
 	rootNd->SetEdgeLen(0.0);
 	rootNd->SetNodeNum(0);
-#if POLPY_NEWWAY
     rootNd->SetObservable(true);
-#endif
 	tree->firstPreorder = rootNd;
 
 	// Create the hub node
@@ -284,9 +282,7 @@ void TreeManip::starTree(
 		TreeNode * nd = tree->GetNewNode();
 		nd->SetEdgeLen(ndEdgeLen);
 		nd->SetNodeNum(i);
-#if POLPY_NEWWAY
         nd->SetObservable(true);
-#endif
 		InsertSubtree(nd, hub, TreeManip::kOnLeft);
 		}
 	}
@@ -1002,7 +998,6 @@ void TreeManip::DeleteLeaf(
 	tree->InvalidateNodeCounts();
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |   Builds a star tree with the number of taxa implied by the first element of `split_vect', then applies each aplit
 |   from `split_vect' in turn until finished. Assumes all splits are mutually compatible, that none are trivial splits,
@@ -1097,7 +1092,6 @@ void TreeManip::buildTreeFromSplitVector(
         tree->DebugCheckTree(false, false, 2);
         }
 	}
-#endif
 
 // *********************************************************************************************************************
 // *********************************************************************************************************************

@@ -54,9 +54,7 @@ class SimData
 		void						setState(unsigned pos, int8_t state);
 		void						insertPattern(PatternCountType count);
 
-#if POLPY_NEWWAY
         void                        buildBinVector(unsigned nstates);
-#endif
 		std::vector<double>		    getBinnedCounts();
 
         double						calct(unsigned nstates);

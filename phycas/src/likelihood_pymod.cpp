@@ -139,9 +139,7 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("multBy", &phycas::SimData::multBy)
 		.def("debugAppendCountsToFile", &phycas::SimData::debugAppendCountsToFile)
 		.def("calctBinned", &phycas::SimData::calctBinned)
-#if POLPY_NEWWAY
 		.def("buildBinVector", &phycas::SimData::buildBinVector)
-#endif
 		.def("getTotalCount", &phycas::SimData::getTotalCount)
         .def("getBinnedCounts", &phycas::SimData::getBinnedCounts)
 		;
