@@ -33,6 +33,11 @@ void SimpleUnderflowPolicy::oneTip(
   const CountVectorType	&	counts) 			/**< */
   const
 	{
+#if POLPY_NEWWAY
+    if (num_patterns == 0)
+        return;
+#endif
+
 	unsigned nedges = 2 + other_cond_like.getUnderflowNumEdges();
 	UnderflowType & uf_sum			= cond_like.getUFSumRef();
 	if (nedges >= underflow_num_edges)
@@ -105,7 +110,12 @@ void PatternSpecificUnderflowPolicy::oneTip(
   const CountVectorType	&	counts) 			/**< */
   const
 	{
-	unsigned nedges = 2 + other_cond_like.getUnderflowNumEdges();
+#if POLPY_NEWWAY
+    if (num_patterns == 0)
+        return;
+#endif
+
+    unsigned nedges = 2 + other_cond_like.getUnderflowNumEdges();
 	if (nedges >= underflow_num_edges)
 		{
 		underflow_work.resize(num_patterns*num_states);
@@ -180,6 +190,11 @@ void SimpleUnderflowPolicy::noTips(
   const CountVectorType & counts)			/**< */
   const
 	{
+#if POLPY_NEWWAY
+    if (num_patterns == 0)
+        return;
+#endif
+
 	unsigned nedges = 2 + left_cond_like.getUnderflowNumEdges() + right_cond_like.getUnderflowNumEdges();
 	UnderflowType & uf_sum = cond_like.getUFSumRef();
 	if (nedges >= underflow_num_edges)
@@ -255,6 +270,11 @@ void PatternSpecificUnderflowPolicy::noTips(
   const CountVectorType & counts)			/**< */
   const
 	{
+#if POLPY_NEWWAY
+    if (num_patterns == 0)
+        return;
+#endif
+
 	unsigned nedges = 2 + left_cond_like.getUnderflowNumEdges() + right_cond_like.getUnderflowNumEdges();
 	if (nedges >= underflow_num_edges)
 		{

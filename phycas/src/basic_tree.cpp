@@ -1492,7 +1492,6 @@ std::string & Tree::AppendNewick(
 
 	bool showEdgeLens = HasEdgeLens();
 	bool rooted = IsRooted();
-	PHYCAS_ASSERT(!rooted); //@ this assert should go away as soon as possible
 
 	s << '(';
 	unsigned openParens = 1;
@@ -1514,7 +1513,7 @@ std::string & Tree::AppendNewick(
 
 	if (showEdgeLens && !rooted)
 		{
-		// note that in an unrooted tree, where the root node is actually an upside-down extant tip,
+		// In an unrooted tree, where the root node is actually an upside-down extant tip,
 		// the root node's edge length is actually held by its only child
 		s << ':';
 		TreeNode *onlyChild = nd->GetLeftChild();
@@ -1537,7 +1536,8 @@ std::string & Tree::AppendNewick(
 		return s << ')'; 
 		}
 
-	s << ',';
+    if (!rooted)
+	    s << ',';
 	if (nd->GetNextPreorder() == NULL)
 		{
 		// Two taxon tree, presumably this won't happen, but it is easy to deal with
@@ -1691,7 +1691,12 @@ void Tree::RecalcAllSplits(
         else
             {
             PHYCAS_ASSERT(nd->IsTipRoot());
+#if POLPY_NEWWAY
+            if (nd->IsObservable())
+                s.SetBit(nn);
+#else
             s.SetBit(nn);
+#endif
             }
         }
     }

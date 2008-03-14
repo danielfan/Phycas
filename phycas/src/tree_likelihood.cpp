@@ -114,8 +114,6 @@ namespace phycas
 void TreeLikelihood::useAsLikelihoodRoot(
   TreeNode * nd)
 	{
-	//if (Tree::gDebugOutput && nd)
-	//	std::cerr << "Setting Likelihood root = " << nd->oneLineDebugReport() << std::endl;
 	likelihood_root = nd;
 	}
 

@@ -1041,6 +1041,8 @@ void TreeManip::buildTreeFromSplitVector(
     splits.resize(split_vect.size());
     std::vector<std::string>::const_iterator sit = split_vect.begin();
     unsigned ntips = sit->length();
+    bool is_rooted = tree->IsRooted();
+
     unsigned i = 0;
     for (; sit != split_vect.end(); ++sit, ++i)
         {
@@ -1050,8 +1052,8 @@ void TreeManip::buildTreeFromSplitVector(
         PHYCAS_ASSERT(s.GetNTaxa() == ntips);
         PHYCAS_ASSERT(s.CountOnBits() < ntips - 1); // no trivial splits allowed
         PHYCAS_ASSERT(s.CountOnBits() > 1); // no trivial splits allowed
-        if (s.IsBitSet(0))
-            s.InvertSplit();    // ensure all splits are oriented correctly
+        if (!is_rooted && s.IsBitSet(0))
+            s.InvertSplit();    // ensure all splits are oriented correctly if tree is unrooted
         }
 
     // Sort the split objects from smallest to largest so that more inclusive splits will

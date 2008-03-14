@@ -59,7 +59,8 @@ inline void SimpleUnderflowPolicy::setDimensions(
   unsigned nr, 	/**< is the number of relative rates used in modeling among-site rate variation */
   unsigned ns)	/**< is the number of states */
 	{
-	PHYCAS_ASSERT(np > 0);
+	// Note: num_patterns can legitimately be 0 if running with no data. In this case, no underflow
+    // correction is ever needed, and all member functions simply return without doing anything
 	PHYCAS_ASSERT(nr > 0);
 	PHYCAS_ASSERT(ns > 0);
 	num_patterns = np;
@@ -77,8 +78,16 @@ inline void SimpleUnderflowPolicy::twoTips(
   CondLikelihood & cond_like) /**< is the conditional likelihood array to correct */
   const
 	{
+#if POLPY_NEWWAY
+    if (num_patterns > 0)
+        {
+	    cond_like.setUnderflowNumEdges(2);
+	    cond_like.zeroUF();
+        }
+#else
 	cond_like.setUnderflowNumEdges(2);
 	cond_like.zeroUF();
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -102,10 +111,20 @@ inline void PatternSpecificUnderflowPolicy::correctSiteLike(
   ConstCondLikelihoodShPtr condlike_shptr)	/**< is the conditional likelihood array of the likelihood root node */
   const
 	{
+#if POLPY_NEWWAY
+    if (num_patterns > 0)
+        {
+	    PHYCAS_ASSERT(condlike_shptr);
+	    UnderflowType const * uf = condlike_shptr->getUF();
+	    PHYCAS_ASSERT(uf != NULL);
+	    site_like -= (double)uf[pat];
+        }
+#else
 	PHYCAS_ASSERT(condlike_shptr);
 	UnderflowType const * uf = condlike_shptr->getUF();
 	PHYCAS_ASSERT(uf != NULL);
 	site_like -= (double)uf[pat];
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -117,9 +136,18 @@ inline void SimpleUnderflowPolicy::correctLnLike(
   ConstCondLikelihoodShPtr condlike_shptr)	/**< is the conditional likelihood array of the likelihood root node */
   const
 	{
+#if POLPY_NEWWAY
+    if (num_patterns > 0)
+        {
+	    PHYCAS_ASSERT(condlike_shptr);
+	    UnderflowType ufsum = condlike_shptr->getUFSum();
+	    ln_like -= (double)ufsum;
+        }
+#else
 	PHYCAS_ASSERT(condlike_shptr);
 	UnderflowType ufsum = condlike_shptr->getUFSum();
 	ln_like -= (double)ufsum;
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

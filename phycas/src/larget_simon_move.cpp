@@ -133,7 +133,11 @@ bool LargetSimonMove::update()
 		curr_ln_like	= p->getLastLnLike();
 		curr_ln_prior	= p->getLastLnPrior();
 		revert();
-		PHYCAS_ASSERT(prev_likelihood_root->IsInternal());
+        //@POL 14-Mar-2008 First part of assert below added because prev_likelihood_root can legitimately be NULL
+        // but it is troublesome that the original version of the assert was not tripped more often!
+        // Why was it tripped only when running with no data? More thought should be given to this
+        // situation.
+		PHYCAS_ASSERT(!prev_likelihood_root || prev_likelihood_root->IsInternal());
 		likelihood->useAsLikelihoodRoot(prev_likelihood_root);
 		return false;
 		}

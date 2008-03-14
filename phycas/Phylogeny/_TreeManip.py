@@ -35,7 +35,7 @@ class TreeManip(TreeManipBase):
         >>> from phycas import *
         >>> t = Phylogeny.Tree()
         >>> tm = Phylogeny.TreeManip(t)
-        >>> v = ['-*****','--****', '--**--', '----**']
+        >>> v = ['--****', '--**--', '----**']
         >>> tm.buildTreeFromSplitVector(v, ProbDist.ExponentialDist(10.0))
         >>> print t.walkPreorder()
         (0) -> [6] -> (1) -> [4294967295] -> [4294967295] -> (3) -> (2) -> [4294967295] -> (5) -> (4)

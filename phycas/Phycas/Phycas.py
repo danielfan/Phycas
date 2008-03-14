@@ -1,4 +1,5 @@
 import os, sys, math, threading, types, copy
+import os, sys, math, threading, types, copy
 import MCMCManager  # poorly named, as MCMCManager is now only one of many classes within
 from phycas.Conversions import *
 from phycas.DataMatrix import *
@@ -1278,6 +1279,7 @@ class Phycas(object):
         inch = 72.0
         spacer = 5.0
         max_label_points = 0.0
+        rooted_tree = tree.isRooted()
         nodes = []
 
         # Perform a preorder traversal:
@@ -1290,24 +1292,28 @@ class Phycas(object):
         #    will be calculated on the subsequent postorder traversal
 
         if self.pdf_splits_to_plot:
-            tree.recalcAllSplits(tree.getNTips())
+            tree.recalcAllSplits(tree.getNObservables())
             
         # Record information about the tip serving as the root
         nd = tree.getFirstPreorder()
         assert nd.isRoot(), 'first preorder node should be the root'
-        nodes.append(nd)
+        if not rooted_tree:
+            nodes.append(nd)
         subroot = nd.getLeftChild()
         height = subroot.getEdgeLen()
-        nd.setX(height)
+        nd.setX(height) 
         if self.pdf_ladderize and self.pdf_ladderize == 'left':
-            last_tip_index = float(tree.getNTips() - 1)
-            nd.setY(last_tip_index)
+            last_tip_index = float(tree.getNObservables() - 1)
+            nd.setY(last_tip_index) #--> Y is irrelevant if rooted
             ntips = 0.0
         else:
             nd.setY(0.0)
-            ntips = 1.0
+            if rooted_tree:
+                ntips = 0.0
+            else:
+                ntips = 1.0
         max_height = height
-        if self.pdf_tip_label_font:
+        if self.pdf_tip_label_font and not rooted_tree:
             taxon_label = nd.getNodeName()
             label_width = float(self.pdf_tip_label_height)*pdf.calcStringWidth(self.pdf_tip_label_font, taxon_label)
             if label_width > max_label_points:
@@ -1375,7 +1381,7 @@ class Phycas(object):
         if self.pdf_tip_label_font:
             xheight = float(self.pdf_tip_label_height)*pdf.getXHeight(self.pdf_tip_label_font)
         half_xheight = xheight/2.0
-        ntips = tree.getNTips()
+        ntips = tree.getNObservables()
         label_width   = max_label_points + spacer
         right_margin  = self.pdf_right_margin*inch
         left_margin   = self.pdf_left_margin*inch
@@ -1405,7 +1411,6 @@ class Phycas(object):
             title_str_extent = float(self.pdf_title_height)*pdf.calcStringWidth(self.pdf_title_font, title)
             title_x = left_margin + (plot_width - title_str_extent)/2.0
             title_y = tree_y0 + tree_height + 2.0*float(self.pdf_title_height)
-            #title_y = plot_top - top_margin
             pdf.addText(title_x, title_y, self.pdf_title_font, self.pdf_title_height, title)
 
         if self.pdf_scalebar_position:
@@ -1413,13 +1418,11 @@ class Phycas(object):
                 # Draw scalebar horizontally starting at top left corner
                 scalebar_width = scalebar*xscaler
                 scalebar_y = tree_x0 + tree_height - scalebar_height + spacer
-                #scalebar_y = plot_top - top_margin - scalebar_height + spacer
                 pdf.addLine(left_margin, scalebar_y, left_margin + scalebar_width, scalebar_y, self.pdf_line_width)
 
                 # Draw scalebar text centered above the scalebar
                 scalebar_x = left_margin + (scalebar_width - scalebar_str_extent)/2.0
                 scalebar_y = tree_x0 + tree_height - float(self.pdf_scalebar_label_height)
-                #scalebar_y = plot_top - top_margin - float(self.pdf_scalebar_label_height)
                 pdf.addText(scalebar_x, scalebar_y, self.pdf_scalebar_label_font, self.pdf_scalebar_label_height, scalebar_str)
             else:
                 # Draw scalebar horizontally starting at bottom left corner
@@ -1456,7 +1459,6 @@ class Phycas(object):
             node_x = left_margin + nd.getX()*xscaler
             if nd.isTip():
                 node_y = tree_y0 + tree_height - nd.getY()*yscaler
-                #node_y = plot_top - top_margin - nd.getY()*yscaler
                 if self.pdf_scalebar_position and self.pdf_scalebar_position == 'top':
                     node_y -= scalebar_height
                 brlen = nd.isRoot() and xscaler*nd.getX() or xscaler*nd.getEdgeLen()
@@ -1478,7 +1480,7 @@ class Phycas(object):
                         nchildren += 1.0
                     else:
                         break
-                if nd is subroot:
+                if (not rooted_tree) and (nd is subroot):
                     if self.pdf_ladderize and self.pdf_ladderize == 'left':
                         right_child = nd.getParent()
                     else:
@@ -1486,7 +1488,6 @@ class Phycas(object):
                 else:
                     nd.setY(childY/nchildren)
                     node_y = tree_y0 + tree_height - childY*yscaler/nchildren
-                    #node_y = plot_top - top_margin - childY*yscaler/nchildren
                     if self.pdf_scalebar_position and self.pdf_scalebar_position == 'top':
                         node_y -= scalebar_height
                     brlen = xscaler*nd.getEdgeLen()
@@ -1495,9 +1496,7 @@ class Phycas(object):
 
                 # draw line representing shoulders of internal node
                 left_y = tree_y0 + tree_height - left_child.getY()*yscaler
-                #left_y = plot_top - top_margin - left_child.getY()*yscaler
                 right_y = tree_y0 + tree_height - right_child.getY()*yscaler
-                #right_y = plot_top - top_margin - right_child.getY()*yscaler
                 if self.pdf_scalebar_position and self.pdf_scalebar_position == 'top':
                     left_y -= scalebar_height
                     right_y -= scalebar_height

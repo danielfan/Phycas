@@ -211,9 +211,14 @@ class TreeSummarizer(object):
             if splits_plotted == splits_to_plot:
                 break
 
+        if splits_plotted == 0:
+            self.phycas.output('No AWTY plot created because no splits with posteriors less than 1.0 were found')
+            return False
+        
         pdf.scatterPlot(data, title = 'Split Probabilities Through Time', xinfo = (0,ntrees,10,0), yinfo = (0.0,1.0,10,1))
         if trivial_ignored + uninteresting_ignored > 0:
             self.phycas.output('%d trivial and %d uninteresting splits were ignored.' % (trivial_ignored, uninteresting_ignored))
+        return True
         
     def sojournPlot(self, pdf, split_vect, ntrees):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -251,7 +256,7 @@ class TreeSummarizer(object):
 
         if splits_plotted == 0:
             self.phycas.output('No sojourn plot created because all non-trivial splits had posterior probability 1.0')
-            return
+            return False
 
         # Now create the plot data
         data = []
@@ -283,6 +288,8 @@ class TreeSummarizer(object):
         pdf.scatterPlot(data, points = False, line_width = 3, line_cap_style = 'square', title = 'Split Sojourns', xinfo = (0,ntrees,10,0), yinfo = (0.0,float(ymax),ydivs,0))
         if trivial_ignored + uninteresting_ignored > 0:
             self.phycas.output('%d trivial and %d uninteresting splits were ignored.' % (trivial_ignored, uninteresting_ignored))
+
+        return True            
         
     def consensus(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -293,6 +300,7 @@ class TreeSummarizer(object):
         saved to the file sumt_output_tree_file if this variable is not None.
         
         """
+        #raw_input('debug stop')
         # Check to make sure user specified an input tree file
         self.phycas.phycassert(self.phycas.sumt_input_tree_file, 'sumt_input_tree_file must be specified before sumt method is called')
         self.phycas.phycassert(self.phycas.sumt_trees_prefix, 'sumt_trees_prefix must be specified before sumt method is called')
@@ -505,6 +513,7 @@ class TreeSummarizer(object):
         for k,v in split_vect[:first_below_50]:
             if len(v) > 2:
                 majrule_splits.append(k)
+
         tm.buildTreeFromSplitVector(majrule_splits, ProbDist.ExponentialDist(10))
         self.assignEdgeLensAndSupportValues(majrule, split_map, num_trees_considered)
         summary_short_name_list = ['majrule']
@@ -581,11 +590,12 @@ class TreeSummarizer(object):
             pdf.overwrite = True
             
             self.phycas.output('\nSaving AWTY plot in file %s...' % fn)
-            self.awtyPlot(pdf, split_vect, num_trees_considered)
+            awty_ok = self.awtyPlot(pdf, split_vect, num_trees_considered)
 
             self.phycas.output('\nSaving Sojourn plot in file %s...' % fn)
-            self.sojournPlot(pdf, split_vect, num_trees_considered)
+            sojourn_ok = self.sojournPlot(pdf, split_vect, num_trees_considered)
 
-            pdf.saveDocument(fn)
+            if awty_ok or sojourn_ok:
+                pdf.saveDocument(fn)
 
         self.phycas.output('\nSumT finished.')
