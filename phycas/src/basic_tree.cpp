@@ -1691,12 +1691,8 @@ void Tree::RecalcAllSplits(
         else
             {
             PHYCAS_ASSERT(nd->IsTipRoot());
-#if POLPY_NEWWAY
             if (nd->IsObservable())
                 s.SetBit(nn);
-#else
-            s.SetBit(nn);
-#endif
             }
         }
     }

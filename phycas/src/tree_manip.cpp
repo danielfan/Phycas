@@ -264,7 +264,6 @@ void TreeManip::starTree(
 	//
 	TreeNode * rootNd = tree->GetNewNode();
 	rootNd->SetEdgeLen(0.0);
-#if POLPY_NEWWAY
     unsigned first_tip_number;
     if (tree->IsRooted())
         {
@@ -278,9 +277,6 @@ void TreeManip::starTree(
     	rootNd->SetNodeNum(0);
         rootNd->SetObservable(true);
         }
-#else
-    rootNd->SetObservable(true);
-#endif
 	tree->firstPreorder = rootNd;
 
 	// Create the hub node
@@ -291,11 +287,7 @@ void TreeManip::starTree(
 	hub->SetNodeNum(ntips);
 	InsertSubtree(hub, rootNd, TreeManip::kOnLeft);
 
-#if POLPY_NEWWAY
 	for (unsigned i = first_tip_number; i < ntips; ++i)
-#else
-	for (unsigned i = 1; i < ntips; ++i)
-#endif
 		{
 		const double ndEdgeLen = edge_len_dist->Sample();
 		TreeNode * nd = tree->GetNewNode();

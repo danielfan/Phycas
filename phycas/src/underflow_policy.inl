@@ -78,16 +78,11 @@ inline void SimpleUnderflowPolicy::twoTips(
   CondLikelihood & cond_like) /**< is the conditional likelihood array to correct */
   const
 	{
-#if POLPY_NEWWAY
     if (num_patterns > 0)
         {
 	    cond_like.setUnderflowNumEdges(2);
 	    cond_like.zeroUF();
         }
-#else
-	cond_like.setUnderflowNumEdges(2);
-	cond_like.zeroUF();
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -111,7 +106,6 @@ inline void PatternSpecificUnderflowPolicy::correctSiteLike(
   ConstCondLikelihoodShPtr condlike_shptr)	/**< is the conditional likelihood array of the likelihood root node */
   const
 	{
-#if POLPY_NEWWAY
     if (num_patterns > 0)
         {
 	    PHYCAS_ASSERT(condlike_shptr);
@@ -119,12 +113,6 @@ inline void PatternSpecificUnderflowPolicy::correctSiteLike(
 	    PHYCAS_ASSERT(uf != NULL);
 	    site_like -= (double)uf[pat];
         }
-#else
-	PHYCAS_ASSERT(condlike_shptr);
-	UnderflowType const * uf = condlike_shptr->getUF();
-	PHYCAS_ASSERT(uf != NULL);
-	site_like -= (double)uf[pat];
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -136,18 +124,12 @@ inline void SimpleUnderflowPolicy::correctLnLike(
   ConstCondLikelihoodShPtr condlike_shptr)	/**< is the conditional likelihood array of the likelihood root node */
   const
 	{
-#if POLPY_NEWWAY
     if (num_patterns > 0)
         {
 	    PHYCAS_ASSERT(condlike_shptr);
 	    UnderflowType ufsum = condlike_shptr->getUFSum();
 	    ln_like -= (double)ufsum;
         }
-#else
-	PHYCAS_ASSERT(condlike_shptr);
-	UnderflowType ufsum = condlike_shptr->getUFSum();
-	ln_like -= (double)ufsum;
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
