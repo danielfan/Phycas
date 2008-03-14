@@ -52,14 +52,15 @@ class TreeSummarizer(object):
         second element of the split divided by the first element.
         
         """
-        tree.recalcAllSplits(tree.getNTips())
+        #tree.recalcAllSplits(tree.getNTips())
+        tree.recalcAllSplits(tree.getNObservables())
         nd = tree.getFirstPreorder()
         while True:
             nd = nd.getNextPreorder()
             if not nd:
                 break
             s = nd.getSplit()
-            if self.rooted_trees and s.isBitSet(0):
+            if (not self.rooted_trees) and s.isBitSet(0):
                 s.invertSplit()
             ss = s.createPatternRepresentation()
             try:
@@ -337,7 +338,8 @@ class TreeSummarizer(object):
             # Build the tree
             t.buildFromString(newick, True)
             t.rectifyNames(self.taxon_labels)
-            ntips = t.getNTips()
+            #ntips = t.getNTips()
+            ntips = t.getNObservables()
             if ntips > split_field_width:
                 # this is necessary only if number of taxa varies from tree to tree
                 split_field_width = ntips
@@ -381,7 +383,7 @@ class TreeSummarizer(object):
                     
                     # Grab the split and invert it if necessary to attain a standard polarity
                     s = nd.getSplit()
-                    if self.rooted_trees and s.isBitSet(0):
+                    if (not self.rooted_trees) and s.isBitSet(0):
                         s.invertSplit()
                         
                     # Create a string representation of the split
@@ -428,7 +430,8 @@ class TreeSummarizer(object):
         self.phycas.output('Total number of trees in file = %d' % num_trees)
         self.phycas.output('Number of trees considered = %d' % num_trees_considered)
         self.phycas.output('Number of distinct tree topologies found = %d' % len(tree_map.keys()))
-        self.phycas.output('Number of distinct splits found = %d' % (len(split_map.keys()) - t.getNTips()))
+        #self.phycas.output('Number of distinct splits found = %d' % (len(split_map.keys()) - t.getNTips()))
+        self.phycas.output('Number of distinct splits found = %d' % (len(split_map.keys()) - t.getNObservables()))
 
         # Sort the splits from highest posterior probabilty to lowest        
         split_vect = split_map.items()

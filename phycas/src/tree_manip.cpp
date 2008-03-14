@@ -250,7 +250,7 @@ void TreeManip::InsertSubtree(
 |	is assumed that the random number generator has already been set for `edge_len_dist'.
 */
 void TreeManip::starTree(
-  unsigned		ntips,			/**< Number of tip nodes (including the tip at which the tree is rooted) */
+  unsigned		ntips,			/**< Number of tip nodes (tree will have one more tip than this if rooted) */
   ProbDistShPtr	edge_len_dist)	/**< Probability distribution from which to draw the edge lengths */
 	{
 	PHYCAS_ASSERT(ntips > 0);
@@ -264,8 +264,23 @@ void TreeManip::starTree(
 	//
 	TreeNode * rootNd = tree->GetNewNode();
 	rootNd->SetEdgeLen(0.0);
-	rootNd->SetNodeNum(0);
+#if POLPY_NEWWAY
+    unsigned first_tip_number;
+    if (tree->IsRooted())
+        {
+        first_tip_number = 0;
+    	rootNd->SetNodeNum(ntips);
+        rootNd->SetObservable(false);
+        }
+    else
+        {
+        first_tip_number = 1;
+    	rootNd->SetNodeNum(0);
+        rootNd->SetObservable(true);
+        }
+#else
     rootNd->SetObservable(true);
+#endif
 	tree->firstPreorder = rootNd;
 
 	// Create the hub node
@@ -276,7 +291,11 @@ void TreeManip::starTree(
 	hub->SetNodeNum(ntips);
 	InsertSubtree(hub, rootNd, TreeManip::kOnLeft);
 
+#if POLPY_NEWWAY
+	for (unsigned i = first_tip_number; i < ntips; ++i)
+#else
 	for (unsigned i = 1; i < ntips; ++i)
+#endif
 		{
 		const double ndEdgeLen = edge_len_dist->Sample();
 		TreeNode * nd = tree->GetNewNode();

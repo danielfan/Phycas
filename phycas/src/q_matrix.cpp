@@ -100,12 +100,16 @@ void QMatrix::recalcPMat(
   double * * pmat,		/**< */
   double edgelen) 		/**< */
 	{
-	PHYCAS_ASSERT(edgelen >= 0.0);
 	recalcQMatrix();
+    double t = edgelen;
+
+    // The next two lines fix the "Rota" bug; see BUGS file for details
+    if (t < 1.e-8) 
+        t = 1.e-8; //TreeNode::edgeLenEpsilon;
 
 	// Adjust the supplied edgelen to account for the fact that the expected number of substitutions
 	// implied by the Q matrix is not unity
-	double v = edgelen*edgelen_scaler;
+	double v = t*edgelen_scaler;
 
 	// Exponentiate eigenvalues and put everything back together again
 	for (unsigned i = 0; i < dimension; ++i)
@@ -132,12 +136,17 @@ void QMatrix::recalcPMatrix(
   std::vector<double> & P,	/**< */
   double edgelen)			/**< */
 	{
-	PHYCAS_ASSERT(edgelen >= 0.0);
 	recalcQMatrix();
 
-	// Adjust the supplied edgelen to account for the fact that the expected number of substitutions
+    double t = edgelen;
+
+    // The next two lines fix the "Rota" bug; see BUGS file for details
+    if (t < 1.e-8) 
+        t = 1.e-8; //TreeNode::edgeLenEpsilon;
+
+    // Adjust the supplied edgelen to account for the fact that the expected number of substitutions
 	// implied by the Q matrix is not unity
-	double v = edgelen*edgelen_scaler;
+	double v = t*edgelen_scaler;
 
 	P.clear();
 	P.reserve(flat_length);
