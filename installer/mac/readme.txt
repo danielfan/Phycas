@@ -20,9 +20,19 @@ is distributed.
 
 Applescript script for opening the site-packages directory:
 -----------------------------------------------------------
-set posixdir to (do shell script "export PATH=/usr/local/bin:$PATH;echo `/Volumes/phycas-installer/Phycas/scripts/opensitepackages.py`")
+set posixdir to (do shell script "export PATH=/usr/local/bin:$PATH;echo `/Applications/Phycas/scripts/opensitepackages.py`")
 set macfolder to POSIX file posixdir
-tell application "Finder" to open folder macfolder
+set original_folder to ""
+tell application "Finder"
+	try
+		-- assume macfolder represents an alias
+		set original_folder to (original item of macfolder) as text
+	on error
+		-- macfolder was not an alias after all
+		set original_folder to macfolder as text
+	end try
+end tell
+tell application "Finder" to open folder original_folder
 
 The do shell script command runs the opensitepackages.py python script inside
 the hidden folder scripts. The opensitepackages.py file looks like this:
@@ -41,6 +51,10 @@ The "POSIX file posixdir" command is needed to convert a POSIX-style path
 e.g. /Library/Frameworks/Python.framework/Versions/2.5/lib/python2.5/site-packages
 into a Mac path
 e.g. Macintosh HD:Library:Frameworks:Python.framework:Versions:2.5:lib:python2.5:site-packages
+
+In some mac python installations, the file referenced by macfolder is actually an alias.
+The try block is thus needed because the original target of the alias must be extracted 
+if it is an alias. 
 
 Changing the icon for something:
 --------------------------------
