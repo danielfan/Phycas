@@ -13,7 +13,6 @@
 # http://el-tramo.be/about
 #
 
-
 ################################################################################
 # Customizable variables
 ################################################################################
@@ -25,7 +24,6 @@ SOURCE_DIR=.
 SOURCE_FILES=$(PHYCAS_MPKG_NAME) SubPackages
 
 TEMPLATE_DMG=template.dmg
-
 
 ################################################################################
 # DMG building. No editing should be needed beyond this point.

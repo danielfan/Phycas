@@ -6,9 +6,13 @@ build_number_from_svn_info = True
 
 # the following setting is only used if build_number_from_svn_info is False, or
 # regular expression search of svn output fails to find pattern 'Revision: (\d+)'
-svn_revision = '424'
 
-fakeCompilingExtensions = False # deprecated
+phycas_major = '0'
+phycas_minor = '11'
+
+boost_target_dir = 'boost_1_34_0'
+
+fakeCompilingExtensions = True # deprecated
 compilingExt = sys.platform == "darwin"
 
 if fakeCompilingExtensions:
@@ -135,10 +139,12 @@ if build_number_from_svn_info:
             # any other developer commits!), revision number will increase by 1
             next_revision_number = 1 + int(re_match.group(1))
             svn_revision = str(next_revision_number)
+            
+phycas_full_version = phycas_major+'.'+phycas_minor+'.'+svn_revision
         
 setupArgs = {
     'name':'Phycas',
-    'version':'0.11.'+svn_revision,
+    'version':phycas_full_version,
     'description':'Phycas: Python Software for Phylogenetic Analysis',
     'author':'Phycas Development Team',
     'author_email':'developers@phycas.org',
@@ -190,7 +196,7 @@ else:
     parent_dir = os.path.split(sys.argv[0])[0]
     include_dirs = [
         "/usr/include",
-        "/usr/local/include/boost-1_33_1", 
+        "/usr/local/include/"+boost_target_dir, 
         os.path.abspath(parent_dir),
         os.path.abspath(os.path.join(parent_dir, "phycas", "src")),
         ]
@@ -200,30 +206,29 @@ else:
 if compilingExt:
     if fakeCompilingExtensions:
         em = [Extension('Conversions._Conversions', ['phycas/src/conversions_pymod.cpp'], 
-                    
                     extra_link_args = [
                         #'--colocate-lib=libboost_python.dylib',
-                        '--built-under=phycas',
+                        '--built-under=/Users/plewis/phycasdev',
                         '--path-from-package=phycas/Conversions', ]),
             Extension('DataMatrix._DataMatrixBase', ['phycas/src/data_matrix_pymod.cpp'], 
                     extra_link_args = [
-                        '--built-under=phycas',
+                        '--built-under=/Users/plewis/phycasdev',
                         '--path-from-package=phycas/DataMatrix', ]),
             Extension('Likelihood._LikelihoodBase', ['phycas/src/likelihood_pymod.cpp'], 
                     extra_link_args = [
-                        '--built-under=phycas',
+                        '--built-under=/Users/plewis/phycasdev',
                         '--path-from-package=phycas/Likelihood', ]),
             Extension('Phylogeny._Phylogeny', ['phycas/src/phylogeny_pymod.cpp'], 
                     extra_link_args = [
-                        '--built-under=phycas',
+                        '--built-under=/Users/plewis/phycasdev',
                         '--path-from-package=phycas/Phylogeny', ]),
             Extension('ProbDist._ProbDist', ['phycas/src/probdist_pymod.cpp'], 
                     extra_link_args = [
-                        '--built-under=phycas',
+                        '--built-under=/Users/plewis/phycasdev',
                         '--path-from-package=phycas/ProbDist', ]),
             Extension('ReadNexus._ReadNexus', ['phycas/src/read_nexus_pymod.cpp'], 
                     extra_link_args = [
-                        '--built-under=phycas',
+                        '--built-under=/Users/plewis/phycasdev',
                         '--path-from-package=phycas/ReadNexus', ]),
             ]
     else:

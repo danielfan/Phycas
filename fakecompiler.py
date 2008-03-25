@@ -68,6 +68,7 @@ class FakeCompiler (CCompiler) :
                  extra_preargs=None,
                  extra_postargs=None,
                  depends=None):
+        print '\nCOMPILE:'
         print output_dir
         return [] #don't need to compile
 
@@ -86,8 +87,9 @@ class FakeCompiler (CCompiler) :
               extra_postargs=None,
               build_temp=None,
               target_lang=None):
-        print 'LINK:'
+        print '\nLINK:'
         destParent, file = os.path.split(output_filename)
+        #print 'destParent =',destParent
         if not os.path.exists(destParent):
             os.makedirs(destParent)
         exPostDict = {}
@@ -105,6 +107,9 @@ class FakeCompiler (CCompiler) :
         if not '--path-from-package' in exPostDict:
             raise ValueError, '"--path-from-package=<path>" must be used the "extra_link_args" argument to the Extensions __init__ to use the fakecompiler'
         sourceParent = os.path.join(exPostDict['--built-under'], exPostDict['--path-from-package'])
+        #print '--built-under =',exPostDict['--built-under']
+        #print '--path-from-package =',exPostDict['--path-from-package']
+        #print 'sourceParent =',sourceParent
         if not os.path.exists(sourceParent):
             raise ValueError, '%s does not exist' % sourceParent
         source = os.path.join(sourceParent, file)
@@ -113,6 +118,7 @@ class FakeCompiler (CCompiler) :
             source = os.path.join(sourceParent, exPostDict['--colocate-lib'])
             dest = os.path.join(destParent, exPostDict['--colocate-lib'])
             self._copyFile(source, dest)
+        #raw_input('check')
 
     def _copyFile(self, source, dest):
         import shutil
