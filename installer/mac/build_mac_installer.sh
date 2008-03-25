@@ -16,6 +16,7 @@ doBuild=1
 boost_dylib="libboost_python-1_34.dylib"
 
 # Set variable python_version to current major.minor version
+# python_version=2.3
 python_version=`python -c "import platform; major,minor,patch = platform.python_version_tuple(); print '%s.%s' % (major,minor)"`
 
 # Turn tracing on (set -x) or off (set +x). Tracing displays each line 
@@ -50,37 +51,40 @@ then
 fi
 
 #########################################################################
-#######################  Create temp dirs  ##############################
+############################  Directory setup  ###################################
 #########################################################################
 
 # Specify variables representing the temporary directory wherein packages will be created
-packPar="$PHYCAS_ROOT/installer/mac"
-subPack="$packPar/SubPackages"
+stagedir="$PHYCAS_ROOT/installer/mac/stage"
+subpackagedir="$stagedir/SubPackages"
+infodir="$PHYCAS_ROOT/installer/mac/info"
+packagemakerdir="$PHYCAS_ROOT/installer/mac/packagemaker"
     
+# Create a string representing the name of the metapackage
+# For example: Phycas-Mac-i386-python2.5.mpkg
+buildIdentifier="Phycas-Mac-`arch`-python$python_version"
+metapackage="$buildIdentifier.mpkg"
+
 # Recursively delete the "$PHYCAS_ROOT/dist" directory (if it exists). 
 sudo rm -rf "$PHYCAS_ROOT/dist"
 
 # Recursively delete the "$PHYCAS_ROOT/build" directory (if it exists). 
 sudo rm -rf "$PHYCAS_ROOT/build"
 
-# Recursively delete the "SubPackages" directory (if it exists). 
+# Recursively delete the "stagedir" directory (if it exists). 
 # This directory is located inside "$PHYCAS_ROOT/phycas/installer/mac"
-sudo rm -rf "$subPack"
-
-# Recursively delete the "lib" directory (if it exists). 
-# This directory is located inside "$PHYCAS_ROOT/phycas/installer/mac"
-sudo rm -rf "$packPar/lib"
+sudo rm -rf "$stagedir"
 
 # Now create a new, empty "SubPackages" directory. The -p option tells
 # mkdir to create intermediate directories if needed
-if ! test -e $subPack
+if ! test -e $subpackagedir
 then
-	sudo mkdir -p $subPack || exit
+	sudo mkdir -p $subpackagedir || exit
 fi
     
 # Create a directory "lib" inside the "installer/mac" directory. The -p option tells
 # mkdir to create intermediate directories if necessary.
-mkdir -p "$packPar/lib"
+mkdir -p "$stagedir/lib"
 
 #read -p "temp dirs refreshed"
 
@@ -99,14 +103,14 @@ fi
 #########################################################################
 
 # Copy the boost dylib to the "$PHYCAS_ROOT/installer/mac/lib" directory
-cp "$PHYCAS_ROOT/phycas/Conversions/$boost_dylib" "$packPar/lib"
+cp "$PHYCAS_ROOT/phycas/Conversions/$boost_dylib" "$stagedir/lib"
 
 # Now invoke packagemaker to create the boost package:
 # -build                         => create an installation package
 # -v                             => verbose output during archiving
-# -p $subPack/libBoost.pkg       => the path where the package is to be created
-# -proj $packPar/libBoost.pmproj => path to the pmproj document
-sudo /Developer/Tools/packagemaker -build -v -p $subPack/libBoost.pkg -proj $packPar/libBoost.pmproj || exit
+# -p $subpackagedir/libBoost.pkg       => the path where the package is to be created
+# -proj $stagedir/libBoost.pmproj => path to the pmproj document
+sudo /Developer/Tools/packagemaker -build -v -p $subpackagedir/libBoost.pkg -proj $stagedir/libBoost.pmproj || exit
 
 #read -p "boost package should be in SubPackages dir now"
 
@@ -139,59 +143,54 @@ python setup.py build --compiler=fake || exit
 # that we have already compiled the sources. The -k option saves temps.
 "$PYTHON_ROOT/bin/bdist_mpkg" --skip-build -k || exit
 
-# Create a string representing the name of the metapackage
-# For example: Phycas-Mac-i386-python2.5.mpkg
-buildIdentifier="Phycas-Mac-`arch`-python$python_version"
-pack="$buildIdentifier.mpkg"
-
 # Copy the current README and LICENSE files to the "$PHYCAS_ROOT/phycas/installer/mac" directory
-cp $PHYCAS_ROOT/README "$packPar/Readme.txt" || exit
-cp $PHYCAS_ROOT/LICENSE "$packPar/License.txt" || exit
+cp $PHYCAS_ROOT/README "$stagedir/Readme.txt" || exit
+cp $PHYCAS_ROOT/LICENSE "$stagedir/License.txt" || exit
 
 # bdist_mpkg already created the phycas package, so just copy it to the SubPackages directory
-sudo cp -r dist/Phycas-*-py$python_version-macosx10*mpkg/Contents/Packages/Phycas-platlib-*-py$python_version-macosx10*.pkg $subPack/Phycas.pkg || exit
+sudo cp -r dist/Phycas-*-py$python_version-macosx10*mpkg/Contents/Packages/Phycas-platlib-*-py$python_version-macosx10*.pkg $subpackagedir/Phycas.pkg || exit
 
-#read -p "phycas package should be in $subPack dir now"
+#read -p "phycas package should be in $subpackagedir dir now"
 
 #########################################################################
 ########################  Create metapackage  ###########################
 #########################################################################
 
 # Invoke packagemaker to create a metapackage that will install phycas to site-packages and boost to /usr/local/lib
-sudo /Developer/Tools/packagemaker -build -v -p "$packPar/$pack" -v -proj $packPar/phycas+boost-`arch`-$python_version.pmproj || exit
+sudo /Developer/Tools/packagemaker -build -v -p "$stagedir/$metapackage" -v -proj $stagedir/phycas+boost-`arch`-$python_version.pmproj || exit
 
-#read -p "metapackage should be in $packPar dir now"
+#read -p "metapackage should be in $stagedir dir now"
 
 #########################################################################
 ########################  Create Info.plist  ############################
 #########################################################################
 
-cd $packPar || exit
+#cd $stagedir || exit
 
 # Create the correct Info.plist
-cp info-pList-prefix.txt  info.plist || exit
-cat 10.3test.xml >> info.plist || exit
+cp $infodir/info-pList-prefix.txt  $stagedir/info.plist || exit
+cat $infodir/10.3test.xml >> $stagedir/info.plist || exit
 if test `arch` = "i386" 
 then
-	cat intelTest.xml >> info.plist || exit
+	cat $infodir/intelTest.xml >> $stagedir/info.plist || exit
 else
-	cat ppcTest.xml >> info.plist || exit
+	cat $infodir/ppcTest.xml >> $stagedir/info.plist || exit
 fi
-cat py${python_version}Test.xml >> info.plist || exit
-cat info-pList-suffix.txt >> info.plist || exit
+cat $infodir/py${python_version}Test.xml >> $stagedir/info.plist || exit
+cat $infodir/info-pList-suffix.txt >> $stagedir/info.plist || exit
 
 # Replace with the correct Info.plist
-sudo mv info.plist "$pack/Contents/Info.plist" || exit
+sudo mv $stagedir/info.plist "$metapackage/Contents/Info.plist" || exit
 
-echo "$pack created"
+echo "$metapackage created"
 
 #########################################################################
 ########################  Create dmg file  ##############################
 #########################################################################
 
 # Create the dmg file
-cd $packPar || exit
-export PHYCAS_MPKG_NAME="$pack" || exit
+cd $stagedir || exit
+export PHYCAS_MPKG_NAME="$metapackage" || exit
 make -f dmgMakefile || exit
 
 mv Phycas-1.0.dmg "$PHYCAS_ROOT/dist/${buildIdentifier}.dmg" || exit

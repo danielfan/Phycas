@@ -1,0 +1,18 @@
+	<dict>
+		<key>TitleKey</key>
+		<string>This build of Phycas requires an Intel (i386) chip</string>
+		<key>LabelKey</key>
+		<string>i386 chip</string>
+		<key>MessageKey</key>
+		<string>Please download the appropriate installer for your platform (an PowerPC build)</string>
+		<key>SpecArgument</key>
+		<string>hw.machine</string>
+		<key>SpecType</key>
+		<string>sysctl</string>
+		<key>TestObject</key>
+		<string>i386</string>
+		<key>TestOperator</key>
+		<string>=</string>
+			<key>Level</key>
+			<string>requires</string>
+	</dict>
