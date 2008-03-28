@@ -1,6 +1,6 @@
 import os,sys,math,random
 from phycas.PDFGen import *
-from phycas.TreeViewer import *
+#from phycas.TreeViewer import *
 from phycas import *
 
 class TreeSummarizer(object):

@@ -1,0 +1,6 @@
+Welcome to the Phycas installer!
+
+What you are probably most interested in knowing is 
+"What am I about to do to my computer by running this installer?"
+Here is what will happen if you continue...
+TO BE WRITTEN

@@ -20,7 +20,7 @@
 NAME=Phycas
 VERSION=1.0
 
-SOURCE_DIR=.
+SOURCE_DIR=../stage
 SOURCE_FILES=$(PHYCAS_MPKG_NAME) SubPackages
 
 TEMPLATE_DMG=template.dmg

@@ -4,25 +4,15 @@ include INSTALL
 
 include Jamroot
 
-include conversions/VC/conversions.sln
-include conversions/VC/conversions.vcproj
-
-include data_matrix/VC/data_matrix.sln
-include data_matrix/VC/data_matrix.vcproj
-
-include likelihood/VC/likelihood.sln
-include likelihood/VC/likelihood.vcproj
-
-include phylogeny/VC/phylogeny.sln
-include phylogeny/VC/phylogeny.vcproj
-
-include prob_dist/VC/prob_dist.sln
-include prob_dist/VC/prob_dist.vcproj
-
-include read_nexus/VC/read_nexus.sln
-include read_nexus/VC/read_nexus.vcproj
-
-include VC/phycas.sln
+include VC/VC.sln
+include VC/VC.vcproj
+include VC/conversions/conversions.vcproj
+include VC/data_matrix/data_matrix.vcproj
+include VC/likelihood/likelihood.vcproj
+include VC/pdfgen/pdfgen.vcproj
+include VC/phylogeny/phylogeny.vcproj
+include VC/prob_dist/prob_dist.vcproj
+include VC/read_nexus/read_nexus.vcproj
 include VC/profiling/profiling.vcproj
 include VC/profiling/profiling.cpp
 include VC/profiling/pol_profiling_config.h
@@ -34,8 +24,11 @@ include phycas/Examples/Simplest/Simplest.py
 include phycas/Examples/Simplest/green.nex
 include phycas/Examples/Paradox/Paradox.py
 include phycas/Examples/Paradox/ShoupLewis.nex
+
 include phycas/Tests/runall.py
 include phycas/Tests/doctestall.py
+
+recursive-include phycas/PDFGen/AFM *.afm
 
 recursive-include phycas/Tests/Data *.nex
 
@@ -57,7 +50,8 @@ recursive-include phycas/Tests/SplitTest/reference_output *
 recursive-include phycas/Tests/PDFTree *.py
 recursive-include phycas/Tests/PDFTree/reference_output *
 
-recursive-include phycas/Tests/SumT *.py
-recursive-include phycas/Tests/SumT/reference_output *
+recursive-include phycas/Tests/Sumt *.py
+recursive-include phycas/Tests/Sumt/reference_output *
 
 recursive-include phycas/src *.h *.hpp *.inl *.c *.cpp
+

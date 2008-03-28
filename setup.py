@@ -2,10 +2,11 @@ import sys
 
 # If build_number_from_svn_info = True, gleans svn revision from subprocess call to "svn info -r HEAD"
 # if False, need to set svn revision manually in svn_revision
-build_number_from_svn_info = True
+build_number_from_svn_info = False
 
 # the following setting is only used if build_number_from_svn_info is False, or
 # regular expression search of svn output fails to find pattern 'Revision: (\d+)'
+svn_revision = 578
 
 phycas_major = '0'
 phycas_minor = '11'
@@ -27,6 +28,7 @@ import distutils
 import os
 
 data_all = [
+          'PDFGen/AFM/*.afm',
           'Tests/cleanall.py',
           'Tests/doctestall.py',
           'Tests/runall.py',
@@ -98,7 +100,8 @@ windows_package_data = {
                     'phycas.Likelihood': ['*.pyd'],
                     'phycas.ProbDist': ['*.pyd'],
                     'phycas.Phylogeny': ['*.pyd'],
-                    'phycas.ReadNexus': ['*.pyd']
+                    'phycas.ReadNexus': ['*.pyd'],
+                    'phycas.PDFGen': ['AFM/*.afm']
                     }
 #windows_package_data.update({'phycas': data_windows_only})
 windows_package_data.update({'phycas': data_all})
@@ -112,7 +115,7 @@ conversionsDataFiles = sharedObjSuffix + dynamicLibSuffix
 test_data = [
           'Tests/cleanall.py',
           'Tests/doctestall.py',
-          'Tests/runall.py'
+          'Tests/runall.py',
           ]
 _pack_data = {
         'phycas': data_all,
@@ -140,7 +143,7 @@ if build_number_from_svn_info:
             next_revision_number = 1 + int(re_match.group(1))
             svn_revision = str(next_revision_number)
             
-phycas_full_version = phycas_major+'.'+phycas_minor+'.'+svn_revision
+phycas_full_version = phycas_major+'.'+phycas_minor+'.'+str(svn_revision)
         
 setupArgs = {
     'name':'Phycas',
