@@ -4,7 +4,7 @@
 			<key>LabelKey</key>
 			<string>PyDir</string>
 			<key>MessageKey</key>
-			<string>Expecting a directory called /Library/Frameworks/Python.framework/Versions/2.5  Please install from a built distribution using setup.py as described on the phycas web site</string>
+			<string>Expecting Python 2.5 to be installed, but could not find the folder /Library/Frameworks/Python.framework/Versions/2.5, which should be present if Python 2.5 has been installed.</string>
 			<key>SpecType</key>
 			<string>file</string>
 			<key>SpecArgument</key>

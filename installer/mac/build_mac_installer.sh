@@ -16,12 +16,12 @@ doBuild=1
 boost_dylib="libboost_python-1_34.dylib"
 
 # Set variable python_version to current major.minor version
-# python_version=2.3
+#python_version=2.4
 python_version=`python -c "import platform; major,minor,patch = platform.python_version_tuple(); print '%s.%s' % (major,minor)"`
 
 # Turn tracing on (set -x) or off (set +x). Tracing displays each line 
 # as it executes it, showing any substitutions performed.
-set -x
+set +x
 
 ##########################################################################
 #########################  Sanity Checks  ################################
@@ -59,8 +59,10 @@ stagedir="$PHYCAS_ROOT/installer/mac/stage"
 subpackagedir="$stagedir/SubPackages"
 boostlibdir="$stagedir/boostlib"
 infodir="$PHYCAS_ROOT/installer/mac/info"
+imagedir="$PHYCAS_ROOT/installer/mac/image"
 packagemakerdir="$PHYCAS_ROOT/installer/mac/packagemaker"
 diskimagedir="$PHYCAS_ROOT/installer/mac/diskimage"
+manualdir="$PHYCAS_ROOT/documentation/users"
 userid=$USER
     
 # Create a string representing the name of the metapackage
@@ -87,16 +89,12 @@ mkdir -p $subpackagedir || exit
 # The -p option tells mkdir to create intermediate directories if necessary.
 mkdir -p $boostlibdir || exit
 
-echo "********************************************************************************"
-echo "Directory setup completed:"
-echo "  \$stagedir ($stagedir) deleted and then recreated"
-echo "  \$subpackagedir ($subpackagedir) created"
-echo "  \$boostlibdir ($boostlibdir) created"
-echo "  \$infodir points to $infodir"
-echo "  \$packagemakerdir points to $packagemakerdir"
-echo "  \$metapackage will be naed $metapackage"
-echo "********************************************************************************"
-#read -p "Press return to invoke bjam and build phycas..."
+# Delete temporary files associated with creating the final dmg. Important
+# especially if you switch python versions (otherwise, an old package from
+# the wrong version might be lying around and get packed up insde the new dmg) 
+cd $diskimagedir
+make -f $diskimagedir/dmgMakefile clean || exit
+cd "$PHYCAS_ROOT"
 
 #########################################################################
 #########################  Invoke bjam  #################################
@@ -107,11 +105,6 @@ if test $doBuild = 1
 then
     bjam release || exit
 fi
-
-echo "********************************************************************************"
-echo "Phycas bjam build complete"
-echo "********************************************************************************"
-#read -p "Press return to invoke packagemaker to build libBoost.pkg..."
 
 #########################################################################
 ######################  Create boost package  ###########################
@@ -127,12 +120,8 @@ cp "$PHYCAS_ROOT/phycas/Conversions/$boost_dylib" $boostlibdir
 # -proj $stagedir/libBoost.pmproj => path to the pmproj document
 sudo /Developer/Tools/packagemaker -build -v -p $subpackagedir/libBoost.pkg -proj $packagemakerdir/libBoost.pmproj || exit
 
-echo "********************************************************************************"
-echo "Boost dylib copied to $boostlib"
-echo "Packagemaker created $subpackagedir/libBoost.pkg"
-echo "  using project file $packagemakerlib/libBoost.pmproj"
-echo "********************************************************************************"
-#read -p "Press return to invoke setup and bdist_mpkg to build Phycas.pkg..."
+# The temporary directory holding the boost dylib can now be eliminated
+rm -rf $boostlibdir
 
 #########################################################################
 ######################  Create phycas package  ##########################
@@ -170,13 +159,8 @@ cp $PHYCAS_ROOT/LICENSE "$stagedir/License.txt" || exit
 # bdist_mpkg already created the phycas package, so just copy it to the SubPackages directory
 mv dist/Phycas-*-py$python_version-macosx10*mpkg/Contents/Packages/Phycas-platlib-*-py$python_version-macosx10*.pkg $subpackagedir/Phycas.pkg || exit
 
-echo "********************************************************************************"
-echo "distutils.setup used to set up directory structure in $PHYCAS_ROOT/build"
-echo "bdist_mpkg used to build Phycas.pkg in $PHYCAS_ROOT/dist"
-echo "README and LICENSE files copied to $stagedir as Readme.txt and License.txt, respectively"
-echo "Phycas.pkg copied to $subpackagedir"
-echo "********************************************************************************"
-#read -p "Press return to invoke packagemaker to build the metapackage $metapackage..."
+# no longer any need to keep the metapackage bdist_mpkg created in the dist folder
+rm -rf dist/Phycas-*-py$python_version-macosx10*mpkg || exit
 
 #########################################################################
 ########################  Create metapackage  ###########################
@@ -184,11 +168,6 @@ echo "**************************************************************************
 
 # Invoke packagemaker to create a metapackage that will install phycas to site-packages and boost to /usr/local/lib
 sudo /Developer/Tools/packagemaker -build -v -p "$stagedir/$metapackage" -v -proj $packagemakerdir/phycas+boost-`arch`-$python_version.pmproj || exit
-
-echo "********************************************************************************"
-echo "packagemaker project $stagedir/phycas+boost-`arch`-$python_version.pmproj used to build $stagedir/$metapackage"
-echo "********************************************************************************"
-#read -p "Press return to create Info.plist..."
 
 #########################################################################
 ########################  Create Info.plist  ############################
@@ -209,10 +188,15 @@ cat $infodir/info-pList-suffix.txt >> $stagedir/info.plist || exit
 # Replace with the correct Info.plist
 sudo mv $stagedir/info.plist "$stagedir/$metapackage/Contents/Info.plist" || exit
 
-echo "********************************************************************************"
-echo "Info.plist in $stagedir/$metapackage replaced"
-echo "********************************************************************************"
-#read -p "Press return to create disk image..."
+#########################################################################
+####################  Build and copy manual.pdf  ########################
+#########################################################################
+
+cd $manualdir
+pdflatex manual
+pdflatex manual
+cp manual.pdf $stagedir
+cd "$PHYCAS_ROOT"
 
 #########################################################################
 ########################  Create dmg file  ##############################
@@ -228,4 +212,3 @@ mv Phycas-1.0.dmg "$PHYCAS_ROOT/dist/${buildIdentifier}.dmg" || exit
 echo "********************************************************************************"
 echo "$PHYCAS_ROOT/dist/${buildIdentifier}.dmg created"
 echo "********************************************************************************"
-read -p "Press return to quit..."

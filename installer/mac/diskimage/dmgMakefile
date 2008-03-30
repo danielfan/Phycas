@@ -1,17 +1,8 @@
+# This makefile originally written by Remko Troncon 
 #
-# Build file for creating DMG files.
+#   http://el-tramo.be/about
 #
-# The DMG packager looks for a template.dmg.bz2 for using as its 
-# DMG template. If it doesn't find one, it generates a clean one.
-#
-# If you create a DMG template, you should make one containing all
-# the files listed in $(SOURCE_FILES) below, and arrange everything to suit
-# your style. The contents of the files themselves does not matter, so
-# they can be empty (they will be overwritten later). 
-#
-# Remko Troncon 
-# http://el-tramo.be/about
-#
+# Highly customized to create disk image for installing Phycas.
 
 ################################################################################
 # Customizable variables
@@ -20,8 +11,33 @@
 NAME=Phycas
 VERSION=1.0
 
+# Expects the following file structure:
+# 
+# $(SOURCE_DIR)
+#   $(SOURCE_FILES)
+#   $(SUBPACKAGE_DIR)
+#     $(SUBPACKAGES)
+# 
+# i.e. files listed in $(SUBPACKAGES) are in a directory named $(SUBPACKAGE_DIR)
+# and $(SUBPACKAGE_DIR) is itself inside a directory named $(SOURCE_DIR), which 
+# also contains the files listed in SOURCE_FILES
+# 
+# In the original makefile, $(SOURCE_FILES) comprised the metapackage file and
+# the subpackage directory, and both of these were deleted from the template.dmg
+# and then copied anew. POL changed this in order to be able to hide the subpackage
+# directory from the Finder when the dmg is mounted by the user. To hide the 
+# subpackage directory, I unpacked template.dmg.bz2, then mounted template.dmg
+# (as Phycas), then created a directory named SubPackages and hid it using
+#
+# /Developer/Tools/SetFile -a V /Volumes/Phycas/SubPackages
+#
+# I then unmounted the Phycas volume, deleted the original template.dmg.bz2
+# file, and recreated it by using bzip on template.dmg.
+
 SOURCE_DIR=../stage
-SOURCE_FILES=$(PHYCAS_MPKG_NAME) SubPackages
+SUBPACKAGE_DIR=SubPackages
+SUBPACKAGES=libBoost.pkg Phycas.pkg
+SOURCE_FILES=$(PHYCAS_MPKG_NAME) manual.pdf
 
 TEMPLATE_DMG=template.dmg
 
@@ -49,16 +65,27 @@ $(TEMPLATE_DMG).bz2:
 	@echo
 
 $(WC_DMG): $(TEMPLATE_DMG)
+	@echo
+	@echo --------------------- Copying $(TEMPLATE_DMG) to $(WC_DMG) --------------------
 	cp $< $@
 
-$(MASTER_DMG): $(WC_DMG) $(addprefix $(SOURCE_DIR)/,$(SOURCE_FILES))
+$(MASTER_DMG): $(WC_DMG) $(addprefix $(SOURCE_DIR)/,$(SOURCE_FILES)) $(addprefix $(SOURCE_DIR)/$(SUBPACKAGE_DIR)/,$(SUBPACKAGES))
 	@echo
 	@echo --------------------- Creating Disk Image --------------------
 	mkdir -p $(WC_DIR)
 	hdiutil attach "$(WC_DMG)" -noautoopen -quiet -mountpoint "$(WC_DIR)"
+	# replace existing metapackage with new one
+	#rm -rf "$(WC_DIR)/$(PHYCAS_MPKG_NAME)";
+	#ditto -rsrc "$(SOURCE_DIR)/$(PHYCAS_MPKG_NAME)" "$(WC_DIR)/$(PHYCAS_MPKG_NAME)";
+	@echo ------ copying SOURCE_FILES -----
 	for i in $(SOURCE_FILES); do  \
 		rm -rf "$(WC_DIR)/$$i"; \
 		ditto -rsrc "$(SOURCE_DIR)/$$i" "$(WC_DIR)/$$i"; \
+	done
+	@echo ------ copying SUBPACKAGES -----
+	for i in $(SUBPACKAGES); do  \
+		rm -rf "$(WC_DIR)/$(SUBPACKAGE_DIR)/$$i"; \
+		ditto -rsrc "$(SOURCE_DIR)/$(SUBPACKAGE_DIR)/$$i" "$(WC_DIR)/$(SUBPACKAGE_DIR)/$$i"; \
 	done
 	#rm -f "$@"
 	#hdiutil create -srcfolder "$(WC_DIR)" -format UDZO -imagekey zlib-level=9 "$@" -volname "$(NAME) $(VERSION)" -scrub -quiet
