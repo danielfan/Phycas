@@ -55,14 +55,17 @@ fi
 #########################################################################
 
 # Specify variables representing the temporary directory wherein packages will be created
+macdir="$PHYCAS_ROOT/installer/mac"
 stagedir="$PHYCAS_ROOT/installer/mac/stage"
 subpackagedir="$stagedir/SubPackages"
+phycasdir="$stagedir/appsfolder/Phycas"
 boostlibdir="$stagedir/boostlib"
 infodir="$PHYCAS_ROOT/installer/mac/info"
 imagedir="$PHYCAS_ROOT/installer/mac/image"
 packagemakerdir="$PHYCAS_ROOT/installer/mac/packagemaker"
 diskimagedir="$PHYCAS_ROOT/installer/mac/diskimage"
 manualdir="$PHYCAS_ROOT/documentation/users"
+shortcutdir="$PHYCAS_ROOT/installer/mac/shortcuts"
 userid=$USER
     
 # Create a string representing the name of the metapackage
@@ -113,11 +116,11 @@ fi
 # Copy the boost dylib to the "$boostlib" directory
 cp "$PHYCAS_ROOT/phycas/Conversions/$boost_dylib" $boostlibdir
 
-# Now invoke packagemaker to create the boost package:
-# -build                         => create an installation package
-# -v                             => verbose output during archiving
-# -p $subpackagedir/libBoost.pkg       => the path where the package is to be created
-# -proj $stagedir/libBoost.pmproj => path to the pmproj document
+# Now invoke packagemaker (v2.1.1) to create the boost package:
+# -build                                 => create an installation package
+# -v                                     => verbose output during archiving
+# -p $subpackagedir/libBoost.pkg         => the path where the package is to be created
+# -proj $packagemakerdir/libBoost.pmproj => path to the pmproj document
 sudo /Developer/Tools/packagemaker -build -v -p $subpackagedir/libBoost.pkg -proj $packagemakerdir/libBoost.pmproj || exit
 
 # The temporary directory holding the boost dylib can now be eliminated
@@ -163,6 +166,34 @@ mv dist/Phycas-*-py$python_version-macosx10*mpkg/Contents/Packages/Phycas-platli
 rm -rf dist/Phycas-*-py$python_version-macosx10*mpkg || exit
 
 #########################################################################
+#################  Create Phycas folder package  ########################
+#########################################################################
+
+# Create the Phycas folder
+mkdir -p $phycasdir
+chmod 775 $phycasdir
+cp $macdir/welcome.txt "$stagedir/ReadMeFirst"
+
+# Build and copy manual.pdf
+cd $manualdir
+pdflatex manual
+pdflatex manual
+cp manual.pdf $phycasdir
+cd "$PHYCAS_ROOT"
+
+#  Copy pseudoshortcuts 
+cp -R $shortcutdir/RunTests25.app $phycasdir/RunTests.app
+cp -R $shortcutdir/ExamplesFolder25.app $phycasdir/ExamplesFolder.app
+cp -R $shortcutdir/StartPhycas25.app $phycasdir/StartPhycas.app
+
+# Now invoke packagemaker (v2.1.1) to create the package:
+# -build                                  => create an installation package
+# -v                                      => verbose output during archiving
+# -p $subpackagedir/PhycasAppsFolder.pkg  => the path where the package is to be created
+# -proj $stagedir/libBoost.pmproj         => path to the pmproj document
+sudo /Developer/Tools/packagemaker -build -v -p $subpackagedir/PhycasAppsFolder.pkg -proj $packagemakerdir/PhycasAppsFolder.pmproj || exit
+
+#########################################################################
 ########################  Create metapackage  ###########################
 #########################################################################
 
@@ -187,16 +218,6 @@ cat $infodir/info-pList-suffix.txt >> $stagedir/info.plist || exit
 
 # Replace with the correct Info.plist
 sudo mv $stagedir/info.plist "$stagedir/$metapackage/Contents/Info.plist" || exit
-
-#########################################################################
-####################  Build and copy manual.pdf  ########################
-#########################################################################
-
-cd $manualdir
-pdflatex manual
-pdflatex manual
-cp manual.pdf $stagedir
-cd "$PHYCAS_ROOT"
 
 #########################################################################
 ########################  Create dmg file  ##############################
