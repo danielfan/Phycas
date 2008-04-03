@@ -1,0 +1,95 @@
+Mac installer notes
+===================
+
+Overview
+--------
+
+The script build_mac_installer.sh orchestrates everything, so the
+best way to learn about the process is to study that file.
+
+The ultimate goal is a disk image (dmg file) containing a metapackage.
+
+The metapackage contains three component packages:
+- libBoost.pkg
+- Phycas.pkg
+- PhycasAppsFolder.pkg
+
+libBoost.pkg installs the Boost dynamic library to /usr/local/lib
+
+Phycas.pkg installs the phycas directory, which contains all the
+Python source code, C++ shared libraries, examples, and tests, to
+the site-packages directory of the Python installation.
+
+PhycasAppsFolder.pkg installs the manual and several applescript
+applications (StartPhycas, ExamplesFolder and RunTests) to a 
+folder named Phycas inside the user's Applications folder.
+
+Cleaning the slate
+------------------
+The file macDeveloperUninstall.sh does not currently work (too
+much has changed about the process since this file was created).
+Here is an applescript that removes all traces of the installation
+(you will have to change the paths of course):
+
+set ok to "yes"
+try
+	set d to display dialog "sudo password:" default answer "" with hidden answer
+on error errText number errNumber
+	if (errNumber is equal to -128) then
+		-- User pressed Cancel button
+		set ok to "no"
+	end if
+end try
+
+if ok is equal to "yes" then
+	set pw to text returned of d
+	do shell script "sudo rm -rf /usr/local/lib/libboost_python-1_34.dylib" password pw with administrator privileges
+	do shell script "sudo rm -rf /Library/Frameworks/Python.framework/Versions/2.5/lib/python2.5/site-packages/phycas" password pw with administrator privileges
+	do shell script "sudo rm -rf /Library/Receipts/libBoost.pkg" password pw with administrator privileges
+	do shell script "sudo rm -rf /Library/Receipts/Phycas.pkg" password pw with administrator privileges
+	do shell script "sudo rm -rf /Library/Receipts/PhycasAppsFolder.pkg" password pw with administrator privileges
+	do shell script "sudo rm -rf /Users/plewis/phycasdev/installer/mac/stage" password pw with administrator privileges
+	do shell script "sudo rm -rf /Users/plewis/phycasdev/dist" password pw with administrator privileges
+	do shell script "sudo rm -rf /Users/plewis/phycasdev/build" password pw with administrator privileges
+	do shell script "sudo rm -rf /Applications/Phycas" password pw with administrator privileges
+	do shell script "cd /Users/plewis/phycasdev/installer/mac/diskimage; make -f dmgMakefile clean"
+end if
+
+Packagemaker projects
+---------------------
+Two packagemaker projects (libBoost.pmproj and PhycasAppsFolder.pmproj)
+correspond to individual projects in the metaproject. The Phycas.pkg
+is created indirectly by using bdist_mpkg to create a metapackage, then
+extracting the Phycas.pkg from that metapackage. The final project
+file needed is phycas+boost-i386-2.5.pmproj, which builds the final
+metapackage.
+
+Applescript applications
+------------------------
+The apps in the shortcuts folder were made using the applescript
+editor (/Applications/AppleScript/Script Editor). 
+
+They can still be edited by the Script Editor because the Run Only 
+option was never checked when they were saved. 
+
+These scripts were saved as application bundles so that they can 
+be run by double-clicking. 
+
+The icon in StartPhycas25.app was changed by deleting the existing
+StartPhycas25.app/Contents/Resources/applet.icns file and replacing
+it with the phycas-icons.icns file from the installer/mac/images
+folder.
+
+Disk image properties
+---------------------
+Although not used currently, the background and other properties of
+the disk image can be modified by uncompressing 
+installer/mac/diskimage/template.dmg.bz2 (double-click on it),
+mounting the resulting template.dmg file, then modifying the 
+properties of the mounted disk image using Command+j (be sure to
+choose "This Window Only").
+
+
+
+
+
