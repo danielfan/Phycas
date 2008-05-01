@@ -102,6 +102,14 @@ class SliceSampler(SliceSamplerBase):
 
         """
         SliceSamplerBase.__init__(self, rng, func)
+
+    def setXValue(self, x):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Sets current value of slice sampler to the supplied value x.
+        
+        """
+        SliceSamplerBase.setXValue(self, x)        
         
     def sample(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
