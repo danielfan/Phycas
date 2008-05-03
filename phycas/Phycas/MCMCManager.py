@@ -374,7 +374,7 @@ class MarkovChain(LikelihoodCore):
             self.bush_move.setTreeLikelihood(self.likelihood)
             self.bush_move.setLot(self.r)
             self.bush_move.setEdgeLenDistMean(self.phycas.bush_move_edgelen_mean)
-            self.bush_move.viewProposedMove(self.phycas.bush_move_debug)
+            #self.bush_move.viewProposedMove(self.phycas.bush_move_debug)
             if self.model.edgeLengthsFixed():
                 self.bush_move.fixParameter()
             self.bush_move.finalize()
