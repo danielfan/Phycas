@@ -5,7 +5,7 @@ to fix, and documenting them helps to avoid repeating history. Minor bugs repres
 cosmetic glitches that are easy to work around and do not take long to fix. Minor bugs 
 are best documented in SVN comments.
 
-Bug 4: the "Yang" bug (fixed in revision 591 on 5 May 2008)
+Bug 4: the "Yang" bug (fixed in revision 590 on 5 May 2008)
 -----------------------------------------------------------
 Reported by Ziheng Yang on 3 May 2008. The immediate problem that Ziheng had was
 
@@ -43,9 +43,9 @@ This function had this body:
 The conditional should have been "if (nd)..." not "if (!nd)...", so newly-minted nodes
 were not being adorned by internal node data structures necessary for carrying out 
 likelihood calculations and the program crashed the first time these data structures
-were needed. Search for POLPY_NEWWAY in revision 591 for all the places where code
+were needed. Search for POLPY_NEWWAY in revision 590 for all the places where code
 was changed to fix this bug. The POLPY_NEWWAY conditionals were removed in revision
-592.
+591.
 
 Bug 3: the "Rota" bug (fixed in revision 434 on 19-Oct-2007)
 ------------------------------------------------------------

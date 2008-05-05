@@ -943,15 +943,9 @@ void TreeManip::SibToChild(
 /*----------------------------------------------------------------------------------------------------------------------
 |	Removes leaf node `u' and its associated edge.
 */
-#if POLPY_NEWWAY
-//POL 5 May 2008 - relates to "Yang" bug (see BUGS file for details)
 void TreeManip::DeleteLeaf(
   TreeNode * u,	            /**< this node's edge will be removed */
   bool store_as_internal)   /**< if true, store u in internal node storage; otherwise, store it in leaf node storage */
-#else
-void TreeManip::DeleteLeaf(
-  TreeNode *u)	/* this node's edge will be removed */
-#endif
 	{
 	// Note which nodes have pointers potentially aimed at u (will need to be redirected)
 	//
@@ -984,15 +978,10 @@ void TreeManip::DeleteLeaf(
 	u->prevPreorder = NULL;
 	u->nextPreorder = NULL;
 
-#if POLPY_NEWWAY
-    //POL 5 May 2008 - relates to "Yang" bug (see BUGS file for details)
     if (store_as_internal)
 	    tree->StoreInternalNode(u);
     else
 	    tree->StoreLeafNode(u);
-#else
-    tree->StoreLeafNode(u);
-#endif
 
 	if (u_par->CountChildren() == 1)
 		{

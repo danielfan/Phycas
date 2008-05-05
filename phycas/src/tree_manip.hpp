@@ -78,12 +78,7 @@ class TreeManip
 		void		DetachSubtree(TreeNode * s);
 		void		InsertSubtree(TreeNode * s, TreeNode * u, InsertMode m, TreeNode * targetSib = NULL);
 
-#if POLPY_NEWWAY
-        //POL 5 May 2008 - relates to "Yang" bug (see BUGS file for details)
 		void		DeleteLeaf(TreeNode * u, bool store_as_internal = false);
-#else
-		void		DeleteLeaf(TreeNode * u);
-#endif
 		void		InsertSubtreeIntoEdge(TreeNode * subtree, TreeNode * edge_nd);
 
 		void		LChildToLSib(TreeNode * u, TreeNode * w);

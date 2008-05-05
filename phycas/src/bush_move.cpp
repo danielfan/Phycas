@@ -659,10 +659,7 @@ void BushMove::proposeDeleteEdgeMove(TreeNode * u)
 	// will be accepted, at which point the CLAs can definitely be discarded
 	likelihood->invalidateBothEndsDiscardCache(u);
 
-#if POLPY_NEWWAY
-    //POL 5 May 2008 - relates to "Yang" bug (see BUGS file for details)
     bool u_is_internal = u->IsInternal();
-#endif
 
     // Save nd's edge length in case we need to revert
 	//
@@ -711,12 +708,7 @@ void BushMove::proposeDeleteEdgeMove(TreeNode * u)
 		tree_manipulator.InsertSubtree(orig_rchild, orig_par, TreeManip::kOnRight);
 		}
 
-#if POLPY_NEWWAY
-    //POL 5 May 2008 - relates to "Yang" bug (see BUGS file for details)
 	tree_manipulator.DeleteLeaf(u, u_is_internal);
-#else
-	tree_manipulator.DeleteLeaf(u);
-#endif
 
 	//orig_par->SelectNode();
 

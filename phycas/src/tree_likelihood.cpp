@@ -1713,12 +1713,7 @@ void TreeLikelihood::prepareInternalNodeForLikelihood(
   TreeNode * nd)	/**< is the node to decorate */
 	{
 	//InternalData * ndID = nd->GetInternalData();
-#if POLPY_NEWWAY
-    //POL 5-May-2008 changed "if (!nd)" to "if (nd)" - part of fix for the "Yang" bug
 	if (nd)
-#else
-	if (!nd)
-#endif
 		{
 		TreeNode::InternalDataDeleter	cl_deleter	= &deallocateInternalData;
 		InternalData * cl = allocateInternalData();
