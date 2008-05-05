@@ -109,8 +109,17 @@ inline effective_postorder_edge_iterator::effective_postorder_edge_iterator(
 	TreeNode * currAvoidNode = effectiveRoot;
 	for (TreeNode * currAnc = effectiveRoot->GetParent(); currAnc != NULL; currAnc = currAnc->GetParent())
 		{
+#if 0
 		if (!isValidChecker.empty() && isValidChecker(currAnc, currAvoidNode))
 			break;
+#else
+		if (!isValidChecker.empty())
+            {
+            bool ok = isValidChecker(currAnc, currAvoidNode);
+            if (ok)
+			    break;
+            }
+#endif
 
 		// 
 		edge_stack.push(EdgeEndpoints(currAnc, currAvoidNode));

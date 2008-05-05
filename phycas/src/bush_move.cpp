@@ -115,7 +115,20 @@ bool BushMove::update()
 
 	double ln_accept_ratio = curr_posterior - prev_posterior + ln_hastings + ln_jacobian + ln_polytomy_prior_ratio;
 
-	if (ln_accept_ratio >= 0.0 || std::log(rng->Uniform(FILE_AND_LINE)) <= ln_accept_ratio)
+    bool accepted = (ln_accept_ratio >= 0.0 || std::log(rng->Uniform(FILE_AND_LINE)) <= ln_accept_ratio);
+    if (save_debug_info)
+        {
+    	if (add_edge_move_proposed)
+            {
+            debug_info = str(boost::format("Bush: add (%s)") % (accepted ? "accepted" : "rejected"));
+            }
+        else
+            {
+            debug_info = str(boost::format("Bush: del (%s)") % (accepted ? "accepted" : "rejected"));
+            }
+        }
+
+	if (accepted)
 		{
 		p->setLastLnPrior(curr_ln_prior);
 		p->setLastLnLike(curr_ln_like);
@@ -304,6 +317,8 @@ void BushMove::proposeNewState()
 			else
 				--i;
 			}
+        //nd->SelectNode();
+		//likelihood->startTreeViewer(tree, "Delete edge move");
 		proposeDeleteEdgeMove(nd);
 
 		// The Jacobian is the matrix of the derivatives of all post-move quantities with respect to all
@@ -605,6 +620,9 @@ void BushMove::proposeAddEdgeMove(TreeNode * u)
 
 	//orig_lchild->SelectNode();
 
+    //v->SelectNode();
+    //likelihood->startTreeViewer(tree, "proposeAddEdgeMove");
+
 	likelihood->useAsLikelihoodRoot(orig_lchild);
 	likelihood->invalidateAwayFromNode(*orig_lchild);
 	likelihood->invalidateBothEnds(orig_lchild);	//@POL really just need invalidateParentalOnly function
@@ -641,7 +659,11 @@ void BushMove::proposeDeleteEdgeMove(TreeNode * u)
 	// will be accepted, at which point the CLAs can definitely be discarded
 	likelihood->invalidateBothEndsDiscardCache(u);
 
-	// Save nd's edge length in case we need to revert
+#if POLPY_NEWWAY
+    bool u_is_internal = u->IsInternal();
+#endif
+
+    // Save nd's edge length in case we need to revert
 	//
 	orig_edgelen = u->GetEdgeLen();
 
@@ -688,7 +710,11 @@ void BushMove::proposeDeleteEdgeMove(TreeNode * u)
 		tree_manipulator.InsertSubtree(orig_rchild, orig_par, TreeManip::kOnRight);
 		}
 
+#if POLPY_NEWWAY
+	tree_manipulator.DeleteLeaf(u, u_is_internal);
+#else
 	tree_manipulator.DeleteLeaf(u);
+#endif
 
 	//orig_par->SelectNode();
 

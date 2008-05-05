@@ -228,7 +228,7 @@ class Phycas(object):
         self.uf_num_edges           = 50        # Number of edges to traverse before taking action to prevent underflow
         
         # ***** IT IS BEST NOT TO CHANGE ANYTHING BELOW HERE *****
-        self.debugging              = False      # If set to True expect lots of debug output (e.g. data pattern table)
+        self.debugging              = True      # If set to True expect lots of debug output (e.g. data pattern table)
         self.data_matrix            = None
         self.file_name_data_stored  = None
         self.file_name_trees_stored = None
