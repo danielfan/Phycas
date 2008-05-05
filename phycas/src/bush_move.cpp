@@ -660,6 +660,7 @@ void BushMove::proposeDeleteEdgeMove(TreeNode * u)
 	likelihood->invalidateBothEndsDiscardCache(u);
 
 #if POLPY_NEWWAY
+    //POL 5 May 2008 - relates to "Yang" bug (see BUGS file for details)
     bool u_is_internal = u->IsInternal();
 #endif
 
@@ -711,6 +712,7 @@ void BushMove::proposeDeleteEdgeMove(TreeNode * u)
 		}
 
 #if POLPY_NEWWAY
+    //POL 5 May 2008 - relates to "Yang" bug (see BUGS file for details)
 	tree_manipulator.DeleteLeaf(u, u_is_internal);
 #else
 	tree_manipulator.DeleteLeaf(u);
