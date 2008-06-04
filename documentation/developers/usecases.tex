@@ -1,0 +1,64 @@
+\documentclass[12pt]{article}
+\setlength{\oddsidemargin}{0.in}
+\setlength{\textwidth}{6.5in}
+\setlength{\topmargin}{-0.25in}
+\setlength{\textheight}{8.25in}
+
+% Skip space between paragraphs
+\setlength{\parskip}{.1in}
+
+% Do not put numbers in section headings
+\setcounter{secnumdepth}{0}
+
+% Indent paragraphs 0. in
+\setlength{\parindent}{0.in}
+
+% Use the natbib package for the bibliography
+\usepackage[round]{natbib}
+\bibliographystyle{sysbio}
+
+% Use the graphicx package to incorporate and scale
+% encapsulated postscript figures
+\usepackage{graphicx}
+
+% Make document single-spaced
+\renewcommand{\baselinestretch}{1.0}
+
+\begin{document}
+
+\section{Partitioning Use Cases}
+
+\begin{itemize}
+\item The user partitions a protein-coding gene into first, second and third codon positions. An HKY+G model is applied to each subset and each subset is allowed to have its own relative rate parameter. Branch lengths and tree topology are linked across subsets. All other substitution model parameters are unlinked across partitions.
+\begin{verbatim}
+from phycas import *
+phycas = Phycas()
+first  = charsubset(1,2000,3)  # charsubset(a,b,c) => range(a-1,b,c)
+second = charsubset(2,2000,3)
+third  = charsubset(3,2000,3)
+phycas.partition = (first, second, third)
+phycas.model = ('hky','hky','hky')
+phycas.num_rates = (4,4,4)
+phycas.estimate_gamma_shape = (True, True, True)
+phycas.estimate_subset_relrate = (True, True, True)
+\end{verbatim}
+
+\item The user partitions a two-gene data set into a protein-coding gene and an 18s gene. A codon model is applied to the protein-coding subset, whereas a HKY+I+G model is applied to the 18s subset.
+%\begin{verbatim}
+%\end{verbatim}
+
+\item The user applies a HKY+I+G model to an 18s rRNA gene and the Mk model to a collection of discrete morphological characters. Phycas implicitly partitions the discrete morphological character data into subsets each having characters with different numbers of observed states.
+%\begin{verbatim}
+%\end{verbatim}
+
+\item The user partitions 18s data into stems and loops, and applies a double model to the stems and a HKY+I+G model to the loops.
+%\begin{verbatim}
+%\end{verbatim}
+
+\item The user partitions data at boundary between two genes and applies an HKY+G model to both genes, unlinking everything except tree topology.
+%\begin{verbatim}
+%\end{verbatim}
+
+\end{itemize}
+
+\end{document}

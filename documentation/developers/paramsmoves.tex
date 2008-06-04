@@ -1,0 +1,103 @@
+\chapter{Parameters and moves} 
+
+A \term{move} in \phycas\ involves a Metropolis-Hastings update mechanism, whereas a \term{parameter} uses slice sampling.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Adding a new move}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{enumerate}
+\item Create header (*.hpp) and source code (*.cpp) files for your move. The easiest way to do this is to copy the files for an existing move. Here is the basic boilerplate code for the header file:
+\begin{verbatim}
+#if ! defined(MY_NEW_MOVE_HPP)
+#define MY_NEW_MOVE_HPP
+
+#include <boost/weak_ptr.hpp>		// for boost::weak_ptr
+#include "phycas/src/mcmc_updater.hpp"	// for base class MCMCUpdater
+
+class MCMCChainManager;
+typedef boost::weak_ptr<MCMCChainManager>  ChainManagerWkPtr;
+
+namespace phycas
+{
+
+/*----------------------------------------
+|   Description of what MyNewMove does.
+*/
+class MyNewMove : public MCMCUpdater
+    {
+    public:
+                MyNewMove();
+        virtual ~MyNewMove();
+        bool    update();
+    };
+}  // namespace phycas
+\end{verbatim}
+And here is the corresponding minimal boilerplate for the source code file:
+\begin{verbatim}
+namespace phycas
+{
+/*----------------------------------------
+|   MyNewMove constructor.
+*/
+MyNewMove::MyNewMove()
+  {
+  }
+
+/*----------------------------------------
+|   MyNewMove destructor.
+*/
+MyNewMove::~MyNewMove()
+  {
+  }
+
+/*----------------------------------------
+|   Description of update method.
+*/
+bool NielsenMappingMove::update()
+    {
+    // code for performing the update goes here
+    return true;
+    }
+} // namespace phycas
+
+\end{verbatim}
+\item Write the constructor, destructor, and \method{update} member function, creating helper methods as necessary. The \method{update} method should return true if it changes the model, false if it leaves everything untouched (e.g. a Metropolis-Hastings proposal that is rejected). Note that because \class{MyNewMove} is derived from \class{MCMCUpdater}, it has access to the following shared pointers (as well as the other public and protected data members of the \class{MCMCUpdater} class):
+\begin{itemize}
+\item \shptr{tree} points to the \class{Tree} object
+\item \shptr{tree\_manipulator} points to the \class{TreeManip} object
+\item \shptr{model} points to the \class{Model} object
+\item \shptr{likelihood} points to the \class{TreeLikelihood} object
+\item \shptr{rng} points to the \class{Lot} (pseudorandom number generator) object
+\end{itemize}
+\item In \pathname{updater\_pymod.cpp}, add a Boost Python entry so that your new move can be called from Python code:
+\begin{verbatim}
+#include "phycas/src/my_new_move.hpp"
+...
+class_<phycas::MyNewMove, bases<phycas::MCMCUpdater>, 
+  boost::noncopyable, boost::shared_ptr<phycas::MyNewMove> >("MyNewMove") 
+  .def("update", &phycas::MyNewMove::update)
+  ;
+\end{verbatim}
+\item Add the new move to the \method{setupChain} function of \class{MCMCManager}
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Larget-Simon LOCAL move}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%
+% Figure "MBTA"
+%
+%\clearpage
+%\begin{figure}
+%\centering
+%\includegraphics[scale=0.5]{Figures/MBTA.eps}
+%\label{MBTA}
+%\caption{\small Map of the Massachusetts Bay Transit Authority subway system is a good example of a model. Is is an abstraction of reality that is nevertheless much more useful (for the purpose of using the subway system) than a very realistic map of the region.}
+%\end{figure}
+

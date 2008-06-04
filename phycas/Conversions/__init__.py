@@ -1,3 +1,4 @@
 from _Conversions import *
 
-#print 'importing Conversions...'
+import os
+print 'importing Conversions from ',os.path.abspath(__file__)

@@ -1,0 +1,90 @@
+\documentclass[openany]{book}
+%\setlength{\oddsidemargin}{0.in}
+%\setlength{\textwidth}{6.5in}
+%\setlength{\topmargin}{-0.25in}
+%\setlength{\textheight}{8.25in}
+
+% Skip space between paragraphs
+\setlength{\parskip}{.1in}
+
+% Do not put numbers in section headings
+\setcounter{secnumdepth}{0}
+
+% Indent paragraphs 0. in
+\setlength{\parindent}{0.in}
+
+% Use the natbib package for the bibliography
+\usepackage[round]{natbib}
+\bibliographystyle{sysbio}
+
+% Use the graphicx package to incorporate and scale
+% encapsulated postscript figures
+\usepackage{graphicx}
+
+% Make document single-spaced
+\renewcommand{\baselinestretch}{1.0}
+
+\newcommand{\summarysymbol}{$\hookrightarrow$}
+
+\usepackage{wrapfig}
+
+%\usepackage{float}
+%\floatstyle{plain}
+%\newfloat{floatbox}{!hb}{loa}
+%w3\floatname{floatbox}{Box}
+
+\newcounter{aside}
+\newenvironment{aside}[2]
+{
+	\label{#1}
+	\stepcounter{aside}
+	%\begin{floatbox}
+	\begin{centering}
+	\hfill \begin{tabular}{c} \hline \hline
+	\\
+	\begin{minipage}{5.in}
+	\small {\bfseries Box~\arabic{aside}: #2} --- 
+}
+{
+	\end{minipage} \\ \\ \hline \hline
+	\end{tabular} \hfill
+	\end{centering}
+	%\end{floatbox}
+}
+
+\input{defs}
+\input{setbmp}
+\input{seteps}
+
+\includeonly{info,paramsmoves}
+
+% Use the natbib package for the bibliography
+\usepackage[round]{natbib}
+\bibliographystyle{sysbio}
+
+% Use the graphicx package to incorporate and scale
+% encapsulated postscript figures
+\usepackage{graphicx}
+
+\begin{document}
+
+\title{Phycas Developer Guide}
+\author{Paul O. Lewis, Mark T. Holder, David L. Swofford}
+\date{June, 2008} 
+\maketitle
+
+\include{info}
+\tableofcontents
+
+\include{paramsmoves}
+
+\bibliography{developerguide}
+
+%\appendix
+
+%\include{Appendix1} 
+%\include{Appendix2} 
+
+%\include{index}
+\end{document}
+

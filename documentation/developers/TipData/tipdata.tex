@@ -171,6 +171,10 @@ The \function{allocateTipData} function (\cppfile{tree\_likelihood.cpp}) allocat
 
 The \function{compressDataMatrix} function (\cppfile{tree\_likelihood.cpp}) is responsible for compressing the data patterns. This function takes a reference to a CipresNative::DiscreteMatrix object and fills data members \datamember{pattern\_map}, \datamember{pattern\_counts} and \datamember{charIndexToPatternIndex}.
 
+\section{The TreeNode::TipDataDeleter function pointer}
+
+The \function{TipDataDeleter} function is responsible for deleting the TipData structure allocated by the \function{TreeLikelihood::allocateTipData} function. The function \function{TreeNode::SetTipData} is used to set both \datamember{tipData} and \datamember{tipDataDeleter}.
+
 %
 % Figure "felsenstein"
 %

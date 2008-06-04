@@ -1,0 +1,67 @@
+\setlength{\oddsidemargin}{0.75in}
+\setlength{\evensidemargin}{0.in}
+\setlength{\textwidth}{5.75in}
+\setlength{\parindent}{0.in}
+
+\newfont{\msamsix}{MSAM10 at 6pt}
+\newfont{\mmlfnt}{eurb10 at 10pt}
+\newfont{\mmlfntlg}{eurb10 at 18pt}
+
+% use the fancyhdr package to allow both headers and footers
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{} % clear all headers and footers
+\fancyhead[LO,RE]{Phycas Developer Guide}
+\fancyhead[RO,LE]{\thepage}
+\fancyfoot[LO,LE]{{\footnotesize \copyright\ 2008 by Paul O. Lewis, Mark T. Holder and David L. Swofford}}
+\fancyfoot[CE,CO]{}
+
+% chapter pages will be in plain pagestyle, so we need to redefine
+% the plain pagestyle to have the same format as other pages
+\fancypagestyle{plain}{%
+\fancyhf{} % clear all headers and footer fields except those redefined below
+\fancyhead[LO,RE]{Bayesian Phylogenetics From the Ground Up}
+\fancyhead[RO,LE]{\thepage}
+\fancyfoot[LO,LE]{{\footnotesize \copyright\ 2007 by Paul O. Lewis, Mark T. Holder and David L. Swofford}}}
+
+\newcommand{\Phycas}{{\sf Phycas}}
+\newcommand{\phycas}{{\sf Phycas}}
+\newcommand{\microsoft}{Microsoft$^{\mbox{\msamsix r}}$}
+\newcommand{\winthirtytwo}{Win32$^{\mbox{\msamsix r}}$}
+\newcommand{\windows}{Windows$^{\mbox{\msamsix r}}$}
+
+\newcommand{\treeviewurl}{{\tt http://taxonomy.zoology.gla.ac.uk/rod/treeview.html}}
+\newcommand{\lewislabsurl}{{\tt http://lewis.eeb.uconn.edu/lewishome/}}
+\newcommand{\nclurl}{{\tt http://sourceforge.org/projects/ncl/}}
+
+\newcommand{\ba}{\begin{array}}
+\newcommand{\ea}{\end{array}}
+
+\newcommand{\be}{\begin{eqnarray*}}
+\newcommand{\ee}{\end{eqnarray*}}
+
+\newcommand{\bi}{\begin{itemize}}
+\newcommand{\ei}{\end{itemize}}
+
+\newcommand{\rr}{{\rho}}
+\newcommand{\rrr}{{\rho_r}}
+\newcommand{\Lmprime}{{L'_m}}
+\newcommand{\Lmdblprime}{{L''_m}}
+
+\newcommand{\Lconditional}{ \mbox{$\L$} }
+\newcommand{\Lmconditional}{ \mbox{$\L_m$} }
+\newcommand{\Lmconditionalprime}{ \mbox{$\L'_m$} }
+\newcommand{\Lmconditionaldblprime}{ \mbox{$\L''_m}$ }
+
+\newcommand{\Lconst}{ \mbox{$L_{\star}$} }
+\newcommand{\Lconstprime}{ \mbox{$L'_{\star}$} }
+\newcommand{\Lconstdblprime}{ \mbox{$L''_{\star}$} }
+
+\newcommand{\term}[1]{{\bfseries #1}}
+\newcommand{\pathname}[1]{{\em #1}}
+\newcommand{\class}[1]{{\tt #1}}
+\newcommand{\variable}[1]{{\tt #1}}
+\newcommand{\shptr}[1]{{\tt #1}}
+\newcommand{\method}[1]{{\tt #1}}
+
+%\newenvironment{box}{\begin{centering}\hfill \framebox{\begin{tabular}{p{5.in}}}{\end{tabular}}\hfill\end{centering}}
