@@ -205,6 +205,10 @@ class MarkovChain(LikelihoodCore):
         
     def paramFileHeader(self, paramf):
         paramf.write('[ID: %d]\n' % self.r.getInitSeed())
+        if self.phycas.doing_path_sampling:
+            paramf.write('Gen\tbeta\tLnL\tTL')
+        else:
+            paramf.write('Gen\tLnL\tTL')
         paramf.write(self.model.paramHeader())
         if self.phycas.using_hyperprior:
             if self.phycas.internal_edgelen_dist is self.phycas.external_edgelen_dist:
@@ -526,11 +530,11 @@ class MCMCManager:
         """
         # Gather log-likelihoods, and if path sampling save in path_sample list for later
         lnLikes = []
-        doing_path_sampling = self.phycas.nchains > 1 and not self.phycas.is_standard_heating
+        multichain_path_sampling = self.phycas.nchains > 1 and not self.phycas.is_standard_heating
         for i,c in enumerate(self.chains):
             lnLi = c.chain_manager.getLastLnLike()
             lnLikes.append(lnLi)
-            if doing_path_sampling:
+            if multichain_path_sampling:
                 self.phycas.path_sample[i].append(lnLi)
         
         # Only record samples from the current cold chain
@@ -544,6 +548,8 @@ class MCMCManager:
             
             # new way: cycle, lnL_1, lnL_2, ..., lnL_nchains, TL
             self.phycas.paramf.write('%d\t' % (cycle + 1))
+            if self.phycas.doing_path_sampling:
+                self.phycas.paramf.write('%.5f\t' % (cold_chain.heating_power))
             for lnl in lnLikes:
                 self.phycas.paramf.write('%.3f\t' % lnl)
             self.phycas.paramf.write('%.3f' % cold_chain.tree.edgeLenSum())

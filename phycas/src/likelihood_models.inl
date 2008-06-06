@@ -978,7 +978,11 @@ inline void Model::buildStateList(
 */
 inline std::string JC::paramHeader() const
 	{
+#if POLPY_NEWWAY
+	std::string s = "";
+#else
 	std::string s = std::string("Gen\tLnL\tTL");
+#endif
 	if (is_flex_model)
 		{
 		s += "\tncat";
@@ -1154,7 +1158,11 @@ inline void	HKY::createParameters(
 */
 inline std::string HKY::paramHeader() const
 	{
+#if POLPY_NEWWAY
+	std::string s = std::string("\tkappa\tfreqA\tfreqC\tfreqG\tfreqT");
+#else
 	std::string s = std::string("Gen\tLnL\tTL\tkappa\tfreqA\tfreqC\tfreqG\tfreqT");
+#endif
 	if (is_flex_model)
 		{
 		s += "\tncat";
@@ -1712,7 +1720,11 @@ inline void GTR::setStateFreqParamPrior(ProbDistShPtr d)
 */
 inline std::string GTR::paramHeader() const
 	{
+#if POLPY_NEWWAY
+	std::string s = std::string("\trAC\trAG\trAT\trCG\trCT\trGT\tfreqA\tfreqC\tfreqG\tfreqT");
+#else
 	std::string s = std::string("Gen\tLnL\tTL\trAC\trAG\trAT\trCG\trCT\trGT\tfreqA\tfreqC\tfreqG\tfreqT");
+#endif
 	if (is_flex_model)
 		{
 		s += "\tncat";

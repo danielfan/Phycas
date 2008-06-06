@@ -6,7 +6,7 @@ build_number_from_svn_info = False
 
 # the following setting is only used if build_number_from_svn_info is False, or
 # regular expression search of svn output fails to find pattern 'Revision: (\d+)'
-svn_revision = 588
+svn_revision = 620
 
 phycas_major = '0'
 phycas_minor = '11'

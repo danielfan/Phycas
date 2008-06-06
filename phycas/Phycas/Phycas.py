@@ -82,7 +82,6 @@ class Phycas(object):
         # Variables associated with the source of starting tree
         self.starting_tree_source   = 'random'  # Source of the starting tree topology: can be either 'random' or 'usertree'. Note that this setting does not determine the edge lengths in the starting tree, only the topology. Starting edge lengths are determined by the probability distribution specified in starting_edgelen_dist
         self.tree_topology          = None      # Unused unless starting_tree_source is 'usertree', in which case this should be a standard newick string representation of the tree topology; e.g. '(A:0.01,B:0.071,(C:0.013,D:0.021):0.037)'
-        self.tree_file_name         = ''        # Will hold tree file name
 
         # Variables associated with Larget-Simon moves
         self.ls_move_lambda         = 0.2       # The value of the tuning parameter for the Larget-Simon move
@@ -196,11 +195,13 @@ class Phycas(object):
         
         # Variables associated with path sampling (i.e. thermodynamic integration)
         # If pathsampling() function called, ncycles will be ignored and instead the number of cycles
-        # will be ps_burnin + (ps_Q*ps_nbetaincr)
+        # will be ps_burnin + (ps_Q*ps_nbetavals)
         self.ps_toward_posterior    = True      # If True, chain will start with beta = 0.0 (exploring prior) and end up exploring posterior; otherwise, chain will begin by exploring posterior and end exploring prior
         self.ps_burnin              = 1000      # Number of cycles used to equilibrate before increasing beta
         self.ps_Q                   = 100       # Number of cycles between changes in beta
-        self.ps_nbetaincr           = 10        # The number of values beta will take on during the run; for example, if this value is 4, then beta will take on these values: 0, 1/3, 2/3, 1
+        self.ps_nbetavals           = 10        # The number of values beta will take on during the run; for example, if this value is 4, then beta will take on these values: 0, 1/3, 2/3, 1
+        self.ps_minbeta             = 0.0       # The first beta value that will be sampled if ps_toward_posterior = True
+        self.ps_maxbeta             = 1.0       # The last beta value that will be sampled if ps_toward_posterior = True
         self.ps_filename            = None      # If defined, a file by this name will be created containing the intermediate results (average log-likelihood at each step of the path)
 
         # Variables associated with Gelfand-Ghosh calculation
@@ -252,19 +253,26 @@ class Phycas(object):
         self.reader                 = NexusReader()
         self.logf                   = None
         self._logFileName           = None
-        #self.use_tree_viewer        = False    # Popup graphical TreeViewer to show trees during run POLPY_NEWWAY
         self.addition_sequence      = []        # List of taxon numbers for addition sequence
         self.samc_theta             = []        # Normalizing factors (will have length ntax - 3 because levels with 1, 2 or 3 taxa are not examined)
         self.samc_distance_matrix   = None      # Holds ntax x ntax hamming distance matrix used by SamcMove
-        self.path_sample            = None
         self.stored_treenames       = None
         self.stored_newicks         = None
         self.ps_delta_beta          = 0.0
         self.doing_path_sampling    = False
+        self.path_sample            = None
         self.psf                    = None
         self.pdf_splits_to_plot     = None
+        self.param_file_name        = None  
+        self.tree_file_name         = None
+        self.nsamples               = None
+        self.ps_beta                = 1.0
+        self.wangang_sampled_betas  = None
+        self.wangang_sampled_likes  = None
 
-        self.dict_keys              = copy.copy(self.__dict__.keys())        
+        # make a copy of the vector of keys from __dict__ so that we can detect (in check_settings)
+        # whether the user has accidentally introduced a new variable (by misspelling, for example)
+        self.dict_keys = copy.copy(self.__dict__.keys())        
         
     # see http://mail.python.org/pipermail/python-list/2002-January/121376.html
     def source_line():
@@ -275,6 +283,17 @@ class Phycas(object):
             for k in self.__dict__.keys():
                 if k not in self.dict_keys and not k == 'dict_keys':
                     print 'Error:',k,'is not a valid Phycas setting'
+
+                    f = open('dist_keys.txt', 'w')
+                    for kk in self.dict_keys:
+                        f.write('%s\n' % kk)
+                    f.close()
+                    
+                    f = open('__dict__.txt', 'w')
+                    for kk in self.__dict__.keys():
+                        f.write('%s\n' % kk)
+                    f.close()
+
                     sys.exit(0)
         
     def phycassert(self, assumption, msg):
@@ -517,24 +536,23 @@ class Phycas(object):
         last_adaptation = 0
         next_adaptation = self.adapt_first
 
-        #if self.use_tree_viewer:
-        #    self.tree_mutex = threading.Lock()
-        #    self.tree_viewer = TreeViewer.TreeViewer(tree=self.tree, mutex=self.tree_mutex) # POLPY_NEWWAY
-        #    self.tree_viewer.start() # POLPY_NEWWAY
-
         if self.doing_path_sampling:
             self.path_sample = []
             chain = self.mcmc_manager.chains[0]
             ps_Qsum = 0.0
             ps_Qnum = 0
             if self.ps_toward_posterior:
-                ps_beta = 0.0
+                self.ps_beta = self.ps_minbeta
             else:
-                ps_beta = 1.0
-            chain.setPower(ps_beta)
+                self.ps_beta = self.ps_maxbeta
+            chain.setPower(self.ps_beta)
             if self.ps_filename:
                 self.psf = open(self.ps_filename,'w')
                 self.psf.write('beta\tavglnL\n')
+            self.wangang_sampled_betas = [self.ps_beta]
+            self.wangang_sampled_likes = []
+            self.wangang_sampled_likes.append([])
+            beta_index = 0
             
         for cycle in xrange(self.ncycles):
             for i,c in enumerate(self.mcmc_manager.chains):
@@ -545,20 +563,26 @@ class Phycas(object):
                 msg = 'cycle = %d, lnL = %.5f (%.5f secs)' % (cycle + 1, cold_chain_manager.getLastLnLike(), self.stopwatch.elapsedSeconds())
                 self.output(msg)
             if self.doing_path_sampling and cycle + 1 > self.ps_burnin:
-                ps_Qsum += cold_chain_manager.getLastLnLike()
+                sampled_lnL = cold_chain_manager.getLastLnLike()
+                ps_Qsum += sampled_lnL
                 ps_Qnum += 1
+                self.wangang_sampled_likes[beta_index].append(sampled_lnL)
                 if ps_Qnum == self.ps_Q:
                     avg = ps_Qsum/float(self.ps_Q)
                     self.path_sample.append(avg)
                     if self.ps_filename:
-                        self.psf.write('%.3f\t%.5f\n' % (ps_beta,avg))
+                        self.psf.write('%.3f\t%.5f\n' % (self.ps_beta,avg))
+                    if self.ps_toward_posterior:
+                        self.ps_beta += self.ps_delta_beta
+                    else:
+                        self.ps_beta -= self.ps_delta_beta
+                    chain.setPower(self.ps_beta)
                     ps_Qsum = 0.0
                     ps_Qnum = 0
-                    if self.ps_toward_posterior:
-                        ps_beta += self.ps_delta_beta
-                    else:
-                        ps_beta -= self.ps_delta_beta
-                    chain.setPower(ps_beta)
+                    self.wangang_sampled_betas.append(self.ps_beta)
+                    self.wangang_sampled_likes.append([])
+                    beta_index += 1
+
             if (cycle + 1) % self.sample_every == 0:
                 self.mcmc_manager.recordSample(cycle)
                 self.stopwatch.normalize()
@@ -1031,9 +1055,10 @@ class Phycas(object):
         
         """
         self.check_settings()
+        self.phycassert(self.ps_maxbeta > self.ps_minbeta, 'ps_maxbeta must be greater than ps_minbeta')
         self.nchains = 1
-        self.ncycles = self.ps_burnin + (self.ps_Q*self.ps_nbetaincr)
-        self.ps_delta_beta = 1.0/float(self.ps_nbetaincr - 1)
+        self.ncycles = self.ps_burnin + (self.ps_Q*(self.ps_nbetavals))
+        self.ps_delta_beta = (self.ps_maxbeta - self.ps_minbeta)/float(self.ps_nbetavals - 1)
         self.doing_path_sampling = True
         self.setupMCMC()
         self.runMCMC()
