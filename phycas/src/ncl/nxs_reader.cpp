@@ -57,7 +57,11 @@ void NxsReader::RestoreEnabledStatus(const vector<bool> &enableStatus)
 	NxsBlockPtrShared temp = NxsBlockPtrShared();	//If we are get the pointer from a weak pointer, this shared pointer will keep the block around while it is read the block
 	for(ListOfWeakBlockPtrs::iterator currIt = weakBlockPtrs.begin(); esIt != enableStatus.end() && currIt != weakBlockPtrs.end(); ++currIt, ++esIt)
 		{
+#if POLPY_NEWWAY
+		temp =  currIt->lock(); 
+#else
 		temp =  boost::make_shared(*currIt); 
+#endif
 		nxsBlockReader = temp.get();
 		if (*esIt)
 			nxsBlockReader->Enable();
@@ -98,7 +102,11 @@ vector<bool> NxsReader::DisableAllBlocksExcept(const VecString &activeBlockIDs)
 	NxsBlockPtrShared temp = NxsBlockPtrShared();	//If we are get the pointer from a weak pointer, this shared pointer will keep the block around while it is read the block
 	for(ListOfWeakBlockPtrs::iterator currIt = weakBlockPtrs.begin(); currIt != weakBlockPtrs.end(); ++currIt)
 		{
+#if POLPY_NEWWAY
+		temp =  currIt->lock(); 
+#else
 		temp =  boost::make_shared(*currIt); 
+#endif
 		nxsBlockReader = temp.get();
 		retVec.push_back(nxsBlockReader->IsEnabled());
 		DisableBlockIfItCannotReadID(nxsBlockReader, activeBlockIDs);
@@ -114,7 +122,11 @@ void NxsReader::Add(
   NxsBlockWeakPtr newBlock)
 	{
 	NXS_ASSERT(boost::make_shared(newBlock) != NxsBlockPtrShared());
+#if POLPY_NEWWAY
+	newBlock.lock()->SetNexus(this);
+#else
 	boost::make_shared(newBlock)->SetNexus(this);
+#endif
 	weakBlockPtrs.push_back(newBlock);
 	}
 
@@ -133,7 +145,11 @@ void NxsReader::Add(
 bool	EqualsBare(NxsBlockWeakPtr w, NxsBlock *b);
 bool	EqualsBare(NxsBlockWeakPtr w, NxsBlock *b)
 	{
+#if POLPY_NEWWAY
+	return (b == w.lock().get());
+#else
 	return (b == boost::make_shared(w).get());
+#endif
 	}
 /*----------------------------------------------------------------------------------------------------------------------
 | 	Adds newBlock to the list of NxsBlock objects that can be used to read files and calls SetNexus method of newBlock
@@ -142,7 +158,11 @@ bool	EqualsBare(NxsBlockWeakPtr w, NxsBlock *b)
 void NxsReader::Detach(
   NxsBlockWeakPtr newBlock)
 	{
+#if POLPY_NEWWAY
+	NxsBlockPtrShared p = newBlock.lock();
+#else
 	NxsBlockPtrShared p = boost::make_shared(newBlock);
+#endif
 	if (p != NxsBlockPtrShared())
 		Detach(p.get());
 	}
@@ -161,7 +181,11 @@ void NxsReader::Detach(
 	//
 	for (ListOfWeakBlockPtrs::iterator sbIt = weakBlockPtrs.begin(); sbIt != weakBlockPtrs.end(); )
 		{
+#if POLPY_NEWWAY
+		NxsBlockPtrShared p = sbIt->lock();
+#else
 		NxsBlockPtrShared p = boost::make_shared(*sbIt);
+#endif
 		if (p.get() == newBlock)
 			sbIt = weakBlockPtrs.erase(sbIt);
 		else
@@ -177,7 +201,11 @@ void NxsReader::ResetAllBlocks()
 	for (ListOfBlockPtrs::iterator bIt = blockPtrs.begin(); bIt != blockPtrs.end(); ++bIt)
 		(*bIt)->Reset();
 	for (ListOfWeakBlockPtrs::iterator sbIt = weakBlockPtrs.begin(); sbIt != weakBlockPtrs.end(); ++sbIt)
+#if POLPY_NEWWAY
+		sbIt->lock()->Reset();
+#else
 		boost::make_shared(*sbIt)->Reset();
+#endif
 	
 	}
 
@@ -249,7 +277,11 @@ bool NxsReader::Execute(
 						NxsBlockPtrShared p = NxsBlockPtrShared();
 						for(; scurrIt != weakBlockPtrs.end(); ++scurrIt)
 							{
+#if POLPY_NEWWAY
+							p = scurrIt->lock();
+#else
 							p = boost::make_shared(*scurrIt);
+#endif
 							DebugReportBlock(*p);
 							}
 						}
@@ -290,7 +322,11 @@ bool NxsReader::Execute(
 					{
 					for(ListOfWeakBlockPtrs::iterator currIt = weakBlockPtrs.begin(); currIt != weakBlockPtrs.end(); ++currIt)
 						{
+#if POLPY_NEWWAY
+						temp =  currIt->lock(); 
+#else
 						temp =  boost::make_shared(*currIt); 
+#endif
 						nxsBlockReader = temp.get();
 						if(nxsBlockReader != NULL && nxsBlockReader->CanReadBlockType(token.GetTokenReference()))
 							{
