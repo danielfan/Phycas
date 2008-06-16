@@ -2800,6 +2800,7 @@ static unsigned int windowPositions[CACHED_WINDOW_POSITIONS];
         // Start the command        
         [self startProgram:cmd arguments:arg environment:env];
 		
+		NSString *pref = @"source ";
 		NSString *singleQuote = @"\'";
 //		NSString *toInvoke = @"pwd"; //
 		NSString *toInvoke = [[PhycasGUIEnv sharedInstance] guiArgvZero];
