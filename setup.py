@@ -208,30 +208,32 @@ else:
 
 if compilingExt:
     if fakeCompilingExtensions:
+    	phycasRoot = os.path.dirname(sys.argv[0])
+    	builtUnder = "--built-under=" + phycasRoot
         em = [Extension('Conversions._Conversions', ['phycas/src/conversions_pymod.cpp'], 
                     extra_link_args = [
                         #'--colocate-lib=libboost_python.dylib',
-                        '--built-under=/Users/plewis/phycasdev',
+                        builtUnder,
                         '--path-from-package=phycas/Conversions', ]),
             Extension('DataMatrix._DataMatrixBase', ['phycas/src/data_matrix_pymod.cpp'], 
                     extra_link_args = [
-                        '--built-under=/Users/plewis/phycasdev',
+                        builtUnder,
                         '--path-from-package=phycas/DataMatrix', ]),
             Extension('Likelihood._LikelihoodBase', ['phycas/src/likelihood_pymod.cpp'], 
                     extra_link_args = [
-                        '--built-under=/Users/plewis/phycasdev',
+                        builtUnder,
                         '--path-from-package=phycas/Likelihood', ]),
             Extension('Phylogeny._Phylogeny', ['phycas/src/phylogeny_pymod.cpp'], 
                     extra_link_args = [
-                        '--built-under=/Users/plewis/phycasdev',
+                        builtUnder,
                         '--path-from-package=phycas/Phylogeny', ]),
             Extension('ProbDist._ProbDist', ['phycas/src/probdist_pymod.cpp'], 
                     extra_link_args = [
-                        '--built-under=/Users/plewis/phycasdev',
+                        builtUnder,
                         '--path-from-package=phycas/ProbDist', ]),
             Extension('ReadNexus._ReadNexus', ['phycas/src/read_nexus_pymod.cpp'], 
                     extra_link_args = [
-                        '--built-under=/Users/plewis/phycasdev',
+                        builtUnder,
                         '--path-from-package=phycas/ReadNexus', ]),
             ]
     else:

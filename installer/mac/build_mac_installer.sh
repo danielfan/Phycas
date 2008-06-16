@@ -22,6 +22,7 @@ python_version=`python -c "import platform; major,minor,patch = platform.python_
 # Turn tracing on (set -x) or off (set +x). Tracing displays each line 
 # as it executes it, showing any substitutions performed.
 set +x
+#set -x
 
 ##########################################################################
 #########################  Sanity Checks  ################################
@@ -153,6 +154,7 @@ python setup.py build --compiler=fake || exit
 
 # Build the phycas installer package. The --skip-build option tells bdist_mpkg 
 # that we have already compiled the sources. The -k option saves temps.
+#read -p "1"
 "$PYTHON_ROOT/bin/bdist_mpkg" --skip-build -k || exit
 
 # Copy the current README and LICENSE files to the "$PHYCAS_ROOT/phycas/installer/mac" directory
