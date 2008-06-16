@@ -1,4 +1,5 @@
 #!/bin/sh
+set -x
 for i in Development Deployment ; 
 do
 	cp PhycasGUIexecFromGUI.sh ./build/$i/PhycasGUI.app/Contents/MacOS/ 
