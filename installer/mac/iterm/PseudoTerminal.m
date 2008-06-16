@@ -59,6 +59,7 @@
 #import <iTermOutlineView.h>
 #import <iTerm/iTermGrowlDelegate.h>
 #include <unistd.h>
+#import "PhycasGUIEnv.h"
 
 @interface PSMTabBarControl (Private)
 - (void)update;
@@ -2799,7 +2800,14 @@ static unsigned int windowPositions[CACHED_WINDOW_POSITIONS];
         // Start the command        
         [self startProgram:cmd arguments:arg environment:env];
 		
-		[commandField setStringValue:@"ls"];
+		NSString *singleQuote = @"\'";
+//		NSString *toInvoke = @"pwd"; //
+		NSString *toInvoke = [[PhycasGUIEnv sharedInstance] guiArgvZero];
+		NSString *unterminated =  [singleQuote stringByAppendingString:toInvoke];
+		NSString *augmented =  [unterminated stringByAppendingString:@"execFromGUI.sh"];
+		NSString *phycasCmd = [augmented stringByAppendingString:singleQuote];
+		
+		[commandField setStringValue:phycasCmd];
 		[self sendCommand: nil];
 
     }

@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2D1FC2A10E06820E003E5E56 /* PhycasGUIApplication.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D1FC29F0E06820E003E5E56 /* PhycasGUIApplication.h */; };
+		2D1FC2A20E06820E003E5E56 /* PhycasGUIEnv.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D1FC2A00E06820E003E5E56 /* PhycasGUIEnv.h */; };
+		2D1FC3000E068649003E5E56 /* PhycasGUIEnv.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1FC29D0E0681F6003E5E56 /* PhycasGUIEnv.m */; };
 		2D337CFE0E059FD80060071A /* PhycasGUIApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D337CFD0E059FD80060071A /* PhycasGUIApplication.m */; };
 		2D337D200E05A0FD0060071A /* PhycasGUI.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2D76B7FA0E0596F000236368 /* PhycasGUI.plist */; };
 		2D76B7A10E0594F200236368 /* iTermSecurityMgr.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D76B7A00E0594F200236368 /* iTermSecurityMgr.m */; };
@@ -280,6 +283,9 @@
 		20D5CC6404E7AA0500000106 /* iTermApplicationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iTermApplicationDelegate.m; sourceTree = "<group>"; };
 		20E74F4804E9089700000106 /* ITAddressBookMgr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ITAddressBookMgr.h; sourceTree = "<group>"; };
 		20E74F4904E9089700000106 /* ITAddressBookMgr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ITAddressBookMgr.m; sourceTree = "<group>"; };
+		2D1FC29D0E0681F6003E5E56 /* PhycasGUIEnv.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhycasGUIEnv.m; sourceTree = "<group>"; };
+		2D1FC29F0E06820E003E5E56 /* PhycasGUIApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhycasGUIApplication.h; sourceTree = "<group>"; };
+		2D1FC2A00E06820E003E5E56 /* PhycasGUIEnv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhycasGUIEnv.h; sourceTree = "<group>"; };
 		2D337CFD0E059FD80060071A /* PhycasGUIApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhycasGUIApplication.m; sourceTree = "<group>"; };
 		2D76B7A00E0594F200236368 /* iTermSecurityMgr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iTermSecurityMgr.m; sourceTree = "<group>"; };
 		2D76B7A50E05955F00236368 /* iTermSecurityMgr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iTermSecurityMgr.h; sourceTree = "<group>"; };
@@ -544,6 +550,7 @@
 		0464AB0E006CD2EC7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				2D1FC29D0E0681F6003E5E56 /* PhycasGUIEnv.m */,
 				2D76B7B80E0595FC00236368 /* Shells.m */,
 				F67332400AED82E5003D786E /* iTermOutlineView.m */,
 				DD4BAB7C0470C44C00A8A065 /* FindPanelWindowController.m */,
@@ -581,6 +588,8 @@
 		0464AB15006CD2EC7F000001 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				2D1FC29F0E06820E003E5E56 /* PhycasGUIApplication.h */,
+				2D1FC2A00E06820E003E5E56 /* PhycasGUIEnv.h */,
 				872EBC6B04E42E320073D10E /* charmaps.h */,
 				872EBC6804E42E320073D10E /* FindPanelWindowController.h */,
 				872EBC6A04E42E320073D10E /* iTerm.h */,
@@ -870,6 +879,8 @@
 			files = (
 				2D76B7D80E0596F000236368 /* iTermApplicationDelegate.h in Headers */,
 				2D76B7DA0E0596F000236368 /* iTermSecurityMgr.h in Headers */,
+				2D1FC2A10E06820E003E5E56 /* PhycasGUIApplication.h in Headers */,
+				2D1FC2A20E06820E003E5E56 /* PhycasGUIEnv.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1235,6 +1246,7 @@
 				F67332420AED82E5003D786E /* iTermOutlineView.m in Sources */,
 				2D76B7A20E0594F200236368 /* iTermSecurityMgr.m in Sources */,
 				2D76B7BA0E0595FC00236368 /* Shells.m in Sources */,
+				2D1FC3000E068649003E5E56 /* PhycasGUIEnv.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
