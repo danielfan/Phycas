@@ -90,9 +90,9 @@ class PhycasCmdOpts(object):
                 try:
                     self.current[name] = transf(self, value)
                 except:
-                    error_msg("%s is not a valid value for %s"%(value, name))
+                    raise ValueError("%s is not a valid value for %s" % (value, name))
         else:
-            error_msg("%s does not contain an attribute %s" % (self.command.__class__.__name__, name))
+            raise AttributeError("%s does not contain an attribute %s" % (self.command.__class__.__name__, name))
     def _reset_term_width():
         tty_sz = ttysize()
         if tty_sz:
@@ -108,6 +108,11 @@ class PhycasCmdOpts(object):
 
 PhycasCmdOpts._set_terminal_width(80)
 
+def phycas_except_hook(t, v, tb):
+    error_msg(v)
+
+sys.excepthook = phycas_except_hook
+
 class PhycasCommand():
     def __init__(self, phycas, option_defs):
         self.__dict__["options"] = PhycasCmdOpts(self, option_defs)
@@ -121,7 +126,9 @@ class PhycasCommand():
         if name in self.__dict__:
             self.__dict__[name] = value
         else:
-            self.__dict__["options"].set_opt(name.lower(), value)
+            if not self.__dict__["options"].set_opt(name.lower(), value):
+                return False
+        return True
     def help(self, opt=None):
        print self.options
         
@@ -139,17 +146,12 @@ class Sumt(PhycasCommand):
                 )
         PhycasCommand.__init__(self, p, args)
 
-    def __call__(self):
-        self.phycas.sumt_outgroup_taxon     = self.outgroup_taxon
-        self.phycas.sumt_input_tree_file    = self.input_tree_file   
-        self.phycas.sumt_trees_prefix       = self.trees_prefix      
-        self.phycas.sumt_splits_prefix      = self.splits_prefix     
-        self.phycas.sumt_output_replace     = self.output_replace    
-        self.phycas.sumt_burnin             = self.burnin            
-        self.phycas.sumt_equal_brlens       = self.equal_brlens      
-        self.phycas.sumt_tree_credible_prob = self.tree_credible_prob
-        self.phycas.sumt_rooted             = self.rooted            
-        self.phycas.sumt()
+    def __call__(self, **kwargs):
+        for key, value in kwargs.iteritems():
+            setattr(self, key, value)
+        import SumTImpl
+        tree_summarizer = SumTImpl.TreeSummarizer(self)
+        tree_summarizer.consensus()
        
 sumt = Sumt(phycas)
 
