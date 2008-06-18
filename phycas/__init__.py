@@ -40,10 +40,13 @@ import fcntl
 import struct
 import termios
 def ttysize():
-    buf = 'abcdefgh'
-    buf = fcntl.ioctl(0, termios.TIOCGWINSZ, buf)
-    row, col, rpx, cpx = struct.unpack('hhhh', buf)
-    return row, col
+    try:
+        buf = 'abcdefgh'
+        buf = fcntl.ioctl(0, termios.TIOCGWINSZ, buf)
+        row, col, rpx, cpx = struct.unpack('hhhh', buf)
+        return row, col
+    except:
+        return None
 ###############################################################################
 
 
