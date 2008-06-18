@@ -9,7 +9,7 @@ class TreeSummarizer(object):
     Saves consensus tree and QQ plots in pdf files.
     
     """
-    def __init__(self, phycas):
+    def __init__(self, phycas, opts):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Initializes TreeSummarizer object by assigning supplied phycas object
@@ -17,28 +17,29 @@ class TreeSummarizer(object):
         
         """
         self.phycas = phycas
-        self.rooted_trees = phycas.sumt_rooted
-        self.outgroup = phycas.sumt_outgroup_taxon
-        if self.rooted_trees and phycas.sumt_outgroup_taxon:
+        self.opts = opts
+        self.rooted_trees = opts.rooted
+        self.outgroup = opts.outgroup_taxon
+        if self.rooted_trees and opts.outgroup_taxon:
             self.outgroup = None
             self.phycas.warning('Specifying True for sumt_rooted is incompatible with specifying\nsumt_outgroup_taxon; I will pretend that you set sumt_outgroup_taxon to None')
 
     def readTreesFromFile(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Reads all trees from the file named in self.phycas.sumt_input_tree_file.
+        Reads all trees from the file named in self.opts.input_tree_file.
         Stores tree descriptions in self.stored_newicks and taxon labels in
         self.taxon_labels.
         
         """
-        self.phycas.reader.readFile(self.phycas.sumt_input_tree_file)
+        self.phycas.reader.readFile(self.opts.input_tree_file)
         self.taxon_labels = self.phycas.reader.getTaxLabels()
         self.stored_treenames = []
         self.stored_newicks = []
         for t in self.phycas.reader.getTrees():
             self.stored_treenames.append(t.name) # should use hash to store both names and newicks
             self.stored_newicks.append(t.newick)
-        self.phycas.phycassert(len(self.stored_newicks) > 0, 'expecting a trees block defining at least one tree in the file %s' % self.phycas.sumt_input_tree_file)
+        self.phycas.phycassert(len(self.stored_newicks) > 0, 'expecting a trees block defining at least one tree in the file %s' % self.opts.input_tree_file)
 
     def assignEdgeLensAndSupportValues(self, tree, split_map, total_samples):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -69,7 +70,7 @@ class TreeSummarizer(object):
                 self.phycas.abort('could not find edge length information for the split %s' % ss)
             support = float(v[0])/float(total_samples)
             nd.setSupport(support)
-            if self.phycas.sumt_equal_brlens:
+            if self.opts.equal_brlens:
                 edge_len = 1.0
             else:
                 edge_len = float(v[1])/float(v[0])
@@ -89,7 +90,7 @@ class TreeSummarizer(object):
         alt_pdf_file = pdf_file
         if not alt_pdf_file:
             alt_pdf_file = 'sumt.pdf'
-        if self.phycas.sumt_output_replace:
+        if self.opts.output_replace:
             pdf.overwrite = True
         else:
             while os.path.exists(alt_pdf_file):
@@ -101,7 +102,7 @@ class TreeSummarizer(object):
         alt_tree_file = tree_file
         if not alt_tree_file:
             alt_tree_file = 'sumt.tre'
-        if not self.phycas.sumt_output_replace:
+        if not self.opts.output_replace:
             while os.path.exists(alt_tree_file):
                 alt_tree_file = '%s_%d.tre' % (tree_file, random.randint(1,1000000))
             if alt_tree_file != tree_file:
@@ -302,12 +303,12 @@ class TreeSummarizer(object):
         """
         #raw_input('debug stop')
         # Check to make sure user specified an input tree file
-        self.phycas.phycassert(self.phycas.sumt_input_tree_file, 'sumt_input_tree_file must be specified before sumt method is called')
-        self.phycas.phycassert(self.phycas.sumt_trees_prefix, 'sumt_trees_prefix must be specified before sumt method is called')
-        self.phycas.phycassert(self.phycas.sumt_trees_prefix != self.phycas.sumt_splits_prefix, 'sumt_trees_prefix must differ from sumt_splits_prefix')
+        self.phycas.phycassert(self.opts.input_tree_file, 'sumt_input_tree_file must be specified before sumt method is called')
+        self.phycas.phycassert(self.opts.trees_prefix, 'sumt_trees_prefix must be specified before sumt method is called')
+        self.phycas.phycassert(self.opts.trees_prefix != self.opts.splits_prefix, 'sumt_trees_prefix must differ from sumt_splits_prefix')
             
-        treefname = '%s.tre' % self.phycas.sumt_trees_prefix
-        pdffname = '%s.pdf' % self.phycas.sumt_trees_prefix
+        treefname = '%s.tre' % self.opts.trees_prefix
+        pdffname = '%s.pdf' % self.opts.trees_prefix
 
         num_trees = 0
         num_trees_considered = 0
@@ -315,7 +316,7 @@ class TreeSummarizer(object):
         tree_map = {}
 
         # Open sumt_tfile_name and read trees therein
-        self.phycas.output('\nReading trees from file %s...' % self.phycas.sumt_input_tree_file)
+        self.phycas.output('\nReading trees from file %s...' % self.opts.input_tree_file)
         self.readTreesFromFile()
 
         # Build each tree and add the splits and tree topolgies found there to the
@@ -329,11 +330,11 @@ class TreeSummarizer(object):
         # values used for display purposes
         split_field_width = 0
         num_stored_trees = len(self.stored_newicks)
-        self.phycas.phycassert(num_stored_trees > 0, 'Specified tree file (%s) contained no stored trees' % self.phycas.sumt_input_tree_file)
+        self.phycas.phycassert(num_stored_trees > 0, 'Specified tree file (%s) contained no stored trees' % self.opts.input_tree_file)
         sojourn_field_width = 2 + math.floor(math.log10(float(num_stored_trees)))
         
         for newick in self.stored_newicks:
-            if num_trees < self.phycas.sumt_burnin:
+            if num_trees < self.opts.burnin:
                 num_trees += 1
                 continue
             num_trees += 1
@@ -434,7 +435,7 @@ class TreeSummarizer(object):
 
         self.phycas.output('\nSummary of sampled trees:')
         self.phycas.output('-------------------------')
-        self.phycas.output('Tree file = %s' % self.phycas.sumt_input_tree_file)
+        self.phycas.output('Tree file = %s' % self.opts.input_tree_file)
         self.phycas.output('Total number of trees in file = %d' % num_trees)
         self.phycas.output('Number of trees considered = %d' % num_trees_considered)
         self.phycas.output('Number of distinct tree topologies found = %d' % len(tree_map.keys()))
@@ -533,7 +534,7 @@ class TreeSummarizer(object):
         done = False
         tree_vect = tree_map.items()
         tree_vect.sort(cmp = lambda x,y: cmp(y[1][0], x[1][0]))
-        if self.phycas.sumt_tree_credible_prob > 0.0:
+        if self.opts.tree_credible_prob > 0.0:
             for i,(k,v) in enumerate(tree_vect):
                 if done:
                     break
@@ -541,7 +542,7 @@ class TreeSummarizer(object):
                 # Determine the posterior probability and cumulative posterior probability
                 post_prob = float(v[0])/float(num_trees_considered)
                 cum_prob += post_prob
-                if cum_prob > self.phycas.sumt_tree_credible_prob:
+                if cum_prob > self.opts.tree_credible_prob:
                     # stop after the current tree
                     done = True
 
@@ -584,8 +585,8 @@ class TreeSummarizer(object):
         self.phycas.output('\nSaving distinct tree topologies...')
         self.save_trees(treefname, pdffname, summary_short_name_list, summary_full_name_list, summary_tree_list)
 
-        if self.phycas.sumt_splits_prefix:
-            fn = '%s.pdf' % self.phycas.sumt_splits_prefix
+        if self.opts.splits_prefix:
+            fn = '%s.pdf' % self.opts.splits_prefix
             pdf = PDFGenerator(11.0, 8.5)
             pdf.overwrite = True
             
@@ -599,3 +600,5 @@ class TreeSummarizer(object):
                 pdf.saveDocument(fn)
 
         self.phycas.output('\nSumT finished.')
+
+
