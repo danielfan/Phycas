@@ -58,13 +58,20 @@ class PhycasCmdOpts(object):
     
     def __init__(self, command, args):
         self.current = {}
+        self.transformer = {}
         self.help_info = {}
         self.optionsInOrder = args
         self.command = command
         for opt in args:
-            name, default, help_str = opt
+            if len(opt) == 3:
+                name, default, help_str = opt
+                transf = None
+            else:
+                name, default, help_str, transf = opt
             self.help_info[name] =  [default, help_str]
             self.current[name] = default
+            if transf is not None:
+                self.transformer[name] = transf
 
     def __str__(self):
         PhycasCmdOpts._reset_term_width()
@@ -76,7 +83,14 @@ class PhycasCmdOpts(object):
         return "\n".join(opts_help)
     def set_opt(self, name, value):
         if name in self.current:
-            self.current[name] = value
+            transf = self.transformer.get(name)
+            if transf is None:
+                self.current[name] = value
+            else:
+                try:
+                    self.current[name] = transf(self, value)
+                except:
+                    error_msg("%s is not a valid value for %s"%(value, name))
         else:
             error_msg("%s does not contain an attribute %s" % (self.command.__class__.__name__, name))
     def _reset_term_width():
