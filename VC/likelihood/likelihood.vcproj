@@ -302,6 +302,9 @@
 				RelativePath="..\..\phycas\src\underflow_policy.cpp">
 			</File>
 			<File
+				RelativePath="..\..\phycas\src\unimap_nni_move.cpp">
+			</File>
+			<File
 				RelativePath="..\..\phycas\src\univent_manager.cpp">
 			</File>
 			<File
@@ -488,6 +491,12 @@
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\underflow_policy.inl">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\unimap_nni_move.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\unimap_nni_move.inl">
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\univent_manager.hpp">

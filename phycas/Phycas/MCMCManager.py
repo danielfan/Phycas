@@ -404,23 +404,9 @@ class MarkovChain(LikelihoodCore):
                 self.tree_scaler_move.fixParameter()
             self.chain_manager.addMove(self.tree_scaler_move)
 
-        # Create a LargetSimonMove object to handle Metropolis-Hastings
-        # updates to the tree topology and edge lengths
-        self.larget_simon_move = Likelihood.LargetSimonMove()
-        self.larget_simon_move.setName("Larget-Simon move")
-        self.larget_simon_move.setWeight(self.phycas.ls_move_weight)
-        self.larget_simon_move.setTree(self.tree)
-        self.larget_simon_move.setModel(self.model)
-        self.larget_simon_move.setTreeLikelihood(self.likelihood)
-        self.larget_simon_move.setLot(self.r)
-        self.larget_simon_move.setLambda(self.phycas.ls_move_lambda)
-        if self.model.edgeLengthsFixed():
-            self.larget_simon_move.fixParameter()
-        self.chain_manager.addMove(self.larget_simon_move)
-        
-        #POLPY_NEWWAY
-        # If use_unimap specified, add a NeilsenMappingMove (this will later be replaced with a reversible-jump move)
         if self.phycas.use_unimap:
+            # Create a NeilsenMappingMove (this will later be replaced with a reversible-jump move)
+            # and a UnimapNNIMove (replaces LargetSimonMove for unimap analyses)
             self.nielsen_mapping_move = Likelihood.NielsenMappingMove()
             self.nielsen_mapping_move.setName("Nielsen mapping move")
             self.nielsen_mapping_move.setWeight(self.phycas.nielsen_move_weight)
@@ -429,6 +415,29 @@ class MarkovChain(LikelihoodCore):
             self.nielsen_mapping_move.setTreeLikelihood(self.likelihood)
             self.nielsen_mapping_move.setLot(self.r)
             self.chain_manager.addMove(self.nielsen_mapping_move)
+
+            self.unimap_nni_move = Likelihood.UnimapNNIMove()
+            self.unimap_nni_move.setName("Unimap NNI move")
+            self.unimap_nni_move.setWeight(self.phycas.unimap_nni_move_weight)
+            self.unimap_nni_move.setTree(self.tree)
+            self.unimap_nni_move.setModel(self.model)
+            self.unimap_nni_move.setTreeLikelihood(self.likelihood)
+            self.unimap_nni_move.setLot(self.r)
+            self.chain_manager.addMove(self.unimap_nni_move)
+        else:
+            # Create a LargetSimonMove object to handle Metropolis-Hastings
+            # updates to the tree topology and edge lengths
+            self.larget_simon_move = Likelihood.LargetSimonMove()
+            self.larget_simon_move.setName("Larget-Simon move")
+            self.larget_simon_move.setWeight(self.phycas.ls_move_weight)
+            self.larget_simon_move.setTree(self.tree)
+            self.larget_simon_move.setModel(self.model)
+            self.larget_simon_move.setTreeLikelihood(self.likelihood)
+            self.larget_simon_move.setLot(self.r)
+            self.larget_simon_move.setLambda(self.phycas.ls_move_lambda)
+            if self.model.edgeLengthsFixed():
+                self.larget_simon_move.fixParameter()
+            self.chain_manager.addMove(self.larget_simon_move)
 
         # If requested, create an NCatMove object to allow the number of rate categories to change
         if self.phycas.use_flex_model:
