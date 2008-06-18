@@ -228,7 +228,7 @@ double UnimapNNIMove::HarvestLnLikeFromCondLikePar(
   const double * const * childPMatrix)
 	{
 	const LikeFltType * focalNdCLAPtr = focalCondLike->getCLA(); //PELIGROSO
-	PHYCAS_ASSERT(focalNodeCLA);
+	PHYCAS_ASSERT(focalNdCLAPtr);
 	const unsigned num_patterns = likelihood->getNPatterns();
 	const unsigned num_states = likelihood->getNStates();
 		// Get state frequencies from model and alias rate category probability array for speed
@@ -273,6 +273,8 @@ TipData * UnimapNNIMove::allocTipDataFromUnivents(TreeNode * nd , bool use_last)
 	PHYCAS_ASSERT(um);
 	PHYCAS_ASSERT(num_patterns == um->size());
 	int8_t * tipSpecificStateCode = new int8_t[num_patterns];
+	const int8_t num_states = (int8_t) likelihood->getNStates();
+
 	for (unsigned site = 0; site < num_patterns; ++site)
 		{
 		const StateTimeList & state_time_pair_vec =  (*um)[site];
@@ -289,6 +291,7 @@ TipData * UnimapNNIMove::allocTipDataFromUnivents(TreeNode * nd , bool use_last)
 					boost::shared_array<const int8_t>(tipSpecificStateCode),	// stateCodesShPtr
 					1,													// number of relative rate categories
 					likelihood->getNStates(),													// number of states in the model
+					NULL,
 					true,														// managePMatrices
 					likelihood->getCondLikelihoodStorage());
 

@@ -3143,6 +3143,7 @@ TipData * TreeLikelihood::allocateTipData(  //POLBM TreeLikelihood::allocateTipD
 						boost::shared_array<const int8_t>(tipSpecificStateCode),	// stateCodesShPtr
 						num_rates,													// number of relative rate categories
 						num_states,													// number of states in the model
+						NULL,
 						true,														// managePMatrices
 						cla_pool);
 #else
@@ -3150,6 +3151,7 @@ TipData * TreeLikelihood::allocateTipData(  //POLBM TreeLikelihood::allocateTipD
 						boost::shared_array<const int8_t>(tipSpecificStateCode),	// stateCodesShPtr
 						num_rates,													// number of relative rate categories
 						num_states,													// number of states in the model
+						NULL,
 						true,														// managePMatrices
 						cla_pool);
 #endif

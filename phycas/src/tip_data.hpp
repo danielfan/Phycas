@@ -186,11 +186,10 @@ class TipData
 
 											TipData(unsigned nRates, unsigned nStates, CondLikelihoodStorage & cla_storage);
 #if POLPY_NEWWAY
-											TipData(bool using_unimap, unsigned nPatterns, const std::vector<unsigned int> & stateListPosVec, boost::shared_array<const int8_t> stateCodesShPtr, unsigned nRates, unsigned nStates, bool managePMatrices, CondLikelihoodStorage & cla_storage);
+											TipData(bool using_unimap, unsigned nPatterns, const std::vector<unsigned int> & stateListPosVec, boost::shared_array<const int8_t> stateCodesShPtr, unsigned nRates, unsigned nStates, double * * * pMatTranspose, bool managePMatrices, CondLikelihoodStorage & cla_storage);
 #else
-											TipData(const std::vector<unsigned int> & stateListPosVec, boost::shared_array<const int8_t> stateCodesShPtr, unsigned nRates, unsigned nStates, bool managePMatrices, CondLikelihoodStorage & cla_storage);
+											TipData(const std::vector<unsigned int> & stateListPosVec, boost::shared_array<const int8_t> stateCodesShPtr, unsigned nRates, unsigned nStates, double * * * pMatTranspose, bool managePMatrices, CondLikelihoodStorage & cla_storage);
 #endif
-	private:
 		const StateListPos &				getConstStateListPos() const;
 
 		friend void							calcPMatTranspose(const TreeLikelihood & treeLikeInfo, const TipData & tipData, double edgeLength);
