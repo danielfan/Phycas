@@ -90,7 +90,7 @@ class PhycasCmdOpts(object):
                 try:
                     self.current[name] = transf(self, value)
                 except:
-                    raise ValueError("%s is not a valid value for %s" % (value, name))
+                    raise #ValueError("%s is not a valid value for %s" % (value, name))
         else:
             raise AttributeError("%s does not contain an attribute %s" % (self.command.__class__.__name__, name))
     def _reset_term_width():
@@ -113,6 +113,11 @@ def phycas_except_hook(t, v, tb):
 
 sys.excepthook = phycas_except_hook
 
+def BoolArgValidate(opts, v):
+    return bool(v)
+def IntArgValidate(opts, v):
+    return int(v)
+
 class PhycasCommand():
     def __init__(self, phycas, option_defs):
         self.__dict__["options"] = PhycasCmdOpts(self, option_defs)
@@ -126,9 +131,7 @@ class PhycasCommand():
         if name in self.__dict__:
             self.__dict__[name] = value
         else:
-            if not self.__dict__["options"].set_opt(name.lower(), value):
-                return False
-        return True
+            self.__dict__["options"].set_opt(name.lower(), value)
     def help(self, opt=None):
        print self.options
         
@@ -138,11 +141,11 @@ class Sumt(PhycasCommand):
                    ("input_tree_file",     None,           "Set to the name of the input tree file. This setting should not be None at the time the sumt method is called."),
                    ("trees_prefix",        'sumt_trees',   "The output tree file in which all distinct tree topologies are saved along with the majority-rule consensus tree will be named <sumt_trees_prefix>.tre and the corresponding pdf file containing graphical representations of these trees will be named <sumt_trees_prefix>.pdf. This setting cannot be None when the sumt method is called."),
                    ("splits_prefix",       'sumt_splits',  "The pdf file showing plots depicting split posteriors through time and split sojourns will be named <sumt_splits_prefix>.pdf. If None, this analysis will be skipped."),
-                   ("output_replace",      False,          "If True, output files will be replaced automatically if they exist; if False, a random integer will be added to the name so that the name no longer matches an existing file", bool),
-                   ("burnin",              1,              "Number of trees to skip in sumt_input_tree_file", int),
-                   ("equal_brlens",        False,          "If True, trees in pdf file will be drawn with branch lengths equal, making support values easier to see; if set to True, consider setting pdf_scalebar_position = None (scalebar is irrelevant in this case)", bool),
+                   ("output_replace",      False,          "If True, output files will be replaced automatically if they exist; if False, a random integer will be added to the name so that the name no longer matches an existing file", BoolArgValidate),
+                   ("burnin",              1,              "Number of trees to skip in sumt_input_tree_file", IntArgValidate),
+                   ("equal_brlens",        False,          "If True, trees in pdf file will be drawn with branch lengths equal, making support values easier to see; if set to True, consider setting pdf_scalebar_position = None (scalebar is irrelevant in this case)", BoolArgValidate),
                    ("tree_credible_prob",  0.95,           "Include just enough trees in the <sumt_trees_prefix>.tre and <sumt_trees_prefix>.pdf files such that the cumulative posterior probability is greater than this value"),
-                   ("rooted",              False,          "Set to True if trees in sumt_input_tree_file are rooted; otherwise, leave set to default value of False to assume trees are unrooted", bool),
+                   ("rooted",              False,          "Set to True if trees in sumt_input_tree_file are rooted; otherwise, leave set to default value of False to assume trees are unrooted", BoolArgValidate),
                 )
         PhycasCommand.__init__(self, p, args)
 
