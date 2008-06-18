@@ -209,6 +209,20 @@ class TreeLikelihood
 
 		void							setUFNumEdges(unsigned nedges);
 
+		void							calcPMatTranspose(double * * *, const StateListPos &, double);
+		void							calcPMat(double * * *, double); //
+
+		void							calcCLATwoTips(CondLikelihood &, const TipData &, const TipData &);
+		void							calcCLAOneTip(CondLikelihood &, const TipData &, ConstPMatrices, const CondLikelihood &);
+		void							calcCLANoTips(CondLikelihood &, ConstPMatrices, const CondLikelihood &, ConstPMatrices, const CondLikelihood &);
+  
+		void							conditionOnAdditionalTip(CondLikelihood &, const TipData &);
+		void							conditionOnAdditionalInternal(CondLikelihood &, ConstPMatrices , const CondLikelihood &);
+
+		double							harvestLnL(EdgeEndpoints & focalEdge);
+		double							harvestLnLFromValidEdge(ConstEdgeEndpoints & focalEdge);
+
+		CondLikelihoodStorage & getCondLikelihoodStorage();
 	protected:
 
 		//NaiveUnderflowPolicy			underflow_policy;		/**< The object that takes care of underflow correction when computing likelihood for large trees */
@@ -253,19 +267,8 @@ class TreeLikelihood
 
 		void							calcTMatForSim(TipData &, double);
 		void							simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar, bool refresh_probs);
-		void							calcPMatTranspose(double * * *, const StateListPos &, double);
-		void							calcPMat(double * * *, double); //
 		void							calcPMatCommon(double * * *, double);
 
-		void							calcCLATwoTips(CondLikelihood &, const TipData &, const TipData &);
-		void							calcCLAOneTip(CondLikelihood &, const TipData &, ConstPMatrices, const CondLikelihood &);
-		void							calcCLANoTips(CondLikelihood &, ConstPMatrices, const CondLikelihood &, ConstPMatrices, const CondLikelihood &);
-  
-		void							conditionOnAdditionalTip(CondLikelihood &, const TipData &);
-		void							conditionOnAdditionalInternal(CondLikelihood &, ConstPMatrices , const CondLikelihood &);
-
-		double							harvestLnL(EdgeEndpoints & focalEdge);
-		double							harvestLnLFromValidEdge(ConstEdgeEndpoints & focalEdge);
 
     protected:
 

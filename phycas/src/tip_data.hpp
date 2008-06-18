@@ -1,20 +1,20 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-|  Phycas: Python software for phylogenetic analysis                          |
-|  Copyright (C) 2006 Mark T. Holder, Paul O. Lewis and David L. Swofford     |
-|                                                                             |
-|  This program is free software; you can redistribute it and/or modify       |
-|  it under the terms of the GNU General Public License as published by       |
-|  the Free Software Foundation; either version 2 of the License, or          |
-|  (at your option) any later version.                                        |
-|                                                                             |
-|  This program is distributed in the hope that it will be useful,            |
-|  but WITHOUT ANY WARRANTY; without even the implied warranty of             |
-|  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              |
-|  GNU General Public License for more details.                               |
-|                                                                             |
-|  You should have received a copy of the GNU General Public License along    |
-|  with this program; if not, write to the Free Software Foundation, Inc.,    |
-|  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
+|  Phycas: Python software for phylogenetic analysis						  |
+|  Copyright (C) 2006 Mark T. Holder, Paul O. Lewis and David L. Swofford	  |
+|																			  |
+|  This program is free software; you can redistribute it and/or modify		  |
+|  it under the terms of the GNU General Public License as published by		  |
+|  the Free Software Foundation; either version 2 of the License, or		  |
+|  (at your option) any later version.										  |
+|																			  |
+|  This program is distributed in the hope that it will be useful,			  |
+|  but WITHOUT ANY WARRANTY; without even the implied warranty of			  |
+|  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the			  |
+|  GNU General Public License for more details.								  |
+|																			  |
+|  You should have received a copy of the GNU General Public License along	  |
+|  with this program; if not, write to the Free Software Foundation, Inc.,	  |
+|  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.				  |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #if ! defined(TIP_DATA_HPP)
@@ -58,20 +58,20 @@ typedef std::vector<unsigned int> StateListPos;
 |	  dimensions ntax=4 nchar=5;
 |	  format datatype=dna missing=? gap=-;
 |	  matrix
-|	    taxon1 A ? T  G    {CGT}
-|	    taxon2 A C - {ACG}  T 
-|	    taxon3 A C -  N    (AG)
-|	    taxon4 A C T  R     Y
+|		taxon1 A ? T  G	   {CGT}
+|		taxon2 A C - {ACG}	T 
+|		taxon3 A C -  N	   (AG)
+|		taxon4 A C T  R		Y
 |	  ;
 |	end;
 |>
 |	The above NEXUS file would be stored internally (i.e., CipresNative::DiscreteMatrix) in the following form, where 
 |	states or state combinations have been replaced with integers ranging from -1 to 9:
 |>
-|	taxon1  0 4  3 2 6
-|	taxon2  0 1 -1 7 3
-|	taxon3  0 1 -1 5 8
-|	taxon4  0 1  3 8 9
+|	taxon1	0 4	 3 2 6
+|	taxon2	0 1 -1 7 3
+|	taxon3	0 1 -1 5 8
+|	taxon4	0 1	 3 8 9
 |>
 |	The global state list position vector (i.e. `CipresNative::DiscreteMatrix::getStateListPos()') is 
 |	  0 2 4 6 8 14 19 23 27 30
@@ -79,7 +79,7 @@ typedef std::vector<unsigned int> StateListPos;
 |	  1 0 1 1 1 2 1 3 5 -1 0 1 2 3 4 0 1 2 3 3 1 2 3 3 0 2 3 2 0 2 4 1 3
 |	The table below explains this enigmatic global state list. The asterisks in the first column mark the elements of 
 |	the global state list position vector given above. The second column is the global state list, which is also given 
-|	above. The third column contains the codes used for states internally. Finally, the last column relates	these global 
+|	above. The third column contains the codes used for states internally. Finally, the last column relates these global 
 |	state codes to the representation in the original nexus file. Horizontal lines mark the boundaries between states. 
 |	The first state list element in each section holds the number of subsequent state list elements that need to be read
 |	in order to fully characterize the state or state combination. The unambiguous states come first, followed by the 
@@ -88,52 +88,52 @@ typedef std::vector<unsigned int> StateListPos;
 |	code is 5, corresponding to 'N' in the nexus file, which means "A, C, G or T"). The gap (or inapplicable) state is 
 |	always represented by -1 and has no separate entry in the global state list.
 |>
-|             global   global     representation
-|	          state    state      in nexus file
-|	index     list     code  -->  ambig.nex
+|			  global   global	  representation
+|			  state	   state	  in nexus file
+|	index	  list	   code	 -->  ambig.nex
 |	---------------------------------------------
-|	  0*        1       0    -->  A
-|	  1         0
+|	  0*		1		0	 -->  A
+|	  1			0
 |	---------------------------------------------
-|	  2*        1       1    -->  C
-|	  3         1
+|	  2*		1		1	 -->  C
+|	  3			1
 |	---------------------------------------------
-|	  4*        1       2    -->  G
-|	  5         2
+|	  4*		1		2	 -->  G
+|	  5			2
 |	---------------------------------------------
-|	  6*        1       3    -->  T
-|	  7         3
+|	  6*		1		3	 -->  T
+|	  7			3
 |	---------------------------------------------
-|	  8*        5       4    -->  ?
-|	  9        -1                 
-|	 10         0       Note that ? allows gaps
-|	 11         1       in addition to A, C, G or
-|	 12         2       T, so it is even more
-|	 13         3       ambiguous than N
+|	  8*		5		4	 -->  ?
+|	  9		   -1				  
+|	 10			0		Note that ? allows gaps
+|	 11			1		in addition to A, C, G or
+|	 12			2		T, so it is even more
+|	 13			3		ambiguous than N
 |	---------------------------------------------
-|	 14*        4       5    -->  N
-|	 15         0
-|	 16         1
-|	 17         2
-|	 18         3
+|	 14*		4		5	 -->  N
+|	 15			0
+|	 16			1
+|	 17			2
+|	 18			3
 |	---------------------------------------------
-|	 19*        3       6    -->  {CGT}
-|	 20         1
-|	 21         2
-|	 22         3
+|	 19*		3		6	 -->  {CGT}
+|	 20			1
+|	 21			2
+|	 22			3
 |	---------------------------------------------
-|	 23*        3       7    -->  {ACG}
-|	 24         0
-|	 25         2
-|	 26         3
+|	 23*		3		7	 -->  {ACG}
+|	 24			0
+|	 25			2
+|	 26			3
 |	---------------------------------------------
-|	 27*        2       8    -->  R, {AG}
-|	 28         0
-|	 29         2
+|	 27*		2		8	 -->  R, {AG}
+|	 28			0
+|	 29			2
 |	---------------------------------------------
-|	 30*        4       9    -->  Y
-|	 31         1
-|	 32         3
+|	 30*		4		9	 -->  Y
+|	 31			1
+|	 32			3
 |	---------------------------------------------
 |>	
 |	For large datasets with many different ambiguity combinations, the global state list could grow quite large. Each 
@@ -143,11 +143,11 @@ typedef std::vector<unsigned int> StateListPos;
 |	a translation is done into local state codes. The local codes are identical to the global codes for the primary states
 |	and the state representing complete ambiguity, but may differ from the global codes for codes representing partial
 |	ambiguities. To illustrate, consider taxon4 in the example. It has these states in the NEXUS data file:
-|	  A  C  T  R  Y
+|	  A	 C	T  R  Y
 |	which translate to these global state codes:
-|	  0  1  3  8  9
+|	  0	 1	3  8  9
 |	When copied to a tip node in a tree, however, these codes become translated to
-|	  0  1  3  5  6
+|	  0	 1	3  5  6
 |	Global codes 8 and 9 have become 5 and 6, respectively.
 |	
 |	Note that the constructor is private and thus TipData objects can only be created by the friend function
@@ -177,19 +177,20 @@ class TipData
 		bool								parentalCLACached() const;
 
 #if POLPY_NEWWAY
-        unsigned                            getNumUnivents(unsigned site) const;
-        std::vector<unsigned>               getUniventStates(unsigned site) const;
-        std::vector<double>                 getUniventTimes(unsigned site) const;
+		unsigned							getNumUnivents(unsigned site) const;
+		std::vector<unsigned>				getUniventStates(unsigned site) const;
+		std::vector<double>					getUniventTimes(unsigned site) const;
+		UniventManager *					getUniventManager();
 #endif
 
-	private:
 
 											TipData(unsigned nRates, unsigned nStates, CondLikelihoodStorage & cla_storage);
 #if POLPY_NEWWAY
-											TipData(bool using_unimap, unsigned nPatterns, const std::vector<unsigned int> & stateListPosVec, boost::shared_array<const int8_t> stateCodesShPtr, unsigned nRates, unsigned nStates, double * * * pMatTranspose, bool managePMatrices, CondLikelihoodStorage & cla_storage);
+											TipData(bool using_unimap, unsigned nPatterns, const std::vector<unsigned int> & stateListPosVec, boost::shared_array<const int8_t> stateCodesShPtr, unsigned nRates, unsigned nStates, bool managePMatrices, CondLikelihoodStorage & cla_storage);
 #else
-											TipData(const std::vector<unsigned int> & stateListPosVec, boost::shared_array<const int8_t> stateCodesShPtr, unsigned nRates, unsigned nStates, double * * * pMatTranspose, bool managePMatrices, CondLikelihoodStorage & cla_storage);
+											TipData(const std::vector<unsigned int> & stateListPosVec, boost::shared_array<const int8_t> stateCodesShPtr, unsigned nRates, unsigned nStates, bool managePMatrices, CondLikelihoodStorage & cla_storage);
 #endif
+	private:
 		const StateListPos &				getConstStateListPos() const;
 
 		friend void							calcPMatTranspose(const TreeLikelihood & treeLikeInfo, const TipData & tipData, double edgeLength);
@@ -197,22 +198,22 @@ class TipData
 	private:
 
 #if POLPY_NEWWAY
-        bool                                unimap;             /**< true if tips are to be prepared for uniformized mapping likelihood; false if tips are to be prepared for Felsenstein-style integrated likelihoods */
-        UniventManager                      state_time;         /**< state_time[i][j].first holds the state for univent j at site i, whereas state_time[i][j].second holds the fraction of the edgelen representing the time at which the univent occurred */
-        unsigned                            mdot;               /**< the total number of univents over all sites on the edge owned by this node */
+		bool								unimap;				/**< true if tips are to be prepared for uniformized mapping likelihood; false if tips are to be prepared for Felsenstein-style integrated likelihoods */
+		UniventManager						state_time;			/**< state_time[i][j].first holds the state for univent j at site i, whereas state_time[i][j].second holds the fraction of the edgelen representing the time at which the univent occurred */
+		unsigned							mdot;				/**< the total number of univents over all sites on the edge owned by this node */
 #endif
 											// conditional likelihood of the rest of the tree
 		//bool								parCLAValid;
-		CondLikelihoodShPtr					parWorkingCLA; 	    /**< conditional likelihood array for parent and beyond (valid if it points to something, invalid otherwise) */
-		CondLikelihoodShPtr					parCachedCLA; 	    /**< parental conditional likelihood array is stored here to make reverting MCMC moves cheap */
+		CondLikelihoodShPtr					parWorkingCLA;		/**< conditional likelihood array for parent and beyond (valid if it points to something, invalid otherwise) */
+		CondLikelihoodShPtr					parCachedCLA;		/**< parental conditional likelihood array is stored here to make reverting MCMC moves cheap */
 		
 
 		int8_t								state;				/**< Used in simulation to temporarily store the state for one character */
 		StateListPos						state_list_pos;		/**< Vector of indices into the tip-specific `state_codes' array */
-		boost::shared_array<const int8_t>	state_codes; 		/**< Array of tip-specific state codes */
+		boost::shared_array<const int8_t>	state_codes;		/**< Array of tip-specific state codes */
 		mutable double * * *				pMatrixTranspose;	/**< The (rate category) x (stateCode) x (ancestor state) augmented transposed transition probability matrices (points to `ownedPMatrices' if the constructor parameter `managePMatrices' parameter is true) */
 		ScopedThreeDMatrix<double>			ownedPMatrices;		/**< Vector of transposed transition matrices */
-		CondLikelihoodStorage & 			cla_pool;			/**< Source of CondLikelihood objects if needed */
+		CondLikelihoodStorage &				cla_pool;			/**< Source of CondLikelihood objects if needed */
 	};
 	
 typedef boost::shared_ptr<TipData> TipDataShPtr;
@@ -227,7 +228,7 @@ typedef std::vector<TipDataShPtr> VecTipDataShPtr;
 |	currently point to anything, a CondLikelihood object is first retrieved from `cla_pool', so this function always 
 |	returns a shared pointer that actually points to something.
 */
-inline ConstCondLikelihoodShPtr	TipData::getValidParentalCondLikePtr() const
+inline ConstCondLikelihoodShPtr TipData::getValidParentalCondLikePtr() const
 	{
 	//PHYCAS_ASSERT(parCLAValid);
 	//TipData * t = const_cast<TipData *>(this);

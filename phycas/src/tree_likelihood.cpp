@@ -293,7 +293,7 @@ void TreeLikelihood::recalcSMatrix(
         preorder_iterator nd = t->begin();  // skip the tip root node
         for (++nd; nd != t->end(); ++nd)
             {
-            StateTimeListVect & v = (nd->IsTip() ? nd->GetTipData()->state_time.getVect() : nd->GetInternalData()->state_time.getVect());
+            StateTimeListVect & v = (nd->IsTip() ? nd->GetTipData()->state_time : nd->GetInternalData()->state_time);
 
             // Loop over sites
             for (StateTimeListVect::const_iterator sit = v.begin(); sit != v.end(); ++sit)
@@ -649,7 +649,7 @@ void TreeLikelihood::copyStateTimeListVect(
     {
     PHYCAS_ASSERT(nd->IsTip()       || nd->GetInternalData() != NULL);
     PHYCAS_ASSERT(nd->IsInternal()  || nd->GetTipData()      != NULL);
-    StateTimeListVect & original = (nd->IsInternal() ? nd->GetInternalData()->state_time.getVect() : nd->GetTipData()->state_time.getVect());
+    StateTimeListVect & original = (nd->IsInternal() ? nd->GetInternalData()->state_time : nd->GetTipData()->state_time);
     stcopy.resize(original.size());
     StateTimeListVect::iterator origit, copyit;
     for (origit = original.begin(), copyit = stcopy.begin(); origit != original.end(); ++origit, ++copyit)
@@ -673,7 +673,7 @@ void TreeLikelihood::revertStateTimeListVect(
     {
     PHYCAS_ASSERT(nd->IsTip()       || nd->GetInternalData() != NULL);
     PHYCAS_ASSERT(nd->IsInternal()  || nd->GetTipData()      != NULL);
-    StateTimeListVect & recipient = (nd->IsInternal() ? nd->GetInternalData()->state_time.getVect() : nd->GetTipData()->state_time.getVect());
+    StateTimeListVect & recipient = (nd->IsInternal() ? nd->GetInternalData()->state_time : nd->GetTipData()->state_time);
     recipient.resize(stcopy.size());
     StateTimeListVect::iterator recipit, copyit;
     for (recipit = stcopy.begin(), copyit = recipient.begin(); recipit != stcopy.end(); ++recipit, ++copyit)
@@ -727,8 +727,8 @@ void TreeLikelihood::slideNode(
             other->SetEdgeLen(ynew);
             if (isUsingUnimap())
                 {
-                StateTimeListVect & slider_vect = (slider->IsInternal() ? slider->GetInternalData()->state_time.getVect() : slider->GetTipData()->state_time.getVect());
-                StateTimeListVect & other_vect  = (other->IsInternal()  ? other->GetInternalData()->state_time.getVect() : other->GetTipData()->state_time.getVect());
+                StateTimeListVect & slider_vect = (slider->IsInternal() ? slider->GetInternalData()->state_time : slider->GetTipData()->state_time);
+                StateTimeListVect & other_vect  = (other->IsInternal()  ? other->GetInternalData()->state_time : other->GetTipData()->state_time);
                 PHYCAS_ASSERT(nsites == slider_vect.size());
                 PHYCAS_ASSERT(nsites == other_vect.size());
 
@@ -824,8 +824,8 @@ void TreeLikelihood::slideNode(
             other->SetEdgeLen(ynew);
             if (isUsingUnimap())
                 {
-                StateTimeListVect & slider_vect = (slider->IsInternal() ? slider->GetInternalData()->state_time.getVect() : slider->GetTipData()->state_time.getVect());
-                StateTimeListVect & other_vect  = (other->IsInternal() ? other->GetInternalData()->state_time.getVect() : other->GetTipData()->state_time.getVect());
+                StateTimeListVect & slider_vect = (slider->IsInternal() ? slider->GetInternalData()->state_time : slider->GetTipData()->state_time);
+                StateTimeListVect & other_vect  = (other->IsInternal() ? other->GetInternalData()->state_time : other->GetTipData()->state_time);
                 PHYCAS_ASSERT(nsites == slider_vect.size());
                 PHYCAS_ASSERT(nsites == other_vect.size());
 
@@ -925,8 +925,8 @@ void TreeLikelihood::slideNode(
             other->SetEdgeLen(ynew);
             if (isUsingUnimap())
                 {
-                StateTimeListVect & slider_vect = (slider->IsInternal() ? slider->GetInternalData()->state_time.getVect() : slider->GetTipData()->state_time.getVect());
-                StateTimeListVect & other_vect  = (other->IsInternal()  ? other->GetInternalData()->state_time.getVect() : other->GetTipData()->state_time.getVect());
+                StateTimeListVect & slider_vect = (slider->IsInternal() ? slider->GetInternalData()->state_time : slider->GetTipData()->state_time);
+                StateTimeListVect & other_vect  = (other->IsInternal()  ? other->GetInternalData()->state_time : other->GetTipData()->state_time);
                 PHYCAS_ASSERT(nsites == slider_vect.size());
                 PHYCAS_ASSERT(nsites == other_vect.size());
 
@@ -1021,8 +1021,8 @@ void TreeLikelihood::slideNode(
             other->SetEdgeLen(ynew);
             if (isUsingUnimap())
                 {
-                StateTimeListVect & slider_vect = (slider->IsInternal() ? slider->GetInternalData()->state_time.getVect() : slider->GetTipData()->state_time.getVect());
-                StateTimeListVect & other_vect  = (other->IsInternal() ? other->GetInternalData()->state_time.getVect() : other->GetTipData()->state_time.getVect());
+                StateTimeListVect & slider_vect = (slider->IsInternal() ? slider->GetInternalData()->state_time : slider->GetTipData()->state_time);
+                StateTimeListVect & other_vect  = (other->IsInternal() ? other->GetInternalData()->state_time : other->GetTipData()->state_time);
                 PHYCAS_ASSERT(nsites == slider_vect.size());
                 PHYCAS_ASSERT(nsites == other_vect.size());
 
@@ -1984,6 +1984,11 @@ bool TreeLikelihood::invalidateBothEndsDiscardCache(TreeNode * ref_nd, TreeNode 
 	return false;
 	}
 
+CondLikelihoodStorage & TreeLikelihood::getCondLikelihoodStorage()
+	{
+	return cla_pool;
+	}
+	
 /*----------------------------------------------------------------------------------------------------------------------
 |	Unconditionally invalidate parental (and, if ref_nd is internal, filial) conditional likelihood arrays. Always 
 |	returns false so it can be used in conjunction with effective_postorder_edge_iterator to invalidate every CLA in
@@ -3031,44 +3036,6 @@ TipData * TreeLikelihood::allocateTipData(  //POLBM TreeLikelihood::allocateTipD
 	// Loop through all patterns for this row of the matrix. For each global state code encountered,
 	// determine which local state code it represents, and build up the tipSpecificStateCode array
 	// as we go.
-#if 0
-	if (model->isCodonModel())
-		{
-		// Read three nucleotides at a time and interpret the triplet as a codon state
-		//@POL Currently, any ambiguity at any codon position results in a missing data entry for the codon state
-    	unsigned i = 0;
-		for (PatternMapType::const_iterator it = pattern_map.begin(); it != pattern_map.end(); ++it, ++i)
-			{
-			const int8_t globalStateCode = (it->first)[row];
-
-			if (globalStateCode < nsPlusOne)
-				{
-				// no partial ambiguity, but may be gap state
-				tipSpecificStateCode[i] = (globalStateCode < 0 ? ns : globalStateCode);
-				}
-			else
-				{
-				// partial ambiguity
-				foundElement = globalToLocal.find(globalStateCode);
-				if (foundElement == globalToLocal.end())
-					{
-					// state code needs to be added to map
-					globalToLocal[globalStateCode] = nPartialAmbig + nsPlusOne;
-					stateListVec.push_back(state_list_pos[globalStateCode]);
-					tipSpecificStateCode[i] = nPartialAmbig + nsPlusOne;
-					nPartialAmbig++;
-					}
-				else
-					{
-					// state code is already in the map
-					tipSpecificStateCode[i] = foundElement->second;
-					}
-				}
-			}
-		}
-	else
-		{
-#endif
 #if POLPY_NEWWAY
         if (using_unimap)
             {
@@ -3168,49 +3135,6 @@ TipData * TreeLikelihood::allocateTipData(  //POLBM TreeLikelihood::allocateTipD
 				}
 			}
 #endif
-#if 0
-		}
-#endif
-
-#	if 0
-		//POL-debug
-    std::ofstream tmpf("debugAllocateTipData.txt", std::ios::out | std::ios::app);
-		std::map<int8_t, int8_t>::const_iterator mapiter; 
-		unsigned z;
-
-		tmpf << "\n\nInside allocateTipData function:" << std::endl;
-
-		tmpf << "\n  ns: " << (int)ns << std::endl;
-
-		tmpf << "\n  Adding TipData for node number " << row << ": ";
-		//for (z = 0; z < num_patterns; ++z)
-		//	tmpf << ' ' << (int)(myRow[z]);
-		tmpf << std::endl;
-
-		tmpf << "\n  Contents of state_list_pos:" << std::endl;
-        for (std::vector<unsigned int>::const_iterator ziter = state_list_pos.begin(); ziter != state_list_pos.end(); ++ziter)
-			tmpf << "\n    " << (*ziter);
-		tmpf << std::endl;
-
-		tmpf << "\n  nPartialAmbig: " << nPartialAmbig << std::endl;
-
-		tmpf << "\n  Contents of tipSpecificStateCode:" << std::endl;
-		for (z = 0; z < num_patterns; ++z)
-			tmpf << "\n    " << (int)(tipSpecificStateCode[z]);
-		tmpf << std::endl;
-
-		if (globalToLocal.empty())
-			tmpf << "\n  globalToLocal map is empty" << std::endl;
-		else
-			{
-			tmpf << "\n  Contents of globalToLocal map:" << std::endl;
-			for (mapiter = globalToLocal.begin(); mapiter != globalToLocal.end(); ++mapiter)
-				tmpf << "\n    " << (int)(mapiter->first) << " (global) -> " << (int)(mapiter->second) << " (local)";
-			tmpf << std::endl;
-			}
-        tmpf.close();
-#	endif
-
 #if POLPY_NEWWAY
     //assert(num_patterns == tipSpecificStateCode.length());
 	return new TipData(	using_unimap,
@@ -3219,7 +3143,6 @@ TipData * TreeLikelihood::allocateTipData(  //POLBM TreeLikelihood::allocateTipD
 						boost::shared_array<const int8_t>(tipSpecificStateCode),	// stateCodesShPtr
 						num_rates,													// number of relative rate categories
 						num_states,													// number of states in the model
-						NULL,														// pMatTranspose
 						true,														// managePMatrices
 						cla_pool);
 #else
@@ -3227,7 +3150,6 @@ TipData * TreeLikelihood::allocateTipData(  //POLBM TreeLikelihood::allocateTipD
 						boost::shared_array<const int8_t>(tipSpecificStateCode),	// stateCodesShPtr
 						num_rates,													// number of relative rate categories
 						num_states,													// number of states in the model
-						NULL,														// pMatTranspose
 						true,														// managePMatrices
 						cla_pool);
 #endif

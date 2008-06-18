@@ -1,20 +1,20 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-|  Phycas: Python software for phylogenetic analysis                          |
-|  Copyright (C) 2006 Mark T. Holder, Paul O. Lewis and David L. Swofford     |
-|                                                                             |
-|  This program is free software; you can redistribute it and/or modify       |
-|  it under the terms of the GNU General Public License as published by       |
-|  the Free Software Foundation; either version 2 of the License, or          |
-|  (at your option) any later version.                                        |
-|                                                                             |
-|  This program is distributed in the hope that it will be useful,            |
-|  but WITHOUT ANY WARRANTY; without even the implied warranty of             |
-|  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              |
-|  GNU General Public License for more details.                               |
-|                                                                             |
-|  You should have received a copy of the GNU General Public License along    |
-|  with this program; if not, write to the Free Software Foundation, Inc.,    |
-|  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
+|  Phycas: Python software for phylogenetic analysis						  |
+|  Copyright (C) 2006 Mark T. Holder, Paul O. Lewis and David L. Swofford	  |
+|																			  |
+|  This program is free software; you can redistribute it and/or modify		  |
+|  it under the terms of the GNU General Public License as published by		  |
+|  the Free Software Foundation; either version 2 of the License, or		  |
+|  (at your option) any later version.										  |
+|																			  |
+|  This program is distributed in the hope that it will be useful,			  |
+|  but WITHOUT ANY WARRANTY; without even the implied warranty of			  |
+|  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the			  |
+|  GNU General Public License for more details.								  |
+|																			  |
+|  You should have received a copy of the GNU General Public License along	  |
+|  with this program; if not, write to the Free Software Foundation, Inc.,	  |
+|  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.				  |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #if ! defined(INTERNAL_DATA_HPP)
@@ -52,13 +52,13 @@ class CondLikelihoodStorage;
 |	categores and DNA data):
 |>
 |	+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---
-|	|                    pattern 1                  |                    pattern 2                  |                   
+|	|					 pattern 1					|					 pattern 2					|					
 |	+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---
-|	|     rate 1    |     rate 2    |     rate 3    |     rate 1    |     rate 2    |     rate 3    |     rate 1    |   
+|	|	  rate 1	|	  rate 2	|	  rate 3	|	  rate 1	|	  rate 2	|	  rate 3	|	  rate 1	|	
 |	+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---
 |	| A | C | G | T | A | C | G | T | A | C | G | T | A | C | G | T | A | C | G | T | A | C | G | T | A | C | G | T | A 
 |	+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---
-|	                  ^
+|					  ^
 |>
 |	The element above indicated by the symbol ^ would represent the probability of that part of data pattern 1 above 
 |	this node given that the relative rate was rate 2 and this node had state A. The `ownedPMatrices' data member stores
@@ -67,18 +67,18 @@ class CondLikelihoodStorage;
 |	each element in memory is indicated by the numbers inside the cells below. Note that this order is compatible with
 |	the layout of the CLA to minimize cache faults as the CLAs are computed.
 |>
-|	            to state               to state               to state     
-|	        A    C    G    T       A    C    G    T       A    C    G    T
-|	f    +----+----+----+----+  +----+----+----+----+  +----+----+----+----+
-|	r  A |  0 |  1 |  2 |  3 |  | 16 | 17 | 18 | 19 |  | 32 | 33 | 34 | 35 |
-|	o    +----+----+----+----+  +----+----+----+----+  +----+----+----+----+
-|	m  C |  4 |  5 |  6 |  7 |  | 20 | 21 | 22 | 23 |  | 36 | 37 | 38 | 39 |
-|	     +----+----+----+----+  +----+----+----+----+  +----+----+----+----+
-|	s  G |  8 |  9 | 10 | 11 |  | 24 | 25 | 26 | 27 |  | 40 | 41 | 42 | 43 |
-|	t    +----+----+----+----+  +----+----+----+----+  +----+----+----+----+
-|	a  T | 12 | 13 | 14 | 15 |  | 28 | 29 | 30 | 31 |  | 44 | 45 | 46 | 47 |
-|	t    +----+----+----+----+  +----+----+----+----+  +----+----+----+----+
-|	e            rate 1                 rate 2                 rate 3     
+|				to state			   to state				  to state	   
+|			A	 C	  G	   T	   A	C	 G	  T		  A	   C	G	 T
+|	f	 +----+----+----+----+	+----+----+----+----+  +----+----+----+----+
+|	r  A |	0 |	 1 |  2 |  3 |	| 16 | 17 | 18 | 19 |  | 32 | 33 | 34 | 35 |
+|	o	 +----+----+----+----+	+----+----+----+----+  +----+----+----+----+
+|	m  C |	4 |	 5 |  6 |  7 |	| 20 | 21 | 22 | 23 |  | 36 | 37 | 38 | 39 |
+|		 +----+----+----+----+	+----+----+----+----+  +----+----+----+----+
+|	s  G |	8 |	 9 | 10 | 11 |	| 24 | 25 | 26 | 27 |  | 40 | 41 | 42 | 43 |
+|	t	 +----+----+----+----+	+----+----+----+----+  +----+----+----+----+
+|	a  T | 12 | 13 | 14 | 15 |	| 28 | 29 | 30 | 31 |  | 44 | 45 | 46 | 47 |
+|	t	 +----+----+----+----+	+----+----+----+----+  +----+----+----+----+
+|	e			 rate 1					rate 2				   rate 3	  
 |>
 */
 class InternalData
@@ -109,10 +109,11 @@ class InternalData
 		bool							parentalCLACached() const;
 
 #if POLPY_NEWWAY
-        unsigned                        getNumUnivents(unsigned site) const;
-        std::vector<unsigned>           getUniventStates(unsigned site) const;
-        std::vector<double>             getUniventTimes(unsigned site) const;
-        void                            swapStateTime(InternalData * other);
+		unsigned						getNumUnivents(unsigned site) const;
+		std::vector<unsigned>			getUniventStates(unsigned site) const;
+		std::vector<double>				getUniventTimes(unsigned site) const;
+		void							swapStateTime(InternalData * other);
+		UniventManager *				getUniventManager();
 #endif
 
 	private:
@@ -123,23 +124,23 @@ class InternalData
 #endif
 
 #if POLPY_NEWWAY
-        bool                            unimap;         /**< true if internal nodes are to be prepared for uniformized mapping likelihood; false if internal nodes are to be prepared for Felsenstein-style integrated likelihoods */
-        UniventManager                  state_time;     /**< state_time[i][j].first holds a state for univent j at site i, whereas state_time[i][j].second holds the fraction of the edgelen representing the time at which the univent occurred */
-        unsigned                        mdot;           /**< the total number of univents over all sites on the edge owned by this node */
-        //@POL mdot should be kept by UniventManager, but right now it is still being managed by InternalData and TipData
+		bool							unimap;			/**< true if internal nodes are to be prepared for uniformized mapping likelihood; false if internal nodes are to be prepared for Felsenstein-style integrated likelihoods */
+		UniventManager					state_time;		/**< state_time[i][j].first holds a state for univent j at site i, whereas state_time[i][j].second holds the fraction of the edgelen representing the time at which the univent occurred */
+		unsigned						mdot;			/**< the total number of univents over all sites on the edge owned by this node */
+		//@POL mdot should be kept by UniventManager, but right now it is still being managed by InternalData and TipData
 #endif
 
 		//CLA's for an edge from a node to its parent are stored in the node's InternalData (or TipData).
 		//bool							parCLAValid;	/**< true if parWorkingCLA is valid */
-		CondLikelihoodShPtr				parWorkingCLA; 	/**< conditional likelihood array for the parent node and beyond (valid if it points to something, invalid otherwise) */
-		CondLikelihoodShPtr				parCachedCLA; 	/**< parental conditional likelihood array is stored here to make reverting MCMC moves cheap */
+		CondLikelihoodShPtr				parWorkingCLA;	/**< conditional likelihood array for the parent node and beyond (valid if it points to something, invalid otherwise) */
+		CondLikelihoodShPtr				parCachedCLA;	/**< parental conditional likelihood array is stored here to make reverting MCMC moves cheap */
 		//bool							childCLAValid;	/**< true if childWorkingCLA is valid. */
 		CondLikelihoodShPtr				childWorkingCLA;/**< conditional likelihood array for this node and above (valid if it points to something, invalid otherwise) */ 
 		CondLikelihoodShPtr				childCachedCLA; /**< filial conditional likelihood array is stored here to make reverting MCMC moves cheap */
 		
 		int8_t							state;			/**< Used in simulation to temporarily store the state for one character */
-		mutable double * * *			pMatrices; 		/**< Either an alias to a pMatrix array or an alias to ownedPMatrices.ptr */
-		ScopedThreeDMatrix<double>		ownedPMatrices; /**< Transition probability matrices for this interior node  */
+		mutable double * * *			pMatrices;		/**< Either an alias to a pMatrix array or an alias to ownedPMatrices.ptr */
+		ScopedThreeDMatrix<double>		ownedPMatrices; /**< Transition probability matrices for this interior node	 */
 		CondLikelihoodStorage &			cla_pool;		/**< CondLikelihood object storage facility */
 	};
 	

@@ -21,7 +21,7 @@
 
 namespace phycas
 {
-
+#if 0
 /*----------------------------------------------------------------------------------------------------------------------
 |	The constructor dymanically allocates the `state_time' data member and sets `map' to 0.
 */
@@ -102,5 +102,5 @@ void UniventManager::swap(
     state_time = other.state_time;
     other.state_time = tmp;
     }
-
+#endif
 }   // namespace phycas

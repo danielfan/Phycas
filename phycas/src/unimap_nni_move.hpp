@@ -30,6 +30,7 @@ namespace phycas
 
 class MCMCChainManager;
 typedef boost::weak_ptr<MCMCChainManager> ChainManagerWkPtr;
+UniventManager * GetUniventManager(TreeNode * nd);
 
 /*----------------------------------------------------------------------------------------------------------------------
 |   
@@ -51,6 +52,25 @@ class UnimapNNIMove : public MCMCUpdater
 		virtual void	proposeNewState();
 		virtual void	revert();
 		virtual void	accept();
+	protected:
+		TreeNode * randomInternalAboveSubroot();
+		TreeNode * swap1;
+		TreeNode * swap2;
+
+		TipData * xTipData;
+		TipData * yTipData;
+		TipData * zTipData;
+		TipData * wTipData;
+
+		bool x_is_left;
+		
+		double prev_ln_prior;	/**< The log prior of the starting state */
+		double prev_ln_like;	/**< The log likelihood of the starting state */
+
+		TipData * allocTipDataFromUnivents(TreeNode * nd , bool use_last);
+		double FourTaxonLnL(TreeNode * nd);
+		double FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nd);
+		double HarvestLnLikeFromCondLikePar(ConstCondLikelihoodShPtr focalCondLike, ConstCondLikelihoodShPtr neighborCondLike, const double * const * childPMatrix);
 	};
 
 } // namespace phycas

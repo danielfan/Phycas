@@ -1,20 +1,20 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-|  Phycas: Python software for phylogenetic analysis                          |
-|  Copyright (C) 2006 Mark T. Holder, Paul O. Lewis and David L. Swofford     |
-|                                                                             |
-|  This program is free software; you can redistribute it and/or modify       |
-|  it under the terms of the GNU General Public License as published by       |
-|  the Free Software Foundation; either version 2 of the License, or          |
-|  (at your option) any later version.                                        |
-|                                                                             |
-|  This program is distributed in the hope that it will be useful,            |
-|  but WITHOUT ANY WARRANTY; without even the implied warranty of             |
-|  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              |
-|  GNU General Public License for more details.                               |
-|                                                                             |
-|  You should have received a copy of the GNU General Public License along    |
-|  with this program; if not, write to the Free Software Foundation, Inc.,    |
-|  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
+|  Phycas: Python software for phylogenetic analysis						  |
+|  Copyright (C) 2006 Mark T. Holder, Paul O. Lewis and David L. Swofford	  |
+|																			  |
+|  This program is free software; you can redistribute it and/or modify		  |
+|  it under the terms of the GNU General Public License as published by		  |
+|  the Free Software Foundation; either version 2 of the License, or		  |
+|  (at your option) any later version.										  |
+|																			  |
+|  This program is distributed in the hope that it will be useful,			  |
+|  but WITHOUT ANY WARRANTY; without even the implied warranty of			  |
+|  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the			  |
+|  GNU General Public License for more details.								  |
+|																			  |
+|  You should have received a copy of the GNU General Public License along	  |
+|  with this program; if not, write to the Free Software Foundation, Inc.,	  |
+|  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.				  |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #ifndef PYPHY_BASIC_TREE_NODE_HPP
@@ -24,6 +24,7 @@
 #include <boost/function.hpp>
 #include "phycas/src/split.hpp"
 
+#include "phycas/src/univent_manager.hpp"
 namespace phycas
 {
 
@@ -63,7 +64,7 @@ class TreeNode
 		bool			IsTip() const;
 		bool			IsObservable() const;
 		bool			IsAnyRoot() const;
-		bool			IsTipRoot() const;  //POL: formerly IsRoot()
+		bool			IsTipRoot() const;	//POL: formerly IsRoot()
 		bool			IsInternalRoot() const;
 		bool			IsInternal() const;
 		bool			NumberNotYetAssigned() const;
@@ -72,7 +73,7 @@ class TreeNode
 
 		// Accessors
 		//
-		float			        GetSupport();
+		float					GetSupport();
 		float					GetX();
 		float					GetY();
 		const std::string &		GetNodeName() const;
@@ -92,8 +93,7 @@ class TreeNode
 		InternalData *			GetInternalData();
 		const TipData *			GetTipData() const;
 		const InternalData *	GetInternalData() const;
-        Split &                 GetSplit();
-
+		Split &					GetSplit();
 		// Modifiers
 		//
 		void			SetObservable();
@@ -105,9 +105,9 @@ class TreeNode
 		void			UnselectNode();
 		void			SetEdgeLen(double x);
 		void			SetNodeName(std::string name);
-		void			SetNodeNum(unsigned num);       //@POL should be SetNodeNumber (to match GetNodeNumber)
+		void			SetNodeNum(unsigned num);		//@POL should be SetNodeNumber (to match GetNodeNumber)
 
-        void            SetTreeShPtr(TreeShPtr t);
+		void			SetTreeShPtr(TreeShPtr t);
 
 		void			ResetTipData();
 		void			SetTipData(TipData * d, TreeNode::TipDataDeleter f);
@@ -141,10 +141,10 @@ class TreeNode
 		TreeNode *			prevPreorder;			/**< points to previous node in preorder sequence */
 		bool				observable;				/**< true if data could be observed for this node */
 
-        TreeShPtr           tree;                   /**> Points to tree of which this node is part */
+		TreeShPtr			tree;					/**> Points to tree of which this node is part */
 
-        float               support;				/**< used to hold support value (bootstrap proportion or Bayesian posterior probability */
-        double				tmp;					/**< temporary non-persistant workspace to be used within individual methods */
+		float				support;				/**< used to hold support value (bootstrap proportion or Bayesian posterior probability */
+		double				tmp;					/**< temporary non-persistant workspace to be used within individual methods */
 		float				x;						/**< x-coordinate for purposes of drawing the tree */
 		float				y;						/**< y-coordinate for purposes of drawing the tree */
 		bool				selected;				/**< can be used anytime a node needs to be selected for some purpose */
@@ -154,8 +154,8 @@ class TreeNode
 		TipData	 *			tipData;				/**< is a pointer to a structure used to store data for tip nodes */
 		TipDataDeleter		tipDataDeleter;			/**< function object used to delete memory allocated for tipData */
 		InternalData *		internalData;			/**< is a pointer to a structure used to store data for internal nodes */
-		InternalDataDeleter	internalDataDeleter;	/**< function object used to delete memory allocated for `internalData' */
-        Split               split;                  /**< is the object that keeps track of the taxon bipartition implied by this node's edge */
+		InternalDataDeleter internalDataDeleter;	/**< function object used to delete memory allocated for `internalData' */
+		Split				split;					/**< is the object that keeps track of the taxon bipartition implied by this node's edge */
 
 	public:
 

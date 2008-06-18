@@ -24,7 +24,9 @@
 
 namespace phycas
 {
-
+#if 1
+	typedef StateTimeListVect UniventManager;
+#else
 class UniventManager
     {
     public:
@@ -43,7 +45,8 @@ class UniventManager
     private:
 
         unsigned            mdot;           /**< the total number of univents over all sites on the edge owned by this node */
-        StateTimeListVect * state_time;     /**< state_time[i][j].first holds a state for univent j at site i, whereas state_time[i][j].second holds the fraction of the edgelen representing the time at which the univent occurred */
+        StateTimeListVect   state_time;     /**< state_time[i][j].first holds a state for univent j at site i, whereas state_time[i][j].second holds the fraction of the edgelen representing the time at which the univent occurred */
     };
+#endif
 }
 #endif

@@ -26,6 +26,13 @@
 namespace phycas
 {
 
+#if POLPY_NEWWAY
+UniventManager * InternalData::getUniventManager()
+	{
+	return &state_time;
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Constructor initializes the conditional likelihood vectors using `nRates' and `nStates', and initializes the 
 |	`pMatrices' data member using `pMat'. The parameter `managePMatrices' determines whether to allocate space for the 

@@ -56,7 +56,7 @@ class Lot
 #else
 		double 					Uniform();
 #endif
-
+		bool					Boolean();
 	private:    	
 
 		unsigned 				last_seed_setting;
@@ -65,6 +65,11 @@ class Lot
 	};
 
 typedef boost::shared_ptr<Lot> LotShPtr;
+
+inline bool Lot::Boolean()
+	{
+	return (Uniform() < 0.5);
+	}
 
 } // namespace phycas
 

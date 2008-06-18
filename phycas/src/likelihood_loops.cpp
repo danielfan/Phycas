@@ -637,7 +637,7 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 
 	// Get pointer to start of array holding pattern counts
 	PHYCAS_ASSERT(pattern_counts.size() == num_patterns);
-	PatternCountType * counts = (PatternCountType *)(&pattern_counts[0]); //PELIGROSO
+	const PatternCountType * const  counts = (const PatternCountType * const)(&pattern_counts[0]); //PELIGROSO
 
 	// Get state frequencies from model and alias rate category probability array for speed
 	const double * stateFreq = &model->getStateFreqs()[0]; //PELIGROSO
