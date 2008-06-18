@@ -36,11 +36,11 @@ import textwrap
 #   Taken from
 #   http://mail.python.org/pipermail/python-list/2006-February/365594.html
 
-import fcntl
-import struct
-import termios
 def ttysize():
     try:
+        import fcntl
+        import struct
+        import termios
         buf = 'abcdefgh'
         buf = fcntl.ioctl(0, termios.TIOCGWINSZ, buf)
         row, col, rpx, cpx = struct.unpack('hhhh', buf)
