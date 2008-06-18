@@ -28,19 +28,58 @@ if not _user_ini_checked:
         execfile(p)
 phycas = Phycas()
 
+
+import textwrap
+
+
+###############################################################################
+#   Taken from
+#   http://mail.python.org/pipermail/python-list/2006-February/365594.html
+
+import fcntl
+import struct
+import termios
+def ttysize():
+    buf = 'abcdefgh'
+    buf = fcntl.ioctl(0, termios.TIOCGWINSZ, buf)
+    row, col, rpx, cpx = struct.unpack('hhhh', buf)
+    return row, col
+###############################################################################
+
+
 class PhycasCmdOpts(object):
+    _help_str_wrapper = textwrap.TextWrapper()
+    _help_fmt_str = "%-19s %-19s %s"
+    
     def __init__(self, command, args):
         self.help_info = {}
-        self.optionsInOrder = []
+        self.optionsInOrder = args
         for opt in args:
             name, default, help_str = opt
-            self.optionsInOrder.append(name)
             command.__dict__[name] = default
             self.help_info[name] =  [default, help_str]
     def __str__(self):
-        return "\n".join(["%20s %20s %s" % (i, self.help_info[i][0], self.help_info[i][1]) for i in self.optionsInOrder])
-            
-        
+        PhycasCmdOpts._reset_term_width()
+        opts_help = []
+        for i in self.optionsInOrder:
+            hs = "\n".join(PhycasCmdOpts._help_str_wrapper.wrap(i[2]))
+            s = PhycasCmdOpts._help_fmt_str % (i[0], i[1], hs[40:])
+            opts_help.append(s)
+        return "\n".join(opts_help)
+
+    def _reset_term_width():
+        tty_sz = ttysize()
+        if tty_sz:
+            PhycasCmdOpts._set_terminal_width(tty_sz[1])
+    _reset_term_width = staticmethod(_reset_term_width)
+    def _set_terminal_width(w):
+        new_width = max(60, w)
+        PhycasCmdOpts._help_str_wrapper.width = new_width
+        PhycasCmdOpts._help_str_wrapper.subsequent_indent = " "*40
+        PhycasCmdOpts._help_str_wrapper.initial_indent = " "*40
+    _set_terminal_width = staticmethod(_set_terminal_width)
+PhycasCmdOpts._set_terminal_width(80)
+
 class Sumt:
     def __init__(self, p):
         args = (   ("outgroup_taxon",      None,           "Set to the taxon name of the tip serving as the outgroup for display rooting purposes (note: at this time outgroup can consist of just one taxon)"),
