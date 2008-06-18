@@ -86,7 +86,11 @@ class TreeManip
 
 		void		SibToChild(TreeNode * u, TreeNode * s, InsertMode m, TreeNode * targetSib = NULL);
 
-	protected:
+#if POLPY_NEWWAY
+        void        rescaleAllEdgeLengths(double scaling_factor);
+#endif
+
+    protected:
 
 		TreeShPtr	tree;	/**< The tree to be manipulated */
 

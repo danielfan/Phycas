@@ -131,7 +131,7 @@ class Tree(TreeBase):
         c -> [1] -> d -> [0] -> a -> b
 
         """
-        TreeBase.buildFromString(self ,newick, zero_based_tips)
+        TreeBase.buildFromString(self, newick, zero_based_tips)
 
     def clear(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

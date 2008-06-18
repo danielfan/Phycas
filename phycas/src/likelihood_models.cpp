@@ -323,6 +323,216 @@ void JC::calcPMat(double * * pMat, double edgeLength) const
 	//	cout << pMat[i][0] << ' '<< pMat[i][1] << ' '<< pMat[i][2] << ' '<< pMat[i][3] << '\n';
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Computes the uniformized transition probability matrix given an edge length. Overrides the pure virtual function 
+|   inherited from the base class Model. For the JC69 model, the uniformized transition probability matrix is:
+|>
+|   1 - 3*beta/lambda      beta/lambda         beta/lambda        beta/lambda
+|     beta/lambda       1 - 3*beta/lambda      beta/lambda        beta/lambda
+|     beta/lambda          beta/lambda      1 - 3*beta/lambda     beta/lambda
+|     beta/lambda          beta/lambda         beta/lambda      1 - 3*beta/lambda
+|>
+|	where lambda is slightly larger than the largest element in the rate matrix (i.e. slightly larger than beta).
+|   See Mateiu, L., and B. Rannala (2006. Systematic Biology 55:259-269) for details.
+|   For efficiency, what is actually computed is the product of lambda and the above matrix, and what is stored are
+|   the logarithms of the elements (because these values are always used on the log scale): i.e.
+|>
+|   log(lambda - 3*beta)      log(beta)             log(beta)             log(beta)
+|       log(beta)         log(lambda - 3*beta)      log(beta)             log(beta)
+|       log(beta)             log(beta)         log(lambda - 3*beta)      log(beta)
+|       log(beta)             log(beta)             log(beta)         log(lambda - 3*beta)
+|>
+|   Because rate and time are confounded, beta is arbitrarily scaled so that time is measured in 
+|   expected number of substitutions (i.e. set beta such that the edge length v = t):
+|>  
+|   v = 3*beta*t
+|   v = 3*(1/3)*t
+|>
+|   Setting beta = 1/3 results in v = t.
+*/
+double JC::calcLMat(double * * lMat) const
+	{
+    // Mateiu and Rannala:   Me:
+    //  B = 4/3              beta = 1/3
+    //  Qii = -1             Qii = -3*beta = -1
+    //  Qij = 1/3            Qij = beta    = 1/3
+    //  Pii = 3/4            Pii = 1 - 3*beta/lambda = 1 - 1/4 = 3/4
+    //  Pij = 1/12           Pij = beta/lambda = 1/12
+    //  lambda = 4
+    double beta = 1.0/3.0;
+	const double lambda = 1.1;
+	const double diag_term = log(lambda - 3.0*beta);
+	const double off_diag_term = log(beta);
+	lMat[0][0] = diag_term;
+	lMat[0][1] = off_diag_term;
+	lMat[0][2] = off_diag_term;
+	lMat[0][3] = off_diag_term;
+	lMat[1][0] = off_diag_term;
+	lMat[1][1] = diag_term;
+	lMat[1][2] = off_diag_term;
+	lMat[1][3] = off_diag_term;
+	lMat[2][0] = off_diag_term;
+	lMat[2][1] = off_diag_term;
+	lMat[2][2] = diag_term;
+	lMat[2][3] = off_diag_term;
+	lMat[3][0] = off_diag_term;
+	lMat[3][1] = off_diag_term;
+	lMat[3][2] = off_diag_term;
+	lMat[3][3] = diag_term;
+    return lambda;
+	}
+#endif
+
+#if POLPY_NEWWAY
+double JC::calcUMat(double * * uMat) const
+	{
+    double beta = 1.0/3.0;
+	const double lambda = 1.1;
+	const double diag_term = 1.0 - 3.0*beta/lambda;
+	const double off_diag_term = beta/lambda;
+	uMat[0][0] = diag_term;
+	uMat[0][1] = off_diag_term;
+	uMat[0][2] = off_diag_term;
+	uMat[0][3] = off_diag_term;
+	uMat[1][0] = off_diag_term;
+	uMat[1][1] = diag_term;
+	uMat[1][2] = off_diag_term;
+	uMat[1][3] = off_diag_term;
+	uMat[2][0] = off_diag_term;
+	uMat[2][1] = off_diag_term;
+	uMat[2][2] = diag_term;
+	uMat[2][3] = off_diag_term;
+	uMat[3][0] = off_diag_term;
+	uMat[3][1] = off_diag_term;
+	uMat[3][2] = off_diag_term;
+	uMat[3][3] = diag_term;
+    return lambda;
+	}
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Computes the uniformized transition probability matrix given an edge length. Overrides the pure virtual function 
+|   inherited from the base class Model. 
+*/
+double HKY::calcLMat(double * * lMat) const
+	{
+	double piA = state_freqs[0];
+	double piC = state_freqs[1];
+	double piG = state_freqs[2];
+	double piT = state_freqs[3];
+	double piR = piA + piG;
+	double piY = piC + piT;
+
+    // set beta such that edgelen = t
+    double beta = 1.0/(2.0*piR*piY + 2.0*kappa*(piA*piG + piC*piT));
+        
+    // set lambda to maximim substitution rate + epsilon
+    double lambda_epsilon = 0.1;
+    double max_rate = beta*(piY + piG*kappa);
+    double next_rate = beta*(piR + piT*kappa);
+    if (next_rate > max_rate)
+        max_rate = next_rate;
+    next_rate = beta*(piY + piA*kappa);
+    if (next_rate > max_rate)
+        max_rate = next_rate;
+    next_rate = beta*(piR + piC*kappa);
+    if (next_rate > max_rate)
+        max_rate = next_rate;
+    double lambda = max_rate + lambda_epsilon;
+
+    lMat[0][0] = log(lambda - beta*(piY + piG*kappa));
+    lMat[0][1] = log(piC*beta);
+    lMat[0][2] = log(piG*kappa*beta);
+    lMat[0][3] = log(piT*beta);
+    lMat[1][0] = log(piA*beta);
+    lMat[1][1] = log(lambda - beta*(piR + piT*kappa));
+    lMat[1][2] = log(piG*beta);
+    lMat[1][3] = log(piT*kappa*beta);
+    lMat[2][0] = log(piA*kappa*beta);
+    lMat[2][1] = log(piC*beta);
+    lMat[2][2] = log(lambda - beta*(piY + piA*kappa));
+    lMat[2][3] = log(piT*beta);
+    lMat[3][0] = log(piA*beta);
+    lMat[3][1] = log(piC*kappa*beta);
+    lMat[3][2] = log(piG*beta);
+    lMat[3][3] = log(lambda - beta*(piR + piC*kappa));
+
+    // here are the values on the normal scale in case they are ever needed
+    //lMat[0][0] = 1.0 - beta*(piY + piG*kappa)/lambda
+    //lMat[0][1] = piC*beta/lambda
+    //lMat[0][2] = piG*kappa*beta/lambda
+    //lMat[0][3] = piT*beta/lambda
+    //lMat[1][0] = piA*beta/lambda
+    //lMat[1][1] = 1.0 - beta*(piR + piT*kappa)/lambda
+    //lMat[1][2] = piG*beta/lambda
+    //lMat[1][3] = piT*kappa*beta/lambda
+    //lMat[2][0] = piA*kappa*beta/lambda
+    //lMat[2][1] = piC*beta/lambda
+    //lMat[2][2] = 1.0 - beta*(piY + piA*kappa)/lambda
+    //lMat[2][3] = piT*beta/lambda
+    //lMat[3][0] = piA*beta/lambda
+    //lMat[3][1] = piC*kappa*beta/lambda
+    //lMat[3][2] = piG*beta/lambda
+    //lMat[3][3] = 1.0 - beta*(piR + piC*kappa)/lambda
+
+    return lambda;
+	}
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Computes the uniformized transition probability matrix given an edge length. Overrides the pure virtual function 
+|   inherited from the base class Model. 
+*/
+double HKY::calcUMat(double * * uMat) const
+	{
+	double piA = state_freqs[0];
+	double piC = state_freqs[1];
+	double piG = state_freqs[2];
+	double piT = state_freqs[3];
+	double piR = piA + piG;
+	double piY = piC + piT;
+
+    // set beta such that edgelen = t
+    double beta = 1.0/(2.0*piR*piY + 2.0*kappa*(piA*piG + piC*piT));
+        
+    // set lambda to maximim substitution rate + epsilon
+    double lambda_epsilon = 0.1;
+    double max_rate = beta*(piY + piG*kappa);
+    double next_rate = beta*(piR + piT*kappa);
+    if (next_rate > max_rate)
+        max_rate = next_rate;
+    next_rate = beta*(piY + piA*kappa);
+    if (next_rate > max_rate)
+        max_rate = next_rate;
+    next_rate = beta*(piR + piC*kappa);
+    if (next_rate > max_rate)
+        max_rate = next_rate;
+    double lambda = max_rate + lambda_epsilon;
+
+    uMat[0][0] = 1.0 - beta*(piY + piG*kappa)/lambda;
+    uMat[0][1] = piC*beta/lambda;
+    uMat[0][2] = piG*kappa*beta/lambda;
+    uMat[0][3] = piT*beta/lambda;
+    uMat[1][0] = piA*beta/lambda;
+    uMat[1][1] = 1.0 - beta*(piR + piT*kappa)/lambda;
+    uMat[1][2] = piG*beta/lambda;
+    uMat[1][3] = piT*kappa*beta/lambda;
+    uMat[2][0] = piA*kappa*beta/lambda;
+    uMat[2][1] = piC*beta/lambda;
+    uMat[2][2] = 1.0 - beta*(piY + piA*kappa)/lambda;
+    uMat[2][3] = piT*beta/lambda;
+    uMat[3][0] = piA*beta/lambda;
+    uMat[3][1] = piC*kappa*beta/lambda;
+    uMat[3][2] = piG*beta/lambda;
+    uMat[3][3] = 1.0 - beta*(piR + piC*kappa)/lambda;
+
+    return lambda;
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the transition probability matrix given an edge length. Overrides the pure virtual function inherited from 
 |	the base class Model.

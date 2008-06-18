@@ -76,11 +76,11 @@ class TreeLikelihoodWrapper : public TreeLikelihood
 		TreeLikelihoodWrapper(PyObject * self, ModelShPtr m) : TreeLikelihood(m), m_self(self) 
 			{
 			}
-		virtual ~TreeLikelihoodWrapper() {} //POL added because GCC claims that there are virtual functions, but where are they?
+		virtual ~TreeLikelihoodWrapper() {} //@POL may need to delete uMat here (see TreeLikelihood::~TreeLikelihood)
 
-		int startTreeViewer(TreeShPtr t, std::string msg) const 
+		int startTreeViewer(TreeShPtr t, std::string msg, unsigned site) const 
 			{ 
-			return call_method<int,TreeShPtr,std::string>(m_self, "startTreeViewer", t, msg); 
+			return call_method<int,TreeShPtr,std::string>(m_self, "startTreeViewer", t, msg, site); 
 			}
 
 	private:
@@ -178,6 +178,11 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("setHaveData", &TreeLikelihood::setHaveData)
 		.def("getNPatterns", &TreeLikelihood::getNPatterns)
 		.def("getLikelihoodRootNodeNum", &TreeLikelihood::getLikelihoodRootNodeNum)
+#if POLPY_NEWWAY
+		.def("useUnimap", &TreeLikelihood::useUnimap)
+		.def("isUsingUnimap", &TreeLikelihood::isUsingUnimap)
+		.def("nielsenMapping", &TreeLikelihood::nielsenMapping)
+#endif
 		.def("setUFNumEdges", &TreeLikelihood::setUFNumEdges)
 		.def("bytesPerCLA", &TreeLikelihood::bytesPerCLA)
 		.def("numCLAsCreated", &TreeLikelihood::numCLAsCreated)
@@ -188,12 +193,22 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 	class_<TipData, boost::noncopyable>("TipData", no_init)
 		.def("parentalCLAValid", &TipData::parentalCLAValid)
 		.def("parentalCLACached", &TipData::parentalCLACached)
+#if POLPY_NEWWAY
+		.def("getNumUnivents", &TipData::getNumUnivents)
+		.def("getUniventStates", &TipData::getUniventStates)
+		.def("getUniventTimes", &TipData::getUniventTimes)
+#endif
 		;
 	class_<InternalData, boost::noncopyable>("InternalData", no_init)
 		.def("filialCLAValid", &InternalData::filialCLAValid)
 		.def("filialCLACached", &InternalData::filialCLACached)
 		.def("parentalCLAValid", &InternalData::parentalCLAValid)
 		.def("parentalCLACached", &InternalData::parentalCLACached)
+#if POLPY_NEWWAY
+		.def("getNumUnivents", &InternalData::getNumUnivents)
+		.def("getUniventStates", &InternalData::getUniventStates)
+		.def("getUniventTimes", &InternalData::getUniventTimes)
+#endif
 		;
 #if 0
 	class_<QMatrix, boost::noncopyable>("QMatrixBase")

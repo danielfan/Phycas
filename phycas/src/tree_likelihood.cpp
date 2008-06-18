@@ -32,6 +32,9 @@
 #include <numeric>
 #include "phycas/src/edge_iterators.hpp"
 
+// formerly in tree_likelihood.inl
+#include "phycas/src/edge_endpoints.hpp"
+
 static int8_t codon_state_codes[] =
 	{
 	0,  // 0 AAA
@@ -102,6 +105,1637 @@ static int8_t codon_state_codes[] =
 
 namespace phycas
 {
+
+// **************************************************************************************
+// ***** Former TreeLikelihood inlines (begin) ******************************************
+// **************************************************************************************
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	TreeLikelihood constructor.
+*/
+TreeLikelihood::TreeLikelihood(
+  ModelShPtr mod)		/**< is the substitution model */
+  :
+  likelihood_root(0),
+  store_site_likes(true),
+  no_data(false),
+  nTaxa(0),
+  num_patterns(0),
+  num_states(mod->getNStates()),
+  num_rates(mod->getNRatesTotal()),
+  model(mod), 
+  rate_means(mod->getNRatesTotal(), 1.0), //POL_BOOKMARK
+  rate_probs(mod->getNRatesTotal(), 1.0), 
+  nevals(0),
+#if POLPY_NEWWAY
+  using_unimap(false),
+  uMat(NULL),
+  sMat(NULL),
+  nunivents(0),
+  maxm(5),
+  uMatVect(5),
+#endif
+  debugging_now(false)
+	{
+	mod->recalcRatesAndProbs(rate_means, rate_probs);
+	underflow_policy.setTriggerSensitivity(50);
+	underflow_policy.setCorrectToValue(10000.0);
+
+    // build up logmfact
+    // m   ->  m!          log(m!)
+    // 0   ->  1   = 1       0.0  = 0.0
+    // 1   ->  1   = 1*1     0.0  = 0.0 + 0.0
+    // 2   ->  2   = 1*2    0.693 = 0.0 + 0.693
+    // 3   ->  6   = 2*3    1.792 = 0.693 + 1.099
+    // 4   -> 24   = 6*4    3.178 = 1.792 + 1.386
+    logmfact.resize(maxm + 1, 0.0);
+    logmfact[0] = 0.0;
+    for (unsigned m = 1; m <= maxm; ++m)
+        {
+        logmfact[m] = logmfact[m-1] + log((double)m);
+        }
+	}
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	TreeLikelihood destructor.
+*/
+TreeLikelihood::~TreeLikelihood()
+    {
+    if (uMat != NULL)
+        DeleteTwoDArray<double>(uMat);
+    if (sMat != NULL)
+        DeleteTwoDArray<unsigned>(sMat);
+    } 
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|   Swaps InternalData data member `state_time' and edge lengths for the supplied nodes `nd1' and `nd2'. Assumes 
+|   `nd1' and `nd2' are both internal nodes.
+*/
+void TreeLikelihood::swapInternalDataAndEdgeLen(
+  TreeNode * nd1,   /**< is the first of two nodes whose InternalData structures and edge lengths are to be swapped */
+  TreeNode * nd2)   /**< is the second of two nodes whose InternalData structures and edge lengths are to be swapped */
+    {
+    PHYCAS_ASSERT(nd1->IsInternal());
+    PHYCAS_ASSERT(nd1->GetInternalData() != NULL);
+    PHYCAS_ASSERT(nd2->IsInternal());
+    PHYCAS_ASSERT(nd2->GetInternalData() != NULL);
+
+    // Swap edge lengths
+    double edgelen = nd1->GetEdgeLen();
+    nd1->SetEdgeLen(nd2->GetEdgeLen());
+    nd2->SetEdgeLen(edgelen);
+
+    if (using_unimap)
+        {
+        // Swap InternalData structures
+        nd1->GetInternalData()->swapStateTime(nd2->GetInternalData());
+        }
+    }
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|   Returns the current value of the data member `using_unimap'.
+*/
+bool TreeLikelihood::isUsingUnimap()
+	{
+    return using_unimap;
+	}
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Specifies whether the TreeLikelihood object will use uniformized mapping likelihoods or the standard Felsenstein-
+|   style integrated likelihood.
+*/
+void TreeLikelihood::useUnimap(
+  bool yes_or_no)	/**< is either true (to assume uniformized mapping) or false (to use the integrated likelihood) */
+	{
+    using_unimap = yes_or_no;
+	}
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|   Returns a string representation of the current value of `sMat' for debugging purposes.
+*/
+std::string TreeLikelihood::debugShowSMatrix()
+    {
+    unsigned i, j, v, total, trace;
+    total = 0;
+    trace = 0;
+    std::vector<unsigned> rowsum(num_states, 0);
+    std::vector<unsigned> colsum(num_states, 0);
+    std::string s = str(boost::format(" %8s") % " ");
+    for (j = 0; j < num_states; ++j)
+        {
+        s += boost::str(boost::format(" %8d") % j);
+        }
+    s += boost::str(boost::format(" %8s\n") % std::string("sum"));
+    for (i = 0; i < num_states; ++i)
+        {
+        s += boost::str(boost::format(" %8d") % i);
+        for (j = 0; j < num_states; ++j)
+            {
+            v = sMat[i][j];
+            s += boost::str(boost::format(" %8d") % v);
+            total += v;
+            rowsum[i] += v;
+            colsum[j] += v;
+            if (i == j)
+                trace += v;
+            }
+        s += boost::str(boost::format(" %8d\n") % rowsum[i]);
+        }
+
+    // print out row of column sums, then total at the end
+    s += boost::str(boost::format(" %8s") % std::string("sum"));
+    for (j = 0; j < num_states; ++j)
+        {
+        s += boost::str(boost::format(" %8d") % colsum[j]);
+        }
+    s += boost::str(boost::format(" %8d\n") % total);
+    s += boost::str(boost::format("trace     = %d\n") % trace);
+    s += boost::str(boost::format("nunivents = %d\n") % nunivents);
+    return s;
+    }
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|   Recalculates the two-dimensional matrix `sMat' of numbers of all 16 possible univent transitions over all sites.
+|   A no-op if using_unimap is false.
+*/
+void TreeLikelihood::recalcSMatrix(
+  TreeShPtr t)  /**< is the tree to use */
+    {
+    if (isUsingUnimap())
+        {
+        // Make sure sMat exists
+        if (sMat == NULL)
+            {
+            sMat = NewTwoDArray<unsigned>(num_states, num_states); 
+            }
+
+        // Zero every element of sMat
+        for (unsigned i = 0; i < num_states; ++i)
+            {
+            for (unsigned j = 0; j < num_states; ++j)
+                {
+                sMat[i][j] = 0;
+                }
+            }
+
+        // Loop over nodes in the tree
+        preorder_iterator nd = t->begin();  // skip the tip root node
+        for (++nd; nd != t->end(); ++nd)
+            {
+            StateTimeListVect & v = (nd->IsTip() ? nd->GetTipData()->state_time.getVect() : nd->GetInternalData()->state_time.getVect());
+
+            // Loop over sites
+            for (StateTimeListVect::const_iterator sit = v.begin(); sit != v.end(); ++sit)
+                {
+                const StateTimeList & stlist = (*sit);
+                int8_t prev_state = stlist.begin()->first;
+
+                // Loop over univents
+                for (StateTimeList::const_iterator it = stlist.begin() + 1; it != stlist.end() - 1; ++it)
+                    {
+                    int8_t new_state = it->first;
+                    ++sMat[prev_state][new_state];
+                    prev_state = new_state;
+                    }
+                }
+            }
+        } // if using unimap
+    }
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|   Recalculates the vector `uMatVect'
+*/
+void TreeLikelihood::recalcUMatVect()
+    {
+#define DEBUG_RECALC_UMATVECT 0
+#if DEBUG_RECALC_UMATVECT
+    std::string tmps;
+    std::string fmt = "%12.5f\t";
+    for (unsigned w = 0; w < uMatVect.size(); ++w)
+        {
+        tmps += str(boost::format("\nm = %d\n") % w);
+        if (uMatVect[w].GetDimension() > 0)
+            uMatVect[w].MatrixToString(tmps, fmt);
+        else
+            tmps += "  Matrix not yet initialized\n";
+        }
+    std::cerr << "\nuMatVect before resizing..." << std::endl;
+    std::cerr << tmps << std::endl;
+#endif
+
+    uMatVect.resize(maxm + 1);
+
+#if DEBUG_RECALC_UMATVECT
+    tmps.clear();
+    for (unsigned w = 0; w < uMatVect.size(); ++w)
+        {
+        tmps += str(boost::format("\nm = %d\n") % w);
+        if (uMatVect[w].GetDimension() > 0)
+            uMatVect[w].MatrixToString(tmps, fmt);
+        else
+            tmps += "  Matrix not yet initialized\n";
+        }
+    std::cerr << "\nuMatVect after resizing..." << std::endl;
+    std::cerr << tmps << std::endl;
+#endif
+
+    for (unsigned m = 0; m <= maxm; ++m)
+        {
+        if (uMatVect[m].GetDimension() == 0)
+            uMatVect[m].CreateMatrix(num_states, 0.0);
+        if (m == 0)
+            uMatVect[m].Identity();
+        else if (m == 1)
+            {
+            // uniformized transition matrix
+            lambda = model->calcUMat(uMatVect[m].GetMatrix());
+            }
+        else
+            {
+            // multiply previous matrix by uniformized transition matrix (in uMatVect[1])
+            for (unsigned i = 0; i < num_states; ++i)
+                {
+                for (unsigned j = 0; j < num_states; ++j)
+                    {
+                    double sum = 0.0;
+                    for (unsigned k = 0; k < num_states; ++k)
+                        {
+                        sum += uMatVect[m-1][i][k]*uMatVect[1][k][j];
+                        }
+                    uMatVect[m][i][j] = sum;
+                    }
+                }
+            }
+        }
+
+#if DEBUG_RECALC_UMATVECT
+    tmps.clear();
+    for (unsigned w = 0; w < uMatVect.size(); ++w)
+        {
+        tmps += str(boost::format("\nm = %d\n") % w);
+        if (uMatVect[w].GetDimension() > 0)
+            uMatVect[w].MatrixToString(tmps, fmt);
+        else
+            tmps += "  Matrix not yet initialized\n";
+        }
+    std::cerr << "\nuMatVect just before exiting recalcUMatVect..." << std::endl;
+    std::cerr << tmps << std::endl;
+#endif
+    }
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|   Chooses a value of m, the number of univents on a particular edge for a particular site. 
+*/
+unsigned TreeLikelihood::sampleM(
+  int8_t start_state,               /**< is the state at the beginning of the edge */
+  int8_t end_state,                 /**< is the state at the end of the edge */
+  double transition_prob,           /**< is the probability of `end_state' given `start_state' (marginalized over all possible numbers of univents) */
+  double edgelen,                   /**< is the length of the edge in expected number of substitutions per site */
+  LotShPtr rng)	                    /**< is the random number generator to use for the mapping */
+    {
+    unsigned m = UINT_MAX;
+    std::vector<double> probm;
+    std::vector<double> cumprm;
+
+    double u = rng->Uniform(FILE_AND_LINE);
+
+    // ok will be set to true if an m value can be sampled. The reason m might not be sampled is
+    // because maxm might be not set high enough, in which case maxm will be doubled and another
+    // attempt to sample m will be made.
+    bool ok = false;
+    while (!ok)
+        {
+        probm.clear();
+
+        // First draw m, the number of univents on this edge
+        double lambda_t       = edgelen*lambda;
+        double log_lambda_t   = log(lambda_t);
+        double log_trans_prob = log(transition_prob);
+        for (unsigned z = 0; z <= maxm; ++z)
+            {
+            double logprm = (double)z*log_lambda_t - lambda_t - logmfact[z] - log_trans_prob;
+            double pij = uMatVect[z][start_state][end_state]; //@POL should uMatVect hold L matrices rather than U matrices?
+            probm.push_back(pij*exp(logprm));
+            }
+        cumprm.resize(probm.size());
+
+        // partial_sum adds successive elements of prob together and stores in cumprm
+        std::partial_sum(probm.begin(), probm.end(), cumprm.begin());
+
+        // lower_bound returns an iterator positioned at the first element in cumprm with a value greater than or equal
+        // to a uniform random deviate. 
+        std::vector<double>::iterator it = std::lower_bound(cumprm.begin(), cumprm.end(), u);
+        if (it != cumprm.end())
+            {
+            ok = true;
+            m = (unsigned)(it - cumprm.begin());
+            //m += (at_least_one ? 1 : 0);
+            //std::cerr << "m = " << m << std::endl;
+            }
+        else
+            {
+            //std::cerr << "start_state     = " << (unsigned)start_state << std::endl;
+            //std::cerr << "end_state       = " << (unsigned)end_state << std::endl;
+            //std::cerr << "edgelen         = " << edgelen << std::endl;
+            //if (start_state == end_state)
+            //    std::cerr << "ad hoc transition prob = " << (0.25 + 0.75*exp(-4.0*edgelen/3.0)) << std::endl;
+            //else
+            //    std::cerr << "ad hoc transition prob = " << (0.25 - 0.25*exp(-4.0*edgelen/3.0)) << std::endl;
+            //std::cerr << "transition_prob = " << transition_prob << std::endl;
+            //std::cerr << "u = " << u << std::endl;
+            //std::cerr << "m, prob, cum" << std::endl;
+            //for (unsigned z = 0; z < maxm; ++z)
+            //    {
+            //    std::cerr << str(boost::format("%6d %12.5f %12.5f") % z % probm[z] % cumprm[z]) << std::endl;
+            //    }
+
+            // The m that was sampled was greater than maxm, indicating that 
+            // maxm is not large enough, so double maxm and try again
+            unsigned prev_maxm = maxm;
+            maxm *= 2;
+
+            // extend logmfact vector
+            logmfact.resize(maxm + 1, 0.0);
+            for (unsigned m = prev_maxm + 1; m <= maxm; ++m)
+                {
+                logmfact[m] = logmfact[m - 1] + log((double)m);
+                }
+            recalcUMatVect();
+
+            std::cerr << "\nIncreasing maxm to " << maxm << std::endl;
+            for (unsigned m = 0; m <= maxm; ++m)
+                {
+                std::cerr << '\t' << m << '\t' << logmfact[m] << std::endl;
+                }
+            }
+        }
+    // Subtract cumprm.begin() from it to yield the sampled value of m
+    PHYCAS_ASSERT(m != UINT_MAX);
+    return m;
+    }
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|   Refreshes the uniformized mapping for one site on one particular edge. 
+*/
+void TreeLikelihood::unimapEdgeOneSite(
+  StateTimeList & state_time_vect,  /**< site-specific vector to hold state-time pairs representing the mapping on this edge */
+  int8_t start_state,               /**< is the state at the beginning of the edge */
+  int8_t end_state,                 /**< is the state at the end of the edge */
+  double transition_prob,           /**< is the probability of `end_state' given `start_state' (marginalized over all possible numbers of univents) */
+  double edgelen,                   /**< is the length of the edge in expected number of substitutions per site */
+  LotShPtr rng)	                    /**< is the random number generator to use for the mapping */
+	{
+#if 1
+    unsigned m = sampleM(start_state, end_state, transition_prob, edgelen, rng);
+
+    state_time_vect.clear();
+
+    // Now sample the m states and times
+    if (m == 0)
+        {
+        PHYCAS_ASSERT(start_state == end_state);
+        state_time_vect.push_back(StateTimePair(start_state, 0.0));
+        }
+    else if (m == 1)
+        {
+        // The state of the single univent is determined in this case because it 
+        // must match the end state
+        double u = rng->Uniform(FILE_AND_LINE);
+        state_time_vect.push_back(StateTimePair(start_state, 0.0));
+        state_time_vect.push_back(StateTimePair(end_state, (float)u));
+        }
+    else
+        {
+        // m is greater than 1
+
+        // Start by drawing m times
+        std::vector<float> times(m, 0.0);
+        unsigned k;
+        for (k = 0; k < m; ++k)
+            times[k] = (float)rng->Uniform(FILE_AND_LINE);
+        std::sort(times.begin(), times.end());
+
+        // Now draw m states until a sample is obtained in which the mth state equals end_state
+        double u;
+        std::vector<int8_t> states(m, (int8_t)0);
+        bool done = false;
+        unsigned ntries = 0;
+        while (!done)
+            {
+            ntries++;
+            int8_t prev_state = start_state;
+            for (k = 0; k < m; ++k)
+                {
+                const double * uMat_row = uMat[prev_state];
+                u = rng->Uniform(FILE_AND_LINE);
+                double cump = 0.0;
+                int8_t new_state;
+                bool found = false;
+                for (unsigned j = 0; j < num_states; ++j)
+                    {
+                    cump += exp(uMat_row[j])/lambda;
+                    if (u < cump)
+                        {
+                        new_state = j;
+                        found = true;
+                        break;
+                        }
+                    }
+                PHYCAS_ASSERT(found);
+                states[k] = new_state;
+                prev_state = new_state;
+                }
+            if (ntries > 1000 || states[m-1] == end_state)
+                done = true;
+            }
+        PHYCAS_ASSERT(ntries <= 1000);
+
+        // Now have both times and states, so add them to state_time_vect
+        state_time_vect.push_back(StateTimePair(start_state, 0.0));
+        for (k = 0; k < m; ++k)
+            state_time_vect.push_back(StateTimePair(states[k], times[k]));
+        }
+#else
+	bool ok = false;
+    unsigned ntries = 0;
+    unsigned max_tries = 1000;
+    while (!ok && ntries < max_tries)
+        {
+        ++ntries;
+        state_time_vect.clear();
+        state_time_vect.push_back(StateTimePair(start_state, 0.0));
+        double cumt = 0.0;
+        bool done = false;
+        while (!done)
+            {
+            // choose next sojourn time
+            double u = rng->Uniform(FILE_AND_LINE);
+            double t = -log(u)/lambda;
+            cumt += t;
+            if (cumt >= edgelen)
+                {
+                // we're done with this attempt, but need to check whether this attempt succeeded
+                done = true;
+                if (state_time_vect.rbegin()->first == end_state)
+                    ok = true;
+                }
+            else
+                {
+                // not yet done, so choose a state for this event
+                int8_t prev_state = state_time_vect.rbegin()->first;
+                const double * uMat_row = uMat[prev_state];
+                u = rng->Uniform(FILE_AND_LINE);
+                double cump = 0.0;
+                int8_t new_state;
+                bool found = false;
+                for (unsigned j = 0; j < num_states; ++j)
+                    {
+                    cump += exp(uMat_row[j])/lambda;
+                    if (u < cump)
+                        {
+                        new_state = j;
+                        found = true;
+                        break;
+                        }
+                    }
+                PHYCAS_ASSERT(found);
+                state_time_vect.push_back(StateTimePair(new_state, (float)(cumt/edgelen)));
+                }
+            }
+        }
+    PHYCAS_ASSERT(ok);
+#endif
+
+    // Now that we have a successful mapping, record the univents in sMat
+    StateTimeList::const_iterator it = state_time_vect.begin();
+    int8_t prev_state = it->first;
+    ++it;   // skip the state at the beginning of the edge
+    for (; it != state_time_vect.end(); ++it)
+        {
+        int8_t new_state = it->first;
+        ++sMat[prev_state][new_state];
+        ++nunivents;
+        prev_state = new_state;
+        }
+    state_time_vect.push_back(StateTimePair(end_state, 1.0));
+    }
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|   Makes a copy of the univent state-time list vector of the supplied `nd', storing it in the supplied container
+|   `stcopy'.
+*/
+void TreeLikelihood::copyStateTimeListVect(
+  TreeNode * nd,                /**< is the node owning the state-time list vector to be copied */
+  StateTimeListVect & stcopy)   /**< is the state-time list vector used to store the copy */  
+    {
+    PHYCAS_ASSERT(nd->IsTip()       || nd->GetInternalData() != NULL);
+    PHYCAS_ASSERT(nd->IsInternal()  || nd->GetTipData()      != NULL);
+    StateTimeListVect & original = (nd->IsInternal() ? nd->GetInternalData()->state_time.getVect() : nd->GetTipData()->state_time.getVect());
+    stcopy.resize(original.size());
+    StateTimeListVect::iterator origit, copyit;
+    for (origit = original.begin(), copyit = stcopy.begin(); origit != original.end(); ++origit, ++copyit)
+        {
+        StateTimeList & o = (*origit);
+        StateTimeList & c = (*copyit);
+        c.resize(o.size());
+        std::copy(o.begin(), o.end(), c.begin());
+        }
+    }
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|   Copies the supplied univent state-time list vector `stcopy' to the TipData or InternalData structure of the 
+|   supplied `nd'.
+*/
+void TreeLikelihood::revertStateTimeListVect(
+  TreeNode * nd,                /**< is the node owning the state-time list vector to be copied to */
+  StateTimeListVect & stcopy)   /**< is the state-time list vector used to copy from */  
+    {
+    PHYCAS_ASSERT(nd->IsTip()       || nd->GetInternalData() != NULL);
+    PHYCAS_ASSERT(nd->IsInternal()  || nd->GetTipData()      != NULL);
+    StateTimeListVect & recipient = (nd->IsInternal() ? nd->GetInternalData()->state_time.getVect() : nd->GetTipData()->state_time.getVect());
+    recipient.resize(stcopy.size());
+    StateTimeListVect::iterator recipit, copyit;
+    for (recipit = stcopy.begin(), copyit = recipient.begin(); recipit != stcopy.end(); ++recipit, ++copyit)
+        {
+        StateTimeList & r = (*recipit);
+        StateTimeList & c = (*copyit);
+        r.resize(c.size());
+        std::copy(c.begin(), c.end(), r.begin());
+        }
+    }
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	The node `slider' is moved along the combined edges of `slider' and `other'. If `fraction' is positive, `slider' 
+|   gains edge length at the expense of `other'. If `fraction' is negative, `other' gains edge length at the expense of
+|   `slider'. This function not only changes edge lengths, but also takes care of transferring any univents that lie 
+|   along the affected path. If `slider' is a sibling of other, then `slider' is somewhat of a misnomer since it does 
+|   not actually slide; instead, the parent of both `slider' and `other' does the sliding.
+*/
+void TreeLikelihood::slideNode(
+  double fraction, 
+  TreeNode * slider, 
+  TreeNode * other)
+    {
+    bool other_is_child = (other->GetParent() == slider);
+    PHYCAS_ASSERT(other_is_child || slider->GetParent() == other->GetParent());
+    unsigned nsites = num_patterns;
+    if (other_is_child)
+        {
+        if (fraction < 0.0)
+            {
+            // Fraction is negative, which means that other gains edge length at its base at the 
+            // expense of slider, which loses edge length at its end
+            //                         |
+            //                         |
+            //  -----------------------*--------------------------------*
+            //               <---------^slider                          ^other
+            //  <----xnew---><------------------ynew-------------------->
+            //  <-----------x----------><--------------y---------------->
+            //               <--delta-->
+            //
+            //PHYCAS_ASSERT(which_case == 2 || which_case == 5 || which_case == 11);
+            double x      = slider->GetEdgeLen();
+            double y      = other->GetEdgeLen();
+            double delta  = -x*fraction;
+            double xnew   = x - delta;
+            double ynew   = y + delta;
+            double cutoff = 1.0 - fraction;
+            slider->SetEdgeLen(xnew);
+            other->SetEdgeLen(ynew);
+            if (isUsingUnimap())
+                {
+                StateTimeListVect & slider_vect = (slider->IsInternal() ? slider->GetInternalData()->state_time.getVect() : slider->GetTipData()->state_time.getVect());
+                StateTimeListVect & other_vect  = (other->IsInternal()  ? other->GetInternalData()->state_time.getVect() : other->GetTipData()->state_time.getVect());
+                PHYCAS_ASSERT(nsites == slider_vect.size());
+                PHYCAS_ASSERT(nsites == other_vect.size());
+
+                // Iterate over sites
+                StateTimeListVect::iterator other_site_it  = other_vect.begin();
+                StateTimeListVect::iterator slider_site_it = slider_vect.begin();
+                for (; slider_site_it != slider_vect.end(); ++slider_site_it, ++other_site_it)
+                    {
+                    // Grab state_time vectors for current site from both slider and other
+                    StateTimeList & other_stlist  = (*other_site_it);
+                    StateTimeList & slider_stlist = (*slider_site_it);
+
+                    // Iterate over slider's state_time vector starting from the end, copying
+                    // elements to the front of other as needed
+                    unsigned nmoved = 0;
+                    StateTimeList::reverse_iterator rit, slider_first, slider_last;
+                    slider_first = slider_stlist.rbegin() + 1;
+                    slider_last  = slider_first;
+                    for (rit = slider_first; rit != slider_stlist.rend() - 1; ++rit)
+                        {
+                        StateTimePair & p = (*rit);
+                        float time = p.second;
+                        if (time > cutoff)
+                            {
+                            other_stlist.insert(other_stlist.begin() + 1, p);
+                            ++nmoved;
+                            ++slider_last;
+                            }
+                        else
+                            break;
+                        }
+
+                    // If any elements were copied to other, erase them now from slider
+                    if (nmoved > 0)
+                        {
+                        // Gymnastics needed because erase does not work with reverse_iterators
+                        StateTimeList::iterator first = (slider_last+1).base();
+                        StateTimeList::iterator last  = (slider_first+1).base();
+                        slider_stlist.erase(++first, ++last);
+                        }
+
+                    // Recalculate the times in slider
+                    StateTimeList::iterator it;
+                    for (it = slider_stlist.begin() + 1; it != slider_stlist.end() - 1; ++it)
+                        {
+                        StateTimePair & p = (*it);
+                        double time = p.second;
+                        double new_time = time*x/xnew;
+                        p.second = (float)new_time;
+                        }
+
+                    // Recalculate the newly-added times at beginning of other
+                    StateTimeList::iterator one_beyond_newly_added = other_stlist.begin() + nmoved + 1;
+                    for (it = other_stlist.begin() + 1; it != one_beyond_newly_added; ++it)
+                        {
+                        StateTimePair & p = (*it);
+                        double time = p.second;
+                        double new_time = (time*x - xnew)/ynew;
+                        p.second = (float)new_time;
+                        }
+
+                    // Recalculate the original times in other
+                    for (it = one_beyond_newly_added; it != other_stlist.end() - 1; ++it)
+                        {
+                        StateTimePair & p = (*it);
+                        double time = p.second;
+                        double new_time = (delta + time*y)/ynew;
+                        p.second = (float)new_time;
+                        }
+                    }   // loop over sites
+                } // if unimap
+            }   // fraction negative
+        else
+            {
+            // Fraction is positive, so slider gains edge length at its end at the expense of other, 
+            // which loses edge length at its base
+            //                         |
+            //                         |
+            //  -----------------------*--------------------------------*
+            //                   slider^-------------->                 ^other
+            //  <------------------xnew---------------><------ynew------>
+            //  <----------x----------><--------------y----------------->
+            //                         <-----delta---->
+            //
+            //PHYCAS_ASSERT(which_case == 1 || which_case == 4 || which_case == 10);
+            double x      = slider->GetEdgeLen();
+            double y      = other->GetEdgeLen();
+            double delta  = y*fraction;
+            double xnew   = x + delta;
+            double ynew   = y - delta;
+            double cutoff = fraction;
+            slider->SetEdgeLen(xnew);
+            other->SetEdgeLen(ynew);
+            if (isUsingUnimap())
+                {
+                StateTimeListVect & slider_vect = (slider->IsInternal() ? slider->GetInternalData()->state_time.getVect() : slider->GetTipData()->state_time.getVect());
+                StateTimeListVect & other_vect  = (other->IsInternal() ? other->GetInternalData()->state_time.getVect() : other->GetTipData()->state_time.getVect());
+                PHYCAS_ASSERT(nsites == slider_vect.size());
+                PHYCAS_ASSERT(nsites == other_vect.size());
+
+                // Iterate over sites
+                StateTimeListVect::iterator other_site_it  = other_vect.begin();
+                StateTimeListVect::iterator slider_site_it = slider_vect.begin();
+                for (; slider_site_it != slider_vect.end(); ++slider_site_it, ++other_site_it)
+                    {
+                    // Grab state_time vectors for current site from both slider and other
+                    StateTimeList & other_stlist  = (*other_site_it);
+                    StateTimeList & slider_stlist = (*slider_site_it);
+
+                    // Iterate over other's state_time vector starting from the beginning, copying
+                    // elements to the end of slider as needed
+                    unsigned nmoved = 0;
+                    StateTimeList::iterator it, other_first, other_last;
+                    other_first = other_stlist.begin() + 1;
+                    other_last = other_first;
+                    for (it = other_first; it != other_stlist.end() - 1; ++it)
+                        {
+                        StateTimePair & p = (*it);
+                        float time = p.second;
+                        if (time < cutoff)
+                            {
+                            slider_stlist.insert(slider_stlist.end() - 1, p);
+                            ++nmoved;
+                            ++other_last;
+                            }
+                        else
+                            break;
+                        }
+
+                    // If any elements were copied to slider, erase them now from other
+                    if (nmoved > 0)
+                        {
+                        other_stlist.erase(other_first, other_last);
+                        }
+
+                    // Recalculate the original times in slider
+                    unsigned offset = (unsigned)slider_stlist.size() - nmoved - 1;
+                    StateTimeList::iterator first_newly_added = slider_stlist.begin() + offset;
+                    for (it = slider_stlist.begin() + 1; it != first_newly_added; ++it)
+                        {
+                        StateTimePair & p = (*it);
+                        double time = p.second;
+                        double new_time = time*x/xnew;
+                        p.second = (float)new_time;
+                        }
+
+                    // Recalculate the new times added to the end of slider
+                    for (it = first_newly_added; it != slider_stlist.end() - 1; ++it)
+                        {
+                        StateTimePair & p = (*it);
+                        double time = p.second;
+                        double new_time = (x + time*y)/xnew;
+                        p.second = (float)new_time;
+                        }
+
+                    // Recalculate the times in other
+                    for (it = other_stlist.begin() + 1; it != other_stlist.end() - 1; ++it)
+                        {
+                        StateTimePair & p = (*it);
+                        double time = p.second;
+                        double new_time = (time*y - delta)/ynew;
+                        p.second = (float)new_time;
+                        }
+                    }   // loop over sites
+                } // if unimap
+            }   // fraction positive
+        }   // other is child
+    else
+        {
+        // other is the sibling, not the child, of slider
+        if (fraction < 0.0)
+            {
+            // Fraction is negative, which means that other gains edge length at its base at the 
+            // expense of slider, which loses edge length at its base
+            //
+            //     +-----------x-----------* slider
+            //  ---+
+            //     +----------------y-------------* other
+            //
+            //              <-----delta---->
+            //
+            //     +--xnew--* slider
+            //  ---+
+            //     +----------------------ynew----------------------* other
+            //               
+            //PHYCAS_ASSERT(which_case == 8);
+            double x      = slider->GetEdgeLen();
+            double y      = other->GetEdgeLen();
+            double delta  = -x*fraction;
+            double xnew   = x - delta;
+            double ynew   = y + delta;
+            double cutoff = fraction;
+            slider->SetEdgeLen(xnew);
+            other->SetEdgeLen(ynew);
+            if (isUsingUnimap())
+                {
+                StateTimeListVect & slider_vect = (slider->IsInternal() ? slider->GetInternalData()->state_time.getVect() : slider->GetTipData()->state_time.getVect());
+                StateTimeListVect & other_vect  = (other->IsInternal()  ? other->GetInternalData()->state_time.getVect() : other->GetTipData()->state_time.getVect());
+                PHYCAS_ASSERT(nsites == slider_vect.size());
+                PHYCAS_ASSERT(nsites == other_vect.size());
+
+                // Iterate over sites
+                StateTimeListVect::iterator other_site_it  = other_vect.begin();
+                StateTimeListVect::iterator slider_site_it = slider_vect.begin();
+                for (; slider_site_it != slider_vect.end(); ++slider_site_it, ++other_site_it)
+                    {
+                    // Grab state_time vectors for current site from both slider and other
+                    StateTimeList & other_stlist  = (*other_site_it);
+                    StateTimeList & slider_stlist = (*slider_site_it);
+
+                    // Iterate over slider's state_time vector starting from the beginning, copying
+                    // elements to the front of other as long as the time is less than cutoff
+                    unsigned nmoved = 0;
+                    StateTimeList::iterator it, slider_first, slider_last;
+                    slider_first = slider_stlist.begin() + 1;
+                    slider_last  = slider_first;
+                    for (it = slider_first; it != slider_stlist.end() - 1; ++it)
+                        {
+                        StateTimePair & p = (*it);
+                        float time = p.second;
+                        if (time < cutoff)
+                            {
+                            other_stlist.insert(other_stlist.begin() + 1, p);
+                            ++nmoved;
+                            ++slider_last;
+                            }
+                        else
+                            break;
+                        }
+
+                    // If any elements were copied to other, erase them now from slider
+                    if (nmoved > 0)
+                        {
+                        slider_stlist.erase(slider_first, slider_last);
+                        }
+
+                    // Recalculate the times in slider
+                    for (it = slider_stlist.begin() + 1; it != slider_stlist.end() - 1; ++it)
+                        {
+                        StateTimePair & p = (*it);
+                        double time = p.second;
+                        double new_time = (time*x - delta)/xnew;
+                        p.second = (float)new_time;
+                        }
+
+                    // Recalculate the newly-added times at base of other
+                    StateTimeList::iterator one_beyond_newly_added = other_stlist.begin() + nmoved + 1;
+                    for (it = other_stlist.begin() + 1; it != one_beyond_newly_added; ++it)
+                        {
+                        StateTimePair & p = (*it);
+                        double time = p.second;
+                        double new_time = (delta - time*x)/ynew;
+                        p.second = (float)new_time;
+                        }
+
+                    // Recalculate the original times in other
+                    for (it = one_beyond_newly_added; it != other_stlist.end() - 1; ++it)
+                        {
+                        StateTimePair & p = (*it);
+                        double time = p.second;
+                        double new_time = (delta + time*y)/ynew;
+                        p.second = (float)new_time;
+                        }
+                    }   // loop over sites
+                } // if unimap
+            }   // fraction negative
+        else
+            {
+            // Fraction is positive, so slider gains edge length at its base at the expense of other, 
+            // which loses edge length at its base
+            //
+            //     +-----------x-----------* slider
+            //  ---+
+            //     +----------------y-------------* other
+            //
+            //                             <-----delta----->
+            //
+            //     +------------------xnew------------------* slider
+            //  ---+
+            //     +---------ynew------* other
+            //               
+            //PHYCAS_ASSERT(which_case == 7);
+            double x      = slider->GetEdgeLen();
+            double y      = other->GetEdgeLen();
+            double delta  = y*fraction;
+            double xnew   = x + delta;
+            double ynew   = y - delta;
+            double cutoff = fraction;
+            slider->SetEdgeLen(xnew);
+            other->SetEdgeLen(ynew);
+            if (isUsingUnimap())
+                {
+                StateTimeListVect & slider_vect = (slider->IsInternal() ? slider->GetInternalData()->state_time.getVect() : slider->GetTipData()->state_time.getVect());
+                StateTimeListVect & other_vect  = (other->IsInternal() ? other->GetInternalData()->state_time.getVect() : other->GetTipData()->state_time.getVect());
+                PHYCAS_ASSERT(nsites == slider_vect.size());
+                PHYCAS_ASSERT(nsites == other_vect.size());
+
+                // Iterate over sites
+                StateTimeListVect::iterator other_site_it  = other_vect.begin();
+                StateTimeListVect::iterator slider_site_it = slider_vect.begin();
+                for (; slider_site_it != slider_vect.end(); ++slider_site_it, ++other_site_it)
+                    {
+                    // Grab state_time vectors for current site from both slider and other
+                    StateTimeList & other_stlist  = (*other_site_it);
+                    StateTimeList & slider_stlist = (*slider_site_it);
+
+                    // Iterate over other's state_time vector starting from the beginning, 
+                    // copying elements to the beginning of slider as needed
+                    unsigned nmoved = 0;
+                    StateTimeList::iterator it, other_first, other_last;
+                    other_first = other_stlist.begin() + 1;
+                    other_last  = other_first;
+                    for (it = other_first; it != other_stlist.end(); ++it)
+                        {
+                        StateTimePair & p = (*it);
+                        float time = p.second;
+                        if (time <= cutoff)
+                            {
+                            slider_stlist.insert(slider_stlist.begin() + 1, p);
+                            ++nmoved;
+                            ++other_last;
+                            }
+                        else
+                            break;
+                        }
+
+                    // If any elements were copied to slider, erase them now from other
+                    if (nmoved > 0)
+                        {
+                        other_stlist.erase(other_first, other_last);
+                        }
+
+                    // Recalculate the newly-added times at the base of slider's edge
+                    StateTimeList::iterator one_beyond_newly_added = slider_stlist.begin() + nmoved + 1;
+                    for (it = slider_stlist.begin() + 1; it != one_beyond_newly_added; ++it)
+                        {
+                        StateTimePair & p = (*it);
+                        double time = p.second;
+                        double new_time = (delta - time*y)/xnew;
+                        p.second = (float)new_time;
+                        }
+
+                    // Recalculate the original times at the end of slider's edge
+                    for (it = one_beyond_newly_added; it != slider_stlist.end() - 1; ++it)
+                        {
+                        StateTimePair & p = (*it);
+                        double time = p.second;
+                        double new_time = (delta + time*x)/xnew;
+                        p.second = (float)new_time;
+                        }
+
+                    // Recalculate the times in other
+                    for (it = other_stlist.begin() + 1; it != other_stlist.end() - 1; ++it)
+                        {
+                        StateTimePair & p = (*it);
+                        double time = p.second;
+                        double new_time = (time*y - delta)/ynew;
+                        p.second = (float)new_time;
+                        }
+                    }   // loop over sites
+                } // if unimap
+            }   // fraction positive
+        }   // other is sibling
+    }   // TreeLikelihood::slideNode
+
+/*----------------------------------------------------------------------------------------------------------------------
+|   Refreshes the mapping for all sites using the method of Nielsen, R. 2002. Mapping mutations on phylogenies. 
+|   Systematic Biology 51:729-739. This function will wipe out all stored states and times on the edges of the tree and
+|   create a fresh set compatible with the tip states.
+*/
+void TreeLikelihood::nielsenMapping(
+  TreeShPtr t,  	/**< is the tree to use for the mapping */
+  LotShPtr rng)	    /**< is the random number generator to use for the mapping */
+	{
+    t->renumberInternalNodes(t->GetNTips());
+    unsigned starting_seed = rng->GetSeed();
+    double starting_tree_length = t->EdgeLenSum();
+
+    // Get model to recalculate the uniformized transition matrix uMat (note: uMat is owned by TreeLikelihood)
+    if (uMat == NULL)
+        {
+        uMat = NewTwoDArray<double>(num_states, num_states); 
+        }
+    lambda = model->calcLMat(uMat);
+    recalcUMatVect();
+
+    // Reset the matrix of uniformized transition counts
+    if (sMat == NULL)
+        {
+        sMat = NewTwoDArray<unsigned>(num_states, num_states); 
+        }
+    for (unsigned i = 0; i < num_states; ++i)
+        {
+        for (unsigned j = 0; j < num_states; ++j)
+            {
+            sMat[i][j] = 0;
+            }
+        }
+    nunivents = 0;
+
+    std::vector<double> prob;
+    prob.reserve(num_states);
+    std::vector<double> cum_prob(num_states, 0.0);
+
+    TreeNode * root_tip = t->GetFirstPreorder();
+    PHYCAS_ASSERT(root_tip->IsTipRoot());
+    TreeNode * subroot = root_tip->GetLeftChild();
+
+	//useAsLikelihoodRoot(subroot);
+	//invalidateAwayFromNode(*subroot);
+	//invalidateBothEnds(subroot);
+    useAsLikelihoodRoot(NULL);
+
+    // Work down the tree in postorder fashion updating conditional likelihoods
+    // (This code stolen from TreeLikelihood::calcLnLFromNode.)
+
+	// The functor below will return true if the conditional likelihood arrays pointing away from the
+	// focal_node are up-to-date, false if they need to be recomputed
+	NodeValidityChecker valid_functor = boost::bind(&TreeLikelihood::isValid, this, _1, _2);
+
+	// The iterator below will visit nodes that need their CLAs updated centripetally 
+    // (like a postorder traversal but also coming from below the focal node). Each node 
+    // visited is guaranteed by valid_functor to need its CLA updated.
+	effective_postorder_edge_iterator iter(subroot, valid_functor);
+	effective_postorder_edge_iterator iter_end;
+	for (; iter != iter_end; ++iter)
+		{
+		refreshCLA(*iter->first, iter->second);
+		}
+
+    // Must now refresh the CLA of the focal node (subroot) because this one was not
+    // recalculated by the effective_postorder_edge_iterator
+	refreshCLA(*subroot, root_tip);
+
+    // Work up the tree in preorder fashion choosing states for internal nodes along the way
+    TreeNode * nd = subroot;
+    for (; nd != NULL; nd = nd->GetNextPreorder())
+        {
+        if (nd->IsInternal())
+            {
+            // Choose states for all sites at this internal node
+            InternalData * nd_data =  nd->GetInternalData();
+            LikeFltType * cla = nd_data->getChildCondLikePtr()->getCLA();
+			ConstPMatrices pmatrices = nd_data->getConstPMatrices();
+            double const * const * pmatrix = pmatrices[0]; // index is 0 because assuming only one rate 
+            if (nd == subroot)
+                {
+                //
+                // Choose states and mappings for the subroot node
+                //
+                // The subroot is a special case for several reasons:
+                // 1. its conditional likelihood arrays do not take into account its parent, 
+                //    which is the tip serving as the root of the tree. 
+                // 2. this is the first node to get assigned a state, hence we must use the 
+                //    equilibrium freqencies as the prior instead of the transition probability
+                //    from the state below
+                // 3. because the subroot serves as the likelihood root, we must keep track
+                //    of the frequency of each state assigned to this node in order to compute
+                //    the likelihood (these frequencies are stored in the vector
+                //    TreeLikelihood::obs_state_freqs)
+            	const std::vector<double> & freqs = model->getStateFreqs();
+
+                // Gather arrays needed from the root_tip
+                double                         root_tip_edge_len  = subroot->GetEdgeLen();
+		        const TipData &                root_tip_data      = *(root_tip->GetTipData());
+		        double * * *                   root_tip_p         = root_tip_data.getMutableTransposedPMatrices();
+		        calcPMatTranspose(root_tip_p, root_tip_data.getConstStateListPos(),  root_tip_edge_len);
+		        const double * const * const * root_tip_tmatrix   = root_tip_data.getConstTransposedPMatrices();
+		        const int8_t *                 root_tip_codes     = root_tip_data.getConstStateCodes();
+                nd_data->mdot = 0;
+                obs_state_freqs.clear();
+                obs_state_freqs.resize(num_states, 0);
+
+                for (unsigned j = 0; j < num_patterns; ++j)
+		            {
+                    // compute probability of each possible state
+                    prob.clear();
+	                for (unsigned k = 0; k < num_states; ++k)
+		                {
+                        double state_freq             = freqs[k];
+                        double conditional_likelihood = *cla++;
+                        unsigned root_tip_state       = (unsigned)root_tip_codes[j];
+                        double transition_prob        = root_tip_tmatrix[0][k][root_tip_state];   // note: first index is 0 because assuming no rate heterogeneity
+                        double unnorm_prob            = state_freq*conditional_likelihood*transition_prob;
+                        prob.push_back(unnorm_prob);
+                        }
+                    double total = std::accumulate(prob.begin(), prob.end(), 0.0); 
+                    std::for_each(prob.begin(), prob.end(), boost::lambda::_1 /= total);
+
+	                // Create a vector of cumulative probabilities to use in choosing relative rates
+	                std::partial_sum(prob.begin(), prob.end(), cum_prob.begin());
+
+#if 1
+                    // lower_bound function below returns the position of the first element 
+                    // in cum_prob that has a value greater than or equivalent to a uniform
+                    // random deviate
+                    double u = rng->Uniform(FILE_AND_LINE);
+            		int8_t ending_state = (int8_t)(std::lower_bound(cum_prob.begin(), cum_prob.end(), u) - cum_prob.begin());
+
+                    // The state s sampled above is the state assigned (for site j) to the likelihood root
+                    // (the likelihood root is actually the subroot node).
+                    obs_state_freqs[ending_state]++;
+
+                    int8_t beginning_state = root_tip_codes[j];
+
+                    // note: first index is 0 because assuming no rate heterogeneity
+                    // note: ending state specified as from state because subroot is likelihood origin
+                    double transition_prob  = root_tip_tmatrix[0][ending_state][beginning_state];   
+#else
+                    // lower_bound function below returns the position of the first element 
+                    // in cum_prob that has a value greater than or equivalent to a uniform
+                    // random deviate
+                    double u = rng->Uniform(FILE_AND_LINE);
+            		int8_t beginning_state = (int8_t)(std::lower_bound(cum_prob.begin(), cum_prob.end(), u) - cum_prob.begin());
+
+                    // The state s sampled above is the state assigned (for site j) to the likelihood root
+                    // (the likelihood root is actually the subroot node).
+                    obs_state_freqs[beginning_state]++;
+
+                    // Note that because the subroot node serves as the likelihood root, we specify its  
+                    // state as beginning state and its parent's state as the ending state. Imagine that
+                    // the edge extending down from the subroot to the root tip has been swung around
+                    // so that the subroot is at its base and the tip at the other end is above the subroot.
+                    int8_t ending_state = root_tip_codes[j];
+                    double transition_prob  = root_tip_tmatrix[0][beginning_state][ending_state];   // note: first index is 0 because assuming no rate heterogeneity
+#endif
+                    unimapEdgeOneSite(nd_data->state_time[j], beginning_state, ending_state, transition_prob, nd->GetEdgeLen(), rng);
+                    nd_data->mdot += (unsigned)(nd_data->state_time[j].size() - 2);
+                    }
+                }
+            else
+                {
+                //
+                // Choose states and mappings for non-subroot internal node
+                //
+                TreeNode * par = nd->GetParent();
+                PHYCAS_ASSERT(par != NULL);
+                PHYCAS_ASSERT(par->IsInternal());
+                const InternalData & par_data       = *(par->GetInternalData());
+                nd_data->mdot = 0;
+                for (unsigned j = 0; j < num_patterns; ++j)
+		            {
+                    unsigned parent_state = (unsigned)(par->GetInternalData()->state_time[j][0].first);
+                    prob.clear();
+	                for (unsigned k = 0; k < num_states; ++k)
+		                {
+                        double transition_prob        = pmatrix[parent_state][k];
+                        double conditional_likelihood = *cla++;
+                        double unnorm_prob            = transition_prob*conditional_likelihood;
+                        prob.push_back(unnorm_prob);
+                        }
+                    double total = std::accumulate(prob.begin(), prob.end(), 0.0); 
+                    std::for_each(prob.begin(), prob.end(), boost::lambda::_1 /= total);
+
+                    // Create a vector of cumulative probabilities to use in choosing relative rates
+	                std::partial_sum(prob.begin(), prob.end(), cum_prob.begin());
+
+                    // lower_bound function below returns the position of the first element 
+                    // in cum_prob that has a value greater than or equivalent to a uniform
+                    // random deviate
+                    int8_t starting_state = par_data.state_time[j].rbegin()->first;
+                    double u = rng->Uniform(FILE_AND_LINE);
+            	    int8_t ending_state = (int8_t)(std::lower_bound(cum_prob.begin(), cum_prob.end(), u) - cum_prob.begin());
+                    double transition_prob  = pmatrix[starting_state][ending_state];
+                    unimapEdgeOneSite(nd_data->state_time[j], starting_state, ending_state, transition_prob, nd->GetEdgeLen(), rng);
+                    nd_data->mdot += (unsigned)(nd_data->state_time[j].size() - 2);
+                    }
+                }
+            }
+        else    // node is a tip node
+            {
+            //
+            // Choose mappings for tip node
+            //
+            //std::cerr << "Tip node " << nd->GetNodeNumber() << " (" << nd->GetNodeName() << ")" << std::endl;
+            TreeNode * par = nd->GetParent();
+            PHYCAS_ASSERT(par != NULL);
+            PHYCAS_ASSERT(par->IsInternal());
+            const InternalData & par_data = *(par->GetInternalData());
+            TipData * nd_data =  nd->GetTipData();
+        	const int8_t * state_codes = nd_data->getConstStateCodes();
+			ConstPMatrices tmatrices = nd_data->getTransposedPMatrices();
+            nd_data->mdot = 0;
+            for (unsigned j = 0; j < num_patterns; ++j)
+                {
+                int8_t starting_state = par_data.state_time[j].rbegin()->first;
+                int8_t ending_state = (int8_t)state_codes[j];
+                double transition_prob = tmatrices[0][ending_state][starting_state];
+                unimapEdgeOneSite(nd_data->state_time[j], starting_state, ending_state, transition_prob, nd->GetEdgeLen(), rng);
+                nd_data->mdot += (unsigned)(nd_data->state_time[j].size() - 2);
+                }
+            }
+        }
+
+    unsigned ndiffs = 0;
+    for (unsigned i = 0; i < num_states; ++i)
+        {
+        for (unsigned j = 0; j < num_states; ++j)
+            {
+            if (i != j)
+                ndiffs += sMat[i][j];
+            }
+        }
+    double d = (double)ndiffs/(lambda*(double)num_patterns);
+    //std::cerr << "starting tree length  = " << starting_tree_length << std::endl;
+    //std::cerr << "estimated tree length = " << d << std::endl;
+	}
+#endif
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Calls the setTriggerSensitivity function of the data member `underflow_policy' to set the number of edges that must
+|	be traversed before taking action to prevent underflow.
+*/
+void TreeLikelihood::setUFNumEdges(
+  unsigned nedges)	/**< is the number of edges to traverse before taking action to prevent underflow */
+	{
+	underflow_policy.setTriggerSensitivity(nedges);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns number of bytes allocated for each CLA. This equals sizeof(LikeFltType) times the product of the number of
+|	patterns, number of rates and number of states. Calls corresponding function of data member `cla_pool' to get the
+|	value returned.
+*/
+unsigned TreeLikelihood::bytesPerCLA() const
+	{
+	return cla_pool.bytesPerCLA();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the number of CondLikelihood objects created since the `cla_pool' data member was constructed, or since the
+|	last call to the function clearStack of `cla_pool', which resets the value to zero. Calls corresponding function of
+|	data member `cla_pool' to get the value returned.
+*/
+unsigned TreeLikelihood::numCLAsCreated() const
+	{
+	return cla_pool.numCLAsCreated();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the current number of CondLikelihood objects stored in `cla_pool'. The total number of CLAs currently
+|	checked out to the tree can be obtained as TreeLikelihood::numCLAsCreated() minus TreeLikelihood::numCLAsStored().
+|	Calls corresponding function of data member `cla_pool' to get the value returned.
+*/
+unsigned TreeLikelihood::numCLAsStored() const
+	{
+	return cla_pool.numCLAsStored();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the current value of `likelihood_root'. See TreeLikelihood::useAsLikelihoodRoot for more information about
+|	the meaning of the likelihood root.
+*/
+TreeNode * TreeLikelihood::getLikelihoodRoot()
+	{
+    return likelihood_root;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the number of the node currently serving as the likelihood root. If `likelihood_root' is NULL, returns -1
+|	instead to indicate that no node is currently designated as the likelihood root. This function was written primarily
+|	for use by the TreeViewer.py application for debugging purposes.
+*/
+int TreeLikelihood::getLikelihoodRootNodeNum() const
+	{
+	return (likelihood_root ? (int)likelihood_root->GetNodeNumber() : -1);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns a shared pointer to the CondLikelihood object that would be used to compute the likelihood conditional on a 
+|	particular state being assigned to `focal_nd' when `avoid' is the likelihood root. This function obtains the correct
+|	shared pointer, but if that pointer does not point to an object, it goes to `cla_pool' to get another one.
+*/
+CondLikelihoodShPtr getCondLikePtr(
+  TreeNode * focal_nd,	/**< is the focal node */
+  TreeNode * avoid) 	/**< is the focal node neighbor (node closer to likelihood root) */
+	{
+	EdgeEndpoints e(focal_nd, avoid);
+	return getCondLikePtr(e);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns a shared pointer to the CondLikelihood object that would be used to compute the likelihood conditional on a 
+|	particular state being assigned to `focal_nd' when `avoid' is the likelihood root. 
+*/
+ConstCondLikelihoodShPtr getValidCondLikePtr(
+  const TreeNode * focal_nd,	/**< is the focal node */
+  const TreeNode * avoid) 		/**< is the focal node neighbor (node closer to likelihood root) */
+	{
+	ConstEdgeEndpoints e(focal_nd, avoid);
+	return getValidCondLikePtr(e);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns a shared pointer to the CondLikelihood object that would be used to compute the likelihood conditional on a
+|	particular state being assigned to the focal node of `edge' when `edge' focal neighbor is the likelihood root. This
+|	function obtain the correct shared pointer, but if that pointer does not point to a CondLikelihood object, it goes 
+|	to `cla_pool' to get one.
+*/
+CondLikelihoodShPtr getCondLikePtr(
+  EdgeEndpoints edge) /**< is the edge specifying the focal node and the focal node neighbor */
+	{
+	TreeNode * actual_child = edge.getActualChild();
+	if (actual_child == edge.getFocalNode())
+		{
+		// focal node F is a child of N, the focal neighbor (likelihood root is somewhere below N)
+		//
+		//      \   /
+		//       \ /
+		//        F
+		//   \   / <-- filial CLA of focal node is returned
+		//    \ /
+		//     N
+		//    / 
+		//
+		PHYCAS_ASSERT(actual_child->IsInternal());
+		InternalData * child_internal_data = actual_child->GetInternalData();
+		PHYCAS_ASSERT(child_internal_data != NULL);
+		return child_internal_data->getChildCondLikePtr();
+		}
+
+	// focal neighbor N is a child of the focal node F
+	PHYCAS_ASSERT(actual_child == edge.getFocalNeighbor());
+	if (actual_child->IsInternal())
+		{
+		// focal neighbor N is an internal node (likelihood root is somewhere above N)
+		//
+		//      \   /
+		//       \ /
+		//        N
+		//   \   /
+		//    \ / <-- parental CLA of focal neighbor is returned
+		//     F
+		//    / 
+		//
+		InternalData * child_internal_data = actual_child->GetInternalData();
+		PHYCAS_ASSERT(child_internal_data != NULL);
+		return child_internal_data->getParentalCondLikePtr();		
+		}
+
+	// focal neighbor N is a tip node (N equals the likelihood root in this case)
+	//
+	//        N
+	//   \   /
+	//    \ / <-- parental CLA of focal neighbor is returned
+	//     F
+	//    / 
+	//
+	TipData * child_tip_data = actual_child->GetTipData();
+	PHYCAS_ASSERT(child_tip_data != NULL);
+	return child_tip_data->getParentalCondLikePtr();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns a pointer to the CondLikelihood object that would be used to compute the likelihood conditional on a
+|	particular state being assigned to the focal node of `edge' when `edge' focal neighbor is the likelihood root.
+|	This is a const version of the corresponding getCondLikePtr function, to be used when it can be assumed that the
+|	conditional likelihood arrays are up-to-date.
+*/
+ConstCondLikelihoodShPtr getValidCondLikePtr(
+  ConstEdgeEndpoints edge) /**< is the edge comprising the focal node and focal node neighbor */
+	{
+#if 1
+	const TreeNode * actual_child = edge.getActualChild();
+	if (actual_child == edge.getFocalNode())
+		{
+		// focal node F is a child of N, the focal neighbor (likelihood root is somewhere below N)
+		//
+		//      \   /
+		//       \ /
+		//        F
+		//   \   / <-- filial CLA of focal node is returned
+		//    \ /
+		//     N
+		//    / 
+		//
+		PHYCAS_ASSERT(actual_child->IsInternal());
+		const InternalData * child_internal_data = actual_child->GetInternalData();
+		PHYCAS_ASSERT(child_internal_data != NULL);
+		return child_internal_data->getValidChildCondLikePtr();
+		}
+
+	// focal neighbor N is a child of the focal node F
+	PHYCAS_ASSERT(actual_child == edge.getFocalNeighbor());
+	if (actual_child->IsInternal())
+		{
+		// focal neighbor N is an internal node (likelihood root is somewhere above N)
+		//
+		//      \   /
+		//       \ /
+		//        N
+		//   \   /
+		//    \ / <-- parental CLA of focal neighbor is returned
+		//     F
+		//    / 
+		//
+		const InternalData * child_internal_data = actual_child->GetInternalData();
+		PHYCAS_ASSERT(child_internal_data != NULL);
+		return child_internal_data->getValidParentalCondLikePtr();		
+		}
+
+	// focal neighbor N is a tip node (N equals the likelihood root in this case)
+	//
+	//        N
+	//   \   /
+	//    \ / <-- parental CLA of focal neighbor is returned
+	//     F
+	//    / 
+	//
+	const TipData * child_tip_data = actual_child->GetTipData();
+	PHYCAS_ASSERT(child_tip_data != NULL);
+	return child_tip_data->getValidParentalCondLikePtr();
+#else
+	const TreeNode * c = edge.getActualChild();
+	if (edge.getFocalNode() == c)
+		{
+		PHYCAS_ASSERT(c->IsInternal());
+		const InternalData * childInternalData = c->GetInternalData();
+		PHYCAS_ASSERT(childInternalData != NULL);
+		return childInternalData->getValidChildCondLike();
+		}
+	// moving up the tree in calculations (root to leaves).
+	PHYCAS_ASSERT(c == edge.getFocalNeighbor());
+	if (c->IsInternal())
+		{
+		const InternalData * childInternalData = c->GetInternalData();
+		PHYCAS_ASSERT(childInternalData != NULL);
+		return childInternalData->getValidParentalCondLike();		
+		}
+	const TipData * childTipData = c->GetTipData();
+	PHYCAS_ASSERT(childTipData != NULL);
+	return childTipData->getValidParentalCondLike();
+#endif
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Modifier function that sets the value of the `no_data' data member to true.
+*/
+void TreeLikelihood::setNoData()
+	{
+	no_data = true;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Modifier function that sets the value of the `no_data' data member to false.
+*/
+void TreeLikelihood::setHaveData()
+	{
+	no_data = false;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Modifier function that sets the `num_patterns' data member.
+*/
+void TreeLikelihood::setNPatterns(
+  unsigned nPatterns)	/**< is the number of patterns */
+	{
+	num_patterns = nPatterns;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Modifier function that sets the `model' data member, replacing the model defined in the constructor.
+*/
+void TreeLikelihood::replaceModel(
+  ModelShPtr m)
+	{
+	model = m;
+	recalcRelativeRates();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the values of the `num_states' and `num_rates' data members according to the model, then calls the 
+|	recalcRatesAndProbs function of the model to force recalculation of the `rate_means' and `rate_probs' vectors. 
+|	Should be called after changing the number of rate categories, the gamma shape parameter, or the pinvar parameter of
+|	the model. Note that trees on which likelihoods need to be calculated also need to be re-equipped by calling 
+|	prepareForLikelihood if the number of rate categories changes (not done by this function). 
+*/
+void TreeLikelihood::recalcRelativeRates()
+	{
+	num_states = model->getNStates();
+	num_rates = model->getNRatesTotal();
+	model->recalcRatesAndProbs(rate_means, rate_probs); //POL_BOOKMARK
+	likelihood_rate_site.resize(num_rates*num_patterns, 0.0);
+	if (!no_data)
+		cla_pool.setCondLikeDimensions(num_patterns, num_rates, num_states);
+	underflow_policy.setDimensions(num_patterns, num_rates, num_states);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns the `cla_pool' data member.
+*/
+const CondLikelihoodStorage & TreeLikelihood::getCLAStorage() const
+	{
+	return cla_pool;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns the `nTaxa' data member.
+*/
+unsigned TreeLikelihood::getNTaxa() const
+	{
+	return nTaxa;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns the `num_patterns' data member.
+*/
+unsigned TreeLikelihood::getNPatterns() const
+	{
+	return num_patterns;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns the `num_rates' data member. Assumes that the length of the `rate_means' vector 
+|	equals the value of the `num_rates' data member.
+*/
+unsigned TreeLikelihood::getNRatesTotal() const
+	{
+	PHYCAS_ASSERT(rate_means.size() == num_rates);
+	return num_rates;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns the `num_states' data member.
+*/
+unsigned TreeLikelihood::getNStates() const
+	{
+	return num_states;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns a copy of the (shared_ptr) data member `model'.
+*/
+ModelShPtr TreeLikelihood::getModel() const
+	{
+	return model;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns the data member `state_list'.
+*/
+const VecStateList & TreeLikelihood::getStateList() const
+	{
+	return state_list;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns the data member `state_list_pos'.
+*/
+const VecStateListPos & TreeLikelihood::getStateListPos() const
+	{
+	return state_list_pos;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns the data member `rate_means'.
+*/
+const std::vector<double> & TreeLikelihood::getRateMeans() const
+	{
+	return rate_means; //POL_BOOKMARK
+	}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns the data member `rate_probs'.
+*/
+const std::vector<double> & TreeLikelihood::getRateProbs() const
+	{
+	return rate_probs;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns the data member `category_boundaries'.
+*/
+std::vector<double> TreeLikelihood::getCategoryLowerBoundaries() const
+	{
+	std::vector<double> tmp_means;
+	std::vector<double> returned_boundaries;
+	model->recalcGammaRatesAndBoundaries(tmp_means, returned_boundaries);
+	return returned_boundaries;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Calls TreeLikelihood::simulateImpl specifying that the transition probabilities should be recalculated (or 
+|	calculated the first time) before beginning simulations. After TreeLikelihood::simulateFirst is called once, 
+|	TreeLikelihood::simulate can be called many more times to generate more data sets using the same transition 
+|	probabilities.
+*/
+void TreeLikelihood::simulateFirst(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar)
+	{
+	simulateImpl(sim_data, t, rng, nchar, true);	// true means recalculate transition probabilities
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Calls TreeLikelihood::simulateImpl specifying that the transition probabilities should NOT be recalculated. Only
+|	call this function after calling TreeLikelihood::simulateFirst at least once, otherwise the transition probabilities
+|	will contain garbage.
+*/
+void TreeLikelihood::simulate(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar)
+	{
+	simulateImpl(sim_data, t, rng, nchar, false);	// false means do not recalculate transition probabilities
+	}
+
+// **************************************************************************************
+// ***** Former TreeLikelihood inlines (end) ********************************************
+// **************************************************************************************
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Specifies the (internal) node to use as the likelihood root (it will be stored in the `likelihood_root' data member). 
@@ -793,7 +2427,6 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 	PHYCAS_ASSERT(nchar > 0);
 
 	// Recalculate transition probabilities if requested
-	//@POL using for_each would simplify this
 	if (refresh_probs)
 		{
 		preorder_iterator nd = t->begin();
@@ -838,79 +2471,6 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 
 	sim_data->resetPatternLength(t->GetNTips());
 	sim_data->wipePattern();
-
-#if 0  //POL temporary debugging section BEGIN
-	//std::ofstream doof("doof_check.txt", std::ios::out | std::ios::app); 
-	std::ofstream doof("doof_check.txt"); 
-	doof << "\nNEW DATA SET BEGINNING" << std::endl;
-	doof << "model parameter names:  " << model->paramHeader() << std::endl;
-	doof << "model parameter values: " << model->paramReport() << std::endl;
-
-	// Go through all nodes and show their edge lengths and transition probability matrices
-	{
-		preorder_iterator nd = t->begin();
-
-		// First preorder node is the root node and represents a special case
-		// Its transition matrices must be computed using the "subroot" node's edge length
-		// The subroot node's transition matrices need not be calculated 
-		TipData & ndTD = *(nd->GetTipData());
-		double * * * p = ndTD.getTransposedPMatrices();
-		TreeNode * subroot = nd->GetLeftChild();
-		doof << "Subroot node edge length = " << subroot->GetEdgeLen() << std::endl;
-		doof << "Transposed transition probability matrices:" << std::endl;
-		for (unsigned rr = 0; rr < num_rates; ++rr)
-			{
-			doof << "  Relative rate " << rr << " = " << rate_means[rr] << std::endl;
-			doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][0][0] % p[rr][0][1] % p[rr][0][2] % p[rr][0][3]);
-			doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][1][0] % p[rr][1][1] % p[rr][1][2] % p[rr][1][3]);
-			doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][2][0] % p[rr][2][1] % p[rr][2][2] % p[rr][2][3]);
-			doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][3][0] % p[rr][3][1] % p[rr][3][2] % p[rr][3][3]);
-			doof << std::endl;
-			}
-		++nd;
-
-		// Skip subroot node as its transition matrices are never used and thus do not need to be computed
-		++nd;
-
-		// Process the remaining nodes in the tree
-		for (; nd != t->end(); ++nd)
-			{
-			if (nd->IsTip())
-				{
-				TipData & ndTD = *(nd->GetTipData());
-				double * * * p = ndTD.getTransposedPMatrices();
-				doof << "Tip node " << nd->GetNodeNumber() << " edge length = " << nd->GetEdgeLen() << std::endl;
-				doof << "Transposed transition probability matrices:" << std::endl;
-				for (unsigned rr = 0; rr < num_rates; ++rr)
-					{
-					doof << "  Relative rate " << rr << " = " << rate_means[rr] << std::endl;
-					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][0][0] % p[rr][0][1] % p[rr][0][2] % p[rr][0][3]);
-					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][1][0] % p[rr][1][1] % p[rr][1][2] % p[rr][1][3]);
-					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][2][0] % p[rr][2][1] % p[rr][2][2] % p[rr][2][3]);
-					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][3][0] % p[rr][3][1] % p[rr][3][2] % p[rr][3][3]);
-					doof << std::endl;
-					}
-				}
-			else
-				{
-				InternalData & ndID	= *(nd->GetInternalData());
-				double * * * p = ndID.getPMatrices();
-				doof << "Internal node " << nd->GetNodeNumber() << " edge length = " << nd->GetEdgeLen() << std::endl;
-				doof << "Transition probability matrices:" << std::endl;
-				for (unsigned rr = 0; rr < num_rates; ++rr)
-					{
-					doof << "  Relative rate " << rr << " = " << rate_means[rr] << std::endl;
-					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][0][0] % p[rr][0][1] % p[rr][0][2] % p[rr][0][3]);
-					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][1][0] % p[rr][1][1] % p[rr][1][2] % p[rr][1][3]);
-					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][2][0] % p[rr][2][1] % p[rr][2][2] % p[rr][2][3]);
-					doof << str(boost::format("  %12.5f %12.5f %12.5f %12.5f\n") % p[rr][3][0] % p[rr][3][1] % p[rr][3][2] % p[rr][3][3]);
-					doof << std::endl;
-					}
-				}
-			}
-	}
-	doof.close();
-#endif	//POL temporary debugging section END
 
 	for (unsigned character = 0; character < nchar; ++character)
 		{
@@ -1004,8 +2564,6 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 					}
 				ndTD.state = (int8_t)i;
 				sim_data->setState(nd->GetNodeNumber(), (int8_t)i);
-
-				//std::cerr << "  Assigning state " << i;
 				}
 			else
 				{
@@ -1028,12 +2586,8 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 						break;
 					}
 				ndID.state = (int8_t)i;
-				//std::cerr << "  Assigning state " << i;
 				}
-
-			//std::cerr << " to node " << nd->GetNodeNumber() << std::endl;
 			}
-		//std::cerr << std::endl;
 
 		// We are now finished simulating data for one character, so insert the pattern just generated
 		// into the pattern map maintained by sim_data; the 1.0 means that the count for this pattern
@@ -1184,6 +2738,72 @@ bool TreeLikelihood::debugCheckCLAsRemainInNode(
     return CLAs_found;
     }
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	This is the function that is called (from calcLnL) to recompute the log-likelihood if `using_unimap' is true. It 
+|   computes the log-likelihood using the stored matrix of uniformized mapping transition counts (`sMat') as well as the
+|   stored `mdot' values in the TipData or InternalData structure associated with each node. This method assumes that
+|   both `lambda' and the uniformized transition matrix `uMat' are up-to-date, and that the counts of observed states 
+|   in the tip root (which always serves as the likelihood root when using_unimap is true) have been stored in
+*/
+double TreeLikelihood::calcUnimapLnL(
+  TreeShPtr t)
+	{
+    PHYCAS_ASSERT(using_unimap);
+    PHYCAS_ASSERT(uMat);
+    lambda = model->calcLMat(uMat);
+    double nsites = (double)num_patterns;
+
+    // Compute term that is the product of relative frequencies of each state
+    // sampled in the node serving as the likelihood root (the subroot node).
+    double log_basal_freqs     = 0.0;
+   	const std::vector<double> & freqs = model->getStateFreqs();
+    for (unsigned i = 0; i < num_states; ++i)
+        {
+        log_basal_freqs += (double)(obs_state_freqs[i])*log(freqs[i]);
+        }
+
+    // Compute term that is the product of all edge lengths each raised to the power
+    // mdot, where mdot is the total number of univents over all sites along that edge. Also use 
+    // this opportunity to calculate the tree length, which will be used later.
+    double tree_length         = 0.0;
+    double log_edgelen_to_mdot = 0.0;
+    TreeNode * nd = t->GetFirstPreorder()->GetNextPreorder();
+    for (; nd != NULL; nd = nd->GetNextPreorder())
+        {
+        double edgelen = nd->GetEdgeLen();
+        tree_length += edgelen;
+        if (nd->IsTip())
+            {
+            TipData * nd_data = nd->GetTipData();
+            double m = (double)nd_data->mdot;
+            log_edgelen_to_mdot += m*log(edgelen);
+            }
+        else
+            {
+            InternalData * nd_data = nd->GetInternalData();
+            double m = (double)nd_data->mdot;
+            log_edgelen_to_mdot += m*log(edgelen);
+            }
+        }
+
+    // Compute term that is the product of uniformized transition probabilities for all univents
+    double log_uij_to_sij = 0.0;
+    for (unsigned i = 0; i < num_states; ++i)
+        {
+        for (unsigned j = 0; j < num_states; ++j)
+            {
+            // If you are wondering why I haven't taken the log of the uMat entry, I should remind
+            // you that it is the log of a transition probability that is stored in uMat[i][j]
+            log_uij_to_sij += (double)(sMat[i][j])*uMat[i][j];
+            }
+        }
+
+    double log_likelihood = log_basal_freqs + log_edgelen_to_mdot + log_uij_to_sij - nsites*lambda*tree_length;
+    return log_likelihood;
+    }
+#endif
+
 int calcLnLLevel = 0;
 /*----------------------------------------------------------------------------------------------------------------------
 |	This is the function that needs to be called to recompute the log-likelihood. If `likelihood_root' is not NULL, 
@@ -1197,7 +2817,8 @@ double TreeLikelihood::calcLnL(
 	{
 	if (no_data)
 		return 0.0;
-	// Compute likelihood using likelihood_root if specified
+
+    // Compute likelihood using likelihood_root if specified
 	// Assume that if likelihood_root has been specified, then the necessary 
 	// CLA invalidations have already been performed.
 	TreeNode * nd = likelihood_root;
@@ -1236,6 +2857,11 @@ double TreeLikelihood::calcLnL(
 
     // Uncomment line below to force recalculation of all CLAs
     //storeAllCLAs(t);
+
+#if POLPY_NEWWAY
+    if (using_unimap)
+        return calcUnimapLnL(t);
+#endif
 
     // Calculate log-likelihood using nd as the likelihood root
 	double lnL = calcLnLFromNode(*nd);
@@ -1363,7 +2989,6 @@ double TreeLikelihood::calcLnLFromNode(
 		// iter will visit nodes that need their CLAs updated centripetally (like a postorder traversal 
 		// but also coming from below the focal node). Each node visited is guaranteed by valid_functor 
 		// to need its CLA updated.
-
 		effective_postorder_edge_iterator iter(&focal_node, valid_functor);
 		effective_postorder_edge_iterator iter_end;
 		for (; iter != iter_end; ++iter)
@@ -1392,7 +3017,11 @@ TipData * TreeLikelihood::allocateTipData(  //POLBM TreeLikelihood::allocateTipD
 	std::vector<unsigned int>					stateListVec;
 	std::map<int8_t, int8_t>::const_iterator	foundElement;
 
+#if POLPY_NEWWAY
+	int8_t *									tipSpecificStateCode	= new int8_t[num_patterns];
+#else
 	int8_t *									tipSpecificStateCode	= new int8_t[(unsigned)pattern_map.size()];
+#endif
 	//@POL 21-Nov-2005 make tipSpecificStateCode a shared_array or a std:Vector - currently I don't think these are being deleted
 
 	const int8_t								ns						= num_states;
@@ -1402,12 +3031,12 @@ TipData * TreeLikelihood::allocateTipData(  //POLBM TreeLikelihood::allocateTipD
 	// Loop through all patterns for this row of the matrix. For each global state code encountered,
 	// determine which local state code it represents, and build up the tipSpecificStateCode array
 	// as we go.
-	unsigned i = 0;
 #if 0
 	if (model->isCodonModel())
 		{
 		// Read three nucleotides at a time and interpret the triplet as a codon state
 		//@POL Currently, any ambiguity at any codon position results in a missing data entry for the codon state
+    	unsigned i = 0;
 		for (PatternMapType::const_iterator it = pattern_map.begin(); it != pattern_map.end(); ++it, ++i)
 			{
 			const int8_t globalStateCode = (it->first)[row];
@@ -1440,6 +3069,76 @@ TipData * TreeLikelihood::allocateTipData(  //POLBM TreeLikelihood::allocateTipD
 	else
 		{
 #endif
+#if POLPY_NEWWAY
+        if (using_unimap)
+            {
+            for (unsigned site = 0; site < num_patterns; ++site)
+                {
+                unsigned pattern_index = charIndexToPatternIndex[site];
+                PatternMapType::const_iterator it = pattern_map.begin();
+                std::advance(it, pattern_index); //@POL not very efficient for map types, so may be worth using a vector rather than a map for pattern_map when using_unimap is true
+			    const int8_t globalStateCode = (it->first)[row];
+
+			    if (globalStateCode < nsPlusOne)
+				    {
+				    // no partial ambiguity, but may be gap state
+				    tipSpecificStateCode[site] = (globalStateCode < 0 ? ns : globalStateCode);
+				    }
+			    else
+				    {
+				    // partial ambiguity
+				    foundElement = globalToLocal.find(globalStateCode);
+				    if (foundElement == globalToLocal.end())
+					    {
+					    // state code needs to be added to map
+					    globalToLocal[globalStateCode] = nPartialAmbig + nsPlusOne;
+					    stateListVec.push_back(state_list_pos[globalStateCode]);
+					    tipSpecificStateCode[site] = nPartialAmbig + nsPlusOne;
+					    nPartialAmbig++;
+					    }
+				    else
+					    {
+					    // state code is already in the map
+					    tipSpecificStateCode[site] = foundElement->second;
+					    }
+				    }
+                //std::cerr << row << ": " << site << " -> " << (int)(tipSpecificStateCode[site]) << std::endl;
+			    }
+            }
+        else
+            {
+        	unsigned i = 0;
+		    for (PatternMapType::const_iterator it = pattern_map.begin(); it != pattern_map.end(); ++it, ++i)
+			    {
+			    const int8_t globalStateCode = (it->first)[row];
+
+			    if (globalStateCode < nsPlusOne)
+				    {
+				    // no partial ambiguity, but may be gap state
+				    tipSpecificStateCode[i] = (globalStateCode < 0 ? ns : globalStateCode);
+				    }
+			    else
+				    {
+				    // partial ambiguity
+				    foundElement = globalToLocal.find(globalStateCode);
+				    if (foundElement == globalToLocal.end())
+					    {
+					    // state code needs to be added to map
+					    globalToLocal[globalStateCode] = nPartialAmbig + nsPlusOne;
+					    stateListVec.push_back(state_list_pos[globalStateCode]);
+					    tipSpecificStateCode[i] = nPartialAmbig + nsPlusOne;
+					    nPartialAmbig++;
+					    }
+				    else
+					    {
+					    // state code is already in the map
+					    tipSpecificStateCode[i] = foundElement->second;
+					    }
+				    }
+			    }
+            }
+#else
+    	unsigned i = 0;
 		for (PatternMapType::const_iterator it = pattern_map.begin(); it != pattern_map.end(); ++it, ++i)
 			{
 			const int8_t globalStateCode = (it->first)[row];
@@ -1468,48 +3167,62 @@ TipData * TreeLikelihood::allocateTipData(  //POLBM TreeLikelihood::allocateTipD
 					}
 				}
 			}
+#endif
 #if 0
 		}
 #endif
 
 #	if 0
 		//POL-debug
+    std::ofstream tmpf("debugAllocateTipData.txt", std::ios::out | std::ios::app);
 		std::map<int8_t, int8_t>::const_iterator mapiter; 
 		unsigned z;
 
-		//std::cerr << "\n\nInside allocateTipData function:" << std::endl;
+		tmpf << "\n\nInside allocateTipData function:" << std::endl;
 
-		//std::cerr << "\n  ns: " << (int)ns << std::endl;
+		tmpf << "\n  ns: " << (int)ns << std::endl;
 
-		std::cerr << "\n  Adding TipData for node number " << row << ": ";
-				for (z = 0; z < num_patterns; ++z)
-					std::cerr << ' ' << (int)(myRow[z]);
-		std::cerr << std::endl;
+		tmpf << "\n  Adding TipData for node number " << row << ": ";
+		//for (z = 0; z < num_patterns; ++z)
+		//	tmpf << ' ' << (int)(myRow[z]);
+		tmpf << std::endl;
 
-		//std::cerr << "\n  Contents of state_list_pos:" << std::endl;
-		//for (vector<unsigned int>::const_iterator ziter = state_list_pos.begin(); ziter != state_list_pos.end(); ++ziter)
-		//	std::cerr << "\n    " << (*ziter);
-		//std::cerr << std::endl;
+		tmpf << "\n  Contents of state_list_pos:" << std::endl;
+        for (std::vector<unsigned int>::const_iterator ziter = state_list_pos.begin(); ziter != state_list_pos.end(); ++ziter)
+			tmpf << "\n    " << (*ziter);
+		tmpf << std::endl;
 
-		//std::cerr << "\n  nPartialAmbig: " << nPartialAmbig << std::endl;
+		tmpf << "\n  nPartialAmbig: " << nPartialAmbig << std::endl;
 
-		//std::cerr << "\n  Contents of tipSpecificStateCode:" << std::endl;
-		//for (z = 0; z < nPatterns; ++z)
-		//	std::cerr << "\n    " << (int)(tipSpecificStateCode[z]);
-		//std::cerr << std::endl;
+		tmpf << "\n  Contents of tipSpecificStateCode:" << std::endl;
+		for (z = 0; z < num_patterns; ++z)
+			tmpf << "\n    " << (int)(tipSpecificStateCode[z]);
+		tmpf << std::endl;
 
-		//if (globalToLocal.empty())
-		//	std::cerr << "\n  globalToLocal map is empty" << std::endl;
-		//else
-		//	{
-		//	std::cerr << "\n  Contents of globalToLocal map:" << std::endl;
-		//	for (mapiter = globalToLocal.begin(); mapiter != globalToLocal.end(); ++mapiter)
-		//		std::cerr << "\n    " << (int)(mapiter->first) << " (global) -> " << (int)(mapiter->second) << " (local)";
-		//	std::cerr << std::endl;
-		//	}
-
+		if (globalToLocal.empty())
+			tmpf << "\n  globalToLocal map is empty" << std::endl;
+		else
+			{
+			tmpf << "\n  Contents of globalToLocal map:" << std::endl;
+			for (mapiter = globalToLocal.begin(); mapiter != globalToLocal.end(); ++mapiter)
+				tmpf << "\n    " << (int)(mapiter->first) << " (global) -> " << (int)(mapiter->second) << " (local)";
+			tmpf << std::endl;
+			}
+        tmpf.close();
 #	endif
 
+#if POLPY_NEWWAY
+    //assert(num_patterns == tipSpecificStateCode.length());
+	return new TipData(	using_unimap,
+                        num_patterns,
+                        stateListVec,												// stateListPosVec
+						boost::shared_array<const int8_t>(tipSpecificStateCode),	// stateCodesShPtr
+						num_rates,													// number of relative rate categories
+						num_states,													// number of states in the model
+						NULL,														// pMatTranspose
+						true,														// managePMatrices
+						cla_pool);
+#else
 	return new TipData(	stateListVec,												// stateListPosVec
 						boost::shared_array<const int8_t>(tipSpecificStateCode),	// stateCodesShPtr
 						num_rates,													// number of relative rate categories
@@ -1517,6 +3230,7 @@ TipData * TreeLikelihood::allocateTipData(  //POLBM TreeLikelihood::allocateTipD
 						NULL,														// pMatTranspose
 						true,														// managePMatrices
 						cla_pool);
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -1526,12 +3240,22 @@ TipData * TreeLikelihood::allocateTipData(  //POLBM TreeLikelihood::allocateTipD
 */
 InternalData * TreeLikelihood::allocateInternalData()
 	{
+#if POLPY_NEWWAY
+	return new InternalData(using_unimap,
+                            num_patterns,				// number of site patterns
+							num_rates,					// number of relative rate categories
+							num_states,					// number of model states
+							NULL,						// pMat
+							true,						// managePMatrices
+							cla_pool);					
+#else
 	return new InternalData(num_patterns,				// number of site patterns
 							num_rates,					// number of relative rate categories
 							num_states,					// number of model states
 							NULL,						// pMat
 							true,						// managePMatrices
 							cla_pool);					
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -1645,9 +3369,9 @@ void TreeLikelihood::copyDataFromDiscreteMatrix(
 #if defined(INTERFACE_WITH_CIPRES)
 	// changed signature because both compressDataMatrix and compressIDLMatrix now use 
 	// buildPatternMapFromRawMatrix, which takes ntax and nchar as first two arguments
-	num_patterns = compressDataMatrix(mat.getNTax(), mat.getNChar(), mat);
+    num_patterns = compressDataMatrix(mat.getNTax(), mat.getNChar(), mat);
 #else
-	num_patterns = compressDataMatrix(mat);
+    num_patterns = compressDataMatrix(mat);
 #endif
 
 	state_list = mat.getStateList(); 
@@ -1889,6 +3613,9 @@ unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix &
 	unsigned ntax = mat.getNTax();
 	unsigned nchar = mat.getNChar();
 
+    // patternToIndex is a map that associates a list of character indices with each pattern. Thus, if 
+    // some pattern is found at sites 0, 15, and 167, then patternToIndex.first is the pattern and 
+    // patternToIndex.second is the list<unsigned> [0, 15, 167]
 	typedef std::list<unsigned> IndexList;
 	typedef std::map<VecStateList, IndexList> PatternToIndex;
 	PatternToIndex patternToIndex;
@@ -1948,7 +3675,7 @@ unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix &
 				pToILowB->second.push_back(j);
 			else
 				{
-				IndexList ilist(1, j);
+				IndexList ilist(1, j);  // create a list<unsigned> containing 1 element whose value is j
 				patternToIndex.insert(pToILowB, PatternToIndex::value_type(pattern, ilist));
 				}
 			}
@@ -1981,14 +3708,15 @@ unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix &
 				pattern_map.insert(lowb, PatternMapType::value_type(pattern, 1));
 				}
 			
-			// Add the pattern to the map if it has not yet been seen, otherwise increment 
-			// the count of this pattern if it is already in the map (see item 24, p. 110, in Meyers' Efficient STL)
+            // Add the pattern to the patternToIndex map if not already present, and then
+            // append the character index to the list of character indices associated with
+            // the pattern
 			PatternToIndex::iterator pToILowB = patternToIndex.lower_bound(pattern);
 			if (pToILowB != patternToIndex.end() && !(patternToIndex.key_comp()(pattern, pToILowB->first)))
 				pToILowB->second.push_back(j);
 			else
 				{
-				IndexList ilist(1, j);
+				IndexList ilist(1, j);  // create a list<unsigned> containing 1 element whose value is j
 				patternToIndex.insert(pToILowB, PatternToIndex::value_type(pattern, ilist));
 				}
 			}
@@ -2001,12 +3729,22 @@ unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix &
 	for (PatternMapType::iterator mapit = pattern_map.begin(); mapit != pattern_map.end(); ++mapit, ++patternIndex)
 		{
 		pattern_counts.push_back(mapit->second);
+
+        // Find pattern in patternToIndex, which provides a list of indices of sites having that pattern
+        // For each site index in the list, add an element to the map charIndexToPatternIndex
+        // Now, charIndexToPatternIndex[i] points to the index in pattern_map for the pattern found for site i
 		const IndexList & inds = patternToIndex[mapit->first];
 		for (IndexList::const_iterator indIt = inds.begin(); indIt != inds.end(); ++indIt)
 			charIndexToPatternIndex[*indIt] = patternIndex;
 		}
-
+#if POLPY_NEWWAY
+    if (using_unimap)
+        return (unsigned)charIndexToPatternIndex.size();
+    else
+        return (unsigned)pattern_map.size();
+#else
 	return (unsigned)pattern_map.size();
+#endif
 	}
 #endif
 

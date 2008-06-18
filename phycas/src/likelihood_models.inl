@@ -1543,6 +1543,34 @@ inline void GTR::calcPMat(double * * pMat, double edgeLength) const
 	q_matrix.recalcPMat(pMat, edgeLength);
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Computes the uniformized transition probability matrix given an edge length. Overrides the pure virtual function 
+|   inherited from the base class Model. Uses the data member `q_matrix' to perform the calculation.
+*/
+inline double GTR::calcLMat(double * * lMat) const
+	{
+    std::cerr << "Error in GTR::calcUMat: q_matrix does not yet have the required recalcLMat function" << std::endl;
+    assert(0);
+	//q_matrix.recalcLMat(lMat, edgeLength);
+    return 0.0;
+	}
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Computes the uniformized transition probability matrix given an edge length. Overrides the pure virtual function 
+|   inherited from the base class Model. Uses the data member `q_matrix' to perform the calculation.
+*/
+inline double GTR::calcUMat(double * * uMat) const
+	{
+    std::cerr << "Error in GTR::calcLMat: q_matrix does not yet have the required recalcUMat function" << std::endl;
+    assert(0);
+	//q_matrix.recalcUMat(uMat, edgeLength);
+    return 0.0;
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the data member `rel_rates_fixed' to true. The fixParameter member function of all GTRRateParam objects is 
 |	either called immediately (if the `rel_rate_params' vector is not empty) or is called in createParameters (when 

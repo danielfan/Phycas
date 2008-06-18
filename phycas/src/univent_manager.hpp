@@ -1,6 +1,6 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
 |  Phycas: Python software for phylogenetic analysis                          |
-|  Copyright (C) 2006 Mark T. Holder, Paul O. Lewis and David L. Swofford     |
+|  Copyright (C) 2008 Mark T. Holder, Paul O. Lewis and David L. Swofford     |
 |                                                                             |
 |  This program is free software; you can redistribute it and/or modify       |
 |  it under the terms of the GNU General Public License as published by       |
@@ -17,24 +17,33 @@
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#if ! defined(STATES_PATTERNS_HPP)
-#define STATES_PATTERNS_HPP
+#if ! defined(UNIVENT_MANAGER_HPP)
+#define UNIVENT_MANAGER_HPP
 
-#include "phycas/src/cipres/ConfigDependentHeaders.h"	// for int8_t typedef
+#include "phycas/src/states_patterns.hpp"
 
-typedef std::vector<int8_t>				            VecStateList;
-typedef std::vector<unsigned>			            VecStateListPos;
+namespace phycas
+{
 
-typedef double										PatternCountType;
-typedef	std::map<VecStateList, PatternCountType>	PatternMapType;
-typedef	std::vector<PatternCountType>				CountVectorType;
+class UniventManager
+    {
+    public:
 
-#if POLPY_NEWWAY    // StateTimeList should be a list!
-typedef std::pair<int8_t,float>                     StateTimePair;
-typedef std::vector<StateTimePair>                  StateTimeList;
-typedef std::vector<StateTimeList>                  StateTimeListVect;
+                                        UniventManager();
+                                        ~UniventManager();
+
+        unsigned                        size() const;
+        void                            resize(unsigned sz);
+        StateTimeList &                 operator[](unsigned i);
+        const StateTimeList &           operator[](unsigned i) const;
+        StateTimeListVect &             getVect();
+
+        void                            swap(UniventManager & other);
+
+    private:
+
+        unsigned            mdot;           /**< the total number of univents over all sites on the edge owned by this node */
+        StateTimeListVect * state_time;     /**< state_time[i][j].first holds a state for univent j at site i, whereas state_time[i][j].second holds the fraction of the edgelen representing the time at which the univent occurred */
+    };
+}
 #endif
-
-#endif
-
-

@@ -22,6 +22,9 @@
 #include "phycas/src/mcmc_chain_manager.hpp"
 #include "phycas/src/xlikelihood.hpp"
 #include "phycas/src/basic_tree.hpp"
+#if POLPY_NEWWAY
+#include "phycas/src/nielsen_mapping_move.hpp"
+#endif
 
 namespace phycas
 {
@@ -38,8 +41,31 @@ void MCMCChainManager::refreshLastLnLike()
 		}
 
 	// Only need one updater to get the log-likelihood because all updaters must be able to do this calculation
+#if POLPY_NEWWAY    //@POL should only go to this trouble if univents are being used
+    // Try to find a NielsenMappingMove updater to use for this. If one is present, its update method must
+    // be called before the likelihood can be calculated in order to generate the latent variables used in
+    // uniformized mapping MCMC
+    bool found = false; 
+	for (MCMCUpdaterIter it = moves_begin; it != moves_end; ++it)
+        {
+        NielsenMappingMove * m = dynamic_cast<NielsenMappingMove *>(it->get());
+        if (m)
+            {
+            m->update();
+            last_ln_like = m->recalcLike();
+            found = true;
+            break;
+            }
+        }
+    if (!found)
+        {
+        MCMCUpdaterShPtr u = *params_begin;
+	    last_ln_like = u->recalcLike();
+        }
+#else
 	MCMCUpdaterShPtr u = *params_begin;
 	last_ln_like = u->recalcLike();
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

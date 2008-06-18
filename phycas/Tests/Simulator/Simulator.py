@@ -42,9 +42,9 @@ f.write('\nbegin trees;')
 f.write('\n  translate')
 for i,nm in enumerate(phycas.sim_taxon_labels):
     if nm.count(' ') > 0:
-        f.write("\n    %d '%s'" % (i, nm))
+        f.write("\n    %d '%s'" % (i + 1, nm))
     else:
-        f.write("\n    %d %s" % (i, nm))
+        f.write("\n    %d %s" % (i + 1, nm))
     if i < len(phycas.sim_taxon_labels) - 1:
         f.write(',')
     else:

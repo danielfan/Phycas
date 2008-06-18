@@ -111,6 +111,7 @@ double TreeScalerMove::operator()(
 */
 void TreeScalerMove::rescaleAllEdgeLengths()
 	{
+    //@POL this function is replicated in TreeManip - should just use that version
     double scaling_factor = curr_value;
 
     curr_value = 1.0;

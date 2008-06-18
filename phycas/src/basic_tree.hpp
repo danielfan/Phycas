@@ -97,6 +97,9 @@ class Tree
 		//
 		void					Clear();
         void                    stripNodeNames();
+#if POLPY_NEWWAY
+        void                    renumberInternalNodes(unsigned start_at);
+#endif
 		void					BuildFromString(const std::string & newick, bool zero_based_tips = false); // throws XPhylogeny
 		void					RectifyNumbers(std::vector<std::string> name_vector); // throws XPhylogeny
 		void					RectifyNames(std::vector<std::string> name_vector); // throws XPhylogeny

@@ -34,10 +34,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="python24.lib boost_python.lib"
+				AdditionalDependencies="python25.lib boost_python-vc71-mt-gyd-1_34.lib"
 				OutputFile="$(OutDir)/test.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(BOOST_ROOT)\libs\python\build\bin-stage&quot;;$(PYTHON_ROOT)\libs"
+				AdditionalLibraryDirectories="$(BOOST_ROOT)\stage\lib;$(PYTHON_ROOT)\libs"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/test.pdb"
 				SubSystem="1"
@@ -119,7 +119,7 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath="..\..\src\boost_assertion_failed.cpp">
+				RelativePath="..\..\phycas\src\boost_assertion_failed.cpp">
 			</File>
 			<File
 				RelativePath=".\test.cpp">

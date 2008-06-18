@@ -248,6 +248,9 @@
 				RelativePath="..\..\phycas\src\ncat_move.cpp">
 			</File>
 			<File
+				RelativePath="..\..\phycas\src\nielsen_mapping_move.cpp">
+			</File>
+			<File
 				RelativePath="..\..\phycas\src\omega_param.cpp">
 			</File>
 			<File
@@ -275,6 +278,9 @@
 				RelativePath="..\..\phycas\src\split.cpp">
 			</File>
 			<File
+				RelativePath="..\..\phycas\src\square_matrix.cpp">
+			</File>
+			<File
 				RelativePath="..\..\phycas\src\state_freq_param.cpp">
 			</File>
 			<File
@@ -294,6 +300,9 @@
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\underflow_policy.cpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\univent_manager.cpp">
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\updater_pymod.cpp">
@@ -403,6 +412,9 @@
 				RelativePath="..\..\phycas\src\ncat_move.inl">
 			</File>
 			<File
+				RelativePath="..\..\phycas\src\nielsen_mapping_move.hpp">
+			</File>
+			<File
 				RelativePath="..\..\phycas\src\nopython_force_include.hpp">
 			</File>
 			<File
@@ -428,6 +440,9 @@
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\slice_sampler.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\square_matrix.hpp">
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\states_patterns.hpp">
@@ -473,6 +488,9 @@
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\underflow_policy.inl">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\univent_manager.hpp">
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\xlikelihood.hpp">

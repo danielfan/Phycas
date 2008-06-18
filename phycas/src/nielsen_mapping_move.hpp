@@ -1,6 +1,6 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
 |  Phycas: Python software for phylogenetic analysis                          |
-|  Copyright (C) 2006 Mark T. Holder, Paul O. Lewis and David L. Swofford     |
+|  Copyright (C) 2008 Mark T. Holder, Paul O. Lewis and David L. Swofford     |
 |                                                                             |
 |  This program is free software; you can redistribute it and/or modify       |
 |  it under the terms of the GNU General Public License as published by       |
@@ -17,24 +17,33 @@
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#if ! defined(STATES_PATTERNS_HPP)
-#define STATES_PATTERNS_HPP
+#if ! defined(NIELSEN_MAPPING_MOVE_HPP)
+#define NIELSEN_MAPPING_MOVE_HPP
 
-#include "phycas/src/cipres/ConfigDependentHeaders.h"	// for int8_t typedef
+#include <vector>									// for std::vector
+#include <boost/shared_ptr.hpp>						// for boost::shared_ptr
+#include <boost/weak_ptr.hpp>						// for boost::weak_ptr
+//#include <boost/enable_shared_from_this.hpp>		// for boost::enable_shared_from_this
+#include "phycas/src/mcmc_updater.hpp"		// for base class MCMCUpdater
 
-typedef std::vector<int8_t>				            VecStateList;
-typedef std::vector<unsigned>			            VecStateListPos;
+class MCMCChainManager;
+typedef boost::weak_ptr<MCMCChainManager>			ChainManagerWkPtr;
 
-typedef double										PatternCountType;
-typedef	std::map<VecStateList, PatternCountType>	PatternMapType;
-typedef	std::vector<PatternCountType>				CountVectorType;
+namespace phycas
+{
 
-#if POLPY_NEWWAY    // StateTimeList should be a list!
-typedef std::pair<int8_t,float>                     StateTimePair;
-typedef std::vector<StateTimePair>                  StateTimeList;
-typedef std::vector<StateTimeList>                  StateTimeListVect;
-#endif
+/*----------------------------------------------------------------------------------------------------------------------
+|   Refreshes the mapping for all sites using the method of Nielsen, R. 2002. Mapping mutations on phylogenies. 
+|   Systematic Biology 51:729-739. This function will wipe out all stored states and times on the edges of the tree and
+|   create a fresh set compatible with the tip states. 
+*/
+class NielsenMappingMove : public MCMCUpdater
+	{
+	public:
+						NielsenMappingMove();
+						virtual ~NielsenMappingMove(); 
+        bool            update();
+    };
 
-#endif
-
-
+}
+#endif 

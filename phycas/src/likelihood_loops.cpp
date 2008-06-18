@@ -209,7 +209,12 @@ void TreeLikelihood::calcCLATwoTips(
 			const double * leftPMatTRow = leftPMatT[leftStateCodes[p]];
 			const double * rightPMatTRow = rightPMatT[rightStateCodes[p]];
             for (unsigned s = 0; s < num_states; ++s)
-				cla[s] = leftPMatTRow[s]*rightPMatTRow[s];
+                {
+                double leftprob = leftPMatTRow[s];
+                double rightprob = rightPMatTRow[s];
+				//cla[s] = leftPMatTRow[s]*rightPMatTRow[s];
+				cla[s] = leftprob*rightprob;
+                }
 			}
 		}
 #if defined(DO_UNDERFLOW_POLICY)

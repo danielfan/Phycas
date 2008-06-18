@@ -90,6 +90,10 @@ class Phycas(object):
         
         # Variables associated with tree scaler move
         self.tree_scaler_weight     = 0         # Whole-tree scaling will be performed this many times per cycle
+        
+        #POLPY_NEWWAY
+        self.use_unimap             = False     # if True, MCMC analyses will use the uniformized mapping approach
+        self.nielsen_move_weight    = 1         # Nielsen mapping will be performed this many times per cycle
 
         # Variables associated with PDF tree drawing (used in pdftree() function)
         # The 14 standard fonts guaranteed to be available in all PDF consumer applications:
@@ -246,6 +250,8 @@ class Phycas(object):
         self.taxon_labels           = []        # Will hold taxon labels from data file or default names if self.data_source equals None
         self.paramf                 = None
         self.treef                  = None
+        self.tree_file_name         = ''        # Will hold tree file name (see openParameterAndTreeFiles)
+        self.param_file_name        = ''        # Will hold parameter file name (see openParameterAndTreeFiles)
         self.tmp_simdata            = SimData()
         self.gg_Pm                  = 0.0       # Penalty component (same for all k)
         self.gg_Gm                  = []        # Vector of goodness-of-fit components (one for each k in gg_kvect)
@@ -269,6 +275,8 @@ class Phycas(object):
         self.ps_beta                = 1.0
         self.wangang_sampled_betas  = None
         self.wangang_sampled_likes  = None
+        self.unimap_manager         = None
+        self.nsamples               = 0
 
         # make a copy of the vector of keys from __dict__ so that we can detect (in check_settings)
         # whether the user has accidentally introduced a new variable (by misspelling, for example)
@@ -279,6 +287,18 @@ class Phycas(object):
         return inspect.getouterframes(inspect.currentframe())[1][2]
 
     def check_settings(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        At the end of the __init__ function, a variable dict_keys is
+        created consisting of a copy of all keys in __dict__. Now,
+        we expect len(__dict__) to be one greater than len(dict_keys)
+        because __dict__ now includes an entry for dict_keys. If 
+        len(__dict__) is longer than this, then probably the user
+        misspelled one of the variable names, thus accidentally
+        adding another entry to __dict__. This gives us an 
+        opportunity to catch this kind of mistake.
+        
+        """
         if len(self.__dict__) > len(self.dict_keys) + 1:
             for k in self.__dict__.keys():
                 if k not in self.dict_keys and not k == 'dict_keys':
@@ -958,32 +978,36 @@ class Phycas(object):
         This function is for parts of the setup that should occur right before
         runMCMC() is called. Setup is deferred until this point to give the
         user a chance to change the default settings before the call to
-        runMCMC(). A call to the MCMCManager's createChains function is the
-        last thing done by this function.
+        runMCMC(). This function does these things: 
+        1) reads the data and ensures that the taxon_labels list is filled
+        with the correct number of taxon labels; 
+        2) creates a starting tree description; 
+        3) creates an appropriate heat_vector (for either Metropolis-coupling
+        or discrete path sampling); 
+        4) calls MCMCManager's createChains function to handle setup for each
+        individual chain; and 
+        5) opens the parameter and tree files.
         
         """
-
         # Read the data
         if self.data_source == 'file':
             self.readDataFromFile()
-        # Store (and create, if necessary) list of taxon labels
         elif (len(self.taxon_labels) != self.ntax):
+            # Create and store a list of default taxon labels
             for i in range(self.ntax):
                 s = 'taxon_%d' % (i + 1)
                 self.taxon_labels.append(s)
-
         self.phycassert(len(self.taxon_labels) == self.ntax, "Number of taxon labels does not match number of taxa.")
 
-        # Create a tree description to be used for building starting trees (formerly Phycas.setupTree function)
+        # Create a tree description to be used for building starting trees
         if self.starting_tree_source == 'file':
             self.phycassert(self.data_source, "Specified starting_tree_source to be 'file' when data_source was None (file was not read)")
-
-            # Grab first tree description in the data file
-            # TODO allow some other tree than the first
             newicks = []
             for t in self.reader.getTrees():
                 newicks.append(t.newick)
             self.phycassert(len(newicks) > 0, 'a trees block defining at least one tree must be stored in the nexus data file')
+            # Grab first tree description in the data file
+            # TODO allow some other tree than the first
             self.starting_tree = newicks[0]
         elif self.starting_tree_source == 'usertree':
             self.starting_tree = self.tree_topology
@@ -998,13 +1022,17 @@ class Phycas(object):
             if self.nchains == 1:
                 self.heat_vector = [1.0]
             else:
+                # DISCRETE PATH SAMPLING
                 # Create a list for each chain to hold sampled lnL values
+                #@ shouldn't this only be done if self.is_standard_heating is False?
                 self.path_sample = []
                 for i in range(self.nchains):
                     self.path_sample.append([])
-                    
+                
+                # Determine vector of powers for each chain
                 self.heat_vector = []
                 if self.is_standard_heating:
+                    # Goal is to improve mixing; both likelihood and prior raised to power
                     for i in range(self.nchains):
                         # Standard heating 
                         # 0 1.000 = 1/1.0 cold chain explores posterior
@@ -1014,6 +1042,8 @@ class Phycas(object):
                         temp = 1.0/(1.0 + float(i)*self.heating_lambda)
                         self.heat_vector.append(temp)
                 else:
+                    # DISCRETE PATH SAMPLING
+                    # Goal is path sampling, not mixing, so these powers are applied only to likelihood
                     for i in range(self.nchains):
                         self.do_marginal_like = True
                         # Likelihood heating for thermodynamic integration
@@ -1026,13 +1056,11 @@ class Phycas(object):
                         temp = float(self.nchains - i - 1)/denom
                         self.heat_vector.append(temp)
         else:
-            # User supplied heat_vector; check to make sure they allowed for a cold chain
+            # User supplied his/her own heat_vector; perform sanity checks
             self.nchains = len(self.heat_vector)
-            self.phycassert(self.heat_vector.index(1.0) < self.nchains, 'no cold chain was specified')
+            self.phycassert(self.heat_vector.index(1.0) < self.nchains, 'user-supplied heat_vector does not allow for a cold chain (one power must be 1.0)')
 
-        # Call MCMCManager's createChains function
         self.mcmc_manager.createChains()
-        
         self.openParameterAndTreeFiles()
         
     def mcmc(self):
@@ -1148,6 +1176,17 @@ class Phycas(object):
         self.gg_Pm, self.gg_Gm, self.gg_Dm = gelfand_ghosh.run()
         return (self.gg_Pm, self.gg_Gm, self.gg_Dm)
 
+    def unimap(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Performs a uniformized mapping MCMC analysis. 
+        
+        """
+        self.check_settings()
+        import UnimapImpl
+        self.unimap_manager = UnimapImpl.UnimapManager(self)
+        self.unimap_manager.run()
+        
     def sumt(self):
         self.check_settings()
         import SumTImpl

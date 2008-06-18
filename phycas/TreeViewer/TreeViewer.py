@@ -8,7 +8,7 @@
 # o Nodes that are selected (along with their associated edges) are shown in red
 #   (this is useful for showing, for example, which edges were modified by a
 #   Larget-Simon move)
-# o The label of the node currently serving at the likelihood root is shown in
+# o The label of the node currently serving as the likelihood root is shown in
 #   magenta, whereas other nodes are gray (todo: allow nodes other than node 0 to
 #   serve as the likelihood root)
 # o A default tree is shown initially (todo: allow tree to be replaced)
@@ -21,10 +21,8 @@
 
 from phycas import *
 #from threading import *
-from Tkinter import *
-from tkMessageBox import askokcancel, askquestion, showinfo
-from tkSimpleDialog import askstring
-from tkFileDialog import askopenfilename
+import Tkinter
+#from tkFileDialog import askopenfilename
 import tkFont
 import math
 
@@ -73,25 +71,65 @@ Likelihood root node is PINK
 Keyboard shortcuts:
   h - opens this help dialog box
   n - toggles between node numbers and names
-  q - quits application
+  q - quits application normally (returns 1)
+  c - quits application abnormally (returns 0)
+  k - increases site
+  j - decreases site
+  g - go to site
 
-Currently, edge are not shown proportional to their lengths.
+Currently, edges are NOT shown proportional to their lengths.
 """
 
-class TreeCanvas(Canvas):
-    # Wrapping Canvas calls in these display* functions in order to later make
+class TreeCanvas(Tkinter.Canvas):
+    #def __init__(self, parent, tree, tree_lock, width, height):
+    def __init__(self, parent, tree, width, height):
+        #self.tree_mutex = tree_lock
+        Tkinter.Canvas.__init__(self, master=parent, bg=color_plot_background, width=width, height=height)
+
+        self.frame = parent
+        self.tree = tree
+        self.use_edgelens = False   # by default, all edges are drawn as equal in length (call useEdgelens() to change this)
+        self.tree_modified = True
+        self.tree_height = 0.0
+        self.tree_width = 0.0
+        self.xscaler = 1.0
+        self.yscaler = 1.0
+        self.plot_margin = 20        
+
+        # variables associated with the tree being displayed
+        #self.default_tree_topology = '(A,(((B,C)U,(D,(E,F)W)V)T,G)S,(H,(I,(J,K)Z,L)Y)X)R'
+        #self.tree = Phylogeny.Tree()
+        #self.tree.buildFromString(self.default_tree_topology)
+        self.likelihood_root_nodenum = 0
+
+        # variables associated with showing nodes
+        self.use_node_names = False
+
+        # variables associated with showing status of conditional likelihood arrays
+        self.CLA_radius = 2   # radius of circle plotted for each CLA
+        
+        # font-related
+        self.font = tkFont.Font(family='Courier', size=8)
+        fm = self.font.metrics()
+        self.font_height = fm['ascent'] + fm['descent']
+        self.font_Mwidth = self.font.measure('M')
+        self.nodename_text_color = color_unselected_node
+
+        self.bind("<Configure>", self.resizeEvent)
+
+    # I am wrapping Canvas calls in these display* functions in order to later make
     # it easier to draw to a PDF file rather than the screen
     def displayText(self, x, y, text, font, color):
-        Canvas.create_text(self, x, y, text=text, font=font, fill=color)
+        Tkinter.Canvas.create_text(self, x, y, text=text, font=font, fill=color)
         
     def displayLine(self, x0, y0, x, y, color, thickness):
-        Canvas.create_line(self, x0, y0, x, y, fill=color, width=thickness)
+        Tkinter.Canvas.create_line(self, x0, y0, x, y, fill=color, width=thickness)
 
     def displayFilledOval(self, x0, y0, x, y, color):
-        Canvas.create_oval(self, x0, y0, x, y, fill=color, outline=color)
+        Tkinter.Canvas.create_oval(self, x0, y0, x, y, fill=color, outline=color)
 
     def displayFilledRectangle(self, x, y, width, height, color):
-        Canvas.create_rectangle(self, x, y, width, height, fill=color)
+        Tkinter.Canvas.create_rectangle(self, x, y, width, height, fill=color)
         
     def xtranslate(self, x):
         return int(self.left + self.xscaler*x)
@@ -103,7 +141,8 @@ class TreeCanvas(Canvas):
         x = self.xtranslate(xval)
         y = self.ytranslate(yval)
         color = (number == self.likelihood_root_nodenum and color_likelihood_root or node_color)
-        self.displayText(x, y, text=str(label), font=self.font, color=color)
+        if self.frame.site is None:
+            self.displayText(x, y, text=str(label), font=self.font, color=color)
 
     def plotEdge(self, parent_x, parent_y, child_x, child_y,
                  thickness=1,
@@ -112,7 +151,8 @@ class TreeCanvas(Canvas):
                  parental_color=color_undefined_cla,
                  parental_cached_color=color_undefined_cla,
                  filial_color=color_undefined_cla,
-                 filial_cached_color=color_undefined_cla):
+                 filial_cached_color=color_undefined_cla,
+                 state_list=[], times_list=[]):
         x0 = self.xtranslate(parent_x)
         y0 = self.ytranslate(parent_y)
         x = self.xtranslate(child_x)
@@ -134,13 +174,43 @@ class TreeCanvas(Canvas):
         # Draw the edge itself
         self.displayLine(x0+dx, y0+dy, x-dx, y-dy, edge_color, thickness)
 
-        # Draw the parental CLA marker
-        self.displayFilledOval(x0+dx-cla_radius, y0+dy-cla_radius, x0+dx+cla_radius, y0+dy+cla_radius, color=parental_color)
-        self.displayFilledOval(x0+dx-cached_radius, y0+dy-cached_radius, x0+dx+cached_radius, y0+dy+cached_radius, color=parental_cached_color)
+        if self.frame.site is None:
+            # Draw the parental CLA marker
+            self.displayFilledOval(x0+dx-cla_radius, y0+dy-cla_radius, x0+dx+cla_radius, y0+dy+cla_radius, color=parental_color)
+            self.displayFilledOval(x0+dx-cached_radius, y0+dy-cached_radius, x0+dx+cached_radius, y0+dy+cached_radius, color=parental_cached_color)
 
-        # Draw the filial CLA marker
-        self.displayFilledOval(x-dx-cla_radius, y-dy-cla_radius, x-dx+cla_radius, y-dy+cla_radius, color=filial_color)
-        self.displayFilledOval(x-dx-cached_radius, y-dy-cached_radius, x-dx+cached_radius, y-dy+cached_radius, color=filial_cached_color)
+            # Draw the filial CLA marker
+            self.displayFilledOval(x-dx-cla_radius, y-dy-cla_radius, x-dx+cla_radius, y-dy+cla_radius, color=filial_color)
+            self.displayFilledOval(x-dx-cached_radius, y-dy-cached_radius, x-dx+cached_radius, y-dy+cached_radius, color=filial_cached_color)
+        else:
+            # If state_list not empty, draw states of univents evenly spaced along edge
+            #                 tan(theta) = (y - y0)/(x - x0)
+            #          x, y   r = sqrt[(x-x0)^2 + (y - y0)^2]
+            #          /|     dy = r*sin(theta)  
+            #       1 / |     dx = r*cos(theta)
+            #        /  |     Example: 3 univents shown, indexed s = 0, 1 and 2
+            #     1 /   |     r_s = (s+1)*r/(n+1)
+            #      /    |     r_0 = 1*r/4 = r/4
+            #   0 /     |     r_1 = 2*r/4 = r/2
+            #    /______|     r_2 = 3*r/4
+            # x0, y0    
+            nstates = len(state_list)
+            if nstates > 0:
+                xdiff = float(x - x0)
+                ydiff = float(y - y0)
+                r = math.sqrt(xdiff*xdiff + ydiff*ydiff)
+                if xdiff == 0.0:
+                    theta = math.pi/2.0
+                else:
+                    theta = math.acos(xdiff/r)
+                for i,(s,t) in enumerate(zip(state_list, times_list)):
+                    #r_s  = r*float(i)/float(nstates - 1)
+                    r_s = r*float(t)
+                    dx_s = r_s*math.cos(theta)
+                    dy_s = r_s*math.sin(theta)
+                    display_string = '%s' % (self.frame.lookup_state[s])
+                    self.displayText(x0 + dx_s, y0 - dy_s, text=display_string, font=self.font, color=yellow)
+                    #self.displayLine(x, y, x, y, yellow, thickness)
 
     def getEdgeLen(self, nd):
         return (self.use_edgelens and nd.getEdgeLen() or 1.0)
@@ -231,13 +301,24 @@ class TreeCanvas(Canvas):
             y = self.tree_height - nd.getY()
             color = nd.isSelected() and color_selected_edge or color_unselected_edge
             par_color, par_dot_color, fil_color, fil_dot_color = self.checkCLAstatus(nd)
+            univent_states = []
+            univent_times = []
+            if self.frame.site is not None:
+                if nd.isTip():
+                    nd_data = nd.getTipData()
+                else:
+                    nd_data = nd.getInternalData()
+                if nd_data and nd_data.getNumUnivents(self.frame.site) > 0:
+                    univent_states = nd_data.getUniventStates(self.frame.site)
+                    univent_times  = nd_data.getUniventTimes(self.frame.site)
             self.plotEdge(parent_x=x0, parent_y=y0, child_x=x, child_y=y,
                           thickness=nd.isSelected() and 3 or 1,
                           nodenum_radius=2*self.font_Mwidth,
                           cla_radius=4, cached_radius=2, 
                           edge_color=color,
                           parental_color=par_color, parental_cached_color=par_dot_color,
-                          filial_color=fil_color, filial_cached_color=fil_dot_color)
+                          filial_color=fil_color, filial_cached_color=fil_dot_color,
+                          state_list=univent_states, times_list=univent_times)
             id = self.use_node_names and nd.getNodeName() or nd.getNodeNumber()
             color = nd.isSelected() and color_selected_node or color_unselected_node
             self.plotNode(x, y, nd.getNodeNumber(), id, color)
@@ -296,41 +377,6 @@ class TreeCanvas(Canvas):
                         filial_cached_color = color_invalid_cla
         return parental_color, parental_cached_color, filial_color, filial_cached_color
         
-    #def __init__(self, parent, tree, tree_lock, width, height):
-    def __init__(self, parent, tree, width, height):
-        #self.tree_mutex = tree_lock
-        Canvas.__init__(self, master=parent, bg=color_plot_background, width=width, height=height)
-
-        self.tree = tree
-        self.use_edgelens = False   # by default, all edges are drawn as equal in length (call useEdgelens() to change this)
-        self.tree_modified = True
-        self.tree_height = 0.0
-        self.tree_width = 0.0
-        self.xscaler = 1.0
-        self.yscaler = 1.0
-        self.plot_margin = 20        
-
-        # variables associated with the tree being displayed
-        #self.default_tree_topology = '(A,(((B,C)U,(D,(E,F)W)V)T,G)S,(H,(I,(J,K)Z,L)Y)X)R'
-        #self.tree = Phylogeny.Tree()
-        #self.tree.buildFromString(self.default_tree_topology)
-        self.likelihood_root_nodenum = 0
-
-        # variables associated with showing nodes
-        self.use_node_names = False
-
-        # variables associated with showing status of conditional likelihood arrays
-        self.CLA_radius = 2             # radius of circle plotted for each CLA
-        
-        # font-related
-        self.font = tkFont.Font(family='Courier', size=8)
-        fm = self.font.metrics()
-        self.font_height = fm['ascent'] + fm['descent']
-        self.font_Mwidth = self.font.measure('M')
-        self.nodename_text_color = color_unselected_node
-
-        self.bind("<Configure>", self.resizeEvent)
-
     def resizeEvent(self, event):
         self.resize(event.width, event.height, self.plot_margin)
         self.repaint()
@@ -367,41 +413,47 @@ class TreeCanvas(Canvas):
             self.repaint()
 
 #class TreeViewer(Frame,Thread):
-class TreeViewer(Frame):
-    #def __init__(self, tree, mutex=None, parent=None):
-    def __init__(self, tree, msg='Tree Viewer for Debugging', parent=None):
+class TreeViewer(Tkinter.Frame):
+    def __init__(self, tree, msg, site, parent=None):
+        self.lookup_state = ['A','C','G','T']
+        self.site = None
+        if site > 0:
+            self.site = site - 1
+        self.window_title_prefix = msg
+        self.exit_code = 1  # user can choose a normal quit (returns 1) or a cancel quit (returns 0)
+        
         #Thread.__init__(self)
-        Frame.__init__(self, parent)
-        self.pack(expand=YES, fill=BOTH)
+        Tkinter.Frame.__init__(self, parent)
+        self.pack(expand=Tkinter.YES, fill=Tkinter.BOTH)
 
         # set the window title
-        self.winfo_toplevel().title(msg)
+        self.setTitle()
 
         # always position the main window 50 pixels from top and 50 pixels from left
         self.winfo_toplevel().geometry("+%d+%d" % (50, 50))
 
         # create a frame to hold the menu buttons
-        menuf = Frame(self)
-        menuf.pack(expand=NO, fill=X)
+        menuf = Tkinter.Frame(self)
+        menuf.pack(expand=Tkinter.NO, fill=Tkinter.X)
         
         # create the File menu button
-        self.filemb = Menubutton(menuf, text='File', relief=RAISED, anchor=W, borderwidth=0)
-        self.filemb.pack(expand=NO, fill=X, side=LEFT)
-        self.filemb.menu = Menu(self.filemb, tearoff=0)
+        self.filemb = Tkinter.Menubutton(menuf, text='File', relief=Tkinter.RAISED, anchor=Tkinter.W, borderwidth=0)
+        self.filemb.pack(expand=Tkinter.NO, fill=Tkinter.X, side=Tkinter.LEFT)
+        self.filemb.menu = Tkinter.Menu(self.filemb, tearoff=0)
         self.filemb['menu'] = self.filemb.menu
         self.filemb.menu.add_command(label='Quit', command=self.quit)
         
         # create the Options menu button
-        self.samplemb = Menubutton(menuf, text='Options', relief=RAISED, anchor=W, borderwidth=0)
-        self.samplemb.pack(expand=NO, fill=X, side=LEFT)
-        self.samplemb.menu = Menu(self.samplemb, tearoff=0)
+        self.samplemb = Tkinter.Menubutton(menuf, text='Options', relief=Tkinter.RAISED, anchor=Tkinter.W, borderwidth=0)
+        self.samplemb.pack(expand=Tkinter.NO, fill=Tkinter.X, side=Tkinter.LEFT)
+        self.samplemb.menu = Tkinter.Menu(self.samplemb, tearoff=0)
         self.samplemb['menu'] = self.samplemb.menu
         self.samplemb.menu.add_command(label='Toggle node numbers', command=self.toggleNodeNamesNumbers)
 
         # create the Help menu button
-        self.helpmb = Menubutton(menuf, text='Help', relief=RAISED, anchor=W, borderwidth=0)
-        self.helpmb.pack(expand=YES, fill=X, side=LEFT)
-        self.helpmb.menu = Menu(self.helpmb, tearoff=0)
+        self.helpmb = Tkinter.Menubutton(menuf, text='Help', relief=Tkinter.RAISED, anchor=Tkinter.W, borderwidth=0)
+        self.helpmb.pack(expand=Tkinter.YES, fill=Tkinter.X, side=Tkinter.LEFT)
+        self.helpmb.menu = Tkinter.Menu(self.helpmb, tearoff=0)
         self.helpmb['menu'] = self.helpmb.menu
         self.helpmb.menu.add_command(label='About', command=self.helpAbout)
         
@@ -410,21 +462,44 @@ class TreeViewer(Frame):
         canvash = int(0.67*self.winfo_screenheight())
         #self.plotter = TreeCanvas(parent=self, tree=tree, tree_lock=mutex, width=canvasw, height=canvash)
         self.plotter = TreeCanvas(parent=self, tree=tree, width=canvasw, height=canvash)
-        self.plotter.pack(side=TOP, expand=YES, fill=BOTH)
+        self.plotter.pack(side=Tkinter.TOP, expand=Tkinter.YES, fill=Tkinter.BOTH)
         
         # create the status label
-        self.status_label = Label(self, justify=LEFT, relief=SUNKEN, height=1, anchor=W, text='Ready')
-        self.status_label.pack(side=TOP, expand=NO, fill=X)
+        self.status_label = Tkinter.Label(self, justify=Tkinter.LEFT, relief=Tkinter.SUNKEN, height=1, anchor=Tkinter.W, text='Ready')
+        self.status_label.pack(side=Tkinter.TOP, expand=Tkinter.NO, fill=Tkinter.X)
         
         # bind some keys to the application (doesn't matter which widget has focus when you use bind_all
-        self.bind_all("<KeyPress-n>", self.keybdToggleNodeNamesNumbers)
-        self.bind_all("<KeyPress-h>", self.keybdHelpAbout)
-        self.bind_all("<KeyPress-q>", self.keybdQuit)
-        #self.bind_all("<Shift-KeyPress-N>", self.keybdManySteps)
+        # See http://www.goingthewongway.com/2007/08/24/tkinter-keyboard-bindings-in-python/ for a list of
+        # key codes and symbols, or enable keybdShowKeycode below, which will show you the key codes
+        if False:
+            self.bind_all("<Key>", self.keybdShowKeycode)
+        else:
+            self.bind_all("<KeyPress-n>", self.keybdToggleNodeNamesNumbers)
+            self.bind_all("<KeyPress-h>", self.keybdHelpAbout)
+            self.bind_all("<KeyPress-q>", self.keybdQuit)
+            self.bind_all("<KeyPress-c>", self.keybdEscapeQuit)
+            self.bind_all("<Right>", self.keybdIncrSite)
+            self.bind_all("<Left>", self.keybdDecrSite)
+            self.bind_all("<Next>", self.keybdSitePlusHundred)
+            self.bind_all("<Prior>", self.keybdSiteMinusHundred)
+            self.bind_all("<KeyPress-g>", self.keybdGoToSite)
+            #self.bind_all("<Shift-KeyPress-N>", self.keybdManySteps)
 
         # configure event is bound only to the main frame
         #self.bind("<Configure>", self.resizing)
         
+    def setTitle(self):
+        s = self.window_title_prefix
+        if self.site is not None:
+            s += ' (site = %d)' % self.site
+        self.winfo_toplevel().title(s)
+        
+    def keybdShowKeycode(self, event):
+        import tkMessageBox         # askokcancel, askquestion, showinfo
+        keyinfo = "event.keycode = %d\nevent.keysym = %s" % (event.keycode, event.keysym)
+        tkMessageBox.showinfo('Info about the key you pressed', keyinfo)
+        return "break"
+
     def keybdToggleNodeNamesNumbers(self, event):
         self.toggleNodeNamesNumbers()
 
@@ -441,13 +516,59 @@ class TreeViewer(Frame):
         self.helpAbout()
 
     def helpAbout(self):
-        showinfo('About the Phycas TreeViewer', helptext)
+        import tkMessageBox         # askokcancel, askquestion, showinfo
+        tkMessageBox.showinfo('About the Phycas TreeViewer', helptext)
+
+    def keybdIncrSite(self, event):
+        if self.site is None:
+            self.site = 0
+        else:
+            self.site += 1
+        self.setTitle()
+        self.plotter.repaint()
+
+    def keybdDecrSite(self, event):
+        if self.site == 0:
+            self.site = None
+        else:
+            self.site -= 1
+        self.setTitle()
+        self.plotter.repaint()
+        
+    def keybdSitePlusHundred(self, event):
+        if self.site is None:
+            self.site = 100
+        else:
+            self.site += 100
+        self.setTitle()
+        self.plotter.repaint()
+
+    def keybdSiteMinusHundred(self, event):
+        if self.site <= 100:
+            self.site = None
+        else:
+            self.site -= 100
+        self.setTitle()
+        self.plotter.repaint()
+        
+    def keybdGoToSite(self, event):
+        import tkSimpleDialog
+        answer = tkSimpleDialog.askinteger('Go to site','Enter site (0 or larger)',minvalue=0)      
+        if answer is not None:
+            self.site = answer
+            self.setTitle()
+            self.plotter.repaint()
 
     def keybdQuit(self, event):
         self.close()
 
+    def keybdEscapeQuit(self, event):
+        self.exit_code = 0
+        self.close()
+
     def close(self):
         self.quit()
+        self.destroy()
         
     def refresh(self, message):
         self.status_label.config(text=message)
@@ -460,7 +581,8 @@ class TreeViewer(Frame):
             self.plotter.likelihood_root_nodenum = like_root_node_num
         
     def run(self):
-        mainloop()
+        Tkinter.mainloop()
+        return self.exit_code
 
 if __name__ == '__main__':
     newick = '(A,(((B,C)U,(D,(E,F)W)V)T,G)S,(H,(I,(J,K)Z,L)Y)X)R'

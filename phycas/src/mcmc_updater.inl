@@ -80,7 +80,8 @@ inline void MCMCUpdater::freeParameter()
 /*----------------------------------------------------------------------------------------------------------------------
 |	Performs an update. For moves this involves calling proposeNewState, computing the posterior density of the new 
 |	state, and deciding whether to accept or reject the proposed move. For parameters, this involves choosing the next
-|	parameter value by slice sampling. This base class version does nothing
+|	parameter value by slice sampling. This base class version does nothing. In derived classes, update should return 
+|   true if it changed anything, false if whatever was proposed was rejected and thus nothing was changed.
 */
 inline bool MCMCUpdater::update()
 	{

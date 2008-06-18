@@ -360,6 +360,17 @@ void SimData::saveToNexusFile(
 			outf << str(boost::format(fmtstr) % taxon_names[i]) << "  ";
 			}
 
+#if POLPY_NEWWAY
+        // Spit out characters in the order in which they were simulated. While this is a nice feature, 
+        // it currently requires storing the data twice (patternVect and sim_pattern_map)
+        unsigned nchar = (unsigned)patternVect.size();
+        for (unsigned k = 0; k < nchar; ++k)
+            {
+            unsigned j = (unsigned)patternVect[k][i];
+            char s = state_symbols[j][0];
+            outf << s;
+            }
+#else
 		for (SimPatternMapType::iterator it = sim_pattern_map.begin(); it != sim_pattern_map.end(); ++it)
 			{
 			// The first member of it is the state, which must be converted from its coded form
@@ -376,6 +387,7 @@ void SimData::saveToNexusFile(
 				outf << s;
 				}
 			}
+#endif
 		outf << "\n";
 		}
 
@@ -454,6 +466,10 @@ void SimData::insertPattern(PatternCountType count)
 		// tmp_pattern has not yet been stored in sim_pattern_map
 		sim_pattern_map.insert(lowb, SimPatternMapType::value_type(tmp_pattern, count));
 		}
+
+#if POLPY_NEWWAY
+    patternVect.push_back(tmp_pattern);
+#endif
 
 	total_count += count;
 	}

@@ -26,6 +26,10 @@
 #include <boost/shared_array.hpp>
 #include "phycas/src/cipres/AllocateMatrix.hpp"
 #include "phycas/src/cipres/ConfigDependentHeaders.h"
+#if POLPY_NEWWAY
+#include "phycas/src/states_patterns.hpp"
+#include "phycas/src/univent_manager.hpp"
+#endif
 
 struct CIPRES_Matrix;
 
@@ -172,19 +176,35 @@ class TipData
 		bool								parentalCLAValid() const;
 		bool								parentalCLACached() const;
 
+#if POLPY_NEWWAY
+        unsigned                            getNumUnivents(unsigned site) const;
+        std::vector<unsigned>               getUniventStates(unsigned site) const;
+        std::vector<double>                 getUniventTimes(unsigned site) const;
+#endif
+
 	private:
 
 											TipData(unsigned nRates, unsigned nStates, CondLikelihoodStorage & cla_storage);
+#if POLPY_NEWWAY
+											TipData(bool using_unimap, unsigned nPatterns, const std::vector<unsigned int> & stateListPosVec, boost::shared_array<const int8_t> stateCodesShPtr, unsigned nRates, unsigned nStates, double * * * pMatTranspose, bool managePMatrices, CondLikelihoodStorage & cla_storage);
+#else
 											TipData(const std::vector<unsigned int> & stateListPosVec, boost::shared_array<const int8_t> stateCodesShPtr, unsigned nRates, unsigned nStates, double * * * pMatTranspose, bool managePMatrices, CondLikelihoodStorage & cla_storage);
+#endif
 		const StateListPos &				getConstStateListPos() const;
 
 		friend void							calcPMatTranspose(const TreeLikelihood & treeLikeInfo, const TipData & tipData, double edgeLength);
 	
 	private:
+
+#if POLPY_NEWWAY
+        bool                                unimap;             /**< true if tips are to be prepared for uniformized mapping likelihood; false if tips are to be prepared for Felsenstein-style integrated likelihoods */
+        UniventManager                      state_time;         /**< state_time[i][j].first holds the state for univent j at site i, whereas state_time[i][j].second holds the fraction of the edgelen representing the time at which the univent occurred */
+        unsigned                            mdot;               /**< the total number of univents over all sites on the edge owned by this node */
+#endif
 											// conditional likelihood of the rest of the tree
 		//bool								parCLAValid;
-		CondLikelihoodShPtr					parWorkingCLA; 	/**< conditional likelihood array for parent and beyond (valid if it points to something, invalid otherwise) */
-		CondLikelihoodShPtr					parCachedCLA; 	/**< parental conditional likelihood array is stored here to make reverting MCMC moves cheap */
+		CondLikelihoodShPtr					parWorkingCLA; 	    /**< conditional likelihood array for parent and beyond (valid if it points to something, invalid otherwise) */
+		CondLikelihoodShPtr					parCachedCLA; 	    /**< parental conditional likelihood array is stored here to make reverting MCMC moves cheap */
 		
 
 		int8_t								state;				/**< Used in simulation to temporarily store the state for one character */

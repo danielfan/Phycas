@@ -32,6 +32,10 @@
 #include "phycas/src/cond_likelihood_storage.hpp"
 #include "phycas/src/underflow_policy.hpp"
 
+#if POLPY_NEWWAY
+#include "phycas/src/square_matrix.hpp"
+#endif
+
 struct CIPRES_Matrix;
 
 namespace CipresNative
@@ -107,7 +111,7 @@ class TreeLikelihood
 	public:
 
 										TreeLikelihood(ModelShPtr);
-								virtual ~TreeLikelihood(){} //needed as long as startTreeViewer is virtual
+								virtual ~TreeLikelihood(); //needed as long as startTreeViewer is virtual
 
 		// Accessors
 		unsigned						getNTaxa() const;
@@ -176,6 +180,21 @@ class TreeLikelihood
 		void							simulateFirst(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar);
 		void							simulate(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar);
 
+#if POLPY_NEWWAY
+		void							useUnimap(bool yes_or_no = true);
+        bool                            isUsingUnimap();
+        unsigned                        sampleM(int8_t start_state, int8_t end_state, double transition_prob, double edgelen, LotShPtr rng);
+        void                            unimapEdgeOneSite(StateTimeList & state_time_vect, int8_t start_state, int8_t end_state, double transition_prob, double edgelen, LotShPtr rng);
+        void                            nielsenMapping(TreeShPtr t, LotShPtr rng);
+        double                          calcUnimapLnL(TreeShPtr t);
+        void                            recalcUMatVect();
+        void                            recalcSMatrix(TreeShPtr t);
+        std::string                     debugShowSMatrix();
+        void                            slideNode(double fraction, TreeNode * slider, TreeNode * other);
+        void                            copyStateTimeListVect(TreeNode * nd, StateTimeListVect & stcopy);
+        void                            revertStateTimeListVect(TreeNode * nd, StateTimeListVect & stcopy);
+        void                            swapInternalDataAndEdgeLen(TreeNode * nd1, TreeNode * nd2);
+#endif
 		void							addDataTo(SimData & other);
 
 		unsigned						getNEvals();
@@ -186,7 +205,7 @@ class TreeLikelihood
 
 		int								getLikelihoodRootNodeNum() const;
 		void							debugSaveCLAs(TreeShPtr t, std::string fn, bool overwrite);
-		virtual int						startTreeViewer(TreeShPtr, std::string) const {return 0;}
+		virtual int						startTreeViewer(TreeShPtr, std::string, unsigned site = 0) const {return 0;}
 
 		void							setUFNumEdges(unsigned nedges);
 
@@ -248,6 +267,20 @@ class TreeLikelihood
 		double							harvestLnL(EdgeEndpoints & focalEdge);
 		double							harvestLnLFromValidEdge(ConstEdgeEndpoints & focalEdge);
 
+    protected:
+
+#if POLPY_NEWWAY
+        bool                            using_unimap;           /**< if true, uniformized mapping likelihoods will be used; if false, Felsenstein-style integrated likelihoods will be used */
+        std::vector<SquareMatrix>       uMatVect;               /**< uMat[m][i][j] is the (i,j)th element of the matrix obtained by raising the uniformized transition matrix to the power m */               
+        double * *                      uMat;                   /**< uMat[i][j] is the log of the corresponding element of the uniformized transition matrix element */
+        double                          lambda;                 /**< rate at which uniformization events, or univents, occur */
+        unsigned * *                    sMat;                   /**< sMat[i][j] is total number of univents in which state i changes to state j */
+        unsigned                        nunivents;              /**< total number of univents over all edges and all sites */
+        unsigned                        maxm;                   /**< the maximum number of univents on any edge for any site (determines length of logmfact vector) */
+        std::vector<double>             logmfact;               /**< contains the log of the factorial of m for m = 0..maxm */
+        std::vector<unsigned>           obs_state_freqs;        /**< vector of length num_states holding the frequency with which each state was observed in the subroot node (used in computing the unimap likelihood) */
+#endif
+
 	public: //@POL these should be protected rather than public
 
 		std::vector<double>				likelihood_rate_site;	/**< Vector of likelihoods for each rate/site combination */
@@ -267,6 +300,6 @@ ConstCondLikelihoodShPtr getValidCondLikePtr(const TreeNode * focal_nd, const Tr
 
 } // namespace phycas
 
-#include "tree_likelihood.inl"
+//#include "tree_likelihood.inl"
 
 #endif

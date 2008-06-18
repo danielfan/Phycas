@@ -17,10 +17,12 @@
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-//#include "phycas/force_include.h"
 #include "phycas/src/cipres/CipresDataMatrixHelper.h"
 #include "phycas/src/probability_distribution.hpp"
 #include "phycas/src/likelihood_models.hpp"
+#if POLPY_NEWWAY
+#include "phycas/src/basic_tree_node.hpp"
+#endif
 #include "phycas/src/tree_likelihood.hpp"
 #include "phycas/src/xlikelihood.hpp"
 #include "phycas/src/mcmc_chain_manager.hpp"
@@ -28,6 +30,798 @@
 #include "phycas/src/basic_tree.hpp"
 
 #include "boost/format.hpp"
+
+#if LARGET_SIMON_UNIVENT
+
+#define KEEP_BRANCHES_LEGAL
+#define MAX_LEGAL_BRLEN 285
+
+namespace phycas
+{
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Calls proposeNewState(), then decides whether to accept or reject the proposed new state, calling accept() or 
+|	revert(), whichever is appropriate.
+*/
+bool LargetSimonMove::update()
+	{
+	// The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
+	// A proposed LargetSimonMove cannot be accepted without changing edge lengths, so it is best to bail out now.
+	if (is_fixed)
+		return false;
+
+    tree->renumberInternalNodes(tree->GetNTips()); //@POL this should be somewhere else
+
+    ChainManagerShPtr p = chain_mgr.lock();
+	PHYCAS_ASSERT(p);
+	double prev_ln_like = p->getLastLnLike();
+	TreeNode * prev_likelihood_root = likelihood->getLikelihoodRoot();
+
+	proposeNewState();
+
+    //@POL this brute-force recalculation should be avoided for the sake of speed once the move is working
+    likelihood->recalcSMatrix(tree);
+
+    curr_ln_like = likelihood->calcLnL(tree);
+
+	double prev_ln_prior = 0.0;
+	if (star_tree_proposal)
+		{
+		prev_ln_prior		= p->calcExternalEdgeLenPriorUnnorm(orig_edge_len);
+
+        double curr_edgelen = orig_node->GetEdgeLen();
+		curr_ln_prior		= p->calcExternalEdgeLenPriorUnnorm(curr_edgelen);
+		}
+	else
+		{
+        PHYCAS_ASSERT(ndY->IsInternal());
+        prev_ln_prior  = (ndX->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(x) : p->calcExternalEdgeLenPriorUnnorm(x));
+        prev_ln_prior += p->calcInternalEdgeLenPriorUnnorm(y);
+        prev_ln_prior += (ndZ->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(z) : p->calcExternalEdgeLenPriorUnnorm(z));
+
+        double xnew = ndX->GetEdgeLen();
+		curr_ln_prior  = (ndX->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(xnew) : p->calcExternalEdgeLenPriorUnnorm(xnew));
+
+        double ynew = ndY->GetEdgeLen();
+        curr_ln_prior += p->calcInternalEdgeLenPriorUnnorm(ynew);
+
+        double znew = ndZ->GetEdgeLen();
+        curr_ln_prior += (ndZ->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(znew) : p->calcExternalEdgeLenPriorUnnorm(znew));
+		}
+
+    double prev_posterior = 0.0;
+	double curr_posterior = 0.0;
+    if (is_standard_heating)
+        {
+        prev_posterior = heating_power*(prev_ln_like + prev_ln_prior);
+	    curr_posterior = heating_power*(curr_ln_like + curr_ln_prior);
+        }
+    else
+        {
+        prev_posterior = heating_power*prev_ln_like + prev_ln_prior;
+	    curr_posterior = heating_power*curr_ln_like + curr_ln_prior;
+        }
+
+	double ln_accept_ratio = curr_posterior - prev_posterior + getLnHastingsRatio() + getLnJacobian();
+    //double lnu = std::log(rng->Uniform(FILE_AND_LINE));
+    //bool accepted = (ln_accept_ratio >= 0.0 || lnu <= ln_accept_ratio);
+    //bool accepted = (ln_accept_ratio >= 0.0 || std::log(rng->Uniform(FILE_AND_LINE)) <= ln_accept_ratio);
+    double lnu = DBL_MAX;
+    bool accepted = (ln_accept_ratio >= 0.0);
+    if (!accepted)
+        {
+        double u = rng->Uniform(FILE_AND_LINE);
+        lnu = std::log(u);
+        accepted = (lnu <= ln_accept_ratio);
+        }
+
+    if (save_debug_info)
+        {
+    	if (star_tree_proposal)
+            {
+            debug_info = str(boost::format("LS: %.5f -> %.5f (%s)") % orig_edge_len % orig_node->GetEdgeLen() % (accepted ? "accepted" : "rejected"));
+            }
+        else
+            {
+#if 0
+            debug_info = str(boost::format("LargetSimonMove: case %d, topology %s, x=%f, y=%f, z=%f, newX=%f, newY=%f, newZ=%f, %s") % which_case % (topol_changed ? "changed" : "unchanged") % x % y % z % (ndX->GetEdgeLen()) % (ndY->GetEdgeLen()) % (ndZ->GetEdgeLen()) % (accepted ? "accepted" : "rejected"));
+#else
+            debug_info = str(boost::format("LargetSimonMove: topology %s, case = %d, x=%f, y=%f, z=%f, newX=%f, newY=%f, newZ=%f, %s, lnu = %.5f, lnr = %.5f, curr = %.5f, prev = %.5f") 
+                % (topol_changed ? "changed" : "unchanged") 
+                % which_case
+                % x 
+                % y 
+                % z 
+                % (ndX->GetEdgeLen()) 
+                % (ndY->GetEdgeLen()) 
+                % (ndZ->GetEdgeLen()) 
+                % (accepted ? "accepted" : "rejected")
+                % lnu
+                % ln_accept_ratio
+                % curr_posterior
+                % prev_posterior);
+#endif
+            //debug_info = str(boost::format("LargetSimonMove: curr_posterior=%f prev_posterior=%f getLnHastingsRatio()=%f ln_accept_ratio=%f") % curr_posterior % prev_posterior % getLnHastingsRatio() % ln_accept_ratio);
+            }
+        }
+    
+    if (accepted)
+		{
+		p->setLastLnPrior(curr_ln_prior);
+		p->setLastLnLike(curr_ln_like);
+		accept();
+		return true;
+		}
+	else
+		{
+		curr_ln_like	= p->getLastLnLike();
+		curr_ln_prior	= p->getLastLnPrior();
+		revert();
+
+        //@POL 14-Mar-2008 First part of assert below added because prev_likelihood_root can legitimately be NULL
+        // but it is troublesome that the original version of the assert was not tripped more often!
+        // Why was it tripped only when running with no data? More thought should be given to this
+        // situation.
+		PHYCAS_ASSERT(!prev_likelihood_root || prev_likelihood_root->IsInternal());
+		likelihood->useAsLikelihoodRoot(prev_likelihood_root);
+		return false;
+		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	If the tree has only one internal node (i.e. it is the star tree), then `star_tree_proosal' is set to true and the
+|	starTreeProposeNewState function is called. If the tree is not the star tree, then `star_tree_proosal' is set to 
+|	false and the defaultProposeNewState function is called.
+*/
+void LargetSimonMove::proposeNewState()
+	{
+	if (tree->GetNInternals() == 1)
+		{
+		starTreeProposeNewState();
+		star_tree_proposal = true;
+		}
+	else
+		{
+		defaultProposeNewState();
+		star_tree_proposal = false;
+		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Chooses a random edge and changes its current length m to a new length m* using the following formula, where `lambda' is
+|	a tuning parameter.
+|>
+|	m* = m*exp(lambda*(r.Uniform(FILE_AND_LINE) - 0.5))
+|>
+*/
+void LargetSimonMove::starTreeProposeNewState()
+	{
+    // LargetSimonMove not yet ready for both univents and star trees
+    PHYCAS_ASSERT(!likelihood->isUsingUnimap());
+
+	// Choose edge randomly.
+	//
+	unsigned numEdges = tree->GetNNodes() - 1;
+	unsigned k = rng->SampleUInt(numEdges);
+	unsigned i = 0;
+	//@POL this loop is crying out for the for_each algorithm
+	for (orig_node = tree->GetFirstPreorder(); orig_node != NULL; orig_node = orig_node->GetNextPreorder())
+		{
+		// All nodes have an edge associated with them except for the root
+		//
+		if (!orig_node->IsTipRoot())
+			{
+			if (i == k)
+				{
+				orig_edge_len = orig_node->GetEdgeLen();
+				break;
+				}
+			++i;
+			}
+		}
+
+	// Modify the edge
+	//
+	double m		= orig_node->GetEdgeLen();
+	double mstar	= m*std::exp(lambda*(rng->Uniform(FILE_AND_LINE) - 0.5));
+	orig_node->SetEdgeLen(mstar);
+
+	// Invalidate CLAs to ensure next likelihood calculation will be correct
+	orig_node->SelectNode();
+	TreeNode * nd = orig_node->IsTip() ? orig_node->GetParent() : orig_node;
+	PHYCAS_ASSERT(nd->IsInternal());
+	likelihood->useAsLikelihoodRoot(nd);
+	likelihood->invalidateAwayFromNode(*orig_node);
+	likelihood->invalidateBothEnds(orig_node);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|   Selects an internal node at random from a discrete uniform distribution with the constraint that the returned node
+|   is not equal to the subroot (the sole child of the tip node serving as the root).
+*/
+TreeNode * LargetSimonMove::randomInternalAboveSubroot()
+    {
+	// Avoiding the "subroot" node (only child of the tip serving as the root), so the number of 
+	// acceptable nodes is one fewer than the number of internal nodes
+	unsigned numAcceptableNodes = tree->GetNInternals() - 1;
+
+	unsigned ypos = rng->SampleUInt(numAcceptableNodes);
+	unsigned i = 0;
+    TreeNode * nd = tree->GetFirstPreorder();
+	for (; nd != NULL; nd = nd->GetNextPreorder())
+		{
+		if (nd->IsInternal() && !nd->GetParentConst()->IsTipRoot())
+			{
+			if (i == ypos)
+				break;
+			++i;
+			}
+		}
+	PHYCAS_ASSERT(nd->GetLeftChild() != NULL);
+	PHYCAS_ASSERT(nd->GetParentConst() != NULL);
+	PHYCAS_ASSERT(!nd->GetParent()->IsTipRoot());
+    return nd;
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
+|   Selects a child of the supplied `nd' at random from a discrete uniform distribution.
+*/
+TreeNode * LargetSimonMove::randomChild(
+  TreeNode * nd)    /**< is the parent node whose children are candidates */
+    {
+	unsigned ychildren = nd->CountChildren();
+	unsigned which_child = rng->SampleUInt(ychildren);
+	unsigned k = 0;
+    TreeNode * child = nd->GetLeftChild();
+	for (; child != NULL; child = child->GetRightSib())
+		{
+		if (k == which_child)
+			break;
+		++k;
+		}
+	PHYCAS_ASSERT(child != NULL);
+    return child;
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
+|   Randomly chooses a node to serve as node Z (the bottom of the three nodes involved in a Larget-Simon move). The 
+|   supplied node `middle' is the node serving as Y. In the figure below, the nodes labeled Z are all possible 
+|   candidates for the return value of this function. The node selected as Z should be the owner of the lowermost edge
+|   involved in the move (X owns the uppermost edge and Y owns the middle edge).
+|>
+|	     X  X  X 
+|	      \ | /
+|          \|/
+|	  Z  Z  Y
+|	   \ | /
+|	    \|/
+|	     Z
+|	     |
+|>
+*/
+TreeNode * LargetSimonMove::chooseZ(
+  TreeNode * middle)    /**< is the middle node (Y) */
+    {
+    TreeNode * nd = NULL;
+	TreeNode * U = middle->GetParent();
+	PHYCAS_ASSERT(U != NULL);
+	unsigned uchildren = U->CountChildren();
+	unsigned which_child = rng->SampleUInt(uchildren);
+	if (which_child == 0)
+		{
+		// Selected "child" is actually U's parent
+		nd = U;
+		}
+	else
+		{
+		// Selected child is one of U's actual children (but cannot be equal to middle)
+		unsigned k = 1;
+		for (nd = U->GetLeftChild(); nd != NULL; nd = nd->GetRightSib())
+			{
+			if (nd == middle)
+				continue;
+			else
+				{
+				if (k == which_child)
+					break;
+				++k;
+				}
+			}
+		PHYCAS_ASSERT(nd != NULL);
+		}
+    return nd;
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Performs a local perturbation using a generalization of the algorithm "LOCAL Without a Molecular Clock" described by 
+|	Larget and Simon (1999. Mol. Biol. Evol. 16(6): 750-759). This version allows polytomies (except the case of the 
+|	star tree, for which the required three-contiguous-edge segment cannot be identified).
+|	
+|	     X  c  d
+|	      \ | /
+|          \|/
+|	  a  b  Y
+|	   \ | /
+|	    \|/
+|	     u
+|	     |
+|	     Z <-- may or may not be the tip at which tree is rooted
+|	
+|	Pick a random interior node Y whose parent is not the root (i.e. avoid the subroot node directly connected to the 
+|	tip node at which the tree is rooted. Let u be the parent of y. Let Z be a randomly-chosen child of u (note that in 
+|	this case u's parent is considered a "child" of u). In the figure above, we (by chance) chose the parent of u to be 
+|	Z, but we could have chosen any of u's real children (except Y). a and b are the other "children" of u, not 
+|	including Y. Let X be a randomly chosen child of Y (and here a "child" is really a child). c and d are the other 
+|	children of Y.
+|	
+|	      a   b   c   d
+|	       \ /     \ /
+|	Z ===== u ===== Y ===== X
+|	
+|	The path represented by the double line above is either contracted or expanded by a factor m*, where
+|	
+|	m* = m*exp(lambda*(r.Uniform(FILE_AND_LINE) - 0.5))
+|	
+|	Then, one of {u, Y} is chosen at random to move. Let's say for illustration that u was chosen. u is moved (along 
+|	with a and c) to a random point along the main path from Z to X. If this makes the node u cross over node Y, then 
+|	the equivalent of an NNI rearrangement is effected:
+|	
+|	    X  c  d          X  a  b
+|	     \ | /            \ | /    In this case, invalidate CLAs away from u and 
+|         \|/              \|/     make u the likelihood root
+|	 a  b  Y          c  d  u
+|	  \ | /   -->      \ | /
+|	   \|/              \|/
+|	    u                Y
+|	    |                |
+|	    Z                Z
+|
+|	If there is no NNI rearrangement, the move will only require adjusting edge lengths. In this case, invalidate CLAs
+|	away from Y and make Y the likelihood root.
+*/
+void LargetSimonMove::defaultProposeNewState()
+	{
+	double xstar, ystar, zstar;
+
+	// Make sure all the necessary shared pointers have been set to something meaningful
+	PHYCAS_ASSERT(rng);
+	PHYCAS_ASSERT(tree);
+	PHYCAS_ASSERT(model);
+	PHYCAS_ASSERT(likelihood);
+
+	// Begin by resetting all the data members involved with reverting a move
+	reset();
+
+	// Select an internal node whose parent is not the root node to serve as ndY, 
+    // whose branch will form the middle segment in the path of three contiguous 
+    // segments to be modified.
+    ndY = randomInternalAboveSubroot();
+	y = ndY->GetEdgeLen();
+    likelihood->copyStateTimeListVect(ndY, yst);
+
+	// Set ndX equal to a randomly-chosen child of ndY
+	ndX = randomChild(ndY);
+	x = ndX->GetEdgeLen();
+    likelihood->copyStateTimeListVect(ndX, xst);
+
+	// Set ndZ randomly to either the parent of ndY or one of ndY's sibs
+    ndZ = chooseZ(ndY);
+    z = ndZ->GetEdgeLen();
+    likelihood->copyStateTimeListVect(ndZ, zst);
+
+    // Set ndBase to the deepest affected node
+	//ndBase = ndZ->GetParent();
+
+    // Set node U to the other node (besides ndY) that could slide.
+    // Note that U may or may not be equal to ndZ.
+    TreeNode * ndU = ndY->GetParent(); 
+
+	m = x + y + z;
+    expand_contract_factor = exp(lambda*(rng->Uniform(FILE_AND_LINE) - 0.5));
+	mstar = m*expand_contract_factor;
+
+	xstar = x*expand_contract_factor;
+	ndX->SetEdgeLen(xstar);
+
+    ystar = y*expand_contract_factor;
+	ndY->SetEdgeLen(ystar);
+
+    zstar = z*expand_contract_factor;
+	ndZ->SetEdgeLen(zstar);
+
+	double d = rng->Uniform(FILE_AND_LINE)*mstar;
+
+	// Decide whether to move ndY a distance d from the top, or 
+    // move ndU a distance d from the bottom
+	bool moving_Y = true;
+	if (rng->Uniform(FILE_AND_LINE) < 0.5)
+		moving_Y = false;
+	bool moving_U = !moving_Y;
+
+    // Determine whether proposed move will change the topology
+    topol_changed = false;
+    if (moving_Y && d >= xstar + ystar)
+        topol_changed = true;
+    if (moving_U && d >= ystar + zstar)
+        topol_changed = true;
+
+	if (topol_changed) 
+		{
+        if (moving_Y)   
+            {
+            double f = (d - xstar - ystar)/zstar;
+            if (ndU == ndZ)
+                {
+                which_case = 6;
+
+                //ndX->SelectNode();
+                //ndY->SelectNode();
+                //ndZ->SelectNode();
+                //std::string titlestr = str(boost::format("%s, %s: f = %.8f, d = %.8f, r = %.8f, x = %.8f, y = %.8f, z = %.8f") % (moving_Y ? "Y" : "U") % (topol_changed ? "nni" : "nul") % f % d % expand_contract_factor % x % y % z);
+                //likelihood->startTreeViewer(tree, titlestr);
+
+                likelihood->slideNode(-1.0, ndY, ndX);  // move all of Y's edge to base of X
+
+                //titlestr = str(boost::format("Before NNISwapSpecial: x = %.8f, y = %.8f, z = %.8f") % ndX->GetEdgeLen() % ndY->GetEdgeLen() % ndZ->GetEdgeLen());
+                //likelihood->startTreeViewer(tree, titlestr);
+
+                swap1 = ndX;
+			    swap2 = ndZ->GetParent();
+			    tree_manipulator.NNISwapSpecial(swap1); // moves Y below Z
+                likelihood->swapInternalDataAndEdgeLen(ndY, ndZ);
+
+                //titlestr = str(boost::format("After NNISwapSpecial: x = %.8f, y = %.8f, z = %.8f") % ndX->GetEdgeLen() % ndY->GetEdgeLen() % ndZ->GetEdgeLen());
+                //likelihood->startTreeViewer(tree, titlestr);
+
+                likelihood->slideNode(1.0 - f, ndZ, ndY);
+
+                //titlestr = str(boost::format("After final slideNode: x = %.8f, y = %.8f, z = %.8f") % ndX->GetEdgeLen() % ndY->GetEdgeLen() % ndZ->GetEdgeLen());
+                //likelihood->startTreeViewer(tree, titlestr);
+                }
+            else
+                {
+                which_case = 3;
+                likelihood->slideNode(-1.0, ndY, ndX);  // move all of Y's edge to base of X
+    			swap1 = ndX;
+	    		swap2 = ndZ;
+    			tree_manipulator.NNISwap(swap1, swap2);  // nearest-neighbor interchange
+                likelihood->slideNode(f, ndY, ndZ);  // move a fraction f of the basal part of Z's edge onto Y
+                }
+            }
+        else
+            {
+            double f = (d - zstar - ystar)/xstar;   // positive f means slide ndU up past ndY toward ndX
+            if (ndU == ndZ)
+                {
+                which_case = 12;
+                
+                //ndX->SelectNode();
+                //ndY->SelectNode();
+                //ndZ->SelectNode();
+                //std::string titlestr = str(boost::format("%s, %s: f = %.8f, d = %.8f, r = %.8f, x = %.8f, y = %.8f, z = %.8f") % (moving_Y ? "Y" : "U") % (topol_changed ? "nni" : "nul") % f % d % expand_contract_factor % x % y % z);
+                //likelihood->startTreeViewer(tree, titlestr);
+                
+                likelihood->slideNode(-1.0, ndZ, ndY);  // move all of Z's edge to base of Y
+			    swap1 = ndX;
+			    swap2 = ndZ->GetParent();
+			    tree_manipulator.NNISwapSpecial(swap1); // moves Y below Z
+                likelihood->swapInternalDataAndEdgeLen(ndY, ndZ);
+
+                //titlestr = str(boost::format("After NNISwapSpecial: x = %.8f, y = %.8f, z = %.8f") % ndX->GetEdgeLen() % ndY->GetEdgeLen() % ndZ->GetEdgeLen());
+                //likelihood->startTreeViewer(tree, titlestr);
+
+                likelihood->slideNode(f, ndY, ndX); // move a fraction f of the basal part of X's edge onto Y
+
+                //titlestr = str(boost::format("After slideNode: x = %.8f, y = %.8f, z = %.8f") % ndX->GetEdgeLen() % ndY->GetEdgeLen() % ndZ->GetEdgeLen());
+                //likelihood->startTreeViewer(tree, titlestr);
+                }
+            else
+                {
+                which_case = 9;
+                likelihood->slideNode(-1.0, ndY, ndZ);  // move all of Y's edge to base of Z
+                likelihood->slideNode(f, ndY, ndX);     // move a fraction f of the basal part of X's edge onto Y
+    			swap1 = ndX;
+	    		swap2 = ndZ;
+    			tree_manipulator.NNISwap(swap1, swap2);  // nearest-neighbor interchange
+                }
+            }
+        }
+    else
+        {
+        if (moving_Y)   
+            {
+            if (d < xstar)
+                {
+                // sliding Y up
+                if (ndU == ndZ)
+                    which_case = 4;
+                else
+                    which_case = 1;
+                double f = (xstar - d)/xstar;   // positive f means slide ndY up
+                likelihood->slideNode(f, ndY, ndX); // slide ndY up a fraction f into ndX's edge
+                }
+            else
+                {
+                // sliding Y down
+                if (ndU == ndZ)
+                    which_case = 5;
+                else
+                    which_case = 2;
+                double f = -(d - xstar)/ystar;  // negative f means slide ndY down
+                likelihood->slideNode(f, ndY, ndX); // slide ndY down a fraction f into its own edge
+                }
+            }
+        else // moving U
+            {
+            if (d < zstar)
+                {
+                // sliding U down
+                if (ndU == ndZ)
+                    {
+                    which_case = 11;
+                    double f = -(zstar - d)/zstar;   // negative f means slide ndZ down
+                    likelihood->slideNode(f, ndZ, ndY); // slide ndZ down a fraction f into its own edge
+                    }
+                else
+                    {
+                    which_case = 8;
+                    double f = -(zstar - d)/zstar;  // negative f means slide ndU down
+                    likelihood->slideNode(f, ndZ, ndY); // slide ndU "down" a fraction f into ndZ's edge
+                    }
+                }
+            else
+                {
+                // sliding U up
+                if (ndU == ndZ)
+                    {
+                    which_case = 10;
+                    double f = (d - zstar)/ystar;   // positive f means slide ndZ up
+                    likelihood->slideNode(f, ndZ, ndY); // slide ndZ up a fraction f into ndY's edge
+                    }
+                else
+                    {
+                    which_case = 7;
+                    double f = (d - zstar)/ystar;   // positive f means slide ndU up
+
+                    //ndX->SelectNode();
+                    //ndY->SelectNode();
+                    //ndZ->SelectNode();
+                    //std::string titlestr = str(boost::format("Before slideNode: %s, %s: f = %.8f, d = %.8f, r = %.8f, x = %.8f, y = %.8f, z = %.8f") % (moving_Y ? "Y" : "U") % (topol_changed ? "nni" : "nul") % f % d % expand_contract_factor % ndX->GetEdgeLen() % ndY->GetEdgeLen() % ndZ->GetEdgeLen());
+                    //likelihood->startTreeViewer(tree, titlestr);
+
+                    likelihood->slideNode(f, ndZ, ndY); // slide ndU up a fraction f into ndY's edge
+
+                    //titlestr = str(boost::format("After slideNode: %s, %s: f = %.8f, d = %.8f, r = %.8f, x = %.8f, y = %.8f, z = %.8f") % (moving_Y ? "Y" : "U") % (topol_changed ? "nni" : "nul") % f % d % expand_contract_factor % ndX->GetEdgeLen() % ndY->GetEdgeLen() % ndZ->GetEdgeLen());
+                    //likelihood->startTreeViewer(tree, titlestr);
+                    }
+                }
+            }
+        }
+
+	ndX->SelectNode();
+	ndY->SelectNode();
+	ndZ->SelectNode();
+	PHYCAS_ASSERT(ndY->IsInternal());
+	likelihood->useAsLikelihoodRoot(ndY);
+	likelihood->invalidateAwayFromNode(*ndY);
+	likelihood->invalidateBothEnds(ndY);
+
+    //@POL temp
+	//likelihood->invalidateBothEnds(ndZ);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Reverses move made in proposeNewState. Assumes ndX, ndY, and ndZ are non-NULL, which will be true if proposeNewState
+|	was just called.
+*/
+void LargetSimonMove::revert()
+	{
+	if (star_tree_proposal)
+		{
+		orig_node->SetEdgeLen(orig_edge_len);
+		TreeNode * nd = orig_node->IsTip() ? orig_node->GetParent() : orig_node;
+		PHYCAS_ASSERT(nd->IsInternal());
+		likelihood->useAsLikelihoodRoot(nd);
+		likelihood->restoreFromCacheAwayFromNode(*orig_node);
+		likelihood->restoreFromCacheParentalOnly(orig_node);
+
+		orig_node->UnselectNode();
+		}
+	else
+		{
+		PHYCAS_ASSERT(ndX != NULL);
+		PHYCAS_ASSERT(ndY != NULL);
+		PHYCAS_ASSERT(ndZ != NULL);
+		PHYCAS_ASSERT(topol_changed ? (swap1 != NULL && swap2 != NULL) : (swap1 == NULL && swap2 == NULL));
+
+		if (topol_changed)
+			{
+			if (swap2 == ndZ)
+				{
+				// If swap2 equals ndZ, then swap2 was a child of ndBase and we were able to use
+				// the standard NNISwap function to swap the two nodes
+				//
+				tree_manipulator.NNISwap(swap1, swap2);
+				}
+			else 
+				{
+				// If swap2 is ndZ's parent, then swap2 is ndBase (i.e. it is the "child" node below the
+				// lower of the two adjacent internal nodes involved in the swap) and we had to use the
+				// NNISwapSpecial function to perform the rearrangment
+				//
+				tree_manipulator.NNISwapSpecial(swap1);
+                likelihood->swapInternalDataAndEdgeLen(ndY, ndZ);
+				}
+			}
+
+		ndX->SetEdgeLen(x);
+		ndY->SetEdgeLen(y);
+		ndZ->SetEdgeLen(z);
+
+        likelihood->revertStateTimeListVect(ndX, xst);
+        likelihood->revertStateTimeListVect(ndY, yst);
+        likelihood->revertStateTimeListVect(ndZ, zst);
+        likelihood->recalcSMatrix(tree);
+
+		PHYCAS_ASSERT(ndY->IsInternal());
+		likelihood->useAsLikelihoodRoot(ndY);
+		likelihood->restoreFromCacheAwayFromNode(*ndY);
+		likelihood->restoreFromCacheParentalOnly(ndY);
+
+		ndX->UnselectNode();
+		ndY->UnselectNode();
+		ndZ->UnselectNode();
+		}
+
+	reset();
+	}
+
+/*--------------------------------------------------------------------------------------------------------------------------
+|	Called if the move is accepted.
+*/
+void LargetSimonMove::accept()
+	{
+	if (star_tree_proposal)
+		{
+		TreeNode * nd = orig_node->IsTip() ? orig_node->GetParent() : orig_node;
+		PHYCAS_ASSERT(nd->IsInternal());
+		likelihood->useAsLikelihoodRoot(nd);
+		likelihood->discardCacheAwayFromNode(*orig_node);
+		likelihood->discardCacheBothEnds(orig_node);
+
+		orig_node->UnselectNode();
+		}
+	else
+		{
+		PHYCAS_ASSERT(ndY->IsInternal());
+		likelihood->useAsLikelihoodRoot(ndY);
+		likelihood->discardCacheAwayFromNode(*ndY);
+		likelihood->discardCacheBothEnds(ndY);
+
+		ndX->UnselectNode();
+		ndY->UnselectNode();
+		ndZ->UnselectNode();
+		}
+
+	reset();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	The default constructor sets `lambda' to the default value (0.2), sets `topol_changed' to false, and `m' and `mstar'
+|	to 0.0. All other data members are automatically initialized (shared pointers) or are initialized via a call to 
+|	reset().
+*/
+LargetSimonMove::LargetSimonMove() : MCMCUpdater()
+	{
+	topol_changed	= false;
+	lambda			= 0.2;
+	m				= 0.0;
+	mstar			= 0.0;
+	three_edgelens.reserve(3);
+	reset();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Forgets information saved to enable reverting a proposed move.
+*/
+void LargetSimonMove::reset()
+	{
+	topol_changed   = false;
+	swap1		    = NULL;
+	swap2		    = NULL;
+	ndX			    = NULL;
+	ndY			    = NULL;
+	ndZ			    = NULL;
+	//ndBase		    = NULL;
+	x		        = 0.0;
+	y		        = 0.0;
+	z		        = 0.0;
+    which_case      = 0;
+
+    expand_contract_factor = 1.0;
+
+    xst.clear();
+    yst.clear();
+    zst.clear();
+
+	// three_edgelens should have 3 elements, used for computing the edge length prior for default proposal in update
+	three_edgelens.resize(3, 0.0);
+
+	// these are related to the star tree exception
+	orig_edge_len	= 0.0;
+	orig_node		= NULL;
+
+	// one_edgelen should have 1 element, used for computing the edge length prior for star tree proposal in update
+	one_edgelen.resize(1, 0.0);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Provides a way of setting the value for the private data member `lambda'.
+*/
+void LargetSimonMove::setLambda(double x)
+	{
+	lambda = x;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Provides read access to the private data member `lambda'.
+*/
+double LargetSimonMove::getLambda() const
+	{
+	return lambda;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the natural log of the Hastings ratio for this move. The Hastings ratio is (`mstar'/`m')^3, where `mstar' is
+|	the new length of the modified three-edge segment and `m' is the length before the move is proposed. If the tree is
+|	the star tree (only one internal node), then the exponent is 1 rather than 3 because only one edge is involved.
+*/
+double LargetSimonMove::getLnHastingsRatio() const
+	{
+	if (star_tree_proposal)
+		return std::log(orig_node->GetEdgeLen()) - std::log(orig_edge_len);
+	else
+		return 3.0*(std::log(mstar) - std::log(m));
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the natural log of the Jacobian for this move.
+*/
+double LargetSimonMove::getLnJacobian() const
+	{
+	return 0.0;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the current value of private variable `which_case', which is the index of whichever of the eight possible 
+|	cases was used last.
+*/
+unsigned LargetSimonMove::getWhichCase() const
+	{
+	return which_case;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Provides read access to the private data member `topol_changed'.
+*/
+bool LargetSimonMove::topologyChanged() const
+	{
+	return topol_changed;
+	}
+
+}	// namespace phycas
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
+#else   // old Larget-Simon move
+//////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
 
 #define KEEP_BRANCHES_LEGAL
 #define MAX_LEGAL_BRLEN 285
@@ -51,11 +845,15 @@ bool LargetSimonMove::update()
 	double prev_ln_like = p->getLastLnLike();
 	TreeNode * prev_likelihood_root = likelihood->getLikelihoodRoot();
 
+  	double check_ln_like = likelihood->calcLnL(tree);
+    if (check_ln_like != prev_ln_like)
+        {
+        std::cerr << "WHOA! prev_ln_like = " << prev_ln_like << " but check_ln_like = " << check_ln_like << std::endl;
+        }
+
 	proposeNewState();
 
 	curr_ln_like = likelihood->calcLnL(tree);
-
-	//likelihood->startTreeViewer(tree, str(boost::format("Larget-Simon move PROPOSED (topology %s)") % (topol_changed ? "changed" : "unchanged")));
 
 	double prev_ln_prior = 0.0;
 	if (star_tree_proposal)
@@ -105,7 +903,8 @@ bool LargetSimonMove::update()
         }
 
 	double ln_accept_ratio = curr_posterior - prev_posterior + getLnHastingsRatio() + getLnJacobian();
-
+    //double lnu = std::log(rng->Uniform(FILE_AND_LINE));
+    //bool accepted = (ln_accept_ratio >= 0.0 || lnu <= ln_accept_ratio);
     bool accepted = (ln_accept_ratio >= 0.0 || std::log(rng->Uniform(FILE_AND_LINE)) <= ln_accept_ratio);
 
     if (save_debug_info)
@@ -116,7 +915,32 @@ bool LargetSimonMove::update()
             }
         else
             {
-            debug_info = str(boost::format("LargetSimonMove: topology %s, x=%f, y=%f, z=%f, newX=%f, newY=%f, newZ=%f, %s") % (topol_changed ? "changed" : "unchanged") % origX % origY % origZ % (ndX->GetEdgeLen()) % (ndY->GetEdgeLen()) % (ndZ->GetEdgeLen()) %(accepted ? "accepted" : "rejected"));
+            //debug_info = str(boost::format("LargetSimonMove: topology %s, x=%f, y=%f, z=%f, newX=%f, newY=%f, newZ=%f, %s") % (topol_changed ? "changed" : "unchanged") % origX % origY % origZ % (ndX->GetEdgeLen()) % (ndY->GetEdgeLen()) % (ndZ->GetEdgeLen()) %(accepted ? "accepted" : "rejected"));
+            //debug_info = str(boost::format("LargetSimonMove: curr_posterior=%f prev_posterior=%f getLnHastingsRatio()=%f ln_accept_ratio=%f") % curr_posterior % prev_posterior % getLnHastingsRatio() % ln_accept_ratio);
+            //debug_info = str(boost::format("LargetSimonMove: topology %s, x=%f, y=%f, z=%f, newX=%f, newY=%f, newZ=%f, %s, lnu = %.5f, lnr = %.5f, curr = %.5f, prev = %.5f") 
+            //    % (topol_changed ? "changed" : "unchanged") 
+            //    % origX 
+            //    % origY 
+            //    % origZ 
+            //    % (ndX->GetEdgeLen()) 
+            //    % (ndY->GetEdgeLen()) 
+            //    % (ndZ->GetEdgeLen()) 
+            //    %(accepted ? "accepted" : "rejected") 
+            //    % lnu 
+            //    % ln_accept_ratio
+            //    % curr_posterior 
+            //    % prev_posterior
+            //    );
+            debug_info = str(boost::format("LargetSimonMove: topology %s, x=%f, y=%f, z=%f, newX=%f, newY=%f, newZ=%f, %s") 
+                % (topol_changed ? "changed" : "unchanged") 
+                % origX 
+                % origY 
+                % origZ 
+                % (ndX->GetEdgeLen()) 
+                % (ndY->GetEdgeLen()) 
+                % (ndZ->GetEdgeLen()) 
+                %(accepted ? "accepted" : "rejected") 
+                );
             //debug_info = str(boost::format("LargetSimonMove: curr_posterior=%f prev_posterior=%f getLnHastingsRatio()=%f ln_accept_ratio=%f") % curr_posterior % prev_posterior % getLnHastingsRatio() % ln_accept_ratio);
             }
         }
@@ -207,6 +1031,18 @@ void LargetSimonMove::starTreeProposeNewState()
 	likelihood->invalidateBothEnds(orig_node);
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Not yet written.
+*/
+void LargetSimonMove::fixUpUnivents(
+  double u, 
+  TreeNode * avoid, 
+  TreeNode * moved)
+    {
+    }
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Performs a local perturbation using a generalization of the algorithm "LOCAL Without a Molecular Clock" described by 
 |	Larget and Simon (1999. Mol. Biol. Evol. 16(6): 750-759). This version allows polytomies (except the case of the 
@@ -222,7 +1058,7 @@ void LargetSimonMove::starTreeProposeNewState()
 |	     |
 |	     Z <-- may or may not be the tip at which tree is rooted
 |	
-|	Pick a random interior node Y whose parent is not the root (i.e. avoid the internal node directly connected to the 
+|	Pick a random interior node Y whose parent is not the root (i.e. avoid the subroot node directly connected to the 
 |	tip node at which the tree is rooted. Let u be the parent of y. Let Z be a randomly-chosen child of u (note that in 
 |	this case u's parent is considered a "child" of u). In the figure above, we (by chance) chose the parent of u to be 
 |	Z, but we could have chosen any of u's real children (except Y). a and b are the other "children" of u, not 
@@ -391,8 +1227,6 @@ void LargetSimonMove::defaultProposeNewState()
 		//
 		if (ndZ != U)
 			{
-			//cerr << "\n=====> simple <=====\n" << endl;
-
 			// Things are simple when ndZ is U's child and ndX is ndY's child
 			//
 			swap1 = ndX;
@@ -402,8 +1236,6 @@ void LargetSimonMove::defaultProposeNewState()
 			}
 		else
 			{
-			//cerr << "\n=====> complicated <=====\n" << endl;
-
 			// Things are more complicated when the node to swap is U's parent AND there is
 			// the possibility of a polytomy at either U or ndY. If we could assume that polytomies
 			// were impossible, we could make our lives easier by just swapping U's other "child"
@@ -501,8 +1333,6 @@ void LargetSimonMove::revert()
 		likelihood->restoreFromCacheAwayFromNode(*ndY);
 		likelihood->restoreFromCacheParentalOnly(ndY);
 
-		//likelihood->startTreeViewer(tree, "Larget-Simon move REVERTED");
-
 		ndX->UnselectNode();
 		ndY->UnselectNode();
 		ndZ->UnselectNode();
@@ -524,8 +1354,6 @@ void LargetSimonMove::accept()
 		likelihood->discardCacheAwayFromNode(*orig_node);
 		likelihood->discardCacheBothEnds(orig_node);
 
-		//likelihood->startTreeViewer(tree, "Larget-Simon move ACCEPTED");
-
 		orig_node->UnselectNode();
 		}
 	else
@@ -536,8 +1364,6 @@ void LargetSimonMove::accept()
 		likelihood->discardCacheAwayFromNode(*ndY);
 		likelihood->discardCacheBothEnds(ndY);
 
-		//likelihood->startTreeViewer(tree, "Larget-Simon move ACCEPTED");
-
 		ndX->UnselectNode();
 		ndY->UnselectNode();
 		ndZ->UnselectNode();
@@ -546,4 +1372,6 @@ void LargetSimonMove::accept()
 	reset();
 	}
 
-}	// namespace phycas
+} // namespace phycas
+
+#endif

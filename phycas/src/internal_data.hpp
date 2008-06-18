@@ -27,6 +27,11 @@
 #include "phycas/src/cipres/AllocateMatrix.hpp"
 #include "phycas/src/cipres/ConfigDependentHeaders.h"
 
+#if POLPY_NEWWAY
+#include "phycas/src/states_patterns.hpp"
+#include "phycas/src/univent_manager.hpp"
+#endif
+
 struct CIPRES_Matrix;
 
 namespace CipresNative
@@ -103,8 +108,26 @@ class InternalData
 		bool							parentalCLAValid() const;
 		bool							parentalCLACached() const;
 
+#if POLPY_NEWWAY
+        unsigned                        getNumUnivents(unsigned site) const;
+        std::vector<unsigned>           getUniventStates(unsigned site) const;
+        std::vector<double>             getUniventTimes(unsigned site) const;
+        void                            swapStateTime(InternalData * other);
+#endif
+
 	private:
+#if POLPY_NEWWAY
+										InternalData(bool using_unimap, unsigned nPatterns, unsigned nRates, unsigned nStates, double * * * pMatrices, bool managePMatrices, CondLikelihoodStorage & cla_storage);
+#else
 										InternalData(unsigned nPatterns, unsigned nRates, unsigned nStates, double * * * pMatrices, bool managePMatrices, CondLikelihoodStorage & cla_storage);
+#endif
+
+#if POLPY_NEWWAY
+        bool                            unimap;         /**< true if internal nodes are to be prepared for uniformized mapping likelihood; false if internal nodes are to be prepared for Felsenstein-style integrated likelihoods */
+        UniventManager                  state_time;     /**< state_time[i][j].first holds a state for univent j at site i, whereas state_time[i][j].second holds the fraction of the edgelen representing the time at which the univent occurred */
+        unsigned                        mdot;           /**< the total number of univents over all sites on the edge owned by this node */
+        //@POL mdot should be kept by UniventManager, but right now it is still being managed by InternalData and TipData
+#endif
 
 		//CLA's for an edge from a node to its parent are stored in the node's InternalData (or TipData).
 		//bool							parCLAValid;	/**< true if parWorkingCLA is valid */

@@ -23,6 +23,8 @@
 namespace phycas
 {
 
+#if !LARGET_SIMON_UNIVENT
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	The default constructor sets `lambda' to the default value (0.2), sets `topol_changed' to false, and `m' and `mstar'
 |	to 0.0. All other data members are automatically initialized (shared pointers) or are initialized via a call to 
@@ -119,6 +121,8 @@ inline bool	LargetSimonMove::topologyChanged() const
 	{
 	return topol_changed;
 	}
+
+#endif
 
 } // namespace phycas
 #endif

@@ -105,7 +105,7 @@ class TreeNode
 		void			UnselectNode();
 		void			SetEdgeLen(double x);
 		void			SetNodeName(std::string name);
-		void			SetNodeNum(unsigned num);
+		void			SetNodeNum(unsigned num);       //@POL should be SetNodeNumber (to match GetNodeNumber)
 
         void            SetTreeShPtr(TreeShPtr t);
 

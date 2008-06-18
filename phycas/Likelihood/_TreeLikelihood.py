@@ -361,10 +361,8 @@ class TreeLikelihood(TreeLikelihoodBase):
         """
         TreeLikelihoodBase.setUFNumEdges(self, nedges)
         
-    def startTreeViewer(self, t, s):
+    def startTreeViewer(self, t, s, i):
         import phycas.TreeViewer
-        tv = phycas.TreeViewer.TreeViewer(tree=t, msg=s)
+        tv = phycas.TreeViewer.TreeViewer(tree=t, msg=s, site=i)
         tv.setLikelihoodRoot(TreeLikelihoodBase.getLikelihoodRootNodeNum(self))
-        tv.run()
-        
-        return 1
+        return tv.run()

@@ -27,6 +27,31 @@ using namespace phycas;
 
 #include "phycas/src/basic_lot.hpp"
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Scales all edge lengths in the tree by multiplying each of them by `scaling_factor' so that the tree is now 
+|   different from its original length by a factor of `scaling_factor'. Assumes `scaling_factor' is greater than zero.
+|   This function resets the tree's `tree_scale' data member to 1.0 because the rescaling is done the brute-force way
+|   by actually changing all the edge lengths. Faster (and less invasive) rescaling can be accomplished by simply
+|   calling SetTreeScale directly, which doesn't change any edge lengths, only the `tree_scale' data member.
+*/
+void TreeManip::rescaleAllEdgeLengths(double scaling_factor)
+	{
+    PHYCAS_ASSERT(scaling_factor > 0.0);
+    tree->SetTreeScale(1.0);
+
+    // Change the edge lengths
+    TreeNode * nd = tree->GetFirstPreorder();
+    nd = nd->GetNextPreorder(); // skip the tip root
+	for (; nd != NULL; nd = nd->GetNextPreorder())
+		{
+        double old_edgelen = nd->GetEdgeLen();
+        double new_edgelen = old_edgelen*scaling_factor;
+        nd->SetEdgeLen(new_edgelen);
+		}
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Assigns all edge lengths in the tree using independent draws from the ProbabilityDistribution object pointed to by
 |	`d'.
@@ -562,7 +587,6 @@ void TreeManip::NNISwapSpecial(
 		RChildToRSib(V, V);
 
 	// This rearrangement invalidates the TreeID and node counts
-	//
 	tree->InvalidateTreeID();
 	tree->InvalidateNodeCounts();
 	}

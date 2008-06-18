@@ -64,6 +64,11 @@ class Model	{
 		virtual std::string				paramHeader() const = 0;
 		virtual std::string				paramReport() const = 0;
 
+#if POLPY_NEWWAY
+		virtual double					calcLMat(double * * lMat) const = 0;
+		virtual double					calcUMat(double * * uMat) const = 0;
+#endif
+
 		// Query functions
 		bool							isCodonModel() const;
 
@@ -221,7 +226,11 @@ class JC: public Model
 
 		virtual std::string		getModelName() const;
 		void					calcPMat(double * * pMat, double edgeLength) const;
-		virtual std::string		paramHeader() const;
+#if POLPY_NEWWAY
+        double					calcLMat(double * * lMat) const;
+        double					calcUMat(double * * uMat) const;
+#endif
+        virtual std::string		paramHeader() const;
 		virtual std::string		paramReport() const;
 	};
 
@@ -241,6 +250,10 @@ class HKY: public Model
 
 		virtual std::string			getModelName() const;
         virtual void				createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters) const;
+#if POLPY_NEWWAY
+        double					    calcLMat(double * * lMat) const;
+        double					    calcUMat(double * * uMat) const;
+#endif
         void						calcPMat(double * * pMat, double edgeLength) const;
 		void						fixKappa();
 		void						freeKappa();
@@ -280,6 +293,10 @@ class GTR: public Model
 
 		virtual std::string			getModelName() const;
 		virtual void				createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters) const;
+#if POLPY_NEWWAY
+        double					    calcLMat(double * * lMat) const;
+        double					    calcUMat(double * * uMat) const;
+#endif
 		void						calcPMat(double * * pMat, double edgeLength) const;
 		void						fixRelRates();
 		void						freeRelRates();
@@ -355,6 +372,10 @@ class Codon: public Model
 
 		void						updateQMatrix() const;
 		virtual void				createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters) const;
+#if POLPY_NEWWAY
+        double					    calcLMat(double * * lMat) const;
+        double					    calcUMat(double * * uMat) const;
+#endif
 		void						calcPMat(double * * pMat, double edgeLength) const;
 
 protected:

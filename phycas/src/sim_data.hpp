@@ -90,6 +90,10 @@ class SimData
 		VecStateList				tmp_pattern;			/**< Workspace for building up a pattern */
 		std::string					outstr;					/**< Workspace for building up a tabular representation of `sim_pattern_map' (used by showPatternMap function) */
         std::vector<double>         binv;                   /**< Stores binned counts if calctBinned is called; otherwise, will be an empty vector. */
+
+#if POLPY_NEWWAY
+        std::vector<VecStateList>   patternVect;            // temporary debugging aid
+#endif
 	};
 
 typedef boost::shared_ptr<SimData>	SimDataShPtr;

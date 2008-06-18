@@ -2,6 +2,16 @@ import os,sys,math
 from phycas import *
 
 def cloneDistribution(d):
+    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+    """
+    This function clones (deep copies) a ProbabilityDistribution object.
+    Cloning is needed because while separate chains in an MCMC analysis 
+    need to begin with the same random number seed, it is not good for
+    them to share a pseudorandom number generator if (for example) 
+    separate chains are run in different threads or on different
+    processors.
+    
+    """
     if d == None:
         return None
     else:
@@ -10,32 +20,44 @@ def cloneDistribution(d):
 class LikelihoodCore:
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
-    Not yet documented.
+    The LikelihoodCore class comprises only those features of a 
+    MarkovChain that are needed to compute likelihoods. Thus, one could 
+    construct a stand-alone LikelihoodCore object if all you wanted to do
+    was calculate the likelihood of a tree under a particular model. The
+    LikelihoodCore class serves as the base class for MarkovChain.
     
     """
     def __init__(self, phycas):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Not yet documented.
+        The constructor for the LikelihoodCore class stores the supplied 
+        phycas object in the data member self.phycas. It also creates a Tree
+        object and stores it in self.tree and a pseudorandom number generator
+        (Lot object), storing it in self.r. Finally, it clones the starting
+        edge length distribution, storing it in self.starting_edgelen_dist.
         
         """
-        self.phycas                             = phycas
-        self.model                              = None
-        self.likelihood                         = None
-        self.tree                               = Phylogeny.Tree()
-        self.r                                  = ProbDist.Lot()
-        self.starting_edgelen_dist              = cloneDistribution(self.phycas.starting_edgelen_dist)
+        self.phycas                 = phycas
+        self.model                  = None
+        self.likelihood             = None
+        self.tree                   = Phylogeny.Tree()
+        self.r                      = ProbDist.Lot()
+        self.starting_edgelen_dist  = cloneDistribution(self.phycas.starting_edgelen_dist)
     
     def setupCore(self, zero_based_tips = False):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Not yet documented.
+        The setupCore function does the following based on information stored
+        in self.phycas: 1) sets the random number seed of the local pseudo-
+        random number generator (self.r); 2) creates a substitution model,
+        storing it in self.model; 3) creates a TreeLikelihood object, storing
+        it in self.likelihood; and 4) builds the starting tree, storing it in
+        self.tree.
         
         """
         # Set seed if user has supplied one
         if self.phycas.random_seed != 0:
             self.r.setSeed(int(self.phycas.random_seed))
-
         self.starting_edgelen_dist.setLot(self.r)
 
         # Create a substitution model
@@ -89,12 +111,14 @@ class LikelihoodCore:
         if self.phycas.fix_edgelens:
             self.model.fixEdgeLengths()
             
-        # Create the likelihood object (formerly the Phycas.setupLikelihood function)
+        # Create the likelihood object
         self.likelihood = Likelihood.TreeLikelihood(self.model)
         self.likelihood.setUFNumEdges(self.phycas.uf_num_edges)
+        self.likelihood.useUnimap(self.phycas.use_unimap)    #POLPY_NEWWAY
         if self.phycas.data_source == 'file':
             self.likelihood.copyDataFromDiscreteMatrix(self.phycas.data_matrix)
-            self.npatterns = self.likelihood.getNPatterns()
+            #POL changed self.npatterns to self.phycas.npatterns below
+            self.phycas.npatterns = self.likelihood.getNPatterns()
         elif not self.phycas.data_source:
             self.phycas.phycassert(self.phycas.ntax > 0, 'data_source is None, which indicates data will be simulated, but in this case sim_taxon_labels should not be an empty list')
 
@@ -171,39 +195,71 @@ class LikelihoodCore:
 class MarkovChain(LikelihoodCore):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
-    Not yet documented.
+    The MarkovChain class encapsulates the notion of a Markov chain used
+    in Bayesian analyses. The MarkovChain class has the ability to
+    orchestrate a Markov chain Monte Carlo (MCMC) analysis. In 
+    Metropolis-coupled MCMC, the cold chain and each of the heated chains
+    are MarkovChain objects. The primary addition MarkovChain adds to the
+    base class LikelihoodCore are prior distributions and the 
+    self.heating_power data member.
     
     """
     def __init__(self, phycas, power):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Not yet documented.
+        The MarkovChain constructor makes a copy of the supplied phycas
+        object, clones all of the prior ProbabilityDistribution objects in the
+        supplied phycas object, and sets self.heating_power to the supplied
+        power.
         
         """
         LikelihoodCore.__init__(self, phycas)
         
-        self.phycas                             = phycas
-        self.heating_power                      = power
-        self.relrate_prior                      = cloneDistribution(self.phycas.relrate_prior)
-        self.base_freq_param_prior              = cloneDistribution(self.phycas.base_freq_param_prior)
-        self.gamma_shape_prior                  = cloneDistribution(self.phycas.gamma_shape_prior)
-        self.edgelen_hyperprior                 = cloneDistribution(self.phycas.edgelen_hyperprior)
-        self.external_edgelen_dist              = cloneDistribution(self.phycas.external_edgelen_dist)
-        self.internal_edgelen_dist              = cloneDistribution(self.phycas.internal_edgelen_dist)
-        self.kappa_prior                        = cloneDistribution(self.phycas.kappa_prior)
-        self.pinvar_prior                       = cloneDistribution(self.phycas.pinvar_prior)
-        self.flex_prob_param_prior              = cloneDistribution(self.phycas.flex_prob_param_prior)
-        self.chain_manager                      = None
+        self.phycas                  = phycas
+        self.heating_power           = power
+        self.relrate_prior           = cloneDistribution(self.phycas.relrate_prior)
+        self.base_freq_param_prior   = cloneDistribution(self.phycas.base_freq_param_prior)
+        self.gamma_shape_prior       = cloneDistribution(self.phycas.gamma_shape_prior)
+        self.edgelen_hyperprior      = cloneDistribution(self.phycas.edgelen_hyperprior)
+        self.external_edgelen_dist   = cloneDistribution(self.phycas.external_edgelen_dist)
+        self.internal_edgelen_dist   = cloneDistribution(self.phycas.internal_edgelen_dist)
+        self.kappa_prior             = cloneDistribution(self.phycas.kappa_prior)
+        self.pinvar_prior            = cloneDistribution(self.phycas.pinvar_prior)
+        self.flex_prob_param_prior   = cloneDistribution(self.phycas.flex_prob_param_prior)
+        self.chain_manager           = None
 
         self.setupChain()
 
     def resetNEvals(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Calls the resetNEvals function of self.likelihood. This resets the 
+        number of likelihood evaluations performed to 0.
+
+        """
         return self.likelihood.resetNEvals()
     
     def getNEvals(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Calls the getNEvals function of self.likelihood. This returns the 
+        number of likelihood evaluations performed since the last call of
+        resetNEvals.
+
+        """
         return self.likelihood.getNEvals()
         
     def paramFileHeader(self, paramf):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Writes the header line at the beginning of the parameter file. The
+        parameter paramf should be an (already open for writing) file object.
+        The parameter file corresponds to the *.p file produced by MrBayes. It
+        begins with a line containing the initial random number seed, followed
+        by a line of column titles for the (tab-delimited) sampled parameter
+        information on the subsequent lines.
+
+        """
         paramf.write('[ID: %d]\n' % self.r.getInitSeed())
         if self.phycas.doing_path_sampling:
             paramf.write('Gen\tbeta\tLnL\tTL')
@@ -220,6 +276,16 @@ class MarkovChain(LikelihoodCore):
             paramf.write('\trates_probs')
 
     def treeFileHeader(self, treef):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Writes the header line at the beginning of the tree file. The
+        parameter treef should be an (already open for writing) file object.
+        The tree file corresponds to the *.t file produced by MrBayes, and is
+        in NEXUS format. This function writes the opening "#NEXUS" line, a 
+        comment containing the initial random number seed, and the beginning
+        of a NEXUS TREES block, including the TRANSLATE command.
+
+        """
         treef.write('#NEXUS\n')
         treef.write('[ID: %d]\n' % self.r.getInitSeed())
         treef.write('begin trees;\n')
@@ -233,6 +299,13 @@ class MarkovChain(LikelihoodCore):
                 treef.write("       %d '%s'%s\n" % (i + 1, self.phycas.taxon_labels[i], i == self.phycas.ntax - 1 and ';' or ','))
 
     def setPower(self, power):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Sets the heating_power data member and calls the setPower method for
+        every updater so that all updaters are immediately informed that the
+        power for this chain has changed.
+        
+        """
         self.heating_power = power
         for updater in self.chain_manager.getAllUpdaters():
             updater.setPower(power)
@@ -240,13 +313,24 @@ class MarkovChain(LikelihoodCore):
     def setupChain(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Not yet documented.
+        The setupChain method prepares a MarkovChain object before an MCMC
+        analysis is started. This method is called at the end of the 
+        MarkovChain constructor. The duties performed include:
+        1) calling the base class setupCore method; 
+        2) preparing the starting tree by adding data structures needed for
+        computing likelihood (transition matrices and conditional likelihood
+        arrays); 
+        3) setting up prior distributions for model parameters; 
+        4) creating an MCMCManager object and adding all relevant updaters to
+        it; 
+        and 5) makes sure each updater knows the type of heating and the 
+        power.
         
         """
         LikelihoodCore.setupCore(self)
         LikelihoodCore.prepareForLikelihood(self)
         
-        # Make sure that each is using the same pseudorandom number generator object
+        # Make sure that each prior is using the same pseudorandom number generator object
         self.relrate_prior.setLot(self.r)
         self.base_freq_param_prior.setLot(self.r)
         self.flex_prob_param_prior.setLot(self.r)
@@ -257,7 +341,7 @@ class MarkovChain(LikelihoodCore):
         if self.phycas.internal_edgelen_dist:
             self.internal_edgelen_dist.setLot(self.r)
         
-        # define priors for the model parameters
+        # Define priors for the model parameters
         if self.phycas.default_model == 'gtr':
             self.model.setRelRatePrior(self.relrate_prior)
             self.model.setStateFreqParamPrior(self.base_freq_param_prior)   #POL should be named state_freq_param_prior
@@ -292,16 +376,16 @@ class MarkovChain(LikelihoodCore):
         self.likelihood.replaceModel(self.model)            
 
         if self.phycas.data_source == None:
-            self.likelihood.setNoData() # user wants to run MCMC with no data
+            self.likelihood.setNoData() # user apparently wants to run MCMC with no data
         
         # Create an MCMCChainManager object and add all necessary updaters
         self.chain_manager = Likelihood.MCMCChainManager()
         self.chain_manager.addMCMCUpdaters(
-            self.model,              # substitution model
-            self.tree,               # tree
-            self.likelihood,         # likelihood calculation machinery
-            self.r,                  # pseudorandom number generator
-            #POLPY_NEWWAY False,     # separate_edgelen_params (deprecated: always False)
+            self.model,                     # substitution model
+            self.tree,                      # tree
+            self.likelihood,                # likelihood calculation machinery
+            self.r,                         # pseudorandom number generator
+            #POLPY_NEWWAY False,            # separate_edgelen_params (deprecated: always False)
             self.phycas.slice_max_units,    # maximum number of slice units allowed
             self.phycas.slice_weight)       # weight for each parameter added
 
@@ -333,6 +417,18 @@ class MarkovChain(LikelihoodCore):
         if self.model.edgeLengthsFixed():
             self.larget_simon_move.fixParameter()
         self.chain_manager.addMove(self.larget_simon_move)
+        
+        #POLPY_NEWWAY
+        # If use_unimap specified, add a NeilsenMappingMove (this will later be replaced with a reversible-jump move)
+        if self.phycas.use_unimap:
+            self.nielsen_mapping_move = Likelihood.NielsenMappingMove()
+            self.nielsen_mapping_move.setName("Nielsen mapping move")
+            self.nielsen_mapping_move.setWeight(self.phycas.nielsen_move_weight)
+            self.nielsen_mapping_move.setTree(self.tree)
+            self.nielsen_mapping_move.setModel(self.model)
+            self.nielsen_mapping_move.setTreeLikelihood(self.likelihood)
+            self.nielsen_mapping_move.setLot(self.r)
+            self.chain_manager.addMove(self.nielsen_mapping_move)
 
         # If requested, create an NCatMove object to allow the number of rate categories to change
         if self.phycas.use_flex_model:
@@ -420,26 +516,40 @@ class MCMCManager:
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
     This class manages one to many Markov chains participating in a
-    Bayesian MCMC analysis. It creates the chains and manages swapping
-    and sampling the chains. If likelihood heating is employed, it also
-    has the ability to estimate the marginal likelihood of the model.
+    Bayesian MCMC analysis. It creates the MarkovChain objects and manages
+    swapping and sampling the chains. If likelihood heating is employed,
+    it also has the ability to estimate (albeit crudely) the marginal
+    likelihood of the model. A single instance of MCMCManager is created
+    by Phycas in the Phycas contructor.
     
     """
     def __init__(self, phycas):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Stores the phycas object passed into the constructor and creates an
-        empty chains vector.
+        empty self.chains list.
         
         """
         self.phycas = phycas
         self.chains = []
 
     def paramFileHeader(self, paramf):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Simply passes the file object paramf on to the paramFileHeader method
+        of the MarkovChain object representing the cold chain.
+        
+        """
         m = self.getColdChain()
         m.paramFileHeader(paramf)
 
     def treeFileHeader(self, treef):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Simply passes the file object treef on to the treeFileHeader method
+        of the MarkovChain object representing the cold chain.
+                
+        """
         m = self.getColdChain()
         m.treeFileHeader(treef)
 
@@ -447,10 +557,24 @@ class MCMCManager:
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Creates a separate MarkovChain for every element in phycas.heat_vector
-        and, after calling the setupChain function for the MarkovChain, adds
-        it to the data member chains.
+        and adds it to self.chains. This function is also responsible for 
+        performing several sanity checks (last chance to abort before creating
+        the MCMC machinery).
         
         """
+        # Sanity checks
+        unimap_and_flex            = (self.phycas.use_unimap and self.phycas.use_flex_model)
+        unimap_and_ratehet         = (self.phycas.use_unimap and self.phycas.num_rates > 1)
+        unimap_and_polytomies      = (self.phycas.use_unimap and self.phycas.allow_polytomies)
+        unimap_and_multiple_chains = (self.phycas.use_unimap and self.phycas.nchains > 1)
+        unimap_and_samc            = (self.phycas.use_unimap and self.phycas.doing_samc)
+        self.phycas.phycassert(not unimap_and_samc, 'SAMC cannot (yet) be used in conjunction with use_unimap')
+        self.phycas.phycassert(not unimap_and_polytomies, 'Allowing polytomies cannot (yet) be used in conjunction with use_unimap')
+        self.phycas.phycassert(not unimap_and_flex, 'Flex model cannot (yet) be used in conjunction with use_unimap')
+        self.phycas.phycassert(not unimap_and_ratehet, 'Rate heterogeneity cannot (yet) be used in conjunction with use_unimap')
+        self.phycas.phycassert(not unimap_and_multiple_chains, 'Multiple chains cannot (yet) be used in conjunction with use_unimap')
+        
+        # Create the chains
         for heating_power in self.phycas.heat_vector:
             markov_chain = MarkovChain(self.phycas, heating_power)
             self.chains.append(markov_chain)
@@ -458,7 +582,8 @@ class MCMCManager:
     def getNumChains(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Returns the current number of chains being managed by this object.
+        Returns the current number of chains being managed by this object
+        (i.e. returns the length of the self.chains list).
         
         """
         return len(self.chains)
@@ -467,7 +592,7 @@ class MCMCManager:
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Returns the index (0..nchains-1) of the chain corresponding to the
-        cold chain (i.e. the first chain whose power = 1.0).
+        cold chain (i.e. the first chain whose power equals 1.0).
         
         """
         return self.phycas.heat_vector.index(1.0)
@@ -475,7 +600,7 @@ class MCMCManager:
     def getColdChain(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Returns the cold chain MCMCChain object. The cold chain is the
+        Returns the cold chain MarkovChain object. The cold chain is the
         first chain in the data member chains whose power equals 1.0.
         
         """
@@ -495,8 +620,8 @@ class MCMCManager:
     def setChainPower(self, chain_index, power):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Loops through all updaters in the chain having the specified index,
-        and sets the power for each updater to the supplied power.
+        Loops through all updaters in the chain having the specified 
+        chain_index, setting the power for each updater to the supplied power.
         
         """
         phycas.phycassert(len(chains) > chain_index, 'chain index specified (%d) too large for number of chains (%d)' % (chain_index, len(chains)))
@@ -505,15 +630,34 @@ class MCMCManager:
         self.chains[chain_index].setPower(power)
 
     def resetNEvals(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Calls resetNEvals method for every MarkovChain in the self.chains
+        list.
+        
+        """
         for c in self.chains:
             c.resetNEvals()
 
     def setRandomSeedAllChains(self, rnseed):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Sets the master random number seed to rnseed, then passes rnseed to
+        the setSeed method of every MarkovChain in the self.chains list.
+        
+        """
         self.phycas.random_seed = rnseed
         for c in self.chains:
             c.r.setSeed(int(rnseed))
 
     def getTotalEvals(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns the total number of likelihood evaluations over all 
+        MarkovChain objects in the self.chains list by calling the getNEvals
+        method for each chain.
+        
+        """
         total = 0
         for c in self.chains:
             total += c.getNEvals()
@@ -522,10 +666,11 @@ class MCMCManager:
     def recordSample(self, cycle):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Records current tree topology and edge lengths by adding a line to
+        Records the current tree topology and edge lengths by adding a line to
         the tree file, and records tree length and substitution parameters
-        by adding a line to the parameter file. If multiple chains and doing
-        path sampling, stores log-likelihoods of all chains.
+        by adding a line to the parameter file. If there are multiple chains 
+        and doing path sampling (is_standard_heating False), stores 
+        the log-likelihoods of all chains.
         
         """
         # Gather log-likelihoods, and if path sampling save in path_sample list for later
@@ -535,18 +680,13 @@ class MCMCManager:
             lnLi = c.chain_manager.getLastLnLike()
             lnLikes.append(lnLi)
             if multichain_path_sampling:
-                self.phycas.path_sample[i].append(lnLi)
+                self.phycas.path_sample[i].append(lnLi) # DISCRETE PATH SAMPLING
         
         # Only record samples from the current cold chain
         cold_chain = self.phycas.mcmc_manager.getColdChain()
         
         # Add line to parameter file if it exists
         if self.phycas.paramf:
-            # old way: cycle, lnL_1, TL
-            #lnL = cold_chain.chain_manager.getLastLnLike()
-            #self.phycas.paramf.write('%d\t%.3f\t%.3f' % (cycle + 1, lnL, cold_chain.tree.edgeLenSum()))
-            
-            # new way: cycle, lnL_1, lnL_2, ..., lnL_nchains, TL
             self.phycas.paramf.write('%d\t' % (cycle + 1))
             if self.phycas.doing_path_sampling:
                 self.phycas.paramf.write('%.5f\t' % (cold_chain.heating_power))

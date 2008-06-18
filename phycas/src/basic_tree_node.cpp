@@ -24,7 +24,11 @@
 
 using namespace phycas;
 
+#if POLPY_NEWWAY
+const double TreeNode::edgeLenEpsilon = 1.e-12;  
+#else
 const double TreeNode::edgeLenEpsilon = 1.e-8;
+#endif
 const double TreeNode::edgeLenDefault = 0.1;
 const double TreeNode::edgeLenInitValue = DBL_MAX;
 const unsigned TreeNode::nodeNumInitValue = UINT_MAX;
