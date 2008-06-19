@@ -36,6 +36,12 @@
 namespace phycas
 {
 
+void UnimapNNIMove::setLot(LotShPtr p)
+	{
+	MCMCUpdater::setLot(p);
+	gammaDist.SetLot(rng.get());
+	}
+
 UniventManager * GetUniventManager(TreeNode * nd)
 	{
 	if (nd->IsTip())
@@ -79,7 +85,7 @@ bool UnimapNNIMove::update()
 		curr_posterior = heating_power*curr_ln_like + curr_ln_prior;
 		}
 
-	double ln_accept_ratio = curr_posterior - prev_posterior + getLnHastingsRatio() + getLnJacobian();
+	double ln_accept_ratio = curr_posterior - prev_posterior + getLnHastingsRatio();
 	//double lnu = std::log(rng->Uniform(FILE_AND_LINE));
 	//bool accepted = (ln_accept_ratio >= 0.0 || lnu <= ln_accept_ratio);
 	//bool accepted = (ln_accept_ratio >= 0.0 || std::log(rng->Uniform(FILE_AND_LINE)) <= ln_accept_ratio);
@@ -94,15 +100,15 @@ bool UnimapNNIMove::update()
 
 	if (accepted)
 		{
-		p->setLastLnPrior(curr_ln_prior);
-		p->setLastLnLike(curr_ln_like);
+		//p->setLastLnPrior(curr_ln_prior);
+		//p->setLastLnLike(curr_ln_like);
 		accept();
 		return true;
 		}
 	else
 		{
-		curr_ln_like	= p->getLastLnLike();
-		curr_ln_prior	= p->getLastLnPrior();
+		//curr_ln_like	= p->getLastLnLike();
+		//curr_ln_prior	= p->getLastLnPrior();
 		revert();
 		return false;
 		}
@@ -136,6 +142,76 @@ TreeNode * UnimapNNIMove::randomInternalAboveSubroot()
     return nd;
     }
 
+void UnimapNNIMove::calculatePairwiseDistances()
+	{
+	dXY = dWX =  dXZ =  dWY =  dYZ =  dWZ = 0.0;
+	/* This is called before the swap so "x" is "ySis" and "z" is "wSis" */
+	const int8_t * xStates = ySisTipData->getTipStatesArray().get();
+	const int8_t * yStates = yTipData->getTipStatesArray().get();
+	const int8_t * wStates = wTipData->getTipStatesArray().get();
+	const int8_t * zStates = wSisTipData->getTipStatesArray().get();
+	const unsigned num_patterns = likelihood->getNPatterns();
+	for (unsigned i = 0; i < num_patterns; ++i)
+		{
+		const int8_t x = *xStates++;
+		const int8_t y = *yStates++;
+		const int8_t w = *wStates++;
+		const int8_t z = *zStates++;
+		if (x != y)
+			dXY += 1.0;
+		if (x != w)
+			dWX += 1.0;
+		if (x != z)
+			dXZ += 1.0;
+		if (y != w)
+			dWY += 1.0;
+		if (y != z)
+			dYZ += 1.0;
+		if (w != z)
+			dWZ += 1.0;
+		}
+	double dnp = (double) num_patterns;
+	dXY /= dnp;
+	dWX /= dnp;
+	dXZ /= dnp;
+	dWY /= dnp;
+	dYZ /= dnp;
+	dWZ /= dnp;
+	}
+
+void UnimapNNIMove::calculateProposalDist(bool before_swap)
+	{
+	if (before_swap)
+		{
+		propMeanX = std::max(min_edge_len_mean, (2*dXY + dXZ + dWX - dYZ - dWY)/4.0);
+		propMeanY = std::max(min_edge_len_mean, (2*dXY + dYZ + dWY - dXZ - dWX)/4.0);
+		propMeanZ = std::max(min_edge_len_mean, (2*dWZ + dXZ + dYZ - dWX - dWY)/4.0); 
+		propMeanW = std::max(min_edge_len_mean, (2*dWZ + dWX + dWY - dXZ - dXY)/4.0);
+		propMeanInternal = std::max(min_edge_len_mean, (dXZ + dWX + dYZ + dWY - 2*dXY - 2*dWZ)/4.0);
+		}
+	else
+		{
+		propMeanX = std::max(min_edge_len_mean, (2*dWX + dXZ + dXY - dWZ - dWY)/4.0); 
+		propMeanY = std::max(min_edge_len_mean, (2*dYZ + dXY + dWY - dXZ - dWZ)/4.0);
+		propMeanW = std::max(min_edge_len_mean, (2*dWX + dWZ + dWY - dXZ - dXY)/4.0);
+		propMeanZ = std::max(min_edge_len_mean, (2*dYZ + dXZ + dWZ - dXY - dWY)/4.0);
+		propMeanInternal = std::max(min_edge_len_mean, (dXZ + dWZ + dXY + dWY - 2*dYZ - 2*dWX)/4.0);
+		}
+	}
+
+double UnimapNNIMove::calcProposalLnDensity(double mean, double x)
+	{
+	const double variance = (edge_len_prop_cv*edge_len_prop_cv*mean*mean);
+	gammaDist.SetMeanAndVariance(mean, variance);
+	return gammaDist.GetLnPDF(x);
+	}
+
+double UnimapNNIMove::proposeEdgeLen(double mean)
+	{
+	const double variance = (edge_len_prop_cv*edge_len_prop_cv*mean*mean);
+	gammaDist.SetMeanAndVariance(mean, variance);
+	return gammaDist.Sample();
+	}
 /*----------------------------------------------------------------------------------------------------------------------
 |	
 */
@@ -164,25 +240,58 @@ void UnimapNNIMove::proposeNewState()
     likelihood->storeAllCLAs(tree);
 
 	prev_ln_like = FourTaxonLnL(nd);
-	prev_ln_prior = (x->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(x->GetEdgeLen()) : p->calcExternalEdgeLenPriorUnnorm(x->GetEdgeLen()));
-	prev_ln_prior += (y->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(y->GetEdgeLen()) : p->calcExternalEdgeLenPriorUnnorm(y->GetEdgeLen()));
-	prev_ln_prior += (z->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(z->GetEdgeLen()) : p->calcExternalEdgeLenPriorUnnorm(z->GetEdgeLen()));
-	prev_ln_prior += p->calcInternalEdgeLenPriorUnnorm(nd->GetEdgeLen());
-	prev_ln_prior += p->calcInternalEdgeLenPriorUnnorm(ndP->GetEdgeLen());
+	prev_x_len = x->GetEdgeLen();
+	prev_y_len = y->GetEdgeLen();
+	prev_z_len = z->GetEdgeLen();
+	prev_nd_len = nd->GetEdgeLen();
+	prev_ndP_len = ndP->GetEdgeLen();
+	prev_ln_prior = (x->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(prev_x_len) : p->calcExternalEdgeLenPriorUnnorm(prev_x_len));
+	prev_ln_prior += (y->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(prev_y_len) : p->calcExternalEdgeLenPriorUnnorm(prev_y_len));
+	prev_ln_prior += (z->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(prev_z_len) : p->calcExternalEdgeLenPriorUnnorm(prev_z_len));
+	prev_ln_prior += p->calcInternalEdgeLenPriorUnnorm(prev_nd_len);
+	prev_ln_prior += p->calcInternalEdgeLenPriorUnnorm(prev_ndP_len);
 
 	
+	calculatePairwiseDistances();
+	calculateProposalDist(true);
+	ln_density_reverse_move = calcProposalLnDensity(propMeanX, prev_x_len);
+	ln_density_reverse_move += calcProposalLnDensity(propMeanY, prev_y_len);
+	ln_density_reverse_move += calcProposalLnDensity(propMeanW, prev_ndP_len);
+	ln_density_reverse_move += calcProposalLnDensity(propMeanZ, prev_z_len);
+	ln_density_reverse_move += calcProposalLnDensity(propMeanInternal, prev_nd_len);
 	
+	/* This swap is the equivalent of an NNI swap of the the nodes that are closest to y and w */
 	std::swap(ySisTipData, wSisTipData);
+	
+	calculateProposalDist(false);
+	double xLen = proposeEdgeLen(propMeanX);
+	double yLen = proposeEdgeLen(propMeanY);
+	double zLen = proposeEdgeLen(propMeanZ);
+	double ndPLen = proposeEdgeLen(propMeanW);
+	double ndLen = proposeEdgeLen(propMeanInternal);
+	
+	x->SetEdgeLen(xLen);
+	y->SetEdgeLen(yLen);
+	z->SetEdgeLen(zLen);
+	nd->SetEdgeLen(ndLen);
+	ndP->SetEdgeLen(ndPLen);
+	
+	ln_density_forward_move = calcProposalLnDensity(propMeanX, xLen);
+	ln_density_forward_move += calcProposalLnDensity(propMeanY, yLen);
+	ln_density_forward_move += calcProposalLnDensity(propMeanW, ndPLen);
+	ln_density_forward_move += calcProposalLnDensity(propMeanZ, zLen);
+	ln_density_forward_move += calcProposalLnDensity(propMeanInternal, ndLen);
+	
 
     curr_ln_like = FourTaxonLnLFromCorrectTipDataMembers(nd);
     
     DebugSaveNexusFile(ySisTipData, yTipData, wSisTipData, wTipData, curr_ln_like);
     
-	curr_ln_prior = (x->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(x->GetEdgeLen()) : p->calcExternalEdgeLenPriorUnnorm(x->GetEdgeLen()));
-	curr_ln_prior += (y->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(y->GetEdgeLen()) : p->calcExternalEdgeLenPriorUnnorm(y->GetEdgeLen()));
-	curr_ln_prior += (z->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(z->GetEdgeLen()) : p->calcExternalEdgeLenPriorUnnorm(z->GetEdgeLen()));
-	curr_ln_prior += p->calcInternalEdgeLenPriorUnnorm(nd->GetEdgeLen());
-	curr_ln_prior += p->calcInternalEdgeLenPriorUnnorm(ndP->GetEdgeLen());
+	curr_ln_prior = (x->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(xLen) : p->calcExternalEdgeLenPriorUnnorm(xLen));
+	curr_ln_prior += (y->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(yLen) : p->calcExternalEdgeLenPriorUnnorm(yLen));
+	curr_ln_prior += (z->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(zLen) : p->calcExternalEdgeLenPriorUnnorm(zLen));
+	curr_ln_prior += p->calcInternalEdgeLenPriorUnnorm(ndLen);
+	curr_ln_prior += p->calcInternalEdgeLenPriorUnnorm(ndPLen);
 	
 	}
 
@@ -201,7 +310,7 @@ double UnimapNNIMove::FourTaxonLnL(TreeNode * nd)
 	PHYCAS_ASSERT(ndP);
 	TreeNode * parent = ndP->GetParent();
 	PHYCAS_ASSERT(parent);
-	TreeNode * lower = ndP->FindNextSib();
+	TreeNode * lower = nd->FindNextSib();
 	PHYCAS_ASSERT(lower);
 	PHYCAS_ASSERT(nd->CountChildren() == 2); // we haven't figured this out for polytomies
 	PHYCAS_ASSERT(ndP->CountChildren() == 2); // we haven't figured this out for polytomies
@@ -451,6 +560,14 @@ TipData * UnimapNNIMove::createTipDataFromUnivents(TreeNode * nd , bool use_last
 */
 void UnimapNNIMove::revert()
 	{
+	x->SetEdgeLen(prev_x_len);
+	y->SetEdgeLen(prev_y_len);
+	z->SetEdgeLen(prev_z_len);
+	TreeNode * nd =  y->GetParent();
+	assert(nd);
+	assert(nd->GetParent());
+	nd->SetEdgeLen(prev_nd_len);
+	nd->GetParent()->SetEdgeLen(prev_ndP_len);	
 	}
 
 /*--------------------------------------------------------------------------------------------------------------------------
@@ -490,6 +607,8 @@ UnimapNNIMove::UnimapNNIMove() : MCMCUpdater(),
   wSisTipData(0),
   wTipData(0)
 	{
+	min_edge_len_mean = 0.02;
+	edge_len_prop_cv = 0.1;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -497,8 +616,7 @@ UnimapNNIMove::UnimapNNIMove() : MCMCUpdater(),
 */
 double UnimapNNIMove::getLnHastingsRatio() const
 	{
-	PHYCAS_ASSERT(false);
-	return 0.0;
+	return ln_density_reverse_move - ln_density_forward_move;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -506,7 +624,6 @@ double UnimapNNIMove::getLnHastingsRatio() const
 */
 double UnimapNNIMove::getLnJacobian() const
 	{
-	PHYCAS_ASSERT(false);
 	return 0.0;
 	}
 

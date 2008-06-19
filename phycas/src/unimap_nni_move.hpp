@@ -49,6 +49,7 @@ class UnimapNNIMove : public MCMCUpdater
 		virtual void	proposeNewState();
 		virtual void	revert();
 		virtual void	accept();
+		virtual void	setLot(LotShPtr p);
 	protected:
 		TreeNode * randomInternalAboveSubroot();
 		TreeNode * x;
@@ -60,10 +61,21 @@ class UnimapNNIMove : public MCMCUpdater
 		TipData * wSisTipData;
 		TipData * wTipData;
 
+		GammaDistribution gammaDist; 
+		double min_edge_len_mean, edge_len_prop_cv;
+		double ln_density_reverse_move, ln_density_forward_move;
+		double prev_x_len, prev_y_len, prev_z_len, prev_nd_len, prev_ndP_len;
 		bool x_is_left;
-		
+		double dXY, dWX, dXZ, dWY, dYZ, dWZ;
+		double propMeanX, propMeanY, propMeanZ, propMeanW, propMeanInternal; 
 		double prev_ln_prior;	/**< The log prior of the starting state */
 		double prev_ln_like;	/**< The log likelihood of the starting state */
+
+		void calculatePairwiseDistances();
+		void calculateProposalDist(bool);
+
+		double calcProposalLnDensity(double mean, double x);
+		double UnimapNNIMove::proposeEdgeLen(double mean);
 
 		void FillStateCodeArray(const UniventManager * um, int8_t * tipSpecificStateCode, bool);
 		TipData * createTipDataFromUnivents(TreeNode * nd , bool use_last, TipData *);
