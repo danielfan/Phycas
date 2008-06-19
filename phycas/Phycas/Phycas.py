@@ -88,6 +88,9 @@ class Phycas(object):
         self.ls_move_weight         = 100       # Larget-Simon moves will be performed this many times per cycle
         self.ls_move_debug          = False     # If set to true, TreeViewer will popup on each Larget-Simon move update showing edges affected by the proposed move
         
+        # Variables associated with Unimap NNI moves
+        self.unimap_nni_move_weight = 1         # Unimap NNI moves will be performed this many times per cycle
+
         # Variables associated with tree scaler move
         self.tree_scaler_weight     = 0         # Whole-tree scaling will be performed this many times per cycle
         

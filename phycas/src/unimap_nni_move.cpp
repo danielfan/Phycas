@@ -145,24 +145,23 @@ void UnimapNNIMove::proposeNewState()
 	PHYCAS_ASSERT(nd);
 	TreeNode * ndP = nd->GetParent();
 	PHYCAS_ASSERT(ndP);
-	TreeNode * z = ndP->FindNextSib();
+	z = nd->FindNextSib();
 	PHYCAS_ASSERT(z);
 	PHYCAS_ASSERT(nd->CountChildren() == 2); // we haven't figured this out for polytomies
 	PHYCAS_ASSERT(ndP->CountChildren() == 2); // we haven't figured this out for polytomies
-	TreeNode * x = nd->GetLeftChild();
+	x = nd->GetLeftChild();
 	PHYCAS_ASSERT(x);
-	TreeNode * y = x->GetRightSib();
+	y = x->GetRightSib();
 	PHYCAS_ASSERT(y);
 	x_is_left = rng->Boolean();
 	if (!x_is_left)
 		std::swap(x,y);
-	swap1 = z;
-	swap2 = x;
-	
 	
 	ChainManagerShPtr p = chain_mgr.lock();
 	PHYCAS_ASSERT(p);
 
+    //temporary!
+    likelihood->storeAllCLAs(tree);
 
 	prev_ln_like = FourTaxonLnL(nd);
 	prev_ln_prior = (x->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(x->GetEdgeLen()) : p->calcExternalEdgeLenPriorUnnorm(x->GetEdgeLen()));
@@ -170,10 +169,24 @@ void UnimapNNIMove::proposeNewState()
 	prev_ln_prior += (z->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(z->GetEdgeLen()) : p->calcExternalEdgeLenPriorUnnorm(z->GetEdgeLen()));
 	prev_ln_prior += p->calcInternalEdgeLenPriorUnnorm(nd->GetEdgeLen());
 	prev_ln_prior += p->calcInternalEdgeLenPriorUnnorm(ndP->GetEdgeLen());
+
+    x->SelectNode();
+    y->SelectNode();
+    z->SelectNode();
+    nd->SelectNode();
+
+    //likelihood->startTreeViewer(tree, "before");
 	
 	tree_manipulator.NNISwap(z, x);
 	
-	curr_ln_like = FourTaxonLnL(nd);
+    //likelihood->startTreeViewer(tree, "after");
+	
+    x->UnselectNode();
+    y->UnselectNode();
+    z->UnselectNode();
+    nd->UnselectNode();
+
+    curr_ln_like = FourTaxonLnL(nd);
 	curr_ln_prior = (x->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(x->GetEdgeLen()) : p->calcExternalEdgeLenPriorUnnorm(x->GetEdgeLen()));
 	curr_ln_prior += (y->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(y->GetEdgeLen()) : p->calcExternalEdgeLenPriorUnnorm(y->GetEdgeLen()));
 	curr_ln_prior += (z->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(z->GetEdgeLen()) : p->calcExternalEdgeLenPriorUnnorm(z->GetEdgeLen()));
@@ -197,6 +210,7 @@ double UnimapNNIMove::FourTaxonLnL(TreeNode * nd)
 	PHYCAS_ASSERT(upLeftNd);
 	TreeNode * upRightNd = upLeftNd->GetRightSib();
 	PHYCAS_ASSERT(upRightNd);
+
 	xTipData = allocTipDataFromUnivents(upLeftNd, true);  /* LEAK !!!!*/
 	yTipData = allocTipDataFromUnivents(upRightNd, true);
 	if (!x_is_left)
@@ -213,7 +227,11 @@ double UnimapNNIMove::FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nd)
 	PHYCAS_ASSERT(nd_internal_data);
 	CondLikelihoodShPtr nd_childCLPtr =  nd_internal_data->getChildCondLikePtr();
 	CondLikelihoodShPtr nd_parentCLPtr =  nd_internal_data->getParentalCondLikePtr();
-	
+
+    likelihood->calcPMatTranspose(xTipData->getTransposedPMatrices(), xTipData->getConstStateListPos(), x->GetEdgeLen());
+    likelihood->calcPMatTranspose(yTipData->getTransposedPMatrices(), yTipData->getConstStateListPos(), y->GetEdgeLen());
+    likelihood->calcPMatTranspose(zTipData->getTransposedPMatrices(), zTipData->getConstStateListPos(), z->GetEdgeLen());
+    likelihood->calcPMatTranspose(wTipData->getTransposedPMatrices(), wTipData->getConstStateListPos(), nd->GetParent()->GetEdgeLen());
 	likelihood->calcCLATwoTips(*nd_childCLPtr, *xTipData, *yTipData);
 	likelihood->calcCLATwoTips(*nd_parentCLPtr, *zTipData, *wTipData);
 
@@ -278,14 +296,15 @@ TipData * UnimapNNIMove::allocTipDataFromUnivents(TreeNode * nd , bool use_last)
 	for (unsigned site = 0; site < num_patterns; ++site)
 		{
 		const StateTimeList & state_time_pair_vec =  (*um)[site];
+        PHYCAS_ASSERT(!state_time_pair_vec.empty());
 		const StateTimePair & state_time_pair  = (use_last ? *state_time_pair_vec.rbegin() : *state_time_pair_vec.begin());
 		int8_t globalStateCode = state_time_pair.first;
-		PHYCAS_ASSERT (globalStateCode >= 0 && globalStateCode < num_states);
+		PHYCAS_ASSERT (globalStateCode >= 0 && globalStateCode < (int8_t)likelihood->getNStates());
 		tipSpecificStateCode[site] = globalStateCode;
 		}
 
 	std::vector<unsigned int> emptyStateListVec;
-	return new TipData(	true,
+    TipData * retval = new TipData(	true,
 					num_patterns,
 					emptyStateListVec,												// stateListPosVec
 					boost::shared_array<const int8_t>(tipSpecificStateCode),	// stateCodesShPtr
@@ -294,7 +313,7 @@ TipData * UnimapNNIMove::allocTipDataFromUnivents(TreeNode * nd , bool use_last)
 					NULL,
 					true,														// managePMatrices
 					likelihood->getCondLikelihoodStorage());
-
+    return retval;
 	}
 /*----------------------------------------------------------------------------------------------------------------------
 |	
@@ -315,10 +334,16 @@ void UnimapNNIMove::accept()
 |	to 0.0. All other data members are automatically initialized (shared pointers) or are initialized via a call to 
 |	reset().
 */
-UnimapNNIMove::UnimapNNIMove() : MCMCUpdater()
+UnimapNNIMove::UnimapNNIMove() : MCMCUpdater(),
+  x(0),
+  y(0),
+  z(0),
+  xTipData(0),
+  yTipData(0),
+  zTipData(0),
+  wTipData(0)
 	{
 	}
-
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the natural log of the Hastings ratio for this move.

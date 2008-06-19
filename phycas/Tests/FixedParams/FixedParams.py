@@ -42,4 +42,11 @@ phycas.starting_tree_source         = 'random'
 phycas.outfile_prefix               = 'fixed'
 
 phycas.ncycles                      = 2500
+
+phycas.debugging = True
+
+import sys,os
+if os.path.basename(sys.executable) == 'python_d.exe':
+    raw_input('debug stop')
+
 phycas.mcmc()

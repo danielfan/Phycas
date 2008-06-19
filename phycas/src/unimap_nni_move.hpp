@@ -54,8 +54,9 @@ class UnimapNNIMove : public MCMCUpdater
 		virtual void	accept();
 	protected:
 		TreeNode * randomInternalAboveSubroot();
-		TreeNode * swap1;
-		TreeNode * swap2;
+		TreeNode * x;
+		TreeNode * y;
+		TreeNode * z;
 
 		TipData * xTipData;
 		TipData * yTipData;

@@ -31,6 +31,7 @@
 #endif
 #include "phycas/src/tree_likelihood.hpp"
 #include "phycas/src/larget_simon_move.hpp"
+#include "phycas/src/unimap_nni_move.hpp"
 #include "phycas/src/tree_scaler_move.hpp"
 #include "phycas/src/ncat_move.hpp"
 #include "phycas/src/bush_move.hpp"
@@ -96,6 +97,10 @@ void updater_pymod()
 		.def("setLambda", &phycas::LargetSimonMove::setLambda)
 		.def("getLambda", &phycas::LargetSimonMove::getLambda)
 		.def("topologyChanged", &phycas::LargetSimonMove::topologyChanged)
+		;
+	class_<phycas::UnimapNNIMove, bases<phycas::MCMCUpdater>, 
+		boost::noncopyable, boost::shared_ptr<phycas::UnimapNNIMove> >("UnimapNNIMove") 
+		.def("update", &phycas::UnimapNNIMove::update)
 		;
 	class_<phycas::TreeScalerMove, bases<phycas::MCMCUpdater>, 
 		boost::noncopyable, boost::shared_ptr<phycas::TreeScalerMove> >("TreeScalerMove") 
