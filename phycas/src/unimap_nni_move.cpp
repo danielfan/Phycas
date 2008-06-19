@@ -721,7 +721,7 @@ void UnimapNNIMove::revert()
 	sampleUniventsKeepEndStates(x, nd_states, (const double **) pre_x_pmat_transposed);
 	sampleUniventsKeepEndStates(y, nd_states, (const double **) pre_y_pmat_transposed);
 	sampleUniventsKeepEndStates(z, ndP_states, (const double **) pre_z_pmat_transposed);
-	sampleUnivents(nd, ndP_states, nd_states, (const double **) pre_p_mat);
+	sampleUnivents(nd, ndP_states, nd_states, (const double **) pre_p_mat[0]);
 	sampleUniventsKeepBegStates(ndP, ndP_states, (const double **) pre_w_pmat_transposed);
 	}
 
