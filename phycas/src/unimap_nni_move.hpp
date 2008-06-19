@@ -54,6 +54,8 @@ class UnimapNNIMove : public MCMCUpdater
 		TreeNode * randomInternalAboveSubroot();
 		TreeNode * x;
 		TreeNode * y;
+		TreeNode * wSis;
+		TreeNode * ySis;
 		TreeNode * z;
 
 		TipData * ySisTipData;

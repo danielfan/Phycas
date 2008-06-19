@@ -263,11 +263,11 @@ void UnimapNNIMove::proposeNewState()
 	PHYCAS_ASSERT(nd);
 	TreeNode * ndP = nd->GetParent();
 	PHYCAS_ASSERT(ndP);
-	z = nd->FindNextSib();
+	wSis = z = nd->FindNextSib();
 	PHYCAS_ASSERT(z);
 	PHYCAS_ASSERT(nd->CountChildren() == 2); // we haven't figured this out for polytomies
 	PHYCAS_ASSERT(ndP->CountChildren() == 2); // we haven't figured this out for polytomies
-	x = nd->GetLeftChild();
+	ySis = x = nd->GetLeftChild();
 	PHYCAS_ASSERT(x);
 	y = x->GetRightSib();
 	PHYCAS_ASSERT(y);
@@ -318,6 +318,7 @@ void UnimapNNIMove::proposeNewState()
 	/* This swap is the equivalent of an NNI swap of the the nodes that are closest to y and w */
 	scoringBeforeMove = false;
 	std::swap(ySisTipData, wSisTipData);
+	std::swap(ySis, wSis);
 	
 	calculateProposalDist(false);
 	double xLen = proposeEdgeLen(propMeanX);
@@ -355,6 +356,10 @@ UnimapNNIMove::~UnimapNNIMove()
 	delete yTipData;
 	delete wSisTipData;
 	delete wTipData;
+	DeleteTwoDArray<double> (pre_w_pmat_transposed);
+	DeleteTwoDArray<double> (pre_x_pmat_transposed);
+	DeleteTwoDArray<double> (pre_y_pmat_transposed);
+	DeleteTwoDArray<double> (pre_z_pmat_transposed);
 	}
 
 double UnimapNNIMove::FourTaxonLnLBeforeMove(TreeNode * nd)
@@ -531,9 +536,9 @@ double UnimapNNIMove::FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nd)
 		p_mat = post_p_mat;
 		}
 
-    likelihood->calcPMatTranspose(ySisTipData->getTransposedPMatrices(), ySisTipData->getConstStateListPos(), x->GetEdgeLen());
+    likelihood->calcPMatTranspose(ySisTipData->getTransposedPMatrices(), ySisTipData->getConstStateListPos(), ySis->GetEdgeLen());
     likelihood->calcPMatTranspose(yTipData->getTransposedPMatrices(), yTipData->getConstStateListPos(), y->GetEdgeLen());
-    likelihood->calcPMatTranspose(wSisTipData->getTransposedPMatrices(), wSisTipData->getConstStateListPos(), z->GetEdgeLen());
+    likelihood->calcPMatTranspose(wSisTipData->getTransposedPMatrices(), wSisTipData->getConstStateListPos(), wSis->GetEdgeLen());
     likelihood->calcPMatTranspose(wTipData->getTransposedPMatrices(), wTipData->getConstStateListPos(), nd->GetParent()->GetEdgeLen());
 
 	
@@ -721,7 +726,7 @@ void UnimapNNIMove::revert()
 	sampleUniventsKeepEndStates(x, nd_states, (const double **) pre_x_pmat_transposed);
 	sampleUniventsKeepEndStates(y, nd_states, (const double **) pre_y_pmat_transposed);
 	sampleUniventsKeepEndStates(z, ndP_states, (const double **) pre_z_pmat_transposed);
-	sampleUnivents(nd, ndP_states, nd_states, (const double **) pre_p_mat[0]);
+	sampleUnivents(nd, ndP_states, nd_states, (const double **) pre_p_mat);
 	sampleUniventsKeepBegStates(ndP, ndP_states, (const double **) pre_w_pmat_transposed);
 	}
 
