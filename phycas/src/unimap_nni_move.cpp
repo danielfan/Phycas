@@ -724,6 +724,7 @@ void UnimapNNIMove::revert()
 	sampleUnivents(nd, ndP_states, nd_states, (const double **) pre_p_mat);
 	sampleUniventsKeepBegStates(ndP, ndP_states, (const double **) pre_w_pmat_transposed);
 	}
+
 /*--------------------------------------------------------------------------------------------------------------------------
 |	Called if the move is accepted.
 */
@@ -750,9 +751,26 @@ void UnimapNNIMove::accept()
 	/* using the statecode arrays at  ySisTipData  and yTipData
 		as storage for the new samples of nd and ndP sequences.
 	*/
+	TreeNode * nd =  y->GetParent();
+	assert(nd);
+	assert(nd->GetParent());
+	nd->SetEdgeLen(prev_nd_len);
+	TreeNode * ndP = nd->GetParent();
+	ndP->SetEdgeLen(prev_ndP_len);
 	int8_t * nd_states = const_cast<int8_t *>(ySisTipData->getTipStatesArray().get());
 	int8_t * ndP_states = const_cast<int8_t *>(yTipData->getTipStatesArray().get());
-	
+
+	LikeFltType * root_state_posterior = post_root_posterior->getCLA(); //PELIGROSO
+	const LikeFltType * des_cla = post_cla->getCLA(); //PELIGROSO
+	const unsigned num_patterns = likelihood->getNPatterns();
+	sampleRootStates(num_patterns, nd_states, root_state_posterior);
+	sampleDescendantStates(num_patterns, ndP_states, (const double **) post_p_mat[0], des_cla, nd_states);
+
+	sampleUniventsKeepEndStates(x, ndP_states, (const double **) wSisTipData->getTransposedPMatrices()[0]);
+	sampleUniventsKeepEndStates(y, nd_states, (const double **) yTipData->getTransposedPMatrices()[0]);
+	sampleUniventsKeepEndStates(z, nd_states, (const double **) ySisTipData->getTransposedPMatrices()[0]);
+	sampleUnivents(nd, ndP_states, nd_states, (const double **) post_p_mat[0]);
+	sampleUniventsKeepBegStates(ndP, ndP_states, (const double **) wTipData->getTransposedPMatrices()[0]);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
