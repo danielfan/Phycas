@@ -72,6 +72,8 @@ class UnimapNNIMove : public MCMCUpdater
 		double FourTaxonLnL(TreeNode * nd);
 		double FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nd);
 		double HarvestLnLikeFromCondLikePar(ConstCondLikelihoodShPtr focalCondLike, ConstCondLikelihoodShPtr neighborCondLike, const double * const * childPMatrix);
+
+        void DebugSaveNexusFile(TipData * xtd, TipData * ytd, TipData * ztd, TipData * wtd, double lnlike);
 	};
 
 } // namespace phycas

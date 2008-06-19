@@ -187,6 +187,7 @@ class TipData
 											TipData(unsigned nRates, unsigned nStates, CondLikelihoodStorage & cla_storage);
 #if POLPY_NEWWAY
 											TipData(bool using_unimap, unsigned nPatterns, const std::vector<unsigned int> & stateListPosVec, boost::shared_array<const int8_t> stateCodesShPtr, unsigned nRates, unsigned nStates, double * * * pMatTranspose, bool managePMatrices, CondLikelihoodStorage & cla_storage);
+        boost::shared_array<const int8_t>   getTipStatesArray() {return state_codes;}
 #else
 											TipData(const std::vector<unsigned int> & stateListPosVec, boost::shared_array<const int8_t> stateCodesShPtr, unsigned nRates, unsigned nStates, double * * * pMatTranspose, bool managePMatrices, CondLikelihoodStorage & cla_storage);
 #endif

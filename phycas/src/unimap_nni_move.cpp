@@ -218,8 +218,130 @@ double UnimapNNIMove::FourTaxonLnL(TreeNode * nd)
 	zTipData = allocTipDataFromUnivents(lower, true);
 	wTipData = allocTipDataFromUnivents(parent, false);
 
-	return FourTaxonLnLFromCorrectTipDataMembers(nd);
+	double lnlike = FourTaxonLnLFromCorrectTipDataMembers(nd);
+
+    //DebugSaveNexusFile(xTipData, yTipData, zTipData, wTipData, lnlike);
+
+    return lnlike;
 	}
+
+void UnimapNNIMove::DebugSaveNexusFile(TipData * xtd, TipData * ytd, TipData * ztd, TipData * wtd, double lnlike)
+    {
+    typedef boost::shared_array<const int8_t> StateArr;
+    StateArr xdata = xtd->getTipStatesArray();
+    StateArr ydata = ytd->getTipStatesArray();
+    StateArr zdata = ztd->getTipStatesArray();
+    StateArr wdata = wtd->getTipStatesArray();
+    unsigned nchar = likelihood->getNPatterns();
+    unsigned i;
+
+    std::ofstream nxsf("tmp.nex");
+    nxsf << "#nexus\n" << std::endl;
+    nxsf << "begin data;" << std::endl;
+    nxsf << "  dimensions ntax=4 nchar=" << nchar << ";" << std::endl;
+    nxsf << "  format datatype=dna gap=- missing=?;" << std::endl;
+    nxsf << "  matrix" << std::endl;
+    nxsf << "    x ";
+    for (i = 0; i < nchar; ++i)
+        {
+        if (xdata[i] == 0)
+            nxsf << "a";
+        else if (xdata[i] == 1)
+            nxsf << "c";
+        else if (xdata[i] == 2)
+            nxsf << "g";
+        else
+            nxsf << "t";
+        }
+    nxsf << std::endl;
+    nxsf << "    y ";
+    for (i = 0; i < nchar; ++i)
+        {
+        if (ydata[i] == 0)
+            nxsf << "a";
+        else if (ydata[i] == 1)
+            nxsf << "c";
+        else if (ydata[i] == 2)
+            nxsf << "g";
+        else
+            nxsf << "t";
+        }
+    nxsf << std::endl;
+    nxsf << "    z ";
+    for (i = 0; i < nchar; ++i)
+        {
+        if (zdata[i] == 0)
+            nxsf << "a";
+        else if (zdata[i] == 1)
+            nxsf << "c";
+        else if (zdata[i] == 2)
+            nxsf << "g";
+        else
+            nxsf << "t";
+        }
+    nxsf << std::endl;
+    nxsf << "    w ";
+    for (i = 0; i < nchar; ++i)
+        {
+        if (wdata[i] == 0)
+            nxsf << "a";
+        else if (wdata[i] == 1)
+            nxsf << "c";
+        else if (wdata[i] == 2)
+            nxsf << "g";
+        else
+            nxsf << "t";
+        }
+    nxsf << std::endl;
+    nxsf << "  ;\nend;" << std::endl;
+
+    nxsf << "\nbegin paup;" << std::endl;
+    nxsf << "  log file=tmp.log start replace;" << std::endl;
+    nxsf << "  set criterion=likelihood storebrlens;" << std::endl;
+    nxsf << "end;" << std::endl;
+
+    nxsf << "\nbegin trees;" << std::endl;
+    nxsf << "  translate" << std::endl;
+    nxsf << "    1 x," << std::endl;
+    nxsf << "    2 y," << std::endl;
+    nxsf << "    3 z," << std::endl;
+    nxsf << "    4 w" << std::endl;
+    nxsf << "    ;" << std::endl;
+    TreeNode * xpar = x->GetParent();
+    TreeNode * zpar = z->GetParent();
+    if (xpar->GetParent() == zpar)
+        nxsf << boost::str(boost::format("  utree curr = (x:%.8f, y:%.8f, (z:%.8f, w:%.8f):%.8f);") % x->GetEdgeLen() % y->GetEdgeLen() % z->GetEdgeLen() % zpar->GetEdgeLen() % xpar->GetEdgeLen()) << std::endl;
+    else
+        nxsf << boost::str(boost::format("  utree curr = (z:%.8f, y:%.8f, (x:%.8f, w:%.8f):%.8f);") % z->GetEdgeLen() % y->GetEdgeLen() % x->GetEdgeLen() % xpar->GetEdgeLen() % zpar->GetEdgeLen()) << std::endl;
+    nxsf << "end;" << std::endl;
+
+    nxsf << "\nbegin paup;" << std::endl;
+    nxsf << boost::str(boost::format("  [!***** phycas lnL = %.8f *****]") % lnlike) << std::endl;
+    if (model->getModelName().compare("JC69") == 0)
+        {
+        JC * p = dynamic_cast<JC *>(model.get());
+        nxsf << "  lset nst=1 basefreq=equal;" << std::endl;
+        }
+    else if (model->getModelName().compare("HKY85") == 0)
+        {
+        HKY * p = dynamic_cast<HKY *>(model.get());
+		const std::vector<double> freq = model->getStateFreqs();
+        nxsf << boost::str(boost::format("  lset nst=2 variant=hky basefreq=(%.8f %.8f %.8f) tratio=%.8f;") % freq[0] % freq[1] % freq[2] % p->calcTRatio()) << std::endl;
+        }
+    else if (model->getModelName().compare("GTR") == 0)
+        {
+        GTR * p = dynamic_cast<GTR *>(model.get());
+		const std::vector<double> freq = model->getStateFreqs();
+        std::vector<double> rmat = p->getRelRates();
+        nxsf << boost::str(boost::format("  lset nst=6 basefreq=(%.8f %.8f %.8f) rmatrix=(%.8f %.8f %.8f %.8f %.8f);") % freq[0] % freq[1] % freq[2] % rmat[0] % rmat[1] % rmat[2] % rmat[3] % rmat[4]) << std::endl;
+        }
+    nxsf << "  lscores 1 / userbrlens;" << std::endl;
+    nxsf << "  log stop;" << std::endl;
+    nxsf << "end;" << std::endl;
+
+    nxsf.close();
+    std::exit(0);
+    }
 	
 double UnimapNNIMove::FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nd)
 	{

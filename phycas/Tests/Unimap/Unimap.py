@@ -14,7 +14,7 @@ phycas.ls_move_weight        = 10
 phycas.tree_scaler_weight    = 0
 phycas.nielsen_move_weight   = 1
 phycas.slice_weight          = 1
-phycas.debugging             = True
+phycas.debugging             = False
 phycas.use_unimap            = True
 
 import sys,os
