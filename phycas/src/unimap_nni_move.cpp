@@ -516,7 +516,11 @@ void UnimapNNIMove::storePMatTransposed(double **& cached, const double *** p_ma
 	const unsigned nStates = likelihood->getNStates();
 	if (!cached)
 		cached = NewTwoDArray<double>(nStates, nStates);
-	std::copy(p_mat_array[0][0], p_mat_array[0][0] + nStates*nStates, cached[0]);
+	for (unsigned i = 0; i < nStates; ++i)
+		{
+		for (unsigned j = 0; j < nStates; ++j)
+			cached[j][i] = p_mat_array[0][i][j];
+		}
 	}
 	
 double UnimapNNIMove::FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nd)
