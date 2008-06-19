@@ -60,6 +60,11 @@ class UnimapNNIMove : public MCMCUpdater
 		TipData * yTipData;
 		TipData * wSisTipData;
 		TipData * wTipData;
+		
+		double  * * pre_x_pmat_transposed;
+		double  * * pre_y_pmat_transposed;
+		double  * * pre_w_pmat_transposed;
+		double  * * pre_z_pmat_transposed;
 
 		GammaDistribution gammaDist; 
 		double min_edge_len_mean, edge_len_prop_cv;
@@ -70,10 +75,12 @@ class UnimapNNIMove : public MCMCUpdater
 		double propMeanX, propMeanY, propMeanZ, propMeanW, propMeanInternal; 
 		double prev_ln_prior;	/**< The log prior of the starting state */
 		double prev_ln_like;	/**< The log likelihood of the starting state */
-		CondLikelihoodShPtr pre_child_cla;
-		CondLikelihoodShPtr pre_parent_cla;
-		CondLikelihoodShPtr post_child_cla;
-		CondLikelihoodShPtr post_parent_cla;
+		CondLikelihoodShPtr pre_root_posterior;
+		CondLikelihoodShPtr pre_cla;
+		double * * * pre_p_mat;
+		CondLikelihoodShPtr post_root_posterior;
+		CondLikelihoodShPtr post_cla;
+		double * * * post_p_mat;
 		bool scoringBeforeMove;
 		void calculatePairwiseDistances();
 		void calculateProposalDist(bool);
@@ -83,11 +90,17 @@ class UnimapNNIMove : public MCMCUpdater
 
 		void FillStateCodeArray(const StateTimeListVect * um, int8_t * tipSpecificStateCode, bool);
 		TipData * createTipDataFromUnivents(TreeNode * nd , bool use_last, TipData *);
-		double FourTaxonLnL(TreeNode * nd);
+		double FourTaxonLnLBeforeMove(TreeNode * nd);
 		double FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nd);
 		double HarvestLnLikeFromCondLikePar(CondLikelihoodShPtr focalCondLike, ConstCondLikelihoodShPtr neighborCondLike, const double * const * childPMatrix);
-
+		void storePMatTransposed(double **& cached, const double *** p_mat_array);
         void DebugSaveNexusFile(TipData * xtd, TipData * ytd, TipData * ztd, TipData * wtd, double lnlike);
+
+		void sampleDescendantStates(const unsigned num_patterns, int8_t * nd_states, const double ** p_mat, const LikeFltType * des_cla, const int8_t * parent_states);
+		void sampleRootStates(const unsigned num_patterns, int8_t * nd_states, LikeFltType * rootStatePosterior);
+		void sampleUniventsKeepEndStates(TreeNode * nd, const int8_t * par_states, const double * * p_mat_transposed);
+		void sampleUnivents(TreeNode * nd, const int8_t * par_states, const int8_t * des_states, const double * * p_mat);
+		void sampleUniventsKeepBegStates(TreeNode * nd, const int8_t * des_states, const double * * p_mat_transposed);
 	};
 
 } // namespace phycas
