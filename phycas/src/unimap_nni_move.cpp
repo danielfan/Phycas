@@ -281,18 +281,16 @@ void UnimapNNIMove::proposeNewState()
 	ln_density_forward_move += calcProposalLnDensity(propMeanW, ndPLen);
 	ln_density_forward_move += calcProposalLnDensity(propMeanZ, zLen);
 	ln_density_forward_move += calcProposalLnDensity(propMeanInternal, ndLen);
-	
 
     curr_ln_like = FourTaxonLnLFromCorrectTipDataMembers(nd);
     
-    DebugSaveNexusFile(ySisTipData, yTipData, wSisTipData, wTipData, curr_ln_like);
+    //DebugSaveNexusFile(ySisTipData, yTipData, wSisTipData, wTipData, curr_ln_like);
     
 	curr_ln_prior = (x->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(xLen) : p->calcExternalEdgeLenPriorUnnorm(xLen));
 	curr_ln_prior += (y->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(yLen) : p->calcExternalEdgeLenPriorUnnorm(yLen));
 	curr_ln_prior += (z->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(zLen) : p->calcExternalEdgeLenPriorUnnorm(zLen));
 	curr_ln_prior += p->calcInternalEdgeLenPriorUnnorm(ndLen);
 	curr_ln_prior += p->calcInternalEdgeLenPriorUnnorm(ndPLen);
-	
 	}
 
 UnimapNNIMove::~UnimapNNIMove()
@@ -308,8 +306,6 @@ double UnimapNNIMove::FourTaxonLnL(TreeNode * nd)
 	PHYCAS_ASSERT(nd);
 	TreeNode * ndP = nd->GetParent();
 	PHYCAS_ASSERT(ndP);
-	TreeNode * parent = ndP->GetParent();
-	PHYCAS_ASSERT(parent);
 	TreeNode * lower = nd->FindNextSib();
 	PHYCAS_ASSERT(lower);
 	PHYCAS_ASSERT(nd->CountChildren() == 2); // we haven't figured this out for polytomies
@@ -324,7 +320,7 @@ double UnimapNNIMove::FourTaxonLnL(TreeNode * nd)
 	if (!x_is_left)
 		std::swap(ySisTipData, yTipData);
 	wSisTipData = createTipDataFromUnivents(lower, true, wSisTipData);
-	wTipData = createTipDataFromUnivents(parent, false, wTipData);
+	wTipData = createTipDataFromUnivents(ndP, false, wTipData);
 
 	double lnlike = FourTaxonLnLFromCorrectTipDataMembers(nd);
 
@@ -519,6 +515,10 @@ void UnimapNNIMove::FillStateCodeArray(const UniventManager * um, int8_t * tipSp
 	for (unsigned site = 0; site < num_patterns; ++site)
 		{
 		const StateTimeList & state_time_pair_vec =  (*um)[site];
+        if (state_time_pair_vec.empty())
+            {
+            std::cerr << "hola" << std::endl;
+            }
 		PHYCAS_ASSERT(!state_time_pair_vec.empty());
 		const StateTimePair & state_time_pair  = (use_last ? *state_time_pair_vec.rbegin() : *state_time_pair_vec.begin());
 		int8_t globalStateCode = state_time_pair.first;
