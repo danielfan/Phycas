@@ -24,7 +24,6 @@
 #include <boost/function.hpp>
 #include "phycas/src/split.hpp"
 
-#include "phycas/src/univent_manager.hpp"
 namespace phycas
 {
 

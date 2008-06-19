@@ -50,7 +50,7 @@ TipData::TipData(
 	}
 
 #if POLPY_NEWWAY
-UniventManager * TipData::getUniventManager()
+StateTimeListVect * TipData::getStateTimeListVect()
 	{
 	return &state_time;
 	}

@@ -42,17 +42,17 @@ void UnimapNNIMove::setLot(LotShPtr p)
 	gammaDist.SetLot(rng.get());
 	}
 
-UniventManager * GetUniventManager(TreeNode * nd)
+StateTimeListVect * GetStateTimeListVect(TreeNode * nd)
 	{
 	if (nd->IsTip())
 		{
 		TipData * td = nd->GetTipData();
-		return (td ? td->getUniventManager() : NULL);
+		return (td ? td->getStateTimeListVect() : NULL);
 		}
 	else
 		{
 		InternalData * id = nd->GetInternalData();
-		return (id ? id->getUniventManager() : NULL);
+		return (id ? id->getStateTimeListVect() : NULL);
 		}
 	}
 
@@ -526,7 +526,7 @@ double UnimapNNIMove::HarvestLnLikeFromCondLikePar(
 	return lnLikelihood;
 	}
 
-void UnimapNNIMove::FillStateCodeArray(const UniventManager * um, int8_t * tipSpecificStateCode, bool use_last)
+void UnimapNNIMove::FillStateCodeArray(const StateTimeListVect * um, int8_t * tipSpecificStateCode, bool use_last)
 	{
 	const int8_t num_states = (int8_t) likelihood->getNStates();
 	const unsigned num_patterns = likelihood->getNPatterns();
@@ -551,7 +551,7 @@ void UnimapNNIMove::FillStateCodeArray(const UniventManager * um, int8_t * tipSp
 TipData * UnimapNNIMove::createTipDataFromUnivents(TreeNode * nd , bool use_last, TipData *td)
 	{
 	PHYCAS_ASSERT(nd);
-	const UniventManager * um = GetUniventManager(nd);
+	const StateTimeListVect * um = GetStateTimeListVect(nd);
 	if (td)
 		{
 		/* this is the one place in which we overwrite the state codes */
@@ -588,7 +588,10 @@ void UnimapNNIMove::revert()
 	assert(nd);
 	assert(nd->GetParent());
 	nd->SetEdgeLen(prev_nd_len);
-	nd->GetParent()->SetEdgeLen(prev_ndP_len);	
+	nd->GetParent()->SetEdgeLen(prev_ndP_len);
+	
+//	pre_child_cla	pre_parent_cla
+	
 	}
 
 /*--------------------------------------------------------------------------------------------------------------------------
@@ -612,6 +615,9 @@ void UnimapNNIMove::accept()
     z->UnselectNode();
     nd->UnselectNode();
     */
+    
+   // post_child_cla post_parent_cla
+
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

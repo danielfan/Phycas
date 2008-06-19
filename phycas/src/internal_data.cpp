@@ -27,7 +27,7 @@ namespace phycas
 {
 
 #if POLPY_NEWWAY
-UniventManager * InternalData::getUniventManager()
+StateTimeListVect * InternalData::getStateTimeListVect()
 	{
 	return &state_time;
 	}

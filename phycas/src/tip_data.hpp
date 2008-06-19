@@ -28,7 +28,6 @@
 #include "phycas/src/cipres/ConfigDependentHeaders.h"
 #if POLPY_NEWWAY
 #include "phycas/src/states_patterns.hpp"
-#include "phycas/src/univent_manager.hpp"
 #endif
 
 struct CIPRES_Matrix;
@@ -180,7 +179,7 @@ class TipData
 		unsigned							getNumUnivents(unsigned site) const;
 		std::vector<unsigned>				getUniventStates(unsigned site) const;
 		std::vector<double>					getUniventTimes(unsigned site) const;
-		UniventManager *					getUniventManager();
+		StateTimeListVect *					getStateTimeListVect();
 #endif
 
 
@@ -199,7 +198,7 @@ class TipData
 
 #if POLPY_NEWWAY
 		bool								unimap;				/**< true if tips are to be prepared for uniformized mapping likelihood; false if tips are to be prepared for Felsenstein-style integrated likelihoods */
-		UniventManager						state_time;			/**< state_time[i][j].first holds the state for univent j at site i, whereas state_time[i][j].second holds the fraction of the edgelen representing the time at which the univent occurred */
+		StateTimeListVect					state_time;			/**< state_time[i][j].first holds the state for univent j at site i, whereas state_time[i][j].second holds the fraction of the edgelen representing the time at which the univent occurred */
 		unsigned							mdot;				/**< the total number of univents over all sites on the edge owned by this node */
 #endif
 											// conditional likelihood of the rest of the tree

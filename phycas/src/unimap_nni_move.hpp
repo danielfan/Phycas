@@ -30,7 +30,7 @@ namespace phycas
 
 class MCMCChainManager;
 typedef boost::weak_ptr<MCMCChainManager> ChainManagerWkPtr;
-UniventManager * GetUniventManager(TreeNode * nd);
+StateTimeListVect * GetStateTimeListVect(TreeNode * nd);
 
 /*----------------------------------------------------------------------------------------------------------------------
 |   
@@ -81,7 +81,7 @@ class UnimapNNIMove : public MCMCUpdater
 		double calcProposalLnDensity(double mean, double x);
 		double UnimapNNIMove::proposeEdgeLen(double mean);
 
-		void FillStateCodeArray(const UniventManager * um, int8_t * tipSpecificStateCode, bool);
+		void FillStateCodeArray(const StateTimeListVect * um, int8_t * tipSpecificStateCode, bool);
 		TipData * createTipDataFromUnivents(TreeNode * nd , bool use_last, TipData *);
 		double FourTaxonLnL(TreeNode * nd);
 		double FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nd);
