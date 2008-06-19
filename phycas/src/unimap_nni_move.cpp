@@ -217,6 +217,7 @@ double UnimapNNIMove::proposeEdgeLen(double mean)
 */
 void UnimapNNIMove::proposeNewState()
 	{
+	scoringBeforeMove = true;
 	TreeNode * nd  = randomInternalAboveSubroot();
 	PHYCAS_ASSERT(nd);
 	TreeNode * ndP = nd->GetParent();
@@ -232,7 +233,17 @@ void UnimapNNIMove::proposeNewState()
 	x_is_left = rng->Boolean();
 	if (!x_is_left)
 		std::swap(x,y);
-	
+
+	InternalData * nd_internal_data = nd->GetInternalData();
+	PHYCAS_ASSERT(nd_internal_data);
+	InternalData * ndp_internal_data = ndP->GetInternalData();
+	PHYCAS_ASSERT(ndp_internal_data);
+	pre_child_cla = nd_internal_data->getChildCondLikePtr();
+	pre_parent_cla = nd_internal_data->getChildCondLikePtr();
+	post_child_cla = ndp_internal_data->getChildCondLikePtr();
+	post_parent_cla = ndp_internal_data->getChildCondLikePtr();
+
+
 	ChainManagerShPtr p = chain_mgr.lock();
 	PHYCAS_ASSERT(p);
 
@@ -261,6 +272,7 @@ void UnimapNNIMove::proposeNewState()
 	ln_density_reverse_move += calcProposalLnDensity(propMeanInternal, prev_nd_len);
 	
 	/* This swap is the equivalent of an NNI swap of the the nodes that are closest to y and w */
+	scoringBeforeMove = false;
 	std::swap(ySisTipData, wSisTipData);
 	
 	calculateProposalDist(false);
@@ -447,9 +459,17 @@ double UnimapNNIMove::FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nd)
 	{
 	InternalData * nd_internal_data = nd->GetInternalData();
 	PHYCAS_ASSERT(nd_internal_data);
-	CondLikelihoodShPtr nd_childCLPtr =  nd_internal_data->getChildCondLikePtr();
-	CondLikelihoodShPtr nd_parentCLPtr =  nd_internal_data->getParentalCondLikePtr();
-
+	CondLikelihoodShPtr nd_childCLPtr, nd_parentCLPtr;
+	if (scoringBeforeMove)
+		{
+		nd_childCLPtr = pre_child_cla;
+		nd_parentCLPtr = pre_parent_cla;
+		}
+	else
+		{
+		nd_childCLPtr = post_child_cla;
+		nd_parentCLPtr = post_parent_cla;
+		}
     likelihood->calcPMatTranspose(ySisTipData->getTransposedPMatrices(), ySisTipData->getConstStateListPos(), x->GetEdgeLen());
     likelihood->calcPMatTranspose(yTipData->getTransposedPMatrices(), yTipData->getConstStateListPos(), y->GetEdgeLen());
     likelihood->calcPMatTranspose(wSisTipData->getTransposedPMatrices(), wSisTipData->getConstStateListPos(), z->GetEdgeLen());
@@ -463,11 +483,11 @@ double UnimapNNIMove::FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nd)
 	}
 	
 double UnimapNNIMove::HarvestLnLikeFromCondLikePar(
-  ConstCondLikelihoodShPtr focalCondLike, 
+  CondLikelihoodShPtr focalCondLike, 
   ConstCondLikelihoodShPtr neighborCondLike, 
   const double * const * childPMatrix)
 	{
-	const LikeFltType * focalNdCLAPtr = focalCondLike->getCLA(); //PELIGROSO
+	LikeFltType * focalNdCLAPtr = focalCondLike->getCLA(); //PELIGROSO
 	PHYCAS_ASSERT(focalNdCLAPtr);
 	const unsigned num_patterns = likelihood->getNPatterns();
 	const unsigned num_states = likelihood->getNStates();
@@ -485,7 +505,8 @@ double UnimapNNIMove::HarvestLnLikeFromCondLikePar(
 			const double * childP_i = childPMatrix[i];
 			for (unsigned j = 0; j < num_states; ++j)
 				neigborLike += childP_i[j]*focalNeighborCLAPtr[j];
-			siteLike += stateFreq[i]*focalNdCLAPtr[i]*neigborLike;
+			focalNdCLAPtr[i] *= stateFreq[i]*neigborLike;
+			siteLike += focalNdCLAPtr[i];
 			}
 		focalNdCLAPtr += num_states;
 		focalNeighborCLAPtr += num_states;

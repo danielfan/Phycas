@@ -70,7 +70,11 @@ class UnimapNNIMove : public MCMCUpdater
 		double propMeanX, propMeanY, propMeanZ, propMeanW, propMeanInternal; 
 		double prev_ln_prior;	/**< The log prior of the starting state */
 		double prev_ln_like;	/**< The log likelihood of the starting state */
-
+		CondLikelihoodShPtr pre_child_cla;
+		CondLikelihoodShPtr pre_parent_cla;
+		CondLikelihoodShPtr post_child_cla;
+		CondLikelihoodShPtr post_parent_cla;
+		bool scoringBeforeMove;
 		void calculatePairwiseDistances();
 		void calculateProposalDist(bool);
 
@@ -81,7 +85,7 @@ class UnimapNNIMove : public MCMCUpdater
 		TipData * createTipDataFromUnivents(TreeNode * nd , bool use_last, TipData *);
 		double FourTaxonLnL(TreeNode * nd);
 		double FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nd);
-		double HarvestLnLikeFromCondLikePar(ConstCondLikelihoodShPtr focalCondLike, ConstCondLikelihoodShPtr neighborCondLike, const double * const * childPMatrix);
+		double HarvestLnLikeFromCondLikePar(CondLikelihoodShPtr focalCondLike, ConstCondLikelihoodShPtr neighborCondLike, const double * const * childPMatrix);
 
         void DebugSaveNexusFile(TipData * xtd, TipData * ytd, TipData * ztd, TipData * wtd, double lnlike);
 	};

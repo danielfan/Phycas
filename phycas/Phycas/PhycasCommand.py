@@ -84,9 +84,9 @@ class IntArgValidate(object):
     def __call__(self, opts, v):
         iv = int(v)
         if (self.min is not None) and (self.min > iv):
-            raise ValueError("Value must be >= %d" % str(self.min))
+            raise ValueError("Value must be >= %s" % str(self.min))
         if (self.max is not None) and (self.max < iv):
-            raise ValueError("Value must be <= %d" % str(self.min))
+            raise ValueError("Value must be <= %s" % str(self.min))
         return iv
 
 class PhycasCommand():
