@@ -39,10 +39,7 @@ class UnimapNNIMove : public MCMCUpdater
 	{
 	public:
 						UnimapNNIMove();
-						virtual ~UnimapNNIMove() 
-							{
-							//std::cerr << "UnimapNNIMove dying..." << std::endl;
-							}
+						virtual ~UnimapNNIMove();
 
 		// These are virtual functions in the MCMCUpdater base class
 		//
@@ -58,9 +55,9 @@ class UnimapNNIMove : public MCMCUpdater
 		TreeNode * y;
 		TreeNode * z;
 
-		TipData * xTipData;
+		TipData * ySisTipData;
 		TipData * yTipData;
-		TipData * zTipData;
+		TipData * wSisTipData;
 		TipData * wTipData;
 
 		bool x_is_left;
@@ -68,7 +65,8 @@ class UnimapNNIMove : public MCMCUpdater
 		double prev_ln_prior;	/**< The log prior of the starting state */
 		double prev_ln_like;	/**< The log likelihood of the starting state */
 
-		TipData * allocTipDataFromUnivents(TreeNode * nd , bool use_last);
+		void FillStateCodeArray(const UniventManager * um, int8_t * tipSpecificStateCode, bool);
+		TipData * createTipDataFromUnivents(TreeNode * nd , bool use_last, TipData *);
 		double FourTaxonLnL(TreeNode * nd);
 		double FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nd);
 		double HarvestLnLikeFromCondLikePar(ConstCondLikelihoodShPtr focalCondLike, ConstCondLikelihoodShPtr neighborCondLike, const double * const * childPMatrix);

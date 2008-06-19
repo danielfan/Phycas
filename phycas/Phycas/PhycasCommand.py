@@ -77,8 +77,17 @@ PhycasCmdOpts._set_terminal_width(80)
 
 def BoolArgValidate(opts, v):
     return bool(v)
-def IntArgValidate(opts, v):
-    return int(v)
+class IntArgValidate(object):
+    def __init__(self, min=None, max=None):
+        self.min = min
+        self.max = max
+    def __call__(self, opts, v):
+        iv = int(v)
+        if (self.min is not None) and (self.min > iv):
+            raise ValueError("Value must be >= %d" % str(self.min))
+        if (self.max is not None) and (self.max < iv):
+            raise ValueError("Value must be <= %d" % str(self.min))
+        return iv
 
 class PhycasCommand():
     def __init__(self, phycas, option_defs):

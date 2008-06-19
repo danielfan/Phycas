@@ -170,29 +170,28 @@ void UnimapNNIMove::proposeNewState()
 	prev_ln_prior += p->calcInternalEdgeLenPriorUnnorm(nd->GetEdgeLen());
 	prev_ln_prior += p->calcInternalEdgeLenPriorUnnorm(ndP->GetEdgeLen());
 
-    x->SelectNode();
-    y->SelectNode();
-    z->SelectNode();
-    nd->SelectNode();
+	
+	
+	std::swap(ySisTipData, wSisTipData);
 
-    //likelihood->startTreeViewer(tree, "before");
-	
-	tree_manipulator.NNISwap(z, x);
-	
-    //likelihood->startTreeViewer(tree, "after");
-	
-    x->UnselectNode();
-    y->UnselectNode();
-    z->UnselectNode();
-    nd->UnselectNode();
-
-    curr_ln_like = FourTaxonLnL(nd);
+    curr_ln_like = FourTaxonLnLFromCorrectTipDataMembers(nd);
+    
+    DebugSaveNexusFile(ySisTipData, yTipData, wSisTipData, wTipData, curr_ln_like);
+    
 	curr_ln_prior = (x->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(x->GetEdgeLen()) : p->calcExternalEdgeLenPriorUnnorm(x->GetEdgeLen()));
 	curr_ln_prior += (y->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(y->GetEdgeLen()) : p->calcExternalEdgeLenPriorUnnorm(y->GetEdgeLen()));
 	curr_ln_prior += (z->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(z->GetEdgeLen()) : p->calcExternalEdgeLenPriorUnnorm(z->GetEdgeLen()));
 	curr_ln_prior += p->calcInternalEdgeLenPriorUnnorm(nd->GetEdgeLen());
 	curr_ln_prior += p->calcInternalEdgeLenPriorUnnorm(ndP->GetEdgeLen());
 	
+	}
+
+UnimapNNIMove::~UnimapNNIMove()
+	{
+	delete ySisTipData;
+	delete yTipData;
+	delete wSisTipData;
+	delete wTipData;
 	}
 
 double UnimapNNIMove::FourTaxonLnL(TreeNode * nd)
@@ -211,16 +210,16 @@ double UnimapNNIMove::FourTaxonLnL(TreeNode * nd)
 	TreeNode * upRightNd = upLeftNd->GetRightSib();
 	PHYCAS_ASSERT(upRightNd);
 
-	xTipData = allocTipDataFromUnivents(upLeftNd, true);  /* LEAK !!!!*/
-	yTipData = allocTipDataFromUnivents(upRightNd, true);
+	ySisTipData = createTipDataFromUnivents(upLeftNd, true, ySisTipData);
+	yTipData = createTipDataFromUnivents(upRightNd, true, yTipData);
 	if (!x_is_left)
-		std::swap(xTipData, yTipData);
-	zTipData = allocTipDataFromUnivents(lower, true);
-	wTipData = allocTipDataFromUnivents(parent, false);
+		std::swap(ySisTipData, yTipData);
+	wSisTipData = createTipDataFromUnivents(lower, true, wSisTipData);
+	wTipData = createTipDataFromUnivents(parent, false, wTipData);
 
 	double lnlike = FourTaxonLnLFromCorrectTipDataMembers(nd);
 
-    //DebugSaveNexusFile(xTipData, yTipData, zTipData, wTipData, lnlike);
+    DebugSaveNexusFile(ySisTipData, yTipData, wSisTipData, wTipData, lnlike);
 
     return lnlike;
 	}
@@ -235,8 +234,8 @@ void UnimapNNIMove::DebugSaveNexusFile(TipData * xtd, TipData * ytd, TipData * z
     unsigned nchar = likelihood->getNPatterns();
     unsigned i;
 
-    std::ofstream nxsf("tmp.nex");
-    nxsf << "#nexus\n" << std::endl;
+    std::ofstream nxsf("tmp.nex", std::ios::app);
+    //nxsf << "#nexus\n" << std::endl;
     nxsf << "begin data;" << std::endl;
     nxsf << "  dimensions ntax=4 nchar=" << nchar << ";" << std::endl;
     nxsf << "  format datatype=dna gap=- missing=?;" << std::endl;
@@ -318,10 +317,7 @@ void UnimapNNIMove::DebugSaveNexusFile(TipData * xtd, TipData * ytd, TipData * z
     nxsf << "\nbegin paup;" << std::endl;
     nxsf << boost::str(boost::format("  [!***** phycas lnL = %.8f *****]") % lnlike) << std::endl;
     if (model->getModelName().compare("JC69") == 0)
-        {
-        JC * p = dynamic_cast<JC *>(model.get());
         nxsf << "  lset nst=1 basefreq=equal;" << std::endl;
-        }
     else if (model->getModelName().compare("HKY85") == 0)
         {
         HKY * p = dynamic_cast<HKY *>(model.get());
@@ -340,7 +336,6 @@ void UnimapNNIMove::DebugSaveNexusFile(TipData * xtd, TipData * ytd, TipData * z
     nxsf << "end;" << std::endl;
 
     nxsf.close();
-    std::exit(0);
     }
 	
 double UnimapNNIMove::FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nd)
@@ -350,12 +345,12 @@ double UnimapNNIMove::FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nd)
 	CondLikelihoodShPtr nd_childCLPtr =  nd_internal_data->getChildCondLikePtr();
 	CondLikelihoodShPtr nd_parentCLPtr =  nd_internal_data->getParentalCondLikePtr();
 
-    likelihood->calcPMatTranspose(xTipData->getTransposedPMatrices(), xTipData->getConstStateListPos(), x->GetEdgeLen());
+    likelihood->calcPMatTranspose(ySisTipData->getTransposedPMatrices(), ySisTipData->getConstStateListPos(), x->GetEdgeLen());
     likelihood->calcPMatTranspose(yTipData->getTransposedPMatrices(), yTipData->getConstStateListPos(), y->GetEdgeLen());
-    likelihood->calcPMatTranspose(zTipData->getTransposedPMatrices(), zTipData->getConstStateListPos(), z->GetEdgeLen());
+    likelihood->calcPMatTranspose(wSisTipData->getTransposedPMatrices(), wSisTipData->getConstStateListPos(), z->GetEdgeLen());
     likelihood->calcPMatTranspose(wTipData->getTransposedPMatrices(), wTipData->getConstStateListPos(), nd->GetParent()->GetEdgeLen());
-	likelihood->calcCLATwoTips(*nd_childCLPtr, *xTipData, *yTipData);
-	likelihood->calcCLATwoTips(*nd_parentCLPtr, *zTipData, *wTipData);
+	likelihood->calcCLATwoTips(*nd_childCLPtr, *ySisTipData, *yTipData);
+	likelihood->calcCLATwoTips(*nd_parentCLPtr, *wSisTipData, *wTipData);
 
 	likelihood->calcPMat(nd_internal_data->getMutablePMatrices(), nd->GetEdgeLen());
 	const double * const *  childPMatrix = nd_internal_data->getConstPMatrices()[0];
@@ -405,37 +400,51 @@ double UnimapNNIMove::HarvestLnLikeFromCondLikePar(
 	return lnLikelihood;
 	}
 
-TipData * UnimapNNIMove::allocTipDataFromUnivents(TreeNode * nd , bool use_last)
+void UnimapNNIMove::FillStateCodeArray(const UniventManager * um, int8_t * tipSpecificStateCode, bool use_last)
 	{
-	PHYCAS_ASSERT(nd);
+	const int8_t num_states = (int8_t) likelihood->getNStates();
 	const unsigned num_patterns = likelihood->getNPatterns();
-	const UniventManager * um = GetUniventManager(nd);
 	PHYCAS_ASSERT(um);
 	PHYCAS_ASSERT(num_patterns == um->size());
-	int8_t * tipSpecificStateCode = new int8_t[num_patterns];
-	const int8_t num_states = (int8_t) likelihood->getNStates();
 
 	for (unsigned site = 0; site < num_patterns; ++site)
 		{
 		const StateTimeList & state_time_pair_vec =  (*um)[site];
-        PHYCAS_ASSERT(!state_time_pair_vec.empty());
+		PHYCAS_ASSERT(!state_time_pair_vec.empty());
 		const StateTimePair & state_time_pair  = (use_last ? *state_time_pair_vec.rbegin() : *state_time_pair_vec.begin());
 		int8_t globalStateCode = state_time_pair.first;
-		PHYCAS_ASSERT (globalStateCode >= 0 && globalStateCode < (int8_t)likelihood->getNStates());
+		PHYCAS_ASSERT (globalStateCode >= 0 && globalStateCode < num_states);
 		tipSpecificStateCode[site] = globalStateCode;
 		}
-
-	std::vector<unsigned int> emptyStateListVec;
-    TipData * retval = new TipData(	true,
-					num_patterns,
-					emptyStateListVec,												// stateListPosVec
-					boost::shared_array<const int8_t>(tipSpecificStateCode),	// stateCodesShPtr
-					1,													// number of relative rate categories
-					likelihood->getNStates(),													// number of states in the model
-					NULL,
-					true,														// managePMatrices
-					likelihood->getCondLikelihoodStorage());
-    return retval;
+	}
+	
+TipData * UnimapNNIMove::createTipDataFromUnivents(TreeNode * nd , bool use_last, TipData *td)
+	{
+	PHYCAS_ASSERT(nd);
+	const UniventManager * um = GetUniventManager(nd);
+	if (td)
+		{
+		/* this is the one place in which we overwrite the state codes */
+		int8_t * stateCodes = const_cast<int8_t *>(td->getTipStatesArray().get());
+		FillStateCodeArray(um, stateCodes, use_last);
+		}
+	else
+		{
+		const unsigned num_patterns = likelihood->getNPatterns();
+		int8_t * tipSpecificStateCode = new int8_t[num_patterns];
+		FillStateCodeArray(um, tipSpecificStateCode, use_last);
+		std::vector<unsigned int> emptyStateListVec;
+		td = new TipData(	true,
+						num_patterns,
+						emptyStateListVec,												// stateListPosVec
+						boost::shared_array<const int8_t>(tipSpecificStateCode),	// stateCodesShPtr
+						1,													// number of relative rate categories
+						likelihood->getNStates(),													// number of states in the model
+						NULL,
+						true,														// managePMatrices
+						likelihood->getCondLikelihoodStorage());
+		}
+	return td;
 	}
 /*----------------------------------------------------------------------------------------------------------------------
 |	
@@ -449,6 +458,22 @@ void UnimapNNIMove::revert()
 */
 void UnimapNNIMove::accept()
 	{
+	/*x->SelectNode();
+    y->SelectNode();
+    z->SelectNode();
+    nd->SelectNode();
+
+	likelihood->startTreeViewer(tree, "before");
+	*/
+	tree_manipulator.NNISwap(z, x);
+    /*
+    likelihood->startTreeViewer(tree, "after");
+    
+    x->UnselectNode();
+    y->UnselectNode();
+    z->UnselectNode();
+    nd->UnselectNode();
+    */
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -460,9 +485,9 @@ UnimapNNIMove::UnimapNNIMove() : MCMCUpdater(),
   x(0),
   y(0),
   z(0),
-  xTipData(0),
+  ySisTipData(0),
   yTipData(0),
-  zTipData(0),
+  wSisTipData(0),
   wTipData(0)
 	{
 	}
