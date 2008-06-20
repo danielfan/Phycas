@@ -515,7 +515,7 @@ void UnimapNNIMove::storePMatTransposed(double **& cached, const double *** p_ma
 	{
 	const unsigned nStates = likelihood->getNStates();
 	if (!cached)
-		cached = NewTwoDArray<double>(nStates, nStates);
+		cached = NewTwoDArray<double>(nStates+1, nStates+1);
 	for (unsigned i = 0; i < nStates; ++i)
 		{
 		for (unsigned j = 0; j < nStates; ++j)
