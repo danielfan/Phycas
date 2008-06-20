@@ -27,7 +27,7 @@
 #include "phycas/src/cipres/AllocateMatrix.hpp"
 #include "phycas/src/cipres/ConfigDependentHeaders.h"
 #if POLPY_NEWWAY
-#include "phycas/src/states_patterns.hpp"
+#	include "phycas/src/states_patterns.hpp"
 #endif
 
 struct CIPRES_Matrix;

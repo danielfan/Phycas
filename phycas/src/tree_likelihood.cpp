@@ -535,54 +535,78 @@ void TreeLikelihood::unimapEdgeOneSite(
     else
         {
         // m is greater than 1
-
+		state_time_vect.reserve(m);
         // Start by drawing m times
         std::vector<float> times(m, 0.0);
         unsigned k;
         for (k = 0; k < m; ++k)
             times[k] = (float)rng->Uniform(FILE_AND_LINE);
         std::sort(times.begin(), times.end());
-
-        // Now draw m states until a sample is obtained in which the mth state equals end_state
-        double u;
-        std::vector<int8_t> states(m, (int8_t)0);
-        bool done = false;
-        unsigned ntries = 0;
-        while (!done)
-            {
-            ntries++;
-            int8_t prev_state = start_state;
-            for (k = 0; k < m; ++k)
-                {
-                const double * uMat_row = uMat[prev_state];
-                u = rng->Uniform(FILE_AND_LINE);
-                double cump = 0.0;
-                int8_t new_state;
-                bool found = false;
-                for (unsigned j = 0; j < num_states; ++j)
-                    {
-                    cump += exp(uMat_row[j])/lambda;
-                    if (u < cump)
-                        {
-                        new_state = j;
-                        found = true;
-                        break;
-                        }
-                    }
-                PHYCAS_ASSERT(found);
-                states[k] = new_state;
-                prev_state = new_state;
-                }
-            if (ntries > 1000 || states[m-1] == end_state)
-                done = true;
-            }
-        PHYCAS_ASSERT(ntries <= 1000);
-
-        // Now have both times and states, so add them to state_time_vect
-        state_time_vect.push_back(StateTimePair(start_state, 0.0));
-        for (k = 0; k < m; ++k)
-            state_time_vect.push_back(StateTimePair(states[k], times[k]));
-        }
+#		if defined(SIMULATE_MAPPINGS_GIVEN_M)
+			// Now draw m states until a sample is obtained in which the mth state equals end_state
+			double u;
+			std::vector<int8_t> states(m, (int8_t)0);
+			bool done = false;
+			unsigned ntries = 0;
+			while (!done)
+				{
+				ntries++;
+				int8_t prev_state = start_state;
+				for (k = 0; k < m; ++k)
+					{
+					const double * uMat_row = uMat[prev_state];
+					u = rng->Uniform(FILE_AND_LINE);
+					double cump = 0.0;
+					int8_t new_state;
+					bool found = false;
+					for (unsigned j = 0; j < num_states; ++j)
+						{
+						cump += exp(uMat_row[j])/lambda;
+						if (u < cump)
+							{
+							new_state = j;
+							found = true;
+							break;
+							}
+						}
+					PHYCAS_ASSERT(found);
+					states[k] = new_state;
+					prev_state = new_state;
+					}
+				if (ntries > 1000 || states[m-1] == end_state)
+					done = true;
+				}
+			PHYCAS_ASSERT(ntries <= 1000);
+	
+			// Now have both times and states, so add them to state_time_vect
+			state_time_vect.push_back(StateTimePair(start_state, 0.0));
+			for (k = 0; k < m; ++k)
+				state_time_vect.push_back(StateTimePair(states[k], times[k]));
+#		else //SIMULATE_MAPPINGS_GIVEN_M
+			const SquareMatrix & one_umat = getUMat(1);
+			const SquareMatrix * curr_umat = &getUMat(m);
+			const SquareMatrix * rest_umat = &getUMat(m - 1);
+			int8_t prev_state = start_state;
+			for (unsigned curr_m = 0; curr_m < m - 1; ++curr_m)
+				{
+				const double prob_all_mappings = (*curr_umat)[prev_state][end_state];
+				double u = rng->Uniform(FILE_AND_LINE)*prob_all_mappings;
+				unsigned s = 0;
+				/*TEMP should just loop over single-mutation neighbors */
+				for (; s < num_states; ++s)
+					{
+					u -= one_umat[prev_state][s]* (*rest_umat)[s][end_state];
+					if (u < 0.0)
+						break;
+					}
+				PHYCAS_ASSERT(s < num_states || u < 1.0e-7);
+				state_time_vect.push_back(StateTimePair(s, times[curr_m]));
+				curr_umat = rest_umat;
+				rest_umat = &getUMat(m - curr_m - 1);
+				}
+			state_time_vect.push_back(StateTimePair(end_state, times[m-1]));
+#		endif //SIMULATE_MAPPINGS_GIVEN_M
+	}
 
     // Now that we have a successful mapping, record the univents in sMat
     StateTimeList::const_iterator it = state_time_vect.begin();
