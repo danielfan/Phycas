@@ -61,7 +61,7 @@ if __name__ == '__main__':
     # Simulate data
     phycas.simulateDNA()
 
-    # Now compute the likelihood of the model tree
+    # Run a unimap mcmc analysis
     phycas.starting_tree_source    = 'random'
     phycas.data_source             = 'file'
     phycas.data_file_name          = 'simulated.nex'
@@ -75,6 +75,7 @@ if __name__ == '__main__':
     phycas.outfile_prefix          = 'doofus'
     phycas.mcmc()
     
+    # Summarize the tree file
     phycas.log_file_name           = 'logfile.txt'
     phycas.sumt_input_tree_file    = 'doofus.t'
     phycas.sumt_trees_prefix       = 'doofus_trees'
@@ -85,8 +86,7 @@ if __name__ == '__main__':
     phycas.sumt_tree_credible_prob = 1.0
     phycas.sumt()
 
-    
-    # Add a PAUP block to the simulated.nex file to make it easy to check the results
+    # Add a PAUP block to the simulated.nex file to make it easy to check the simulated data
     f = file('simulated.nex', 'a')
     f.write('\n')
     f.write('\nbegin paup;')

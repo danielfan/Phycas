@@ -651,7 +651,18 @@ TipData * UnimapNNIMove::createTipDataFromUnivents(TreeNode * nd , bool use_last
 
 void UnimapNNIMove::sampleUniventsKeepEndStates(TreeNode * nd, const int8_t * par_states, const double * * p_mat_transposed)
 	{
-	const double edgelen = nd->GetEdgeLen();
+    const double edgelen = nd->GetEdgeLen();
+
+    //temporary!
+	const unsigned nStates = likelihood->getNStates();
+	double * * * tmp = NewThreeDArray<double>(1, nStates + 1, nStates);
+    likelihood->calcPMatTranspose(tmp, ySisTipData->getConstStateListPos(), edgelen);
+    for (unsigned z = 0; z < nStates; ++z)
+        {
+        for (unsigned zz = 0; zz < nStates; ++zz)
+            PHYCAS_ASSERT(tmp[0][z][zz] == p_mat_transposed[z][zz]);
+        }
+    
 	StateTimeListVect *stlv = GetStateTimeListVect(nd);
 	PHYCAS_ASSERT(stlv);
 	StateTimeListVect::iterator state_time_it = stlv->begin();
