@@ -258,11 +258,18 @@ double UnimapNNIMove::proposeEdgeLen(double mean)
 */
 void UnimapNNIMove::proposeNewState()
 	{
-    // Choose random internal node nd: one of the two children of nd will be swapped with nd's sibling
-    // x = child that is swapped
-    // y = x's sibling
-    // z = nd's sibling
-    // w = nd's parent
+    // Choose random internal node nd and randomly choose one of nd's children to call x (the other is y)
+    // Here is the actual layout of the tree in memory
+    //
+    //      x  y        x = child that is swapped
+    //       \/         y = x's sibling
+    //   z   nd         z = nd's sibling
+    //    \ /           w = nd's parent
+    //    ndP
+    //    /
+    //   w
+    //
+    // Here is the layout that conforms to the terminology used
     //
     // x     z  <-- swapping x and z
     //  \___/ 
@@ -668,7 +675,7 @@ void UnimapNNIMove::sampleUniventsKeepEndStates(TreeNode * nd, const int8_t * pa
 	{
     const double edgelen = nd->GetEdgeLen();
 
-    //temporary!
+#if 0   //temporary!
 	const unsigned nStates = likelihood->getNStates();
 	double * * * tmp = NewThreeDArray<double>(1, nStates + 1, nStates);
     likelihood->calcPMatTranspose(tmp, ySisTipData->getConstStateListPos(), edgelen);
@@ -677,6 +684,7 @@ void UnimapNNIMove::sampleUniventsKeepEndStates(TreeNode * nd, const int8_t * pa
         for (unsigned zz = 0; zz < nStates; ++zz)
             PHYCAS_ASSERT(tmp[0][z][zz] == p_mat_transposed[z][zz]);
         }
+#endif
     
 	StateTimeListVect *stlv = GetStateTimeListVect(nd);
 	PHYCAS_ASSERT(stlv);
@@ -696,6 +704,18 @@ void UnimapNNIMove::sampleUniventsKeepEndStates(TreeNode * nd, const int8_t * pa
 void UnimapNNIMove::sampleUnivents(TreeNode * nd, const int8_t * par_states, const int8_t * des_states, const double * * p_mat)
 	{
 	const double edgelen = nd->GetEdgeLen();
+
+#if 0   //temporary!
+	const unsigned nStates = likelihood->getNStates();
+	double * * * tmp = NewThreeDArray<double>(1, nStates, nStates);
+    likelihood->calcPMat(tmp, edgelen);
+    for (unsigned z = 0; z < nStates; ++z)
+        {
+        for (unsigned zz = 0; zz < nStates; ++zz)
+            PHYCAS_ASSERT(tmp[0][z][zz] == p_mat[z][zz]);
+        }
+#endif
+    
 	StateTimeListVect *stlv = GetStateTimeListVect(nd);
 	PHYCAS_ASSERT(stlv);
 	StateTimeListVect::iterator state_time_it = stlv->begin();
@@ -713,6 +733,18 @@ void UnimapNNIMove::sampleUnivents(TreeNode * nd, const int8_t * par_states, con
 void UnimapNNIMove::sampleUniventsKeepBegStates(TreeNode * nd, const int8_t * des_states, const double * * p_mat_transposed)
 	{
 	const double edgelen = nd->GetEdgeLen();
+
+#if 0   //temporary!
+	const unsigned nStates = likelihood->getNStates();
+	double * * * tmp = NewThreeDArray<double>(1, nStates + 1, nStates);
+    likelihood->calcPMatTranspose(tmp, ySisTipData->getConstStateListPos(), edgelen);
+    for (unsigned z = 0; z < nStates; ++z)
+        {
+        for (unsigned zz = 0; zz < nStates; ++zz)
+            PHYCAS_ASSERT(tmp[0][z][zz] == p_mat_transposed[z][zz]);
+        }
+#endif
+    
 	StateTimeListVect *stlv = GetStateTimeListVect(nd);
 	PHYCAS_ASSERT(stlv);
 	StateTimeListVect::iterator state_time_it = stlv->begin();

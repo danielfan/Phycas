@@ -187,6 +187,7 @@ class TreeLikelihood
         void                            unimapEdgeOneSite(StateTimeList & state_time_vect, int8_t start_state, int8_t end_state, double transition_prob, double edgelen, LotShPtr rng);
         void                            nielsenMapping(TreeShPtr t, LotShPtr rng);
         double                          calcUnimapLnL(TreeShPtr t);
+        const SquareMatrix &            getUMat(unsigned m);
         void                            recalcUMatVect();
         void                            recalcSMatrix(TreeShPtr t);
         std::string                     debugShowSMatrix();

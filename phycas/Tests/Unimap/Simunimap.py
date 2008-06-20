@@ -4,7 +4,7 @@ from phycas import *
 model = 'hky'
 rnseed = 13975
 debug = 0
-nsites = 5000
+nsites = 2000
 ntax = 4
 
 if __name__ == '__main__':

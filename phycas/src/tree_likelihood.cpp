@@ -316,6 +316,18 @@ void TreeLikelihood::recalcSMatrix(
 
 #if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
+|   Returns requested element of uMatVect.
+*/
+const SquareMatrix & TreeLikelihood::getUMat(unsigned m)
+    {
+    PHYCAS_ASSERT(m < maxm);
+    PHYCAS_ASSERT(m < uMatVect.size());
+    return uMatVect[m];
+    }
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
 |   Recalculates the vector `uMatVect'
 */
 void TreeLikelihood::recalcUMatVect()
@@ -502,7 +514,6 @@ void TreeLikelihood::unimapEdgeOneSite(
   double edgelen,                   /**< is the length of the edge in expected number of substitutions per site */
   LotShPtr rng)	                    /**< is the random number generator to use for the mapping */
 	{
-#if 1
     unsigned m = sampleM(start_state, end_state, transition_prob, edgelen, rng);
 
     state_time_vect.clear();
@@ -572,56 +583,6 @@ void TreeLikelihood::unimapEdgeOneSite(
         for (k = 0; k < m; ++k)
             state_time_vect.push_back(StateTimePair(states[k], times[k]));
         }
-#else
-	bool ok = false;
-    unsigned ntries = 0;
-    unsigned max_tries = 1000;
-    while (!ok && ntries < max_tries)
-        {
-        ++ntries;
-        state_time_vect.clear();
-        state_time_vect.push_back(StateTimePair(start_state, 0.0));
-        double cumt = 0.0;
-        bool done = false;
-        while (!done)
-            {
-            // choose next sojourn time
-            double u = rng->Uniform(FILE_AND_LINE);
-            double t = -log(u)/lambda;
-            cumt += t;
-            if (cumt >= edgelen)
-                {
-                // we're done with this attempt, but need to check whether this attempt succeeded
-                done = true;
-                if (state_time_vect.rbegin()->first == end_state)
-                    ok = true;
-                }
-            else
-                {
-                // not yet done, so choose a state for this event
-                int8_t prev_state = state_time_vect.rbegin()->first;
-                const double * uMat_row = uMat[prev_state];
-                u = rng->Uniform(FILE_AND_LINE);
-                double cump = 0.0;
-                int8_t new_state;
-                bool found = false;
-                for (unsigned j = 0; j < num_states; ++j)
-                    {
-                    cump += exp(uMat_row[j])/lambda;
-                    if (u < cump)
-                        {
-                        new_state = j;
-                        found = true;
-                        break;
-                        }
-                    }
-                PHYCAS_ASSERT(found);
-                state_time_vect.push_back(StateTimePair(new_state, (float)(cumt/edgelen)));
-                }
-            }
-        }
-    PHYCAS_ASSERT(ok);
-#endif
 
     // Now that we have a successful mapping, record the univents in sMat
     StateTimeList::const_iterator it = state_time_vect.begin();
