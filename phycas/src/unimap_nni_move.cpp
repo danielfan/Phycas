@@ -258,6 +258,17 @@ double UnimapNNIMove::proposeEdgeLen(double mean)
 */
 void UnimapNNIMove::proposeNewState()
 	{
+    // Choose random internal node nd: one of the two children of nd will be swapped with nd's sibling
+    // x = child that is swapped
+    // y = x's sibling
+    // z = nd's sibling
+    // w = nd's parent
+    //
+    // x     z  <-- swapping x and z
+    //  \___/ 
+    //  /   \   Before move, x = ySis and z = wSis
+    // y     w  After move,  x = wSis and z = ySis
+    //
 	scoringBeforeMove = true;
 	TreeNode * nd  = randomInternalAboveSubroot();
 	PHYCAS_ASSERT(nd);
@@ -267,13 +278,17 @@ void UnimapNNIMove::proposeNewState()
 	PHYCAS_ASSERT(z);
 	PHYCAS_ASSERT(nd->CountChildren() == 2); // we haven't figured this out for polytomies
 	PHYCAS_ASSERT(ndP->CountChildren() == 2); // we haven't figured this out for polytomies
-	ySis = x = nd->GetLeftChild();
+
+    x = nd->GetLeftChild();
 	PHYCAS_ASSERT(x);
 	y = x->GetRightSib();
 	PHYCAS_ASSERT(y);
+
+    // Decide which of the two children of nd to involve in the NNI move
 	x_is_left = rng->Boolean();
 	if (!x_is_left)
 		std::swap(x,y);
+    ySis = x;
 
 	InternalData * nd_internal_data = nd->GetInternalData();
 	PHYCAS_ASSERT(nd_internal_data);
