@@ -320,7 +320,7 @@ void TreeLikelihood::recalcSMatrix(
 */
 const SquareMatrix & TreeLikelihood::getUMat(unsigned m)
     {
-    PHYCAS_ASSERT(m < maxm);
+    PHYCAS_ASSERT(m <= maxm);
     PHYCAS_ASSERT(m < uMatVect.size());
     return uMatVect[m];
     }
@@ -585,24 +585,31 @@ void TreeLikelihood::unimapEdgeOneSite(
 #		else //SIMULATE_MAPPINGS_GIVEN_M
 			const SquareMatrix & one_umat = getUMat(1);
 			const SquareMatrix * curr_umat = &getUMat(m);
-			const SquareMatrix * rest_umat = &getUMat(m - 1);
 			int8_t prev_state = start_state;
 			for (unsigned curr_m = 0; curr_m < m - 1; ++curr_m)
 				{
+				const SquareMatrix * rest_umat = &getUMat(m - curr_m - 1);
 				const double prob_all_mappings = (*curr_umat)[prev_state][end_state];
 				double u = rng->Uniform(FILE_AND_LINE)*prob_all_mappings;
 				unsigned s = 0;
 				/*TEMP should just loop over single-mutation neighbors */
 				for (; s < num_states; ++s)
 					{
+                    double tmp1 = one_umat[prev_state][s];
+                    double tmp2 = (*rest_umat)[s][end_state];
+                    double tmp3 = tmp1*tmp2;
 					u -= one_umat[prev_state][s]* (*rest_umat)[s][end_state];
 					if (u < 0.0)
 						break;
 					}
+                if (s >= num_states && u >= 1.0e-7)
+                    {
+                    std::cerr << "woah!" << std::endl;
+                    }
 				PHYCAS_ASSERT(s < num_states || u < 1.0e-7);
 				state_time_vect.push_back(StateTimePair(s, times[curr_m]));
 				curr_umat = rest_umat;
-				rest_umat = &getUMat(m - curr_m - 1);
+                prev_state = s;
 				}
 			state_time_vect.push_back(StateTimePair(end_state, times[m-1]));
 #		endif //SIMULATE_MAPPINGS_GIVEN_M
