@@ -789,9 +789,7 @@ void UnimapNNIMove::accept()
 	TreeNode * nd =  y->GetParent();
 	assert(nd);
 	assert(nd->GetParent());
-	nd->SetEdgeLen(prev_nd_len);
 	TreeNode * ndP = nd->GetParent();
-	ndP->SetEdgeLen(prev_ndP_len);
 	int8_t * nd_states = const_cast<int8_t *>(ySisTipData->getTipStatesArray().get());
 	int8_t * ndP_states = const_cast<int8_t *>(yTipData->getTipStatesArray().get());
 
