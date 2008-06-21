@@ -5,7 +5,7 @@ model = 'hky'
 rnseed = 13975
 debug = 0
 nsites = 2000
-ntax = 4
+ntax = 10
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
@@ -76,15 +76,14 @@ if __name__ == '__main__':
     phycas.mcmc()
     
     # Summarize the tree file
-    phycas.log_file_name           = 'logfile.txt'
-    phycas.sumt_input_tree_file    = 'doofus.t'
-    phycas.sumt_trees_prefix       = 'doofus_trees'
-    phycas.sumt_splits_prefix      = 'doofus_splits'
-    phycas.sumt_burnin             = 0
-    phycas.sumt_outgroup_taxon     = phycas.sim_taxon_labels[0]
-    phycas.sumt_output_replace     = True
-    phycas.sumt_tree_credible_prob = 1.0
-    phycas.sumt()
+    sumt.input_tree_file    = 'doofus.t'
+    sumt.trees_prefix       = 'doofus_trees'
+    sumt.splits_prefix      = 'doofus_splits'
+    sumt.burnin             = 0
+    sumt.outgroup_taxon     = phycas.sim_taxon_labels[0]
+    sumt.output_replace     = True
+    sumt.tree_credible_prob = 1.0
+    sumt()
 
     # Add a PAUP block to the simulated.nex file to make it easy to check the simulated data
     f = file('simulated.nex', 'a')
