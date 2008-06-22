@@ -27,6 +27,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pdfgen", "pdfgen\pdfgen.vcp
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ncl", "ncl\ncl.vcproj", "{7BBC165F-8F6A-4215-B039-A47D049C31E1}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -63,6 +67,10 @@ Global
 		{1B5E52CB-42AB-4AB6-9E98-D714B33028AE}.Debug.Build.0 = Debug|Win32
 		{1B5E52CB-42AB-4AB6-9E98-D714B33028AE}.Release.ActiveCfg = Release|Win32
 		{1B5E52CB-42AB-4AB6-9E98-D714B33028AE}.Release.Build.0 = Release|Win32
+		{7BBC165F-8F6A-4215-B039-A47D049C31E1}.Debug.ActiveCfg = Debug|Win32
+		{7BBC165F-8F6A-4215-B039-A47D049C31E1}.Debug.Build.0 = Debug|Win32
+		{7BBC165F-8F6A-4215-B039-A47D049C31E1}.Release.ActiveCfg = Release|Win32
+		{7BBC165F-8F6A-4215-B039-A47D049C31E1}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
 		readme.txt = readme.txt

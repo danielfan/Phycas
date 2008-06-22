@@ -46,6 +46,7 @@ project phycas
       <library>/boost/python//boost_python 
       <include>. 
       <include>./phycas/src 
+      <include>../ncl/branches/v2.1/ncl 
       <link>shared ;
 
 # The rule python-extension is defined in <top-of-boost-build-system>/tools/python.jam
@@ -103,6 +104,28 @@ alias datamatrix_sources
     tool_specific_requirements ;
 python-extension _DataMatrixBase : datamatrix_sources ;
 install DataMatrix : _DataMatrixBase : <location>phycas/DataMatrix ;
+
+# Build and install the NCL extension
+alias ncl_sources
+  : phycas/src/ncl_pymod.cpp
+    ../ncl/branches/v2.1/ncl/nxsassumptionsblock.cpp
+    ../ncl/branches/v2.1/ncl/nxsblock.cpp
+    ../ncl/branches/v2.1/ncl/nxscharactersblock.cpp
+    ../ncl/branches/v2.1/ncl/nxsdatablock.cpp
+    ../ncl/branches/v2.1/ncl/nxsdistancedatum.cpp
+    ../ncl/branches/v2.1/ncl/nxsdistancesblock.cpp
+    ../ncl/branches/v2.1/ncl/nxsexception.cpp
+    ../ncl/branches/v2.1/ncl/nxspublicblocks.cpp
+    ../ncl/branches/v2.1/ncl/nxsreader.cpp
+    ../ncl/branches/v2.1/ncl/nxssetreader.cpp
+    ../ncl/branches/v2.1/ncl/nxsstring.cpp
+    ../ncl/branches/v2.1/ncl/nxstaxablock.cpp
+    ../ncl/branches/v2.1/ncl/nxstoken.cpp
+    ../ncl/branches/v2.1/ncl/nxstreesblock.cpp
+    ../ncl/branches/v2.1/ncl/nxsunalignedblock.cpp
+    tool_specific_requirements ;
+python-extension _NCLBase : ncl_sources ;
+install NCL : _NCLBase : <location>phycas/NCL ;
 
 # Build and install the Likelihood extension
 alias likelihood_sources
