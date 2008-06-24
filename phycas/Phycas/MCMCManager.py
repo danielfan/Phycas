@@ -134,7 +134,7 @@ class LikelihoodCore:
             self.phycas.starting_tree = self.tree.makeNewick()
         else:
             # Build user-specified tree
-            self.tree.buildFromString(self.phycas.starting_tree, zero_based_tips)
+            self.phycas.starting_tree.buildTree(self.tree)
             if not self.tree.tipNumbersSetUsingNames():
                 self.phycas.warn_tip_numbers = True
 

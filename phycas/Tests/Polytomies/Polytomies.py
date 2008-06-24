@@ -16,9 +16,8 @@ phycas.taxon_labels = ['P._fimbriata', 'P._parksii', 'P._articulata', 'P._gracil
 
 # Create a model tree containing one polytomy
 phycas.ntax = 5
-phycas.tree = Phylogeny.Tree()
-phycas.tree_topology = '(1:0.1,2:0.1,(3:0.1,4:0.1,5:0.1):0.1)'
-phycas.tree.buildFromString(phycas.tree_topology)
+phycas.tree_topology = Newick('(1:0.1,2:0.1,(3:0.1,4:0.1,5:0.1):0.1)')
+phycas.tree = phycas.tree_topology.buildTree()
 
 # Create a model
 phycas.default_model = 'hky'

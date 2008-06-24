@@ -23,7 +23,7 @@
 #endif
 
 #include "probability_distribution.hpp"
-#include "ncl/nxs_exception.hpp"
+#include "ncl/nxsexception.h"
 
 namespace phycas
 {
@@ -1787,9 +1787,9 @@ std::string DirichletDistribution::GetDescriptionForPython() const
 	return s;
 	}
 
-VecDbl DirichletDistribution::GetMean() const 
+std::vector<double> DirichletDistribution::GetMean() const 
 	{
-	VecDbl retvect;
+	std::vector<double> retvect;
 
 	double sum = 0.0;
 	for (std::vector<double>::const_iterator dIt = dirParams.begin(); dIt != dirParams.end(); ++dIt) 
@@ -1804,9 +1804,9 @@ VecDbl DirichletDistribution::GetMean() const
 	return retvect;
 	}
 
-VecDbl DirichletDistribution::GetVar() const 
+std::vector<double> DirichletDistribution::GetVar() const 
 	{
-	VecDbl retvect;
+	std::vector<double> retvect;
 
 	double c = 0.0;
 	for (std::vector<double>::const_iterator dIt = dirParams.begin(); dIt != dirParams.end(); ++dIt) 
@@ -1824,9 +1824,9 @@ VecDbl DirichletDistribution::GetVar() const
 	return retvect;
 	}
 
-VecDbl DirichletDistribution::GetStdDev() const 
+std::vector<double> DirichletDistribution::GetStdDev() const 
 	{
-	VecDbl retvect = GetVar();
+	std::vector<double> retvect = GetVar();
 
 	for (unsigned i = 0; i < GetNParams(); ++i)
 		{
@@ -1845,7 +1845,7 @@ VecDbl DirichletDistribution::GetStdDev() const
 |	elements of `x' after the (k-1)th. will be ignored.
 */
 double DirichletDistribution::ApproxCDF(
-  const VecDbl &x,		/**< is the point to be evaluated */
+  const std::vector<double> &x,		/**< is the point to be evaluated */
   unsigned nsamples)	/**< is the number of samples to use in approximating the CDF */
   const 
 	{
@@ -1882,9 +1882,9 @@ double DirichletDistribution::ApproxCDF(
 	return (double)num_inside/(double)nsamples;
 	}
 
-VecDbl DirichletDistribution::Sample() const 
+std::vector<double> DirichletDistribution::Sample() const 
 	{
-	VecDbl x;
+	std::vector<double> x;
 
 	double sum = 0.0;
 	for (unsigned i = 0; i < GetNParams(); ++i)
@@ -1901,7 +1901,7 @@ VecDbl DirichletDistribution::Sample() const
 	}
 
 double DirichletDistribution::GetLnPDF(
-  const VecDbl &x)
+  const std::vector<double> &x)
   const 
 	{
 	PHYCAS_ASSERT(GetNParams() == (unsigned)x.size());
@@ -1922,7 +1922,7 @@ double DirichletDistribution::GetLnPDF(
 	}
 
 double DirichletDistribution::GetRelativeLnPDF(
-  const VecDbl &x)
+  const std::vector<double> &x)
   const 
 	{
 	PHYCAS_ASSERT(GetNParams() == (unsigned)x.size());
@@ -1955,7 +1955,7 @@ boost::python::numeric::array DirichletDistribution::GetVarCovarMatrix()
 		}
 	double denom = c*c*(c + 1.0);
 
-	VecDbl V;
+	std::vector<double> V;
 	for (i = 0; i < dim; ++i)
 		{
 		for (j = 0; j < dim; ++j)
@@ -1979,7 +1979,7 @@ boost::python::numeric::array DirichletDistribution::GetVarCovarMatrix()
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the variance-covariance matrix in the form of a 1-dimensional vector (first row, then second row, etc.)
 */
-VecDbl DirichletDistribution::GetVarCovarMatrix()
+std::vector<double> DirichletDistribution::GetVarCovarMatrix()
 	{
 	unsigned i, j;
 	unsigned dim = (unsigned)dirParams.size();
@@ -1991,7 +1991,7 @@ VecDbl DirichletDistribution::GetVarCovarMatrix()
 		}
 	double denom = c*c*(c + 1.0);
 
-	VecDbl V;
+	std::vector<double> V;
 	for (i = 0; i < dim; ++i)
 		{
 		for (j = 0; j < dim; ++j)
@@ -2018,7 +2018,7 @@ VecDbl DirichletDistribution::GetVarCovarMatrix()
 |	Sets parameters of the distribution from the vector of means and vector of variances (note: v is not the variance
 |	covariance matrix, but just a single-dimensional array of variances - the covariances are not needed).
 */
-void DirichletDistribution::SetMeanAndVariance(const VecDbl &m, const VecDbl &v)
+void DirichletDistribution::SetMeanAndVariance(const std::vector<double> &m, const std::vector<double> &v)
 	{
 	unsigned m_length = (unsigned)m.size();
 

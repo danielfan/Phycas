@@ -65,31 +65,6 @@ The following defines will help me wade through harmless, class-level functions 
   /* STATIC_CONST declares data as const and static */
 #define STATIC_CONST static
 
-/*currently we only support a console or suppressing output */
-#define CONSOLE_PHOREST 
-#if defined (CONSOLE_PHYCAS_NO_SOCKET)
-#   if !defined(NCL_USE_STD_OUTPUT)
-#		define NCL_USE_NXS_CONSOLE_OUTPUT
-#   endif
-#   undef NCL_SOCKET_IO
-#   define NCL_PRINT_COMMAND_STATE_TO_HIDDEN 0
-#elif defined(NXS_SUPPRESS_OUTPUT)
-//@POL 27-Oct-2005 Mark, I get lots of errors when I try to use this code
-#   undef NCL_SOCKET_IO
-#	define NCL_USER_SUPPLIED_OUTPUT
-#	define NCL_SUPPRESS_OUTPUT
-#   define NCL_PRINT_COMMAND_STATE_TO_HIDDEN 0
-#	define NCL_USER_OUTPUT_FWD_DECLARATIONS "phycas/src/ncl/output/nxs_suppress_fwd_decl.hpp"
-#	define NCL_USER_OUTPUT_HEADER "phycas/src/ncl/output/nxs_suppress_output_stream.hpp"
-#	define NCL_USER_OUTPUT_MGR_HEADER "phycas/src/ncl/output/nxs_suppress_output_mgr.hpp"
-#else
-#	define NCL_SOCKET_IO
-#	define NCL_USER_SUPPLIED_OUTPUT
-#   define NCL_PRINT_COMMAND_STATE_TO_HIDDEN 1
-#	define NCL_USER_OUTPUT_FWD_DECLARATIONS "phycas/src/ncl/output/nxs_xml_socket_fwd_decl.hpp"
-#	define NCL_USER_OUTPUT_HEADER "phycas/src/ncl/output/nxs_xml_socket_output_stream.hpp"
-#	define NCL_USER_OUTPUT_MGR_HEADER "phycas/src/ncl/output/nxs_xml_socket_output_mgr.hpp"
-#endif //defined (CONSOLE_PHYCAS_NO_SOCKET)
 
 #if defined (CORBA_CLIENT_PHYCAS) || defined(CORBA_SERVER_PHYCAS)
 #	define CORBA_PHYCAS
@@ -146,8 +121,6 @@ The following defines will help me wade through harmless, class-level functions 
 #	error need to define a platform
 #endif
 
-#include "phycas/src/ncl/singleton.hpp"
-
 class Phylodiversity;
 class DistributionManager;
 class PhoSampler;
@@ -155,40 +128,9 @@ class PhoMCMC;
 class PWD;
 class LongOperationManager;
 
-#if defined(USE_LOKI_SINGLETON)
-	typedef Loki::SingletonHolder<DistributionManager, Loki::CreateUsingNew, Loki::SingletonWithLongevity> DistributionManagerSingletonHolder;
-	typedef Loki::CreateUsingNew<DistributionManager> DistributionManagerCreator;
-	typedef Loki::SingletonHolder<PhoSampler, Loki::CreateUsingNew, Loki::SingletonWithLongevity> SamplerSingletonHolder;
-	typedef Loki::CreateUsingNew<PhoSampler> PhoSamplerCreator;
-	typedef Loki::SingletonHolder<PhoMCMC, Loki::CreateUsingNew, Loki::SingletonWithLongevity> MCMCSingletonHolder;
-	typedef Loki::CreateUsingNew<PhoMCMC> PhoMCMCCreator;
-	typedef Loki::SingletonHolder<PWD, Loki::CreateUsingNew, Loki::SingletonWithLongevity> PWDSingletonHolder;
-	typedef Loki::CreateUsingNew<PWD> PWDCreator;
-	typedef Loki::SingletonHolder<LongOperationManager, Loki::CreateUsingNew, Loki::SingletonWithLongevity> LongOperationManagerSingletonHolder;
-	typedef Loki::CreateUsingNew<LongOperationManager> LongOperationManagerCreator;
-	typedef Loki::SingletonHolder<Phylodiversity, Loki::CreateUsingNew, Loki::SingletonWithLongevity> PhylodiversitySingletonHolder;
-	typedef Loki::CreateUsingNew<Phylodiversity> LongOperationManagerCreator;
-#else
-	typedef ncl::SingletonHolder<DistributionManager> DistributionManagerSingletonHolder;
-	typedef ncl::SingletonHolder<DistributionManager> DistributionManagerCreator;
-	typedef ncl::SingletonHolder<PhoSampler> SamplerSingletonHolder;
-	typedef ncl::SingletonHolder<PhoSampler> PhoSamplerCreator;
-	typedef ncl::SingletonHolder<PhoMCMC> MCMCSingletonHolder;
-	typedef ncl::SingletonHolder<PhoMCMC> PhoMCMCCreator;
-	typedef ncl::SingletonHolder<PWD> PWDSingletonHolder;
-	typedef ncl::SingletonHolder<PWD> PWDCreator;
-	typedef ncl::SingletonHolder<LongOperationManager> LongOperationManagerSingletonHolder;
-	typedef ncl::SingletonHolder<LongOperationManager> LongOperationManagerCreator;
-	typedef ncl::SingletonHolder<Phylodiversity> PhylodiversitySingletonHolder;
-	typedef ncl::SingletonHolder<Phylodiversity> PhylodiversityCreator;
 
-#endif
-
-const unsigned int kNxsDistributionManagerLongevity = 40;
-const unsigned int kNxsTreesManagerLongevity = 40;
-const unsigned int kNxsCharactersManagerLongevity = 40;
-const unsigned int kNxsTaxaManagerLongevity = 50;
-const unsigned int kNxsOutputManagerLongevity = 100;
+#include <vector>
+typedef std::vector<double> VecDbl;
 #include "phycas/src/phycas.h"
 
 #endif	/* __PHOREST_CONFIG_H */

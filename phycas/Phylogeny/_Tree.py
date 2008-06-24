@@ -1,5 +1,5 @@
 from _Phylogeny import *
-
+from phycas.ReadNexus._NexusReader import TreeDescription
 class Tree(TreeBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
@@ -11,10 +11,15 @@ class Tree(TreeBase):
     functions of other classes.
 
     """
-    def __init__(self):
+    def __init__(self, builder=None, newick=None, zero_based=False):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Calls clear() to initialize data members.
+        If a `builder` is passed in, then the builder.buildTree() function
+        will be called to initialize the tree.
+        If no builder is passed in, but `newick` is specified then the tree 
+        definition comes from the newick string and `zero_based` is used to 
+        indicate whether the taxa indices start at 0 or 1.
 
         >>> from phycas.Phylogeny import *
         >>> t1 = Tree()
@@ -23,6 +28,11 @@ class Tree(TreeBase):
 
         """
         TreeBase.__init__(self)
+        if builder:
+            builder.buildTree(self)
+        elif newick:
+            self.buildFromString(newick, zero_based)
+                
         
     def __iter__(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

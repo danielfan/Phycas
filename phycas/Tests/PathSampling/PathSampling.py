@@ -25,7 +25,7 @@ phycas.sim_taxon_labels     = ['A','B','C','D','E']
 
 # settings relating to the tree used
 phycas.starting_tree_source = 'usertree' # use 'random' for a random starting tree, 'usertree' for a specified topology
-phycas.tree_topology        = '(1:0.01,2:0.01,(3:0.01,(4:0.01,5:0.01):0.01):0.01)' 
+phycas.tree_topology        = Newick('(1:0.01,2:0.01,(3:0.01,(4:0.01,5:0.01):0.01):0.01)')
 
 # settings relating to substitution model
 phycas.default_model        = 'gtr'    # use 'jc' for JC,'hky' for HKY model, 'gtr' for GTR model

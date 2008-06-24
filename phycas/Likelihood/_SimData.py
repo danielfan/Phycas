@@ -80,7 +80,7 @@ class SimData(SimDataBase):
     
     # Read a data file
     phycas.reader.readFile('../Tests/Data/nyldna4.nex')
-    phycas.data_matrix = ReadNexus.getDiscreteMatrix(phycas.reader, 0)
+    phycas.data_matrix = ReadNexus.getLastDiscreteMatrix(phycas.reader, True)
     phycas.ntax = phycas.data_matrix.getNTax()
     taxon_names = phycas.reader.getTaxLabels()
     

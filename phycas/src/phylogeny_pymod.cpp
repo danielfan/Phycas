@@ -36,8 +36,6 @@
 #include "phycas/src/probability_distribution.hpp"
 #include "phycas/src/basic_tree.hpp"
 #include "phycas/src/tree_manip.hpp"
-//#include "ncl/misc/string_extensions.hpp"
-//#include "ncl/nxs_exception.hpp"
 #include "phycas/src/cond_likelihood.hpp"
 #include "phycas/src/cond_likelihood_storage.hpp"
 #include "phycas/src/tip_data.hpp"

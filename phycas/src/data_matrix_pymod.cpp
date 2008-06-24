@@ -31,6 +31,7 @@ using namespace boost::python;
 BOOST_PYTHON_MODULE(_DataMatrixBase)
 {
 	class_<CipresNative::DiscreteMatrix, boost::noncopyable>("DataMatrixBase", no_init)
+		.def("getDatatype",  &CipresNative::DiscreteMatrix::getDatatype)
 		.def("getNChar", &CipresNative::DiscreteMatrix::getNChar)
 		.def("getNTax", &CipresNative::DiscreteMatrix::getNTax)
 		.def("getNStates", &CipresNative::DiscreteMatrix::getNStates)

@@ -21,6 +21,7 @@
 #include <iostream>
 #include <boost/assert.hpp>
 
+#if defined(BOOST_ENABLE_ASSERT_HANDLER)
 void boost::assertion_failed(char const * expr, char const * function, char const * file, long line)
 	{
 	std::cerr << "\nBoost assertion failed:";
@@ -29,6 +30,8 @@ void boost::assertion_failed(char const * expr, char const * function, char cons
 	std::cerr << "\n  file: " << file;
 	std::cerr << "\n  line: " << line;
 	std::cerr << std::endl;
-    std::exit(1);
+	std::exit(1);
 	}
+#endif 
+
 #endif

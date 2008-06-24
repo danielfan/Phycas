@@ -22,6 +22,7 @@
 
 #include <vector>
 #include <stack>
+#include <boost/shared_ptr.hpp>
 namespace phycas
 {
 typedef double LikeFltType;

@@ -24,18 +24,14 @@ class Brownian(object):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Reads all trees from the file named in self.phycas.brownian_input_tree_file.
-        Stores tree descriptions in self.stored_newicks and taxon labels in
+        Stores tree descriptions in self.stored_tree_defs and taxon labels in
         self.taxon_labels.
         
         """
         self.phycas.reader.readFile(self.phycas.brownian_input_tree_file)
         self.taxon_labels = self.phycas.reader.getTaxLabels()
-        self.stored_treenames = []
-        self.stored_newicks = []
-        for t in self.phycas.reader.getTrees():
-            self.stored_treenames.append(t.name) # should use hash to store both names and newicks
-            self.stored_newicks.append(t.newick)
-        self.phycas.phycassert(len(self.stored_newicks) > 0, 'expecting a trees block defining at least one tree in the file %s' % self.phycas.sumt_input_tree_file)
+        self.self.stored_tree_defs = self.phycas.reader.getTrees()
+        self.phycas.phycassert(len(self.stored_tree_defs) > 0, 'expecting a trees block defining at least one tree in the file %s' % self.phycas.sumt_input_tree_file)
 
     def run(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -70,10 +66,10 @@ class Brownian(object):
         t.setRooted()
 
         # values used for display purposes
-        num_stored_trees = len(self.stored_newicks)
+        num_stored_trees = len(self.stored_tree_defs)
         self.phycas.phycassert(num_stored_trees > 0, 'Specified tree file (%s) contained no stored trees' % self.phycas.sumt_input_tree_file)
         
-        for newick in self.stored_newicks:
+        for tree_def in self.stored_tree_defs:
             num_trees_considered += 1
 
             # Create variance-covariance matrix
@@ -83,7 +79,7 @@ class Brownian(object):
             
             # Build the tree
             #raw_input('stopped')
-            t.buildFromString(newick, True)
+            tree_def.buildTree(t)
             t.rectifyNames(self.taxon_labels)
             ntips = t.getNTips()
             t.recalcAllSplits(ntips)

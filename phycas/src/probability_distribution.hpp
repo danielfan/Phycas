@@ -25,7 +25,7 @@
 #endif
 
 #include <cmath>
-#include "ncl/nxs_defs.hpp"
+#include "ncl/nxsdefs.h"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/format.hpp>
@@ -100,21 +100,21 @@ class MultivariateProbabilityDistribution
 		virtual	bool				IsDiscrete() const											= 0;
 		virtual std::string 		GetDistributionName() const									= 0;
 		virtual std::string 		GetDistributionDescription() const							= 0;
-		virtual VecDbl				GetMean() const												= 0;
-		virtual VecDbl 				GetVar() const												= 0;
-		virtual VecDbl 				GetStdDev() const											= 0;
-		virtual VecDbl				Sample() const												= 0; 
-		virtual double				ApproxCDF(const VecDbl &x, unsigned nsamples = 10000) const	= 0;
-		virtual double				GetLnPDF(const VecDbl &) const								= 0; 
-		virtual double				GetRelativeLnPDF(const VecDbl &) const						= 0; 
-		virtual void 				SetMeanAndVariance(const VecDbl &m, const VecDbl &v)		= 0;
+		virtual std::vector<double>				GetMean() const												= 0;
+		virtual std::vector<double> 				GetVar() const												= 0;
+		virtual std::vector<double> 				GetStdDev() const											= 0;
+		virtual std::vector<double>				Sample() const												= 0; 
+		virtual double				ApproxCDF(const std::vector<double> &x, unsigned nsamples = 10000) const	= 0;
+		virtual double				GetLnPDF(const std::vector<double> &) const								= 0; 
+		virtual double				GetRelativeLnPDF(const std::vector<double> &) const						= 0; 
+		virtual void 				SetMeanAndVariance(const std::vector<double> &m, const std::vector<double> &v)		= 0;
 #		if defined(PYTHON_ONLY)
 #			if defined(USING_NUMARRAY)
 				virtual void 			AltSetMeanAndVariance(boost::python::numeric::array m, boost::python::numeric::array v) = 0;
 				virtual boost::python::numeric::array	GetVarCovarMatrix()						= 0;
 #			else
-				//virtual void 			AltSetMeanAndVariance(VecDbl m, VecDbl v)				= 0;
-				virtual VecDbl			GetVarCovarMatrix()										= 0;
+				//virtual void 			AltSetMeanAndVariance(std::vector<double> m, std::vector<double> v)				= 0;
+				virtual std::vector<double>			GetVarCovarMatrix()										= 0;
 #			endif
 #		endif
 		virtual unsigned			GetNParams()	const										= 0;
@@ -400,21 +400,21 @@ class DirichletDistribution : public MultivariateProbabilityDistribution
 		std::string 						GetDistributionName() const;
 		std::string 						GetDistributionDescription() const;
 		std::string 						GetDescriptionForPython() const;
-		VecDbl								GetMean() const;
-		VecDbl 								GetVar() const;
-		VecDbl 								GetStdDev() const;
-		VecDbl								Sample() const;
-		double								ApproxCDF(const VecDbl &x, unsigned nsamples = 10000) const;
-		double								GetLnPDF(const VecDbl &x) const;
-		double								GetRelativeLnPDF(const VecDbl &x) const;
-		void 								SetMeanAndVariance(const VecDbl &m, const VecDbl &v);
+		std::vector<double>								GetMean() const;
+		std::vector<double> 								GetVar() const;
+		std::vector<double> 								GetStdDev() const;
+		std::vector<double>								Sample() const;
+		double								ApproxCDF(const std::vector<double> &x, unsigned nsamples = 10000) const;
+		double								GetLnPDF(const std::vector<double> &x) const;
+		double								GetRelativeLnPDF(const std::vector<double> &x) const;
+		void 								SetMeanAndVariance(const std::vector<double> &m, const std::vector<double> &v);
 #		if defined(PYTHON_ONLY)
 #			if defined(USING_NUMARRAY)
 				void							AltSetMeanAndVariance(boost::python::numeric::array m, boost::python::numeric::array v);
 				boost::python::numeric::array	GetVarCovarMatrix();
 #			else
-				void							AltSetMeanAndVariance(VecDbl m, VecDbl v);
-				VecDbl							GetVarCovarMatrix();
+				void							AltSetMeanAndVariance(std::vector<double> m, std::vector<double> v);
+				std::vector<double>							GetVarCovarMatrix();
 #			endif
 #		endif
 

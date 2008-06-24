@@ -50,7 +50,12 @@ typedef struct
 									-1 is used for gaps.  To handle all possible data sets, this must be large enough to hold
 									2^(nStates + 1) values if the datatype allows gaps.  Thus using int8_t limits us to 8 states */
 	
-	typedef enum {CIPR_DNA_Datatype, CIPR_RNA_Datatype, CIPR_AA_Datatype, CIPR_Codon_Datatype, CIPR_Generic_Datatype} CIPR_Datatypes;
+	typedef enum {CIPR_DNA_Datatype = 0, 
+				  CIPR_RNA_Datatype = 1, 
+				  CIPR_AA_Datatype = 2, 
+				  CIPR_Codon_Datatype = 3, 
+				  CIPR_Generic_Datatype = 4
+				  } CIPR_Datatypes;
 	typedef struct CIPRES_Matrix
 		{
 		CIPR_State_t 	  *stateList; 		/** Flattened array of array of observed states.  If more than one state was observed, then the first element is the number of states observed.  

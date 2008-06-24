@@ -36,9 +36,9 @@ if __name__ == '__main__':
     # Create a model tree
     phycas.starting_tree_source = 'usertree'
     if ntax == 4:
-        phycas.tree_topology = '(1:0.1,2:0.1,(3:0.1,4:0.1):0.1)'
+        phycas.tree_topology = Newick('(1:0.1,2:0.1,(3:0.1,4:0.1):0.1)')
     else:
-        phycas.tree_topology = '(1:0.1,2:0.1,(3:0.1,(4:0.1,((5:0.1,8:0.1):0.1,(6:0.1,((7:0.1,10:0.1):0.1,9:0.1):0.1):0.1):0.1):0.1):0.1)'
+        phycas.tree_topology = Newick('(1:0.1,2:0.1,(3:0.1,(4:0.1,((5:0.1,8:0.1):0.1,(6:0.1,((7:0.1,10:0.1):0.1,9:0.1):0.1):0.1):0.1):0.1):0.1)')
 
     # Create a model
     assert model == 'jc' or model == 'hky', "model must be either 'jc' or 'hky'"

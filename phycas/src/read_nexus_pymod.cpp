@@ -1,20 +1,20 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-|  Phycas: Python software for phylogenetic analysis                          |
-|  Copyright (C) 2006 Mark T. Holder, Paul O. Lewis and David L. Swofford     |
-|                                                                             |
-|  This program is free software; you can redistribute it and/or modify       |
-|  it under the terms of the GNU General Public License as published by       |
-|  the Free Software Foundation; either version 2 of the License, or          |
-|  (at your option) any later version.                                        |
-|                                                                             |
-|  This program is distributed in the hope that it will be useful,            |
-|  but WITHOUT ANY WARRANTY; without even the implied warranty of             |
-|  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              |
-|  GNU General Public License for more details.                               |
-|                                                                             |
-|  You should have received a copy of the GNU General Public License along    |
-|  with this program; if not, write to the Free Software Foundation, Inc.,    |
-|  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
+|  Phycas: Python software for phylogenetic analysis						  |
+|  Copyright (C) 2006 Mark T. Holder, Paul O. Lewis and David L. Swofford	  |
+|																			  |
+|  This program is free software; you can redistribute it and/or modify		  |
+|  it under the terms of the GNU General Public License as published by		  |
+|  the Free Software Foundation; either version 2 of the License, or		  |
+|  (at your option) any later version.										  |
+|																			  |
+|  This program is distributed in the hope that it will be useful,			  |
+|  but WITHOUT ANY WARRANTY; without even the implied warranty of			  |
+|  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the			  |
+|  GNU General Public License for more details.								  |
+|																			  |
+|  You should have received a copy of the GNU General Public License along	  |
+|  with this program; if not, write to the Free Software Foundation, Inc.,	  |
+|  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.				  |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #if defined(_MSC_VER)
@@ -25,7 +25,7 @@
 
 //#include "phycas/force_include.h"
 
-/*  This file inclusion avoids a bizarre anonymous namespace multiple definition link error that 
+/*	This file inclusion avoids a bizarre anonymous namespace multiple definition link error that 
 	TL (and others) are getting on Mac 10.3.9 (gcc 3.3).
 	If you undef PYPHY_INCLUDE_TO_AVOID_LINK_ERROR you need to uncomment:
 		cipres_services/cipres_nexus_reader.cpp
@@ -33,7 +33,7 @@
 		ncl/command/nxs_command_output.cpp 
 	lines from the phycas/read_nexus/Jamfile
 */
-#if defined(__APPLE__) && defined(__GNUC__) &&  (__GNUC__ == 3) && (__GNUC_MINOR__ == 3)	//17-May-2006
+#if defined(__APPLE__) && defined(__GNUC__) &&	(__GNUC__ == 3) && (__GNUC_MINOR__ == 3)	//17-May-2006
 #	define PYPHY_INCLUDE_TO_AVOID_LINK_ERROR
 #endif
 
@@ -41,15 +41,12 @@
 #	warning using macro to include cipres_nexus_reader.cpp TEMPORARY HACK!
 #	include "phycas/src/cipres/cipres_nexus_reader.cpp"
 #	warning using macro to include nxs_command_output.cpp TEMPORARY HACK!
-#	include "phycas/src/ncl/command/nxs_command_output.cpp"
 #else
 #	include "phycas/src/cipres/cipres_nexus_reader.hpp"
 #endif
-#include "phycas/src/ncl/characters/nxs_characters_manager.hpp"
 #include "phycas/src/cipres/CipresDataMatrixHelper.h"
-#include "phycas/src/ncl/nxs_exception.hpp"
-#include "phycas/src/ncl/trees/full_tree_description.hpp"
-#include "phycas/src/ncl/misc/nxs_index_set.hpp"
+#include "ncl/nxsexception.h"
+#include "ncl/nxstreesblock.h"
 
 #if defined(USING_NUMARRAY)
 // These next three lines required, otherwise get link error "unresolved external symbol _PyArrayHandle" 
@@ -62,40 +59,38 @@
 using namespace boost::python;
 
 
-int	CipresNexusReader::GetNChar()
-	{
-	return charactersMgr->GetNumChars();
-	}
-
 void translate(const NxsException & e)
 	{
-    // Use the Python 'C' API to set up an exception object
-    PyErr_SetString(PyExc_Exception, e.what());
-    }
+	// Use the Python 'C' API to set up an exception object
+	PyErr_SetString(PyExc_Exception, e.what());
+	}
+
+
 
 
 BOOST_PYTHON_MODULE(_ReadNexus)
 {
-	class_<FullTreeDescription>("FullTreeDescription", init<FullTreeDescription>())
-		.def_readwrite("name", &FullTreeDescription::name)
-		.def_readwrite("newick", &FullTreeDescription::newick)
-		.def_readwrite("rooted", &FullTreeDescription::rooted)
+	class_<NxsFullTreeDescription>("FullTreeDescription", init<NxsFullTreeDescription>())
+		.def("getName", &NxsFullTreeDescription::GetName, return_value_policy<copy_const_reference>())
+		.def("getNewick", &NxsFullTreeDescription::GetNewick, return_value_policy<copy_const_reference>())
+		.def("isRooted", &NxsFullTreeDescription::IsRooted)
 		;
 
-	class_<std::vector<FullTreeDescription> >("VecFullTreeDescription", no_init)
-		.def("__iter__",  iterator<std::vector<FullTreeDescription> >())
-        .def("size", &std::vector<FullTreeDescription>::size)
+	class_<std::vector<NxsFullTreeDescription> >("VecFullTreeDescription", no_init)
+		.def("__iter__",  iterator<std::vector<NxsFullTreeDescription> >())
+		.def("size", &std::vector<NxsFullTreeDescription>::size)
 		;
    
-	class_<CipresNexusReader>("NexusReaderBase", init<int>())
-        .def("readFile", &CipresNexusReader::ReadFilePath)
-        .def("getNChar", &CipresNexusReader::GetNChar)
-        .def("getErrorMessage", &CipresNexusReader::GetErrorMessage)
-        .def("getTrees", &CipresNexusReader::GetTrees, return_value_policy<copy_const_reference>())
-		.def("getTaxLabels", &CipresNexusReader::GetTaxLabels)
+	class_<PhycasNexusReader>("NexusReaderBase", init<int>())
+		.def("readFile", &PhycasNexusReader::ReadFilePath)
+		.def("getNChar", &PhycasNexusReader::GetNChar)
+		.def("getErrorMessage", &PhycasNexusReader::GetErrorMessage)
+		.def("getTrees", &PhycasNexusReader::GetTrees, return_value_policy<copy_const_reference>())
+		.def("getTaxLabels", &PhycasNexusReader::GetTaxLabels)
+		.def("clear", &PhycasNexusReader::Clear)
 		;
 	
-	def("getDiscreteMatrix", createNativeDiscreteMatrix, return_value_policy<manage_new_object>());
+	def("getLastDiscreteMatrix", GetLastDiscreteMatrix, return_value_policy<manage_new_object>());
 
 	register_exception_translator<NxsException>(&translate);
 }

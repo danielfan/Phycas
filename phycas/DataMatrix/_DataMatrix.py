@@ -5,12 +5,12 @@ class DataMatrix(DataMatrixBase):
     """
     Encapsulates a data matrix used for phylogenetic analysis. It is not
     possible to construct an empty DataMatrix object; the way to obtain
-    one is to import ReadNexus and call its getDiscreteMatrix function:
+    one is to import ReadNexus and call its getLastDiscreteMatrix function:
 
     >>> from phycas import *
     >>> r = ReadNexus.NexusReader()
     >>> r.readFile('../Tests/Data/nyldna4.nex')
-    >>> m = ReadNexus.getDiscreteMatrix(r, 0)
+    >>> m = ReadNexus.getLastDiscreteMatrix(r, True)
 
     """
     def getNChar(self):
@@ -21,7 +21,7 @@ class DataMatrix(DataMatrixBase):
         >>> from phycas import *
         >>> r = ReadNexus.NexusReader()
         >>> r.readFile('../Tests/Data/nyldna4.nex')
-        >>> m = ReadNexus.getDiscreteMatrix(r, 0)
+        >>> m = ReadNexus.getLastDiscreteMatrix(r, True)
         >>> m.getNChar()
         3080
 
@@ -36,7 +36,7 @@ class DataMatrix(DataMatrixBase):
         >>> from phycas import *
         >>> r = ReadNexus.NexusReader()
         >>> r.readFile('../Tests/Data/nyldna4.nex')
-        >>> m = ReadNexus.getDiscreteMatrix(r, 0)
+        >>> m = ReadNexus.getLastDiscreteMatrix(r, True)
         >>> m.getNTax()
         4
         
@@ -53,7 +53,7 @@ class DataMatrix(DataMatrixBase):
         >>> from phycas import *
         >>> r = ReadNexus.NexusReader()
         >>> r.readFile('../Tests/Data/nyldna4.nex')
-        >>> m = ReadNexus.getDiscreteMatrix(r, 0)
+        >>> m = ReadNexus.getLastDiscreteMatrix(r, True)
         >>> m.getNStates()
         4
 
@@ -70,9 +70,9 @@ class DataMatrix(DataMatrixBase):
         >>> from phycas import *
         >>> r = ReadNexus.NexusReader()
         >>> r.readFile('../Tests/Data/nyldna4.nex')
-        >>> m = ReadNexus.getDiscreteMatrix(r, 0)
+        >>> m = ReadNexus.getLastDiscreteMatrix(r, True)
         >>> print m.getSymbolsList()
-        ACGT?N
+        ACGT?BDHKMRSVWY
 
         """
         DataMatrixBase.getSymbolsList(self)
@@ -90,9 +90,9 @@ class DataMatrix(DataMatrixBase):
         >>> from phycas import *
         >>> r = ReadNexus.NexusReader()
         >>> r.readFile('../Tests/Data/nyldna4.nex')
-        >>> m = ReadNexus.getDiscreteMatrix(r, 0)
+        >>> m = ReadNexus.getLastDiscreteMatrix(r, True)
         >>> print m.getStateList()
-        (1, 0, 1, 1, 1, 2, 1, 3, 5, -1, 0, 1, 2, 3, 4, 0, 1, 2, 3)
+        (1, 0, 1, 1, 1, 2, 1, 3, 4, 0, 1, 2, 3, 3, 1, 2, 3, 3, 0, 2, 3, 3, 0, 1, 3, 2, 2, 3, 2, 0, 1, 2, 0, 2, 2, 1, 2, 3, 0, 1, 2, 2, 0, 3, 2, 1, 3)
 
         Here is a translation of the state list in the above example. In this
         case, the states encountered in the original data file (nyldna4.nex)
@@ -135,9 +135,9 @@ class DataMatrix(DataMatrixBase):
         >>> from phycas import *
         >>> r = ReadNexus.NexusReader()
         >>> r.readFile('../Tests/Data/nyldna4.nex')
-        >>> m = ReadNexus.getDiscreteMatrix(r, 0)
+        >>> m = ReadNexus.getLastDiscreteMatrix(r, True)
         >>> print m.getStateListPos()
-        (0, 2, 4, 6, 8, 14)
+        (0, 2, 4, 6, 8, 13, 17, 21, 25, 28, 31, 34, 37, 41, 44)
 
         See first column of table in the documentation for getStateList()
         function to see what the state list values mean.
@@ -146,3 +146,126 @@ class DataMatrix(DataMatrixBase):
         DataMatrixBase.getStateListPos(self)
 
 
+class DataMatrixWrapper(object):
+    """Wraps a DataMatrixBase object and enables access to field. Note that
+    this class may be expanded later to allow editing, but (given that it 
+    is tedious to recode a matrix's underlying data structure via python)
+    only editing of the cell (no new state combinations will be introduced)."""
+    DNA_Datatype = 0
+    RNA_Datatype = 1
+    AA_Datatype = 2 
+    Codon_Datatype = 3
+    Generic_Datatype = 4
+    NEXUS_DATATYPE_NAMES = ("DNA", "RNA", "Protein", "Standard", "Standard")
+    def __init__(self, dataMatrixBaseObj):
+        assert(dataMatrixBaseObj)
+        self.mat = dataMatrixBaseObj
+        self.state_list_pos = dataMatrixBaseObj.getStateListPos()
+        self.state_list = dataMatrixBaseObj.getStateList()
+        self.n_char = dataMatrixBaseObj.getNChar()
+        self.n_tax = dataMatrixBaseObj.getNTax()
+        self.n_states = dataMatrixBaseObj.getNStates()
+        raw_symbols_list = dataMatrixBaseObj.getSymbolsList()
+        assert(len(raw_symbols_list) >= self.n_states)
+        self.symbols = []
+        self.symbols_to_code = {}
+        self.datatype_enum = dataMatrixBaseObj.getDatatype()
+        
+        for n in range(self.n_states):
+            i = raw_symbols_list[n]
+            if i != " ":
+                self.symbols.append(i)
+                self.symbols_to_code[i] = n
+        u = 0
+        for n, i in enumerate(raw_symbols_list):
+            if i != " ":
+                if n >= self.n_states:
+                    self.symbols.append(i)
+                    self.symbols_to_code[i] = n
+            else:
+                s = getListOfStates()
+                if len(s) == 1:
+                    sn = str(u)
+                    while sn in self.symbols_to_code:
+                        u += 1
+                        sn = str(u)
+                    self.symbols.append(sn)
+                    self.symbols_to_code[sn] = n
+                else:
+                    s.sort()
+                    try:
+                        sym = [self.symbols[j] for j in s]
+                    except KeyError:
+                        # if this happens then we have a multi-state code that 
+                        # refers to a higher state code -- all of the 
+                        # "fundamental" states are supposed to come firet
+                        assert(false) 
+                    sym.sort()
+                    t = tuple(s)
+                    self.symbols.append("{%s}"% " ".join(sym))
+                    self.symbols_to_code[t] = n
+    def getDatatype(self):
+        return self.datatype_enum
+
+    def getNChar(self):
+        return self.n_char
+
+    def getNTax(self):
+        return self.n_tax
+
+    def getNStates(self):
+        return self.n_states
+
+    def getSymbolsList():
+        return self.symbols
+
+    def getStateList():
+        return self.state_list
+
+    def getStateListPos():
+        return self.state_listPos
+
+    def getCodedDataMatrix(self):
+        return self.mat.getCodedDataMatrix()
+
+    def getRow(self, index):
+        return self.mat.getRow(index)
+
+    def getListOfStates(self, intCode):
+        """Converts a single integer code (the codes in a matrix) to list of 
+        integer codes."""
+        if intCode == -1:
+            return [-1]
+        s = []
+        index = self.state_list_pos[intCode]
+        ns = self.state_list[index]
+        for i in range(ns):
+            index += 1
+            s.append(self.state_list[index])
+        return s
+    def getSymbolToCode(self, sym):
+        try:
+            return self.symbols_to_code[sym]
+        except:
+            pass
+        if isinstance(sym, str):
+            if len(sym) == 1:
+                return self.symbols_to_code[sym]
+            if sym.startswith("{") and sym.endswith("}"):
+                symList = symList[1:-1].split(" ")
+                if len(symList) == 1:
+                     return self.symbols_to_code[symList[0]]
+            else:
+                return self.symbols_to_code[sym]
+        else:
+            symList = list(sym)
+        symList.sort()
+        symT = tuple(symList)
+        return self.symbols_to_code[symT]
+    
+    def getCodeToSymbol(self, intCode):
+        if intCode == -1:
+            return '-'
+        return self.symbols[intCode]
+    def getNEXUSFormatCommand(self):
+        return "Format datatype=%s missing = ? gap = - ;" % DataMatrixWrapper.NEXUS_DATATYPE_NAMES[self.datatype_enum]

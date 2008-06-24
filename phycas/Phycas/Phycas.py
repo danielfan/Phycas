@@ -255,8 +255,7 @@ class Phycas(object):
         self.addition_sequence      = []        # List of taxon numbers for addition sequence
         self.samc_theta             = []        # Normalizing factors (will have length ntax - 3 because levels with 1, 2 or 3 taxa are not examined)
         self.samc_distance_matrix   = None      # Holds ntax x ntax hamming distance matrix used by SamcMove
-        self.stored_treenames       = None
-        self.stored_newicks         = None
+        self.stored_tree_defs       = None
         self.ps_delta_beta          = 0.0
         self.doing_path_sampling    = False
         self.path_sample            = None
@@ -799,7 +798,7 @@ class Phycas(object):
         if not self.file_name_data_stored or (self.data_file_name != self.file_name_data_stored):
             self.reader.readFile(self.data_file_name)
             self.taxon_labels = self.reader.getTaxLabels()
-            self.data_matrix = getDiscreteMatrix(self.reader, 0)
+            self.data_matrix = getLastDiscreteMatrix(self.reader, True)
             self.ntax = self.data_matrix.getNTax()
             self.nchar = self.data_matrix.getNChar() # used for Gelfand-Ghosh simulations only
             self.file_name_data_stored = self.data_file_name    # prevents rereading same data file later
@@ -808,12 +807,8 @@ class Phycas(object):
         if not self.file_name_trees_stored or (self.tree_file_name != self.file_name_trees_stored):
             self.reader.readFile(self.tree_file_name)
             self.taxon_labels = self.reader.getTaxLabels()  # shouldn't overwrite taxon_labels stored previously
-            self.stored_treenames = []
-            self.stored_newicks = []
-            for t in self.reader.getTrees():
-                self.stored_treenames.append(t.name) # should use hash to store both names and newicks
-                self.stored_newicks.append(t.newick)
-            self.phycassert(len(self.stored_newicks) > 0, 'expecting a trees block defining at least one tree in the nexus data file %s' % self.tree_file_name)
+            self.stored_tree_defs = self.reader.getTrees()
+            self.phycassert(len(self.stored_tree_defs) > 0, 'expecting a trees block defining at least one tree in the nexus data file %s' % self.tree_file_name)
             self.file_name_trees_stored = self.tree_file_name    # prevents rereading same tree file later
 
     def distanceToTaxaSet(self, leaf, taxon_set, d):
@@ -870,9 +865,9 @@ class Phycas(object):
 
         addseq = self.addition_sequence
         brlens = [self.starting_edgelen_dist.sample() for i in range(5)]
-        self.tree_topology = "((%d:%.5f,%d:%.5f):%.5f,%d:%.5f,%d:%.5f)" % (
+        self.tree_topology = Newick("((%d:%.5f,%d:%.5f):%.5f,%d:%.5f,%d:%.5f)" % (
                              addseq[0] + 1, brlens[0], addseq[1] + 1, brlens[1], brlens[4], addseq[2] + 1,
-                             brlens[2], addseq[3] + 1, brlens[3])
+                             brlens[2], addseq[3] + 1, brlens[3]), Newick.ONE_BASED_TAXA_NUMBERS)
         self.starting_tree_source = 'usertree'
         self.starting_tree = self.tree_topology
         print "starting tree = ", self.tree_topology
@@ -995,13 +990,11 @@ class Phycas(object):
         # Create a tree description to be used for building starting trees
         if self.starting_tree_source == 'file':
             self.phycassert(self.data_source, "Specified starting_tree_source to be 'file' when data_source was None (file was not read)")
-            newicks = []
-            for t in self.reader.getTrees():
-                newicks.append(t.newick)
-            self.phycassert(len(newicks) > 0, 'a trees block defining at least one tree must be stored in the nexus data file')
+            tree_defs = self.reader.getTrees()
+            self.phycassert(len(tree_defs) > 0, 'a trees block defining at least one tree must be stored in the nexus data file')
             # Grab first tree description in the data file
             # TODO allow some other tree than the first
-            self.starting_tree = newicks[0]
+            self.starting_tree = tree_defs[0]
         elif self.starting_tree_source == 'usertree':
             self.starting_tree = self.tree_topology
         elif self.starting_tree_source == 'random':
@@ -1144,7 +1137,7 @@ class Phycas(object):
         self.readTreesFromFile()
         self.phycassert(self.data_source == 'file', "set data_source to 'file' and specify data_file_name before calling the likelihoods function")
         self.readDataFromFile()
-        for t,topology in enumerate(self.stored_newicks):
+        for t, topology in enumerate(self.stored_tree_defs):
             self.starting_tree = topology
             core = MCMCManager.LikelihoodCore(self)
             core.setupCore(True)    # specify zero_based_tips = True because topology came from file
@@ -1251,8 +1244,7 @@ class Phycas(object):
                 self.pdf_splits_to_plot[p] = float(f)
         if self.pdf_newick:        
             # Build tree the newick description of which is in self.newick
-            tree = Tree()
-            tree.buildFromString(self.pdf_newick, False)
+            tree = self.pdf_newick.buildTree()
             
             if self.pdf_outgroup_taxon:
                 num = tree.findTipByName(self.pdf_outgroup_taxon)
@@ -1279,8 +1271,8 @@ class Phycas(object):
             # Build each tree and determine its height
             tree = Tree()
             max_height = 0.0
-            for newick in self.stored_newicks:
-                tree.buildFromString(newick, True)
+            for tree_def in self.stored_tree_defs:
+                tree_def.buildTree(tree)
                 tree.rectifyNames(self.taxon_labels)
                 if self.pdf_outgroup_taxon:
                     num = tree.findTipByName(self.pdf_outgroup_taxon)
@@ -1293,8 +1285,8 @@ class Phycas(object):
             # Build each tree again and save in PDF file            
             pdf = PDFGenerator(self.pdf_page_width, self.pdf_page_height)
             pdf.overwrite = True
-            for newick in self.stored_newicks:
-                tree.buildFromString(newick, True)
+            for tree_def in self.stored_tree_defs:
+                tree_def.buildTree(tree)
                 tree.rectifyNames(self.taxon_labels)
                 if self.pdf_outgroup_taxon:
                     num = tree.findTipByName(self.pdf_outgroup_taxon)

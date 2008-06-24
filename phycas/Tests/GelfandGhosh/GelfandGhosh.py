@@ -26,7 +26,7 @@ def commonSetup():
     phycas.using_hyperprior = True
     phycas.gg_outfile = None
     phycas.starting_tree_source = 'usertree'
-    phycas.starting_tree = '(1:0.04,2:0.02,(3:0.04,4:0.02):0.02)'
+    phycas.starting_tree = Newick('(1:0.04,2:0.02,(3:0.04,4:0.02):0.02)', Newick.ONE_BASED_TAXA_NUMBERS)
     phycas.default_model = 'hky'
     phycas.data_source = 'memory'
     phycas.estimate_pinvar = False
@@ -117,9 +117,8 @@ if __name__ == "__main__":
 
     # Create a model tree
     phycas.ntax = 4
-    phycas.tree = Phylogeny.Tree()
-    phycas.tree_topology = '(1:0.04,2:0.02,(3:0.04,4:0.02):0.02)'
-    phycas.tree.buildFromString(phycas.tree_topology)
+    phycas.tree_topology = Newick('(1:0.04,2:0.02,(3:0.04,4:0.02):0.02)')
+    phycas.tree = phycas.tree_topology.buildTree()
 
     # Create a model
     phycas.model = Likelihood.HKYModel()

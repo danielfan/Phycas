@@ -28,18 +28,14 @@ class TreeSummarizer(object):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Reads all trees from the file named in self.opts.input_tree_file.
-        Stores tree descriptions in self.stored_newicks and taxon labels in
+        Stores tree descriptions in self.stored_tree_defs and taxon labels in
         self.taxon_labels.
         
         """
         self.phycas.reader.readFile(self.opts.input_tree_file)
         self.taxon_labels = self.phycas.reader.getTaxLabels()
-        self.stored_treenames = []
-        self.stored_newicks = []
-        for t in self.phycas.reader.getTrees():
-            self.stored_treenames.append(t.name) # should use hash to store both names and newicks
-            self.stored_newicks.append(t.newick)
-        self.phycas.phycassert(len(self.stored_newicks) > 0, 'expecting a trees block defining at least one tree in the file %s' % self.opts.input_tree_file)
+        self.stored_tree_defs = self.phycas.reader.getTrees()
+        self.phycas.phycassert(len(self.stored_tree_defs) > 0, 'expecting a trees block defining at least one tree in the file %s' % self.opts.input_tree_file)
 
     def assignEdgeLensAndSupportValues(self, tree, split_map, total_samples):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -335,11 +331,11 @@ class TreeSummarizer(object):
 
         # values used for display purposes
         split_field_width = 0
-        num_stored_trees = len(self.stored_newicks)
+        num_stored_trees = len(self.stored_tree_defs)
         self.phycas.phycassert(num_stored_trees > 0, 'Specified tree file (%s) contained no stored trees' % self.opts.input_tree_file)
         sojourn_field_width = 2 + math.floor(math.log10(float(num_stored_trees)))
         
-        for newick in self.stored_newicks:
+        for tree_def in self.stored_tree_defs:
             if num_trees < self.opts.burnin:
                 num_trees += 1
                 continue
@@ -351,7 +347,7 @@ class TreeSummarizer(object):
             tree_key = []
 
             # Build the tree
-            t.buildFromString(newick, True)
+            tree_def.buildTree(t)
             t.rectifyNames(self.taxon_labels)
             #ntips = t.getNTips()
             ntips = t.getNObservables()
@@ -437,7 +433,7 @@ class TreeSummarizer(object):
                 entry.append(num_trees_considered)
             else:
                 # tree topology has not yet been seen
-                tree_map[k] = [1, newick, treelen, num_trees_considered]
+                tree_map[k] = [1, tree_def, treelen, num_trees_considered]
 
         self.phycas.output('\nSummary of sampled trees:')
         self.phycas.output('-------------------------')
@@ -581,7 +577,7 @@ class TreeSummarizer(object):
                 t = Phylogeny.Tree()
                 if self.rooted_trees:
                     t.setRooted()
-                t.buildFromString(v[1], True)   # these trees come from a nexus file, so taxon numbers will start at 0, hence the True second argument
+                v[1].buildTree(t)
                 self.assignEdgeLensAndSupportValues(t, split_map, num_trees_considered)
                 t.stripNodeNames()
                 summary_short_name_list.append('%d_%d_of_%d' % (i+1,v[0],num_trees_considered))

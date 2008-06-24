@@ -49,6 +49,18 @@
 #   define TODO(x) message(__FILE__"("__STRINGIZE__(__LINE__)") : " "TODO: "#x) 
 #endif
 
+#if ! defined(NDEBUG)
+#	define BOOST_ENABLE_ASSERT_HANDLER
+#endif
+
+#undef DECLARING_ALL_EXCEPTIONS
+#if defined DECLARING_ALL_EXCEPTIONS
+#	define X_SPEC_THROW(x) throw(x)
+#else
+#	define X_SPEC_THROW(x) 
+#endif
+
+
 #include "phycas/src/phycas_config.h"
 
 #endif

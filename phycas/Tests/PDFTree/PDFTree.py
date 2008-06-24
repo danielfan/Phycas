@@ -1,7 +1,7 @@
 from phycas import *
 
 phycas = Phycas()
-phycas.pdf_newick                = "('P. fimbriata':0.1,('P. articulata':0.09,'P. parksii':0.04)v:0.1,('P. macrophylla':0.14,(('P. gracilis':0.08,('P. ciliata':0.02,'P. basiramia':0.03)x:0.05)y:0.01,'P. polygama':0.09)z:0.06)w:0.07)u"
+phycas.pdf_newick                = Newick("('P. fimbriata':0.1,('P. articulata':0.09,'P. parksii':0.04)v:0.1,('P. macrophylla':0.14,(('P. gracilis':0.08,('P. ciliata':0.02,'P. basiramia':0.03)x:0.05)y:0.01,'P. polygama':0.09)z:0.06)w:0.07)u", Newick.TAXA_NAMES)
 phycas.pdf_outgroup_taxon        = 'P. macrophylla' # use None to display tree as is
 phycas.pdf_tip_label_font        = 'Times-Italic'   # must be one of the 14 standard font names
 phycas.pdf_tip_label_height      = 24               # in units of points

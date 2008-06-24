@@ -134,7 +134,7 @@ class GelfandGhosh(object):
     def getData(self):
         data_reader = ReadNexus.NexusReader()
         data_reader.readFile(self.datafname)
-        self.data_matrix = ReadNexus.getDiscreteMatrix(data_reader, 0)
+        self.data_matrix = ReadNexus.getLastDiscreteMatrix(data_reader, True)
         self.taxon_labels = data_reader.getTaxLabels()
         self.ntax = self.data_matrix.getNTax()
         self.nchar = self.data_matrix.getNChar()
@@ -147,10 +147,7 @@ class GelfandGhosh(object):
         tree_reader = ReadNexus.NexusReader()
         tree_reader.readFile(self.treefname)
         self.trees = tree_reader.getTrees()
-        self.ntrees = 0
-        for i,t in enumerate(self.trees):
-            if i >= self.gg_burnin:
-                self.ntrees += 1
+        self.ntrees = len(self.trees) - self.gg_burnin
         self.outputTreesInfo()
 
     def setupModel(self):
@@ -383,16 +380,13 @@ class GelfandGhosh(object):
         stopwatch = ProbDist.StopWatch()
         stopwatch.start()
         prev_secs = 0.0
-        for i,t in enumerate(self.trees):
+        for i, t in enumerate(self.trees):
             if i >= self.gg_burnin:     # POL use slice to get rid of this waste
                 tree_description = t.newick
                 tree_name = t.name
                 tree_rooted = t.rooted
                 
-                # Second argument (zero-based tip node numbers) must be True
-                # because we read these tree descriptions from a nexus file, and
-                # the nexus reader always returns zero-based tree descriptions
-                tree.buildFromString(tree_description, True) 
+                t.buildTree(tree) 
 
                 #print '*** simulating from tree %s: %s' % (tree_name, tree_description)
 

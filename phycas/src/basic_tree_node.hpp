@@ -22,6 +22,7 @@
 
 #include <string>
 #include <boost/function.hpp>
+#include <boost/shared_ptr.hpp>
 #include "phycas/src/split.hpp"
 
 namespace phycas

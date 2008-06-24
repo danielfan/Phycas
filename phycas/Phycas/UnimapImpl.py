@@ -27,7 +27,7 @@ class UnimapManager(object):
         self.r                                  = ProbDist.Lot()
         self.starting_edgelen_dist              = cloneDistribution(self.phycas.starting_edgelen_dist)
         
-    def setup(self, zero_based_tips = False):
+    def setup(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Copied largely from MCMCManager::setupCore.
@@ -97,7 +97,7 @@ class UnimapManager(object):
         elif self.phycas.starting_tree_source == 'usertree':
             # Build user-specified tree
             self.phycas.starting_tree = self.phycas.tree_topology
-            self.tree.buildFromString(self.phycas.starting_tree, zero_based_tips)
+            self.phycas.starting_tree.buildTree(self.tree)
             if not self.tree.tipNumbersSetUsingNames():
                 self.phycas.warn_tip_numbers = True
         else:

@@ -540,7 +540,7 @@ def simulateData(fn):
 def readData(fn):
     phycas.reader = ReadNexus.NexusReader()
     phycas.reader.readFile(fn)
-    phycas.data_matrix = ReadNexus.getDiscreteMatrix(phycas.reader, 0)
+    phycas.data_matrix = ReadNexus.getLastDiscreteMatrix(phycas.reader, true)
     phycas.ntax = phycas.data_matrix.getNTax()
     phycas.nchar = phycas.data_matrix.getNChar()
     phycas.taxon_names = phycas.reader.getTaxLabels()

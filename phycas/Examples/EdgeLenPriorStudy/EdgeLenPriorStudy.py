@@ -37,7 +37,7 @@ def simulate():
     simulator.default_model = 'jc'
     simulator.num_rates = 1
     simulator.starting_tree_source = 'usertree'
-    simulator.tree_topology = '(1,2,(3,4))'
+    simulator.tree_topology = Newick('(1,2,(3,4))', Newick.ONE_BASED_TAXA_NUMBERS)
     simulator.starting_edgelen_dist = ProbDist.ExponentialDist(1.0/true_edgelen_mean)
     simulator.sim_taxon_labels = ['A', 'B', 'C', 'D']
     simulator.sim_file_name = sim_file_name

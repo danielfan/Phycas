@@ -24,17 +24,12 @@
 #include <vector>
 #include "phycas/src/cipres/CipresNativeC.h"
 #include "phycas/src/cipres/AllocateMatrix.hpp"
+#include "ncl/nxscharactersblock.h"
 
 #ifdef __cplusplus
-#if !defined(NO_IDL_TYPES)
-#	include "phycas/src/cipres/CipresHelper.h"
-#endif
+
 	namespace CipresNative 
 	{
-#	if !defined(NO_IDL_TYPES)
-		CIPR_Datatypes corbaToNativeDatatype(const CipresIDL_api1::DiscreteDatatypes dt);
-		CipresIDL_api1::DiscreteDatatypes nativeToCorbaDatatype(const CIPR_Datatypes dt);
-#	endif
 
 		/**
 		 * Matrix representation that serves as a bridge between CORBA communication (CipresIDL_api1::DataMatrix) and 
@@ -43,11 +38,9 @@
 	class DiscreteMatrix 
 		{
 		public:
-#			if !defined(NO_IDL_TYPES)
-				DiscreteMatrix(const CipresIDL_api1::DataMatrix &);
-#			endif
 			DiscreteMatrix(const CIPR_Matrix & );
-			
+			DiscreteMatrix(const NxsCharactersBlock & cb, bool convertGapsToMissing);
+
 			const CIPR_Matrix & getConstNativeC() const
 				{
 				return nativeCMatrix;
@@ -99,9 +92,10 @@
 				{
 				return nativeCMatrix.matrix;
 				}
-#			if !defined(NO_IDL_TYPES)
-				::CipresIDL_api1::DataMatrix * _retn() const;
-#			endif
+			const int getDatatype() const
+				{
+				return (int)nativeCMatrix.datatype;
+				}
 		private:
 			typedef ScopedTwoDMatrix<CIPR_StateSet_t> ScopedStateSetTwoDMatrix;
 			
