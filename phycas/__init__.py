@@ -15,6 +15,7 @@ import Conversions
 import DataMatrix
 import Likelihood
 import PDFGen
+import wxPhycas
 import Phylogeny
 import ProbDist
 import ReadNexus
