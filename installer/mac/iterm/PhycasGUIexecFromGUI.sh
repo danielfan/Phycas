@@ -17,6 +17,7 @@ then
 	else
 		DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:$phycas_dir/Conversions"
 	fi
+	PATH="$PATH:$mac_os_dir"
 else
 	echo "$0: $phycas_dir does not exist!"
 	exit 1
@@ -31,8 +32,10 @@ then
 	echo "#!/bin/sh" > "$env_settings_path"
 	echo "PYTHONPATH=\"$PYTHONPATH\"" >> "$env_settings_path"
 	echo "DYLD_LIBRARY_PATH=\"$DYLD_LIBRARY_PATH\"" >> "$env_settings_path"
+	echo "PATH=\"$PATH\"" >> "$env_settings_path"
 	echo "export PYTHONPATH" >> "$env_settings_path"
 	echo "export DYLD_LIBRARY_PATH" >> "$env_settings_path"
+	echo "export PATH" >> "$env_settings_path"
 	
 	run_cmd_path="$HOME/.phycas/run_phycas.sh"
 	if ! test -f "$run_cmd_path"
