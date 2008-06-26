@@ -63,10 +63,12 @@ else {
 	  : requirements 
 		  <library>/boost/python//boost_python 
 		  <library>/ncl//ncl
-		  <include>. 
+          <threading>multi
+ 		  <include>. 
 		  <include>./phycas/src 
 		  <link>shared ;
 }
+
 # The rule python-extension is defined in <top-of-boost-build-system>/tools/python.jam
 # The boost-build.jam file in this directory points bjam to <top-of-boost-build-system>
 import python ;
