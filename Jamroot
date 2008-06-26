@@ -8,15 +8,20 @@ use-project boost : $(BOOST_ROOT) ;
 
 # Grab the path to the NLC project from the NCL_INSTALL_DIR environmental variable
 local NCL_INSTALL_DIR = [ os.environ NCL_INSTALL_DIR ] ;
-use-project ncl : $(NCL_INSTALL_DIR) ;
-
+local OSTYPE = [ os.environ OSTYPE ] ;
+local OS = [ os.environ OS ] ;
+echo $(OSTYPE) ;
+if $(OSTYPE) = "darwin" {
+	echo "Assuming that you have built and installed NCL 2.1 to $NCL_INSTALL_DIR" ;
+}
+else {
+	use-project ncl : $(NCL_INSTALL_DIR) ;
+}
 # Tool-specific settings
 echo "---------------------------------------------------------" ;
 echo "Trying to identify the correct toolset." ;
 echo "If the incorrect toolset is chosen, you will need to edit" ;
 echo "the Tool-specific settings section of the Jamroot file..." ;
-local OSTYPE = [ os.environ OSTYPE ] ;
-local OS = [ os.environ OS ] ;
 if $(OSTYPE) = "linux" {
   echo "  Looks like this is Linux, so using toolset gcc" ;
   alias tool_specific_requirements : : : : <toolset>gcc <cxxflags>"-include phycas/src/std_force_include.hpp" ;
@@ -45,14 +50,23 @@ else {
 echo "---------------------------------------------------------" ;
 
 # Project-wide requirements
-project phycas 
-  : requirements 
-      <library>/boost/python//boost_python 
-      <library>/ncl//ncl
-      <include>. 
-      <include>./phycas/src 
-      <link>shared ;
-
+if $(OSTYPE) = "darwin" {
+  project phycas 
+	  : requirements 
+		  <library>/boost/python//boost_python 
+		  <include>. 
+		  <include>./phycas/src 
+		  <link>shared ;
+} 
+else {
+  project phycas 
+	  : requirements 
+		  <library>/boost/python//boost_python 
+		  <library>/ncl//ncl
+		  <include>. 
+		  <include>./phycas/src 
+		  <link>shared ;
+}
 # The rule python-extension is defined in <top-of-boost-build-system>/tools/python.jam
 # The boost-build.jam file in this directory points bjam to <top-of-boost-build-system>
 import python ;
