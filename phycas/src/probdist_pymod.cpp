@@ -122,7 +122,7 @@ BOOST_PYTHON_MODULE(_ProbDist)
 		.def("normalize", &phycas::StopWatch::normalize)
 		.def("elapsedSeconds", &phycas::StopWatch::elapsedSeconds)
 		.def("stopTicks", &phycas::StopWatch::stopTicks)
-		.def("doofus", &phycas::StopWatch::doofus)
+		//.def("doofus", &phycas::StopWatch::doofus)
 		;
 
 //We tell boost::python the smart pointer type we're using, like this:

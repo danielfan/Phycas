@@ -148,6 +148,7 @@ std::string StopWatch::tobinary(long x)
     return revs;
     }
 
+#if 0
 void StopWatch::doofus()
 	{
 #if 1
@@ -189,5 +190,6 @@ void StopWatch::doofus()
         }
 #endif
 	}
+#endif
 
 }	// namespace phycas

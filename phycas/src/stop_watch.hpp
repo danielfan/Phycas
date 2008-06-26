@@ -92,7 +92,7 @@ class StopWatch
         // for debugging
 		long stopTicks();
         std::string tobinary(long x);
-        void doofus();
+        //void doofus();
 
 	private:
 

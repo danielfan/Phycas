@@ -60,7 +60,6 @@
 #	define X_SPEC_THROW(x) 
 #endif
 
-
 #include "phycas/src/phycas_config.h"
 
 #endif

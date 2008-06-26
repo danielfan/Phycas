@@ -108,7 +108,7 @@ The following defines will help me wade through harmless, class-level functions 
 #if defined (WIN_PHOREST)
 	//@@ this misspecification of the directory style is a nxsfilepath bug that needs to be fixed
 	//#	define NXS_USE_WINDOWS_DIR_STYLE
-#	undef NXS_USE_WINDOWS_DIR_STYLE
+#	define NXS_USE_WINDOWS_DIR_STYLE
 #elif defined (LINUX_PHOREST) 
 #	define NXS_USE_UNIX_DIR_STYLE
 #elif defined (MAC_PHOREST)

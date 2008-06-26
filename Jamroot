@@ -6,8 +6,9 @@ import os ;
 local BOOST_ROOT = [ os.environ BOOST_ROOT ] ;
 use-project boost : $(BOOST_ROOT) ;
 
-# Grab the path to the Boost project from the BOOST_ROOT environmental variable
+# Grab the path to the NLC project from the NCL_INSTALL_DIR environmental variable
 local NCL_INSTALL_DIR = [ os.environ NCL_INSTALL_DIR ] ;
+use-project ncl : $(NCL_INSTALL_DIR) ;
 
 # Tool-specific settings
 echo "---------------------------------------------------------" ;
@@ -47,6 +48,7 @@ echo "---------------------------------------------------------" ;
 project phycas 
   : requirements 
       <library>/boost/python//boost_python 
+      <library>/ncl//ncl
       <include>. 
       <include>./phycas/src 
       <link>shared ;
