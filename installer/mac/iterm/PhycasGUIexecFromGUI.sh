@@ -2,14 +2,14 @@
 mac_os_dir=`dirname "$0"`
 contents_os_dir=`dirname "$mac_os_dir"`
 resources_dir="$contents_os_dir/Resources"
-phycas_dir="$resources_dir/phycas"
+phycas_dir="$resources_dir/python/site-packages/phycas"
 if test -d "$phycas_dir"
 then
 	if test -z "$PYTHONPATH"
 	then
-		PYTHONPATH="$resources_dir"
+		PYTHONPATH="$resources_dir/python:$resources_dir/python/site-packages"
 	else
-		PYTHONPATH="$PYTHONPATH:$resources_dir"
+		PYTHONPATH="$PYTHONPATH:$resources_dir/python:$resources_dir/python/site-packages"
 	fi
 	if test -z "$DYLD_LIBRARY_PATH"
 	then
@@ -17,7 +17,7 @@ then
 	else
 		DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:$resources_dir:$phycas_dir/Conversions"
 	fi
-	PATH="$PATH:$mac_os_dir"
+	PATH="$mac_os_dir:$PATH"
 else
 	echo "$0: $phycas_dir does not exist!"
 	exit 1
@@ -36,7 +36,7 @@ then
 	echo "export PYTHONPATH" >> "$env_settings_path"
 	echo "export DYLD_LIBRARY_PATH" >> "$env_settings_path"
 	echo "export PATH" >> "$env_settings_path"
-	
+	echo "export USES_I_PYTHON=1" >> "$env_settings_path"
 	run_cmd_path="$HOME/.phycas/run_phycas.sh"
 	if ! test -f "$run_cmd_path"
 	then

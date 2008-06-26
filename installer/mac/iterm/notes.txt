@@ -1,0 +1,73 @@
+First I sourced phycas_bundler.sh:
+
+================================================================================
+>  export PHYCAS_ROOT="${PROJECTS_DIR}/phycas_dev/py2.5/trunk"
+>  export PATH="$PHYCAS_ROOT/installer/mac/iterm/bundleprefix/bin:$PATH"
+>  export BOOST_ROOT="$HOME/builds/py2.5/boost_1_35_0"
+>  source "$HOME/shell/phycas-dev.sh"
+================================================================================
+
+phycas_dev.sh is:
+
+================================================================================
+> if test -d "$PHYCAS_ROOT"
+> then
+>         if test -d "$BOOST_ROOT"
+>         then
+>                 source "${HOME}/shell/uncipres.sh"
+>                 source "${HOME}/shell/phycas-run.sh"
+>                 export OSTYPE="darwin"
+>                 export BOOST_BUILD_PATH="${BOOST_ROOT}/tools/build/v2"
+>                 export PATH="${PATH}:${BOOST_ROOT}/tools/jam/src/bin.macosxx86"
+>         else
+>                 echo "BOOST_ROOT must be set to a directory"
+>         fi
+> else
+>         echo "PHYCAS_ROOT must be set to a directory"
+> fi
+================================================================================
+
+And phycas_run.sh is:
+================================================================================
+> if test -d "$PHYCAS_ROOT"
+> then
+>         if test -n "$PYTHONPATH" 
+>         then
+>                         export PYTHONPATH="$PYTHONPATH/:$PHYCAS_ROOT"
+>         else
+>                         export PYTHONPATH="$PHYCAS_ROOT"
+>         fi
+>         if test -n "$DYLD_LIBRARY_PATH" 
+>         then
+>                         export DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH/:$PHYCAS_ROOT/phycas/Conversions"
+>         else
+>                         export DYLD_LIBRARY_PATH="$PHYCAS_ROOT/phycas/Conversions"
+>         fi
+> else
+>         echo "PHYCAS_ROOT must be set to a directory"
+> fi
+================================================================================
+
+ $ cd ~/builds/phycasbundle/
+ $ tar xfvz /Users/mholder/archives/readline-5.2.tar.gz 
+ $ tar xfvj /Users/mholder/archives/Python-2.5.2.tar.bz2 
+ $ tar xfvz /Users/mholder/archives/ipython-0.8.2.tar.gz 
+ $ cd readline-5.2/
+ $ ./configure --prefix=$PHYCAS_ROOT/installer/mac/iterm/bundleprefix
+ $ make 
+ $ make install
+ $ cd ../Python-2.5.2/
+ $ CPPFLAGS=-I$PHYCAS_ROOT/installer/mac/iterm/bundleprefix/include LDFLAGS=-L$PHYCAS_ROOT/installer/mac/iterm/bundleprefix/lib ./configure --with-readline=$PHYCAS_ROOT/installer/mac/iterm/bundleprefix --prefix=$PHYCAS_ROOT/installer/mac/iterm/bundleprefix --enable-framework=$PHYCAS_ROOT/installer/mac/iterm/bundleprefix
+ $ make 
+ $ sudo make install
+ $ cd ../ipython-0.8.2/
+ $ sudo python setup.py install --prefix=$PHYCAS_ROOT/installer/mac/iterm/bundleprefix
+ $ cd $PHYCAS_ROOT/installer/mac/iterm
+ $ mkdir phycas_bin
+ $ mkdir phycas_lib
+ $ for i in ipython irunner pycolor pythonw python python-config smtpd.py pydoc ; 
+ > do 
+ >     cp bundleprefix/bin/$i phycas_bin/ ; 
+ > done
+ $ cp bundleprefix/lib/libreadline.dylib phycas_lib
+ 
