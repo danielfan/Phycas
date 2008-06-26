@@ -15,3 +15,4 @@ then
 	cp -r phycas_bin/* Phycas.app/Contents/MacOS/
 fi
 sh makeDMG.sh || exit 4
+

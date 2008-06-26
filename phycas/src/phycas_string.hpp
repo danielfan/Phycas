@@ -54,6 +54,7 @@
 	using std::strlen;
 #endif
 #include <limits>
+#include <ncl/nxsstring.h>
 class NxsException;
 /*----------------------------------------------------------------------------------------------------------------------
 |	Class used with the << operators to format doubles by providing the arguments for the sprintf function that is
@@ -134,10 +135,6 @@ std::string	  & AppendNumberThenWord(unsigned i, std::string s);
 std::string	  & Capitalize(std::string &);
 void			CharToUpper(char & c);
 void			CharToLower(char & c);
-unsigned		ConvertToUnsignedOrThrow(const std::string &, ncl::IntegerConversion conv = ncl::kStringIsInt)  X_SPEC_THROW(int NxsX_NotANumber);
-int				ConvertToIntOrThrow(const std::string &, ncl::IntegerConversion conv = ncl::kStringIsInt) X_SPEC_THROW(NxsX_NotANumber);
-long			ConvertToLongOrThrow(const std::string &, ncl::IntegerConversion conv = ncl::kStringIsInt) X_SPEC_THROW(NxsX_NotANumber);
-double			ConvertToDoubleOrThrow(const std::string &)  X_SPEC_THROW(NxsX_NotANumber);
 std::size_t		CopyToCStr(const std::string &, char * buffer, const std::size_t bufferLen) ;
 bool			EqualsLong(const std::string &, long) ;
 bool			EqualsCaseInsensitive(const std::string &, const std::string &s) ;
@@ -232,6 +229,24 @@ class NxsIndexSet;
 class NxsX_NotANumber {};       /* exception thrown if attempt to convert string to a number fails */
 class NxsX_NumberIsTooLarge : public NxsX_NotANumber {}; //exceeds the bounds of the requested type 
 class NxsX_NumberIsTooSmall : public NxsX_NotANumber {}; //smaller than the lower bound of the requested type
+
+/*----------------------------------------------------------------------------------------------------------------------
+|
+*/
+inline bool IsALong(const std::string &s, long * l)
+	{
+	const char * c = s.c_str();
+	return c && NxsString::to_long(c, l);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|
+*/
+inline bool IsADouble(const std::string &s, double * d) 
+	{
+	const char * c = s.c_str();
+	return c && NxsString::to_double(c, d);
+	}
 
 inline std::string  & ConvertBlanksToUnderscores(std::string & s)
 	{

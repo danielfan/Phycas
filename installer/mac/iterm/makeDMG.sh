@@ -3,12 +3,15 @@ NAME=Phycas
 VERSION=1.0
 MASTER_DMG=$NAME-$VERSION.dmg
 set -x
-files="PhycasGUI.app" 
 if test -d "$PHYCAS_ROOT"
 then
 	SOURCE_DIR="$PHYCAS_ROOT/installer/mac/iterm"
 	cd $PHYCAS_ROOT/installer/mac/diskimage/
 	TEMPLATE_DMG="template.dmg"
+	if test -f ${TEMPLATE_DMG}
+	then
+		rm ${TEMPLATE_DMG}
+	fi
 	bunzip2 -k ${TEMPLATE_DMG}.bz2
 	WC_DMG=wapp.dmg
 	WC_DIR=wapp
@@ -19,10 +22,15 @@ then
 	fi
 	mkdir -p ${WC_DIR}
 	hdiutil attach "$WC_DMG" -noautoopen -quiet -mountpoint "$WC_DIR"
-	for i in $files
+	for i in "Phycas.app" 
 	do
 		rm -rf "$WC_DIR/$i"; \
 		ditto -rsrc "$SOURCE_DIR/$i" "$WC_DIR/$i"; \
+	done
+	for i in "LICENSE" "readme.txt"
+	do
+		rm -rf "$WC_DIR/$i"; \
+		ditto -rsrc "$PHYCAS_ROOT/$i" "$WC_DIR/$i"; \
 	done
 	WC_DEV=`hdiutil info | grep "$WC_DIR" | grep "Apple_HFS" | awk '{print $1}'` 
 	if test -z $WC_DEV

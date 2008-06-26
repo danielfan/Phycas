@@ -115,34 +115,6 @@ vector<string> SplitString(
 		}
 	}
 
-/*--------------------------------------------------------------------------------------------------------------------------
-|	Converts the stored string to an unsigned int using the standard C function strtol, throwing NxsX_NotANumber if the 
-|	conversion fails. Returns UINT_MAX if the number is too large to fit in an unsigned (or was a negative number).
-*/
-unsigned ConvertToUnsignedOrThrow(const string & s, ncl::IntegerConversion conv) X_SPEC_THROW(NxsX_NotANumber)
-	{
-	long l = ConvertToLongOrThrow(s, conv);
-	if (l < 0)
-		throw NxsX_NumberIsTooSmall();
-	if (LONG_MAX > UINT_MAX && l > (long) UINT_MAX)
-		throw NxsX_NumberIsTooLarge();
-	return static_cast<unsigned> (l);
-	}
-/*--------------------------------------------------------------------------------------------------------------------------
-|	Converts the stored string to an int using the standard C function strtol, throwing NxsX_NotANumber if the conversion 
-|	fails. Returns INT_MAX if the number is too large to fit in an int or -INT_MAX if it is too small.
-*/
-int ConvertToIntOrThrow(const string & s, ncl::IntegerConversion conv) X_SPEC_THROW(NxsX_NotANumber)
-	{
-	long l = ConvertToLongOrThrow(s, conv);
-	if (l >= INT_MAX)
-		throw NxsX_NumberIsTooLarge();
-	if (l <= -INT_MAX)
-		throw NxsX_NumberIsTooSmall();
-	return static_cast<int> (l);
-	}
-
-
 
 size_t CopyToCStr(const string & s, char *buffer, const size_t bufferLen)
 	{
@@ -317,67 +289,22 @@ NexusQuotingReq QuotesNeeded(const std::string & s)
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-| 	Slow (catches exception if false)
-*/
-bool IsALong(const std::string &s, long * l)
-	{
-	if (l == NULL)
-		{
-		long nl;
-		return IsALong(s, &nl);
-		}
-	try
-		{
-		*l = ConvertToLongOrThrow(s);
-		}
-	catch (...)
-		{
-		return false;
-		}
-	return true;
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-| 	Slow (catches exception if false)
+|
 */
 bool IsAnUnsigned(const std::string &s, unsigned * u) 
 	{
-	if (u == NULL)
+	long l;
+	if (IsALong(s, &l))
 		{
-		unsigned nu;
-		return IsAnUnsigned(s, &nu);
+		if (l >=0 && l < (long)UINT_MAX)
+			{
+			*u = (unsigned) l;
+			return true;
+			}
 		}
-	try
-		{
-		*u = ConvertToUnsignedOrThrow(s);
-		}
-	catch (...)
-		{
-		return false;
-		}
-	return true;
+	return false;
 	}
 
-/*----------------------------------------------------------------------------------------------------------------------
-| 	Slow (catches exception if false)
-*/
-bool IsADouble(const std::string &s, double * d) 
-	{
-	if (d == NULL)
-		{
-		double nd;
-		return IsADouble(s, &nd);
-		}
-	try
-		{
-		*d = ConvertToDoubleOrThrow(s);
-		}
-	catch (...)
-		{
-		return false;
-		}
-	return true;
-	}
 
 /*--------------------------------------------------------------------------------------------------------------------------
 | Returns true if the stored string is a non-case-sensitive copy of the argument `s'. Note: will return true if both the
@@ -415,31 +342,6 @@ string UpperCasePrefix(const string &s)
 	return x;
 	}
 
-
-/*--------------------------------------------------------------------------------------------------------------------------
-| Converts the stored string to a long using the standard C function strtol, throwing NxsX_NotANumber if the conversion 
-| fails (or  NxsX_NumberIsTooLarge or NxsX_NumberIsTooSmall if the number is out of bounds)
-*/
-long ConvertToLongOrThrow(const string &s, ncl::IntegerConversion ) X_SPEC_THROW(NxsX_NotANumber)
-	{
-	long d = ConvertEntireStr<long>(s);
-	if (d == LONG_MAX)
-		throw NxsX_NotANumber();
-	return d;
-	}
-
-
-/*--------------------------------------------------------------------------------------------------------------------------
-| Converts the stored string to a double using the standard C function strtod, throwing NxsX_NotANumber if the conversion
-| fails. throws NxsX_NumberIsTooLarge or NxsX_NumberIsTooSmall if the number is out of bounds
-*/
-double ConvertToDoubleOrThrow(const std::string & s) X_SPEC_THROW(NxsX_NotANumber)
-	{
-	double d = ConvertEntireStr<double>(s);
-	if (d == DBL_MAX)
-		throw NxsX_NotANumber();
-	return d;
-	}
 
 /*--------------------------------------------------------------------------------------------------------------------------
 | Transforms the vector of string objects by making them all lower case and then capitalizing the first portion of 

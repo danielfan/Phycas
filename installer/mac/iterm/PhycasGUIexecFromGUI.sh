@@ -13,9 +13,9 @@ then
 	fi
 	if test -z "$DYLD_LIBRARY_PATH"
 	then
-		DYLD_LIBRARY_PATH="$phycas_dir/Conversions"
+		DYLD_LIBRARY_PATH="$resources_dir:$phycas_dir/Conversions"
 	else
-		DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:$phycas_dir/Conversions"
+		DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:$resources_dir:$phycas_dir/Conversions"
 	fi
 	PATH="$PATH:$mac_os_dir"
 else
@@ -44,9 +44,18 @@ then
 		echo "env_settings_path=\$HOME/.phycas/phycas_gui_env.sh" >> "$run_cmd_path"
 		echo "if test -f \$env_settings_path" >> "$run_cmd_path"
 		echo "then" >> "$run_cmd_path"
-		echo "    source \$env_settings_path || exit 1" >> "$run_cmd_path"
+		echo "  source \$env_settings_path || exit 1" >> "$run_cmd_path"
 		echo "fi" >> "$run_cmd_path"
-		echo "python -i -c \"from phycas import *\"" >> "$run_cmd_path"
+		echo "if test -z \"\$PYTHONINTERPRETER\"" >> "$run_cmd_path"
+		echo "then" >> "$run_cmd_path"
+		echo "  if test -z \"\$USES_I_PYTHON\"" >> "$run_cmd_path"
+		echo "  then" >> "$run_cmd_path"
+		echo "   PYTHONINTERPRETER=python" >> "$run_cmd_path"
+		echo "  else" >> "$run_cmd_path"
+		echo "    PYTHONINTERPRETER=ipython" >> "$run_cmd_path"
+		echo "  fi" >> "$run_cmd_path"
+		echo "fi" >> "$run_cmd_path"
+		echo "\$PYTHONINTERPRETER -i -c \"from phycas import *\"" >> "$run_cmd_path"
 		chmod +x "$run_cmd_path"
 	fi
 	if ! test -f "$run_cmd_path"
