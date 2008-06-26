@@ -16,6 +16,10 @@ if ! test -d Phycas.app/Contents/Resources/python
 then
 	mkdir Phycas.app/Contents/Resources/python
 fi
+if ! test -d Phycas.app/Contents/Resources/python/site-packages
+then
+	mkdir Phycas.app/Contents/Resources/python/site-packages
+fi
 cp -r $PHYCAS_ROOT/phycas Phycas.app/Contents/Resources/python/site-packages || exit 2
 find  Phycas.app/Contents/Resources/python/site-packages/phycas -name .svn -exec rm -rf {} \; 
 sh makeDMG.sh || exit 4
