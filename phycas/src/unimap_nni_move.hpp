@@ -88,7 +88,7 @@ class UnimapNNIMove : public MCMCUpdater
 		void calculateProposalDist(bool);
 
 		double calcProposalLnDensity(double mean, double x);
-		double UnimapNNIMove::proposeEdgeLen(double mean);
+		double proposeEdgeLen(double mean);
 
 		void FillStateCodeArray(const StateTimeListVect * um, int8_t * tipSpecificStateCode, bool);
 		TipData * createTipDataFromUnivents(TreeNode * nd , bool use_last, TipData *);

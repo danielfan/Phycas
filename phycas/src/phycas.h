@@ -20,6 +20,7 @@
 #if !defined(PHYCAS_H)
 #define PHYCAS_H
 
+#include <cfloat>
 
 #include "ncl/nxsdefs.h"
 	//USING_VARIANCE_FOR_RATEHET as opposed to using the shape parameter of the gamma distribution for rate het.
