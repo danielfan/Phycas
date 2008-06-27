@@ -42,13 +42,12 @@ then
 		echo "Could not unmount. Run 'hdiutil info' "
 		exit 2
 	else
-		echo "This script doesn't know how to get the device name reliably"
-		echo "We think that you need to run:"
-		echo
-		echo "hdiutil resize -nofinalgap $WC_DEV"
-		echo "hdiutil detach $WC_DEV -quiet -force"
-		echo
-		echo "then run finishDMG.sh"
+		hdiutil detach $WC_DEV -quiet -force
+		rm -f "$MASTER_DMG"
+		hdiutil convert "$WC_DMG" -quiet -format UDZO -imagekey zlib-level=9 -o "$@"
+		#rm -rf $WC_DIR
+		mv "$WC_DMG" "$MASTER_DMG"
+		mv "$MASTER_DMG" "$SOURCE_DIR/"
 	fi
 else
 	echo "PHYCAS_ROOT is not defined as a directory"
