@@ -75,7 +75,7 @@ DiscreteMatrix::DiscreteMatrix(const NxsCharactersBlock & cb, bool gapsToMissing
 	const unsigned nMapperStateCodes = mapper.GetNumStateCodes();
 	const unsigned recodeVecLen = nMapperStateCodes;
 	const unsigned nMapperPosStateCodes = nMapperStateCodes - (hadGaps ? 2 : 1);
-	std::vector<CIPR_State_t> recodeVec(recodeVecLen + 1, -2);  //@POL not sure the +1 is correct (but +0 is definitely wrong!)
+	std::vector<CIPR_State_t> recodeVec(recodeVecLen + negSCLOffset, -2);  //@POL not sure the +1 is correct (but +0 is definitely wrong!)
 	CIPR_State_t * recodeArr = &recodeVec[negSCLOffset];
 
 	if (fundamentalSymbols.length() < this->nativeCMatrix.nStates)
