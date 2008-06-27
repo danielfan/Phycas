@@ -2,6 +2,8 @@
 mac_os_dir=`dirname "$0"`
 contents_os_dir=`dirname "$mac_os_dir"`
 resources_dir="$contents_os_dir/Resources"
+PHYCAS_GUI_RESOURCES_DIR="$resources_dir"
+export PHYCAS_GUI_RESOURCES_DIR
 phycas_dir="$resources_dir/phycas"
 if test -d "$phycas_dir"
 then
@@ -58,11 +60,19 @@ then
 		echo "        USES_I_PYTHON=0" >> "$run_cmd_path"
 		echo "    fi" >> "$run_cmd_path"
 		echo "fi" >> "$run_cmd_path"
+		echo "export USES_I_PYTHON " >> "$run_cmd_path"
 		echo "if ! test \"\$USES_I_PYTHON\" = \"1\"" >> "$run_cmd_path"
 		echo "then" >> "$run_cmd_path"
 		echo "    \$PYTHONINTERPRETER -i -c \"from phycas import *\"" >> "$run_cmd_path"
 		echo "else" >> "$run_cmd_path"
-		echo "    \$PYTHONINTERPRETER -i -c \"import IPython ; IPython.Shell.start().mainloop()\" -c \"from phycas import *\"" >> "$run_cmd_path"
+		echo "    if ! test -d \"\$HOME/.ipython\"" >> "$run_cmd_path"
+		echo "    then" >> "$run_cmd_path"
+		echo "        if test -d \"\$PHYCAS_GUI_RESOURCES_DIR/initial_ipython/.ipython\"" >> "$run_cmd_path"
+		echo "        then" >> "$run_cmd_path"
+		echo "            cp -r \"\$PHYCAS_GUI_RESOURCES_DIR/initial_ipython/.ipython\" \"\$HOME/.ipython\" "  >> "$run_cmd_path"
+		echo "        fi" >> "$run_cmd_path"
+		echo "    fi" >> "$run_cmd_path"
+		echo "    \$PYTHONINTERPRETER -c \"import IPython ; IPython.Shell.start().mainloop()\" -c \"from phycas import *\"" >> "$run_cmd_path"
 		echo "fi" >> "$run_cmd_path"
 		chmod +x "$run_cmd_path"
 	fi
