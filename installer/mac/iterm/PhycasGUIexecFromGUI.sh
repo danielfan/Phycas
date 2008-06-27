@@ -2,14 +2,14 @@
 mac_os_dir=`dirname "$0"`
 contents_os_dir=`dirname "$mac_os_dir"`
 resources_dir="$contents_os_dir/Resources"
-phycas_dir="$resources_dir/python/site-packages/phycas"
+phycas_dir="$resources_dir/phycas"
 if test -d "$phycas_dir"
 then
 	if test -z "$PYTHONPATH"
 	then
-		PYTHONPATH="$resources_dir/python:$resources_dir/python/site-packages"
+		PYTHONPATH="$resources_dir"
 	else
-		PYTHONPATH="$PYTHONPATH:$resources_dir/python:$resources_dir/python/site-packages"
+		PYTHONPATH="$PYTHONPATH:$resources_dir"
 	fi
 	if test -z "$DYLD_LIBRARY_PATH"
 	then
@@ -36,7 +36,6 @@ then
 	echo "export PYTHONPATH" >> "$env_settings_path"
 	echo "export DYLD_LIBRARY_PATH" >> "$env_settings_path"
 	echo "export PATH" >> "$env_settings_path"
-	echo "export USES_I_PYTHON=1" >> "$env_settings_path"
 	run_cmd_path="$HOME/.phycas/run_phycas.sh"
 	if ! test -f "$run_cmd_path"
 	then
@@ -52,9 +51,18 @@ then
 		echo "fi" >> "$run_cmd_path"
 		echo "if test -z \"\$USES_I_PYTHON\"" >> "$run_cmd_path"
 		echo "then" >> "$run_cmd_path"
-		echo "    \$PYTHONINTERPRETER -i -c \"from phycas import * ; import IPython ; IPython.Shell.start().mainloop() \"" >> "$run_cmd_path"
-		echo "else" >> "$run_cmd_path"
+		echo "    if \`python -c 'import IPython' 2>/dev/null \`" >> "$run_cmd_path"
+		echo "    then" >> "$run_cmd_path"
+		echo "        USES_I_PYTHON=1" >> "$run_cmd_path"
+		echo "    else" >> "$run_cmd_path"
+		echo "        USES_I_PYTHON=0" >> "$run_cmd_path"
+		echo "    fi" >> "$run_cmd_path"
+		echo "if" >> "$run_cmd_path"
+		echo "if test \"\$USES_I_PYTHON\" = \"1\"" >> "$run_cmd_path"
+		echo "then" >> "$run_cmd_path"
 		echo "    \$PYTHONINTERPRETER -i -c \"from phycas import *\"" >> "$run_cmd_path"
+		echo "else" >> "$run_cmd_path"
+		echo "    \$PYTHONINTERPRETER -i -c \"from phycas import * ; import IPython ; IPython.Shell.start().mainloop() \"" >> "$run_cmd_path"
 		echo "fi" >> "$run_cmd_path"
 		chmod +x "$run_cmd_path"
 	fi

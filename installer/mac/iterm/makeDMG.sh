@@ -24,7 +24,7 @@ then
 	do
 		ditto -rsrc "$PHYCAS_ROOT/$i" "phycasimg/$i" || exit
 	done
-	hdiutil create -srcfolder phycas $MASTER_DMG
+	hdiutil create -srcfolder phycasimg $MASTER_DMG
 else
 	echo "PHYCAS_ROOT is not defined as a directory"
 	exit 1
