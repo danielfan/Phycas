@@ -71,7 +71,7 @@ DiscreteMatrix::DiscreteMatrix(const NxsCharactersBlock & cb, bool gapsToMissing
 	CIPR_State_t newMissingStateCode = this->nativeCMatrix.nStates;
 	PHYCAS_ASSERT((int)NXS_MISSING_CODE < 0);
 	PHYCAS_ASSERT((int)NXS_GAP_STATE_CODE < 0);
-	const int sclOffset = (hadGaps ? std::min( (int)NXS_GAP_STATE_CODE, (int)NXS_MISSING_CODE) :  (int)NXS_MISSING_CODE);
+	const int sclOffset = std::min( (int)NXS_GAP_STATE_CODE, (int)NXS_MISSING_CODE);
 	const int negSCLOffset = -sclOffset;
 	const unsigned nMapperStateCodes = mapper.GetNumStateCodes();
 	const unsigned recodeVecLen = nMapperStateCodes;
