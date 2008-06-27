@@ -5,10 +5,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "conversions", "conversions\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "data_matrix", "data_matrix\data_matrix.vcproj", "{4276D07D-BE49-4AC6-8BBB-C30C28E53167}"
 	ProjectSection(ProjectDependencies) = postProject
+		{7BBC165F-8F6A-4215-B039-A47D049C31E1} = {7BBC165F-8F6A-4215-B039-A47D049C31E1}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "likelihood", "likelihood\likelihood.vcproj", "{7236CB43-5404-475B-9DF9-08796D419A58}"
 	ProjectSection(ProjectDependencies) = postProject
+		{7BBC165F-8F6A-4215-B039-A47D049C31E1} = {7BBC165F-8F6A-4215-B039-A47D049C31E1}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "prob_dist", "prob_dist\prob_dist.vcproj", "{6D39CB95-6A32-4F24-8C0A-0553E8C310CA}"
@@ -17,14 +19,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "prob_dist", "prob_dist\prob
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "phylogeny", "phylogeny\phylogeny.vcproj", "{38A3E6E4-E1A1-4274-902F-C0F7DC646891}"
 	ProjectSection(ProjectDependencies) = postProject
+		{7BBC165F-8F6A-4215-B039-A47D049C31E1} = {7BBC165F-8F6A-4215-B039-A47D049C31E1}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "read_nexus", "read_nexus\read_nexus.vcproj", "{4308AE1D-9E4B-446E-907E-539BF85267F8}"
 	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pdfgen", "pdfgen\pdfgen.vcproj", "{1B5E52CB-42AB-4AB6-9E98-D714B33028AE}"
-	ProjectSection(ProjectDependencies) = postProject
+		{7BBC165F-8F6A-4215-B039-A47D049C31E1} = {7BBC165F-8F6A-4215-B039-A47D049C31E1}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ncl", "ncl\ncl.vcproj", "{7BBC165F-8F6A-4215-B039-A47D049C31E1}"
@@ -63,10 +63,6 @@ Global
 		{4308AE1D-9E4B-446E-907E-539BF85267F8}.Debug.Build.0 = Debug|Win32
 		{4308AE1D-9E4B-446E-907E-539BF85267F8}.Release.ActiveCfg = Release|Win32
 		{4308AE1D-9E4B-446E-907E-539BF85267F8}.Release.Build.0 = Release|Win32
-		{1B5E52CB-42AB-4AB6-9E98-D714B33028AE}.Debug.ActiveCfg = Debug|Win32
-		{1B5E52CB-42AB-4AB6-9E98-D714B33028AE}.Debug.Build.0 = Debug|Win32
-		{1B5E52CB-42AB-4AB6-9E98-D714B33028AE}.Release.ActiveCfg = Release|Win32
-		{1B5E52CB-42AB-4AB6-9E98-D714B33028AE}.Release.Build.0 = Release|Win32
 		{7BBC165F-8F6A-4215-B039-A47D049C31E1}.Debug.ActiveCfg = Debug|Win32
 		{7BBC165F-8F6A-4215-B039-A47D049C31E1}.Debug.Build.0 = Debug|Win32
 		{7BBC165F-8F6A-4215-B039-A47D049C31E1}.Release.ActiveCfg = Release|Win32

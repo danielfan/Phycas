@@ -24,5 +24,10 @@ phycas.estimate_pinvar = True
 phycas.use_flex_model = False
 phycas.random_seed = 13579
 phycas.data_file_name = '../Data/green.nex'
+
+import sys,os
+if os.path.basename(sys.executable) == 'python_d.exe':
+    raw_input('debug stop')
+
 phycas.mcmc()
 

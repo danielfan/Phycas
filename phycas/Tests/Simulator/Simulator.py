@@ -22,8 +22,15 @@ phycas.random_seed = 13579
 phycas.sim_file_name = 'simulated.nex'
 phycas.sim_nchar = 100000
 
+import sys,os
+if os.path.basename(sys.executable) == 'python_d.exe':
+    raw_input('debug stop before simulate')
+
 # Simulate data
 phycas.simulateDNA()
+
+if os.path.basename(sys.executable) == 'python_d.exe':
+    raw_input('debug stop before likelihood')
 
 # Now compute the likelihood of the model tree
 phycas.data_source = 'file'

@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(PYTHON_ROOT)\include;$(PHYCAS_ROOT);$(NCL_ROOT)\ncl;$(BOOST_ROOT)"
+				AdditionalIncludeDirectories="$(NCL_ROOT);$(PYTHON_ROOT)\include;$(PHYCAS_ROOT);$(NCL_ROOT)\ncl;$(BOOST_ROOT)"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;DATA_MATRIX_EXPORTS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -37,7 +37,7 @@
 				AdditionalDependencies="boost_python-vc71-mt-gyd-1_34.lib ncl.lib"
 				OutputFile="$(PHYCAS_ROOT)/phycas/DataMatrix/_DataMatrixBase_d.pyd"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(NCL_ROOT)\vc7\ncl\Debug;$(BOOST_ROOT)\stage\lib;$(PYTHON_ROOT)\libs"
+				AdditionalLibraryDirectories="$(PHYCAS_ROOT)\VC\ncl\Debug;$(BOOST_ROOT)\stage\lib;$(PYTHON_ROOT)\libs"
 				IgnoreDefaultLibraryNames="boost_python-vc71-mt-gd-1_34.lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/data_matrix.pdb"
@@ -73,7 +73,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(PYTHON_ROOT)\include;$(PHYCAS_ROOT);$(BOOST_ROOT)"
+				AdditionalIncludeDirectories="$(NCL_ROOT);$(PYTHON_ROOT)\include;$(PHYCAS_ROOT);$(BOOST_ROOT)"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;DATA_MATRIX_EXPORTS"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
@@ -86,6 +86,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="ncl.lib"
 				OutputFile="$(PHYCAS_ROOT)/phycas/DataMatrix/_DataMatrixBase.pyd"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(BOOST_ROOT)\stage\lib;$(PYTHON_ROOT)\libs"

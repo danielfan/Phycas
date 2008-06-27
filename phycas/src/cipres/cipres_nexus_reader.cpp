@@ -198,7 +198,11 @@ void NxsFilePath::TranslateDirStack(const list<string> &dirStack) const
  				nativePath.append("..");
  			else
  				{
- 				nativePath.append("\\");
+                if (dIt != dirStack.begin())
+                    {
+                    // Only add slash if in the middle of the path
+ 				    nativePath.append("\\");
+                    }
  				nativePath.append(*dIt);
  				}
  			}
@@ -300,6 +304,7 @@ CipresNative::DiscreteMatrix * GetLastDiscreteMatrix(PhycasNexusReader & nexusRe
 	{
 	return createNativeDiscreteMatrix(nexusReader, 0L, UINT_MAX, convertGapsToMissing);
 	}
+
 CipresNative::DiscreteMatrix * createNativeDiscreteMatrix(PhycasNexusReader & nexusReader, NxsTaxaBlock * taxaBlockPtr, unsigned int charBlockIndex, bool convertGapsToMissing)
 	{
 	NxsCharactersBlock * cb;
