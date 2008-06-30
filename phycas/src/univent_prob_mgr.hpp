@@ -86,6 +86,9 @@ class UniventProbMgr
 		unsigned						numStates;
 		ModelShPtr						model;
 		bool							sampleTimes;
+		mutable SquareMatrix			scratchMatOne;
+		mutable SquareMatrix			scratchMatTwo;
+		bool							storeUnivents;
 };
 
 /*----------------------------------------------------------------------------------------------------------------------

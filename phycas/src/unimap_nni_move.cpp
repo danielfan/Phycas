@@ -362,7 +362,7 @@ double UnimapNNIMove::FourTaxonLnLBeforeMove(TreeNode * nd)
 
 
 
-    DebugSaveNexusFile(ySisTipData, yTipData, wSisTipData, wTipData, lnlike);
+    //DebugSaveNexusFile(ySisTipData, yTipData, wSisTipData, wTipData, lnlike);
 
     return lnlike;
 	}

@@ -29,9 +29,11 @@ UniventProbMgr::UniventProbMgr(ModelShPtr modelArg)
 	,numStates(modelArg->getNStates())
 	,model(modelArg)
 	,sampleTimes(false)
+	,scratchMatOne(modelArg->getNStates(), 0.0)
+	,scratchMatTwo(modelArg->getNStates(), 0.0),
+	storeUnivents(false)
 	{
 	lnUMat = lnUMatMemMgt.GetMatrix();
-	
 	
 	unsigned init_max_m = 5;
 	maxm = init_max_m;
@@ -165,7 +167,7 @@ void UniventProbMgr::expandUMatVect(unsigned m) const
 	if (m > prevlogmfactsize)
 		{
 		// extend logmfact vector
-		logmfact.resize(maxm + 1, 0.0);
+		logmfact.resize(m + 1, 0.0);
 		for (unsigned m = prevlogmfactsize; m <= maxm; ++m)
 			logmfact[m] = logmfact[m - 1] + log((double)m);
 		std::cerr << "\nIncreasing maxm to " << maxm << std::endl;
@@ -282,74 +284,142 @@ void UniventProbMgr::unimapEdgeOneSite(
 		}
     }
 
+/*==============================================================================
+| uses scratchMatTwo (and indirectly scratchMatOne)
+*/
 void UniventProbMgr::sampleUniventsKeepEndStates(Univents & u, const double edgelen, const int8_t * par_states, const double * * p_mat_transposed, Lot &rng) const
 	{
-	const unsigned num_patterns = u.univents.size();
-	const int8_t *dp = &(u.end_states_vec[0]);
-	u.mdot = 0;
-	for (unsigned i = 0; i < num_patterns; ++i)
-		{
-	    const int8_t end_state = *dp++;
-	    const int8_t start_state = par_states[i];
-		double transition_prob = p_mat_transposed[end_state][start_state];
-		unimapEdgeOneSite(u, i, start_state, end_state, transition_prob, edgelen, sampleTimes, rng);
-	  	}
-	u.is_valid = true;
-	u.times_valid = this->sampleTimes;
+	const int8_t * des_states = &(u.end_states_vec[0]);
+	double ** p_mat = scratchMatTwo.GetMatrix();
+	fillTranspose(p_mat, p_mat_transposed, numStates);
+	sampleUnivents(u, edgelen, par_states, des_states, const_cast<const double * const *>(p_mat), rng, NULL);
 	}
- 
+
+/*==============================================================================
+| uses scratchMatOne
+*/
 void UniventProbMgr::sampleUnivents(Univents & u, const double edgelen,  const int8_t * par_states, const int8_t * des_states, const double * const * p_mat, Lot & rng, unsigned ** s_mat) const
 	{
-    
 	const unsigned num_patterns = u.univents.size();
 	u.mdot = 0;
-	for (unsigned i = 0; i < num_patterns; ++i)
+	scratchMatOne.Fill(1.0);
+	const bool doSampleTimes = this->sampleTimes;
+    const double lambda_t       = edgelen*lambda;
+    const double log_lambda_t   = log(lambda_t);
+	std::vector<double> elogprmVec; // holds factors that do not depend on the start and end states
+	for (unsigned pattern_index = 0; pattern_index < num_patterns; ++pattern_index)
 		{
-		const int8_t start_state = par_states[i];
-	    const int8_t end_state = des_states[i];
-		const double transition_prob = p_mat[start_state][end_state];
-		if (s_mat)
-			s_mat[start_state][end_state] += 1.0;
-		unimapEdgeOneSite(u, i, start_state, end_state, transition_prob, edgelen, sampleTimes, rng);
+		const int8_t start_state = *par_states++;
+	    const int8_t end_state = *des_states++;
+	    // begin UniventProbMgr::unimapEdgeOneSite inlined manually 
+	    const double trans_prob = p_mat[start_state][end_state];
+		/* begin sampleM inlined manually.... */
+		unsigned m = UINT_MAX;
+		double uni_variate = rng.Uniform(FILE_AND_LINE);
+			// ok will be set to true if an m value can be sampled. The reason m might not be sampled is
+			// because maxm might be not set high enough, in which case maxm will be doubled and another
+			// attempt to sample m will be made.
+		double total_prob = 0.0;
+		unsigned next_z = 0;
+		for (;;)
+			{
+			for (unsigned z = next_z; z <= maxm; ++z)
+				{
+				if (z >= elogprmVec.size())
+					{
+					elogprmVec.reserve(maxm);
+					elogprmVec.push_back(exp((double)z*log_lambda_t - lambda_t - logmfact[z]));
+					PHYCAS_ASSERT(z < elogprmVec.size());
+					}
+				const double elogprm = elogprmVec[z];
+				double pij = uMatVect[z][start_state][end_state]; //@POL should uMatVect hold L matrices rather than U matrices?
+				const double pr = pij*elogprm/trans_prob;
+				total_prob += pr;
+				if (total_prob > uni_variate)
+					{
+					m = z;
+					break;
+					}
+				}
+			if (m == UINT_MAX)
+				{
+				next_z = maxm + 1;
+				expandUMatVect(maxm*2);
+				}
+			else
+				break;
+			}
+		/* end  sampleM inlined manually */
+    
+		u.mdot += m;
+		if (doSampleTimes)
+			{
+			std::vector<double> & t = u.times.at(pattern_index);
+			t.clear();
+			t.resize(m);
+			for (unsigned k = 0; k < m; ++k)
+				t[k] = (float)rng.Uniform(FILE_AND_LINE);
+			std::sort(t.begin(), t.end());
+			}
+		StateMapping * sm = 0L;
+		if (storeUnivents)
+			{
+			sm = &(u.univents.at(pattern_index));
+			sm->clear();
+			sm->resize(m);
+			}
+		// Now sample the m states
+		if (m == 0)
+			{
+			PHYCAS_ASSERT(start_state == end_state);
+			}
+		else if (m == 1)
+			{
+			if (s_mat)
+				s_mat[start_state][end_state] += 1;		
+			if (sm)
+				(*sm)[0] = end_state;
+			}
+		else
+			{
+			const double * const * one_umat = getUMatConst(1);
+			const double * const * curr_umat = getUMatConst(m);
+			int8_t prev_state = start_state;
+			for (unsigned curr_m = 0; curr_m < m - 1; ++curr_m)
+				{
+				const double * const * rest_umat = getUMatConst(m - curr_m - 1);
+				const double prob_all_mappings = curr_umat[prev_state][end_state];
+				double u = rng.Uniform(FILE_AND_LINE)*prob_all_mappings;
+				unsigned s = 0;
+				/*TEMP should just loop over single-mutation neighbors */
+				for (; s < numStates; ++s)
+					{
+					u -= one_umat[prev_state][s]* rest_umat[s][end_state];
+					if (u < 0.0)
+						break;
+					}
+				if (s >= numStates && u >= 1.0e-7)
+					{
+					std::cerr << "woah!" << std::endl;
+					}
+				PHYCAS_ASSERT(s < numStates || u < 1.0e-7);
+				if (s_mat)
+					s_mat[start_state][s] += 1;
+				if (sm)
+					(*sm)[curr_m] = s;
+				curr_umat = rest_umat;
+				prev_state = s;
+				}
+			if (s_mat)
+				s_mat[prev_state][end_state] += 1;
+			if (sm)
+				(*sm)[m-1] = end_state;
+			}
+
 	  	}
 	u.is_valid = true;
 	u.times_valid = this->sampleTimes;
-
 	}
-
-#if 0
-	void UniventProbMgr::sampleUniventsKeepBegStates(TreeNode * nd, const int8_t * des_states, const double * * p_mat_transposed)
-		{
-		const double edgelen = nd->GetEdgeLen();
-	
-	#if 0   //temporary!
-		const unsigned nStates = likelihood->getNStates();
-		double * * * tmp = NewThreeDArray<double>(1, nStates + 1, nStates);
-		likelihood->calcPMatTranspose(tmp, ySisTipData->getConstStateListPos(), edgelen);
-		for (unsigned z = 0; z < nStates; ++z)
-			{
-			for (unsigned zz = 0; zz < nStates; ++zz)
-				PHYCAS_ASSERT(tmp[0][z][zz] == p_mat_transposed[z][zz]);
-			}
-	#endif
-		
-		StateTimeListVect *stlv = GetStateTimeListVect(nd);
-		PHYCAS_ASSERT(stlv);
-		StateTimeListVect::iterator state_time_it = stlv->begin();
-		const unsigned num_patterns = likelihood->getNPatterns();
-		for (unsigned i = 0; i < num_patterns; ++i, ++state_time_it)
-			{
-			PHYCAS_ASSERT(state_time_it != stlv->end());
-			int8_t end_state = des_states[i];
-			StateTimeList & state_time_list = *state_time_it;
-			int8_t start_state = state_time_list.begin()->first;
-			double transition_prob = p_mat_transposed[end_state][start_state];
-			likelihood->unimapEdgeOneSite(u, i, start_state, end_state, transition_prob, edgelen, sampleTimes, rng);
-			}
-		u.is_valid = true;
-		u.times_valid = this->sampleTimes;
-		}
-#endif
 
 
 void UniventProbMgr::sampleDescendantStates(
