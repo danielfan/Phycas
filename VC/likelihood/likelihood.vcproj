@@ -305,6 +305,12 @@
 				RelativePath="..\..\phycas\src\unimap_nni_move.cpp">
 			</File>
 			<File
+				RelativePath="..\..\phycas\src\univent_prob_mgr.cpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\univents.cpp">
+			</File>
+			<File
 				RelativePath="..\..\phycas\src\updater_pymod.cpp">
 			</File>
 		</Filter>

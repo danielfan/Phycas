@@ -93,7 +93,7 @@ class UniventProbMgr
 */
 inline const double * const *  UniventProbMgr::getUMatConst(unsigned m) const
     {
-    if (m >= uMatVect.size());
+    if (m >= uMatVect.size())
     	expandUMatVect(m);
     return const_cast<const double * const *>( uMatVect[m].GetMatrix());
     }
