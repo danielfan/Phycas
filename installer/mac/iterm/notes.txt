@@ -1,3 +1,52 @@
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+I. Building the "PhycasGUI.app"
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+In theory you can checkout the iterm code from 
+
+	iterm.cvs.sourceforge.net:/cvsroot/iterm
+
+to a directory on your machine that we will call ITERM_SRC_ROOT. then
+
+	$ cd ${PHYCAS_ROOT}/installer/mac/iterm
+	$ ../copy_to_iterm.sh ${ITERM_SRC_ROOT} to
+	$ cd $ITERM_SRC_ROOT
+
+then launch xcode and build the PhycasGUI target
+
+	$ sh add_to_package.sh
+
+You should then have an iTerm app hacked into a PhycasGUI at:
+
+	${ITERM_SRC_ROOT}/build/Deployment/PhycasGUI.app
+
+To put your changes into the Phycas repository, you will need to: 
+
+	$ cd ${ITERM_SRC_ROOT}/build/Deployment
+	$ tar cfvj PhycasGUI.app.tar.bz PhycasGUI.app
+	$ mv PhycasGUI.app.tar.bz $PHYCAS_ROOT/installer/mac/iterm/
+	$ cd $PHYCAS_ROOT/installer/mac/iterm/
+	$ svn commit -m "new PhycasGUI.app compiled from iterm tweaks"
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+II. Building a new Phycas.app 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+When changes are made to the phycas code base (not the tweaks to the GUI, but
+real changes C++ or python code that alter the behavior of phycas) then we can 
+package a new version of Phycas.app by simply refilling the .app bundle.
+
+	$ cd $PHYCAS_ROOT/installer/mac/iterm/
+	$ ./refill_phycas_gui_app.sh
+
+This should produce a new $PHYCAS_ROOT/installer/mac/iterm/Phycas-1.0.dmg
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+III. Notes on failed attempt to bundle IPython, readline, and Python in the .app
+bundle
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
 First I sourced phycas_bundler.sh:
 
 ================================================================================
