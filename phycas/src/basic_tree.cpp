@@ -289,7 +289,7 @@ void Tree::RerootAtTip(unsigned num)
 |	`TreeNode::prevPreorder') by starting with the root node (`firstPreorder') and walking through the tree by visiting
 |	`lChild', `rSib' and `par' pointers. Sets `preorderDirty' to false when done.
 */
-void Tree::RefreshPreorder(TreeNode *nd)
+void Tree::RefreshPreorder(TreeNode *nd) const
 	{
 	if (!preorderDirty)
 		return;
@@ -921,13 +921,9 @@ std::string Tree::DebugWalkTree(bool preorder, unsigned verbosity)
 		else
 			{
 			if (verbosity < 2)
-				{
 				s << nd->briefDebugReport(verbosity);
-				}
 			else    // verbosity == 2
-				{
 				s << nd->oneLineDebugReport();
-				}
 
 			// Output an arrow if not the last node in the series
 			bool show_arrow = false;
@@ -2092,7 +2088,6 @@ TreeNode	* Tree::GetFirstPreorder()
 	{
 	if (preorderDirty)
 		RefreshPreorder();
-
 	return firstPreorder;
 	}
 
@@ -2101,6 +2096,29 @@ TreeNode	* Tree::GetFirstPreorder()
 |	preorder pointers need to be updated (i.e., `preorderDirty' is true).
 */
 TreeNode * Tree::GetLastPreorder()
+	{
+	if (preorderDirty)
+		RefreshPreorder();
+
+	return lastPreorder;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Return value of data member `firstPreorder'. Note: makes a (rather expensive) call to RefreshPreorder() if the
+|	preorder pointers need to be updated (i.e., `preorderDirty' is true).
+*/
+const TreeNode * Tree::GetFirstPreorderConst() const
+	{
+	if (preorderDirty)
+		RefreshPreorder();
+	return firstPreorder;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Return value of data member `lastPreorder'. Note: makes a (rather expensive) call to RefreshPreorder() if the
+|	preorder pointers need to be updated (i.e., `preorderDirty' is true).
+*/
+const TreeNode * Tree::GetLastPreorderConst() const
 	{
 	if (preorderDirty)
 		RefreshPreorder();

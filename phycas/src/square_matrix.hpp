@@ -25,6 +25,8 @@
 namespace phycas
 {
 
+void fillTranspose(double ** p_mat_trans_scratch, const double * const *p_mat, const unsigned);
+
 #if POLPY_NEWWAY
 class SquareMatrix
     {
@@ -49,7 +51,43 @@ class SquareMatrix
         double * *                      m;      /**< the two-dimensional matrix of doubles */
         unsigned                        dim;    /**< dimension of both rows and columns */ 
     };
-#endif
 
+inline void fillTranspose(double ** p_mat_trans_scratch, const double * const *p_mat, const unsigned dim)
+	{
+	for (unsigned j = 0; j < dim; ++j)
+		{
+		for (unsigned k = 0 ; k < dim; ++k)
+			p_mat_trans_scratch[j][k] = p_mat[k][j];
+		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that simply returns the value of `dim' (the row and column dimension).
+*/
+inline unsigned SquareMatrix::GetDimension() const 
+    {
+    return dim;
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that simply returns `m'. This allows `m' to be passed to functions that expect a two-dimensional
+|   array of doubles, but keep in mind that this is somewhat unsafe.
+*/
+inline double * * SquareMatrix::GetMatrix() const 
+    {
+    return m;
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Operator that allows access to this SquareMatrix object as if it were a two-dimensional array of doubles.
+*/
+inline double * SquareMatrix::operator[](
+  unsigned i) const 
+    {
+    PHYCAS_ASSERT(i < dim); 
+    return m[i];
+    }
+
+#endif
 }   // namespace phycas
 #endif

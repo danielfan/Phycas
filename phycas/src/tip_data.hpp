@@ -28,6 +28,7 @@
 #include "phycas/src/cipres/ConfigDependentHeaders.h"
 #if POLPY_NEWWAY
 #	include "phycas/src/states_patterns.hpp"
+#	include "phycas/src/univents.hpp"
 #endif
 
 struct CIPRES_Matrix;
@@ -46,7 +47,6 @@ typedef boost::shared_ptr<CondLikelihood> CondLikelihoodShPtr;
 typedef boost::shared_ptr<const CondLikelihood> ConstCondLikelihoodShPtr;
 class Tree;
 typedef std::vector<unsigned int> StateListPos;
-
 /*----------------------------------------------------------------------------------------------------------------------
 |	The TipData class stores the data associated with each tip in the tree. The description below assumes the data was
 |	read from the following NEXUS data file (ambig.nex):
@@ -176,10 +176,13 @@ class TipData
 		bool								parentalCLACached() const;
 
 #if POLPY_NEWWAY
-		unsigned							getNumUnivents(unsigned site) const;
-		std::vector<unsigned>				getUniventStates(unsigned site) const;
-		std::vector<double>					getUniventTimes(unsigned site) const;
-		StateTimeListVect *					getStateTimeListVect();
+		unsigned 							getNumUnivents(unsigned i) const {return univents.getNumEvents(i);}
+		std::vector<unsigned>				getUniventStates(unsigned i) const {return univents.getEventsVec(i);}
+		std::vector<double>   				getUniventTimes(unsigned i) const {return univents.getTimes(i);}
+
+		Univents & 							getUniventsRef() {return univents;}
+		const Univents & 					getUniventsConstRef()const {return univents;}
+		void								swapUnivents(InternalData * other);
 #endif
 
 
@@ -198,8 +201,7 @@ class TipData
 
 #if POLPY_NEWWAY
 		bool								unimap;				/**< true if tips are to be prepared for uniformized mapping likelihood; false if tips are to be prepared for Felsenstein-style integrated likelihoods */
-		StateTimeListVect					state_time;			/**< state_time[i][j].first holds the state for univent j at site i, whereas state_time[i][j].second holds the fraction of the edgelen representing the time at which the univent occurred */
-		unsigned							mdot;				/**< the total number of univents over all sites on the edge owned by this node */
+		Univents							univents;			/**< univents[i][j].first holds the state for univent j at site i, whereas univents[i][j].second holds the fraction of the edgelen representing the time at which the univent occurred */
 #endif
 											// conditional likelihood of the rest of the tree
 		//bool								parCLAValid;

@@ -102,9 +102,11 @@ class LargetSimonMove : public MCMCUpdater
 		TreeNode *		    swap1;						/**< First of the two nodes involved in an NNI swap; NULL if no swap was performed; used by Revert to undo a move */
 		TreeNode *		    swap2;						/**< Second of the two nodes involved in an NNI swap; NULL if no swap was performed; used by Revert to undo a move */
 
-        StateTimeListVect   xst;                        /**< Copy of state-time list vector for node X in case revert needed */
-        StateTimeListVect   yst;                        /**< Copy of state-time list vector for node Y in case revert needed */
-        StateTimeListVect   zst;                        /**< Copy of state-time list vector for node Z in case revert needed */
+#		if defined(DEAD_UNIVENT_CODE_WAS_NOT_DEAD)
+			StateTimeListVect   xst;                        /**< Copy of state-time list vector for node X in case revert needed */
+			StateTimeListVect   yst;                        /**< Copy of state-time list vector for node Y in case revert needed */
+			StateTimeListVect   zst;                        /**< Copy of state-time list vector for node Z in case revert needed */
+#		endif // defined(DEAD_UNIVENT_CODE_WAS_NOT_DEAD)
 
 		double			    m;							/**< Original 3-segment length; needed for computing Hastings ratio */
 		double			    mstar;						/**< Modified 3-segment length; needed for computing Hastings ratio */

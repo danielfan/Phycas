@@ -29,7 +29,7 @@ unsigned SquareMatrix::k = 0;   //temporary!
 |	SquareMatrix default constructor. Sets `dim' and `m' data members to 0.
 */
 SquareMatrix::SquareMatrix()
-  : dim(0), m(0), id(++k)
+  :  id(++k),  m(0), dim(0)
     {
     //std::cerr << "----> constructing default SquareMatrix " << id << " <----" << std::endl;
     } 
@@ -40,7 +40,7 @@ SquareMatrix::SquareMatrix()
 SquareMatrix::SquareMatrix(
   unsigned sz,      /**< the row and column dimension of the matrix */
   double value)     /**< the value to which to set all elements */
-  : dim(sz), m(0), id(++k)
+  : id(++k), m(0), dim(sz)
     {
     //std::cerr << "----> constructing SquareMatrix " << id << " of size " << dim << " with all values set to " << value << " <----" << std::endl;
     CreateMatrix(sz, value);
@@ -53,7 +53,7 @@ SquareMatrix::SquareMatrix(
 */
 SquareMatrix::SquareMatrix(
   const SquareMatrix & other)   /**< is the SquareMatrix to copy */
-  : dim(other.dim), m(0), id(++k)
+  : id(++k), m(0), dim(other.dim)
     {
     //std::cerr << "----> copy constructing SquareMatrix " << id << " from " << other.id << " <----" << std::endl;
     if (dim > 0)
@@ -161,32 +161,6 @@ void SquareMatrix::SetToScalar(
         *p++ = scalar;
     }
 
-/*----------------------------------------------------------------------------------------------------------------------
-|	Accessor function that simply returns the value of `dim' (the row and column dimension).
-*/
-unsigned SquareMatrix::GetDimension() const 
-    {
-    return dim;
-    }
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Accessor function that simply returns `m'. This allows `m' to be passed to functions that expect a two-dimensional
-|   array of doubles, but keep in mind that this is somewhat unsafe.
-*/
-double * * SquareMatrix::GetMatrix() const 
-    {
-    return m;
-    }
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Operator that allows access to this SquareMatrix object as if it were a two-dimensional array of doubles.
-*/
-double * SquareMatrix::operator[](
-  unsigned i) const 
-    {
-    PHYCAS_ASSERT(i < dim); 
-    return m[i];
-    }
 
 /*----------------------------------------------------------------------------------------------------------------------
 |   Saves a representation of the matrix to the supplied string for use in debugging. The caller should supply a format

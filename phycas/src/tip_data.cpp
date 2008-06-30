@@ -49,12 +49,6 @@ TipData::TipData(
 	pMatrixTranspose = ownedPMatrices.ptr;
 	}
 
-#if POLPY_NEWWAY
-StateTimeListVect * TipData::getStateTimeListVect()
-	{
-	return &state_time;
-	}
-#endif
 /*----------------------------------------------------------------------------------------------------------------------
 |	Constructor for TipData objects that will be used in likelihood calcuations and thus need to store the observed
 |	data for the tip as well as information about local state codes.
@@ -75,21 +69,21 @@ TipData::TipData(
 	//parCLAValid(false),
 	//parWorkingCLA(NULL),
 	//parCachedCLA(NULL),
+#if POLPY_NEWWAY
+    unimap(using_unimap),
+#endif
 	state(-1), 
 	state_list_pos(stateListPosVec), 
 	state_codes(stateCodesShPtr), 
 	pMatrixTranspose(pMatTranspose),
-#if POLPY_NEWWAY
-    unimap(using_unimap),
-    mdot(0),
-#endif
 	cla_pool(cla_storage)
 	{
 	const unsigned nObservedStates = nStates + 1 + state_list_pos.size();
 #if POLPY_NEWWAY
     if (using_unimap)
         {
-        state_time.resize(nPatterns);
+        univents.resize(nPatterns);
+        univents.setEndStates(state_codes.get());
         }
 #endif
 	if (managePMatrices)
@@ -112,60 +106,5 @@ CondLikelihoodShPtr TipData::getParentalCondLikePtr()
 		parWorkingCLA = cla_pool.getCondLikelihood();
 	return parWorkingCLA;
 	}
-
-#if POLPY_NEWWAY
-/*----------------------------------------------------------------------------------------------------------------------
-|	Returns the number of univents for site `site'. Assumes `unimap' is true and `size' is less than the length of the
-|   `state_time' vector.
-*/
-unsigned TipData::getNumUnivents(
-  unsigned site) const      /**< is the site of interest */
-    {
-    if (!unimap || site >= (unsigned)state_time.size())
-        return 0;
-    return (unsigned)state_time[site].size();
-    }
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Returns a vector of univent states for site `site'. Assumes `unimap' is true and `size' is less than the length of 
-|   the `state_time' vector. This function is not particularly efficient, and it intended primarily for transferring
-|   univent states to Python code for debugging purposes.
-*/
-std::vector<unsigned> TipData::getUniventStates(
-  unsigned site) const      /**< is the site of interest */
-    {
-    std::vector<unsigned> v;
-    if (!unimap || site >= (unsigned)state_time.size())
-        return v;
-    v.resize(state_time[site].size());
-    unsigned i = 0;
-    for (StateTimeList::const_iterator it = state_time[site].begin(); it != state_time[site].end(); ++it, ++i)
-        {
-        v[i] = (unsigned)it->first;
-        }
-    return v;
-    }
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Returns a vector of univent times for site `site'. Assumes `unimap' is true and `size' is less than the length of 
-|   the `state_time' vector. This function is not particularly efficient, and it intended primarily for transferring
-|   univent times to Python code for debugging purposes.
-*/
-std::vector<double> TipData::getUniventTimes(
-  unsigned site) const      /**< is the site of interest */
-    {
-    std::vector<double> v;
-    if (!unimap || site >= (unsigned)state_time.size())
-        return v;
-    v.resize(state_time[site].size());
-    unsigned i = 0;
-    for (StateTimeList::const_iterator it = state_time[site].begin(); it != state_time[site].end(); ++it, ++i)
-        {
-        v[i] = (double)it->second;
-        }
-    return v;
-    }
-
-#endif
 
 }	// namespace phycas

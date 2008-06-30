@@ -54,7 +54,7 @@ NielsenMappingMove::~NielsenMappingMove()
 bool NielsenMappingMove::update()
 	{
     PHYCAS_ASSERT(likelihood->isUsingUnimap());
-    likelihood->nielsenMapping(tree, rng);
+    likelihood->nielsenMapping(tree, rng, true);
     return true;
     }
 

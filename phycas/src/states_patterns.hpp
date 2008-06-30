@@ -29,10 +29,8 @@ typedef double										PatternCountType;
 typedef	std::map<VecStateList, PatternCountType>	PatternMapType;
 typedef	std::vector<PatternCountType>				CountVectorType;
 
-#if POLPY_NEWWAY    // StateTimeList should be a list!
-typedef std::pair<int8_t,float>                     StateTimePair;
-typedef std::vector<StateTimePair>                  StateTimeList;
-typedef std::vector<StateTimeList>                  StateTimeListVect;
+#if POLPY_NEWWAY    
+typedef std::vector< int8_t > StateMapping;
 #endif
 
 #endif

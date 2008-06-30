@@ -47,7 +47,7 @@ class Lot
 		void 					SetSeed(unsigned s);
 
 		// Utilities
-        unsigned                MultinomialDraw(const double * probs, unsigned n);
+        unsigned                MultinomialDraw(const double * probs, unsigned n, double totalProb=1.0);
 		unsigned 				SampleUInt(unsigned);
 		unsigned				GetRandBits(unsigned nbits);
 

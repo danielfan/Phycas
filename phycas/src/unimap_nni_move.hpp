@@ -30,7 +30,6 @@ namespace phycas
 
 class MCMCChainManager;
 typedef boost::weak_ptr<MCMCChainManager> ChainManagerWkPtr;
-StateTimeListVect * GetStateTimeListVect(TreeNode * nd);
 
 /*----------------------------------------------------------------------------------------------------------------------
 |   
@@ -50,6 +49,8 @@ class UnimapNNIMove : public MCMCUpdater
 		virtual void	revert();
 		virtual void	accept();
 		virtual void	setLot(LotShPtr p);
+		bool getDoSampleUnivents() const {return doSampleUnivents;}
+		void setDoSampleUnivents(bool v) {doSampleUnivents = v;}
 	protected:
 		TreeNode * randomInternalAboveSubroot();
 		TreeNode * x;
@@ -67,7 +68,7 @@ class UnimapNNIMove : public MCMCUpdater
 		double  * * pre_y_pmat_transposed;
 		double  * * pre_w_pmat_transposed;
 		double  * * pre_z_pmat_transposed;
-
+		bool doSampleUnivents;
 		GammaDistribution gammaDist; 
 		double min_edge_len_mean, edge_len_prop_cv;
 		double ln_density_reverse_move, ln_density_forward_move;
@@ -90,19 +91,13 @@ class UnimapNNIMove : public MCMCUpdater
 		double calcProposalLnDensity(double mean, double x);
 		double proposeEdgeLen(double mean);
 
-		void FillStateCodeArray(const StateTimeListVect * um, int8_t * tipSpecificStateCode, bool);
-		TipData * createTipDataFromUnivents(TreeNode * nd , bool use_last, TipData *);
+		TipData * createTipDataFromUnivents(const Univents &, TipData *);
 		double FourTaxonLnLBeforeMove(TreeNode * nd);
 		double FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nd);
 		double HarvestLnLikeFromCondLikePar(CondLikelihoodShPtr focalCondLike, ConstCondLikelihoodShPtr neighborCondLike, const double * const * childPMatrix);
 		void storePMatTransposed(double **& cached, const double *** p_mat_array);
         void DebugSaveNexusFile(TipData * xtd, TipData * ytd, TipData * ztd, TipData * wtd, double lnlike);
 
-		void sampleDescendantStates(const unsigned num_patterns, int8_t * nd_states, const double ** p_mat, const LikeFltType * des_cla, const int8_t * parent_states);
-		void sampleRootStates(const unsigned num_patterns, int8_t * nd_states, LikeFltType * rootStatePosterior);
-		void sampleUniventsKeepEndStates(TreeNode * nd, const int8_t * par_states, const double * * p_mat_transposed);
-		void sampleUnivents(TreeNode * nd, const int8_t * par_states, const int8_t * des_states, const double * * p_mat);
-		void sampleUniventsKeepBegStates(TreeNode * nd, const int8_t * des_states, const double * * p_mat_transposed);
 	};
 
 } // namespace phycas

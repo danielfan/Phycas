@@ -75,6 +75,8 @@ class Tree
 		unsigned				GetNObservables();
 		TreeNode *				GetFirstPreorder();
 		TreeNode *				GetLastPreorder();
+		const TreeNode *		GetFirstPreorderConst() const;
+		const TreeNode *		GetLastPreorderConst() const;
 		preorder_iterator		begin();
 		preorder_iterator		end();
 
@@ -110,7 +112,7 @@ class Tree
 		void					RerootAtThisTip(TreeNode * nd);
 		void					RerootAtThisInternal(TreeNode * nd);
 		void					RerootAtTip(unsigned num);
-		void					RefreshPreorder(TreeNode * nd = NULL);
+		void					RefreshPreorder(TreeNode * nd = NULL) const;
 		std::string &			AppendNewick(std::string &);
 		std::string				MakeNewick();
 		bool					SetNumberFromName(TreeNode * nd, std::set<unsigned> & used);
@@ -158,13 +160,13 @@ class Tree
 		bool					treeid_valid;			/**< True if the tree_id data member is valid; if false, call RefreshTreeID to make it valid again */
 		TreeNodeStack			tipStorage;			    /**< A stack of pointers to (tip) TreeNode objects */
 		TreeNodeStack			internalNodeStorage;	/**< A stack of pointers to (internal) TreeNode objects */
-		TreeNode *				firstPreorder;			/**< Pointer to the first preorder node (equals last postorder node) */
-		TreeNode *				lastPreorder;			/**< Pointer to the last preorder node (equals first postorder node) */	
+		mutable TreeNode *		firstPreorder;			/**< Pointer to the first preorder node (equals last postorder node) (mutable because it is not kept up-to-date, and may have to be recalculated on the fly)*/
+		mutable TreeNode *		lastPreorder;			/**< Pointer to the last preorder node (equals first postorder node) (mutable because it is not kept up-to-date, and may have to be recalculated on the fly)*/	
 		unsigned				nTips;					/**< Total number of tip (degree = 1) nodes in the tree */
 		unsigned				nInternals;				/**< Total number of internal (degree > 1) nodes in the tree */
 		bool					hasEdgeLens;			/**< True if edge lengths have been specified */
 		bool					isRooted;				/**< True if the tree is rooted */
-		bool					preorderDirty;			/**< Set to false when preorder traversal pointers are set, but a function should set to true if it modifies the tree and does not leave the preorder traversal pointers valid */
+		mutable bool			preorderDirty;			/**< Set to false when preorder traversal pointers are set, but a function should set to true if it modifies the tree and does not leave the preorder traversal pointers valid */
 		bool					nodeCountsValid;		/**< If false, causes functions that depend on accurate node counts, such as GetNTips(), GetNNodes(), GetNInternals() and GetNObservables(), to recompute nTips and nInternals */
 		bool					numbers_from_names;		/**< True if tip node numbers were set using tip node names in tree description. */
         double                  tree_scale;             /**> Multiplier that converts stored edge lengths into expected number of substitutions. Starts out 1.0 but is modified by TreeScalerMove. */

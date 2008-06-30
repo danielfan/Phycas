@@ -111,11 +111,11 @@ unsigned Lot::SampleUInt(unsigned max)
 |	Returns a multinomial deviate in [0,n) given the bin probabilities in probs. The sum of the first n elements of 
 |   probs is assumed to equal 1.0.
 */
-unsigned Lot::MultinomialDraw(const double * probs, unsigned n)
+unsigned Lot::MultinomialDraw(const double * probs, unsigned n, double totalProb)
 	{
     PHYCAS_ASSERT(probs != NULL);
     PHYCAS_ASSERT(n > 0);
-    double u = Uniform(FILE_AND_LINE);
+    double u = totalProb*Uniform(FILE_AND_LINE);
     for (unsigned i = 0; i < n; ++i)
         {
         u -= probs[i];

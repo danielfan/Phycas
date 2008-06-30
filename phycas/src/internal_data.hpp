@@ -28,7 +28,8 @@
 #include "phycas/src/cipres/ConfigDependentHeaders.h"
 
 #if POLPY_NEWWAY
-#include "phycas/src/states_patterns.hpp"
+#	include "phycas/src/states_patterns.hpp"
+#	include "phycas/src/univents.hpp"
 #endif
 
 struct CIPRES_Matrix;
@@ -108,24 +109,25 @@ class InternalData
 		bool							parentalCLACached() const;
 
 #if POLPY_NEWWAY
-		unsigned						getNumUnivents(unsigned site) const;
-		std::vector<unsigned>			getUniventStates(unsigned site) const;
-		std::vector<double>				getUniventTimes(unsigned site) const;
-		void							swapStateTime(InternalData * other);
-		StateTimeListVect *				getStateTimeListVect();
+		unsigned 						getNumUnivents(unsigned i) const {return univents.getNumEvents(i);}
+		std::vector<unsigned>			getUniventStates(unsigned i) const {return univents.getEventsVec(i);}
+		std::vector<double>   			getUniventTimes(unsigned i) const {return univents.getTimes(i);}
+
+		Univents & 						getUniventsRef() {return univents;}
+		const Univents & 				getUniventsConstRef()const {return univents;}
 #endif
 
 	private:
 #if POLPY_NEWWAY
 										InternalData(bool using_unimap, unsigned nPatterns, unsigned nRates, unsigned nStates, double * * * pMatrices, bool managePMatrices, CondLikelihoodStorage & cla_storage);
+		void							swapUnivents(InternalData * other);
 #else
 										InternalData(unsigned nPatterns, unsigned nRates, unsigned nStates, double * * * pMatrices, bool managePMatrices, CondLikelihoodStorage & cla_storage);
 #endif
 
 #if POLPY_NEWWAY
 		bool							unimap;			/**< true if internal nodes are to be prepared for uniformized mapping likelihood; false if internal nodes are to be prepared for Felsenstein-style integrated likelihoods */
-		StateTimeListVect				state_time;		/**< state_time[i][j].first holds a state for univent j at site i, whereas state_time[i][j].second holds the fraction of the edgelen representing the time at which the univent occurred */
-		unsigned						mdot;			/**< the total number of univents over all sites on the edge owned by this node */
+		Univents						univents;
 #endif
 
 		//CLA's for an edge from a node to its parent are stored in the node's InternalData (or TipData).

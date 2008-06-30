@@ -397,17 +397,19 @@ void LargetSimonMove::defaultProposeNewState()
     // segments to be modified.
     ndY = randomInternalAboveSubroot();
 	y = ndY->GetEdgeLen();
-    likelihood->copyStateTimeListVect(ndY, yst);
 
 	// Set ndX equal to a randomly-chosen child of ndY
 	ndX = randomChild(ndY);
 	x = ndX->GetEdgeLen();
-    likelihood->copyStateTimeListVect(ndX, xst);
 
 	// Set ndZ randomly to either the parent of ndY or one of ndY's sibs
     ndZ = chooseZ(ndY);
     z = ndZ->GetEdgeLen();
-    likelihood->copyStateTimeListVect(ndZ, zst);
+#	if defined(DEAD_UNIVENT_CODE_WAS_NOT_DEAD)
+		likelihood->copyStateTimeListVect(ndY, yst);
+		likelihood->copyStateTimeListVect(ndX, xst);
+		likelihood->copyStateTimeListVect(ndZ, zst);
+#	endif // defined(DEAD_UNIVENT_CODE_WAS_NOT_DEAD)
 
     // Set ndBase to the deepest affected node
 	//ndBase = ndZ->GetParent();
@@ -658,9 +660,11 @@ void LargetSimonMove::revert()
 		ndY->SetEdgeLen(y);
 		ndZ->SetEdgeLen(z);
 
-        likelihood->revertStateTimeListVect(ndX, xst);
-        likelihood->revertStateTimeListVect(ndY, yst);
-        likelihood->revertStateTimeListVect(ndZ, zst);
+#		if defined(DEAD_UNIVENT_CODE_WAS_NOT_DEAD)
+			likelihood->revertStateTimeListVect(ndX, xst);
+			likelihood->revertStateTimeListVect(ndY, yst);
+			likelihood->revertStateTimeListVect(ndZ, zst);
+#		endif // defined(DEAD_UNIVENT_CODE_WAS_NOT_DEAD)
         likelihood->recalcSMatrix(tree);
 
 		PHYCAS_ASSERT(ndY->IsInternal());
@@ -740,9 +744,11 @@ void LargetSimonMove::reset()
 
     expand_contract_factor = 1.0;
 
+#	if defined(DEAD_UNIVENT_CODE_WAS_NOT_DEAD)
     xst.clear();
     yst.clear();
     zst.clear();
+#	endif // defined(DEAD_UNIVENT_CODE_WAS_NOT_DEAD)
 
 	// three_edgelens should have 3 elements, used for computing the edge length prior for default proposal in update
 	three_edgelens.resize(3, 0.0);
