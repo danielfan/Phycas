@@ -1112,7 +1112,7 @@ void TreeManip::buildTreeFromSplitVector(
             if (ss.SubsumedIn(s))
                 {
                 prune_list.push_back(nd);
-                tree->FindLastPreorderInClade(nd);
+                nd = tree->FindLastPreorderInClade(nd);
                 }
             }
 
