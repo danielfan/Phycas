@@ -1109,11 +1109,10 @@ void TreeManip::buildTreeFromSplitVector(
         for (TreeNode * nd = subroot->GetNextPreorder(); nd != NULL; nd = nd->GetNextPreorder())
             {
             Split & ss = nd->GetSplit();
-            TreeNode * next = NULL;
             if (ss.SubsumedIn(s))
                 {
                 prune_list.push_back(nd);
-                nd = tree->FindLastPreorderInClade(nd);
+                tree->FindLastPreorderInClade(nd);
                 }
             }
 
@@ -1123,7 +1122,6 @@ void TreeManip::buildTreeFromSplitVector(
         
         for (std::vector<TreeNode *>::iterator nit = prune_list.begin(); nit != prune_list.end(); ++nit)
             {
-            TreeNode * nd = *nit;
             DetachSubtree(*nit);
             InsertSubtree(*nit, newNd, TreeManip::kOnRight);
             }
