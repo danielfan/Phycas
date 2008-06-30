@@ -214,10 +214,14 @@ class TreeSummarizer(object):
         
         pdf.scatterPlot(data, title = 'Split Probabilities Through Time', xinfo = (0,ntrees,10,0), yinfo = (0.0,1.0,10,1))
 
-        import wx
-        wxapp = wxPhycas.CreateAWTYApp()
-        wxapp.scatterPlot(data, title = 'Split Probabilities Through Time', xinfo = (0,ntrees,10,0), yinfo = (0.0,1.0,10,1))
-        wxapp.MainLoop()
+        try:
+            import wx
+        except:
+            pass
+        else:
+            wxapp = wxPhycas.CreateAWTYApp()
+            wxapp.scatterPlot(data, title = 'Split Probabilities Through Time', xinfo = (0,ntrees,10,0), yinfo = (0.0,1.0,10,1))
+            wxapp.MainLoop()
         
         if trivial_ignored + uninteresting_ignored > 0:
             self.phycas.output('%d trivial and %d uninteresting splits were ignored.' % (trivial_ignored, uninteresting_ignored))
