@@ -67,7 +67,7 @@ void UniventProbMgr::recalcUMat()
             lambda = model->calcUMat(oneUPtr);
             }
 		}
-	maxm = 2;
+	maxm = 1;
 	 // the reduceMaxm bit here is a hack to try to reduce maxm as opposed to allowing it to continue to creep up.
 	const unsigned reduceMaxm = 2;
 	expandUMatVect(prev_maxm > ( reduceMaxm + 2) ? prev_maxm - reduceMaxm : prev_maxm);
@@ -133,13 +133,14 @@ void UniventProbMgr::expandUMatVect(unsigned m) const
 	if (m <= maxm)
 		return;
 		
-	PHYCAS_ASSERT(maxm >= 2);
-	uMatVect.resize(m + 1);
+	PHYCAS_ASSERT(maxm >= 1);
+	uMatVect.resize(m + 2);
 	// we could get better cache efficiency by storing the transpose of one uMatVect
 	// whenever we calculate it in 
 	const double * const * onePtr = const_cast<const double * const * >(uMatVect[1].GetMatrix());
 	for (unsigned k = maxm + 1; k <= m + 1; ++k)
 		{
+		
 		if (uMatVect[k].GetDimension() == 0)
 			uMatVect[k].CreateMatrix(numStates, 0.0);
 		double * * currPtr = uMatVect[k].GetMatrix();

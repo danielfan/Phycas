@@ -21,6 +21,10 @@
 #include <iostream>
 #include <boost/assert.hpp>
 
+/* #define DEBUG_INPUT_ON_ASSERT
+   #define CRASH_ON_ASSERT
+*/
+
 #if defined(BOOST_ENABLE_ASSERT_HANDLER)
 void boost::assertion_failed(char const * expr, char const * function, char const * file, long line)
 	{
@@ -30,6 +34,17 @@ void boost::assertion_failed(char const * expr, char const * function, char cons
 	std::cerr << "\n  file: " << file;
 	std::cerr << "\n  line: " << line;
 	std::cerr << std::endl;
+#	if defined (DEBUG_INPUT_ON_ASSERT)
+		std::cerr << "Enter a key and return to exit" << std::endl;
+		std::string s;
+		std::cin >> s;
+#	endif 
+#	if defined (CRASH_ON_ASSERT)
+		// this hack works to stop gdb on an assert (even in cases in which adding 
+		//	a breakpoint seems to be difficult).
+		char * c = 0L;
+		*c = 'q';
+#	endif 
 	std::exit(1);
 	}
 #endif 

@@ -463,6 +463,7 @@ class Phycas(object):
             tmpf.write('************** cycle=%d, chain=%d\n' % (cycle,chain_index))
         for p in chain.chain_manager.getAllUpdaters():
             w = p.getWeight()
+            #print p.getName(), "weight =", w
             for x in range(w):
                 if self.debugging:
                     p.setSaveDebugInfo(True)

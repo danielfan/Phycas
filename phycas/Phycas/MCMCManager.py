@@ -424,6 +424,8 @@ class MarkovChain(LikelihoodCore):
             self.unimap_nni_move.setTreeLikelihood(self.likelihood)
             self.unimap_nni_move.setLot(self.r)
             self.chain_manager.addMove(self.unimap_nni_move)
+
+            self.chain_manager.addMove(self.nielsen_mapping_move)
         else:
             # Create a LargetSimonMove object to handle Metropolis-Hastings
             # updates to the tree topology and edge lengths
