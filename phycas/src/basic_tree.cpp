@@ -970,8 +970,8 @@ bool Tree::DebugCheckTree(bool allowDegTwo, bool checkDataPointers, int verbosit
 	unsigned countedNNodes = 0;
 	unsigned countedNLeaves = 1;
 	
-	const unsigned expectedNLeaves = nTips; // +tipStorage.size()
 #   if !defined(NDEBUG)
+	const unsigned expectedNLeaves = nTips; // +tipStorage.size()
 	const unsigned expectedNNodes = expectedNLeaves + nInternals; // + internalNodeStorage.size()
 #   endif
 	std::string indent;

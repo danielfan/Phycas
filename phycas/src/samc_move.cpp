@@ -212,7 +212,9 @@ bool SamcMove::extrapolate(
 	double theta_diff,			/**< is the difference in the thetas (this appears in the acceptance probability calculation and is a function of the weights in the SAMC algorithm) */
 	double ln_proposal_ratio)	/**< is the ratio of proposing a projection rather than an extrapolation, also needed in the acceptance probability. */
 	{
-	const unsigned ninternals_alloced = tree->GetNInternalsAllocated();
+#   if !defined(NDEBUG)
+	    const unsigned ninternals_alloced = tree->GetNInternalsAllocated();
+#   endif
 	last_move_projection = false;
 
 	// The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
