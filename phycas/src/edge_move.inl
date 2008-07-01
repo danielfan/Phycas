@@ -32,6 +32,7 @@ inline void EdgeMove::reset()
 	{
 	origEdgelen	= 0.0;
 	origNode	= NULL;
+	likeRoot	= NULL;
 
 	// one_edgelen should have one element, used for computing the edge length prior in update
 	if (one_edgelen.empty())

@@ -35,7 +35,7 @@
 using namespace phycas;
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	The constructor sets `origEdgelen' to 0.0, `origNode' to NULL, and `lambda' to 1.0.
+|	The constructor sets `origEdgelen' to 0.0, `origNode' to NULL, `likeRoot' to NULL, and `lambda' to 1.0.
 */
 EdgeMove::EdgeMove() : MCMCUpdater()
 	{
@@ -48,9 +48,10 @@ EdgeMove::EdgeMove() : MCMCUpdater()
 */
 void EdgeMove::accept()
 	{
-	likelihood->useAsLikelihoodRoot(origNode);
-	likelihood->discardCacheAwayFromNode(*origNode);
-	likelihood->discardCacheBothEnds(origNode);
+    PHYCAS_ASSERT(likeRoot);
+    likelihood->useAsLikelihoodRoot(likeRoot);
+    likelihood->invalidateAwayFromNode(*likeRoot);
+    likelihood->invalidateBothEnds(origNode);	//@POL really just need invalidateParentalOnly function
 
 	reset();
 	}
@@ -62,9 +63,10 @@ void EdgeMove::revert()
 	{
 	origNode->SetEdgeLen(origEdgelen);
 
-	likelihood->useAsLikelihoodRoot(origNode);
-	likelihood->restoreFromCacheAwayFromNode(*origNode);
-	likelihood->restoreFromCacheParentalOnly(origNode);
+    PHYCAS_ASSERT(likeRoot);
+    likelihood->useAsLikelihoodRoot(likeRoot);
+    likelihood->invalidateAwayFromNode(*likeRoot);
+    likelihood->invalidateBothEnds(origNode);	//@POL really just need invalidateParentalOnly function
 
 	reset();
 	}
@@ -99,15 +101,24 @@ void EdgeMove::proposeNewState()
 			}
 		}
 
+    //origNode->SelectNode();
+    //likelihood->startTreeViewer(tree, "EdgeMove selected edge");
+    //origNode->UnselectNode();
+
 	// Modify the edge
 	//
 	double m		= origNode->GetEdgeLen();
 	double mstar	= m*std::exp(lambda*(rng->Uniform(FILE_AND_LINE) - 0.5));
 	origNode->SetEdgeLen(mstar);
 
-	likelihood->useAsLikelihoodRoot(origNode);
-	likelihood->invalidateAwayFromNode(*origNode);
-	likelihood->invalidateBothEnds(origNode);	//@POL really just need invalidateParentalOnly function
+    if (origNode->IsInternal())
+        likeRoot = origNode;
+    else
+        likeRoot = origNode->GetParent();
+    PHYCAS_ASSERT(likeRoot);
+    likelihood->useAsLikelihoodRoot(likeRoot);
+    likelihood->invalidateAwayFromNode(*likeRoot);
+    likelihood->invalidateBothEnds(origNode);	//@POL really just need invalidateParentalOnly function
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

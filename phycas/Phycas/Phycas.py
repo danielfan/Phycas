@@ -87,6 +87,11 @@ class Phycas(object):
         self.ls_move_lambda         = 0.2       # The value of the tuning parameter for the Larget-Simon move
         self.ls_move_weight         = 100       # Larget-Simon moves will be performed this many times per cycle
         self.ls_move_debug          = False     # If set to true, TreeViewer will popup on each Larget-Simon move update showing edges affected by the proposed move
+
+        # Variables associated with edge length moves
+        self.fix_topology           = False     # If True, an EdgeMove move will be substituted for the LargetSimonMove, so edge lengths will be updated by slice sampling but the topology will remain unchanged during an MCMC analysis
+        self.edge_move_lambda       = 0.2       # The value of the tuning parameter for the EdgeMove
+        self.edge_move_weight       = 0         # Only used if fix_topology is True. Makes sense to set this to some multiple of the number of edges since each EdgeMove affects a single randomly-chosen edge 
         
         # Variables associated with Unimap NNI moves
         self.unimap_nni_move_weight = 10         # Unimap NNI moves will be performed this many times per cycle
@@ -196,6 +201,7 @@ class Phycas(object):
         self.ps_toward_posterior    = True      # If True, chain will start with beta = 0.0 (exploring prior) and end up exploring posterior; otherwise, chain will begin by exploring posterior and end exploring prior
         self.ps_burnin              = 1000      # Number of cycles used to equilibrate before increasing beta
         self.ps_Q                   = 100       # Number of cycles between changes in beta
+        self.ps_sample_every        = 1         # Determines number of times likelihood will be sampled. Number of samples for each value of beta will be ps_Q/sample_every
         self.ps_nbetavals           = 10        # The number of values beta will take on during the run; for example, if this value is 4, then beta will take on these values: 0, 1/3, 2/3, 1
         self.ps_minbeta             = 0.0       # The first beta value that will be sampled if ps_toward_posterior = True
         self.ps_maxbeta             = 1.0       # The last beta value that will be sampled if ps_toward_posterior = True
@@ -552,8 +558,9 @@ class Phycas(object):
         if self.doing_path_sampling:
             self.path_sample = []
             chain = self.mcmc_manager.chains[0]
-            ps_Qsum = 0.0
-            ps_Qnum = 0
+            ps_Qsum   = 0.0
+            ps_Qtotal = 0.0
+            ps_Qnum   = 0
             if self.ps_toward_posterior:
                 self.ps_beta = self.ps_minbeta
             else:
@@ -577,11 +584,13 @@ class Phycas(object):
                 self.output(msg)
             if self.doing_path_sampling and cycle + 1 > self.ps_burnin:
                 sampled_lnL = cold_chain_manager.getLastLnLike()
-                ps_Qsum += sampled_lnL
                 ps_Qnum += 1
-                self.wangang_sampled_likes[beta_index].append(sampled_lnL)
+                if (ps_Qnum % self.ps_sample_every) == 0:
+                    ps_Qsum += sampled_lnL
+                    ps_Qtotal += 1.0
+                    self.wangang_sampled_likes[beta_index].append(sampled_lnL)
                 if ps_Qnum == self.ps_Q:
-                    avg = ps_Qsum/float(self.ps_Q)
+                    avg = ps_Qsum/ps_Qtotal
                     self.path_sample.append(avg)
                     if self.ps_filename:
                         self.psf.write('%.3f\t%.5f\n' % (self.ps_beta,avg))
@@ -590,12 +599,12 @@ class Phycas(object):
                     else:
                         self.ps_beta -= self.ps_delta_beta
                     chain.setPower(self.ps_beta)
-                    ps_Qsum = 0.0
-                    ps_Qnum = 0
+                    ps_Qsum   = 0.0
+                    ps_Qtotal = 0.0
+                    ps_Qnum   = 0
                     self.wangang_sampled_betas.append(self.ps_beta)
                     self.wangang_sampled_likes.append([])
                     beta_index += 1
-
             if (cycle + 1) % self.sample_every == 0:
                 self.mcmc_manager.recordSample(cycle)
                 self.stopwatch.normalize()
@@ -615,6 +624,11 @@ class Phycas(object):
             self.treeFileClose()
         if self.paramf:
             self.paramFileClose()
+            
+        # Delete the last (extra) entry in both self.wangang_sampled_betas and self.wangang_sampled_likes
+        if self.doing_path_sampling:
+            self.wangang_sampled_betas = self.wangang_sampled_betas[:-1]
+            self.wangang_sampled_likes = self.wangang_sampled_likes[:-1]
 
         # If we have been path sampling, compute marginal likelihood using lnL values
         # for each chain stored in self.path_sample

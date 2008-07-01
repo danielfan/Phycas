@@ -1,7 +1,7 @@
 import sys
 from phycas import *
 
-def analyze_results(rep, betavect, likevect):
+def analyze_results(phycas, rep, betavect, likevect):
     # open a file for writing (file name has replicate in it so each rep will not overwrite previous files)
     f = open('wangang-%d.txt' % (rep + 1), 'w')
     
@@ -39,13 +39,13 @@ phycas.starting_freqs       = [0.2, 0.3, 0.3, 0.2]  # order is A,C,G,T
 phycas.sim_file_name        = 'simulated.nex'
 phycas.sim_nchar            = 1000
 
-nreps = 2
+nreps = 1
 for rep in range(nreps):
     # Simulate data
     phycas.data_source = None
     phycas.simulateDNA()
 
-    phycas.data_source = 'file'
+    phycas.data_source          = 'file'
     phycas.data_file_name       = 'simulated.nex'
     phycas.outfile_prefix       = 'junk'  # this will create junk.p and junk.t but these are not used, hence the prefix 'junk'
     phycas.is_standard_heating  = False   # True means heat posterior, False means heat only likelihood    
@@ -54,7 +54,8 @@ for rep in range(nreps):
     # number of cycles will be ps_burnin + (ps_Q*ps_nbetavals)
     phycas.ps_toward_posterior  = False # specify True for beta ps_minbeta -> ps_maxbeta, False means beta ps_maxbeta -> ps_minbeta
     phycas.ps_burnin            = 100   # number of cycles before any sampling is done
-    phycas.ps_Q                 = 20    # number of MCMC cycles per value of beta
+    phycas.ps_Q                 = 45    # number of MCMC cycles per value of beta
+    phycas.ps_sample_every      = 5     # log-likelihood will be sampled whenever cycle modulo ps_sample_every equals 0
     phycas.ps_nbetavals         = 10    # number of beta values 
     phycas.ps_filename          = None  # set to file name to create file containing beta values and average likelihoods
     phycas.ps_minbeta           = 0.0   # smallest beta value to be sampled
@@ -74,16 +75,21 @@ for rep in range(nreps):
     phycas.pinvar_prior          = ProbDist.BetaDist(1.0, 1.0)
     phycas.base_freq_param_prior = ProbDist.ExponentialDist(1.0)
 
+    # try rescaling the entire tree at least once per cycle
+    phycas.tree_scaler_weight    = 1
+    
+    # fix the tree topology, which means use EdgeMove (which only change edge lengths) instead
+    # of LargetSimonMove (which changes both edge lengths and the tree topology)
+    phycas.fix_topology          = True
+    phycas.edge_move_weight      = 100      # do 100 EdgeMove updates per cycle (makes sense to set this to some multiple of the number of edges)
+
     # probably best to *not* change any of these
-    phycas.nchains              = 1
-    phycas.ls_move_weight       = 100   # set to 0 to fix tree topology (and branch lengths)
-    phycas.tree_scaler_weight   = 1
-    phycas.slice_weight         = 1
-    phycas.using_hyperprior     = False
-    phycas.use_flex_model       = False
+    phycas.nchains              = 1         # multiple chain analyses are not yet working
+    phycas.slice_weight         = 1         # means one slice sampling update of each model parameter per cycle
+    phycas.using_hyperprior     = False     # False means do not use hierarchical model for edge lengths
+    phycas.use_flex_model       = False     # flex model is not yet published
 
     # this is the command that begins the analysis
-    #phycas.mcmc()
     phycas.pathsampling()
     
-    analyze_results(rep, phycas.wangang_sampled_betas, phycas.wangang_sampled_likes)
+    analyze_results(phycas, rep, phycas.wangang_sampled_betas, phycas.wangang_sampled_likes)

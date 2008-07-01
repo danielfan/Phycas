@@ -426,6 +426,20 @@ class MarkovChain(LikelihoodCore):
             self.chain_manager.addMove(self.unimap_nni_move)
 
             self.chain_manager.addMove(self.nielsen_mapping_move)
+        elif self.phycas.fix_topology:
+            # Create an EdgeMove object to handle Metropolis-Hastings
+            # updates to the edge lengths only (does not change the topology)
+            self.edge_move = Likelihood.EdgeMove()
+            self.edge_move.setName("Edge length move")
+            self.edge_move.setWeight(self.phycas.edge_move_weight)
+            self.edge_move.setTree(self.tree)
+            self.edge_move.setModel(self.model)
+            self.edge_move.setTreeLikelihood(self.likelihood)
+            self.edge_move.setLot(self.r)
+            self.edge_move.setLambda(self.phycas.edge_move_lambda)
+            if self.model.edgeLengthsFixed():
+                self.edge_move.fixParameter()
+            self.chain_manager.addMove(self.edge_move)
         else:
             # Create a LargetSimonMove object to handle Metropolis-Hastings
             # updates to the tree topology and edge lengths

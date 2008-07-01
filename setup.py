@@ -6,7 +6,7 @@ build_number_from_svn_info = False
 
 # the following setting is only used if build_number_from_svn_info is False, or
 # regular expression search of svn output fails to find pattern 'Revision: (\d+)'
-svn_revision = 620
+svn_revision = 718
 
 phycas_major = '0'
 phycas_minor = '11'
@@ -42,6 +42,11 @@ data_all = [
           'Tests/FixedParams/FixedParams.py',
           'Tests/FixedParams/reference_output/fixed.p',
           'Tests/FixedParams/reference_output/fixed.t',
+          'Tests/FixedTopology/__init__.py',
+          'Tests/FixedTopology/FixedTopology.py',
+          'Tests/FixedTopology/reference_output/fixdtree.p',
+          'Tests/FixedTopology/reference_output/fixdtree.t',
+          'Tests/FixedTopology/reference_output/simulated.nex',
           'Tests/GTRTest/__init__.py',
           'Tests/GTRTest/GTRTest.py',
           'Tests/GTRTest/reference_output/gtr_test.p',
@@ -164,6 +169,7 @@ setupArgs = {
      'phycas.Phycas',
      'phycas.Phylogeny',
      'phycas.ReadNexus',
+     'phycas.wxPhycas',
      ],
     'long_description':phycas_description,
     'platforms':['Linux', 'MacOS X', 'Windows'],

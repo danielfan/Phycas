@@ -109,6 +109,7 @@ class EdgeMove : public MCMCUpdater
 		double						lambda;			/**< Larger values result in changes of greater magnitude: CV = sqrt[(lambda/2) - 1] */
 		double						origEdgelen;	/**< Length of modified edge saved (in case revert is necessary) */
 		TreeNode *					origNode;		/**< Node owning the modified edge (in case revert is necessary) */
+		TreeNode *					likeRoot;		/**< Node to be used as the likelihood root (equals origNode if origNode is internal, otherwise equals origNode's parent) */
 
 		std::vector<double>				one_edgelen;						/**< Workspace declared here to avoid unnecessary allocs/deallocs */
 	};

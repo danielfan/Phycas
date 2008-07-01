@@ -60,6 +60,7 @@ if __name__ == '__main__':
 
     runTest(outFile, "ExplorePrior", mcmcOutputs(["nodata.nex"]))
     runTest(outFile, "FixedParams", ["fixed.p", "fixed.t"])
+    runTest(outFile, "FixedTopology", ["fixdtree.p", "fixdtree.t", "simulated.nex"])
     runTest(outFile, "GTRTest", ["gtr_test.p", "gtr_test.t"])
     runTest(outFile, "Simulator", ["simulated.nex"])
     runTest(outFile, "SplitTest", ["out.txt"])

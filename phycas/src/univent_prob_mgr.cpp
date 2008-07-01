@@ -468,7 +468,7 @@ void UniventProbMgr::sampleRootStates(
 		const int8_t st = rng.MultinomialDraw(rootStatePosterior, numStates, total);
 		nd_states[i] = st;
 		if (obs_state_counts)
-			obs_state_counts[st] += 1.0;
+			obs_state_counts[st] += 1;
 		rootStatePosterior += numStates;
 		}
 	}
