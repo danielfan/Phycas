@@ -461,7 +461,7 @@ S40:
                 REDUCTION OF A WHEN B .LE. 1000
 */
     if(b > 1000.0e0) goto S80;
-    n = a-1.0e0;
+    n = (int)(a-1.0e0);   /* POL added cast to silence VC warning C4244 */
     w = 1.0e0;
     for(i=1; i<=n; i++) {
         a -= 1.0e0;
@@ -476,7 +476,7 @@ S60:
 /*
                  REDUCTION OF B WHEN B .LT. 8
 */
-    n = b-1.0e0;
+    n = (int)(b-1.0e0);   /* POL added cast to silence VC warning C4244 */
     z = 1.0e0;
     for(i=1; i<=n; i++) {
         b -= 1.0e0;
@@ -488,7 +488,7 @@ S80:
 /*
                 REDUCTION OF A WHEN B .GT. 1000
 */
-    n = a-1.0e0;
+    n = (int)(a-1.0e0);   /* POL added cast to silence VC warning C4244 */
     w = 1.0e0;
     for(i=1; i<=n; i++) {
         a -= 1.0e0;
@@ -714,7 +714,7 @@ S40:
          PROCEDURE FOR A0 .LT. 1 AND 1 .LT. B0 .LT. 8
 */
     u = gamln1(&a0);
-    m = b0-1.0e0;
+    m = (int)(b0-1.0e0);   /* POL added cast to silence VC warning C4244 */
     if(m < 1) goto S60;
     c = 1.0e0;
     for(i=1; i<=m; i++) {
@@ -919,7 +919,7 @@ S150:
     *w = 0.5e0+(0.5e0-*w1);
     goto S250;
 S160:
-    n = b0;
+    n = (int)b0;   /* POL added cast to silence VC warning C4244 */
     b0 -= (double)n;
     if(b0 != 0.0e0) goto S170;
     n -= 1;
@@ -1070,7 +1070,7 @@ S70:
                 ALGORITHM FOR 1 .LT. B0 .LT. 8
 */
     u = gamln1(&a0);
-    n = b0-1.0e0;
+    n = (int)(b0-1.0e0);   /* POL added cast to silence VC warning C4244 */
     if(n < 1) goto S90;
     c = 1.0e0;
     for(i=1; i<=n; i++) {
@@ -1210,7 +1210,7 @@ S70:
                 ALGORITHM FOR 1 .LT. B0 .LT. 8
 */
     u = gamln1(&a0);
-    n = b0-1.0e0;
+    n = (int)(b0-1.0e0);   /* POL added cast to silence VC warning C4244 */
     if(n < 1) goto S90;
     c = 1.0e0;
     for(i=1; i<=n; i++) {
@@ -1300,8 +1300,8 @@ static int i,k,kp1,mu,nm1;
     d = 1.0e0;
     if(*n == 1 || *a < 1.0e0) goto S10;
     if(apb < 1.1e0*ap1) goto S10;
-    mu = fabs(exparg(&K1));
-    k = exparg(&K2);
+    mu = (int)fabs(exparg(&K1));   /* POL added cast to silence VC warning C4244 */
+    k = (int)exparg(&K2);   /* POL added cast to silence VC warning C4244 */
     if(k < mu) mu = k;
     t = mu;
     d = exp(-t);
@@ -1321,8 +1321,8 @@ S10:
 S20:
     r = (*b-1.0e0)**x/ *y-*a;
     if(r < 1.0e0) goto S50;
-    k = t = nm1;
-    if(r < t) k = r;
+    k = (int)nm1; t = nm1; /* k = t = nm1; */  /* POL added cast to silence VC warning C4244 */
+    if(r < t) k = (int)r;  /* POL added cast to silence VC warning C4244 */
 S30:
 /*
           ADD THE INCREASING TERMS OF THE SERIES
@@ -1887,7 +1887,8 @@ S120:
 /*
      S
 */
-    if(!(*s < 0.0e0 || *which != 3 && *s > *xn)) goto S160;
+    if(!(*s < 0.0e0 || (*which != 3 && *s > *xn))) goto S160; /* POL added parens */
+    /* if(!(*s < 0.0e0 || *which != 3 && *s > *xn)) goto S160; */
     if(!(*s < 0.0e0)) goto S140;
     *bound = 0.0e0;
     goto S150;
@@ -3549,7 +3550,8 @@ S250:
 S260:
         fx = ccum-*q;
 S270:
-        if(!(qporq && cum > 1.5e0 || !qporq && ccum > 1.5e0)) goto S280;
+        if(!(qporq && cum > 1.5e0 || (!qporq && ccum > 1.5e0))) goto S280; /* POL added parens */
+        /* if(!(qporq && cum > 1.5e0 || !qporq && ccum > 1.5e0)) goto S280; */
         *status = 10;
         return;
 S280:
@@ -5253,7 +5255,7 @@ S20:
 /*
      Calculate the central term of the poisson weighting factor.
 */
-    icent = xnonc;
+    icent = (int)xnonc;  /* POL added cast to silence VC warning C4244 */
     if(icent == 0) icent = 1;
 /*
      Compute central weight term
@@ -6093,7 +6095,8 @@ S90:
     qok = 1;
     return;
 S100:
-    qup = qincr && yy < 0.0e0 || !qincr && yy > 0.0e0;
+    qup = (qincr && yy < 0.0e0) || (!qincr && yy > 0.0e0);  /* POL added parens */
+    /* qup = qincr && yy < 0.0e0 || !qincr && yy > 0.0e0; */
 /*
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      HANDLE CASE IN WHICH WE MUST STEP HIGHER
@@ -6117,7 +6120,8 @@ S120:
     goto S300;
 S130:
     yy = *fx;
-    qbdd = qincr && yy >= 0.0e0 || !qincr && yy <= 0.0e0;
+    qbdd = (qincr && yy >= 0.0e0) || (!qincr && yy <= 0.0e0);  /* POL added parens */
+    /* qbdd = qincr && yy >= 0.0e0 || !qincr && yy <= 0.0e0; */
     qlim = xub >= big;
     qcond = qbdd || qlim;
     if(qcond) goto S140;
@@ -6158,7 +6162,8 @@ S190:
     goto S300;
 S200:
     yy = *fx;
-    qbdd = qincr && yy <= 0.0e0 || !qincr && yy >= 0.0e0;
+    qbdd = (qincr && yy <= 0.0e0) || (!qincr && yy >= 0.0e0); /* POL added parens */
+    /* qbdd = qincr && yy <= 0.0e0 || !qincr && yy >= 0.0e0; */
     qlim = xlb <= small;
     qcond = qbdd || qlim;
     if(qcond) goto S210;
@@ -6602,7 +6607,7 @@ S40:
                 REDUCTION OF A WHEN B .LE. 1000
 */
     if(b > 1000.0e0) goto S80;
-    n = a-1.0e0;
+    n = (int)(a-1.0e0);  /* POL added cast to silence VC warning C4244 */
     w = 1.0e0;
     for(i=1; i<=n; i++) {
         a -= 1.0e0;
@@ -6617,7 +6622,7 @@ S60:
 /*
                  REDUCTION OF B WHEN B .LT. 8
 */
-    n = b-1.0e0;
+    n = (int)(b-1.0e0);  /* POL added cast to silence VC warning C4244 */
     z = 1.0e0;
     for(i=1; i<=n; i++) {
         b -= 1.0e0;
@@ -6629,7 +6634,7 @@ S80:
 /*
                 REDUCTION OF A WHEN B .GT. 1000
 */
-    n = a-1.0e0;
+    n = (int)(a-1.0e0);  /* POL added cast to silence VC warning C4244 */
     w = 1.0e0;
     for(i=1; i<=n; i++) {
         a -= 1.0e0;
@@ -6720,7 +6725,7 @@ S10:
     return dlngam;
 S20:
     if(*a >= 10.0e0) goto S40;
-    n = *a-1.25e0;
+    n = (int)(*a-1.25e0);  /* POL added cast to silence VC warning C4244 */
     t = *a;
     w = 1.0e0;
     for(i=1; i<=n; i++) {
@@ -6834,9 +6839,15 @@ double dt1(double *p,double *q,double *df)
 */
 {
 static double coef[4][5] = {
+    {   1.0e0,     1.0e0,    0.0e0,   0.0e0,  0.0e0},
+    {   3.0e0,    16.0e0,    5.0e0,   0.0e0,  0.0e0},
+    { -15.0e0,    17.0e0,   19.0e0,   3.0e0,  0.0e0},
+    {-945.0e0, -1920.0e0, 1482.0e0, 776.0e0, 79.0e0}
+}; /* POL added missing braces around initializer */
+/* static double coef[4][5] = {
     1.0e0,1.0e0,0.0e0,0.0e0,0.0e0,3.0e0,16.0e0,5.0e0,0.0e0,0.0e0,-15.0e0,17.0e0,
     19.0e0,3.0e0,0.0e0,-945.0e0,-1920.0e0,1482.0e0,776.0e0,79.0e0
-};
+}; */
 static double denom[4] = {
     4.0e0,96.0e0,384.0e0,92160.0e0
 };
@@ -7001,7 +7012,8 @@ S230:
     goto S80;
 S240:
     *xhi = c;
-    qrzero = fc >= 0.0e0 && fb <= 0.0e0 || fc < 0.0e0 && fb >= 0.0e0;
+    qrzero = (fc >= 0.0e0 && fb <= 0.0e0) || (fc < 0.0e0 && fb >= 0.0e0); /* POL added parens */
+    /* qrzero = fc >= 0.0e0 && fb <= 0.0e0 || fc < 0.0e0 && fb >= 0.0e0; */
     if(!qrzero) goto S250;
     *status = 0;
     goto S260;
@@ -7893,7 +7905,7 @@ S10:
     return gamln;
 S20:
     if(*a >= 10.0e0) goto S40;
-    n = *a-1.25e0;
+    n = (int)(*a-1.25e0);  /* POL added cast to silence VC warning C4244 */
     t = *a;
     w = 1.0e0;
     for(i=1; i<=n; i++) {
@@ -8077,7 +8089,7 @@ S110:
     if(fabs(*a) >= 1.e3) return Xgamm;
     if(*a > 0.0e0) goto S120;
     x = -*a;
-    n = x;
+    n = (int)x;  /* POL added cast to silence VC warning C4244 */
     t = x-(double)n;
     if(t > 0.9e0) t = 1.0e0-t;
     s = sin(pi*t)/pi;

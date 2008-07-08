@@ -110,12 +110,12 @@ void StopWatch::normalize()
         
         // sanity check
         stop_time = time(NULL);
-        double crude_elapsed_seconds = (double)(stop_time - start_time);
-        if (crude_elapsed_seconds > 0.0)
-            {
-            double diff = std::fabs(elapsed_seconds - crude_elapsed_seconds);
-            //PHYCAS_ASSERT(diff < 1.0);   // allow up to 1 sec. difference between clock() and time(NULL) estimates
-            }
+        //double crude_elapsed_seconds = (double)(stop_time - start_time);
+        //if (crude_elapsed_seconds > 0.0)
+        //    {
+        //    double diff = std::fabs(elapsed_seconds - crude_elapsed_seconds);
+        //    //PHYCAS_ASSERT(diff < 1.0);   // allow up to 1 sec. difference between clock() and time(NULL) estimates
+        //    }
 
         start_ticks = stop_ticks;    
         }

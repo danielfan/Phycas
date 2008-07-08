@@ -932,7 +932,6 @@ void Split::GetOnListImpl(std::vector<unsigned> & v) const
 */
 std::vector<unsigned> Split::GetOnList() const
     {
-    unsigned k = 0;
     std::vector<unsigned> v;
     GetOnListImpl(v);
     return v;
@@ -975,7 +974,6 @@ void Split::GetOffListImpl(std::vector<unsigned> & v) const
 */
 std::vector<unsigned> Split::GetOffList() const
     {
-    unsigned k = 0;
     std::vector<unsigned> v;
     GetOffListImpl(v);
     return v;
@@ -987,7 +985,6 @@ std::vector<unsigned> Split::GetOffList() const
 */
 std::vector<unsigned> Split::GetExcludedList() const
     {
-    unsigned k = 0;
     std::vector<unsigned> v;
     if (excl_bits.empty())
         return v;
