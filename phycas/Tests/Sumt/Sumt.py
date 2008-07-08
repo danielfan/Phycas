@@ -2,7 +2,7 @@ from phycas import *
 
 if __name__ == '__main__':
     phycas.log_file_name = 'logfile.txt'
-    sumt.input_tree_file = 'test.t'
+    sumt.trees = 'test.t'
     sumt.trees_prefix = 'trees'
     sumt.splits_prefix = 'splits'
     sumt.burnin = 11

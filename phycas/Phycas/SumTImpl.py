@@ -2,6 +2,7 @@ import os,sys,math,random
 from phycas.PDFGen import *
 #from phycas.TreeViewer import *
 from phycas import *
+from phycas.Phycas.PhycasCommand import *
 
 class TreeSummarizer(object):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -24,18 +25,6 @@ class TreeSummarizer(object):
             self.outgroup = None
             self.phycas.warning('Specifying True for sumt_rooted is incompatible with specifying\nsumt_outgroup_taxon; I will pretend that you set sumt_outgroup_taxon to None')
 
-    def readTreesFromFile(self):
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
-        """
-        Reads all trees from the file named in self.opts.input_tree_file.
-        Stores tree descriptions in self.stored_tree_defs and taxon labels in
-        self.taxon_labels.
-        
-        """
-        self.phycas.reader.readFile(self.opts.input_tree_file)
-        self.taxon_labels = self.phycas.reader.getTaxLabels()
-        self.stored_tree_defs = self.phycas.reader.getTrees()
-        self.phycas.phycassert(len(self.stored_tree_defs) > 0, 'expecting a trees block defining at least one tree in the file %s' % self.opts.input_tree_file)
 
     def assignEdgeLensAndSupportValues(self, tree, split_map, total_samples):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -309,7 +298,8 @@ class TreeSummarizer(object):
         """
         #raw_input('debug stop')
         # Check to make sure user specified an input tree file
-        self.phycas.phycassert(self.opts.input_tree_file, 'sumt_input_tree_file must be specified before sumt method is called')
+        input_trees = self.opts.trees
+        self.phycas.phycassert(input_trees, 'trees cannot be None or empty when sumt method is called')
         self.phycas.phycassert(self.opts.trees_prefix, 'sumt_trees_prefix must be specified before sumt method is called')
         self.phycas.phycassert(self.opts.trees_prefix != self.opts.splits_prefix, 'sumt_trees_prefix must differ from sumt_splits_prefix')
             
@@ -322,8 +312,12 @@ class TreeSummarizer(object):
         tree_map = {}
 
         # Open sumt_tfile_name and read trees therein
-        self.phycas.output('\nReading trees from file %s...' % self.opts.input_tree_file)
-        self.readTreesFromFile()
+        self.phycas.output('\nReading %s...' % TreeSource.description(input_trees))
+        self.stored_tree_defs = list(input_trees)
+        self.taxon_labels = input_trees.taxon_labels # this must be kept after the coercion of the trees to a list (in case that is what triggers the readinf of the file with the taxon labels)
+        num_stored_trees = len(self.stored_tree_defs)
+        self.phycas.phycassert(num_stored_trees > 0, 'Specified tree source (%s) contained no stored trees' %  TreeSource.description(input_trees))
+
 
         # Build each tree and add the splits and tree topolgies found there to the
         # dictionary of splits (split_map) and the dictionary of tree topologies
@@ -335,8 +329,6 @@ class TreeSummarizer(object):
 
         # values used for display purposes
         split_field_width = 0
-        num_stored_trees = len(self.stored_tree_defs)
-        self.phycas.phycassert(num_stored_trees > 0, 'Specified tree file (%s) contained no stored trees' % self.opts.input_tree_file)
         sojourn_field_width = 2 + math.floor(math.log10(float(num_stored_trees)))
         
         for tree_def in self.stored_tree_defs:
@@ -441,7 +433,7 @@ class TreeSummarizer(object):
 
         self.phycas.output('\nSummary of sampled trees:')
         self.phycas.output('-------------------------')
-        self.phycas.output('Tree file = %s' % self.opts.input_tree_file)
+        self.phycas.output('Tree source = %s' %  TreeSource.description(input_trees))
         self.phycas.output('Total number of trees in file = %d' % num_trees)
         self.phycas.output('Number of trees considered = %d' % num_trees_considered)
         self.phycas.output('Number of distinct tree topologies found = %d' % len(tree_map.keys()))

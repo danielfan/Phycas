@@ -145,17 +145,66 @@ void UnimapNNIMove::calculatePairwiseDistances()
 		const int8_t w = *wStates++;
 		const int8_t z = *zStates++;
 		if (x != y)
+			{
 			dXY += 1.0;
-		if (x != w)
-			dWX += 1.0;
-		if (x != z)
-			dXZ += 1.0;
-		if (y != w)
-			dWY += 1.0;
-		if (y != z)
-			dYZ += 1.0;
-		if (w != z)
-			dWZ += 1.0;
+			if (x != w)
+				{
+				dWX += 1.0;
+				if (x != z)
+					{
+					dXZ += 1.0;
+					if (y != w)
+						dWY += 1.0;
+					if (y != z)
+						dYZ += 1.0;
+					if (w != z)
+						dWZ += 1.0;
+					}
+				else
+					{
+					dYZ += 1.0;
+					dWZ += 1.0;
+					if (y != w)
+						dWY += 1.0;
+					}
+				}
+			else
+				{
+				dWY += 1.0;
+				if (x != z)
+					{
+					dXZ += 1.0;
+					dWZ += 1.0;
+					}
+				if (y != z)
+					dYZ += 1.0;
+				}
+			
+			}
+		else
+			{
+			if (x != w)
+				{
+				dWX += 1.0;
+				dWY += 1.0;
+				if (x != z)
+					{
+					dXZ += 1.0;
+					dYZ += 1.0;
+					}
+				if (w != z)
+					dWZ += 1.0;
+				}
+			else
+				{			
+				if (x != z)
+					{
+					dXZ += 1.0;
+					dYZ += 1.0;
+					dWZ += 1.0;
+					}
+				}
+}
 		}
 	double dnp = (double) num_patterns;
 	dXY /= dnp;
@@ -516,11 +565,11 @@ double UnimapNNIMove::FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nd)
     likelihood->calcPMatTranspose(wTipData->getTransposedPMatrices(), wTipData->getConstStateListPos(), nd->GetParent()->GetEdgeLen());
 
 	
+	likelihood->calcPMat(p_mat, nd->GetEdgeLen());
+	const double * const *  childPMatrix = p_mat[0];
 	likelihood->calcCLATwoTips(*nd_childCLPtr, *ySisTipData, *yTipData);
 	likelihood->calcCLATwoTips(*nd_parentCLPtr, *wSisTipData, *wTipData);
 
-	likelihood->calcPMat(p_mat, nd->GetEdgeLen());
-	const double * const *  childPMatrix = p_mat[0];
 	return HarvestLnLikeFromCondLikePar(nd_childCLPtr, nd_parentCLPtr, childPMatrix);
 	}
 	

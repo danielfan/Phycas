@@ -94,7 +94,7 @@ class Phycas(object):
         self.edge_move_weight       = 0         # Only used if fix_topology is True. Makes sense to set this to some multiple of the number of edges since each EdgeMove affects a single randomly-chosen edge 
         
         # Variables associated with Unimap NNI moves
-        self.unimap_nni_move_weight = 10         # Unimap NNI moves will be performed this many times per cycle
+        self.unimap_nni_move_weight = 100         # Unimap NNI moves will be performed this many times per cycle
 
         # Variables associated with tree scaler move
         self.tree_scaler_weight     = 0         # Whole-tree scaling will be performed this many times per cycle

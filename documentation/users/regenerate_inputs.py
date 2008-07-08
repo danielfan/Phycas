@@ -2,7 +2,7 @@ import re
 
 categories = {
     'mcmc': ('random_seed','ncycles','sample_every','report_every','outfile_prefix','data_source','data_file_name','starting_tree_source','tree_topology','nchains'),
-    'sumt': ('sumt_outgroup_taxon','sumt_input_tree_file','sumt_trees_prefix','sumt_splits_prefix','sumt_output_replace','sumt_burnin','sumt_equal_brlens'),
+    'sumt': ('sumt_outgroup_taxon','trees','sumt_trees_prefix','sumt_splits_prefix','sumt_output_replace','sumt_burnin','sumt_equal_brlens'),
     'edges': ('internal_edgelen_dist','external_edgelen_dist','edgelen_dist','using_hyperprior','edgelen_hyperprior')
     #'xxxx': ('','','','','','','','','','','','',''),
     }

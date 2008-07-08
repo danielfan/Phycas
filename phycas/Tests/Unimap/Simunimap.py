@@ -76,7 +76,7 @@ if __name__ == '__main__':
     phycas.mcmc()
     
     # Summarize the tree file
-    sumt.input_tree_file    = 'doofus.t'
+    sumt.trees    = 'doofus.t'
     sumt.trees_prefix       = 'doofus_trees'
     sumt.splits_prefix      = 'doofus_splits'
     sumt.burnin             = 0

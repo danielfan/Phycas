@@ -1,6 +1,6 @@
-import sys
+import sys, os
 import textwrap
-
+import phycas.ReadNexus as ReadNexus
 
 ###############################################################################
 #   Taken from
@@ -19,6 +19,54 @@ def ttysize():
         return None
 ###############################################################################
 
+class FileFormats:
+    NEXUS, FASTA, PHYLIP = range(3)
+
+class TreeSource(object):
+    def __init__(self, arg, **kwargs):
+        """`arg` can be a string or an iterable containing trees.
+        If `arg` is a string, then the `format` keyword argument can be used to
+        specify the file format (the default is NEXUS).
+        If the trees are passed in as a list then a `taxon_labels` keyword
+        argument is expected.
+        """
+        if isinstance(arg, str):
+            self.filename = arg
+            self.format = kwargs.get("format", FileFormats.NEXUS)
+            self.trees = None
+            self.taxon_labels = None
+        else:
+            self.trees = list(arg)
+            self.taxon_labels = kwargs.get("taxon_labels")
+            self.filename = None
+            self.format = None
+            
+    def description(arg):
+        if isinstance(arg, TreeSource) and arg.filename:
+            return 'trees from the file "%s"' % arg.filename
+        return "collection of trees"
+    description = staticmethod(description)
+
+    def __iter__(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns an iterable over the trees (this will trigger the reading of 
+        the input file if the object was initialized from a string.
+        Stores tree descriptions in self.stored_tree_defs and taxon labels in
+        self.taxon_labels.
+        """
+        if self.trees is None:
+            if not self.filename:
+                raise ValueError("No file name specified for the source of trees")
+            if not os.path.exists(self.filename):
+                raise ValueError('The file "%s" does not exist')
+            reader = ReadNexus.NexusReader()
+            reader.readFile(self.filename)
+            self.taxon_labels = reader.getTaxLabels()
+            self.trees = reader.getTrees()
+        return iter(self.trees)
+
+
 class PhycasCmdOpts(object):
     _help_str_wrapper = textwrap.TextWrapper()
     _help_fmt_str = "%-19s %-19s %s"
@@ -29,6 +77,7 @@ class PhycasCmdOpts(object):
         self.__dict__["_help_info"] = {}
         self.__dict__["_optionsInOrder"] = None
         self.__dict__["_command"] = None
+        self.__dict__["_unchecked"] = set()
         if command and args:
             self._initialize(command, args)
     def _initialize(self, command=None, args=None):
@@ -80,6 +129,26 @@ class PhycasCmdOpts(object):
             self.__dict__[name] = value
         else:
             self._set_opt(name, value)
+    def check_unchecked(self):
+        for name in self._unchecked:
+            value = self._current[name]
+            try:
+                transf = self._transformer.get(name)
+                if not transf is None:
+                    self._current[name] = transf(self, value)
+            except:
+                pass # it is concievable that some errors here are not errors once all of the other opts have been transformed, so we set options twice
+        for name in self._unchecked:
+            value = self._current[name]
+            self._set_opt(name, value)
+        self._unchecked.clear()
+    def set_unchecked(self, name, value):
+        "Sets the attribute `key` to the `value`"
+        if name in self._current:
+            self._current[name] = value
+            self._unchecked.add(name)
+        else:
+            raise AttributeError("%s does not contain an attribute %s" % (self._command.__class__.__name__, name))
     def _reset_term_width():
         tty_sz = ttysize()
         if tty_sz:
@@ -95,8 +164,13 @@ class PhycasCmdOpts(object):
 
 PhycasCmdOpts._set_terminal_width(80)
 
+
+def TreeSourceValidate(opts, v):
+    return TreeSource(v)
+
 def BoolArgValidate(opts, v):
     return bool(v)
+
 class IntArgValidate(object):
     def __init__(self, min=None, max=None):
         self.min = min
@@ -120,6 +194,7 @@ class PhycasCommandHelp(object):
         print(str(self))
     def __repr__(self):
         return str(self)
+
 class PhycasCommand(object):
     def __init__(self, phycas, option_defs):
         # the roundabout way of initializing PhycasCmdOpts is needed because
@@ -140,4 +215,17 @@ class PhycasCommand(object):
             self.__dict__[name] = value
         else:
             raise AttributeError("%s does not contain an attribute %s" % (self.__class__.__name__, name))
-        
+
+    def set(self, **kwargs):
+        "Sets the attributes of a command using keyword arguments"
+        old = {}
+        o = self._options
+        try:
+            for key, value in kwargs.iteritems():
+                old[key] = getattr(self, key)
+                o.set_unchecked(key, value)
+            o.check_unchecked()
+        except:
+            for key, value in old.iteritems():
+                o.set_unchecked(key, value)
+            raise

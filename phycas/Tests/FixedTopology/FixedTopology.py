@@ -62,7 +62,7 @@ if __name__ == '__main__':
     
     # Summarize the tree file
     if False:
-        sumt.input_tree_file    = 'fixdtree.t'
+        sumt.trees    = 'fixdtree.t'
         sumt.trees_prefix       = 'fixdtree_trees'
         sumt.splits_prefix      = 'fixdtree_splits'
         sumt.burnin             = 0
