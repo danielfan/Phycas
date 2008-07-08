@@ -19,7 +19,7 @@
 
 #include <cmath>
 #include <set>
-#include <limits>
+#include <climits>
 #include <algorithm>
 #include <strstream>
 #include <boost/format.hpp>
