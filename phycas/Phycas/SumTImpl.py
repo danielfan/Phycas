@@ -1,4 +1,5 @@
 import os,sys,math,random
+import os,sys,math,random
 #from phycas.TreeViewer import *
 from phycas import *
 from phycas import useWxPhycas
@@ -194,12 +195,13 @@ class TreeSummarizer(object):
         
         pdf.scatterPlot(data, title = 'Split Probabilities Through Time', xinfo = (0,ntrees,10,0), yinfo = (0.0,1.0,10,1))
 
-        if useWxPhycas():
+        if self.opts.useGUI and useWxPhycas():
             try:
-                    import wx
+                import wx
             except:
                 pass
             else:
+                from phycas import wxPhycas
                 wxapp = wxPhycas.CreateAWTYApp()
                 wxapp.scatterPlot(data, title = 'Split Probabilities Through Time', xinfo = (0,ntrees,10,0), yinfo = (0.0,1.0,10,1))
                 wxapp.MainLoop()

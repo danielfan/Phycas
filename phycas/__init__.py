@@ -64,6 +64,7 @@ if not _user_ini_checked:
         execfile(p)
 
 def useWxPhycas():
+    print 'Inside useWxPhycas(), returning',_use_wx_phycas
     return _use_wx_phycas
 
 import Conversions
@@ -80,7 +81,6 @@ from Phycas.PhycasCommand import FileFormats, REPLACE, APPEND, ADD_NUMBER, phyca
 # keep the wx import after the reading of the startup so that it can be optional
 if useWxPhycas():
     import wxPhycas
-
 
 phycas = Phycas()
 python_help = help

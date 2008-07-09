@@ -58,7 +58,7 @@ if __name__ == '__main__':
 
     # os.chdir(os.path.join(os.path.split(scriptPar)[0], "Examples"))
 
-    #runTest(outFile, "Sumt", ["trees.tre","splits.pdf","logfile.txt"])
+    runTest(outFile, "Sumt", ["trees.tre","splits.pdf","logfile.txt"])
     #runTest(outFile, "ExplorePrior", mcmcOutputs(["nodata.nex"]))
     runTest(outFile, "FixedParams", ["fixed.p", "fixed.t"])
     #runTest(outFile, "FixedTopology", ["fixdtree.p", "fixdtree.t", "simulated.nex"])
