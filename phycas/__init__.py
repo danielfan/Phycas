@@ -11,13 +11,13 @@
 #    'Examples',
 #    ]
 
-class VerbosityLevel:
+class OutFilter:
     DEBUGGING, VERBOSE, NORMAL, WARNINGS, ERRORS, SILENT = range(6)
-    _names = ["debugging", "verbose", "normal", "warnings", "errors", "silent"]
+    _names = ["DEBUGGING", "VERBOSE", "NORMAL", "WARNINGS", "ERRORS", "SILENT"]
     def to_str(v):
-        if v < 0 or v > len(VerbosityLevel._names):
-            raise VauleError("Invalid VerbosityLevel code (%s) specified" % str(v))       
-        return VerbosityLevel._names[v]
+        if v < 0 or v > len(OutFilter._names):
+            raise VauleError("Invalid OutFilter code (%s) specified" % str(v))       
+        return OutFilter._names[v]
     to_str = staticmethod(to_str)
 
 class OutputFilter(object):
@@ -26,24 +26,24 @@ class OutputFilter(object):
         self.stream = stream
     def _filter_output(self, msg, level):
         if self.level <= level:
-            if level < VerbosityLevel.WARNINGS:
+            if level < OutFilter.WARNINGS:
                 self.stream(msg)
-            elif level == VerbosityLevel.WARNINGS:
+            elif level == OutFilter.WARNINGS:
                 self.stream("\n***** Warning: " + msg)
             else:
                 self.stream("\n***** Error: " + msg)
     def info(self, msg):
-        self._filter_output(msg, VerbosityLevel.NORMAL)
+        self._filter_output(msg, OutFilter.NORMAL)
     def warning(self, msg):
-        self._filter_output(msg, VerbosityLevel.WARNINGS)
+        self._filter_output(msg, OutFilter.WARNINGS)
     def error(self, msg):
-        self._filter_output(msg, VerbosityLevel.ERRORS)
+        self._filter_output(msg, OutFilter.ERRORS)
     def verbose_info(self, msg):
-        self._filter_output(msg, VerbosityLevel.VERBOSE)
+        self._filter_output(msg, OutFilter.VERBOSE)
     def debugging(self, msg):
-        self._filter_output(msg, VerbosityLevel.DEBUGGING)
+        self._filter_output(msg, OutFilter.DEBUGGING)
 
-def getDefaultVerbosityLevel():
+def getDefaultOutFilter():
     global default_verbosity_level
     return default_verbosity_level
 
@@ -51,7 +51,7 @@ def getDefaultVerbosityLevel():
 # These globals are set here, so that reading in the startup.py gives
 #   experienced users the chance to override the default behavior.
 intercept_python_exceptions = True
-default_verbosity_level = VerbosityLevel.NORMAL
+default_verbosity_level = OutFilter.NORMAL
 
 import Conversions
 import DataMatrix

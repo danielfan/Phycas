@@ -1,7 +1,7 @@
 import sys, os
 import textwrap
 import phycas.ReadNexus as ReadNexus
-from phycas import getDefaultVerbosityLevel, VerbosityLevel
+from phycas import getDefaultOutFilter, OutFilter
 
 ###############################################################################
 #   Taken from
@@ -346,7 +346,7 @@ class PhycasCommandOutputOptions(object):
         self.__dict__["level"] = 0
         self.__dict__["_cached_level"] = 0
         if verbosity_level is None:
-            self.level = getDefaultVerbosityLevel()
+            self.level = getDefaultOutFilter()
         else:
             self.level = verbosity_level
         self.__dict__["_help_order"] = []
@@ -354,8 +354,8 @@ class PhycasCommandOutputOptions(object):
         o = self.__dict__.get(name)
         if o is not None:
             if name == "level":
-                if value < VerbosityLevel.DEBUGGING or value > VerbosityLevel.SILENT:
-                    raise ValueError("The verbosity level must be set to one of the following:\n    VerbosityLevel.%s" % "\n    VerbosityLevel.".join(["DEBUGGING", "VERBOSE", "NORMAL", "WARNINGS", "ERRORS", "SILENT"]))
+                if value < OutFilter.DEBUGGING or value > OutFilter.SILENT:
+                    raise ValueError("The verbosity level must be set to one of the following:\n    OutFilter.%s" % "\n    OutFilter.".join(["DEBUGGING", "VERBOSE", "NORMAL", "WARNINGS", "ERRORS", "SILENT"]))
                 self.__dict__["level"] = value
                 self.__dict__["_cached_level"] = value
             else:
@@ -369,8 +369,8 @@ class PhycasCommandOutputOptions(object):
                 else:
                     o.set(value)
         else:
-            if name in VerbosityLevel._names:
-                i = VerbosityLevel._names.index(name)
+            if name in OutFilter._names:
+                i = OutFilter._names.index(name)
                 if value:
                     if self.level > value:
                         self.__dict__["level"] = value
@@ -385,13 +385,13 @@ class PhycasCommandOutputOptions(object):
         """Silence the output from the associated function.
         
         Somewhat counterintuitively, this function moves the level down
-        to VerbosityLevel.ERRORS rather than VerbosityLevel.SILENT.
-        The VerbosityLevel.SILENT level is intended only for developers 
+        to OutFilter.ERRORS rather than OutFilter.SILENT.
+        The OutFilter.SILENT level is intended only for developers 
         It can be set by (for an instance called `out`):
             out._silence()
-            out.level = VerbosityLevel.SILENT
+            out.level = OutFilter.SILENT
         """
-        self.__dict__["level"] = VerbosityLevel.ERRORS
+        self.__dict__["level"] = OutFilter.ERRORS
         for n in self.__dict__["_help_order"]:
             self.__dict__[n]._silence()
        
@@ -408,7 +408,7 @@ class PhycasCommandOutputOptions(object):
             dpref = pref + "."
         else:
             dpref = pref
-        s = VerbosityLevel.to_str(self.level)
+        s = "OutFilter." + OutFilter.to_str(self.level)
         opts_help = [PhycasTablePrinter.format_help("%slevel" %dpref, s, "Controls the amount of output (verbosity) of the command")]
         for n in self.__dict__["_help_order"]:
             a = self.__dict__[n]
