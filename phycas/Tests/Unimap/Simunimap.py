@@ -76,13 +76,14 @@ if __name__ == '__main__':
     phycas.mcmc()
     
     # Summarize the tree file
-    sumt.trees    = 'doofus.t'
-    sumt.trees_prefix       = 'doofus_trees'
-    sumt.splits_prefix      = 'doofus_splits'
+    sumt.trees              = 'doofus.t'
     sumt.burnin             = 0
     sumt.outgroup_taxon     = phycas.sim_taxon_labels[0]
-    sumt.output_replace     = True
     sumt.tree_credible_prob = 1.0
+    sumt.out.tree.prefix    = "doofus_trees"
+    sumt.out.trees.mode     = REPLACE
+    sumt.out.splits.prefix  = "doofus_splits"
+    sumt.out.splits.mode    = REPLACE
     sumt()
 
     # Add a PAUP block to the simulated.nex file to make it easy to check the simulated data

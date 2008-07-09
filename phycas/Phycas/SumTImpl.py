@@ -21,6 +21,8 @@ class TreeSummarizer(object):
         self.opts = opts
         self.rooted_trees = opts.rooted
         self.outgroup = opts.outgroup_taxon
+        self.output = opts.out
+        self.stdout = OutputFilter(opts.out.level, phycas.output)
         if self.rooted_trees and opts.outgroup_taxon:
             self.outgroup = None
             self.phycas.warning('Specifying True for sumt_rooted is incompatible with specifying\nsumt_outgroup_taxon; I will pretend that you set sumt_outgroup_taxon to None')
@@ -41,6 +43,7 @@ class TreeSummarizer(object):
         #tree.recalcAllSplits(tree.getNTips())
         tree.recalcAllSplits(tree.getNObservables())
         nd = tree.getFirstPreorder()
+        eq_brlen = self.output.trees.equal_brlens
         while True:
             nd = nd.getNextPreorder()
             if not nd:
@@ -52,10 +55,10 @@ class TreeSummarizer(object):
             try:
                 v = split_map[ss]
             except KeyError:
-                self.phycas.abort('could not find edge length information for the split %s' % ss)
+                raise ValueError('could not find edge length information for the split %s' % ss)
             support = float(v[0])/float(total_samples)
             nd.setSupport(support)
-            if self.opts.equal_brlens:
+            if eq_brlen:
                 edge_len = 1.0
             else:
                 edge_len = float(v[1])/float(v[0])
@@ -75,13 +78,13 @@ class TreeSummarizer(object):
         alt_pdf_file = pdf_file
         if not alt_pdf_file:
             alt_pdf_file = 'sumt.pdf'
-        if self.opts.output_replace:
+        if self.output.output_replace:
             pdf.overwrite = True
         else:
             while os.path.exists(alt_pdf_file):
                 alt_pdf_file = '%s_%d.pdf' % (pdf_file, random.randint(1,1000000))
             if alt_pdf_file != pdf_file:
-                self.phycas.output('Supplied pdf file name %s exists, using %s instead' % (pdf_file, alt_pdf_file))
+                self.stdout.info('Supplied pdf file name %s exists, using %s instead' % (pdf_file, alt_pdf_file))
         
         # Open the output tree file        
         alt_tree_file = tree_file
@@ -91,7 +94,7 @@ class TreeSummarizer(object):
             while os.path.exists(alt_tree_file):
                 alt_tree_file = '%s_%d.tre' % (tree_file, random.randint(1,1000000))
             if alt_tree_file != tree_file:
-                self.phycas.output('Supplied tree file name %s exists, using %s instead' % (tree_file, alt_tree_file))
+                self.stdout.info('Supplied tree file name %s exists, using %s instead' % (tree_file, alt_tree_file))
         treef = open(alt_tree_file, 'w')
         
         treef.write('#nexus\n\n')
@@ -111,10 +114,10 @@ class TreeSummarizer(object):
                 try:
                     num = list(self.taxon_labels).index(self.outgroup)
                 except ValueError:
-                    self.phycas.output('Warning: could not root tree using specified outgroup: no tip having name "%s" could be found' % self.outgroup)
-                    self.phycas.output('Here is the list of all taxon labels:')
+                    self.stdout.info('Warning: could not root tree using specified outgroup: no tip having name "%s" could be found' % self.outgroup)
+                    self.stdout.info('Here is the list of all taxon labels:')
                     for label in self.taxon_labels:
-                        self.phycas.output('  %s' % label)
+                        self.stdout.info('  %s' % label)
                 else:
                     tree.rerootAtTip(num)
             treef.write('  tree %s = [&U] %s;\n' % (short, tree.makeNewick()))
@@ -198,7 +201,7 @@ class TreeSummarizer(object):
                 break
 
         if splits_plotted == 0:
-            self.phycas.output('No AWTY plot created because no splits with posteriors less than 1.0 were found')
+            self.stdout.info('No AWTY plot created because no splits with posteriors less than 1.0 were found')
             return False
         
         pdf.scatterPlot(data, title = 'Split Probabilities Through Time', xinfo = (0,ntrees,10,0), yinfo = (0.0,1.0,10,1))
@@ -213,7 +216,7 @@ class TreeSummarizer(object):
             wxapp.MainLoop()
         
         if trivial_ignored + uninteresting_ignored > 0:
-            self.phycas.output('%d trivial and %d uninteresting splits were ignored.' % (trivial_ignored, uninteresting_ignored))
+            self.stdout.info('%d trivial and %d uninteresting splits were ignored.' % (trivial_ignored, uninteresting_ignored))
         return True
         
     def sojournPlot(self, pdf, split_vect, ntrees):
@@ -251,7 +254,7 @@ class TreeSummarizer(object):
                 break
 
         if splits_plotted == 0:
-            self.phycas.output('No sojourn plot created because all non-trivial splits had posterior probability 1.0')
+            self.stdout.info('No sojourn plot created because all non-trivial splits had posterior probability 1.0')
             return False
 
         # Now create the plot data
@@ -283,7 +286,7 @@ class TreeSummarizer(object):
 
         pdf.scatterPlot(data, points = False, line_width = 3, line_cap_style = 'square', title = 'Split Sojourns', xinfo = (0,ntrees,10,0), yinfo = (0.0,float(ymax),ydivs,0))
         if trivial_ignored + uninteresting_ignored > 0:
-            self.phycas.output('%d trivial and %d uninteresting splits were ignored.' % (trivial_ignored, uninteresting_ignored))
+            self.stdout.info('%d trivial and %d uninteresting splits were ignored.' % (trivial_ignored, uninteresting_ignored))
 
         return True            
         
@@ -312,9 +315,10 @@ class TreeSummarizer(object):
         tree_map = {}
 
         # Open sumt_tfile_name and read trees therein
-        self.phycas.output('\nReading %s...' % TreeSource.description(input_trees))
+        self.stdout.info('\nReading %s...' % TreeSource.description(input_trees))
         self.stored_tree_defs = list(input_trees)
         self.taxon_labels = input_trees.taxon_labels # this must be kept after the coercion of the trees to a list (in case that is what triggers the readinf of the file with the taxon labels)
+
         num_stored_trees = len(self.stored_tree_defs)
         self.phycas.phycassert(num_stored_trees > 0, 'Specified tree source (%s) contained no stored trees' %  TreeSource.description(input_trees))
 
@@ -322,7 +326,7 @@ class TreeSummarizer(object):
         # Build each tree and add the splits and tree topolgies found there to the
         # dictionary of splits (split_map) and the dictionary of tree topologies
         # (tree_map), respectively
-        self.phycas.output('Compiling lists of tree topologies and splits...')
+        self.stdout.info('Compiling lists of tree topologies and splits...')
         t = Phylogeny.Tree()
         if self.rooted_trees:
             t.setRooted()
@@ -431,14 +435,14 @@ class TreeSummarizer(object):
                 # tree topology has not yet been seen
                 tree_map[k] = [1, tree_def, treelen, num_trees_considered]
 
-        self.phycas.output('\nSummary of sampled trees:')
-        self.phycas.output('-------------------------')
-        self.phycas.output('Tree source = %s' %  TreeSource.description(input_trees))
-        self.phycas.output('Total number of trees in file = %d' % num_trees)
-        self.phycas.output('Number of trees considered = %d' % num_trees_considered)
-        self.phycas.output('Number of distinct tree topologies found = %d' % len(tree_map.keys()))
-        #self.phycas.output('Number of distinct splits found = %d' % (len(split_map.keys()) - t.getNTips()))
-        self.phycas.output('Number of distinct splits found = %d' % (len(split_map.keys()) - t.getNObservables()))
+        self.stdout.info('\nSummary of sampled trees:')
+        self.stdout.info('-------------------------')
+        self.stdout.info('Tree source = %s' %  TreeSource.description(input_trees))
+        self.stdout.info('Total number of trees in file = %d' % num_trees)
+        self.stdout.info('Number of trees considered = %d' % num_trees_considered)
+        self.stdout.info('Number of distinct tree topologies found = %d' % len(tree_map.keys()))
+        #self.stdout.info('Number of distinct splits found = %d' % (len(split_map.keys()) - t.getNTips()))
+        self.stdout.info('Number of distinct splits found = %d' % (len(split_map.keys()) - t.getNObservables()))
 
         # Sort the splits from highest posterior probabilty to lowest        
         split_vect = split_map.items()
@@ -451,15 +455,15 @@ class TreeSummarizer(object):
         split_fmt_str = '%%%ds' % split_field_width
         sojourn_label_fmt_str = '%%%ds' % sojourn_field_width
         sojourn_fmt_str = '%%%dd' % sojourn_field_width
-        self.phycas.output('\nSplit (split), split representation (pattern), frequency (freq.), posterior')
-        self.phycas.output('  probability (prob.), mean edge length (weight), first sojourn start (s0),')
-        self.phycas.output('  last sojourn end (sk), and number of sojourns (k):')
+        self.stdout.info('\nSplit (split), split representation (pattern), frequency (freq.), posterior')
+        self.stdout.info('  probability (prob.), mean edge length (weight), first sojourn start (s0),')
+        self.stdout.info('  last sojourn end (sk), and number of sojourns (k):')
         split_str = split_fmt_str % 'pattern'
         freq_str = sojourn_label_fmt_str % 'freq.'
         s0_str = sojourn_label_fmt_str % 's0'
         sk_str = sojourn_label_fmt_str % 'sk'
         k_str = sojourn_label_fmt_str % 'k'
-        self.phycas.output('%6s %s %s %10s %10s %s %s %s' % ('split', split_str, freq_str, 'prob.', 'weight', s0_str, sk_str, k_str))
+        self.stdout.info('%6s %s %s %10s %10s %s %s %s' % ('split', split_str, freq_str, 'prob.', 'weight', s0_str, sk_str, k_str))
         first_below_50 = None
         for i,(k,v) in enumerate(split_vect):
             trivial_split = len(v) == 2 and True or False
@@ -500,10 +504,10 @@ class TreeSummarizer(object):
             s0_str = sojourn_fmt_str % first_sojourn_start
             sk_str = sojourn_fmt_str % last_sojourn_end
             k_str = sojourn_fmt_str % num_sojourns
-            self.phycas.output('%6d %s %s %10.5f %10.5f %s %s %s' % (i + 1, split_str, freq_str, split_posterior, split_weight, s0_str, sk_str, k_str))
+            self.stdout.info('%6d %s %s %10.5f %10.5f %s %s %s' % (i + 1, split_str, freq_str, split_posterior, split_weight, s0_str, sk_str, k_str))
 
         # Build 50% majority rule tree if requested
-        self.phycas.output('\nSaving majority-rule consensus tree...')
+        self.stdout.info('\nSaving majority-rule consensus tree...')
         majrule = Phylogeny.Tree()
         if self.rooted_trees:
             majrule.setRooted()
@@ -520,14 +524,14 @@ class TreeSummarizer(object):
         summary_tree_list = [majrule]
 
         # Output summary of tree topologies
-        self.phycas.output('\nTree topology (topology), frequency (freq.), mean tree length (TL),')
-        self.phycas.output('  first sojourn start (s0), last sojourn end (sk), number of sojourns (k),')
-        self.phycas.output('  posterior probability (prob.), cumulative probability (cum.):')
+        self.stdout.info('\nTree topology (topology), frequency (freq.), mean tree length (TL),')
+        self.stdout.info('  first sojourn start (s0), last sojourn end (sk), number of sojourns (k),')
+        self.stdout.info('  posterior probability (prob.), cumulative probability (cum.):')
         freq_str = sojourn_label_fmt_str % 'freq.'
         s0_str = sojourn_label_fmt_str % 's0'
         sk_str = sojourn_label_fmt_str % 'sk'
         k_str = sojourn_label_fmt_str % 'k'
-        self.phycas.output('%8s %s %10s %s %s %s %10s %10s' % ('topology', freq_str, 'TL', s0_str, sk_str, k_str, 'prob.', 'cum.'))
+        self.stdout.info('%8s %s %10s %s %s %s %10s %10s' % ('topology', freq_str, 'TL', s0_str, sk_str, k_str, 'prob.', 'cum.'))
         cum_prob = 0.0
         done = False
         tree_vect = tree_map.items()
@@ -567,7 +571,7 @@ class TreeSummarizer(object):
                 s0_str = sojourn_fmt_str % first_sojourn_start
                 sk_str = sojourn_fmt_str % last_sojourn_end
                 k_str = sojourn_fmt_str % num_sojourns
-                self.phycas.output('%8d %s %10.5f %s %s %s %10.5f %10.5f' % (i+1, freq_str, avgTL, s0_str, sk_str, k_str, post_prob, cum_prob))
+                self.stdout.info('%8d %s %10.5f %s %s %s %10.5f %10.5f' % (i+1, freq_str, avgTL, s0_str, sk_str, k_str, post_prob, cum_prob))
 
                 # Save the tree topology (decorated with posterior mean edge lengths) to the tree file
                 t = Phylogeny.Tree()
@@ -580,7 +584,7 @@ class TreeSummarizer(object):
                 summary_full_name_list.append('Frequency %d of %d' % (v[0],num_trees_considered))
                 summary_tree_list.append(t)
 
-        self.phycas.output('\nSaving distinct tree topologies...')
+        self.stdout.info('\nSaving distinct tree topologies...')
         self.save_trees(treefname, pdffname, summary_short_name_list, summary_full_name_list, summary_tree_list)
 
         if self.opts.splits_prefix:
@@ -588,15 +592,15 @@ class TreeSummarizer(object):
             pdf = PDFGenerator(11.0, 8.5)
             pdf.overwrite = True
             
-            self.phycas.output('\nSaving AWTY plot in file %s...' % fn)
+            self.stdout.info('\nSaving AWTY plot in file %s...' % fn)
             awty_ok = self.awtyPlot(pdf, split_vect, num_trees_considered)
 
-            self.phycas.output('\nSaving Sojourn plot in file %s...' % fn)
+            self.stdout.info('\nSaving Sojourn plot in file %s...' % fn)
             sojourn_ok = self.sojournPlot(pdf, split_vect, num_trees_considered)
 
             if awty_ok or sojourn_ok:
                 pdf.saveDocument(fn)
 
-        self.phycas.output('\nSumT finished.')
+        self.stdout.info('\nSumT finished.')
 
 

@@ -62,12 +62,11 @@ if __name__ == '__main__':
     
     # Summarize the tree file
     if False:
-        sumt.trees    = 'fixdtree.t'
-        sumt.trees_prefix       = 'fixdtree_trees'
-        sumt.splits_prefix      = 'fixdtree_splits'
+        sumt.trees              = 'fixdtree.t'
+        sumt.out.trees.prefix   = 'fixdtree_trees'
+        sumt.out.splits.prefix  = 'fixdtree_splits'
         sumt.burnin             = 0
         sumt.outgroup_taxon     = phycas.sim_taxon_labels[0]
-        sumt.output_replace     = True
         sumt.tree_credible_prob = 1.0
         sumt()
 

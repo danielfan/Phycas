@@ -11,6 +11,48 @@
 #    'Examples',
 #    ]
 
+class VerbosityLevel:
+    DEBUGGING, VERBOSE, NORMAL, WARNINGS, ERRORS, SILENT = range(6)
+    _names = ["debugging", "verbose", "normal", "warnings", "errors", "silent"]
+    def to_str(v):
+        if v < 0 or v > len(VerbosityLevel._names):
+            raise VauleError("Invalid VerbosityLevel code (%s) specified" % str(v))       
+        return VerbosityLevel._names[v]
+    to_str = staticmethod(to_str)
+
+class OutputFilter(object):
+    def __init__(self, level, stream):
+        self.level = level
+        self.stream = stream
+    def _filter_output(self, msg, level):
+        if self.level <= level:
+            if level < VerbosityLevel.WARNINGS:
+                self.stream(msg)
+            elif level == VerbosityLevel.WARNINGS:
+                self.stream("\n***** Warning: " + msg)
+            else:
+                self.stream("\n***** Error: " + msg)
+    def info(self, msg):
+        self._filter_output(msg, VerbosityLevel.NORMAL)
+    def warning(self, msg):
+        self._filter_output(msg, VerbosityLevel.WARNINGS)
+    def error(self, msg):
+        self._filter_output(msg, VerbosityLevel.ERRORS)
+    def verbose_info(self, msg):
+        self._filter_output(msg, VerbosityLevel.VERBOSE)
+    def debugging(self, msg):
+        self._filter_output(msg, VerbosityLevel.DEBUGGING)
+
+def getDefaultVerbosityLevel():
+    global default_verbosity_level
+    return default_verbosity_level
+
+
+# These globals are set here, so that reading in the startup.py gives
+#   experienced users the chance to override the default behavior.
+intercept_python_exceptions = True
+default_verbosity_level = VerbosityLevel.NORMAL
+
 import Conversions
 import DataMatrix
 import Likelihood
@@ -22,9 +64,11 @@ import ReadNexus
 import sys
 from Phycas import Phycas
 from Phycas.SumT import SumT
+from Phycas.PhycasCommand import FileFormats, REPLACE, APPEND, ADD_NUMBER, phycas_help
+
 _user_ini_checked = False
 
-intercept_python_exceptions = True
+
 if not _user_ini_checked:
     import os
     _user_ini_checked = True
@@ -33,6 +77,8 @@ if not _user_ini_checked:
         execfile(p)
 
 phycas = Phycas()
+python_help = help
+help = phycas_help
 def error_msg(msg):
     sys.stderr.write("Error: %s\n" % msg)
 
@@ -41,6 +87,7 @@ def phycas_except_hook(t, v, tb):
 
 if intercept_python_exceptions:
     sys.excepthook = phycas_except_hook
+
 
 class Newick(object):
     """A class that holds a newick string to define a tree along with an
