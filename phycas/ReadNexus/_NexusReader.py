@@ -185,7 +185,6 @@ class NexusReader(NexusReaderBase):
             return DataMatrixWrapper(raw_mat)
         return None
 
-
     def writeNEXUS(self, out, appending=False):
         nw = NexusWriter(out, appending, self.getTaxLabels())
         dm = self.getLastDiscreteMatrix()

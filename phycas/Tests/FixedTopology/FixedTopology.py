@@ -5,13 +5,13 @@ rnseed = 91375
 nsites = 2000
 
 if __name__ == '__main__':
-    phycas = Phycas()
+    Phycas.PhycassertRaisesException = True
 
     # Set data_source to None because we will not be reading data from a file
-    phycas.data_source = None
+    #simulate.data_source = None  # do not need this since it can be assumed for simulate
 
     # Define the names of the taxa to use when the simulated data set is saved to a file
-    phycas.sim_taxon_labels = [
+    simulate.taxon_labels = [
         'Chara',
         'Conocephalum',
         'Bazzania',
@@ -25,40 +25,40 @@ if __name__ == '__main__':
     ]
 
     # Create a model tree
-    phycas.starting_tree_source = 'usertree'
-    phycas.tree_topology = Newick('(1:0.1,2:0.1,(3:0.1,(4:0.1,((5:0.1,8:0.1):0.1,(6:0.1,((7:0.1,10:0.1):0.1,9:0.1):0.1):0.1):0.1):0.1):0.1)')
+    simulate.starting_tree_source = 'usertree'
+    simulate.tree_topology = Newick('(1:0.1,2:0.1,(3:0.1,(4:0.1,((5:0.1,8:0.1):0.1,(6:0.1,((7:0.1,10:0.1):0.1,9:0.1):0.1):0.1):0.1):0.1):0.1)')
 
     # Create a model
-    phycas.default_model = 'hky'
-    phycas.starting_kappa = 5.0
-    phycas.starting_freqs = [0.2, 0.3, 0.3, 0.2]
+    simulate.default_model = 'hky'
+    simulate.starting_kappa = 5.0
+    simulate.starting_freqs = [0.2, 0.3, 0.3, 0.2]
 
     # Simulation settings
-    phycas.random_seed   = rnseed
-    #phycas.random_seed   = 0
-    phycas.sim_file_name = 'simulated.nex'
-    phycas.sim_nchar     = nsites
+    simulate.random_seed   = rnseed
+    #simulate.random_seed   = 0
+    simulate.file_name = 'simulated.nex'
+    simulate.nchar     = nsites
 
     # Simulate data
-    phycas.simulateDNA()
+    simulate()
 
     # Run MCMC analysis
-    phycas.starting_tree_source    = 'usertree'
-    phycas.data_source             = 'file'
-    phycas.data_file_name          = 'simulated.nex'
-    phycas.fix_topology            = 1 
-    phycas.edge_move_weight        = 17
-    phycas.tree_scaler_weight      = 1
-    phycas.ncycles                 = 100
-    phycas.sample_every            = 1
-    phycas.report_every            = 10
-    phycas.outfile_prefix          = 'fixdtree'
+    mcmc.starting_tree_source    = 'usertree'
+    mcmc.data_source             = 'file'
+    mcmc.data_file_name          = 'simulated.nex'
+    mcmc.fix_topology            = 1 
+    mcmc.edge_move_weight        = 17
+    mcmc.tree_scaler_weight      = 1
+    mcmc.ncycles                 = 100
+    mcmc.sample_every            = 1
+    mcmc.report_every            = 10
+    mcmc.outfile_prefix          = 'fixdtree'
     
     import sys,os
     if os.path.basename(sys.executable) == 'python_d.exe':
         raw_input('debug stop')
     
-    phycas.mcmc()
+    mcmc()
     
     # Summarize the tree file
     if False:

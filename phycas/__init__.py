@@ -75,6 +75,7 @@ import ProbDist
 import ReadNexus
 import sys
 from Phycas.SumT import SumT
+from Phycas.MCMC import MCMC
 from Phycas.PhycasCommand import FileFormats, REPLACE, APPEND, ADD_NUMBER, phycas_help
 # keep the wx import after the reading of the startup so that it can be optional
 if useWxPhycas():
@@ -88,11 +89,11 @@ def error_msg(msg):
     sys.stderr.write("Error: %s\n" % msg)
 
 def phycas_except_hook(t, v, tb):
+    #print '***** error message passed to phycas_except_hook is %s *****' % v
     error_msg(v)
 
 if intercept_python_exceptions:
     sys.excepthook = phycas_except_hook
-
 
 class Newick(object):
     """A class that holds a newick string to define a tree along with an
@@ -115,8 +116,7 @@ class Newick(object):
     def __str__(self):
         return self.newick
 
-
-
 sumt = SumT(phycas)
+mcmc = MCMC(phycas)
 
 #print 'importing phycas...'

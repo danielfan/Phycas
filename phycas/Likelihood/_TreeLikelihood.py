@@ -62,7 +62,7 @@ class TreeLikelihood(TreeLikelihoodBase):
         data_matrix are compressed into data patterns and their counts.
         
         """
-        TreeLikelihoodBase.copyDataFromDiscreteMatrix(self, data_matrix)
+        TreeLikelihoodBase.copyDataFromDiscreteMatrix(self, data_matrix.mat)
 
     def copyDataFromSimData(self, sim_data):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

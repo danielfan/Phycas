@@ -1,50 +1,49 @@
 from phycas import *
+#Phycas.PhycassertRaisesException = True
 
-phycas                              = Phycas()
+mcmc.nchains                      = 1
 
-phycas.nchains                      = 1
+mcmc.random_seed                  = 13579
+mcmc.default_model                = 'hky'
 
-phycas.random_seed                  = 13579
-phycas.default_model                = 'hky'
+mcmc.starting_kappa               = 4.0
+mcmc.fix_kappa                    = True
+mcmc.kappa_prior                  = ProbDist.ExponentialDist(1.0)
 
-phycas.starting_kappa               = 4.0
-phycas.fix_kappa                    = True
-phycas.kappa_prior                  = ProbDist.ExponentialDist(1.0)
+mcmc.starting_freqs               = [0.1, 0.2, 0.3, 0.4]
+mcmc.fix_freqs                    = True
+mcmc.base_freq_param_prior        = ProbDist.ExponentialDist(1.0)
 
-phycas.starting_freqs               = [0.1, 0.2, 0.3, 0.4]
-phycas.fix_freqs                    = True
-phycas.base_freq_param_prior        = ProbDist.ExponentialDist(1.0)
+mcmc.num_rates                    = 4
+mcmc.starting_shape               = 0.14
+mcmc.fix_shape                    = True
+mcmc.use_inverse_shape            = False
+mcmc.gamma_shape_prior            = ProbDist.ExponentialDist(1.0)
 
-phycas.num_rates                    = 4
-phycas.starting_shape               = 0.14
-phycas.fix_shape                    = True
-phycas.use_inverse_shape            = False
-phycas.gamma_shape_prior            = ProbDist.ExponentialDist(1.0)
+mcmc.estimate_pinvar              = True
+mcmc.starting_pinvar              = 0.27
+mcmc.fix_pinvar                   = True
+mcmc.pinvar_prior                 = ProbDist.BetaDist(1.0, 1.0)
 
-phycas.estimate_pinvar              = True
-phycas.starting_pinvar              = 0.27
-phycas.fix_pinvar                   = True
-phycas.pinvar_prior                 = ProbDist.BetaDist(1.0, 1.0)
+mcmc.fix_edgelens                 = True
+mcmc.edgelen_dist                 = ProbDist.ExponentialDist(10.0)
 
-phycas.fix_edgelens                 = True
-phycas.edgelen_dist                 = ProbDist.ExponentialDist(10.0)
+mcmc.using_hyperprior             = True
+mcmc.starting_edgelen_hyperparam  = 0.05
+mcmc.fix_edgelen_hyperparam       = True
+mcmc.edgelen_hyperprior           = ProbDist.InverseGammaDist(2.1, 0.9090909)
 
-phycas.using_hyperprior             = True
-phycas.starting_edgelen_hyperparam  = 0.05
-phycas.fix_edgelen_hyperparam       = True
-phycas.edgelen_hyperprior           = ProbDist.InverseGammaDist(2.1, 0.9090909)
+mcmc.data_source                  = 'file'
+mcmc.data_file_name               = '../Data/nyldna4.nex'
 
-phycas.data_source                  = 'file'
-phycas.data_file_name               = '../Data/nyldna4.nex'
+mcmc.starting_tree_source         = 'random'
 
-phycas.starting_tree_source         = 'random'
+mcmc.outfile_prefix               = 'fixed'
 
-phycas.outfile_prefix               = 'fixed'
-
-phycas.ncycles                      = 2500
+mcmc.ncycles                      = 2500
 
 import sys,os
 if os.path.basename(sys.executable) == 'python_d.exe':
     raw_input('debug stop')
 
-phycas.mcmc()
+mcmc()

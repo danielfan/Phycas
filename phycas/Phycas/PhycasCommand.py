@@ -5,22 +5,42 @@ from phycas.PDFGen import PDFGenerator
 import phycas.ReadNexus as ReadNexus
 
 ###############################################################################
-#   Taken from
-#   http://mail.python.org/pipermail/python-list/2006-February/365594.html
-
 def ttysize():
-    try:
-        import fcntl
-        import struct
-        import termios
-        buf = 'abcdefgh'
-        buf = fcntl.ioctl(0, termios.TIOCGWINSZ, buf)
-        row, col, rpx, cpx = struct.unpack('hhhh', buf)
-        return row, col
-    except:
-        return None
-###############################################################################
+    #Mark, add this section for us Windows users
+    if os.name == 'nt':
+        # From http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/440694
+        from ctypes import windll, create_string_buffer
 
+        # stdin handle is -10
+        # stdout handle is -11
+        # stderr handle is -12
+
+        h = windll.kernel32.GetStdHandle(-12)
+        csbi = create_string_buffer(22)
+        res = windll.kernel32.GetConsoleScreenBufferInfo(h, csbi)
+
+        if res:
+            import struct
+            (bufx, bufy, curx, cury, wattr,
+             left, top, right, bottom, maxx, maxy) = struct.unpack("hhhhHhhhhhh", csbi.raw)
+            sizex = right - left + 1
+            sizey = bottom - top + 1
+            return sizey, sizex
+        else:
+            return None
+    else:
+        # From http://mail.python.org/pipermail/python-list/2006-February/365594.html
+        try:
+            import fcntl
+            import struct
+            import termios
+            buf = 'abcdefgh'
+            buf = fcntl.ioctl(0, termios.TIOCGWINSZ, buf)
+            row, col, rpx, cpx = struct.unpack('hhhh', buf)
+            return row, col
+        except:
+            return None
+###############################################################################
 
 class PhycasHelp(object):
     _phycas_cmd_classes = set()
@@ -573,6 +593,10 @@ class PhycasCmdOpts(object):
                     raise ValueError("%s is not a valid value for %s.  %s" % (value, name, c))
             self._command.__dict__[name] = self._current[name]
         else:
+            print 'name  =',name
+            print 'value =',value
+            for k in self._current.keys():
+                print k
             raise AttributeError("%s does not contain an attribute %s" % (self._command.__class__.__name__, name))
     def __contains__(self, name):
         return name in self._current
@@ -699,7 +723,8 @@ class PhycasCommandHelp(object):
 
 class PhycasCommand(object):
 
-    def __init__(self, phycas, option_defs, output_options=None):
+    #Mark, added cmd_name and cmd_descript - you had hard-coded Sumt here
+    def __init__(self, phycas, option_defs, cmd_name, cmd_descrip, output_options=None):
         # the roundabout way of initializing PhycasCmdOpts is needed because
         #   _options must be in the __dict__ before the setattr is called
         #   on a PhycasCommand
@@ -709,12 +734,14 @@ class PhycasCommand(object):
         o._initialize(self, option_defs)
         self.__dict__["phycas"] = phycas
         self.__dict__["out"] = output_options
-        self.__dict__["help"] = PhycasCommandHelp(self, "Sumt", "The Sumt command is used to summarize a collection of trees (usually trees that have been produced by an MCMC simulation).")
+        self.__dict__["help"] = PhycasCommandHelp(self, cmd_name, cmd_descrip)
 
     def __setattr__(self, name, value):
         o = self.__dict__["_options"]
         if name in o:
-            o._set_opt(name.lower(), value)
+            #Mark, why lower()? 
+            #o._set_opt(name.lower(), value)
+            o._set_opt(name, value)
         elif name in self.__dict__:
             outp = self.__dict__["out"]
             isintarg = isinstance(value, int) or isinstance(value, long)

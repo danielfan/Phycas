@@ -36,43 +36,43 @@ class Phycas(object):
         
         """
         # Variables controlling the MCMC analysis and progress reporting
-        self.random_seed            = 0         # Determines the random number seed used (specify either 0 or a positive integer; 0 means generate seed automatically from system clock)
-        self.ncycles                = 10000     # The number of update cycles (a cycle is analogous to, but different than, a "generation" in MrBayes; Phycas does in one cycle what MrBayes does in about 100 generations for a simple model such as JC)
-        self.sample_every           = 100       # The current tree topology and model parameter values will be sampled after this many cycles have elapsed since the last sample was taken
-        self.report_every           = 100       # A progress report will be displayed after this many cycles have elapsed since the last progress report
-        self.verbose                = True      # You will get more output if True, less output if False
+        #-self.random_seed            = 0         # Determines the random number seed used (specify either 0 or a positive integer; 0 means generate seed automatically from system clock)
+        #-self.ncycles                = 10000     # The number of update cycles (a cycle is analogous to, but different than, a "generation" in MrBayes; Phycas does in one cycle what MrBayes does in about 100 generations for a simple model such as JC)
+        #-self.sample_every           = 100       # The current tree topology and model parameter values will be sampled after this many cycles have elapsed since the last sample was taken
+        #-self.report_every           = 100       # A progress report will be displayed after this many cycles have elapsed since the last progress report
+        #-self.verbose                = True      # You will get more output if True, less output if False
         self.quiet                  = False     # If True, output will only be sent to the log file if open (see below); if False, output will be sent to the console as well
-        self.outfile_prefix         = None      # If None, parameter and tree files created will have a name beginning with the name of the data file; if provided, this prefix will form the first part of the parameter (e.g. <outfile_prefix>.p) and tree file (e.g. <outfile_prefix>.t) names
+        #-self.outfile_prefix         = None      # If None, parameter and tree files created will have a name beginning with the name of the data file; if provided, this prefix will form the first part of the parameter (e.g. <outfile_prefix>.p) and tree file (e.g. <outfile_prefix>.t) names
 
         # Variables associated with substitution models (except for edge lengths)
-        self.default_model          = 'hky'     # Can be 'jc', 'hky' or 'gtr'
+        #-self.default_model          = 'hky'     # Can be 'jc', 'hky' or 'gtr'
 
-        self.relrate_prior          = ExponentialDist(1.0)              # The prior distribution for individual GTR relative rate parameters
-        self.starting_relrates      = [1.0, 4.0, 1.0, 1.0, 4.0, 1.0]    # The starting values for GTR relative rates
-        self.fix_relrates           = False                             # If True, GTR relative rates will not be modified during the course of an MCMC analysis
+        #-self.relrate_prior          = ExponentialDist(1.0)              # The prior distribution for individual GTR relative rate parameters
+        #-self.starting_relrates      = [1.0, 4.0, 1.0, 1.0, 4.0, 1.0]    # The starting values for GTR relative rates
+        #-self.fix_relrates           = False                             # If True, GTR relative rates will not be modified during the course of an MCMC analysis
 
-        self.kappa_prior            = ExponentialDist(1.0)      # The prior distribution for the kappa parameter in an HKY model
-        self.starting_kappa         = 4.0                       # Tthe starting value for the kappa parameter in an HKY model
-        self.fix_kappa              = False                     # If True, the HKY kappa parameter will not be modified during the course of an MCMC analysis
+        #-self.kappa_prior            = ExponentialDist(1.0)      # The prior distribution for the kappa parameter in an HKY model
+        #-self.starting_kappa         = 4.0                       # The starting value for the kappa parameter in an HKY model
+        #-self.fix_kappa              = False                     # If True, the HKY kappa parameter will not be modified during the course of an MCMC analysis
 
-        self.num_rates              = 1                     # Tthe number of relative rates used for the discrete gamma rate heterogeneity submodel; default is rate homogeneity (i.e. 1 rate)
-        self.gamma_shape_prior      = ExponentialDist(1.0)  # The prior distribution for the shape parameter of the gamma among-site rate distribution
-        self.starting_shape         = 0.5                   # The starting value for the gamma shape parameter
-        self.fix_shape              = False                 # If True, the gamma shape parameter will not be modified during the course of an MCMC analysis
-        self.use_inverse_shape      = False                 # If True, gamma_shape_prior is applied to 1/shape rather than shape
+        #-self.num_rates              = 1                     # The number of relative rates used for the discrete gamma rate heterogeneity submodel; default is rate homogeneity (i.e. 1 rate)
+        #-self.gamma_shape_prior      = ExponentialDist(1.0)  # The prior distribution for the shape parameter of the gamma among-site rate distribution
+        #-self.starting_shape         = 0.5                   # The starting value for the gamma shape parameter
+        #-self.fix_shape              = False                 # If True, the gamma shape parameter will not be modified during the course of an MCMC analysis
+        #-self.use_inverse_shape      = False                 # If True, gamma_shape_prior is applied to 1/shape rather than shape
 
-        self.estimate_pinvar        = False                 # If True, an invariable sites submodel will be applied and the parameter representing the proportion of invariable sites will be estimated
-        self.pinvar_prior           = BetaDist(1.0, 1.0)    # The prior distribution for pinvar, the proportion of invariable sites parameter
-        self.starting_pinvar        = 0.2                   # The starting value of pinvar, the proportion of invariable sites parameter
-        self.fix_pinvar             = False                 # If True, the proportion of invariable sites parameter (pinvar) will not be modified during the course of an MCMC analysis
+        #-self.estimate_pinvar        = False                 # If True, an invariable sites submodel will be applied and the parameter representing the proportion of invariable sites will be estimated
+        #-self.pinvar_prior           = BetaDist(1.0, 1.0)    # The prior distribution for pinvar, the proportion of invariable sites parameter
+        #-self.starting_pinvar        = 0.2                   # The starting value of pinvar, the proportion of invariable sites parameter
+        #-self.fix_pinvar             = False                 # If True, the proportion of invariable sites parameter (pinvar) will not be modified during the course of an MCMC analysis
 
-        self.base_freq_param_prior  = ExponentialDist(1.0)  # The prior distribution for the individual base frequency parameters; these parameters, when normalized to sum to 1, represent the equilibrium proportions of the nucleotide states
-        self.starting_freqs         = [1.0, 1.0, 1.0, 1.0]  # The starting values for the four base frequency parameters
-        self.fix_freqs              = False                 # If True, the base frequencies will not be modified during the course of an MCMC analysis
+        #-self.base_freq_param_prior  = ExponentialDist(1.0)  # The prior distribution for the individual base frequency parameters; these parameters, when normalized to sum to 1, represent the equilibrium proportions of the nucleotide states
+        #-self.starting_freqs         = [1.0, 1.0, 1.0, 1.0]  # The starting values for the four base frequency parameters
+        #-self.fix_freqs              = False                 # If True, the base frequencies will not be modified during the course of an MCMC analysis
 
         # Variables associated with the source of data        
-        self.data_source            = 'file'    # Specify None to explore the joint prior or to simulate data; if 'file', data_file_name should be a valid nexus file name
-        self.data_file_name         = ''        # Used to specify the nexus data file name to be used for subsequent analyses
+        #-self.data_source            = 'file'    # Specify None to explore the joint prior or to simulate data; if 'file', data_file_name should be a valid nexus file name
+        #-self.data_file_name         = ''        # Used to specify the nexus data file name to be used for subsequent analyses
 
         # Variables associated with simulating data (see function simulateDNA below)
         self.sim_file_name          = 'simulated.nex'                           # Name of file in which to save simulated data
@@ -80,28 +80,28 @@ class Phycas(object):
         self.sim_nchar              = 1000                                      # Number of characters to generate
 
         # Variables associated with the source of starting tree
-        self.starting_tree_source   = 'random'  # Source of the starting tree topology: can be either 'random' or 'usertree'. Note that this setting does not determine the edge lengths in the starting tree, only the topology. Starting edge lengths are determined by the probability distribution specified in starting_edgelen_dist
-        self.tree_topology          = None      # Unused unless starting_tree_source is 'usertree', in which case this should be a standard newick string representation of the tree topology; e.g. '(A:0.01,B:0.071,(C:0.013,D:0.021):0.037)'
+        #-self.starting_tree_source   = 'random'  # Source of the starting tree topology: can be either 'random' or 'usertree'. Note that this setting does not determine the edge lengths in the starting tree, only the topology. Starting edge lengths are determined by the probability distribution specified in starting_edgelen_dist
+        #-self.tree_topology          = None      # Unused unless starting_tree_source is 'usertree', in which case this should be a standard newick string representation of the tree topology; e.g. '(A:0.01,B:0.071,(C:0.013,D:0.021):0.037)'
 
         # Variables associated with Larget-Simon moves
-        self.ls_move_lambda         = 0.2       # The value of the tuning parameter for the Larget-Simon move
-        self.ls_move_weight         = 100       # Larget-Simon moves will be performed this many times per cycle
-        self.ls_move_debug          = False     # If set to true, TreeViewer will popup on each Larget-Simon move update showing edges affected by the proposed move
+        #-self.ls_move_lambda         = 0.2       # The value of the tuning parameter for the Larget-Simon move
+        #-self.ls_move_weight         = 100       # Larget-Simon moves will be performed this many times per cycle
+        #-self.ls_move_debug          = False     # If set to true, TreeViewer will popup on each Larget-Simon move update showing edges affected by the proposed move
 
         # Variables associated with edge length moves
-        self.fix_topology           = False     # If True, an EdgeMove move will be substituted for the LargetSimonMove, so edge lengths will be updated by slice sampling but the topology will remain unchanged during an MCMC analysis
-        self.edge_move_lambda       = 0.2       # The value of the tuning parameter for the EdgeMove
-        self.edge_move_weight       = 0         # Only used if fix_topology is True. Makes sense to set this to some multiple of the number of edges since each EdgeMove affects a single randomly-chosen edge 
+        #-self.fix_topology           = False     # If True, an EdgeMove move will be substituted for the LargetSimonMove, so edge lengths will be updated by slice sampling but the topology will remain unchanged during an MCMC analysis
+        #-self.edge_move_lambda       = 0.2       # The value of the tuning parameter for the EdgeMove
+        #-self.edge_move_weight       = 0         # Only used if fix_topology is True. Makes sense to set this to some multiple of the number of edges since each EdgeMove affects a single randomly-chosen edge 
         
         # Variables associated with Unimap NNI moves
-        self.unimap_nni_move_weight = 100         # Unimap NNI moves will be performed this many times per cycle
+        #-self.unimap_nni_move_weight = 100         # Unimap NNI moves will be performed this many times per cycle
 
         # Variables associated with tree scaler move
-        self.tree_scaler_weight     = 0         # Whole-tree scaling will be performed this many times per cycle
+        #-self.tree_scaler_weight     = 0         # Whole-tree scaling will be performed this many times per cycle
         
         #POLPY_NEWWAY
-        self.use_unimap             = False     # if True, MCMC analyses will use the uniformized mapping approach
-        self.nielsen_move_weight    = 1         # Nielsen mapping will be performed this many times per cycle
+        #-self.use_unimap             = False     # if True, MCMC analyses will use the uniformized mapping approach
+        #-self.nielsen_move_weight    = 1         # Nielsen mapping will be performed this many times per cycle
 
         # Variables associated with PDF tree drawing (used in pdftree() function)
         # The 14 standard fonts guaranteed to be available in all PDF consumer applications:
@@ -141,12 +141,12 @@ class Phycas(object):
         self.brownian_input_tree_file    = None           # Set to the name of the input tree file. This setting should not be None at the time the brownian method is called.
 
         # Variables associated with Polytomy (Bush) moves
-        self.allow_polytomies       = False     # If True, do Bush moves in addition to Larget-Simon moves; if False, do Larget-Simon moves only
-        self.polytomy_prior         = True      # If True, use polytomy prior; if False, use resolution class prior
-        self.topo_prior_C           = 2.0       # Specifies the strength of the prior (C = 1 is flat prior; C > 1 favors less resolved topologies)
-        self.bush_move_edgelen_mean = 1.0       # Specifies mean of exponential edge length generation distribution used by BushMove when new edges are created
-        self.bush_move_weight       = 100       # Bush moves will be performed this many times per cycle if
-        self.bush_move_debug        = False     # If set to true, TreeViewer will pop up on each Bush move update showing edges affected by the proposed move
+        #-self.allow_polytomies       = False     # If True, do Bush moves in addition to Larget-Simon moves; if False, do Larget-Simon moves only
+        #-self.polytomy_prior         = True      # If True, use polytomy prior; if False, use resolution class prior
+        #-self.topo_prior_C           = 2.0       # Specifies the strength of the prior (C = 1 is flat prior; C > 1 favors less resolved topologies)
+        #-self.bush_move_edgelen_mean = 1.0       # Specifies mean of exponential edge length generation distribution used by BushMove when new edges are created
+        #-self.bush_move_weight       = 100       # Bush moves will be performed this many times per cycle if
+        #-self.bush_move_debug        = False     # If set to true, TreeViewer will pop up on each Bush move update showing edges affected by the proposed move
 
         # Variables associated with SAMC analyses
         self.doing_samc             = False     # If True, using Cheon and Liang "SSAMC" method
@@ -157,14 +157,14 @@ class Phycas(object):
         self.samc_temperature       = 0.6       # Temperature used in extrapolate move to smooth out differences in probabilities of different possible attachment points
 
         # Variables associated with slice samplers
-        self.slice_weight           = 1         # Slice sampled parameters will be updated this many times per cycle
-        self.slice_max_units        = 1000      # Max. number of units used in slice sampling
-        self.adapt_first            = 100       # Adaptation of slice samplers is performed the first time at cycle adapt_first.
+        #-self.slice_weight           = 1         # Slice sampled parameters will be updated this many times per cycle
+        #-self.slice_max_units        = 1000      # Max. number of units used in slice sampling
+        #-self.adapt_first            = 100       # Adaptation of slice samplers is performed the first time at cycle adapt_first.
                                                 # Subsequent adaptations wait twice the number of cycles as the previous adaptation.
                                                 # Thus, adaptation n occurs at cycle adapt_first*(2^n - 1)
                                                 # The total number of adaptations that will occur during an MCMC run is
                                                 #      [ln(adapt_first + ncycles) - ln(adapt_first)]/ln(2)
-        self.adapt_simple_param     = 0.5       # Slice sampler adaptation parameter
+        #-self.adapt_simple_param     = 0.5       # Slice sampler adaptation parameter
         #self.adapt_ycond_param      = 1.3
         #self.adapt_ycond_from_ends  = 0.25
 
@@ -175,25 +175,25 @@ class Phycas(object):
         # and external edges. If using_hyperprior is True, then hyperparameters will be used to
         # govern the mean of all edge length priors defined. The same hyperprior will be used for both
         # hyperparameters (should two hyperparameters be used)
-        self.using_hyperprior       = True      
-        self.edgelen_hyperprior     = InverseGammaDist(2.1,1.0/1.1)
-        self.starting_edgelen_hyperparam = 0.05 #POL doesn't do anything! currently ignored
-        self.fix_edgelen_hyperparam = False 
+        #-self.using_hyperprior       = True      
+        #-self.edgelen_hyperprior     = InverseGammaDist(2.1,1.0/1.1)
+        #-self.starting_edgelen_hyperparam = 0.05 #POL doesn't do anything! currently ignored
+        #-self.fix_edgelen_hyperparam = False 
 
         # Note that edgelen_dist is a property: its setter function (setEdgelenDist) sets
         # both internal_edgelen_dist and external_edgelen_dist to the value specified
-        self.internal_edgelen_dist  = None                  # Can be used to set a prior distribution for internal edges that differs from that applied to external edges. If this is set to something besides None, you should also set external_edgelen_dist appropriately. Setting the edgelen_dist property sets both external_edgelen_dist and internal_edgelen_dist to the same value
-        self.external_edgelen_dist  = None                  # Can be used to set a prior distribution for external edges that differs from that applied to internal edges. If this is set to something besides None, you should also set internal_edgelen_dist appropriately. Setting the edgelen_dist property sets both external_edgelen_dist and internal_edgelen_dist to the same value
-        self.edgelen_dist           = ExponentialDist(2.0)  # Sets both internal_edgelen_dist and external_edgelen_dist to the supplied value. Use this setting if you want all edges in the tree to have the same prior distribution. Using this setting will overwrite any values previously supplied for internal_edgelen_dist and external_edgelen_dist
-        self.fix_edgelens           = False 
+        #-self.internal_edgelen_dist  = None                  # Can be used to set a prior distribution for internal edges that differs from that applied to external edges. If this is set to something besides None, you should also set external_edgelen_dist appropriately. Setting the edgelen_dist property sets both external_edgelen_dist and internal_edgelen_dist to the same value
+        #-self.external_edgelen_dist  = None                  # Can be used to set a prior distribution for external edges that differs from that applied to internal edges. If this is set to something besides None, you should also set internal_edgelen_dist appropriately. Setting the edgelen_dist property sets both external_edgelen_dist and internal_edgelen_dist to the same value
+        #-self.edgelen_dist           = ExponentialDist(2.0)  # Sets both internal_edgelen_dist and external_edgelen_dist to the supplied value. Use this setting if you want all edges in the tree to have the same prior distribution. Using this setting will overwrite any values previously supplied for internal_edgelen_dist and external_edgelen_dist
+        #-self.fix_edgelens           = False 
         
         # Variables associated with initializing the MCMC sampler
-        self.starting_edgelen_dist  = ExponentialDist(10.0) # Used to select the starting edge lengths when starting_tree_source is 'random'
+        #-self.starting_edgelen_dist  = ExponentialDist(10.0) # Used to select the starting edge lengths when starting_tree_source is 'random'
 
         # Variables associated with Metropolis coupling (heated chains)
-        self.heating_lambda         = 0.2
-        self.nchains                = 1
-        self.is_standard_heating    = True
+        #-self.heating_lambda         = 0.2
+        #-self.nchains                = 1
+        #-self.is_standard_heating    = True
         
         # Variables associated with path sampling (i.e. thermodynamic integration)
         # If pathsampling() function called, ncycles will be ignored and instead the number of cycles
@@ -220,16 +220,16 @@ class Phycas(object):
         self.gg_bincount_filename   = None      # If not None, and if gg_bin_patterns is True, the binned counts for the original dataset and all posterior predictive data sets will be saved to a file by this name
 
         # Variables associated with the FLEXCAT model
-        self.use_flex_model         = False
-        self.flex_ncat_move_weight  = 1         # Number of times each cycle to attempt an ncat move
-        self.flex_num_spacers       = 1         # Number of fake rates between each adjacent pair of real rates
-        self.flex_phi               = 0.25      # Proportion of ncat moves in which ncat is incremented (ncat is decremented with probability 1 - flex_phi)
-        self.flex_L                 = 1.0       # Upper bound of interval used for unnormalized relative rate parameter values
-        self.flex_lambda            = 1.0       # Parameter of Poisson prior on the number of extra categories
-        self.flex_prob_param_prior  = ExponentialDist(1.0)
+        #-self.use_flex_model         = False
+        #-self.flex_ncat_move_weight  = 1         # Number of times each cycle to attempt an ncat move
+        #-self.flex_num_spacers       = 1         # Number of fake rates between each adjacent pair of real rates
+        #-self.flex_phi               = 0.25      # Proportion of ncat moves in which ncat is incremented (ncat is decremented with probability 1 - flex_phi)
+        #-self.flex_L                 = 1.0       # Upper bound of interval used for unnormalized relative rate parameter values
+        #-self.flex_lambda            = 1.0       # Parameter of Poisson prior on the number of extra categories
+        #-self.flex_prob_param_prior  = ExponentialDist(1.0)
 
         # Variables associated with underflow protection                
-        self.uf_num_edges           = 50        # Number of edges to traverse before taking action to prevent underflow
+        #-self.uf_num_edges           = 50        # Number of edges to traverse before taking action to prevent underflow
         
         # ***** IT IS BEST NOT TO CHANGE ANYTHING BELOW HERE *****
         self.debugging              = False      # If set to True expect lots of debug output (e.g. data pattern table)
@@ -354,7 +354,7 @@ class Phycas(object):
         s = '\n***** Warning: %s' % msg
         self.output(s)
         
-    def showParamInfo(self, p):
+    def obsolete_showParamInfo(self, p):
         self.output('  Parameter name:     %s' % p.getName())
         self.output('  Prior distribution: %s' % p.getPriorDescr())
         if p.isMasterParameter():
@@ -364,7 +364,7 @@ class Phycas(object):
         self.output('  Prior log-density:  %s' % p.getLnPrior())
         self.output()
                 
-    def showTopoPriorInfo(self):
+    def obsolete_showTopoPriorInfo(self):
         m = self.mcmc_manager.getColdChain()
         self.output('Topology prior:')
         if not self.allow_polytomies:
@@ -389,7 +389,7 @@ class Phycas(object):
                     self.output('%20d %20.8f' % (i,topo_prior))
             self.output()
 
-    def treeFileOpen(self):
+    def obsolete_treeFileOpen(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Opens the tree file and writes a translate table.
@@ -398,11 +398,11 @@ class Phycas(object):
         self.treef = file(self.tree_file_name, 'w')
         self.mcmc_manager.treeFileHeader(self.treef)
 
-    def treeFileClose(self):
+    def obsolete_treeFileClose(self):
         self.treef.write('end;\n')
         self.treef.close()
 
-    def paramFileOpen(self):
+    def obsolete_paramFileOpen(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Opens the parameter file and writes a header line.
@@ -412,10 +412,10 @@ class Phycas(object):
         self.mcmc_manager.paramFileHeader(self.paramf)
         self.paramf.write('\n')
 
-    def paramFileClose(self):
+    def obsolete_paramFileClose(self):
         self.paramf.close()
 
-    def sliceSamplerReport(self, s, nm):
+    def obsolete_sliceSamplerReport(self, s, nm):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Reports status of one slice sampler s that is updating a parameter
@@ -426,7 +426,7 @@ class Phycas(object):
         mode = s.getMode()
         return '  mode=%.5f, avgevals=%.3f (%s)\n' % (mode, avg, nm)
 
-    def adaptOneSliceSampler(self, p):
+    def obsolete_adaptOneSliceSampler(self, p):
         self.phycassert(p, 'could not adapt slice sampler; parameter non-existant')
         summary = ''
         if p.hasSliceSampler():
@@ -439,7 +439,7 @@ class Phycas(object):
                 s.resetDiagnostics()
         return summary
         
-    def adaptSliceSamplers(self):
+    def obsolete_adaptSliceSamplers(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Cycles through all slice samplers and adapts each one. Adaptation of
@@ -463,7 +463,7 @@ class Phycas(object):
             self.output('\nSlice sampler diagnostics:')
             self.output(summary)
 
-    def updateAllUpdaters(self, chain, chain_index, cycle):
+    def obsolete_updateAllUpdaters(self, chain, chain_index, cycle):
         if self.debugging:
             tmpf = file('debug_info.txt', 'a')
             tmpf.write('************** cycle=%d, chain=%d\n' % (cycle,chain_index))
@@ -480,7 +480,7 @@ class Phycas(object):
         if self.debugging:
             tmpf.close()
 
-    def runMCMC(self):
+    def obsolete_runMCMC(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Performs the MCMC analysis. Assumes setupMCMC() has already been
@@ -634,7 +634,7 @@ class Phycas(object):
         # for each chain stored in self.path_sample
         self.calcMarginalLikelihood()
 
-    def calcMarginalLikelihood(self):
+    def obsolete_calcMarginalLikelihood(self):
         marginal_like = 0.0
         if self.doing_path_sampling:
             # Calculate marginal likelihood using continuous path sampling
@@ -809,7 +809,7 @@ class Phycas(object):
         if (total_secs > 0.0):
             self.output('  = %.5f likelihood evaluations/sec' % (total_evals/total_secs))
     
-    def readDataFromFile(self):
+    def obsolete_readDataFromFile(self):
         if not self.file_name_data_stored or (self.data_file_name != self.file_name_data_stored):
             self.reader.readFile(self.data_file_name)
             self.taxon_labels = self.reader.getTaxLabels()
@@ -954,13 +954,13 @@ class Phycas(object):
         
     log_file_name = property(getLogFile, setLogFile)
 
-    def getPrefix(self):
+    def obsolete_getPrefix(self):
         prefix = os.path.abspath(self.data_file_name) #os.path.basename(self.data_file_name)
         if self.outfile_prefix:
             prefix = self.outfile_prefix
         return prefix
     
-    def openParameterAndTreeFiles(self):
+    def obsolete_openParameterAndTreeFiles(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Creates parameter and tree file names based on the data file name or the
@@ -975,7 +975,7 @@ class Phycas(object):
         self.treeFileOpen()
 
     
-    def setupMCMC(self):
+    def obsolete_setupMCMC(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         This function is for parts of the setup that should occur right before

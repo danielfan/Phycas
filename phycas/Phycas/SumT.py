@@ -15,7 +15,7 @@ class SumT(PhycasCommand):
         o.__dict__["trees"] = t
         s = PDFOutputSpec('sumt_splits', "The pdf file showing plots depicting split posteriors through time and split sojourns will be named <sumt_splits_prefix>.pdf. If None, this analysis will be skipped.")
         o.__dict__["splits"] = s
-        PhycasCommand.__init__(self, p, args, o)
+        PhycasCommand.__init__(self, p, args, "sumt", "The sumt command is used to summarize a collection of trees (usually trees that have been produced by an MCMC simulation).", o)
 
     def __call__(self, **kwargs):
         self.set(**kwargs)
