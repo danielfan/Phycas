@@ -1,7 +1,8 @@
 import sys, os
 import textwrap
-import phycas.ReadNexus as ReadNexus
 from phycas import getDefaultOutFilter, OutFilter
+from phycas.PDFGen import PDFGenerator
+import phycas.ReadNexus as ReadNexus
 
 ###############################################################################
 #   Taken from
@@ -195,6 +196,8 @@ class PhycasOutput(object):
         self._is_active = False
     def _activate(self):
         self._is_active = True
+    def __bool__(self):
+        return self._is_active
 
 class FileOutputSpec(PhycasOutput):
     def __init__(self, prefix="", help_str="", filename=None):
@@ -208,6 +211,11 @@ class FileOutputSpec(PhycasOutput):
         self._valid_formats = []
         self._options = []
         self._opened_filename = None
+        self._opened_file = None
+        self._prexisting = False
+
+    def __bool__(self):
+        return bool(self._is_active and (self.filename or self.prefix))
 
     def _help_str_list(self, pref=""):
         """Generates a list of strings formatted for displaying help
@@ -289,6 +297,9 @@ class FileOutputSpec(PhycasOutput):
     def _getFilename(self):
         if self._opened_filename:
             return self._opened_filename
+        return self._calcFilename()
+
+    def _calcFilename(self):
         pref, suffix = None, None
         if self.filename:
             fn = self.filename
@@ -304,6 +315,48 @@ class FileOutputSpec(PhycasOutput):
                     curr_index += 1
             return fn
         return None
+    def _getUnchangedFilname(self):
+        if isinstance(self.mode, AddNumberExistingFileBehavior):
+            m = self.mode
+            try:
+                self.mode = REPLACE
+                fn = self._calcFilename()
+            finally:
+                self.mode = m
+            return fn
+        else:
+            return self._getFilename()
+    def open(self, out):
+        self._opened_filename = self._getFilename()
+        self._prexisting = os.path.exists(self._opened_filename)
+        m =  isinstance(self.mode, AppendExistingFileBehavior) and "a" or "w"
+        self._opened_file = open(self._opened_filename, m)
+        if out is not None:
+            if self._prexisting:
+                if m == "a":
+                    out.info("Appending to %s" %self._opened_filename)
+                else:
+                    out.info("Replacing %s" %self._opened_filename)
+            else:
+                uf = self._getUnchangedFilname()
+                if uf != self._opened_filename:
+                    out.info("The file %s already exists, using %s instead" % (uf, self._opened_filename))
+        return self._opened_file
+    def close(self):
+        if self._opened_file:
+            self._opened_file.close()
+        self._opened_file = None
+        self._opened_filename = None
+    def replaceMode(self):
+        return isinstance(self.mode, ReplaceExistingFileBehavior)
+    def appendMode(self):
+        return isinstance(self.mode, AppendExistingFileBehavior)
+    def addNumberMode(self):
+        return isinstance(self.mode, AddNumberExistingFileBehavior)
+    def sameBaseName(self, other):
+        if self.filename:
+            return self.filename == other.filename
+        return self.prefix and (self.prefix == other.prefix)
 
 class TextOutputSpec(FileOutputSpec):
     def __init__(self, prefix="", help_str="", filename=None):
@@ -322,10 +375,27 @@ class TreeOutputSpec(TextOutputSpec):
         FileOutputSpec.__init__(self, prefix, help_str, filename)
         self._valid_formats = [FileFormats.NEXUS]
         self.format = FileFormats.NEXUS
+        self._writer = None
 
     def _getSuffix(self):
         return ".tre"
 
+    def open(self, taxa_labels, out):
+        #should return a writer that implements the _writeTree and finish methods
+        o = FileOutputSpec.open(self, out)
+        if FileFormats.NEXUS == self.format:
+            from phycas.ReadNexus._NexusReader import NexusWriter
+            self._writer =  NexusWriter(o, self._prexisting and self.appendMode(), taxa_labels)
+            return self._writer
+        else:
+            assert(False)
+    def close(self):
+        if self._writer:
+            self._writer.finish()
+            self._writer = None
+        self._opened_pdfgen = None
+        FileOutputSpec.close(self)
+            
     
 class PDFOutputSpec(BinaryOutputSpec):
     def _getSuffix(self):
@@ -334,6 +404,20 @@ class PDFOutputSpec(BinaryOutputSpec):
         BinaryOutputSpec.__init__(self, prefix, help_str, filename)
         self._valid_formats = [FileFormats.PDF]
         self.format = FileFormats.PDF
+        self._opened_pdfgen = None
+
+    def open(self, w, h, out):
+        FileOutputSpec.open(self, out)
+        pdf = PDFGenerator(w, h)
+        self._opened_pdfgen = pdf
+        return pdf
+        
+    def close(self):
+        if self._opened_pdfgen:
+            assert(self._opened_file)
+            self._opened_pdfgen.saveDocument(stream=self._opened_file)
+        self._opened_pdfgen = None
+        FileOutputSpec.close(self)
 
 class PhycasCommandOutputOptions(object):
     """The PhycasCommandOutputOptions is a very simple class written to

@@ -1,10 +1,10 @@
 
-Reading trees from file test.t...
+Reading trees from the file "test.t"...
 Compiling lists of tree topologies and splits...
 
 Summary of sampled trees:
 -------------------------
-Tree file = test.t
+Tree source: trees from the file "test.t"
 Total number of trees in file = 111
 Number of trees considered = 100
 Number of distinct tree topologies found = 8
@@ -118,6 +118,9 @@ topology freq.         TL    s0    sk     k      prob.       cum.
        8     1    4.62165    12    12     1    0.01000    1.00000
 
 Saving distinct tree topologies...
+Replacing trees.pdf
+Replacing trees.tre
+Replacing splits.pdf
 
 Saving AWTY plot in file splits.pdf...
 40 trivial and 28 uninteresting splits were ignored.

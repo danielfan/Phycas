@@ -58,6 +58,7 @@ if __name__ == '__main__':
 
     # os.chdir(os.path.join(os.path.split(scriptPar)[0], "Examples"))
 
+    runTest(outFile, "Sumt", ["trees.tre","splits.pdf","logfile.txt"])
     runTest(outFile, "ExplorePrior", mcmcOutputs(["nodata.nex"]))
     runTest(outFile, "FixedParams", ["fixed.p", "fixed.t"])
     runTest(outFile, "FixedTopology", ["fixdtree.p", "fixdtree.t", "simulated.nex"])
@@ -65,7 +66,6 @@ if __name__ == '__main__':
     runTest(outFile, "Simulator", ["simulated.nex"])
     runTest(outFile, "SplitTest", ["out.txt"])
     runTest(outFile, "PDFTree", ["test.pdf"])
-    #runTest(outFile, "Sumt", ["trees.tre","splits.pdf","logfile.txt"])
     # note: should add trees.pdf to list for SumT, but slight rounding differences
     # cause PDF files to be different, and haven't been able to figure out
     # why the rounding should be different between Intel Mac and Intel PC!

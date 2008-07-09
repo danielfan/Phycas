@@ -3,7 +3,7 @@ from phycas import *
 if __name__ == '__main__':
     phycas.log_file_name = 'logfile.txt'
     sumt.trees              = 'test.t'
-    sumt.out.tree.prefix    = "trees"
+    sumt.out.trees.prefix    = "trees"
     sumt.out.trees.mode     = REPLACE
     sumt.out.splits.prefix  = "splits"
     sumt.out.splits.mode    = REPLACE

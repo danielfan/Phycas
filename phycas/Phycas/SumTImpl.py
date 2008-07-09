@@ -1,7 +1,7 @@
 import os,sys,math,random
-from phycas.PDFGen import *
 #from phycas.TreeViewer import *
 from phycas import *
+from phycas import useWxPhycas
 from phycas.Phycas.PhycasCommand import *
 
 class TreeSummarizer(object):
@@ -64,7 +64,7 @@ class TreeSummarizer(object):
                 edge_len = float(v[1])/float(v[0])
             nd.setEdgeLen(edge_len)
 
-    def save_trees(self, tree_file, pdf_file, short_names, full_names, trees):
+    def save_trees(self, short_names, full_names, trees):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Saves the supplied tree names (tree_names) and newick descriptions
@@ -73,68 +73,56 @@ class TreeSummarizer(object):
         between 1 and 1 million to the end of the supplied tree file name.
         
         """
-        # Open the output pdf file
-        pdf = PDFGenerator(self.phycas.pdf_page_width, self.phycas.pdf_page_height)
-        alt_pdf_file = pdf_file
-        if not alt_pdf_file:
-            alt_pdf_file = 'sumt.pdf'
-        if self.output.output_replace:
-            pdf.overwrite = True
-        else:
-            while os.path.exists(alt_pdf_file):
-                alt_pdf_file = '%s_%d.pdf' % (pdf_file, random.randint(1,1000000))
-            if alt_pdf_file != pdf_file:
-                self.stdout.info('Supplied pdf file name %s exists, using %s instead' % (pdf_file, alt_pdf_file))
-        
-        # Open the output tree file        
-        alt_tree_file = tree_file
-        if not alt_tree_file:
-            alt_tree_file = 'sumt.tre'
-        if not self.opts.output_replace:
-            while os.path.exists(alt_tree_file):
-                alt_tree_file = '%s_%d.tre' % (tree_file, random.randint(1,1000000))
-            if alt_tree_file != tree_file:
-                self.stdout.info('Supplied tree file name %s exists, using %s instead' % (tree_file, alt_tree_file))
-        treef = open(alt_tree_file, 'w')
-        
-        treef.write('#nexus\n\n')
-        treef.write('begin trees;\n')
-        treef.write('  translate\n')
-        ntax = len(self.taxon_labels)
-        for i,label in enumerate(self.taxon_labels):
-            if ' ' in label:
-                tmp = "'%s'" % label
-            else:
-                tmp = label
-            treef.write("  %d %s%s\n" % (i+1, tmp, (i < ntax - 1) and ',' or ''))
-        treef.write('  ;\n')
-        for short,full,tree in zip(short_names, full_names, trees):
-            # Reroot (if requested) tree and output newick description to tree file
-            if self.outgroup:
+        # we use the trees file spec to make a pdf with the same 
+        trees_spec = self.output.trees
+        pdf_spec = PDFOutputSpec(trees_spec.prefix, "", trees_spec.filename)
+        try:
+            pdf_spec.mode = trees_spec.mode
+        except:
+            pdf_spec.mode = ADD_NUMBER
+        print(str(pdf_spec))
+        print(str(trees_spec))
+        pdf, treef = None, None
+        try:
+            # Open the output pdf file
+            pdf = pdf_spec.open(self.phycas.pdf_page_width, self.phycas.pdf_page_height, self.stdout)
+    
+            treef = trees_spec.open(self.taxon_labels, self.stdout)
+    
+            if not (pdf or treef):
+                return
+            reroot = self.outgroup
+            root_num = 0
+            if reroot:
                 try:
-                    num = list(self.taxon_labels).index(self.outgroup)
+                    root_num = list(self.taxon_labels).index(self.outgroup)
                 except ValueError:
                     self.stdout.info('Warning: could not root tree using specified outgroup: no tip having name "%s" could be found' % self.outgroup)
                     self.stdout.info('Here is the list of all taxon labels:')
                     for label in self.taxon_labels:
                         self.stdout.info('  %s' % label)
-                else:
-                    tree.rerootAtTip(num)
-            treef.write('  tree %s = [&U] %s;\n' % (short, tree.makeNewick()))
-
-            # Add taxon names to tip nodes and output to pdf file
-            tree.rectifyNames(self.taxon_labels)
-            if self.phycas.pdf_ladderize:
-                if self.phycas.pdf_ladderize == 'right':
-                    tree.ladderizeRight()
-                else:
-                    tree.ladderizeLeft()
-            pdf.newPage()
-            self.phycas.tree2pdf(pdf, tree, full, show_support = True)
-            
-        pdf.saveDocument(pdf_file)
-        treef.write('end;\n')
-        treef.close()
+                    reroot = False
+            for short,full,tree in zip(short_names, full_names, trees):
+                # Reroot (if requested) tree and output newick description to tree file
+                if reroot:
+                    tree.rerootAtTip(root_num)
+                if treef:
+                    treef.writeTree(tree, short)
+                if pdf:
+                    # Add taxon names to tip nodes and output to pdf file
+                    tree.rectifyNames(self.taxon_labels)
+                    if self.phycas.pdf_ladderize:
+                        if self.phycas.pdf_ladderize == 'right':
+                            tree.ladderizeRight()
+                        else:
+                            tree.ladderizeLeft()
+                    pdf.newPage()
+                    self.phycas.tree2pdf(pdf, tree, full, show_support = True)
+        finally:
+            if pdf is not None:
+                pdf_spec.close()
+            if treef is not None:
+                trees_spec.close()
 
     def awtyPlot(self, pdf, split_vect, ntrees, ndivisions = 10):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -206,14 +194,15 @@ class TreeSummarizer(object):
         
         pdf.scatterPlot(data, title = 'Split Probabilities Through Time', xinfo = (0,ntrees,10,0), yinfo = (0.0,1.0,10,1))
 
-        try:
-            import wx
-        except:
-            pass
-        else:
-            wxapp = wxPhycas.CreateAWTYApp()
-            wxapp.scatterPlot(data, title = 'Split Probabilities Through Time', xinfo = (0,ntrees,10,0), yinfo = (0.0,1.0,10,1))
-            wxapp.MainLoop()
+        if useWxPhycas():
+            try:
+                    import wx
+            except:
+                pass
+            else:
+                wxapp = wxPhycas.CreateAWTYApp()
+                wxapp.scatterPlot(data, title = 'Split Probabilities Through Time', xinfo = (0,ntrees,10,0), yinfo = (0.0,1.0,10,1))
+                wxapp.MainLoop()
         
         if trivial_ignored + uninteresting_ignored > 0:
             self.stdout.info('%d trivial and %d uninteresting splits were ignored.' % (trivial_ignored, uninteresting_ignored))
@@ -303,12 +292,8 @@ class TreeSummarizer(object):
         # Check to make sure user specified an input tree file
         input_trees = self.opts.trees
         self.phycas.phycassert(input_trees, 'trees cannot be None or empty when sumt method is called')
-        self.phycas.phycassert(self.opts.trees_prefix, 'sumt_trees_prefix must be specified before sumt method is called')
-        self.phycas.phycassert(self.opts.trees_prefix != self.opts.splits_prefix, 'sumt_trees_prefix must differ from sumt_splits_prefix')
-            
-        treefname = '%s.tre' % self.opts.trees_prefix
-        pdffname = '%s.pdf' % self.opts.trees_prefix
-
+        self.phycas.phycassert(self.output.trees.prefix, 'sumt.out.trees.prefix must be specified before sumt method is called')
+        
         num_trees = 0
         num_trees_considered = 0
         split_map = {}
@@ -437,7 +422,7 @@ class TreeSummarizer(object):
 
         self.stdout.info('\nSummary of sampled trees:')
         self.stdout.info('-------------------------')
-        self.stdout.info('Tree source = %s' %  TreeSource.description(input_trees))
+        self.stdout.info('Tree source: %s' %  TreeSource.description(input_trees))
         self.stdout.info('Total number of trees in file = %d' % num_trees)
         self.stdout.info('Number of trees considered = %d' % num_trees_considered)
         self.stdout.info('Number of distinct tree topologies found = %d' % len(tree_map.keys()))
@@ -580,25 +565,29 @@ class TreeSummarizer(object):
                 v[1].buildTree(t)
                 self.assignEdgeLensAndSupportValues(t, split_map, num_trees_considered)
                 t.stripNodeNames()
-                summary_short_name_list.append('%d_%d_of_%d' % (i+1,v[0],num_trees_considered))
+                summary_short_name_list.append('%d %d of %d' % (i+1,v[0],num_trees_considered))
                 summary_full_name_list.append('Frequency %d of %d' % (v[0],num_trees_considered))
                 summary_tree_list.append(t)
 
         self.stdout.info('\nSaving distinct tree topologies...')
-        self.save_trees(treefname, pdffname, summary_short_name_list, summary_full_name_list, summary_tree_list)
+        self.save_trees(summary_short_name_list, summary_full_name_list, summary_tree_list)
 
-        if self.opts.splits_prefix:
-            fn = '%s.pdf' % self.opts.splits_prefix
-            pdf = PDFGenerator(11.0, 8.5)
-            pdf.overwrite = True
-            
-            self.stdout.info('\nSaving AWTY plot in file %s...' % fn)
-            awty_ok = self.awtyPlot(pdf, split_vect, num_trees_considered)
-
-            self.stdout.info('\nSaving Sojourn plot in file %s...' % fn)
-            sojourn_ok = self.sojournPlot(pdf, split_vect, num_trees_considered)
-
-            if awty_ok or sojourn_ok:
+        trees_spec = self.output.trees 
+        sp = self.output.splits 
+        if bool(sp):
+            if sp.replaceMode() and sp.sameBaseName(trees_spec):
+                self.stdout.info("Splits pdf will overwrite the tree topology pdf")
+            pdf = sp.open(11.0, 8.5, self.stdout)
+            try:
+                fn = sp._getFilename()
+                self.stdout.info('\nSaving AWTY plot in file %s...' % fn)
+                awty_ok = self.awtyPlot(pdf, split_vect, num_trees_considered)
+    
+                self.stdout.info('\nSaving Sojourn plot in file %s...' % fn)
+                sojourn_ok = self.sojournPlot(pdf, split_vect, num_trees_considered)
+            finally:
+                sp.close()
+            if not (awty_ok or sojourn_ok):
                 pdf.saveDocument(fn)
 
         self.stdout.info('\nSumT finished.')

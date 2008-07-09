@@ -1,6 +1,8 @@
 import os,sys,math
 from phycas import *
-
+import phycas.Phylogeny as Phylogeny
+import phycas.ProbDist as ProbDist
+import phycas.Likelihood as Likelihood
 def cloneDistribution(d):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """

@@ -52,29 +52,34 @@ def getDefaultOutFilter():
 #   experienced users the chance to override the default behavior.
 intercept_python_exceptions = True
 default_verbosity_level = OutFilter.NORMAL
-
-import Conversions
-import DataMatrix
-import Likelihood
-import PDFGen
-import wxPhycas
-import Phylogeny
-import ProbDist
-import ReadNexus
-import sys
-from Phycas import Phycas
-from Phycas.SumT import SumT
-from Phycas.PhycasCommand import FileFormats, REPLACE, APPEND, ADD_NUMBER, phycas_help
-
 _user_ini_checked = False
+_use_wx_phycas = True
 
-
+from Phycas import Phycas
 if not _user_ini_checked:
     import os
     _user_ini_checked = True
     p = os.path.expanduser("~/.phycas/startup.py")
     if os.path.exists(p):
         execfile(p)
+
+def useWxPhycas():
+    return _use_wx_phycas
+
+import Conversions
+import DataMatrix
+import Likelihood
+import PDFGen
+import Phylogeny
+import ProbDist
+import ReadNexus
+import sys
+from Phycas.SumT import SumT
+from Phycas.PhycasCommand import FileFormats, REPLACE, APPEND, ADD_NUMBER, phycas_help
+# keep the wx import after the reading of the startup so that it can be optional
+if useWxPhycas():
+    import wxPhycas
+
 
 phycas = Phycas()
 python_help = help

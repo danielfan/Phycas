@@ -7,15 +7,17 @@ _ROUND_TRIP_EVERY_NEXUS_READ = False
 class TreeDescription(object):
     def __init__(self, nxs_full_tree_description):
         self.ftd = nxs_full_tree_description
+
     def getNameFromC(self):
         return self.ftd.getName()
+
     def getNewickFromC(self):
         return self.ftd.getNewick()
+    makeNewick = getNewickFromC
+
     def getIsRootedFromC(self):
         return self.ftd.isRooted()
-    def writeNEXUSTreeCommand(self, out):
-        c = self.rooted and "R" or "U"
-        out.write("Tree %s = [&%s] %s;\n" % (escapeNexus(self.name), c, self.newick))
+
     def buildTree(self, tree=None):
         """Calls buildFromString or other appropriate method to construct a tree 
         in the the variable `tree`
@@ -46,7 +48,80 @@ def escapeNexus(s):
             return "''''"
         return "'%s'" % s
     return s
-    
+
+class NexusWriter(object):
+    NO_BLOCK, TAXA_BLOCK, CHARACTERS_BLOCK, TREES_BLOCK = range(4)
+    def __init__(self, outstream, preexisting=False, taxa=[]):
+        self.outstream = outstream
+        self._preexisting = preexisting
+        self._started_writing = False
+        self._in_block = NexusWriter.NO_BLOCK
+        self._written = []
+        self.taxa = taxa
+    def _writeTaxa(self):
+        assert(self.outstream)
+        if (not self._preexisting) and (not self._started_writing):
+            self.outstream.write("#NEXUS\n")
+        self._started_writing = True
+        if self.taxa:
+            taxa = self.taxa
+            ntax = len(self.taxa)
+            labels = [escapeNexus(t) for t in taxa]
+            self.outstream.write("""BEGIN TAXA;
+  Dimensions ntax = %d;
+  TaxLabels
+    %s ;
+END;
+""" % (ntax, "\n    ".join(labels)))
+            self._written.append(NexusWriter.TAXA_BLOCK)
+
+    def writeTree(self, tree, name="", rooted=None):
+        assert(self.outstream)
+        assert(self.taxa)
+        if not self._in_block == NexusWriter.TREES_BLOCK:
+            if not NexusWriter.TAXA_BLOCK in self._written:
+                self._writeTaxa()
+            taxa = self.taxa
+            ntax = len(self.taxa)
+            labels = [escapeNexus(t) for t in taxa]
+            t_arg = ",\n    ".join(["%d %s" % (i+1, n) for i,n in enumerate(labels)])
+            self.outstream.write("BEGIN TREES;\n  Translate\n    %s;\n" % t_arg)
+            self._in_block = NexusWriter.TREES_BLOCK
+        if rooted is None:
+            rooted = tree.rooted
+        c = rooted and "R" or "U"
+        n = name or tree.name
+        self.outstream.write("  Tree %s = [&%s] %s;\n" % (escapeNexus(n), c, tree.newick))
+        self._written.append(NexusWriter.TREES_BLOCK)
+
+    def writeCharacters(self, data_matrix):
+        assert(self.outstream)
+        assert(self.taxa)
+        if not NexusWriter.TAXA_BLOCK in self._written:
+            self._writeTaxa()
+        self.finish_block()
+        out.write("Begin Characters;\n Dimensions nchar = %d;\n " % self.getNChar())
+        out.write(dm.getNEXUSFormatCommand())
+        out.write("\n Matrix\n")
+        assert(len(et) == dm.n_tax)
+        for ind, name in enumerate(et):
+            out.write("%-20s "% name)
+            r = dm.getRow(ind)
+            for c in r:
+                out.write(dm.getCodeToSymbol(c))
+            out.write("\n")
+        out.write(";\nEnd;\n\n")
+        self._written.append(NexusWriter.CHARACTERS_BLOCK)
+        
+    def finish_block(self):
+        if not self.outstream:
+            return
+        if self._in_block != NexusWriter.NO_BLOCK:
+            self.outstream.write("END;\n")
+            self._in_block = NexusWriter.NO_BLOCK
+            
+    finish = finish_block
+
 class NexusReader(NexusReaderBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
@@ -112,31 +187,11 @@ class NexusReader(NexusReaderBase):
 
 
     def writeNEXUS(self, out, appending=False):
-        taxa = self.getTaxLabels()
-        et = [escapeNexus(t) for t in taxa]
-        if et:
-            if not appending:
-                out.write("#NEXUS\n")
-            out.write("Begin Taxa;\n Dimensions ntax = %d;\n" % len(et))
-            out.write(" Taxlabels %s ;\nEnd;\n\n" % " ".join(et))
+        nw = NexusWriter(out, appending, self.getTaxLabels())
         dm = self.getLastDiscreteMatrix()
         if dm:
-            out.write("Begin Characters;\n Dimensions nchar = %d;\n " % self.getNChar())
-            out.write(dm.getNEXUSFormatCommand())
-            out.write("\n Matrix\n")
-            assert(len(et) == dm.n_tax)
-            for ind, name in enumerate(et):
-                out.write("%-20s "% name)
-                r = dm.getRow(ind)
-                for c in r:
-                    out.write(dm.getCodeToSymbol(c))
-                out.write("\n")
-            out.write(";\nEnd;\n\n")
-            
+            nw.writeCharacters(dm)
         tr = self.getTrees()
-        if tr:
-            out.write("Begin Trees;\n")
-            for t in tr:
-                t.writeNEXUSTreeCommand(out)
-            out.write("End;\n\n")
-            
+        for t in tr:
+            nw.writeTree(t)
+

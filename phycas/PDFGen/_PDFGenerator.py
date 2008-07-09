@@ -263,7 +263,7 @@ class PDFGenerator(object):
         self.pages      = PDFPagesObject(self)
         self.catalog.pages_obj = self.pages.number
 
-        self.curr_page = None
+        self.curr_page  = None
 
     def newPage(self):                
         self.curr_page = PDFPageObject(self, self.pages)
@@ -354,17 +354,29 @@ class PDFGenerator(object):
             if i > 0:
                 self.char_width[font_face][i] = w
 
-    def saveDocument(self, filename):
+    def saveDocument(self, filename="", stream=None):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Creates the PDF document.
-
+        If the stream argument is used, then the stream is NOT closed on exit
         """
-        if os.path.exists(filename) and not self.overwrite:
-            print "PDF file '%s' could not be saved because it already exists" % filename
-            print 'Either set overwrite to True or delete/rename the existing file and try again'
-            return
-        outf = open(filename, 'wb')
+        if stream is None:
+            if not filename:
+                raise ValueError("Either the 'filename' or 'stream' argument must be used")
+            if os.path.exists(filename) and not self.overwrite:
+                print "PDF file '%s' could not be saved because it already exists" % filename
+                print 'Either set overwrite to True or delete/rename the existing file and try again'
+                return
+            outf = open(filename, 'wb')
+        else:
+            outf = stream
+        try:
+            self._writeDocument(outf)
+        finally:
+            if stream is None:
+                outf.close()
+
+    def _writeDocument(self, outf):
         outstr = '%%PDF-1.4%c' % self.terminator
         outf.write(outstr)
         cum_bytes = len(outstr)
@@ -386,7 +398,7 @@ class PDFGenerator(object):
         outf.write('startxref%c' % self.terminator)
         outf.write('%d%c' % (cum_bytes, self.terminator))
         outf.write('%%EOF')
-        outf.close()
+        
 
     def scatterPlot(self, data,
                     title = '',

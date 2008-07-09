@@ -462,3 +462,5 @@ class Tree(TreeBase):
 
         """
         return TreeBase.ladderize(self, False)
+    rooted = property(isRooted)
+    newick = property(makeNewick)
