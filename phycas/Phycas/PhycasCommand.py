@@ -758,7 +758,12 @@ class PhycasCommand(object):
             self.__dict__[name] = value
         else:
             raise AttributeError("%s has no attribute %s" % (self.__class__.__name__, name))
-
+    def __getattr__(self, name):
+        nl = name.lower()
+        try:
+            return self.__dict__[nl]
+        except:
+            raise AttributeError("%s has no attribute %s" % (self.__class__.__name__, name))
     def set(self, **kwargs):
         "Sets the attributes of a command using keyword arguments"
         old = {}
