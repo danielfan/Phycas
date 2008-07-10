@@ -6,22 +6,22 @@ mcmc.nchains                      = 1
 mcmc.random_seed                  = 13579
 mcmc.default_model                = 'hky'
 
-mcmc.starting_kappa               = 4.0
+mcmc.kappa                        = 4.0
 mcmc.fix_kappa                    = True
 mcmc.kappa_prior                  = ProbDist.ExponentialDist(1.0)
 
-mcmc.starting_freqs               = [0.1, 0.2, 0.3, 0.4]
+mcmc.base_freqs                   = [0.1, 0.2, 0.3, 0.4]
 mcmc.fix_freqs                    = True
 mcmc.base_freq_param_prior        = ProbDist.ExponentialDist(1.0)
 
 mcmc.num_rates                    = 4
-mcmc.starting_shape               = 0.14
+mcmc.gamma_shape                  = 0.14
 mcmc.fix_shape                    = True
 mcmc.use_inverse_shape            = False
 mcmc.gamma_shape_prior            = ProbDist.ExponentialDist(1.0)
 
-mcmc.estimate_pinvar              = True
-mcmc.starting_pinvar              = 0.27
+mcmc.pinvar_model                 = True
+mcmc.pinvar                       = 0.27
 mcmc.fix_pinvar                   = True
 mcmc.pinvar_prior                 = ProbDist.BetaDist(1.0, 1.0)
 

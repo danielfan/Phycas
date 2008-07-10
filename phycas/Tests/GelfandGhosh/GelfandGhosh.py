@@ -29,7 +29,7 @@ def commonSetup():
     phycas.starting_tree = Newick('(1:0.04,2:0.02,(3:0.04,4:0.02):0.02)', Newick.ONE_BASED_TAXA_NUMBERS)
     phycas.default_model = 'hky'
     phycas.data_source = 'memory'
-    phycas.estimate_pinvar = False
+    phycas.pinvar_model = False
     phycas.use_flex_model = False
 
 def runHKY(rnseed):

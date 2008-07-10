@@ -43,21 +43,21 @@ class UnimapManager(object):
         if self.phycas.default_model in ['gtr','hky']:
             if self.phycas.default_model == 'gtr':
                 self.model = Likelihood.GTRModel()
-                self.model.setRelRates(self.phycas.starting_relrates)
+                self.model.setRelRates(self.phycas.relrates)
                 if self.phycas.fix_relrates:
                     self.model.fixRelRates()
             else:
                 self.model = Likelihood.HKYModel()
-                self.model.setKappa(self.phycas.starting_kappa)
+                self.model.setKappa(self.phycas.kappa)
                 if self.phycas.fix_kappa:
                     self.model.fixKappa()
-            self.phycas.phycassert(self.phycas.starting_freqs, 'starting_freqs is None, but should be a list containing 4 (unnormalized) relative base frequencies')
-            self.phycas.phycassert(len(self.phycas.starting_freqs) == 4, 'starting_freqs should be a list containing exactly 4 base frequencies; instead, it contains %d values' % len(self.phycas.starting_freqs))
-            self.phycas.phycassert(self.phycas.starting_freqs[0] >= 0.0, 'starting_freqs[0] cannot be negative (%f was specified)' % self.phycas.starting_freqs[0])
-            self.phycas.phycassert(self.phycas.starting_freqs[1] >= 0.0, 'starting_freqs[1] cannot be negative (%f was specified)' % self.phycas.starting_freqs[1])
-            self.phycas.phycassert(self.phycas.starting_freqs[2] >= 0.0, 'starting_freqs[2] cannot be negative (%f was specified)' % self.phycas.starting_freqs[2])
-            self.phycas.phycassert(self.phycas.starting_freqs[3] >= 0.0, 'starting_freqs[3] cannot be negative (%f was specified)' % self.phycas.starting_freqs[3])
-            self.model.setNucleotideFreqs(self.phycas.starting_freqs[0], self.phycas.starting_freqs[1], self.phycas.starting_freqs[2], self.phycas.starting_freqs[3])  #POL should be named setStateFreqs?
+            self.phycas.phycassert(self.phycas.base_freqs, 'base_freqs is None, but should be a list containing 4 (unnormalized) relative base frequencies')
+            self.phycas.phycassert(len(self.phycas.base_freqs) == 4, 'base_freqs should be a list containing exactly 4 base frequencies; instead, it contains %d values' % len(self.phycas.base_freqs))
+            self.phycas.phycassert(self.phycas.base_freqs[0] >= 0.0, 'base_freqs[0] cannot be negative (%f was specified)' % self.phycas.base_freqs[0])
+            self.phycas.phycassert(self.phycas.base_freqs[1] >= 0.0, 'base_freqs[1] cannot be negative (%f was specified)' % self.phycas.base_freqs[1])
+            self.phycas.phycassert(self.phycas.base_freqs[2] >= 0.0, 'base_freqs[2] cannot be negative (%f was specified)' % self.phycas.base_freqs[2])
+            self.phycas.phycassert(self.phycas.base_freqs[3] >= 0.0, 'base_freqs[3] cannot be negative (%f was specified)' % self.phycas.base_freqs[3])
+            self.model.setNucleotideFreqs(self.phycas.base_freqs[0], self.phycas.base_freqs[1], self.phycas.base_freqs[2], self.phycas.base_freqs[3])  #POL should be named setStateFreqs?
             if self.phycas.fix_freqs:
                 self.model.fixStateFreqs()
         else:
@@ -68,7 +68,7 @@ class UnimapManager(object):
         self.phycas.phycassert(self.phycas.num_rates == 1, 'Among-site rate heterogeneity submodels are not allowed in uniformized mapping MCMC at the present time')
         self.model.setNGammaRates(1)
 
-        self.phycas.phycassert(not self.phycas.estimate_pinvar, 'Proportion of invariable sites submodel is not allowed in uniformized mapping MCMC at the present time')
+        self.phycas.phycassert(not self.phycas.pinvar_model, 'Proportion of invariable sites submodel is not allowed in uniformized mapping MCMC at the present time')
         self.model.setNotPinvarModel()
 
         if self.phycas.fix_edgelens:

@@ -30,8 +30,8 @@ if __name__ == '__main__':
 
     # Create a model
     simulate.default_model = 'hky'
-    simulate.starting_kappa = 5.0
-    simulate.starting_freqs = [0.2, 0.3, 0.3, 0.2]
+    simulate.kappa = 5.0
+    simulate.base_freqs = [0.2, 0.3, 0.3, 0.2]
 
     # Simulation settings
     simulate.random_seed   = rnseed
@@ -96,7 +96,7 @@ if __name__ == '__main__':
         f.write('\n  log start file=paup.log replace;')
         f.write('\n  set criterion=likelihood autoclose;')
         tratio = phycas.mcmc_manager.getColdChain().model.calcTRatio()
-        f.write('\n  lset nst=2 variant=hky basefreq=(%.2f %.2f %.2f) tratio=%.1f rates=equal;' % (phycas.starting_freqs[0], phycas.starting_freqs[1], phycas.starting_freqs[2], tratio))
+        f.write('\n  lset nst=2 variant=hky basefreq=(%.2f %.2f %.2f) tratio=%.1f rates=equal;' % (phycas.base_freqs[0], phycas.base_freqs[1], phycas.base_freqs[2], tratio))
         f.write('\n  lscores 1 / userbrlen;')
         f.write('\n  lset nst=2 basefreq=estimate tratio=estimate rates=gamma shape=estimate;')
         f.write('\n  lscores 1 / nouserbrlen;')

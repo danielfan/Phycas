@@ -30,11 +30,11 @@ phycas.tree_topology        = Newick('(1:0.01,2:0.01,(3:0.01,(4:0.01,5:0.01):0.0
 # settings relating to substitution model
 phycas.default_model        = 'gtr'    # use 'jc' for JC,'hky' for HKY model, 'gtr' for GTR model
 phycas.num_rates            = 4        # use number > 1 for discrete gamma rate heterogeneity
-phycas.estimate_pinvar      = True     # use True for proportion invariable sites model
-phycas.starting_pinvar      = 0.2
-phycas.starting_shape       = 0.5
-phycas.starting_relrates    = [1.0, 4.0, 1.0, 1.0, 4.0, 1.0]    # AC, AG, AT, CG, CT, GT
-phycas.starting_freqs       = [0.2, 0.3, 0.3, 0.2]  # order is A,C,G,T
+phycas.pinvar_model         = True     # use True for proportion invariable sites model
+phycas.pinvar               = 0.2
+phycas.gamma_shape          = 0.5
+phycas.relrates             = [1.0, 4.0, 1.0, 1.0, 4.0, 1.0]    # AC, AG, AT, CG, CT, GT
+phycas.base_freqs           = [0.2, 0.3, 0.3, 0.2]  # order is A,C,G,T
 
 phycas.sim_file_name        = 'simulated.nex'
 phycas.sim_nchar            = 1000

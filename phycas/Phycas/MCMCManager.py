@@ -66,21 +66,21 @@ class LikelihoodCore:
         if self.parent.opts.default_model in ['gtr','hky']:
             if self.parent.opts.default_model == 'gtr':
                 self.model = Likelihood.GTRModel()
-                self.model.setRelRates(self.parent.opts.starting_relrates)
+                self.model.setRelRates(self.parent.opts.relrates)
                 if self.parent.opts.fix_relrates:
                     self.model.fixRelRates()
             else:
                 self.model = Likelihood.HKYModel()
-                self.model.setKappa(self.parent.opts.starting_kappa)
+                self.model.setKappa(self.parent.opts.kappa)
                 if self.parent.opts.fix_kappa:
                     self.model.fixKappa()
-            self.parent.phycas.phycassert(self.parent.opts.starting_freqs, 'starting_freqs is None, but should be a list containing 4 (unnormalized) relative base frequencies')
-            self.parent.phycas.phycassert(len(self.parent.opts.starting_freqs) == 4, 'starting_freqs should be a list containing exactly 4 base frequencies; instead, it contains %d values' % len(self.parent.opts.starting_freqs))
-            self.parent.phycas.phycassert(self.parent.opts.starting_freqs[0] >= 0.0, 'starting_freqs[0] cannot be negative (%f was specified)' % self.parent.opts.starting_freqs[0])
-            self.parent.phycas.phycassert(self.parent.opts.starting_freqs[1] >= 0.0, 'starting_freqs[1] cannot be negative (%f was specified)' % self.parent.opts.starting_freqs[1])
-            self.parent.phycas.phycassert(self.parent.opts.starting_freqs[2] >= 0.0, 'starting_freqs[2] cannot be negative (%f was specified)' % self.parent.opts.starting_freqs[2])
-            self.parent.phycas.phycassert(self.parent.opts.starting_freqs[3] >= 0.0, 'starting_freqs[3] cannot be negative (%f was specified)' % self.parent.opts.starting_freqs[3])
-            self.model.setNucleotideFreqs(self.parent.opts.starting_freqs[0], self.parent.opts.starting_freqs[1], self.parent.opts.starting_freqs[2], self.parent.opts.starting_freqs[3])  #POL should be named setStateFreqs?
+            self.parent.phycas.phycassert(self.parent.opts.base_freqs, 'base_freqs is None, but should be a list containing 4 (unnormalized) relative base frequencies')
+            self.parent.phycas.phycassert(len(self.parent.opts.base_freqs) == 4, 'base_freqs should be a list containing exactly 4 base frequencies; instead, it contains %d values' % len(self.parent.opts.base_freqs))
+            self.parent.phycas.phycassert(self.parent.opts.base_freqs[0] >= 0.0, 'base_freqs[0] cannot be negative (%f was specified)' % self.parent.opts.base_freqs[0])
+            self.parent.phycas.phycassert(self.parent.opts.base_freqs[1] >= 0.0, 'base_freqs[1] cannot be negative (%f was specified)' % self.parent.opts.base_freqs[1])
+            self.parent.phycas.phycassert(self.parent.opts.base_freqs[2] >= 0.0, 'base_freqs[2] cannot be negative (%f was specified)' % self.parent.opts.base_freqs[2])
+            self.parent.phycas.phycassert(self.parent.opts.base_freqs[3] >= 0.0, 'base_freqs[3] cannot be negative (%f was specified)' % self.parent.opts.base_freqs[3])
+            self.model.setNucleotideFreqs(self.parent.opts.base_freqs[0], self.parent.opts.base_freqs[1], self.parent.opts.base_freqs[2], self.parent.opts.base_freqs[3])  #POL should be named setStateFreqs?
             if self.parent.opts.fix_freqs:
                 self.model.fixStateFreqs()
         else:
@@ -95,16 +95,16 @@ class LikelihoodCore:
         elif self.parent.opts.num_rates > 1:
             self.model.setNGammaRates(self.parent.opts.num_rates)
             self.model.setPriorOnShapeInverse(self.parent.opts.use_inverse_shape)    #POL should be named useInverseShape rather than setPriorOnShapeInverse
-            self.model.setShape(self.parent.opts.starting_shape)
+            self.model.setShape(self.parent.opts.gamma_shape)
             if self.parent.opts.fix_shape:
                 self.model.fixShape()
         else:
             self.model.setNGammaRates(1)
             
-        if self.parent.opts.estimate_pinvar:
+        if self.parent.opts.pinvar_model:
             assert not self.parent.opts.use_flex_model, 'Cannot currently use flex model with pinvar'
             self.model.setPinvarModel()
-            self.model.setPinvar(self.parent.opts.starting_pinvar)
+            self.model.setPinvar(self.parent.opts.pinvar)
             if self.parent.opts.fix_pinvar:
                 self.model.fixPinvar()
         else:
@@ -357,7 +357,7 @@ class MarkovChain(LikelihoodCore):
             self.model.setFLEXProbParamPrior(self.parent.opts.flex_prob_param_prior)
         elif self.parent.opts.num_rates > 1:
             self.model.setDiscreteGammaShapePrior(self.gamma_shape_prior)
-        if self.parent.opts.estimate_pinvar:
+        if self.parent.opts.pinvar_model:
             self.model.setPinvarPrior(self.pinvar_prior)
         
         # Define edge length prior distributions

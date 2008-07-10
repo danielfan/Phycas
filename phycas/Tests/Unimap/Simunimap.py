@@ -46,8 +46,8 @@ if __name__ == '__main__':
         phycas.default_model = 'jc'
     elif model == 'hky':
         phycas.default_model = 'hky'
-        phycas.starting_kappa = 5.0
-        phycas.starting_freqs = [0.25, 0.25, 0.25, 0.25]
+        phycas.kappa = 5.0
+        phycas.base_freqs = [0.25, 0.25, 0.25, 0.25]
 
     # Simulation settings
     phycas.random_seed   = rnseed
@@ -112,7 +112,7 @@ if __name__ == '__main__':
     f.write('\n  set criterion=likelihood autoclose;')
     if model == 'hky':
         tratio = phycas.mcmc_manager.getColdChain().model.calcTRatio()
-        f.write('\n  lset nst=2 variant=hky basefreq=(%.2f %.2f %.2f) tratio=%.1f rates=equal;' % (phycas.starting_freqs[0], phycas.starting_freqs[1], phycas.starting_freqs[2], tratio))
+        f.write('\n  lset nst=2 variant=hky basefreq=(%.2f %.2f %.2f) tratio=%.1f rates=equal;' % (phycas.base_freqs[0], phycas.base_freqs[1], phycas.base_freqs[2], tratio))
     else:
         f.write('\n  lset nst=1 basefreq=equal rates=equal;')
     f.write('\n  lscores 1 / userbrlen;')

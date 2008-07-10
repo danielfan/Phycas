@@ -12,7 +12,7 @@ def analyze():
     analyzer.outfile_prefix = 'ps_hkyig'
     analyzer.default_model = 'hky'
     analyzer.num_rates = 4
-    analyzer.estimate_pinvar = True
+    analyzer.pinvar_model = True
     analyzer.random_seed = rnseed
     analyzer.edgelen_dist = ProbDist.ExponentialDist(10.0)
     analyzer.using_hyperprior = False 

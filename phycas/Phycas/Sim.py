@@ -12,12 +12,12 @@ class Sim(PhycasCommand):
                 ("random_seed",     0,                                        "Determines the random number seed used; specify 0 to generate seed automatically from system clock", IntArgValidate(min=0)),
                 ("default_model",   'hky',                                    "Can be 'jc', 'hky' or 'gtr'"),
                 ("relrates",        [1.0, 4.0, 1.0, 1.0, 4.0, 1.0] ,          "The GTR relative rates to use for simulation. Only used if default_model is 'gtr'"),
-                ("starting_kappa",  4.0,                                      "The kappa (transition/transversion rate ratio) parameter. Only used if default_model is 'hky'", FloatArgValidate(min=0.01)),
+                ("kappa",           4.0,                                      "The kappa (transition/transversion rate ratio) parameter. Only used if default_model is 'hky'", FloatArgValidate(min=0.01)),
                 ("num_rates",       1,                                        "The number of relative rates used for the discrete gamma rate heterogeneity submodel; equal rates are used if num_rates = 1", IntArgValidate(min=1)),
                 ("gamma_shape",     0.5,                                      "The gamma shape parameter. Only used if num_rates > 1", FloatArgValidate(min=0.01)),
-                ("estimate_pinvar", False,                                    "If True, an invariable sites submodel will be applied", BoolArgValidate),
+                ("pinvar_model",    False,                                    "If True, an invariable sites submodel will be applied", BoolArgValidate),
                 ("pinvar",          0.2,                                      "The proportion of invariable sites. Only used if use_pinvar is True", ProbArgValidate()),
-                ("starting_freqs",  [1.0, 1.0, 1.0, 1.0],                     "The four base frequency parameters. These will be normalized before they are used, and thus do not need to sum to 1.0"),
+                ("base_freqs",      [1.0, 1.0, 1.0, 1.0],                     "The four base frequency parameters. These will be normalized before they are used, and thus do not need to sum to 1.0"),
                 ("starting_edgelen_dist",  ExponentialDist(10.0),           "Used to select the starting edge lengths when tree_source is 'random'"),
                 )                                                  
         PhycasCommand.__init__(self, p, args, "simulate", "Simulates DNA sequences according to the specified model.")

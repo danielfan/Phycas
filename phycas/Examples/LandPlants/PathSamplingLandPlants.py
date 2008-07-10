@@ -26,7 +26,7 @@ def analyze(internal_prior_mean):
     analyzer.verbose = True
     analyzer.tree_scaler_weight = 1
     analyzer.slice_weight = 1
-    analyzer.estimate_pinvar = False
+    analyzer.pinvar_model = False
     analyzer.use_flex_model = False
     analyzer.ps_toward_posterior = False
     analyzer.ps_burnin = 0
