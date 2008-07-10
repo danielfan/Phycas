@@ -54,6 +54,9 @@ intercept_python_exceptions = True
 default_verbosity_level = OutFilter.NORMAL
 _user_ini_checked = False
 _use_wx_phycas = True
+_check_for_updates = True
+_phycas_update_url = "129.237.138.231" # change this to phycas.org url
+_phycas_branch = "$Revision$"
 
 from Phycas import Phycas
 if not _user_ini_checked:
@@ -118,4 +121,7 @@ class Newick(object):
 sumt = SumT(phycas)
 mcmc = MCMC(phycas)
 
+if _check_for_updates and sys.argv and not sys.argv[0]:
+    import phycas.Utilities.PhycasUpdateCheck as PhycasUpdateCheck
+    PhycasUpdateCheck.runPhycasUpdateChecker()
 #print 'importing phycas...'
