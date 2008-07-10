@@ -813,7 +813,7 @@ class Phycas(object):
         if not self.file_name_data_stored or (self.data_file_name != self.file_name_data_stored):
             self.reader.readFile(self.data_file_name)
             self.taxon_labels = self.reader.getTaxLabels()
-            self.data_matrix = getLastDiscreteMatrix(self.reader, True)
+            self.data_matrix = self.reader.getLastDiscreteMatrix(True)
             self.ntax = self.data_matrix.getNTax()
             self.nchar = self.data_matrix.getNChar() # used for Gelfand-Ghosh simulations only
             self.file_name_data_stored = self.data_file_name    # prevents rereading same data file later

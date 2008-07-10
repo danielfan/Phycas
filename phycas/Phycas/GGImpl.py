@@ -134,7 +134,7 @@ class GelfandGhosh(object):
     def getData(self):
         data_reader = ReadNexus.NexusReader()
         data_reader.readFile(self.datafname)
-        self.data_matrix = ReadNexus.getLastDiscreteMatrix(data_reader, True)
+        self.data_matrix = data_reader.getLastDiscreteMatrix(True)
         self.taxon_labels = data_reader.getTaxLabels()
         self.ntax = self.data_matrix.getNTax()
         self.nchar = self.data_matrix.getNChar()

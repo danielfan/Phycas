@@ -19,7 +19,7 @@ class TreeLikelihood(TreeLikelihoodBase):
     >>> import time
     >>> reader = ReadNexus.NexusReader()
     >>> reader.readFile('../Tests/Data/nyldna4.nex')
-    >>> data_matrix = ReadNexus.getLastDiscreteMatrix(reader, True)
+    >>> data_matrix = reader.getLastDiscreteMatrix(True)
     >>> model = Likelihood.HKYModel()
     >>> model.setStateFreqUnnorm(0, 1.0)
     >>> model.setStateFreqUnnorm(1, 2.0)
@@ -58,7 +58,7 @@ class TreeLikelihood(TreeLikelihoodBase):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Copies data from a discrete data matrix object (such as that returned
-        by the function ReadNexus.getLastDiscreteMatrix). The contents of
+        by the function ReadNexus.NexusReader.getLastDiscreteMatrix). The contents of
         data_matrix are compressed into data patterns and their counts.
         
         """

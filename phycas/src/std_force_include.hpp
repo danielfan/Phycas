@@ -30,7 +30,6 @@
 #define POLPY_NEWWAY  1
 #define POLPY_OLDWAY  !(POLPY_NEWWAY)
 //#define USING_NUMARRAY
-//#define INTERFACE_WITH_CIPRES
 
 // Uncommenting LOG_LOT_UNIFORM_CALLS macro results in a file named uniform.txt being saved that contains
 // a record of every random number generated in Lot::Uniform() showing the file and line on which the call

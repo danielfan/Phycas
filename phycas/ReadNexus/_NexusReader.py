@@ -180,7 +180,7 @@ class NexusReader(NexusReaderBase):
         return [TreeDescription(t) for t in NexusReaderBase.getTrees(self)]
     
     def getLastDiscreteMatrix(self, gaps_to_missing=True):
-        raw_mat = getLastDiscreteMatrix(self, gaps_to_missing)
+        raw_mat = getLastNexusDiscreteMatrix(self, gaps_to_missing)
         if raw_mat:
             return DataMatrixWrapper(raw_mat)
         return None

@@ -10,7 +10,7 @@ class DataMatrix(DataMatrixBase):
     >>> from phycas import *
     >>> r = ReadNexus.NexusReader()
     >>> r.readFile('../Tests/Data/nyldna4.nex')
-    >>> m = ReadNexus.getLastDiscreteMatrix(r, True)
+    >>> m = r.getLastDiscreteMatrix(True)
 
     """
     def getNChar(self):
@@ -21,7 +21,7 @@ class DataMatrix(DataMatrixBase):
         >>> from phycas import *
         >>> r = ReadNexus.NexusReader()
         >>> r.readFile('../Tests/Data/nyldna4.nex')
-        >>> m = ReadNexus.getLastDiscreteMatrix(r, True)
+        >>> m = r.getLastDiscreteMatrix(True)
         >>> m.getNChar()
         3080
 
@@ -36,7 +36,7 @@ class DataMatrix(DataMatrixBase):
         >>> from phycas import *
         >>> r = ReadNexus.NexusReader()
         >>> r.readFile('../Tests/Data/nyldna4.nex')
-        >>> m = ReadNexus.getLastDiscreteMatrix(r, True)
+        >>> m = r.getLastDiscreteMatrix(True)
         >>> m.getNTax()
         4
         
@@ -53,7 +53,7 @@ class DataMatrix(DataMatrixBase):
         >>> from phycas import *
         >>> r = ReadNexus.NexusReader()
         >>> r.readFile('../Tests/Data/nyldna4.nex')
-        >>> m = ReadNexus.getLastDiscreteMatrix(r, True)
+        >>> m = r.getLastDiscreteMatrix(True)
         >>> m.getNStates()
         4
 
@@ -70,9 +70,9 @@ class DataMatrix(DataMatrixBase):
         >>> from phycas import *
         >>> r = ReadNexus.NexusReader()
         >>> r.readFile('../Tests/Data/nyldna4.nex')
-        >>> m = ReadNexus.getLastDiscreteMatrix(r, True)
+        >>> m = r.getLastDiscreteMatrix(True)
         >>> print m.getSymbolsList()
-        ACGT?BDHKMRSVWY
+        ['A', 'C', 'G', 'T', '?', 'B', 'D', 'H', 'K', 'M', 'R', 'S', 'V', 'W', 'Y']
 
         """
         DataMatrixBase.getSymbolsList(self)
@@ -90,7 +90,7 @@ class DataMatrix(DataMatrixBase):
         >>> from phycas import *
         >>> r = ReadNexus.NexusReader()
         >>> r.readFile('../Tests/Data/nyldna4.nex')
-        >>> m = ReadNexus.getLastDiscreteMatrix(r, True)
+        >>> m = r.getLastDiscreteMatrix(True)
         >>> print m.getStateList()
         (1, 0, 1, 1, 1, 2, 1, 3, 4, 0, 1, 2, 3, 3, 1, 2, 3, 3, 0, 2, 3, 3, 0, 1, 3, 2, 2, 3, 2, 0, 1, 2, 0, 2, 2, 1, 2, 3, 0, 1, 2, 2, 0, 3, 2, 1, 3)
 
@@ -135,7 +135,7 @@ class DataMatrix(DataMatrixBase):
         >>> from phycas import *
         >>> r = ReadNexus.NexusReader()
         >>> r.readFile('../Tests/Data/nyldna4.nex')
-        >>> m = ReadNexus.getLastDiscreteMatrix(r, True)
+        >>> m = r.getLastDiscreteMatrix(True)
         >>> print m.getStateListPos()
         (0, 2, 4, 6, 8, 13, 17, 21, 25, 28, 31, 34, 37, 41, 44)
 
@@ -216,14 +216,14 @@ class DataMatrixWrapper(object):
     def getNStates(self):
         return self.n_states
 
-    def getSymbolsList():
+    def getSymbolsList(self):
         return self.symbols
 
-    def getStateList():
+    def getStateList(self):
         return self.state_list
 
-    def getStateListPos():
-        return self.state_listPos
+    def getStateListPos(self):
+        return self.state_list_pos
 
     def getCodedDataMatrix(self):
         return self.mat.getCodedDataMatrix()
@@ -243,6 +243,7 @@ class DataMatrixWrapper(object):
             index += 1
             s.append(self.state_list[index])
         return s
+
     def getSymbolToCode(self, sym):
         try:
             return self.symbols_to_code[sym]
@@ -262,10 +263,11 @@ class DataMatrixWrapper(object):
         symList.sort()
         symT = tuple(symList)
         return self.symbols_to_code[symT]
-    
+
     def getCodeToSymbol(self, intCode):
         if intCode == -1:
             return '-'
         return self.symbols[intCode]
+
     def getNEXUSFormatCommand(self):
         return "Format datatype=%s missing = ? gap = - ;" % DataMatrixWrapper.NEXUS_DATATYPE_NAMES[self.datatype_enum]

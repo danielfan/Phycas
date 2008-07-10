@@ -90,7 +90,7 @@ BOOST_PYTHON_MODULE(_ReadNexus)
 		.def("clear", &PhycasNexusReader::Clear)
 		;
 	
-	def("getLastDiscreteMatrix", GetLastDiscreteMatrix, return_value_policy<manage_new_object>());
+	def("getLastNexusDiscreteMatrix", GetLastDiscreteMatrix, return_value_policy<manage_new_object>());
 
 	register_exception_translator<NxsException>(&translate);
 }

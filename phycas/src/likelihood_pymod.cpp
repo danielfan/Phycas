@@ -143,17 +143,7 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("getTotalCount", &phycas::SimData::getTotalCount)
         .def("getBinnedCounts", &phycas::SimData::getBinnedCounts)
 		;
-#if defined(INTERFACE_WITH_CIPRES)
-#error INTERFACE_WITH_CIPRES defined
-	class_<PhycasIDLishMatrix, boost::noncopyable>("PhycasIDLishMatrix", init<unsigned, unsigned, std::string, int, unsigned>())
-		.def("setCharStateLookup", &PhycasIDLishMatrix::setCharStateLookup)
-		.def("replaceRow", &PhycasIDLishMatrix::replaceRow)
-		;
-#endif
 	class_<TreeLikelihood, TreeLikelihoodWrapper, boost::noncopyable>("TreeLikelihoodBase", init<boost::shared_ptr<Model> >())
-#if defined(INTERFACE_WITH_CIPRES)
-		.def("copyDataFromIDLMatrix", &TreeLikelihood::copyDataFromIDLMatrix)
-#endif
 		.def("copyDataFromDiscreteMatrix", &TreeLikelihood::copyDataFromDiscreteMatrix)
 		.def("copyDataFromSimData", &TreeLikelihood::copyDataFromSimData)
 		.def("prepareForSimulation", &TreeLikelihood::prepareForSimulation)
