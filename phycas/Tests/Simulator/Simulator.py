@@ -11,7 +11,7 @@ sim.tree_topology = Newick('(1:0.1,2:0.15,(3:0.025,4:0.15):0.05)')
 sim.default_model = 'hky'
 sim.starting_kappa = 4.0
 sim.starting_freqs = [0.1, 0.2, 0.3, 0.4]
-sim.estimate_pinvar = False
+#sim.estimate_pinvar = False
 
 # Simulation settings
 sim.random_seed = 13579

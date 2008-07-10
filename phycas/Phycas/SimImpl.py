@@ -31,6 +31,7 @@ class SimImpl(object):
         
         """
         self.starting_tree_source = self.opts.tree_source
+        self.starting_tree        = self.opts.tree_topology
         self.ntax                 = len(self.opts.taxon_labels)
         self.phycas.phycassert(self.ntax > 3, 'Must specify labels for at least four taxa')
         core = LikelihoodCore(self)
