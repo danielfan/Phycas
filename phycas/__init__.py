@@ -64,7 +64,6 @@ if not _user_ini_checked:
         execfile(p)
 
 def useWxPhycas():
-    print 'Inside useWxPhycas(), returning',_use_wx_phycas
     return _use_wx_phycas
 
 import Conversions

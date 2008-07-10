@@ -6,7 +6,6 @@ import phycas.ReadNexus as ReadNexus
 
 ###############################################################################
 def ttysize():
-    #Mark, add this section for us Windows users
     if os.name == 'nt':
         # From http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/440694
         from ctypes import windll, create_string_buffer
@@ -536,7 +535,6 @@ class PhycasCmdOpts(object):
         self.__dict__["_command"] = None
         self.__dict__["_unchecked"] = set()
         if command and args:
-
             self._initialize(command, args)
     def _initialize(self, command=None, args=None):
         self._current = {}
@@ -550,11 +548,13 @@ class PhycasCmdOpts(object):
                 transf = None
             else:
                 name, default, help_str, transf = opt
+            name = name.lower()
             self._help_info[name] =  [default, help_str]
             self._current[name] = default
             if transf is not None:
                 self._transformer[name] = transf
             self._command.__dict__[name] = self._current[name]
+
     def _help_str_list(self, pref=""):
         """Generates a list of strings formatted for displaying help
         Assumes that PhycasTablePrinter._reset_term_width has been called 
@@ -565,8 +565,10 @@ class PhycasCmdOpts(object):
             dpref = ""
         opts_help = []
         for i in self._optionsInOrder:
-            n = pref and "%s%s" % (dpref, i[0]) or i[0]
-            s = PhycasTablePrinter.format_help(n, self._current[i[0]], i[2])
+            oc_name = i[0]
+            name = oc_name.lower()
+            n = pref and "%s%s" % (dpref, name) or name
+            s = PhycasTablePrinter.format_help(oc_name, self._current[name], i[2])
             opts_help.append(s)
         return opts_help
 
@@ -723,7 +725,6 @@ class PhycasCommandHelp(object):
 
 class PhycasCommand(object):
 
-    #Mark, added cmd_name and cmd_descript - you had hard-coded Sumt here
     def __init__(self, phycas, option_defs, cmd_name, cmd_descrip, output_options=None):
         # the roundabout way of initializing PhycasCmdOpts is needed because
         #   _options must be in the __dict__ before the setattr is called
@@ -737,25 +738,24 @@ class PhycasCommand(object):
         self.__dict__["help"] = PhycasCommandHelp(self, cmd_name, cmd_descrip)
 
     def __setattr__(self, name, value):
+        nl = name.lower()
         o = self.__dict__["_options"]
-        if name in o:
-            #Mark, why lower()? 
-            #o._set_opt(name.lower(), value)
-            o._set_opt(name, value)
-        elif name in self.__dict__:
+        if nl in o:
+            o._set_opt(nl, value)
+        elif nl == "out" and "out" in self.__dict__:
             outp = self.__dict__["out"]
             isintarg = isinstance(value, int) or isinstance(value, long)
             turning_off = ((value is None) or (value is False) or (isintarg and value == 0))
             turning_on = ((value is True) or (isintarg and value != 0))
-            if name == "out":
+            if nl == "out":
                 if turning_off and (outp is not None):
                     outp._silence()
                 elif turning_on and (outp is not None):
                     outp._activate()
                 else:
                     self.__dict__["out"] = value
-            else:
-                self.__dict__[name] = value
+        elif name in self.__dict__:
+            self.__dict__[name] = value
         else:
             raise AttributeError("%s has no attribute %s" % (self.__class__.__name__, name))
 
