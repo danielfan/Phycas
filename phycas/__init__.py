@@ -56,7 +56,8 @@ _user_ini_checked = False
 _use_wx_phycas = True
 _check_for_updates = True
 _phycas_update_url = "129.237.138.231" # change this to phycas.org url
-_phycas_branch = "$Revision$"
+_phycas_branch = "$HeadURL$"
+_phycas_revision = "$Revision: 733 $"
 
 from Phycas import Phycas
 if not _user_ini_checked:
@@ -123,5 +124,5 @@ mcmc = MCMC(phycas)
 
 if _check_for_updates and sys.argv and not sys.argv[0]:
     import phycas.Utilities.PhycasUpdateCheck as PhycasUpdateCheck
-    PhycasUpdateCheck.runPhycasUpdateChecker()
+    PhycasUpdateCheck.runPhycasUpdateChecker(_phycas_update_url, )
 #print 'importing phycas...'
