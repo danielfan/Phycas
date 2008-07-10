@@ -158,8 +158,8 @@ class LikelihoodCore:
         
         """
         sim_data = Likelihood.SimData()
-        self.parent.phycas.phycassert(self.parent.sim_nchar > 0, 'sim_nchar must be greater than zero in order to perform simulations')
-        self.likelihood.simulateFirst(sim_data, self.tree, self.r, self.parent.sim_nchar)
+        self.parent.phycas.phycassert(self.parent.opts.nchar > 0, 'nchar must be greater than zero in order to perform simulations')
+        self.likelihood.simulateFirst(sim_data, self.tree, self.r, self.parent.opts.nchar)
         return sim_data
         
     def prepareForLikelihood(self):

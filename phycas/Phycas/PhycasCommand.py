@@ -4,6 +4,8 @@ from phycas import getDefaultOutFilter, OutFilter
 from phycas.PDFGen import PDFGenerator
 import phycas.ReadNexus as ReadNexus
 
+_opt_double_space = True    #POL added
+
 ###############################################################################
 def ttysize():
     if os.name == 'nt':
@@ -198,7 +200,14 @@ class PhycasTablePrinter:
         global _opt_val_help_len, _opt_name_help_len
         hs = "\n".join(PhycasTablePrinter._help_str_wrapper.wrap(helpStr))
         w = _opt_val_help_len + _opt_name_help_len + 2
-        return PhycasTablePrinter._help_fmt_str % (name, value, hs[w:])
+        if value.__class__.__name__ == 'str':                       #POL added
+            if "'" in value:                                        #POL added
+                v = '"%s"' % value                                  #POL added
+            else:                                                   #POL added
+                v = "'%s'" % value                                  #POL added
+        else:                                                       #POL added
+            v = value                                               #POL added
+        return PhycasTablePrinter._help_fmt_str % (name, v, hs[w:]) #POL modified (value -> v)
     format_help = staticmethod(format_help)
 
     def get_help_divider():
@@ -569,6 +578,8 @@ class PhycasCmdOpts(object):
             name = oc_name.lower()
             n = pref and "%s%s" % (dpref, name) or name
             s = PhycasTablePrinter.format_help(oc_name, self._current[name], i[2])
+            if _opt_double_space and i != self._optionsInOrder[0]:  #POL added
+                s = '\n%s' % s                                      #POL added
             opts_help.append(s)
         return opts_help
 

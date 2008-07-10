@@ -3,7 +3,8 @@ from phycas.Phycas.MCMCImpl import MCMCImpl
 from phycas.ProbDist import BetaDist, ExponentialDist, InverseGammaDist
 class MCMC(PhycasCommand):
     def __init__(self, p):
-        args = (("random_seed",            0,                               "Determines the random number seed used; specify 0 to generate seed automatically from system clock", IntArgValidate(min=0)),
+        args = (
+                ("random_seed",            0,                               "Determines the random number seed used; specify 0 to generate seed automatically from system clock", IntArgValidate(min=0)),
                 ("ncycles",                10000,                           "The number of update cycles (a cycle is analogous to, but different than, a 'generation' in MrBayes; Phycas does in one cycle what MrBayes does in about 100 generations for a simple model such as JC)", IntArgValidate(min=0)),
                 ("sample_every",           100,                             "The current tree topology and model parameter values will be sampled after this many cycles have elapsed since the last sample was taken", IntArgValidate(min=0)),
                 ("report_every",           100,                             "A progress report will be displayed after this many cycles have elapsed since the last progress report", IntArgValidate(min=0)),

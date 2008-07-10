@@ -80,6 +80,7 @@ import ReadNexus
 import sys
 from Phycas.SumT import SumT
 from Phycas.MCMC import MCMC
+from Phycas.Sim import Sim
 from Phycas.PhycasCommand import FileFormats, REPLACE, APPEND, ADD_NUMBER, phycas_help
 # keep the wx import after the reading of the startup so that it can be optional
 if useWxPhycas():
@@ -121,6 +122,7 @@ class Newick(object):
 
 sumt = SumT(phycas)
 mcmc = MCMC(phycas)
+sim  = Sim(phycas)
 
 if _check_for_updates and sys.argv and not sys.argv[0]:
     import phycas.Utilities.PhycasUpdateCheck as PhycasUpdateCheck

@@ -1,42 +1,35 @@
 from phycas import *
 
-phycas = Phycas()
-
-# Set data_source to None because we will not be reading data from a file
-phycas.data_source = None
-
 # Define the names of the taxa to use when the simulated data set is saved to a file
-phycas.sim_taxon_labels = ['P. parksii', 'P. articulata', 'P._gracilis', 'P. macrophylla']
+sim.taxon_labels = ['P. parksii', 'P. articulata', 'P._gracilis', 'P. macrophylla']
 
 # Create a model tree
-phycas.starting_tree_source = 'usertree'
-phycas.tree_topology = Newick('(1:0.1,2:0.15,(3:0.025,4:0.15):0.05)')
+sim.tree_source = 'usertree'
+sim.tree_topology = Newick('(1:0.1,2:0.15,(3:0.025,4:0.15):0.05)')
 
 # Create a model
-phycas.default_model = 'hky'
-phycas.starting_kappa = 4.0
-phycas.starting_freqs = [0.1, 0.2, 0.3, 0.4]
+sim.default_model = 'hky'
+sim.starting_kappa = 4.0
+sim.starting_freqs = [0.1, 0.2, 0.3, 0.4]
+sim.estimate_pinvar = False
 
 # Simulation settings
-phycas.random_seed = 13579
-phycas.sim_file_name = 'simulated.nex'
-phycas.sim_nchar = 100000
+sim.random_seed = 13579
+sim.file_name = 'simulated.nex'
+sim.nchar = 100000
 
 import sys,os
 if os.path.basename(sys.executable) == 'python_d.exe':
-    raw_input('debug stop before simulate')
+    raw_input('attach debugger to python_d process now')
 
 # Simulate data
-phycas.simulateDNA()
-
-if os.path.basename(sys.executable) == 'python_d.exe':
-    raw_input('debug stop before likelihood')
+sim()
 
 # Now compute the likelihood of the model tree
-phycas.data_source = 'file'
-phycas.data_file_name = 'simulated.nex'
-lnL = phycas.likelihood()
-print 'lnL =',lnL
+#phycas.data_source = 'file'
+#phycas.data_file_name = 'simulated.nex'
+#lnL = phycas.likelihood()
+#print 'lnL =',lnL
 
 # Add a PAUP block to the simulated.nex file to make it easy to check the results
 f = file('simulated.nex', 'a')
@@ -47,16 +40,16 @@ f.write('\nend;')
 f.write('\n')
 f.write('\nbegin trees;')
 f.write('\n  translate')
-for i,nm in enumerate(phycas.sim_taxon_labels):
+for i,nm in enumerate(sim.taxon_labels):
     if nm.count(' ') > 0:
         f.write("\n    %d '%s'" % (i + 1, nm))
     else:
         f.write("\n    %d %s" % (i + 1, nm))
-    if i < len(phycas.sim_taxon_labels) - 1:
+    if i < len(sim.taxon_labels) - 1:
         f.write(',')
     else:
         f.write(';')
-f.write('\n  utree simtree = %s;' % phycas.tree_topology)
+f.write('\n  utree simtree = %s;' % sim.tree_topology)
 f.write('\nend;')
 f.write('\n')
 f.write('\nbegin paup;')
