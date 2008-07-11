@@ -5,21 +5,13 @@
 from phycas import *
 from math import exp
 
-# Create a Phycas object
-phycas = Phycas()
-
-# Set various options before starting the run. To see all available options, you
-# can go to the source: take a look at the beginning part of the Phycas.py file
-#   phycas/Examples/Paradox/Paradox.py <- you are here
-#   phycas/Phycas/Phycas.py            <- here is Phycas.py
-
 # Set up the substitution model
-phycas.default_model = 'hky'   # use the Hasegawa-Kishino-Yano (1985) model
-phycas.num_rates = 4        # add discrete gamma rate heterogeneity with 4 rate categories
+model.type      = 'hky'   # use the Hasegawa-Kishino-Yano (1985) model
+model.num_rates = 4        # add discrete gamma rate heterogeneity with 4 rate categories
 
 # Set prior on the gamma shape parameter to be an exponential distribution having mean 0.5
 # Note that the value in parentheses is the inverse of the mean, not the mean.
-phycas.gamma_shape_prior = ProbDist.ExponentialDist(2.0)
+model.gamma_shape_prior = ProbDist.ExponentialDist(2.0)
 
 # Set the prior for the base frequency parameters. The base frequency parameters in Phycas
 # are only proportional to the base frequencies (i.e. they often add up to a value greater
@@ -28,10 +20,10 @@ phycas.gamma_shape_prior = ProbDist.ExponentialDist(2.0)
 # equivalent to placing a Dirichlet(a,a,a,a) prior on the actual base frequencies. If you
 # change the prior, you should keep the second one (the scale) set to 1.0 if you want the
 # joint base frequency prior to remain Dirichlet.
-phycas.base_freq_param_prior = ProbDist.GammaDist(1.0, 1.0)
+model.base_freq_param_prior = ProbDist.GammaDist(1.0, 1.0)
 
 # Set the prior for kappa, the ratio of the rate of transitions to the rate of transversions
-phycas.kappa_prior = ProbDist.ExponentialDist(1.0)
+model.kappa_prior = ProbDist.ExponentialDist(1.0)
 
 # Use a hyperparameter to govern the mean of the branch length prior
 # Instead of specifying, say, ExponentialDist(10.0) for branch lengths, this
@@ -42,11 +34,11 @@ phycas.kappa_prior = ProbDist.ExponentialDist(1.0)
 # mu. For this "hyperprior" (the prior for a hyperparameter) we used an Inverse
 # Gamma distribution having mean 1.0 and variance 10.0, as first suggested by
 # Suchard et al. in their 2001 MBE (18:1001-1013) paper on Bayesian model selection.
-phycas.using_hyperprior = True 
-phycas.edgelen_hyperprior = ProbDist.InverseGammaDist(2.1, 1.0/1.1)
+mcmc.using_hyperprior = True 
+mcmc.edgelen_hyperprior = ProbDist.InverseGammaDist(2.1, 1.0/1.1)
 
 # Tell phycas that we want to allow polytomies
-phycas.allow_polytomies = True
+mcmc.allow_polytomies = True
 
 # Tell phycas that we want to use the "polytomy" prior, which specifies
 # how much higher the prior probability is for a given tree compared to
@@ -59,30 +51,26 @@ phycas.allow_polytomies = True
 # pleasing in that a slightly-more-resolved tree (with k+1 internal
 # nodes) needs to be more than one log-likelihood unit better than a
 # tree with just k internal nodes in order to overcome this prior.
-phycas.polytomy_prior   = True
-phycas.topo_prior_C     = exp(1.0)
+mcmc.polytomy_prior   = True
+mcmc.topo_prior_C     = exp(1.0)
 
 # Start with a random tree
-phycas.starting_tree_source = 'random'
+mcmc.starting_tree_source = 'random'
 
 # Specify the data file (here we specified the location relative to this file)
 # Note that you should use forward slashes ('/') even if running in Windows.
-phycas.data_file_name = 'ShoupLewis.nex'
+mcmc.data_file_name = 'ShoupLewis.nex'
 
 # Let slice sampler have maximum freedom to extend slice
-phycas.slice_max_units = 0
+mcmc.slice_max_units = 0
 
-# Tell phycas that we want to run the MCMC analysis for 20000 cycles.
+# Tell Phycas that we want to run the MCMC analysis for 20000 cycles.
 # Note that a cycle in Phycas differs from a generation in MrBayes.
 # A cycle involves updating each non-branch-length parameter in the model
 # as well as a certain number of Metropolis-Hastings updates of branch
 # lengths and tree topology.
-phycas.ncycles = 20000
-phycas.sample_every = 10    # save tree and parameters every 10 cycles
+mcmc.ncycles = 20000
+mcmc.sample_every = 10    # save tree and parameters every 10 cycles
 
-# Finally, call setup(), which prepares phycas for the MCMC analysis, taking
-# account of the changed settings above, then call run() which does the
-# actual analysis.
-#raw_input('debug stop')
-#phycas.random_seed = 13579
-phycas.mcmc()
+# Finally, call mcmc(), which starts the MCMC analysis.
+mcmc()

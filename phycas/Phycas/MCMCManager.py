@@ -487,20 +487,20 @@ class MarkovChain(LikelihoodCore):
             # Set up the topology prior
             self.topo_prior_calculator = self.bush_move.getTopoPriorCalculator()
             self.topo_prior_calculator.chooseUnrooted()
-            self.topo_prior_calculator.setC(self.parent.topo_prior_C)
-            if self.parent.polytomy_prior:
+            self.topo_prior_calculator.setC(self.parent.opts.topo_prior_C)
+            if self.parent.opts.polytomy_prior:
                 self.topo_prior_calculator.choosePolytomyPrior()
             else:
                 self.topo_prior_calculator.chooseResolutionClassPrior()
                 
             # Continue setting up BushMove object
             self.bush_move.setName("Bush move")
-            self.bush_move.setWeight(self.parent.bush_move_weight)
+            self.bush_move.setWeight(self.parent.opts.bush_move_weight)
             self.bush_move.setTree(self.tree)
             self.bush_move.setModel(self.model)
             self.bush_move.setTreeLikelihood(self.likelihood)
             self.bush_move.setLot(self.r)
-            self.bush_move.setEdgeLenDistMean(self.parent.bush_move_edgelen_mean)
+            self.bush_move.setEdgeLenDistMean(self.parent.opts.bush_move_edgelen_mean)
             #self.bush_move.viewProposedMove(self.parent.bush_move_debug)
             if self.model.edgeLengthsFixed():
                 self.bush_move.fixParameter()
@@ -592,7 +592,7 @@ class MCMCManager:
         """
         # Sanity checks
         unimap_and_flex            = (self.parent.opts.use_unimap and self.parent.opts.use_flex_model)
-        unimap_and_ratehet         = (self.parent.opts.use_unimap and self.parent.opts.num_rates > 1)
+        unimap_and_ratehet         = (self.parent.opts.use_unimap and self.parent.opts.model.num_rates > 1)
         unimap_and_polytomies      = (self.parent.opts.use_unimap and self.parent.opts.allow_polytomies)
         unimap_and_multiple_chains = (self.parent.opts.use_unimap and self.parent.opts.nchains > 1)
         #unimap_and_samc            = (self.parent.opts.use_unimap and self.parent.opts.doing_samc)

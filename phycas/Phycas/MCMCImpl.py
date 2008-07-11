@@ -24,7 +24,6 @@ class MCMCImpl(object):
         self.phycas = phycas
         self.opts = opts
         
-        self.debugging              = False      # If set to True expect lots of debug output (e.g. data pattern table)
         self.data_matrix            = None
         self.file_name_trees_stored = None
         self.do_marginal_like       = False
@@ -116,20 +115,20 @@ class MCMCImpl(object):
             self.phycas.output(summary)
 
     def updateAllUpdaters(self, chain, chain_index, cycle):
-        if self.debugging:
+        if self.opts.debugging:
             tmpf = file('debug_info.txt', 'a')
             tmpf.write('************** cycle=%d, chain=%d\n' % (cycle,chain_index))
         for p in chain.chain_manager.getAllUpdaters():
             w = p.getWeight()
             #print p.getName(), "weight =", w
             for x in range(w):
-                if self.debugging:
+                if self.opts.debugging:
                     p.setSaveDebugInfo(True)
                 p.update()
-                if self.debugging:
+                if self.opts.debugging:
                     tmpf.write('%s | %s\n' % (p.getName(), p.getDebugInfo()))
         
-        if self.debugging:
+        if self.opts.debugging:
             tmpf.close()
 
     def showTopoPriorInfo(self):
@@ -427,7 +426,7 @@ class MCMCImpl(object):
             self.showParamInfo(p)
 
         # Debugging: show data patterns
-        if self.debugging:
+        if self.opts.debugging:
             cold_chain = self.mcmc_manager.getColdChain()
             s = cold_chain.likelihood.listPatterns()
             print '\nDebug Info: List of data patterns and their frequencies:'

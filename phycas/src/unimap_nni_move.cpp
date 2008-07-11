@@ -85,7 +85,19 @@ bool UnimapNNIMove::update()
 		accepted = (lnu <= ln_accept_ratio);
 		}
 
-	if (accepted)
+    if (save_debug_info)
+        {
+        debug_info = str(boost::format("swapping %d <-> %d (%s, lnR = %.5f)") % x->GetNodeNumber() % z->GetNodeNumber() % (accepted ? "accepted" : "rejected") % ln_accept_ratio);
+        }
+    
+    // temporary!
+    //x->SelectNode();
+    //z->SelectNode();
+    //likelihood->startTreeViewer(tree, debug_info);
+    //x->UnselectNode();
+    //z->UnselectNode();
+
+    if (accepted)
 		{
 		//p->setLastLnPrior(curr_ln_prior);
 		//p->setLastLnLike(curr_ln_like);
