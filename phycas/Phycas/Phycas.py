@@ -547,7 +547,7 @@ class Phycas(object):
         sim_data = core.simulate()
         sim_data.saveToNexusFile(self.sim_file_name, self.sim_taxon_labels, 'dna', ('a','c','g','t'))
         
-    def likelihood(self):
+    def obsolete_likelihood(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Computes the log-likelihood based on the current tree and current

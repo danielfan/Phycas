@@ -136,6 +136,7 @@ class LikelihoodCore:
             self.parent.starting_tree = self.tree.makeNewick()
         else:
             # Build user-specified tree
+            #self.tree.buildTree(self.parent.starting_tree)
             self.parent.starting_tree.buildTree(self.tree)
             if not self.tree.tipNumbersSetUsingNames():
                 self.parent.warn_tip_numbers = True

@@ -11,7 +11,6 @@ sim.tree_topology = Newick('(1:0.1,2:0.15,(3:0.025,4:0.15):0.05)')
 sim.default_model = 'hky'
 sim.kappa = 4.0
 sim.base_freqs = [0.1, 0.2, 0.3, 0.4]
-#sim.pinvar_model = False
 
 # Simulation settings
 sim.random_seed = 13579
@@ -26,10 +25,14 @@ if os.path.basename(sys.executable) == 'python_d.exe':
 sim()
 
 # Now compute the likelihood of the model tree
-#phycas.data_source = 'file'
-#phycas.data_file_name = 'simulated.nex'
-#lnL = phycas.likelihood()
-#print 'lnL =',lnL
+#like.data_source = 'file'
+like.data_file_name = 'simulated.nex'
+like.tree_topology = Newick('(1:0.1,2:0.15,(3:0.025,4:0.15):0.05)')
+like.default_model = 'hky'
+like.kappa = 4.0
+like.base_freqs = [0.1, 0.2, 0.3, 0.4]
+lnL = like()
+print 'lnL =',lnL
 
 # Add a PAUP block to the simulated.nex file to make it easy to check the results
 f = file('simulated.nex', 'a')

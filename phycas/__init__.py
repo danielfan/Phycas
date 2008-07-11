@@ -78,9 +78,6 @@ import Phylogeny
 import ProbDist
 import ReadNexus
 import sys
-from Phycas.SumT import SumT
-from Phycas.MCMC import MCMC
-from Phycas.Sim import Sim
 from Phycas.PhycasCommand import FileFormats, REPLACE, APPEND, ADD_NUMBER, phycas_help
 # keep the wx import after the reading of the startup so that it can be optional
 if useWxPhycas():
@@ -120,11 +117,20 @@ class Newick(object):
     def __str__(self):
         return self.newick
 
+from Phycas.SumT import SumT
 sumt = SumT(phycas)
+
+from Phycas.MCMC import MCMC
 mcmc = MCMC(phycas)
+
+from Phycas.Sim import Sim
 sim  = Sim(phycas)
+
+from Phycas.Like import Like
+like = Like(phycas)
 
 if _check_for_updates and sys.argv and not sys.argv[0]:
     import phycas.Utilities.PhycasUpdateCheck as PhycasUpdateCheck
-    PhycasUpdateCheck.runPhycasUpdateChecker(_phycas_update_url, )
-#print 'importing phycas...'
+    #POL runPhycasUpdateChecker takes no arguments currently: PhycasUpdateCheck.runPhycasUpdateChecker(_phycas_update_url, )
+    PhycasUpdateCheck.runPhycasUpdateChecker()
+
