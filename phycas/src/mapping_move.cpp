@@ -26,35 +26,35 @@
 //#include "phycas/src/mcmc_chain_manager.hpp"
 //#include "phycas/src/basic_tree.hpp"
 //#include "boost/format.hpp"
-#include "phycas/src/nielsen_mapping_move.hpp"
+#include "phycas/src/mapping_move.hpp"
 
 namespace phycas
 {
 
 /*----------------------------------------------------------------------------------------------------------------------
-|   NielsenMappingMove constructor. Nothing to be done because this class only manipulates the TreeLikelihood object
+|   MappingMove constructor. Nothing to be done because this class only manipulates the TreeLikelihood object
 |   and has no data members of its own.
 */
-NielsenMappingMove::NielsenMappingMove()
+MappingMove::MappingMove()
 	{
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
-|   NielsenMappingMove destructor.
+|   MappingMove destructor.
 */
-NielsenMappingMove::~NielsenMappingMove()
+MappingMove::~MappingMove()
 	{
-    //std::cerr << "NielsenMappingMove dying..." << std::endl;
+    //std::cerr << "MappingMove dying..." << std::endl;
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Creates a new mapping for all characters on the tree using the method of Nielsen, R. 2002. Mapping mutations on 
-|   phylogenies. Systematic Biology 51:729-739. This move regenerates only latent variables, and is always accepted.
+|	Creates a new univent mapping for all characters on the tree. This move regenerates only latent variables, and is 
+|   always accepted.
 */
-bool NielsenMappingMove::update()
+bool MappingMove::update()
 	{
     PHYCAS_ASSERT(likelihood->isUsingUnimap());
-    likelihood->nielsenMapping(tree, rng, true);
+    likelihood->fullRemapping(tree, rng, true);
     return true;
     }
 

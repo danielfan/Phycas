@@ -171,7 +171,7 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 #if POLPY_NEWWAY
 		.def("useUnimap", &TreeLikelihood::useUnimap)
 		.def("isUsingUnimap", &TreeLikelihood::isUsingUnimap)
-		.def("nielsenMapping", &TreeLikelihood::nielsenMapping)
+		.def("fullRemapping", &TreeLikelihood::fullRemapping)
 #endif
 		.def("setUFNumEdges", &TreeLikelihood::setUFNumEdges)
 		.def("bytesPerCLA", &TreeLikelihood::bytesPerCLA)

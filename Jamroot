@@ -157,7 +157,7 @@ alias likelihood_sources
     phycas/src/mcmc_flexcat_param.cpp 
     phycas/src/mcmc_updater.cpp 
     phycas/src/ncat_move.cpp 
-    phycas/src/nielsen_mapping_move.cpp 
+    phycas/src/mapping_move.cpp 
     phycas/src/omega_param.cpp 
     phycas/src/phycas_string.cpp 
     phycas/src/pinvar_param.cpp 

@@ -26,7 +26,6 @@ class MCMCImpl(object):
         
         self.debugging              = False      # If set to True expect lots of debug output (e.g. data pattern table)
         self.data_matrix            = None
-        self.file_name_data_stored  = None
         self.file_name_trees_stored = None
         self.do_marginal_like       = False
         self.mcmc_manager           = MCMCManager(self)
@@ -215,13 +214,11 @@ class MCMCImpl(object):
         self.treeFileOpen()
 
     def readDataFromFile(self):
-        if not self.file_name_data_stored or (self.data_file_name != self.file_name_data_stored):
-            self.reader.readFile(self.opts.data_file_name)
-            self.taxon_labels = self.reader.getTaxLabels()
-            self.data_matrix = self.reader.getLastDiscreteMatrix(True)
-            self.ntax = self.data_matrix.getNTax()
-            self.nchar = self.data_matrix.getNChar() # used for Gelfand-Ghosh simulations only
-            self.file_name_data_stored = self.opts.data_file_name    # prevents rereading same data file later
+        self.reader.readFile(self.opts.data_file_name)
+        self.taxon_labels = self.reader.getTaxLabels()
+        self.data_matrix = self.reader.getLastDiscreteMatrix(True)
+        self.ntax = self.data_matrix.getNTax()
+        self.nchar = self.data_matrix.getNChar() # used for Gelfand-Ghosh simulations only
 
     def calcMarginalLikelihood(self):
         marginal_like = 0.0
@@ -270,9 +267,9 @@ class MCMCImpl(object):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         This function is for parts of the setup that should occur right before
-        runMCMC() is called. Setup is deferred until this point to give the
+        run() is called. Setup is deferred until this point to give the
         user a chance to change the default settings before the call to
-        runMCMC(). This function does these things: 
+        run(). This function does these things: 
         1) reads the data and ensures that the taxon_labels list is filled
         with the correct number of taxon labels; 
         2) creates a starting tree description; 
@@ -386,22 +383,29 @@ class MCMCImpl(object):
             elif self.opts.data_source == 'file':
                 self.phycas.output('Data source:    %s' % self.opts.data_file_name)
             else:
-                self.phycas.output("Data source:    Unknown (something other than 'file' or None was specified for data_source)")
+                self.phycas.abort("Only 'file' or None are allowed for data_source")
             self.phycas.output('No. cycles:     %s' % self.opts.ncycles)
             self.phycas.output('Sample every:   %s' % self.opts.sample_every)
             self.phycas.output('Starting tree:  %s' % self.starting_tree)
             self.phycas.output('No. samples:    %s' % self.nsamples)
             self.phycas.output('Sampled trees will be saved in %s' % self.tree_file_name)
             self.phycas.output('Sampled parameters will be saved in %s' % self.param_file_name)
+            if self.opts.use_unimap:
+                self.phycas.output('Using uniformized mapping MCMC')
+            else:
+                self.phycas.output('Using standard MCMC (i.e. no uniformized mapping)')
 
             if not self.warn_tip_numbers:
                 self.phycas.output('Tip node numbers were set using the names in the tree description')
             else:
                 self.phycas.output('Warning: tip node numbers were NOT set using the names in the tree description')
 
-        self.phycas.output('Creating %d chains with these temperatures:' % (self.opts.nchains))
-        for t in self.heat_vector:
-            self.phycas.output('  %.5f %s' % (t, t == 1.0 and '(cold chain)' or ''))
+        if self.opts.nchains == 1:
+            self.phycas.output('Creating one chain (i.e. not using heated chains to improve mixing)')
+        else:
+            self.phycas.output('Creating %d chains with these temperatures:' % (self.opts.nchains))
+            for t in self.heat_vector:
+                self.phycas.output('  %.5f %s' % (t, t == 1.0 and '(cold chain)' or ''))
             
         # Compute the current log-likelihood and log-prior in case first updater 
         # is a move and will thus depend on these quantities being accurate
@@ -413,7 +417,7 @@ class MCMCImpl(object):
                 self.phycas.output('Starting log-prior = %s' % c.chain_manager.getLastLnPrior())
 
         # Show starting parameter info 
-        self.phycas.output('Parameter starting values and prior densities:')
+        self.phycas.output('\nParameter starting values and prior densities:')
         cold_chain_manager = self.mcmc_manager.getColdChainManager()
         for p in cold_chain_manager.getEdgeLenParams():
             self.showParamInfo(p)
@@ -434,7 +438,7 @@ class MCMCImpl(object):
 
         self.stopwatch.start()
         self.mcmc_manager.resetNEvals()
-
+        
         self.phycas.output('\nSampling (%d cycles)...' % self.opts.ncycles)
         if self.opts.verbose:
             print

@@ -1,4 +1,5 @@
 from phycas.Phycas.PhycasCommand import *
+from phycas import model
 from phycas.Phycas.MCMCImpl import MCMCImpl
 from phycas.ProbDist import BetaDist, ExponentialDist, InverseGammaDist
 class MCMC(PhycasCommand):
@@ -11,39 +12,21 @@ class MCMC(PhycasCommand):
                 ("verbose",                True,                            "You will get more output if True, less output if False", BoolArgValidate),
                 ("quiet",                  False,                           "If True, output will only be sent to the log file if open (see below); if False, output will be sent to the console as well", BoolArgValidate),
                 ("outfile_prefix",         None,                            "If None, parameter and tree files created will have a name beginning with the name of the data file; if provided, this prefix will form the first part of the parameter (e.g. <outfile_prefix>.p) and tree file (e.g. <outfile_prefix>.t) names"),
-                ("default_model",          'hky',                           "Can be 'jc', 'hky' or 'gtr'"),
-                ("relrate_prior",          ExponentialDist(1.0),            "The prior distribution for individual GTR relative rate parameters"),
-                ("relrates",               [1.0, 4.0, 1.0, 1.0, 4.0, 1.0] , "The starting values for GTR relative rates"),
-                ("fix_relrates",           False,                           "If True, GTR relative rates will not be modified during the course of an MCMC analysis", BoolArgValidate),
-                ("kappa_prior",            ExponentialDist(1.0),            "The prior distribution for the kappa parameter in an HKY model"),
-                ("kappa",                  4.0,                             "The starting value for the kappa parameter in an HKY model", FloatArgValidate(min=0.01)),
-                ("fix_kappa",              False,                           "If True, the HKY kappa parameter will not be modified during the course of an MCMC analysis", BoolArgValidate),
-                ("num_rates",              1,                               "The number of relative rates used for the discrete gamma rate heterogeneity submodel; default is rate homogeneity (i.e. 1 rate)", IntArgValidate(min=1)),
-                ("gamma_shape_prior",      ExponentialDist(1.0),            "The prior distribution for the shape parameter of the gamma among-site rate distribution"),
-                ("gamma_shape",            0.5,                             "The starting value for the gamma shape parameter", FloatArgValidate(min=0.01)),
-                ("fix_shape",              False,                           "If True, the gamma shape parameter will not be modified during the course of an MCMC analysis", BoolArgValidate),
-                ("use_inverse_shape",      False,                           "If True, gamma_shape_prior is applied to 1/shape rather than shape", BoolArgValidate),
-                ("pinvar_model",           False,                           "If True, an invariable sites submodel will be applied and the parameter representing the proportion of invariable sites will be estimated", BoolArgValidate),
-                ("pinvar_prior",           BetaDist(1.0, 1.0),              "The prior distribution for pinvar, the proportion of invariable sites parameter"),
-                ("pinvar",                 0.2,                             "The starting value of pinvar, the proportion of invariable sites parameter", ProbArgValidate()),
-                ("fix_pinvar",             False,                           "If True, the proportion of invariable sites parameter (pinvar) will not be modified during the course of an MCMC analysis", BoolArgValidate),
-                ("base_freq_param_prior",  ExponentialDist(1.0),            "The prior distribution for the individual base frequency parameters; these parameters, when normalized to sum to 1, represent the equilibrium proportions of the nucleotide states"),
-                ("base_freqs",             [1.0, 1.0, 1.0, 1.0],            "The starting values for the four base frequency parameters"),
-                ("fix_freqs",              False,                           "If True, the base frequencies will not be modified during the course of an MCMC analysis", BoolArgValidate),
+                ("model",                  model,                           "Specifies the model to use. By default, uses the predefined model object. Type model.help to set the settings for this model."),
                 ("data_source",            'file',                          "not yet documented"),
                 ("data_file_name",         '',                              "Used to specify the nexus data file name to be used for subsequent analyses"),
                 ("starting_tree_source",   'random',                        "Source of the starting tree topology: can be either 'random' or 'usertree'. Note that this setting does not determine the edge lengths in the starting tree, only the topology. Starting edge lengths are determined by the probability distribution specified in starting_edgelen_dist"),
                 ("tree_topology",          None,                            "Unused unless starting_tree_source is 'usertree', in which case this should be a standard newick string representation of the tree topology; e.g. '(A:0.01,B:0.071,(C:0.013,D:0.021):0.037)'"),
+                ("fix_topology",           False,                           "If True, an EdgeMove move will be substituted for the LargetSimonMove, so edge lengths will be updated by slice sampling but the topology will remain unchanged during an MCMC analysis", BoolArgValidate),
                 ("ls_move_lambda",         0.2,                             "The value of the tuning parameter for the Larget-Simon move", FloatArgValidate(min=0.01)),
                 ("ls_move_weight",         100,                             "Larget-Simon moves will be performed this many times per cycle", IntArgValidate(min=0)),
                 ("ls_move_debug",          False,                           "If set to true, TreeViewer will popup on each Larget-Simon move update showing edges affected by the proposed move", BoolArgValidate),
-                ("fix_topology",           False,                           "If True, an EdgeMove move will be substituted for the LargetSimonMove, so edge lengths will be updated by slice sampling but the topology will remain unchanged during an MCMC analysis", BoolArgValidate),
                 ("edge_move_lambda",       0.2,                             "The value of the tuning parameter for the EdgeMove", FloatArgValidate(min=0.01)),
                 ("edge_move_weight",       0,                               "Only used if fix_topology is True. Makes sense to set this to some multiple of the number of edges since each EdgeMove affects a single randomly-chosen edge ", IntArgValidate(min=0)),
+                ("mapping_move_weight",     1,                              "Univent mapping will be performed this many times per cycle", IntArgValidate(min=0)),
                 ("unimap_nni_move_weight", 100,                             "Unimap NNI moves will be performed this many times per cycle", IntArgValidate(min=0)),
                 ("tree_scaler_weight",     0,                               "Whole-tree scaling will be performed this many times per cycle", IntArgValidate(min=0)),
                 ("use_unimap",              False,                          "if True, MCMC analyses will use the uniformized mapping approach", BoolArgValidate),
-                ("nielsen_move_weight",     1,                              "Nielsen mapping will be performed this many times per cycle", IntArgValidate(min=0)),
                 ("allow_polytomies",        False,                          "If True, do Bush moves in addition to Larget-Simon moves; if False, do Larget-Simon moves only", BoolArgValidate),
                 ("polytomy_prior",          True,                           "If True, use polytomy prior; if False, use resolution class prior", BoolArgValidate),
                 ("topo_prior_C",            2.0,                            "Specifies the strength of the prior (C = 1 is flat prior; C > 1 favors less resolved topologies)", FloatArgValidate(min=0.01)),
@@ -64,7 +47,7 @@ class MCMC(PhycasCommand):
                 ("fix_edgelens",            False,                          "not yet documented", BoolArgValidate),
                 ("starting_edgelen_dist",  ExponentialDist(10.0),           "Used to select the starting edge lengths when starting_tree_source is 'random'"),
                 ("heating_lambda",         0.2,                             "not yet documented", FloatArgValidate(min=0.01)),
-                ("nchains",                1,                               "not yet documented", IntArgValidate(min=1,max=1)), # only allowing 1 chain now because multiple chains not yet fully implemented
+                ("nchains",                1,                               "The number of Markov chains to run simultaneously. One chain serves as the cold chain from which samples are drawn, the other chains are heated to varying degrees and serve to enhance mixing in the cold chain.", IntArgValidate(min=1,max=1)), # only allowing 1 chain now because multiple chains not yet fully implemented
                 ("is_standard_heating",    True,                            "not yet documented", BoolArgValidate),
                 ("use_flex_model",         False,                           "not yet documented", BoolArgValidate),
                 ("flex_ncat_move_weight",  1,                               "Number of times each cycle to attempt an ncat move", IntArgValidate(min=0)),
@@ -78,8 +61,33 @@ class MCMC(PhycasCommand):
                 )
         PhycasCommand.__init__(self, p, args, "mcmc", "The mcmc command is used to conduct a Bayesian Markov chain Monte Carlo analysis.")
 
+        # The data members added below should be hidden from the user because they are for use by phycas developers.
+        #
+        # The roundabout way of introducing these data members is necessary because PhycasCommand.__setattr__ tries
+        # to prevent users from adding new data members (to prevent accidental misspellings from causing problems)
+        self.__dict__["debugging"] = False
+        
     def __call__(self, **kwargs):
         self.set(**kwargs)
         mcmc_impl = MCMCImpl(self.phycas, self)
         mcmc_impl.run()
         
+#                ("default_model",          'hky',                           "Can be 'jc', 'hky' or 'gtr'"),
+#                ("relrate_prior",          ExponentialDist(1.0),            "The prior distribution for individual GTR relative rate parameters"),
+#                ("relrates",               [1.0, 4.0, 1.0, 1.0, 4.0, 1.0] , "The starting values for GTR relative rates"),
+#                ("fix_relrates",           False,                           "If True, GTR relative rates will not be modified during the course of an MCMC analysis", BoolArgValidate),
+#                ("kappa_prior",            ExponentialDist(1.0),            "The prior distribution for the kappa parameter in an HKY model"),
+#                ("kappa",                  4.0,                             "The starting value for the kappa parameter in an HKY model", FloatArgValidate(min=0.01)),
+#                ("fix_kappa",              False,                           "If True, the HKY kappa parameter will not be modified during the course of an MCMC analysis", BoolArgValidate),
+#                ("num_rates",              1,                               "The number of relative rates used for the discrete gamma rate heterogeneity submodel; default is rate homogeneity (i.e. 1 rate)", IntArgValidate(min=1)),
+#                ("gamma_shape_prior",      ExponentialDist(1.0),            "The prior distribution for the shape parameter of the gamma among-site rate distribution"),
+#                ("gamma_shape",            0.5,                             "The starting value for the gamma shape parameter", FloatArgValidate(min=0.01)),
+#                ("fix_shape",              False,                           "If True, the gamma shape parameter will not be modified during the course of an MCMC analysis", BoolArgValidate),
+#                ("use_inverse_shape",      False,                           "If True, gamma_shape_prior is applied to 1/shape rather than shape", BoolArgValidate),
+#                ("pinvar_model",           False,                           "If True, an invariable sites submodel will be applied and the parameter representing the proportion of invariable sites will be estimated", BoolArgValidate),
+#                ("pinvar_prior",           BetaDist(1.0, 1.0),              "The prior distribution for pinvar, the proportion of invariable sites parameter"),
+#                ("pinvar",                 0.2,                             "The starting value of pinvar, the proportion of invariable sites parameter", ProbArgValidate()),
+#                ("fix_pinvar",             False,                           "If True, the proportion of invariable sites parameter (pinvar) will not be modified during the course of an MCMC analysis", BoolArgValidate),
+#                ("base_freq_param_prior",  ExponentialDist(1.0),            "The prior distribution for the individual base frequency parameters; these parameters, when normalized to sum to 1, represent the equilibrium proportions of the nucleotide states"),
+#                ("base_freqs",             [1.0, 1.0, 1.0, 1.0],            "The starting values for the four base frequency parameters"),
+#                ("fix_freqs",              False,                           "If True, the base frequencies will not be modified during the course of an MCMC analysis", BoolArgValidate),

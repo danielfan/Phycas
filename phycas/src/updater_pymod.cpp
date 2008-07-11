@@ -27,7 +27,7 @@
 #include "phycas/src/cipres/CipresDataMatrixHelper.h"
 #if POLPY_NEWWAY
 #include "phycas/src/basic_tree_node.hpp"
-#include "phycas/src/nielsen_mapping_move.hpp"
+#include "phycas/src/mapping_move.hpp"
 #endif
 #include "phycas/src/tree_likelihood.hpp"
 #include "phycas/src/larget_simon_move.hpp"
@@ -107,9 +107,9 @@ void updater_pymod()
 		.def("update", &phycas::TreeScalerMove::update)
 		;
 #if POLPY_NEWWAY
-	class_<phycas::NielsenMappingMove, bases<phycas::MCMCUpdater>, 
-		boost::noncopyable, boost::shared_ptr<phycas::NielsenMappingMove> >("NielsenMappingMove") 
-		.def("update", &phycas::NielsenMappingMove::update)
+	class_<phycas::MappingMove, bases<phycas::MCMCUpdater>, 
+		boost::noncopyable, boost::shared_ptr<phycas::MappingMove> >("MappingMove") 
+		.def("update", &phycas::MappingMove::update)
 		;
 #endif
 	class_<TopoPriorCalculator, boost::noncopyable, 

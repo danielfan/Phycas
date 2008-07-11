@@ -117,6 +117,9 @@ class Newick(object):
     def __str__(self):
         return self.newick
 
+from Phycas.Model import Model
+model = Model(phycas)
+
 from Phycas.SumT import SumT
 sumt = SumT(phycas)
 

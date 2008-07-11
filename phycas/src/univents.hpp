@@ -21,7 +21,6 @@
 
 #include <vector>
 
-//#include "phycas/force_include.h"
 #include "phycas/src/states_patterns.hpp"
 
 namespace phycas
@@ -31,53 +30,49 @@ class TreeNode;
 class Univents;
 
 class Univents
-{
+    {
 	public:
 
-		Univents()
-			:mdot(false),
-			is_valid(false)
-			{}
-		unsigned size() const {return univents.size();}
-		void resize(unsigned );
-		void swap(Univents & );
+		                                    Univents();
+		unsigned                            size() const;
+		void                                resize(unsigned n);
+		void                                swap(Univents & other);
 
-		void setEndStates(const int8_t *p);
+		void                                setEndStates(const int8_t * p);
 
-		bool isValid() const {return is_valid; }
-		bool timesValid() const {return is_valid && times_valid; }
+		bool                                isValid() const;
+		bool                                timesValid() const;
 
-		const std::vector<int8_t> & getEndStatesVecConstRef() const {return end_states_vec;}
-		std::vector<int8_t> & getEndStatesVecRef() {return end_states_vec;}
+		const std::vector<int8_t> &         getEndStatesVecConstRef() const;
+		std::vector<int8_t> &               getEndStatesVecRef();
 
-		const std::vector< StateMapping > & getVecEventsVecConstRef() const {return univents;}
-		std::vector< StateMapping > & getVecEventsVecRef() {return univents;}
+		const std::vector< StateMapping > & getVecEventsVecConstRef() const;
+		std::vector< StateMapping > &       getVecEventsVecRef();
 		
-		const StateMapping & getEventsVecConstRef(unsigned i) const  {return univents.at(i);}
-		StateMapping & getEventsVecRef(unsigned i) {return univents.at(i);}
+		const StateMapping &                getEventsVecConstRef(unsigned i) const;
+		StateMapping &                      getEventsVecRef(unsigned i);
 		
-		unsigned getNumEvents(unsigned) const;
-		std::vector<unsigned> getEventsVec(unsigned) const;
-		std::vector<double>   getTimes(unsigned) const;
+		unsigned                            getNumEvents(unsigned) const;
+		std::vector<unsigned>               getEventsVec(unsigned) const;
+		std::vector<double>                 getTimes(unsigned) const;
 
-		void fillStateCodeArray(int8_t * tipSpecificStateCode) const;
-		unsigned getMDot() const
-			{
-			PHYCAS_ASSERT(is_valid);
-			return mdot;
-			}
+		void                                fillStateCodeArray(int8_t * tipSpecificStateCode) const;
+		unsigned                            getMDot() const;
+
 	private:
-		/* remember to add any new data members to swap(); */
-		std::vector< StateMapping > 	univents;		/**< univents[i][j].first holds a state for univent j at site i, whereas univents[i][j].second holds the fraction of the edgelen representing the time at which the univent occurred */
-		std::vector< std::vector<double> > times;		/**< univents[i][j].first holds a state for univent j at site i, whereas univents[i][j].second holds the fraction of the edgelen representing the time at which the univent occurred */
-		std::vector<int8_t>				end_states_vec;
-		unsigned						mdot;			/**< the total number of univents over all sites on the edge owned by this node */
-		bool							is_valid;
-		bool							times_valid;
+		/************ remember to add any new data members to swap(); *************/
+		std::vector< StateMapping > 	    univents;		/**< univents[i][j] holds a state for univent j at site i */
+		std::vector< std::vector<double> >  times;		    /**< times[i][j] holds the fraction of the edgelen representing the time at which the univent occurred */
+		std::vector<int8_t>				    end_states_vec; /**<* end_states_vec[i] holds the end state for site i */
+		unsigned						    mdot;			/**< the total number of univents over all sites on the edge owned by this node */
+		bool							    is_valid;       /**< */
+		bool							    times_valid;    /**< */
+		/************ remember to add any new data members to swap(); *************/
 	friend class UniventProbMgr;
-};
+    };
 
 } // phycas
 
+#include "phycas/src/univents.inl"
 
 #endif

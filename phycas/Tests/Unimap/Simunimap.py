@@ -67,7 +67,7 @@ if __name__ == '__main__':
     phycas.data_file_name          = 'simulated.nex'
     phycas.ls_move_weight          = 1 
     phycas.tree_scaler_weight      = 1
-    phycas.nielsen_move_weight     = 1
+    phycas.mapping_move_weight     = 1
     phycas.ncycles                 = 100
     phycas.sample_every            = 1
     phycas.report_every            = 10

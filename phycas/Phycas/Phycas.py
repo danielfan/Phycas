@@ -526,43 +526,6 @@ class Phycas(object):
         self.setupSAMC()
         self.runSAMC()
 
-    def obsolete_simulateDNA(self):
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
-        """
-        Simulates a DNA dataset and stores it in NEXUS format in the supplied
-        filename.
-        
-        """
-        self.check_settings()
-        self.starting_tree = self.tree_topology
-        self.phycassert(self.data_source == None, 'set data_source to None before calling simulateDNA')
-        self.ntax = len(self.sim_taxon_labels)
-        core = MCMCManager.LikelihoodCore(self)
-        core.setupCore()
-        if not core.tree.hasEdgeLens():
-            tm = TreeManip(core.tree)
-            tm.setRandomEdgeLengths(core.starting_edgelen_dist)
-        self.sim_model_tree = core.tree
-        core.prepareForSimulation()
-        sim_data = core.simulate()
-        sim_data.saveToNexusFile(self.sim_file_name, self.sim_taxon_labels, 'dna', ('a','c','g','t'))
-        
-    def obsolete_likelihood(self):
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
-        """
-        Computes the log-likelihood based on the current tree and current
-        model.
-        
-        """
-        self.check_settings()
-        self.starting_tree = self.tree_topology
-        self.phycassert(self.data_source == 'file', "set data_source to 'file' and specify data_file_name before calling the likelihood function")
-        self.readDataFromFile()
-        core = MCMCManager.LikelihoodCore(self)
-        core.setupCore()
-        core.prepareForLikelihood()
-        return core.calcLnLikelihood()
-        
     def likelihoods(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -600,7 +563,7 @@ class Phycas(object):
         self.gg_Pm, self.gg_Gm, self.gg_Dm = gelfand_ghosh.run()
         return (self.gg_Pm, self.gg_Gm, self.gg_Dm)
 
-    def unimap(self):
+    def obsolete_unimap(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Performs a uniformized mapping MCMC analysis. 

@@ -737,14 +737,13 @@ void TreeLikelihood::slideNode(
 	}	// TreeLikelihood::slideNode
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Refreshes the mapping for all sites using the method of Nielsen, R. 2002. Mapping mutations on phylogenies. 
-|	Systematic Biology 51:729-739. This function will wipe out all stored states and times on the edges of the tree and
-|	create a fresh set compatible with the tip states.
+|	Refreshes the univent mapping for all sites over the entire tree. This function will wipe out all stored states 
+|   and times on the edges of the tree and create a fresh set compatible with the tip states.
 */
-void TreeLikelihood::nielsenMapping(
-  TreeShPtr t,		/**< is the tree to use for the mapping */
-  LotShPtr rng,
-  bool doSampleUnivents)		/**< is the random number generator to use for the mapping */
+void TreeLikelihood::fullRemapping(
+  TreeShPtr t,		        /**< is the tree to use for the mapping */
+  LotShPtr rng,             /**< is the random number generator to use for the mapping */
+  bool doSampleUnivents)    /**< is True if ... */
 	{
 	t->renumberInternalNodes(t->GetNTips());
 	univentProbMgr.recalcUMat();

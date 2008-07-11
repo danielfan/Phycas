@@ -149,7 +149,7 @@ class TreeLikelihood
 		const UniventProbMgr		  & GetUniventProbMgrConstRef() const {return univentProbMgr;}
 		void							useUnimap(bool yes_or_no = true);
 		bool							isUsingUnimap();
-		void							nielsenMapping(TreeShPtr t, LotShPtr rng, bool doSampleUnivents);
+		void							fullRemapping(TreeShPtr t, LotShPtr rng, bool doSampleUnivents);
 		void							recalcSMatrix(TreeShPtr t);
 		std::string						debugShowSMatrix();
 		void							slideNode(double fraction, TreeNode * slider, TreeNode * other);

@@ -230,6 +230,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\phycas\src\mapping_move.cpp">
+			</File>
+			<File
 				RelativePath="..\..\phycas\src\mcmc_chain_manager.cpp">
 			</File>
 			<File
@@ -246,9 +249,6 @@
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\ncat_move.cpp">
-			</File>
-			<File
-				RelativePath="..\..\phycas\src\nielsen_mapping_move.cpp">
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\omega_param.cpp">
@@ -388,6 +388,9 @@
 				RelativePath="..\..\phycas\src\likelihood_models.inl">
 			</File>
 			<File
+				RelativePath="..\..\phycas\src\mapping_move.hpp">
+			</File>
+			<File
 				RelativePath="..\..\phycas\src\mcmc_chain_manager.hpp">
 			</File>
 			<File
@@ -416,9 +419,6 @@
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\ncat_move.inl">
-			</File>
-			<File
-				RelativePath="..\..\phycas\src\nielsen_mapping_move.hpp">
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\nopython_force_include.hpp">
@@ -500,6 +500,12 @@
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\unimap_nni_move.inl">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\univents.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\univents.inl">
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\xlikelihood.hpp">

@@ -1,11 +1,14 @@
-# This script creates a tar file containing the phycas directory and everything inside it
-# needed for running Phycas. This makes it possible to build phycas in one's home directory
-# and then easily copy the relevant parts of the phycas directory to the site-packages
-# directory of the Python installation on a linux machine, for example. 
-# The src subdirectory and all .svn subdirectories are completely excluded, and the list
-# of file name extensions that are matched is given in the variable validset. The only
+#/usr/bin/env python
+
+# This script creates a tar archive (tarfile) inside the rootdir directory. The tarfile
+# contains the rootdir directory and everything inside it. Normally, rootdir is defined
+# to be the phycas directory. This makes it possible to build phycas in one's home directory
+# and then easily copy the entire phycas package to the site-packages directory of the 
+# Python installation. The src subdirectory and all .svn subdirectories, which are not
+# needed for a functioning phycas package, are completely excluded.  The list of file 
+# name extensions that are matched is given in the variable validset. The only
 # thing this script does not do is move the libboost*.so file and its symbolic links,
-# which you will have to do manually.
+# which you will have to do manually until this functionality is added to this script.
 
 import os
 import sets

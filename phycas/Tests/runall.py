@@ -34,7 +34,13 @@ def runDiff(a, b, outFile):
          sys.exit("Script aborted because of failed example.\nOutput differed from the expected output.  See the differences at the end of %s" % outFile)
     
 def runTest(outFile, name, results):
-    print("Running test in " + name)
+    print("\n")
+    print("________________________________________")
+    print("|\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/|")
+    print("| Running test in " + name)
+    print("|\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/|")
+    print("----------------------------------------")
+    print("\n")
     outStream = open(outFile, 'a')
     writeHeader(outStream, name)
     outStream.close()

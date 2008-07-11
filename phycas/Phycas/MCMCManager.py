@@ -63,25 +63,25 @@ class LikelihoodCore:
         self.starting_edgelen_dist.setLot(self.r)
 
         # Create a substitution model
-        if self.parent.opts.default_model in ['gtr','hky']:
-            if self.parent.opts.default_model == 'gtr':
+        if self.parent.opts.model.type in ['gtr','hky']:
+            if self.parent.opts.model.type == 'gtr':
                 self.model = Likelihood.GTRModel()
-                self.model.setRelRates(self.parent.opts.relrates)
-                if self.parent.opts.fix_relrates:
+                self.model.setRelRates(self.parent.opts.model.relrates)
+                if self.parent.opts.model.fix_relrates:
                     self.model.fixRelRates()
             else:
                 self.model = Likelihood.HKYModel()
-                self.model.setKappa(self.parent.opts.kappa)
-                if self.parent.opts.fix_kappa:
+                self.model.setKappa(self.parent.opts.model.kappa)
+                if self.parent.opts.model.fix_kappa:
                     self.model.fixKappa()
-            self.parent.phycas.phycassert(self.parent.opts.base_freqs, 'base_freqs is None, but should be a list containing 4 (unnormalized) relative base frequencies')
-            self.parent.phycas.phycassert(len(self.parent.opts.base_freqs) == 4, 'base_freqs should be a list containing exactly 4 base frequencies; instead, it contains %d values' % len(self.parent.opts.base_freqs))
-            self.parent.phycas.phycassert(self.parent.opts.base_freqs[0] >= 0.0, 'base_freqs[0] cannot be negative (%f was specified)' % self.parent.opts.base_freqs[0])
-            self.parent.phycas.phycassert(self.parent.opts.base_freqs[1] >= 0.0, 'base_freqs[1] cannot be negative (%f was specified)' % self.parent.opts.base_freqs[1])
-            self.parent.phycas.phycassert(self.parent.opts.base_freqs[2] >= 0.0, 'base_freqs[2] cannot be negative (%f was specified)' % self.parent.opts.base_freqs[2])
-            self.parent.phycas.phycassert(self.parent.opts.base_freqs[3] >= 0.0, 'base_freqs[3] cannot be negative (%f was specified)' % self.parent.opts.base_freqs[3])
-            self.model.setNucleotideFreqs(self.parent.opts.base_freqs[0], self.parent.opts.base_freqs[1], self.parent.opts.base_freqs[2], self.parent.opts.base_freqs[3])  #POL should be named setStateFreqs?
-            if self.parent.opts.fix_freqs:
+            self.parent.phycas.phycassert(self.parent.opts.model.base_freqs, 'base_freqs is None, but should be a list containing 4 (unnormalized) relative base frequencies')
+            self.parent.phycas.phycassert(len(self.parent.opts.model.base_freqs) == 4, 'base_freqs should be a list containing exactly 4 base frequencies; instead, it contains %d values' % len(self.parent.opts.model.base_freqs))
+            self.parent.phycas.phycassert(self.parent.opts.model.base_freqs[0] >= 0.0, 'base_freqs[0] cannot be negative (%f was specified)' % self.parent.opts.model.base_freqs[0])
+            self.parent.phycas.phycassert(self.parent.opts.model.base_freqs[1] >= 0.0, 'base_freqs[1] cannot be negative (%f was specified)' % self.parent.opts.model.base_freqs[1])
+            self.parent.phycas.phycassert(self.parent.opts.model.base_freqs[2] >= 0.0, 'base_freqs[2] cannot be negative (%f was specified)' % self.parent.opts.model.base_freqs[2])
+            self.parent.phycas.phycassert(self.parent.opts.model.base_freqs[3] >= 0.0, 'base_freqs[3] cannot be negative (%f was specified)' % self.parent.opts.model.base_freqs[3])
+            self.model.setNucleotideFreqs(self.parent.opts.model.base_freqs[0], self.parent.opts.model.base_freqs[1], self.parent.opts.model.base_freqs[2], self.parent.opts.model.base_freqs[3])  #POL should be named setStateFreqs?
+            if self.parent.opts.model.fix_freqs:
                 self.model.fixStateFreqs()
         else:
             self.model = Likelihood.JCModel()
@@ -89,23 +89,23 @@ class LikelihoodCore:
         # If rate heterogeneity is to be assumed, add it to the model here
         # Note must defer setting up pattern specific rates model until we know number of patterns
         if self.parent.opts.use_flex_model:
-            self.model.setNGammaRates(self.parent.opts.num_rates)
+            self.model.setNGammaRates(self.parent.opts.model.num_rates)
             self.model.setFlexModel()
             self.model.setFlexRateUpperBound(self.parent.opts.flex_L)
-        elif self.parent.opts.num_rates > 1:
-            self.model.setNGammaRates(self.parent.opts.num_rates)
-            self.model.setPriorOnShapeInverse(self.parent.opts.use_inverse_shape)    #POL should be named useInverseShape rather than setPriorOnShapeInverse
-            self.model.setShape(self.parent.opts.gamma_shape)
-            if self.parent.opts.fix_shape:
+        elif self.parent.opts.model.num_rates > 1:
+            self.model.setNGammaRates(self.parent.opts.model.num_rates)
+            self.model.setPriorOnShapeInverse(self.parent.opts.model.use_inverse_shape)    #POL should be named useInverseShape rather than setPriorOnShapeInverse
+            self.model.setShape(self.parent.opts.model.gamma_shape)
+            if self.parent.opts.model.fix_shape:
                 self.model.fixShape()
         else:
             self.model.setNGammaRates(1)
             
-        if self.parent.opts.pinvar_model:
+        if self.parent.opts.model.pinvar_model:
             assert not self.parent.opts.use_flex_model, 'Cannot currently use flex model with pinvar'
             self.model.setPinvarModel()
-            self.model.setPinvar(self.parent.opts.pinvar)
-            if self.parent.opts.fix_pinvar:
+            self.model.setPinvar(self.parent.opts.model.pinvar)
+            if self.parent.opts.model.fix_pinvar:
                 self.model.fixPinvar()
         else:
             self.model.setNotPinvarModel()
@@ -220,14 +220,14 @@ class MarkovChain(LikelihoodCore):
         
         self.parent                  = parent
         self.heating_power           = power
-        self.relrate_prior           = cloneDistribution(self.parent.opts.relrate_prior)
-        self.base_freq_param_prior   = cloneDistribution(self.parent.opts.base_freq_param_prior)
-        self.gamma_shape_prior       = cloneDistribution(self.parent.opts.gamma_shape_prior)
+        self.relrate_prior           = cloneDistribution(self.parent.opts.model.relrate_prior)
+        self.base_freq_param_prior   = cloneDistribution(self.parent.opts.model.base_freq_param_prior)
+        self.gamma_shape_prior       = cloneDistribution(self.parent.opts.model.gamma_shape_prior)
         self.edgelen_hyperprior      = cloneDistribution(self.parent.opts.edgelen_hyperprior)
         self.external_edgelen_dist   = cloneDistribution(self.parent.opts.external_edgelen_dist)
         self.internal_edgelen_dist   = cloneDistribution(self.parent.opts.internal_edgelen_dist)
-        self.kappa_prior             = cloneDistribution(self.parent.opts.kappa_prior)
-        self.pinvar_prior            = cloneDistribution(self.parent.opts.pinvar_prior)
+        self.kappa_prior             = cloneDistribution(self.parent.opts.model.kappa_prior)
+        self.pinvar_prior            = cloneDistribution(self.parent.opts.model.pinvar_prior)
         self.flex_prob_param_prior   = cloneDistribution(self.parent.opts.flex_prob_param_prior)
         self.chain_manager           = None
 
@@ -345,10 +345,10 @@ class MarkovChain(LikelihoodCore):
             self.internal_edgelen_dist.setLot(self.r)
         
         # Define priors for the model parameters
-        if self.parent.opts.default_model == 'gtr':
+        if self.parent.opts.model.type == 'gtr':
             self.model.setRelRatePrior(self.relrate_prior)
             self.model.setStateFreqParamPrior(self.base_freq_param_prior)   #POL should be named state_freq_param_prior
-        elif self.parent.opts.default_model == 'hky':
+        elif self.parent.opts.model.type == 'hky':
             self.model.setKappaPrior(self.kappa_prior)
             self.model.setStateFreqParamPrior(self.base_freq_param_prior)   #POL should be named state_freq_param_prior
 
@@ -356,9 +356,9 @@ class MarkovChain(LikelihoodCore):
         if self.parent.opts.use_flex_model:
             self.model.setNumFlexSpacers(self.parent.opts.flex_num_spacers)
             self.model.setFLEXProbParamPrior(self.parent.opts.flex_prob_param_prior)
-        elif self.parent.opts.num_rates > 1:
+        elif self.parent.opts.model.num_rates > 1:
             self.model.setDiscreteGammaShapePrior(self.gamma_shape_prior)
-        if self.parent.opts.pinvar_model:
+        if self.parent.opts.model.pinvar_model:
             self.model.setPinvarPrior(self.pinvar_prior)
         
         # Define edge length prior distributions
@@ -408,27 +408,26 @@ class MarkovChain(LikelihoodCore):
             self.chain_manager.addMove(self.tree_scaler_move)
 
         if self.parent.opts.use_unimap:
-            # Create a NeilsenMappingMove (this will later be replaced with a reversible-jump move)
-            # and a UnimapNNIMove (replaces LargetSimonMove for unimap analyses)
-            self.nielsen_mapping_move = Likelihood.NielsenMappingMove()
-            self.nielsen_mapping_move.setName("Nielsen mapping move")
-            self.nielsen_mapping_move.setWeight(self.parent.nielsen_move_weight)
-            self.nielsen_mapping_move.setTree(self.tree)
-            self.nielsen_mapping_move.setModel(self.model)
-            self.nielsen_mapping_move.setTreeLikelihood(self.likelihood)
-            self.nielsen_mapping_move.setLot(self.r)
-            self.chain_manager.addMove(self.nielsen_mapping_move)
+            # Create a MappingMove (to refresh the mapping for all sites)
+            self.unimapping_move = Likelihood.MappingMove()
+            self.unimapping_move.setName("Univent mapping move")
+            self.unimapping_move.setWeight(self.parent.opts.mapping_move_weight)
+            self.unimapping_move.setTree(self.tree)
+            self.unimapping_move.setModel(self.model)
+            self.unimapping_move.setTreeLikelihood(self.likelihood)
+            self.unimapping_move.setLot(self.r)
+            self.chain_manager.addMove(self.unimapping_move)
 
+            # Create a UnimapNNIMove (replaces LargetSimonMove for unimap analyses)
             self.unimap_nni_move = Likelihood.UnimapNNIMove()
             self.unimap_nni_move.setName("Unimap NNI move")
-            self.unimap_nni_move.setWeight(self.parent.unimap_nni_move_weight)
+            self.unimap_nni_move.setWeight(self.parent.opts.unimap_nni_move_weight)
             self.unimap_nni_move.setTree(self.tree)
             self.unimap_nni_move.setModel(self.model)
             self.unimap_nni_move.setTreeLikelihood(self.likelihood)
             self.unimap_nni_move.setLot(self.r)
             self.chain_manager.addMove(self.unimap_nni_move)
 
-            self.chain_manager.addMove(self.nielsen_mapping_move)
         elif self.parent.opts.fix_topology:
             # Create an EdgeMove object to handle Metropolis-Hastings
             # updates to the edge lengths only (does not change the topology)
@@ -596,8 +595,8 @@ class MCMCManager:
         unimap_and_ratehet         = (self.parent.opts.use_unimap and self.parent.opts.num_rates > 1)
         unimap_and_polytomies      = (self.parent.opts.use_unimap and self.parent.opts.allow_polytomies)
         unimap_and_multiple_chains = (self.parent.opts.use_unimap and self.parent.opts.nchains > 1)
-        unimap_and_samc            = (self.parent.opts.use_unimap and self.parent.opts.doing_samc)
-        self.parent.phycas.phycassert(not unimap_and_samc, 'SAMC cannot (yet) be used in conjunction with use_unimap')
+        #unimap_and_samc            = (self.parent.opts.use_unimap and self.parent.opts.doing_samc)
+        #self.parent.phycas.phycassert(not unimap_and_samc, 'SAMC cannot (yet) be used in conjunction with use_unimap')
         self.parent.phycas.phycassert(not unimap_and_polytomies, 'Allowing polytomies cannot (yet) be used in conjunction with use_unimap')
         self.parent.phycas.phycassert(not unimap_and_flex, 'Flex model cannot (yet) be used in conjunction with use_unimap')
         self.parent.phycas.phycassert(not unimap_and_ratehet, 'Rate heterogeneity cannot (yet) be used in conjunction with use_unimap')

@@ -17,8 +17,8 @@
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#if ! defined(NIELSEN_MAPPING_MOVE_HPP)
-#define NIELSEN_MAPPING_MOVE_HPP
+#if ! defined(MAPPING_MOVE_HPP)
+#define MAPPING_MOVE_HPP
 
 #include <vector>									// for std::vector
 #include <boost/shared_ptr.hpp>						// for boost::shared_ptr
@@ -33,15 +33,14 @@ namespace phycas
 {
 
 /*----------------------------------------------------------------------------------------------------------------------
-|   Refreshes the mapping for all sites using the method of Nielsen, R. 2002. Mapping mutations on phylogenies. 
-|   Systematic Biology 51:729-739. This function will wipe out all stored states and times on the edges of the tree and
-|   create a fresh set compatible with the tip states. 
+|   Refreshes the univent mapping for all sites. This function will wipe out all stored states and times on the edges 
+|   of the tree and create a fresh set compatible with the tip states. 
 */
-class NielsenMappingMove : public MCMCUpdater
+class MappingMove : public MCMCUpdater
 	{
 	public:
-						NielsenMappingMove();
-						virtual ~NielsenMappingMove(); 
+						MappingMove();
+						virtual ~MappingMove(); 
         bool            update();
     };
 

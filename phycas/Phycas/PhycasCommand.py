@@ -67,26 +67,24 @@ class PhycasHelp(object):
     
 For Python Help use "python_help()"
 
-  Commands objects are called by following the name by () and then
-   hitting the RETURN key. Thus, to invoke the sumt command use:
+Commands are invoked by following the name by () and then
+hitting the RETURN key. Thus, to invoke the sumt command use:
 
 sumt()
 
-  Commands (and almost everything else in python) are case-sensitive -- so
-    "Sumt" is _not_ the same thing as "sumt"
+Commands (and almost everything else in python) are case-sensitive -- so
+"Sumt" is _not_ the same thing as "sumt" In general, you should use the
+lower case versions.
 
-  Lower case versions are the instances of command objects that most users 
-    will be interested in using.
-
-  The currently implemented Phycas commands are:
+The currently implemented Phycas commands are:
   
 %s
 
-  Use <command_name>.help to see the detailed help for each command. So,
+Use <command_name>.help to see the detailed help for each command. So,
 
 sumt.help
 
-  will display the help information for the sumt command object.
+will display the help information for the sumt command object.
 """ % t
 
     def __call__(self):

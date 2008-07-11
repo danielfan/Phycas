@@ -1,6 +1,6 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
 |  Phycas: Python software for phylogenetic analysis                          |
-|  Copyright (C) 2006 Mark T. Holder, Paul O. Lewis and David L. Swofford     |
+|  Copyright (C) 2008 Mark T. Holder, Paul O. Lewis and David L. Swofford     |
 |                                                                             |
 |  This program is free software; you can redistribute it and/or modify       |
 |  it under the terms of the GNU General Public License as published by       |

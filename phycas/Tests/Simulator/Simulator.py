@@ -1,16 +1,16 @@
 from phycas import *
 
+# Create a model
+model.type =  'hky'
+model.kappa = 4.0
+model.base_freqs = [0.1, 0.2, 0.3, 0.4]
+
 # Define the names of the taxa to use when the simulated data set is saved to a file
 sim.taxon_labels = ['P. parksii', 'P. articulata', 'P._gracilis', 'P. macrophylla']
 
 # Create a model tree
 sim.tree_source = 'usertree'
 sim.tree_topology = Newick('(1:0.1,2:0.15,(3:0.025,4:0.15):0.05)')
-
-# Create a model
-sim.default_model = 'hky'
-sim.kappa = 4.0
-sim.base_freqs = [0.1, 0.2, 0.3, 0.4]
 
 # Simulation settings
 sim.random_seed = 13579
@@ -28,9 +28,6 @@ sim()
 #like.data_source = 'file'
 like.data_file_name = 'simulated.nex'
 like.tree_topology = Newick('(1:0.1,2:0.15,(3:0.025,4:0.15):0.05)')
-like.default_model = 'hky'
-like.kappa = 4.0
-like.base_freqs = [0.1, 0.2, 0.3, 0.4]
 lnL = like()
 print 'lnL =',lnL
 
