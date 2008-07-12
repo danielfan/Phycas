@@ -134,6 +134,5 @@ like = Like(phycas)
 
 if _check_for_updates and sys.argv and not sys.argv[0]:
     import phycas.Utilities.PhycasUpdateCheck as PhycasUpdateCheck
-    #POL runPhycasUpdateChecker takes no arguments currently: PhycasUpdateCheck.runPhycasUpdateChecker(_phycas_update_url, )
-    PhycasUpdateCheck.runPhycasUpdateChecker()
-
+    o = OutputFilter(getDefaultOutFilter(), phycas.output)
+    PhycasUpdateCheck.runPhycasUpdateChecker(o, _phycas_update_url, _phycas_branch, _phycas_revision)
