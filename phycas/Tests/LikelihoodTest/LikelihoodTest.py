@@ -540,7 +540,7 @@ def simulateData(fn):
 def readData(fn):
     phycas.reader = ReadNexus.NexusReader()
     phycas.reader.readFile(fn)
-    phycas.data_matrix = phycas.reader.getLastDiscreteMatrix(true)
+    phycas.data_matrix = phycas.reader.getLastDiscreteMatrix(True)
     phycas.ntax = phycas.data_matrix.getNTax()
     phycas.nchar = phycas.data_matrix.getNChar()
     phycas.taxon_names = phycas.reader.getTaxLabels()
@@ -569,6 +569,14 @@ if __name__ == '__main__':
     model_tree = '(0:0.1,1:0.15,(2:0.025,3:0.15):0.05)'
     phycas.tree.buildFromString(model_tree, True)   # 2nd arg. is zero_based_tips
 
+    print
+    print '+------------------------------------------------+'
+    print '|           Analyzing nyldna4.nex                |'
+    print '+------------------------------------------------+'
+
+    readData('../Data/nyldna4.nex')
+    createCommandFile('check.nex')
+    tryAllModels('check.nex')
     #m = Lock()
     #tv = TreeViewer(tree=phycas.tree, mutex=m)
     #tv.start()
@@ -581,11 +589,3 @@ if __name__ == '__main__':
     simulateData('simulated.nex')
     tryAllModels('simulated.nex')
 
-    print
-    print '+------------------------------------------------+'
-    print '|           Analyzing nyldna4.nex                |'
-    print '+------------------------------------------------+'
-
-    readData('../Data/nyldna4.nex')
-    createCommandFile('check.nex')
-    tryAllModels('check.nex')
