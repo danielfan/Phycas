@@ -552,12 +552,12 @@ def readData(fn):
     phycas.likelihood.copyDataFromDiscreteMatrix(phycas.data_matrix)
     phycas.likelihood.prepareForLikelihood(phycas.tree)
 
-def createCommandFile(fn):
+def createCommandFile(fn, dataf):
     outf = file(fn, 'w')
     outf.write('#nexus\n\n')
     outf.write('begin paup;\n')
     outf.write("  set nowarnroot;\n")
-    outf.write("  exe '../Data/nyldna4.nex';\n")
+    outf.write("  exe '%s';\n" % dataf)
     outf.write('end;\n')
     outf.close()    
 
@@ -569,17 +569,18 @@ if __name__ == '__main__':
     model_tree = '(0:0.1,1:0.15,(2:0.025,3:0.15):0.05)'
     phycas.tree.buildFromString(model_tree, True)   # 2nd arg. is zero_based_tips
 
+    #m = Lock()
+    #tv = TreeViewer(tree=phycas.tree, mutex=m)
+    #tv.start()
+
     print
     print '+------------------------------------------------+'
     print '|           Analyzing nyldna4.nex                |'
     print '+------------------------------------------------+'
-
-    readData('../Data/nyldna4.nex')
-    createCommandFile('check.nex')
+    dataf = '../Data/nyldna4-compressed.nex'
+    readData(dataf)
+    createCommandFile('check.nex', dataf)
     tryAllModels('check.nex')
-    #m = Lock()
-    #tv = TreeViewer(tree=phycas.tree, mutex=m)
-    #tv.start()
 
     print
     print '+------------------------------------------------+'

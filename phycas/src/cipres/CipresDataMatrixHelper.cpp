@@ -169,7 +169,13 @@ DiscreteMatrix::DiscreteMatrix(const NxsCharactersBlock & cb, bool gapsToMissing
 	nativeCMatrix.stateListPos = &stateListPosAlias[0];
 	nativeCMatrix.stateList = &stateListAlias[0];
 	//std::cerr <<"done with DiscreteMatrix ctor\n";
-
+	
+	intWts.clear();
+	dblWts.clear();
+	const NxsTransformationManager &tm = cb.GetNxsTransformationManagerRef();
+	intWts = tm.GetDefaultIntWeights();
+	if (intWts.empty())
+		dblWts = tm.GetDefaultDoubleWeights();
 }
 
 /*

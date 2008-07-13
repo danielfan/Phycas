@@ -47,12 +47,14 @@ BOOST_PYTHON_MODULE(_Conversions)
 	// these lines taken from HippoGraph
 	std_vector_to_tuple<unsigned>();
 	std_vector_to_tuple<int8_t>();
+	std_vector_to_tuple<int>();
 	std_vector_to_tuple<double>();
 	std_vector_to_tuple<std::string>();
 	std_vector_to_tuple<phycas::TreeNode *>();
 
 	from_python_sequence<std::vector<unsigned>, variable_capacity_policy>();
     from_python_sequence<std::vector<int8_t>, variable_capacity_policy>();
+    from_python_sequence<std::vector<int>, variable_capacity_policy>();
     from_python_sequence<std::vector<double>, variable_capacity_policy>();
     from_python_sequence<std::vector<std::string>, variable_capacity_policy>();
 }

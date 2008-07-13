@@ -96,6 +96,36 @@
 				{
 				return (int)nativeCMatrix.datatype;
 				}
+			bool hasWeights() const
+				{
+				return hasIntWeights() || hasDblWeights();
+				}
+
+			bool hasIntWeights() const
+				{
+				return !(intWts.empty());
+				}
+			
+			bool hasDblWeights() const
+				{
+				return !(dblWts.empty());
+				}
+			std::vector<int> & getIntWeights()
+				{
+				return intWts;
+				}
+			std::vector<double> & getDblWeights()
+				{
+				return dblWts;
+				}
+			const std::vector<int> & getIntWeightsConst() const
+				{
+				return intWts;
+				}
+			const std::vector<double> & getDblWeightsConst() const
+				{
+				return dblWts;
+				}
 		private:
 			typedef ScopedTwoDMatrix<CIPR_StateSet_t> ScopedStateSetTwoDMatrix;
 			
@@ -104,7 +134,8 @@
 			ScopedStateSetTwoDMatrix	matrixAlias;		/** memory management alias to matrix field of nativeCMatrix */
 			std::vector<CIPR_State_t>	stateListAlias;		/** memory management alias to ambigList field of nativeCMatrix */
 			std::vector<unsigned>		stateListPosAlias;		/** memory management alias to symbolsList field of nativeCMatrix */
-			
+			std::vector<int>			intWts;
+			std::vector<double>			dblWts;
 			DiscreteMatrix(const DiscreteMatrix &); /** don't define, not copyable*/
 			DiscreteMatrix & operator=(const DiscreteMatrix &); /** don't define, not copyable*/
 		};

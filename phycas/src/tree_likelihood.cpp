@@ -2896,6 +2896,23 @@ unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix &
 	charIndexToPatternIndex.clear();
 	unsigned ntax = mat.getNTax();
 	unsigned nchar = mat.getNChar();
+	const std::vector<int> & iwts = mat.getIntWeightsConst();
+	const std::vector<double> & dwts = mat.getDblWeightsConst();
+	std::vector<double> iWtsAsDbl;
+	const double  * wts = NULL;
+	if (!iwts.empty())
+		{
+		PHYCAS_ASSERT(iwts.size() >= nchar);
+		iWtsAsDbl.resize(nchar, 1.0);
+		for (unsigned j = 0; j < nchar; ++j)
+			iWtsAsDbl[j] = (double)iwts.at(j);
+		wts = &(iWtsAsDbl[0]);
+		}
+	else if (!dwts.empty())
+		{
+		PHYCAS_ASSERT(dwts.size() >= nchar);
+		wts = &(dwts[0]);
+		}
 
 	// patternToIndex is a map that associates a list of character indices with each pattern. Thus, if 
 	// some pattern is found at sites 0, 15, and 167, then patternToIndex.first is the pattern and 
@@ -2935,7 +2952,9 @@ unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix &
 				else
 					pattern.push_back((int8_t)61);
 				}
-
+			
+			// here we (arbitrarily) use the max weight of any char in the codon
+			PatternCountType charWt = (wts ? std::max(wts[j], std::max(wts[j+1], wts[j+2])) : 1.0); 
 			//@POL below here same as the else block
 
 			// Add the pattern to the map if it has not yet been seen, otherwise increment 
@@ -2944,12 +2963,12 @@ unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix &
 			if (lowb != pattern_map.end() && !(pattern_map.key_comp()(pattern, lowb->first)))
 				{
 				// pattern is already in pattern_map, increment count
-				lowb->second += 1.0;
+				lowb->second += charWt;
 				}
 			else
 				{
 				// pattern has not yet been stored in pattern_map
-				pattern_map.insert(lowb, PatternMapType::value_type(pattern, 1));
+				pattern_map.insert(lowb, PatternMapType::value_type(pattern, charWt));
 				}
 			
 			// Add the pattern to the map if it has not yet been seen, otherwise increment 
@@ -2977,6 +2996,7 @@ unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix &
 				const int8_t   code = row[j];
 				pattern.push_back(code);
 				}
+			PatternCountType charWt = (wts ? wts[j] : 1.0); 
 
 			// Add the pattern to the map if it has not yet been seen, otherwise increment 
 			// the count of this pattern if it is already in the map (see item 24, p. 110, in Meyers' Efficient STL)
@@ -2984,12 +3004,12 @@ unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix &
 			if (lowb != pattern_map.end() && !(pattern_map.key_comp()(pattern, lowb->first)))
 				{
 				// pattern is already in pattern_map, increment count
-				lowb->second += 1.0;
+				lowb->second += charWt;
 				}
 			else
 				{
 				// pattern has not yet been stored in pattern_map
-				pattern_map.insert(lowb, PatternMapType::value_type(pattern, 1));
+				pattern_map.insert(lowb, PatternMapType::value_type(pattern, charWt));
 				}
 			
 			// Add the pattern to the patternToIndex map if not already present, and then

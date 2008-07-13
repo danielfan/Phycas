@@ -160,16 +160,11 @@ class DataMatrixWrapper(object):
     def __init__(self, dataMatrixBaseObj):
         assert(dataMatrixBaseObj)
         self.mat = dataMatrixBaseObj
-        self.state_list_pos = dataMatrixBaseObj.getStateListPos()
-        self.state_list = dataMatrixBaseObj.getStateList()
-        self.n_char = dataMatrixBaseObj.getNChar()
-        self.n_tax = dataMatrixBaseObj.getNTax()
         self.n_states = dataMatrixBaseObj.getNStates()
         raw_symbols_list = dataMatrixBaseObj.getSymbolsList()
         assert(len(raw_symbols_list) >= self.n_states)
         self.symbols = []
         self.symbols_to_code = {}
-        self.datatype_enum = dataMatrixBaseObj.getDatatype()
         
         for n in range(self.n_states):
             i = raw_symbols_list[n]
@@ -204,15 +199,32 @@ class DataMatrixWrapper(object):
                     t = tuple(s)
                     self.symbols.append("{%s}"% " ".join(sym))
                     self.symbols_to_code[t] = n
+        self._state_list_pos = None
+        self._state_list = None
+        self._n_char = None
+        self._n_tax = None
+        self._datatype_enum = None
+        self._int_wts = None
+        self._float_wts = None
+
     def getDatatype(self):
-        return self.datatype_enum
-
+        if self._datatype_enum is None:
+            self._datatype_enum = self.mat.getDatatype()
+        return self._datatype_enum
+    datatype_enum = property(getDatatype)
+    
     def getNChar(self):
-        return self.n_char
-
+        if self._n_char is None:
+            self._n_char = self.mat.getNChar()
+        return self._n_char
+    n_char = property(getNChar)
+    
     def getNTax(self):
-        return self.n_tax
-
+        if self._n_tax is None:
+            self._n_tax = self.mat.getNTax()
+        return self._n_tax
+    n_tax = property(getNTax)
+    
     def getNStates(self):
         return self.n_states
 
@@ -220,10 +232,28 @@ class DataMatrixWrapper(object):
         return self.symbols
 
     def getStateList(self):
-        return self.state_list
+        if self._state_list:
+            self._state_list = self.mat.getStateList()
+        return self._state_list
+    state_list = property(getStateList)
 
     def getStateListPos(self):
-        return self.state_list_pos
+        if self._state_list_pos is None:
+            self._state_list_pos = self.mat.getStateListPos()
+        return self._state_list_pos
+    state_list_pos = property(getStateListPos)
+
+    def getIntWts(self):
+        if self._int_wts is None:
+            self._int_wts = self.mat.getIntWeights()
+        return self._int_wts
+    int_wts = property(getIntWts)
+
+    def getFloatWts(self):
+        if self._float_wts is None:
+            self._float_wts = self.mat.getFloatWeights()
+        return self._float_wts
+    float_wts = property(getFloatWts)
 
     def getCodedDataMatrix(self):
         return self.mat.getCodedDataMatrix()
