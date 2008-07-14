@@ -70,7 +70,7 @@ if not _user_ini_checked:
 def useWxPhycas():
     return _use_wx_phycas
 
-from phycas.Utilities.io import getPhycasTestData
+from phycas.Utilities.io import getPhycasTestData, _runRegressionTests
 import Conversions
 from DataMatrix._DataMatrix import DataMatrix
 import Likelihood
@@ -133,7 +133,11 @@ sim  = Sim(phycas)
 from Phycas.Like import Like
 like = Like(phycas)
 
+def runTests():
+    output_stream = OutputFilter(getDefaultOutFilter(), phycas.output)
+    _runRegressionTests(output_stream)
+
 if _check_for_updates and sys.argv and not sys.argv[0]:
     import phycas.Utilities.PhycasUpdateCheck as PhycasUpdateCheck
-    o = OutputFilter(getDefaultOutFilter(), phycas.output)
-    PhycasUpdateCheck.runPhycasUpdateChecker(o, _phycas_update_url, _phycas_branch, _phycas_revision)
+    output_stream = OutputFilter(getDefaultOutFilter(), phycas.output)
+    PhycasUpdateCheck.runPhycasUpdateChecker(output_stream, _phycas_update_url, _phycas_branch, _phycas_revision)

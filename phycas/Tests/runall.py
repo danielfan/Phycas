@@ -63,7 +63,7 @@ if __name__ == '__main__':
     removeFilesIfTheyExist(scriptPar, [outFile])
 
     # os.chdir(os.path.join(os.path.split(scriptPar)[0], "Examples"))
-
+    os.chdir(scriptPar)
     runTest(outFile, "Sumt", ["trees.tre","splits.pdf","logfile.txt"])
     #runTest(outFile, "ExplorePrior", mcmcOutputs(["nodata.nex"]))
     runTest(outFile, "FixedParams", ["fixed.p", "fixed.t"])

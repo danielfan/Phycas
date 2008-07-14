@@ -145,7 +145,7 @@ class NexusReader(NexusReaderBase):
 
         >>> from phycas import *
         >>> reader = ReadNexus.NexusReader()
-        >>> reader.readFile('../Tests/Data/nyldna4.nex')
+        >>> reader.readFile(getPhycasTestData('nyldna4.nex'))
         >>> print reader.getLastDiscreteMatrix().n_char
         3080
 

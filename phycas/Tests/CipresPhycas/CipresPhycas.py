@@ -17,10 +17,6 @@ class CipresPhycas(CipresIDL_api1__POA.AsyncTreeInfer, SimpleServer, Phycas):
         _LOG.info('Initializing Phycas')
         Phycas.__init__(self)
         self.data_source = 'memory'
-        #if sys.platform == 'darwin':
-        #    self.data_file_name = r'/Users/mholder/Documents/projects/phycas_svn/phycasdev/phycas/Tests/Data/nyldna4.nex'
-        #else:
-        #    self.data_file_name = r'C:\Synchronized\Projects\phycasdev_trunk\phycas\Tests\Data\nyldna4.nex'
         SimpleServer.__init__(self, registry)
         self.registry = registry
         self.trees = []

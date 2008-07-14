@@ -1,7 +1,7 @@
 from phycas import *
 import shutil
 
-data_file_name = '../../Tests/Data/green.nex'
+data_file_name = getPhycasTestData('green.nex')
 rnseed = 75391
 ncycles = 11000
 samplefreq = 100
