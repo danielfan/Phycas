@@ -1,4 +1,3 @@
-#from _DataMatrixBase import *
 from _LikelihoodBase import *
 
 class TreeLikelihood(TreeLikelihoodBase):

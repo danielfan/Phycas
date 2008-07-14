@@ -1,5 +1,5 @@
 from _ReadNexus import *
-from phycas.DataMatrix._DataMatrix import DataMatrixWrapper
+from phycas.DataMatrix._DataMatrix import DataMatrix
 import re
 
 _ROUND_TRIP_EVERY_NEXUS_READ = False
@@ -192,7 +192,7 @@ class NexusReader(NexusReaderBase):
     def getLastDiscreteMatrix(self, gaps_to_missing=True):
         raw_mat = getLastNexusDiscreteMatrix(self, gaps_to_missing)
         if raw_mat:
-            return DataMatrixWrapper(raw_mat)
+            return DataMatrix(raw_mat)
         return None
 
     def writeNEXUS(self, out, appending=False):
