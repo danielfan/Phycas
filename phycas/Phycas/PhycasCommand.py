@@ -2,6 +2,7 @@ import sys, os
 import textwrap
 from phycas import getDefaultOutFilter, OutFilter
 from phycas.PDFGen import PDFGenerator
+from phycas.ReadNexus import FileFormats
 import phycas.ReadNexus as ReadNexus
 
 _opt_double_space = True
@@ -99,15 +100,6 @@ will display the help information for the sumt command object.
         return str(self)
 
 phycas_help = PhycasHelp()
-
-class FileFormats:
-    NEXUS, FASTA, PHYLIP, PDF, RAW_TEXT = range(5)
-    _names = ["NEXUS", "FASTA", "PHYLIP", "PDF", "RAW_TEXT"]
-    def to_str(v):
-        if v < 0 or v > len(FileFormats._names):
-            raise VauleError("Invalid file format code (%s) specified" % str(v))
-        return FileFormats._names[v]
-    to_str = staticmethod(to_str)
 
 class ExistingFileBehavior(object):
     pass

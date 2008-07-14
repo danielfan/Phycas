@@ -8,9 +8,7 @@ class DataMatrix(DataMatrixBase):
     one is to import ReadNexus and call its getLastDiscreteMatrix function:
 
     >>> from phycas import *
-    >>> r = ReadNexus.NexusReader()
-    >>> r.readFile('../Tests/Data/nyldna4.nex')
-    >>> m = r.getLastDiscreteMatrix(True)
+    >>> matrix = phycas.readData(getPhycasTestData("nyldna4.nex"))
 
     """
     def getNChar(self):
@@ -147,10 +145,11 @@ class DataMatrix(DataMatrixBase):
 
 
 class DataMatrixWrapper(object):
-    """Wraps a DataMatrixBase object and enables access to field. Note that
+    """Wraps a DataMatrixBase object and enables access to fields. Note that
     this class may be expanded later to allow editing, but (given that it 
     is tedious to recode a matrix's underlying data structure via python)
-    only editing of the cell (no new state combinations will be introduced)."""
+    only editing of the cell (no new state combinations will be introduced).
+    """
     DNA_Datatype = 0
     RNA_Datatype = 1
     AA_Datatype = 2 

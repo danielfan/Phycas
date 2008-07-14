@@ -132,6 +132,15 @@ sim  = Sim(phycas)
 from Phycas.Like import Like
 like = Like(phycas)
 
+def getPhycasTestDataDir():
+    import os
+    d = os.path.dirname(__file__)
+    test_data_dir = os.path.join(d, "Tests", "Data")
+    return test_data_dir
+
+def getPhycasTestData(filen):
+    return os.path.join(getPhycasTestDataDir(), filen)
+
 if _check_for_updates and sys.argv and not sys.argv[0]:
     import phycas.Utilities.PhycasUpdateCheck as PhycasUpdateCheck
     o = OutputFilter(getDefaultOutFilter(), phycas.output)

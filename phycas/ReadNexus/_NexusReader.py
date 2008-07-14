@@ -4,6 +4,16 @@ import re
 
 _ROUND_TRIP_EVERY_NEXUS_READ = False
 
+class FileFormats:
+    NEXUS, FASTA, PHYLIP, PDF, RAW_TEXT = range(5)
+    _names = ["NEXUS", "FASTA", "PHYLIP", "PDF", "RAW_TEXT"]
+    def to_str(v):
+        if v < 0 or v > len(FileFormats._names):
+            raise VauleError("Invalid file format code (%s) specified" % str(v))
+        return FileFormats._names[v]
+    to_str = staticmethod(to_str)
+
+
 class TreeDescription(object):
     def __init__(self, nxs_full_tree_description):
         self.ftd = nxs_full_tree_description
