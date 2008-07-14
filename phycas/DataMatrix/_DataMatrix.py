@@ -232,7 +232,7 @@ class DataMatrixWrapper(object):
         return self.symbols
 
     def getStateList(self):
-        if self._state_list:
+        if self._state_list is None:
             self._state_list = self.mat.getStateList()
         return self._state_list
     state_list = property(getStateList)
