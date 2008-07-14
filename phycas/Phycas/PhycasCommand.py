@@ -4,14 +4,13 @@ from phycas import getDefaultOutFilter, OutFilter
 from phycas.PDFGen import PDFGenerator
 import phycas.ReadNexus as ReadNexus
 
-_opt_double_space = True    #POL added
+_opt_double_space = True
 
 ###############################################################################
 def ttysize():
     if os.name == 'nt':
         # From http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/440694
         from ctypes import windll, create_string_buffer
-
         # stdin handle is -10
         # stdout handle is -11
         # stderr handle is -12
@@ -43,6 +42,11 @@ def ttysize():
             return None
 ###############################################################################
 
+def _value_for_user(value):
+    if isinstance(value, str):
+        return repr(value)
+    return str(value)
+
 class PhycasHelp(object):
     _phycas_cmd_classes = set()
     def __str__(self):
@@ -53,14 +57,13 @@ class PhycasHelp(object):
         i = iter(n)
         o = []
         while not done:
-            a, b, c = ("", "", "")
+            a, b = ("", "")
             try:
                 a = i.next()
                 b = i.next()
-                c = i.next()
             except StopIteration:
                 done = True
-            r = PhycasTablePrinter.format_help(a, b, c)
+            r = PhycasTablePrinter.format_help(a, b)
             o.append(r)
         t = "\n".join(o)
         return """Phycas Help
@@ -94,6 +97,7 @@ will display the help information for the sumt command object.
 
     def __repr__(self):
         return str(self)
+
 phycas_help = PhycasHelp()
 
 class FileFormats:
@@ -152,7 +156,7 @@ class TreeSource(object):
     def __iter__(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Returns an iterable over the trees (this will trigger the reading of 
+        Returns an iterable over the trees (this will trigger the reading of
         the input file if the object was initialized from a string.
         Stores tree descriptions in self.stored_tree_defs and taxon labels in
         self.taxon_labels.
@@ -168,13 +172,13 @@ class TreeSource(object):
             self.trees = reader.getTrees()
         return iter(self.trees)
 
-_opt_name_help_len = 24
+_opt_name_help_len = 30
 _opt_val_help_len = 19
 
 class PhycasTablePrinter:
     _help_str_wrapper = textwrap.TextWrapper()
     _text_wrapper = textwrap.TextWrapper()
-    _help_fmt_str = "%%-%ds %%-%ds %%s" % (_opt_name_help_len, _opt_val_help_len)
+    _help_fmt_str = "%%-%ds %%s" % (_opt_name_help_len)
 
     def _reset_term_width():
         tty_sz = ttysize()
@@ -184,7 +188,7 @@ class PhycasTablePrinter:
 
     def _set_terminal_width(w):
         global _opt_val_help_len, _opt_name_help_len
-        x = _opt_val_help_len + _opt_name_help_len + 2
+        x =  _opt_name_help_len + 1
         new_width = max(x + _opt_name_help_len + 1, w)
         PhycasTablePrinter._help_str_wrapper.width = new_width
         PhycasTablePrinter._help_str_wrapper.subsequent_indent = " "*x
@@ -194,27 +198,19 @@ class PhycasTablePrinter:
         PhycasTablePrinter._text_wrapper.initial_indent = ""
     _set_terminal_width = staticmethod(_set_terminal_width)
 
-    def format_help(name, value, helpStr):
+    def format_help(name, helpStr):
         global _opt_val_help_len, _opt_name_help_len
         hs = "\n".join(PhycasTablePrinter._help_str_wrapper.wrap(helpStr))
-        w = _opt_val_help_len + _opt_name_help_len + 2
-        if value.__class__.__name__ == 'str':                       #POL added
-            if "'" in value:                                        #POL added
-                v = '"%s"' % value                                  #POL added
-            else:                                                   #POL added
-                v = "'%s'" % value                                  #POL added
-        else:                                                       #POL added
-            v = value                                               #POL added
-        return PhycasTablePrinter._help_fmt_str % (name, v, hs[w:]) #POL modified (value -> v)
+        w = _opt_name_help_len + 1
+        return PhycasTablePrinter._help_fmt_str % (name, hs[w:])
     format_help = staticmethod(format_help)
 
     def get_help_divider():
         global _opt_val_help_len, _opt_name_help_len
-        l = PhycasTablePrinter._help_str_wrapper.width - (_opt_val_help_len + _opt_name_help_len + 2)
-        return " ".join(["="*_opt_name_help_len, "="*_opt_val_help_len, "="*l])
+        l = PhycasTablePrinter._help_str_wrapper.width - (_opt_name_help_len + 1)
+        return " ".join(["="*_opt_name_help_len, "="*l])
     get_help_divider = staticmethod(get_help_divider)
 PhycasTablePrinter._set_terminal_width(80)
-
 class PhycasOutput(object):
     def __init__(self):
         self._is_active = True
@@ -224,7 +220,6 @@ class PhycasOutput(object):
         self._is_active = True
     def __bool__(self):
         return self._is_active
-
 class FileOutputSpec(PhycasOutput):
     def __init__(self, prefix="", help_str="", filename=None):
         PhycasOutput.__init__(self)
@@ -251,24 +246,43 @@ class FileOutputSpec(PhycasOutput):
             dpref = pref + "."
         else:
             dpref = ""
+        opts_help = [PhycasTablePrinter.format_help("%s" %pref, self._help_str)]
+        if self._getFilename():
+            opts_help.append(PhycasTablePrinter.format_help("%sprefix" % dpref, "file prefix (appropriate suffix will be added)"))
+            opts_help.append(PhycasTablePrinter.format_help("%sfilename" % dpref, "The full file name."))
+            opts_help.append(PhycasTablePrinter.format_help("%smode" % dpref, 'Controls the behavior when the file is present. Valid settings are %s. ADD_NUMBER indicates that a number will be added to the end of the file name (or prefix) to make the name unique' % self._getValidModeNames()))
+            if len(self._valid_formats) > 1:
+                opts_help.append(PhycasTablePrinter.format_help("%s.format" % dpref, 'Format of the file valid settings are %s' % self._getValidFormatNames()))
+        if self._options:
+            opts_help.extend(self._options._help_str_list(pref))
+        return opts_help
+
+    def _current_str_list(self, pref=""):
+        """Generates a list of strings formatted for displaying current valuet
+        Assumes that PhycasTablePrinter._reset_term_width has been called 
+        more recently than the last terminal width change)."""
+        if pref:
+            dpref = pref + "."
+        else:
+            dpref = ""
         v = None
         fn = self._getFilename()
         if fn:
             if self._is_active:
-                v = fn
+                v = _value_for_user(fn)
             else:
                 v = "<silenced>"
-        opts_help = [PhycasTablePrinter.format_help("%s" %pref, v, self._help_str)]
+        opts_help = [PhycasTablePrinter.format_help("%s" %pref, v)]
         if fn:
             if self.prefix:
-                opts_help.append(PhycasTablePrinter.format_help("%sprefix" % dpref, self.prefix, "file prefix (appropriate suffix will be added)"))
+                opts_help.append(PhycasTablePrinter.format_help("%sprefix" % dpref, _value_for_user(self.prefix)))
             if self.filename:
-                opts_help.append(PhycasTablePrinter.format_help("%sfilename" % dpref, self.filename, "The full file name."))
-            opts_help.append(PhycasTablePrinter.format_help("%smode" % dpref, str(self.mode), 'Controls the behavior when the file is present. Valid settings are %s. ADD_NUMBER indicates that a number will be added to the end of the file name (or prefix) to make the name unique' % self._getValidModeNames()))
+                opts_help.append(PhycasTablePrinter.format_help("%sfilename" % dpref, _value_for_user(self.filename)))
+            opts_help.append(PhycasTablePrinter.format_help("%smode" % dpref, str(self.mode)))
             if len(self._valid_formats) > 1:
-                opts_help.append(PhycasTablePrinter.format_help("%s.format" % dpref, FileFormats.to_str(self.format), 'Format of the file valid settings are %s' % self._getValidFormatNames()))
+                opts_help.append(PhycasTablePrinter.format_help("%s.format" % dpref, FileFormats.to_str(self.format)))
         if self._options:
-            opts_help.extend(self._options._help_str_list(pref))
+            opts_help.extend(self._options._current_str_list(pref))
         return opts_help
 
     def __setattr__(self, name, v):
@@ -518,19 +532,32 @@ class PhycasCommandOutputOptions(object):
             dpref = pref + "."
         else:
             dpref = pref
-        s = "OutFilter." + OutFilter.to_str(self.level)
-        opts_help = [PhycasTablePrinter.format_help("%slevel" %dpref, s, "Controls the amount of output (verbosity) of the command")]
+        opts_help = [PhycasTablePrinter.format_help("%slevel" %dpref, "Controls the amount of output (verbosity) of the command")]
         for n in self.__dict__["_help_order"]:
             a = self.__dict__[n]
             opts_help.append("")
             opts_help.extend(a._help_str_list("%s%s" % (dpref, n)))
         return opts_help
 
+    def _current_str_list(self, pref=""):
+        """Generates a list of strings formatted for displaying help
+        Assumes that PhycasTablePrinter._reset_term_width has been called 
+        more recently than the last terminal width change)."""
+        if pref:
+            dpref = pref + "."
+        else:
+            dpref = pref
+        s = "OutFilter." + OutFilter.to_str(self.level)
+        opts_help = [PhycasTablePrinter.format_help("%slevel" %dpref, s)]
+        for n in self.__dict__["_help_order"]:
+            a = self.__dict__[n]
+            opts_help.append("")
+            opts_help.extend(a._current_str_list("%s%s" % (dpref, n)))
+        return opts_help
+
     def __str__(self):
        PhycasTablePrinter._reset_term_width()
        return "\n".join(self._help_str_list())
-
-
 
 class PhycasCmdOpts(object):
     
@@ -574,10 +601,28 @@ class PhycasCmdOpts(object):
         for i in self._optionsInOrder:
             oc_name = i[0]
             name = oc_name.lower()
-            n = pref and "%s%s" % (dpref, name) or name
-            s = PhycasTablePrinter.format_help(oc_name, self._current[name], i[2])
-            if _opt_double_space and i != self._optionsInOrder[0]:  #POL added
-                s = '\n%s' % s                                      #POL added
+            n = pref and "%s%s" % (dpref, oc_name) or oc_name
+            s = PhycasTablePrinter.format_help(n, i[2])
+            if _opt_double_space and i != self._optionsInOrder[0]:
+                s = '\n%s' % s                                    
+            opts_help.append(s)
+        return opts_help
+    def _current_str_list(self, pref=""):
+        """Generates a list of strings formatted for displaying help
+        Assumes that PhycasTablePrinter._reset_term_width has been called 
+        more recently than the last terminal width change)."""
+        if pref:
+            dpref = pref + "."
+        else:
+            dpref = ""
+        opts_help = []
+        for i in self._optionsInOrder:
+            oc_name = i[0]
+            name = oc_name.lower()
+            n = pref and "%s%s" % (dpref, oc_name) or oc_name
+            s = PhycasTablePrinter.format_help(n, _value_for_user(self._current[name]))
+            if _opt_double_space and i != self._optionsInOrder[0]:
+                s = '\n%s' % s                                    
             opts_help.append(s)
         return opts_help
 
@@ -641,13 +686,11 @@ class PhycasCmdOpts(object):
         else:
             raise AttributeError("%s does not contain an attribute %s" % (self._command.__class__.__name__, name))
 
-
 def TreeSourceValidate(opts, v):
     return TreeSource(v)
 
 def BoolArgValidate(opts, v):
     return bool(v)
-
 
 class IntArgValidate(object):
     def __init__(self, min=None, max=None):
@@ -706,6 +749,8 @@ class PhycasCommandHelp(object):
         self.cmd_descrip = cmd_descrip
 
     def __str__(self):
+        return "\n".join([self.explain(), "\n", self.current()])
+    def explain(self):
         PhycasTablePrinter._reset_term_width()
         command = self.command
         opts = command.__dict__["_options"]
@@ -714,16 +759,47 @@ class PhycasCommandHelp(object):
         a = [self.cmd_name]
         a.extend(PhycasTablePrinter._text_wrapper.wrap(self.cmd_descrip))
         o = opts._help_str_list()
-        h = PhycasTablePrinter.format_help("Attribute", "Current Value", "Explanation")
+        h = PhycasTablePrinter.format_help("Attribute", "Explanation")
         if len(o) > 0:
-            a.extend(["\nAvailable options:", h, d])
+            a.extend(["\nAvailable input options:", h, d])
             a.extend(o)
             a.extend([d, ""])
         if out is not None:
-            a.extend(["Current output settings:", h, d])
+            a.extend(["Available output settings:", h, d])
             a.extend(out._help_str_list("out"))
         return "\n".join(a)
 
+    def current(self):
+        PhycasTablePrinter._reset_term_width()
+        command = self.command
+        a = []
+        opts = command.__dict__["_options"]
+        out = command.__dict__["out"]
+        d = PhycasTablePrinter.get_help_divider()
+        h = PhycasTablePrinter.format_help("Attribute", "Current Value")
+        o = opts._current_str_list()
+        if len(o) > 0:
+            a.extend(["\nCurrent %s input settings:" % self.cmd_name , h, d])
+            a.extend(o)
+            a.extend([d, ""])
+        if out is not None:
+            a.extend(["Current %s  output settings:" % self.cmd_name, h, d])
+            a.extend(out._current_str_list("out"))
+        return "\n".join(a)
+
+    def __call__(self):
+        """Returns the result of __str__, so that users can omit the () on the
+        and simply type "cmd.help" to see the help message."""
+        print(str(self))
+
+    def __repr__(self):
+        return str(self)
+
+class PhycasCurrentValuesHelper:
+    def __init__(self, helper):
+        self.helper = helper
+    def __str__(self):
+        return self.helper.current()
     def __call__(self):
         """Returns the result of __str__, so that users can omit the () on the
         and simply type "cmd.help" to see the help message."""
@@ -744,7 +820,9 @@ class PhycasCommand(object):
         o._initialize(self, option_defs)
         self.__dict__["phycas"] = phycas
         self.__dict__["out"] = output_options
-        self.__dict__["help"] = PhycasCommandHelp(self, cmd_name, cmd_descrip)
+        h = PhycasCommandHelp(self, cmd_name, cmd_descrip)
+        self.__dict__["help"] = h
+        self.__dict__["current"] = PhycasCurrentValuesHelper(h)
 
     def __setattr__(self, name, value):
         nl = name.lower()
