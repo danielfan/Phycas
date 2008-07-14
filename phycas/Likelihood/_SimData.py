@@ -76,11 +76,8 @@ class SimData(SimDataBase):
     chains (svn > 425). -POL 24 Aug 2007
     
     from phycas import *
-    phycas = Phycas()
-    
     # Read a data file
-    phycas.reader.readFile('../Tests/Data/nyldna4.nex')
-    phycas.data_matrix = phycas.reader.getLastDiscreteMatrix(True)
+    phycas.data_matrix =  phycas.readData(getPhycasTestData("nyldna4.nex"))
     phycas.ntax = phycas.data_matrix.getNTax()
     taxon_names = phycas.reader.getTaxLabels()
     
