@@ -16,7 +16,9 @@ class TreeLikelihood(TreeLikelihoodBase):
 
     >>> from phycas import *
     >>> import time
-    >>> data_matrix =  phycas.readData(getPhycasTestData("nyldna4.nex"))
+    >>> reader = ReadNexus.NexusReader()
+    >>> reader.readFile('../Tests/Data/nyldna4.nex')
+    >>> data_matrix =  reader.getLastDiscreteMatrix()
     >>> model = Likelihood.HKYModel()
     >>> model.setStateFreqUnnorm(0, 1.0)
     >>> model.setStateFreqUnnorm(1, 2.0)

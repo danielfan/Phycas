@@ -72,7 +72,7 @@ def useWxPhycas():
 
 from phycas.Utilities.io import getPhycasTestData
 import Conversions
-import DataMatrix
+from DataMatrix._DataMatrix import DataMatrix
 import Likelihood
 import PDFGen
 import Phylogeny

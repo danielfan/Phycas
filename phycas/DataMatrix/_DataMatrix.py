@@ -1,4 +1,4 @@
-from _DataMatrixBase import *
+from _DataMatrixBase import DataMatrixBase
 class DataMatrix(DataMatrixBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """Wraps a DataMatrixBase object and enables access to fields. Note that
@@ -22,9 +22,10 @@ class DataMatrix(DataMatrixBase):
     Generic_Datatype = 4
     NEXUS_DATATYPE_NAMES = ("DNA", "RNA", "Protein", "Standard", "Standard")
 
-    def __init__(self, dataMatrixBaseObj):
+    def __init__(self, dataMatrixBaseObj, taxa):
         "intended to be called by the phycas internal functions only"
         assert(dataMatrixBaseObj)
+        self.taxa = taxa
         self.mat = dataMatrixBaseObj
         self.n_states = dataMatrixBaseObj.getNStates()
         raw_symbols_list = dataMatrixBaseObj.getSymbolsList()

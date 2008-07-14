@@ -2,7 +2,6 @@ import os, sys, math, threading, types, copy
 import os, sys, math, threading, types, copy
 import MCMCManager  # poorly named, as MCMCManager is now only one of many classes within
 from phycas.Conversions import *
-from phycas.DataMatrix import *
 from phycas.Likelihood import *
 from phycas.PDFGen import *
 from phycas.Phylogeny import *

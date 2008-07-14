@@ -110,15 +110,15 @@ END;
         if not NexusWriter.TAXA_BLOCK in self._written:
             self._writeTaxa()
         self.finish_block()
-        out.write("Begin Characters;\n Dimensions nchar = %d;\n " % self.getNChar())
-        out.write(dm.getNEXUSFormatCommand())
+        out.write("Begin Characters;\n Dimensions nchar = %d;\n " % data_matrix.n_char)
+        out.write(data_matrix.getNEXUSFormatCommand())
         out.write("\n Matrix\n")
         assert(len(et) == dm.n_tax)
         for ind, name in enumerate(et):
             out.write("%-20s "% name)
-            r = dm.getRow(ind)
+            r = data_matrix.getRow(ind)
             for c in r:
-                out.write(dm.getCodeToSymbol(c))
+                out.write(data_matrix.getCodeToSymbol(c))
             out.write("\n")
         out.write(";\nEnd;\n\n")
         self._written.append(NexusWriter.CHARACTERS_BLOCK)
@@ -146,11 +146,13 @@ class NexusReader(NexusReaderBase):
         >>> from phycas import *
         >>> reader = ReadNexus.NexusReader()
         >>> reader.readFile('../Tests/Data/nyldna4.nex')
-        >>> print reader.getNChar()
+        >>> print reader.getLastDiscreteMatrix().n_char
         3080
 
         """
         NexusReaderBase.__init__(self, -1)
+        self.taxa = None
+        self._raw_mat = None
 
     def readFile(self, fn):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -158,20 +160,16 @@ class NexusReader(NexusReaderBase):
         Need to write.
 
         """
+        self.taxa = None
+        self._raw_mat = None
         NexusReaderBase.readFile(self, fn)
+        self.taxa = NexusReaderBase.getTaxLabels(self)
         if _ROUND_TRIP_EVERY_NEXUS_READ:
             import sys
             sys.stdout.write("==========================DEBUG OUTPUT FROM %s  ================\n" % (__file__))
             self.writeNEXUS(sys.stdout)
             sys.stdout.write("========================== END DEBUG OUTPUT FROM %s  ================\n" % (__file__))
         
-    def getNChar(self):
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
-        """
-        Need to write.
-
-        """
-        return NexusReaderBase.getNChar(self)
         
     def getErrorMessage(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -190,10 +188,10 @@ class NexusReader(NexusReaderBase):
         return [TreeDescription(t) for t in NexusReaderBase.getTrees(self)]
     
     def getLastDiscreteMatrix(self, gaps_to_missing=True):
-        raw_mat = getLastNexusDiscreteMatrix(self, gaps_to_missing)
-        if raw_mat:
-            return DataMatrix(raw_mat)
-        return None
+        if self._raw_mat is None:
+            self._raw_mat = getLastNexusDiscreteMatrix(self, gaps_to_missing)
+            return DataMatrix(self._raw_mat, self.taxa)
+        return self._raw_mat
 
     def writeNEXUS(self, out, appending=False):
         nw = NexusWriter(out, appending, self.getTaxLabels())
