@@ -578,6 +578,7 @@ if __name__ == '__main__':
     print '|           Analyzing nyldna4.nex                |'
     print '+------------------------------------------------+'
     dataf = '../Data/nyldna4-compressed.nex'
+    #dataf = '../Data/nyldna4.nex'
     readData(dataf)
     createCommandFile('check.nex', dataf)
     tryAllModels('check.nex')

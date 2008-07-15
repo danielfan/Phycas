@@ -2897,22 +2897,30 @@ unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix &
 	unsigned ntax = mat.getNTax();
 	unsigned nchar = mat.getNChar();
 	const std::vector<int> & iwts = mat.getIntWeightsConst();
-	const std::vector<double> & dwts = mat.getDblWeightsConst();
-	std::vector<double> iWtsAsDbl;
-	const double  * wts = NULL;
+	std::vector<double> actingWeights(nchar, 1.0);
 	if (!iwts.empty())
 		{
 		PHYCAS_ASSERT(iwts.size() >= nchar);
-		iWtsAsDbl.resize(nchar, 1.0);
 		for (unsigned j = 0; j < nchar; ++j)
-			iWtsAsDbl[j] = (double)iwts.at(j);
-		wts = &(iWtsAsDbl[0]);
+			actingWeights[j] = (double)iwts.at(j);
 		}
-	else if (!dwts.empty())
+	else
 		{
-		PHYCAS_ASSERT(dwts.size() >= nchar);
-		wts = &(dwts[0]);
+		const std::vector<double> & dwts = mat.getDblWeightsConst();
+		if (!dwts.empty())
+			{
+			actingWeights = dwts;
+			PHYCAS_ASSERT(actingWeights.size() >= nchar);
+			}
 		}
+
+	const std::set<unsigned> & excl = mat.getExcludedCharIndices();
+	for (std::set<unsigned>::const_iterator eIt = excl.begin(); eIt != excl.end(); ++eIt)
+		{
+		PHYCAS_ASSERT(*eIt < nchar);
+		actingWeights[*eIt] = 0.0;
+		}
+	const double * wts = &(actingWeights[0]);
 
 	// patternToIndex is a map that associates a list of character indices with each pattern. Thus, if 
 	// some pattern is found at sites 0, 15, and 167, then patternToIndex.first is the pattern and 

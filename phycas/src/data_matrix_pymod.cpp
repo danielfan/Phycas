@@ -42,5 +42,6 @@ BOOST_PYTHON_MODULE(_DataMatrixBase)
 		.def("getRow", &CipresNative::DiscreteMatrix::getRowAsVector)
 		.def("getIntWeights", &CipresNative::DiscreteMatrix::getIntWeights, return_value_policy<copy_non_const_reference>())
 		.def("getFloatWeights", &CipresNative::DiscreteMatrix::getDblWeights, return_value_policy<copy_non_const_reference>())
+		.def("getExcludedIndices", &CipresNative::DiscreteMatrix::getExcludedCharIndicesAsVector)
 		;
 }

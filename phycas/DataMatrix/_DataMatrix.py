@@ -73,6 +73,7 @@ class DataMatrix(DataMatrixBase):
         self._datatype_enum = None
         self._int_wts = None
         self._float_wts = None
+        self._excluded = None
 
     def getNChar(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -274,4 +275,19 @@ class DataMatrix(DataMatrixBase):
             self._float_wts = self.mat.getFloatWeights()
         return self._float_wts
     float_wts = property(getFloatWts)
+
+    def getExcludedIndices(self):
+        """The `n_char` attribute
+        Returns the number of characters in the data matrix.
+
+        >>> from phycas import *
+        >>> m = phycas.readData(getPhycasTestData("nyldna4-compressed.nex"))
+        >>> m.getExcludedIndices()
+        (181,)
+
+        """
+        if self._excluded is None:
+            self._excluded = self.mat.getExcludedIndices()
+        return self._excluded
+    excluded = property(getExcludedIndices)
 

@@ -126,6 +126,14 @@
 				{
 				return dblWts;
 				}
+			const std::set<unsigned> & getExcludedCharIndices() const
+				{
+				return activeExSet;
+				}
+			std::vector<unsigned> getExcludedCharIndicesAsVector() const
+				{
+				return std::vector<unsigned>(activeExSet.begin(), activeExSet.end());
+				}
 		private:
 			typedef ScopedTwoDMatrix<CIPR_StateSet_t> ScopedStateSetTwoDMatrix;
 			
@@ -136,6 +144,7 @@
 			std::vector<unsigned>		stateListPosAlias;		/** memory management alias to symbolsList field of nativeCMatrix */
 			std::vector<int>			intWts;
 			std::vector<double>			dblWts;
+			std::set<unsigned>		activeExSet;
 			DiscreteMatrix(const DiscreteMatrix &); /** don't define, not copyable*/
 			DiscreteMatrix & operator=(const DiscreteMatrix &); /** don't define, not copyable*/
 		};

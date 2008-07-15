@@ -176,6 +176,7 @@ DiscreteMatrix::DiscreteMatrix(const NxsCharactersBlock & cb, bool gapsToMissing
 	intWts = tm.GetDefaultIntWeights();
 	if (intWts.empty())
 		dblWts = tm.GetDefaultDoubleWeights();
+	activeExSet = cb.GetExcludedIndexSet();
 }
 
 /*
