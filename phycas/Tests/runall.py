@@ -79,7 +79,7 @@ if __name__ == '__main__':
     # Still need to get these working...
     #runTest(outFile, "SAMCTest", ["cf.txt", "samc_output.p", "samc_output.t"])
     #runTest(outFile, "GelfandGhosh", ["ggout.txt", "analHKY.nex.p", "analHKY.nex.t", "analHKYflex.nex.p", "analHKYflex.nex.t", "analHKYg.nex.p", "analHKYg.nex.t"])
-    #runTest(outFile, "LikelihoodTest", ["simulated.nex", "check.nex"])
+    runTest(outFile, "LikelihoodTest", ["simulated.nex", "check.nex"])
     #runTest(outFile, "Polytomies", ["simHKY.nex"] + mcmcOutputs(["HKYpolytomy"]))
 
     if sys.platform == 'win32':
