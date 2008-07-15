@@ -10,7 +10,7 @@ def getPhycasTestDir():
     return _test_dir
 
 def getPhycasTestDataDir():
-    return os.path.join(getPhycasTestDir(),"Data")
+    return os.path.join(getPhycasTestDir(), "Data")
 
 def getPhycasTestData(filen):
     return os.path.join(getPhycasTestDataDir(), filen)

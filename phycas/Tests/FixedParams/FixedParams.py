@@ -33,7 +33,7 @@ mcmc.starting_edgelen_hyperparam  = 0.05
 mcmc.fix_edgelen_hyperparam       = True
 mcmc.edgelen_hyperprior           = ProbDist.InverseGammaDist(2.1, 0.9090909)
 mcmc.data_source                  = 'file'
-mcmc.data_file_name               = '../Data/nyldna4.nex'
+mcmc.data_file_name               = getPhycasTestData('nyldna4.nex')
 mcmc.starting_tree_source         = 'random'
 
 import sys,os

@@ -577,8 +577,8 @@ if __name__ == '__main__':
     print '+------------------------------------------------+'
     print '|           Analyzing nyldna4.nex                |'
     print '+------------------------------------------------+'
-    dataf = '../Data/nyldna4-compressed.nex'
-    #dataf = '../Data/nyldna4.nex'
+    dataf = getPhycasTestData('nyldna4-compressed.nex')
+    #dataf = getPhycasTestData('nyldna4.nex')
     readData(dataf)
     createCommandFile('check.nex', dataf)
     tryAllModels('check.nex')
@@ -593,7 +593,8 @@ if __name__ == '__main__':
         simulateData('simulated.nex')
         tryAllModels('simulated.nex')
     else:
-        o = open(os.path.join('reference_output','simulated.nex'), "rU")
+        d = os.path.dirname(__file__)
+        o = open(os.path.join(d, 'reference_output','simulated.nex'), "rU")
         t = open("simulated.nex", "w")
         t.write(o.read())
         t.close()
