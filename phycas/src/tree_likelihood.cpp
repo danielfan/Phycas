@@ -2527,38 +2527,45 @@ TipData * TreeLikelihood::allocateTipData(	//POLBM TreeLikelihood::allocateTipDa
 #if POLPY_NEWWAY
 		if (using_unimap)
 			{
-			for (unsigned site = 0; site < num_patterns; ++site)
+			unsigned inc_site = 0;
+			const unsigned n_char = charIndexToPatternIndex.size();
+			for (unsigned site = 0; site < n_char; ++site)
 				{
 				unsigned pattern_index = charIndexToPatternIndex[site];
-				PatternMapType::const_iterator it = pattern_map.begin();
-				std::advance(it, pattern_index); //@POL not very efficient for map types, so may be worth using a vector rather than a map for pattern_map when using_unimap is true
-				const int8_t globalStateCode = (it->first)[row];
-
-				if (globalStateCode < nsPlusOne)
+				if (pattern_index != UINT_MAX)
 					{
-					// no partial ambiguity, but may be gap state
-					tipSpecificStateCode[site] = (globalStateCode < 0 ? ns : globalStateCode);
-					}
-				else
-					{
-					// partial ambiguity
-					foundElement = globalToLocal.find(globalStateCode);
-					if (foundElement == globalToLocal.end())
+					PatternMapType::const_iterator it = pattern_map.begin();
+					std::advance(it, pattern_index); //@POL not very efficient for map types, so may be worth using a vector rather than a map for pattern_map when using_unimap is true
+					const int8_t globalStateCode = (it->first)[row];
+	
+					if (globalStateCode < nsPlusOne)
 						{
-						// state code needs to be added to map
-						globalToLocal[globalStateCode] = nPartialAmbig + nsPlusOne;
-						stateListVec.push_back(state_list_pos[globalStateCode]);
-						tipSpecificStateCode[site] = nPartialAmbig + nsPlusOne;
-						nPartialAmbig++;
+						// no partial ambiguity, but may be gap state
+						tipSpecificStateCode[inc_site] = (globalStateCode < 0 ? ns : globalStateCode);
 						}
 					else
 						{
-						// state code is already in the map
-						tipSpecificStateCode[site] = foundElement->second;
+						// partial ambiguity
+						foundElement = globalToLocal.find(globalStateCode);
+						if (foundElement == globalToLocal.end())
+							{
+							// state code needs to be added to map
+							globalToLocal[globalStateCode] = nPartialAmbig + nsPlusOne;
+							stateListVec.push_back(state_list_pos[globalStateCode]);
+							tipSpecificStateCode[inc_site] = nPartialAmbig + nsPlusOne;
+							nPartialAmbig++;
+							}
+						else
+							{
+							// state code is already in the map
+							tipSpecificStateCode[inc_site] = foundElement->second;
+							}
 						}
+					++inc_site;
 					}
 				//std::cerr << row << ": " << site << " -> " << (int)(tipSpecificStateCode[site]) << std::endl;
 				}
+			PHYCAS_ASSERT(inc_site == num_patterns);
 			}
 		else
 			{
@@ -2893,9 +2900,9 @@ void TreeLikelihood::prepareForLikelihood( //POLBM TreeLikelihood::prepareForLik
 unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix & mat) //POLBM TreeLikelihood::compressDataMatrix
 	{
 	pattern_map.clear();
-	charIndexToPatternIndex.clear();
 	unsigned ntax = mat.getNTax();
 	unsigned nchar = mat.getNChar();
+	charIndexToPatternIndex.assign(nchar, UINT_MAX);
 	const std::vector<int> & iwts = mat.getIntWeightsConst();
 	std::vector<double> actingWeights(nchar, 1.0);
 	if (!iwts.empty())
@@ -2939,55 +2946,58 @@ unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix &
 			if (j+2 >= nchar)
 				break;
 
-			// Build up a vector representing the pattern of state codes at this site
-			std::vector<int8_t> pattern;
-			for (unsigned i = 0; i < ntax; ++i)
-				{
-				const int8_t * row	= mat.getRow(i);
-				const int8_t   code1 = row[j];
-				const int8_t   code2 = row[j+1];
-				const int8_t   code3 = row[j+2];
-				bool code1_ok = (code1 >= 0 && code1 < 4);
-				bool code2_ok = (code2 >= 0 && code2 < 4);
-				bool code3_ok = (code3 >= 0 && code3 < 4);
-				if (code1_ok && code2_ok && code3_ok)
-					{
-					const int8_t code = codon_state_codes[16*code1 + 4*code2 + code3]; // CGT = 27 = 16*1 + 4*2 + 3
-					if (code > 60)
-						throw XLikelihood(str(boost::format("Stop codon encountered for taxon %d at sites %d-%d") % (i+1) % (j+1) % (j+4)));
-					pattern.push_back(code);
-					}
-				else
-					pattern.push_back((int8_t)61);
-				}
-			
 			// here we (arbitrarily) use the max weight of any char in the codon
 			PatternCountType charWt = (wts ? std::max(wts[j], std::max(wts[j+1], wts[j+2])) : 1.0); 
-			//@POL below here same as the else block
-
-			// Add the pattern to the map if it has not yet been seen, otherwise increment 
-			// the count of this pattern if it is already in the map (see item 24, p. 110, in Meyers' Efficient STL)
-			PatternMapType::iterator lowb = pattern_map.lower_bound(pattern);
-			if (lowb != pattern_map.end() && !(pattern_map.key_comp()(pattern, lowb->first)))
+			if (charWt > 0.0)
 				{
-				// pattern is already in pattern_map, increment count
-				lowb->second += charWt;
-				}
-			else
-				{
-				// pattern has not yet been stored in pattern_map
-				pattern_map.insert(lowb, PatternMapType::value_type(pattern, charWt));
-				}
-			
-			// Add the pattern to the map if it has not yet been seen, otherwise increment 
-			// the count of this pattern if it is already in the map (see item 24, p. 110, in Meyers' Efficient STL)
-			PatternToIndex::iterator pToILowB = patternToIndex.lower_bound(pattern);
-			if (pToILowB != patternToIndex.end() && !(patternToIndex.key_comp()(pattern, pToILowB->first)))
-				pToILowB->second.push_back(j);
-			else
-				{
-				IndexList ilist(1, j);	// create a list<unsigned> containing 1 element whose value is j
-				patternToIndex.insert(pToILowB, PatternToIndex::value_type(pattern, ilist));
+				// Build up a vector representing the pattern of state codes at this site
+				std::vector<int8_t> pattern;
+				for (unsigned i = 0; i < ntax; ++i)
+					{
+					const int8_t * row	= mat.getRow(i);
+					const int8_t   code1 = row[j];
+					const int8_t   code2 = row[j+1];
+					const int8_t   code3 = row[j+2];
+					bool code1_ok = (code1 >= 0 && code1 < 4);
+					bool code2_ok = (code2 >= 0 && code2 < 4);
+					bool code3_ok = (code3 >= 0 && code3 < 4);
+					if (code1_ok && code2_ok && code3_ok)
+						{
+						const int8_t code = codon_state_codes[16*code1 + 4*code2 + code3]; // CGT = 27 = 16*1 + 4*2 + 3
+						if (code > 60)
+							throw XLikelihood(str(boost::format("Stop codon encountered for taxon %d at sites %d-%d") % (i+1) % (j+1) % (j+4)));
+						pattern.push_back(code);
+						}
+					else
+						pattern.push_back((int8_t)61);
+					}
+				
+				//@POL below here same as the else block
+	
+				// Add the pattern to the map if it has not yet been seen, otherwise increment 
+				// the count of this pattern if it is already in the map (see item 24, p. 110, in Meyers' Efficient STL)
+				PatternMapType::iterator lowb = pattern_map.lower_bound(pattern);
+				if (lowb != pattern_map.end() && !(pattern_map.key_comp()(pattern, lowb->first)))
+					{
+					// pattern is already in pattern_map, increment count
+					lowb->second += charWt;
+					}
+				else
+					{
+					// pattern has not yet been stored in pattern_map
+					pattern_map.insert(lowb, PatternMapType::value_type(pattern, charWt));
+					}
+				
+				// Add the pattern to the map if it has not yet been seen, otherwise increment 
+				// the count of this pattern if it is already in the map (see item 24, p. 110, in Meyers' Efficient STL)
+				PatternToIndex::iterator pToILowB = patternToIndex.lower_bound(pattern);
+				if (pToILowB != patternToIndex.end() && !(patternToIndex.key_comp()(pattern, pToILowB->first)))
+					pToILowB->second.push_back(j);
+				else
+					{
+					IndexList ilist(1, j);	// create a list<unsigned> containing 1 element whose value is j
+					patternToIndex.insert(pToILowB, PatternToIndex::value_type(pattern, ilist));
+					}
 				}
 			}
 		}
@@ -2996,40 +3006,42 @@ unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix &
 		// Loop across each site in mat
 		for (unsigned j = 0; j < nchar; ++j)
 			{
-			// Build up a vector representing the pattern of state codes at this site
-			std::vector<int8_t> pattern;
-			for (unsigned i = 0; i < ntax; ++i)
-				{
-				const int8_t * row	= mat.getRow(i);
-				const int8_t   code = row[j];
-				pattern.push_back(code);
-				}
 			PatternCountType charWt = (wts ? wts[j] : 1.0); 
-
-			// Add the pattern to the map if it has not yet been seen, otherwise increment 
-			// the count of this pattern if it is already in the map (see item 24, p. 110, in Meyers' Efficient STL)
-			PatternMapType::iterator lowb = pattern_map.lower_bound(pattern);
-			if (lowb != pattern_map.end() && !(pattern_map.key_comp()(pattern, lowb->first)))
+			if (charWt > 0.0)
 				{
-				// pattern is already in pattern_map, increment count
-				lowb->second += charWt;
-				}
-			else
-				{
-				// pattern has not yet been stored in pattern_map
-				pattern_map.insert(lowb, PatternMapType::value_type(pattern, charWt));
-				}
-			
-			// Add the pattern to the patternToIndex map if not already present, and then
-			// append the character index to the list of character indices associated with
-			// the pattern
-			PatternToIndex::iterator pToILowB = patternToIndex.lower_bound(pattern);
-			if (pToILowB != patternToIndex.end() && !(patternToIndex.key_comp()(pattern, pToILowB->first)))
-				pToILowB->second.push_back(j);
-			else
-				{
-				IndexList ilist(1, j);	// create a list<unsigned> containing 1 element whose value is j
-				patternToIndex.insert(pToILowB, PatternToIndex::value_type(pattern, ilist));
+				// Build up a vector representing the pattern of state codes at this site
+				std::vector<int8_t> pattern;
+				for (unsigned i = 0; i < ntax; ++i)
+					{
+					const int8_t * row	= mat.getRow(i);
+					const int8_t   code = row[j];
+					pattern.push_back(code);
+					}
+				// Add the pattern to the map if it has not yet been seen, otherwise increment 
+				// the count of this pattern if it is already in the map (see item 24, p. 110, in Meyers' Efficient STL)
+				PatternMapType::iterator lowb = pattern_map.lower_bound(pattern);
+				if (lowb != pattern_map.end() && !(pattern_map.key_comp()(pattern, lowb->first)))
+					{
+					// pattern is already in pattern_map, increment count
+					lowb->second += charWt;
+					}
+				else
+					{
+					// pattern has not yet been stored in pattern_map
+					pattern_map.insert(lowb, PatternMapType::value_type(pattern, charWt));
+					}
+				
+				// Add the pattern to the patternToIndex map if not already present, and then
+				// append the character index to the list of character indices associated with
+				// the pattern
+				PatternToIndex::iterator pToILowB = patternToIndex.lower_bound(pattern);
+				if (pToILowB != patternToIndex.end() && !(patternToIndex.key_comp()(pattern, pToILowB->first)))
+					pToILowB->second.push_back(j);
+				else
+					{
+					IndexList ilist(1, j);	// create a list<unsigned> containing 1 element whose value is j
+					patternToIndex.insert(pToILowB, PatternToIndex::value_type(pattern, ilist));
+					}
 				}
 			}
 		}
@@ -3038,6 +3050,7 @@ unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix &
 	pattern_counts.clear();
 	pattern_counts.reserve(pattern_map.size());
 	unsigned patternIndex = 0;
+	unsigned n_inc_chars = 0;
 	for (PatternMapType::iterator mapit = pattern_map.begin(); mapit != pattern_map.end(); ++mapit, ++patternIndex)
 		{
 		pattern_counts.push_back(mapit->second);
@@ -3047,11 +3060,14 @@ unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix &
 		// Now, charIndexToPatternIndex[i] points to the index in pattern_map for the pattern found for site i
 		const IndexList & inds = patternToIndex[mapit->first];
 		for (IndexList::const_iterator indIt = inds.begin(); indIt != inds.end(); ++indIt)
+			{
 			charIndexToPatternIndex[*indIt] = patternIndex;
+			++n_inc_chars;
+			}
 		}
 #if POLPY_NEWWAY
 	if (using_unimap)
-		return (unsigned)charIndexToPatternIndex.size();
+		return n_inc_chars;
 	else
 		return (unsigned)pattern_map.size();
 #else

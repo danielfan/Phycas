@@ -241,7 +241,7 @@ class TreeLikelihood
 		CountVectorType					pattern_counts;			/**< vector of pattern counts */
 		PatternMapType					pattern_map;			/**< keys are patterns, values are pattern counts */
 		std::vector<double>				site_likelihood;		/**< site_likelihood[pat] stores the site likelihood for pattern pat, but only if `store_site_likes' is true */
-		std::map<unsigned, unsigned>	charIndexToPatternIndex; /**< maps original character index to the index in compressed pattern "matrix" */
+		std::vector<unsigned>			charIndexToPatternIndex; /**< maps original character index to the index in compressed pattern "matrix" */
 	};
 
 /// used to get access to a CLA to write it
