@@ -31,10 +31,7 @@
 #include <boost/format.hpp>
 #include <numeric>
 #include "phycas/src/edge_iterators.hpp"
-
-#if POLPY_NEWWAY
-#	include "phycas/src/univents.hpp"
-#endif // POLPY_NEWWAY
+#include "phycas/src/univents.hpp"
 
 // formerly in tree_likelihood.inl
 #include "phycas/src/edge_endpoints.hpp"
@@ -110,18 +107,15 @@ static int8_t codon_state_codes[] =
 namespace phycas
 {
 
-#if POLPY_NEWWAY
-
 Univents & getUniventsRef(TreeNode &nd)
 	{
 	return (nd.IsTip() ? nd.GetTipData()->getUniventsRef() : nd.GetInternalData()->getUniventsRef());
 	}
+
 const Univents & getUniventsConstRef(const TreeNode &nd) 
 	{
 	return (nd.IsTip() ? nd.GetTipData()->getUniventsConstRef() : nd.GetInternalData()->getUniventsConstRef());
 	}
-
-#endif
 
 // **************************************************************************************
 // ***** Former TreeLikelihood inlines (begin) ******************************************
@@ -141,23 +135,20 @@ TreeLikelihood::TreeLikelihood(
   num_states(mod->getNStates()),
   num_rates(mod->getNRatesTotal()),
   model(mod), 
-  rate_means(mod->getNRatesTotal(), 1.0), //POL_BOOKMARK
+  rate_means(mod->getNRatesTotal(), 1.0), //POL_BOOKMARK rate_means vector init
   rate_probs(mod->getNRatesTotal(), 1.0), 
   nevals(0),
   debugging_now(false)
-#if POLPY_NEWWAY
   ,using_unimap(false),
   univentProbMgr(mod),
   sMat(NULL),
   sMatValid(false)
-#endif
 	{
 	mod->recalcRatesAndProbs(rate_means, rate_probs);
 	underflow_policy.setTriggerSensitivity(50);
 	underflow_policy.setCorrectToValue(10000.0);
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	TreeLikelihood destructor.
 */
@@ -166,9 +157,7 @@ TreeLikelihood::~TreeLikelihood()
 	if (sMat != NULL)
 		DeleteTwoDArray<unsigned>(sMat);
 	} 
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Swaps InternalData data member `state_time' and edge lengths for the supplied nodes `nd1' and `nd2'. Assumes 
 |	`nd1' and `nd2' are both internal nodes.
@@ -190,9 +179,7 @@ void TreeLikelihood::swapInternalDataAndEdgeLen(
 	if (using_unimap)
 		nd1->GetInternalData()->swapUnivents(nd2->GetInternalData());
 	}
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the current value of the data member `using_unimap'.
 */
@@ -200,9 +187,7 @@ bool TreeLikelihood::isUsingUnimap()
 	{
 	return using_unimap;
 	}
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Specifies whether the TreeLikelihood object will use uniformized mapping likelihoods or the standard Felsenstein-
 |	style integrated likelihood.
@@ -212,9 +197,7 @@ void TreeLikelihood::useUnimap(
 	{
 	using_unimap = yes_or_no;
 	}
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns a string representation of the current value of `sMat' for debugging purposes.
 */
@@ -258,9 +241,7 @@ std::string TreeLikelihood::debugShowSMatrix()
 	s += boost::str(boost::format("nunivents = %d\n") % nunivents);
 	return s;
 	}
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Recalculates the two-dimensional matrix `sMat' of numbers of all 16 possible univent transitions over all sites.
 |	A no-op if using_unimap is false.
@@ -310,13 +291,6 @@ void TreeLikelihood::recalcSMatrix(
 			}
 		} // if using unimap
 	}
-#endif
-
-
-
-
-
-#if POLPY_NEWWAY
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	The node `slider' is moved along the combined edges of `slider' and `other'. If `fraction' is positive, `slider' 
@@ -886,8 +860,6 @@ void TreeLikelihood::fullRemapping(
 	if (doSampleUnivents)
 		sMatValid = true;
 	}
-#endif
-
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calls the setTriggerSensitivity function of the data member `underflow_policy' to set the number of edges that must
@@ -1161,7 +1133,7 @@ void TreeLikelihood::recalcRelativeRates()
 	{
 	num_states = model->getNStates();
 	num_rates = model->getNRatesTotal();
-	model->recalcRatesAndProbs(rate_means, rate_probs); //POL_BOOKMARK
+	model->recalcRatesAndProbs(rate_means, rate_probs); //POL_BOOKMARK recalcRatesAndProbs call
 	likelihood_rate_site.resize(num_rates*num_patterns, 0.0);
 	if (!no_data)
 		cla_pool.setCondLikeDimensions(num_patterns, num_rates, num_states);
@@ -1239,7 +1211,7 @@ const VecStateListPos & TreeLikelihood::getStateListPos() const
 */
 const std::vector<double> & TreeLikelihood::getRateMeans() const
 	{
-	return rate_means; //POL_BOOKMARK
+	return rate_means; //POL_BOOKMARK TreeLikelihood::getRateMeans
 	}
 
 
@@ -2348,13 +2320,11 @@ double TreeLikelihood::calcLnL(
 	// Uncomment line below to force recalculation of all CLAs
 	//storeAllCLAs(t);
 
-#if POLPY_NEWWAY
 	if (using_unimap)
 		{
 		PHYCAS_ASSERT(sMatValid);
 		return univentProbMgr.calcUnimapLnL(*t, num_patterns, &obs_state_counts[0], sMat);
 		}
-#endif
 
 	// Calculate log-likelihood using nd as the likelihood root
 	double lnL = calcLnLFromNode(*nd);
@@ -2510,11 +2480,7 @@ TipData * TreeLikelihood::allocateTipData(	//POLBM TreeLikelihood::allocateTipDa
 	std::vector<unsigned int>					stateListVec;
 	std::map<int8_t, int8_t>::const_iterator	foundElement;
 
-#if POLPY_NEWWAY
 	int8_t *									tipSpecificStateCode	= new int8_t[num_patterns];
-#else
-	int8_t *									tipSpecificStateCode	= new int8_t[(unsigned)pattern_map.size()];
-#endif
 	//@POL 21-Nov-2005 make tipSpecificStateCode a shared_array or a std:Vector - currently I don't think these are being deleted
 
 	const int8_t								ns						= num_states;
@@ -2524,60 +2490,23 @@ TipData * TreeLikelihood::allocateTipData(	//POLBM TreeLikelihood::allocateTipDa
 	// Loop through all patterns for this row of the matrix. For each global state code encountered,
 	// determine which local state code it represents, and build up the tipSpecificStateCode array
 	// as we go.
-#if POLPY_NEWWAY
-		if (using_unimap)
+	if (using_unimap)
+		{
+		unsigned inc_site = 0;
+		const unsigned n_char = charIndexToPatternIndex.size();
+		for (unsigned site = 0; site < n_char; ++site)
 			{
-			unsigned inc_site = 0;
-			const unsigned n_char = charIndexToPatternIndex.size();
-			for (unsigned site = 0; site < n_char; ++site)
+			unsigned pattern_index = charIndexToPatternIndex[site];
+			if (pattern_index != UINT_MAX)
 				{
-				unsigned pattern_index = charIndexToPatternIndex[site];
-				if (pattern_index != UINT_MAX)
-					{
-					PatternMapType::const_iterator it = pattern_map.begin();
-					std::advance(it, pattern_index); //@POL not very efficient for map types, so may be worth using a vector rather than a map for pattern_map when using_unimap is true
-					const int8_t globalStateCode = (it->first)[row];
-	
-					if (globalStateCode < nsPlusOne)
-						{
-						// no partial ambiguity, but may be gap state
-						tipSpecificStateCode[inc_site] = (globalStateCode < 0 ? ns : globalStateCode);
-						}
-					else
-						{
-						// partial ambiguity
-						foundElement = globalToLocal.find(globalStateCode);
-						if (foundElement == globalToLocal.end())
-							{
-							// state code needs to be added to map
-							globalToLocal[globalStateCode] = nPartialAmbig + nsPlusOne;
-							stateListVec.push_back(state_list_pos[globalStateCode]);
-							tipSpecificStateCode[inc_site] = nPartialAmbig + nsPlusOne;
-							nPartialAmbig++;
-							}
-						else
-							{
-							// state code is already in the map
-							tipSpecificStateCode[inc_site] = foundElement->second;
-							}
-						}
-					++inc_site;
-					}
-				//std::cerr << row << ": " << site << " -> " << (int)(tipSpecificStateCode[site]) << std::endl;
-				}
-			PHYCAS_ASSERT(inc_site == num_patterns);
-			}
-		else
-			{
-			unsigned i = 0;
-			for (PatternMapType::const_iterator it = pattern_map.begin(); it != pattern_map.end(); ++it, ++i)
-				{
+				PatternMapType::const_iterator it = pattern_map.begin();
+				std::advance(it, pattern_index); //@POL not very efficient for map types, so may be worth using a vector rather than a map for pattern_map when using_unimap is true
 				const int8_t globalStateCode = (it->first)[row];
 
 				if (globalStateCode < nsPlusOne)
 					{
 					// no partial ambiguity, but may be gap state
-					tipSpecificStateCode[i] = (globalStateCode < 0 ? ns : globalStateCode);
+					tipSpecificStateCode[inc_site] = (globalStateCode < 0 ? ns : globalStateCode);
 					}
 				else
 					{
@@ -2588,18 +2517,23 @@ TipData * TreeLikelihood::allocateTipData(	//POLBM TreeLikelihood::allocateTipDa
 						// state code needs to be added to map
 						globalToLocal[globalStateCode] = nPartialAmbig + nsPlusOne;
 						stateListVec.push_back(state_list_pos[globalStateCode]);
-						tipSpecificStateCode[i] = nPartialAmbig + nsPlusOne;
+						tipSpecificStateCode[inc_site] = nPartialAmbig + nsPlusOne;
 						nPartialAmbig++;
 						}
 					else
 						{
 						// state code is already in the map
-						tipSpecificStateCode[i] = foundElement->second;
+						tipSpecificStateCode[inc_site] = foundElement->second;
 						}
 					}
+				++inc_site;
 				}
+			//std::cerr << row << ": " << site << " -> " << (int)(tipSpecificStateCode[site]) << std::endl;
 			}
-#else
+		PHYCAS_ASSERT(inc_site == num_patterns);
+		}
+	else
+		{
 		unsigned i = 0;
 		for (PatternMapType::const_iterator it = pattern_map.begin(); it != pattern_map.end(); ++it, ++i)
 			{
@@ -2629,9 +2563,7 @@ TipData * TreeLikelihood::allocateTipData(	//POLBM TreeLikelihood::allocateTipDa
 					}
 				}
 			}
-#endif
-#if POLPY_NEWWAY
-	//assert(num_patterns == tipSpecificStateCode.length());
+		}
 	return new TipData( using_unimap,
 						num_patterns,
 						stateListVec,												// stateListPosVec
@@ -2641,15 +2573,6 @@ TipData * TreeLikelihood::allocateTipData(	//POLBM TreeLikelihood::allocateTipDa
 						NULL,
 						true,														// managePMatrices
 						cla_pool);
-#else
-	return new TipData( stateListVec,												// stateListPosVec
-						boost::shared_array<const int8_t>(tipSpecificStateCode),	// stateCodesShPtr
-						num_rates,													// number of relative rate categories
-						num_states,													// number of states in the model
-						NULL,
-						true,														// managePMatrices
-						cla_pool);
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -2659,7 +2582,6 @@ TipData * TreeLikelihood::allocateTipData(	//POLBM TreeLikelihood::allocateTipDa
 */
 InternalData * TreeLikelihood::allocateInternalData()
 	{
-#if POLPY_NEWWAY
 	return new InternalData(using_unimap,
 							num_patterns,				// number of site patterns
 							num_rates,					// number of relative rate categories
@@ -2667,14 +2589,6 @@ InternalData * TreeLikelihood::allocateInternalData()
 							NULL,						// pMat
 							true,						// managePMatrices
 							cla_pool);					
-#else
-	return new InternalData(num_patterns,				// number of site patterns
-							num_rates,					// number of relative rate categories
-							num_states,					// number of model states
-							NULL,						// pMat
-							true,						// managePMatrices
-							cla_pool);					
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -2857,7 +2771,7 @@ void TreeLikelihood::addOrphanTip(
 |	Calls allocateTipData() for all tip nodes and allocateInternalData() for all internal nodes in the supplied Tree. 
 |	Assumes each tip node number in the tree equals the appropriate row in the data matrix. 
 */
-void TreeLikelihood::prepareForLikelihood( //POLBM TreeLikelihood::prepareForLikelihood
+void TreeLikelihood::prepareForLikelihood( //POL_BOOKMARK TreeLikelihood::prepareForLikelihood
   TreeShPtr t)									/**< is the tree to decorate */
 	{
 	// If no_data is true, it means that calcLnL will always return 0.0 immediately and 
@@ -2891,13 +2805,12 @@ void TreeLikelihood::prepareForLikelihood( //POLBM TreeLikelihood::prepareForLik
 	// are changed to vectors
 	}
 
-
 /*----------------------------------------------------------------------------------------------------------------------
 |	Copies data from `mat' to the map `pattern_map'. The resulting map holds pairs whose key is the pattern for one site
 |	and whose value is a count of the number of sites having that pattern. The counts from `pattern_map' are transferred  
 |	to the `pattern_counts' vector (vectors are more efficient containers for use during likelihood calculations).
 */
-unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix & mat) //POLBM TreeLikelihood::compressDataMatrix
+unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix & mat) //POL_BOOKMARK TreeLikelihood::compressDataMatrix
 	{
 	pattern_map.clear();
 	unsigned ntax = mat.getNTax();
@@ -3065,14 +2978,10 @@ unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix &
 			++n_inc_chars;
 			}
 		}
-#if POLPY_NEWWAY
 	if (using_unimap)
 		return n_inc_chars;
 	else
 		return (unsigned)pattern_map.size();
-#else
-	return (unsigned)pattern_map.size();
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

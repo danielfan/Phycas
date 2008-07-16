@@ -16,7 +16,6 @@
 |  with this program; if not, write to the Free Software Foundation, Inc.,    |
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-#if POLPY_NEWWAY
 #include "phycas/src/univent_prob_mgr.hpp"
 #include "phycas/src/tree_likelihood.hpp"
 #include "phycas/src/basic_tree.hpp"
@@ -551,4 +550,3 @@ double UniventProbMgr::calcUnimapLnL(
 
 } // namespace phycas
 
-#endif //POLPY_NEWWAY

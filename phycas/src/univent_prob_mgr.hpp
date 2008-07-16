@@ -21,7 +21,6 @@
 
 #include <vector>
 
-#if POLPY_NEWWAY
 #include "phycas/src/cond_likelihood.hpp"
 #include "phycas/src/square_matrix.hpp"
 #include "phycas/src/univents.hpp"
@@ -81,5 +80,4 @@ class UniventProbMgr
 
 #include "phycas/src/univent_prob_mgr.inl"
 
-#endif //POLPY_NEWWAY
 #endif

@@ -37,9 +37,7 @@ inline void SimData::clear()
 	sim_pattern_map.clear();
 	total_count = 0.0;
 	pattern_length = 0;
-#if POLPY_NEWWAY
     patternVect.clear();
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

@@ -26,18 +26,13 @@
 namespace phycas
 {
 
-#if POLPY_NEWWAY
-#endif
-
 /*----------------------------------------------------------------------------------------------------------------------
 |	Constructor initializes the conditional likelihood vectors using `nRates' and `nStates', and initializes the 
 |	`pMatrices' data member using `pMat'. The parameter `managePMatrices' determines whether to allocate space for the 
 |	transition probability matrices.
 */
 InternalData::InternalData(
-#if POLPY_NEWWAY
   bool					using_unimap,		/**< is true if internal nodes are to be prepared for uniformized mapping likelihood; it is false if internal nodes are to be prepared for Felsenstein-style integrated likelihoods */
-#endif
   unsigned				nPatterns,			/**< is the number of site patterns */
   unsigned				nRates,				/**< is the number of relative rate categories */
   unsigned				nStates,			/**< is the number of states in the model */
@@ -51,17 +46,13 @@ InternalData::InternalData(
 	//childCLAValid(false),
 	//childWorkingCLA(NULL),
 	//childCachedCLA(NULL),
-#if POLPY_NEWWAY
 	unimap(using_unimap),
-#endif
 	state(-1), 
 	pMatrices(pMat),
 	cla_pool(cla_storage)
 	{
-#if POLPY_NEWWAY
 	if (using_unimap)
 		univents.resize(nPatterns);
-#endif
 	if (managePMatrices)
 		{
 		ownedPMatrices.Initialize(nRates, nStates, nStates);
@@ -70,7 +61,6 @@ InternalData::InternalData(
 		}
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calls the swap method of the `state_time' data member, supplying as the argument other's state_time data member.
 */
@@ -79,7 +69,5 @@ void InternalData::swapUnivents(
 	{
 	univents.swap(other->univents);
 	}
-#endif
-
 
 }	// namespace phycas

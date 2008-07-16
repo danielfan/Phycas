@@ -540,7 +540,6 @@ void Codon::calcPMat(double * * pMat, double edgeLength) const
 	q_matrix.recalcPMat(pMat, edgeLength);
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the uniformized transition probability matrix given an edge length. Overrides the pure virtual function 
 |   inherited from the base class Model. Uses the data member `q_matrix' to perform the calculation.
@@ -553,9 +552,7 @@ double Codon::calcLMat(double * * lMat) const
 	//q_matrix.recalcLMat(lMat, edgeLength);
     return 0.0;
 	}
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the uniformized transition probability matrix given an edge length. Overrides the pure virtual function 
 |   inherited from the base class Model. Uses the data member `q_matrix' to perform the calculation.
@@ -568,7 +565,6 @@ double Codon::calcUMat(double * * uMat) const
 	//q_matrix.recalcUMat(uMat, edgeLength);
     return 0.0;
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Override of Model base class function that sets all state frequencies to 1/num_states. The base class version is 

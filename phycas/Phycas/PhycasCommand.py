@@ -5,8 +5,6 @@ from phycas.PDFGen import PDFGenerator
 from phycas.ReadNexus import FileFormats
 import phycas.ReadNexus as ReadNexus
 
-#_opt_double_space = True
-
 ###############################################################################
 def ttysize():
     if os.name == 'nt':

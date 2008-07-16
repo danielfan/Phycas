@@ -168,11 +168,9 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("setHaveData", &TreeLikelihood::setHaveData)
 		.def("getNPatterns", &TreeLikelihood::getNPatterns)
 		.def("getLikelihoodRootNodeNum", &TreeLikelihood::getLikelihoodRootNodeNum)
-#if POLPY_NEWWAY
 		.def("useUnimap", &TreeLikelihood::useUnimap)
 		.def("isUsingUnimap", &TreeLikelihood::isUsingUnimap)
 		.def("fullRemapping", &TreeLikelihood::fullRemapping)
-#endif
 		.def("setUFNumEdges", &TreeLikelihood::setUFNumEdges)
 		.def("bytesPerCLA", &TreeLikelihood::bytesPerCLA)
 		.def("numCLAsCreated", &TreeLikelihood::numCLAsCreated)
@@ -183,22 +181,18 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 	class_<TipData, boost::noncopyable>("TipData", no_init)
 		.def("parentalCLAValid", &TipData::parentalCLAValid)
 		.def("parentalCLACached", &TipData::parentalCLACached)
-#if POLPY_NEWWAY
 		.def("getNumUnivents", &TipData::getNumUnivents)
 		.def("getUniventStates", &TipData::getUniventStates)
 		.def("getUniventTimes", &TipData::getUniventTimes)
-#endif
 		;
 	class_<InternalData, boost::noncopyable>("InternalData", no_init)
 		.def("filialCLAValid", &InternalData::filialCLAValid)
 		.def("filialCLACached", &InternalData::filialCLACached)
 		.def("parentalCLAValid", &InternalData::parentalCLAValid)
 		.def("parentalCLACached", &InternalData::parentalCLACached)
-#if POLPY_NEWWAY
 		.def("getNumUnivents", &InternalData::getNumUnivents)
 		.def("getUniventStates", &InternalData::getUniventStates)
 		.def("getUniventTimes", &InternalData::getUniventTimes)
-#endif
 		;
 #if 0
 	class_<QMatrix, boost::noncopyable>("QMatrixBase")

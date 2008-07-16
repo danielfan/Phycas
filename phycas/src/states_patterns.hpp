@@ -29,9 +29,7 @@ typedef double										PatternCountType;
 typedef	std::map<VecStateList, PatternCountType>	PatternMapType;
 typedef	std::vector<PatternCountType>				CountVectorType;
 
-#if POLPY_NEWWAY    
-typedef std::vector< int8_t > StateMapping;
-#endif
+typedef std::vector< int8_t >                       StateMapping;
 
 #endif
 

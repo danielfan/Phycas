@@ -16,7 +16,6 @@
 |  with this program; if not, write to the Free Software Foundation, Inc.,    |
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-#if POLPY_NEWWAY
 #include "phycas/src/univents.hpp"
 
 namespace phycas {
@@ -128,6 +127,4 @@ void Univents::fillStateCodeArray(int8_t * tipSpecificStateCode) const
 	}
 
 } // namespace phycas
-
-#endif //POLPY_NEWWAY
 

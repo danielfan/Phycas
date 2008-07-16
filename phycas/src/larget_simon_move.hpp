@@ -217,9 +217,7 @@ class LargetSimonMove : public MCMCUpdater
 		void			defaultProposeNewState();
 		void			starTreeProposeNewState();
 
-#if POLPY_NEWWAY
-        void            fixUpUnivents(double u, TreeNode * avoid, TreeNode * moved);
-#endif
+        //@POL not used, right? void            fixUpUnivents(double u, TreeNode * avoid, TreeNode * moved);
 
 		// These are virtual functions in the MCMCUpdater base class
 		//

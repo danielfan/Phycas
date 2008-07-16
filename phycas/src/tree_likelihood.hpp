@@ -31,10 +31,7 @@
 #include "phycas/src/cond_likelihood.hpp"
 #include "phycas/src/cond_likelihood_storage.hpp"
 #include "phycas/src/underflow_policy.hpp"
-
-#if POLPY_NEWWAY
-#	include "phycas/src/univent_prob_mgr.hpp"
-#endif
+#include "phycas/src/univent_prob_mgr.hpp"
 
 struct CIPRES_Matrix;
 
@@ -63,13 +60,9 @@ typedef boost::shared_ptr<SimData>	SimDataShPtr;
 class Lot;
 typedef boost::shared_ptr<Lot>	LotShPtr;
 
-#if POLPY_NEWWAY
 class Univents;
 Univents & getUniventsRef(TreeNode &);
 const Univents & getUniventsConstRef(const TreeNode &);
-#endif
-
-
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Used for computing the likelihood on a tree.
@@ -145,7 +138,6 @@ class TreeLikelihood
 		void							simulateFirst(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar);
 		void							simulate(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar);
 
-#if POLPY_NEWWAY
 		const UniventProbMgr		  & GetUniventProbMgrConstRef() const {return univentProbMgr;}
 		void							useUnimap(bool yes_or_no = true);
 		bool							isUsingUnimap();
@@ -154,7 +146,6 @@ class TreeLikelihood
 		std::string						debugShowSMatrix();
 		void							slideNode(double fraction, TreeNode * slider, TreeNode * other);
 		void							swapInternalDataAndEdgeLen(TreeNode * nd1, TreeNode * nd2);
-#endif
 		void							addDataTo(SimData & other);
 
 		unsigned						getNEvals();
@@ -202,8 +193,7 @@ class TreeLikelihood
 		VecStateList					state_list;				/**< The global lookup table for decoding coded states */
 		VecStateListPos					state_list_pos;			/**< The vector of positions of states in `state_list' */
 
-		//POL_BOOKMARK
-		std::vector<double>				rate_means;				/**< Vector of relative rates */
+		std::vector<double>				rate_means;				/**< Vector of relative rates */ //POL_BOOKMARK rate_means declaration
 		std::vector<double>				rate_probs;				/**< Vector of relative rate probabilities */
 
 		unsigned						nevals;					/**< For debugging, records the number of times calcLnL() is called */
@@ -226,14 +216,12 @@ class TreeLikelihood
 
 	protected:
 
-#if POLPY_NEWWAY
 		bool							using_unimap;			/**< if true, uniformized mapping likelihoods will be used; if false, Felsenstein-style integrated likelihoods will be used */
 		UniventProbMgr					univentProbMgr;
 		unsigned * *					sMat;					/**< sMat[i][j] is total number of univents in which state i changes to state j */
 		unsigned						nunivents;				/**< total number of univents over all edges and all sites */
 		std::vector<unsigned>			obs_state_counts;
 		bool							sMatValid;
-#endif
 
 	public: //@POL these should be protected rather than public
 

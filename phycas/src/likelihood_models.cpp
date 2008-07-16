@@ -157,7 +157,7 @@ void Model::createParameters(
 		PHYCAS_ASSERT(flex_rate_params.empty());
 		PHYCAS_ASSERT(flex_prob_params.empty());
 		for (unsigned i = 0; i < num_gamma_rates; ++i)
-			{ //POL_BOOKMARK
+			{ //POL_BOOKMARK creating flex model parameters
 			// start with rates drawn from Uniform(0.0, flex_upper_rate_bound)
 			//@POL to do this right, need to draw from prior, but if number of spacers is small, drawing from
             // Uniform(0,flex_upper_rate_bound) will give almost the same results
@@ -323,7 +323,6 @@ void JC::calcPMat(double * * pMat, double edgeLength) const
 	//	cout << pMat[i][0] << ' '<< pMat[i][1] << ' '<< pMat[i][2] << ' '<< pMat[i][3] << '\n';
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the uniformized transition probability matrix given an edge length. Overrides the pure virtual function 
 |   inherited from the base class Model. For the JC69 model, the uniformized transition probability matrix is:
@@ -382,9 +381,7 @@ double JC::calcLMat(double * * lMat) const
 	lMat[3][3] = diag_term;
     return lambda;
 	}
-#endif
 
-#if POLPY_NEWWAY
 double JC::calcUMat(double * * uMat) const
 	{
     double beta = 1.0/3.0;
@@ -409,9 +406,7 @@ double JC::calcUMat(double * * uMat) const
 	uMat[3][3] = diag_term;
     return lambda;
 	}
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the uniformized transition probability matrix given an edge length. Overrides the pure virtual function 
 |   inherited from the base class Model. 
@@ -479,9 +474,7 @@ double HKY::calcLMat(double * * lMat) const
 
     return lambda;
 	}
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the uniformized transition probability matrix given an edge length. Overrides the pure virtual function 
 |   inherited from the base class Model. 
@@ -531,7 +524,6 @@ double HKY::calcUMat(double * * uMat) const
 
     return lambda;
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the transition probability matrix given an edge length. Overrides the pure virtual function inherited from 

@@ -86,9 +86,7 @@ class TreeManip
 
 		void		SibToChild(TreeNode * u, TreeNode * s, InsertMode m, TreeNode * targetSib = NULL);
 
-#if POLPY_NEWWAY
         void        rescaleAllEdgeLengths(double scaling_factor);
-#endif
 
     protected:
 

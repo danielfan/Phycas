@@ -978,11 +978,7 @@ inline void Model::buildStateList(
 */
 inline std::string JC::paramHeader() const
 	{
-#if POLPY_NEWWAY
 	std::string s = "";
-#else
-	std::string s = std::string("Gen\tLnL\tTL");
-#endif
 	if (is_flex_model)
 		{
 		s += "\tncat";
@@ -1158,11 +1154,7 @@ inline void	HKY::createParameters(
 */
 inline std::string HKY::paramHeader() const
 	{
-#if POLPY_NEWWAY
 	std::string s = std::string("\tkappa\tfreqA\tfreqC\tfreqG\tfreqT");
-#else
-	std::string s = std::string("Gen\tLnL\tTL\tkappa\tfreqA\tfreqC\tfreqG\tfreqT");
-#endif
 	if (is_flex_model)
 		{
 		s += "\tncat";
@@ -1543,7 +1535,6 @@ inline void GTR::calcPMat(double * * pMat, double edgeLength) const
 	q_matrix.recalcPMat(pMat, edgeLength);
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the uniformized transition probability matrix given an edge length. Overrides the pure virtual function 
 |   inherited from the base class Model. Uses the data member `q_matrix' to perform the calculation.
@@ -1555,9 +1546,7 @@ inline double GTR::calcLMat(double * * lMat) const
 	//q_matrix.recalcLMat(lMat, edgeLength);
     return 0.0;
 	}
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the uniformized transition probability matrix given an edge length. Overrides the pure virtual function 
 |   inherited from the base class Model. Uses the data member `q_matrix' to perform the calculation.
@@ -1569,7 +1558,6 @@ inline double GTR::calcUMat(double * * uMat) const
 	//q_matrix.recalcUMat(uMat, edgeLength);
     return 0.0;
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the data member `rel_rates_fixed' to true. The fixParameter member function of all GTRRateParam objects is 
@@ -1748,11 +1736,7 @@ inline void GTR::setStateFreqParamPrior(ProbDistShPtr d)
 */
 inline std::string GTR::paramHeader() const
 	{
-#if POLPY_NEWWAY
 	std::string s = std::string("\trAC\trAG\trAT\trCG\trCT\trGT\tfreqA\tfreqC\tfreqG\tfreqT");
-#else
-	std::string s = std::string("Gen\tLnL\tTL\trAC\trAG\trAT\trCG\trCT\trGT\tfreqA\tfreqC\tfreqG\tfreqT");
-#endif
 	if (is_flex_model)
 		{
 		s += "\tncat";

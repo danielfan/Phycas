@@ -20,9 +20,7 @@
 #include "phycas/src/cipres/CipresDataMatrixHelper.h"
 #include "phycas/src/probability_distribution.hpp"
 #include "phycas/src/likelihood_models.hpp"
-#if POLPY_NEWWAY
 #include "phycas/src/basic_tree_node.hpp"
-#endif
 #include "phycas/src/tree_likelihood.hpp"
 #include "phycas/src/xlikelihood.hpp"
 #include "phycas/src/mcmc_chain_manager.hpp"
@@ -1037,7 +1035,6 @@ void LargetSimonMove::starTreeProposeNewState()
 	likelihood->invalidateBothEnds(orig_node);
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Not yet written.
 */
@@ -1047,7 +1044,6 @@ void LargetSimonMove::fixUpUnivents(
   TreeNode * moved)
     {
     }
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Performs a local perturbation using a generalization of the algorithm "LOCAL Without a Molecular Clock" described by 

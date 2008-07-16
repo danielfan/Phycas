@@ -354,7 +354,6 @@ void Tree::RefreshPreorder(TreeNode *nd) const
 		preorderDirty = false;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets internal node numbers starting with the supplied value `start_at'. Visits nodes in preorder sequence, so the
 |   subroot node (the only descendant of the tip node serving as the root) is assigned the number `start_at'.
@@ -369,7 +368,6 @@ void Tree::renumberInternalNodes(
             nd->SetNodeNum(num++);
         }
     }
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets all node names to the empty string "". This forces MakeNewick, for example, to use node numbers as the names of

@@ -27,7 +27,6 @@ namespace phycas
 
 void fillTranspose(double ** p_mat_trans_scratch, const double * const *p_mat, const unsigned);
 
-#if POLPY_NEWWAY
 class SquareMatrix
 	{
 	public:
@@ -88,6 +87,5 @@ inline double * SquareMatrix::operator[](
 	return m[i];
 	}
 
-#endif
 }	// namespace phycas
 #endif

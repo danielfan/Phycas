@@ -54,10 +54,8 @@ TipData::TipData(
 |	data for the tip as well as information about local state codes.
 */
 TipData::TipData(
-#if POLPY_NEWWAY
   bool                              using_unimap,       /**< is true if tips are to be prepared for uniformized mapping likelihood; it is false if tips are to be prepared for Felsenstein-style integrated likelihoods */
   unsigned				            nPatterns,			/**< is the number of site patterns */
-#endif
   const std::vector<unsigned int> &	stateListPosVec,	/**< is the vector of positions of each state into the `state_codes' vector */
   boost::shared_array<const int8_t>	stateCodesShPtr,	/**< is the `state_codes' vector */ 
   unsigned							nRates,				/**< is the number of relative rate categories */
@@ -69,9 +67,7 @@ TipData::TipData(
 	//parCLAValid(false),
 	//parWorkingCLA(NULL),
 	//parCachedCLA(NULL),
-#if POLPY_NEWWAY
     unimap(using_unimap),
-#endif
 	state(-1), 
 	state_list_pos(stateListPosVec), 
 	state_codes(stateCodesShPtr), 
@@ -79,13 +75,11 @@ TipData::TipData(
 	cla_pool(cla_storage)
 	{
 	const unsigned nObservedStates = nStates + 1 + state_list_pos.size();
-#if POLPY_NEWWAY
     if (using_unimap)
         {
         univents.resize(nPatterns);
         univents.setEndStates(state_codes.get());
         }
-#endif
 	if (managePMatrices)
 		{
 		ownedPMatrices.Initialize(nRates, nObservedStates, nStates);

@@ -360,7 +360,7 @@ void SimData::saveToNexusFile(
 			outf << str(boost::format(fmtstr) % taxon_names[i]) << "  ";
 			}
 
-#if POLPY_NEWWAY
+#if 1
         // Spit out characters in the order in which they were simulated. While this is a nice feature, 
         // it currently requires storing the data twice (patternVect and sim_pattern_map)
         unsigned nchar = (unsigned)patternVect.size();
@@ -467,10 +467,7 @@ void SimData::insertPattern(PatternCountType count)
 		sim_pattern_map.insert(lowb, SimPatternMapType::value_type(tmp_pattern, count));
 		}
 
-#if POLPY_NEWWAY
     patternVect.push_back(tmp_pattern);
-#endif
-
 	total_count += count;
 	}
 

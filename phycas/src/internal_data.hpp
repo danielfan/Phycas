@@ -26,11 +26,8 @@
 #include <boost/shared_array.hpp>
 #include "phycas/src/cipres/AllocateMatrix.hpp"
 #include "phycas/src/cipres/ConfigDependentHeaders.h"
-
-#if POLPY_NEWWAY
-#	include "phycas/src/states_patterns.hpp"
-#	include "phycas/src/univents.hpp"
-#endif
+#include "phycas/src/states_patterns.hpp"
+#include "phycas/src/univents.hpp"
 
 struct CIPRES_Matrix;
 
@@ -108,27 +105,19 @@ class InternalData
 		bool							parentalCLAValid() const;
 		bool							parentalCLACached() const;
 
-#if POLPY_NEWWAY
 		unsigned 						getNumUnivents(unsigned i) const {return univents.getNumEvents(i);}
 		std::vector<unsigned>			getUniventStates(unsigned i) const {return univents.getEventsVec(i);}
 		std::vector<double>   			getUniventTimes(unsigned i) const {return univents.getTimes(i);}
 
 		Univents & 						getUniventsRef() {return univents;}
 		const Univents & 				getUniventsConstRef()const {return univents;}
-#endif
 
 	private:
-#if POLPY_NEWWAY
 										InternalData(bool using_unimap, unsigned nPatterns, unsigned nRates, unsigned nStates, double * * * pMatrices, bool managePMatrices, CondLikelihoodStorage & cla_storage);
 		void							swapUnivents(InternalData * other);
-#else
-										InternalData(unsigned nPatterns, unsigned nRates, unsigned nStates, double * * * pMatrices, bool managePMatrices, CondLikelihoodStorage & cla_storage);
-#endif
 
-#if POLPY_NEWWAY
 		bool							unimap;			/**< true if internal nodes are to be prepared for uniformized mapping likelihood; false if internal nodes are to be prepared for Felsenstein-style integrated likelihoods */
 		Univents						univents;
-#endif
 
 		//CLA's for an edge from a node to its parent are stored in the node's InternalData (or TipData).
 		//bool							parCLAValid;	/**< true if parWorkingCLA is valid */
