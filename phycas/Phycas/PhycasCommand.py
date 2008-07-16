@@ -1,11 +1,11 @@
 import sys, os
 import textwrap
-from phycas import getDefaultOutFilter, OutFilter
+from phycas import getDefaultOutFilter, OutFilter, help_double_space, current_double_space, current_follows_help
 from phycas.PDFGen import PDFGenerator
 from phycas.ReadNexus import FileFormats
 import phycas.ReadNexus as ReadNexus
 
-_opt_double_space = True
+#_opt_double_space = True
 
 ###############################################################################
 def ttysize():
@@ -240,9 +240,16 @@ class FileOutputSpec(PhycasOutput):
             dpref = ""
         opts_help = [PhycasTablePrinter.format_help("%s" %pref, self._help_str)]
         if self._getFilename():
-            opts_help.append(PhycasTablePrinter.format_help("%sprefix" % dpref, "file prefix (appropriate suffix will be added)"))
-            opts_help.append(PhycasTablePrinter.format_help("%sfilename" % dpref, "The full file name."))
-            opts_help.append(PhycasTablePrinter.format_help("%smode" % dpref, 'Controls the behavior when the file is present. Valid settings are %s. ADD_NUMBER indicates that a number will be added to the end of the file name (or prefix) to make the name unique' % self._getValidModeNames()))
+            prefix_str = PhycasTablePrinter.format_help("%sprefix" % dpref, "file prefix (appropriate suffix will be added)")
+            fn_str = PhycasTablePrinter.format_help("%sfilename" % dpref, "The full file name.")
+            mode_str = PhycasTablePrinter.format_help("%smode" % dpref, 'Controls the behavior when the file is present. Valid settings are %s. ADD_NUMBER indicates that a number will be added to the end of the file name (or prefix) to make the name unique' % self._getValidModeNames())
+            if help_double_space:
+                prefix_str = '\n%s' % prefix_str
+                fn_str = "\n%s" % fn_str
+                mode_str = "\n%s" % mode_str
+            opts_help.append(prefix_str)
+            opts_help.append(fn_str)
+            opts_help.append(mode_str)
             if len(self._valid_formats) > 1:
                 opts_help.append(PhycasTablePrinter.format_help("%s.format" % dpref, 'Format of the file valid settings are %s' % self._getValidFormatNames()))
         if self._options:
@@ -595,7 +602,7 @@ class PhycasCmdOpts(object):
             name = oc_name.lower()
             n = pref and "%s%s" % (dpref, oc_name) or oc_name
             s = PhycasTablePrinter.format_help(n, i[2])
-            if _opt_double_space and i != self._optionsInOrder[0]:
+            if help_double_space and i != self._optionsInOrder[0]:
                 s = '\n%s' % s                                    
             opts_help.append(s)
         return opts_help
@@ -613,7 +620,7 @@ class PhycasCmdOpts(object):
             name = oc_name.lower()
             n = pref and "%s%s" % (dpref, oc_name) or oc_name
             s = PhycasTablePrinter.format_help(n, _value_for_user(self._current[name]))
-            if _opt_double_space and i != self._optionsInOrder[0]:
+            if current_double_space and i != self._optionsInOrder[0]:
                 s = '\n%s' % s                                    
             opts_help.append(s)
         return opts_help
@@ -741,7 +748,10 @@ class PhycasCommandHelp(object):
         self.cmd_descrip = cmd_descrip
 
     def __str__(self):
-        return "\n".join([self.explain(), "\n", self.current()])
+        if current_follows_help:
+            return "\n".join([self.explain(), "\n", self.current()])
+        else:
+            return "\n" + self.explain()
     def explain(self):
         PhycasTablePrinter._reset_term_width()
         command = self.command

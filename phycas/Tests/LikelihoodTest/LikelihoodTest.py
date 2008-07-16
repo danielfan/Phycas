@@ -470,6 +470,7 @@ def tryAllModels(fn):
     f = file(fn, 'a')
     f.write('\n')
     f.write('\nbegin paup;')
+    f.write('\n  log file=paup.log start replace;')
     f.write('\n  set criterion=likelihood storebrlen;')
     f.write('\nend;')
     f.write('\n')
@@ -489,6 +490,7 @@ def tryAllModels(fn):
     f.write('\n')
     f.write('\nbegin paup;\n')
     f.write('\n'.join(paup_commands))
+    f.write('\n  log stop;')
     f.write('\nend;')
     f.write('\n')
     f.close()
@@ -577,8 +579,8 @@ if __name__ == '__main__':
     print '+------------------------------------------------+'
     print '|           Analyzing nyldna4.nex                |'
     print '+------------------------------------------------+'
-    dataf = getPhycasTestData('nyldna4-compressed.nex')
-    #dataf = getPhycasTestData('nyldna4.nex')
+    #dataf = getPhycasTestData('nyldna4-compressed.nex')
+    dataf = getPhycasTestData('nyldna4.nex')
     readData(dataf)
     createCommandFile('check.nex', dataf)
     tryAllModels('check.nex')

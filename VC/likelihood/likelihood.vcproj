@@ -502,6 +502,12 @@
 				RelativePath="..\..\phycas\src\unimap_nni_move.inl">
 			</File>
 			<File
+				RelativePath="..\..\phycas\src\univent_prob_mgr.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\univent_prob_mgr.inl">
+			</File>
+			<File
 				RelativePath="..\..\phycas\src\univents.hpp">
 			</File>
 			<File

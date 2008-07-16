@@ -37,6 +37,9 @@
 namespace phycas
 {
 
+/*----------------------------------------------------------------------------------------------------------------------
+|	
+*/
 void UnimapNNIMove::setLot(LotShPtr p)
 	{
 	MCMCUpdater::setLot(p);
@@ -421,8 +424,6 @@ double UnimapNNIMove::FourTaxonLnLBeforeMove(TreeNode * nd)
 	storePMatTransposed(pre_z_pmat_transposed, (const double ***) wSisTipData->getTransposedPMatrices());
 	storePMatTransposed(pre_w_pmat_transposed, (const double ***) wTipData->getTransposedPMatrices());
 
-
-
     //DebugSaveNexusFile(ySisTipData, yTipData, wSisTipData, wTipData, lnlike);
 
     return lnlike;
@@ -674,7 +675,7 @@ void UnimapNNIMove::revert()
 	ndP->SetEdgeLen(prev_ndP_len);
 	
 
-	const UniventProbMgr &upm = likelihood->GetUniventProbMgrConstRef();
+	const UniventProbMgr & upm = likelihood->GetUniventProbMgrConstRef();
 	Lot & rngRef = *rng;
 	/* using the statecode arrays at  ySisTipData  and yTipData
 		as storage for the new samples of nd and ndP sequences.
@@ -743,7 +744,7 @@ void UnimapNNIMove::accept()
 	assert(nd->GetParent());
 	TreeNode * ndP = nd->GetParent();
 
-	const UniventProbMgr &upm = likelihood->GetUniventProbMgrConstRef();
+	const UniventProbMgr & upm = likelihood->GetUniventProbMgrConstRef();
 	Lot & rngRef = *rng;
 
 	LikeFltType * root_state_posterior = post_root_posterior->getCLA(); //PELIGROSO

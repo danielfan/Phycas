@@ -37,67 +37,90 @@ typedef boost::weak_ptr<MCMCChainManager> ChainManagerWkPtr;
 class UnimapNNIMove : public MCMCUpdater
 	{
 	public:
-						UnimapNNIMove();
-						virtual ~UnimapNNIMove();
+						        UnimapNNIMove();
+						        virtual ~UnimapNNIMove();
 
 		// These are virtual functions in the MCMCUpdater base class
 		//
-		virtual bool	update();
-		virtual double	getLnHastingsRatio() const;
-		virtual double	getLnJacobian() const;
-		virtual void	proposeNewState();
-		virtual void	revert();
-		virtual void	accept();
-		virtual void	setLot(LotShPtr p);
-		bool getDoSampleUnivents() const {return doSampleUnivents;}
-		void setDoSampleUnivents(bool v) {doSampleUnivents = v;}
+		virtual bool	        update();
+		virtual double	        getLnHastingsRatio() const;
+		virtual double	        getLnJacobian() const;
+		virtual void	        proposeNewState();
+		virtual void	        revert();
+		virtual void	        accept();
+		virtual void	        setLot(LotShPtr p);
+
+		bool                    getDoSampleUnivents() const;
+		void                    setDoSampleUnivents(bool v);
+
 	protected:
-		TreeNode * randomInternalAboveSubroot();
-		TreeNode * x;
-		TreeNode * y;
-		TreeNode * wSis;
-		TreeNode * ySis;
-		TreeNode * z;
 
-		TipData * ySisTipData;
-		TipData * yTipData;
-		TipData * wSisTipData;
-		TipData * wTipData;
+		void                    calculatePairwiseDistances();
+		void                    calculateProposalDist(bool);
+
+		double                  calcProposalLnDensity(double mean, double x);
+		double                  proposeEdgeLen(double mean);
+
+		TipData *               createTipDataFromUnivents(const Univents &, TipData *);
+		double                  FourTaxonLnLBeforeMove(TreeNode * nd);
+		double                  FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nd);
+		double                  HarvestLnLikeFromCondLikePar(CondLikelihoodShPtr focalCondLike, ConstCondLikelihoodShPtr neighborCondLike, const double * const * childPMatrix);
+		void                    storePMatTransposed(double **& cached, const double *** p_mat_array);
+        void                    DebugSaveNexusFile(TipData * xtd, TipData * ytd, TipData * ztd, TipData * wtd, double lnlike);
+	    TreeNode *              randomInternalAboveSubroot();
+
+	protected:
+
+        TreeNode *              x;                          /**< xxxx */
+	    TreeNode *              y;                          /**< xxxx */
+	    TreeNode *              z;                          /**< xxxx */
+	    TreeNode *              wSis;                       /**< xxxx */
+	    TreeNode *              ySis;                       /**< xxxx */
+		bool                    x_is_left;                  /**< xxxx */
+
+		TipData *               ySisTipData;                /**< xxxx */
+		TipData *               yTipData;                   /**< xxxx */
+		TipData *               wSisTipData;                /**< xxxx */
+		TipData *               wTipData;                   /**< xxxx */
 		
-		double  * * pre_x_pmat_transposed;
-		double  * * pre_y_pmat_transposed;
-		double  * * pre_w_pmat_transposed;
-		double  * * pre_z_pmat_transposed;
-		bool doSampleUnivents;
-		GammaDistribution gammaDist; 
-		double min_edge_len_mean, edge_len_prop_cv;
-		double ln_density_reverse_move, ln_density_forward_move;
-		double prev_x_len, prev_y_len, prev_z_len, prev_nd_len, prev_ndP_len;
-		bool x_is_left;
-		double dXY, dWX, dXZ, dWY, dYZ, dWZ;
-		double propMeanX, propMeanY, propMeanZ, propMeanW, propMeanInternal; 
-		double prev_ln_prior;	/**< The log prior of the starting state */
-		double prev_ln_like;	/**< The log likelihood of the starting state */
-		CondLikelihoodShPtr pre_root_posterior;
-		CondLikelihoodShPtr pre_cla;
-		double * * * pre_p_mat;
-		CondLikelihoodShPtr post_root_posterior;
-		CondLikelihoodShPtr post_cla;
-		double * * * post_p_mat;
-		bool scoringBeforeMove;
-		void calculatePairwiseDistances();
-		void calculateProposalDist(bool);
+		double  * *             pre_x_pmat_transposed;      /**< xxxx */
+		double  * *             pre_y_pmat_transposed;      /**< xxxx */
+		double  * *             pre_w_pmat_transposed;      /**< xxxx */
+		double  * *             pre_z_pmat_transposed;      /**< xxxx */
 
-		double calcProposalLnDensity(double mean, double x);
-		double proposeEdgeLen(double mean);
+		bool                    doSampleUnivents;           /**< xxxx */
+		GammaDistribution       gammaDist;                  /**< xxxx */
+		double                  min_edge_len_mean;          /**< xxxx */
+        double                  edge_len_prop_cv;           /**< xxxx */
+		double                  ln_density_reverse_move;    /**< xxxx */
+        double                  ln_density_forward_move;    /**< xxxx */
+		double                  prev_x_len;                 /**< xxxx */
+        double                  prev_y_len;                 /**< xxxx */
+        double                  prev_z_len;                 /**< xxxx */
+        double                  prev_nd_len;                /**< xxxx */
+        double                  prev_ndP_len;               /**< xxxx */
 
-		TipData * createTipDataFromUnivents(const Univents &, TipData *);
-		double FourTaxonLnLBeforeMove(TreeNode * nd);
-		double FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nd);
-		double HarvestLnLikeFromCondLikePar(CondLikelihoodShPtr focalCondLike, ConstCondLikelihoodShPtr neighborCondLike, const double * const * childPMatrix);
-		void storePMatTransposed(double **& cached, const double *** p_mat_array);
-        void DebugSaveNexusFile(TipData * xtd, TipData * ytd, TipData * ztd, TipData * wtd, double lnlike);
+		double                  dXY;                        /**< xxxx */
+		double                  dWX;                        /**< xxxx */
+		double                  dXZ;                        /**< xxxx */
+		double                  dWY;                        /**< xxxx */
+		double                  dYZ;                        /**< xxxx */
+		double                  dWZ;                        /**< xxxx */
 
+		double                  propMeanX;                  /**< xxxx */
+		double                  propMeanY;                  /**< xxxx */
+		double                  propMeanZ;                  /**< xxxx */
+		double                  propMeanW;                  /**< xxxx */
+		double                  propMeanInternal;           /**< xxxx */
+		double                  prev_ln_prior;	            /**< The log prior of the starting state */
+		double                  prev_ln_like;	            /**< The log likelihood of the starting state */
+		CondLikelihoodShPtr     pre_root_posterior;         /**< xxxx */
+		CondLikelihoodShPtr     pre_cla;                    /**< xxxx */
+		double * * *            pre_p_mat;                  /**< xxxx */
+		CondLikelihoodShPtr     post_root_posterior;        /**< xxxx */
+		CondLikelihoodShPtr     post_cla;                   /**< xxxx */
+		double * * *            post_p_mat;                 /**< xxxx */
+		bool                    scoringBeforeMove;          /**< xxxx */
 	};
 
 } // namespace phycas

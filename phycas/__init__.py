@@ -50,6 +50,9 @@ def getDefaultOutFilter():
 
 # These globals are set here, so that reading in the startup.py gives
 #   experienced users the chance to override the default behavior.
+help_double_space = True
+current_double_space = True
+current_follows_help = True
 intercept_python_exceptions = True
 default_verbosity_level = OutFilter.NORMAL
 _user_ini_checked = False

@@ -15,7 +15,7 @@ def runPhycasUpdateChecker(outstream, update_url, branch_string, revision_string
             outstream.warning('Could not run "svn status" command on directory %d to see if it is up-to-date' % phycas_path)
             return
         if not "*" in svnStatOut:
-            outstream.verbose_info("Your copy of phycas is to be up-to-date")
+            outstream.verbose_info("Your copy of phycas is up-to-date")
             return
         
     print "runPhycasUpdateChecker() not implemented"

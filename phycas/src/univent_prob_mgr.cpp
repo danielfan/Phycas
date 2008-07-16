@@ -21,27 +21,33 @@
 #include "phycas/src/tree_likelihood.hpp"
 #include "phycas/src/basic_tree.hpp"
 #include "phycas/src/basic_tree_node.hpp"
+
 namespace phycas
 {
 
-UniventProbMgr::UniventProbMgr(ModelShPtr modelArg)
-	:lnUMatMemMgt(modelArg->getNStates(), 0.0)
-	,numStates(modelArg->getNStates())
-	,model(modelArg)
-	,sampleTimes(false)
-	,scratchMatOne(modelArg->getNStates(), 0.0)
-	,scratchMatTwo(modelArg->getNStates(), 0.0),
-	storeUnivents(false)
+/*----------------------------------------------------------------------------------------------------------------------
+|	Constructor
+*/
+UniventProbMgr::UniventProbMgr(
+  ModelShPtr modelArg)  /**< is a shared pointer to the model object */
+  : lnUMatMemMgt(modelArg->getNStates(), 0.0)
+  , numStates(modelArg->getNStates())
+  , model(modelArg)
+  , sampleTimes(false)
+  , scratchMatOne(modelArg->getNStates(), 0.0)
+  , scratchMatTwo(modelArg->getNStates(), 0.0)
+  , storeUnivents(false)
 	{
 	lnUMat = lnUMatMemMgt.GetMatrix();
 	
 	unsigned init_max_m = 5;
 	maxm = init_max_m;
+
 	// build up logmfact
 	// m   ->  m!          log(m!)
-	// 0   ->  1   = 1       0.0  = 0.0
-	// 1   ->  1   = 1*1     0.0  = 0.0 + 0.0
-	// 2   ->  2   = 1*2    0.693 = 0.0 + 0.693
+	// 0   ->  1   = 1        0.0 =   0.0
+	// 1   ->  1   = 1*1      0.0 =   0.0 +   0.0
+	// 2   ->  2   = 1*2    0.693 =   0.0 + 0.693
 	// 3   ->  6   = 2*3    1.792 = 0.693 + 1.099
 	// 4   -> 24   = 6*4    3.178 = 1.792 + 1.386
 	logmfact.resize(init_max_m + 1, 0.0);
@@ -50,9 +56,11 @@ UniventProbMgr::UniventProbMgr(ModelShPtr modelArg)
 		logmfact[m] = logmfact[m-1] + log((double)m);
 	}
 
-
+/*----------------------------------------------------------------------------------------------------------------------
+|	
+*/
 void UniventProbMgr::recalcUMat()
-{
+    {
 	this->lambda = model->calcLMat(lnUMat);
 	uMatVect.resize(2);
     unsigned prev_maxm = maxm;
@@ -70,10 +78,11 @@ void UniventProbMgr::recalcUMat()
             }
 		}
 	maxm = 1;
+
 	 // the reduceMaxm bit here is a hack to try to reduce maxm as opposed to allowing it to continue to creep up.
 	const unsigned reduceMaxm = 2;
 	expandUMatVect(prev_maxm > ( reduceMaxm + 2) ? prev_maxm - reduceMaxm : prev_maxm);
-}
+    }
 
 /*----------------------------------------------------------------------------------------------------------------------
 |   Chooses a value of m, the number of univents on a particular edge for a particular site. 
@@ -130,6 +139,9 @@ unsigned UniventProbMgr::sampleM(
     return m;
     }
 
+/*----------------------------------------------------------------------------------------------------------------------
+|	
+*/
 void UniventProbMgr::expandUMatVect(unsigned m) const 
 	{
 	if (m <= maxm)
@@ -284,6 +296,9 @@ void UniventProbMgr::unimapEdgeOneSite(
 		}
     }
 
+/*----------------------------------------------------------------------------------------------------------------------
+|	
+*/
 /*==============================================================================
 | uses scratchMatTwo (and indirectly scratchMatOne)
 */
@@ -295,6 +310,9 @@ void UniventProbMgr::sampleUniventsKeepEndStates(Univents & u, const double edge
 	sampleUnivents(u, edgelen, par_states, des_states, const_cast<const double * const *>(p_mat), rng, NULL);
 	}
 
+/*----------------------------------------------------------------------------------------------------------------------
+|	
+*/
 /*==============================================================================
 | uses scratchMatOne
 */
@@ -421,7 +439,9 @@ void UniventProbMgr::sampleUnivents(Univents & u, const double edgelen,  const i
 	u.times_valid = this->sampleTimes;
 	}
 
-
+/*----------------------------------------------------------------------------------------------------------------------
+|	
+*/
 void UniventProbMgr::sampleDescendantStates(
 	const unsigned num_patterns, 
 	int8_t * nd_states, 
@@ -447,6 +467,9 @@ void UniventProbMgr::sampleDescendantStates(
 		}
 	}
 
+/*----------------------------------------------------------------------------------------------------------------------
+|	
+*/
 void UniventProbMgr::sampleRootStates(
 	const unsigned num_patterns,
 	int8_t * nd_states,
@@ -472,8 +495,6 @@ void UniventProbMgr::sampleRootStates(
 		rootStatePosterior += numStates;
 		}
 	}
-
-
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	This is the function that is called (from calcLnL) to recompute the log-likelihood if `using_unimap' is true. It 
@@ -528,17 +549,6 @@ double UniventProbMgr::calcUnimapLnL(
 	return log_likelihood;
 	}
 
-
 } // namespace phycas
-
-
-
-
-
-
-
-
-
-
 
 #endif //POLPY_NEWWAY
