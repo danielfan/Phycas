@@ -2809,8 +2809,30 @@ void TreeLikelihood::prepareForLikelihood( //POL_BOOKMARK TreeLikelihood::prepar
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Builds up the vector data member `constant_states' based on the patterns in `pattern_map'. Returns number of 
-|   potentially constant patterns found.
+|	Returns reference to the vector data member `all_missing', which is a list of indices of sites for which all taxa
+|   show completely missing data. The first site has index 0 in the `all_missing' vector.
+*/
+const std::vector<unsigned> & TreeLikelihood::getListOfAllMissingSites() const
+    {
+    return all_missing;
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Builds up the vector data member `constant_states' based on the patterns in `pattern_map'. The `constant_states' 
+|   vector has a similar structure to the `state_list' vector. Here is an example `constant_states' vector for 4 sites:
+|>
+|   +---+---+---+---+---+---+---+---+
+|   | 0 | 1 | 0 | 1 | 3 | 2 | 0 | 2 |
+|   +---+---+---+---+---+---+---+---+
+|     ^   ^       ^       ^
+|     |   |       |       |
+|     |   |       |       4th site can potentially be constant for either A (state 0) or G (state 2)
+|     |   |       3rd site can be potentially constant for T (state 3)
+|     |   2nd site can be potentially constant for 1 state: that state (A, state 0) follows in the next cell
+|     1st site is definitely variable (hence the 0 meaning no states follow)
+|>
+|   The function returns the number of potentially constant patterns found (note the return value is NOT the number
+|   of potentially constant sites).
 */
 unsigned TreeLikelihood::buildConstantStatesVector()
 	{
@@ -2835,6 +2857,7 @@ unsigned TreeLikelihood::buildConstantStatesVector()
             // states          | A | C | G | T |  - A C G T | A C G T | C G T | A G T |  A  G  | C T
             // state_list      1 0 1 1 1 2 1 3 5 -1 0 1 2 3 4 0 1 2 3 3 1 2 3 3 0 2 3 2  0  2  4 1 3
             // state_list_pos  0   2   4   6   8           14        19      23      27       30
+
             int code = (int)(pat->first)[taxon];
             PHYCAS_ASSERT(code >= 0);   // Mark, why don't ? and - states trigger this assert? Does this have to do with the fact that we have abandoned the Cipres version of NCL?
             unsigned pos = (unsigned)state_list_pos[code];
@@ -3005,6 +3028,9 @@ unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix &
 		}
 	else // not codon model
 		{
+		std::vector<int8_t> pattern;
+        unsigned nStates = getNStates();
+
 		// Loop across each site in mat
 		for (unsigned j = 0; j < nchar; ++j)
 			{
@@ -3012,13 +3038,24 @@ unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix &
 			if (charWt > 0.0)
 				{
 				// Build up a vector representing the pattern of state codes at this site
-				std::vector<int8_t> pattern;
+				pattern.clear();
+                unsigned num_all_missing = 0;
 				for (unsigned i = 0; i < ntax; ++i)
 					{
 					const int8_t * row	= mat.getRow(i);
 					const int8_t   code = row[j];
 					pattern.push_back(code);
+                    if (code == nStates)	
+                        ++num_all_missing;
 					}
+
+                // Do not include the pattern if it contains only completely missing data
+                // for all taxa
+                if (num_all_missing == ntax)
+                    {
+                    all_missing.push_back(j);
+                    continue;
+                    }
 
 				// Add the pattern to the map if it has not yet been seen, otherwise increment 
 				// the count of this pattern if it is already in the map (see item 24, p. 110, in Meyers' Efficient STL)
@@ -3047,7 +3084,7 @@ unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix &
 					}
 				}
 			}
-		}
+		}   // if model->isCodonModel() ... else ...
 
 	// Copy counts to pattern_counts before returning
 	pattern_counts.clear();

@@ -381,6 +381,15 @@ class MCMCImpl(object):
                 self.phycas.output('Data source:    None (running MCMC with no data to explore prior)')
             elif self.opts.data_source == 'file':
                 self.phycas.output('Data source:    %s' % self.opts.data_file_name)
+                all_missing = self.mcmc_manager.getColdChain().likelihood.getListOfAllMissingSites()
+                num_excluded = len(all_missing)
+                if num_excluded > 0:
+                    self.phycas.output('*** Note: the following %d sites were automatically excluded because' % num_excluded)
+                    self.phycas.output('*** they exhibited completely missing data for all taxa:')
+                    while len(all_missing) > 0:
+                        tmp = all_missing[:10]
+                        all_missing = all_missing[10:]
+                        self.phycas.output('***   '+','.join([str(i+1) for i in tmp]))
             else:
                 self.phycas.abort("Only 'file' or None are allowed for data_source")
             self.phycas.output('No. cycles:     %s' % self.opts.ncycles)

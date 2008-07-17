@@ -86,6 +86,7 @@ class TreeLikelihood
 		const std::vector<double> &		getRateProbs() const;
 		void							recalcRelativeRates();
 		std::vector<double>				getCategoryLowerBoundaries() const;
+		const std::vector<unsigned> &	getListOfAllMissingSites() const;
 
 		// Modifiers
 		void							setNPatterns(unsigned npatterns);
@@ -232,7 +233,8 @@ class TreeLikelihood
 		PatternMapType					pattern_map;			/**< keys are patterns, values are pattern counts */
 		std::vector<double>				site_likelihood;		/**< site_likelihood[pat] stores the site likelihood for pattern pat, but only if `store_site_likes' is true */
 		std::vector<unsigned>			charIndexToPatternIndex; /**< maps original character index to the index in compressed pattern "matrix" */
-        std::vector<unsigned>           constant_states;        /**< keeps track of the states for potentially constant sites. For example, given this vector for 3 patterns |0|1|0|2|0|2|, the initial 0 means the first site is variable, the next value 1 means the second site could potentially be constant with state equal to the third element 0, and the fourth element 2 means the third site is potentially constant and two states (0 and 2) are possible candidates for the constant state */
+        std::vector<unsigned>           constant_states;        /**< keeps track of the states for potentially constant sites. See TreeLikelihood::buildConstantStatesVector for description of the structure of this vector. */
+        std::vector<unsigned>           all_missing;            /**< keeps track of sites excluded automatically because they have missing data for all taxa. */
 	};
 
 /// used to get access to a CLA to write it
