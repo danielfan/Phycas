@@ -2,7 +2,7 @@
 
 begin paup;
   set nowarnroot;
-  exe '../Data/nyldna4.nex';
+  exe 'C:\Synchronized\Projects\phycastmp\phycas\Tests\Data\nyldna4.nex';
 end;
 
 
@@ -20,6 +20,7 @@ begin trees;
 end;
 
 begin paup;
+log file=paup.log start replace;
 
 [!
 ***** GTR+G+I (estimate everything) *****]
@@ -153,4 +154,6 @@ lscores 1 / userbrlen;
 lset nst=1 basefreq=equal rates=gamma shape=1.2 pinvar=0.3;
 lscores 1 / userbrlen;
 [!Phycas JC+G+I lnL = -7340.00127]
+
+log stop;
 end;

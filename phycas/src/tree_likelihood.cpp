@@ -36,6 +36,11 @@
 // formerly in tree_likelihood.inl
 #include "phycas/src/edge_endpoints.hpp"
 
+#if 0 && POLPY_NEWWAY
+//@POL temporary!
+#   include <fstream>
+#endif
+
 static int8_t codon_state_codes[] =
 	{
 	0,	// 0 AAA
@@ -2532,7 +2537,7 @@ TipData * TreeLikelihood::allocateTipData(	//POLBM TreeLikelihood::allocateTipDa
 			}
 		PHYCAS_ASSERT(inc_site == num_patterns);
 		}
-	else
+	else    // not unimap
 		{
 		unsigned i = 0;
 		for (PatternMapType::const_iterator it = pattern_map.begin(); it != pattern_map.end(); ++it, ++i)
@@ -2659,12 +2664,25 @@ void TreeLikelihood::copyDataFromDiscreteMatrix(
 	{
 	nTaxa = mat.getNTax();
 
-	// The compressDataMatrix function first erases, then builds, both pattern_map and 
+#if POLPY_NEWWAY
+    // These assignments should be kept before compressDataMatrix because they are used there
+	state_list = mat.getStateList(); 
+	state_list_pos = mat.getStateListPos();
+#endif
+
+    // The compressDataMatrix function first erases, then builds, both pattern_map and 
 	// pattern_counts using the uncompressed data contained in mat
 	num_patterns = compressDataMatrix(mat);
 
+#if POLPY_NEWWAY
+    buildConstantStatesVector();
+#endif
+
+#if 0
+    // moved above compressDataMatrix call
 	state_list = mat.getStateList(); 
 	state_list_pos = mat.getStateListPos();
+#endif
 
 	// size of likelihood_rate_site vector needs to be revisited if the number of rates subsequently changes 
 	recalcRelativeRates();
@@ -2805,6 +2823,142 @@ void TreeLikelihood::prepareForLikelihood( //POL_BOOKMARK TreeLikelihood::prepar
 	// are changed to vectors
 	}
 
+#if POLPY_NEWWAY
+//#define DEBUG_CONSTANT_DETERMINATION
+/*----------------------------------------------------------------------------------------------------------------------
+|	Builds up the vector data member `constant_states' based on the patterns in `pattern_map'. Returns number of 
+|   potentially constant patterns found.
+*/
+unsigned TreeLikelihood::buildConstantStatesVector()
+	{
+    #if defined(DEBUG_CONSTANT_DETERMINATION)
+        std::ofstream debugf("constness.txt");
+        if (model->isPinvarModel())
+            debugf << "pinvar model" << std::endl;
+        else
+            debugf << "non-pinvar model" << std::endl;
+        debugf << "pattern\tstates\tcommon" << std::endl;
+        const char * code_lookup = "ACGT";
+        unsigned j = 0;
+    #endif
+
+    PHYCAS_ASSERT(!pattern_map.empty());
+    constant_states.clear();
+
+    unsigned num_potentially_constant = 0;
+    std::set<int> common_states;    // holds running intersection across taxa for this pattern
+    std::set<int> curr_states;      // holds states for taxon under consideration
+    std::vector<int> xset;          // temporarily holds intersection of common_states and curr_states
+
+    for (PatternMapType::const_iterator pat = pattern_map.begin(); pat != pattern_map.end(); ++pat)
+        {
+        #if defined(DEBUG_CONSTANT_DETERMINATION)
+            debugf << boost::str(boost::format("%6d\t|") % ++j);
+        #endif
+
+        bool site_potentially_constant = true;
+        for (unsigned taxon = 0; taxon < nTaxa; ++taxon)
+            {
+            #if !defined(DEBUG_CONSTANT_DETERMINATION)  // Note the !
+                if (!site_potentially_constant)                
+                    break;
+            #endif
+
+            // Reminder of how data members state_list and state_list_pos are laid out:
+            //                                         ?         N      {CGT}  {ACG}    R,(AG)    Y
+            // states          | A | C | G | T |  - A C G T | A C G T | C G T | A G T |  A  G  | C T
+            // state_list      1 0 1 1 1 2 1 3 5 -1 0 1 2 3 4 0 1 2 3 3 1 2 3 3 0 2 3 2  0  2  4 1 3
+            // state_list_pos  0   2   4   6   8           14        19      23      27       30
+            int code = (int)(pat->first)[taxon];
+            PHYCAS_ASSERT(code >= 0);   // Mark, why don't ? and - states trigger this assert? Does this have to do with the fact that we have abandoned the Cipres version of NCL?
+            unsigned pos = (unsigned)state_list_pos[code];
+            unsigned n = (unsigned)state_list[pos];
+            curr_states.clear();
+
+            #if defined(DEBUG_CONSTANT_DETERMINATION)
+                std::string code_repr = "";
+            #endif
+
+            // Insert all states for the current taxon into the curr_states set
+            for (unsigned x = pos + 1; x < pos + n + 1; ++x)
+                {
+                int c = (int)state_list[x];
+                PHYCAS_ASSERT(c >= 0);
+                if (site_potentially_constant)
+                    curr_states.insert(c);
+
+                #if defined(DEBUG_CONSTANT_DETERMINATION)
+                    code_repr += code_lookup[c];
+                #endif
+                }
+
+            if (taxon == 0)
+                {
+                // For first taxon, let common_states equal curr_states
+                common_states.clear();
+                common_states.insert(curr_states.begin(), curr_states.end());
+                }
+            else
+                {
+                // For subsequent taxa, common_states should contain only those states possessed
+                // by all taxa (i.e. it will be the empty set if the site is variable)
+                xset.clear();
+                std::set_intersection(common_states.begin(), common_states.end(), curr_states.begin(), curr_states.end(), back_inserter(xset));
+                if (xset.empty())
+                    site_potentially_constant = false;
+                else
+                    {
+                    common_states.clear();
+                    common_states.insert(xset.begin(), xset.end());
+                    }
+                }
+
+            #if defined(DEBUG_CONSTANT_DETERMINATION)
+                debugf << code_repr.c_str() << "|";
+            #endif
+            }
+
+        if (site_potentially_constant)
+            {
+            ++num_potentially_constant;
+            constant_states.push_back((unsigned)common_states.size());
+            for (std::set<int>::const_iterator it = common_states.begin(); it != common_states.end(); ++it)
+                {
+                constant_states.push_back(*it);
+                }
+            }
+        else
+            {
+            constant_states.push_back(0);
+            }
+
+        #if defined(DEBUG_CONSTANT_DETERMINATION)
+            // Output the set of states common to all taxa for this pattern
+            debugf << "\t{";
+            if (site_potentially_constant)
+                {
+                for (std::set<int>::const_iterator it = common_states.begin(); it != common_states.end(); ++it)
+                    debugf << code_lookup[*it];
+                }
+            debugf << "}" << std::endl;
+        #endif
+
+        }
+    #if defined(DEBUG_CONSTANT_DETERMINATION)
+        debugf << "num_potentially_constant = " << num_potentially_constant << std::endl;
+        debugf << "total_patterns           = " << (unsigned)pattern_map.size() << std::endl;
+        debugf << "constant_states vector:" << std::endl;
+        for (std::vector<unsigned>::const_iterator it = constant_states.begin(); it != constant_states.end(); ++it)
+            {
+            debugf << (*it) << "|";
+            }
+        debugf << std::endl;
+        debugf.close();
+    #endif
+    return num_potentially_constant;
+    }
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Copies data from `mat' to the map `pattern_map'. The resulting map holds pairs whose key is the pattern for one site
 |	and whose value is a count of the number of sites having that pattern. The counts from `pattern_map' are transferred  
@@ -2816,6 +2970,10 @@ unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix &
 	unsigned ntax = mat.getNTax();
 	unsigned nchar = mat.getNChar();
 	charIndexToPatternIndex.assign(nchar, UINT_MAX);
+
+    // Create actingWeights vector and copy the integer weights from mat into it
+    // If there are no integer weights in mat, copy the floating point weights instead
+    // if floating point weights have been defined
 	const std::vector<int> & iwts = mat.getIntWeightsConst();
 	std::vector<double> actingWeights(nchar, 1.0);
 	if (!iwts.empty())
@@ -2834,6 +2992,7 @@ unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix &
 			}
 		}
 
+    // Set corresponding actingWeights elements to zero if any characters have been excluded in mat
 	const std::set<unsigned> & excl = mat.getExcludedCharIndices();
 	for (std::set<unsigned>::const_iterator eIt = excl.begin(); eIt != excl.end(); ++eIt)
 		{
@@ -2914,7 +3073,7 @@ unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix &
 				}
 			}
 		}
-	else	// not codon model
+	else // not codon model
 		{
 		// Loop across each site in mat
 		for (unsigned j = 0; j < nchar; ++j)
@@ -2930,6 +3089,7 @@ unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix &
 					const int8_t   code = row[j];
 					pattern.push_back(code);
 					}
+
 				// Add the pattern to the map if it has not yet been seen, otherwise increment 
 				// the count of this pattern if it is already in the map (see item 24, p. 110, in Meyers' Efficient STL)
 				PatternMapType::iterator lowb = pattern_map.lower_bound(pattern);
@@ -2978,6 +3138,7 @@ unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix &
 			++n_inc_chars;
 			}
 		}
+
 	if (using_unimap)
 		return n_inc_chars;
 	else

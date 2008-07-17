@@ -56,7 +56,7 @@ typedef std::vector<unsigned int> StateListPos;
 |	  format datatype=dna missing=? gap=-;
 |	  matrix
 |		taxon1 A ? T  G	   {CGT}
-|		taxon2 A C - {ACG}	T 
+|		taxon2 A C - {AGT}	T 
 |		taxon3 A C -  N	   (AG)
 |		taxon4 A C T  R		Y
 |	  ;
@@ -73,7 +73,7 @@ typedef std::vector<unsigned int> StateListPos;
 |	The global state list position vector (i.e. `CipresNative::DiscreteMatrix::getStateListPos()') is 
 |	  0 2 4 6 8 14 19 23 27 30
 |	Each of the above values represents an index into the global state list, which looks like this:
-|	  1 0 1 1 1 2 1 3 5 -1 0 1 2 3 4 0 1 2 3 3 1 2 3 3 0 2 3 2 0 2 4 1 3
+|	  1 0 1 1 1 2 1 3 5 -1 0 1 2 3 4 0 1 2 3 3 1 2 3 3 0 2 3 2 0 2 2 1 3
 |	The table below explains this enigmatic global state list. The asterisks in the first column mark the elements of 
 |	the global state list position vector given above. The second column is the global state list, which is also given 
 |	above. The third column contains the codes used for states internally. Finally, the last column relates these global 
@@ -119,7 +119,7 @@ typedef std::vector<unsigned int> StateListPos;
 |	 21			2
 |	 22			3
 |	---------------------------------------------
-|	 23*		3		7	 -->  {ACG}
+|	 23*		3		7	 -->  {AGT}
 |	 24			0
 |	 25			2
 |	 26			3
@@ -128,7 +128,7 @@ typedef std::vector<unsigned int> StateListPos;
 |	 28			0
 |	 29			2
 |	---------------------------------------------
-|	 30*		4		9	 -->  Y
+|	 30*		2		9	 -->  Y
 |	 31			1
 |	 32			3
 |	---------------------------------------------

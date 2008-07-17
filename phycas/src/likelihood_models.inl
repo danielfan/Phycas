@@ -245,7 +245,11 @@ inline void Model::normalizeFreqs()
 */
 inline unsigned Model::getNRatesTotal() const
 	{
+#if POLPY_NEWWAY
+	return num_gamma_rates;
+#else
 	return num_gamma_rates + (is_pinvar_model ? 1 : 0);
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -701,6 +705,16 @@ inline void Model::normalizeRatesAndProbs(
 		}
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the current value of the data member `is_pinvar_model'.
+*/
+inline bool Model::isPinvarModel()
+	{
+	return is_pinvar_model;
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the data member `is_pinvar_model' to true. A subsequent call to the createParameters member function will
 |	result in a PinvarParam being added to the list of updaters for this model.
@@ -772,143 +786,6 @@ inline ProbDistShPtr Model::getPinvarPrior()
 inline void Model::setPinvarPrior(ProbDistShPtr d)
  	{
 	pinvar_prior = d;
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Recalculates all relative rate means and their probabilities, storing these in the `rates' and `probs' vectors
-|	supplied as reference arguments. If using a discrete gamma ("G") model only, the number of elements in both `rates'
-|	and `probs' equals the number of gamma rate categories. If using a pinvar model ("I") only, the number of elements 
-|	in both vectors will be 2, with rates[0] = 0.0, rates[1] = 1.0/(1.0 - pinvar), probs[0] = pinvar and probs[1] =
-|	1.0 - pinvar. If using an "I+G" model, there will be num_gamma_rates + 1 elements in both vectors, with rates[0] =
-|	0.0 and probs[0] = pinvar, and the remaining elements containing the gamma rates and probabilities corrected for
-|	the value of pinvar.
-*/
-inline void Model::recalcRatesAndProbs(
-  std::vector<double> & rates, 
-  std::vector<double> & probs) const
-	{
-	if (is_flex_model)
-		{
-		normalizeRatesAndProbs(rates, probs);
-		}
-	else
-		{
-		std::vector<double> boundaries;
-
-		if (is_pinvar_model)
-			{
-			PHYCAS_ASSERT(pinvar < 1.0);
-			double one_minus_pinvar = 1.0 - pinvar;
-
-			// First calculate the gamma rates alone
-			std::vector<double> gamma_rates;
-			recalcGammaRatesAndBoundaries(gamma_rates, boundaries);
-
-			// Build up the rates and probs vectors using the local vector gamma_rates and the data members 
-			// pinvar and gamma_rate_probs
-			rates.resize(num_gamma_rates + 1, 0.0);
-			probs.resize(num_gamma_rates + 1, 0.0);
-			std::vector<double>::iterator rates_iter = rates.begin();
-			std::vector<double>::iterator probs_iter = probs.begin();
-			std::vector<double>::const_iterator gamma_probs_iter = gamma_rate_probs.begin();
-			std::vector<double>::const_iterator gamma_rates_iter = gamma_rates.begin();
-			(*rates_iter++) = 0.0;
-			(*probs_iter++) = pinvar;
-			//@POL use std::transform algorithm with a boost::lambda here?
-			for (unsigned i = 0; i < num_gamma_rates; ++i)
-				{
-				*rates_iter++ = (*gamma_rates_iter++)/one_minus_pinvar;
-				*probs_iter++ = (*gamma_probs_iter++)*one_minus_pinvar;
-				}
-			}
-		else
-			{
-			// The rates and probs computed by recalcGammaRatesAndBoundaries are what we need if is_pinvar_model is false
-			recalcGammaRatesAndBoundaries(rates, boundaries);
-			probs.resize(num_gamma_rates, 0.0);
-			std::copy(gamma_rate_probs.begin(), gamma_rate_probs.end(), probs.begin());
-			}
-		}
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Determines the category means of a discrete gamma distribution with `num_gamma_rates' categories. A continuous gamma
-|	distribution is divided into `num_gamma_rates' sections, the boundaries of which are determined by the probability 
-|	mass assumed to lie in each section. The vector `gamma_rate_probs' holds the probabilities corresponding to each 
-|	category, which by default are all 1/`num_gamma_rates'. Upon return, rates[i] holds the mean rate for the category 
-|	starting at boundaries[i]. For i < `num_gamma_rates' - 1, the upper limit of the rate category is at boundaries[i+1],
-|	but for the last rate category (i.e. i = `num_gamma_rates' - 1), the upper boundary is infinity. Assumes 
-|	`num_gamma_rates' is greater than zero.
-|
-|	Assume there are four rate categories, and let the means of these categories be labeled r_0, r_1, r_2 and r_3. Let 
-|	the boundaries of the (e.g. four) rate categories be b_0, b_1, b_2, b_3 and b_4, with b_0 = 0.0 and b_4 = infinity.
-|	The mean of rate category i is r_i and can be computed as the expected value of r in the interval [b_i, b_{i+1})
-|	divided by the integral of the continuous gamma distribution over the same interval. For a gamma distribution having
-|	shape alpha and scale beta, we have (in pseudo-LaTeX):
-|>	
-|	       / b_{i+1}   r^{alpha - 1} exp{-r/beta}
-|	       |         r -------------------------- dr
-|	       / b_i        beta^alpha  Gamma(alpha)      
-|	r_i = ------------------------------------------
-|	       / b_{i+1}   r^{alpha - 1} exp{-r/beta}   
-|	       |           -------------------------- dr
-|	       / b_i        beta^alpha  Gamma(alpha)
-|
-|	      (alpha)(beta)[CumGamma(b_{i+1}, alpha + 1, beta) - CumGamma(b_i, alpha + 1, beta)]
-|	    = ----------------------------------------------------------------------------------
-|	                 CumGamma(b_{i+1}, alpha, beta) - CumGamma(b_i, alpha, beta)
-|>
-*/
-inline void Model::recalcGammaRatesAndBoundaries(std::vector<double> & rates, std::vector<double> & boundaries) const
-	{
-	PHYCAS_ASSERT(num_gamma_rates > 0);
-	rates.resize(num_gamma_rates, 0.0);
-	boundaries.resize(num_gamma_rates, 0.0);
-
-	if (num_gamma_rates == 1)
-		{
-		rates[0] = 1.0;
-		boundaries[0] = 0.0;
-		return;
-		}
-
-	PHYCAS_ASSERT(gamma_shape > 0.0);
-	double alpha = gamma_shape;
-	double beta = 1.0/gamma_shape;
-	
-	//std::cerr << "\nGamma rate category information for shape = " << gamma_shape << std::endl;
-
-	double cum_upper		= 0.0;
-	double cum_upper_plus	= 0.0;
-	double upper			= 0.0;
-	double cum_prob			= 0.0;
-	for (unsigned i = 1; i <= num_gamma_rates; ++i)
-		{
-		double lower				= upper;
-		double cum_lower_plus		= cum_upper_plus;
-		double cum_lower			= cum_upper;
-		cum_prob					+= gamma_rate_probs[i-1];
-
-		if (i < num_gamma_rates)
-			{
-			upper					= cdf.SampleGamma(cum_prob, alpha, beta);
-			cum_upper_plus			= cdf.CumGamma(upper, alpha + 1.0, beta);
-			cum_upper				= cdf.CumGamma(upper, alpha, beta);
-			}
-		else
-			{
-			cum_upper_plus			= 1.0;
-			cum_upper				= 1.0;
-			}
-
-		double numer				= cum_upper_plus - cum_lower_plus;
-		double denom				= cum_upper - cum_lower;
-		double r_mean				= (denom > 0.0 ? (alpha*beta*numer/denom) : 0.0);
-		rates[i-1]					= r_mean;
-		boundaries[i-1]				= lower;
-
-		//std::cerr << str(boost::format("%6d %12.6f %12.6f") % (i-1) % boundaries[i-1] % rates[i-1]) << std::endl;
-		}
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

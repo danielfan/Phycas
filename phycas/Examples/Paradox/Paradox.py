@@ -74,3 +74,10 @@ mcmc.sample_every = 10    # save tree and parameters every 10 cycles
 
 # Finally, call mcmc(), which starts the MCMC analysis.
 mcmc()
+
+# Summarize the trees, creating pdf files sumt_splits.pdf and sumt_trees.pdf
+# as well as a tree file named sumt_trees.tre
+sumt.outgroup_taxon = 'Oedogonium cardiacum'
+sumt.trees          = 'ShoupLewis.nex.t'
+sumt.burnin         = 101
+sumt()

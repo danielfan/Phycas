@@ -68,6 +68,9 @@ void model_pymod()
 		.def("getFLEXProbParamPrior", &phycas::Model::getFLEXProbParamPrior)
 		.def("setFlexRateUnnorm", &phycas::Model::setFlexRateUnnorm)
 		.def("setFlexProbUnnorm", &phycas::Model::setFlexProbUnnorm)
+#if POLPY_NEWWAY
+		.def("isPinvarModel", &phycas::Model::isPinvarModel)
+#endif
 		.def("setPinvarModel", &phycas::Model::setPinvarModel)
 		.def("setNotPinvarModel", &phycas::Model::setNotPinvarModel)
 		.def("fixPinvar", &phycas::Model::fixPinvar)

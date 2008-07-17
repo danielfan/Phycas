@@ -34,7 +34,10 @@
 #include "phycas/src/cipres/util_copy.hpp"
 #include <numeric>
 
-//#define LOG_SITELIKES
+#if 0 && POLPY_NEWWAY
+//@POL temporary! 
+#include <fstream>
+#endif
 
 #include <iostream>
 using std::cerr;
@@ -643,17 +646,25 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 	const double * stateFreq = &model->getStateFreqs()[0]; //PELIGROSO
 	const double * rateCatProbArray = &rate_probs[0]; //PELIGROSO
 
+#if POLPY_NEWWAY
+    bool is_pinvar = model->isPinvarModel();
+    double pinvar = model->getPinvar();
+    const unsigned * pinvar_states = &constant_states[0]; //PELIGROSO
+#endif
+
 	if (store_site_likes)
 		site_likelihood.clear();
-
-#if defined(LOG_SITELIKES)
-	std::ofstream tmpf("doof.txt", std::ios::out | std::ios::app);
-	tmpf << "pat\tfreqA\tCLAA\tPrA\tfreqC\tCLAC\tPrC\tfreqG\tCLAG\tPrG\tfreqT\tCLAT\tPrT\tuncorr\tcorr\tcount\tlnL" << std::endl;
-#endif
 
 	double lnLikelihood = 0.0;
 	if (focalNeighbor->IsTip())
 		{
+#if 0 && POLPY_NEWWAY
+        unsigned nchar = (unsigned)charIndexToPatternIndex.size();
+        PatternCountType nchar_check = std::accumulate(pattern_counts.begin(), pattern_counts.end(), 0.0, std::plus<PatternCountType>());
+        PHYCAS_ASSERT(nchar = (unsigned)nchar_check);
+        std::vector<double> debug_log_site_like(nchar, DBL_MAX);
+#endif
+
 		const TipData & tipData = *focalNeighbor->GetTipData();
 		double * * * p = tipData.getMutableTransposedPMatrices();
 		calcPMatTranspose(p, tipData.getConstStateListPos(),  focalEdgeLen);
@@ -665,9 +676,6 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 			
 		for (unsigned pat = 0; pat < num_patterns; ++pat)
 			{
-#if defined(LOG_SITELIKES)
-			tmpf << pat << '\t';
-#endif
 			double siteLike = 0.0;
 			for (unsigned r = 0; r < num_rates; ++r)
 				{
@@ -676,21 +684,32 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 				double siteRateLike = 0.0;
                 for (unsigned i = 0; i < num_states; ++i)
                     {
-#if defined(LOG_SITELIKES)
-        			tmpf << stateFreq[i] << '\t';
-		        	tmpf << focalNdCLAPtr[r][i] << '\t';
-			        tmpf << tipPMatT_pat[i] << '\t';
-			        tmpf << (stateFreq[i]*focalNdCLAPtr[r][i]*tipPMatT_pat[i]) << '\t';
-#endif
 					siteRateLike += stateFreq[i] * focalNdCLAPtr[r][i] * tipPMatT_pat[i];
                     }
 				siteLike += rateCatProbArray[r] * siteRateLike;
 				focalNdCLAPtr[r] += num_states;
 				}
+#if POLPY_NEWWAY
+            if (is_pinvar)
+                {
+                double pinvar_like = 0.0;
+                unsigned num_pinvar_states = *pinvar_states++;
+                for (unsigned i = 0; i < num_pinvar_states; ++i)
+                    pinvar_like += stateFreq[*pinvar_states++];
+                //std::cerr << boost::str(boost::format("pat = %2d, n = %2d, pinvar_like = %.5f, siteLike = %.5f") % pat % num_pinvar_states % pinvar_like % siteLike) << std::endl;
+                siteLike = pinvar*pinvar_like + (1.0 - pinvar)*siteLike;
+                }
+#endif
 			double site_lnL = std::log(siteLike);
 
-#if defined(LOG_SITELIKES)
-			tmpf << site_lnL << '\t';
+#if 0 && POLPY_NEWWAY
+            //@POL temporary! This is shockingly inefficient, but then it's only debugging code
+            for (unsigned site_index = 0; site_index < nchar; ++site_index)
+                {
+                unsigned pattern_index = charIndexToPatternIndex[site_index];
+                if (pattern_index == pat)
+                    debug_log_site_like[site_index] = site_lnL;
+                }
 #endif
 
 #if defined(DO_UNDERFLOW_POLICY)
@@ -701,21 +720,25 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 				site_likelihood.push_back(site_lnL);
 			lnLikelihood += counts[pat]*site_lnL;
 
-#if defined(LOG_SITELIKES)
-			tmpf << site_lnL << '\t';
-			tmpf << counts[pat] << '\t';
-			tmpf << lnLikelihood << std::endl;
+			} // pat loop
+
+#if 0 && POLPY_NEWWAY
+        //@POL temporary! 
+        std::ofstream sitelikef("site_likes.txt");
+        sitelikef << "nchar = " << nchar << std::endl;
+        unsigned site_index = 0;
+        for (std::vector<double>::const_iterator lit = debug_log_site_like.begin(); lit != debug_log_site_like.end(); ++lit)
+            {
+            sitelikef << boost::str(boost::format("%d\t%.6f") % (++site_index) % (*lit)) << std::endl;
+            }
+        sitelikef.close();
 #endif
-			}		
+
 #if defined(DO_UNDERFLOW_POLICY)
 		underflow_policy.correctLnLike(lnLikelihood, focalCondLike);
 #endif
-
-#if defined(LOG_SITELIKES)
-		tmpf << "1\t\t\t\t\t" << lnLikelihood << std::endl;
-#endif
 		}
-	else
+	else    // focalNeighbor is not a tip
 		{
 		const InternalData * neighborID = focalNeighbor->GetInternalData();
 		calcPMat(neighborID->getMutablePMatrices(), focalEdgeLen);
@@ -753,13 +776,19 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 				focalNdCLAPtr[r] += num_states;
 				focalNeighborCLAPtr[r] += num_states;
 				}
-			double site_lnL = std::log(siteLike);
 
-#if defined(LOG_SITELIKES)
-			tmpf << '\t';
-			tmpf << pat << '\t';
-			tmpf << site_lnL << '\t';
+#if POLPY_NEWWAY
+            if (is_pinvar)
+                {
+                double pinvar_like = 0.0;
+                unsigned num_pinvar_states = *pinvar_states++;
+                for (unsigned i = 0; i < num_pinvar_states; ++i)
+                    pinvar_like += stateFreq[*pinvar_states++];
+                //std::cerr << boost::str(boost::format("pat = %2d, n = %2d, pinvar_like = %.5f, siteLike = %.5f") % pat % num_pinvar_states % pinvar_like % siteLike) << std::endl;
+                siteLike = pinvar*pinvar_like + (1.0 - pinvar)*siteLike;
+                }
 #endif
+			double site_lnL = std::log(siteLike);
 
 #if defined(DO_UNDERFLOW_POLICY)
 			underflow_policy.correctSiteLike(site_lnL, pat, focalCondLike);
@@ -769,25 +798,12 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 				site_likelihood.push_back(site_lnL);
 			lnLikelihood += counts[pat]*site_lnL;
 
-#if defined(LOG_SITELIKES)
-			tmpf << site_lnL << '\t';
-			tmpf << counts[pat] << '\t';
-			tmpf << lnLikelihood << std::endl;
-#endif
 			}
 #if defined(DO_UNDERFLOW_POLICY)
 		underflow_policy.correctLnLike(lnLikelihood, focalCondLike);
 		underflow_policy.correctLnLike(lnLikelihood, neighborCondLike);
 #endif
-
-#if defined(LOG_SITELIKES)
-		tmpf << "0\t\t\t\t\t" << lnLikelihood << std::endl;
-#endif
 		}
-
-#if defined(LOG_SITELIKES)
-	tmpf.close();
-#endif
 
 	//std::ofstream doof("counts_patterns.txt");
 	//std::vector<double>::iterator sit = site_likelihood.begin();

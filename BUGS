@@ -5,6 +5,20 @@ to fix, and documenting them helps to avoid repeating history. Minor bugs repres
 cosmetic glitches that are easy to work around and do not take long to fix. Minor bugs 
 are best documented in SVN comments.
 
+Bug 5: the "pinvar" bug (fixed in revision 760 on 17 July 2008)
+---------------------------------------------------------------
+Phycas failed the LikelihoodTest test when that test was reinstated by MTH on 16 July.
+This bug caused the log-likelihoods for +I models to be slightly off (5th decimal place).
+It turns out that this bug was caused by the "Rota" bug fix. Rather than implement a
+workaround, POL decided to take the opportunity to redo the +I model likelihood 
+calculations in a more efficient manner (+I was previously being implemented as simple
+one more rate category with a 0.0 rate). Phycas now does not require an additional
+rate category for +I models and instead uses a vector (TreeLikelihood::constant_states)
+that stores the state(s) of potentially constant sites (and also keeps track of 
+sites that are definitely variable). The constant_states vector is built in the function
+TreeLikelihood::buildConstantStatesVector, and the information in constant_states is
+used in TreeLikelihood::harvestLnLFromValidEdge.
+
 Bug 4: the "Yang" bug (fixed in revision 591 on 5 May 2008)
 -----------------------------------------------------------
 Reported by Ziheng Yang on 3 May 2008. The immediate problem that Ziheng had 
