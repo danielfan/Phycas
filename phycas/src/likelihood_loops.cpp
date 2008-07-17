@@ -34,11 +34,6 @@
 #include "phycas/src/cipres/util_copy.hpp"
 #include <numeric>
 
-#if 0 && POLPY_NEWWAY
-//@POL temporary! 
-#include <fstream>
-#endif
-
 #include <iostream>
 using std::cerr;
 using std::endl;
@@ -646,11 +641,9 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 	const double * stateFreq = &model->getStateFreqs()[0]; //PELIGROSO
 	const double * rateCatProbArray = &rate_probs[0]; //PELIGROSO
 
-#if POLPY_NEWWAY
     bool is_pinvar = model->isPinvarModel();
     double pinvar = model->getPinvar();
     const unsigned * pinvar_states = &constant_states[0]; //PELIGROSO
-#endif
 
 	if (store_site_likes)
 		site_likelihood.clear();
@@ -658,13 +651,6 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 	double lnLikelihood = 0.0;
 	if (focalNeighbor->IsTip())
 		{
-#if 0 && POLPY_NEWWAY
-        unsigned nchar = (unsigned)charIndexToPatternIndex.size();
-        PatternCountType nchar_check = std::accumulate(pattern_counts.begin(), pattern_counts.end(), 0.0, std::plus<PatternCountType>());
-        PHYCAS_ASSERT(nchar = (unsigned)nchar_check);
-        std::vector<double> debug_log_site_like(nchar, DBL_MAX);
-#endif
-
 		const TipData & tipData = *focalNeighbor->GetTipData();
 		double * * * p = tipData.getMutableTransposedPMatrices();
 		calcPMatTranspose(p, tipData.getConstStateListPos(),  focalEdgeLen);
@@ -689,7 +675,7 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 				siteLike += rateCatProbArray[r] * siteRateLike;
 				focalNdCLAPtr[r] += num_states;
 				}
-#if POLPY_NEWWAY
+
             if (is_pinvar)
                 {
                 double pinvar_like = 0.0;
@@ -699,18 +685,8 @@ double TreeLikelihood::harvestLnLFromValidEdge(
                 //std::cerr << boost::str(boost::format("pat = %2d, n = %2d, pinvar_like = %.5f, siteLike = %.5f") % pat % num_pinvar_states % pinvar_like % siteLike) << std::endl;
                 siteLike = pinvar*pinvar_like + (1.0 - pinvar)*siteLike;
                 }
-#endif
-			double site_lnL = std::log(siteLike);
 
-#if 0 && POLPY_NEWWAY
-            //@POL temporary! This is shockingly inefficient, but then it's only debugging code
-            for (unsigned site_index = 0; site_index < nchar; ++site_index)
-                {
-                unsigned pattern_index = charIndexToPatternIndex[site_index];
-                if (pattern_index == pat)
-                    debug_log_site_like[site_index] = site_lnL;
-                }
-#endif
+			double site_lnL = std::log(siteLike);
 
 #if defined(DO_UNDERFLOW_POLICY)
 			underflow_policy.correctSiteLike(site_lnL, pat, focalCondLike);
@@ -721,18 +697,6 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 			lnLikelihood += counts[pat]*site_lnL;
 
 			} // pat loop
-
-#if 0 && POLPY_NEWWAY
-        //@POL temporary! 
-        std::ofstream sitelikef("site_likes.txt");
-        sitelikef << "nchar = " << nchar << std::endl;
-        unsigned site_index = 0;
-        for (std::vector<double>::const_iterator lit = debug_log_site_like.begin(); lit != debug_log_site_like.end(); ++lit)
-            {
-            sitelikef << boost::str(boost::format("%d\t%.6f") % (++site_index) % (*lit)) << std::endl;
-            }
-        sitelikef.close();
-#endif
 
 #if defined(DO_UNDERFLOW_POLICY)
 		underflow_policy.correctLnLike(lnLikelihood, focalCondLike);
@@ -777,7 +741,6 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 				focalNeighborCLAPtr[r] += num_states;
 				}
 
-#if POLPY_NEWWAY
             if (is_pinvar)
                 {
                 double pinvar_like = 0.0;
@@ -787,8 +750,8 @@ double TreeLikelihood::harvestLnLFromValidEdge(
                 //std::cerr << boost::str(boost::format("pat = %2d, n = %2d, pinvar_like = %.5f, siteLike = %.5f") % pat % num_pinvar_states % pinvar_like % siteLike) << std::endl;
                 siteLike = pinvar*pinvar_like + (1.0 - pinvar)*siteLike;
                 }
-#endif
-			double site_lnL = std::log(siteLike);
+
+            double site_lnL = std::log(siteLike);
 
 #if defined(DO_UNDERFLOW_POLICY)
 			underflow_policy.correctSiteLike(site_lnL, pat, focalCondLike);
@@ -804,17 +767,6 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 		underflow_policy.correctLnLike(lnLikelihood, neighborCondLike);
 #endif
 		}
-
-	//std::ofstream doof("counts_patterns.txt");
-	//std::vector<double>::iterator sit = site_likelihood.begin();
-	//for (PatternMapType::iterator pit = pattern_map.begin(); pit != pattern_map.end(); ++pit, ++sit)
-	//	{
-	//	PHYCAS_ASSERT(sit != site_likelihood.end());
-	//	doof << str(boost::format("%12.5f\t%.1f\t|\t") % (*sit) % pit->second);
-	//	std::copy(pit->first.begin(), pit->first.end(), std::ostream_iterator<int>(doof, "\t")); 
-	//	doof << std::endl;
-	//	}
-	//doof.close();
 
 	return lnLikelihood;
 	}

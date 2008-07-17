@@ -36,11 +36,6 @@
 // formerly in tree_likelihood.inl
 #include "phycas/src/edge_endpoints.hpp"
 
-#if 0 && POLPY_NEWWAY
-//@POL temporary!
-#   include <fstream>
-#endif
-
 static int8_t codon_state_codes[] =
 	{
 	0,	// 0 AAA
@@ -2664,25 +2659,15 @@ void TreeLikelihood::copyDataFromDiscreteMatrix(
 	{
 	nTaxa = mat.getNTax();
 
-#if POLPY_NEWWAY
     // These assignments should be kept before compressDataMatrix because they are used there
 	state_list = mat.getStateList(); 
 	state_list_pos = mat.getStateListPos();
-#endif
 
     // The compressDataMatrix function first erases, then builds, both pattern_map and 
 	// pattern_counts using the uncompressed data contained in mat
 	num_patterns = compressDataMatrix(mat);
 
-#if POLPY_NEWWAY
     buildConstantStatesVector();
-#endif
-
-#if 0
-    // moved above compressDataMatrix call
-	state_list = mat.getStateList(); 
-	state_list_pos = mat.getStateListPos();
-#endif
 
 	// size of likelihood_rate_site vector needs to be revisited if the number of rates subsequently changes 
 	recalcRelativeRates();
@@ -2823,25 +2808,12 @@ void TreeLikelihood::prepareForLikelihood( //POL_BOOKMARK TreeLikelihood::prepar
 	// are changed to vectors
 	}
 
-#if POLPY_NEWWAY
-//#define DEBUG_CONSTANT_DETERMINATION
 /*----------------------------------------------------------------------------------------------------------------------
 |	Builds up the vector data member `constant_states' based on the patterns in `pattern_map'. Returns number of 
 |   potentially constant patterns found.
 */
 unsigned TreeLikelihood::buildConstantStatesVector()
 	{
-    #if defined(DEBUG_CONSTANT_DETERMINATION)
-        std::ofstream debugf("constness.txt");
-        if (model->isPinvarModel())
-            debugf << "pinvar model" << std::endl;
-        else
-            debugf << "non-pinvar model" << std::endl;
-        debugf << "pattern\tstates\tcommon" << std::endl;
-        const char * code_lookup = "ACGT";
-        unsigned j = 0;
-    #endif
-
     PHYCAS_ASSERT(!pattern_map.empty());
     constant_states.clear();
 
@@ -2852,17 +2824,11 @@ unsigned TreeLikelihood::buildConstantStatesVector()
 
     for (PatternMapType::const_iterator pat = pattern_map.begin(); pat != pattern_map.end(); ++pat)
         {
-        #if defined(DEBUG_CONSTANT_DETERMINATION)
-            debugf << boost::str(boost::format("%6d\t|") % ++j);
-        #endif
-
         bool site_potentially_constant = true;
         for (unsigned taxon = 0; taxon < nTaxa; ++taxon)
             {
-            #if !defined(DEBUG_CONSTANT_DETERMINATION)  // Note the !
-                if (!site_potentially_constant)                
-                    break;
-            #endif
+            if (!site_potentially_constant)                
+                break;
 
             // Reminder of how data members state_list and state_list_pos are laid out:
             //                                         ?         N      {CGT}  {ACG}    R,(AG)    Y
@@ -2875,10 +2841,6 @@ unsigned TreeLikelihood::buildConstantStatesVector()
             unsigned n = (unsigned)state_list[pos];
             curr_states.clear();
 
-            #if defined(DEBUG_CONSTANT_DETERMINATION)
-                std::string code_repr = "";
-            #endif
-
             // Insert all states for the current taxon into the curr_states set
             for (unsigned x = pos + 1; x < pos + n + 1; ++x)
                 {
@@ -2886,10 +2848,6 @@ unsigned TreeLikelihood::buildConstantStatesVector()
                 PHYCAS_ASSERT(c >= 0);
                 if (site_potentially_constant)
                     curr_states.insert(c);
-
-                #if defined(DEBUG_CONSTANT_DETERMINATION)
-                    code_repr += code_lookup[c];
-                #endif
                 }
 
             if (taxon == 0)
@@ -2912,10 +2870,6 @@ unsigned TreeLikelihood::buildConstantStatesVector()
                     common_states.insert(xset.begin(), xset.end());
                     }
                 }
-
-            #if defined(DEBUG_CONSTANT_DETERMINATION)
-                debugf << code_repr.c_str() << "|";
-            #endif
             }
 
         if (site_potentially_constant)
@@ -2931,33 +2885,9 @@ unsigned TreeLikelihood::buildConstantStatesVector()
             {
             constant_states.push_back(0);
             }
-
-        #if defined(DEBUG_CONSTANT_DETERMINATION)
-            // Output the set of states common to all taxa for this pattern
-            debugf << "\t{";
-            if (site_potentially_constant)
-                {
-                for (std::set<int>::const_iterator it = common_states.begin(); it != common_states.end(); ++it)
-                    debugf << code_lookup[*it];
-                }
-            debugf << "}" << std::endl;
-        #endif
-
         }
-    #if defined(DEBUG_CONSTANT_DETERMINATION)
-        debugf << "num_potentially_constant = " << num_potentially_constant << std::endl;
-        debugf << "total_patterns           = " << (unsigned)pattern_map.size() << std::endl;
-        debugf << "constant_states vector:" << std::endl;
-        for (std::vector<unsigned>::const_iterator it = constant_states.begin(); it != constant_states.end(); ++it)
-            {
-            debugf << (*it) << "|";
-            }
-        debugf << std::endl;
-        debugf.close();
-    #endif
     return num_potentially_constant;
     }
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Copies data from `mat' to the map `pattern_map'. The resulting map holds pairs whose key is the pattern for one site

@@ -111,9 +111,7 @@ class Model	{
 		void							normalizeRatesAndProbs(std::vector<double> & rates, std::vector<double> & probs) const;
 		
 		// Member functions related to proportion of invariable sites
-#if POLPY_NEWWAY
         bool							isPinvarModel();
-#endif
         void							setPinvarModel();
 		void							setNotPinvarModel();
 		bool							pinvarFixed() const;

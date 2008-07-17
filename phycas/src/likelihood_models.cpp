@@ -54,7 +54,6 @@ void Model::recalcRatesAndProbs( //POL_BOOKMARK Model::recalcRatesAndProbs
 		    PHYCAS_ASSERT(pinvar < 1.0);
 		    double one_minus_pinvar = 1.0 - pinvar;
 
-#if POLPY_NEWWAY
 		    // First calculate the gamma rates alone
 		    std::vector<double> gamma_rates;
 		    recalcGammaRatesAndBoundaries(gamma_rates, boundaries);
@@ -62,13 +61,6 @@ void Model::recalcRatesAndProbs( //POL_BOOKMARK Model::recalcRatesAndProbs
 		    // Copy the rate probabilities directly
 		    probs.resize(num_gamma_rates, 0.0);
 		    std::copy(gamma_rate_probs.begin(), gamma_rate_probs.end(), probs.begin());
-
-            //temporary!
-            //std::cerr << "\nRate probability vector:" << std::endl;
-            //for (unsigned i = 0; i < num_gamma_rates; ++i)
-            //    {
-            //    std::cerr << boost::str(boost::format("%6d %12.5f") % (i+1) % probs[i]) << std::endl;
-            //    }
 
 		    // Adjust gamma_rates using pinvar and save to rates vector
 		    rates.resize(num_gamma_rates, 0.0);
@@ -78,41 +70,6 @@ void Model::recalcRatesAndProbs( //POL_BOOKMARK Model::recalcRatesAndProbs
 			    {
 			    *rates_iter++ = (*gamma_rates_iter++)/one_minus_pinvar;
 			    }
-
-            //temporary!
-            //std::cerr << "\nGamma rates vector before correction:" << std::endl;
-            //for (unsigned i = 0; i < num_gamma_rates; ++i)
-            //    {
-            //    std::cerr << boost::str(boost::format("%6d %12.5f") % (i+1) % gamma_rates[i]) << std::endl;
-            //    }
-
-            //temporary!
-            //std::cerr << "\nGamma rates vector after correction:" << std::endl;
-            //for (unsigned i = 0; i < num_gamma_rates; ++i)
-            //    {
-            //    std::cerr << boost::str(boost::format("%6d %12.5f") % (i+1) % rates[i]) << std::endl;
-            //    }
-#else
-		    // First calculate the gamma rates alone
-		    std::vector<double> gamma_rates;
-		    recalcGammaRatesAndBoundaries(gamma_rates, boundaries);
-
-		    // Build up the rates and probs vectors using the local vector gamma_rates and the data members 
-		    // pinvar and gamma_rate_probs
-		    rates.resize(num_gamma_rates + 1, 0.0);
-		    probs.resize(num_gamma_rates + 1, 0.0);
-		    std::vector<double>::iterator rates_iter = rates.begin();
-		    std::vector<double>::iterator probs_iter = probs.begin();
-		    std::vector<double>::const_iterator gamma_probs_iter = gamma_rate_probs.begin();
-		    std::vector<double>::const_iterator gamma_rates_iter = gamma_rates.begin();
-		    (*rates_iter++) = 0.0;
-		    (*probs_iter++) = pinvar;
-		    for (unsigned i = 0; i < num_gamma_rates; ++i)
-			    {
-			    *rates_iter++ = (*gamma_rates_iter++)/one_minus_pinvar;
-			    *probs_iter++ = (*gamma_probs_iter++)*one_minus_pinvar;
-			    }
-#endif
 		    }
 	    else
 		    {

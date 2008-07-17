@@ -245,11 +245,7 @@ inline void Model::normalizeFreqs()
 */
 inline unsigned Model::getNRatesTotal() const
 	{
-#if POLPY_NEWWAY
 	return num_gamma_rates;
-#else
-	return num_gamma_rates + (is_pinvar_model ? 1 : 0);
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -705,7 +701,6 @@ inline void Model::normalizeRatesAndProbs(
 		}
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the current value of the data member `is_pinvar_model'.
 */
@@ -713,7 +708,6 @@ inline bool Model::isPinvarModel()
 	{
 	return is_pinvar_model;
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the data member `is_pinvar_model' to true. A subsequent call to the createParameters member function will
