@@ -2,7 +2,7 @@
 
 begin paup;
   set nowarnroot;
-  exe 'C:\Synchronized\Projects\phycastmp\phycas\Tests\Data\nyldna4.nex';
+  [variable output ] exe 'C:\Synchronized\Projects\phycastmp\phycas\Tests\Data\nyldna4.nex';
 end;
 
 

@@ -81,7 +81,7 @@ import PDFGen
 import Phylogeny
 import ProbDist
 import ReadNexus
-import sys
+import sys, os
 from Phycas.PhycasCommand import FileFormats, REPLACE, APPEND, ADD_NUMBER, phycas_help
 # keep the wx import after the reading of the startup so that it can be optional
 if useWxPhycas():
@@ -144,3 +144,11 @@ if _check_for_updates and sys.argv and not sys.argv[0]:
     import phycas.Utilities.PhycasUpdateCheck as PhycasUpdateCheck
     output_stream = OutputFilter(getDefaultOutFilter(), phycas.output)
     PhycasUpdateCheck.runPhycasUpdateChecker(output_stream, _phycas_update_url, _phycas_branch, _phycas_revision)
+
+def touch(f):
+    "updates the time stamp of the path `f` or creates a file with that uri."
+    if os.path.exists(f):
+        os.utime(f, None)
+    else:
+        fo = file(f, "w")
+        fo.close()
