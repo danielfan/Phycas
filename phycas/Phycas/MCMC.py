@@ -1,4 +1,4 @@
-from phycas.Phycas.PhycasCommand import *
+from phycas.Utilities.PhycasCommand import *
 from phycas import model
 from phycas.Phycas.MCMCImpl import MCMCImpl
 from phycas.ProbDist import BetaDist, ExponentialDist, InverseGammaDist

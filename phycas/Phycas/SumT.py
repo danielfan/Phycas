@@ -1,4 +1,4 @@
-from phycas.Phycas.PhycasCommand import *
+from phycas.Utilities.PhycasCommand import *
 from phycas.Phycas.SumTImpl import TreeSummarizer
 class SumT(PhycasCommand):
     def __init__(self, p):

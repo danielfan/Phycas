@@ -1,5 +1,5 @@
 from copy import copy
-from phycas.Phycas.PhycasCommand import *
+from phycas.Utilities.PhycasCommand import *
 from phycas.ProbDist import BetaDist, ExponentialDist, InverseGammaDist
 class Model(PhycasCommand):
     def __init__(self, p):

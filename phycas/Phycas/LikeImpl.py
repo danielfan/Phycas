@@ -1,7 +1,7 @@
 import os,sys,math,random
 from phycas import *
 from MCMCManager import LikelihoodCore
-from phycas.Phycas.PhycasCommand import *
+from phycas.Utilities.PhycasCommand import *
 from phycas.ReadNexus import NexusReader
 
 class LikeImpl(object):

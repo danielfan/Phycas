@@ -1,6 +1,6 @@
 import os,sys,math,random
 from phycas import *
-from phycas.Phycas.PhycasCommand import *
+from phycas.Utilities.PhycasCommand import *
 from MCMCManager import MCMCManager
 from phycas.ProbDist import StopWatch
 from phycas.ReadNexus import NexusReader

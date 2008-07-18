@@ -3,7 +3,7 @@ import os,sys,math,random
 #from phycas.TreeViewer import *
 from phycas import *
 from phycas import useWxPhycas
-from phycas.Phycas.PhycasCommand import *
+from phycas.Utilities.PhycasCommand import *
 
 class TreeSummarizer(object):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

@@ -1,4 +1,4 @@
-from phycas.Phycas.PhycasCommand import *
+from phycas.Utilities.PhycasCommand import *
 from phycas import model
 from phycas.ProbDist import ExponentialDist
 from phycas.Phycas.SimImpl import SimImpl

@@ -82,7 +82,7 @@ import Phylogeny
 import ProbDist
 import ReadNexus
 import sys, os
-from Phycas.PhycasCommand import FileFormats, REPLACE, APPEND, ADD_NUMBER, phycas_help
+from Utilities.PhycasCommand import FileFormats, REPLACE, APPEND, ADD_NUMBER, phycas_help
 # keep the wx import after the reading of the startup so that it can be optional
 if useWxPhycas():
     import wxPhycas
