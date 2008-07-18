@@ -93,11 +93,57 @@ sumt.help
 will display the help information for the sumt command object.
 """ % t
 
-    def __call__(self):
+    def _print_help(self, a, level=0):
+        if isinstance(a, PhycasCommand):
+            a.help()
+        elif isinstance(a, PhycasCommandOutputOptions):
+            print (str(a))
+        elif a is None:
+            print("None is the Python object used to represent the concept 'undefined' or 'not applicable'")
+        elif a is True:
+            print("True is the Python's representation of the boolean condition 'true'.")
+        elif a is False:
+            print("False is the Python's representation of the boolean condition 'false'.")
+        elif isinstance(a, int) or isinstance(a, long):
+            print("The integer", str(a))
+        elif isinstance(a, float):
+            print("The real number", str(a))
+        elif isinstance(a, str):
+            print("The string '%s' if you would like to see the methods available for a string use the command 'help(str)'", repr(s))
+        elif isinstance(a, list):
+            print("A python list. Use [number] to access elements in the list. For instance, x[0] is the first element of list x.\nUse 'help(list)' to see a list of available methods")
+        elif isinstance(a, list):
+            print("A python tuple. Use [number] to access elements in the list. For instance, x[0] is the first element of tuple x.\nUse 'help(tuple)' to see a list of available methods")
+        elif isinstance(a, dict):
+            print("A python dict. Use [key] to access elements in the list. For instance, x[2] returns the value associated with the key 2 (if there is such an element in the dictionary).\nUse 'help(dict)' to see a list of available methods")
+        else:
+            import pydoc
+            d = pydoc.getdoc(a)
+            if isinstance(a, type):
+                m = pydoc.allmethods(a)
+                pub_methods = [k for k in m.iterkeys() if not k.startswith("_")]
+                if pub_methods or d:
+                    if level == 0:
+                        print("\nThis is a class or python type")
+                    else:
+                        print("Information about this type:")
+                    if d:
+                        print(d)
+                    if pub_methods:
+                        print("The following public methods are available:\n%s" % '\n'.join(pub_methods))
+                else:
+                    print("\nThis is an undocumented class or python type without public methods")
+            else:
+                print("\n%s\nAn instance of type %s." % (repr(a), a.__class__.__name__))
+                self._print_help(a.__class__, level+1)
+
+    def __call__(self, *args):
         """Returns the result of __str__, so that users can omit the () on the
         and simply type "cmd.help" to see the help message."""
-        print(str(self))
-
+        if len(args) == 0:
+            print(str(self))
+        for a in args:
+            self._print_help(a)
     def __repr__(self):
         return str(self)
 

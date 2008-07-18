@@ -80,6 +80,7 @@ import Likelihood
 import PDFGen
 import Phylogeny
 import ProbDist
+from ProbDist import BernoulliDist, BetaDist, BinomialDist, DirichletDist, ExponentialDist, GammaDist, ImproperUniformDist, InverseGammaDist, NormalDist, UniformDist
 import ReadNexus
 import sys, os
 from Utilities.PhycasCommand import FileFormats, REPLACE, APPEND, ADD_NUMBER, phycas_help

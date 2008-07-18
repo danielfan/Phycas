@@ -87,7 +87,10 @@ This manual begins as a tutorial by showing you how to perform a simple analysis
 Phycas is an extension of Python, so to use it you must first start Python. In this section, you will learn how to invoke Phycas commands from the Python command line. After you become familiar with the basic commands, you will probably want to create a file containing the Phycas commands for a particular analysis. Creating such a file (a Python {\em script}) makes it easier to remember exactly what analyses you performed at some later time. If you want to redo an analysis, having the commands in a script file means you do not have to type the majority of the commands over again.
 
 \subsection{First things first}
-
+There are two ways to run Phycas. 
+The general way is to invoke python from a terminal.
+If you are running the Mac OS you can obtain a \path{Phycas.app} bundle that is built around the open-source terminal iTerm.
+\subsubsection{Starting from a terminal}
 To start Python on most operating systems, open a console window (a.k.a. terminal window) and type the word \code{python}. This should generate output similar to the following:
 \begin{verbatim}
 Python 2.5.1 (r251:54863, Oct 30 2007, 13:54:11) 
@@ -103,6 +106,15 @@ At the \code{>>>} prompt, type \code{from phycas import *}, like this:
 \end{verbatim}
 
 After pressing return, you will see only another Python \code{>>>} prompt, but something important has happened nevertheless. Phycas is an ``extension'' of Python, but you must import extensions in order for their capabilities to be available. The import statement you typed means ``import everything phycas has to offer.'' 
+
+\subsubsection{Starting from the Phycas.app bundle}
+If you are using the \path{Phycas.app} bundle (on Mac OS), you can launch Phycas by double clicking on the Phycas icon (this is the \path{.app} bundle, the Mac Finder simply hides the \path{.app} suffix from users).
+The Phycas application will then show up in your dock and the window will be a terminal that has already invoked Python
+and issued the ``from phycas import *'' command mentioned in the previous section.
+
+All the instructions for the rest of the manual will be executed the same way regardless of whether Phycas running from a generic terminal or the \path{Phycas.app} bundle.
+
+
 
 \subsection{Getting help}
 
