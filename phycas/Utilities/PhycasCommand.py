@@ -134,8 +134,12 @@ will display the help information for the sumt command object.
                 else:
                     print("\nThis is an undocumented class or python type without public methods")
             else:
-                print("\n%s\nAn instance of type %s." % (repr(a), a.__class__.__name__))
-                self._print_help(a.__class__, level+1)
+                print("\n%s\n\nAn instance of type %s.\n" % (repr(a), a.__class__.__name__))
+                if callable(a):
+                    if d:
+                        print(d)
+                else:
+                    self._print_help(a.__class__, level+1)
 
     def __call__(self, *args):
         """Returns the result of __str__, so that users can omit the () on the
