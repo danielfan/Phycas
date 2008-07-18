@@ -7,9 +7,8 @@ class Like(PhycasCommand):
         args = ( 
                 ("data_file_name",  None,                                     "Name of file in which to save simulated data'"),
                 ("model",           model,                                    "Specifies the model to use. By default, uses the predefined model object. Type model.help to set the settings for this model."),
-                ("tree_source",     'usertree',                               "If 'usertree', the tree description should be supplied in 'tree_topology'; if 'random', an edge length distribution should be supplied in 'starting_edgelen_dist'"),
+                ("tree_source",     'usertree',                               "If 'usertree', the tree description should be supplied in 'tree_topology'; if 'random', an edge length distribution should be supplied in 'starting_edgelen_dist'", EnumArgValidate(['random','usertree'])),
                 ("tree_topology",   '(1:0.02,2:0.02,(3:0.01,4:0.01):0.01)',   "The tree topology (with branch lengths) of the model tree to be used for simulation. Used only if tree_source is 'usertree'"),
-                ("default_model",   'hky',                                    "Can be 'jc', 'hky' or 'gtr'"),
                 ("starting_edgelen_dist",  ExponentialDist(10.0),             "Used to select the starting edge lengths when tree_source is 'random'"),
                 )
         PhycasCommand.__init__(self, p, args, "like", "Calculates the log-likelihood under the current model.")

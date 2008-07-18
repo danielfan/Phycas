@@ -668,7 +668,10 @@ class PhycasCmdOpts(object):
                         print c
                     except:
                         raise
-                    raise ValueError("%s is not a valid value for %s.  %s" % (value, name, c))
+                    if value.__class__.__name__ == 'str':
+                        raise ValueError("'%s' is not a valid value for %s. %s" % (value, name, c))
+                    else:
+                        raise ValueError("%s is not a valid value for %s. %s" % (value, name, c))
             self._command.__dict__[name] = self._current[name]
         else:
             print 'name  =',name
@@ -713,6 +716,25 @@ def TreeSourceValidate(opts, v):
 
 def BoolArgValidate(opts, v):
     return bool(v)
+
+class EnumArgValidate(object):
+    def __init__(self, valid_values):
+        self.valid_tuple = tuple(valid_values)
+        for_display = []
+        for v in self.valid_tuple:
+            if v.__class__.__name__ == 'str':
+                for_display.append("'%s'" % v)
+            else:
+                for_display.append("%s" % str(v))
+        self.display_str = ','.join(for_display)
+    def __call__(self, opts, v):
+        if v.__class__.__name__ != 'str':
+            raise ValueError('Value must be a Python string')
+        if v not in self.valid_tuple:
+            raise ValueError("Value must be one of the following: %s" % self.valid_values_as_str)
+        return v
+    def get_description(self):
+        return "Must be one of the following: %s" % self.valid_values_as_str
 
 class IntArgValidate(object):
     def __init__(self, min=None, max=None):

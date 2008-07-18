@@ -4,7 +4,7 @@ from phycas.ProbDist import BetaDist, ExponentialDist, InverseGammaDist
 class Model(PhycasCommand):
     def __init__(self, p):
         args = ( 
-                ("type",                   'hky',                           "Can be 'jc', 'hky' or 'gtr'"),
+                ("type",                   'hky',                           "Can be 'jc', 'hky' or 'gtr'", EnumArgValidate(['jc', 'hky', 'gtr'])),
                 ("relrate_prior",          ExponentialDist(1.0),            "The prior distribution for individual GTR relative rate parameters"),
                 ("relrates",               [1.0, 4.0, 1.0, 1.0, 4.0, 1.0] , "The current values for GTR relative rates. These should be specified in this order: A<->C, A<->G, A<->T, C<->G, C<->T, G<->T."),
                 ("fix_relrates",           False,                           "If True, GTR relative rates will not be modified during the course of an MCMC analysis", BoolArgValidate),
