@@ -6,25 +6,25 @@ class Model(PhycasCommand):
         args = ( 
                 ("type",                   'hky',                           "Can be 'jc', 'hky' or 'gtr'"),
                 ("relrate_prior",          ExponentialDist(1.0),            "The prior distribution for individual GTR relative rate parameters"),
-                ("relrates",               [1.0, 4.0, 1.0, 1.0, 4.0, 1.0] , "The starting values for GTR relative rates"),
+                ("relrates",               [1.0, 4.0, 1.0, 1.0, 4.0, 1.0] , "The current values for GTR relative rates. These should be specified in this order: A<->C, A<->G, A<->T, C<->G, C<->T, G<->T."),
                 ("fix_relrates",           False,                           "If True, GTR relative rates will not be modified during the course of an MCMC analysis", BoolArgValidate),
                 ("kappa_prior",            ExponentialDist(1.0),            "The prior distribution for the kappa parameter in an HKY model"),
-                ("kappa",                  4.0,                             "The starting value for the kappa parameter in an HKY model", FloatArgValidate(min=0.01)),
+                ("kappa",                  4.0,                             "The current value for the kappa parameter in an HKY model", FloatArgValidate(min=0.01)),
                 ("fix_kappa",              False,                           "If True, the HKY kappa parameter will not be modified during the course of an MCMC analysis", BoolArgValidate),
                 ("num_rates",              1,                               "The number of relative rates used for the discrete gamma rate heterogeneity submodel; default is rate homogeneity (i.e. 1 rate)", IntArgValidate(min=1)),
                 ("gamma_shape_prior",      ExponentialDist(1.0),            "The prior distribution for the shape parameter of the gamma among-site rate distribution"),
-                ("gamma_shape",            0.5,                             "The starting value for the gamma shape parameter", FloatArgValidate(min=0.01)),
+                ("gamma_shape",            0.5,                             "The current value for the gamma shape parameter", FloatArgValidate(min=0.01)),
                 ("fix_shape",              False,                           "If True, the gamma shape parameter will not be modified during the course of an MCMC analysis", BoolArgValidate),
                 ("use_inverse_shape",      False,                           "If True, gamma_shape_prior is applied to 1/shape rather than shape", BoolArgValidate),
                 ("pinvar_model",           False,                           "If True, an invariable sites submodel will be applied and the parameter representing the proportion of invariable sites will be estimated", BoolArgValidate),
                 ("pinvar_prior",           BetaDist(1.0, 1.0),              "The prior distribution for pinvar, the proportion of invariable sites parameter"),
-                ("pinvar",                 0.2,                             "The starting value of pinvar, the proportion of invariable sites parameter", ProbArgValidate()),
+                ("pinvar",                 0.2,                             "The current value of pinvar, the proportion of invariable sites parameter", ProbArgValidate()),
                 ("fix_pinvar",             False,                           "If True, the proportion of invariable sites parameter (pinvar) will not be modified during the course of an MCMC analysis", BoolArgValidate),
                 ("base_freq_param_prior",  ExponentialDist(1.0),            "The prior distribution for the individual base frequency parameters; these parameters, when normalized to sum to 1, represent the equilibrium proportions of the nucleotide states"),
-                ("base_freqs",             [1.0, 1.0, 1.0, 1.0],            "The starting values for the four base frequency parameters"),
+                ("base_freqs",             [1.0, 1.0, 1.0, 1.0],            "The current values for the four base frequency parameters"),
                 ("fix_freqs",              False,                           "If True, the base frequencies will not be modified during the course of an MCMC analysis", BoolArgValidate),
                 )
-        PhycasCommand.__init__(self, p, args, "model", "Defines a substitutio model.")
+        PhycasCommand.__init__(self, p, args, "model", "Defines a substitution model.")
 
     def saveas(self):
         new_model = Model(self.phycas)
