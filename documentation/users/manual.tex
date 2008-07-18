@@ -35,6 +35,8 @@
 \newcommand{\term}[1]{{\bfseries #1}\index{#1}}
 \newcommand{\setting}[1]{{\tt \small #1}\index{#1}}
 
+\newfont{\bftt}{cmtt10}
+
 % index stuff
 \usepackage{makeidx}
 \makeindex
@@ -316,14 +318,23 @@ All scripting-based languages (R, Python, Perl, Ruby) are relatively slow compar
 
 This section lists all currently available Phycas settings. You will find more if you look at the \code{Phycas.\_\_init\_\_} method in the \pathname{Phycas.py} file, but be forewarned that settings found in \pathname{Phycas.py} but not listed here are experimental and not fully tested --- use at your own risk. Please do not ask for help with undocumented settings: we will document them here when we feel they are ready to be used.
 
-\subsection{Settings used by \code{mcmc()}}\label{subsec:mcmcsettings}
+\subsection{Settings used by \code{model}}\label{subsec:modelsettings}
+\input{model}
+
+\subsection{Settings used by \code{mcmc}}\label{subsec:mcmcsettings}
 \input{mcmc}
 
-\subsection{Settings used by \code{sumt()}}\label{subsec:sumtsettings}
+\subsection{Settings used by \code{sumt}}\label{subsec:sumtsettings}
 \input{sumt}
 
-\subsection{Settings related to edges}\label{subsec:edgesettings}
-\input{edges}
+\subsection{Settings used by \code{like}}\label{subsec:likesettings}
+\input{like}
+
+\subsection{Settings used by \code{sim}}\label{subsec:simsettings}
+\input{sim}
+
+%\subsection{Settings related to edges}\label{subsec:edgesettings}
+%\input{edges}
 
 \subsection{Settings related to models}\label{subsec:modelsettings}
 NOT YET WRITTEN

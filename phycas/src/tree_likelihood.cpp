@@ -2817,6 +2817,17 @@ const std::vector<unsigned> & TreeLikelihood::getListOfAllMissingSites() const
     return all_missing;
     }
 
+#if 0
+/*----------------------------------------------------------------------------------------------------------------------
+|   Returns a list of all sites with patterns comprising only two primary states and no missing data or ambiguities for
+|   any taxon.
+*/
+std::vector<unsigned> TreeLikelihood::findDataBipartitions()
+    {
+    // needs to be written
+    }
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Builds up the vector data member `constant_states' based on the patterns in `pattern_map'. The `constant_states' 
 |   vector has a similar structure to the `state_list' vector. Here is an example `constant_states' vector for 4 sites:
@@ -3097,7 +3108,7 @@ unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix &
 
 		// Find pattern in patternToIndex, which provides a list of indices of sites having that pattern
 		// For each site index in the list, add an element to the map charIndexToPatternIndex
-		// Now, charIndexToPatternIndex[i] points to the index in pattern_map for the pattern found for site i
+		// Now, charIndexToPatternIndex[i] points to the index in pattern_map for the pattern found at site i
 		const IndexList & inds = patternToIndex[mapit->first];
 		for (IndexList::const_iterator indIt = inds.begin(); indIt != inds.end(); ++indIt)
 			{

@@ -585,7 +585,32 @@ class PhycasCmdOpts(object):
             if transf is not None:
                 self._transformer[name] = transf
             self._command.__dict__[name] = self._current[name]
-
+    def _latex(self):
+        """Generates LaTeX description list for inclusion in the Phycas manual"""
+        latex = ""
+        latex += '\\begin{description}\n'
+        for o in self._optionsInOrder:
+            o_name = o[0].lower()
+            name = o_name.replace('_','\_')
+            o_default_value = o[1]
+            default_value = None
+            c = o_default_value.__class__.__name__
+            #print str(o_default_value),'-->',c
+            if c == 'str':
+                default_value = "{\\bftt '%s'}" % o_default_value
+            elif c == 'Model':
+                default_value = "predefined model object"
+            else:
+                default_value = '{\\bftt  %s}' % str(o_default_value)
+            o_descrip = o[2]
+            descrip = o_descrip.replace('_','\_')
+            latex += '\item[\\bftt  %s] %s' % (name,descrip)
+            if default_value:
+                latex +=  ' (default: %s)\n' % default_value
+            else:
+                latex +=  '\n'
+        latex += '\\end{description}\n'
+        return latex
     def _help_str_list(self, pref=""):
         """Generates a list of strings formatted for displaying help
         Assumes that PhycasTablePrinter._reset_term_width has been called 
@@ -750,6 +775,7 @@ class PhycasCommandHelp(object):
             return "\n".join([self.explain(), "\n", self.current()])
         else:
             return "\n" + self.explain()
+            
     def explain(self):
         PhycasTablePrinter._reset_term_width()
         command = self.command
@@ -808,6 +834,26 @@ class PhycasCurrentValuesHelper:
     def __repr__(self):
         return str(self)
 
+class PhycasManualGenerator(object):
+    def __init__(self, command, cmd_name, cmd_descrip):
+        self.command = command
+        self.cmd_name = cmd_name
+        self.cmd_descrip = cmd_descrip
+
+    def manual(self):
+        f = open(self.command.help.cmd_name+'.tex', 'w')
+        opts = self.command.__dict__["_options"]
+        f.write(opts._latex())
+        f.close()
+
+    def __str__(self):
+        """Allows users to avoid using function call syntax"""
+        self.manual()
+        
+    def __call__(self):
+        """Creates a LaTeX file whose name is <command name>.tex that can be included in the Phycas manual"""
+        self.manual()
+
 class PhycasCommand(object):
 
     def __init__(self, phycas, option_defs, cmd_name, cmd_descrip, output_options=None):
@@ -823,6 +869,8 @@ class PhycasCommand(object):
         h = PhycasCommandHelp(self, cmd_name, cmd_descrip)
         self.__dict__["help"] = h
         self.__dict__["current"] = PhycasCurrentValuesHelper(h)
+        m = PhycasManualGenerator(self, cmd_name, cmd_descrip)
+        self.__dict__["manual"] = m
 
     def __setattr__(self, name, value):
         nl = name.lower()

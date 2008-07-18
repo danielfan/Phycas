@@ -14,7 +14,7 @@ class Sim(PhycasCommand):
                 ("random_seed",     0,                                        "Determines the random number seed used; specify 0 to generate seed automatically from system clock", IntArgValidate(min=0)),
                 ("starting_edgelen_dist",  ExponentialDist(10.0),             "Used to select the starting edge lengths when tree_source is 'random'"),
                 )                                                  
-        PhycasCommand.__init__(self, p, args, "simulate", "Simulates DNA sequences according to the specified model.")
+        PhycasCommand.__init__(self, p, args, "sim", "Simulates DNA sequences according to the specified model.")
         
         # The data members added below should be hidden from the user because they are irrelevant to simulating data
         # They must be present, however, because they are referenced in the LikelihoodCore class, which is also used
