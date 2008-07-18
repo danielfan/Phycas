@@ -3056,7 +3056,7 @@ unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix &
 					const int8_t * row	= mat.getRow(i);
 					const int8_t   code = row[j];
 					pattern.push_back(code);
-                    if (code == nStates)	
+                    if ((unsigned) code == nStates)	
                         ++num_all_missing;
 					}
 
