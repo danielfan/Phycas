@@ -523,7 +523,8 @@ class TreeSummarizer(object):
         cum_prob = 0.0
         done = False
         tree_vect = tree_map.items()
-        tree_vect.sort(cmp = lambda x,y: cmp(y[1][0], x[1][0]))
+        c = lambda x,y: cmp(y[1][0], x[1][0])
+        tree_vect.sort(c)
         if self.opts.tree_credible_prob > 0.0:
             for i,(k,v) in enumerate(tree_vect):
                 if done:
