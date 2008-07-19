@@ -6,6 +6,11 @@ from phycas.PDFGen import PDFGenerator
 from phycas.ReadNexus import FileFormats
 import phycas.ReadNexus as ReadNexus
 
+try: 
+    _s = set()
+except ImportError:
+    from sets import Set as set
+
 ###############################################################################
 def ttysize():
     if os.name == 'nt':
@@ -109,7 +114,7 @@ will display the help information for the sumt command object.
         elif isinstance(a, float):
             print("The real number", str(a))
         elif isinstance(a, str):
-            print("The string '%s' if you would like to see the methods available for a string use the command 'help(str)'", repr(s))
+            print("The string %s\nIf you would like to see the methods available for a string use the command 'help(str)'" % repr(a))
         elif isinstance(a, list):
             print("A python list. Use [number] to access elements in the list. For instance, x[0] is the first element of list x.\nUse 'help(list)' to see a list of available methods")
         elif isinstance(a, list):

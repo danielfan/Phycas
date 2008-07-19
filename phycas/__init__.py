@@ -73,7 +73,7 @@ if not _user_ini_checked:
 def useWxPhycas():
     return _use_wx_phycas
 
-from phycas.Utilities.io import getPhycasTestData, _runRegressionTests
+from phycas.Utilities.io import getPhycasDir, getPhycasTestData, _runRegressionTests
 import Conversions
 from DataMatrix._DataMatrix import DataMatrix
 import Likelihood

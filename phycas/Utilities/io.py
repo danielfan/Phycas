@@ -1,18 +1,24 @@
 import os, sys, subprocess
 
-_test_dir = None
+_phycas_dir = None
 
+def getPhycasDir():
+    "Returns the absolute path to the directory that is the top of the phycas package"
+    global _phycas_dir
+    if _phycas_dir is None:
+        _phycas_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+    return _phycas_dir
+    
 def getPhycasTestDir():
-    global _test_dir
-    if _test_dir is None:
-        d = os.path.dirname(os.path.dirname(__file__))
-        _test_dir = os.path.join(d, "Tests")
-    return _test_dir
+    return os.path.join(getPhycasDir(), "Tests")
 
 def getPhycasTestDataDir():
     return os.path.join(getPhycasTestDir(), "Data")
 
 def getPhycasTestData(filen):
+    """Takes a string `filen` that represents the name of one of the files in
+    Phycas' test suite.
+    The function returns the full path to the test file."""
     return os.path.join(getPhycasTestDataDir(), filen)
 
 def _runRegressionTests(out):
