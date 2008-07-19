@@ -433,7 +433,8 @@ class TreeSummarizer(object):
 
         # Sort the splits from highest posterior probabilty to lowest        
         split_vect = split_map.items()
-        split_vect.sort(cmp = lambda x,y: cmp(y[1][0], x[1][0]))
+        c = lambda x,y: cmp(y[1][0], x[1][0])
+        split_vect.sort(c)
 
         # Output summary of splits
         if sojourn_field_width < 5:
