@@ -20,10 +20,9 @@ then
 	do
 		ditto -rsrc "./$i" "phycasimg/$i" || exit
 	done
-	for i in "LICENSE" "readme.txt"
-	do
-		ditto -rsrc "$PHYCAS_ROOT/$i" "phycasimg/$i" || exit
-	done
+	ditto -rsrc "$PHYCAS_ROOT/LICENSE" "phycasimg/LICENSE" || exit
+	ditto -rsrc "README" "phycasimg/README" || exit
+	ditto -rsrc "$PHYCAS_ROOT/documentation/users/manual.pdf" "phycasimg/manual.pdf" || exit
 	hdiutil create -srcfolder phycasimg $MASTER_DMG
 else
 	echo "PHYCAS_ROOT is not defined as a directory"
