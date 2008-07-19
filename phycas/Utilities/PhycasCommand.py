@@ -8,7 +8,7 @@ import phycas.ReadNexus as ReadNexus
 
 try: 
     _s = set()
-except ImportError:
+except :
     from sets import Set as set
 
 ###############################################################################
