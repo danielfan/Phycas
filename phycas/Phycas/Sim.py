@@ -2,8 +2,9 @@ from phycas.Utilities.PhycasCommand import *
 from phycas import model
 from phycas.ProbDist import ExponentialDist
 from phycas.Phycas.SimImpl import SimImpl
+
 class Sim(PhycasCommand):
-    def __init__(self, p):
+    def __init__(self):
         args = (   
                 ("file_name",       'simulated.nex',                          "Name of file in which to save simulated data'"),
                 ("model",           model,                                    "Specifies the model to use. By default, uses the predefined model object. Type model.help to set the settings for this model."),
@@ -14,7 +15,7 @@ class Sim(PhycasCommand):
                 ("random_seed",     0,                                        "Determines the random number seed used; specify 0 to generate seed automatically from system clock", IntArgValidate(min=0)),
                 ("starting_edgelen_dist",  ExponentialDist(10.0),             "Used to select the starting edge lengths when tree_source is 'random'"),
                 )                                                  
-        PhycasCommand.__init__(self, p, args, "sim", "Simulates DNA sequences according to the specified model.")
+        PhycasCommand.__init__(self, args, "sim", "Simulates DNA sequences according to the specified model.")
         
         # The data members added below should be hidden from the user because they are irrelevant to simulating data
         # They must be present, however, because they are referenced in the LikelihoodCore class, which is also used
@@ -30,6 +31,6 @@ class Sim(PhycasCommand):
 
     def __call__(self, **kwargs):
         self.set(**kwargs)
-        simulate = SimImpl(self.phycas, self)
+        simulate = SimImpl(self)
         simulate.run()
         

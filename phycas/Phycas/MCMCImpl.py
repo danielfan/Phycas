@@ -1,6 +1,7 @@
 import os,sys,math,random
 from phycas import *
 from phycas.Utilities.PhycasCommand import *
+from phycas.Utilities.CommonFunctions import CommonFunctions
 from MCMCManager import MCMCManager
 from phycas.ProbDist import StopWatch
 from phycas.ReadNexus import NexusReader
@@ -8,22 +9,25 @@ from phycas.ReadNexus import NexusReader
 def check(msg = 'check'):
     raw_input(msg)
 
-class MCMCImpl(object):
+class MCMCImpl(CommonFunctions):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
     Needs to be written.
     
     """
-    def __init__(self, phycas, opts):
+    def __init__(self, opts):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Initializes MCMCRunner object by assigning supplied phycas object
         to a data member variable.
         
         """
-        self.phycas = phycas
+        CommonFunctions.__init__(self)
         self.opts = opts
+        self.optsout = opts.out
+        self.stdout = OutputFilter(opts.out.level, self.output)
         
+        # These copied over from Phycas.py - many are not used and should be weeded out
         self.data_matrix            = None
         self.file_name_trees_stored = None
         self.do_marginal_like       = False
@@ -46,8 +50,8 @@ class MCMCImpl(object):
         self.gg_Gm                  = []        # Vector of goodness-of-fit components (one for each k in gg_kvect)
         self.gg_Dm                  = []        # Vector of overall measures (one for each k in gg_kvect)
         self.reader                 = NexusReader()
-        self.logf                   = None
-        self._logFileName           = None
+        #self.logf                   = None
+        #self._logFileName           = None
         self.addition_sequence      = []        # List of taxon numbers for addition sequence
         self.samc_theta             = []        # Normalizing factors (will have length ntax - 3 because levels with 1, 2 or 3 taxa are not examined)
         self.samc_distance_matrix   = None      # Holds ntax x ntax hamming distance matrix used by SamcMove
@@ -78,7 +82,7 @@ class MCMCImpl(object):
         return '  mode=%.5f, avgevals=%.3f (%s)\n' % (mode, avg, nm)
 
     def adaptOneSliceSampler(self, p):
-        self.phycas.phycassert(p, 'could not adapt slice sampler; parameter non-existant')
+        self.phycassert(p, 'could not adapt slice sampler; parameter non-existant')
         summary = ''
         if p.hasSliceSampler():
             s = p.getSliceSampler()
@@ -111,8 +115,8 @@ class MCMCImpl(object):
             summary += self.adaptOneSliceSampler(p)
         
         if self.opts.verbose and summary != '':
-            self.phycas.output('\nSlice sampler diagnostics:')
-            self.phycas.output(summary)
+            self.output('\nSlice sampler diagnostics:')
+            self.output(summary)
 
     def updateAllUpdaters(self, chain, chain_index, cycle):
         if self.opts.debugging:
@@ -133,38 +137,38 @@ class MCMCImpl(object):
 
     def showTopoPriorInfo(self):
         m = self.mcmc_manager.getColdChain()
-        self.phycas.output('Topology prior:')
+        self.output('Topology prior:')
         if not self.opts.allow_polytomies:
-            self.phycas.output('  flat across all fully-resolved tree topologies (polytomies not allowed)')
+            self.output('  flat across all fully-resolved tree topologies (polytomies not allowed)')
         else:            
             if m.topo_prior_calculator.isPolytomyPrior():
-                self.phycas.output('  Prior type: polytomy prior')
+                self.output('  Prior type: polytomy prior')
             else:
-                self.phycas.output('  Prior type: resolution class prior')
-            self.phycas.output('  Prior strength (C): %s' % m.topo_prior_calculator.getC())
-            self.phycas.output('  Prior probability for each resolution class:')
-            self.phycas.output('  Note: 0.00000000 does *not* mean that the prior is zero! It simply')
-            self.phycas.output('        indicates that the prior is less than 0.000000005\n')
-            self.phycas.output('%20s %20s' % ('internal nodes', 'prior probability'))
-            self.phycas.output('%20s %20s' % ('--------------', '-----------------'))
+                self.output('  Prior type: resolution class prior')
+            self.output('  Prior strength (C): %s' % m.topo_prior_calculator.getC())
+            self.output('  Prior probability for each resolution class:')
+            self.output('  Note: 0.00000000 does *not* mean that the prior is zero! It simply')
+            self.output('        indicates that the prior is less than 0.000000005\n')
+            self.output('%20s %20s' % ('internal nodes', 'prior probability'))
+            self.output('%20s %20s' % ('--------------', '-----------------'))
             topo_priors = m.topo_prior_calculator.getRealizedResClassPriorsVect()
             for i,v in enumerate(topo_priors):
                 if i == 0:
                     denom = v   # first element of vector is log of normalization constant (sum of all other elements)
                 else:
                     topo_prior = math.exp(v - denom)
-                    self.phycas.output('%20d %20.8f' % (i,topo_prior))
-            self.phycas.output()
+                    self.output('%20d %20.8f' % (i,topo_prior))
+            self.output()
 
     def showParamInfo(self, p):
-        self.phycas.output('  Parameter name:     %s' % p.getName())
-        self.phycas.output('  Prior distribution: %s' % p.getPriorDescr())
+        self.output('  Parameter name:     %s' % p.getName())
+        self.output('  Prior distribution: %s' % p.getPriorDescr())
         if p.isMasterParameter():
-            self.phycas.output('  Master parameter (no current value)')
+            self.output('  Master parameter (no current value)')
         else:
-            self.phycas.output('  Current value:      %s' % p.getCurrValue())
-        self.phycas.output('  Prior log-density:  %s' % p.getLnPrior())
-        self.phycas.output()
+            self.output('  Current value:      %s' % p.getCurrValue())
+        self.output('  Prior log-density:  %s' % p.getLnPrior())
+        self.output()
                 
     def treeFileOpen(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -232,22 +236,22 @@ class MCMCImpl(object):
             if self.ps_filename:
                 self.psf.write('%s\t%.5f\n' % ('-->',marginal_like))
                 self.psf.close()
-            self.phycas.output('Marginal likelihood (continuous path sampling method) = %f' % marginal_like)
+            self.output('Marginal likelihood (continuous path sampling method) = %f' % marginal_like)
         elif self.opts.nchains > 1 and not self.opts.is_standard_heating:
             # Calculate marginal likelihood using discrete path sampling
             # The path_sampling vector is 2-dimensional, each element holds samples from one chain
             C = self.opts.nchains - 1
-            self.phycas.output('\nCalculation of marginal likelihood:')
-            self.phycas.output('%12s%12s' % ('chain', 'avg. lnL'))
+            self.output('\nCalculation of marginal likelihood:')
+            self.output('%12s%12s' % ('chain', 'avg. lnL'))
             for i,v in enumerate(self.path_sample):
                 n = len(v)
                 avg = sum(v)/float(n)
-                self.phycas.output('%12d%12.5f' % (i, avg))
+                self.output('%12d%12.5f' % (i, avg))
                 if (i == 0) or (i == C):
                     avg /= 2.0
                 marginal_like += avg
             marginal_like /= float(C)
-            self.phycas.output('  Marginal likelihood (discrete path sampling method) = %f' % marginal_like)
+            self.output('  Marginal likelihood (discrete path sampling method) = %f' % marginal_like)
             
             # Calculate marginal likelihood using harmonic mean method on cold chain
             sample_size = len(self.path_sample[0])
@@ -258,9 +262,9 @@ class MCMCImpl(object):
                 if diff < 500.0:
                     sum_diffs += math.exp(-diff)
                 else:
-                    self.phycas.output('warning: ignoring large diff (%f) in harmonic mean calculation' % diff)
+                    self.output('warning: ignoring large diff (%f) in harmonic mean calculation' % diff)
             log_harmonic_mean = math.log(sample_size) + min_lnL - math.log(sum_diffs)
-            self.phycas.output('  Marginal likelihood(harmonic mean method)= %f' % log_harmonic_mean)
+            self.output('  Marginal likelihood(harmonic mean method)= %f' % log_harmonic_mean)
 
     def setup(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -275,8 +279,9 @@ class MCMCImpl(object):
         3) creates an appropriate heat_vector (for either Metropolis-coupling
         or discrete path sampling); 
         4) calls MCMCManager's createChains function to handle setup for each
-        individual chain; and 
-        5) opens the parameter and tree files.
+        individual chain; 
+        5) opens the parameter and tree files; and
+        6) establishes an output log file name if requested
         
         """
         # REVISIT LATER
@@ -295,23 +300,23 @@ class MCMCImpl(object):
             for i in range(self.ntax):
                 s = 'taxon_%d' % (i + 1)
                 self.taxon_labels.append(s)
-        self.phycas.phycassert(len(self.taxon_labels) == self.ntax, "Number of taxon labels does not match number of taxa.")
+        self.phycassert(len(self.taxon_labels) == self.ntax, "Number of taxon labels does not match number of taxa.")
 
         # Create a tree description to be used for building starting trees
         if self.opts.starting_tree_source == 'file':
-            self.phycas.phycas.phycassert(self.data_source, "Specified starting_tree_source to be 'file' when data_source was None (file was not read)")
+            self.phycassert(self.data_source, "Specified starting_tree_source to be 'file' when data_source was None (file was not read)")
             tree_defs = self.reader.getTrees()
-            self.phycas.phycassert(len(tree_defs) > 0, 'a trees block defining at least one tree must be stored in the nexus data file')
+            self.phycassert(len(tree_defs) > 0, 'a trees block defining at least one tree must be stored in the nexus data file')
             # Grab first tree description in the data file
             # TODO allow some other tree than the first
             self.starting_tree = tree_defs[0]
         elif self.opts.starting_tree_source == 'usertree':
             self.starting_tree = self.tree_topology
         elif self.opts.starting_tree_source == 'random':
-            self.phycas.phycassert(self.ntax > 0, 'expecting ntax to be greater than 0')
+            self.phycassert(self.ntax > 0, 'expecting ntax to be greater than 0')
             self.starting_tree = None
         else:
-            self.phycas.phycassert(False, "starting_tree_source should equal 'random', 'file', or 'usertree', but instead it was this: %s" % self.starting_tree_source)
+            self.phycassert(False, "starting_tree_source should equal 'random', 'file', or 'usertree', but instead it was this: %s" % self.starting_tree_source)
         
         # Determine heating levels if multiple chains
         if self.heat_vector == None:
@@ -354,10 +359,19 @@ class MCMCImpl(object):
         else:
             # User supplied his/her own heat_vector; perform sanity checks
             self.opts.nchains = len(self.heat_vector)
-            self.phycas.phycassert(self.heat_vector.index(1.0) < self.opts.nchains, 'user-supplied heat_vector does not allow for a cold chain (one power must be 1.0)')
+            self.phycassert(self.heat_vector.index(1.0) < self.opts.nchains, 'user-supplied heat_vector does not allow for a cold chain (one power must be 1.0)')
 
         self.mcmc_manager.createChains()
         self.openParameterAndTreeFiles()
+        
+        # Open a log file if requested
+        log_file_spec = self.optsout.log
+        self.logf = None
+        try:
+            # Open the log file
+            self.logf = log_file_spec.open(self.stdout)
+        except:
+            print '*** Attempt to open log file failed.'
         
     def run(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -368,7 +382,7 @@ class MCMCImpl(object):
         self.setup()
         
         # If user has set quiet to True, then phycas.output calls will have no effect
-        self.phycas.quiet = self.opts.quiet
+        self.quiet = self.opts.quiet
         
         # Tell TreeLikelihood object if user wants to run with no data
         #if not self.data_source:
@@ -378,42 +392,42 @@ class MCMCImpl(object):
         
         if self.opts.verbose:
             if self.opts.data_source == None:
-                self.phycas.output('Data source:    None (running MCMC with no data to explore prior)')
+                self.output('Data source:    None (running MCMC with no data to explore prior)')
             elif self.opts.data_source == 'file':
-                self.phycas.output('Data source:    %s' % self.opts.data_file_name)
+                self.output('Data source:    %s' % self.opts.data_file_name)
                 all_missing = self.mcmc_manager.getColdChain().likelihood.getListOfAllMissingSites()
                 num_excluded = len(all_missing)
                 if num_excluded > 0:
-                    self.phycas.output('*** Note: the following %d sites were automatically excluded because' % num_excluded)
-                    self.phycas.output('*** they exhibited completely missing data for all taxa:')
+                    self.output('*** Note: the following %d sites were automatically excluded because' % num_excluded)
+                    self.output('*** they exhibited completely missing data for all taxa:')
                     while len(all_missing) > 0:
                         tmp = all_missing[:10]
                         all_missing = all_missing[10:]
-                        self.phycas.output('***   '+','.join([str(i+1) for i in tmp]))
+                        self.output('***   '+','.join([str(i+1) for i in tmp]))
             else:
                 self.phycas.abort("Only 'file' or None are allowed for data_source")
-            self.phycas.output('No. cycles:     %s' % self.opts.ncycles)
-            self.phycas.output('Sample every:   %s' % self.opts.sample_every)
-            self.phycas.output('Starting tree:  %s' % self.starting_tree)
-            self.phycas.output('No. samples:    %s' % self.nsamples)
-            self.phycas.output('Sampled trees will be saved in %s' % self.tree_file_name)
-            self.phycas.output('Sampled parameters will be saved in %s' % self.param_file_name)
+            self.output('No. cycles:     %s' % self.opts.ncycles)
+            self.output('Sample every:   %s' % self.opts.sample_every)
+            self.output('Starting tree:  %s' % self.starting_tree)
+            self.output('No. samples:    %s' % self.nsamples)
+            self.output('Sampled trees will be saved in %s' % self.tree_file_name)
+            self.output('Sampled parameters will be saved in %s' % self.param_file_name)
             if self.opts.use_unimap:
-                self.phycas.output('Using uniformized mapping MCMC')
+                self.output('Using uniformized mapping MCMC')
             else:
-                self.phycas.output('Using standard MCMC (i.e. no uniformized mapping)')
+                self.output('Using standard MCMC (i.e. no uniformized mapping)')
 
             if not self.warn_tip_numbers:
-                self.phycas.output('Tip node numbers were set using the names in the tree description')
+                self.output('Tip node numbers were set using the names in the tree description')
             else:
-                self.phycas.output('Warning: tip node numbers were NOT set using the names in the tree description')
+                self.output('Warning: tip node numbers were NOT set using the names in the tree description')
 
         if self.opts.nchains == 1:
-            self.phycas.output('Creating one chain (i.e. not using heated chains to improve mixing)')
+            self.output('Creating one chain (i.e. not using heated chains to improve mixing)')
         else:
-            self.phycas.output('Creating %d chains with these temperatures:' % (self.opts.nchains))
+            self.output('Creating %d chains with these temperatures:' % (self.opts.nchains))
             for t in self.heat_vector:
-                self.phycas.output('  %.5f %s' % (t, t == 1.0 and '(cold chain)' or ''))
+                self.output('  %.5f %s' % (t, t == 1.0 and '(cold chain)' or ''))
             
         # Compute the current log-likelihood and log-prior in case first updater 
         # is a move and will thus depend on these quantities being accurate
@@ -421,11 +435,11 @@ class MCMCImpl(object):
             c.chain_manager.refreshLastLnLike()
             c.chain_manager.refreshLastLnPrior()
             if c.heating_power == 1.0:
-                self.phycas.output('Starting log-likelihood = %s' % c.chain_manager.getLastLnLike())
-                self.phycas.output('Starting log-prior = %s' % c.chain_manager.getLastLnPrior())
+                self.output('Starting log-likelihood = %s' % c.chain_manager.getLastLnLike())
+                self.output('Starting log-prior = %s' % c.chain_manager.getLastLnPrior())
 
         # Show starting parameter info 
-        self.phycas.output('\nParameter starting values and prior densities:')
+        self.output('\nParameter starting values and prior densities:')
         cold_chain_manager = self.mcmc_manager.getColdChainManager()
         for p in cold_chain_manager.getEdgeLenParams():
             self.showParamInfo(p)
@@ -447,7 +461,7 @@ class MCMCImpl(object):
         self.stopwatch.start()
         self.mcmc_manager.resetNEvals()
         
-        self.phycas.output('\nSampling (%d cycles)...' % self.opts.ncycles)
+        self.output('\nSampling (%d cycles)...' % self.opts.ncycles)
         if self.opts.verbose:
             print
         self.mcmc_manager.recordSample(0)
@@ -481,7 +495,7 @@ class MCMCImpl(object):
                 self.stopwatch.normalize()
                 cold_chain_manager = self.mcmc_manager.getColdChainManager()
                 msg = 'cycle = %d, lnL = %.5f (%.5f secs)' % (cycle + 1, cold_chain_manager.getLastLnLike(), self.stopwatch.elapsedSeconds())
-                self.phycas.output(msg)
+                self.output(msg)
             # REVISIT LATER
             #if self.doing_path_sampling and cycle + 1 > self.ps_burnin:
             #    sampled_lnL = cold_chain_manager.getLastLnLike()
@@ -517,9 +531,9 @@ class MCMCImpl(object):
         self.adaptSliceSamplers()
         total_evals = self.mcmc_manager.getTotalEvals() #self.likelihood.getNEvals()
         total_secs = self.stopwatch.elapsedSeconds()
-        self.phycas.output('%d likelihood evaluations in %.5f seconds' % (total_evals, total_secs))
+        self.output('%d likelihood evaluations in %.5f seconds' % (total_evals, total_secs))
         if (total_secs > 0.0):
-            self.phycas.output('  = %.5f likelihood evaluations/sec' % (total_evals/total_secs))
+            self.output('  = %.5f likelihood evaluations/sec' % (total_evals/total_secs))
 
         if self.treef:
             self.treeFileClose()

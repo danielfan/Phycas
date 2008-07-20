@@ -3,21 +3,22 @@ from phycas import *
 from MCMCManager import LikelihoodCore
 from phycas.Utilities.PhycasCommand import *
 from phycas.ReadNexus import NexusReader
+from phycas.Utilities.CommonFunctions import CommonFunctions
 
-class LikeImpl(object):
+class LikeImpl(CommonFunctions):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
     To be written.
     
     """
-    def __init__(self, phycas, opts):
+    def __init__(self, opts):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Initializes the LikeImpl object by assigning supplied phycas object
         to a data member variable.
         
         """
-        self.phycas                = phycas
+        CommonFunctions.__init__(self)
         self.opts                  = opts
         self.starting_tree         = None
         self.taxon_labels          = None
@@ -43,9 +44,9 @@ class LikeImpl(object):
         if self.opts.tree_topology.__class__.__name__ == 'str':
             self.starting_tree = Newick(self.opts.tree_topology)
         else:
-            self.phycas.phycassert(self.opts.tree_topology.__class__.__name__ == 'Newick', 'expecting tree_topology to be either a string or a Newick object')
+            self.phycassert(self.opts.tree_topology.__class__.__name__ == 'Newick', 'expecting tree_topology to be either a string or a Newick object')
             self.starting_tree = self.opts.tree_topology
-        self.phycas.phycassert(self.opts.data_file_name is not None, "specify data_file_name before calling like()")
+        self.phycassert(self.opts.data_file_name is not None, "specify data_file_name before calling like()")
         self.readDataFromFile()
         core = LikelihoodCore(self)
         core.setupCore()

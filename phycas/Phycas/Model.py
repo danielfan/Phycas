@@ -2,7 +2,7 @@ from copy import copy
 from phycas.Utilities.PhycasCommand import *
 from phycas.ProbDist import BetaDist, ExponentialDist, InverseGammaDist
 class Model(PhycasCommand):
-    def __init__(self, p):
+    def __init__(self):
         args = ( 
                 ("type",                   'hky',                           "Can be 'jc', 'hky' or 'gtr'", EnumArgValidate(['jc', 'hky', 'gtr'])),
                 ("relrate_prior",          ExponentialDist(1.0),            "The prior distribution for individual GTR relative rate parameters"),
@@ -24,7 +24,7 @@ class Model(PhycasCommand):
                 ("base_freqs",             [1.0, 1.0, 1.0, 1.0],            "The current values for the four base frequency parameters"),
                 ("fix_freqs",              False,                           "If True, the base frequencies will not be modified during the course of an MCMC analysis", BoolArgValidate),
                 )
-        PhycasCommand.__init__(self, p, args, "model", "Defines a substitution model.")
+        PhycasCommand.__init__(self, args, "model", "Defines a substitution model.")
 
     def saveas(self):
         new_model = Model(self.phycas)

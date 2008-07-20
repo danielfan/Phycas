@@ -2,21 +2,22 @@ import os,sys,math,random
 from phycas import *
 from MCMCManager import LikelihoodCore
 from phycas.Utilities.PhycasCommand import *
+from phycas.Utilities.CommonFunctions import CommonFunctions
 
-class SimImpl(object):
+class SimImpl(CommonFunctions):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
     Simulates DNA sequence data.
     
     """
-    def __init__(self, phycas, opts):
+    def __init__(self, opts):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Initializes the SimulateImpl object by assigning supplied phycas object
         to a data member variable.
         
         """
-        self.phycas               = phycas
+        CommonFunctions.__init__(self)
         self.opts                 = opts
         self.starting_tree_source = None
         self.starting_tree        = None
@@ -33,7 +34,7 @@ class SimImpl(object):
         self.starting_tree_source = self.opts.tree_source
         self.starting_tree        = self.opts.tree_topology
         self.ntax                 = len(self.opts.taxon_labels)
-        self.phycas.phycassert(self.ntax > 3, 'Must specify labels for at least four taxa')
+        self.phycassert(self.ntax > 3, 'Must specify labels for at least four taxa')
         core = LikelihoodCore(self)
         core.setupCore()
         if not core.tree.hasEdgeLens():

@@ -1,5 +1,5 @@
 from phycas import *
-#Phycas.PhycassertRaisesException = True
+#phycassertRaisesException = True
 
 model.type                        = 'hky'
 
@@ -22,6 +22,8 @@ model.pinvar                       = 0.27
 model.fix_pinvar                   = True
 model.pinvar_prior                 = ProbDist.BetaDist(1.0, 1.0)
 
+mcmc.out.log                      = 'output.txt'
+mcmc.out.log.mode                 = REPLACE
 mcmc.nchains                      = 1
 mcmc.ncycles                      = 2500
 mcmc.outfile_prefix               = 'fixed'

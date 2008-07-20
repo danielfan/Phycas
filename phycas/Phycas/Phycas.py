@@ -1,9 +1,8 @@
 import os, sys, math, threading, types, copy
-import os, sys, math, threading, types, copy
 import MCMCManager  # poorly named, as MCMCManager is now only one of many classes within
 from phycas.Conversions import *
 from phycas.Likelihood import *
-from phycas.PDFGen import *
+#from phycas.PDFGen import *
 from phycas.Phylogeny import *
 from phycas.ProbDist import *
 from phycas.ReadNexus import *
@@ -42,32 +41,32 @@ class Phycas(object):
         #   Times-Bold       Helvetica-Bold        Courier-Bold        ZapfDingbats
         #   Times-Italic     Helvetica-Oblique     Courier-Oblique
         #   Times-BoldItalic Helvetica-BoldOblique Courier-BoldOblique
-        self.pdf_filename              = 'trees.pdf'    # Set to desired name of pdf file to create
-        self.pdf_edge_support_file     = None           # File containing PAUP* output with table of support values; if specified, the support values will be shown on trees plotted
-        self.pdf_tip_label_font        = 'Times-Italic' # Font used for tip node names; should be one of the 14 standard fonts listed above
-        self.pdf_tip_label_height      = 12             # Height in points of tip node name font
-        self.pdf_plot_label_font       = 'Helvetica'    # Font used for plot axis labels; should be one of the 14 standard fonts listed above
-        self.pdf_plot_label_height     = 12             # Height in points of plot axis label font
-        self.pdf_title_font            = 'Helvetica'    # Font used for scalebar text; should be one of the 14 standard fonts listed above
-        self.pdf_title_height          = 14             # Height in points of scalebar text font
-        self.pdf_scalebar_position     = 'bottom'       # Valid values are 'top', 'bottom' or None
-        self.pdf_scalebar_label_font   = 'Helvetica'    # Font used for scalebar text; should be one of the 14 standard fonts listed above
-        self.pdf_scalebar_label_height = 10             # Height in points of scalebar text font
-        self.pdf_support_label_font    = 'Times-Roman'  # Font used for edge support values; should be one of the 14 standard fonts listed above
-        self.pdf_support_label_height  = 8              # Height in points of edge support font
-        self.pdf_support_as_percent    = True           # If True, support values will be shown as percentages (e.g. 93.1) rather than proportions (e.g. 0.931)
-        self.pdf_support_decimals      = 1              # The number of decimal places shown in support values (e.g. to get 93.7, specify 1; to round up to 94, specify 0)
-        self.pdf_ladderize             = 'right'        # Valid values are 'right', 'left' or None
-        self.pdf_page_width            = 8.5            # Page width in inches
-        self.pdf_page_height           = 11.0           # Page length in inches
-        self.pdf_line_width            = 1.0            # Width of lines representing edges in the tree
-        self.pdf_left_margin           = 1.0            # Left margin in inches (1 inch = 72 points)
-        self.pdf_right_margin          = 1.0            # Right margin in inches (1 inch = 72 points)
-        self.pdf_top_margin            = 1.0            # Top margin in inches (1 inch = 72 points)
-        self.pdf_bottom_margin         = 1.0            # Bottom margin in inches (1 inch = 72 points)
-        self.pdf_treefile              = None           # Set to tree file name if you want to make one pdf file with each tree from tree file on a separate page
-        self.pdf_newick                = None           # Set to the tree description to print if only want to save one tree to a pdf file
-        self.pdf_outgroup_taxon        = None           # Set to taxon name of tip serving as the outgroup for display rooting purposes (note: at this time outgroup can consist of just one taxon)
+        #self.pdf_filename              = 'trees.pdf'    # Set to desired name of pdf file to create
+        #self.pdf_edge_support_file     = None           # File containing PAUP* output with table of support values; if specified, the support values will be shown on trees plotted
+        #self.pdf_tip_label_font        = 'Times-Italic' # Font used for tip node names; should be one of the 14 standard fonts listed above
+        #self.pdf_tip_label_height      = 12             # Height in points of tip node name font
+        #self.pdf_plot_label_font       = 'Helvetica'    # Font used for plot axis labels; should be one of the 14 standard fonts listed above
+        #self.pdf_plot_label_height     = 12             # Height in points of plot axis label font
+        #self.pdf_title_font            = 'Helvetica'    # Font used for scalebar text; should be one of the 14 standard fonts listed above
+        #self.pdf_title_height          = 14             # Height in points of scalebar text font
+        #self.pdf_scalebar_position     = 'bottom'       # Valid values are 'top', 'bottom' or None
+        #self.pdf_scalebar_label_font   = 'Helvetica'    # Font used for scalebar text; should be one of the 14 standard fonts listed above
+        #self.pdf_scalebar_label_height = 10             # Height in points of scalebar text font
+        #self.pdf_support_label_font    = 'Times-Roman'  # Font used for edge support values; should be one of the 14 standard fonts listed above
+        #self.pdf_support_label_height  = 8              # Height in points of edge support font
+        #self.pdf_support_as_percent    = True           # If True, support values will be shown as percentages (e.g. 93.1) rather than proportions (e.g. 0.931)
+        #self.pdf_support_decimals      = 1              # The number of decimal places shown in support values (e.g. to get 93.7, specify 1; to round up to 94, specify 0)
+        #self.pdf_ladderize             = 'right'        # Valid values are 'right', 'left' or None
+        #self.pdf_page_width            = 8.5            # Page width in inches
+        #self.pdf_page_height           = 11.0           # Page length in inches
+        #self.pdf_line_width            = 1.0            # Width of lines representing edges in the tree
+        #self.pdf_left_margin           = 1.0            # Left margin in inches (1 inch = 72 points)
+        #self.pdf_right_margin          = 1.0            # Right margin in inches (1 inch = 72 points)
+        #self.pdf_top_margin            = 1.0            # Top margin in inches (1 inch = 72 points)
+        #self.pdf_bottom_margin         = 1.0            # Bottom margin in inches (1 inch = 72 points)
+        #self.pdf_treefile              = None           # Set to tree file name if you want to make one pdf file with each tree from tree file on a separate page
+        #self.pdf_newick                = None           # Set to the tree description to print if only want to save one tree to a pdf file
+        #self.pdf_outgroup_taxon        = None           # Set to taxon name of tip serving as the outgroup for display rooting purposes (note: at this time outgroup can consist of just one taxon)
         
 
         # Variables associated with the brownian command
@@ -140,7 +139,7 @@ class Phycas(object):
         self.doing_path_sampling    = False
         self.path_sample            = None
         self.psf                    = None
-        self.pdf_splits_to_plot     = None
+        #self.pdf_splits_to_plot     = None
         self.param_file_name        = None  
         self.tree_file_name         = None
         self.nsamples               = None
@@ -188,7 +187,7 @@ class Phycas(object):
 
                     sys.exit(0)
         
-    def phycassert(self, assumption, msg):
+    def obsolete_phycassert(self, assumption, msg):
         if not assumption:
             if Phycas.PhycassertRaisesException:
                 raise AssertionError(msg)
@@ -203,11 +202,11 @@ class Phycas(object):
 
     edgelen_dist = property(getEdgelenDist, setEdgelenDist)
     
-    def shutdown(self):
+    def obsolete_shutdown(self):
         if self.logf:
             self.logf.close()
 
-    def output(self, msg = None):
+    def obsolete_output(self, msg = None):
         if not self.quiet:
             if msg:
                 print msg
@@ -219,12 +218,12 @@ class Phycas(object):
             self.logf.write('%s\n' % (msg))
             self.logf.flush()
 
-    def abort(self, msg):
+    def obsolete_abort(self, msg):
         s = '\n***** Fatal error: %s' % msg
         #self.output(s)
         sys.exit(s)
         
-    def warning(self, msg):
+    def obsolete_warning(self, msg):
         s = '\n***** Warning: %s' % msg
         self.output(s)
         
@@ -479,22 +478,22 @@ class Phycas(object):
 
         self.openParameterAndTreeFiles()
         
-    def setLogFile(self, filename):
-        # Open a log file if requested
-        if self.logf:
-            self.logf.close()
-            self.logf = None
-        if not filename:
-            self._logFileName = None
-        else:
-            # TODO check first to see if it exists before blindly overwriting
-            self.logf = file(filename, 'w')
-            self._logFileName = filename
-
-    def getLogFile(self):
-        return self._logFileName
-        
-    log_file_name = property(getLogFile, setLogFile)
+    #def setLogFile(self, filename):
+    #    # Open a log file if requested
+    #    if self.logf:
+    #        self.logf.close()
+    #        self.logf = None
+    #    if not filename:
+    #        self._logFileName = None
+    #    else:
+    #        # TODO check first to see if it exists before blindly overwriting
+    #        self.logf = file(filename, 'w')
+    #        self._logFileName = filename
+    #
+    #def getLogFile(self):
+    #    return self._logFileName
+    #    
+    #log_file_name = property(getLogFile, setLogFile)
 
     def pathsampling(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -627,7 +626,7 @@ class Phycas(object):
 
         return distance
 
-    def pdftree(self):
+    def obsolete_pdftree(self):
         #complex_outgroup = type(self.pdf_outgroup_taxon) in (types.ListType,types.TupleType)
         self.check_settings()
         simple_outgroup = type(self.pdf_outgroup_taxon) == types.StringType
@@ -704,7 +703,7 @@ class Phycas(object):
         # Prevent unintentional spillover
         self.pdf_splits_to_plot = None
         
-    def tree2pdf(self, pdf, tree, title = None, xscalemax = 0.0, show_support = False):
+    def obsolete_tree2pdf(self, pdf, tree, title = None, xscalemax = 0.0, show_support = False):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Prints tree on a pdf object (instance of class PDFGenerator). If title
@@ -984,8 +983,8 @@ class Phycas(object):
 
     # by default phycassert sys.exit.
     # When debugging, it is nice to set this to True so that you can see the stack trace
-    PhycassertRaisesException = False
-    CPPCompiledInDebug = False
+    #PhycassertRaisesException = False
+    #CPPCompiledInDebug = False
 
 if __name__ == '__main__':
     print "The Phycas.py file should be imported, not run directly. To import it,"

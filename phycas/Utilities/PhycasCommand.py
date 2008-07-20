@@ -485,6 +485,8 @@ class TextOutputSpec(FileOutputSpec):
     def __init__(self, prefix="", help_str="", filename=None):
         FileOutputSpec.__init__(self, prefix, help_str, filename)
         self._valid_formats = [FileFormats.RAW_TEXT]
+    def _getSuffix(self):
+        return ".txt"
 
 class BinaryOutputSpec(FileOutputSpec):
     def __init__(self, prefix="", help_str="", filename=None):
@@ -999,7 +1001,7 @@ class PhycasManualGenerator(object):
 
 class PhycasCommand(object):
 
-    def __init__(self, phycas, option_defs, cmd_name, cmd_descrip, output_options=None):
+    def __init__(self, option_defs, cmd_name, cmd_descrip, output_options=None):
         # the roundabout way of initializing PhycasCmdOpts is needed because
         #   _options must be in the __dict__ before the setattr is called
         #   on a PhycasCommand
@@ -1007,7 +1009,7 @@ class PhycasCommand(object):
         o = PhycasCmdOpts()
         self.__dict__["_options"] = o
         o._initialize(self, option_defs)
-        self.__dict__["phycas"] = phycas
+        #self.__dict__["phycas"] = phycas
         self.__dict__["out"] = output_options
         h = PhycasCommandHelp(self, cmd_name, cmd_descrip)
         self.__dict__["help"] = h

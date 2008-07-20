@@ -2,8 +2,9 @@ from phycas.Utilities.PhycasCommand import *
 from phycas import model
 from phycas.ProbDist import ExponentialDist
 from phycas.Phycas.LikeImpl import LikeImpl
+
 class Like(PhycasCommand):
-    def __init__(self, p):
+    def __init__(self):
         args = ( 
                 ("data_file_name",  None,                                     "Name of file in which to save simulated data'"),
                 ("model",           model,                                    "Specifies the model to use. By default, uses the predefined model object. Type model.help to set the settings for this model."),
@@ -11,7 +12,7 @@ class Like(PhycasCommand):
                 ("tree_topology",   '(1:0.02,2:0.02,(3:0.01,4:0.01):0.01)',   "The tree topology (with branch lengths) of the model tree to be used for simulation. Used only if tree_source is 'usertree'"),
                 ("starting_edgelen_dist",  ExponentialDist(10.0),             "Used to select the starting edge lengths when tree_source is 'random'"),
                 )
-        PhycasCommand.__init__(self, p, args, "like", "Calculates the log-likelihood under the current model.")
+        PhycasCommand.__init__(self, args, "like", "Calculates the log-likelihood under the current model.")
 
         # The data members added below should be hidden from the user because they are irrelevant to 
         # computing the likelihood. They must be present, however, because they are referenced in the 
@@ -28,6 +29,6 @@ class Like(PhycasCommand):
 
     def __call__(self, **kwargs):
         self.set(**kwargs)
-        calclike = LikeImpl(self.phycas, self)
+        calclike = LikeImpl(self)
         return calclike.run()
         

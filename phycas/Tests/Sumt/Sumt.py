@@ -8,7 +8,8 @@ if __name__ == '__main__':
     touch("trees.pdf")
     touch("trees.tre")
     
-    phycas.log_file_name    = 'logfile.txt'
+    sumt.out.log            = 'logfile.txt'
+    sumt.out.log.mode       = REPLACE
     sumt.trees              = 'test.t'
     sumt.out.trees.prefix   = "trees"
     sumt.out.trees.mode     = REPLACE

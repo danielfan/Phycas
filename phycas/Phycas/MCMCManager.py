@@ -74,12 +74,12 @@ class LikelihoodCore:
                 self.model.setKappa(self.parent.opts.model.kappa)
                 if self.parent.opts.model.fix_kappa:
                     self.model.fixKappa()
-            self.parent.phycas.phycassert(self.parent.opts.model.base_freqs, 'base_freqs is None, but should be a list containing 4 (unnormalized) relative base frequencies')
-            self.parent.phycas.phycassert(len(self.parent.opts.model.base_freqs) == 4, 'base_freqs should be a list containing exactly 4 base frequencies; instead, it contains %d values' % len(self.parent.opts.model.base_freqs))
-            self.parent.phycas.phycassert(self.parent.opts.model.base_freqs[0] >= 0.0, 'base_freqs[0] cannot be negative (%f was specified)' % self.parent.opts.model.base_freqs[0])
-            self.parent.phycas.phycassert(self.parent.opts.model.base_freqs[1] >= 0.0, 'base_freqs[1] cannot be negative (%f was specified)' % self.parent.opts.model.base_freqs[1])
-            self.parent.phycas.phycassert(self.parent.opts.model.base_freqs[2] >= 0.0, 'base_freqs[2] cannot be negative (%f was specified)' % self.parent.opts.model.base_freqs[2])
-            self.parent.phycas.phycassert(self.parent.opts.model.base_freqs[3] >= 0.0, 'base_freqs[3] cannot be negative (%f was specified)' % self.parent.opts.model.base_freqs[3])
+            self.parent.phycassert(self.parent.opts.model.base_freqs, 'base_freqs is None, but should be a list containing 4 (unnormalized) relative base frequencies')
+            self.parent.phycassert(len(self.parent.opts.model.base_freqs) == 4, 'base_freqs should be a list containing exactly 4 base frequencies; instead, it contains %d values' % len(self.parent.opts.model.base_freqs))
+            self.parent.phycassert(self.parent.opts.model.base_freqs[0] >= 0.0, 'base_freqs[0] cannot be negative (%f was specified)' % self.parent.opts.model.base_freqs[0])
+            self.parent.phycassert(self.parent.opts.model.base_freqs[1] >= 0.0, 'base_freqs[1] cannot be negative (%f was specified)' % self.parent.opts.model.base_freqs[1])
+            self.parent.phycassert(self.parent.opts.model.base_freqs[2] >= 0.0, 'base_freqs[2] cannot be negative (%f was specified)' % self.parent.opts.model.base_freqs[2])
+            self.parent.phycassert(self.parent.opts.model.base_freqs[3] >= 0.0, 'base_freqs[3] cannot be negative (%f was specified)' % self.parent.opts.model.base_freqs[3])
             self.model.setNucleotideFreqs(self.parent.opts.model.base_freqs[0], self.parent.opts.model.base_freqs[1], self.parent.opts.model.base_freqs[2], self.parent.opts.model.base_freqs[3])  #POL should be named setStateFreqs?
             if self.parent.opts.model.fix_freqs:
                 self.model.fixStateFreqs()
@@ -122,7 +122,7 @@ class LikelihoodCore:
             #POL changed self.npatterns to self.parent.npatterns below
             self.parent.npatterns = self.likelihood.getNPatterns()
         elif self.parent.opts.data_source is None:
-            self.parent.phycas.phycassert(self.parent.ntax > 0, 'data_source is None, which indicates data will be simulated, but in this case sim_taxon_labels should not be an empty list')
+            self.parent.phycassert(self.parent.ntax > 0, 'data_source is None, which indicates data will be simulated, but in this case sim_taxon_labels should not be an empty list')
 
         # Build the starting tree
         if self.parent.starting_tree == None:
@@ -159,7 +159,7 @@ class LikelihoodCore:
         
         """
         sim_data = Likelihood.SimData()
-        self.parent.phycas.phycassert(self.parent.opts.nchar > 0, 'nchar must be greater than zero in order to perform simulations')
+        self.parent.phycassert(self.parent.opts.nchar > 0, 'nchar must be greater than zero in order to perform simulations')
         self.likelihood.simulateFirst(sim_data, self.tree, self.r, self.parent.opts.nchar)
         return sim_data
         
@@ -596,11 +596,11 @@ class MCMCManager:
         unimap_and_polytomies      = (self.parent.opts.use_unimap and self.parent.opts.allow_polytomies)
         unimap_and_multiple_chains = (self.parent.opts.use_unimap and self.parent.opts.nchains > 1)
         #unimap_and_samc            = (self.parent.opts.use_unimap and self.parent.opts.doing_samc)
-        #self.parent.phycas.phycassert(not unimap_and_samc, 'SAMC cannot (yet) be used in conjunction with use_unimap')
-        self.parent.phycas.phycassert(not unimap_and_polytomies, 'Allowing polytomies cannot (yet) be used in conjunction with use_unimap')
-        self.parent.phycas.phycassert(not unimap_and_flex, 'Flex model cannot (yet) be used in conjunction with use_unimap')
-        self.parent.phycas.phycassert(not unimap_and_ratehet, 'Rate heterogeneity cannot (yet) be used in conjunction with use_unimap')
-        self.parent.phycas.phycassert(not unimap_and_multiple_chains, 'Multiple chains cannot (yet) be used in conjunction with use_unimap')
+        #self.parent.phycassert(not unimap_and_samc, 'SAMC cannot (yet) be used in conjunction with use_unimap')
+        self.parent.phycassert(not unimap_and_polytomies, 'Allowing polytomies cannot (yet) be used in conjunction with use_unimap')
+        self.parent.phycassert(not unimap_and_flex, 'Flex model cannot (yet) be used in conjunction with use_unimap')
+        self.parent.phycassert(not unimap_and_ratehet, 'Rate heterogeneity cannot (yet) be used in conjunction with use_unimap')
+        self.parent.phycassert(not unimap_and_multiple_chains, 'Multiple chains cannot (yet) be used in conjunction with use_unimap')
         
         # Create the chains
         for heating_power in self.parent.heat_vector:
@@ -652,8 +652,8 @@ class MCMCManager:
         chain_index, setting the power for each updater to the supplied power.
         
         """
-        parent.phycas.phycassert(len(chains) > chain_index, 'chain index specified (%d) too large for number of chains (%d)' % (chain_index, len(chains)))
-        parent.phycas.phycassert(len(self.parent.heat_vector) == len(self.chains), 'length of heat vector (%d) not equal to number of chains (%d)' % (len(self.heat_vector, len(self.nchains))))
+        parent.phycassert(len(chains) > chain_index, 'chain index specified (%d) too large for number of chains (%d)' % (chain_index, len(chains)))
+        parent.phycassert(len(self.parent.heat_vector) == len(self.chains), 'length of heat vector (%d) not equal to number of chains (%d)' % (len(self.heat_vector, len(self.nchains))))
         self.parent.heat_vector[chain_index] = power
         self.chains[chain_index].setPower(power)
 

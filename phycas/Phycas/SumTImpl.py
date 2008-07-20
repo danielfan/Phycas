@@ -4,31 +4,38 @@ import os,sys,math,random
 from phycas import *
 from phycas import useWxPhycas
 from phycas.Utilities.PhycasCommand import *
+from phycas.Utilities.CommonFunctions import CommonFunctions
+from phycas.Utilities.PDFTree import PDFTree
 
-class TreeSummarizer(object):
+class TreeSummarizer(CommonFunctions):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
     Saves consensus tree and QQ plots in pdf files.
     
     """
-    def __init__(self, phycas, opts):
+    def __init__(self, opts):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Initializes TreeSummarizer object by assigning supplied phycas object
         to a data member variable.
         
         """
-        self.phycas = phycas
+        CommonFunctions.__init__(self)
         self.opts = opts
+        
+        self.pdf_splits_to_plot = None
+
+        self.pdf_page_width = 8.5       # should be an option
+        self.pdf_page_height = 11.0     # should be an option
+        self.pdf_ladderize = 'right'    # should be an option - valid values are 'right', 'left' or None
         self.rooted_trees = opts.rooted
         self.outgroup = opts.outgroup_taxon
-        self.output = opts.out
-        self.stdout = OutputFilter(opts.out.level, phycas.output)
+        self.optsout = opts.out
+        self.stdout = OutputFilter(opts.out.level, self.output)
         if self.rooted_trees and opts.outgroup_taxon:
             self.outgroup = None
-            self.phycas.warning('Specifying True for sumt_rooted is incompatible with specifying\nsumt_outgroup_taxon; I will pretend that you set sumt_outgroup_taxon to None')
-
-
+            self.warning('Specifying True for sumt_rooted is incompatible with specifying\nsumt_outgroup_taxon; I will pretend that you set sumt_outgroup_taxon to None')
+    
     def assignEdgeLensAndSupportValues(self, tree, split_map, total_samples):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -44,7 +51,7 @@ class TreeSummarizer(object):
         #tree.recalcAllSplits(tree.getNTips())
         tree.recalcAllSplits(tree.getNObservables())
         nd = tree.getFirstPreorder()
-        eq_brlen = self.output.trees.equal_brlens
+        eq_brlen = self.optsout.trees.equal_brlens
         while True:
             nd = nd.getNextPreorder()
             if not nd:
@@ -75,7 +82,7 @@ class TreeSummarizer(object):
         
         """
         # we use the trees file spec to make a pdf with the same 
-        trees_spec = self.output.trees
+        trees_spec = self.optsout.trees
         pdf_spec = PDFOutputSpec(trees_spec.prefix, "", trees_spec.filename)
         try:
             pdf_spec.mode = trees_spec.mode
@@ -86,7 +93,7 @@ class TreeSummarizer(object):
         pdf, treef = None, None
         try:
             # Open the output pdf file
-            pdf = pdf_spec.open(self.phycas.pdf_page_width, self.phycas.pdf_page_height, self.stdout)
+            pdf = pdf_spec.open(self.pdf_page_width, self.pdf_page_height, self.stdout)
     
             treef = trees_spec.open(self.taxon_labels, self.stdout)
     
@@ -112,13 +119,13 @@ class TreeSummarizer(object):
                 if pdf:
                     # Add taxon names to tip nodes and output to pdf file
                     tree.rectifyNames(self.taxon_labels)
-                    if self.phycas.pdf_ladderize:
-                        if self.phycas.pdf_ladderize == 'right':
+                    if self.pdf_ladderize:
+                        if self.pdf_ladderize == 'right':
                             tree.ladderizeRight()
                         else:
                             tree.ladderizeLeft()
                     pdf.newPage()
-                    self.phycas.tree2pdf(pdf, tree, full, show_support = True)
+                    PDFTree().tree2pdf(pdf, tree, full, show_support = True)
         finally:
             if pdf is not None:
                 pdf_spec.close()
@@ -290,11 +297,19 @@ class TreeSummarizer(object):
         saved to the file sumt_output_tree_file if this variable is not None.
         
         """
-        #raw_input('debug stop')
+        # Open a log file if requested
+        log_file_spec = self.optsout.log
+        self.logf = None
+        try:
+            # Open the log file
+            self.logf = log_file_spec.open(self.stdout)
+        except:
+            print '*** Attempt to open log file failed.'
+
         # Check to make sure user specified an input tree file
         input_trees = self.opts.trees
-        self.phycas.phycassert(input_trees, 'trees cannot be None or empty when sumt method is called')
-        self.phycas.phycassert(self.output.trees.prefix, 'sumt.out.trees.prefix must be specified before sumt method is called')
+        self.phycassert(input_trees, 'trees cannot be None or empty when sumt method is called')
+        self.phycassert(self.optsout.trees.prefix, 'sumt.out.trees.prefix must be specified before sumt method is called')
         
         num_trees = 0
         num_trees_considered = 0
@@ -307,7 +322,7 @@ class TreeSummarizer(object):
         self.taxon_labels = input_trees.taxon_labels # this must be kept after the coercion of the trees to a list (in case that is what triggers the readinf of the file with the taxon labels)
 
         num_stored_trees = len(self.stored_tree_defs)
-        self.phycas.phycassert(num_stored_trees > 0, 'Specified tree source (%s) contained no stored trees' %  TreeSource.description(input_trees))
+        self.phycassert(num_stored_trees > 0, 'Specified tree source (%s) contained no stored trees' %  TreeSource.description(input_trees))
 
 
         # Build each tree and add the splits and tree topolgies found there to the
@@ -576,8 +591,8 @@ class TreeSummarizer(object):
         self.stdout.info('\nSaving distinct tree topologies...')
         self.save_trees(summary_short_name_list, summary_full_name_list, summary_tree_list)
 
-        trees_spec = self.output.trees 
-        sp = self.output.splits 
+        trees_spec = self.optsout.trees 
+        sp = self.optsout.splits 
         if bool(sp):
             if sp.replaceMode() and sp.sameBaseName(trees_spec):
                 self.stdout.info("Splits pdf will overwrite the tree topology pdf")

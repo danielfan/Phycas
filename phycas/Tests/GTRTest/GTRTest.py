@@ -9,6 +9,8 @@ model.gamma_shape = 2.0
 model.pinvar_model = True
 model.use_inverse_shape = True
 
+mcmc.out.log = 'output.txt'
+mcmc.out.log.mode = REPLACE
 mcmc.outfile_prefix = 'gtr_test'
 mcmc.nchains = 1
 mcmc.ncycles = 100

@@ -53,6 +53,8 @@ def getDefaultOutFilter():
 help_double_space = True
 current_double_space = True
 current_follows_help = True
+phycassertRaisesException = False
+cppCompiledInDebug = False
 intercept_python_exceptions = True
 default_verbosity_level = OutFilter.NORMAL
 _user_ini_checked = False
@@ -88,7 +90,7 @@ from Utilities.PhycasCommand import FileFormats, REPLACE, APPEND, ADD_NUMBER, ph
 if useWxPhycas():
     import wxPhycas
 
-phycas = Phycas()
+#phycas = Phycas()
 python_help = help
 help = phycas_help
 def error_msg(msg):
@@ -123,27 +125,32 @@ class Newick(object):
         return self.newick
 
 from Phycas.Model import Model
-model = Model(phycas)
+model = Model()
 
 from Phycas.SumT import SumT
-sumt = SumT(phycas)
+sumt = SumT()
 
 from Phycas.MCMC import MCMC
-mcmc = MCMC(phycas)
+mcmc = MCMC()
 
 from Phycas.Sim import Sim
-sim  = Sim(phycas)
+sim  = Sim()
 
 from Phycas.Like import Like
-like = Like(phycas)
+like = Like()
+
+def simpleOutputter(msg):
+    print msg
 
 def runTests():
-    output_stream = OutputFilter(getDefaultOutFilter(), phycas.output)
+    #output_stream = OutputFilter(getDefaultOutFilter(), phycas.output)
+    output_stream = OutputFilter(getDefaultOutFilter(), simpleOutputter)
     _runRegressionTests(output_stream)
 
 if _check_for_updates and sys.argv and not sys.argv[0]:
     import phycas.Utilities.PhycasUpdateCheck as PhycasUpdateCheck
-    output_stream = OutputFilter(getDefaultOutFilter(), phycas.output)
+    #output_stream = OutputFilter(getDefaultOutFilter(), phycas.output)
+    output_stream = OutputFilter(getDefaultOutFilter(), simpleOutputter)
     PhycasUpdateCheck.runPhycasUpdateChecker(output_stream, _phycas_update_url, _phycas_branch, _phycas_revision)
 
 def touch(f):
