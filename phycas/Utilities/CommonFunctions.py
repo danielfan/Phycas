@@ -1,4 +1,7 @@
 import sys
+from phycas import OutputFilter, getDefaultOutFilter
+
+
 
 class CommonFunctions(object):
     def __init__(self):
@@ -31,3 +34,8 @@ class CommonFunctions(object):
         s = '\n***** Warning: %s' % msg
         self.output(s)
         
+
+outputter = OutputFilter(getDefaultOutFilter(), CommonFunctions())
+def getDefaultOutputter():
+    global outputter
+    return outputter

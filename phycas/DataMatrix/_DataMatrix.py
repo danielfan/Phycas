@@ -8,11 +8,11 @@ class DataMatrix(DataMatrixBase):
     
     
     In general,  it is not possible to construct an empty DataMatrix object.
-    the way to obtain one is to read a data file (see the phycas.readData() 
-    function).
+    the way to obtain one is to read a data file (see the readData() function
+    in phycas.Utilities.io).
     
-    >>> from phycas import *
-    >>> matrix = phycas.readData(getPhycasTestData("nyldna4.nex"))
+    >>> from phycas.Utilities.io import readData, getPhycasTestData
+    >>> matrix = readData(getPhycasTestData("nyldna4.nex"))
 
     """
     DNA_Datatype = 0
@@ -80,8 +80,8 @@ class DataMatrix(DataMatrixBase):
         """The `n_char` attribute
         Returns the number of characters in the data matrix.
 
-        >>> from phycas import *
-        >>> m = phycas.readData(getPhycasTestData("nyldna4.nex"))
+        >>> from phycas.Utilities.io import readData, getPhycasTestData
+        >>> m = readData(getPhycasTestData("nyldna4.nex"))
         >>> m.getNChar()
         3080
         >>> m.n_char
@@ -98,8 +98,8 @@ class DataMatrix(DataMatrixBase):
         """The `n_tax` attribute
         Returns the number of taxa in the data matrix.
 
-        >>> from phycas import *
-        >>> m = phycas.readData(getPhycasTestData("nyldna4.nex"))
+        >>> from phycas.Utilities.io import readData, getPhycasTestData
+        >>> m = readData(getPhycasTestData("nyldna4.nex"))
         >>> m.getNTax()
         4
         
@@ -122,8 +122,8 @@ class DataMatrix(DataMatrixBase):
         matrix. Note: there may well be more state codes than this, because
         ambiguities are coded as separate states.
 
-        >>> from phycas import *
-        >>> m = phycas.readData(getPhycasTestData("nyldna4.nex"))
+        >>> from phycas.Utilities.io import readData, getPhycasTestData
+        >>> m = readData(getPhycasTestData("nyldna4.nex"))
         >>> m.getNStates()
         4
         >>> m.n_states
@@ -139,8 +139,8 @@ class DataMatrix(DataMatrixBase):
         original symbols or ambiguity/polymorphism specifications have been
         recoded, and getStateList() returns the codes used.
 
-        >>> from phycas import *
-        >>> m = phycas.readData(getPhycasTestData("nyldna4.nex"))
+        >>> from phycas.Utilities.io import readData, getPhycasTestData
+        >>> m = readData(getPhycasTestData("nyldna4.nex"))
         >>> print m.getSymbolsList()
         ['A', 'C', 'G', 'T', '?', 'B', 'D', 'H', 'K', 'M', 'R', 'S', 'V', 'W', 'Y']
 
@@ -157,8 +157,8 @@ class DataMatrix(DataMatrixBase):
         as if it were a separate state. The state list can be used to uncover
         the original meaning of these coded states.
 
-        >>> from phycas import *
-        >>> m = phycas.readData(getPhycasTestData("nyldna4.nex"))
+        >>> from phycas.Utilities.io import readData, getPhycasTestData
+        >>> m = readData(getPhycasTestData("nyldna4.nex"))
         >>> print m.getStateList()
         (1, 0, 1, 1, 1, 2, 1, 3, 4, 0, 1, 2, 3, 3, 1, 2, 3, 3, 0, 2, 3, 3, 0, 1, 3, 2, 2, 3, 2, 0, 1, 2, 0, 2, 2, 1, 2, 3, 0, 1, 2, 2, 0, 3, 2, 1, 3)
 
@@ -203,8 +203,8 @@ class DataMatrix(DataMatrixBase):
         Returns a tuple showing the index corresponding to each state found
         in the data matrix into the state list.
 
-        >>> from phycas import *
-        >>> m = phycas.readData(getPhycasTestData("nyldna4.nex"))
+        >>> from phycas.Utilities.io import readData, getPhycasTestData
+        >>> m = readData(getPhycasTestData("nyldna4.nex"))
         >>> print m.getStateListPos()
         (0, 2, 4, 6, 8, 13, 17, 21, 25, 28, 31, 34, 37, 41, 44)
 
@@ -280,8 +280,8 @@ class DataMatrix(DataMatrixBase):
         """The `n_char` attribute
         Returns the number of characters in the data matrix.
 
-        >>> from phycas import *
-        >>> m = phycas.readData(getPhycasTestData("nyldna4-compressed.nex"))
+        >>> from phycas.Utilities.io import readData, getPhycasTestData
+        >>> m = readData(getPhycasTestData("nyldna4-compressed.nex"))
         >>> m.getExcludedIndices()
         (181,)
 

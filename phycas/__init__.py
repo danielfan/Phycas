@@ -38,10 +38,18 @@ class OutputFilter(object):
         self._filter_output(msg, OutFilter.WARNINGS)
     def error(self, msg):
         self._filter_output(msg, OutFilter.ERRORS)
+    def abort(self, msg):
+        self._filter_output(msg, OutFilter.ERRORS)
+        sys.exit('\n***** Fatal error: %s' % msg)
     def verbose_info(self, msg):
         self._filter_output(msg, OutFilter.VERBOSE)
     def debugging(self, msg):
         self._filter_output(msg, OutFilter.DEBUGGING)
+    def phycassert(self, assumption, msg):
+        if not assumption:
+            if phycassertRaisesException:
+                raise AssertionError(msg)
+            sys.exit('Error: ' + msg)
 
 def getDefaultOutFilter():
     global default_verbosity_level

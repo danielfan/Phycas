@@ -561,18 +561,6 @@ class Phycas(object):
 
         return distance
 
-    def readData(self, filepath, format=FileFormats.NEXUS):
-        """Returns a data matrix (or None if there is no data) from `filepath`
-        
-        Currently only supports NEXUS and only returns the last data matrix, but
-        this will be generalized to read other formats and return the 
-        supermatrix of all data matrices in the file."""
-        
-        self.phycassert(format == FileFormats.NEXUS, "Currently only the NEXUS format is supported")
-        r = NexusReader()
-        r.readFile(filepath)
-        return r.getLastDiscreteMatrix(True)
-
     # by default phycassert sys.exit.
     # When debugging, it is nice to set this to True so that you can see the stack trace
     #PhycassertRaisesException = False
