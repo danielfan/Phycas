@@ -7,4 +7,4 @@ from _PDFGenerator import *
 
 def testExamples():
     import doctest
-    doctest.testfile('_PDFGenerator.py')
+    return doctest.testfile('_PDFGenerator.py')

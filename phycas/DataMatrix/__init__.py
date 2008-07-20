@@ -9,4 +9,4 @@ from _DataMatrix import *
 
 def testExamples():
     import doctest
-    doctest.testfile('_DataMatrix.py')
+    return doctest.testfile('_DataMatrix.py')

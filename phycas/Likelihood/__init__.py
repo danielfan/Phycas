@@ -15,9 +15,17 @@ from _QMatrix import *
 
 def testExamples():
     import doctest
-    doctest.testfile('_MCMCChainManager.py')
-    doctest.testfile('_Model.py')
-    doctest.testfile('_QMatrix.py')
-    doctest.testfile('_SimData.py')
-    doctest.testfile('_TopoPriorCalculator.py')
-    doctest.testfile('_TreeLikelihood.py')
+    a = [0,0]
+    r = doctest.testfile('_MCMCChainManager.py')
+    a[0] += r[0] ; a[1] += r[1]
+    r = doctest.testfile('_Model.py')
+    a[0] += r[0] ; a[1] += r[1]
+    r = doctest.testfile('_QMatrix.py')
+    a[0] += r[0] ; a[1] += r[1]
+    r = doctest.testfile('_SimData.py')
+    a[0] += r[0] ; a[1] += r[1]
+    r = doctest.testfile('_TopoPriorCalculator.py')
+    a[0] += r[0] ; a[1] += r[1]
+    r = doctest.testfile('_TreeLikelihood.py')
+    a[0] += r[0] ; a[1] += r[1]
+    return tuple(a)

@@ -9,4 +9,4 @@ from _NexusReader import *
 
 def testExamples():
     import doctest
-    doctest.testfile('_NexusReader.py')
+    return doctest.testfile('_NexusReader.py')

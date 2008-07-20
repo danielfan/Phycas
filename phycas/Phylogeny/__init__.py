@@ -11,6 +11,12 @@ from _Split import *
 
 def testExamples():
     import doctest
-    doctest.testfile('_Tree.py')
-    doctest.testfile('_TreeManip.py')
-    doctest.testfile('_Split.py')
+    a = [0,0]
+    r = doctest.testfile('_Tree.py')
+    a[0] += r[0] ; a[1] += r[1]
+    r = doctest.testfile('_TreeManip.py')
+    a[0] += r[0] ; a[1] += r[1]
+    r = doctest.testfile('_Split.py')
+    a[0] += r[0] ; a[1] += r[1]
+    return tuple(a)
+    
