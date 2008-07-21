@@ -7,6 +7,7 @@ from phycas.ReadNexus import FileFormats
 import phycas.ReadNexus as ReadNexus
 from phycas.Utilities.CommonFunctions import getDefaultOutputStream
 from phycas import OutputFilter
+import copy
 try: 
     _s = set()
 except :
@@ -192,7 +193,10 @@ class TreeSource(object):
             self.trees = None
             self.taxon_labels = None
         else:
-            self.trees = list(arg)
+            if arg is None:
+                self.trees = None
+            else:
+                self.trees = list(arg)
             self.taxon_labels = kwargs.get("taxon_labels")
             self.filename = None
             self.format = None
@@ -213,7 +217,7 @@ class TreeSource(object):
         """
         if self.trees is None:
             if not self.filename:
-                raise ValueError("No file name specified for the source of trees")
+                return iter([])
             if not os.path.exists(self.filename):
                 raise ValueError('The file "%s" does not exist')
             reader = ReadNexus.NexusReader()
@@ -221,7 +225,12 @@ class TreeSource(object):
             self.taxon_labels = reader.getTaxLabels()
             self.trees = reader.getTrees()
         return iter(self.trees)
-
+    def __str__(self):
+        if self.trees:
+            return "collection of trees in memory"
+        if self.filename:
+            return "trees from the file %s" % filename
+        return "None"
 _opt_name_help_len = 30
 _opt_val_help_len = 19
 
@@ -270,6 +279,7 @@ class PhycasOutput(object):
         self._is_active = True
     def __bool__(self):
         return self._is_active
+
 class FileOutputSpec(PhycasOutput):
     def __init__(self, prefix="", help_str="", filename=None):
         PhycasOutput.__init__(self)
@@ -280,12 +290,28 @@ class FileOutputSpec(PhycasOutput):
             self.prefix = None
         self._help_str = help_str
         self._valid_formats = []
-        self._options = []
+        self._options = None
         self._opened_filename = None
         self._opened_file = None
         self._prexisting = False
         self._opened_file_is_log_in = None # reference of outputstream that is mirroring output to the file
 
+    def __deepcopy__(self, memo):
+        o = self.__class__(copy.deepcopy(self.prefix, memo),
+                           copy.deepcopy(self._help_str, memo),
+                           copy.deepcopy(self.filename, memo))
+        opts = self._options
+        c = {}
+        if opts:
+            c = opts._current
+            o._options = PhycasCmdOpts(o, opts._optionsInOrder)
+            oo = o._options
+            for k, v in c.iteritems():
+                oo._set_opt(k, v)
+        for k, v in self.__dict__.iteritems():
+            if (k not in c) and (k not in ["_options", "_opened_filename", "_opened_file", "_opened_file_is_log_in"]):
+                o.__dict__[k] = copy.deepcopy(v)
+        return o
     def __bool__(self):
         return bool(self._is_active and (self.filename or self.prefix))
 
@@ -576,7 +602,14 @@ class PhycasCommandOutputOptions(object):
         self.__dict__["_help_order"] = []
         self.__dict__["_outputter"] = None
         self.__dict__["_stream"] = None
-
+    def __deepcopy__(self, memo):
+        o = PhycasCommandOutputOptions(self.level)
+        for k, v in self.__dict__.iteritems():
+            if v is None:
+                o.__dict__[k] = None
+            else:
+                o.__dict__[k] = copy.deepcopy(v, memo)
+        return o
     def __setattr__(self, name, value):
         if name == "_outputter" or name == "_stream":
             self.__dict__[name] = value
@@ -706,6 +739,7 @@ class PhycasCmdOpts(object):
         self.__dict__["_unchecked"] = set()
         if command and args:
             self._initialize(command, args)
+
     def _initialize(self, command=None, args=None):
         self._current = {}
         self._transformer = {}
@@ -778,6 +812,7 @@ class PhycasCmdOpts(object):
                 s = '\n%s' % s                                    
             opts_help.append(s)
         return opts_help
+
     def _current_str_list(self, pref=""):
         """Generates a list of strings formatted for displaying help
         Assumes that PhycasTablePrinter._reset_term_width has been called 
@@ -812,11 +847,9 @@ class PhycasCmdOpts(object):
                 except:
                     try:
                         c = ""
-                        print transf
                         c = transf.get_description()
-                        print c
                     except:
-                        raise
+                        pass
                     if value.__class__.__name__ == 'str':
                         raise ValueError("'%s' is not a valid value for %s. %s" % (value, name, c))
                     else:
@@ -861,6 +894,8 @@ class PhycasCmdOpts(object):
             raise AttributeError("%s does not contain an attribute %s" % (self._command.__class__.__name__, name))
 
 def TreeSourceValidate(opts, v):
+    if v is None:
+        return None
     return TreeSource(v)
 
 def BoolArgValidate(opts, v):
@@ -1041,13 +1076,40 @@ class PhycasCommand(object):
         o = PhycasCmdOpts()
         self.__dict__["_options"] = o
         o._initialize(self, option_defs)
-        #self.__dict__["phycas"] = phycas
         self.__dict__["out"] = output_options
         h = PhycasCommandHelp(self, cmd_name, cmd_descrip)
         self.__dict__["help"] = h
         self.__dict__["current"] = PhycasCurrentValuesHelper(h)
         m = PhycasManualGenerator(self, cmd_name, cmd_descrip)
         self.__dict__["manual"] = m
+
+    def __deepcopy__(self, memo):
+        opts = self._options
+        opts_copy = copy.deepcopy(opts._optionsInOrder, memo)
+        h = self.help
+        # this creates a new command instance, but some of the settings may
+        #   reflect the initial unset state (those in which the values have
+        #   been rebound in the `self` instance, thus causing a discrepancy
+        #   between the initial value in opts._optionsInOrder and the current
+        #   value in opts._current.  We fix this below
+        c = PhycasCommand(opts_copy, h.cmd_name, h.cmd_descrip, self.out)
+        if c.out:
+            out = self.out
+            if out:
+                c.__dict__["out"] = copy.deepcopy(out)
+            else:
+                c.__dict__["out"] = None
+        # update the settings to a copy of the current settings
+        opts_copy = c._options
+        managed_dict = opts_copy._current
+        for k, v in opts._current.iteritems():
+            opts_copy._set_opt(k, copy.deepcopy(v,memo))
+        # update the ad-hoc unmanaged attributes
+        for k, v in self.__dict__.iteritems():
+            if not k in managed_dict:
+                if not k  in ["_options", "help", "current", "manual", "out"]:
+                    c.__dict__[k] = copy.deepcopy(v, memo)
+        return c
 
     def __setattr__(self, name, value):
         nl = name.lower()
