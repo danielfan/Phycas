@@ -1093,7 +1093,7 @@ class PhycasCommand(object):
 
     def __deepcopy__(self, memo):
         opts = self._options
-        opts_copy = copy.deepcopy(opts._optionsInOrder, memo)
+        opts_copy = opts._optionsInOrder
         h = self.help
         # this creates a new command instance, but some of the settings may
         #   reflect the initial unset state (those in which the values have
@@ -1108,7 +1108,7 @@ class PhycasCommand(object):
         opts_copy = c._options
         managed_dict = opts_copy._current
         for k, v in opts._current.iteritems():
-            opts_copy._set_opt(k, copy.deepcopy(v,memo))
+            opts_copy._set_opt(k, v)
         # update the ad-hoc unmanaged attributes
         for k, v in self.__dict__.iteritems():
             if not k in managed_dict:

@@ -2,6 +2,7 @@ from phycas.Utilities.PhycasCommand import *
 from phycas import model
 from phycas.Phycas.MCMCImpl import MCMCImpl
 from phycas.ProbDist import BetaDist, ExponentialDist, InverseGammaDist
+import copy
 
 class MCMC(PhycasCommand):
     def __init__(self):
@@ -75,7 +76,8 @@ class MCMC(PhycasCommand):
         
     def __call__(self, **kwargs):
         self.set(**kwargs)
-        mcmc_impl = MCMCImpl(self)
+        c = copy.deepcopy(self)
+        mcmc_impl = MCMCImpl(c)
         mcmc_impl.run()
         
 #                ("default_model",          'hky',                           "Can be 'jc', 'hky' or 'gtr'"),

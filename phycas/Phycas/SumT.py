@@ -23,10 +23,7 @@ class SumT(PhycasCommand):
 
     def __call__(self, **kwargs):
         self.set(**kwargs)
-        print self.current()
         c = copy.deepcopy(self)
-        print self.current()
-        print c.current()
         tree_summarizer = TreeSummarizer(c)
         tree_summarizer.consensus()
         
