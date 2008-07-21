@@ -4,6 +4,7 @@ from phycas.Utilities.CommonFunctions import CommonFunctions
 
 class PDFTree(CommonFunctions):
     def __init__(self):
+        CommonFunctions.__init__(self, None)
         self.pdf_splits_to_plot = None
         # Variables associated with PDF tree drawing (used in pdftree() function)
         # The 14 standard fonts guaranteed to be available in all PDF consumer applications:

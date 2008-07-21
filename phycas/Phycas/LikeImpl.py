@@ -18,8 +18,7 @@ class LikeImpl(CommonFunctions):
         to a data member variable.
         
         """
-        CommonFunctions.__init__(self)
-        self.opts                  = opts
+        CommonFunctions.__init__(self, opts)
         self.starting_tree         = None
         self.taxon_labels          = None
         self.data_matrix           = None

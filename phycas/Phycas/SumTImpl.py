@@ -7,7 +7,7 @@ from phycas.Utilities.PhycasCommand import *
 from phycas.Utilities.CommonFunctions import CommonFunctions
 from phycas.Utilities.PDFTree import PDFTree
 
-class TreeSummarizer(object):
+class TreeSummarizer(CommonFunctions):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
     Saves consensus tree and QQ plots in pdf files.
@@ -20,7 +20,7 @@ class TreeSummarizer(object):
         to a data member variable.
         
         """
-        self.opts = opts
+        CommonFunctions.__init__(self, opts)
         
         self.pdf_splits_to_plot = None
 
@@ -29,8 +29,6 @@ class TreeSummarizer(object):
         self.pdf_ladderize = 'right'    # should be an option - valid values are 'right', 'left' or None
         self.rooted_trees = opts.rooted
         self.outgroup = opts.outgroup_taxon
-        self.optsout = opts.out
-        self.stdout = opts.out.getStdOutputter()
         if self.rooted_trees and opts.outgroup_taxon:
             self.outgroup = None
             self.warning('Specifying True for sumt_rooted is incompatible with specifying\nsumt_outgroup_taxon; I will pretend that you set sumt_outgroup_taxon to None')
@@ -288,24 +286,6 @@ class TreeSummarizer(object):
         return True            
         
     def consensus(self):
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
-        """
-        This is the main member a wrapper around the doConsensus method that
-        makes sure that the logger is installed and detached correctly
-        """
-        # Open a log file if requested
-        log_file_spec = self.optsout.log
-        try:
-            # Open the log file
-            log_file_spec.openAsLog(self.stdout)
-        except:
-            print '*** Attempt to open log file failed.'
-        try:
-            self.doConsensus()
-        except:
-            log_file_spec.close()
-
-    def doConsensus(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         This is the main member function of the class. It computes and outputs

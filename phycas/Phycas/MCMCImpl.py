@@ -22,11 +22,7 @@ class MCMCImpl(CommonFunctions):
         to a data member variable.
         
         """
-        CommonFunctions.__init__(self)
-        self.opts = opts
-        self.optsout = opts.out
-        self.stdout = OutputFilter(opts.out.level, self.output)
-        
+        CommonFunctions.__init__(self, opts)
         # These copied over from Phycas.py - many are not used and should be weeded out
         self.data_matrix            = None
         self.file_name_trees_stored = None
@@ -50,7 +46,6 @@ class MCMCImpl(CommonFunctions):
         self.gg_Gm                  = []        # Vector of goodness-of-fit components (one for each k in gg_kvect)
         self.gg_Dm                  = []        # Vector of overall measures (one for each k in gg_kvect)
         self.reader                 = NexusReader()
-        #self.logf                   = None
         #self._logFileName           = None
         self.addition_sequence      = []        # List of taxon numbers for addition sequence
         self.samc_theta             = []        # Normalizing factors (will have length ntax - 3 because levels with 1, 2 or 3 taxa are not examined)
@@ -364,21 +359,13 @@ class MCMCImpl(CommonFunctions):
         self.mcmc_manager.createChains()
         self.openParameterAndTreeFiles()
         
-        # Open a log file if requested
-        log_file_spec = self.optsout.log
-        self.logf = None
-        try:
-            # Open the log file
-            self.logf = log_file_spec.open(self.stdout)
-        except:
-            print '*** Attempt to open log file failed.'
-        
     def run(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Performs the MCMC analysis. 
         
         """
+        
         self.setup()
         
         # If user has set quiet to True, then phycas.output calls will have no effect

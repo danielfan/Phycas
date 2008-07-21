@@ -17,8 +17,7 @@ class SimImpl(CommonFunctions):
         to a data member variable.
         
         """
-        CommonFunctions.__init__(self)
-        self.opts                 = opts
+        CommonFunctions.__init__(self, opts)
         self.starting_tree_source = None
         self.starting_tree        = None
         self.ntax                 = None
