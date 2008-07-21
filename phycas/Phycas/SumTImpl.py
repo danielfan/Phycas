@@ -7,7 +7,7 @@ from phycas.Utilities.PhycasCommand import *
 from phycas.Utilities.CommonFunctions import CommonFunctions
 from phycas.Utilities.PDFTree import PDFTree
 
-class TreeSummarizer(CommonFunctions):
+class TreeSummarizer(object):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
     Saves consensus tree and QQ plots in pdf files.
@@ -20,7 +20,6 @@ class TreeSummarizer(CommonFunctions):
         to a data member variable.
         
         """
-        CommonFunctions.__init__(self)
         self.opts = opts
         
         self.pdf_splits_to_plot = None
@@ -31,7 +30,7 @@ class TreeSummarizer(CommonFunctions):
         self.rooted_trees = opts.rooted
         self.outgroup = opts.outgroup_taxon
         self.optsout = opts.out
-        self.stdout = OutputFilter(opts.out.level, self.output)
+        self.stdout = opts.out.getStdOutputter()
         if self.rooted_trees and opts.outgroup_taxon:
             self.outgroup = None
             self.warning('Specifying True for sumt_rooted is incompatible with specifying\nsumt_outgroup_taxon; I will pretend that you set sumt_outgroup_taxon to None')
@@ -291,25 +290,34 @@ class TreeSummarizer(CommonFunctions):
     def consensus(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
+        This is the main member a wrapper around the doConsensus method that
+        makes sure that the logger is installed and detached correctly
+        """
+        # Open a log file if requested
+        log_file_spec = self.optsout.log
+        try:
+            # Open the log file
+            log_file_spec.openAsLog(self.stdout)
+        except:
+            print '*** Attempt to open log file failed.'
+        try:
+            self.doConsensus()
+        except:
+            log_file_spec.close()
+
+    def doConsensus(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
         This is the main member function of the class. It computes and outputs
         a summary of splits found in the sampled trees, a summary of distinct
         tree topologies found, and a majority rule consensus tree, which is
         saved to the file sumt_output_tree_file if this variable is not None.
         
         """
-        # Open a log file if requested
-        log_file_spec = self.optsout.log
-        self.logf = None
-        try:
-            # Open the log file
-            self.logf = log_file_spec.open(self.stdout)
-        except:
-            print '*** Attempt to open log file failed.'
-
         # Check to make sure user specified an input tree file
         input_trees = self.opts.trees
-        self.phycassert(input_trees, 'trees cannot be None or empty when sumt method is called')
-        self.phycassert(self.optsout.trees.prefix, 'sumt.out.trees.prefix must be specified before sumt method is called')
+        self.stdout.phycassert(input_trees, 'trees cannot be None or empty when sumt method is called')
+        self.stdout.phycassert(self.optsout.trees.prefix, 'sumt.out.trees.prefix must be specified before sumt method is called')
         
         num_trees = 0
         num_trees_considered = 0
@@ -322,7 +330,7 @@ class TreeSummarizer(CommonFunctions):
         self.taxon_labels = input_trees.taxon_labels # this must be kept after the coercion of the trees to a list (in case that is what triggers the readinf of the file with the taxon labels)
 
         num_stored_trees = len(self.stored_tree_defs)
-        self.phycassert(num_stored_trees > 0, 'Specified tree source (%s) contained no stored trees' %  TreeSource.description(input_trees))
+        self.stdout.phycassert(num_stored_trees > 0, 'Specified tree source (%s) contained no stored trees' %  TreeSource.description(input_trees))
 
 
         # Build each tree and add the splits and tree topolgies found there to the

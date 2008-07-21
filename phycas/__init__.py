@@ -24,14 +24,27 @@ class OutputFilter(object):
     def __init__(self, level, stream):
         self.level = level
         self.stream = stream
+        self.other = []
+    def add_mirror(self, o):
+        if not o in self.other:
+            self.other.append(o)
+    def remove_mirror(self, o):
+        try:
+            n = self.other.index(o)
+            self.other.pop(n)
+        except:
+            return
+
     def _filter_output(self, msg, level):
         if self.level <= level:
-            if level < OutFilter.WARNINGS:
-                self.stream(msg)
-            elif level == OutFilter.WARNINGS:
-                self.stream("\n***** Warning: " + msg)
-            else:
-                self.stream("\n***** Error: " + msg)
+            m = msg
+            if level == OutFilter.WARNINGS:
+                m = "\n***** Warning: " + msg
+            elif level > OutFilter.WARNINGS:
+                m = "\n***** Error: " + msg
+            self.stream(m)
+            for o in self.other:
+                o.write(m)
     def info(self, msg):
         self._filter_output(msg, OutFilter.NORMAL)
     def warning(self, msg):

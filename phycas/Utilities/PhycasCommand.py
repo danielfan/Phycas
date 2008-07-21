@@ -5,7 +5,8 @@ from phycas import getDefaultOutFilter, OutFilter, help_double_space, current_do
 from phycas.PDFGen import PDFGenerator
 from phycas.ReadNexus import FileFormats
 import phycas.ReadNexus as ReadNexus
-
+from phycas.Utilities.CommonFunctions import getDefaultOutputStream
+from phycas import OutputFilter
 try: 
     _s = set()
 except :
@@ -283,6 +284,7 @@ class FileOutputSpec(PhycasOutput):
         self._opened_filename = None
         self._opened_file = None
         self._prexisting = False
+        self._opened_file_is_log_in = None # reference of outputstream that is mirroring output to the file
 
     def __bool__(self):
         return bool(self._is_active and (self.filename or self.prefix))
@@ -449,7 +451,7 @@ class FileOutputSpec(PhycasOutput):
             return fn
         else:
             return self._getFilename()
-    def open(self, out):
+    def open(self, out, as_log_file=False):
         self._opened_filename = self._getFilename()
         self._prexisting = os.path.exists(self._opened_filename)
         m =  isinstance(self.mode, AppendExistingFileBehavior) and "a" or "w"
@@ -464,12 +466,25 @@ class FileOutputSpec(PhycasOutput):
                 uf = self._getUnchangedFilname()
                 if uf != self._opened_filename:
                     out.info("The file %s already exists, using %s instead" % (uf, self._opened_filename))
+        self._opened_file_is_log = as_log_file
+        if as_log_file:
+            self._opened_file_is_log_in = out
+            out.add_mirror(self._opened_file)
+        else:
+            self._opened_file_is_log_in = None
         return self._opened_file
+
+    def openAsLog(self, out):
+        return self.open(out, True)
+
     def close(self):
         if self._opened_file:
+            if self._opened_file_is_log_in is not None:
+                self._opened_file_is_log_in.remove_mirror(self._opened_file)
             self._opened_file.close()
         self._opened_file = None
         self._opened_filename = None
+        self._opened_file_is_log_in = None
     def replaceMode(self):
         return isinstance(self.mode, ReplaceExistingFileBehavior)
     def appendMode(self):
@@ -559,8 +574,13 @@ class PhycasCommandOutputOptions(object):
         else:
             self.level = verbosity_level
         self.__dict__["_help_order"] = []
+        self.__dict__["_outputter"] = None
+        self.__dict__["_stream"] = None
 
     def __setattr__(self, name, value):
+        if name == "_outputter" or name == "_stream":
+            self.__dict__[name] = value
+            return
         o = self.__dict__.get(name)
         if o is not None:
             if name == "level":
@@ -662,6 +682,18 @@ class PhycasCommandOutputOptions(object):
     def __str__(self):
        PhycasTablePrinter._reset_term_width()
        return "\n".join(self._help_str_list())
+
+    def getStdOutputter(self):
+        """Returns self._outputter, or a filter around self._stream, or (if 
+        both of those attributes are None) a filter around the default
+        output stream.
+        """
+        if self._outputter:
+            return self._outputter
+        s = self._stream
+        if s is None:
+            s = getDefaultOutputStream()
+        return OutputFilter(self.level, s)
 
 class PhycasCmdOpts(object):
     

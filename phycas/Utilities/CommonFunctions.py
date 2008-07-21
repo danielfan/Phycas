@@ -35,7 +35,17 @@ class CommonFunctions(object):
         self.output(s)
         
 
-outputter = OutputFilter(getDefaultOutFilter(), CommonFunctions())
+output_stream = CommonFunctions()
+
+def getDefaultOutputContainer():
+    global output_stream
+    return output_stream
+
+def getDefaultOutputStream():
+    return getDefaultOutputContainer().output
+
+outputter = OutputFilter(getDefaultOutFilter(), getDefaultOutputStream())
+
 def getDefaultOutputter():
     global outputter
     return outputter
