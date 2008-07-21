@@ -1,6 +1,6 @@
 from phycas.Utilities.PhycasCommand import *
 from phycas.Phycas.SumTImpl import TreeSummarizer
-
+import copy
 class SumT(PhycasCommand):
     def __init__(self):
         args = (   ("outgroup_taxon",      None,           "Set to the taxon name of the tip serving as the outgroup for display rooting purposes (note: at this time outgroup can consist of just one taxon)"),
@@ -23,6 +23,10 @@ class SumT(PhycasCommand):
 
     def __call__(self, **kwargs):
         self.set(**kwargs)
-        tree_summarizer = TreeSummarizer(self)
+        print self.current()
+        c = copy.deepcopy(self)
+        print self.current()
+        print c.current()
+        tree_summarizer = TreeSummarizer(c)
         tree_summarizer.consensus()
         

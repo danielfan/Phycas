@@ -229,8 +229,18 @@ class TreeSource(object):
         if self.trees:
             return "collection of trees in memory"
         if self.filename:
-            return "trees from the file %s" % filename
+            return "trees from the file %s" % self.filename
         return "None"
+
+    def __deepcopy__(self, memo):
+        #trees are expensive, so we don't make a deepcopy
+        print "TreeSource.__deepcopy__() %s" % str(self.__dict__)
+        if self.trees:
+            return TreeSource(self.trees, taxon_labels=self.taxon_labels)
+        elif self.filename:
+            return TreeSource(self.filename, format=self.format)
+        return TreeSource(None, taxon_labels=self.taxon_labels)
+
 _opt_name_help_len = 30
 _opt_val_help_len = 19
 
@@ -856,10 +866,6 @@ class PhycasCmdOpts(object):
                         raise ValueError("%s is not a valid value for %s. %s" % (value, name, c))
             self._command.__dict__[name] = self._current[name]
         else:
-            print 'name  =',name
-            print 'value =',value
-            for k in self._current.keys():
-                print k
             raise AttributeError("%s does not contain an attribute %s" % (self._command.__class__.__name__, name))
     def __contains__(self, name):
         return name in self._current
@@ -896,6 +902,8 @@ class PhycasCmdOpts(object):
 def TreeSourceValidate(opts, v):
     if v is None:
         return None
+    if isinstance(v, TreeSource):
+        return v
     return TreeSource(v)
 
 def BoolArgValidate(opts, v):
@@ -1092,13 +1100,10 @@ class PhycasCommand(object):
         #   been rebound in the `self` instance, thus causing a discrepancy
         #   between the initial value in opts._optionsInOrder and the current
         #   value in opts._current.  We fix this below
-        c = PhycasCommand(opts_copy, h.cmd_name, h.cmd_descrip, self.out)
-        if c.out:
-            out = self.out
-            if out:
-                c.__dict__["out"] = copy.deepcopy(out)
-            else:
-                c.__dict__["out"] = None
+        out = self.out
+        if out:
+            out = copy.deepcopy(out, memo)
+        c = PhycasCommand(opts_copy, h.cmd_name, h.cmd_descrip, out)
         # update the settings to a copy of the current settings
         opts_copy = c._options
         managed_dict = opts_copy._current
