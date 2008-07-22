@@ -24,9 +24,12 @@ model.pinvar_prior                 = ProbDist.BetaDist(1.0, 1.0)
 
 mcmc.out.log                      = 'output.txt'
 mcmc.out.log.mode                 = REPLACE
+mcmc.out.trees                    = 'fixed.t'
+mcmc.out.trees.mode               = REPLACE
+mcmc.out.params                   = 'fixed.p'
+mcmc.out.params.mode              = REPLACE
 mcmc.nchains                      = 1
 mcmc.ncycles                      = 2500
-mcmc.outfile_prefix               = 'fixed'
 mcmc.random_seed                  = 13579
 mcmc.fix_edgelens                 = True
 mcmc.edgelen_dist                 = ProbDist.ExponentialDist(10.0)

@@ -39,8 +39,8 @@ class MCMCImpl(CommonFunctions):
         self.taxon_labels           = []        # Will hold taxon labels from data file or default names if self.data_source equals None
         self.paramf                 = None
         self.treef                  = None
-        self.tree_file_name         = ''        # Will hold tree file name (see openParameterAndTreeFiles)
-        self.param_file_name        = ''        # Will hold parameter file name (see openParameterAndTreeFiles)
+        #self.tree_file_name         = ''        # Will hold tree file name (see openParameterAndTreeFiles)
+        #self.param_file_name        = ''        # Will hold parameter file name (see openParameterAndTreeFiles)
         #self.tmp_simdata            = SimData()
         self.gg_Pm                  = 0.0       # Penalty component (same for all k)
         self.gg_Gm                  = []        # Vector of goodness-of-fit components (one for each k in gg_kvect)
@@ -56,8 +56,8 @@ class MCMCImpl(CommonFunctions):
         self.path_sample            = None
         self.psf                    = None
         self.pdf_splits_to_plot     = None
-        self.param_file_name        = None  
-        self.tree_file_name         = None
+        #self.param_file_name        = None  
+        #self.tree_file_name         = None
         self.nsamples               = None
         self.ps_beta                = 1.0
         self.wangang_sampled_betas  = None
@@ -171,7 +171,16 @@ class MCMCImpl(CommonFunctions):
         Opens the tree file and writes a translate table.
         
         """
-        self.treef = file(self.tree_file_name, 'w')
+        #self.tree_file_name = self.opts.out.trees
+        
+        tree_file_spec = self.opts.out.trees
+        self.treef = None
+        try:
+            self.treef = tree_file_spec.open(self.stdout)
+        except:
+            print '*** Attempt to open tree file (%s) failed.' % self.opts.out.trees.filename
+
+        #self.treef = file(self.tree_file_name, 'w')
         self.mcmc_manager.treeFileHeader(self.treef)
 
     def treeFileClose(self):
@@ -184,18 +193,27 @@ class MCMCImpl(CommonFunctions):
         Opens the parameter file and writes a header line.
         
         """
-        self.paramf = file(self.param_file_name, 'w')
+        #self.param_file_name = self.opts.out.params
+        
+        param_file_spec = self.opts.out.params
+        self.paramf = None
+        try:
+            self.paramf = param_file_spec.open(self.stdout)
+        except:
+            print '*** Attempt to open parameter file (%s) failed.' % self.opts.out.params.filename
+
+        #self.paramf = file(self.param_file_name, 'w')
         self.mcmc_manager.paramFileHeader(self.paramf)
         self.paramf.write('\n')
 
     def paramFileClose(self):
         self.paramf.close()
 
-    def getPrefix(self):
-        prefix = os.path.abspath(self.opts.data_file_name) #os.path.basename(self.data_file_name)
-        if self.opts.outfile_prefix:
-            prefix = self.opts.outfile_prefix
-        return prefix
+    #def getPrefix(self):
+    #    prefix = os.path.abspath(self.opts.data_file_name) #os.path.basename(self.data_file_name)
+    #    if self.opts.outfile_prefix:
+    #        prefix = self.opts.outfile_prefix
+    #    return prefix
     
     def openParameterAndTreeFiles(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -204,9 +222,9 @@ class MCMCImpl(CommonFunctions):
         user-supplied prefix and opens the files
         
         """
-        prefix = self.getPrefix()
-        self.param_file_name = prefix + '.p'
-        self.tree_file_name = prefix + '.t'
+        #prefix = self.getPrefix()
+        #self.param_file_name = prefix + '.p'
+        #self.tree_file_name = prefix + '.t'
 
         self.paramFileOpen()
         self.treeFileOpen()
@@ -397,8 +415,10 @@ class MCMCImpl(CommonFunctions):
             self.output('Sample every:   %s' % self.opts.sample_every)
             self.output('Starting tree:  %s' % self.starting_tree)
             self.output('No. samples:    %s' % self.nsamples)
-            self.output('Sampled trees will be saved in %s' % self.tree_file_name)
-            self.output('Sampled parameters will be saved in %s' % self.param_file_name)
+            #self.output('Sampled trees will be saved in %s' % self.tree_file_name)
+            self.output('Sampled trees will be saved in %s' % self.opts.out.trees.filename)
+            #self.output('Sampled parameters will be saved in %s' % self.param_file_name)
+            self.output('Sampled parameters will be saved in %s' % self.opts.out.params.filename)
             if self.opts.use_unimap:
                 self.output('Using uniformized mapping MCMC')
             else:
@@ -455,25 +475,24 @@ class MCMCImpl(CommonFunctions):
         last_adaptation = 0
         next_adaptation = self.opts.adapt_first
 
-        # REVISIT LATER
-        #if self.doing_path_sampling:
-        #    self.path_sample = []
-        #    chain = self.mcmc_manager.chains[0]
-        #    ps_Qsum   = 0.0
-        #    ps_Qtotal = 0.0
-        #    ps_Qnum   = 0
-        #    if self.ps_toward_posterior:
-        #        self.ps_beta = self.ps_minbeta
-        #    else:
-        #        self.ps_beta = self.ps_maxbeta
-        #    chain.setPower(self.ps_beta)
-        #    if self.ps_filename:
-        #        self.psf = open(self.ps_filename,'w')
-        #        self.psf.write('beta\tavglnL\n')
-        #    self.wangang_sampled_betas = [self.ps_beta]
-        #    self.wangang_sampled_likes = []
-        #    self.wangang_sampled_likes.append([])
-        #    beta_index = 0
+        if self.doing_path_sampling:
+            self.path_sample = []
+            chain = self.mcmc_manager.chains[0]
+            ps_Qsum   = 0.0
+            ps_Qtotal = 0.0
+            ps_Qnum   = 0
+            if self.ps_toward_posterior:
+                self.ps_beta = self.ps_minbeta
+            else:
+                self.ps_beta = self.ps_maxbeta
+            chain.setPower(self.ps_beta)
+            if self.ps_filename:
+                self.psf = open(self.ps_filename,'w')
+                self.psf.write('beta\tavglnL\n')
+            self.wangang_sampled_betas = [self.ps_beta]
+            self.wangang_sampled_likes = []
+            self.wangang_sampled_likes.append([])
+            beta_index = 0
             
         for cycle in xrange(self.opts.ncycles):
             for i,c in enumerate(self.mcmc_manager.chains):
@@ -483,30 +502,29 @@ class MCMCImpl(CommonFunctions):
                 cold_chain_manager = self.mcmc_manager.getColdChainManager()
                 msg = 'cycle = %d, lnL = %.5f (%.5f secs)' % (cycle + 1, cold_chain_manager.getLastLnLike(), self.stopwatch.elapsedSeconds())
                 self.output(msg)
-            # REVISIT LATER
-            #if self.doing_path_sampling and cycle + 1 > self.ps_burnin:
-            #    sampled_lnL = cold_chain_manager.getLastLnLike()
-            #    ps_Qnum += 1
-            #    if (ps_Qnum % self.ps_sample_every) == 0:
-            #        ps_Qsum += sampled_lnL
-            #        ps_Qtotal += 1.0
-            #        self.wangang_sampled_likes[beta_index].append(sampled_lnL)
-            #    if ps_Qnum == self.ps_Q:
-            #        avg = ps_Qsum/ps_Qtotal
-            #        self.path_sample.append(avg)
-            #        if self.ps_filename:
-            #            self.psf.write('%.3f\t%.5f\n' % (self.ps_beta,avg))
-            #        if self.ps_toward_posterior:
-            #            self.ps_beta += self.ps_delta_beta
-            #        else:
-            #            self.ps_beta -= self.ps_delta_beta
-            #        chain.setPower(self.ps_beta)
-            #        ps_Qsum   = 0.0
-            #        ps_Qtotal = 0.0
-            #        ps_Qnum   = 0
-            #        self.wangang_sampled_betas.append(self.ps_beta)
-            #        self.wangang_sampled_likes.append([])
-            #        beta_index += 1
+            if self.doing_path_sampling and cycle + 1 > self.ps_burnin:
+                sampled_lnL = cold_chain_manager.getLastLnLike()
+                ps_Qnum += 1
+                if (ps_Qnum % self.ps_sample_every) == 0:
+                    ps_Qsum += sampled_lnL
+                    ps_Qtotal += 1.0
+                    self.wangang_sampled_likes[beta_index].append(sampled_lnL)
+                if ps_Qnum == self.ps_Q:
+                    avg = ps_Qsum/ps_Qtotal
+                    self.path_sample.append(avg)
+                    if self.ps_filename:
+                        self.psf.write('%.3f\t%.5f\n' % (self.ps_beta,avg))
+                    if self.ps_toward_posterior:
+                        self.ps_beta += self.ps_delta_beta
+                    else:
+                        self.ps_beta -= self.ps_delta_beta
+                    chain.setPower(self.ps_beta)
+                    ps_Qsum   = 0.0
+                    ps_Qtotal = 0.0
+                    ps_Qnum   = 0
+                    self.wangang_sampled_betas.append(self.ps_beta)
+                    self.wangang_sampled_likes.append([])
+                    beta_index += 1
             if (cycle + 1) % self.opts.sample_every == 0:
                 self.mcmc_manager.recordSample(cycle)
                 self.stopwatch.normalize()

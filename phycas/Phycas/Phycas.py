@@ -49,14 +49,14 @@ class Phycas(object):
         # Variables associated with path sampling (i.e. thermodynamic integration)
         # If pathsampling() function called, ncycles will be ignored and instead the number of cycles
         # will be ps_burnin + (ps_Q*ps_nbetavals)
-        self.ps_toward_posterior    = True      # If True, chain will start with beta = 0.0 (exploring prior) and end up exploring posterior; otherwise, chain will begin by exploring posterior and end exploring prior
-        self.ps_burnin              = 1000      # Number of cycles used to equilibrate before increasing beta
-        self.ps_Q                   = 100       # Number of cycles between changes in beta
-        self.ps_sample_every        = 1         # Determines number of times likelihood will be sampled. Number of samples for each value of beta will be ps_Q/sample_every
-        self.ps_nbetavals           = 10        # The number of values beta will take on during the run; for example, if this value is 4, then beta will take on these values: 0, 1/3, 2/3, 1
-        self.ps_minbeta             = 0.0       # The first beta value that will be sampled if ps_toward_posterior = True
-        self.ps_maxbeta             = 1.0       # The last beta value that will be sampled if ps_toward_posterior = True
-        self.ps_filename            = None      # If defined, a file by this name will be created containing the intermediate results (average log-likelihood at each step of the path)
+        #self.ps_toward_posterior    = True      # If True, chain will start with beta = 0.0 (exploring prior) and end up exploring posterior; otherwise, chain will begin by exploring posterior and end exploring prior
+        #self.ps_burnin              = 1000      # Number of cycles used to equilibrate before increasing beta
+        #self.ps_Q                   = 100       # Number of cycles between changes in beta
+        #self.ps_sample_every        = 1         # Determines number of times likelihood will be sampled. Number of samples for each value of beta will be ps_Q/sample_every
+        #self.ps_nbetavals           = 10        # The number of values beta will take on during the run; for example, if this value is 4, then beta will take on these values: 0, 1/3, 2/3, 1
+        #self.ps_minbeta             = 0.0       # The first beta value that will be sampled if ps_toward_posterior = True
+        #self.ps_maxbeta             = 1.0       # The last beta value that will be sampled if ps_toward_posterior = True
+        #self.ps_filename            = None      # If defined, a file by this name will be created containing the intermediate results (average log-likelihood at each step of the path)
 
         # Variables associated with Gelfand-Ghosh calculation
         self.gg_outfile             = 'gg.txt'  # File in which to save gg results (use None to not save results)

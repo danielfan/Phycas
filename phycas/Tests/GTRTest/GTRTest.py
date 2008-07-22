@@ -11,7 +11,10 @@ model.use_inverse_shape = True
 
 mcmc.out.log = 'output.txt'
 mcmc.out.log.mode = REPLACE
-mcmc.outfile_prefix = 'gtr_test'
+mcmc.out.trees.prefix = 'gtr_test'
+mcmc.out.trees.mode = REPLACE
+mcmc.out.params.prefix = 'gtr_test'
+mcmc.out.params.mode = REPLACE
 mcmc.nchains = 1
 mcmc.ncycles = 100
 mcmc.sample_every = 5

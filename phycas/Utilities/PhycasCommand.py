@@ -533,11 +533,12 @@ class FileOutputSpec(PhycasOutput):
         return self.prefix and (self.prefix == other.prefix)
 
 class TextOutputSpec(FileOutputSpec):
-    def __init__(self, prefix="", help_str="", filename=None):
+    def __init__(self, prefix="", suffix=".txt", help_str="", filename=None):
         FileOutputSpec.__init__(self, prefix, help_str, filename)
         self._valid_formats = [FileFormats.RAW_TEXT]
+        self.__dict__["suffix"] = suffix
     def _getSuffix(self):
-        return ".txt"
+        return self.suffix
 
 class BinaryOutputSpec(FileOutputSpec):
     def __init__(self, prefix="", help_str="", filename=None):

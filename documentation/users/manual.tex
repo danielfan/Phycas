@@ -212,7 +212,7 @@ A Python script is a file containing Python source code. When submitted to the P
 
 Before continuing, create a new, empty directory (a.k.a. folder) in which to experiment. Copy the file \path{green.nex} into the new directory. This file can be found under your Phycas installation directory at the location \path{phycas/Tests/Data/green.nex}. If you have no idea where your Phycas installation directory is located, please reread the relevant subsection of the installation instructions (section~\ref{sec:install}, starting on p.~\pageref{sec:install}).
 
-\subsection{Your first Phycas analysis}
+\subsection{The {\em basic.py} script}
 
 Create a new (plain text\footnote{
 %
@@ -222,7 +222,8 @@ It is important to save the file using plain text format. Most word processing p
 \begin{verbatim}
 from phycas import *
 mcmc.data_file_name = 'green.nex'
-mcmc.log_file_name = 'basic.log'
+mcmc.out.log = 'basic.log'
+mcmc.out.log.mode = REPLACE
 mcmc.ncycles = 2000
 mcmc.sample_every = 10
 mcmc()
@@ -247,11 +248,16 @@ For example, if the data file was in a directory named {\tt xyz} at the same lev
 Phycas does not do anything at this point in the script except set the \opt{data\_file\_name} option of the \cmd{mcmc} command to the string \code{'green.nex'}. The file name is specified as a string, so surround the file name with single quotes so that the Python interpreter will not complain. 
 %
 \begin{verbatim}
-mcmc.log_file_name = 'basic.log'
+mcmc.out.log = 'basic.log'
 \end{verbatim}
 %
 This line starts a log file, which captures all output sent to the console. Some consoles do not have a large buffer, and it is possible to lose the beginning of the output if an analysis runs for a long time. Note that the name of the log file must be in the form of a Python string: that is, failing to surround the file name with quotes will result in an error.
 %
+\begin{verbatim}
+mcmc.out.log.mode = REPLACE
+\end{verbatim}
+%
+This line specifies the mode for the log file. The mode of any output file determines what happens if a file by that name already exists. The default behavior is to create a file by the same name but with a number at the end. For example, if \path{basic.log} already exists, then the new log file would be named \path{basic1.log}. If \path{basic1.log} already exists, then the new log file would be named \path{basic2.log}, and so on. You can also specify \code{REPLACE} (as we have done here) to replace any existing file with the same name, or \code{APPEND} to add to the end of an existing file. 
 \begin{verbatim}
 mcmc.ncycles = 2000
 \end{verbatim}
@@ -301,25 +307,25 @@ The program should run for a few minutes, creating three files (\pathname{basic.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Summarizing tree files}
 
-Phycas provides the {\tt sumt()} method for summarizing an input tree file. While analogous, Phycas' {\tt sumt()} method differs somewhat from the MrBayes sumt command. The example below stands alone, however there is nothing wrong with tacking on these statements after the {\tt mcmc()} call in the previous \pathname{basic.py} example.
+Phycas provides the {\tt sumt()} method for summarizing an input tree file. While analogous, Phycas' {\tt sumt()} method differs somewhat from the MrBayes sumt command. The example below stands alone, however there is no reason why you could not place the following statements after the {\tt mcmc()} call in the previous \pathname{basic.py} example.
 
 \subsection{Example script}
 
 \begin{verbatim}
 from phycas import *
-phycas = Phycas()
-phycas.sumt_input_tree_file = 'green.nex.t'
-phycas.sumt_trees_prefix = 'trees'
-phycas.sumt_splits_prefix = 'splits'
-phycas.sumt_burnin = 1
-phycas.sumt()
+sumt.trees = 'green.nex.t'
+sumt.out.trees.prefix = 'trees'
+sumt.out.splits.prefix = 'splits'
+sumt.burnin = 1
+sumt()
 \end{verbatim}
 
 \subsection{Line-by-line explanation}
 
+{\bf *** BEGIN AGAIN HERE ***}
+
 \begin{verbatim}
 from phycas import *
-phycas = Phycas()
 \end{verbatim}
 %
 These two lines were explained previously in the explanation of the \pathname{basic.py} script on page~\pageref{subsec:basicpyexplanation}.
