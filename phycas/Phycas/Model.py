@@ -23,6 +23,22 @@ class Model(PhycasCommand):
                 ("base_freq_param_prior",  ExponentialDist(1.0),            "The prior distribution for the individual base frequency parameters; these parameters, when normalized to sum to 1, represent the equilibrium proportions of the nucleotide states"),
                 ("base_freqs",             [1.0, 1.0, 1.0, 1.0],            "The current values for the four base frequency parameters"),
                 ("fix_freqs",              False,                           "If True, the base frequencies will not be modified during the course of an MCMC analysis", BoolArgValidate),
+                #("using_hyperprior",        True,                           "not yet documented", BoolArgValidate),
+                ("edgelen_hyperprior",      InverseGammaDist(2.1,1.0/1.1),  "not yet documented"),
+                ("fix_edgelen_hyperparam",  False,                          "not yet documented", BoolArgValidate),
+                ("starting_edgelen_hyperparam", 0.05,                       "This is a placeholder - setting this currently has no effect", FloatArgValidate(min=0.01)),
+                ("internal_edgelen_dist",   None,                           "Can be used to set a prior distribution for internal edges that differs from that applied to external edges. If this is set to something besides None, you should also set external_edgelen_dist appropriately. Setting the edgelen_dist property sets both external_edgelen_dist and internal_edgelen_dist to the same value"),
+                ("external_edgelen_dist",   None,                           "Can be used to set a prior distribution for external edges that differs from that applied to internal edges. If this is set to something besides None, you should also set internal_edgelen_dist appropriately. Setting the edgelen_dist property sets both external_edgelen_dist and internal_edgelen_dist to the same value"),
+                ("edgelen_dist",            ExponentialDist(2.0),           "Sets both internal_edgelen_dist and external_edgelen_dist to the supplied value. Use this setting if you want all edges in the tree to have the same prior distribution. Using this setting will overwrite any values previously supplied for internal_edgelen_dist and external_edgelen_dist"),
+                ("fix_edgelens",            False,                          "not yet documented", BoolArgValidate),
+                ("starting_edgelen_dist",  ExponentialDist(10.0),           "Used to select the starting edge lengths when starting_tree_source is 'random'"),
+                ("use_flex_model",         False,                           "not yet documented", BoolArgValidate),
+                ("flex_ncat_move_weight",  1,                               "Number of times each cycle to attempt an ncat move", IntArgValidate(min=0)),
+                ("flex_num_spacers",       1,                               "Number of fake rates between each adjacent pair of real rates", IntArgValidate(min=1)),
+                ("flex_phi",               0.25,                            "Proportion of ncat moves in which ncat is incremented (ncat is decremented with probability 1 - flex_phi)", ProbArgValidate()),
+                ("flex_L",                 1.0,                             "Upper bound of interval used for unnormalized relative rate parameter values", FloatArgValidate(min=0.01)),
+                ("flex_lambda",            1.0,                             "Parameter of Poisson prior on the number of extra categories", FloatArgValidate(min=0.01)),
+                ("flex_prob_param_prior",  ExponentialDist(1.0),            "not yet documented"),
                 )
         PhycasCommand.__init__(self, args, "model", "Defines a substitution model.")
 

@@ -22,6 +22,12 @@ model.pinvar                       = 0.27
 model.fix_pinvar                   = True
 model.pinvar_prior                 = ProbDist.BetaDist(1.0, 1.0)
 
+model.fix_edgelens                 = True
+model.edgelen_dist                 = ProbDist.ExponentialDist(10.0)
+model.starting_edgelen_hyperparam  = 0.05
+model.fix_edgelen_hyperparam       = True
+model.edgelen_hyperprior           = ProbDist.InverseGammaDist(2.1, 0.9090909)
+
 mcmc.out.log                      = 'output.txt'
 mcmc.out.log.mode                 = REPLACE
 mcmc.out.trees                    = 'fixed.t'
@@ -31,12 +37,6 @@ mcmc.out.params.mode              = REPLACE
 mcmc.nchains                      = 1
 mcmc.ncycles                      = 2500
 mcmc.random_seed                  = 13579
-mcmc.fix_edgelens                 = True
-mcmc.edgelen_dist                 = ProbDist.ExponentialDist(10.0)
-mcmc.using_hyperprior             = True
-mcmc.starting_edgelen_hyperparam  = 0.05
-mcmc.fix_edgelen_hyperparam       = True
-mcmc.edgelen_hyperprior           = ProbDist.InverseGammaDist(2.1, 0.9090909)
 mcmc.data_source                  = 'file'
 mcmc.data_file_name               = getPhycasTestData('nyldna4.nex')
 mcmc.starting_tree_source         = 'random'

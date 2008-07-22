@@ -24,10 +24,10 @@ class MCMC(PhycasCommand):
                 ("ls_move_debug",          False,                           "If set to true, TreeViewer will popup on each Larget-Simon move update showing edges affected by the proposed move", BoolArgValidate),
                 ("edge_move_lambda",       0.2,                             "The value of the tuning parameter for the EdgeMove", FloatArgValidate(min=0.01)),
                 ("edge_move_weight",       0,                               "Only used if fix_topology is True. Makes sense to set this to some multiple of the number of edges since each EdgeMove affects a single randomly-chosen edge ", IntArgValidate(min=0)),
-                ("mapping_move_weight",     1,                              "Univent mapping will be performed this many times per cycle", IntArgValidate(min=0)),
-                ("unimap_nni_move_weight", 100,                             "Unimap NNI moves will be performed this many times per cycle", IntArgValidate(min=0)),
+                #("mapping_move_weight",     1,                              "Univent mapping will be performed this many times per cycle", IntArgValidate(min=0)),
+                #("unimap_nni_move_weight", 100,                             "Unimap NNI moves will be performed this many times per cycle", IntArgValidate(min=0)),
                 ("tree_scaler_weight",     0,                               "Whole-tree scaling will be performed this many times per cycle", IntArgValidate(min=0)),
-                ("use_unimap",              False,                          "if True, MCMC analyses will use the uniformized mapping approach", BoolArgValidate),
+                #("use_unimap",              False,                          "if True, MCMC analyses will use the uniformized mapping approach", BoolArgValidate),
                 ("allow_polytomies",        False,                          "If True, do Bush moves in addition to Larget-Simon moves; if False, do Larget-Simon moves only", BoolArgValidate),
                 ("polytomy_prior",          True,                           "If True, use polytomy prior; if False, use resolution class prior", BoolArgValidate),
                 ("topo_prior_C",            2.0,                            "Specifies the strength of the prior (C = 1 is flat prior; C > 1 favors less resolved topologies)", FloatArgValidate(min=0.01)),
@@ -38,25 +38,9 @@ class MCMC(PhycasCommand):
                 ("slice_max_units",         1000,                           "Max. number of units used in slice sampling", IntArgValidate(min=0)),
                 ("adapt_first",             100,                            "Adaptation of slice samplers is performed the first time at cycle adapt_first. Subsequent adaptations wait twice the number of cycles as the previous adaptation. Thus, adaptation n occurs at cycle adapt_first*(2**(n - 1)). The total number of adaptations that will occur during an MCMC run is [ln(adapt_first + ncycles) - ln(adapt_first)]/ln(2)", IntArgValidate(min=0)),
                 ("adapt_simple_param",      0.5,                            "Slice sampler adaptation parameter", FloatArgValidate(min=0.01)),
-                ("using_hyperprior",        True,                           "not yet documented", BoolArgValidate),
-                ("edgelen_hyperprior",      InverseGammaDist(2.1,1.0/1.1),  "not yet documented"),
-                ("fix_edgelen_hyperparam",  False,                          "not yet documented", BoolArgValidate),
-                ("starting_edgelen_hyperparam", 0.05,                       "not yet documented", FloatArgValidate(min=0.01)),
-                ("internal_edgelen_dist",   None,                           "Can be used to set a prior distribution for internal edges that differs from that applied to external edges. If this is set to something besides None, you should also set external_edgelen_dist appropriately. Setting the edgelen_dist property sets both external_edgelen_dist and internal_edgelen_dist to the same value"),
-                ("external_edgelen_dist",   None,                           "Can be used to set a prior distribution for external edges that differs from that applied to internal edges. If this is set to something besides None, you should also set internal_edgelen_dist appropriately. Setting the edgelen_dist property sets both external_edgelen_dist and internal_edgelen_dist to the same value"),
-                ("edgelen_dist",            ExponentialDist(2.0),           "Sets both internal_edgelen_dist and external_edgelen_dist to the supplied value. Use this setting if you want all edges in the tree to have the same prior distribution. Using this setting will overwrite any values previously supplied for internal_edgelen_dist and external_edgelen_dist"),
-                ("fix_edgelens",            False,                          "not yet documented", BoolArgValidate),
-                ("starting_edgelen_dist",  ExponentialDist(10.0),           "Used to select the starting edge lengths when starting_tree_source is 'random'"),
                 ("heating_lambda",         0.2,                             "not yet documented", FloatArgValidate(min=0.01)),
                 ("nchains",                1,                               "The number of Markov chains to run simultaneously. One chain serves as the cold chain from which samples are drawn, the other chains are heated to varying degrees and serve to enhance mixing in the cold chain.", IntArgValidate(min=1,max=1)), # only allowing 1 chain now because multiple chains not yet fully implemented
                 ("is_standard_heating",    True,                            "not yet documented", BoolArgValidate),
-                ("use_flex_model",         False,                           "not yet documented", BoolArgValidate),
-                ("flex_ncat_move_weight",  1,                               "Number of times each cycle to attempt an ncat move", IntArgValidate(min=0)),
-                ("flex_num_spacers",       1,                               "Number of fake rates between each adjacent pair of real rates", IntArgValidate(min=1)),
-                ("flex_phi",               0.25,                            "Proportion of ncat moves in which ncat is incremented (ncat is decremented with probability 1 - flex_phi)", ProbArgValidate()),
-                ("flex_L",                 1.0,                             "Upper bound of interval used for unnormalized relative rate parameter values", FloatArgValidate(min=0.01)),
-                ("flex_lambda",            1.0,                             "Parameter of Poisson prior on the number of extra categories", FloatArgValidate(min=0.01)),
-                ("flex_prob_param_prior",  ExponentialDist(1.0),            "not yet documented"),
                 ("uf_num_edges",           50,                              "Number of edges to traverse before taking action to prevent underflow", IntArgValidate(min=1)),
                 ("ntax",                   0,                               "To explore the prior, set to some positive value. Also set data_source to None", IntArgValidate(min=0)),
                 )
@@ -76,6 +60,9 @@ class MCMC(PhycasCommand):
         # The roundabout way of introducing these data members is necessary because PhycasCommand.__setattr__ tries
         # to prevent users from adding new data members (to prevent accidental misspellings from causing problems)
         self.__dict__["debugging"] = False
+        self.__dict__["use_unimap"] = False             # if True, MCMC analyses will use the uniformized mapping approach.
+        self.__dict__["mapping_move_weight"] = 1        # Univent mapping will be performed this many times per cycle
+        self.__dict__["unimap_nni_move_weight"] = 100   # Unimap NNI moves will be performed this many times per cycle
         
     def __call__(self, **kwargs):
         self.set(**kwargs)
@@ -83,22 +70,19 @@ class MCMC(PhycasCommand):
         mcmc_impl = MCMCImpl(c)
         mcmc_impl.run()
         
-#                ("default_model",          'hky',                           "Can be 'jc', 'hky' or 'gtr'"),
-#                ("relrate_prior",          ExponentialDist(1.0),            "The prior distribution for individual GTR relative rate parameters"),
-#                ("relrates",               [1.0, 4.0, 1.0, 1.0, 4.0, 1.0] , "The starting values for GTR relative rates"),
-#                ("fix_relrates",           False,                           "If True, GTR relative rates will not be modified during the course of an MCMC analysis", BoolArgValidate),
-#                ("kappa_prior",            ExponentialDist(1.0),            "The prior distribution for the kappa parameter in an HKY model"),
-#                ("kappa",                  4.0,                             "The starting value for the kappa parameter in an HKY model", FloatArgValidate(min=0.01)),
-#                ("fix_kappa",              False,                           "If True, the HKY kappa parameter will not be modified during the course of an MCMC analysis", BoolArgValidate),
-#                ("num_rates",              1,                               "The number of relative rates used for the discrete gamma rate heterogeneity submodel; default is rate homogeneity (i.e. 1 rate)", IntArgValidate(min=1)),
-#                ("gamma_shape_prior",      ExponentialDist(1.0),            "The prior distribution for the shape parameter of the gamma among-site rate distribution"),
-#                ("gamma_shape",            0.5,                             "The starting value for the gamma shape parameter", FloatArgValidate(min=0.01)),
-#                ("fix_shape",              False,                           "If True, the gamma shape parameter will not be modified during the course of an MCMC analysis", BoolArgValidate),
-#                ("use_inverse_shape",      False,                           "If True, gamma_shape_prior is applied to 1/shape rather than shape", BoolArgValidate),
-#                ("pinvar_model",           False,                           "If True, an invariable sites submodel will be applied and the parameter representing the proportion of invariable sites will be estimated", BoolArgValidate),
-#                ("pinvar_prior",           BetaDist(1.0, 1.0),              "The prior distribution for pinvar, the proportion of invariable sites parameter"),
-#                ("pinvar",                 0.2,                             "The starting value of pinvar, the proportion of invariable sites parameter", ProbArgValidate()),
-#                ("fix_pinvar",             False,                           "If True, the proportion of invariable sites parameter (pinvar) will not be modified during the course of an MCMC analysis", BoolArgValidate),
-#                ("base_freq_param_prior",  ExponentialDist(1.0),            "The prior distribution for the individual base frequency parameters; these parameters, when normalized to sum to 1, represent the equilibrium proportions of the nucleotide states"),
-#                ("base_freqs",             [1.0, 1.0, 1.0, 1.0],            "The starting values for the four base frequency parameters"),
-#                ("fix_freqs",              False,                           "If True, the base frequencies will not be modified during the course of an MCMC analysis", BoolArgValidate),
+    #("using_hyperprior",        True,                           "not yet documented", BoolArgValidate),
+    #("edgelen_hyperprior",      InverseGammaDist(2.1,1.0/1.1),  "not yet documented"),
+    #("fix_edgelen_hyperparam",  False,                          "not yet documented", BoolArgValidate),
+    #("starting_edgelen_hyperparam", 0.05,                       "not yet documented", FloatArgValidate(min=0.01)),
+    #("internal_edgelen_dist",   None,                           "Can be used to set a prior distribution for internal edges that differs from that applied to external edges. If this is set to something besides None, you should also set external_edgelen_dist appropriately. Setting the edgelen_dist property sets both external_edgelen_dist and internal_edgelen_dist to the same value"),
+    #("external_edgelen_dist",   None,                           "Can be used to set a prior distribution for external edges that differs from that applied to internal edges. If this is set to something besides None, you should also set internal_edgelen_dist appropriately. Setting the edgelen_dist property sets both external_edgelen_dist and internal_edgelen_dist to the same value"),
+    #("edgelen_dist",            ExponentialDist(2.0),           "Sets both internal_edgelen_dist and external_edgelen_dist to the supplied value. Use this setting if you want all edges in the tree to have the same prior distribution. Using this setting will overwrite any values previously supplied for internal_edgelen_dist and external_edgelen_dist"),
+    #("fix_edgelens",            False,                          "not yet documented", BoolArgValidate),
+    #("starting_edgelen_dist",  ExponentialDist(10.0),           "Used to select the starting edge lengths when starting_tree_source is 'random'"),
+    #("use_flex_model",         False,                           "not yet documented", BoolArgValidate),
+    #("flex_ncat_move_weight",  1,                               "Number of times each cycle to attempt an ncat move", IntArgValidate(min=0)),
+    #("flex_num_spacers",       1,                               "Number of fake rates between each adjacent pair of real rates", IntArgValidate(min=1)),
+    #("flex_phi",               0.25,                            "Proportion of ncat moves in which ncat is incremented (ncat is decremented with probability 1 - flex_phi)", ProbArgValidate()),
+    #("flex_L",                 1.0,                             "Upper bound of interval used for unnormalized relative rate parameter values", FloatArgValidate(min=0.01)),
+    #("flex_lambda",            1.0,                             "Parameter of Poisson prior on the number of extra categories", FloatArgValidate(min=0.01)),
+    #("flex_prob_param_prior",  ExponentialDist(1.0),            "not yet documented"),

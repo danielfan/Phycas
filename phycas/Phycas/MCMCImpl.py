@@ -299,10 +299,10 @@ class MCMCImpl(CommonFunctions):
         """
         # REVISIT LATER
         # Hack until PhycasCommand implements properties
-        if self.opts.internal_edgelen_dist is None:
-            self.opts.internal_edgelen_dist = self.opts.edgelen_dist
-        if self.opts.external_edgelen_dist is None:
-            self.opts.external_edgelen_dist = self.opts.edgelen_dist
+        if self.opts.model.internal_edgelen_dist is None:
+            self.opts.model.internal_edgelen_dist = self.opts.model.edgelen_dist
+        if self.opts.model.external_edgelen_dist is None:
+            self.opts.model.external_edgelen_dist = self.opts.model.edgelen_dist
         
         # Read the data
         if self.opts.data_source == 'file':

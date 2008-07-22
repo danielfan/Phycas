@@ -34,8 +34,7 @@ model.kappa_prior = ProbDist.ExponentialDist(1.0)
 # mu. For this "hyperprior" (the prior for a hyperparameter) we used an Inverse
 # Gamma distribution having mean 1.0 and variance 10.0, as first suggested by
 # Suchard et al. in their 2001 MBE (18:1001-1013) paper on Bayesian model selection.
-mcmc.using_hyperprior = True 
-mcmc.edgelen_hyperprior = ProbDist.InverseGammaDist(2.1, 1.0/1.1)
+model.edgelen_hyperprior = ProbDist.InverseGammaDist(2.1, 1.0/1.1)
 
 # Tell phycas that we want to allow polytomies
 mcmc.allow_polytomies = True
@@ -71,6 +70,16 @@ mcmc.slice_max_units = 0
 # lengths and tree topology.
 mcmc.ncycles = 20000
 mcmc.sample_every = 10    # save tree and parameters every 10 cycles
+
+# Specify the names of the files that will store the trees and parameter values
+mcmc.out.trees.prefix = 'trees'
+mcmc.out.trees.mode = REPLACE
+mcmc.out.params.prefix = 'params'
+mcmc.out.params.mode = REPLACE
+
+# Specify the names of the file that will store the output
+mcmc.out.log.prefix = 'output'
+mcmc.out.log.mode = REPLACE
 
 # Finally, call mcmc(), which starts the MCMC analysis.
 mcmc()

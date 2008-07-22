@@ -3,6 +3,7 @@ from phycas import *
 import phycas.Phylogeny as Phylogeny
 import phycas.ProbDist as ProbDist
 import phycas.Likelihood as Likelihood
+
 def cloneDistribution(d):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
@@ -44,7 +45,7 @@ class LikelihoodCore:
         self.likelihood             = None
         self.tree                   = Phylogeny.Tree()
         self.r                      = ProbDist.Lot()
-        self.starting_edgelen_dist  = cloneDistribution(self.parent.opts.starting_edgelen_dist)
+        self.starting_edgelen_dist  = cloneDistribution(self.parent.opts.model.starting_edgelen_dist)
     
     def setupCore(self, zero_based_tips = False):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -88,10 +89,10 @@ class LikelihoodCore:
 
         # If rate heterogeneity is to be assumed, add it to the model here
         # Note must defer setting up pattern specific rates model until we know number of patterns
-        if self.parent.opts.use_flex_model:
+        if self.parent.opts.model.use_flex_model:
             self.model.setNGammaRates(self.parent.opts.model.num_rates)
             self.model.setFlexModel()
-            self.model.setFlexRateUpperBound(self.parent.opts.flex_L)
+            self.model.setFlexRateUpperBound(self.parent.opts.model.flex_L)
         elif self.parent.opts.model.num_rates > 1:
             self.model.setNGammaRates(self.parent.opts.model.num_rates)
             self.model.setPriorOnShapeInverse(self.parent.opts.model.use_inverse_shape)    #POL should be named useInverseShape rather than setPriorOnShapeInverse
@@ -102,7 +103,7 @@ class LikelihoodCore:
             self.model.setNGammaRates(1)
             
         if self.parent.opts.model.pinvar_model:
-            assert not self.parent.opts.use_flex_model, 'Cannot currently use flex model with pinvar'
+            assert not self.parent.opts.model.use_flex_model, 'Cannot currently use flex model with pinvar'
             self.model.setPinvarModel()
             self.model.setPinvar(self.parent.opts.model.pinvar)
             if self.parent.opts.model.fix_pinvar:
@@ -110,7 +111,7 @@ class LikelihoodCore:
         else:
             self.model.setNotPinvarModel()
 
-        if self.parent.opts.fix_edgelens:
+        if self.parent.opts.model.fix_edgelens:
             self.model.fixEdgeLengths()
             
         # Create the likelihood object
@@ -223,12 +224,12 @@ class MarkovChain(LikelihoodCore):
         self.relrate_prior           = cloneDistribution(self.parent.opts.model.relrate_prior)
         self.base_freq_param_prior   = cloneDistribution(self.parent.opts.model.base_freq_param_prior)
         self.gamma_shape_prior       = cloneDistribution(self.parent.opts.model.gamma_shape_prior)
-        self.edgelen_hyperprior      = cloneDistribution(self.parent.opts.edgelen_hyperprior)
-        self.external_edgelen_dist   = cloneDistribution(self.parent.opts.external_edgelen_dist)
-        self.internal_edgelen_dist   = cloneDistribution(self.parent.opts.internal_edgelen_dist)
+        self.edgelen_hyperprior      = cloneDistribution(self.parent.opts.model.edgelen_hyperprior)
+        self.external_edgelen_dist   = cloneDistribution(self.parent.opts.model.external_edgelen_dist)
+        self.internal_edgelen_dist   = cloneDistribution(self.parent.opts.model.internal_edgelen_dist)
         self.kappa_prior             = cloneDistribution(self.parent.opts.model.kappa_prior)
         self.pinvar_prior            = cloneDistribution(self.parent.opts.model.pinvar_prior)
-        self.flex_prob_param_prior   = cloneDistribution(self.parent.opts.flex_prob_param_prior)
+        self.flex_prob_param_prior   = cloneDistribution(self.parent.opts.model.flex_prob_param_prior)
         self.chain_manager           = None
 
         self.setupChain()
@@ -269,13 +270,13 @@ class MarkovChain(LikelihoodCore):
         else:
             paramf.write('Gen\tLnL\tTL')
         paramf.write(self.model.paramHeader())
-        if self.parent.opts.using_hyperprior:
-            if self.parent.opts.internal_edgelen_dist is self.parent.opts.external_edgelen_dist:
+        if self.parent.opts.model.edgelen_hyperprior is not None:
+            if self.parent.opts.model.internal_edgelen_dist is self.parent.opts.model.external_edgelen_dist:
                 paramf.write('\thyper(all)')
             else:
                 paramf.write('\thyper(external)')
                 paramf.write('\thyper(internal)')
-        if self.parent.opts.use_flex_model:
+        if self.parent.opts.model.use_flex_model:
             paramf.write('\trates_probs')
 
     def treeFileHeader(self, treef):
@@ -341,7 +342,7 @@ class MarkovChain(LikelihoodCore):
         self.pinvar_prior.setLot(self.r)
         self.edgelen_hyperprior.setLot(self.r)
         self.external_edgelen_dist.setLot(self.r)
-        if self.parent.opts.internal_edgelen_dist:
+        if self.parent.opts.model.internal_edgelen_dist:
             self.internal_edgelen_dist.setLot(self.r)
         
         # Define priors for the model parameters
@@ -353,25 +354,25 @@ class MarkovChain(LikelihoodCore):
             self.model.setStateFreqParamPrior(self.base_freq_param_prior)   #POL should be named state_freq_param_prior
 
         # If rate heterogeneity is to be assumed, add priors for these model parameters here
-        if self.parent.opts.use_flex_model:
-            self.model.setNumFlexSpacers(self.parent.opts.flex_num_spacers)
-            self.model.setFLEXProbParamPrior(self.parent.opts.flex_prob_param_prior)
+        if self.parent.opts.model.use_flex_model:
+            self.model.setNumFlexSpacers(self.parent.opts.model.flex_num_spacers)
+            self.model.setFLEXProbParamPrior(self.flex_prob_param_prior)
         elif self.parent.opts.model.num_rates > 1:
             self.model.setDiscreteGammaShapePrior(self.gamma_shape_prior)
         if self.parent.opts.model.pinvar_model:
             self.model.setPinvarPrior(self.pinvar_prior)
         
         # Define edge length prior distributions
-        separate_edge_len_dists = self.parent.opts.internal_edgelen_dist is not self.parent.opts.external_edgelen_dist
+        separate_edge_len_dists = self.parent.opts.model.internal_edgelen_dist is not self.parent.opts.model.external_edgelen_dist
         self.model.separateInternalExternalEdgeLenPriors(separate_edge_len_dists)
         self.model.setExternalEdgeLenPrior(self.external_edgelen_dist)
         self.model.setInternalEdgeLenPrior(self.internal_edgelen_dist)
 
-        if self.parent.opts.using_hyperprior:
+        if self.parent.opts.model.edgelen_hyperprior is not None:
             #self.edgelen_hyperprior.setMeanAndVariance(1.0, 10.0)
             self.model.setEdgeLenHyperPrior(self.edgelen_hyperprior)
             #todo self.model.starting_edgelen_hyperparam
-            if self.parent.opts.fix_edgelen_hyperparam:
+            if self.parent.opts.model.fix_edgelen_hyperparam:
                 self.model.fixEdgeLenHyperprior()   #POL should be named fixEdgeLenHyperparam
         else:
             self.model.setEdgeLenHyperPrior(None)
@@ -458,20 +459,20 @@ class MarkovChain(LikelihoodCore):
             self.chain_manager.addMove(self.larget_simon_move)
 
         # If requested, create an NCatMove object to allow the number of rate categories to change
-        if self.parent.opts.use_flex_model:
+        if self.parent.opts.model.use_flex_model:
             # Create an NCatMove object
             self.ncat_move = Likelihood.NCatMove()
             
             # Set up features specific to NCatMove
             self.ncat_move.setCatProbPrior(self.flex_prob_param_prior)
-            self.ncat_move.setL(self.parent.opts.flex_L)
-            self.ncat_move.setS(self.parent.opts.flex_num_spacers)
-            self.ncat_move.setLambda(self.parent.opts.flex_lambda)
-            self.ncat_move.setPhi(self.parent.opts.flex_phi)
+            self.ncat_move.setL(self.parent.opts.model.flex_L)
+            self.ncat_move.setS(self.parent.opts.model.flex_num_spacers)
+            self.ncat_move.setLambda(self.parent.opts.model.flex_lambda)
+            self.ncat_move.setPhi(self.parent.opts.model.flex_phi)
 
             # Continue setting up NCatMove object
             self.ncat_move.setName("NCat move")
-            self.ncat_move.setWeight(self.parent.opts.flex_ncat_move_weight)
+            self.ncat_move.setWeight(self.parent.opts.model.flex_ncat_move_weight)
             self.ncat_move.setTree(self.tree)
             self.ncat_move.setModel(self.model)
             self.ncat_move.setTreeLikelihood(self.likelihood)
@@ -591,7 +592,7 @@ class MCMCManager:
         
         """
         # Sanity checks
-        unimap_and_flex            = (self.parent.opts.use_unimap and self.parent.opts.use_flex_model)
+        unimap_and_flex            = (self.parent.opts.use_unimap and self.parent.opts.model.use_flex_model)
         unimap_and_ratehet         = (self.parent.opts.use_unimap and self.parent.opts.model.num_rates > 1)
         unimap_and_polytomies      = (self.parent.opts.use_unimap and self.parent.opts.allow_polytomies)
         unimap_and_multiple_chains = (self.parent.opts.use_unimap and self.parent.opts.nchains > 1)
@@ -723,10 +724,10 @@ class MCMCManager:
             self.parent.paramf.write('%.3f' % cold_chain.tree.edgeLenSum())
             
             self.parent.paramf.write(cold_chain.model.paramReport())
-            if self.parent.opts.using_hyperprior:
+            if self.parent.opts.model.edgelen_hyperprior is not None:
                 for p in cold_chain.chain_manager.getEdgeLenHyperparams():
                     self.parent.paramf.write('\t%.5f' % p.getCurrValue())
-            if self.parent.opts.use_flex_model:
+            if self.parent.opts.model.use_flex_model:
                 rates_vector = cold_chain.likelihood.getRateMeans()
                 for rr in rates_vector:
                     self.parent.paramf.write('\t%.5f' % rr)
