@@ -160,8 +160,8 @@ sim  = Sim()
 from Phycas.Like import Like
 like = Like()
 
-from Phycas.PS import PS
-ps = PS()
+#from Phycas.PS import PS
+#ps = PS()
 
 def simpleOutputter(msg):
     print msg

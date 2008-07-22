@@ -84,14 +84,12 @@ This manual begins as a tutorial by showing you how to perform a simple analysis
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Warming up to Phycas} \label{sec:warmup}
 
-Phycas is an extension of Python, so to use it you must first start Python. In this section, you will learn how to invoke Phycas commands from the Python command line. After you become familiar with the basic commands, you will probably want to create a file containing the Phycas commands for a particular analysis. Creating such a file (a Python {\em script}) makes it easier to remember exactly what analyses you performed at some later time. If you want to redo an analysis, having the commands in a script file means you do not have to type the majority of the commands over again.
+Phycas is an extension of Python, so to use it you must first start Python. In this section, you will learn how to invoke Phycas commands from the Python command line. After you become familiar with the basic commands, you will probably want to create a file containing the Phycas commands for a particular analysis. Creating such a file (a Python \term{script}) makes it easier to remember exactly what analyses you performed at some later time. If you want to redo an analysis, having the commands in a script file means you do not have to type the majority of the commands over again.
 
 \subsection{First things first}
-There are two ways to run Phycas. 
-The general way is to invoke python from a terminal.
-If you are running the Mac OS you can obtain a \path{Phycas.app} bundle that is built around the open-source terminal iTerm.
-\subsubsection{Starting from a terminal}
-To start Python on most operating systems, open a console window (a.k.a. terminal window) and type the word \code{python}. This should generate output similar to the following:
+The way Phycas is run depends on the operating system you are using. If you are using the Windows or Linux versions, you start Phycas by opening a terminal (in Windows this is referred to as a console window) and typing \code{python} to invoke Python. If you are using a Mac, you will have downloaded the \path{Phycas.app} bundle that is built around the open-source terminal program iTerm (\url{http://iterm.sourceforge.net/}).
+\subsubsection{Starting from a terminal on Windows}
+To start Python on Windows, open a console window (a.k.a. terminal window) and type the word \code{python}. This should generate output similar to the following:
 \begin{verbatim}
 Python 2.5.1 (r251:54863, Oct 30 2007, 13:54:11) 
 [GCC 4.1.2 20070925 (Red Hat 4.1.2-33)] on linux2
@@ -107,14 +105,12 @@ At the \code{>>>} prompt, type \code{from phycas import *}, like this:
 
 After pressing return, you will see only another Python \code{>>>} prompt, but something important has happened nevertheless. Phycas is an ``extension'' of Python, but you must import extensions in order for their capabilities to be available. The import statement you typed means ``import everything phycas has to offer.'' 
 
-\subsubsection{Starting from the Phycas.app bundle}
-If you are using the \path{Phycas.app} bundle (on Mac OS), you can launch Phycas by double clicking on the Phycas icon (this is the \path{.app} bundle, the Mac Finder simply hides the \path{.app} suffix from users).
+\subsubsection{Starting from the Phycas.app bundle under MacOS}
+If you are using the \path{Phycas.app} bundle on MacOS, you can launch Phycas by double clicking on the Phycas icon (this is the \path{.app} bundle, the Mac Finder simply hides the \path{.app} suffix from users).
 The Phycas application will then show up in your dock and the window will be a terminal that has already invoked Python
 and issued the ``from phycas import *'' command mentioned in the previous section.
 
-All the instructions for the rest of the manual will be executed the same way regardless of whether Phycas running from a generic terminal or the \path{Phycas.app} bundle.
-
-
+All the instructions for the rest of the manual will be executed the same way regardless of whether Phycas running from a Windows console window, a Linux terminal or the \path{Phycas.app} bundle.
 
 \subsection{Getting help}
 
@@ -149,7 +145,7 @@ will display the help information for the sumt command object.
 >>> 
 \end{verbatim}
 
-Ordinarily, typing \cmd{help} will invoke the {\em Python} help system. Note however that after you entered \code{from phycas import *}, typing \cmd{help} now invokes the {\em Phycas} help system. You can still access Python's interactive help by typing \cmd{python\_help()}. Hopefully, the output is self-explanatory, so let's try what the output of the \cmd{help} command suggests: obtaining help for a particular command. Type the following at the Python prompt:
+Ordinarily, typing \cmd{help} will invoke the {\em Python} help system. Note however after Phycas has been imported into Python, typing \cmd{help} now invokes the {\em Phycas} help system. You can still access Python's interactive help by typing \cmd{python\_help()}. Hopefully, the output is self-explanatory, so let's try what the output of the \cmd{help} command suggests: obtaining help for a particular command. Type the following at the Python prompt:
 \begin{verbatim}
 >>> model.help
 model
@@ -182,12 +178,14 @@ fix_relrates                   False
 >>> 
 \end{verbatim}
 
-Only a portion of the output has been shown (as indicated by the ellipsis). The output shows what model.options are available and, at the end, the current values for those options. Thus, we see that the \opt{type} of model can be one of three things (\optval{'jc'}, \optval{'hky'} or \optval{'gtr'}) and that the current model type is \optval{'hky'}. Suppose you wanted to use the GTR model rather than the HKY model. You can do this by changing the \opt{type} option of the \cmd{model} command as follows:
+Only a portion of the output has been shown (as indicated by the ellipsis). The output shows what model options are available and, at the end, the current values for those options. Thus, we see that the \opt{type} of model can be one of three things (\optval{'jc'}, \optval{'hky'} or \optval{'gtr'}) and that the current model type is \optval{'hky'}. Suppose you wanted to use the GTR model rather than the HKY model. You can do this by changing the \opt{type} option of the \cmd{model} command as follows:
 \begin{verbatim}
 >>> model.type = 'gtr'
 >>> model.current
 \end{verbatim}
 Entering \code{model.current} shows the list of current values, allowing you to confirm that your change has been made.
+
+BEGIN AGAIN HERE
 
 The quotes around \optval{'gtr'} are important. They indicate to Python that you are specifying a \term{string} (a series of text characters) rather than the name of some other sort of object. If you typed \code{gtr} without the quotes, Python would assume you are referring to a variable. Because it will (presumably) not find a variable by that name, you will get the following error message if you forget the quotes:
 \begin{verbatim}
