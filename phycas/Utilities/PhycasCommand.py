@@ -3,9 +3,9 @@ from cStringIO import StringIO
 import textwrap
 from phycas import getDefaultOutFilter, OutFilter, help_double_space, current_double_space, current_follows_help
 from phycas.PDFGen import PDFGenerator
-from phycas.ReadNexus import FileFormats
 import phycas.ReadNexus as ReadNexus
 from phycas.Utilities.CommonFunctions import getDefaultOutputStream
+from phycas.Utilities.io import FileFormats, DataSource, TreeSource
 from phycas import OutputFilter
 import copy
 try: 
@@ -178,68 +178,6 @@ class AddNumberExistingFileBehavior(ExistingFileBehavior):
 REPLACE = ReplaceExistingFileBehavior()
 APPEND = AppendExistingFileBehavior()
 ADD_NUMBER = AddNumberExistingFileBehavior()
-
-class TreeSource(object):
-    def __init__(self, arg, **kwargs):
-        """`arg` can be a string or an iterable containing trees.
-        If `arg` is a string, then the `format` keyword argument can be used to
-        specify the file format (the default is NEXUS).
-        If the trees are passed in as a list then a `taxon_labels` keyword
-        argument is expected.
-        """
-        if isinstance(arg, str):
-            self.filename = arg
-            self.format = kwargs.get("format", FileFormats.NEXUS)
-            self.trees = None
-            self.taxon_labels = None
-        else:
-            if arg is None:
-                self.trees = None
-            else:
-                self.trees = list(arg)
-            self.taxon_labels = kwargs.get("taxon_labels")
-            self.filename = None
-            self.format = None
-            
-    def description(arg):
-        if isinstance(arg, TreeSource) and arg.filename:
-            return 'trees from the file "%s"' % arg.filename
-        return "collection of trees"
-    description = staticmethod(description)
-
-    def __iter__(self):
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
-        """
-        Returns an iterable over the trees (this will trigger the reading of
-        the input file if the object was initialized from a string.
-        Stores tree descriptions in self.stored_tree_defs and taxon labels in
-        self.taxon_labels.
-        """
-        if self.trees is None:
-            if not self.filename:
-                return iter([])
-            if not os.path.exists(self.filename):
-                raise ValueError('The file "%s" does not exist')
-            reader = ReadNexus.NexusReader()
-            reader.readFile(self.filename)
-            self.taxon_labels = reader.getTaxLabels()
-            self.trees = reader.getTrees()
-        return iter(self.trees)
-    def __str__(self):
-        if self.trees:
-            return "collection of trees in memory"
-        if self.filename:
-            return "trees from the file %s" % self.filename
-        return "None"
-
-    def __deepcopy__(self, memo):
-        #trees are expensive, so we don't make a deepcopy
-        print "TreeSource.__deepcopy__() %s" % str(self.__dict__)
-        if self.trees:
-            return TreeSource(self.trees, taxon_labels=self.taxon_labels)
-        elif self.filename:
-            return TreeSource(self.filename, format=self.format)
-        return TreeSource(None, taxon_labels=self.taxon_labels)
 
 _opt_name_help_len = 30
 _opt_val_help_len = 19
@@ -906,6 +844,13 @@ def TreeSourceValidate(opts, v):
     if isinstance(v, TreeSource):
         return v
     return TreeSource(v)
+
+def DataSourceValidate(opts, v):
+    if v is None:
+        return None
+    if isinstance(v, DataSource):
+        return v
+    return DataSource(v)
 
 def BoolArgValidate(opts, v):
     return bool(v)

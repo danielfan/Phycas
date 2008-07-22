@@ -305,12 +305,12 @@ class TreeSummarizer(CommonFunctions):
         tree_map = {}
 
         # Open sumt_tfile_name and read trees therein
-        self.stdout.info('\nReading %s...' % TreeSource.description(input_trees))
+        self.stdout.info('\nReading %s...' % str(input_trees))
         self.stored_tree_defs = list(input_trees)
         self.taxon_labels = input_trees.taxon_labels # this must be kept after the coercion of the trees to a list (in case that is what triggers the readinf of the file with the taxon labels)
 
         num_stored_trees = len(self.stored_tree_defs)
-        self.stdout.phycassert(num_stored_trees > 0, 'Specified tree source (%s) contained no stored trees' %  TreeSource.description(input_trees))
+        self.stdout.phycassert(num_stored_trees > 0, 'Specified tree source (%s) contained no stored trees' %  str(input_trees))
 
 
         # Build each tree and add the splits and tree topolgies found there to the
@@ -427,7 +427,7 @@ class TreeSummarizer(CommonFunctions):
 
         self.stdout.info('\nSummary of sampled trees:')
         self.stdout.info('-------------------------')
-        self.stdout.info('Tree source: %s' %  TreeSource.description(input_trees))
+        self.stdout.info('Tree source: %s' %  str(input_trees))
         self.stdout.info('Total number of trees in file = %d' % num_trees)
         self.stdout.info('Number of trees considered = %d' % num_trees_considered)
         self.stdout.info('Number of distinct tree topologies found = %d' % len(tree_map.keys()))

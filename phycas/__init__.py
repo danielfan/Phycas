@@ -96,7 +96,7 @@ if not _user_ini_checked:
 def useWxPhycas():
     return _use_wx_phycas
 
-from phycas.Utilities.io import getPhycasDir, getPhycasTestData, _runRegressionTests
+from phycas.Utilities.io import getPhycasDir, getPhycasTestData, _runRegressionTests, FileFormats
 import Conversions
 from DataMatrix._DataMatrix import DataMatrix
 import Likelihood
@@ -106,7 +106,7 @@ import ProbDist
 from ProbDist import BernoulliDist, BetaDist, BinomialDist, DirichletDist, ExponentialDist, GammaDist, ImproperUniformDist, InverseGammaDist, NormalDist, UniformDist
 import ReadNexus
 import sys, os
-from Utilities.PhycasCommand import FileFormats, REPLACE, APPEND, ADD_NUMBER, phycas_help
+from Utilities.PhycasCommand import REPLACE, APPEND, ADD_NUMBER, phycas_help
 # keep the wx import after the reading of the startup so that it can be optional
 if useWxPhycas():
     import wxPhycas
@@ -184,3 +184,12 @@ def touch(f):
     else:
         fo = file(f, "w")
         fo.close()
+
+def at(addr):
+    """Look up an object by its id."""
+    import gc
+    for o in gc.get_objects():
+        if id(o) == addr:
+            return o
+    return None
+
