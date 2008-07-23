@@ -9,12 +9,7 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>command</string>
-				<string>tool</string>
-				<string>sh</string>
-				<string>zsh</string>
-				<string>csh</string>
-				<string>pl</string>
+				<string>py</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>PhycasGUI.icns</string>

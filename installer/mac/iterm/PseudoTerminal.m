@@ -2800,7 +2800,6 @@ static unsigned int windowPositions[CACHED_WINDOW_POSITIONS];
         // Start the command        
         [self startProgram:cmd arguments:arg environment:env];
 		
-		NSString *pref = @"source ";
 		NSString *singleQuote = @"\'";
 //		NSString *toInvoke = @"pwd"; //
 		NSString *toInvoke = [[PhycasGUIEnv sharedInstance] guiArgvZero];
@@ -2867,6 +2866,7 @@ static unsigned int windowPositions[CACHED_WINDOW_POSITIONS];
 
 -(void)addNewSession:(NSDictionary *) addressbookEntry withCommand: (NSString *)command
 {
+	/*
     // NSLog(@"PseudoTerminal: -addInSessions: 0x%x", object);
     PTYSession *aSession;
     NSString *terminalProfile;
@@ -2897,7 +2897,57 @@ static unsigned int windowPositions[CACHED_WINDOW_POSITIONS];
         // Start the command        
         [self startProgram:[self _getSessionParameters: command] arguments:arg environment:env];
     }
+	*/
+	// NSLog(@"PseudoTerminal: -addInSessions: 0x%x", object);
+    PTYSession *aSession;
+    NSString *terminalProfile;
+    
+    terminalProfile = [addressbookEntry objectForKey: KEY_TERMINAL_PROFILE];
+	if(terminalProfile == nil)
+		terminalProfile = [[iTermTerminalProfileMgr singleInstance] defaultProfileName];	
 	
+    // Initialize a new session
+    aSession = [[PTYSession alloc] init];
+	[[aSession SCREEN] setScrollback:[[iTermTerminalProfileMgr singleInstance] scrollbackLinesForProfile: [addressbookEntry objectForKey: KEY_TERMINAL_PROFILE]]];
+    // set our preferences
+    [aSession setAddressBookEntry: addressbookEntry];
+    // Add this session to our term and make it current
+    [self appendSession: aSession];
+    if ([aSession SCREEN]) {
+        
+        
+        NSString *cmd;
+        NSArray *arg;
+        NSString *pwd;
+        
+        // Grab the addressbook command
+        cmd = [self _getSessionParameters: [addressbookEntry objectForKey: KEY_COMMAND]];
+        
+        [PseudoTerminal breakDown:cmd cmdPath:&cmd cmdArgs:&arg];
+        
+        pwd = [addressbookEntry objectForKey: KEY_WORKING_DIRECTORY];
+        if([pwd length] <= 0)
+            pwd = NSHomeDirectory();
+        NSDictionary *env=[NSDictionary dictionaryWithObject: pwd forKey:@"PWD"];
+        
+        [self setCurrentSessionName:[addressbookEntry objectForKey: KEY_NAME]];	
+        
+        // Start the command        
+        [self startProgram:cmd arguments:arg environment:env];
+		
+		NSString *singleQuote = @"\'";
+		NSString *space = @" ";
+		//		NSString *toInvoke = @"pwd"; //
+		NSString *toInvoke = [[PhycasGUIEnv sharedInstance] guiArgvZero];
+		NSString *unterminated =  [singleQuote stringByAppendingString:toInvoke];
+		NSString *augmented =  [unterminated stringByAppendingString:@"execFromGUI.sh"];
+		NSString *phycasCmd = [augmented stringByAppendingString:singleQuote];
+		NSString *phycasCmdWSp = [phycasCmd stringByAppendingString:space];
+		NSString *phycasCmdReady = [phycasCmdWSp stringByAppendingString:command];
+		
+		[commandField setStringValue:phycasCmdReady];
+		[self sendCommand: nil];
+	}
     [aSession release];
 }
 

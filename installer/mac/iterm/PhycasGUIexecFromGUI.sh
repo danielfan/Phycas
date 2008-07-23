@@ -83,11 +83,16 @@ then
 		echo "then" >> "$run_cmd_path"
 		echo "   PYTHONINTERPRETER=python" >> "$run_cmd_path"
 		echo "fi" >> "$run_cmd_path"
-		echo "if ! test \"\$USES_I_PYTHON\" = \"1\"" >> "$run_cmd_path"
+		echo "if test \$# -eq 0" >> "$run_cmd_path"
 		echo "then" >> "$run_cmd_path"
-		echo "    \$PYTHONINTERPRETER -i -c \"from phycas import *\"" >> "$run_cmd_path"
+		echo "    if ! test \"\$USES_I_PYTHON\" = \"1\"" >> "$run_cmd_path"
+		echo "    then" >> "$run_cmd_path"
+		echo "        \$PYTHONINTERPRETER -i -c \"from phycas import *\"" >> "$run_cmd_path"
+		echo "    else" >> "$run_cmd_path"
+		echo "        \$PYTHONINTERPRETER -c \"import IPython ; IPython.Shell.start().mainloop()\" -c \"from phycas import *\"" >> "$run_cmd_path"
+		echo "    fi" >> "$run_cmd_path"
 		echo "else" >> "$run_cmd_path"
-		echo "    \$PYTHONINTERPRETER -c \"import IPython ; IPython.Shell.start().mainloop()\" -c \"from phycas import *\"" >> "$run_cmd_path"
+		echo "    \$PYTHONINTERPRETER -i \$@" >> "$run_cmd_path"
 		echo "fi" >> "$run_cmd_path"
 		chmod +x "$run_cmd_path"
 	fi
@@ -96,7 +101,14 @@ then
 		echo "The mandatory file $run_cmd_path does not exist, and cannot be created (perhaps there is a directory in the way or you do not have permissions)."
 		exit 1
 	fi
-	"$run_cmd_path"
+	if test $# -eq 0
+	then
+		"$run_cmd_path"
+	else
+		bd=`dirname $1`
+		cd "$bd" || exit 1
+		"$run_cmd_path" $@
+	fi
 else
 	echo "The mandatory directory $HOME/.phycas does not exist, and cannot be created (perhaps there is a file in the way or you do not have permissions to write to the directory $HOME)."
 	exit 1
