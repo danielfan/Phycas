@@ -81,7 +81,7 @@ def getDefaultOutFilter():
 # immediately take effect. Can PhycasCommand be modified to allow classes
 # that behave like Settings?
 help_double_space = True
-current_double_space = True
+current_double_space = False
 current_follows_help = True
 phycassertRaisesException = False
 cppCompiledInDebug = False

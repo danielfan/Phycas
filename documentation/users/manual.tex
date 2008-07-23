@@ -38,6 +38,8 @@
 \newcommand{\optval}[1]{{\tt #1}}			% option values (e.g. 'gtr' for model.type option)
 \newcommand{\term}[1]{{\bfseries #1}\index{#1}}		% new term
 
+\newcommand{\phycasicon}{\includegraphics[scale=0.1]{images/PhycasGUI}}
+
 \newfont{\bftt}{cmtt10}
 
 % index stuff
@@ -78,7 +80,7 @@ Phycas (\url{http://phycas.org}) is an extension of the Python programming langu
 
 \subsection{How to use this manual}
 
-This manual begins as a tutorial by showing you how to perform a simple analysis, but does not attempt to explain all possible settings. The purpose is to quickly show you how to run the program, allowing later sections to provide detail. After the initial sections, the manual switches more to a reference style, detailing how to select models (section~\ref{sec:models}, p.~\pageref{sec:models}) and highlighting some of the features that set Phycas apart from other Bayesian phylogenetics software (section~\ref{sec:features}, p.~\pageref{sec:features}). Toward the end you will find a discussion of design principles (e.g. Why did we decide to extend Python rather than write a stand-alone program? Why is there no graphical interface?) in section~\ref{sec:designprinciples} (p.~\pageref{sec:designprinciples}) followed by an annotated listing of Phycas settings (section~\ref{sec:phycassettings}, p.~\pageref{sec:phycassettings}). The final section (section~\ref{sec:install}, p.~\pageref{sec:install}) is devoted to the details of getting Phycas (and Python) installed on your computer system.
+This manual begins as a tutorial by showing you how to perform a simple analysis, but does not attempt to explain all possible settings. The purpose is to quickly show you how to run the program, allowing later sections to provide detail. After the initial sections, the manual switches to reference style, detailing how to select models (section~\ref{sec:models}, p.~\pageref{sec:models}) and highlighting some of the features that set Phycas apart from other Bayesian phylogenetics software (section~\ref{sec:features}, p.~\pageref{sec:features}). Toward the end you will find a discussion (in section~\ref{sec:designprinciples}) of design principles (e.g. Why did we decide to extend Python rather than write a stand-alone program? Why is there no graphical interface?) followed by an annotated listing (in section~\ref{sec:phycassettings}) of Phycas settings. The final section (\ref{sec:install}) is devoted to the details of getting Phycas (and Python) installed on your computer system.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% Warming up to Phycas %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,7 +90,8 @@ This manual begins as a tutorial by showing you how to perform a simple analysis
 Phycas is an extension of Python, so to use it you must first start Python. In this section, you will learn how to invoke Phycas commands from the Python command line. After you become familiar with the basic commands, you will probably want to create a file containing the Phycas commands for a particular analysis. Creating such a file (a Python \term{script}) makes it easier to remember exactly what analyses you performed at some later time. If you want to redo an analysis, having the commands in a script file means you do not have to type the majority of the commands over again.
 
 \subsection{First things first}
-The way Phycas is run depends on the operating system you are using. If you are using the Windows or Linux versions, you start Phycas by opening a terminal (in Windows this is referred to as a console window) and typing \code{python} to invoke Python. If you are using a Mac, you will have downloaded the \path{Phycas.app} bundle that is built around the open-source terminal program iTerm (\url{http://iterm.sourceforge.net/}).
+The way Phycas is run depends on the operating system you are using. If you are using the Windows or Linux versions, you start Phycas by opening a terminal (in Windows this is referred to as a ``console window'' or ``command prompt'') and typing \code{python} to invoke Python. If you are using a Mac, you will have downloaded the \pathname{Phycas.app} bundle that is built around the open-source terminal program iTerm (\url{http://iterm.sourceforge.net/}). Starting \pathname{Phycas.app} by double-clicking the \phycasicon\ icon automatically starts an iTerm terminal, invokes Python and loads Phycas.
+
 \subsubsection{Starting from a terminal on Windows}
 To start Python on Windows, open a console window (a.k.a. terminal window) and type the word \code{python}. This should generate output similar to the following:
 \begin{verbatim}
@@ -106,12 +109,10 @@ At the \code{>>>} prompt, type \code{from phycas import *}, like this:
 
 After pressing return, you will see only another Python \code{>>>} prompt, but something important has happened nevertheless. Phycas is an ``extension'' of Python, but you must import extensions in order for their capabilities to be available. The import statement you typed means ``import everything phycas has to offer.'' 
 
-\subsubsection{Starting from the Phycas.app bundle under MacOS}
-If you are using the \path{Phycas.app} bundle on MacOS, you can launch Phycas by double clicking on the Phycas icon (this is the \path{.app} bundle, the Mac Finder simply hides the \path{.app} suffix from users).
-The Phycas application will then show up in your dock and the window will be a terminal that has already invoked Python
-and issued the ``from phycas import *'' command mentioned in the previous section.
+\subsubsection{Starting from the \pathname{Phycas.app} bundle under MacOS}
+If you are using the \pathname{Phycas.app} bundle on MacOS, you can launch the Phycas application by double clicking on the \phycasicon\ icon. Although the name appears to be just \pathname{Phycas}, it is really \pathname{Phycas.app}; the MacOS hides the \pathname{.app} extension. (We will hereafter use the terms \term{Phycas application} and \term{Phycas.app} bundle interchangeably.) The Phycas application will show up in your dock and the window that appears will be a terminal that has already invoked Python and issued the ``from phycas import *'' command mentioned in the previous section.
 
-All the instructions for the rest of the manual will be executed the same way regardless of whether Phycas running from a Windows console window, a Linux terminal or the \path{Phycas.app} bundle.
+All the instructions for the rest of the manual will be executed the same way regardless of whether Phycas running from a Windows console window, a Linux terminal or the \pathname{Phycas} application.
 
 \subsection{Getting help}
 
@@ -146,7 +147,7 @@ will display the help information for the sumt command object.
 >>> 
 \end{verbatim}
 
-Ordinarily, typing \cmd{help} will invoke the {\em Python} help system. Note however after Phycas has been imported into Python, typing \cmd{help} now invokes the {\em Phycas} help system. You can still access Python's interactive help by typing \cmd{python\_help()}. Hopefully, the output is self-explanatory, so let's try what the output of the \cmd{help} command suggests: obtaining help for a particular command. Type the following at the Python prompt:
+Ordinarily, typing \cmd{help} will invoke the {\em Python} help system; however, note that after Phycas has been imported into Python, typing \cmd{help} now invokes the {\em Phycas} help system. You can still access Python's interactive help by typing \cmd{python\_help()}. Hopefully, the output is self-explanatory, so let's try what the output of the \cmd{help} command suggests: obtaining help for a particular command. Type the following at the Python prompt:
 \begin{verbatim}
 >>> model.help
 model
@@ -179,7 +180,7 @@ fix_relrates                   False
 >>> 
 \end{verbatim}
 
-Only a portion of the output has been shown (as indicated by the ellipsis). The output shows what model options are available and, at the end, the current values for those options. Thus, we see that the \opt{type} of model can be one of three things (\optval{'jc'}, \optval{'hky'} or \optval{'gtr'}) and that the current model type is \optval{'hky'}. Suppose you wanted to use the GTR model rather than the HKY model. You can do this by changing the \opt{type} option of the \cmd{model} command as follows:
+You will probably need to scroll up to see all of the output of the \cmd{model.help} command. Only a portion of the output has been shown (as indicated by the ellipsis). The output shows what model options are available and, at the end, the current values for those options. Thus, we see that the \opt{type} of model can be one of three things (\optval{'jc'}, \optval{'hky'} or \optval{'gtr'}) and that the current model type is \optval{'hky'}. Suppose you wanted to use the GTR model rather than the HKY model. You can do this by changing the \opt{type} option of the \cmd{model} command as follows:
 \begin{verbatim}
 >>> model.type = 'gtr'
 >>> model.current
@@ -194,7 +195,7 @@ Error: name 'gtr' is not defined
 
 The option \opt{relrate\_prior} specifies the prior probability distribution to use for each of the six GTR relative rates. Phycas defines several probability distributions for use as priors. In this case, the current value of \optval{ExponentialDist(1.00000)} indicates that each GTR relative rate parameter will be assigned an exponential(1) prior distribution. See section~\ref{sec:probdist} (p.~\pageref{sec:probdist}) for a complete list of probability distributions available within Phycas.
 
-The option \opt{relrates} specifies the current values of the six GTR relative rates. The square brackets around the current value of \optval{[1.0, 4.0, 1.0, 1.0, 4.0, 1.0]} indicate that you should specify the six relative rate values as a Python \term{list}. The description indicates the ordering expected. The \opt{relrates} option (and others like it, such as \opt{kappa}, \opt{base\_freqs}, \opt{gamma\_shape}, and \opt{pinvar}) is used for a variety of purposes: (1) to set the starting values for an MCMC analysis (the \cmd{mcmc} command); (2) to specify the values of parameters for simulations (the \cmd{sim} command); or (3) to specify the values of parameters for calculating the likelihood (the \cmd{like} command).
+The option \opt{relrates} specifies the current values of the six GTR relative rates. The square brackets around the current value of \optval{[1.0, 4.0, 1.0, 1.0, 4.0, 1.0]} indicate that you should specify the six relative rate values as a Python \term{list}. The description (``The current values for GTR relative rates. These should be specified in this order: A<->C, A<->G, A<->T, C<->G, C<->T, G<->T.'') indicates the expected order for the six relative rate values. The \opt{relrates} option and others like it, such as \opt{kappa}, \opt{base\_freqs}, \opt{gamma\_shape}, and \opt{pinvar} are used for a variety of purposes: (1) to set the starting values for an MCMC analysis (the \cmd{mcmc} command); (2) to specify the values of parameters for simulations (the \cmd{sim} command); or (3) to specify the values of parameters for calculating the likelihood (the \cmd{like} command).
 
 The \opt{fix\_relrates} command is used to specify whether the relative rates are to be allowed to vary during an MCMC analysis (\opt{fix\_relrates}=\optval{False}) or are to be frozen at the values specified by \opt{relrates} (\opt{fix\_relrates}=\optval{True}). The values \optval{True} and \optval{False} are known to Python and should not be surrounded by quotes (note also that case is important: typeing \code{true} or \code{TRUE} will generate a ``not defined'' error message from Python).
 
@@ -207,11 +208,13 @@ The next task is to create a Python script containing the commands to carry out 
 
 \subsection{Before proceeding...}
 
-Create a new, empty directory (a.k.a. folder) in which to experiment. Copy the file \path{green.nex} into the new directory. This file can be found under your Phycas installation directory at the location \path{phycas/Tests/Data/green.nex}. If you have no idea where your Phycas installation directory is located, please reread the relevant subsection of the installation instructions (either section~\ref{subsubsec:installfolderwindows} if you are using Windows, or section~\ref{subsubsec:installfoldermac} if you are using a Mac).
+Exit your Python session by typing \keycmd{Ctrl-d} (MacOS or Linux) or \keycmd{Ctrl-z} (Windows). If you are using \pathname{Phycas.app} on MacOS, type \keycmd{Ctrl-d} one more time to exit the terminal shell (this will make the terminal window disappear). 
+
+Create a new, empty directory (a.k.a. folder) in which to experiment. Copy the file \pathname{green.nex} into the new directory. This file can be found under your Phycas installation directory at the location \pathname{phycas/Tests/Data/green.nex}. If you have no idea where your Phycas installation directory is located, please reread the relevant subsection of the installation instructions (either section~\ref{subsubsec:installfolderwindows} if you are using Windows, or section~\ref{subsubsec:installfoldermac} if you are using a Mac).
 
 \subsection{The {\em basic.py} script}
 
-Create a new (plain text\footnote{It is important to save the file using plain text format. Most word processing programs, such as \trademark{Microsoft} \trademark{Word}, save files by default in a format that contains a lot of extra, proprietary information. All such programs have the option to save the file as plain text. It is best to create Python scripts using an editor that {\em only} saves files as plain text. Examples (for \trademark{Windows}) include Notepad++ and Pythonwin (or the simple Notepad program that comes with \trademark{Windows}). For Macs, Text Wrangler or BBEdit are good choices. Python comes with its own editor, named Idle, that is also a good (if slightly sluggish) choice.}) file in the folder (which should contain only the file \path{green.nex}). Name the new file \path{basic.py} and type the following lines into the file:
+Create a new (plain text\footnote{It is important to save the file using plain text format. Most word processing programs, such as \trademark{Microsoft} \trademark{Word}, save files by default in a format that contains a lot of extra, proprietary information. All such programs have the option to save the file as plain text. It is best to create Python scripts using an editor that {\em only} saves files as plain text. Examples (for \trademark{Windows}) include Notepad++ and Pythonwin (or the simple Notepad program that comes with \trademark{Windows}). For Macs, Text Wrangler or BBEdit are good choices. Python comes with its own editor, named Idle, that is also a good (if slightly sluggish) choice.}) file in the folder (which should contain only the file \pathname{green.nex}). Name the new file \pathname{basic.py} and type the following lines into the file:
 \begin{verbatim}
 from phycas import *
 mcmc.data_file_name = 'green.nex'
@@ -223,6 +226,7 @@ mcmc.ncycles = 2000
 mcmc.sample_every = 10
 mcmc()
 \end{verbatim}
+{\bf If you are using MacOS,} and choose to copy and paste the lines above into a new TextWrangler window, you need to take one extra step before saving the file. From TextWrangler's \menu{Text} menu, choose \menu{Convert to ASCII}. This converts the fancy, slanted apostrophe characters used in the PDF file to the standard, upright apostrophe character that Python expects.
 
 \subsection{Line-by-line explanation} \label{subsec:basicpyexplanation}
 
@@ -252,19 +256,19 @@ This line starts a log file, which captures all output sent to the console. Some
 mcmc.out.log.mode = REPLACE
 \end{verbatim}
 %
-This line specifies the mode for the log file. The mode of any output file determines what happens if a file by that name already exists. The default behavior is to create a file by the same name but with a number at the end. For example, if \path{basic.log} already exists, then the new log file would be named \path{basic1.log}. If \path{basic1.log} already exists, then the new log file would be named \path{basic2.log}, and so on. You can also specify \code{REPLACE} (as we have done here) to replace any existing file with the same name, or \code{APPEND} to add to the end of an existing file. 
+This line specifies the mode for the log file. The mode of any output file determines what happens if a file by that name already exists. The default behavior is to create a file by the same name but with a number at the end. For example, if \pathname{basic.log} already exists, then the new log file would be named \pathname{basic1.log}. If \pathname{basic1.log} already exists, then the new log file would be named \pathname{basic2.log}, and so on. You can also specify \code{REPLACE} (as we have done here) to replace any existing file with the same name, or \code{APPEND} to add to the end of an existing file. 
 %
 \begin{verbatim}
 mcmc.out.trees.prefix = 'green'
 \end{verbatim}
 %
-This line specifies that the trees sampled during the MCMC analysis will be saved to a file having the prefix \path{green}. Phycas will add the extension \path{.t} to the end of the prefix you specify, so the full file name will be \path{green.t}. If you preferred, you could specify the entire file name using \code{mcmc.out.trees = 'green.t'} and \code{mcmc.out.trees.mode} could be used to specify Phycas' behavior if the file specified already exists.
+This line specifies that the trees sampled during the MCMC analysis will be saved to a file having the prefix \pathname{green}. Phycas will add the extension \pathname{.t} to the end of the prefix you specify, so the full file name will be \pathname{green.t}. If you preferred, you could specify the entire file name using \code{mcmc.out.trees = 'green.t'} and \code{mcmc.out.trees.mode} could be used to specify Phycas' behavior if the file specified already exists.
 %
 \begin{verbatim}
 mcmc.out.params.prefix = 'green'
 \end{verbatim}
 %
-This line specifies that the parameters sampled during the MCMC analysis will be saved to a file having the prefix \path{green}. Phycas will add the extension \path{.p} to the end of the prefix you specify, so the full file name will be \path{green.p}. 
+This line specifies that the parameters sampled during the MCMC analysis will be saved to a file having the prefix \pathname{green}. Phycas will add the extension \pathname{.p} to the end of the prefix you specify, so the full file name will be \pathname{green.p}. 
 %
 \begin{verbatim}
 mcmc.ncycles = 2000
@@ -300,7 +304,7 @@ model = m1()
 \end{verbatim}
 It is unlikely that you will need to do this under ordinary circumstances. We point it out only because typing \code{model()} by itself will appear to do nothing and thus might be confusing given the behavior of most Phycas commands.
 
-\subsection{Running Phycas}
+\subsection{Running \pathname{basic.py}} \label{subsec:runningbasicpy}
 
 To execute the \pathname{basic.py} script you just created, open a console window, navigate to the directory containing the script and type the following at the command prompt:
 %
@@ -308,6 +312,22 @@ To execute the \pathname{basic.py} script you just created, open a console windo
 python basic.py
 \end{verbatim}
 %
+{\bf If you are using Windows,} we suggest you read section~\ref{subsubsec:winconsole}, where a registry trick is described that enables you to open a console window positioned at a particular directory by right-clicking the name of the folder in and Explorer or My Computer window. This saves having to navigate to the directory after opening the console window, which can be a very tedious and time consuming operation if the directory in which your script resides is nested deep inside your file system.
+
+{\bf If you are using MacOS,} first start the \pathname{Phycas.app} application by double-clicking the \phycasicon\ icon, then press \keycmd{Ctrl-d} to exit Python. Issue the following command to see where you are in the file system:
+%
+\begin{verbatim}
+pwd
+\end{verbatim}
+%
+Now, navigate to the folder containing your script using the \cmd{cd} command. For example, if you created a folder named \pathname{test} on your desktop, and the ``present working directory'' command (\cmd{pwd}) says you are currently at \pathname{/Users/plewis}, you could use the following \cmd{cd} command to change to the \pathname{/Users/plewis/Desktop/test} folder:
+%
+\begin{verbatim}
+cd Desktop/test
+\end{verbatim}
+%
+You can use the \cmd{ls} command to see what files are in the folder: you should see both \pathname{basic.py} and \pathname{green.nex} in the list. Now you can type \code{python basic.py} as described above.
+
 The program should run for a few minutes, creating three files (\pathname{basic.log}, \pathname{green.t} and \pathname{green.p}) as it runs. The file \pathname{green.t} is the tree file containing the trees sampled during the MCMC run, while \pathname{green.p} is the parameter file containing samples of model parameters. These files are equivalent to their counterparts in MrBayes.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -315,7 +335,7 @@ The program should run for a few minutes, creating three files (\pathname{basic.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Summarizing tree files}
 
-Phycas provides the {\tt sumt()} method for summarizing an input tree file. While analogous, Phycas' {\tt sumt()} method differs somewhat from the MrBayes sumt command. The example below stands alone, however there is no reason why you could not place the following statements after the {\tt mcmc()} call in the previous \pathname{basic.py} example.
+Phycas provides the {\tt sumt()} method for summarizing an input tree file. While analogous, Phycas' {\tt sumt()} method differs somewhat from the MrBayes sumt command. The example below stands alone, however there is no reason why you could not place the following statements after the {\tt mcmc()} call in the previous \pathname{basic.py} example. For now, however, create a new file named \pathname{summarize.py} (in the same folder housing \pathname{basic.py}), enter the text of the example script below into the file, and save the file (being sure to \menu{Convert to ASCII} if using TextWrangler).
 
 \subsection{Example script}
 
@@ -334,7 +354,7 @@ sumt()
 from phycas import *
 \end{verbatim}
 %
-These two lines were explained previously in the explanation of the \pathname{basic.py} script on page~\pageref{subsec:basicpyexplanation}. (This line would not be necessary if the \code{sumt} commands were appended to the end of \path{basic.py}.)
+These two lines were explained previously in the explanation of the \pathname{basic.py} script on page~\pageref{subsec:basicpyexplanation}. (This line would not be necessary if the \code{sumt} commands were appended to the end of \pathname{basic.py}.)
 %
 \begin{verbatim}
 sumt.trees = 'green.t'
@@ -377,6 +397,10 @@ The {\tt sumt()} method call begins the analysis of the input tree file. Besides
 \item[sk] This is the last sample in which the split or tree topology appeared. The minimum possible value of this quantity is 1, and the maximum is the number of trees sampled.
 \item[k] This is the number of sojourns made by the split or tree topology. A sojourn is a sequence of sampled trees in which the split or topology appears, preceded and followed by a sampled tree lacking that split or topology.
 \end{description}
+
+\subsection{Running \pathname{summarize.py}}
+
+Using the same procedure outlined in section~\ref{subsec:runningbasicpy}, run your \pathname{summarize.py} script. This will produce the files \pathname{trees.tre}, \pathname{trees.pdf} and \pathname{splits.pdf}. You can open the PDF files and view or print the figures therein.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% Probability Distributions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -477,7 +501,7 @@ NOT YET WRITTEN
 
 These instructions assume you are using \trademark{Windows} \trademark{XP} or \trademark{Vista}.
 
-\subsubsection{\trademark{Windows} console}
+\subsubsection{\trademark{Windows} console} \label{subsubsec:winconsole}
 
 One very handy feature that does not come with \trademark{Windows} is the ability to open a command console by using the right-click speed menu in \trademark{Explorer}. The web site \url{http://www.commandline.co.uk/cmdhere/} makes this feature easy to add and will make Phycas {\em much} easier to use (it is not required, however, in order to use Phycas). The basic procedure is to create a file named \pathname{cmdhere.reg} with the following text (or download the file from the web site above):
 %
@@ -537,7 +561,7 @@ The ``Phycas Installation Folder'' that is mentioned in the tutorial is inside \
 \begin{figure}[t]
 \begin{center}
 \begin{minipage}{5.in}
-\hfil\includegraphics[scale=0.5]{images/phycasdmg.png}\hfil
+\hfil\includegraphics[scale=0.5]{images/phycasdmg}\hfil
 \caption{\small The Phycas DMG file after it has been mounted.}
 \label{phycasdmg}
 \end{minipage}
