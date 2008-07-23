@@ -1,6 +1,6 @@
 from _ProbDist import *
 
-class ImproperUniformDist(ImproperUniformDistBase):
+class ImproperUniform(ImproperUniformDistBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
     Represents the univariate improper uniform probability distribution.
@@ -18,7 +18,7 @@ class ImproperUniformDist(ImproperUniformDistBase):
         creating one. 
 
         >>> from phycas.ProbDist import *
-        >>> d = ImproperUniformDist()
+        >>> d = ImproperUniform()
         >>> print d.getRelativeLnPDF(1.5)
         0.0
 
@@ -54,12 +54,12 @@ class ImproperUniformDist(ImproperUniformDistBase):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Returns a string that could be used to initialize another
-        ImproperUniformDist object identical to this one. e.g.,
+        ImproperUniform object identical to this one. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = ImproperUniformDist()
+        >>> d = ImproperUniform()
         >>> print d.__str__()
-        ImproperUniformDist()
+        ImproperUniform()
         
         """
         return ImproperUniformDistBase.__str__(self)
@@ -68,12 +68,12 @@ class ImproperUniformDist(ImproperUniformDistBase):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Returns a string that could be used to initialize another
-        ImproperUniformDist object identical to this one. e.g.,
+        ImproperUniform object identical to this one. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = ImproperUniformDist()
+        >>> d = ImproperUniform()
         >>> print d.__repr__()
-        ImproperUniformDist()
+        ImproperUniform()
         
         """
         return ImproperUniformDistBase.__repr__(self)
@@ -176,7 +176,7 @@ class ImproperUniformDist(ImproperUniformDistBase):
         the logarithm of which is 0.0.
 
         >>> from phycas.ProbDist import *
-        >>> d = ImproperUniformDist()
+        >>> d = ImproperUniform()
         >>> print d.getRelativeLnPDF(1.5)
         0.0
         >>> print d.getRelativeLnPDF(2.5)

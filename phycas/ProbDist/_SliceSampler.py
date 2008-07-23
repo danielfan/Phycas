@@ -24,8 +24,8 @@ class SliceSampler(SliceSamplerBase):
         be a ProbDist.Lot object, and func must be either one of the standard
         univariate continuous probability distributions defined in the
         ProbDist module or an object derived from ProbDist.AdHocDensityBase.
-        Note that discrete distributions (e.g. BinomialDist) or multivariate
-        distributions (e.g. DirichletDist) cannot be used to create a
+        Note that discrete distributions (e.g. Binomial) or multivariate
+        distributions (e.g. Dirichlet) cannot be used to create a
         SliceSampler object.
 
         Below is an example where the function represents one of the standard
@@ -33,7 +33,7 @@ class SliceSampler(SliceSamplerBase):
 
         >>> from phycas.ProbDist import *
         >>> rng = Lot(13579)
-        >>> func = BetaDist(2.0, 1.0)
+        >>> func = Beta(2.0, 1.0)
         >>> print round(2.0/3.0, 12) # expected mean
         0.666666666667
         >>> ss = SliceSampler(rng, func)
@@ -54,8 +54,8 @@ class SliceSampler(SliceSamplerBase):
         presented in the example, even across different CPU architectures.
 
         Here is a more complicated example involving a bimodal mixture
-        distribution composed of equal parts BetaDist(2,19) and
-        BetaDist(19,2). Because this mixture distribution is not represented
+        distribution composed of equal parts Beta(2,19) and
+        Beta(19,2). Because this mixture distribution is not represented
         in any of the distributions provided, we must create a new class
         (MyBimodalDist) derived from ProbDist.AdHocDensityBase. Any function
         used to create a SliceSampler must define a function (here getLnPDF)
@@ -74,8 +74,8 @@ class SliceSampler(SliceSamplerBase):
         ...    def __init__(self):
         ...        # Very important: must call base class constructor!
         ...        AdHocDensityBase.__init__(self) 
-        ...        self.b1 = BetaDist(2,19)
-        ...        self.b2 = BetaDist(19,2)
+        ...        self.b1 = Beta(2,19)
+        ...        self.b2 = Beta(19,2)
         ...        self.lnzero = getEffectiveLnZero()
         ...
         ...    def getLnPDF(self, x):
@@ -119,7 +119,7 @@ class SliceSampler(SliceSamplerBase):
         want to get some details of the slice sampling process.
         
         >>> from phycas.ProbDist import *
-        >>> ss = SliceSampler(Lot(91735), ExponentialDist(10.0))
+        >>> ss = SliceSampler(Lot(91735), Exponential(10.0))
         >>> print round(ss.sample(), 12)
         0.044758783301
         
@@ -144,7 +144,7 @@ class SliceSampler(SliceSamplerBase):
             7+: x-coord of failed sampling attempts
         
         >>> from phycas.ProbDist import *
-        >>> ss = SliceSampler(Lot(91735), ExponentialDist(10.0))
+        >>> ss = SliceSampler(Lot(91735), Exponential(10.0))
         >>> info = ss.debugSample()
         >>> print round(info[0], 12) # sampled value
         0.044758783301
@@ -188,7 +188,7 @@ class SliceSampler(SliceSamplerBase):
         a demonstrated need for overrelaxed sampling.
 
         >>> from phycas.ProbDist import *
-        >>> ss = SliceSampler(Lot(91735), ExponentialDist(10.0))
+        >>> ss = SliceSampler(Lot(91735), Exponential(10.0))
         >>> print round(ss.overrelaxedSample(), 12)
         0.033135032654
         
@@ -210,7 +210,7 @@ class SliceSampler(SliceSamplerBase):
              5: log of y-coord of slice
         
         >>> from phycas.ProbDist import *
-        >>> ss = SliceSampler(Lot(91735), ExponentialDist(10.0))
+        >>> ss = SliceSampler(Lot(91735), Exponential(10.0))
         >>> info = ss.debugOverrelaxedSample()
         >>> print "%.12f" % info[0] # sampled value
         0.033135032654
@@ -243,14 +243,14 @@ class SliceSampler(SliceSamplerBase):
         standard univariate continuous probability distributions defined in
         the ProbDist module or an object derived from the class
         ProbDist.AdHocDensityBase. Note that discrete distributions (e.g.
-        BinomialDist) or multivariate distributions (e.g. DirichletDist)
+        Binomial) or multivariate distributions (e.g. Dirichlet)
         cannot be used to create a SliceSampler object.
 
         >>> from phycas.ProbDist import *
-        >>> ss = SliceSampler(Lot(91735), ExponentialDist(10.0))
+        >>> ss = SliceSampler(Lot(91735), Exponential(10.0))
         >>> print round(ss.sample(), 12)
         0.044758783301
-        >>> func = BetaDist(100.0, 10.0)
+        >>> func = Beta(100.0, 10.0)
         >>> ss.attachFunc(func)
         >>> print round(ss.sample(), 12)
         0.846151407446
@@ -267,7 +267,7 @@ class SliceSampler(SliceSamplerBase):
         >>> from phycas.ProbDist import *
         >>> # Create SliceSampler with r1
         >>> r1 = Lot(73915)
-        >>> ss = SliceSampler(r1, ExponentialDist(0.1))
+        >>> ss = SliceSampler(r1, Exponential(0.1))
         >>> print round(ss.sample(), 12)
         0.35589724917
         >>> # Switch to r2
@@ -293,7 +293,7 @@ class SliceSampler(SliceSamplerBase):
         basis for computing the average cropped slice interval width).
         
         >>> from phycas.ProbDist import *
-        >>> ss = SliceSampler(Lot(73915), ExponentialDist(0.1))
+        >>> ss = SliceSampler(Lot(73915), Exponential(0.1))
         >>> ss.adaptSimple(1.0)
         Traceback (most recent call last):
             ...
@@ -319,7 +319,7 @@ class SliceSampler(SliceSamplerBase):
         computing the average distance between successive sampled values).
 
         >>> from phycas.ProbDist import *
-        >>> ss = SliceSampler(Lot(73915), ExponentialDist(0.1))
+        >>> ss = SliceSampler(Lot(73915), Exponential(0.1))
         >>> ss.adaptNeal(1.0)
         Traceback (most recent call last):
             ...
@@ -344,7 +344,7 @@ class SliceSampler(SliceSamplerBase):
         this width until the density curve is crossed on each side.
         
         >>> from phycas.ProbDist import *
-        >>> ss = SliceSampler(Lot(73915), ExponentialDist(0.1))
+        >>> ss = SliceSampler(Lot(73915), Exponential(0.1))
         >>> samples = [ss.sample() for i in range(10)]
         >>> print ss.getSliceUnitWidth()
         1.0
@@ -363,7 +363,7 @@ class SliceSampler(SliceSamplerBase):
         calling this method, otherwise an exception is raised.
 
         >>> from phycas.ProbDist import *
-        >>> ss = SliceSampler(Lot(73915), ExponentialDist(0.1))
+        >>> ss = SliceSampler(Lot(73915), Exponential(0.1))
         >>> ss.getMinX()
         Traceback (most recent call last):
             ...
@@ -386,7 +386,7 @@ class SliceSampler(SliceSamplerBase):
         calling this method, otherwise an exception is raised.
         
         >>> from phycas.ProbDist import *
-        >>> ss = SliceSampler(Lot(73915), ExponentialDist(0.1))
+        >>> ss = SliceSampler(Lot(73915), Exponential(0.1))
         >>> ss.getMaxX()
         Traceback (most recent call last):
             ...
@@ -417,7 +417,7 @@ class SliceSampler(SliceSamplerBase):
         the function getLeftEdgeOfSlice().
 
         >>> from phycas.ProbDist import *
-        >>> ss = SliceSampler(Lot(73915), BetaDist(50.0, 50.0))
+        >>> ss = SliceSampler(Lot(73915), Beta(50.0, 50.0))
         >>> print round(ss.sample(), 12)
         0.591999204028
         >>> print round(ss.getOrigLeftEdgeOfSlice(), 12)
@@ -450,7 +450,7 @@ class SliceSampler(SliceSamplerBase):
         the function getRightEdgeOfSlice().
 
         >>> from phycas.ProbDist import *
-        >>> ss = SliceSampler(Lot(73915), BetaDist(50.0, 50.0))
+        >>> ss = SliceSampler(Lot(73915), Beta(50.0, 50.0))
         >>> print round(ss.sample(), 12)
         0.591999204028
         >>> print round(ss.getOrigRightEdgeOfSlice(), 12)
@@ -482,7 +482,7 @@ class SliceSampler(SliceSamplerBase):
         getLeftEdgeOfSlice().
 
         >>> from phycas.ProbDist import *
-        >>> ss = SliceSampler(Lot(73915), BetaDist(50.0, 5.0))
+        >>> ss = SliceSampler(Lot(73915), Beta(50.0, 5.0))
         >>> print round(ss.sample(), 12)
         0.591999204028
         >>> print round(ss.getOrigLeftEdgeOfSlice(), 12)
@@ -514,7 +514,7 @@ class SliceSampler(SliceSamplerBase):
         getRightEdgeOfSlice().
 
         >>> from phycas.ProbDist import *
-        >>> ss = SliceSampler(Lot(73915), BetaDist(5.0, 50.0))
+        >>> ss = SliceSampler(Lot(73915), Beta(5.0, 50.0))
         >>> print round(ss.sample(), 12)
         0.087950013611
         >>> print round(ss.getOrigRightEdgeOfSlice(), 12)
@@ -537,7 +537,7 @@ class SliceSampler(SliceSamplerBase):
         taken.
         
         >>> from phycas.ProbDist import *
-        >>> ss = SliceSampler(Lot(73915), BetaDist(5.0, 50.0))
+        >>> ss = SliceSampler(Lot(73915), Beta(5.0, 50.0))
         >>> print round(ss.sample(), 12)
         0.087950013611
         >>> print ss.getSliceYValue()
@@ -556,7 +556,7 @@ class SliceSampler(SliceSamplerBase):
         function evaluations required for each sample drawn.
         
         >>> from phycas.ProbDist import *
-        >>> ss = SliceSampler(Lot(73915), ExponentialDist(10.0))
+        >>> ss = SliceSampler(Lot(73915), Exponential(10.0))
         >>> samples = [ss.sample() for i in range(10)]
         >>> evals = ss.getNumFuncEvals()
         >>> print round(evals/10.0, 12)
@@ -577,7 +577,7 @@ class SliceSampler(SliceSamplerBase):
         drawn.
         
         >>> from phycas.ProbDist import *
-        >>> ss = SliceSampler(Lot(73915), ExponentialDist(10.0))
+        >>> ss = SliceSampler(Lot(73915), Exponential(10.0))
         >>> print ss.getNumFailedSamples()
         0
         >>> samples = [ss.sample() for i in range(10)]
@@ -599,7 +599,7 @@ class SliceSampler(SliceSamplerBase):
         number of units required per sample drawn.
         
         >>> from phycas.ProbDist import *
-        >>> ss = SliceSampler(Lot(73915), ExponentialDist(0.2))
+        >>> ss = SliceSampler(Lot(73915), Exponential(0.2))
         >>> print ss.getNumUnitsRequired()
         0
         >>> samples = [ss.sample() for i in range(10)]
@@ -621,7 +621,7 @@ class SliceSampler(SliceSamplerBase):
         used by adaptSimple().
 
         >>> from phycas.ProbDist import *
-        >>> ss = SliceSampler(Lot(73915), ExponentialDist(0.1))
+        >>> ss = SliceSampler(Lot(73915), Exponential(0.1))
         >>> samples = [ss.sample() for i in range(10)]
         >>> print len(samples)
         10
@@ -642,7 +642,7 @@ class SliceSampler(SliceSamplerBase):
         adaptYConditional().
         
         >>> from phycas.ProbDist import *
-        >>> ss = SliceSampler(Lot(73915), ExponentialDist(0.1))
+        >>> ss = SliceSampler(Lot(73915), Exponential(0.1))
         >>> samples = [ss.sample() for i in range(10)]
         >>> print ss.getNumSamples()
         10
@@ -675,7 +675,7 @@ class SliceSampler(SliceSamplerBase):
         calcW() function.
         
         >>> from phycas.ProbDist import *
-        >>> ss = SliceSampler(Lot(73915), BetaDist(20.0, 20.0))
+        >>> ss = SliceSampler(Lot(73915), Beta(20.0, 20.0))
         >>> samples = [ss.sample() for i in range(20)]
         >>> print ss.getNumFailedSamples()
         38
@@ -707,7 +707,7 @@ class SliceSampler(SliceSamplerBase):
         
         >>> from phycas.ProbDist import *
         >>> import math
-        >>> ss = SliceSampler(Lot(73915), BetaDist(20.0, 20.0))
+        >>> ss = SliceSampler(Lot(73915), Beta(20.0, 20.0))
         >>> print ss.getSliceUnitWidth()
         1.0
         >>> samples = [ss.sample() for i in range(20)]
@@ -739,7 +739,7 @@ class SliceSampler(SliceSamplerBase):
         variable distribution in which the true mode is located at 0.5.
 
         >>> from phycas.ProbDist import *
-        >>> ss = SliceSampler(Lot(73915), BetaDist(2.0, 2.0))
+        >>> ss = SliceSampler(Lot(73915), Beta(2.0, 2.0))
         >>> first = ss.sample()
         >>> print round(ss.getMode(), 12)
         0.591999204028
@@ -760,7 +760,7 @@ class SliceSampler(SliceSamplerBase):
         assert.
 
         >>> from phycas.ProbDist import *
-        >>> ss = SliceSampler(Lot(73915), BetaDist(2.0, 2.0))
+        >>> ss = SliceSampler(Lot(73915), Beta(2.0, 2.0))
         >>> first = ss.sample()
         >>> print "%.5f" % first
         0.59200
@@ -785,7 +785,7 @@ class SliceSampler(SliceSamplerBase):
         estimated mode is higher.
         
         >>> from phycas.ProbDist import *
-        >>> ss = SliceSampler(Lot(73915), BetaDist(2.0, 2.0))
+        >>> ss = SliceSampler(Lot(73915), Beta(2.0, 2.0))
         >>> first = ss.sample()
         >>> print round(ss.getLnDensityAtMode(), 12)
         -1.42073614232

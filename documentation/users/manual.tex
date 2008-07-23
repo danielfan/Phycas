@@ -172,7 +172,7 @@ Current model input settings:
 Attribute                      Current Value
 ============================== ====================================================
 type                           'hky'
-relrate_prior                  ExponentialDist(1.00000)
+relrate_prior                  Exponential(1.00000)
 relrates                       [1.0, 4.0, 1.0, 1.0, 4.0, 1.0]
 fix_relrates                   False
 ============================== ====================================================
@@ -193,7 +193,7 @@ The quotes around \optval{'gtr'} are important. They indicate to Python that you
 Error: name 'gtr' is not defined
 \end{verbatim}
 
-The option \opt{relrate\_prior} specifies the prior probability distribution to use for each of the six GTR relative rates. Phycas defines several probability distributions for use as priors. In this case, the current value of \optval{ExponentialDist(1.00000)} indicates that each GTR relative rate parameter will be assigned an exponential(1) prior distribution. See section~\ref{sec:probdist} (p.~\pageref{sec:probdist}) for a complete list of probability distributions available within Phycas.
+The option \opt{relrate\_prior} specifies the prior probability distribution to use for each of the six GTR relative rates. Phycas defines several probability distributions for use as priors. In this case, the current value of \optval{Exponential(1.00000)} indicates that each GTR relative rate parameter will be assigned an exponential(1) prior distribution. See section~\ref{sec:probdist} (p.~\pageref{sec:probdist}) for a complete list of probability distributions available within Phycas.
 
 The option \opt{relrates} specifies the current values of the six GTR relative rates. The square brackets around the current value of \optval{[1.0, 4.0, 1.0, 1.0, 4.0, 1.0]} indicate that you should specify the six relative rate values as a Python \term{list}. The description (``The current values for GTR relative rates. These should be specified in this order: A<->C, A<->G, A<->T, C<->G, C<->T, G<->T.'') indicates the expected order for the six relative rate values. The \opt{relrates} option and others like it, such as \opt{kappa}, \opt{base\_freqs}, \opt{gamma\_shape}, and \opt{pinvar} are used for a variety of purposes: (1) to set the starting values for an MCMC analysis (the \cmd{mcmc} command); (2) to specify the values of parameters for simulations (the \cmd{sim} command); or (3) to specify the values of parameters for calculating the likelihood (the \cmd{like} command).
 

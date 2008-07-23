@@ -1,6 +1,6 @@
 from _ProbDist import *
 
-class BetaDist(BetaDistBase):
+class Beta(BetaDistBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
     Represents the univariate beta probability distribution.
@@ -17,10 +17,10 @@ class BetaDist(BetaDistBase):
     def __init__(self, a, b):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Specify the a and b parameters of the BetaDist object. e.g.,
+        Specify the a and b parameters of the Beta object. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = BetaDist(2, 3)
+        >>> d = Beta(2, 3)
         >>> print d.getMean()
         0.4
 
@@ -33,7 +33,7 @@ class BetaDist(BetaDistBase):
         Creates a copy of this Beta distribution.
 
         >>> from phycas.ProbDist import *
-        >>> d1 = BetaDist(2, 3)
+        >>> d1 = Beta(2, 3)
         >>> print d1.getMean()
         0.4
         >>> d2 = d1.clone()
@@ -65,13 +65,13 @@ class BetaDist(BetaDistBase):
     def __str__(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Returns a string that could be used to initialize another BetaDist
+        Returns a string that could be used to initialize another Beta
         object identical to this one. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = BetaDist(2, 3)
+        >>> d = Beta(2, 3)
         >>> print d.__str__()
-        BetaDist(2.00000, 3.00000)
+        Beta(2.00000, 3.00000)
         
         """
         return BetaDistBase.__str__(self)
@@ -79,13 +79,13 @@ class BetaDist(BetaDistBase):
     def __repr__(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Returns a string that could be used to initialize another BetaDist
+        Returns a string that could be used to initialize another Beta
         object identical to this one. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = BetaDist(2, 3)
+        >>> d = Beta(2, 3)
         >>> print d.__repr__()
-        BetaDist(2.00000, 3.00000)
+        Beta(2.00000, 3.00000)
         
         """
         return BetaDistBase.__repr__(self)
@@ -98,8 +98,8 @@ class BetaDist(BetaDistBase):
 
         >>> g = Lot()
         >>> g.setSeed(1357)
-        >>> d1 = BetaDist(1.0, 1.0)
-        >>> d2 = BetaDist(2.0, 3.0)
+        >>> d1 = Beta(1.0, 1.0)
+        >>> d2 = Beta(2.0, 3.0)
         >>> d1.setLot(g)
         >>> d2.setLot(g)
         >>> print round(d1.sample(), 8), round(d2.sample(), 8)
@@ -129,7 +129,7 @@ class BetaDist(BetaDistBase):
         the setSeed function of that Lot ojbect. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = BetaDist(2, 3)
+        >>> d = Beta(2, 3)
         >>> d.setSeed(135)
         >>> print "%.12f" % d.sample()
         0.011620973198
@@ -161,7 +161,7 @@ class BetaDist(BetaDistBase):
         from this distribution).
 
         >>> from phycas.ProbDist import *
-        >>> d = BetaDist(2, 3)
+        >>> d = Beta(2, 3)
         >>> print d.getMean()
         0.4
 
@@ -176,7 +176,7 @@ class BetaDist(BetaDistBase):
         samples from this distribution).
 
         >>> from phycas.ProbDist import *
-        >>> d = BetaDist(2, 3)
+        >>> d = Beta(2, 3)
         >>> print d.getVar()
         0.04
 
@@ -191,7 +191,7 @@ class BetaDist(BetaDistBase):
         called to generate samples from this distribution).
 
         >>> from phycas.ProbDist import *
-        >>> d = BetaDist(2, 3)
+        >>> d = Beta(2, 3)
         >>> print d.getStdDev()
         0.2
 
@@ -206,7 +206,7 @@ class BetaDist(BetaDistBase):
         up to the value x.
 
         >>> from phycas.ProbDist import *
-        >>> d = BetaDist(2, 3)
+        >>> d = Beta(2, 3)
         >>> print d.getCDF(0.35)
         0.43701875
 
@@ -217,11 +217,11 @@ class BetaDist(BetaDistBase):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Draws a single sampled value from the Beta distribution specified by
-        this BetaDist object. Python list comprehensions can be used to
+        this Beta object. Python list comprehensions can be used to
         store many simulated samples for use in subsequent calculations.
 
         >>> from phycas.ProbDist import *
-        >>> d = BetaDist(2, 3)
+        >>> d = Beta(2, 3)
         >>> d.setSeed(97531)
         >>> print round(d.sample(), 8)
         0.8555905
@@ -240,7 +240,7 @@ class BetaDist(BetaDistBase):
         Returns the natural logarithm of the density at x. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = BetaDist(2, 3)
+        >>> d = Beta(2, 3)
         >>> print d.getLnPDF(0.35)
         0.573518693104
 
@@ -274,7 +274,7 @@ class BetaDist(BetaDistBase):
         integrates to 1.0)
 
         >>> from phycas.ProbDist import *
-        >>> d = BetaDist(2, 3)
+        >>> d = Beta(2, 3)
         >>> print d.getRelativeLnPDF(0.35)
         -1.91138795668
 
@@ -317,7 +317,7 @@ class BetaDist(BetaDistBase):
                 = 0.0275
 
         >>> from phycas.ProbDist import *
-        >>> d = BetaDist(2, 3)
+        >>> d = Beta(2, 3)
         >>> print d.getMean()
         0.4
         >>> print d.getVar()

@@ -396,7 +396,7 @@ std::string NormalDistribution::GetDistributionName() const
 */
 std::string NormalDistribution::GetDistributionDescription() const
 	{
-	return str(boost::format("NormalDist(%#.5f, %#.5f)") % mean % sd);
+	return str(boost::format("Normal(%#.5f, %#.5f)") % mean % sd);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -553,8 +553,8 @@ std::string BernoulliDistribution::GetDistributionName() const
 */
 std::string BernoulliDistribution::GetDistributionDescription() const
 	{
-	//return MakeStrPrintF("BernoulliDist(%.5f)", p);
-	return str(boost::format("BernoulliDist(%#.5f)") % p);
+	//return MakeStrPrintF("Bernoulli(%.5f)", p);
+	return str(boost::format("Bernoulli(%#.5f)") % p);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -722,9 +722,9 @@ std::string BinomialDistribution::GetDistributionName() const
 */
 std::string BinomialDistribution::GetDistributionDescription() const
 	{
-	//return MakeStrPrintF("BinomialDist(%d, %.5f)", (unsigned)n, p);
+	//return MakeStrPrintF("Binomial(%d, %.5f)", (unsigned)n, p);
 	unsigned nn = (unsigned)n;
-	return str(boost::format("BinomialDist(%d, %#.5f)") % nn % p);
+	return str(boost::format("Binomial(%d, %#.5f)") % nn % p);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -917,7 +917,7 @@ std::string ImproperUniformDistribution::GetDistributionName() const
 */
 std::string ImproperUniformDistribution::GetDistributionDescription() const
 	{
-	return "ImproperUniformDist()";
+	return "ImproperUniform()";
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -1049,8 +1049,8 @@ std::string UniformDistribution::GetDistributionName() const
 */
 std::string UniformDistribution::GetDistributionDescription() const
 	{
-	//return MakeStrPrintF("UniformDist(%.5f, %.5f)", a, b);
-	return str(boost::format("UniformDist(%#.5f, %#.5f)") % a % b);
+	//return MakeStrPrintF("Uniform(%.5f, %.5f)", a, b);
+	return str(boost::format("Uniform(%#.5f, %#.5f)") % a % b);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -1221,8 +1221,8 @@ std::string GammaDistribution::GetDistributionName() const
 */
 std::string GammaDistribution::GetDistributionDescription() const
 	{
-	//return MakeStrPrintF("GammaDist(%.5f, %.5f)", alpha, beta);
-	return str(boost::format("GammaDist(%#.5f, %#.5f)") % alpha % beta);
+	//return MakeStrPrintF("Gamma(%.5f, %.5f)", alpha, beta);
+	return str(boost::format("Gamma(%#.5f, %#.5f)") % alpha % beta);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -1392,8 +1392,8 @@ std::string ExponentialDistribution::GetDistributionName() const
 std::string ExponentialDistribution::GetDistributionDescription() const
 	{
 	double hazard_rate = 1.0/beta;
-	//return MakeStrPrintF("ExponentialDist(%.5f)", hazard_rate);
-	return str(boost::format("ExponentialDist(%#.5f)") % hazard_rate);
+	//return MakeStrPrintF("Exponential(%.5f)", hazard_rate);
+	return str(boost::format("Exponential(%#.5f)") % hazard_rate);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -1472,8 +1472,8 @@ std::string InverseGammaDistribution::GetDistributionName() const
 */
 std::string InverseGammaDistribution::GetDistributionDescription() const
 	{
-	//return MakeStrPrintF("InverseGammaDist(%.5f, %.5f)", alpha, beta);
-	return str(boost::format("InverseGammaDist(%#.5f, %#.5f)") % alpha % beta);
+	//return MakeStrPrintF("InverseGamma(%.5f, %.5f)", alpha, beta);
+	return str(boost::format("InverseGamma(%#.5f, %#.5f)") % alpha % beta);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -1744,7 +1744,7 @@ std::string DirichletDistribution::GetDistributionDescription() const
 	{
 	PHYCAS_ASSERT(GetNParams() > 1);
 	std::string s;
-	s << "DirichletDist(";
+	s << "Dirichlet(";
 	//s << MakeStrPrintF("%.5f", dirParams[0]);
 	s << str(boost::format("%#.5f") % dirParams[0]);
 	for (unsigned i = 1; i < GetNParams(); ++i) 
@@ -1775,7 +1775,7 @@ std::string DirichletDistribution::GetDescriptionForPython() const
 	{
 	PHYCAS_ASSERT(GetNParams() > 1);
 	std::string s;
-	s << "DirichletDist((";
+	s << "Dirichlet((";
 	//s << MakeStrPrintF("%.5f", dirParams[0]);
 	s << str(boost::format("%#.5f") % dirParams[0]);
 	for (unsigned i = 1; i < GetNParams(); ++i) 
@@ -2134,8 +2134,8 @@ std::string BetaDistribution::GetDistributionName() const
 	
 std::string BetaDistribution::GetDistributionDescription() const
 	{
-	//return MakeStrPrintF("BetaDist(%.5f, %.5f)", alphaParam, betaParam);
-	return str(boost::format("BetaDist(%#.5f, %#.5f)") % alphaParam % betaParam);
+	//return MakeStrPrintF("Beta(%.5f, %.5f)", alphaParam, betaParam);
+	return str(boost::format("Beta(%#.5f, %#.5f)") % alphaParam % betaParam);
 	}
 	
 double BetaDistribution::GetMean() const

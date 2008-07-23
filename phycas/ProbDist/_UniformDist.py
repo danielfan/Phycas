@@ -1,6 +1,6 @@
 from _ProbDist import *
 
-class UniformDist(UniformDistBase):
+class Uniform(UniformDistBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
     Represents the univariate uniform probability distribution. This
@@ -13,10 +13,10 @@ class UniformDist(UniformDistBase):
     def __init__(self, a, b):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Specify the left and right bounds of the UniformDist object. e.g.,
+        Specify the left and right bounds of the Uniform object. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = UniformDist(2, 3)
+        >>> d = Uniform(2, 3)
         >>> print d.getMean()
         2.5
 
@@ -50,13 +50,13 @@ class UniformDist(UniformDistBase):
     def __str__(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Returns a string that could be used to initialize another UniformDist
+        Returns a string that could be used to initialize another Uniform
         object identical to this one. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = UniformDist(2, 3)
+        >>> d = Uniform(2, 3)
         >>> print d.__str__()
-        UniformDist(2.00000, 3.00000)
+        Uniform(2.00000, 3.00000)
         
         """
         return UniformDistBase.__str__(self)
@@ -64,13 +64,13 @@ class UniformDist(UniformDistBase):
     def __repr__(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Returns a string that could be used to initialize another UniformDist
+        Returns a string that could be used to initialize another Uniform
         object identical to this one. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = UniformDist(2, 3)
+        >>> d = Uniform(2, 3)
         >>> print d.__repr__()
-        UniformDist(2.00000, 3.00000)
+        Uniform(2.00000, 3.00000)
         
         """
         return UniformDistBase.__repr__(self)
@@ -83,8 +83,8 @@ class UniformDist(UniformDistBase):
 
         >>> g = Lot()
         >>> g.setSeed(1357)
-        >>> d1 = UniformDist(2.0, 3.0)
-        >>> d2 = UniformDist(1.0, 3.0)
+        >>> d1 = Uniform(2.0, 3.0)
+        >>> d2 = Uniform(1.0, 3.0)
         >>> d1.setLot(g)
         >>> d2.setLot(g)
         >>> print "%.12f" % d1.sample()
@@ -116,7 +116,7 @@ class UniformDist(UniformDistBase):
         the setSeed function of that Lot ojbect. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = UniformDist(2, 3)
+        >>> d = Uniform(2, 3)
         >>> d.setSeed(135)
         >>> print d.sample()
         2.00105655985
@@ -148,7 +148,7 @@ class UniformDist(UniformDistBase):
         from this distribution).
 
         >>> from phycas.ProbDist import *
-        >>> d = UniformDist(2, 3)
+        >>> d = Uniform(2, 3)
         >>> print d.getMean()
         2.5
 
@@ -163,7 +163,7 @@ class UniformDist(UniformDistBase):
         samples from this distribution).
 
         >>> from phycas.ProbDist import *
-        >>> d = UniformDist(2, 3)
+        >>> d = Uniform(2, 3)
         >>> print d.getVar()
         0.0833333333333
 
@@ -178,7 +178,7 @@ class UniformDist(UniformDistBase):
         called to generate samples from this distribution).
 
         >>> from phycas.ProbDist import *
-        >>> d = UniformDist(2, 3)
+        >>> d = Uniform(2, 3)
         >>> print d.getStdDev()
         0.288675134595
 
@@ -193,7 +193,7 @@ class UniformDist(UniformDistBase):
         left bound up to the value x.
 
         >>> from phycas.ProbDist import *
-        >>> d = UniformDist(2, 3)
+        >>> d = Uniform(2, 3)
         >>> print d.getCDF(2.5)
         0.5
 
@@ -204,11 +204,11 @@ class UniformDist(UniformDistBase):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Draws a single sampled value from the uniform distribution specified by
-        this UniformDist object. Python list comprehensions can be used to
+        this Uniform object. Python list comprehensions can be used to
         store many simulated samples for use in subsequent calculations.
 
         >>> from phycas.ProbDist import *
-        >>> d = UniformDist(2, 3)
+        >>> d = Uniform(2, 3)
         >>> d.setSeed(97531)
         >>> print [d.sample()] * 3
         [2.763313617332142, 2.763313617332142, 2.763313617332142]
@@ -224,10 +224,10 @@ class UniformDist(UniformDistBase):
 
         >>> from phycas.ProbDist import *
         >>> import math
-        >>> d = UniformDist(2, 3)
+        >>> d = Uniform(2, 3)
         >>> print math.fabs(d.getLnPDF(2.5))  # see note about fabs below
         0.0
-        >>> d = UniformDist(1, 3)
+        >>> d = Uniform(1, 3)
         >>> print d.getLnPDF(2.5)
         -0.69314718056
 
@@ -262,7 +262,7 @@ class UniformDist(UniformDistBase):
         of bounds.
 
         >>> from phycas.ProbDist import *
-        >>> d = UniformDist(2, 3)
+        >>> d = Uniform(2, 3)
         >>> print d.getRelativeLnPDF(1.5)
         -1.79769313486e+308
         >>> print d.getRelativeLnPDF(2.5)
@@ -283,7 +283,7 @@ class UniformDist(UniformDistBase):
         b = a + c
 
         >>> from phycas.ProbDist import *
-        >>> d = UniformDist(2, 3)
+        >>> d = Uniform(2, 3)
         >>> print d.getMean()
         2.5
         >>> print d.getVar()

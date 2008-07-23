@@ -1,6 +1,6 @@
 from _ProbDist import *
 
-class DirichletDist(DirichletDistBase):
+class Dirichlet(DirichletDistBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
     Represents the multivariate Dirichlet probability distribution.
@@ -10,10 +10,10 @@ class DirichletDist(DirichletDistBase):
     def __init__(self, c):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Specify the parameters of the DirichletDist object as a tuple. e.g.,
+        Specify the parameters of the Dirichlet object as a tuple. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = DirichletDist((1,1,1,1))
+        >>> d = Dirichlet((1,1,1,1))
         >>> print d.getMean()
         (0.25, 0.25, 0.25, 0.25)
 
@@ -34,7 +34,7 @@ class DirichletDist(DirichletDistBase):
         Always returns False because the Dirichlet distribution is continuous.
 
         >>> from phycas.ProbDist import *
-        >>> d = DirichletDist((1,1,1,1))
+        >>> d = Dirichlet((1,1,1,1))
         >>> print d.isDiscrete()
         False
         
@@ -47,7 +47,7 @@ class DirichletDist(DirichletDistBase):
         Returns the string 'Dirichlet'
 
         >>> from phycas.ProbDist import *
-        >>> d = DirichletDist((1,1,1,1))
+        >>> d = Dirichlet((1,1,1,1))
         >>> print d.getDistName()
         Dirichlet
         
@@ -57,13 +57,13 @@ class DirichletDist(DirichletDistBase):
     def __str__(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Returns a string that could be used to initialize another DirichletDist
+        Returns a string that could be used to initialize another Dirichlet
         object identical to this one. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = DirichletDist((1,2,3,4))
+        >>> d = Dirichlet((1,2,3,4))
         >>> print d.__str__()
-        DirichletDist((1.00000, 2.00000, 3.00000, 4.00000))
+        Dirichlet((1.00000, 2.00000, 3.00000, 4.00000))
         
         """
         return DirichletDistBase.__str__(self)
@@ -71,15 +71,15 @@ class DirichletDist(DirichletDistBase):
     def __repr__(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Returns a string that could be used to initialize another DirichletDist
+        Returns a string that could be used to initialize another Dirichlet
         object identical to this one. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = DirichletDist((1,2,3,4))
+        >>> d = Dirichlet((1,2,3,4))
         >>> print d.__repr__()
-        DirichletDist((1.00000, 2.00000, 3.00000, 4.00000))
+        Dirichlet((1.00000, 2.00000, 3.00000, 4.00000))
         >>> print d
-        DirichletDist((1.00000, 2.00000, 3.00000, 4.00000))
+        Dirichlet((1.00000, 2.00000, 3.00000, 4.00000))
         
         """
         return DirichletDistBase.__repr__(self)
@@ -92,7 +92,7 @@ class DirichletDist(DirichletDistBase):
 
         >>> g = Lot()
         >>> g.setSeed(1357)
-        >>> d = DirichletDist((1.0, 1.0, 1.0, 1.0))
+        >>> d = Dirichlet((1.0, 1.0, 1.0, 1.0))
         >>> d.setLot(g)
         >>> for x in d.sample():
         ...     print "%.12f" % x
@@ -137,7 +137,7 @@ class DirichletDist(DirichletDistBase):
         the setSeed function of that Lot ojbect.
 
         >>> from phycas.ProbDist import *
-        >>> d = DirichletDist((1,2,3,4))
+        >>> d = Dirichlet((1,2,3,4))
         >>> d.setSeed(135)
         >>> for x in d.sample():
         ...     print "%.12f" % x
@@ -182,7 +182,7 @@ class DirichletDist(DirichletDistBase):
         the object returned is a tuple.
 
         >>> from phycas.ProbDist import *
-        >>> d = DirichletDist((1,2,3,4))
+        >>> d = Dirichlet((1,2,3,4))
         >>> print d.getMean()
         (0.10000000000000001, 0.20000000000000001, 0.29999999999999999, 0.40000000000000002)
 
@@ -198,7 +198,7 @@ class DirichletDist(DirichletDistBase):
         distribution, the object returned is a tuple.
 
         >>> from phycas.ProbDist import *
-        >>> d = DirichletDist((1,2,3,4))
+        >>> d = Dirichlet((1,2,3,4))
         >>> print d.getVar()
         (0.0081818181818181825, 0.014545454545454545, 0.019090909090909092, 0.02181818181818182)
 
@@ -214,7 +214,7 @@ class DirichletDist(DirichletDistBase):
         a multivariate distribution, the object returned is a tuple.
 
         >>> from phycas.ProbDist import *
-        >>> d = DirichletDist((1,2,3,4))
+        >>> d = Dirichlet((1,2,3,4))
         >>> print d.getStdDev()
         (0.090453403373329092, 0.12060453783110545, 0.13816985594155148, 0.14770978917519928)
 
@@ -225,11 +225,11 @@ class DirichletDist(DirichletDistBase):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Draws a single sampled value from the Dirichlet distribution specified
-        by this DirichletDist object. Python list comprehensions can be used
+        by this Dirichlet object. Python list comprehensions can be used
         to store many simulated samples for use in subsequent calculations.
 
         >>> from phycas.ProbDist import *
-        >>> d = DirichletDist((1,2,3,4))
+        >>> d = Dirichlet((1,2,3,4))
         >>> d.setSeed(97531)
         >>> for x in d.sample():
         ...     print "%.12f" % x
@@ -253,23 +253,23 @@ class DirichletDist(DirichletDistBase):
         a tuple of length k, where k is one fewer than the number of
         parameters of the Dirichlet distribution. If x has length greater
         than k, the extra elements will be ignored. In the following example,
-        the result returned from approxCDF for a DirichletDist((1,1))
+        the result returned from approxCDF for a Dirichlet((1,1))
         distribution is compared to the exact result for the equivalent
-        univariate BetaDist(1,1) distribution (the setSeed call is needed
+        univariate Beta(1,1) distribution (the setSeed call is needed
         to ensure that the approximated CDF will be the same every time this
         example is run):
 
         >>> from phycas.ProbDist import *
-        >>> d = DirichletDist((1,1))
+        >>> d = Dirichlet((1,1))
         >>> d.setSeed(1357)
         >>> print d.approxCDF(d.getMean())
         0.5059
-        >>> b = BetaDist(1,1)
+        >>> b = Beta(1,1)
         >>> print b.getCDF(b.getMean())
         0.5
          
         """
-        assert n > 0, 'n must be greater than zero in DirichletDist.approxCDF function'
+        assert n > 0, 'n must be greater than zero in Dirichlet.approxCDF function'
         nparams = DirichletDistBase.getNParams(self)
         assert nparams == len(x), 'Vector supplied to approxCDF has length %d but length expected was %d' % (len(x), nparams)
         return DirichletDistBase.approxCDF(self, x, n)
@@ -281,7 +281,7 @@ class DirichletDist(DirichletDistBase):
         Returns the natural logarithm of the density at x. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = DirichletDist((1,2,3,4))
+        >>> d = Dirichlet((1,2,3,4))
         >>> print d.getLnPDF((0.4,0.3,0.2,0.1))
         -1.01368307788
 
@@ -329,7 +329,7 @@ class DirichletDist(DirichletDistBase):
         integrates to 1.0)
 
         >>> from phycas.ProbDist import *
-        >>> d = DirichletDist((1,2,3,4))
+        >>> d = Dirichlet((1,2,3,4))
         >>> print d.getRelativeLnPDF((0.4,0.3,0.2,0.1))
         -11.3306039082
 
@@ -371,7 +371,7 @@ class DirichletDist(DirichletDistBase):
     #
     #    >>> from phycas.ProbDist import *
     #    >>> from numarray import array
-    #    >>> d = DirichletDist((1,1,1))
+    #    >>> d = Dirichlet((1,1,1))
     #    >>> m = array([1./9., 3./9., 5./9.])
     #    >>> print m
     #    [ 0.11111111  0.33333333  0.55555556]
@@ -386,8 +386,8 @@ class DirichletDist(DirichletDistBase):
     #    
     #    """
     #    nparams = DirichletDistBase.getNParams(self)
-    #    assert len(mean.shape) == 1, 'Mean vector supplied to DirichletDist.setMeanAndVariance should be a single-dimensional array'
-    #    assert len(variance.shape) == 1, 'Variance vector supplied to DirichletDist.setMeanAndVariance should be a single-dimensional array'
+    #    assert len(mean.shape) == 1, 'Mean vector supplied to Dirichlet.setMeanAndVariance should be a single-dimensional array'
+    #    assert len(variance.shape) == 1, 'Variance vector supplied to Dirichlet.setMeanAndVariance should be a single-dimensional array'
     #    assert nparams == len(mean), 'Mean vector supplied to setMeanAndVariance should have %d elements, but %d were found' % (nparams, len(mean))
     #    assert nparams == len(variance), 'Variance vector supplied to setMeanAndVariance should have %d elements, but %d were found' % (nparams, len(variance))
     #    return DirichletDistBase.setMeanAndVariance(self, mean, variance)
@@ -402,7 +402,7 @@ class DirichletDist(DirichletDistBase):
         Dirichlet distribution). For example:
         
         >>> from phycas.ProbDist import *
-        >>> d = DirichletDist((1,1,1))
+        >>> d = Dirichlet((1,1,1))
         >>> m = (1./9., 3./9., 5./9.)
         >>> print m
         (0.1111111111111111, 0.33333333333333331, 0.55555555555555558)
@@ -446,7 +446,7 @@ class DirichletDist(DirichletDistBase):
     #
     #    >>> from phycas.ProbDist import *
     #    >>> from numpy.numarray import array
-    #    >>> d = DirichletDist((1,1,1))
+    #    >>> d = Dirichlet((1,1,1))
     #    >>> print d.getVarCovarMatrix()
     #    [[ 0.05555556 -0.02777778 -0.02777778]
     #     [-0.02777778  0.05555556 -0.02777778]
@@ -498,7 +498,7 @@ class DirichletDist(DirichletDistBase):
         Cov_ij = -1*1/36 = -0.02777778
         
         >>> from phycas.ProbDist import *
-        >>> d = DirichletDist((1,1,1))
+        >>> d = Dirichlet((1,1,1))
         >>> d.printSquareMatrix(d.getVarCovarMatrix())
          0.05555556  -0.02777778  -0.02777778 
         -0.02777778   0.05555556  -0.02777778 
@@ -514,10 +514,10 @@ class DirichletDist(DirichletDistBase):
         For example:
         
         >>> from phycas.ProbDist import *
-        >>> d1 = DirichletDist((1,2,3,4))
+        >>> d1 = Dirichlet((1,2,3,4))
         >>> print d1.getNParams()
         4
-        >>> d2 = DirichletDist((1,1))
+        >>> d2 = Dirichlet((1,1))
         >>> print d2.getNParams()
         2
         

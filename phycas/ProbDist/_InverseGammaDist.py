@@ -1,6 +1,6 @@
 from _ProbDist import *
 
-class InverseGammaDist(InverseGammaDistBase):
+class InverseGamma(InverseGammaDistBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
     Represents the univariate inverse gamma probability distribution.
@@ -19,19 +19,19 @@ class InverseGammaDist(InverseGammaDistBase):
     def __init__(self, shape, scale):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Specify the shape and scale parameters of the InverseGammaDist
+        Specify the shape and scale parameters of the InverseGamma
         object. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = InverseGammaDist(2.25, 0.2)
+        >>> d = InverseGamma(2.25, 0.2)
         >>> print d.getMean()
         4.0
 
-        Trying to create an InverseGammaDist object with a shape less than
+        Trying to create an InverseGamma object with a shape less than
         2 results in a VAlueError exception:
 
         >>> from phycas.ProbDist import *
-        >>> d = InverseGammaDist(0.5, 3)
+        >>> d = InverseGamma(0.5, 3)
         Traceback (most recent call last):
         ...
         Exception: variance undefined for shape less than or equal to 2
@@ -66,13 +66,13 @@ class InverseGammaDist(InverseGammaDistBase):
     def __str__(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Returns a string that could be used to initialize another InverseGammaDist
+        Returns a string that could be used to initialize another InverseGamma
         object identical to this one. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = InverseGammaDist(2.25, 0.2)
+        >>> d = InverseGamma(2.25, 0.2)
         >>> print d.__str__()
-        InverseGammaDist(2.25000, 0.20000)
+        InverseGamma(2.25000, 0.20000)
         
         """
         return InverseGammaDistBase.__str__(self)
@@ -81,12 +81,12 @@ class InverseGammaDist(InverseGammaDistBase):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Returns a string that could be used to initialize another
-        InverseGammaDist object identical to this one. e.g.,
+        InverseGamma object identical to this one. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = InverseGammaDist(2.25, 0.2)
+        >>> d = InverseGamma(2.25, 0.2)
         >>> print d.__repr__()
-        InverseGammaDist(2.25000, 0.20000)
+        InverseGamma(2.25000, 0.20000)
         
         """
         return InverseGammaDistBase.__repr__(self)
@@ -99,8 +99,8 @@ class InverseGammaDist(InverseGammaDistBase):
 
         >>> g = Lot()
         >>> g.setSeed(1357)
-        >>> d1 = InverseGammaDist(2.25, 0.2)
-        >>> d2 = InverseGammaDist(2.1, 10)
+        >>> d1 = InverseGamma(2.25, 0.2)
+        >>> d2 = InverseGamma(2.1, 10)
         >>> d1.setLot(g)
         >>> d2.setLot(g)
         >>> print "%.12f" % d1.sample()
@@ -132,7 +132,7 @@ class InverseGammaDist(InverseGammaDistBase):
         the setSeed function of that Lot ojbect. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = InverseGammaDist(2.25, 0.2)
+        >>> d = InverseGamma(2.25, 0.2)
         >>> d.setSeed(135)
         >>> print d.sample()
         67.7996039852
@@ -164,7 +164,7 @@ class InverseGammaDist(InverseGammaDistBase):
         from this distribution).
 
         >>> from phycas.ProbDist import *
-        >>> d = InverseGammaDist(2.25, 0.2)
+        >>> d = InverseGamma(2.25, 0.2)
         >>> print d.getMean()
         4.0
 
@@ -179,7 +179,7 @@ class InverseGammaDist(InverseGammaDistBase):
         samples from this distribution).
 
         >>> from phycas.ProbDist import *
-        >>> d = InverseGammaDist(2.25, 0.2)
+        >>> d = InverseGamma(2.25, 0.2)
         >>> print d.getVar()
         64.0
 
@@ -194,7 +194,7 @@ class InverseGammaDist(InverseGammaDistBase):
         called to generate samples from this distribution).
 
         >>> from phycas.ProbDist import *
-        >>> d = InverseGammaDist(2.25, 0.2)
+        >>> d = InverseGamma(2.25, 0.2)
         >>> print d.getStdDev()
         8.0
 
@@ -209,7 +209,7 @@ class InverseGammaDist(InverseGammaDistBase):
         up to the value x.
 
         >>> from phycas.ProbDist import *
-        >>> d = InverseGammaDist(2.25, 0.2)
+        >>> d = InverseGamma(2.25, 0.2)
         >>> print d.getCDF(1.5)
         0.198360740619
 
@@ -220,11 +220,11 @@ class InverseGammaDist(InverseGammaDistBase):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Draws a single sampled value from the inverse gamma distribution specified by
-        this InverseGammaDist object. Python list comprehensions can be used to
+        this InverseGamma object. Python list comprehensions can be used to
         store many simulated samples for use in subsequent calculations.
 
         >>> from phycas.ProbDist import *
-        >>> d = InverseGammaDist(2.25, 0.2)
+        >>> d = InverseGamma(2.25, 0.2)
         >>> d.setSeed(97531)
         >>> print "%.12f" % d.sample()
         1.621624150641
@@ -243,7 +243,7 @@ class InverseGammaDist(InverseGammaDistBase):
         Returns the natural logarithm of the density at x. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = InverseGammaDist(3, 2)
+        >>> d = InverseGamma(3, 2)
         >>> print d.getLnPDF(1.5)
         -4.72778248801
 
@@ -275,7 +275,7 @@ class InverseGammaDist(InverseGammaDistBase):
         value (i.e. from a density function that integrates to 1.0)
 
         >>> from phycas.ProbDist import *
-        >>> d = InverseGammaDist(3, 2)
+        >>> d = InverseGamma(3, 2)
         >>> print d.getRelativeLnPDF(1.5)
         -1.95519376577
 
@@ -312,7 +312,7 @@ class InverseGammaDist(InverseGammaDistBase):
         scale b = 1/(5 + 5*12.5) = 1/67.5 = 0.014814815
 
         >>> from phycas.ProbDist import *
-        >>> d = InverseGammaDist(2.25, 0.2)
+        >>> d = InverseGamma(2.25, 0.2)
         >>> print d.getMean()
         4.0
         >>> print d.getVar()
@@ -322,7 +322,7 @@ class InverseGammaDist(InverseGammaDistBase):
         5.0
         >>> print d.getVar()
         2.0
-        >>> d = InverseGammaDist(14.5, 0.014814815)
+        >>> d = InverseGamma(14.5, 0.014814815)
         >>> print d.getMean()
         4.9999999375
         >>> print d.getVar()

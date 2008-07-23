@@ -1,6 +1,6 @@
 from _ProbDist import *
 
-class ExponentialDist(ExponentialDistBase):
+class Exponential(ExponentialDistBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
     Represents the univariate exponential probability distribution.
@@ -16,10 +16,10 @@ class ExponentialDist(ExponentialDistBase):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Specify the hazard parameter (i.e. inverse of the mean) when
-        initializing an ExponentialDist object. e.g.,
+        initializing an Exponential object. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> b = ExponentialDist(2)
+        >>> b = Exponential(2)
         >>> print b.getMean()
         0.5
         
@@ -53,12 +53,12 @@ class ExponentialDist(ExponentialDistBase):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Returns a string that could be used to initialize another
-        ExponentialDist object identical to this one. e.g.,
+        Exponential object identical to this one. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> b = ExponentialDist(2)
+        >>> b = Exponential(2)
         >>> print b.__str__()
-        ExponentialDist(2.00000)
+        Exponential(2.00000)
         
         """
         return ExponentialDistBase.__str__(self)
@@ -67,12 +67,12 @@ class ExponentialDist(ExponentialDistBase):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Returns a string that could be used to initialize another
-        ExponentialDist object identical to this one. e.g.,
+        Exponential object identical to this one. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> b = ExponentialDist(2)
+        >>> b = Exponential(2)
         >>> print b.__repr__()
-        ExponentialDist(2.00000)
+        Exponential(2.00000)
         
         """
         return ExponentialDistBase.__repr__(self)
@@ -85,8 +85,8 @@ class ExponentialDist(ExponentialDistBase):
 
         >>> g = Lot()
         >>> g.setSeed(1357)
-        >>> d1 = ExponentialDist(3.0)
-        >>> d2 = ExponentialDist(2.0)
+        >>> d1 = Exponential(3.0)
+        >>> d2 = Exponential(2.0)
         >>> d1.setLot(g)
         >>> d2.setLot(g)
         >>> print "%.12f" % d1.sample()
@@ -118,7 +118,7 @@ class ExponentialDist(ExponentialDistBase):
         the setSeed function of that Lot ojbect. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> b = ExponentialDist(2)
+        >>> b = Exponential(2)
         >>> b.setSeed(135)
         >>> print "%.12f" % b.sample()
         0.000528559199
@@ -150,7 +150,7 @@ class ExponentialDist(ExponentialDistBase):
         from this distribution).
 
         >>> from phycas.ProbDist import *
-        >>> b = ExponentialDist(2)
+        >>> b = Exponential(2)
         >>> print b.getMean()
         0.5
 
@@ -165,7 +165,7 @@ class ExponentialDist(ExponentialDistBase):
         samples from this distribution).
 
         >>> from phycas.ProbDist import *
-        >>> b = ExponentialDist(2)
+        >>> b = Exponential(2)
         >>> print b.getVar()
         0.25
 
@@ -180,7 +180,7 @@ class ExponentialDist(ExponentialDistBase):
         called to generate samples from this distribution).
 
         >>> from phycas.ProbDist import *
-        >>> b = ExponentialDist(2)
+        >>> b = Exponential(2)
         >>> print b.getStdDev()
         0.5
 
@@ -195,7 +195,7 @@ class ExponentialDist(ExponentialDistBase):
         up to the value x.
 
         >>> from phycas.ProbDist import *
-        >>> b = ExponentialDist(2)
+        >>> b = Exponential(2)
         >>> print b.getCDF(1.5)
         0.950212931632
 
@@ -210,12 +210,12 @@ class ExponentialDist(ExponentialDistBase):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Draws a single sampled value from the exponential distribution
-        specified by this ExponentialDist object. Python list comprehensions
+        specified by this Exponential object. Python list comprehensions
         can be used to store many simulated samples for use in subsequent
         calculations.
 
         >>> from phycas.ProbDist import *
-        >>> b = ExponentialDist(2)
+        >>> b = Exponential(2)
         >>> b.setSeed(97531)
         >>> print "%.12f" % b.sample()
         0.720509647019
@@ -234,7 +234,7 @@ class ExponentialDist(ExponentialDistBase):
         Returns the natural logarithm of the density at x. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> b = ExponentialDist(2)
+        >>> b = Exponential(2)
         >>> print b.getLnPDF(1.5)
         -2.30685281944
 
@@ -256,7 +256,7 @@ class ExponentialDist(ExponentialDistBase):
         integrates to 1.0)
 
         >>> from phycas.ProbDist import *
-        >>> b = ExponentialDist(2)
+        >>> b = Exponential(2)
         >>> print b.getRelativeLnPDF(1.5)
         -3.0
 
@@ -278,7 +278,7 @@ class ExponentialDist(ExponentialDistBase):
         compatibility with functions of the same name in other distributions.
 
         >>> from phycas.ProbDist import *
-        >>> b = ExponentialDist(2)
+        >>> b = Exponential(2)
         >>> print b.getMean()
         0.5
         >>> print b.getVar()

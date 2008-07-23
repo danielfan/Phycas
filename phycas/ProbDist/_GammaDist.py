@@ -1,6 +1,6 @@
 from _ProbDist import *
 
-class GammaDist(GammaDistBase):
+class Gamma(GammaDistBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
     Represents the univariate gamma probability distribution.
@@ -20,10 +20,10 @@ class GammaDist(GammaDistBase):
     def __init__(self, shape, scale):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Specify the shape and scale parameters of the GammaDist object. e.g.,
+        Specify the shape and scale parameters of the Gamma object. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = GammaDist(2, 3)
+        >>> d = Gamma(2, 3)
         >>> print d.getMean()
         6.0
 
@@ -57,13 +57,13 @@ class GammaDist(GammaDistBase):
     def __str__(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Returns a string that could be used to initialize another GammaDist
+        Returns a string that could be used to initialize another Gamma
         object identical to this one. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = GammaDist(2, 3)
+        >>> d = Gamma(2, 3)
         >>> print d.__str__()
-        GammaDist(2.00000, 3.00000)
+        Gamma(2.00000, 3.00000)
         
         """
         return GammaDistBase.__str__(self)
@@ -71,13 +71,13 @@ class GammaDist(GammaDistBase):
     def __repr__(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Returns a string that could be used to initialize another GammaDist
+        Returns a string that could be used to initialize another Gamma
         object identical to this one. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = GammaDist(2, 3)
+        >>> d = Gamma(2, 3)
         >>> print d.__repr__()
-        GammaDist(2.00000, 3.00000)
+        Gamma(2.00000, 3.00000)
         
         """
         return GammaDistBase.__repr__(self)
@@ -90,8 +90,8 @@ class GammaDist(GammaDistBase):
 
         >>> g = Lot()
         >>> g.setSeed(1357)
-        >>> d1 = GammaDist(0.5, 2.0)
-        >>> d2 = GammaDist(5.0, 0.2)
+        >>> d1 = Gamma(0.5, 2.0)
+        >>> d2 = Gamma(5.0, 0.2)
         >>> d1.setLot(g)
         >>> d2.setLot(g)
         >>> print "%.12f" % d1.sample()
@@ -123,7 +123,7 @@ class GammaDist(GammaDistBase):
         the setSeed function of that Lot ojbect. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = GammaDist(2, 3)
+        >>> d = Gamma(2, 3)
         >>> d.setSeed(135)
         >>> print "%.12f" % d.sample()
         0.140064780761
@@ -155,7 +155,7 @@ class GammaDist(GammaDistBase):
         from this distribution).
 
         >>> from phycas.ProbDist import *
-        >>> d = GammaDist(2, 3)
+        >>> d = Gamma(2, 3)
         >>> print d.getMean()
         6.0
 
@@ -170,7 +170,7 @@ class GammaDist(GammaDistBase):
         samples from this distribution).
 
         >>> from phycas.ProbDist import *
-        >>> d = GammaDist(2, 3)
+        >>> d = Gamma(2, 3)
         >>> print d.getVar()
         18.0
 
@@ -185,7 +185,7 @@ class GammaDist(GammaDistBase):
         called to generate samples from this distribution).
 
         >>> from phycas.ProbDist import *
-        >>> d = GammaDist(2, 3)
+        >>> d = Gamma(2, 3)
         >>> print d.getStdDev()
         4.24264068712
 
@@ -200,7 +200,7 @@ class GammaDist(GammaDistBase):
         up to the value x.
 
         >>> from phycas.ProbDist import *
-        >>> d = GammaDist(2, 3)
+        >>> d = Gamma(2, 3)
         >>> print d.getCDF(1.5)
         0.090204010431
 
@@ -211,11 +211,11 @@ class GammaDist(GammaDistBase):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Draws a single sampled value from the gamma distribution specified by
-        this GammaDist object. Python list comprehensions can be used to
+        this Gamma object. Python list comprehensions can be used to
         store many simulated samples for use in subsequent calculations.
 
         >>> from phycas.ProbDist import *
-        >>> d = GammaDist(2, 3)
+        >>> d = Gamma(2, 3)
         >>> d.setSeed(97531)
         >>> samples = [d.sample() for i in range(3)]
         >>> for x in samples:
@@ -237,7 +237,7 @@ class GammaDist(GammaDistBase):
         Returns the natural logarithm of the density at x. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = GammaDist(2, 3)
+        >>> d = Gamma(2, 3)
         >>> ln_pdf = d.getLnPDF(1.5)
         >>> print round(ln_pdf, 9)
         -2.291759469
@@ -272,7 +272,7 @@ class GammaDist(GammaDistBase):
         integrates to 1.0)
 
         >>> from phycas.ProbDist import *
-        >>> d = GammaDist(2, 3)
+        >>> d = Gamma(2, 3)
         >>> print d.getRelativeLnPDF(1.5)
         -0.0945348918918
 
@@ -301,7 +301,7 @@ class GammaDist(GammaDistBase):
         Sets the mean and variance of this distribution. 
 
         >>> from phycas.ProbDist import *
-        >>> d = GammaDist(2, 3)
+        >>> d = Gamma(2, 3)
         >>> print d.getMean()
         6.0
         >>> print d.getVar()

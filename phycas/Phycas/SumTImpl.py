@@ -508,7 +508,7 @@ class TreeSummarizer(CommonFunctions):
             if len(v) > 2:
                 majrule_splits.append(k)
 
-        tm.buildTreeFromSplitVector(majrule_splits, ProbDist.ExponentialDist(10))
+        tm.buildTreeFromSplitVector(majrule_splits, ProbDist.Exponential(10))
         self.assignEdgeLensAndSupportValues(majrule, split_map, num_trees_considered)
         summary_short_name_list = ['majrule']
         summary_full_name_list = ['Majority-rule Consensus']

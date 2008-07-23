@@ -15,7 +15,7 @@ class TreeManip(TreeManipBase):
         >>> from phycas import *
         >>> t = Phylogeny.Tree()
         >>> tm = Phylogeny.TreeManip(t)
-        >>> d = ProbDist.ExponentialDist(10.0)
+        >>> d = ProbDist.Exponential(10.0)
         >>> tm.starTree(5, d)
         >>> print t.walkPreorder()
         (0) -> [5] -> (4) -> (3) -> (2) -> (1)
@@ -36,7 +36,7 @@ class TreeManip(TreeManipBase):
 #         >>> t = Phylogeny.Tree()
 #         >>> tm = Phylogeny.TreeManip(t)
 #         >>> v = ['--****', '--**--', '----**']
-#         >>> tm.buildTreeFromSplitVector(v, ProbDist.ExponentialDist(10.0))
+#         >>> tm.buildTreeFromSplitVector(v, ProbDist.Exponential(10.0))
 #         >>> print t.walkPreorder(2)
 #         (0) -> [6] -> (1) -> [4294967295] -> [4294967295] -> (3) -> (2) -> [4294967295] -> (5) -> (4)
 # 
@@ -52,7 +52,7 @@ class TreeManip(TreeManipBase):
         >>> from phycas import *
         >>> t = Phylogeny.Tree()
         >>> tm = Phylogeny.TreeManip(t)
-        >>> d = ProbDist.ExponentialDist(10.0)
+        >>> d = ProbDist.Exponential(10.0)
         >>> tm.starTree(5, d)
         >>> print t.walkPreorder()
         (0) -> [5] -> (4) -> (3) -> (2) -> (1)
@@ -80,7 +80,7 @@ class TreeManip(TreeManipBase):
 
         """
         import phycas.ProbDist
-        dist = phycas.ProbDist.ExponentialDist(lambd)
+        dist = phycas.ProbDist.Exponential(lambd)
         dist.setLot(rng)
         TreeManipBase.randomTree(self, num_tips, rng, dist, True)
 
@@ -94,7 +94,7 @@ class TreeManip(TreeManipBase):
         >>> from phycas import *
         >>> t = Phylogeny.Tree()
         >>> rng = ProbDist.Lot(13579)
-        >>> dist = ProbDist.ExponentialDist(0.5)
+        >>> dist = ProbDist.Exponential(0.5)
         >>> dist.setLot(rng)
         >>> tm = Phylogeny.TreeManip(t)
         >>> tm.randTree(5, rng, dist)
@@ -116,7 +116,7 @@ class TreeManip(TreeManipBase):
         >>> t = Phylogeny.Tree()
         >>> t.buildFromString('(1,(2,5),(3,4))')
         >>> rng = ProbDist.Lot(13579)
-        >>> dist = ProbDist.ExponentialDist(0.5)
+        >>> dist = ProbDist.Exponential(0.5)
         >>> dist.setLot(rng)
         >>> tm = Phylogeny.TreeManip(t)
         >>> tm.setRandomEdgeLengths(dist)

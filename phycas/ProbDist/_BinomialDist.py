@@ -1,6 +1,6 @@
 from _ProbDist import *
 
-class BinomialDist(BinomialDistBase):
+class Binomial(BinomialDistBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
     Represents the univariate binomial probability distribution.
@@ -10,10 +10,10 @@ class BinomialDist(BinomialDistBase):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Specify the number of trials n and the probability p of a success on
-        any given trial when initializing a BinomialDist object. e.g.,
+        any given trial when initializing a Binomial object. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = BinomialDist(10, 0.1)
+        >>> d = Binomial(10, 0.1)
         >>> print d.getMean()
         1.0
 
@@ -47,13 +47,13 @@ class BinomialDist(BinomialDistBase):
     def __str__(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Returns a string that could be used to initialize another BinomialDist
+        Returns a string that could be used to initialize another Binomial
         object identical to this one. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = BinomialDist(10, 0.1)
+        >>> d = Binomial(10, 0.1)
         >>> print d.__str__()
-        BinomialDist(10, 0.10000)
+        Binomial(10, 0.10000)
         
         """
         return BinomialDistBase.__str__(self)
@@ -61,13 +61,13 @@ class BinomialDist(BinomialDistBase):
     def __repr__(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Returns a string that could be used to initialize another BinomialDist
+        Returns a string that could be used to initialize another Binomial
         object identical to this one. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = BinomialDist(10, 0.1)
+        >>> d = Binomial(10, 0.1)
         >>> print d.__repr__()
-        BinomialDist(10, 0.10000)
+        Binomial(10, 0.10000)
         
         """
         return BinomialDistBase.__repr__(self)
@@ -80,8 +80,8 @@ class BinomialDist(BinomialDistBase):
 
         >>> g = Lot()
         >>> g.setSeed(1357)
-        >>> d1 = BinomialDist(10, 0.5)
-        >>> d2 = BinomialDist(10, 0.2)
+        >>> d1 = Binomial(10, 0.5)
+        >>> d2 = Binomial(10, 0.2)
         >>> d1.setLot(g)
         >>> d2.setLot(g)
         >>> print [d1.sample(), d2.sample()]
@@ -111,7 +111,7 @@ class BinomialDist(BinomialDistBase):
         the setSeed function of that Lot ojbect. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = BinomialDist(10, 0.1)
+        >>> d = Binomial(10, 0.1)
         >>> d.setSeed(1537)
         >>> d.sample()
         2.0
@@ -143,7 +143,7 @@ class BinomialDist(BinomialDistBase):
         from this distribution).
 
         >>> from phycas.ProbDist import *
-        >>> d = BinomialDist(10, 0.1)
+        >>> d = Binomial(10, 0.1)
         >>> print d.getMean()
         1.0
 
@@ -158,7 +158,7 @@ class BinomialDist(BinomialDistBase):
         samples from this distribution).
 
         >>> from phycas.ProbDist import *
-        >>> d = BinomialDist(10, 0.1)
+        >>> d = Binomial(10, 0.1)
         >>> print d.getVar()
         0.9
 
@@ -173,7 +173,7 @@ class BinomialDist(BinomialDistBase):
         called to generate samples from this distribution).
 
         >>> from phycas.ProbDist import *
-        >>> d = BinomialDist(10, 0.1)
+        >>> d = Binomial(10, 0.1)
         >>> print d.getStdDev()
         0.948683298051
 
@@ -188,7 +188,7 @@ class BinomialDist(BinomialDistBase):
         numbers from 0 up to the value x.
 
         >>> from phycas.ProbDist import *
-        >>> d = BinomialDist(10, 0.1)
+        >>> d = Binomial(10, 0.1)
         >>> print d.getCDF(3)
         0.9872048016
 
@@ -199,11 +199,11 @@ class BinomialDist(BinomialDistBase):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Draws a single sampled value from the binomial distribution specified by
-        this BinomialDist object. Python list comprehensions can be used to
+        this Binomial object. Python list comprehensions can be used to
         store many simulated samples for use in subsequent calculations.
 
         >>> from phycas.ProbDist import *
-        >>> d = BinomialDist(10, 0.1)
+        >>> d = Binomial(10, 0.1)
         >>> d.setSeed(97531)
         >>> print [d.sample()] * 3
         [1.0, 1.0, 1.0]
@@ -218,7 +218,7 @@ class BinomialDist(BinomialDistBase):
         logarithm of the probability of x. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = BinomialDist(10, 0.1)
+        >>> d = Binomial(10, 0.1)
         >>> print d.getLnPDF(3)
         -2.8577871458
 
@@ -251,7 +251,7 @@ class BinomialDist(BinomialDistBase):
         to 1.0)
 
         >>> from phycas.ProbDist import *
-        >>> d = BinomialDist(10, 0.1)
+        >>> d = Binomial(10, 0.1)
         >>> print d.getRelativeLnPDF(3)
         -7.64527888859
         
@@ -284,7 +284,7 @@ class BinomialDist(BinomialDistBase):
         other distributions.
 
         >>> from phycas.ProbDist import *
-        >>> d = BinomialDist(10, 0.1)
+        >>> d = Binomial(10, 0.1)
         >>> print d.getMean()
         1.0
         >>> print d.getVar()

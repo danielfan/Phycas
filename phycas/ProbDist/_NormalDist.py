@@ -1,6 +1,6 @@
 from _ProbDist import *
 
-class NormalDist(NormalDistBase):
+class Normal(NormalDistBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
     Represents the univariate normal probability distribution.
@@ -9,11 +9,11 @@ class NormalDist(NormalDistBase):
     def __init__(self, mean, stddev):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Specify the mean and standard deviation when creating a new NormalDist
+        Specify the mean and standard deviation when creating a new Normal
         object. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = NormalDist(2, 3)
+        >>> d = Normal(2, 3)
         >>> print d.getMean()
         2.0
         >>> print d.getStdDev()
@@ -49,13 +49,13 @@ class NormalDist(NormalDistBase):
     def __str__(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Returns a string that could be used to initialize another NormalDist
+        Returns a string that could be used to initialize another Normal
         object identical to this one. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = NormalDist(2, 3)
+        >>> d = Normal(2, 3)
         >>> print d.__str__()
-        NormalDist(2.00000, 3.00000)
+        Normal(2.00000, 3.00000)
         
         """
         return NormalDistBase.__str__(self)
@@ -63,13 +63,13 @@ class NormalDist(NormalDistBase):
     def __repr__(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Returns a string that could be used to initialize another NormalDist
+        Returns a string that could be used to initialize another Normal
         object identical to this one. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = NormalDist(2, 3)
+        >>> d = Normal(2, 3)
         >>> print d.__repr__()
-        NormalDist(2.00000, 3.00000)
+        Normal(2.00000, 3.00000)
         
         """
         return NormalDistBase.__repr__(self)
@@ -82,8 +82,8 @@ class NormalDist(NormalDistBase):
 
         >>> g = Lot()
         >>> g.setSeed(1357)
-        >>> d1 = NormalDist(0.0, 1.0)
-        >>> d2 = NormalDist(10.0, 1.0)
+        >>> d1 = Normal(0.0, 1.0)
+        >>> d2 = Normal(10.0, 1.0)
         >>> d1.setLot(g)
         >>> d2.setLot(g)
         >>> print "%.12f" % d1.sample()
@@ -115,7 +115,7 @@ class NormalDist(NormalDistBase):
         the setSeed function of that Lot ojbect. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = NormalDist(2, 3)
+        >>> d = Normal(2, 3)
         >>> d.setSeed(135)
         >>> print "%.12f" % d.sample()
         -7.221565598551
@@ -147,7 +147,7 @@ class NormalDist(NormalDistBase):
         from this distribution).
 
         >>> from phycas.ProbDist import *
-        >>> d = NormalDist(2, 3)
+        >>> d = Normal(2, 3)
         >>> print d.getMean()
         2.0
 
@@ -162,7 +162,7 @@ class NormalDist(NormalDistBase):
         samples from this distribution).
 
         >>> from phycas.ProbDist import *
-        >>> d = NormalDist(2, 3)
+        >>> d = Normal(2, 3)
         >>> print d.getVar()
         9.0
 
@@ -177,7 +177,7 @@ class NormalDist(NormalDistBase):
         called to generate samples from this distribution).
 
         >>> from phycas.ProbDist import *
-        >>> d = NormalDist(2, 3)
+        >>> d = Normal(2, 3)
         >>> print d.getStdDev()
         3.0
 
@@ -192,7 +192,7 @@ class NormalDist(NormalDistBase):
         negative infinity up to the value x.
 
         >>> from phycas.ProbDist import *
-        >>> d = NormalDist(0, 3)
+        >>> d = Normal(0, 3)
         >>> print d.getCDF(0.0)
         0.5
 
@@ -203,11 +203,11 @@ class NormalDist(NormalDistBase):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Draws a single sampled value from the normal distribution specified
-        by this NormalDist object. Python list comprehensions can be used to
+        by this Normal object. Python list comprehensions can be used to
         store many simulated samples for use in subsequent calculations.
 
         >>> from phycas.ProbDist import *
-        >>> d = NormalDist(0, 3)
+        >>> d = Normal(0, 3)
         >>> d.setSeed(97531)
         >>> samples = [d.sample() for i in range(3)]
         >>> for x in samples:
@@ -226,7 +226,7 @@ class NormalDist(NormalDistBase):
         Returns the natural logarithm of the density at x. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = NormalDist(0, 3)
+        >>> d = Normal(0, 3)
         >>> ln_pdf = d.getLnPDF(1.0)
         >>> print round(ln_pdf, 9)
         -1.961995266
@@ -269,7 +269,7 @@ class NormalDist(NormalDistBase):
         integrates to 1.0)
 
         >>> from phycas.ProbDist import *
-        >>> d = NormalDist(0, 3)
+        >>> d = Normal(0, 3)
         >>> print d.getRelativeLnPDF(1.5)
         0.125
 
@@ -308,7 +308,7 @@ class NormalDist(NormalDistBase):
         Sets the mean and variance of this distribution. 
 
         >>> from phycas.ProbDist import *
-        >>> d = NormalDist(2, 3)
+        >>> d = Normal(2, 3)
         >>> print d.getMean()
         2.0
         >>> print d.getVar()

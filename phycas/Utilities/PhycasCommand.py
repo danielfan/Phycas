@@ -681,14 +681,10 @@ class PhycasCommandOutputOptions(object):
 
     def _write_latex(self, out, pref=""):
         out.write('\\begin{description}\n')
-        if pref:
-            dpref = pref + "."
-        else:
-            dpref = pref
-        out.write('\item[\\bftt  %slevel] Controls the amount of output (verbosity) of the command (default: OutFilter.%s)\n' % (dpref, OutFilter.to_str(self.level)))
+        out.write('\item[\\bftt  %s.level] Controls the amount of output (verbosity) of the command (default: OutFilter.%s)\n' % (pref, OutFilter.to_str(self.level)))
         for n in self.__dict__["_help_order"]:
             a = self.__dict__[n]
-            a._write_latex_item(out, dpref)
+            a._write_latex_item(out, pref)
         out.write('\\end{description}\n')
 
     def _current_str_list(self, pref=""):

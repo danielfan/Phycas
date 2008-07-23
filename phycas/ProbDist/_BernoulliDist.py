@@ -1,6 +1,6 @@
 from _ProbDist import *
 
-class BernoulliDist(BernoulliDistBase):
+class Bernoulli(BernoulliDistBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
     Represents the univariate bernoulli probability distribution. The
@@ -15,7 +15,7 @@ class BernoulliDist(BernoulliDistBase):
         Specify the probability p of a success. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = BernoulliDist(0.1)
+        >>> d = Bernoulli(0.1)
         >>> print d.getMean()
         0.1
 
@@ -50,12 +50,12 @@ class BernoulliDist(BernoulliDistBase):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Returns a string that could be used to initialize another
-        BernoulliDist object identical to this one. e.g.,
+        Bernoulli object identical to this one. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = BernoulliDist(0.1)
+        >>> d = Bernoulli(0.1)
         >>> print d.__str__()
-        BernoulliDist(0.10000)
+        Bernoulli(0.10000)
         
         """
         return BernoulliDistBase.__str__(self)
@@ -64,12 +64,12 @@ class BernoulliDist(BernoulliDistBase):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Returns a string that could be used to initialize another
-        BernoulliDist object identical to this one. e.g.,
+        Bernoulli object identical to this one. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = BernoulliDist(0.1)
+        >>> d = Bernoulli(0.1)
         >>> print d.__repr__()
-        BernoulliDist(0.10000)
+        Bernoulli(0.10000)
         
         """
         return BernoulliDistBase.__repr__(self)
@@ -82,8 +82,8 @@ class BernoulliDist(BernoulliDistBase):
 
         >>> g = Lot()
         >>> g.setSeed(1357)
-        >>> d1 = BernoulliDist(0.5)
-        >>> d2 = BernoulliDist(0.2)
+        >>> d1 = Bernoulli(0.5)
+        >>> d2 = Bernoulli(0.2)
         >>> d1.setLot(g)
         >>> d2.setLot(g)
         >>> [d1.sample(), d2.sample()]
@@ -113,7 +113,7 @@ class BernoulliDist(BernoulliDistBase):
         the setSeed function of that Lot ojbect. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = BernoulliDist(0.1)
+        >>> d = Bernoulli(0.1)
         >>> d.setSeed(135)
         >>> d.sample()
         1.0
@@ -145,7 +145,7 @@ class BernoulliDist(BernoulliDistBase):
         from this distribution).
 
         >>> from phycas.ProbDist import *
-        >>> d = BernoulliDist(0.1)
+        >>> d = Bernoulli(0.1)
         >>> print d.getMean()
         0.1
 
@@ -160,7 +160,7 @@ class BernoulliDist(BernoulliDistBase):
         samples from this distribution).
 
         >>> from phycas.ProbDist import *
-        >>> d = BernoulliDist(0.1)
+        >>> d = Bernoulli(0.1)
         >>> print d.getVar()
         0.09
 
@@ -175,7 +175,7 @@ class BernoulliDist(BernoulliDistBase):
         called to generate samples from this distribution).
 
         >>> from phycas.ProbDist import *
-        >>> d = BernoulliDist(0.1)
+        >>> d = Bernoulli(0.1)
         >>> print d.getStdDev()
         0.3
 
@@ -190,7 +190,7 @@ class BernoulliDist(BernoulliDistBase):
         specified.
 
         >>> from phycas.ProbDist import *
-        >>> d = BernoulliDist(0.1)
+        >>> d = Bernoulli(0.1)
         >>> print d.getCDF(0)
         0.9
         >>> print d.getCDF(1)
@@ -203,12 +203,12 @@ class BernoulliDist(BernoulliDistBase):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Draws a single sampled value from the bernoulli distribution
-        specified by this BernoulliDist object. Python list comprehensions
+        specified by this Bernoulli object. Python list comprehensions
         can be used to store many simulated samples for use in subsequent
         calculations.
 
         >>> from phycas.ProbDist import *
-        >>> d = BernoulliDist(0.1)
+        >>> d = Bernoulli(0.1)
         >>> d.setSeed(97531)
         >>> print [d.sample()] * 3
         [0.0, 0.0, 0.0]
@@ -223,7 +223,7 @@ class BernoulliDist(BernoulliDistBase):
         natural logarithm of the probability of x. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = BernoulliDist(0.1)
+        >>> d = Bernoulli(0.1)
         >>> print d.getLnPDF(0)
         -0.105360515658
         >>> print d.getLnPDF(1)
@@ -235,7 +235,7 @@ class BernoulliDist(BernoulliDistBase):
     def getRelativeLnPDF(self, x):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        For BernoulliDist, this function is identical to the getLnPDF
+        For Bernoulli, this function is identical to the getLnPDF
         function. For more complicated density functions, the
         getRelativeLnPDF returns a value proportional to the density function
         but does not calculate terms that are constant to save computation.
@@ -252,7 +252,7 @@ class BernoulliDist(BernoulliDistBase):
         compatibility with functions of the same name in other distributions.
 
         >>> from phycas.ProbDist import *
-        >>> d = BernoulliDist(0.1)
+        >>> d = Bernoulli(0.1)
         >>> print d.getMean()
         0.1
         >>> print d.getVar()

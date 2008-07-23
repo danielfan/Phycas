@@ -1,6 +1,6 @@
 from phycas.Utilities.PhycasCommand import *
 from phycas import model
-from phycas.ProbDist import ExponentialDist
+from phycas.ProbDist import Exponential
 from phycas.Phycas.SimImpl import SimImpl
 
 class Sim(PhycasCommand):
@@ -13,7 +13,7 @@ class Sim(PhycasCommand):
                 ("tree_source",     'usertree',                               "If 'usertree', the tree description should be supplied in 'tree_topology'; if 'random', an edge length distribution should be supplied in 'starting_edgelen_dist'", EnumArgValidate(['random','usertree'])),
                 ("tree_topology",   '(1:0.02,2:0.02,(3:0.01,4:0.01):0.01)',   "The tree topology (with branch lengths) of the model tree to be used for simulation. Used only if tree_source is 'usertree'"),
                 ("random_seed",     0,                                        "Determines the random number seed used; specify 0 to generate seed automatically from system clock", IntArgValidate(min=0)),
-                ("starting_edgelen_dist",  ExponentialDist(10.0),             "Used to select the starting edge lengths when tree_source is 'random'"),
+                ("starting_edgelen_dist",  Exponential(10.0),                 "Used to select the starting edge lengths when tree_source is 'random'"),
                 )                                                  
         PhycasCommand.__init__(self, args, "sim", "Simulates DNA sequences according to the specified model.")
         

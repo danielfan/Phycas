@@ -1,7 +1,7 @@
 from phycas.Utilities.PhycasCommand import *
 from phycas import model
 from phycas.Phycas.MCMCImpl import MCMCImpl
-from phycas.ProbDist import BetaDist, ExponentialDist, InverseGammaDist
+#from phycas.ProbDist import Beta, Exponential, InverseGamma
 import copy
 
 class MCMC(PhycasCommand):
