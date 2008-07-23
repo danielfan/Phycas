@@ -38,6 +38,7 @@
 \newcommand{\optval}[1]{{\tt #1}}			% option values (e.g. 'gtr' for model.type option)
 \newcommand{\term}[1]{{\bfseries #1}\index{#1}}		% new term
 
+\newcommand{\phycasapp}{\pathname{Phycas.app}}
 \newcommand{\phycasicon}{\includegraphics[scale=0.1]{images/PhycasGUI}}
 
 \newfont{\bftt}{cmtt10}
@@ -87,10 +88,10 @@ This manual begins as a tutorial by showing you how to perform a simple analysis
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Warming up to Phycas} \label{sec:warmup}
 
-Phycas is an extension of Python, so to use it you must first start Python. In this section, you will learn how to invoke Phycas commands from the Python command line. After you become familiar with the basic commands, you will probably want to create a file containing the Phycas commands for a particular analysis. Creating such a file (a Python \term{script}) makes it easier to remember exactly what analyses you performed at some later time. If you want to redo an analysis, having the commands in a script file means you do not have to type the majority of the commands over again.
+Phycas is an extension of Python, so to use it you must first start Python. In this section, you will learn how to invoke Phycas commands from the Python command line. After you become familiar with the basic commands, you will probably want to create a file containing the Phycas commands for a particular analysis. Creating such a file (a Python \term{script}) makes it easier to remember exactly what analyses you performed at some later time. If you want to redo an analysis, having the commands in a script file means you do not have to type the majority of the commands over again. We will switch to using scripts in section~\ref{sec:basic} (``A basic analysis'').
 
 \subsection{First things first}
-The way Phycas is run depends on the operating system you are using. If you are using the Windows or Linux versions, you start Phycas by opening a terminal (in Windows this is referred to as a ``console window'' or ``command prompt'') and typing \code{python} to invoke Python. If you are using a Mac, you will have downloaded the \pathname{Phycas.app} bundle that is built around the open-source terminal program iTerm (\url{http://iterm.sourceforge.net/}). Starting \pathname{Phycas.app} by double-clicking the \phycasicon\ icon automatically starts an iTerm terminal, invokes Python and loads Phycas.
+The way Phycas is run depends on the operating system you are using. If you are using the Windows or Linux versions, you start Phycas by opening a terminal (in Windows this is referred to as a ``console window'' or ``command prompt'') and typing \code{python} to invoke Python. If you are using a Mac, you will have downloaded the \phycasapp\ bundle that is built around the open-source terminal program iTerm (\url{http://iterm.sourceforge.net/}). Starting \phycasapp\ by double-clicking the \phycasicon\ icon automatically starts an iTerm terminal, invokes Python and loads Phycas.
 
 \subsubsection{Starting from a terminal on Windows}
 To start Python on Windows, open a console window (a.k.a. terminal window) and type the word \code{python}. This should generate output similar to the following:
@@ -109,8 +110,8 @@ At the \code{>>>} prompt, type \code{from phycas import *}, like this:
 
 After pressing return, you will see only another Python \code{>>>} prompt, but something important has happened nevertheless. Phycas is an ``extension'' of Python, but you must import extensions in order for their capabilities to be available. The import statement you typed means ``import everything phycas has to offer.'' 
 
-\subsubsection{Starting from the \pathname{Phycas.app} bundle under MacOS}
-If you are using the \pathname{Phycas.app} bundle on MacOS, you can launch the Phycas application by double clicking on the \phycasicon\ icon. Although the name appears to be just \pathname{Phycas}, it is really \pathname{Phycas.app}; the MacOS hides the \pathname{.app} extension. (We will hereafter use the terms \term{Phycas application} and \term{Phycas.app} bundle interchangeably.) The Phycas application will show up in your dock and the window that appears will be a terminal that has already invoked Python and issued the ``from phycas import *'' command mentioned in the previous section.
+\subsubsection{Starting from the \phycasapp\ bundle under MacOS}
+If you are using the \phycasapp\ bundle on MacOS, you can launch the Phycas application by double clicking on the \phycasicon\ icon. Although the name appears to be just \pathname{Phycas}, it is really \phycasapp; the MacOS hides the \pathname{.app} extension. (We will hereafter use the terms \term{Phycas application} and \term{Phycas.app} bundle interchangeably.) The Phycas application will show up in your dock and the window that appears will be a terminal that has already invoked Python and issued the ``from phycas import *'' command mentioned in the previous section.
 
 All the instructions for the rest of the manual will be executed the same way regardless of whether Phycas running from a Windows console window, a Linux terminal or the \pathname{Phycas} application.
 
@@ -208,9 +209,9 @@ The next task is to create a Python script containing the commands to carry out 
 
 \subsection{Before proceeding...}
 
-Exit your Python session by typing \keycmd{Ctrl-d} (MacOS or Linux) or \keycmd{Ctrl-z} (Windows). If you are using \pathname{Phycas.app} on MacOS, type \keycmd{Ctrl-d} one more time to exit the terminal shell (this will make the terminal window disappear). 
+Exit your current Python session by typing \keycmd{Ctrl-d} (MacOS or Linux) or \keycmd{Ctrl-z} (Windows). If you are using \phycasapp\ on MacOS, type \keycmd{Ctrl-d} one more time to exit the terminal shell (this will make the iTerm window disappear). 
 
-Create a new, empty directory (a.k.a. folder) in which to experiment. Copy the file \pathname{green.nex} into the new directory. This file can be found under your Phycas installation directory at the location \pathname{phycas/Tests/Data/green.nex}. If you have no idea where your Phycas installation directory is located, please reread the relevant subsection of the installation instructions (either section~\ref{subsubsec:installfolderwindows} if you are using Windows, or section~\ref{subsubsec:installfoldermac} if you are using a Mac).
+Create a new, empty directory (a.k.a. folder) in which to experiment. Copy the file \pathname{green.nex} into the new directory. This file can be found under your Phycas installation directory at the location \pathname{phycas/Tests/Data/green.nex}. If you have no idea where your Phycas installation directory is located, please refer to the relevant subsection of the installation instructions (either section~\ref{subsubsec:installfolderwindows} if you are using Windows, or section~\ref{subsubsec:installfoldermac} if you are using a Mac).
 
 \subsection{The {\em basic.py} script}
 
@@ -306,27 +307,19 @@ It is unlikely that you will need to do this under ordinary circumstances. We po
 
 \subsection{Running \pathname{basic.py}} \label{subsec:runningbasicpy}
 
-To execute the \pathname{basic.py} script you just created, open a console window, navigate to the directory containing the script and type the following at the command prompt:
+\subsubsection{If you are using Windows...} 
+
+To execute the \pathname{basic.py} script you just created, open a console window, navigate\footnote{We suggest you read section~\ref{subsubsec:winconsole}, where a registry trick is described that enables you to open a console window positioned at a particular directory by right-clicking the name of the folder in and Explorer or My Computer window. This saves having to navigate to the directory after opening the console window, which can be a very tedious and time consuming operation if the directory in which your script resides is nested deep inside your file system.} to the directory containing the script and type the following at the command prompt:
 %
 \begin{verbatim}
 python basic.py
 \end{verbatim}
-%
-{\bf If you are using Windows,} we suggest you read section~\ref{subsubsec:winconsole}, where a registry trick is described that enables you to open a console window positioned at a particular directory by right-clicking the name of the folder in and Explorer or My Computer window. This saves having to navigate to the directory after opening the console window, which can be a very tedious and time consuming operation if the directory in which your script resides is nested deep inside your file system.
 
-{\bf If you are using MacOS,} first start the \pathname{Phycas.app} application by double-clicking the \phycasicon\ icon, then press \keycmd{Ctrl-d} to exit Python. Issue the following command to see where you are in the file system:
-%
-\begin{verbatim}
-pwd
-\end{verbatim}
-%
-Now, navigate to the folder containing your script using the \cmd{cd} command. For example, if you created a folder named \pathname{test} on your desktop, and the ``present working directory'' command (\cmd{pwd}) says you are currently at \pathname{/Users/plewis}, you could use the following \cmd{cd} command to change to the \pathname{/Users/plewis/Desktop/test} folder:
-%
-\begin{verbatim}
-cd Desktop/test
-\end{verbatim}
-%
-You can use the \cmd{ls} command to see what files are in the folder: you should see both \pathname{basic.py} and \pathname{green.nex} in the list. Now you can type \code{python basic.py} as described above.
+\subsubsection{If you are using MacOS...} 
+
+Locate your \pathname{basic.py} file in a Finder window, then drag it onto the \phycasapp\ icon \phycasicon. It should start running immediately and leave you with a Python prompt \code{>>>} when it is finished. Press \keycmd{Ctrl-d} twice (once to exit Python, a second time to exit the iTerm session).
+
+\subsubsection{Regardless of your operating system...} 
 
 The program should run for a few minutes, creating three files (\pathname{basic.log}, \pathname{green.t} and \pathname{green.p}) as it runs. The file \pathname{green.t} is the tree file containing the trees sampled during the MCMC run, while \pathname{green.p} is the parameter file containing samples of model parameters. These files are equivalent to their counterparts in MrBayes.
 
@@ -407,7 +400,112 @@ Using the same procedure outlined in section~\ref{subsec:runningbasicpy}, run yo
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Probability Distributions}\label{sec:probdist}
 
-TO BE WRITTEN
+Phycas defines several probability distributions that can be used as prior distributions for model parameters. This section briefly describes each of these distributions. 
+
+In most cases, you will need to prefix the names of distributions with \code{ProbDist.}. For example:
+%
+\begin{verbatim}
+model.pinvar_prior = ProbDist.Beta(1,1)
+\end{verbatim}
+%
+You can avoid the need for the prefix by specifically importing the distributions you need at the top of your script. For example:
+%
+\begin{verbatim}
+from phycas.ProbDist import Beta
+...
+model.pinvar_prior = Beta(1,1)
+\end{verbatim}
+
+The abbreviation \term{pdf} stands for ``probability density function.'' The pdf describes the relative probability the distribution ascribes to each value. The pdf is scaled so that it integrates to 1.0, allowing specific areas under the pdf to be interpreted as probabilities.
+
+\subsection{Bernoulli}\label{bernoullidist}
+\subsubsection{Typical uses:}
+To be written.
+\subsubsection{Parameters:}
+\begin{description}
+\item[$\alpha$] to be described
+\item[$\beta$] to be described
+\end{description}
+\subsubsection{Probability density function:}
+\[ f(\alpha, \beta) = \mbox{to be written} \]
+
+\subsection{Beta}\label{betadist}
+\subsubsection{Typical uses:}
+To be written.
+\subsubsection{Parameters:}
+\begin{description}
+\item[$\alpha$] to be described
+\item[$\beta$] to be described
+\end{description}
+\subsubsection{Probability density function:}
+\[ f(\alpha, \beta) = \mbox{to be written} \]
+
+\subsection{Binomial}\label{binomialdist}
+\subsubsection{Typical uses:}
+To be written.
+\subsubsection{Parameters:}
+\begin{description}
+\item[$\alpha$] to be described
+\item[$\beta$] to be described
+\end{description}
+\subsubsection{Probability density function:}
+\[ f(\alpha, \beta) = \mbox{to be written} \]
+
+\subsection{Exponential}\label{exponentialdist}
+\subsubsection{Typical uses:}
+To be written.
+\subsubsection{Parameters:}
+\begin{description}
+\item[$\alpha$] to be described
+\item[$\beta$] to be described
+\end{description}
+\subsubsection{Probability density function:}
+\[ f(\alpha, \beta) = \mbox{to be written} \]
+
+\subsection{Gamma}\label{gammadist}
+\subsubsection{Typical uses:}
+The Gamma distribution (or its special case, the Exponential distribution) is commonly used as a prior distribution for parameters defined on the positive half of the real number line. The Gamma distribution assigns probability zero for any value less than zero.
+\subsubsection{Parameters:}
+\begin{description}
+\item[$\alpha$] The shape parameter. Gamma distributions with shapes less than 1 have a pdf mode greater than zero. For those with shape equal to 1, the maximum value of the pdf is equal to $\beta$ and occurs at zero. If the shape is greater than 1, the pdf approaches infinity as zero is approached.
+\item[$\beta$] The scale parameter.
+\end{description}
+\subsubsection{Probability density function:}
+\[ f(x | \alpha, \beta) = \frac{x^{\alpha-1} \; e^{-x/\beta}}{\beta^{\alpha} \; \Gamma(\alpha)} \]
+The quantity $\Gamma(\alpha)$ is the gamma function, which for integral values of $\alpha$ is equal to $(\alpha-1)!$.
+
+\subsection{InverseGamma}\label{inversegammadist}
+\subsubsection{Typical uses:}
+To be written.
+\subsubsection{Parameters:}
+\begin{description}
+\item[$\alpha$] to be described
+\item[$\beta$] to be described
+\end{description}
+\subsubsection{Probability density function:}
+\[ f(\alpha, \beta) = \mbox{to be written} \]
+
+\subsection{Normal}\label{normaldist}
+\subsubsection{Typical uses:}
+To be written.
+\subsubsection{Parameters:}
+\begin{description}
+\item[$\alpha$] to be described
+\item[$\beta$] to be described
+\end{description}
+\subsubsection{Probability density function:}
+\[ f(\alpha, \beta) = \mbox{to be written} \]
+
+\subsection{Uniform}\label{uniform}
+\subsubsection{Typical uses:}
+To be written.
+\subsubsection{Parameters:}
+\begin{description}
+\item[$\alpha$] to be described
+\item[$\beta$] to be described
+\end{description}
+\subsubsection{Probability density function:}
+\[ f(\alpha, \beta) = \mbox{to be written} \]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% Models %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -549,11 +647,11 @@ If you are using MacOS 10.4, and haven't installed Python yourself, your Mac pro
 
 \subsubsection{Installing Phycas on a Mac}
 
-Visit the Download section of the Phycas web site \url{http://phycas.org/} and download the MacOS DMG file. Once the DMG file has been downloaded, double-click it to mount it. Inside the DMG, you should find several files (Figure~\ref{phycasdmg}). Copy the ``file'' named \pathname{Phycas} (which is actually a special ``application bundle'' folder named \pathname{Phycas.app}, but the operating system hides the \pathname{.app} part of the name) and the file named \pathname{manual.pdf} to a folder of your choice (e.g. we suggest you create a \pathname{Phycas} folder inside your \pathname{Applications} folder for this purpose). To start Phycas, double-click the \pathname{Phycas.app} application. {\bf Important:} When you start Phycas, you are actually starting an application named iTerm that has been bundled with the Phycas Python libraries. Thus, the menu items you see are iTerm menu items (including the \menu{Update...} menu item. With this MacOS version, you need not type the \code{from phycas import *} command because this is done for you when you double-click \pathname{Phycas.app}.
+Visit the Download section of the Phycas web site \url{http://phycas.org/} and download the MacOS DMG file. Once the DMG file has been downloaded, double-click it to mount it. Inside the DMG, you should find several files (Figure~\ref{phycasdmg}). Copy the ``file'' named \pathname{Phycas} (which is actually a special ``application bundle'' folder named \phycasapp, but the operating system hides the \pathname{.app} part of the name) and the file named \pathname{manual.pdf} to a folder of your choice (e.g. we suggest you create a \pathname{Phycas} folder inside your \pathname{Applications} folder for this purpose). To start Phycas, double-click the \phycasapp\ application. {\bf Important:} When you start Phycas, you are actually starting an application named iTerm that has been bundled with the Phycas Python libraries. Thus, the menu items you see are iTerm menu items (including the \menu{Update...} menu item. With this MacOS version, you need not type the \code{from phycas import *} command because this is done for you when you double-click \phycasapp.
 
 \subsubsection{Locating the ``Phycas Installation Folder'' on a Mac} \label{subsubsec:installfoldermac}
 
-The ``Phycas Installation Folder'' that is mentioned in the tutorial is inside \pathname{Phycas.app} application bundle. MacOS tries to make it difficult for you to see inside application bundles, but clicking on the \pathname{Phycas.app} bundle while pressing the \keycmd{Ctrl} will produce a menu, and choosing the \menu{Show Package Contents} item on that menu will allow you to view the contents of the application bundle folder. Once inside \pathname{Phycas.app}, double-click on the \pathname{Contents} folder, then the \pathname{Resources} folder to find the ``Phycas Installation Folder.''
+The ``Phycas Installation Folder'' that is mentioned in the tutorial is inside \phycasapp\ application bundle. MacOS tries to make it difficult for you to see inside application bundles, but clicking on the \phycasapp\ bundle while pressing the \keycmd{Ctrl} will produce a menu, and choosing the \menu{Show Package Contents} item on that menu will allow you to view the contents of the application bundle folder. Once inside \phycasapp, double-click on the \pathname{Contents} folder, then the \pathname{Resources} folder to find the ``Phycas Installation Folder.''
 
 %
 % Figure "phycasdmg"
