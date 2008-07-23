@@ -78,7 +78,7 @@ def readTrees(filepath, format=FileFormats.NEXUS, out=None):
     return reader.taxa, reader.getTrees()
 
 def readFileToSourceObjects(filepath, format=FileFormats.NEXUS, out=None):
-    """Returns a (DataSource, TreeSource) from the file `filepath`
+    """Returns a (DataSource, TreeCollection) from the file `filepath`
     
     Currently only supports NEXUS and only returns the last data matrix, but
     this will be generalized to read other formats and return the 
@@ -90,10 +90,10 @@ def readFileToSourceObjects(filepath, format=FileFormats.NEXUS, out=None):
     reader.readFile(filepath)
     t = reader.taxa
     dm = DataSource(reader.getLastDiscreteMatrix(True), taxon_labels=t)
-    tm = TreeSource(reader.getTrees(), taxon_labels=t)
+    tm = TreeCollection(reader.getTrees(), taxon_labels=t)
     return dm, tm
 
-class TreeSource(object):
+class TreeCollection(object):
     def __init__(self, arg, **kwargs):
         """`arg` can be a string or an iterable containing trees.
         If `arg` is a string, then the `format` keyword argument can be used to
@@ -129,6 +129,7 @@ class TreeSource(object):
                 return iter([])
             self.taxon_labels, self.trees = readTrees(self.filename, self.format)
         return iter(self.trees)
+
     def __str__(self):
         if self.title:
             return self.title
@@ -144,12 +145,19 @@ class TreeSource(object):
 
     def __deepcopy__(self, memo):
         #trees are expensive, so we don't make a deepcopy
-        print "TreeSource.__deepcopy__() %s" % str(self.__dict__)
         if self.trees:
-            return TreeSource(self.trees, taxon_labels=self.taxon_labels, title=self.title)
+            return TreeCollection(self.trees, taxon_labels=self.taxon_labels, title=self.title)
         elif self.filename:
-            return TreeSource(self.filename, format=self.format, title=self.title)
-        return TreeSource(None, taxon_labels=self.taxon_labels, title=self.title)
+            return TreeCollection(self.filename, format=self.format, title=self.title)
+        return TreeCollection(None, taxon_labels=self.taxon_labels, title=self.title)
+
+    def writeTree(self, tree, name="", rooted=None):
+        if not self.trees:
+            self.trees = []
+        self.trees.append(tree)
+
+    def finish(self):
+        pass
 
 class DataSource(object):
     def __init__(self, arg, **kwargs):
@@ -201,7 +209,6 @@ class DataSource(object):
 
     def __deepcopy__(self, memo):
         #trees are expensive, so we don't make a deepcopy
-        print "TreeSource.__deepcopy__() %s" % str(self.__dict__)
         if self.data_obj:
             return DataSource(self.data_obj, taxon_labels=self.taxon_labels, title=self.title)
         elif self.filename:

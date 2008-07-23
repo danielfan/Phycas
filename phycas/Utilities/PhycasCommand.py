@@ -5,7 +5,7 @@ from phycas import getDefaultOutFilter, OutFilter, help_double_space, current_do
 from phycas.PDFGen import PDFGenerator
 import phycas.ReadNexus as ReadNexus
 from phycas.Utilities.CommonFunctions import getDefaultOutputStream
-from phycas.Utilities.io import FileFormats, DataSource, TreeSource
+from phycas.Utilities.io import FileFormats, DataSource, TreeCollection
 from phycas import OutputFilter
 import copy
 try: 
@@ -207,7 +207,7 @@ class PhycasTablePrinter:
 
     def format_help(name, helpStr):
         global _opt_val_help_len, _opt_name_help_len
-        hs = "\n".join(PhycasTablePrinter._help_str_wrapper.wrap(helpStr))
+        hs = "\n".join(PhycasTablePrinter._help_str_wrapper.wrap(str(helpStr)))
         w = _opt_name_help_len + 1
         return PhycasTablePrinter._help_fmt_str % (name, hs[w:])
     format_help = staticmethod(format_help)
@@ -386,9 +386,10 @@ class FileOutputSpec(PhycasOutput):
             self.filename = s
         else:
             raise ValueError("An output setting can (currently) only be set to a string that is taken to be the filename")
-    def _getValidModeNames(self):
 
+    def _getValidModeNames(self):
         return 'REPLACE, APPEND, or ADD_NUMBER'
+
     def __str__(self):
        PhycasTablePrinter._reset_term_width()
        return "\n".join(self._help_str_list())
@@ -414,6 +415,7 @@ class FileOutputSpec(PhycasOutput):
                     curr_index += 1
             return fn
         return None
+
     def _getUnchangedFilname(self):
         if isinstance(self.mode, AddNumberExistingFileBehavior):
             m = self.mode
@@ -425,6 +427,7 @@ class FileOutputSpec(PhycasOutput):
             return fn
         else:
             return self._getFilename()
+
     def open(self, out, as_log_file=False):
         self._opened_filename = self._getFilename()
         self._prexisting = os.path.exists(self._opened_filename)
@@ -459,12 +462,16 @@ class FileOutputSpec(PhycasOutput):
         self._opened_file = None
         self._opened_filename = None
         self._opened_file_is_log_in = None
+
     def replaceMode(self):
         return isinstance(self.mode, ReplaceExistingFileBehavior)
+
     def appendMode(self):
         return isinstance(self.mode, AppendExistingFileBehavior)
+
     def addNumberMode(self):
         return isinstance(self.mode, AddNumberExistingFileBehavior)
+
     def sameBaseName(self, other):
         if self.filename:
             return self.filename == other.filename
@@ -485,11 +492,38 @@ class BinaryOutputSpec(FileOutputSpec):
     def _getValidModeNames(self):
         return 'REPLACE, or ADD_NUMBER'
 
+class DevNullWriter(object):
+    """Class that fulfills thet TreeWriter and MatrixWriter interface, but does
+    not write any data.""" 
+    def writeTree(self, tree, name="", rooted=None):
+        pass
+    def writeCharacters(self, data_matrix):
+        pass
+
+    def finish(self):
+        pass
+
+class MultiWriter(object):
+    """Class that fulfills thet TreeWriter and MatrixWriter interface, by
+    delegating the information to other writers.""" 
+    def __init__(self, writers=()):
+        """Should pass in a list of opened writers."""
+        self.writers = writers
+    def writeTree(self, tree, name="", rooted=None):
+        for w in self.writers:
+            w.writeTree(tree, name, rooted)
+    def writeCharacters(self, data_matrix):
+        for w in self.writers:
+            w.writeCharacters(tdata_matrix)
+    def finish(self):
+        pass
+
 class TreeOutputSpec(TextOutputSpec):
     def __init__(self, prefix="", help_str="", filename=None):
         FileOutputSpec.__init__(self, prefix, help_str, filename)
         self._valid_formats = [FileFormats.NEXUS]
         self.format = FileFormats.NEXUS
+        self.__dict__["collection"] = None
         self._writer = None
 
     def _getSuffix(self):
@@ -497,13 +531,25 @@ class TreeOutputSpec(TextOutputSpec):
 
     def open(self, taxa_labels, out):
         #should return a writer that implements the _writeTree and finish methods
-        o = FileOutputSpec.open(self, out)
+        self._writer = None
+        if self._getFilename():
+            o = FileOutputSpec.open(self, out)
         if FileFormats.NEXUS == self.format:
             from phycas.ReadNexus._NexusReader import NexusWriter
-            self._writer =  NexusWriter(o, self._prexisting and self.appendMode(), taxa_labels)
-            return self._writer
+            self._writer = NexusWriter(o, self._prexisting and self.appendMode(), taxa_labels)  
         else:
             assert(False)
+        if self.collection:
+            writers = []
+            if self._writer is not None:
+                writers.append(self._writer)
+            if isinstance(self.collection, list):
+                writers.extend(self.collection)
+            else:
+                writers.append(self.collection)
+            self._writer = MultiWriter(writers)
+        return self._writer
+
     def close(self):
         if self._writer:
             self._writer.finish()
@@ -817,6 +863,7 @@ class PhycasCmdOpts(object):
             self.__dict__[name] = value
         else:
             self._set_opt(name, value)
+
     def check_unchecked(self):
         for name in self._unchecked:
             value = self._current[name]
@@ -830,6 +877,7 @@ class PhycasCmdOpts(object):
             value = self._current[name]
             self._set_opt(name, value)
         self._unchecked.clear()
+
     def set_unchecked(self, name, value):
         "Sets the attribute `key` to the `value`"
         if name in self._current:
@@ -841,9 +889,9 @@ class PhycasCmdOpts(object):
 def TreeSourceValidate(opts, v):
     if v is None:
         return None
-    if isinstance(v, TreeSource):
+    if isinstance(v, TreeCollection):
         return v
-    return TreeSource(v)
+    return TreeCollection(v)
 
 def DataSourceValidate(opts, v):
     if v is None:
