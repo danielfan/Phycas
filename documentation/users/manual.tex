@@ -31,6 +31,7 @@
 \newcommand{\trademark}[1]{#1${}^{\mbox{\tiny TM}}$}
 \newcommand{\pathname}[1]{{\em #1}}			% file name or file path
 \newcommand{\menu}[1]{{\sf #1}}				% menu command
+\newcommand{\keycmd}[1]{{\sf #1}}			% keyboard command
 \newcommand{\code}[1]{{\tt #1}}				% typeset using typewriter font
 \newcommand{\cmd}[1]{{\tt \small #1}\index{#1}}		% phycas commands (e.g. mcmc, sumt, etc.)
 \newcommand{\opt}[1]{{\tt \small #1}\index{#1}}		% command options (e.g. 'type' for model command)
@@ -185,8 +186,6 @@ Only a portion of the output has been shown (as indicated by the ellipsis). The 
 \end{verbatim}
 Entering \code{model.current} shows the list of current values, allowing you to confirm that your change has been made.
 
-BEGIN AGAIN HERE
-
 The quotes around \optval{'gtr'} are important. They indicate to Python that you are specifying a \term{string} (a series of text characters) rather than the name of some other sort of object. If you typed \code{gtr} without the quotes, Python would assume you are referring to a variable. Because it will (presumably) not find a variable by that name, you will get the following error message if you forget the quotes:
 \begin{verbatim}
 >>> model.type = gtr
@@ -204,24 +203,22 @@ The \opt{fix\_relrates} command is used to specify whether the relative rates ar
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{A basic analysis} \label{sec:basic}
 
-A Python script is a file containing Python source code. When submitted to the Python interpreter (a computer program), the commands in the script file are read and executed. The relationship between a Python script and the Python interpreter is much the same as the relationship between a nexus file (containing a PAUP block) and the program PAUP*. PAUP* acts as the interpreter for the commands in the file. 
+The next task is to create a Python script containing the commands to carry out a basic MCMC analysis. A Python script is a file containing Python source code (including Phycas commands). When submitted to the Python interpreter (a computer program), the commands in the script file are read and executed. The relationship between a Python script and the Python interpreter is much the same as the relationship between a nexus file (containing a PAUP block) and the program PAUP*. PAUP* acts as the interpreter for the commands in the file. 
 
 \subsection{Before proceeding...}
 
-Before continuing, create a new, empty directory (a.k.a. folder) in which to experiment. Copy the file \path{green.nex} into the new directory. This file can be found under your Phycas installation directory at the location \path{phycas/Tests/Data/green.nex}. If you have no idea where your Phycas installation directory is located, please reread the relevant subsection of the installation instructions (section~\ref{sec:install}, starting on p.~\pageref{sec:install}).
+Create a new, empty directory (a.k.a. folder) in which to experiment. Copy the file \path{green.nex} into the new directory. This file can be found under your Phycas installation directory at the location \path{phycas/Tests/Data/green.nex}. If you have no idea where your Phycas installation directory is located, please reread the relevant subsection of the installation instructions (either section~\ref{subsubsec:installfolderwindows} if you are using Windows, or section~\ref{subsubsec:installfoldermac} if you are using a Mac).
 
 \subsection{The {\em basic.py} script}
 
-Create a new (plain text\footnote{
-%
-It is important to save the file using plain text format. Most word processing programs, such as \trademark{Microsoft} \trademark{Word}, save files by default in a format that contains a lot of extra, proprietary information. All such programs have the option to save the file as plain text. It is best to create Python scripts using an editor that {\em only} saves files as plain text. Examples (for \trademark{Windows}) include Notepad++ and Pythonwin (or the simple Notepad program that comes with \trademark{Windows}). For Macs, Text Wrangler or BBEdit are good choices. Python comes with its own editor, named Idle, that is also a good (if slightly sluggish) choice.}.
-%
-) file in the folder (which should contain only the file \path{green.nex}). Name the new file \path{basic.py} and type the following lines into the file:
+Create a new (plain text\footnote{It is important to save the file using plain text format. Most word processing programs, such as \trademark{Microsoft} \trademark{Word}, save files by default in a format that contains a lot of extra, proprietary information. All such programs have the option to save the file as plain text. It is best to create Python scripts using an editor that {\em only} saves files as plain text. Examples (for \trademark{Windows}) include Notepad++ and Pythonwin (or the simple Notepad program that comes with \trademark{Windows}). For Macs, Text Wrangler or BBEdit are good choices. Python comes with its own editor, named Idle, that is also a good (if slightly sluggish) choice.}) file in the folder (which should contain only the file \path{green.nex}). Name the new file \path{basic.py} and type the following lines into the file:
 \begin{verbatim}
 from phycas import *
 mcmc.data_file_name = 'green.nex'
 mcmc.out.log = 'basic.log'
 mcmc.out.log.mode = REPLACE
+mcmc.out.trees.prefix = 'green'
+mcmc.out.params.prefix = 'green'
 mcmc.ncycles = 2000
 mcmc.sample_every = 10
 mcmc()
@@ -256,6 +253,19 @@ mcmc.out.log.mode = REPLACE
 \end{verbatim}
 %
 This line specifies the mode for the log file. The mode of any output file determines what happens if a file by that name already exists. The default behavior is to create a file by the same name but with a number at the end. For example, if \path{basic.log} already exists, then the new log file would be named \path{basic1.log}. If \path{basic1.log} already exists, then the new log file would be named \path{basic2.log}, and so on. You can also specify \code{REPLACE} (as we have done here) to replace any existing file with the same name, or \code{APPEND} to add to the end of an existing file. 
+%
+\begin{verbatim}
+mcmc.out.trees.prefix = 'green'
+\end{verbatim}
+%
+This line specifies that the trees sampled during the MCMC analysis will be saved to a file having the prefix \path{green}. Phycas will add the extension \path{.t} to the end of the prefix you specify, so the full file name will be \path{green.t}. If you preferred, you could specify the entire file name using \code{mcmc.out.trees = 'green.t'} and \code{mcmc.out.trees.mode} could be used to specify Phycas' behavior if the file specified already exists.
+%
+\begin{verbatim}
+mcmc.out.params.prefix = 'green'
+\end{verbatim}
+%
+This line specifies that the parameters sampled during the MCMC analysis will be saved to a file having the prefix \path{green}. Phycas will add the extension \path{.p} to the end of the prefix you specify, so the full file name will be \path{green.p}. 
+%
 \begin{verbatim}
 mcmc.ncycles = 2000
 \end{verbatim}
@@ -292,13 +302,13 @@ It is unlikely that you will need to do this under ordinary circumstances. We po
 
 \subsection{Running Phycas}
 
-To execute the \path{basic.py} script you just created, open a console window, navigate to the directory containing the script and type the following at the command prompt:
+To execute the \pathname{basic.py} script you just created, open a console window, navigate to the directory containing the script and type the following at the command prompt:
 %
 \begin{verbatim}
 python basic.py
 \end{verbatim}
 %
-The program should run for a few minutes, creating three files (\pathname{basic.log}, \pathname{green.nex.t} and \pathname{green.nex.p}) as it runs. The file \pathname{green.nex.t} is the tree file containing the trees sampled during the MCMC run, while \pathname{green.nex.p} is the parameter file containing samples of model parameters. These files are equivalent to their counterparts in MrBayes.
+The program should run for a few minutes, creating three files (\pathname{basic.log}, \pathname{green.t} and \pathname{green.p}) as it runs. The file \pathname{green.t} is the tree file containing the trees sampled during the MCMC run, while \pathname{green.p} is the parameter file containing samples of model parameters. These files are equivalent to their counterparts in MrBayes.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% Summarizing tree files %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -320,42 +330,40 @@ sumt()
 
 \subsection{Line-by-line explanation}
 
-{\bf *** BEGIN AGAIN HERE ***}
-
 \begin{verbatim}
 from phycas import *
 \end{verbatim}
 %
-These two lines were explained previously in the explanation of the \pathname{basic.py} script on page~\pageref{subsec:basicpyexplanation}.
+These two lines were explained previously in the explanation of the \pathname{basic.py} script on page~\pageref{subsec:basicpyexplanation}. (This line would not be necessary if the \code{sumt} commands were appended to the end of \path{basic.py}.)
 %
 \begin{verbatim}
-phycas.sumt_input_tree_file = 'green.nex.t'
+sumt.trees = 'green.t'
 \end{verbatim}
 %
-The setting \opt{sumt\_input\_tree\_file} specifies the name of the tree file to be analyzed. Here, we are specifying the tree file produced by the analysis performed by \pathname{basic.py}. The file named here should be a valid nexus tree file, but need not be a file produced by Phycas.
+The setting \opt{trees} specifies the name of the tree file to be analyzed. Here, we are specifying the tree file produced by the analysis performed by \pathname{basic.py}. The file named here should be a valid nexus tree file, but need not be a file produced by Phycas.
 %
 \begin{verbatim}
-phycas.sumt_trees_prefix = 'trees'
+sumt.out.trees.prefix = 'trees'
 \end{verbatim}
 %
-The setting \opt{sumt\_trees\_prefix} specifies the prefix used to create file names for a tree file (prefix + \pathname{.tre}) and a pdf file (prefix + \pathname{.pdf}). Both files will contain the same trees, but the trees in the pdf file are graphically represented whereas those in the tree file are in the form of newick (nested parentheses) tree descriptions. The first tree in each file is the 50\% majority-rule consensus tree, followed by all distinct tree topologies sampled during the course of the MCMC analysis. The graphical versions in the pdf file have edge lengths drawn proportional to their posterior means and with posterior probability support values shown above each edge. With the exception of the majority rule consensus tree, the titles of trees reflect their frequency amongst the samples. 
+The setting \opt{out.trees.prefix} specifies the prefix used to create file names for a tree file (prefix + \pathname{.tre}) and a pdf file (prefix + \pathname{.pdf}). Both files will contain the same trees, but the trees in the pdf file are graphically represented whereas those in the tree file are in the form of newick (nested parentheses) tree descriptions. The first tree in each file is the 50\% majority-rule consensus tree, followed by all distinct tree topologies sampled during the course of the MCMC analysis. The graphical versions in the pdf file have edge lengths drawn proportional to their posterior means and with posterior probability support values shown above each edge. With the exception of the majority rule consensus tree, the titles of trees reflect their frequency amongst the samples. 
 %
 \begin{verbatim}
-phycas.sumt_splits_prefix = 'splits'
+sumt.out.splits.prefix = 'splits'
 \end{verbatim}
 %
-The setting \opt{sumt\_splits\_prefix} specifies the prefix used to create a file name for a pdf file containing two plots. The first plot in the file is similar to an AWTY (\url{http://king2.scs.fsu.edu/CEBProjects/awty/awty_start.php}) cumulative plot. It shows the split posterior probability calculated at evenly-spaced points throughout the MCMC run (as if the MCMC run were stopped and split posteriors computed at that point in the run). This kind of plot gives you information about whether the Markov chain converged with respect to split posteriors. (Often, when plots of log-likelihoods or model parameters show apparent convergence, split posteriors are still changing, making this type of plot a better indicator of convergence.) This first plot is not identical to an AWTY cumulative plot. The most striking difference is the fact that the lines plotted all originate at zero (AWTY does not plot these lines). Also, in AWTY the x-axis is labeled in terms of generations, whereas the Phycas equivalent labels the x-axis in terms of samples. 
+The setting \opt{out.splits.prefix} specifies the prefix used to create a file name for a pdf file containing two plots. The first plot in the file is similar to an AWTY (\url{http://king2.scs.fsu.edu/CEBProjects/awty/awty_start.php}) cumulative plot. It shows the split posterior probability calculated at evenly-spaced points throughout the MCMC run (as if the MCMC run were stopped and split posteriors computed at that point in the run). This kind of plot gives you information about whether the Markov chain converged with respect to split posteriors. (Often, when plots of log-likelihoods or model parameters show apparent convergence, split posteriors are still changing, making this type of plot a better indicator of convergence.) This first plot is not identical to an AWTY cumulative plot. The most striking difference is the fact that the lines plotted all originate at zero (AWTY does not plot these lines). Also, in AWTY the x-axis is labeled in terms of generations, whereas the Phycas equivalent labels the x-axis in terms of samples. 
 
 The second plot in this file shows split sojourns. A split sojourn is a sequence of successive samples in which the split is present in the sampled tree, preceded and followed by an absense of the split. The number and duration of split sojourns gives an indication of how well the Markov chain is mixing, and this plot shows the results graphically. Neither plot in this file shows results for trivial splits (the split separating a single taxon from all other taxa; such splits are always present and are thus guaranteed to have split posterior 1.0) or for splits that were present in every sample (these are not useful from the standpoint of assessing convergence or mixing, except that poor mixing might be indicated if very few splits are plotted). See \citet{LewisLewis2005} for an example of the use of split sojourns to assess convergence. 
 %
 \begin{verbatim}
-phycas.sumt_burnin = 1
+sumt.burnin = 1
 \end{verbatim}
 %
-The setting \opt{sumt\_burnin} is the number of sampled tree topologies to skip. This value should always be at least 1, because the first tree in the tree file is the starting tree, which is never a valid sample from the posterior distribution. All statistics computed by the {\tt sumt()} method are based on the number of sampled trees remaining after the burn-in trees have been removed from consideration. For example, if there are 101 trees in the input tree file, and \opt{sumt\_burnin} is 1, all posterior probabilities will be computed using 100 in the denominator (not 101).
+The setting \opt{burnin} is the number of sampled tree topologies to skip. This value should always be at least 1, because the first tree in the tree file is the starting tree, which is never a valid sample from the posterior distribution. All statistics computed by the {\tt sumt()} method are based on the number of sampled trees remaining after the burn-in trees have been removed from consideration. For example, if there are 101 trees in the input tree file, and \opt{burnin} is 1, all posterior probabilities will be computed using 100 in the denominator (not 101).
 %
 \begin{verbatim}
-phycas.sumt()
+sumt()
 \end{verbatim}
 %
 The {\tt sumt()} method call begins the analysis of the input tree file. Besides the three files produced containing trees and plots, output is generated by this method summarizing the tree topologies and splits discovered. Each summary table includes the following information:
@@ -444,7 +452,7 @@ The design principles underlying Phycas are presented best as a series of questi
 \subsection{Why is there no graphical user interface (GUI)?}
 \index{graphical user interface}Due to the large scale at which DNA sequencing is performed these days, and the increasing desire to ``pipeline'' analyses, we felt that using a script-based approach would best serve the needs of potential users in the near and distant future. Python is already installed on most unix-based operating systems (including Linux and MacIntosh OSX), and thus Phycas can be easily inserted in to bioinformatics pipeline applications. Although it does not come pre-installed on new systems, Python is easy to install on \trademark{Windows}-based PCs, and thus Phycas can be used easily on any workstation or laptop. While many users like user-friendly GUIs with pull-down menus and dialog boxes, software that depends only on a GUI has certain disadvantages: (1) cannot be pipelined easily; (2) cannot be run on a remote cluster; and (3) often does not allow one to save a record of the exact analysis performed. One of the strong benefits of a GUI is that it allows experimentation and visualization. Phycas provides for visualization by outputting trees and plots in the form of PDF files. While not quite as appealing as an on-screen visual representation, PDF files provide what most of us really need: the ability to insert a publication-quality figure into a manuscript, or load artwork into other programs for manipulation. Now for the selfish reason for not creating a GUI for Phycas: GUIs present a lot of problems these days for developers, who must keep up with rapidly-changing operating systems and processor hardware, and avoiding a GUI allows us more time to work on keeping up with phylogenetics! 
 
-\subsection{Why is a lot of Phycas written in C++?}
+\subsection{Why is much of Phycas written in C++?}
 All scripting-based languages (R, Python, Perl, Ruby) are relatively slow compared to compiled languages such as C and C++. Fortunately, the Boost Python library (\url{http://www.boost.org/libs/python/doc/}) has made it easy to write the parts of Phycas that need to be fast in C++ and export these routines so that they can be called from Python. As a result, Phycas is as fast or faster than any phylogenetic software application out there. If you make comparisons of Phycas to other programs, be sure to compare them in a fair way. Phycas uses a different definition of ``generation'' than does MrBayes, for example. Because a ``cycle'' in Phycas is equivalent to more than 100 ``generations'' in MrBayes, it is easy to conclude that Phycas is slow compared to MrBayes. To be fair, compare instead the time required for some (large) number likelihood calculations under comparable models. Phycas makes this easy by reporting the number of likelihood calculations performed and the time required at the end of an MCMC analysis\index{comparing speed}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -491,28 +499,50 @@ REGEDIT4
 %
 Assuming that you saved this file with the extension \pathname{.reg}, the \trademark{Windows} operating system will know what to do with it. Double-click the name of the file in \trademark{Windows} \trademark{Explorer}, and the required registry entry will be made. {\bfseries Warning:} {\em making changes to your system's registry is a bit risky, and we take no responsibility for any damage your system may incurr by following these directions!} That said, this worked fine for us and saves an enormous amount of time. \trademark{Windows} offers a PowerToy (\url{http://www.microsoft.com/windowsxp/downloads/powertoys/xppowertoys.mspx}) for \trademark{XP} that does something similar. While perhaps safer to install, it is somewhat frustrating to use because if you are already inside a directory in which you want to open a console, you must first go up one level in order to open a console window for that directory.
 
-\subsubsection{Installing Python}
+\subsubsection{Installing Python under \trademark{Windows}}
 
-Before you go to the trouble of downloading and installing Python, make sure you do not already have Python installed on your Windows system. From the Start button, choose \menu{All Programs}, then \menu{Accessories} and finally \menu{Command Prompt}. Type \code{python -V} in the console window that appears, and if a phrase such as \code{Python 2.5.1} appears, then you already have Python installed! Most Windows users will probably see \code{'python' is not recognized as an internal or external command, operable program or batch file.} In this case, you need to visit \url{http://python.org} and download and install the latest version of Python.
+Before you go to the trouble of downloading and installing Python, make sure you do not already have Python installed on your Windows system. From the Start button, choose \menu{All Programs}, then \menu{Accessories} and finally \menu{Command Prompt}. Type \code{python -V} in the console window that appears, and if a phrase such as \code{Python 2.5.1} appears, then you already have Python installed! Most Windows users will probably see \code{'python' is not recognized as an internal or external command, operable program or batch file.} In this case, you need to visit \url{http://python.org} and download and install the latest version of Python (version 2.5.2 as of this writing).
 
-\subsubsection{Installing Phycas}
+\subsubsection{Installing Phycas under \trademark{Windows}}
 
-Visit the Download section of the Phycas web site \url{http://phycas.org} and download the Windows installer. If you are using Windows XP, double-click the installer to install Phycas. If using Vista, right-click the installer and choose to install as Administrator. The installer will attempt to identify the location of Python on your system, and if it fails to find Python will abort the installation. Assuming it can find Python, it will install Phycas into the \pathname{Lib/site-packages} directory of that Python installation. You will also find a Phycas section in the menu that appears when you choose \menu{Start} and \menu{All Programs}. Included in the \menu{Start/All Programs/Phycas} menu is an item named \menu{Phycas Installation Folder}. Choosing this menu item will open Windows (file) Explorer to the Phycas installation folder.
+Visit the Download section of the Phycas web site \url{http://phycas.org/} and download the Windows installer. If you are using Windows XP, double-click the installer to install Phycas. If using Vista, right-click the installer and choose to install as Administrator. The installer will attempt to identify the location of Python on your system, and if it fails to find Python will abort the installation. Assuming it can find Python, it will install Phycas into the \pathname{Lib/site-packages} directory of that Python installation. 
 
-NEEDS WORK
+\subsubsection{Locating the ``Phycas Installation Folder'' under \trademark{Windows}} \label{subsubsec:installfolderwindows}
+
+You will find a Phycas section in the menu that appears when you choose \menu{Start} and \menu{All Programs}. Included in the \menu{Start/All Programs/Phycas} menu is an item named \menu{Phycas Installation Folder}. Choosing this menu item will open \trademark{Windows} (file) Explorer to the ``Phycas Installation Folder'' mentioned in the tutorial.
 
 \subsection{Instructions for MacIntosh Users}
 
-TO BE WRITTEN
+These instructions assume you are using MacOS 10.4 or later.
+
+\subsubsection{The iTerm terminal application}
+
+Bundled with Phycas is a terminal application called iTerm. The iTerm application is an open-source replacement for the Terminal application with which you may be familiar (and which comes with the MacOS). While it is possible to use Phycas from Terminal, we recommend strongly that you use the iTerm application that comes with Phycas. The iTerm application starts automatically when you click on the icon labeled ``Phycas'' (see below). The main reason for using the bundled iTerm application is that it starts Python and imports phycas for you automatically when it is started.
+
+\subsubsection{Installing Python on a Mac}
+
+If you are using MacOS 10.4, and haven't installed Python yourself, your Mac probably has Python 2.3 installed. To find out, open a terminal window (you can find the Terminal app in the Utilities folder, which is itself a subfolder of the \pathname{Applications} folder) and type \code{python -V}. If the version of Python is 2.3, you will need to visit \url{http://python.org} and download and install the latest version of Python (version 2.5.2 as of this writing).
+
+\subsubsection{Installing Phycas on a Mac}
+
+Visit the Download section of the Phycas web site \url{http://phycas.org/} and download the MacOS DMG file. Once the DMG file has been downloaded, double-click it to mount it. Inside the DMG, you should find several files (Figure~\ref{phycasdmg}). Copy the ``file'' named \pathname{Phycas} (which is actually a special ``application bundle'' folder named \pathname{Phycas.app}, but the operating system hides the \pathname{.app} part of the name) and the file named \pathname{manual.pdf} to a folder of your choice (e.g. we suggest you create a \pathname{Phycas} folder inside your \pathname{Applications} folder for this purpose). To start Phycas, double-click the \pathname{Phycas.app} application. {\bf Important:} When you start Phycas, you are actually starting an application named iTerm that has been bundled with the Phycas Python libraries. Thus, the menu items you see are iTerm menu items (including the \menu{Update...} menu item. With this MacOS version, you need not type the \code{from phycas import *} command because this is done for you when you double-click \pathname{Phycas.app}.
+
+\subsubsection{Locating the ``Phycas Installation Folder'' on a Mac} \label{subsubsec:installfoldermac}
+
+The ``Phycas Installation Folder'' that is mentioned in the tutorial is inside \pathname{Phycas.app} application bundle. MacOS tries to make it difficult for you to see inside application bundles, but clicking on the \pathname{Phycas.app} bundle while pressing the \keycmd{Ctrl} will produce a menu, and choosing the \menu{Show Package Contents} item on that menu will allow you to view the contents of the application bundle folder. Once inside \pathname{Phycas.app}, double-click on the \pathname{Contents} folder, then the \pathname{Resources} folder to find the ``Phycas Installation Folder.''
 
 %
-% Figure "felsenstein"
+% Figure "phycasdmg"
 %
-%\clearpage
-%\begin{figure}
-%\centering
-%\hfil\includegraphics[scale=0.7]{felsenzone.eps}\hfil
-%\end{figure}
+\begin{figure}[t]
+\begin{center}
+\begin{minipage}{5.in}
+\hfil\includegraphics[scale=0.5]{images/phycasdmg.eps}\hfil
+\caption{\small The Phycas DMG file after it has been mounted.}
+\label{phycasdmg}
+\end{minipage}
+\end{center}
+\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% Acknowledgements %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

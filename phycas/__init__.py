@@ -71,6 +71,15 @@ def getDefaultOutFilter():
 
 # These globals are set here, so that reading in the startup.py gives
 #   experienced users the chance to override the default behavior.
+# Mark: it would be better I think to put these in a file that can be
+# rewritten by a Settings object. The Settings object could be defined
+# like MCMC, SumT, etc., with options such as "intercept_python_exceptions"
+# If a user wanted to change, say, help_double_space, he/she could type
+# settings.help_double_space=False; settings(). The settings() call would
+# overwrite the file containing these settings with the current values
+# and immediately reload the module so that the new options would 
+# immediately take effect. Can PhycasCommand be modified to allow classes
+# that behave like Settings?
 help_double_space = True
 current_double_space = True
 current_follows_help = True
