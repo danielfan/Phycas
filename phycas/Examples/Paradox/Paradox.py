@@ -11,7 +11,7 @@ model.num_rates = 4        # add discrete gamma rate heterogeneity with 4 rate c
 
 # Set prior on the gamma shape parameter to be an exponential distribution having mean 0.5
 # Note that the value in parentheses is the inverse of the mean, not the mean.
-model.gamma_shape_prior = ProbDist.ExponentialDist(2.0)
+model.gamma_shape_prior = ProbDist.Exponential(2.0)
 
 # Set the prior for the base frequency parameters. The base frequency parameters in Phycas
 # are only proportional to the base frequencies (i.e. they often add up to a value greater
@@ -20,21 +20,21 @@ model.gamma_shape_prior = ProbDist.ExponentialDist(2.0)
 # equivalent to placing a Dirichlet(a,a,a,a) prior on the actual base frequencies. If you
 # change the prior, you should keep the second one (the scale) set to 1.0 if you want the
 # joint base frequency prior to remain Dirichlet.
-model.base_freq_param_prior = ProbDist.GammaDist(1.0, 1.0)
+model.base_freq_param_prior = ProbDist.Gamma(1.0, 1.0)
 
 # Set the prior for kappa, the ratio of the rate of transitions to the rate of transversions
-model.kappa_prior = ProbDist.ExponentialDist(1.0)
+model.kappa_prior = ProbDist.Exponential(1.0)
 
 # Use a hyperparameter to govern the mean of the branch length prior
-# Instead of specifying, say, ExponentialDist(10.0) for branch lengths, this
-# approach effectively sets the prior to ExponentialDist(mu) and lets mu be
+# Instead of specifying, say, Exponential(10.0) for branch lengths, this
+# approach effectively sets the prior to Exponential(mu) and lets mu be
 # a free parameter in the model (that will tune itself during the MCMC run
 # to hover around the mean branch length). This means we are not setting a prior
 # directly on branch lengths, but we do need to specify one for the "hyperparameter"
 # mu. For this "hyperprior" (the prior for a hyperparameter) we used an Inverse
 # Gamma distribution having mean 1.0 and variance 10.0, as first suggested by
 # Suchard et al. in their 2001 MBE (18:1001-1013) paper on Bayesian model selection.
-model.edgelen_hyperprior = ProbDist.InverseGammaDist(2.1, 1.0/1.1)
+model.edgelen_hyperprior = ProbDist.InverseGamma(2.1, 1.0/1.1)
 
 # Tell phycas that we want to allow polytomies
 mcmc.allow_polytomies = True

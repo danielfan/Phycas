@@ -1,4 +1,5 @@
 from phycas.Utilities.PhycasCommand import *
+from phycas.Utilities.CommonFunctions import CommonFunctions
 from phycas import model
 from phycas.Phycas.MCMCImpl import MCMCImpl
 #from phycas.ProbDist import Beta, Exponential, InverseGamma
@@ -8,6 +9,7 @@ class MCMC(PhycasCommand):
     def __init__(self):
         args = (
                 ("random_seed",            0,                               "Determines the random number seed used; specify 0 to generate seed automatically from system clock", IntArgValidate(min=0)),
+                ("burnin",                 0,                               "The number of update cycles to ignore before sampling begins. If burnin=1000 and ncycles=10000, the total number of cycles will be 11000.", IntArgValidate(min=0)),
                 ("ncycles",                10000,                           "The number of update cycles (a cycle is analogous to, but different than, a 'generation' in MrBayes; Phycas does in one cycle what MrBayes does in about 100 generations for a simple model such as JC)", IntArgValidate(min=0)),
                 ("sample_every",           100,                             "The current tree topology and model parameter values will be sampled after this many cycles have elapsed since the last sample was taken", IntArgValidate(min=0)),
                 ("report_every",           100,                             "A progress report will be displayed after this many cycles have elapsed since the last progress report", IntArgValidate(min=0)),
@@ -40,7 +42,6 @@ class MCMC(PhycasCommand):
                 ("adapt_simple_param",      0.5,                            "Slice sampler adaptation parameter", FloatArgValidate(min=0.01)),
                 ("heating_lambda",         0.2,                             "not yet documented", FloatArgValidate(min=0.01)),
                 ("nchains",                1,                               "The number of Markov chains to run simultaneously. One chain serves as the cold chain from which samples are drawn, the other chains are heated to varying degrees and serve to enhance mixing in the cold chain.", IntArgValidate(min=1,max=1)), # only allowing 1 chain now because multiple chains not yet fully implemented
-                ("is_standard_heating",    True,                            "not yet documented", BoolArgValidate),
                 ("uf_num_edges",           50,                              "Number of edges to traverse before taking action to prevent underflow", IntArgValidate(min=1)),
                 ("ntax",                   0,                               "To explore the prior, set to some positive value. Also set data_source to None", IntArgValidate(min=0)),
                 )
@@ -64,12 +65,31 @@ class MCMC(PhycasCommand):
         self.__dict__["mapping_move_weight"] = 1        # Univent mapping will be performed this many times per cycle
         self.__dict__["unimap_nni_move_weight"] = 100   # Unimap NNI moves will be performed this many times per cycle
         
+        # The data members added below are hidden from the user because they are set by the ps command
+        self.__dict__["doing_path_sampling"] = False
+        self.__dict__["ps_nbetavals"] = 101
+        self.__dict__["ps_maxbeta"] = 1.0
+        self.__dict__["ps_minbeta"] = 0.0
+        
+    def checkSanity(self):
+        """
+        Place asserts in this function that should be checked before anything substantive
+        is done during a call of self.run().
+        """
+        cf = CommonFunctions(self)
+        cf.phycassert(self.ps_nbetavals > 0, 'ps_nbetavals cannot be less than 1')
+        
     def __call__(self, **kwargs):
         self.set(**kwargs)
+        self.checkSanity()
         c = copy.deepcopy(self)
         mcmc_impl = MCMCImpl(c)
         mcmc_impl.run()
-        
+
+    # These taken out of circulation (at least for now):
+    #("is_standard_heating",    True,                            "not yet documented", BoolArgValidate),
+
+    # These moved to model:
     #("using_hyperprior",        True,                           "not yet documented", BoolArgValidate),
     #("edgelen_hyperprior",      InverseGammaDist(2.1,1.0/1.1),  "not yet documented"),
     #("fix_edgelen_hyperparam",  False,                          "not yet documented", BoolArgValidate),

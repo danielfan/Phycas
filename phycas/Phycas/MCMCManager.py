@@ -139,6 +139,9 @@ class LikelihoodCore:
             # Build user-specified tree
             #self.tree.buildTree(self.parent.starting_tree)
             self.parent.starting_tree.buildTree(self.tree)
+            if not self.tree.hasEdgeLens():
+                tm = Phylogeny.TreeManip(self.tree)
+                tm.setRandomEdgeLengths(self.starting_edgelen_dist)
             if not self.tree.tipNumbersSetUsingNames():
                 self.parent.warn_tip_numbers = True
 
@@ -224,12 +227,14 @@ class MarkovChain(LikelihoodCore):
         self.relrate_prior           = cloneDistribution(self.parent.opts.model.relrate_prior)
         self.base_freq_param_prior   = cloneDistribution(self.parent.opts.model.base_freq_param_prior)
         self.gamma_shape_prior       = cloneDistribution(self.parent.opts.model.gamma_shape_prior)
-        self.edgelen_hyperprior      = cloneDistribution(self.parent.opts.model.edgelen_hyperprior)
         self.external_edgelen_dist   = cloneDistribution(self.parent.opts.model.external_edgelen_dist)
         self.internal_edgelen_dist   = cloneDistribution(self.parent.opts.model.internal_edgelen_dist)
         self.kappa_prior             = cloneDistribution(self.parent.opts.model.kappa_prior)
         self.pinvar_prior            = cloneDistribution(self.parent.opts.model.pinvar_prior)
         self.flex_prob_param_prior   = cloneDistribution(self.parent.opts.model.flex_prob_param_prior)
+        self.edgelen_hyperprior      = None
+        if self.parent.opts.model.edgelen_hyperprior is not None:
+            self.edgelen_hyperprior  = cloneDistribution(self.parent.opts.model.edgelen_hyperprior)
         self.chain_manager           = None
 
         self.setupChain()
@@ -265,7 +270,7 @@ class MarkovChain(LikelihoodCore):
 
         """
         paramf.write('[ID: %d]\n' % self.r.getInitSeed())
-        if self.parent.doing_path_sampling:
+        if self.parent.opts.doing_path_sampling:
             paramf.write('Gen\tbeta\tLnL\tTL')
         else:
             paramf.write('Gen\tLnL\tTL')
@@ -340,7 +345,8 @@ class MarkovChain(LikelihoodCore):
         self.flex_prob_param_prior.setLot(self.r)
         self.gamma_shape_prior.setLot(self.r)
         self.pinvar_prior.setLot(self.r)
-        self.edgelen_hyperprior.setLot(self.r)
+        if self.edgelen_hyperprior is not None:
+            self.edgelen_hyperprior.setLot(self.r)
         self.external_edgelen_dist.setLot(self.r)
         if self.parent.opts.model.internal_edgelen_dist:
             self.internal_edgelen_dist.setLot(self.r)
@@ -434,12 +440,12 @@ class MarkovChain(LikelihoodCore):
             # updates to the edge lengths only (does not change the topology)
             self.edge_move = Likelihood.EdgeMove()
             self.edge_move.setName("Edge length move")
-            self.edge_move.setWeight(self.parent.edge_move_weight)
+            self.edge_move.setWeight(self.parent.opts.edge_move_weight)
             self.edge_move.setTree(self.tree)
             self.edge_move.setModel(self.model)
             self.edge_move.setTreeLikelihood(self.likelihood)
             self.edge_move.setLot(self.r)
-            self.edge_move.setLambda(self.parent.edge_move_lambda)
+            self.edge_move.setLambda(self.parent.opts.edge_move_lambda)
             if self.model.edgeLengthsFixed():
                 self.edge_move.fixParameter()
             self.chain_manager.addMove(self.edge_move)
@@ -536,10 +542,10 @@ class MarkovChain(LikelihoodCore):
         # Make sure each updater knows the heating power and heating type
         for updater in self.chain_manager.getAllUpdaters():
             updater.setPower(self.heating_power)
-            if self.parent.opts.is_standard_heating:
-                updater.setStandardHeating()
-            else:
-                updater.setLikelihoodHeating()
+            #if self.parent.opts.is_standard_heating:
+            updater.setStandardHeating()
+            #else:
+            #    updater.setLikelihoodHeating()
 
 class MCMCManager:
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -697,19 +703,17 @@ class MCMCManager:
         """
         Records the current tree topology and edge lengths by adding a line to
         the tree file, and records tree length and substitution parameters
-        by adding a line to the parameter file. If there are multiple chains 
-        and doing path sampling (is_standard_heating False), stores 
-        the log-likelihoods of all chains.
+        by adding a line to the parameter file.
         
         """
         # Gather log-likelihoods, and if path sampling save in path_sample list for later
         lnLikes = []
-        multichain_path_sampling = self.parent.opts.nchains > 1 and not self.parent.opts.is_standard_heating
+        #multichain_path_sampling = self.parent.opts.nchains > 1 and not self.parent.opts.is_standard_heating
         for i,c in enumerate(self.chains):
             lnLi = c.chain_manager.getLastLnLike()
             lnLikes.append(lnLi)
-            if multichain_path_sampling:
-                self.parent.path_sample[i].append(lnLi) # DISCRETE PATH SAMPLING
+            #if multichain_path_sampling:
+            #    self.parent.path_sample[i].append(lnLi) # DISCRETE PATH SAMPLING
         
         # Only record samples from the current cold chain
         cold_chain = self.parent.mcmc_manager.getColdChain()
@@ -717,7 +721,7 @@ class MCMCManager:
         # Add line to parameter file if it exists
         if self.parent.paramf:
             self.parent.paramf.write('%d\t' % (cycle + 1))
-            if self.parent.doing_path_sampling:
+            if self.parent.opts.doing_path_sampling:
                 self.parent.paramf.write('%.5f\t' % (cold_chain.heating_power))
             for lnl in lnLikes:
                 self.parent.paramf.write('%.3f\t' % lnl)

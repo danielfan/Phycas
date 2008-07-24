@@ -51,19 +51,21 @@ class MCMCImpl(CommonFunctions):
         self.samc_theta             = []        # Normalizing factors (will have length ntax - 3 because levels with 1, 2 or 3 taxa are not examined)
         self.samc_distance_matrix   = None      # Holds ntax x ntax hamming distance matrix used by SamcMove
         self.stored_tree_defs       = None
-        self.ps_delta_beta          = 0.0
-        self.doing_path_sampling    = False
-        self.path_sample            = None
         self.psf                    = None
         self.pdf_splits_to_plot     = None
         #self.param_file_name        = None  
         #self.tree_file_name         = None
         self.nsamples               = None
-        self.ps_beta                = 1.0
-        self.wangang_sampled_betas  = None
-        self.wangang_sampled_likes  = None
         self.unimap_manager         = None
         self.nsamples               = 0
+        self.burnin                 = 0     # same as self.opts.burnin except for path sampling, when it drops to 0 after first beta value
+        self.last_adaptation        = 0
+        self.next_adaptation        = 0
+        self.ps_beta                = 1.0
+        self.ps_beta_index          = 0
+        self.ps_sampled_betas       = None
+        self.ps_sampled_likes       = None
+        self.ps_delta_beta          = 0.0
 
     def sliceSamplerReport(self, s, nm):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -238,46 +240,35 @@ class MCMCImpl(CommonFunctions):
 
     def calcMarginalLikelihood(self):
         marginal_like = 0.0
-        if self.doing_path_sampling:
+        if self.opts.doing_path_sampling:
             # Calculate marginal likelihood using continuous path sampling
-            # The path_sampling vector is 1-dimensional, each element holds average for one increment
-            C = len(self.path_sample) - 1
-            marginal_like += (self.path_sample[0] + self.path_sample[-1])/2.0
-            for v in self.path_sample[1:-1]:
-                marginal_like += v
-            marginal_like /= float(C)
-            if self.ps_filename:
-                self.psf.write('%s\t%.5f\n' % ('-->',marginal_like))
-                self.psf.close()
-            self.output('Marginal likelihood (continuous path sampling method) = %f' % marginal_like)
-        elif self.opts.nchains > 1 and not self.opts.is_standard_heating:
-            # Calculate marginal likelihood using discrete path sampling
-            # The path_sampling vector is 2-dimensional, each element holds samples from one chain
-            C = self.opts.nchains - 1
-            self.output('\nCalculation of marginal likelihood:')
-            self.output('%12s%12s' % ('chain', 'avg. lnL'))
-            for i,v in enumerate(self.path_sample):
-                n = len(v)
-                avg = sum(v)/float(n)
-                self.output('%12d%12.5f' % (i, avg))
-                if (i == 0) or (i == C):
-                    avg /= 2.0
-                marginal_like += avg
-            marginal_like /= float(C)
-            self.output('  Marginal likelihood (discrete path sampling method) = %f' % marginal_like)
-            
+            for i in range(self.opts.ps_nbetavals):
+                n = len(self.ps_sampled_likes[i])
+                self.phycassert(n == self.opts.ncycles//self.opts.sample_every, 'number of sampled likelihoods (%d) does not match the expected number (%d) in path sampling calculation' % (n, self.opts.ncycles//self.opts.sample_every))
+                mean = sum(self.ps_sampled_likes[i])/float(n)
+                if i == 0 or i == self.opts.ps_nbetavals - 1:
+                    marginal_like += (mean/2.0)
+                else:
+                    marginal_like += mean
+            marginal_like /= float(self.opts.ps_nbetavals - 1)
+            self.output('Log of marginal likelihood (continuous path sampling method) = %f' % marginal_like)
+        else:
             # Calculate marginal likelihood using harmonic mean method on cold chain
-            sample_size = len(self.path_sample[0])
-            min_lnL = min(self.path_sample[0])
+            nignored = 0
+            n = len(self.ps_sampled_likes[0])
+            self.phycassert(n == self.opts.ncycles//self.opts.sample_every, 'number of sampled likelihoods (%d) does not match the expected number (%d) in harmonic mean calculation' % (n, self.opts.ncycles//self.opts.sample_every))
+            min_lnL = min(self.ps_sampled_likes[0])
             sum_diffs = 0.0
-            for lnl in self.path_sample[0]:
+            for lnl in self.ps_sampled_likes[0]:
                 diff = lnl - min_lnL
                 if diff < 500.0:
                     sum_diffs += math.exp(-diff)
                 else:
-                    self.output('warning: ignoring large diff (%f) in harmonic mean calculation' % diff)
-            log_harmonic_mean = math.log(sample_size) + min_lnL - math.log(sum_diffs)
-            self.output('  Marginal likelihood(harmonic mean method)= %f' % log_harmonic_mean)
+                    nignored += 1
+            log_harmonic_mean = math.log(n) + min_lnL - math.log(sum_diffs)
+            if nignored > 0:
+                self.warning('ignoring %d sampled log-likelihoods in harmonic mean calculation' % nignored)
+            self.output('Log of marginal likelihood (harmonic mean method) = %f' % log_harmonic_mean)
 
     def setup(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -289,8 +280,7 @@ class MCMCImpl(CommonFunctions):
         1) reads the data and ensures that the taxon_labels list is filled
         with the correct number of taxon labels; 
         2) creates a starting tree description; 
-        3) creates an appropriate heat_vector (for either Metropolis-coupling
-        or discrete path sampling); 
+        3) creates an appropriate heat_vector
         4) calls MCMCManager's createChains function to handle setup for each
         individual chain; 
         5) opens the parameter and tree files; and
@@ -324,7 +314,7 @@ class MCMCImpl(CommonFunctions):
             # TODO allow some other tree than the first
             self.starting_tree = tree_defs[0]
         elif self.opts.starting_tree_source == 'usertree':
-            self.starting_tree = self.tree_topology
+            self.starting_tree = Newick(self.opts.tree_topology)
         elif self.opts.starting_tree_source == 'random':
             self.phycassert(self.ntax > 0, 'expecting ntax to be greater than 0')
             self.starting_tree = None
@@ -339,9 +329,9 @@ class MCMCImpl(CommonFunctions):
                 # DISCRETE PATH SAMPLING
                 # Create a list for each chain to hold sampled lnL values
                 #@ shouldn't this only be done if self.is_standard_heating is False?
-                self.path_sample = []
-                for i in range(self.opts.nchains):
-                    self.path_sample.append([])
+                #self.path_sample = []
+                #for i in range(self.opts.nchains):
+                #    self.path_sample.append([])
                 
                 # Determine vector of powers for each chain
                 self.heat_vector = []
@@ -355,20 +345,20 @@ class MCMCImpl(CommonFunctions):
                         # 3 0.625 = 1/1.6
                         temp = 1.0/(1.0 + float(i)*self.heating_lambda)
                         self.heat_vector.append(temp)
-                else:
-                    # DISCRETE PATH SAMPLING
-                    # Goal is path sampling, not mixing, so these powers are applied only to likelihood
-                    for i in range(self.opts.nchains):
-                        self.do_marginal_like = True
-                        # Likelihood heating for thermodynamic integration
-                        # 0 1.000 = (3-0)/3 cold chain explores posterior
-                        # 1 0.667 = (3-1)/3
-                        # 2 0.333 = (3-2)/3
-                        # 3 0.000 = (3-3)/3 hottest chain explores prior
-                        temp = 1.0
-                        denom = float(self.opts.nchains - 1)
-                        temp = float(self.opts.nchains - i - 1)/denom
-                        self.heat_vector.append(temp)
+                #else:
+                #    # DISCRETE PATH SAMPLING
+                #    # Goal is path sampling, not mixing, so these powers are applied only to likelihood
+                #    for i in range(self.opts.nchains):
+                #        self.do_marginal_like = True
+                #        # Likelihood heating for thermodynamic integration
+                #        # 0 1.000 = (3-0)/3 cold chain explores posterior
+                #        # 1 0.667 = (3-1)/3
+                #        # 2 0.333 = (3-2)/3
+                #        # 3 0.000 = (3-3)/3 hottest chain explores prior
+                #        temp = 1.0
+                #        denom = float(self.opts.nchains - 1)
+                #        temp = float(self.opts.nchains - i - 1)/denom
+                #        self.heat_vector.append(temp)
         else:
             # User supplied his/her own heat_vector; perform sanity checks
             self.opts.nchains = len(self.heat_vector)
@@ -377,13 +367,43 @@ class MCMCImpl(CommonFunctions):
         self.mcmc_manager.createChains()
         self.openParameterAndTreeFiles()
         
+    def beyondBurnin(self, cycle):
+        c = cycle + 1
+        return (c > self.burnin)
+        
+    def doThisCycle(self, cycle, mod):
+        c = cycle + 1
+        return ((c % mod) == 0)
+        
+    def mainMCMCLoop(self):
+        for cycle in xrange(self.burnin + self.opts.ncycles):
+            for i,c in enumerate(self.mcmc_manager.chains):
+                self.updateAllUpdaters(c, i, cycle)
+            if self.opts.verbose and self.doThisCycle(cycle, self.opts.report_every):
+                self.stopwatch.normalize()
+                cold_chain_manager = self.mcmc_manager.getColdChainManager()
+                if self.opts.doing_path_sampling:
+                    msg = 'beta = %.5f, cycle = %d, lnL = %.5f (%.5f secs)' % (self.ps_beta, cycle + 1, cold_chain_manager.getLastLnLike(), self.stopwatch.elapsedSeconds())
+                else:
+                    msg = 'cycle = %d, lnL = %.5f (%.5f secs)' % (cycle + 1, cold_chain_manager.getLastLnLike(), self.stopwatch.elapsedSeconds())
+                self.output(msg)
+            if self.beyondBurnin(cycle) and self.doThisCycle(cycle - self.burnin, self.opts.sample_every):
+                self.mcmc_manager.recordSample(cycle)
+                cold_chain_manager = self.mcmc_manager.getColdChainManager()
+                sampled_lnL = cold_chain_manager.getLastLnLike()
+                self.ps_sampled_likes[self.ps_beta_index].append(sampled_lnL)
+                self.stopwatch.normalize()
+            if self.doThisCycle(cycle, self.next_adaptation):
+                self.adaptSliceSamplers()
+                self.next_adaptation += 2*(self.next_adaptation - self.last_adaptation)
+                self.last_adaptation = cycle + 1
+        
     def run(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Performs the MCMC analysis. 
         
         """
-        
         self.setup()
         
         # If user has set quiet to True, then phycas.output calls will have no effect
@@ -411,10 +431,20 @@ class MCMCImpl(CommonFunctions):
                         self.output('***   '+','.join([str(i+1) for i in tmp]))
             else:
                 self.phycas.abort("Only 'file' or None are allowed for data_source")
-            self.output('No. cycles:     %s' % self.opts.ncycles)
-            self.output('Sample every:   %s' % self.opts.sample_every)
             self.output('Starting tree:  %s' % self.starting_tree)
-            self.output('No. samples:    %s' % self.nsamples)
+            if self.opts.doing_path_sampling:
+                self.output('\nPerforming path sampling MCMC to estimate marginal likelihood.')
+                self.output('Likelihood will be raised to the power beta, and beta will be')
+                self.output('decremented from 1.0 to 0.0 in a series of steps.')
+                self.output('  No. steps:               %s' % self.opts.ps_nbetavals)
+                self.output('  No. cycles per step:     %s' % self.opts.ncycles)
+                self.output('  Sample every:            %s' % self.opts.sample_every)
+                self.output('  No. samples per step:    %s' % self.nsamples)
+                self.output('\n')
+            else:
+                self.output('No. cycles:     %s' % self.opts.ncycles)
+                self.output('Sample every:   %s' % self.opts.sample_every)
+                self.output('No. samples:    %s' % self.nsamples)
             #self.output('Sampled trees will be saved in %s' % self.tree_file_name)
             self.output('Sampled trees will be saved in %s' % self.opts.out.trees.filename)
             #self.output('Sampled parameters will be saved in %s' % self.param_file_name)
@@ -468,70 +498,36 @@ class MCMCImpl(CommonFunctions):
         self.stopwatch.start()
         self.mcmc_manager.resetNEvals()
         
-        self.output('\nSampling (%d cycles)...' % self.opts.ncycles)
+        if self.opts.doing_path_sampling:
+            self.output('\nSampling (%d cycles for each of the %d values of beta)...' % (self.opts.ncycles, self.opts.ps_nbetavals))
+        else:
+            self.output('\nSampling (%d cycles)...' % self.opts.ncycles)
         if self.opts.verbose:
             print
         self.mcmc_manager.recordSample(0)
-        last_adaptation = 0
-        next_adaptation = self.opts.adapt_first
+        self.last_adaptation = 0
+        self.next_adaptation = self.opts.adapt_first
 
-        if self.doing_path_sampling:
-            self.path_sample = []
+        if self.opts.doing_path_sampling:
             chain = self.mcmc_manager.chains[0]
-            ps_Qsum   = 0.0
-            ps_Qtotal = 0.0
-            ps_Qnum   = 0
-            if self.ps_toward_posterior:
-                self.ps_beta = self.ps_minbeta
-            else:
-                self.ps_beta = self.ps_maxbeta
-            chain.setPower(self.ps_beta)
-            if self.ps_filename:
-                self.psf = open(self.ps_filename,'w')
-                self.psf.write('beta\tavglnL\n')
-            self.wangang_sampled_betas = [self.ps_beta]
-            self.wangang_sampled_likes = []
-            self.wangang_sampled_likes.append([])
-            beta_index = 0
+            self.ps_delta_beta = float(self.opts.ps_maxbeta - self.opts.ps_minbeta)/float(self.opts.ps_nbetavals - 1)
+            self.ps_sampled_betas = [self.opts.ps_maxbeta - self.ps_delta_beta*float(i) for i in range(self.opts.ps_nbetavals)]
             
-        for cycle in xrange(self.opts.ncycles):
-            for i,c in enumerate(self.mcmc_manager.chains):
-                self.updateAllUpdaters(c, i, cycle)
-            if self.opts.verbose and (cycle + 1) % self.opts.report_every == 0:
-                self.stopwatch.normalize()
-                cold_chain_manager = self.mcmc_manager.getColdChainManager()
-                msg = 'cycle = %d, lnL = %.5f (%.5f secs)' % (cycle + 1, cold_chain_manager.getLastLnLike(), self.stopwatch.elapsedSeconds())
-                self.output(msg)
-            if self.doing_path_sampling and cycle + 1 > self.ps_burnin:
-                sampled_lnL = cold_chain_manager.getLastLnLike()
-                ps_Qnum += 1
-                if (ps_Qnum % self.ps_sample_every) == 0:
-                    ps_Qsum += sampled_lnL
-                    ps_Qtotal += 1.0
-                    self.wangang_sampled_likes[beta_index].append(sampled_lnL)
-                if ps_Qnum == self.ps_Q:
-                    avg = ps_Qsum/ps_Qtotal
-                    self.path_sample.append(avg)
-                    if self.ps_filename:
-                        self.psf.write('%.3f\t%.5f\n' % (self.ps_beta,avg))
-                    if self.ps_toward_posterior:
-                        self.ps_beta += self.ps_delta_beta
-                    else:
-                        self.ps_beta -= self.ps_delta_beta
-                    chain.setPower(self.ps_beta)
-                    ps_Qsum   = 0.0
-                    ps_Qtotal = 0.0
-                    ps_Qnum   = 0
-                    self.wangang_sampled_betas.append(self.ps_beta)
-                    self.wangang_sampled_likes.append([])
-                    beta_index += 1
-            if (cycle + 1) % self.opts.sample_every == 0:
-                self.mcmc_manager.recordSample(cycle)
-                self.stopwatch.normalize()
-            if (cycle + 1) % next_adaptation == 0:
-                self.adaptSliceSamplers()
-                next_adaptation += 2*(next_adaptation - last_adaptation)
-                last_adaptation = cycle + 1
+            self.ps_sampled_likes = []
+            for self.ps_beta_index,self.ps_beta in enumerate(self.ps_sampled_betas):
+                self.ps_sampled_likes.append([])
+                chain.setPower(self.ps_beta)
+                if self.ps_beta_index > 0:
+                    self.burnin = 0
+                else:
+                    self.burnin = self.opts.burnin
+                self.mainMCMCLoop()
+        else:
+            self.ps_sampled_likes = []
+            self.ps_sampled_likes.append([])
+            self.ps_beta_index = 0
+            self.burnin = self.opts.burnin
+            self.mainMCMCLoop()
 
         self.adaptSliceSamplers()
         total_evals = self.mcmc_manager.getTotalEvals() #self.likelihood.getNEvals()
@@ -545,11 +541,6 @@ class MCMCImpl(CommonFunctions):
         if self.paramf:
             self.paramFileClose()
             
-        # Delete the last (extra) entry in both self.wangang_sampled_betas and self.wangang_sampled_likes
-        if self.doing_path_sampling:
-            self.wangang_sampled_betas = self.wangang_sampled_betas[:-1]
-            self.wangang_sampled_likes = self.wangang_sampled_likes[:-1]
-
-        # If we have been path sampling, compute marginal likelihood using lnL values
-        # for each chain stored in self.path_sample
+        # Report marginal likelihood calculation (using harmonic mean method, or path sampling if 
+        # this mcmc method was called from the ps command)
         self.calcMarginalLikelihood()

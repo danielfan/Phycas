@@ -131,6 +131,7 @@ if __name__ == '__main__':
 
     # os.chdir(os.path.join(os.path.split(scriptPar)[0], "Examples"))
     os.chdir(scriptPar)
+    runTest(outFile, "PathSampling", ["params.p", "trees.t"])
     runTest(outFile, "LikelihoodTest", ["simulated.nex", "check.nex"])
     runTest(outFile, "Sumt", ["trees.tre","splits.pdf","logfile.txt"])
     #runTest(outFile, "ExplorePrior", mcmcOutputs(["nodata.nex"]))

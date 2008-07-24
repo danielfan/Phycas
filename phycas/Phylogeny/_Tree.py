@@ -32,7 +32,6 @@ class Tree(TreeBase):
             builder.buildTree(self)
         elif newick:
             self.buildFromString(newick, zero_based)
-                
         
     def __iter__(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -251,6 +250,15 @@ class Tree(TreeBase):
         """
         return TreeBase.isRooted(self)
 
+    #def hasEdgeLens(self):
+    #    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+    #    """
+    #    Returns True if edge lengths have been specified for the tree, False
+    #    otherwise.
+    #
+    #    """
+    #    return TreeBase.hasEdgeLens(self)
+
     def hasEdgeLens(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -415,15 +423,6 @@ class Tree(TreeBase):
 
         """
         return TreeBase.unselectAllNodes(self)
-
-    def hasEdgeLens(self):
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
-        """
-        Returns True if edge lengths have been specified for the tree, False
-        otherwise.
-
-        """
-        return TreeBase.hasEdgeLens(self)
 
     def getFirstPreorder(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
