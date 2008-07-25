@@ -87,6 +87,8 @@ mcmc()
 # Summarize the trees, creating pdf files sumt_splits.pdf and sumt_trees.pdf
 # as well as a tree file named sumt_trees.tre
 sumt.outgroup_taxon = 'Oedogonium cardiacum'
-sumt.trees          = 'ShoupLewis.nex.t'
+sumt.trees          = 'trees.t'
 sumt.burnin         = 101
+sumt.out.log.prefix = 'output'
+sumt.out.log.mode   = APPEND
 sumt()
