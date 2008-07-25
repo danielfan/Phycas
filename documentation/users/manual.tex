@@ -21,6 +21,9 @@
 % encapsulated postscript figures
 \usepackage{graphicx}
 
+% bold math
+\usepackage{bm}
+
 % Make document single-spaced
 \renewcommand{\baselinestretch}{1.0}
 
@@ -37,6 +40,11 @@
 \newcommand{\opt}[1]{{\tt \small #1}\index{#1}}		% command options (e.g. 'type' for model command)
 \newcommand{\optval}[1]{{\tt #1}}			% option values (e.g. 'gtr' for model.type option)
 \newcommand{\term}[1]{{\bfseries #1}\index{#1}}		% new term
+
+\newcommand{\one}[1]{\mbox{${\bf 1}_{#1}$}}
+\newcommand{\data}{{\bf y}}
+\newcommand{\params}{\mbox{$\bm \theta$}}
+\newcommand{\Var}{\mbox{Var}}
 
 \newcommand{\phycasapp}{\pathname{Phycas.app}}
 \newcommand{\phycasicon}{\includegraphics[scale=0.1]{images/PhycasGUI}}
@@ -57,6 +65,7 @@
 % Keep hyperref last among includes
 \usepackage{hyperref}\hypersetup{backref, linkcolor=blue, urlcolor=blue, colorlinks=true, citecolor=blue, hyperindex=true, 
 pdfstartview=FitB, 
+pdfstartpage=1,
 pdftitle={Phycas User Manual},
 pdfauthor={Paul O. Lewis, Mark T. Holder, and David L. Swofford}, 
 pdfsubject={Phycas User Manual},
@@ -402,7 +411,7 @@ Using the same procedure outlined in section~\ref{subsec:runningbasicpy}, run yo
 
 Phycas defines several probability distributions that can be used as prior distributions for model parameters. This section briefly describes each of these distributions. 
 
-In most cases, you will need to prefix the names of distributions with \code{ProbDist.}. For example:
+In most cases, you will need to prefix the names of distributions with \code{ProbDist}. For example:
 %
 \begin{verbatim}
 model.pinvar_prior = ProbDist.Beta(1,1)
@@ -416,96 +425,127 @@ from phycas.ProbDist import Beta
 model.pinvar_prior = Beta(1,1)
 \end{verbatim}
 
-The abbreviation \term{pdf} stands for ``probability density function.'' The pdf describes the relative probability the distribution ascribes to each value. The pdf is scaled so that it integrates to 1.0, allowing specific areas under the pdf to be interpreted as probabilities.
+The \term{support} of a distribution is the set of values for which the density function is greater than zero. 
 
+A distribution is a \term{discrete distribution} if the number of possible values is finite and each value is associated with a non-zero probability. Discrete distributions are associated with probability functions ($p(y|\params)$) that serve to provide the probability associated with each possible value.
+
+A distribution is a \term{continuous distribution} if the number of possible values is infinite and thus each particular value has probability zero. Continuous distributions are associated with probability density functions (\term{pdf}s). The pdf ($f(y|\params)$) provides the {\em relative} probability of each value. The pdf is scaled so that it integrates to 1.0, allowing specific areas under the pdf to be interpreted as probabilities. 
+
+The indicator function \one{x=y} takes on the value 1.0 if and only if the condition in the subscript is true (i.e., $x=y$ in this example).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Bernoulli}\label{bernoullidist}
-\subsubsection{Typical uses:}
-To be written.
-\subsubsection{Parameters:}
-\begin{description}
-\item[$\alpha$] to be described
-\item[$\beta$] to be described
-\end{description}
-\subsubsection{Probability density function:}
-\[ f(\alpha, \beta) = \mbox{to be written} \]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\renewcommand{\arraystretch}{1.5}
+
+This (discrete) distribution is provided for completeness, but currently there are no parameters in Phycas for which this distribution should be used as a prior. There are only two possible values (0 and 1), so Bernoulli distributions are appropriate for modeling stochastic processes that are characterized by presence vs. absence of something, or success vs. failure.
+
+\begin{tabular}{lcl}
+Parameter:            & & $p$ (probability of 1)     \\
+Probability function: & & $p(y|p) = p \one{y=1} + (1-p) \one{y=0}$ \\
+Support:              & & $\{0,1\}$     \\
+Expected value:       & & $E[y] = p$ \\
+Variance:             & & $\Var(y) = p(1-p)$ 
+\end{tabular}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Beta}\label{betadist}
-\subsubsection{Typical uses:}
-To be written.
-\subsubsection{Parameters:}
-\begin{description}
-\item[$\alpha$] to be described
-\item[$\beta$] to be described
-\end{description}
-\subsubsection{Probability density function:}
-\[ f(\alpha, \beta) = \mbox{to be written} \]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+Beta distributions (continuous) are popular as priors for parameters whose value is restricted to the interval [0.0, 1.0], such as proportions. The proportion of invariable sites parameter (often abbreviated pinvar) has a Beta prior by default in Phycas. The quantity $\Gamma(x)$ that appears in the pdf is the \term{gamma function}, which for integral values of $x$ is equal to $(x-1)!$.
+
+\begin{tabular}{lcl}
+Parameters:            & & $\alpha$, $\beta$   \\
+Probability density function: & & $f(y|\alpha, \beta) = \frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha) \; \Gamma(\beta)} \; y^{\alpha-1} \; (1-y)^{\beta - 1}$ \\
+Support:              & & $[0.0,1.0]$     \\
+Expected value:       & & $E[y] = \frac{\alpha}{\alpha + \beta}$ \\
+Variance:             & & $\Var(y) = \frac{\alpha \beta}{(\alpha + \beta)^2 \; (\alpha + \beta + 1)}$ 
+\end{tabular}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Binomial}\label{binomialdist}
-\subsubsection{Typical uses:}
-To be written.
-\subsubsection{Parameters:}
-\begin{description}
-\item[$\alpha$] to be described
-\item[$\beta$] to be described
-\end{description}
-\subsubsection{Probability density function:}
-\[ f(\alpha, \beta) = \mbox{to be written} \]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+The (discrete) Binomial distribution is not currently useful as a prior distribution in Phycas, and is provided for the sake of completeness. The Binomial distribution is commonly used to model counts of the number of trials satisfying some condition (a ``success''). For example, the number of heads out of 10 (independent) flips of a coin follows a Binomial distribution. The parameter of the distribution is the probability that the condition (e.g. heads) is satisfied on any given trial.
+
+\begin{tabular}{lcl}
+Parameters:           & & $p$ (probability of success in any given trial), $n$ (number of trials)    \\
+Probability function: & & $p(y|p,n) = {n \choose y} p^y (1-p)^{n-y} $ \\
+Support:              & & $\{0,1,\cdots\}$     \\
+Expected value:       & & $E[y] = n p$ \\
+Variance:             & & $\Var(y) = n p(1-p)$ 
+\end{tabular}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Exponential}\label{exponentialdist}
-\subsubsection{Typical uses:}
-To be written.
-\subsubsection{Parameters:}
-\begin{description}
-\item[$\alpha$] to be described
-\item[$\beta$] to be described
-\end{description}
-\subsubsection{Probability density function:}
-\[ f(\alpha, \beta) = \mbox{to be written} \]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+The (continuous) Exponential distribution is a special case of the Gamma distribution (in which the shape parameter equals 1.0). The Exponential distribution is a common prior for parameters restricted to the positive real numbers, such as edge lengths, transition/transversion rate ratio ($\kappa$), nonsynonymous/synonymous rate ratio ($\omega$), the shape parameter of the discretized Gamma distribution used to model among-site rate heterogeneity, GTR model relative rates, and the parameters governing base frequencies.
+
+\begin{tabular}{lcl}
+Parameter:            & & $\lambda$ (hazard)    \\
+Probability function: & & $f(y|\lambda) = \lambda e^{-\lambda y}$ \\
+Support:              & & $[0.0,\infty)$     \\
+Expected value:       & & $E[y] = \lambda$ \\
+Variance:             & & $\Var(y) = \lambda$ 
+\end{tabular}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Gamma}\label{gammadist}
-\subsubsection{Typical uses:}
-The Gamma distribution (or its special case, the Exponential distribution) is commonly used as a prior distribution for parameters defined on the positive half of the real number line. The Gamma distribution assigns probability zero for any value less than zero.
-\subsubsection{Parameters:}
-\begin{description}
-\item[$\alpha$] The shape parameter. Gamma distributions with shapes less than 1 have a pdf mode greater than zero. For those with shape equal to 1, the maximum value of the pdf is equal to $\beta$ and occurs at zero. If the shape is greater than 1, the pdf approaches infinity as zero is approached.
-\item[$\beta$] The scale parameter.
-\end{description}
-\subsubsection{Probability density function:}
-\[ f(x | \alpha, \beta) = \frac{x^{\alpha-1} \; e^{-x/\beta}}{\beta^{\alpha} \; \Gamma(\alpha)} \]
-The quantity $\Gamma(\alpha)$ is the gamma function, which for integral values of $\alpha$ is equal to $(\alpha-1)!$.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+The Gamma distribution (or its special case, the Exponential distribution) is commonly used as a prior distribution for parameters defined on the positive half of the real number line. The Gamma distribution assigns probability zero for any value less than zero. Gamma distributions with shapes less than 1 have a pdf mode greater than zero. Those with shape equal to 1 are identical to Exponential distributions. In this case, the highest point reached by the pdf is $\beta$ and occurs at the value zero. If the shape is greater than 1, the pdf approaches infinity as zero is approached. The quantity $\Gamma(\alpha)$ that appears in the pdf is the \term{gamma function}, which for integral values of $\alpha$ is equal to $(\alpha-1)!$.
+
+\begin{tabular}{lcl}
+Parameter:            & & $\alpha$ (shape), $\beta$ (scale)    \\
+Probability function: & & $f(y|\alpha,\beta) = \frac{y^{\alpha - 1} \; e^{-y/\beta}}{\beta^{\alpha} \; \Gamma(\alpha)}$ \\
+Support:              & & $[0.0,\infty)$     \\
+Expected value:       & & $E[y] = \alpha \beta$ \\
+Variance:             & & $\Var(y) = \alpha \beta^2$ 
+\end{tabular}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{InverseGamma}\label{inversegammadist}
-\subsubsection{Typical uses:}
-To be written.
-\subsubsection{Parameters:}
-\begin{description}
-\item[$\alpha$] to be described
-\item[$\beta$] to be described
-\end{description}
-\subsubsection{Probability density function:}
-\[ f(\alpha, \beta) = \mbox{to be written} \]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+The Inverse Gamma distribution with parameters $\alpha$ and $\beta$ is the distribution of the quantity $1/y$ if $y$ has a Gamma($\alpha,\beta$) distribution. In Phycas, the Inverse Gamma distribution is primarily used as an edge length hyperprior (see section~\ref{hierarchicalmodels} on hierarchical models). The mean of an Inverse Gamma distribution is undefined unless the shape parameter $\alpha$ is greater than 1; the variance is undefined unless $\alpha > 2$.
+
+\begin{tabular}{lcl}
+Parameter:            & & $\alpha$ (shape), $\beta$ (scale)    \\
+Probability function: & & $f(y|\alpha,\beta) = \frac{(1/y)^{\alpha + 1} \; e^{-(1/y)/\beta}}{\beta^{\alpha} \; \Gamma(\alpha)}$ \\
+Support:              & & $[0.0,\infty)$     \\
+Expected value:       & & $E[y] = \frac{1}{\beta \;(\alpha-1)}$ \\
+Variance:             & & $\Var(y) = \frac{1}{\beta^2*(\alpha-1)^2 \; (\alpha-2)}$ 
+\end{tabular}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Normal}\label{normaldist}
-\subsubsection{Typical uses:}
-To be written.
-\subsubsection{Parameters:}
-\begin{description}
-\item[$\alpha$] to be described
-\item[$\beta$] to be described
-\end{description}
-\subsubsection{Probability density function:}
-\[ f(\alpha, \beta) = \mbox{to be written} \]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+NEEDS WORK
+
+\begin{tabular}{lcl}
+Parameter:            & & $\mu$ (mean), $\sigma$ (standard deviation)    \\
+Probability function: & & $f(y|\mu,\sigma) = \frac{1}{\sqrt{2 \pi \sigma^2}} e^{-\frac{(y-\mu)^2}{2 \sigma}}$ \\
+Support:              & & $[-\infty,\infty)$     \\
+Expected value:       & & $E[y] = \mu$ \\
+Variance:             & & $\Var(y) = \sigma^2$ 
+\end{tabular}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Uniform}\label{uniform}
-\subsubsection{Typical uses:}
-To be written.
-\subsubsection{Parameters:}
-\begin{description}
-\item[$\alpha$] to be described
-\item[$\beta$] to be described
-\end{description}
-\subsubsection{Probability density function:}
-\[ f(\alpha, \beta) = \mbox{to be written} \]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+NEEDS WORK
+
+\begin{tabular}{lcl}
+Parameter:            & & $a$ (lower bound), $b$ (upper bound)    \\
+Probability function: & & $f(y|a,b) = \frac{1}{b-a}$ \\
+Support:              & & $[a,b]$     \\
+Expected value:       & & $E[y] = \frac{a+b}{2}$ \\
+Variance:             & & $\Var(y) = \frac{(b-a)^2}{12}$ 
+\end{tabular}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% Models %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -519,17 +559,17 @@ TO BE WRITTEN
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Features}\label{sec:features}
 
-Phycas differs in some ways from other programs that conduct Bayesian phylogenetic analyses. Phycas does not attempt to do everything, but does provide some features not found in any other software. The following sections are meant to highlight some of the features present in Phycas that are uncommon in other programs.
+Phycas differs in some ways from other programs that conduct Bayesian phylogenetic analyses. The following sections are meant to highlight some of the features present in Phycas that are uncommon or absent in other programs.
 
 \subsection{Slice sampling}
 
-Phycas makes extensive use of an MCMC method known as \term{slice sampling} \citep{Neal2003a}, whereas many programs use Metropolis-Hastings (MH) proposals to update model parameters during an MCMC analysis. The decision to use slice sampling in Phycas was based on tunability: the efficiency of slice samplers can be tuned as they run. In contrast, MH depends on tuning parameters that must be adjusted prior to sampling, an activity almost never performed in practice, leading to inefficient MCMC sampling for data sets that are not like those used when decisions were being made about default values of tuning parameters. In the final tally, a program using slice sampling behaves nearly identically to one using MH if the program using MH has been tuned prior to the analysis; however, Phycas saves you from having to worry about tuning by doing it automatically during the run. 
+Phycas makes extensive use of an MCMC method known as \term{slice sampling} \citep{Neal2003a}, whereas many programs use Metropolis-Hastings (MH) proposals to update model parameters during an MCMC analysis. The decision to use slice sampling in Phycas was based on the fact that the efficiency of slice samplers can be tuned as they run. In contrast, MH depends on tuning parameters that must be adjusted prior to sampling, an activity almost never performed in practice, leading to inefficient MCMC sampling for data sets that are not like those used when decisions were being made about default values of tuning parameters. In the final tally, a program using slice sampling behaves nearly identically to one using MH if the program using MH has been tuned prior to the analysis; however, Phycas saves you from having to worry about tuning by doing it automatically during the run. 
 
-Phycas first attempts to adapt its slice samplers (one slice sampler is assigned to each model parameter) at the cycle specified by the setting \opt{adapt\_first}. Each subsequent adaptation occurs after twice as many cycles as the previous adaptation. After the first few adaptations there is usually little to be gained by adapting the slice samplers further, hence the increasingly long time periods between adaptations. 
+Phycas first attempts to adapt its slice samplers (one slice sampler is assigned to each model parameter) at the cycle specified by the setting \opt{mcmc.adapt\_first}. Each subsequent adaptation occurs after twice as many cycles as the previous adaptation. After the first few adaptations there is usually little to be gained by adapting the slice samplers further, hence the increasingly long time periods between adaptations. 
 
 Slice sampling can be used only for continuous model parameters, not for updating the tree topology. Phycas uses the \citet{LargetSimon1999} ``LOCAL move without a molecular clock'' to propose simultaneous changes in tree topology and edge lengths. Because edge length parameters are closely tied to the topology (and because there are so many of them!), it appears to be more efficient to use the LOCAL move rather than slice samplers to update edge lengths.
 
-\subsection{Hierarchical models}
+\subsection{Hierarchical models} \label{hierarchicalmodels}
 
 It is common still in Bayesian phylogenetics to use non-hierarchical models. In a non-hierarchical model, all parameters in the model can be found in the likelihood function. Edge lengths are parameters found in the likelihood function and, typically, a single Exponential distribution is used as the prior distribution for all edge lengths. The problem with this is that the edge length prior often has more of an effect than intended (the average tree length often responds to changes in the edge length prior mean) and researchers are often at a loss when deciding on an appropriate prior mean for edge lengths. It is possible to take an empirical Bayes approach, which involves estimating edge lengths under maximum likelihood and using the average estimated edge length as the mean of the prior. Bayesian purists eschew this peeking at the data to help determine the prior, but how should one choose an appropriate prior distribution without using estimates? 
 
@@ -572,24 +612,16 @@ The design principles underlying Phycas are presented best as a series of questi
 \index{why Python?}Most phylogenetic analyses take a considerable amount of time to run, and thus most phylogenetic analysis software provides a mechanism for batch processing. Batch processing is ordinarily accomplished through the use of a programming language of some sort that allows the user to specify the sequence of commands to run. For example, PAUP* allows PAUP blocks to be placed in nexus files. The user can run an analysis without manual intervention by simply executing such a file containing PAUP* commands. This mode has the added benefit of creating a record of exactly the analysis performed, so that later on when the reviews come back and you are trying to respond to reviewers' concerns, you can actually recall what you did! Using menu-driven programs makes this difficult unless the software saves a history of all keystrokes and menu selections. Other popular programs have their own, proprietary command languages. For example, MrBayes uses MRBAYES blocks in nexus files, Hy-Phy uses a C-like language, and Beast uses xml as its medium for communicating commands. The problem (as we see it) with all of these is that the language used to communicate with the program is: (1) proprietary, (2) unique, and (3) incomplete. The proprietary and unique nature of these languages means you have only the documentation provided by the program's authors to guide you. Once that is exhausted, you must resort to emailing the authors, who are often so swamped with requests for information that they can only respond to a small fraction of requests. The incomplete nature of these languages means that many things one would like to do are not possible. The reason we chose to extent Python is so that we could use an existing, well-documented, widely-available computing language as the command language for Phycas. There are many books available on using Python, which means we do not have to provide all the details, and Python is a very powerful computing language, meaning you can write very sophisticated scripts that do anything your heart desires in your phylogenetic analysis. With the phylogenetic library of tools supplied by Phycas, you can even invent new phylogenetic methods if you are so inclined. There is, of course, some program-specific learning you must do in order to use Phycas; just having a prior knowledge of Python will not save you from reading this manual to learn what Phycas offers and how to access those features. We feel, however, that using a powerful, existing computing language to communicate with Phycas instead of ``rolling our own'' program-specific language was a very good idea.
 
 \subsection{Why is there no graphical user interface (GUI)?}
-\index{graphical user interface}Due to the large scale at which DNA sequencing is performed these days, and the increasing desire to ``pipeline'' analyses, we felt that using a script-based approach would best serve the needs of potential users in the near and distant future. Python is already installed on most unix-based operating systems (including Linux and MacIntosh OSX), and thus Phycas can be easily inserted in to bioinformatics pipeline applications. Although it does not come pre-installed on new systems, Python is easy to install on \trademark{Windows}-based PCs, and thus Phycas can be used easily on any workstation or laptop. While many users like user-friendly GUIs with pull-down menus and dialog boxes, software that depends only on a GUI has certain disadvantages: (1) cannot be pipelined easily; (2) cannot be run on a remote cluster; and (3) often does not allow one to save a record of the exact analysis performed. One of the strong benefits of a GUI is that it allows experimentation and visualization. Phycas provides for visualization by outputting trees and plots in the form of PDF files. While not quite as appealing as an on-screen visual representation, PDF files provide what most of us really need: the ability to insert a publication-quality figure into a manuscript, or load artwork into other programs for manipulation. Now for the selfish reason for not creating a GUI for Phycas: GUIs present a lot of problems these days for developers, who must keep up with rapidly-changing operating systems and processor hardware, and avoiding a GUI allows us more time to work on keeping up with phylogenetics! 
+\index{graphical user interface}Due to the large scale at which DNA sequencing is performed these days, and the increasing desire to ``pipeline'' analyses, we felt that using a script-based approach would best serve the needs of potential users in the near and distant future. Python is already installed on most unix-based operating systems (including Linux and MacIntosh OSX), and thus Phycas can be easily inserted in to bioinformatics pipeline applications. Although it does not come pre-installed on new systems, Python is easy to install on \trademark{Windows}-based PCs, and thus Phycas can be used easily on any workstation or laptop. While many users like user-friendly GUIs with pull-down menus and dialog boxes, software that depends on a GUI has certain disadvantages: (1) cannot be pipelined easily; (2) cannot be run on a remote cluster; and (3) often does not allow one to save a record of the exact analysis performed. One of the strong benefits of a GUI is that it allows experimentation and visualization. Phycas provides for visualization by outputting trees and plots in the form of PDF files. While not quite as appealing as an on-screen visual representation, PDF files provide what most of us really need: the ability to insert a publication-quality figure into a manuscript, or load artwork into other programs for manipulation.  
 
-\subsection{Why is much of Phycas written in C++?}
-All scripting-based languages (R, Python, Perl, Ruby) are relatively slow compared to compiled languages such as C and C++. Fortunately, the Boost Python library (\url{http://www.boost.org/libs/python/doc/}) has made it easy to write the parts of Phycas that need to be fast in C++ and export these routines so that they can be called from Python. As a result, Phycas is as fast or faster than any phylogenetic software application out there. If you make comparisons of Phycas to other programs, be sure to compare them in a fair way. Phycas uses a different definition of ``generation'' than does MrBayes, for example. Because a ``cycle'' in Phycas is equivalent to more than 100 ``generations'' in MrBayes, it is easy to conclude that Phycas is slow compared to MrBayes. To be fair, compare instead the time required for some (large) number likelihood calculations under comparable models. Phycas makes this easy by reporting the number of likelihood calculations performed and the time required at the end of an MCMC analysis\index{comparing speed}.
+\subsection{Is Phycas slower than MrBayes?}
+All scripting-based languages (R, Python, Perl, Ruby) are relatively slow compared to compiled languages such as C and C++. Fortunately, the Boost Python library (\url{http://www.boost.org/libs/python/doc/}) has made it easy to write the parts of Phycas that need to be fast in C++ and export these routines so that they can be called from Python. As a result, Phycas competes favorably with any phylogenetic software application out there in terms of speed. If you make speed comparisons of Phycas to other programs, be sure to compare them in a fair way. Phycas uses a different definition of ``generation'' than does MrBayes, for example. Because a ``cycle'' in Phycas is equivalent to more than 100 ``generations'' in MrBayes, it is easy to conclude that Phycas is slow compared to MrBayes. To be fair, compare instead the time required for some (large) number likelihood calculations under comparable models. Phycas makes this easy by reporting the number of likelihood calculations performed and the time required at the end of an MCMC analysis\index{comparing speed}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% Settings %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Settings}\label{sec:phycassettings}
 \input{cmdsettings}
-
-
-%\subsection{Settings related to edges}\label{subsec:edgesettings}
-%\input{edges}
-
-\subsection{Settings related to models}\label{subsec:modelsettings}
-NOT YET WRITTEN
-%\input{models}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% Installing Phycas %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
