@@ -63,14 +63,6 @@ mcmc.data_file_name = 'ShoupLewis.nex'
 # Let slice sampler have maximum freedom to extend slice
 mcmc.slice_max_units = 0
 
-# Tell Phycas that we want to run the MCMC analysis for 20000 cycles.
-# Note that a cycle in Phycas differs from a generation in MrBayes.
-# A cycle involves updating each non-branch-length parameter in the model
-# as well as a certain number of Metropolis-Hastings updates of branch
-# lengths and tree topology.
-mcmc.ncycles = 20000
-mcmc.sample_every = 10    # save tree and parameters every 10 cycles
-
 # Specify the names of the files that will store the trees and parameter values
 mcmc.out.trees.prefix = 'trees'
 mcmc.out.trees.mode = REPLACE
@@ -84,14 +76,14 @@ mcmc.out.log.mode = REPLACE
 # Choose a pseudorandom number seed so that we can later repeat the analysis exactly if we so desire
 mcmc.random_seed = 13957
 
-# Finally, call mcmc(), which starts the MCMC analysis.
-mcmc()
+# Tell Phycas that we want to run the MCMC analysis for 1000 cycles per beta value,
+# and that we want to burn-in for 1000 cycles before sampling the first beta value.
+mcmc.burnin = 1000
+mcmc.ncycles = 1000
+mcmc.sample_every = 10    # save tree and parameters every 10 cycles
 
-# Summarize the trees, creating pdf files sumt_splits.pdf and sumt_trees.pdf
-# as well as a tree file named sumt_trees.tre
-sumt.outgroup_taxon = 'Oedogonium cardiacum'
-sumt.trees          = 'trees.t'
-sumt.burnin         = 101
-sumt.out.log.prefix = 'output'
-sumt.out.log.mode   = APPEND
-sumt()
+# Setup path sampling
+ps.nbetavals = 1
+ps.maxbeta = 0.0
+ps.minbeta = 0.0
+ps()
