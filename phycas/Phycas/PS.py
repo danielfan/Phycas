@@ -9,7 +9,17 @@ class PS(PhycasCommand):
                    ("minbeta", 0.0, "The last beta value that will be sampled.", FloatArgValidate(min=0.0, max=1.0)),
                 )
         # Specify output options
+        self.__dict__["hidden"] = True # hide from main phycas help list of commands until working
         PhycasCommand.__init__(self, args, "ps", "Performs path sampling (thermodynamic integration) for purposes of estimating the marginal likelihood of the current model.")
+
+    def hidden():
+        """ 
+        Overrides the PhycasCommand.hidden method to keep PS's name from being displayed 
+        in the list of classes displayed when users type help. Delete this function, or
+        change its return value to False, when it is ready to be advertised.
+        """
+        return True
+    hidden = staticmethod(hidden)
 
     def checkSanity(self):
         """

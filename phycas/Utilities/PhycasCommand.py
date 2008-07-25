@@ -61,7 +61,7 @@ class PhycasHelp(object):
     _phycas_cmd_classes = set()
     def __str__(self):
         PhycasTablePrinter._reset_term_width()
-        n = [i.__name__.lower() for i in PhycasHelp._phycas_cmd_classes]
+        n = [i.__name__.lower() for i in PhycasHelp._phycas_cmd_classes if not i.hidden()]
         n.sort()
         done = False
         i = iter(n)
@@ -1079,7 +1079,16 @@ class PhycasCommand(object):
         self.__dict__["help"] = h
         self.__dict__["current"] = PhycasCurrentValuesHelper(h)
         m = PhycasManualGenerator(self, cmd_name, cmd_descrip)
+        self.__dict__["curr"] = self.__dict__["current"] # allow abbreviation for current
         self.__dict__["manual"] = m
+        
+    def hidden():
+        """ 
+        Override this function to return True if you want to keep a class's name from being
+        displayed in the main phycas help display.
+        """
+        return False
+    hidden = staticmethod(hidden)
 
     def __deepcopy__(self, memo):
         opts = self._options
