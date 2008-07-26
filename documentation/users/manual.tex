@@ -409,8 +409,12 @@ Using the same procedure outlined in section~\ref{subsec:runningbasicpy}, run yo
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Probability Distributions}\label{sec:probdist}
 
-Phycas defines several probability distributions that can be used as prior distributions for model parameters. This section briefly describes each of these distributions. 
+Phycas defines several probability distributions. Several of these (Uniform, Beta, Exponential, Gamma, InverseGamma) are commonly used as prior distributions for model parameters. Others (Bernoulli, Binomial, Normal) are less commonly used as prior distributions in Bayesian phylogenetics, but are nevertheless useful for other reasons. This section briefly describes each of these distributions. 
 
+{\large \em Terminology ---}
+The \term{support} of a distribution is the set of values for which the density function is greater than zero. A distribution is a \term{discrete distribution} if the number of possible values is finite and each value is associated with a non-zero probability. Discrete distributions are associated with probability functions ($p(y|\params)$) that serve to provide the probability associated with each possible value. A distribution is a \term{continuous distribution} if the number of possible values is infinite and thus each particular value has probability zero. Continuous distributions are associated with probability density functions (\term{pdf}s). The pdf ($f(y|\params)$) provides the {\em relative} probability of each value. The pdf is scaled so that it integrates to 1.0, allowing specific areas under the pdf to be interpreted as probabilities. The indicator function \one{x=y} takes on the value 1.0 if and only if the condition in the subscript is true (i.e., $x=y$ in this example).
+
+{\large \em Using probability distributions in Phycas ---}
 In most cases, you will need to prefix the names of distributions with \code{ProbDist}. For example:
 %
 \begin{verbatim}
@@ -420,18 +424,111 @@ model.pinvar_prior = ProbDist.Beta(1,1)
 You can avoid the need for the prefix by specifically importing the distributions you need at the top of your script. For example:
 %
 \begin{verbatim}
-from phycas.ProbDist import Beta
+from phycas.ProbDist import Beta,Gamma
 ...
 model.pinvar_prior = Beta(1,1)
 \end{verbatim}
+%
+Each probability distribution defined in Phycas provides a \code{sample} method that generates a single random deviate from that distribution. For example:
+%
+\begin{verbatim}
+d = ProbDist.Gamma(0.5, 4.0)
+d.sample()
+11.923011659940444
+\end{verbatim}
+%
+This can be used to get a feel for typical values generated from a distribution. To generate 10 values from a Gamma(0.5, 4.0) distribution, you can use a Python for loop:
+%
+\begin{verbatim}
+d = ProbDist.Gamma(0.5, 4.0)
+for i in range(10):
+    d.sample()
+0.21277867604109485
+1.8952730436709666
+0.26548236737438019
+3.2718729795327026
+2.5822707554839197
+0.043311257125495065
+0.30315706776669216
+14.728064587204788
+0.085634607314423447
+0.10030029917676343
+\end{verbatim}
+%
+It is also possible to get the distribution object to tell you its current mean, variance and standard deviation:
+%
+\begin{verbatim}
+d = ProbDist.Gamma(0.5, 4.0)
+d.getMean()
+2.0
+d.getVar()
+8.0
+d.getStdDev()
+2.8284271247461903
+\end{verbatim}
+%
+To set the parameters of a distribution to match a particular mean and variance, use the \code{setMeanAndVariance} method:
+%
+\begin{verbatim}
+d = ProbDist.Normal(1.0, 1.0)
+d.setMeanAndVariance(2.0, 1.0)
+d.getMean()
+2.0
+d.getVar()
+1.0
+\end{verbatim}
+%
+To get a description of the distribution and a list of all of its methods, use the \code{help} function:
+%
+\begin{verbatim}
+help(ProbDist.Normal)
 
-The \term{support} of a distribution is the set of values for which the density function is greater than zero. 
+This is a class or python type
+Represents the univariate normal probability distribution.
+The following public methods are available:
+getMean
+setLot
+resetLot
+getDistName
+getRelativeLnPDF
+getVar
+lnGamma
+getStdDev
+clone
+getLnPDF
+isDiscrete
+sample
+setMeanAndVariance
+setSeed
+getCDF
+\end{verbatim}
+%
+To get a description and usage example for a particular function, use \code{help} on the name of the function:
+%
+\begin{verbatim}
+help(ProbDist.Exponential.setMeanAndVariance)
 
-A distribution is a \term{discrete distribution} if the number of possible values is finite and each value is associated with a non-zero probability. Discrete distributions are associated with probability functions ($p(y|\params)$) that serve to provide the probability associated with each possible value.
+<unbound method Exponential.setMeanAndVariance>
 
-A distribution is a \term{continuous distribution} if the number of possible values is infinite and thus each particular value has probability zero. Continuous distributions are associated with probability density functions (\term{pdf}s). The pdf ($f(y|\params)$) provides the {\em relative} probability of each value. The pdf is scaled so that it integrates to 1.0, allowing specific areas under the pdf to be interpreted as probabilities. 
+An instance of type instancemethod.
 
-The indicator function \one{x=y} takes on the value 1.0 if and only if the condition in the subscript is true (i.e., $x=y$ in this example).
+Sets the mean and variance of this distribution. This distribution is
+determined entirely by the mean, so the var argument is ignored. The
+reason this function requires both mean and variance is for
+compatibility with functions of the same name in other distributions.
+
+>>> from phycas.ProbDist import *
+>>> b = Exponential(2)
+>>> print b.getMean()
+0.5
+>>> print b.getVar()
+0.25
+>>> b.setMeanAndVariance(5, 0)
+>>> print b.getMean()
+5.0
+>>> print b.getVar()
+25.0
+\end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Bernoulli}\label{bernoullidist}
@@ -439,12 +536,13 @@ The indicator function \one{x=y} takes on the value 1.0 if and only if the condi
 
 \renewcommand{\arraystretch}{1.5}
 
-This (discrete) distribution is provided for completeness, but currently there are no parameters in Phycas for which this distribution should be used as a prior. There are only two possible values (0 and 1), so Bernoulli distributions are appropriate for modeling stochastic processes that are characterized by presence vs. absence of something, or success vs. failure.
+This distribution is provided for completeness, but currently there are no parameters in Phycas for which this distribution should be used as a prior. There are only two possible values (0 and 1), so Bernoulli distributions are appropriate for modeling stochastic processes that are characterized by presence vs. absence of something, or success vs. failure.
 
 \begin{tabular}{lcl}
-Parameter:            & & $p$ (probability of 1)     \\
+Type:                 & & Discrete \\
+Parameter:            & & $p$ (probability of 1) \\
 Probability function: & & $p(y|p) = p \one{y=1} + (1-p) \one{y=0}$ \\
-Support:              & & $\{0,1\}$     \\
+Support:              & & $\{0,1\}$  \\
 Expected value:       & & $E[y] = p$ \\
 Variance:             & & $\Var(y) = p(1-p)$ 
 \end{tabular}
@@ -453,10 +551,11 @@ Variance:             & & $\Var(y) = p(1-p)$
 \subsection{Beta}\label{betadist}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Beta distributions (continuous) are popular as priors for parameters whose value is restricted to the interval [0.0, 1.0], such as proportions. The proportion of invariable sites parameter (often abbreviated pinvar) has a Beta prior by default in Phycas. The quantity $\Gamma(x)$ that appears in the pdf is the \term{gamma function}, which for integral values of $x$ is equal to $(x-1)!$.
+Beta distributions are popular as priors for parameters whose value is restricted to the interval [0.0, 1.0], such as proportions. The proportion of invariable sites parameter (often abbreviated pinvar) has a Beta prior by default in Phycas. The quantity $\Gamma(x)$ that appears in the pdf is the \term{gamma function}, which for integral values of $x$ is equal to $(x-1)!$.
 
 \begin{tabular}{lcl}
-Parameters:            & & $\alpha$, $\beta$   \\
+Type:                 & & Continuous \\
+Parameters:           & & $\alpha$, $\beta$   \\
 Probability density function: & & $f(y|\alpha, \beta) = \frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha) \; \Gamma(\beta)} \; y^{\alpha-1} \; (1-y)^{\beta - 1}$ \\
 Support:              & & $[0.0,1.0]$     \\
 Expected value:       & & $E[y] = \frac{\alpha}{\alpha + \beta}$ \\
@@ -467,9 +566,10 @@ Variance:             & & $\Var(y) = \frac{\alpha \beta}{(\alpha + \beta)^2 \; (
 \subsection{Binomial}\label{binomialdist}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The (discrete) Binomial distribution is not currently useful as a prior distribution in Phycas, and is provided for the sake of completeness. The Binomial distribution is commonly used to model counts of the number of trials satisfying some condition (a ``success''). For example, the number of heads out of 10 (independent) flips of a coin follows a Binomial distribution. The parameter of the distribution is the probability that the condition (e.g. heads) is satisfied on any given trial.
+The Binomial distribution is not currently useful as a prior distribution in Phycas, and is provided for the sake of completeness. The Binomial distribution is commonly used to model counts of the number of trials satisfying some condition (a ``success''). For example, the number of heads out of 10 (independent) flips of a coin follows a Binomial distribution. The parameter of the distribution is the probability that the condition (e.g. heads) is satisfied on any given trial.
 
 \begin{tabular}{lcl}
+Type:                 & & Discrete \\
 Parameters:           & & $p$ (probability of success in any given trial), $n$ (number of trials)    \\
 Probability function: & & $p(y|p,n) = {n \choose y} p^y (1-p)^{n-y} $ \\
 Support:              & & $\{0,1,\cdots\}$     \\
@@ -481,14 +581,15 @@ Variance:             & & $\Var(y) = n p(1-p)$
 \subsection{Exponential}\label{exponentialdist}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The (continuous) Exponential distribution is a special case of the Gamma distribution (in which the shape parameter equals 1.0). The Exponential distribution is a common prior for parameters restricted to the positive real numbers, such as edge lengths, transition/transversion rate ratio ($\kappa$), nonsynonymous/synonymous rate ratio ($\omega$), the shape parameter of the discretized Gamma distribution used to model among-site rate heterogeneity, GTR model relative rates, and the parameters governing base frequencies.
+The Exponential distribution is a special case of the Gamma distribution (in which the shape parameter equals 1.0). The Exponential distribution is a common prior for parameters restricted to the positive real numbers, such as edge lengths, transition/transversion rate ratio ($\kappa$), nonsynonymous/synonymous rate ratio ($\omega$), the shape parameter of the discretized Gamma distribution used to model among-site rate heterogeneity, GTR model relative rates, and the parameters governing base frequencies.
 
 \begin{tabular}{lcl}
+Type:                 & & Continuous \\
 Parameter:            & & $\lambda$ (hazard)    \\
 Probability function: & & $f(y|\lambda) = \lambda e^{-\lambda y}$ \\
 Support:              & & $[0.0,\infty)$     \\
-Expected value:       & & $E[y] = \lambda$ \\
-Variance:             & & $\Var(y) = \lambda$ 
+Expected value:       & & $E[y] = 1/\lambda$ \\
+Variance:             & & $\Var(y) = 1/\lambda^2$ 
 \end{tabular}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -498,6 +599,7 @@ Variance:             & & $\Var(y) = \lambda$
 The Gamma distribution (or its special case, the Exponential distribution) is commonly used as a prior distribution for parameters defined on the positive half of the real number line. The Gamma distribution assigns probability zero for any value less than zero. Gamma distributions with shapes less than 1 have a pdf mode greater than zero. Those with shape equal to 1 are identical to Exponential distributions. In this case, the highest point reached by the pdf is $\beta$ and occurs at the value zero. If the shape is greater than 1, the pdf approaches infinity as zero is approached. The quantity $\Gamma(\alpha)$ that appears in the pdf is the \term{gamma function}, which for integral values of $\alpha$ is equal to $(\alpha-1)!$.
 
 \begin{tabular}{lcl}
+Type:                 & & Continuous \\
 Parameter:            & & $\alpha$ (shape), $\beta$ (scale)    \\
 Probability function: & & $f(y|\alpha,\beta) = \frac{y^{\alpha - 1} \; e^{-y/\beta}}{\beta^{\alpha} \; \Gamma(\alpha)}$ \\
 Support:              & & $[0.0,\infty)$     \\
@@ -512,22 +614,24 @@ Variance:             & & $\Var(y) = \alpha \beta^2$
 The Inverse Gamma distribution with parameters $\alpha$ and $\beta$ is the distribution of the quantity $1/y$ if $y$ has a Gamma($\alpha,\beta$) distribution. In Phycas, the Inverse Gamma distribution is primarily used as an edge length hyperprior (see section~\ref{hierarchicalmodels} on hierarchical models). The mean of an Inverse Gamma distribution is undefined unless the shape parameter $\alpha$ is greater than 1; the variance is undefined unless $\alpha > 2$.
 
 \begin{tabular}{lcl}
+Type:                 & & Continuous \\
 Parameter:            & & $\alpha$ (shape), $\beta$ (scale)    \\
 Probability function: & & $f(y|\alpha,\beta) = \frac{(1/y)^{\alpha + 1} \; e^{-(1/y)/\beta}}{\beta^{\alpha} \; \Gamma(\alpha)}$ \\
 Support:              & & $[0.0,\infty)$     \\
 Expected value:       & & $E[y] = \frac{1}{\beta \;(\alpha-1)}$ \\
-Variance:             & & $\Var(y) = \frac{1}{\beta^2*(\alpha-1)^2 \; (\alpha-2)}$ 
+Variance:             & & $\Var(y) = \frac{1}{\beta^2 \; (\alpha-1)^2 \; (\alpha-2)}$ 
 \end{tabular}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Normal}\label{normaldist}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-NEEDS WORK
+The normal distribution does not get a lot of use as a prior distribution because its support includes the negative real numbers, and most parameters used in Bayesian phylogenetics only make sense if they are positive.
 
 \begin{tabular}{lcl}
+Type:                 & & Continuous \\
 Parameter:            & & $\mu$ (mean), $\sigma$ (standard deviation)    \\
-Probability function: & & $f(y|\mu,\sigma) = \frac{1}{\sqrt{2 \pi \sigma^2}} e^{-\frac{(y-\mu)^2}{2 \sigma}}$ \\
+Probability function: & & $f(y|\mu,\sigma) = \frac{1}{\sqrt{2 \pi \sigma^2}} e^{-\frac{(y-\mu)^2}{2 \sigma^2}}$ \\
 Support:              & & $[-\infty,\infty)$     \\
 Expected value:       & & $E[y] = \mu$ \\
 Variance:             & & $\Var(y) = \sigma^2$ 
@@ -537,14 +641,15 @@ Variance:             & & $\Var(y) = \sigma^2$
 \subsection{Uniform}\label{uniform}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-NEEDS WORK
+The Uniform distribution has been used extensively as a prior for many different continuous model parameters; however, because Uniform distributions must be truncated in order to be proper, their use as prior distributions can have some surprising effects (see \citet{Felsenstein2004} for a good discussion of the problems with truncated Uniform priors).
 
 \begin{tabular}{lcl}
+Type:                 & & Continuous \\
 Parameter:            & & $a$ (lower bound), $b$ (upper bound)    \\
 Probability function: & & $f(y|a,b) = \frac{1}{b-a}$ \\
 Support:              & & $[a,b]$     \\
-Expected value:       & & $E[y] = \frac{a+b}{2}$ \\
-Variance:             & & $\Var(y) = \frac{(b-a)^2}{12}$ 
+Expected value:       & & $E[y] = \frac{a + b}{2}$ \\
+Variance:             & & $\Var(y) = \frac{(b - a)^2}{12}$ 
 \end{tabular}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
