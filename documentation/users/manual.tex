@@ -46,6 +46,9 @@
 \newcommand{\params}{\mbox{$\bm \theta$}}
 \newcommand{\Var}{\mbox{Var}}
 
+\newcommand{\pinvar}{\mbox{$p_{\mbox{invar}}$}}
+\newcommand{\ncat}{\mbox{$n_{\mbox{cat}}$}}
+
 \newcommand{\phycasapp}{\pathname{Phycas.app}}
 \newcommand{\phycasicon}{\includegraphics[scale=0.1]{images/PhycasGUI}}
 
@@ -657,7 +660,67 @@ Variance:             & & $\Var(y) = \frac{(b - a)^2}{12}$
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Models}\label{sec:models}
 
-TO BE WRITTEN
+Phycas implements the standard suite of nucleotide models: JC, F81, K80, HKY, and GTR with their I, G and I+G rate heterogeneity versions. Phycas does not currently implement data partitioning, although this feature is under active development. The following sections illustrate how to set up each of the five basic classes of models listed above and how to add discrete gamma and/or proportion of invariable sites rate heterogeneity to any model.
+
+\subsection{JC}
+
+The JC model \citep{JukesCantor1969} constrains base frequencies and relative substitution rates to be equal.
+
+\begin{verbatim}
+model.type = 'jc'
+\end{verbatim}
+
+\subsection{F81}
+
+The F81 model \citep{Felsenstein1981} constrains relative substitution rates to be equal but allows base frequencies to vary.
+
+\begin{verbatim}
+model.type = 'hky'
+model.kappa = 1.0
+model.fix_kappa = True
+\end{verbatim}
+
+\subsection{K80}
+
+The K80 model \citep{Kimura1980} constrains base frequencies to be equal but allows the relative rate of transitions to differ from the relative rate of transversions by a factor $\kappa$.
+
+\begin{verbatim}
+model.type = 'hky'
+model.base_freqs = [0.25, 0.25, 0.25, 0.25]
+model.fix_freqs = True
+\end{verbatim}
+
+\subsection{HKY}
+
+The HKY model \citep{HasegawaKishinoYano1985} allows base frequencies to be unequal and the transition/transversion rate ratio $\kappa$ to be some value other than 1.0.
+
+\begin{verbatim}
+model.type = 'hky'
+\end{verbatim}
+
+\subsection{GTR}
+
+The GTR model \citep{LanavePreparataSacconeSerio1984} allows base frequencies to be unequal and all six relative substitution rates to be different.
+
+\begin{verbatim}
+model.type = 'gtr'
+\end{verbatim}
+
+\subsection{+I}
+
+A $+I$ version \citep{Reeves1992} of any of the basic substitution models means that each site is viewed as having probability $\pinvar$ of being invariable (i.e. substitution rate zero). This is one common (albeit simplistic) way to accommodate among-site rate heterogeneity in nucleotide sequence data.
+
+\begin{verbatim}
+model.pinvar_model = True
+\end{verbatim}
+
+\subsection{+G}
+
+A $+G$ version \citep{Yang1994} of any of the basic substitution models means that the model assumes that the distribution of rates across sites conforms to a Gamma distribution having mean 1.0. In Phycas (as in most phylogenetic software), a discretized Gamma distribution is used in practice. The number of rate categories is set using the \opt{model.num\_rates} option. If \opt{model.num\_rates} is set to any value greater than 1, the model becomes a $+G$ version.
+
+\begin{verbatim}
+model.num_rates = 4
+\end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% Features %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
