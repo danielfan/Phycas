@@ -55,7 +55,7 @@ def _value_for_user(value):
     return str(value)
 
 def _escape_for_latex(s):
-    return str(s).replace('_', '\_').replace('<','$<$').replace('>','$>$')
+    return = str(s).replace('_', '\_').replace('<','$<$').replace('>','$>$')
 
 class PhycasHelp(object):
     _phycas_cmd_classes = set()
