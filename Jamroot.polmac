@@ -1,0 +1,201 @@
+# This is the Jamroot file used by the Boost.Build v2 system
+# for building the Python extensions that constitute Phycas
+
+# Grab the path to the Boost project from the BOOST_ROOT environmental variable
+import os ;
+local BOOST_ROOT = [ os.environ BOOST_ROOT ] ;
+use-project boost : $(BOOST_ROOT) ;
+
+# Grab the path to the NLC project from the NCL_INSTALL_DIR environmental variable
+local NCL_INSTALL_DIR = [ os.environ NCL_INSTALL_DIR ] ;
+local OSTYPE = [ os.environ OSTYPE ] ;
+local OS = [ os.environ OS ] ;
+echo $(OSTYPE) ;
+use-project ncl : $(NCL_INSTALL_DIR) ;
+
+# Tool-specific settings
+echo "---------------------------------------------------------" ;
+echo "Trying to identify the correct toolset." ;
+echo "If the incorrect toolset is chosen, you will need to edit" ;
+echo "the Tool-specific settings section of the Jamroot file..." ;
+if $(OSTYPE) = "linux" {
+  echo "  Looks like this is Linux, so using toolset gcc" ;
+  alias tool_specific_requirements : : : : <toolset>gcc <cxxflags>"-include phycas/src/std_force_include.hpp" ;
+}
+else {
+  if $(OSTYPE) = "darwin" {
+  echo "  Looks like this is a Mac, so using toolset darwin" ;
+  using darwin ;
+  alias tool_specific_requirements : : : : <toolset>darwin <cxxflags>"-include phycas/src/std_force_include.hpp" ;
+  }
+  else {
+    if $(OS) = "Windows_NT" {
+      echo "  Looks like this is Windows, so using toolset msvc" ;
+      alias tool_specific_requirements : : : : <toolset>msvc <cxxflags>"-FI std_force_include.hpp" ;
+    }
+    else {
+      echo "  Could not identify platform.  Expecting an environmental variable:" ;
+      echo "  for Linux:   OSTYPE=linux" ;
+      echo "  for Mac:   OSTYPE=darwin" ;
+      echo "  for Windows:   OS=Windows_NT" ;
+      echo "  Going with toolset gcc just in case that works" ;
+      alias tool_specific_requirements : : : : <toolset>gcc <cxxflags>"-include phycas/src/std_force_include.hpp" ;
+    }
+  }
+}
+echo "---------------------------------------------------------" ;
+
+# Project-wide requirements
+project phycas 
+  : requirements 
+     <library>/boost/python//boost_python 
+     <library>/ncl//ncl
+     <threading>multi
+     <include>. 
+     <include>./phycas/src 
+     <link>shared ;
+
+# The rule python-extension is defined in <top-of-boost-build-system>/tools/python.jam
+# The boost-build.jam file in this directory points bjam to <top-of-boost-build-system>
+import python ;
+
+# Build and install the Conversions extension
+alias conversions_sources
+  : phycas/src/conversions_pymod.cpp
+    phycas/src/boost_assertion_failed.cpp
+    phycas/src/basic_tree.cpp
+    phycas/src/basic_tree_node.cpp
+    phycas/src/split.cpp
+    phycas/src/phycas_string.cpp
+    tool_specific_requirements ;
+python-extension _Conversions : conversions_sources ;
+install Conversions 
+  : _Conversions 
+  : <location>phycas/Conversions 
+    <install-dependencies>on 
+    <install-type>LIB ;  # note: tried using <dll-path> but it seemed to have no effect 
+
+# Build and install the PDFGen extension
+# Note: commented out because currently no C++ code is used in generating PDF files from phycas
+#       It is anticipated, however, that in the future we will want to have such capability
+#       on both the C++ and Python side. The basic framework is now in place for this.
+#alias pdfgen_sources
+#  : phycas/src/pdfgen_pymod.cpp
+#    phycas/src/boost_assertion_failed.cpp
+#    phycas/src/pdfgen.cpp
+#    tool_specific_requirements ;
+#python-extension _PDFGen : pdfgen_sources ;
+#install PDFGen : _PDFGen : <location>phycas/PDFGen ;
+
+# Build and install the ProbDist extension
+alias probdist_sources
+  : phycas/src/probdist_pymod.cpp 
+    phycas/src/boost_assertion_failed.cpp
+    phycas/src/phycas_string.cpp
+    phycas/src/basic_lot.cpp
+    phycas/src/stop_watch.cpp
+    phycas/src/thirdparty/dcdflib/src/dcdflib.c
+    phycas/src/thirdparty/dcdflib/src/ipmpar.c
+    phycas/src/probability_distribution.cpp
+    phycas/src/slice_sampler.cpp
+    tool_specific_requirements ;
+python-extension _ProbDist : probdist_sources ;
+install ProbDist : _ProbDist : <location>phycas/ProbDist ;
+
+# Build and install the DataMatrix extension
+alias datamatrix_sources
+  : phycas/src/data_matrix_pymod.cpp
+    phycas/src/boost_assertion_failed.cpp
+    phycas/src/cipres/CipresDataMatrixHelper.cpp
+    tool_specific_requirements ;
+python-extension _DataMatrixBase : datamatrix_sources ;
+install DataMatrix : _DataMatrixBase : <location>phycas/DataMatrix ;
+
+# Build and install the Likelihood extension
+alias likelihood_sources
+  : phycas/src/basic_lot.cpp
+    phycas/src/basic_tree.cpp 
+    phycas/src/basic_tree_node.cpp 
+    phycas/src/boost_assertion_failed.cpp
+    phycas/src/bush_move.cpp 
+    phycas/src/cipres/CipresDataMatrixHelper.cpp
+	phycas/src/codon_model.cpp
+    phycas/src/cond_likelihood_storage.cpp
+	phycas/src/discrete_gamma_shape_param.cpp
+    phycas/src/thirdparty/dcdflib/src/dcdflib.c
+	phycas/src/edgelen_master_param.cpp
+    phycas/src/edge_move.cpp 
+    phycas/src/flex_prob_param.cpp
+    phycas/src/flex_rate_param.cpp 
+    phycas/src/gtr_rate_param.cpp 
+    phycas/src/hyperprior_param.cpp 
+    phycas/src/kappa_param.cpp 
+    phycas/src/internal_data.cpp 
+    phycas/src/thirdparty/dcdflib/src/ipmpar.c
+    phycas/src/larget_simon_move.cpp 
+    phycas/src/likelihood_loops.cpp
+    phycas/src/likelihood_models.cpp 
+    phycas/src/likelihood_pymod.cpp 
+    phycas/src/linalg.c
+    phycas/src/model_pymod.cpp
+    phycas/src/mcmc_chain_manager.cpp 
+    phycas/src/mcmc_param.cpp 
+    phycas/src/mcmc_flexcat_param.cpp 
+    phycas/src/mcmc_updater.cpp 
+    phycas/src/ncat_move.cpp 
+    phycas/src/mapping_move.cpp 
+    phycas/src/omega_param.cpp 
+    phycas/src/phycas_string.cpp 
+    phycas/src/pinvar_param.cpp 
+    phycas/src/probability_distribution.cpp 
+    phycas/src/q_matrix.cpp
+    phycas/src/samc_move.cpp 
+    phycas/src/sim_data.cpp 
+    phycas/src/slice_sampler.cpp
+    phycas/src/split.cpp 
+    phycas/src/square_matrix.cpp 
+    phycas/src/state_freq_param.cpp
+    phycas/src/tip_data.cpp 
+    phycas/src/topo_prior_calculator.cpp 
+    phycas/src/tree_likelihood.cpp 
+    phycas/src/tree_scaler_move.cpp 
+    phycas/src/underflow_policy.cpp 
+    phycas/src/unimap_nni_move.cpp 
+    phycas/src/univent_prob_mgr.cpp 
+    phycas/src/univents.cpp 
+    phycas/src/updater_pymod.cpp
+    [ obj likelihood_tree_manip_obj : phycas/src/tree_manip.cpp tool_specific_requirements ]
+    tool_specific_requirements ;
+python-extension _LikelihoodBase : likelihood_sources ;
+install Likelihood : _LikelihoodBase : <location>phycas/Likelihood ;
+
+# Build and install the Phylogeny extension
+alias phylogeny_sources
+  : phycas/src/phylogeny_pymod.cpp
+    phycas/src/boost_assertion_failed.cpp
+    phycas/src/basic_tree.cpp 
+    phycas/src/basic_tree_node.cpp
+    [ obj phylogeny_tree_manip_obj : phycas/src/tree_manip.cpp tool_specific_requirements ]
+    phycas/src/basic_cdf.cpp
+    phycas/src/basic_lot.cpp
+    phycas/src/split.cpp 
+    phycas/src/thirdparty/dcdflib/src/dcdflib.c
+    phycas/src/thirdparty/dcdflib/src/ipmpar.c
+    phycas/src/phycas_string.cpp 
+    tool_specific_requirements ;
+python-extension _Phylogeny : phylogeny_sources ;
+install Phylogeny : _Phylogeny : <location>phycas/Phylogeny ;
+
+# Build and install the ReadNexus extension
+alias readnexus_sources
+  : phycas/src/read_nexus_pymod.cpp
+    phycas/src/boost_assertion_failed.cpp
+    phycas/src/cipres/CipresDataMatrixHelper.cpp
+    phycas/src/cipres/cipres_nexus_reader.cpp           #POL 18-Mar-2006 may need to comment out for Mac
+    phycas/src/probability_distribution.cpp
+    phycas/src/basic_lot.cpp
+    phycas/src/thirdparty/dcdflib/src/dcdflib.c
+    phycas/src/thirdparty/dcdflib/src/ipmpar.c
+    tool_specific_requirements ;
+python-extension _ReadNexus : readnexus_sources ;
+install ReadNexus : _ReadNexus : <location>phycas/ReadNexus ;
