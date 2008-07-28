@@ -12,9 +12,14 @@ try:
     _s = set()
 except :
     from sets import Set as set
+    
+_fixed_terminal_width = None
 
 ###############################################################################
 def ttysize():
+    global _fixed_terminal_width
+    if _fixed_terminal_width:
+        return _fixed_terminal_width
     if os.name == 'nt':
         # From http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/440694
         from ctypes import windll, create_string_buffer
@@ -87,7 +92,7 @@ sumt()
 
 Commands (and almost everything else in python) are case-sensitive -- so
 "Sumt" is _not_ the same thing as "sumt" In general, you should use the
-lower case versions.
+lower case versions of the phycas command names.
 
 The currently implemented Phycas commands are:
   
@@ -154,6 +159,7 @@ will display the help information for the sumt command object.
         if len(args) == 0:
             print(str(self))
         for a in args:
+            print ("Help entry for %s:" % repr(a))
             self._print_help(a)
     def __repr__(self):
         return str(self)
