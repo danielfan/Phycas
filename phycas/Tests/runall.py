@@ -28,8 +28,8 @@ def writeHeader(out, name):
     border = "*" * len(s)
     out.write("%s\n%s\n%s\n \n" % (border, s, border))
 
-_diff_key_pat = re.compile(r"[-*]{3}\s+(\d+)\s+[-*]{3}")
-_missig_key_pat = re.compile(r"[-]{3}\s+(\d+)\s+[-]{3}")
+_diff_key_pat = re.compile(r"[-*]{3}\s+(\d+)(,?\d*)\s+[-*]{3}")
+_missig_key_pat = re.compile(r"[-]{3}\s+(\d+)(,?\d*)\s+[-]{3}")
 
 def parse_diffs(diff_lines):
     d = {}
@@ -62,6 +62,7 @@ def runDiff(a, b, outFile, acceptable_diffs=()):
     fa = open(a, "rU")
     fb = open(b, "rU")
     all_diffs = list(difflib.context_diff(fa.readlines(), fb.readlines(), n=0))
+    print "\n".join(all_diffs)
     if all_diffs:
         all_diffs = parse_diffs(all_diffs)
         for k in acceptable_diffs:
@@ -131,9 +132,9 @@ if __name__ == '__main__':
 
     # os.chdir(os.path.join(os.path.split(scriptPar)[0], "Examples"))
     os.chdir(scriptPar)
+    runTest(outFile, "Sumt", ["trees.tre","splits.pdf","logfile.txt"])
     runTest(outFile, "PathSampling", ["params.p", "trees.t"])
     runTest(outFile, "LikelihoodTest", ["simulated.nex", "check.nex"])
-    runTest(outFile, "Sumt", ["trees.tre","splits.pdf","logfile.txt"])
     #runTest(outFile, "ExplorePrior", mcmcOutputs(["nodata.nex"]))
     runTest(outFile, "FixedParams", ["fixed.p", "fixed.t"])
     #runTest(outFile, "FixedTopology", ["fixdtree.p", "fixdtree.t", "simulated.nex"])
