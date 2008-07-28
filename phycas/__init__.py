@@ -37,11 +37,11 @@ class OutputFilter(object):
 
     def _filter_output(self, msg, level):
         if self.level <= level:
-            m = msg+'\n'
+            m = msg + '\n'
             if level == OutFilter.WARNINGS:
-                m = "\n***** Warning: " + msg
+                m = "\n***** Warning: %s\n" % msg
             elif level > OutFilter.WARNINGS:
-                m = "\n***** Error: " + msg
+                m = "\n***** Error: %s\n" % msg
             self.stream(m)
             for o in self.other:
                 o.write(m)

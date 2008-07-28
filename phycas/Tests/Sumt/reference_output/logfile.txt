@@ -1,10 +1,10 @@
 
-Reading trees from the file "test.t"...
+Reading Trees from the file 'test.t'...
 Compiling lists of tree topologies and splits...
 
 Summary of sampled trees:
 -------------------------
-Tree source: trees from the file "test.t"
+Tree source: Collection of 111 trees in memory (id 45064104). Trees from the file 'test.t'
 Total number of trees in file = 111
 Number of trees considered = 100
 Number of distinct tree topologies found = 8
