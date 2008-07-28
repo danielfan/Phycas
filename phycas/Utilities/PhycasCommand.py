@@ -6,7 +6,7 @@ from phycas.PDFGen import PDFGenerator
 import phycas.ReadNexus as ReadNexus
 from phycas.Utilities.CommonFunctions import getDefaultOutputStream
 from phycas.Utilities.io import FileFormats, DataSource, TreeCollection
-from phycas import OutputFilter
+from phycas import OutputFilter, name_of
 import copy
 try: 
     _s = set()
@@ -14,6 +14,7 @@ except :
     from sets import Set as set
     
 _fixed_terminal_width = None
+_use_instance_names = True
 
 ###############################################################################
 def ttysize():
@@ -1184,5 +1185,12 @@ class PhycasCommand(object):
             for key, value in old.iteritems():
                 o.set_unchecked(key, value)
             raise
-    def __str__(self):
-        return "%s command instance (with id=%d)" % (self.help.cmd_name, id(self))
+    def brief_str(self):
+        global _use_instance_names
+        v = None
+        if _use_instance_names:
+            v = name_of(self)
+        if v:
+            return v
+            v = "with id=%d" % id(self)
+        return "The %s command instance %s" % (self.help.cmd_name, v)

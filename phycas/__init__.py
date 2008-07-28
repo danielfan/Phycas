@@ -11,6 +11,18 @@
 #    'Examples',
 #    ]
 
+
+def name_of(_obj):
+    k=None
+    v=None
+    for k,v in locals().iteritems():
+        if v is _obj and k != "_obj":
+            return k
+    for k,v in globals().iteritems():
+        if v is _obj and k != "_obj":
+            return k
+    return None
+
 class OutFilter:
     DEBUGGING, VERBOSE, NORMAL, WARNINGS, ERRORS, SILENT = range(6)
     _names = ["DEBUGGING", "VERBOSE", "NORMAL", "WARNINGS", "ERRORS", "SILENT"]
@@ -201,4 +213,3 @@ def at(addr):
         if id(o) == addr:
             return o
     return None
-
