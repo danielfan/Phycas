@@ -257,7 +257,6 @@ mcmc.ncycles = 2000
 mcmc.sample_every = 10
 mcmc()
 \end{verbatim}
-{\bf If you are using MacOS,} and choose to copy and paste the lines above into a new TextWrangler window, you need to take one extra step before saving the file. From TextWrangler's \menu{Text} menu, choose \menu{Convert to ASCII}. This converts the fancy, slanted apostrophe characters used in the PDF file to the standard, upright apostrophe character that Python expects.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Line-by-line explanation} \label{subsec:basicpyexplanation}
@@ -372,7 +371,7 @@ The program should run for a few minutes, creating three files (\pathname{basic.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Summarizing tree files}
 
-Phycas provides the {\tt sumt()} method for summarizing an input tree file. While analogous, Phycas' {\tt sumt()} method differs somewhat from the MrBayes sumt command. The example below stands alone, however there is no reason why you could not place the following statements after the {\tt mcmc()} call in the previous \pathname{basic.py} example. For now, however, create a new file named \pathname{summarize.py} (in the same folder housing \pathname{basic.py}), enter the text of the example script below into the file, and save the file (being sure to \menu{Convert to ASCII} if using TextWrangler).
+Phycas provides the {\tt sumt()} method for summarizing an input tree file. While analogous, Phycas' {\tt sumt()} method differs somewhat from the MrBayes sumt command. The example below stands alone, however there is no reason why you could not place the following statements after the {\tt mcmc()} call in the previous \pathname{basic.py} example. For now, however, create a new file named \pathname{summarize.py} (in the same folder housing \pathname{basic.py}), enter the text of the example script below into the file, and save the file.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Example script}
@@ -659,9 +658,9 @@ Expected value:       & & $E[y] = \alpha \beta$ \\
 Variance:             & & $\Var(y) = \alpha \beta^2$ 
 \end{tabular}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{InverseGamma}\label{inversegammadist}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{InverseGamma}\label{inversegammadist}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 The Inverse Gamma distribution with parameters $\alpha$ and $\beta$ is the distribution of the quantity $1/y$ if $y$ has a Gamma($\alpha,\beta$) distribution. In Phycas, the Inverse Gamma distribution is primarily used as an edge length hyperprior (see section~\ref{hierarchicalmodels} on hierarchical models). The mean of an Inverse Gamma distribution is undefined unless the shape parameter $\alpha$ is greater than 1; the variance is undefined unless $\alpha > 2$.
 
@@ -711,84 +710,117 @@ Variance:             & & $\Var(y) = \frac{(b - a)^2}{12}$
 
 Phycas implements the standard suite of nucleotide models: JC, F81, K80, HKY, and GTR with their I, G and I+G rate heterogeneity versions. Phycas does not currently implement data partitioning, although this feature is under active development. The following sections illustrate how to set up each of the five basic classes of models listed above and how to add discrete gamma and/or proportion of invariable sites rate heterogeneity to any model.
 
-%%%%%%%%%%%%%%%
-\subsection{JC}
-%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{The basic substitution models}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%
+\subsubsection{JC}
+%%%%%%%%%%%%%%%%%%
 The JC model \citep{JukesCantor1969} constrains base frequencies and relative substitution rates to be equal.
 
-{\large \em Rate matrix}
+{\bf Rate matrix}
 $${\bf R} = \bordermatrix{ &     A     &     C     &     G     &   T       \cr
                          A & -3 \alpha &  \alpha   &  \alpha   &  \alpha   \cr
                          C &  \alpha   & -3 \alpha &  \alpha   &  \alpha   \cr
                          G &  \alpha   &  \alpha   & -3 \alpha &  \alpha   \cr
                          T &  \alpha   &  \alpha   &  \alpha   & -3 \alpha \cr}$$
 
-{\large \em Choosing the JC model in Phycas}
+{\bf Choosing the JC model in Phycas}
 \begin{verbatim}
 model.type = 'jc'
 \end{verbatim}
 
-%%%%%%%%%%%%%%%%
-\subsection{F81}
-%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%
+\subsubsection{F81}
+%%%%%%%%%%%%%%%%%%%
 
-The F81 model \citep{Felsenstein1981} constrains relative substitution rates ($\mu$) to be equal but allows base frequencies ($\bm \pi$) to vary. Fixing $\pi_A = \pi_C = \pi_G = \pi_T = 0.25$ makes the F81 model equivalent to the JC model (i.e. $\mu = 4 \alpha$).
+The F81 model \citep{Felsenstein1981} constrains relative substitution rates ($\mu$) to be equal but allows base frequencies ($\bm \pi$) to vary. Fixing $\pi_A = \pi_C = \pi_G = \pi_T = 0.25$ makes the F81 model equivalent to the JC model (note that $\mu = 4 \alpha$).
 
-{\large \em Rate matrix}
+{\bf Rate matrix}
 $${\bf R} = \bordermatrix{ &       A      &       C       &       G       &       T       \cr
                          A &    \Rii{A}   & \pi_C \; \mu  & \pi_G \; \mu  & \pi_T \; \mu  \cr
                          C & \pi_A \; \mu &    \Rii{C}    & \pi_G \; \mu  & \pi_T \; \mu  \cr
                          G & \pi_A \; \mu & \pi_C \; \mu  &    \Rii{G}    & \pi_T \; \mu  \cr
                          T & \pi_A \; \mu & \pi_C \; \mu  & \pi_G \; \mu  &     \Rii{T}   \cr}$$                                                         
 
-{\large \em Choosing the F81 model in Phycas}
+{\bf Choosing the F81 model in Phycas}
 \begin{verbatim}
 model.type = 'hky'
 model.kappa = 1.0
 model.fix_kappa = True
 \end{verbatim}
 
-%%%%%%%%%%%%%%%%
-\subsection{K80}
-%%%%%%%%%%%%%%%%
-The K80 model \citep{Kimura1980} constrains base frequencies to be equal but allows the relative rate of transitions to differ from the relative rate of transversions by a factor $\kappa$.
+%%%%%%%%%%%%%%%%%%%
+\subsubsection{K80}
+%%%%%%%%%%%%%%%%%%%
+The K80 model \citep{Kimura1980} constrains base frequencies to be equal but allows the rate of transitions to differ from the rate of transversions by a factor $\kappa = \alpha/\beta$.
 
+{\bf Rate matrix}
+$${\bf R} = \bordermatrix{ &         A          &         C          &        G          &         T          \cr
+                         A & -\beta(\kappa + 2) &  \beta             &  \beta \kappa     &  \beta             \cr
+                         C &  \beta             & -\beta(\kappa + 2) &  \beta            &  \beta \kappa      \cr
+                         G &  \beta \kappa      &  \beta             & -\beta(\kappa + 2)&  \beta             \cr
+                         T &  \beta             &  \beta \kappa      &  \beta            & -\beta(\kappa + 2) \cr}$$
+
+
+{\bf Choosing the K80 model in Phycas}
 \begin{verbatim}
 model.type = 'hky'
 model.base_freqs = [0.25, 0.25, 0.25, 0.25]
 model.fix_freqs = True
 \end{verbatim}
 
-%%%%%%%%%%%%%%%%
-\subsection{HKY}
-%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%
+\subsubsection{HKY}
+%%%%%%%%%%%%%%%%%%%
 The HKY model \citep{HasegawaKishinoYano1985} allows base frequencies to be unequal and the transition/transversion rate ratio $\kappa$ to be some value other than 1.0.
 
+{\bf Rate matrix}
+$${\bf R} = \bordermatrix{ &       A      &       C       &       G       &       T       \cr
+A & -\beta (\pi_Y + \pi_G \kappa) & \pi_C \; \beta  & \pi_G \; \beta \; \kappa  & \pi_T \; \beta  \cr
+C & \pi_A \; \beta & -\beta (\pi_R + \pi_T \kappa) & \pi_G \; \beta  & \pi_T \; \beta \; \kappa  \cr
+G & \pi_A \; \beta \; \kappa & \pi_C \; \beta  & -\beta (\pi_Y + \pi_A \kappa) & \pi_T \; \beta  \cr
+T & \pi_A \; \beta & \pi_C \; \beta \; \kappa  & \pi_G \; \beta  & -\beta (\pi_R + \pi_C \kappa) \cr}$$
+
+{\bf Choosing the HKY model in Phycas}
 \begin{verbatim}
 model.type = 'hky'
 \end{verbatim}
 
-%%%%%%%%%%%%%%%%
-\subsection{GTR}
-%%%%%%%%%%%%%%%%
-The GTR model \citep{LanavePreparataSacconeSerio1984} allows base frequencies to be unequal and all six relative substitution rates to be different.
+%%%%%%%%%%%%%%%%%%%
+\subsubsection{GTR}
+%%%%%%%%%%%%%%%%%%%
+The GTR model \citep{LanavePreparataSacconeSerio1984} allows base frequencies to be unequal and all six relative substitution rates ($a$, $b$, $c$, $d$, $e$ and $f$) to be different.
 
+{\bf Rate matrix}
+$${\bf R} = \bordermatrix{ &       A      &       C       &       G       &       T       \cr
+A & -(\pi_C a + \pi_G b + \pi_T c) & \pi_C \; a  & \pi_G \; b  & \pi_T \; c  \cr
+C & \pi_A \; a & -(\pi_A a + \pi_G d + \pi_T e) & \pi_G \; d  & \pi_T \; e  \cr
+G & \pi_A \; b & \pi_C \; d  & -(\pi_A b + \pi_C d + \pi_T f) & \pi_T \; f  \cr
+T & \pi_A \; c & \pi_C \; e  & \pi_G \; f  & -(\pi_A c + \pi_C e + \pi_G f) \cr}$$
+
+{\bf Choosing the GTR model in Phycas}
 \begin{verbatim}
 model.type = 'gtr'
 \end{verbatim}
 
-%%%%%%%%%%%%%%%
-\subsection{+I}
-%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Adding rate heterogeneity}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Proportion of invariable-sites}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 A $+I$ version \citep{Reeves1992} of any of the basic substitution models means that each site is viewed as having probability $\pinvar$ of being invariable (i.e. substitution rate zero). This is one common (albeit simplistic) way to accommodate among-site rate heterogeneity in nucleotide sequence data.
 
 \begin{verbatim}
 model.pinvar_model = True
 \end{verbatim}
 
-%%%%%%%%%%%%%%%
-\subsection{+G}
-%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Discrete gamma}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 A $+G$ version \citep{Yang1994} of any of the basic substitution models means that the model assumes that the distribution of rates across sites conforms to a Gamma distribution having mean 1.0. In Phycas (as in most phylogenetic software), a discretized Gamma distribution is used in practice. The number of rate categories is set using the \opt{model.num\_rates} option. If \opt{model.num\_rates} is set to any value greater than 1, the model becomes a $+G$ version.
 
 \begin{verbatim}
