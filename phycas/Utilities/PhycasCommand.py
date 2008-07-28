@@ -908,21 +908,29 @@ def BoolArgValidate(opts, v):
 class EnumArgValidate(object):
     def __init__(self, valid_values):
         self.valid_tuple = tuple(valid_values)
+        self.none_is_valid_value = False
         for_display = []
         for v in self.valid_tuple:
-            if v.__class__.__name__ == 'str':
+            if v is None:
+                for_display.append('None')
+                self.none_is_valid_value = True
+            elif v.__class__.__name__ == 'str':
                 for_display.append("'%s'" % v)
             else:
                 for_display.append("%s" % str(v))
         self.display_str = ','.join(for_display)
     def __call__(self, opts, v):
-        if v.__class__.__name__ != 'str':
-            raise ValueError('Value must be a Python string')
-        if v not in self.valid_tuple:
-            raise ValueError("Value must be one of the following: %s" % self.valid_values_as_str)
+        if v is None:
+            if not self.none_is_valid_value:
+                raise ValueError('Value cannot be None')
+        else:
+            if v.__class__.__name__ != 'str':
+                raise ValueError('Value must be a Python string')
+            if v not in self.valid_tuple:
+                raise ValueError("Value must be one of the following: %s" % self.display_str)
         return v
     def get_description(self):
-        return "Must be one of the following: %s" % self.valid_values_as_str
+        return "Must be one of the following: %s" % self.display_str
 
 class IntArgValidate(object):
     def __init__(self, min=None, max=None):

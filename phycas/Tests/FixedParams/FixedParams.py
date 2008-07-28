@@ -24,7 +24,7 @@ model.pinvar_prior                 = ProbDist.Beta(1.0, 1.0)
 
 model.fix_edgelens                 = True
 model.edgelen_dist                 = ProbDist.Exponential(10.0)
-model.starting_edgelen_hyperparam  = 0.05
+model.edgelen_hyperparam           = 0.05
 model.fix_edgelen_hyperparam       = True
 model.edgelen_hyperprior           = ProbDist.InverseGamma(2.1, 0.9090909)
 

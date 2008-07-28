@@ -375,28 +375,100 @@ class MCMCImpl(CommonFunctions):
         c = cycle + 1
         return ((c % mod) == 0)
         
-    def mainMCMCLoop(self):
+    def explorePrior(self, cycle):
+        chain_index = self.mcmc_manager.getColdChainIndex()
+        chain = self.mcmc_manager.getColdChain()
+        if self.opts.debugging:
+            tmpf = file('debug_info.txt', 'a')
+            tmpf.write('************** cycle=%d, chain=%d\n' % (cycle,chain_index))
+        for p in chain.chain_manager.getAllUpdaters():
+            w = p.getWeight()
+            name = p.getName()
+            if name == 'edge length hyperparameter':
+                self.opts.model.edgelen_hyperparam = self.opts.model.edgelen_hyperprior.sample()
+                print 'New edge length hyperparameter:',self.opts.model.edgelen_hyperparam
+                self.opts.model.edgelen_dist.setMeanAndVariance(1.0/self.opts.model.edgelen_hyperparam)
+                print 'Drawing new edgelengths for entire tree from',self.opts.model.edgelen_dist.__str__()
+                tm = Phylogeny.TreeManip(chain.tree)
+                tm.setRandomEdgeLengths(self.opts.model.edgelen_dist)
+            elif name == 'trs/trv rate ratio':
+                self.opts.model.kappa = self.opts.model.kappa_prior.sample()
+                print 'New kappa:',self.opts.model.kappa
+            elif name == 'base freq. A':
+                self.opts.model.base_freqs[0] = self.opts.model.base_freq_param_prior.sample()
+                print 'New base freq A param:',self.opts.model.base_freqs[0] 
+            elif name == 'base freq. C':
+                self.opts.model.base_freqs[1] = self.opts.model.base_freq_param_prior.sample()
+                print 'New base freq C param:',self.opts.model.base_freqs[1] 
+            elif name == 'base freq. G':
+                self.opts.model.base_freqs[2] = self.opts.model.base_freq_param_prior.sample()
+                print 'New base freq G param:',self.opts.model.base_freqs[2] 
+            elif name == 'base freq. T':
+                self.opts.model.base_freqs[3] = self.opts.model.base_freq_param_prior.sample()
+                print 'New base freq T param:',self.opts.model.base_freqs[3] 
+            elif name == 'Discrete gamma shape':
+                self.opts.model.gamma_shape = self.opts.model.gamma_shape_prior.sample()
+                print 'New gamma shape:',self.opts.model.gamma_shape
+            elif name == 'Larget-Simon move':
+                print 'Ignoring Larget-Simon move'
+            elif name == 'master edge length parameter':
+                print 'Ignoring master edge length parameter'
+            else:
+                print 'Unknown parameter --> name=%s, weight=%d, type=%s' % (p.getName(), w, p.__class__.__name__)
+            #if self.opts.debugging:
+            #    tmpf.write('%s | %s\n' % (p.getName(), p.getDebugInfo()))
+        raw_input('attach')
+        print '>>>>> lnL = %.6f' % chain.calcLnLikelihood()
+        raw_input('check')
+        
+        if self.opts.debugging:
+            tmpf.close()
+        
+    def mainMCMCLoop(self, explore_prior = False):
+        # uncomment next line to force normal behavior (i.e. explore prior using normal MCMC slice samplers and MH moves)
+        explore_prior = False  
         for cycle in xrange(self.burnin + self.opts.ncycles):
-            for i,c in enumerate(self.mcmc_manager.chains):
-                self.updateAllUpdaters(c, i, cycle)
-            if self.opts.verbose and self.doThisCycle(cycle, self.opts.report_every):
-                self.stopwatch.normalize()
-                cold_chain_manager = self.mcmc_manager.getColdChainManager()
-                if self.opts.doing_path_sampling:
-                    msg = 'beta = %.5f, cycle = %d, lnL = %.5f (%.5f secs)' % (self.ps_beta, cycle + 1, cold_chain_manager.getLastLnLike(), self.stopwatch.elapsedSeconds())
-                else:
-                    msg = 'cycle = %d, lnL = %.5f (%.5f secs)' % (cycle + 1, cold_chain_manager.getLastLnLike(), self.stopwatch.elapsedSeconds())
-                self.output(msg)
-            if self.beyondBurnin(cycle) and self.doThisCycle(cycle - self.burnin, self.opts.sample_every):
-                self.mcmc_manager.recordSample(cycle)
-                cold_chain_manager = self.mcmc_manager.getColdChainManager()
-                sampled_lnL = cold_chain_manager.getLastLnLike()
-                self.ps_sampled_likes[self.ps_beta_index].append(sampled_lnL)
-                self.stopwatch.normalize()
-            if self.doThisCycle(cycle, self.next_adaptation):
-                self.adaptSliceSamplers()
-                self.next_adaptation += 2*(self.next_adaptation - self.last_adaptation)
-                self.last_adaptation = cycle + 1
+            if explore_prior:
+                self.explorePrior(cycle)
+                if self.opts.verbose and self.doThisCycle(cycle, self.opts.report_every):
+                    self.stopwatch.normalize()
+                    cold_chain_manager = self.mcmc_manager.getColdChainManager()
+                    if self.opts.doing_path_sampling:
+                        msg = 'beta = %.5f, cycle = %d, lnL = %.5f (%.5f secs)' % (self.ps_beta, cycle + 1, cold_chain_manager.getLastLnLike(), self.stopwatch.elapsedSeconds())
+                    else:
+                        msg = 'cycle = %d, lnL = %.5f (%.5f secs)' % (cycle + 1, cold_chain_manager.getLastLnLike(), self.stopwatch.elapsedSeconds())
+                    self.output(msg)
+                if self.beyondBurnin(cycle) and self.doThisCycle(cycle - self.burnin, self.opts.sample_every):
+                    self.mcmc_manager.recordSample(cycle)
+                    cold_chain_manager = self.mcmc_manager.getColdChainManager()
+                    sampled_lnL = cold_chain_manager.getLastLnLike()
+                    self.ps_sampled_likes[self.ps_beta_index].append(sampled_lnL)
+                    self.stopwatch.normalize()
+                if self.doThisCycle(cycle, self.next_adaptation):
+                    self.adaptSliceSamplers()
+                    self.next_adaptation += 2*(self.next_adaptation - self.last_adaptation)
+                    self.last_adaptation = cycle + 1
+            else:
+                for i,c in enumerate(self.mcmc_manager.chains):
+                    self.updateAllUpdaters(c, i, cycle)
+                if self.opts.verbose and self.doThisCycle(cycle, self.opts.report_every):
+                    self.stopwatch.normalize()
+                    cold_chain_manager = self.mcmc_manager.getColdChainManager()
+                    if self.opts.doing_path_sampling:
+                        msg = 'beta = %.5f, cycle = %d, lnL = %.5f (%.5f secs)' % (self.ps_beta, cycle + 1, cold_chain_manager.getLastLnLike(), self.stopwatch.elapsedSeconds())
+                    else:
+                        msg = 'cycle = %d, lnL = %.5f (%.5f secs)' % (cycle + 1, cold_chain_manager.getLastLnLike(), self.stopwatch.elapsedSeconds())
+                    self.output(msg)
+                if self.beyondBurnin(cycle) and self.doThisCycle(cycle - self.burnin, self.opts.sample_every):
+                    self.mcmc_manager.recordSample(cycle)
+                    cold_chain_manager = self.mcmc_manager.getColdChainManager()
+                    sampled_lnL = cold_chain_manager.getLastLnLike()
+                    self.ps_sampled_likes[self.ps_beta_index].append(sampled_lnL)
+                    self.stopwatch.normalize()
+                if self.doThisCycle(cycle, self.next_adaptation):
+                    self.adaptSliceSamplers()
+                    self.next_adaptation += 2*(self.next_adaptation - self.last_adaptation)
+                    self.last_adaptation = cycle + 1
         
     def run(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -521,13 +593,19 @@ class MCMCImpl(CommonFunctions):
                     self.burnin = 0
                 else:
                     self.burnin = self.opts.burnin
-                self.mainMCMCLoop()
+                if self.ps_beta == 0.0:
+                    self.mainMCMCLoop(explore_prior=True)
+                else:
+                    self.mainMCMCLoop()
         else:
             self.ps_sampled_likes = []
             self.ps_sampled_likes.append([])
             self.ps_beta_index = 0
             self.burnin = self.opts.burnin
-            self.mainMCMCLoop()
+            if self.opts.data_source is None:
+                self.mainMCMCLoop(explore_prior=True)
+            else:
+                self.mainMCMCLoop()
 
         self.adaptSliceSamplers()
         total_evals = self.mcmc_manager.getTotalEvals() #self.likelihood.getNEvals()

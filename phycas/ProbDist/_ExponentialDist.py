@@ -269,12 +269,12 @@ class Exponential(ExponentialDistBase):
         """
         return ExponentialDistBase.getRelativeLnPDF(self, x)
         
-    def setMeanAndVariance(self, mean, var):
+    def setMeanAndVariance(self, mean, var=0.0):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Sets the mean and variance of this distribution. This distribution is
-        determined entirely by the mean, so the var argument is ignored. The
-        reason this function requires both mean and variance is for
+        determined entirely by the mean, so no variance need be provided.
+        The reason this function even has a variance argument is for
         compatibility with functions of the same name in other distributions.
 
         >>> from phycas.ProbDist import *
