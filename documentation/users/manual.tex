@@ -60,6 +60,12 @@
 
 \newfont{\bftt}{cmtt10}
 
+% Causes upright apostrophe (ASCII 27) to be used in verbatim rather than the 
+% acute-accent-like apostrophe (ASCII 146), which causes problems when users 
+% cut and paste from the manual into a Python source code file, where ASCII 146
+% is not recognized
+\usepackage{upquote}
+
 % index stuff
 \usepackage{makeidx}
 \makeindex
