@@ -136,9 +136,12 @@ class TreeCollection(object):
         s, t = "", ""
         d = self.trees
         if d:
-            s = "Collection of %d trees in memory (id %d). " % (len(self.trees), id(self.trees))
+            s = "Collection of %d trees in memory. " % len(self.trees)
         if self.filename:
             t =  "Trees from the file %s" % repr(self.filename)
+        elif d:
+            t = "\nThe id of python Tree Collection %d" % id(self.trees)
+
         if s or t:
             return s + t
         return "None"
