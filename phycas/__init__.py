@@ -37,7 +37,7 @@ class OutputFilter(object):
 
     def _filter_output(self, msg, level):
         if self.level <= level:
-            m = msg
+            m = msg+'\n'
             if level == OutFilter.WARNINGS:
                 m = "\n***** Warning: " + msg
             elif level > OutFilter.WARNINGS:

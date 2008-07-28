@@ -9,7 +9,7 @@ def getDefaultOutputContainer():
 
 def writeMessageToStdOut(m):
     "Writes a message to standard out and adds a trailing newline"
-    sys.stdout.write("%s\n" % m)
+    sys.stdout.write("%s" % m)
 
 def getDefaultOutputStream():
     return writeMessageToStdOut

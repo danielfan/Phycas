@@ -504,7 +504,7 @@ class DevNullWriter(object):
         pass
 
 class MultiWriter(object):
-    """Class that fulfills thet TreeWriter and MatrixWriter interface, by
+    """Class that fulfills the TreeWriter and MatrixWriter interface, by
     delegating the information to other writers.""" 
     def __init__(self, writers=()):
         """Should pass in a list of opened writers."""
