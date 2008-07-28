@@ -1,6 +1,7 @@
+from _PyDistributionBase import PyDistributionBase
 from _ProbDist import *
 
-class Binomial(BinomialDistBase):
+class Binomial(BinomialDistBase, PyDistributionBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
     Represents the univariate binomial probability distribution.

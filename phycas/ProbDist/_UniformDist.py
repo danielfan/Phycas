@@ -1,6 +1,7 @@
+from _PyDistributionBase import PyDistributionBase
 from _ProbDist import *
 
-class Uniform(UniformDistBase):
+class Uniform(UniformDistBase, PyDistributionBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
     Represents the univariate uniform probability distribution. This
@@ -30,7 +31,7 @@ class Uniform(UniformDistBase):
         
         """
         return UniformDistBase.clone(self)
-        
+
     def isDiscrete(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """

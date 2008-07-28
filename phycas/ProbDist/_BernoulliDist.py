@@ -1,6 +1,7 @@
+from _PyDistributionBase import PyDistributionBase
 from _ProbDist import *
 
-class Bernoulli(BernoulliDistBase):
+class Bernoulli(BernoulliDistBase, PyDistributionBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
     Represents the univariate bernoulli probability distribution. The

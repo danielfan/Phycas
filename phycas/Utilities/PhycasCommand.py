@@ -55,9 +55,12 @@ def ttysize():
 ###############################################################################
 
 def _value_for_user(value):
-    if isinstance(value, str):
-        return repr(value)
-    return str(value)
+    try:
+        return value.brief_str()
+    except:
+        if isinstance(value, str):
+            return repr(value)
+        return str(value)
 
 def _escape_for_latex(s):
     return str(s).replace('_', '\_').replace('<','$<$').replace('>','$>$')
@@ -251,6 +254,9 @@ class FileOutputSpec(PhycasOutput):
         self._opened_file_is_log_in = None # reference of outputstream that is mirroring output to the file
 
     def __deepcopy__(self, memo):
+        c = memo.get(self)
+        if not c is None:
+            return c
         o = self.__class__(copy.deepcopy(self.prefix, memo),
                            copy.deepcopy(self._help_str, memo),
                            copy.deepcopy(self.filename, memo))
@@ -265,6 +271,7 @@ class FileOutputSpec(PhycasOutput):
         for k, v in self.__dict__.iteritems():
             if (k not in c) and (k not in ["_options", "_opened_filename", "_opened_file", "_opened_file_is_log_in"]):
                 o.__dict__[k] = copy.deepcopy(v)
+        memo[self] = o
         return o
     def __bool__(self):
         return bool(self._is_active and (self.filename or self.prefix))
@@ -604,12 +611,16 @@ class PhycasCommandOutputOptions(object):
         self.__dict__["_outputter"] = None
         self.__dict__["_stream"] = None
     def __deepcopy__(self, memo):
+        c = memo.get(self)
+        if not c is None:
+            return c
         o = PhycasCommandOutputOptions(self.level)
         for k, v in self.__dict__.iteritems():
             if v is None:
                 o.__dict__[k] = None
             else:
                 o.__dict__[k] = copy.deepcopy(v, memo)
+        memo[self] = o
         return o
     def __setattr__(self, name, value):
         if name == "_outputter" or name == "_stream":
@@ -1105,6 +1116,9 @@ class PhycasCommand(object):
     hidden = staticmethod(hidden)
 
     def __deepcopy__(self, memo):
+        c = memo.get(self)
+        if not c is None:
+            return c
         opts = self._options
         opts_copy = opts._optionsInOrder
         h = self.help
@@ -1127,6 +1141,7 @@ class PhycasCommand(object):
             if not k in managed_dict:
                 if not k  in ["_options", "help", "current", "manual", "out"]:
                     c.__dict__[k] = copy.deepcopy(v, memo)
+        memo[self] = c
         return c
 
     def __setattr__(self, name, value):
@@ -1169,3 +1184,5 @@ class PhycasCommand(object):
             for key, value in old.iteritems():
                 o.set_unchecked(key, value)
             raise
+    def __str__(self):
+        return "%s command instance (with id=%d)" % (self.help.cmd_name, id(self))

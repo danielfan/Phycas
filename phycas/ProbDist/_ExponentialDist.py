@@ -1,6 +1,7 @@
+from _PyDistributionBase import PyDistributionBase
 from _ProbDist import *
 
-class Exponential(ExponentialDistBase):
+class Exponential(ExponentialDistBase, PyDistributionBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
     Represents the univariate exponential probability distribution.

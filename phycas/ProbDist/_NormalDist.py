@@ -1,6 +1,7 @@
+from _PyDistributionBase import PyDistributionBase
 from _ProbDist import *
 
-class Normal(NormalDistBase):
+class Normal(NormalDistBase, PyDistributionBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
     Represents the univariate normal probability distribution.

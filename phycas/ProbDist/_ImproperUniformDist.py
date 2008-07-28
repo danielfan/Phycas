@@ -1,6 +1,7 @@
+from _PyDistributionBase import PyDistributionBase
 from _ProbDist import *
 
-class ImproperUniform(ImproperUniformDistBase):
+class ImproperUniform(ImproperUniformDistBase, PyDistributionBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
     Represents the univariate improper uniform probability distribution.

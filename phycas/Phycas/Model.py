@@ -1,4 +1,4 @@
-from copy import copy
+import copy
 from phycas.Utilities.PhycasCommand import *
 from phycas.ProbDist import Beta, Exponential, InverseGamma
 class Model(PhycasCommand):
@@ -42,33 +42,40 @@ class Model(PhycasCommand):
         PhycasCommand.__init__(self, args, "model", "Defines a substitution model.")
 
     def saveas(self):
-        new_model = Model(self.phycas)
-        new_model.type                  = copy(self.type)
+        return copy.deepcopy(self)
 
-        new_model.num_rates             = copy(self.num_rates)
-        new_model.use_inverse_shape     = copy(self.use_inverse_shape)
-        new_model.pinvar_model          = copy(self.pinvar_model)
+    def __deepcopy__(self, memo):
+        c = memo.get(self)
+        if c:
+            return c
+        new_model = Model()
+        new_model.type                  = copy.deepcopy(self.type, memo)
 
-        new_model.relrate_prior         = self.relrate_prior.clone()
-        new_model.kappa_prior           = self.kappa_prior.clone()
-        new_model.gamma_shape_prior     = self.gamma_shape_prior.clone()
-        new_model.pinvar_prior          = self.pinvar_prior.clone()
-        new_model.base_freq_param_prior = self.base_freq_param_prior.clone()
-
-        new_model.relrates              = copy(self.relrates)
-        new_model.kappa                 = copy(self.kappa)
-        new_model.gamma_shape           = copy(self.gamma_shape)
-        new_model.pinvar                = copy(self.pinvar)
-        new_model.base_freqs            = copy(self.base_freqs)
-
-        new_model.fix_relrates          = copy(self.fix_relrates)
-        new_model.fix_kappa             = copy(self.fix_kappa)
-        new_model.fix_shape             = copy(self.fix_shape)
-        new_model.fix_pinvar            = copy(self.fix_pinvar)
-        new_model.fix_freqs             = copy(self.fix_freqs)
+        new_model.num_rates             = copy.deepcopy(self.num_rates, memo)
+        new_model.use_inverse_shape     = copy.deepcopy(self.use_inverse_shape, memo)
+        new_model.pinvar_model          = copy.deepcopy(self.pinvar_model, memo)
         
+        new_model.relrate_prior         = copy.deepcopy(self.relrate_prior, memo)
+        new_model.kappa_prior           = copy.deepcopy(self.kappa_prior, memo)
+        new_model.gamma_shape_prior     = copy.deepcopy(self.gamma_shape_prior, memo)
+        new_model.pinvar_prior          = copy.deepcopy(self.pinvar_prior, memo)
+        new_model.base_freq_param_prior = copy.deepcopy(self.base_freq_param_prior, memo)
+
+        new_model.relrates              = copy.deepcopy(self.relrates, memo)
+        new_model.kappa                 = copy.deepcopy(self.kappa, memo)
+        new_model.gamma_shape           = copy.deepcopy(self.gamma_shape, memo)
+        new_model.pinvar                = copy.deepcopy(self.pinvar, memo)
+        new_model.base_freqs            = copy.deepcopy(self.base_freqs, memo)
+
+        new_model.fix_relrates          = copy.deepcopy(self.fix_relrates, memo)
+        new_model.fix_kappa             = copy.deepcopy(self.fix_kappa, memo)
+        new_model.fix_shape             = copy.deepcopy(self.fix_shape, memo)
+        new_model.fix_pinvar            = copy.deepcopy(self.fix_pinvar, memo)
+        new_model.fix_freqs             = copy.deepcopy(self.fix_freqs, memo)
+        
+        memo[self] = new_model
         return new_model
-    
+
     def __call__(self, **kwargs):
         self.set(**kwargs)
         return self.saveas()

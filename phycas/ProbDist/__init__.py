@@ -2,6 +2,7 @@ import warnings
 warnings.filterwarnings('ignore', '.*second conversion method ignored.*', RuntimeWarning)
 
 from phycas.Conversions import *
+from _PyDistributionBase import PyDistributionBase
 from _ProbDist import *
 from _Lot import *
 from _StopWatch import *
@@ -47,3 +48,6 @@ def testExamples():
     r = doctest.testfile('_ImproperUniformDist.py')
     a[0] += r[0] ; a[1] += r[1] 
     return tuple(a)
+    
+
+
