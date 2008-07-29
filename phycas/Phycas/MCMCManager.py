@@ -44,7 +44,7 @@ class LikelihoodCore:
         self.model                  = None
         self.likelihood             = None
         self.tree                   = Phylogeny.Tree()
-        self.r                      = ProbDist.Lot()
+        self.r                      = self.parent._getLot()
         self.starting_edgelen_dist  = cloneDistribution(self.parent.opts.model.starting_edgelen_dist)
     
     def setupCore(self, zero_based_tips = False):
@@ -59,8 +59,7 @@ class LikelihoodCore:
         
         """
         # Set seed if user has supplied one
-        if self.parent.opts.random_seed != 0:
-            self.r.setSeed(int(self.parent.opts.random_seed))
+        self.r = self.parent._getLot()
         self.starting_edgelen_dist.setLot(self.r)
 
         # Create a substitution model

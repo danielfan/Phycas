@@ -184,6 +184,12 @@ like = Like()
 from Phycas.PS import PS
 ps = PS()
 
+taxa = []
+
+from Phycas.RandomTree import RandomTree
+randomtree = RandomTree()
+
+
 def simpleOutputter(msg):
     print msg
 

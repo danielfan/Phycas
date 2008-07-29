@@ -7,9 +7,9 @@ import copy
 
 class MCMC(PhycasCommand):
     def __init__(self):
-        args = (
-                ("random_seed",            0,                               "Determines the random number seed used; specify 0 to generate seed automatically from system clock", IntArgValidate(min=0)),
-                ("burnin",                 0,                               "The number of update cycles to ignore before sampling begins. If burnin=1000 and ncycles=10000, the total number of cycles will be 11000.", IntArgValidate(min=0)),
+        args = tuple(
+                PhycasCommand._getRNGOptions() + 
+                [("burnin",                 0,                               "The number of update cycles to ignore before sampling begins. If burnin=1000 and ncycles=10000, the total number of cycles will be 11000.", IntArgValidate(min=0)),
                 ("ncycles",                10000,                           "The number of update cycles (a cycle is analogous to, but different than, a 'generation' in MrBayes; Phycas does in one cycle what MrBayes does in about 100 generations for a simple model such as JC)", IntArgValidate(min=0)),
                 ("sample_every",           100,                             "The current tree topology and model parameter values will be sampled after this many cycles have elapsed since the last sample was taken", IntArgValidate(min=0)),
                 ("report_every",           100,                             "A progress report will be displayed after this many cycles have elapsed since the last progress report", IntArgValidate(min=0)),
@@ -44,7 +44,7 @@ class MCMC(PhycasCommand):
                 ("nchains",                1,                               "The number of Markov chains to run simultaneously. One chain serves as the cold chain from which samples are drawn, the other chains are heated to varying degrees and serve to enhance mixing in the cold chain.", IntArgValidate(min=1,max=1)), # only allowing 1 chain now because multiple chains not yet fully implemented
                 ("uf_num_edges",           50,                              "Number of edges to traverse before taking action to prevent underflow", IntArgValidate(min=1)),
                 ("ntax",                   0,                               "To explore the prior, set to some positive value. Also set data_source to None", IntArgValidate(min=0)),
-                )
+                ])
 
         # Specify output options
         o = PhycasCommandOutputOptions()

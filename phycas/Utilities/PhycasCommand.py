@@ -57,7 +57,7 @@ def ttysize():
 
 def _value_for_user(value):
     try:
-        return value.brief_str()
+        return value._brief_str()
     except:
         if isinstance(value, str):
             return repr(value)
@@ -1185,12 +1185,15 @@ class PhycasCommand(object):
             for key, value in old.iteritems():
                 o.set_unchecked(key, value)
             raise
-    def brief_str(self):
+    def _brief_str(self):
         global _use_instance_names
         v = None
         if _use_instance_names:
             v = name_of(self)
         if v:
             return v
-            v = "with id=%d" % id(self)
+        v = "with id=%d" % id(self)
         return "The %s command instance %s" % (self.help.cmd_name, v)
+    def _getRNGOptions():
+        return [("random_seed", 0, "Determines the random number seed used; specify 0 to generate seed automatically from system clock", IntArgValidate(min=0))]
+    _getRNGOptions = staticmethod(_getRNGOptions)

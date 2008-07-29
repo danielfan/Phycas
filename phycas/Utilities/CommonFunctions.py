@@ -1,5 +1,5 @@
 import sys
-from phycas import OutputFilter, getDefaultOutFilter
+from phycas import OutputFilter, getDefaultOutFilter, ProbDist
 
 output_stream = None
 outputter = None
@@ -67,6 +67,13 @@ class CommonFunctions(object):
         self.stdout.add_mirror(m)
     def remove_mirror(self, m):
         self.stdout.remove_mirror(m)
-
-
+    def _getLot(self):
+        l = ProbDist.Lot()
+        try:            
+            i = int(self.opts.random_seed)
+            if i != 0:
+                l.setSeed(i)
+        except:
+            pass
+        return l
 

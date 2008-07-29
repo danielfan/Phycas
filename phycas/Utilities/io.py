@@ -77,8 +77,8 @@ def readTrees(filepath, format=FileFormats.NEXUS, out=None):
     reader.readFile(filepath)
     return reader.taxa, reader.getTrees()
 
-def readFileToSourceObjects(filepath, format=FileFormats.NEXUS, out=None):
-    """Returns a (DataSource, TreeCollection) from the file `filepath`
+def readFileIntoMemory(filepath, format=FileFormats.NEXUS, out=None):
+    """Returns a (Taxa list, DataSource, TreeCollection) from the file `filepath`
     
     Currently only supports NEXUS and only returns the last data matrix, but
     this will be generalized to read other formats and return the 
@@ -91,7 +91,7 @@ def readFileToSourceObjects(filepath, format=FileFormats.NEXUS, out=None):
     t = reader.taxa
     dm = DataSource(reader.getLastDiscreteMatrix(True), taxon_labels=t)
     tm = TreeCollection(reader.getTrees(), taxon_labels=t)
-    return dm, tm
+    return t, dm, tm
 
 class TreeCollection(object):
     def __init__(self, arg, **kwargs):
