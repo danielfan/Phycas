@@ -184,7 +184,29 @@ like = Like()
 from Phycas.PS import PS
 ps = PS()
 
-taxa = []
+class DefaultData:
+    "Bundle of references most loaded taxa, trees, and character matrices."
+    _default_data = None
+    def getInstance():
+        if DefaultData._default_data is None:
+            DefaultData._default_data = DefaultData()
+        return DefaultData._default_data
+    getInstance = staticmethod(getInstance)
+
+    def __init__(self):
+        self.__dict__["taxon_labels"] = ()
+        self.__dict__["characters"] = None
+        self.__dict__["trees"] = ()
+    def __setattr__(self, name, value):
+        raise TypeError("Assignment is not supported.")
+    def set_taxon_labels(self, t):
+        self.__dict__["taxon_labels"] = t
+    def set_trees(self, t):
+        self.__dict__["trees"] = None
+    def set_characters(self, t):
+        self.__dict__["characters"] = None
+P = DefaultData.getInstance()
+
 
 from Phycas.RandomTree import RandomTree
 randomtree = RandomTree()

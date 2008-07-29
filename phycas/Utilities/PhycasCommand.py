@@ -146,7 +146,7 @@ will display the help information for the sumt command object.
                     if d:
                         print(d)
                     if pub_methods:
-                        print("The following public methods are available:\n%s" % '\n'.join(pub_methods))
+                        print("\nThe following public methods are available:\n%s" % '\n'.join(pub_methods))
                 else:
                     print("\nThis is an undocumented class or python type without public methods")
             else:
@@ -1107,7 +1107,10 @@ class PhycasCommand(object):
         # the roundabout way of initializing PhycasCmdOpts is needed because
         #   _options must be in the __dict__ before the setattr is called
         #   on a PhycasCommand
-        PhycasHelp._phycas_cmd_classes.add(self.__class__)
+        object.__init__(self)
+        c = self.__class__
+        if c is not PhycasCommand:
+            PhycasHelp._phycas_cmd_classes.add(c)
         o = PhycasCmdOpts()
         self.__dict__["_options"] = o
         o._initialize(self, option_defs)
