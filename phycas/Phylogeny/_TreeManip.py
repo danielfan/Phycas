@@ -94,7 +94,7 @@ class TreeManip(TreeManipBase):
         >>> tm = Phylogeny.TreeManip(t)
         >>> tm.equiprobTree(5, r, d)
         >>> print t.makeNewick()
-        (1:0.06106,(2:0.06113,(3:0.03849,5:0.08943):0.11240):0.05451,4:0.13251)
+        (1:0.06106,(2:0.06113,3:0.03849):0.05451,(4:0.13251,5:0.08943):0.11240)
         
         """
         return TreeManipBase.equiprobTree(self, num_tips, rng, edge_len_dist)

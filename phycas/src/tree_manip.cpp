@@ -580,9 +580,11 @@ void TreeManip::equiprobTree(
 
 	for (unsigned i = 2; i < ntips; ++i)
 		{
-		// Choose one of the current nodes above rootNd
-		unsigned j = rng->SampleUInt(i - 1);
-        PHYCAS_ASSERT(j < (unsigned)receptive.size());
+        unsigned num_receptive_nodes = 2*i - 3;
+        PHYCAS_ASSERT(num_receptive_nodes < (unsigned)receptive.size());
+
+		// Choose one of the receptive nodes (i.e. any node except rootNd)
+		unsigned j = rng->SampleUInt(num_receptive_nodes);
 		nd = receptive[j];
 
 		// Create an internal node on nd's edge
