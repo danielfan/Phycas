@@ -2,6 +2,7 @@ import copy, os, sys, math, random, copy
 from phycas.Utilities.PhycasCommand import _value_for_user
 from phycas.Utilities.CommonFunctions import CommonFunctions
 from phycas.Utilities.io import TreeCollection
+from phycas import Phylogeny
 
 class TreeSimulator(CommonFunctions, TreeCollection):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -32,10 +33,9 @@ class TreeSimulator(CommonFunctions, TreeCollection):
         return self
     def next(self):
         t = Phylogeny.Tree()
-        Phylogeny.TreeManip(t).randomTree(
-                self.ntax,           # number of tips
-                self.r,                     # pseudorandom number generator
-                self.opts.edgelen_dist, # distribution from which to draw starting edge lengths
-                False)
+        nt = len(self.opts.taxa)
+        tm = Phylogeny.TreeManip(t)
+        tm.randomTree(nt, self.r, self.opts.edgelen_dist, False)
+        return t
 
 

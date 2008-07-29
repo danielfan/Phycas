@@ -11,7 +11,7 @@ class Tree(TreeBase):
     functions of other classes.
 
     """
-    def __init__(self, builder=None, newick=None, zero_based=False):
+    def __init__(self, builder=None, newick=None, zero_based=False, taxa=None):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Calls clear() to initialize data members.
@@ -32,6 +32,7 @@ class Tree(TreeBase):
             builder.buildTree(self)
         elif newick:
             self.buildFromString(newick, zero_based)
+        self.taxa = taxa
         
     def __iter__(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
