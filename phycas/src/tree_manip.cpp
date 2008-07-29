@@ -581,7 +581,7 @@ void TreeManip::equiprobTree(
 	for (unsigned i = 2; i < ntips; ++i)
 		{
         unsigned num_receptive_nodes = 2*i - 3;
-        PHYCAS_ASSERT(num_receptive_nodes < (unsigned)receptive.size());
+        PHYCAS_ASSERT(num_receptive_nodes == (unsigned)receptive.size());
 
 		// Choose one of the receptive nodes (i.e. any node except rootNd)
 		unsigned j = rng->SampleUInt(num_receptive_nodes);
