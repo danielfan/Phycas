@@ -312,7 +312,6 @@ class TreeSummarizer(CommonFunctions):
         num_stored_trees = len(self.stored_tree_defs)
         self.stdout.phycassert(num_stored_trees > 0, 'Specified tree source (%s) contained no stored trees' %  str(input_trees))
 
-
         # Build each tree and add the splits and tree topolgies found there to the
         # dictionary of splits (split_map) and the dictionary of tree topologies
         # (tree_map), respectively
@@ -369,7 +368,7 @@ class TreeSummarizer(CommonFunctions):
             #       allows the number and extent of each sojourn to be computed
             nd = t.getFirstPreorder()
             assert nd.isRoot(), 'the first preorder node should be the root'
-            split_vec = []
+            #split_vec = []
             while True:
                 nd = nd.getNextPreorder()
                 if not nd:
@@ -456,8 +455,13 @@ class TreeSummarizer(CommonFunctions):
         k_str = sojourn_label_fmt_str % 'k'
         self.stdout.info('%6s %s %s %10s %10s %s %s %s' % ('split', split_str, freq_str, 'prob.', 'weight', s0_str, sk_str, k_str))
         first_below_50 = None
+        num_trivial = 0
         for i,(k,v) in enumerate(split_vect):
+            # len(v) is 2 in trivial splits because these splits are associated with tips, 
+            # for which the sojourn history is omitted (v[0] is frequency and v[1] is edge length sum)
             trivial_split = len(v) == 2 and True or False
+            if trivial_split:
+                num_trivial += 1
             
             # Split frequency is simply the first element of the list
             split_freq = v[0]
@@ -507,8 +511,11 @@ class TreeSummarizer(CommonFunctions):
         for k,v in split_vect[:first_below_50]:
             if len(v) > 2:
                 majrule_splits.append(k)
-
-        tm.buildTreeFromSplitVector(majrule_splits, ProbDist.Exponential(10))
+        
+        if len(majrule_splits) == 0:
+            tm.starTree(num_trivial)
+        else:
+            tm.buildTreeFromSplitVector(majrule_splits, ProbDist.Exponential(10))
         self.assignEdgeLensAndSupportValues(majrule, split_map, num_trees_considered)
         summary_short_name_list = ['majrule']
         summary_full_name_list = ['Majority-rule Consensus']

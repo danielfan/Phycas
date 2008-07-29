@@ -241,17 +241,20 @@ class MCMCImpl(CommonFunctions):
     def calcMarginalLikelihood(self):
         marginal_like = 0.0
         if self.opts.doing_path_sampling:
-            # Calculate marginal likelihood using continuous path sampling
-            for i in range(self.opts.ps_nbetavals):
-                n = len(self.ps_sampled_likes[i])
-                self.phycassert(n == self.opts.ncycles//self.opts.sample_every, 'number of sampled likelihoods (%d) does not match the expected number (%d) in path sampling calculation' % (n, self.opts.ncycles//self.opts.sample_every))
-                mean = sum(self.ps_sampled_likes[i])/float(n)
-                if i == 0 or i == self.opts.ps_nbetavals - 1:
-                    marginal_like += (mean/2.0)
-                else:
-                    marginal_like += mean
-            marginal_like /= float(self.opts.ps_nbetavals - 1)
-            self.output('Log of marginal likelihood (continuous path sampling method) = %f' % marginal_like)
+            if self.opts.ps_nbetavals > 1:
+                # Calculate marginal likelihood using continuous path sampling
+                for i in range(self.opts.ps_nbetavals):
+                    n = len(self.ps_sampled_likes[i])
+                    self.phycassert(n == self.opts.ncycles//self.opts.sample_every, 'number of sampled likelihoods (%d) does not match the expected number (%d) in path sampling calculation' % (n, self.opts.ncycles//self.opts.sample_every))
+                    mean = sum(self.ps_sampled_likes[i])/float(n)
+                    if i == 0 or i == self.opts.ps_nbetavals - 1:
+                        marginal_like += (mean/2.0)
+                    else:
+                        marginal_like += mean
+                marginal_like /= float(self.opts.ps_nbetavals - 1)
+                self.output('Log of marginal likelihood (continuous path sampling method) = %f' % marginal_like)
+            else:
+                self.output('Log of marginal likelihood not computed (ps_nbetavals must be greater than 1)')
         else:
             # Calculate marginal likelihood using harmonic mean method on cold chain
             nignored = 0
@@ -419,7 +422,10 @@ class MCMCImpl(CommonFunctions):
             #    print 'Unknown parameter --> name=%s, weight=%d, type=%s' % (p.getName(), w, p.__class__.__name__)
             #if self.opts.debugging:
             #    tmpf.write('%s | %s\n' % (p.getName(), p.getDebugInfo()))
-        print '>>>>> lnL = %.6f' % chain.calcLnLikelihood()
+        cold_chain_manager = self.mcmc_manager.getColdChainManager()
+        cold_chain_manager.refreshLastLnLike()
+        #print '>>>>> lnL = %.6f' % cold_chain_manager.getLastLnLike()
+        #print '>>>>> lnL = %.6f' % chain.calcLnLikelihood()
         
         if self.opts.debugging:
             tmpf.close()

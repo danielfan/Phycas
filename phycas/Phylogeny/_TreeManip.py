@@ -43,7 +43,7 @@ class TreeManip(TreeManipBase):
 #         """
 #        TreeManipBase.buildTreeFromSplitVector(self, split_vect, edge_len_dist)
 
-    def starTree(self, num_tips, edge_len_dist):
+    def starTree(self, num_tips, edge_len_dist = None):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Creates a star tree having num_tips tips and edge lengths drawn at
@@ -60,6 +60,45 @@ class TreeManip(TreeManipBase):
         """
         return TreeManipBase.starTree(self, num_tips, edge_len_dist)
 
+    def equiprobTree(self, num_tips, rng, edge_len_dist = None):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Creates a random tree from a discrete uniform distribution. For 
+        example, for 6 taxa there are 105 distinct unrooted tree topologies,
+        and if this function were to be called many times, it would generate
+        each of these 105 tree topologies with probability 1/105 = 0.0095238.
+        
+        >>> from phycas import *
+        >>> r = ProbDist.Lot(13579)
+        >>> t = Phylogeny.Tree()
+        >>> tm = Phylogeny.TreeManip(t)
+        >>> tm.equiprobTree(5,r)
+        >>> print t.walkPreorder()
+        (0) -> [7] -> [5] -> [6] -> (1) -> (3) -> (2) -> (4)
+        >>> print t.makeNewick()
+        (1:1.00000,((2:1.00000,4:1.00000):1.00000,3:1.00000):1.00000,5:1.00000)
+        
+        In the example above, the edge lengths are all 1.0 because no edge
+        length distribution was supplied to the equiprobTree function. Below
+        is the same example except that the edge length distribution has been
+        defined to be a Gamma distribution with mean 0.1 and variance 0.05.
+        
+        >>> from phycas import *
+        >>> r = ProbDist.Lot(94593)
+        >>> d = ProbDist.Gamma(1.0, 1.0)
+        >>> d.setMeanAndVariance(0.1, 0.001)
+        >>> print 'mean = %.5f, variance = %.5f' % (d.getMean(), d.getVar())
+        mean = 0.10000, variance = 0.00100
+        >>> d.setLot(r)
+        >>> t = Phylogeny.Tree()
+        >>> tm = Phylogeny.TreeManip(t)
+        >>> tm.equiprobTree(5, r, d)
+        >>> print t.makeNewick()
+        (1:0.06106,(2:0.06113,(3:0.03849,5:0.08943):0.11240):0.05451,4:0.13251)
+        
+        """
+        return TreeManipBase.equiprobTree(self, num_tips, rng, edge_len_dist)
+        
     def yuleTree(self, num_tips, rng, lambd):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
