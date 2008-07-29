@@ -55,6 +55,7 @@ class TreeManip
 
 		void		starTree(unsigned ntips, ProbDistShPtr edge_len_dist);
 		void		randomTree(unsigned ntips, LotShPtr rng, ProbDistShPtr edge_len_dist, bool yule);
+		void		equiprobTree(unsigned ntips, LotShPtr rng, ProbDistShPtr edge_len_dist);
 
 		void		setRandomEdgeLens(ProbDistShPtr d);
 

@@ -2803,6 +2803,7 @@ void TreeLikelihood::prepareForLikelihood( //POL_BOOKMARK TreeLikelihood::prepar
 			nd->SetInternalData(cl, cl_deleter);
 			}
 		}
+	useAsLikelihoodRoot(NULL);
 
 	//@POL	should decorate any nodes in tipStorage and nodeStorage now, but should wait until those 
 	// are changed to vectors

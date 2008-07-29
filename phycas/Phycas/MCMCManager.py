@@ -384,7 +384,7 @@ class MarkovChain(LikelihoodCore):
 
         self.likelihood.replaceModel(self.model)            
 
-        if self.parent.opts.data_source == None:
+        if self.parent.opts.data_source is None:
             self.likelihood.setNoData() # user apparently wants to run MCMC with no data
         
         # Create an MCMCChainManager object and add all necessary updaters

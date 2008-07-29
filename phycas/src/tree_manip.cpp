@@ -537,6 +537,93 @@ void TreeManip::randomTree(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Constructs an equiprobable tree topology and sets all edge lengths using draws from the supplied `edge_len_dist'.
+*/
+void TreeManip::equiprobTree(
+  unsigned ntips,				/**< is the number of tip nodes in the final tree (includes the tip node serving as the root) */
+  LotShPtr	rng,				/**< is the random number generator used to determine the branching order (but not edge lengths) */
+  ProbDistShPtr	edge_len_dist)	/**< is the probability distribution used to generate new edge lengths (should be exponential(lambda) if `yule' is true, where lambda is the instantaneous speciation rate) */
+	{
+	PHYCAS_ASSERT(edge_len_dist);
+	PHYCAS_ASSERT(tree);
+
+    // Empty the tree of everything and simply return if ntips is 0
+	tree->Clear();
+    if (ntips == 0)
+        return;
+
+	// Create the root node
+	TreeNode * rootNd = tree->GetNewNode();
+	tree->firstPreorder = rootNd;
+
+	// Create the subroot node
+	TreeNode * nd = tree->GetNewNode();
+
+    // This vector makes it easy to randomly choose next node to bisect
+    typedef std::vector<TreeNode *> NodeVector;
+	NodeVector receptive;
+    receptive.reserve(2*ntips - 3);
+    receptive.push_back(nd);
+
+	// Connect the root node to the subroot node
+	rootNd->lChild = nd;
+	rootNd->rSib = NULL;
+	rootNd->par = NULL;
+	nd->lChild = NULL;
+	nd->rSib = NULL;
+	nd->par = rootNd;
+
+	for (unsigned i = 2; i < ntips; ++i)
+		{
+		// Choose one of the current nodes above rootNd
+		unsigned j = rng->SampleUInt(i - 1);
+        PHYCAS_ASSERT(j < (unsigned)receptive.size());
+		nd = receptive[j];
+
+		// Create an internal node on nd's edge
+		TreeNode * parent = tree->GetNewNode();
+        receptive.push_back(parent);
+		parent->lChild = nd;
+		parent->rSib = nd->rSib;
+		parent->par = nd->par;
+		TreeNode * lSib = FindLeftSib(nd);
+		if (lSib != NULL)
+			lSib->rSib = parent;
+		PHYCAS_ASSERT(nd->par != NULL);
+		if (nd->par->lChild == nd)
+			nd->par->lChild = parent;
+		nd->rSib = NULL;
+		nd->par = parent;
+
+        // Create a new tip representing nd's sister
+		TreeNode * sister = tree->GetNewNode();
+        receptive.push_back(sister);
+		nd->rSib = sister;
+        sister->par = parent;
+		sister->lChild = NULL;
+		sister->rSib = NULL;
+		}
+
+	tree->RefreshPreorder();
+
+    // Set node numbers and edge lengths
+    unsigned tip_number = 0;
+    unsigned internal_number = ntips;
+    rootNd->SetNodeNum(tip_number++);
+    for (NodeVector::iterator it = receptive.begin(); it != receptive.end(); ++it)
+        {
+        TreeNode * nd = (*it);
+        if (nd->IsInternal())
+            nd->SetNodeNum(internal_number++);
+        else
+            nd->SetNodeNum(tip_number++);
+        double new_edgelen = edge_len_dist->Sample();
+        nd->SetEdgeLen(new_edgelen);
+        }
+	tree->hasEdgeLens = true;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Performs a specialized NNI swap for the following situation (where swap2 is the deepest node in the affected
 |	subtree):
 |>

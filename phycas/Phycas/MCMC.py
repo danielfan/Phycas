@@ -61,10 +61,10 @@ class MCMC(PhycasCommand):
         # The roundabout way of introducing these data members is necessary because PhycasCommand.__setattr__ tries
         # to prevent users from adding new data members (to prevent accidental misspellings from causing problems)
         self.__dict__["debugging"] = False
-        self.__dict__["use_unimap"] = False             # if True, MCMC analyses will use the uniformized mapping approach.
-        self.__dict__["mapping_move_weight"] = 1        # Univent mapping will be performed this many times per cycle
-        self.__dict__["unimap_nni_move_weight"] = 100   # Unimap NNI moves will be performed this many times per cycle
-        
+        self.__dict__["use_unimap"] = False                    # if True, MCMC analyses will use the uniformized mapping approach.
+        self.__dict__["mapping_move_weight"] = 1               # Univent mapping will be performed this many times per cycle
+        self.__dict__["unimap_nni_move_weight"] = 100          # Unimap NNI moves will be performed this many times per cycle
+
         # The data members added below are hidden from the user because they are set by the ps command
         self.__dict__["doing_path_sampling"] = False
         self.__dict__["ps_nbetavals"] = 101

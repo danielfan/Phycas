@@ -386,40 +386,40 @@ class MCMCImpl(CommonFunctions):
             name = p.getName()
             if name == 'edge length hyperparameter':
                 self.opts.model.edgelen_hyperparam = self.opts.model.edgelen_hyperprior.sample()
-                print 'New edge length hyperparameter:',self.opts.model.edgelen_hyperparam
+                #print 'New edge length hyperparameter:',self.opts.model.edgelen_hyperparam
                 self.opts.model.edgelen_dist.setMeanAndVariance(1.0/self.opts.model.edgelen_hyperparam)
-                print 'Drawing new edgelengths for entire tree from',self.opts.model.edgelen_dist.__str__()
+                #print 'Drawing new edgelengths for entire tree from',self.opts.model.edgelen_dist.__str__()
                 tm = Phylogeny.TreeManip(chain.tree)
-                tm.setRandomEdgeLengths(self.opts.model.edgelen_dist)
+                tm.equiprobTree(chain.tree.getNTips(), chain.r, self.opts.model.edgelen_dist)
+                chain.prepareForLikelihood()
+                self.phycassert(self.opts.allow_polytomies == False, 'polytomies not yet allowed in MCMCImpl.explorePrior')
             elif name == 'trs/trv rate ratio':
                 self.opts.model.kappa = self.opts.model.kappa_prior.sample()
-                print 'New kappa:',self.opts.model.kappa
+                #print 'New kappa:',self.opts.model.kappa
             elif name == 'base freq. A':
                 self.opts.model.base_freqs[0] = self.opts.model.base_freq_param_prior.sample()
-                print 'New base freq A param:',self.opts.model.base_freqs[0] 
+                #print 'New base freq A param:',self.opts.model.base_freqs[0] 
             elif name == 'base freq. C':
                 self.opts.model.base_freqs[1] = self.opts.model.base_freq_param_prior.sample()
-                print 'New base freq C param:',self.opts.model.base_freqs[1] 
+                #print 'New base freq C param:',self.opts.model.base_freqs[1] 
             elif name == 'base freq. G':
                 self.opts.model.base_freqs[2] = self.opts.model.base_freq_param_prior.sample()
-                print 'New base freq G param:',self.opts.model.base_freqs[2] 
+                #print 'New base freq G param:',self.opts.model.base_freqs[2] 
             elif name == 'base freq. T':
                 self.opts.model.base_freqs[3] = self.opts.model.base_freq_param_prior.sample()
-                print 'New base freq T param:',self.opts.model.base_freqs[3] 
+                #print 'New base freq T param:',self.opts.model.base_freqs[3] 
             elif name == 'Discrete gamma shape':
                 self.opts.model.gamma_shape = self.opts.model.gamma_shape_prior.sample()
-                print 'New gamma shape:',self.opts.model.gamma_shape
-            elif name == 'Larget-Simon move':
-                print 'Ignoring Larget-Simon move'
-            elif name == 'master edge length parameter':
-                print 'Ignoring master edge length parameter'
-            else:
-                print 'Unknown parameter --> name=%s, weight=%d, type=%s' % (p.getName(), w, p.__class__.__name__)
+                #print 'New gamma shape:',self.opts.model.gamma_shape
+            #elif name == 'Larget-Simon move':
+            #    print 'Ignoring Larget-Simon move'
+            #elif name == 'master edge length parameter':
+            #    print 'Ignoring master edge length parameter'
+            #else:
+            #    print 'Unknown parameter --> name=%s, weight=%d, type=%s' % (p.getName(), w, p.__class__.__name__)
             #if self.opts.debugging:
             #    tmpf.write('%s | %s\n' % (p.getName(), p.getDebugInfo()))
-        raw_input('attach')
         print '>>>>> lnL = %.6f' % chain.calcLnLikelihood()
-        raw_input('check')
         
         if self.opts.debugging:
             tmpf.close()
@@ -582,8 +582,11 @@ class MCMCImpl(CommonFunctions):
 
         if self.opts.doing_path_sampling:
             chain = self.mcmc_manager.chains[0]
-            self.ps_delta_beta = float(self.opts.ps_maxbeta - self.opts.ps_minbeta)/float(self.opts.ps_nbetavals - 1)
-            self.ps_sampled_betas = [self.opts.ps_maxbeta - self.ps_delta_beta*float(i) for i in range(self.opts.ps_nbetavals)]
+            if self.opts.ps_nbetavals > 1:
+                self.ps_delta_beta = float(self.opts.ps_maxbeta - self.opts.ps_minbeta)/float(self.opts.ps_nbetavals - 1)
+                self.ps_sampled_betas = [self.opts.ps_maxbeta - self.ps_delta_beta*float(i) for i in range(self.opts.ps_nbetavals)]
+            else:
+                self.ps_sampled_betas = [self.opts.ps_minbeta]
             
             self.ps_sampled_likes = []
             for self.ps_beta_index,self.ps_beta in enumerate(self.ps_sampled_betas):

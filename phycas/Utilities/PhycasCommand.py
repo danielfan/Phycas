@@ -968,27 +968,38 @@ class IntArgValidate(object):
                 return "Must be an integer in the range from %d to %d " % (self.min, self.max)
 
 class FloatArgValidate(object):
-    def __init__(self, min=None, max=None):
+    def __init__(self, min=None, max=None, lessthan=None, greaterthan=None):
         self.min = min
         self.max = max
+        self.lessthan = lessthan
+        self.greaterthan = greaterthan
     def __call__(self, opts, v):
-        iv = float(v)
-        if (self.min is not None) and (self.min > iv):
+        fv = float(v)
+        if (self.greaterthan is not None) and (self.greaterthan >= fv):
+            raise ValueError("Value must be > %s" % str(self.min))
+        elif (self.min is not None) and (self.min > fv):
             raise ValueError("Value must be >= %s" % str(self.min))
-        if (self.max is not None) and (self.max < iv):
+        if (self.lessthan is not None) and (self.lessthan <= fv):
+            raise ValueError("Value must be < %s" % str(self.min))
+        elif (self.max is not None) and (self.max < fv):
             raise ValueError("Value must be <= %s" % str(self.min))
-        return iv
+        return fv
     def get_description(self):
-        if self.min is None:
-            if self.max is None:
-                return "Must be a real number."
-            else:
-                return "Must be a real number no greater than %f" % self.max
+        s = 'Must be a real number'
+        if (self.min is None) and (self.max is None) and (self.lessthan is None) and (self.greaterthan is None):
+            s += '.'
         else:
-            if self.max is None:
-                return "Must be a real number no less than %f" % self.min
-            else:
-                return "Must be a real number in the range from %f to %f " % (self.min, self.max)
+            s += ' '
+            if self.greaterthan is not None:
+                s += 'greater than %f' % self.greaterthan
+            elif self.min is not None:
+                s += 'greater than or equal to %f' % self.min
+            s += ' and '
+            if self.lessthan is not None:
+                s += 'less than %f' % self.lessthan
+            elif self.max is not None:
+                s += 'less than or equal to %f' % self.max
+        return s
 
 class ProbArgValidate(FloatArgValidate):
     def __init__(self):

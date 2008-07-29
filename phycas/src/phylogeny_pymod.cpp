@@ -125,6 +125,7 @@ BOOST_PYTHON_MODULE(_Phylogeny)
 		.def("buildTreeFromSplitVector", &TreeManip::buildTreeFromSplitVector)
 		.def("starTree", &TreeManip::starTree)
 		.def("randomTree", &TreeManip::randomTree)
+		.def("equiprobTree", &TreeManip::equiprobTree)
 		.def("setRandomEdgeLens", &TreeManip::setRandomEdgeLens)
 		;
 
