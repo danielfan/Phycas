@@ -82,7 +82,10 @@ def readFileIntoMemory(filepath, format=FileFormats.NEXUS, out=None):
     
     Currently only supports NEXUS and only returns the last data matrix, but
     this will be generalized to read other formats and return the 
-    supermatrix of all data matrices in the file."""
+    supermatrix of all data matrices in the file.
+    
+
+    """
 
     _readFileSanityCheck(filepath, format, out)
     from phycas.ReadNexus import NexusReader
@@ -115,7 +118,8 @@ class TreeCollection(object):
             self.taxon_labels = kwargs.get("taxon_labels")
             self.filename = None
             self.format = None
-            
+        self.active_taxa = self.taxon_labels
+
     def __iter__(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -128,6 +132,7 @@ class TreeCollection(object):
             if not self.filename:
                 return iter([])
             self.taxon_labels, self.trees = readTrees(self.filename, self.format)
+            self._checkActiveTaxa()
         return iter(self.trees)
 
     def __str__(self):
@@ -162,6 +167,19 @@ class TreeCollection(object):
     def finish(self):
         pass
 
+    def setActiveTaxonLabels(self, tl):
+        self.active_taxa = tl
+        self._checkActiveTaxa()
+
+    def _checkActiveTaxa(self):
+        if self.active_taxa is None:
+            return True
+        if self.taxon_labels:
+            if self.active_taxa != self.taxon_labels:
+                raise ValueError("Relabeling of taxa in TreeCollection objects is not currently supported")
+        return True
+        
+        
 class DataSource(object):
     def __init__(self, arg, **kwargs):
         """`arg` can be a string or an iterable containing trees.
