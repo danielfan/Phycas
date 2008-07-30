@@ -1,5 +1,4 @@
 from phycas import *
-#phycassertRaisesException = True
 
 model.type                        = 'hky'
 

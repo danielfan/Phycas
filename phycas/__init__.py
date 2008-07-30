@@ -81,6 +81,8 @@ def getDefaultOutFilter():
     return default_verbosity_level
 
 
+
+
 # These globals are set here, so that reading in the startup.py gives
 #   experienced users the chance to override the default behavior.
 # Mark: it would be better I think to put these in a file that can be
@@ -107,7 +109,7 @@ _phycas_update_url = "129.237.138.231" # change this to phycas.org url
 _phycas_branch = "$HeadURL$"
 _phycas_revision = "$Revision: 733 $"
 
-from Phycas import Phycas
+#from Phycas import Phycas
 if not _user_ini_checked:
     import os
     _user_ini_checked = True
@@ -129,6 +131,10 @@ from ProbDist import Bernoulli, Beta, Binomial, Dirichlet, Exponential, Gamma, I
 import ReadNexus
 import sys, os
 from Utilities.PhycasCommand import REPLACE, APPEND, ADD_NUMBER, phycas_help
+from phycas.Utilities.DefaultData import DefaultData
+
+P = DefaultData.getInstance()
+
 # keep the wx import after the reading of the startup so that it can be optional
 if useWxPhycas():
     import wxPhycas
@@ -167,6 +173,11 @@ class Newick(object):
     def __str__(self):
         return self.newick
 
+
+from Phycas.RandomTree import RandomTree
+randomtree = RandomTree()
+
+
 from Phycas.Model import Model
 model = Model()
 
@@ -184,33 +195,6 @@ like = Like()
 
 from Phycas.PS import PS
 ps = PS()
-
-class DefaultData:
-    "Bundle of references most loaded taxa, trees, and character matrices."
-    _default_data = None
-    def getInstance():
-        if DefaultData._default_data is None:
-            DefaultData._default_data = DefaultData()
-        return DefaultData._default_data
-    getInstance = staticmethod(getInstance)
-
-    def __init__(self):
-        self.__dict__["taxon_labels"] = ()
-        self.__dict__["characters"] = None
-        self.__dict__["trees"] = ()
-    def __setattr__(self, name, value):
-        raise TypeError("Assignment is not supported.")
-    def set_taxon_labels(self, t):
-        self.__dict__["taxon_labels"] = t
-    def set_trees(self, t):
-        self.__dict__["trees"] = None
-    def set_characters(self, t):
-        self.__dict__["characters"] = None
-P = DefaultData.getInstance()
-
-
-from Phycas.RandomTree import RandomTree
-randomtree = RandomTree()
 
 
 def simpleOutputter(msg):

@@ -7,7 +7,7 @@
 # likelihood calculations.
 
 from phycas import *
-
+from phycas.Phycas import Phycas
 def tryAllModels(fn):
     # Create string containing PAUP commands that will be added to the end of the
     # file fn to check results - we will add more commands to this string as we go

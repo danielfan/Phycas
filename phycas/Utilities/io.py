@@ -2,7 +2,6 @@ import os, sys, subprocess
 from phycas.ReadNexus._NexusReader import FileFormats
 from phycas.Utilities.CommonFunctions import getDefaultOutputter
 
-
 _phycas_dir = None
 
 def getPhycasDir():
@@ -77,27 +76,11 @@ def readTrees(filepath, format=FileFormats.NEXUS, out=None):
     reader.readFile(filepath)
     return reader.taxa, reader.getTrees()
 
-def readFileIntoMemory(filepath, format=FileFormats.NEXUS, out=None):
-    """Returns a (Taxa list, DataSource, TreeCollection) from the file `filepath`
-    
-    Currently only supports NEXUS and only returns the last data matrix, but
-    this will be generalized to read other formats and return the 
-    supermatrix of all data matrices in the file.
-    
-
-    """
-
-    _readFileSanityCheck(filepath, format, out)
-    from phycas.ReadNexus import NexusReader
-    reader = NexusReader()
-    reader.readFile(filepath)
-    t = reader.taxa
-    dm = DataSource(reader.getLastDiscreteMatrix(True), taxon_labels=t)
-    tm = TreeCollection(reader.getTrees(), taxon_labels=t)
-    return t, dm, tm
-
 class TreeCollection(object):
+
     def __init__(self, arg, **kwargs):
+        self.init(arg, **kwargs)
+    def init(self, arg, **kwargs):
         """`arg` can be a string or an iterable containing trees.
         If `arg` is a string, then the `format` keyword argument can be used to
         specify the file format (the default is NEXUS).
@@ -119,6 +102,15 @@ class TreeCollection(object):
             self.filename = None
             self.format = None
         self.active_taxa = self.taxon_labels
+
+    def reset(self):
+        self.title = None
+        self.filename = None
+        self.format = None
+        self.trees = None
+        self.taxon_labels = None
+        self.taxon_labels = None
+        self.active_taxa = None
 
     def __iter__(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -153,12 +145,22 @@ class TreeCollection(object):
 
     def __deepcopy__(self, memo):
         #trees are expensive, so we don't make a deepcopy
-        if self.trees:
-            return TreeCollection(self.trees, taxon_labels=self.taxon_labels, title=self.title)
-        elif self.filename:
-            return TreeCollection(self.filename, format=self.format, title=self.title)
-        return TreeCollection(None, taxon_labels=self.taxon_labels, title=self.title)
+        c = memo.get(self)
+        if c is not None:
+            return c
+        c = TreeCollection(None)
+        self._copyInternals(c)
+        memo[self] = c
+        return c
 
+    def _copyInternals(self, c):
+        if self.trees:
+            c.init(self.trees, taxon_labels=self.taxon_labels, title=self.title)
+        elif self.filename:
+            c.init(self.filename, format=self.format, title=self.title)
+        else:
+            c.init(None, taxon_labels=self.taxon_labels, title=self.title)
+        
     def writeTree(self, tree, name="", rooted=None):
         if not self.trees:
             self.trees = []

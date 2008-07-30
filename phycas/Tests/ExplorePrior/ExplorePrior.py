@@ -3,7 +3,6 @@
 # approximate the joint prior distribution.
 
 from phycas import *
-#Phycas.PhycassertRaisesException = True
 
 mcmc.data_source              = None
 mcmc.outfile_prefix           = 'nodata.nex'  # used for creating *.p and *.t file names
