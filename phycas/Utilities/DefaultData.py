@@ -10,8 +10,8 @@ class DefaultData:
 
     def __init__(self):
         self.__dict__["taxon_labels"] = []
-        self.__dict__["characters"] = DataSource()
-        self.__dict__["trees"] = TreeCollection()
+        self.__dict__["characters"] = None #DataSource()
+        self.__dict__["trees"] = None # TreeCollection()
 
     def __setattr__(self, name, value):
         raise TypeError("Assignment is not supported.")
