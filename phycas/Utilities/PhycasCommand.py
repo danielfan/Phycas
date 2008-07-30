@@ -845,7 +845,7 @@ class PhycasCmdOpts(object):
         PhycasTablePrinter._reset_term_width()
         return "\n".join(self._help_str_list())
 
-    def _set_opt(self, name, value):
+    def _set_opt(self, name, value, force_valid=True):
         if name in self._current:
             transf = self._transformer.get(name)
             if transf is None:
@@ -854,15 +854,18 @@ class PhycasCmdOpts(object):
                 try:
                     self._current[name] = transf(self, value)
                 except:
-                    try:
-                        c = ""
-                        c = transf.get_description()
-                    except:
-                        pass
-                    if value.__class__.__name__ == 'str':
-                        raise ValueError("'%s' is not a valid value for %s. %s" % (value, name, c))
+                    if force_valid:
+                        try:
+                            c = ""
+                            c = transf.get_description()
+                        except:
+                            pass
+                        if value.__class__.__name__ == 'str':
+                            raise ValueError("'%s' is not a valid value for %s. %s" % (value, name, c))
+                        else:
+                            raise ValueError("%s is not a valid value for %s. %s" % (value, name, c))
                     else:
-                        raise ValueError("%s is not a valid value for %s. %s" % (value, name, c))
+                        self._current[name] = value
             self._command.__dict__[name] = self._current[name]
         else:
             raise AttributeError("%s does not contain an attribute %s" % (self._command.__class__.__name__, name))
@@ -896,6 +899,7 @@ class PhycasCmdOpts(object):
         "Sets the attribute `key` to the `value`"
         if name in self._current:
             self._current[name] = value
+            self._command.__dict__[name] = value
             self._unchecked.add(name)
         else:
             raise AttributeError("%s does not contain an attribute %s" % (self._command.__class__.__name__, name))
@@ -919,7 +923,13 @@ def BoolArgValidate(opts, v):
 
 class EnumArgValidate(object):
     def __init__(self, valid_values):
-        self.valid_tuple = tuple(valid_values)
+        l = []
+        for i in valid_values:
+            if isinstance(i, str):
+                l.append(i.lower())
+            else:
+                l.append(i)
+        self.valid_tuple = tuple(l)
         self.none_is_valid_value = False
         for_display = []
         for v in self.valid_tuple:
@@ -936,8 +946,9 @@ class EnumArgValidate(object):
             if not self.none_is_valid_value:
                 raise ValueError('Value cannot be None')
         else:
-            if v.__class__.__name__ != 'str':
+            if not isinstance(v, str):
                 raise ValueError('Value must be a Python string')
+            v = v.lower()
             if v not in self.valid_tuple:
                 raise ValueError("Value must be one of the following: %s" % self.display_str)
         return v
@@ -994,11 +1005,10 @@ class FloatArgValidate(object):
                 s += 'greater than %f' % self.greaterthan
             elif self.min is not None:
                 s += 'greater than or equal to %f' % self.min
-            s += ' and '
             if self.lessthan is not None:
-                s += 'less than %f' % self.lessthan
+                s += ' and less than %f' % self.lessthan
             elif self.max is not None:
-                s += 'less than or equal to %f' % self.max
+                s += ' and less than or equal to %f' % self.max
         return s
 
 class ProbArgValidate(FloatArgValidate):
@@ -1150,7 +1160,7 @@ class PhycasCommand(object):
         opts_copy = c._options
         managed_dict = opts_copy._current
         for k, v in opts._current.iteritems():
-            opts_copy._set_opt(k, v)
+            opts_copy.set_unchecked(k, v)
         # update the ad-hoc unmanaged attributes
         for k, v in self.__dict__.iteritems():
             if not k in managed_dict:

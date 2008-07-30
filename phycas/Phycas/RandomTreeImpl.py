@@ -27,17 +27,33 @@ class TreeSimulator(CommonFunctions, TreeCollection):
         """
         CommonFunctions.__init__(self, opts)
         self.r = self._getLot()
-        self.opts.edgelen_dist.setLot(self.r)
+        eld = self.edgelen_dist
         self._current = 0
         self.trees = []
-        if not self.taxon_labels and self.n_taxa < 1:
+        if (not self.taxon_labels) and self.n_taxa < 1:
             raise ValueError("TreeSimulator cannot be created with an empty list of taxon_labels and n_taxa set to 0")
+        if eld is None:
+            if self.distribution.lower() != "yule":
+                raise ValueError("edgelen_dist must be set if the tree simulator's distribution is not Yule")
+            if self.speciation_rate is None:
+                raise ValueError("edgelen_dist or the speciation_rate must be set to generate trees from the Yule process")
+        else:
+            eld.setLot(self.r)
         self.stdout.info("Generating %s" % str(self))
 
     def __str__(self):
         nt = self.n_trees
         n = nt > 0 and "%d " % nt or ""
-        return "collection of %stree(s) simulated by the Yule process with edgelen_dist = %s" % (n, _value_for_user(self.opts.edgelen_dist))
+        eld = self.edgelen_dist
+        if self.distribution.lower() != "yule":
+            t = "from the equiprobable distribution"
+        else:
+            t = "from the Yule process"
+        if eld is None:
+            y = "with speciation rate = %f" % self.speciation_rate
+        else:
+            y = "with edge lengths drawn from %s" % _value_for_user(eld)
+        return "collection of %stree(s) simulated by %s %s" % (n, t, y)
 
     def writeTree(self, tree, name="", rooted=None):
         raise ValueError("TreeSimulator collection of trees cannot be used as an output destination")
@@ -58,7 +74,19 @@ class TreeSimulator(CommonFunctions, TreeCollection):
             t = Phylogeny.Tree()
             ntax = self.n_taxa
         tm = Phylogeny.TreeManip(t)
-        tm.randomTree(ntax, self.r, self.opts.edgelen_dist, False)
+        eld = self.edgelen_dist
+        if self.distribution == "yule":
+            if eld is None:
+                isp = self.speciation_rate
+                if isp is None or isp <= 0.0:
+                    raise ValueError("edgelen_dist or the speciation_rate must be set to generate trees from the Yule process")
+                eld = Exponential(isp)
+                eld.setLot(self.r)
+                tm.yuleTree(ntax, self.r, eld)
+            else:
+                tm.randTree(ntax, self.r, eld)
+        else:
+            tm.equiprobTree(ntax, self.r, eld)
         return t
 
     def next(self):
@@ -105,9 +133,9 @@ class TreeSimulator(CommonFunctions, TreeCollection):
         
             
     def __len__(self):
-        if self.opts.n_trees < 1:
+        if self.n_trees < 1:
             raise TypeError("TreeSimulator without n_trees has no len()")
-        return self.opts.n_trees
+        return self.n_trees
 
     def getNTrees(self):
         return self.opts.n_trees
@@ -127,6 +155,27 @@ class TreeSimulator(CommonFunctions, TreeCollection):
     def setNTaxa(self, x):
         self.opts.n_taxa = x
 
+    def getDistribution(self):
+        return self.opts.distribution
+
+    def setDistribution(self, x):
+        self.opts.distribution = x
+
+    def getEdgeLenDist(self):
+        return self.opts.edgelen_dist
+
+    def setEdgeLenDist(self, x):
+        self.opts.edgelen_dist = x
+
+    def getSpeciationRate(self):
+        return self.opts.speciation_rate
+
+    def setSpeciationRate(self, x):
+        self.opts.speciation_rate = x
+
     n_trees = property(getNTrees, setNTrees)
     n_taxa = property(getNTaxa, setNTaxa)
     taxon_labels = property(getTaxa, setTaxa)
+    edgelen_dist = property(getEdgeLenDist, setEdgeLenDist)
+    distribution = property(getDistribution, setDistribution)
+    speciation_rate = property(getSpeciationRate, setSpeciationRate)
