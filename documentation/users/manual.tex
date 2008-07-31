@@ -252,7 +252,7 @@ Create a new (plain text\footnote{It is important to save the file using plain t
 jEdit (\url{http://www.jedit.org/}) is a Java-Based text editor that works well on all platforms.}) file in the folder (which should contain only the file \pathname{green.nex}). Name the new file \pathname{basic.py} and type the following lines into the file:
 \begin{verbatim}
 from phycas import *
-mcmc.data_file_name = 'green.nex'
+mcmc.data_source = 'green.nex'
 mcmc.out.log = 'basic.log'
 mcmc.out.log.mode = REPLACE
 mcmc.out.trees.prefix = 'green'
@@ -274,13 +274,14 @@ When you first start Python, it knows nothing about Phycas. You must import the 
 
 \begin{samepage}
 \begin{verbatim}
-mcmc.data_file_name = 'green.nex'
+mcmc.data_source = 'green.nex'
 \end{verbatim}
 This line specifies that the data should be read from the file named {\tt green.nex}. In our case, {\tt green.nex} is in the same directory as this script, but if it were in a different folder then you would need to specify a relative or absolute path to the file\footnote{
 %
-For example, if the data file was in a directory named {\tt xyz} at the same level as the directory containing the script, set \opt{data\_file\_name} to {\tt '../xyz/green.nex'} }.
+For example, if the data file was in a directory named {\tt xyz} at the same level as the directory containing the script, set \opt{data\_source} to {\tt '../xyz/green.nex'} }.
 %
-Phycas does not do anything at this point in the script except set the \opt{data\_file\_name} option of the \cmd{mcmc} command to the string \code{'green.nex'}. The file name is specified as a string, so surround the file name with single quotes so that the Python interpreter will not complain. 
+Phycas does not do anything at this point in the script except create a DataSource object that will read the file \code{'green.nex'} and make the \opt{mcmc.data\_source} field refer to this object. The file name is specified as a string, so surround the file name with single quotes so that the Python interpreter will not complain. 
+
 \end{samepage}
 
 \begin{samepage}
@@ -333,7 +334,11 @@ mcmc()
 \end{verbatim} 
 This begins an MCMC analysis using defaults for everything except the options that you modified (\opt{data\_file\_name}, \opt{log\_file\_name}, \opt{ncycles} and \opt{sample\_every}). To see what additional settings can be changed before calling the \code{mcmc} method, either type \cmd{mcmc.help} at the Python prompt or see section~\ref{subsec:mcmcsettings} on page~\pageref{subsec:mcmcsettings}.
 
-For Phycas commands such as \cmd{mcmc}, adding the parentheses after the name of the command generally serves to start the analysis that the command implements. There are exceptions to this rule. The most notable exeption is the \cmd{model} command, where typing \code{model()} serves to make a copy of the model for purposes of saving the current model settings. For example, you could issue the following command:
+\subsubsection{Invoking phycas commands}
+For Phycas commands such as \cmd{mcmc}, adding the parentheses after the name of the command generally serves to start the analysis that the command implements. 
+There are exceptions to this rule. 
+For example, the ``action'' associated with the \cmd{model} command is simply the creation of a copy of the model for purposes of saving the current model settings. 
+Thus, you could issue the following command:
 \begin{verbatim}
 m1 = model()
 \end{verbatim}
@@ -341,11 +346,10 @@ to save the current model settings to a variable named \code{m1}\footnote
 %
 {The name ``m1'' here is arbitrary, but you should be careful to avoid using names that are identical to those Phycas uses. For example, if you named your model ``mcmc'', then you would lose the ability to perform an MCMC analysis because you have redifined the name ``mcmc'' to mean something else!}
 %
-. After this point, you could make changes to \cmd{model} and conduct various analyses. Later, you could reconstitute \cmd{model} to the state it was in when you saved it by doing this:
-\begin{verbatim}
-model = m1()
-\end{verbatim}
-It is unlikely that you will need to do this under ordinary circumstances. We point it out only because typing \code{model()} by itself will appear to do nothing and thus might be confusing given the behavior of most Phycas commands.
+. After this point, you could make changes to \cmd{model} and conduct various analyses. 
+It is unlikely that you will need to do this under ordinary circumstances (until we implement partitioned or mixture models).
+We point it out only because typing \code{model()} by itself will appear to do nothing and thus might be confusing given the behavior of most Phycas commands.
+Similarly the \code{randomtrees()} invocation returns a \code{TreeCollection} that holds a set of simulate trees (and does not produce visible output).
 \end{samepage}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

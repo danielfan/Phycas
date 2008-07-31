@@ -1,5 +1,5 @@
 from phycas.Utilities.PhycasCommand import *
-from phycas import model, randomtree
+from phycas import model, randomtree, P
 from phycas.ProbDist import Exponential
 from phycas.Phycas.LikeImpl import LikeImpl
 
@@ -7,10 +7,11 @@ class Like(PhycasCommand):
     def __init__(self):
         args = ( 
                  PhycasCommand._getRNGOptions() + 
-                [("data_file_name",  None,                                     "Name of file in which to save simulated data'"),
-                ("model",           model,                                    "Specifies the model to use. By default, uses the predefined model object. Type model.help to set the settings for this model."),
-                ("tree_source",   randomtree(),                                  "TreeCollection that will provide the tree.", TreeSourceValidate),
-                ("starting_edgelen_dist",  Exponential(10.0),                 "Used to select the starting edge lengths when tree_source is 'random'"),
+                [
+                ("data_source",             P.characters,               "The DataSource that provides the data, to be used in the MCMC analysis. Should be a DataSource object", DataSourceValidate),
+                ("model",                   model,                      "Specifies the model to use. By default, uses the predefined model object. Type model.help to set the settings for this model."),
+                ("tree_source",             randomtree(),               "TreeCollection that will provide the tree.", TreeSourceValidate),
+                ("starting_edgelen_dist",   Exponential(10.0),          "Used to select the starting edge lengths when tree_source is 'random'"),
                 ]
                 )
         PhycasCommand.__init__(self, args, "like", "Calculates the log-likelihood under the current model.")

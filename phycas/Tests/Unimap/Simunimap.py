@@ -47,8 +47,7 @@ if __name__ == '__main__':
 
     # Run a unimap mcmc analysis
     mcmc.starting_tree_source    = 'random'
-    mcmc.data_source             = 'file'
-    mcmc.data_file_name          = 'simulated.nex'
+    mcmc.data_source             = 'simulated.nex'
     mcmc.tree_scaler_weight      = 1
     mcmc.fix_topology            = True
     mcmc.ncycles                 = 100

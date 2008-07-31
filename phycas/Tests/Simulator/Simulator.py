@@ -26,7 +26,7 @@ simulator = sim()
 
 # Now compute the likelihood of the model tree
 #like.data_source = 'file'
-like.data_file_name = 'simulated.nex'
+like.data_source = 'simulated.nex'
 like.tree_source = TreeCollection(newick=Newick('(1:0.1,2:0.15,(3:0.025,4:0.15):0.05)'))
 lnL = like()
 print 'lnL =',lnL

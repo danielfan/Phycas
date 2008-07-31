@@ -26,12 +26,19 @@ class LikeImpl(CommonFunctions):
         self.nchar                 = None
         self.reader                = NexusReader()
         
-    def readDataFromFile(self):
-        self.reader.readFile(self.opts.data_file_name)
-        self.taxon_labels = self.reader.getTaxLabels()
-        self.data_matrix = self.reader.getLastDiscreteMatrix(True)
-        self.ntax = self.data_matrix.getNTax()
-        self.nchar = self.data_matrix.getNChar() # used for Gelfand-Ghosh simulations only
+
+    def _loadData(self, matrix):
+        self.data_matrix = matrix
+        if matrix is None:            
+            self.taxon_labels = []
+            self.ntax = 0
+            self.nchar = 0 # used for Gelfand-Ghosh simulations only
+        else:
+            self.taxon_labels = matrix.taxa
+            self.ntax = self.data_matrix.getNTax()
+            self.nchar = self.data_matrix.getNChar() # used for Gelfand-Ghosh simulations only
+        self.phycassert(len(self.taxon_labels) == self.ntax, "Number of taxon labels does not match number of taxa.")
+
 
     def getStartingTree(self):
         if self.starting_tree is None:
@@ -51,8 +58,12 @@ class LikeImpl(CommonFunctions):
         model.
         
         """
-        self.phycassert(self.opts.data_file_name is not None, "specify data_file_name before calling like()")
-        self.readDataFromFile()
+        
+        ds = self.opts.data_source
+        mat = ds and ds.getMatrix() or None
+        self.phycassert(self.opts.data_source is not None, "specify data_source before calling like()")
+        self._loadData(mat)
+        
         self.starting_tree =  self.getStartingTree()
         core = LikelihoodCore(self)
         core.setupCore()
