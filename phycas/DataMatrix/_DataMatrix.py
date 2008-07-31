@@ -107,7 +107,7 @@ class DataMatrix(DataMatrixBase):
         if self._n_tax is None:
             self._n_tax = self.mat.getNTax()
         return self._n_tax
-        n_tax = property(getNTax)
+    n_tax = property(getNTax)
 
     def getDatatype(self):
         if self._datatype_enum is None:
@@ -218,7 +218,8 @@ class DataMatrix(DataMatrixBase):
         state_list_pos = property(getStateListPos)
 
     def getCodedDataMatrix(self):
-        return self.mat.getCodedDataMatrix()
+        return [self.getRow(i) for i in range(self.n_tax)]
+
 
     def getRow(self, index):
         return self.mat.getRow(index)

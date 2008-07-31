@@ -614,6 +614,7 @@ class MCMCImpl(CommonFunctions):
             if self.opts.data_source is None:
                 self.mainMCMCLoop(explore_prior=True)
             else:
+                #print '["', '"],\n["'.join(["".join([str(i) for i in row]) for row in self.data_matrix.getCodedDataMatrix()]), '"]' #MTH
                 self.mainMCMCLoop()
 
         self.adaptSliceSamplers()
