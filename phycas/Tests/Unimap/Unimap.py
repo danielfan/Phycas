@@ -16,9 +16,10 @@ mcmc.tree_scaler_weight     = 0
 mcmc.slice_weight           = 1
 mcmc.debugging              = True
 
-import sys,os
-if os.path.basename(sys.executable) == 'python_d.exe':
-    raw_input('debug stop')
+if False:
+	import sys,os
+	if os.path.basename(sys.executable) == 'python_d.exe':
+		raw_input('debug stop')
 
 mcmc()
 

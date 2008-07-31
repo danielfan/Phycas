@@ -13,7 +13,7 @@ model.gamma_shape = 2.0
 model.pinvar_model = True
 model.use_inverse_shape = True
 model.use_flex_model = False
-model.edgelen_dist = Exponential(1.0)
+model.edgelen_prior = Exponential(1.0)
 
 mcmc.out.log = 'output.txt'
 mcmc.out.log.mode = REPLACE
@@ -36,8 +36,9 @@ mcmc.starting_tree_source = randomtree(n_taxa=len(blob.taxon_labels), rng=rng)
 mcmc.rng = rng
 mcmc.data_source = blob.characters
 
-import sys,os
-if os.path.basename(sys.executable) == 'python_d.exe':
-    raw_input('debug stop')
+if False:
+	import sys,os
+	if os.path.basename(sys.executable) == 'python_d.exe':
+		raw_input('debug stop')
 
 mcmc()

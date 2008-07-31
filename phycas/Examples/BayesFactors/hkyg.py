@@ -14,7 +14,7 @@ def analyze():
     analyzer.num_rates = 4
     analyzer.pinvar_model = False
     analyzer.random_seed = rnseed
-    analyzer.edgelen_dist = ProbDist.ExponentialDist(10.0)
+    analyzer.edgelen_prior = ProbDist.ExponentialDist(10.0)
     analyzer.using_hyperprior = False 
     analyzer.allow_polytomies = False
     analyzer.data_file_name = data_file_name

@@ -88,7 +88,7 @@ def analyze(prior_mean):
     # about are the edge length priors. The master_edgelen_dist specifies the prior used
     # for all edge lengths. Tell Phycas to not use a hyperprior for edge lengths, otherwise
     # it will ignore your master_edgelen_dist specification.
-    analyzer.edgelen_dist = ProbDist.ExponentialDist(1.0/prior_mean)
+    analyzer.edgelen_prior = ProbDist.ExponentialDist(1.0/prior_mean)
     analyzer.using_hyperprior = False 
 
     # Don't allow polytomies

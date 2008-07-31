@@ -317,24 +317,23 @@ class MCMCImpl(CommonFunctions):
         6) establishes an output log file name if requested
         
         """
-        # BOOKMARK
-        if self.opts.model.edgelen_dist is not None:
-            # set both internal and external edge length priors to edgelen_dist
-            self.opts.model.internal_edgelen_dist = self.opts.model.edgelen_dist
-            self.opts.model.external_edgelen_dist = self.opts.model.edgelen_dist
+        if self.opts.model.edgelen_prior is not None:
+            # set both internal and external edge length priors to edgelen_prior
+            self.opts.model.internal_edgelen_prior = self.opts.model.edgelen_prior
+            self.opts.model.external_edgelen_prior = self.opts.model.edgelen_prior
         else:
             # Ensure that user has specified both internal and external edge length priors
-            self.phycassert(self.opts.model.internal_edgelen_dist is not None, 'internal_edgelen_dist cannot be None if edgelen_dist is None')
-            self.phycassert(self.opts.model.external_edgelen_dist is not None, 'external_edgelen_dist cannot be None if edgelen_dist is None')
+            self.phycassert(self.opts.model.internal_edgelen_prior is not None, 'internal_edgelen_prior cannot be None if edgelen_prior is None')
+            self.phycassert(self.opts.model.external_edgelen_prior is not None, 'external_edgelen_prior cannot be None if edgelen_prior is None')
             
         if self.opts.model.edgelen_hyperprior is not None:
             # Ensure that both internal and external edgelen priors are Exponential
-            if self.opts.model.internal_edgelen_dist.getDistName() != 'Exponential':
-                self.opts.model.internal_edgelen_dist = Exponential(1.0)
-                self.warning('internal_edgelen_dist reset to Exponential because edgelen_hyperprior was specified')
-            if self.opts.model.external_edgelen_dist.getDistName() != 'Exponential':
-                self.opts.model.external_edgelen_dist = Exponential(1.0)
-                self.warning('external_edgelen_dist reset to Exponential because edgelen_hyperprior was specified')
+            if self.opts.model.internal_edgelen_prior.getDistName() != 'Exponential':
+                self.opts.model.internal_edgelen_prior = Exponential(1.0)
+                self.warning('internal_edgelen_prior reset to Exponential because edgelen_hyperprior was specified')
+            if self.opts.model.external_edgelen_prior.getDistName() != 'Exponential':
+                self.opts.model.external_edgelen_prior = Exponential(1.0)
+                self.warning('external_edgelen_prior reset to Exponential because edgelen_hyperprior was specified')
 
         ds = self.opts.data_source
         mat = ds and ds.getMatrix() or None

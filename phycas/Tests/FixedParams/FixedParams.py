@@ -26,7 +26,7 @@ model.fix_pinvar                   = True
 model.pinvar_prior                 = ProbDist.Beta(1.0, 1.0)
 
 model.fix_edgelens                 = True
-model.edgelen_dist                 = ProbDist.Exponential(10.0)
+model.edgelen_prior                = ProbDist.Exponential(10.0)
 model.edgelen_hyperparam           = 0.05
 model.fix_edgelen_hyperparam       = True
 model.edgelen_hyperprior           = ProbDist.InverseGamma(2.1, 0.9090909)
@@ -43,8 +43,9 @@ mcmc.rng                          = rng
 mcmc.data_source                   = blob.characters
 mcmc.starting_tree_source         = randomtree(n_taxa=len(blob.taxon_labels), rng=rng)
 
-import sys,os
-if os.path.basename(sys.executable) == 'python_d.exe':
-    raw_input('debug stop')
+if False:
+	import sys,os
+	if os.path.basename(sys.executable) == 'python_d.exe':
+		raw_input('debug stop')
 
 mcmc()

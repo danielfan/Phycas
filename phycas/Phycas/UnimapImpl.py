@@ -60,10 +60,10 @@ class UnimapImpl(object):
         
         # REVISIT LATER
         # Hack until PhycasCommand implements properties
-        if self.opts.internal_edgelen_dist is None:
-            self.opts.internal_edgelen_dist = self.opts.edgelen_dist
-        if self.opts.external_edgelen_dist is None:
-            self.opts.external_edgelen_dist = self.opts.edgelen_dist
+        if self.opts.internal_edgelen_prior is None:
+            self.opts.internal_edgelen_prior = self.opts.edgelen_prior
+        if self.opts.external_edgelen_prior is None:
+            self.opts.external_edgelen_prior = self.opts.edgelen_prior
         
         # Read the data
         if self.opts.data_source == 'file':

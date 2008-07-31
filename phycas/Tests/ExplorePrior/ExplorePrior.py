@@ -13,7 +13,7 @@ model.flex_phi                 = 0.5       # proportion of ncat moves in which n
 model.flex_L                   = 5.0       # upper bound of interval used for unnormalized relative rate parameter values
 model.flex_lambda              = 4.0       # parameter of Poisson prior on the number of extra categories
 model.flex_prob_param_prior    = Exponential(1.0)
-model.edgelen_dist             = Exponential(1.0)
+model.edgelen_prior            = Exponential(1.0)
 model.use_inverse_shape        = False
 
 mcmc.data_source              = None

@@ -6,7 +6,7 @@ n = Newick('(1,2,(3,(4,((5,8),(6,((7,10),9))))))')
 
 model.type                = 'jc'
 model.edgelen_hyperprior  = None
-model.edgelen_dist        = ProbDist.Exponential(10.0)
+model.edgelen_prior       = ProbDist.Exponential(10.0)
 
 mcmc.rng                  = rng
 mcmc.burnin               = 100

@@ -217,8 +217,8 @@ class MarkovChain(LikelihoodCore):
         self.relrate_prior           = cloneDistribution(self.parent.opts.model.relrate_prior)
         self.base_freq_param_prior   = cloneDistribution(self.parent.opts.model.base_freq_param_prior)
         self.gamma_shape_prior       = cloneDistribution(self.parent.opts.model.gamma_shape_prior)
-        self.external_edgelen_dist   = cloneDistribution(self.parent.opts.model.external_edgelen_dist)
-        self.internal_edgelen_dist   = cloneDistribution(self.parent.opts.model.internal_edgelen_dist)
+        self.external_edgelen_prior  = cloneDistribution(self.parent.opts.model.external_edgelen_prior)
+        self.internal_edgelen_prior  = cloneDistribution(self.parent.opts.model.internal_edgelen_prior)
         self.kappa_prior             = cloneDistribution(self.parent.opts.model.kappa_prior)
         self.pinvar_prior            = cloneDistribution(self.parent.opts.model.pinvar_prior)
         self.flex_prob_param_prior   = cloneDistribution(self.parent.opts.model.flex_prob_param_prior)
@@ -266,7 +266,7 @@ class MarkovChain(LikelihoodCore):
             paramf.write('Gen\tLnL\tTL')
         paramf.write(self.model.paramHeader())
         if self.parent.opts.model.edgelen_hyperprior is not None:
-            if self.parent.opts.model.internal_edgelen_dist is self.parent.opts.model.external_edgelen_dist:
+            if self.parent.opts.model.internal_edgelen_prior is self.parent.opts.model.external_edgelen_prior:
                 paramf.write('\thyper(all)')
             else:
                 paramf.write('\thyper(external)')
@@ -337,9 +337,9 @@ class MarkovChain(LikelihoodCore):
         self.pinvar_prior.setLot(self.r)
         if self.edgelen_hyperprior is not None:
             self.edgelen_hyperprior.setLot(self.r)
-        self.external_edgelen_dist.setLot(self.r)
-        if self.parent.opts.model.internal_edgelen_dist:
-            self.internal_edgelen_dist.setLot(self.r)
+        self.external_edgelen_prior.setLot(self.r)
+        if self.parent.opts.model.internal_edgelen_prior:
+            self.internal_edgelen_prior.setLot(self.r)
         
         # Define priors for the model parameters
         if self.parent.opts.model.type == 'gtr':
@@ -359,10 +359,10 @@ class MarkovChain(LikelihoodCore):
             self.model.setPinvarPrior(self.pinvar_prior)
         
         # Define edge length prior distributions
-        separate_edge_len_dists = self.parent.opts.model.internal_edgelen_dist is not self.parent.opts.model.external_edgelen_dist
+        separate_edge_len_dists = self.parent.opts.model.internal_edgelen_prior is not self.parent.opts.model.external_edgelen_prior
         self.model.separateInternalExternalEdgeLenPriors(separate_edge_len_dists)
-        self.model.setExternalEdgeLenPrior(self.external_edgelen_dist)
-        self.model.setInternalEdgeLenPrior(self.internal_edgelen_dist)
+        self.model.setExternalEdgeLenPrior(self.external_edgelen_prior)
+        self.model.setInternalEdgeLenPrior(self.internal_edgelen_prior)
 
         if self.parent.opts.model.edgelen_hyperprior is not None:
             #self.edgelen_hyperprior.setMeanAndVariance(1.0, 10.0)

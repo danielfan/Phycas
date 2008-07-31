@@ -16,9 +16,10 @@ sim.random_seed = 13579
 sim.file_name = 'simulated.nex'
 sim.nchar = 100000
 
-import sys,os
-if os.path.basename(sys.executable) == 'python_d.exe':
-    raw_input('attach debugger to python_d process now')
+if False:
+	import sys,os
+	if os.path.basename(sys.executable) == 'python_d.exe':
+		raw_input('attach debugger to python_d process now')
 
 # Simulate data
 simulator = sim()

@@ -153,14 +153,14 @@ class Phycas(object):
 
                     sys.exit(0)
         
-    def setEdgelenDist(self, dist):
-        self.internal_edgelen_dist = self.external_edgelen_dist = dist
+    def setEdgelenPrior(self, dist):
+        self.internal_edgelen_prior = self.external_edgelen_prior = dist
         
-    def getEdgelenDist(self):
-        self.phycassert(self.internal_edgelen_dist is self.external_edgelen_dist, "There are separate distributions for internal and external edge lengths")
-        return self.internal_edgelen_dist
+    def getEdgelenPrior(self):
+        self.phycassert(self.internal_edgelen_prior is self.external_edgelen_prior, "There are separate distributions for internal and external edge lengths")
+        return self.internal_edgelen_prior
 
-    edgelen_dist = property(getEdgelenDist, setEdgelenDist)
+    edgelen_prior = property(getEdgelenPrior, setEdgelenPrior)
     
     def runSAMC(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

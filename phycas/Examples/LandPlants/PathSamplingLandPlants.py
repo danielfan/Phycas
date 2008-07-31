@@ -14,8 +14,8 @@ def analyze(internal_prior_mean):
     analyzer.random_seed = rnseed
     analyzer.default_model = 'hky'
     analyzer.num_rates = 3
-    analyzer.external_edgelen_dist = ProbDist.ExponentialDist(1.0/external_prior_mean)
-    analyzer.internal_edgelen_dist = ProbDist.ExponentialDist(1.0/internal_prior_mean)
+    analyzer.external_edgelen_prior = ProbDist.ExponentialDist(1.0/external_prior_mean)
+    analyzer.internal_edgelen_prior = ProbDist.ExponentialDist(1.0/internal_prior_mean)
     analyzer.using_hyperprior = False 
     analyzer.allow_polytomies = False
     analyzer.data_file_name = data_file_name
