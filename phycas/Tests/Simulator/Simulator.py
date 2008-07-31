@@ -9,8 +9,7 @@ model.base_freqs = [0.1, 0.2, 0.3, 0.4]
 sim.taxon_labels = ['P. parksii', 'P. articulata', 'P._gracilis', 'P. macrophylla']
 
 # Create a model tree
-sim.tree_source = 'usertree'
-sim.tree_topology = Newick('(1:0.1,2:0.15,(3:0.025,4:0.15):0.05)')
+sim.tree_source = TreeCollection(newick=Newick('(1:0.1,2:0.15,(3:0.025,4:0.15):0.05)'))
 
 # Simulation settings
 sim.random_seed = 13579
@@ -22,12 +21,12 @@ if os.path.basename(sys.executable) == 'python_d.exe':
     raw_input('attach debugger to python_d process now')
 
 # Simulate data
-sim()
+simulator = sim()
 
 # Now compute the likelihood of the model tree
 #like.data_source = 'file'
 like.data_file_name = 'simulated.nex'
-like.tree_topology = Newick('(1:0.1,2:0.15,(3:0.025,4:0.15):0.05)')
+like.tree_source = TreeCollection(newick=Newick('(1:0.1,2:0.15,(3:0.025,4:0.15):0.05)'))
 lnL = like()
 print 'lnL =',lnL
 
@@ -49,7 +48,7 @@ for i,nm in enumerate(sim.taxon_labels):
         f.write(',')
     else:
         f.write(';')
-f.write('\n  utree simtree = %s;' % sim.tree_topology)
+f.write('\n  utree simtree = %s;' % simulator.starting_tree)
 f.write('\nend;')
 f.write('\n')
 f.write('\nbegin paup;')

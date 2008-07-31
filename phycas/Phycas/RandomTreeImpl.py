@@ -2,7 +2,7 @@ import copy, os, sys, math, random, copy
 from phycas.Utilities.PhycasCommand import str_value_for_user
 from phycas.Utilities.CommonFunctions import CommonFunctions
 from phycas.Utilities.io import TreeCollection
-from phycas import Phylogeny
+from phycas import Phylogeny, Newick
 
 class TreeSimulator(CommonFunctions, TreeCollection):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -30,7 +30,7 @@ class TreeSimulator(CommonFunctions, TreeCollection):
         eld = self.edgelen_dist
         self._current = 0
         self.trees = []
-        if (not self.taxon_labels) and self.n_taxa < 1:
+        if (not self.taxon_labels) and self.n_taxa < 1 and (not opts.newick):
             raise ValueError("TreeSimulator cannot be created with an empty list of taxon_labels and n_taxa set to 0")
         if eld is None:
             if self.distribution.lower() != "yule":
@@ -76,7 +76,13 @@ class TreeSimulator(CommonFunctions, TreeCollection):
         tm = Phylogeny.TreeManip(t)
         eld = self.edgelen_dist
         self.stdout.debugging("RandomTree._simulateTree seed = %d" %self.r.getSeed())
-        if self.distribution.lower() == "yule":
+        n = self.opts.newick
+        if n:
+            if not isinstance(n, Newick):
+                n = Newick(n)
+            n.buildTree(t)
+            tm.setRandomEdgeLengths(self.edgelen_dist)
+        elif self.distribution.lower() == "yule":
             if eld is None:
                 isp = self.speciation_rate
                 if isp is None or isp <= 0.0:

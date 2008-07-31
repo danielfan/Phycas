@@ -43,11 +43,22 @@ class LikelihoodCore:
         self.parent                 = parent
         self.model                  = None
         self.likelihood             = None
-        self.tree                   = Phylogeny.Tree()
+        self._tree                  = None
         self.r                      = self.parent._getLot()
         self.starting_edgelen_dist  = cloneDistribution(self.parent.opts.model.starting_edgelen_dist)
-    
-    def setupCore(self, zero_based_tips = False):
+    def getTree(self):
+        if self._tree is None:
+            self.setupCore()
+        return self._tree
+    def setTree(self, t):
+        self._tree = t
+    def delTree(self, t):
+        if self._tree:
+            del self._tree
+            self._tree = None
+    tree = property(getTree, setTree, delTree)
+
+    def setupCore(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         The setupCore function does the following based on information stored
@@ -123,24 +134,27 @@ class LikelihoodCore:
             self.parent.npatterns = self.likelihood.getNPatterns()
 
         # Build the starting tree
-        if self.parent.starting_tree == None:
-            # Build a random tree
-            Phylogeny.TreeManip(self.tree).randomTree(
-                self.parent.ntax,           # number of tips
-                self.r,                     # pseudorandom number generator
-                self.starting_edgelen_dist, # distribution from which to draw starting edge lengths
-                False)                      # Yule tree if True, edge lengths independent if False
-            self.parent.warn_tip_numbers = False
-            self.parent.starting_tree = self.tree.makeNewick()
+        if False:
+            if self.parent.starting_tree == None:
+                # Build a random tree
+                Phylogeny.TreeManip(self.tree).randomTree(
+                    self.parent.ntax,           # number of tips
+                    self.r,                     # pseudorandom number generator
+                    self.starting_edgelen_dist, # distribution from which to draw starting edge lengths
+                    False)                      # Yule tree if True, edge lengths independent if False
+                self.parent.warn_tip_numbers = False
+                self.parent.starting_tree = self.tree.makeNewick()
+            else:
+                # Build user-specified tree
+                #self.tree.buildTree(self.parent.starting_tree)
+                self.parent.starting_tree.buildTree(self.tree)
+                if not self.tree.hasEdgeLens():
+                    tm = Phylogeny.TreeManip(self.tree)
+                    tm.setRandomEdgeLengths(self.starting_edgelen_dist)
+                if not self.tree.tipNumbersSetUsingNames():
+                    self.parent.warn_tip_numbers = True
         else:
-            # Build user-specified tree
-            #self.tree.buildTree(self.parent.starting_tree)
-            self.parent.starting_tree.buildTree(self.tree)
-            if not self.tree.hasEdgeLens():
-                tm = Phylogeny.TreeManip(self.tree)
-                tm.setRandomEdgeLengths(self.starting_edgelen_dist)
-            if not self.tree.tipNumbersSetUsingNames():
-                self.parent.warn_tip_numbers = True
+            self.tree = self.parent.getStartingTree()
 
     def prepareForSimulation(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

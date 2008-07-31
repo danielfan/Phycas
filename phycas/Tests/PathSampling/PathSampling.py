@@ -1,22 +1,20 @@
 from phycas import *
-filename = getPhycasTestData('green.nex')
-blob = readFile(filename)
 
 rng = ProbDist.Lot()
-rng.setSeed(13579)
+rng.setSeed(98765)
+n = Newick('(1,2,(3,(4,((5,8),(6,((7,10),9))))))')
 
 model.type                = 'jc'
 model.edgelen_hyperprior  = None
 model.edgelen_dist        = ProbDist.Exponential(10.0)
 
-mcmc.random_seed          = 98765
+mcmc.rng                  = rng
 mcmc.burnin               = 100
 mcmc.ncycles              = 100
 mcmc.sample_every         = 10
 mcmc.report_every         = 10
-mcmc.dataSOURCE           = blob.characters
-mcmc.starting_tree_source = 'usertree'
-mcmc.tree_topology        = '(1,2,(3,(4,((5,8),(6,((7,10),9))))))'
+mcmc.dataSOURCE           = getPhycasTestData('green.nex')
+mcmc.starting_tree_source = randomtree(newick=n, rng=rng)
 mcmc.fix_topology         = True
 mcmc.edge_move_weight     = 1
 

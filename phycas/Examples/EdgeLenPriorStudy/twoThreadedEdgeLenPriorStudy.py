@@ -40,7 +40,7 @@ def simulate(file_name):
     jcmodel.setNGammaRates(1)      # specifying one rate means *no* rate heterogeneity
 
     # Create a tree
-    true_tree = Phylogeny.Tree(newick='(1,2,(3,4))')
+    true_tree = Phylogeny.Tree(newick=Newick('(1,2,(3,4))'))
 
     # Create a true edge length probability distribution
     # If setLot were not called, true_edgelen_dist would use its own random number generator

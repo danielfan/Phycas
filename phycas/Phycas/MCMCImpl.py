@@ -272,6 +272,34 @@ class MCMCImpl(CommonFunctions):
                 self.warning('ignoring %d sampled log-likelihoods in harmonic mean calculation' % nignored)
             self.output('Log of marginal likelihood (harmonic mean method) = %f' % log_harmonic_mean)
 
+    def getStartingTree(self):
+        if self.starting_tree is None:
+            if False:
+                if self.opts.starting_tree_source == 'file':
+                    self.phycassert(self.data_source, "Specified starting_tree_source to be 'file' when data_source was None (file was not read)")
+                    tree_defs = self.reader.getTrees()
+                    self.phycassert(len(tree_defs) > 0, 'a trees block defining at least one tree must be stored in the nexus data file')
+                    # Grab first tree description in the data file
+                    # TODO allow some other tree than the first
+                    self.starting_tree = tree_defs[0]
+                elif self.opts.starting_tree_source == 'usertree':
+                    self.starting_tree = Newick(self.opts.tree_topology)
+                elif self.opts.starting_tree_source == 'random':
+                    self.phycassert(self.ntax > 0, 'expecting ntax to be greater than 0')
+                    self.starting_tree = None
+                else:
+                    self.phycassert(False, "starting_tree_source should equal 'random', 'file', or 'usertree', but instead it was this: %s" % self.starting_tree_source)
+            else:
+                try:
+                    tr_source = self.opts.starting_tree_source
+                    tr_source.setActiveTaxonLabels(self.taxon_labels)
+                    i = iter(tr_source)
+                    self.starting_tree = i.next()
+                except:
+                    self.stdout.error("A starting tree could not be obtained from the starting_tree_source")
+                    raise
+        return self.starting_tree
+
     def setup(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -299,30 +327,10 @@ class MCMCImpl(CommonFunctions):
         mat = ds and ds.getMatrix() or None
         self._loadData(mat)
         
+        
+        
         # Create a tree description to be used for building starting trees
-        if self.opts.starting_tree_source == 'file':
-            self.phycassert(self.data_source, "Specified starting_tree_source to be 'file' when data_source was None (file was not read)")
-            tree_defs = self.reader.getTrees()
-            self.phycassert(len(tree_defs) > 0, 'a trees block defining at least one tree must be stored in the nexus data file')
-            # Grab first tree description in the data file
-            # TODO allow some other tree than the first
-            self.starting_tree = tree_defs[0]
-        elif self.opts.starting_tree_source == 'usertree':
-            self.starting_tree = Newick(self.opts.tree_topology)
-        elif self.opts.starting_tree_source == 'random':
-            self.phycassert(self.ntax > 0, 'expecting ntax to be greater than 0')
-            self.starting_tree = None
-        else:
-            self.phycassert(False, "starting_tree_source should equal 'random', 'file', or 'usertree', but instead it was this: %s" % self.starting_tree_source)
-        if False:
-            try:
-                tr_source = self.opts.starting_tree_source
-                tr_source.setActiveTaxonLabels(self.taxon_labels)
-                i = iter(tr_source)
-                self.starting_tree = i.next()
-            except:
-                self.stdout.error("A starting tree could not be obtained from the starting_tree_source")
-                raise
+        self.getStartingTree()
         
 
         # Determine heating levels if multiple chains

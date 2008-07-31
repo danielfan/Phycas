@@ -13,6 +13,7 @@ class RandomTree(PhycasCommand):
                     ("speciation_rate",  None, "The rate of speciation that governs the branch lengths of the Yule tree simulation process. This is only used if edgelen_dist is None", FloatArgValidate(min=1.0e-10)),
                     ("n_trees", 0, "The number of trees to generate (if 0 is specified, a bottomless collection of trees is generated)", IntArgValidate(min=0)),
                     ("n_taxa", 0, "The number of taxa to generate (only used if the taxon_labels attribute is not specified", IntArgValidate(min=0)),
+                    ("newick", None, "Tree topology to simulate branch lengths on."),
                    ]
                    )
         o = PhycasCommandOutputOptions()

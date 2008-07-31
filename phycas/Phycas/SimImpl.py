@@ -23,7 +23,16 @@ class SimImpl(CommonFunctions):
         self.ntax                 = None
         self.sim_model_tree       = None
         self.data_matrix          = None
-        
+    def getStartingTree(self):
+        if self.starting_tree is None:
+            try:
+                tr_source = self.opts.tree_source
+                i = iter(tr_source)
+                self.starting_tree = i.next()
+            except:
+                self.stdout.error("A tree could not be obtained from the tree_source")
+                raise
+        return self.starting_tree
     def run(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -32,7 +41,7 @@ class SimImpl(CommonFunctions):
         
         """
         self.starting_tree_source = self.opts.tree_source
-        self.starting_tree        = self.opts.tree_topology
+        self.getStartingTree()
         self.ntax                 = len(self.opts.taxon_labels)
         self.phycassert(self.ntax > 3, 'Must specify labels for at least four taxa')
         core = LikelihoodCore(self)

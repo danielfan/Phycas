@@ -1,7 +1,7 @@
 import os, sys, subprocess
 from phycas.ReadNexus._NexusReader import FileFormats
 from phycas.Utilities.CommonFunctions import getDefaultOutputter
-from phycas import Phylogeny
+from phycas import Phylogeny, Newick
 _phycas_dir = None
 
 def getPhycasDir():
@@ -99,9 +99,11 @@ class TreeCollection(object):
             self.taxon_labels = kwargs.get("taxon_labels")
             newick = kwargs.get("newick")
             if newick:
+                if not isinstance(newick, Newick):
+                    newick = Newick(newick)
                 tree = Phylogeny.Tree()
                 # by default the tree is read as 1-based (as in NEXUS trees)
-                tree.buildFromString(newick, kwargs.get("zero_based", False)) 
+                newick.buildTree(tree) 
                 self.trees = [tree]
             else:
                 self.trees = kwargs.get("trees", [])

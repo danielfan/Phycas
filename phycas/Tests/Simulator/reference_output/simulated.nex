@@ -22,7 +22,7 @@ begin trees;
     2 'P. articulata',
     3 P._gracilis,
     4 'P. macrophylla';
-  utree simtree = (1:0.1,2:0.15,(3:0.025,4:0.15):0.05);
+  utree simtree = (1:0.10000,2:0.15000,(3:0.02500,4:0.15000):0.05000);
 end;
 
 begin paup;

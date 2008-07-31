@@ -41,8 +41,7 @@ mcmc.nchains                      = 1
 mcmc.ncycles                      = 2500
 mcmc.rng                          = rng
 mcmc.dataSOURCE                   = blob.characters
-mcmc.starting_tree_source         = 'random'
-#mcmc.starting_tree_source         = randomtree(n_taxa=len(blob.taxon_labels), rng=rng)
+mcmc.starting_tree_source         = randomtree(n_taxa=len(blob.taxon_labels), rng=rng)
 
 import sys,os
 if os.path.basename(sys.executable) == 'python_d.exe':

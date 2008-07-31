@@ -33,6 +33,17 @@ class LikeImpl(CommonFunctions):
         self.ntax = self.data_matrix.getNTax()
         self.nchar = self.data_matrix.getNChar() # used for Gelfand-Ghosh simulations only
 
+    def getStartingTree(self):
+        if self.starting_tree is None:
+            try:
+                tr_source = self.opts.tree_source
+                tr_source.setActiveTaxonLabels(self.taxon_labels)
+                i = iter(tr_source)
+                self.starting_tree = i.next()
+            except:
+                self.stdout.error("A tree could not be obtained from the tree_source")
+                raise
+        return self.starting_tree
     def run(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -40,13 +51,9 @@ class LikeImpl(CommonFunctions):
         model.
         
         """
-        if self.opts.tree_topology.__class__.__name__ == 'str':
-            self.starting_tree = Newick(self.opts.tree_topology)
-        else:
-            self.phycassert(self.opts.tree_topology.__class__.__name__ == 'Newick', 'expecting tree_topology to be either a string or a Newick object')
-            self.starting_tree = self.opts.tree_topology
         self.phycassert(self.opts.data_file_name is not None, "specify data_file_name before calling like()")
         self.readDataFromFile()
+        self.starting_tree =  self.getStartingTree()
         core = LikelihoodCore(self)
         core.setupCore()
         core.prepareForLikelihood()
