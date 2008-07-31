@@ -1,4 +1,9 @@
 from phycas import *
+filename = getPhycasTestData('green.nex')
+blob = readFile(filename)
+
+rng = ProbDist.Lot()
+rng.setSeed(13579)
 
 model.type                = 'jc'
 model.edgelen_hyperprior  = None
@@ -9,8 +14,7 @@ mcmc.burnin               = 100
 mcmc.ncycles              = 100
 mcmc.sample_every         = 10
 mcmc.report_every         = 10
-mcmc.data_source          = 'file'
-mcmc.data_file_name       = '../Data/green.nex'
+mcmc.dataSOURCE           = blob.characters
 mcmc.starting_tree_source = 'usertree'
 mcmc.tree_topology        = '(1,2,(3,(4,((5,8),(6,((7,10),9))))))'
 mcmc.fix_topology         = True

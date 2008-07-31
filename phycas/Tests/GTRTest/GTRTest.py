@@ -1,7 +1,13 @@
 # This file does a short MCMC analysis under the GTR+I+G model
 
 from phycas import *
-#Phycas.PhycassertRaisesException = True
+filename = getPhycasTestData('green.nex')
+blob = readFile(filename)
+
+rng = ProbDist.Lot()
+rng.setSeed(13579)
+
+
 
 model.type = 'gtr'
 model.num_rates = 4
@@ -27,8 +33,8 @@ mcmc.tree_scaler_weight = 1
 mcmc.slice_weight = 1
 mcmc.slice_max_units = 0
 mcmc.starting_tree_source = 'random'
-mcmc.random_seed = 13579
-mcmc.data_file_name = getPhycasTestData('green.nex')
+mcmc.rng = rng
+mcmc.dataSOURCE = blob.characters
 
 import sys,os
 if os.path.basename(sys.executable) == 'python_d.exe':

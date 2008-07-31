@@ -1,4 +1,9 @@
 from phycas import *
+filename = getPhycasTestData('nyldna4.nex')
+blob = readFile(filename)
+
+rng = ProbDist.Lot()
+rng.setSeed(13579)
 
 model.type                        = 'hky'
 
@@ -35,10 +40,10 @@ mcmc.out.params                   = 'fixed.p'
 mcmc.out.params.mode              = REPLACE
 mcmc.nchains                      = 1
 mcmc.ncycles                      = 2500
-mcmc.random_seed                  = 13579
-mcmc.data_source                  = 'file'
-mcmc.data_file_name               = getPhycasTestData('nyldna4.nex')
+mcmc.rng                          = rng
 mcmc.starting_tree_source         = 'random'
+mcmc.dataSOURCE                   = blob.characters
+
 
 import sys,os
 if os.path.basename(sys.executable) == 'python_d.exe':

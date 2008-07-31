@@ -22,6 +22,7 @@ class SimImpl(CommonFunctions):
         self.starting_tree        = None
         self.ntax                 = None
         self.sim_model_tree       = None
+        self.data_matrix          = None
         
     def run(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

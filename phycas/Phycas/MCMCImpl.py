@@ -211,12 +211,6 @@ class MCMCImpl(CommonFunctions):
     def paramFileClose(self):
         self.paramf.close()
 
-    #def getPrefix(self):
-    #    prefix = os.path.abspath(self.opts.data_file_name) #os.path.basename(self.data_file_name)
-    #    if self.opts.outfile_prefix:
-    #        prefix = self.opts.outfile_prefix
-    #    return prefix
-    
     def openParameterAndTreeFiles(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -230,14 +224,19 @@ class MCMCImpl(CommonFunctions):
 
         self.paramFileOpen()
         self.treeFileOpen()
-
-    def readDataFromFile(self):
-        self.reader.readFile(self.opts.data_file_name)
-        self.taxon_labels = self.reader.getTaxLabels()
-        self.data_matrix = self.reader.getLastDiscreteMatrix(True)
-        self.ntax = self.data_matrix.getNTax()
-        self.nchar = self.data_matrix.getNChar() # used for Gelfand-Ghosh simulations only
-
+        
+    def _loadData(self, matrix):
+        self.data_matrix = matrix
+        if matrix is None:            
+            self.taxon_labels = []
+            self.ntax = 0
+            self.nchar = 0 # used for Gelfand-Ghosh simulations only
+        else:
+            self.taxon_labels = matrix.taxa
+            self.ntax = self.data_matrix.getNTax()
+            self.nchar = self.data_matrix.getNChar() # used for Gelfand-Ghosh simulations only
+        self.phycassert(len(self.taxon_labels) == self.ntax, "Number of taxon labels does not match number of taxa.")
+        
     def calcMarginalLikelihood(self):
         marginal_like = 0.0
         if self.opts.doing_path_sampling:
@@ -296,18 +295,10 @@ class MCMCImpl(CommonFunctions):
             self.opts.model.internal_edgelen_dist = self.opts.model.edgelen_dist
         if self.opts.model.external_edgelen_dist is None:
             self.opts.model.external_edgelen_dist = self.opts.model.edgelen_dist
+        ds = self.opts.dataSOURCE
+        mat = ds and ds.getMatrix() or None
+        self._loadData(mat)
         
-        # Read the data
-        if self.opts.data_source == 'file':
-            self.readDataFromFile()
-        elif (len(self.taxon_labels) != self.opts.ntax):
-            # Create and store a list of default taxon labels
-            self.ntax = self.opts.ntax
-            for i in range(self.ntax):
-                s = 'taxon_%d' % (i + 1)
-                self.taxon_labels.append(s)
-        self.phycassert(len(self.taxon_labels) == self.ntax, "Number of taxon labels does not match number of taxa.")
-
         # Create a tree description to be used for building starting trees
         if self.opts.starting_tree_source == 'file':
             self.phycassert(self.data_source, "Specified starting_tree_source to be 'file' when data_source was None (file was not read)")
@@ -323,7 +314,17 @@ class MCMCImpl(CommonFunctions):
             self.starting_tree = None
         else:
             self.phycassert(False, "starting_tree_source should equal 'random', 'file', or 'usertree', but instead it was this: %s" % self.starting_tree_source)
+        if False:
+            try:
+                tr_source = self.opts.starting_tree_source
+                tr_source.setActiveTaxonLabels(self.taxon_labels)
+                i = iter(tr_source)
+                self.starting_tree = i.next()
+            except:
+                self.stdout.error("A starting tree could not be obtained from the starting_tree_source")
+                raise
         
+
         # Determine heating levels if multiple chains
         if self.heat_vector == None:
             if self.opts.nchains == 1:
@@ -494,10 +495,10 @@ class MCMCImpl(CommonFunctions):
         self.nsamples = self.opts.ncycles//self.opts.sample_every
         
         if self.opts.verbose:
-            if self.opts.data_source == None:
+            if self.data_matrix == None:
                 self.output('Data source:    None (running MCMC with no data to explore prior)')
-            elif self.opts.data_source == 'file':
-                self.output('Data source:    %s' % self.opts.data_file_name)
+            else:
+                self.output('Data source:    %s' % str_value_for_user(self.opts.dataSource))
                 all_missing = self.mcmc_manager.getColdChain().likelihood.getListOfAllMissingSites()
                 num_excluded = len(all_missing)
                 if num_excluded > 0:
@@ -507,8 +508,6 @@ class MCMCImpl(CommonFunctions):
                         tmp = all_missing[:10]
                         all_missing = all_missing[10:]
                         self.output('***   '+','.join([str(i+1) for i in tmp]))
-            else:
-                self.phycas.abort("Only 'file' or None are allowed for data_source")
             self.output('Starting tree:  %s' % self.starting_tree)
             if self.opts.doing_path_sampling:
                 self.output('\nPerforming path sampling MCMC to estimate marginal likelihood.')
@@ -611,10 +610,9 @@ class MCMCImpl(CommonFunctions):
             self.ps_sampled_likes.append([])
             self.ps_beta_index = 0
             self.burnin = self.opts.burnin
-            if self.opts.data_source is None:
+            if self.data_matrix is None:
                 self.mainMCMCLoop(explore_prior=True)
             else:
-                #print '["', '"],\n["'.join(["".join([str(i) for i in row]) for row in self.data_matrix.getCodedDataMatrix()]), '"]' #MTH
                 self.mainMCMCLoop()
 
         self.adaptSliceSamplers()

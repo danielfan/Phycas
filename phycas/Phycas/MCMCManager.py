@@ -117,7 +117,7 @@ class LikelihoodCore:
         self.likelihood = Likelihood.TreeLikelihood(self.model)
         self.likelihood.setUFNumEdges(self.parent.opts.uf_num_edges)
         self.likelihood.useUnimap(self.parent.opts.use_unimap)
-        if self.parent.opts.data_source == 'file':
+        if self.parent.data_matrix:
             self.likelihood.copyDataFromDiscreteMatrix(self.parent.data_matrix)
             #POL changed self.npatterns to self.parent.npatterns below
             self.parent.npatterns = self.likelihood.getNPatterns()
@@ -384,7 +384,7 @@ class MarkovChain(LikelihoodCore):
 
         self.likelihood.replaceModel(self.model)            
 
-        if self.parent.opts.data_source is None:
+        if self.parent.opts.dataSOURCE is None:
             self.likelihood.setNoData() # user apparently wants to run MCMC with no data
         
         # Create an MCMCChainManager object and add all necessary updaters

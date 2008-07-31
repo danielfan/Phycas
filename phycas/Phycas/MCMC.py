@@ -1,6 +1,6 @@
 from phycas.Utilities.PhycasCommand import *
 from phycas.Utilities.CommonFunctions import CommonFunctions
-from phycas import model
+from phycas import model, randomtree, P
 from phycas.Phycas.MCMCImpl import MCMCImpl
 #from phycas.ProbDist import Beta, Exponential, InverseGamma
 import copy
@@ -16,8 +16,9 @@ class MCMC(PhycasCommand):
                 ("verbose",                True,                            "You will get more output if True, less output if False", BoolArgValidate),
                 ("quiet",                  False,                           "If True, output will only be sent to the log file if open (see below); if False, output will be sent to the console as well", BoolArgValidate),
                 ("model",                  model,                           "Specifies the model to use. By default, uses the predefined model object. Type model.help to set the settings for this model."),
-                ("data_source",            'file',                          "Specifies the source of data, if any, to be used in the MCMC analysis. Should be either 'file' or None.", EnumArgValidate(['file',None])),
-                ("data_file_name",         '',                              "Used to specify the nexus data file name to be used for subsequent analyses"),
+                ("dataSOURCE",             P.characters,                    "The DataSource that provides the data, if any, to be used in the MCMC analysis. Should be a DataSource object", DataSourceValidate),
+                #("data_source",            'file',                          "Specifies the source of data, if any, to be used in the MCMC analysis. Should be either 'file' or None.", EnumArgValidate(['file',None])),
+                #("data_file_name",         '',                              "Used to specify the nexus data file name to be used for subsequent analyses"),
                 ("starting_tree_source",   'random',                        "Source of the starting tree topology: can be either 'random' or 'usertree'. Note that this setting does not determine the edge lengths in the starting tree, only the topology. Starting edge lengths are determined by the probability distribution specified in starting_edgelen_dist.", EnumArgValidate(['random','usertree'])),
                 ("tree_topology",          None,                            "Unused unless starting_tree_source is 'usertree', in which case this should be a standard newick string representation of the tree topology; e.g. '(A:0.01,B:0.071,(C:0.013,D:0.021):0.037)'"),
                 ("fix_topology",           False,                           "If True, an EdgeMove move will be substituted for the LargetSimonMove, so edge lengths will be updated by slice sampling but the topology will remain unchanged during an MCMC analysis", BoolArgValidate),
