@@ -45,7 +45,6 @@ class LikelihoodCore:
         self.likelihood             = None
         self._tree                  = None
         self.r                      = self.parent._getLot()
-        self.starting_edgelen_dist  = cloneDistribution(self.parent.opts.model.starting_edgelen_dist)
     def getTree(self):
         if self._tree is None:
             self.setupCore()
@@ -71,7 +70,7 @@ class LikelihoodCore:
         """
         # Set seed if user has supplied one
         self.r = self.parent._getLot()
-        self.starting_edgelen_dist.setLot(self.r)
+        #self.starting_edgelen_dist.setLot(self.r)
 
         # Create a substitution model
         if self.parent.opts.model.type in ['gtr','hky']:
@@ -134,27 +133,7 @@ class LikelihoodCore:
             self.parent.npatterns = self.likelihood.getNPatterns()
 
         # Build the starting tree
-        if False:
-            if self.parent.starting_tree == None:
-                # Build a random tree
-                Phylogeny.TreeManip(self.tree).randomTree(
-                    self.parent.ntax,           # number of tips
-                    self.r,                     # pseudorandom number generator
-                    self.starting_edgelen_dist, # distribution from which to draw starting edge lengths
-                    False)                      # Yule tree if True, edge lengths independent if False
-                self.parent.warn_tip_numbers = False
-                self.parent.starting_tree = self.tree.makeNewick()
-            else:
-                # Build user-specified tree
-                #self.tree.buildTree(self.parent.starting_tree)
-                self.parent.starting_tree.buildTree(self.tree)
-                if not self.tree.hasEdgeLens():
-                    tm = Phylogeny.TreeManip(self.tree)
-                    tm.setRandomEdgeLengths(self.starting_edgelen_dist)
-                if not self.tree.tipNumbersSetUsingNames():
-                    self.parent.warn_tip_numbers = True
-        else:
-            self.tree = self.parent.getStartingTree()
+        self.tree = self.parent.getStartingTree()
 
     def prepareForSimulation(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

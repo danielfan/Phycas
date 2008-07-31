@@ -7,7 +7,7 @@ from phycas import *
 mcmc.data_source              = None
 mcmc.outfile_prefix           = 'nodata.nex'  # used for creating *.p and *.t file names
 mcmc.ntax                     = 10 
-mcmc.starting_tree_source     = 'random'
+mcmc.starting_tree_source     = randomtree(n_taxa=10)
 mcmc.ncycles                  = 1000
 mcmc.nchains                  = 1
 mcmc.sample_every             = 20

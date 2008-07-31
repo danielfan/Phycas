@@ -11,10 +11,7 @@ class Sim(PhycasCommand):
                 ("taxon_labels",    ['taxon1', 'taxon2', 'taxon3', 'taxon4'], "Names to use for taxa in simulated data set (number of labels defined determines the number of taxa in the simulated dataset)"),
                 ("nchar",           1000,                                     "Number of characters to generate", IntArgValidate(min=1)),
                 ("tree_source",     randomtree,                               "TreeCollection that will provide the model tree for the simulation.", TreeSourceValidate),
-                ] + PhycasCommand._getRNGOptions() + 
-                [
-                ("starting_edgelen_dist",  Exponential(10.0),                 "Used to select the starting edge lengths when tree_source is 'random'"),
-                ]
+                ] + PhycasCommand._getRNGOptions()
                 )                                                  
         PhycasCommand.__init__(self, args, "sim", "Simulates DNA sequences according to the specified model.")
         

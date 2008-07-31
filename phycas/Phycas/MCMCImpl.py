@@ -530,10 +530,8 @@ class MCMCImpl(CommonFunctions):
                 self.output('No. cycles:     %s' % self.opts.ncycles)
                 self.output('Sample every:   %s' % self.opts.sample_every)
                 self.output('No. samples:    %s' % self.nsamples)
-            #self.output('Sampled trees will be saved in %s' % self.tree_file_name)
-            self.output('Sampled trees will be saved in %s' % self.opts.out.trees.filename)
-            #self.output('Sampled parameters will be saved in %s' % self.param_file_name)
-            self.output('Sampled parameters will be saved in %s' % self.opts.out.params.filename)
+            self.output('Sampled trees will be saved in %s' % str_value_for_user(self.opts.out.trees))
+            self.output('Sampled parameters will be saved in %s' % str_value_for_user(self.opts.out.params))
             if self.opts.use_unimap:
                 self.output('Using uniformized mapping MCMC')
             else:

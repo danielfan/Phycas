@@ -171,6 +171,10 @@ class TreeSummarizer(CommonFunctions):
         trivial_ignored = 0
         uninteresting_ignored = 0
         data = []
+        stride = ntrees // ndivisions
+        if stride < 2:
+            self.stdout.error("Insufficient number of trees (%d) to construct a splits through time plot with %d divisions" % (ntrees, ndivisions))
+            return
         xvect = range(0, ntrees + 1, ntrees//ndivisions)
         for k,value in split_vect:
             if len(value) == 2:
@@ -432,7 +436,9 @@ class TreeSummarizer(CommonFunctions):
         self.stdout.info('Number of distinct tree topologies found = %d' % len(tree_map.keys()))
         #self.stdout.info('Number of distinct splits found = %d' % (len(split_map.keys()) - t.getNTips()))
         self.stdout.info('Number of distinct splits found = %d' % (len(split_map.keys()) - t.getNObservables()))
-
+        if num_trees_considered == 0:
+            self.stdout.info('\nSumT finished.')
+            return
         # Sort the splits from highest posterior probabilty to lowest        
         split_vect = split_map.items()
         c = lambda x,y: cmp(y[1][0], x[1][0])

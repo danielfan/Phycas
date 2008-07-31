@@ -30,7 +30,6 @@ class Model(PhycasCommand):
                 ("external_edgelen_dist",  None,                            "Can be used to set a prior distribution for external edges that differs from that applied to internal edges. If this is set to something besides None, you should also set internal_edgelen_dist appropriately. Setting the edgelen_dist property sets both external_edgelen_dist and internal_edgelen_dist to the same value"),
                 ("edgelen_dist",           Exponential(2.0),                "Sets both internal_edgelen_dist and external_edgelen_dist to the supplied value. Use this setting if you want all edges in the tree to have the same prior distribution. Using this setting will overwrite any values previously supplied for internal_edgelen_dist and external_edgelen_dist"),
                 ("fix_edgelens",           False,                           "not yet documented", BoolArgValidate),
-                ("starting_edgelen_dist",  Exponential(10.0),               "Used to select the starting edge lengths when starting_tree_source is 'random'"),
                 ("use_flex_model",         False,                           "not yet documented", BoolArgValidate),
                 ("flex_ncat_move_weight",  1,                               "Number of times each cycle to attempt an ncat move", IntArgValidate(min=0)),
                 ("flex_num_spacers",       1,                               "Number of fake rates between each adjacent pair of real rates", IntArgValidate(min=1)),

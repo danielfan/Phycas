@@ -53,12 +53,26 @@ mcmc.allow_polytomies = True
 mcmc.polytomy_prior   = True
 mcmc.topo_prior_C     = exp(1.0)
 
-# Start with a random tree
-mcmc.starting_tree_source = 'random'
 
 # Specify the data file (here we specified the location relative to this file)
 # Note that you should use forward slashes ('/') even if running in Windows.
-mcmc.data_file_name = 'ShoupLewis.nex'
+file_contents = readFile('ShoupLewis.nex')
+mcmc.data_source = file_contents.characters
+
+# We would like to start with a random tree, so we will create tree source
+# that generates random trees for the taxa that we have in our data set.
+
+# So that we can "replay" an analysis (if we would like to), we should set the 
+# seed on a pseudorandom number generator and give that random number generator 
+# to the MCMC command and the randomtree simulator
+
+# first create the random number generator
+rng = ProbDist.Lot()
+# now set the seed to a positive integer
+rng.setSeed(13957)
+
+mcmc.rng = rng
+mcmc.starting_tree_source = randomtree(rng=rng)
 
 # Let slice sampler have maximum freedom to extend slice
 mcmc.slice_max_units = 0
@@ -72,9 +86,6 @@ mcmc.out.params.mode = REPLACE
 # Specify the names of the file that will store the output
 mcmc.out.log.prefix = 'output'
 mcmc.out.log.mode = REPLACE
-
-# Choose a pseudorandom number seed so that we can later repeat the analysis exactly if we so desire
-mcmc.random_seed = 13957
 
 # Tell Phycas that we want to run the MCMC analysis for 1000 cycles per beta value,
 # and that we want to burn-in for 1000 cycles before sampling the first beta value.

@@ -53,22 +53,36 @@ mcmc.allow_polytomies = True
 mcmc.polytomy_prior   = True
 mcmc.topo_prior_C     = exp(1.0)
 
-# Start with a random tree
-mcmc.starting_tree_source = 'random'
 
-# Specify the data file (here we specified the location relative to this file)
+# Read the data from a file (here we specified the location relative to this file)
 # Note that you should use forward slashes ('/') even if running in Windows.
-mcmc.data_file_name = 'ShoupLewis.nex'
+file_contents = readFile('ShoupLewis.nex')
+mcmc.data_source = file_contents.characters
+
+# We would like to start with a random tree, so we will create tree source
+# that generates random trees for the taxa that we have in our data set.
+
+# So that we can "replay" an analysis (if we would like to), we should set the 
+# seed on a pseudorandom number generator and give that random number generator 
+# to the MCMC command and the randomtree simulator
+
+# first create the random number generator
+rng = ProbDist.Lot()
+# now set the seed to a positive integer
+rng.setSeed(13957)
+
+mcmc.rng = rng
+mcmc.starting_tree_source = randomtree(rng=rng)
 
 # Let slice sampler have maximum freedom to extend slice
 mcmc.slice_max_units = 0
 
-# Tell Phycas that we want to run the MCMC analysis for 20000 cycles.
+# Tell Phycas that we want to run the MCMC analysis for 2000 cycles.
 # Note that a cycle in Phycas differs from a generation in MrBayes.
 # A cycle involves updating each non-branch-length parameter in the model
 # as well as a certain number of Metropolis-Hastings updates of branch
 # lengths and tree topology.
-mcmc.ncycles = 20000
+mcmc.ncycles = 2000
 mcmc.sample_every = 10    # save tree and parameters every 10 cycles
 
 # Specify the names of the files that will store the trees and parameter values
