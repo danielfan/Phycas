@@ -111,8 +111,9 @@ class Tree
 		void					RerootAtThisInternal(TreeNode * nd);
 		void					RerootAtTip(unsigned num);
 		void					RefreshPreorder(TreeNode * nd = NULL) const;
-		std::string &			AppendNewick(std::string &);
+		std::string &			AppendNewick(std::string &, bool useNumbers=false);
 		std::string				MakeNewick();
+		std::string				MakeNumberedNewick();
 		bool					SetNumberFromName(TreeNode * nd, std::set<unsigned> & used);
         unsigned                FindTipByName(std::string tipname);
 		TreeNodeVec				GetNodesWithEdges();

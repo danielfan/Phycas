@@ -296,8 +296,8 @@ void Tree::RefreshPreorder(TreeNode *nd) const
 
 	if (nd == NULL)
 		nd = firstPreorder;
-
-	PHYCAS_ASSERT(nd != NULL);
+	if (nd == NULL)
+		return; // tolerate calling this on a empty tree
 
 	if (nd->lChild == NULL && nd->rSib == NULL)
 		{
@@ -1491,7 +1491,8 @@ void Tree::BuildFromString(
 |	having node number x lacks a name, the "name" used for it in the tree description is x + 1.
 */
 std::string & Tree::AppendNewick(
-  std::string & s)  /**< */
+  std::string & s,
+  bool useNumbers)
 	{
 	if (preorderDirty)
 		RefreshPreorder();
@@ -1516,7 +1517,7 @@ std::string & Tree::AppendNewick(
 		{
 		// If the root node has a name, use it; otherwise convert the node number to a string
 		// Note that neither name nor number should be output for root node if the tree is rooted
-		if (nd->nodeName.empty())
+		if (useNumbers || nd->nodeName.empty())
 			append_unsigned(s, nd->GetNodeNumber() + 1);
 		else
 			s << nd->nodeName;
@@ -1552,7 +1553,7 @@ std::string & Tree::AppendNewick(
 	if (nd->GetNextPreorder() == NULL)
 		{
 		// Two taxon tree, presumably this won't happen, but it is easy to deal with
-		if (nd->nodeName.empty())
+		if (useNumbers || nd->nodeName.empty())
 			append_unsigned(s, nd->GetNodeNumber() + 1);
 		else
 			s << nd->nodeName;
@@ -1578,7 +1579,7 @@ std::string & Tree::AppendNewick(
 		if (nd->IsTip())
 			{
 			// Output taxon names for tips if they are available, otherwise output tip node number plus 1
-			if (nd->nodeName.empty())
+			if (useNumbers || nd->nodeName.empty())
 				append_unsigned(s, nd->GetNodeNumber() + 1);
 			else
 				s << nd->nodeName;
@@ -1607,7 +1608,7 @@ std::string & Tree::AppendNewick(
 
 					// Output names for internal nodes if they are available, otherwise 
 					// do not output anything
-					if (!tempAncNode->nodeName.empty())
+					if (!(useNumbers || tempAncNode->nodeName.empty()))
 						s << tempAncNode->nodeName;
 
 					if (showEdgeLens)
@@ -1641,7 +1642,7 @@ std::string & Tree::AppendNewick(
 			tmpNode = tmpNode->par;
 			TreeNode *tmpNodePar = tmpNode->par;
 			bool tmpNodeParIsRoot = tmpNodePar->IsTipRoot();
-			if (!tmpNode->nodeName.empty())
+			if (!(useNumbers || tmpNode->nodeName.empty()))
 				s << tmpNode->nodeName;
 			if (showEdgeLens && !tmpNodeParIsRoot)
 				{
@@ -2171,6 +2172,20 @@ std::string Tree::MakeNewick()
 	{
 	std::string s;
 	AppendNewick(s);
+	return s;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Creates a parenthetical description of the tree (Newick format). If the tree has edge lengths, these are included in
+|	the Newick description. Any nodes having non-empty node names are named in the Newick description. Tip nodes that
+|	do not have stored names are given a name that equals 1 plus their node number. Calls AppendNewick() to do the work,
+|	but unlike AppendNewick() does not have a std::string reference parameter and returns a std::string by value rather
+|	than by reference.
+*/
+std::string Tree::MakeNumberedNewick()
+	{
+	std::string s;
+	AppendNewick(s, true);
 	return s;
 	}
 

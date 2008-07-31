@@ -33,7 +33,7 @@ class CommonFunctions(object):
         except:
             self.optsout = None
             self.stdout = getDefaultOutputter()
-
+        self._rng = None
     def __del__(self):
         self.close()
 
@@ -68,12 +68,17 @@ class CommonFunctions(object):
     def remove_mirror(self, m):
         self.stdout.remove_mirror(m)
     def _getLot(self):
-        l = ProbDist.Lot()
+        l = self.opts.rng
+        if l:
+            self._rng = l
+        elif self._rng is None:
+            self._rng = ProbDist.Lot()
         try:            
             i = int(self.opts.random_seed)
             if i != 0:
-                l.setSeed(i)
+                self._rng.setSeed(i)
+                self.opts.random_seed = 0
         except:
             pass
-        return l
+        return self._rng
 
