@@ -80,8 +80,9 @@ class MCMC(PhycasCommand):
         
     def __call__(self, **kwargs):
         self.set(**kwargs)
-        self.checkSanity()
+        #self.checkSanity()
         c = copy.deepcopy(self)
+        #c = self
         mcmc_impl = MCMCImpl(c)
         mcmc_impl.run()
 

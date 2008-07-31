@@ -45,6 +45,7 @@ class LikelihoodCore:
         self.likelihood             = None
         self._tree                  = None
         self.r                      = self.parent._getLot()
+
     def getTree(self):
         if self._tree is None:
             self.setupCore()

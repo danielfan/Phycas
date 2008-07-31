@@ -37,7 +37,7 @@ class TreeSimulator(CommonFunctions, TreeCollection):
                 raise ValueError("edgelen_dist or the speciation_rate must be set to generate trees from the Yule process")
         else:
             eld.setLot(self.r)
-        self.stdout.info("Generating %s" % str(self))
+        self.stdout.debugging("Generating %s" % str(self))
 
     def __str__(self):
         nt = self.n_trees
@@ -52,6 +52,15 @@ class TreeSimulator(CommonFunctions, TreeCollection):
         else:
             y = "with edge lengths drawn from %s" % str_value_for_user(eld)
         return "collection of %stree(s) simulated by %s %s" % (n, t, y)
+
+    def setActiveTaxonLabels(self, tl):
+        if not self.taxon_labels:
+            self.taxon_labels = tl
+        if tl:
+            self.active_taxa = [i.lower() for i in tl]
+        else:
+            self.active_taxa = None
+        self._checkActiveTaxa()
 
     def writeTree(self, tree, name="", rooted=None):
         raise ValueError("TreeSimulator collection of trees cannot be used as an output destination")

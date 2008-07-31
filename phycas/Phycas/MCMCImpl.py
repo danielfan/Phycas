@@ -66,6 +66,7 @@ class MCMCImpl(CommonFunctions):
         self.ps_sampled_betas       = None
         self.ps_sampled_likes       = None
         self.ps_delta_beta          = 0.0
+        self.phycassert(self.opts.ps_nbetavals > 0, 'ps_nbetavals cannot be less than 1')
 
     def sliceSamplerReport(self, s, nm):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

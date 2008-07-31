@@ -405,8 +405,9 @@ class FileOutputSpec(PhycasOutput):
         return 'REPLACE, APPEND, or ADD_NUMBER'
 
     def __str__(self):
-       PhycasTablePrinter._reset_term_width()
-       return "\n".join(self._help_str_list())
+        return "Filestream to %s" % self._getFilename()
+        #PhycasTablePrinter._reset_term_width()
+        #return "\n".join(self._help_str_list())
 
     def _getFilename(self):
         if self._opened_filename:
