@@ -1,4 +1,4 @@
-#!/bin/sh"
+#!/bin/sh
 active_env_path="$HOME/.phycas/active_phycas_env.sh"
 if test -f "$active_env_path"
 then

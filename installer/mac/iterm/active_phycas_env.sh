@@ -1,4 +1,4 @@
-#!/bin/sh"
+#!/bin/sh
 ################################################################################################
 # This file sourced whenever phycas is run through the Phycas.app 
 # The Phycas.app executes ~/.phycas/run_phycas.sh which sources this file before invoking python.
