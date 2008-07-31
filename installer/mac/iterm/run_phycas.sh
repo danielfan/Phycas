@@ -14,7 +14,7 @@ then
     then
         $PYTHONINTERPRETER -i -c "from phycas import *"
     else
-        $PYTHONINTERPRETER -c "import IPython ; IPython.Shell.start().mainloop()" -c "from phycas import *"
+        $PYTHONINTERPRETER -c "from IPython.Shell import IPShell ; IPShell(['-i', '-c','from phycas import *']).mainloop()"
     fi
 else
     $PYTHONINTERPRETER -i $@
