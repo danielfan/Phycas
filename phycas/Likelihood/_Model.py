@@ -152,7 +152,7 @@ class HKYModel(HKYModelBase):
         base frequencies being set to 0.1, 0.2, 0.3 and 0.4.
         
         """
-        return HKYModelBase.setStateFreqParam(self, i, value)
+        return HKYModelBase.setStateFreqUnnorm(self, i, value)
 
     def setAllFreqsEqual(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

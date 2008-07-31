@@ -317,21 +317,31 @@ class MCMCImpl(CommonFunctions):
         6) establishes an output log file name if requested
         
         """
-        # REVISIT LATER
-        # Hack until PhycasCommand implements properties
-        if self.opts.model.internal_edgelen_dist is None:
+        # BOOKMARK
+        if self.opts.model.edgelen_dist is not None:
+            # set both internal and external edge length priors to edgelen_dist
             self.opts.model.internal_edgelen_dist = self.opts.model.edgelen_dist
-        if self.opts.model.external_edgelen_dist is None:
             self.opts.model.external_edgelen_dist = self.opts.model.edgelen_dist
+        else:
+            # Ensure that user has specified both internal and external edge length priors
+            self.phycassert(self.opts.model.internal_edgelen_dist is not None, 'internal_edgelen_dist cannot be None if edgelen_dist is None')
+            self.phycassert(self.opts.model.external_edgelen_dist is not None, 'external_edgelen_dist cannot be None if edgelen_dist is None')
+            
+        if self.opts.model.edgelen_hyperprior is not None:
+            # Ensure that both internal and external edgelen priors are Exponential
+            if self.opts.model.internal_edgelen_dist.getDistName() != 'Exponential':
+                self.opts.model.internal_edgelen_dist = Exponential(1.0)
+                self.warning('internal_edgelen_dist reset to Exponential because edgelen_hyperprior was specified')
+            if self.opts.model.external_edgelen_dist.getDistName() != 'Exponential':
+                self.opts.model.external_edgelen_dist = Exponential(1.0)
+                self.warning('external_edgelen_dist reset to Exponential because edgelen_hyperprior was specified')
+
         ds = self.opts.data_source
         mat = ds and ds.getMatrix() or None
         self._loadData(mat)
         
-        
-        
         # Create a tree description to be used for building starting trees
         self.getStartingTree()
-        
 
         # Determine heating levels if multiple chains
         if self.heat_vector == None:
@@ -388,49 +398,48 @@ class MCMCImpl(CommonFunctions):
         return ((c % mod) == 0)
         
     def explorePrior(self, cycle):
+        self.phycassert(self.opts.allow_polytomies == False, 'polytomies not yet allowed in MCMCImpl.explorePrior')
         chain_index = self.mcmc_manager.getColdChainIndex()
         chain = self.mcmc_manager.getColdChain()
+        tm = Phylogeny.TreeManip(chain.tree)
         if self.opts.debugging:
             tmpf = file('debug_info.txt', 'a')
             tmpf.write('************** cycle=%d, chain=%d\n' % (cycle,chain_index))
+        edgelens_generated = False
         for p in chain.chain_manager.getAllUpdaters():
             w = p.getWeight()
             name = p.getName()
             if name == 'edge length hyperparameter':
-                self.opts.model.edgelen_hyperparam = self.opts.model.edgelen_hyperprior.sample()
-                #print 'New edge length hyperparameter:',self.opts.model.edgelen_hyperparam
-                self.opts.model.edgelen_dist.setMeanAndVariance(1.0/self.opts.model.edgelen_hyperparam)
-                #print 'Drawing new edgelengths for entire tree from',self.opts.model.edgelen_dist.__str__()
-                tm = Phylogeny.TreeManip(chain.tree)
-                tm.equiprobTree(chain.tree.getNTips(), chain.r, self.opts.model.edgelen_dist)
-                chain.prepareForLikelihood()
-                self.phycassert(self.opts.allow_polytomies == False, 'polytomies not yet allowed in MCMCImpl.explorePrior')
+                # BOOKMARK
+                edgelen_hyperparam = chain.model.getEdgeLenHyperPrior().sample()
+                chain.model.getInternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
+                chain.model.getExternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
+                tm.equiprobTree(chain.tree.getNTips(), chain.r, chain.model.getInternalEdgeLenPrior(), chain.model.getExternalEdgeLenPrior())
+                edgelens_generated = True
             elif name == 'trs/trv rate ratio':
-                self.opts.model.kappa = self.opts.model.kappa_prior.sample()
-                #print 'New kappa:',self.opts.model.kappa
+                new_kappa = chain.model.getKappaPrior().sample()
+                chain.model.setKappa(new_kappa)
             elif name == 'base freq. A':
-                self.opts.model.base_freqs[0] = self.opts.model.base_freq_param_prior.sample()
-                #print 'New base freq A param:',self.opts.model.base_freqs[0] 
+                new_freq_param_A = chain.model.getStateFreqParamPrior().sample()
+                chain.model.setStateFreqParam(0, new_freq_param_A) 
             elif name == 'base freq. C':
-                self.opts.model.base_freqs[1] = self.opts.model.base_freq_param_prior.sample()
-                #print 'New base freq C param:',self.opts.model.base_freqs[1] 
+                new_freq_param_C = chain.model.getStateFreqParamPrior().sample()
+                chain.model.setStateFreqParam(1, new_freq_param_C) 
             elif name == 'base freq. G':
-                self.opts.model.base_freqs[2] = self.opts.model.base_freq_param_prior.sample()
-                #print 'New base freq G param:',self.opts.model.base_freqs[2] 
+                new_freq_param_G = chain.model.getStateFreqParamPrior().sample()
+                chain.model.setStateFreqParam(2, new_freq_param_G) 
             elif name == 'base freq. T':
-                self.opts.model.base_freqs[3] = self.opts.model.base_freq_param_prior.sample()
-                #print 'New base freq T param:',self.opts.model.base_freqs[3] 
+                new_freq_param_T = chain.model.getStateFreqParamPrior().sample()
+                chain.model.setStateFreqParam(3, new_freq_param_T) 
             elif name == 'Discrete gamma shape':
-                self.opts.model.gamma_shape = self.opts.model.gamma_shape_prior.sample()
-                #print 'New gamma shape:',self.opts.model.gamma_shape
-            #elif name == 'Larget-Simon move':
-            #    print 'Ignoring Larget-Simon move'
-            #elif name == 'master edge length parameter':
-            #    print 'Ignoring master edge length parameter'
-            #else:
-            #    print 'Unknown parameter --> name=%s, weight=%d, type=%s' % (p.getName(), w, p.__class__.__name__)
-            #if self.opts.debugging:
-            #    tmpf.write('%s | %s\n' % (p.getName(), p.getDebugInfo()))
+                new_gamma_shape = chain.model.getDiscreteGammaShapePrior().sample()
+                chain.model.setShape(new_gamma_shape)
+        # If no edge length hyperprior was specified, then need to set
+        # edge length priors and build the tree now
+        if not edgelens_generated:
+            tm.equiprobTree(chain.tree.getNTips(), chain.r, chain.model.getInternalEdgeLenPrior(), chain.model.getExternalEdgeLenPrior())
+        chain.prepareForLikelihood()
+        
         cold_chain_manager = self.mcmc_manager.getColdChainManager()
         cold_chain_manager.refreshLastLnLike()
         #print '>>>>> lnL = %.6f' % cold_chain_manager.getLastLnLike()

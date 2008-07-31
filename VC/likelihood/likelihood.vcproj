@@ -179,7 +179,13 @@
 				RelativePath="..\..\phycas\src\flex_rate_param.cpp">
 			</File>
 			<File
+				RelativePath="..\..\phycas\src\gtr_model.cpp">
+			</File>
+			<File
 				RelativePath="..\..\phycas\src\gtr_rate_param.cpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\hky_model.cpp">
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\hyperprior_param.cpp">
@@ -201,6 +207,9 @@
 						Name="VCCLCompilerTool"
 						ForcedIncludeFiles="$(NOINHERIT)"/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\jc_model.cpp">
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\kappa_param.cpp">

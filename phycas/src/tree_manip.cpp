@@ -540,17 +540,19 @@ void TreeManip::randomTree(
 |	Constructs an equiprobable tree topology and sets all edge lengths using draws from the supplied `edge_len_dist'.
 */
 void TreeManip::equiprobTree(
-  unsigned ntips,				/**< is the number of tip nodes in the final tree (includes the tip node serving as the root) */
-  LotShPtr	rng,				/**< is the random number generator used to determine the branching order (but not edge lengths) */
-  ProbDistShPtr	edge_len_dist)	/**< is the probability distribution used to generate new edge lengths (should be exponential(lambda) if `yule' is true, where lambda is the instantaneous speciation rate) */
+  unsigned ntips,				    /**< is the number of tip nodes in the final tree (includes the tip node serving as the root) */
+  LotShPtr	rng,				    /**< is the random number generator used to determine the branching order (but not edge lengths) */
+  ProbDistShPtr	internal_edge_dist,	/**< is the probability distribution used to generate new internal edge lengths  */
+  ProbDistShPtr	external_edge_dist)	/**< is the probability distribution used to generate new external edge lengths  */
 	{
-	//PHYCAS_ASSERT(edge_len_dist);
 	PHYCAS_ASSERT(tree);
 
     // Empty the tree of everything and simply return if ntips is 0
 	tree->Clear();
     if (ntips == 0)
         return;
+
+    double treelen = 0.0; //temporary!
 
     unsigned tip_number = 0;
     unsigned internal_number = ntips;
@@ -563,10 +565,13 @@ void TreeManip::equiprobTree(
 	// Create the subroot node (which is second tip)
 	TreeNode * nd = tree->GetNewNode();
     nd->SetNodeNum(tip_number++);
+    nd->SetEdgeLen(1.0);
+    treelen += nd->GetEdgeLen(); //temporary!
 
     // This vector makes it easy to randomly choose next node to bisect
-    typedef std::vector<TreeNode *> NodeVector;
-	NodeVector receptive;
+    //typedef std::vector<TreeNode *> NodeVector;
+	//NodeVector receptive;
+    std::vector<TreeNode *> receptive;
     receptive.reserve(2*ntips - 3);
     receptive.push_back(nd);
 
@@ -590,6 +595,8 @@ void TreeManip::equiprobTree(
 		// Create an internal node on nd's edge
 		TreeNode * parent = tree->GetNewNode();
         parent->SetNodeNum(internal_number++);
+        parent->SetEdgeLen(1.0);
+        treelen += nd->GetEdgeLen(); //temporary!
         receptive.push_back(parent);
 		parent->lChild = nd;
 		parent->rSib = nd->rSib;
@@ -606,6 +613,8 @@ void TreeManip::equiprobTree(
         // Create a new tip representing nd's sister
 		TreeNode * sister = tree->GetNewNode();
         sister->SetNodeNum(tip_number++);
+        sister->SetEdgeLen(1.0);
+        treelen += nd->GetEdgeLen(); //temporary!
         receptive.push_back(sister);
 		nd->rSib = sister;
         sister->par = parent;
@@ -616,10 +625,24 @@ void TreeManip::equiprobTree(
 	tree->RefreshPreorder();
 
     // Set edge lengths
-    for (NodeVector::iterator it = receptive.begin(); it != receptive.end(); ++it)
+    if (internal_edge_dist && !external_edge_dist)
+        external_edge_dist = internal_edge_dist;
+    double tree_length = 0.0;
+    for (std::vector<TreeNode *>::iterator it = receptive.begin(); it != receptive.end(); ++it)
         {
         TreeNode * nd = (*it);
-        double new_edgelen = (edge_len_dist ? edge_len_dist->Sample() : 1.0);
+        double new_edgelen = 1.0;
+        if (nd->IsInternal())
+            {
+            if (internal_edge_dist)
+                new_edgelen = internal_edge_dist->Sample();
+            }
+        else
+            {
+            if (external_edge_dist)
+                new_edgelen = external_edge_dist->Sample();
+            }
+        tree_length += new_edgelen;
         nd->SetEdgeLen(new_edgelen);
         }
 	tree->hasEdgeLens = true;

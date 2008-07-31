@@ -29,6 +29,811 @@ using std::cout;
 using namespace phycas;
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	The non-public constructor has a single parameter representing the number of basic states this model supports.
+|	State frequencies are all set to 1/`num_states'. Assumes that the number of states provided is greater than 0.
+*/
+Model::Model(
+  unsigned numStates)	/**< is the number of basic states (e.g. 4 for DNA) */
+	:
+    	separate_int_ext_edgelen_priors(false),
+	num_states(numStates), //@POL 31-Oct-2005 what about morphological models, is numStates in this case the maximum number of states allowed?
+	num_gamma_rates(1), 
+	gamma_rates_unnorm(1, 1.0),
+	gamma_rate_probs(1, 1.0), 
+	state_freq_fixed(false),
+	edge_lengths_fixed(false),	
+	edgelen_hyperprior_fixed(false),
+	is_codon_model(false),
+	is_pinvar_model(false),
+	is_flex_model(false),
+	flex_upper_rate_bound(1.0),
+	num_flex_spacers(1),
+	flex_probs_fixed(false),
+	flex_rates_fixed(false),
+	pinvar_fixed(false),
+	pinvar(0.0), 
+	gamma_shape_fixed(false),
+	gamma_shape(0.5),
+    invert_shape(false)
+	{
+	PHYCAS_ASSERT(num_states > 0);
+	setAllFreqsEqual();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	The virtual destructor does nothing.
+*/
+Model::~Model()
+	{
+	//std::cerr << "Model dying..." << std::endl;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	The virtual destructor does nothing.
+*/
+bool Model::isCodonModel() const
+	{
+	return is_codon_model;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets value of data member `separate_int_ext_edgelen_priors' to supplied value `separate'.
+*/
+void Model::separateInternalExternalEdgeLenPriors(
+  bool separate)
+    {
+    separate_int_ext_edgelen_priors = separate;
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns value of data member `separate_int_ext_edgelen_priors'.
+*/
+bool Model::isSeparateInternalExternalEdgeLenPriors() const
+    {
+    return separate_int_ext_edgelen_priors;
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `edgeLenHyperPrior' to the supplied probability distribution `d'. This prior distribution will 
+|	be used when the model is asked to create parameters.
+*/
+void	Model::setEdgeLenHyperPrior(ProbDistShPtr d)		
+	{
+	edgeLenHyperPrior = d;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that can be used to copy the `internalEdgeLenPrior' shared pointer.
+*/
+ProbDistShPtr Model::getInternalEdgeLenPrior()
+	{
+	return internalEdgeLenPrior;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `internalEdgeLenPrior' to the supplied probability distribution `d'. This prior distribution
+|	will be used when the model is asked to create parameters.
+*/
+void	Model::setInternalEdgeLenPrior(ProbDistShPtr d)
+	{
+	internalEdgeLenPrior = d;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that can be used to copy the `externalEdgeLenPrior' shared pointer.
+*/
+ProbDistShPtr Model::getExternalEdgeLenPrior()
+	{
+	return externalEdgeLenPrior;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `externalEdgeLenPrior' to the supplied probability distribution `d'. This prior distribution
+|	will be used when the model is asked to create parameters.
+*/
+void	Model::setExternalEdgeLenPrior(ProbDistShPtr d)
+	{
+	externalEdgeLenPrior = d;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that can be used to copy the `edgeLenHyperPrior' shared pointer.
+*/
+ProbDistShPtr Model::getEdgeLenHyperPrior()
+	{
+	return edgeLenHyperPrior;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Computes all `numRates' transition probability matrices. Assumes edge lengths in `edgeLength' array have already
+|	been computed.
+*/
+void Model::calcPMatrices(
+  double * * *		pMat,			/**< is the array of 2-dimensional transition probability matrices (one transition matrix for each relative rate category) */
+  const double *	edgeLength,		/**< is the vector of rate-adjusted edge lengths (length is `numRates') */
+  unsigned			numRates		/**< is the number of relative rate categories */
+  ) const
+	{
+	for (unsigned i = 0; i < numRates; ++i)
+		calcPMat(pMat[i], edgeLength[i]);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns value of data member `num_states'.
+*/
+unsigned Model::getNStates() const
+	{
+	return num_states;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns a reference to `state_freqs', the vector of relative state frequencies. The values in
+|	the array returned by this function have been normalized such that they sum to 1.0.
+*/
+const std::vector<double> & Model::getStateFreqs() const
+	{
+	return state_freqs;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Modifier function that sets all four nucleotide frequency parameters. The member function normalizeFreqs is called 
+|	automatically to recalculate `state_freqs', so it is not necessary to supply four values that sum to 1.0. Assumes
+|	that `num_states' equals 4 and that each of the four values supplied are greater than or equal to zero.
+*/
+void Model::setNucleotideFreqs(
+  double freqA,				/**< the new value of `state_freq_unnorm'[0] (i.e. frequency of base A) */
+  double freqC,				/**< the new value of `state_freq_unnorm'[1] (i.e. frequency of base C) */
+  double freqG,				/**< the new value of `state_freq_unnorm'[2] (i.e. frequency of base G) */
+  double freqT)				/**< the new value of `state_freq_unnorm'[3] (i.e. frequency of base T/U) */
+	{
+	PHYCAS_ASSERT(num_states == 4);
+	PHYCAS_ASSERT(freqA >= 0.0);
+	PHYCAS_ASSERT(freqC >= 0.0);
+	PHYCAS_ASSERT(freqG >= 0.0);
+	PHYCAS_ASSERT(freqT >= 0.0);
+	state_freq_unnorm[0] = freqA;
+	state_freq_unnorm[1] = freqC;
+	state_freq_unnorm[2] = freqG;
+	state_freq_unnorm[3] = freqT;
+	normalizeFreqs();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Modifier function that sets one of the state frequency parameters (the unnormalized values that determine the values
+|	in the `state_freqs' vector when normalized) in the data member vector `state_freq_unnorm'. The member function
+|	normalizeFreqs is called automatically to recalculate `state_freqs'. Assumes `param_index' is less than `num_states'
+|	(i.e. a valid index into `state_freq_unnorm) and `value' is non-negative.
+*/
+void Model::setStateFreqUnnorm(
+  unsigned param_index,		/**< the 0-based index into the `state_freq_unnorm' vector of the element to modify */
+  double value)				/**< the new value of `state_freq_unnorm'[`param_index'] */
+	{
+	PHYCAS_ASSERT(param_index < num_states);
+	PHYCAS_ASSERT(value >= 0.0);
+	state_freq_unnorm[param_index] = value;
+	normalizeFreqs();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Modifier function that sets all state frequency parameters in the data member `stateFreqParams' to 1.0, and all
+|	state frequencies in the data member `state_freqs' to the value 1/`num_states'. Assumes `num_states' is greater than zero.
+*/
+void Model::setAllFreqsEqual()
+	{
+	PHYCAS_ASSERT(num_states > 0);
+	state_freq_unnorm.clear();
+	state_freq_unnorm.assign(num_states, 1.0);
+	state_freqs.clear();
+	state_freqs.assign(num_states, 1.0/num_states);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Modifier function that sets all state frequencies in data member `state_freqs' to the normalized values in the 
+|	vector `stateFreqParams'. Assumes `num_states' is greater than zero.
+*/
+void Model::normalizeFreqs()
+	{
+	PHYCAS_ASSERT(num_states > 0);
+	double sum = std::accumulate(state_freq_unnorm.begin(), state_freq_unnorm.end(), 0.0);
+	PHYCAS_ASSERT(sum != 0.0);
+	PHYCAS_ASSERT(state_freq_unnorm.size() == state_freqs.size());
+	std::transform(state_freq_unnorm.begin(), state_freq_unnorm.end(), state_freqs.begin(), boost::lambda::_1/sum);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the total number of rate categories. The total number of rate categories equals the number of discrete 
+|	gamma rate categories (i.e. the value returned by the getNGammaRates member function) if `is_pinvar_model' is false.
+|	If `is_pinvar_model' is true, however, the total number of rate categories equals the number of discrete gamma rate
+|	categories plus 1 (to accommodate the 0-rate category of which the probability is `pinvar').
+*/
+unsigned Model::getNRatesTotal() const
+	{
+	return num_gamma_rates;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function returning the value of the data member `num_gamma_rates'. This is the number of discrete gamma
+|	rate categories. The total number of relative rate categories exceeds this value by 1 if `pinvar' is greater than
+|	0.0. See the documentation for the getNRatesTotal member function.
+*/
+unsigned Model::getNGammaRates() const
+	{
+	return num_gamma_rates;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Modifier function that sets the value of data member `num_gamma_rates' to the supplied number of rate categories 
+|	`nGammaRates'. Recomputes the vector `gamma_rate_probs' if `num_gamma_rates' is changed. Each element of 
+|	`gamma_rate_probs' is assigned the value 1/`nGammaRates'. Assumes `nGammaRates' > 0.
+*/
+void Model::setNGammaRates(
+  unsigned nGammaRates)				/**< is the new number of discrete gamma rate categories */
+	{
+	if (nGammaRates != num_gamma_rates)
+		{
+		PHYCAS_ASSERT(nGammaRates > 0);
+		gamma_rates_unnorm.assign(nGammaRates, 1.0);
+		gamma_rate_probs.resize(nGammaRates); //@POL this line not necessary (?) because assign also resizes
+		gamma_rate_probs.assign(nGammaRates, 1.0/(double)nGammaRates);
+		num_gamma_rates = nGammaRates;
+		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns a reference to `gamma_rate_probs', the vector of probabilities of a site being in 
+|	any given rate category.
+*/
+const std::vector<double> & Model::getGammaRateProbs() const
+	{
+	return gamma_rate_probs;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Modifier function that sets all values in the vector `gamma_rate_probs' to the value 1/`num_gamma_rates'. Assumes 
+|	`num_gamma_rates' is greater than zero.
+*/
+void Model::setAllGammaRateProbsEqual()
+	{
+	PHYCAS_ASSERT(num_gamma_rates > 0);
+	gamma_rate_probs.clear();
+	gamma_rate_probs.assign(num_gamma_rates, 1.0/num_gamma_rates);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns the current value of the data member `gamma_shape'.
+*/
+double Model::getShape()
+	{
+	return gamma_shape;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Modifier function that sets the data member `gamma_shape' to the supplied value `alpha'. Assumes `alpha' is greater
+|	than zero.
+*/
+void Model::setShape(
+  double alpha)		/**< is the new value for the `gamma_shape' data member */
+	{
+	PHYCAS_ASSERT(alpha > 0.0);
+	gamma_shape = alpha;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Modifier function that sets the data member `invert_shape' to the supplied value `invert'. If true is specified for
+|	`invert', then `gamma_shape_param' will manage the inverse of the gamma shape rather than the shape itself.
+*/
+void Model::setPriorOnShapeInverse(
+  bool invert)		/**< is the new value for the `gamma_shape' data member */
+	{
+	invert_shape = invert;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `gamma_shape_fixed' to true. The fixParameter member function of the DiscreteGammaParam object
+|	is either called immediately (if `gamma_shape_param' is a valid pointer) or is called in createParameters (when
+|	`gamma_shape_param' is first assigned).
+*/
+void Model::fixShape()
+	{
+	gamma_shape_fixed = true;
+	if (gamma_shape_param)
+		gamma_shape_param->fixParameter();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `gamma_shape_fixed' to false. The freeParameter member function of the DiscreteGammaParam 
+|	object is called immediately if `gamma_shape_param' is a valid pointer.
+*/
+void Model::freeShape()
+	{
+	gamma_shape_fixed = false;
+	if (gamma_shape_param)
+		gamma_shape_param->freeParameter();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns the current value of the data member `pinvar'.
+*/
+double Model::getPinvar()
+	{
+	return pinvar;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Modifier function that sets the data member `pinvar' to the supplied value `pinv'. Assumes `pinv' is greater
+|	than or equal to zero but strictly less than 1.0.
+*/
+void Model::setPinvar(
+  double pinv)		/**< is the new value for the `pinvar' data member */
+	{
+	PHYCAS_ASSERT(pinv >= 0.0);
+	PHYCAS_ASSERT(pinv < 1.0);
+	pinvar = pinv;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns value of `gamma_shape_fixed'.
+*/
+bool Model::shapeFixed() const
+	{
+	return gamma_shape_fixed;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns value of `pinvar_fixed'.
+*/
+bool Model::pinvarFixed() const
+	{
+	return pinvar_fixed;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns value of `state_freq_fixed'.
+*/
+bool Model::stateFreqsFixed() const
+	{
+	return state_freq_fixed;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns value of `edgelen_hyperprior_fixed'.
+*/
+bool Model::edgeLenHyperParamFixed() const
+	{
+	return edgelen_hyperprior_fixed;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns value of `edge_lengths_fixed'.
+*/
+bool Model::edgeLengthsFixed() const
+	{
+	return edge_lengths_fixed;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `edge_lengths_fixed' to true.
+*/
+void Model::fixEdgeLengths()
+	{
+	edge_lengths_fixed = true;
+	if (!edgelen_params.empty())
+		{
+		//@POL good place to use std::for_each with a boost::lambda functor?
+		for (MCMCUpdaterVect::iterator it = edgelen_params.begin(); it != edgelen_params.end(); ++it)
+			(*it)->fixParameter();
+		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `edge_lengths_fixed' to false.
+*/
+void Model::freeEdgeLengths()
+	{
+	edge_lengths_fixed = false;
+	if (!edgelen_params.empty())	//TODO create Model::edgelen_params and fill it in createParameters
+		{
+		//@POL good place to use std::for_each with a boost::lambda functor?
+		for (MCMCUpdaterVect::iterator it = edgelen_params.begin(); it != edgelen_params.end(); ++it)
+			(*it)->freeParameter();
+		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `edgelen_hyperprior_fixed' to true and calls fixParameter() for all edge length 
+|   hyperparameters.
+*/
+void Model::fixEdgeLenHyperprior()
+	{
+	edgelen_hyperprior_fixed = true;
+	if (!edgelen_hyper_params.empty())
+		{
+		for (MCMCUpdaterVect::iterator it = edgelen_hyper_params.begin(); it != edgelen_hyper_params.end(); ++it)
+			(*it)->fixParameter();
+		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `edgelen_hyperprior_fixed' to false and calls freeParameter() for all edge length 
+|   hyperparameters.
+*/
+void Model::freeEdgeLenHyperprior()
+	{
+	edgelen_hyperprior_fixed = false;
+	if (!edgelen_hyper_params.empty())
+		{
+		for (MCMCUpdaterVect::iterator it = edgelen_hyper_params.begin(); it != edgelen_hyper_params.end(); ++it)
+			(*it)->freeParameter();
+		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `state_freq_fixed' to true. The fixParameter member function of all StateFreqParam objects is 
+|	either called immediately (if the `freq_params' vector is not empty) or is called in createParameters (when 
+|	`freq_params' is built).
+*/
+void Model::fixStateFreqs()
+	{
+	state_freq_fixed = true;
+	if (!freq_params.empty())
+		{
+		//@POL good place to use std::for_each with a boost::lambda functor?
+		for (MCMCUpdaterVect::iterator it = freq_params.begin(); it != freq_params.end(); ++it)
+			(*it)->fixParameter();
+		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `state_freq_fixed' to false. The freeParameter member function of all StateFreqParam objects is 
+|	called immediately if the `freq_params' vector is not empty.
+*/
+void Model::freeStateFreqs()
+	{
+	state_freq_fixed = false;
+	if (!freq_params.empty())
+		{
+		//@POL good place to use std::for_each with a boost::lambda functor?
+		for (MCMCUpdaterVect::iterator it = freq_params.begin(); it != freq_params.end(); ++it)
+			(*it)->freeParameter();
+		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `is_flex_model' to true. A subsequent call to the createParameters member function will
+|	result in `num_gamma_rates' FlexRateParam and FlexProbParam objects being added to the list of updaters for this 
+|	model.
+*/
+void Model::setFlexModel()
+	{
+	is_flex_model = true;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `flex_upper_rate_bound' to `new_upper_bound'. Rescales all existing unnormalized relative rate
+|	parameter values in the vector `gamma_rates_unnorm' to accommodate the new upper bound. Assumes that 
+|	`new_upper_bound' is greater than zero. Returns immediately if `new_upper_bound' is identical to current value of
+|	`flex_upper_rate_bound'.
+*/
+void Model::setFlexRateUpperBound(double new_upper_bound)
+	{
+	double old_upper_bound = flex_upper_rate_bound;
+	if (new_upper_bound == old_upper_bound)
+		return;
+	PHYCAS_ASSERT(new_upper_bound > 0.0);
+	flex_upper_rate_bound = new_upper_bound;
+	double mult_factor = new_upper_bound/old_upper_bound;
+	std::for_each(gamma_rates_unnorm.begin(), gamma_rates_unnorm.end(), boost::lambda::_1 *= mult_factor);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `num_flex_spacers' to `s'. See the data member `num_flex_spacers' and the function 
+|	FlexRateParam::recalcPrior for more information on FLEX model spacers.
+*/
+void Model::setNumFlexSpacers(unsigned s)
+	{
+	num_flex_spacers = s;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `is_flex_model' to false. No FlexRateParam or FlexProbParam objects will be added in a 
+|	subsequent call to the createParameters member function.
+*/
+void Model::setNotFlexModel()
+	{
+	is_flex_model = false;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `flex_probs_fixed' to true. The fixParameter member function of all FlexProbParam objects is 
+|	either called immediately (if the `flex_prob_params' vector is not empty) or is called in createParameters (when 
+|	`flex_prob_params' is built).
+*/
+void Model::fixFlexProbs()
+	{
+	flex_probs_fixed = true;
+	if (!flex_prob_params.empty())
+		{
+		//@POL good place to use std::for_each with a boost::lambda functor?
+		for (MCMCUpdaterVect::iterator it = flex_prob_params.begin(); it != flex_prob_params.end(); ++it)
+			(*it)->fixParameter();
+		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `flex_probs_fixed' to false. The freeParameter member function of all FlexProbParam objects is 
+|	called immediately if the `flex_prob_params' vector is not empty.
+*/
+void Model::freeFlexProbs()
+	{
+	flex_probs_fixed = false;
+	if (!flex_prob_params.empty())
+		{
+		//@POL good place to use std::for_each with a boost::lambda functor?
+		for (MCMCUpdaterVect::iterator it = flex_prob_params.begin(); it != flex_prob_params.end(); ++it)
+			(*it)->freeParameter();
+		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `flex_rates_fixed' to true. The fixParameter member function of all FlexRateParam objects is 
+|	either called immediately (if the `flex_rate_params' vector is not empty) or is called in createParameters (when 
+|	`flex_rate_params' is built).
+*/
+void Model::fixFlexRates()
+	{
+	flex_rates_fixed = true;
+	if (!flex_rate_params.empty())
+		{
+		//@POL good place to use std::for_each with a boost::lambda functor?
+		for (MCMCUpdaterVect::iterator it = flex_rate_params.begin(); it != flex_rate_params.end(); ++it)
+			(*it)->fixParameter();
+		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `flex_rates_fixed' to false. The freeParameter member function of all FlexRateParam objects is 
+|	called immediately if the `flex_rate_params' vector is not empty.
+*/
+void Model::freeFlexRates()
+	{
+	flex_rates_fixed = false;
+	if (!flex_rate_params.empty())
+		{
+		//@POL good place to use std::for_each with a boost::lambda functor?
+		for (MCMCUpdaterVect::iterator it = flex_rate_params.begin(); it != flex_rate_params.end(); ++it)
+			(*it)->freeParameter();
+		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets value of data member `flex_prob_param_prior'.
+*/
+void Model::setFLEXProbParamPrior(ProbDistShPtr d)
+ 	{
+	flex_prob_param_prior = d;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns current value of data member `flex_prob_param_prior'.
+*/
+ProbDistShPtr Model::getFLEXProbParamPrior()
+ 	{
+	return flex_prob_param_prior;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Modifier function that sets one of the FLEX rate parameters (the unnormalized values that determine the values in 
+|	the `TreeLikelihood::rate_means' vector when normalized) in the data member vector `gamma_rates_unnorm'. The 
+|	function Model::recalcRatesAndProbs should be called to recalculate `TreeLikelihood::rate_means' before the 
+|	likelihood is computed (ideally immediately after setFlexRateUnnorm is called). Assumes `param_index' is less than 
+|	`num_gamma_rates' (i.e. a valid index into `gamma_rates_unnorm') and `value' is non-negative.
+*/
+void Model::setFlexRateUnnorm(
+  unsigned param_index,		/**< the 0-based index into the `gamma_rates_unnorm' vector of the element to modify */
+  double value)				/**< the new value of `gamma_rates_unnorm'[`param_index'] */
+	{
+	PHYCAS_ASSERT(gamma_rates_unnorm.size() == num_gamma_rates);
+	PHYCAS_ASSERT(param_index < num_gamma_rates);
+	PHYCAS_ASSERT(value >= 0.0);
+	gamma_rates_unnorm[param_index] = value;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Modifier function that sets one of the FLEX rate probability parameters (the unnormalized values that determine the 
+|	values in the `TreeLikelihood::rate_probs' vector when normalized) in the data member vector `gamma_rate_probs'. 
+|	The function Model::recalcRatesAndProbs should be called to recalculate `TreeLikelihood::rate_probs' before the 
+|	likelihood is computed (ideally immediately after setFlexProbUnnorm is called). Assumes `param_index' is less than 
+|	`num_gamma_rates' (i.e. a valid index into `gamma_rate_probs') and `value' is non-negative.
+*/
+void Model::setFlexProbUnnorm(
+  unsigned param_index,		/**< the 0-based index into the `gamma_rate_probs' vector of the element to modify */
+  double value)				/**< the new value of `gamma_rate_probs'[`param_index'] */
+	{
+	PHYCAS_ASSERT(gamma_rate_probs.size() == num_gamma_rates);
+	PHYCAS_ASSERT(param_index < num_gamma_rates);
+	PHYCAS_ASSERT(value >= 0.0);
+	gamma_rate_probs[param_index] = value;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Normalizes the rates stored in `gamma_rates_unnorm' so that their mean (using probabilities in `gamma_rate_probs')
+|	equals 1.0. Normalizes the probabilities stored in `gamma_rate_probs' so that their sum is 1.0. Copies normalized
+|	rates to supplied vector `rates' and normalized probabilities to the supplied vector `probs'. Resizes `rates' and
+|	`probs' if necessary.
+*/
+void Model::normalizeRatesAndProbs(
+  std::vector<double> & rates,		/**< is the vector to receive the normalized rates */
+  std::vector<double> & probs)		/**< is the vector to receive the normalized probabilities */
+  const
+	{
+	// c*r0*p0 + c*r1*p1 + c*r2*p2 + c*r3*p3 = 1.0
+	// c*(r0*p0 + r1*p1 + r2*p2 + r3*p3) = 1.0
+	// c = 1/(r0*p0 + r1*p1 + r2*p2 + r3*p3)
+	//
+	PHYCAS_ASSERT(gamma_rates_unnorm.size() == num_gamma_rates);
+	PHYCAS_ASSERT(gamma_rate_probs.size() == num_gamma_rates);
+	rates.resize(num_gamma_rates, 0.0);
+	probs.resize(num_gamma_rates, 0.0);
+	std::vector<double>::const_iterator rates_it = gamma_rates_unnorm.begin();
+	std::vector<double>::const_iterator probs_it = gamma_rate_probs.begin();
+	unsigned i;
+
+	// normalize the probabilities first (we will need them to normalize the rates)
+	double prob_sum = 0.0;
+	for (i = 0; i < num_gamma_rates; ++i)
+		{
+		PHYCAS_ASSERT(gamma_rate_probs[i] > 0.0);
+		prob_sum += gamma_rate_probs[i];
+		}
+	double prob_normalizer = 1.0/prob_sum;
+
+	// normalize the rates and copy the probs
+	double rate_prob_sum = 0.0;
+	for (i = 0; i < num_gamma_rates; ++i)
+		{
+		probs[i] = gamma_rate_probs[i]*prob_normalizer;
+		PHYCAS_ASSERT(gamma_rates_unnorm[i] > 0.0);
+		rate_prob_sum += gamma_rates_unnorm[i]*probs[i];
+		}
+	double rate_normalizer = 1.0/rate_prob_sum;
+
+	// copy the rates
+	for (i = 0; i < num_gamma_rates; ++i)
+		{
+		rates[i] = gamma_rates_unnorm[i]*rate_normalizer;
+		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the current value of the data member `is_pinvar_model'.
+*/
+bool Model::isPinvarModel()
+	{
+	return is_pinvar_model;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `is_pinvar_model' to true. A subsequent call to the createParameters member function will
+|	result in a PinvarParam being added to the list of updaters for this model.
+*/
+void Model::setPinvarModel()
+	{
+	is_pinvar_model = true;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `is_pinvar_model' to false. No PinvarParam will be added in a subsequent call to the 
+|	createParameters member function.
+*/
+void Model::setNotPinvarModel()
+	{
+	is_pinvar_model = false;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `pinvar_fixed' to true. The fixParameter member function of the PinvarParam object is either 
+|	called immediately (if `pinvar_param' is a valid pointer) or is called in createParameters (when `pinvar_param' is 
+|	first assigned).
+*/
+void Model::fixPinvar()
+	{
+	pinvar_fixed = true;
+	if (pinvar_param)
+		pinvar_param->fixParameter();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the data member `pinvar_fixed' to false. The freeParameter member function of the PinvarParam object is called 
+|	immediately if `pinvar_param' is a valid pointer.
+*/
+void Model::freePinvar()
+	{
+	pinvar_fixed = false;
+	if (pinvar_param)
+		pinvar_param->freeParameter();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns current value of data member `gamma_shape_prior'.
+*/
+ProbDistShPtr Model::getDiscreteGammaShapePrior()
+ 	{
+	return gamma_shape_prior;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets value of data member `gamma_shape_prior'.
+*/
+void Model::setDiscreteGammaShapePrior(ProbDistShPtr d)
+ 	{
+	gamma_shape_prior = d;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns current value of data member `pinvar_prior'.
+*/
+ProbDistShPtr Model::getPinvarPrior()
+ 	{
+	return pinvar_prior;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns current value of data member `pinvar_prior'.
+*/
+void Model::setPinvarPrior(ProbDistShPtr d)
+ 	{
+	pinvar_prior = d;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Clears `state_list' and `state_list_pos', then builds up a 4-state version of these vectors suitable for simulated
+|	nucleotide data (i.e. no ambiguities).
+*/
+void Model::buildStateList(
+  VecStateList & state_list,		/**< is the vector of state codes (see TipData documentation for explanation) */
+  VecStateListPos & state_list_pos)	/**< is the vector of positions of states within `state_list' */
+  const
+	{
+	state_list.clear();
+	state_list_pos.clear();
+
+	// state A 
+	state_list.push_back(1);		// next 1 element is state code for base A
+	state_list.push_back(0);		// state code for base A is 0
+	state_list_pos.push_back(0);	// information for first state starts at position 0 in state_list
+
+	// state C
+	state_list.push_back(1);		// next 1 element is state code for base C
+	state_list.push_back(1);		// state code for base C is 1
+	state_list_pos.push_back(2);	// information for second state starts at position 2 in state_list
+
+	// state G 
+	state_list.push_back(1);		// next 1 element is state code for base G
+	state_list.push_back(2);		// state code for base G is 2
+	state_list_pos.push_back(4);	// information for third state starts at position 4 in state_list
+
+	// state T 
+	state_list.push_back(1);		// next 1 element is state code for base T
+	state_list.push_back(3);		// state code for base T is 3
+	state_list_pos.push_back(6);	// information for fourth state starts at position 6 in state_list
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the string in the `state_repr' vector corresponding to `state'. If supplied `state' is negative, returns
+|	the gap state ("-"). If `state' equals or exceeds `num_states', returns "?".
+*/
+std::string Model::lookupStateRepr(
+  int state)	const /**< is the state to look up */
+	{
+	if (state < 0)
+		return "-";
+	else if ((unsigned)state < num_states)
+		return state_repr[state];
+	else
+		return "?";
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Recalculates all relative rate means and their probabilities, storing these in the `rates' and `probs' vectors
 |	supplied as reference arguments. If using a discrete gamma ("G") model only, the number of elements in both `rates'
 |	and `probs' equals the number of gamma rate categories. If using a pinvar model ("I") only, the number of elements 
@@ -177,15 +982,6 @@ double Model::getFlexProbUnnorm(
   unsigned param_index)		/**< the 0-based index into the `gamma_rate_probs' vector of the element to return */
 	{
 	return gamma_rate_probs[param_index];
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Returns the value of `rel_rates[param_index]'.
-*/
-double GTR::getRelRateUnnorm(
-  unsigned param_index)		/**< the 0-based index into the `gamma_rate_probs' vector of the element to return */
-	{
-	return rel_rates[param_index];
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -359,7 +1155,7 @@ void Model::createParameters(
 |	Stores a flattened version of the supplied 2-dimensional array `twoDarr', storing the result in the supplied VecDbl
 |	reference variable `p'. The supplied `twoDarr' should be laid out so that rows occupy contiguous memory.
 */
-inline void Model::flattenTwoDMatrix(VecDbl & p, double * * twoDarr, unsigned dim) const
+void Model::flattenTwoDMatrix(VecDbl & p, double * * twoDarr, unsigned dim) const
 	{
 	unsigned flat_length = dim*dim;
 	p.reserve(flat_length);
@@ -417,319 +1213,3 @@ VecDbl Model::getPMatrix(double edgeLength) const
 #endif
 #endif
 
-/*----------------------------------------------------------------------------------------------------------------------
-|	Computes the transition probability matrix given an edge length. Overrides the pure virtual function inherited from 
-|	the base class Model. For the JC69 model, the transition probabilities are:
-|>
-|	Pii = 0.25 + 0.75*exp{-4*beta*t}
-|	Pij = 0.25 - 0.25*exp{-4*beta*t}
-|>
-|	The evolutionary distance `edgeLength' = 3*beta*t, so as a function of edge length, the transition probabilities
-|	are:
-|>
-|	Pii = 0.25 + 0.75*exp{-4*edgeLength/3}
-|	Pij = 0.25 - 0.25*exp{-4*edgeLength/3}
-|>
-*/
-void JC::calcPMat(double * * pMat, double edgeLength) const
-	{
-	const double exp_term = exp(-(4.0/3.0)*edgeLength);
-	const double prob_change = 0.25 - 0.25*exp_term;
-	const double prob_nochange = 0.25 + 0.75*exp_term;
-	pMat[0][0] = prob_nochange;
-	pMat[0][1] = prob_change;
-	pMat[0][2] = prob_change;
-	pMat[0][3] = prob_change;
-	pMat[1][0] = prob_change;
-	pMat[1][1] = prob_nochange;
-	pMat[1][2] = prob_change;
-	pMat[1][3] = prob_change;
-	pMat[2][0] = prob_change;
-	pMat[2][1] = prob_change;
-	pMat[2][2] = prob_nochange;
-	pMat[2][3] = prob_change;
-	pMat[3][0] = prob_change;
-	pMat[3][1] = prob_change;
-	pMat[3][2] = prob_change;
-	pMat[3][3] = prob_nochange;
-	//for (unsigned i = 0 ; i < 4; ++i)
-	//	cout << pMat[i][0] << ' '<< pMat[i][1] << ' '<< pMat[i][2] << ' '<< pMat[i][3] << '\n';
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Computes the uniformized transition probability matrix given an edge length. Overrides the pure virtual function 
-|   inherited from the base class Model. For the JC69 model, the uniformized transition probability matrix is:
-|>
-|   1 - 3*beta/lambda      beta/lambda         beta/lambda        beta/lambda
-|     beta/lambda       1 - 3*beta/lambda      beta/lambda        beta/lambda
-|     beta/lambda          beta/lambda      1 - 3*beta/lambda     beta/lambda
-|     beta/lambda          beta/lambda         beta/lambda      1 - 3*beta/lambda
-|>
-|	where lambda is slightly larger than the largest element in the rate matrix (i.e. slightly larger than beta).
-|   See Mateiu, L., and B. Rannala (2006. Systematic Biology 55:259-269) for details.
-|   For efficiency, what is actually computed is the product of lambda and the above matrix, and what is stored are
-|   the logarithms of the elements (because these values are always used on the log scale): i.e.
-|>
-|   log(lambda - 3*beta)      log(beta)             log(beta)             log(beta)
-|       log(beta)         log(lambda - 3*beta)      log(beta)             log(beta)
-|       log(beta)             log(beta)         log(lambda - 3*beta)      log(beta)
-|       log(beta)             log(beta)             log(beta)         log(lambda - 3*beta)
-|>
-|   Because rate and time are confounded, beta is arbitrarily scaled so that time is measured in 
-|   expected number of substitutions (i.e. set beta such that the edge length v = t):
-|>  
-|   v = 3*beta*t
-|   v = 3*(1/3)*t
-|>
-|   Setting beta = 1/3 results in v = t.
-*/
-double JC::calcLMat(double * * lMat) const
-	{
-    // Mateiu and Rannala:   Me:
-    //  B = 4/3              beta = 1/3
-    //  Qii = -1             Qii = -3*beta = -1
-    //  Qij = 1/3            Qij = beta    = 1/3
-    //  Pii = 3/4            Pii = 1 - 3*beta/lambda = 1 - 1/4 = 3/4
-    //  Pij = 1/12           Pij = beta/lambda = 1/12
-    //  lambda = 4
-    double beta = 1.0/3.0;
-	const double lambda = 1.1;
-	const double diag_term = log(lambda - 3.0*beta);
-	const double off_diag_term = log(beta);
-	lMat[0][0] = diag_term;
-	lMat[0][1] = off_diag_term;
-	lMat[0][2] = off_diag_term;
-	lMat[0][3] = off_diag_term;
-	lMat[1][0] = off_diag_term;
-	lMat[1][1] = diag_term;
-	lMat[1][2] = off_diag_term;
-	lMat[1][3] = off_diag_term;
-	lMat[2][0] = off_diag_term;
-	lMat[2][1] = off_diag_term;
-	lMat[2][2] = diag_term;
-	lMat[2][3] = off_diag_term;
-	lMat[3][0] = off_diag_term;
-	lMat[3][1] = off_diag_term;
-	lMat[3][2] = off_diag_term;
-	lMat[3][3] = diag_term;
-    return lambda;
-	}
-
-double JC::calcUMat(double * * uMat) const
-	{
-    double beta = 1.0/3.0;
-	const double lambda = 1.1;
-	const double diag_term = 1.0 - 3.0*beta/lambda;
-	const double off_diag_term = beta/lambda;
-	uMat[0][0] = diag_term;
-	uMat[0][1] = off_diag_term;
-	uMat[0][2] = off_diag_term;
-	uMat[0][3] = off_diag_term;
-	uMat[1][0] = off_diag_term;
-	uMat[1][1] = diag_term;
-	uMat[1][2] = off_diag_term;
-	uMat[1][3] = off_diag_term;
-	uMat[2][0] = off_diag_term;
-	uMat[2][1] = off_diag_term;
-	uMat[2][2] = diag_term;
-	uMat[2][3] = off_diag_term;
-	uMat[3][0] = off_diag_term;
-	uMat[3][1] = off_diag_term;
-	uMat[3][2] = off_diag_term;
-	uMat[3][3] = diag_term;
-    return lambda;
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Computes the uniformized transition probability matrix given an edge length. Overrides the pure virtual function 
-|   inherited from the base class Model. 
-*/
-double HKY::calcLMat(double * * lMat) const
-	{
-	double piA = state_freqs[0];
-	double piC = state_freqs[1];
-	double piG = state_freqs[2];
-	double piT = state_freqs[3];
-	double piR = piA + piG;
-	double piY = piC + piT;
-
-    // set beta such that edgelen = t
-    double beta = 1.0/(2.0*piR*piY + 2.0*kappa*(piA*piG + piC*piT));
-        
-    // set lambda to maximim substitution rate + epsilon
-    double lambda_epsilon = 0.1;
-    double max_rate = beta*(piY + piG*kappa);
-    double next_rate = beta*(piR + piT*kappa);
-    if (next_rate > max_rate)
-        max_rate = next_rate;
-    next_rate = beta*(piY + piA*kappa);
-    if (next_rate > max_rate)
-        max_rate = next_rate;
-    next_rate = beta*(piR + piC*kappa);
-    if (next_rate > max_rate)
-        max_rate = next_rate;
-    double lambda = max_rate + lambda_epsilon;
-
-    lMat[0][0] = log(lambda - beta*(piY + piG*kappa));
-    lMat[0][1] = log(piC*beta);
-    lMat[0][2] = log(piG*kappa*beta);
-    lMat[0][3] = log(piT*beta);
-    lMat[1][0] = log(piA*beta);
-    lMat[1][1] = log(lambda - beta*(piR + piT*kappa));
-    lMat[1][2] = log(piG*beta);
-    lMat[1][3] = log(piT*kappa*beta);
-    lMat[2][0] = log(piA*kappa*beta);
-    lMat[2][1] = log(piC*beta);
-    lMat[2][2] = log(lambda - beta*(piY + piA*kappa));
-    lMat[2][3] = log(piT*beta);
-    lMat[3][0] = log(piA*beta);
-    lMat[3][1] = log(piC*kappa*beta);
-    lMat[3][2] = log(piG*beta);
-    lMat[3][3] = log(lambda - beta*(piR + piC*kappa));
-
-    // here are the values on the normal scale in case they are ever needed
-    //lMat[0][0] = 1.0 - beta*(piY + piG*kappa)/lambda
-    //lMat[0][1] = piC*beta/lambda
-    //lMat[0][2] = piG*kappa*beta/lambda
-    //lMat[0][3] = piT*beta/lambda
-    //lMat[1][0] = piA*beta/lambda
-    //lMat[1][1] = 1.0 - beta*(piR + piT*kappa)/lambda
-    //lMat[1][2] = piG*beta/lambda
-    //lMat[1][3] = piT*kappa*beta/lambda
-    //lMat[2][0] = piA*kappa*beta/lambda
-    //lMat[2][1] = piC*beta/lambda
-    //lMat[2][2] = 1.0 - beta*(piY + piA*kappa)/lambda
-    //lMat[2][3] = piT*beta/lambda
-    //lMat[3][0] = piA*beta/lambda
-    //lMat[3][1] = piC*kappa*beta/lambda
-    //lMat[3][2] = piG*beta/lambda
-    //lMat[3][3] = 1.0 - beta*(piR + piC*kappa)/lambda
-
-    return lambda;
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Computes the uniformized transition probability matrix given an edge length. Overrides the pure virtual function 
-|   inherited from the base class Model. 
-*/
-double HKY::calcUMat(double * * uMat) const
-	{
-	double piA = state_freqs[0];
-	double piC = state_freqs[1];
-	double piG = state_freqs[2];
-	double piT = state_freqs[3];
-	double piR = piA + piG;
-	double piY = piC + piT;
-
-    // set beta such that edgelen = t
-    double beta = 1.0/(2.0*piR*piY + 2.0*kappa*(piA*piG + piC*piT));
-        
-    // set lambda to maximim substitution rate + epsilon
-    double lambda_epsilon = 0.1;
-    double max_rate = beta*(piY + piG*kappa);
-    double next_rate = beta*(piR + piT*kappa);
-    if (next_rate > max_rate)
-        max_rate = next_rate;
-    next_rate = beta*(piY + piA*kappa);
-    if (next_rate > max_rate)
-        max_rate = next_rate;
-    next_rate = beta*(piR + piC*kappa);
-    if (next_rate > max_rate)
-        max_rate = next_rate;
-    double lambda = max_rate + lambda_epsilon;
-
-    uMat[0][0] = 1.0 - beta*(piY + piG*kappa)/lambda;
-    uMat[0][1] = piC*beta/lambda;
-    uMat[0][2] = piG*kappa*beta/lambda;
-    uMat[0][3] = piT*beta/lambda;
-    uMat[1][0] = piA*beta/lambda;
-    uMat[1][1] = 1.0 - beta*(piR + piT*kappa)/lambda;
-    uMat[1][2] = piG*beta/lambda;
-    uMat[1][3] = piT*kappa*beta/lambda;
-    uMat[2][0] = piA*kappa*beta/lambda;
-    uMat[2][1] = piC*beta/lambda;
-    uMat[2][2] = 1.0 - beta*(piY + piA*kappa)/lambda;
-    uMat[2][3] = piT*beta/lambda;
-    uMat[3][0] = piA*beta/lambda;
-    uMat[3][1] = piC*kappa*beta/lambda;
-    uMat[3][2] = piG*beta/lambda;
-    uMat[3][3] = 1.0 - beta*(piR + piC*kappa)/lambda;
-
-    return lambda;
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Computes the transition probability matrix given an edge length. Overrides the pure virtual function inherited from 
-|	the base class Model.
-*/
-void HKY::calcPMat(double * * pMat, double edgeLength) const
-	{
-	PHYCAS_ASSERT(state_freqs.size() == 4);
-	double piA = state_freqs[0];
-	double piC = state_freqs[1];
-	double piG = state_freqs[2];
-	double piT = state_freqs[3];
-
-	double PiA = piA + piG;
-	double PiC = piC + piT;
-	double PiG = piA + piG;
-	double PiT = piC + piT;
-
-	double bigPiInvA = 1.0/PiA;
-	double bigPiInvC = 1.0/PiC;
-	double bigPiInvG = 1.0/PiG;
-	double bigPiInvT = 1.0/PiT;
-
-	double t = edgeLength;
-    // The next two lines fix the "Rota" bug; see BUGS file for details
-    if (t < 1.e-8) 
-        t = 1.e-8; //TreeNode::edgeLenEpsilon;
-	double ta, tb, tc, td, y;
-	double denom = ((piA + piG)*(piC + piT) + kappa*((piA*piG) + (piC*piT)));
-	double beta = 0.5/denom;
-	double x = exp(-beta*t);
-
-	// changes to base A
-	td			= -beta*(1 + PiA*(kappa - 1.0));
-	y			= exp(t*td);
-	ta			= piA*(bigPiInvA - 1.0);
-	tb			= (PiA - piA)*bigPiInvA;
-	tc			= piA*bigPiInvA;
-	pMat[0][0]	= piA + (x*ta) + (y*tb);
-	pMat[1][0]	= piA*(1.0 - x);
-	pMat[2][0]	= piA + (x*ta) - (y*tc);
-	pMat[3][0]	= pMat[1][0];
-
-	// changes to base C
-	td = -beta*(1 + PiC*(kappa - 1.0));
-	y = exp(t*td);
-	ta = piC*(bigPiInvC - 1.0);
-	tb = (PiC - piC)*bigPiInvC;
-	tc = piC*bigPiInvC;
-	pMat[0][1] = piC*(1.0 - x);
-	pMat[1][1] = piC + (x*ta) + (y*tb);
-	pMat[2][1] = pMat[0][1];
-	pMat[3][1] = piC + (x*ta) - (y*tc);
-
-	// changes to base G
-	td = -beta*(1 + PiG*(kappa - 1.0));
-	y = exp(t*td);
-	ta = piG*(bigPiInvG - 1.0);
-	tb = (PiG - piG)*bigPiInvG;
-	tc = piG*bigPiInvG;
-	pMat[0][2] = piG + (x*ta) - (y*tc);
-	pMat[1][2] = piG*(1.0 - x);
-	pMat[2][2] = piG + (x*ta) + (y*tb);
-	pMat[3][2] = pMat[1][2];
-
-	// changes to base T
-	td = -beta*(1 + PiT*(kappa - 1.0));
-	y = exp(t*td);
-	ta = piT*(bigPiInvT - 1.0);
-	tb = (PiT - piT)*bigPiInvT;
-	tc = piT*bigPiInvT;
-	pMat[0][3] = piT*(1.0 - x);
-	pMat[1][3] = piT + (x*ta) - (y*tc);
-	pMat[2][3] = pMat[0][3];
-	pMat[3][3] = piT + (x*ta) + (y*tb);
-	}

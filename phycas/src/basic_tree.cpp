@@ -1121,7 +1121,7 @@ double Tree::EdgeLenSum()
 	TreeNode *nd = GetFirstPreorder();
 	double sum = 0.0;
 
-	for (nd->GetNextPreorder(); nd != NULL; nd = nd->GetNextPreorder())
+	for (nd = nd->GetNextPreorder(); nd != NULL; nd = nd->GetNextPreorder())
 		{
 		//std::cerr << "nd->GetNodeNumber() = " << nd->GetNodeNumber() << ", sum = " << sum << std::endl; //POL-debug
 		sum += nd->GetEdgeLen();

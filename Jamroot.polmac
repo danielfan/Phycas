@@ -129,8 +129,11 @@ alias likelihood_sources
     phycas/src/edge_move.cpp 
     phycas/src/flex_prob_param.cpp
     phycas/src/flex_rate_param.cpp 
+    phycas/src/gtr_model.cpp 
     phycas/src/gtr_rate_param.cpp 
+    phycas/src/hky_model.cpp 
     phycas/src/hyperprior_param.cpp 
+    phycas/src/jc_model.cpp 
     phycas/src/kappa_param.cpp 
     phycas/src/internal_data.cpp 
     phycas/src/thirdparty/dcdflib/src/ipmpar.c

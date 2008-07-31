@@ -60,13 +60,19 @@ class TreeManip(TreeManipBase):
         """
         return TreeManipBase.starTree(self, num_tips, edge_len_dist)
 
-    def equiprobTree(self, num_tips, rng, edge_len_dist = None):
+    def equiprobTree(self, num_tips, rng, internal_dist = None, external_dist = None):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Creates a random tree from a discrete uniform distribution. For 
         example, for 6 taxa there are 105 distinct unrooted tree topologies,
         and if this function were to be called many times, it would generate
         each of these 105 tree topologies with probability 1/105 = 0.0095238.
+        The probability distribution internal_dist is used to set internal
+        edge lengths, whereas external_dist is used to set the lengths of 
+        edges associated with tip nodes. If neither internal_dist nor 
+        external_dist are specified, every edge in the tree will have length 
+        1.0. If internal_dist is specified, but not external_dist, 
+        external_dist will be made equal to internal_dist.
         
         >>> from phycas import *
         >>> r = ProbDist.Lot(13579)
@@ -80,8 +86,9 @@ class TreeManip(TreeManipBase):
         
         In the example above, the edge lengths are all 1.0 because no edge
         length distribution was supplied to the equiprobTree function. Below
-        is the same example except that the edge length distribution has been
-        defined to be a Gamma distribution with mean 0.1 and variance 0.05.
+        is the same example except that both the internal and external edge 
+        length distributions have been defined to be Gamma distributions with 
+        mean 0.1 and variance 0.05.
         
         >>> from phycas import *
         >>> r = ProbDist.Lot(94593)
@@ -97,7 +104,7 @@ class TreeManip(TreeManipBase):
         (1:0.06106,(2:0.06113,3:0.03849):0.05451,(4:0.13251,5:0.08943):0.11240)
         
         """
-        return TreeManipBase.equiprobTree(self, num_tips, rng, edge_len_dist)
+        return TreeManipBase.equiprobTree(self, num_tips, rng, internal_dist, external_dist)
         
     def yuleTree(self, num_tips, rng, lambd):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

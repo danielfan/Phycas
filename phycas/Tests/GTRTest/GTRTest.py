@@ -7,14 +7,13 @@ blob = readFile(filename)
 rng = ProbDist.Lot()
 rng.setSeed(13579)
 
-
-
 model.type = 'gtr'
 model.num_rates = 4
 model.gamma_shape = 2.0
 model.pinvar_model = True
 model.use_inverse_shape = True
 model.use_flex_model = False
+model.edgelen_dist = Exponential(1.0)
 
 mcmc.out.log = 'output.txt'
 mcmc.out.log.mode = REPLACE
