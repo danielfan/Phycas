@@ -33,7 +33,33 @@ class Tree(TreeBase):
         elif newick:
             self.buildFromString(newick, zero_based)
         self.taxon_labels = taxon_labels
-        
+        if self.getFirstPreorder():
+            if self.taxon_labels:
+                self.rectifyNumbers(self.taxon_labels)
+            else:
+                self.taxon_labels = []
+                someLabels = False
+                for tip in self.getFullTipList():
+                    n = tip.getNodeName()
+                    if not n:
+                        n = None
+                    else:
+                        someLabels = True
+                    self.taxon_labels.append(n)
+                if not someLabels:
+                    self.taxon_labels = []
+
+    def buildTree(self, tree=None):
+        """Calls buildFromString or other appropriate method to construct a tree 
+        in the the variable `tree`
+        Returns the `tree` instance."""
+        if tree is None:
+            return Phylogeny.Tree(newick=self.newick, taxon_labels=list(self.taxon_labels))
+        # makeNumberedNewick returns a one-based number
+        tree.buildFromString(self.makeNumberedNewick(), False) 
+        return tree
+    def __str__(self):
+        return self.newick
     def __iter__(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -78,7 +104,7 @@ class Tree(TreeBase):
                 yield nd
             nd = nd.getNextPreorder()
         
-    def tipNodes(self):
+    def iterTipNodes(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Returns nodes that correspond to tip nodes, where a tip node is any
@@ -88,7 +114,7 @@ class Tree(TreeBase):
         >>> from phycas.Phylogeny import *
         >>> tree = Tree()
         >>> tree.buildFromString('(a,b,(c,(d,e)x)y)z')
-        >>> for nd in tree.tipNodes():
+        >>> for nd in tree.iterTipNodes():
         ...     print nd.getNodeName(),
         ... 
         a b c d e
@@ -101,7 +127,7 @@ class Tree(TreeBase):
                 yield nd
             nd = nd.getNextPreorder()
         
-    def internalNodes(self):
+    def iterInternalNodes(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Returns nodes that correspond to internal nodes, where an internal
@@ -112,7 +138,7 @@ class Tree(TreeBase):
         >>> from phycas.Phylogeny import *
         >>> tree = Tree()
         >>> tree.buildFromString('(a,b,(c,(d,e)x)y)z')
-        >>> for nd in tree.internalNodes():
+        >>> for nd in tree.iterInternalNodes():
         ...     print nd.getNodeName(),
         ... 
         z y x
@@ -379,6 +405,22 @@ class Tree(TreeBase):
         """
         return TreeBase.makeNewick(self)
 
+    def makeNumberedNewick(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns a 1-based newick representing the tree in newick format (i.e. 
+        using nested parentheses). If a node is named, the name will be used in the
+        tree description. Tip nodes are represented by node numbers if they
+        do not have a name. If edge lengths are present, they will be shown.
+
+        >>> from phycas.Phylogeny import *
+        >>> t = Tree()
+        >>> t.buildFromString('((a:0.11,b:0.12)x:0.10,c:0.21,(d:0.31,e:0.32)y:0.30)z')
+        >>> print t.makeNumberedNewick()
+        (1:0.11000,2:0.12000,(3:0.21000,(4:0.31000,5:0.32000):0.30000):0.10000)
+
+        """
+        return TreeBase.makeNumberedNewick(self)
     def rectifyNumbers(self, taxon_names):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -396,6 +438,7 @@ class Tree(TreeBase):
         a (4) -> ? [0] -> b (3) -> ? [2] -> c (2) -> ? [1] -> d (1) -> e (0)
 
         """
+        self.taxon_labels = taxon_names
         return TreeBase.rectifyNumbers(self, taxon_names)
 
     def rectifyNames(self, taxon_names):
@@ -415,6 +458,7 @@ class Tree(TreeBase):
         e (0) -> ? [0] -> d (1) -> ? [2] -> c (2) -> ? [1] -> b (3) -> a (4)
 
         """
+        self.taxon_labels = taxon_names
         return TreeBase.rectifyNames(self, taxon_names)
 
     def unselectAllNodes(self):
@@ -462,5 +506,24 @@ class Tree(TreeBase):
 
         """
         return TreeBase.ladderize(self, False)
+    def getTips(self):
+        """Returns the tips in preorder traversal order"""
+        return [i for i in self.iterTipNodes()]
+
+    def getFullTipList(self):
+        """Returns the a list of nodes or None up to the index corresponding to 
+        the higest node index.
+        """
+        d = {}
+        max_n = 0
+        for nd in self.iterTipNodes():
+            n = nd.getNodeNumber()
+            d[n] = nd
+            max_n = max(max_n, n)
+        l = [None] * (max_n + 1)
+        for k, v in d.iteritems():
+            l[k] = v
+        return l
+
     rooted = property(isRooted)
     newick = property(makeNewick)
