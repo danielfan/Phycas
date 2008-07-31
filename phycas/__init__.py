@@ -172,7 +172,14 @@ def phycas_except_hook(t, v, tb):
 
 if intercept_python_exceptions:
     sys.excepthook = phycas_except_hook
-
+    try:
+        import IPython
+        _ipython_api = IPython.ipapi.get()
+        _ip = _ipython_api.IP
+        _ip_phycas_except_hook  = lambda x, a, b, c: phycas_except_hook(a,b,c)
+        _ip.set_custom_exc((Exception,), _ip_phycas_except_hook)
+    except:
+        pass
 
 from Phycas.RandomTree import RandomTree
 randomtree = RandomTree()
