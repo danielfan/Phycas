@@ -9,7 +9,7 @@ class Like(PhycasCommand):
                  PhycasCommand._getRNGOptions() + 
                 [("data_file_name",  None,                                     "Name of file in which to save simulated data'"),
                 ("model",           model,                                    "Specifies the model to use. By default, uses the predefined model object. Type model.help to set the settings for this model."),
-                ("tree_source",   randomtree,                                  "TreeCollection that will provide the tree.", TreeSourceValidate),
+                ("tree_source",   randomtree(),                                  "TreeCollection that will provide the tree.", TreeSourceValidate),
                 ("starting_edgelen_dist",  Exponential(10.0),                 "Used to select the starting edge lengths when tree_source is 'random'"),
                 ]
                 )

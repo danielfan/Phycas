@@ -30,8 +30,6 @@ class TreeSimulator(CommonFunctions, TreeCollection):
         eld = self.edgelen_dist
         self._current = 0
         self.trees = []
-        if (not self.taxon_labels) and self.n_taxa < 1 and (not opts.newick):
-            raise ValueError("TreeSimulator cannot be created with an empty list of taxon_labels and n_taxa set to 0")
         if eld is None:
             if self.distribution.lower() != "yule":
                 raise ValueError("edgelen_dist must be set if the tree simulator's distribution is not Yule")
@@ -66,6 +64,8 @@ class TreeSimulator(CommonFunctions, TreeCollection):
         return self
 
     def _simulateTree(self):
+        if (not self.taxon_labels) and self.n_taxa < 1 and (not self.newick):
+            raise ValueError("TreeSimulator cannot be created with an empty list of taxon_labels and n_taxa set to 0")
         tl = self.taxon_labels
         if tl:
             t = Phylogeny.Tree(taxon_labels=self.taxon_labels)
@@ -76,7 +76,7 @@ class TreeSimulator(CommonFunctions, TreeCollection):
         tm = Phylogeny.TreeManip(t)
         eld = self.edgelen_dist
         self.stdout.debugging("RandomTree._simulateTree seed = %d" %self.r.getSeed())
-        n = self.opts.newick
+        n = self.newick
         if n:
             if not isinstance(n, Newick):
                 n = Newick(n)
@@ -183,9 +183,17 @@ class TreeSimulator(CommonFunctions, TreeCollection):
     def setSpeciationRate(self, x):
         self.opts.speciation_rate = x
 
-    n_trees = property(getNTrees, setNTrees)
-    n_taxa = property(getNTaxa, setNTaxa)
+    def getNewick(self):
+        return self.opts.newick
+
+    def setNewick(self, x):
+        self.opts.newick = x
+
+    distribution = property(getDistribution, setDistribution)
     taxon_labels = property(getTaxa, setTaxa)
     edgelen_dist = property(getEdgeLenDist, setEdgeLenDist)
-    distribution = property(getDistribution, setDistribution)
     speciation_rate = property(getSpeciationRate, setSpeciationRate)
+    n_trees = property(getNTrees, setNTrees)
+    n_taxa = property(getNTaxa, setNTaxa)
+    newick = property(getNewick, setNewick)
+    
