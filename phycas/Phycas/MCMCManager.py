@@ -121,8 +121,6 @@ class LikelihoodCore:
             self.likelihood.copyDataFromDiscreteMatrix(self.parent.data_matrix)
             #POL changed self.npatterns to self.parent.npatterns below
             self.parent.npatterns = self.likelihood.getNPatterns()
-        elif self.parent.opts.data_source is None:
-            self.parent.phycassert(self.parent.ntax > 0, 'data_source is None, which indicates data will be simulated, but in this case sim_taxon_labels should not be an empty list')
 
         # Build the starting tree
         if self.parent.starting_tree == None:

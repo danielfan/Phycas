@@ -6,7 +6,6 @@ rng = ProbDist.Lot()
 rng.setSeed(13579)
 
 model.type                        = 'hky'
-
 model.kappa                        = 4.0
 model.fix_kappa                    = True
 model.kappa_prior                  = ProbDist.Exponential(1.0)
@@ -41,9 +40,9 @@ mcmc.out.params.mode              = REPLACE
 mcmc.nchains                      = 1
 mcmc.ncycles                      = 2500
 mcmc.rng                          = rng
-mcmc.starting_tree_source         = 'random'
 mcmc.dataSOURCE                   = blob.characters
-
+mcmc.starting_tree_source         = 'random'
+#mcmc.starting_tree_source         = randomtree(n_taxa=len(blob.taxon_labels), rng=rng)
 
 import sys,os
 if os.path.basename(sys.executable) == 'python_d.exe':
