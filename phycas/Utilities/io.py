@@ -1,7 +1,7 @@
 import os, sys, subprocess
 from phycas.ReadNexus._NexusReader import FileFormats
 from phycas.Utilities.CommonFunctions import getDefaultOutputter
-
+from phycas import Phylogeny
 _phycas_dir = None
 
 def getPhycasDir():
@@ -78,39 +78,44 @@ def readTrees(filepath, format=FileFormats.NEXUS, out=None):
 
 class TreeCollection(object):
 
-    def __init__(self, arg, **kwargs):
-        self.init(arg, **kwargs)
-    def init(self, arg, **kwargs):
+    def __init__(self, **kwargs):
+        self.init(**kwargs)
+    def init(self, **kwargs):
         """`arg` can be a string or an iterable containing trees.
         If `arg` is a string, then the `format` keyword argument can be used to
         specify the file format (the default is NEXUS).
         If the trees are passed in as a list then a `taxon_labels` keyword
         argument is expected.
         """
+        self.reset()
         self.title = kwargs.get("title")
-        if isinstance(arg, str):
-            self.filename = arg
+        self.filename = kwargs.get("filename")
+        if self.filename:
             self.format = kwargs.get("format", FileFormats.NEXUS)
-            self.trees = None
+            self.trees = []
             self.taxon_labels = None
         else:
-            if arg is None:
-                self.trees = None
-            else:
-                self.trees = list(arg)
-            self.taxon_labels = kwargs.get("taxon_labels")
-            self.filename = None
             self.format = None
+            self.taxon_labels = kwargs.get("taxon_labels")
+            newick = kwargs.get("newick")
+            if newick:
+                tree = Phylogeny.Tree()
+                # by default the tree is read as 1-based (as in NEXUS trees)
+                tree.buildFromString(newick, kwargs.get("zero_based", False)) 
+                self.trees = [tree]
+            else:
+                self.trees = kwargs.get("trees", [])
         self.active_taxa = self.taxon_labels
+        
 
     def reset(self):
         self.title = None
         self.filename = None
         self.format = None
-        self.trees = None
-        self.taxon_labels = None
+        self.trees = []
         self.taxon_labels = None
         self.active_taxa = None
+        self._needToRelabel = False
 
     def __iter__(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -120,11 +125,15 @@ class TreeCollection(object):
         Stores tree descriptions in self.stored_tree_defs and taxon labels in
         self.taxon_labels.
         """
-        if self.trees is None:
+        if not self.trees:
             if not self.filename:
                 return iter([])
             self.taxon_labels, self.trees = readTrees(self.filename, self.format)
             self._checkActiveTaxa()
+        if self._needToRelabel:
+            self.trees = [i.rectifyNumbers(self.active_taxa) for i in self.trees]
+            self.taxon_labels = self.active_taxa
+            self._needToRelabel = False
         return iter(self.trees)
 
     def __str__(self):
@@ -148,19 +157,14 @@ class TreeCollection(object):
         c = memo.get(self)
         if c is not None:
             return c
-        c = TreeCollection(None)
+        c = TreeCollection()
         self._copyInternals(c)
         memo[self] = c
         return c
 
     def _copyInternals(self, c):
-        if self.trees:
-            c.init(self.trees, taxon_labels=self.taxon_labels, title=self.title)
-        elif self.filename:
-            c.init(self.filename, format=self.format, title=self.title)
-        else:
-            c.init(None, taxon_labels=self.taxon_labels, title=self.title)
-        
+        c.init(**self.__dict__)
+
     def writeTree(self, tree, name="", rooted=None):
         if not self.trees:
             self.trees = []
@@ -170,20 +174,31 @@ class TreeCollection(object):
         pass
 
     def setActiveTaxonLabels(self, tl):
-        self.active_taxa = tl
+        if tl:
+            self.active_taxa = [i.lower() for i in tl]
+        else:
+            self.active_taxa = None
         self._checkActiveTaxa()
 
     def _checkActiveTaxa(self):
-        if self.active_taxa is None:
+        al = self.active_taxa
+        if al is None:
+            self._needToRelabel = False
             return True
         if self.taxon_labels:
-            if self.active_taxa != self.taxon_labels:
-                raise ValueError("Relabeling of taxa in TreeCollection objects is not currently supported")
+            tl = [i.lower() for i in self.taxon_labels]
+            if al != tl:
+                for a in al:
+                    if a not in tl:
+                        raise ValueError("Taxon %s is not found in the TreeCollection's taxon_labels (%s)" % (a, "\n".join(tl)))
+                self._needToRelabel = True
+            else:
+                self._needToRelabel = False
         return True
         
         
 class DataSource(object):
-    def __init__(self, arg, **kwargs):
+    def __init__(self, **kwargs):
         """`arg` can be a string or an iterable containing trees.
         If `arg` is a string, then the `format` keyword argument can be used to
         specify the file format (the default is NEXUS).
@@ -191,17 +206,18 @@ class DataSource(object):
         argument is expected.
         """
         self.title = kwargs.get("title")
-        if isinstance(arg, str):
-            self.filename = arg
-            self.format = kwargs.get("format", FileFormats.NEXUS)
-            self.data_obj = None
-            self.taxon_labels = None
-        else:
-            self.data_obj = arg
-            self.taxon_labels = kwargs.get("taxon_labels")
-            self.filename = None
-            self.format = None
-            
+        self.filename = kwargs.get("filename")
+        self.data_obj = kwargs.get("matrix") or kwargs.get("data_obj")
+        self.taxon_labels = kwargs.get("taxon_labels")
+        self.format = kwargs.get("format", FileFormats.NEXUS)
+
+    def _reset(self):
+        self.__init__()
+
+    def _setEqualTo(self, other):
+        "Copy the state from other (currently other must be a DataSource object)"
+        self._reset()
+        self.__init__(**other.__dict__)
 
     def getMatrix(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -215,7 +231,7 @@ class DataSource(object):
             if not self.filename:
                 return None
             self.data_obj = readData(self.filename, self.format)
-        self.data_obj
+        return self.data_obj
 
     def __str__(self):
         if self.title:
@@ -233,8 +249,8 @@ class DataSource(object):
     def __deepcopy__(self, memo):
         #trees are expensive, so we don't make a deepcopy
         if self.data_obj:
-            return DataSource(self.data_obj, taxon_labels=self.taxon_labels, title=self.title)
+            return DataSource(matrix=self.data_obj, taxon_labels=self.taxon_labels, title=self.title)
         elif self.filename:
-            return DataSource(self.filename, format=self.format, title=self.title)
-        return DataSource(None, taxon_labels=self.taxon_labels, title=self.title)
+            return DataSource(filename=self.filename, format=self.format, title=self.title)
+        return DataSource(taxon_labels=self.taxon_labels, title=self.title)
 

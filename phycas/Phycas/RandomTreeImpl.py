@@ -1,5 +1,5 @@
 import copy, os, sys, math, random, copy
-from phycas.Utilities.PhycasCommand import _value_for_user
+from phycas.Utilities.PhycasCommand import str_value_for_user
 from phycas.Utilities.CommonFunctions import CommonFunctions
 from phycas.Utilities.io import TreeCollection
 from phycas import Phylogeny
@@ -52,7 +52,7 @@ class TreeSimulator(CommonFunctions, TreeCollection):
         if eld is None:
             y = "with speciation rate = %f" % self.speciation_rate
         else:
-            y = "with edge lengths drawn from %s" % _value_for_user(eld)
+            y = "with edge lengths drawn from %s" % str_value_for_user(eld)
         return "collection of %stree(s) simulated by %s %s" % (n, t, y)
 
     def writeTree(self, tree, name="", rooted=None):
@@ -75,17 +75,21 @@ class TreeSimulator(CommonFunctions, TreeCollection):
             ntax = self.n_taxa
         tm = Phylogeny.TreeManip(t)
         eld = self.edgelen_dist
-        if self.distribution == "yule":
+        self.stdout.debugging("RandomTree._simulateTree seed = %d" %self.r.getSeed())
+        if self.distribution.lower() == "yule":
             if eld is None:
                 isp = self.speciation_rate
                 if isp is None or isp <= 0.0:
                     raise ValueError("edgelen_dist or the speciation_rate must be set to generate trees from the Yule process")
                 eld = Exponential(isp)
                 eld.setLot(self.r)
+                self.stdout.debugging("Calling TreeManip.yuleTree")
                 tm.yuleTree(ntax, self.r, eld)
             else:
+                self.stdout.debugging("Calling TreeManip.randTree")
                 tm.randTree(ntax, self.r, eld)
         else:
+            self.stdout.debugging("Calling TreeManip.equiprobTree")
             tm.equiprobTree(ntax, self.r, eld)
         return t
 

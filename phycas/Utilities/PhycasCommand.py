@@ -55,7 +55,7 @@ def ttysize():
             return None
 ###############################################################################
 
-def _value_for_user(value):
+def str_value_for_user(value):
     try:
         return value._brief_str()
     except:
@@ -342,15 +342,15 @@ class FileOutputSpec(PhycasOutput):
         fn = self._getFilename()
         if fn:
             if self._is_active:
-                v = _value_for_user(fn)
+                v = str_value_for_user(fn)
             else:
                 v = "<silenced>"
         opts_help = [PhycasTablePrinter.format_help("%s" %pref, v)]
         if fn:
             if self.prefix:
-                opts_help.append(PhycasTablePrinter.format_help("%sprefix" % dpref, _value_for_user(self.prefix)))
+                opts_help.append(PhycasTablePrinter.format_help("%sprefix" % dpref, str_value_for_user(self.prefix)))
             if self.filename:
-                opts_help.append(PhycasTablePrinter.format_help("%sfilename" % dpref, _value_for_user(self.filename)))
+                opts_help.append(PhycasTablePrinter.format_help("%sfilename" % dpref, str_value_for_user(self.filename)))
             opts_help.append(PhycasTablePrinter.format_help("%smode" % dpref, str(self.mode)))
             if len(self._valid_formats) > 1:
                 opts_help.append(PhycasTablePrinter.format_help("%s.format" % dpref, FileFormats.to_str(self.format)))
@@ -835,7 +835,7 @@ class PhycasCmdOpts(object):
             oc_name = i[0]
             name = oc_name.lower()
             n = pref and "%s%s" % (dpref, oc_name) or oc_name
-            s = PhycasTablePrinter.format_help(n, _value_for_user(self._current[name]))
+            s = PhycasTablePrinter.format_help(n, str_value_for_user(self._current[name]))
             if current_double_space and i != self._optionsInOrder[0]:
                 s = '\n%s' % s                                    
             opts_help.append(s)
@@ -909,14 +909,14 @@ def TreeSourceValidate(opts, v):
         return None
     if isinstance(v, TreeCollection):
         return v
-    return TreeCollection(v)
+    return TreeCollection(filename=v)
 
 def DataSourceValidate(opts, v):
     if v is None:
         return None
     if isinstance(v, DataSource):
         return v
-    return DataSource(v)
+    return DataSource(filename=v)
 
 def BoolArgValidate(opts, v):
     return bool(v)
@@ -1015,6 +1015,12 @@ class ProbArgValidate(FloatArgValidate):
     def __init__(self):
         FloatArgValidate.__init__(self, min=0.0, max=1.0)
 
+def LotArgValidate(opts, v):
+    from phycas.ProbDist._Lot import Lot
+    if isinstance(v, Lot):
+        return v
+    raise ValueError("Mest be a ProbDist.Lot instance")
+    
 class PhycasCommandHelp(object):
     def __init__(self, command, cmd_name, cmd_descrip):
         self.command = command
@@ -1219,5 +1225,6 @@ class PhycasCommand(object):
         v = "with id=%d" % id(self)
         return "The %s command instance %s" % (self.help.cmd_name, v)
     def _getRNGOptions():
-        return [("random_seed", 0, "Determines the random number seed used; specify 0 to generate seed automatically from system clock", IntArgValidate(min=0))]
+        return [("rng", None, "A pseudo-random number generator instance", LotArgValidate),
+                ("random_seed", 0, "Determines the random number seed used; specify 0 to generate seed automatically from system clock", IntArgValidate(min=0))]
     _getRNGOptions = staticmethod(_getRNGOptions)

@@ -1,4 +1,17 @@
 from _DataMatrixBase import DataMatrixBase
+
+class BogusDataMatrix(object):
+    def getNChar(self): return 0
+    def getNTax(self): return 0
+    def getDatatype(self): return 0
+    def getStateList(self): return tuple()
+    def getStateListPos(self): return tuple()
+    def getCodedDataMatrix(self): return tuple()
+    def getRow(self): return tuple()
+    def getIntWeights(self): return tuple()
+    def getFloatWeights(self): return tuple()
+    def getExcludedIndicesWeights(self): return tuple()
+
 class DataMatrix(DataMatrixBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """Wraps a DataMatrixBase object and enables access to fields. Note that
@@ -22,17 +35,22 @@ class DataMatrix(DataMatrixBase):
     Generic_Datatype = 4
     NEXUS_DATATYPE_NAMES = ("DNA", "RNA", "Protein", "Standard", "Standard")
 
-    def __init__(self, dataMatrixBaseObj, taxa):
+    def __init__(self, dataMatrixBaseObj, taxa=None):
         "intended to be called by the phycas internal functions only"
-        assert(dataMatrixBaseObj)
+        self._reset()
+        if isinstance(dataMatrixBaseObj, DataMatrix):
+            dataMatrixBaseObj = dataMatrixBaseObj.mat
+            if not taxa:
+                taxa = dataMatrixBaseObj.taxa
         self.taxa = taxa
+        if dataMatrixBaseObj is None:
+            self.n_states = 0
+            self.mat = BogusDataMatrix()
+            return
         self.mat = dataMatrixBaseObj
         self.n_states = dataMatrixBaseObj.getNStates()
         raw_symbols_list = dataMatrixBaseObj.getSymbolsList()
         assert(len(raw_symbols_list) >= self.n_states)
-        self.symbols = []
-        self.symbols_to_code = {}
-        
         for n in range(self.n_states):
             i = raw_symbols_list[n]
             if i != " ":
@@ -66,6 +84,14 @@ class DataMatrix(DataMatrixBase):
                     t = tuple(s)
                     self.symbols.append("{%s}"% " ".join(sym))
                     self.symbols_to_code[t] = n
+    def __bool__(self):
+        return self.n_char > 0
+    def _reset(self):
+        self.taxa = None
+        self.mat = None
+        self.n_states = None
+        self.symbols = []
+        self.symbols_to_code = {}
         self._state_list_pos = None
         self._state_list = None
         self._n_char = None
@@ -74,6 +100,7 @@ class DataMatrix(DataMatrixBase):
         self._int_wts = None
         self._float_wts = None
         self._excluded = None
+        
 
     def getNChar(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
