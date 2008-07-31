@@ -323,7 +323,7 @@ class MCMCImpl(CommonFunctions):
             self.opts.model.internal_edgelen_dist = self.opts.model.edgelen_dist
         if self.opts.model.external_edgelen_dist is None:
             self.opts.model.external_edgelen_dist = self.opts.model.edgelen_dist
-        ds = self.opts.dataSOURCE
+        ds = self.opts.data_source
         mat = ds and ds.getMatrix() or None
         self._loadData(mat)
         
@@ -506,7 +506,7 @@ class MCMCImpl(CommonFunctions):
             if self.data_matrix == None:
                 self.output('Data source:    None (running MCMC with no data to explore prior)')
             else:
-                self.output('Data source:    %s' % str_value_for_user(self.opts.dataSource))
+                self.output('Data source:    %s' % str_value_for_user(self.opts.data_source))
                 all_missing = self.mcmc_manager.getColdChain().likelihood.getListOfAllMissingSites()
                 num_excluded = len(all_missing)
                 if num_excluded > 0:

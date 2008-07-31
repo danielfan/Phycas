@@ -13,7 +13,7 @@ mcmc.burnin               = 100
 mcmc.ncycles              = 100
 mcmc.sample_every         = 10
 mcmc.report_every         = 10
-mcmc.dataSOURCE           = getPhycasTestData('green.nex')
+mcmc.data_source          = getPhycasTestData('green.nex')
 mcmc.starting_tree_source = randomtree(newick=n, rng=rng)
 mcmc.fix_topology         = True
 mcmc.edge_move_weight     = 1
