@@ -140,7 +140,13 @@ If we would like to execute the example data file ``green.nex'' and store the re
 \begin{verbatim}
 file_contents = readFile("green.nex")
 \end{verbatim}
-
+At this point you should be able to inspect the data that was read. 
+The easiest way to figure out about an object is to ask for help:
+\begin{verbatim}
+help
+help(file_contents)
+\end{verbatim}
+The first invocation of help shows the general message and the second form is how you ask for help about a specific object.
 
 \begin{verbatim}
 mcmc.data_source = 'green.nex' #file_contents.characters
