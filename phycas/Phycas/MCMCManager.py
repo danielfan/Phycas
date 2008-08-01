@@ -339,8 +339,9 @@ class MarkovChain(LikelihoodCore):
         self.pinvar_prior.setLot(self.r)
         if self.edgelen_hyperprior is not None:
             self.edgelen_hyperprior.setLot(self.r)
-        self.external_edgelen_prior.setLot(self.r)
-        if self.parent.opts.model.internal_edgelen_prior:
+        if self.parent.opts.model.external_edgelen_prior is not None:
+            self.external_edgelen_prior.setLot(self.r)
+        if self.parent.opts.model.internal_edgelen_prior is not None:
             self.internal_edgelen_prior.setLot(self.r)
         
         # Define priors for the model parameters
@@ -690,7 +691,7 @@ class MCMCManager:
             total += c.getNEvals()
         return total
 
-    def recordSample(self, cycle):
+    def recordSample(self, cycle = -1):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Records the current tree topology and edge lengths by adding a line to

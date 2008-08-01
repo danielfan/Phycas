@@ -73,6 +73,8 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 		void					addModelParam(MCMCUpdaterShPtr p);
 		void					addEdgeLenParam(MCMCUpdaterShPtr p);
 		void					addEdgeLenHyperparam(MCMCUpdaterShPtr p);
+        void                    setEdgeLenHyperparam(unsigned i, double v);
+
 		void					finalize();
 
 		double					recalcEdgeLenPriors(double mu, double var);

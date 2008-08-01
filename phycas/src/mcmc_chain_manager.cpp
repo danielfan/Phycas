@@ -266,10 +266,22 @@ void	MCMCChainManager::addEdgeLenParam(MCMCUpdaterShPtr p)
 /*----------------------------------------------------------------------------------------------------------------------
 |	Adds a HyperPriorParam shared pointer to the `edge_len_hyperparams' vector.
 */
-void	MCMCChainManager::addEdgeLenHyperparam(MCMCUpdaterShPtr p) 
+void MCMCChainManager::addEdgeLenHyperparam(MCMCUpdaterShPtr p) 
 	{
 	edge_len_hyperparams.push_back(p);
 	dirty = true;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the specified value in the `edge_len_hyperparams' vector. If there are two edge length hyperparameters, the 
+|   first applies to external edge lengths and the second to internal edge lengths.
+*/
+void MCMCChainManager::setEdgeLenHyperparam(
+  unsigned i,   /**< is the index of the value to set */
+  double v)     /**< is the value to set */
+	{
+    PHYCAS_ASSERT(i < edge_len_hyperparams.size());
+	edge_len_hyperparams[i]->setCurrValue(v);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

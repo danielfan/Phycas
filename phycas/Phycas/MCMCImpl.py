@@ -388,6 +388,10 @@ class MCMCImpl(CommonFunctions):
 
         self.mcmc_manager.createChains()
         self.openParameterAndTreeFiles()
+        if self.opts.doing_path_sampling:
+            self.ps_beta = self.opts.ps_maxbeta
+            cc = self.mcmc_manager.getColdChain()
+            cc.setPower(self.ps_beta)
         
     def beyondBurnin(self, cycle):
         c = cycle + 1
@@ -411,9 +415,18 @@ class MCMCImpl(CommonFunctions):
             name = p.getName()
             if name == 'edge length hyperparameter':
                 # BOOKMARK
-                edgelen_hyperparam = chain.model.getEdgeLenHyperPrior().sample()
-                chain.model.getInternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
-                chain.model.getExternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
+                if chain.model.isSeparateInternalExternalEdgeLenPriors():
+                    edgelen_hyperparam = chain.model.getEdgeLenHyperPrior().sample()
+                    chain.chain_manager.setEdgeLenHyperparam(0, edgelen_hyperparam)
+                    chain.model.getExternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
+                    edgelen_hyperparam = chain.model.getEdgeLenHyperPrior().sample()
+                    chain.chain_manager.setEdgeLenHyperparam(1, edgelen_hyperparam)
+                    chain.model.getInternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
+                else:
+                    edgelen_hyperparam = chain.model.getEdgeLenHyperPrior().sample()
+                    chain.chain_manager.setEdgeLenHyperparam(0, edgelen_hyperparam)
+                    chain.model.getInternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
+                    chain.model.getExternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
                 tm.equiprobTree(chain.tree.getNTips(), chain.r, chain.model.getInternalEdgeLenPrior(), chain.model.getExternalEdgeLenPrior())
                 edgelens_generated = True
             elif name == 'trs/trv rate ratio':
@@ -619,12 +632,14 @@ class MCMCImpl(CommonFunctions):
             self.output('\nSampling (%d cycles)...' % self.opts.ncycles)
         if self.opts.verbose:
             print
-        self.mcmc_manager.recordSample(0)
         self.last_adaptation = 0
         self.next_adaptation = self.opts.adapt_first
 
+        # Lay down first line in params file (recorded as cycle 0) containing starting values of parameters
+        self.mcmc_manager.recordSample()
+
         if self.opts.doing_path_sampling:
-            chain = self.mcmc_manager.chains[0]
+            chain = self.mcmc_manager.getColdChain()
             if self.opts.ps_nbetavals > 1:
                 self.ps_delta_beta = float(self.opts.ps_maxbeta - self.opts.ps_minbeta)/float(self.opts.ps_nbetavals - 1)
                 self.ps_sampled_betas = [self.opts.ps_maxbeta - self.ps_delta_beta*float(i) for i in range(self.opts.ps_nbetavals)]
