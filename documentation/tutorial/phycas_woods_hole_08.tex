@@ -117,8 +117,32 @@ You can launch the \phycas application you can double-click the \phycas icon app
 After the libraries have loaded you will see a prompt.
 This is the python interpreter waiting for you to give it a command.
 
+The first step is to set the working directory of \phycas to the directory in which you want to work.
+If you are using the IPython interface, and you would like to  move to a directory called \localfile{Desktop/PhycasWHExamples} then issue the command:
 \begin{verbatim}
-file_contents = readFile('green.nex')
+cd Desktop/PhycasWHExamples
+pwd
+\end{verbatim}
+to change working directory and then show the path to the current directory
+
+Note that, if you are using the ``raw'' python interface, you have to issue the commands:
+\begin{verbatim}
+import os
+os.chdir("Desktop/PhycasWHExamples")
+from phycas import *
+\end{verbatim}
+
+
+To read in the data into memory we invoke the \cmd{readFile} function.
+We pass in the full path to the NEXUS file that we would like to read as an argument to the function, and we capture a reference to the data that has been read by storing the return value of the function.
+If we would like to execute the example data file ``green.nex'' and store the results in a variable called 
+\texttt{file\_contents} then we use the command:
+\begin{verbatim}
+file_contents = readFile("green.nex")
+\end{verbatim}
+
+
+\begin{verbatim}
 mcmc.data_source = 'green.nex' #file_contents.characters
 mcmc.out.log = 'basic.log'
 mcmc.out.log.mode = REPLACE

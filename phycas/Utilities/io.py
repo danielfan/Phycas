@@ -224,10 +224,7 @@ class DataSource(object):
     def getMatrix(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Returns an iterable over the trees (this will trigger the reading of
-        the input file if the object was initialized from a string.
-        Stores tree descriptions in self.stored_tree_defs and taxon labels in
-        self.taxon_labels.
+        Returns a DataMatrix object (or None if the DataSource is empty)"
         """
         if self.data_obj is None:
             if not self.filename:

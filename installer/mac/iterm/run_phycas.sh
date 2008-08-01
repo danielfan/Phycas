@@ -17,5 +17,15 @@ then
         $PYTHONINTERPRETER -c "from IPython.Shell import IPShell ; IPShell(['-i', '-c','from phycas import *']).mainloop()"
     fi
 else
-    $PYTHONINTERPRETER -i $@
+	if test $# -eq 0
+	then
+    if ! test "$USES_I_PYTHON" = "1"
+    then
+        $PYTHONINTERPRETER -i $1
+    else
+        $PYTHONINTERPRETER -c "from IPython.Shell import IPShell ; IPShell(['-i', \"$1\"]).mainloop()"
+    fi
+	else
+    	$PYTHONINTERPRETER -i $@
+    fi
 fi

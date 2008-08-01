@@ -234,3 +234,16 @@ def at(addr):
             return o
     return None
 from phycas.Utilities.GlobalState import readFile
+
+print """
+                     Welcome to Phycas
+                      version 1-alpha
+
+Phycas is written by Paul O. Lewis with some contributions by David Swofford
+and Mark Holder.
+
+You are running code compiled from SVN %s
+
+Phycas is distributed under the GNU Public License see License file for more
+information.
+""" % _phycas_revision[1:-1]
