@@ -252,37 +252,36 @@ We will see examples of these files later in the lab.
 
 The commands for replaying this example are shown in the section \hyperref[basicpy]{basic.py} and in the file \localfile{basic.py} in the scripts folder that accompanied the lab.
 
-Actually a slightly longer, but more 
+\subsubsection{Another way to read in data}
+A slightly longer, but more more explicit way to have written the previous 
+script would have started with the lines:
+\begin{verbatim}
+file_contents = readFile("green.nex")
+mcmc.data_source = file_contents.characters
+\end{verbatim}
+
+In this form we read in the data before telling the \cmd{mcmc} to use this data.
+So after we read the file, we can inspect the contents:
+\begin{verbatim}
+help(file_contents)
+print file_contents.taxon_labels
+print file_contents.characters
+print file_contents.trees
+\end{verbatim}
+
+
+
 \section{Polytomy priors}
 One flavor of Bayesian analysis that is implemented in \phycas, but not available in \mb is support for prior distributions that place non-zero probability on trees that are not fully-resolved (also referred to as trees with polytomies or trees with multifurcations).
 The details of the algorithm (and justifications for the approach) can be found in \citet{LewisHH2005}.
 We will be using the same data set that was used in that paper which is a set of algal sequences published by \citet{ShoupL2003}.
 
-To read in the data into memory we invoke the \cmd{readFile} function.
-We pass in the full path to the NEXUS file that we would like to read as an argument to the function, and we capture a reference to the data that has been read by storing the return value of the function.
-If we would like to execute the example data file ``green.nex'' and store the results in a variable called 
-\cmdopt{file\_contents} then we use the command:
-\begin{verbatim}
-file_contents = readFile("green.nex")
-\end{verbatim}
-At this point you should be able to inspect the data that was read. 
-The easiest way to figure out about an object is to ask for help:
-\begin{verbatim}
-help
-help(file_contents)
-\end{verbatim}
-The first invocation of help shows the general message and the second form is how you ask for help about a specific object.
-
-\begin{verbatim}
-mcmc.data_source = 'green.nex' #file_contents.characters
-mcmc.out.log = 'basic.log'
-mcmc.out.log.mode = REPLACE
-mcmc.out.trees.prefix = 'green'
-mcmc.out.params.prefix = 'green'
-mcmc.ncycles = 2000
-mcmc.sample_every = 10
-mcmc()
-\end{verbatim}
+This time we will pay more attention to the model and mcmc settings than we did in the basic example above.
+To start from a clean slate:
+\begin{enumerate}
+	\item open a new window in the \phycas application
+	\item change the working directory to a convenient location for working with the \localfile{ShoupLewis.nex}. Note that you do {\bf not} have to change your working directory to match the location to the input file, but if you do not then you will have to make sure that you use a relative or absolute path to all of the files that you refer to.
+\end{enumerate}
 
 
 \newpage
