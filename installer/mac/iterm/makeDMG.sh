@@ -23,6 +23,9 @@ then
 	ditto -rsrc "$PHYCAS_ROOT/LICENSE" "phycasimg/LICENSE" || exit
 	ditto -rsrc "README" "phycasimg/README" || exit
 	ditto -rsrc "$PHYCAS_ROOT/documentation/users/manual.pdf" "phycasimg/manual.pdf" || exit
+	ditto -rsrc "$PHYCAS_ROOT/documentation/tutorial/PhycasWHExamples" "phycasimg/PhycasWHExamples" || exit
+	ditto -rsrc "$PHYCAS_ROOT/documentation/tutorial/phycas_woods_hole_08.pdf" "phycasimg/PhycasWHExamples/phycas_woods_hole_08.pdf" || exit
+	
 	hdiutil create -srcfolder phycasimg $MASTER_DMG
 else
 	echo "PHYCAS_ROOT is not defined as a directory"

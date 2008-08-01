@@ -111,11 +111,24 @@ while the python prompt looks like this:
 
 
 \subsection{Exercise 1}
-Locate the directory of example files labeled \localfile{PhycasWHExamples}
+Locate the directory of example files labeled \localfile{PhycasWHExamples} and move it to a convenient location for you.
 
-Double-click the \phycas application to launch it.  
+You can launch the \phycas application you can double-click the \phycas icon application (later when you have scripts written, you can launch the \phycas by dragging a python script onto the \phycas application icon).
 After the libraries have loaded you will see a prompt.
 This is the python interpreter waiting for you to give it a command.
+
+\begin{verbatim}
+file_contents = readFile('green.nex')
+mcmc.data_source = 'green.nex' #file_contents.characters
+mcmc.out.log = 'basic.log'
+mcmc.out.log.mode = REPLACE
+mcmc.out.trees.prefix = 'green'
+mcmc.out.params.prefix = 'green'
+mcmc.ncycles = 2000
+mcmc.sample_every = 10
+mcmc()
+\end{verbatim}
+
 
 
 

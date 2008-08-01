@@ -80,7 +80,10 @@ class TreeSummarizer(CommonFunctions):
         """
         # we use the trees file spec to make a pdf with the same 
         trees_spec = self.optsout.trees
-        pdf_spec = PDFOutputSpec(trees_spec.prefix, "", trees_spec.filename)
+        p = trees_spec.prefix
+        if not p:
+            p = trees_spec.filename
+        pdf_spec = PDFOutputSpec(p, "", "")
         try:
             pdf_spec.mode = trees_spec.mode
         except:
@@ -301,7 +304,6 @@ class TreeSummarizer(CommonFunctions):
         # Check to make sure user specified an input tree file
         input_trees = self.opts.trees
         self.stdout.phycassert(input_trees, 'trees cannot be None or empty when sumt method is called')
-        self.stdout.phycassert(self.optsout.trees.prefix, 'sumt.out.trees.prefix must be specified before sumt method is called')
         
         num_trees = 0
         num_trees_considered = 0
@@ -348,8 +350,7 @@ class TreeSummarizer(CommonFunctions):
                 # this is necessary only if number of taxa varies from tree to tree
                 split_field_width = ntips
             t.recalcAllSplits(ntips)
-            treelen = t.edgeLenSum()
-
+            
             # Each split found in any tree is associated with a list by the dictionary split_map
             #   The list is organized as follows:
             #   - element 0 is the number of times the split was seen over all sampled trees
@@ -373,6 +374,8 @@ class TreeSummarizer(CommonFunctions):
             nd = t.getFirstPreorder()
             assert nd.isRoot(), 'the first preorder node should be the root'
             #split_vec = []
+            treelen = 0.0
+            hel = t.hasEdgeLens()
             while True:
                 nd = nd.getNextPreorder()
                 if not nd:
@@ -383,8 +386,8 @@ class TreeSummarizer(CommonFunctions):
                     internal_node = not tip_node
                     
                     # Grab the edge length
-                    edge_len = nd.getEdgeLen()
-                    
+                    edge_len = hel and nd.getEdgeLen() or 1.0
+                    treelen += edge_len
                     # Grab the split and invert it if necessary to attain a standard polarity
                     s = nd.getSplit()
                     if (not self.rooted_trees) and s.isBitSet(0):
@@ -412,7 +415,8 @@ class TreeSummarizer(CommonFunctions):
                             split_map[ss] = [1, edge_len]
                         else:
                             split_map[ss] = [1, edge_len, num_trees_considered]
-                            
+            #treelen = t.edgeLenSum()
+                
             # Update tree_map, which is a map with keys equal to lists of internal node splits
             # and values equal to 2-element lists containing the frequency and newick tree
             # description
