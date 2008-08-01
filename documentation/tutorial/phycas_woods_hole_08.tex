@@ -1,0 +1,131 @@
+\documentclass{article}
+
+\setcounter{page}{1}
+\setcounter{secnumdepth}{0}
+\setlength{\oddsidemargin}{0.in}
+\setlength{\evensidemargin}{0.in}
+\setlength{\textwidth}{6.5in}
+\setlength{\topmargin}{0.0in}
+\setlength{\headheight}{0.17in}
+\setlength{\headsep}{0.35in}
+\setlength{\textheight}{8.in}
+\setlength{\parindent}{0in}
+\setlength{\parskip}{.1in}
+%\input seteps
+
+\usepackage{xspace}
+\newcommand{\barLone}{\bar{L}_1}
+\newcommand{\barLzero}{\bar{L}_0}
+\newcommand{\execmd}[1]{\texttt{#1}\\}
+\newcommand{\cmdopt}[1]{\texttt{#1}\xspace}
+\newcommand{\cmd}[1]{\texttt{#1}\xspace}
+\newcommand{\mb}{MrBayes\xspace}
+\newcommand{\paup}{PAUP*\xspace}
+\newcommand{\phycas}{Phycas\xspace}
+\newcommand{\localfile}[1]{\textsf{#1}\xspace}
+\newcommand{\QandA}[2]{\textit{#1}\footnote{#2}\xspace}
+% use the fancyhdr package to allow both headers and footers
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{} % clear all headers and footers
+\fancyhead[LO,RE]{Woods Hole}
+\fancyhead[RO,LE]{Workshop on Molecular Evolution}
+\fancyfoot[LO,LE]{{\footnotesize \copyright\ 2008 by Paul O. Lewis, Mark T. Holder, and David Swofford}}
+\fancyfoot[CE,CO]{}
+\fancyfoot[RO,RE]{\thepage}
+
+\usepackage{url}
+
+\usepackage{hyperref}
+\hypersetup{backref,  pdfpagemode=FullScreen,  linkcolor=blue, citecolor=red, colorlinks=true, hyperindex=true}
+\fancyhead[CE,CO]{\phycas Tutorial}
+\begin{document}
+
+%###########################################################################################
+\section{\phycas Lab}
+
+%###########################################################################################
+
+The main goal is to become familiar with running \phycas and interpreting its output. 
+Don't rush things. 
+If you don't finish the lab, you can always download 
+\phycas from \url{http://www.phycas.org} when you get home and finish it there.
+
+Stylistic conventions used in this document:
+
+\begin{tabular}{l}
+	Commands understood by the \paup and/or \mb programs are in \cmd{this fixed width font} \\
+	Questions for you to answer are in {\em italics}. \\
+	Important things to note are in {\bf bold face}. \\
+	Names of files \localfile{are in  this font}.\\
+	Web site URLs look \url{http://like_this} and are clickable links.
+\end{tabular}
+
+%-------------------------------------------------------------------------------------------
+\subsection{Background}
+%-------------------------------------------------------------------------------------------
+\phycas is a software package for Bayesian phylogenetic analysis written by Paul Lewis with
+some contributions by Mark Holder and David Swofford.
+\phycas is a hybrid program: computationally-intensive tasks are implemented in C++, and the high-level
+tasks are done in \href{http://www.python.org/}{python}\footnote{The Phycas manual contains instructions for installing python if you are using an operating system
+that does not come with python installed.}.
+
+In fact, the python language is the front-end for \phycas. 
+So when you write command file in \phycas you are actually writing a python program.
+This has advantages because python interpreter is a powerful, robust, and versatile program for interpreting text commands.
+However, it also means that \phycas cannot be forgiving when it comes to the structure of commands and syntax in general.
+
+\subsubsection{The Phycas.app bundle}
+In the lab we will be running \phycas as a double-clickable program that is built around the open-source iTerm Terminal application (\href{http://iterm.sourceforge.net/}{iTerm homepage}).
+You can run phycas scripts from any terminal by invoking python and entering the command:
+\begin{verbatim}
+from phycas import *
+\end{verbatim}
+You will not have to issue this command when using the \phycas application bundle on Mac, but you will have to use the command in all of your phycas scripts.
+\subsubsection{IPython}
+In the lab we will be running \phycas through \href{http://ipython.scipy.org/moin/}{IPython} rather than Python itself.  
+IPython provides a more user-friendly environment for interactive python than the ``raw'' python interpreter.
+The main benefits of IPython are:
+\begin{itemize}
+	\item Tab-completion of variable names (start to type the name and then hit the Tab-key to fill in the rest of the word or see a list of possible matches),
+	\item Native support for a few UNIX commands (most notably \cmd{ls} and \cmd{cd})
+	\item Support for any UNIX commands if you start the line with an exclamation point (!)
+\end{itemize}
+If you decide that you do not like IPython, then you can simply edit the active configuration file of phycas. 
+Open 
+\localfile{$\sim$/.phycas/active\_phycas\_env.sh} 
+in a text editor, and change the last line to read:
+\begin{verbatim}
+export USES_I_PYTHON=0
+\end{verbatim}
+
+If you are unsure whether or not you have correctly enabled (or disabled) the IPython-style of interacting with \phycas, you can tell by looking at the prompt.
+The IPython prompt looks like this:
+\begin{verbatim}
+In [2]: 
+\end{verbatim}
+while the python prompt looks like this:
+\begin{verbatim}
+>>>
+\end{verbatim}
+
+
+\subsection{Exercise 1}
+Locate the directory of example files labeled \localfile{PhycasWHExamples}
+
+Double-click the \phycas application to launch it.  
+After the libraries have loaded you will see a prompt.
+This is the python interpreter waiting for you to give it a command.
+
+
+
+\end{document}
+
+\label{executingdatafile}
+\execmd{cmdhere}
+\localfile{algaemb.nex} 
+\cmdopt{tratiopr} 
+
+\QandA{q?}{answer}
+
+
