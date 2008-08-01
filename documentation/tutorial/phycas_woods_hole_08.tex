@@ -117,26 +117,117 @@ You can launch the \phycas application you can double-click the \phycas icon app
 After the libraries have loaded you will see a prompt.
 This is the python interpreter waiting for you to give it a command.
 
+\subsubsection{Changing the working directory}
 The first step is to set the working directory of \phycas to the directory in which you want to work.
 If you are using the IPython interface, and you would like to  move to a directory called \localfile{Desktop/PhycasWHExamples} then issue the command:
 \begin{verbatim}
 cd Desktop/PhycasWHExamples
 pwd
+ls
 \end{verbatim}
-to change working directory and then show the path to the current directory
+to change working directory, then show the path to the current directory
 
-Note that, if you are using the ``raw'' python interface, you have to issue the commands:
+Note that, if you are using the  python interpreter (instead of the IPython interface), you have to issue the commands:
 \begin{verbatim}
 import os
 os.chdir("Desktop/PhycasWHExamples")
 from phycas import *
 \end{verbatim}
 
+\subsubsection{Getting help}
+A good first step is to get an idea of what actions you can take. 
+Call the help function to see a general message about \phycas, and then
+use the \cmd{public} function to see a summary of globally available
+variables
+\begin{verbatim}
+help()
+public()
+\end{verbatim}
+
+Because you are actually programming python with every line you type, you 
+also have access to all python commands.
+You can ask python for all of the variables that are in memory using the
+\cmd{dir} function:
+\begin{verbatim}
+dir()
+\end{verbatim}
+This will return a (long) list of strings that are the names of all of the currently
+available names that python knows about.  
+You can ignore any name that starts with an underscore.
+
+Well, a very long list of variables is probably not too helpful to you.
+Fortunately, you can pass one of the listed names in the help function to see 
+some information about the variable:
+\begin{verbatim}
+help(readFile)
+help(mcmc)
+\end{verbatim}
+
+\subsubsection{Setting up a basic MCMC analysis}
+The settings that affect the behavior of an MCMC run are all stored
+as attributes of an \phycas object with the name \cmd{mcmc}.
+In python, objects are collections of data and actions.
+You address the attributes of an object by putting a ``.'' between
+the name of the object and the name of the attribute.
+And you change the value of an attribute by using the ``='' character
+to assign the attribute a new value
+Let's see how it works:o
+\begin{verbatim}
+mcmc.current()
+mcmc.data_source = "green.nex"
+mcmc.current()
+\end{verbatim}
+If you look through the tables of input settings before and after
+the assignment to the \cmdopt{data\_source} attribute, you should see
+that the value goes from ``\cmd{None}'' to ``\cmd{Characters from the file green.nex}''
+
+As with \mb, the MCMC sampler will produce a collection of files storing
+trees and parameter values.
+Now lets configure the output settings:
+\begin{verbatim}
+mcmc.out.log = "basic.log"
+mcmc.out.log.mode = REPLACE
+mcmc.out.trees.prefix = 'green'
+mcmc.out.params.prefix = 'green'
+\end{verbatim}
+
+Now we will set up the length of the MCMC simulation. 
+It is important to realize that a ``cycle'' in \phycas is {\bf not}
+equivalent to a ``generation'' in \mb.
+In \mb each generation represents an iteration of:
+\begin{enumerate}
+	\item propose a new state,
+	\item evaluate the posterior probability density,
+	\item accept or reject the proposal
+\end{enumerate}
+But in \phycas a cycle represents a sweep of proposals over all of the parameters
+in model -- including several proposed changes to the topology.
+In terms of the number of updates, a cycle in \phycas is more or less equivalent (in terms 
+of the number of updates) to 100 generations in \mb:
+\begin{verbatim}
+mcmc.ncycles = 2000
+mcmc.sample_every = 10
+\end{verbatim}
+
+Before we launch the analysis, let's check the settings according to the MCMC command
+to see if there were any errors in the settings:
+\begin{verbatim}
+mcmc.current()
+\end{verbatim}
+
+If everything looks good we can launch the run by calling the \cmd{mcmc} command
+as if it were a python function:
+\begin{verbatim}
+mcmc()
+\end{verbatim}
+
+
+
 
 To read in the data into memory we invoke the \cmd{readFile} function.
 We pass in the full path to the NEXUS file that we would like to read as an argument to the function, and we capture a reference to the data that has been read by storing the return value of the function.
 If we would like to execute the example data file ``green.nex'' and store the results in a variable called 
-\texttt{file\_contents} then we use the command:
+\cmdopt{file\_contents} then we use the command:
 \begin{verbatim}
 file_contents = readFile("green.nex")
 \end{verbatim}

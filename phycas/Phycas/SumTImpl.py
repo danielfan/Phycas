@@ -132,7 +132,7 @@ class TreeSummarizer(CommonFunctions):
             if treef is not None:
                 trees_spec.close()
 
-    def awtyPlot(self, pdf, split_vect, ntrees, ndivisions = 10):
+    def awtyPlot(self, pdf_factory, split_vect, ntrees, ndivisions = 10):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         The supplied split_vect is a vector of key,value pairs, where the key
@@ -203,7 +203,8 @@ class TreeSummarizer(CommonFunctions):
         if splits_plotted == 0:
             self.stdout.info('No AWTY plot created because no splits with posteriors less than 1.0 were found')
             return False
-        
+        pdf = pdf_factory()
+        self.stdout.info('\nSaving AWTY plot in file %s...' % self._splitsPdfFilename)
         pdf.scatterPlot(data, title = 'Split Probabilities Through Time', xinfo = (0,ntrees,10,0), yinfo = (0.0,1.0,10,1))
 
         if self.opts.useGUI and useWxPhycas():
@@ -221,7 +222,7 @@ class TreeSummarizer(CommonFunctions):
             self.stdout.info('%d trivial and %d uninteresting splits were ignored.' % (trivial_ignored, uninteresting_ignored))
         return True
         
-    def sojournPlot(self, pdf, split_vect, ntrees):
+    def sojournPlot(self, pdf_factory, split_vect, ntrees):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Creates a plot comprising numerous horizontal lines, each representing
@@ -259,6 +260,8 @@ class TreeSummarizer(CommonFunctions):
             self.stdout.info('No sojourn plot created because all non-trivial splits had posterior probability 1.0')
             return False
 
+        self.stdout.info('\nSaving Sojourn plot in file %s...' % self._splitsPdfFilename)
+
         # Now create the plot data
         data = []
         for i,s in enumerate(v):
@@ -286,6 +289,7 @@ class TreeSummarizer(CommonFunctions):
         if splits_plotted <= 10:
             ydivs = int(ymax)
 
+        pdf = pdf_factory()
         pdf.scatterPlot(data, points = False, line_width = 3, line_cap_style = 'square', title = 'Split Sojourns', xinfo = (0,ntrees,10,0), yinfo = (0.0,float(ymax),ydivs,0))
         if trivial_ignored + uninteresting_ignored > 0:
             self.stdout.info('%d trivial and %d uninteresting splits were ignored.' % (trivial_ignored, uninteresting_ignored))
@@ -596,24 +600,29 @@ class TreeSummarizer(CommonFunctions):
         self.stdout.info('\nSaving distinct tree topologies...')
         self.save_trees(summary_short_name_list, summary_full_name_list, summary_tree_list)
 
-        trees_spec = self.optsout.trees 
-        sp = self.optsout.splits 
-        if bool(sp):
-            if sp.replaceMode() and sp.sameBaseName(trees_spec):
-                self.stdout.info("Splits pdf will overwrite the tree topology pdf")
-            pdf = sp.open(11.0, 8.5, self.stdout)
+        self._splitsPdfWriter = None
+        self._splitsPdfFilename = None
+        
+        if bool(self.optsout.splits):
             try:
-                fn = sp._getFilename()
-                self.stdout.info('\nSaving AWTY plot in file %s...' % fn)
-                awty_ok = self.awtyPlot(pdf, split_vect, num_trees_considered)
-    
-                self.stdout.info('\nSaving Sojourn plot in file %s...' % fn)
-                sojourn_ok = self.sojournPlot(pdf, split_vect, num_trees_considered)
+                pdf_source = lambda : self._getSplitsPDFWriter()
+                awty_written = self.awtyPlot(pdf_source, split_vect, num_trees_considered)
+                sojourn_written = self.sojournPlot(pdf_source, split_vect, num_trees_considered)
             finally:
-                sp.close()
-            if not (awty_ok or sojourn_ok):
-                pdf.saveDocument(fn)
+                if self._splitsPdfWriter:
+                    self.optsout.splits.close()
+            if awty_written or sojourn_written:
+                self._splitsPdfWriter.saveDocument(self._splitsPdfFilename)
 
         self.stdout.info('\nSumT finished.')
-
+    def _getSplitsPDFWriter(self):
+        if self._splitsPdfWriter is None:
+            sp = self.optsout.splits 
+            if sp.replaceMode() and sp.sameBaseName(self.optsout.trees):
+                self.stdout.info("Splits pdf will overwrite the tree topology pdf")
+            self._splitsPdfFilename = sp._getFilename()
+            self._splitsPdfWriter = sp.open(11.0, 8.5, self.stdout)
+        return self._splitsPdfWriter
+            
+        
 

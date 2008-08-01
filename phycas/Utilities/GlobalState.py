@@ -14,7 +14,7 @@ class PhyloPackage(object):
         self.trees = TreeCollection()
 
 def readFile(filepath, format=FileFormats.NEXUS, out=None):
-    """Returns a (Taxa list, DataSource, TreeCollection) from the file `filepath`
+    """Returns a (list of taxon labels, DataSource, TreeCollection) from the file `filepath`
     
     Currently only supports NEXUS and only returns the last data matrix, but
     this will be generalized to read other formats and return the 
@@ -35,6 +35,7 @@ def readFile(filepath, format=FileFormats.NEXUS, out=None):
     return x
 
 def readFileNoSideEffects(filepath, format=FileFormats.NEXUS, out=None):
+    """Returns a (list of taxon labels, DataSource, TreeCollection) from the file `filepath`"""
     _readFileSanityCheck(filepath, format, out)
     from phycas.ReadNexus import NexusReader
     reader = NexusReader()

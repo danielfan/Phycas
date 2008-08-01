@@ -102,8 +102,6 @@ class Newick(object):
     def __str__(self):
         return self.newick
 
-
-
 # These globals are set here, so that reading in the startup.py gives
 #   experienced users the chance to override the default behavior.
 # Mark: it would be better I think to put these in a file that can be
@@ -137,6 +135,7 @@ if not _user_ini_checked:
     p = os.path.expanduser("~/.phycas/startup.py")
     if os.path.exists(p):
         execfile(p)
+    del p
 
 def useWxPhycas():
     return _use_wx_phycas
@@ -151,7 +150,7 @@ import ProbDist
 from ProbDist import Bernoulli, Beta, Binomial, Dirichlet, Exponential, Gamma, ImproperUniform, InverseGamma, Normal, Uniform
 import ReadNexus
 import sys, os
-from Utilities.PhycasCommand import REPLACE, APPEND, ADD_NUMBER, phycas_help
+from Utilities.PhycasCommand import REPLACE, APPEND, ADD_NUMBER, phycas_help, public
 from phycas.Utilities.DefaultData import DefaultData
 
 P = DefaultData.getInstance()
@@ -235,6 +234,7 @@ def at(addr):
     return None
 from phycas.Utilities.GlobalState import readFile
 
+    
 print """
                      Welcome to Phycas
                       version 1-alpha
@@ -247,3 +247,4 @@ You are running code compiled from SVN %s
 Phycas is distributed under the GNU Public License see License file for more
 information.
 """ % _phycas_revision[1:-1]
+

@@ -66,25 +66,37 @@ def str_value_for_user(value):
 def _escape_for_latex(s):
     return str(s).replace('_', '\_').replace('<','$<$').replace('>','$>$')
 
+def public(mod=None):
+    "Prints a summary of the names of the globally available objects"
+    l = globals().keys()
+    l = [i for i in l if not i.startswith("_")]
+    print two_column_str(l)
+
+def two_column_str(p):
+    p.sort()
+    half = len(p)/2
+    ait = iter(p[:half])
+    bit = iter(p[half:])
+    o = []
+    done = False
+    while not done:
+        a, b = ("", "")
+        try:
+            a = ait.next()
+            b = bit.next()
+        except StopIteration:
+            done = True
+        r = PhycasTablePrinter.format_help(a, b)
+        o.append(r)
+    return "\n".join(o)
+    
+    
 class PhycasHelp(object):
     _phycas_cmd_classes = set()
     def __str__(self):
         PhycasTablePrinter._reset_term_width()
         n = [i.__name__.lower() for i in PhycasHelp._phycas_cmd_classes if not i.hidden()]
-        n.sort()
-        done = False
-        i = iter(n)
-        o = []
-        while not done:
-            a, b = ("", "")
-            try:
-                a = i.next()
-                b = i.next()
-            except StopIteration:
-                done = True
-            r = PhycasTablePrinter.format_help(a, b)
-            o.append(r)
-        t = "\n".join(o)
+        t = two_column_str(n)
         return """Phycas Help
     
 For Python Help use "python_help()"
