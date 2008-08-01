@@ -12,6 +12,8 @@
 \setlength{\parindent}{0in}
 \setlength{\parskip}{.1in}
 %\input seteps
+\usepackage[round]{natbib}
+\bibliographystyle{sysbio}
 
 \usepackage{xspace}
 \newcommand{\barLone}{\bar{L}_1}
@@ -187,8 +189,8 @@ Now lets configure the output settings:
 \begin{verbatim}
 mcmc.out.log = "basic.log"
 mcmc.out.log.mode = REPLACE
-mcmc.out.trees.prefix = 'green'
-mcmc.out.params.prefix = 'green'
+mcmc.out.trees.prefix = "green"
+mcmc.out.params.prefix = "green"
 \end{verbatim}
 
 Now we will set up the length of the MCMC simulation. 
@@ -221,8 +223,38 @@ as if it were a python function:
 mcmc()
 \end{verbatim}
 
+As in \mb, we can summarize the tree trees produced by the \cmd{mcmc} analysis
+using a \cmd{sumt} command.
+Unlike \mb, the \cmd{sumt} command is not automatically configured to read the files
+that were just created.
+Once again, we can use the \cmd{current} function to inspect a command's state.
+Let's tell the \cmd{sumt} command to read the trees from the \localfile{green.t} file
+that was just created by the MCMC analysis:
+\begin{verbatim}
+sumt.current()
+sumt.trees = "green.t"
+sumt.current()
+\end{verbatim}
 
+Then we can rune the sumt command with the syntax:
+\begin{verbatim}
+sumt()
+\end{verbatim}
 
+You will see the majority-rule consensus trees and the trees that have the 
+highest posterior probability in the \localfile{sumt\_trees.pdf} file.
+In the case of this simple dataset and this short MCMC, it is entirely possible that all of the 
+splits will have estimated posterior probabilities of 1.0.
+If that is the case, the \cmd{sumt} command will not produce a pdf file showing 
+plots of the posterior probability over different divisions of the MCMC
+simulation.
+We will see examples of these files later in the lab.
+
+The commands for replaying this example are shown in the section \hyperref{basicpy}{basic.py} and in the file \localfile{basic.py} in the scripts folder that accompanied the lab.
+
+\section{Polytomy priors}
+One flavor of Bayesian analysis that is implemented in \phycas, but not available in \mb is support for prior distributions that place non-zero probability on trees that are not fully-resolved (also referred to as trees with polytomies or trees with multifurcations).
+The details of the algorithm (and justifications for the approach) can be found in \citet{LewisHH2005}
 
 To read in the data into memory we invoke the \cmd{readFile} function.
 We pass in the full path to the NEXUS file that we would like to read as an argument to the function, and we capture a reference to the data that has been read by storing the return value of the function.
@@ -251,8 +283,16 @@ mcmc()
 \end{verbatim}
 
 
+\newpage
+\subsection{basic.py}\label{basicpy}
+\begin{verbatim}
+#!/usr/bin/env pythonfrom phycas import *mcmc.current()mcmc.data_source = "green.nex"mcmc.out.log = "basic.log"mcmc.out.log.mode = REPLACEmcmc.out.trees.prefix = "green"mcmc.out.params.prefix = "green"mcmc.ncycles = 2000mcmc.sample_every = 10mcmc()sumt.trees = "green.t"sumt()
+\end{verbatim}
 
 
+
+
+\bibliography{phylo}
 \end{document}
 
 \label{executingdatafile}
