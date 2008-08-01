@@ -2299,6 +2299,42 @@ bool TreeLikelihood::debugCheckCLAsRemainInNode(
 	return CLAs_found;
 	}
 
+/*----------------------------------------------------------------------------------------------------------------------
+|   Computes the lower bound of the log-likelihood. This occurs when all edges are infinitely long. The site 
+|   log-likelihood in this case is simply the sum of the logs of the equilibrium frequency of each tip state: i.e.,
+|>
+|   log-like for site j = \sum_{i=1}^{ntax} log(\pi_{s_{ij}})
+|>
+|   Assumes that data have been stored.
+*/
+double TreeLikelihood::calcLogLikeLowerBound() const
+    {
+    PHYCAS_ASSERT(!no_data);
+
+    // Create a vector containing the log of each state frequency
+    unsigned nstates = getNStates();
+	const double * stateFreq = &model->getStateFreqs()[0]; //PELIGROSO
+    std::vector<double> logfreq(nstates, 0.0);
+    for (unsigned i = 0; i < nstates; ++i)
+        logfreq[i] = log(stateFreq[i]);
+
+    double lnL = 0.0;
+    for (PatternMapType::const_iterator pit = pattern_map.begin(); pit != pattern_map.end(); ++pit)
+        {
+        const VecStateList & pattern = pit->first;
+        const PatternCountType & count = pit->second;
+        double site_log_like = 0.0;
+        for (VecStateList::const_iterator sit = pattern.begin(); sit != pattern.end(); ++sit)
+            {
+            int8_t s = (*sit);
+            PHYCAS_ASSERT(s >= (int8_t)0);
+            PHYCAS_ASSERT(s < (int8_t)nstates);
+            site_log_like += logfreq[s];
+            }
+        lnL += count*site_log_like;
+        }
+    return lnL;
+    }
 
 int calcLnLLevel = 0;
 /*----------------------------------------------------------------------------------------------------------------------
@@ -2855,12 +2891,12 @@ const std::vector<unsigned> & TreeLikelihood::getListOfAllMissingSites() const
     return all_missing;
     }
 
-#if 0
+#if 0 && POLPY_NEWWAY  
 /*----------------------------------------------------------------------------------------------------------------------
 |   Returns a list of all sites with patterns comprising only two primary states and no missing data or ambiguities for
 |   any taxon.
 */
-std::vector<unsigned> TreeLikelihood::findDataBipartitions()
+std::vector<unsigned> TreeLikelihood::findDataBipartitions() const
     {
     // needs to be written
     }

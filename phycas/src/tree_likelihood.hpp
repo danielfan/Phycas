@@ -99,6 +99,11 @@ class TreeLikelihood
         void                            storeSiteLikelihoods(bool yes);
 
 		// Utilities
+#if 0 && POLPY_NEWWAY  
+        std::vector<unsigned>           findDataBipartitions() const;
+#endif
+        double                          calcLogLikeLowerBound() const;
+
 		void							addOrphanTip(TreeShPtr t, unsigned row, std::string name);
 		void							addDecoratedInternalNode(TreeShPtr t, unsigned num = UINT_MAX);
 		void							prepareForSimulation(TreeShPtr);
