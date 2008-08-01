@@ -173,7 +173,7 @@ You address the attributes of an object by putting a ``.'' between
 the name of the object and the name of the attribute.
 And you change the value of an attribute by using the ``='' character
 to assign the attribute a new value
-Let's see how it works:o
+Let's see how it works:
 \begin{verbatim}
 mcmc.current()
 mcmc.data_source = "green.nex"
@@ -183,7 +183,7 @@ If you look through the tables of input settings before and after
 the assignment to the \cmdopt{data\_source} attribute, you should see
 that the value goes from ``\cmd{None}'' to ``\cmd{Characters from the file green.nex}''
 
-As with \mb, the MCMC sampler will produce a collection of files storing
+As with \mb\citep{MRBAYES}, the MCMC sampler will produce a collection of files storing
 trees and parameter values.
 Now lets configure the output settings:
 \begin{verbatim}
@@ -250,11 +250,13 @@ plots of the posterior probability over different divisions of the MCMC
 simulation.
 We will see examples of these files later in the lab.
 
-The commands for replaying this example are shown in the section \hyperref{basicpy}{basic.py} and in the file \localfile{basic.py} in the scripts folder that accompanied the lab.
+The commands for replaying this example are shown in the section \hyperref[basicpy]{basic.py} and in the file \localfile{basic.py} in the scripts folder that accompanied the lab.
 
+Actually a slightly longer, but more 
 \section{Polytomy priors}
 One flavor of Bayesian analysis that is implemented in \phycas, but not available in \mb is support for prior distributions that place non-zero probability on trees that are not fully-resolved (also referred to as trees with polytomies or trees with multifurcations).
-The details of the algorithm (and justifications for the approach) can be found in \citet{LewisHH2005}
+The details of the algorithm (and justifications for the approach) can be found in \citet{LewisHH2005}.
+We will be using the same data set that was used in that paper which is a set of algal sequences published by \citet{ShoupL2003}.
 
 To read in the data into memory we invoke the \cmd{readFile} function.
 We pass in the full path to the NEXUS file that we would like to read as an argument to the function, and we capture a reference to the data that has been read by storing the return value of the function.
@@ -286,12 +288,25 @@ mcmc()
 \newpage
 \subsection{basic.py}\label{basicpy}
 \begin{verbatim}
-#!/usr/bin/env pythonfrom phycas import *mcmc.current()mcmc.data_source = "green.nex"mcmc.out.log = "basic.log"mcmc.out.log.mode = REPLACEmcmc.out.trees.prefix = "green"mcmc.out.params.prefix = "green"mcmc.ncycles = 2000mcmc.sample_every = 10mcmc()sumt.trees = "green.t"sumt()
+#!/usr/bin/env python
+from phycas import *
+
+mcmc.current()
+mcmc.data_source = "green.nex"
+mcmc.out.log = "basic.log"
+mcmc.out.log.mode = REPLACE
+mcmc.out.trees.prefix = "green"
+mcmc.out.params.prefix = "green"
+mcmc.ncycles = 2000
+mcmc.sample_every = 10
+mcmc()
+sumt.trees = "green.t"
+sumt()
 \end{verbatim}
 
 
 
-
+\newpage
 \bibliography{phylo}
 \end{document}
 
