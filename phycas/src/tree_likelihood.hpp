@@ -87,12 +87,16 @@ class TreeLikelihood
 		void							recalcRelativeRates();
 		std::vector<double>				getCategoryLowerBoundaries() const;
 		const std::vector<unsigned> &	getListOfAllMissingSites() const;
+        const std::vector<double> &     getSiteLikelihoods() const;
+        bool                            storingSiteLikelihoods() const;
+        const CountVectorType &         getPatternCounts() const;
 
 		// Modifiers
 		void							setNPatterns(unsigned npatterns);
 		void							replaceModel(ModelShPtr);
 		void							setNoData();
 		void							setHaveData();
+        void                            storeSiteLikelihoods(bool yes);
 
 		// Utilities
 		void							addOrphanTip(TreeShPtr t, unsigned row, std::string name);

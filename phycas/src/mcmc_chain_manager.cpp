@@ -32,6 +32,7 @@ namespace phycas
 */
 void MCMCChainManager::refreshLastLnLike()
 	{
+
 	// Might need to add more checks here
 	if (dirty)
 		{

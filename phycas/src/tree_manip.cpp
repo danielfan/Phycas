@@ -560,11 +560,13 @@ void TreeManip::equiprobTree(
     // Create the root node (first tip)
 	TreeNode * rootNd = tree->GetNewNode();
     rootNd->SetNodeNum(tip_number++);
+    rootNd->SetObservable();
 	tree->firstPreorder = rootNd;
 
 	// Create the subroot node (which is second tip)
 	TreeNode * nd = tree->GetNewNode();
     nd->SetNodeNum(tip_number++);
+    nd->SetObservable();
     nd->SetEdgeLen(1.0);
     treelen += nd->GetEdgeLen(); //temporary!
 
@@ -613,6 +615,7 @@ void TreeManip::equiprobTree(
         // Create a new tip representing nd's sister
 		TreeNode * sister = tree->GetNewNode();
         sister->SetNodeNum(tip_number++);
+        sister->SetObservable();
         sister->SetEdgeLen(1.0);
         treelen += nd->GetEdgeLen(); //temporary!
         receptive.push_back(sister);

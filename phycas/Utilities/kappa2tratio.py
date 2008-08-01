@@ -38,22 +38,7 @@
 #
 import sys,math
 
-if __name__ == '__main__':
-    if len(sys.argv) != 6:
-        print 'Error: you must specify the value of kappa and all four'
-        print 'nucleotide relative frequencies when invoking this script'
-        print 'Usage:'
-        print '  python kappa2tratio.py kappa piA piC piG piT'
-        print 'Example:'
-        print '  python kappa2tratio.py 2.77 0.290 0.205 0.158 0.347'
-        print '  tratio = 1.31003069196'
-
-    kappa = float(sys.argv[1])
-    piA = float(sys.argv[2])
-    piC = float(sys.argv[3])
-    piG = float(sys.argv[4])
-    piT = float(sys.argv[5])
-
+def convert(kappa, piA, piC, piG, piT):
     # Normalize frequencies if the ones supplied do not add to 1.0 +- 1.e-6
     sum = piA + piC + piG + piT
     if math.fabs(sum - 1.0) > 1.e-6:
@@ -69,4 +54,21 @@ if __name__ == '__main__':
         print '  piT =',piT
 
     tratio = kappa*(piA*piG + piC*piT)/((piA + piG)*(piC + piT))
-    print 'tratio =',tratio    
+    return tratio
+
+if __name__ == '__main__':
+    if len(sys.argv) != 6:
+        print 'Error: you must specify the value of kappa and all four'
+        print 'nucleotide relative frequencies when invoking this script'
+        print 'Usage:'
+        print '  python kappa2tratio.py kappa piA piC piG piT'
+        print 'Example:'
+        print '  python kappa2tratio.py 2.77 0.290 0.205 0.158 0.347'
+        print '  tratio = 1.31003069196'
+
+    kappa = float(sys.argv[1])
+    piA = float(sys.argv[2])
+    piC = float(sys.argv[3])
+    piG = float(sys.argv[4])
+    piT = float(sys.argv[5])
+    print 'tratio =', convert(kappa, piA, piC, piG, piT)

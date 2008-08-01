@@ -51,6 +51,7 @@ class LikeImpl(CommonFunctions):
                 self.stdout.error("A tree could not be obtained from the tree_source")
                 raise
         return self.starting_tree
+        
     def run(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """

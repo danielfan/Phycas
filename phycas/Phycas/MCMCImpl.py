@@ -439,11 +439,34 @@ class MCMCImpl(CommonFunctions):
         if not edgelens_generated:
             tm.equiprobTree(chain.tree.getNTips(), chain.r, chain.model.getInternalEdgeLenPrior(), chain.model.getExternalEdgeLenPrior())
         chain.prepareForLikelihood()
+        chain.likelihood.replaceModel(chain.model)
         
+        if False:
+            chain.likelihood.storeSiteLikelihoods(True)
+            from phycas.Utilities.kappa2tratio import convert
+            f = chain.model.getStateFreqs()
+            k = convert(chain.model.getKappa(), f[0], f[1], f[2], f[3])
+            print 'cycle = %d, model = %s' % (cycle + 1, chain.model.getModelName())
+            print '  lset tratio=%.5f basefreq=(%.5f %.5f %.5f) rates=gamma ncat=4 shape=%.5f;' % (k, f[0], f[1], f[2], chain.model.getShape())
+            print 'taxon names:', self.opts.data_source.taxon_labels
+            chain.tree.rectifyNames(self.opts.data_source.taxon_labels)
+            print '  utree one = %s;' % chain.tree.makeNewick()
+            print '  sum of edge lengths = %.5f' % chain.tree.edgeLenSum()
+            raw_input('stopped before computing likelihood')
+            
         cold_chain_manager = self.mcmc_manager.getColdChainManager()
         cold_chain_manager.refreshLastLnLike()
-        #print '>>>>> lnL = %.6f' % cold_chain_manager.getLastLnLike()
-        #print '>>>>> lnL = %.6f' % chain.calcLnLikelihood()
+        
+        if False:
+            counts = chain.likelihood.getPatternCounts()
+            sitelikes = chain.likelihood.getSiteLikelihoods()
+            print '  lnL = %.6f' % cold_chain_manager.getLastLnLike()
+            sumlikes = 0.0
+            for sitelike,count in zip(sitelikes, counts):
+                if count > 100:
+                    print '%6.0f -> %12.5f' % (count, sitelike)
+                sumlikes += count*sitelike
+            raw_input('check: sum = %.5f' % sumlikes)
         
         if self.opts.debugging:
             tmpf.close()

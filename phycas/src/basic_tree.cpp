@@ -1520,7 +1520,12 @@ std::string & Tree::AppendNewick(
 		if (useNumbers || nd->nodeName.empty())
 			append_unsigned(s, nd->GetNodeNumber() + 1);
 		else
-			s << nd->nodeName;
+            {
+            if (nd->nodeName.find(" ") == std::string::npos)
+			    s << nd->nodeName;
+            else
+			    s << "'" << nd->nodeName << "'";
+            }
 		}
 
 	if (showEdgeLens && !rooted)
@@ -1556,7 +1561,12 @@ std::string & Tree::AppendNewick(
 		if (useNumbers || nd->nodeName.empty())
 			append_unsigned(s, nd->GetNodeNumber() + 1);
 		else
-			s << nd->nodeName;
+            {
+            if (nd->nodeName.find(" ") == std::string::npos)
+			    s << nd->nodeName;
+            else
+			    s << "'" << nd->nodeName << "'";
+            }
 		if (showEdgeLens)  
 			{
 			s << ":";
@@ -1582,7 +1592,12 @@ std::string & Tree::AppendNewick(
 			if (useNumbers || nd->nodeName.empty())
 				append_unsigned(s, nd->GetNodeNumber() + 1);
 			else
-				s << nd->nodeName;
+                {
+                if (nd->nodeName.find(" ") == std::string::npos)
+			        s << nd->nodeName;
+                else
+			        s << "'" << nd->nodeName << "'";
+                }
 
 			// Output edge length if they were provided
 			if (showEdgeLens)
@@ -1609,7 +1624,12 @@ std::string & Tree::AppendNewick(
 					// Output names for internal nodes if they are available, otherwise 
 					// do not output anything
 					if (!(useNumbers || tempAncNode->nodeName.empty()))
-						s << tempAncNode->nodeName;
+                        {
+                        if (tempAncNode->nodeName.find(" ") == std::string::npos)
+			                s << tempAncNode->nodeName;
+                        else
+			                s << "'" << tempAncNode->nodeName << "'";
+                        }
 
 					if (showEdgeLens)
 						{
@@ -1643,7 +1663,12 @@ std::string & Tree::AppendNewick(
 			TreeNode *tmpNodePar = tmpNode->par;
 			bool tmpNodeParIsRoot = tmpNodePar->IsTipRoot();
 			if (!(useNumbers || tmpNode->nodeName.empty()))
-				s << tmpNode->nodeName;
+                {
+                if (tmpNode->nodeName.find(" ") == std::string::npos)
+			        s << tmpNode->nodeName;
+                else
+			        s << "'" << tmpNode->nodeName << "'";
+                }
 			if (showEdgeLens && !tmpNodeParIsRoot)
 				{
 				s << ":";

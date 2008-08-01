@@ -331,6 +331,7 @@ class MarkovChain(LikelihoodCore):
         LikelihoodCore.prepareForLikelihood(self)
         
         # Make sure that each prior is using the same pseudorandom number generator object
+        self.kappa_prior.setLot(self.r)
         self.relrate_prior.setLot(self.r)
         self.base_freq_param_prior.setLot(self.r)
         self.flex_prob_param_prior.setLot(self.r)

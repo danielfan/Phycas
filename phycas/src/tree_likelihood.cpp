@@ -128,7 +128,7 @@ TreeLikelihood::TreeLikelihood(
   ModelShPtr mod)		/**< is the substitution model */
   :
   likelihood_root(0),
-  store_site_likes(true),
+  store_site_likes(false),
   no_data(false),
   nTaxa(0),
   num_patterns(0),
@@ -157,6 +157,40 @@ TreeLikelihood::~TreeLikelihood()
 	if (sMat != NULL)
 		DeleteTwoDArray<unsigned>(sMat);
 	} 
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns a reference to the vector of site likelihoods (data member `site_likelihood') computed in 
+|   TreeLikelihood::harvestLnLFromValidEdge.
+*/
+const std::vector<double> & TreeLikelihood::getSiteLikelihoods() const
+    {
+    return site_likelihood;
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns a reference to the vector of pattern counts (data member `pattern_counts').
+*/
+const std::vector<double> & TreeLikelihood::getPatternCounts() const
+    {
+    return pattern_counts;
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the current value of the data member `store_site_likes'.
+*/
+bool TreeLikelihood::storingSiteLikelihoods() const
+    {
+    return store_site_likes;
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the current value of the data member `store_site_likes' to true if `yes' is true, and false if `yes' is false.
+*/
+void TreeLikelihood::storeSiteLikelihoods(
+  bool yes)    /**< is the value to which `store_site_likes' should be set */
+    {
+    store_site_likes = yes;
+    }
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Swaps InternalData data member `state_time' and edge lengths for the supplied nodes `nd1' and `nd2'. Assumes 
@@ -2338,6 +2372,9 @@ double TreeLikelihood::calcLnL(
 			calcLnLLevel = 0;
 			}
 #	endif
+
+    //startTreeViewer(t, "lnL = %.5f" % lnL);
+
 	return lnL;
 	}
 

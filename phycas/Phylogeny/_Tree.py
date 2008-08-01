@@ -421,6 +421,7 @@ class Tree(TreeBase):
 
         """
         return TreeBase.makeNumberedNewick(self)
+        
     def rectifyNumbers(self, taxon_names):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
