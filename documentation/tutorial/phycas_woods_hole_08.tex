@@ -359,7 +359,7 @@ model.edgelen_hyperprior = InverseGamma(2.10000, 0.90909)
 \end{verbatim}
 uses an Inverse-Gamma distribution with mean 1 and variance 10 for the hyperparameter, $\mu$.
 
-\subsubsection{Allowing Polytomies -- or Not}
+\subsubsection{MCMC over fully-resolved trees}
 Let's perform an initial run in the ``standard'' mode in which polytomies are not considered.
 We tell the \cmd{mcmc} command that we do not want to sample trees with polytomies:
 \begin{verbatim}
@@ -417,6 +417,9 @@ Note that a couple of the internal branches have very short lengths but
 also display very high posterior probabilities.  
 \QandA{Which groupings in the tree do you think will display posterior probabilities
 which are very sensitive to the prior over tree topologies?}{We are about to find out, but in most runs it the clade of:\\ {\em Heterochlamydomonas rugosa} + {\em Heterochlamydomonas inaequalis}\\ and the clade that delimited by the most recent common ancestor:\\ {\em Carteria obtusa} and {\em Volvox carteri}}
+
+You could have also entered all of the commands that you just entered from a script. 
+You can use the \cmd{history} command in IPython 
 
 \subsection{Allowing Polytomies}
 Lets redo the same analysis but allow for polytomies.
@@ -505,6 +508,31 @@ Look at the \localfile{polytomy\_sumt\_splits.pdf}  for evidence of poor mixing 
 and compare the majority-rule consensus trees and the maximum a posterior trees shown in  \localfile{polytomy\_trees.pdf} to those found in \localfile{no\_p\_sumt\_trees.pdf}
 
 \section{Different priors for internal and terminal edge lengths}
+\citet{YangR2005} \citep[and][]{Yang2007} suggested using prior probabilities on the internal edges of the tree
+that strongly favor short lengths as means of reducing the strength
+of support for some groupings in a Bayesian phylogenetic analysis.
+In fact the suggest using a prior for internal branches which prefers shorter branch lengths more
+strongly as the number of characters in your data set increases.
+These suggestions are alternatives to the polytomy prior approach, and you can try it out from within 
+\phycas\footnote{You can also download a version of \mb that has been modified to perform the analysis from Ziheng's software site: \url{http://abacus.gene.ucl.ac.uk/software.html}}
+It will be easiest to copy the \localfile{NoPolytomy.py} script that you created earlier 
+and modify it.
+
+In particular we need to tell \phycas that we do not want to use the hierarchical model for
+branch lengths.
+Then we need to set different prior distributions for the internal and terminal branch lengths.
+
+By calling \cmd{model.help()} and \cmd{mcmc.help()} you should be able find the commands that you will have to type to have a internal branch length prior with a mean of 0.0001 and a terminal edge prior with a mean of 0.1 (you can use Exponential distributions for both, but pass in different rate parameters for the Exponential).
+
+The important settings to verify have been changed are:
+\begin{verbatim}
+model.edgelen_hyperprior = None
+model.internal_edgelen_prior = Exponential(10000.0)
+model.external_edgelen_prior = Exponential(10.0)
+
+mcmc.allow_polytomies = Falsemcmc.out.trees.prefix = "int_term_trees"mcmc.out.params.prefix = "int_term_params"mcmc.out.log.prefix = "int_term_output"sumt.trees          = "int_term_sumt_trees.t"sumt.out.log.prefix = "int_term_sumt_output"\end{verbatim}
+
+
 \newpage
 \subsection{basic.py}\label{basicpy}
 \begin{verbatim}
