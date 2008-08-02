@@ -99,9 +99,9 @@ class SliceViewer(Frame):
         self.r = Lot()
         #self.r.setSeed(13579)
         print "seed is =", self.r.getSeed()
-        #self.d = MyBeta(1.5)
+        self.d = MyBeta(1.5)
         # self.d = MyExpon()
-        self.d = MyBimodal() 
+        #self.d = MyBimodal() 
         self.f = AdHocDensity(self.d.getLnPDF)
         
         # self.f should be function that returns natural log of a probability density, or

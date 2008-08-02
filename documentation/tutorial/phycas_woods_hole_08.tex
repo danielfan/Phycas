@@ -298,7 +298,7 @@ Note that the \cmd{model.type} is a string that can be \texttt{"gtr"}, \texttt{"
 Let's configure \phycas to use the HKY model with $\Gamma$-distributed rate heterogeneity:
 
 \begin{verbatim}
-model.type      = 'hky'
+model.type = 'hky'
 model.num_rates = 4
 \end{verbatim}
 the \cmd{model.num\_rates} is the number of variable rates that are used to approximate the Gamma distribution. 
@@ -373,7 +373,7 @@ tell the mcmc command to start from a random tree that is generated using the sa
 number generator:
 
 \begin{verbatim}
-rng = ProbDist.Lot()
+rng = Lot()
 rng.setSeed(13957)
 mcmc.rng = rng
 mcmc.starting_tree_source = randomtree(rng=rng)
@@ -401,17 +401,89 @@ After it has completed we can summarize the results:
 
 \begin{verbatim}
 sumt.outgroup_taxon = "Oedogonium cardiacum"
-sumt.trees          = "no_p_trees.t"
-sumt.burnin         = 101
+sumt.trees = "no_p_trees.t"
+sumt.burnin = 101
 sumt.out.log.prefix = "no_p_output"
-sumt.out.log.mode   = APPEND
+sumt.out.log.mode = APPEND
+sumt.out.trees.prefix = "no_p_sumt_trees"
+sumt.out.trees.mode = REPLACE
+sumt.out.splits.prefix = "no_p_sumt_splits"
+sumt.out.splits.mode = REPLACE
 sumt()
 \end{verbatim}
-Take a look at the summaries and  the strength of support for the clades.
+Take a look at the summaries (they should be in the files \localfile{no\_p\_splits.pdf} and \localfile{no\_p\_trees.pdf}) and  the strength of support for the clades.
 
 Note that a couple of the internal branches have very short lengths but 
 also display very high posterior probabilities.  
-For example the branches leading to the clades:
+\QandA{Which groupings in the tree do you think will display posterior probabilities
+which are very sensitive to the prior over tree topologies?}{We are about to find out, but in most runs it the clade of:\\ {\em Heterochlamydomonas rugosa} + {\em Heterochlamydomonas inaequalis}\\ and the clade that delimited by the most recent common ancestor:\\ {\em Carteria obtusa} and {\em Volvox carteri}}
+
+\subsection{Allowing Polytomies}
+Lets redo the same analysis but allow for polytomies.
+
+Rather than type every thing in again and just change a few commands, lets give \phycas a script.
+We can get the last commands from the IPython session by using the command \cmd{history}:
+\begin{verbatim}
+history
+\end{verbatim}
+Then you can copy the output and paste it into a file.  
+You'll have to remove the prompts that IPython displays (and shows in the history) and then save the file with the ending ``.py''
+Alternatively you can edit the \localfile{NoPolytomy.py} script and save it as  \localfile{Polytomy.py}.
+
+Here are the changes that we need to make:
+Before we run the file and before \cmd{mcmc()} function call:
+\begin{verbatim}
+mcmc.allow_polytomies = False
+\end{verbatim}
+That will allow the sampler to consider trees that are not fully resolved, 
+but we still have to specify a prior to the different types of tree.
+
+\phycas supports priors on the trees based such that different ``resolution classes'' of trees have a particular prior probability, but the easiest prior to understand (and one that seems to work well in practice) is to use the ``polytomy'' prior discussed by \citet{LewisHH2005}.
+In this prior, you specify the ratio of the prior probability between a tree over the probability of a tree that has one fewer internal branch.
+So this is the ratio associated with collapsing a branch in the tree (the ratio that favors the 
+acceptance of a delete-edge form of the ``bush move'' in \phycas).
+Using a value for this prior ratio of $e$ (the base of the natural logarithm) was 
+suggested by \citet{LewisHH2005}.
+This value has no particular significance or justification in this
+context (there is no theory saying that you {\em should} use $e$),
+ but it is aesthetically pleasing in that a tree with one more
+branch has to be more than one log-likelihood unit better in
+order to be favored over the tree with a polytomy.
+
+We can set up this analysis by invoking:
+
+\begin{verbatim}
+mcmc.polytomy_prior = True
+mcmc.topo_prior_C = 2.72
+\end{verbatim}
+where \cmd{mcmc.topo\_prior\_C} is the prior ratio.
+
+Since python is a fully functional language it has functions to
+calculate powers of $e$; so we could have avoided rounding 
+error by using:
+\begin{verbatim}
+mcmc.polytomy_prior = True
+import math
+mcmc.topo_prior_C = math.exp(1.0)
+\end{verbatim}
+
+Let's make sure to rename our output files, so that we do not overwrite the files that we just produced
+in the run that did not consider polytomies:
+\begin{verbatim}
+mcmc.out.trees.prefix = "polytomy_trees"
+mcmc.out.params.prefix = "polytomy_params"
+sumt.trees = "polytomy_trees.t"
+sumt.out.log.prefix = "polytomy_output"
+sumt.out.trees.prefix = "polytomy_sumt_trees"
+sumt.out.splits.prefix = "polytomy_sumt_splits"
+\end{verbatim}
+
+Now we have changed the command script to run the file. Save it as \localfile{Polytomy.py}
+
+How do we tell \phycas execute it?
+
+The easiest way to do this (on Mac) is to simply drag the \localfile{Polytomy.py}
+
 \newpage
 \subsection{basic.py}\label{basicpy}
 \begin{verbatim}
@@ -450,7 +522,7 @@ model.edgelen_hyperprior = InverseGamma(2.1, 1.0/1.1)
 
 mcmc.allow_polytomies = False
 
-rng = ProbDist.Lot()
+rng = Lot()
 rng.setSeed(13957)
 
 mcmc.rng = rng
