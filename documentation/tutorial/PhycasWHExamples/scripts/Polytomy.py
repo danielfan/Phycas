@@ -5,6 +5,11 @@
 from phycas import *
 from math import exp
 
+# Read the data from a file (here we specified the location relative to this file)
+# Note that you should use forward slashes ('/') even if running in Windows.
+file_contents = readFile('ShoupLewis.nex')
+mcmc.data_source = file_contents.characters
+
 # Set up the substitution model
 model.type      = 'hky'   # use the Hasegawa-Kishino-Yano (1985) model
 model.num_rates = 4        # add discrete gamma rate heterogeneity with 4 rate categories
@@ -23,7 +28,7 @@ model.gamma_shape_prior = ProbDist.Exponential(2.0)
 model.base_freq_param_prior = ProbDist.Gamma(1.0, 1.0)
 
 # Set the prior for kappa, the ratio of the rate of transitions to the rate of transversions
-model.kappa_prior = ProbDist.Exponential(1.0)
+model.kappa_prior = ProbDist.Exponential(.25)
 
 # Use a hyperparameter to govern the mean of the branch length prior
 # Instead of specifying, say, Exponential(10.0) for branch lengths, this
@@ -54,10 +59,6 @@ mcmc.polytomy_prior   = True
 mcmc.topo_prior_C     = exp(1.0)
 
 
-# Read the data from a file (here we specified the location relative to this file)
-# Note that you should use forward slashes ('/') even if running in Windows.
-file_contents = readFile('ShoupLewis.nex')
-mcmc.data_source = file_contents.characters
 
 # We would like to start with a random tree, so we will create tree source
 # that generates random trees for the taxa that we have in our data set.

@@ -56,7 +56,7 @@ If you don't finish the lab, you can always download
 Stylistic conventions used in this document:
 
 \begin{tabular}{l}
-	Commands understood by the \paup and/or \mb programs are in \cmd{this fixed width font} \\
+	Commands understood by the \phycas are in \cmd{this fixed width font} \\
 	Questions for you to answer are in {\em italics}. \\
 	Important things to note are in {\bf bold face}. \\
 	Names of files \localfile{are in  this font}.\\
@@ -183,7 +183,7 @@ If you look through the tables of input settings before and after
 the assignment to the \cmdopt{data\_source} attribute, you should see
 that the value goes from ``\cmd{None}'' to ``\cmd{Characters from the file green.nex}''
 
-As with \mb\citep{MRBAYES}, the MCMC sampler will produce a collection of files storing
+As with \mb\citep{RonquistH2003}, the MCMC sampler will produce a collection of files storing
 trees and parameter values.
 Now lets configure the output settings:
 \begin{verbatim}
@@ -290,14 +290,75 @@ mcmc.data_source = file_contents.characters
 \end{verbatim}
 if you print the \cmd{file\_contents.character} attribute you should see that the matrix has 17 taxa and 3341 characters.
 
+\subsection{Setting up the model of evolution}
 Now we will configure the model of character evolution. 
 Use the \cmd{model.help()} invocation to see the current settings of the model and the explanations of the
 attributes.
 Note that the \cmd{model.type} is a string that can be \texttt{"gtr"}, \texttt{"hky"} or \texttt{"jc"} and this controls whether some of the other settings are used (for instance the settings associated with kappa are only used if the model.type is \texttt{"hky"}).
 
+Let's configure \phycas to use the HKY model with $\Gamma$-distributed rate heterogeneity:
+\begin{verbatim}
+model.type      = 'hky'model.num_rates = 4
+\end{verbatim}
+the \cmd{model.num\_rates} is the number of variable rates that are used to approximate the Gamma distribution. 
+If you were to set \cmd{model.num\_rates = 1} then you would be selecting a single-rate model that does not use $\Gamma$-distributed rate heterogeneity at all.
+We can set the value of the shape parameter of the Gamma distribution, but this is just the initial value that the sampler will start at.  
+It is more important (in the context of setting up an MCMC run) to set the prior distribution for the gamma's shape parameter.
+We can do this by choosing from among the Continuous probability distributions over non-negative numbers.
+An Exponential distribution will be fine for the purpose of the lab (The Gamma and Inverse-Gamma distributions are also possible choices):
+\begin{verbatim}
+model.gamma_shape_prior = Exponential(2.0)
+\end{verbatim}
+This has just set the prior to be an exponential distribution with mean of 0.5.
+\\{\bf NOTE:}  \phycas parameterizes the exponential distribution with the rate parameter with is the reciprocal of the mean of the distribution!
+If you are unsure, you can always ``ask'' a distribution what it's mean is:
+\begin{verbatim}
+model.gamma_shape_prior.getMean()
+\end{verbatim}
 
 
+Kappa ($\kappa$), the transition/transversion rate ratio, is usually much greater than 1, so let's use a fairly vague prior with a mean of 4:
+\begin{verbatim}
+model.kappa_prior = Exponential(0.25)
+\end{verbatim}
 
+The only other parameters in the HKY substitution model are the base frequencies\footnote{
+Internally, \phycas uses parameters that are unnormalized $(0,\infty)$ parameters.
+The base frequencies are obtained by dividing each of the parameters by the sum of the four.
+We place priors on the unnormalized versions, which is why we use a GammaDistribution in this example.
+Note that putting Gamma($a,1$) priors on the unnormalized versions of the parameters is 
+equivalent to placing a Dirichlet($a,a,a,a$) on the frequencies themselves.
+}:
+\begin{verbatim}
+model.base_freq_param_prior = Gamma(1.0, 1.0)
+\end{verbatim}
+
+\subsubsection{The priors on the tree}
+The tree and branch lengths are also important parts of our model and they need to have
+priors assigned to them.
+Currently \phycas only support a uniform priors over all tree topologies (within a
+class of trees with the same number of internal nodes); so we do not have to set
+a prior on the shapes of different resolved trees.
+However we do need to say something about the branch lengths.
+
+We could use an Exponential (or Gamma distribution) for the prior on all of the branch lengths, but then we would have to choose a mean.
+Choosing a reasonable prior is important because:
+\begin{enumerate}
+	\item  estimating branch lengths accurately is often crucial to getting the topology correct,
+	\item the prior will be applied to a large number of parameters (because there are so many branches in the tree).
+\end{enumerate}
+\citet{SuchardWS2001} suggested the use of a hierarchical model in which the branch lengths are distributed as exponential variables with a mean of $\mu$, where $\mu$ is a hyperparameter that 
+has a prior distribution set by the investigator.
+This has the advantage of producing a ``fat-tailed'' prior distribution on the branch length in which the 
+mean of the prior distribution for the branch lengths is allowed to tune-itself to the data at hand.
+In \phycas, if you have the \cmd{model.edgelen\_hyperprior} attribute set to a distribution (rather than \texttt{None}), you will be using this hierarchical model suggested by \citet{SuchardWS2001}.
+For example:
+\begin{verbatim}
+model.edgelen_hyperprior = InverseGamma(2.10000, 0.90909)
+\end{verbatim}
+uses an Inverse-Gamma distribution with mean 1 and variance 10 for the hyperparameter, $\mu$.
+
+\subsubsection{Allowing polytomies -- or Not}
 
 \newpage
 \subsection{basic.py}\label{basicpy}
