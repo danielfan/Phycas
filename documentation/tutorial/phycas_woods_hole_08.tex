@@ -283,6 +283,21 @@ To start from a clean slate:
 	\item change the working directory to a convenient location for working with the \localfile{ShoupLewis.nex}. Note that you do {\bf not} have to change your working directory to match the location to the input file, but if you do not then you will have to make sure that you use a relative or absolute path to all of the files that you refer to.
 \end{enumerate}
 
+Read the file into memory:
+\begin{verbatim}
+file_contents = readFile("ShoupLewis.nex")
+mcmc.data_source = file_contents.characters
+\end{verbatim}
+if you print the \cmd{file\_contents.character} attribute you should see that the matrix has 17 taxa and 3341 characters.
+
+Now we will configure the model of character evolution. 
+Use the \cmd{model.help()} invocation to see the current settings of the model and the explanations of the
+attributes.
+Note that the \cmd{model.type} is a string that can be \texttt{"gtr"}, \texttt{"hky"} or \texttt{"jc"} and this controls whether some of the other settings are used (for instance the settings associated with kappa are only used if the model.type is \texttt{"hky"}).
+
+
+
+
 
 \newpage
 \subsection{basic.py}\label{basicpy}

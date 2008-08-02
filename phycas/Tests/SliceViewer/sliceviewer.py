@@ -6,22 +6,22 @@ from tkFileDialog import askopenfilename
 from sliceplotter import Plotter
 import math
 
-# MyExponDist is derived from ProbDist.ExponentialDist. MyExponDist gets its
+# MyExpon is derived from ProbDist.Exponential. MyExpon gets its
 # getLnPDF function from the base class, but must add getPDF
 # so that SliceViewer can plot the density function.
-class MyExponDist(ExponentialDist):
+class MyExpon(Exponential):
     def __init__(self):
-        ExponentialDist.__init__(self, 2.0)
+        Exponential.__init__(self, 2.0)
 
     def getPDF(self, x):
         return math.exp(self.getLnPDF(x))
 
-# MyBetaDist is derived from ProbDist.BetaDist. MyBetaDist gets its
+# MyBeta is derived from ProbDist.Beta. MyBeta gets its
 # getLnPDF function from the base class, but must add getPDF
 # so that SliceViewer can plot the density function.
-class MyBetaDist(BetaDist):
+class MyBeta(Beta):
     def __init__(self, strength):
-        BetaDist.__init__(self, strength, strength)
+        Beta.__init__(self, strength, strength)
 
     def getPDF(self, x):
         return math.exp(self.getLnPDF(x))
@@ -39,16 +39,16 @@ class AdHocDensity(AdHocDensityBase):
     def __call__(self, x):
         return self.func(x)
 
-# Here is an example of a case where we need to use AdHocDensity. MyBimodalDist
+# Here is an example of a case where we need to use AdHocDensity. MyBimodal
 # implements a mixture of two Beta distributions, and thus is not represented
 # by any of the distributions in ProbDist. When rolling your own probability
 # distributions like this, it is important to return a very large negative number
 # if the parameter is out of range. Here, the constructor queries ProbDist
 # for a suitable number (returned by the getEffectiveLnZero function)
-class MyBimodalDist:
+class MyBimodal:
     def __init__(self):
-        self.b1 = BetaDist(2,19)
-        self.b2 = BetaDist(19,2)
+        self.b1 = Beta(2,19)
+        self.b2 = Beta(19,2)
         self.lnzero = getEffectiveLnZero()
 
     def getLnPDF(self, x):
@@ -70,7 +70,7 @@ class MyBimodalDist:
             p = 0.0
         return p
 
-# Results of applying different adapt modes to MyBimodalDist
+# Results of applying different adapt modes to MyBimodal
 # (results in each case are the mean number of extra function evaluations
 # based on a sample size of 10,000)
 #
@@ -85,7 +85,7 @@ class SliceViewer(Frame):
         Frame.__init__(self, parent, bg='yellow')
         self.pack(expand=YES, fill=BOTH)
 
-        self.adaptMode = 'yconditional'   # choices are: simple, neal, or yconditional
+        self.adaptMode = "simple" # 'yconditional'   # choices are: simple, neal, or yconditional
         self.adaptSimpleParam = 0.25
         self.adaptNealParam = 2.0
         self.adaptYCondParam = 1.3
@@ -98,9 +98,9 @@ class SliceViewer(Frame):
         
         self.r = Lot()
         #self.r.setSeed(13579)
-        #self.d = MyBetaDist(1.5)
-        # self.d = MyExponDist()
-        self.d = MyBimodalDist() 
+        self.d = MyBeta(1.5)
+        # self.d = MyExpon()
+        #self.d = MyBimodal() 
         self.f = AdHocDensity(self.d.getLnPDF)
         
         # self.f should be function that returns natural log of a probability density, or
@@ -152,6 +152,7 @@ class SliceViewer(Frame):
         self.bind_all("<KeyPress-a>", self.keybdAdaptSampler)
         self.bind_all("<KeyPress-r>", self.keybdReset)
         self.bind_all("<KeyPress-q>", self.keybdQuit)
+        self._step_n_within_step = 0
 
         # configure event is bound only to the main frame
         #self.bind("<Configure>", self.resizing)
@@ -184,8 +185,9 @@ class SliceViewer(Frame):
         print 'range of y is [%f, %f]' % (ymin, ymax)
 
     def takeStep(self, show_slice=False):
-        #self.total_steps += 1
-        self.curr = self.s.debugSample()
+        if self._step_n_within_step == 0:
+            #self.total_steps += 1
+            self.curr = self.s.debugSample()
         # 0: sampled x
         # 1: x-coord of vertical slice
         # 2: y-coord of top of vertical slice (y-coord of bottom of vertical slice always 0.0)
@@ -198,7 +200,6 @@ class SliceViewer(Frame):
         y0 = math.exp(self.curr[2])
         x = self.curr[0]
         y = math.exp(self.curr[5])
-        self.plotter.points.append((x,y))
         xleft = self.s.getOrigLeftEdgeOfSlice()
         xright = self.s.getOrigRightEdgeOfSlice()
         
@@ -223,19 +224,14 @@ class SliceViewer(Frame):
         efficiency = (float(self.n_func_evals)/float(n_samples)) - 4.0
         self.status_label.config(text='unit width=%.2f, units=%d, extra evals=%d, extra evals/sample=%.1f' % (unit_width, n_units, extra_evals, efficiency))
         if show_slice:
+            self._step_n_within_step += 1
             self.plotter.repaint()
-            self.plotter.plotSlice(xleft, xright, xincr, y)
             self.plotter.plotLine(x0, 0.0, x0, y0)
-            self.plotter.plotPoint(x, y, 'cyan')
             n_failed = curr_len - 7
             print 'n_failed=%d' % (n_failed)
             print 'self.s.getNumSamples()=', self.s.getNumSamples()
             print 'self.s.getNumFailedSamples()=', self.s.getNumFailedSamples()
             print 'self.s.getNumFuncEvals()=', self.s.getNumFuncEvals()
-            if n_failed > 0:
-                for i in range(n_failed):
-                    print 'failed sample %d at x=%f' % (i,self.curr[i + 7])
-                    self.plotter.plotPoint(self.curr[i + 7], y, 'red')
             if self.adaptMode == 'yconditional':
                 mode = self.s.getMode()
                 mode_height = math.exp(self.s.getLnDensityAtMode())
@@ -251,6 +247,16 @@ class SliceViewer(Frame):
                 right_y1 = 0.0
                 self.plotter.plotLine(left_x0, left_y0, left_x1, left_y1, "green")
                 self.plotter.plotLine(right_x0, right_y0, right_x1, right_y1, "green")
+            if self._step_n_within_step == 1:
+                return
+            self.plotter.plotSlice(xleft, xright, xincr, y)
+            if n_failed > 0:                
+                for i in range(n_failed):
+                    print 'failed sample %d at x=%f' % (i,self.curr[i + 7])
+                    self.plotter.plotPoint(self.curr[i + 7], y, 'red')
+            self.plotter.plotPoint(x, y, 'cyan')
+            self.plotter.points.append((x,y))
+            self._step_n_within_step = 0
             print 'successful sample at x=%f\n' % x
             print 'xleft=%f, xright=%f, xincr=%f\n' % (xleft, xright, xincr)
 

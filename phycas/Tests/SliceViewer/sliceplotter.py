@@ -101,9 +101,9 @@ class Plotter(Canvas):
         iy0 = self.ytranslate(y0)
         iy1 = self.ytranslate(y1)
         if line_color==None:
-            Canvas.create_line(self, ix0, iy0, ix1, iy1, fill=self.slice_color)
+            Canvas.create_line(self, ix0, iy0, ix1, iy1, fill=self.slice_color, width=2)
         else:
-            Canvas.create_line(self, ix0, iy0, ix1, iy1, fill=line_color)
+            Canvas.create_line(self, ix0, iy0, ix1, iy1, fill=line_color, width=2)
         
     def plotPoint(self, xval, yval, color='yellow'):
         ok = True
