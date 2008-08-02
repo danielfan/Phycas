@@ -98,6 +98,7 @@ class SliceViewer(Frame):
         
         self.r = Lot()
         #self.r.setSeed(13579)
+        print "seed is =", self.r.getSeed()
         self.d = MyBeta(1.5)
         # self.d = MyExpon()
         #self.d = MyBimodal() 
@@ -142,6 +143,8 @@ class SliceViewer(Frame):
         self.rescalePlot(1000)
 
         # reset statistics such as average slice width, number of function evalutations, etc.
+        w = self.s.getSliceUnitWidth()
+        self.s.setSliceUnitWidth(w/4.0)
         self.s.resetDiagnostics()
 
         # bind some keys to the application (doesn't matter which widget has focus
@@ -149,12 +152,15 @@ class SliceViewer(Frame):
         self.bind_all("<KeyPress-o>", self.keybdOverrelaxedOneStep)
         self.bind_all("<KeyPress-n>", self.keybdOneStep)
         self.bind_all("<KeyPress-d>", self.keybdDetailedStep)
+        self.bind_all("<KeyPress-b>", self.keybdBackDetailedStep)
         self.bind_all("<Shift-KeyPress-N>", self.keybdManySteps)
+        self.bind_all("<KeyPress-m>", self.keybdManySteps)
         self.bind_all("<KeyPress-a>", self.keybdAdaptSampler)
         self.bind_all("<KeyPress-r>", self.keybdReset)
         self.bind_all("<KeyPress-q>", self.keybdQuit)
-        self._step_num_within_step = 0
 
+        self._step_num_within_step = 0
+        self._just_point = False
         # configure event is bound only to the main frame
         #self.bind("<Configure>", self.resizing)
 
@@ -255,87 +261,90 @@ class SliceViewer(Frame):
         efficiency = (float(self.n_func_evals)/float(n_samples)) - 4.0
         #self.status_label.config(text='unit width=%.2f, units=%d, extra evals=%d, extra evals/sample=%.1f' % (unit_width, n_units, extra_evals, efficiency))
         if show_slice:
-            self._step_num_within_step += 1
-            
-            # Plot the vertical slice
             self.plotter.repaint()
-            self.plotter.plotLine(x0, 0.0, x0, y0)
-            self.status_label.config(text='vertical slice')
-            if self._step_num_within_step == target_step:
-                return
-            target_step += 1
-
-            n_failed = curr_len - 7
-            #print 'n_failed=%d' % (n_failed)
-            #print 'self.s.getNumSamples()=', self.s.getNumSamples()
-            #print 'self.s.getNumFailedSamples()=', self.s.getNumFailedSamples()
-            #print 'self.s.getNumFuncEvals()=', self.s.getNumFuncEvals()
-            if self.adaptMode == 'yconditional':
-                mode = self.s.getMode()
-                mode_height = math.exp(self.s.getLnDensityAtMode())
-                w0 = self.s.calcW(mode_height)
-                w1 = self.s.calcW(0.0)
-                left_x0 = mode - w0/2.0
-                left_y0 = mode_height
-                left_x1 = mode - w1/2.0
-                left_y1 = 0.0
-                right_x0 = mode + w0/2.0
-                right_y0 = mode_height
-                right_x1 = mode + w1/2.0
-                right_y1 = 0.0
-                self.plotter.plotLine(left_x0, left_y0, left_x1, left_y1, "green")
-                self.plotter.plotLine(right_x0, right_y0, right_x1, right_y1, "green")
-            
-            # Plot an arrow indicating where the horizontal slice will be located
-            if self._step_num_within_step == target_step:
-                self.plotter.plotLeftPointingArrow(x0, y, color="white", shaft_length=10, arrowhead_length=5)
-                self.status_label.config(text='location of horizontal slice')
-                return
-            target_step += 1
-            
-            # Plot the unit that spans the vertical slice
-            nunits, first_unit_index = self.plotter.plotOneSliceUnit(xleft, xright, xincr, x0, y)
-            assert nunits == n_units, 'nunits = %d, n_units = %d'
-            self.status_label.config(text='first unit randomly positioned around vertical slice')
-            if self._step_num_within_step == target_step:
-                return
-            target_step += 1
-            
-            # Plot the units to the right of the first unit
-            curr_index = first_unit_index + 1
-            if curr_index < nunits:
-                while curr_index < nunits:
-                    n, i = self.plotter.plotOneSliceUnit(xleft, xright, xincr, x0, y, curr_index) 
-                    curr_index += 1
-                self.status_label.config(text='add units to right until density bracketed')
+            if not self._just_point:
+                self.plotter.plotLine(x0, 0.0, x0, y0)
+                self._step_num_within_step += 1
+                
+                # Plot the vertical slice
+                self.status_label.config(text='vertical slice')
+                if self._step_num_within_step == target_step:
+                    return
+                target_step += 1
+    
+                n_failed = curr_len - 7
+                #print 'n_failed=%d' % (n_failed)
+                #print 'self.s.getNumSamples()=', self.s.getNumSamples()
+                #print 'self.s.getNumFailedSamples()=', self.s.getNumFailedSamples()
+                #print 'self.s.getNumFuncEvals()=', self.s.getNumFuncEvals()
+                if self.adaptMode == 'yconditional':
+                    mode = self.s.getMode()
+                    mode_height = math.exp(self.s.getLnDensityAtMode())
+                    w0 = self.s.calcW(mode_height)
+                    w1 = self.s.calcW(0.0)
+                    left_x0 = mode - w0/2.0
+                    left_y0 = mode_height
+                    left_x1 = mode - w1/2.0
+                    left_y1 = 0.0
+                    right_x0 = mode + w0/2.0
+                    right_y0 = mode_height
+                    right_x1 = mode + w1/2.0
+                    right_y1 = 0.0
+                    self.plotter.plotLine(left_x0, left_y0, left_x1, left_y1, "green")
+                    self.plotter.plotLine(right_x0, right_y0, right_x1, right_y1, "green")
+                
+                # Plot an arrow indicating where the horizontal slice will be located
+                if self._step_num_within_step == target_step:
+                    self.plotter.plotLeftPointingArrow(x0, y, color="white", shaft_length=10, arrowhead_length=5)
+                    self.status_label.config(text='location of horizontal slice')
+                    return
+                target_step += 1
+                
+                # Plot the unit that spans the vertical slice
+                nunits, n_increases, first_unit_index = self.plotter.plotOneSliceUnit(xleft, xright, xincr, x0, y)
+                assert nunits == n_units, 'nunits = %d, n_units = %d' %(nunits, n_units)
+                self.status_label.config(text='first unit randomly positioned around vertical slice')
                 if self._step_num_within_step == target_step:
                     return
                 target_step += 1
                 
-            # Plot the units to the left of the first unit
-            curr_index = first_unit_index - 1
-            if curr_index >= 0:
-                while curr_index >= 0:
-                    n, i = self.plotter.plotOneSliceUnit(xleft, xright, xincr, x0, y, curr_index)                
-                    curr_index -= 1
-                self.status_label.config(text='add units to left until density bracketed')
-                if self._step_num_within_step == target_step:
-                    return
-                target_step += 1
-                
-            if n_failed > 0:
-                for i in range(n_failed):
-                    xfail = self.curr[i + 7]
-                    self.plotter.plotPoint(xfail, y, 'red')
-                    self.status_label.config(text='sample attempt failed')
+                # Plot the units to the right of the first unit
+                curr_index = first_unit_index + 1 
+                while curr_index  < n_increases :
+                    self.plotter.plotOneSliceUnit(xleft, xright, xincr, x0, y, curr_index) 
                     if self._step_num_within_step == target_step:
+                        self.status_label.config(text='add units to right until density bracketed')
                         return
                     target_step += 1
+                    curr_index += 1
+                    
+                # Plot the units to the left of the first unit
+                curr_index = first_unit_index - 1 
+                while curr_index >= 0:
+                    self.plotter.plotOneSliceUnit(xleft, xright, xincr, x0, y, curr_index)                
+                    if self._step_num_within_step == target_step:
+                        self.status_label.config(text='add units to left until density bracketed')
+                        return
+                    target_step += 1
+                    curr_index -= 1
+                    
+                if n_failed > 0:
+                    for i in range(n_failed):
+                        xfail = self.curr[i + 7]
+                        self.plotter.plotPoint(xfail, y, 'red')
+                        self.status_label.config(text='sample attempt failed')
+                        if self._step_num_within_step == target_step:
+                            return
+                        target_step += 1
 
             # this is the last thing to plot, so we reset to _step_num_within_step to 0
             self.plotter.plotPoint(x, y, 'cyan')
-            self.plotter.points.append((x,y))
-            self._step_num_within_step = 0
+            if self._just_point:
+                self._step_num_within_step = 0
+                self._just_point = False
+                self.plotter.points.append((x,y))
+            else:
+                self._just_point = True
             self.status_label.config(text='successful sample at x=%.3f' % x)
             #print 'xleft=%f, xright=%f, xincr=%f\n' % (xleft, xright, xincr)
         else:
@@ -374,6 +383,12 @@ class SliceViewer(Frame):
         self.oneStep(detailed=False)
 
     def keybdDetailedStep(self, event):
+        self.oneStep(detailed=True)
+
+    def keybdBackDetailedStep(self, event):
+        if self._step_num_within_step < 1:
+            return
+        self._step_num_within_step = max(1, self._step_num_within_step - 2)
         self.oneStep(detailed=True)
 
     # next two functions result in a single overrelaxed sample and show details of the slice sampling process

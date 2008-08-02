@@ -84,7 +84,7 @@ class Plotter(Canvas):
     def ytranslate(self, y):
         return int(self.bottom - self.yaxislen*((y - self.ylow)/(self.yhigh - self.ylow)))
 
-    def plotOneSliceUnit(self, xleft, xright, xincr, xvert, y, which = None):
+    def plotOneSliceUnit(self, xleft, xright, xincr, xvert, y, which = None, ticks=True):
         """
         Plots only one slice unit. If which is None, the unit plotted is the
         one that spans the vertical slice (at x-coordinate xvert). If which
@@ -96,7 +96,7 @@ class Plotter(Canvas):
         x1 = self.xtranslate(xright)
         xv = self.xtranslate(xvert)
         y = self.ytranslate(y)
-        n = int((xright - xleft)//xincr)
+        n = int(0.5 + (xright - xleft)/xincr) # int((xright - xleft)//xincr)
         ticks = [xleft + xincr*i for i in range(n + 1)]
         for k, tick in enumerate(ticks):
             xleft = self.xtranslate(tick)
@@ -110,11 +110,13 @@ class Plotter(Canvas):
             if which == k:
                 # Draw the horizontal line
                 Canvas.create_line(self, xleft, y, xright, y, fill=self.slice_color)
-                # Draw tick mark at left end
-                Canvas.create_line(self, xleft, y-2, xleft, y+2, fill=self.slice_color)
-                # Draw tick mark at right end
-                Canvas.create_line(self, xright, y-2, xright, y+2, fill=self.slice_color)
-        return n, k
+                if ticks:
+                    # Draw tick mark at left end
+                    Canvas.create_line(self, xleft, y-2, xleft, y+2, fill=self.slice_color)
+                    # Draw tick mark at right end
+                    Canvas.create_line(self, xright, y-2, xright, y+2, fill=self.slice_color)
+        assert which is not None, " ".join([str(i) for i in [x0, x, x1, xleft, xright, xincr, xvert, y]])
+        return n, k, which
         
     def plotSlice(self, xleft, xright, xincr, y):
         x0 = self.xtranslate(xleft)
