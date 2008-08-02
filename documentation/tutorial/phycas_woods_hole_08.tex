@@ -30,8 +30,8 @@
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{} % clear all headers and footers
-\fancyhead[LO,RE]{Woods Hole}
-\fancyhead[RO,LE]{Workshop on Molecular Evolution}
+\fancyhead[LO,RE]{Phycas demo}
+\fancyhead[RO,LE]{2008 Workshop on Molecular Evolution Woods Hole}
 \fancyfoot[LO,LE]{{\footnotesize \copyright\ 2008 by Paul O. Lewis, Mark T. Holder, and David Swofford}}
 \fancyfoot[CE,CO]{}
 \fancyfoot[RO,RE]{\thepage}
@@ -40,7 +40,6 @@
 
 \usepackage{hyperref}
 \hypersetup{backref,  pdfpagemode=FullScreen,  linkcolor=blue, citecolor=red, colorlinks=true, hyperindex=true}
-\fancyhead[CE,CO]{\phycas Tutorial}
 \begin{document}
 
 %###########################################################################################
@@ -297,8 +296,10 @@ attributes.
 Note that the \cmd{model.type} is a string that can be \texttt{"gtr"}, \texttt{"hky"} or \texttt{"jc"} and this controls whether some of the other settings are used (for instance the settings associated with kappa are only used if the model.type is \texttt{"hky"}).
 
 Let's configure \phycas to use the HKY model with $\Gamma$-distributed rate heterogeneity:
-\begin{verbatim}
-model.type      = 'hky'model.num_rates = 4
+
+\begin{verbatim}
+model.type      = 'hky'
+model.num_rates = 4
 \end{verbatim}
 the \cmd{model.num\_rates} is the number of variable rates that are used to approximate the Gamma distribution. 
 If you were to set \cmd{model.num\_rates = 1} then you would be selecting a single-rate model that does not use $\Gamma$-distributed rate heterogeneity at all.
@@ -372,21 +373,45 @@ tell the mcmc command to start from a random tree that is generated using the sa
 number generator:
 
 \begin{verbatim}
-rng = ProbDist.Lot()rng.setSeed(13957)
-mcmc.rng = rngmcmc.starting_tree_source = randomtree(rng=rng)\end{verbatim}
+rng = ProbDist.Lot()
+rng.setSeed(13957)
+mcmc.rng = rng
+mcmc.starting_tree_source = randomtree(rng=rng)
+\end{verbatim}
 
 Now we can configure the MCMC to run a short simulation and save files with names that
 will remind us to that they are from the no-polytomies run:
 \begin{verbatim}
-mcmc.ncycles = 2000mcmc.sample_every = 10mcmc.out.trees.prefix = "no_p_trees"mcmc.out.trees.mode = REPLACEmcmc.out.params.prefix = "no_p_params"mcmc.out.params.mode = REPLACEmcmc.out.log.prefix = "no_p_output"mcmc.out.log.mode = REPLACE\end{verbatim}
-Finally, we call \cmd{mcmc()} which starts the MCMC analysis:\begin{verbatim}
+mcmc.ncycles = 2000
+mcmc.sample_every = 10
+mcmc.out.trees.prefix = "no_p_trees"
+mcmc.out.trees.mode = REPLACE
+mcmc.out.params.prefix = "no_p_params"
+mcmc.out.params.mode = REPLACE
+mcmc.out.log.prefix = "no_p_output"
+mcmc.out.log.mode = REPLACE
+\end{verbatim}
+
+Finally, we call \cmd{mcmc()} which starts the MCMC analysis:
+\begin{verbatim}
 mcmc()
 \end{verbatim}
 
 After it has completed we can summarize the results:
-\begin{verbatim}
-sumt.outgroup_taxon = "Oedogonium cardiacum"sumt.trees          = "no_p_trees.t"sumt.burnin         = 101sumt.out.log.prefix = "no_p_output"sumt.out.log.mode   = APPENDsumt()\end{verbatim}
 
+\begin{verbatim}
+sumt.outgroup_taxon = "Oedogonium cardiacum"
+sumt.trees          = "no_p_trees.t"
+sumt.burnin         = 101
+sumt.out.log.prefix = "no_p_output"
+sumt.out.log.mode   = APPEND
+sumt()
+\end{verbatim}
+Take a look at the summaries and  the strength of support for the clades.
+
+Note that a couple of the internal branches have very short lengths but 
+also display very high posterior probabilities.  
+For example the branches leading to the clades:
 \newpage
 \subsection{basic.py}\label{basicpy}
 \begin{verbatim}
@@ -412,23 +437,45 @@ sumt()
 \begin{verbatim}
 from phycas import *
 
-file_contents = readFile('ShoupLewis.nex')mcmc.data_source = file_contents.characters
+file_contents = readFile('ShoupLewis.nex')
+mcmc.data_source = file_contents.characters
 
-model.type = 'hky'   model.num_rates = 4       model.gamma_shape_prior = Exponential(2.0)model.base_freq_param_prior =  Gamma(1.0, 1.0)model.kappa_prior = Exponential(.25)model.edgelen_hyperprior = InverseGamma(2.1, 1.0/1.1)
+model.type = 'hky'   
+model.num_rates = 4       
+model.gamma_shape_prior = Exponential(2.0)
+model.base_freq_param_prior =  Gamma(1.0, 1.0)
+model.kappa_prior = Exponential(.25)
+model.edgelen_hyperprior = InverseGamma(2.1, 1.0/1.1)
 
 
 mcmc.allow_polytomies = False
 
-rng = ProbDist.Lot()rng.setSeed(13957)mcmc.rng = rngmcmc.starting_tree_source = randomtree(rng=rng)
+rng = ProbDist.Lot()
+rng.setSeed(13957)
 
-mcmc.slice_max_units = 0mcmc.ncycles = 2000mcmc.sample_every = 10
+mcmc.rng = rng
+mcmc.starting_tree_source = randomtree(rng=rng)
 
-mcmc.out.trees.prefix = 'no_p_trees'mcmc.out.trees.mode = REPLACEmcmc.out.params.prefix = 'no_p_params'mcmc.out.params.mode = REPLACEmcmc.out.log.prefix = 'no_p_output'mcmc.out.log.mode = REPLACE
+mcmc.slice_max_units = 0
+mcmc.ncycles = 2000
+mcmc.sample_every = 10
 
-mcmc()
-sumt.outgroup_taxon = 'Oedogonium cardiacum'sumt.trees          = 'no_p_trees.t'sumt.burnin         = 101
+mcmc.out.trees.prefix = 'no_p_trees'
+mcmc.out.trees.mode = REPLACE
+mcmc.out.params.prefix = 'no_p_params'
+mcmc.out.params.mode = REPLACE
+mcmc.out.log.prefix = 'no_p_output'
+mcmc.out.log.mode = REPLACE
 
-sumt.out.log.prefix = 'sumtno_p_output'sumt.out.log.mode   = APPENDsumt()
+mcmc()
+
+sumt.outgroup_taxon = 'Oedogonium cardiacum'
+sumt.trees          = 'no_p_trees.t'
+sumt.burnin         = 101
+
+sumt.out.log.prefix = 'sumtno_p_output'
+sumt.out.log.mode   = APPEND
+sumt()
 \end{verbatim}
 
 \newpage

@@ -20,7 +20,7 @@ def cloneDistribution(d):
     else:
         return d.clone()
 
-class LikelihoodCore:
+class LikelihoodCore(object):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
     The LikelihoodCore class comprises only those features of a 
@@ -51,7 +51,14 @@ class LikelihoodCore:
             self.setupCore()
         return self._tree
     def setTree(self, t):
-        self._tree = t
+        print "in setTree"
+        if t and not isinstance(t, Phylogeny.Tree):
+            print "in setTree coercion"
+            tr = Phylogeny.Tree()
+            self._tree = t.buildTree(tr)
+        else:
+            print "in setTree ref"
+            self._tree = t
     def delTree(self, t):
         if self._tree:
             del self._tree
@@ -134,6 +141,7 @@ class LikelihoodCore:
             self.parent.npatterns = self.likelihood.getNPatterns()
 
         # Build the starting tree
+        
         self.tree = self.parent.getStartingTree()
 
     def prepareForSimulation(self):
