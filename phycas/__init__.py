@@ -183,7 +183,6 @@ if intercept_python_exceptions:
 from Phycas.RandomTree import RandomTree
 randomtree = RandomTree()
 
-
 from Phycas.Model import Model
 model = Model()
 
@@ -239,12 +238,10 @@ print """
                      Welcome to Phycas
                       version 1-alpha
 
-Phycas is written by Paul O. Lewis with some contributions by David Swofford
-and Mark Holder.
+Phycas is written by Paul O. Lewis, Mark Holder and David Swofford
+You are running build number %s
 
-You are running code compiled from SVN %s
-
-Phycas is distributed under the GNU Public License see License file for more
-information.
+Phycas is distributed under the GNU Public License (see License file for more
+information).
 """ % _phycas_revision[1:-1]
 

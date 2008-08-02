@@ -639,6 +639,7 @@ class MCMCImpl(CommonFunctions):
         self.mcmc_manager.recordSample()
 
         if self.opts.doing_path_sampling:
+            self.phycassert(self.opts.nchains == 1, 'path sampling requires nchains to be 1')
             chain = self.mcmc_manager.getColdChain()
             if self.opts.ps_nbetavals > 1:
                 self.ps_delta_beta = float(self.opts.ps_maxbeta - self.opts.ps_minbeta)/float(self.opts.ps_nbetavals - 1)

@@ -102,7 +102,7 @@ class TreeLikelihood
 #if 0 && POLPY_NEWWAY  
         std::vector<unsigned>           findDataBipartitions() const;
 #endif
-        double                          calcLogLikeLowerBound() const;
+        double                          calcLogLikeAtSubstitutionSaturation() const;
 
 		void							addOrphanTip(TreeShPtr t, unsigned row, std::string name);
 		void							addDecoratedInternalNode(TreeShPtr t, unsigned num = UINT_MAX);

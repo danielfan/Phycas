@@ -145,7 +145,7 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
         .def("getBinnedCounts", &phycas::SimData::getBinnedCounts)
 		;
 	class_<TreeLikelihood, TreeLikelihoodWrapper, boost::noncopyable>("TreeLikelihoodBase", init<boost::shared_ptr<Model> >())
-        .def("calcLogLikeLowerBound", &TreeLikelihood::calcLogLikeLowerBound)
+        .def("calcLogLikeAtSubstitutionSaturation", &TreeLikelihood::calcLogLikeAtSubstitutionSaturation)
 		.def("getPatternCounts", &TreeLikelihood::getPatternCounts, return_value_policy<copy_const_reference>())
 		.def("getSiteLikelihoods", &TreeLikelihood::getSiteLikelihoods, return_value_policy<copy_const_reference>())
 		.def("storingSiteLikelihoods", &TreeLikelihood::storingSiteLikelihoods)

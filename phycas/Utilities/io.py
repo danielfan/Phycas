@@ -81,11 +81,16 @@ class TreeCollection(object):
     def __init__(self, **kwargs):
         self.init(**kwargs)
     def init(self, **kwargs):
-        """`arg` can be a string or an iterable containing trees.
-        If `arg` is a string, then the `format` keyword argument can be used to
-        specify the file format (the default is NEXUS).
-        If the trees are passed in as a list then a `taxon_labels` keyword
-        argument is expected.
+        """Valid keyword arguments include filename, format, newick, taxon_labels, trees and title.
+        filename should be a string and should represent the path to a tree file.
+        format is relevant only if filename is specified. The values for format are
+        in the FileFormats class (but currently include only FileFormats.NEXUS).
+        newick is a newick string representation of a tree topology (with or without
+        edge lengths). 
+        taxon_labels provide names for the numbers used in a newick description (alternatively,
+        taxon labels can be provided directly in the newick string)
+        trees is an iterable collection of Phylogeny.Tree objects.
+        title is a label for the collection.
         """
         self.reset()
         self.title = kwargs.get("title")

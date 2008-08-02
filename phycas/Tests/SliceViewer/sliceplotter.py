@@ -84,6 +84,38 @@ class Plotter(Canvas):
     def ytranslate(self, y):
         return int(self.bottom - self.yaxislen*((y - self.ylow)/(self.yhigh - self.ylow)))
 
+    def plotOneSliceUnit(self, xleft, xright, xincr, xvert, y, which = None):
+        """
+        Plots only one slice unit. If which is None, the unit plotted is the
+        one that spans the vertical slice (at x-coordinate xvert). If which
+        is an integer, plots the unit whose index is that integer. The return 
+        value is the tuple (n,k), where n is the number of slice units
+        and k the index of the unit plotted. 
+        """
+        x0 = self.xtranslate(xleft)
+        x1 = self.xtranslate(xright)
+        xv = self.xtranslate(xvert)
+        y = self.ytranslate(y)
+        n = int((xright - xleft)//xincr)
+        ticks = [xleft + xincr*i for i in range(n + 1)]
+        for k, tick in enumerate(ticks):
+            xleft = self.xtranslate(tick)
+            xright = self.xtranslate(tick + xincr)
+            
+            # If no index was supplied, check to see if the current unit spans
+            # the vertical slice. If so, arrange for this unit to be plotted
+            if (xleft < xv) and (xright > xv) and (which is None):
+                which = k
+                
+            if which == k:
+                # Draw the horizontal line
+                Canvas.create_line(self, xleft, y, xright, y, fill=self.slice_color)
+                # Draw tick mark at left end
+                Canvas.create_line(self, xleft, y-2, xleft, y+2, fill=self.slice_color)
+                # Draw tick mark at right end
+                Canvas.create_line(self, xright, y-2, xright, y+2, fill=self.slice_color)
+        return n, k
+        
     def plotSlice(self, xleft, xright, xincr, y):
         x0 = self.xtranslate(xleft)
         x1 = self.xtranslate(xright)
@@ -105,7 +137,25 @@ class Plotter(Canvas):
         else:
             Canvas.create_line(self, ix0, iy0, ix1, iy1, fill=line_color, width=2)
         
-    def plotPoint(self, xval, yval, color='yellow'):
+    def plotLeftPointingArrow(self, xval, yval, color='white', shaft_length=10, arrowhead_length=5):
+        # Draw shaft of arrow
+        ix0 = self.xtranslate(xval)
+        iy0 = self.ytranslate(yval)
+        ix1 = ix0 + shaft_length
+        iy1 = iy0
+        Canvas.create_line(self, ix0, iy0, ix1, iy1, fill=color, width=2)
+        
+        # Draw upper half of arrowhead
+        ix1 = ix0 + arrowhead_length
+        iy1 = iy0 + arrowhead_length
+        Canvas.create_line(self, ix0, iy0, ix1, iy1, fill=color, width=2)
+        
+        # Draw lower half of arrowhead
+        ix1 = ix0 + arrowhead_length
+        iy1 = iy0 - arrowhead_length
+        Canvas.create_line(self, ix0, iy0, ix1, iy1, fill=color, width=2)
+
+    def plotPoint(self, xval, yval, color='yellow', radius=2):
         ok = True
         if xval < self.xlow or xval > self.xhigh:
             ok = False
@@ -114,7 +164,7 @@ class Plotter(Canvas):
         if ok:
             x = self.xtranslate(xval)
             y = self.ytranslate(yval)
-            Canvas.create_oval(self, x-2, y-2, x+2, y+2, fill=color, outline=color)
+            Canvas.create_oval(self, x-radius, y-radius, x+radius, y+radius, fill=color, outline=color)
 
     def plotAllPoints(self):
         for p in self.points:

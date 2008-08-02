@@ -153,7 +153,7 @@ class SliceViewer(Frame):
         self.bind_all("<KeyPress-a>", self.keybdAdaptSampler)
         self.bind_all("<KeyPress-r>", self.keybdReset)
         self.bind_all("<KeyPress-q>", self.keybdQuit)
-        self._step_n_within_step = 0
+        self._step_num_within_step = 0
 
         # configure event is bound only to the main frame
         #self.bind("<Configure>", self.resizing)
@@ -186,23 +186,42 @@ class SliceViewer(Frame):
         print 'range of y is [%f, %f]' % (ymin, ymax)
 
     def takeStep(self, show_slice=False, detailed=False):
-        if (not detailed) or self._step_n_within_step == 0:
+        """
+        If detailed is False, this function displays an entire slice sampling step.
+        If detailed is True, this function shows the details of a single slice sampling step.
+        That is, it first shows the vertical slice, then the point chosen for the horizontal
+        slice, then the horizontal slice, etc.
+        """
+        target_step = 1
+        if (not detailed) or self._step_num_within_step == 0:
             #self.total_steps += 1
+            # Tell the slice sampler to take one step and return all the information
+            # about that step
             self.curr = self.s.debugSample()
         if not detailed:
-            self._step_n_within_step = 1000000
-        # 0: sampled x
-        # 1: x-coord of vertical slice
-        # 2: y-coord of top of vertical slice (y-coord of bottom of vertical slice always 0.0)
-        # 3: x-coord of left edge of horizontal slice
-        # 4: x-coord of right edge of horizontal slice
-        # 5: y-coord of horizontal slice
-        # 6: horizontal slice interval width
-        # 7+: x-coord of failed sampling attempts (y-coord all equal to element 5)
+            self._step_num_within_step = 1000000
+            
+        # debugSample returns a tuple with the following information about the 
+        # slice sampling step just completed:
+        #   0: sampled x
+        #   1: x-coord of vertical slice
+        #   2: y-coord of top of vertical slice (y-coord of bottom of vertical slice always 0.0)
+        #   3: x-coord of left edge of horizontal slice
+        #   4: x-coord of right edge of horizontal slice
+        #   5: y-coord of horizontal slice
+        #   6: horizontal slice interval width
+        #   7+: x-coord of failed sampling attempts (y-coord all equal to element 5)
+        
+        # point (x0,y0) is the top of the vertical slice
         x0 = self.curr[1]
         y0 = math.exp(self.curr[2])
+        
+        # point (x,y) is the point ultimately chosen along the horizontal slice
         x = self.curr[0]
         y = math.exp(self.curr[5])
+        
+        # xleft and xright are the x-coordinates of the left and right ends of the 
+        # horizontal slice
         xleft = self.s.getOrigLeftEdgeOfSlice()
         xright = self.s.getOrigRightEdgeOfSlice()
         
@@ -211,30 +230,46 @@ class SliceViewer(Frame):
         #outf.write('%d\t%f\t%f\n' % (self.total_steps, y, slice_extent))
         #outf.close()                    
         
+        # xincr is the slice unit width
         xincr = self.curr[6]
+        
+        # curr_len is the length of the list returned by the slice sampler's debugSample method
+        # This information helps us tell how many failed attempts there were
         curr_len = len(self.curr)
-        prev_n_func_evals = self.n_func_evals
-        self.n_func_evals = self.s.getNumFuncEvals()
-        n_samples = self.s.getNumSamples()
+        
+        # Determine the number of horiz. slice units needed
         unit_width = self.s.getSliceUnitWidth()
+        assert xincr == unit_width
         n_units = int(0.5 + (xright - xleft)/xincr)
-        # 4 function evaluations are required
+        
+        # Get number of function evaluations needed for the current slice sample
+        # At minimum, four function evaluations are required:
         #   1. re-evaluate current point (density has probably changed since last update)
         #   2. check left edge to see if it is outside slice
         #   3. check right edge to see if it is outside slice
         #   4. check sampled point to see if it is valid
+        prev_n_func_evals = self.n_func_evals
+        self.n_func_evals = self.s.getNumFuncEvals()
         extra_evals = self.n_func_evals - prev_n_func_evals - 4
+        n_samples = self.s.getNumSamples()
         efficiency = (float(self.n_func_evals)/float(n_samples)) - 4.0
-        self.status_label.config(text='unit width=%.2f, units=%d, extra evals=%d, extra evals/sample=%.1f' % (unit_width, n_units, extra_evals, efficiency))
+        #self.status_label.config(text='unit width=%.2f, units=%d, extra evals=%d, extra evals/sample=%.1f' % (unit_width, n_units, extra_evals, efficiency))
         if show_slice:
-            self._step_n_within_step += 1
+            self._step_num_within_step += 1
+            
+            # Plot the vertical slice
             self.plotter.repaint()
             self.plotter.plotLine(x0, 0.0, x0, y0)
+            self.status_label.config(text='vertical slice')
+            if self._step_num_within_step == target_step:
+                return
+            target_step += 1
+
             n_failed = curr_len - 7
-            print 'n_failed=%d' % (n_failed)
-            print 'self.s.getNumSamples()=', self.s.getNumSamples()
-            print 'self.s.getNumFailedSamples()=', self.s.getNumFailedSamples()
-            print 'self.s.getNumFuncEvals()=', self.s.getNumFuncEvals()
+            #print 'n_failed=%d' % (n_failed)
+            #print 'self.s.getNumSamples()=', self.s.getNumSamples()
+            #print 'self.s.getNumFailedSamples()=', self.s.getNumFailedSamples()
+            #print 'self.s.getNumFuncEvals()=', self.s.getNumFuncEvals()
             if self.adaptMode == 'yconditional':
                 mode = self.s.getMode()
                 mode_height = math.exp(self.s.getLnDensityAtMode())
@@ -250,20 +285,59 @@ class SliceViewer(Frame):
                 right_y1 = 0.0
                 self.plotter.plotLine(left_x0, left_y0, left_x1, left_y1, "green")
                 self.plotter.plotLine(right_x0, right_y0, right_x1, right_y1, "green")
-            if self._step_n_within_step == 1:
+            
+            # Plot an arrow indicating where the horizontal slice will be located
+            if self._step_num_within_step == target_step:
+                self.plotter.plotLeftPointingArrow(x0, y, color="white", shaft_length=10, arrowhead_length=5)
+                self.status_label.config(text='location of horizontal slice')
                 return
-            self.plotter.plotSlice(xleft, xright, xincr, y)
-            if n_failed > 0:                
+            target_step += 1
+            
+            # Plot the unit that spans the vertical slice
+            nunits, first_unit_index = self.plotter.plotOneSliceUnit(xleft, xright, xincr, x0, y)
+            assert nunits == n_units, 'nunits = %d, n_units = %d'
+            self.status_label.config(text='first unit randomly positioned around vertical slice')
+            if self._step_num_within_step == target_step:
+                return
+            target_step += 1
+            
+            # Plot the units to the right of the first unit
+            curr_index = first_unit_index + 1
+            if curr_index < nunits:
+                while curr_index < nunits:
+                    n, i = self.plotter.plotOneSliceUnit(xleft, xright, xincr, x0, y, curr_index) 
+                    curr_index += 1
+                self.status_label.config(text='add units to right until density bracketed')
+                if self._step_num_within_step == target_step:
+                    return
+                target_step += 1
+                
+            # Plot the units to the left of the first unit
+            curr_index = first_unit_index - 1
+            if curr_index >= 0:
+                while curr_index >= 0:
+                    n, i = self.plotter.plotOneSliceUnit(xleft, xright, xincr, x0, y, curr_index)                
+                    curr_index -= 1
+                self.status_label.config(text='add units to left until density bracketed')
+                if self._step_num_within_step == target_step:
+                    return
+                target_step += 1
+                
+            if n_failed > 0:
                 for i in range(n_failed):
-                    print 'failed sample %d at x=%f' % (i,self.curr[i + 7])
-                    self.plotter.plotPoint(self.curr[i + 7], y, 'red')
+                    xfail = self.curr[i + 7]
+                    self.plotter.plotPoint(xfail, y, 'red')
+                    self.status_label.config(text='sample attempt failed')
+                    if self._step_num_within_step == target_step:
+                        return
+                    target_step += 1
 
-            # this is the last thing to plot, so we reset to _step_n_within_step to 0
+            # this is the last thing to plot, so we reset to _step_num_within_step to 0
             self.plotter.plotPoint(x, y, 'cyan')
             self.plotter.points.append((x,y))
-            self._step_n_within_step = 0
-            print 'successful sample at x=%f\n' % x
-            print 'xleft=%f, xright=%f, xincr=%f\n' % (xleft, xright, xincr)
+            self._step_num_within_step = 0
+            self.status_label.config(text='successful sample at x=%.3f' % x)
+            #print 'xleft=%f, xright=%f, xincr=%f\n' % (xleft, xright, xincr)
         else:
             self.plotter.points.append((x,y))
 
@@ -294,13 +368,13 @@ class SliceViewer(Frame):
 
     # next two functions result in a single sample and show details of the slice sampling process
     def oneStep(self, detailed=False):
-        self.takeStep(True, detailed)
+        self.takeStep(show_slice=True, detailed=detailed)
         
     def keybdOneStep(self, event):
-        self.oneStep()
+        self.oneStep(detailed=False)
 
     def keybdDetailedStep(self, event):
-        self.oneStep(True)
+        self.oneStep(detailed=True)
 
     # next two functions result in a single overrelaxed sample and show details of the slice sampling process
     def overrelaxedOneStep(self):

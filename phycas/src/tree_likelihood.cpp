@@ -2300,16 +2300,19 @@ bool TreeLikelihood::debugCheckCLAsRemainInNode(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|   Computes the lower bound of the log-likelihood. This occurs when all edges are infinitely long. The site 
-|   log-likelihood in this case is simply the sum of the logs of the equilibrium frequency of each tip state: i.e.,
+|   Computes the value of the log-likelihood at substitutional saturation (this occurs when all edges have infinite
+|   length). The site log-likelihood in this case is simply the sum of the logs of the equilibrium frequency of each tip
+|   state: i.e.,
 |>
 |   log-like for site j = \sum_{i=1}^{ntax} log(\pi_{s_{ij}})
 |>
-|   Assumes that data have been stored.
+|   Meaningless if no data has been stored, so assumes that `pattern_map' is not empty.
 */
-double TreeLikelihood::calcLogLikeLowerBound() const
+double TreeLikelihood::calcLogLikeAtSubstitutionSaturation() const
     {
+    //@POL needs to take ambiguity into account!
     PHYCAS_ASSERT(!no_data);
+    PHYCAS_ASSERT(!pattern_map.empty());
 
     // Create a vector containing the log of each state frequency
     unsigned nstates = getNStates();
@@ -2724,6 +2727,7 @@ void TreeLikelihood::prepareForSimulation(
 		}
 	}
 
+// BOOKMARK state_list and state_list_pos
 /*----------------------------------------------------------------------------------------------------------------------
 |	Builds `pattern_map' and `pattern_counts' using uncompressed data stored in `mat'.
 */
