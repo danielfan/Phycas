@@ -148,6 +148,7 @@ class SliceViewer(Frame):
         # when you use bind_all
         self.bind_all("<KeyPress-o>", self.keybdOverrelaxedOneStep)
         self.bind_all("<KeyPress-n>", self.keybdOneStep)
+        self.bind_all("<KeyPress-d>", self.keybdDetailedStep)
         self.bind_all("<Shift-KeyPress-N>", self.keybdManySteps)
         self.bind_all("<KeyPress-a>", self.keybdAdaptSampler)
         self.bind_all("<KeyPress-r>", self.keybdReset)
@@ -184,10 +185,12 @@ class SliceViewer(Frame):
         print 'range of x is [%f, %f]' % (xmin, xmax)
         print 'range of y is [%f, %f]' % (ymin, ymax)
 
-    def takeStep(self, show_slice=False):
-        if self._step_n_within_step == 0:
+    def takeStep(self, show_slice=False, detailed=False):
+        if (not detailed) or self._step_n_within_step == 0:
             #self.total_steps += 1
             self.curr = self.s.debugSample()
+        if not detailed:
+            self._step_n_within_step = 1000000
         # 0: sampled x
         # 1: x-coord of vertical slice
         # 2: y-coord of top of vertical slice (y-coord of bottom of vertical slice always 0.0)
@@ -254,6 +257,8 @@ class SliceViewer(Frame):
                 for i in range(n_failed):
                     print 'failed sample %d at x=%f' % (i,self.curr[i + 7])
                     self.plotter.plotPoint(self.curr[i + 7], y, 'red')
+
+            # this is the last thing to plot, so we reset to _step_n_within_step to 0
             self.plotter.plotPoint(x, y, 'cyan')
             self.plotter.points.append((x,y))
             self._step_n_within_step = 0
@@ -286,12 +291,15 @@ class SliceViewer(Frame):
     #    print "resizing: x=%f, y=%f" % (event.width, event.height)
 
     # next two functions result in a single sample and show details of the slice sampling process
-    def oneStep(self):
-        self.takeStep(True)
+    def oneStep(self, detailed=False):
+        self.takeStep(True, detailed)
         
     def keybdOneStep(self, event):
         self.oneStep()
-        
+
+    def keybdDetailedStep(self, event):
+        self.oneStep(True)
+
     # next two functions result in a single overrelaxed sample and show details of the slice sampling process
     def overrelaxedOneStep(self):
         self.takeOverrelaxedStep(True)
