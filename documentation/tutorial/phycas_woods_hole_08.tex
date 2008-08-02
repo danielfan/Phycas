@@ -480,10 +480,31 @@ sumt.out.splits.prefix = "polytomy_sumt_splits"
 
 Now we have changed the command script to run the file. Save it as \localfile{Polytomy.py}
 
+\subsection{Executing a script}
 How do we tell \phycas execute it?
 
-The easiest way to do this (on Mac) is to simply drag the \localfile{Polytomy.py}
+The easiest way to do this (on Mac) is to simply drag the \localfile{Polytomy.py} file onto the \phycas icon (in the dock if \phycas is running or on the to the application icon if it is not running).
 
+If you are {\bf not} running the double-clickable \phycas, then you can invoke:
+\begin{verbatim}
+cd <type the directory with the Polytomy.py script here>
+python -i Polytomy.py
+\end{verbatim}
+
+A third way to do this is better when you already have a phycas session underway. 
+From within the python (or IPython) interpreter, you can execute the command:
+\begin{verbatim}
+execfile("Polytomy.py")
+\end{verbatim}
+to execute a python script (in this case  \localfile{Polytomy.py}).
+
+\subsection{Comparing the results}
+If all goes well, you should have the files created by the run:
+\localfile{polytomy\_params.p}, \localfile{polytomy\_sumt\_splits.pdf}, \localfile{polytomy\_sumt\_trees.pdf}, \localfile{polytomy\_trees.t}, and \localfile{polytomy\_sumt\_trees.tre}.
+Look at the \localfile{polytomy\_sumt\_splits.pdf}  for evidence of poor mixing  during the MCMC; 
+and compare the majority-rule consensus trees and the maximum a posterior trees shown in  \localfile{polytomy\_trees.pdf} to those found in \localfile{no\_p\_sumt\_trees.pdf}
+
+\section{Different priors for internal and terminal edge lengths}
 \newpage
 \subsection{basic.py}\label{basicpy}
 \begin{verbatim}
