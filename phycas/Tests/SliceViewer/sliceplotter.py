@@ -84,7 +84,21 @@ class Plotter(Canvas):
     def ytranslate(self, y):
         return int(self.bottom - self.yaxislen*((y - self.ylow)/(self.yhigh - self.ylow)))
 
-    def plotOneSliceUnit(self, xleft, xright, xincr, xvert, y, which = None, ticks=True):
+    def plotCurrentSliceWidth(self, xleft, xright, xvert, y):
+        x0 = self.xtranslate(xleft)
+        x1 = self.xtranslate(xright)
+        xv = self.xtranslate(xvert)
+        y = self.ytranslate(y)
+        Canvas.create_line(self, xleft, y, xright, y, fill=self.slice_color)
+
+    def getExpandedSliceDim(self, xleft, xright, xincr):
+        n = int(0.5 + (xright - xleft)/xincr) # int((xright - xleft)//xincr)
+        ticks = [xleft + xincr*i for i in range(n + 1)]
+        tf = ticks[0]
+        tl = ticks[-1]
+        return self.xtranslate(tf), self.xtranslate(tl)
+
+    def plotOneSliceUnit(self, xleft, xright, xincr, xvert, y, which = None, showTicks=True):
         """
         Plots only one slice unit. If which is None, the unit plotted is the
         one that spans the vertical slice (at x-coordinate xvert). If which
@@ -98,6 +112,7 @@ class Plotter(Canvas):
         y = self.ytranslate(y)
         n = int(0.5 + (xright - xleft)/xincr) # int((xright - xleft)//xincr)
         ticks = [xleft + xincr*i for i in range(n + 1)]
+        last_incr = len(ticks) - 1
         for k, tick in enumerate(ticks):
             xleft = self.xtranslate(tick)
             xright = self.xtranslate(tick + xincr)
@@ -110,12 +125,13 @@ class Plotter(Canvas):
             if which == k:
                 # Draw the horizontal line
                 Canvas.create_line(self, xleft, y, xright, y, fill=self.slice_color)
-                if ticks:
+                if showTicks or k == 0:
                     # Draw tick mark at left end
                     Canvas.create_line(self, xleft, y-2, xleft, y+2, fill=self.slice_color)
+                if showTicks or k == last_incr:
                     # Draw tick mark at right end
                     Canvas.create_line(self, xright, y-2, xright, y+2, fill=self.slice_color)
-        assert which is not None, " ".join([str(i) for i in [x0, x, x1, xleft, xright, xincr, xvert, y]])
+        assert which is not None, " ".join([str(i) for i in [x0, xv, x1, xleft, xright, xincr, xvert, y]])
         return n, k, which
         
     def plotSlice(self, xleft, xright, xincr, y):

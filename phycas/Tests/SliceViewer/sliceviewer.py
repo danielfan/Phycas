@@ -99,9 +99,9 @@ class SliceViewer(Frame):
         self.r = Lot()
         #self.r.setSeed(13579)
         print "seed is =", self.r.getSeed()
-        self.d = MyBeta(1.5)
+        #self.d = MyBeta(1.5)
         # self.d = MyExpon()
-        #self.d = MyBimodal() 
+        self.d = MyBimodal() 
         self.f = AdHocDensity(self.d.getLnPDF)
         
         # self.f should be function that returns natural log of a probability density, or
@@ -144,7 +144,7 @@ class SliceViewer(Frame):
 
         # reset statistics such as average slice width, number of function evalutations, etc.
         w = self.s.getSliceUnitWidth()
-        self.s.setSliceUnitWidth(w/4.0)
+        self.s.setSliceUnitWidth(w/2.0)
         self.s.resetDiagnostics()
 
         # bind some keys to the application (doesn't matter which widget has focus
@@ -301,42 +301,66 @@ class SliceViewer(Frame):
                 target_step += 1
                 
                 # Plot the unit that spans the vertical slice
-                nunits, n_increases, first_unit_index = self.plotter.plotOneSliceUnit(xleft, xright, xincr, x0, y)
-                assert nunits == n_units, 'nunits = %d, n_units = %d' %(nunits, n_units)
-                self.status_label.config(text='first unit randomly positioned around vertical slice')
-                if self._step_num_within_step == target_step:
-                    return
-                target_step += 1
-                
-                # Plot the units to the right of the first unit
-                curr_index = first_unit_index + 1 
-                while curr_index  < n_increases :
-                    self.plotter.plotOneSliceUnit(xleft, xright, xincr, x0, y, curr_index) 
+                n_increases = int(0.5 + (xright - xleft)/xincr) # int((xright - xleft)//xincr)
+        
+                growingSlice = self._step_num_within_step < target_step + n_increases
+                if growingSlice:
+                    nunits, n_increases, first_unit_index = self.plotter.plotOneSliceUnit(xleft, xright, xincr, x0, y, which=None, showTicks=True)
+
+                    assert nunits == n_units, 'nunits = %d, n_units = %d' %(nunits, n_units)
+                    self.status_label.config(text='first unit randomly positioned around vertical slice')
                     if self._step_num_within_step == target_step:
-                        self.status_label.config(text='add units to right until density bracketed')
                         return
                     target_step += 1
-                    curr_index += 1
                     
-                # Plot the units to the left of the first unit
-                curr_index = first_unit_index - 1 
-                while curr_index >= 0:
-                    self.plotter.plotOneSliceUnit(xleft, xright, xincr, x0, y, curr_index)                
-                    if self._step_num_within_step == target_step:
-                        self.status_label.config(text='add units to left until density bracketed')
-                        return
-                    target_step += 1
-                    curr_index -= 1
-                    
-                if n_failed > 0:
-                    for i in range(n_failed):
-                        xfail = self.curr[i + 7]
-                        self.plotter.plotPoint(xfail, y, 'red')
-                        self.status_label.config(text='sample attempt failed')
+                    # Plot the units to the right of the first unit
+                    curr_index = first_unit_index + 1 
+                    while curr_index  < n_increases :
+                        self.plotter.plotOneSliceUnit(xleft, xright, xincr, x0, y, curr_index) 
                         if self._step_num_within_step == target_step:
+                            self.status_label.config(text='add units to right until density bracketed')
                             return
                         target_step += 1
-
+                        curr_index += 1
+                        
+                    # Plot the units to the left of the first unit
+                    curr_index = first_unit_index - 1 
+                    while curr_index >= 0:
+                        self.plotter.plotOneSliceUnit(xleft, xright, xincr, x0, y, curr_index)                
+                        if self._step_num_within_step == target_step:
+                            self.status_label.config(text='add units to left until density bracketed')
+                            return
+                        target_step += 1
+                        curr_index -= 1
+                else:
+                    target_step += n_increases
+                left_border, right_border = self.plotter.getExpandedSliceDim(xleft, xright, xincr)
+                if self._step_num_within_step == target_step:
+                    self.plotter.plotCurrentSliceWidth(left_border, right_border, x0, y)
+                    self.status_label.config(text='Now we have the full slice that we will sample from')
+                    return
+                target_step += 1
+                if n_failed > 0:
+                    for i in range(n_failed):
+                        for j in (0,1):
+                            xfail = self.curr[i + 7]
+                            xft = self.plotter.xtranslate(xfail)
+                            if j == 1:
+                                if x0 < xfail:
+                                    right_border = xft
+                                else:
+                                    left_border = xft
+                            if not self._just_point:
+                                self.plotter.plotPoint(xfail, y, 'red')                                
+                            if self._step_num_within_step == target_step:
+                                self.plotter.plotCurrentSliceWidth(left_border, right_border, x0, y)
+                                if j == 0:
+                                    self.status_label.config(text='sample attempt failed')
+                                elif j == 1:
+                                    self.status_label.config(text='We can crop the edges of the slice')                                
+                                return
+                            target_step += 1
+            
             # this is the last thing to plot, so we reset to _step_num_within_step to 0
             self.plotter.plotPoint(x, y, 'cyan')
             if self._just_point:
@@ -344,6 +368,7 @@ class SliceViewer(Frame):
                 self._just_point = False
                 self.plotter.points.append((x,y))
             else:
+                self.plotter.plotCurrentSliceWidth(left_border, right_border, x0, y)
                 self._just_point = True
             self.status_label.config(text='successful sample at x=%.3f' % x)
             #print 'xleft=%f, xright=%f, xincr=%f\n' % (xleft, xright, xincr)
@@ -443,4 +468,6 @@ class SliceViewer(Frame):
         self.quit()
         
 if __name__ == '__main__':
-    SliceViewer().mainloop()
+    app = Tk()
+    app.geometry("%dx%d%+d%+d" % (800, 600, 0, 0))
+    SliceViewer(app).mainloop()
