@@ -1,6 +1,8 @@
 import math, types
 from phycas.PDFGen import *
 from phycas.Utilities.CommonFunctions import CommonFunctions
+from phycas.Utilities.GlobalState import readFile
+from phycas.Phylogeny import Tree
 
 class PDFTree(CommonFunctions):
     def __init__(self):
@@ -12,38 +14,50 @@ class PDFTree(CommonFunctions):
         #   Times-Bold       Helvetica-Bold        Courier-Bold        ZapfDingbats
         #   Times-Italic     Helvetica-Oblique     Courier-Oblique
         #   Times-BoldItalic Helvetica-BoldOblique Courier-BoldOblique
-        self.pdf_filename              = 'trees.pdf'    # Set to desired name of pdf file to create
-        self.pdf_edge_support_file     = None           # File containing PAUP* output with table of support values; if specified, the support values will be shown on trees plotted
-        self.pdf_tip_label_font        = 'Times-Italic' # Font used for tip node names; should be one of the 14 standard fonts listed above
-        self.pdf_tip_label_height      = 12             # Height in points of tip node name font
-        self.pdf_plot_label_font       = 'Helvetica'    # Font used for plot axis labels; should be one of the 14 standard fonts listed above
-        self.pdf_plot_label_height     = 12             # Height in points of plot axis label font
-        self.pdf_title_font            = 'Helvetica'    # Font used for scalebar text; should be one of the 14 standard fonts listed above
-        self.pdf_title_height          = 14             # Height in points of scalebar text font
-        self.pdf_scalebar_position     = 'bottom'       # Valid values are 'top', 'bottom' or None
-        self.pdf_scalebar_label_font   = 'Helvetica'    # Font used for scalebar text; should be one of the 14 standard fonts listed above
-        self.pdf_scalebar_label_height = 10             # Height in points of scalebar text font
-        self.pdf_support_label_font    = 'Times-Roman'  # Font used for edge support values; should be one of the 14 standard fonts listed above
-        self.pdf_support_label_height  = 8              # Height in points of edge support font
-        self.pdf_support_as_percent    = True           # If True, support values will be shown as percentages (e.g. 93.1) rather than proportions (e.g. 0.931)
-        self.pdf_support_decimals      = 1              # The number of decimal places shown in support values (e.g. to get 93.7, specify 1; to round up to 94, specify 0)
-        self.pdf_ladderize             = 'right'        # Valid values are 'right', 'left' or None
-        self.pdf_page_width            = 8.5            # Page width in inches
-        self.pdf_page_height           = 11.0           # Page length in inches
-        self.pdf_line_width            = 1.0            # Width of lines representing edges in the tree
-        self.pdf_left_margin           = 1.0            # Left margin in inches (1 inch = 72 points)
-        self.pdf_right_margin          = 1.0            # Right margin in inches (1 inch = 72 points)
-        self.pdf_top_margin            = 1.0            # Top margin in inches (1 inch = 72 points)
-        self.pdf_bottom_margin         = 1.0            # Bottom margin in inches (1 inch = 72 points)
-        self.pdf_treefile              = None           # Set to tree file name if you want to make one pdf file with each tree from tree file on a separate page
-        self.pdf_newick                = None           # Set to the tree description to print if only want to save one tree to a pdf file
-        self.pdf_outgroup_taxon        = None           # Set to taxon name of tip serving as the outgroup for display rooting purposes (note: at this time outgroup can consist of just one taxon)
+        self.pdf_filename                 = 'trees.pdf'    # Set to desired name of pdf file to create
+        self.pdf_edge_support_file        = None           # File containing PAUP* output with table of support values; if specified, the support values will be shown on trees plotted
+        self.pdf_tip_label_font           = 'Times-Italic' # Font used for tip node names; should be one of the 14 standard fonts listed above
+        self.pdf_tip_label_height         = 12             # Height in points of tip node name font
+        self.pdf_plot_label_font          = 'Helvetica'    # Font used for plot axis labels; should be one of the 14 standard fonts listed above
+        self.pdf_plot_label_height        = 12             # Height in points of plot axis label font
+        self.pdf_title_font               = 'Helvetica'    # Font used for scalebar text; should be one of the 14 standard fonts listed above
+        self.pdf_title_height             = 14             # Height in points of scalebar text font
+        self.pdf_scalebar_position        = 'bottom'       # Valid values are 'top', 'bottom' or None
+        self.pdf_scalebar_label_font      = 'Helvetica'    # Font used for scalebar text; should be one of the 14 standard fonts listed above
+        self.pdf_scalebar_label_height    = 10             # Height in points of scalebar text font
+        self.pdf_support_label_font       = 'Times-Roman'  # Font used for edge support values; should be one of the 14 standard fonts listed above
+        self.pdf_support_label_height     = 8              # Height in points of edge support font
+        self.pdf_support_as_percent       = True           # If True, support values will be shown as percentages (e.g. 93.1) rather than proportions (e.g. 0.931)
+        self.pdf_support_decimals         = 1              # The number of decimal places shown in support values (e.g. to get 93.7, specify 1; to round up to 94, specify 0)
+        self.pdf_ladderize                = 'right'        # Valid values are 'right', 'left' or None
+        self.pdf_page_width               = 8.5            # Page width in inches
+        self.pdf_page_height              = 11.0           # Page length in inches
+        self.pdf_line_width               = 1.0            # Width of lines representing edges in the tree
+        self.pdf_left_margin              = 1.0            # Left margin in inches (1 inch = 72 points)
+        self.pdf_right_margin             = 1.0            # Right margin in inches (1 inch = 72 points)
+        self.pdf_top_margin               = 1.0            # Top margin in inches (1 inch = 72 points)
+        self.pdf_bottom_margin            = 1.0            # Bottom margin in inches (1 inch = 72 points)
+        self.keep_xy_proportional         = True           # If True, vertical dimension of each tree in a collection will be kept proportional to its horizontal dimension
+        self.keep_tip_labels_proportional = True           # If True, tip label height will be kept commensurate with size of tree for each tree in a printed collection (smaller trees will have smaller tip labels)
+        self.pdf_treefile                 = None           # Set to tree file name if you want to make one pdf file with each tree from tree file on a separate page
+        self.pdf_newick                   = None           # Set to the tree description to print if only want to save one tree to a pdf file
+        self.pdf_outgroup_taxon           = None           # Set to taxon name of tip serving as the outgroup for display rooting purposes (note: at this time outgroup can consist of just one taxon)
 
     def pdftree(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Creates a PDF file containing a single tree (if pdf_newick is 
+        specified) or a collection of trees (if pdf_treefile is specified). 
+        If a collection of trees is specified, scales all trees the same (i.e
+        the scalebar is identical in size for all trees plotted).
+        """
         #complex_outgroup = type(self.pdf_outgroup_taxon) in (types.ListType,types.TupleType)
         simple_outgroup = type(self.pdf_outgroup_taxon) == types.StringType
         self.phycassert(simple_outgroup, 'Phycas cannot yet deal with pdf_outgroup_taxon containing more than one outgroup taxon')
         self.phycassert((self.pdf_treefile and not self.pdf_newick) or (self.pdf_newick and not self.pdf_treefile), 'set either pdf_newick or pdf_treefile, but not both')
+        
+        # If pdf_edge_support_file has been specified, read splits table from the file 
+        # and store the splits in the pdf_splits_to_plot dictionary
         if self.pdf_edge_support_file and os.path.exists(self.pdf_edge_support_file):
             # Read splits file and store all splits found along with their frequencies
             contents_of_file = open(self.pdf_edge_support_file,'r').read()
@@ -53,6 +67,9 @@ class PDFTree(CommonFunctions):
             self.pdf_splits_to_plot = {}
             for p,f in matches:
                 self.pdf_splits_to_plot[p] = float(f)
+                
+        # Fork depending on whether user wants to print just one tree (pdf_newick specified)
+        # or an entire collection of trees (pdf_treefile specified)
         if self.pdf_newick:        
             # Build tree the newick description of which is in self.newick
             tree = self.pdf_newick.buildTree()
@@ -77,14 +94,14 @@ class PDFTree(CommonFunctions):
         else:
             # Open pdf_treefile and read trees therein
             self.tree_file_name = self.pdf_treefile
-            self.readTreesFromFile()
+            contents = readFile(self.pdf_treefile)
 
             # Build each tree and determine its height
             tree = Tree()
             max_height = 0.0
-            for tree_def in self.stored_tree_defs:
+            for tree_def in contents.trees:
                 tree_def.buildTree(tree)
-                tree.rectifyNames(self.taxon_labels)
+                tree.rectifyNames(contents.taxon_labels)
                 if self.pdf_outgroup_taxon:
                     num = tree.findTipByName(self.pdf_outgroup_taxon)
                     self.phycassert(num, 'could not root tree using specified outgroup: no tip having name "%s" could be found' % self.pdf_outgroup_taxon)
@@ -92,13 +109,15 @@ class PDFTree(CommonFunctions):
                 h = tree.calcTotalHeight()
                 if h > max_height:
                     max_height = h
+                #tlen = tree.edgeLenSum()
+                #print 'tlen =',tlen,', height =',h
 
             # Build each tree again and save in PDF file            
             pdf = PDFGenerator(self.pdf_page_width, self.pdf_page_height)
             pdf.overwrite = True
-            for tree_def in self.stored_tree_defs:
+            for tree_def in contents.trees:
                 tree_def.buildTree(tree)
-                tree.rectifyNames(self.taxon_labels)
+                tree.rectifyNames(contents.taxon_labels)
                 if self.pdf_outgroup_taxon:
                     num = tree.findTipByName(self.pdf_outgroup_taxon)
                     tree.rerootAtTip(num)
@@ -107,7 +126,7 @@ class PDFTree(CommonFunctions):
                         tree.ladderizeRight()
                     else:
                         tree.ladderizeLeft()
-                tree.rectifyNames(self.taxon_labels)
+                tree.rectifyNames(contents.taxon_labels)
                 pdf.newPage()
                 self.tree2pdf(pdf, tree, None, max_height)
             pdf.saveDocument(self.pdf_filename)
@@ -167,6 +186,8 @@ class PDFTree(CommonFunctions):
             else:
                 ntips = 1.0
         max_height = height
+        
+        # Determine the width (in points) occupied by the longest taxon label 
         if self.pdf_tip_label_font and not rooted_tree:
             taxon_label = nd.getNodeName()
             label_width = float(self.pdf_tip_label_height)*pdf.calcStringWidth(self.pdf_tip_label_font, taxon_label)
@@ -296,11 +317,15 @@ class PDFTree(CommonFunctions):
         #top_margin += (plot_height*(1.0 - max_height/xscalemax))/2.0
 
         # adjust yscaler to keep vertical tree dimension proportional to its horizontal dimension
-        yscaler *= max_height/xscalemax
+        if self.keep_xy_proportional:
+            yscaler *= max_height/xscalemax
 
         # adjust tip label height (in points) to make size of tip labels commensurate with size of tree
-        tip_font_points = self.pdf_tip_label_height*max_height/xscalemax
-
+        if self.keep_tip_labels_proportional:
+            tip_font_points = self.pdf_tip_label_height*max_height/xscalemax
+        else:
+            tip_font_points = self.pdf_tip_label_height
+        
         # Perform a postorder traversal:
         # 1) scale each x-value
         # 2) calculate y-value of each internal node as the average y-value of its children

@@ -30,7 +30,6 @@ def _runRegressionTests(out):
     r = os.path.join(d, "doctestall.py")
     spawnPython(r)
     out.info("\nAll tests passed.")
-    
         
 def spawnPython(f):
     if not os.path.exists(f):
@@ -60,8 +59,6 @@ def readData(filepath, format=FileFormats.NEXUS, out=None):
     reader = NexusReader()
     reader.readFile(filepath)
     return reader.getLastDiscreteMatrix(True)
-
-
 
 def readTrees(filepath, format=FileFormats.NEXUS, out=None):
     """Returns a (taxon_list, list of TreeDescription objects) (or an empty list if there are no trees) from `filepath`
