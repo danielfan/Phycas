@@ -264,6 +264,8 @@ class SliceViewer(Frame):
             self._step_n_within_step = 0
             print 'successful sample at x=%f\n' % x
             print 'xleft=%f, xright=%f, xincr=%f\n' % (xleft, xright, xincr)
+        else:
+            self.plotter.points.append((x,y))
 
     def takeOverrelaxedStep(self, show_slice=False):
         self.curr = self.s.debugOverrelaxedSample()
