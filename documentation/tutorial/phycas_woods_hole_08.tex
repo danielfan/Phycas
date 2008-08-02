@@ -236,11 +236,11 @@ sumt.trees = "green.t"
 sumt.current()
 \end{verbatim}
 
-Then we can rune the sumt command with the syntax:
+Then we can run the sumt command with the syntax:
 \begin{verbatim}
 sumt()
 \end{verbatim}
-
+\textbf{The sumt.burnin setting in \phycas is specified in terms of the number of trees to skip in the file -- not in terms of the generation number.}
 You will see the majority-rule consensus trees and the trees that have the 
 highest posterior probability in the \localfile{sumt\_trees.pdf} file.
 In the case of this simple dataset and this short MCMC, it is entirely possible that all of the 
@@ -358,7 +358,34 @@ model.edgelen_hyperprior = InverseGamma(2.10000, 0.90909)
 \end{verbatim}
 uses an Inverse-Gamma distribution with mean 1 and variance 10 for the hyperparameter, $\mu$.
 
-\subsubsection{Allowing polytomies -- or Not}
+\subsubsection{Allowing Polytomies -- or Not}
+Let's perform an initial run in the ``standard'' mode in which polytomies are not considered.
+We tell the \cmd{mcmc} command that we do not want to sample trees with polytomies:
+\begin{verbatim}
+mcmc.allow_polytomies = False
+\end{verbatim}
+
+Because we are going to perform an analysis that uses a pseudorandom number generator, it is a 
+good idea to explicitly set the seed so that we can repeat the analysis.
+Let's create a random number generator, set it's seed, and assign it to the mcmc command, and 
+tell the mcmc command to start from a random tree that is generated using the same random
+number generator:
+
+\begin{verbatim}
+rng = ProbDist.Lot()rng.setSeed(13957)
+mcmc.rng = rngmcmc.starting_tree_source = randomtree(rng=rng)\end{verbatim}
+
+Now we can configure the MCMC to run a short simulation and save files with names that
+will remind us to that they are from the no-polytomies run:
+\begin{verbatim}
+mcmc.ncycles = 2000mcmc.sample_every = 10mcmc.out.trees.prefix = "no_p_trees"mcmc.out.trees.mode = REPLACEmcmc.out.params.prefix = "no_p_params"mcmc.out.params.mode = REPLACEmcmc.out.log.prefix = "no_p_output"mcmc.out.log.mode = REPLACE\end{verbatim}
+Finally, we call \cmd{mcmc()} which starts the MCMC analysis:\begin{verbatim}
+mcmc()
+\end{verbatim}
+
+After it has completed we can summarize the results:
+\begin{verbatim}
+sumt.outgroup_taxon = "Oedogonium cardiacum"sumt.trees          = "no_p_trees.t"sumt.burnin         = 101sumt.out.log.prefix = "no_p_output"sumt.out.log.mode   = APPENDsumt()\end{verbatim}
 
 \newpage
 \subsection{basic.py}\label{basicpy}
@@ -380,6 +407,29 @@ sumt()
 \end{verbatim}
 
 
+\newpage
+\subsection{NoPolytomy.py}\label{NoPolytomy}
+\begin{verbatim}
+from phycas import *
+
+file_contents = readFile('ShoupLewis.nex')mcmc.data_source = file_contents.characters
+
+model.type = 'hky'   model.num_rates = 4       model.gamma_shape_prior = Exponential(2.0)model.base_freq_param_prior =  Gamma(1.0, 1.0)model.kappa_prior = Exponential(.25)model.edgelen_hyperprior = InverseGamma(2.1, 1.0/1.1)
+
+
+mcmc.allow_polytomies = False
+
+rng = ProbDist.Lot()rng.setSeed(13957)mcmc.rng = rngmcmc.starting_tree_source = randomtree(rng=rng)
+
+mcmc.slice_max_units = 0mcmc.ncycles = 2000mcmc.sample_every = 10
+
+mcmc.out.trees.prefix = 'no_p_trees'mcmc.out.trees.mode = REPLACEmcmc.out.params.prefix = 'no_p_params'mcmc.out.params.mode = REPLACEmcmc.out.log.prefix = 'no_p_output'mcmc.out.log.mode = REPLACE
+
+mcmc()
+sumt.outgroup_taxon = 'Oedogonium cardiacum'sumt.trees          = 'no_p_trees.t'sumt.burnin         = 101
+
+sumt.out.log.prefix = 'sumtno_p_output'sumt.out.log.mode   = APPENDsumt()
+\end{verbatim}
 
 \newpage
 \bibliography{phylo}
