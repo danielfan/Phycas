@@ -298,7 +298,7 @@ Note that the \cmd{model.type} is a string that can be \texttt{"gtr"}, \texttt{"
 Let's configure \phycas to use the HKY model with $\Gamma$-distributed rate heterogeneity:
 
 \begin{verbatim}
-model.type = 'hky'
+model.type = "hky"
 model.num_rates = 4
 \end{verbatim}
 the \cmd{model.num\_rates} is the number of variable rates that are used to approximate the Gamma distribution. 
@@ -530,7 +530,15 @@ model.edgelen_hyperprior = None
 model.internal_edgelen_prior = Exponential(10000.0)
 model.external_edgelen_prior = Exponential(10.0)
 
-mcmc.allow_polytomies = Falsemcmc.out.trees.prefix = "int_term_trees"mcmc.out.params.prefix = "int_term_params"mcmc.out.log.prefix = "int_term_output"sumt.trees          = "int_term_sumt_trees.t"sumt.out.log.prefix = "int_term_sumt_output"\end{verbatim}
+mcmc.allow_polytomies = False
+mcmc.out.trees.prefix = "int_ext_trees"
+mcmc.out.params.prefix = "int_ext_params"
+mcmc.out.log.prefix = "int_ext_output"
+sumt.trees          = "int_ext_trees.t"
+sumt.out.log.prefix = "int_ext_sumt_output"
+sumt.out.trees.prefix = "int_ext_sumt_trees"sumt.out.splits.prefix = "int_ext_sumt_splits"\end{verbatim}
+
+Run the analysis, and see how the clade posterior probabilities compare to the previous analyses.
 
 
 \newpage
@@ -558,10 +566,10 @@ sumt()
 \begin{verbatim}
 from phycas import *
 
-file_contents = readFile('ShoupLewis.nex')
+file_contents = readFile("ShoupLewis.nex")
 mcmc.data_source = file_contents.characters
 
-model.type = 'hky'   
+model.type = "hky"
 model.num_rates = 4       
 model.gamma_shape_prior = Exponential(2.0)
 model.base_freq_param_prior =  Gamma(1.0, 1.0)
@@ -581,20 +589,20 @@ mcmc.slice_max_units = 0
 mcmc.ncycles = 2000
 mcmc.sample_every = 10
 
-mcmc.out.trees.prefix = 'no_p_trees'
+mcmc.out.trees.prefix = "no_p_trees"
 mcmc.out.trees.mode = REPLACE
-mcmc.out.params.prefix = 'no_p_params'
+mcmc.out.params.prefix = "no_p_params"
 mcmc.out.params.mode = REPLACE
-mcmc.out.log.prefix = 'no_p_output'
+mcmc.out.log.prefix = "no_p_output"
 mcmc.out.log.mode = REPLACE
 
 mcmc()
 
-sumt.outgroup_taxon = 'Oedogonium cardiacum'
-sumt.trees          = 'no_p_trees.t'
+sumt.outgroup_taxon = "Oedogonium cardiacum"
+sumt.trees          = "no_p_trees.t"
 sumt.burnin         = 101
 
-sumt.out.log.prefix = 'sumtno_p_output'
+sumt.out.log.prefix = "sumtno_p_output"
 sumt.out.log.mode   = APPEND
 sumt()
 \end{verbatim}

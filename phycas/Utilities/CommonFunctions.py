@@ -7,9 +7,9 @@ outputter = None
 def getDefaultOutputContainer():
     return getDefaultOutputter()
 
-def writeMessageToStdOut(m):
+def writeMessageToStdOut(msg):
     "Writes a message to standard out and adds a trailing newline"
-    sys.stdout.write("%s" % m)
+    sys.stdout.write("%s" % msg)
 
 def getDefaultOutputStream():
     return writeMessageToStdOut
@@ -58,11 +58,11 @@ class CommonFunctions(object):
     info = output
             
     def abort(self, msg):
-        self.stdout.abort(m)
+        self.stdout.abort(msg)
     def warning(self, msg):
-        self.stdout.warning(m)
+        self.stdout.warning(msg)
     def error(self, msg):
-        self.stdout.error(m)
+        self.stdout.error(msg)
     def add_mirror(self, m):
         self.stdout.add_mirror(m)
     def remove_mirror(self, m):
