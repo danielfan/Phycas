@@ -435,7 +435,7 @@ After it has completed we can summarize the results:
 sumt.outgroup_taxon = "Oedogonium cardiacum"
 sumt.trees = "no_p_trees.t"
 sumt.burnin = 101
-sumt.out.log.prefix = "no_p_output"
+sumt.out.log.prefix = "no_p_sumt_output"
 sumt.out.log.mode = APPEND
 sumt.out.trees.prefix = "no_p_sumt_trees"
 sumt.out.trees.mode = REPLACE
@@ -448,7 +448,10 @@ Take a look at the summaries (they should be in the files \localfile{no\_p\_sumt
 Note that a couple of the internal branches have very short lengths but 
 also display very high posterior probabilities.  
 \QandA{Which groupings in the tree do you think will display posterior probabilities
-which are very sensitive to the prior over tree topologies?}{In most runs it the clade of:\\ ({\em Heterochlamydomonas rugosa} + {\em Heterochlamydomonas inaequalis})\\ and the clade leading to:\\ ({\em Volvox carteri}, {\em Chlamydomonas reinhardtii}, {\em Tetraspora sp}, {\em Chlamydomonas baca}, the three {\em Heterochlamydomonas} species, and {\em Carteria radiosa}, and {\em Carteria obtusa})\\ are the ones that you should pay extra attention to.}
+which are very sensitive to the prior over tree topologies?}{In most runs it the clade of:\\ ({\em Heterochlamydomonas rugosa} + {\em Heterochlamydomonas inaequalis})\\ 
+and the clade with all of the taxa excep:\\ 
+({\em Lobochlamys segnis}, {\em Carteria crucifera}, and {\em Oedogonium cardiacum})\\ 
+are the ones that you should pay extra attention to.}
 
 You could have also entered all of the commands that you just entered from a script. 
 You can use the \cmd{history} command in IPython 
@@ -474,14 +477,14 @@ That will allow the sampler to consider trees that are not fully resolved,
 but we still have to specify a prior to the different types of tree.
 
 \phycas supports priors on the trees based such that different ``resolution classes'' of trees have a particular prior probability, but the easiest prior to understand (and one that seems to work well in practice) is to use the ``polytomy'' prior discussed by \citet{LewisHH2005}.
-In this prior, you specify the ratio of the prior probability between a tree over the probability of a tree that has one fewer internal branch.
-So this is the ratio associated with collapsing a branch in the tree (the ratio that favors the 
+In this prior, you specify the ratio of the prior probability of a tree over the probability of another tree that is identical to it except  that it has one fewer internal branch.
+This is the ratio associated with collapsing a branch in the tree (the ratio that favors the 
 acceptance of a delete-edge form of the ``bush move'' in \phycas).
 Using a value for this prior ratio of $e$ (the base of the natural logarithm) was 
 suggested by \citet{LewisHH2005}.
 This value has no particular significance or justification in this
 context (there is no theory saying that you {\em should} use $e$),
- but it is aesthetically pleasing in that a tree with one more
+but it is aesthetically pleasing in that a tree with one more
 branch has to be more than one log-likelihood unit better in
 order to be favored over the tree with a polytomy.
 
@@ -507,13 +510,14 @@ in the run that did not consider polytomies:
 \begin{verbatim}
 mcmc.out.trees.prefix = "polytomy_trees"
 mcmc.out.params.prefix = "polytomy_params"
+mcmc.out.log.prefix = "polytomy_output"
 sumt.trees = "polytomy_trees.t"
-sumt.out.log.prefix = "polytomy_output"
+sumt.out.log.prefix = "polytomy_sumt_output"
 sumt.out.trees.prefix = "polytomy_sumt_trees"
 sumt.out.splits.prefix = "polytomy_sumt_splits"
 \end{verbatim}
 
-Now we have changed the command script to run the file. Save it as \localfile{Polytomy.py}
+Now we have changed the command script to run the file. Save it as \localfile{Polytomy.py} in the same directory as your other files for this tutorial.
 
 \subsection{Executing a script}
 How do we tell \phycas execute it?
@@ -539,9 +543,9 @@ If all goes well, you should have the files created by the run:
 Look at the \localfile{polytomy\_sumt\_splits.pdf}  for evidence of poor mixing  during the MCMC; 
 and compare the majority-rule consensus trees and the maximum a posterior trees shown in  \localfile{polytomy\_trees.pdf} to those found in \localfile{no\_p\_sumt\_trees.pdf}
 
+\QandA{Is the maximum a posteriori tree topology a fully resolved tree?}{No, it has 2 polytomies in place of the grouping mentioned above as being sensitive to the prior.}
 \section{Using differinge priors for internal and terminal edge lengths}
-\citet{YangR2005} \citep[and][]{Yang2007} suggested using prior probabilities on the internal edges of the tree
-that strongly favor short lengths as means of reducing the strength
+\citet{YangR2005} \citep[and][]{Yang2007} suggested using prior probabilities on the internal edges of the tree that strongly favor short lengths as means of reducing the strength
 of support for some groupings in a Bayesian phylogenetic analysis.
 In fact the suggest using a prior for internal branches which prefers shorter branch lengths more
 strongly as the number of characters in your data set increases.
@@ -574,7 +578,9 @@ sumt.out.splits.prefix = "int_ext_sumt_splits"
 
 Run the analysis, and see how the clade posterior probabilities compare to the previous analyses.
 
-\QandA{Do the results seem comparable to the other analyses?}{}
+\QandA{Do the results seem comparable to the other analyses?}{Perhaps for you (since there are pseudorandom numbers involved, results may vary if you have not set the seed), but in my runs under this model the results were quite different.
+The support of several clades is reduced, but the majority-rule consensus tree also contains 
+branches that are not present in the majority-rule tree from the NoPolytomy tree.}
 
 \section{Fully exploiting the python interface}
 This section is intended to give a feel of the advantages of using
