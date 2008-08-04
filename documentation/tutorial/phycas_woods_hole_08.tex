@@ -580,20 +580,27 @@ Run the analysis, and see how the clade posterior probabilities compare to the p
 
 \QandA{Do the results seem comparable to the other analyses?}{Perhaps for you (since there are pseudorandom numbers involved, results may vary if you have not set the seed), but in my runs under this model the results were quite different.
 The support of several clades is reduced, but the majority-rule consensus tree also contains 
-branches that are not present in the majority-rule tree from the NoPolytomy tree.}
+branches that are not present in the majority-rule tree from the NoPolytomy tree.
+The branch lengths are also quite different (which is not too surprising given the very strong prior 
+used).}
+
+Note that \citet{YangR2005} do not give specific recommendations about the exact values of the means of  the priors to use.
+They discuss the way the prior mean should change as a function of the number of characters sampled, but
+do not advocate specific prior means.
+Thus, it is possible that the prior mean of 0.0001 is simply too low (and that higher means would result in significantly improved performance).
 
 \section{Fully exploiting the python interface}
 This section is intended to give a feel of the advantages of using
 python as a front-end for python.
-The primary audience is people who are not intimidate about dabbling with 
+The primary audience is people who are comfortable dabbling with 
 programming a bit.  
 If you are confident that you are not going to ever
 write python code to interact with \phycas, then you
-can just read over the section, or finish the lab here
+can just quickly read over the section, or finish the tutorial here
 Our hope is that \phycas will be useful even if have {\bf no}
 desire to program -- so this part of the tutorial is entirely optional.
 
-If you are interested in using python and \phycas more
+If you {\em are} interested in using python and \phycas more
 fully, you may be interested in seeing a full list 
 of the functions available (giving you more information
 than the \phycas functions \cmd{help} and \cmd{public}
