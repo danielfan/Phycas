@@ -600,6 +600,19 @@ can just quickly read over the section, or finish the tutorial here
 Our hope is that \phycas will be useful even if have {\bf no}
 desire to program -- so this part of the tutorial is entirely optional.
 
+The motivation for this example is the idea (suggested by
+several people, but no one in the published literature, as 
+far as I know) that a ``quick-and-dirty'' polytomy analysis
+could be done by:
+\begin{enumerate}
+	\item running an MCMC example,
+	\item collapsing all internal branches that are under some small (and arbitrary)
+	threshold branch length, and
+	\item summarizing the results.
+\end{enumerate}
+
+
+
 If you {\em are} interested in using python and \phycas more
 fully, you may be interested in seeing a full list 
 of the functions available (giving you more information
@@ -613,6 +626,7 @@ dir()
 This will return a (long) list of strings that are the names of all of the currently
 available names that python knows about.  
 You can ignore any name that starts with an underscore.
+
 
 
 

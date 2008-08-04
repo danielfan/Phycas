@@ -294,8 +294,76 @@ class TreeSummarizer(CommonFunctions):
         if trivial_ignored + uninteresting_ignored > 0:
             self.stdout.info('%d trivial and %d uninteresting splits were ignored.' % (trivial_ignored, uninteresting_ignored))
 
-        return True            
-        
+        return True
+
+    def recordTreeInMaps(self, tree, split_map, tree_key):
+        # Each split found in any tree is associated with a list by the dictionary split_map
+        #   The list is organized as follows:
+        #   - element 0 is the number of times the split was seen over all sampled trees
+        #       (this provides the posterior probability of this split when divided by the
+        #       number of trees sampled)
+        #   - element 1 holds the sum of edge lengths for this split (this provides the posterior
+        #       mean edge length corresponding to this split when divided by the value in element 0)
+        #   - elements 2... are, for internal nodes, the indices of trees in which the split was
+        #       found (this part is omitted for terminal nodes, which must appear in every tree)
+        #   From the tree index list we can compute the following quantities for internal splits:
+        #   1. the number of sojourns for each internal split (a sojourn is a series of consecutive
+        #      samples in which a split was found that is preceded and followed by at least one
+        #      sample not containing the split)
+        #   2. sliding window and cumulative plots, such as those produced by AWTY
+        # Each distinct tree topology is associated with a similar list:
+        #   - element 0 is again the number of times the tree topology was seen over all samples
+        #   - element 1 holds the newick tree description
+        #   - element 2 holds the sum of tree lengths over all sampled trees of this topology
+        #   - elements 3... are the indices of trees in which the topology was found. This list
+        #       allows the number and extent of each sojourn to be computed
+        nd = tree.getFirstPreorder()
+        assert nd.isRoot(), 'the first preorder node should be the root'
+        #split_vec = []
+        treelen = 0.0
+        has_edge_lens = tree.hasEdgeLens()
+        while True:
+            nd = nd.getNextPreorder()
+            if not nd:
+                break
+            else:
+                # Determine whether this split represents an internal or tip node
+                is_tip_node = nd.isTip() or nd.getParent().isRoot()
+                # Grab the edge length
+                edge_len = has_edge_lens and nd.getEdgeLen() or 1.0
+                treelen += edge_len
+                self.recordNodeInMaps(nd, split_map, tree_key, is_tip_node, edge_len)
+        return treelen
+
+    def recordNodeInMaps(self, nd, split_map, tree_key, is_tip_node, edge_len):
+        # Grab the split and invert it if necessary to attain a standard polarity
+        s = nd.getSplit()
+        if (not self.rooted_trees) and s.isBitSet(0):
+            s.invertSplit()
+            
+        # Create a string representation of the split
+        ss = s.createPatternRepresentation()
+
+        # Add string represention of the split to the tree_key list, which
+        # will be used to uniquely identify the tree topology
+        if not is_tip_node:                        
+            tree_key.append(ss)
+
+        # Update the dictionary entry corresponding to this split
+        if ss in split_map.keys():
+            # split has been seen before
+            entry = split_map[ss]
+            entry[0] += 1
+            entry[1] += edge_len
+            if not is_tip_node:
+                entry.append(self.num_trees_considered)
+        else:
+            # split not yet seen
+            if is_tip_node:
+                split_map[ss] = [1, edge_len]
+            else:
+                split_map[ss] = [1, edge_len, self.num_trees_considered]
+
     def consensus(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -310,7 +378,7 @@ class TreeSummarizer(CommonFunctions):
         self.stdout.phycassert(input_trees, 'trees cannot be None or empty when sumt method is called')
         
         num_trees = 0
-        num_trees_considered = 0
+        self.num_trees_considered = 0
         split_map = {}
         tree_map = {}
 
@@ -339,7 +407,7 @@ class TreeSummarizer(CommonFunctions):
                 num_trees += 1
                 continue
             num_trees += 1
-            num_trees_considered += 1
+            self.num_trees_considered += 1
 
             # Create a tree key, which is a list of internal node splits that can be
             # used to uniquely identify a tree topology
@@ -355,72 +423,8 @@ class TreeSummarizer(CommonFunctions):
                 split_field_width = ntips
             t.recalcAllSplits(ntips)
             
-            # Each split found in any tree is associated with a list by the dictionary split_map
-            #   The list is organized as follows:
-            #   - element 0 is the number of times the split was seen over all sampled trees
-            #       (this provides the posterior probability of this split when divided by the
-            #       number of trees sampled)
-            #   - element 1 holds the sum of edge lengths for this split (this provides the posterior
-            #       mean edge length corresponding to this split when divided by the value in element 0)
-            #   - elements 2... are, for internal nodes, the indices of trees in which the split was
-            #       found (this part is omitted for terminal nodes, which must appear in every tree)
-            #   From the tree index list we can compute the following quantities for internal splits:
-            #   1. the number of sojourns for each internal split (a sojourn is a series of consecutive
-            #      samples in which a split was found that is preceded and followed by at least one
-            #      sample not containing the split)
-            #   2. sliding window and cumulative plots, such as those produced by AWTY
-            # Each distinct tree topology is associated with a similar list:
-            #   - element 0 is again the number of times the tree topology was seen over all samples
-            #   - element 1 holds the newick tree description
-            #   - element 2 holds the sum of tree lengths over all sampled trees of this topology
-            #   - elements 3... are the indices of trees in which the topology was found. This list
-            #       allows the number and extent of each sojourn to be computed
-            nd = t.getFirstPreorder()
-            assert nd.isRoot(), 'the first preorder node should be the root'
-            #split_vec = []
-            treelen = 0.0
-            hel = t.hasEdgeLens()
-            while True:
-                nd = nd.getNextPreorder()
-                if not nd:
-                    break
-                else:
-                    # Determine whether this split represents an internal or tip node
-                    tip_node = nd.isTip() or nd.getParent().isRoot()
-                    internal_node = not tip_node
-                    
-                    # Grab the edge length
-                    edge_len = hel and nd.getEdgeLen() or 1.0
-                    treelen += edge_len
-                    # Grab the split and invert it if necessary to attain a standard polarity
-                    s = nd.getSplit()
-                    if (not self.rooted_trees) and s.isBitSet(0):
-                        s.invertSplit()
-                        
-                    # Create a string representation of the split
-                    ss = s.createPatternRepresentation()
-                    
-                    # Add string represention of the split to the tree_key list, which
-                    # will be used to uniquely identify the tree topology
-                    if internal_node:                        
-                        tree_key.append(ss)
-
-                    # Update the dictionary entry corresponding to this split
-                    if ss in split_map.keys():
-                        # split has been seen before
-                        entry = split_map[ss]
-                        entry[0] += 1
-                        entry[1] += edge_len
-                        if internal_node:
-                            entry.append(num_trees_considered)
-                    else:
-                        # split not yet seen
-                        if tip_node:
-                            split_map[ss] = [1, edge_len]
-                        else:
-                            split_map[ss] = [1, edge_len, num_trees_considered]
-            #treelen = t.edgeLenSum()
-                
+            treelen = self.recordTreeInMaps(t, split_map, tree_key)
+            
             # Update tree_map, which is a map with keys equal to lists of internal node splits
             # and values equal to 2-element lists containing the frequency and newick tree
             # description
@@ -431,20 +435,20 @@ class TreeSummarizer(CommonFunctions):
                 entry = tree_map[k]
                 entry[0] += 1
                 entry[2] += treelen
-                entry.append(num_trees_considered)
+                entry.append(self.num_trees_considered)
             else:
                 # tree topology has not yet been seen
-                tree_map[k] = [1, tree_def, treelen, num_trees_considered]
+                tree_map[k] = [1, tree_def, treelen, self.num_trees_considered]
 
         self.stdout.info('\nSummary of sampled trees:')
         self.stdout.info('-------------------------')
         self.stdout.info('Tree source: %s' %  str(input_trees))
         self.stdout.info('Total number of trees in file = %d' % num_trees)
-        self.stdout.info('Number of trees considered = %d' % num_trees_considered)
+        self.stdout.info('Number of trees considered = %d' % self.num_trees_considered)
         self.stdout.info('Number of distinct tree topologies found = %d' % len(tree_map.keys()))
         #self.stdout.info('Number of distinct splits found = %d' % (len(split_map.keys()) - t.getNTips()))
         self.stdout.info('Number of distinct splits found = %d' % (len(split_map.keys()) - t.getNObservables()))
-        if num_trees_considered == 0:
+        if self.num_trees_considered == 0:
             self.stdout.info('\nSumT finished.')
             return
         # Sort the splits from highest posterior probabilty to lowest        
@@ -481,7 +485,7 @@ class TreeSummarizer(CommonFunctions):
             split_freq = v[0]
 
             # Split posterior is split_freq divided by the number of trees considered
-            split_posterior = float(split_freq)/float(num_trees_considered)
+            split_posterior = float(split_freq)/float(self.num_trees_considered)
 
             # split_weight is the sum of edge lengths v[1] divided by the split_freq
             split_weight = float(v[1])/float(split_freq)
@@ -496,7 +500,7 @@ class TreeSummarizer(CommonFunctions):
             first_sojourn_start = trivial_split and 1 or v[2]
 
             # Determine last sojourn (the final element of the list)
-            last_sojourn_end = trivial_split and num_trees_considered or v[-1]
+            last_sojourn_end = trivial_split and self.num_trees_considered or v[-1]
 
             # Determine the number of sojourns (this must be counted)
             num_sojourns = 1
@@ -530,7 +534,7 @@ class TreeSummarizer(CommonFunctions):
             tm.starTree(num_trivial)
         else:
             tm.buildTreeFromSplitVector(majrule_splits, ProbDist.Exponential(10))
-        self.assignEdgeLensAndSupportValues(majrule, split_map, num_trees_considered)
+        self.assignEdgeLensAndSupportValues(majrule, split_map, self.num_trees_considered)
         summary_short_name_list = ['majrule']
         summary_full_name_list = ['Majority-rule Consensus']
         summary_tree_list = [majrule]
@@ -555,7 +559,7 @@ class TreeSummarizer(CommonFunctions):
                     break
                 
                 # Determine the posterior probability and cumulative posterior probability
-                post_prob = float(v[0])/float(num_trees_considered)
+                post_prob = float(v[0])/float(self.num_trees_considered)
                 cum_prob += post_prob
                 if cum_prob > self.opts.tree_credible_prob:
                     # stop after the current tree
@@ -591,10 +595,10 @@ class TreeSummarizer(CommonFunctions):
                 if self.rooted_trees:
                     t.setRooted()
                 v[1].buildTree(t)
-                self.assignEdgeLensAndSupportValues(t, split_map, num_trees_considered)
+                self.assignEdgeLensAndSupportValues(t, split_map, self.num_trees_considered)
                 t.stripNodeNames()
-                summary_short_name_list.append('%d %d of %d' % (i+1,v[0],num_trees_considered))
-                summary_full_name_list.append('Frequency %d of %d' % (v[0],num_trees_considered))
+                summary_short_name_list.append('%d %d of %d' % (i+1,v[0], self.num_trees_considered))
+                summary_full_name_list.append('Frequency %d of %d' % (v[0], self.num_trees_considered))
                 summary_tree_list.append(t)
 
         self.stdout.info('\nSaving distinct tree topologies...')
@@ -606,8 +610,8 @@ class TreeSummarizer(CommonFunctions):
         if bool(self.optsout.splits):
             try:
                 pdf_source = lambda : self._getSplitsPDFWriter()
-                awty_written = self.awtyPlot(pdf_source, split_vect, num_trees_considered)
-                sojourn_written = self.sojournPlot(pdf_source, split_vect, num_trees_considered)
+                awty_written = self.awtyPlot(pdf_source, split_vect, self.num_trees_considered)
+                sojourn_written = self.sojournPlot(pdf_source, split_vect, self.num_trees_considered)
             finally:
                 if self._splitsPdfWriter:
                     self.optsout.splits.close()
