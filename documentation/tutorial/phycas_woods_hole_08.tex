@@ -589,44 +589,6 @@ They discuss the way the prior mean should change as a function of the number of
 do not advocate specific prior means.
 Thus, it is possible that the prior mean of 0.0001 is simply too low (and that higher means would result in significantly improved performance).
 
-\section{Fully exploiting the python interface}
-This section is intended to give a feel of the advantages of using
-python as a front-end for python.
-The primary audience is people who are comfortable dabbling with 
-programming a bit.  
-If you are confident that you are not going to ever
-write python code to interact with \phycas, then you
-can just quickly read over the section, or finish the tutorial here
-Our hope is that \phycas will be useful even if have {\bf no}
-desire to program -- so this part of the tutorial is entirely optional.
-
-The motivation for this example is the idea (suggested by
-several people, but no one in the published literature, as 
-far as I know) that a ``quick-and-dirty'' polytomy analysis
-could be done by:
-\begin{enumerate}
-	\item running an MCMC example,
-	\item collapsing all internal branches that are under some small (and arbitrary)
-	threshold branch length, and
-	\item summarizing the results.
-\end{enumerate}
-
-
-
-If you {\em are} interested in using python and \phycas more
-fully, you may be interested in seeing a full list 
-of the functions available (giving you more information
-than the \phycas functions \cmd{help} and \cmd{public}
-mentioned above).
-You can ask python for all of the variables that are in memory using the
-\cmd{dir} function:
-\begin{verbatim}
-dir()
-\end{verbatim}
-This will return a (long) list of strings that are the names of all of the currently
-available names that python knows about.  
-You can ignore any name that starts with an underscore.
-
 
 
 
@@ -658,6 +620,22 @@ than simply invoking the scripts.
 \begin{verbatim}
 #!/usr/bin/env pythonfrom phycas import *file_contents = readFile("ShoupLewis.nex")mcmc.data_source = file_contents.charactersmodel.help()model.type = "hky"model.num_rates = 4model.current()model.gamma_shape_prior = Exponential(2.0)model.gamma_shape_prior.getMean()model.kappa_prior = Exponential(0.25)model.base_freq_param_prior = Gamma(1.0, 1.0)model.edgelen_hyperprior = InverseGamma(2.10000, 0.90909)mcmc.allow_polytomies = Falserng = Lot()rng.setSeed(13957)mcmc.rng = rngmcmc.starting_tree_source = randomtree(rng=rng)mcmc.ncycles = 2000mcmc.sample_every = 10mcmc.out.trees.prefix = "no_p_trees" mcmc.out.trees.mode = REPLACE mcmc.out.params.prefix = "no_p_params" mcmc.out.params.mode = REPLACE mcmc.out.log.prefix = "no_p_output" mcmc.out.log.mode = REPLACE mcmc.current()mcmc()sumt.outgroup_taxon = "Oedogonium cardiacum" sumt.trees = "no_p_trees.t" sumt.burnin = 101 sumt.out.log.prefix = "no_p_output" sumt.out.log.mode = APPEND sumt.out.trees.prefix = "no_p_sumt_trees" sumt.out.trees.mode = REPLACE sumt.out.splits.prefix = "no_p_sumt_splits" sumt.out.splits.mode = REPLACE sumt()\end{verbatim}
 
+
+\newpage
+\subsection{Polytomy.py}\label{Polytomy}
+\begin{verbatim}
+#!/usr/bin/env pythonfrom phycas import *file_contents = readFile("ShoupLewis.nex")mcmc.data_source = file_contents.charactersmodel.help()model.type = "hky"model.num_rates = 4model.current()model.gamma_shape_prior = Exponential(2.0)model.gamma_shape_prior.getMean()model.kappa_prior = Exponential(0.25)model.base_freq_param_prior = Gamma(1.0, 1.0)model.edgelen_hyperprior = InverseGamma(2.10000, 0.90909)mcmc.allow_polytomies = Truemcmc.polytomy_prior = Trueimport mathmcmc.topo_prior_C = math.exp(1.0)rng = Lot()rng.setSeed(13957)mcmc.rng = rngmcmc.starting_tree_source = randomtree(rng=rng)mcmc.ncycles = 2000mcmc.sample_every = 10mcmc.out.trees.prefix = "polytomy_trees"mcmc.out.trees.mode = REPLACE mcmc.out.params.prefix = "polytomy_params"mcmc.out.params.mode = REPLACE mcmc.out.log.prefix = "polytomy_output"mcmc.out.log.mode = REPLACE mcmc.current()mcmc()sumt.outgroup_taxon = "Oedogonium cardiacum"sumt.trees = "polytomy_trees.t" sumt.burnin = 101 sumt.out.log.prefix = "polytomy_sumt_output"sumt.out.log.mode = APPEND sumt.out.trees.prefix = "polytomy_sumt_trees"sumt.out.trees.mode = REPLACE sumt.out.splits.prefix = "polytomy_sumt_splits"sumt.out.splits.mode = REPLACE sumt()
+\end{verbatim}
+
+
+\newpage
+\subsection{Polytomy.py}\label{Polytomy}
+\begin{verbatim}
+#!/usr/bin/env pythonfrom phycas import *file_contents = readFile("ShoupLewis.nex")mcmc.data_source = file_contents.charactersmodel.help()model.type = "hky"model.num_rates = 4model.current()model.gamma_shape_prior = Exponential(2.0)model.gamma_shape_prior.getMean()model.kappa_prior = Exponential(0.25)model.base_freq_param_prior = Gamma(1.0, 1.0)model.edgelen_hyperprior = Nonemodel.internal_edgelen_prior = Exponential(10000.0)model.external_edgelen_prior = Exponential(10.0)mcmc.allow_polytomies = Falserng = Lot()rng.setSeed(13957)mcmc.rng = rngmcmc.starting_tree_source = randomtree(rng=rng)mcmc.ncycles = 2000mcmc.sample_every = 10mcmc.out.trees.prefix = "int_ext_trees" mcmc.out.trees.mode = REPLACE mcmc.out.params.prefix = "int_ext_params" mcmc.out.params.mode = REPLACE mcmc.out.log.prefix = "int_ext_output" mcmc.out.log.mode = REPLACE mcmc.current()mcmc()sumt.outgroup_taxon = "Oedogonium cardiacum" sumt.trees = "int_ext_trees.t" sumt.burnin = 101 sumt.out.log.prefix = "int_ext_sumt_output" sumt.out.log.mode = APPEND sumt.out.trees.prefix = "int_ext_sumt_trees" sumt.out.trees.mode = REPLACE sumt.out.splits.prefix = "int_ext_sumt_splits" sumt.out.splits.mode = REPLACE sumt()
+
+\end{verbatim}
+
+
 \newpage
 \bibliography{phylo}
 \end{document}
@@ -668,5 +646,90 @@ than simply invoking the scripts.
 \cmdopt{tratiopr} 
 
 \QandA{q?}{answer}
+
+
+
+\section{Fully exploiting the python interface}
+This section is intended to give a feel of the advantages of using
+python as a front-end for python.
+The primary audience is people who are comfortable dabbling with 
+python programming.
+Our hope is that \phycas will be useful even if have {\bf no}
+desire to program -- so this part of the tutorial is {\bf entirely optional}.
+If you are not going to ever
+write python code to interact with \phycas, then you
+can just quickly skip the section and finish the tutorial here.
+
+Even if you are interested in programming some in python,
+it is probably inadvisable to type the following instructions in
+by hand.  
+The script \localfile{scripts/collapseShort.py} is provided 
+to perform the steps described below.
+
+The motivation for this example is the idea (suggested by
+several people, but no one in the published literature, as 
+far as I know) that a ``quick-and-dirty'' polytomy analysis
+could be done by:
+\begin{enumerate}
+	\item running an MCMC example,
+	\item collapsing all internal branches that are under some small (and arbitrary)
+	threshold branch length, and
+	\item summarizing the results
+\end{enumerate}
+Obviously this procedure is a bit unsatisfying because the threshold
+branch length must be set in some {\em ad hoc} fashion.
+Nevertheless, it would be interesting to see how such an analysis performs.
+
+In a ``normal'' program, if you wanted to try out a new methodology
+you would have to edit the source code and recompile.
+Because of the flexibility of python, however, users can actually
+alter the behavior of \phycas in very rich and powerful ways.
+If we were to look at the code for the \cmd{sumt} command we would see
+that the consensus tree is created by recording trees in a particular
+data structure by calling the following method:
+\begin{verbatim}
+    def recordTreeInMaps(self, tree, split_map, tree_key):        nd = tree.getFirstPreorder().getNextPreorder()        treelen = 0.0        has_edge_lens = tree.hasEdgeLens()        while nd:            is_tip_node = nd.isTip() or nd.getParent().isRoot()            edge_len = has_edge_lens and nd.getEdgeLen() or 1.0            treelen += edge_len            self.recordNodeInMaps(nd, split_map, tree_key, is_tip_node, edge_len)            nd = nd.getNextPreorder()        return treelen
+\end{verbatim}
+in a python class called \cmd{TreeSummarizer}.
+
+We do not have time or space to fully explain python, here.
+In a nutshell this method is calling another function, \cmd{recordNodeInMaps} for 
+every node in the tree.
+By adding a test that checks if the internal branches have length greater than 0.005
+we can filter the trees included in the consensus tree summary so that short branches
+are excluded -- just as if they were collapsed into a polytomy.
+We can copy this function, add one line, and change the indentation to yield the 
+following function:
+\begin{verbatim}
+def newRecordTreeInMaps(self, tree, split_map, tree_key):    nd = tree.getFirstPreorder().getNextPreorder()    treelen = 0.0    has_edge_lens = tree.hasEdgeLens()    while nd:        is_tip_node = nd.isTip() or nd.getParent().isRoot()        edge_len = has_edge_lens and nd.getEdgeLen() or 1.0        if edge_len > 0.05:
+                treelen += edge_len            self.recordNodeInMaps(nd, split_map, tree_key, is_tip_node, edge_len)        nd = nd.getNextPreorder()    return treelen\end{verbatim}
+Now we can assign replace the old function with our new one:
+\begin{verbatim}
+TreeSummarizer.recordTreeInMaps = newRecordTreeInMaps
+\end{verbatim}
+
+Now we can summarize the ``NoPolytomy'' results from before and see support has changed.
+
+The full script is called \localfile{collapseShort.py} in the scripts file.
+Move it to the directory with the output from \localfile{NoPolytomy.py}
+
+
+
+
+
+
+If you {\em are} interested in using python and \phycas more
+fully, you may be interested in seeing a full list 
+of the functions available (giving you more information
+than the \phycas functions \cmd{help} and \cmd{public}
+mentioned above).
+You can ask python for all of the variables that are in memory using the
+\cmd{dir} function:
+\begin{verbatim}
+dir()
+\end{verbatim}
+This will return a (long) list of strings that are the names of all of the currently
+available names that python knows about.  
+You can ignore any name that starts with an underscore.
 
 
