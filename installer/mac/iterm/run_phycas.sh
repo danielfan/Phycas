@@ -10,22 +10,22 @@ then
 fi
 if test $# -eq 0
 then
-    if ! test "$USES_I_PYTHON" = "1"
-    then
-        $PYTHONINTERPRETER -i -c "from phycas import *"
-    else
-        $PYTHONINTERPRETER -c "from IPython.Shell import IPShell ; IPShell(['-i', '-c','from phycas import *']).mainloop()"
-    fi
-else
-	if test $# -eq 0
+	if test "$USES_I_PYTHON" = "1"
 	then
-    if ! test "$USES_I_PYTHON" = "1"
-    then
-        $PYTHONINTERPRETER -i $1
-    else
-        $PYTHONINTERPRETER -c "from IPython.Shell import IPShell ; IPShell(['-i', \"$1\"]).mainloop()"
-    fi
+		$PYTHONINTERPRETER -c "from IPython.Shell import IPShell ; IPShell(['-i', '-c','from phycas import *']).mainloop()"
 	else
-    	$PYTHONINTERPRETER -i $@
-    fi
+		$PYTHONINTERPRETER -i -c "from phycas import *"
+	fi
+else
+	if test $# -eq 1
+	then
+		if test "$USES_I_PYTHON" = "1"
+		then
+			$PYTHONINTERPRETER -c "from IPython.Shell import IPShell ; IPShell(['-i', \"$1\"]).mainloop()"
+		else
+			$PYTHONINTERPRETER -i $1
+		fi
+	else
+		$PYTHONINTERPRETER -i $@
+	fi
 fi

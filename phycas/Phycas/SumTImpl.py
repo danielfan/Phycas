@@ -611,8 +611,6 @@ class TreeSummarizer(CommonFunctions):
             finally:
                 if self._splitsPdfWriter:
                     self.optsout.splits.close()
-            if awty_written or sojourn_written:
-                self._splitsPdfWriter.saveDocument(self._splitsPdfFilename)
 
         self.stdout.info('\nSumT finished.')
     def _getSplitsPDFWriter(self):

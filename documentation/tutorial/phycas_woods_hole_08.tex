@@ -1,7 +1,7 @@
 \documentclass{article}
 
 \setcounter{page}{1}
-\setcounter{secnumdepth}{0}
+%\setcounter{secnumdepth}{0}
 \setlength{\oddsidemargin}{0.in}
 \setlength{\evensidemargin}{0.in}
 \setlength{\textwidth}{6.5in}
@@ -39,18 +39,22 @@
 \usepackage{url}
 
 \usepackage{hyperref}
-\hypersetup{backref,  pdfpagemode=FullScreen,  linkcolor=blue, citecolor=red, colorlinks=true, hyperindex=true}
+\hypersetup{backref,  pdfpagemode=FullScreen,  linkcolor=blue, citecolor=red, colorlinks=true}
 \begin{document}
+\tableofcontents
 
+
+\newpage
 %###########################################################################################
 \section{\phycas Lab}
-
 %###########################################################################################
 
 The main goal is to become familiar with running \phycas and interpreting its output. 
 Don't rush things. 
 If you don't finish the lab, you can always download 
 \phycas from \url{http://www.phycas.org} when you get home and finish it there.
+The manual available at the web site and the web site itself have instructions for 
+installing \phycas if you are using your own machine.
 
 Stylistic conventions used in this document:
 
@@ -59,7 +63,7 @@ Stylistic conventions used in this document:
 	Questions for you to answer are in {\em italics}. \\
 	Important things to note are in {\bf bold face}. \\
 	Names of files \localfile{are in  this font}.\\
-	Web site URLs look \url{http://like_this} and are clickable links.
+	Web site URLs look \href{http://www.google.com}{like this} and are clickable links.
 \end{tabular}
 
 %-------------------------------------------------------------------------------------------
@@ -74,15 +78,24 @@ that does not come with python installed.}.
 In fact, the python language is the front-end for \phycas. 
 So when you write command file in \phycas you are actually writing a python program.
 This has advantages because python interpreter is a powerful, robust, and versatile program for interpreting text commands.
-However, it also means that \phycas cannot be forgiving when it comes to the structure of commands and syntax in general.
+However, it also means that \phycas cannot always be forgiving when it comes to the structure of commands and syntax in general.
+We have attempted to add as much flexibility as possible, but be aware that {\bf most commands are case-sensitive and you will have to pay attention to the quoting used in commands in this tutorial}.
+
 
 \subsubsection{The Phycas.app bundle}
-In the lab we will be running \phycas as a double-clickable program that is built around the open-source iTerm Terminal application (\href{http://iterm.sourceforge.net/}{iTerm homepage}).
+In the lab we will be running \phycas as a double-clickable program that is built around the open-source iTerm terminal application (\href{http://iterm.sourceforge.net/}{iTerm homepage}).
 You can run phycas scripts from any terminal by invoking python and entering the command:
 \begin{verbatim}
 from phycas import *
 \end{verbatim}
-You will not have to issue this command when using the \phycas application bundle on Mac, but you will have to use the command in all of your phycas scripts.
+You will {\bf not} have to issue this command when using the \phycas application bundle on Mac, but you will have to use the command in all of your phycas scripts.
+
+If you are not using the Phycas.app bundle, you will need to invoke python and enter the \cmd{from phycas import *} command.
+In order for this to work, you have to have \phycas installed in a standard location or your shell's environmental variables set correctly.
+The Windows-installer for \phycas will set up your environment correctly.
+If python shows an error when you try the command given above, the consult the \phycas manual or ask one
+of us for help configuring your environment correctly.
+
 \subsubsection{IPython}
 In the lab we will be running \phycas through \href{http://ipython.scipy.org/moin/}{IPython} rather than Python itself.  
 IPython provides a more user-friendly environment for interactive python than the ``raw'' python interpreter.
@@ -90,9 +103,9 @@ The main benefits of IPython are:
 \begin{itemize}
 	\item Tab-completion of variable names (start to type the name and then hit the Tab-key to fill in the rest of the word or see a list of possible matches),
 	\item Native support for a few UNIX commands (most notably \cmd{ls} and \cmd{cd})
-	\item Support for any UNIX commands if you start the line with an exclamation point (!)
+	\item Support for any UNIX commands if you start the line with ! (an exclamation point). For example \cmd{!cat myscript.py | grep mcmc} would behave just like the UNIX commands \cmd{cat myscript.py | grep mcmc}
 \end{itemize}
-If you decide that you do not like IPython, then you can simply edit the active configuration file of phycas. 
+If you decide that you do not like IPython (or if you are running on a machine that does not have the IPython libraries installed), then you can simply edit the active configuration file of phycas. 
 Open 
 \localfile{$\sim$/.phycas/active\_phycas\_env.sh} 
 in a text editor, and change the last line to read:
@@ -105,16 +118,16 @@ The IPython prompt looks like this:
 \begin{verbatim}
 In [2]: 
 \end{verbatim}
-while the python prompt looks like this:
+with the number in bracket indicating the number of commands executed, while the python prompt looks like this:
 \begin{verbatim}
 >>>
 \end{verbatim}
 
 
-\subsection{Exercise 1}
+\subsection{Simplest usage}
 Locate the directory of example files labeled \localfile{PhycasWHExamples} and move it to a convenient location for you.
 
-You can launch the \phycas application you can double-click the \phycas icon application (later when you have scripts written, you can launch the \phycas by dragging a python script onto the \phycas application icon).
+You can launch the \phycas application by double-clicking the \phycas icon  (later when you have scripts written, you can launch the \phycas by dragging a python script onto the \phycas application icon).
 After the libraries have loaded you will see a prompt.
 This is the python interpreter waiting for you to give it a command.
 
@@ -126,35 +139,23 @@ cd Desktop/PhycasWHExamples
 pwd
 ls
 \end{verbatim}
-to change working directory, then show the path to the current directory
+to change working directory, then show the path to the current directory, and finally list the directory contents.
 
-Note that, if you are using the  python interpreter (instead of the IPython interface), you have to issue the commands:
+If you are using the  python interpreter (instead of the IPython interface), you have to issue the commands:
 \begin{verbatim}
-import os
-os.chdir("Desktop/PhycasWHExamples")
 from phycas import *
+os.chdir("Desktop/PhycasWHExamples")
 \end{verbatim}
 
 \subsubsection{Getting help}
 A good first step is to get an idea of what actions you can take. 
-Call the help function to see a general message about \phycas, and then
+Call the \cmd{help} function to see a general message about \phycas, and then
 use the \cmd{public} function to see a summary of globally available
 variables
 \begin{verbatim}
 help()
 public()
 \end{verbatim}
-
-Because you are actually programming python with every line you type, you 
-also have access to all python commands.
-You can ask python for all of the variables that are in memory using the
-\cmd{dir} function:
-\begin{verbatim}
-dir()
-\end{verbatim}
-This will return a (long) list of strings that are the names of all of the currently
-available names that python knows about.  
-You can ignore any name that starts with an underscore.
 
 Well, a very long list of variables is probably not too helpful to you.
 Fortunately, you can pass one of the listed names in the help function to see 
@@ -182,9 +183,17 @@ If you look through the tables of input settings before and after
 the assignment to the \cmdopt{data\_source} attribute, you should see
 that the value goes from ``\cmd{None}'' to ``\cmd{Characters from the file green.nex}''
 
-As with \mb\citep{RonquistH2003}, the MCMC sampler will produce a collection of files storing
+Take time to look over the options available for MCMC to get a feeling for
+what \phycas can do.
+The \cmd{current} and \cmd{help} function for \phycas commands will 
+each show two tables, the first for settings that control the behavior
+of the analysis, and the second table listing the options that control
+the where the output of the command is placed.
+
+As with other Bayesian phylogenetic software, the MCMC sampler will produce a collection of files storing
 trees and parameter values.
-Now lets configure the output settings:
+Now let's configure the output settings, so that the files generated will have names that 
+will remind us of the analysis done:
 \begin{verbatim}
 mcmc.out.log = "basic.log"
 mcmc.out.log.mode = REPLACE
@@ -194,7 +203,7 @@ mcmc.out.params.prefix = "green"
 
 Now we will set up the length of the MCMC simulation. 
 It is important to realize that a ``cycle'' in \phycas is {\bf not}
-equivalent to a ``generation'' in \mb.
+equivalent to a ``generation'' in \mb \citet{RonquistH2003}
 In \mb each generation represents an iteration of:
 \begin{enumerate}
 	\item propose a new state,
@@ -209,6 +218,15 @@ of the number of updates) to 100 generations in \mb:
 mcmc.ncycles = 2000
 mcmc.sample_every = 10
 \end{verbatim}
+{\bf This run will almost certainly not be long enough}.
+In the interest of time, we will be running short MCMC simulations in the lab, please do
+not interpret the number of cycles used in this tutorial 
+as recommendations for the appropriate length of the MCMC runs.
+As we have discussed several times in the course MCMC is a beautiful, but
+fairly dangerous algorithm and it is important that you make an 
+effort to verify that your run is long enough before you publish
+results.
+
 
 Before we launch the analysis, let's check the settings according to the MCMC command
 to see if there were any errors in the settings:
@@ -239,9 +257,16 @@ Then we can run the sumt command with the syntax:
 \begin{verbatim}
 sumt()
 \end{verbatim}
-\textbf{The sumt.burnin setting in \phycas is specified in terms of the number of trees to skip in the file -- not in terms of the generation number.}
+\textbf{The \cmd{sumt.burnin} setting in \phycas is specified in terms of the number of trees to skip in the file -- not in terms of the generation number.}
 You will see the majority-rule consensus trees and the trees that have the 
 highest posterior probability in the \localfile{sumt\_trees.pdf} file.
+
+From within IPython on Mac, the easiest way to open the pdf files is to shell-escape and use the \cmd{open} command:
+\begin{verbatim}
+!open sumt_trees.pdf
+\end{verbatim}
+
+
 In the case of this simple dataset and this short MCMC, it is entirely possible that all of the 
 splits will have estimated posterior probabilities of 1.0.
 If that is the case, the \cmd{sumt} command will not produce a pdf file showing 
@@ -249,6 +274,10 @@ plots of the posterior probability over different divisions of the MCMC
 simulation.
 We will see examples of these files later in the lab.
 
+You can leave this \phycas session with the command:
+\begin{verbatim}
+exit()
+\end{verbatim}
 The commands for replaying this example are shown in the section \hyperref[basicpy]{basic.py} and in the file \localfile{basic.py} in the scripts folder that accompanied the lab.
 
 \subsubsection{Another way to read in data}
@@ -271,7 +300,7 @@ print file_contents.trees
 
 
 \section{Polytomy priors}
-One flavor of Bayesian analysis that is implemented in \phycas, but not available in \mb is support for prior distributions that place non-zero probability on trees that are not fully-resolved (also referred to as trees with polytomies or trees with multifurcations).
+One flavor of Bayesian analysis that is implemented in \phycas, but not available in many other Bayesian phylogenetic programs\footnote{Note that polytomy priors {\em are} implemented in Peter Foster's program, \href{http://bmnh.org/~pf/p4.html}{p4}, which is another C/python hybrid program.} is support for prior distributions that place non-zero probability on trees that are not fully-resolved (also referred to as trees with polytomies or trees with multifurcations).
 The details of the algorithm (and justifications for the approach) can be found in \citet{LewisHH2005}.
 We will be using the same data set that was used in that paper which is a set of algal sequences published by \citet{ShoupL2003}.
 
@@ -303,7 +332,7 @@ model.num_rates = 4
 \end{verbatim}
 the \cmd{model.num\_rates} is the number of variable rates that are used to approximate the Gamma distribution. 
 If you were to set \cmd{model.num\_rates = 1} then you would be selecting a single-rate model that does not use $\Gamma$-distributed rate heterogeneity at all.
-We can set the value of the shape parameter of the Gamma distribution, but this is just the initial value that the sampler will start at.  
+We can set the value of the shape parameter of the Gamma distribution, but this is just the value that the sampler will start at.  
 It is more important (in the context of setting up an MCMC run) to set the prior distribution for the gamma's shape parameter.
 We can do this by choosing from among the Continuous probability distributions over non-negative numbers.
 An Exponential distribution will be fine for the purpose of the lab (The Gamma and Inverse-Gamma distributions are also possible choices):
@@ -324,11 +353,13 @@ model.kappa_prior = Exponential(0.25)
 \end{verbatim}
 
 The only other parameters in the HKY substitution model are the base frequencies\footnote{
-Internally, \phycas uses parameters that are unnormalized $(0,\infty)$ parameters.
+Internally, \phycas uses base frequency parameters that are unnormalized $(0,\infty)$ variables.
 The base frequencies are obtained by dividing each of the parameters by the sum of the four.
 We place priors on the unnormalized versions, which is why we use a GammaDistribution in this example.
 Note that putting Gamma($a,1$) priors on the unnormalized versions of the parameters is 
 equivalent to placing a Dirichlet($a,a,a,a$) on the frequencies themselves.
+So using 4 Gamma(1.0, 1.0) priors for the base frequency parameters, is equivalent to a Dirichlet(1,1,1,1)
+prior on the base frequencies (and is also a uniform prior on the frequencies).
 }:
 \begin{verbatim}
 model.base_freq_param_prior = Gamma(1.0, 1.0)
@@ -343,7 +374,8 @@ a prior on the shapes of different resolved trees.
 However we do need to say something about the branch lengths.
 
 We could use an Exponential (or Gamma distribution) for the prior on all of the branch lengths, but then we would have to choose a mean.
-Choosing a reasonable prior is important because:
+Choosing a reasonable prior is important for any parameter in a Bayesian analysis, but 
+the branch length prior merits extra care because:
 \begin{enumerate}
 	\item  estimating branch lengths accurately is often crucial to getting the topology correct,
 	\item the prior will be applied to a large number of parameters (because there are so many branches in the tree).
@@ -357,7 +389,7 @@ For example:
 \begin{verbatim}
 model.edgelen_hyperprior = InverseGamma(2.10000, 0.90909)
 \end{verbatim}
-uses an Inverse-Gamma distribution with mean 1 and variance 10 for the hyperparameter, $\mu$.
+uses an Inverse Gamma distribution with mean 1 and variance 10 for the hyperparameter, $\mu$.
 
 \subsubsection{MCMC over fully-resolved trees}
 Let's perform an initial run in the ``standard'' mode in which polytomies are not considered.
@@ -411,12 +443,12 @@ sumt.out.splits.prefix = "no_p_sumt_splits"
 sumt.out.splits.mode = REPLACE
 sumt()
 \end{verbatim}
-Take a look at the summaries (they should be in the files \localfile{no\_p\_splits.pdf} and \localfile{no\_p\_trees.pdf}) and  the strength of support for the clades.
+Take a look at the summaries (they should be in the files \localfile{no\_p\_sumt\_splits.pdf} and \localfile{no\_p\_sumt\_trees.pdf}) and  the strength of support for the clades.
 
 Note that a couple of the internal branches have very short lengths but 
 also display very high posterior probabilities.  
 \QandA{Which groupings in the tree do you think will display posterior probabilities
-which are very sensitive to the prior over tree topologies?}{We are about to find out, but in most runs it the clade of:\\ {\em Heterochlamydomonas rugosa} + {\em Heterochlamydomonas inaequalis}\\ and the clade that delimited by the most recent common ancestor:\\ {\em Carteria obtusa} and {\em Volvox carteri}}
+which are very sensitive to the prior over tree topologies?}{In most runs it the clade of:\\ ({\em Heterochlamydomonas rugosa} + {\em Heterochlamydomonas inaequalis})\\ and the clade leading to:\\ ({\em Volvox carteri}, {\em Chlamydomonas reinhardtii}, {\em Tetraspora sp}, {\em Chlamydomonas baca}, the three {\em Heterochlamydomonas} species, and {\em Carteria radiosa}, and {\em Carteria obtusa})\\ are the ones that you should pay extra attention to.}
 
 You could have also entered all of the commands that you just entered from a script. 
 You can use the \cmd{history} command in IPython 
@@ -436,7 +468,7 @@ Alternatively you can edit the \localfile{NoPolytomy.py} script and save it as  
 Here are the changes that we need to make:
 Before we run the file and before \cmd{mcmc()} function call:
 \begin{verbatim}
-mcmc.allow_polytomies = False
+mcmc.allow_polytomies = True
 \end{verbatim}
 That will allow the sampler to consider trees that are not fully resolved, 
 but we still have to specify a prior to the different types of tree.
@@ -507,7 +539,7 @@ If all goes well, you should have the files created by the run:
 Look at the \localfile{polytomy\_sumt\_splits.pdf}  for evidence of poor mixing  during the MCMC; 
 and compare the majority-rule consensus trees and the maximum a posterior trees shown in  \localfile{polytomy\_trees.pdf} to those found in \localfile{no\_p\_sumt\_trees.pdf}
 
-\section{Different priors for internal and terminal edge lengths}
+\section{Using differinge priors for internal and terminal edge lengths}
 \citet{YangR2005} \citep[and][]{Yang2007} suggested using prior probabilities on the internal edges of the tree
 that strongly favor short lengths as means of reducing the strength
 of support for some groupings in a Bayesian phylogenetic analysis.
@@ -536,76 +568,68 @@ mcmc.out.params.prefix = "int_ext_params"
 mcmc.out.log.prefix = "int_ext_output"
 sumt.trees          = "int_ext_trees.t"
 sumt.out.log.prefix = "int_ext_sumt_output"
-sumt.out.trees.prefix = "int_ext_sumt_trees"sumt.out.splits.prefix = "int_ext_sumt_splits"\end{verbatim}
+sumt.out.trees.prefix = "int_ext_sumt_trees"
+sumt.out.splits.prefix = "int_ext_sumt_splits"
+\end{verbatim}
 
 Run the analysis, and see how the clade posterior probabilities compare to the previous analyses.
 
+\QandA{Do the results seem comparable to the other analyses?}{}
 
+\section{Fully exploiting the python interface}
+This section is intended to give a feel of the advantages of using
+python as a front-end for python.
+The primary audience is people who are not intimidate about dabbling with 
+programming a bit.  
+If you are confident that you are not going to ever
+write python code to interact with \phycas, then you
+can just read over the section, or finish the lab here
+Our hope is that \phycas will be useful even if have {\bf no}
+desire to program -- so this part of the tutorial is entirely optional.
+
+If you are interested in using python and \phycas more
+fully, you may be interested in seeing a full list 
+of the functions available (giving you more information
+than the \phycas functions \cmd{help} and \cmd{public}
+mentioned above).
+You can ask python for all of the variables that are in memory using the
+\cmd{dir} function:
+\begin{verbatim}
+dir()
+\end{verbatim}
+This will return a (long) list of strings that are the names of all of the currently
+available names that python knows about.  
+You can ignore any name that starts with an underscore.
+
+
+
+\newpage
+\section{Scripts used in this tutorial}
+The following pages have the text of scripts that 
+were described in this tutorial.
+They are also available as plain text files (the 
+correct format for saving files for \phycas) in
+the directory that accompanies the lab.
+To use those scripts, you will have to move them
+to the directory with the data files, or edit the
+filenames in the scripts to reflect the relative 
+path to the data files.
+
+It is probably unwise to simply execute these files
+as you read the tutorial, because typing things, in
+making mistakes, and seeing how \phycas reports
+errors will probably help you learn much more 
+than simply invoking the scripts.
 \newpage
 \subsection{basic.py}\label{basicpy}
 \begin{verbatim}
-#!/usr/bin/env python
-from phycas import *
-
-mcmc.current()
-mcmc.data_source = "green.nex"
-mcmc.out.log = "basic.log"
-mcmc.out.log.mode = REPLACE
-mcmc.out.trees.prefix = "green"
-mcmc.out.params.prefix = "green"
-mcmc.ncycles = 2000
-mcmc.sample_every = 10
-mcmc()
-sumt.trees = "green.t"
-sumt()
-\end{verbatim}
+#!/usr/bin/env pythonfrom phycas import *print help()print public()print help(readFile)print help(mcmc)mcmc.current()mcmc.data_source = "green.nex"mcmc.current()mcmc.out.log = "basic.log"mcmc.out.log.mode = REPLACEmcmc.out.trees.prefix = "green"mcmc.out.params.prefix = "green"mcmc.ncycles = 2000 mcmc.sample_every = 10mcmc.current()mcmc()sumt.current()sumt.trees = "green.t"sumt.current()sumt()\end{verbatim}
 
 
 \newpage
 \subsection{NoPolytomy.py}\label{NoPolytomy}
 \begin{verbatim}
-from phycas import *
-
-file_contents = readFile("ShoupLewis.nex")
-mcmc.data_source = file_contents.characters
-
-model.type = "hky"
-model.num_rates = 4       
-model.gamma_shape_prior = Exponential(2.0)
-model.base_freq_param_prior =  Gamma(1.0, 1.0)
-model.kappa_prior = Exponential(.25)
-model.edgelen_hyperprior = InverseGamma(2.1, 1.0/1.1)
-
-
-mcmc.allow_polytomies = False
-
-rng = Lot()
-rng.setSeed(13957)
-
-mcmc.rng = rng
-mcmc.starting_tree_source = randomtree(rng=rng)
-
-mcmc.slice_max_units = 0
-mcmc.ncycles = 2000
-mcmc.sample_every = 10
-
-mcmc.out.trees.prefix = "no_p_trees"
-mcmc.out.trees.mode = REPLACE
-mcmc.out.params.prefix = "no_p_params"
-mcmc.out.params.mode = REPLACE
-mcmc.out.log.prefix = "no_p_output"
-mcmc.out.log.mode = REPLACE
-
-mcmc()
-
-sumt.outgroup_taxon = "Oedogonium cardiacum"
-sumt.trees          = "no_p_trees.t"
-sumt.burnin         = 101
-
-sumt.out.log.prefix = "sumtno_p_output"
-sumt.out.log.mode   = APPEND
-sumt()
-\end{verbatim}
+#!/usr/bin/env pythonfrom phycas import *file_contents = readFile("ShoupLewis.nex")mcmc.data_source = file_contents.charactersmodel.help()model.type = "hky"model.num_rates = 4model.current()model.gamma_shape_prior = Exponential(2.0)model.gamma_shape_prior.getMean()model.kappa_prior = Exponential(0.25)model.base_freq_param_prior = Gamma(1.0, 1.0)model.edgelen_hyperprior = InverseGamma(2.10000, 0.90909)mcmc.allow_polytomies = Falserng = Lot()rng.setSeed(13957)mcmc.rng = rngmcmc.starting_tree_source = randomtree(rng=rng)mcmc.ncycles = 2000mcmc.sample_every = 10mcmc.out.trees.prefix = "no_p_trees" mcmc.out.trees.mode = REPLACE mcmc.out.params.prefix = "no_p_params" mcmc.out.params.mode = REPLACE mcmc.out.log.prefix = "no_p_output" mcmc.out.log.mode = REPLACE mcmc.current()mcmc()sumt.outgroup_taxon = "Oedogonium cardiacum" sumt.trees = "no_p_trees.t" sumt.burnin = 101 sumt.out.log.prefix = "no_p_output" sumt.out.log.mode = APPEND sumt.out.trees.prefix = "no_p_sumt_trees" sumt.out.trees.mode = REPLACE sumt.out.splits.prefix = "no_p_sumt_splits" sumt.out.splits.mode = REPLACE sumt()\end{verbatim}
 
 \newpage
 \bibliography{phylo}

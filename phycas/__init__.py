@@ -237,7 +237,7 @@ from phycas.Utilities.GlobalState import readFile
     
 print """
                      Welcome to Phycas
-                      version 1-alpha
+                      version 1.0.0-alpha
 
 Phycas is written by Paul O. Lewis, Mark Holder and David Swofford
 You are running build number %s
