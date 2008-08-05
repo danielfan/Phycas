@@ -313,7 +313,7 @@ The commands for replaying this example are shown in the section \hyperref[basic
 
 \section{Polytomy priors}
 One flavor of Bayesian analysis that is implemented in \phycas, but not available in many other Bayesian phylogenetic programs\footnote{Note that polytomy priors {\em are} implemented in Peter Foster's program, \href{http://bmnh.org/~pf/p4.html}{p4}, which is another C/python hybrid program.} is support for prior distributions that place non-zero probability on trees that are not fully-resolved (also referred to as trees with polytomies or trees with multifurcations).
-The details of the algorithm (and justifications for the approach) can be found in \citet{LewisHH2005}.
+The details of the algorithm (and justifications for the approach) can be found in \citet{LewisHolderHolsinger2005}.
 We will be using the same data set that was used in that paper which is a set of algal sequences published by \citet{ShoupL2003}.
 
 This time we will pay more attention to the model and MCMC settings than we did in the basic example above.
@@ -474,7 +474,7 @@ are the ones that you should pay extra attention to.}
 Note that you could have also entered all of the commands that you just entered from a script. 
 
 \subsection{Allowing Polytomies}
-Lets redo the same analysis but allow for polytomies.
+Let's redo the same analysis but allow for polytomies.
 
 Rather than type every thing in again, let's give \phycas a script.
 Copy the \localfile{NoPolytomy.py} file from the \localfile{PhycasWHExamples/scripts} 
@@ -491,12 +491,12 @@ You must make these changes to the script before the line that says \cmd{mcmc()}
 The first line tells the MCMC sampler to consider polytomies and the next  two lines
 set up the prior distribution over unresolved trees.
 
-\phycas supports priors on the trees based such that different ``resolution classes'' of trees have a particular prior probability, but the easiest prior to understand (and one that seems to work well in practice) is to use the ``polytomy'' prior discussed by \citet{LewisHH2005}.
+\phycas supports priors on the trees based such that different ``resolution classes'' of trees have a particular prior probability, but the easiest prior to understand (and one that seems to work well in practice) is to use the ``polytomy'' prior discussed by \citet{LewisHolderHolsinger2005}.
 In this prior, you specify the ratio of the prior probability of a tree over the probability of another tree that is identical to it except  that it has one fewer internal branch.
 This is the ratio associated with collapsing a branch in the tree (the ratio that favors the 
 acceptance of a delete-edge form of the ``bush move'' in \phycas).
 Using a value for this prior ratio of $e$ (the base of the natural logarithm) was 
-suggested by \citet{LewisHH2005}.
+suggested by \citet{LewisHolderHolsinger2005}.
 This value has no particular significance or justification in this
 context (there is no theory saying that you {\em should} use $e$),
 but it is aesthetically pleasing in that a tree with one more
@@ -827,7 +827,7 @@ sumt()
 
 
 \newpage
-\bibliography{../users/manual}
+\bibliography{../../../documentation/users/manual}
 \end{document}
 
 \label{executingdatafile}
