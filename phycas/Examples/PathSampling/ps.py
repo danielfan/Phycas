@@ -94,7 +94,7 @@ mcmc.ncycles = 1000
 mcmc.sample_every = 10    # save tree and parameters every 10 cycles
 
 # Setup path sampling
-ps.nbetavals = 1
-ps.maxbeta = 0.0
+ps.nbetavals = 2
+ps.maxbeta = 0.1
 ps.minbeta = 0.0
 ps()
