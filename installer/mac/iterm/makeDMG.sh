@@ -23,7 +23,16 @@ then
 	ditto -rsrc "$PHYCAS_ROOT/LICENSE" "phycasimg/LICENSE" || exit
 	ditto -rsrc "README" "phycasimg/README" || exit
 	ditto -rsrc "$PHYCAS_ROOT/documentation/users/manual.pdf" "phycasimg/manual.pdf" || exit
-	ditto -rsrc "$PHYCAS_ROOT/documentation/tutorial/PhycasWHExamples" "phycasimg/PhycasWHExamples" || exit
+	mkdir "phycasimg/PhycasWHExamples"
+	mkdir "phycasimg/PhycasWHExamples/scripts"
+	for f in $PHYCAS_ROOT/documentation/tutorial/PhycasWHExamples/*nex
+	do 
+		ditto -rsrc "$f" "phycasimg/PhycasWHExamples" || exit
+	done
+	for f in $PHYCAS_ROOT/documentation/tutorial/PhycasWHExamples/scripts/*py
+	do 
+		ditto -rsrc "$f" "phycasimg/PhycasWHExamples/scripts/" || exit
+	done
 	ditto -rsrc "$PHYCAS_ROOT/documentation/tutorial/phycas_woods_hole_08.pdf" "phycasimg/PhycasWHExamples/phycas_woods_hole_08.pdf" || exit
 	
 	hdiutil create -srcfolder phycasimg $MASTER_DMG
