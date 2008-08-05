@@ -132,7 +132,7 @@ with the number in bracket indicating the number of commands executed, while the
 
 
 \subsection{Simplest usage}
-Locate the directory of example files labeled \localfile{PhycasWHExamples} and move it to a convenient location for you.
+Locate the directory of example files labeled \localfile{Tutorial} and move it to a convenient location for you.
 
 
 You can launch the \phycas application by double-clicking the \phycas icon  (later when you have scripts written, you can launch the \phycas by dragging a python script onto the \phycas application icon).
@@ -142,9 +142,9 @@ The working directory will be your home directory.
 
 \subsubsection{Changing the working directory}
 The first step is to set the working directory of \phycas to the directory in which you want to work.
-If you are using the IPython interface, and you would like to  move to a directory called \localfile{Desktop/PhycasWHExamples} then issue the command:
+If you are using the IPython interface, and you would like to  move to a directory called \localfile{Desktop/Tutorial} then issue the command:
 \begin{verbatim}
-In [2]: cd Desktop/PhycasWHExamples
+In [2]: cd Desktop/Tutorial
 In [3]: pwd
 In [4]: ls
 \end{verbatim}
@@ -153,7 +153,7 @@ to change working directory, then show the path to the current directory, and fi
 If you are using the  python interpreter (instead of the IPython interface), you have to issue the commands:
 \begin{verbatim}
 >>> from phycas import *
->>> os.chdir("Desktop/PhycasWHExamples")
+>>> os.chdir("Desktop/Tutorial")
 >>> os.path.abspath(".")
 >>> os.listdir(".")
 \end{verbatim}
@@ -510,8 +510,8 @@ Note that you could have also entered all of the commands that you just entered 
 Let's redo the same analysis but allow for polytomies.
 
 Rather than type every thing in again, let's give \phycas a script.
-Copy the \localfile{NoPolytomy.py} file from the \localfile{PhycasWHExamples/scripts} 
-into the \localfile{PhycasWHExamples} directory  and rename the file \localfile{Polytomy.py}\footnote{You can also use the \cmd{history} command in IPython to see the previous commands. This can be useful if you are using \phycas interactively and would
+Copy the \localfile{NoPolytomy.py} file from the \localfile{Tutorial/scripts} 
+into the \localfile{Tutorial} directory  and rename the file \localfile{Polytomy.py}\footnote{You can also use the \cmd{history} command in IPython to see the previous commands. This can be useful if you are using \phycas interactively and would
 like to turn you commands into a script.}.
 
 Here are the changes that we need to make to enable sampling over unresolved trees:

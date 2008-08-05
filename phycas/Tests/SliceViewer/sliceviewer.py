@@ -99,15 +99,6 @@ class SliceViewer(Frame):
         self.r = Lot()
         #self.r.setSeed(13579)
         print "seed is =", self.r.getSeed()
-        self.d = MyBeta(1.5)
-        # self.d = MyExpon()
-        #self.d = MyBimodal() 
-        self.f = AdHocDensity(self.d.getLnPDF)
-        
-        # self.f should be function that returns natural log of a probability density, or
-        # the natural log of a function proportional to a probability density
-        self.s = SliceSampler(self.r, self.f)
-
         # create a frame to hold the menu buttons
         menuf = Frame(self, bg='magenta')
         menuf.pack(expand=NO, fill=X)
@@ -124,29 +115,15 @@ class SliceViewer(Frame):
         self.samplemb.pack(expand=YES, fill=X, side=LEFT)
         self.samplemb.menu = Menu(self.samplemb, tearoff=1)
         self.samplemb['menu'] = self.samplemb.menu
-        self.samplemb.menu.add_command(label='One step', command=self.oneStep)
-        self.samplemb.menu.add_command(label='Many steps', command=self.manySteps)
-        self.samplemb.menu.add_command(label='Adapt', command=self.adaptSampler)
-        self.samplemb.menu.add_command(label='Reset', command=self.reset)
-
-        # create the canvas
-        # func_to_plot should return density, not log density
-        self.plotter = Plotter(parent=self, func_to_plot=self.d.getPDF)
-        self.plotter.pack(side=TOP, expand=YES, fill=BOTH)
-        
-        # create the status label
-        self.status_label = Label(self, justify=LEFT, relief=SUNKEN, height=1, anchor=W, text='Ready')
-        self.status_label.pack(side=TOP, expand=NO, fill=X)
-        
-        # grab a few samples to use in scaling the plot (number to generate is passed
-        # to the rescalePlot function)
-        self.rescalePlot(1000)
-
-        # reset statistics such as average slice width, number of function evalutations, etc.
-        w = self.s.getSliceUnitWidth()
-        self.s.setSliceUnitWidth(w/2.0)
-        self.s.resetDiagnostics()
-
+        self.samplemb.menu.add_command(label='One step (n)', command=self.oneStep)
+        self.samplemb.menu.add_command(label='Partial Step (d)', command=self.detailedStep)
+        self.samplemb.menu.add_command(label='Many steps (m)', command=self.manySteps)
+        self.samplemb.menu.add_command(label='Adapt (a)', command=self.adaptSampler)
+        self.samplemb.menu.add_command(label='Reset (r)', command=self.reset)
+        self.samplemb.menu.add_command(label='Partial Back Step (b)', command=self.oneStep)
+        self.samplemb.menu.add_command(label='Use Beta (A)', command=self.switchToBeta)
+        self.samplemb.menu.add_command(label='Use Bimodal (O)', command=self.switchToBimodal)
+        self.samplemb.menu.add_command(label='Use Exponential (E)', command=self.switchToExpon)
         # bind some keys to the application (doesn't matter which widget has focus
         # when you use bind_all
         self.bind_all("<KeyPress-o>", self.keybdOverrelaxedOneStep)
@@ -158,11 +135,48 @@ class SliceViewer(Frame):
         self.bind_all("<KeyPress-a>", self.keybdAdaptSampler)
         self.bind_all("<KeyPress-r>", self.keybdReset)
         self.bind_all("<KeyPress-q>", self.keybdQuit)
+        self.bind_all("<Shift-KeyPress-A>", self.keybdSwitchToBeta)
+        self.bind_all("<Shift-KeyPress-O>", self.keybdSwitchToBimodal)
+        self.bind_all("<Shift-KeyPress-E>", self.keybdSwitchToExpon)
 
         self._step_num_within_step = 0
         self._just_point = False
         # configure event is bound only to the main frame
         #self.bind("<Configure>", self.resizing)
+        self.plotter = None
+        
+        self.d = MyBeta(1.5)
+        # create the canvas
+        # func_to_plot should return density, not log density
+        
+        self.plotter = Plotter(parent=self, func_to_plot=self.d.getPDF)
+        self.plotter.pack(side=TOP, expand=YES, fill=BOTH)
+        self.switchToBeta()
+
+
+    def _densityChanged(self):
+        self.plotter.func = self.d.getPDF
+        self.f = AdHocDensity(self.d.getLnPDF)
+        
+        # self.f should be function that returns natural log of a probability density, or
+        # the natural log of a function proportional to a probability density
+        self.s = SliceSampler(self.r, self.f)
+
+        
+        # create the status label
+        self.status_label = Label(self, justify=LEFT, relief=SUNKEN, height=1, anchor=W, text='Ready')
+        self.status_label.pack(side=TOP, expand=NO, fill=X)
+        
+        # grab a few samples to use in scaling the plot (number to generate is passed
+        # to the rescalePlot function)
+        self.rescalePlot(1000)
+
+        # reset statistics such as average slice width, number of function evalutations, etc.
+        w = self.s.getSliceUnitWidth()
+        self.s.setSliceUnitWidth(w/3.0)
+        self.s.resetDiagnostics()
+        self.reset()
+
 
     # The rescalePlot function draws n samples from the target distribution to determine
     # the approximate limits of the main part of the density function. It then sets
@@ -263,12 +277,12 @@ class SliceViewer(Frame):
         if show_slice:
             self.plotter.repaint()
             if not self._just_point:
-                self.plotter.plotLine(x0, 0.0, x0, y0)
                 self._step_num_within_step += 1
                 
                 # Plot the vertical slice
                 self.status_label.config(text='vertical slice')
                 if self._step_num_within_step == target_step:
+                    self.plotter.plotLine(x0, 0.0, x0, y0)
                     return
                 target_step += 1
     
@@ -295,6 +309,7 @@ class SliceViewer(Frame):
                 
                 # Plot an arrow indicating where the horizontal slice will be located
                 if self._step_num_within_step == target_step:
+                    self.plotter.plotLine(x0, 0.0, x0, y0)
                     self.plotter.plotLeftPointingArrow(x0, y, color="white", shaft_length=10, arrowhead_length=5)
                     self.status_label.config(text='location of horizontal slice')
                     return
@@ -407,16 +422,45 @@ class SliceViewer(Frame):
     def keybdOneStep(self, event):
         self.oneStep(detailed=False)
 
-    def keybdDetailedStep(self, event):
+    def detailedStep(self):
         self.oneStep(detailed=True)
 
-    def keybdBackDetailedStep(self, event):
+    def detailedBackStep(self):
         if self._step_num_within_step < 1:
             return
         self._step_num_within_step = max(1, self._step_num_within_step - 2)
-        self.oneStep(detailed=True)
+        self.detailedStep()
 
-    # next two functions result in a single overrelaxed sample and show details of the slice sampling process
+    def switchToBeta(self):
+        self.d = MyBeta(1.5)
+        self._densityChanged()
+
+    def switchToExpon(self):
+        self.d = MyExpon()
+        self._densityChanged()
+        
+    def switchToBimodal(self):
+        self.d = MyBimodal()
+        self._densityChanged()
+       
+
+    def keybdDetailedStep(self, event):
+        self.detailedStep()
+
+    def keybdBackDetailedStep(self, event):
+        self.detailedBackStep()
+    
+    def keybdSwitchToBeta(self, event):
+        self.switchToBeta()
+
+    def keybdSwitchToBimodal(self, event):
+        self.switchToBimodal()
+
+    def keybdSwitchToExpon(self, event):
+        self.switchToExpon()
+
+
+# next two functions result in a single overrelaxed sample and show details of the slice sampling process
     def overrelaxedOneStep(self):
         self.takeOverrelaxedStep(True)
         
@@ -434,7 +478,13 @@ class SliceViewer(Frame):
 
     # next two functions clear the canvas and start the sampling over from scratch        
     def reset(self):
-        self.plotter.reset()
+        if self.plotter:
+            try:
+                pw, ph, plotm = self.plotter.plotw, self.plotter.ploth, self.plotter.plotm
+            except:
+                pw, ph, plotm = 800, 600, 40
+            self.plotter.resize( pw, ph, plotm)
+            self.plotter.reset()
                 
     def keybdReset(self, event):
         self.reset()

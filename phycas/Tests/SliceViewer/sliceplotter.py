@@ -1,6 +1,7 @@
 from Tkinter import *
 import tkFont
 
+LINE_WIDTH = 3
 class Plotter(Canvas):
     def __init__(self, parent, func_to_plot):
         self.background_color = 'blue'
@@ -65,8 +66,8 @@ class Plotter(Canvas):
         self.yticks = 1 + int((upperbound - lowerbound)/incr)
         
     def drawAxes(self):
-        Canvas.create_line(self, self.left, self.bottom, self.right, self.bottom, width=2, fill=self.axis_color)
-        Canvas.create_line(self, self.left, self.bottom, self.left, self.top, width=2, fill=self.axis_color)
+        Canvas.create_line(self, self.left, self.bottom, self.right, self.bottom, width=LINE_WIDTH, fill=self.axis_color)
+        Canvas.create_line(self, self.left, self.bottom, self.left, self.top, width=LINE_WIDTH, fill=self.axis_color)
         for i in range(self.xticks):
             v = self.xlow + float(i)*self.xincr
             x = self.left + self.xaxislen*((v - self.xlow)/(self.xhigh - self.xlow))
@@ -89,7 +90,7 @@ class Plotter(Canvas):
         x1 = self.xtranslate(xright)
         xv = self.xtranslate(xvert)
         y = self.ytranslate(y)
-        Canvas.create_line(self, xleft, y, xright, y, fill=self.slice_color)
+        Canvas.create_line(self, xleft, y, xright, y, fill=self.slice_color, width=LINE_WIDTH)
 
     def getExpandedSliceDim(self, xleft, xright, xincr):
         n = int(0.5 + (xright - xleft)/xincr) # int((xright - xleft)//xincr)
@@ -124,13 +125,13 @@ class Plotter(Canvas):
                 
             if which == k:
                 # Draw the horizontal line
-                Canvas.create_line(self, xleft, y, xright, y, fill=self.slice_color)
+                Canvas.create_line(self, xleft, y, xright, y, fill=self.slice_color, width=LINE_WIDTH)
                 if showTicks or k == 0:
                     # Draw tick mark at left end
-                    Canvas.create_line(self, xleft, y-2, xleft, y+2, fill=self.slice_color)
+                    Canvas.create_line(self, xleft, y-2, xleft, y+2, fill=self.slice_color, width=LINE_WIDTH)
                 if showTicks or k == last_incr:
                     # Draw tick mark at right end
-                    Canvas.create_line(self, xright, y-2, xright, y+2, fill=self.slice_color)
+                    Canvas.create_line(self, xright, y-2, xright, y+2, fill=self.slice_color, width=LINE_WIDTH)
         assert which is not None, " ".join([str(i) for i in [x0, xv, x1, xleft, xright, xincr, xvert, y]])
         return n, k, which
         
@@ -138,12 +139,12 @@ class Plotter(Canvas):
         x0 = self.xtranslate(xleft)
         x1 = self.xtranslate(xright)
         y = self.ytranslate(y)
-        Canvas.create_line(self, x0, y, x1, y, fill=self.slice_color)
+        Canvas.create_line(self, x0, y, x1, y, fill=self.slice_color, width=LINE_WIDTH)
         n = int((xright - xleft)//xincr)
         ticks = [xleft + xincr*i for i in range(n + 1)]
         for tick in ticks:
             x = self.xtranslate(tick)
-            Canvas.create_line(self, x, y-2, x, y+2, fill=self.slice_color)
+            Canvas.create_line(self, x, y-2, x, y+2, fill=self.slice_color, width=LINE_WIDTH)
         
     def plotLine(self, x0, y0, x1, y1, line_color=None):
         ix0 = self.xtranslate(x0)
@@ -151,9 +152,9 @@ class Plotter(Canvas):
         iy0 = self.ytranslate(y0)
         iy1 = self.ytranslate(y1)
         if line_color==None:
-            Canvas.create_line(self, ix0, iy0, ix1, iy1, fill=self.slice_color, width=2)
+            Canvas.create_line(self, ix0, iy0, ix1, iy1, fill=self.slice_color, width=LINE_WIDTH)
         else:
-            Canvas.create_line(self, ix0, iy0, ix1, iy1, fill=line_color, width=2)
+            Canvas.create_line(self, ix0, iy0, ix1, iy1, fill=line_color, width=LINE_WIDTH)
         
     def plotLeftPointingArrow(self, xval, yval, color='white', shaft_length=10, arrowhead_length=5):
         # Draw shaft of arrow
@@ -161,19 +162,19 @@ class Plotter(Canvas):
         iy0 = self.ytranslate(yval)
         ix1 = ix0 + shaft_length
         iy1 = iy0
-        Canvas.create_line(self, ix0, iy0, ix1, iy1, fill=color, width=2)
+        Canvas.create_line(self, ix0, iy0, ix1, iy1, fill=color, width=LINE_WIDTH)
         
         # Draw upper half of arrowhead
         ix1 = ix0 + arrowhead_length
         iy1 = iy0 + arrowhead_length
-        Canvas.create_line(self, ix0, iy0, ix1, iy1, fill=color, width=2)
+        Canvas.create_line(self, ix0, iy0, ix1, iy1, fill=color, width=LINE_WIDTH)
         
         # Draw lower half of arrowhead
         ix1 = ix0 + arrowhead_length
         iy1 = iy0 - arrowhead_length
-        Canvas.create_line(self, ix0, iy0, ix1, iy1, fill=color, width=2)
+        Canvas.create_line(self, ix0, iy0, ix1, iy1, fill=color, width=LINE_WIDTH)
 
-    def plotPoint(self, xval, yval, color='yellow', radius=2):
+    def plotPoint(self, xval, yval, color='yellow', radius=3):
         ok = True
         if xval < self.xlow or xval > self.xhigh:
             ok = False
@@ -206,7 +207,7 @@ class Plotter(Canvas):
             yval = f(xval)
             x = self.xtranslate(xval)
             y = self.ytranslate(yval)
-            Canvas.create_line(self, x0, y0, x, y, fill=self.func_color)
+            Canvas.create_line(self, x0, y0, x, y, fill=self.func_color, width=LINE_WIDTH)
             x0 = x
             y0 = y
 
