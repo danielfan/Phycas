@@ -383,7 +383,7 @@ model.gamma_shape_prior = Exponential(2.0)
 \end{verbatim}
 This has just set the prior to be an exponential distribution with mean of 0.5.
 \\{\bf NOTE:}  \phycas parameterizes the exponential distribution with the rate parameter with is the reciprocal of the mean of the distribution!
-If you are unsure, you can always ``ask'' a distribution what it's mean is:
+If you are unsure, you can always ``ask'' a distribution what its mean is:
 \begin{verbatim}
 model.gamma_shape_prior.getMean()
 \end{verbatim}
@@ -443,7 +443,7 @@ mcmc.allow_polytomies = False
 
 Because we are going to perform an analysis that uses a pseudorandom number generator, it is a 
 good idea to explicitly set the seed so that we can repeat the analysis.
-Let's create a random number generator, set it's seed, and assign it to the mcmc command, and 
+Let's create a random number generator, set its seed, and assign it to the mcmc command, and 
 tell the mcmc command to start from a random tree that is generated using the same random
 number generator:
 
@@ -493,16 +493,16 @@ Take a look at the summaries (they should be in the files \localfile{no\_p\_sumt
 Note that a couple of the internal branches have very short lengths but 
 also display very high posterior probabilities.  
 \QandA{Which groupings in the tree do you think will display posterior probabilities
-which are very sensitive to the prior over tree topologies?}{In most runs it the clade of:\\ ({\em Heterochlamydomonas rugosa} + {\em Heterochlamydomonas inaequalis})\\ 
+which are very sensitive to the prior over tree topologies?}{In most runs the clade of:\\ ({\em Heterochlamydomonas rugosa} + {\em Heterochlamydomonas inaequalis})\\ 
 and the clade with :\\ 
-({\em Volvox carteri}
-{\em Chlamydomonas reinhardtii }
-{\em Tetraspora sp }
-{\em Chlamydomonas baca}
+({\em Volvox carteri},
+{\em Chlamydomonas reinhardtii},
+{\em Tetraspora sp.},
+{\em Chlamydomonas baca},
 the three {\em Heterochlamydomonas} species,
 {\em Carteria radiosa}, and {\em Carteria obtusa }
 )\
-are the ones that you should pay extra attention to.}
+are the ones to which you should pay extra attention.}
 
 Note that you could have also entered all of the commands that you just entered from a script. 
 
@@ -554,7 +554,7 @@ sumt.out.splits.prefix = "polytomy_sumt_splits"
 Now we have changed the command script to run the file. Save it as \localfile{Polytomy.py} in the same directory as your other files for this tutorial.
 
 \subsection{Executing a script}
-How do we tell \phycas execute it?
+How do we tell \phycas execute a script?
 There are actually three ways to do this:
 \subsubsection{Drag-and-drop}
 The easiest way to do this on Mac is to simply drag the \localfile{Polytomy.py} file onto the \phycas icon (in the dock if \phycas is running or on the to the application icon if it is not running).
@@ -632,6 +632,7 @@ Thus, it is possible that the prior mean of 0.0001 is simply too low (and that h
 
 
 \newpage
+\section{Scripts used in the tutorial}
 \subsection{basic.py}\label{basicpy}
 \begin{verbatim}
 #!/usr/bin/env python
