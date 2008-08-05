@@ -2,11 +2,11 @@ import sys
 
 # If build_number_from_svn_info = True, gleans svn revision from subprocess call to "svn info -r HEAD"
 # if False, need to set svn revision manually in svn_revision
-build_number_from_svn_info = False
+build_number_from_svn_info = True
 
 # the following setting is only used if build_number_from_svn_info is False, or
 # regular expression search of svn output fails to find pattern 'Revision: (\d+)'
-svn_revision = 832
+svn_revision = 902
 
 phycas_major = '0'
 phycas_minor = '11'
@@ -165,10 +165,16 @@ if build_number_from_svn_info:
             # we're up to date
             svn_revision = re_match.group(1)
         else:
-            # we're not up to date, once we commit (which hopefully will happen before
-            # any other developer commits!), revision number will increase by 1
-            next_revision_number = 1 + int(re_match.group(1))
-            svn_revision = str(next_revision_number)
+            # not up to date
+            #next_revision_number = 1 + int(re_match.group(1))
+            #svn_revision = str(next_revision_number)
+            print 'Error: svn working copy is not up-to-date'
+            print '       Commit before building release'
+            sys.exit()
+    else:
+        print 'Error: could not process output of "svn info -r HEAD" command'
+        print '       This output is needed to obtain SVN revision number'
+        sys.exit()
             
 phycas_full_version = phycas_major+'.'+phycas_minor+'.'+str(svn_revision)
         
