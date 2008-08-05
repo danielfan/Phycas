@@ -106,6 +106,7 @@ data_all = [
             'Utilities/__init__.py',
             'Utilities/CommonFunctions.py',
             'Utilities/DefaultData.py',
+            'Utilities/GlobalState.py',
             'Utilities/flexplot.py',
             'Utilities/io.py',
             'Utilities/kappa2tratio.py',
