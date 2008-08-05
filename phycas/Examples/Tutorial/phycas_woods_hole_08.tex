@@ -76,7 +76,7 @@ tasks are done in \href{http://www.python.org/}{python}\footnote{The Phycas manu
 that does not come with python installed.}.
 
 In fact, the python language is the front-end for \phycas. 
-So when you write command file in \phycas you are actually writing a python program.
+So when you write a command file in \phycas you are actually writing a python program.
 This has advantages because python interpreter is a powerful, robust, and versatile program for interpreting text commands.
 However, it also means that \phycas cannot always be forgiving when it comes to the structure of commands and syntax in general.
 We have attempted to add as much flexibility as possible, but be aware that {\bf most commands are case-sensitive and you will have to pay attention to the quoting used in commands in this tutorial}.
@@ -310,8 +310,38 @@ The commands for replaying this example are shown in the section \hyperref[basic
 %\end{verbatim}
 
 
+\section{A note an scripts used in this tutorial}
+The \localfile{scripts} directory has the python
+scripts \localfile{IntExtPrior.py}, \localfile{NoPolytomy.py},
+\localfile{Polytomy.py}, and \localfile{basic.py}
+that have all of the commands needed to run the tutorial.
+To use those scripts, you will have to move them
+from the \localfile{scripts} directory to the directory
+with the data files, or edit the
+filenames in the scripts to reflect the relative 
+path to the data files.
+
+You may prefer to create your own version of the
+files as you read the tutorial.
+Making mistakes, and seeing how \phycas reports
+errors will probably help you learn much more 
+than simply invoking the scripts.
+
+If you do create your own scripts, you will have to remember
+to start them with the line:
+\begin{verbatim}
+from phycas import *
+\end{verbatim}
+
+An intermediate between simply executing the provided files
+and typing them in your self is to open the provided file in
+a text editor and pasting the commands into when you are given 
+a prompt.
+This will save you some typing, but allow you to follow 
+along with the tutorial in a step-by-step fashion.
 
 \section{Polytomy priors}
+
 One flavor of Bayesian analysis that is implemented in \phycas, but not available in many other Bayesian phylogenetic programs\footnote{Note that polytomy priors {\em are} implemented in Peter Foster's program, \href{http://bmnh.org/~pf/p4.html}{p4}, which is another C/python hybrid program.} is support for prior distributions that place non-zero probability on trees that are not fully-resolved (also referred to as trees with polytomies or trees with multifurcations).
 The details of the algorithm (and justifications for the approach) can be found in \citet{LewisHolderHolsinger2005}.
 We will be using the same data set that was used in that paper which is a set of algal sequences published by \citet{ShoupL2003}.
@@ -346,7 +376,7 @@ the \cmd{model.num\_rates} is the number of variable rates that are used to appr
 If you were to set \cmd{model.num\_rates = 1} then you would be selecting a single-rate model that does not use $\Gamma$-distributed rate heterogeneity at all.
 We can set the value of the shape parameter of the Gamma distribution, but this is just the value that the sampler will start at.  
 It is more important (in the context of setting up an MCMC run) to set the prior distribution for the gamma's shape parameter.
-We can do this by choosing from among the Continuous probability distributions over non-negative numbers.
+We can do this by choosing from among the continuous probability distributions over non-negative numbers.
 An Exponential distribution will be fine for the purpose of the lab (The Gamma and Inverse-Gamma distributions are also possible choices):
 \begin{verbatim}
 model.gamma_shape_prior = Exponential(2.0)
@@ -394,14 +424,15 @@ the branch length prior merits extra care because:
 \end{enumerate}
 \citet{SuchardWS2001} suggested the use of a hierarchical model in which the branch lengths are distributed as exponential variables with a mean of $\mu$, where $\mu$ is a hyperparameter that 
 has a prior distribution set by the investigator.
-This has the advantage of producing a ``fat-tailed'' prior distribution on the branch length in which the 
+This has the advantage of producing a vague prior distribution on the branch length in which the 
 mean of the prior distribution for the branch lengths is allowed to tune-itself to the data at hand.
 In \phycas, if you have the \cmd{model.edgelen\_hyperprior} attribute set to a distribution (rather than \texttt{None}), you will be using this hierarchical model suggested by \citet{SuchardWS2001}.
 For example:
 \begin{verbatim}
 model.edgelen_hyperprior = InverseGamma(2.10000, 0.90909)
 \end{verbatim}
-uses an Inverse Gamma distribution with mean 1 and variance 10 for the hyperparameter, $\mu$.
+uses an Inverse Gamma distribution with parameters a=2.10000 and b=0.90909 for the hyperparameter, $\mu$.
+This distribution has mean 1 and variance 10.
 
 \subsubsection{MCMC over fully-resolved trees}
 Let's perform an initial run in the ``standard'' mode in which polytomies are not considered.
@@ -428,12 +459,13 @@ will remind us that they are from the no-polytomies run:
 \begin{verbatim}
 mcmc.ncycles = 2000
 mcmc.sample_every = 10
+\end{verbatim}
+
+To configure the names of the files produced we can use the following commands:
+\begin{verbatim}
 mcmc.out.trees.prefix = "no_p_trees"
-mcmc.out.trees.mode = REPLACE
 mcmc.out.params.prefix = "no_p_params"
-mcmc.out.params.mode = REPLACE
 mcmc.out.log.prefix = "no_p_output"
-mcmc.out.log.mode = REPLACE
 \end{verbatim}
 
 Finally, we call \cmd{mcmc()} which starts the MCMC analysis:
@@ -441,18 +473,19 @@ Finally, we call \cmd{mcmc()} which starts the MCMC analysis:
 mcmc()
 \end{verbatim}
 
-After it has completed we can summarize the results:
-
+After it has completed we can summarize the results.
+We can control the behavior of the MCMC with:
 \begin{verbatim}
 sumt.outgroup_taxon = "Oedogonium cardiacum"
 sumt.trees = "no_p_trees.t"
 sumt.burnin = 101
+\end{verbatim}
+
+We can specify the names of the files using the \cmd{sumt.out} attributes:
+\begin{verbatim}
 sumt.out.log.prefix = "no_p_sumt_output"
-sumt.out.log.mode = APPEND
 sumt.out.trees.prefix = "no_p_sumt_trees"
-sumt.out.trees.mode = REPLACE
 sumt.out.splits.prefix = "no_p_sumt_splits"
-sumt.out.splits.mode = REPLACE
 sumt()
 \end{verbatim}
 Take a look at the summaries (they should be in the files \localfile{no\_p\_sumt\_splits.pdf} and \localfile{no\_p\_sumt\_trees.pdf}) and  the strength of support for the clades.
@@ -502,22 +535,17 @@ context (there is no theory saying that you {\em should} use $e$),
 but it is aesthetically pleasing in that a tree with one more
 branch has to be more than one log-likelihood unit better in
 order to be favored over the tree with a polytomy.
+The \cmd{mcmc.topo\_prior\_C} option mentioned above is the prior ratio.
 
-We can set up this analysis by invoking:
 
-where \cmd{mcmc.topo\_prior\_C} is the prior ratio.
-
-Since python is a fully functional language it has functions to
-calculate powers of $e$; so we could have avoided rounding 
-error by using:
-
-Let's make sure to rename our output files, so that we do not overwrite the files that we just produced
+Make sure to rename our output files, so that we do not overwrite the files that we just produced
 in the run that did not consider polytomies:
 \begin{verbatim}
 mcmc.out.trees.prefix = "polytomy_trees"
+sumt.trees = "polytomy_trees.t"
+
 mcmc.out.params.prefix = "polytomy_params"
 mcmc.out.log.prefix = "polytomy_output"
-sumt.trees = "polytomy_trees.t"
 sumt.out.log.prefix = "polytomy_sumt_output"
 sumt.out.trees.prefix = "polytomy_sumt_trees"
 sumt.out.splits.prefix = "polytomy_sumt_splits"
@@ -527,22 +555,26 @@ Now we have changed the command script to run the file. Save it as \localfile{Po
 
 \subsection{Executing a script}
 How do we tell \phycas execute it?
-
+There are actually three ways to do this:
+\subsubsection{Drag-and-drop}
 The easiest way to do this on Mac is to simply drag the \localfile{Polytomy.py} file onto the \phycas icon (in the dock if \phycas is running or on the to the application icon if it is not running).
 
-\subsection{Executing a script if you are not using the double-clickable application}
-If you are {\bf not} running the double-clickable \phycas, then you can invoke:
+\subsubsection{Executing a script if you are not using the double-clickable application}
+If you are {\bf not} running the double-clickable \phycas, then you can launch a new
+Terminal (or Command Prompt) session and from the shell execute the following commands:
 \begin{verbatim}
 cd <type the directory with the Polytomy.py script here>
 python -i Polytomy.py
 \end{verbatim}
 
-\footnote{
-A third way to do this is better when you already have a phycas session underway. 
-From within the python (or IPython) interpreter, you can execute the command:
-\cmd{execfile("Polytomy.py")}
+\subsubsection{Executing a script from within the same \phycas session}
+If you already have a phycas session underway and do not want to start a
+new session, you can execute the command:
+\begin{verbatim}
+execfile("Polytomy.py")
+\end{verbatim}
 to execute a python script (in this case  \localfile{Polytomy.py}).
-}
+
 
 \subsection{Comparing the results}
 If all goes well, you should have the files created by the run:
@@ -551,11 +583,11 @@ Look at the \localfile{polytomy\_sumt\_splits.pdf}  for evidence of poor mixing 
 and compare the majority-rule consensus trees and the maximum a posterior trees shown in  \localfile{polytomy\_trees.pdf} to those found in \localfile{no\_p\_sumt\_trees.pdf}
 
 \QandA{Is the maximum a posteriori tree topology a fully resolved tree?}{No, it has 2 polytomies in place of the grouping mentioned above as being sensitive to the prior.}
-\section{Using differinge priors for internal and terminal edge lengths}
+\section{Using different priors for internal and terminal edge lengths}
 \citet{YangR2005} \citep[and][]{Yang2007} suggested using prior probabilities on the internal edges of the tree that strongly favor short lengths as means of reducing the strength
 of support for some groupings in a Bayesian phylogenetic analysis.
-In fact the suggest using a prior for internal branches which prefers shorter branch lengths more
-strongly as the number of characters in your data set increases.
+In fact, they suggest that the prior for internal branches which prefers shorter branch lengths more
+strongly when you have a large number of characters in your data set.
 These suggestions are alternatives to the polytomy prior approach, and you can try it out from within 
 \phycas\footnote{You can also download a version of \mb that has been modified to perform the analysis from Ziheng's software site: \url{http://abacus.gene.ucl.ac.uk/software.html}}
 It will be easiest to copy the \localfile{NoPolytomy.py} script that you created earlier 
@@ -599,23 +631,6 @@ Thus, it is possible that the prior mean of 0.0001 is simply too low (and that h
 
 
 
-\newpage
-\section{Scripts used in this tutorial}
-The following pages have the text of scripts that 
-were described in this tutorial.
-They are also available as plain text files (the 
-correct format for saving files for \phycas) in
-the directory that accompanies the lab.
-To use those scripts, you will have to move them
-to the directory with the data files, or edit the
-filenames in the scripts to reflect the relative 
-path to the data files.
-
-It is probably unwise to simply execute these files
-as you read the tutorial, because typing things, in
-making mistakes, and seeing how \phycas reports
-errors will probably help you learn much more 
-than simply invoking the scripts.
 \newpage
 \subsection{basic.py}\label{basicpy}
 \begin{verbatim}
@@ -766,7 +781,7 @@ sumt()
 
 
 \newpage
-\subsection{Polytomy.py}\label{Polytomy}
+\subsection{IntExtPrior.py}\label{IntExtPrior}
 \begin{verbatim}
 #!/usr/bin/env python
 
