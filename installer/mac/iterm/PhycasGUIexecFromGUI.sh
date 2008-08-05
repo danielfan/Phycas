@@ -40,6 +40,14 @@ then
 	then
 		cp "$resources_dir/active_phycas_env.sh" "$active_env_path"
 	fi	
+	startup_py_path="$HOME/.phycas/startup.py"
+	if ! test -f "$startup_py_path"
+	then
+		if test -f "$resources_dir/startup.py"
+		then
+			cp "$resources_dir/startup.py" "$startup_py_path"
+		fi
+	fi	
 	run_cmd_path="$HOME/.phycas/run_phycas.sh"
 	if ! test -f "$run_cmd_path"
 	then

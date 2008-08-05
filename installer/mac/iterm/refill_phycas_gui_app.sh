@@ -20,6 +20,7 @@ fi
 cp -r "$PHYCAS_ROOT/phycas" Phycas.app/Contents/Resources/ || exit 2
 cp -r ./active_phycas_env.sh Phycas.app/Contents/Resources/ || exit 2
 cp -r ./run_phycas.sh Phycas.app/Contents/Resources/ || exit 2
+cp  ./startup.py Phycas.app/Contents/Resources/ || exit 2
 find  Phycas.app/Contents/Resources/phycas -name .svn -exec rm -rf {} \; 
 sh makeDMG.sh || exit 4
 
