@@ -105,15 +105,13 @@ The main benefits of IPython are:
 	\item Native support for a few UNIX commands (most notably \cmd{ls} and \cmd{cd})
 	\item Support for any UNIX commands if you start the line with ! (an exclamation point). For example \cmd{!cat myscript.py | grep mcmc} would behave just like the UNIX commands \cmd{cat myscript.py | grep mcmc}
 \end{itemize}
-To indicate to \phycas that you would like to use IPython, then open the \localfile{$\sim$/.phycas/active\_phycas\_env.sh} 
+To indicate to \phycas that you would like to use IPython, open the \localfile{$\sim$/.phycas/active\_phycas\_env.sh} 
 in a text editor, and change the last line to read:
 \begin{verbatim}
 export USES_I_PYTHON=1
 \end{verbatim}
  
-
-If you decide that you do not like IPython (or if you are running on a machine that does not have the IPython libraries installed), then you can simply edit the active configuration file of phycas. 
-Open 
+If you decide that you do not like IPython (or if you are running on a machine that does not have the IPython libraries installed), then open 
 \localfile{$\sim$/.phycas/active\_phycas\_env.sh} 
 in a text editor, and change the last line to read:
 \begin{verbatim}
@@ -132,7 +130,7 @@ with the number in bracket indicating the number of commands executed, while the
 
 
 \subsection{Simplest usage}
-Locate the directory of example files labeled \localfile{PhycasTutorial} and move it to a convenient location for you.
+Locate the directory of example files labeled \localfile{PhycasWHExamples} and move it to a convenient location for you.
 
 
 You can launch the \phycas application by double-clicking the \phycas icon  (later when you have scripts written, you can launch the \phycas by dragging a python script onto the \phycas application icon).
@@ -178,7 +176,7 @@ help(mcmc)
 
 \subsubsection{Setting up a basic MCMC analysis}
 The settings that affect the behavior of an MCMC run are all stored
-as attributes of an \phycas object with the name \cmd{mcmc}.
+as attributes of a \phycas object with the name \cmd{mcmc}.
 In python, objects are collections of data and actions.
 You address the attributes of an object by putting a ``.'' between
 the name of the object and the name of the attribute.
@@ -204,7 +202,7 @@ the where the output of the command is placed.
 
 As with other Bayesian phylogenetic software, the MCMC sampler will produce a collection of files storing
 trees and parameter values.
-Now let's configure the output settings, so that the files generated will have names that 
+Now let's configure the output settings so that the files generated will have names that 
 will remind us of the analysis done:
 \begin{verbatim}
 mcmc.out.log = "basic.log"
@@ -225,7 +223,7 @@ In \mb each generation represents an iteration of:
 But in \phycas a cycle represents a sweep of proposals over all of the parameters
 in model -- including several proposed changes to the topology.
 In terms of the number of updates, a cycle in \phycas is more or less equivalent (in terms 
-of the number of updates) to 100 generations in \mb\footnote{That statement is true, when you use the default settings. 
+of the number of updates) to 100 generations in \mb\footnote{That statement is true when you use the default settings. 
 The \cmd{mcmc} options with the word \cmd{weight} in their name
 you can alter the number of times a particular type of update is performed
 in each cycle}:

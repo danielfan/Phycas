@@ -105,6 +105,7 @@ data_all = [
             'Examples/Tutorial/PhycasWHExamples/scripts/sumt.py',
             'Utilities/__init__.py',
             'Utilities/CommonFunctions.py',
+            'Utilities/DefaultData.py',
             'Utilities/flexplot.py',
             'Utilities/io.py',
             'Utilities/kappa2tratio.py',
