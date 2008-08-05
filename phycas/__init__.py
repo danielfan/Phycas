@@ -126,7 +126,7 @@ _use_wx_phycas = False
 _check_for_updates = True
 _phycas_update_url = "129.237.138.231" # change this to phycas.org url
 _phycas_branch = "$HeadURL$"
-_phycas_revision = "$Revision: 733 $"
+_phycas_revision = "$Revision$"
 
 #from Phycas import Phycas
 if not _user_ini_checked:

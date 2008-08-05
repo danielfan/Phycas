@@ -132,7 +132,7 @@ with the number in bracket indicating the number of commands executed, while the
 
 
 \subsection{Simplest usage}
-Locate the directory of example files labeled \localfile{Tutorial} and move it to a convenient location for you.
+Locate the directory of example files labeled \localfile{PhycasTutorial} and move it to a convenient location for you.
 
 
 You can launch the \phycas application by double-clicking the \phycas icon  (later when you have scripts written, you can launch the \phycas by dragging a python script onto the \phycas application icon).
@@ -142,9 +142,9 @@ The working directory will be your home directory.
 
 \subsubsection{Changing the working directory}
 The first step is to set the working directory of \phycas to the directory in which you want to work.
-If you are using the IPython interface, and you would like to  move to a directory called \localfile{Desktop/Tutorial} then issue the command:
+If you are using the IPython interface, and you would like to  move to a directory called \localfile{Desktop/PhycasTutorial} then issue the command:
 \begin{verbatim}
-In [2]: cd Desktop/Tutorial
+In [2]: cd Desktop/PhycasTutorial
 In [3]: pwd
 In [4]: ls
 \end{verbatim}
@@ -153,7 +153,7 @@ to change working directory, then show the path to the current directory, and fi
 If you are using the  python interpreter (instead of the IPython interface), you have to issue the commands:
 \begin{verbatim}
 >>> from phycas import *
->>> os.chdir("Desktop/Tutorial")
+>>> os.chdir("Desktop/PhycasTutorial")
 >>> os.path.abspath(".")
 >>> os.listdir(".")
 \end{verbatim}
@@ -314,15 +314,22 @@ The commands for replaying this example are shown in the section \hyperref[basic
 
 
 \section{A note an scripts used in this tutorial}
-The \localfile{scripts} directory has the python
+The tutorial directory has the python
 scripts \localfile{IntExtPrior.py}, \localfile{NoPolytomy.py},
 \localfile{Polytomy.py}, and \localfile{basic.py}
 that have all of the commands needed to run the tutorial.
-To use those scripts, you will have to move them
-from the \localfile{scripts} directory to the directory
-with the data files, or edit the
+To use those scripts, they should be in the same directory
+as the data files (or you could edit the
 filenames in the scripts to reflect the relative 
-path to the data files.
+path to the data files).
+
+Identical versions are also in the \localfile{scripts} directory
+inside the tutorial.
+I recommend leaving the copies inside the \localfile{scripts} directory 
+untouched.
+That way you can compare any changes that you have made
+to the original versions whenever you want to see what 
+you have changed.
 
 You may prefer to create your own version of the
 files as you read the tutorial.
@@ -584,6 +591,9 @@ Look at the \localfile{polytomy\_sumt\_splits.pdf}  for evidence of poor mixing 
 and compare the majority-rule consensus trees and the maximum a posterior trees shown in  \localfile{polytomy\_trees.pdf} to those found in \localfile{no\_p\_sumt\_trees.pdf}
 
 \QandA{Is the maximum a posteriori tree topology a fully resolved tree?}{No, it has 2 polytomies in place of the grouping mentioned above as being sensitive to the prior.}
+\QandA{Is the majority-rule consensus tree the same as the consensus from the ``no polytomies'' run?}{No, the consensus has a fewer groups in it.}
+
+
 \section{Using different priors for internal and terminal edge lengths}
 \citet{YangR2005} \citep[and][]{Yang2007} suggested using prior probabilities on the internal edges of the tree that strongly favor short lengths as means of reducing the strength
 of support for some groupings in a Bayesian phylogenetic analysis.
@@ -642,7 +652,11 @@ If you are interested in programming in python
 feel free to ask us about how you can use
 \phycas as a library of phylogenetic functions.
 
+\section{Thanks}
+We thank you for trying out \phycas and providing feedback!
 
+We would like to thank Michael Cummings and the Workshop on Molecular Evolution for hosting the debut of \phycas. Funding sources include the CIPRES grant (NSF-DBI-0306047) to Dave Swofford, a NESCent sabbatical fellowship to Paul Lewis. 
+\phycas is built using 5 open source libraries: \href{http://www.boost.org/}{boost}, \href{http://sourceforge.net/projects/ncl/}{ncl} (the NEXUS Class Library),  \href{http://iterm.sourceforge.net/}{iTerm},  \href{http://ipython.scipy.org/moin/}{IPython}, and (of course) \href{http://www.python.org/}{python}
 
 
 \newpage
