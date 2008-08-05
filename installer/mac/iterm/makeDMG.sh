@@ -23,17 +23,17 @@ then
 	ditto -rsrc "$PHYCAS_ROOT/LICENSE" "phycasimg/LICENSE" || exit
 	ditto -rsrc "README" "phycasimg/README" || exit
 	ditto -rsrc "$PHYCAS_ROOT/documentation/users/manual.pdf" "phycasimg/manual.pdf" || exit
-	mkdir "phycasimg/PhycasWHExamples"
-	mkdir "phycasimg/PhycasWHExamples/scripts"
-	for f in $PHYCAS_ROOT/documentation/tutorial/PhycasWHExamples/*nex
+	mkdir "phycasimg/Tutorial"
+	mkdir "phycasimg/Tutorial/scripts"
+	for f in $PHYCAS_ROOT/phycas/Examples/Tutorial/PhycasWHExamples/*nex
 	do 
-		ditto -rsrc "$f" "phycasimg/PhycasWHExamples" || exit
+		ditto -rsrc "$f" "phycasimg/Tutorial" || exit
 	done
-	for f in $PHYCAS_ROOT/documentation/tutorial/PhycasWHExamples/scripts/*py
+	for f in $PHYCAS_ROOT/phycas/Examples/Tutorial/PhycasWHExamples/scripts/*py
 	do 
-		ditto -rsrc "$f" "phycasimg/PhycasWHExamples/scripts/" || exit
+		ditto -rsrc "$f" "phycasimg/Tutorial/scripts/" || exit
 	done
-	ditto -rsrc "$PHYCAS_ROOT/documentation/tutorial/phycas_woods_hole_08.pdf" "phycasimg/PhycasWHExamples/phycas_woods_hole_08.pdf" || exit
+	ditto -rsrc "$PHYCAS_ROOT/documentation/tutorial/phycas_woods_hole_08.pdf" "phycasimg/Tutorial/PhycasTutorial.pdf" || exit
 	
 	hdiutil create -srcfolder phycasimg $MASTER_DMG
 else

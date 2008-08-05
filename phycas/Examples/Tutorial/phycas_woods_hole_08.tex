@@ -93,7 +93,7 @@ You will {\bf not} have to issue this command when using the \phycas application
 If you are not using the Phycas.app bundle, you will need to invoke python and enter the \cmd{from phycas import *} command.
 In order for this to work, you have to have \phycas installed in a standard location or your shell's environmental variables set correctly.
 The Windows-installer for \phycas will set up your environment correctly.
-If python shows an error when you try the command given above, the consult the \phycas manual or ask one
+If python shows an error when you try the command given above, then consult the \phycas manual or ask one
 of us for help configuring your environment correctly.
 
 \subsubsection{IPython}
@@ -375,7 +375,7 @@ model.num_rates = 4
 the \cmd{model.num\_rates} is the number of variable rates that are used to approximate the Gamma distribution. 
 If you were to set \cmd{model.num\_rates = 1} then you would be selecting a single-rate model that does not use $\Gamma$-distributed rate heterogeneity at all.
 We can set the value of the shape parameter of the Gamma distribution, but this is just the value that the sampler will start at.  
-It is more important (in the context of setting up an MCMC run) to set the prior distribution for the gamma's shape parameter.
+It is more important (in the context of setting up an MCMC run) to set the prior distribution for the  shape parameter of the gamma distribution.
 We can do this by choosing from among the continuous probability distributions over non-negative numbers.
 An Exponential distribution will be fine for the purpose of the lab (The Gamma and Inverse-Gamma distributions are also possible choices):
 \begin{verbatim}
