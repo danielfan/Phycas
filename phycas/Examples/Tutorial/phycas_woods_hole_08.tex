@@ -587,7 +587,9 @@ to execute a python script (in this case  \localfile{Polytomy.py}).
 \subsection{Comparing the results}
 If all goes well, you should have the files created by the run:
 \localfile{polytomy\_params.p}, \localfile{polytomy\_sumt\_splits.pdf}, \localfile{polytomy\_sumt\_trees.pdf}, \localfile{polytomy\_trees.t}, and \localfile{polytomy\_sumt\_trees.tre}.
-Look at the \localfile{polytomy\_sumt\_splits.pdf}  for evidence of poor mixing  during the MCMC; 
+Look at the \localfile{polytomy\_sumt\_splits.pdf}  for evidence of poor mixing during the MCMC\footnote{
+\href{http://beast.bio.ed.ac.uk/}{Tracer} and \href{http://ceb.csit.fsu.edu/awty}{AWTY} are also highly
+recommended for diagnosing lack of convergence in MCMC samples.}; 
 and compare the majority-rule consensus trees and the maximum a posterior trees shown in  \localfile{polytomy\_trees.pdf} to those found in \localfile{no\_p\_sumt\_trees.pdf}
 
 \QandA{Is the maximum a posteriori tree topology a fully resolved tree?}{No, it has 2 polytomies in place of the grouping mentioned above as being sensitive to the prior.}
