@@ -163,11 +163,9 @@ if build_number_from_svn_info:
     svnheadinfo = subprocess.Popen('svn info -r HEAD', shell=True, stdout=subprocess.PIPE).communicate()[0].strip()
     re_match = re.search('Revision: (\d+)', svnheadinfo)
     if re_match:
+        svn_revision = re_match.group(1)
         svninfo = subprocess.Popen('svn status --non-interactive', shell=True, stdout=subprocess.PIPE).communicate()[0].strip()
-        if len(svninfo) == 0:
-            # we're up to date
-            svn_revision = re_match.group(1)
-        else:
+        if len(svninfo) > 0:
             # not up to date
             not_questions = 0
             for line in svninfo.split('\n'):
@@ -178,6 +176,7 @@ if build_number_from_svn_info:
                 print 'Warning: there are files unknown to svn in your working copy' 
                 print '         Continuing, but you might want to use "svn propset svn:ignore"'
                 print '         to add these to your ignore list at some point.'
+                raw_input('Press return to continue...')
             else:
                 print 'Error: svn working copy is not up-to-date'
                 print '       Commit before building release.'
