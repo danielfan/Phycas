@@ -24,6 +24,17 @@ if len(sys.argv) > 0 and sys.argv[1] == '-install':
     file_created(os.path.join(Phycas_shortcuts, filename))
     os.remove(filename)
 
+    # Create shortcut to Woods Hole tutorial directory
+    target = os.path.join(site_packages, 'phycas', 'Examples', 'Tutorial')
+    description = 'Shortcut to Tutorial folder'
+    filename = 'Tutorial Folder.lnk'
+    arguments = ''
+    workdir = os.path.join(site_packages, 'phycas', 'Examples', 'Tutorial')
+    create_shortcut(target, description, filename, arguments, workdir)
+    dest_name, ok = distutils.file_util.copy_file(filename, Phycas_shortcuts)
+    file_created(os.path.join(Phycas_shortcuts, filename))
+    os.remove(filename)
+
     # Create shortcut to runall.py file
     target = os.path.join(site_packages, 'phycas', 'Tests', 'runall.py')
     description = 'Batch file that tests examples that come with Phycas'
