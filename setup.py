@@ -169,11 +169,19 @@ if build_number_from_svn_info:
             svn_revision = re_match.group(1)
         else:
             # not up to date
-            #next_revision_number = 1 + int(re_match.group(1))
-            #svn_revision = str(next_revision_number)
-            print 'Error: svn working copy is not up-to-date'
-            print '       Commit before building release'
-            sys.exit()
+            not_questions = 0
+            for line in svninfo.split('\n'):
+                print line
+                if line[0] != '?':
+                    not_questions += 1
+            if not_questions == 0:
+                print 'Warning: there are files unknown to svn in your working copy' 
+                print '         Continuing, but you might want to use "svn propset svn:ignore"'
+                print '         to add these to your ignore list at some point.'
+            else:
+                print 'Error: svn working copy is not up-to-date'
+                print '       Commit before building release.'
+                sys.exit()
     else:
         print 'Error: could not process output of "svn info -r HEAD" command'
         print '       This output is needed to obtain SVN revision number'
