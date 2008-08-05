@@ -156,6 +156,9 @@ applications or to extend the current functionality.
 """
 
 if build_number_from_svn_info:
+    print 'Obtaining svn revision number...'
+    print '(if this takes too long, you can set build_number_from_svn_info=False'
+    print 'at the top of setup.py'
     import subprocess, re
     svnheadinfo = subprocess.Popen('svn info -r HEAD', shell=True, stdout=subprocess.PIPE).communicate()[0].strip()
     re_match = re.search('Revision: (\d+)', svnheadinfo)
