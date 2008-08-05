@@ -49,7 +49,7 @@
 \section{\phycas Lab}
 %###########################################################################################
 
-The main goal is to become familiar with running \phycas and interpreting its output. 
+The goal of this tutorial is to help you become familiar with running \phycas and interpreting its output. 
 Don't rush things. 
 If you don't finish the lab, you can always download 
 \phycas from \url{http://www.phycas.org} when you get home and finish it there.
@@ -69,13 +69,13 @@ Stylistic conventions used in this document:
 %-------------------------------------------------------------------------------------------
 \subsection{Background}
 %-------------------------------------------------------------------------------------------
-\phycas is a software package for Bayesian phylogenetic analysis written by Paul Lewis with
-some contributions by Mark Holder and David Swofford.
+\phycas is a software package for Bayesian phylogenetic analysis written by Paul Lewis, Mark Holder and David Swofford.
 \phycas is a hybrid program: computationally-intensive tasks are implemented in C++, and the high-level
 tasks are done in \href{http://www.python.org/}{python}\footnote{The Phycas manual contains instructions for installing python if you are using an operating system
 that does not come with python installed.}.
 
-In fact, the python language is the front-end for \phycas. 
+In fact, the python language is the scripting language of \phycas, and the python interpreter is
+the front-end for \phycas. 
 So when you write a command file in \phycas you are actually writing a python program.
 This has advantages because python interpreter is a powerful, robust, and versatile program for interpreting text commands.
 However, it also means that \phycas cannot always be forgiving when it comes to the structure of commands and syntax in general.
@@ -83,17 +83,17 @@ We have attempted to add as much flexibility as possible, but be aware that {\bf
 
 
 \subsubsection{The Phycas.app bundle}
-In the lab we will be running \phycas as a double-clickable program that is built around the open-source iTerm terminal application (\href{http://iterm.sourceforge.net/}{iTerm homepage}).
-You can run phycas scripts from any terminal by invoking python and entering the command:
+In the lab we will be running \phycas as a double-clickable program built around the open-source iTerm terminal application (\href{http://iterm.sourceforge.net/}{iTerm homepage}).
+You can run \phycas from any terminal by invoking python and entering the command:
 \begin{verbatim}
 from phycas import *
 \end{verbatim}
-You will {\bf not} have to issue this command when using the \phycas application bundle on Mac, but you will have to use the command in all of your phycas scripts.
+You will {\bf not} have to issue this command when using the \phycas application bundle on Mac, but you {\bf will} have to use the command in all of your \phycas scripts.
 
 If you are not using the Phycas.app bundle, you will need to invoke python and enter the \cmd{from phycas import *} command.
-In order for this to work, you have to have \phycas installed in a standard location or your shell's environmental variables set correctly.
+In order for this to work, you have to have \phycas installed in a standard location or your shell's environmental variables must be set correctly.
 The Windows-installer for \phycas will set up your environment correctly.
-If python shows an error when you try the command given above, then consult the \phycas manual or ask one
+If python shows an error when you try the \cmd{from phycas import *}  command given above, then consult the \phycas manual or ask one
 of us for help configuring your environment correctly.
 
 \subsubsection{IPython}
@@ -168,9 +168,9 @@ help()
 public()
 \end{verbatim}
 
-Well, a very long list of variables is probably not too helpful to you.
-Fortunately, you can pass one of the listed names in the help function to see 
-some information about the variable:
+A very long list of variables is probably not too helpful to you.
+Fortunately, you can pass one of the listed names as an argument
+to the help function to see some information about the variable:
 \begin{verbatim}
 help(readFile)
 help(mcmc)
@@ -193,7 +193,7 @@ mcmc.current()
 \end{verbatim}
 If you look through the tables of input settings before and after
 the assignment to the \cmdopt{data\_source} attribute, you should see
-that the value goes from ``\cmd{None}'' to ``\cmd{Characters from the file green.nex}''
+that the value goes from \cmd{None} to \cmd{Characters from the file green.nex}
 
 Take time to look over the options available for MCMC to get a feeling for
 what \phycas can do.
@@ -225,7 +225,10 @@ In \mb each generation represents an iteration of:
 But in \phycas a cycle represents a sweep of proposals over all of the parameters
 in model -- including several proposed changes to the topology.
 In terms of the number of updates, a cycle in \phycas is more or less equivalent (in terms 
-of the number of updates) to 100 generations in \mb:
+of the number of updates) to 100 generations in \mb\footnote{That statement is true, when you use the default settings. 
+The \cmd{mcmc} options with the word \cmd{weight} in their name
+you can alter the number of times a particular type of update is performed
+in each cycle}:
 \begin{verbatim}
 mcmc.ncycles = 2000
 mcmc.sample_every = 10
@@ -334,8 +337,8 @@ from phycas import *
 \end{verbatim}
 
 An intermediate between simply executing the provided files
-and typing them in your self is to open the provided file in
-a text editor and pasting the commands into when you are given 
+and typing them in your self is to open the scripts that are provided in
+a text editor and paste the commands when you are given 
 a prompt.
 This will save you some typing, but allow you to follow 
 along with the tutorial in a step-by-step fashion.
@@ -350,7 +353,8 @@ This time we will pay more attention to the model and MCMC settings than we did 
 Start \phycas from a clean slate:
 \begin{enumerate}
 	\item open a new window in the \phycas application
-	\item change the working directory to a convenient location for working with the \localfile{ShoupLewis.nex}. Note that you do {\bf not} have to change your working directory to match the location to the input file, but if you do not then you will have to make sure that you use a relative or absolute path to all of the files that you refer to.
+	\item change the working directory to a convenient location for working with the \localfile{ShoupLewis.nex}. Note that you do {\bf not} have to change your working directory to match the location to the input file.
+	However, if you do not change your working directory then you will have to make sure that you use a relative or absolute path to all of the files that you refer to instead of just using filenames.
 \end{enumerate}
 
 Read the file into memory:
@@ -422,8 +426,8 @@ the branch length prior merits extra care because:
 	\item  estimating branch lengths accurately is often crucial to getting the topology correct,
 	\item the prior will be applied to a large number of parameters (because there are so many branches in the tree).
 \end{enumerate}
-\citet{SuchardWS2001} suggested the use of a hierarchical model in which the branch lengths are distributed as exponential variables with a mean of $\mu$, where $\mu$ is a hyperparameter that 
-has a prior distribution set by the investigator.
+\citet{SuchardWS2001} suggested the use of a hierarchical model in which the branch lengths are distributed as exponential variables with a mean of $\mu$.
+We refer to $\mu$ as a ``hyperparameter'', and we have to place a prior distribution (a ``hyperprior'') on {\em it}.
 This has the advantage of producing a vague prior distribution on the branch length in which the 
 mean of the prior distribution for the branch lengths is allowed to tune-itself to the data at hand.
 In \phycas, if you have the \cmd{model.edgelen\_hyperprior} attribute set to a distribution (rather than \texttt{None}), you will be using this hierarchical model suggested by \citet{SuchardWS2001}.
@@ -431,7 +435,7 @@ For example:
 \begin{verbatim}
 model.edgelen_hyperprior = InverseGamma(2.10000, 0.90909)
 \end{verbatim}
-uses an Inverse Gamma distribution with parameters a=2.10000 and b=0.90909 for the hyperparameter, $\mu$.
+uses an Inverse Gamma distribution with parameters shape parameter of 2.1 and a scale parameter of 0.90909 for the hyperparameter, $\mu$.
 This distribution has mean 1 and variance 10.
 
 \subsubsection{MCMC over fully-resolved trees}
@@ -448,20 +452,18 @@ tell the mcmc command to start from a random tree that is generated using the sa
 number generator:
 
 \begin{verbatim}
-rng = Lot()
+rng = RNG()
 rng.setSeed(13957)
 mcmc.rng = rng
 mcmc.starting_tree_source = randomtree(rng=rng)
 \end{verbatim}
 
-Now we can configure the MCMC to run a short simulation and save files with names that
-will remind us that they are from the no-polytomies run:
+Now we can configure the MCMC to run a short simulation:
 \begin{verbatim}
 mcmc.ncycles = 2000
 mcmc.sample_every = 10
 \end{verbatim}
-
-To configure the names of the files produced we can use the following commands:
+ and save files with names that will remind us that they are from the no-polytomies run:
 \begin{verbatim}
 mcmc.out.trees.prefix = "no_p_trees"
 mcmc.out.params.prefix = "no_p_params"
@@ -504,15 +506,14 @@ the three {\em Heterochlamydomonas} species,
 )\
 are the ones to which you should pay extra attention.}
 
-Note that you could have also entered all of the commands that you just entered from a script. 
-
 \subsection{Allowing Polytomies}
 Let's redo the same analysis but allow for polytomies.
 
-Rather than type every thing in again, let's give \phycas a script.
-Copy the \localfile{NoPolytomy.py} file from the \localfile{Tutorial/scripts} 
-into the \localfile{Tutorial} directory  and rename the file \localfile{Polytomy.py}\footnote{You can also use the \cmd{history} command in IPython to see the previous commands. This can be useful if you are using \phycas interactively and would
+Even if you are writing your own scripts for this tutorial, you probably 
+want to just copy the script from the \localfile{NoPolytomy.py} analysis and save
+the file as \localfile{Polytomy.py}\footnote{You can also use the \cmd{history} command in IPython to see the previous commands. This can be useful if you are using \phycas interactively and would
 like to turn you commands into a script.}.
+Then we can just change the lines that differ between the two styles of analysis.
 
 Here are the changes that we need to make to enable sampling over unresolved trees:
 \begin{verbatim}
@@ -524,7 +525,7 @@ You must make these changes to the script before the line that says \cmd{mcmc()}
 The first line tells the MCMC sampler to consider polytomies and the next  two lines
 set up the prior distribution over unresolved trees.
 
-\phycas supports priors on the trees based such that different ``resolution classes'' of trees have a particular prior probability, but the easiest prior to understand (and one that seems to work well in practice) is to use the ``polytomy'' prior discussed by \citet{LewisHolderHolsinger2005}.
+\phycas supports priors on the trees based such that different ``resolution classes'' of trees have a particular prior probability, but the easiest prior to understand (and one that seems to work well in practice) is the ``polytomy'' prior discussed by \citet{LewisHolderHolsinger2005}.
 In this prior, you specify the ratio of the prior probability of a tree over the probability of another tree that is identical to it except  that it has one fewer internal branch.
 This is the ratio associated with collapsing a branch in the tree (the ratio that favors the 
 acceptance of a delete-edge form of the ``bush move'' in \phycas).
@@ -561,14 +562,14 @@ The easiest way to do this on Mac is to simply drag the \localfile{Polytomy.py} 
 
 \subsubsection{Executing a script if you are not using the double-clickable application}
 If you are {\bf not} running the double-clickable \phycas, then you can launch a new
-Terminal (or Command Prompt) session and from the shell execute the following commands:
+Terminal (or Command application on Windows) session and from the shell execute the following commands:
 \begin{verbatim}
 cd <type the directory with the Polytomy.py script here>
 python -i Polytomy.py
 \end{verbatim}
 
 \subsubsection{Executing a script from within the same \phycas session}
-If you already have a phycas session underway and do not want to start a
+If you already have a \phycas session underway and do not want to start a
 new session, you can execute the command:
 \begin{verbatim}
 execfile("Polytomy.py")
@@ -627,6 +628,19 @@ Note that \citet{YangR2005} do not give specific recommendations about the exact
 They discuss the way the prior mean should change as a function of the number of characters sampled, but
 do not advocate specific prior means.
 Thus, it is possible that the prior mean of 0.0001 is simply too low (and that higher means would result in significantly improved performance).
+For some datasets, the priors that Yang and Rannala suggested do result in a majority-rule consensus tree that is less resolved than the ``normal'' Bayesian analysis (polytomies excluded and vague priors on 
+branch lengths).
+
+\section{Conclusions}
+That is it for this lab! 
+
+Please feel free to try out other aspects of \phycas, and let us know if there were
+parts of the tutorial or the user-interface of \phycas that
+you found confusing.
+
+If you are interested in programming in python
+feel free to ask us about how you can use
+\phycas as a library of phylogenetic functions.
 
 
 
@@ -690,7 +704,7 @@ model.edgelen_hyperprior = InverseGamma(2.10000, 0.90909)
 
 mcmc.allow_polytomies = False
 
-rng = Lot()
+rng = RNG()
 rng.setSeed(13957)
 mcmc.rng = rng
 mcmc.starting_tree_source = randomtree(rng=rng)
@@ -749,7 +763,7 @@ import math
 mcmc.topo_prior_C = math.exp(1.0)
 
 
-rng = Lot()
+rng = RNG()
 rng.setSeed(13957)
 mcmc.rng = rng
 mcmc.starting_tree_source = randomtree(rng=rng)
@@ -808,7 +822,7 @@ model.external_edgelen_prior = Exponential(10.0)
 
 mcmc.allow_polytomies = False
 
-rng = Lot()
+rng = RNG()
 rng.setSeed(13957)
 mcmc.rng = rng
 mcmc.starting_tree_source = randomtree(rng=rng)

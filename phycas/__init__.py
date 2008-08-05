@@ -234,6 +234,7 @@ def at(addr):
     return None
 from phycas.Utilities.GlobalState import readFile
 
+RNG = Lot
     
 print """
                      Welcome to Phycas
