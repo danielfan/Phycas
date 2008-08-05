@@ -486,11 +486,7 @@ class MCMCImpl(CommonFunctions):
         
     def mainMCMCLoop(self, explore_prior = False):
         # uncomment next line to force normal behavior (i.e. explore prior using normal MCMC slice samplers and MH moves)
-        # explore_prior = False  
-	if explore_prior:
-		self.output('@@@@@@ explore_prior is True @@@@@@')
-	else:
-		self.output('@@@@@@ explore_prior is False @@@@@@')
+        explore_prior = False  
         for cycle in xrange(self.burnin + self.opts.ncycles):
             if explore_prior:
                 self.explorePrior(cycle)
@@ -645,7 +641,6 @@ class MCMCImpl(CommonFunctions):
         if self.opts.doing_path_sampling:
             self.phycassert(self.opts.nchains == 1, 'path sampling requires nchains to be 1')
             chain = self.mcmc_manager.getColdChain()
-            print '@@@@@@ lower bound on log-likelihood = %.5f @@@@@@' % (chain.likelihood.calcLogLikeAtSubstitutionSaturation())
             if self.opts.ps_nbetavals > 1:
                 self.ps_delta_beta = float(self.opts.ps_maxbeta - self.opts.ps_minbeta)/float(self.opts.ps_nbetavals - 1)
                 self.ps_sampled_betas = [self.opts.ps_maxbeta - self.ps_delta_beta*float(i) for i in range(self.opts.ps_nbetavals)]
