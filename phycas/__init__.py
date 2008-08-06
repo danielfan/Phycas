@@ -126,7 +126,7 @@ _use_wx_phycas = False
 _check_for_updates = True
 _phycas_update_url = "129.237.138.231" # change this to phycas.org url
 _phycas_branch = "$HeadURL$"
-_phycas_revision = "$Revision$"
+_phycas_revision = "PHYCAS_SVN_REVISION_NUMBER_HERE"
 
 #from Phycas import Phycas
 if not _user_ini_checked:
@@ -238,13 +238,13 @@ RNG = Lot
     
 print """
                      Welcome to Phycas
-                      version 1.0.0-alpha
+                      version 1.0.0-r%s
 
 Phycas is written by Paul O. Lewis, Mark Holder and David Swofford
 You are running a build from svn %s
 
 Phycas is distributed under the GNU Public License (see License file for more
 information).
-""" % _phycas_revision[1:-1].lower()
+""" % "PHYCAS_SVN_REVISION_NUMBER_HERE"
 
 
