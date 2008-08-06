@@ -38,7 +38,7 @@ cp -r ./active_phycas_env.sh Phycas.app/Contents/Resources/ || exit 2
 cp -r ./run_phycas.sh Phycas.app/Contents/Resources/ || exit 2
 cp  ./startup.py Phycas.app/Contents/Resources/ || exit 2
 find  Phycas.app/Contents/Resources/phycas -name .svn -exec rm -rf {} \;
-cat Phycas.app/Contents/Resources/phycas/__init__.py  | sed "s/PHYCAS_SVN_REVISION_NUMBER_HERE/$sv/" > t
+cat Phycas.app/Contents/Resources/phycas/__init__.py  | sed "s/PHYCAS_SVN_REVISION_NUMBER_HERE/$sv/g" > t
 mv t Phycas.app/Contents/Resources/phycas/__init__.py
 sh makeDMG.sh || exit 4
 
