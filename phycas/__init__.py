@@ -179,7 +179,7 @@ try:
     _ip.set_custom_exc((Exception,), _ip_phycas_except_hook)
     _ip.magic_colors("NoColor")
 except:
-        pass
+    pass
 
 from Phycas.RandomTree import RandomTree
 randomtree = RandomTree()
@@ -245,6 +245,6 @@ You are running a build from svn %s
 
 Phycas is distributed under the GNU Public License (see License file for more
 information).
-""" % "PHYCAS_SVN_REVISION_NUMBER_HERE"
+""" % ("PHYCAS_SVN_REVISION_NUMBER_HERE", "PHYCAS_SVN_REVISION_NUMBER_HERE")
 
 
