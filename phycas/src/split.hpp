@@ -138,6 +138,8 @@ class Split
         std::vector<unsigned>   excl_bits;      /**< is a sorted vector containing bit positions corresponding to excluded taxa (lowest possible value is 0) */
 	};
 
+std::istream & operator>>(std::istream & in, Split & s);
+
 typedef std::set<Split> SplitSet;
 
 unsigned FindSplitsAbsentInTestTree(const SplitSet & ref_tree, const SplitSet & test_tree, SplitSet & missing);
