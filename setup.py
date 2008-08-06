@@ -159,8 +159,6 @@ applications or to extend the current functionality.
 
 if build_number_from_svn_info:
     print 'Obtaining svn revision number...'
-    print '(if this takes too long, you can set build_number_from_svn_info=False'
-    print 'at the top of setup.py'
     import subprocess, re
     svn_version = subprocess.Popen('svnversion', shell=True, stdout=subprocess.PIPE).communicate()[0].strip()
     if svn_version[-1] == 'M':
@@ -168,7 +166,7 @@ if build_number_from_svn_info:
         print 'Error: svn working copy is not up-to-date'
         print '       Commit before building release.'
         sys.exit()
-    elif svn_version.find(':'):
+    elif svn_version.find(':') > -1:
         print 'Error: svn working copy is a mixture of versions (%s)' % svn_version
         print '       Update at the highest level and try again.'
         sys.exit()
