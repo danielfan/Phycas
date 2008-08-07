@@ -174,7 +174,7 @@ if build_number_from_svn_info:
 phycas_full_version = phycas_major+'.'+phycas_minor+'.'+str(svn_revision)
 
 init_file_contents = open('./phycas/__init__.py', 'r').read()
-new_init_file_contents = init_file_contents.replace('PHYCAS_SVN_REVISION_NUMBER_HERE', svn_revision, 2)
+new_init_file_contents = init_file_contents.replace('PHYCAS_SVN_REVISION_NUMBER_HERE', str(svn_revision))
 open('./phycas/__init__.py', 'w').write(new_init_file_contents)
         
 setupArgs = {
