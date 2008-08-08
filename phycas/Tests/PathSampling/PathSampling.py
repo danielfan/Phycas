@@ -27,6 +27,8 @@ mcmc.out.trees.mode       = REPLACE
 mcmc.out.params           = 'params.p'
 mcmc.out.params.mode      = REPLACE
 
+mcmc.draw_directly_from_prior = True
+
 ps.nbetavals              = 5
 ps.maxbeta                = 1.0
 ps.minbeta                = 0.0

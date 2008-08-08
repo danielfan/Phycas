@@ -63,6 +63,7 @@ class MCMC(PhycasCommand):
         self.__dict__["use_unimap"] = False                    # if True, MCMC analyses will use the uniformized mapping approach.
         self.__dict__["mapping_move_weight"] = 1               # Univent mapping will be performed this many times per cycle
         self.__dict__["unimap_nni_move_weight"] = 100          # Unimap NNI moves will be performed this many times per cycle
+        self.__dict__["draw_directly_from_prior"] = True
 
         # The data members added below are hidden from the user because they are set by the ps command
         self.__dict__["doing_path_sampling"] = False

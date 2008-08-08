@@ -40,11 +40,3 @@ class PS(PhycasCommand):
         mcmc()
         mcmc.ps_heating_likelihood = False
         mcmc.doing_path_sampling = False
-    
-    # probably not good to give users this choice
-    #("toward_posterior", True, "If True, chain will start with beta = 0.0 (exploring prior) and end up exploring posterior; otherwise, chain will begin by exploring posterior and end exploring prior", BoolArgValidate),
-
-    # can just use mcmc's normal burnin, sample_every and ncycles for these:
-    #("burnin", 1000, "Number of cycles used to equilibrate before increasing beta", IntArgValidate(min=0)),
-    #("sample_every", 1, "Determines number of times likelihood will be sampled. Number of samples for each value of beta will be ps_Q/sample_every", IntArgValidate(min=0)),
-    #("nbetacycles", 100, "Number of cycles between changes in beta", IntArgValidate(min=1)),
