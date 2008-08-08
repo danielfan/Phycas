@@ -543,10 +543,10 @@ class MarkovChain(LikelihoodCore):
         # Make sure each updater knows the heating power and heating type
         for updater in self.chain_manager.getAllUpdaters():
             updater.setPower(self.heating_power)
-            #if self.parent.opts.is_standard_heating:
-            updater.setStandardHeating()
-            #else:
-            #    updater.setLikelihoodHeating()
+            if self.parent.opts.ps_heating_likelihood:
+                updater.setLikelihoodHeating()
+            else:
+                updater.setStandardHeating()
 
 class MCMCManager:
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -709,12 +709,9 @@ class MCMCManager:
         """
         # Gather log-likelihoods, and if path sampling save in path_sample list for later
         lnLikes = []
-        #multichain_path_sampling = self.parent.opts.nchains > 1 and not self.parent.opts.is_standard_heating
         for i,c in enumerate(self.chains):
             lnLi = c.chain_manager.getLastLnLike()
             lnLikes.append(lnLi)
-            #if multichain_path_sampling:
-            #    self.parent.path_sample[i].append(lnLi) # DISCRETE PATH SAMPLING
         
         # Only record samples from the current cold chain
         cold_chain = self.parent.mcmc_manager.getColdChain()

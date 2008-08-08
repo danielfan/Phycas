@@ -1,38 +1,40 @@
 from phycas import *
+from ProbDist import Exponential
 import shutil
 
-data_file_name = getPhycasTestData('green.nex')
-rnseed = 75391
-ncycles = 11000
+data       = getPhycasTestData('green.nex')
+ncycles    = 10000
 samplefreq = 100
-lsweight = 100
+lsweight   = 100
+rnseed     = 75391
 
-def analyze():
-    analyzer = Phycas()
-    analyzer.outfile_prefix = 'ps_hkyig'
-    analyzer.default_model = 'hky'
-    analyzer.num_rates = 4
-    analyzer.pinvar_model = True
-    analyzer.random_seed = rnseed
-    analyzer.edgelen_prior = ProbDist.ExponentialDist(10.0)
-    analyzer.using_hyperprior = False 
-    analyzer.allow_polytomies = False
-    analyzer.data_file_name = data_file_name
-    analyzer.starting_tree_source = 'random'
-    analyzer.is_standard_heating = False
-    analyzer.adapt_first = 10
-    analyzer.verbose = True
-    analyzer.tree_scaler_weight = 1
-    analyzer.slice_weight = 1
-    analyzer.use_flex_model = False
-    analyzer.ps_toward_posterior = False
-    analyzer.ps_burnin = 0
-    analyzer.ps_Q = ncycles
-    analyzer.ps_nbetaincr = 100
-    analyzer.sample_every = samplefreq
-    analyzer.report_every = ncycles/20
-    analyzer.ls_move_weight = lsweight
-    analyzer.pathsampling()
+rng = ProbDist.Lot()
+rng.setSeed(rnseed)
 
-if __name__ == '__main__':
-    analyze()
+model.type                 = 'hky'
+model.num_rates            = 4
+model.pinvar_model         = True
+model.edgelen_prior        = Exponential(10.0)
+model.edgelen_hyperprior   = None 
+model.use_flex_model = False
+
+mcmc.data_source           = data.characters
+mcmc.starting_tree_source  = randomtree(n_taxa=len(blob.taxon_labels), rng=rng)
+mcmc.adapt_first           = 10
+mcmc.verbose               = True
+mcmc.tree_scaler_weight    = 1
+mcmc.slice_weight          = 1
+mcmc.burnin                = ncycles//10
+mcmc.ncycles               = 10000
+mcmc.sample_every          = samplefreq
+mcmc.report_every          = ncycles//20
+mcmc.ls_move_weight        = lsweight
+mcmc.allow_polytomies      = False
+mcmc.random_seed           = rnseed
+mcmc.out                   = 'hkyg.log'
+
+ps.maxbeta                 = 1.0
+ps.minbeta                 = 0.0
+ps.nbetavals               = 101
+ps()
+

@@ -69,6 +69,7 @@ class MCMC(PhycasCommand):
         self.__dict__["ps_nbetavals"] = 101
         self.__dict__["ps_maxbeta"] = 1.0
         self.__dict__["ps_minbeta"] = 0.0
+        self.__dict__["ps_heating_likelihood"] = False
         
     def checkSanity(self):
         """
@@ -85,6 +86,3 @@ class MCMC(PhycasCommand):
         #c = self
         mcmc_impl = MCMCImpl(c)
         mcmc_impl.run()
-
-    # These taken out of circulation (at least for now):
-    #("is_standard_heating",    True,                            "not yet documented", BoolArgValidate),

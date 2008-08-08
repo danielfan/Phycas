@@ -21,7 +21,6 @@ def analyze(internal_prior_mean):
     analyzer.data_file_name = data_file_name
     analyzer.outfile_prefix = 'ps_%.9f' % internal_prior_mean
     analyzer.starting_tree_source = 'random'
-    analyzer.is_standard_heating = False
     analyzer.adapt_first = 10
     analyzer.verbose = True
     analyzer.tree_scaler_weight = 1

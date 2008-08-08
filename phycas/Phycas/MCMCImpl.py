@@ -348,39 +348,16 @@ class MCMCImpl(CommonFunctions):
             if self.opts.nchains == 1:
                 self.heat_vector = [1.0]
             else:
-                # DISCRETE PATH SAMPLING
-                # Create a list for each chain to hold sampled lnL values
-                #@ shouldn't this only be done if self.is_standard_heating is False?
-                #self.path_sample = []
-                #for i in range(self.opts.nchains):
-                #    self.path_sample.append([])
-                
                 # Determine vector of powers for each chain
                 self.heat_vector = []
-                if self.is_standard_heating:
-                    # Goal is to improve mixing; both likelihood and prior raised to power
-                    for i in range(self.opts.nchains):
-                        # Standard heating 
-                        # 0 1.000 = 1/1.0 cold chain explores posterior
-                        # 1 0.833 = 1/1.2
-                        # 2 0.714 = 1/1.4
-                        # 3 0.625 = 1/1.6
-                        temp = 1.0/(1.0 + float(i)*self.heating_lambda)
-                        self.heat_vector.append(temp)
-                #else:
-                #    # DISCRETE PATH SAMPLING
-                #    # Goal is path sampling, not mixing, so these powers are applied only to likelihood
-                #    for i in range(self.opts.nchains):
-                #        self.do_marginal_like = True
-                #        # Likelihood heating for thermodynamic integration
-                #        # 0 1.000 = (3-0)/3 cold chain explores posterior
-                #        # 1 0.667 = (3-1)/3
-                #        # 2 0.333 = (3-2)/3
-                #        # 3 0.000 = (3-3)/3 hottest chain explores prior
-                #        temp = 1.0
-                #        denom = float(self.opts.nchains - 1)
-                #        temp = float(self.opts.nchains - i - 1)/denom
-                #        self.heat_vector.append(temp)
+                for i in range(self.opts.nchains):
+                    # Standard heating 
+                    # 0 1.000 = 1/1.0 cold chain explores posterior
+                    # 1 0.833 = 1/1.2
+                    # 2 0.714 = 1/1.4
+                    # 3 0.625 = 1/1.6
+                    temp = 1.0/(1.0 + float(i)*self.heating_lambda)
+                    self.heat_vector.append(temp)
         else:
             # User supplied his/her own heat_vector; perform sanity checks
             self.opts.nchains = len(self.heat_vector)
@@ -485,8 +462,6 @@ class MCMCImpl(CommonFunctions):
             tmpf.close()
         
     def mainMCMCLoop(self, explore_prior = False):
-        # uncomment next line to force normal behavior (i.e. explore prior using normal MCMC slice samplers and MH moves)
-        explore_prior = False  
         for cycle in xrange(self.burnin + self.opts.ncycles):
             if explore_prior:
                 self.explorePrior(cycle)

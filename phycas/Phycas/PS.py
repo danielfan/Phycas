@@ -36,7 +36,9 @@ class PS(PhycasCommand):
         mcmc.ps_nbetavals = self.nbetavals
         mcmc.ps_maxbeta = self.maxbeta
         mcmc.ps_minbeta = self.minbeta
+        mcmc.ps_heating_likelihood = True
         mcmc()
+        mcmc.ps_heating_likelihood = False
         mcmc.doing_path_sampling = False
     
     # probably not good to give users this choice
