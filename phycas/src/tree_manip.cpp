@@ -51,6 +51,48 @@ void TreeManip::rescaleAllEdgeLengths(double scaling_factor)
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Deletes a randomly-selected edge from the tree. Does not strip conditional likelihoods before storing internal
+|   nodes, so care should be taken with this function if the likelihood will be calculated on the resulting tree.
+*/
+void TreeManip::deleteRandomInternalEdge(LotShPtr rng)
+    {
+    // Choose an internal node at random (but not the only child of the root node) and delete
+    // its edge to create a polytomy (or a bigger polytomy if there is already a polytomy)
+    unsigned num_internals = tree->GetNInternals()
+    PHYCAS_ASSERT(num_internals > 0);
+    unsigned i = rng->SampleUInt(num_internals);
+
+    TreeNode * nd = tree->GetFirstPreorder();
+    for (; nd != NULL; nd = nd->GetNextPreorder())
+        {
+        if (nd->IsTip() || nd->GetParent()->IsTipRoot())
+            continue;
+
+        if (i == 0)
+            break;
+        else
+            --i;
+        }
+
+	// This operation should not leave the root node (which is a tip) with more than one child,
+	// so check to make sure that nd is not the root nor a child of root
+	TreeNode * parent = nd->GetParent();
+	PHYCAS_ASSERT(orig_par != NULL);
+	PHYCAS_ASSERT(!orig_par->IsTipRoot());
+
+	// Make all of nd's children children of parent instead
+	while (nd->GetLeftChild() != NULL)
+		{
+		TreeNode * rchild = nd->GetLeftChild();
+		DetachSubtree(rchild);
+		InsertSubtree(rchild, parent, TreeManip::kOnRight);
+		}
+
+	DeleteLeaf(nd, true);
+	tree->InvalidateNodeCounts();
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Assigns all edge lengths in the tree using independent draws from the ProbabilityDistribution object pointed to by
 |	`d'.
 */
@@ -1085,15 +1127,13 @@ void TreeManip::DeleteLeaf(
   bool store_as_internal)   /**< if true, store u in internal node storage; otherwise, store it in leaf node storage */
 	{
 	// Note which nodes have pointers potentially aimed at u (will need to be redirected)
-	//
-	TreeNode *u_par		= u->par;
-	TreeNode *u_rSib	= u->rSib;
-	TreeNode *u_lSib	= FindLeftSib(u);
-	TreeNode *u_prevPre = u->prevPreorder;
-	TreeNode *u_nextPre = u->nextPreorder;
+	TreeNode * u_par		= u->par;
+	TreeNode * u_rSib	    = u->rSib;
+	TreeNode * u_lSib	    = FindLeftSib(u);
+	TreeNode * u_prevPre    = u->prevPreorder;
+	TreeNode * u_nextPre    = u->nextPreorder;
 
 	// Redirect pointers aimed at u
-	//
 	if (u_nextPre == NULL)
 		tree->lastPreorder = u_prevPre;
 	else
@@ -1108,7 +1148,6 @@ void TreeManip::DeleteLeaf(
 	u_prevPre->nextPreorder = u_nextPre;
 
 	// Detach and then delete u
-	//
 	PHYCAS_ASSERT(u->lChild == NULL);
 	u->rSib			= NULL;
 	u->par			= NULL;
@@ -1146,7 +1185,6 @@ void TreeManip::DeleteLeaf(
 		}
 
 	// This rearrangement invalidates the TreeID and node counts
-	//
 	tree->InvalidateID();
 	tree->InvalidateNodeCounts();
 	}

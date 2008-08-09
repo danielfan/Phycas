@@ -174,3 +174,12 @@ class TreeManip(TreeManipBase):
         """
         TreeManipBase.setRandomEdgeLens(self, edge_len_dist)
 
+    def deleteRandomInternalEdge(self, rng):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Deletes a random internal edge using the supplied random number 
+        generator object. 
+
+        """
+        TreeManipBase.deleteRandomInternalEdge(self, rng)
+

@@ -28,6 +28,9 @@ namespace phycas
 class Tree;
 typedef boost::shared_ptr<Tree> TreeShPtr;
 
+class Lot;
+typedef boost::shared_ptr<Lot> LotShPtr;
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes topological priors used by BushMove to handle polytomous trees in MCMC analyses. Also provides several
 |	utility functions for computing the number of tree topologies with varying degrees of resolution.
@@ -73,6 +76,8 @@ class TopoPriorCalculator
 
 		std::vector<double>				GetTopoPriorVect();
 		std::vector<double>				GetRealizedResClassPriorsVect();
+
+        unsigned                        sample(LotShPtr rng);
 
 		void							Reset();
 

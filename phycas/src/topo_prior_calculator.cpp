@@ -21,6 +21,7 @@
 #include <limits>
 #include "phycas/src/topo_prior_calculator.hpp"
 #include "phycas/src/basic_tree.hpp"
+#include "phycas/src/basic_lot.hpp"
 
 namespace phycas
 {
@@ -371,5 +372,28 @@ std::vector<double> TopoPriorCalculator::GetLnCounts()
 
 	return v;
 	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|   Samples a resolution class (i.e. number of internal nodes) from the realized resolution class distribution. This
+|   function is not efficient because it calls TopoPriorCalculator::GetRealizedResClassPriorsVect, resulting in an
+|   unnecessary vector copy operation.
+*/
+unsigned TopoPriorCalculator::sample(
+  LotShPtr rng) /**< is the random number generator to use for sampling */
+	{
+    std::vector<double> v = GetRealizedResClassPriorsVect();
+    double u = rng->Uniform(FILE_AND_LINE);
+    double logu = (u > 0.0 ? log(u) : -DBL_MAX);
+    double log_x = logu + v[0];
+    double cum = 0.0;
+    for (unsigned i = 1; i < v.size(); ++i)
+        {
+        cum += v[1];
+        if (log_x <= cum)
+            return i;
+        }
+    PHYCAS_ASSERT(0);
+    return (v.size() - 1);
+    }
 
 }	// namespace phycas

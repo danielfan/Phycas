@@ -136,6 +136,7 @@ void updater_pymod()
 		.def("isRooted", &TopoPriorCalculator::IsRooted)
 		.def("isUnrooted", &TopoPriorCalculator::IsUnrooted)
 		.def("getRealizedResClassPriorsVect", &TopoPriorCalculator::GetRealizedResClassPriorsVect)
+		.def("sample", &TopoPriorCalculator::sample)
 		;
 	class_<phycas::BushMove, bases<phycas::MCMCUpdater>, 
 		boost::noncopyable, boost::shared_ptr<phycas::BushMove> >("BushMove") 

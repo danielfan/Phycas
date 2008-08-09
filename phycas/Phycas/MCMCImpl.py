@@ -390,7 +390,8 @@ class MCMCImpl(CommonFunctions):
         for p in chain.chain_manager.getAllUpdaters():
             w = p.getWeight()
             name = p.getName()
-            if name == 'edge length hyperparameter':
+            if name == 'edge length hyperparameter':    # C++ class HyperPriorParam
+                # Choose hyperparam, then use it to choose new edge lengths for a newly-created tree
                 if chain.model.isSeparateInternalExternalEdgeLenPriors():
                     edgelen_hyperparam = chain.model.getEdgeLenHyperPrior().sample()
                     chain.chain_manager.setEdgeLenHyperparam(0, edgelen_hyperparam)
@@ -405,32 +406,93 @@ class MCMCImpl(CommonFunctions):
                     chain.model.getExternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
                 tm.equiprobTree(chain.tree.getNTips(), chain.r, chain.model.getInternalEdgeLenPrior(), chain.model.getExternalEdgeLenPrior())
                 edgelens_generated = True
-            elif name == 'trs/trv rate ratio':
+            elif name == 'trs/trv rate ratio':              # C++ class KappaParam
                 new_kappa = chain.model.getKappaPrior().sample()
                 chain.model.setKappa(new_kappa)
-            elif name == 'base freq. A':
+            elif name == 'nonsynon./synon. rate ratio':      # C++ class OmegaParam
+                new_omega = chain.model.getOmegaPrior().sample()
+                chain.model.setOmega(new_omega)
+            elif name == 'rAC':                    # C++ class GTRRateParam
+                new_rAC = chain.model.getRelRatePrior().sample()
+                chain.model.setRelRateUnnorm(0, new_rAC) 
+            elif name == 'rAG':                    # C++ class GTRRateParam
+                new_rAG = chain.model.getRelRatePrior().sample()
+                chain.model.setRelRateUnnorm(1, new_rAG) 
+            elif name == 'rAT':                    # C++ class GTRRateParam
+                new_rAT = chain.model.getRelRatePrior().sample()
+                chain.model.setRelRateUnnorm(2, new_rAT) 
+            elif name == 'rCG':                    # C++ class GTRRateParam
+                new_rCG = chain.model.getRelRatePrior().sample()
+                chain.model.setRelRateUnnorm(3, new_rCG) 
+            elif name == 'rCT':                    # C++ class GTRRateParam
+                new_rCT = chain.model.getRelRatePrior().sample()
+                chain.model.setRelRateUnnorm(4, new_rCT) 
+            elif name == 'rGT':                    # C++ class GTRRateParam
+                new_rGT = chain.model.getRelRatePrior().sample()
+                chain.model.setRelRateUnnorm(5, new_rGT) 
+            elif name == 'base freq. A':                    # C++ class StateFreqParam
                 new_freq_param_A = chain.model.getStateFreqParamPrior().sample()
                 chain.model.setStateFreqParam(0, new_freq_param_A) 
-            elif name == 'base freq. C':
+            elif name == 'base freq. C':                    # C++ class StateFreqParam
                 new_freq_param_C = chain.model.getStateFreqParamPrior().sample()
                 chain.model.setStateFreqParam(1, new_freq_param_C) 
-            elif name == 'base freq. G':
+            elif name == 'base freq. G':                    # C++ class StateFreqParam
                 new_freq_param_G = chain.model.getStateFreqParamPrior().sample()
                 chain.model.setStateFreqParam(2, new_freq_param_G) 
-            elif name == 'base freq. T':
+            elif name == 'base freq. T':                    # C++ class StateFreqParam
                 new_freq_param_T = chain.model.getStateFreqParamPrior().sample()
                 chain.model.setStateFreqParam(3, new_freq_param_T) 
-            elif name == 'Discrete gamma shape':
+            elif name == 'Discrete gamma shape':            # C++ class DiscreteGammaShapeParam
                 new_gamma_shape = chain.model.getDiscreteGammaShapePrior().sample()
                 chain.model.setShape(new_gamma_shape)
-        # If no edge length hyperprior was specified, then need to set
-        # edge length priors and build the tree now
+            elif name == 'Proportion of invariable sites':  # C++ class PinvarParam
+                new_pinvar = chain.model.getPinvarPrior().sample()
+                chain.model.setPinvar(new_pinvar)
+            elif name == 'master edge length parameter':
+                pass
+            elif name == 'Edge length move':                # C++ class EdgeMove
+                pass
+            elif name == 'Larget-Simon move':               # C++ class LargetSimonMove
+                pass
+            elif name == 'Tree scaler move':                # C++ class TreeScalerMove
+                pass
+            elif name == 'Bush move':                       # C++ class BushMove
+                pass
+            elif name == 'FLEX probs':                      # C++ class FlexProbParam
+                pass
+            elif name == 'FLEX rates':                      # C++ class FlexRateParam
+                pass
+            elif name == 'NCat move':                       # C++ class NCatMove
+                # TODO sample not only ncat but also rates and probs
+                pass
+            elif name == 'Univent mapping move':            # C++ class MappingMove
+                self.phycassert(0, 'sampling directly from the prior not yet implemented for unimap analyses (workaround: specify mcmc.draw_directly_from_prior = False)')
+            elif name == 'Unimap NNI move':                 # C++ class UnimapNNIMove
+                self.phycassert(0, 'sampling directly from the prior not yet implemented for unimap analyses (workaround: specify mcmc.draw_directly_from_prior = False)')
+            elif name == 'SAMC move':                       # C++ class SamcMove
+                self.phycassert(0, 'sampling directly from the prior not yet implemented for SAMC (workaround: specify mcmc.draw_directly_from_prior = False)')
+            else:
+                self.phycassert(0, 'model uses an updater (%s) that has not yet been added to MCMCImpl.explorePrior (workaround: specify mcmc.draw_directly_from_prior = False)' % name)
+
+        # If no edge length hyperprior was specified, then build the tree with edge lengths now
         if not edgelens_generated:
             tm.equiprobTree(chain.tree.getNTips(), chain.r, chain.model.getInternalEdgeLenPrior(), chain.model.getExternalEdgeLenPrior())
+            
+        if self.opts.allow_polytomies:
+            # Choose number of internal nodes
+            num_internal_nodes = chain.topo_prior_calculator.sample(chain.r)
+                    
+            # Delete nodes at random from tree to achieve chosen number of internal nodes
+            orig_num_internal_nodes = chain.tree.getNInternals()
+            num_internals_to_delete = orig_num_internal_nodes - num_internal_nodes
+            for i in range(num_internals_to_delete):
+                tm.deleteRandomInternalEdge(chain.r)
+                
         chain.prepareForLikelihood()
         chain.likelihood.replaceModel(chain.model)
         
         if False:
+            # debugging code
             chain.likelihood.storeSiteLikelihoods(True)
             from phycas.Utilities.kappa2tratio import convert
             f = chain.model.getStateFreqs()
@@ -447,6 +509,7 @@ class MCMCImpl(CommonFunctions):
         cold_chain_manager.refreshLastLnLike()
         
         if False:
+            # debugging code
             counts = chain.likelihood.getPatternCounts()
             sitelikes = chain.likelihood.getSiteLikelihoods()
             print '  lnL = %.6f' % cold_chain_manager.getLastLnLike()
