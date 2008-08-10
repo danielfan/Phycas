@@ -36,6 +36,8 @@ mcmc.out.log               = 'ps_hky.log'
 mcmc.out.trees             = 'ps_hky.t'
 mcmc.out.params            = 'ps_hky.p'
 
+mcmc.draw_directly_from_prior = False
+
 ps.maxbeta                 = 1.0
 ps.minbeta                 = 0.0
 ps.nbetavals               = 101

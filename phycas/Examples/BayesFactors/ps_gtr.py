@@ -36,6 +36,8 @@ mcmc.out.log               = 'ps_gtr.log'
 mcmc.out.trees             = 'ps_gtr.t'
 mcmc.out.params            = 'ps_gtr.p'
 
+mcmc.draw_directly_from_prior = False
+
 ps.maxbeta                 = 1.0
 ps.minbeta                 = 0.0
 ps.nbetavals               = 101

@@ -37,6 +37,8 @@ mcmc.out.log               = 'ps_f81.log'
 mcmc.out.trees             = 'ps_f81.t'
 mcmc.out.params            = 'ps_f81.p'
 
+mcmc.draw_directly_from_prior = False
+
 ps.maxbeta                 = 1.0
 ps.minbeta                 = 0.0
 ps.nbetavals               = 101
