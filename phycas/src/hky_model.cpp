@@ -164,12 +164,20 @@ std::string HKY::paramHeader() const
 |	Overrides the pure virtual base class version to generate a string of tab-separated values of model-specific 
 |	parameters suitable for saving in a sampled parameter file (e.g. like the .p files saved by MrBayes).
 */
-std::string HKY::paramReport() const
+std::string HKY::paramReport(
+  unsigned ndecimals) const /**< floating point precision to use */
 	{
-	std::string s = str(boost::format("\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f") % kappa % state_freqs[0] % state_freqs[1] % state_freqs[2] % state_freqs[3]);
+    std::string fmt = boost::str(boost::format("%%.%df\t") % ndecimals);
+	std::string s = str(boost::format(fmt) % kappa);
+	s += str(boost::format(fmt) % state_freqs[0]);
+	s += str(boost::format(fmt) % state_freqs[1]);
+	s += str(boost::format(fmt) % state_freqs[2]);
+	s += str(boost::format(fmt) % state_freqs[3]);
+	//std::string s = str(boost::format("\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f") % kappa % state_freqs[0] % state_freqs[1] % state_freqs[2] % state_freqs[3]);
 	if (is_flex_model)
 		{
-		s += str(boost::format("\t%d") % num_gamma_rates);
+		s += str(boost::format("%d\t") % num_gamma_rates);
+		//s += str(boost::format("\t%d") % num_gamma_rates);
 
 		//std::ofstream ratef("flex_rates.txt", std::ios::out | std::ios::app);
 		//for (unsigned i = 0; i < num_gamma_rates; ++i)
@@ -191,10 +199,14 @@ std::string HKY::paramReport() const
 		}
 	else if (num_gamma_rates > 1)
 		{
-		s += str(boost::format("\t%.5f") % gamma_shape);
+		s += str(boost::format(fmt) % gamma_shape);
+		//s += str(boost::format("\t%.5f") % gamma_shape);
 		}
 	if (is_pinvar_model)
-		s += str(boost::format("\t%.5f") % pinvar);
+        {
+		s += str(boost::format(fmt) % pinvar);
+		//s += str(boost::format("\t%.5f") % pinvar);
+        }
 	return s;
 	}
 

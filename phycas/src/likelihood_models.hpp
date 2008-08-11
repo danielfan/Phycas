@@ -62,7 +62,7 @@ class Model	{
         virtual void					createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters) const;
         virtual void					buildStateList(VecStateList &, VecStateListPos &) const;
 		virtual std::string				paramHeader() const = 0;
-		virtual std::string				paramReport() const = 0;
+		virtual std::string				paramReport(unsigned ndecimals) const = 0;
 
 		virtual double					calcLMat(double * * lMat) const = 0;
 		virtual double					calcUMat(double * * uMat) const = 0;
@@ -228,7 +228,7 @@ class JC: public Model
         double					calcLMat(double * * lMat) const;
         double					calcUMat(double * * uMat) const;
         virtual std::string		paramHeader() const;
-		virtual std::string		paramReport() const;
+		virtual std::string		paramReport(unsigned ndecimals) const;
 	};
 
 typedef boost::shared_ptr<JC> JCShPtr;
@@ -261,7 +261,7 @@ class HKY: public Model
 		void						setKappaFromTRatio(double tratio);
 		double						calcTRatio();
 		virtual std::string			paramHeader() const;
-		virtual std::string			paramReport() const;
+		virtual std::string			paramReport(unsigned ndecimals) const;
 
 protected:
 	
@@ -305,7 +305,7 @@ class GTR: public Model
         void						setStateFreqParamPrior(ProbDistShPtr d);
 		ProbDistShPtr				getStateFreqParamPrior();
 		virtual std::string			paramHeader() const;
-		virtual std::string			paramReport() const;
+		virtual std::string			paramReport(unsigned ndecimals) const;
 		double						calcTRatio();
 
 	protected:
@@ -361,7 +361,7 @@ class Codon: public Model
 		ProbDistShPtr				getStateFreqParamPrior();
 
 		virtual std::string			paramHeader() const;
-		virtual std::string			paramReport() const;
+		virtual std::string			paramReport(unsigned ndecimals) const;
 
 		void						updateQMatrix() const;
 		virtual void				createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters) const;

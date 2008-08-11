@@ -91,12 +91,16 @@ std::string JC::paramHeader() const
 |	The only parameters in the JC model are edge lengths, which are not reported by this function, but we must provide
 |	an override of the pure virtual base class version.
 */
-std::string JC::paramReport() const
+std::string JC::paramReport(
+  unsigned ndecimals) const /**< floating point precision to use */
 	{
+    std::string fmt = boost::str(boost::format("%%.%df\t") % ndecimals);
 	std::string s;
 	if (is_flex_model)
 		{
-		s += str(boost::format("\t%d") % num_gamma_rates);
+		s += str(boost::format("%d\t") % num_gamma_rates);
+		//s += str(boost::format("\t%d") % num_gamma_rates);
+
 		//std::vector<double> rates(num_gamma_rates, 0.0);
 		//std::vector<double> probs(num_gamma_rates, 0.0);
 		//normalizeRatesAndProbs(rates, probs);
@@ -112,10 +116,14 @@ std::string JC::paramReport() const
 		}
 	else if (num_gamma_rates > 1)
 		{
-		s += str(boost::format("\t%.5f") % gamma_shape);
+		s += str(boost::format(fmt) % gamma_shape);
+		//s += str(boost::format("\t%.5f") % gamma_shape);
 		}
 	if (is_pinvar_model)
-		s += str(boost::format("\t%.5f") % pinvar);
+        {
+		s += str(boost::format(fmt) % pinvar);
+		//s += str(boost::format("\t%.5f") % pinvar);
+        }
 	return s;
 	}
 

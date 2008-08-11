@@ -1492,6 +1492,7 @@ void Tree::BuildFromString(
 */
 std::string & Tree::AppendNewick(
   std::string & s,
+  unsigned float_precision,
   bool useNumbers)
 	{
 	if (preorderDirty)
@@ -1499,8 +1500,7 @@ std::string & Tree::AppendNewick(
 
 	// Create a tool for formatting floating point values
 	const unsigned floatWidth = UINT_MAX;	// make output width wide enough to hold the formatted value
-	const unsigned floatPrec = 5;			// number of digits following decimal point
-	DoubleFormatter df(floatWidth, floatPrec); 
+	DoubleFormatter df(floatWidth, float_precision); 
 
 	bool showEdgeLens = HasEdgeLens();
 	bool rooted = IsRooted();
@@ -2193,10 +2193,11 @@ preorder_iterator Tree::end()
 |	but unlike AppendNewick() does not have a std::string reference parameter and returns a std::string by value rather
 |	than by reference.
 */
-std::string Tree::MakeNewick()
+std::string Tree::MakeNewick(
+  unsigned float_precision)
 	{
 	std::string s;
-	AppendNewick(s);
+	AppendNewick(s, float_precision);
 	return s;
 	}
 
@@ -2207,10 +2208,11 @@ std::string Tree::MakeNewick()
 |	but unlike AppendNewick() does not have a std::string reference parameter and returns a std::string by value rather
 |	than by reference.
 */
-std::string Tree::MakeNumberedNewick()
+std::string Tree::MakeNumberedNewick(
+  unsigned float_precision)
 	{
 	std::string s;
-	AppendNewick(s, true);
+	AppendNewick(s, float_precision, true);
 	return s;
 	}
 

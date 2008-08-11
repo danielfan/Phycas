@@ -43,6 +43,7 @@ class MCMC(PhycasCommand):
                 ("nchains",                1,                               "The number of Markov chains to run simultaneously. One chain serves as the cold chain from which samples are drawn, the other chains are heated to varying degrees and serve to enhance mixing in the cold chain.", IntArgValidate(min=1,max=1)), # only allowing 1 chain now because multiple chains not yet fully implemented
                 ("uf_num_edges",           50,                              "Number of edges to traverse before taking action to prevent underflow", IntArgValidate(min=1)),
                 ("ntax",                   0,                               "To explore the prior, set to some positive value. Also set data_source to None", IntArgValidate(min=0)),
+                ("ndecimals",              8,                               "Number of decimal places used for sampled parameter values", IntArgValidate(min=1)),
                 ])
 
         # Specify output options

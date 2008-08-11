@@ -388,7 +388,7 @@ class Tree(TreeBase):
         """
         return TreeBase.edgeLenSum(self)
 
-    def makeNewick(self):
+    def makeNewick(self, float_precision = 5):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Returns a string representing the tree in newick format (i.e. using
@@ -403,9 +403,9 @@ class Tree(TreeBase):
         (a:0.11000,b:0.12000,(c:0.21000,(d:0.31000,e:0.32000)y:0.30000)z:0.10000)x
 
         """
-        return TreeBase.makeNewick(self)
+        return TreeBase.makeNewick(self, float_precision)
 
-    def makeNumberedNewick(self):
+    def makeNumberedNewick(self, float_precision = 5):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Returns a 1-based newick representing the tree in newick format (i.e. 
@@ -420,7 +420,7 @@ class Tree(TreeBase):
         (1:0.11000,2:0.12000,(3:0.21000,(4:0.31000,5:0.32000):0.30000):0.10000)
 
         """
-        return TreeBase.makeNumberedNewick(self)
+        return TreeBase.makeNumberedNewick(self, float_precision)
         
     def rectifyNumbers(self, taxon_names):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

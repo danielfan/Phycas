@@ -707,6 +707,8 @@ class MCMCManager:
         by adding a line to the parameter file.
         
         """
+        float_format_str = '%%.%df\t' % self.parent.opts.ndecimals
+        
         # Gather log-likelihoods, and if path sampling save in path_sample list for later
         lnLikes = []
         for i,c in enumerate(self.chains):
@@ -720,25 +722,25 @@ class MCMCManager:
         if self.parent.paramf:
             self.parent.paramf.write('%d\t' % (cycle + 1))
             if self.parent.opts.doing_path_sampling:
-                self.parent.paramf.write('%.5f\t' % (cold_chain.heating_power))
+                self.parent.paramf.write(float_format_str % (cold_chain.heating_power))
             for lnl in lnLikes:
-                self.parent.paramf.write('%.3f\t' % lnl)
-            self.parent.paramf.write('%.3f' % cold_chain.tree.edgeLenSum())
+                self.parent.paramf.write(float_format_str % lnl)
+            self.parent.paramf.write(float_format_str % cold_chain.tree.edgeLenSum())
             
-            self.parent.paramf.write(cold_chain.model.paramReport())
+            self.parent.paramf.write(cold_chain.model.paramReport(self.parent.opts.ndecimals))
             if self.parent.opts.model.edgelen_hyperprior is not None:
                 for p in cold_chain.chain_manager.getEdgeLenHyperparams():
-                    self.parent.paramf.write('\t%.5f' % p.getCurrValue())
+                    self.parent.paramf.write(float_format_str % p.getCurrValue())
             if self.parent.opts.model.use_flex_model:
                 rates_vector = cold_chain.likelihood.getRateMeans()
                 for rr in rates_vector:
-                    self.parent.paramf.write('\t%.5f' % rr)
+                    self.parent.paramf.write(float_format_str % rr)
                 probs_vector = cold_chain.likelihood.getRateProbs()
                 for rp in probs_vector:
-                    self.parent.paramf.write('\t%.5f' % rp)
+                    self.parent.paramf.write(float_format_str % rp)
             self.parent.paramf.write('\n')
         
         # Add line to tree file if it exists
         if self.parent.treef:
-            self.parent.treef.write('   tree rep.%d = %s;\n' % (cycle + 1, cold_chain.tree.makeNewick()))
+            self.parent.treef.write('   tree rep.%d = %s;\n' % (cycle + 1, cold_chain.tree.makeNewick(self.parent.opts.ndecimals)))
 

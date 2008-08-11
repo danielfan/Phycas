@@ -393,7 +393,7 @@ unsigned TopoPriorCalculator::sample(
             return i;
         }
     PHYCAS_ASSERT(0);
-    return (v.size() - 1);
+    return (unsigned)(v.size() - 1);
     }
 
 }	// namespace phycas

@@ -407,22 +407,39 @@ std::string GTR::paramHeader() const
 |	parameters suitable for saving in a sampled parameter file (e.g. like the .p files saved by MrBayes). Assumes that
 |	the `state_freqs' vector has length 4 and the `rel_rates' vector has length 6.
 */
-std::string GTR::paramReport() const
+std::string GTR::paramReport(
+  unsigned ndecimals) const /**< floating point precision to use */
 	{
 	PHYCAS_ASSERT(rel_rates.size() == 6);
 	PHYCAS_ASSERT(state_freqs.size() == 4);
-	std::string s = str(boost::format("\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f") % rel_rates[0] % rel_rates[1] % rel_rates[2] % rel_rates[3] % rel_rates[4] % rel_rates[5]);
-	s += str(boost::format("\t%.5f\t%.5f\t%.5f\t%.5f") % state_freqs[0] % state_freqs[1] % state_freqs[2] % state_freqs[3]);
+    std::string fmt = boost::str(boost::format("%%.%df\t") % ndecimals);
+	std::string s = str(boost::format(fmt) % rel_rates[0]);
+	s += str(boost::format(fmt) % rel_rates[1]);
+	s += str(boost::format(fmt) % rel_rates[2]);
+	s += str(boost::format(fmt) % rel_rates[3]);
+	s += str(boost::format(fmt) % rel_rates[4]);
+	s += str(boost::format(fmt) % rel_rates[5]);
+	//std::string s = str(boost::format("\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f") % rel_rates[0] % rel_rates[1] % rel_rates[2] % rel_rates[3] % rel_rates[4] % rel_rates[5]);
+	s += str(boost::format(fmt) % state_freqs[0]);
+	s += str(boost::format(fmt) % state_freqs[1]);
+	s += str(boost::format(fmt) % state_freqs[2]);
+	s += str(boost::format(fmt) % state_freqs[3]);
+	//s += str(boost::format("\t%.5f\t%.5f\t%.5f\t%.5f") % state_freqs[0] % state_freqs[1] % state_freqs[2] % state_freqs[3]);
 	if (is_flex_model)
 		{
-		s += str(boost::format("\t%d") % num_gamma_rates);
+		s += str(boost::format("%d\t") % num_gamma_rates);
+		//s += str(boost::format("\t%d") % num_gamma_rates);
 		}
 	else if (num_gamma_rates > 1)
 		{
-		s += str(boost::format("\t%.5f") % gamma_shape);
+		s += str(boost::format(fmt) % gamma_shape);
+		//s += str(boost::format("\t%.5f") % gamma_shape);
 		}
 	if (is_pinvar_model)
-		s += str(boost::format("\t%.5f") % pinvar);
+        {
+		s += str(boost::format(fmt) % pinvar);
+		//s += str(boost::format("\t%.5f") % pinvar);
+        }
 	return s;
 	}
 

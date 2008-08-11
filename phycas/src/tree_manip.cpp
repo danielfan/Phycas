@@ -50,6 +50,7 @@ void TreeManip::rescaleAllEdgeLengths(double scaling_factor)
 		}
 	}
 
+#if 0
 /*----------------------------------------------------------------------------------------------------------------------
 |	Deletes a randomly-selected edge from the tree. Does not strip conditional likelihoods before storing internal
 |   nodes, so care should be taken with this function if the likelihood will be calculated on the resulting tree.
@@ -58,7 +59,7 @@ void TreeManip::deleteRandomInternalEdge(LotShPtr rng)
     {
     // Choose an internal node at random (but not the only child of the root node) and delete
     // its edge to create a polytomy (or a bigger polytomy if there is already a polytomy)
-    unsigned num_internals = tree->GetNInternals()
+    unsigned num_internals = tree->GetNInternals();
     PHYCAS_ASSERT(num_internals > 0);
     unsigned i = rng->SampleUInt(num_internals);
 
@@ -91,6 +92,7 @@ void TreeManip::deleteRandomInternalEdge(LotShPtr rng)
 	DeleteLeaf(nd, true);
 	tree->InvalidateNodeCounts();
     }
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Assigns all edge lengths in the tree using independent draws from the ProbabilityDistribution object pointed to by

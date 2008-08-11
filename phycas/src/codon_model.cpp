@@ -380,23 +380,33 @@ std::string Codon::paramHeader() const
 |	Overrides the pure virtual base class version to generate a string of tab-separated values of model-specific 
 |	parameters suitable for saving in a sampled parameter file (e.g. like the .p files saved by MrBayes).
 */
-std::string Codon::paramReport() const
+std::string Codon::paramReport(
+  unsigned ndecimals) const /**< floating point precision to use */
 	{
-	std::string s = str(boost::format("\t%.5f\t%.5f\t") % kappa % omega);
+    std::string fmt = boost::str(boost::format("%%.%df\t") % ndecimals);
+	std::string s = boost::str(boost::format(fmt) % kappa);
+	s += boost::str(boost::format(fmt) % omega);
+	//std::string s = boost::str(boost::format("\t%.5f\t%.5f\t") % kappa % omega);
 	for (unsigned i = 0; i < 61; ++i)
 		{
-		s += str(boost::format("%.5f\t") % state_freqs[i]);
+		s += str(boost::format(fmt) % state_freqs[i]);
+		//s += str(boost::format("%.5f\t") % state_freqs[i]);
 		}
 	if (is_flex_model)
 		{
-		s += str(boost::format("\t%d") % num_gamma_rates);
+		s += str(boost::format("%d\t") % num_gamma_rates);
+		//s += str(boost::format("\t%d") % num_gamma_rates);
 		}
 	else if (num_gamma_rates > 1)
 		{
-		s += str(boost::format("\t%.5f") % gamma_shape);
+		s += str(boost::format(fmt) % gamma_shape);
+		//s += str(boost::format("\t%.5f") % gamma_shape);
 		}
 	if (is_pinvar_model)
-		s += str(boost::format("\t%.5f") % pinvar);
+        {
+		s += str(boost::format(fmt) % pinvar);
+		//s += str(boost::format("\t%.5f") % pinvar);
+        }
 	return s;
 	}
 
