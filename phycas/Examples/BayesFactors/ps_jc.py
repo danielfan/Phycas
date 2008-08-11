@@ -35,6 +35,7 @@ mcmc.out.trees             = 'ps_jc.t'
 mcmc.out.params            = 'ps_jc.p'
 
 mcmc.draw_directly_from_prior = False
+mcmc.ndecimals             = 8
 
 ps.maxbeta                 = 1.0
 ps.minbeta                 = 0.0

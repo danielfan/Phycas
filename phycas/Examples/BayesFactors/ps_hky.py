@@ -37,6 +37,7 @@ mcmc.out.trees             = 'ps_hky.t'
 mcmc.out.params            = 'ps_hky.p'
 
 mcmc.draw_directly_from_prior = False
+mcmc.ndecimals             = 8
 
 ps.maxbeta                 = 1.0
 ps.minbeta                 = 0.0
