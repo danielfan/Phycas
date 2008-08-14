@@ -291,8 +291,12 @@ class MCMCImpl(CommonFunctions):
                 else:
                     self.phycassert(False, "starting_tree_source should equal 'random', 'file', or 'usertree', but instead it was this: %s" % self.starting_tree_source)
             else:
+                # If user failed to specify starting_tree_source, get starting tree from randomtree object
+                # as it is currently configured
+                tr_source = self.opts.starting_tree_source
+                if tr_source is None:
+                    tr_source = randomtree()
                 try:
-                    tr_source = self.opts.starting_tree_source
                     tr_source.setActiveTaxonLabels(self.taxon_labels)
                     i = iter(tr_source)
                     self.starting_tree = i.next()

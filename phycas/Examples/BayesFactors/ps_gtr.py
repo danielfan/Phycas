@@ -20,6 +20,8 @@ model.relrate_prior         = Exponential(1.0)
 model.base_freq_param_prior = Exponential(1.0)
 model.use_flex_model        = False
 
+randomtree.rng             = rng
+
 mcmc.data_source           = 'green.nex'
 mcmc.adapt_first           = 10
 mcmc.verbose               = True

@@ -21,6 +21,8 @@ model.base_freq_param_prior = Exponential(1.0)
 model.fix_kappa             = True
 model.use_flex_model        = False
 
+randomtree.rng             = rng
+
 mcmc.data_source           = 'green.nex'
 mcmc.adapt_first           = 10
 mcmc.verbose               = True

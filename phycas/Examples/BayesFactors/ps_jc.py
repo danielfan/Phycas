@@ -18,6 +18,8 @@ model.edgelen_prior        = Exponential(10.0)
 model.edgelen_hyperprior   = None 
 model.use_flex_model       = False
 
+randomtree.rng             = rng
+
 mcmc.data_source           = 'green.nex'
 mcmc.adapt_first           = 10
 mcmc.verbose               = True

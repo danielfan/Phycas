@@ -21,6 +21,8 @@ model.base_freqs           = [0.25, 0.25, 0.25, 0.25]
 model.fix_freqs            = True
 model.use_flex_model       = False
 
+randomtree.rng             = rng
+
 mcmc.data_source           = 'green.nex'
 mcmc.adapt_first           = 10
 mcmc.verbose               = True
