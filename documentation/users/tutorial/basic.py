@@ -1,5 +1,5 @@
 from phycas import *
-mcmc.data_file_name = 'green.nex'
+mcmc.data_source = 'green.nex'
 mcmc.out.log = 'basic.log'
 mcmc.out.log.mode = REPLACE
 mcmc.out.trees.prefix = 'green'
