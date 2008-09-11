@@ -8,65 +8,95 @@ use-project boost : $(BOOST_ROOT) ;
 
 # Grab the path to the NLC project from the NCL_INSTALL_DIR environmental variable
 local NCL_INSTALL_DIR = [ os.environ NCL_INSTALL_DIR ] ;
+local NCL_ALREADY_INSTALLED = [ os.environ NCL_ALREADY_INSTALLED ] ;
 local OSTYPE = [ os.environ OSTYPE ] ;
 local OS = [ os.environ OS ] ;
-echo $(OSTYPE) ;
-if $(OSTYPE) = "darwin" {
-	echo "Assuming that you have built and installed NCL 2.1 to $NCL_INSTALL_DIR" ;
-}
-else {
-	use-project ncl : $(NCL_INSTALL_DIR) ;
-}
+
 # Tool-specific settings
 echo "---------------------------------------------------------" ;
 echo "Trying to identify the correct toolset." ;
 echo "If the incorrect toolset is chosen, you will need to edit" ;
 echo "the Tool-specific settings section of the Jamroot file..." ;
-if $(OSTYPE) = "linux" {
-  echo "  Looks like this is Linux, so using toolset gcc" ;
-  alias tool_specific_requirements : : : : <toolset>gcc <cxxflags>"-include phycas/src/std_force_include.hpp" ;
-}
-else {
-  if $(OSTYPE) = "darwin" {
-  echo "  Looks like this is a Mac, so using toolset darwin" ;
-  using darwin ;
-  alias tool_specific_requirements : : : : <toolset>darwin <cxxflags>"-include phycas/src/std_force_include.hpp -I$NCL_INSTALL_DIR/include" <linkflags>"-L$NCL_INSTALL_DIR/lib/ncl -lncl" ;
-  }
-  else {
+
+if $(NCL_ALREADY_INSTALLED) {
     if $(OS) = "Windows_NT" {
-      echo "  Looks like this is Windows, so using toolset msvc" ;
-      alias tool_specific_requirements : : : : <toolset>msvc <cxxflags>"-FI std_force_include.hpp" ;
+        echo "Sorry you cannot use the NCL_ALREADY_INSTALLED option on Windows (yet)" ;
+        exit ;
+    }
+    
+    echo "Assuming that you have built and installed NCL 2.1 to $NCL_INSTALL_DIR" ;
+    
+    if $(OSTYPE) = "linux" {
+      echo "  Looks like this is Linux, so using toolset gcc" ;
+      alias tool_specific_requirements : : : : <toolset>gcc <cxxflags>"-include phycas/src/std_force_include.hpp -I$NCL_INSTALL_DIR/include" <linkflags>"-L$NCL_INSTALL_DIR/lib/ncl -lncl" ;
     }
     else {
-      echo "  Could not identify platform.  Expecting an environmental variable:" ;
-      echo "  for Linux:   OSTYPE=linux" ;
-      echo "  for Mac:   OSTYPE=darwin" ;
-      echo "  for Windows:   OS=Windows_NT" ;
-      echo "  Going with toolset gcc just in case that works" ;
-      alias tool_specific_requirements : : : : <toolset>gcc <cxxflags>"-include phycas/src/std_force_include.hpp" ;
+        if $(OSTYPE) = "darwin" {
+            echo "  Looks like this is a Mac, so using toolset darwin" ;
+            using darwin ;
+            alias tool_specific_requirements : : : : <toolset>darwin <cxxflags>"-include phycas/src/std_force_include.hpp -I$NCL_INSTALL_DIR/include" <linkflags>"-L$NCL_INSTALL_DIR/lib/ncl -lncl" ;
+        }
+        else {
+            echo "  Could not identify platform.  Expecting an environmental variable:" ;
+            echo "  for Linux:   OSTYPE=linux" ;
+            echo "  for Mac:   OSTYPE=darwin" ;
+            echo "  for Windows:   OS=Windows_NT" ;
+            echo "  Going with toolset gcc just in case that works" ;
+            alias tool_specific_requirements : : : : <toolset>gcc <cxxflags>"-include phycas/src/std_force_include.hpp" ;
+        }
     }
-  }
 }
+else {
+    echo "Will build NCL using $NCL_INSTALL_DIR/Jamroot" ;
+    use-project ncl : $(NCL_INSTALL_DIR) ;
+    
+    if $(OSTYPE) = "linux" {
+        echo "  Looks like this is Linux, so using toolset gcc" ;
+        alias tool_specific_requirements : : : : <toolset>gcc <cxxflags>"-include phycas/src/std_force_include.hpp" ;
+    }
+    else {
+        if $(OSTYPE) = "darwin" {
+            echo "  Looks like this is a Mac, so using toolset darwin" ;
+            using darwin ;
+            alias tool_specific_requirements : : : : <toolset>darwin <cxxflags>"-include phycas/src/std_force_include.hpp" ;
+        }
+        else {
+            if $(OS) = "Windows_NT" {
+                echo "  Looks like this is Windows, so using toolset msvc" ;
+                alias tool_specific_requirements : : : : <toolset>msvc <cxxflags>"-FI std_force_include.hpp" ;
+            }
+            else {
+                echo "  Could not identify platform.  Expecting an environmental variable:" ;
+                echo "  for Linux:   OSTYPE=linux" ;
+                echo "  for Mac:   OSTYPE=darwin" ;
+                echo "  for Windows:   OS=Windows_NT" ;
+                echo "  Going with toolset gcc just in case that works" ;
+                alias tool_specific_requirements : : : : <toolset>gcc <cxxflags>"-include phycas/src/std_force_include.hpp" ;
+            }
+        }
+    }
+}
+
 echo "---------------------------------------------------------" ;
 
 # Project-wide requirements
 if $(OSTYPE) = "darwin" {
   project phycas 
-	  : requirements 
-		  <library>/boost/python//boost_python 
-		  <include>. 
-		  <include>./phycas/src 
-		  <link>shared ;
+      : requirements 
+          <library>/boost/python//boost_python 
+          <include>. 
+          <include>./phycas/src 
+          <link>shared ;
 } 
 else {
   project phycas 
-	  : requirements 
-		  <library>/boost/python//boost_python 
-		  <library>/ncl//ncl
+      : requirements 
+          <library>/boost/python//boost_python 
+          <library>/ncl//ncl
           <threading>multi
- 		  <include>. 
-		  <include>./phycas/src 
-		  <link>shared ;
+          <include>. 
+          <include>./phycas/src 
+          <link>shared ;
 }
 
 # The rule python-extension is defined in <top-of-boost-build-system>/tools/python.jam
@@ -135,11 +165,11 @@ alias likelihood_sources
     phycas/src/boost_assertion_failed.cpp
     phycas/src/bush_move.cpp 
     phycas/src/cipres/CipresDataMatrixHelper.cpp
-	phycas/src/codon_model.cpp
+    phycas/src/codon_model.cpp
     phycas/src/cond_likelihood_storage.cpp
-	phycas/src/discrete_gamma_shape_param.cpp
+    phycas/src/discrete_gamma_shape_param.cpp
     phycas/src/thirdparty/dcdflib/src/dcdflib.c
-	phycas/src/edgelen_master_param.cpp
+    phycas/src/edgelen_master_param.cpp
     phycas/src/edge_move.cpp 
     phycas/src/flex_prob_param.cpp
     phycas/src/flex_rate_param.cpp 
