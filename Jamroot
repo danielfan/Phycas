@@ -52,13 +52,13 @@ else {
     
     if $(OSTYPE) = "linux" {
         echo "  Looks like this is Linux, so using toolset gcc" ;
-        alias tool_specific_requirements : : : : <toolset>gcc <cxxflags>"-include phycas/src/std_force_include.hpp" ;
+        alias tool_specific_requirements : : : : <toolset>gcc <cxxflags>"-include phycas/src/std_force_include.hpp -I$NCL_INSTALL_DIR" ;
     }
     else {
         if $(OSTYPE) = "darwin" {
             echo "  Looks like this is a Mac, so using toolset darwin" ;
             using darwin ;
-            alias tool_specific_requirements : : : : <toolset>darwin <cxxflags>"-include phycas/src/std_force_include.hpp" ;
+            alias tool_specific_requirements : : : : <toolset>darwin <cxxflags>"-include phycas/src/std_force_include.hpp -I$NCL_INSTALL_DIR" ;
         }
         else {
             if $(OS) = "Windows_NT" {
