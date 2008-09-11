@@ -45,6 +45,15 @@ if $(NCL_ALREADY_INSTALLED) {
             alias tool_specific_requirements : : : : <toolset>gcc <cxxflags>"-include phycas/src/std_force_include.hpp" ;
         }
     }
+    
+    echo "---------------------------------------------------------" ;
+    project phycas 
+      : requirements 
+          <library>/boost/python//boost_python 
+          <include>. 
+          <include>./phycas/src 
+          <link>shared ;
+
 }
 else {
     echo "Will build NCL using $NCL_INSTALL_DIR/Jamroot" ;
@@ -75,21 +84,9 @@ else {
             }
         }
     }
-}
 
-echo "---------------------------------------------------------" ;
-
-# Project-wide requirements
-if $(OSTYPE) = "darwin" {
-  project phycas 
-      : requirements 
-          <library>/boost/python//boost_python 
-          <include>. 
-          <include>./phycas/src 
-          <link>shared ;
-} 
-else {
-  project phycas 
+    echo "---------------------------------------------------------" ;
+    project phycas 
       : requirements 
           <library>/boost/python//boost_python 
           <library>/ncl//ncl
@@ -98,6 +95,7 @@ else {
           <include>./phycas/src 
           <link>shared ;
 }
+
 
 # The rule python-extension is defined in <top-of-boost-build-system>/tools/python.jam
 # The boost-build.jam file in this directory points bjam to <top-of-boost-build-system>
