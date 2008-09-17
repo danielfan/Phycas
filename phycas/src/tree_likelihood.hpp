@@ -20,25 +20,20 @@
 #if ! defined(TREE_LIKELIHOOD_HPP)
 #define TREE_LIKELIHOOD_HPP
 
-#include "phycas/src/states_patterns.hpp"
 #include <vector>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
-#include "phycas/src/cipres/AllocateMatrix.hpp"
-#include "phycas/src/cipres/ConfigDependentHeaders.h"	// int8_t typedef
+
+#include "ncl/nxscxxdiscretematrix.h"
+
+#include "phycas/src/states_patterns.hpp"
 #include "phycas/src/likelihood_models.hpp"
 #include "phycas/src/cond_likelihood.hpp"
 #include "phycas/src/cond_likelihood_storage.hpp"
 #include "phycas/src/underflow_policy.hpp"
 #include "phycas/src/univent_prob_mgr.hpp"
 
-struct CIPRES_Matrix;
-
-namespace CipresNative
-{
-class DiscreteMatrix;
-}
 	
 namespace phycas
 {
@@ -110,7 +105,7 @@ class TreeLikelihood
 		void							prepareForLikelihood(TreeShPtr);
 		void							prepareInternalNodeForLikelihood(TreeNode * nd);
 
-		void							copyDataFromDiscreteMatrix(const CipresNative::DiscreteMatrix &);
+		void							copyDataFromDiscreteMatrix(const NxsCXXDiscreteMatrix &);
 		void							copyDataFromSimData(SimDataShPtr sim_data);
 
 		bool							invalidateNode(TreeNode * ref_nd, TreeNode * neighbor_closer_to_likelihood_root);
@@ -219,7 +214,7 @@ class TreeLikelihood
 		TipData *						allocateTipData(unsigned);
 		InternalData *					allocateInternalData();
 
-		unsigned						compressDataMatrix(const CipresNative::DiscreteMatrix &);
+		unsigned						compressDataMatrix(const NxsCXXDiscreteMatrix &);
 
 		void							calcTMatForSim(TipData &, double);
 		void							simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar, bool refresh_probs);

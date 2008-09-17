@@ -22,7 +22,6 @@
 #include <algorithm>
 #include <functional>
 #include <boost/format.hpp>
-#include "phycas/src/cipres/ConfigDependentHeaders.h"	// int8_t typedef
 #include "phycas/src/basic_tree.hpp"
 #include "phycas/src/tip_data.hpp"
 #include "phycas/src/sim_data.hpp"

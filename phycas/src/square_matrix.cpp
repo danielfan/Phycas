@@ -18,7 +18,11 @@
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #include "phycas/src/square_matrix.hpp"
-#include "boost/format.hpp"
+
+#include <boost/format.hpp>
+
+#include "ncl/nxsallocatematrix.h"
+
 
 namespace phycas
 {

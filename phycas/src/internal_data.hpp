@@ -24,8 +24,6 @@
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
-#include "phycas/src/cipres/AllocateMatrix.hpp"
-#include "phycas/src/cipres/ConfigDependentHeaders.h"
 #include "phycas/src/states_patterns.hpp"
 #include "phycas/src/univents.hpp"
 

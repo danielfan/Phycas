@@ -149,7 +149,6 @@ install ProbDist : _ProbDist : <location>phycas/ProbDist ;
 alias datamatrix_sources
   : phycas/src/data_matrix_pymod.cpp
     phycas/src/boost_assertion_failed.cpp
-    phycas/src/cipres/CipresDataMatrixHelper.cpp
     tool_specific_requirements ;
 python-extension _DataMatrixBase : datamatrix_sources ;
 install DataMatrix : _DataMatrixBase : <location>phycas/DataMatrix ;
@@ -162,7 +161,6 @@ alias likelihood_sources
     phycas/src/basic_tree_node.cpp 
     phycas/src/boost_assertion_failed.cpp
     phycas/src/bush_move.cpp 
-    phycas/src/cipres/CipresDataMatrixHelper.cpp
     phycas/src/codon_model.cpp
     phycas/src/cond_likelihood_storage.cpp
     phycas/src/discrete_gamma_shape_param.cpp
@@ -238,8 +236,6 @@ alias readnexus_sources
   : phycas/src/basic_cdf.cpp
     phycas/src/read_nexus_pymod.cpp
     phycas/src/boost_assertion_failed.cpp
-    phycas/src/cipres/CipresDataMatrixHelper.cpp
-    phycas/src/cipres/cipres_nexus_reader.cpp           #POL 18-Mar-2006 may need to comment out for Mac
     phycas/src/probability_distribution.cpp
     phycas/src/basic_lot.cpp
     phycas/src/thirdparty/dcdflib/src/dcdflib.c

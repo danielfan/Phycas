@@ -18,7 +18,6 @@
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 //#include "phycas/force_include.h"
-#include "phycas/src/cipres/CipresDataMatrixHelper.h"
 #include "phycas/src/basic_tree.hpp"
 #include "phycas/src/likelihood_models.hpp"
 #include "phycas/src/tree_likelihood.hpp"
@@ -2732,7 +2731,7 @@ void TreeLikelihood::prepareForSimulation(
 |	Builds `pattern_map' and `pattern_counts' using uncompressed data stored in `mat'.
 */
 void TreeLikelihood::copyDataFromDiscreteMatrix(
-  const CipresNative::DiscreteMatrix & mat)		/**< is the data source */
+  const NxsCXXDiscreteMatrix & mat)		/**< is the data source */
 	{
 	nTaxa = mat.getNTax();
 
@@ -2948,7 +2947,7 @@ unsigned TreeLikelihood::buildConstantStatesVector()
             // state_list_pos  0   2   4   6   8           14        19      23      27       30
 
             int code = (int)(pat->first)[taxon];
-            PHYCAS_ASSERT(code >= 0);   // Mark, why don't ? and - states trigger this assert? Does this have to do with the fact that we have abandoned the Cipres version of NCL?
+            PHYCAS_ASSERT(code >= 0);   // Mark, why don't ? and - states trigger this assert? Does this have to do with the fact that we have abandoned the Cipres version of NCL? We translate - to ? in the NxsCXXDiscreteMatrix constructor
             unsigned pos = (unsigned)state_list_pos[code];
             unsigned n = (unsigned)state_list[pos];
             curr_states.clear();
@@ -3006,7 +3005,7 @@ unsigned TreeLikelihood::buildConstantStatesVector()
 |	and whose value is a count of the number of sites having that pattern. The counts from `pattern_map' are transferred  
 |	to the `pattern_counts' vector (vectors are more efficient containers for use during likelihood calculations).
 */
-unsigned TreeLikelihood::compressDataMatrix(const CipresNative::DiscreteMatrix & mat) //POL_BOOKMARK TreeLikelihood::compressDataMatrix
+unsigned TreeLikelihood::compressDataMatrix(const NxsCXXDiscreteMatrix & mat) //POL_BOOKMARK TreeLikelihood::compressDataMatrix
 	{
 	pattern_map.clear();
 	unsigned ntax = mat.getNTax();

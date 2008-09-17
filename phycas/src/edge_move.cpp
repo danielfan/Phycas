@@ -17,8 +17,6 @@
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-//#include "phycas/force_include.h"
-#include "phycas/src/cipres/CipresDataMatrixHelper.h"
 #include "phycas/src/probability_distribution.hpp"
 #include "phycas/src/likelihood_models.hpp"
 #include "phycas/src/basic_tree_node.hpp"

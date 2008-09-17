@@ -24,24 +24,24 @@
 #include <boost/python.hpp>
 
 //#include "phycas/force_include.h"
-#include "phycas/src/cipres/CipresDataMatrixHelper.h"
+#include "ncl/nxscxxdiscretematrix.h"
 
 using namespace boost::python;
 
 BOOST_PYTHON_MODULE(_DataMatrixBase)
 {
-	class_<CipresNative::DiscreteMatrix, boost::noncopyable>("DataMatrixBase", no_init)
-		.def("getDatatype",  &CipresNative::DiscreteMatrix::getDatatype)
-		.def("getNChar", &CipresNative::DiscreteMatrix::getNChar)
-		.def("getNTax", &CipresNative::DiscreteMatrix::getNTax)
-		.def("getNStates", &CipresNative::DiscreteMatrix::getNStates)
-		.def("getSymbolsList", &CipresNative::DiscreteMatrix::getSymbolsList)
-		.def("getStateList", &CipresNative::DiscreteMatrix::getStateList, return_value_policy<copy_const_reference>())
-		.def("getStateListPos", &CipresNative::DiscreteMatrix::getStateListPos, return_value_policy<copy_const_reference>())
-		.def("getCodedDataMatrix", &CipresNative::DiscreteMatrix::getConstNativeC, return_value_policy<copy_const_reference>())
-		.def("getRow", &CipresNative::DiscreteMatrix::getRowAsVector)
-		.def("getIntWeights", &CipresNative::DiscreteMatrix::getIntWeights, return_value_policy<copy_non_const_reference>())
-		.def("getFloatWeights", &CipresNative::DiscreteMatrix::getDblWeights, return_value_policy<copy_non_const_reference>())
-		.def("getExcludedIndices", &CipresNative::DiscreteMatrix::getExcludedCharIndicesAsVector)
+	class_<NxsCXXDiscreteMatrix, boost::noncopyable>("DataMatrixBase", no_init)
+		.def("getDatatype",  &NxsCXXDiscreteMatrix::getDatatype)
+		.def("getNChar", &NxsCXXDiscreteMatrix::getNChar)
+		.def("getNTax", &NxsCXXDiscreteMatrix::getNTax)
+		.def("getNStates", &NxsCXXDiscreteMatrix::getNStates)
+		.def("getSymbolsList", &NxsCXXDiscreteMatrix::getSymbolsList)
+		.def("getStateList", &NxsCXXDiscreteMatrix::getStateList, return_value_policy<copy_const_reference>())
+		.def("getStateListPos", &NxsCXXDiscreteMatrix::getStateListPos, return_value_policy<copy_const_reference>())
+		.def("getCodedDataMatrix", &NxsCXXDiscreteMatrix::getConstNativeC, return_value_policy<copy_const_reference>())
+		.def("getRow", &NxsCXXDiscreteMatrix::getRowAsVector)
+		.def("getIntWeights", &NxsCXXDiscreteMatrix::getIntWeights, return_value_policy<copy_non_const_reference>())
+		.def("getFloatWeights", &NxsCXXDiscreteMatrix::getDblWeights, return_value_policy<copy_non_const_reference>())
+		.def("getExcludedIndices", &NxsCXXDiscreteMatrix::getExcludedCharIndicesAsVector)
 		;
 }

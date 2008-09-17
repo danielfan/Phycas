@@ -19,8 +19,8 @@
 
 #include <cmath>
 #include <iostream>
+#include "ncl/nxsallocatematrix.h"
 #include "phycas/src/likelihood_models.hpp"
-#include "phycas/src/cipres/AllocateMatrix.hpp"
 #if defined(PYTHON_ONLY) && defined(USING_NUMARRAY)
 #	include <boost/python/numeric.hpp>
 #	include "phycas/src/thirdparty/num_util/num_util.h"

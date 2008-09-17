@@ -20,8 +20,6 @@
 #if ! defined(SQUARE_MATRIX_HPP)
 #define SQUARE_MATRIX_HPP
 
-#include "phycas/src/cipres/AllocateMatrix.hpp"
-	
 namespace phycas
 {
 

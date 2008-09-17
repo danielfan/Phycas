@@ -22,8 +22,8 @@
 //#	pragma warning(error : 4710) // reports functions not inlined as errors
 //#endif
 
-//#include "phycas/force_include.h"
-#include "phycas/src/cipres/CipresDataMatrixHelper.h"
+#include "ncl/nxsutilcopy.h"
+
 #include "phycas/src/basic_tree.hpp"
 #include "phycas/src/cond_likelihood.hpp"
 #include "phycas/src/likelihood_models.hpp"
@@ -31,7 +31,6 @@
 #include "phycas/src/tip_data.hpp"
 #include "phycas/src/internal_data.hpp"
 #include "phycas/src/edge_endpoints.hpp"
-#include "phycas/src/cipres/util_copy.hpp"
 #include <numeric>
 
 #include <iostream>
@@ -57,7 +56,7 @@ void scaleVector(std::vector<T> & scaled, const vector<T> & orig, T scaler)
 	const unsigned origLen = (const unsigned)orig.size();
 	scaled.resize(origLen);
 	scaled.assign(origLen, scaler);
-	cip_imult(orig.begin(), orig.end(), scaled.begin());
+	ncl_imult(orig.begin(), orig.end(), scaled.begin());
 	}
 
 template<typename T>
@@ -175,11 +174,11 @@ void TreeLikelihood::calcPMatTranspose(
 			unsigned indexIntoStateList = stateListPosArr[ambigCode];
 			const unsigned nObservedStates = stateListArr[indexIntoStateList++];
 			unsigned currObservedState = stateListArr[indexIntoStateList++];
-			cip_copy(pMat[currObservedState], pMat[currObservedState] + num_states, pMat[currPMatRowIndex]);
+			ncl_copy(pMat[currObservedState], pMat[currObservedState] + num_states, pMat[currPMatRowIndex]);
 			for (unsigned m = 1; m < nObservedStates; ++m)
 				{
 				currObservedState = stateListArr[indexIntoStateList++];
-				cip_iadd(pMat[currObservedState], pMat[currObservedState] + num_states, pMat[currPMatRowIndex]);
+				ncl_iadd(pMat[currObservedState], pMat[currObservedState] + num_states, pMat[currPMatRowIndex]);
 				}
 			}
 		}

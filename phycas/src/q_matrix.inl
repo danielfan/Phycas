@@ -21,7 +21,7 @@
 #include <boost/lambda/lambda.hpp>				// for boost::lambda::_1
 #include <boost/lambda/bind.hpp>				// for boost::lambda::bind
 #include "phycas/src/q_matrix.hpp"
-#include "phycas/src/cipres/AllocateMatrix.hpp"
+#include "ncl/nxsallocatematrix.h"
 #include <functional>
 #include <algorithm>
 #include <boost/format.hpp>

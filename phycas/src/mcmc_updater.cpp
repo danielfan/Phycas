@@ -18,7 +18,6 @@
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 //#include "phycas/force_include.h"
-#include "phycas/src/cipres/CipresDataMatrixHelper.h"
 #include "phycas/src/likelihood_models.hpp"
 #include "phycas/src/tree_likelihood.hpp"
 #include "phycas/src/mcmc_updater.hpp"
