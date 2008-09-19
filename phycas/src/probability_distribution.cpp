@@ -2162,6 +2162,17 @@ double BetaDistribution::GetCDF(double x) const
 	return cdf.CumBeta(x, alphaParam, betaParam);
 	}
 	
+double BetaDistribution::GetQuantile(
+  double p) const   /**< is the integral from 0.0 up to x (x is the value returned) */
+	{
+	if (p <= 0.0)
+		return 0.0;
+    else if (p >= 1.0)
+        return 1.0;
+
+	return cdf.BetaQuantile(p, alphaParam, betaParam);
+	}
+	
 double BetaDistribution::Sample() const
 	{
 	double x_1 = cdf.SampleGamma(lot->Uniform(FILE_AND_LINE), alphaParam, 1.0); 

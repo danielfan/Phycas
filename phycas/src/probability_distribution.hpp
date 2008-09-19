@@ -207,6 +207,7 @@ class BetaDistribution  : public ProbabilityDistribution
 		double 			GetVar() const;
 		double 			GetStdDev() const;
 		double			GetCDF(double x) const;
+		double			GetQuantile(double p) const;
 		double			Sample() const;
 		double			GetLnPDF(double x) const;
 		double			GetRelativeLnPDF(double x) const;

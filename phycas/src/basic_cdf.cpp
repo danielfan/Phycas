@@ -31,6 +31,28 @@ double CDF::LnGamma(double a) const
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Returns x where the integral of the beta probability density function from 0 to x equals the supplied value `p'
+*/
+double CDF::BetaQuantile(
+  double p,		/**< is the integral of the probability density function from 0 to x (the value x is returned) */
+  double alpha,	/**< is the first parameter of the Beta distribution */
+  double beta)	const /**< is the second parameter of the Beta distribution */
+	{
+    int which    = 2;       // tells cdfbet function you want to calculate X,Y given P,Q,A,B
+	double P	 = p;       // integral from 0 to X
+	double Q	 = 1.0 - p; // integral from X to 1
+	double A	 = alpha;   // first shape parameter of the beta distribution
+	double B	 = beta;    // second shape parameter of the beta distribution
+    double X     = 0.0;     // upper limit of integration (calculated and returned)
+    double Y     = 0.0;     // lower limit of integration (calculated but not returned)
+    int status   = 0;       // remains 0 if everything went well
+    double bound = 0.0;     // unimportant if status is 0
+
+    cdfbet(&which, &P, &Q, &X, &Y, &A, &B, &status, &bound);
+	return X;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Returns cumulative beta distribution function for value `x' and parameters `alpha' and `beta'. This is the integral
 |	of the beta probability density function from 0 to x.
 */

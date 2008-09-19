@@ -214,6 +214,20 @@ class Beta(BetaDistBase, PyDistributionBase):
         """
         return BetaDistBase.getCDF(self, x)
         
+    def getQuantile(self, p):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Given p, the integral of the probability density function from 0.0
+        up to a value x, returns x.
+
+        >>> from phycas.ProbDist import *
+        >>> d = Beta(2, 3)
+        >>> print '%.5f' % d.getQuantile(0.35)
+        0.30096
+
+        """
+        return BetaDistBase.getQuantile(self, p)
+        
     def sample(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """

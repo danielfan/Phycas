@@ -65,7 +65,7 @@ class MCMCImpl(CommonFunctions):
         self.ps_beta_index          = 0
         self.ps_sampled_betas       = None
         self.ps_sampled_likes       = None
-        self.ps_delta_beta          = 0.0
+        #self.ps_delta_beta          = 0.0   # can be deleted when new system in place
         self.phycassert(self.opts.ps_nbetavals > 0, 'ps_nbetavals cannot be less than 1')
 
     def sliceSamplerReport(self, s, nm):
@@ -666,8 +666,34 @@ class MCMCImpl(CommonFunctions):
             self.phycassert(self.opts.nchains == 1, 'path sampling requires nchains to be 1')
             chain = self.mcmc_manager.getColdChain()
             if self.opts.ps_nbetavals > 1:
-                self.ps_delta_beta = float(self.opts.ps_maxbeta - self.opts.ps_minbeta)/float(self.opts.ps_nbetavals - 1)
-                self.ps_sampled_betas = [self.opts.ps_maxbeta - self.ps_delta_beta*float(i) for i in range(self.opts.ps_nbetavals)]
+                # old way (constant ps_delta_beta)
+                #     self.ps_delta_beta = float(self.opts.ps_maxbeta - self.opts.ps_minbeta)/float(self.opts.ps_nbetavals - 1)
+                #     self.ps_sampled_betas = [self.opts.ps_maxbeta - self.ps_delta_beta*float(i) for i in range(self.opts.ps_nbetavals)]
+                # new way (ps_delta_beta is a vector of values determined by discretized beta distribution)
+                # Beta distribution will be divided into ps_nbetavals intervals, each of which has an equal area
+                segment_area = 1.0/float(self.opts.ps_nbetavals - 1)
+                cum_area = 0.0
+                lower_boundary = 0.0
+                self.ps_sampled_betas = [self.opts.ps_minbeta]
+                total_extent = float(self.opts.ps_maxbeta - self.opts.ps_minbeta)
+                betadist = ProbDist.Beta(self.opts.ps_shape1, self.opts.ps_shape2)
+                for i in range(self.opts.ps_nbetavals - 1):
+                    cum_area += segment_area
+                    upper_boundary = betadist.getQuantile(cum_area)
+                    scaled_upper_boundary = self.opts.ps_minbeta + total_extent*upper_boundary
+                    self.ps_sampled_betas.append(scaled_upper_boundary)
+                    lower_boundary = upper_boundary
+                    
+                # Reverse the sampled betas so that they start at 1.0 and decrease toward 0.0
+                self.ps_sampled_betas.reverse()
+                
+                # Output the beta values that will be used
+                self.output('The %d heating powers chosen from a discrete\nBeta(%.5f, %.5f) distribution were:' % (self.opts.ps_nbetavals, self.opts.ps_shape1, self.opts.ps_shape2))
+                self.output('An MCMC analysis will be performed using each of')
+                self.output('these as the power to which the likelihood is raised.')
+                for i,x in enumerate(self.ps_sampled_betas):
+                    self.output('%6d %12.5f' % (i+1,x))
+                self.output()
             else:
                 self.ps_sampled_betas = [self.opts.ps_minbeta]
             

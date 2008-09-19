@@ -32,4 +32,6 @@ mcmc.draw_directly_from_prior = True
 ps.nbetavals              = 5
 ps.maxbeta                = 1.0
 ps.minbeta                = 0.0
+ps.shape1                 = 1
+ps.shape2                 = 1
 ps()

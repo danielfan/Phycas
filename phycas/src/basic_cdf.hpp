@@ -46,6 +46,7 @@ class CDF
 	{
 	public:
 		double 						LnGamma(double x) const;
+		double						BetaQuantile(double p, double alpha, double beta) const;
 		double						CumBeta(double x, double alpha, double beta) const;
 		double						CumGamma(double x, double alpha, double beta) const;
 		double						SampleGamma(double p, double alpha, double beta) const;
