@@ -75,6 +75,10 @@ class MCMC(PhycasCommand):
         self.__dict__["ps_shape2"] = 1.0
         self.__dict__["ps_heating_likelihood"] = False
         
+        # The data members added below are hidden from the user because they are set when the mcmc command runs
+        self.__dict__["ps_sampled_likes"] = None
+        self.__dict__["ps_sampled_betas"] = None
+        
     def checkSanity(self):
         """
         Place asserts in this function that should be checked before anything substantive
@@ -90,3 +94,5 @@ class MCMC(PhycasCommand):
         #c = self
         mcmc_impl = MCMCImpl(c)
         mcmc_impl.run()
+        self.ps_sampled_betas = mcmc_impl.ps_sampled_betas
+        self.ps_sampled_likes = mcmc_impl.ps_sampled_likes

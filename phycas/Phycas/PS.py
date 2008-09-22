@@ -14,6 +14,10 @@ class PS(PhycasCommand):
         self.__dict__["hidden"] = True # hide from main phycas help list of commands until working
         PhycasCommand.__init__(self, args, "ps", "Performs path sampling (thermodynamic integration) for purposes of estimating the marginal likelihood of the current model.")
 
+        # The data members added below are hidden from the user because they are set when the mcmc command runs
+        self.__dict__["sampled_likes"] = None
+        self.__dict__["sampled_betas"] = None
+
     def hidden():
         """ 
         Overrides the PhycasCommand.hidden method to keep PS's name from being displayed 
@@ -44,3 +48,5 @@ class PS(PhycasCommand):
         mcmc()
         mcmc.ps_heating_likelihood = False
         mcmc.doing_path_sampling = False
+        self.sampled_betas = mcmc.ps_sampled_betas
+        self.sampled_likes = mcmc.ps_sampled_likes
