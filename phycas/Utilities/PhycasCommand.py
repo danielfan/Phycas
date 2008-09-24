@@ -286,6 +286,7 @@ class FileOutputSpec(PhycasOutput):
                 o.__dict__[k] = copy.deepcopy(v)
         memo[self] = o
         return o
+        
     def __bool__(self):
         return bool(self._is_active and (self.filename or self.prefix))
 
@@ -341,9 +342,8 @@ class FileOutputSpec(PhycasOutput):
         if self._options:
             self._options._write_latex_item(out, pref)
 
-
     def _current_str_list(self, pref=""):
-        """Generates a list of strings formatted for displaying current valuet
+        """Generates a list of strings formatted for displaying current value.
         Assumes that PhycasTablePrinter._reset_term_width has been called 
         more recently than the last terminal width change)."""
         if pref:
@@ -456,6 +456,10 @@ class FileOutputSpec(PhycasOutput):
             return self._getFilename()
 
     def open(self, out, as_log_file=False):
+        # Do not open the file if user has deactivated
+        if not self.__bool__():
+            return None
+            
         self._opened_filename = self._getFilename()
         self._prexisting = os.path.exists(self._opened_filename)
         m =  isinstance(self.mode, AppendExistingFileBehavior) and "a" or "w"
@@ -624,6 +628,7 @@ class PhycasCommandOutputOptions(object):
         self.__dict__["_help_order"] = []
         self.__dict__["_outputter"] = None
         self.__dict__["_stream"] = None
+        
     def __deepcopy__(self, memo):
         c = memo.get(self)
         if not c is None:
@@ -636,6 +641,7 @@ class PhycasCommandOutputOptions(object):
                 o.__dict__[k] = copy.deepcopy(v, memo)
         memo[self] = o
         return o
+        
     def __setattr__(self, name, value):
         if name == "_outputter" or name == "_stream":
             self.__dict__[name] = value
@@ -651,9 +657,9 @@ class PhycasCommandOutputOptions(object):
                 isintarg = isinstance(value, int) or isinstance(value, long)
                 turning_off = ((value is None) or (value is False) or (isintarg and value == 0))
                 turning_on = ((value is True) or (isintarg and value != 0))
-                if turning_off and (outp is not None):
+                if turning_off:     # POL deleted "and (outp is not None)"
                     o._silence()
-                elif turning_on and (outp is not None):
+                elif turning_on:    # POL deleted  "and (outp is not None)"
                     o._activate()
                 else:
                     o.set(value)

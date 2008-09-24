@@ -183,8 +183,8 @@ class MCMCImpl(CommonFunctions):
         except:
             print '*** Attempt to open tree file (%s) failed.' % self.opts.out.trees.filename
 
-        #self.treef = file(self.tree_file_name, 'w')
-        self.mcmc_manager.treeFileHeader(self.treef)
+        if self.treef:
+            self.mcmc_manager.treeFileHeader(self.treef)
 
     def treeFileClose(self):
         self.treef.write('end;\n')
@@ -205,9 +205,9 @@ class MCMCImpl(CommonFunctions):
         except:
             print '*** Attempt to open parameter file (%s) failed.' % self.opts.out.params.filename
 
-        #self.paramf = file(self.param_file_name, 'w')
-        self.mcmc_manager.paramFileHeader(self.paramf)
-        self.paramf.write('\n')
+        if self.paramf:
+            self.mcmc_manager.paramFileHeader(self.paramf)
+            self.paramf.write('\n')
 
     def paramFileClose(self):
         self.paramf.close()
