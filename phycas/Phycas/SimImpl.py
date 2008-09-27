@@ -23,6 +23,7 @@ class SimImpl(CommonFunctions):
         self.ntax                 = None
         self.sim_model_tree       = None
         self.data_matrix          = None
+        
     def getStartingTree(self):
         if self.starting_tree is None:
             try:
@@ -33,6 +34,7 @@ class SimImpl(CommonFunctions):
                 self.stdout.error("A tree could not be obtained from the tree_source")
                 raise
         return self.starting_tree
+        
     def run(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """

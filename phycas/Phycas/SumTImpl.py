@@ -22,8 +22,6 @@ class TreeSummarizer(CommonFunctions):
         """
         CommonFunctions.__init__(self, opts)
         
-        self.pdf_splits_to_plot = None
-
         self.pdf_page_width = 8.5       # should be an option
         self.pdf_page_height = 11.0     # should be an option
         self.pdf_ladderize = 'right'    # should be an option - valid values are 'right', 'left' or None
@@ -373,6 +371,7 @@ class TreeSummarizer(CommonFunctions):
         saved to the file sumt_output_tree_file if this variable is not None.
         
         """
+       
         # Check to make sure user specified an input tree file
         input_trees = self.opts.trees
         self.stdout.phycassert(input_trees, 'trees cannot be None or empty when sumt method is called')
@@ -474,6 +473,7 @@ class TreeSummarizer(CommonFunctions):
         self.stdout.info('%6s %s %s %10s %10s %s %s %s' % ('split', split_str, freq_str, 'prob.', 'weight', s0_str, sk_str, k_str))
         first_below_50 = None
         num_trivial = 0
+        split_info = []
         for i,(k,v) in enumerate(split_vect):
             # len(v) is 2 in trivial splits because these splits are associated with tips, 
             # for which the sojourn history is omitted (v[0] is frequency and v[1] is edge length sum)
@@ -517,6 +517,7 @@ class TreeSummarizer(CommonFunctions):
             s0_str = sojourn_fmt_str % first_sojourn_start
             sk_str = sojourn_fmt_str % last_sojourn_end
             k_str = sojourn_fmt_str % num_sojourns
+            split_info.append((split_str, trivial_split, split_freq, split_posterior, split_weight, num_sojourns, first_sojourn_start, last_sojourn_end))
             self.stdout.info('%6d %s %s %10.5f %10.5f %s %s %s' % (i + 1, split_str, freq_str, split_posterior, split_weight, s0_str, sk_str, k_str))
 
         # Build 50% majority rule tree if requested
@@ -617,6 +618,8 @@ class TreeSummarizer(CommonFunctions):
                     self.optsout.splits.close()
 
         self.stdout.info('\nSumT finished.')
+        return split_info
+        
     def _getSplitsPDFWriter(self):
         if self._splitsPdfWriter is None:
             sp = self.optsout.splits 

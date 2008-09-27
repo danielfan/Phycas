@@ -53,7 +53,6 @@ mcmc.allow_polytomies = True
 mcmc.polytomy_prior   = True
 mcmc.topo_prior_C     = exp(1.0)
 
-
 # Read the data from a file (here we specified the location relative to this file)
 # Note that you should use forward slashes ('/') even if running in Windows.
 file_contents = readFile('ShoupLewis.nex')
