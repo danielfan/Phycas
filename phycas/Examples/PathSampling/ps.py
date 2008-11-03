@@ -20,7 +20,7 @@ model.gamma_shape_prior = ProbDist.Exponential(2.0)
 # equivalent to placing a Dirichlet(a,a,a,a) prior on the actual base frequencies. If you
 # change the prior, you should keep the second one (the scale) set to 1.0 if you want the
 # joint base frequency prior to remain Dirichlet.
-model.base_freq_param_prior = ProbDist.Gamma(1.0, 1.0)
+model.state_freq_param_prior = ProbDist.Gamma(1.0, 1.0)
 
 # Set the prior for kappa, the ratio of the rate of transitions to the rate of transversions
 model.kappa_prior = ProbDist.Exponential(1.0)

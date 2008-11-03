@@ -17,7 +17,7 @@ model.pinvar_model         = False
 model.edgelen_prior        = Exponential(10.0)
 model.edgelen_hyperprior   = None 
 model.kappa_prior          = Exponential(0.2)
-model.base_freqs           = [0.25, 0.25, 0.25, 0.25]
+model.state_freqs           = [0.25, 0.25, 0.25, 0.25]
 model.fix_freqs            = True
 model.use_flex_model       = False
 

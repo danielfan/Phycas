@@ -92,13 +92,13 @@ class LikelihoodCore(object):
                 self.model.setKappa(self.parent.opts.model.kappa)
                 if self.parent.opts.model.fix_kappa:
                     self.model.fixKappa()
-            self.parent.phycassert(self.parent.opts.model.base_freqs, 'base_freqs is None, but should be a list containing 4 (unnormalized) relative base frequencies')
-            self.parent.phycassert(len(self.parent.opts.model.base_freqs) == 4, 'base_freqs should be a list containing exactly 4 base frequencies; instead, it contains %d values' % len(self.parent.opts.model.base_freqs))
-            self.parent.phycassert(self.parent.opts.model.base_freqs[0] >= 0.0, 'base_freqs[0] cannot be negative (%f was specified)' % self.parent.opts.model.base_freqs[0])
-            self.parent.phycassert(self.parent.opts.model.base_freqs[1] >= 0.0, 'base_freqs[1] cannot be negative (%f was specified)' % self.parent.opts.model.base_freqs[1])
-            self.parent.phycassert(self.parent.opts.model.base_freqs[2] >= 0.0, 'base_freqs[2] cannot be negative (%f was specified)' % self.parent.opts.model.base_freqs[2])
-            self.parent.phycassert(self.parent.opts.model.base_freqs[3] >= 0.0, 'base_freqs[3] cannot be negative (%f was specified)' % self.parent.opts.model.base_freqs[3])
-            self.model.setNucleotideFreqs(self.parent.opts.model.base_freqs[0], self.parent.opts.model.base_freqs[1], self.parent.opts.model.base_freqs[2], self.parent.opts.model.base_freqs[3])  #POL should be named setStateFreqs?
+            self.parent.phycassert(self.parent.opts.model.state_freqs, 'state_freqs is None, but should be a list containing 4 (unnormalized) relative base frequencies')
+            self.parent.phycassert(len(self.parent.opts.model.state_freqs) == 4, 'state_freqs should be a list containing exactly 4 base frequencies; instead, it contains %d values' % len(self.parent.opts.model.state_freqs))
+            self.parent.phycassert(self.parent.opts.model.state_freqs[0] >= 0.0, 'state_freqs[0] cannot be negative (%f was specified)' % self.parent.opts.model.state_freqs[0])
+            self.parent.phycassert(self.parent.opts.model.state_freqs[1] >= 0.0, 'state_freqs[1] cannot be negative (%f was specified)' % self.parent.opts.model.state_freqs[1])
+            self.parent.phycassert(self.parent.opts.model.state_freqs[2] >= 0.0, 'state_freqs[2] cannot be negative (%f was specified)' % self.parent.opts.model.state_freqs[2])
+            self.parent.phycassert(self.parent.opts.model.state_freqs[3] >= 0.0, 'state_freqs[3] cannot be negative (%f was specified)' % self.parent.opts.model.state_freqs[3])
+            self.model.setNucleotideFreqs(self.parent.opts.model.state_freqs[0], self.parent.opts.model.state_freqs[1], self.parent.opts.model.state_freqs[2], self.parent.opts.model.state_freqs[3])  #POL should be named setStateFreqs?
             if self.parent.opts.model.fix_freqs:
                 self.model.fixStateFreqs()
         else:
@@ -224,7 +224,7 @@ class MarkovChain(LikelihoodCore):
         self.parent                  = parent
         self.heating_power           = power
         self.relrate_prior           = cloneDistribution(self.parent.opts.model.relrate_prior)
-        self.base_freq_param_prior   = cloneDistribution(self.parent.opts.model.base_freq_param_prior)
+        self.state_freq_param_prior   = cloneDistribution(self.parent.opts.model.state_freq_param_prior)
         self.gamma_shape_prior       = cloneDistribution(self.parent.opts.model.gamma_shape_prior)
         self.external_edgelen_prior  = cloneDistribution(self.parent.opts.model.external_edgelen_prior)
         self.internal_edgelen_prior  = cloneDistribution(self.parent.opts.model.internal_edgelen_prior)
@@ -341,7 +341,7 @@ class MarkovChain(LikelihoodCore):
         # Make sure that each prior is using the same pseudorandom number generator object
         self.kappa_prior.setLot(self.r)
         self.relrate_prior.setLot(self.r)
-        self.base_freq_param_prior.setLot(self.r)
+        self.state_freq_param_prior.setLot(self.r)
         self.flex_prob_param_prior.setLot(self.r)
         self.gamma_shape_prior.setLot(self.r)
         self.pinvar_prior.setLot(self.r)
@@ -355,10 +355,10 @@ class MarkovChain(LikelihoodCore):
         # Define priors for the model parameters
         if self.parent.opts.model.type == 'gtr':
             self.model.setRelRatePrior(self.relrate_prior)
-            self.model.setStateFreqParamPrior(self.base_freq_param_prior)   #POL should be named state_freq_param_prior
+            self.model.setStateFreqParamPrior(self.state_freq_param_prior)   #POL should be named state_freq_param_prior
         elif self.parent.opts.model.type == 'hky':
             self.model.setKappaPrior(self.kappa_prior)
-            self.model.setStateFreqParamPrior(self.base_freq_param_prior)   #POL should be named state_freq_param_prior
+            self.model.setStateFreqParamPrior(self.state_freq_param_prior)   #POL should be named state_freq_param_prior
 
         # If rate heterogeneity is to be assumed, add priors for these model parameters here
         if self.parent.opts.model.use_flex_model:

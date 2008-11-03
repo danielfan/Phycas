@@ -5,14 +5,14 @@ blob = readFile(filename)
 rng = ProbDist.Lot()
 rng.setSeed(13579)
 
-model.type                        = 'hky'
+model.type                         = 'hky'
 model.kappa                        = 4.0
 model.fix_kappa                    = True
 model.kappa_prior                  = ProbDist.Exponential(1.0)
 
-model.base_freqs                   = [0.1, 0.2, 0.3, 0.4]
+model.state_freqs                  = [0.1, 0.2, 0.3, 0.4]
 model.fix_freqs                    = True
-model.base_freq_param_prior        = ProbDist.Exponential(1.0)
+model.state_freq_param_prior       = ProbDist.Exponential(1.0)
 
 model.num_rates                    = 4
 model.gamma_shape                  = 0.14

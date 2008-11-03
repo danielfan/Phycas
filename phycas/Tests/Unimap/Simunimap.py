@@ -35,7 +35,7 @@ if __name__ == '__main__':
     assert model.type == 'jc' or model.type == 'hky', "model must be either 'jc' or 'hky'"
     if model.type == 'hky':
         model.kappa = 5.0
-        model.base_freqs = [0.25, 0.25, 0.25, 0.25]
+        model.state_freqs = [0.25, 0.25, 0.25, 0.25]
 
     # Simulation settings
     sim.random_seed = rnseed
@@ -95,7 +95,7 @@ if __name__ == '__main__':
     f.write('\n  set criterion=likelihood autoclose;')
     if model == 'hky':
         tratio = mcmc.mcmc_manager.getColdChain().model.calcTRatio()
-        f.write('\n  lset nst=2 variant=hky basefreq=(%.2f %.2f %.2f) tratio=%.1f rates=equal;' % (mcmc.base_freqs[0], mcmc.base_freqs[1], mcmc.base_freqs[2], tratio))
+        f.write('\n  lset nst=2 variant=hky basefreq=(%.2f %.2f %.2f) tratio=%.1f rates=equal;' % (mcmc.state_freqs[0], mcmc.state_freqs[1], mcmc.state_freqs[2], tratio))
     else:
         f.write('\n  lset nst=1 basefreq=equal rates=equal;')
     f.write('\n  lscores 1 / userbrlen;')

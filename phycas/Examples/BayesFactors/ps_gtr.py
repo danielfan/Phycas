@@ -17,7 +17,7 @@ model.pinvar_model          = False
 model.edgelen_prior         = Exponential(10.0)
 model.edgelen_hyperprior    = None 
 model.relrate_prior         = Exponential(1.0)
-model.base_freq_param_prior = Exponential(1.0)
+model.state_freq_param_prior = Exponential(1.0)
 model.use_flex_model        = False
 
 randomtree.rng             = rng

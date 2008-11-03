@@ -1,42 +1,44 @@
 import copy
 from phycas.Utilities.PhycasCommand import *
-from phycas.ProbDist import Beta, Exponential, InverseGamma
+from phycas.ProbDist import Beta, Exponential, InverseGamma, Dirichlet
 class Model(PhycasCommand):
     def __init__(self):
         args = ( 
-                ("type",                   'hky',                           "Can be 'jc', 'hky' or 'gtr'", EnumArgValidate(['jc', 'hky', 'gtr'])),
-                ("relrate_prior",          Exponential(1.0),                "The prior distribution for individual GTR relative rate parameters"),
-                ("relrates",               [1.0, 4.0, 1.0, 1.0, 4.0, 1.0] , "The current values for GTR relative rates. These should be specified in this order: A<->C, A<->G, A<->T, C<->G, C<->T, G<->T."),
-                ("fix_relrates",           False,                           "If True, GTR relative rates will not be modified during the course of an MCMC analysis", BoolArgValidate),
-                ("kappa_prior",            Exponential(1.0),                "The prior distribution for the kappa parameter in an HKY model"),
-                ("kappa",                  4.0,                             "The current value for the kappa parameter in an HKY model", FloatArgValidate(greaterthan=0.0)),
-                ("fix_kappa",              False,                           "If True, the HKY kappa parameter will not be modified during the course of an MCMC analysis", BoolArgValidate),
-                ("num_rates",              1,                               "The number of relative rates used for the discrete gamma rate heterogeneity submodel; default is rate homogeneity (i.e. 1 rate)", IntArgValidate(min=1)),
-                ("gamma_shape_prior",      Exponential(1.0),                "The prior distribution for the shape parameter of the gamma among-site rate distribution"),
-                ("gamma_shape",            0.5,                             "The current value for the gamma shape parameter", FloatArgValidate(greaterthan=0.0)),
-                ("fix_shape",              False,                           "If True, the gamma shape parameter will not be modified during the course of an MCMC analysis", BoolArgValidate),
-                ("use_inverse_shape",      False,                           "If True, gamma_shape_prior is applied to 1/shape rather than shape", BoolArgValidate),
-                ("pinvar_model",           False,                           "If True, an invariable sites submodel will be applied and the parameter representing the proportion of invariable sites will be estimated", BoolArgValidate),
-                ("pinvar_prior",           Beta(1.0, 1.0),                  "The prior distribution for pinvar, the proportion of invariable sites parameter"),
-                ("pinvar",                 0.2,                             "The current value of pinvar, the proportion of invariable sites parameter", ProbArgValidate()),
-                ("fix_pinvar",             False,                           "If True, the proportion of invariable sites parameter (pinvar) will not be modified during the course of an MCMC analysis", BoolArgValidate),
-                ("base_freq_param_prior",  Exponential(1.0),                "The prior distribution for the individual base frequency parameters; these parameters, when normalized to sum to 1, represent the equilibrium proportions of the nucleotide states"),
-                ("base_freqs",             [1.0, 1.0, 1.0, 1.0],            "The current values for the four base frequency parameters"),
-                ("fix_freqs",              False,                           "If True, the base frequencies will not be modified during the course of an MCMC analysis", BoolArgValidate),
-                ("edgelen_hyperprior",     InverseGamma(2.1,1.0/1.1),       "The prior distribution for the hyperparameter that serves as the mean of an Exponential edge length prior. If set to None, a non-hierarchical model will be used with respect to edge lengths. Note that specifying an edge length hyperprior will cause internal and external edge length priors to be Exponential distributions (regardless of what you assign to internal_edgelen_prior, external_edgelen_prior or edgelen_prior)."),
-                ("fix_edgelen_hyperparam", False,                           "If True, the hyperparameter that governs the mean of the Exponential edge length prior will be fixed at the value edgelen_hyperparam.", BoolArgValidate),
-                ("edgelen_hyperparam",     0.05,                            "The current value of the edge length hyperparameter - setting this currently has no effect", FloatArgValidate(greaterthan=0.0)),
-                ("internal_edgelen_prior", Exponential(2.0),                "Can be used to set a prior distribution for internal edges that differs from that applied to external edges. If this is set to something besides None, you should also set external_edgelen_prior appropriately. Setting the edgelen_prior option sets both external_edgelen_prior and internal_edgelen_prior to the same value"),
-                ("external_edgelen_prior", Exponential(2.0),                "Can be used to set a prior distribution for external edges that differs from that applied to internal edges. If this is set to something besides None, you should also set internal_edgelen_prior appropriately. Setting the edgelen_prior option sets both external_edgelen_prior and internal_edgelen_prior to the same value"),
-                ("edgelen_prior",          None,                            "Sets both internal_edgelen_prior and external_edgelen_prior to the supplied value. Use this setting if you want all edges in the tree to have the same prior distribution. Using this setting will overwrite any values previously supplied for internal_edgelen_prior and external_edgelen_prior"),
-                ("fix_edgelens",           False,                           "not yet documented", BoolArgValidate),
-                ("use_flex_model",         False,                           "not yet documented", BoolArgValidate),
-                ("flex_ncat_move_weight",  1,                               "Number of times each cycle to attempt an ncat move", IntArgValidate(min=0)),
-                ("flex_num_spacers",       1,                               "Number of fake rates between each adjacent pair of real rates", IntArgValidate(min=1)),
-                ("flex_phi",               0.25,                            "Proportion of ncat moves in which ncat is incremented (ncat is decremented with probability 1 - flex_phi)", ProbArgValidate()),
-                ("flex_L",                 1.0,                             "Upper bound of interval used for unnormalized relative rate parameter values", FloatArgValidate(greaterthan=0.0)),
-                ("flex_lambda",            1.0,                             "Parameter of Poisson prior on the number of extra categories", FloatArgValidate(greaterthan=0.0)),
-                ("flex_prob_param_prior",  Exponential(1.0),                "not yet documented"),
+                ("type",                    'hky',                           "Can be 'jc', 'hky' or 'gtr'", EnumArgValidate(['jc', 'hky', 'gtr'])),
+                ("relrate_prior",           Exponential(1.0),                "The prior distribution for individual GTR relative rate parameters"),
+                ("relrates",                [1.0, 4.0, 1.0, 1.0, 4.0, 1.0] , "The current values for GTR relative rates. These should be specified in this order: A<->C, A<->G, A<->T, C<->G, C<->T, G<->T."),
+                ("fix_relrates",            False,                           "If True, GTR relative rates will not be modified during the course of an MCMC analysis", BoolArgValidate),
+                ("kappa_prior",             Exponential(1.0),                "The prior distribution for the kappa parameter in an HKY model"),
+                ("kappa",                   4.0,                             "The current value for the kappa parameter in an HKY model", FloatArgValidate(greaterthan=0.0)),
+                ("fix_kappa",               False,                           "If True, the HKY kappa parameter will not be modified during the course of an MCMC analysis", BoolArgValidate),
+                ("num_rates",               1,                               "The number of relative rates used for the discrete gamma rate heterogeneity submodel; default is rate homogeneity (i.e. 1 rate)", IntArgValidate(min=1)),
+                ("gamma_shape_prior",       Exponential(1.0),                "The prior distribution for the shape parameter of the gamma among-site rate distribution"),
+                ("gamma_shape",             0.5,                             "The current value for the gamma shape parameter", FloatArgValidate(greaterthan=0.0)),
+                ("fix_shape",               False,                           "If True, the gamma shape parameter will not be modified during the course of an MCMC analysis", BoolArgValidate),
+                ("use_inverse_shape",       False,                           "If True, gamma_shape_prior is applied to 1/shape rather than shape", BoolArgValidate),
+                ("pinvar_model",            False,                           "If True, an invariable sites submodel will be applied and the parameter representing the proportion of invariable sites will be estimated", BoolArgValidate),
+                ("pinvar_prior",            Beta(1.0, 1.0),                  "The prior distribution for pinvar, the proportion of invariable sites parameter"),
+                ("pinvar",                  0.2,                             "The current value of pinvar, the proportion of invariable sites parameter", ProbArgValidate()),
+                ("fix_pinvar",              False,                           "If True, the proportion of invariable sites parameter (pinvar) will not be modified during the course of an MCMC analysis", BoolArgValidate),
+                ("update_freqs_separately", True,                            "If True, state frequencies will be individually updated using slice sampling; if False, they will be updated jointly using a Metropolis-Hastings move (generally both faster and better)."),
+                ("state_freq_prior",        Dirichlet([1.0, 1.0, 1.0, 1.0]),  "The joint prior distribution for the relative state frequency parameters. Used only if update_freqs_separately is False."),
+                ("state_freq_param_prior",  Exponential(1.0),                "The prior distribution for the individual base frequency parameters; these parameters, when normalized to sum to 1, represent the equilibrium proportions of the nucleotide states. Used only if update_freqs_separately is True."),
+                ("state_freqs",             [1.0, 1.0, 1.0, 1.0],            "The current values for the four base frequency parameters"),
+                ("fix_freqs",               False,                           "If True, the base frequencies will not be modified during the course of an MCMC analysis", BoolArgValidate),
+                ("edgelen_hyperprior",      InverseGamma(2.1,1.0/1.1),       "The prior distribution for the hyperparameter that serves as the mean of an Exponential edge length prior. If set to None, a non-hierarchical model will be used with respect to edge lengths. Note that specifying an edge length hyperprior will cause internal and external edge length priors to be Exponential distributions (regardless of what you assign to internal_edgelen_prior, external_edgelen_prior or edgelen_prior)."),
+                ("fix_edgelen_hyperparam",  False,                           "If True, the hyperparameter that governs the mean of the Exponential edge length prior will be fixed at the value edgelen_hyperparam.", BoolArgValidate),
+                ("edgelen_hyperparam",      0.05,                            "The current value of the edge length hyperparameter - setting this currently has no effect", FloatArgValidate(greaterthan=0.0)),
+                ("internal_edgelen_prior",  Exponential(2.0),                "Can be used to set a prior distribution for internal edges that differs from that applied to external edges. If this is set to something besides None, you should also set external_edgelen_prior appropriately. Setting the edgelen_prior option sets both external_edgelen_prior and internal_edgelen_prior to the same value"),
+                ("external_edgelen_prior",  Exponential(2.0),                "Can be used to set a prior distribution for external edges that differs from that applied to internal edges. If this is set to something besides None, you should also set internal_edgelen_prior appropriately. Setting the edgelen_prior option sets both external_edgelen_prior and internal_edgelen_prior to the same value"),
+                ("edgelen_prior",           None,                            "Sets both internal_edgelen_prior and external_edgelen_prior to the supplied value. Use this setting if you want all edges in the tree to have the same prior distribution. Using this setting will overwrite any values previously supplied for internal_edgelen_prior and external_edgelen_prior"),
+                ("fix_edgelens",            False,                           "not yet documented", BoolArgValidate),
+                ("use_flex_model",          False,                           "not yet documented", BoolArgValidate),
+                ("flex_ncat_move_weight",   1,                               "Number of times each cycle to attempt an ncat move", IntArgValidate(min=0)),
+                ("flex_num_spacers",        1,                               "Number of fake rates between each adjacent pair of real rates", IntArgValidate(min=1)),
+                ("flex_phi",                0.25,                            "Proportion of ncat moves in which ncat is incremented (ncat is decremented with probability 1 - flex_phi)", ProbArgValidate()),
+                ("flex_L",                  1.0,                             "Upper bound of interval used for unnormalized relative rate parameter values", FloatArgValidate(greaterthan=0.0)),
+                ("flex_lambda",             1.0,                             "Parameter of Poisson prior on the number of extra categories", FloatArgValidate(greaterthan=0.0)),
+                ("flex_prob_param_prior",   Exponential(1.0),                "not yet documented"),
                 )
         PhycasCommand.__init__(self, args, "model", "Defines a substitution model.")
 
@@ -58,13 +60,13 @@ class Model(PhycasCommand):
         new_model.kappa_prior           = copy.deepcopy(self.kappa_prior, memo)
         new_model.gamma_shape_prior     = copy.deepcopy(self.gamma_shape_prior, memo)
         new_model.pinvar_prior          = copy.deepcopy(self.pinvar_prior, memo)
-        new_model.base_freq_param_prior = copy.deepcopy(self.base_freq_param_prior, memo)
+        new_model.state_freq_param_prior = copy.deepcopy(self.state_freq_param_prior, memo)
 
         new_model.relrates              = copy.deepcopy(self.relrates, memo)
         new_model.kappa                 = copy.deepcopy(self.kappa, memo)
         new_model.gamma_shape           = copy.deepcopy(self.gamma_shape, memo)
         new_model.pinvar                = copy.deepcopy(self.pinvar, memo)
-        new_model.base_freqs            = copy.deepcopy(self.base_freqs, memo)
+        new_model.state_freqs            = copy.deepcopy(self.state_freqs, memo)
 
         new_model.fix_relrates          = copy.deepcopy(self.fix_relrates, memo)
         new_model.fix_kappa             = copy.deepcopy(self.fix_kappa, memo)

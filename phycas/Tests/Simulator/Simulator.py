@@ -3,7 +3,7 @@ from phycas import *
 # Create a model
 model.type =  'hky'
 model.kappa = 4.0
-model.base_freqs = [0.1, 0.2, 0.3, 0.4]
+model.state_freqs = [0.1, 0.2, 0.3, 0.4]
 
 # Define the names of the taxa to use when the simulated data set is saved to a file
 sim.taxon_labels = ['P. parksii', 'P. articulata', 'P._gracilis', 'P. macrophylla']

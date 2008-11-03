@@ -13,7 +13,7 @@ model.current()
 model.gamma_shape_prior = Exponential(2.0)
 model.gamma_shape_prior.getMean()
 model.kappa_prior = Exponential(0.25)
-model.base_freq_param_prior = Gamma(1.0, 1.0)
+model.state_freq_param_prior = Gamma(1.0, 1.0)
 
 model.edgelen_hyperprior = None
 model.internal_edgelen_prior = Exponential(10000.0)

@@ -135,13 +135,13 @@ class UnimapImpl(object):
                 self.model.setKappa(self.opts.kappa)
                 if self.opts.fix_kappa:
                     self.model.fixKappa()
-            self.phycas.phycassert(self.opts.base_freqs, 'base_freqs is None, but should be a list containing 4 (unnormalized) relative base frequencies')
-            self.phycas.phycassert(len(self.opts.base_freqs) == 4, 'base_freqs should be a list containing exactly 4 base frequencies; instead, it contains %d values' % len(self.opts.base_freqs))
-            self.phycas.phycassert(self.opts.base_freqs[0] >= 0.0, 'base_freqs[0] cannot be negative (%f was specified)' % self.opts.base_freqs[0])
-            self.phycas.phycassert(self.opts.base_freqs[1] >= 0.0, 'base_freqs[1] cannot be negative (%f was specified)' % self.opts.base_freqs[1])
-            self.phycas.phycassert(self.opts.base_freqs[2] >= 0.0, 'base_freqs[2] cannot be negative (%f was specified)' % self.opts.base_freqs[2])
-            self.phycas.phycassert(self.opts.base_freqs[3] >= 0.0, 'base_freqs[3] cannot be negative (%f was specified)' % self.opts.base_freqs[3])
-            self.model.setNucleotideFreqs(self.opts.base_freqs[0], self.opts.base_freqs[1], self.opts.base_freqs[2], self.opts.base_freqs[3])  #POL should be named setStateFreqs?
+            self.phycas.phycassert(self.opts.state_freqs, 'state_freqs is None, but should be a list containing 4 (unnormalized) relative base frequencies')
+            self.phycas.phycassert(len(self.opts.state_freqs) == 4, 'state_freqs should be a list containing exactly 4 base frequencies; instead, it contains %d values' % len(self.opts.state_freqs))
+            self.phycas.phycassert(self.opts.state_freqs[0] >= 0.0, 'state_freqs[0] cannot be negative (%f was specified)' % self.opts.state_freqs[0])
+            self.phycas.phycassert(self.opts.state_freqs[1] >= 0.0, 'state_freqs[1] cannot be negative (%f was specified)' % self.opts.state_freqs[1])
+            self.phycas.phycassert(self.opts.state_freqs[2] >= 0.0, 'state_freqs[2] cannot be negative (%f was specified)' % self.opts.state_freqs[2])
+            self.phycas.phycassert(self.opts.state_freqs[3] >= 0.0, 'state_freqs[3] cannot be negative (%f was specified)' % self.opts.state_freqs[3])
+            self.model.setNucleotideFreqs(self.opts.state_freqs[0], self.opts.state_freqs[1], self.opts.state_freqs[2], self.opts.state_freqs[3])  #POL should be named setStateFreqs?
             if self.opts.fix_freqs:
                 self.model.fixStateFreqs()
         else:
