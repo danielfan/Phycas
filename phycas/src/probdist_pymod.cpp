@@ -81,6 +81,9 @@ BOOST_PYTHON_MODULE(_ProbDist)
         .def("lnGamma", &ProbabilityDistribution::LnGamma)
 		;
 
+	class_<MultivariateProbabilityDistribution, boost::shared_ptr<MultivariateProbabilityDistribution>, boost::noncopyable>("MultivariateProbabilityDistribution", no_init)
+		;
+
 	class_<SliceSampler, boost::shared_ptr<SliceSampler> >("SliceSamplerBase")
 		.def(init<boost::shared_ptr<phycas::Lot>, boost::shared_ptr<AdHocDensity> >())
 		.def("attachFunc", &SliceSampler::AttachFunc)
@@ -140,7 +143,7 @@ BOOST_PYTHON_MODULE(_ProbDist)
 		.def("getrandbits", &phycas::Lot::GetRandBits)
 		;
 
-	class_<DirichletDistribution>("DirichletDistBase")
+	class_<DirichletDistribution, bases<MultivariateProbabilityDistribution> >("DirichletDistBase")
 		.def(init<const std::vector<double> &>())
 		.def(init<const DirichletDistribution &>())
 		.def("clone", &DirichletDistribution::Clone, return_value_policy<manage_new_object>())

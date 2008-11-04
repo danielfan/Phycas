@@ -30,6 +30,7 @@
 #include "phycas/src/larget_simon_move.hpp"
 #include "phycas/src/unimap_nni_move.hpp"
 #include "phycas/src/tree_scaler_move.hpp"
+#include "phycas/src/state_freq_move.hpp"
 #include "phycas/src/ncat_move.hpp"
 #include "phycas/src/bush_move.hpp"
 #include "phycas/src/samc_move.hpp"
@@ -54,6 +55,8 @@ void updater_pymod()
 		.def("setStartingValue", &MCMCUpdater::setStartingValue)
 		.def("setTree", &MCMCUpdater::setTree)
 		.def("setLot", &MCMCUpdater::setLot)
+		.def("setPrior", &MCMCUpdater::setPrior)
+		.def("setMultivarPrior", &MCMCUpdater::setMultivarPrior)
 		.def("setTreeLikelihood", &MCMCUpdater::setTreeLikelihood)
 		.def("setModel", &MCMCUpdater::setModel)
 		.def("setChainManager", &MCMCUpdater::setChainManager)
@@ -104,7 +107,11 @@ void updater_pymod()
 		boost::noncopyable, boost::shared_ptr<phycas::TreeScalerMove> >("TreeScalerMove") 
 		.def("update", &phycas::TreeScalerMove::update)
 		;
-	class_<phycas::MappingMove, bases<phycas::MCMCUpdater>, 
+	class_<phycas::StateFreqMove, bases<phycas::MCMCUpdater>, 
+		boost::noncopyable, boost::shared_ptr<phycas::StateFreqMove> >("StateFreqMove") 
+		.def("update", &phycas::StateFreqMove::update)
+		;
+    class_<phycas::MappingMove, bases<phycas::MCMCUpdater>, 
 		boost::noncopyable, boost::shared_ptr<phycas::MappingMove> >("MappingMove") 
 		.def("update", &phycas::MappingMove::update)
 		;

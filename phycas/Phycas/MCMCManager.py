@@ -224,7 +224,8 @@ class MarkovChain(LikelihoodCore):
         self.parent                  = parent
         self.heating_power           = power
         self.relrate_prior           = cloneDistribution(self.parent.opts.model.relrate_prior)
-        self.state_freq_param_prior   = cloneDistribution(self.parent.opts.model.state_freq_param_prior)
+        self.state_freq_prior        = cloneDistribution(self.parent.opts.model.state_freq_prior)
+        self.state_freq_param_prior  = cloneDistribution(self.parent.opts.model.state_freq_param_prior)
         self.gamma_shape_prior       = cloneDistribution(self.parent.opts.model.gamma_shape_prior)
         self.external_edgelen_prior  = cloneDistribution(self.parent.opts.model.external_edgelen_prior)
         self.internal_edgelen_prior  = cloneDistribution(self.parent.opts.model.internal_edgelen_prior)
@@ -341,6 +342,7 @@ class MarkovChain(LikelihoodCore):
         # Make sure that each prior is using the same pseudorandom number generator object
         self.kappa_prior.setLot(self.r)
         self.relrate_prior.setLot(self.r)
+        self.state_freq_prior.setLot(self.r)
         self.state_freq_param_prior.setLot(self.r)
         self.flex_prob_param_prior.setLot(self.r)
         self.gamma_shape_prior.setLot(self.r)
@@ -355,10 +357,16 @@ class MarkovChain(LikelihoodCore):
         # Define priors for the model parameters
         if self.parent.opts.model.type == 'gtr':
             self.model.setRelRatePrior(self.relrate_prior)
-            self.model.setStateFreqParamPrior(self.state_freq_param_prior)   #POL should be named state_freq_param_prior
+            if self.parent.opts.model.update_freqs_separately:
+                self.model.setStateFreqParamPrior(self.state_freq_param_prior)
+            else:
+                self.model.setStateFreqPrior(self.state_freq_prior)
         elif self.parent.opts.model.type == 'hky':
             self.model.setKappaPrior(self.kappa_prior)
-            self.model.setStateFreqParamPrior(self.state_freq_param_prior)   #POL should be named state_freq_param_prior
+            if self.parent.opts.model.update_freqs_separately:
+                self.model.setStateFreqParamPrior(self.state_freq_param_prior)
+            else:
+                self.model.setStateFreqPrior(self.state_freq_prior)
 
         # If rate heterogeneity is to be assumed, add priors for these model parameters here
         if self.parent.opts.model.use_flex_model:
@@ -399,7 +407,7 @@ class MarkovChain(LikelihoodCore):
             #POLPY_NEWWAY False,            # separate_edgelen_params (deprecated: always False)
             self.parent.opts.slice_max_units,    # maximum number of slice units allowed
             self.parent.opts.slice_weight)       # weight for each parameter added
-
+            
         # Create a TreeScalerMove object to handle scaling the entire tree to allow faster
         # convergence in edge lengths. This move is unusual in using slice sampling rather
         # than Metropolis-Hastings updates: most "moves" in parent are Metropolis-Hastings.
@@ -415,6 +423,20 @@ class MarkovChain(LikelihoodCore):
                 self.tree_scaler_move.fixParameter()
             self.chain_manager.addMove(self.tree_scaler_move)
 
+        if not self.parent.opts.model.update_freqs_separately:
+            # Create a StateFreqMove to update entire state frequency vector
+            self.state_freq_move = Likelihood.StateFreqMove()
+            self.state_freq_move.setName("State freq move")
+            self.state_freq_move.setWeight(self.parent.opts.state_freq_weight)
+            self.state_freq_move.setTree(self.tree)
+            self.state_freq_move.setModel(self.model)
+            self.state_freq_move.setTreeLikelihood(self.likelihood)
+            self.state_freq_move.setLot(self.r)
+            if self.model.stateFreqsFixed():
+                self.state_freq_move.fixParameter()
+            self.state_freq_move.setMultivarPrior(self.state_freq_prior)
+            self.chain_manager.addMove(self.state_freq_move)
+        
         if self.parent.opts.use_unimap:
             # Create a MappingMove (to refresh the mapping for all sites)
             self.unimapping_move = Likelihood.MappingMove()

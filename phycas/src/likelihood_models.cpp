@@ -198,6 +198,19 @@ void Model::setNucleotideFreqs(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Modifier function that sets all of the state frequency parameters (the unnormalized values that determine the values
+|	in the `state_freqs' vector when normalized) in the data member vector `state_freq_unnorm'. The member function
+|	normalizeFreqs is called automatically to recalculate `state_freqs'. 
+*/
+void Model::setStateFreqsUnnorm(
+  std::vector<double> & values)	/**< the new values */
+	{
+    PHYCAS_ASSERT(values.size() == state_freq_unnorm.size());
+    std::copy(values.begin(), values.end(), state_freq_unnorm.begin());
+	normalizeFreqs();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Modifier function that sets one of the state frequency parameters (the unnormalized values that determine the values
 |	in the `state_freqs' vector when normalized) in the data member vector `state_freq_unnorm'. The member function
 |	normalizeFreqs is called automatically to recalculate `state_freqs'. Assumes `param_index' is less than `num_states'

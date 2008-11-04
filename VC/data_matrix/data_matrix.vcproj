@@ -129,9 +129,6 @@
 				RelativePath="..\..\phycas\src\boost_assertion_failed.cpp">
 			</File>
 			<File
-				RelativePath="..\..\phycas\src\cipres\CipresDataMatrixHelper.cpp">
-			</File>
-			<File
 				RelativePath="..\..\phycas\src\data_matrix_pymod.cpp">
 			</File>
 		</Filter>

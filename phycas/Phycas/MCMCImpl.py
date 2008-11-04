@@ -122,7 +122,9 @@ class MCMCImpl(CommonFunctions):
             tmpf.write('************** cycle=%d, chain=%d\n' % (cycle,chain_index))
         for p in chain.chain_manager.getAllUpdaters():
             w = p.getWeight()
-            #print p.getName(), "weight =", w
+            #print p.getName(), "(weight = %d)" % w
+            #if p.getName() == 'State freq move':
+            #    raw_input('debug stop')
             for x in range(w):
                 if self.opts.debugging:
                     p.setSaveDebugInfo(True)
@@ -454,6 +456,8 @@ class MCMCImpl(CommonFunctions):
                 chain.model.setPinvar(new_pinvar)
             elif name == 'master edge length parameter':
                 pass
+            elif name == 'State freq move':                # C++ class StateFreqMove
+                pass    # POL_TO_DO_SOON
             elif name == 'Edge length move':                # C++ class EdgeMove
                 pass
             elif name == 'Larget-Simon move':               # C++ class LargetSimonMove
@@ -690,11 +694,11 @@ class MCMCImpl(CommonFunctions):
                     self.ps_sampled_betas.reverse()
                 
                 # Output the beta values that will be used
-                self.output('The %d heating powers chosen from a discrete\nBeta(%.5f, %.5f) distribution were:' % (self.opts.ps_nbetavals, self.opts.ps_shape1, self.opts.ps_shape2))
-                self.output('An MCMC analysis will be performed using each of')
-                self.output('these as the power to which the likelihood is raised.')
+                self.output('%d %s chosen from a discrete\nBeta(%.5f, %.5f) distribution:' % (self.opts.ps_nbetavals, (self.opts.ps_nbetavals == 1 and 'value was' or 'values were'), self.opts.ps_shape1, self.opts.ps_shape2))
                 for i,x in enumerate(self.ps_sampled_betas):
                     self.output('%6d %12.5f' % (i+1,x))
+                self.output('An MCMC analysis will be performed exploring each of the')
+                self.output('power posteriors defined by these values.')
                 self.output()
             else:
                 self.ps_sampled_betas = [self.opts.ps_minbeta]

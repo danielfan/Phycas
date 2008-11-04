@@ -293,6 +293,9 @@
 				RelativePath="..\..\phycas\src\square_matrix.cpp">
 			</File>
 			<File
+				RelativePath="..\..\phycas\src\state_freq_move.cpp">
+			</File>
+			<File
 				RelativePath="..\..\phycas\src\state_freq_param.cpp">
 			</File>
 			<File
@@ -461,6 +464,12 @@
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\square_matrix.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\state_freq_move.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\state_freq_move.inl">
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\states_patterns.hpp">

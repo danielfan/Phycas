@@ -135,10 +135,11 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		virtual void			setModel(ModelShPtr p);
 		virtual void			setChainManager(ChainManagerWkPtr p);
         void                    setSaveDebugInfo(bool save_info);
+		virtual void			setPrior(ProbDistShPtr p);
+		virtual void			setMultivarPrior(MultivarProbDistShPtr p);
 
 		// Modifiers used only by parameters
 		virtual void			setStartingValue(double x);
-		virtual void			setPrior(ProbDistShPtr p);
 		virtual void			setPriorMeanAndVariance(double m, double v);
 		virtual double			recalcPrior();
         virtual void            setCurrValue(double x);
@@ -185,7 +186,8 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		ModelShPtr				model;					/**< The substitution model to be used in computing the likelihood */
 		TreeLikeShPtr			likelihood;				/**< The object that knows how to calculate the likelihood */
 		LotShPtr				rng;					/**< The pseudorandom number generator object used in updating parameter value */
-		ProbDistShPtr			prior;					/**< The probability distribution serving as the prior for a parameter (not used by moves) */
+		ProbDistShPtr			prior;					/**< The probability distribution serving as the prior for a parameter */
+        MultivarProbDistShPtr   mvprior;                /**< The probability distribution serving as the prior for a multivariate parameter */
 		SliceSamplerShPtr		slice_sampler;			/**< The slice sampler used by parameters for updating (not used by moves) */
 		ChainManagerWkPtr		chain_mgr;				/**< The object that knows how to compute the joint log prior density */
 		double					curr_value;				/**< The current value of this parameter */

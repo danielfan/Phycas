@@ -75,6 +75,7 @@ class Model	{
 		const std::vector<double>	&	getStateFreqs() const;
 		virtual void					setNucleotideFreqs(double freqA, double freqC, double freqG, double freqT);
 		virtual void					setAllFreqsEqual();
+        virtual void                    setStateFreqsUnnorm(std::vector<double> & values);
 		virtual void					setStateFreqUnnorm(unsigned param_index, double value);
         double						    getStateFreqUnnorm(unsigned param_index);
 		void							normalizeFreqs();
@@ -250,16 +251,25 @@ class HKY: public Model
         double					    calcLMat(double * * lMat) const;
         double					    calcUMat(double * * uMat) const;
         void						calcPMat(double * * pMat, double edgeLength) const;
-		void						fixKappa();
+
+        void						fixKappa();
 		void						freeKappa();
-		double						getKappa();
+
+        double						getKappa();
 		void						setKappa(double k);
-		void						setKappaPrior(ProbDistShPtr d);
+
+        void						setKappaPrior(ProbDistShPtr d);
 		ProbDistShPtr				getKappaPrior();
+
+        void						setKappaFromTRatio(double tratio);
+		double						calcTRatio();
+
+		void						setStateFreqPrior(MultivarProbDistShPtr d);
+		MultivarProbDistShPtr		getStateFreqPrior();
+
 		void						setStateFreqParamPrior(ProbDistShPtr d);
 		ProbDistShPtr				getStateFreqParamPrior();
-		void						setKappaFromTRatio(double tratio);
-		double						calcTRatio();
+
 		virtual std::string			paramHeader() const;
 		virtual std::string			paramReport(unsigned ndecimals) const;
 
@@ -267,7 +277,8 @@ protected:
 	
 	double						kappa;				/**< The transition/transversion rate ratio */
 	ProbDistShPtr				kappa_prior;		/**< The prior distribution governing kappa */
-	ProbDistShPtr				freq_param_prior;	/**< The prior distribution governing each frequency parameter */
+	ProbDistShPtr				freq_param_prior;	/**< The prior distribution governing each frequency parameter (used if frequencies are updated separately by slice sampling) */
+	MultivarProbDistShPtr		freq_prior;	        /**< The prior distribution governing the vector of frequencies (used if frequencies are updated jointly by StateFreqMove) */
 	bool						kappa_fixed;		/**< If true, the value of kappa will not change during MCMC updates */
 	mutable MCMCUpdaterShPtr	kappa_param;		/**< Copy of the kappa parameter (saved so that fixed/free status can be changed) */
 	};
@@ -291,20 +302,28 @@ class GTR: public Model
         double					    calcLMat(double * * lMat) const;
         double					    calcUMat(double * * uMat) const;
 		void						calcPMat(double * * pMat, double edgeLength) const;
-		void						fixRelRates();
+
+        void						fixRelRates();
 		void						freeRelRates();
-		std::vector<double>			getRelRates();
+
+        std::vector<double>			getRelRates();
 		void						setRelRates(const std::vector<double> & rates);	
 		void						setRelRateUnnorm(unsigned param_index, double value);
 		double						getRelRateUnnorm(unsigned param_index);
 		void						setRelRatePrior(ProbDistShPtr d);
 		ProbDistShPtr				getRelRatePrior();
-		void						setNucleotideFreqs(double freqA, double freqC, double freqG, double freqT);
-		void						setAllFreqsEqual();
+
+        void						setNucleotideFreqs(double freqA, double freqC, double freqG, double freqT);
+        void						setAllFreqsEqual();
 		void						setStateFreqUnnorm(unsigned param_index, double value);
+
+        void						setStateFreqPrior(MultivarProbDistShPtr d);
+		MultivarProbDistShPtr		getStateFreqPrior();
+
         void						setStateFreqParamPrior(ProbDistShPtr d);
 		ProbDistShPtr				getStateFreqParamPrior();
-		virtual std::string			paramHeader() const;
+
+        virtual std::string			paramHeader() const;
 		virtual std::string			paramReport(unsigned ndecimals) const;
 		double						calcTRatio();
 
@@ -312,7 +331,8 @@ class GTR: public Model
 
 		std::vector<double>			rel_rates;			/**< A vector containing the six relative rates */
 		ProbDistShPtr				rel_rate_prior;		/**< The prior distribution governing each relative rate (usually a gamma distribution with scale 1 and shape equal to the desired Dirichlet parameter) */
-		ProbDistShPtr				freq_param_prior;	/**< The prior distribution governing each frequency parameter (usually a gamma distribution with scale 1 and shape equal to the desired Dirichlet parameter) */
+		ProbDistShPtr				freq_param_prior;	/**< The prior distribution governing each frequency parameter (usually a gamma distribution with scale 1 and shape equal to the desired Dirichlet parameter; used if frequencies are updated separately by slice sampling) */
+    	MultivarProbDistShPtr		freq_prior;	        /**< The prior distribution governing the vector of frequencies (used if frequencies are updated jointly by StateFreqMove) */
 		bool						rel_rates_fixed;	/**< If true, the relative rate values will not change during MCMC updates */
 		mutable MCMCUpdaterVect		rel_rate_params;	/**< A vector containing copies of all six relative rate parameters (saved so that fixed/free status can be changed) */
 		mutable QMatrix				q_matrix;			/**< A QMatrix object used to compute transition probabilities */

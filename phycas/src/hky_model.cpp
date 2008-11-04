@@ -80,47 +80,55 @@ void	HKY::createParameters(
 
 	PHYCAS_ASSERT(freq_params.empty());
 
-	MCMCUpdaterShPtr freqA_param = MCMCUpdaterShPtr(new StateFreqParam(0));
-	freqA_param->setName("base freq. A");
-	freqA_param->setTree(t);
-	freqA_param->setStartingValue(1.0);
-	freqA_param->setPrior(freq_param_prior);
-	if (state_freq_fixed)
-		freqA_param->fixParameter();
-	parameters.push_back(freqA_param);
-	freq_params.push_back(freqA_param);
+    PHYCAS_ASSERT(freq_param_prior || freq_prior);
+    if (freq_param_prior)
+        {
+        // Only add frequency parameters if freqs will be updated separately
+        // The other option is to update the frequencies jointly using the 
+        // StateFreqMove Metropolis-Hastings move (in which case freq_param
+        // will be set and freq_param_prior will be empty)
 
-	MCMCUpdaterShPtr freqC_param = MCMCUpdaterShPtr(new StateFreqParam(1));
-	freqC_param->setName("base freq. C");
-	freqC_param->setTree(t);
-	freqC_param->setStartingValue(1.0);
-	freqC_param->setPrior(freq_param_prior);
-	if (state_freq_fixed)
-		freqC_param->fixParameter();
-	parameters.push_back(freqC_param);
-	freq_params.push_back(freqC_param);
+	    MCMCUpdaterShPtr freqA_param = MCMCUpdaterShPtr(new StateFreqParam(0));
+	    freqA_param->setName("base freq. A");
+	    freqA_param->setTree(t);
+	    freqA_param->setStartingValue(1.0);
+	    freqA_param->setPrior(freq_param_prior);
+	    if (state_freq_fixed)
+		    freqA_param->fixParameter();
+	    parameters.push_back(freqA_param);
+	    freq_params.push_back(freqA_param);
 
-	MCMCUpdaterShPtr freqG_param = MCMCUpdaterShPtr(new StateFreqParam(2));
-	freqG_param->setName("base freq. G");
-	freqG_param->setTree(t);
-	freqG_param->setStartingValue(1.0);
-	freqG_param->setPrior(freq_param_prior);
-	if (state_freq_fixed)
-		freqG_param->fixParameter();
-	parameters.push_back(freqG_param);
-	freq_params.push_back(freqG_param);
+	    MCMCUpdaterShPtr freqC_param = MCMCUpdaterShPtr(new StateFreqParam(1));
+	    freqC_param->setName("base freq. C");
+	    freqC_param->setTree(t);
+	    freqC_param->setStartingValue(1.0);
+	    freqC_param->setPrior(freq_param_prior);
+	    if (state_freq_fixed)
+		    freqC_param->fixParameter();
+	    parameters.push_back(freqC_param);
+	    freq_params.push_back(freqC_param);
 
-	MCMCUpdaterShPtr freqT_param = MCMCUpdaterShPtr(new StateFreqParam(3));
-	freqT_param->setName("base freq. T");
-	freqT_param->setTree(t);
-	freqT_param->setStartingValue(1.0);
-	freqT_param->setPrior(freq_param_prior);
-	if (state_freq_fixed)
-		freqT_param->fixParameter();
-	parameters.push_back(freqT_param);
-	freq_params.push_back(freqT_param);
+	    MCMCUpdaterShPtr freqG_param = MCMCUpdaterShPtr(new StateFreqParam(2));
+	    freqG_param->setName("base freq. G");
+	    freqG_param->setTree(t);
+	    freqG_param->setStartingValue(1.0);
+	    freqG_param->setPrior(freq_param_prior);
+	    if (state_freq_fixed)
+		    freqG_param->fixParameter();
+	    parameters.push_back(freqG_param);
+	    freq_params.push_back(freqG_param);
+
+	    MCMCUpdaterShPtr freqT_param = MCMCUpdaterShPtr(new StateFreqParam(3));
+	    freqT_param->setName("base freq. T");
+	    freqT_param->setTree(t);
+	    freqT_param->setStartingValue(1.0);
+	    freqT_param->setPrior(freq_param_prior);
+	    if (state_freq_fixed)
+		    freqT_param->fixParameter();
+	    parameters.push_back(freqT_param);
+	    freq_params.push_back(freqT_param);
+        }
 	}
-
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	This function provides the names of the columns that appear in the parameter file (i.e. the "*.p" file created by 
@@ -280,6 +288,22 @@ ProbDistShPtr HKY::getStateFreqParamPrior()
 void HKY::setStateFreqParamPrior(ProbDistShPtr d)
  	{
 	freq_param_prior = d;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns current value of data member `freq_prior'.
+*/
+MultivarProbDistShPtr HKY::getStateFreqPrior()
+ 	{
+	return freq_prior;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets `freq_prior' data member to the supplied MultivariateProbabilityDistribution shared pointer `d'.
+*/
+void HKY::setStateFreqPrior(MultivarProbDistShPtr d)
+ 	{
+	freq_prior = d;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

@@ -21,7 +21,7 @@ class Model(PhycasCommand):
                 ("pinvar",                  0.2,                             "The current value of pinvar, the proportion of invariable sites parameter", ProbArgValidate()),
                 ("fix_pinvar",              False,                           "If True, the proportion of invariable sites parameter (pinvar) will not be modified during the course of an MCMC analysis", BoolArgValidate),
                 ("update_freqs_separately", True,                            "If True, state frequencies will be individually updated using slice sampling; if False, they will be updated jointly using a Metropolis-Hastings move (generally both faster and better)."),
-                ("state_freq_prior",        Dirichlet([1.0, 1.0, 1.0, 1.0]),  "The joint prior distribution for the relative state frequency parameters. Used only if update_freqs_separately is False."),
+                ("state_freq_prior",        Dirichlet([1.0, 1.0, 1.0, 1.0]), "The joint prior distribution for the relative state frequency parameters. Used only if update_freqs_separately is False."),
                 ("state_freq_param_prior",  Exponential(1.0),                "The prior distribution for the individual base frequency parameters; these parameters, when normalized to sum to 1, represent the equilibrium proportions of the nucleotide states. Used only if update_freqs_separately is True."),
                 ("state_freqs",             [1.0, 1.0, 1.0, 1.0],            "The current values for the four base frequency parameters"),
                 ("fix_freqs",               False,                           "If True, the base frequencies will not be modified during the course of an MCMC analysis", BoolArgValidate),

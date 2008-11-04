@@ -124,6 +124,8 @@ class MultivariateProbabilityDistribution
 		Lot *				lot;
 	};
 
+typedef boost::shared_ptr<MultivariateProbabilityDistribution> MultivarProbDistShPtr;
+
 /*------------------------------------------------------------------------------------------------------------------------------------------------------------------
 |	Encapsulates the discrete bernoulli probability distribution with parameter p, the probability of success.
 */
@@ -401,10 +403,10 @@ class DirichletDistribution : public MultivariateProbabilityDistribution
 		std::string 						GetDistributionName() const;
 		std::string 						GetDistributionDescription() const;
 		std::string 						GetDescriptionForPython() const;
-		std::vector<double>								GetMean() const;
-		std::vector<double> 								GetVar() const;
-		std::vector<double> 								GetStdDev() const;
-		std::vector<double>								Sample() const;
+		std::vector<double>					GetMean() const;
+		std::vector<double> 				GetVar() const;
+		std::vector<double> 				GetStdDev() const;
+		std::vector<double>					Sample() const;
 		double								ApproxCDF(const std::vector<double> &x, unsigned nsamples = 10000) const;
 		double								GetLnPDF(const std::vector<double> &x) const;
 		double								GetRelativeLnPDF(const std::vector<double> &x) const;

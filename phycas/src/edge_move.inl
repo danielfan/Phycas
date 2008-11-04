@@ -17,8 +17,8 @@
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#if ! defined(EDGE_MOVE_INL)
-#define EDGE_MOVE_INL
+#if ! defined(STATE_FREQ_MOVE_INL)
+#define STATE_FREQ_MOVE_INL
 
 namespace phycas
 {

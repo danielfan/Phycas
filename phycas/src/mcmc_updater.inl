@@ -420,6 +420,14 @@ inline void MCMCUpdater::setPrior(ProbDistShPtr p)
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Sets the `mvprior' data member to the supplied MultivariateProbabilityDistribution shared pointer.
+*/
+inline void MCMCUpdater::setMultivarPrior(MultivarProbDistShPtr p)
+	{
+	mvprior = p;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Sets the current value to the supplied value `x'. The value is stored in the data member `curr_value' and passed to
 |   the slice sampler if and when it is created in the member function MCMCUpdater::createSliceSampler().
 */
