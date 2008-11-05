@@ -457,7 +457,8 @@ class MCMCImpl(CommonFunctions):
             elif name == 'master edge length parameter':
                 pass
             elif name == 'State freq move':                # C++ class StateFreqMove
-                pass    # POL_TO_DO_SOON
+                freq_vector = chain.model.getStateFreqPrior().sample()
+                chain.model.setNucleotideFreqs(freq_vector[0],freq_vector[1],freq_vector[2],freq_vector[3])
             elif name == 'Edge length move':                # C++ class EdgeMove
                 pass
             elif name == 'Larget-Simon move':               # C++ class LargetSimonMove

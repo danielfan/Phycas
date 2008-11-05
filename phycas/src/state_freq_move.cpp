@@ -80,12 +80,20 @@ void StateFreqMove::proposeNewState()
 
     // create Dirichlet distribution and sample from it to get proposed frequencies
     dir_forward = DirichletShPtr(new DirichletDistribution(c_forward));
+    dir_forward->SetLot(getLot().get());
     new_freqs = dir_forward->Sample();
 
     // create vector of Dirichlet parameters for selecting old frequencies (needed for Hasting ratio calculation)
     c_reverse.resize(new_freqs.size());
 	std::transform(new_freqs.begin(), new_freqs.end(), c_reverse.begin(), boost::lambda::_1*psi);
     dir_reverse = DirichletShPtr(new DirichletDistribution(c_reverse));
+
+    //for (unsigned i = 0; i < 5; ++i)
+    //    {
+    //    std::vector<double> tmp_freqs = dir_forward->Sample();
+    //    std::cerr << boost::str(boost::format("  %d %.9f %.9f %.9f %.9f\n") % tmp_freqs[0] % i % tmp_freqs[1] % tmp_freqs[2] % tmp_freqs[3]);
+    //    }
+    //std::cerr << boost::str(boost::format("%.9f %.9f %.9f %.9f ") % new_freqs[0] % new_freqs[1] % new_freqs[2] % new_freqs[3]);
 	}
 
 /*--------------------------------------------------------------------------------------------------------------------------
@@ -173,6 +181,7 @@ bool StateFreqMove::update()
     double lnu = std::log(rng->Uniform(FILE_AND_LINE));
 	if (ln_accept_ratio >= 0.0 || lnu <= ln_accept_ratio)
 		{
+        //std::cerr << "ACCEPTED\n" << std::endl;
 		p->setLastLnPrior(curr_ln_prior);
 		p->setLastLnLike(curr_ln_like);
 		accept();
@@ -180,6 +189,7 @@ bool StateFreqMove::update()
 		}
 	else
 		{
+        //std::cerr << "rejected\n" << std::endl;
 		curr_ln_like	= p->getLastLnLike();
 		curr_ln_prior	= p->getLastLnPrior();
 		revert();

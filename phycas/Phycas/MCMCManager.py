@@ -50,6 +50,7 @@ class LikelihoodCore(object):
         if self._tree is None:
             self.setupCore()
         return self._tree
+        
     def setTree(self, t):
         print "in setTree"
         if t and not isinstance(t, Phylogeny.Tree):
@@ -59,10 +60,12 @@ class LikelihoodCore(object):
         else:
             print "in setTree ref"
             self._tree = t
+            
     def delTree(self, t):
         if self._tree:
             del self._tree
             self._tree = None
+            
     tree = property(getTree, setTree, delTree)
 
     def setupCore(self):
