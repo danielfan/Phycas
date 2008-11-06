@@ -385,7 +385,6 @@ class MCMCImpl(CommonFunctions):
         return ((c % mod) == 0)
         
     def explorePrior(self, cycle):
-        self.phycassert(self.opts.allow_polytomies == False, 'polytomies not yet allowed in MCMCImpl.explorePrior')
         chain_index = self.mcmc_manager.getColdChainIndex()
         chain = self.mcmc_manager.getColdChain()
         tm = Phylogeny.TreeManip(chain.tree)
@@ -458,6 +457,7 @@ class MCMCImpl(CommonFunctions):
                 pass
             elif name == 'State freq move':                # C++ class StateFreqMove
                 freq_vector = chain.model.getStateFreqPrior().sample()
+                # should use generic function below (i.e. not specific to nucleotide data)
                 chain.model.setNucleotideFreqs(freq_vector[0],freq_vector[1],freq_vector[2],freq_vector[3])
             elif name == 'Edge length move':                # C++ class EdgeMove
                 pass
@@ -466,14 +466,13 @@ class MCMCImpl(CommonFunctions):
             elif name == 'Tree scaler move':                # C++ class TreeScalerMove
                 pass
             elif name == 'Bush move':                       # C++ class BushMove
-                pass
+                pass    # polytomies handled further down (by randomly pruning fully-resolved equiprobable tree)
             elif name == 'FLEX probs':                      # C++ class FlexProbParam
-                pass
+                self.phycassert(0, 'sampling directly from the prior not yet implemented for FLEX model (workaround: specify mcmc.draw_directly_from_prior = False)')
             elif name == 'FLEX rates':                      # C++ class FlexRateParam
-                pass
+                self.phycassert(0, 'sampling directly from the prior not yet implemented for FLEX model (workaround: specify mcmc.draw_directly_from_prior = False)')
             elif name == 'NCat move':                       # C++ class NCatMove
-                # TODO sample not only ncat but also rates and probs
-                pass
+                self.phycassert(0, 'sampling directly from the prior not yet implemented for FLEX model (workaround: specify mcmc.draw_directly_from_prior = False)')
             elif name == 'Univent mapping move':            # C++ class MappingMove
                 self.phycassert(0, 'sampling directly from the prior not yet implemented for unimap analyses (workaround: specify mcmc.draw_directly_from_prior = False)')
             elif name == 'Unimap NNI move':                 # C++ class UnimapNNIMove
@@ -513,7 +512,8 @@ class MCMCImpl(CommonFunctions):
             print '  utree one = %s;' % chain.tree.makeNewick()
             print '  sum of edge lengths = %.5f' % chain.tree.edgeLenSum()
             raw_input('stopped before computing likelihood')
-            
+        
+        # recalculate the likelihood
         cold_chain_manager = self.mcmc_manager.getColdChainManager()
         cold_chain_manager.refreshLastLnLike()
         

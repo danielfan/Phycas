@@ -2,7 +2,7 @@ import math, types
 from phycas.PDFGen import *
 from phycas.Utilities.CommonFunctions import CommonFunctions
 from phycas.Utilities.GlobalState import readFile
-from phycas.Phylogeny import Tree
+from phycas import Newick, Phylogeny
 
 class PDFTree(CommonFunctions):
     def __init__(self):
@@ -72,7 +72,10 @@ class PDFTree(CommonFunctions):
         # or an entire collection of trees (pdf_treefile specified)
         if self.pdf_newick:        
             # Build tree the newick description of which is in self.newick
-            tree = self.pdf_newick.buildTree()
+            tree = Phylogeny.Tree()
+            newick = Newick(self.pdf_newick)
+            newick.buildTree(tree)
+            print tree.makeNewick()
             
             if self.pdf_outgroup_taxon:
                 num = tree.findTipByName(self.pdf_outgroup_taxon)
@@ -97,7 +100,7 @@ class PDFTree(CommonFunctions):
             contents = readFile(self.pdf_treefile)
 
             # Build each tree and determine its height
-            tree = Tree()
+            tree = Phylogeny.Tree()
             max_height = 0.0
             for tree_def in contents.trees:
                 tree_def.buildTree(tree)
