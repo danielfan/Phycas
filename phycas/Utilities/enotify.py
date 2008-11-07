@@ -5,6 +5,10 @@
 # 
 # from phycas.Utilities.enotify import sendemail
 # sendemail(smtphost='smtp.muppet.org', toaddr='bunsen.honeydew@muppet.org', subject='Your Phycas run has finished')
+#
+# Notes: 
+# - some STMP servers will reject an email if an invalid fromaddr (e.g. 'nobody') is specified
+# - at this time, only one toaddr may be specified
 
 import smtplib
 
@@ -23,6 +27,10 @@ def sendemail(smtphost, toaddr, subject, msgbody='', fromaddr='nobody'):
     except smtplib.SMTPDataError:
         errmsg = 'SMTPDataError exception'
     finally:
-        if errmsg is not None:
+        if errmsg is None:
+            import os
+            if os.path.exists('smtperror.txt'):
+                os.remove('smtperror.txt')
+        else:
             open('smtperror.txt', 'w').write('From=%s\nTo=%s\nSubject=%s\nBody=%s\nSMTPhost=%s\nError=%s\n' % (fromaddr, toaddr, subject, msgbody, smtphost, errmsg))
     server.quit()
