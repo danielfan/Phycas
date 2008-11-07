@@ -4,12 +4,11 @@
 # with the sumject "Your Phycas run has finished":
 # 
 # from phycas.Utilities.enotify import sendemail
-# sendemail(smtphost='smtp.muppet.org', toaddr='bunsen.honeydew@muppet.org', 
-#    fromaddr='nobody@muppet.org', subject='Your Phycas run has finished')
+# sendemail(smtphost='smtp.muppet.org', toaddr='bunsen.honeydew@muppet.org', subject='Your Phycas run has finished')
 
 import smtplib
 
-def sendemail(smtphost, toaddr, fromaddr, subject, msgbody=''):
+def sendemail(smtphost, toaddr, subject, msgbody='', fromaddr='nobody'):
     msg = 'From: %s\r\nTo: %s\r\nSubject: %s\r\n\r\n%s\n' % (fromaddr, toaddr, subject, msgbody)
     server = smtplib.SMTP(smtphost)
     errmsg = None
