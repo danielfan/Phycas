@@ -14,13 +14,13 @@ def sendemail(smtphost, toaddr, subject, msgbody='', fromaddr='nobody'):
     errmsg = None
     try:
         server.sendmail(fromaddr, toaddr, msg)
-    except SMTPRecipientsRefused:
+    except smtplib.SMTPRecipientsRefused:
         errmsg = 'SMTPRecipientsRefused exception'
-    except SMTPHeloError:
+    except smtplib.SMTPHeloError:
         errmsg = 'SMTPHeloError exception'
-    except SMTPSenderRefused:
+    except smtplib.SMTPSenderRefused:
         errmsg = 'SMTPSenderRefused exception'
-    except SMTPDataError:
+    except smtplib.SMTPDataError:
         errmsg = 'SMTPDataError exception'
     finally:
         if errmsg is not None:
