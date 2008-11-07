@@ -1862,6 +1862,17 @@ void Tree::DebugHere(
 	std::cerr << "~~~~~~~ " << s << " ~~~~~~~" << std::endl;
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Scales all edge lengths in the tree by multiplying them by the supplied value `scaling_factor'.
+*/
+void Tree::ScaleAllEdgeLens(
+  double scaling_factor)    /**< is the value by which all edge lengths will be multiplied */
+	{
+	std::for_each(begin(), end(), boost::lambda::bind(&TreeNode::ScaleEdgeLen, boost::lambda::_1, scaling_factor));
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Assigns all edge lengths in the tree to the supplied value `v'.
 */
@@ -1900,8 +1911,11 @@ void Tree::Clear()
 	nodeCountsValid		= false;
 	treeid_valid		= false;
 	numbers_from_names	= false;
-    tree_scale          = 1.0;
     debugOutput         = false;
+#if POLPY_NEWWAY
+#else
+    tree_scale          = 1.0;
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -1967,6 +1981,8 @@ void Tree::Reserve(
 		}
 	}
 
+#if POLPY_NEWWAY
+#else
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the `tree_scale' data member to the supplied value `scale'.
 */
@@ -1975,7 +1991,10 @@ void Tree::SetTreeScale(
 	{
 	tree_scale = scale;
 	}
+#endif
 
+#if POLPY_NEWWAY
+#else
 /*----------------------------------------------------------------------------------------------------------------------
 |	Accessor function that returns the current value of the `tree_scale' parameter.
 */
@@ -1983,6 +2002,7 @@ double Tree::GetTreeScale()
 	{
 	return tree_scale;
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns true if `firstPreorder' points to a node having no parent, no right sibling and only one child.

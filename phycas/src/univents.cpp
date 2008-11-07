@@ -38,7 +38,7 @@ void Univents::setEndStates(
     {
 	PHYCAS_ASSERT(p);
 	is_valid = false;   //@POL shouldn't we also set times_valid to false here?
-	const unsigned n = end_states_vec.size();
+	const unsigned n = (const unsigned)end_states_vec.size();
 	PHYCAS_ASSERT(n > 0);
 	for (unsigned i = 0; i < n; ++i)
 		end_states_vec[i] = p[i];   //@POL should assert that p is long enough for this
@@ -81,7 +81,7 @@ unsigned Univents::getNumEvents(
 	{
 	PHYCAS_ASSERT(this->is_valid);
 	PHYCAS_ASSERT(site < univents.size());
-	return univents.at(site).size();
+	return (unsigned)univents.at(site).size();
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -120,7 +120,7 @@ std::vector<double> Univents::getTimes(
 */
 void Univents::fillStateCodeArray(int8_t * tipSpecificStateCode) const
 	{
-	const unsigned n = end_states_vec.size();
+	const unsigned n = (const unsigned)end_states_vec.size();
 	PHYCAS_ASSERT(n > 0);
 	for (unsigned i = 0 ; i < n; ++i)
 		tipSpecificStateCode[i] = end_states_vec[i];

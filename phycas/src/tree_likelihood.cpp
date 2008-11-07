@@ -2894,7 +2894,7 @@ const std::vector<unsigned> & TreeLikelihood::getListOfAllMissingSites() const
     return all_missing;
     }
 
-#if 0 && POLPY_NEWWAY  
+#if 0
 /*----------------------------------------------------------------------------------------------------------------------
 |   Returns a list of all sites with patterns comprising only two primary states and no missing data or ambiguities for
 |   any taxon.

@@ -848,11 +848,11 @@ bool LargetSimonMove::update()
 	double prev_ln_like = p->getLastLnLike();
 	TreeNode * prev_likelihood_root = likelihood->getLikelihoodRoot();
 
-  	double check_ln_like = likelihood->calcLnL(tree);
-    if (check_ln_like != prev_ln_like)
-        {
-        std::cerr << "WHOA! prev_ln_like = " << prev_ln_like << " but check_ln_like = " << check_ln_like << std::endl;
-        }
+  	//double check_ln_like = likelihood->calcLnL(tree);
+    //if (check_ln_like != prev_ln_like)
+    //    {
+    //    std::cerr << "WHOA! prev_ln_like = " << prev_ln_like << " but check_ln_like = " << check_ln_like << std::endl;
+    //    }
 
 	proposeNewState();
 

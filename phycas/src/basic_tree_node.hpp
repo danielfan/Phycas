@@ -17,8 +17,8 @@
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.				  |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#ifndef PYPHY_BASIC_TREE_NODE_HPP
-#define PYPHY_BASIC_TREE_NODE_HPP
+#ifndef BASIC_TREE_NODE_HPP
+#define BASIC_TREE_NODE_HPP
 
 #include <string>
 #include <boost/function.hpp>
@@ -51,12 +51,10 @@ class TreeNode
 		virtual			~TreeNode();
 		
 		// Typedefs
-		//
 		typedef boost::function< void (TipData *) >			TipDataDeleter;
 		typedef boost::function< void (InternalData *) >	InternalDataDeleter;
 
 		// Predicates
-		//
 		bool			HasChildren() const;
 		bool			NoChildren() const;
 		bool			HasParent() const;
@@ -72,7 +70,6 @@ class TreeNode
 		bool			IsSelected() const;
 
 		// Accessors
-		//
 		float					GetSupport();
 		float					GetX();
 		float					GetY();
@@ -94,8 +91,8 @@ class TreeNode
 		const TipData *			GetTipData() const;
 		const InternalData *	GetInternalData() const;
 		Split &					GetSplit();
+
 		// Modifiers
-		//
 		void			SetObservable();
 		void			SetUnobservable();
 		void			SetSupport(float x);
@@ -104,6 +101,9 @@ class TreeNode
 		void			SelectNode();
 		void			UnselectNode();
 		void			SetEdgeLen(double x);
+#if POLPY_NEWWAY
+		void			ScaleEdgeLen(double scaling_factor);
+#endif
 		void			SetNodeName(std::string name);
 		void			SetNodeNum(unsigned num);		//@POL should be SetNodeNumber (to match GetNodeNumber)
 
@@ -120,7 +120,6 @@ class TreeNode
 		void			Clear();
 
 		// Utilities
-		//
 		void			AppendNodeInfo(std::string &s, bool num_and_name_only = false) const;
 		unsigned		CountChildren() const;
 		TreeNode *		FindNextSib();
@@ -150,7 +149,6 @@ class TreeNode
 		bool				selected;				/**< can be used anytime a node needs to be selected for some purpose */
 
 		// Pointers to structures used by likelihood calculation routines. 
-		//
 		TipData	 *			tipData;				/**< is a pointer to a structure used to store data for tip nodes */
 		TipDataDeleter		tipDataDeleter;			/**< function object used to delete memory allocated for tipData */
 		InternalData *		internalData;			/**< is a pointer to a structure used to store data for internal nodes */

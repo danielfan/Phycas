@@ -94,7 +94,7 @@ class TreeLikelihood
         void                            storeSiteLikelihoods(bool yes);
 
 		// Utilities
-#if 0 && POLPY_NEWWAY  
+#if 0
         std::vector<unsigned>           findDataBipartitions() const;
 #endif
         double                          calcLogLikeAtSubstitutionSaturation() const;

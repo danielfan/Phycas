@@ -23,16 +23,16 @@
 #define LARGET_SIMON_UNIVENT 1
 #if LARGET_SIMON_UNIVENT
 
-#include <vector>									// for std::vector
-#include <boost/shared_ptr.hpp>						// for boost::shared_ptr
-#include <boost/weak_ptr.hpp>						// for boost::weak_ptr
+#include <vector>							// for std::vector
+#include <boost/shared_ptr.hpp>				// for boost::shared_ptr
+#include <boost/weak_ptr.hpp>				// for boost::weak_ptr
 #include "phycas/src/mcmc_updater.hpp"		// for base class MCMCUpdater
 
 namespace phycas
 {
 
 class MCMCChainManager;
-typedef boost::weak_ptr<MCMCChainManager>			ChainManagerWkPtr;
+typedef boost::weak_ptr<MCMCChainManager>	ChainManagerWkPtr;
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Encapsulates the Larget-Simon local move. The LS move is the default move, but an exception must be made in the case

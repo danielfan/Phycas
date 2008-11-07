@@ -28,7 +28,7 @@ namespace phycas
 */
 inline unsigned Univents::size() const 
     {
-    return univents.size();
+    return (unsigned)univents.size();
     }
 
 /*----------------------------------------------------------------------------------------------------------------------

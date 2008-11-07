@@ -27,6 +27,8 @@ using namespace phycas;
 
 #include "phycas/src/basic_lot.hpp"
 
+#if POLPY_NEWWAY
+#else
 /*----------------------------------------------------------------------------------------------------------------------
 |	Scales all edge lengths in the tree by multiplying each of them by `scaling_factor' so that the tree is now 
 |   different from its original length by a factor of `scaling_factor'. Assumes `scaling_factor' is greater than zero.
@@ -49,6 +51,7 @@ void TreeManip::rescaleAllEdgeLengths(double scaling_factor)
         nd->SetEdgeLen(new_edgelen);
 		}
 	}
+#endif
 
 #if 0
 /*----------------------------------------------------------------------------------------------------------------------
