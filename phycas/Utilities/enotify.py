@@ -26,11 +26,12 @@ def sendemail(smtphost, toaddr, subject, msgbody='', fromaddr='nobody'):
         errmsg = 'SMTPSenderRefused exception'
     except smtplib.SMTPDataError:
         errmsg = 'SMTPDataError exception'
-    finally:
-        if errmsg is None:
-            import os
-            if os.path.exists('smtperror.txt'):
-                os.remove('smtperror.txt')
-        else:
-            open('smtperror.txt', 'w').write('From=%s\nTo=%s\nSubject=%s\nBody=%s\nSMTPhost=%s\nError=%s\n' % (fromaddr, toaddr, subject, msgbody, smtphost, errmsg))
+
+    if errmsg is None:
+        import os
+        if os.path.exists('smtperror.txt'):
+            os.remove('smtperror.txt')
+    else:
+        open('smtperror.txt', 'w').write('From=%s\nTo=%s\nSubject=%s\nBody=%s\nSMTPhost=%s\nError=%s\n' % (fromaddr, toaddr, subject, msgbody, smtphost, errmsg))
+        
     server.quit()
