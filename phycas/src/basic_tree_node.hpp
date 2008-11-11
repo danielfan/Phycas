@@ -101,9 +101,7 @@ class TreeNode
 		void			SelectNode();
 		void			UnselectNode();
 		void			SetEdgeLen(double x);
-#if POLPY_NEWWAY
 		void			ScaleEdgeLen(double scaling_factor);
-#endif
 		void			SetNodeName(std::string name);
 		void			SetNodeNum(unsigned num);		//@POL should be SetNodeNumber (to match GetNodeNumber)
 

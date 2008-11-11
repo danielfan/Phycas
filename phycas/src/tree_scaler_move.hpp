@@ -47,35 +47,25 @@ class TreeScalerMove : public MCMCUpdater
 							//std::cerr << "TreeScalerMove dying..." << std::endl;
 							}
 
-#if POLPY_NEWWAY
         void            setLambda(double x);
         double          getLambda() const;
         void            proposeNewState();
-#endif
 
 		// These are virtual functions in the MCMCUpdater base class
 		virtual bool	update();
 		virtual double	recalcPrior();			// override virtual from MCMCUpdater base class
 		virtual void	revert();
 		virtual void	accept();
-#if POLPY_NEWWAY
 		virtual double	getLnHastingsRatio() const;
-#else
-		virtual double	operator()(double f);	// override pure virtual from AdHocDensity (base class of MCMCUpdater)
-#endif
 
     private:
 
-#if POLPY_NEWWAY
         double          lambda;         /**< the tuning parameter for this move */
         unsigned        n;              /**< the number of edges in the tree */
         double          m;              /**< the preproposal tree length */
         double          mstar;          /**< the proposed new tree length */
         double          forward_scaler; /**< the factor by which the original edge lengths should be multiplied to create proposed new edge lengths */
         double          reverse_scaler; /**< the factor by which the new edge lengths should be multiplied to return them to their original lengths*/
-#else
-        void            rescaleAllEdgeLengths();
-#endif
 	};
 
 } // namespace phycas

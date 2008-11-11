@@ -34,12 +34,7 @@ const unsigned TreeNode::nodeNumInitValue = UINT_MAX;
 */
 double TreeNode::GetEdgeLen() const
 	{
-#if POLPY_NEWWAY
 	return edgeLen;
-#else
-    double scale = tree->GetTreeScale();
-	return edgeLen*scale;
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -50,7 +45,6 @@ Split & TreeNode::GetSplit()
 	return split;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the data member `edgeLen' to the product of the current value of `edgeLen' and the supplied `scaling_factor'.
 */
@@ -61,7 +55,6 @@ void TreeNode::ScaleEdgeLen(
     double new_edgeLen = edgeLen*scaling_factor;
     SetEdgeLen(new_edgeLen);
     }
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Allows write access to protected data member `edgeLen'.
@@ -69,32 +62,7 @@ void TreeNode::ScaleEdgeLen(
 void TreeNode::SetEdgeLen(
   double x)							/**< is the new edge length value */
 	{
-#if POLPY_NEWWAY
 	edgeLen = (x < TreeNode::edgeLenEpsilon ? TreeNode::edgeLenEpsilon : x);
-#else
-    // The outside world doesn't know about the tree scaling factor, so the value x
-    // will be an unscaled edge length
-    double scale = tree->GetTreeScale();
-    PHYCAS_ASSERT(scale > 0.0);
-    double newlen = x/scale;
-	edgeLen = (newlen < TreeNode::edgeLenEpsilon ? TreeNode::edgeLenEpsilon : newlen);
-#endif
-
-#if 0	// if reinstated, also reinstate code in TreeLikelihood::calcLnL
-	if (IsInternal())
-		{
-		SelectNode();
-		}
-	else
-		{
-		// Internal nodes are the only ones that matter during the likelihood calculation,
-		// so make sure at least one internal node gets selected. It is possible that this
-		// tip node is serving as the root node, so need to make sure it has a parent before
-		// trying to select the parent.
-		if (par)
-			par->SelectNode();
-		}
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

@@ -533,6 +533,8 @@ class MCMCImpl(CommonFunctions):
             tmpf.close()
         
     def mainMCMCLoop(self, explore_prior = False):
+        self.last_adaptation = 0
+        self.next_adaptation = self.opts.adapt_first
         for cycle in xrange(self.burnin + self.opts.ncycles):
             if explore_prior and self.opts.draw_directly_from_prior:
                 self.explorePrior(cycle)
@@ -660,8 +662,11 @@ class MCMCImpl(CommonFunctions):
             self.output('\nSampling (%d cycles)...' % self.opts.ncycles)
         if self.opts.verbose:
             print
-        self.last_adaptation = 0
-        self.next_adaptation = self.opts.adapt_first
+            
+        # POL moved these lines to beginning of mainMCMCLoop so that adaptation cycle
+        # starts again each time path sampling beta value is changed
+        #self.last_adaptation = 0
+        #self.next_adaptation = self.opts.adapt_first
 
         # Lay down first line in params file (recorded as cycle 0) containing starting values of parameters
         self.mcmc_manager.recordSample()
