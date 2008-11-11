@@ -241,22 +241,67 @@ class MCMCImpl(CommonFunctions):
         self.phycassert(len(self.taxon_labels) == self.ntax, "Number of taxon labels does not match number of taxa.")
         
     def calcMarginalLikelihood(self):
-        marginal_like = 0.0
+        ps_aborted = False
+        ps_msg = ''
         if self.opts.doing_path_sampling:
             if self.opts.ps_nbetavals > 1:
-                # Calculate marginal likelihood using continuous path sampling
+                # Calculate marginal likelihood using Lartillot and Phillippe (2005) method
+                marginal_like = 0.0
                 for i in range(self.opts.ps_nbetavals):
                     n = len(self.ps_sampled_likes[i])
-                    self.phycassert(n == self.opts.ncycles//self.opts.sample_every, 'number of sampled likelihoods (%d) does not match the expected number (%d) in path sampling calculation' % (n, self.opts.ncycles//self.opts.sample_every))
+                    if not (n == self.opts.ncycles//self.opts.sample_every):
+                        ps_aborted = True
+                        ps_msg = 'Path sampling marginal likelihood calculations aborted because number of sampled likelihoods (%d) did not match the expected number (%d)' % (n, self.opts.ncycles//self.opts.sample_every)
+                        break
                     mean = sum(self.ps_sampled_likes[i])/float(n)
-                    if i == 0 or i == self.opts.ps_nbetavals - 1:
-                        marginal_like += (mean/2.0)
+                    if i == 0:
+                        before = self.ps_sampled_betas[0]
                     else:
-                        marginal_like += mean
-                marginal_like /= float(self.opts.ps_nbetavals - 1)
-                self.output('Log of marginal likelihood (continuous path sampling method) = %f' % marginal_like)
+                        before = self.ps_sampled_betas[i-1]
+                    if i == self.opts.ps_nbetavals - 1:
+                        after = self.ps_sampled_betas[-1]
+                    else:
+                        after = self.ps_sampled_betas[i+1]
+                    diff = before - after
+                    if diff < 0.0:
+                        ps_aborted = True
+                        ps_msg = 'Phycas does not currently support path sampling from prior toward posterior'
+                        break
+                    marginal_like += mean*diff/2.0
+                if not ps_aborted:
+                    marginal_like /= float(self.opts.ps_nbetavals - 1)
+                    self.output('Log of marginal likelihood (thermodynamic integration method) = %.8f' % marginal_like)
+
+                if not ps_aborted:
+                    # Calculate marginal likelihood using steppingstone sampling method
+                    lnR = 0.0
+                    seR = 0.0
+                    for i in range(1,self.opts.ps_nbetavals):
+                        # assuming that beta_incr and n are ok because ps_aborted is not true
+                        beta_incr = self.ps_sampled_betas[i-1] - self.ps_sampled_betas[i]
+                        n = len(self.ps_sampled_likes[i])
+                        
+                        # marginal likelihood calculation
+                        tmp = 0.0
+                        Lmax = max(self.ps_sampled_likes[i])
+                        for lnL in self.ps_sampled_likes[i]:
+                            tmp += math.exp(beta_incr*(lnL - Lmax))
+                        tmp /= float(n)
+                        lnR += beta_incr*Lmax + math.log(tmp)
+
+                        # standard error calculation
+                        tmp1 = 0.0
+                        for lnL in self.ps_sampled_likes[i]:
+                            aa = math.exp(beta_incr*(lnL - Lmax))/tmp
+                            tmp1 += math.pow((aa - 1.0),2.0)
+                        tmp1 /= float(n)
+                        seR += tmp1/float(n)
+
+                    self.output('Log of marginal likelihood (steppingstone sampling method) = %.8f (se = %.8f)' % (lnR, seR))
             else:
                 self.output('Log of marginal likelihood not computed (ps_nbetavals must be greater than 1)')
+            if ps_aborted:
+                self.output(ps_msg)
         else:
             # Calculate marginal likelihood using harmonic mean method on cold chain
             nignored = 0
