@@ -246,7 +246,7 @@ print """
                       version 1.0.0-r%s
 
 Phycas is written by Paul O. Lewis, Mark Holder and David Swofford
-You are running a build from svn %s
+You are running a build from subversion revision %s
 
 Phycas is distributed under the GNU Public License (see License file for more
 information).
