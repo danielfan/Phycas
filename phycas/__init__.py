@@ -127,14 +127,18 @@ _check_for_updates = True
 _phycas_update_url = "129.237.138.231" # change this to phycas.org url
 _phycas_branch = "$HeadURL$"
 
+# Look for a file named svnver.txt in the same directory as this __init__.py file
+# The svnver.txt file should contain only the svn version number, and should be
+# created automatically when bjam is run (using a make rule in the Jamroot file)
+_phycas_revision = '?'
 try:
-    _phycas_revision = open('svnver.txt', 'r').read()
-except IOError:
     import os
-    print 'Could not find svnver.txt file in this directory:\n  %s' % os.getcwd()
-    _phycas_revision = '?'
+    svnverfile = 'svnver.txt'
+    svnverdir = os.path.dirname(__file__)
+    svnverpath = os.path.join(svnverdir,svnverfile)
+    _phycas_revision = open(svnverpath, 'r').read()
 except:
-    _phycas_revision = '?'
+    print 'Warning: could not find the %s file in this directory:\n  %s' % (svnverfile,svnverdir)
 #_phycas_revision = "PHYCAS_SVN_REVISION_NUMBER_HERE"
 
 #from Phycas import Phycas
