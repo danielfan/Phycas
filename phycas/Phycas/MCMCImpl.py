@@ -259,7 +259,7 @@ class MCMCImpl(CommonFunctions):
                     else:
                         before = self.ps_sampled_betas[i-1]
                     if i == self.opts.ps_nbetavals - 1:
-                        after = self.ps_sampled_betas[-1]
+                        after = self.ps_sampled_betas[self.opts.ps_nbetavals - 1]
                     else:
                         after = self.ps_sampled_betas[i+1]
                     diff = before - after
@@ -269,7 +269,6 @@ class MCMCImpl(CommonFunctions):
                         break
                     marginal_like += mean*diff/2.0
                 if not ps_aborted:
-                    marginal_like /= float(self.opts.ps_nbetavals - 1)
                     self.output('Log of marginal likelihood (thermodynamic integration method) = %.8f' % marginal_like)
 
                 if not ps_aborted:
