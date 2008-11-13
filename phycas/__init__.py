@@ -128,9 +128,13 @@ _phycas_update_url = "129.237.138.231" # change this to phycas.org url
 _phycas_branch = "$HeadURL$"
 
 try:
-	_phycas_revision = open('svnver.txt', 'r').read()
+    _phycas_revision = open('svnver.txt', 'r').read()
+except IOError:
+    import os
+    print 'Could not find svnver.txt file in this directory:\n  %s' % os.getcwd()
+    _phycas_revision = '?'
 except:
-	_phycas_revision = '?'
+    _phycas_revision = '?'
 #_phycas_revision = "PHYCAS_SVN_REVISION_NUMBER_HERE"
 
 #from Phycas import Phycas
