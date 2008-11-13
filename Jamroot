@@ -105,7 +105,7 @@ else {
 make svnversion : : @svnversion ;
 actions svnversion
 {
-	./svnver.py 
+	python svnver.py 
 }
 #install phycas : svnversion.txt ;
 
