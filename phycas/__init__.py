@@ -126,7 +126,12 @@ _use_wx_phycas = False
 _check_for_updates = True
 _phycas_update_url = "129.237.138.231" # change this to phycas.org url
 _phycas_branch = "$HeadURL$"
-_phycas_revision = "PHYCAS_SVN_REVISION_NUMBER_HERE"
+
+try:
+	_phycas_revision = open('svnver.txt', 'r').read()
+except:
+	_phycas_revision = '?'
+#_phycas_revision = "PHYCAS_SVN_REVISION_NUMBER_HERE"
 
 #from Phycas import Phycas
 if not _user_ini_checked:
@@ -245,6 +250,6 @@ You are running a build from svn %s
 
 Phycas is distributed under the GNU Public License (see License file for more
 information).
-""" % ("PHYCAS_SVN_REVISION_NUMBER_HERE", "PHYCAS_SVN_REVISION_NUMBER_HERE")
+""" % (_phycas_revision, _phycas_revision)
 
 
