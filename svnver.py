@@ -10,4 +10,4 @@ try:
 except OSError:
     svn_revision = '?'
     
-open('phycas/svnver.txt', 'w').write('%s-r%s\n' % (phycas_version,svn_revision))
+open('phycas/svnver.txt', 'w').write('%s-r%s' % (phycas_version,svn_revision))

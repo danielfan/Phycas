@@ -250,7 +250,9 @@ from phycas.Utilities.GlobalState import readFile
 RNG = Lot
     
 print """
-///// Welcome to Phycas /////
+  /////////////////////////////
+ ///// Welcome to Phycas /////
+/////////////////////////////
 Version %s
 
 Phycas is written by Paul O. Lewis, Mark Holder and David Swofford
