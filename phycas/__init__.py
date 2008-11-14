@@ -250,14 +250,13 @@ from phycas.Utilities.GlobalState import readFile
 RNG = Lot
     
 print """
-                     Welcome to Phycas
-                      version 1.0.0-r%s
+///// Welcome to Phycas /////
+Version %s
 
 Phycas is written by Paul O. Lewis, Mark Holder and David Swofford
-You are running a build from subversion revision %s
 
 Phycas is distributed under the GNU Public License (see License file for more
 information).
-""" % (_phycas_revision, _phycas_revision)
+""" % (_phycas_revision,)
 
 

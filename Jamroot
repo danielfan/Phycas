@@ -102,10 +102,10 @@ else {
 # Note that the target name supplied to make is not the same as the file generated, which
 # ensures that this command will be run every time Jamroot is executed.
 # See http://boost.sourceforge.net/boost-build2/doc/html/bbv2/builtins/raw.html
-make svnversion : : @svnversion ;
+make svnversion : phycasver.txt : @svnversion ;
 actions svnversion
 {
-	python svnver.py 
+    python svnver.py $(>)
 }
 #install phycas : svnversion.txt ;
 
