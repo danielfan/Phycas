@@ -764,8 +764,23 @@ class MCMCManager:
                 for rp in probs_vector:
                     self.parent.paramf.write(float_format_str % rp)
             self.parent.paramf.write('\n')
-        
+            
         # Add line to tree file if it exists
         if self.parent.treef:
             self.parent.treef.write('   tree rep.%d = %s;\n' % (cycle + 1, cold_chain.tree.makeNewick(self.parent.opts.ndecimals)))
 
+        # Add line to sitelike file if it exists and if we are saving site-likelihoods
+        if self.parent.opts.saving_sitelikes:
+            if self.parent.sitelikef:
+                cold_chain.likelihood.storeSiteLikelihoods(True)
+                cold_chain.likelihood.calcLnL(cold_chain.tree)
+                cold_chain.likelihood.storeSiteLikelihoods(False)
+                
+                patternLnLikes = cold_chain.likelihood.getSiteLikelihoods()
+                siteloglikes = [0.0]*self.parent.nchar
+                for i,patternLnL in enumerate(patternLnLikes):
+                    for site in self.parent.siteIndicesForPatternIndex[i]:
+                        siteloglikes[site] = patternLnL
+                for siteLnL in siteloglikes:
+                    self.parent.sitelikef.write(float_format_str % siteLnL)
+                self.parent.sitelikef.write('\n')

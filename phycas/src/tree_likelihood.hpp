@@ -85,6 +85,7 @@ class TreeLikelihood
         const std::vector<double> &     getSiteLikelihoods() const;
         bool                            storingSiteLikelihoods() const;
         const CountVectorType &         getPatternCounts() const;
+        const std::vector<unsigned> &   getCharIndexToPatternIndex() const;
 
 		// Modifiers
 		void							setNPatterns(unsigned npatterns);

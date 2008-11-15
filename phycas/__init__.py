@@ -215,6 +215,8 @@ like = Like()
 from Phycas.PS import PS
 ps = PS()
 
+from Phycas.CPO import CPO
+cpo = CPO()
 
 def simpleOutputter(msg):
     print msg

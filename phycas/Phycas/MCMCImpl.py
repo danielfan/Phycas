@@ -39,6 +39,7 @@ class MCMCImpl(CommonFunctions):
         self.taxon_labels           = []        # Will hold taxon labels from data file or default names if self.data_source equals None
         self.paramf                 = None
         self.treef                  = None
+        self.sitelikef              = None
         #self.tree_file_name         = ''        # Will hold tree file name (see openParameterAndTreeFiles)
         #self.param_file_name        = ''        # Will hold parameter file name (see openParameterAndTreeFiles)
         #self.tmp_simdata            = SimData()
@@ -67,6 +68,29 @@ class MCMCImpl(CommonFunctions):
         self.ps_sampled_likes       = None
         #self.ps_delta_beta          = 0.0   # can be deleted when new system in place
         self.phycassert(self.opts.ps_nbetavals > 0, 'ps_nbetavals cannot be less than 1')
+        self.siteIndicesForPatternIndex = None
+        
+    def setSiteLikeFile(self, sitelikef):
+        if sitelikef is not None:
+            self.sitelikef = sitelikef
+            
+    def siteLikeFileSetup(self, coldchain):
+        if self.sitelikef is not None:
+            # Set up the siteIndicesForPatternIndex, which holds a list of sites for each pattern index
+            # This allows us to spit out site likelihoods for each site, even though site likelihoods
+            # are stored for patterns, many of which represent numerous sites
+            v = coldchain.likelihood.getCharIndexToPatternIndex()
+            self.phycassert(len(v) == self.nchar,'Number of sites returned by coldchain.likelihood.getCharIndexToPatternIndex differs from MCMCImpl.nchar in MCMCImpl.siteLikeFileSetup()')
+            npatterns = coldchain.likelihood.getNPatterns()
+            self.siteIndicesForPatternIndex = []
+            for i in range(npatterns):
+                self.siteIndicesForPatternIndex.append([])
+            for i,p in enumerate(v):
+                self.siteIndicesForPatternIndex[p].append(i)
+
+    def unsetSiteLikeFile(self):
+        self.sitelikef = None
+        self.siteIndicesForPatternIndex = None
 
     def sliceSamplerReport(self, s, nm):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -419,6 +443,7 @@ class MCMCImpl(CommonFunctions):
             self.ps_beta = self.opts.ps_maxbeta
             cc = self.mcmc_manager.getColdChain()
             cc.setPower(self.ps_beta)
+        self.siteLikeFileSetup(self.mcmc_manager.getColdChain())
         
     def beyondBurnin(self, cycle):
         c = cycle + 1

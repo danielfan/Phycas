@@ -76,6 +76,10 @@ class MCMC(PhycasCommand):
         self.__dict__["ps_shape2"] = 1.0
         self.__dict__["ps_heating_likelihood"] = False
         
+        # The data members added below are hidden from the user because they are set by the cpo command
+        self.__dict__["saving_sitelikes"] = False
+        self.__dict__["sitelikef"] = None
+        
         # The data members added below are hidden from the user because they are set when the mcmc command runs
         self.__dict__["ps_sampled_likes"] = None
         self.__dict__["ps_sampled_betas"] = None
@@ -92,8 +96,9 @@ class MCMC(PhycasCommand):
         self.set(**kwargs)
         #self.checkSanity()
         c = copy.deepcopy(self)
-        #c = self
         mcmc_impl = MCMCImpl(c)
+        mcmc_impl.setSiteLikeFile(self.sitelikef)
         mcmc_impl.run()
         self.ps_sampled_betas = mcmc_impl.ps_sampled_betas
         self.ps_sampled_likes = mcmc_impl.ps_sampled_likes
+        mcmc_impl.unsetSiteLikeFile()

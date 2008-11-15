@@ -175,6 +175,14 @@ const std::vector<double> & TreeLikelihood::getPatternCounts() const
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Returns a reference to the data member `charIndexToPatternIndex'.
+*/
+const std::vector<unsigned> & TreeLikelihood::getCharIndexToPatternIndex() const
+    {
+    return charIndexToPatternIndex;
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Returns the current value of the data member `store_site_likes'.
 */
 bool TreeLikelihood::storingSiteLikelihoods() const
