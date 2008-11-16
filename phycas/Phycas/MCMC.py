@@ -41,7 +41,6 @@ class MCMC(PhycasCommand):
                 ("adapt_first",             100,                            "Adaptation of slice samplers is performed the first time at cycle adapt_first. Subsequent adaptations wait twice the number of cycles as the previous adaptation. Thus, adaptation n occurs at cycle adapt_first*(2**(n - 1)). The total number of adaptations that will occur during an MCMC run is [ln(adapt_first + ncycles) - ln(adapt_first)]/ln(2)", IntArgValidate(min=0)),
                 ("adapt_simple_param",      0.5,                            "Slice sampler adaptation parameter", FloatArgValidate(min=0.01)),
                 ("heating_lambda",         0.2,                             "not yet documented", FloatArgValidate(min=0.01)),
-                ("nchains",                1,                               "The number of Markov chains to run simultaneously. One chain serves as the cold chain from which samples are drawn, the other chains are heated to varying degrees and serve to enhance mixing in the cold chain.", IntArgValidate(min=1,max=1)), # only allowing 1 chain now because multiple chains not yet fully implemented
                 ("uf_num_edges",           50,                              "Number of edges to traverse before taking action to prevent underflow", IntArgValidate(min=1)),
                 ("ntax",                   0,                               "To explore the prior, set to some positive value. Also set data_source to None", IntArgValidate(min=0)),
                 ("ndecimals",              8,                               "Number of decimal places used for sampled parameter values", IntArgValidate(min=1)),
@@ -62,10 +61,11 @@ class MCMC(PhycasCommand):
         # The roundabout way of introducing these data members is necessary because PhycasCommand.__setattr__ tries
         # to prevent users from adding new data members (to prevent accidental misspellings from causing problems)
         self.__dict__["debugging"] = False
-        self.__dict__["use_unimap"] = False                    # if True, MCMC analyses will use the uniformized mapping approach.
-        self.__dict__["mapping_move_weight"] = 1               # Univent mapping will be performed this many times per cycle
-        self.__dict__["unimap_nni_move_weight"] = 100          # Unimap NNI moves will be performed this many times per cycle
-        self.__dict__["draw_directly_from_prior"] = True
+        self.__dict__["use_unimap"] = False                 # if True, MCMC analyses will use the uniformized mapping approach.
+        self.__dict__["mapping_move_weight"] = 1            # Univent mapping will be performed this many times per cycle
+        self.__dict__["unimap_nni_move_weight"] = 100       # Unimap NNI moves will be performed this many times per cycle
+        self.__dict__["draw_directly_from_prior"] = True    # If True, MCMCImpl.explorePrior function is used to draw samples directly from the prior during path sampling, which dramatically improves mixing compared to using MCMC proposals to explore the prior
+        self.__dict__["nchains"] = 1                        # The number of Markov chains to run simultaneously. One chain serves as the cold chain from which samples are drawn, the other chains are heated to varying degrees and serve to enhance mixing in the cold chain.
 
         # The data members added below are hidden from the user because they are set by the ps command
         self.__dict__["doing_path_sampling"] = False

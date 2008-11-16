@@ -5,13 +5,7 @@ from phycas import mcmc
 
 class CPO(PhycasCommand):
     def __init__(self):
-        # **** IMPORTANT **** The arguments below are ignored for now - left over from ancestral PS command - replace with something meaningful
-        args = (   ("nbetavals", 101, "The number of values beta will take on during the run; for example, if this value is 4, then beta will take on these values: 1, 2/3, 1/3, 0", IntArgValidate(min=1)),
-                   ("maxbeta", 1.0, "The first beta value that will be sampled.", FloatArgValidate(min=0.0, max=1.0)),
-                   ("minbeta", 0.0, "The last beta value that will be sampled.", FloatArgValidate(min=0.0, max=1.0)),
-                   ("shape1", 0.3, "The first shape parameter of the distribution used to determine the beta values to be sampled. This distribution is, confusingly, a Beta distribution. Thus, if both shape1 and shape2 are set to 1, beta values will be chosen at uniform intervals from minbeta to maxbeta.", FloatArgValidate(greaterthan=0.0)),
-                   ("shape2", 1.0, "The second shape parameter of the distribution used to determine the beta values to be sampled. This distribution is, confusingly, a Beta distribution. Thus, if both shape1 and shape2 are set to 1, beta values will be chosen at uniform intervals from minbeta to maxbeta.", FloatArgValidate(greaterthan=0.0)),
-                )
+        args = (("patterns_only", False, "If True, each row of the sitelike output file will contain sampled log-likelihoods for each pattern, with the first row of the file holding the counts for each pattern. If False, the rows of the sitelike file will contain the log-likelihoods for each site in the order in which the sites occur in the data file (generally produces a larger file).", BoolArgValidate),)
         # Specify output options
         o = PhycasCommandOutputOptions()
         o.__dict__["_help_order"] = ["sitelike"]
