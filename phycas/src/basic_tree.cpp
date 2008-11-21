@@ -1769,8 +1769,12 @@ unsigned Tree::FindTipByName(
 		{
 		if (nd->IsTip())
 			{
+            //std::cerr << boost::str(boost::format("%s <-> %s = %d") % tipname % nd->GetNodeName() % tipname.compare(nd->GetNodeName())) << std::endl;
             if (tipname.compare(nd->GetNodeName()) == 0)
+                {
+                //std::cerr << boost::str(boost::format("Found! node number is %d") % nd->GetNodeNumber()) << std::endl;
                 return nd->GetNodeNumber();
+                }
 			}
         }
     return UINT_MAX;

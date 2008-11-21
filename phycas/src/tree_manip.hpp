@@ -57,7 +57,7 @@ class TreeManip
 		void		randomTree(unsigned ntips, LotShPtr rng, ProbDistShPtr edge_len_dist, bool yule);
 		void		equiprobTree(unsigned ntips, LotShPtr rng, ProbDistShPtr internal_edge_dist, ProbDistShPtr external_edge_dist);
 
-        //void        deleteRandomInternalEdge(LotShPtr rng);
+        void        deleteRandomInternalEdge(LotShPtr rng);
 		void		setRandomEdgeLens(ProbDistShPtr d);
 
         void        buildTreeFromSplitVector(const std::vector<std::string> & split_vect, ProbDistShPtr edge_len_dist);

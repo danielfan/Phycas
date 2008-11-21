@@ -76,7 +76,7 @@ class PDFTree(CommonFunctions):
             
             if self.pdf_outgroup_taxon:
                 num = tree.findTipByName(self.pdf_outgroup_taxon)
-                self.phycassert(num, 'could not root tree using specified outgroup: no tip having name "%s" could be found' % self.pdf_outgroup_taxon)
+                self.phycassert(num is not None, 'could not root tree using specified outgroup: no tip having name "%s" could be found' % self.pdf_outgroup_taxon)
                 tree.rerootAtTip(num)
                 
             if self.pdf_ladderize:

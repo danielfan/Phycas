@@ -27,7 +27,6 @@ using namespace phycas;
 
 #include "phycas/src/basic_lot.hpp"
 
-#if 0
 /*----------------------------------------------------------------------------------------------------------------------
 |	Deletes a randomly-selected edge from the tree. Does not strip conditional likelihoods before storing internal
 |   nodes, so care should be taken with this function if the likelihood will be calculated on the resulting tree.
@@ -69,7 +68,6 @@ void TreeManip::deleteRandomInternalEdge(LotShPtr rng)
 	DeleteLeaf(nd, true);
 	tree->InvalidateNodeCounts();
     }
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Assigns all edge lengths in the tree using independent draws from the ProbabilityDistribution object pointed to by
