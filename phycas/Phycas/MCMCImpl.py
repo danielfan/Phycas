@@ -563,6 +563,7 @@ class MCMCImpl(CommonFunctions):
             orig_num_internal_nodes = chain.tree.getNInternals()
             num_internals_to_delete = orig_num_internal_nodes - num_internal_nodes
             for i in range(num_internals_to_delete):
+                #open('doofus.tre','w').write('%s;\n' % chain.tree.makeNumberedNewick())
                 tm.deleteRandomInternalEdge(chain.r)
                 
         chain.prepareForLikelihood()

@@ -37,25 +37,27 @@ void TreeManip::deleteRandomInternalEdge(LotShPtr rng)
     // its edge to create a polytomy (or a bigger polytomy if there is already a polytomy)
     unsigned num_internals = tree->GetNInternals();
     PHYCAS_ASSERT(num_internals > 0);
-    unsigned i = rng->SampleUInt(num_internals);
+    unsigned i = rng->SampleUInt(num_internals - 1);
 
     TreeNode * nd = tree->GetFirstPreorder();
     for (; nd != NULL; nd = nd->GetNextPreorder())
         {
-        if (nd->IsTip() || nd->GetParent()->IsTipRoot())
-            continue;
-
-        if (i == 0)
-            break;
-        else
-            --i;
+        bool is_tip = nd->IsTip();
+        bool is_subroot = (is_tip ? false : nd->GetParent()->IsTipRoot());
+        if (!is_tip && !is_subroot)
+            {
+            if (i == 0)
+                break;
+            else
+                --i;
+            }
         }
 
 	// This operation should not leave the root node (which is a tip) with more than one child,
 	// so check to make sure that nd is not the root nor a child of root
 	TreeNode * parent = nd->GetParent();
-	PHYCAS_ASSERT(orig_par != NULL);
-	PHYCAS_ASSERT(!orig_par->IsTipRoot());
+	PHYCAS_ASSERT(parent != NULL);
+	PHYCAS_ASSERT(!parent->IsTipRoot());
 
 	// Make all of nd's children children of parent instead
 	while (nd->GetLeftChild() != NULL)

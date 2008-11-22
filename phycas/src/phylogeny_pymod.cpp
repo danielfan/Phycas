@@ -128,7 +128,7 @@ BOOST_PYTHON_MODULE(_Phylogeny)
 		.def("randomTree", &TreeManip::randomTree)
 		.def("equiprobTree", &TreeManip::equiprobTree)
 		.def("setRandomEdgeLens", &TreeManip::setRandomEdgeLens)
-		//.def("deleteRandomInternalEdge", &TreeManip::deleteRandomInternalEdge)
+		.def("deleteRandomInternalEdge", &TreeManip::deleteRandomInternalEdge)
 		;
 
 	class_<Split, boost::shared_ptr<Split> >("SplitBase")
