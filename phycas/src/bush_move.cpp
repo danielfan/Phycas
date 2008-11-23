@@ -506,6 +506,9 @@ const VecPolytomyDistr & BushMove::computePolytomyDistribution(unsigned nspokes)
 	PolytomyDistrMap::const_iterator i = poly_prob.find(nspokes);
 	if (i == poly_prob.end())
 		{
+#if POLPY_NEWWAY
+        std::cerr << boost::str(boost::format(">>--> Adding distribution for nspokes = %d...") % nspokes) << std::endl;
+#endif
 		// There is no existing probability distribution vector corresponding to nspokes
 		// Need to calcuate it and insert into poly_prob map.
 		double ln_nfact = cdf.LnGamma((double)(nspokes + 1));

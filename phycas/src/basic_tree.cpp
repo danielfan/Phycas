@@ -51,8 +51,7 @@ TreeNode * Tree::PopLeafNode()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Push node onto end of `internalNodeStorage' vector (nodes are stored rather than deleted to save having to reallocate them
-|	later.
+|	Pop node off end of `internalNodeStorage' vector 
 */
 TreeNode * Tree::PopInternalNode()
 	{

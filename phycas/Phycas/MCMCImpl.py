@@ -141,18 +141,22 @@ class MCMCImpl(CommonFunctions):
             self.output(summary)
 
     def updateAllUpdaters(self, chain, chain_index, cycle):
+        #import gc
+        #gc.enable()
         if self.opts.debugging:
             tmpf = file('debug_info.txt', 'a')
             tmpf.write('************** cycle=%d, chain=%d\n' % (cycle,chain_index))
         for p in chain.chain_manager.getAllUpdaters():
             w = p.getWeight()
             #print p.getName(), "(weight = %d)" % w
-            #if p.getName() == 'State freq move':
-            #    raw_input('debug stop')
             for x in range(w):
                 if self.opts.debugging:
                     p.setSaveDebugInfo(True)
                 p.update()
+                #if p.getName() == 'Bush move':
+                #    print '  counts after bush move =',gc.get_count()
+                #    print '  thresholds =',gc.get_threshold()
+                #    #raw_input('debug stop')
                 if self.opts.debugging:
                     tmpf.write('%s | %s\n' % (p.getName(), p.getDebugInfo()))
         

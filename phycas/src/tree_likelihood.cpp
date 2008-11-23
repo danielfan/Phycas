@@ -2812,13 +2812,25 @@ void TreeLikelihood::addDataTo(SimData & other)
 void TreeLikelihood::prepareInternalNodeForLikelihood(
   TreeNode * nd)	/**< is the node to decorate */
 	{
-	//InternalData * ndID = nd->GetInternalData();
+#if POLPY_NEWWAY
+	if (nd)
+		{
+    	InternalData * ndID = nd->GetInternalData();
+        if (ndID == NULL)
+            {
+    		TreeNode::InternalDataDeleter	cl_deleter	= &deallocateInternalData;
+	    	InternalData * cl = allocateInternalData();
+		    nd->SetInternalData(cl, cl_deleter);
+            }
+		}
+#else
 	if (nd)
 		{
 		TreeNode::InternalDataDeleter	cl_deleter	= &deallocateInternalData;
 		InternalData * cl = allocateInternalData();
 		nd->SetInternalData(cl, cl_deleter);
 		}
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
