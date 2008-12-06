@@ -56,6 +56,15 @@
 #include <limits>
 #include <ncl/nxsstring.h>
 class NxsException;
+
+#if defined(_MSC_VER) && _MSC_VER >= 1500
+#	include <cstdio>
+#	define sprintf sprintf_s
+#	if !defined(vsnprintf)
+#		define vsnprintf _vsnprintf_s
+#	endif
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Class used with the << operators to format doubles by providing the arguments for the sprintf function that is
 |	used to append double.  
@@ -477,7 +486,7 @@ template<>
 inline std::string & AppendNumber<int>(std::string & s, const int i)
 	{
 	char tmp[81];
-	std::sprintf(tmp, "%d", i);
+	sprintf(tmp, "%d", i);
 	s.append(tmp);
 	return s;
 	}
@@ -486,7 +495,7 @@ template<>
 inline std::string & AppendNumber<unsigned>(std::string & s, const unsigned i)
 	{
 	char tmp[81];
-	std::sprintf(tmp, "%u", i);
+	sprintf(tmp, "%u", i);
 	s.append(tmp);
 	return s;
 	}
@@ -494,7 +503,7 @@ template<>
 inline std::string & AppendNumber<long>(std::string & s, const long l)
 	{
 	char tmp[81];
-	std::sprintf(tmp, "%ld", l);
+	sprintf(tmp, "%ld", l);
 	s.append(tmp);
 	return s;
 	}
@@ -503,7 +512,7 @@ template<>
 inline std::string & AppendNumber<unsigned long>(std::string & s, const unsigned long l)
 	{
 	char tmp[81];
-	std::sprintf(tmp, "%lu", l);
+	sprintf(tmp, "%lu", l);
 	s.append(tmp);
 	return s;
 	}
