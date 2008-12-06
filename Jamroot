@@ -211,7 +211,7 @@ alias likelihood_sources
     phycas/src/slice_sampler.cpp
     phycas/src/split.cpp 
     phycas/src/square_matrix.cpp 
-    phycas/src/state_freq_move.cpp
+    phycas/src/dirichlet_move.cpp
     phycas/src/state_freq_param.cpp
     phycas/src/tip_data.cpp 
     phycas/src/topo_prior_calculator.cpp 
