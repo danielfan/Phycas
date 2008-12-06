@@ -23,7 +23,7 @@
 #include "phycas/src/tree_likelihood.hpp"
 #include "phycas/src/xlikelihood.hpp"
 #include "phycas/src/mcmc_chain_manager.hpp"
-#include "phycas/src/state_freq_move.hpp"
+#include "phycas/src/dirichlet_move.hpp"
 #include "phycas/src/basic_tree.hpp"
 #include "phycas/src/tree_manip.hpp"
 
@@ -32,7 +32,7 @@ using namespace phycas;
 /*----------------------------------------------------------------------------------------------------------------------
 |	The constructor sets tuning parameter `psi' to 300.0 and calls reset().
 */
-StateFreqMove::StateFreqMove() : MCMCUpdater()
+DirichletMove::DirichletMove() : MCMCUpdater()
 	{
 	psi = 300.0;
 	reset();
@@ -41,7 +41,7 @@ StateFreqMove::StateFreqMove() : MCMCUpdater()
 /*--------------------------------------------------------------------------------------------------------------------------
 |   Resets the 'dir_forward' and 'dir_reverse' shared pointers.
 */
-void StateFreqMove::reset()
+void DirichletMove::reset()
 	{
     dir_forward.reset();
     dir_reverse.reset();
@@ -50,7 +50,7 @@ void StateFreqMove::reset()
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the value for the data member 'psi', which is the tuning parameter for this move.
 */
-void StateFreqMove::setPsi(
+void DirichletMove::setPsi(
   double x) /* is the new value for psi */
 	{
 	psi = x;
@@ -59,7 +59,7 @@ void StateFreqMove::setPsi(
 /*----------------------------------------------------------------------------------------------------------------------
 |	Provides read access to the data member 'psi', which is the tuning parameter for this move.
 */
-double StateFreqMove::getPsi() const
+double DirichletMove::getPsi() const
 	{
 	return psi;
 	}
@@ -67,53 +67,45 @@ double StateFreqMove::getPsi() const
 /*--------------------------------------------------------------------------------------------------------------------------
 |   Chooses a new vector of state frequencies using a sharp Dirichlet distribution centered at the original frequencies.
 */
-void StateFreqMove::proposeNewState()
+void DirichletMove::proposeNewState()
 	{
-    // copy the current frequencies to the data member orig_freqs
-    const std::vector<double> & rfreqs = model->getStateFreqs();
-    orig_freqs.resize(rfreqs.size());
-    std::copy(rfreqs.begin(), rfreqs.end(), orig_freqs.begin());
+    // copy the current parameters from the model to the data member orig_params
+    getParams();
 
-    // create vector of Dirichlet parameters for selecting new frequencies
-    c_forward.resize(rfreqs.size());
-	std::transform(orig_freqs.begin(), orig_freqs.end(), c_forward.begin(), boost::lambda::_1*psi);
+    // create vector of Dirichlet parameters for selecting new parameter values (by multiplying
+    // each current parameter value by the value `psi')
+    c_forward.resize(orig_params.size());
+	std::transform(orig_params.begin(), orig_params.end(), c_forward.begin(), boost::lambda::_1*psi);
 
     // create Dirichlet distribution and sample from it to get proposed frequencies
     dir_forward = DirichletShPtr(new DirichletDistribution(c_forward));
     dir_forward->SetLot(getLot().get());
-    new_freqs = dir_forward->Sample();
+    new_params = dir_forward->Sample();
 
     // create vector of Dirichlet parameters for selecting old frequencies (needed for Hasting ratio calculation)
-    c_reverse.resize(new_freqs.size());
-	std::transform(new_freqs.begin(), new_freqs.end(), c_reverse.begin(), boost::lambda::_1*psi);
+    c_reverse.resize(new_params.size());
+	std::transform(new_params.begin(), new_params.end(), c_reverse.begin(), boost::lambda::_1*psi);
     dir_reverse = DirichletShPtr(new DirichletDistribution(c_reverse));
-
-    //for (unsigned i = 0; i < 5; ++i)
-    //    {
-    //    std::vector<double> tmp_freqs = dir_forward->Sample();
-    //    std::cerr << boost::str(boost::format("  %d %.9f %.9f %.9f %.9f\n") % tmp_freqs[0] % i % tmp_freqs[1] % tmp_freqs[2] % tmp_freqs[3]);
-    //    }
-    //std::cerr << boost::str(boost::format("%.9f %.9f %.9f %.9f ") % new_freqs[0] % new_freqs[1] % new_freqs[2] % new_freqs[3]);
 	}
 
 /*--------------------------------------------------------------------------------------------------------------------------
 |	Returns the natural log of the Hastings ratio for this move. The Hastings ratio is:
 |>
-|	Pr(new state -> old state)   Dir(pi'[i]*psi) density evaluated at pi
-|	-------------------------- = ---------------------------------------
-|	Pr(old state -> new state)   Dir(pi[i]*psi) density evaluated at pi'
+|	Pr(new state -> old state)   Dir(c'[i]*psi) density evaluated at c
+|	-------------------------- = -------------------------------------
+|	Pr(old state -> new state)   Dir(c[i]*psi) density evaluated at c'
 |>
-|   where pi[i] is the ith current frequency and pi'[i] is the ith proposed new frequency.
+|   where c[i] is the ith current parameter and c'[i] is the ith proposed new parameter.
 */
-double StateFreqMove::getLnHastingsRatio() const
+double DirichletMove::getLnHastingsRatio() const
 	{
-    return (dir_reverse->GetLnPDF(orig_freqs) - dir_forward->GetLnPDF(new_freqs));
+    return (dir_reverse->GetLnPDF(orig_params) - dir_forward->GetLnPDF(new_params));
 	}
 
 /*--------------------------------------------------------------------------------------------------------------------------
 |	This move does not change the model dimension, so the Jacobian is irrelevant.
 */
-double StateFreqMove::getLnJacobian() const
+double DirichletMove::getLnJacobian() const
 	{
 	return 0.0;
 	}
@@ -121,7 +113,7 @@ double StateFreqMove::getLnJacobian() const
 /*--------------------------------------------------------------------------------------------------------------------------
 |	Called if the proposed move is accepted. Simply calls the reset() function.
 */
-void StateFreqMove::accept()
+void DirichletMove::accept()
 	{
 	reset();
 	}
@@ -130,10 +122,9 @@ void StateFreqMove::accept()
 |	Called if the proposed move is rejected. Calls the reset() function after reinstating the original state frequencies
 |   and ensuring that all conditional likelihood arrays will be recalculated when the likelihood is next calculated.
 */
-void StateFreqMove::revert()
+void DirichletMove::revert()
 	{
-    // replace current frequencies with original ones
-    model->setStateFreqsUnnorm(orig_freqs);
+    setParams(orig_params);
 
     // invalidate all CLAs
     likelihood->useAsLikelihoodRoot(NULL);	
@@ -145,21 +136,21 @@ void StateFreqMove::revert()
 |	Calls proposeNewState(), then decides whether to accept or reject the proposed new state, calling accept() or 
 |	revert(), whichever is appropriate.
 */
-bool StateFreqMove::update()
+bool DirichletMove::update()
 	{
 	ChainManagerShPtr p = chain_mgr.lock();
 	PHYCAS_ASSERT(p);
 
 	proposeNewState();
 
-    double prev_ln_prior		= mvprior->GetRelativeLnPDF(orig_freqs);
+    double prev_ln_prior		= mvprior->GetRelativeLnPDF(orig_params);
 	double prev_ln_like			= p->getLastLnLike();
 
-    // replace current frequencies with new ones
-    model->setStateFreqsUnnorm(new_freqs);
+    // replace current parameter values with new ones
+    setParams(new_params);
     likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
 
-	double curr_ln_prior		= mvprior->GetRelativeLnPDF(new_freqs);
+	double curr_ln_prior		= mvprior->GetRelativeLnPDF(new_params);
 	double curr_ln_like			= likelihood->calcLnL(tree);
 
     double prev_posterior = 0.0;
@@ -196,3 +187,44 @@ bool StateFreqMove::update()
 		return false;
 		}
 	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Obtains the current state frequencies from the model, storing them in the data member `orig_params'.
+*/
+void StateFreqMove::getParams()
+	{
+    const std::vector<double> & rfreqs = model->getStateFreqs();
+    orig_params.resize(rfreqs.size());
+    std::copy(rfreqs.begin(), rfreqs.end(), orig_params.begin());
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Replaces the state frequencies in the model with those supplied in the vector `v'.
+*/
+void StateFreqMove::setParams(
+  const std::vector<double> & v)    /*< is the vector of parameter values to send to the model */
+	{
+    model->setStateFreqsUnnorm(v);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Obtains the current relative rates from the model, storing them in the data member `orig_params'.
+*/
+void RelRatesMove::getParams()
+	{
+    GTR * gtr_model = dynamic_cast<GTR *>(model.get());
+    const std::vector<double> & rrates = gtr_model->getRelRates();
+    orig_params.resize(rrates.size());
+    std::copy(rrates.begin(), rrates.end(), orig_params.begin());
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Replaces the relative rates in the model with those supplied in the vector `v'.
+*/
+void RelRatesMove::setParams(
+  const std::vector<double> & v)    /*< is the vector of parameter values to send to the model */
+	{
+    GTR * gtr_model = dynamic_cast<GTR *>(model.get());
+    gtr_model->setRelRates(v);
+	}
+

@@ -164,6 +164,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\phycas\src\dirichlet_move.cpp">
+			</File>
+			<File
 				RelativePath="..\..\phycas\src\discrete_gamma_shape_param.cpp">
 			</File>
 			<File
@@ -293,9 +296,6 @@
 				RelativePath="..\..\phycas\src\square_matrix.cpp">
 			</File>
 			<File
-				RelativePath="..\..\phycas\src\state_freq_move.cpp">
-			</File>
-			<File
 				RelativePath="..\..\phycas\src\state_freq_param.cpp">
 			</File>
 			<File
@@ -374,6 +374,12 @@
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\cond_likelihood_storage.inl">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\dirichlet_move.hpp">
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\dirichlet_move.inl">
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\edge_endpoints.hpp">
@@ -464,12 +470,6 @@
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\square_matrix.hpp">
-			</File>
-			<File
-				RelativePath="..\..\phycas\src\state_freq_move.hpp">
-			</File>
-			<File
-				RelativePath="..\..\phycas\src\state_freq_move.inl">
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\states_patterns.hpp">

@@ -159,10 +159,12 @@ class TipData
 	friend class SimData;
 
 	public:
-											//~TipData()
-											//	{
-											//	std::cerr << "TipData dying..." << std::endl;
-											//	}
+
+											TipData(unsigned nRates, unsigned nStates, CondLikelihoodStorage & cla_storage);
+											TipData(bool using_unimap, unsigned nPatterns, const std::vector<unsigned int> & stateListPosVec, boost::shared_array<const int8_t> stateCodesShPtr, unsigned nRates, unsigned nStates, double * * * pMatTranspose, bool managePMatrices, CondLikelihoodStorage & cla_storage);
+#if POLPY_NEWWAY
+                                            ~TipData();
+#endif
 
 		const double * const * const *		getConstTransposedPMatrices() const;
 		double * * *						getTransposedPMatrices();
@@ -183,8 +185,6 @@ class TipData
 		const Univents & 					getUniventsConstRef()const {return univents;}
 		void								swapUnivents(InternalData * other);
 
-											TipData(unsigned nRates, unsigned nStates, CondLikelihoodStorage & cla_storage);
-											TipData(bool using_unimap, unsigned nPatterns, const std::vector<unsigned int> & stateListPosVec, boost::shared_array<const int8_t> stateCodesShPtr, unsigned nRates, unsigned nStates, double * * * pMatTranspose, bool managePMatrices, CondLikelihoodStorage & cla_storage);
         boost::shared_array<const int8_t>   getTipStatesArray() {return state_codes;}
 		const StateListPos &				getConstStateListPos() const;
 

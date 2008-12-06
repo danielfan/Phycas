@@ -83,10 +83,9 @@ class InternalData
 
 	public:
 
-										//~InternalData()
-										//	{
-										//	std::cerr << "InternalData dying..." << std::endl;
-										//	}
+#if POLPY_NEWWAY
+										~InternalData();
+#endif
 
 		unsigned						getCLASize() const;
 		double * * *					getPMatrices();

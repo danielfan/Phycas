@@ -34,19 +34,18 @@ typedef boost::weak_ptr<MCMCChainManager>			ChainManagerWkPtr;
 typedef boost::shared_ptr<DirichletDistribution>    DirichletShPtr;
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	A StateFreqMove proposes new state frequencies that are slightly different than the current state frequencies by 
+|	A DirichletMove proposes new parameter values that are slightly different than the current parameter values by 
 |   sampling from a Dirichlet distribution with parameters equal to the current frequencies multiplied by a large 
 |   value (the tuning parameter 'psi').
 */
-class StateFreqMove : public MCMCUpdater
+class DirichletMove : public MCMCUpdater
 	{
 	public:
-									StateFreqMove();
-									virtual ~StateFreqMove() 
+									DirichletMove();
+									virtual ~DirichletMove() 
 										{
-										//std::cerr << "StateFreqMove dying..." << std::endl;
+										//std::cerr << "DirichletMove dying..." << std::endl;
 										}
-
 
 		// Accessors
 		double						getPsi() const;
@@ -56,6 +55,8 @@ class StateFreqMove : public MCMCUpdater
 
 		// Utilities
 		void						reset();
+        virtual void                getParams() {}
+        virtual void                setParams(const std::vector<double> & v) {}
 
 		// These are virtual functions in the MCMCUpdater base class
 		virtual bool				update();
@@ -67,21 +68,59 @@ class StateFreqMove : public MCMCUpdater
 
 	private:
 
-		StateFreqMove &				operator=(const StateFreqMove &);	// never use - don't define
+		DirichletMove &				operator=(const DirichletMove &);	// never use - don't define
 
-	private:
+	protected:
 
 		double						psi;			/**< Larger values result in changes of smaller magnitude */
-		std::vector<double> 		new_freqs;	    /**< Proposed new frequencies */
-		std::vector<double> 		orig_freqs;	    /**< Saved frequencies (in case revert is necessary) */
+		std::vector<double> 		new_params;	    /**< Proposed new parameter values */
+		std::vector<double> 		orig_params;	/**< Saved parameter values (in case revert is necessary) */
 		std::vector<double> 		c_forward;	    /**< Dirichlet parameter vector used to propose new frequencies */
 		std::vector<double> 		c_reverse;	    /**< Dirichlet parameter vector used to propose original frequencies (only used to compute Hastings ratio) */
         DirichletShPtr              dir_forward;    /**< Points to an ad hoc Dirichlet distribution object used to assess the forward move density and to propose a new frequency vector */
         DirichletShPtr              dir_reverse;    /**< Points to an ad hoc Dirichlet distribution object used to assess the reverse move density */
 	};
 
+/*----------------------------------------------------------------------------------------------------------------------
+|	A StateFreqMove proposes new state frequencies that are slightly different than the current frequencies by sampling 
+|   from a Dirichlet distribution with parameters equal to the current frequencies multiplied by a large value (the 
+|   tuning parameter 'psi').
+*/
+class StateFreqMove : public DirichletMove
+	{
+	public:
+									StateFreqMove();
+                                    virtual ~StateFreqMove() {}
+
+        virtual void                getParams();
+        virtual void                setParams(const std::vector<double> & v);
+
+	private:
+
+		StateFreqMove &				operator=(const StateFreqMove &);	// never use - don't define
+    };
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	A RelRatesMove proposes new GTR relative rates that are slightly different than the current rates by sampling 
+|   from a Dirichlet distribution with parameters equal to the current rates multiplied by a large value (the 
+|   tuning parameter 'psi').
+*/
+class RelRatesMove : public DirichletMove
+	{
+	public:
+									RelRatesMove();
+                                    virtual ~RelRatesMove() {}
+
+        virtual void                getParams();
+        virtual void                setParams(const std::vector<double> & v);
+
+	private:
+
+		RelRatesMove &				operator=(const RelRatesMove &);	// never use - don't define
+    };
+
 } // namespace phycas
 
-#include "phycas/src/edge_move.inl"
+#include "phycas/src/dirichlet_move.inl"
 
 #endif

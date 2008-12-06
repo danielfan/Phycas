@@ -88,6 +88,29 @@ TipData::TipData(
 		}
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Destructor ensures that all CLA structures are returned to `cla_pool'. The `ownedPMatrices' and `univents' data 
+|   members takes care of deleting themselves when they go out of scope.
+*/
+TipData::~TipData()
+	{
+	// Invalidate the parental CLAs if they exist
+	if (parWorkingCLA)
+		{
+		cla_pool.putCondLikelihood(parWorkingCLA);
+		parWorkingCLA.reset();
+		}
+
+	// Remove cached parental CLAs if they exist
+	if (parCachedCLA)
+		{
+		cla_pool.putCondLikelihood(parCachedCLA);
+		parCachedCLA.reset();
+		}
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns `parWorkingCLA' data member. If `parWorkingCLA' does not currently point to anything, a CondLikelihood 
 |	object is first retrieved from `cla_pool', so this function always returns a shared pointer that actually points to

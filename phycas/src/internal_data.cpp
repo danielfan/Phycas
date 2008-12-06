@@ -60,6 +60,45 @@ InternalData::InternalData(
 		}
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Destructor ensures that all CLA structures are returned to `cla_pool'. The `ownedPMatrices' and `univents' data 
+|   members takes care of deleting themselves when they go out of scope.
+*/
+InternalData::~InternalData()
+	{
+    //std::cerr << "Deleting InternalData object..." << std::endl;
+
+	// Invalidate the parental CLAs if they exist
+	if (parWorkingCLA)
+		{
+		cla_pool.putCondLikelihood(parWorkingCLA);
+		parWorkingCLA.reset();
+		}
+
+    // Remove cached parental CLAs if they exist
+	if (parCachedCLA)
+		{
+		cla_pool.putCondLikelihood(parCachedCLA);
+		parCachedCLA.reset();
+		}
+
+	// Invalidate the filial CLAs if they exist
+	if (childWorkingCLA)
+		{
+		cla_pool.putCondLikelihood(childWorkingCLA);
+		childWorkingCLA.reset();
+		}
+
+    // Remove cached filial CLAs if they exist
+	if (childCachedCLA)
+		{
+		cla_pool.putCondLikelihood(childCachedCLA);
+		childCachedCLA.reset();
+		}
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calls the swap method of the `state_time' data member, supplying as the argument other's state_time data member.
 */

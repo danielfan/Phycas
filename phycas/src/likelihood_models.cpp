@@ -203,7 +203,7 @@ void Model::setNucleotideFreqs(
 |	normalizeFreqs is called automatically to recalculate `state_freqs'. 
 */
 void Model::setStateFreqsUnnorm(
-  std::vector<double> & values)	/**< the new values */
+  const std::vector<double> & values)	/**< the new values */
 	{
     PHYCAS_ASSERT(values.size() == state_freq_unnorm.size());
     std::copy(values.begin(), values.end(), state_freq_unnorm.begin());

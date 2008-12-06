@@ -75,7 +75,7 @@ class Model	{
 		const std::vector<double>	&	getStateFreqs() const;
 		virtual void					setNucleotideFreqs(double freqA, double freqC, double freqG, double freqT);
 		virtual void					setAllFreqsEqual();
-        virtual void                    setStateFreqsUnnorm(std::vector<double> & values);
+        virtual void                    setStateFreqsUnnorm(const std::vector<double> & values);
 		virtual void					setStateFreqUnnorm(unsigned param_index, double value);
         double						    getStateFreqUnnorm(unsigned param_index);
 		void							normalizeFreqs();
