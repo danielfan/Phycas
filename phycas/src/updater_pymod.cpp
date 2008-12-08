@@ -30,7 +30,7 @@
 #include "phycas/src/larget_simon_move.hpp"
 #include "phycas/src/unimap_nni_move.hpp"
 #include "phycas/src/tree_scaler_move.hpp"
-#include "phycas/src/state_freq_move.hpp"
+#include "phycas/src/dirichlet_move.hpp"
 #include "phycas/src/ncat_move.hpp"
 #include "phycas/src/bush_move.hpp"
 #include "phycas/src/samc_move.hpp"
@@ -52,6 +52,7 @@ void updater_pymod()
 		.def("getWeight", &MCMCUpdater::getWeight)
 		.def("setName", &MCMCUpdater::setName)
 		.def("setWeight", &MCMCUpdater::setWeight)
+		.def("setBoldness", &MCMCUpdater::setBoldness)
 		.def("setStartingValue", &MCMCUpdater::setStartingValue)
 		.def("setTree", &MCMCUpdater::setTree)
 		.def("setLot", &MCMCUpdater::setLot)

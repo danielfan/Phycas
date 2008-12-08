@@ -787,6 +787,7 @@ class MCMCImpl(CommonFunctions):
             for self.ps_beta_index,self.ps_beta in enumerate(self.ps_sampled_betas):
                 self.ps_sampled_likes.append([])
                 chain.setPower(self.ps_beta)
+                chain.setBoldness(100.0*(1.0-self.ps_beta))
                 if self.ps_beta_index > 0:
                     self.burnin = 0
                 else:

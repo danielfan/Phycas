@@ -57,6 +57,21 @@ void DirichletMove::setPsi(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Sets the value for the data member 'psi', which is the tuning parameter for this move, based on a boldness value
+|	that ranges from 0 (least bold) to 100 (most bold). The actual formula used is psi = 3*(100 - x), with minimum of 
+|	1 and maximum of 300 enforced after the calculation.
+*/
+void DirichletMove::setBoldness(
+  double x) /* is the new boldness value */
+	{
+	psi = 3.0*(100.0 - x);
+	if (psi < 1.0)
+		psi = 1.0;
+	else if (psi > 300.0)
+		psi = 300.0;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Provides read access to the data member 'psi', which is the tuning parameter for this move.
 */
 double DirichletMove::getPsi() const
@@ -189,6 +204,13 @@ bool DirichletMove::update()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	The constructor simply calls the base class (DirichletMove) constructor.
+*/
+StateFreqMove::StateFreqMove() : DirichletMove()
+	{
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Obtains the current state frequencies from the model, storing them in the data member `orig_params'.
 */
 void StateFreqMove::getParams()
@@ -205,6 +227,13 @@ void StateFreqMove::setParams(
   const std::vector<double> & v)    /*< is the vector of parameter values to send to the model */
 	{
     model->setStateFreqsUnnorm(v);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	The constructor simply calls the base class (DirichletMove) constructor.
+*/
+RelRatesMove::RelRatesMove() : DirichletMove()
+	{
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

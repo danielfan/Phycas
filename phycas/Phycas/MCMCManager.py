@@ -225,6 +225,7 @@ class MarkovChain(LikelihoodCore):
         LikelihoodCore.__init__(self, parent)
         
         self.parent                  = parent
+        self.boldness                = 0.0
         self.heating_power           = power
         self.relrate_prior           = cloneDistribution(self.parent.opts.model.relrate_prior)
         self.state_freq_prior        = cloneDistribution(self.parent.opts.model.state_freq_prior)
@@ -321,6 +322,24 @@ class MarkovChain(LikelihoodCore):
         self.heating_power = power
         for updater in self.chain_manager.getAllUpdaters():
             updater.setPower(power)
+
+    def setBoldness(self, boldness):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Sets the boldness data member and calls the setBoldness method for
+        every updater so that all updaters are immediately informed that the
+        boldness for this chain has changed. The boldness is a value from 0 to
+        100 that specifies the boldness of Metropolis-Hastings moves. Setting
+        the boldness has no effect on slice sampling based updaters. Each 
+        move class defines what is meant by boldness. The boldness is changed
+        during an MCMC run in some circumstances, such as during a path 
+        sampling analysis where the target distribution changes during the 
+        run.
+        
+        """
+        self.boldness = boldness
+        for updater in self.chain_manager.getAllUpdaters():
+            updater.setBoldness(boldness)
 
     def setupChain(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

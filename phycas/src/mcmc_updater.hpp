@@ -128,6 +128,7 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		// Modifiers
 		virtual void			setName(const std::string & s);
 		virtual void			setWeight(unsigned w);
+		virtual void			setBoldness(double b);
 		void					setMaxUnits(unsigned max_units);
 		virtual void			setLot(LotShPtr p);
 		virtual void			setTree(TreeShPtr p);

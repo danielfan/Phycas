@@ -198,6 +198,13 @@ inline void MCMCUpdater::setWeight(unsigned w)
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Sets the boldness of proposals. The meaning of boldness is interpreted individually by derived classes.
+*/
+inline void MCMCUpdater::setBoldness(double b)
+	{
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Sets the value of data member `slice_max_units', which is the maximum number of units used for slice sampling 
 |	updates. If a slice sampler has been created, calls the setMaxUnits function of `slice_sampler'.
 */

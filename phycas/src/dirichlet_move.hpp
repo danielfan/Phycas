@@ -59,6 +59,7 @@ class DirichletMove : public MCMCUpdater
         virtual void                setParams(const std::vector<double> & v) {}
 
 		// These are virtual functions in the MCMCUpdater base class
+		virtual void				setBoldness(double x);
 		virtual bool				update();
 		virtual double				getLnHastingsRatio() const;
 		virtual double				getLnJacobian() const;
