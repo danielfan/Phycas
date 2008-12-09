@@ -228,6 +228,7 @@ class MarkovChain(LikelihoodCore):
         self.boldness                = 0.0
         self.heating_power           = power
         self.relrate_prior           = cloneDistribution(self.parent.opts.model.relrate_prior)
+        self.relrate_param_prior     = cloneDistribution(self.parent.opts.model.relrate_param_prior)
         self.state_freq_prior        = cloneDistribution(self.parent.opts.model.state_freq_prior)
         self.state_freq_param_prior  = cloneDistribution(self.parent.opts.model.state_freq_param_prior)
         self.gamma_shape_prior       = cloneDistribution(self.parent.opts.model.gamma_shape_prior)
@@ -378,7 +379,10 @@ class MarkovChain(LikelihoodCore):
         
         # Define priors for the model parameters
         if self.parent.opts.model.type == 'gtr':
-            self.model.setRelRatePrior(self.relrate_prior)
+            if self.parent.opts.model.update_relrates_separately:
+                self.model.setRelRateParamPrior(self.relrate_param_prior)
+            else:
+                self.model.setRelRatePrior(self.relrate_prior)
             if self.parent.opts.model.update_freqs_separately:
                 self.model.setStateFreqParamPrior(self.state_freq_param_prior)
             else:
@@ -445,7 +449,7 @@ class MarkovChain(LikelihoodCore):
                 self.tree_scaler_move.fixParameter()
             self.chain_manager.addMove(self.tree_scaler_move)
 
-        if not self.parent.opts.model.update_freqs_separately:
+        if not self.parent.opts.model.type == 'jc' and not self.parent.opts.model.update_freqs_separately:
             # Create a StateFreqMove to update entire state frequency vector
             self.state_freq_move = Likelihood.StateFreqMove()
             self.state_freq_move.setName("State freq move")
@@ -458,6 +462,20 @@ class MarkovChain(LikelihoodCore):
                 self.state_freq_move.fixParameter()
             self.state_freq_move.setMultivarPrior(self.state_freq_prior)
             self.chain_manager.addMove(self.state_freq_move)
+        
+        if self.parent.opts.model.type == 'gtr' and not self.parent.opts.model.update_relrates_separately:
+            # Create a RelRateMove to update entire relative rates vector
+            self.rel_rate_move = Likelihood.RelRateMove()
+            self.rel_rate_move.setName("State freq move")
+            self.rel_rate_move.setWeight(self.parent.opts.rel_rate_weight)
+            self.rel_rate_move.setTree(self.tree)
+            self.rel_rate_move.setModel(self.model)
+            self.rel_rate_move.setTreeLikelihood(self.likelihood)
+            self.rel_rate_move.setLot(self.r)
+            if self.model.relRatesFixed():
+                self.rel_rate_move.fixParameter()
+            self.rel_rate_move.setMultivarPrior(self.rel_rate_prior)
+            self.chain_manager.addMove(self.rel_rate_move)
         
         if self.parent.opts.use_unimap:
             # Create a MappingMove (to refresh the mapping for all sites)

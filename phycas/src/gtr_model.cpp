@@ -74,74 +74,82 @@ void	GTR::createParameters(
 
 	PHYCAS_ASSERT(rel_rate_params.empty());
 
-	MCMCUpdaterShPtr rAC_param = MCMCUpdaterShPtr(new GTRRateParam(0));
-	rAC_param->setName("rAC");
-	rAC_param->setTree(t);
-	rAC_param->setStartingValue(1.0);
-	rAC_param->setPrior(rel_rate_prior);
-	if (rel_rates_fixed)
-		rAC_param->fixParameter();
-	parameters.push_back(rAC_param);
-	rel_rate_params.push_back(rAC_param);
-
-	MCMCUpdaterShPtr rAG_param = MCMCUpdaterShPtr(new GTRRateParam(1));
-	rAG_param->setName("rAG");
-	rAG_param->setTree(t);
-	rAG_param->setStartingValue(4.0);
-	rAG_param->setPrior(rel_rate_prior);
-	if (rel_rates_fixed)
-		rAG_param->fixParameter();
-	parameters.push_back(rAG_param);
-	rel_rate_params.push_back(rAG_param);
-
-	MCMCUpdaterShPtr rAT_param = MCMCUpdaterShPtr(new GTRRateParam(2));
-	rAT_param->setName("rAT");
-	rAT_param->setTree(t);
-	rAT_param->setStartingValue(1.0);
-	rAT_param->setPrior(rel_rate_prior);
-	if (rel_rates_fixed)
-		rAT_param->fixParameter();
-	parameters.push_back(rAT_param);
-	rel_rate_params.push_back(rAT_param);
-
-	MCMCUpdaterShPtr rCG_param = MCMCUpdaterShPtr(new GTRRateParam(3));
-	rCG_param->setName("rCG");
-	rCG_param->setTree(t);
-	rCG_param->setStartingValue(1.0);
-	rCG_param->setPrior(rel_rate_prior);
-	if (rel_rates_fixed)
-		rCG_param->fixParameter();
-	parameters.push_back(rCG_param);
-	rel_rate_params.push_back(rCG_param);
-
-	MCMCUpdaterShPtr rCT_param = MCMCUpdaterShPtr(new GTRRateParam(4));
-	rCT_param->setName("rCT");
-	rCT_param->setTree(t);
-	rCT_param->setStartingValue(4.0);
-	rCT_param->setPrior(rel_rate_prior);
-	if (rel_rates_fixed)
-		rCT_param->fixParameter();
-	parameters.push_back(rCT_param);
-	rel_rate_params.push_back(rCT_param);
-
-	MCMCUpdaterShPtr rGT_param = MCMCUpdaterShPtr(new GTRRateParam(5));
-	rGT_param->setName("rGT");
-	rGT_param->setStartingValue(1.0);
-	rGT_param->setTree(t);
-	rGT_param->setPrior(rel_rate_prior);
-	if (rel_rates_fixed)
-		rGT_param->fixParameter();
-	parameters.push_back(rGT_param);
-	rel_rate_params.push_back(rGT_param);
+    PHYCAS_ASSERT(relrate_param_prior || relrate_prior);
+    if (rel_rate_param_prior)
+        {
+        // Only add relative rate parameters if relative rates will be updated separately
+        // The other option is to update the relative rates jointly using the 
+        // RelRateMove Metropolis-Hastings move (in which case relrate_prior
+        // will be set and relrate_param_prior will be empty)
+    
+        MCMCUpdaterShPtr rAC_param = MCMCUpdaterShPtr(new GTRRateParam(0));
+        rAC_param->setName("rAC");
+        rAC_param->setTree(t);
+        rAC_param->setStartingValue(1.0);
+        rAC_param->setPrior(rel_rate_param_prior);
+        if (rel_rates_fixed)
+            rAC_param->fixParameter();
+        parameters.push_back(rAC_param);
+        rel_rate_params.push_back(rAC_param);
+    
+        MCMCUpdaterShPtr rAG_param = MCMCUpdaterShPtr(new GTRRateParam(1));
+        rAG_param->setName("rAG");
+        rAG_param->setTree(t);
+        rAG_param->setStartingValue(4.0);
+        rAG_param->setPrior(rel_rate_param_prior);
+        if (rel_rates_fixed)
+            rAG_param->fixParameter();
+        parameters.push_back(rAG_param);
+        rel_rate_params.push_back(rAG_param);
+    
+        MCMCUpdaterShPtr rAT_param = MCMCUpdaterShPtr(new GTRRateParam(2));
+        rAT_param->setName("rAT");
+        rAT_param->setTree(t);
+        rAT_param->setStartingValue(1.0);
+        rAT_param->setPrior(rel_rate_param_prior);
+        if (rel_rates_fixed)
+            rAT_param->fixParameter();
+        parameters.push_back(rAT_param);
+        rel_rate_params.push_back(rAT_param);
+    
+        MCMCUpdaterShPtr rCG_param = MCMCUpdaterShPtr(new GTRRateParam(3));
+        rCG_param->setName("rCG");
+        rCG_param->setTree(t);
+        rCG_param->setStartingValue(1.0);
+        rCG_param->setPrior(rel_rate_param_prior);
+        if (rel_rates_fixed)
+            rCG_param->fixParameter();
+        parameters.push_back(rCG_param);
+        rel_rate_params.push_back(rCG_param);
+    
+        MCMCUpdaterShPtr rCT_param = MCMCUpdaterShPtr(new GTRRateParam(4));
+        rCT_param->setName("rCT");
+        rCT_param->setTree(t);
+        rCT_param->setStartingValue(4.0);
+        rCT_param->setPrior(rel_rate_param_prior);
+        if (rel_rates_fixed)
+            rCT_param->fixParameter();
+        parameters.push_back(rCT_param);
+        rel_rate_params.push_back(rCT_param);
+    
+        MCMCUpdaterShPtr rGT_param = MCMCUpdaterShPtr(new GTRRateParam(5));
+        rGT_param->setName("rGT");
+        rGT_param->setStartingValue(1.0);
+        rGT_param->setTree(t);
+        rGT_param->setPrior(rel_rate_param_prior);
+        if (rel_rates_fixed)
+            rGT_param->fixParameter();
+        parameters.push_back(rGT_param);
+        rel_rate_params.push_back(rGT_param);
+        }
 
 	PHYCAS_ASSERT(freq_params.empty());
-
     PHYCAS_ASSERT(freq_param_prior || freq_prior);
     if (freq_param_prior)
         {
         // Only add frequency parameters if freqs will be updated separately
         // The other option is to update the frequencies jointly using the 
-        // StateFreqMove Metropolis-Hastings move (in which case freq_param
+        // StateFreqMove Metropolis-Hastings move (in which case freq_prior
         // will be set and freq_param_prior will be empty)
 
 	    MCMCUpdaterShPtr freqA_param = MCMCUpdaterShPtr(new StateFreqParam(0));
@@ -318,17 +326,33 @@ void GTR::setRelRateUnnorm(
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns current value of data member `rel_rate_prior'.
 */
-ProbDistShPtr GTR::getRelRatePrior()
+MultivarProbDistShPtr GTR::getRelRatePrior()
  	{
 	return rel_rate_prior;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Returns current value of data member `rel_rate_param_prior'.
+*/
+ProbDistShPtr GTR::getRelRateParamPrior()
+ 	{
+	return rel_rate_param_prior;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Sets `rel_rate_prior' data member to the supplied ProbabilityDistribution shared pointer `d'.
 */
-void GTR::setRelRatePrior(ProbDistShPtr d)
+void GTR::setRelRatePrior(MultivarProbDistShPtr d)
  	{
 	rel_rate_prior = d;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets `rel_rate_param_prior' data member to the supplied ProbabilityDistribution shared pointer `d'.
+*/
+void GTR::setRelRateParamPrior(ProbDistShPtr d)
+ 	{
+	rel_rate_param_prior = d;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

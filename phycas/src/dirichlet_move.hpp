@@ -49,9 +49,12 @@ class DirichletMove : public MCMCUpdater
 
 		// Accessors
 		double						getPsi() const;
+		unsigned					getDimension() const;
+
 
 		// Modifiers
 		void						setPsi(double x);
+		void						setDimension(unsigned d);
 
 		// Utilities
 		void						reset();
@@ -73,7 +76,11 @@ class DirichletMove : public MCMCUpdater
 
 	protected:
 
+		unsigned					dim;			/**< The number of parameters governed by this move */
+		double						boldness;		/**< Ranges from 0 to 100 and determines the boldness of the move */
 		double						psi;			/**< Larger values result in changes of smaller magnitude */
+		double						minpsi;			/**< Smallest allowed value of psi */
+		double						maxpsi;			/**< Largest allowed value of psi */
 		std::vector<double> 		new_params;	    /**< Proposed new parameter values */
 		std::vector<double> 		orig_params;	/**< Saved parameter values (in case revert is necessary) */
 		std::vector<double> 		c_forward;	    /**< Dirichlet parameter vector used to propose new frequencies */

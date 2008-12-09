@@ -30,11 +30,15 @@
 using namespace phycas;
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	The constructor sets tuning parameter `psi' to 300.0 and calls reset().
+|	The constructor sets tuning parameter `psi' and `maxpsi' to 300.0 and calls reset().
 */
 DirichletMove::DirichletMove() : MCMCUpdater()
 	{
-	psi = 300.0;
+	dim = 0;
+	boldness = 0.0;
+	minpsi = 5.0;
+	maxpsi = 300.0;
+	psi = maxpsi;
 	reset();
 	}
 
@@ -57,18 +61,55 @@ void DirichletMove::setPsi(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Sets the value for the data member 'dim', which is the number of parameters updated jointly by this move.
+*/
+void DirichletMove::setDimension(
+  unsigned d) /* is the new value for psi */
+	{
+	dim = d;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Sets the value for the data member 'psi', which is the tuning parameter for this move, based on a boldness value
 |	that ranges from 0 (least bold) to 100 (most bold). The actual formula used is psi = 3*(100 - x), with minimum of 
-|	1 and maximum of 300 enforced after the calculation.
+|	0 and maximum of `maxpsi' enforced after the calculation. Current parameter values are multiplied by the value `psi'
+|	to obtain the parameters of a new Dirichlet distribution used for sampling the proposed new values. The boldest
+|	distribution that can be used for sampling is a flat dirichlet, however, so if any of the parameters are less than
+|	1 after multiplication by `psi', they are simply set to 1.
 */
 void DirichletMove::setBoldness(
   double x) /* is the new boldness value */
 	{
-	psi = 3.0*(100.0 - x);
-	if (psi < 1.0)
-		psi = 1.0;
-	else if (psi > 300.0)
-		psi = 300.0;
+	boldness = x;
+	if (boldness < 0.0)
+		boldness = 0.0;
+	else if (boldness > 100.0)
+		boldness = 100.0;
+
+    // copy the current parameters from the model to the data member orig_params
+    getParams();
+
+    // compute psi from boldness value
+    //  
+    //  minpsi = 5
+    //  maxpsi = 300
+    //  % represents result in column to the left
+    //
+    //  boldness     100-%    (maxpsi-minpsi)*%/100   minpsi+%  
+    //      0         100              295               300
+    //    100           0                0                 5
+    //
+    //  psi = minpsi + (maxpsi - minpsi)*(100-boldness)/100
+    //
+	psi = minpsi + (maxpsi - minpsi)*(100.0-boldness)/100.0;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Provides read access to the data member 'dim', which is the number of parameters updated jointly by this move.
+*/
+unsigned DirichletMove::getDimension() const
+	{
+	return dim;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -86,16 +127,29 @@ void DirichletMove::proposeNewState()
 	{
     // copy the current parameters from the model to the data member orig_params
     getParams();
-
+    
     // create vector of Dirichlet parameters for selecting new parameter values (by multiplying
     // each current parameter value by the value `psi')
-    c_forward.resize(orig_params.size());
+    unsigned sz = (unsigned)orig_params.size();
+    c_forward.resize(sz);
 	std::transform(orig_params.begin(), orig_params.end(), c_forward.begin(), boost::lambda::_1*psi);
-
-    // create Dirichlet distribution and sample from it to get proposed frequencies
+	
+	// create Dirichlet distribution and sample from it to get proposed frequencies
     dir_forward = DirichletShPtr(new DirichletDistribution(c_forward));
     dir_forward->SetLot(getLot().get());
     new_params = dir_forward->Sample();
+
+	//temporary!!
+	//std::cerr << boost::str(boost::format(">>>>>>>>>> boldness = %.1f, psi = %.5f\n") % boldness % psi);
+	//std::cerr << ">>>>>>>>>> orig_params: ";
+	//std::copy(orig_params.begin(), orig_params.end(), std::ostream_iterator<double>(std::cerr," "));
+	//std::cerr << "\n";
+	//std::cerr << ">>>>>>>>>> c_forward: ";
+	//std::copy(c_forward.begin(), c_forward.end(), std::ostream_iterator<double>(std::cerr," "));
+	//std::cerr << "\n";
+	//std::cerr << ">>>>>>>>>> new_params: ";
+	//std::copy(new_params.begin(), new_params.end(), std::ostream_iterator<double>(std::cerr," "));
+	//std::cerr << "\n" << std::endl;
 
     // create vector of Dirichlet parameters for selecting old frequencies (needed for Hasting ratio calculation)
     c_reverse.resize(new_params.size());
@@ -208,6 +262,7 @@ bool DirichletMove::update()
 */
 StateFreqMove::StateFreqMove() : DirichletMove()
 	{
+	dim = 4;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -215,9 +270,18 @@ StateFreqMove::StateFreqMove() : DirichletMove()
 */
 void StateFreqMove::getParams()
 	{
-    const std::vector<double> & rfreqs = model->getStateFreqs();
-    orig_params.resize(rfreqs.size());
-    std::copy(rfreqs.begin(), rfreqs.end(), orig_params.begin());
+	PHYCAS_ASSERT(dim > 0);
+	if (model)
+		{
+    	const std::vector<double> & rfreqs = model->getStateFreqs();
+    	orig_params.resize(rfreqs.size());
+		PHYCAS_ASSERT(dim == rfreqs.size());
+    	std::copy(rfreqs.begin(), rfreqs.end(), orig_params.begin());
+    	}
+    else
+    	{
+    	orig_params.assign(dim, 1.0);
+    	}
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -234,6 +298,7 @@ void StateFreqMove::setParams(
 */
 RelRatesMove::RelRatesMove() : DirichletMove()
 	{
+	dim = 6;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -241,10 +306,19 @@ RelRatesMove::RelRatesMove() : DirichletMove()
 */
 void RelRatesMove::getParams()
 	{
-    GTR * gtr_model = dynamic_cast<GTR *>(model.get());
-    const std::vector<double> & rrates = gtr_model->getRelRates();
-    orig_params.resize(rrates.size());
-    std::copy(rrates.begin(), rrates.end(), orig_params.begin());
+	PHYCAS_ASSERT(dim > 0);
+	GTR * gtr_model = dynamic_cast<GTR *>(model.get());
+	if (gtr_model)
+		{
+		const std::vector<double> & rrates = gtr_model->getRelRates();
+		PHYCAS_ASSERT(dim == rrates.size());
+		orig_params.resize(rrates.size());
+		std::copy(rrates.begin(), rrates.end(), orig_params.begin());
+    	}
+    else
+    	{
+    	orig_params.assign(dim, 1.0);
+    	}
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

@@ -310,8 +310,12 @@ class GTR: public Model
 		void						setRelRates(const std::vector<double> & rates);	
 		void						setRelRateUnnorm(unsigned param_index, double value);
 		double						getRelRateUnnorm(unsigned param_index);
-		void						setRelRatePrior(ProbDistShPtr d);
-		ProbDistShPtr				getRelRatePrior();
+		
+		void						setRelRateParamPrior(ProbDistShPtr d);
+		ProbDistShPtr				getRelRateParamPrior();
+		
+		void						setRelRatePrior(MultivarProbDistShPtr d);
+		MultivarProbDistShPtr		getRelRatePrior();
 
         void						setNucleotideFreqs(double freqA, double freqC, double freqG, double freqT);
         void						setAllFreqsEqual();
@@ -329,13 +333,14 @@ class GTR: public Model
 
 	protected:
 
-		std::vector<double>			rel_rates;			/**< A vector containing the six relative rates */
-		ProbDistShPtr				rel_rate_prior;		/**< The prior distribution governing each relative rate (usually a gamma distribution with scale 1 and shape equal to the desired Dirichlet parameter) */
-		ProbDistShPtr				freq_param_prior;	/**< The prior distribution governing each frequency parameter (usually a gamma distribution with scale 1 and shape equal to the desired Dirichlet parameter; used if frequencies are updated separately by slice sampling) */
-    	MultivarProbDistShPtr		freq_prior;	        /**< The prior distribution governing the vector of frequencies (used if frequencies are updated jointly by StateFreqMove) */
-		bool						rel_rates_fixed;	/**< If true, the relative rate values will not change during MCMC updates */
-		mutable MCMCUpdaterVect		rel_rate_params;	/**< A vector containing copies of all six relative rate parameters (saved so that fixed/free status can be changed) */
-		mutable QMatrix				q_matrix;			/**< A QMatrix object used to compute transition probabilities */
+		std::vector<double>			rel_rates;			    /**< A vector containing the six relative rates */
+		MultivarProbDistShPtr		rel_rate_prior;		    /**< The prior distribution governing each relative rate (usually a gamma distribution with scale 1 and shape equal to the desired Dirichlet parameter) */
+		ProbDistShPtr				rel_rate_param_prior;	/**< The joint prior distribution governing all six relative rates */
+		ProbDistShPtr				freq_param_prior;	    /**< The prior distribution governing each frequency parameter (usually a gamma distribution with scale 1 and shape equal to the desired Dirichlet parameter; used if frequencies are updated separately by slice sampling) */
+    	MultivarProbDistShPtr		freq_prior;	            /**< The prior distribution governing the vector of frequencies (used if frequencies are updated jointly by StateFreqMove) */
+		bool						rel_rates_fixed;	    /**< If true, the relative rate values will not change during MCMC updates */
+		mutable MCMCUpdaterVect		rel_rate_params;	    /**< A vector containing copies of all six relative rate parameters (saved so that fixed/free status can be changed) */
+		mutable QMatrix				q_matrix;			    /**< A QMatrix object used to compute transition probabilities */
 	};
 
 typedef boost::shared_ptr<GTR> GTRShPtr;
