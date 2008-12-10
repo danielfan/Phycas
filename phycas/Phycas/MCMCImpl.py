@@ -528,6 +528,9 @@ class MCMCImpl(CommonFunctions):
                 chain.model.setPinvar(new_pinvar)
             elif name == 'master edge length parameter':
                 pass
+            elif name == 'Relative rates move':             # C++ class StateFreqMove
+                rate_vector = chain.model.getRelRatePrior().sample()
+                chain.model.setRelRates(rate_vector)
             elif name == 'State freq move':                # C++ class StateFreqMove
                 freq_vector = chain.model.getStateFreqPrior().sample()
                 # should use generic function below (i.e. not specific to nucleotide data)
@@ -790,6 +793,7 @@ class MCMCImpl(CommonFunctions):
                 boldness = 100.0*(1.0-self.ps_beta)
                 chain.setBoldness(boldness)
                 print 'Setting chain boldness to %g based on beta = %g' % (boldness,self.ps_beta)
+                raw_input('check')
                 if self.ps_beta_index > 0:
                     self.burnin = 0
                 else:

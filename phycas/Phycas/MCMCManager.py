@@ -465,16 +465,16 @@ class MarkovChain(LikelihoodCore):
         
         if self.parent.opts.model.type == 'gtr' and not self.parent.opts.model.update_relrates_separately:
             # Create a RelRateMove to update entire relative rates vector
-            self.rel_rate_move = Likelihood.RelRateMove()
-            self.rel_rate_move.setName("State freq move")
+            self.rel_rate_move = Likelihood.RelRatesMove()
+            self.rel_rate_move.setName("Relative rates move")
             self.rel_rate_move.setWeight(self.parent.opts.rel_rate_weight)
             self.rel_rate_move.setTree(self.tree)
             self.rel_rate_move.setModel(self.model)
             self.rel_rate_move.setTreeLikelihood(self.likelihood)
             self.rel_rate_move.setLot(self.r)
-            if self.model.relRatesFixed():
-                self.rel_rate_move.fixParameter()
-            self.rel_rate_move.setMultivarPrior(self.rel_rate_prior)
+            #if self.model.relRatesFixed():
+            #    self.rel_rate_move.fixParameter()
+            self.rel_rate_move.setMultivarPrior(self.relrate_prior)
             self.chain_manager.addMove(self.rel_rate_move)
         
         if self.parent.opts.use_unimap:

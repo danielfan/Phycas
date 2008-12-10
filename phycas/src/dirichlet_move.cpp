@@ -36,7 +36,7 @@ DirichletMove::DirichletMove() : MCMCUpdater()
 	{
 	dim = 0;
 	boldness = 0.0;
-	minpsi = 5.0;
+	minpsi = 1.0;
 	maxpsi = 300.0;
 	psi = maxpsi;
 	reset();
@@ -86,9 +86,6 @@ void DirichletMove::setBoldness(
 	else if (boldness > 100.0)
 		boldness = 100.0;
 
-    // copy the current parameters from the model to the data member orig_params
-    getParams();
-
     // compute psi from boldness value
     //  
     //  minpsi = 5
@@ -102,6 +99,7 @@ void DirichletMove::setBoldness(
     //  psi = minpsi + (maxpsi - minpsi)*(100-boldness)/100
     //
 	psi = minpsi + (maxpsi - minpsi)*(100.0-boldness)/100.0;
+	std::cerr << boost::str(boost::format("####### x = %.5f, boldness = %.5f, psi = %.5f") % x % boldness % psi) << std::endl;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -132,7 +130,7 @@ void DirichletMove::proposeNewState()
     // each current parameter value by the value `psi')
     unsigned sz = (unsigned)orig_params.size();
     c_forward.resize(sz);
-	std::transform(orig_params.begin(), orig_params.end(), c_forward.begin(), boost::lambda::_1*psi);
+	std::transform(orig_params.begin(), orig_params.end(), c_forward.begin(), 1.0 + boost::lambda::_1*psi);
 	
 	// create Dirichlet distribution and sample from it to get proposed frequencies
     dir_forward = DirichletShPtr(new DirichletDistribution(c_forward));
@@ -153,7 +151,7 @@ void DirichletMove::proposeNewState()
 
     // create vector of Dirichlet parameters for selecting old frequencies (needed for Hasting ratio calculation)
     c_reverse.resize(new_params.size());
-	std::transform(new_params.begin(), new_params.end(), c_reverse.begin(), boost::lambda::_1*psi);
+	std::transform(new_params.begin(), new_params.end(), c_reverse.begin(), 1.0 + boost::lambda::_1*psi);
     dir_reverse = DirichletShPtr(new DirichletDistribution(c_reverse));
 	}
 

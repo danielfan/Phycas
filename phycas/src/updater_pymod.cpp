@@ -108,7 +108,14 @@ void updater_pymod()
 		boost::noncopyable, boost::shared_ptr<phycas::TreeScalerMove> >("TreeScalerMove") 
 		.def("update", &phycas::TreeScalerMove::update)
 		;
-	class_<phycas::StateFreqMove, bases<phycas::MCMCUpdater>, 
+	class_<phycas::DirichletMove, bases<phycas::MCMCUpdater>, 
+		boost::noncopyable, boost::shared_ptr<phycas::DirichletMove> >("DirichletMove") 
+		;
+	class_<phycas::RelRatesMove, bases<phycas::DirichletMove>, 
+		boost::noncopyable, boost::shared_ptr<phycas::RelRatesMove> >("RelRatesMove") 
+		.def("update", &phycas::RelRatesMove::update)
+		;
+	class_<phycas::StateFreqMove, bases<phycas::DirichletMove>, 
 		boost::noncopyable, boost::shared_ptr<phycas::StateFreqMove> >("StateFreqMove") 
 		.def("update", &phycas::StateFreqMove::update)
 		;
