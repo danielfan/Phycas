@@ -99,7 +99,7 @@ void DirichletMove::setBoldness(
     //  psi = minpsi + (maxpsi - minpsi)*(100-boldness)/100
     //
 	psi = minpsi + (maxpsi - minpsi)*(100.0-boldness)/100.0;
-	std::cerr << boost::str(boost::format("####### x = %.5f, boldness = %.5f, psi = %.5f") % x % boldness % psi) << std::endl;
+	//std::cerr << boost::str(boost::format("####### x = %.5f, boldness = %.5f, psi = %.5f") % x % boldness % psi) << std::endl;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

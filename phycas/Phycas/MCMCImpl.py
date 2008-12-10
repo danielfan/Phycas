@@ -793,7 +793,7 @@ class MCMCImpl(CommonFunctions):
                 boldness = 100.0*(1.0-self.ps_beta)
                 chain.setBoldness(boldness)
                 print 'Setting chain boldness to %g based on beta = %g' % (boldness,self.ps_beta)
-                raw_input('check')
+                #raw_input('check')
                 if self.ps_beta_index > 0:
                     self.burnin = 0
                 else:
