@@ -54,6 +54,8 @@ class DirichletMove : public MCMCUpdater
 
 		// Modifiers
 		void						setPsi(double x);
+		void						setMaxPsi(double x);
+		void						setMinPsi(double x);
 		void						setDimension(unsigned d);
 
 		// Utilities
@@ -62,6 +64,8 @@ class DirichletMove : public MCMCUpdater
         virtual void                setParams(const std::vector<double> & v) {}
 
 		// These are virtual functions in the MCMCUpdater base class
+        virtual void                setPosteriorTuningParam(double x);
+        virtual void                setPriorTuningParam(double x);
 		virtual void				setBoldness(double x);
 		virtual bool				update();
 		virtual double				getLnHastingsRatio() const;
@@ -79,8 +83,8 @@ class DirichletMove : public MCMCUpdater
 		unsigned					dim;			/**< The number of parameters governed by this move */
 		double						boldness;		/**< Ranges from 0 to 100 and determines the boldness of the move */
 		double						psi;			/**< Larger values result in changes of smaller magnitude */
-		double						minpsi;			/**< Smallest allowed value of psi */
-		double						maxpsi;			/**< Largest allowed value of psi */
+		double						min_psi;		/**< Smallest allowed value of psi (used when exploring the prior) */
+		double						max_psi;		/**< Largest allowed value of psi (used when exploring the posterior) */
 		std::vector<double> 		new_params;	    /**< Proposed new parameter values */
 		std::vector<double> 		orig_params;	/**< Saved parameter values (in case revert is necessary) */
 		std::vector<double> 		c_forward;	    /**< Dirichlet parameter vector used to propose new frequencies */

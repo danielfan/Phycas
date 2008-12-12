@@ -61,6 +61,44 @@ void EdgeMove::reset()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Sets the value for the data member 'min_lambda', which is the tuning parameter used for exploring the posterior 
+|   distribution in this move.
+*/
+void EdgeMove::setPosteriorTuningParam(
+  double x) /* is the new value for `min_lambda' */
+	{
+	min_lambda = x;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the value for the data member `max_lambda', which is the tuning parameter used for exploring the prior 
+|   distribution in this move.
+*/
+void EdgeMove::setPriorTuningParam(
+  double x) /* is the new value for `max_lambda' */
+	{
+	max_lambda = x;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the value for the data member 'lambda', which is the tuning parameter for this move, based on a boldness value
+|	that ranges from 0 (least bold) to 100 (most bold). Simple linear interpolation is used (i.e. a boldness of 50
+|   results in `lambda' halfway between `min_lambda' and `max_lambda').
+*/
+void EdgeMove::setBoldness(
+  double x) /* is the new boldness value */
+	{
+	boldness = x;
+	if (boldness < 0.0)
+		boldness = 0.0;
+	else if (boldness > 100.0)
+		boldness = 100.0;
+
+    // compute lambda from boldness value
+	lambda = min_lambda + (max_lambda - min_lambda)*boldness/100.0;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Sets the value for the data member lambda, which is the tuning parameter for this move.
 */
 void EdgeMove::setLambda(double x)

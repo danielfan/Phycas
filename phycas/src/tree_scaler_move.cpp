@@ -42,23 +42,46 @@ TreeScalerMove::TreeScalerMove() : MCMCUpdater()
     forward_scaler = 1.0;
     reverse_scaler = 1.0;
     lambda = 0.5;
+    min_lambda = 0.5;
+    max_lambda = 0.5;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Sets the value for the data member 'lambda', which is the tuning parameter for this move.
+|	Sets the value for the data member 'min_lambda', which is the tuning parameter used for exploring the posterior 
+|   distribution in this move.
 */
-void TreeScalerMove::setLambda(
-  double x) /* is the new value for `lambda' */
+void TreeScalerMove::setPosteriorTuningParam(
+  double x) /* is the new value for `min_lambda' */
 	{
-	lambda = x;
+	min_lambda = x;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Provides read access to the data member 'lambda', which is the tuning parameter for this move.
+|	Sets the value for the data member `max_lambda', which is the tuning parameter used for exploring the prior 
+|   distribution in this move.
 */
-double TreeScalerMove::getLambda() const
+void TreeScalerMove::setPriorTuningParam(
+  double x) /* is the new value for `max_lambda' */
 	{
-	return lambda;
+	max_lambda = x;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the value for the data member 'lambda', which is the tuning parameter for this move, based on a boldness value
+|	that ranges from 0 (least bold) to 100 (most bold). Simple linear interpolation is used (i.e. a boldness of 50
+|   results in `lambda' halfway between `min_lambda' and `max_lambda').
+*/
+void TreeScalerMove::setBoldness(
+  double x) /* is the new boldness value */
+	{
+	boldness = x;
+	if (boldness < 0.0)
+		boldness = 0.0;
+	else if (boldness > 100.0)
+		boldness = 100.0;
+
+    // compute lambda from boldness value
+	lambda = min_lambda + (max_lambda - min_lambda)*boldness/100.0;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

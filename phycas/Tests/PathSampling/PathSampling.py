@@ -28,6 +28,16 @@ mcmc.out.params           = 'params.p'
 mcmc.out.params.mode      = REPLACE
 
 mcmc.draw_directly_from_prior = True
+mcmc.ls_move_lambda       = 0.2
+mcmc.ls_move_lambda0      = 0.5
+mcmc.edge_move_lambda     = 0.2
+mcmc.edge_move_lambda0    = 0.5
+mcmc.state_freq_psi       = 300.0
+mcmc.state_freq_psi0      = 1.0
+mcmc.rel_rate_psi         = 300.0 
+mcmc.rel_rate_psi0        = 1.0
+mcmc.tree_scaler_lambda   = 0.2
+mcmc.tree_scaler_lambda0  = 0.5
 
 ps.nbetavals              = 5
 ps.maxbeta                = 1.0

@@ -30,15 +30,15 @@
 using namespace phycas;
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	The constructor sets tuning parameter `psi' and `maxpsi' to 300.0 and calls reset().
+|	The constructor sets tuning parameter `psi' and `max_psi' to 300.0 and calls reset().
 */
 DirichletMove::DirichletMove() : MCMCUpdater()
 	{
 	dim = 0;
 	boldness = 0.0;
-	minpsi = 1.0;
-	maxpsi = 300.0;
-	psi = maxpsi;
+	max_psi = 1.0;
+	max_psi = 300.0;
+	psi = max_psi;
 	reset();
 	}
 
@@ -61,6 +61,27 @@ void DirichletMove::setPsi(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Sets the value for the data member 'min_psi', which is the minimum value of the tuning parameter for this move.
+|   The minimum value is used whenever boldness comes into play, for example during a path sampling analysis when the
+|   target distribution changes from posterior to prior and boldness is adjusted accordingly.
+*/
+void DirichletMove::setPriorTuningParam(
+  double x) /* is the new value for max_psi */
+	{
+	min_psi = x;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the value for the data member 'max_psi', which is the maximum value of the tuning parameter for this move.
+|   The maximum value is the default value, used for exploring the posterior distribution.
+*/
+void DirichletMove::setPosteriorTuningParam(
+  double x) /* is the new value for max_psi */
+	{
+	max_psi = x;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Sets the value for the data member 'dim', which is the number of parameters updated jointly by this move.
 */
 void DirichletMove::setDimension(
@@ -72,7 +93,7 @@ void DirichletMove::setDimension(
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the value for the data member 'psi', which is the tuning parameter for this move, based on a boldness value
 |	that ranges from 0 (least bold) to 100 (most bold). The actual formula used is psi = 3*(100 - x), with minimum of 
-|	0 and maximum of `maxpsi' enforced after the calculation. Current parameter values are multiplied by the value `psi'
+|	0 and maximum of `max_psi' enforced after the calculation. Current parameter values are multiplied by the value `psi'
 |	to obtain the parameters of a new Dirichlet distribution used for sampling the proposed new values. The boldest
 |	distribution that can be used for sampling is a flat dirichlet, however, so if any of the parameters are less than
 |	1 after multiplication by `psi', they are simply set to 1.
@@ -88,17 +109,17 @@ void DirichletMove::setBoldness(
 
     // compute psi from boldness value
     //  
-    //  minpsi = 5
-    //  maxpsi = 300
+    //  max_psi = 5
+    //  max_psi = 300
     //  % represents result in column to the left
     //
-    //  boldness     100-%    (maxpsi-minpsi)*%/100   minpsi+%  
+    //  boldness     100-%    (max_psi-max_psi)*%/100   max_psi+%  
     //      0         100              295               300
     //    100           0                0                 5
     //
-    //  psi = minpsi + (maxpsi - minpsi)*(100-boldness)/100
+    //  psi = max_psi + (max_psi - max_psi)*(100-boldness)/100
     //
-	psi = minpsi + (maxpsi - minpsi)*(100.0-boldness)/100.0;
+	psi = max_psi + (max_psi - max_psi)*(100.0-boldness)/100.0;
 	//std::cerr << boost::str(boost::format("####### x = %.5f, boldness = %.5f, psi = %.5f") % x % boldness % psi) << std::endl;
 	}
 

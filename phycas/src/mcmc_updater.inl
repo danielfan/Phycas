@@ -198,9 +198,30 @@ inline void MCMCUpdater::setWeight(unsigned w)
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Sets the value of the move-specific data member used to determine the size of a step when exploring the posterior
+|   distribution. This base class version does nothing; override in derived classes to set the tuning parameter
+|   appropriately.
+*/
+inline void MCMCUpdater::setPosteriorTuningParam(
+  double x) /**< is the new value of the tuning parameter */
+	{
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the value of the move-specific data member used to determine the size of a step when exploring the prior
+|   distribution. This base class version does nothing; override in derived classes to set the tuning parameter
+|   appropriately.
+*/
+inline void MCMCUpdater::setPriorTuningParam(
+  double x) /**< is the new value of the tuning parameter */
+	{
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Sets the boldness of proposals. The meaning of boldness is interpreted individually by derived classes.
 */
-inline void MCMCUpdater::setBoldness(double b)
+inline void MCMCUpdater::setBoldness(
+  double b) /**< is the new boldness value */
 	{
 	}
 
