@@ -491,22 +491,22 @@ class MCMCImpl(CommonFunctions):
                 new_omega = chain.model.getOmegaPrior().sample()
                 chain.model.setOmega(new_omega)
             elif name == 'rAC':                    # C++ class GTRRateParam
-                new_rAC = chain.model.getRelRatePrior().sample()
+                new_rAC = chain.model.getRelRateParamPrior().sample()
                 chain.model.setRelRateUnnorm(0, new_rAC) 
             elif name == 'rAG':                    # C++ class GTRRateParam
-                new_rAG = chain.model.getRelRatePrior().sample()
+                new_rAG = chain.model.getRelRateParamPrior().sample()
                 chain.model.setRelRateUnnorm(1, new_rAG) 
             elif name == 'rAT':                    # C++ class GTRRateParam
-                new_rAT = chain.model.getRelRatePrior().sample()
+                new_rAT = chain.model.getRelRateParamPrior().sample()
                 chain.model.setRelRateUnnorm(2, new_rAT) 
             elif name == 'rCG':                    # C++ class GTRRateParam
-                new_rCG = chain.model.getRelRatePrior().sample()
+                new_rCG = chain.model.getRelRateParamPrior().sample()
                 chain.model.setRelRateUnnorm(3, new_rCG) 
             elif name == 'rCT':                    # C++ class GTRRateParam
-                new_rCT = chain.model.getRelRatePrior().sample()
+                new_rCT = chain.model.getRelRateParamPrior().sample()
                 chain.model.setRelRateUnnorm(4, new_rCT) 
             elif name == 'rGT':                    # C++ class GTRRateParam
-                new_rGT = chain.model.getRelRatePrior().sample()
+                new_rGT = chain.model.getRelRateParamPrior().sample()
                 chain.model.setRelRateUnnorm(5, new_rGT) 
             elif name == 'base freq. A':                    # C++ class StateFreqParam
                 new_freq_param_A = chain.model.getStateFreqParamPrior().sample()
