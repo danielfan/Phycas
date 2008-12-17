@@ -60,6 +60,7 @@ class MCMCImpl(CommonFunctions):
         self.unimap_manager         = None
         self.nsamples               = 0
         self.burnin                 = 0     # same as self.opts.burnin except for path sampling, when it drops to 0 after first beta value
+        self.cycle_start            = 0     # used in path sampling to avoid starting over the cycle count for each beta value
         self.last_adaptation        = 0
         self.next_adaptation        = 0
         self.ps_beta                = 1.0
@@ -627,7 +628,7 @@ class MCMCImpl(CommonFunctions):
                     msg = 'cycle = %d, lnL = %.5f (%.5f secs)' % (cycle + 1, cold_chain_manager.getLastLnLike(), self.stopwatch.elapsedSeconds())
                 self.output(msg)
             if self.beyondBurnin(cycle) and self.doThisCycle(cycle - self.burnin, self.opts.sample_every):
-                self.mcmc_manager.recordSample(cycle)
+                self.mcmc_manager.recordSample(self.cycle_start + cycle)
                 cold_chain_manager = self.mcmc_manager.getColdChainManager()
                 sampled_lnL = cold_chain_manager.getLastLnLike()
                 self.ps_sampled_likes[self.ps_beta_index].append(sampled_lnL)
@@ -636,6 +637,7 @@ class MCMCImpl(CommonFunctions):
                 self.adaptSliceSamplers()
                 self.next_adaptation += 2*(self.next_adaptation - self.last_adaptation)
                 self.last_adaptation = cycle + 1
+        self.cycle_start += self.burnin + self.opts.ncycles
         
     def run(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -798,6 +800,7 @@ class MCMCImpl(CommonFunctions):
                     self.burnin = 0
                 else:
                     self.burnin = self.opts.burnin
+                    self.cycle_start = 0
                 if self.ps_beta == 0.0:
                     self.mainMCMCLoop(explore_prior=True)
                 else:
@@ -806,6 +809,7 @@ class MCMCImpl(CommonFunctions):
             self.ps_sampled_likes = []
             self.ps_sampled_likes.append([])
             self.ps_beta_index = 0
+            self.cycle_start = 0
             self.burnin = self.opts.burnin
             if self.data_matrix is None:
                 self.mainMCMCLoop(explore_prior=True)
