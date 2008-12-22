@@ -49,6 +49,8 @@
 #endif
 
 #if ! defined(NDEBUG)
+#	define BOOST_DEBUG_PYTHON
+#	define BOOST_ALL_NO_LIB
 #	define BOOST_ENABLE_ASSERT_HANDLER
 #endif
 

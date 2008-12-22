@@ -164,6 +164,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\..\ndev\branches\v2.1\ncl\nxscxxdiscretematrix.cpp"
+				>
+			</File>
+			<File
 				RelativePath="$(NCL_ROOT)\ncl\nxsdatablock.cpp"
 				>
 			</File>

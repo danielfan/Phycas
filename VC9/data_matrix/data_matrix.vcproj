@@ -64,11 +64,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="boost_python-vc71-mt-gyd-1_34.lib ncl.lib"
+				AdditionalDependencies="boost_python-vc90-mt-gyd-1_37.lib"
 				OutputFile="$(PHYCAS_ROOT)/phycas/DataMatrix/_DataMatrixBase_d.pyd"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(PHYCAS_ROOT)\VC\ncl\Debug;$(BOOST_ROOT)\stage\lib;$(PYTHON_ROOT)\libs"
-				IgnoreDefaultLibraryNames="boost_python-vc71-mt-gd-1_34.lib"
+				IgnoreDefaultLibraryNames="boost_python-vc90-mt-gd-1_37.lib"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/data_matrix.pdb"
 				SubSystem="2"

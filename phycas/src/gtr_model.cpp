@@ -74,7 +74,7 @@ void	GTR::createParameters(
 
 	PHYCAS_ASSERT(rel_rate_params.empty());
 
-    PHYCAS_ASSERT(relrate_param_prior || relrate_prior);
+    PHYCAS_ASSERT(rel_rate_param_prior || rel_rate_prior);
     if (rel_rate_param_prior)
         {
         // Only add relative rate parameters if relative rates will be updated separately

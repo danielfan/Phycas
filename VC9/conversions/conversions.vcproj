@@ -64,11 +64,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="boost_python-vc71-mt-gyd-1_34.lib"
+				AdditionalDependencies="boost_python-vc90-mt-gyd-1_37.lib"
 				OutputFile="$(PHYCAS_ROOT)/phycas/Conversions/_Conversions_d.pyd"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(BOOST_ROOT)\stage\lib;$(PYTHON_ROOT)\libs"
-				IgnoreDefaultLibraryNames="boost_python-vc71-mt-gd-1_34.lib"
+				IgnoreDefaultLibraryNames="boost_python-vc90-mt-gd-1_37.lib"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/conversions.pdb"
 				SubSystem="2"

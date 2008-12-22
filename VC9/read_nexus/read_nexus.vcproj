@@ -64,11 +64,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ncl.lib boost_python-vc71-mt-gyd-1_34.lib"
+				AdditionalDependencies="ncl.lib boost_python-vc90-mt-gyd-1_37.lib"
 				OutputFile="$(PHYCAS_ROOT)\phycas\ReadNexus\_ReadNexus_d.pyd"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(PHYCAS_ROOT)\VC\ncl\Debug;$(PHYCAS_ROOT);$(BOOST_ROOT)\stage\lib;$(PYTHON_ROOT)\libs"
-				IgnoreDefaultLibraryNames="boost_python-vc71-mt-gd-1_34.lib"
+				AdditionalLibraryDirectories="$(PHYCAS_ROOT)\VC9\ncl\Debug;$(PHYCAS_ROOT);$(BOOST_ROOT)\stage\lib;$(PYTHON_ROOT)\libs"
+				IgnoreDefaultLibraryNames="boost_python-vc90-mt-gd-1_37.lib"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/read_nexus.pdb"
 				SubSystem="2"
@@ -239,10 +239,6 @@
 						ForcedIncludeFiles="$(NOINHERIT)"
 					/>
 				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\..\ncl\branches\v2.1\ncl\nxscxxdiscretematrix.cpp"
-				>
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\probability_distribution.cpp"

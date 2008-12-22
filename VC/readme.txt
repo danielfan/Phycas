@@ -38,6 +38,20 @@ C:\Python-2.5.1\PCbuild\readme.txt.
 
 Building the Debug version of the Boost Python DLL
 --------------------------------------------------
+Modify C:\boost_1_37_0\tools\build\v2\user-config.jam to include these lines:
+
+using python : 2.6 : C:\\Python26\\python.exe ;
+using python : 2.6 : C:\\Python-2.6.1\\PCBuild\\python_d.exe
+  : # includes
+  : # libs
+  : <python-debugging>on ;
+
+Failure to add these lines results in a boost_python*.dll that loads non-debugging DLLs,
+causing python_d.exe to crash. Also, in user-config.jam, make sure the following line is 
+uncommented:
+
+using msvc ;
+
 To build *only* the Python library out of the many projects composing Boost, navigate
 to the Boost folder (e.g. C:\boost_1_34_0) and type
 
