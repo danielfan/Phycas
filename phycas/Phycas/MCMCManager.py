@@ -430,7 +430,7 @@ class MarkovChain(LikelihoodCore):
             self.tree,                      # tree
             self.likelihood,                # likelihood calculation machinery
             self.r,                         # pseudorandom number generator
-            #POLPY_NEWWAY False,            # separate_edgelen_params (deprecated: always False)
+            #False,                         # separate_edgelen_params (deprecated: always False)
             self.parent.opts.slice_max_units,    # maximum number of slice units allowed
             self.parent.opts.slice_weight)       # weight for each parameter added
             

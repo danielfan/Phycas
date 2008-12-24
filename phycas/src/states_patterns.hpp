@@ -20,7 +20,10 @@
 #if ! defined(STATES_PATTERNS_HPP)
 #define STATES_PATTERNS_HPP
 
-#include "ncl/nxscdiscretematrix.h"	// for int8_t typedef
+#include <vector>
+#include <map>
+
+#include "ncl/nxscdiscretematrix.h"	    // for int8_t typedef
 
 typedef std::vector<int8_t>				            VecStateList;
 typedef std::vector<unsigned>			            VecStateListPos;

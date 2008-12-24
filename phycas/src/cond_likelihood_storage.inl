@@ -48,6 +48,14 @@ inline CondLikelihoodStorage::~CondLikelihoodStorage()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Returns the number of elements in `cl_stack' (which equals the number of stored conditional likelihood arrays).
+*/
+inline unsigned CondLikelihoodStorage::getCLAPoolSize() const
+	{
+	return (unsigned)cl_stack.size();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Returns the value of the data member `num_patterns', which holds the number of patterns used in determining the size
 |	of newly-created CondLikelihood objects.
 */

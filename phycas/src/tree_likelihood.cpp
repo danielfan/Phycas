@@ -2812,7 +2812,7 @@ void TreeLikelihood::addDataTo(SimData & other)
 void TreeLikelihood::prepareInternalNodeForLikelihood(
   TreeNode * nd)	/**< is the node to decorate */
 	{
-#if 0 && POLPY_NEWWAY
+#if POLPY_NEWWAY
 	if (nd)
 		{
     	InternalData * ndID = nd->GetInternalData();

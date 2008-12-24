@@ -44,6 +44,8 @@ class CondLikelihoodStorage
 										CondLikelihoodStorage();
 										//CondLikelihoodStorage(unsigned cond_like_len, unsigned starting_size = 1);
 										~CondLikelihoodStorage();
+										
+		unsigned                        getCLAPoolSize() const;
 
 		CondLikelihoodShPtr				getCondLikelihood();
 		void							putCondLikelihood(CondLikelihoodShPtr p);

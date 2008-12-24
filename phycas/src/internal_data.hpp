@@ -24,6 +24,7 @@
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
+#include "ncl/nxsallocatematrix.h"
 #include "phycas/src/states_patterns.hpp"
 #include "phycas/src/univents.hpp"
 
@@ -83,9 +84,7 @@ class InternalData
 
 	public:
 
-#if POLPY_NEWWAY
 										~InternalData();
-#endif
 
 		unsigned						getCLASize() const;
 		double * * *					getPMatrices();
@@ -105,16 +104,17 @@ class InternalData
 		unsigned 						getNumUnivents(unsigned i) const {return univents.getNumEvents(i);}
 		std::vector<unsigned>			getUniventStates(unsigned i) const {return univents.getEventsVec(i);}
 		std::vector<double>   			getUniventTimes(unsigned i) const {return univents.getTimes(i);}
-
 		Univents & 						getUniventsRef() {return univents;}
 		const Univents & 				getUniventsConstRef()const {return univents;}
 
 	private:
+	
 										InternalData(bool using_unimap, unsigned nPatterns, unsigned nRates, unsigned nStates, double * * * pMatrices, bool managePMatrices, CondLikelihoodStorage & cla_storage);
-		void							swapUnivents(InternalData * other);
 
 		bool							unimap;			/**< true if internal nodes are to be prepared for uniformized mapping likelihood; false if internal nodes are to be prepared for Felsenstein-style integrated likelihoods */
+		
 		Univents						univents;
+		void							swapUnivents(InternalData * other);
 
 		//CLA's for an edge from a node to its parent are stored in the node's InternalData (or TipData).
 		//bool							parCLAValid;	/**< true if parWorkingCLA is valid */
@@ -123,7 +123,7 @@ class InternalData
 		//bool							childCLAValid;	/**< true if childWorkingCLA is valid. */
 		CondLikelihoodShPtr				childWorkingCLA;/**< conditional likelihood array for this node and above (valid if it points to something, invalid otherwise) */ 
 		CondLikelihoodShPtr				childCachedCLA; /**< filial conditional likelihood array is stored here to make reverting MCMC moves cheap */
-		
+
 		int8_t							state;			/**< Used in simulation to temporarily store the state for one character */
 		mutable double * * *			pMatrices;		/**< Either an alias to a pMatrix array or an alias to ownedPMatrices.ptr */
 		ScopedThreeDMatrix<double>		ownedPMatrices; /**< Transition probability matrices for this interior node	 */

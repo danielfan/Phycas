@@ -29,6 +29,50 @@ const double TreeNode::edgeLenDefault = 0.1;
 const double TreeNode::edgeLenInitValue = DBL_MAX;
 const unsigned TreeNode::nodeNumInitValue = UINT_MAX;
 
+#if POLPY_NEWWAY
+//extern unsigned numnodes;
+#endif
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Initializes all pointers to 0, nodeNum to TreeNode::nodeNumInitValue, and edgeLen to TreeNode::edgeLenInitValue.
+*/
+TreeNode::TreeNode() 
+  :nodeNum(TreeNode::nodeNumInitValue),
+  edgeLen(TreeNode::edgeLenInitValue),
+  lChild(0),
+  par(0),
+  rSib(0),
+  nextPreorder(0),
+  prevPreorder(0),
+  observable(false),
+  support(0.0),
+  tmp(0.0),
+  x(0.0),
+  y(0.0),
+  selected(false),
+  tipData(0),
+  tipDataDeleter(0),
+  internalData(0),
+  internalDataDeleter(0)
+  	{
+#if POLPY_NEWWAY
+    //numnodes++;
+#endif
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Destructor for TreeNode. 
+*/
+TreeNode::~TreeNode()
+	{
+	std::cerr << "In node destructor" << std::endl;
+#if POLPY_NEWWAY
+    //numnodes--;
+#endif
+	ResetInternalData();
+	ResetTipData();
+	}
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the edge length (value of `edgeLen' data member multiplied by the tree's scaler value).
 */

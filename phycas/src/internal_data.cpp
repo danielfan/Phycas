@@ -17,9 +17,16 @@
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.				  |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-//#include "phycas/force_include.h"
-#include "phycas/src/likelihood_models.hpp"
-#include "phycas/src/tree_likelihood.hpp"
+#if POLPY_NEWWAY
+#   include <stdint.h> 
+#   include "phycas/src/cond_likelihood.hpp"
+#   include "phycas/src/cond_likelihood_storage.hpp"
+#else
+#   include "ncl/nxscdiscretematrix.h"             // for int8_t
+#   include "phycas/src/likelihood_models.hpp"
+#   include "phycas/src/tree_likelihood.hpp"
+#endif
+
 #include "phycas/src/internal_data.hpp"
 
 namespace phycas
@@ -60,15 +67,12 @@ InternalData::InternalData(
 		}
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Destructor ensures that all CLA structures are returned to `cla_pool'. The `ownedPMatrices' and `univents' data 
 |   members takes care of deleting themselves when they go out of scope.
 */
 InternalData::~InternalData()
 	{
-    //std::cerr << "Deleting InternalData object..." << std::endl;
-
 	// Invalidate the parental CLAs if they exist
 	if (parWorkingCLA)
 		{
@@ -97,7 +101,6 @@ InternalData::~InternalData()
 		childCachedCLA.reset();
 		}
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calls the swap method of the `state_time' data member, supplying as the argument other's state_time data member.

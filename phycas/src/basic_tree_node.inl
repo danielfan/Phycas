@@ -37,31 +37,6 @@ inline TreeNode * TreeNode::FindNextSib()
 	return par->lChild;
 	}
 
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Initializes all pointers to 0, nodeNum to TreeNode::nodeNumInitValue, and edgeLen to TreeNode::edgeLenInitValue.
-*/
-inline TreeNode::TreeNode() 
-  :nodeNum(TreeNode::nodeNumInitValue),
-  edgeLen(TreeNode::edgeLenInitValue),
-  lChild(0),
-  par(0),
-  rSib(0),
-  nextPreorder(0),
-  prevPreorder(0),
-  observable(false),
-  support(0.0),
-  tmp(0.0),
-  x(0.0),
-  y(0.0),
-  selected(false),
-  tipData(0),
-  tipDataDeleter(0),
-  internalData(0),
-  internalDataDeleter(0)
-  	{
-	}
-
 /*----------------------------------------------------------------------------------------------------------------------
 |	Initializes all pointers to 0, nodeNum to TreeNode::nodeNumInitValue and edgeLen to TreeNode::edgeLenInitValue.
 |	Also deletes any structures assigned to `tipData' or `internalData' using the callbacks provided when these
@@ -86,15 +61,6 @@ inline void TreeNode::Clear()
 	x				= 0.0;
 	y				= 0.0;
 	selected		= false;
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Destructor for TreeNode. 
-*/
-inline TreeNode::~TreeNode()
-	{
-	ResetInternalData();
-	ResetTipData();
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

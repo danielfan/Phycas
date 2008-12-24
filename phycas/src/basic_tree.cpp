@@ -20,7 +20,7 @@
 #include <string>
 #include <cstdio>
 #include <cctype>
-#include "phycas/src/phycas_string.hpp"
+//#include "phycas/src/phycas_string.hpp"
 #include "phycas/src/basic_tree.hpp"
 #include "phycas/src/xphylogeny.hpp"
 
@@ -276,8 +276,9 @@ void Tree::RerootAtTip(unsigned num)
 	if (nd == NULL)
 		{
 		workspace.clear();
-		workspace << "there is no tip node having number ";
-		throw XPhylogeny(append_unsigned(workspace, num));
+		workspace << boost::str(boost::format("there is no tip node having number %d") % num);
+		throw XPhylogeny(workspace);
+		//throw XPhylogeny(append_unsigned(workspace, num));
 		}
 	else
 		RerootAtThisTip(nd);
@@ -1302,7 +1303,16 @@ void Tree::BuildFromString(
 						{
 						workspace.clear();
 						workspace << "expecting single quote to mark the end of node name (";
-						workspace << abbreviate(nd->GetNodeName(), 20);
+						//workspace << abbreviate(nd->GetNodeName(), 20);
+						std::string s = nd->GetNodeName();
+                        if (s.length() < 20)
+                            workspace << s;
+                        else
+                            {
+                            std::string ss(s.substr(0, 20));
+                            ss << "...";
+                            workspace << ss;
+                            }
 						workspace << ")";
 						throw XPhylogeny(workspace);
 						}
@@ -1517,7 +1527,10 @@ std::string & Tree::AppendNewick(
 		// If the root node has a name, use it; otherwise convert the node number to a string
 		// Note that neither name nor number should be output for root node if the tree is rooted
 		if (useNumbers || nd->nodeName.empty())
-			append_unsigned(s, nd->GetNodeNumber() + 1);
+		    {
+			//append_unsigned(s, nd->GetNodeNumber() + 1);
+			s << boost::str(boost::format("%d") % (nd->GetNodeNumber() + 1));
+			}
 		else
             {
             if (nd->nodeName.find(" ") == std::string::npos)
@@ -1558,7 +1571,10 @@ std::string & Tree::AppendNewick(
 		{
 		// Two taxon tree, presumably this won't happen, but it is easy to deal with
 		if (useNumbers || nd->nodeName.empty())
-			append_unsigned(s, nd->GetNodeNumber() + 1);
+		    {
+			//append_unsigned(s, nd->GetNodeNumber() + 1);
+			s << boost::str(boost::format("%d") % (nd->GetNodeNumber() + 1));
+			}
 		else
             {
             if (nd->nodeName.find(" ") == std::string::npos)
@@ -1589,7 +1605,10 @@ std::string & Tree::AppendNewick(
 			{
 			// Output taxon names for tips if they are available, otherwise output tip node number plus 1
 			if (useNumbers || nd->nodeName.empty())
-				append_unsigned(s, nd->GetNodeNumber() + 1);
+			    {
+				//append_unsigned(s, nd->GetNodeNumber() + 1);
+    			s << boost::str(boost::format("%d") % (nd->GetNodeNumber() + 1));
+    			}
 			else
                 {
                 if (nd->nodeName.find(" ") == std::string::npos)
@@ -1746,15 +1765,30 @@ Tree::Tree()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Calls Clear() to store all nodes and delete all other allocated memory, then erases `internalNodeStorage' to eliminate the
-|	memory allocated for TreeNode objects.
+|	Calls Clear() to store all nodes and delete all other allocated memory, then erases `internalNodeStorage' and
+|   `tipStorage' to eliminate the memory allocated for TreeNode objects.
 */
 Tree::~Tree()
 	{
-	Clear(); //@ not too efficient to store nodes and then immediately delete them all
+	Clear(); 
 	while (!internalNodeStorage.empty()) 
+	    {
+	    //std::cerr << "Popping internal node" << std::endl;
+	    //TreeNode * nd = internalNodeStorage.top();
 		internalNodeStorage.pop();
-		
+		//delete nd;
+		//nd = NULL;
+		}
+#if POLPY_NEWWAY
+	while (!tipStorage.empty()) 
+		{
+	    //std::cerr << "Popping tip node" << std::endl;
+	    //TreeNode * nd = tipStorage.top();
+		tipStorage.pop();
+		//delete nd;
+		//nd = NULL;
+		}
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -1895,9 +1929,16 @@ void Tree::Clear()
 		// Walk tree in postorder fashion, storing nodes as we go
 		for (TreeNode *nd = GetLastPreorder(); nd != NULL;)
 			{
-			TreeNode *next = nd->GetNextPostorder();
+			TreeNode * next = nd->GetNextPostorder();
+#if POLPY_NEWWAY
+			if (nd->IsTip())
+				StoreLeafNode(nd);
+			else
+				StoreInternalNode(nd);
+#else
+            internalNodeStorage.push(nd);
+#endif
 			nd->Clear();
-			internalNodeStorage.push(nd);
 			nd = next;
 			}
 
@@ -1913,7 +1954,7 @@ void Tree::Clear()
 	treeid_valid		= false;
 	numbers_from_names	= false;
     debugOutput         = false;
-	}
+   	}
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Converts the tree to a rooted tree (if it is not already a rooted tree) and sets `isRooted' data member to true.
@@ -1949,6 +1990,10 @@ TreeNode * Tree::GetNewNode()
 	return AllocNewNode();
 	}
 	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Allocates memory for a new TreeNode object, sets the new node's tree pointer to this Tree object, and returns a
+|   TreeNode pointer to the new node.
+*/
 TreeNode * Tree::AllocNewNode()
 	{
 	TreeNode * nd = new TreeNode();
@@ -2047,6 +2092,21 @@ unsigned Tree::GetNInternalsAllocated()
 	return (unsigned)(internalNodeStorage.size() + GetNInternals());
 	}
 
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the current number of node objects stored in the data member `internalNodeStorage'
+*/
+unsigned Tree::NumInternalNodesStored()
+	{
+	return (unsigned)internalNodeStorage.size();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the current number of node objects stored in the data member `tipStorage'
+*/
+unsigned Tree::NumTipNodesStored()
+	{
+	return (unsigned)tipStorage.size();
+	}
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the number of tip nodes currently composing the tree. The data member `nTips' stores the number of degree 

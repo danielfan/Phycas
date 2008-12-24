@@ -576,7 +576,7 @@ class MCMCImpl(CommonFunctions):
                 
         chain.prepareForLikelihood()
         chain.likelihood.replaceModel(chain.model)
-        
+                
         if False:
             # debugging code
             chain.likelihood.storeSiteLikelihoods(True)

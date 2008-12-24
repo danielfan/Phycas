@@ -21,7 +21,7 @@
 #include <set>
 #include <climits>
 #include <algorithm>
-#include <strstream>
+#include <sstream>
 #include <boost/format.hpp>
 #include "phycas/src/split.hpp"
 #include "phycas/src/xphylogeny.hpp"
@@ -243,7 +243,8 @@ void Split::ReadImpl(
 void Split::Read(
   const std::string in)
     {
-    std::istrstream inss(in.c_str());
+    //std::istrstream inss(in.c_str());
+    std::istringstream inss(in);
     ReadImpl(inss);
     }
 

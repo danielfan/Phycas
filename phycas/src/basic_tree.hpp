@@ -79,6 +79,9 @@ class Tree
 		const TreeNode *		GetLastPreorderConst() const;
 		preorder_iterator		begin();
 		preorder_iterator		end();
+		
+        unsigned                NumInternalNodesStored();
+        unsigned                NumTipNodesStored();
 
 		// Predicates
 		//

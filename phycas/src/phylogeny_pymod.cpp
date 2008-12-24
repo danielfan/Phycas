@@ -120,6 +120,7 @@ BOOST_PYTHON_MODULE(_Phylogeny)
 		.def("debugMode", &phycas::Tree::debugMode)
 		.def("recalcAllSplits", &phycas::Tree::RecalcAllSplits)
 		.def("ladderize", &phycas::Tree::Ladderize)
+		.def("GetNInternalsAllocated", &phycas::Tree::GetNInternalsAllocated)
 		;
 
 	class_<TreeManip>("TreeManipBase", init<boost::shared_ptr<Tree> >())
