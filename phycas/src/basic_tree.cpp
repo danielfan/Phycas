@@ -38,6 +38,85 @@ using namespace phycas;
 //bool Tree::gDebugOutput = true;
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Sets firstPreorder to NULL and calls Clear() to initialize data members.
+*/
+Tree::Tree()
+  : firstPreorder(NULL)
+	{
+	//std::cerr << "Tree constructor" << std::endl;
+	isRooted = false;
+	Clear();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Calls Clear() to store all nodes and delete all other allocated memory, then erases `internalNodeStorage' and
+|   `tipStorage' to eliminate the memory allocated for TreeNode objects.
+*/
+Tree::~Tree()
+	{
+	//std::cerr << "Tree destructor" << std::endl;
+	Clear(); 
+	while (!internalNodeStorage.empty()) 
+	    {
+	    //std::cerr << "Popping internal node" << std::endl;
+	    TreeNode * nd = internalNodeStorage.top();
+		internalNodeStorage.pop();
+		delete nd;
+		nd = NULL;
+		}
+#if POLPY_NEWWAY
+	while (!tipStorage.empty()) 
+		{
+	    //std::cerr << "Popping tip node" << std::endl;
+	    TreeNode * nd = tipStorage.top();
+		tipStorage.pop();
+		delete nd;
+		nd = NULL;
+		}
+#endif
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns Tree object to just-constructed state. If preorder pointers are valid, walks tree in postorder fashion 
+|	storing nodes as they are visited in `internalNodeStorage'. If the preorder pointers are not valid, first calls 
+|	RefreshPreorder() to remedy this. If `firstPreorder' is NULL, assumes that tree has just been constructed and there
+|	are thus no nodes to store.
+*/
+void Tree::Clear()
+	{
+	if (firstPreorder != NULL)
+		{
+		// Walk tree in postorder fashion, storing nodes as we go
+		for (TreeNode *nd = GetLastPreorder(); nd != NULL;)
+			{
+			TreeNode * next = nd->GetNextPostorder();
+#if POLPY_NEWWAY
+			if (nd->IsTip())
+				StoreLeafNode(nd);
+			else
+				StoreInternalNode(nd);
+#else
+            internalNodeStorage.push(nd);
+#endif
+			nd->Clear();
+			nd = next;
+			}
+
+		firstPreorder = NULL;
+		}
+
+	lastPreorder		= NULL;
+	nInternals			= 0;
+	nTips				= 0;
+	preorderDirty		= true;
+	hasEdgeLens			= false;
+	nodeCountsValid		= false;
+	treeid_valid		= false;
+	numbers_from_names	= false;
+    debugOutput         = false;
+   	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Push node onto end of `internalNodeStorage' vector (nodes are stored rather than deleted to save having to reallocate them
 |	later.
 */
@@ -1076,7 +1155,9 @@ bool Tree::DebugCheckTree(bool allowDegTwo, bool checkDataPointers, int verbosit
                     }
 				}
 			}
+#if POLPY_OLDWAY
 		PHYCAS_ASSERT(&*currNd->tree == this);
+#endif
 		if (!preorderDirty) 
 			{
 			PHYCAS_ASSERT(currNd->prevPreorder == prevNd);
@@ -1755,43 +1836,6 @@ void Tree::RecalcAllSplits(
 // below here lies previous contents of basic_tree.inl
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Sets firstPreorder to NULL and calls Clear() to initialize data members.
-*/
-Tree::Tree()
-  : firstPreorder(NULL)
-	{
-	isRooted = false;
-	Clear();
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Calls Clear() to store all nodes and delete all other allocated memory, then erases `internalNodeStorage' and
-|   `tipStorage' to eliminate the memory allocated for TreeNode objects.
-*/
-Tree::~Tree()
-	{
-	Clear(); 
-	while (!internalNodeStorage.empty()) 
-	    {
-	    //std::cerr << "Popping internal node" << std::endl;
-	    //TreeNode * nd = internalNodeStorage.top();
-		internalNodeStorage.pop();
-		//delete nd;
-		//nd = NULL;
-		}
-#if POLPY_NEWWAY
-	while (!tipStorage.empty()) 
-		{
-	    //std::cerr << "Popping tip node" << std::endl;
-	    //TreeNode * nd = tipStorage.top();
-		tipStorage.pop();
-		//delete nd;
-		//nd = NULL;
-		}
-#endif
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
 |	Attempts to locate a tip having the name `tipname'. If one can be found, its node number is returned. If no tip by
 |   that name can be found, returns UINT_MAX.
 */
@@ -1917,46 +1961,6 @@ void Tree::SetAllEdgeLens(double v)
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Returns Tree object to just-constructed state. If preorder pointers are valid, walks tree in postorder fashion 
-|	storing nodes as they are visited in `internalNodeStorage'. If the preorder pointers are not valid, first calls 
-|	RefreshPreorder() to remedy this. If `firstPreorder' is NULL, assumes that tree has just been constructed and there
-|	are thus no nodes to store.
-*/
-void Tree::Clear()
-	{
-	if (firstPreorder != NULL)
-		{
-		// Walk tree in postorder fashion, storing nodes as we go
-		for (TreeNode *nd = GetLastPreorder(); nd != NULL;)
-			{
-			TreeNode * next = nd->GetNextPostorder();
-#if POLPY_NEWWAY
-			if (nd->IsTip())
-				StoreLeafNode(nd);
-			else
-				StoreInternalNode(nd);
-#else
-            internalNodeStorage.push(nd);
-#endif
-			nd->Clear();
-			nd = next;
-			}
-
-		firstPreorder = NULL;
-		}
-
-	lastPreorder		= NULL;
-	nInternals			= 0;
-	nTips				= 0;
-	preorderDirty		= true;
-	hasEdgeLens			= false;
-	nodeCountsValid		= false;
-	treeid_valid		= false;
-	numbers_from_names	= false;
-    debugOutput         = false;
-   	}
-
-/*----------------------------------------------------------------------------------------------------------------------
 |	Converts the tree to a rooted tree (if it is not already a rooted tree) and sets `isRooted' data member to true.
 */
 void Tree::setRooted()
@@ -1997,7 +2001,9 @@ TreeNode * Tree::GetNewNode()
 TreeNode * Tree::AllocNewNode()
 	{
 	TreeNode * nd = new TreeNode();
+#if POLPY_OLDWAY	
 	nd->SetTreeShPtr(TreeShPtr(this));
+#endif
 	return nd;
 	}
 
@@ -2018,7 +2024,9 @@ void Tree::Reserve(
 	for (unsigned i = 0; i < num_nodes_needed; ++i)
 		{
         TreeNode * nd = new TreeNode();
+#if POLPY_OLDWAY
         nd->SetTreeShPtr(TreeShPtr(this));
+#endif
 		internalNodeStorage.push(nd);
 		}
 	}

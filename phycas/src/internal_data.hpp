@@ -109,7 +109,11 @@ class InternalData
 
 	private:
 	
+#if POLPY_NEWWAY	//CLAShPtr
+										InternalData(bool using_unimap, unsigned nPatterns, unsigned nRates, unsigned nStates, double * * * pMatrices, bool managePMatrices, CondLikelihoodStorageShPtr cla_storage);
+#else
 										InternalData(bool using_unimap, unsigned nPatterns, unsigned nRates, unsigned nStates, double * * * pMatrices, bool managePMatrices, CondLikelihoodStorage & cla_storage);
+#endif
 
 		bool							unimap;			/**< true if internal nodes are to be prepared for uniformized mapping likelihood; false if internal nodes are to be prepared for Felsenstein-style integrated likelihoods */
 		
@@ -127,7 +131,11 @@ class InternalData
 		int8_t							state;			/**< Used in simulation to temporarily store the state for one character */
 		mutable double * * *			pMatrices;		/**< Either an alias to a pMatrix array or an alias to ownedPMatrices.ptr */
 		ScopedThreeDMatrix<double>		ownedPMatrices; /**< Transition probability matrices for this interior node	 */
+#if POLPY_NEWWAY	//CLAShPtr
+		CondLikelihoodStorageShPtr		cla_pool;		/**< CondLikelihood object storage facility */
+#else
 		CondLikelihoodStorage &			cla_pool;		/**< CondLikelihood object storage facility */
+#endif
 	};
 	
 typedef boost::shared_ptr<InternalData>			InternalDataShPtr;
@@ -168,8 +176,13 @@ inline const double * const * const * InternalData::getConstPMatrices() const
 */
 inline CondLikelihoodShPtr InternalData::getChildCondLikePtr()
 	{
+#if POLPY_NEWWAY	//CLAShPtr
+	if (!childWorkingCLA)
+		childWorkingCLA = cla_pool->getCondLikelihood();
+#else
 	if (!childWorkingCLA)
 		childWorkingCLA = cla_pool.getCondLikelihood();
+#endif
 	return childWorkingCLA;
 	}
 
@@ -180,8 +193,13 @@ inline CondLikelihoodShPtr InternalData::getChildCondLikePtr()
 */
 inline CondLikelihoodShPtr InternalData::getParentalCondLikePtr()
 	{
+#if POLPY_NEWWAY	//CLAShPtr
+	if (!parWorkingCLA)
+		parWorkingCLA = cla_pool->getCondLikelihood();
+#else
 	if (!parWorkingCLA)
 		parWorkingCLA = cla_pool.getCondLikelihood();
+#endif
 	return parWorkingCLA;
 	}
 

@@ -5,6 +5,61 @@ to fix, and documenting them helps to avoid repeating history. Minor bugs repres
 cosmetic glitches that are easy to work around and do not take long to fix. Minor bugs 
 are best documented in SVN comments.
 
+Bug 6: the "leaky" bug (fixed in revision 994 on 24 Dec 2008)
+-------------------------------------------------------------
+This bug turned out to be two bugs, both causing memory leaks during that part of 
+path sampling analyses when the prior is being sampled directly. The first bug turned
+out to be relatively easy to fix: the ScopedThreeDMatrix destructor in nxsallocatematrix.h
+consisted of this line
+
+if (!ptr) DeleteThreeDArray<T>(ptr);
+
+which of course should have been
+
+if (ptr) DeleteThreeDArray<T>(ptr);
+
+The second memory leak was much harder to find and fix. First of all, the Tree destructor
+(in basic_tree.cpp) was popping nodes off the internalNodeStorage and tipStorage stacks
+but not actually deleting the nodes. This meant that not only TreeNode objects were
+not being deleted, but the large TipData and even larger InternalData structures that
+were stored in these TreeNode objects were also not getting deleted. To fix this,
+"delete nd" statements were added to the Tree destructor, but this led to a complication:
+each TreeNode object was storing a smart pointer to its Tree object. Unfortunately, these
+smart pointers were being created upon TreeNode construction and thus each of these had
+a use count of just 1 when the node was deleted, resulting in a second call of the Tree
+destructor. The Tree destructor was thus being called recursively, which led to lots of
+problems with freeing the same object multiple times. Since the smart pointer to Tree
+inside TreeNode objects was not ever being used, this data member was simply removed to
+solve this problem. One final glitch remained, however, and this was revealed when 
+doctestall.py was run in debug mode. The first doctest example in _TreeLikelihood.py
+crashed when the following section was executed:
+
+>>> likelihood = Likelihood.TreeLikelihood(model)
+>>> likelihood.copyDataFromDiscreteMatrix(data_matrix)
+>>> for t in reader.getTrees():
+...     tree = Phylogeny.Tree(t)
+...     likelihood.prepareForLikelihood(tree)
+...     lnL = likelihood.calcLnL(tree)
+...     print '%.5f' % lnL
+-7812.79213
+
+The problem here was that the TreeLikelihood object's destructor was called before the
+Tree destructor. TreeNode objects that have been used to compute likelihoods have
+either TipData or InternalData objects attached to them, and the InternalData objects
+each have (or had, I should say) a reference to the CondLikelihoodStorage data member 
+(cla_pool) of the TreeLikelihood class, so when TreeLikelihood was deleted,
+these reference got hosed. Then, when Tree::~Tree was called, it began deleting nodes
+and the internal nodes began deleting their InternalData structures, which in turn
+began trying to stuff their CondLikelihood objects back into cla_pool...and therein
+lies the problem. To fix this, TreeLikelihood creates a new CondLikelihoodStorage
+object in its constructor:
+
+cla_pool = CondLikelihoodStorageShPtr(new CondLikelihoodStorage());
+
+and from this point on, shared pointers are used by InternalData objects. That way,
+the object pointed to by cla_pool is not deleted until all references to it are 
+deleted.
+
 Bug 5: the "pinvar" bug (fixed in revision 760 on 17 July 2008)
 ---------------------------------------------------------------
 Phycas failed the LikelihoodTest test when that test was reinstated by MTH on 16 July.

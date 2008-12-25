@@ -237,7 +237,7 @@ void GTR::fixRelRates()
 	rel_rates_fixed = true;
 	if (!rel_rate_params.empty())
 		{
-#if 0
+#if 1
 		//@POL good place to use std::for_each with a boost::lambda functor?
 		for (MCMCUpdaterVect::iterator it = rel_rate_params.begin(); it != rel_rate_params.end(); ++it)
 			(*it)->fixParameter();
@@ -256,7 +256,7 @@ void GTR::freeRelRates()
 	rel_rates_fixed = false;
 	if (!rel_rate_params.empty())
 		{
-#if 0
+#if 1
 		//@POL good place to use std::for_each with a boost::lambda functor?
 		for (MCMCUpdaterVect::iterator it = rel_rate_params.begin(); it != rel_rate_params.end(); ++it)
 			(*it)->freeParameter();

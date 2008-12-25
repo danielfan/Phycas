@@ -38,39 +38,17 @@ inline TreeNode * TreeNode::FindNextSib()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Initializes all pointers to 0, nodeNum to TreeNode::nodeNumInitValue and edgeLen to TreeNode::edgeLenInitValue.
-|	Also deletes any structures assigned to `tipData' or `internalData' using the callbacks provided when these
-|	structures were allocated. Basically, returns node to its just-constructed state.
-*/
-inline void TreeNode::Clear()
-	{
-	ResetInternalData();
-	ResetTipData();
-
-	lChild			= 0; 
-	par				= 0;
-	rSib			= 0;
-	nextPreorder	= 0;
-	prevPreorder	= 0;
-	nodeNum			= TreeNode::nodeNumInitValue;
-	edgeLen			= TreeNode::edgeLenInitValue;
-	nodeName		= "";
-	observable		= false;
-	support			= 0.0;
-	tmp				= 0.0;
-	x				= 0.0;
-	y				= 0.0;
-	selected		= false;
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
 |	Sets the `tree' share pointer data member to the supplied value `t'. This allows subsequent access to the tree of
 |   which this node is a part in order to, for example, gain access to the whole-tree scaling factor.
 */
 inline void TreeNode::SetTreeShPtr(
   TreeShPtr t) /**> is a pointer to the tree (should be called just after a node is created) */
 	{
+#if POLPY_NEWWAY
+	//tree = t.get();
+#else
 	tree = t;
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

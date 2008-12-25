@@ -160,8 +160,13 @@ class TipData
 
 	public:
 
+#if POLPY_NEWWAY	//CLAShPtr
+											TipData(unsigned nRates, unsigned nStates, CondLikelihoodStorageShPtr cla_storage);
+											TipData(bool using_unimap, unsigned nPatterns, const std::vector<unsigned int> & stateListPosVec, boost::shared_array<const int8_t> stateCodesShPtr, unsigned nRates, unsigned nStates, double * * * pMatTranspose, bool managePMatrices, CondLikelihoodStorageShPtr cla_storage);
+#else
 											TipData(unsigned nRates, unsigned nStates, CondLikelihoodStorage & cla_storage);
 											TipData(bool using_unimap, unsigned nPatterns, const std::vector<unsigned int> & stateListPosVec, boost::shared_array<const int8_t> stateCodesShPtr, unsigned nRates, unsigned nStates, double * * * pMatTranspose, bool managePMatrices, CondLikelihoodStorage & cla_storage);
+#endif
 #if POLPY_NEWWAY
                                             ~TipData();
 #endif
@@ -205,7 +210,11 @@ class TipData
 		boost::shared_array<const int8_t>	state_codes;		/**< Array of tip-specific state codes */
 		mutable double * * *				pMatrixTranspose;	/**< The (rate category) x (stateCode) x (ancestor state) augmented transposed transition probability matrices (points to `ownedPMatrices' if the constructor parameter `managePMatrices' parameter is true) */
 		ScopedThreeDMatrix<double>			ownedPMatrices;		/**< Vector of transposed transition matrices */
+#if POLPY_NEWWAY	//CLAShPtr
+		CondLikelihoodStorageShPtr			cla_pool;			/**< Source of CondLikelihood objects if needed */
+#else
 		CondLikelihoodStorage &				cla_pool;			/**< Source of CondLikelihood objects if needed */
+#endif
 	};
 	
 typedef boost::shared_ptr<TipData> TipDataShPtr;

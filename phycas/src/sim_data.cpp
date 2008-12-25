@@ -23,6 +23,10 @@
 #include <functional>
 #include <boost/format.hpp>
 #include "phycas/src/basic_tree.hpp"
+#if POLPY_NEWWAY	//CLAShPtr
+#	include "phycas/src/cond_likelihood.hpp"
+#	include "phycas/src/cond_likelihood_storage.hpp"
+#endif
 #include "phycas/src/tip_data.hpp"
 #include "phycas/src/sim_data.hpp"
 #include "phycas/src/phycas_string.hpp"

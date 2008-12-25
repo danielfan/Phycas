@@ -34,7 +34,11 @@ namespace phycas
 TipData::TipData(
   unsigned nRates,		/**< is the number of relative rate categories */
   unsigned nStates,		/**< is the number of states in the model */
+#if POLPY_NEWWAY	//CLAShPtr
+  CondLikelihoodStorageShPtr cla_storage)
+#else
   CondLikelihoodStorage & cla_storage)
+#endif
 	:
 	//parCLAValid(false)
 	//parWorkingCLA(NULL),
@@ -61,7 +65,11 @@ TipData::TipData(
   unsigned							nStates,			/**< is the number of states in the model */
   double * * *						pMatTranspose,		/**< is an alias to the rates by states by states pMatrix array, may be NULL */
   bool								managePMatrices, 	/**< if true, a 3D matrix will be allocated (if pMat is also NULL, the pMatrices will alias ownedPMatrices.ptr) */ 
+#if POLPY_NEWWAY	//CLAShPtr
+  CondLikelihoodStorageShPtr 		cla_storage)
+#else
   CondLikelihoodStorage & 			cla_storage)
+#endif
 	:
 	//parCLAValid(false),
 	//parWorkingCLA(NULL),
@@ -98,14 +106,22 @@ TipData::~TipData()
 	// Invalidate the parental CLAs if they exist
 	if (parWorkingCLA)
 		{
+#if POLPY_NEWWAY	//CLAShPtr
+		cla_pool->putCondLikelihood(parWorkingCLA);
+#else
 		cla_pool.putCondLikelihood(parWorkingCLA);
+#endif
 		parWorkingCLA.reset();
 		}
 
 	// Remove cached parental CLAs if they exist
 	if (parCachedCLA)
 		{
+#if POLPY_NEWWAY	//CLAShPtr
+		cla_pool->putCondLikelihood(parCachedCLA);
+#else
 		cla_pool.putCondLikelihood(parCachedCLA);
+#endif
 		parCachedCLA.reset();
 		}
 	}
@@ -118,8 +134,13 @@ TipData::~TipData()
 */
 CondLikelihoodShPtr TipData::getParentalCondLikePtr()
 	{
+#if POLPY_NEWWAY	//CLAShPtr
+	if (!parWorkingCLA)
+		parWorkingCLA = cla_pool->getCondLikelihood();
+#else
 	if (!parWorkingCLA)
 		parWorkingCLA = cla_pool.getCondLikelihood();
+#endif
 	return parWorkingCLA;
 	}
 

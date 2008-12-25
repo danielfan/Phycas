@@ -29,8 +29,8 @@ const double TreeNode::edgeLenDefault = 0.1;
 const double TreeNode::edgeLenInitValue = DBL_MAX;
 const unsigned TreeNode::nodeNumInitValue = UINT_MAX;
 
-#if POLPY_NEWWAY
-//extern unsigned numnodes;
+#if 0 && POLPY_NEWWAY
+extern unsigned numnodes;
 #endif
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -55,8 +55,8 @@ TreeNode::TreeNode()
   internalData(0),
   internalDataDeleter(0)
   	{
-#if POLPY_NEWWAY
-    //numnodes++;
+#if 0 && POLPY_NEWWAY
+    numnodes++;
 #endif
 	}
 
@@ -65,12 +65,39 @@ TreeNode::TreeNode()
 */
 TreeNode::~TreeNode()
 	{
-	std::cerr << "In node destructor" << std::endl;
-#if POLPY_NEWWAY
-    //numnodes--;
+	//std::cerr << "In node destructor" << std::endl;
+#if 0 && POLPY_NEWWAY
+    numnodes--;
 #endif
+	Clear();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Initializes all pointers to 0, nodeNum to TreeNode::nodeNumInitValue and edgeLen to TreeNode::edgeLenInitValue.
+|	Also deletes any structures assigned to `tipData' or `internalData' using the callbacks provided when these
+|	structures were allocated. Basically, returns node to its just-constructed state.
+*/
+void TreeNode::Clear()
+	{
+	//std::cerr << "tree use count = " << tree.use_count() << std::endl;
+	//tree.reset();
 	ResetInternalData();
 	ResetTipData();
+
+	lChild			= 0; 
+	par				= 0;
+	rSib			= 0;
+	nextPreorder	= 0;
+	prevPreorder	= 0;
+	nodeNum			= TreeNode::nodeNumInitValue;
+	edgeLen			= TreeNode::edgeLenInitValue;
+	nodeName		= "";
+	observable		= false;
+	support			= 0.0;
+	tmp				= 0.0;
+	x				= 0.0;
+	y				= 0.0;
+	selected		= false;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

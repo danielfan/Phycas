@@ -57,11 +57,13 @@
 #include <ncl/nxsstring.h>
 class NxsException;
 
-#if defined(_MSC_VER) && _MSC_VER >= 1500
-#	include <cstdio>
-#	define sprintf sprintf_s
-#	if !defined(vsnprintf)
-#		define vsnprintf _vsnprintf_s
+#if defined(_MSC_VER)
+#	if _MSC_VER >= 1500
+#		include <cstdio>
+#		define sprintf sprintf_s
+#		if !defined(vsnprintf)
+#			define vsnprintf _vsnprintf_s
+#		endif
 #	endif
 #endif
 
