@@ -483,8 +483,10 @@ class MCMCImpl(CommonFunctions):
                     chain.chain_manager.setEdgeLenHyperparam(0, edgelen_hyperparam)
                     chain.model.getInternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
                     chain.model.getExternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
-                #raw_input('about to call tm.equiprobTree (site 1)...')
-                tm.equiprobTree(chain.tree.getNTips(), chain.r, chain.model.getInternalEdgeLenPrior(), chain.model.getExternalEdgeLenPrior())
+                if self.opts.fix_topology:
+                    tm.setRandomInternalExternalEdgeLengths(chain.model.getInternalEdgeLenPrior(), chain.model.getExternalEdgeLenPrior()) 
+                else:
+                    tm.equiprobTree(chain.tree.getNTips(), chain.r, chain.model.getInternalEdgeLenPrior(), chain.model.getExternalEdgeLenPrior())
                 edgelens_generated = True
             elif name == 'trs/trv rate ratio':              # C++ class KappaParam
                 new_kappa = chain.model.getKappaPrior().sample()
@@ -561,9 +563,12 @@ class MCMCImpl(CommonFunctions):
                 self.phycassert(0, 'model uses an updater (%s) that has not yet been added to MCMCImpl.explorePrior (workaround: specify mcmc.draw_directly_from_prior = False)' % name)
 
         # If no edge length hyperprior was specified, then build the tree with edge lengths now
+
         if not edgelens_generated:
-            #raw_input('about to call tm.equiprobTree (site 2)...')
-            tm.equiprobTree(chain.tree.getNTips(), chain.r, chain.model.getInternalEdgeLenPrior(), chain.model.getExternalEdgeLenPrior())
+            if self.opts.fix_topology:
+                tm.setRandomInternalExternalEdgeLengths(chain.model.getInternalEdgeLenPrior(), chain.model.getExternalEdgeLenPrior()) 
+            else:
+                tm.equiprobTree(chain.tree.getNTips(), chain.r, chain.model.getInternalEdgeLenPrior(), chain.model.getExternalEdgeLenPrior())
             
         if self.opts.allow_polytomies:
             # Choose number of internal nodes

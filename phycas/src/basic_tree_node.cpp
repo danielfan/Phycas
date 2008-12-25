@@ -29,10 +29,6 @@ const double TreeNode::edgeLenDefault = 0.1;
 const double TreeNode::edgeLenInitValue = DBL_MAX;
 const unsigned TreeNode::nodeNumInitValue = UINT_MAX;
 
-#if 0 && POLPY_NEWWAY
-extern unsigned numnodes;
-#endif
-
 /*----------------------------------------------------------------------------------------------------------------------
 |	Initializes all pointers to 0, nodeNum to TreeNode::nodeNumInitValue, and edgeLen to TreeNode::edgeLenInitValue.
 */
@@ -55,9 +51,6 @@ TreeNode::TreeNode()
   internalData(0),
   internalDataDeleter(0)
   	{
-#if 0 && POLPY_NEWWAY
-    numnodes++;
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -66,9 +59,6 @@ TreeNode::TreeNode()
 TreeNode::~TreeNode()
 	{
 	//std::cerr << "In node destructor" << std::endl;
-#if 0 && POLPY_NEWWAY
-    numnodes--;
-#endif
 	Clear();
 	}
 

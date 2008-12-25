@@ -173,6 +173,31 @@ class TreeManip(TreeManipBase):
 
         """
         TreeManipBase.setRandomEdgeLens(self, edge_len_dist)
+        
+    def setRandomInternalExternalEdgeLengths(self, internal_dist, external_dist):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Sets edge lengths using random draws from the probability distribution
+        internal_dist (for internal edges) or external_dist (for edges 
+        subtending tips).
+        
+        >>> from phycas import *
+        >>> t = Phylogeny.Tree()
+        >>> t.buildFromString('(1,(2,5),(3,4))')
+        >>> rng = ProbDist.Lot(13579)
+        >>> edist = ProbDist.Exponential(1.0)
+        >>> edist.setLot(rng)
+        >>> idist = ProbDist.Exponential(10.0)
+        >>> idist.setLot(rng)
+        >>> tm = Phylogeny.TreeManip(t)
+        >>> tm.setRandomInternalExternalEdgeLengths(idist, edist)
+        >>> print t.walkPreorder()
+        1 -> [2] -> [0] -> 2 -> 5 -> [1] -> 3 -> 4
+        >>> print t.makeNewick()
+        (1:0.01644,(2:0.01019,5:0.59116):0.04536,(3:1.70839,4:0.36239):0.02834)
+
+        """
+        TreeManipBase.setRandomInternalExternalEdgeLens(self, internal_dist, external_dist)
 
     def deleteRandomInternalEdge(self, rng):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

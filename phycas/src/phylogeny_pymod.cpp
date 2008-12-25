@@ -129,6 +129,7 @@ BOOST_PYTHON_MODULE(_Phylogeny)
 		.def("randomTree", &TreeManip::randomTree)
 		.def("equiprobTree", &TreeManip::equiprobTree)
 		.def("setRandomEdgeLens", &TreeManip::setRandomEdgeLens)
+		.def("setRandomInternalExternalEdgeLens", &TreeManip::setRandomInternalExternalEdgeLens)
 		.def("deleteRandomInternalEdge", &TreeManip::deleteRandomInternalEdge)
 		;
 

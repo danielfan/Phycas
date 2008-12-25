@@ -58,7 +58,11 @@ class TreeManip
 		void		equiprobTree(unsigned ntips, LotShPtr rng, ProbDistShPtr internal_edge_dist, ProbDistShPtr external_edge_dist);
 
         void        deleteRandomInternalEdge(LotShPtr rng);
+        
 		void		setRandomEdgeLens(ProbDistShPtr d);
+#if POLPY_NEWWAY
+		void		setRandomInternalExternalEdgeLens(ProbDistShPtr internal_dist, ProbDistShPtr external_dist);
+#endif
 
         void        buildTreeFromSplitVector(const std::vector<std::string> & split_vect, ProbDistShPtr edge_len_dist);
 		//void		BuildTreeFromID(NxsTaxaManager *tm,const TreeID& tree_id, unsigned root_at = 0);
