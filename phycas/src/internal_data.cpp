@@ -17,8 +17,7 @@
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.				  |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#if 0 && POLPY_NEWWAY
-#   include <stdint.h> 
+#if POLPY_NEWWAY
 #   include "phycas/src/cond_likelihood.hpp"
 #   include "phycas/src/cond_likelihood_storage.hpp"
 #else

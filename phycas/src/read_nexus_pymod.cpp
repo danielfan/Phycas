@@ -39,9 +39,7 @@
 #	include "phycas/src/thirdparty/num_util/num_util.h"
 #endif
 
-
 using namespace boost::python;
-
 
 void translate(const NxsException & e)
 	{
@@ -49,11 +47,15 @@ void translate(const NxsException & e)
 	PyErr_SetString(PyExc_Exception, e.what());
 	}
 
-
-
-
 #include "ncl/nxspublicblocks.h"
+#include "phycas/src/phycas_nexus_reader.hpp"
 
+//POL 
+// I moved NxsFilePath declaration/definition to nxs_file_path.hpp and nxs_file_path.cpp, respectively
+// I moved PhycasNexusReader declaration/definition to phycas_nexus_reader.hpp and phycas_nexus_reader.cpp, respectively
+// 
+
+#if 0 
 
 #if defined(NXS_USE_MAC_DIR_STYLE)
 	const char nativeSeparator = ':';
@@ -492,8 +494,6 @@ NxsCXXDiscreteMatrix * createNativeDiscreteMatrix(PhycasNexusReader & nexusReade
 	return new NxsCXXDiscreteMatrix(*cb, convertGapsToMissing);
 	}
 
-
-
 void PhycasNexusReader::NexusError(const std::string &msg, file_pos pos, unsigned line, unsigned col, CmdResult , NxsBlock* )
 	{
 	errorMsg = msg;
@@ -621,8 +621,7 @@ std::vector<std::string> PhycasNexusReader::GetTaxLabels() const
 	return activeTB->GetAllLabels();
 	}
 	
-
-
+#endif
 
 BOOST_PYTHON_MODULE(_ReadNexus)
 {

@@ -20,6 +20,7 @@
 #if !defined(UNDERFLOW_POLICY_HPP)
 #define UNDERFLOW_POLICY_HPP
 
+#include <cmath>
 #include "phycas/src/states_patterns.hpp"
 #include "phycas/src/cond_likelihood.hpp"
 #include "phycas/src/cond_likelihood_storage.hpp"

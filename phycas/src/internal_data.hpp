@@ -81,6 +81,7 @@ class InternalData
   : boost::noncopyable
 	{
 	friend class TreeLikelihood;
+	friend class InternalDataTest;
 
 	public:
 

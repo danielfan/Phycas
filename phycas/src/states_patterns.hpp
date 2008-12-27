@@ -23,7 +23,28 @@
 #include <vector>
 #include <map>
 
-#include "ncl/nxscdiscretematrix.h"	    // for int8_t typedef
+#if POLPY_NEWWAY
+#	if HAVE_INTTYPES_H
+#		include <inttypes.h>
+#	elif HAVE_STDINT_H
+#		include <stdint.h>
+#	elif defined(_MSC_VER) && _MSC_VER >= 1200
+#		include <basetsd.h>
+		typedef   INT8 int8_t;
+		typedef  UINT8 uint8_t;
+		typedef  INT64 int64_t;
+		typedef UINT64 uint64_t;
+#	elif defined(_MSC_VER)
+		typedef signed char int8_t;
+		typedef unsigned char uint8_t;
+		typedef long long int64_t;
+		typedef unsigned long long uint64_t;
+#	elif defined(_WIN32)
+#		include <stdint.h>
+#	endif
+#else
+#	include "ncl/nxscdiscretematrix.h"	    // for int8_t typedef
+#endif
 
 typedef std::vector<int8_t>				            VecStateList;
 typedef std::vector<unsigned>			            VecStateListPos;
