@@ -47,7 +47,7 @@ struct AdHocDensity
 	{
 	virtual ~AdHocDensity() 
 		{
-		//std::cerr << "AdHocDensity dying..." << std::endl;
+		std::cerr << "\n>>>>> AdHocDensity dying..." << std::endl;
 		}
     virtual double operator()(double) = 0;
 	};
@@ -56,7 +56,7 @@ class ProbabilityDistribution : public AdHocDensity
 	{
 	public:
 							ProbabilityDistribution() {lot = &myLot;}
-							virtual ~ProbabilityDistribution() {}
+							virtual ~ProbabilityDistribution();
 
         double              LnGamma(double x);
 

@@ -54,6 +54,18 @@ NxsCXXDiscreteMatrix * createNativeDiscreteMatrix(PhycasNexusReader & nexusReade
 	return new NxsCXXDiscreteMatrix(*cb, convertGapsToMissing);
 	}
 
+PhycasNexusReader::~PhycasNexusReader()
+	{
+	std::cerr << "\n\n>>>>> PhycasNexusReader dying..." << std::endl;
+	// Unlike the PublicNexusReader, the Phycas Nexus Reader owns the blocks, and thus deletes them on destruction
+	Clear();
+	}
+	
+void PhycasNexusReader::Clear()
+	{
+	PublicNexusReader::DeleteBlocksFromFactories();
+	}
+			
 void PhycasNexusReader::NexusError(const std::string &msg, file_pos pos, unsigned line, unsigned col, CmdResult , NxsBlock* )
 	{
 	errorMsg = msg;

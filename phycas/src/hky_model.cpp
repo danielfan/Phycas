@@ -41,6 +41,13 @@ HKY::HKY()
 	state_repr.push_back("T");
 	}
 
+HKY::~HKY()
+	{
+	std::cerr << "HKY dying..." << std::endl;
+	Model::Clear();
+	std::cerr << "  kappa_prior use_count() = " << kappa_prior.use_count() << std::endl;
+	}
+										
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns a string indicating the name of this model, namely "HKY85", "HKY85+G", "HKY85+I" or "HKY85+G+I".
 */

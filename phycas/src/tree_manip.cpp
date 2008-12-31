@@ -28,6 +28,41 @@ using namespace phycas;
 #include "phycas/src/basic_lot.hpp"
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	The default constructor does not set the data member `tree'. You should set `tree' using the SetTree() member
+|	function before using any of the other member functions, most of which assume that `tree' points to a Tree object.
+*/
+TreeManip::TreeManip()
+  	{
+  	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	The constructor requires a single argument, which is a shared pointer to the tree to be manipulated.
+*/
+TreeManip::TreeManip(
+  TreeShPtr t)	/**< Is the tree to be manipulated */
+  	{
+	PHYCAS_ASSERT(t);
+	tree = t;
+  	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	The destructor need not do anything, but it can be useful to uncomment the output statement to see when the
+|	destructor is called.
+*/
+TreeManip::~TreeManip()
+	{
+	std::cerr << "\n\n>>>>> TreeManip is dying..." << std::endl;
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the `tree' data member to the supplied shared pointer to Tree.
+*/
+void TreeManip::setTree(TreeShPtr t)
+  	{
+	tree = t;
+  	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Deletes a randomly-selected edge from the tree. Does not strip conditional likelihoods before storing internal
 |   nodes, so care should be taken with this function if the likelihood will be calculated on the resulting tree.
 */

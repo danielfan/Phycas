@@ -40,6 +40,14 @@ StateFreqParam::StateFreqParam(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Destructor.
+*/
+StateFreqParam::~StateFreqParam()
+	{
+	std::cerr << "\n>>>>> StateFreqParam dying..." << std::endl;
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
 |	Calls the sample() member function of the `slice_sampler' data member.
 */
 bool StateFreqParam::update()

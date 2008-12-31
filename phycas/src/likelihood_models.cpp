@@ -60,15 +60,29 @@ Model::Model(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	The virtual destructor does nothing.
+|	The virtual destructor .
 */
 Model::~Model()
 	{
-	//std::cerr << "Model dying..." << std::endl;
+	std::cerr << "\n>>>>> Model dying..." << std::endl;
+	Clear();
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	The virtual destructor does nothing.
+|	Clears vectors of shared pointers.
+*/
+void Model::Clear()
+	{
+	std::cerr << "\n>>>>> Model::Clear..." << std::endl;
+	freq_params.clear();
+	edgelen_hyper_params.clear();
+	edgelen_params.clear();
+	flex_rate_params.clear();
+	flex_prob_params.clear();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns value of data member `is_codon_model'.
 */
 bool Model::isCodonModel() const
 	{
@@ -1063,8 +1077,9 @@ void Model::createParameters(
 	    if (edge_lengths_fixed)
 		    p->fixParameter();
 	    edgelens_vect_ref.push_back(p);
+		std::cerr << "\n>>>>> MASTER EDGE LENGH PARAMETER use count = 2? " << p.use_count() << std::endl;
         }
-
+	
 	// Save a vector of shared pointers so that we can modify their fixed/free status if we need to
 	edgelen_params.resize(edgelens_vect_ref.size());
 	std::copy(edgelens_vect_ref.begin(), edgelens_vect_ref.end(), edgelen_params.begin());
@@ -1147,6 +1162,7 @@ void Model::createParameters(
 		if (gamma_shape_fixed)
 			gamma_shape_param->fixParameter();
 		parameters_vect_ref.push_back(gamma_shape_param);
+		std::cerr << "\n>>>>> gamma_shape_param.use_count() = " << gamma_shape_param.use_count() << std::endl;
 		}
 
 	if (is_pinvar_model)

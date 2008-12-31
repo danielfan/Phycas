@@ -17,6 +17,7 @@
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.				  |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+#include <boost/shared_ptr.hpp>
 #include "ncl/nxspublicblocks.h"
 #include "phycas/src/nxs_file_path.hpp"
 
@@ -36,13 +37,7 @@ class PhycasNexusReader: public PublicNexusReader
 			activeCharactersBlockIndex(UINT_MAX)
 			{}
 			
-		/* Unlike the PublicNexusReader, the Phycas Nexus Reader owns the blocks, 
-			and thus deletes them on destruction
-		*/
-		~PhycasNexusReader()
-			{
-			Clear();
-			}
+		~PhycasNexusReader();
 			
 		void ReadFilePath(const std::string & filePath)
 			{
@@ -61,10 +56,7 @@ class PhycasNexusReader: public PublicNexusReader
 			return errorMsg;
 			}
 			
-		virtual void Clear()
-			{
-			PublicNexusReader::DeleteBlocksFromFactories();
-			}
+		virtual void Clear();
 			
 		virtual void ClearUsedBlockList()
 			{
@@ -91,6 +83,8 @@ class PhycasNexusReader: public PublicNexusReader
 		unsigned							columnOfError ;
 
 	};
+	
+typedef boost::shared_ptr<PhycasNexusReader> PhycasNexusReaderShPtr;
 
 NxsCXXDiscreteMatrix * GetLastDiscreteMatrix(PhycasNexusReader & nexusReader, bool convertGapsToMissing);
 NxsCXXDiscreteMatrix * createNativeDiscreteMatrix(PhycasNexusReader & nexusReader, NxsTaxaBlock * taxaBlockPtr, unsigned int charBlockIndex, bool convertGapsToMissing);

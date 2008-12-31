@@ -46,6 +46,14 @@ EdgeLenMasterParam::EdgeLenMasterParam(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Destructor.
+*/
+EdgeLenMasterParam::~EdgeLenMasterParam()
+	{
+	std::cerr << "\n>>>>> EdgeLenMasterParam dying..." << std::endl;
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
 |	Member function that exists only to facilitate using boost::lambda::bind to be used in the getLnPrior() function. It
 |	returns the log of the probability density evaluated at the current edge length associated with `nd'.
 */

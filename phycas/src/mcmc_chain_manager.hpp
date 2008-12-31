@@ -64,10 +64,7 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 	{
 	public:
 								MCMCChainManager();
-								~MCMCChainManager() 
-									{
-									//std::cerr << "MCMCChainManager dying..." << std::endl;
-									}
+								~MCMCChainManager();
 
 		void					addMove(MCMCUpdaterShPtr p);
 		void					addModelParam(MCMCUpdaterShPtr p);
@@ -103,6 +100,8 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
         MCMCUpdaterVect         getEdgeLenHyperparams() const;
 
         void					addMCMCUpdaters(ModelShPtr m, TreeShPtr t, TreeLikeShPtr like, LotShPtr r, unsigned max_units, unsigned weight);
+        
+        void					debugUpdaterReport(std::string s);
 
 	public:
 		// magic workaround for avoiding bogus error when compiling with darwin GCC 3.3 build 1640: 

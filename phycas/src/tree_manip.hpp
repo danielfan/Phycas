@@ -50,6 +50,7 @@ class TreeManip
 	public:
 					TreeManip();
 					TreeManip(TreeShPtr t);
+					~TreeManip();
 
 		void		setTree(TreeShPtr t);
 

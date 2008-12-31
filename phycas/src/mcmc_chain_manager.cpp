@@ -27,6 +27,81 @@
 namespace phycas
 {
 
+void MCMCChainManager::debugUpdaterReport(std::string s)
+	{
+	std::cerr << "\n>>>>> MCMCChainManager updater report (" << s << ") <<<<<" << std::endl;
+	std::cerr << "all_updaters:" << std::endl;
+	for (MCMCUpdaterIter iter = all_updaters.begin(); iter != all_updaters.end(); ++iter)
+		{
+		std::cerr << "  " << (*iter)->getName() << " use count = " << iter->use_count() << std::endl;
+		}
+	std::cerr << "moves:" << std::endl;
+	for (MCMCUpdaterIter iter = moves.begin(); iter != moves.end(); ++iter)
+		{
+		std::cerr << "  " << (*iter)->getName() << " use count = " << iter->use_count() << std::endl;
+		}
+	std::cerr << "model_params:" << std::endl;
+	for (MCMCUpdaterIter iter = model_params.begin(); iter != model_params.end(); ++iter)
+		{
+		std::cerr << "  " << (*iter)->getName() << " use count = " << iter->use_count() << std::endl;
+		}
+	std::cerr << "edge_len_params:" << std::endl;
+	for (MCMCUpdaterIter iter = edge_len_params.begin(); iter != edge_len_params.end(); ++iter)
+		{
+		std::cerr << "  " << (*iter)->getName() << " use count = " << iter->use_count() << std::endl;
+		}
+	std::cerr << "edge_len_hyperparams:" << std::endl;
+	for (MCMCUpdaterIter iter = edge_len_hyperparams.begin(); iter != edge_len_hyperparams.end(); ++iter)
+		{
+		std::cerr << "  " << (*iter)->getName() << " use count = " << iter->use_count() << std::endl;
+		}
+	std::cerr << "\n" << std::endl;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Destructor for 
+*/
+MCMCChainManager::~MCMCChainManager() 
+	{
+	std::cerr << "\n>>>>> MCMCChainManager dying..." << std::endl;
+
+	std::cerr << "\nBefore all_updaters cleared..." << std::endl;
+	for (MCMCUpdaterIter iter = all_updaters.begin(); iter != all_updaters.end(); ++iter)
+		{
+		std::cerr << "  " << (*iter)->getName() << " use count = " << iter->use_count() << std::endl;
+		}
+	all_updaters.clear();
+
+	std::cerr << "\nBefore moves cleared..." << std::endl;
+	for (MCMCUpdaterIter iter = moves.begin(); iter != moves.end(); ++iter)
+		{
+		std::cerr << "  " << (*iter)->getName() << " use count = " << iter->use_count() << std::endl;
+		}
+	moves.clear();
+
+	std::cerr << "\nBefore model_params cleared..." << std::endl;
+	for (MCMCUpdaterIter iter = model_params.begin(); iter != model_params.end(); ++iter)
+		{
+		std::cerr << "  " << (*iter)->getName() << " use count = " << iter->use_count() << std::endl;
+		}
+	model_params.clear();
+
+	std::cerr << "\nBefore edge_len_params cleared..." << std::endl;
+	for (MCMCUpdaterIter iter = edge_len_params.begin(); iter != edge_len_params.end(); ++iter)
+		{
+		std::cerr << "  " << (*iter)->getName() << " use count = " << iter->use_count() << std::endl;
+		}
+	edge_len_params.clear();
+
+	std::cerr << "\nBefore edge_len_hyperparams cleared..." << std::endl;
+	for (MCMCUpdaterIter iter = edge_len_hyperparams.begin(); iter != edge_len_hyperparams.end(); ++iter)
+		{
+		std::cerr << "  " << (*iter)->getName() << " use count = " << iter->use_count() << std::endl;
+		}
+	edge_len_hyperparams.clear();
+	}
+
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Refreshes `last_ln_like' by calling recalcLike() for the first updater in the `all_updaters' vector.
 */
@@ -151,6 +226,7 @@ void MCMCChainManager::addMCMCUpdaters(
 		p->setTreeLikelihood(like);
 		p->setLot(r);
 		addEdgeLenParam(p);
+		std::cerr << ">>>>> adding edge length parameter in MCMCChainManager::addMCMCUpdaters: use count = " << p.use_count() << std::endl;
 		}
 
 	// Add the edge length hyperparameters (if any were created)
@@ -163,10 +239,20 @@ void MCMCChainManager::addMCMCUpdaters(
 		p->setTreeLikelihood(like);
 		p->setLot(r);
 		addEdgeLenHyperparam(p);
+		std::cerr << ">>>>> adding edge length hyperparameters in MCMCChainManager::addMCMCUpdaters: use count = " << p.use_count() << std::endl;
 		}
 
 	for (iter = parameters.begin(); iter != parameters.end(); ++iter)
 		{
+#if 1
+		(*iter)->setWeight(weight);
+		(*iter)->setMaxUnits(max_units);
+		(*iter)->setModel(m);
+		(*iter)->setTreeLikelihood(like);
+		(*iter)->setLot(r);
+		addModelParam(*iter);
+		std::cerr << ">>>>> adding model parameter (" << (*iter)->getName() << ") in MCMCChainManager::addMCMCUpdaters: use count = " << (*iter).use_count() << std::endl;
+#else
 		MCMCUpdaterShPtr p = (*iter);
 		p->setWeight(weight);
 		p->setMaxUnits(max_units);
@@ -174,6 +260,8 @@ void MCMCChainManager::addMCMCUpdaters(
 		p->setTreeLikelihood(like);
 		p->setLot(r);
 		addModelParam(p);
+		std::cerr << ">>>>> adding model parameter (" << p->getName() << ") in MCMCChainManager::addMCMCUpdaters: use count = " << p.use_count() << std::endl;
+#endif
 		}
 	}
 
@@ -375,12 +463,25 @@ void MCMCChainManager::finalize()
 
 	params_begin = edgelens_begin;
 	params_end = model_params_end;
-
+	
+	// 3 here
+	
 	// Call each updater's setChainManager member function, supplying a shared pointer to this object
 	// This allows each updater to ask the MCMCChainManager to calculate the joint prior over all
 	// parameters when needed for computing the posterior density during slice sampling
+#if 0
 	std::for_each(all_updaters.begin(), all_updaters.end(), 
 		boost::lambda::bind(&MCMCUpdater::setChainManager, *boost::lambda::_1, ChainManagerWkPtr(shared_from_this())));
+#else
+	ChainManagerWkPtr wptr(shared_from_this());
+	for (MCMCUpdaterIter uit = all_updaters.begin(); uit != all_updaters.end(); ++uit)
+		{
+		(*uit)->setChainManager(wptr);
+		}
+#endif
+	
+	// 4 here
+	//debugUpdaterReport("inside finalize");
 
 	// Call each parameter's setCurrValueFromModel member function to make sure that their 
     // curr_value data members are up to date

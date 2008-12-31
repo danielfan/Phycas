@@ -29,6 +29,14 @@ namespace phycas
 {
 
 /*----------------------------------------------------------------------------------------------------------------------
+|   Virtual destructor.
+*/
+ProbabilityDistribution::~ProbabilityDistribution()
+	{
+	std::cerr << "\n>>>>> ProbabilityDistribution dying..." << std::endl;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Returns the natural logarithm of the gamma function evaluated at the supplied value `x'. This function is a wrapper
 |   around CDF::LnGamma.
 */

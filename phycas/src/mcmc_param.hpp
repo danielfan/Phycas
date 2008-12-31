@@ -48,10 +48,7 @@ class KappaParam : public MCMCUpdater
 	{
 	public:
 						KappaParam();
-						virtual ~KappaParam() 
-							{
-							//std::cerr << "KappaParam dying..." << std::endl;
-							}
+						virtual ~KappaParam(); 
 
         virtual void    setCurrValueFromModel();
 		virtual void	setModel(ModelShPtr p);
@@ -120,10 +117,7 @@ class DiscreteGammaShapeParam : public MCMCUpdater
 	{
 	public:
 						DiscreteGammaShapeParam(bool invert);
-						virtual ~DiscreteGammaShapeParam() 
-							{
-							//std::cerr << "DiscreteGammaShapeParam dying..." << std::endl;
-							}
+						virtual ~DiscreteGammaShapeParam();
 
         virtual void    setCurrValueFromModel();
 		virtual bool	update();				// override virtual from MCMCUpdater base class
@@ -220,10 +214,7 @@ class StateFreqParam : public MCMCUpdater
 {
 	public:
 							StateFreqParam(unsigned w);
-							virtual ~StateFreqParam()
-								{
-								//std::cerr << "StateFreqParam dying..." << std::endl;
-								}
+							virtual ~StateFreqParam();
 	
         virtual void        setCurrValueFromModel();
 		virtual bool		update();				// override virtual from MCMCUpdater base class
@@ -251,10 +242,8 @@ class EdgeLenMasterParam : public MCMCUpdater
                                 };
 
                             EdgeLenMasterParam(EdgeLenMasterParam::EdgeLenType t = EdgeLenMasterParam::both);
-							virtual ~EdgeLenMasterParam()
-								{
-								//std::cerr << "EdgeLenMasterParam dying..." << std::endl;
-								}
+							virtual ~EdgeLenMasterParam();
+							
 		virtual double		recalcPrior();
 		virtual void		setPriorMeanAndVariance(double m, double v);
 
@@ -279,10 +268,7 @@ class HyperPriorParam : public MCMCUpdater
 	public:
 							HyperPriorParam();
 							HyperPriorParam(EdgeLenMasterParamShPtr p);
-							virtual ~HyperPriorParam()
-								{
-								//std::cerr << "HyperPriorParam dying..." << std::endl;
-								}
+							virtual ~HyperPriorParam();
 
         virtual void        setCurrValueFromModel();
 		virtual bool		update();				// override virtual from MCMCUpdater base class

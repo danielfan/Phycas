@@ -35,6 +35,14 @@ DiscreteGammaShapeParam::DiscreteGammaShapeParam(bool invert)
 	is_master_param = false;
 	is_hyper_param = false;
 	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Destructor.
+*/
+DiscreteGammaShapeParam::~DiscreteGammaShapeParam() 
+	{
+ 	std::cerr << "\n>>>>> DiscreteGammaShapeParam dying...likelihood use count = " << likelihood.use_count() << std::endl;
+ 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calls the sample() member function of the `slice_sampler' data member.

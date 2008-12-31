@@ -66,6 +66,8 @@ class Model	{
 
 		virtual double					calcLMat(double * * lMat) const = 0;
 		virtual double					calcUMat(double * * uMat) const = 0;
+		
+		virtual void					Clear();
 
 		// Query functions
 		bool							isCodonModel() const;
@@ -241,11 +243,8 @@ class HKY: public Model
 	{
 	public:
 									HKY();
-									~HKY()
-										{
-										//std::cerr << "HKY dying..." << std::endl;
-										}
-
+									~HKY();
+									
 		virtual std::string			getModelName() const;
         virtual void				createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters) const;
         double					    calcLMat(double * * lMat) const;

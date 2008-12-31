@@ -57,6 +57,14 @@ HyperPriorParam::HyperPriorParam(
 	is_master_param = false;
 	is_hyper_param = true;
 	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Destructor.
+*/
+HyperPriorParam::~HyperPriorParam()
+	{
+	std::cerr << "\n>>>>> HyperPriorParam dying..." << std::endl;
+	}
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calls the sample() member function of the `slice_sampler' data member.

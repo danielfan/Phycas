@@ -54,7 +54,7 @@ Tree::Tree()
 */
 Tree::~Tree()
 	{
-	//std::cerr << "Tree destructor" << std::endl;
+	std::cerr << "\n>>>>> Tree dying..." << std::endl;
 	Clear(); 
 	while (!internalNodeStorage.empty()) 
 	    {
@@ -2001,7 +2001,8 @@ TreeNode * Tree::GetNewNode()
 TreeNode * Tree::AllocNewNode()
 	{
 	TreeNode * nd = new TreeNode();
-#if POLPY_OLDWAY	
+#if POLPY_OLDWAY
+#	error Should not be compiled
 	nd->SetTreeShPtr(TreeShPtr(this));
 #endif
 	return nd;

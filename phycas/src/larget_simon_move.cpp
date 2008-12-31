@@ -35,6 +35,14 @@ namespace phycas
 {
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Virtual destructor.
+*/
+LargetSimonMove::~LargetSimonMove()
+	{
+	std::cerr << "\n>>>>> LargetSimonMove dying..." << std::endl;
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
 |	Calls proposeNewState(), then decides whether to accept or reject the proposed new state, calling accept() or 
 |	revert(), whichever is appropriate.
 */

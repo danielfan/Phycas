@@ -28,6 +28,14 @@ namespace phycas
 {
 
 /*----------------------------------------------------------------------------------------------------------------------
+|   Destructor.
+*/
+MCMCUpdater::~MCMCUpdater() 
+	{
+	std::cerr << "\n\n>>>>MCMCUpdater dying..." << std::endl;
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
 |   Set `curr_value' data member to the supplied value `x'. Not ordinarily used, but useful for debugging.
 */
 void MCMCUpdater::setCurrValue(

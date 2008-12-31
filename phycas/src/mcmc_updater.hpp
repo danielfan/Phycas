@@ -89,10 +89,7 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 	{
 	public:
 								MCMCUpdater();
-								virtual	~MCMCUpdater() 
-									{
-									//std::cerr << "MCMCUpdater dying..." << std::endl;
-									}
+								virtual	~MCMCUpdater();
 
 		// Predicates
 		bool					isParameter() const;

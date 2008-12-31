@@ -37,6 +37,14 @@ KappaParam::KappaParam()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Destructor.
+*/
+KappaParam::~KappaParam() 
+	{
+	std::cerr << "\n>>>>> KappaParam dying..." << std::endl;
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
 |	Calls the sample() member function of the `slice_sampler' data member.
 */
 bool KappaParam::update()

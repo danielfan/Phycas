@@ -61,10 +61,7 @@ class LargetSimonMove : public MCMCUpdater
 	{
 	public:
 						LargetSimonMove();
-						virtual ~LargetSimonMove() 
-							{
-							//std::cerr << "LargetSimonMove dying..." << std::endl;
-							}
+						virtual ~LargetSimonMove();
 
 		unsigned		getWhichCase() const;
 		void			setLambda(double x);

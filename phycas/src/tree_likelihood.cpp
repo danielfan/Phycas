@@ -156,7 +156,7 @@ TreeLikelihood::TreeLikelihood(
 */
 TreeLikelihood::~TreeLikelihood()
 	{
-
+	std::cerr << "\n>>>>> TreeLikelihood dying..." << std::endl;
 	if (sMat != NULL)
 		DeleteTwoDArray<unsigned>(sMat);
 	} 
