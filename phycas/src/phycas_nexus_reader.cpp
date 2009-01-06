@@ -56,7 +56,7 @@ NxsCXXDiscreteMatrix * createNativeDiscreteMatrix(PhycasNexusReader & nexusReade
 
 PhycasNexusReader::~PhycasNexusReader()
 	{
-	std::cerr << "\n\n>>>>> PhycasNexusReader dying..." << std::endl;
+	//std::cerr << "\n\n>>>>> PhycasNexusReader dying..." << std::endl;
 	// Unlike the PublicNexusReader, the Phycas Nexus Reader owns the blocks, and thus deletes them on destruction
 	Clear();
 	}

@@ -147,6 +147,7 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 
 
 		// Utilities
+		void					releaseSharedPointers();
 		virtual bool			update();
 		virtual double			recalcLike();
 

@@ -27,6 +27,7 @@
 #include "probability_distribution.hpp"
 #include "xprobdist.hpp"
 #include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
 #if defined(PYTHON_ONLY)
 #	include <boost/python/call_method.hpp>
 #endif
@@ -51,6 +52,11 @@ struct SliceStats
 // Note: AdHocDensity is defined in probablity_distribution.hpp
 typedef boost::shared_ptr<AdHocDensity> FuncToSampleShPtr;
 
+#undef WEAK_FUNCTOSAMPLE
+#if defined(WEAK_FUNCTOSAMPLE)
+typedef boost::weak_ptr<AdHocDensity> FuncToSampleWkPtr;
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Implements the univariate slice sampler described in Neal, Radford M. 2003. Slice sampling. Annals of Statistics 
 |	31:705-741.
@@ -59,7 +65,11 @@ class SliceSampler
 	{
 	public:
 								SliceSampler();
+#if defined(WEAK_FUNCTOSAMPLE)
+								SliceSampler(LotShPtr rnd, FuncToSampleWkPtr f);
+#else
 								SliceSampler(LotShPtr rnd, FuncToSampleShPtr f);
+#endif
 		virtual					~SliceSampler();
 
 		double					Sample();
@@ -68,7 +78,11 @@ class SliceSampler
 		double					OverrelaxedSample();
 		VecDbl					DebugOverrelaxedSample();
 
+#if defined(WEAK_FUNCTOSAMPLE)
+		void					AttachFunc(FuncToSampleWkPtr f);
+#else
 		void					AttachFunc(FuncToSampleShPtr f);
+#endif
 		void					AttachRandomNumberGenerator(LotShPtr rnd);
 
 		void					SetXValue(double x);
@@ -116,7 +130,11 @@ class SliceSampler
 		ParamAndLnProb			GetNextOverrelaxedSample(const ParamAndLnProb);
 		SliceInterval			BisectionSqueeze(double left, double lnf_left, double right, double lnf_right, const double ln_y0, double tol, unsigned max_steps) const;
 
+#if defined(WEAK_FUNCTOSAMPLE)
+		FuncToSampleWkPtr		func;				/**< is a functor representing the probability distribution to be sampled */
+#else
 		FuncToSampleShPtr		func;				/**< is a functor representing the probability distribution to be sampled */
+#endif
 		LotShPtr				r;					/**< is the random number generator */
 		ParamAndLnProb			lastSampled;		/**< most recent valid sample and its relative density */
 		double					w;					/**< unit size for interval I */

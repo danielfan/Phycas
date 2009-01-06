@@ -41,7 +41,7 @@ DiscreteGammaShapeParam::DiscreteGammaShapeParam(bool invert)
 */
 DiscreteGammaShapeParam::~DiscreteGammaShapeParam() 
 	{
- 	std::cerr << "\n>>>>> DiscreteGammaShapeParam dying...likelihood use count = " << likelihood.use_count() << std::endl;
+ 	//std::cerr << "\n>>>>> DiscreteGammaShapeParam dying...likelihood use count = " << likelihood.use_count() << std::endl;
  	}
 
 /*----------------------------------------------------------------------------------------------------------------------

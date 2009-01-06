@@ -50,7 +50,7 @@ EdgeLenMasterParam::EdgeLenMasterParam(
 */
 EdgeLenMasterParam::~EdgeLenMasterParam()
 	{
-	std::cerr << "\n>>>>> EdgeLenMasterParam dying..." << std::endl;
+	//std::cerr << "\n>>>>> EdgeLenMasterParam dying..." << std::endl;
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------

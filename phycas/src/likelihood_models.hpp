@@ -55,6 +55,7 @@ class Model	{
 		virtual							~Model();
 
 		// Utilities
+		virtual void					releaseUpdaters();
 		virtual std::string				getModelName() const = 0;
 		virtual void					calcPMat(double * * pMat, double edgeLength) const = 0;
 		void							calcPMatrices(double * * * pMat, const double * edgeLength, unsigned numRates) const;

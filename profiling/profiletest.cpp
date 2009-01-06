@@ -1,3 +1,5 @@
+#define SIMPLEST_CASE
+
 #include <algorithm>
 #include <iostream>
 #include "phycas/src/basic_tree.hpp"
@@ -19,11 +21,15 @@ typedef boost::shared_ptr<NxsCXXDiscreteMatrix> NxsCXXDiscreteMatrixShPtr;
 void run()
 	{
 	LotShPtr lot;
+	ProbDistShPtr edgelen_prior;
+
+#if !defined(SIMPLEST_CASE)
 	ProbDistShPtr kappa_prior;
 	ProbDistShPtr state_freq_param_prior;
 	ProbDistShPtr shape_prior;
-	ProbDistShPtr edgelen_prior;
 	ProbDistShPtr edgelen_hyperprior;
+#endif
+
 	ModelShPtr model;
 	//HKYShPtr hky;
 	//TreeLikelihoodShPtr likelihood;
@@ -58,22 +64,32 @@ void run()
 	lot->SetSeed(13579);
 	
 	// Create priors
+#if !defined(SIMPLEST_CASE)
 	kappa_prior.reset(new ExponentialDistribution(1.0));
 	state_freq_param_prior.reset(new ExponentialDistribution(1.0));
 	shape_prior.reset(new ExponentialDistribution(1.0));
-	edgelen_prior.reset(new ExponentialDistribution(2.0));
 	edgelen_hyperprior.reset(new InverseGammaDistribution(2.1, 0.909));
+#endif
+	edgelen_prior.reset(new ExponentialDistribution(2.0));
 
 	// Replace random number generator in each prior with lot
+#if !defined(SIMPLEST_CASE)
 	kappa_prior->SetLot(lot.get());
 	state_freq_param_prior->SetLot(lot.get());
 	shape_prior->SetLot(lot.get());
-	edgelen_prior->SetLot(lot.get());
 	edgelen_hyperprior->SetLot(lot.get());
-
+#endif
+	edgelen_prior->SetLot(lot.get());
+	
 	// Create a model
 	unsigned ncat = 3;
 	{
+#if defined(SIMPLEST_CASE)
+		JCShPtr jc(new JC());
+		jc->setInternalEdgeLenPrior(edgelen_prior);
+		jc->setExternalEdgeLenPrior(edgelen_prior);
+		model = jc;
+#else
 		HKYShPtr hky(new HKY());
 		hky->setKappa(4.0);
 		hky->setKappaPrior(kappa_prior);
@@ -92,6 +108,7 @@ void run()
 		// both model and hky have use count 2 here
 		//std::cerr << "hky use count = " << hky.use_count() << std::endl;
 		//std::cerr << "model use count = " << model.use_count() << std::endl;
+#endif
 	}
 	// model has use count 1 here
 	unsigned nrates = ncat;
@@ -114,7 +131,9 @@ void run()
 	// Build a random tree
 	t.reset(new Tree());
 	TreeManip tree_manip(t);
+	std::cerr << "\n***** edgelen_prior use count before equiprobTree = " << edgelen_prior.use_count() << " (expecting 3)" << std::endl;
 	tree_manip.equiprobTree(ntax, lot, edgelen_prior, edgelen_prior);
+	std::cerr << "\n***** edgelen_prior use count after equiprobTree = " << edgelen_prior.use_count() << " (expecting 3)" << std::endl;
 	std::cout << "Starting tree = " << t->MakeNewick() << std::endl;
 
 	// Prepare the tree
@@ -123,12 +142,18 @@ void run()
 	double lnL = likelihood->calcLnL(t);
 	std::cout << "lnL of starting tree = " << lnL << std::endl;
 
+	std::cerr << "\n***** edgelen_prior use count before creating mcmc = " << edgelen_prior.use_count() << " (expecting 3)" << std::endl;
 	// model has use count 3 here
 	
 	// Create chain, add parameters and moves
 	mcmc.reset(new MCMCChainManager());
+	std::cerr << "\n***** lot use count before addMCMCUpdaters = " << lot.use_count() << " (expecting 1)" << std::endl;
+	std::cerr << "\n***** edgelen_prior use count after creating mcmc = " << edgelen_prior.use_count() << " (expecting 3)" << std::endl;
 	mcmc->addMCMCUpdaters(model, t, likelihood, lot, 0, 1);	
 	mcmc->debugUpdaterReport("after addMCMCUpdaters");
+	
+	std::cerr << "\n***** edgelen_prior use count after addMCMCUpdaters = " << edgelen_prior.use_count() << " (expecting 4)" << std::endl;
+	std::cerr << "\n***** lot use count after addMCMCUpdaters = " << lot.use_count() << " (expecting 2)" << std::endl;
 
 	// likelihood has use count 9 here (1 from before plus 8 updaters (1 kappa + 4 base freqs +  1 shape + 1 edgelen master + 1 hyper) held by mcmc)
 	// model has use count 11 here (3 from before plus 8 updaters held by mcmc)
@@ -160,6 +185,8 @@ void run()
 	mcmc->debugUpdaterReport("after finalize");	
 	// lsmove now has use count = 3 because a third shared pointer has been added to MCMCChainManager's all_updaters vector
 	// likelihood now has use count = 10: 1 (new) + 8 held by updaters and 1 held by lsmove
+
+	std::cerr << "\n***** lot use count after finalize = " << lot.use_count() << " (expecting 3)" << std::endl;
 	
 	// Compute starting log-likelihood
 	mcmc->refreshLastLnLike();
@@ -189,14 +216,29 @@ void run()
 		double lnL = likelihood->calcLnL(t);
 		std::cout << "lnL of starting tree = " << lnL << std::endl;
 		}
+		
+	//mcmc->releaseUpdaters();
+	//likelihood->releaseModel();
+	model->releaseUpdaters();
+	
+	// 	************ before exiting run function ***********
+	// 	lot                    use count = 3
+	// 	edgelen_prior          use count = 2 vs 4
+	// 	likelihood             use count = 3
+	// 	t                      use count = 6
+	// 	model                  use count = 4 vs 5
+	// 	mcmc                   use count = 1
+	// 	lsmove                 use count = 3 vs. 1
 
 	std::cerr << "\n\n************ before exiting run function ***********" << std::endl;
 	std::cerr << "lot                    use count = " << lot.use_count() << std::endl;
+	std::cerr << "edgelen_prior          use count = " << edgelen_prior.use_count() << std::endl;
+#if !defined(SIMPLEST_CASE)
 	std::cerr << "kappa_prior            use count = " << kappa_prior.use_count() << std::endl;
 	std::cerr << "state_freq_param_prior use count = " << state_freq_param_prior.use_count() << std::endl;
 	std::cerr << "shape_prior            use count = " << shape_prior.use_count() << std::endl;
-	std::cerr << "edgelen_prior          use count = " << edgelen_prior.use_count() << std::endl;
 	std::cerr << "edgelen_hyperprior     use count = " << edgelen_hyperprior.use_count() << std::endl;
+#endif
 	//std::cerr << "hky                    use count = " << hky.use_count() << std::endl;
 	std::cerr << "likelihood             use count = " << likelihood.use_count() << std::endl;
 	std::cerr << "t                      use count = " << t.use_count() << std::endl;
@@ -226,7 +268,7 @@ class Test
 			}
 		~Test()
 			{
-			std::cerr << "Test dying...myp use count = " << myp.use_count() << std::endl;
+			//std::cerr << "Test dying...myp use count = " << myp.use_count() << std::endl;
 			}
 	private:
 		StrShPtr myp;

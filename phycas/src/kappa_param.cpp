@@ -41,7 +41,7 @@ KappaParam::KappaParam()
 */
 KappaParam::~KappaParam() 
 	{
-	std::cerr << "\n>>>>> KappaParam dying..." << std::endl;
+	//std::cerr << "\n>>>>> KappaParam dying..." << std::endl;
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------

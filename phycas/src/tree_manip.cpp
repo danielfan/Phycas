@@ -51,7 +51,7 @@ TreeManip::TreeManip(
 */
 TreeManip::~TreeManip()
 	{
-	std::cerr << "\n\n>>>>> TreeManip is dying..." << std::endl;
+	//std::cerr << "\n\n>>>>> TreeManip is dying..." << std::endl;
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------

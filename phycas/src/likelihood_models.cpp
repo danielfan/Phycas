@@ -64,7 +64,7 @@ Model::Model(
 */
 Model::~Model()
 	{
-	std::cerr << "\n>>>>> Model dying..." << std::endl;
+	//std::cerr << "\n>>>>> Model dying..." << std::endl;
 	Clear();
 	}
 
@@ -73,13 +73,33 @@ Model::~Model()
 */
 void Model::Clear()
 	{
-	std::cerr << "\n>>>>> Model::Clear..." << std::endl;
+	//std::cerr << "\n>>>>> Model::Clear..." << std::endl;
 	freq_params.clear();
 	edgelen_hyper_params.clear();
 	edgelen_params.clear();
 	flex_rate_params.clear();
 	flex_prob_params.clear();
 	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Resets shared pointers to MCMCUpdater objects to break cyclic dependency that prevents shared pointers from ever 
+|	reaching a use count of 1 (and hence preventing deleting of the pointed-to objects). The cycle is 
+|	TreeLikelihood->Model->MCMCUpdater->TreeLikelihood.
+*/
+void Model::releaseUpdaters()
+    {
+	//std::cerr << "\n>>>>> Model::releaseUpdaters()..." << std::endl;    
+	Clear();
+	edgeLenHyperPrior.reset();
+	internalEdgeLenPrior.reset();
+	externalEdgeLenPrior.reset();
+	flex_prob_param_prior.reset();
+	flex_rate_param_prior.reset();
+	pinvar_param.reset();	
+	pinvar_prior.reset();
+	gamma_shape_param.reset();
+	gamma_shape_prior.reset();
+    }
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns value of data member `is_codon_model'.
@@ -1077,7 +1097,7 @@ void Model::createParameters(
 	    if (edge_lengths_fixed)
 		    p->fixParameter();
 	    edgelens_vect_ref.push_back(p);
-		std::cerr << "\n>>>>> MASTER EDGE LENGH PARAMETER use count = 2? " << p.use_count() << std::endl;
+		//std::cerr << "\n>>>>> MASTER EDGE LENGH PARAMETER use count = 2? " << p.use_count() << std::endl;
         }
 	
 	// Save a vector of shared pointers so that we can modify their fixed/free status if we need to
@@ -1162,7 +1182,7 @@ void Model::createParameters(
 		if (gamma_shape_fixed)
 			gamma_shape_param->fixParameter();
 		parameters_vect_ref.push_back(gamma_shape_param);
-		std::cerr << "\n>>>>> gamma_shape_param.use_count() = " << gamma_shape_param.use_count() << std::endl;
+		//std::cerr << "\n>>>>> gamma_shape_param.use_count() = " << gamma_shape_param.use_count() << std::endl;
 		}
 
 	if (is_pinvar_model)

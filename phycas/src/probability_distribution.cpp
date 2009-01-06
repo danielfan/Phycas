@@ -33,7 +33,7 @@ namespace phycas
 */
 ProbabilityDistribution::~ProbabilityDistribution()
 	{
-	std::cerr << "\n>>>>> ProbabilityDistribution dying..." << std::endl;
+	//std::cerr << "\n>>>>> ProbabilityDistribution dying..." << std::endl;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

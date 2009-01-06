@@ -63,7 +63,7 @@ HyperPriorParam::HyperPriorParam(
 */
 HyperPriorParam::~HyperPriorParam()
 	{
-	std::cerr << "\n>>>>> HyperPriorParam dying..." << std::endl;
+	//std::cerr << "\n>>>>> HyperPriorParam dying..." << std::endl;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

@@ -63,43 +63,52 @@ void MCMCChainManager::debugUpdaterReport(std::string s)
 */
 MCMCChainManager::~MCMCChainManager() 
 	{
-	std::cerr << "\n>>>>> MCMCChainManager dying..." << std::endl;
+	//std::cerr << "\n>>>>> MCMCChainManager dying..." << std::endl;
+	releaseUpdaters();
+	}
 
-	std::cerr << "\nBefore all_updaters cleared..." << std::endl;
+/*----------------------------------------------------------------------------------------------------------------------
+|	Clears vectors of shared pointers to MCMCUpdater objects. Called from destructor (or can be called at will). 
+*/
+void MCMCChainManager::releaseUpdaters()
+    {
+	//std::cerr << "\n>>>>> MCMCChainManager::releaseUpdaters()..." << std::endl;    
+	//std::cerr << "\nBefore all_updaters cleared..." << std::endl;
 	for (MCMCUpdaterIter iter = all_updaters.begin(); iter != all_updaters.end(); ++iter)
 		{
-		std::cerr << "  " << (*iter)->getName() << " use count = " << iter->use_count() << std::endl;
+		//std::cerr << "  " << (*iter)->getName() << " use count = " << iter->use_count() << std::endl;
+		(*iter)->releaseSharedPointers();
 		}
 	all_updaters.clear();
 
-	std::cerr << "\nBefore moves cleared..." << std::endl;
-	for (MCMCUpdaterIter iter = moves.begin(); iter != moves.end(); ++iter)
-		{
-		std::cerr << "  " << (*iter)->getName() << " use count = " << iter->use_count() << std::endl;
-		}
+	//std::cerr << "\nBefore moves cleared..." << std::endl;
+	//for (MCMCUpdaterIter iter = moves.begin(); iter != moves.end(); ++iter)
+	//	{
+	//	std::cerr << "  " << (*iter)->getName() << " use count = " << iter->use_count() << std::endl;
+	//	}
 	moves.clear();
 
-	std::cerr << "\nBefore model_params cleared..." << std::endl;
-	for (MCMCUpdaterIter iter = model_params.begin(); iter != model_params.end(); ++iter)
-		{
-		std::cerr << "  " << (*iter)->getName() << " use count = " << iter->use_count() << std::endl;
-		}
+	//std::cerr << "\nBefore model_params cleared..." << std::endl;
+	//for (MCMCUpdaterIter iter = model_params.begin(); iter != model_params.end(); ++iter)
+	//	{
+	//	std::cerr << "  " << (*iter)->getName() << " use count = " << iter->use_count() << std::endl;
+	//	}
 	model_params.clear();
 
-	std::cerr << "\nBefore edge_len_params cleared..." << std::endl;
-	for (MCMCUpdaterIter iter = edge_len_params.begin(); iter != edge_len_params.end(); ++iter)
-		{
-		std::cerr << "  " << (*iter)->getName() << " use count = " << iter->use_count() << std::endl;
-		}
+	//std::cerr << "\nBefore edge_len_params cleared..." << std::endl;
+	//for (MCMCUpdaterIter iter = edge_len_params.begin(); iter != edge_len_params.end(); ++iter)
+	//	{
+	//	std::cerr << "  " << (*iter)->getName() << " use count = " << iter->use_count() << std::endl;
+	//	}
 	edge_len_params.clear();
 
-	std::cerr << "\nBefore edge_len_hyperparams cleared..." << std::endl;
-	for (MCMCUpdaterIter iter = edge_len_hyperparams.begin(); iter != edge_len_hyperparams.end(); ++iter)
-		{
-		std::cerr << "  " << (*iter)->getName() << " use count = " << iter->use_count() << std::endl;
-		}
+	//std::cerr << "\nBefore edge_len_hyperparams cleared..." << std::endl;
+	//for (MCMCUpdaterIter iter = edge_len_hyperparams.begin(); iter != edge_len_hyperparams.end(); ++iter)
+	//	{
+	//	std::cerr << "  " << (*iter)->getName() << " use count = " << iter->use_count() << std::endl;
+	//	}
 	edge_len_hyperparams.clear();
-	}
+    }
 
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -181,6 +190,8 @@ void MCMCChainManager::addMCMCUpdaters(
   unsigned max_units,				/**< is the maximum number of slice sampler units to use in each update */
   unsigned weight)					/**< is the weight to be used for all parameters added by this function */
 	{
+	//std::cerr << "\n***** model.getExternalEdgeLenPrior() upon entering MCMCChainManager::addMCMCUpdaters: use count = " << m->getExternalEdgeLenPrior().use_count() << std::endl;
+	
 	if (!like)
 		{
 		throw XLikelihood("Error in MCMCChainManager::addMCMCUpdaters: no TreeLikelihood object defined");
@@ -226,7 +237,8 @@ void MCMCChainManager::addMCMCUpdaters(
 		p->setTreeLikelihood(like);
 		p->setLot(r);
 		addEdgeLenParam(p);
-		std::cerr << ">>>>> adding edge length parameter in MCMCChainManager::addMCMCUpdaters: use count = " << p.use_count() << std::endl;
+		//std::cerr << ">>>>> adding edge length parameter in MCMCChainManager::addMCMCUpdaters: use count = " << p.use_count() << std::endl;
+		//std::cerr << "\n***** model.getExternalEdgeLenPrior() after adding edge length parameter: use count = " << m->getExternalEdgeLenPrior().use_count() << std::endl;
 		}
 
 	// Add the edge length hyperparameters (if any were created)
@@ -239,7 +251,7 @@ void MCMCChainManager::addMCMCUpdaters(
 		p->setTreeLikelihood(like);
 		p->setLot(r);
 		addEdgeLenHyperparam(p);
-		std::cerr << ">>>>> adding edge length hyperparameters in MCMCChainManager::addMCMCUpdaters: use count = " << p.use_count() << std::endl;
+		//std::cerr << ">>>>> adding edge length hyperparameters in MCMCChainManager::addMCMCUpdaters: use count = " << p.use_count() << std::endl;
 		}
 
 	for (iter = parameters.begin(); iter != parameters.end(); ++iter)
@@ -251,7 +263,7 @@ void MCMCChainManager::addMCMCUpdaters(
 		(*iter)->setTreeLikelihood(like);
 		(*iter)->setLot(r);
 		addModelParam(*iter);
-		std::cerr << ">>>>> adding model parameter (" << (*iter)->getName() << ") in MCMCChainManager::addMCMCUpdaters: use count = " << (*iter).use_count() << std::endl;
+		//std::cerr << ">>>>> adding model parameter (" << (*iter)->getName() << ") in MCMCChainManager::addMCMCUpdaters: use count = " << (*iter).use_count() << std::endl;
 #else
 		MCMCUpdaterShPtr p = (*iter);
 		p->setWeight(weight);
@@ -260,9 +272,10 @@ void MCMCChainManager::addMCMCUpdaters(
 		p->setTreeLikelihood(like);
 		p->setLot(r);
 		addModelParam(p);
-		std::cerr << ">>>>> adding model parameter (" << p->getName() << ") in MCMCChainManager::addMCMCUpdaters: use count = " << p.use_count() << std::endl;
+		//std::cerr << ">>>>> adding model parameter (" << p->getName() << ") in MCMCChainManager::addMCMCUpdaters: use count = " << p.use_count() << std::endl;
 #endif
 		}
+	//std::cerr << "\n***** model.getExternalEdgeLenPrior() upon exiting MCMCChainManager::addMCMCUpdaters: use count = " << m->getExternalEdgeLenPrior().use_count() << std::endl;
 	}
 
 ////////////////////////////////////////// inserted contents of mcmc_chain_manager.inl here /////////////////////////////

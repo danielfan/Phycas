@@ -65,6 +65,9 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 	public:
 								MCMCChainManager();
 								~MCMCChainManager();
+								
+		void 					releaseUpdaters();
+
 
 		void					addMove(MCMCUpdaterShPtr p);
 		void					addModelParam(MCMCUpdaterShPtr p);

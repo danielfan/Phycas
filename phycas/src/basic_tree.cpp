@@ -54,7 +54,7 @@ Tree::Tree()
 */
 Tree::~Tree()
 	{
-	std::cerr << "\n>>>>> Tree dying..." << std::endl;
+	//std::cerr << "\n>>>>> Tree dying..." << std::endl;
 	Clear(); 
 	while (!internalNodeStorage.empty()) 
 	    {

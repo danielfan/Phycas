@@ -95,6 +95,7 @@ class TreeLikelihood
         void                            storeSiteLikelihoods(bool yes);
 
 		// Utilities
+		void							releaseModel();
 #if 0
         std::vector<unsigned>           findDataBipartitions() const;
 #endif

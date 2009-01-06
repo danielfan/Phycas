@@ -43,9 +43,9 @@ HKY::HKY()
 
 HKY::~HKY()
 	{
-	std::cerr << "HKY dying..." << std::endl;
+	//std::cerr << "HKY dying..." << std::endl;
 	Model::Clear();
-	std::cerr << "  kappa_prior use_count() = " << kappa_prior.use_count() << std::endl;
+	//std::cerr << "  kappa_prior use_count() = " << kappa_prior.use_count() << std::endl;
 	}
 										
 /*----------------------------------------------------------------------------------------------------------------------

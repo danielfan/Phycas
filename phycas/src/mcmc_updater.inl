@@ -250,7 +250,7 @@ inline double MCMCUpdater::operator()(double)
 /*----------------------------------------------------------------------------------------------------------------------
 |	This creates a SliceSampler object and assigns it to the `slice_sampler' data member, which is a shared_ptr that 
 |	points to nothing initially. The SliceSampler constructor takes a boost::shared_ptr<Lot> (which we have available)  
-|	FuncToSampleShPtr (this object). Thus, the SliceSampler cannot be created in the constructor because "this" does
+|	FuncToSampleWkPtr (this object). Thus, the SliceSampler cannot be created in the constructor because "this" does
 |	not yet fully exist, hence the need for a createSliceSampler() member function, which needs to be called at some 
 |	point after the MCMCUpdater-derived object is created and of course before its `slice_sampler' data member starts 
 |	being used.
@@ -258,7 +258,11 @@ inline double MCMCUpdater::operator()(double)
 inline void MCMCUpdater::createSliceSampler() 
 	{
 	PHYCAS_ASSERT(!slice_sampler);	// don't want to do this more than once
+#if defined(WEAK_FUNCTOSAMPLE)
+	slice_sampler.reset(new SliceSampler(rng, FuncToSampleWkPtr(shared_from_this()))); // forces inclusion of "phycas/src/slice_sampler.hpp"
+#else
 	slice_sampler.reset(new SliceSampler(rng, shared_from_this())); // forces inclusion of "phycas/src/slice_sampler.hpp"
+#endif
 	slice_sampler->SetMaxUnits(slice_max_units);
 	slice_sampler->SetXValue(curr_value);
 	}

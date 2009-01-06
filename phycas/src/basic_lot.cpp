@@ -52,7 +52,7 @@ Lot::Lot(unsigned rnd_seed) : last_seed_setting(1U), curr_seed(1U), num_seeds_ge
 */
 Lot::~Lot() 
 	{
-	std::cerr << "\n>>>>> Lot object dying..." << std::endl;
+	//std::cerr << "\n>>>>> Lot object dying..." << std::endl;
 	//delete cdf_converter;
 	}
 

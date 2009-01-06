@@ -47,7 +47,7 @@ struct AdHocDensity
 	{
 	virtual ~AdHocDensity() 
 		{
-		std::cerr << "\n>>>>> AdHocDensity dying..." << std::endl;
+		//std::cerr << "\n>>>>> AdHocDensity dying..." << std::endl;
 		}
     virtual double operator()(double) = 0;
 	};

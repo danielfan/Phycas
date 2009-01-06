@@ -44,7 +44,7 @@ StateFreqParam::StateFreqParam(
 */
 StateFreqParam::~StateFreqParam()
 	{
-	std::cerr << "\n>>>>> StateFreqParam dying..." << std::endl;
+	//std::cerr << "\n>>>>> StateFreqParam dying..." << std::endl;
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------

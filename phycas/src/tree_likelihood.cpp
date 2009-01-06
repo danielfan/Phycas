@@ -156,10 +156,18 @@ TreeLikelihood::TreeLikelihood(
 */
 TreeLikelihood::~TreeLikelihood()
 	{
-	std::cerr << "\n>>>>> TreeLikelihood dying..." << std::endl;
+	//std::cerr << "\n>>>>> TreeLikelihood dying..." << std::endl;
 	if (sMat != NULL)
 		DeleteTwoDArray<unsigned>(sMat);
 	} 
+
+/*----------------------------------------------------------------------------------------------------------------------
+|   Resets the `model' shared pointer.
+*/
+void TreeLikelihood::releaseModel()
+    {
+	model.reset();
+    }
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns a reference to the vector of site likelihoods (data member `site_likelihood') computed in 

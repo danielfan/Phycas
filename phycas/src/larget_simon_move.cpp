@@ -39,7 +39,7 @@ namespace phycas
 */
 LargetSimonMove::~LargetSimonMove()
 	{
-	std::cerr << "\n>>>>> LargetSimonMove dying..." << std::endl;
+	//std::cerr << "\n>>>>> LargetSimonMove dying..." << std::endl;
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------

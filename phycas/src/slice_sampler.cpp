@@ -41,7 +41,11 @@ using namespace phycas;
 ParamAndLnProb SliceSampler::GetNextOverrelaxedSample(const ParamAndLnProb initialPair)
 	{
 	PHYCAS_ASSERT(r != NULL);
-	PHYCAS_ASSERT(func != NULL);
+	
+#if defined(WEAK_FUNCTOSAMPLE)
+	FuncToSampleShPtr fsh = func.lock();
+	PHYCAS_ASSERT(fsh != NULL);
+#endif
 
 	++num_overrelaxed_samples;
 
@@ -66,7 +70,11 @@ ParamAndLnProb SliceSampler::GetNextOverrelaxedSample(const ParamAndLnProb initi
 	//
 	double x = si.first + si.second - initialX;
 
+#if defined(WEAK_FUNCTOSAMPLE)
+	double ln_fx = (*fsh)(x);
+#else
 	double ln_fx = (*func)(x);
+#endif
 	++func_evals;
 
 	ParamAndLnProb p;
@@ -110,7 +118,11 @@ ParamAndLnProb SliceSampler::GetNextOverrelaxedSample(const ParamAndLnProb initi
 ParamAndLnProb SliceSampler::GetNextSample(const ParamAndLnProb initialPair)
 	{
 	PHYCAS_ASSERT(r != NULL);
-	PHYCAS_ASSERT(func != NULL);
+	
+#if defined(WEAK_FUNCTOSAMPLE)
+	FuncToSampleShPtr fsh = func.lock();
+	PHYCAS_ASSERT(fsh != NULL);
+#endif
 
 	++num_samples;
 
@@ -170,8 +182,14 @@ ParamAndLnProb SliceSampler::GetNextSample(const ParamAndLnProb initialPair)
         bool right_ok = false;
         double new_left_edge = left_edge;
         double new_right_edge = right_edge;
+#if defined(WEAK_FUNCTOSAMPLE)
+      	FuncToSampleShPtr fsh = func.lock();
+        double left_edge_ln_y = (*fsh)(left_edge);
+        double right_edge_ln_y = (*fsh)(right_edge);
+#else
         double left_edge_ln_y = (*func)(left_edge);
         double right_edge_ln_y = (*func)(right_edge);
+#endif
         for (;;)
             {
 		    if (left_edge_ln_y < ln_y)
@@ -186,7 +204,11 @@ ParamAndLnProb SliceSampler::GetNextSample(const ParamAndLnProb initialPair)
                 left_edge -= (right_edge - left_edge);
                 if (!left_ok)
                     {
+#if defined(WEAK_FUNCTOSAMPLE)
+                    left_edge_ln_y = (*fsh)(left_edge);
+#else
                     left_edge_ln_y = (*func)(left_edge);
+#endif
                     new_left_edge = left_edge;
                     }
                 }
@@ -195,7 +217,11 @@ ParamAndLnProb SliceSampler::GetNextSample(const ParamAndLnProb initialPair)
                 right_edge += (right_edge - left_edge);
                 if (!right_ok)
                     {
+#if defined(WEAK_FUNCTOSAMPLE)
+                    right_edge_ln_y = (*fsh)(right_edge);
+#else
                     right_edge_ln_y = (*func)(right_edge);
+#endif
                     new_right_edge = right_edge;
                     }
                 }
@@ -211,7 +237,11 @@ ParamAndLnProb SliceSampler::GetNextSample(const ParamAndLnProb initialPair)
 	    //
 	    for (;;)
 		    {
+#if defined(WEAK_FUNCTOSAMPLE)
+		    double left_edge_ln_y = (*fsh)(left_edge);
+#else
 		    double left_edge_ln_y = (*func)(left_edge);
+#endif
 		    //std::cerr << "~~ left edge = " << left_edge << ", left_edge_ln_y = " << left_edge_ln_y << std::endl;
 		    ++func_evals;
 		    if (left_edge_ln_y < ln_y || J == 0)
@@ -227,7 +257,11 @@ ParamAndLnProb SliceSampler::GetNextSample(const ParamAndLnProb initialPair)
 	    //
 	    for (;;)
 		    {
+#if defined(WEAK_FUNCTOSAMPLE)
+		    double right_edge_ln_y = (*fsh)(right_edge);
+#else
 		    double right_edge_ln_y = (*func)(right_edge);
+#endif
 		    ++func_evals;
 		    //std::cerr << "~~ right edge = " << right_edge << ", right_edge_ln_y = " << right_edge_ln_y << std::endl;
 		    if (right_edge_ln_y < ln_y || K == 0)
@@ -251,7 +285,12 @@ ParamAndLnProb SliceSampler::GetNextSample(const ParamAndLnProb initialPair)
 		{
 		double x = left_edge + ((right_edge - left_edge) * r->Uniform(FILE_AND_LINE));
 
+#if defined(WEAK_FUNCTOSAMPLE)
+		FuncToSampleShPtr fsh = func.lock();
+		double ln_fx = (*fsh)(x);
+#else
 		double ln_fx = (*func)(x);
+#endif
 		//std::cerr << "~~ x = " << x << ", ln_fx = " << ln_fx << std::endl;
 		++func_evals;
 
@@ -316,7 +355,11 @@ SliceSampler::SliceSampler()
 */
 SliceSampler::SliceSampler(
   LotShPtr rnd,				/**< is the random number generator object to use */
+#if defined(WEAK_FUNCTOSAMPLE)
+  FuncToSampleWkPtr f)		/**< is the probability distribution to sample */
+#else
   FuncToSampleShPtr f)		/**< is the probability distribution to sample */
+#endif
   : func(f), r(rnd)
 	{
 	Init();
@@ -327,6 +370,7 @@ SliceSampler::SliceSampler(
 */
 SliceSampler::~SliceSampler()
 	{
+	//std::cerr << "\n>>>>> SliceSampler dying..." << std::endl;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -357,7 +401,12 @@ void SliceSampler::Init()
 |	Attaches a ProbabilityDistribution object representing the distribution to be sampled. Calls Init() to reset the
 |	sampler to its just-constructed state.
 */
-void SliceSampler::AttachFunc(FuncToSampleShPtr f)
+void SliceSampler::AttachFunc(
+#if defined(WEAK_FUNCTOSAMPLE)
+  FuncToSampleWkPtr f)
+#else
+  FuncToSampleShPtr f)
+#endif
 	{
 	func = f;
 	Init();
@@ -450,7 +499,12 @@ SliceInterval SliceSampler::FindSliceInterval(ParamAndLnProb x0, const double ln
 		{
 		left_edge -= w;
 		prev_lnfx = curr_lnfx;
+#if defined(WEAK_FUNCTOSAMPLE)
+		FuncToSampleShPtr fsh = func.lock();
+		curr_lnfx = (*fsh)(left_edge);
+#else
 		curr_lnfx = (*func)(left_edge);
+#endif
 		}
 
 	// use bisection to locate left edge
@@ -467,7 +521,12 @@ SliceInterval SliceSampler::FindSliceInterval(ParamAndLnProb x0, const double ln
 		{
 		right_edge += w;
 		prev_lnfx = curr_lnfx;
+#if defined(WEAK_FUNCTOSAMPLE)
+		FuncToSampleShPtr fsh = func.lock();
+		curr_lnfx = (*fsh)(right_edge);
+#else
 		curr_lnfx = (*func)(right_edge);
+#endif
 		}
 
 	// use bisection to locate right edge
@@ -490,7 +549,12 @@ SliceInterval SliceSampler::BisectionSqueeze(double left, double lnf_left, doubl
 	bool right_below = (lnf_right < ln_y0);
 	PHYCAS_ASSERT((left_below && !right_below) || (right_below && !left_below));
 	double middle = (left + right)/2.0;
+#if defined(WEAK_FUNCTOSAMPLE)
+	FuncToSampleShPtr fsh = func.lock();
+	double lnf_middle = (*fsh)(middle);
+#else
 	double lnf_middle = (*func)(middle);
+#endif
 	bool middle_below = (lnf_middle < ln_y0);
 	bool middle_above = !middle_below;
 	double half_width = (right - left)/2.0;
@@ -720,8 +784,9 @@ void SliceSampler::SetXValue(
 		{
 		lastSampled.first = x;
 #if POLPY_OLDWAY
-		PHYCAS_ASSERT(func);
-		lastSampled.second = (*func)(x);
+		FuncToSampleShPtr fsh = func.lock();
+		PHYCAS_ASSERT(fsh);
+		lastSampled.second = (*fsh)(x);
 #endif
 		}
 	}
@@ -742,8 +807,13 @@ double SliceSampler::GetLastSampledXValue()
 */
 double SliceSampler::GetLastSampledYValue()
 	{
-	PHYCAS_ASSERT(func);
+#if defined(WEAK_FUNCTOSAMPLE)
+	FuncToSampleShPtr fsh = func.lock();
+	PHYCAS_ASSERT(fsh);
+	lastSampled.second = (*fsh)(lastSampled.first);
+#else
 	lastSampled.second = (*func)(lastSampled.first);
+#endif
 	return lastSampled.second;
 	}
 
@@ -775,14 +845,21 @@ double SliceSampler::OverrelaxedSample()
 		{
 		throw XProbDist("must attach random number generator to slice sampler before attempting to draw samples");
 		}
-	if (func == NULL)
+#if defined(WEAK_FUNCTOSAMPLE)
+	FuncToSampleShPtr fsh = func.lock();
+	if (fsh == NULL)
 		{
 		throw XProbDist("must specify density function for slice sampler before attempting to draw samples");
 		}
 
 	// We can never be guaranteed that the full conditional density at lastSampled.first has not 
 	// changed since the last call during an MCMC run.
+	lastSampled.second = (*fsh)(lastSampled.first);
+#else
+	// We can never be guaranteed that the full conditional density at lastSampled.first has not 
+	// changed since the last call during an MCMC run.
 	lastSampled.second = (*func)(lastSampled.first);
+#endif
 	++func_evals;
 
 	const ParamAndLnProb currentPoint = lastSampled;
@@ -809,16 +886,23 @@ VecDbl SliceSampler::DebugOverrelaxedSample()
 		{
 		throw XProbDist("must attach random number generator to slice sampler before attempting to draw samples");
 		}
-	if (func == NULL)
+#if defined(WEAK_FUNCTOSAMPLE)
+	FuncToSampleShPtr fsh = func.lock();
+	if (fsh == NULL)
 		{
 		throw XProbDist("must attach a probability distribution to slice sampler before attempting to draw samples");
 		}
+#endif
 
 	double v1 = lastSampled.first; // x-coord of vertical slice
 
 	// We can never be guaranteed that the full conditional density at lastSampled.first has not 
 	// changed since the last call during an MCMC run.
+#if defined(WEAK_FUNCTOSAMPLE)
+	lastSampled.second = (*fsh)(lastSampled.first);
+#else
 	lastSampled.second = (*func)(lastSampled.first);
+#endif
 	++func_evals;
 
 	double v2 = lastSampled.second; // y-coord of top of vertical slice
@@ -854,7 +938,12 @@ double SliceSampler::Sample()
 
 	// We can never be guaranteed that the full conditional density at lastSampled.first has not 
 	// changed since the last call during an MCMC run, so recalculate it now
+#if defined(WEAK_FUNCTOSAMPLE)
+	FuncToSampleShPtr fsh = func.lock();
+    lastSampled.second = (*fsh)(lastSampled.first);
+#else
     lastSampled.second = (*func)(lastSampled.first);
+#endif
 	++func_evals;
 
 	const ParamAndLnProb currentPoint = lastSampled;
@@ -883,15 +972,23 @@ VecDbl SliceSampler::DebugSample()
 		{
 		throw XProbDist("must attach random number generator to slice sampler before attempting to draw samples");
 		}
-	if (func == NULL)
+#if defined(WEAK_FUNCTOSAMPLE)
+	FuncToSampleShPtr fsh = func.lock();
+	if (fsh == NULL)
 		{
 		throw XProbDist("must attach a probability distribution to slice sampler before attempting to draw samples");
 		}
+#endif
 
 	// We can never be guaranteed that the full conditional density at lastSampled.first has not 
 	// changed since the last call during an MCMC run.
 	lastSampled.second = 0.0;
+
+#if defined(WEAK_FUNCTOSAMPLE)
+	lastSampled.second = (*fsh)(lastSampled.first);
+#else
 	lastSampled.second = (*func)(lastSampled.first);
+#endif
 	++func_evals;
 	//std::cerr << "~~ re-evaluating density at current point in DebugSample" << std::endl;
 

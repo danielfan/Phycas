@@ -32,7 +32,26 @@ namespace phycas
 */
 MCMCUpdater::~MCMCUpdater() 
 	{
-	std::cerr << "\n\n>>>>MCMCUpdater dying..." << std::endl;
+	//std::cerr << "\n\n>>>>MCMCUpdater dying..." << std::endl;
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|   Resets all shared pointers. It is only necessary to reset `model' and `likelihood' in order to avoid problems with
+|	shared pointer cycles preventing deletion of objects (in particular, Model->MCMCUpdater->TreeLikelihood->Model);
+|	however, we might as well delete all of them. This function is called by MCMCChainManager::releaseUpdaters().
+*/
+void MCMCUpdater::releaseSharedPointers()
+	{
+	// model and likelihood must be reset to avoid memory leaks due to shared pointer cycles
+	model.reset();
+	//likelihood.reset();
+	
+	// these are optional
+	tree.reset();
+	rng.reset();
+	prior.reset();
+	mvprior.reset();
+	slice_sampler.reset();
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
