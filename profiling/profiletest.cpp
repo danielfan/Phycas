@@ -103,25 +103,14 @@ void run()
 		hky->setInternalEdgeLenPrior(edgelen_prior);
 		hky->setExternalEdgeLenPrior(edgelen_prior);
 		hky->setEdgeLenHyperPrior(edgelen_hyperprior);
-		// model has use count 0 and hky has use count 1 here
 		model = hky;
-		// both model and hky have use count 2 here
-		//std::cerr << "hky use count = " << hky.use_count() << std::endl;
-		//std::cerr << "model use count = " << model.use_count() << std::endl;
 #endif
 	}
-	// model has use count 1 here
 	unsigned nrates = ncat;
 	unsigned nstates = 4;
 	
 	// Create a TreeLikelihood object for the model and copy data from data_matrix
 	TreeLikelihoodShPtr likelihood(new TreeLikelihood(model));
-	//likelihood.reset(new TreeLikelihood(model));
-	// likelihood has use count 1 here
-	// model has use count 3 here
-	//	1 from original new
-	//	1 from copy to model data member in TreeLikelihood constructor
-	//  1 from copy to univentProbMgr data member in TreeLikelihood constructor
 	likelihood->copyDataFromDiscreteMatrix(*data_matrix);
 	unsigned npatterns = likelihood->getNPatterns();
 	std::cout << "Number of data patterns = " << npatterns << std::endl;
@@ -131,9 +120,7 @@ void run()
 	// Build a random tree
 	t.reset(new Tree());
 	TreeManip tree_manip(t);
-	std::cerr << "\n***** edgelen_prior use count before equiprobTree = " << edgelen_prior.use_count() << " (expecting 3)" << std::endl;
 	tree_manip.equiprobTree(ntax, lot, edgelen_prior, edgelen_prior);
-	std::cerr << "\n***** edgelen_prior use count after equiprobTree = " << edgelen_prior.use_count() << " (expecting 3)" << std::endl;
 	std::cout << "Starting tree = " << t->MakeNewick() << std::endl;
 
 	// Prepare the tree
@@ -142,36 +129,11 @@ void run()
 	double lnL = likelihood->calcLnL(t);
 	std::cout << "lnL of starting tree = " << lnL << std::endl;
 
-	std::cerr << "\n***** edgelen_prior use count before creating mcmc = " << edgelen_prior.use_count() << " (expecting 3)" << std::endl;
-	// model has use count 3 here
-	
 	// Create chain, add parameters and moves
 	mcmc.reset(new MCMCChainManager());
-	std::cerr << "\n***** lot use count before addMCMCUpdaters = " << lot.use_count() << " (expecting 1)" << std::endl;
-	std::cerr << "\n***** edgelen_prior use count after creating mcmc = " << edgelen_prior.use_count() << " (expecting 3)" << std::endl;
 	mcmc->addMCMCUpdaters(model, t, likelihood, lot, 0, 1);	
-	mcmc->debugUpdaterReport("after addMCMCUpdaters");
-	
-	std::cerr << "\n***** edgelen_prior use count after addMCMCUpdaters = " << edgelen_prior.use_count() << " (expecting 4)" << std::endl;
-	std::cerr << "\n***** lot use count after addMCMCUpdaters = " << lot.use_count() << " (expecting 2)" << std::endl;
-
-	// likelihood has use count 9 here (1 from before plus 8 updaters (1 kappa + 4 base freqs +  1 shape + 1 edgelen master + 1 hyper) held by mcmc)
-	// model has use count 11 here (3 from before plus 8 updaters held by mcmc)
-	
-	//   9 undeleted memory elements introduced here
-	// -----------------------------------------------------------
-	//  12 bytes remaining from allocation at profiletest.cpp (40) lot
-	//  48 bytes remaining from allocation at profiletest.cpp (44) kappa_prior
-	//  48 bytes remaining from allocation at profiletest.cpp (45) state_freq_param_prior
-	//  48 bytes remaining from allocation at profiletest.cpp (46) shape_prior
-	//  48 bytes remaining from allocation at profiletest.cpp (47) edgelen_prior
-	//  48 bytes remaining from allocation at profiletest.cpp (48) edgelen_hyperprior
-	// 308 bytes remaining from allocation at profiletest.cpp (59) hky
-	// 352 bytes remaining from allocation at profiletest.cpp (78) likelihood
-	// 116 bytes remaining from allocation at profiletest.cpp (86) t
 
 	lsmove.reset(new LargetSimonMove());
-	// lsmove now has use count = 1 
 	lsmove->setName("Larget-Simon move");
     lsmove->setWeight(100);
     lsmove->setTree(t);
@@ -180,13 +142,7 @@ void run()
     lsmove->setLot(lot);
     lsmove->setLambda(0.2);
 	mcmc->addMove(lsmove);
-	// lsmove now has use count = 2 because a second shared pointer has been added to MCMCChainManager's moves vector
 	mcmc->finalize();
-	mcmc->debugUpdaterReport("after finalize");	
-	// lsmove now has use count = 3 because a third shared pointer has been added to MCMCChainManager's all_updaters vector
-	// likelihood now has use count = 10: 1 (new) + 8 held by updaters and 1 held by lsmove
-
-	std::cerr << "\n***** lot use count after finalize = " << lot.use_count() << " (expecting 3)" << std::endl;
 	
 	// Compute starting log-likelihood
 	mcmc->refreshLastLnLike();
@@ -209,105 +165,22 @@ void run()
 	std::cout << "Log-likelihood after 1 cycle = " << mcmc->getLastLnLike() << std::endl;
 	
 	// Build 10 equiprobable trees and compute the log-likelihood for each
-	for (unsigned k = 0; k < 10; ++k)
-		{
-		tree_manip.equiprobTree(ntax, lot, edgelen_prior, edgelen_prior);
-		likelihood->prepareForLikelihood(t);
-		double lnL = likelihood->calcLnL(t);
-		std::cout << "lnL of starting tree = " << lnL << std::endl;
-		}
+	// 	for (unsigned k = 0; k < 10; ++k)
+	// 		{
+	// 		tree_manip.equiprobTree(ntax, lot, edgelen_prior, edgelen_prior);
+	// 		likelihood->prepareForLikelihood(t);
+	// 		double lnL = likelihood->calcLnL(t);
+	// 		std::cout << "lnL of starting tree = " << lnL << std::endl;
+	// 		}
 		
-	//mcmc->releaseUpdaters();
-	//likelihood->releaseModel();
 	model->releaseUpdaters();
-	
-	// 	************ before exiting run function ***********
-	// 	lot                    use count = 3
-	// 	edgelen_prior          use count = 2 vs 4
-	// 	likelihood             use count = 3
-	// 	t                      use count = 6
-	// 	model                  use count = 4 vs 5
-	// 	mcmc                   use count = 1
-	// 	lsmove                 use count = 3 vs. 1
-
-	std::cerr << "\n\n************ before exiting run function ***********" << std::endl;
-	std::cerr << "lot                    use count = " << lot.use_count() << std::endl;
-	std::cerr << "edgelen_prior          use count = " << edgelen_prior.use_count() << std::endl;
-#if !defined(SIMPLEST_CASE)
-	std::cerr << "kappa_prior            use count = " << kappa_prior.use_count() << std::endl;
-	std::cerr << "state_freq_param_prior use count = " << state_freq_param_prior.use_count() << std::endl;
-	std::cerr << "shape_prior            use count = " << shape_prior.use_count() << std::endl;
-	std::cerr << "edgelen_hyperprior     use count = " << edgelen_hyperprior.use_count() << std::endl;
-#endif
-	//std::cerr << "hky                    use count = " << hky.use_count() << std::endl;
-	std::cerr << "likelihood             use count = " << likelihood.use_count() << std::endl;
-	std::cerr << "t                      use count = " << t.use_count() << std::endl;
-	std::cerr << "model                  use count = " << model.use_count() << std::endl;
-	std::cerr << "mcmc                   use count = " << mcmc.use_count() << std::endl;
-	std::cerr << "lsmove                 use count = " << lsmove.use_count() << std::endl;
-	mcmc->debugUpdaterReport("before exiting run");
-	
-#if 0
-	char answer = AskUser("\nPress y to quit...");
-	if (answer == '\0')
-		std::cerr << "Oops, something bad happened in the AskUser function." << std::endl;
-	else if (answer == 'y')
-		std::cerr << "\nYou pressed y so I'm quitting" << std::endl;
-	else
-		std::cerr << "\nYou pressed " << answer << " but I'm quitting anyway!" << std::endl;
-#endif
 	}
 	
-typedef boost::shared_ptr<std::string> StrShPtr;
-	
-class Test
-	{
-	public:
-		Test(StrShPtr p) : myp(p)
-			{
-			}
-		~Test()
-			{
-			//std::cerr << "Test dying...myp use count = " << myp.use_count() << std::endl;
-			}
-	private:
-		StrShPtr myp;
-	};
-	
-typedef boost::shared_ptr<Test> TestShPtr;
-	
-void test()
-	{
-	StrShPtr p(new std::string("hello"));
-	std::cerr << "p use count = " << p.use_count() << std::endl;
-	{
-		TestShPtr t(new Test(p));
-		std::cerr << "p use count after Test object created = " << p.use_count() << std::endl;
-	}
-	std::cerr << "p use count after Test object deleted = " << p.use_count() << std::endl;
-	}
-
 int main()
 	{
 	CREATE_MEMCHK
-	//test();
 	run();
  	MEMCHK_REPORT(std::cerr)
 	return 0;
 	}
 	
-//   12 bytes remaining from allocation at profiletest.cpp (57)		17	lot
-//   48 bytes remaining from allocation at profiletest.cpp (61)		3	kappa_prior
-//		1 is original new
-//		1 is from transfer to hky model
-//		1 is from transfer from model to updater
-//   48 bytes remaining from allocation at profiletest.cpp (62)		6	state_freq_param_prior
-//   48 bytes remaining from allocation at profiletest.cpp (63)		3	shape_prior
-//   48 bytes remaining from allocation at profiletest.cpp (64)		4	edgelen_prior
-//   48 bytes remaining from allocation at profiletest.cpp (65)		3	edgelen_hyperprior
-//   308 bytes remaining from allocation at profiletest.cpp (76)	13	hky
-//		1 is original new
-//		1 is from copy to model
-//		1 is from 
-//   352 bytes remaining from allocation at profiletest.cpp (94)	10	likelihood
-//   116 bytes remaining from allocation at profiletest.cpp (102)	20	t

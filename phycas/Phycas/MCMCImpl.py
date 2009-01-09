@@ -269,34 +269,81 @@ class MCMCImpl(CommonFunctions):
             self.nchar = self.data_matrix.getNChar() # used for Gelfand-Ghosh simulations only
         self.phycassert(len(self.taxon_labels) == self.ntax, "Number of taxon labels does not match number of taxa.")
         
+    def cumLagrange(self, which, x, y):
+        xx = x[which]
+        term1 = (xx - x[0])*(y[0] + (xx - x[0])*(y[1] - y[0])/(2.0*(x[1] - x[0])))
+        term2a = 2.0*(xx**2.0) - xx*x[0] - (x[0]**2.0) + 2.0*x[0]*x[1] - 3.0*xx*x[1]
+        term2b = (y[2] - y[1])/(x[2] - x[1]) - (y[1] - y[0])/(x[1] - x[0])
+        term2c = (xx - x[0])/(x[2] - x[0])
+        term2 = term2a*term2b*term2c/6.0
+        cum = term1 + term2
+        return cum
+        
     def calcMarginalLikelihood(self):
         ps_aborted = False
         ps_msg = ''
         if self.opts.doing_path_sampling:
-            if self.opts.ps_nbetavals > 1:
-                # Calculate marginal likelihood using Lartillot and Phillippe (2005) method
+            K = self.opts.ps_nbetavals
+            if K > 1:
+                # Calculate marginal likelihood using the method described by Lartillot and Phillippe (2006; Syst. Biol. 55: 195-107)
+                # using improvements in Xie et al. (2009)
                 marginal_like = 0.0
-                for i in range(self.opts.ps_nbetavals):
-                    n = len(self.ps_sampled_likes[i])
+                if self.opts.ps_simpsons_method:
+                    # This approach uses Simpson's method to interpolate between beta values using the
+                    # interpolation polynomial in Lagrange form. This eliminates a big chuck of the bias
+                    # apparent with Lartillot and Phillippe method when the number of beta values used is small
+                    n = len(self.ps_sampled_likes[0])
                     if not (n == self.opts.ncycles//self.opts.sample_every):
                         ps_aborted = True
                         ps_msg = 'Path sampling marginal likelihood calculations aborted because number of sampled likelihoods (%d) did not match the expected number (%d)' % (n, self.opts.ncycles//self.opts.sample_every)
-                        break
-                    mean = sum(self.ps_sampled_likes[i])/float(n)
-                    if i == 0:
-                        before = self.ps_sampled_betas[0]
                     else:
-                        before = self.ps_sampled_betas[i-1]
-                    if i == self.opts.ps_nbetavals - 1:
-                        after = self.ps_sampled_betas[self.opts.ps_nbetavals - 1]
-                    else:
-                        after = self.ps_sampled_betas[i+1]
-                    diff = before - after
-                    if diff < 0.0:
-                        ps_aborted = True
-                        ps_msg = 'Phycas does not currently support path sampling from prior toward posterior'
-                        break
-                    marginal_like += mean*diff/2.0
+                        mean = [sum(self.ps_sampled_likes[i])/float(n) for i in range(K)]
+                        for i in range(K - 2):
+                            x = [0.0]*3
+                            x[0] = self.ps_sampled_betas[i]
+                            x[1] = self.ps_sampled_betas[i+1]
+                            x[2] = self.ps_sampled_betas[i+2]
+                            y = [0.0]*3
+                            y[0] = mean[i]
+                            y[1] = mean[i+1]
+                            y[2] = mean[i+2]
+                            if i == 0:
+                                a = self.cumLagrange(1, x, y)
+                                marginal_like += a
+                                b = self.cumLagrange(2, x, y)
+                                marginal_like += (b - a)/2.0
+                            elif i == K - 3:
+                                a = self.cumLagrange(1, x, y)
+                                marginal_like += a/2.0
+                                b = self.cumLagrange(2, x, y)
+                                marginal_like += (b - a)
+                            else:
+                                b = self.cumLagrange(2, x, y)
+                                marginal_like += b/2.0
+                else:
+                    # Get here if ps_simpsons_method is false. This approach is similar to Lartillot and Phillippe's
+                    # 2006 method except it is generalized to allow unequal beta intervals
+                    for i in range(K):
+                        n = len(self.ps_sampled_likes[i])
+                        if not (n == self.opts.ncycles//self.opts.sample_every):
+                            ps_aborted = True
+                            ps_msg = 'Path sampling marginal likelihood calculations aborted because number of sampled likelihoods (%d) did not match the expected number (%d)' % (n, self.opts.ncycles//self.opts.sample_every)
+                            break
+                        mean = sum(self.ps_sampled_likes[i])/float(n)
+                        if i == 0:
+                            before = self.ps_sampled_betas[0]
+                        else:
+                            before = self.ps_sampled_betas[i-1]
+                        if i == K - 1:
+                            after = self.ps_sampled_betas[K - 1]
+                        else:
+                            after = self.ps_sampled_betas[i+1]
+                        diff = before - after
+                        if diff < 0.0:
+                            ps_aborted = True
+                            ps_msg = 'Phycas does not currently support path sampling from prior toward posterior'
+                            break
+                        marginal_like += mean*diff/2.0
                 if not ps_aborted:
                     self.output('Log of marginal likelihood (thermodynamic integration method) = %.8f' % marginal_like)
 

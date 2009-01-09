@@ -78,6 +78,7 @@ class MCMC(PhycasCommand):
 
         # The data members added below are hidden from the user because they are set by the ps command
         self.__dict__["doing_path_sampling"] = False
+        self.__dict__["ps_simpsons_method"] = True
         self.__dict__["ps_nbetavals"] = 101
         self.__dict__["ps_maxbeta"] = 1.0
         self.__dict__["ps_minbeta"] = 0.0
@@ -100,6 +101,7 @@ class MCMC(PhycasCommand):
         """
         cf = CommonFunctions(self)
         cf.phycassert(self.ps_nbetavals > 0, 'ps_nbetavals cannot be less than 1')
+        cf.phycassert((self.ps_simpsons_method and self.ps_nbetavals > 2) or not self.ps_simpsons_method, 'ps_nbetavals cannot be less than 3 if ps_simpsons_method is true')
         
     def __call__(self, **kwargs):
         self.set(**kwargs)

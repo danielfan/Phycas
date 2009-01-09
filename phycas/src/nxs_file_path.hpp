@@ -17,6 +17,8 @@
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.				  |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+#include <algorithm>
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Similar to the Perl split function.  Copies the original container of T objects into the list outList as 
 |	smaller containers broken at the specified value (which is omitted).
