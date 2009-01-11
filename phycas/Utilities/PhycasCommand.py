@@ -888,12 +888,15 @@ class PhycasCmdOpts(object):
             self._command.__dict__[name] = self._current[name]
         else:
             raise AttributeError("%s does not contain an attribute %s" % (self._command.__class__.__name__, name))
+            
     def __contains__(self, name):
         return name in self._current
+        
     def __getattr__(self, name):
         if name in self._current:
             return self._current[name]
         raise AttributeError("%s does not contain an attribute %s" % (self.__class__.__name__, name))
+        
     def __setattr__(self, name, value):
         if name in self.__dict__:
             self.__dict__[name] = value
@@ -940,6 +943,12 @@ def DataSourceValidate(opts, v):
 def BoolArgValidate(opts, v):
     return bool(v)
 
+def FileExistsValidate(opts, v):
+    import os.path
+    if not os.path.exists(v):
+        raise ValueError("Expecting '%s' to be an existing file" % v)
+    return v
+    
 class EnumArgValidate(object):
     def __init__(self, valid_values):
         l = []
@@ -1215,12 +1224,14 @@ class PhycasCommand(object):
             self.__dict__[name] = value
         else:
             raise AttributeError("%s has no attribute %s" % (self.__class__.__name__, name))
+            
     def __getattr__(self, name):
         nl = name.lower()
         try:
             return self.__dict__[nl]
         except:
             raise AttributeError("%s has no attribute %s" % (self.__class__.__name__, name))
+            
     def set(self, **kwargs):
         "Sets the attributes of a command using keyword arguments"
         old = {}
@@ -1234,6 +1245,7 @@ class PhycasCommand(object):
             for key, value in old.iteritems():
                 o.set_unchecked(key, value)
             raise
+            
     def _brief_str(self):
         global _use_instance_names
         v = None
@@ -1243,6 +1255,7 @@ class PhycasCommand(object):
             return v
         v = "with id=%d" % id(self)
         return "The %s command instance %s" % (self.help.cmd_name, v)
+        
     def _getRNGOptions():
         return [("rng", None, "A pseudo-random number generator instance", LotArgValidate),
                 ("random_seed", 0, "Determines the random number seed used; specify 0 to generate seed automatically from system clock", IntArgValidate(min=0))]

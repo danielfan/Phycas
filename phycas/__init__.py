@@ -203,6 +203,9 @@ model = Model()
 from Phycas.SumT import SumT
 sumt = SumT()
 
+from Phycas.SumP import SumP
+sump = SumP()
+
 from Phycas.MCMC import MCMC
 mcmc = MCMC()
 

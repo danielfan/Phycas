@@ -26,6 +26,7 @@ class CPO(PhycasCommand):
         change its return value to False, when it is ready to be advertised.
         """
         return True
+        
     hidden = staticmethod(hidden)
 
     def checkSanity(self):

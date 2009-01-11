@@ -16,8 +16,7 @@ class TreeSummarizer(CommonFunctions):
     def __init__(self, opts):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Initializes TreeSummarizer object by assigning supplied phycas object
-        to a data member variable.
+        Initializes TreeSummarizer object.
         
         """
         CommonFunctions.__init__(self, opts)

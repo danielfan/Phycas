@@ -136,6 +136,7 @@ if __name__ == '__main__':
     runTest(outFile, "SplitTest", ["out.txt"])
     runTest(outFile, "PDFTree", ["test.pdf"])
     runTest(outFile, "GTRTest", ["gtr_test.p", "gtr_test.t"])
+    runTest(outFile, "Sump", ["logfile.txt"])
     runTest(outFile, "Sumt", ["trees.tre","splits.pdf","logfile.txt"])
     runTest(outFile, "PathSampling", ["params.p", "trees.t"])
     runTest(outFile, "LikelihoodTest", ["simulated.nex", "check.nex"])
