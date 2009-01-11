@@ -1,0 +1,15 @@
+
+Mean log-likelihood for each value of beta used
+for marginal likelihood estimation:
+
+        beta     mean lnL
+     1.00000  -6544.80455
+     0.38330  -6554.62659
+     0.09921  -6784.43150
+     0.00984  -7467.30629
+     0.00000 -11949.98566
+
+Marginal likelihood estimates:
+ -6623.52760533 Steppingstone sampling method (se = 1.82152309)
+ -6666.33719676 Path sampling method (using trapezoid rule)
+ -6325.02632031 Path sampling method (using Simpson's rule)
