@@ -5,6 +5,7 @@ if __name__ == '__main__':
     sump.out.log.mode       = REPLACE
     sump.file               = 'test.p'
     #sump.file               = 'k2.n10k.p'
+    #sump.file               = 'hmtwo.p'
     sump.burnin             = 1
     sump()
     

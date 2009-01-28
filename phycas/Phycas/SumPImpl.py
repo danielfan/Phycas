@@ -9,7 +9,13 @@ class VarianceZeroError(Exception):
     def __str__(self):
         return self.message
     
-class InvalidNumberOfColumns(Exception):
+class VarianceUndefinedError(Exception):
+    def __init__(self):
+        self.message = 'Cannot calculate standard deviation because sample size is less than 2'
+    def __str__(self):
+        return self.message
+    
+class InvalidNumberOfColumnsError(Exception):
     def __init__(self, nparts, nexpected, line_num):
         self.message = 'Number of values (%d) on line %d inconsistent with number of column headers (%d)' % (nparts, line_num, nexpected)
     def __str__(self):
@@ -198,7 +204,7 @@ class ParamSummarizer(CommonFunctions):
         for i,line in enumerate(lines[start:]):
             parts = line.split()
             if len(parts) != len(headers):
-                raise InvalidNumberOfColumns(len(parts), len(headers), i + start + 1)
+                raise InvalidNumberOfColumnsError(len(parts), len(headers), i + start + 1)
             beta = float(parts[1])
             if curr_beta is None or curr_beta != beta:
                 curr_beta = beta
@@ -277,9 +283,87 @@ class ParamSummarizer(CommonFunctions):
             self.ps_simpsons(betas, means)
         except Exception,e:
             self.output(' %s' % e.message)
+            
+    def summarize(self, v, cutoff=95):
+        # Computes the following summary statistics for the supplied vector v:
+        #   first-order autocorrelation (lag=1)
+        #   effective sample size
+        #   lower credible
+        #   upper credible
+        #   minimum
+        #   maximum
+        #   sample mean
+        #   sample standard deviation (i.e. divide by n-1)
+        # If v is None, returns tuple of header strings.
+        # If v is not None, returns tuple of summary statistics.
+        if v is None:
+            h = ('autocorr', 'ess', 'lower %d%%' % int(cutoff), 'upper %d%%' % int(cutoff), 'min', 'max', 'mean', 'stddev')
+            return h
+            
+        if len(v) < 2:
+            raise VarianceUndefinedError()
+        s = []
+        
+        # compute autocorr and ess
+        try:
+            r,ess = self.autocorr_ess(v)
+        except VarianceZeroError:
+            raise VarianceZeroError()
+        else:
+            s.extend((r,ess))
+            
+        # compute lower and upper
+        v.sort()
+        n = float(len(v))
+        p = float(cutoff)/100.0
+        lower_at = int(math.ceil(n*(1 - p)))
+        upper_at = int(math.ceil(n*p))
+        lower = v[lower_at]
+        upper = v[upper_at]
+        s.extend((lower, upper))
+        
+        # compute min and max
+        s.extend((v[0], v[-1]))
+        
+        # compute mean and stddev
+        mean = sum(v)/n
+        ss = sum([x**2 for x in v])
+        var = (ss - n*mean**2)/(n - 1.0)
+        sd = math.sqrt(var)
+        s.extend((mean, sd))
+        
+        return tuple(s)
     
-    def std_summary(self, lines, burnin):
-         print 'Standard summary is not yet implemented'
+    def std_summary(self, headers, lines, burnin):
+        # Create params such that, for example, params['lnL'] is a list of 
+        # all log-likelihood values (in the order in which they were sampled)
+        params = {}
+        for h in headers:
+            params[h] = []
+        start = 2 + burnin
+        for i,line in enumerate(lines[start:]):
+            parts = line.split()
+            if len(parts) != len(headers):
+                raise InvalidNumberOfColumnsError(len(parts), len(headers), i + start + 1)
+            for h,x in zip(headers,parts):
+                params[h].append(float(x))
+                
+        # Output summary statistics for each parameter (and the log-likelihood)
+        self.output('\nSummary statistics:\n')
+        stats_headers = ('param','n') + self.summarize(None)
+        sz = len(stats_headers)
+        sss = '%12s'*sz + '\n'
+        self.output(sss % stats_headers)
+        for h in headers[1:]:   # skip 'Gen' header
+            v = params[h]
+            try:
+                stats = (h,len(v)) + self.summarize(v)
+                sss = '%12s' + '%12d' + '%12.5f'*(sz - 2)
+                self.output(sss % stats)
+            except (VarianceZeroError,VarianceUndefinedError):
+                sss = '%12s'*sz + '\n'
+                sub = tuple(['---']*sz)
+                self.output(sss % sub)
         
     def run(self):
         fn = self.opts.file
@@ -292,7 +376,7 @@ class ParamSummarizer(CommonFunctions):
             if headers[1] == 'beta':
                 try:
                     self.marginal_likelihood(headers, lines, burnin)
-                except InvalidNumberOfColumns, e:
+                except InvalidNumberOfColumnsError, e:
                     print e
             else:
                 self.std_summary(headers, lines, burnin)
