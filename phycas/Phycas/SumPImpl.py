@@ -24,7 +24,9 @@ class InvalidNumberOfColumnsError(Exception):
 class ParamSummarizer(CommonFunctions):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
-    Summarizes parameter sample.
+    Summarizes parameter sample contained in the param file, which is one
+    of the two files output from an mcmc analysis (the other being the 
+    tree file).
     
     """
     def __init__(self, opts):
@@ -36,6 +38,13 @@ class ParamSummarizer(CommonFunctions):
         CommonFunctions.__init__(self, opts)
         
     def interpolate(self, xx, x, y):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Given x and y, which define three reference points, (x[0],y[0]), 
+        (x[1],y[1]) and (x[2],y[2]), find the point on the interpolating 
+        polynomial corresponding to x-coordinate xx (scalar).
+        
+        """
         term0 = (xx - x[1])*(xx - x[2])/((x[0] - x[1])*(x[0] - x[2]))
         term1 = (xx - x[0])*(xx - x[2])/((x[1] - x[0])*(x[1] - x[2]))
         term2 = (xx - x[0])*(xx - x[1])/((x[2] - x[0])*(x[2] - x[1]))
@@ -43,6 +52,13 @@ class ParamSummarizer(CommonFunctions):
         return retval
         
     def cumLagrange(self, which, x, y):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Given x and y, which define three reference points, (x[0],y[0]), 
+        (x[1],y[1]) and (x[2],y[2]), find the integral under the interpolating
+        polynomial for the first (which=1) or both (which=2) segments.
+        
+        """
         xx = x[which]
         
         x0 = x[0]
@@ -69,9 +85,16 @@ class ParamSummarizer(CommonFunctions):
         return -cum
         
     def ps_simpsons(self, betas, means):
-        # This approach uses Simpson's method to interpolate between beta values using the
-        # interpolation polynomial in Lagrange form. This eliminates a big chunk of the bias
-        # apparent with Lartillot and Phillippe method when the number of beta values used is small
+        """
+        This approach uses Simpson's method to interpolate between beta values using the
+        interpolation polynomial in Lagrange form. Simpson' method is described in most
+        calculus textbooks, and (as used here) fits a parabola to every three consecutive
+        points, using the area under the parabola as an approximation to the integral.
+        This approach provides two estimates for the integral corresponding to each segment
+        except for the first and last. We use the simple average of the two estimates when
+        they are available.
+        
+        """
         nbetas = len(betas)
         if nbetas < 3:
             raise Exception("Must have at least 3 beta values to compute path sampling using Simpson's rule")
@@ -84,16 +107,19 @@ class ParamSummarizer(CommonFunctions):
             # print 'y%d <- c(%s)' % (i,','.join(['%.6f' % z for z in y]))
             # print 'plot(x%d,y%d,type="b")' % (i,i)
             if i == 0:
+                # no averaging on the first segment
                 a = self.cumLagrange(1, x, y)
                 marginal_like += a
                 b = self.cumLagrange(2, x, y)
                 marginal_like += (b - a)/2.0
             elif i == nbetas - 3:
+                # no averaging on the last segment
                 a = self.cumLagrange(1, x, y)
                 marginal_like += a/2.0
                 b = self.cumLagrange(2, x, y)
                 marginal_like += (b - a)
             else:
+                # average two estimates for each of the middle segments
                 a = self.cumLagrange(1, x, y)
                 b = self.cumLagrange(2, x, y)
                 marginal_like += b/2.0
@@ -115,6 +141,15 @@ class ParamSummarizer(CommonFunctions):
         self.output(" %.8f Path sampling method (using Simpson's rule)" % (marginal_like))
 
     def ps_trapezoid(self, betas, means):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        This method approximates the integral under the curve defined by betas
+        (x-coordinates) and means (y-coordinates) using the trapezoid method
+        (straight line interpolation). This is the method advocated by in the
+        Lartillot and Phillippe (2006) paper that introduced the thermodynamic
+        integration method to phylogenetics.
+        
+        """
         nbetas = len(betas)
         marginal_like = 0.0
         for i in range(nbetas):
@@ -134,6 +169,16 @@ class ParamSummarizer(CommonFunctions):
         self.output(' %.8f Path sampling method (using trapezoid rule)' % (marginal_like))
                 
     def ss(self, betas, likes):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        This method estimates the marginal likelihood using the product of 
+        ratios (the stepping stones) bridging the gap between the posterior
+        and the prior. Each ratio is estimated using importance sampling, with
+        the importance distribution being the power posterior defined by 
+        the smaller of the two beta values in the ratio. See Xie et al. (2009;
+        Systematic Biology; submitted Jan. 2009) for details.
+        
+        """
         # Calculate marginal likelihood using steppingstone sampling method
         # betas is a list of beta values ordered from the first sampled to the last sampled
         # likes is a map: i.e. likes[b] holds list of log-likelihoods sampled for beta value b
@@ -166,6 +211,13 @@ class ParamSummarizer(CommonFunctions):
         self.output(' %.8f Steppingstone sampling method (se = %.8f)' % (lnR, seR))
         
     def autocorr_ess(self, values):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Computes the lag-1 autocorrelation (r) for the supplied values list.
+        Also computes the effective sample size (ess). Returns the tuple 
+        (r,ess).
+        
+        """
         nvalues = len(values)
         n = float(nvalues)
         
@@ -192,6 +244,18 @@ class ParamSummarizer(CommonFunctions):
         return (r,ess)
     
     def marginal_likelihood(self, headers, lines, burnin):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Estimates the marginal likelihood for the path sampling/steppingstone
+        sampling case and outputs the autocorrelation and effective sample 
+        size for each parameter/beta combination. The supplied list headers 
+        holds the column headers from the param file. The parameter names are
+        taken from this. The supplied lines is a list of lines from the param
+        file. The supplied burnin indicates the number of initial lines to 
+        ignore (usually will be 1 because the starting values of all 
+        parameters is always output and should always be skipped).
+        
+        """
         # Create params such that, for example, params['lnL'][1.0] is a list of 
         # all log-likelihood values sampled for beta = 1.0 (in the order in which
         # they were sampled)
@@ -284,18 +348,40 @@ class ParamSummarizer(CommonFunctions):
         except Exception,e:
             self.output(' %s' % e.message)
             
-    def summarize(self, v, cutoff=95):
-        # Computes the following summary statistics for the supplied vector v:
-        #   first-order autocorrelation (lag=1)
-        #   effective sample size
-        #   lower credible
-        #   upper credible
-        #   minimum
-        #   maximum
-        #   sample mean
-        #   sample standard deviation (i.e. divide by n-1)
-        # If v is None, returns tuple of header strings.
-        # If v is not None, returns tuple of summary statistics.
+    def harmonic_mean(self, v):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Calculate marginal likelihood using the harmonic mean method using 
+        log-likelihoods supplied in v.
+        
+        """
+        nignored = 0
+        n = len(v)
+        min_lnL = min(v)
+        sum_diffs = 0.0
+        for lnl in v:
+            diff = lnl - min_lnL
+            if diff < 500.0:
+                sum_diffs += math.exp(-diff)
+            else:
+                nignored += 1
+        log_harmonic_mean = math.log(n) + min_lnL - math.log(sum_diffs)
+        if nignored > 0:
+            self.warning('ignoring %d sampled log-likelihoods in harmonic mean calculation' % nignored)
+        self.output('Log of marginal likelihood (harmonic mean method) = %f' % log_harmonic_mean)
+            
+    def summary_stats(self, v, cutoff=95):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Computes the following summary statistics for the supplied vector v:
+        first-order autocorrelation (lag=1), effective sample size, lower 
+        credible interval bound, upper credible interval bound, minimum, 
+        maximum, sample mean, and sample standard deviation (i.e. divide by 
+        n-1). The value of cutoff is the percentage to use for the credible
+        interval. If v is None, returns tuple of header strings. If v is not
+        None, returns tuple of summary statistics.
+        
+        """
         if v is None:
             h = ('autocorr', 'ess', 'lower %d%%' % int(cutoff), 'upper %d%%' % int(cutoff), 'min', 'max', 'mean', 'stddev')
             return h
@@ -335,6 +421,19 @@ class ParamSummarizer(CommonFunctions):
         return tuple(s)
     
     def std_summary(self, headers, lines, burnin):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Produces a table of summary statistics for each parameter using the
+        data in a param file. This is the companion to marginal_likelihood for
+        the standard mcmc case. The supplied list headers holds the column 
+        headers from the param file. The parameter names are taken from this.
+        The supplied lines is a list of lines from the param file. The 
+        supplied burnin indicates the number of initial lines to ignore 
+        (usually will be 1 because the starting values of all parameters is 
+        always output and should always be skipped). See documentation for
+        the summary_stats function for a list of summary statistics computed.
+        
+        """
         # Create params such that, for example, params['lnL'] is a list of 
         # all log-likelihood values (in the order in which they were sampled)
         params = {}
@@ -350,22 +449,32 @@ class ParamSummarizer(CommonFunctions):
                 
         # Output summary statistics for each parameter (and the log-likelihood)
         self.output('\nSummary statistics:\n')
-        stats_headers = ('param','n') + self.summarize(None)
+        stats_headers = ('param','n') + self.summary_stats(None)
         sz = len(stats_headers)
         sss = '%12s'*sz + '\n'
         self.output(sss % stats_headers)
         for h in headers[1:]:   # skip 'Gen' header
             v = params[h]
             try:
-                stats = (h,len(v)) + self.summarize(v)
+                stats = (h,len(v)) + self.summary_stats(v)
                 sss = '%12s' + '%12d' + '%12.5f'*(sz - 2)
                 self.output(sss % stats)
             except (VarianceZeroError,VarianceUndefinedError):
                 sss = '%12s'*sz + '\n'
                 sub = tuple(['---']*sz)
                 self.output(sss % sub)
+        self.output()
+        self.harmonic_mean(params['LnL'])
         
     def run(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Reads the contents of the param file and decides whether to use the 
+        marginal_likelihood or std_summary functions to summarize the data
+        therein. The marginal_likelihood function is called if the second
+        header is "beta"; otherwise, std_summary is called.
+        
+        """
         fn = self.opts.file
         burnin = self.opts.burnin
         lines = open(fn, 'r').readlines()
@@ -381,71 +490,3 @@ class ParamSummarizer(CommonFunctions):
             else:
                 self.std_summary(headers, lines, burnin)
 
-# The stuff below here can be deleted at any time...            
-# def cumLagrangeWG(self, which, x, y):
-#     xx = x[which]
-#     
-#     term1a = (xx - x[0])
-#     term1b = 2.0*(x[1] - x[0])
-#     term1c = (xx - x[0])*(y[1] - y[0])/term1b
-#     term1 = term1a*(y[0] + term1c)
-#     
-#     term2a = 2.0*(xx**2.0) - xx*x[0] - (x[0]**2.0) + 3.0*x[0]*x[1] - 3.0*xx*x[1]
-#     term2b = (y[2] - y[1])/(x[2] - x[1])
-#     term2c = (y[1] - y[0])/(x[1] - x[0])
-#     term2d = (xx - x[0])/(x[2] - x[0])
-#     term2 = term2a*(term2b - term2c)*term2d/6.0
-#     cum = term1 + term2
-#     return -cum
-#     
-# def simpson_function(self, x0, x1, x2, y0, y1, y2):
-#     y = (x2 - x0)*(y0 + 0.5*(x2 - x0)*(y1 - y0)/(x1 - x0)) + \
-#         (2*x2**2 - x0*x2 - x0**2 + 3*x0*x1 - 3*x1*x2) * \
-#         ((y2 - y1)/(x2 - x1) - (y1 - y0)/(x1 - x0))/6
-#     # Add minus because we move from 1 to 0
-#     return (-y)
-# 
-# def ps_simpsons(self, betas, U):
-#     nbetavals = len(betas)
-#     
-#     # betas vector assumed to be sorted from high (1.0) to low (0.0)
-#     # so that betas[i] - betas[i+1] > 0
-#     betaIncvect = []
-#     for i in range(nbetavals-1):
-#         betaIncvect.append(betas[i] - betas[i+1])
-# 
-#     # Trapzoidal integration approximation
-#     mlike = (U[0]*betaIncvect[0] + U[nbetavals - 1]*betaIncvect[nbetavals - 2])/2
-#     for i in range(1, nbetavals - 1):
-#         mlike += U[i]*(betaIncvect[i - 1] + betaIncvect[i])/2
-# 
-#     # Simpson integration approximation
-#     tmp = 0.0
-#     for i in range(nbetavals - 2):
-#         x0 = betas[i]
-#         x1 = betas[i+1]
-#         x2 = betas[i+2]
-# 
-#         y0 = U[i]
-#         y1 = U[i+1]
-#         y2 = U[i+2]
-# 
-#         if i == 0:
-#             #mu0 = -(x1 - x0)*(y0 + y1)/2.0 + (x1 - x0)**3*((y2 - y1)/(x2 - x1) - (y1 - y0)/(x1 - x0))/6
-#             mu0  = -(x1 - x0)*(y0 + y1)/2.0 + (x1 - x0)**3*((y2 - y1)/(x2 - x1) - (y1 - y0)/(x1 - x0))/(6*(x2 - x0))
-# 
-#         if i == nbetavals - 3:
-#             #mu1 = self.simpson_function(x0,x1,x2,y0,y1,y2) + \
-#             #      (x1 - x0)*(y0 + y1)/2.0 - (x1 - x0)**3*((y2 - y1)/(x2 - x1) - (y1 - y0)/(x1 - x0))/6
-#             mu1 = self.simpson_function(x0,x1,x2,y0,y1,y2) + \
-#                    (x1 - x0)*(y0 + y1)/2.0 - (x1 - x0)**3*((y2 - y1)/(x2 - x1) - (y1 - y0)/(x1 - x0))/(6*(x2 - x0))
-# 
-#         tmp += self.simpson_function(x0,x1,x2,y0,y1,y2)
-# 
-#     tmp = (tmp + mu0 + mu1)/2.0
-#     
-#     self.output('\npsm_mlike = %.8f\n' % mlike)
-#     self.output('\npsm_mlike_simpson = %.8f\n' % tmp)        
-    
-        
-        
