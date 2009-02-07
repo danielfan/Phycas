@@ -486,6 +486,7 @@ FUNCTION {format.editors}
     }
   if$
 }
+
 FUNCTION {select.language}
 { duplicate$ empty$
     'pop$
@@ -508,7 +509,7 @@ FUNCTION {format.note}
           { "l" }
           { "u" }
         if$
-        change.case$
+        % change.case$
         }
       if$
       note #2 global.max$ substring$ * "note" bibinfo.check
@@ -519,12 +520,14 @@ FUNCTION {format.note}
 FUNCTION {format.title}
 { title
   duplicate$ empty$ 'skip$
-    { "t" change.case$ }
+    { 
+    %POL "t" change.case$ 
+    }
   if$
   "title" bibinfo.check
   duplicate$ empty$ 'skip$
     {
-      select.language
+      %POL select.language
     }
   if$
 }
@@ -691,7 +694,7 @@ FUNCTION {format.btitle}
 { title "title" bibinfo.check
   duplicate$ empty$ 'skip$
     {
-      select.language
+      %POL select.language
     }
   if$
 }
@@ -976,7 +979,7 @@ FUNCTION {article}
       format.pages output
     }
   if$
-  format.note output
+  %POL format.note output
   fin.entry
 }
 FUNCTION {book}

@@ -1,3 +1,8 @@
+% To do list for new releases: 
+% - check accuracy of \currPyVersion
+% 
+% 
+
 \documentclass[10pt]{article}
 \setlength{\oddsidemargin}{0.in}
 \setlength{\textwidth}{6.5in}
@@ -24,6 +29,7 @@
 % Use the graphicx package to incorporate and scale
 % encapsulated postscript figures
 \usepackage{graphicx}
+\usepackage{floatflt}
 
 % bold math
 \usepackage{bm}
@@ -35,17 +41,24 @@
 %\usepackage{upquote}
 %\newfont{\mytt}{cmtt10 at 10pt}
 
+\newcommand{\currPyVersion}{2.6.1}
+
 \newcommand{\trademark}[1]{#1${}^{\mbox{\tiny TM}}$}
-\newcommand{\pathname}[1]{{\em #1}}			% file name or file path
-\newcommand{\objectname}[1]{{\tt #1}}			% name of an object of a class (e.g. mcmc)
-\newcommand{\classname}[1]{{\tt #1}}			% name of a class (e.g. MCMC)
-\newcommand{\menu}[1]{{\sf #1}}				% menu command
-\newcommand{\keycmd}[1]{{\sf #1}}			% keyboard command
-\newcommand{\code}[1]{{\tt #1}}				% typeset using typewriter font
-\newcommand{\cmd}[1]{{\tt \small #1}\index{#1}}		% phycas commands (e.g. mcmc, sumt, etc.)
-\newcommand{\opt}[1]{{\tt \small #1}\index{#1}}		% command options (e.g. 'type' for model command)
-\newcommand{\optval}[1]{{\tt #1}}			% option values (e.g. 'gtr' for model.type option)
-\newcommand{\term}[1]{{\bfseries #1}\index{#1}}		% new term
+\newcommand{\pathname}[1]{{\em #1}}				% file name or file path
+\newcommand{\objectname}[1]{{\tt #1}}				% name of an object of a class (e.g. mcmc)
+\newcommand{\classname}[1]{{\tt #1}}				% name of a class (e.g. MCMC)
+\newcommand{\menu}[1]{{\sf #1}}					% menu command
+\newcommand{\keycmd}[1]{{\sf #1}}					% keyboard command
+\newcommand{\code}[1]{{\tt #1}}					% typeset using typewriter font
+\newcommand{\cmd}[1]{{\tt \small #1}\index{#1}}	% phycas commands (e.g. mcmc, sumt, etc.)
+\newcommand{\opt}[1]{{\tt \small #1}\index{#1}}	% command options (e.g. 'type' for model command)
+\newcommand{\optval}[1]{{\tt #1}}					% option values (e.g. 'gtr' for model.type option)
+\newcommand{\term}[1]{{\bfseries #1}\index{#1}}	% new term
+
+\newcommand{\important}[1]{{\bf Important: #1}}	% important information
+
+\newcommand{\warning}[1]{{\bf Warning: #1}}		% warnings
+\newcommand{\warnNoPyThree}{\warning{Do not install Python 3.x --- Phycas is not yet ready to make the leap to Python 3}}
 
 \newcommand{\one}[1]{\mbox{${\bf 1}_{#1}$}}
 \newcommand{\data}{{\bf y}}
@@ -56,7 +69,7 @@
 \newcommand{\ncat}{\mbox{$n_{\mbox{cat}}$}}
 
 \newcommand{\phycasapp}{\pathname{Phycas.app}}
-\newcommand{\phycasicon}{\includegraphics[scale=0.1]{images/PhycasGUI}}
+\newcommand{\phycasicon}{\includegraphics[scale=0.2]{images/PhycasGUI}}
 
 \newcommand{\Rii}[1]{-\sum_{i \neq #1} \pi_i \mu}
 
@@ -91,7 +104,7 @@ pdfkeywords={phylogenetics, Bayesian, Markov chain Monte Carlo, MCMC}}
 
 \begin{document}
 
-\title{Phycas User Manual}
+\title{{\sc Phycas User Manual} \\ Version 1.1}
 \author{Paul O. Lewis, Mark. T. Holder, and David L. Swofford}
 \date{\today}
 \maketitle
@@ -119,8 +132,11 @@ Phycas is an extension of Python, so to use it you must first start Python. In t
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{First things first}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The way Phycas is run depends on the operating system you are using. If you are using the Windows or Linux versions, you start Phycas by opening a terminal (in Windows this is referred to as a ``console window'' or ``command prompt'') and typing \code{python} to invoke Python. If you are using a Mac, you will have downloaded the \phycasapp\ bundle that is built around the open-source terminal program iTerm (\url{http://iterm.sourceforge.net/}). Starting \phycasapp\ by double-clicking the \phycasicon\ icon automatically starts an iTerm terminal, invokes Python and loads Phycas.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+The way Phycas is run depends on the operating system you are using. If you are using the Windows or Linux versions, you start Phycas by opening a terminal (in Windows this is referred to as a ``console window'' or ``command prompt'') and typing \code{python} to invoke Python. If you are using a Mac, you will have downloaded the \phycasapp\ bundle that is built around the open-source terminal program iTerm (\url{http://iterm.sourceforge.net/}). Starting \phycasapp\ by double-clicking the Phycas icon automatically starts an iTerm terminal, invokes Python, and loads Phycas.
+
+% The Phycas icon looks like this: \phycasicon
 
 \subsubsection{Starting from a terminal on Windows}
 To start Python on Windows, open a console window (a.k.a. terminal window) and type the word \code{python}. This should generate output similar to the following:
@@ -137,10 +153,14 @@ At the \code{>>>} prompt, type \code{from phycas import *}, like this:
 >>>
 \end{verbatim}
 
-After pressing return, you will see only another Python \code{>>>} prompt, but something important has happened nevertheless. Phycas is an ``extension'' of Python, but you must import extensions in order for their capabilities to be available. The import statement you typed means ``import everything phycas has to offer.'' 
+Phycas is an ``extension'' of Python, but you must import extensions in order for their capabilities to be available. The import statement you typed means ``import everything phycas has to offer.'' 
 
 \subsubsection{Starting from the \phycasapp\ bundle under MacOS}
-If you are using the \phycasapp\ bundle on MacOS, you can launch the Phycas application by double clicking on the \phycasicon\ icon. Although the name appears to be just \pathname{Phycas}, it is really \phycasapp; the MacOS hides the \pathname{.app} extension. (We will hereafter use the terms \term{Phycas application} and \term{Phycas.app} bundle interchangeably.) The Phycas application will show up in your dock and the window that appears will be a terminal that has already invoked Python and issued the ``from phycas import *'' command mentioned in the previous section.
+
+\begin{floatingfigure}[l]{2cm}
+\includegraphics[scale=0.4]{images/PhycasGUI}  
+%\caption{Phycas icon}
+\end{floatingfigure} If you are using the \phycasapp\ bundle on MacOS, you can launch the Phycas application by double clicking on the icon. Although the name appears to be just \pathname{Phycas}, it is really \phycasapp; the MacOS hides the \pathname{.app} extension unless you change this in the Finder preferences. (We will hereafter use the terms \term{Phycas application} and \term{Phycas.app} bundle interchangeably.) The Phycas application will show up in your dock and the window that appears will be a terminal that has already invoked Python and issued the ``from phycas import *'' command mentioned in the previous section.
 
 All the instructions for the rest of the manual will be executed the same way regardless of whether Phycas running from a Windows console window, a Linux terminal or the \pathname{Phycas} application.
 
@@ -987,7 +1007,7 @@ These instructions assume you are using \trademark{Windows} \trademark{XP} or \t
 
 \subsubsection{\trademark{Windows} console} \label{subsubsec:winconsole}
 
-One very handy feature that does not come with \trademark{Windows} is the ability to open a command console by using the right-click speed menu in \trademark{Explorer}. The web site \url{http://www.commandline.co.uk/cmdhere/} makes this feature easy to add and will make Phycas {\em much} easier to use (it is not required, however, in order to use Phycas). The basic procedure is to create a file named \pathname{cmdhere.reg} with the following text (or download the file from the web site above):
+One very handy feature that does not come with \trademark{Windows} is the ability to open a command console by using the right-click speed menu in \trademark{Explorer}. The web site \url{http://www.commandline.co.uk/cmdhere/} describes how to add this functionality, which will make Phycas {\em much} easier to use (it is not required, however, in order to use Phycas). The basic procedure is to create a file named \pathname{cmdhere.reg} with the following text (or download the file from the web site above):
 %
 \begin{verbatim}
 REGEDIT4
@@ -1005,11 +1025,11 @@ REGEDIT4
 @="cmd.exe /c start cmd.exe /k pushd \"%L\""
 \end{verbatim}
 %
-Assuming that you saved this file with the extension \pathname{.reg}, the \trademark{Windows} operating system will know what to do with it. Double-click the name of the file in \trademark{Windows} \trademark{Explorer}, and the required registry entry will be made. {\bfseries Warning:} {\em making changes to your system's registry is a bit risky, and we take no responsibility for any damage your system may incurr by following these directions!} That said, this worked fine for us and saves an enormous amount of time. \trademark{Windows} offers a PowerToy (\url{http://www.microsoft.com/windowsxp/downloads/powertoys/xppowertoys.mspx}) for \trademark{XP} that does something similar. While perhaps safer to install, it is somewhat frustrating to use because if you are already inside a directory in which you want to open a console, you must first go up one level in order to open a console window for that directory.
+Assuming that you saved this file with the extension \pathname{.reg}, the \trademark{Windows} operating system will know what to do with it. Double-click the name of the file in \trademark{Windows} \trademark{Explorer}, and the required registry entry will be made. \warning{making changes to your system's registry is a bit risky, and we take no responsibility for any damage your system may incur by following these directions!} That said, this worked fine for us and saves an enormous amount of time. \trademark{Windows} offers a PowerToy (\url{http://www.microsoft.com/windowsxp/downloads/powertoys/xppowertoys.mspx}) for \trademark{XP} that does something similar. While perhaps safer to install, it is somewhat frustrating to use because if you are already inside a directory in which you want to open a console, you must first go up one level in order to open a console window for that directory.
 
 \subsubsection{Installing Python under \trademark{Windows}}
 
-Before you go to the trouble of downloading and installing Python, make sure you do not already have Python installed on your Windows system. From the Start button, choose \menu{All Programs}, then \menu{Accessories} and finally \menu{Command Prompt}. Type \code{python -V} in the console window that appears, and if a phrase such as \code{Python 2.5.1} appears, then you already have Python installed! Most Windows users will probably see \code{'python' is not recognized as an internal or external command, operable program or batch file.} In this case, you need to visit \url{http://python.org} and download and install the latest version of Python (version 2.5.2 as of this writing).
+Before you go to the trouble of downloading and installing Python, make sure you do not already have Python installed on your Windows system. From the Start button, choose \menu{All Programs}, then \menu{Accessories} and finally \menu{Command Prompt}. Type \code{python -V} in the console window that appears, and if a phrase such as \code{Python 2.5.1} appears, then you already have Python installed! Most Windows users will probably see \code{'python' is not recognized as an internal or external command, operable program or batch file.} In this case, you need to visit \url{http://python.org} and download and install the latest version of Python (version \currPyVersion\ as of this writing). \warnNoPyThree
 
 \subsubsection{Installing Phycas under \trademark{Windows}}
 
@@ -1027,19 +1047,19 @@ These instructions assume you are using MacOS 10.4 or later.
 
 \subsubsection{The iTerm terminal application}
 
-Bundled with Phycas is a terminal application called iTerm. The iTerm application is an open-source replacement for the Terminal application with which you may be familiar (and which comes with the MacOS). While it is possible to use Phycas from Terminal, we recommend strongly that you use the iTerm application that comes with Phycas. The iTerm application starts automatically when you click on the icon labeled ``Phycas'' (see below). The main reason for using the bundled iTerm application is that it starts Python and imports phycas for you automatically when it is started.
+Bundled with Phycas is a terminal application called iTerm. The iTerm application is an open-source replacement for the Terminal application with which you may be familiar (and which comes with the MacOS). While it is possible to use Phycas from Terminal, we recommend strongly that you use the iTerm application that comes with Phycas. The iTerm application starts automatically when you click on the icon labeled ``Phycas'' (see below) or drop a script file onto the icon. The main reason for using the bundled iTerm application is that it starts Python and imports phycas for you automatically when it is started.
 
 \subsubsection{Installing Python on a Mac}
 
-If you are using MacOS 10.4, and haven't installed Python yourself, your Mac probably has Python 2.3 installed. To find out, open a terminal window (you can find the Terminal app in the Utilities folder, which is itself a subfolder of the \pathname{Applications} folder) and type \code{python -V}. If the version of Python is 2.3, you will need to visit \url{http://python.org} and download and install the latest version of Python (version 2.5.2 as of this writing).
+If you are using MacOS 10.4, and haven't installed Python yourself, your Mac probably has Python 2.3 installed. To find out, open a terminal window (you can find the Terminal app in the Utilities folder, which is itself a subfolder of the \pathname{Applications} folder) and type \code{python -V}. If the version of Python is 2.3, you will need to visit \url{http://python.org} and download and install the latest version of Python (version \currPyVersion\ as of this writing). \warnNoPyThree
 
 \subsubsection{Installing Phycas on a Mac}
 
-Visit the Download section of the Phycas web site \url{http://phycas.org/} and download the MacOS DMG file. Once the DMG file has been downloaded, double-click it to mount it. Inside the DMG, you should find several files (Figure~\ref{phycasdmg}). Copy the ``file'' named \pathname{Phycas} (which is actually a special ``application bundle'' folder named \phycasapp, but the operating system hides the \pathname{.app} part of the name) and the file named \pathname{manual.pdf} to a folder of your choice (e.g. we suggest you create a \pathname{Phycas} folder inside your \pathname{Applications} folder for this purpose). To start Phycas, double-click the \phycasapp\ application. {\bf Important:} When you start Phycas, you are actually starting an application named iTerm that has been bundled with the Phycas Python libraries. Thus, the menu items you see are iTerm menu items (including the \menu{Update...} menu item. With this MacOS version, you need not type the \code{from phycas import *} command because this is done for you when you double-click \phycasapp.
+Visit the Download section of the Phycas web site \url{http://phycas.org/} and download the MacOS DMG file. Once the DMG file has been downloaded, double-click it to mount it. Inside the DMG, you should find several files (Figure~\ref{phycasdmg}). Copy the ``file'' named \pathname{Phycas} (which is actually a special ``application bundle'' folder named \phycasapp, but the operating system hides the \pathname{.app} part of the name) to your \pathname{Applications} folder and the file named \pathname{manual.pdf} to a folder of your choice. To start Phycas, double-click the \phycasapp\ application or, alternatively, drop a script file with Phycas commands onto it. \important{When you start Phycas, you are actually starting an application named iTerm that has been bundled with the Phycas Python libraries. Thus, the menu items you see are iTerm menu items (including the \menu{Update...} menu item)}. With this MacOS version, you need not type the \code{from phycas import *} command because this is done for you when you double-click \phycasapp.
 
 \subsubsection{Locating the ``Phycas Installation Folder'' on a Mac} \label{subsubsec:installfoldermac}
 
-The ``Phycas Installation Folder'' that is mentioned in the tutorial is inside \phycasapp\ application bundle. MacOS tries to make it difficult for you to see inside application bundles, but clicking on the \phycasapp\ bundle while pressing the \keycmd{Ctrl} will produce a menu, and choosing the \menu{Show Package Contents} item on that menu will allow you to view the contents of the application bundle folder. Once inside \phycasapp, double-click on the \pathname{Contents} folder, then the \pathname{Resources} folder to find the ``Phycas Installation Folder.''
+The ``Phycas Installation Folder'' that is mentioned in the tutorial is inside the \phycasapp\ application bundle. MacOS tries to make it difficult for you to see inside application bundles, but clicking on the \phycasapp\ bundle while pressing the \keycmd{Ctrl} will produce a menu, and choosing the \menu{Show Package Contents} item on that menu will allow you to view the contents of the application bundle folder. Once inside \phycasapp, double-click on the \pathname{Contents} folder, then the \pathname{Resources} folder to find the ``Phycas Installation Folder.''
 
 %
 % Figure "phycasdmg"
