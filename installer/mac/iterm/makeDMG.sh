@@ -1,10 +1,17 @@
 #!/bin/sh
-NAME=Phycas
-VERSION=1.0
-MASTER_DMG=$NAME-$VERSION.dmg
+
 set -x
 if test -d "$PHYCAS_ROOT"
 then
+	NAME=Phycas
+	if test -f $PHYCAS_ROOT/phycasver.txt
+	then
+		VERSION=`cat $PHYCAS_ROOT/phycasver.txt`
+	else
+		echo "Could not find phycasver.txt file and thus could not determine version"
+		exit
+	fi
+	MASTER_DMG=$NAME-$VERSION.dmg	
 	SOURCE_DIR="$PHYCAS_ROOT/installer/mac/iterm"
 	cd $SOURCE_DIR || exit
 	if test -f $MASTER_DMG
