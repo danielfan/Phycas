@@ -16,8 +16,8 @@
 % Skip space between paragraphs
 \setlength{\parskip}{.05in}
 
-% Do not put numbers in section headings
-\setcounter{secnumdepth}{3}
+% Put numbers in section and subsection headings, but not subsubsection headings
+\setcounter{secnumdepth}{2}
 
 % Specify by how much to indent paragraphs
 \setlength{\parindent}{0ex}
@@ -41,6 +41,7 @@
 %\usepackage{upquote}
 %\newfont{\mytt}{cmtt10 at 10pt}
 
+\newcommand{\currPhycasVersion}{1.1}
 \newcommand{\currPyVersion}{2.6.1}
 
 \newcommand{\trademark}[1]{#1${}^{\mbox{\tiny TM}}$}
@@ -104,7 +105,7 @@ pdfkeywords={phylogenetics, Bayesian, Markov chain Monte Carlo, MCMC}}
 
 \begin{document}
 
-\title{{\sc Phycas User Manual} \\ Version 1.1}
+\title{{\sc Phycas User Manual} \\ Version \currPhycasVersion}
 \author{Paul O. Lewis, Mark. T. Holder, and David L. Swofford}
 \date{\today}
 \maketitle
@@ -116,15 +117,24 @@ pdfkeywords={phylogenetics, Bayesian, Markov chain Monte Carlo, MCMC}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
-Phycas (\url{http://phycas.org}) is an extension of the Python programming language (\url{http://www.python.org}) that allows Python to read NEXUS-formatted data files, run Bayesian phylogenetic MCMC analyses, and summarize the results. In order to use Phycas, you need to first have Python installed on your computer. Please see section~\ref{sec:install} entitled ``Installing Phycas'' (p.~\pageref{sec:install}) for detailed installation instructions and useful information on topics important for using Phycas, such as how to obtain a command prompt for the operating system you are using. The following sections assume that you have successfully installed Phycas and have read section~\ref{sec:install}.
+Phycas (\url{http://www.phycas.org}) is an extension of the Python programming language (\url{http://www.python.org}) that allows Python to read NEXUS-formatted data files, run Bayesian phylogenetic MCMC analyses, and summarize the results. In order to use Phycas, you need to first have Python installed on your computer. Please see section~\ref{sec:install} entitled ``Installing Phycas'' (p.~\pageref{sec:install}) for detailed installation instructions and useful information on topics important for using Phycas, such as how to obtain a command prompt for the operating system you are using. The following sections assume that you have successfully installed Phycas and have read section~\ref{sec:install}.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{How to use this manual}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{What's new in version 1.1?} %%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{New features}
+The \cmd{ps} and \cmd{sump} commands are new to version 1.1. The \cmd{ps} command allows computation of both the path sampling (a.k.a. thermodynamic integration) method of \citet{LartillotPhillippe2006} and the steppingstone sampling method introduced by \citet{XieLewisFanKuoChen2009}. See section \ref{marglike} on page \pageref{marglike} for details. The \cmd{sump} command provides an analog of the sump command in MrBayes, providing means, extremes, and credible intervals for model parameters based on samples saved in the parameter file.
+
+\subsubsection{Bugs fixed}
+Two memory leaks were fixed prior to this release. For a description of the leaks and what was done to fix them, see the section on the ``leaky'' bug in the BUGS file.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{How to use this manual} %%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 This manual begins as a tutorial by showing you how to perform a simple analysis, but does not attempt to explain all possible settings. The purpose is to quickly show you how to run the program, allowing later sections to provide detail. After the initial sections, the manual switches to reference style, detailing how to specify the model of character evolution (section~\ref{sec:models}, p.~\pageref{sec:models}) and highlighting some of the features that set Phycas apart from other Bayesian phylogenetics software (section~\ref{sec:features}, p.~\pageref{sec:features}). Toward the end you will find a discussion (in section~\ref{sec:designprinciples}) of design principles (e.g. Why did we decide to extend Python rather than write a stand-alone program? Why is there no graphical interface?) followed by an annotated listing (in section~\ref{sec:phycassettings}) of Phycas settings. The final section (\ref{sec:install}) is devoted to the details of getting Phycas (and Python) installed on your computer system.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%% Warming up to Phycas %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% Warming up to Phycas %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Warming up to Phycas} \label{sec:warmup}
 
@@ -177,21 +187,22 @@ For Python Help use "python_help()"
 Commands are invoked by following the name by () and then
 hitting the RETURN key. Thus, to invoke the sumt command use:
 
-mcmc()
+sumt()
 
 Commands (and almost everything else in python) are case-sensitive -- so
 "Sumt" is _not_ the same thing as "sumt" In general, you should use the
-lower case versions.
+lower case versions of the phycas command names.
 
 The currently implemented Phycas commands are:
   
-like                           mcmc
+like                           ps
+mcmc                           randomtree
 model                          sim
-sumt                           
+                               
 
 Use <command_name>.help to see the detailed help for each command. So,
 
-mcmc.help
+sumt.help
 
 will display the help information for the sumt command object.
 
@@ -206,32 +217,54 @@ Defines a substitution model.
 
 Available input options:
 Attribute                      Explanation
-============================== ====================================================
+============================== =================================================
 type                           Can be 'jc', 'hky' or 'gtr'
 
-relrate_prior                  The prior distribution for individual GTR relative
-                               rate parameters
+update_relrates_separately     If True, GTR relative rates will be individually
+                               updated using slice sampling; if False, they will
+                               be updated jointly using a Metropolis-Hastings
+                               move (generally both faster and better).
 
-relrates                       The current values for GTR relative rates. These 
-                               should be specified in this order: A<->C, A<->G, 
+relrate_prior                  The joint prior distribution for all six GTR
+                               relative rate parameters. Used only if
+                               update_relrates_separately is False.
+
+relrate_param_prior            The prior distribution for individual GTR
+                               relative rate parameters.  Used only if
+                               update_relrates_separately is true.
+
+relrates                       The current values for GTR relative rates. These
+                               should be specified in this order: A<->C, A<->G,
                                A<->T, C<->G, C<->T, G<->T.
 
 fix_relrates                   If True, GTR relative rates will not be modified
                                during the course of an MCMC analysis
-...
+...                               
 Current model input settings:
 Attribute                      Current Value
-============================== ====================================================
+============================== =================================================
 type                           'hky'
-relrate_prior                  Exponential(1.00000)
+update_relrates_separately     True
+relrate_prior                  Dirichlet((1.00000, 1.00000, 1.00000, 1.00000,
+                               1.00000, 1.00000))
+relrate_param_prior            Exponential(1.00000)
 relrates                       [1.0, 4.0, 1.0, 1.0, 4.0, 1.0]
 fix_relrates                   False
-============================== ====================================================
+kappa_prior                    Exponential(1.00000)
+kappa                          4.0
+fix_kappa                      False
+num_rates                      1
+gamma_shape_prior              Exponential(1.00000)
+gamma_shape                    0.5
+fix_shape                      False
+...
+flex_prob_param_prior          Exponential(1.00000)
+============================== =================================================
 
->>> 
+>>>
 \end{verbatim}
 
-You will probably need to scroll up to see all of the output of the \cmd{model.help} command. Only a portion of the output has been shown (as indicated by the ellipsis). The output shows what model options are available and, at the end, the current values for those options. Thus, we see that the \opt{type} of model can be one of three things (\optval{'jc'}, \optval{'hky'} or \optval{'gtr'}) and that the current model type is \optval{'hky'}. Suppose you wanted to use the GTR model rather than the HKY model. You can do this by changing the \opt{type} option of the \cmd{model} command as follows:
+You will probably need to scroll up to see all of the output of the \cmd{model.help} command. Only a portion of the output has been shown (as indicated by the ellipses). The output shows what model options are available and, at the end, the current values for those options. Thus, we see that the \opt{type} of model can be one of three things (\optval{'jc'}, \optval{'hky'} or \optval{'gtr'}) and that the current model type is \optval{'hky'}. Suppose you wanted to use the GTR model rather than the HKY model. You can do this by changing the \opt{type} option of the \cmd{model} command as follows:
 \begin{verbatim}
 >>> model.type = 'gtr'
 >>> model.current
@@ -244,14 +277,13 @@ The quotes around \optval{'gtr'} are important. They indicate to Python that you
 Error: name 'gtr' is not defined
 \end{verbatim}
 Note that python is forgiving about whether you use double-quotes to delimit strings or single-quotes -- either will work to tell Python that you mean a string rather than the name of a variable.
-Do not be confused by the subtle differences in typesetting within this manual in all cases you should use the quotes in Python (not the ``back-tick'' character or any special curved quote that is found in some word-processing programs).
+Do not be confused by the subtle differences in typesetting within this manual. In all cases you should use plain quotes in Python (not the ``back-tick'' character or any special curved quote that is found in some word-processing programs).
 
+The option \opt{kappa\_prior} specifies the prior probability distribution to use for the transition/transversion rate ratio. Phycas defines several probability distributions for use as priors. In this case, the current value of \optval{Exponential(1.00000)} indicates that the $\kappa$ parameter will be assigned an exponential(1) prior distribution. See section~\ref{sec:probdist} (p.~\pageref{sec:probdist}) for a complete list of probability distributions available within Phycas.
 
-The option \opt{relrate\_prior} specifies the prior probability distribution to use for each of the six GTR relative rates. Phycas defines several probability distributions for use as priors. In this case, the current value of \optval{Exponential(1.00000)} indicates that each GTR relative rate parameter will be assigned an exponential(1) prior distribution. See section~\ref{sec:probdist} (p.~\pageref{sec:probdist}) for a complete list of probability distributions available within Phycas.
+The option \opt{relrates} specifies the values of the six GTR relative rates parameters. The square brackets around the value of the \opt{relrates} parameter, \optval{[1.0, 4.0, 1.0, 1.0, 4.0, 1.0]}, indicate that you should specify the six relative rate values as a Python \term{list}. The description (``The current values for GTR relative rates. These should be specified in this order: A$<$-$>$C, A$<$-$>$G, A$<$-$>$T, C$<$-$>$G, C$<$-$>$T, G$<$-$>$T.'') indicates the expected order for the six relative rate values. The \opt{relrates} option and others like it, such as \opt{kappa}, \opt{state\_freqs}, \opt{gamma\_shape}, and \opt{pinvar} are used for a variety of purposes: (1) to set the starting values for an MCMC analysis (the \cmd{mcmc} command); (2) to specify the values of parameters for simulations (the \cmd{sim} command); or (3) to specify the values of parameters for calculating the likelihood (the \cmd{like} command).
 
-The option \opt{relrates} specifies the current values of the six GTR relative rates. The square brackets around the current value of \optval{[1.0, 4.0, 1.0, 1.0, 4.0, 1.0]} indicate that you should specify the six relative rate values as a Python \term{list}. The description (``The current values for GTR relative rates. These should be specified in this order: A$<$-$>$C, A$<$-$>$G, A$<$-$>$T, C$<$-$>$G, C$<$-$>$T, G$<$-$>$T.'') indicates the expected order for the six relative rate values. The \opt{relrates} option and others like it, such as \opt{kappa}, \opt{state\_freqs}, \opt{gamma\_shape}, and \opt{pinvar} are used for a variety of purposes: (1) to set the starting values for an MCMC analysis (the \cmd{mcmc} command); (2) to specify the values of parameters for simulations (the \cmd{sim} command); or (3) to specify the values of parameters for calculating the likelihood (the \cmd{like} command).
-
-The \opt{fix\_relrates} command is used to specify whether the relative rates are to be allowed to vary during an MCMC analysis (\opt{fix\_relrates}=\optval{False}) or are to be frozen at the values specified by \opt{relrates} (\opt{fix\_relrates}=\optval{True}). The values \optval{True} and \optval{False} are known to Python and should not be surrounded by quotes (note also that case is important: typeing \code{true} or \code{TRUE} will generate a ``not defined'' error message from Python).
+The \opt{fix\_relrates} command is used to specify whether the relative rates are to be allowed to vary during an MCMC analysis (\opt{fix\_relrates}=\optval{False}) or are to be frozen at the values specified by \opt{relrates} (\opt{fix\_relrates}=\optval{True}). The values \optval{True} and \optval{False} are known to Python and should not be surrounded by quotes (note also that case is important: typing \code{true} or \code{TRUE} will generate a ``not defined'' error message from Python).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% A basic analysis %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -270,8 +302,7 @@ Create a new, empty directory (a.k.a. folder) in which to experiment. Copy the f
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{The {\em basic.py} script}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Create a new (plain text\footnote{It is important to save the file using plain text format. Most word processing programs, such as \trademark{Microsoft} \trademark{Word}, save files by default in a format that contains a lot of extra, proprietary information. All such programs have the option to save the file as plain text. It is best to create Python scripts using an editor that {\em only} saves files as plain text. Examples (for \trademark{Windows}) include Notepad++ and Pythonwin (or the simple Notepad program that comes with \trademark{Windows}). For Macs, Text Wrangler or BBEdit are good choices.\\Python comes with its own editor, named Idle, that is also a good (if slightly sluggish) choice.
-jEdit (\url{http://www.jedit.org/}) is a Java-Based text editor that works well on all platforms.}) file in the folder (which should contain only the file \pathname{green.nex}). Name the new file \pathname{basic.py} and type the following lines into the file:
+Create a new (plain text\footnote{It is important to save the file using plain text format. Most word processing programs, such as \trademark{Microsoft} \trademark{Word}, save files by default in a format that contains a lot of extra, proprietary information. All such programs have the option to save the file as plain text. It is best to create Python scripts using an editor that {\em only} saves files as plain text. Examples (for \trademark{Windows}) include Notepad++ and Pythonwin (or the simple Notepad program that comes with \trademark{Windows}). For Macs, Text Wrangler or BBEdit are good choices. Python comes with its own editor, named Idle, that is also a good (if slightly sluggish) choice. jEdit (\url{http://www.jedit.org/}) is a Java-Based text editor that works well on all platforms.}) file in the folder (which should contain only the file \pathname{green.nex}). Name the new file \pathname{basic.py} and type (or copy/paste) the following lines into the file:
 \begin{verbatim}
 from phycas import *
 mcmc.data_source = 'green.nex'
@@ -340,7 +371,7 @@ mcmc.ncycles = 2000
 \end{verbatim}
 The option \opt{ncycles} determines the length of the MCMC run. Cycles in Phycas are {\em not} the same as generations in MrBayes. About two orders of magnitude {\em fewer} Phycas cycles are needed than MrBayes generations, so a 2000 cycle Phycas run corresponds (roughly) to a 200,000 generation MrBayes run. This does not mean that Phycas runs faster (or slower) than MrBayes; it simply means that Phycas does more work during a single ``cycle'' than MrBayes does in one ``generation.''\footnote
 %
-{To compare the speed of MrBayes with Phycas, you should compare the time it takes, on average, to calculate the likelihood, which is the most computationally expensive task either program performs. Phycas reports this average value at the end of a run. MrBayes computes the likelihood roughly one time per generation. Also, be sure to compare the two programs under the same model and on the same dataset and with the same computer!}
+{To compare the speed of MrBayes with Phycas, you should compare the time it takes, on average, to calculate the likelihood, which is the most computationally expensive task either program performs. Phycas reports this average value at the end of a run. MrBayes computes the likelihood roughly one time per generation if you specify \opt{mcmcp nrun=1 nchain=1}. Also, be sure to compare the two programs under the same model and on the same dataset and with the same computer!}
 \end{samepage}
 
 \begin{samepage}
@@ -371,7 +402,7 @@ to save the current model settings to a variable named \code{m1}\footnote
 . After this point, you could make changes to \cmd{model} and conduct various analyses. 
 It is unlikely that you will need to do this under ordinary circumstances (until we implement partitioned or mixture models).
 We point it out only because typing \code{model()} by itself will appear to do nothing and thus might be confusing given the behavior of most Phycas commands.
-Similarly the \code{randomtrees()} invocation returns a \code{TreeCollection} that holds a set of simulate trees (and does not produce visible output).
+Similarly the \code{randomtrees()} invocation returns a \code{TreeCollection} that holds a set of simulated trees (and does not produce visible output).
 \end{samepage}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -491,14 +522,14 @@ The setting \opt{trees} specifies the name of the tree file to be analyzed. Here
 \begin{verbatim}
 sumt.out.trees.prefix = 'trees'
 \end{verbatim}
-The setting \opt{out.trees.prefix} specifies the prefix used to create file names for a tree file (prefix + \pathname{.tre}) and a pdf file (prefix + \pathname{.pdf}). Both files will contain the same trees, but the trees in the pdf file are graphically represented whereas those in the tree file are in the form of newick (nested parentheses) tree descriptions. The first tree in each file is the 50\% majority-rule consensus tree, followed by all distinct tree topologies sampled during the course of the MCMC analysis. The graphical versions in the pdf file have edge lengths drawn proportional to their posterior means and with posterior probability support values shown above each edge. With the exception of the majority rule consensus tree, the titles of trees reflect their frequency amongst the samples. 
+The setting \opt{out.trees.prefix} specifies the prefix used to create file names for a tree file (prefix + \pathname{.tre}) and a pdf file (prefix + \pathname{.pdf}). Both files will contain the same trees, but the trees in the pdf file are graphically represented whereas those in the tree file are in the form of newick (nested parentheses) tree descriptions. The first tree in each file is the 50\% majority-rule consensus tree, followed by all distinct tree topologies sampled during the course of the MCMC analysis. The graphical versions in the pdf file have edge lengths drawn proportional to their posterior means and with posterior probability support values shown above each edge. With the exception of the majority rule consensus tree, the titles of trees reflect their frequency in the samples. 
 \end{samepage}
 
 \begin{samepage}
 \begin{verbatim}
 sumt.out.splits.prefix = 'splits'
 \end{verbatim}
-The setting \opt{out.splits.prefix} specifies the prefix used to create a file name for a pdf file containing two plots. The first plot in the file is similar to an AWTY (\url{http://king2.scs.fsu.edu/CEBProjects/awty/awty_start.php}) cumulative plot. It shows the split posterior probability calculated at evenly-spaced points throughout the MCMC run (as if the MCMC run were stopped and split posteriors computed at that point in the run). This kind of plot gives you information about whether the Markov chain converged with respect to split posteriors. (Often, when plots of log-likelihoods or model parameters show apparent convergence, split posteriors are still changing, making this type of plot a better indicator of convergence.) This first plot is not identical to an AWTY cumulative plot. The most striking difference is the fact that the lines plotted all originate at zero (AWTY does not plot these lines). Also, in AWTY the x-axis is labeled in terms of generations, whereas the Phycas equivalent labels the x-axis in terms of samples. 
+The setting \opt{out.splits.prefix} specifies the prefix used to create a file name for a pdf file containing two plots. The first plot in the file is similar to an AWTY \citep[][\url{http://king2.scs.fsu.edu/CEBProjects/awty/awty_start.php}]{Nylander:2008p471} cumulative plot. It shows the split posterior probability calculated at evenly-spaced points throughout the MCMC run (as if the MCMC run were stopped and split posteriors computed at that point in the run). This kind of plot gives you information about whether the Markov chain converged with respect to split posteriors. (Often, when plots of log-likelihoods or model parameters show apparent convergence, split posteriors are still changing, making this type of plot a better indicator of convergence.) This first plot is not identical to an AWTY cumulative plot. The most striking difference is the fact that the lines plotted all originate at zero (AWTY does not plot these lines). Also, in AWTY the x-axis is labeled in terms of generations, whereas the Phycas equivalent labels the x-axis in terms of samples. 
 
 The second plot in this file shows split sojourns. A split sojourn is a sequence of successive samples in which the split is present in the sampled tree, preceded and followed by an absense of the split. The number and duration of split sojourns gives an indication of how well the Markov chain is mixing, and this plot shows the results graphically. Neither plot in this file shows results for trivial splits (the split separating a single taxon from all other taxa; such splits are always present and are thus guaranteed to have split posterior 1.0) or for splits that were present in every sample (these are not useful from the standpoint of assessing convergence or mixing, except that poor mixing might be indicated if very few splits are plotted). See \citet{LewisLewis2005} for an example of the use of split sojourns to assess convergence. 
 \end{samepage}
@@ -569,7 +600,7 @@ d.sample()
 11.923011659940444
 \end{verbatim}
 %
-This can be used to get a feel for typical values generated from a distribution. To generate 10 values from a Gamma(0.5, 4.0) distribution, you can use a Python for loop:
+This can be used to get a feel for typical values generated from a distribution. To generate 10 values from a Gamma(0.5, 4.0) distribution, you can use a Python \cmd{for} loop:
 %
 \begin{verbatim}
 d = ProbDist.Gamma(0.5, 4.0)
@@ -946,12 +977,12 @@ To use the polytomy prior in an analysis, be sure that \opt{allow\_polytomies} a
 
 The example \pathname{$<$phycas install directory$>$/phycas/Examples/Paradox/Paradox.py} shows a complete example of an analysis using the polytomy prior. If executed, this example script will recreate the analysis presented in Figure 4 of the \citet{LewisHolderHolsinger2005} paper.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Marginal Likelihoods}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-New in version 1.1. Phycas offers several ways of estimating marginal (model) likelihoods. The marginal likelihood represents the average fit of the model to the data (as measured by the likelihood), where the average is a weighted average over all parameter values, the weights being provided by the joint prior distribution. If you initiate an MCMC analysis using the \cmd{mcmc} command, Phycas reports the marginal likelihood using the well-known harmonic mean method introduced by \citet{NewtonRaftery1994}. The {\em harmonic mean method} is widely known to overestimate the marginal likelihood, not penalizing models enough for having extra parameters that do not substantially increase the overall fit of the model. Phycas can use two alternatives to the harmonic mean method --- {\em thermodynamic integration} \citep{LartillotPhillippe2006} (also known as path sampling), and {\em steppingstone sampling} \citep{XieLewisFanKuoChen2009} --- but only if the MCMC analysis is conducted using the \cmd{ps} command. The path sampling (PS) and steppingstone sampling (SS) methods both require running a special MCMC analysis that explores a series of {\em power posterior} distributions. The power posterior is proportional to $L(\theta)^\beta p(\theta)$, where $L(\theta)$ is the likelihood, $p(\theta)$ is the prior and $\beta$ is the power. In PS or SS, $\beta$ is slowly decreased from 1 (posterior distribution) to 0 (prior distribution) in small steps. The number of $\beta$ values used is specified by \opt{ps.nbetavals} and the minimum and maximum $\beta$ values are set using \opt{ps.minbeta} and \opt{maxbeta} (it is best to leave these set to their default values of 0 and 1, respectively). \citet{XieLewisFanKuoChen2009} found that choosing $\beta$ values that are not equally spaced along the path from 1 to 0 substantially improves the efficiency of both PS and SS. Best practice appears to place most $\beta$ values close to 0. Phycas uses evenly-spaced quantiles of a Beta($a$,$b$) distribution to choose $\beta$ values, where the two shape parameters of the Beta distribution, $a$ and $b$, are specified as \opt{ps.shape1} and \opt{ps.shape2}, respectively. By default, \opt{ps.shape1} is 0.3 and \opt{ps.shape2} is 1.0. When the command \code{ps()} is invoked, an MCMC analysis is run for each of the \opt{ps.nbetavals} values of $\beta$. The current settings of the \cmd{mcmc} command are used for each value of $\beta$. The \opt{mcmc.burnin} setting governs only the initial burn-in period; there is no separate burnin between successive values of $\beta$. At the end of the run, Phycas will report the log of the marginal likelihood estimated using both the PS and SS methods.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Marginal Likelihoods} \label{marglike} %%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Phycas offers several ways of estimating marginal (model) likelihoods. The marginal likelihood represents the average fit of the model to the data (as measured by the likelihood), where the average is a weighted average over all parameter values, the weights being provided by the joint prior distribution. If you initiate an MCMC analysis using the \cmd{mcmc} command, Phycas reports the marginal likelihood using the well-known harmonic mean method introduced by \citet{NewtonRaftery1994}. The {\em harmonic mean method} is widely known to overestimate the marginal likelihood, not penalizing models enough for having extra parameters that do not substantially increase the overall fit of the model. Phycas can use two alternatives to the harmonic mean method --- {\em thermodynamic integration} \citep{LartillotPhillippe2006} (also known as path sampling), and {\em steppingstone sampling} \citep{XieLewisFanKuoChen2009} --- but only if the MCMC analysis is conducted using the \cmd{ps} command. The path sampling (PS) and steppingstone sampling (SS) methods both require running a special MCMC analysis that explores a series of {\em power posterior} distributions. The power posterior is proportional to $L(\theta)^\beta p(\theta)$, where $L(\theta)$ is the likelihood, $p(\theta)$ is the prior and $\beta$ is the power. In PS or SS, $\beta$ is slowly decreased from 1 (posterior distribution) to 0 (prior distribution) in small steps. The number of $\beta$ values used is specified by \opt{ps.nbetavals} and the minimum and maximum $\beta$ values are set using \opt{ps.minbeta} and \opt{maxbeta} (it is best to leave these set to their default values of 0 and 1, respectively). \citet{XieLewisFanKuoChen2009} found that choosing $\beta$ values that are not equally spaced along the path from 1 to 0 substantially improves the efficiency of both PS and SS. Best practice appears to place most $\beta$ values close to 0. Phycas uses evenly-spaced quantiles of a Beta($a$,$b$) distribution to choose $\beta$ values, where the two shape parameters of the Beta distribution, $a$ and $b$, are specified as \opt{ps.shape1} and \opt{ps.shape2}, respectively. By default, \opt{ps.shape1} is 0.3 and \opt{ps.shape2} is 1.0. When the command \code{ps()} is invoked, an MCMC analysis is run for each of the \opt{ps.nbetavals} values of $\beta$. The current settings of the \cmd{mcmc} command are used for each value of $\beta$. The \opt{mcmc.burnin} setting governs only the initial burn-in period; there is no separate burnin between successive values of $\beta$. At the end of the run, Phycas will report the log of the marginal likelihood estimated using both the PS and SS methods.
 
-The example \pathname{$<$phycas install directory$>$/phycas/Examples/PathSampling/PathSampling.py} shows a complete example of an analysis using the PS command to estimate the marginal likelihood of the GTR+G model on a 10-taxon {\em rbc}L data set.
+The example \pathname{$<$phycas install directory$>$/phycas/Examples/Steppingstone/Steppingstone.py} shows a complete example of the use of path/steppingstone sampling for marginal likelihood estimation. This example recreates part of Figure 10 in the \citet{XieLewisFanKuoChen2009} paper.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% Design principles %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1059,7 +1090,7 @@ Visit the Download section of the Phycas web site \url{http://phycas.org/} and d
 
 \subsubsection{Locating the ``Phycas Installation Folder'' on a Mac} \label{subsubsec:installfoldermac}
 
-The ``Phycas Installation Folder'' that is mentioned in the tutorial is inside the \phycasapp\ application bundle. MacOS tries to make it difficult for you to see inside application bundles, but clicking on the \phycasapp\ bundle while pressing the \keycmd{Ctrl} will produce a menu, and choosing the \menu{Show Package Contents} item on that menu will allow you to view the contents of the application bundle folder. Once inside \phycasapp, double-click on the \pathname{Contents} folder, then the \pathname{Resources} folder to find the ``Phycas Installation Folder.''
+The ``Phycas Installation Folder'' that is mentioned in the tutorial is inside the \phycasapp\ application bundle. MacOS tries to make it difficult for you to see inside application bundles, but clicking on the \phycasapp\ bundle while pressing the \keycmd{Ctrl} will produce a menu, and choosing the \menu{Show Package Contents} item on that menu will allow you to view the contents of the application bundle folder. Once inside \phycasapp, double-click on the \pathname{Contents} folder, then the \pathname{Resources} folder to find the Phycas Installation folder, which is simply named \path{phycas}.
 
 %
 % Figure "phycasdmg"

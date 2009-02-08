@@ -6,7 +6,8 @@ for k, v in o.iteritems():
         c.append((k,v))
 c.sort()
 for cmd in c:
-    cmd[1].manual()
+    if not cmd[1].hidden():
+        cmd[1].manual()
 
 o = open("cmdsettings.tex", "w")
 o.write("""This section lists all currently available Phycas settings. 
@@ -15,8 +16,6 @@ Please do not ask for help with undocumented settings: we will document them her
 """)
 
 for cmd in c:
-    n = cmd[0].lower()
-    o.write("""
-\subsection{Settings used by \code{%s}}\label{subsec:%ssettings}
-\input{%s}
-""" % (n,n,n))
+    if not cmd[1].hidden():
+        n = cmd[0].lower()
+        o.write("\n\\subsection{Settings used by \\code{%s}}\\label{subsec:%ssettings}\n\\input{%s}" % (n,n,n))

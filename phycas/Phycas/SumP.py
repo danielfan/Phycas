@@ -21,7 +21,7 @@ class SumP(PhycasCommand):
         in the list of classes displayed when users type help. Delete this function, or
         change its return value to False, when it is ready to be advertised.
         """
-        return True
+        return False
         
     hidden = staticmethod(hidden)
 

@@ -721,7 +721,8 @@ class PhycasCommandOutputOptions(object):
         out.write('\item[\\bftt  %s.level] Controls the amount of output (verbosity) of the command (default: OutFilter.%s)\n' % (pref, OutFilter.to_str(self.level)))
         for n in self.__dict__["_help_order"]:
             a = self.__dict__[n]
-            a._write_latex_item(out, pref)
+            which = '%s.%s' % (pref,n)
+            a._write_latex_item(out, which)
         out.write('\\end{description}\n')
 
     def _current_str_list(self, pref=""):
@@ -1129,11 +1130,11 @@ class PhycasManualGenerator(object):
         f = open(self.command.help.cmd_name+'.tex', 'w')
         opts = self.command.__dict__["_options"]
         if opts:
-            f.write("Input options:\\\\")
+            f.write("\subsubsection{Input options:}")
             opts._write_latex(f)
         out = self.command.__dict__['out']
         if out:
-            f.write("Output options:\\\\")
+            f.write("\subsubsection{Output options:}")
             out._write_latex(f, 'out')
         f.close()
 
