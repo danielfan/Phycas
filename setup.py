@@ -8,8 +8,8 @@ build_number_from_svn_info = True
 # regular expression search of svn output fails to find pattern 'Revision: (\d+)'
 svn_revision = 902
 
-phycas_major = '1'
-phycas_minor = '0'
+# Get version from phycasver.txt file
+phycas_major, phycas_minor = tuple(open('phycasver.txt','r').read().split('.'))
 
 boost_target_dir = 'boost_1_34_0'
 
