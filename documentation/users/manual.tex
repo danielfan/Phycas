@@ -195,9 +195,10 @@ lower case versions of the phycas command names.
 
 The currently implemented Phycas commands are:
   
-like                           ps
-mcmc                           randomtree
-model                          sim
+like                           randomtree
+mcmc                           sim
+model                          sump
+ps                             sumt
                                
 
 Use <command_name>.help to see the detailed help for each command. So,
@@ -205,8 +206,6 @@ Use <command_name>.help to see the detailed help for each command. So,
 sumt.help
 
 will display the help information for the sumt command object.
-
->>> 
 \end{verbatim}
 
 Ordinarily, typing \cmd{help} will invoke the {\em Python} help system; however, note that after Phycas has been imported into Python, typing \cmd{help} now invokes the {\em Phycas} help system. You can still access Python's interactive help by typing \cmd{python\_help()}\footnote{If you do try typing \cmd{python\_help()}, note that you can quit the Python help system (and return to using Phycas) by typing \cmd{quit} at the \code{help>} prompt}. Hopefully, the output is self-explanatory, so let's try what the output of the \cmd{help} command suggests: obtaining help for a particular command. Type the following at the Python prompt:
