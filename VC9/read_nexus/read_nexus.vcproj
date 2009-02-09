@@ -240,6 +240,18 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\phycas\src\nxs_file_path.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\ndev\branches\v2.1\ncl\nxscxxdiscretematrix.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\phycas_nexus_reader.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\phycas\src\probability_distribution.cpp"
 				>
 			</File>

@@ -35,7 +35,7 @@ void split(const ORIG_CONTAINER &origContainer, T splitAtVal, std::list<ORIG_CON
 		return;	//empty container sent
 	OrigCIt copyToIt;
 	do	{
-		copyToIt = find(begIt, endIt, splitAtVal);
+		copyToIt = std::find(begIt, endIt, splitAtVal);
 		if (begIt == copyToIt)	
 			outList->push_back(ORIG_CONTAINER());
 		else
@@ -43,7 +43,8 @@ void split(const ORIG_CONTAINER &origContainer, T splitAtVal, std::list<ORIG_CON
 			outList->push_back(ORIG_CONTAINER(begIt,copyToIt));
 			begIt = copyToIt;
 			}
-		++begIt;
+		if (begIt != endIt)	//POL-31Dec2008
+			++begIt;
 		}
 	while (copyToIt != endIt);
 	}

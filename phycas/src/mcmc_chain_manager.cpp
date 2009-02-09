@@ -489,7 +489,11 @@ void MCMCChainManager::finalize()
 	ChainManagerWkPtr wptr(shared_from_this());
 	for (MCMCUpdaterIter uit = all_updaters.begin(); uit != all_updaters.end(); ++uit)
 		{
+		//std::string nm = (*uit)->getName();
+		//unsigned uc1 = (unsigned)(*uit).use_count();
 		(*uit)->setChainManager(wptr);
+		//unsigned uc2 = (unsigned)(*uit).use_count();
+		//std::cerr << ">>>> updater " << nm << " (" << uc1 << " --> " << uc2 << ")" << std::endl;
 		}
 #endif
 	

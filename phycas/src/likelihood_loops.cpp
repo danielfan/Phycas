@@ -159,7 +159,7 @@ void TreeLikelihood::calcPMatTranspose(
 	// For each rate category, transpose the num_states x num_states portion of the matrices
 	// and fill in the ambiguity codes by summing columns
 	const unsigned nPartialAmbigs = (unsigned)stateListPosVec.size();
-	const unsigned int * const stateListPosArr = &stateListPosVec[0]; //PELIGROSO
+	//POL-31Dec2008 const unsigned int * const stateListPosArr = &stateListPosVec[0]; //PELIGROSO
 	const VecStateList stateListVec = state_list;
 	const int8_t * const stateListArr = &stateListVec[0]; //PELIGROSO
 	for (unsigned rate = 0; rate < num_rates; ++rate)
@@ -171,6 +171,7 @@ void TreeLikelihood::calcPMatTranspose(
 		++currPMatRowIndex;
 		for (unsigned ambigCode = 0; ambigCode < nPartialAmbigs; ++ambigCode, ++currPMatRowIndex)
 			{
+			const unsigned int * const stateListPosArr = &stateListPosVec[0]; //PELIGROSO //POL-31Dec2008
 			unsigned indexIntoStateList = stateListPosArr[ambigCode];
 			const unsigned nObservedStates = stateListArr[indexIntoStateList++];
 			unsigned currObservedState = stateListArr[indexIntoStateList++];
