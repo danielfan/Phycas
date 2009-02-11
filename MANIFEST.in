@@ -3,6 +3,8 @@ include CHANGES
 include INSTALL
 
 include Jamroot
+include svnver.py
+include phycasver.txt
 
 include VC/VC.sln
 include VC/VC.vcproj
@@ -22,6 +24,8 @@ include VC/test/test.cpp
 
 include phycas/Examples/Simplest/Simplest.py
 include phycas/Examples/Simplest/green.nex
+include phycas/Examples/Steppingstone/Steppingstone.py
+include phycas/Examples/Steppingstone/green.nex
 include phycas/Examples/Paradox/Paradox.py
 include phycas/Examples/Paradox/ShoupLewis.nex
 
@@ -50,8 +54,18 @@ recursive-include phycas/Tests/SplitTest/reference_output *
 recursive-include phycas/Tests/PDFTree *.py
 recursive-include phycas/Tests/PDFTree/reference_output *
 
-recursive-include phycas/Tests/Sumt *.py
+recursive-include phycas/Tests/LikelihoodTest *.py
+recursive-include phycas/Tests/LikelihoodTest/reference_output *
+recursive-include phycas/Tests/LikelihoodTest/acceptable_diff *
+
+recursive-include phycas/Tests/PathSampling *.py
+recursive-include phycas/Tests/PathSampling/reference_output *
+
+recursive-include phycas/Tests/Sumt *.py test.t
 recursive-include phycas/Tests/Sumt/reference_output *
+
+recursive-include phycas/Tests/Sump *.py test.p
+recursive-include phycas/Tests/Sump/reference_output *
 
 recursive-include phycas/src *.h *.hpp *.inl *.c *.cpp
 
