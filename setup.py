@@ -203,7 +203,7 @@ setupArgs = {
      'phycas.Phylogeny',
      'phycas.ReadNexus',
      'phycas.wxPhycas',
-     'phycas.Utilites',
+     'phycas.Utilities',
      ],
     'long_description':phycas_description,
     'platforms':['Linux', 'MacOS X', 'Windows'],
