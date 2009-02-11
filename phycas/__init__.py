@@ -139,7 +139,6 @@ try:
     _phycas_revision = open(svnverpath, 'r').read()
 except:
     print 'Warning: could not find the %s file in this directory:\n  %s' % (svnverfile,svnverdir)
-#_phycas_revision = "PHYCAS_SVN_REVISION_NUMBER_HERE"
 
 #from Phycas import Phycas
 if not _user_ini_checked:
