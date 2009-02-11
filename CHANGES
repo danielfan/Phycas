@@ -1,9 +1,14 @@
-This is the changes.txt file associated with the Python program Phycas
+This is the CHANGES file associated with the Python program Phycas
 Phycas can be obtained from http://www.phycas.org/
 
 ~~~~~~~~~~~~~~~~~ Release history (most recent first) ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Release 1.1.0 (?)
+Release 1.1 (11-Feb-2009)
+- the subversion revision number for this release is 1020
+- added the ps command, which does path sampling (a.k.a. thermodynamic integration)
+  and steppingstone sampling (new method) for estimating marginal likelihood
+- added sump command, which currently computes just basic summary statistics given
+  a param file output from an mcmc or ps analysis
 - changed model.base_freqs and model.base_freq_param_prior to model.state_freqs 
   and model.state_freq_param_prior, respectively
 - added model.update_freqs_separately and model.state_freq_prior to allow joint
@@ -11,7 +16,8 @@ Release 1.1.0 (?)
   frequency parameter is updated separately by slice sampling (old way) and the
   model.state_freq_param_prior is applied to each one individually; if False, 
   the state frequencies are updated jointly using a Metropolis move and the joint
-  prior model.state_freq_prior is applied to the entire vector of state freqs.
+  prior model.state_freq_prior is applied to the entire vector of state freqs
+- two memory leaks were fixed prior to this release (see "leaky" bug in BUGS file).
 
 Release 1.0.0 (5-Aug-2008)
 This was the first official release at the Woods Hole Molecular Evolution Workshop.
