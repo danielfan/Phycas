@@ -3,6 +3,7 @@ include CHANGES
 include INSTALL
 
 include Jamroot
+include build.sh
 include svnver.py
 include phycasver.txt
 
