@@ -11,6 +11,7 @@ Setting environmental variables
 You will need to set some environmental variables before building Phycas using this 
 Visual Studio solution:
 
+NCL_ROOT=C:\Synchronized\Projects\ncldev\branches\v2.1
 BOOST_ROOT=C:\boost_1_34_0
 PYTHON_ROOT=C:\Python25
 PYTHONPATH=C:\Synchronized\Projects\phycasdev_trunk
