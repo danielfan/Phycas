@@ -36,8 +36,30 @@ choose Debug version and then build just the "python" project (this is the only 
 Be sure to add C:\Python-2.6.1\PCbuild to the PATH environmental variable so that python_d.exe can
 be found when it is invoked.
 
-To use Tkinter in debug mode, follow the directions for building the _tkinter subproject in 
-C:\Python-2.6.1\PCbuild\readme.txt.
+Building Tcl/Tk into Python debug build
+---------------------------------------
+To use Tkinter in debug mode, tried to follow the directions for building the _tkinter subproject in 
+C:\Python-2.6.1\PCbuild\readme.txt, but a lot seems to have changed. Here is a synopsis of all I had
+to do to compile the _tkinter subproject in C:\Python-2.6.1\PCbuild\pcbuild.sln:
+
+Download tcl856-src.zip and tk856-src.zip from http://www.tcl.tk/software/tcltk/download.html
+Extract files from both zip archives to C:\tcl8.5.6 and C:\tk8.5.6
+Run C:\tcl8.5.6\win\buildall.vc.bat debug
+    I had to edit buildall.vc.bat first to specify correct location for vcvars32.bat
+    I got 1 error (could not find hcrtf) that appears to be related to creating help/documentation
+Run C:\tk8.5.6\win\buildall.vc.bat debug
+    I had to edit buildall.vc.bat first to specify correct location for vcvars32.bat
+    Before running, specify "set TCLDIR=..\..\tcl8.5.6"
+    I got 1 error (could not find hcrtf) that appears to be related to creating help/documentation
+Specify the following for additional include directories in the _tkinter project:
+    C:\tcl8.5.6\Generic;C:\tk8.5.6\Generic;C:\tk8.5.6\xlib
+Specify the following for additional library directories in the _tkinter project:
+    C:\tcl8.5.6\win\Debug_VC9;C:\tk8.5.6\win\Debug_VC9;
+Specify the following for additional dependencies in the linker section of the _tkinter project:
+    tcl85g.lib tk85g.lib
+Build the python project again to regenerate python_d.exe
+
+Compile the _tkinter project in Python-2.6.1\PCBuild folder\sln
 
 Building the Debug version of the Boost Python DLL
 --------------------------------------------------

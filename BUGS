@@ -20,7 +20,7 @@ if (ptr) DeleteThreeDArray<T>(ptr);
 
 The second memory leak was much harder to find and fix. First of all, the Tree destructor
 (in basic_tree.cpp) was popping nodes off the internalNodeStorage and tipStorage stacks
-but not actually deleting the nodes. This meant that not only TreeNode objects were
+but not actually deleting the nodes. This meant that not only were TreeNode objects
 not being deleted, but the large TipData and even larger InternalData structures that
 were stored in these TreeNode objects were also not getting deleted. To fix this,
 "delete nd" statements were added to the Tree destructor, but this led to a complication:
@@ -48,10 +48,10 @@ Tree destructor. TreeNode objects that have been used to compute likelihoods hav
 either TipData or InternalData objects attached to them, and the InternalData objects
 each have (or had, I should say) a reference to the CondLikelihoodStorage data member 
 (cla_pool) of the TreeLikelihood class, so when TreeLikelihood was deleted,
-these reference got hosed. Then, when Tree::~Tree was called, it began deleting nodes
+these references got hosed. Then, when Tree::~Tree was called, it began deleting nodes
 and the internal nodes began deleting their InternalData structures, which in turn
-began trying to stuff their CondLikelihood objects back into cla_pool...and therein
-lies the problem. To fix this, TreeLikelihood creates a new CondLikelihoodStorage
+began trying to stuff their CondLikelihood objects back into cla_pool, and...you see
+the problem. To fix this, TreeLikelihood creates a new CondLikelihoodStorage
 object in its constructor:
 
 cla_pool = CondLikelihoodStorageShPtr(new CondLikelihoodStorage());
