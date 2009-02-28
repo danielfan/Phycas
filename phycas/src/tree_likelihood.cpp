@@ -148,7 +148,7 @@ TreeLikelihood::TreeLikelihood(
 #endif
 	mod->recalcRatesAndProbs(rate_means, rate_probs);
 	underflow_policy.setTriggerSensitivity(50);
-	underflow_policy.setCorrectToValue(10000.0);
+	underflow_policy.setCorrectToValue(1.0);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

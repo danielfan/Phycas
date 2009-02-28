@@ -1,0 +1,9 @@
+Release checklist:
+
+In trunk/phycas/__init__.py:
+	set release_version = True
+	
+Edit trunk/phycasver.txt to reflect the new version number
+
+
+

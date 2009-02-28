@@ -54,8 +54,7 @@ class NaiveUnderflowPolicy
 		void						setDimensions(unsigned np, unsigned nr, unsigned ns) {}
 
 		void						twoTips(CondLikelihood & cond_like) const {}
-		void						oneTip(CondLikelihood & cond_like, const CondLikelihood & other_cond_like, const CountVectorType & counts) const {}
-		void						noTips(CondLikelihood & cond_like, const CondLikelihood & left_cond_like, const CondLikelihood & right_cond_like, const CountVectorType & counts) const {}
+		void						check(CondLikelihood & cond_like, const CondLikelihood & left_cond_like, const CondLikelihood & right_cond_like, const CountVectorType & counts, bool polytomy) const {}
 
 		void						correctSiteLike(double & site_like, unsigned pat, ConstCondLikelihoodShPtr condlike_shptr) const {}
 		void						correctLnLike(double & ln_like, ConstCondLikelihoodShPtr condlike_shptr) const {}
@@ -74,8 +73,7 @@ class SimpleUnderflowPolicy
 		void						setDimensions(unsigned np, unsigned nr, unsigned ns);
 
 		void						twoTips(CondLikelihood & cond_like) const;
-		void						oneTip(CondLikelihood & cond_like, const CondLikelihood & other_cond_like, const CountVectorType & counts) const;
-		void						noTips(CondLikelihood & cond_like, const CondLikelihood & left_cond_like, const CondLikelihood & right_cond_like, const CountVectorType & counts) const;
+		void						check(CondLikelihood & cond_like, const CondLikelihood & left_cond_like, const CondLikelihood & right_cond_like, const CountVectorType & counts, bool polytomy) const;
 
 		void						correctSiteLike(double & site_like, unsigned pat, ConstCondLikelihoodShPtr condlike_shptr) const;
 		void						correctLnLike(double & ln_like, ConstCondLikelihoodShPtr condlike_shptr) const;
@@ -90,6 +88,7 @@ class SimpleUnderflowPolicy
 		double						underflow_max_value;	/**< Maximum of the `num_states' conditional likelihoods for a given rate and pattern after underflow correction */
 	};
 
+#if 0	// this class will need some work if it is ever used again
 /*----------------------------------------------------------------------------------------------------------------------
 |	Underflow policy for use with TreeLikelihood class that keeps track of underflow correction factors for each data
 |	pattern. This policy would only be needed if individual site likelihoods are needed. It adds a vector the length of
@@ -108,6 +107,7 @@ class PatternSpecificUnderflowPolicy : public SimpleUnderflowPolicy
 		void						correctSiteLike(double & site_like, unsigned pat, ConstCondLikelihoodShPtr condlike_shptr) const;
 		void						correctLnLike(double & ln_like, ConstCondLikelihoodShPtr condlike_shptr) const;
 	};
+#endif
 
 } // namespace phycas
 

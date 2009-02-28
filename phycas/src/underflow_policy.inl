@@ -97,6 +97,24 @@ inline void SimpleUnderflowPolicy::correctSiteLike(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Obtains sum of underflow correction for all patterns in `cond_like', then subtracts that value from the 
+|	log-likelihood `ln_like'.
+*/
+inline void SimpleUnderflowPolicy::correctLnLike(
+  double & ln_like,							/**< is the log-likelihood to correct for underflow */
+  ConstCondLikelihoodShPtr condlike_shptr)	/**< is the conditional likelihood array of the likelihood root node */
+  const
+	{
+    if (num_patterns > 0)
+        {
+	    PHYCAS_ASSERT(condlike_shptr);
+	    UnderflowType ufsum = condlike_shptr->getUFSum();
+	    ln_like -= (double)ufsum;
+        }
+	}
+
+#if 0	// the PatternSpecificUnderflowPolicy class will need some work if it is ever used again
+/*----------------------------------------------------------------------------------------------------------------------
 |	Obtains a pointer to the underflow array for `cond_like', then subtracts the value stored in that underflow array 
 |	for pattern `pat' from the site likelihood `site_like'.
 */
@@ -116,23 +134,6 @@ inline void PatternSpecificUnderflowPolicy::correctSiteLike(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Obtains sum of underflow correction for all patterns in `cond_like', then subtracts that value from the 
-|	log-likelihood `ln_like'.
-*/
-inline void SimpleUnderflowPolicy::correctLnLike(
-  double & ln_like,							/**< is the log-likelihood to correct for underflow */
-  ConstCondLikelihoodShPtr condlike_shptr)	/**< is the conditional likelihood array of the likelihood root node */
-  const
-	{
-    if (num_patterns > 0)
-        {
-	    PHYCAS_ASSERT(condlike_shptr);
-	    UnderflowType ufsum = condlike_shptr->getUFSum();
-	    ln_like -= (double)ufsum;
-        }
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
 |	Nothing needs to be done to the overall log-likelihood because the correction takes place at the site log-likelihood
 |	stage, so this method is a no-op.
 */
@@ -142,6 +143,7 @@ inline void PatternSpecificUnderflowPolicy::correctLnLike(
   const
 	{
 	}
+#endif 
 
 } // namespace phycas
 

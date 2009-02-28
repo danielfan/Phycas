@@ -18,6 +18,8 @@
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #define DO_UNDERFLOW_POLICY	
+//#undef DO_UNDERFLOW_POLICY	
+
 //#if defined(_MSC_VER)
 //#	pragma warning(error : 4710) // reports functions not inlined as errors
 //#endif
@@ -321,7 +323,7 @@ void TreeLikelihood::calcCLAOneTip(
 		} // loop over rates
 
 #if defined(DO_UNDERFLOW_POLICY)
-	underflow_policy.oneTip(condLike, rightCondLike, pattern_counts);
+	underflow_policy.check(condLike, rightCondLike, rightCondLike, pattern_counts, false);	// last argument is polytomy 
 #endif
 	}
 
@@ -495,7 +497,7 @@ void TreeLikelihood::calcCLANoTips(
 		}	// loop over rates
 
 #if defined(DO_UNDERFLOW_POLICY)
-	underflow_policy.noTips(condLike, leftCondLike, rightCondLike, pattern_counts);
+	underflow_policy.check(condLike, leftCondLike, rightCondLike, pattern_counts, false);	// last argument is polytomy
 #endif
 	}
 	
@@ -513,14 +515,13 @@ void TreeLikelihood::conditionOnAdditionalTip(
 	const double * const * const * tipPMatricesTrans = tipData.getConstTransposedPMatrices();
 	const int8_t * tipStateCodes = tipData.getConstStateCodes();
 	
-	// conditional likelihood arrays are laid out as follows for DNA data:
-	//
-	// +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
-	// |   pattern 1   |               |               |               |               |
-	// +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
-	// | A | C | G | T | A | C | G | T | A | C | G | T | A | C | G | T | A | C | G | T |
-	// +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
-	//
+	//	+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+	//	|                            rate 1                             | ...
+	//	+---+---+---+---+---+---+---+---+---------------+---+---+---+---+
+	//	|   pattern 1   |   pattern 2   |      ...      |   pattern n   | ...
+	//	+---+---+---+---+---+---+---+---+---------------+---+---+---+---+
+	//	| A | C | G | T | A | C | G | T |      ...      | A | C | G | T | ...
+	//	+---+---+---+---+---+---+---+---+---------------+---+---+---+---+
 	for (unsigned r = 0; r < num_rates; ++r)
 		{
 		const double * const * const tipPMatrixT = tipPMatricesTrans[r];
@@ -531,7 +532,11 @@ void TreeLikelihood::conditionOnAdditionalTip(
 				*cla++ *= tipPMatT_pat[i];
 			}
 		}
-	//@POL need to deal with underflow here
+		
+#if defined(DO_UNDERFLOW_POLICY)
+	// Note: check() has 3 CondLikelihood & args, but we only need 1 of them, so provide condLike 3 times
+	underflow_policy.check(condLike, condLike, condLike, pattern_counts, true);	// last argument is polytomy
+#endif
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
@@ -548,14 +553,13 @@ void TreeLikelihood::conditionOnAdditionalInternal(
 	double * cla = condLike.getCLA();
 	const double * childCLA = childCondLike.getCLA();
 
-	// conditional likelihood arrays are laid out as follows for DNA data:
-	//
-	// +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
-	// |   pattern 1   |               |               |               |               |
-	// +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
-	// | A | C | G | T | A | C | G | T | A | C | G | T | A | C | G | T | A | C | G | T |
-	// +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
-	//
+	//	+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+	//	|                            rate 1                             | ...
+	//	+---+---+---+---+---+---+---+---+---------------+---+---+---+---+
+	//	|   pattern 1   |   pattern 2   |      ...      |   pattern n   | ...
+	//	+---+---+---+---+---+---+---+---+---------------+---+---+---+---+
+	//	| A | C | G | T | A | C | G | T |      ...      | A | C | G | T | ...
+	//	+---+---+---+---+---+---+---+---+---------------+---+---+---+---+
 	for (unsigned r = 0; r < num_rates; ++r)
 		{
 		const double * const * childPMatrix = childPMatrices[r];
@@ -571,13 +575,18 @@ void TreeLikelihood::conditionOnAdditionalInternal(
 				}
 			}
 		}
-	//@POL need to deal with underflow here
+		
+#if defined(DO_UNDERFLOW_POLICY)
+	// Note: check() has 3 CondLikelihood & args, but we only need 2 of them, so first 2 are same and 3rd represents child's cond. like
+	underflow_policy.check(condLike, condLike, childCondLike, pattern_counts, true);	// last argument is polytomy
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Called after neighboring conditional likelihood arrays are brought up-to-date.
-|	This function calculates the likelihood for each data pattern, as well as the total log-likelihood.
-|	The site-likelihoods are not stored.
+|	Called after neighboring conditional likelihood arrays are brought up-to-date. This function calculates the 
+|	likelihood for each data pattern, as well as the total log-likelihood. The site-likelihoods are not stored.
+|	The focal_neighbor of focal_edge is NULL if this function is called from TreeLikelihood::calcLnLFromNode (which is
+|	the usual situation).
 |
 |	Conditional likelihood arrays are laid out as follows for DNA data:
 |>
@@ -591,13 +600,13 @@ void TreeLikelihood::conditionOnAdditionalInternal(
 |>	
 */
 double TreeLikelihood::harvestLnL(
-   EdgeEndpoints & focal_edge)
+   EdgeEndpoints & focal_edge) /**< is a pair of TreeNode pointers, the first of which points to the likelihood root node and the second is usuall NULL */
 	{
 	// Get the focal node
 	TreeNode * focal_node = focal_edge.getFocalNode();
 	PHYCAS_ASSERT(focal_node != NULL);
 
-	// If the focal neighbor is NULL, let the parent of the focal node be the focal neighbor
+	// If the focal neighbor is NULL (the usual case), let the parent of the focal node be the focal neighbor
 	TreeNode * focal_neighbor = focal_edge.getFocalNeighbor();
 	if (focal_neighbor == NULL)
 		{

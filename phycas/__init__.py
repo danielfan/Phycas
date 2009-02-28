@@ -113,7 +113,7 @@ class Newick(object):
 # and immediately reload the module so that the new options would 
 # immediately take effect. Can PhycasCommand be modified to allow classes
 # that behave like Settings?
-release_version = True
+release_version = False
 help_double_space = True
 current_double_space = False
 current_follows_help = True
@@ -220,6 +220,12 @@ ps = PS()
 from Phycas.CPO import CPO
 cpo = CPO()
 
+def setMasterSeed(x):
+    r = ProbDist.Lot()
+    r.setSeed(x)
+    randomtree.rng = r
+    mcmc.rng = r
+
 def simpleOutputter(msg):
     print msg
 
@@ -264,5 +270,3 @@ Phycas is written by Paul O. Lewis, Mark Holder and David Swofford
 Phycas is distributed under the GNU Public License (see License file for more
 information).
 """ % (_phycas_revision,)
-
-
