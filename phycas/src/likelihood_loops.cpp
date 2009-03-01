@@ -628,6 +628,14 @@ double TreeLikelihood::harvestLnL(
 double TreeLikelihood::harvestLnLFromValidEdge(
    ConstEdgeEndpoints & focal_edge)	/**< is the edge containing the focal node that will serve as the likelihood root */	
 	{
+#if POLPY_NEWWAY
+#	if defined(DO_UNDERFLOW_POLICY)
+		std::cerr << "##### UNDERFLOW ON #####" << std::endl;
+#	else
+		std::cerr << "##### UNDERFLOW OFF #####" << std::endl;
+#	endif
+#endif
+
 	PHYCAS_ASSERT(focal_edge.getFocalNode() != NULL);
 	PHYCAS_ASSERT(focal_edge.getFocalNeighbor() != NULL);
 	const TreeNode * focalNeighbor = focal_edge.getFocalNeighbor();
