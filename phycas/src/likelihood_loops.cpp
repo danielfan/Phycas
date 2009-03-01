@@ -630,9 +630,9 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 	{
 #if POLPY_NEWWAY
 #	if defined(DO_UNDERFLOW_POLICY)
-		std::cerr << "##### UNDERFLOW ON #####" << std::endl;
+		//std::cerr << "##### UNDERFLOW ON #####" << std::endl;
 #	else
-		std::cerr << "##### UNDERFLOW OFF #####" << std::endl;
+		//std::cerr << "##### UNDERFLOW OFF #####" << std::endl;
 #	endif
 #endif
 
