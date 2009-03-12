@@ -33,6 +33,7 @@ data_all = [
             'Tests/doctestall.py',
             'Tests/runall.py',
             'Tests/Data/green.nex',
+            'Tests/Data/rbcL50.nex',
             'Tests/Data/nyldna4.nex',
             'Tests/Data/nyldna4-compressed.nex',
             #'Tests/ExplorePrior/__init__.py',
