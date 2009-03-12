@@ -8,6 +8,45 @@ Edit trunk/phycasver.txt to reflect the new version number
 Edit setup.py to add any files that need to be included in distributions 
 	(e.g. new Tests)
 	
-Build unix tarball:
-	python build_phycas_tarball.py
-
+Build unix source distribution:
+-------------------------------
+These instructions assume that ncl is in $HOME/ndev and phycas is in
+$HOME/pdev: i.e., I assume you did this at some point:
+	mkdir $HOME/ndev
+	cd $HOME/ndev
+	svn co https://ncl.svn.sourceforge.net/svnroot/ncl .
+	mkdir $HOME/pdev
+	cd $HOME/pdev
+	svn co https://phycas.svn.sourceforge.net/svnroot/phycas .
+	
+Make sure ncl directory is up-to-date:
+	cd $HOME/ndev
+	svn up
+	
+Make sure phycas directory is up-t0-date:
+	cd $HOME/pdev
+	svn up
+	
+Build and test phycas:
+	cd $HOME/pdev/trunk
+	./go.sh
+	cd phycas/Tests
+	python runall.py
+	python doctestall.py
+	
+Create ncl tarball:
+	Make a copy of the ncl source directory:
+		cp -R $HOME/ndev/branches/v2.2/ncl $HOME/ncl-2.2.414
+	Create a tarball of this copy:
+		cd $HOME
+		tar cvf ncl.tar ncl-2.2.414/*
+		
+Make sure $HOME/pdev/build.sh is accurate. If any changes are made, 
+	commit them and update phycas at the highest level
+	
+Create phycas tarball:
+	cd $HOME/pdev/trunk
+	python build_linux_source.py
+	
+Concatentate the two tarballs so that users don't have to separately download NCL:
+	TODO
