@@ -9,7 +9,7 @@ build_number_from_svn_info = True
 svn_revision = 902
 
 # Get version from phycasver.txt file
-phycas_major, phycas_minor = tuple(open('phycasver.txt','r').read().split('.'))
+phycas_major, phycas_minor, phycas_bugfix = tuple(open('phycasver.txt','r').read().split('.'))
 
 boost_target_dir = 'boost_1_34_0'
 
@@ -181,7 +181,7 @@ if build_number_from_svn_info:
         print '       Update at the highest level and try again.'
         sys.exit()
             
-phycas_full_version = phycas_major+'.'+phycas_minor+'.'+str(svn_revision)
+phycas_full_version = phycas_major+'.'+phycas_minor+'.'+phycas_bugfix+'.'+str(svn_revision)
 
 init_file_contents = open('./phycas/__init__.py', 'r').read()
 new_init_file_contents = init_file_contents.replace('PHYCAS_SVN_REVISION_NUMBER_HERE', str(svn_revision))
