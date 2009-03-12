@@ -74,4 +74,12 @@ Make sure pdev is up-to-date, then do this:
 	
 Creating Win32 version:
 -----------------------
-	TODO
+To create versions for different releases of Python, I normally just use different machines
+set up with the different Python versions (you are on your own if you want to create phycas
+versions targetting different python versions all within one machine!).
+
+svn up both ndev and pdev directories
+
+Be sure these environmental variables are set (here are my settings):
+	BOOST_ROOT=C:\Users\Administrator\Library\boost_1_37_0
+	NCL_INSTALL_DIR=C:\Users\Administrator\Documents\ndev\branches\v2.2
