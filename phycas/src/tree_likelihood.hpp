@@ -83,6 +83,9 @@ class TreeLikelihood
 		std::vector<double>				getCategoryLowerBoundaries() const;
 		const std::vector<unsigned> &	getListOfAllMissingSites() const;
         const std::vector<double> &     getSiteLikelihoods() const;
+#if POLPY_NEWWAY
+        const std::vector<double> &     getSiteUF() const;
+#endif
         bool                            storingSiteLikelihoods() const;
         const CountVectorType &         getPatternCounts() const;
         const std::vector<unsigned> &   getCharIndexToPatternIndex() const;
@@ -195,7 +198,8 @@ class TreeLikelihood
 	protected:
 
 		//NaiveUnderflowPolicy			underflow_policy;		/**< The object that takes care of underflow correction when computing likelihood for large trees */
-		SimpleUnderflowPolicy			underflow_policy;		/**< The object that takes care of underflow correction when computing likelihood for large trees */
+		//SimpleUnderflowPolicy			underflow_policy;		/**< The object that takes care of underflow correction when computing likelihood for large trees */
+		PatternSpecificUnderflowPolicy  underflow_policy;		/**< The object that takes care of underflow correction when computing likelihood for large trees */
 
 		TreeNode *						likelihood_root;		/**< If not NULL< calcLnL will use this node as the likelihood root, then reset it to NULL before returning */
 #if POLPY_NEWWAY	//CLAShPtr
@@ -254,6 +258,9 @@ class TreeLikelihood
 		std::vector<unsigned>			charIndexToPatternIndex; /**< maps original character index to the index in compressed pattern "matrix" */
         std::vector<unsigned>           constant_states;        /**< keeps track of the states for potentially constant sites. See TreeLikelihood::buildConstantStatesVector for description of the structure of this vector. */
         std::vector<unsigned>           all_missing;            /**< keeps track of sites excluded automatically because they have missing data for all taxa. */
+#if POLPY_NEWWAY
+		std::vector<double>				site_uf;				/**< site_uf[pat] stores the underflow correction factor used for pattern pat, but only if `store_site_likes' is true and PatternSpecificUnderflowPolicy is being used */
+#endif
 	};
 
 /// used to get access to a CLA to write it

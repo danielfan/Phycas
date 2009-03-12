@@ -148,7 +148,7 @@ TreeLikelihood::TreeLikelihood(
 #endif
 	mod->recalcRatesAndProbs(rate_means, rate_probs);
 	underflow_policy.setTriggerSensitivity(50);
-	underflow_policy.setCorrectToValue(1.0);
+	underflow_policy.setCorrectToValue(10000.0);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -177,6 +177,17 @@ const std::vector<double> & TreeLikelihood::getSiteLikelihoods() const
     {
     return site_likelihood;
     }
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns a reference to the vector of site likelihood underflow correction factors (data member `site_uf') computed
+|   TreeLikelihood::harvestLnLFromValidEdge.
+*/
+const std::vector<double> & TreeLikelihood::getSiteUF() const
+    {
+    return site_uf;
+    }
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns a reference to the vector of pattern counts (data member `pattern_counts').
@@ -2895,7 +2906,7 @@ void TreeLikelihood::copyDataFromDiscreteMatrix(
 	num_patterns = compressDataMatrix(mat);
 
     buildConstantStatesVector();
-
+    
 	// size of likelihood_rate_site vector needs to be revisited if the number of rates subsequently changes 
 	recalcRelativeRates();
 	}
@@ -3087,7 +3098,9 @@ std::vector<unsigned> TreeLikelihood::findDataBipartitions() const
 |     1st site is definitely variable (hence the 0 meaning no states follow)
 |>
 |   The function returns the number of potentially constant patterns found (note the return value is NOT the number
-|   of potentially constant sites).
+|   of potentially constant sites). The modifier "potentially" is needed because of ambiguities: i.e. if every taxon
+|	had missing data for a site, then one does not know if the site is constant or variable, but it is a "potentially"
+|	constant site.
 */
 unsigned TreeLikelihood::buildConstantStatesVector()
 	{

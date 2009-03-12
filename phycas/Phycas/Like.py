@@ -12,6 +12,7 @@ class Like(PhycasCommand):
                 ("model",                   model,                      "Specifies the model to use. By default, uses the predefined model object. Type model.help to set the settings for this model."),
                 ("tree_source",             randomtree(),               "TreeCollection that will provide the tree.", TreeSourceValidate),
                 ("starting_edgelen_dist",   Exponential(10.0),          "Used to select the starting edge lengths when tree_source is 'random'"),
+                ("store_site_likes",         False,                      "If True, site log-likelihoods will be stored and can be retrieved using the getSiteLikes() function"),
                 ]
                 )
         PhycasCommand.__init__(self, args, "like", "Calculates the log-likelihood under the current model.")
@@ -28,6 +29,39 @@ class Like(PhycasCommand):
         self.__dict__["uf_num_edges"]   = 50
         self.__dict__["use_unimap"]     = False
         self.__dict__["data_source"]    = 'file'
+        self.__dict__["site_likes"]    = []
+        self.__dict__["pattern_counts"]    = []
+        self.__dict__["char_to_pattern"]    = []
+        self.__dict__["site_uf"]    = []
+        
+    def getSiteLikes(self):
+        '''
+        Returns a list of pattern log-likelihoods. Note that sites with the same pattern are combined.
+        Use getPatternCounts() to obtain a list of the number of sites for each pattern and use
+        getCharToPattern() to obtain a list mapping individual sites to the pattern index (i.e.,
+        if site_like is the list returned by this function, and char_to_pattern is the list returned
+        by getCharToPattern(), then site_like[char_to_pattern[i]] holds the site log-likelihood for
+        site i.
+        '''
+        return site_likes;
+        
+    def getPatternCounts(self):
+        '''
+        See documentation for getSiteLikes() function.
+        '''
+        return pattern_counts;
+
+    def getCharToPattern(self):
+        '''
+        See documentation for getSiteLikes() function.
+        '''
+        return char_to_pattern;
+
+    def getSiteUF(self):
+        '''
+        See documentation for getSiteLikes() function.
+        '''
+        return site_uf;
 
     def __call__(self, **kwargs):
         self.set(**kwargs)

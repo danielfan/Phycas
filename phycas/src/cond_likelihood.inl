@@ -118,7 +118,7 @@ inline unsigned CondLikelihood::getUFSize() const
 */
 inline void CondLikelihood::zeroUF()
 	{
-	uf_sum = 0;
+	uf_sum = (UnderflowType)0;
 	underflowExponVec.assign(underflowExponVec.size(), 0);
 	}
 

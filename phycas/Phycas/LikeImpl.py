@@ -25,7 +25,6 @@ class LikeImpl(CommonFunctions):
         self.ntax                  = None
         self.nchar                 = None
         self.reader                = NexusReader()
-        
 
     def _loadData(self, matrix):
         self.data_matrix = matrix
@@ -69,6 +68,19 @@ class LikeImpl(CommonFunctions):
         core = LikelihoodCore(self)
         core.setupCore()
         core.prepareForLikelihood()
-        return core.calcLnLikelihood()
-        
+        if self.opts.store_site_likes:
+            core.likelihood.storeSiteLikelihoods(True)
+            self.opts.pattern_counts = None
+            self.opts.char_to_pattern = None
+            self.opts.site_likes = None
+            self.opts.site_uf = None
+        else:
+            core.likelihood.storeSiteLikelihoods(False)
+        lnL = core.calcLnLikelihood()
+        if self.opts.store_site_likes:
+            self.opts.pattern_counts = core.likelihood.getPatternCounts()
+            self.opts.char_to_pattern = core.likelihood.getCharIndexToPatternIndex()
+            self.opts.site_likes = core.likelihood.getSiteLikelihoods()
+            self.opts.site_uf = core.likelihood.getSiteUF()
+        return lnL
         

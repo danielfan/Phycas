@@ -141,6 +141,7 @@ if __name__ == '__main__':
     runTest(outFile, "PathSampling", ["params.p", "trees.t"])
     runTest(outFile, "LikelihoodTest", ["simulated.nex", "check.nex"])
     runTest(outFile, "FixedParams", ["fixed.p", "fixed.t"])
+    runTest(outFile, "Underflow", ["output.txt"])
     #runTest(outFile, "ExplorePrior", mcmcOutputs(["nodata.nex"]))
     #runTest(outFile, "FixedTopology", ["fixdtree.p", "fixdtree.t", "simulated.nex"])
     # note: should add trees.pdf to list for SumT, but slight rounding differences

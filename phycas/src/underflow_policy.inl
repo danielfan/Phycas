@@ -88,12 +88,13 @@ inline void SimpleUnderflowPolicy::twoTips(
 /*----------------------------------------------------------------------------------------------------------------------
 |	Nothing needs to be done in the simple case, so this method is a no-op.
 */
-inline void SimpleUnderflowPolicy::correctSiteLike(
+inline double SimpleUnderflowPolicy::correctSiteLike(
   double & site_like,						/**< is the log-site-likelihood to correct */
   unsigned pat,								/**< is the index of the pattern representing the site to correct */
   ConstCondLikelihoodShPtr condlike_shptr)	/**< is the conditional likelihood array of the likelihood root node */
   const
 	{
+	return 0.0;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -113,24 +114,26 @@ inline void SimpleUnderflowPolicy::correctLnLike(
         }
 	}
 
-#if 0	// the PatternSpecificUnderflowPolicy class will need some work if it is ever used again
 /*----------------------------------------------------------------------------------------------------------------------
 |	Obtains a pointer to the underflow array for `cond_like', then subtracts the value stored in that underflow array 
 |	for pattern `pat' from the site likelihood `site_like'.
 */
-inline void PatternSpecificUnderflowPolicy::correctSiteLike(
+inline double PatternSpecificUnderflowPolicy::correctSiteLike(
   double & site_like,						/**< is the log-site-likelihood to correct */
   unsigned pat,								/**< is the index of the pattern representing the site to correct */
   ConstCondLikelihoodShPtr condlike_shptr)	/**< is the conditional likelihood array of the likelihood root node */
   const
 	{
+	double site_uf_factor = 0.0;
     if (num_patterns > 0)
         {
 	    PHYCAS_ASSERT(condlike_shptr);
 	    UnderflowType const * uf = condlike_shptr->getUF();
 	    PHYCAS_ASSERT(uf != NULL);
-	    site_like -= (double)uf[pat];
+	    site_uf_factor = (double)uf[pat];
+	    site_like -= site_uf_factor;
         }
+	return site_uf_factor;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -143,7 +146,6 @@ inline void PatternSpecificUnderflowPolicy::correctLnLike(
   const
 	{
 	}
-#endif 
 
 } // namespace phycas
 

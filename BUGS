@@ -5,6 +5,53 @@ to fix, and documenting them helps to avoid repeating history. Minor bugs repres
 cosmetic glitches that are easy to work around and do not take long to fix. Minor bugs 
 are best documented in SVN comments.
 
+Bug 7: the "underflow" bug (fixed in revision 1031 on 12 Mar 2009)
+------------------------------------------------------------------
+Thanks to Federico Plazzi and Mark Clements for alerting us to this problem.
+Symptoms of this bug were that the likelihood was incorrectly computed when the pinvar
+submodel was used and underflow protection was active. This turned out to be two
+unrelated bugs. The first bug was that UnderflowType was typedef'd to an unsigned integer
+in cond_likelihood.hpp. Because the maximum conditional likelihood for a pattern sometimes
+needs to be made smaller, the log correction factors sometimes must be negative, hence
+the problem. The UnderflowType is now a (signed) long. The second bug had to do with the
+pinvar model. The overall site likelihood x for the pinvar model is computed as follows:
+
+x = p*i + (1 - p)*v
+
+where p is pinvar, i is the site likelihood given invariability and v is the site 
+likelihood given variability. If underflow correction has been applied, 
+
+x = p*i + (1 - p)*v*c
+
+where c is the cumulative correction factor that has been applied to keep v from
+underflowing. In non-pinvar models, we were subtracting the log of c from the log 
+site likelihood, but obviously taking the log of x above and subtracting log c will
+not work, hence the incorrect log-likelihoods. To correct this, we now compute an
+underflow correction factor f for i if underflow correction has been applied to v:
+
+x = p*i*f + (1 - p)*v*c
+
+If f < c, we effectively replace v*c with v*f by multiplying by f/c:
+
+x = p*i*f + (1 - p)*v*c*(f/c)
+  = p*i*f + (1 - p)*v*f
+  
+Now, log f can later be subtracted from the log x to give the correct site likelihood.
+We need not worry that f/c might underflow, because if it does it means the variable 
+component of the site-likelihood was negligible anyway.
+
+If f < c, we effectively replace i*f with i*c by multiplying by c/f:
+
+x = p*i*f*(c/d) + (1 - p)*v*c
+  = p*i*c + (1 - p)*v*c
+  
+In this case, log c can later be subtracted from the log x to give the correct site
+likelihood (i.e., the usual procedure). If c/f underflows, it means that f was 
+incredibly large, which can only happen if the frequency of the constant state was 
+so small that it would make the invariable part of the site likelihood zero anyway.
+An assert was put in place that tests whether i > z, where z = underflow_max/DBL_MAX, 
+the smallest value of i such that the correction factor f will not overflow.
+
 Bug 6: the "leaky" bug (fixed in revision 994 on 24 Dec 2008)
 -------------------------------------------------------------
 This bug turned out to be two bugs, both causing memory leaks during that part of 

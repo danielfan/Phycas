@@ -475,7 +475,7 @@ void TreeLikelihood::calcCLANoTips(
 				*cla++ = (left_side*right_side);
 				}
 			}
-		else	// if (num_states == 4)
+		else	// num_states != 4
 			{
 			for (unsigned pat = 0; pat < num_patterns; ++pat, leftCLA += num_states, rightCLA += num_states)
 				{
@@ -534,6 +534,7 @@ void TreeLikelihood::conditionOnAdditionalTip(
 		}
 		
 #if defined(DO_UNDERFLOW_POLICY)
+	std::cerr << "@@@@@@@@@@@@@@ additional tip @@@@@@@@@@@@@@" << std::endl;
 	// Note: check() has 3 CondLikelihood & args, but we only need 1 of them, so provide condLike 3 times
 	underflow_policy.check(condLike, condLike, condLike, pattern_counts, true);	// last argument is polytomy
 #endif
@@ -577,6 +578,7 @@ void TreeLikelihood::conditionOnAdditionalInternal(
 		}
 		
 #if defined(DO_UNDERFLOW_POLICY)
+	std::cerr << "@@@@@@@@@@@@@@ additional tip @@@@@@@@@@@@@@" << std::endl;
 	// Note: check() has 3 CondLikelihood & args, but we only need 2 of them, so first 2 are same and 3rd represents child's cond. like
 	underflow_policy.check(condLike, condLike, childCondLike, pattern_counts, true);	// last argument is polytomy
 #endif
@@ -628,14 +630,6 @@ double TreeLikelihood::harvestLnL(
 double TreeLikelihood::harvestLnLFromValidEdge(
    ConstEdgeEndpoints & focal_edge)	/**< is the edge containing the focal node that will serve as the likelihood root */	
 	{
-#if POLPY_NEWWAY
-#	if defined(DO_UNDERFLOW_POLICY)
-		//std::cerr << "##### UNDERFLOW ON #####" << std::endl;
-#	else
-		//std::cerr << "##### UNDERFLOW OFF #####" << std::endl;
-#	endif
-#endif
-
 	PHYCAS_ASSERT(focal_edge.getFocalNode() != NULL);
 	PHYCAS_ASSERT(focal_edge.getFocalNeighbor() != NULL);
 	const TreeNode * focalNeighbor = focal_edge.getFocalNeighbor();
@@ -663,7 +657,12 @@ double TreeLikelihood::harvestLnLFromValidEdge(
     const unsigned * pinvar_states = &constant_states[0]; //PELIGROSO
 
 	if (store_site_likes)
+		{	
 		site_likelihood.clear();
+#if POLPY_NEWWAY
+		site_uf.clear();
+#endif
+		}
 
 	double lnLikelihood = 0.0;
 	if (focalNeighbor->IsTip())
@@ -693,24 +692,80 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 				focalNdCLAPtr[r] += num_states;
 				}
 
+#if POLPY_NEWWAY                
+			double log_correction_factor = underflow_policy.getCorrectionFactor(pat, focalCondLike);
+#endif
             if (is_pinvar)
                 {
+#if POLPY_NEWWAY                
+                double pinvar_like = 0.0;
+                unsigned num_pinvar_states = *pinvar_states++;
+                if (num_pinvar_states > 0)
+                	{
+					for (unsigned i = 0; i < num_pinvar_states; ++i)
+						pinvar_like += stateFreq[*pinvar_states++];
+						
+					if (log_correction_factor != 0.0)
+						{
+						// If variable part of site-likelihood has been corrected for underflow,
+						// we must also correct the invariable component
+						
+						// find correction factor (f) for pinvar_like
+						double underflow_max_value = underflow_policy.getUnderflowMaxValue();
+						PHYCAS_ASSERT(pinvar_like > underflow_max_value/DBL_MAX);
+						double ratio = underflow_max_value/pinvar_like;
+						double log_ratio = std::log(ratio);
+						double f = std::floor(log_ratio);
+						
+						if (f < log_correction_factor)
+							{
+							double expdiff = exp(f - log_correction_factor);
+							pinvar_like *= exp(f);
+							siteLike *= expdiff;
+							log_correction_factor = f;
+							}
+						else
+							{
+							// since log_correction_factor <= f, and since exp(f) is in no danger of overflowing,
+							// we need not worry about exp(log_correction_factor) overflowing
+							double expc = exp(log_correction_factor);
+							pinvar_like *= expc;
+							}
+						}
+					siteLike = pinvar*pinvar_like + (1.0 - pinvar)*siteLike;
+					}
+				else
+					{
+					// This pattern is not constant (or even potentially constant), so the probability 
+					// of the data given invariability is zero
+					siteLike = (1.0 - pinvar)*siteLike;
+					}
+#else
                 double pinvar_like = 0.0;
                 unsigned num_pinvar_states = *pinvar_states++;
                 for (unsigned i = 0; i < num_pinvar_states; ++i)
                     pinvar_like += stateFreq[*pinvar_states++];
-                //std::cerr << boost::str(boost::format("pat = %2d, n = %2d, pinvar_like = %.5f, siteLike = %.5f") % pat % num_pinvar_states % pinvar_like % siteLike) << std::endl;
                 siteLike = pinvar*pinvar_like + (1.0 - pinvar)*siteLike;
+#endif
                 }
 
 			double site_lnL = std::log(siteLike);
 
-#if defined(DO_UNDERFLOW_POLICY)
-			underflow_policy.correctSiteLike(site_lnL, pat, focalCondLike);
+#if POLPY_NEWWAY
+			site_lnL -= log_correction_factor;
+#else
+#	if defined(DO_UNDERFLOW_POLICY)
+			double log_correction_factor = underflow_policy.correctSiteLike(site_lnL, pat, focalCondLike);
+#	endif
 #endif
 
 			if (store_site_likes)
+				{
 				site_likelihood.push_back(site_lnL);
+#if POLPY_NEWWAY
+				site_uf.push_back(log_correction_factor);
+#endif
+				}
 			lnLikelihood += counts[pat]*site_lnL;
 
 			} // pat loop
@@ -758,24 +813,82 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 				focalNeighborCLAPtr[r] += num_states;
 				}
 
+#if POLPY_NEWWAY                
+			double log_correction_factor = underflow_policy.getCorrectionFactor(pat, focalCondLike);
+			log_correction_factor += underflow_policy.getCorrectionFactor(pat, neighborCondLike);
+#endif
             if (is_pinvar)
                 {
+#if POLPY_NEWWAY                
+                double pinvar_like = 0.0;
+                unsigned num_pinvar_states = *pinvar_states++;
+                if (num_pinvar_states > 0)
+                	{
+					for (unsigned i = 0; i < num_pinvar_states; ++i)
+						pinvar_like += stateFreq[*pinvar_states++];
+					
+					if (log_correction_factor != 0.0)
+						{
+						// If variable part of site-likelihood has been corrected for underflow,
+						// we must also correct the invariable component
+						
+						// find correction factor (f) for pinvar_like
+						double underflow_max_value = underflow_policy.getUnderflowMaxValue();
+						PHYCAS_ASSERT(pinvar_like > underflow_max_value/DBL_MAX);
+						double ratio = underflow_max_value/pinvar_like;
+						double log_ratio = std::log(ratio);
+						double f = std::floor(log_ratio);
+						
+						if (f < log_correction_factor)
+							{
+							double expdiff = exp(f - log_correction_factor);
+							pinvar_like *= exp(f);
+							siteLike *= expdiff;
+							log_correction_factor = f;
+							}
+						else
+							{
+							// since log_correction_factor <= f, and since exp(f) is in no danger of overflowing,
+							// we need not worry about exp(log_correction_factor) overflowing
+							double expc = exp(log_correction_factor);
+							pinvar_like *= expc;
+							}
+						}
+					siteLike = pinvar*pinvar_like + (1.0 - pinvar)*siteLike;
+					}
+				else
+					{
+					// This pattern is not constant (or even potentially constant), so the probability 
+					// of the data given invariability is zero
+					siteLike = (1.0 - pinvar)*siteLike;
+					}
+#else
                 double pinvar_like = 0.0;
                 unsigned num_pinvar_states = *pinvar_states++;
                 for (unsigned i = 0; i < num_pinvar_states; ++i)
                     pinvar_like += stateFreq[*pinvar_states++];
-                //std::cerr << boost::str(boost::format("pat = %2d, n = %2d, pinvar_like = %.5f, siteLike = %.5f") % pat % num_pinvar_states % pinvar_like % siteLike) << std::endl;
                 siteLike = pinvar*pinvar_like + (1.0 - pinvar)*siteLike;
+#endif
                 }
 
             double site_lnL = std::log(siteLike);
 
-#if defined(DO_UNDERFLOW_POLICY)
-			underflow_policy.correctSiteLike(site_lnL, pat, focalCondLike);
-			underflow_policy.correctSiteLike(site_lnL, pat, neighborCondLike);
+#if POLPY_NEWWAY
+			site_lnL -= log_correction_factor;
+#else
+#	if defined(DO_UNDERFLOW_POLICY)
+			double log_correction_factor = underflow_policy.correctSiteLike(site_lnL, pat, focalCondLike);
+			log_correction_factor += underflow_policy.correctSiteLike(site_lnL, pat, neighborCondLike);
+#	endif
 #endif
 			if (store_site_likes)
+				{
 				site_likelihood.push_back(site_lnL);
+#if POLPY_NEWWAY
+				site_uf.push_back(log_correction_factor);
+#endif
+				}
+				
 			lnLikelihood += counts[pat]*site_lnL;
 
 			}
