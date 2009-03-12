@@ -69,7 +69,7 @@ recursive-include phycas/Tests/Sumt/reference_output *
 recursive-include phycas/Tests/Sump *.py test.p
 recursive-include phycas/Tests/Sump/reference_output *
 
-recursive-include phycas/Tests/Underflow *.py
+recursive-include phycas/Tests/Underflow *.py gtrig.rbcL50.best.tre
 recursive-include phycas/Tests/Underflow/reference_output *
 
 recursive-include phycas/src *.h *.hpp *.inl *.c *.cpp

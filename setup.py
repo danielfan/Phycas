@@ -98,6 +98,7 @@ data_all = [
             'Tests/*.py',
             'Tests/Underflow/__init__.py',
             'Tests/Underflow/Underflow.py',
+            'Tests/Underflow/gtrig.rbcL50.best.tre',
             'Tests/Underflow/reference_output/output.txt',
             'Tests/*.py',
             'Examples/Paradox/Paradox.py',

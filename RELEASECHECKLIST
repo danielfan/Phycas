@@ -62,9 +62,9 @@ Create phycas tarball (will be in $HOME/pdev/trunk/dist when done):
 	
 Concatentate the two tarballs so that users don't have to separately download NCL:
 	cd $HOME/pdev/trunk/dist
-	gunzip Phycas-1.1.1.1034.tar.gz
-	tar --concatenate -f Phycas-1.1.1.1034.tar $HOME/ncl.tar
-	gzip Phycas-1.1.1.1034.tar.gz
+	gunzip Phycas-1.1.1.1035.tar.gz
+	tar --concatenate -f Phycas-1.1.1.1035.tar $HOME/ncl.tar
+	gzip Phycas-1.1.1.1035.tar.gz
 
 Creating MacOS version:
 -----------------------
