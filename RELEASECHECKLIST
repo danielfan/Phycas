@@ -62,13 +62,15 @@ Create phycas tarball (will be in $HOME/pdev/trunk/dist when done):
 	
 Concatentate the two tarballs so that users don't have to separately download NCL:
 	cd $HOME/pdev/trunk/dist
-	gunzip Phycas-1.1.1.1035.tar.gz
-	tar --concatenate -f Phycas-1.1.1.1035.tar $HOME/ncl.tar
-	gzip Phycas-1.1.1.1035.tar.gz
+	gunzip Phycas-1.1.1.1036.tar.gz
+	tar --concatenate -f Phycas-1.1.1.1036.tar $HOME/ncl.tar
+	gzip Phycas-1.1.1.1036.tar.gz
 
 Creating MacOS version:
 -----------------------
-	TODO
+Make sure pdev is up-to-date, then do this:
+	cd $HOME/pdev/trunk/installer/mac/iterm
+	./refill_phycas_gui_app.sh
 	
 Creating Win32 version:
 -----------------------
