@@ -1,15 +1,5 @@
 Release checklist:
 
-In trunk/phycas/__init__.py:
-	set release_version = True
-	
-Edit trunk/phycasver.txt to reflect the new version number
-
-Edit setup.py to add any files that need to be included in distributions 
-	(e.g. new Tests)
-	
-Build unix source distribution:
--------------------------------
 These instructions assume that ncl is in $HOME/ndev and phycas is in
 $HOME/pdev: i.e., I assume you did this at some point:
 	mkdir $HOME/ndev
@@ -19,11 +9,29 @@ $HOME/pdev: i.e., I assume you did this at some point:
 	cd $HOME/pdev
 	svn co https://phycas.svn.sourceforge.net/svnroot/phycas .
 	
+In trunk/phycas/__init__.py:
+	set release_version = True
+	
+Edit trunk/phycasver.txt to reflect the new version number
+
+Edit setup.py and MANIFEST.in to add any files that need to be included in 
+	distributions (e.g. new Tests)
+	
+Building the manual:
+--------------------
+Edit $HOME/pdev/trunk/documentation/users/manual.tex as needed, adding information on
+new features and bugs fixed in the current version, then do this to build manual.pdf:
+	cd $HOME/pdev/trunk/documentation/users
+	python regenerate_inputs.py
+	./rebuild.sh
+	
+Build unix source distribution:
+-------------------------------
 Make sure ncl directory is up-to-date:
 	cd $HOME/ndev
 	svn up
 	
-Make sure phycas directory is up-t0-date:
+Make sure phycas directory is up-to-date:
 	cd $HOME/pdev
 	svn up
 	
@@ -34,9 +42,13 @@ Build and test phycas:
 	python runall.py
 	python doctestall.py
 	
-Create ncl tarball:
+Create a tarball containing the v2.2 branch of NCL:
 	Make a copy of the ncl source directory:
-		cp -R $HOME/ndev/branches/v2.2/ncl $HOME/ncl-2.2.414
+		cp -R $HOME/ndev/branches/v2.2 $HOME/ncl-2.2.414
+	Delete the bin and .svn directories from $HOME/ncl-2.2.414
+		cd $HOME/ncl-2.2.414
+		rm -rf bin
+		find . -name ".svn" -exec rm -rf {} \;
 	Create a tarball of this copy:
 		cd $HOME
 		tar cvf ncl.tar ncl-2.2.414/*
@@ -44,9 +56,20 @@ Create ncl tarball:
 Make sure $HOME/pdev/build.sh is accurate. If any changes are made, 
 	commit them and update phycas at the highest level
 	
-Create phycas tarball:
+Create phycas tarball (will be in $HOME/pdev/trunk/dist when done):
 	cd $HOME/pdev/trunk
-	python build_linux_source.py
+	./build_linux_source_distr.sh
 	
 Concatentate the two tarballs so that users don't have to separately download NCL:
+	cd $HOME/pdev/trunk/dist
+	gunzip Phycas-1.1.1.1034.tar.gz
+	tar --concatenate -f Phycas-1.1.1.1034.tar $HOME/ncl.tar
+	gzip Phycas-1.1.1.1034.tar.gz
+
+Creating MacOS version:
+-----------------------
+	TODO
+	
+Creating Win32 version:
+-----------------------
 	TODO
