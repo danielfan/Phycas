@@ -113,7 +113,7 @@ class Newick(object):
 # and immediately reload the module so that the new options would 
 # immediately take effect. Can PhycasCommand be modified to allow classes
 # that behave like Settings?
-release_version = False
+release_version = True
 help_double_space = True
 current_double_space = False
 current_follows_help = True

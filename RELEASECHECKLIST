@@ -5,5 +5,9 @@ In trunk/phycas/__init__.py:
 	
 Edit trunk/phycasver.txt to reflect the new version number
 
-
+Edit setup.py to add any files that need to be included in distributions 
+	(e.g. new Tests)
+	
+Build unix tarball:
+	python build_phycas_tarball.py
 
