@@ -106,6 +106,8 @@ data_all = [
             'Examples/Paradox/ShoupLewis.nex',
             'Examples/Steppingstone/Steppingstone.py',
             'Examples/Steppingstone/green.nex',
+            'Examples/Simplest/Simplest.py',
+            'Examples/Simplest/green.nex',
             #'Examples/Tutorial/phycas_woods_hole_08.pdf',
             #'Examples/Tutorial/PhycasWHExamples/green.nex',
             #'Examples/Tutorial/PhycasWHExamples/HibbetGTRrun0.nex.t',
