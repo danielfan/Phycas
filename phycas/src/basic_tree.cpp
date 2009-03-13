@@ -761,10 +761,10 @@ void Tree::DetachSubtree(
 	PHYCAS_ASSERT(s != NULL);
 	PHYCAS_ASSERT(!s->IsTipRoot());
 	PHYCAS_ASSERT(!s->GetParent()->IsTipRoot());
-	if (s->GetParent()->IsTipRoot())
-		{
-		std::cerr << "oops" << std::endl;
-		}
+	//if (s->GetParent()->IsTipRoot())
+	//	{
+	//	std::cerr << "oops" << std::endl;
+	//	}
 
 	// Save pointers to relevant nodes
 	//

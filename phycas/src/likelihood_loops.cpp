@@ -534,7 +534,7 @@ void TreeLikelihood::conditionOnAdditionalTip(
 		}
 		
 #if defined(DO_UNDERFLOW_POLICY)
-	std::cerr << "@@@@@@@@@@@@@@ additional tip @@@@@@@@@@@@@@" << std::endl;
+	//std::cerr << "@@@@@@@@@@@@@@ additional tip @@@@@@@@@@@@@@" << std::endl;
 	// Note: check() has 3 CondLikelihood & args, but we only need 1 of them, so provide condLike 3 times
 	underflow_policy.check(condLike, condLike, condLike, pattern_counts, true);	// last argument is polytomy
 #endif
@@ -578,7 +578,7 @@ void TreeLikelihood::conditionOnAdditionalInternal(
 		}
 		
 #if defined(DO_UNDERFLOW_POLICY)
-	std::cerr << "@@@@@@@@@@@@@@ additional tip @@@@@@@@@@@@@@" << std::endl;
+	//std::cerr << "@@@@@@@@@@@@@@ additional tip @@@@@@@@@@@@@@" << std::endl;
 	// Note: check() has 3 CondLikelihood & args, but we only need 2 of them, so first 2 are same and 3rd represents child's cond. like
 	underflow_policy.check(condLike, condLike, childCondLike, pattern_counts, true);	// last argument is polytomy
 #endif
