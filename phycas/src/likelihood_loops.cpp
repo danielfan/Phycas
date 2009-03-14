@@ -218,7 +218,7 @@ void TreeLikelihood::calcCLATwoTips(
 			}
 		}
 #if defined(DO_UNDERFLOW_POLICY)
-	underflow_policy.twoTips(condLike);
+	underflow_manager.twoTips(condLike);
 #endif
 	}
 
@@ -323,7 +323,7 @@ void TreeLikelihood::calcCLAOneTip(
 		} // loop over rates
 
 #if defined(DO_UNDERFLOW_POLICY)
-	underflow_policy.check(condLike, rightCondLike, rightCondLike, pattern_counts, false);	// last argument is polytomy 
+	underflow_manager.check(condLike, rightCondLike, rightCondLike, pattern_counts, false);	// last argument is polytomy 
 #endif
 	}
 
@@ -497,7 +497,7 @@ void TreeLikelihood::calcCLANoTips(
 		}	// loop over rates
 
 #if defined(DO_UNDERFLOW_POLICY)
-	underflow_policy.check(condLike, leftCondLike, rightCondLike, pattern_counts, false);	// last argument is polytomy
+	underflow_manager.check(condLike, leftCondLike, rightCondLike, pattern_counts, false);	// last argument is polytomy
 #endif
 	}
 	
@@ -536,7 +536,7 @@ void TreeLikelihood::conditionOnAdditionalTip(
 #if defined(DO_UNDERFLOW_POLICY)
 	//std::cerr << "@@@@@@@@@@@@@@ additional tip @@@@@@@@@@@@@@" << std::endl;
 	// Note: check() has 3 CondLikelihood & args, but we only need 1 of them, so provide condLike 3 times
-	underflow_policy.check(condLike, condLike, condLike, pattern_counts, true);	// last argument is polytomy
+	underflow_manager.check(condLike, condLike, condLike, pattern_counts, true);	// last argument is polytomy
 #endif
 	}
 	
@@ -580,7 +580,7 @@ void TreeLikelihood::conditionOnAdditionalInternal(
 #if defined(DO_UNDERFLOW_POLICY)
 	//std::cerr << "@@@@@@@@@@@@@@ additional tip @@@@@@@@@@@@@@" << std::endl;
 	// Note: check() has 3 CondLikelihood & args, but we only need 2 of them, so first 2 are same and 3rd represents child's cond. like
-	underflow_policy.check(condLike, condLike, childCondLike, pattern_counts, true);	// last argument is polytomy
+	underflow_manager.check(condLike, condLike, childCondLike, pattern_counts, true);	// last argument is polytomy
 #endif
 	}
 
@@ -693,7 +693,7 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 				}
 
 #if POLPY_NEWWAY                
-			double log_correction_factor = underflow_policy.getCorrectionFactor(pat, focalCondLike);
+			double log_correction_factor = underflow_manager.getCorrectionFactor(pat, focalCondLike);
 #endif
             if (is_pinvar)
                 {
@@ -711,7 +711,7 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 						// we must also correct the invariable component
 						
 						// find correction factor (f) for pinvar_like
-						double underflow_max_value = underflow_policy.getUnderflowMaxValue();
+						double underflow_max_value = underflow_manager.getUnderflowMaxValue();
 						PHYCAS_ASSERT(pinvar_like > underflow_max_value/DBL_MAX);
 						double ratio = underflow_max_value/pinvar_like;
 						double log_ratio = std::log(ratio);
@@ -755,7 +755,7 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 			site_lnL -= log_correction_factor;
 #else
 #	if defined(DO_UNDERFLOW_POLICY)
-			double log_correction_factor = underflow_policy.correctSiteLike(site_lnL, pat, focalCondLike);
+			double log_correction_factor = underflow_manager.correctSiteLike(site_lnL, pat, focalCondLike);
 #	endif
 #endif
 
@@ -771,7 +771,7 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 			} // pat loop
 
 #if defined(DO_UNDERFLOW_POLICY)
-		underflow_policy.correctLnLike(lnLikelihood, focalCondLike);
+		underflow_manager.correctLnLike(lnLikelihood, focalCondLike);
 #endif
 		}
 	else    // focalNeighbor is not a tip
@@ -814,8 +814,8 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 				}
 
 #if POLPY_NEWWAY                
-			double log_correction_factor = underflow_policy.getCorrectionFactor(pat, focalCondLike);
-			log_correction_factor += underflow_policy.getCorrectionFactor(pat, neighborCondLike);
+			double log_correction_factor = underflow_manager.getCorrectionFactor(pat, focalCondLike);
+			log_correction_factor += underflow_manager.getCorrectionFactor(pat, neighborCondLike);
 #endif
             if (is_pinvar)
                 {
@@ -833,7 +833,7 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 						// we must also correct the invariable component
 						
 						// find correction factor (f) for pinvar_like
-						double underflow_max_value = underflow_policy.getUnderflowMaxValue();
+						double underflow_max_value = underflow_manager.getUnderflowMaxValue();
 						PHYCAS_ASSERT(pinvar_like > underflow_max_value/DBL_MAX);
 						double ratio = underflow_max_value/pinvar_like;
 						double log_ratio = std::log(ratio);
@@ -877,8 +877,8 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 			site_lnL -= log_correction_factor;
 #else
 #	if defined(DO_UNDERFLOW_POLICY)
-			double log_correction_factor = underflow_policy.correctSiteLike(site_lnL, pat, focalCondLike);
-			log_correction_factor += underflow_policy.correctSiteLike(site_lnL, pat, neighborCondLike);
+			double log_correction_factor = underflow_manager.correctSiteLike(site_lnL, pat, focalCondLike);
+			log_correction_factor += underflow_manager.correctSiteLike(site_lnL, pat, neighborCondLike);
 #	endif
 #endif
 			if (store_site_likes)
@@ -893,8 +893,8 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 
 			}
 #if defined(DO_UNDERFLOW_POLICY)
-		underflow_policy.correctLnLike(lnLikelihood, focalCondLike);
-		underflow_policy.correctLnLike(lnLikelihood, neighborCondLike);
+		underflow_manager.correctLnLike(lnLikelihood, focalCondLike);
+		underflow_manager.correctLnLike(lnLikelihood, neighborCondLike);
 #endif
 		}
 

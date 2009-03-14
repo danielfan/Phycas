@@ -613,14 +613,14 @@ double UnimapNNIMove::HarvestLnLikeFromCondLikePar(
 		double site_lnL = std::log(siteLike);
 
 #if defined(DO_UNDERFLOW_POLICY)
-		underflow_policy.correctSiteLike(site_lnL, pat, focalCondLike);
-		underflow_policy.correctSiteLike(site_lnL, pat, neighborCondLike);
+		underflow_manager.correctSiteLike(site_lnL, pat, focalCondLike);
+		underflow_manager.correctSiteLike(site_lnL, pat, neighborCondLike);
 #endif
 		lnLikelihood += site_lnL;
 		}
 #if defined(DO_UNDERFLOW_POLICY)
-	underflow_policy.correctLnLike(lnLikelihood, focalCondLike);
-	underflow_policy.correctLnLike(lnLikelihood, neighborCondLike);
+	underflow_manager.correctLnLike(lnLikelihood, focalCondLike);
+	underflow_manager.correctLnLike(lnLikelihood, neighborCondLike);
 #endif
 
 	return lnLikelihood;

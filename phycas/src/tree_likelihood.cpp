@@ -147,8 +147,8 @@ TreeLikelihood::TreeLikelihood(
 	cla_pool = CondLikelihoodStorageShPtr(new CondLikelihoodStorage());
 #endif
 	mod->recalcRatesAndProbs(rate_means, rate_probs);
-	underflow_policy.setTriggerSensitivity(50);
-	underflow_policy.setCorrectToValue(10000.0);
+	underflow_manager.setTriggerSensitivity(50);
+	underflow_manager.setCorrectToValue(10000.0);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -926,13 +926,13 @@ void TreeLikelihood::fullRemapping(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Calls the setTriggerSensitivity function of the data member `underflow_policy' to set the number of edges that must
+|	Calls the setTriggerSensitivity function of the data member `underflow_manager' to set the number of edges that must
 |	be traversed before taking action to prevent underflow.
 */
 void TreeLikelihood::setUFNumEdges(
   unsigned nedges)	/**< is the number of edges to traverse before taking action to prevent underflow */
 	{
-	underflow_policy.setTriggerSensitivity(nedges);
+	underflow_manager.setTriggerSensitivity(nedges);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -1218,7 +1218,7 @@ void TreeLikelihood::recalcRelativeRates()
 	if (!no_data)
 		cla_pool.setCondLikeDimensions(num_patterns, num_rates, num_states);
 #endif
-	underflow_policy.setDimensions(num_patterns, num_rates, num_states);
+	underflow_manager.setDimensions(num_patterns, num_rates, num_states);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

@@ -47,8 +47,6 @@ class CondLikelihood
 
 		void						zeroUF();
 		std::string					debugShowUF() const;
-		UnderflowType				getUFSum() const;
-		UnderflowType &				getUFSumRef();
 
 		unsigned					getUnderflowNumEdges() const;
 		void						setUnderflowNumEdges(unsigned n);
@@ -58,9 +56,8 @@ class CondLikelihood
 		LikeFltType *				cla;								/**< Pointer to conditional likelihood array stored by `claVec'  */
 		std::vector<LikeFltType>	claVec;								/**< Each element contains the likelihood conditional on a particular state, rate and pattern */
 
-		UnderflowType				uf_sum;								/**< Stores sum of underflow corrections over all sites. Used if SimpleUnderflowPolicy is in effect */
-		UnderflowType *				uf;									/**< Pointer to the underflow correction array stored in `underflowExponVec'. Used if PatternSpecificUnderflowPolicy is in effect */
-		std::vector<UnderflowType>	underflowExponVec;					/**< Stores log of the underflow correction factor for each pattern. Used if PatternSpecificUnderflowPolicy is in effect */
+		UnderflowType *				uf;									/**< Pointer to the underflow correction array stored in `underflowExponVec'. Used if UnderflowManager is in effect */
+		std::vector<UnderflowType>	underflowExponVec;					/**< Stores log of the underflow correction factor for each pattern. Used if UnderflowManager is in effect */
 
 		unsigned 					numEdgesSinceUnderflowProtection;	/**< The number of edges traversed since the underflow protection factor was last updated */
 	};

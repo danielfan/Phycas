@@ -217,7 +217,7 @@ alias likelihood_sources
     phycas/src/topo_prior_calculator.cpp 
     phycas/src/tree_likelihood.cpp 
     phycas/src/tree_scaler_move.cpp 
-    phycas/src/underflow_policy.cpp 
+    phycas/src/underflow_manager.cpp 
     phycas/src/unimap_nni_move.cpp 
     phycas/src/univent_prob_mgr.cpp 
     phycas/src/univents.cpp 

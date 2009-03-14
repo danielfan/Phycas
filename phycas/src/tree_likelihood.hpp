@@ -31,7 +31,7 @@
 #include "phycas/src/likelihood_models.hpp"
 #include "phycas/src/cond_likelihood.hpp"
 #include "phycas/src/cond_likelihood_storage.hpp"
-#include "phycas/src/underflow_policy.hpp"
+#include "phycas/src/underflow_manager.hpp"
 #include "phycas/src/univent_prob_mgr.hpp"
 
 	
@@ -197,9 +197,7 @@ class TreeLikelihood
 
 	protected:
 
-		//NaiveUnderflowPolicy			underflow_policy;		/**< The object that takes care of underflow correction when computing likelihood for large trees */
-		//SimpleUnderflowPolicy			underflow_policy;		/**< The object that takes care of underflow correction when computing likelihood for large trees */
-		PatternSpecificUnderflowPolicy  underflow_policy;		/**< The object that takes care of underflow correction when computing likelihood for large trees */
+		UnderflowManager  				underflow_manager;		/**< The object that takes care of underflow correction when computing likelihood for large trees */
 
 		TreeNode *						likelihood_root;		/**< If not NULL< calcLnL will use this node as the likelihood root, then reset it to NULL before returning */
 #if POLPY_NEWWAY	//CLAShPtr
@@ -259,7 +257,7 @@ class TreeLikelihood
         std::vector<unsigned>           constant_states;        /**< keeps track of the states for potentially constant sites. See TreeLikelihood::buildConstantStatesVector for description of the structure of this vector. */
         std::vector<unsigned>           all_missing;            /**< keeps track of sites excluded automatically because they have missing data for all taxa. */
 #if POLPY_NEWWAY
-		std::vector<double>				site_uf;				/**< site_uf[pat] stores the underflow correction factor used for pattern pat, but only if `store_site_likes' is true and PatternSpecificUnderflowPolicy is being used */
+		std::vector<double>				site_uf;				/**< site_uf[pat] stores the underflow correction factor used for pattern pat, but only if `store_site_likes' is true */
 #endif
 	};
 

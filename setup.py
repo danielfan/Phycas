@@ -370,7 +370,7 @@ if compilingExt:
                     'phycas/src/topo_prior_calculator.cpp',
                     'phycas/src/tree_likelihood.cpp',
                     'phycas/src/tree_manip.cpp',
-                    'phycas/src/underflow_policy.cpp',
+                    'phycas/src/underflow_manager.cpp',
                     'phycas/src/updater_pymod.cpp',
                     ], **argDict),
               Extension('Phylogeny._Phylogeny', 

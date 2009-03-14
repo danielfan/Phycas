@@ -40,7 +40,6 @@ inline CondLikelihood::CondLikelihood(
   unsigned nstates)		/**< is the number of states */
   :
   claVec(npatterns*nrates*nstates),
-  uf_sum(0),
   underflowExponVec(npatterns),
   numEdgesSinceUnderflowProtection(UINT_MAX)
 	{
@@ -114,28 +113,11 @@ inline unsigned CondLikelihood::getUFSize() const
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Sets all elements in `underflowExponVec' to zero and sets `uf_sum' to 0 as well.
+|	Sets all elements in `underflowExponVec' to zero.
 */
 inline void CondLikelihood::zeroUF()
 	{
-	uf_sum = (UnderflowType)0;
 	underflowExponVec.assign(underflowExponVec.size(), 0);
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Returns sum of underflow corrections over all sites (i.e. value of data member `uf_sum').
-*/
-inline UnderflowType CondLikelihood::getUFSum() const
-	{
-	return uf_sum;
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Returns reference to `uf_sum' data member.
-*/
-inline UnderflowType & CondLikelihood::getUFSumRef()
-	{
-	return uf_sum;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
