@@ -5,16 +5,20 @@ to fix, and documenting them helps to avoid repeating history. Minor bugs repres
 cosmetic glitches that are easy to work around and do not take long to fix. Minor bugs 
 are best documented in SVN comments.
 
-Bug 7: the "underflow" bug (fixed in revision 1031 on 12 Mar 2009)
+Bug 7: the "underflow" bug (fixed in revision 1050 on 13 Mar 2009)
 ------------------------------------------------------------------
 Thanks to Federico Plazzi and Mark Clements for alerting us to this problem.
 Symptoms of this bug were that the likelihood was incorrectly computed when the pinvar
-submodel was used and underflow protection was active. This turned out to be two
-unrelated bugs. The first bug was that UnderflowType was typedef'd to an unsigned integer
+submodel was used and underflow protection was active. This turned out to be three
+unrelated bugs. 
+
+The first bug was that UnderflowType was typedef'd to an unsigned integer
 in cond_likelihood.hpp. Because the maximum conditional likelihood for a pattern sometimes
 needs to be made smaller, the log correction factors sometimes must be negative, hence
-the problem. The UnderflowType is now a (signed) long. The second bug had to do with the
-pinvar model. The overall site likelihood x for the pinvar model is computed as follows:
+the problem. The UnderflowType is now a (signed) long. 
+
+The second bug had to do with the pinvar model. The overall site likelihood x for the 
+pinvar model is computed as follows:
 
 x = p*i + (1 - p)*v
 
@@ -51,6 +55,13 @@ incredibly large, which can only happen if the frequency of the constant state w
 so small that it would make the invariable part of the site likelihood zero anyway.
 An assert was put in place that tests whether i > z, where z = underflow_max/DBL_MAX, 
 the smallest value of i such that the correction factor f will not overflow.
+
+The third bug surfaced after the first two were fixed when comparing the Paradox
+example output when mcmc.uf_num_edges was set to 5 to that when mcmc.uf_num_edges
+was set to 50 (the default). In the latter case, underflow protection does not kick
+in because the data set has only 17 taxa (and thus 17*2 - 3 = 31 edges). This turned
+out to be an incompletely-implemented PatternSpecificUnderflowPolicy::check() 
+function.
 
 Bug 6: the "leaky" bug (fixed in revision 994 on 24 Dec 2008)
 -------------------------------------------------------------
