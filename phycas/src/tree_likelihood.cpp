@@ -2574,6 +2574,26 @@ double TreeLikelihood::calcLnL(
 #	endif
 
     //startTreeViewer(t, "lnL = %.5f" % lnL);
+    
+#if 0 && POLPY_NEWWAY
+	std::ofstream doof("allLnL.txt", std::ios::app);
+	doof << boost::str(boost::format("%.12f") % lnL) << std::endl;
+	if (lnL > 0.0)
+		{
+		std::cerr << "Aborting because lnL was positive" << std::endl;
+		std::string s;
+		t->AppendNewick(s, 12);
+		doof << "newick = " << s << std::endl;
+		HKY * hky = dynamic_cast<HKY *>(model.get());
+		doof << boost::str(boost::format("kappa = %.5f") % hky->getKappa()) << std::endl;
+		doof << boost::str(boost::format("shape = %.5f") % hky->getShape()) << std::endl;
+		const std::vector<double> & frq = hky->getStateFreqs();
+		doof << boost::str(boost::format("state frequencies = %.5f %.5f %.5f %.5f") % frq[0] % frq[1] % frq[2] % frq[3]) << std::endl;
+		doof.close();
+		std::exit(0);
+		}
+	doof.close();
+#endif
 
 	return lnL;
 	}

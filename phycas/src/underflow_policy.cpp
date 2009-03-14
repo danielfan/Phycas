@@ -342,18 +342,22 @@ void PatternSpecificUnderflowPolicy::check(
 	unsigned nedges = 0;
 	if (which == one_tip)
 		{
+		// cond_like, left_cond_like == right_cond_like
 		nedges += 2 + left_cond_like.getUnderflowNumEdges();
 		}
 	else if (which == no_tips)
 		{
+		// cond_like, left_cond_like, right_cond_like
 		nedges += 2 + left_cond_like.getUnderflowNumEdges() + right_cond_like.getUnderflowNumEdges();
 		}
 	else if (which == xtra_tip)
 		{
+		// cond_like == left_cond_like == right_cond_like
 		nedges += 1 + cond_like.getUnderflowNumEdges();
 		}
 	else	// xtra_internal
 		{
+		// cond_like == left_cond_like, right_cond_like
 		nedges += 1 + cond_like.getUnderflowNumEdges() + right_cond_like.getUnderflowNumEdges();
 		}
 			
@@ -361,8 +365,6 @@ void PatternSpecificUnderflowPolicy::check(
 	if (do_correction)
 		{
 		// Ok, we've traversed enough edges that it is time to take another factor out for underflow control
-		
-//#error Need to take account of TreeLikelihood::pinvar_like here
 		
 		// Begin by finding the largest conditional likelihood for each pattern
 		// over all rates and states (store these in underflow_work vector)
@@ -412,23 +414,29 @@ void PatternSpecificUnderflowPolicy::check(
 				}
 			if (which == one_tip)
 				{
+				// cond_like, left_cond_like == right_cond_like
 				// uf_left is same object as uf_right in this case
 				*uf = *uf_left + (UnderflowType)f;
 				++uf_left;
 				}
 			else if (which == no_tips)
 				{
+				// cond_like, left_cond_like, right_cond_like
 				*uf = *uf_left + *uf_right + (UnderflowType)f;
 				++uf_left;
 				++uf_right;
 				}
 			else if (which == xtra_tip)
 				{
+				// cond_like == left_cond_like == right_cond_like
 				// nothing above this point to take account of
+				*uf += (UnderflowType)f;
 				}
 			else	// xtra_internal
 				{
-				PHYCAS_ASSERT(0);	// THIS CASE NOT YET IMPLEMENTED
+				// cond_like == left_cond_like, right_cond_like
+				*uf += *uf_right + (UnderflowType)f;
+				++uf_right;
 				}
 			++uf;
 			}
@@ -439,27 +447,33 @@ void PatternSpecificUnderflowPolicy::check(
 		UnderflowType *	uf = cond_like.getUF();
 		UnderflowType const * uf_left = left_cond_like.getUF();
 		UnderflowType const * uf_right = right_cond_like.getUF();
+		// should move loop inside the conditionals for speed
 		for (unsigned pat = 0; pat < num_patterns; ++pat, ++uf)
 			{
 			if (which == one_tip)
 				{
+				// cond_like, left_cond_like == right_cond_like
 				// uf_left is same object as uf_right in this case
 				*uf = *uf_left;
 				++uf_left;
 				}
 			else if (which == no_tips)
 				{
+				// cond_like, left_cond_like, right_cond_like
 				*uf = *uf_left + *uf_right;
 				++uf_left;
 				++uf_right;
 				}
 			else if (which == xtra_tip)
 				{
+				// cond_like == left_cond_like == right_cond_like
 				// nothing above this point to take account of
 				}
 			else	// xtra_internal
 				{
-				PHYCAS_ASSERT(0);	// THIS CASE NOT YET IMPLEMENTED
+				// cond_like == left_cond_like, right_cond_like
+				*uf += *uf_right;
+				++uf_right;
 				}
 			}
 		}

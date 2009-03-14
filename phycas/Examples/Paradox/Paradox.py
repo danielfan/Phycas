@@ -98,6 +98,8 @@ mcmc.out.log.mode = REPLACE
 mcmc.random_seed = 13957
 
 # Finally, call mcmc(), which starts the MCMC analysis.
+#mcmc.report_every = 1   # POL temporary
+#mcmc.uf_num_edges = 5   # POL temporary
 mcmc()
 
 # Summarize the trees, creating pdf files sumt_splits.pdf and sumt_trees.pdf
