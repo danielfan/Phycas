@@ -40,12 +40,24 @@ class UnderflowManager
 		void 						setTriggerSensitivity(unsigned nedges);
 		void						setCorrectToValue(double maxval);
 		void 						setDimensions(unsigned np, unsigned nr, unsigned ns);
-
+		
+		double                      getUnderflowMaxValue() const;
+		
+		void 						twoTips(CondLikelihood & cond_like) const;
 		void						check(CondLikelihood & cond_like, const CondLikelihood & left_cond_like, const CondLikelihood & right_cond_like, const CountVectorType & counts, bool polytomy) const;
 
 		double						getCorrectionFactor(unsigned pat, ConstCondLikelihoodShPtr condlike_shptr) const;
 		double						correctSiteLike(double & site_like, unsigned pat, ConstCondLikelihoodShPtr condlike_shptr) const;
 		void						correctLnLike(double & ln_like, ConstCondLikelihoodShPtr condlike_shptr) const;
+
+	protected:
+	
+		unsigned					num_rates;				/**< Number of among-site rate categories */
+		unsigned					num_patterns;			/**< Number of data patterns */
+		unsigned 					num_states;				/**< Number of states */
+		unsigned					underflow_num_edges;    /**< Number of edges to traverse before underflow risk is evaluated */
+		double						underflow_max_value;    /**< Maximum of the `num_states' conditional likelihoods for a given rate and pattern after underflow correction */
+		mutable std::vector<double>	underflow_work;			/**< Workspace used when correcting for underflow (will have length equal to num_patterns) */
 	};
 
 } // namespace phycas

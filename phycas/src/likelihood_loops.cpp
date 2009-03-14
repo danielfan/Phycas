@@ -769,10 +769,6 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 			lnLikelihood += counts[pat]*site_lnL;
 
 			} // pat loop
-
-#if defined(DO_UNDERFLOW_POLICY)
-		underflow_manager.correctLnLike(lnLikelihood, focalCondLike);
-#endif
 		}
 	else    // focalNeighbor is not a tip
 		{
@@ -892,10 +888,6 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 			lnLikelihood += counts[pat]*site_lnL;
 
 			}
-#if defined(DO_UNDERFLOW_POLICY)
-		underflow_manager.correctLnLike(lnLikelihood, focalCondLike);
-		underflow_manager.correctLnLike(lnLikelihood, neighborCondLike);
-#endif
 		}
 
 	return lnLikelihood;

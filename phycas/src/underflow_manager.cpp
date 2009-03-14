@@ -34,6 +34,15 @@ UnderflowManager::UnderflowManager()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Returns the value of the data member `underflow_max_value', which is the target value to which the largest 
+|	conditional likelihood for each pattern is set.
+*/
+double UnderflowManager::getUnderflowMaxValue() const
+	{
+	return underflow_max_value;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Sets value of the data member `underflow_num_edges' to `nedges'. This is the number of edges to accumulate before 
 |	correcting for underflow. Assumes `nedges' is greater than zero. Often several hundred taxa are required before
 |	underflow becomes a problem, so a reasonable value for `underflow_num_edges' is 25.
