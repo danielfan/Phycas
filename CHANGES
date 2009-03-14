@@ -3,7 +3,23 @@ Phycas can be obtained from http://www.phycas.org/
 
 ~~~~~~~~~~~~~~~~~ Release history (most recent first) ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Release 1.1 (11-Feb-2009)
+Release 1.1.2 (13-Mar-2009)
+- subversion revisions for this release:
+	1047 Mac
+	1049 Linux
+	1049 Win for Python 2.5
+	1047 Win for Python 2.6
+- fixed 3rd. underflow-related bug
+
+Release 1.1.1 (12-Mar-2009)
+- subversion revisions for this release:
+	1052 Mac
+	1052 Linux
+	1052 Win for Python 2.5
+	1053 Win for Python 2.6
+- fixed 2 underflow-related bugs
+
+Release 1.1.0 (11-Feb-2009)
 - the subversion revision number for this release is 1020
 - added the ps command, which does path sampling (a.k.a. thermodynamic integration)
   and steppingstone sampling (new method) for estimating marginal likelihood
