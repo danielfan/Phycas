@@ -73,9 +73,7 @@ class CondLikelihoodStorage
 		std::stack<CondLikelihoodShPtr>	cl_stack;		/**< The stack of CondLikelihoodShPtr */
 	};
 
-#if POLPY_NEWWAY	//CLAShPtr
 typedef boost::shared_ptr<CondLikelihoodStorage> CondLikelihoodStorageShPtr;
-#endif
 
 } //namespace phycas
 

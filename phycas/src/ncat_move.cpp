@@ -112,13 +112,8 @@ void NCatMove::proposeNewState()
 	// store all CLAs checked out to the tree now so that they will be deleted when  
 	// likelihood->cla_pool.clearStack() is called (in the call to recalcRelativeRates below)
 	unsigned new_nr = model->getNRatesTotal();
-#if POLPY_NEWWAY	//CLAShPtr
 	const CondLikelihoodStorageShPtr clapool = likelihood->getCLAStorage();
 	unsigned old_nr = clapool->getNumRates();
-#else
-	const CondLikelihoodStorage & clapool = likelihood->getCLAStorage();
-	unsigned old_nr = clapool.getNumRates();
-#endif
 
 	if (new_nr > old_nr)
 		{

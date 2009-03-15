@@ -18,10 +18,8 @@
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #include "phycas/src/underflow_manager.hpp"
-#if POLPY_NEWWAY
-#	include <fstream>
-#	include <vector>
-#endif
+#include <fstream>
+#include <vector>
 
 namespace phycas
 {

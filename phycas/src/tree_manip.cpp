@@ -122,7 +122,6 @@ void TreeManip::setRandomEdgeLens(ProbDistShPtr d)
     tree->hasEdgeLens = true;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Assigns all internal edge lengths in the tree using independent draws from the ProbabilityDistribution object 
 |   pointed to by `internal_dist', and all external edge lengths using draws from the ProbabilityDistribution
@@ -141,7 +140,6 @@ void TreeManip::setRandomInternalExternalEdgeLens(
 		}
     tree->hasEdgeLens = true;
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Begins with left child of parent of `start' and calls GetRightSib() until the left sibling of `start' is located.

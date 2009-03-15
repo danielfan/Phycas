@@ -14,7 +14,6 @@ class TreeNode(TreeNodeBase):
         """
         TreeNodeBase.__init__(self)
 
-    # POLPY_NEWWAY
     def getSupport(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -23,7 +22,6 @@ class TreeNode(TreeNodeBase):
         """
         return TreeNodeBase.getSupport(self)
     
-    # POLPY_NEWWAY
     def setSupport(self, x):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """

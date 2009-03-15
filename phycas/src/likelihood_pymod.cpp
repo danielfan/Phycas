@@ -148,9 +148,7 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("getPatternCounts", &TreeLikelihood::getPatternCounts, return_value_policy<copy_const_reference>())
 		.def("getCharIndexToPatternIndex", &TreeLikelihood::getCharIndexToPatternIndex, return_value_policy<copy_const_reference>())
 		.def("getSiteLikelihoods", &TreeLikelihood::getSiteLikelihoods, return_value_policy<copy_const_reference>())
-#if POLPY_NEWWAY
 		.def("getSiteUF", &TreeLikelihood::getSiteUF, return_value_policy<copy_const_reference>())
-#endif
 		.def("storingSiteLikelihoods", &TreeLikelihood::storingSiteLikelihoods)
 		.def("storeSiteLikelihoods", &TreeLikelihood::storeSiteLikelihoods)
 		.def("copyDataFromDiscreteMatrix", &TreeLikelihood::copyDataFromDiscreteMatrix)

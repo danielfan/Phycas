@@ -659,9 +659,7 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 	if (store_site_likes)
 		{	
 		site_likelihood.clear();
-#if POLPY_NEWWAY
 		site_uf.clear();
-#endif
 		}
 
 	double lnLikelihood = 0.0;
@@ -692,12 +690,10 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 				focalNdCLAPtr[r] += num_states;
 				}
 
-#if POLPY_NEWWAY                
 			double log_correction_factor = underflow_manager.getCorrectionFactor(pat, focalCondLike);
-#endif
+
             if (is_pinvar)
                 {
-#if POLPY_NEWWAY                
                 double pinvar_like = 0.0;
                 unsigned num_pinvar_states = *pinvar_states++;
                 if (num_pinvar_states > 0)
@@ -740,34 +736,17 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 					// of the data given invariability is zero
 					siteLike = (1.0 - pinvar)*siteLike;
 					}
-#else
-                double pinvar_like = 0.0;
-                unsigned num_pinvar_states = *pinvar_states++;
-                for (unsigned i = 0; i < num_pinvar_states; ++i)
-                    pinvar_like += stateFreq[*pinvar_states++];
-                siteLike = pinvar*pinvar_like + (1.0 - pinvar)*siteLike;
-#endif
                 }
 
 			double site_lnL = std::log(siteLike);
-
-#if POLPY_NEWWAY
 			site_lnL -= log_correction_factor;
-#else
-#	if defined(DO_UNDERFLOW_POLICY)
-			double log_correction_factor = underflow_manager.correctSiteLike(site_lnL, pat, focalCondLike);
-#	endif
-#endif
 
 			if (store_site_likes)
 				{
 				site_likelihood.push_back(site_lnL);
-#if POLPY_NEWWAY
 				site_uf.push_back(log_correction_factor);
-#endif
 				}
 			lnLikelihood += counts[pat]*site_lnL;
-
 			} // pat loop
 		}
 	else    // focalNeighbor is not a tip
@@ -809,13 +788,11 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 				focalNeighborCLAPtr[r] += num_states;
 				}
 
-#if POLPY_NEWWAY                
 			double log_correction_factor = underflow_manager.getCorrectionFactor(pat, focalCondLike);
 			log_correction_factor += underflow_manager.getCorrectionFactor(pat, neighborCondLike);
-#endif
+
             if (is_pinvar)
                 {
-#if POLPY_NEWWAY                
                 double pinvar_like = 0.0;
                 unsigned num_pinvar_states = *pinvar_states++;
                 if (num_pinvar_states > 0)
@@ -858,35 +835,18 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 					// of the data given invariability is zero
 					siteLike = (1.0 - pinvar)*siteLike;
 					}
-#else
-                double pinvar_like = 0.0;
-                unsigned num_pinvar_states = *pinvar_states++;
-                for (unsigned i = 0; i < num_pinvar_states; ++i)
-                    pinvar_like += stateFreq[*pinvar_states++];
-                siteLike = pinvar*pinvar_like + (1.0 - pinvar)*siteLike;
-#endif
                 }
 
             double site_lnL = std::log(siteLike);
-
-#if POLPY_NEWWAY
 			site_lnL -= log_correction_factor;
-#else
-#	if defined(DO_UNDERFLOW_POLICY)
-			double log_correction_factor = underflow_manager.correctSiteLike(site_lnL, pat, focalCondLike);
-			log_correction_factor += underflow_manager.correctSiteLike(site_lnL, pat, neighborCondLike);
-#	endif
-#endif
+			
 			if (store_site_likes)
 				{
 				site_likelihood.push_back(site_lnL);
-#if POLPY_NEWWAY
 				site_uf.push_back(log_correction_factor);
-#endif
 				}
 				
 			lnLikelihood += counts[pat]*site_lnL;
-
 			}
 		}
 

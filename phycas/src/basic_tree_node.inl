@@ -44,11 +44,6 @@ inline TreeNode * TreeNode::FindNextSib()
 inline void TreeNode::SetTreeShPtr(
   TreeShPtr t) /**> is a pointer to the tree (should be called just after a node is created) */
 	{
-#if POLPY_NEWWAY
-	//tree = t.get();
-#else
-	tree = t;
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

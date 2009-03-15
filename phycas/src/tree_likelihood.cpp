@@ -143,9 +143,7 @@ TreeLikelihood::TreeLikelihood(
   sMat(NULL),
   sMatValid(false)
 	{
-#if POLPY_NEWWAY	//CLAShPtr
 	cla_pool = CondLikelihoodStorageShPtr(new CondLikelihoodStorage());
-#endif
 	mod->recalcRatesAndProbs(rate_means, rate_probs);
 	underflow_manager.setTriggerSensitivity(50);
 	underflow_manager.setCorrectToValue(10000.0);
@@ -178,7 +176,6 @@ const std::vector<double> & TreeLikelihood::getSiteLikelihoods() const
     return site_likelihood;
     }
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns a reference to the vector of site likelihood underflow correction factors (data member `site_uf') computed
 |   TreeLikelihood::harvestLnLFromValidEdge.
@@ -187,7 +184,6 @@ const std::vector<double> & TreeLikelihood::getSiteUF() const
     {
     return site_uf;
     }
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns a reference to the vector of pattern counts (data member `pattern_counts').
@@ -942,11 +938,7 @@ void TreeLikelihood::setUFNumEdges(
 */
 unsigned TreeLikelihood::bytesPerCLA() const
 	{
-#if POLPY_NEWWAY	//CLAShPtr
 	return cla_pool->bytesPerCLA();
-#else
-	return cla_pool.bytesPerCLA();
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -956,11 +948,7 @@ unsigned TreeLikelihood::bytesPerCLA() const
 */
 unsigned TreeLikelihood::numCLAsCreated() const
 	{
-#if POLPY_NEWWAY	//CLAShPtr
 	return cla_pool->numCLAsCreated();
-#else
-	return cla_pool.numCLAsCreated();
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -970,11 +958,7 @@ unsigned TreeLikelihood::numCLAsCreated() const
 */
 unsigned TreeLikelihood::numCLAsStored() const
 	{
-#if POLPY_NEWWAY	//CLAShPtr
 	return cla_pool->numCLAsStored();
-#else
-	return cla_pool.numCLAsStored();
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -1211,24 +1195,15 @@ void TreeLikelihood::recalcRelativeRates()
 	num_rates = model->getNRatesTotal();
 	model->recalcRatesAndProbs(rate_means, rate_probs); //POL_BOOKMARK recalcRatesAndProbs call
 	likelihood_rate_site.resize(num_rates*num_patterns, 0.0);
-#if POLPY_NEWWAY	//CLAShPtr
 	if (!no_data)
 		cla_pool->setCondLikeDimensions(num_patterns, num_rates, num_states);
-#else
-	if (!no_data)
-		cla_pool.setCondLikeDimensions(num_patterns, num_rates, num_states);
-#endif
 	underflow_manager.setDimensions(num_patterns, num_rates, num_states);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Accessor function that returns the `cla_pool' data member.
 */
-#if POLPY_NEWWAY	//CLAShPtr
 const CondLikelihoodStorageShPtr TreeLikelihood::getCLAStorage() const
-#else
-const CondLikelihoodStorage & TreeLikelihood::getCLAStorage() const
-#endif
 	{
 	return cla_pool;
 	}
@@ -1543,21 +1518,13 @@ bool TreeLikelihood::invalidateBothEndsDiscardCache(TreeNode * ref_nd, TreeNode 
 			// Invalidate the parental CLAs if they exist
 			if (td->parWorkingCLA)
 				{
-#if POLPY_NEWWAY	//CLAShPtr
 				cla_pool->putCondLikelihood(td->parWorkingCLA);
-#else
-				cla_pool.putCondLikelihood(td->parWorkingCLA);
-#endif
 				td->parWorkingCLA.reset();
 				}
 			// Remove cached parental CLAs if they exist
 			if (td->parCachedCLA)
 				{
-#if POLPY_NEWWAY	//CLAShPtr
 				cla_pool->putCondLikelihood(td->parCachedCLA);
-#else
-				cla_pool.putCondLikelihood(td->parCachedCLA);
-#endif
 				td->parCachedCLA.reset();
 				}
 			}
@@ -1571,42 +1538,26 @@ bool TreeLikelihood::invalidateBothEndsDiscardCache(TreeNode * ref_nd, TreeNode 
 			// Invalidate the parental CLAs if they exist
 			if (id->parWorkingCLA)
 				{
-#if POLPY_NEWWAY	//CLAShPtr
 				cla_pool->putCondLikelihood(id->parWorkingCLA);
-#else
-				cla_pool.putCondLikelihood(id->parWorkingCLA);
-#endif
 				id->parWorkingCLA.reset();
 				}
 			// Remove cached parental CLAs if they exist
 			if (id->parCachedCLA)
 				{
-#if POLPY_NEWWAY	//CLAShPtr
 				cla_pool->putCondLikelihood(id->parCachedCLA);
-#else
-				cla_pool.putCondLikelihood(id->parCachedCLA);
-#endif
 				id->parCachedCLA.reset();
 				}
 
 			// Invalidate the filial CLAs if they exist
 			if (id->childWorkingCLA)
 				{
-#if POLPY_NEWWAY	//CLAShPtr
 				cla_pool->putCondLikelihood(id->childWorkingCLA);
-#else
-				cla_pool.putCondLikelihood(id->childWorkingCLA);
-#endif
 				id->childWorkingCLA.reset();
 				}
 			// Remove cached filial CLAs if they exist
 			if (id->childCachedCLA)
 				{
-#if POLPY_NEWWAY	//CLAShPtr
 				cla_pool->putCondLikelihood(id->childCachedCLA);
-#else
-				cla_pool.putCondLikelihood(id->childCachedCLA);
-#endif
 				id->childCachedCLA.reset();
 				}
 			}
@@ -1615,11 +1566,7 @@ bool TreeLikelihood::invalidateBothEndsDiscardCache(TreeNode * ref_nd, TreeNode 
 	return false;
 	}
 
-#if POLPY_NEWWAY	//CLAShPtr
 CondLikelihoodStorageShPtr TreeLikelihood::getCondLikelihoodStorage()
-#else
-CondLikelihoodStorage & TreeLikelihood::getCondLikelihoodStorage()
-#endif
 	{
 	return cla_pool;
 	}
@@ -1639,13 +1586,8 @@ bool TreeLikelihood::invalidateBothEnds(TreeNode * ref_nd, TreeNode * /* unused 
 		// Invalidate the parental CLAs if they exist
 		if (td->parWorkingCLA)
 			{
-#if POLPY_NEWWAY	//CLAShPtr
 			if (td->parCachedCLA)
 				cla_pool->putCondLikelihood(td->parCachedCLA);
-#else
-			if (td->parCachedCLA)
-				cla_pool.putCondLikelihood(td->parCachedCLA);
-#endif
 			td->parCachedCLA = td->parWorkingCLA;
 			td->parWorkingCLA.reset();
 			}
@@ -1658,13 +1600,8 @@ bool TreeLikelihood::invalidateBothEnds(TreeNode * ref_nd, TreeNode * /* unused 
 		// Invalidate the parental CLAs if they exist
 		if (id->parWorkingCLA)
 			{
-#if POLPY_NEWWAY	//CLAShPtr
 			if (id->parCachedCLA)
 				cla_pool->putCondLikelihood(id->parCachedCLA);
-#else
-			if (id->parCachedCLA)
-				cla_pool.putCondLikelihood(id->parCachedCLA);
-#endif
 			id->parCachedCLA = id->parWorkingCLA;
 			id->parWorkingCLA.reset();
 			}
@@ -1672,13 +1609,8 @@ bool TreeLikelihood::invalidateBothEnds(TreeNode * ref_nd, TreeNode * /* unused 
 		// Invalidate the filial CLAs if they exist
 		if (id->childWorkingCLA)
 			{
-#if POLPY_NEWWAY	//CLAShPtr
 			if (id->childCachedCLA)
 				cla_pool->putCondLikelihood(id->childCachedCLA);
-#else
-			if (id->childCachedCLA)
-				cla_pool.putCondLikelihood(id->childCachedCLA);
-#endif
 			id->childCachedCLA = id->childWorkingCLA;
 			id->childWorkingCLA.reset();
 			}
@@ -1708,13 +1640,8 @@ bool TreeLikelihood::invalidateNode(TreeNode * ref_nd, TreeNode * neighbor_close
 		TipData * td = ref_nd->GetTipData();
 		if (!td->parWorkingCLA)
 			return false;
-#if POLPY_NEWWAY	//CLAShPtr
 		if (td->parCachedCLA)
 			cla_pool->putCondLikelihood(td->parCachedCLA);
-#else
-		if (td->parCachedCLA)
-			cla_pool.putCondLikelihood(td->parCachedCLA);
-#endif
 		td->parCachedCLA = td->parWorkingCLA;
 		td->parWorkingCLA.reset();
 		}
@@ -1726,13 +1653,8 @@ bool TreeLikelihood::invalidateNode(TreeNode * ref_nd, TreeNode * neighbor_close
 			InternalData * id = ref_nd->GetInternalData();
 			if (!id->parWorkingCLA)
 				return false;
-#if POLPY_NEWWAY	//CLAShPtr
 			if (id->parCachedCLA)
 				cla_pool->putCondLikelihood(id->parCachedCLA);
-#else
-			if (id->parCachedCLA)
-				cla_pool.putCondLikelihood(id->parCachedCLA);
-#endif
 			id->parCachedCLA = id->parWorkingCLA;
 			id->parWorkingCLA.reset();
 			}
@@ -1745,13 +1667,8 @@ bool TreeLikelihood::invalidateNode(TreeNode * ref_nd, TreeNode * neighbor_close
 			InternalData * id = neighbor_closer_to_likelihood_root->GetInternalData();
 			if (!id->childWorkingCLA)
 				return false;
-#if POLPY_NEWWAY	//CLAShPtr
 			if (id->childCachedCLA)
 				cla_pool->putCondLikelihood(id->childCachedCLA);
-#else
-			if (id->childCachedCLA)
-				cla_pool.putCondLikelihood(id->childCachedCLA);
-#endif
 			id->childCachedCLA = id->childWorkingCLA;
 			id->childWorkingCLA.reset();
 			}
@@ -1789,11 +1706,7 @@ bool TreeLikelihood::discardCacheBothEnds(TreeNode * ref_nd, TreeNode * /* unuse
 		// Remove cached parental CLAs if they exist
 		if (td->parCachedCLA)
 			{
-#if POLPY_NEWWAY	//CLAShPtr
 			cla_pool->putCondLikelihood(td->parCachedCLA);
-#else
-			cla_pool.putCondLikelihood(td->parCachedCLA);
-#endif
 			td->parCachedCLA.reset();
 			}
 		}
@@ -1805,22 +1718,14 @@ bool TreeLikelihood::discardCacheBothEnds(TreeNode * ref_nd, TreeNode * /* unuse
 		// Remove cached parental CLAs if they exist
 		if (id->parCachedCLA)
 			{
-#if POLPY_NEWWAY	//CLAShPtr
 			cla_pool->putCondLikelihood(id->parCachedCLA);
-#else
-			cla_pool.putCondLikelihood(id->parCachedCLA);
-#endif
 			id->parCachedCLA.reset();
 			}
 
 		// Remove cached filial CLAs if they exist
 		if (id->childCachedCLA)
 			{
-#if POLPY_NEWWAY	//CLAShPtr
 			cla_pool->putCondLikelihood(id->childCachedCLA);
-#else
-			cla_pool.putCondLikelihood(id->childCachedCLA);
-#endif
 			id->childCachedCLA.reset();
 			}
 		}
@@ -1844,13 +1749,8 @@ bool TreeLikelihood::restoreFromCacheParentalOnly(TreeNode * ref_nd, TreeNode * 
 		TipData * td = ref_nd->GetTipData();
 
 		// Store working CLA in any case
-#if POLPY_NEWWAY	//CLAShPtr
 		if (td->parWorkingCLA)
 			cla_pool->putCondLikelihood(td->parWorkingCLA);
-#else
-		if (td->parWorkingCLA)
-			cla_pool.putCondLikelihood(td->parWorkingCLA);
-#endif
 		td->parWorkingCLA.reset();
 
 		// Move cached to working if cached exists
@@ -1865,13 +1765,8 @@ bool TreeLikelihood::restoreFromCacheParentalOnly(TreeNode * ref_nd, TreeNode * 
 		InternalData * id = ref_nd->GetInternalData();
 
 		// Store working CLA in any case
-#if POLPY_NEWWAY	//CLAShPtr
 		if (id->parWorkingCLA)
 			cla_pool->putCondLikelihood(id->parWorkingCLA);
-#else
-		if (id->parWorkingCLA)
-			cla_pool.putCondLikelihood(id->parWorkingCLA);
-#endif
 		id->parWorkingCLA.reset();
 
 		// Move cached to working if cached exists
@@ -1901,13 +1796,8 @@ bool TreeLikelihood::restoreFromCacheBothEnds(TreeNode * ref_nd, TreeNode * /* u
 		TipData * td = ref_nd->GetTipData();
 
 		// Store working CLA in any case
-#if POLPY_NEWWAY	//CLAShPtr
 		if (td->parWorkingCLA)
 			cla_pool->putCondLikelihood(td->parWorkingCLA);
-#else
-		if (td->parWorkingCLA)
-			cla_pool.putCondLikelihood(td->parWorkingCLA);
-#endif
 		td->parWorkingCLA.reset();
 
 		// Move cached to working if cached exists
@@ -1925,13 +1815,8 @@ bool TreeLikelihood::restoreFromCacheBothEnds(TreeNode * ref_nd, TreeNode * /* u
 		// Restore parental CLA from cache
 
 		// Store working CLA in any case
-#if POLPY_NEWWAY	//CLAShPtr
 		if (id->parWorkingCLA)
 			cla_pool->putCondLikelihood(id->parWorkingCLA);
-#else
-		if (id->parWorkingCLA)
-			cla_pool.putCondLikelihood(id->parWorkingCLA);
-#endif
 		id->parWorkingCLA.reset();
 
 		// Move cached to working if cached exists
@@ -1944,13 +1829,8 @@ bool TreeLikelihood::restoreFromCacheBothEnds(TreeNode * ref_nd, TreeNode * /* u
 		// Restore filial CLA from cache
 
 		// Store working CLA in any case
-#if POLPY_NEWWAY	//CLAShPtr
 		if (id->childWorkingCLA)
 			cla_pool->putCondLikelihood(id->childWorkingCLA);
-#else
-		if (id->childWorkingCLA)
-			cla_pool.putCondLikelihood(id->childWorkingCLA);
-#endif
 		id->childWorkingCLA.reset();
 
 		// Move cached to working if cached exists
@@ -1982,13 +1862,8 @@ bool TreeLikelihood::restoreFromCacheNode(TreeNode * ref_nd, TreeNode * neighbor
 		TipData * td = ref_nd->GetTipData();
 
 		// Store the working CLA in any case
-#if POLPY_NEWWAY	//CLAShPtr
 		if (td->parWorkingCLA)
 			cla_pool->putCondLikelihood(td->parWorkingCLA);
-#else
-		if (td->parWorkingCLA)
-			cla_pool.putCondLikelihood(td->parWorkingCLA);
-#endif
 		td->parWorkingCLA.reset();
 
 		// Move cached to working if there is a cached CLA
@@ -2005,13 +1880,8 @@ bool TreeLikelihood::restoreFromCacheNode(TreeNode * ref_nd, TreeNode * neighbor
 			InternalData * id = ref_nd->GetInternalData();
 
 			// Store the working CLA in any case
-#if POLPY_NEWWAY	//CLAShPtr
 			if (id->parWorkingCLA)
 				cla_pool->putCondLikelihood(id->parWorkingCLA);
-#else
-			if (id->parWorkingCLA)
-				cla_pool.putCondLikelihood(id->parWorkingCLA);
-#endif
 			id->parWorkingCLA.reset();
 
 			// Move cached to working if there is a cached CLA
@@ -2031,13 +1901,8 @@ bool TreeLikelihood::restoreFromCacheNode(TreeNode * ref_nd, TreeNode * neighbor
 			InternalData * id = neighbor_closer_to_likelihood_root->GetInternalData();
 
 			// Store the working CLA in any case
-#if POLPY_NEWWAY	//CLAShPtr
 			if (id->childWorkingCLA)
 				cla_pool->putCondLikelihood(id->childWorkingCLA);
-#else
-			if (id->childWorkingCLA)
-				cla_pool.putCondLikelihood(id->childWorkingCLA);
-#endif
 			id->childWorkingCLA.reset();
 
 			// Move cached to working if there is a cached CLA
@@ -2077,35 +1942,6 @@ void TreeLikelihood::discardCacheAwayFromNode(
 	NodeValidityChecker validFunctor = boost::bind(&TreeLikelihood::discardCacheBothEnds, this, _1, _2);
 	effective_postorder_edge_iterator(&focal_node, validFunctor); // need only construct unnamed iterator object
 	}
-
-#if 0
-class CalcTransitionMatrixForOneNode : public std::unary_function<TreeNode &, void>
-	{
-	private:
-		TreeLikelihood & treelike;
-
-	public:
-		CalcTransitionMatrixForOneNode(TreeLikelihood & tl) : treelike(tl) {}
-		void operator()(TreeNode & nd)
-			{
-#			error do not use unless root node special case is taken into account
-			if (!nd.IsTipRoot())
-				{
-				double edge_len = nd.GetEdgeLen();
-				if (nd.IsTip())
-					{
-					TipData & ndTD = *(nd.GetTipData());
-					treelike.calcTMatForSim(ndTD, edge_len);
-					}
-				else
-					{
-					InternalData & ndID = *(nd.GetInternalData());
-					treelike.calcPMat(ndID, edge_len);
-					}
-				}
-			}
-	};
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Simulates data for `nchar' characters using the current model and edge lengths. Transition matrices are recomputed
@@ -2575,26 +2411,6 @@ double TreeLikelihood::calcLnL(
 
     //startTreeViewer(t, "lnL = %.5f" % lnL);
     
-#if 0 && POLPY_NEWWAY
-	std::ofstream doof("allLnL.txt", std::ios::app);
-	doof << boost::str(boost::format("%.12f") % lnL) << std::endl;
-	if (lnL > 0.0)
-		{
-		std::cerr << "Aborting because lnL was positive" << std::endl;
-		std::string s;
-		t->AppendNewick(s, 12);
-		doof << "newick = " << s << std::endl;
-		HKY * hky = dynamic_cast<HKY *>(model.get());
-		doof << boost::str(boost::format("kappa = %.5f") % hky->getKappa()) << std::endl;
-		doof << boost::str(boost::format("shape = %.5f") % hky->getShape()) << std::endl;
-		const std::vector<double> & frq = hky->getStateFreqs();
-		doof << boost::str(boost::format("state frequencies = %.5f %.5f %.5f %.5f") % frq[0] % frq[1] % frq[2] % frq[3]) << std::endl;
-		doof.close();
-		std::exit(0);
-		}
-	doof.close();
-#endif
-
 	return lnL;
 	}
 
@@ -2986,7 +2802,6 @@ void TreeLikelihood::addDataTo(SimData & other)
 void TreeLikelihood::prepareInternalNodeForLikelihood(
   TreeNode * nd)	/**< is the node to decorate */
 	{
-#if POLPY_NEWWAY
 	if (nd)
 		{
     	InternalData * ndID = nd->GetInternalData();
@@ -2997,14 +2812,6 @@ void TreeLikelihood::prepareInternalNodeForLikelihood(
 		    nd->SetInternalData(cl, cl_deleter);
             }
 		}
-#else
-	if (nd)
-		{
-		TreeNode::InternalDataDeleter	cl_deleter	= &deallocateInternalData;
-		InternalData * cl = allocateInternalData();
-		nd->SetInternalData(cl, cl_deleter);
-		}
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -3057,11 +2864,7 @@ void TreeLikelihood::prepareForLikelihood( //POL_BOOKMARK TreeLikelihood::prepar
 
 	// Put all existing conditional likelihood arrays already back into storage
 	//storeAllCLAs(t);
-#if POLPY_NEWWAY	//CLAShPtr
 	//cla_pool->clearStack();	//@POL this here only because prepareForLikelihood called in NCatMove::proposeNewState when ncat is increased
-#else
-	//cla_pool.clearStack();	//@POL this here only because prepareForLikelihood called in NCatMove::proposeNewState when ncat is increased
-#endif
 
 	for (preorder_iterator nd = t->begin(); nd != t->end(); ++nd)
 		{

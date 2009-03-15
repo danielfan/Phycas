@@ -64,7 +64,6 @@ Tree::~Tree()
 		delete nd;
 		nd = NULL;
 		}
-#if POLPY_NEWWAY
 	while (!tipStorage.empty()) 
 		{
 	    //std::cerr << "Popping tip node" << std::endl;
@@ -73,7 +72,6 @@ Tree::~Tree()
 		delete nd;
 		nd = NULL;
 		}
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -90,14 +88,10 @@ void Tree::Clear()
 		for (TreeNode *nd = GetLastPreorder(); nd != NULL;)
 			{
 			TreeNode * next = nd->GetNextPostorder();
-#if POLPY_NEWWAY
 			if (nd->IsTip())
 				StoreLeafNode(nd);
 			else
 				StoreInternalNode(nd);
-#else
-            internalNodeStorage.push(nd);
-#endif
 			nd->Clear();
 			nd = next;
 			}

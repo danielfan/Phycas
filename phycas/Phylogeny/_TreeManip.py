@@ -23,8 +23,7 @@ class TreeManip(TreeManipBase):
         """
         TreeManipBase.__init__(self, t)
 
-    # POLPY_NEWWAY        
-    # def buildTreeFromSplitVector(self, split_vect, edge_len_dist):
+#    def buildTreeFromSplitVector(self, split_vect, edge_len_dist):
 #         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
 #         """
 #         Creates a tree having the splits defined in split_vect, which should

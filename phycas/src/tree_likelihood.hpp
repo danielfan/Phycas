@@ -83,9 +83,7 @@ class TreeLikelihood
 		std::vector<double>				getCategoryLowerBoundaries() const;
 		const std::vector<unsigned> &	getListOfAllMissingSites() const;
         const std::vector<double> &     getSiteLikelihoods() const;
-#if POLPY_NEWWAY
         const std::vector<double> &     getSiteUF() const;
-#endif
         bool                            storingSiteLikelihoods() const;
         const CountVectorType &         getPatternCounts() const;
         const std::vector<unsigned> &   getCharIndexToPatternIndex() const;
@@ -99,9 +97,6 @@ class TreeLikelihood
 
 		// Utilities
 		void							releaseModel();
-#if 0
-        std::vector<unsigned>           findDataBipartitions() const;
-#endif
         double                          calcLogLikeAtSubstitutionSaturation() const;
 
 		void							addOrphanTip(TreeShPtr t, unsigned row, std::string name);
@@ -125,11 +120,8 @@ class TreeLikelihood
 		void							restoreFromCacheAwayFromNode(TreeNode & focalNode);
 		void							discardCacheAwayFromNode(TreeNode & focalNode);
 
-#if POLPY_NEWWAY	//CLAShPtr
 		const CondLikelihoodStorageShPtr	getCLAStorage() const;
-#else
-		const CondLikelihoodStorage &	getCLAStorage() const;
-#endif
+		
 		unsigned						bytesPerCLA() const;
 		unsigned						numCLAsCreated() const;
 		unsigned						numCLAsStored() const;
@@ -189,22 +181,14 @@ class TreeLikelihood
 
         unsigned                        buildConstantStatesVector();
 
-#if POLPY_NEWWAY	//CLAShPtr
 		CondLikelihoodStorageShPtr		getCondLikelihoodStorage();
-#else
-		CondLikelihoodStorage &			getCondLikelihoodStorage();
-#endif
 
 	protected:
 
 		UnderflowManager  				underflow_manager;		/**< The object that takes care of underflow correction when computing likelihood for large trees */
 
 		TreeNode *						likelihood_root;		/**< If not NULL< calcLnL will use this node as the likelihood root, then reset it to NULL before returning */
-#if POLPY_NEWWAY	//CLAShPtr
 		CondLikelihoodStorageShPtr		cla_pool;
-#else
-		CondLikelihoodStorage			cla_pool;				/**< Stores currently unused CondLikelihood objects */
-#endif
 
 		bool							store_site_likes;		/**< If true, calcLnL always stores the site likelihoods in the `site_likelihood' data member; if false, the `site_likelihood' data member is not updated by calcLnL */
 		bool							no_data;				/**< If true, calcLnL always returns 0.0 (useful for allowing MCMC to explore the prior) */
@@ -256,9 +240,7 @@ class TreeLikelihood
 		std::vector<unsigned>			charIndexToPatternIndex; /**< maps original character index to the index in compressed pattern "matrix" */
         std::vector<unsigned>           constant_states;        /**< keeps track of the states for potentially constant sites. See TreeLikelihood::buildConstantStatesVector for description of the structure of this vector. */
         std::vector<unsigned>           all_missing;            /**< keeps track of sites excluded automatically because they have missing data for all taxa. */
-#if POLPY_NEWWAY
 		std::vector<double>				site_uf;				/**< site_uf[pat] stores the underflow correction factor used for pattern pat, but only if `store_site_likes' is true */
-#endif
 	};
 
 /// used to get access to a CLA to write it

@@ -138,12 +138,6 @@ class TreeNode
 		TreeNode *			prevPreorder;			/**< points to previous node in preorder sequence */
 		bool				observable;				/**< true if data could be observed for this node */
 
-#if POLPY_NEWWAY
-		//Tree *				tree;					/**> Points to tree of which this node is part */
-#else
-		TreeShPtr			tree;					/**> Points to tree of which this node is part */
-#endif
-
 		float				support;				/**< used to hold support value (bootstrap proportion or Bayesian posterior probability */
 		double				tmp;					/**< temporary non-persistant workspace to be used within individual methods */
 		float				x;						/**< x-coordinate for purposes of drawing the tree */
