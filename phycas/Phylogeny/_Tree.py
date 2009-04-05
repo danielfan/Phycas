@@ -58,8 +58,10 @@ class Tree(TreeBase):
         # makeNumberedNewick returns a one-based number
         tree.buildFromString(self.makeNumberedNewick(), False) 
         return tree
+        
     def __str__(self):
         return self.newick
+        
     def __iter__(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -507,13 +509,14 @@ class Tree(TreeBase):
 
         """
         return TreeBase.ladderize(self, False)
+        
     def getTips(self):
         """Returns the tips in preorder traversal order"""
         return [i for i in self.iterTipNodes()]
 
     def getFullTipList(self):
-        """Returns the a list of nodes or None up to the index corresponding to 
-        the higest node index.
+        """Returns the list of nodes or None up to the index corresponding to 
+        the highest node index.
         """
         d = {}
         max_n = 0

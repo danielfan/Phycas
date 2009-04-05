@@ -212,6 +212,39 @@ class PDFRectangleObject(PDFObject):
         outf.write(outstr)
         return len(outstr)
 
+class PDFFilledRectangleObject(PDFObject):
+    def __init__(self, pdf_generator, x0, y0, width, height, line_width, line_style, rgb_stroke, rgb_fill):
+        PDFObject.__init__(self, pdf_generator, 'Rectangle')
+        self.x0 = float(x0)
+        self.y0 = float(y0)
+        self.w = float(width)
+        self.h = float(height)
+        self.lw = float(line_width)
+        self.fill_color = rgb_fill
+        self.stroke_color = rgb_stroke
+        self.dash_pattern = line_style == 'dotted' and '[3] 0 d' or '[] 0 d'
+        self.line_cap_style = 1 # 0 = square ends; 1 = rounded ends; 2 = projecting square ends 
+
+    def write(self, outf, terminator):
+        objstr  = '    %.1f w%c' % (self.lw, terminator)
+        objstr += '    %d J%c' % (self.line_cap_style, terminator)
+        objstr += '    %s%c' % (self.dash_pattern, terminator)
+        objstr += '    %.1f %.1f %.1f RG%c' % (self.stroke_color[0], self.stroke_color[1], self.stroke_color[2], terminator)
+        objstr += '    %.1f %.1f %.1f rg%c' % (self.fill_color[0], self.fill_color[1], self.fill_color[2], terminator)
+        objstr += '    %.1f %.1f %.1f %.1f re%c' % (self.x0, self.y0, self.w, self.h, terminator)
+        objstr += '    B'
+        
+        outstr = '%d 0 obj%c' % (self.number, terminator)
+        outstr += '    <<%c' % terminator
+        outstr += '        /Length %d%c' % (len(objstr), terminator)
+        outstr += '    >>%c' % terminator
+        outstr += 'stream%c' % terminator
+        outstr += '%s%c' % (objstr, terminator)
+        outstr += 'endstream%c' % terminator
+        outstr += '    endobj%c' % terminator
+        outf.write(outstr)
+        return len(outstr)
+
 class PDFGenerator(object):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
@@ -282,6 +315,11 @@ class PDFGenerator(object):
     def addRectangle(self, x0, y0, w, h, line_width = 1, line_style = 'solid'):
         assert self.curr_page, 'call newPage() function before adding first content'
         rect = PDFRectangleObject(self, x0, y0, w, h, line_width, line_style)
+        self.curr_page.addContent(rect)
+
+    def addFilledRectangle(self, x0, y0, w, h, line_width = 1, line_style = 'solid', rgb_stroke = (0.0, 0.0, 0.0), rgb_fill = (1.0, 1.0, 1.0)):
+        assert self.curr_page, 'call newPage() function before adding first content'
+        rect = PDFFilledRectangleObject(self, x0, y0, w, h, line_width, line_style, rgb_stroke, rgb_fill)
         self.curr_page.addContent(rect)
 
     def getNextObjectNumber(self):

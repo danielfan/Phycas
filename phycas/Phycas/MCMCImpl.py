@@ -280,6 +280,8 @@ class MCMCImpl(CommonFunctions):
         return cum
         
     def calcMarginalLikelihood(self):
+        # This function is obsolete now that the sump command computes harmonic mean estimate
+        # It is no longer called and should be removed from the code at some point 
         ps_aborted = False
         ps_msg = ''
         if self.opts.doing_path_sampling:
@@ -884,4 +886,4 @@ class MCMCImpl(CommonFunctions):
             
         # Report marginal likelihood calculation (using harmonic mean method, or path sampling if 
         # this mcmc method was called from the ps command)
-        self.calcMarginalLikelihood()
+        #self.calcMarginalLikelihood()

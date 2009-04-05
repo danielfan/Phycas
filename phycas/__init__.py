@@ -225,6 +225,7 @@ def setMasterSeed(x):
     r.setSeed(x)
     randomtree.rng = r
     mcmc.rng = r
+    sim.rng = r
 
 def simpleOutputter(msg):
     print msg

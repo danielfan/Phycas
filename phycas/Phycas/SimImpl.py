@@ -20,7 +20,7 @@ class SimImpl(CommonFunctions):
         CommonFunctions.__init__(self, opts)
         self.starting_tree_source = None
         self.starting_tree        = None
-        self.ntax                 = None
+        #self.ntax                 = None
         self.sim_model_tree       = None
         self.data_matrix          = None
         
@@ -31,7 +31,10 @@ class SimImpl(CommonFunctions):
                 i = iter(tr_source)
                 self.starting_tree = i.next()
             except:
-                self.stdout.error("A tree could not be obtained from the tree_source")
+                if self.opts.tree_source is None:
+                    self.stdout.error("Need to set sim.tree_source before calling sim()")
+                else:
+                    self.stdout.error("A tree could not be obtained from the tree_source")
                 raise
         return self.starting_tree
         
@@ -44,15 +47,20 @@ class SimImpl(CommonFunctions):
         """
         self.starting_tree_source = self.opts.tree_source
         self.getStartingTree()
-        self.ntax                 = len(self.opts.taxon_labels)
-        self.phycassert(self.ntax > 3, 'Must specify labels for at least four taxa')
+        ntax = len(self.opts.taxon_labels)
+        self.phycassert(ntax > 3, 'Must specify labels for at least four taxa')
+        self.phycassert(ntax == self.starting_tree.getNTips(), 'Number of tips in tree does not match number of taxon labels in taxon_labels')
         core = LikelihoodCore(self)
         core.setupCore()
         if not core.tree.hasEdgeLens():
-            tm = TreeManip(core.tree)
-            tm.setRandomEdgeLengths(core.starting_edgelen_dist)
+            tm = Phylogeny.TreeManip(core.tree)
+            tm.setRandomEdgeLengths(self.opts.edgelen_dist)
         self.sim_model_tree = core.tree
         core.prepareForSimulation()
         sim_data = core.simulate()
         sim_data.saveToNexusFile(self.opts.file_name, self.opts.taxon_labels, 'dna', ('a','c','g','t'))
+        dataf = open(self.opts.file_name,'a')
+        dataf.write('\n[\ntree used for simulation:\n%s\n]\n' % core.tree.makeNewick() )
+        dataf.close()
+        
         

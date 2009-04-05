@@ -10,7 +10,8 @@ class Sim(PhycasCommand):
                 ("model",           model,                                    "Specifies the model to use. By default, uses the predefined model object. Type model.help to set the settings for this model."),
                 ("taxon_labels",    ['taxon1', 'taxon2', 'taxon3', 'taxon4'], "Names to use for taxa in simulated data set (number of labels defined determines the number of taxa in the simulated dataset)"),
                 ("nchar",           1000,                                     "Number of characters to generate", IntArgValidate(min=1)),
-                ("tree_source",     randomtree(),                               "TreeCollection that will provide the model tree for the simulation.", TreeSourceValidate),
+                ("edgelen_dist",    Exponential(10.0),                        "Distribution from which random edge lengths are drawn when edge lengths are not specified in tree_source"),
+                ("tree_source",     None,                                     "TreeCollection that will provide the model tree for the simulation. Examples: tree_source = TreeCollection(filename='treefile.tre'); tree_source = TreeCollection(newick='(A:0.01,B:0.07,(C:0.03,D:0.11):0.07'). Can also be object returned by randomtree(); type randomtree.help for details", TreeSourceValidate),
                 ] + PhycasCommand._getRNGOptions()
                 )                                                  
         PhycasCommand.__init__(self, args, "sim", "Simulates DNA sequences according to the specified model.")
