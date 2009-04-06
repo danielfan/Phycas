@@ -46,4 +46,3 @@ for marginal likelihood estimation:
 Marginal likelihood estimates:
  -6623.52760533 Steppingstone sampling method (se = 1.82152309)
  -6666.33719676 Path sampling method (using trapezoid rule)
- -6325.02632031 Path sampling method (using Simpson's rule)
