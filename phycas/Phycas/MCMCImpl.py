@@ -279,123 +279,123 @@ class MCMCImpl(CommonFunctions):
         cum = term1 + term2
         return cum
         
-    def calcMarginalLikelihood(self):
-        # This function is obsolete now that the sump command computes harmonic mean estimate
-        # It is no longer called and should be removed from the code at some point 
-        ps_aborted = False
-        ps_msg = ''
-        if self.opts.doing_path_sampling:
-            K = self.opts.ps_nbetavals
-            if K > 1:
-                # Calculate marginal likelihood using the method described by Lartillot and Phillippe (2006; Syst. Biol. 55: 195-107)
-                # using improvements in Xie et al. (2009)
-                marginal_like = 0.0
-                if self.opts.ps_simpsons_method:
-                    # This approach uses Simpson's method to interpolate between beta values using the
-                    # interpolation polynomial in Lagrange form. This eliminates a big chuck of the bias
-                    # apparent with Lartillot and Phillippe method when the number of beta values used is small
-                    n = len(self.ps_sampled_likes[0])
-                    if not (n == self.opts.ncycles//self.opts.sample_every):
-                        ps_aborted = True
-                        ps_msg = 'Path sampling marginal likelihood calculations aborted because number of sampled likelihoods (%d) did not match the expected number (%d)' % (n, self.opts.ncycles//self.opts.sample_every)
-                    else:
-                        mean = [sum(self.ps_sampled_likes[i])/float(n) for i in range(K)]
-                        for i in range(K - 2):
-                            x = [0.0]*3
-                            x[0] = self.ps_sampled_betas[i]
-                            x[1] = self.ps_sampled_betas[i+1]
-                            x[2] = self.ps_sampled_betas[i+2]
-                            y = [0.0]*3
-                            y[0] = mean[i]
-                            y[1] = mean[i+1]
-                            y[2] = mean[i+2]
-                            if i == 0:
-                                a = self.cumLagrange(1, x, y)
-                                marginal_like += a
-                                b = self.cumLagrange(2, x, y)
-                                marginal_like += (b - a)/2.0
-                            elif i == K - 3:
-                                a = self.cumLagrange(1, x, y)
-                                marginal_like += a/2.0
-                                b = self.cumLagrange(2, x, y)
-                                marginal_like += (b - a)
-                            else:
-                                b = self.cumLagrange(2, x, y)
-                                marginal_like += b/2.0
-                else:
-                    # Get here if ps_simpsons_method is false. This approach is similar to Lartillot and Phillippe's
-                    # 2006 method except it is generalized to allow unequal beta intervals
-                    for i in range(K):
-                        n = len(self.ps_sampled_likes[i])
-                        if not (n == self.opts.ncycles//self.opts.sample_every):
-                            ps_aborted = True
-                            ps_msg = 'Path sampling marginal likelihood calculations aborted because number of sampled likelihoods (%d) did not match the expected number (%d)' % (n, self.opts.ncycles//self.opts.sample_every)
-                            break
-                        mean = sum(self.ps_sampled_likes[i])/float(n)
-                        if i == 0:
-                            before = self.ps_sampled_betas[0]
-                        else:
-                            before = self.ps_sampled_betas[i-1]
-                        if i == K - 1:
-                            after = self.ps_sampled_betas[K - 1]
-                        else:
-                            after = self.ps_sampled_betas[i+1]
-                        diff = before - after
-                        if diff < 0.0:
-                            ps_aborted = True
-                            ps_msg = 'Phycas does not currently support path sampling from prior toward posterior'
-                            break
-                        marginal_like += mean*diff/2.0
-                if not ps_aborted:
-                    self.output('Log of marginal likelihood (thermodynamic integration method) = %.8f' % marginal_like)
-
-                if not ps_aborted:
-                    # Calculate marginal likelihood using steppingstone sampling method
-                    lnR = 0.0
-                    seR = 0.0
-                    for i in range(1,self.opts.ps_nbetavals):
-                        # assuming that beta_incr and n are ok because ps_aborted is not true
-                        beta_incr = self.ps_sampled_betas[i-1] - self.ps_sampled_betas[i]
-                        n = len(self.ps_sampled_likes[i])
-                        
-                        # marginal likelihood calculation
-                        tmp = 0.0
-                        Lmax = max(self.ps_sampled_likes[i])
-                        for lnL in self.ps_sampled_likes[i]:
-                            tmp += math.exp(beta_incr*(lnL - Lmax))
-                        tmp /= float(n)
-                        lnR += beta_incr*Lmax + math.log(tmp)
-
-                        # standard error calculation
-                        tmp1 = 0.0
-                        for lnL in self.ps_sampled_likes[i]:
-                            aa = math.exp(beta_incr*(lnL - Lmax))/tmp
-                            tmp1 += math.pow((aa - 1.0),2.0)
-                        tmp1 /= float(n)
-                        seR += tmp1/float(n)
-
-                    self.output('Log of marginal likelihood (steppingstone sampling method) = %.8f (se = %.8f)' % (lnR, seR))
-            else:
-                self.output('Log of marginal likelihood not computed (ps_nbetavals must be greater than 1)')
-            if ps_aborted:
-                self.output(ps_msg)
-        else:
-            # Calculate marginal likelihood using harmonic mean method on cold chain
-            nignored = 0
-            n = len(self.ps_sampled_likes[0])
-            self.phycassert(n == self.opts.ncycles//self.opts.sample_every, 'number of sampled likelihoods (%d) does not match the expected number (%d) in harmonic mean calculation' % (n, self.opts.ncycles//self.opts.sample_every))
-            min_lnL = min(self.ps_sampled_likes[0])
-            sum_diffs = 0.0
-            for lnl in self.ps_sampled_likes[0]:
-                diff = lnl - min_lnL
-                if diff < 500.0:
-                    sum_diffs += math.exp(-diff)
-                else:
-                    nignored += 1
-            log_harmonic_mean = math.log(n) + min_lnL - math.log(sum_diffs)
-            if nignored > 0:
-                self.warning('ignoring %d sampled log-likelihoods in harmonic mean calculation' % nignored)
-            self.output('Log of marginal likelihood (harmonic mean method) = %f' % log_harmonic_mean)
+#     def calcMarginalLikelihood(self):
+#         # This function is obsolete now that the sump command computes harmonic mean estimate
+#         # It is no longer called and should be removed from the code at some point 
+#         ps_aborted = False
+#         ps_msg = ''
+#         if self.opts.doing_path_sampling:
+#             K = self.opts.ps_nbetavals
+#             if K > 1:
+#                 # Calculate marginal likelihood using the method described by Lartillot and Phillippe (2006; Syst. Biol. 55: 195-107)
+#                 # using improvements in Xie et al. (2009)
+#                 marginal_like = 0.0
+#                 if self.opts.ps_simpsons_method:
+#                     # This approach uses Simpson's method to interpolate between beta values using the
+#                     # interpolation polynomial in Lagrange form. This eliminates a big chuck of the bias
+#                     # apparent with Lartillot and Phillippe method when the number of beta values used is small
+#                     n = len(self.ps_sampled_likes[0])
+#                     if not (n == self.opts.ncycles//self.opts.sample_every):
+#                         ps_aborted = True
+#                         ps_msg = 'Path sampling marginal likelihood calculations aborted because number of sampled likelihoods (%d) did not match the expected number (%d)' % (n, self.opts.ncycles//self.opts.sample_every)
+#                     else:
+#                         mean = [sum(self.ps_sampled_likes[i])/float(n) for i in range(K)]
+#                         for i in range(K - 2):
+#                             x = [0.0]*3
+#                             x[0] = self.ps_sampled_betas[i]
+#                             x[1] = self.ps_sampled_betas[i+1]
+#                             x[2] = self.ps_sampled_betas[i+2]
+#                             y = [0.0]*3
+#                             y[0] = mean[i]
+#                             y[1] = mean[i+1]
+#                             y[2] = mean[i+2]
+#                             if i == 0:
+#                                 a = self.cumLagrange(1, x, y)
+#                                 marginal_like += a
+#                                 b = self.cumLagrange(2, x, y)
+#                                 marginal_like += (b - a)/2.0
+#                             elif i == K - 3:
+#                                 a = self.cumLagrange(1, x, y)
+#                                 marginal_like += a/2.0
+#                                 b = self.cumLagrange(2, x, y)
+#                                 marginal_like += (b - a)
+#                             else:
+#                                 b = self.cumLagrange(2, x, y)
+#                                 marginal_like += b/2.0
+#                 else:
+#                     # Get here if ps_simpsons_method is false. This approach is similar to Lartillot and Phillippe's
+#                     # 2006 method except it is generalized to allow unequal beta intervals
+#                     for i in range(K):
+#                         n = len(self.ps_sampled_likes[i])
+#                         if not (n == self.opts.ncycles//self.opts.sample_every):
+#                             ps_aborted = True
+#                             ps_msg = 'Path sampling marginal likelihood calculations aborted because number of sampled likelihoods (%d) did not match the expected number (%d)' % (n, self.opts.ncycles//self.opts.sample_every)
+#                             break
+#                         mean = sum(self.ps_sampled_likes[i])/float(n)
+#                         if i == 0:
+#                             before = self.ps_sampled_betas[0]
+#                         else:
+#                             before = self.ps_sampled_betas[i-1]
+#                         if i == K - 1:
+#                             after = self.ps_sampled_betas[K - 1]
+#                         else:
+#                             after = self.ps_sampled_betas[i+1]
+#                         diff = before - after
+#                         if diff < 0.0:
+#                             ps_aborted = True
+#                             ps_msg = 'Phycas does not currently support path sampling from prior toward posterior'
+#                             break
+#                         marginal_like += mean*diff/2.0
+#                 if not ps_aborted:
+#                     self.output('Log of marginal likelihood (thermodynamic integration method) = %.8f' % marginal_like)
+# 
+#                 if not ps_aborted:
+#                     # Calculate marginal likelihood using steppingstone sampling method
+#                     lnR = 0.0
+#                     seR = 0.0
+#                     for i in range(1,self.opts.ps_nbetavals):
+#                         # assuming that beta_incr and n are ok because ps_aborted is not true
+#                         beta_incr = self.ps_sampled_betas[i-1] - self.ps_sampled_betas[i]
+#                         n = len(self.ps_sampled_likes[i])
+#                         
+#                         # marginal likelihood calculation
+#                         tmp = 0.0
+#                         Lmax = max(self.ps_sampled_likes[i])
+#                         for lnL in self.ps_sampled_likes[i]:
+#                             tmp += math.exp(beta_incr*(lnL - Lmax))
+#                         tmp /= float(n)
+#                         lnR += beta_incr*Lmax + math.log(tmp)
+# 
+#                         # standard error calculation
+#                         tmp1 = 0.0
+#                         for lnL in self.ps_sampled_likes[i]:
+#                             aa = math.exp(beta_incr*(lnL - Lmax))/tmp
+#                             tmp1 += math.pow((aa - 1.0),2.0)
+#                         tmp1 /= float(n)
+#                         seR += tmp1/float(n)
+# 
+#                     self.output('Log of marginal likelihood (steppingstone sampling method) = %.8f (se = %.8f)' % (lnR, seR))
+#             else:
+#                 self.output('Log of marginal likelihood not computed (ps_nbetavals must be greater than 1)')
+#             if ps_aborted:
+#                 self.output(ps_msg)
+#         else:
+#             # Calculate marginal likelihood using harmonic mean method on cold chain
+#             nignored = 0
+#             n = len(self.ps_sampled_likes[0])
+#             self.phycassert(n == self.opts.ncycles//self.opts.sample_every, 'number of sampled likelihoods (%d) does not match the expected number (%d) in harmonic mean calculation' % (n, self.opts.ncycles//self.opts.sample_every))
+#             min_lnL = min(self.ps_sampled_likes[0])
+#             sum_diffs = 0.0
+#             for lnl in self.ps_sampled_likes[0]:
+#                 diff = lnl - min_lnL
+#                 if diff < 500.0:
+#                     sum_diffs += math.exp(-diff)
+#                 else:
+#                     nignored += 1
+#             log_harmonic_mean = math.log(n) + min_lnL - math.log(sum_diffs)
+#             if nignored > 0:
+#                 self.warning('ignoring %d sampled log-likelihoods in harmonic mean calculation' % nignored)
+#             self.output('Log of marginal likelihood (harmonic mean method) = %f' % log_harmonic_mean)
 
     def getStartingTree(self):
         if self.starting_tree is None:
@@ -580,6 +580,10 @@ class MCMCImpl(CommonFunctions):
                 new_pinvar = chain.model.getPinvarPrior().sample()
                 chain.model.setPinvar(new_pinvar)
             elif name == 'master edge length parameter':
+                pass
+            elif name == 'external edge length parameter':
+                pass
+            elif name == 'internal edge length parameter':
                 pass
             elif name == 'Relative rates move':             # C++ class StateFreqMove
                 rate_vector = chain.model.getRelRatePrior().sample()

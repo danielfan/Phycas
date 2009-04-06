@@ -7,6 +7,13 @@ Release 1.1.4 (8-Apr-2009)
 - harmonic mean estimate of marginal likelihood is no longer computed after an MCMC run
   (use sump command for this)
 - several small bugs were fixed in the sim command (still some glitches left, I fear)
+- the output of sump() when invoked after ps() no longer includes results using Simpson's rule
+  (Simpson's rule for approximating integrals is too unreliable in the context of marginal 
+  likelihood estimation and will no longer be computed by Phycas)
+- ps() no longer issues the complaint "model uses an updater...that has not yet been added 
+  to MCMCImpl.explorePrior" when using the default model
+- bug fixed in TopoPriorCalculator class that caused it to sometimes return counts computed
+  for previous number of taxa after number of taxa changed
 
 Release 1.1.3 (15-Mar-2009)
 - this number was used for some Python-version-specific Mac releases

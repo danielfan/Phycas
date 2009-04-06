@@ -343,10 +343,10 @@ class ParamSummarizer(CommonFunctions):
             self.ps_trapezoid(betas, means)
         except Exception,e:
             self.output(' %s' % e.message)
-        try:
-            self.ps_simpsons(betas, means)
-        except Exception,e:
-            self.output(' %s' % e.message)
+        #try:
+        #    self.ps_simpsons(betas, means)
+        #except Exception,e:
+        #    self.output(' %s' % e.message)
             
     def harmonic_mean(self, v):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

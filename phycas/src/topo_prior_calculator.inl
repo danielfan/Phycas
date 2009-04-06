@@ -62,6 +62,7 @@ inline void TopoPriorCalculator::SetNTax(
 		PHYCAS_ASSERT(new_ntax > (unsigned)(is_rooted ? 1 : 2));
 		ntax = new_ntax;
 
+		counts_dirty = true;
 		topo_priors_dirty = true;
 		}
 	}
