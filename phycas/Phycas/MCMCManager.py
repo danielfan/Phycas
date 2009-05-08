@@ -276,9 +276,17 @@ class MarkovChain(LikelihoodCore):
         """
         paramf.write('[ID: %d]\n' % self.r.getInitSeed())
         if self.parent.opts.doing_path_sampling:
-            paramf.write('Gen\tbeta\tLnL\tTL')
+            paramf.write('Gen\tbeta\tLnL')
         else:
-            paramf.write('Gen\tLnL\tTL')
+            paramf.write('Gen\tLnL')
+            
+        if self.parent.opts.fix_topology:
+            nbrlens = 2*self.parent.ntax - 3    # will need to be changed if rooted trees allowed
+            for i in range(nbrlens):
+                paramf.write('\tbrlen%d' % (i+1))
+        else:
+            paramf.write('\tTL')
+        
         paramf.write(self.model.paramHeader())
         if self.parent.opts.model.edgelen_hyperprior is not None:
             if self.parent.opts.model.internal_edgelen_prior is self.parent.opts.model.external_edgelen_prior:
@@ -802,7 +810,7 @@ class MCMCManager:
             
             # TREE_LENGTH
             if self.parent.opts.fix_topology:
-                self.parent.paramf.write('%s' % '\t'.join([float_format_notab_str % brlen for brlen in cold_chain.tree.edgeLens()]))
+                self.parent.paramf.write('%s\t' % '\t'.join([float_format_notab_str % brlen for brlen in cold_chain.tree.edgeLens()]))
             else:
                 self.parent.paramf.write(float_format_str % cold_chain.tree.edgeLenSum())
             
