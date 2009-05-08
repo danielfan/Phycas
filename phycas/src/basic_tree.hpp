@@ -77,6 +77,7 @@ class Tree
 		TreeNode *				GetLastPreorder();
 		const TreeNode *		GetFirstPreorderConst() const;
 		const TreeNode *		GetLastPreorderConst() const;
+		std::vector<double>		EdgeLens();
 		preorder_iterator		begin();
 		preorder_iterator		end();
 		

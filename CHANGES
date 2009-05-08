@@ -3,6 +3,10 @@ Phycas can be obtained from http://www.phycas.org/
 
 ~~~~~~~~~~~~~~~~~ Release history (most recent first) ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Release 1.1.5 (not yet released)
+- if mcmc.fix_topology specified, all branch lengths are recorded in the params file
+  (otherwise only the tree length is recorded).
+
 Release 1.1.4 (8-Apr-2009)
 - harmonic mean estimate of marginal likelihood is no longer computed after an MCMC run
   (use sump command for this)

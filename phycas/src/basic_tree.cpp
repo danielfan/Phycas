@@ -1178,6 +1178,31 @@ bool Tree::DebugCheckTree(bool allowDegTwo, bool checkDataPointers, int verbosit
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Returns a vector of doubles each element of which is one branch length.
+*/
+std::vector<double> Tree::EdgeLens()
+	{
+	if (!HasEdgeLens())
+		throw XPhylogeny("no edge lengths were specified for this tree");
+
+	if (preorderDirty)
+		RefreshPreorder();
+
+	unsigned nnodes = GetNNodes();
+	std::vector<double> v(nnodes - 1, 0.0);
+
+	TreeNode * nd = GetFirstPreorder();
+	unsigned i = 0;
+	for (nd = nd->GetNextPreorder(); nd != NULL; nd = nd->GetNextPreorder())
+		{
+		double brlen = nd->GetEdgeLen();
+		v[i++] = brlen;
+		}
+		
+	return v;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Computes the sum of all edge lengths in the tree.  Uses preorder pointers to walk through tree, calling 
 |	RefreshPreorder() if these pointers have never been set or have been invalidated.
 */

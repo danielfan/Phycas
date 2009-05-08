@@ -399,7 +399,7 @@ void TreeManip::starTree(
 /*----------------------------------------------------------------------------------------------------------------------
 |	If the `yule' parameter is true, and the supplied probability distribution is ExponentialDist(lambda), this function
 |	builds a Yule tree with speciation rate `lambda'. If the `yule' parameter is false, then the supplied probability
-|	distribution is used to generated independent edge lengths and the resulting tree is not expected to be ultrametric.
+|	distribution is used to generate independent edge lengths and the resulting tree is not expected to be ultrametric.
 |	If you want the same random number generator to be used for both edge lengths and branching order, call the setLot()
 |	function of the probability distribution object, passing the same Lot object used in the call to 
 |	TreeManip::randomTree. The resulting tree is unrooted, so the supplied `ntips' includes the tip serving as the root
@@ -436,7 +436,7 @@ void TreeManip::starTree(
 |>
 |	Pr(S1 < t) = 1 - Pr{no speciation in lineage | lambda, t} = 1 - exp{-lambda t}
 |>
-|	Thus, S1 is exponentially distributed with hazard parameter `lambda'. The cumulative distribution function of the 
+|	Thus, S1 is exponentially distributed with rate parameter `lambda'. The cumulative distribution function of the 
 |	sojourn time S2 is 
 |>
 |	Pr(S2 < t) = 1 - Pr{no speciation in either lineage | lambda, t}

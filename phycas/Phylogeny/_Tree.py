@@ -1,5 +1,6 @@
 from _Phylogeny import *
 from phycas.ReadNexus._NexusReader import TreeDescription
+
 class Tree(TreeBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
@@ -389,6 +390,16 @@ class Tree(TreeBase):
 
         """
         return TreeBase.edgeLenSum(self)
+
+    def edgeLens(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns a list of all edge lengths.
+        
+        Need an example here.
+
+        """
+        return TreeBase.edgeLens(self)
 
     def makeNewick(self, float_precision = 5):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

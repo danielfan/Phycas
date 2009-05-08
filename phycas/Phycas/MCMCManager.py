@@ -781,6 +781,7 @@ class MCMCManager:
         
         """
         float_format_str = '%%.%df\t' % self.parent.opts.ndecimals
+        float_format_notab_str = '%%.%df' % self.parent.opts.ndecimals
         
         # Gather log-likelihoods, and if path sampling save in path_sample list for later
         lnLikes = []
@@ -798,7 +799,12 @@ class MCMCManager:
                 self.parent.paramf.write(float_format_str % (cold_chain.heating_power))
             for lnl in lnLikes:
                 self.parent.paramf.write(float_format_str % lnl)
-            self.parent.paramf.write(float_format_str % cold_chain.tree.edgeLenSum())
+            
+            # TREE_LENGTH
+            if self.parent.opts.fix_topology:
+                self.parent.paramf.write('%s' % '\t'.join([float_format_notab_str % brlen for brlen in cold_chain.tree.edgeLens()]))
+            else:
+                self.parent.paramf.write(float_format_str % cold_chain.tree.edgeLenSum())
             
             self.parent.paramf.write(cold_chain.model.paramReport(self.parent.opts.ndecimals))
             if self.parent.opts.model.edgelen_hyperprior is not None:
