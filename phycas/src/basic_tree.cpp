@@ -1529,7 +1529,10 @@ void Tree::BuildFromString(
 		if (nEdgeLengths > 0)
 			{
 			if (nEdgeLengths < nTips + nInternals - 1)
-				throw XPhylogeny("some but not all edge lengths were specified");
+				{
+				std::string msg = boost::str(boost::format("some but not all edge lengths were specified: %d found, %d expected (= %d tips + %d internals - 1)") % nEdgeLengths % (nTips + nInternals - 1) % nTips % nInternals);
+				throw XPhylogeny(msg);
+				}
 			hasEdgeLens = true;
 			}
 		else

@@ -29,6 +29,8 @@
 extern "C" {
 #endif
 
+#define NEED_MATINV		/* added by POL for Phycas */
+
 #if defined(PAUP)
 //@ below defined TEMP
 #	define NEED_NONSYM_EIG		/* leave undefined for PAUP* -- doesn't need nonsymmetric eigenstuff */

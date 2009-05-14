@@ -93,7 +93,7 @@ ENTRY int LUDecompose(
   int		*permutation,	/* => row permutation according to partial pivoting sequence */
   double	*pd)			/* => 1 if number of row interchanges was even, -1 if odd (NULL OK) */
 	{
-	int			i, imax, j, k;
+	int			i, imax = 0, j, k;
 	double		largest, sum, temp, pivotVal,
 				d = 1.0;
 	
@@ -591,7 +591,7 @@ LOCAL void Tred2(int n, double **a, double *d, double *e, double **z)
 LOCAL int Tql2(int n, double *d, double *e, double **z)
 	{
 	int		i, j, k, l, m, l1, l2;
-	double	c, c2, c3, dl1, el1, f, g, h, p, r, s, s2, tst1, tst2;
+	double	c, c2, c3=0, dl1, el1, f, g, h, p, r, s, s2=0, tst1, tst2;
 
 	if (n == 1)
 		return 0;

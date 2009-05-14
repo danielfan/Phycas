@@ -148,9 +148,11 @@ alias probdist_sources
     phycas/src/phycas_string.cpp
     phycas/src/basic_cdf.cpp
     phycas/src/basic_lot.cpp
+    phycas/src/linalg.c
     phycas/src/stop_watch.cpp
     phycas/src/thirdparty/dcdflib/src/dcdflib.c
     phycas/src/thirdparty/dcdflib/src/ipmpar.c
+    phycas/src/mvnormal_distribution.cpp
     phycas/src/probability_distribution.cpp
     phycas/src/slice_sampler.cpp
     tool_specific_requirements ;

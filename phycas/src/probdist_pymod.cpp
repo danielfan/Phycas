@@ -29,6 +29,7 @@
 
 #include "basic_lot.hpp"
 #include "probability_distribution.hpp"
+#include "mvnormal_distribution.hpp"
 #include "stop_watch.hpp"
 #include "slice_sampler.hpp"
 #include "xprobdist.hpp"
@@ -143,6 +144,30 @@ BOOST_PYTHON_MODULE(_ProbDist)
 		.def("getrandbits", &phycas::Lot::GetRandBits)
 		;
 
+	class_<MVNormalDistribution, bases<MultivariateProbabilityDistribution> >("MVNormalDistBase")
+		.def(init<const std::vector<double> &, const std::vector<double> &>())
+		.def(init<const MVNormalDistribution &>())
+		.def("clone", &MVNormalDistribution::Clone, return_value_policy<manage_new_object>())
+		.def("isDiscrete", &MVNormalDistribution::IsDiscrete)
+		.def("getDistName", &MVNormalDistribution::GetDistributionName)
+		.def("__str__", &MVNormalDistribution::GetDescriptionForPython)
+		.def("__repr__", &MVNormalDistribution::GetDescriptionForPython)
+		.def("setLot", &MVNormalDistribution::SetLot)
+		.def("setSeed", &MVNormalDistribution::SetSeed)
+		.def("resetLot", &MVNormalDistribution::ResetLot)
+		.def("getMean", &MVNormalDistribution::GetMean)
+		.def("getVar", &MVNormalDistribution::GetVar)
+		.def("getStdDev", &MVNormalDistribution::GetStdDev)
+		.def("approxCDF", &MVNormalDistribution::ApproxCDF)
+		.def("sample", &MVNormalDistribution::Sample)
+		.def("getLnPDF", &MVNormalDistribution::GetLnPDF)
+		.def("getRelativeLnPDF", &MVNormalDistribution::GetRelativeLnPDF)
+		.def("setMeanAndVariance", &MVNormalDistribution::SetMeanAndVariance)
+		.def("getVarCovarMatrix", &MVNormalDistribution::GetVarCovarMatrix)
+		.def("getNParams", &MVNormalDistribution::GetNParams)
+		.def("debugMVNorm", &MVNormalDistribution::DebugMVNorm)
+		;
+
 	class_<DirichletDistribution, bases<MultivariateProbabilityDistribution> >("DirichletDistBase")
 		.def(init<const std::vector<double> &>())
 		.def(init<const DirichletDistribution &>())
@@ -165,6 +190,7 @@ BOOST_PYTHON_MODULE(_ProbDist)
 		.def("getVarCovarMatrix", &DirichletDistribution::GetVarCovarMatrix)
 		.def("getNParams", &DirichletDistribution::GetNParams)
 		;
+		
 	class_<BetaDistribution, bases<ProbabilityDistribution, AdHocDensity> >("BetaDistBase")
 		.def(init<double, double>())
 		.def(init<const BetaDistribution &>())

@@ -115,7 +115,6 @@ class Dirichlet(DirichletDistBase, PyDistributionBase):
         0.270456715211
         0.301561060645
         
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         In this example, only one random number generator (g) was involved;
         however, one could pass g to several different probability distribu-
         tions, thus ensuring that the entire sequence of random numbers could
@@ -316,7 +315,7 @@ class Dirichlet(DirichletDistBase, PyDistributionBase):
         
         """
         nparams = DirichletDistBase.getNParams(self)
-        assert nparams == len(x), 'Vector supplied to getRelativeLnPDF has length %d but length expected was %d' % (len(x), nparams)
+        assert nparams == len(x), 'Vector supplied to getLnPDF has length %d but length expected was %d' % (len(x), nparams)
         return DirichletDistBase.getLnPDF(self, x)
         
     def getRelativeLnPDF(self, x):

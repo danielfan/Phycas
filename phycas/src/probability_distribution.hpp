@@ -430,7 +430,7 @@ class DirichletDistribution : public MultivariateProbabilityDistribution
 		std::vector<GammaDistribution>		paramDistributions;
 		mutable std::vector<double>			scratchSpace;
 	};
-
+	
 } // namespace phycas
 
 #include "probability_distribution.inl"

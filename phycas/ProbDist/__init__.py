@@ -17,6 +17,7 @@ from _BinomialDist import *
 from _BernoulliDist import *
 from _BetaDist import *
 from _DirichletDist import *
+from _MVNormalDist import *
 
 #print 'importing ProbDist...'
 
@@ -30,6 +31,8 @@ def testExamples():
     r = doctest.testfile('_BinomialDist.py')
     a[0] += r[0] ; a[1] += r[1] 
     r = doctest.testfile('_DirichletDist.py')
+    a[0] += r[0] ; a[1] += r[1] 
+    r = doctest.testfile('_MVNormalDist.py')
     a[0] += r[0] ; a[1] += r[1] 
     r = doctest.testfile('_ExponentialDist.py')
     a[0] += r[0] ; a[1] += r[1] 
