@@ -3550,7 +3550,7 @@ S250:
 S260:
         fx = ccum-*q;
 S270:
-        if(!(qporq && cum > 1.5e0 || (!qporq && ccum > 1.5e0))) goto S280; /* POL added parens */
+        if(!((qporq && (cum > 1.5e0)) || (!qporq && (ccum > 1.5e0)))) goto S280; /* POL added parens */
         /* if(!(qporq && cum > 1.5e0 || !qporq && ccum > 1.5e0)) goto S280; */
         *status = 10;
         return;
