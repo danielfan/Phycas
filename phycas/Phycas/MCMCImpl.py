@@ -149,7 +149,7 @@ class MCMCImpl(CommonFunctions):
             tmpf.write('************** cycle=%d, chain=%d\n' % (cycle,chain_index))
         for p in chain.chain_manager.getAllUpdaters():
             w = p.getWeight()
-            #print p.getName(), "(weight = %d)" % w
+            print "param = %s (weight = %f), chain = %d" % (p.getName(), w, chain_index)
             for x in range(w):
                 if self.opts.debugging:
                     p.setSaveDebugInfo(True)
@@ -479,12 +479,19 @@ class MCMCImpl(CommonFunctions):
                 # Determine vector of powers for each chain
                 self.heat_vector = []
                 for i in range(self.opts.nchains):
-                    # Standard heating 
+                    # For n=5 chains (1 cold, 4 heated), min_heat_power = 0.5, we have:
+                    # lambda = (1 - min_heat_power)/(min_heat_power*(n-1))
+                    #        = (1 - 0.5)/(0.5*4)
+                    #        = 0.25
                     # 0 1.000 = 1/1.0 cold chain explores posterior
-                    # 1 0.833 = 1/1.2
-                    # 2 0.714 = 1/1.4
-                    # 3 0.625 = 1/1.6
-                    temp = 1.0/(1.0 + float(i)*self.heating_lambda)
+                    # 1 0.800 = 1/1.25
+                    # 2 0.667 = 1/1.50
+                    # 3 0.571 = 1/1.75
+                    # 4 0.500 = 1/2.00
+                    z = self.opts.min_heat_power
+                    n = self.opts.nchains
+                    lamda = (1.0 - z)/(z*(n - 1.0))
+                    temp = 1.0/(1.0 + float(i)*lamda)
                     self.heat_vector.append(temp)
         else:
             # User supplied his/her own heat_vector; perform sanity checks

@@ -28,7 +28,8 @@ class MCMC(PhycasCommand):
                 ("edge_move_lambda0",        1.0,    "Sets the maximum value of the tuning parameter for the EdgeMove Metropolis-Hastings move. This value corresponds to a boldness value of 0.0 and is only used during path sampling analyses.", FloatArgValidate(min=0.01)),
                 ("edge_move_weight",           0,    "Only used if fix_topology is True. Makes sense to set this to some multiple of the number of edges since each EdgeMove affects a single randomly-chosen edge ", IntArgValidate(min=0)),
                 #("mapping_move_weight",       1,    "Univent mapping will be performed this many times per cycle", IntArgValidate(min=0)),
-                #("unimap_nni_move_weight",  100,    "Unimap NNI moves will be performed this many times per cycle", IntArgValidate(min=0)),
+                #("unimap_nni_move_weight",  100,    "Unimap NNI moves will be performed this many times per cycle", IntArgValidate(min=0)),    
+                ("nchains",                    1,    "The number of Markov chains to run simultaneously. One chain serves as the cold chain from which samples are drawn, the other chains are heated to varying degrees and serve to enhance mixing in the cold chain.", IntArgValidate(min=1)),
                 ("rel_rate_weight",            1,    "Updates of GTR relative rates will occur this many times per cycle if relative rates are being updated jointly", IntArgValidate(min=0)),
                 ("rel_rate_psi",           300.0,    "Sets the maximum value of the tuning parameter for the RelRatesMove Metropolis-Hastings move. This value corresponds to a boldness value of 0.0 and is the value used for normal analyses.", FloatArgValidate(min=1.0)),
                 ("rel_rate_psi0",            1.0,    "Sets the minimum value of the tuning parameter for the RelRatesMove Metropolis-Hastings move. This value corresponds to a boldness vlaue of 100.0 and is only used during path sampling analyses.", FloatArgValidate(min=1.0)),
@@ -49,7 +50,7 @@ class MCMC(PhycasCommand):
                 ("slice_max_units",         1000,    "Max. number of units used in slice sampling", IntArgValidate(min=0)),
                 ("adapt_first",              100,    "Adaptation of slice samplers is performed the first time at cycle adapt_first. Subsequent adaptations wait twice the number of cycles as the previous adaptation. Thus, adaptation n occurs at cycle adapt_first*(2**(n - 1)). The total number of adaptations that will occur during an MCMC run is [ln(adapt_first + ncycles) - ln(adapt_first)]/ln(2)", IntArgValidate(min=0)),
                 ("adapt_simple_param",       0.5,    "Slice sampler adaptation parameter", FloatArgValidate(min=0.01)),
-                ("heating_lambda",           0.2,    "not yet documented", FloatArgValidate(min=0.01)),
+                ("min_heat_power",           0.5,    "Power of the hottest chain when nchains > 1", FloatArgValidate(min=0.01)),
                 ("uf_num_edges",              50,    "Number of edges to traverse before taking action to prevent underflow", IntArgValidate(min=1)),
                 ("ntax",                       0,    "To explore the prior, set to some positive value. Also set data_source to None", IntArgValidate(min=0)),
                 ("ndecimals",                  8,    "Number of decimal places used for sampled parameter values", IntArgValidate(min=1)),
@@ -74,7 +75,6 @@ class MCMC(PhycasCommand):
         self.__dict__["mapping_move_weight"] = 1            # Univent mapping will be performed this many times per cycle
         self.__dict__["unimap_nni_move_weight"] = 100       # Unimap NNI moves will be performed this many times per cycle
         self.__dict__["draw_directly_from_prior"] = True    # If True, MCMCImpl.explorePrior function is used to draw samples directly from the prior during path sampling, which dramatically improves mixing compared to using MCMC proposals to explore the prior
-        self.__dict__["nchains"] = 1                        # The number of Markov chains to run simultaneously. One chain serves as the cold chain from which samples are drawn, the other chains are heated to varying degrees and serve to enhance mixing in the cold chain.
 
         # The data members added below are hidden from the user because they are set by the ps command
         self.__dict__["doing_path_sampling"] = False
