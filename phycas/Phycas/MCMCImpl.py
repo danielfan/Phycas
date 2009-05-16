@@ -149,7 +149,7 @@ class MCMCImpl(CommonFunctions):
             tmpf.write('************** cycle=%d, chain=%d\n' % (cycle,chain_index))
         for p in chain.chain_manager.getAllUpdaters():
             w = p.getWeight()
-            print "param = %s (weight = %f), chain = %d" % (p.getName(), w, chain_index)
+            #print "param = %s (weight = %f), chain = %d" % (p.getName(), w, chain_index)
             for x in range(w):
                 if self.opts.debugging:
                     p.setSaveDebugInfo(True)

@@ -7,7 +7,7 @@
 		<key>EmbeddedEditorHidden:plewis</key>
 		<false/>
 		<key>ExpandedEditorWidth:plewis:displays([(0, 0), (1920, 1200)])</key>
-		<integer>1052</integer>
+		<integer>1013</integer>
 		<key>ExpandedEditorWidth:plewis:displays([(0, 0), (1920, 1200)]:[(-1680, 0), (1680, 1050)])</key>
 		<integer>1163</integer>
 		<key>ExpandedEditorWidth:plewis:displays([(0, 0), (1920, 1200)]:[(-2560, -105), (2560, 1600)])</key>
@@ -32,31 +32,6 @@
 			<dict>
 				<key>AliasData</key>
 				<data>
-				AAAAAAGyAAIAAAZBbGxleW4AAAAAAAAAAAAAAAAAAAAA
-				AAAAAADE38I0SCsAAACEPukLTUNNQ0ltcGwucHkAAAAA
-				AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-				AAAAAAAAAAAAAAAAAAAAAIep0MXO1iJURVhUAAAAAP//
-				//8AAAkgAAAAAAAAAAAAAAAAAAAABlBoeWNhcwAQAAgA
-				AMTf+nQAAAARAAgAAMXPHHIAAAABACAAhD7pAIQ3+ACE
-				N+IAhDfCABvdRQAJ96AACfeJAAB7XAACAEtBbGxleW46
-				VXNlcnM6cGxld2lzOkRvY3VtZW50czpQcm9qZWN0czpw
-				ZGV2OnRydW5rOnBoeWNhczpQaHljYXM6TUNNQ0ltcGwu
-				cHkAAA4AGAALAE0AQwBNAEMASQBtAHAAbAAuAHAAeQAP
-				AA4ABgBBAGwAbABlAHkAbgASAERVc2Vycy9wbGV3aXMv
-				RG9jdW1lbnRzL1Byb2plY3RzL3BkZXYvdHJ1bmsvcGh5
-				Y2FzL1BoeWNhcy9NQ01DSW1wbC5weQATAAEvAAAVAAIA
-				Df//AAA=
-				</data>
-				<key>FileURL</key>
-				<string>file://localhost/Users/plewis/Documents/Projects/pdev/trunk/phycas/Phycas/MCMCImpl.py</string>
-				<key>TypeID</key>
-				<string>_CFileLocator</string>
-				<key>Version</key>
-				<integer>1</integer>
-			</dict>
-			<dict>
-				<key>AliasData</key>
-				<data>
 				AAAAAAHUAAIAAAZBbGxleW4AAAAAAAAAAAAAAAAAAAAA
 				AAAAAADE38I0SCsAAACkcI0PaGVhdGVkY2hhaW5zLnB5
 				AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -75,6 +50,31 @@
 				</data>
 				<key>FileURL</key>
 				<string>file://localhost/Users/plewis/Documents/Projects/pdev/trunk/inprep/HeatedChains/heatedchains.py</string>
+				<key>TypeID</key>
+				<string>_CFileLocator</string>
+				<key>Version</key>
+				<integer>1</integer>
+			</dict>
+			<dict>
+				<key>AliasData</key>
+				<data>
+				AAAAAAGyAAIAAAZBbGxleW4AAAAAAAAAAAAAAAAAAAAA
+				AAAAAADE38I0SCsAAACEPukLTUNNQ0ltcGwucHkAAAAA
+				AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+				AAAAAAAAAAAAAAAAAAAAAIep0MXO1iJURVhUAAAAAP//
+				//8AAAkgAAAAAAAAAAAAAAAAAAAABlBoeWNhcwAQAAgA
+				AMTf+nQAAAARAAgAAMXPHHIAAAABACAAhD7pAIQ3+ACE
+				N+IAhDfCABvdRQAJ96AACfeJAAB7XAACAEtBbGxleW46
+				VXNlcnM6cGxld2lzOkRvY3VtZW50czpQcm9qZWN0czpw
+				ZGV2OnRydW5rOnBoeWNhczpQaHljYXM6TUNNQ0ltcGwu
+				cHkAAA4AGAALAE0AQwBNAEMASQBtAHAAbAAuAHAAeQAP
+				AA4ABgBBAGwAbABlAHkAbgASAERVc2Vycy9wbGV3aXMv
+				RG9jdW1lbnRzL1Byb2plY3RzL3BkZXYvdHJ1bmsvcGh5
+				Y2FzL1BoeWNhcy9NQ01DSW1wbC5weQATAAEvAAAVAAIA
+				Df//AAA=
+				</data>
+				<key>FileURL</key>
+				<string>file://localhost/Users/plewis/Documents/Projects/pdev/trunk/phycas/Phycas/MCMCImpl.py</string>
 				<key>TypeID</key>
 				<string>_CFileLocator</string>
 				<key>Version</key>
@@ -211,9 +211,9 @@
 		<key>ToolbarVisible:plewis</key>
 		<true/>
 		<key>ViewSplitterPosition:plewis</key>
-		<real>0.18449611961841583</real>
+		<real>0.1902478039264679</real>
 		<key>WindowFrame:plewis:displays([(0, 0), (1920, 1200)])</key>
-		<string>rect(55,231,1056,1521)</string>
+		<string>rect(143,333,1043,1584)</string>
 		<key>WindowFrame:plewis:displays([(0, 0), (1920, 1200)]:[(-1680, 0), (1680, 1050)])</key>
 		<string>rect(108,118,1101,1519)</string>
 		<key>WindowFrame:plewis:displays([(0, 0), (1920, 1200)]:[(-2560, -105), (2560, 1600)])</key>
