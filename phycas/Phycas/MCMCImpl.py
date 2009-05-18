@@ -498,8 +498,12 @@ class MCMCImpl(CommonFunctions):
             # User supplied his/her own heat_vector; perform sanity checks
             self.heat_vector = self.opts.heat_vector
             #self.opts.nchains = len(self.heat_vector)
-            self.phycassert(self.heat_vector.index(1.0) < len(self.heat_vector), 'user-supplied heat_vector does not allow for a cold chain (one power must be 1.0)')
-
+            self.phycassert(self.heat_vector[0] == 1.0, 'user-supplied heat_vector does not allow for a cold chain (one power must be 1.0)')
+            h = list(self.heat_vector)
+            h.sort(reverse=True)
+            if h != self.heat_vector:
+                self.phycassert(False, 'chain heating powers must be in decreasing order')
+            self.phycassert(h[-1] > 0.0, 'all chain heating powers must be positive')
         self.mcmc_manager.createChains()
         self.openParameterAndTreeFiles()
         if self.opts.doing_path_sampling:
@@ -517,7 +521,7 @@ class MCMCImpl(CommonFunctions):
         return ((c % mod) == 0)
         
     def explorePrior(self, cycle):
-        chain_index = self.mcmc_manager.getColdChainIndex()
+        chain_index = 0
         chain = self.mcmc_manager.getColdChain()
         tm = Phylogeny.TreeManip(chain.tree)
         if self.opts.debugging:

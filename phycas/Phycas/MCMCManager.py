@@ -649,7 +649,6 @@ class MCMCManager:
         """
         self.parent = parent
         self.chains = []
-        self.cold_chain_index = None
         self.swap_table = None
 
     def paramFileHeader(self, paramf):
@@ -696,8 +695,6 @@ class MCMCManager:
         # Create the chains
         for i, heating_power in enumerate(self.parent.heat_vector):
             markov_chain = MarkovChain(self.parent, heating_power)
-            if heating_power == 1.0:
-                self.cold_chain_index = i
             self.chains.append(markov_chain)
             
         n = len(self.parent.heat_vector)
@@ -712,15 +709,6 @@ class MCMCManager:
         """
         return len(self.chains)
 
-    def getColdChainIndex(self):
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
-        """
-        Returns the index (0..nchains-1) of the chain corresponding to the
-        cold chain (i.e. the first chain whose power equals 1.0).
-        
-        """
-        return self.parent.heat_vector.index(1.0)
-
     def getColdChain(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -729,7 +717,7 @@ class MCMCManager:
         
         """
         i = self.parent.heat_vector.index(1.0)
-        return self.chains[i]
+        return self.chains[0]
 
     def getColdChainManager(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -738,8 +726,7 @@ class MCMCManager:
         first chain in the data member chains whose power equals 1.0.
         
         """
-        assert self.cold_chain_index == self.parent.heat_vector.index(1.0)
-        return self.chains[self.cold_chain_index].chain_manager
+        return self.chains[0].chain_manager
 
     def setChainPower(self, chain_index, power):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

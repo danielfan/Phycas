@@ -15,7 +15,7 @@ model.use_flex_model = False
 model.edgelen_prior = Exponential(1.0)
 #model.update_freqs_separately = False
 #model.update_relrates_separately = False
-#model.edgelen_hyperprior = None
+model.edgelen_hyperprior = None
 
 mcmc.out.log = 'output.txt'
 mcmc.out.log.mode = REPLACE
@@ -25,7 +25,7 @@ mcmc.out.params.prefix = 'params'
 mcmc.out.params.mode = REPLACE
 mcmc.nchains = 8
 mcmc.min_heat_power = 1.0/2.6
-#mcmc.heat_vector = [1.0]
+mcmc.heat_vector = [1.0, 0.003]
 mcmc.ncycles = 10000
 mcmc.sample_every = 5
 mcmc.report_every = 20
