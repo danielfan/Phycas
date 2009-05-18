@@ -28,7 +28,7 @@ class MCMCImpl(CommonFunctions):
         self.file_name_trees_stored = None
         self.do_marginal_like       = False
         self.mcmc_manager           = MCMCManager(self)
-        self.heat_vector            = None      # Leave set to None unless you are implementing some ad hoc heating scheme. This vector ordinarily computed using self.opts.nchains and self.heating_lambda
+        self.heat_vector            = None      # Leave set to None unless you are implementing some ad hoc heating scheme. This vector ordinarily computed using nchains and self.heating_lambda
         self.stopwatch              = StopWatch()
         self.sim_model_tree         = None      # Will hold the model tree used by simulateDNA 
         self.starting_tree          = []        # starting_tree[i] will contain reference to Phylogeny.Tree object for chain i
@@ -473,7 +473,7 @@ class MCMCImpl(CommonFunctions):
         #self.getStartingTree()
 
         # Determine heating levels if multiple chains
-        if self.heat_vector == None:
+        if self.opts.heat_vector == None:
             if self.opts.nchains == 1:
                 self.heat_vector = [1.0]
             else:
@@ -496,8 +496,9 @@ class MCMCImpl(CommonFunctions):
                     self.heat_vector.append(temp)
         else:
             # User supplied his/her own heat_vector; perform sanity checks
-            self.opts.nchains = len(self.heat_vector)
-            self.phycassert(self.heat_vector.index(1.0) < self.opts.nchains, 'user-supplied heat_vector does not allow for a cold chain (one power must be 1.0)')
+            self.heat_vector = self.opts.heat_vector
+            #self.opts.nchains = len(self.heat_vector)
+            self.phycassert(self.heat_vector.index(1.0) < len(self.heat_vector), 'user-supplied heat_vector does not allow for a cold chain (one power must be 1.0)')
 
         self.mcmc_manager.createChains()
         self.openParameterAndTreeFiles()
@@ -679,6 +680,8 @@ class MCMCImpl(CommonFunctions):
             tmpf.close()
         
     def mainMCMCLoop(self, explore_prior = False):
+        nchains = len(self.mcmc_manager.chains)
+        print '******** nchains =',nchains
         self.last_adaptation = 0
         self.next_adaptation = self.opts.adapt_first
         for cycle in xrange(self.burnin + self.opts.ncycles):
@@ -690,17 +693,25 @@ class MCMCImpl(CommonFunctions):
                     self.updateAllUpdaters(c, i, cycle)
                     
             # Attempt to swap two random chains
-            if self.opts.nchains > 1:
+            if nchains > 1:
                 self.mcmc_manager.attemptChainSwap(cycle)
                     
             # Provide progress report to user if it is time
             if self.opts.verbose and self.doThisCycle(cycle, self.opts.report_every):
                 self.stopwatch.normalize()
-                cold_chain_manager = self.mcmc_manager.getColdChainManager()
                 if self.opts.doing_path_sampling:
+                    cold_chain_manager = self.mcmc_manager.getColdChainManager()
                     msg = 'beta = %.5f, cycle = %d, lnL = %.5f (%.5f secs)' % (self.ps_beta, cycle + 1, cold_chain_manager.getLastLnLike(), self.stopwatch.elapsedSeconds())
                 else:
-                    msg = 'cycle = %d, lnL = %.5f (%.5f secs)' % (cycle + 1, cold_chain_manager.getLastLnLike(), self.stopwatch.elapsedSeconds())
+                    if nchains == 1:
+                        cold_chain_manager = self.mcmc_manager.getColdChainManager()
+                        msg = 'cycle = %d, lnL = %.5f (%.5f secs)' % (cycle + 1, cold_chain_manager.getLastLnLike(), self.stopwatch.elapsedSeconds())
+                    else:
+                        msg = 'cycle = %d, ' % (cycle + 1)
+                        for k in range(nchains):
+                            c = self.mcmc_manager.chains[k]
+                            msg += 'lnL(%.3f) = %.5f, ' % (c.heating_power, c.chain_manager.getLastLnLike())
+                        msg += '(%.5f secs)' % (self.stopwatch.elapsedSeconds())
                 self.output(msg)
 
             # Sample chain if it is time
@@ -734,6 +745,7 @@ class MCMCImpl(CommonFunctions):
         #    self.likelihood.setNoData()
 
         self.nsamples = self.opts.ncycles//self.opts.sample_every
+        nchains = len(self.mcmc_manager.chains)
         
         if self.opts.verbose:
             if self.data_matrix == None:
@@ -749,8 +761,9 @@ class MCMCImpl(CommonFunctions):
                         tmp = all_missing[:10]
                         all_missing = all_missing[10:]
                         self.output('***   '+','.join([str(i+1) for i in tmp]))
-            if self.opts.nchains > 1:
-                for c in range(self.opts.nchains):
+                        
+            if nchains > 1:
+                for c in range(nchains):
                     self.output('Starting tree for chain %d:  %s' % (c, self.starting_tree[c]))
             else:
                 self.output('Starting tree:  %s' % self.starting_tree)
@@ -779,10 +792,10 @@ class MCMCImpl(CommonFunctions):
             else:
                 self.output('Warning: tip node numbers were NOT set using the names in the tree description')
 
-        if self.opts.nchains == 1:
+        if nchains == 1:
             self.output('Creating one chain (i.e. not using heated chains to improve mixing)')
         else:
-            self.output('Creating %d chains with these temperatures:' % (self.opts.nchains))
+            self.output('Creating %d chains with these temperatures:' % (nchains))
             for t in self.heat_vector:
                 self.output('  %.5f %s' % (t, t == 1.0 and '(cold chain)' or ''))
             
@@ -835,7 +848,7 @@ class MCMCImpl(CommonFunctions):
 
         if self.opts.doing_path_sampling:
             self.phycassert(self.data_matrix is not None, 'path sampling requires data')
-            self.phycassert(self.opts.nchains == 1, 'path sampling requires nchains to be 1')
+            self.phycassert(nchains == 1, 'path sampling requires nchains to be 1')
             chain = self.mcmc_manager.getColdChain()
             if self.opts.ps_nbetavals > 1:
                 if False:

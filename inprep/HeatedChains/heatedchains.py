@@ -1,6 +1,7 @@
 from phycas import *
 
-filename = getPhycasTestData('green.nex')
+#filename = getPhycasTestData('green.nex')
+filename = 'green.nex'
 blob = readFile(filename)
 
 myrng = ProbDist.Lot()
@@ -23,8 +24,9 @@ mcmc.out.trees.prefix = 'trees'
 mcmc.out.trees.mode = REPLACE
 mcmc.out.params.prefix = 'params'
 mcmc.out.params.mode = REPLACE
-mcmc.nchains = 3
-mcmc.min_heat_power = 0.5
+mcmc.nchains = 8
+mcmc.min_heat_power = 1.0/2.6
+#mcmc.heat_vector = [1.0]
 mcmc.ncycles = 10000
 mcmc.sample_every = 5
 mcmc.report_every = 20

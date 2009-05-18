@@ -51,6 +51,7 @@ class MCMC(PhycasCommand):
                 ("adapt_first",              100,    "Adaptation of slice samplers is performed the first time at cycle adapt_first. Subsequent adaptations wait twice the number of cycles as the previous adaptation. Thus, adaptation n occurs at cycle adapt_first*(2**(n - 1)). The total number of adaptations that will occur during an MCMC run is [ln(adapt_first + ncycles) - ln(adapt_first)]/ln(2)", IntArgValidate(min=0)),
                 ("adapt_simple_param",       0.5,    "Slice sampler adaptation parameter", FloatArgValidate(min=0.01)),
                 ("min_heat_power",           0.5,    "Power of the hottest chain when nchains > 1", FloatArgValidate(min=0.01)),
+                ("heat_vector",             None,    "List of heating powers, one of which should be 1.0 (default value None causes this vector to be generated using min_heat_pwer)"),
                 ("uf_num_edges",              50,    "Number of edges to traverse before taking action to prevent underflow", IntArgValidate(min=1)),
                 ("ntax",                       0,    "To explore the prior, set to some positive value. Also set data_source to None", IntArgValidate(min=0)),
                 ("ndecimals",                  8,    "Number of decimal places used for sampled parameter values", IntArgValidate(min=1)),
