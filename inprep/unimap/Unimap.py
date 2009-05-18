@@ -3,10 +3,10 @@ from phycas import *
 model.type                  = 'hky'
 
 mcmc.use_unimap             = True
-mcmc.outfile_prefix         = 'unitest'
+#mcmc.outfile_prefix         = 'unitest'
 mcmc.random_seed            = 19375
 mcmc.data_source         = 'green.nex'
-mcmc.starting_tree_source   = 'random'
+mcmc.starting_tree_source   = randomtree()
 mcmc.ncycles                = 100
 mcmc.sample_every           = 1
 mcmc.report_every           = 10
