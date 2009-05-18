@@ -750,9 +750,6 @@ class MCMCManager:
         """
         self.parent.phycassert(len(self.chains) > chain_index, 'chain index specified (%d) too large for number of chains (%d)' % (chain_index, len(self.chains)))
         self.parent.phycassert(len(self.parent.heat_vector) == len(self.chains), 'length of heat vector (%d) not equal to number of chains (%d)' % (len(self.parent.heat_vector), len(self.chains)))
-        self.parent.heat_vector[chain_index] = power
-        if power == 1.0:
-            self.cold_chain_index = chain_index
         self.chains[chain_index].setPower(power)
 
     def resetNEvals(self):
@@ -932,6 +929,8 @@ class MCMCManager:
             swap_accepted = True
             self.setChainPower(i, power_j)
             self.setChainPower(j, power_i)
+            self.chains[i], self.chains[j] = self.chains[j], self.chains[i]
+            
             self.swap_table[j][i] += 1  # lower triangle
             
         if cycle % 100 == 0:

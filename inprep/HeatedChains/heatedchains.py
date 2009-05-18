@@ -1,7 +1,6 @@
 from phycas import *
 
-#filename = getPhycasTestData('green.nex')
-filename = 'green.nex'
+filename = getPhycasTestData('green.nex')
 blob = readFile(filename)
 
 myrng = ProbDist.Lot()
