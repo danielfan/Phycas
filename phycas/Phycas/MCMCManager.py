@@ -914,13 +914,17 @@ class MCMCManager:
         power_i = self.chains[i].heating_power
         cmi.refreshLastLnLike()
         lnLi = cmi.getLastLnLike()
+        cmi.refreshLastLnPrior()
+        lnPriori = cmi.getLastLnPrior()
 
         cmj = self.chains[j].chain_manager
         power_j = self.chains[j].heating_power
         cmj.refreshLastLnLike()
         lnLj = cmj.getLastLnLike()
+        cmj.refreshLastLnPrior()
+        lnPriorj = cmj.getLastLnPrior()
 
-        log_accept_ratio = (power_j - power_i)*lnLi + (power_i - power_j)*lnLj
+        log_accept_ratio = (power_j - power_i)*(lnLi + lnPriori - lnLj - lnPriorj)
         log_u = math.log(r.uniform())
         swap_accepted = False
         self.swap_table[i][j] += 1  # upper triangle
