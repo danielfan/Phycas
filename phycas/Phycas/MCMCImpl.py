@@ -31,7 +31,7 @@ class MCMCImpl(CommonFunctions):
         self.heat_vector            = None      # Leave set to None unless you are implementing some ad hoc heating scheme. This vector ordinarily computed using self.opts.nchains and self.heating_lambda
         self.stopwatch              = StopWatch()
         self.sim_model_tree         = None      # Will hold the model tree used by simulateDNA 
-        self.starting_tree          = None      # Will contain description of actual starting tree used
+        self.starting_tree          = []        # starting_tree[i] will contain reference to Phylogeny.Tree object for chain i
         self.warn_tip_numbers       = False     # True only if tip numbers were not able to be created using the tip names in the tree description (always False if starting_tree_source == 'random' because BuildTreeFromString is not called in this case)
         self.ntax                   = 0         # Will hold the actual number of taxa after data file read
         self.nchar                  = 0         # Will hold the actual number of characters after data file has been read
@@ -398,36 +398,37 @@ class MCMCImpl(CommonFunctions):
 #             self.output('Log of marginal likelihood (harmonic mean method) = %f' % log_harmonic_mean)
 
     def getStartingTree(self):
-        if self.starting_tree is None:
-            if False:
-                if self.opts.starting_tree_source == 'file':
-                    self.phycassert(self.data_source, "Specified starting_tree_source to be 'file' when data_source was None (file was not read)")
-                    tree_defs = self.reader.getTrees()
-                    self.phycassert(len(tree_defs) > 0, 'a trees block defining at least one tree must be stored in the nexus data file')
-                    # Grab first tree description in the data file
-                    # TODO allow some other tree than the first
-                    self.starting_tree = tree_defs[0]
-                elif self.opts.starting_tree_source == 'usertree':
-                    self.starting_tree = Newick(self.opts.tree_topology)
-                elif self.opts.starting_tree_source == 'random':
-                    self.phycassert(self.ntax > 0, 'expecting ntax to be greater than 0')
-                    self.starting_tree = None
-                else:
-                    self.phycassert(False, "starting_tree_source should equal 'random', 'file', or 'usertree', but instead it was this: %s" % self.starting_tree_source)
-            else:
-                # If user failed to specify starting_tree_source, get starting tree from randomtree object
-                # as it is currently configured
-                tr_source = self.opts.starting_tree_source
-                if tr_source is None:
-                    tr_source = randomtree()
-                try:
-                    tr_source.setActiveTaxonLabels(self.taxon_labels)
-                    i = iter(tr_source)
-                    self.starting_tree = i.next()
-                except:
-                    self.stdout.error("A starting tree could not be obtained from the starting_tree_source")
-                    raise
-        return self.starting_tree
+        #         if self.starting_tree is None:
+        #             if False:
+        #                 if self.opts.starting_tree_source == 'file':
+        #                     self.phycassert(self.data_source, "Specified starting_tree_source to be 'file' when data_source was None (file was not read)")
+        #                     tree_defs = self.reader.getTrees()
+        #                     self.phycassert(len(tree_defs) > 0, 'a trees block defining at least one tree must be stored in the nexus data file')
+        #                     # Grab first tree description in the data file
+        #                     # TODO allow some other tree than the first
+        #                     self.starting_tree = tree_defs[0]
+        #                 elif self.opts.starting_tree_source == 'usertree':
+        #                     self.starting_tree = Newick(self.opts.tree_topology)
+        #                 elif self.opts.starting_tree_source == 'random':
+        #                     self.phycassert(self.ntax > 0, 'expecting ntax to be greater than 0')
+        #                     self.starting_tree = None
+        #                 else:
+        #                     self.phycassert(False, "starting_tree_source should equal 'random', 'file', or 'usertree', but instead it was this: %s" % self.starting_tree_source)
+        #             else:
+        # If user failed to specify starting_tree_source, get starting tree from randomtree object
+        # as it is currently configured
+        tr_source = self.opts.starting_tree_source
+        if tr_source is None:
+            tr_source = randomtree()
+        try:
+            tr_source.setActiveTaxonLabels(self.taxon_labels)
+            i = iter(tr_source)
+            # self.starting_tree = i.next()
+            self.starting_tree.append(i.next())
+        except:
+            self.stdout.error("A starting tree could not be obtained from the starting_tree_source")
+            raise
+        return self.starting_tree[-1]
 
     def setup(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -469,7 +470,7 @@ class MCMCImpl(CommonFunctions):
         self._loadData(mat)
         
         # Create a tree description to be used for building starting trees
-        self.getStartingTree()
+        #self.getStartingTree()
 
         # Determine heating levels if multiple chains
         if self.heat_vector == None:
@@ -681,11 +682,18 @@ class MCMCImpl(CommonFunctions):
         self.last_adaptation = 0
         self.next_adaptation = self.opts.adapt_first
         for cycle in xrange(self.burnin + self.opts.ncycles):
+            # Update all updaters
             if explore_prior and self.opts.draw_directly_from_prior:
                 self.explorePrior(cycle)
             else:
                 for i,c in enumerate(self.mcmc_manager.chains):
                     self.updateAllUpdaters(c, i, cycle)
+                    
+            # Attempt to swap two random chains
+            if self.opts.nchains > 1:
+                self.mcmc_manager.attemptChainSwap(cycle)
+                    
+            # Provide progress report to user if it is time
             if self.opts.verbose and self.doThisCycle(cycle, self.opts.report_every):
                 self.stopwatch.normalize()
                 cold_chain_manager = self.mcmc_manager.getColdChainManager()
@@ -694,12 +702,16 @@ class MCMCImpl(CommonFunctions):
                 else:
                     msg = 'cycle = %d, lnL = %.5f (%.5f secs)' % (cycle + 1, cold_chain_manager.getLastLnLike(), self.stopwatch.elapsedSeconds())
                 self.output(msg)
+
+            # Sample chain if it is time
             if self.beyondBurnin(cycle) and self.doThisCycle(cycle - self.burnin, self.opts.sample_every):
                 self.mcmc_manager.recordSample(self.cycle_start + cycle)
                 cold_chain_manager = self.mcmc_manager.getColdChainManager()
                 sampled_lnL = cold_chain_manager.getLastLnLike()
                 self.ps_sampled_likes[self.ps_beta_index].append(sampled_lnL)
                 self.stopwatch.normalize()
+
+            # Adapt slice samplers if it is time
             if self.doThisCycle(cycle, self.next_adaptation):
                 self.adaptSliceSamplers()
                 self.next_adaptation += 2*(self.next_adaptation - self.last_adaptation)
@@ -737,7 +749,11 @@ class MCMCImpl(CommonFunctions):
                         tmp = all_missing[:10]
                         all_missing = all_missing[10:]
                         self.output('***   '+','.join([str(i+1) for i in tmp]))
-            self.output('Starting tree:  %s' % self.starting_tree)
+            if self.opts.nchains > 1:
+                for c in range(self.opts.nchains):
+                    self.output('Starting tree for chain %d:  %s' % (c, self.starting_tree[c]))
+            else:
+                self.output('Starting tree:  %s' % self.starting_tree)
             if self.opts.doing_path_sampling:
                 self.output('\nPerforming path sampling MCMC to estimate marginal likelihood.')
                 self.output('Likelihood will be raised to the power beta, and beta will be')

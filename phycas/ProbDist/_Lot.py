@@ -82,3 +82,11 @@ class Lot(LotBase):
         from phycas import Phycas
         return LotBase.uniform(self)
     
+    def sampleUInt(self, upper_bound):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Returns a pseudorandom integer i such that 0 <= i < upper_bound.
+
+        """
+        return LotBase.sampleUInt(self, upper_bound)
+    

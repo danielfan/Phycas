@@ -29,6 +29,8 @@ const double TreeNode::edgeLenDefault = 0.1;
 const double TreeNode::edgeLenInitValue = DBL_MAX;
 const unsigned TreeNode::nodeNumInitValue = UINT_MAX;
 
+static unsigned debug_treenode_number = 0;
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Initializes all pointers to 0, nodeNum to TreeNode::nodeNumInitValue, and edgeLen to TreeNode::edgeLenInitValue.
 */
@@ -51,6 +53,7 @@ TreeNode::TreeNode()
   internalData(0),
   internalDataDeleter(0)
   	{
+  	//std::cerr << "=====> creating TreeNode " << (++debug_treenode_number) << std::endl;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

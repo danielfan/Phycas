@@ -7,7 +7,7 @@
 		<key>EmbeddedEditorHidden:plewis</key>
 		<false/>
 		<key>ExpandedEditorWidth:plewis:displays([(0, 0), (1920, 1200)])</key>
-		<integer>1013</integer>
+		<integer>1072</integer>
 		<key>ExpandedEditorWidth:plewis:displays([(0, 0), (1920, 1200)]:[(-1680, 0), (1680, 1050)])</key>
 		<integer>1163</integer>
 		<key>ExpandedEditorWidth:plewis:displays([(0, 0), (1920, 1200)]:[(-2560, -105), (2560, 1600)])</key>
@@ -20,8 +20,11 @@
 		<integer>1289</integer>
 		<key>ExpandedItems:plewis</key>
 		<array>
+			<string>3E71A373-F8F5-4A4F-9918-3DD7B12A94C5</string>
 			<string>56DF8EDD-1AE9-4F2C-80AE-1B56F696A309</string>
+			<string>594C2836-0893-4EE6-8A8E-765ECB86AD90</string>
 			<string>C4125204-A490-4F29-83C6-4DD5F65EB7D7</string>
+			<string>04B0BEAF-138C-4159-9BC7-90A516C391EE</string>
 			<string>47172E56-796E-4DA0-9FDF-D53B4816F935</string>
 			<string>D64E457B-4131-4B0E-B5BA-4D7C10279773</string>
 		</array>
@@ -32,24 +35,72 @@
 			<dict>
 				<key>AliasData</key>
 				<data>
-				AAAAAAHUAAIAAAZBbGxleW4AAAAAAAAAAAAAAAAAAAAA
-				AAAAAADE38I0SCsAAACkcI0PaGVhdGVkY2hhaW5zLnB5
+				AAAAAAG+AAIAAAZBbGxleW4AAAAAAAAAAAAAAAAAAAAA
+				AAAAAADE38I0SCsAAACEPukOTUNNQ01hbmFnZXIucHkA
 				AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-				AAAAAAAAAAAAAAAAAAAAAKRwk8YzN0JURVhUAAAAAP//
-				//8AAAkgAAAAAAAAAAAAAAAAAAAADEhlYXRlZENoYWlu
-				cwAQAAgAAMTf+nQAAAARAAgAAMYzb4IAAAABACAApHCN
-				AIRLMwCEN+IAhDfCABvdRQAJ96AACfeJAAB7XAACAFVB
-				bGxleW46VXNlcnM6cGxld2lzOkRvY3VtZW50czpQcm9q
-				ZWN0czpwZGV2OnRydW5rOmlucHJlcDpIZWF0ZWRDaGFp
-				bnM6aGVhdGVkY2hhaW5zLnB5AAAOACAADwBoAGUAYQB0
-				AGUAZABjAGgAYQBpAG4AcwAuAHAAeQAPAA4ABgBBAGwA
-				bABlAHkAbgASAE5Vc2Vycy9wbGV3aXMvRG9jdW1lbnRz
-				L1Byb2plY3RzL3BkZXYvdHJ1bmsvaW5wcmVwL0hlYXRl
-				ZENoYWlucy9oZWF0ZWRjaGFpbnMucHkAEwABLwAAFQAC
-				AA3//wAA
+				AAAAAAAAAAAAAAAAAAAAAIep0sXO1iJURVhUAAAAAP//
+				//8AAAkgAAAAAAAAAAAAAAAAAAAABlBoeWNhcwAQAAgA
+				AMTf+nQAAAARAAgAAMXPHHIAAAABACAAhD7pAIQ3+ACE
+				N+IAhDfCABvdRQAJ96AACfeJAAB7XAACAE5BbGxleW46
+				VXNlcnM6cGxld2lzOkRvY3VtZW50czpQcm9qZWN0czpw
+				ZGV2OnRydW5rOnBoeWNhczpQaHljYXM6TUNNQ01hbmFn
+				ZXIucHkADgAeAA4ATQBDAE0AQwBNAGEAbgBhAGcAZQBy
+				AC4AcAB5AA8ADgAGAEEAbABsAGUAeQBuABIAR1VzZXJz
+				L3BsZXdpcy9Eb2N1bWVudHMvUHJvamVjdHMvcGRldi90
+				cnVuay9waHljYXMvUGh5Y2FzL01DTUNNYW5hZ2VyLnB5
+				AAATAAEvAAAVAAIADf//AAA=
 				</data>
 				<key>FileURL</key>
-				<string>file://localhost/Users/plewis/Documents/Projects/pdev/trunk/inprep/HeatedChains/heatedchains.py</string>
+				<string>file://localhost/Users/plewis/Documents/Projects/pdev/trunk/phycas/Phycas/MCMCManager.py</string>
+				<key>TypeID</key>
+				<string>_CFileLocator</string>
+				<key>Version</key>
+				<integer>1</integer>
+			</dict>
+			<dict>
+				<key>AliasData</key>
+				<data>
+				AAAAAAGoAAIAAAZBbGxleW4AAAAAAAAAAAAAAAAAAAAA
+				AAAAAADE38I0SCsAAACEPjEHX0xvdC5weQAAAAAAAAAA
+				AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+				AAAAAAAAAAAAAAAAAAAAAIeqCMXO1iJURVhUAAAAAP//
+				//8AAAkgAAAAAAAAAAAAAAAAAAAACFByb2JEaXN0ABAA
+				CAAAxN/6dAAAABEACAAAxc8ccgAAAAEAIACEPjEAhDf4
+				AIQ34gCEN8IAG91FAAn3oAAJ94kAAHtcAAIASUFsbGV5
+				bjpVc2VyczpwbGV3aXM6RG9jdW1lbnRzOlByb2plY3Rz
+				OnBkZXY6dHJ1bms6cGh5Y2FzOlByb2JEaXN0Ol9Mb3Qu
+				cHkAAA4AEAAHAF8ATABvAHQALgBwAHkADwAOAAYAQQBs
+				AGwAZQB5AG4AEgBCVXNlcnMvcGxld2lzL0RvY3VtZW50
+				cy9Qcm9qZWN0cy9wZGV2L3RydW5rL3BoeWNhcy9Qcm9i
+				RGlzdC9fTG90LnB5ABMAAS8AABUAAgAN//8AAA==
+				</data>
+				<key>FileURL</key>
+				<string>file://localhost/Users/plewis/Documents/Projects/pdev/trunk/phycas/ProbDist/_Lot.py</string>
+				<key>TypeID</key>
+				<string>_CFileLocator</string>
+				<key>Version</key>
+				<integer>1</integer>
+			</dict>
+			<dict>
+				<key>AliasData</key>
+				<data>
+				AAAAAAHGAAIAAAZBbGxleW4AAAAAAAAAAAAAAAAAAAAA
+				AAAAAADE38I0SCsAAACEQCcScHJvYmRpc3RfcHltb2Qu
+				Y3BwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+				AAAAAAAAAAAAAAAAAAAAAIerjsXO1iRURVhUAAAAAP//
+				//8AAAkgAAAAAAAAAAAAAAAAAAAAA3NyYwAAEAAIAADE
+				3/p0AAAAEQAIAADFzxx0AAAAAQAgAIRAJwCEN/gAhDfi
+				AIQ3wgAb3UUACfegAAn3iQAAe1wAAgBPQWxsZXluOlVz
+				ZXJzOnBsZXdpczpEb2N1bWVudHM6UHJvamVjdHM6cGRl
+				djp0cnVuazpwaHljYXM6c3JjOnByb2JkaXN0X3B5bW9k
+				LmNwcAAADgAmABIAcAByAG8AYgBkAGkAcwB0AF8AcAB5
+				AG0AbwBkAC4AYwBwAHAADwAOAAYAQQBsAGwAZQB5AG4A
+				EgBIVXNlcnMvcGxld2lzL0RvY3VtZW50cy9Qcm9qZWN0
+				cy9wZGV2L3RydW5rL3BoeWNhcy9zcmMvcHJvYmRpc3Rf
+				cHltb2QuY3BwABMAAS8AABUAAgAN//8AAA==
+				</data>
+				<key>FileURL</key>
+				<string>file://localhost/Users/plewis/Documents/Projects/pdev/trunk/phycas/src/probdist_pymod.cpp</string>
 				<key>TypeID</key>
 				<string>_CFileLocator</string>
 				<key>Version</key>
@@ -83,24 +134,24 @@
 			<dict>
 				<key>AliasData</key>
 				<data>
-				AAAAAAHQAAIAAAZBbGxleW4AAAAAAAAAAAAAAAAAAAAA
-				AAAAAADE38I0SCsAAACkcI0OZGVidWdfaW5mby50eHQA
+				AAAAAAHUAAIAAAZBbGxleW4AAAAAAAAAAAAAAAAAAAAA
+				AAAAAADE38I0SCsAAACkcI0PaGVhdGVkY2hhaW5zLnB5
 				AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-				AAAAAAAAAAAAAAAAAAAAAKR4vcYzTOkAAAAAAAAAAP//
+				AAAAAAAAAAAAAAAAAAAAAKRwk8YzN0JURVhUAAAAAP//
 				//8AAAkgAAAAAAAAAAAAAAAAAAAADEhlYXRlZENoYWlu
-				cwAQAAgAAMTf+nQAAAARAAgAAMYzhSkAAAABACAApHCN
-				AIRLMwCEN+IAhDfCABvdRQAJ96AACfeJAAB7XAACAFRB
+				cwAQAAgAAMTf+nQAAAARAAgAAMYzb4IAAAABACAApHCN
+				AIRLMwCEN+IAhDfCABvdRQAJ96AACfeJAAB7XAACAFVB
 				bGxleW46VXNlcnM6cGxld2lzOkRvY3VtZW50czpQcm9q
 				ZWN0czpwZGV2OnRydW5rOmlucHJlcDpIZWF0ZWRDaGFp
-				bnM6ZGVidWdfaW5mby50eHQADgAeAA4AZABlAGIAdQBn
-				AF8AaQBuAGYAbwAuAHQAeAB0AA8ADgAGAEEAbABsAGUA
-				eQBuABIATVVzZXJzL3BsZXdpcy9Eb2N1bWVudHMvUHJv
-				amVjdHMvcGRldi90cnVuay9pbnByZXAvSGVhdGVkQ2hh
-				aW5zL2RlYnVnX2luZm8udHh0AAATAAEvAAAVAAIADf//
-				AAA=
+				bnM6aGVhdGVkY2hhaW5zLnB5AAAOACAADwBoAGUAYQB0
+				AGUAZABjAGgAYQBpAG4AcwAuAHAAeQAPAA4ABgBBAGwA
+				bABlAHkAbgASAE5Vc2Vycy9wbGV3aXMvRG9jdW1lbnRz
+				L1Byb2plY3RzL3BkZXYvdHJ1bmsvaW5wcmVwL0hlYXRl
+				ZENoYWlucy9oZWF0ZWRjaGFpbnMucHkAEwABLwAAFQAC
+				AA3//wAA
 				</data>
 				<key>FileURL</key>
-				<string>file://localhost/Users/plewis/Documents/Projects/pdev/trunk/inprep/HeatedChains/debug_info.txt</string>
+				<string>file://localhost/Users/plewis/Documents/Projects/pdev/trunk/inprep/HeatedChains/heatedchains.py</string>
 				<key>TypeID</key>
 				<string>_CFileLocator</string>
 				<key>Version</key>
@@ -109,95 +160,24 @@
 			<dict>
 				<key>AliasData</key>
 				<data>
-				AAAAAAGiAAIAAAZBbGxleW4AAAAAAAAAAAAAAAAAAAAA
-				AAAAAADE38I0SCsAAACEPukHTUNNQy5weQAAAAAAAAAA
-				AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-				AAAAAAAAAAAAAAAAAAAAAIepzsXO1iJURVhUAAAAAP//
-				//8AAAkgAAAAAAAAAAAAAAAAAAAABlBoeWNhcwAQAAgA
-				AMTf+nQAAAARAAgAAMXPHHIAAAABACAAhD7pAIQ3+ACE
-				N+IAhDfCABvdRQAJ96AACfeJAAB7XAACAEdBbGxleW46
-				VXNlcnM6cGxld2lzOkRvY3VtZW50czpQcm9qZWN0czpw
-				ZGV2OnRydW5rOnBoeWNhczpQaHljYXM6TUNNQy5weQAA
-				DgAQAAcATQBDAE0AQwAuAHAAeQAPAA4ABgBBAGwAbABl
-				AHkAbgASAEBVc2Vycy9wbGV3aXMvRG9jdW1lbnRzL1By
-				b2plY3RzL3BkZXYvdHJ1bmsvcGh5Y2FzL1BoeWNhcy9N
-				Q01DLnB5ABMAAS8AABUAAgAN//8AAA==
+				AAAAAAHWAAIAAAZBbGxleW4AAAAAAAAAAAAAAAAAAAAA
+				AAAAAADE38I0SCsAAACEQCcWbWNtY19jaGFpbl9tYW5h
+				Z2VyLmNwcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+				AAAAAAAAAAAAAAAAAAAAAIerSMXO1iQAAAAAAAAAAP//
+				//8AAAkgAAAAAAAAAAAAAAAAAAAAA3NyYwAAEAAIAADE
+				3/p0AAAAEQAIAADFzxx0AAAAAQAgAIRAJwCEN/gAhDfi
+				AIQ3wgAb3UUACfegAAn3iQAAe1wAAgBTQWxsZXluOlVz
+				ZXJzOnBsZXdpczpEb2N1bWVudHM6UHJvamVjdHM6cGRl
+				djp0cnVuazpwaHljYXM6c3JjOm1jbWNfY2hhaW5fbWFu
+				YWdlci5jcHAAAA4ALgAWAG0AYwBtAGMAXwBjAGgAYQBp
+				AG4AXwBtAGEAbgBhAGcAZQByAC4AYwBwAHAADwAOAAYA
+				QQBsAGwAZQB5AG4AEgBMVXNlcnMvcGxld2lzL0RvY3Vt
+				ZW50cy9Qcm9qZWN0cy9wZGV2L3RydW5rL3BoeWNhcy9z
+				cmMvbWNtY19jaGFpbl9tYW5hZ2VyLmNwcAATAAEvAAAV
+				AAIADf//AAA=
 				</data>
 				<key>FileURL</key>
-				<string>file://localhost/Users/plewis/Documents/Projects/pdev/trunk/phycas/Phycas/MCMC.py</string>
-				<key>TypeID</key>
-				<string>_CFileLocator</string>
-				<key>Version</key>
-				<integer>1</integer>
-			</dict>
-			<dict>
-				<key>AliasData</key>
-				<data>
-				AAAAAAG+AAIAAAZBbGxleW4AAAAAAAAAAAAAAAAAAAAA
-				AAAAAADE38I0SCsAAACEPukOTUNNQ01hbmFnZXIucHkA
-				AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-				AAAAAAAAAAAAAAAAAAAAAIep0sXO1iJURVhUAAAAAP//
-				//8AAAkgAAAAAAAAAAAAAAAAAAAABlBoeWNhcwAQAAgA
-				AMTf+nQAAAARAAgAAMXPHHIAAAABACAAhD7pAIQ3+ACE
-				N+IAhDfCABvdRQAJ96AACfeJAAB7XAACAE5BbGxleW46
-				VXNlcnM6cGxld2lzOkRvY3VtZW50czpQcm9qZWN0czpw
-				ZGV2OnRydW5rOnBoeWNhczpQaHljYXM6TUNNQ01hbmFn
-				ZXIucHkADgAeAA4ATQBDAE0AQwBNAGEAbgBhAGcAZQBy
-				AC4AcAB5AA8ADgAGAEEAbABsAGUAeQBuABIAR1VzZXJz
-				L3BsZXdpcy9Eb2N1bWVudHMvUHJvamVjdHMvcGRldi90
-				cnVuay9waHljYXMvUGh5Y2FzL01DTUNNYW5hZ2VyLnB5
-				AAATAAEvAAAVAAIADf//AAA=
-				</data>
-				<key>FileURL</key>
-				<string>file://localhost/Users/plewis/Documents/Projects/pdev/trunk/phycas/Phycas/MCMCManager.py</string>
-				<key>TypeID</key>
-				<string>_CFileLocator</string>
-				<key>Version</key>
-				<integer>1</integer>
-			</dict>
-			<dict>
-				<key>AliasData</key>
-				<data>
-				AAAAAAGqAAIAAAZBbGxleW4AAAAAAAAAAAAAAAAAAAAA
-				AAAAAADE38I0SCsAAACEPukJUGh5Y2FzLnB5AAAAAAAA
-				AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-				AAAAAAAAAAAAAAAAAAAAAIep2MXO1iIAAAAAAAAAAP//
-				//8AAAkgAAAAAAAAAAAAAAAAAAAABlBoeWNhcwAQAAgA
-				AMTf+nQAAAARAAgAAMXPHHIAAAABACAAhD7pAIQ3+ACE
-				N+IAhDfCABvdRQAJ96AACfeJAAB7XAACAElBbGxleW46
-				VXNlcnM6cGxld2lzOkRvY3VtZW50czpQcm9qZWN0czpw
-				ZGV2OnRydW5rOnBoeWNhczpQaHljYXM6UGh5Y2FzLnB5
-				AAAOABQACQBQAGgAeQBjAGEAcwAuAHAAeQAPAA4ABgBB
-				AGwAbABlAHkAbgASAEJVc2Vycy9wbGV3aXMvRG9jdW1l
-				bnRzL1Byb2plY3RzL3BkZXYvdHJ1bmsvcGh5Y2FzL1Bo
-				eWNhcy9QaHljYXMucHkAEwABLwAAFQACAA3//wAA
-				</data>
-				<key>FileURL</key>
-				<string>file://localhost/Users/plewis/Documents/Projects/pdev/trunk/phycas/Phycas/Phycas.py</string>
-				<key>TypeID</key>
-				<string>_CFileLocator</string>
-				<key>Version</key>
-				<integer>1</integer>
-			</dict>
-			<dict>
-				<key>AliasData</key>
-				<data>
-				AAAAAAGgAAIAAAZBbGxleW4AAAAAAAAAAAAAAAAAAAAA
-				AAAAAADE38I0SCsAAACEN/gLX19pbml0X18ucHkAAAAA
-				AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-				AAAAAAAAAAAAAAAAAAAAAIeppsXO1iVURVhUAAAAAP//
-				//8AAAkgAAAAAAAAAAAAAAAAAAAABnBoeWNhcwAQAAgA
-				AMTf+nQAAAARAAgAAMXPHHUAAAABABwAhDf4AIQ34gCE
-				N8IAG91FAAn3oAAJ94kAAHtcAAIAREFsbGV5bjpVc2Vy
-				czpwbGV3aXM6RG9jdW1lbnRzOlByb2plY3RzOnBkZXY6
-				dHJ1bms6cGh5Y2FzOl9faW5pdF9fLnB5AA4AGAALAF8A
-				XwBpAG4AaQB0AF8AXwAuAHAAeQAPAA4ABgBBAGwAbABl
-				AHkAbgASAD1Vc2Vycy9wbGV3aXMvRG9jdW1lbnRzL1By
-				b2plY3RzL3BkZXYvdHJ1bmsvcGh5Y2FzL19faW5pdF9f
-				LnB5AAATAAEvAAAVAAIADf//AAA=
-				</data>
-				<key>FileURL</key>
-				<string>file://localhost/Users/plewis/Documents/Projects/pdev/trunk/phycas/__init__.py</string>
+				<string>file://localhost/Users/plewis/Documents/Projects/pdev/trunk/phycas/src/mcmc_chain_manager.cpp</string>
 				<key>TypeID</key>
 				<string>_CFileLocator</string>
 				<key>Version</key>
@@ -211,9 +191,9 @@
 		<key>ToolbarVisible:plewis</key>
 		<true/>
 		<key>ViewSplitterPosition:plewis</key>
-		<real>0.1902478039264679</real>
+		<real>0.25034964084625244</real>
 		<key>WindowFrame:plewis:displays([(0, 0), (1920, 1200)])</key>
-		<string>rect(143,333,1043,1584)</string>
+		<string>rect(126,204,1100,1634)</string>
 		<key>WindowFrame:plewis:displays([(0, 0), (1920, 1200)]:[(-1680, 0), (1680, 1050)])</key>
 		<string>rect(108,118,1101,1519)</string>
 		<key>WindowFrame:plewis:displays([(0, 0), (1920, 1200)]:[(-2560, -105), (2560, 1600)])</key>

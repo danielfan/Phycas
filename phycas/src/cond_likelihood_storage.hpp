@@ -71,6 +71,8 @@ class CondLikelihoodStorage
 		unsigned						num_created;	/**< The total number of CondLikelihood objects created in the lifetime of this object */
 		unsigned						realloc_min;	/**< When a request is made and `cl_stack' is empty, `realloc_min' new objects are created and added to the stack */
 		std::stack<CondLikelihoodShPtr>	cl_stack;		/**< The stack of CondLikelihoodShPtr */
+		
+		unsigned						which;		//TEMP
 	};
 
 typedef boost::shared_ptr<CondLikelihoodStorage> CondLikelihoodStorageShPtr;

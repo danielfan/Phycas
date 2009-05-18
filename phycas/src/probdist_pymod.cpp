@@ -142,6 +142,7 @@ BOOST_PYTHON_MODULE(_ProbDist)
 		.def("getInitSeed", &phycas::Lot::GetInitSeed)
 		.def("uniform", &phycas::Lot::Uniform)
 		.def("getrandbits", &phycas::Lot::GetRandBits)
+		.def("sampleUInt", &phycas::Lot::SampleUInt)
 		;
 
 	class_<MVNormalDistribution, bases<MultivariateProbabilityDistribution> >("MVNormalDistBase")

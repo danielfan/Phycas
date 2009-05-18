@@ -134,7 +134,7 @@ class LikelihoodCore(object):
         if self.parent.opts.model.fix_edgelens:
             self.model.fixEdgeLengths()
             
-        # Create the likelihood object
+        # Create the object
         self.likelihood = Likelihood.TreeLikelihood(self.model)
         self.likelihood.setUFNumEdges(self.parent.opts.uf_num_edges)
         self.likelihood.useUnimap(self.parent.opts.use_unimap)
@@ -144,7 +144,7 @@ class LikelihoodCore(object):
             self.parent.npatterns = self.likelihood.getNPatterns()
 
         # Build the starting tree
-        
+        #POL05172009 print '@@@@@@@@@ calling getStartingTree() @@@@@@@@@'
         self.tree = self.parent.getStartingTree()
 
     def prepareForSimulation(self):
@@ -649,6 +649,7 @@ class MCMCManager:
         """
         self.parent = parent
         self.chains = []
+        self.swap_table = None
 
     def paramFileHeader(self, paramf):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -695,6 +696,9 @@ class MCMCManager:
         for heating_power in self.parent.heat_vector:
             markov_chain = MarkovChain(self.parent, heating_power)
             self.chains.append(markov_chain)
+            
+        n = len(self.parent.heat_vector)
+        self.swap_table = [[0]*n for i in range(n)]
 
     def getNumChains(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -741,9 +745,9 @@ class MCMCManager:
         chain_index, setting the power for each updater to the supplied power.
         
         """
-        parent.phycassert(len(chains) > chain_index, 'chain index specified (%d) too large for number of chains (%d)' % (chain_index, len(chains)))
-        parent.phycassert(len(self.parent.heat_vector) == len(self.chains), 'length of heat vector (%d) not equal to number of chains (%d)' % (len(self.heat_vector, len(self.nchains))))
-        self.parent.heat_vector[chain_index] = power
+        #parent.phycassert(len(chains) > chain_index, 'chain index specified (%d) too large for number of chains (%d)' % (chain_index, len(chains)))
+        #parent.phycassert(len(self.parent.heat_vector) == len(self.chains), 'length of heat vector (%d) not equal to number of chains (%d)' % (len(self.heat_vector, len(self.nchains))))
+        #self.parent.heat_vector[chain_index] = power
         self.chains[chain_index].setPower(power)
 
     def resetNEvals(self):
@@ -846,3 +850,95 @@ class MCMCManager:
                 for siteLnL in siteloglikes:
                     self.parent.sitelikef.write(float_format_str % siteLnL)
                 self.parent.sitelikef.write('\n')
+                
+    def attemptChainSwap(self, cycle):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Attempts to swap two randomly-chosen chains. Letting
+        p_i be posterior density for chain i
+        p_j be posterior density for chain j
+        theta_i be the parameter vector for chain i
+        theta_j be the parameter vector for chain j
+        
+                       p_i(theta_j)  p_j(theta_i)
+        accept_ratio = -----------   ------------
+                       p_i(theta_i)  p_j(theta_j)
+        
+          L(theta_j)^power_i f(theta_j)  L(theta_i)^power_j f(theta_i) 
+        = -----------------------------  -----------------------------
+          L(theta_i)^power_i f(theta_i)  L(theta_j)^power_j f(theta_j) 
+        
+        = L(theta_i)^(power_j - power_i) L(theta_j)^(power_i - power_j)
+        
+        """
+        n = len(self.chains)
+        if n < 2:
+            return
+            
+        # Figure out which chains to swap
+        
+        r = self.parent._getLot()
+        i = r.sampleUInt(n)
+        tmp = r.sampleUInt(n - 1)
+        j = (1 + i + tmp) % n
+        
+        # n = 4
+        # i   tmp  1+i+tmp  j
+        # 0    0     1      1
+        #      1     2      2
+        #      2     3      3
+        # 1    0     2      2
+        #      1     3      3
+        #      2     4      0
+        # 2    0     3      3
+        #      1     4      0
+        #      2     5      1
+        # 3    0     4      0
+        #      1     5      1
+        #      2     6      2
+        
+        assert i != j, 'i = %d, tmp = %d, j = %d' % (i,tmp,j)
+            
+        if i > j:
+            tmp = i
+            i = j
+            j = tmp
+        
+        # Compute acceptance ratio
+        cmi = self.chains[i].chain_manager
+        power_i = self.chains[i].heating_power
+        cmi.refreshLastLnLike()
+        lnLi = cmi.getLastLnLike()
+
+        cmj = self.chains[j].chain_manager
+        power_j = self.chains[j].heating_power
+        cmj.refreshLastLnLike()
+        lnLj = cmj.getLastLnLike()
+
+        log_accept_ratio = (power_j - power_i)*lnLi + (power_i - power_j)*lnLj
+        log_u = math.log(r.uniform())
+        swap_accepted = False
+        self.swap_table[i][j] += 1  # upper triangle
+        if log_u < log_accept_ratio:
+            swap_accepted = True
+            self.setChainPower(i, power_j)
+            self.setChainPower(j, power_i)
+            self.swap_table[j][i] += 1  # lower triangle
+            
+        if cycle % 100 == 0:
+            print '\n********** Attempting chain swap **********'
+            print 'n =',n
+            print 'i =',i
+            print 'j =',j
+            print 'log_accept_ratio =',log_accept_ratio
+            print 'log_u            =',log_u
+            if swap_accepted:
+                print 'swap_accepted    = True'
+            else:
+                print 'swap_accepted    = False'
+            print 'swap_table:'
+            for ii in range(n):
+                for jj in range(n):
+                    print '%12d' % self.swap_table[ii][jj],
+                print
+            print '*********************************************\n'
