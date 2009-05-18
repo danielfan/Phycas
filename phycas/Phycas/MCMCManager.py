@@ -649,6 +649,7 @@ class MCMCManager:
         """
         self.parent = parent
         self.chains = []
+        self.cold_chain_index = None
         self.swap_table = None
 
     def paramFileHeader(self, paramf):
@@ -693,8 +694,10 @@ class MCMCManager:
         self.parent.phycassert(not unimap_and_multiple_chains, 'Multiple chains cannot (yet) be used in conjunction with use_unimap')
         
         # Create the chains
-        for heating_power in self.parent.heat_vector:
+        for i, heating_power in enumerate(self.parent.heat_vector):
             markov_chain = MarkovChain(self.parent, heating_power)
+            if heating_power == 1.0:
+                self.cold_chain_index = i
             self.chains.append(markov_chain)
             
         n = len(self.parent.heat_vector)
@@ -735,8 +738,8 @@ class MCMCManager:
         first chain in the data member chains whose power equals 1.0.
         
         """
-        i = self.parent.heat_vector.index(1.0)
-        return self.chains[i].chain_manager
+        assert self.cold_chain_index == self.parent.heat_vector.index(1.0)
+        return self.chains[self.cold_chain_index].chain_manager
 
     def setChainPower(self, chain_index, power):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -745,9 +748,11 @@ class MCMCManager:
         chain_index, setting the power for each updater to the supplied power.
         
         """
-        #parent.phycassert(len(chains) > chain_index, 'chain index specified (%d) too large for number of chains (%d)' % (chain_index, len(chains)))
-        #parent.phycassert(len(self.parent.heat_vector) == len(self.chains), 'length of heat vector (%d) not equal to number of chains (%d)' % (len(self.heat_vector, len(self.nchains))))
-        #self.parent.heat_vector[chain_index] = power
+        self.parent.phycassert(len(self.chains) > chain_index, 'chain index specified (%d) too large for number of chains (%d)' % (chain_index, len(self.chains)))
+        self.parent.phycassert(len(self.parent.heat_vector) == len(self.chains), 'length of heat vector (%d) not equal to number of chains (%d)' % (len(self.parent.heat_vector), len(self.chains)))
+        self.parent.heat_vector[chain_index] = power
+        if power == 1.0:
+            self.cold_chain_index = chain_index
         self.chains[chain_index].setPower(power)
 
     def resetNEvals(self):
