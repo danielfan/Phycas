@@ -867,30 +867,11 @@ class MCMCManager:
         
         r = self.parent._getLot()
         i = r.sampleUInt(n)
-        tmp = r.sampleUInt(n - 1)
-        j = (1 + i + tmp) % n
-        
-        # n = 4
-        # i   tmp  1+i+tmp  j
-        # 0    0     1      1
-        #      1     2      2
-        #      2     3      3
-        # 1    0     2      2
-        #      1     3      3
-        #      2     4      0
-        # 2    0     3      3
-        #      1     4      0
-        #      2     5      1
-        # 3    0     4      0
-        #      1     5      1
-        #      2     6      2
-        
-        assert i != j, 'i = %d, tmp = %d, j = %d' % (i,tmp,j)
-            
-        if i > j:
-            tmp = i
-            i = j
-            j = tmp
+        j = r.sampleUInt(n - 1)
+        if j >= i:
+            j += 1
+        else:
+            i,j = j,i   # make sure i < j so attempted swaps are consistently in upper triangle of swap table
         
         # Compute acceptance ratio
         cmi = self.chains[i].chain_manager
