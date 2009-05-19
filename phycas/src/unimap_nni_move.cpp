@@ -305,13 +305,13 @@ void UnimapNNIMove::proposeNewState()
 
 	InternalData * nd_internal_data = nd->GetInternalData();
 	PHYCAS_ASSERT(nd_internal_data);
-	pre_root_posterior = nd_internal_data->getChildCondLikePtr();
+	pre_root_posterior = nd_internal_data->getParentalCondLikePtr();
 	pre_cla = nd_internal_data->getChildCondLikePtr();
 	pre_p_mat = nd_internal_data->getMutablePMatrices();
 	
 	InternalData * ndp_internal_data = ndP->GetInternalData();
 	PHYCAS_ASSERT(ndp_internal_data);
-	post_root_posterior = ndp_internal_data->getChildCondLikePtr();
+	post_root_posterior = ndp_internal_data->getParentalCondLikePtr();
 	post_cla = ndp_internal_data->getChildCondLikePtr();
 	post_p_mat = ndp_internal_data->getMutablePMatrices();
 
@@ -328,11 +328,11 @@ void UnimapNNIMove::proposeNewState()
 	prev_z_len = z->GetEdgeLen();
 	prev_nd_len = nd->GetEdgeLen();
 	prev_ndP_len = ndP->GetEdgeLen();
-	prev_ln_prior = (x->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(prev_x_len) : p->calcExternalEdgeLenPriorUnnorm(prev_x_len));
-	prev_ln_prior += (y->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(prev_y_len) : p->calcExternalEdgeLenPriorUnnorm(prev_y_len));
-	prev_ln_prior += (z->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(prev_z_len) : p->calcExternalEdgeLenPriorUnnorm(prev_z_len));
-	prev_ln_prior += p->calcInternalEdgeLenPriorUnnorm(prev_nd_len);
-	prev_ln_prior += p->calcInternalEdgeLenPriorUnnorm(prev_ndP_len);
+	prev_ln_prior = calcEdgeLenLnPrior(*x, prev_x_len, p);
+	prev_ln_prior += calcEdgeLenLnPrior(*y, prev_y_len, p);
+	prev_ln_prior += calcEdgeLenLnPrior(*z, prev_z_len, p);
+	prev_ln_prior += calcEdgeLenLnPrior(*nd, prev_nd_len, p);
+	prev_ln_prior += calcEdgeLenLnPrior(*ndP, prev_ndP_len, p);
 
 	
 	calculatePairwiseDistances();
@@ -371,12 +371,20 @@ void UnimapNNIMove::proposeNewState()
     
     //DebugSaveNexusFile(ySisTipData, yTipData, wSisTipData, wTipData, curr_ln_like);
     
-	curr_ln_prior = (x->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(xLen) : p->calcExternalEdgeLenPriorUnnorm(xLen));
-	curr_ln_prior += (y->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(yLen) : p->calcExternalEdgeLenPriorUnnorm(yLen));
-	curr_ln_prior += (z->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(zLen) : p->calcExternalEdgeLenPriorUnnorm(zLen));
-	curr_ln_prior += p->calcInternalEdgeLenPriorUnnorm(ndLen);
-	curr_ln_prior += p->calcInternalEdgeLenPriorUnnorm(ndPLen);
+	curr_ln_prior 	= calcEdgeLenLnPrior(*x, xLen, p)
+					+ calcEdgeLenLnPrior(*y, yLen, p)
+					+ calcEdgeLenLnPrior(*z, zLen, p)
+					+ calcEdgeLenLnPrior(*nd, ndLen, p)
+					+ calcEdgeLenLnPrior(*ndP, ndPLen, p);
 	}
+
+double calcEdgeLenLnPrior(const TreeNode &x, double edge_len, ChainManagerShPtr & chain_mgr) 
+	{
+	if (x.IsTip())
+		return chain_mgr->calcExternalEdgeLenPriorUnnorm(edge_len);
+	return chain_mgr->calcInternalEdgeLenPriorUnnorm(edge_len);
+	}
+
 
 UnimapNNIMove::~UnimapNNIMove()
 	{
@@ -557,14 +565,14 @@ double UnimapNNIMove::FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nd)
 	double *** p_mat;
 	if (scoringBeforeMove)
 		{
-		nd_childCLPtr = pre_root_posterior;
-		nd_parentCLPtr = pre_cla;
+		nd_childCLPtr = pre_cla;
+		nd_parentCLPtr = pre_root_posterior;
 		p_mat = pre_p_mat;
 		}
 	else
 		{
-		nd_childCLPtr = post_root_posterior;
-		nd_parentCLPtr = post_cla;
+		nd_childCLPtr = post_cla;
+		nd_parentCLPtr = post_root_posterior;
 		p_mat = post_p_mat;
 		}
 
@@ -579,7 +587,7 @@ double UnimapNNIMove::FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nd)
 	likelihood->calcCLATwoTips(*nd_childCLPtr, *ySisTipData, *yTipData);
 	likelihood->calcCLATwoTips(*nd_parentCLPtr, *wSisTipData, *wTipData);
 
-	return HarvestLnLikeFromCondLikePar(nd_childCLPtr, nd_parentCLPtr, childPMatrix);
+	return HarvestLnLikeFromCondLikePar(nd_parentCLPtr, nd_childCLPtr, childPMatrix);
 	}
 	
 double UnimapNNIMove::HarvestLnLikeFromCondLikePar(
@@ -612,17 +620,8 @@ double UnimapNNIMove::HarvestLnLikeFromCondLikePar(
 		focalNeighborCLAPtr += num_states;
 		double site_lnL = std::log(siteLike);
 
-#if defined(DO_UNDERFLOW_POLICY)
-		underflow_manager.correctSiteLike(site_lnL, pat, focalCondLike);
-		underflow_manager.correctSiteLike(site_lnL, pat, neighborCondLike);
-#endif
 		lnLikelihood += site_lnL;
 		}
-#if defined(DO_UNDERFLOW_POLICY)
-	underflow_manager.correctLnLike(lnLikelihood, focalCondLike);
-	underflow_manager.correctLnLike(lnLikelihood, neighborCondLike);
-#endif
-
 	return lnLikelihood;
 	}
 

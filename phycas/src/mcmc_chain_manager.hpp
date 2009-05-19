@@ -148,6 +148,9 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 typedef boost::shared_ptr<MCMCChainManager>		ChainManagerShPtr;
 typedef boost::weak_ptr<MCMCChainManager>		ChainManagerWkPtr;
 
+double calcEdgeLenLnPrior(const TreeNode &x, double edge_len, ChainManagerShPtr & chain_mgr);
+
+
 } // namespace phycas
 
 //#include "phycas/src/mcmc_chain_manager.inl"
