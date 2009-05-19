@@ -72,6 +72,8 @@ bool UnimapNNIMove::update()
 		}
 
 	double ln_accept_ratio = curr_posterior - prev_posterior + getLnHastingsRatio();
+	std::cerr << "ln_accept_ratio = curr_posterior - prev_posterior + ln_density_reverse_move - ln_density_forward_move;\n";
+	std::cerr << ln_accept_ratio << "   " << curr_posterior << "   " <<prev_posterior << "   " << ln_density_reverse_move << "   " << ln_density_forward_move << "\n\n";
 	//double lnu = std::log(rng->Uniform(FILE_AND_LINE));
 	//bool accepted = (ln_accept_ratio >= 0.0 || lnu <= ln_accept_ratio);
 	//bool accepted = (ln_accept_ratio >= 0.0 || std::log(rng->Uniform(FILE_AND_LINE)) <= ln_accept_ratio);
@@ -228,7 +230,7 @@ void UnimapNNIMove::calculatePairwiseDistances()
 
 void UnimapNNIMove::calculateProposalDist(bool before_swap)
 	{
-	if (before_swap)
+	if (!before_swap)
 		{
 		propMeanX = std::max(min_edge_len_mean, (2*dXY + dXZ + dWX - dYZ - dWY)/4.0);
 		propMeanY = std::max(min_edge_len_mean, (2*dXY + dYZ + dWY - dXZ - dWX)/4.0);
@@ -250,7 +252,9 @@ double UnimapNNIMove::calcProposalLnDensity(double mean, double x)
 	{
 	const double variance = (edge_len_prop_cv*edge_len_prop_cv*mean*mean);
 	gammaDist.SetMeanAndVariance(mean, variance);
-	return gammaDist.GetLnPDF(x);
+	const double d = gammaDist.GetLnPDF(x);
+	std::cerr << x << " from Gamma(" << mean << ", " << variance << ") = " << d << "\n";
+	return d;
 	}
 
 double UnimapNNIMove::proposeEdgeLen(double mean)
@@ -355,7 +359,7 @@ void UnimapNNIMove::proposeNewState()
 	double ndPLen = proposeEdgeLen(propMeanW);
 	double ndLen = proposeEdgeLen(propMeanInternal);
 	
-	std::cerr << boost::str(boost::format("tree before = (x:%.5f,y:%.5f,(z:%.5f,w:%.5f):%.5f);\n") % prev_x_len % prev_y_len % prev_z_len % prev_ndP_len % prev_nd_len);
+	std::cerr << boost::str(boost::format("tree before [%.5f] = (x:%.5f,y:%.5f,(z:%.5f,w:%.5f):%.5f);\n") % prev_ln_like % prev_x_len % prev_y_len % prev_z_len % prev_ndP_len % prev_nd_len);
 	
 	x->SetEdgeLen(xLen);
 	y->SetEdgeLen(yLen);
@@ -363,7 +367,6 @@ void UnimapNNIMove::proposeNewState()
 	nd->SetEdgeLen(ndLen);
 	ndP->SetEdgeLen(ndPLen);
 	
-	std::cerr << boost::str(boost::format("tree after = (z:%.5f,y:%.5f,(x:%.5f,w:%.5f):%.5f);\n") % zLen % yLen % xLen % ndPLen % ndLen);
 
 	ln_density_forward_move = calcProposalLnDensity(propMeanX, xLen);
 	ln_density_forward_move += calcProposalLnDensity(propMeanY, yLen);
@@ -372,6 +375,7 @@ void UnimapNNIMove::proposeNewState()
 	ln_density_forward_move += calcProposalLnDensity(propMeanInternal, ndLen);
 
     curr_ln_like = FourTaxonLnLFromCorrectTipDataMembers(nd);
+	std::cerr << boost::str(boost::format("tree after [%.5f] = (z:%.5f,y:%.5f,(x:%.5f,w:%.5f):%.5f);\n") % curr_ln_like % zLen % yLen % xLen % ndPLen % ndLen);
         
 	curr_ln_prior 	= calcEdgeLenLnPrior(*x, xLen, p)
 					+ calcEdgeLenLnPrior(*y, yLen, p)
@@ -804,7 +808,7 @@ UnimapNNIMove::UnimapNNIMove() : MCMCUpdater(),
   doSampleUnivents(false)
 	{
 	min_edge_len_mean = 0.02;
-	edge_len_prop_cv = 0.1;
+	edge_len_prop_cv = 1;
 	pre_x_pmat_transposed = 0L;
 	pre_y_pmat_transposed = 0L;
 	pre_w_pmat_transposed = 0L;
