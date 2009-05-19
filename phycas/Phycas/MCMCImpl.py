@@ -6,6 +6,8 @@ from MCMCManager import MCMCManager
 from phycas.ProbDist import StopWatch
 from phycas.ReadNexus import NexusReader
 
+
+
 def check(msg = 'check'):
     raw_input(msg)
 
@@ -770,7 +772,7 @@ class MCMCImpl(CommonFunctions):
                 for c in range(nchains):
                     self.output('Starting tree for chain %d:  %s' % (c, self.starting_tree[c]))
             else:
-                self.output('Starting tree:  %s' % self.starting_tree)
+                self.output('Starting tree:  %s' % str(self.starting_tree[0]))
             if self.opts.doing_path_sampling:
                 self.output('\nPerforming path sampling MCMC to estimate marginal likelihood.')
                 self.output('Likelihood will be raised to the power beta, and beta will be')

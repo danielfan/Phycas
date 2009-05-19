@@ -94,6 +94,7 @@ class UnimapImpl(object):
         
         # Determine heating levels if multiple chains
         if self.heat_vector == None:
+        	self.phycassert(self.opts.nchains)
             if self.opts.nchains == 1:
                 self.heat_vector = [1.0]
             else:
@@ -108,6 +109,7 @@ class UnimapImpl(object):
                     temp = 1.0/(1.0 + float(i)*self.heating_lambda)
                     self.heat_vector.append(temp)
         else:
+        	self.phycassert(len(self.heat_vector) == 1)
             # User supplied his/her own heat_vector; perform sanity checks
             self.opts.nchains = len(self.heat_vector)
             self.phycas.phycassert(self.heat_vector.index(1.0) < self.opts.nchains, 'user-supplied heat_vector does not allow for a cold chain (one power must be 1.0)')

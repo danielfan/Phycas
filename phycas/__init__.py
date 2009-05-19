@@ -220,6 +220,9 @@ ps = PS()
 from Phycas.CPO import CPO
 cpo = CPO()
 
+from Phycas.Unimap import Unimap
+unimap = Unimap()
+
 def setMasterSeed(x):
     r = ProbDist.Lot()
     r.setSeed(x)

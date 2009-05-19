@@ -34,7 +34,6 @@ void CondLikelihoodStorage::fillTo(unsigned capacity)
 	PHYCAS_ASSERT(num_rates > 0);
 	PHYCAS_ASSERT(num_states > 0);
 	unsigned curr_sz = (unsigned)cl_stack.size();
-	//POL05172009 std::cerr << "***** fillTo(" << capacity << "): which = " << which << ", size = " << curr_sz << std::endl;
 	unsigned num_needed = (capacity > curr_sz ? capacity - curr_sz : 0);
 	for (unsigned i = 0; i < num_needed; ++i)
 		{
@@ -55,7 +54,6 @@ CondLikelihoodStorage::CondLikelihoodStorage()
   realloc_min(1)
 	{
 	which = next_cond_like_storage++;
-	//POL05172009 std::cerr << "***** creating " << which << std::endl;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -64,7 +62,6 @@ CondLikelihoodStorage::CondLikelihoodStorage()
 CondLikelihoodStorage::~CondLikelihoodStorage()
 	{
 	clearStack();
-	//POL05172009 std::cerr << "***** destroying " << which << std::endl;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -152,14 +149,12 @@ CondLikelihoodShPtr CondLikelihoodStorage::getCondLikelihood()
 	PHYCAS_ASSERT(num_patterns > 0);
 	PHYCAS_ASSERT(num_rates > 0);
 	PHYCAS_ASSERT(num_states > 0);
-	//POL05172009 std::cerr << "***** getCondLikelihood(): which = " << which << ", size before = " << cl_stack.size() << std::endl;
 	if (cl_stack.empty())
 		fillTo(realloc_min);
 
 	CondLikelihoodShPtr cl_ptr = cl_stack.top();
 	cl_stack.pop();
 	
-	//POL05172009 std::cerr << "***** getCondLikelihood(): which = " << which << ", size after = " << cl_stack.size() << std::endl;
 
 #if defined(OBSOLETE_DEBUGGING_CODE)
 	unsigned bytes = cl_ptr->getCLASize();
@@ -188,7 +183,6 @@ void CondLikelihoodStorage::putCondLikelihood(CondLikelihoodShPtr p)
 #endif
 
 	cl_stack.push(p);
-	//POL05172009 std::cerr << "***** putCondLikelihood: which = " << which << ", size = " << cl_stack.size() << std::endl;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -231,8 +225,6 @@ void CondLikelihoodStorage::setCondLikeDimensions(unsigned np, unsigned nr, unsi
 	unsigned newlen = np*nr*ns;
 	unsigned oldlen = num_patterns*num_rates*num_states;
 	
-	//POL05172009 std::cerr << "***** setCondLikeDimensions(" << np << ", " << nr << ", " << ns << "): which = " << which << std::endl;
-
 	if (newlen > oldlen)
 		{
 #if defined(OBSOLETE_DEBUGGING_CODE)
