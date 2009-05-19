@@ -66,7 +66,7 @@ class UnimapNNIMove : public MCMCUpdater
 		double                  FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nd);
 		double                  HarvestLnLikeFromCondLikePar(CondLikelihoodShPtr focalCondLike, ConstCondLikelihoodShPtr neighborCondLike, const double * const * childPMatrix);
 		void                    storePMatTransposed(double **& cached, const double *** p_mat_array);
-        void                    DebugSaveNexusFile(TipData * xtd, TipData * ytd, TipData * ztd, TipData * wtd, double lnlike);
+        void                    DebugSaveNexusFile(TipData * xtd, TipData * ytd, TipData * ztd, TipData * wtd, double lnlike, TreeNode * nd);
 	    TreeNode *              randomInternalAboveSubroot();
 
 	protected:

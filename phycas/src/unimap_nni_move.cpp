@@ -372,9 +372,7 @@ void UnimapNNIMove::proposeNewState()
 	ln_density_forward_move += calcProposalLnDensity(propMeanInternal, ndLen);
 
     curr_ln_like = FourTaxonLnLFromCorrectTipDataMembers(nd);
-    
-    DebugSaveNexusFile(ySisTipData, yTipData, wSisTipData, wTipData, curr_ln_like);
-    
+        
 	curr_ln_prior 	= calcEdgeLenLnPrior(*x, xLen, p)
 					+ calcEdgeLenLnPrior(*y, yLen, p)
 					+ calcEdgeLenLnPrior(*z, zLen, p)
@@ -432,12 +430,11 @@ double UnimapNNIMove::FourTaxonLnLBeforeMove(TreeNode * nd)
 	storePMatTransposed(pre_z_pmat_transposed, (const double ***) wSisTipData->getTransposedPMatrices());
 	storePMatTransposed(pre_w_pmat_transposed, (const double ***) wTipData->getTransposedPMatrices());
 
-    DebugSaveNexusFile(ySisTipData, yTipData, wSisTipData, wTipData, lnlike);
 
     return lnlike;
 	}
 
-void UnimapNNIMove::DebugSaveNexusFile(TipData * xtd, TipData * ytd, TipData * ztd, TipData * wtd, double lnlike)
+void UnimapNNIMove::DebugSaveNexusFile(TipData * xtd, TipData * ytd, TipData * ztd, TipData * wtd, double lnlike, TreeNode *nd)
     {
     typedef boost::shared_array<const int8_t> StateArr;
     StateArr xdata = xtd->getTipStatesArray();
@@ -522,9 +519,19 @@ void UnimapNNIMove::DebugSaveNexusFile(TipData * xtd, TipData * ytd, TipData * z
     TreeNode * xpar = x->GetParent();
     TreeNode * zpar = z->GetParent();
     if (xpar->GetParent() == zpar)
-        nxsf << boost::str(boost::format("  utree curr = (x:%.8f, y:%.8f, (z:%.8f, w:%.8f):%.8f);") % x->GetEdgeLen() % y->GetEdgeLen() % z->GetEdgeLen() % zpar->GetEdgeLen() % xpar->GetEdgeLen()) << std::endl;
+    	{
+        nxsf << boost::str(boost::format("  utree curr = (x:%.8f, y:%.8f, (z:%.8f, w:%.8f):%.8f);") % ySis->GetEdgeLen() % y->GetEdgeLen() % wSis->GetEdgeLen() % nd->GetParent()->GetEdgeLen() % nd->GetEdgeLen()) << std::endl;
+        nxsf << "  [y->blen    = " << y->GetEdgeLen() << '\n';
+        nxsf << "   ySis->blen = " << ySis->GetEdgeLen() << '\n';
+        nxsf << "   nd->GetParent()->blen    = " << nd->GetParent()->GetEdgeLen() << '\n';
+        nxsf << "   wSis->blen = " << wSis->GetEdgeLen() << '\n';
+        nxsf << "   ]\n";
+        }
     else
+    	{
+    	PHYCAS_ASSERT(false);
         nxsf << boost::str(boost::format("  utree curr = (z:%.8f, y:%.8f, (x:%.8f, w:%.8f):%.8f);") % z->GetEdgeLen() % y->GetEdgeLen() % x->GetEdgeLen() % xpar->GetEdgeLen() % zpar->GetEdgeLen()) << std::endl;
+        }
     nxsf << "end;" << std::endl;
 
     nxsf << "\nbegin paup;" << std::endl;
@@ -591,7 +598,9 @@ double UnimapNNIMove::FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nd)
 	likelihood->calcCLATwoTips(*nd_childCLPtr, *ySisTipData, *yTipData);
 	likelihood->calcCLATwoTips(*nd_parentCLPtr, *wSisTipData, *wTipData);
 
-	return HarvestLnLikeFromCondLikePar(nd_childCLPtr, nd_parentCLPtr, childPMatrix);
+	double lnl =  HarvestLnLikeFromCondLikePar(nd_childCLPtr, nd_parentCLPtr, childPMatrix);
+	DebugSaveNexusFile(ySisTipData, yTipData, wSisTipData, wTipData, lnl, nd);
+	return lnl;
 	}
 	
 double UnimapNNIMove::HarvestLnLikeFromCondLikePar(
