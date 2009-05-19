@@ -16,6 +16,9 @@ tree used for simulation:
 (1:0.10000,2:0.15000,(3:0.02500,4:0.15000):0.05000)
 ]
 
+begin assumptions;
+  exset * bogus = 51-.;
+end;
 
 begin paup;
   set criterion=likelihood storebrlen;

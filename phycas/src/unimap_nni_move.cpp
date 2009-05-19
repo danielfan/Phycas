@@ -355,12 +355,16 @@ void UnimapNNIMove::proposeNewState()
 	double ndPLen = proposeEdgeLen(propMeanW);
 	double ndLen = proposeEdgeLen(propMeanInternal);
 	
+	std::cerr << boost::str(boost::format("tree before = (x:%.5f,y:%.5f,(z:%.5f,w:%.5f):%.5f);\n") % prev_x_len % prev_y_len % prev_z_len % prev_ndP_len % prev_nd_len);
+	
 	x->SetEdgeLen(xLen);
 	y->SetEdgeLen(yLen);
 	z->SetEdgeLen(zLen);
 	nd->SetEdgeLen(ndLen);
 	ndP->SetEdgeLen(ndPLen);
 	
+	std::cerr << boost::str(boost::format("tree after = (z:%.5f,y:%.5f,(x:%.5f,w:%.5f):%.5f);\n") % zLen % yLen % xLen % ndPLen % ndLen);
+
 	ln_density_forward_move = calcProposalLnDensity(propMeanX, xLen);
 	ln_density_forward_move += calcProposalLnDensity(propMeanY, yLen);
 	ln_density_forward_move += calcProposalLnDensity(propMeanW, ndPLen);
@@ -369,7 +373,7 @@ void UnimapNNIMove::proposeNewState()
 
     curr_ln_like = FourTaxonLnLFromCorrectTipDataMembers(nd);
     
-    //DebugSaveNexusFile(ySisTipData, yTipData, wSisTipData, wTipData, curr_ln_like);
+    DebugSaveNexusFile(ySisTipData, yTipData, wSisTipData, wTipData, curr_ln_like);
     
 	curr_ln_prior 	= calcEdgeLenLnPrior(*x, xLen, p)
 					+ calcEdgeLenLnPrior(*y, yLen, p)
@@ -428,7 +432,7 @@ double UnimapNNIMove::FourTaxonLnLBeforeMove(TreeNode * nd)
 	storePMatTransposed(pre_z_pmat_transposed, (const double ***) wSisTipData->getTransposedPMatrices());
 	storePMatTransposed(pre_w_pmat_transposed, (const double ***) wTipData->getTransposedPMatrices());
 
-    //DebugSaveNexusFile(ySisTipData, yTipData, wSisTipData, wTipData, lnlike);
+    DebugSaveNexusFile(ySisTipData, yTipData, wSisTipData, wTipData, lnlike);
 
     return lnlike;
 	}
@@ -565,14 +569,14 @@ double UnimapNNIMove::FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nd)
 	double *** p_mat;
 	if (scoringBeforeMove)
 		{
-		nd_childCLPtr = pre_cla;
-		nd_parentCLPtr = pre_root_posterior;
+		nd_childCLPtr = pre_root_posterior;
+		nd_parentCLPtr = pre_cla;
 		p_mat = pre_p_mat;
 		}
 	else
 		{
-		nd_childCLPtr = post_cla;
-		nd_parentCLPtr = post_root_posterior;
+		nd_childCLPtr = post_root_posterior;
+		nd_parentCLPtr = post_cla;
 		p_mat = post_p_mat;
 		}
 
@@ -587,7 +591,7 @@ double UnimapNNIMove::FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nd)
 	likelihood->calcCLATwoTips(*nd_childCLPtr, *ySisTipData, *yTipData);
 	likelihood->calcCLATwoTips(*nd_parentCLPtr, *wSisTipData, *wTipData);
 
-	return HarvestLnLikeFromCondLikePar(nd_parentCLPtr, nd_childCLPtr, childPMatrix);
+	return HarvestLnLikeFromCondLikePar(nd_childCLPtr, nd_parentCLPtr, childPMatrix);
 	}
 	
 double UnimapNNIMove::HarvestLnLikeFromCondLikePar(
@@ -659,6 +663,8 @@ TipData * UnimapNNIMove::createTipDataFromUnivents(const Univents & u, TipData *
 */
 void UnimapNNIMove::revert()
 	{
+	std::cerr << "REVERTED" << std::endl;
+	
 	x->SetEdgeLen(prev_x_len);
 	y->SetEdgeLen(prev_y_len);
 	z->SetEdgeLen(prev_z_len);
@@ -713,6 +719,8 @@ void UnimapNNIMove::revert()
 */
 void UnimapNNIMove::accept()
 	{
+	std::cerr << "ACCEPTED" << std::endl;
+	
 	/*x->SelectNode();
     y->SelectNode();
     z->SelectNode();

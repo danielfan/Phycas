@@ -833,7 +833,7 @@ class MCMCImpl(CommonFunctions):
 
         # Show information about topology prior to be used
         self.showTopoPriorInfo()
-
+        
         self.stopwatch.start()
         self.mcmc_manager.resetNEvals()
         

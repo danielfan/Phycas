@@ -509,16 +509,6 @@ class MarkovChain(LikelihoodCore):
             self.chain_manager.addMove(self.edge_move)
 
         if self.parent.opts.use_unimap:
-            # Create a MappingMove (to refresh the mapping for all sites)
-            self.unimapping_move = Likelihood.MappingMove()
-            self.unimapping_move.setName("Univent mapping move")
-            self.unimapping_move.setWeight(self.parent.opts.mapping_move_weight)
-            self.unimapping_move.setTree(self.tree)
-            self.unimapping_move.setModel(self.model)
-            self.unimapping_move.setTreeLikelihood(self.likelihood)
-            self.unimapping_move.setLot(self.r)
-            self.chain_manager.addMove(self.unimapping_move)
-
             # Create a UnimapNNIMove (replaces LargetSimonMove for unimap analyses)
             self.unimap_nni_move = Likelihood.UnimapNNIMove()
             self.unimap_nni_move.setName("Unimap NNI move")
@@ -528,6 +518,16 @@ class MarkovChain(LikelihoodCore):
             self.unimap_nni_move.setTreeLikelihood(self.likelihood)
             self.unimap_nni_move.setLot(self.r)
             self.chain_manager.addMove(self.unimap_nni_move)
+
+            # Create a MappingMove (to refresh the mapping for all sites)
+            self.unimapping_move = Likelihood.MappingMove()
+            self.unimapping_move.setName("Univent mapping move")
+            self.unimapping_move.setWeight(self.parent.opts.mapping_move_weight)
+            self.unimapping_move.setTree(self.tree)
+            self.unimapping_move.setModel(self.model)
+            self.unimapping_move.setTreeLikelihood(self.likelihood)
+            self.unimapping_move.setLot(self.r)
+            self.chain_manager.addMove(self.unimapping_move)
         elif not self.parent.opts.fix_topology:
             # Create a LargetSimonMove object to handle Metropolis-Hastings
             # updates to the tree topology and edge lengths
@@ -613,6 +613,9 @@ class MarkovChain(LikelihoodCore):
         #    self.chain_manager.addMove(self.samc_move)
 
         self.chain_manager.finalize()
+
+        if self.parent.opts.use_unimap:
+            self.likelihood.fullRemapping(self.tree, self.r, True) 
 
         # Calculate relative rates if among-site rate heterogeneity is part of the model
         # Currently, the unnormalized rates are stored in the model; the function call
