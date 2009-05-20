@@ -52,6 +52,8 @@ bool UnimapNNIMove::update()
 	if (is_fixed)
 		return false;
 
+	std::cerr << "****** UnimapNNIMove::update" << std::endl;
+
 	tree->renumberInternalNodes(tree->GetNTips()); //@POL this should be somewhere else
 
 	proposeNewState();
@@ -71,8 +73,8 @@ bool UnimapNNIMove::update()
 		}
 
 	double ln_accept_ratio = curr_posterior - prev_posterior + getLnHastingsRatio();
-	std::cerr << "ln_accept_ratio = curr_posterior - prev_posterior + ln_density_reverse_move - ln_density_forward_move;\n";
-	std::cerr << ln_accept_ratio << "   " << curr_posterior << "   " <<prev_posterior << "   " << ln_density_reverse_move << "   " << ln_density_forward_move << "\n\n";
+	//std::cerr << "ln_accept_ratio = curr_posterior - prev_posterior + ln_density_reverse_move - ln_density_forward_move;\n";
+	//std::cerr << ln_accept_ratio << "   " << curr_posterior << "   " <<prev_posterior << "   " << ln_density_reverse_move << "   " << ln_density_forward_move << "\n\n";
 	//double lnu = std::log(rng->Uniform(FILE_AND_LINE));
 	//bool accepted = (ln_accept_ratio >= 0.0 || lnu <= ln_accept_ratio);
 	//bool accepted = (ln_accept_ratio >= 0.0 || std::log(rng->Uniform(FILE_AND_LINE)) <= ln_accept_ratio);
@@ -84,6 +86,8 @@ bool UnimapNNIMove::update()
 		lnu = std::log(u);
 		accepted = (lnu <= ln_accept_ratio);
 		}
+	//std::cerr << "lnu    ln_accept_ratio = curr_posterior - prev_posterior + ln_density_reverse_move - ln_density_forward_move;\n";
+	//std::cerr << lnu << "   " << ln_accept_ratio << "   " << curr_posterior << "   " <<prev_posterior << "   " << ln_density_reverse_move << "   " << ln_density_forward_move << "\n\n";
 
     if (save_debug_info)
         debug_info = str(boost::format("swapping %d <-> %d (%s, lnR = %.5f)") % x->GetNodeNumber() % z->GetNodeNumber() % (accepted ? "accepted" : "rejected") % ln_accept_ratio);
@@ -235,7 +239,7 @@ double UnimapNNIMove::calcProposalLnDensity(double mean, double x)
 	const double variance = (edge_len_prop_cv*edge_len_prop_cv*mean*mean);
 	gammaDist.SetMeanAndVariance(mean, variance);
 	const double d = gammaDist.GetLnPDF(x);
-	std::cerr << x << " from Gamma(" << mean << ", " << variance << ") = " << d << "\n";
+	//std::cerr << x << " from Gamma(" << mean << ", " << variance << ") = " << d << "\n";
 	return d;
 	}
 
@@ -254,13 +258,11 @@ void UnimapNNIMove::AlterBranchLengths(ChainManagerShPtr & p)
 	prev_nd_len = nd->GetEdgeLen();
 	prev_ndP_len = ndP->GetEdgeLen();
 	
-	
 	prev_ln_prior = calcEdgeLenLnPrior(*x, prev_x_len, p);
 	prev_ln_prior += calcEdgeLenLnPrior(*y, prev_y_len, p);
 	prev_ln_prior += calcEdgeLenLnPrior(*z, prev_z_len, p);
 	prev_ln_prior += calcEdgeLenLnPrior(*nd, prev_nd_len, p);
 	prev_ln_prior += calcEdgeLenLnPrior(*ndP, prev_ndP_len, p);
-
 	
 	calculatePairwiseDistances();
 	calculateProposalDist(true);
@@ -279,14 +281,13 @@ void UnimapNNIMove::AlterBranchLengths(ChainManagerShPtr & p)
 	double ndPLen = proposeEdgeLen(propMeanW);
 	double ndLen = proposeEdgeLen(propMeanInternal);
 	
-	std::cerr << boost::str(boost::format("tree before [%.5f] = (x:%.5f,y:%.5f,(z:%.5f,w:%.5f):%.5f);\n") % prev_ln_like % prev_x_len % prev_y_len % prev_z_len % prev_ndP_len % prev_nd_len);
+	//std::cerr << boost::str(boost::format("tree before [%.5f] = (x:%.5f,y:%.5f,(z:%.5f,w:%.5f):%.5f);\n") % prev_ln_like % prev_x_len % prev_y_len % prev_z_len % prev_ndP_len % prev_nd_len);
 	
 	x->SetEdgeLen(xLen);
 	y->SetEdgeLen(yLen);
 	z->SetEdgeLen(zLen);
 	nd->SetEdgeLen(ndLen);
 	ndP->SetEdgeLen(ndPLen);
-	
 
 	ln_density_forward_move = calcProposalLnDensity(propMeanX, xLen);
 	ln_density_forward_move += calcProposalLnDensity(propMeanY, yLen);
@@ -294,16 +295,15 @@ void UnimapNNIMove::AlterBranchLengths(ChainManagerShPtr & p)
 	ln_density_forward_move += calcProposalLnDensity(propMeanZ, zLen);
 	ln_density_forward_move += calcProposalLnDensity(propMeanInternal, ndLen);
 
-	std::cerr << boost::str(boost::format("tree after = (z:%.5f,y:%.5f,(x:%.5f,w:%.5f):%.5f);\n") % zLen % yLen % xLen % ndPLen % ndLen);
+	//std::cerr << boost::str(boost::format("tree after = (z:%.5f,y:%.5f,(x:%.5f,w:%.5f):%.5f);\n") % zLen % yLen % xLen % ndPLen % ndLen);
         
 	curr_ln_prior 	= calcEdgeLenLnPrior(*x, xLen, p)
 					+ calcEdgeLenLnPrior(*y, yLen, p)
 					+ calcEdgeLenLnPrior(*z, zLen, p)
 					+ calcEdgeLenLnPrior(*nd, ndLen, p)
 					+ calcEdgeLenLnPrior(*ndP, ndPLen, p);
-
-	
 	}
+	
 /*----------------------------------------------------------------------------------------------------------------------
 |	
 */
@@ -379,7 +379,7 @@ void UnimapNNIMove::proposeNewState()
 
 
     curr_ln_like = FourTaxonLnLFromCorrectTipDataMembers(nd);
-	std::cerr << "curr_ln_like = " << curr_ln_like << '\n';
+	//std::cerr << "curr_ln_like = " << curr_ln_like << '\n';
 	}
 
 double calcEdgeLenLnPrior(const TreeNode &x, double edge_len, ChainManagerShPtr & chain_mgr) 
@@ -675,7 +675,7 @@ TipData * UnimapNNIMove::createTipDataFromUnivents(const Univents & u, TipData *
 */
 void UnimapNNIMove::revert()
 	{
-	std::cerr << "REVERTED" << std::endl;
+	//std::cerr << "REVERTED" << std::endl;
 	
 	x->SetEdgeLen(prev_x_len);
 	y->SetEdgeLen(prev_y_len);
@@ -731,7 +731,7 @@ void UnimapNNIMove::revert()
 */
 void UnimapNNIMove::accept()
 	{
-	std::cerr << "ACCEPTED" << std::endl;
+	//std::cerr << "ACCEPTED" << std::endl;
 	
 	/*x->SelectNode();
     y->SelectNode();

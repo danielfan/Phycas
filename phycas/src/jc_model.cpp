@@ -166,6 +166,14 @@ void JC::calcPMat(double * * pMat, double edgeLength) const
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|   Needs work.
+*/
+double JC::calcUniformizationLambda() const
+	{
+    return 1.1;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Computes the uniformized transition probability matrix given an edge length. Overrides the pure virtual function 
 |   inherited from the base class Model. For the JC69 model, the uniformized transition probability matrix is:
 |>
@@ -202,7 +210,7 @@ double JC::calcLMat(double * * lMat) const
     //  Pij = 1/12           Pij = beta/lambda = 1/12
     //  lambda = 4
     double beta = 1.0/3.0;
-	const double lambda = 1.1;
+	const double lambda = calcUniformizationLambda();
 	const double diag_term = log(lambda - 3.0*beta);
 	const double off_diag_term = log(beta);
 	lMat[0][0] = diag_term;

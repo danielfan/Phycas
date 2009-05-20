@@ -204,6 +204,15 @@ void GTR::calcPMat(double * * pMat, double edgeLength) const
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|   Needs work.
+*/
+double GTR::calcUniformizationLambda() const
+	{
+    assert(0);
+    return 0.0;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Computes the uniformized transition probability matrix given an edge length. Overrides the pure virtual function 
 |   inherited from the base class Model. Uses the data member `q_matrix' to perform the calculation.
 */

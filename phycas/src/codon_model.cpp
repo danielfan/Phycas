@@ -549,6 +549,15 @@ void Codon::calcPMat(double * * pMat, double edgeLength) const
 	updateQMatrix();
 	q_matrix.recalcPMat(pMat, edgeLength);
 	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|   Needs work.
+*/
+double Codon::calcUniformizationLambda() const
+	{
+    assert(0);
+    return 0.0;
+	}
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the uniformized transition probability matrix given an edge length. Overrides the pure virtual function 

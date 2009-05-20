@@ -65,6 +65,7 @@ class Model	{
 		virtual std::string				paramHeader() const = 0;
 		virtual std::string				paramReport(unsigned ndecimals) const = 0;
 
+		virtual double					calcUniformizationLambda() const = 0;
 		virtual double					calcLMat(double * * lMat) const = 0;
 		virtual double					calcUMat(double * * uMat) const = 0;
 		
@@ -228,6 +229,7 @@ class JC: public Model
 									}
 
 		virtual std::string		getModelName() const;
+		double					calcUniformizationLambda() const;
 		void					calcPMat(double * * pMat, double edgeLength) const;
         double					calcLMat(double * * lMat) const;
         double					calcUMat(double * * uMat) const;
@@ -248,6 +250,7 @@ class HKY: public Model
 									
 		virtual std::string			getModelName() const;
         virtual void				createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters) const;
+		double						calcUniformizationLambda() const;
         double					    calcLMat(double * * lMat) const;
         double					    calcUMat(double * * uMat) const;
         void						calcPMat(double * * pMat, double edgeLength) const;
@@ -299,6 +302,7 @@ class GTR: public Model
 
 		virtual std::string			getModelName() const;
 		virtual void				createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters) const;
+		double						calcUniformizationLambda() const;
         double					    calcLMat(double * * lMat) const;
         double					    calcUMat(double * * uMat) const;
 		void						calcPMat(double * * pMat, double edgeLength) const;
@@ -390,6 +394,7 @@ class Codon: public Model
 
 		void						updateQMatrix() const;
 		virtual void				createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters) const;
+		double						calcUniformizationLambda() const;
         double					    calcLMat(double * * lMat) const;
         double					    calcUMat(double * * uMat) const;
 		void						calcPMat(double * * pMat, double edgeLength) const;

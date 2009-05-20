@@ -448,6 +448,8 @@ class MarkovChain(LikelihoodCore):
             self.tree_scaler_move = Likelihood.TreeScalerMove()
             self.tree_scaler_move.setName("Tree scaler move")
             self.tree_scaler_move.setWeight(self.parent.opts.tree_scaler_weight)
+            #print '@@@@@@@@@@@ self.parent.opts.tree_scaler_lambda =',self.parent.opts.tree_scaler_lambda
+            #print '@@@@@@@@@@@ self.parent.opts.tree_scaler_lambda.__class__ =',self.parent.opts.tree_scaler_lambda.__class__
             self.tree_scaler_move.setPosteriorTuningParam(self.parent.opts.tree_scaler_lambda)
             self.tree_scaler_move.setPriorTuningParam(self.parent.opts.tree_scaler_lambda0)
             self.tree_scaler_move.setTree(self.tree)
@@ -528,6 +530,23 @@ class MarkovChain(LikelihoodCore):
             self.unimapping_move.setTreeLikelihood(self.likelihood)
             self.unimapping_move.setLot(self.r)
             self.chain_manager.addMove(self.unimapping_move)
+            
+            # Create a UnimapEdgeMove object to handle Metropolis-Hastings
+            # updates to the edge lengths only (does not change the topology)
+            self.unimap_edge_move = Likelihood.UnimapEdgeMove()
+            self.unimap_edge_move.setName("Unimap edge length move")
+            self.unimap_edge_move.setWeight(self.parent.opts.unimap_edge_move_weight)
+            self.unimap_edge_move.setPosteriorTuningParam(self.parent.opts.unimap_edge_move_lambda)
+            self.unimap_edge_move.setPriorTuningParam(self.parent.opts.unimap_edge_move_lambda0)
+            self.unimap_edge_move.setTree(self.tree)
+            self.unimap_edge_move.setModel(self.model)
+            self.unimap_edge_move.setTreeLikelihood(self.likelihood)
+            self.unimap_edge_move.setLot(self.r)
+            self.unimap_edge_move.setLambda(self.parent.opts.unimap_edge_move_lambda)
+            if self.model.edgeLengthsFixed():
+                self.unimap_edge_move.fixParameter()
+            self.chain_manager.addMove(self.unimap_edge_move)
+
         elif not self.parent.opts.fix_topology:
             # Create a LargetSimonMove object to handle Metropolis-Hastings
             # updates to the tree topology and edge lengths

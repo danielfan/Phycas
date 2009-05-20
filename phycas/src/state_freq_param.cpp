@@ -54,6 +54,9 @@ bool StateFreqParam::update()
 	{
 	if (is_fixed)
 		return false;
+
+	std::cerr << "****** StateFreqParam::update" << std::endl;
+
 	slice_sampler->Sample();
 
     if (save_debug_info)

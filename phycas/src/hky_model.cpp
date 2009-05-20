@@ -365,10 +365,9 @@ double HKY::calcTRatio()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Computes the uniformized transition probability matrix given an edge length. Overrides the pure virtual function 
-|   inherited from the base class Model. 
+|   Needs work.
 */
-double HKY::calcLMat(double * * lMat) const
+double HKY::calcUniformizationLambda() const
 	{
 	double piA = state_freqs[0];
 	double piC = state_freqs[1];
@@ -392,7 +391,26 @@ double HKY::calcLMat(double * * lMat) const
     next_rate = beta*(piR + piC*kappa);
     if (next_rate > max_rate)
         max_rate = next_rate;
-    double lambda = max_rate + lambda_epsilon;
+    return max_rate + lambda_epsilon;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Computes the uniformized transition probability matrix given an edge length. Overrides the pure virtual function 
+|   inherited from the base class Model. 
+*/
+double HKY::calcLMat(double * * lMat) const
+	{
+	double piA = state_freqs[0];
+	double piC = state_freqs[1];
+	double piG = state_freqs[2];
+	double piT = state_freqs[3];
+	double piR = piA + piG;
+	double piY = piC + piT;
+
+    // set beta such that edgelen = t
+    double beta = 1.0/(2.0*piR*piY + 2.0*kappa*(piA*piG + piC*piT));
+        
+    double lambda = calcUniformizationLambda();
 
     lMat[0][0] = log(lambda - beta*(piY + piG*kappa));
     lMat[0][1] = log(piC*beta);
