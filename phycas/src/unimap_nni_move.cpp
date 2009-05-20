@@ -22,7 +22,6 @@
 #include "phycas/src/basic_tree_node.hpp"
 #include "phycas/src/tree_likelihood.hpp"
 #include "phycas/src/xlikelihood.hpp"
-#include "phycas/src/mcmc_chain_manager.hpp"
 #include "phycas/src/unimap_nni_move.hpp"
 #include "phycas/src/basic_tree.hpp"
 #include "phycas/src/internal_data.hpp"
@@ -87,31 +86,14 @@ bool UnimapNNIMove::update()
 		}
 
     if (save_debug_info)
-        {
         debug_info = str(boost::format("swapping %d <-> %d (%s, lnR = %.5f)") % x->GetNodeNumber() % z->GetNodeNumber() % (accepted ? "accepted" : "rejected") % ln_accept_ratio);
-        }
     
-    // temporary!
-    //x->SelectNode();
-    //z->SelectNode();
-    //likelihood->startTreeViewer(tree, debug_info);
-    //x->UnselectNode();
-    //z->UnselectNode();
-
     if (accepted)
-		{
-		//p->setLastLnPrior(curr_ln_prior);
-		//p->setLastLnLike(curr_ln_like);
 		accept();
-		return true;
-		}
 	else
-		{
-		//curr_ln_like	= p->getLastLnLike();
-		//curr_ln_prior	= p->getLastLnPrior();
 		revert();
-		return false;
-		}
+
+	return accepted;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -263,6 +245,65 @@ double UnimapNNIMove::proposeEdgeLen(double mean)
 	gammaDist.SetMeanAndVariance(mean, variance);
 	return gammaDist.Sample();
 	}
+
+void UnimapNNIMove::AlterBranchLengths(ChainManagerShPtr & p)
+	{
+	prev_x_len = x->GetEdgeLen();
+	prev_y_len = y->GetEdgeLen();
+	prev_z_len = z->GetEdgeLen();
+	prev_nd_len = nd->GetEdgeLen();
+	prev_ndP_len = ndP->GetEdgeLen();
+	
+	
+	prev_ln_prior = calcEdgeLenLnPrior(*x, prev_x_len, p);
+	prev_ln_prior += calcEdgeLenLnPrior(*y, prev_y_len, p);
+	prev_ln_prior += calcEdgeLenLnPrior(*z, prev_z_len, p);
+	prev_ln_prior += calcEdgeLenLnPrior(*nd, prev_nd_len, p);
+	prev_ln_prior += calcEdgeLenLnPrior(*ndP, prev_ndP_len, p);
+
+	
+	calculatePairwiseDistances();
+	calculateProposalDist(true);
+	ln_density_reverse_move = calcProposalLnDensity(propMeanX, prev_x_len);
+	ln_density_reverse_move += calcProposalLnDensity(propMeanY, prev_y_len);
+	ln_density_reverse_move += calcProposalLnDensity(propMeanW, prev_ndP_len);
+	ln_density_reverse_move += calcProposalLnDensity(propMeanZ, prev_z_len);
+	ln_density_reverse_move += calcProposalLnDensity(propMeanInternal, prev_nd_len);
+	
+	// code that followed the swap:
+		
+	calculateProposalDist(false);
+	double xLen = proposeEdgeLen(propMeanX);
+	double yLen = proposeEdgeLen(propMeanY);
+	double zLen = proposeEdgeLen(propMeanZ);
+	double ndPLen = proposeEdgeLen(propMeanW);
+	double ndLen = proposeEdgeLen(propMeanInternal);
+	
+	std::cerr << boost::str(boost::format("tree before [%.5f] = (x:%.5f,y:%.5f,(z:%.5f,w:%.5f):%.5f);\n") % prev_ln_like % prev_x_len % prev_y_len % prev_z_len % prev_ndP_len % prev_nd_len);
+	
+	x->SetEdgeLen(xLen);
+	y->SetEdgeLen(yLen);
+	z->SetEdgeLen(zLen);
+	nd->SetEdgeLen(ndLen);
+	ndP->SetEdgeLen(ndPLen);
+	
+
+	ln_density_forward_move = calcProposalLnDensity(propMeanX, xLen);
+	ln_density_forward_move += calcProposalLnDensity(propMeanY, yLen);
+	ln_density_forward_move += calcProposalLnDensity(propMeanW, ndPLen);
+	ln_density_forward_move += calcProposalLnDensity(propMeanZ, zLen);
+	ln_density_forward_move += calcProposalLnDensity(propMeanInternal, ndLen);
+
+	std::cerr << boost::str(boost::format("tree after = (z:%.5f,y:%.5f,(x:%.5f,w:%.5f):%.5f);\n") % zLen % yLen % xLen % ndPLen % ndLen);
+        
+	curr_ln_prior 	= calcEdgeLenLnPrior(*x, xLen, p)
+					+ calcEdgeLenLnPrior(*y, yLen, p)
+					+ calcEdgeLenLnPrior(*z, zLen, p)
+					+ calcEdgeLenLnPrior(*nd, ndLen, p)
+					+ calcEdgeLenLnPrior(*ndP, ndPLen, p);
+
+	
+	}
 /*----------------------------------------------------------------------------------------------------------------------
 |	
 */
@@ -287,9 +328,9 @@ void UnimapNNIMove::proposeNewState()
     // y     w  After move,  x = wSis and z = ySis
     //
 	scoringBeforeMove = true;
-	TreeNode * nd  = randomInternalAboveSubroot();
+	nd  = randomInternalAboveSubroot();
 	PHYCAS_ASSERT(nd);
-	TreeNode * ndP = nd->GetParent();
+	ndP = nd->GetParent();
 	PHYCAS_ASSERT(ndP);
 	wSis = z = nd->FindNextSib();
 	PHYCAS_ASSERT(z);
@@ -327,61 +368,18 @@ void UnimapNNIMove::proposeNewState()
     likelihood->storeAllCLAs(tree);
 
 	prev_ln_like = FourTaxonLnLBeforeMove(nd);
-	prev_x_len = x->GetEdgeLen();
-	prev_y_len = y->GetEdgeLen();
-	prev_z_len = z->GetEdgeLen();
-	prev_nd_len = nd->GetEdgeLen();
-	prev_ndP_len = ndP->GetEdgeLen();
-	prev_ln_prior = calcEdgeLenLnPrior(*x, prev_x_len, p);
-	prev_ln_prior += calcEdgeLenLnPrior(*y, prev_y_len, p);
-	prev_ln_prior += calcEdgeLenLnPrior(*z, prev_z_len, p);
-	prev_ln_prior += calcEdgeLenLnPrior(*nd, prev_nd_len, p);
-	prev_ln_prior += calcEdgeLenLnPrior(*ndP, prev_ndP_len, p);
-
 	
-	calculatePairwiseDistances();
-	calculateProposalDist(true);
-	ln_density_reverse_move = calcProposalLnDensity(propMeanX, prev_x_len);
-	ln_density_reverse_move += calcProposalLnDensity(propMeanY, prev_y_len);
-	ln_density_reverse_move += calcProposalLnDensity(propMeanW, prev_ndP_len);
-	ln_density_reverse_move += calcProposalLnDensity(propMeanZ, prev_z_len);
-	ln_density_reverse_move += calcProposalLnDensity(propMeanInternal, prev_nd_len);
+	AlterBranchLengths(p);
+	
 	
 	/* This swap is the equivalent of an NNI swap of the the nodes that are closest to y and w */
 	scoringBeforeMove = false;
 	std::swap(ySisTipData, wSisTipData);
 	std::swap(ySis, wSis);
-	
-	calculateProposalDist(false);
-	double xLen = proposeEdgeLen(propMeanX);
-	double yLen = proposeEdgeLen(propMeanY);
-	double zLen = proposeEdgeLen(propMeanZ);
-	double ndPLen = proposeEdgeLen(propMeanW);
-	double ndLen = proposeEdgeLen(propMeanInternal);
-	
-	std::cerr << boost::str(boost::format("tree before [%.5f] = (x:%.5f,y:%.5f,(z:%.5f,w:%.5f):%.5f);\n") % prev_ln_like % prev_x_len % prev_y_len % prev_z_len % prev_ndP_len % prev_nd_len);
-	
-	x->SetEdgeLen(xLen);
-	y->SetEdgeLen(yLen);
-	z->SetEdgeLen(zLen);
-	nd->SetEdgeLen(ndLen);
-	ndP->SetEdgeLen(ndPLen);
-	
 
-	ln_density_forward_move = calcProposalLnDensity(propMeanX, xLen);
-	ln_density_forward_move += calcProposalLnDensity(propMeanY, yLen);
-	ln_density_forward_move += calcProposalLnDensity(propMeanW, ndPLen);
-	ln_density_forward_move += calcProposalLnDensity(propMeanZ, zLen);
-	ln_density_forward_move += calcProposalLnDensity(propMeanInternal, ndLen);
 
     curr_ln_like = FourTaxonLnLFromCorrectTipDataMembers(nd);
-	std::cerr << boost::str(boost::format("tree after [%.5f] = (z:%.5f,y:%.5f,(x:%.5f,w:%.5f):%.5f);\n") % curr_ln_like % zLen % yLen % xLen % ndPLen % ndLen);
-        
-	curr_ln_prior 	= calcEdgeLenLnPrior(*x, xLen, p)
-					+ calcEdgeLenLnPrior(*y, yLen, p)
-					+ calcEdgeLenLnPrior(*z, zLen, p)
-					+ calcEdgeLenLnPrior(*nd, ndLen, p)
-					+ calcEdgeLenLnPrior(*ndP, ndPLen, p);
+	std::cerr << "curr_ln_like = " << curr_ln_like << '\n';
 	}
 
 double calcEdgeLenLnPrior(const TreeNode &x, double edge_len, ChainManagerShPtr & chain_mgr) 
@@ -404,10 +402,10 @@ UnimapNNIMove::~UnimapNNIMove()
 	DeleteTwoDArray<double> (pre_z_pmat_transposed);
 	}
 
-double UnimapNNIMove::FourTaxonLnLBeforeMove(TreeNode * nd)
+double UnimapNNIMove::FourTaxonLnLBeforeMove(TreeNode * nodePointer)
 	{
 	PHYCAS_ASSERT(nd);
-	TreeNode * ndP = nd->GetParent();
+	PHYCAS_ASSERT(nd == nodePointer);
 	PHYCAS_ASSERT(ndP);
 	TreeNode * lower = nd->FindNextSib();
 	PHYCAS_ASSERT(lower);
@@ -438,7 +436,7 @@ double UnimapNNIMove::FourTaxonLnLBeforeMove(TreeNode * nd)
     return lnlike;
 	}
 
-void UnimapNNIMove::DebugSaveNexusFile(TipData * xtd, TipData * ytd, TipData * ztd, TipData * wtd, double lnlike, TreeNode *nd)
+void UnimapNNIMove::DebugSaveNexusFile(TipData * xtd, TipData * ytd, TipData * ztd, TipData * wtd, double lnlike)
     {
     typedef boost::shared_array<const int8_t> StateArr;
     StateArr xdata = xtd->getTipStatesArray();
@@ -574,8 +572,9 @@ void UnimapNNIMove::storePMatTransposed(double **& cached, const double *** p_ma
 		}
 	}
 	
-double UnimapNNIMove::FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nd)
+double UnimapNNIMove::FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nodePointer)
 	{
+	PHYCAS_ASSERT(nd == nodePointer);
 	CondLikelihoodShPtr nd_childCLPtr, nd_parentCLPtr;
 	double *** p_mat;
 	if (scoringBeforeMove)
@@ -603,7 +602,7 @@ double UnimapNNIMove::FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nd)
 	likelihood->calcCLATwoTips(*nd_parentCLPtr, *wSisTipData, *wTipData);
 
 	double lnl =  HarvestLnLikeFromCondLikePar(nd_childCLPtr, nd_parentCLPtr, childPMatrix);
-	DebugSaveNexusFile(ySisTipData, yTipData, wSisTipData, wTipData, lnl, nd);
+	DebugSaveNexusFile(ySisTipData, yTipData, wSisTipData, wTipData, lnl);
 	return lnl;
 	}
 	

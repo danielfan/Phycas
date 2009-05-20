@@ -24,6 +24,7 @@
 #include <boost/shared_ptr.hpp>				// for boost::shared_ptr
 #include <boost/weak_ptr.hpp>				// for boost::weak_ptr
 #include "phycas/src/mcmc_updater.hpp"		// for base class MCMCUpdater
+#include "phycas/src/mcmc_chain_manager.hpp"
 
 namespace phycas
 {
@@ -66,10 +67,14 @@ class UnimapNNIMove : public MCMCUpdater
 		double                  FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nd);
 		double                  HarvestLnLikeFromCondLikePar(CondLikelihoodShPtr focalCondLike, ConstCondLikelihoodShPtr neighborCondLike, const double * const * childPMatrix);
 		void                    storePMatTransposed(double **& cached, const double *** p_mat_array);
-        void                    DebugSaveNexusFile(TipData * xtd, TipData * ytd, TipData * ztd, TipData * wtd, double lnlike, TreeNode * nd);
+        void                    DebugSaveNexusFile(TipData * xtd, TipData * ytd, TipData * ztd, TipData * wtd, double lnlike);
 	    TreeNode *              randomInternalAboveSubroot();
 
 	protected:
+		void					AlterBranchLengths(ChainManagerShPtr &);
+		TreeNode * 				nd;
+		TreeNode * 				ndP; /**< */
+
 
         TreeNode *              x;                          /**< xxxx */
 	    TreeNode *              y;                          /**< xxxx */
