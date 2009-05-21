@@ -211,19 +211,24 @@ bool UnimapEdgeMove::update()
 	double curr_ln_prior		= (is_internal_edge ? p->calcInternalEdgeLenPriorUnnorm(curr_edgelen) : p->calcExternalEdgeLenPriorUnnorm(curr_edgelen));
 
 	double log_posterior_ratio = 0.0;
-	double log_likelihood_ratio = (double)mdot*log(r) - nsites*uniformization_lambda*(curr_edgelen - origEdgelen);
+	const double log_prior_ratio = curr_ln_prior - prev_ln_prior;
+    const double log_likelihood_ratio = (double)mdot*log(r) - nsites*uniformization_lambda*(curr_edgelen - origEdgelen);
     if (is_standard_heating)
-        log_posterior_ratio = heating_power*(log_likelihood_ratio + curr_ln_prior - prev_ln_prior);
+        log_posterior_ratio = heating_power*(log_likelihood_ratio + log_prior_ratio);
     else
-	    log_posterior_ratio = heating_power*log_likelihood_ratio + curr_ln_prior - prev_ln_prior;
+	    log_posterior_ratio = heating_power*log_likelihood_ratio + log_prior_ratio;
 
 	double ln_accept_ratio	= log_posterior_ratio + getLnHastingsRatio();
 
     double lnu = std::log(rng->Uniform(FILE_AND_LINE));
+/*	std::cerr << " log_likelihood_ratio = " << log_likelihood_ratio << '\n';
+	std::cerr << " log_posterior_ratio = " << log_posterior_ratio << '\n';
+	std::cerr << " ln_accept_ratio = " << ln_accept_ratio << '\n'; 
+	*/
 	if (ln_accept_ratio >= 0.0 || lnu <= ln_accept_ratio)
 		{
-		p->setLastLnPrior(curr_ln_prior);
-		p->setLastLnLike(curr_ln_like);
+		p->setLastLnPrior(p->getLastLnPrior() + log_prior_ratio);
+		p->setLastLnLike(p->getLastLnLike() + log_likelihood_ratio);
 		accept();
 		return true;
 		}

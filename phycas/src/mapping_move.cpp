@@ -19,10 +19,11 @@
 
 #include "phycas/src/tree_likelihood.hpp"
 #include "phycas/src/mapping_move.hpp"
+#include "phycas/src/mcmc_chain_manager.hpp"
 
 namespace phycas
 {
-
+bool recalcLnInRemap  = true;
 /*----------------------------------------------------------------------------------------------------------------------
 |   MappingMove constructor. Nothing to be done because this class only manipulates the TreeLikelihood object
 |   and has no data members of its own.
@@ -50,6 +51,14 @@ bool MappingMove::update()
 	std::cerr << "****** MappingMove::update" << std::endl;
 
     likelihood->fullRemapping(tree, rng, true);
+    
+	if (recalcLnInRemap)
+		{
+		std::cerr << "recalculating lnL in remapping\n";
+		ChainManagerShPtr p = chain_mgr.lock();
+		curr_ln_like = likelihood->calcLnL(tree);
+		p->setLastLnLike(curr_ln_like);
+		}
     return true;
     }
 

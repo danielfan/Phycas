@@ -31,7 +31,7 @@
 
 namespace phycas
 {
-
+bool modify_terminal_edges = false;
 /*----------------------------------------------------------------------------------------------------------------------
 |	
 */
@@ -52,7 +52,9 @@ bool UnimapNNIMove::update()
 	if (is_fixed)
 		return false;
 
-	std::cerr << "****** UnimapNNIMove::update" << std::endl;
+	++nMovesAttempted;
+
+	//std::cerr << "****** UnimapNNIMove::update" << std::endl;
 
 	tree->renumberInternalNodes(tree->GetNTips()); //@POL this should be somewhere else
 
@@ -96,7 +98,7 @@ bool UnimapNNIMove::update()
 		accept();
 	else
 		revert();
-
+	//std::cerr << nMovesAccepted << " accept decisions out of " << nMovesAttempted << " attempts.\n";
 	return accepted;
 	}
 
@@ -275,11 +277,23 @@ void UnimapNNIMove::AlterBranchLengths(ChainManagerShPtr & p)
 	// code that followed the swap:
 		
 	calculateProposalDist(false);
-	double xLen = proposeEdgeLen(propMeanX);
-	double yLen = proposeEdgeLen(propMeanY);
-	double zLen = proposeEdgeLen(propMeanZ);
-	double ndPLen = proposeEdgeLen(propMeanW);
-	double ndLen = proposeEdgeLen(propMeanInternal);
+	double xLen, yLen, zLen, ndLen, ndPLen;
+	if (modify_terminal_edges)
+		{
+		xLen= proposeEdgeLen(propMeanX);
+		yLen = proposeEdgeLen(propMeanY);
+		zLen = proposeEdgeLen(propMeanZ);
+		ndPLen = proposeEdgeLen(propMeanW);
+		ndLen = proposeEdgeLen(propMeanInternal);
+		}
+	else
+		{
+		xLen = prev_x_len;
+		yLen = prev_y_len;
+		zLen = prev_z_len;
+		ndPLen = prev_ndP_len;
+		ndLen = proposeEdgeLen(0.1);
+		}
 	
 	//std::cerr << boost::str(boost::format("tree before [%.5f] = (x:%.5f,y:%.5f,(z:%.5f,w:%.5f):%.5f);\n") % prev_ln_like % prev_x_len % prev_y_len % prev_z_len % prev_ndP_len % prev_nd_len);
 	
@@ -675,7 +689,7 @@ TipData * UnimapNNIMove::createTipDataFromUnivents(const Univents & u, TipData *
 */
 void UnimapNNIMove::revert()
 	{
-	//std::cerr << "REVERTED" << std::endl;
+	std::cerr << "REVERTED" << std::endl;
 	
 	x->SetEdgeLen(prev_x_len);
 	y->SetEdgeLen(prev_y_len);
@@ -731,8 +745,8 @@ void UnimapNNIMove::revert()
 */
 void UnimapNNIMove::accept()
 	{
-	//std::cerr << "ACCEPTED" << std::endl;
-	
+	std::cerr << "ACCEPTED" << std::endl;
+	++nMovesAccepted;
 	/*x->SelectNode();
     y->SelectNode();
     z->SelectNode();
@@ -804,7 +818,9 @@ UnimapNNIMove::UnimapNNIMove() : MCMCUpdater(),
   yTipData(0),
   wSisTipData(0),
   wTipData(0),
-  doSampleUnivents(false)
+  doSampleUnivents(false),
+  nMovesAccepted(0),
+  nMovesAttempted(0)
 	{
 	min_edge_len_mean = 0.02;
 	edge_len_prop_cv = 1;

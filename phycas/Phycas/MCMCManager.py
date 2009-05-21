@@ -711,8 +711,11 @@ class MCMCManager:
         self.parent.phycassert(not unimap_and_polytomies, 'Allowing polytomies cannot (yet) be used in conjunction with use_unimap')
         self.parent.phycassert(not unimap_and_flex, 'Flex model cannot (yet) be used in conjunction with use_unimap')
         self.parent.phycassert(not unimap_and_ratehet, 'Rate heterogeneity cannot (yet) be used in conjunction with use_unimap')
-        self.parent.phycassert(not unimap_and_multiple_chains, 'Multiple chains cannot (yet) be used in conjunction with use_unimap')
-        
+        if False:
+            self.parent.phycassert(not unimap_and_multiple_chains, 'Multiple chains cannot (yet) be used in conjunction with use_unimap')
+        else:
+            print "You are living dangerously"
+    
         # Create the chains
         for i, heating_power in enumerate(self.parent.heat_vector):
             markov_chain = MarkovChain(self.parent, heating_power)
@@ -922,7 +925,7 @@ class MCMCManager:
             
             self.swap_table[j][i] += 1  # lower triangle
             
-        if cycle % 100 == 0:
+        if cycle % 1 == 0:
             print '\n********** Attempting chain swap **********'
             print 'n =',n
             print 'i =',i

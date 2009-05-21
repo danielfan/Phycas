@@ -17,7 +17,7 @@ tree used for simulation:
 ]
 
 begin assumptions;
-  exset * bogus = 500-.;
+  exset * bogus = 1001-.;
 end;
 
 begin paup;
