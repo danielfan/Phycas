@@ -440,7 +440,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\phycas\src\underflow_policy.cpp"
+				RelativePath="..\..\phycas\src\underflow_manager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\unimap_edge_move.cpp"
 				>
 			</File>
 			<File
@@ -707,6 +711,14 @@
 			</File>
 			<File
 				RelativePath="..\..\phycas\src\underflow_policy.inl"
+				>
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\unimap_edge_move.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\phycas\src\unimap_edge_move.inl"
 				>
 			</File>
 			<File
