@@ -542,10 +542,13 @@ double UniventProbMgr::calcUnimapLnL(
 			// If you are wondering why I haven't taken the log of the uMat entry, I should remind
 			// you that it is the log of a transition probability that is stored in uMat[i][j]
 			log_uij_to_sij += (double)(sMat[i][j])*lnUMat[i][j];
+			//std::cerr << "sMat[i][j] = " << sMat[i][j] << '\n';
 			}
 		}
 
 	double log_likelihood = log_basal_freqs + log_edgelen_to_mdot + log_uij_to_sij - nsites*lambda*tree_length;
+	//std::cerr << "log_likelihood = log_basal_freqs + log_edgelen_to_mdot + log_uij_to_sij - nsites*lambda*tree_length;\n";
+	//std::cerr << log_likelihood << " = "<< log_basal_freqs << " + " << log_edgelen_to_mdot << " + " << log_uij_to_sij << " - " << nsites<< " * " << lambda << " *" << tree_length << std::endl;
 	return log_likelihood;
 	}
 

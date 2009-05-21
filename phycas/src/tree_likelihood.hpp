@@ -236,7 +236,7 @@ class TreeLikelihood
 
 		bool							using_unimap;			/**< if true, uniformized mapping likelihoods will be used; if false, Felsenstein-style integrated likelihoods will be used */
 		UniventProbMgr					univentProbMgr;
-		unsigned * *					sMat;					/**< sMat[i][j] is total number of univents in which state i changes to state j */
+		unsigned * *					treeSMat;					/**< sMat[i][j] is total number of univents in which state i changes to state j */
 		unsigned						nunivents;				/**< total number of univents over all edges and all sites */
 		std::vector<unsigned>			obs_state_counts;
 		std::set<TreeNode *>			invalidUniventMappingNodes;

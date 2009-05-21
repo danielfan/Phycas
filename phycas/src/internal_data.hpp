@@ -107,7 +107,7 @@ class InternalData
 		std::vector<double>   			getUniventTimes(unsigned i) const {return univents.getTimes(i);}
 		Univents & 						getUniventsRef() {return univents;}
 		const Univents & 				getUniventsConstRef()const {return univents;}
-
+		unsigned **						getNodeSMat() {return sMat;}
 	private:
 	
 										InternalData(bool using_unimap, unsigned nPatterns, unsigned nRates, unsigned nStates, double * * * pMatrices, bool managePMatrices, CondLikelihoodStorageShPtr cla_storage);
@@ -129,6 +129,7 @@ class InternalData
 		mutable double * * *			pMatrices;		/**< Either an alias to a pMatrix array or an alias to ownedPMatrices.ptr */
 		ScopedThreeDMatrix<double>		ownedPMatrices; /**< Transition probability matrices for this interior node	 */
 		CondLikelihoodStorageShPtr		cla_pool;		/**< CondLikelihood object storage facility */
+		unsigned **						sMat;
 	};
 	
 typedef boost::shared_ptr<InternalData>			InternalDataShPtr;

@@ -47,10 +47,16 @@ InternalData::InternalData(
 	unimap(using_unimap),
 	state(-1), 
 	pMatrices(pMat),
-	cla_pool(cla_storage)
+	cla_pool(cla_storage),
+	sMat(0L)
 	{
 	if (using_unimap)
+		{
 		univents.resize(nPatterns);
+		sMat =  NewTwoDArray<unsigned>(nStates, nStates);
+		for (unsigned i = 0; i < nStates*nStates ; ++i)
+			sMat[0][i] = 0;
+		}
 	if (managePMatrices)
 		{
 		ownedPMatrices.Initialize(nRates, nStates, nStates);
@@ -92,6 +98,7 @@ InternalData::~InternalData()
 		cla_pool->putCondLikelihood(childCachedCLA);
 		childCachedCLA.reset();
 		}
+	DeleteTwoDArray<unsigned>(sMat);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

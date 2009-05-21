@@ -187,7 +187,8 @@ class TipData
 		const StateListPos &				getConstStateListPos() const;
 
 		friend void							calcPMatTranspose(const TreeLikelihood & treeLikeInfo, const TipData & tipData, double edgeLength);
-	
+		unsigned ** 						getNodeSMat() {return sMat;}
+
 	private:
 
 		bool								unimap;				/**< true if tips are to be prepared for uniformized mapping likelihood; false if tips are to be prepared for Felsenstein-style integrated likelihoods */
@@ -204,6 +205,7 @@ class TipData
 		mutable double * * *				pMatrixTranspose;	/**< The (rate category) x (stateCode) x (ancestor state) augmented transposed transition probability matrices (points to `ownedPMatrices' if the constructor parameter `managePMatrices' parameter is true) */
 		ScopedThreeDMatrix<double>			ownedPMatrices;		/**< Vector of transposed transition matrices */
 		CondLikelihoodStorageShPtr			cla_pool;			/**< Source of CondLikelihood objects if needed */
+		unsigned **							sMat;
 	};
 	
 typedef boost::shared_ptr<TipData> TipDataShPtr;

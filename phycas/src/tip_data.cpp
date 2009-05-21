@@ -41,11 +41,15 @@ TipData::TipData(
 	//parCachedCLA(NULL),
 	state(-1), 
 	pMatrixTranspose(NULL),
-	cla_pool(cla_storage)
+	cla_pool(cla_storage),
+	sMat(0L)
 	{
 	const unsigned nToStates = nStates;	// simulated data never has ambiguities, so num. rows in T matrix is just nStates
 	ownedPMatrices.Initialize(nRates, nToStates, nStates);
 	pMatrixTranspose = ownedPMatrices.ptr;
+	sMat =  NewTwoDArray<unsigned>(nStates, nStates); //@ we should make this only true in unimap mode!!!
+	for (unsigned i = 0; i < nStates*nStates ; ++i)
+		sMat[0][i] = 0;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -86,6 +90,9 @@ TipData::TipData(
 		if (pMatrixTranspose == NULL)
 			pMatrixTranspose = ownedPMatrices.ptr;
 		}
+	sMat =  NewTwoDArray<unsigned>(nStates, nStates); //@ we should make this only true in unimap mode!!!
+	for (unsigned i = 0; i < nStates*nStates ; ++i)
+		sMat[0][i] = 0;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -94,6 +101,7 @@ TipData::TipData(
 */
 TipData::~TipData()
 	{
+	DeleteTwoDArray<unsigned>(sMat);
 	// Invalidate the parental CLAs if they exist
 	if (parWorkingCLA)
 		{
