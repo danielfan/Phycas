@@ -2528,7 +2528,7 @@ double TreeLikelihood::calcLnL(
 
 	if (using_unimap)
 		{
-		if (!univentProbMgr.isMappingValid())
+		if (!invalidUniventMappingNodes.empty())
 			{
 			if (treeSMat == NULL)
 				{
@@ -2536,13 +2536,15 @@ double TreeLikelihood::calcLnL(
 				for (unsigned i = 0; i < num_states*num_states; ++i)
 					treeSMat[0][i] = 0;
 				}
-			PHYCAS_ASSERT(!invalidUniventMappingNodes.empty());
 
-			std::set<TreeNode *>::iterator ndIt = invalidUniventMappingNodes.begin(); 
-			for (;ndIt != invalidUniventMappingNodes.end(); ++ndIt)
-				remapUniventsForNode(t, *ndIt);
-
-			debugCheckSMatrix(t);
+			if (false)
+				fullRemapping(t, localRng, true);
+			else
+				{
+				std::set<TreeNode *>::iterator ndIt = invalidUniventMappingNodes.begin(); 
+				for (;ndIt != invalidUniventMappingNodes.end(); ++ndIt)
+					remapUniventsForNode(t, *ndIt);
+				}
 			
 			univentProbMgr.setIsMappingValid(true);
 			invalidUniventMappingNodes.clear();

@@ -36,4 +36,4 @@ if False:
 
 unimap()
 sumt.trees = "trees.t"
-#sumt()
+sumt()
