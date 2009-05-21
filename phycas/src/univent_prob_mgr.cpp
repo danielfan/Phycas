@@ -35,7 +35,7 @@ UniventProbMgr::UniventProbMgr(
   , sampleTimes(false)
   , scratchMatOne(modelArg->getNStates(), 0.0)
   , scratchMatTwo(modelArg->getNStates(), 0.0)
-  , storeUnivents(false), isMappingValidVar(false)
+  , storeUnivents(true), isMappingValidVar(false)
 	{
 	lnUMat = lnUMatMemMgt.GetMatrix();
 	
