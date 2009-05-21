@@ -62,9 +62,6 @@ bool LargetSimonMove::update()
 
 	proposeNewState();
 
-    //@POL this brute-force recalculation should be avoided for the sake of speed once the move is working
-    likelihood->recalcSMatrix(tree);
-
     curr_ln_like = likelihood->calcLnL(tree);
 
 	double prev_ln_prior = 0.0;
@@ -408,11 +405,6 @@ void LargetSimonMove::defaultProposeNewState()
 	// Set ndZ randomly to either the parent of ndY or one of ndY's sibs
     ndZ = chooseZ(ndY);
     z = ndZ->GetEdgeLen();
-#	if defined(DEAD_UNIVENT_CODE_WAS_NOT_DEAD)
-		likelihood->copyStateTimeListVect(ndY, yst);
-		likelihood->copyStateTimeListVect(ndX, xst);
-		likelihood->copyStateTimeListVect(ndZ, zst);
-#	endif // defined(DEAD_UNIVENT_CODE_WAS_NOT_DEAD)
 
     // Set ndBase to the deepest affected node
 	//ndBase = ndZ->GetParent();
@@ -663,13 +655,6 @@ void LargetSimonMove::revert()
 		ndY->SetEdgeLen(y);
 		ndZ->SetEdgeLen(z);
 
-#		if defined(DEAD_UNIVENT_CODE_WAS_NOT_DEAD)
-			likelihood->revertStateTimeListVect(ndX, xst);
-			likelihood->revertStateTimeListVect(ndY, yst);
-			likelihood->revertStateTimeListVect(ndZ, zst);
-#		endif // defined(DEAD_UNIVENT_CODE_WAS_NOT_DEAD)
-        likelihood->recalcSMatrix(tree);
-
 		PHYCAS_ASSERT(ndY->IsInternal());
 		likelihood->useAsLikelihoodRoot(ndY);
 		likelihood->restoreFromCacheAwayFromNode(*ndY);
@@ -746,12 +731,6 @@ void LargetSimonMove::reset()
     which_case      = 0;
 
     expand_contract_factor = 1.0;
-
-#	if defined(DEAD_UNIVENT_CODE_WAS_NOT_DEAD)
-    xst.clear();
-    yst.clear();
-    zst.clear();
-#	endif // defined(DEAD_UNIVENT_CODE_WAS_NOT_DEAD)
 
 	// three_edgelens should have 3 elements, used for computing the edge length prior for default proposal in update
 	three_edgelens.resize(3, 0.0);

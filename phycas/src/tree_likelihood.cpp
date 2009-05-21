@@ -302,53 +302,79 @@ std::string TreeLikelihood::debugShowSMatrix()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Recalculates the two-dimensional matrix `sMat' of numbers of all 16 possible univent transitions over all sites.
-|	A no-op if using_unimap is false.
+|	Recalculates the two-dimensional matrix `sMat' of numbers of all 16 possible univent transitions over all sites and
+|	compares the result to the `treeSMat' data member to ensure that it is being correctly maintained.
 */
-void TreeLikelihood::recalcSMatrix(
+void TreeLikelihood::debugCheckSMatrix(
   TreeShPtr t)	/**< is the tree to use */
 	{
-	if (isUsingUnimap())
+	PHYCAS_ASSERT(isUsingUnimap());
+
+	unsigned * * debugSMat = NewTwoDArray<unsigned>(num_states, num_states); 
+
+	// Zero every element of debugSMat
+	for (unsigned i = 0; i < num_states; ++i)
+		for (unsigned j = 0; j < num_states; ++j)
+			debugSMat[i][j] = 0;
+
+	// Loop over nodes in the tree
+	preorder_iterator nd = t->begin();	// skip the tip root node
+	for (++nd; nd != t->end(); ++nd)
 		{
-		// Make sure sMat exists
-		if (sMat == NULL)
-			sMat = NewTwoDArray<unsigned>(num_states, num_states); 
+		const Univents & u = getUniventsConstRef(*nd);
+		PHYCAS_ASSERT(u.isValid());
+		const std::vector<StateMapping> & 		v 			= u.getVecEventsVecConstRef();
+		const std::vector<int8_t> & 			states_vec	= u.getEndStatesVecConstRef();
+		std::vector<int8_t>::const_iterator 	statesIt 	= states_vec.begin();
 
-		// Zero every element of sMat
-		for (unsigned i = 0; i < num_states; ++i)
+		for (std::vector<StateMapping>::const_iterator sit = v.begin(); sit != v.end(); ++sit, ++statesIt)
 			{
-			for (unsigned j = 0; j < num_states; ++j)
-				sMat[i][j] = 0;
-			}
-
-		// Loop over nodes in the tree
-		preorder_iterator nd = t->begin();	// skip the tip root node
-		for (++nd; nd != t->end(); ++nd)
-			{
-			const Univents & u = getUniventsConstRef(*nd);
-			PHYCAS_ASSERT(u.isValid());
-			const std::vector<StateMapping> & v = u.getVecEventsVecConstRef();
-			const std::vector<int8_t> & states_vec =  u.getEndStatesVecConstRef();
-			std::vector<int8_t>::const_iterator statesIt = states_vec.begin();
-
-			for (std::vector<StateMapping>::const_iterator sit = v.begin(); sit != v.end(); ++sit, ++statesIt)
+			PHYCAS_ASSERT(statesIt != states_vec.end());
+			const StateMapping & stlist = (*sit);
+			if (!stlist.empty())
 				{
-				PHYCAS_ASSERT(statesIt != states_vec.end());
-				const StateMapping & stlist = (*sit);
-				if (!stlist.empty())
+				int8_t prev_state = *statesIt;
+				const StateMapping::const_iterator endIt = stlist.end();
+				for (StateMapping::const_iterator it = stlist.begin(); it != endIt; ++it)
 					{
-					int8_t prev_state = *statesIt;
-					const StateMapping::const_iterator endIt = stlist.end();
-					for (StateMapping::const_iterator it = stlist.begin(); it != endIt; ++it)
-						{
-						const int8_t new_state = *it;
-						sMat[prev_state][new_state] += 1;
-						prev_state = new_state;
-						}
+					const int8_t new_state = *it;
+					debugSMat[prev_state][new_state] += 1;
+					prev_state = new_state;
 					}
 				}
 			}
-		} // if using unimap
+		}
+		
+	// Now check debugSMat against treeSMat
+	bool ok = true;
+	for (unsigned i = 0; i < num_states; ++i)
+		for (unsigned j = 0; j < num_states; ++j)
+			if (debugSMat[i][j] != sMat[i][j])
+				{
+				ok = false;
+				break;
+				}
+				
+	if (!ok)
+		{
+		std::cerr << "\n\ntreeSMat is not correct:\n";
+		std::cerr << "\nsMat looks like this:\n";
+		for (unsigned i = 0; i < num_states; ++i)
+			{
+			for (unsigned j = 0; j < num_states; ++j)
+				std::cerr << boost::str(boost::format("%10d ") % sMat[i][j]);
+			std::cerr << std::endl;
+			}
+		std::cerr << "\n\ndebugSMat looks like this:\n";
+		for (unsigned i = 0; i < num_states; ++i)
+			{
+			for (unsigned j = 0; j < num_states; ++j)
+				std::cerr << boost::str(boost::format("%10d ") % debugSMat[i][j]);
+			std::cerr << std::endl;
+			}
+		}
+			
+	PHYCAS_ASSERT(ok);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -903,7 +929,7 @@ void TreeLikelihood::fullRemapping(
 				// 1. its conditional likelihood arrays do not take into account its parent, 
 				//	  which is the tip serving as the root of the tree. 
 				// 2. this is the first node to get assigned a state, hence we must use the 
-				//	  equilibrium freqencies as the prior instead of the transition probability
+				//	  equilibrium frequencies as the prior instead of the transition probability
 				//	  from the state below
 				// 3. because the subroot serves as the likelihood root, we must keep track
 				//	  of the frequency of each state assigned to this node in order to compute
@@ -965,6 +991,7 @@ void TreeLikelihood::fullRemapping(
 		univentProbMgr.setIsMappingValid(true);
 		invalidUniventMappingNodes.clear();
 		}
+	debugCheckSMatrix(t);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

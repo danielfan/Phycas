@@ -148,7 +148,7 @@ class TreeLikelihood
 		void							useUnimap(bool yes_or_no = true);
 		bool							isUsingUnimap();
 		void							fullRemapping(TreeShPtr t, LotShPtr rng, bool doSampleUnivents);
-		void							recalcSMatrix(TreeShPtr t);
+		void							debugCheckSMatrix(TreeShPtr t);
 		std::string						debugShowSMatrix();
 		void							slideNode(double fraction, TreeNode * slider, TreeNode * other);
 		void							swapInternalDataAndEdgeLen(TreeNode * nd1, TreeNode * nd2);
