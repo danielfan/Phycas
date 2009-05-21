@@ -35,7 +35,7 @@ UniventProbMgr::UniventProbMgr(
   , sampleTimes(false)
   , scratchMatOne(modelArg->getNStates(), 0.0)
   , scratchMatTwo(modelArg->getNStates(), 0.0)
-  , storeUnivents(false)
+  , storeUnivents(false), isMappingValidVar(false)
 	{
 	lnUMat = lnUMatMemMgt.GetMatrix();
 	
@@ -508,6 +508,7 @@ double UniventProbMgr::calcUnimapLnL(
   const unsigned * obs_state_counts,
   const unsigned * const * sMat)
 	{
+	assert(isMappingValidVar);
 	lambda = model->calcLMat(lnUMat);
 	double nsites = (double)num_patterns;
 

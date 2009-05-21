@@ -82,22 +82,22 @@ class TreeLikelihood
 		void							recalcRelativeRates();
 		std::vector<double>				getCategoryLowerBoundaries() const;
 		const std::vector<unsigned> &	getListOfAllMissingSites() const;
-        const std::vector<double> &     getSiteLikelihoods() const;
-        const std::vector<double> &     getSiteUF() const;
-        bool                            storingSiteLikelihoods() const;
-        const CountVectorType &         getPatternCounts() const;
-        const std::vector<unsigned> &   getCharIndexToPatternIndex() const;
+		const std::vector<double> &		getSiteLikelihoods() const;
+		const std::vector<double> &		getSiteUF() const;
+		bool							storingSiteLikelihoods() const;
+		const CountVectorType &			getPatternCounts() const;
+		const std::vector<unsigned> &	getCharIndexToPatternIndex() const;
 
 		// Modifiers
 		void							setNPatterns(unsigned npatterns);
 		void							replaceModel(ModelShPtr);
 		void							setNoData();
 		void							setHaveData();
-        void                            storeSiteLikelihoods(bool yes);
+		void							storeSiteLikelihoods(bool yes);
 
 		// Utilities
 		void							releaseModel();
-        double                          calcLogLikeAtSubstitutionSaturation() const;
+		double							calcLogLikeAtSubstitutionSaturation() const;
 
 		void							addOrphanTip(TreeShPtr t, unsigned row, std::string name);
 		void							addDecoratedInternalNode(TreeShPtr t, unsigned num = UINT_MAX);
@@ -179,13 +179,20 @@ class TreeLikelihood
 		double							harvestLnL(EdgeEndpoints & focalEdge);
 		double							harvestLnLFromValidEdge(ConstEdgeEndpoints & focalEdge);
 
-        unsigned                        buildConstantStatesVector();
+		unsigned						buildConstantStatesVector();
 
 		CondLikelihoodStorageShPtr		getCondLikelihoodStorage();
-
+		void							flagNodeWithInvalidUnivents(TreeNode *nd)
+		{
+			invalidUniventMappingNodes.insert(nd);
+		}
+		void                            setLot(LotShPtr r)
+		{
+		    localRng = r;
+		}
 	protected:
 
-		UnderflowManager  				underflow_manager;		/**< The object that takes care of underflow correction when computing likelihood for large trees */
+		UnderflowManager				underflow_manager;		/**< The object that takes care of underflow correction when computing likelihood for large trees */
 
 		TreeNode *						likelihood_root;		/**< If not NULL< calcLnL will use this node as the likelihood root, then reset it to NULL before returning */
 		CondLikelihoodStorageShPtr		cla_pool;
@@ -208,6 +215,9 @@ class TreeLikelihood
 
 		bool							debugging_now;			/**< For debugging, indicates whether user wants to see debugging output */
 
+
+		void							remapUniventsForNode(TreeShPtr, TreeNode *);
+
 	protected:
 
 		// Utilities
@@ -229,8 +239,9 @@ class TreeLikelihood
 		unsigned * *					sMat;					/**< sMat[i][j] is total number of univents in which state i changes to state j */
 		unsigned						nunivents;				/**< total number of univents over all edges and all sites */
 		std::vector<unsigned>			obs_state_counts;
-		bool							sMatValid;
-
+		std::set<TreeNode *>			invalidUniventMappingNodes;
+        LotShPtr                        localRng;
+        
 	public: //@POL these should be protected rather than public
 
 		std::vector<double>				likelihood_rate_site;	/**< Vector of likelihoods for each rate/site combination */
@@ -238,9 +249,11 @@ class TreeLikelihood
 		PatternMapType					pattern_map;			/**< keys are patterns, values are pattern counts */
 		std::vector<double>				site_likelihood;		/**< site_likelihood[pat] stores the site likelihood for pattern pat, but only if `store_site_likes' is true */
 		std::vector<unsigned>			charIndexToPatternIndex; /**< maps original character index to the index in compressed pattern "matrix" */
-        std::vector<unsigned>           constant_states;        /**< keeps track of the states for potentially constant sites. See TreeLikelihood::buildConstantStatesVector for description of the structure of this vector. */
-        std::vector<unsigned>           all_missing;            /**< keeps track of sites excluded automatically because they have missing data for all taxa. */
+		std::vector<unsigned>			constant_states;		/**< keeps track of the states for potentially constant sites. See TreeLikelihood::buildConstantStatesVector for description of the structure of this vector. */
+		std::vector<unsigned>			all_missing;			/**< keeps track of sites excluded automatically because they have missing data for all taxa. */
 		std::vector<double>				site_uf;				/**< site_uf[pat] stores the underflow correction factor used for pattern pat, but only if `store_site_likes' is true */
+
+
 	};
 
 /// used to get access to a CLA to write it

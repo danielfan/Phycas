@@ -41,6 +41,10 @@ class Univents
 		void                                setEndStates(const int8_t * p);
 
 		bool                                isValid() const;
+		void								setValid(bool v)
+		{
+		is_valid = v;
+		}
 		bool                                timesValid() const;
 
 		const std::vector<int8_t> &         getEndStatesVecConstRef() const;

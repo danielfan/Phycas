@@ -136,6 +136,7 @@ class LikelihoodCore(object):
             
         # Create the object
         self.likelihood = Likelihood.TreeLikelihood(self.model)
+        self.likelihood.setLot(self.r)
         self.likelihood.setUFNumEdges(self.parent.opts.uf_num_edges)
         self.likelihood.useUnimap(self.parent.opts.use_unimap)
         if self.parent.data_matrix:

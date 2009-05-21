@@ -63,17 +63,19 @@ class UnimapNNIMove : public MCMCUpdater
 		double                  proposeEdgeLen(double mean);
 
 		TipData *               createTipDataFromUnivents(const Univents &, TipData *);
-		double                  FourTaxonLnLBeforeMove(TreeNode * nd);
-		double                  FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nd);
+		double                  FourTaxonLnLBeforeMove();
+		double                  FourTaxonLnLFromCorrectTipDataMembers();
 		double                  HarvestLnLikeFromCondLikePar(CondLikelihoodShPtr focalCondLike, ConstCondLikelihoodShPtr neighborCondLike, const double * const * childPMatrix);
 		void                    storePMatTransposed(double **& cached, const double *** p_mat_array);
         void                    DebugSaveNexusFile(TipData * xtd, TipData * ytd, TipData * ztd, TipData * wtd, double lnlike);
 	    TreeNode *              randomInternalAboveSubroot();
 
 	protected:
+		void					resampleInternalNodeStates(const LikeFltType * root_state_posterior, const LikeFltType * des_cla);
+
 		void					AlterBranchLengths(ChainManagerShPtr &);
-		TreeNode * 				nd;
-		TreeNode * 				ndP; /**< */
+		TreeNode * 				origNode;
+		TreeNode * 				origNodePar; /**< */
 
 
         TreeNode *              x;                          /**< xxxx */
@@ -94,6 +96,7 @@ class UnimapNNIMove : public MCMCUpdater
 		double  * *             pre_z_pmat_transposed;      /**< xxxx */
 
 		bool                    doSampleUnivents;           /**< xxxx */
+		bool					doSampleInternalStates;
 		GammaDistribution       gammaDist;                  /**< xxxx */
 		double                  min_edge_len_mean;          /**< xxxx */
         double                  edge_len_prop_cv;           /**< xxxx */

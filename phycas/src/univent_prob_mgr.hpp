@@ -54,6 +54,8 @@ class UniventProbMgr
 		void							    recalcUMat();
 		double							    calcUnimapLnL(const Tree & t, const unsigned num_patterns, const unsigned * obs_state_counts, const unsigned * const  * sMat);
 		
+		bool								isMappingValid() const {return isMappingValidVar;}
+		void								setIsMappingValid(bool v) {isMappingValidVar = v;}
 	private:
 
 		void                                unimapEdgeOneSite(Univents &u, unsigned index, int8_t start_state, int8_t end_state, double transition_prob, double edgelen, bool sampleTimes, Lot & rng) const;
@@ -74,6 +76,7 @@ class UniventProbMgr
 		mutable SquareMatrix			    scratchMatOne;  /**< */
 		mutable SquareMatrix			    scratchMatTwo;  /**< */
 		bool							    storeUnivents;  /**< */
+		bool								isMappingValidVar;
     };
 
 } // phycas namespace

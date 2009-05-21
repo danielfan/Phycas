@@ -257,14 +257,14 @@ void UnimapNNIMove::AlterBranchLengths(ChainManagerShPtr & p)
 	prev_x_len = x->GetEdgeLen();
 	prev_y_len = y->GetEdgeLen();
 	prev_z_len = z->GetEdgeLen();
-	prev_nd_len = nd->GetEdgeLen();
-	prev_ndP_len = ndP->GetEdgeLen();
+	prev_nd_len = origNode->GetEdgeLen();
+	prev_ndP_len = origNodePar->GetEdgeLen();
 	
 	prev_ln_prior = calcEdgeLenLnPrior(*x, prev_x_len, p);
 	prev_ln_prior += calcEdgeLenLnPrior(*y, prev_y_len, p);
 	prev_ln_prior += calcEdgeLenLnPrior(*z, prev_z_len, p);
-	prev_ln_prior += calcEdgeLenLnPrior(*nd, prev_nd_len, p);
-	prev_ln_prior += calcEdgeLenLnPrior(*ndP, prev_ndP_len, p);
+	prev_ln_prior += calcEdgeLenLnPrior(*origNode, prev_nd_len, p);
+	prev_ln_prior += calcEdgeLenLnPrior(*origNodePar, prev_ndP_len, p);
 	
 	calculatePairwiseDistances();
 	calculateProposalDist(true);
@@ -300,8 +300,8 @@ void UnimapNNIMove::AlterBranchLengths(ChainManagerShPtr & p)
 	x->SetEdgeLen(xLen);
 	y->SetEdgeLen(yLen);
 	z->SetEdgeLen(zLen);
-	nd->SetEdgeLen(ndLen);
-	ndP->SetEdgeLen(ndPLen);
+	origNode->SetEdgeLen(ndLen);
+	origNodePar->SetEdgeLen(ndPLen);
 
 	ln_density_forward_move = calcProposalLnDensity(propMeanX, xLen);
 	ln_density_forward_move += calcProposalLnDensity(propMeanY, yLen);
@@ -314,8 +314,8 @@ void UnimapNNIMove::AlterBranchLengths(ChainManagerShPtr & p)
 	curr_ln_prior 	= calcEdgeLenLnPrior(*x, xLen, p)
 					+ calcEdgeLenLnPrior(*y, yLen, p)
 					+ calcEdgeLenLnPrior(*z, zLen, p)
-					+ calcEdgeLenLnPrior(*nd, ndLen, p)
-					+ calcEdgeLenLnPrior(*ndP, ndPLen, p);
+					+ calcEdgeLenLnPrior(*origNode, ndLen, p)
+					+ calcEdgeLenLnPrior(*origNodePar, ndPLen, p);
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
@@ -323,14 +323,14 @@ void UnimapNNIMove::AlterBranchLengths(ChainManagerShPtr & p)
 */
 void UnimapNNIMove::proposeNewState()
 	{
-    // Choose random internal node nd and randomly choose one of nd's children to call x (the other is y)
+    // Choose random internal node origNode and randomly choose one of origNode's children to call x (the other is y)
     // Here is the actual layout of the tree in memory
     //
     //      x  y        x = child that is swapped
     //       \/         y = x's sibling
-    //   z   nd         z = nd's sibling
-    //    \ /           w = nd's parent
-    //    ndP
+    //   z   origNode	z = origNode's sibling
+    //    \ /           w = origNodePar's parent
+    //    origNodePar
     //    /
     //   w
     //
@@ -342,33 +342,33 @@ void UnimapNNIMove::proposeNewState()
     // y     w  After move,  x = wSis and z = ySis
     //
 	scoringBeforeMove = true;
-	nd  = randomInternalAboveSubroot();
-	PHYCAS_ASSERT(nd);
-	ndP = nd->GetParent();
-	PHYCAS_ASSERT(ndP);
-	wSis = z = nd->FindNextSib();
+	origNode  = randomInternalAboveSubroot();
+	PHYCAS_ASSERT(origNode);
+	origNodePar = origNode->GetParent();
+	PHYCAS_ASSERT(origNodePar);
+	wSis = z = origNode->FindNextSib();
 	PHYCAS_ASSERT(z);
-	PHYCAS_ASSERT(nd->CountChildren() == 2); // we haven't figured this out for polytomies
-	PHYCAS_ASSERT(ndP->CountChildren() == 2); // we haven't figured this out for polytomies
+	PHYCAS_ASSERT(origNode->CountChildren() == 2); // we haven't figured this out for polytomies
+	PHYCAS_ASSERT(origNodePar->CountChildren() == 2); // we haven't figured this out for polytomies
 
-    x = nd->GetLeftChild();
+    x = origNode->GetLeftChild();
 	PHYCAS_ASSERT(x);
 	y = x->GetRightSib();
 	PHYCAS_ASSERT(y);
 
-    // Decide which of the two children of nd to involve in the NNI move
+    // Decide which of the two children of origNode to involve in the NNI move
 	x_is_left = rng->Boolean();
 	if (!x_is_left)
 		std::swap(x,y);
     ySis = x;
 
-	InternalData * nd_internal_data = nd->GetInternalData();
+	InternalData * nd_internal_data = origNode->GetInternalData();
 	PHYCAS_ASSERT(nd_internal_data);
 	pre_root_posterior = nd_internal_data->getParentalCondLikePtr();
 	pre_cla = nd_internal_data->getChildCondLikePtr();
 	pre_p_mat = nd_internal_data->getMutablePMatrices();
 	
-	InternalData * ndp_internal_data = ndP->GetInternalData();
+	InternalData * ndp_internal_data = origNodePar->GetInternalData();
 	PHYCAS_ASSERT(ndp_internal_data);
 	post_root_posterior = ndp_internal_data->getParentalCondLikePtr();
 	post_cla = ndp_internal_data->getChildCondLikePtr();
@@ -381,7 +381,7 @@ void UnimapNNIMove::proposeNewState()
     //temporary!
     likelihood->storeAllCLAs(tree);
 
-	prev_ln_like = FourTaxonLnLBeforeMove(nd);
+	prev_ln_like = FourTaxonLnLBeforeMove();
 	
 	AlterBranchLengths(p);
 	
@@ -392,7 +392,7 @@ void UnimapNNIMove::proposeNewState()
 	std::swap(ySis, wSis);
 
 
-    curr_ln_like = FourTaxonLnLFromCorrectTipDataMembers(nd);
+    curr_ln_like = FourTaxonLnLFromCorrectTipDataMembers();
 	//std::cerr << "curr_ln_like = " << curr_ln_like << '\n';
 	}
 
@@ -416,16 +416,15 @@ UnimapNNIMove::~UnimapNNIMove()
 	DeleteTwoDArray<double> (pre_z_pmat_transposed);
 	}
 
-double UnimapNNIMove::FourTaxonLnLBeforeMove(TreeNode * nodePointer)
+double UnimapNNIMove::FourTaxonLnLBeforeMove()
 	{
-	PHYCAS_ASSERT(nd);
-	PHYCAS_ASSERT(nd == nodePointer);
-	PHYCAS_ASSERT(ndP);
-	TreeNode * lower = nd->FindNextSib();
+	PHYCAS_ASSERT(origNode);
+	PHYCAS_ASSERT(origNodePar);
+	TreeNode * lower = origNode->FindNextSib();
 	PHYCAS_ASSERT(lower);
-	PHYCAS_ASSERT(nd->CountChildren() == 2); // we haven't figured this out for polytomies
-	PHYCAS_ASSERT(ndP->CountChildren() == 2); // we haven't figured this out for polytomies
-	TreeNode * upLeftNd = nd->GetLeftChild();
+	PHYCAS_ASSERT(origNode->CountChildren() == 2); // we haven't figured this out for polytomies
+	PHYCAS_ASSERT(origNodePar->CountChildren() == 2); // we haven't figured this out for polytomies
+	TreeNode * upLeftNd = origNode->GetLeftChild();
 	PHYCAS_ASSERT(upLeftNd);
 	TreeNode * upRightNd = upLeftNd->GetRightSib();
 	PHYCAS_ASSERT(upRightNd);
@@ -435,11 +434,11 @@ double UnimapNNIMove::FourTaxonLnLBeforeMove(TreeNode * nodePointer)
 	if (!x_is_left)
 		std::swap(ySisTipData, yTipData);
 	wSisTipData = createTipDataFromUnivents(getUniventsConstRef(*lower), wSisTipData);		
-	TreeNode * ndGp = ndP->GetParent();
+	TreeNode * ndGp = origNodePar->GetParent();
 	PHYCAS_ASSERT(ndGp);
 	wTipData = createTipDataFromUnivents(getUniventsConstRef(*ndGp), wTipData);
 
-	double lnlike = FourTaxonLnLFromCorrectTipDataMembers(nd);
+	double lnlike = FourTaxonLnLFromCorrectTipDataMembers();
 	
 	storePMatTransposed(pre_x_pmat_transposed, (const double ***) ySisTipData->getTransposedPMatrices());
 	storePMatTransposed(pre_y_pmat_transposed, (const double ***) yTipData->getTransposedPMatrices());
@@ -536,10 +535,10 @@ void UnimapNNIMove::DebugSaveNexusFile(TipData * xtd, TipData * ytd, TipData * z
     TreeNode * zpar = z->GetParent();
     if (xpar->GetParent() == zpar)
     	{
-        nxsf << boost::str(boost::format("  utree curr = (x:%.8f, y:%.8f, (z:%.8f, w:%.8f):%.8f);") % ySis->GetEdgeLen() % y->GetEdgeLen() % wSis->GetEdgeLen() % nd->GetParent()->GetEdgeLen() % nd->GetEdgeLen()) << std::endl;
+        nxsf << boost::str(boost::format("  utree curr = (x:%.8f, y:%.8f, (z:%.8f, w:%.8f):%.8f);") % ySis->GetEdgeLen() % y->GetEdgeLen() % wSis->GetEdgeLen() % origNode->GetParent()->GetEdgeLen() % origNode->GetEdgeLen()) << std::endl;
         nxsf << "  [y->blen    = " << y->GetEdgeLen() << '\n';
         nxsf << "   ySis->blen = " << ySis->GetEdgeLen() << '\n';
-        nxsf << "   nd->GetParent()->blen    = " << nd->GetParent()->GetEdgeLen() << '\n';
+        nxsf << "   origNode->GetParent()->blen    = " << origNode->GetParent()->GetEdgeLen() << '\n';
         nxsf << "   wSis->blen = " << wSis->GetEdgeLen() << '\n';
         nxsf << "   ]\n";
         }
@@ -586,9 +585,8 @@ void UnimapNNIMove::storePMatTransposed(double **& cached, const double *** p_ma
 		}
 	}
 	
-double UnimapNNIMove::FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nodePointer)
+double UnimapNNIMove::FourTaxonLnLFromCorrectTipDataMembers()
 	{
-	PHYCAS_ASSERT(nd == nodePointer);
 	CondLikelihoodShPtr nd_childCLPtr, nd_parentCLPtr;
 	double *** p_mat;
 	if (scoringBeforeMove)
@@ -607,10 +605,10 @@ double UnimapNNIMove::FourTaxonLnLFromCorrectTipDataMembers(TreeNode * nodePoint
     likelihood->calcPMatTranspose(ySisTipData->getTransposedPMatrices(), ySisTipData->getConstStateListPos(), ySis->GetEdgeLen());
     likelihood->calcPMatTranspose(yTipData->getTransposedPMatrices(), yTipData->getConstStateListPos(), y->GetEdgeLen());
     likelihood->calcPMatTranspose(wSisTipData->getTransposedPMatrices(), wSisTipData->getConstStateListPos(), wSis->GetEdgeLen());
-    likelihood->calcPMatTranspose(wTipData->getTransposedPMatrices(), wTipData->getConstStateListPos(), nd->GetParent()->GetEdgeLen());
+    likelihood->calcPMatTranspose(wTipData->getTransposedPMatrices(), wTipData->getConstStateListPos(), origNode->GetParent()->GetEdgeLen());
 
 	
-	likelihood->calcPMat(p_mat, nd->GetEdgeLen());
+	likelihood->calcPMat(p_mat, origNode->GetEdgeLen());
 	const double * const *  childPMatrix = p_mat[0];
 	likelihood->calcCLATwoTips(*nd_childCLPtr, *ySisTipData, *yTipData);
 	likelihood->calcCLATwoTips(*nd_parentCLPtr, *wSisTipData, *wTipData);
@@ -694,52 +692,74 @@ void UnimapNNIMove::revert()
 	x->SetEdgeLen(prev_x_len);
 	y->SetEdgeLen(prev_y_len);
 	z->SetEdgeLen(prev_z_len);
-	TreeNode * nd =  y->GetParent();
-	assert(nd);
-	assert(nd->GetParent());
-	nd->SetEdgeLen(prev_nd_len);
-	TreeNode * ndP = nd->GetParent();
-	ndP->SetEdgeLen(prev_ndP_len);
+	assert(origNode ==  y->GetParent());
+	assert(origNode);
+	assert(origNodePar == origNode->GetParent());
+	origNode->SetEdgeLen(prev_nd_len);
+	origNodePar->SetEdgeLen(prev_ndP_len);
 	
 
-	const UniventProbMgr & upm = likelihood->GetUniventProbMgrConstRef();
-	Lot & rngRef = *rng;
 	/* using the statecode arrays at  ySisTipData  and yTipData
-		as storage for the new samples of nd and ndP sequences.
+		as storage for the new samples of origNode and origNodePar sequences.
 	*/
 	
-	LikeFltType * root_state_posterior = pre_root_posterior->getCLA(); //PELIGROSO
-	Univents & ndU = getUniventsRef(*nd);
-	upm.sampleRootStates(ndU, root_state_posterior, rngRef, false, NULL);
 
-	Univents & ndPU = getUniventsRef(*ndP);
-	const int8_t * nd_states = &(ndU.getEndStatesVecConstRef()[0]);
-	const LikeFltType * des_cla = pre_cla->getCLA(); //PELIGROSO
-	upm.sampleDescendantStates(ndPU, (const double **) pre_p_mat[0], des_cla, nd_states, rngRef);
-
-	if (doSampleUnivents)
+	if (doSampleUnivents || doSampleInternalStates)
 		{
-		const int8_t * ndP_states = &(ndPU.getEndStatesVecConstRef()[0]);
-		upm.sampleUniventsKeepEndStates(getUniventsRef(*x), prev_x_len, nd_states, (const double **) pre_x_pmat_transposed, rngRef);
-		upm.sampleUniventsKeepEndStates(getUniventsRef(*y), prev_y_len, nd_states, (const double **) pre_y_pmat_transposed, rngRef);
-		upm.sampleUniventsKeepEndStates(getUniventsRef(*z), prev_z_len, ndP_states, (const double **) pre_z_pmat_transposed, rngRef);
-		upm.sampleUnivents(ndU, prev_nd_len, ndP_states, const_cast<const double *const *>(pre_p_mat[0]), rngRef, NULL);
+		resampleInternalNodeStates(pre_root_posterior->getCLA(), pre_cla->getCLA());
 		
-		const TreeNode * ndGP = ndP->GetParent();
-		PHYCAS_ASSERT(ndGP);
-		const Univents & ndGPU = getUniventsConstRef(*ndGP);
-		const int8_t * ndGP_states = &(ndGPU.getEndStatesVecConstRef()[0]);
-
-		/*	We want the w to ndP branch's pmat, but we don't want it transposed
-			since we are done with pre_z_pmat_transposed for this move, we can 
-			clobber the stored values 
-		*/
-		fillTranspose(pre_z_pmat_transposed, const_cast<const double *const *>(pre_w_pmat_transposed), likelihood->getNStates());
-		upm.sampleUnivents(ndPU, prev_ndP_len, ndGP_states, const_cast<const double *const *>(pre_z_pmat_transposed), rngRef, NULL);
-
+		if (doSampleUnivents)
+			{
+			const UniventProbMgr & upm = likelihood->GetUniventProbMgrConstRef();
+			Univents & ndU = getUniventsRef(*origNode);
+			Univents & ndPU = getUniventsRef(*origNodePar);
+			Lot & rngRef = *rng;
+			const int8_t * ndP_states = &(ndPU.getEndStatesVecConstRef()[0]);
+			const int8_t * nd_states = &(ndU.getEndStatesVecConstRef()[0]);
+			upm.sampleUniventsKeepEndStates(getUniventsRef(*x), prev_x_len, nd_states, (const double **) pre_x_pmat_transposed, rngRef);
+			upm.sampleUniventsKeepEndStates(getUniventsRef(*y), prev_y_len, nd_states, (const double **) pre_y_pmat_transposed, rngRef);
+			upm.sampleUniventsKeepEndStates(getUniventsRef(*z), prev_z_len, ndP_states, (const double **) pre_z_pmat_transposed, rngRef);
+			upm.sampleUnivents(ndU, prev_nd_len, ndP_states, const_cast<const double *const *>(pre_p_mat[0]), rngRef, NULL);
+			
+			const TreeNode * ndGP = origNodePar->GetParent();
+			PHYCAS_ASSERT(ndGP);
+			const Univents & ndGPU = getUniventsConstRef(*ndGP);
+			const int8_t * ndGP_states = &(ndGPU.getEndStatesVecConstRef()[0]);
+	
+			/*	We want the w to origNodePar branch's pmat, but we don't want it transposed
+				since we are done with pre_z_pmat_transposed for this move, we can 
+				clobber the stored values 
+			*/
+			fillTranspose(pre_z_pmat_transposed, const_cast<const double *const *>(pre_w_pmat_transposed), likelihood->getNStates());
+			upm.sampleUnivents(ndPU, prev_ndP_len, ndGP_states, const_cast<const double *const *>(pre_z_pmat_transposed), rngRef, NULL);
+	
+			}
 		}
 	}
 
+void UnimapNNIMove::resampleInternalNodeStates(const LikeFltType * root_state_posterior, const LikeFltType * des_cla)
+{
+	const UniventProbMgr & upm = likelihood->GetUniventProbMgrConstRef();
+	Lot & rngRef = *rng;
+	
+	Univents & ndU = getUniventsRef(*origNode);
+	upm.sampleRootStates(ndU, root_state_posterior, rngRef, false, NULL);
+	
+	Univents & ndPU = getUniventsRef(*origNodePar);
+	const int8_t * nd_states = &(ndU.getEndStatesVecConstRef()[0]);
+	upm.sampleDescendantStates(ndPU, (const double **) pre_p_mat[0], des_cla, nd_states, rngRef);
+	
+	likelihood->flagNodeWithInvalidUnivents(x);
+	getUniventsRef(*x).setValid(false);
+	likelihood->flagNodeWithInvalidUnivents(y);
+	getUniventsRef(*y).setValid(false);
+	likelihood->flagNodeWithInvalidUnivents(z);
+	getUniventsRef(*z).setValid(false);
+	likelihood->flagNodeWithInvalidUnivents(origNode);
+	getUniventsRef(*origNode).setValid(false);
+	likelihood->flagNodeWithInvalidUnivents(origNodePar);
+	getUniventsRef(*origNodePar).setValid(false);
+}
 /*--------------------------------------------------------------------------------------------------------------------------
 |	Called if the move is accepted.
 */
@@ -747,61 +767,43 @@ void UnimapNNIMove::accept()
 	{
 	std::cerr << "ACCEPTED" << std::endl;
 	++nMovesAccepted;
-	/*x->SelectNode();
-    y->SelectNode();
-    z->SelectNode();
-    nd->SelectNode();
-
-	likelihood->startTreeViewer(tree, "before");
-	*/
 	tree_manipulator.NNISwap(z, x);
-    /*
-    likelihood->startTreeViewer(tree, "after");
-    
-    x->UnselectNode();
-    y->UnselectNode();
-    z->UnselectNode();
-    nd->UnselectNode();
-    */
     
    // post_child_cla post_parent_cla
 	/* using the statecode arrays at  ySisTipData  and yTipData
-		as storage for the new samples of nd and ndP sequences.
+		as storage for the new samples of origNode and origNodePar sequences.
 	*/
-	TreeNode * nd =  y->GetParent();
-	assert(nd);
-	assert(nd->GetParent());
-	TreeNode * ndP = nd->GetParent();
+	assert(origNode);
+	assert(origNode->GetParent() == origNodePar);
 
-	const UniventProbMgr & upm = likelihood->GetUniventProbMgrConstRef();
-	Lot & rngRef = *rng;
-
-	LikeFltType * root_state_posterior = post_root_posterior->getCLA(); //PELIGROSO
-	Univents & ndU = getUniventsRef(*nd);
-	upm.sampleRootStates(ndU, root_state_posterior, rngRef, false, NULL);
-
-	Univents & ndPU = getUniventsRef(*ndP);
-	const int8_t * nd_states = &(ndU.getEndStatesVecConstRef()[0]);
-	const LikeFltType * des_cla = post_cla->getCLA(); //PELIGROSO
-	upm.sampleDescendantStates(ndPU, (const double **) post_p_mat[0], des_cla, nd_states, rngRef);
-	if (doSampleUnivents)
+	if (doSampleInternalStates || doSampleUnivents)
 		{
-		const int8_t * ndP_states = &(ndPU.getEndStatesVecConstRef()[0]);
-		upm.sampleUniventsKeepEndStates(getUniventsRef(*x), x->GetEdgeLen(), ndP_states, (const double **) wSisTipData->getTransposedPMatrices()[0], rngRef);
-		upm.sampleUniventsKeepEndStates(getUniventsRef(*y), x->GetEdgeLen(), nd_states, (const double **) yTipData->getTransposedPMatrices()[0], rngRef);
-		upm.sampleUniventsKeepEndStates(getUniventsRef(*z), x->GetEdgeLen(), nd_states, (const double **) ySisTipData->getTransposedPMatrices()[0], rngRef);
-		upm.sampleUnivents(ndU, nd->GetEdgeLen(), ndP_states, (const double **) post_p_mat[0], rngRef, NULL);
-		
-		const TreeNode * ndGP = ndP->GetParent();
-		PHYCAS_ASSERT(ndGP);
-		const Univents & ndGPU = getUniventsConstRef(*ndGP);
-		const int8_t * ndGP_states = &(ndGPU.getEndStatesVecConstRef()[0]);
-		/*	We want the w to ndP branch's pmat, but we don't want it transposed
-			since we are done with pre_z_pmat_transposed for this move, we can 
-			clobber the stored values 
-		*/
-		fillTranspose(pre_z_pmat_transposed, const_cast<const double *const *>(wTipData->getTransposedPMatrices()[0]), likelihood->getNStates());
-		upm.sampleUnivents(ndPU, ndP->GetEdgeLen(), ndGP_states, pre_z_pmat_transposed, rngRef, NULL);
+		resampleInternalNodeStates(post_root_posterior->getCLA(), post_cla->getCLA());
+	
+		if (doSampleUnivents)
+			{
+			const UniventProbMgr & upm = likelihood->GetUniventProbMgrConstRef();
+			Univents & ndU = getUniventsRef(*origNode);
+			Univents & ndPU = getUniventsRef(*origNodePar);
+			Lot & rngRef = *rng;
+			const int8_t * ndP_states = &(ndPU.getEndStatesVecConstRef()[0]);
+			const int8_t * nd_states = &(ndU.getEndStatesVecConstRef()[0]);
+			upm.sampleUniventsKeepEndStates(getUniventsRef(*x), x->GetEdgeLen(), ndP_states, (const double **) wSisTipData->getTransposedPMatrices()[0], rngRef);
+			upm.sampleUniventsKeepEndStates(getUniventsRef(*y), x->GetEdgeLen(), nd_states, (const double **) yTipData->getTransposedPMatrices()[0], rngRef);
+			upm.sampleUniventsKeepEndStates(getUniventsRef(*z), x->GetEdgeLen(), nd_states, (const double **) ySisTipData->getTransposedPMatrices()[0], rngRef);
+			upm.sampleUnivents(ndU, origNode->GetEdgeLen(), ndP_states, (const double **) post_p_mat[0], rngRef, NULL);
+			
+			const TreeNode * ndGP = origNodePar->GetParent();
+			PHYCAS_ASSERT(ndGP);
+			const Univents & ndGPU = getUniventsConstRef(*ndGP);
+			const int8_t * ndGP_states = &(ndGPU.getEndStatesVecConstRef()[0]);
+			/*	We want the w to origNodePar branch's pmat, but we don't want it transposed
+				since we are done with pre_z_pmat_transposed for this move, we can 
+				clobber the stored values 
+			*/
+			fillTranspose(pre_z_pmat_transposed, const_cast<const double *const *>(wTipData->getTransposedPMatrices()[0]), likelihood->getNStates());
+			upm.sampleUnivents(ndPU, origNodePar->GetEdgeLen(), ndGP_states, pre_z_pmat_transposed, rngRef, NULL);
+			}
 		}
 	}
 
@@ -819,6 +821,7 @@ UnimapNNIMove::UnimapNNIMove() : MCMCUpdater(),
   wSisTipData(0),
   wTipData(0),
   doSampleUnivents(false),
+  doSampleInternalStates(true),
   nMovesAccepted(0),
   nMovesAttempted(0)
 	{

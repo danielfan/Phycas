@@ -183,6 +183,7 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("bytesPerCLA", &TreeLikelihood::bytesPerCLA)
 		.def("numCLAsCreated", &TreeLikelihood::numCLAsCreated)
 		.def("numCLAsStored", &TreeLikelihood::numCLAsStored)
+		.def("setLot", &TreeLikelihood::setLot)
 		//.def("setDebug", &TreeLikelihood::setDebug)
 		.def("debugCheckForUncachedCLAs", &TreeLikelihood::debugCheckForUncachedCLAs)
 		;
