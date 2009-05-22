@@ -48,7 +48,7 @@ bool MappingMove::update()
 	{
     PHYCAS_ASSERT(likelihood->isUsingUnimap());
 
-	std::cerr << "****** MappingMove::update" << std::endl;
+	//std::cerr << "****** MappingMove::update" << std::endl;
 
     likelihood->fullRemapping(tree, rng, true);
     

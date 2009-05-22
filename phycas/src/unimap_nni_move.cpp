@@ -614,7 +614,7 @@ double UnimapNNIMove::FourTaxonLnLFromCorrectTipDataMembers()
 	likelihood->calcCLATwoTips(*nd_parentCLPtr, *wSisTipData, *wTipData);
 
 	double lnl =  HarvestLnLikeFromCondLikePar(nd_childCLPtr, nd_parentCLPtr, childPMatrix);
-	DebugSaveNexusFile(ySisTipData, yTipData, wSisTipData, wTipData, lnl);
+	//DebugSaveNexusFile(ySisTipData, yTipData, wSisTipData, wTipData, lnl);
 	return lnl;
 	}
 	
@@ -687,7 +687,7 @@ TipData * UnimapNNIMove::createTipDataFromUnivents(const Univents & u, TipData *
 */
 void UnimapNNIMove::revert()
 	{
-	std::cerr << "REVERTED" << std::endl;
+//	std::cerr << "REVERTED" << std::endl;
 	
 	x->SetEdgeLen(prev_x_len);
 	y->SetEdgeLen(prev_y_len);
@@ -765,7 +765,7 @@ void UnimapNNIMove::resampleInternalNodeStates(const LikeFltType * root_state_po
 */
 void UnimapNNIMove::accept()
 	{
-	std::cerr << "ACCEPTED" << std::endl;
+	//std::cerr << "ACCEPTED" << std::endl;
 	++nMovesAccepted;
 	tree_manipulator.NNISwap(z, x);
     

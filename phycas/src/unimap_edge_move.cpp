@@ -200,7 +200,7 @@ bool UnimapEdgeMove::update()
 	if (is_fixed)
 		return false;
 
-	std::cerr << "****** UnimapEdgeMove::update" << std::endl;
+//	std::cerr << "****** UnimapEdgeMove::update" << std::endl;
 
 	ChainManagerShPtr p = chain_mgr.lock();
 	PHYCAS_ASSERT(p);

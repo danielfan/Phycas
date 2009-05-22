@@ -13,9 +13,10 @@ mcmc.data_source         		= 'green.nex'
 mcmc.starting_tree_source   	= randomtree() # TreeCollection(newick='(1:0.020000,2:0.0100,(3:0.0200,4:0.02000):0.02000)')
 mcmc.ncycles                	= 20000
 mcmc.nchains					= 1
-mcmc.sample_every           	= 1
-mcmc.report_every           	= 1
+mcmc.sample_every           	= 100
+mcmc.report_every           	= 1000
 mcmc.tree_scaler_weight     	= 0
+mcmc.ls_move_weight				= 1
 #mcmc.tree_scaler_lambda     	= 0.5
 mcmc.slice_weight           	= 1
 mcmc.debugging              	= False
@@ -34,7 +35,9 @@ if False:
 	import sys,os
 	if os.path.basename(sys.executable) == 'python_d.exe':
 		raw_input('debug stop')
-
-unimap()
+if len(sys.argv) > 1 and sys.argv[1] == 'm':
+	mcmc()
+else:
+	unimap()
 sumt.trees = "trees.t"
-sumt()
+#sumt()

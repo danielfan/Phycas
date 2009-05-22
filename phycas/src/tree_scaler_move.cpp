@@ -116,7 +116,7 @@ bool TreeScalerMove::update()
     if (is_fixed)
 		return false;
 		
-	std::cerr << "****** TreeScalerMove::update" << std::endl;
+//	std::cerr << "****** TreeScalerMove::update" << std::endl;
 
 	ChainManagerShPtr p = chain_mgr.lock();
 	PHYCAS_ASSERT(p);
