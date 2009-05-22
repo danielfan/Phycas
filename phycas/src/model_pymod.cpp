@@ -98,6 +98,7 @@ void model_pymod()
 		.def("getPMatrix", &phycas::Model::getPMatrix)
         .def("setStateFreqsUnnorm", &phycas::Model::setStateFreqsUnnorm)
         .def("setStateFreqUnnorm", &phycas::Model::setStateFreqUnnorm)
+        .def("getTimeStamp", &phycas::Model::getTimeStamp)
 		;
 	class_<phycas::JC, bases<phycas::Model> >("JCModelBase")
 		.def("getModelName", &phycas::JC::getModelName)

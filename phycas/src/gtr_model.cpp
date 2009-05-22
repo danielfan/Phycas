@@ -290,6 +290,7 @@ std::vector<double> GTR::getRelRates()
 */
 void GTR::setRelRates(const std::vector<double> & rates)
  	{
+	++time_stamp;
 	PHYCAS_ASSERT(rel_rates.size() == 6);
 
 	// Ensure that we are not about to set any negative relative rates
@@ -315,6 +316,7 @@ void GTR::setRelRateUnnorm(
   unsigned param_index,		/**< the 0-based index into the `rel_rates' vector of the element to modify */
   double value)				/**< the new value of `rel_rates'[`param_index'] */
 	{
+	++time_stamp;
 	PHYCAS_ASSERT(rel_rates.size() == 6);
 
 	// Ensure that user supplied a correct index

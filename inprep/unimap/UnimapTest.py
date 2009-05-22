@@ -40,4 +40,4 @@ if len(sys.argv) > 1 and sys.argv[1] == 'm':
 else:
 	unimap()
 sumt.trees = "trees.t"
-#sumt()
+sumt()

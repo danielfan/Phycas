@@ -2232,45 +2232,24 @@ double TreeLikelihood::calcLnL(
 	if (no_data)
 		return 0.0;
 
+	// The variable nevals keeps track of the number of times the likelihood has been calculated		
+	++nevals;
+
 	// Compute likelihood using likelihood_root if specified
 	// Assume that if likelihood_root has been specified, then the necessary 
 	// CLA invalidations have already been performed.
 	TreeNode * nd = likelihood_root;
 	if (nd == NULL)
 		{
-#if 0
-		// If no likelihood_root has been specified, use the subroot node (and
-		// invalidate the entire tree to be safe)
-		nd = t->GetFirstPreorder();
-		PHYCAS_ASSERT(nd);
-
-		// Move to the subroot node
-		nd = nd->GetNextPreorder();
-		PHYCAS_ASSERT(nd);
-
-		// The subroot node is the new likelihood_root
-		likelihood_root = nd;
-
-		// Invalidate (and do not cache) all CLAs from the tree. This will require all CLAs to be recomputed 
-		// when the likelihood is computed using the subroot as the likelihood root. This path should be taken
-		// if a parameter is changed that invalidates the entire tree.
-		NodeValidityChecker validFunctor = boost::bind(&TreeLikelihood::invalidateBothEndsDiscardCache, this, _1, _2);
-		effective_postorder_edge_iterator(nd, validFunctor); // constructor does all the work we need
-		invalidateBothEndsDiscardCache(nd);
-#else
 		// If no likelihood_root has been specified, invalidate the entire tree to be safe
 		nd = storeAllCLAs(t);
 
 		// The subroot node will be the new likelihood_root
 		likelihood_root = nd;
-#endif
 		}
 
 	PHYCAS_ASSERT(nd);
 	PHYCAS_ASSERT(nd->IsInternal());
-
-	// Uncomment line below to force recalculation of all CLAs
-	//storeAllCLAs(t);
 
 	if (using_unimap)
 		{
@@ -2296,16 +2275,14 @@ double TreeLikelihood::calcLnL(
 
 	// Calculate log-likelihood using nd as the likelihood root
 	double lnL = calcLnLFromNode(*nd);
-#	if 0 // !defined(NDEBUG)	
-		if (calcLnLLevel == 0)
-			{
-			calcLnLLevel = 1;
-			storeAllCLAs(t);
-			double lnLRecalc = calcLnL(t);
-			PHYCAS_ASSERT(fabs(lnL-lnLRecalc) < 0.000001);
-			calcLnLLevel = 0;
-			}
-#	endif
+	// 	if (calcLnLLevel == 0)
+	// 		{
+	// 		calcLnLLevel = 1;
+	// 		storeAllCLAs(t);
+	// 		double lnLRecalc = calcLnL(t);
+	// 		PHYCAS_ASSERT(fabs(lnL-lnLRecalc) < 0.000001);
+	// 		calcLnLLevel = 0;
+	// 		}
 
     //startTreeViewer(t, "lnL = %.5f" % lnL);
     
@@ -2435,7 +2412,6 @@ double TreeLikelihood::calcLnLFromNode(
 		EdgeEndpoints edge(&focal_node, NULL);
 		lnL = harvestLnL(edge);
 		}
-	++nevals;
 	return lnL;
 	}
 

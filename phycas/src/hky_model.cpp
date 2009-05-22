@@ -32,7 +32,7 @@ using namespace phycas;
 |	to 1.0.
 */
 HKY::HKY()
-  : Model(4), kappa(1.0), kappa_fixed(false)
+  : Model(4), kappa_fixed(false), kappa(1.0)
 	{
 	state_repr.reserve(4);
 	state_repr.push_back("A");
@@ -260,6 +260,7 @@ double HKY::getKappa()
 */
 void HKY::setKappa(double k)
  	{
+	++time_stamp;
 	if (k <= 0.0)
 		throw XLikelihood();
 	kappa = k;
@@ -326,6 +327,7 @@ void HKY::setStateFreqPrior(MultivarProbDistShPtr d)
 */
 void HKY::setKappaFromTRatio(double tratio)
  	{
+	++time_stamp;
 	if (tratio <= 0.0)
 		throw XLikelihood();
 	double numerator   = tratio*(state_freqs[0] + state_freqs[2])*(state_freqs[1] + state_freqs[3]);

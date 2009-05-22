@@ -698,6 +698,8 @@ class MCMCImpl(CommonFunctions):
                 for i,c in enumerate(self.mcmc_manager.chains):
                     self.updateAllUpdaters(c, i, cycle)
                     
+            # print '******** time_stamp =',self.mcmc_manager.getColdChain().model.getTimeStamp()
+                    
             # Attempt to swap two random chains
             if nchains > 1:
                 self.mcmc_manager.attemptChainSwap(cycle)
@@ -930,6 +932,3 @@ class MCMCImpl(CommonFunctions):
         if self.paramf:
             self.paramFileClose()
             
-        # Report marginal likelihood calculation (using harmonic mean method, or path sampling if 
-        # this mcmc method was called from the ps command)
-        #self.calcMarginalLikelihood()

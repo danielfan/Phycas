@@ -73,6 +73,8 @@ class Model	{
 
 		// Query functions
 		bool							isCodonModel() const;
+		unsigned						getTimeStamp() const
+											{return time_stamp;}
 
 		// Member functions related to relative state frequencies
 		unsigned						getNStates() const;
@@ -178,22 +180,14 @@ protected:
 	ProbDistShPtr					internalEdgeLenPrior;		/**< The prior distribution governing internal edge lengths */
 	ProbDistShPtr					externalEdgeLenPrior;		/**< The prior distribution governing external edge lengths */
     bool                            separate_int_ext_edgelen_priors;    /**> If true, internal edge lengths have a different prior than external edge lengths */
-	unsigned						num_states;					/**< The number of states (e.g. 4 for DNA) */
-	unsigned						num_gamma_rates;			/**< The number of discrete gamma rate categories. If greater than 1, the model becomes a discrete gamma rate heterogeneity ("G") model. */
-	mutable std::vector<double>		gamma_rates_unnorm;			/**< A vector of quantities that yield the relative rates when normalized in recalcRatesAndProbs (length is `num_gamma_rates') */
-	mutable std::vector<double>		gamma_rate_probs;			/**< A vector of probabilities that a site falls in any given rate category (length is `num_gamma_rates') */
 	std::vector<double>				state_freqs;				/**< A vector of relative state frequencies (length is `num_states') */
-	std::vector<double>				state_freq_unnorm;			/**< A vector of quantities that yield the values in `state_freqs' when normalized using the normalizeFreqs member function (length is `num_states') */
-	std::vector<std::string>		state_repr;					/**< A vector strings representing the states allowed by this model */
+	std::vector<std::string>		state_repr;					/**< A vector of strings representing the states allowed by this model */
 	bool							state_freq_fixed;			/**< If true, the values in `state_freq_params' will not change during MCMC updates */
 	mutable MCMCUpdaterVect			freq_params;				/**< Vector of shared pointers to the state frequency parameters (need to retain pointers to these so that the fixed/free status can be changed) */	
     mutable MCMCUpdaterVect		    edgelen_hyper_params;		/**< Vector of shared pointers to the edge length hyperparameters (need to retain a pointer so that the fixed/free status can be changed) */
     mutable MCMCUpdaterVect			edgelen_params;				/**< Vector of shared pointers to the edge length parameters (need to retain pointers to these so that their fixed/free status can be changed) */
 	bool							edge_lengths_fixed;			/**< If true, the value of the edge lengths will not change during MCMC updates */
 	bool							edgelen_hyperprior_fixed;	/**< If true, the value of the edge length hyperprior will not change during MCMC updates */
-	bool							is_codon_model;				/**< If true, nucleotide states will be interpreted as triplets when creating TipData structures for tree */
-	bool							is_pinvar_model;			/**< If true, a parameter for pinvar will be added to MCMC analysis (pinvar_fixed determines whether it is updated or not) */
-	bool							is_flex_model;				/**< If true, the FLEX model of rate heterogeneity will be used instead of the discrete gamma model */
 	mutable double					flex_upper_rate_bound;		/**< Largest possible unnormalized relative rate parameter value (lower bound is always 0.0) */
 	mutable unsigned				num_flex_spacers;			/**< The number of spacers between rates in the FLEX model rate prior. Spacers act like repelling magnets, keeping adjacent rates from getting too close together. Adding more spacers between each pair of adjacent rates increases the repulsive force. Changing the number of spacers is the only modification allowed to the FLEX model rate prior. */
 	bool							flex_probs_fixed;			/**< If true, the values in `flex_prob_params' will not change during MCMC updates */
@@ -205,13 +199,26 @@ protected:
 	bool							pinvar_fixed;				/**< If true, the value of pinvar will not change during MCMC updates */
 	mutable MCMCUpdaterShPtr		pinvar_param;				/**< Shared pointer to the proportion of invariable sites parameter (need to retain a pointer so that the fixed/free status can be changed) */
 	ProbDistShPtr					pinvar_prior;				/**< The prior distribution governing the proportion of invariable sites parameter */
-	double							pinvar;						/**< The proportion of invariable sites. If non-zero, the model becomes an invariable-sites ("I") model. */
 	bool							gamma_shape_fixed;			/**< If true, the value of gamma_shape will not change during MCMC updates */
 	mutable MCMCUpdaterShPtr		gamma_shape_param;			/**< Shared pointer to the gamma shape parameter (need to retain a pointer so that the fixed/free status can be changed) */
 	ProbDistShPtr					gamma_shape_prior;			/**< The prior distribution governing the discrete gamma shape parameter */
-	double							gamma_shape;				/**< Used for discrete gamma rate heterogeneity */
 	bool							invert_shape;				/**< If true, gamma_shape_param will hold inverse of shape rather than shape itself */
 	CDF								cdf;						/**< Provides cumulative gamma distribution function */
+	
+	unsigned						time_stamp;					/**< Provides a way for methods that depend on the model to know if the model has changed */
+	
+	// Below here are quantities that directly affect likelihood calculations and which should increment time_stamp when modified
+	unsigned						num_states;					/**< The number of states (e.g. 4 for DNA) */
+	unsigned						num_gamma_rates;			/**< The number of discrete gamma rate categories. If greater than 1, the model becomes a discrete gamma rate heterogeneity ("G") model. */
+	std::vector<double>				state_freq_unnorm;			/**< A vector of quantities that yield the values in `state_freqs' when normalized using the normalizeFreqs member function (length is `num_states') */
+	mutable std::vector<double>		gamma_rates_unnorm;			/**< A vector of quantities that yield the relative rates when normalized in recalcRatesAndProbs (length is `num_gamma_rates') */
+	mutable std::vector<double>		gamma_rate_probs;			/**< A vector of probabilities that a site falls in any given rate category (length is `num_gamma_rates') */
+	double							gamma_shape;				/**< Used for discrete gamma rate heterogeneity */
+	double							pinvar;						/**< The proportion of invariable sites. If non-zero, the model becomes an invariable-sites ("I") model. */
+	bool							is_flex_model;				/**< If true, the FLEX model of rate heterogeneity will be used instead of the discrete gamma model */
+	bool							is_codon_model;				/**< If true, nucleotide states will be interpreted as triplets when creating TipData structures for tree */
+	bool							is_pinvar_model;			/**< If true, a parameter for pinvar will be added to MCMC analysis (pinvar_fixed determines whether it is updated or not) */
+	
 };
 
 typedef boost::shared_ptr<Model> ModelShPtr;
@@ -278,12 +285,14 @@ class HKY: public Model
 
 protected:
 	
-	double						kappa;				/**< The transition/transversion rate ratio */
 	ProbDistShPtr				kappa_prior;		/**< The prior distribution governing kappa */
 	ProbDistShPtr				freq_param_prior;	/**< The prior distribution governing each frequency parameter (used if frequencies are updated separately by slice sampling) */
 	MultivarProbDistShPtr		freq_prior;	        /**< The prior distribution governing the vector of frequencies (used if frequencies are updated jointly by StateFreqMove) */
 	bool						kappa_fixed;		/**< If true, the value of kappa will not change during MCMC updates */
 	mutable MCMCUpdaterShPtr	kappa_param;		/**< Copy of the kappa parameter (saved so that fixed/free status can be changed) */
+
+	// Below here are quantities that directly affect likelihood calculations and which should increment time_stamp when modified
+	double						kappa;				/**< The transition/transversion rate ratio */
 	};
 
 typedef boost::shared_ptr<HKY> HKYShPtr;
@@ -337,7 +346,6 @@ class GTR: public Model
 
 	protected:
 
-		std::vector<double>			rel_rates;			    /**< A vector containing the six relative rates */
 		MultivarProbDistShPtr		rel_rate_prior;		    /**< The prior distribution governing each relative rate (usually a gamma distribution with scale 1 and shape equal to the desired Dirichlet parameter) */
 		ProbDistShPtr				rel_rate_param_prior;	/**< The joint prior distribution governing all six relative rates */
 		ProbDistShPtr				freq_param_prior;	    /**< The prior distribution governing each frequency parameter (usually a gamma distribution with scale 1 and shape equal to the desired Dirichlet parameter; used if frequencies are updated separately by slice sampling) */
@@ -345,6 +353,9 @@ class GTR: public Model
 		bool						rel_rates_fixed;	    /**< If true, the relative rate values will not change during MCMC updates */
 		mutable MCMCUpdaterVect		rel_rate_params;	    /**< A vector containing copies of all six relative rate parameters (saved so that fixed/free status can be changed) */
 		mutable QMatrix				q_matrix;			    /**< A QMatrix object used to compute transition probabilities */
+
+		// Below here are quantities that directly affect likelihood calculations and which should increment time_stamp when modified
+		std::vector<double>			rel_rates;			    /**< A vector containing the six relative rates */
 	};
 
 typedef boost::shared_ptr<GTR> GTRShPtr;
@@ -401,12 +412,8 @@ class Codon: public Model
 
 protected:
 	
-	double						kappa;				/**< The transition/transversion rate ratio */
 	ProbDistShPtr				kappa_prior;		/**< The prior distribution governing kappa */
-
-	double						omega;				/**< The nonsynonymous/synonymous rate ratio */
 	ProbDistShPtr				omega_prior;		/**< The prior distribution governing omega */
-
 	ProbDistShPtr				freq_param_prior;	/**< The prior distribution governing each frequency parameter */
 
 	bool						kappa_fixed;		/**< If true, the value of kappa will not change during MCMC updates */
@@ -414,7 +421,12 @@ protected:
 
 	mutable MCMCUpdaterShPtr	omega_param;		/**< Copy of the omega parameter (saved so that fixed/free status can be changed) */
 	mutable MCMCUpdaterShPtr	kappa_param;		/**< Copy of the kappa parameter (saved so that fixed/free status can be changed) */
+
 	mutable QMatrix				q_matrix;			/**< A QMatrix object used to compute transition probabilities */
+
+	// Below here are quantities that directly affect likelihood calculations and which should increment time_stamp when modified
+	double						kappa;				/**< The transition/transversion rate ratio */
+	double						omega;				/**< The nonsynonymous/synonymous rate ratio */
 	};
 
 typedef boost::shared_ptr<Codon> CodonShPtr;

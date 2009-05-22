@@ -34,26 +34,27 @@ using namespace phycas;
 Model::Model(
   unsigned numStates)	/**< is the number of basic states (e.g. 4 for DNA) */
 	:
-    	separate_int_ext_edgelen_priors(false),
-	num_states(numStates), //@POL 31-Oct-2005 what about morphological models, is numStates in this case the maximum number of states allowed?
-	num_gamma_rates(1), 
-	gamma_rates_unnorm(1, 1.0),
-	gamma_rate_probs(1, 1.0), 
+   	separate_int_ext_edgelen_priors(false),
 	state_freq_fixed(false),
 	edge_lengths_fixed(false),	
 	edgelen_hyperprior_fixed(false),
-	is_codon_model(false),
-	is_pinvar_model(false),
-	is_flex_model(false),
 	flex_upper_rate_bound(1.0),
 	num_flex_spacers(1),
 	flex_probs_fixed(false),
 	flex_rates_fixed(false),
 	pinvar_fixed(false),
-	pinvar(0.0), 
 	gamma_shape_fixed(false),
+    invert_shape(false),
+    time_stamp(0),
+	num_states(numStates), //@POL 31-Oct-2005 what about morphological models, is numStates in this case the maximum number of states allowed?
+	num_gamma_rates(1), 
+	gamma_rates_unnorm(1, 1.0),
+	gamma_rate_probs(1, 1.0), 
 	gamma_shape(0.5),
-    invert_shape(false)
+	pinvar(0.0), 
+	is_flex_model(false),
+	is_codon_model(false),
+	is_pinvar_model(false)
 	{
 	PHYCAS_ASSERT(num_states > 0);
 	setAllFreqsEqual();
@@ -164,7 +165,7 @@ ProbDistShPtr Model::getExternalEdgeLenPrior()
 |	Sets the data member `externalEdgeLenPrior' to the supplied probability distribution `d'. This prior distribution
 |	will be used when the model is asked to create parameters.
 */
-void	Model::setExternalEdgeLenPrior(ProbDistShPtr d)
+void Model::setExternalEdgeLenPrior(ProbDistShPtr d)
 	{
 	externalEdgeLenPrior = d;
 	}
@@ -219,6 +220,7 @@ void Model::setNucleotideFreqs(
   double freqG,				/**< the new value of `state_freq_unnorm'[2] (i.e. frequency of base G) */
   double freqT)				/**< the new value of `state_freq_unnorm'[3] (i.e. frequency of base T/U) */
 	{
+	++time_stamp;
 	PHYCAS_ASSERT(num_states == 4);
 	PHYCAS_ASSERT(freqA >= 0.0);
 	PHYCAS_ASSERT(freqC >= 0.0);
@@ -239,6 +241,7 @@ void Model::setNucleotideFreqs(
 void Model::setStateFreqsUnnorm(
   const std::vector<double> & values)	/**< the new values */
 	{
+	++time_stamp;
     PHYCAS_ASSERT(values.size() == state_freq_unnorm.size());
     std::copy(values.begin(), values.end(), state_freq_unnorm.begin());
 	normalizeFreqs();
@@ -254,6 +257,7 @@ void Model::setStateFreqUnnorm(
   unsigned param_index,		/**< the 0-based index into the `state_freq_unnorm' vector of the element to modify */
   double value)				/**< the new value of `state_freq_unnorm'[`param_index'] */
 	{
+	++time_stamp;
 	PHYCAS_ASSERT(param_index < num_states);
 	PHYCAS_ASSERT(value >= 0.0);
 	state_freq_unnorm[param_index] = value;
@@ -266,6 +270,7 @@ void Model::setStateFreqUnnorm(
 */
 void Model::setAllFreqsEqual()
 	{
+	++time_stamp;
 	PHYCAS_ASSERT(num_states > 0);
 	state_freq_unnorm.clear();
 	state_freq_unnorm.assign(num_states, 1.0);
@@ -317,6 +322,7 @@ void Model::setNGammaRates(
 	{
 	if (nGammaRates != num_gamma_rates)
 		{
+		++time_stamp;
 		PHYCAS_ASSERT(nGammaRates > 0);
 		gamma_rates_unnorm.assign(nGammaRates, 1.0);
 		gamma_rate_probs.resize(nGammaRates); //@POL this line not necessary (?) because assign also resizes
@@ -340,6 +346,7 @@ const std::vector<double> & Model::getGammaRateProbs() const
 */
 void Model::setAllGammaRateProbsEqual()
 	{
+	++time_stamp;
 	PHYCAS_ASSERT(num_gamma_rates > 0);
 	gamma_rate_probs.clear();
 	gamma_rate_probs.assign(num_gamma_rates, 1.0/num_gamma_rates);
@@ -360,6 +367,7 @@ double Model::getShape()
 void Model::setShape(
   double alpha)		/**< is the new value for the `gamma_shape' data member */
 	{
+	++time_stamp;
 	PHYCAS_ASSERT(alpha > 0.0);
 	gamma_shape = alpha;
 	}
@@ -412,6 +420,7 @@ double Model::getPinvar()
 void Model::setPinvar(
   double pinv)		/**< is the new value for the `pinvar' data member */
 	{
+	++time_stamp;
 	PHYCAS_ASSERT(pinv >= 0.0);
 	PHYCAS_ASSERT(pinv < 1.0);
 	pinvar = pinv;
@@ -551,6 +560,7 @@ void Model::freeStateFreqs()
 */
 void Model::setFlexModel()
 	{
+	++time_stamp;
 	is_flex_model = true;
 	}
 
@@ -562,6 +572,7 @@ void Model::setFlexModel()
 */
 void Model::setFlexRateUpperBound(double new_upper_bound)
 	{
+	++time_stamp;
 	double old_upper_bound = flex_upper_rate_bound;
 	if (new_upper_bound == old_upper_bound)
 		return;
@@ -586,6 +597,7 @@ void Model::setNumFlexSpacers(unsigned s)
 */
 void Model::setNotFlexModel()
 	{
+	++time_stamp;
 	is_flex_model = false;
 	}
 
@@ -678,6 +690,7 @@ void Model::setFlexRateUnnorm(
   unsigned param_index,		/**< the 0-based index into the `gamma_rates_unnorm' vector of the element to modify */
   double value)				/**< the new value of `gamma_rates_unnorm'[`param_index'] */
 	{
+	++time_stamp;
 	PHYCAS_ASSERT(gamma_rates_unnorm.size() == num_gamma_rates);
 	PHYCAS_ASSERT(param_index < num_gamma_rates);
 	PHYCAS_ASSERT(value >= 0.0);
@@ -695,6 +708,7 @@ void Model::setFlexProbUnnorm(
   unsigned param_index,		/**< the 0-based index into the `gamma_rate_probs' vector of the element to modify */
   double value)				/**< the new value of `gamma_rate_probs'[`param_index'] */
 	{
+	++time_stamp;
 	PHYCAS_ASSERT(gamma_rate_probs.size() == num_gamma_rates);
 	PHYCAS_ASSERT(param_index < num_gamma_rates);
 	PHYCAS_ASSERT(value >= 0.0);
@@ -764,6 +778,7 @@ bool Model::isPinvarModel()
 */
 void Model::setPinvarModel()
 	{
+	++time_stamp;
 	is_pinvar_model = true;
 	}
 
@@ -773,6 +788,7 @@ void Model::setPinvarModel()
 */
 void Model::setNotPinvarModel()
 	{
+	++time_stamp;
 	is_pinvar_model = false;
 	}
 

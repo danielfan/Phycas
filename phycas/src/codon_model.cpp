@@ -469,6 +469,7 @@ double Codon::getKappa()
 */
 void Codon::setKappa(double k)
  	{
+	++time_stamp;
 	if (k <= 0.0)
 		throw XLikelihood();
 	kappa = k;
@@ -487,6 +488,7 @@ double Codon::getOmega()
 */
 void Codon::setOmega(double w)
  	{
+	++time_stamp;
 	if (w <= 0.0)
 		throw XLikelihood();
 	omega = w;
@@ -612,6 +614,7 @@ inline void Codon::setNucleotideFreqs(
   double freqG,				/**< the new value of `state_freq_unnorm'[2] (i.e. frequency of base G) */
   double freqT)				/**< the new value of `state_freq_unnorm'[3] (i.e. frequency of base T/U) */
 	{
+	++time_stamp;
 	PHYCAS_ASSERT(num_states == 4);
 	PHYCAS_ASSERT(freqA >= 0.0);
 	PHYCAS_ASSERT(freqC >= 0.0);
