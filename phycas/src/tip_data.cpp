@@ -82,6 +82,12 @@ TipData::TipData(
         {
         univents.resize(nPatterns);
         univents.setEndStates(state_codes.get());
+        for (unsigned i = 0; i < nPatterns; ++i)
+        	{
+        	const int8_t sc = state_codes[i];
+        	if (sc < 0 || sc >= nStates)
+        		throw XLikelihood("Sorry, we currently do not support data sets with ambiguity or gaps when you are using uniformization-based methods");
+        	}
         }
 	if (managePMatrices)
 		{
