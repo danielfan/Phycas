@@ -153,7 +153,7 @@ string GetSingleQuoted(const string & f)
 unsigned replace_all_substr(std::string &target, const std::string & searchStr, const std::string & replaceStr)
 	{
 	unsigned nReplacements = 0;
-	unsigned i = (unsigned)target.find(searchStr, 0);
+	size_t i = (unsigned)target.find(searchStr, 0);
 	while (i != string::npos)
 		{
 		++nReplacements;
