@@ -27,7 +27,7 @@ mcmc.out.trees.mode				= REPLACE
 
 unimap.mapping_move_weight    	= 0
 unimap.unimap_nni_move_weight 	= 1
-unimap.unimap_edge_move_weight 	= 0
+unimap.unimap_edge_move_weight 	= 10
 
 if False:
 	import sys,os

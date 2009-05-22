@@ -18,6 +18,9 @@
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 //#include "phycas/force_include.h"
+#include <numeric>
+#include <boost/bind.hpp>
+#include <boost/format.hpp>
 #include "phycas/src/basic_tree.hpp"
 #include "phycas/src/likelihood_models.hpp"
 #include "phycas/src/tree_likelihood.hpp"
@@ -26,9 +29,6 @@
 #include "phycas/src/sim_data.hpp"
 #include "phycas/src/phycas_string.hpp"
 #include "phycas/src/basic_lot.hpp"
-#include <boost/bind.hpp>
-#include <boost/format.hpp>
-#include <numeric>
 #include "phycas/src/edge_iterators.hpp"
 #include "phycas/src/univents.hpp"
 
@@ -801,260 +801,6 @@ unsigned ** getNodeSMat(TreeNode * nd)
 {
 	return (nd->IsInternal() ? nd->GetInternalData()->getNodeSMat() : nd->GetTipData()->getNodeSMat());
 }
-
-
-// Keeps the endstates constant, but generates a new mapping for the edge below nd.
-void TreeLikelihood::remapUniventsForNode(TreeShPtr t, TreeNode * nd)
-{
-	PHYCAS_ASSERT(localRng);
-	TreeNode * root_tip = t->GetFirstPreorder();
-	TreeNode * subroot = root_tip->GetLeftChild();
-
-	Univents & nd_univents = getUniventsRef(*nd);
-	const double nd_edge_len = nd->GetEdgeLen();
-	SquareMatrix p_mat_trans_scratch(num_states, 0.0);
-	double ** p_mat_trans_scratch_ptr = p_mat_trans_scratch.GetMatrix();
-	
-	unsigned ** nodeSMat = getNodeSMat(nd);
-	
-	if (false)
-		{
-		std::cerr << "\ntreeSMat before decrementing:\n";
-		for (unsigned i = 0; i < num_states; ++i)
-			{
-			for (unsigned j = 0; j < num_states; ++j)
-				std::cerr << boost::str(boost::format("%10d ") % treeSMat[i][j]);
-			std::cerr << std::endl;
-			}
-		}
-	for (unsigned i = 0; i < num_states*num_states; ++i)
-		{
-		treeSMat[0][i] -= nodeSMat[0][i];
-		nodeSMat[0][i] = 0;
-		}
-	
-	if (nd->IsInternal())
-		{
-		// Choose states for all sites at this internal node
-		InternalData * nd_data =  nd->GetInternalData();
-		ConstPMatrices pmatrices = nd_data->getConstPMatrices();
-		double const * const * pmatrix = pmatrices[0]; // index is 0 because assuming only one rate 
-		if (nd == subroot)
-			{
-			std::vector<LikeFltType> prob(num_states*num_patterns);
-			// Gather arrays needed from the root_tip
-			double						   root_tip_edge_len  = nd_edge_len;
-			const TipData &				   root_tip_data	  = *(root_tip->GetTipData());
-			double * * *				   root_tip_p		  = root_tip_data.getMutableTransposedPMatrices();
-			calcPMatTranspose(root_tip_p, root_tip_data.getConstStateListPos(),	 root_tip_edge_len);
-			const double * const * const * root_tip_tmatrix	  = root_tip_data.getConstTransposedPMatrices();
-			const int8_t *				   root_tip_codes	  = root_tip_data.getConstStateCodes();
-			fillTranspose(p_mat_trans_scratch_ptr, root_tip_tmatrix[0], num_states);
-			univentProbMgr.sampleUnivents(nd_univents, root_tip_edge_len, root_tip_codes, const_cast<const double * const*>(p_mat_trans_scratch_ptr), *localRng.get(), nodeSMat);
-			}
-		else
-			{
-			//
-			// Choose states and mappings for non-subroot internal node
-			//
-			TreeNode * par = nd->GetParent();
-			PHYCAS_ASSERT(par != NULL);
-			PHYCAS_ASSERT(par->IsInternal());
-			Univents & ndP_univents = getUniventsRef(*par);
-			const std::vector<int8_t> & par_states_vec = ndP_univents.getEndStatesVecRef();
-			const int8_t * par_states_ptr = &par_states_vec[0];
-			univentProbMgr.sampleUnivents(nd_univents, nd_edge_len,  par_states_ptr, pmatrix, *localRng.get(), nodeSMat);
-			}
-		}
-	else
-		{
-		// Choose mappings for tip node
-		TreeNode * par = nd->GetParent();
-		PHYCAS_ASSERT(par != NULL);
-		PHYCAS_ASSERT(par->IsInternal());
-		Univents & ndP_univents = getUniventsRef(*par);
-		const std::vector<int8_t> & par_states_vec = ndP_univents.getEndStatesVecRef();
-		const int8_t * par_states_ptr = &par_states_vec[0];
-		TipData * nd_data =	 nd->GetTipData();
-		ConstPMatrices tmatrices = nd_data->getTransposedPMatrices();
-		fillTranspose(p_mat_trans_scratch_ptr, tmatrices[0], num_states);
-		univentProbMgr.sampleUnivents(nd_univents, nd_edge_len, par_states_ptr, const_cast<const double **>(p_mat_trans_scratch_ptr), *localRng.get(), nodeSMat);
-		}
-
-	if (false)
-		{
-		std::cerr << "\ntreeSMat after decrementing / before incrementing:\n";
-		for (unsigned i = 0; i < num_states; ++i)
-			{
-			for (unsigned j = 0; j < num_states; ++j)
-				std::cerr << boost::str(boost::format("%10d ") % treeSMat[i][j]);
-			std::cerr << std::endl;
-			}
-		}
-
-	for (unsigned i = 0; i < num_states*num_states; ++i)
-		treeSMat[0][i] += nodeSMat[0][i];
-
-	if (false)
-		{
-		std::cerr << "\ntreeSMat after  incrementing:\n";
-		for (unsigned i = 0; i < num_states; ++i)
-			{
-			for (unsigned j = 0; j < num_states; ++j)
-				std::cerr << boost::str(boost::format("%10d ") % treeSMat[i][j]);
-			std::cerr << std::endl;
-			}
-		}
-
-	nd_univents.setValid(true);
-}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Refreshes the univent mapping for all sites over the entire tree. This function will wipe out all stored states 
-|   and times on the edges of the tree and create a fresh set compatible with the tip states.
-*/
-void TreeLikelihood::fullRemapping(
-  TreeShPtr t,		        /**< is the tree to use for the mapping */
-  LotShPtr rng,             /**< is the random number generator to use for the mapping */
-  bool doSampleUnivents)    /**< is True if ... */
-	{
-	t->renumberInternalNodes(t->GetNTips());
-	univentProbMgr.recalcUMat();
-
-	// Reset the matrix of uniformized transition counts
-	if (treeSMat == NULL)
-		{
-		treeSMat = NewTwoDArray<unsigned>(num_states, num_states); 
-		for (unsigned i = 0; i < num_states*num_states; ++i)
-			treeSMat[0][i] = 0;
-		}
-	nunivents = 0;
-
-	TreeNode * root_tip = t->GetFirstPreorder();
-	PHYCAS_ASSERT(root_tip->IsTipRoot());
-	TreeNode * subroot = root_tip->GetLeftChild();
-
-	//useAsLikelihoodRoot(subroot);
-	//invalidateAwayFromNode(*subroot);
-	//invalidateBothEnds(subroot);
-	useAsLikelihoodRoot(NULL);
-
-	// Work down the tree in postorder fashion updating conditional likelihoods
-	// (This code stolen from TreeLikelihood::calcLnLFromNode.)
-
-	// The functor below will return true if the conditional likelihood arrays pointing away from the
-	// focal_node are up-to-date, false if they need to be recomputed
-	NodeValidityChecker valid_functor = boost::bind(&TreeLikelihood::isValid, this, _1, _2);
-
-	// The iterator below will visit nodes that need their CLAs updated centripetally 
-	// (like a postorder traversal but also coming from below the focal node). Each node 
-	// visited is guaranteed by valid_functor to need its CLA updated.
-	effective_postorder_edge_iterator iter(subroot, valid_functor);
-	effective_postorder_edge_iterator iter_end;
-	for (; iter != iter_end; ++iter)
-		refreshCLA(*iter->first, iter->second);
-
-	// Must now refresh the CLA of the focal node (subroot) because this one was not
-	// recalculated by the effective_postorder_edge_iterator
-	refreshCLA(*subroot, root_tip);
-
-	// Work up the tree in preorder fashion choosing states for internal nodes along the way
-	TreeNode * nd = subroot;
-	SquareMatrix p_mat_trans_scratch(num_states, 0.0);
-	for (; nd != NULL; nd = nd->GetNextPreorder())
-		{
-		Univents & nd_univents = getUniventsRef(*nd);
-		if (nd->IsInternal())
-			{
-			// Choose states for all sites at this internal node
-			InternalData * nd_data =  nd->GetInternalData();
-			const LikeFltType * cla = nd_data->getChildCondLikePtr()->getCLA();
-			ConstPMatrices pmatrices = nd_data->getConstPMatrices();
-			double const * const * pmatrix = pmatrices[0]; // index is 0 because assuming only one rate 
-			if (nd == subroot)
-				{
-				//
-				// Choose states and mappings for the subroot node
-				//
-				// The subroot is a special case for several reasons:
-				// 1. its conditional likelihood arrays do not take into account its parent, 
-				//	  which is the tip serving as the root of the tree. 
-				// 2. this is the first node to get assigned a state, hence we must use the 
-				//	  equilibrium frequencies as the prior instead of the transition probability
-				//	  from the state below
-				// 3. because the subroot serves as the likelihood root, we must keep track
-				//	  of the frequency of each state assigned to this node in order to compute
-				//	  the likelihood (these frequencies are stored in the vector
-				//	  TreeLikelihood::obs_state_counts)
-				std::vector<LikeFltType> prob(num_states*num_patterns);
-				const std::vector<double> & freqs = model->getStateFreqs();
-
-				// Gather arrays needed from the root_tip
-				double						   root_tip_edge_len  = subroot->GetEdgeLen();
-				const TipData &				   root_tip_data	  = *(root_tip->GetTipData());
-				double * * *				   root_tip_p		  = root_tip_data.getMutableTransposedPMatrices();
-				calcPMatTranspose(root_tip_p, root_tip_data.getConstStateListPos(),	 root_tip_edge_len);
-				const double * const * const * root_tip_tmatrix	  = root_tip_data.getConstTransposedPMatrices();
-				const int8_t *				   root_tip_codes	  = root_tip_data.getConstStateCodes();
-				unsigned offset = 0;
-				for (unsigned j = 0; j < num_patterns; ++j)
-					{
-					double total = 0.0;
-					for (unsigned k = 0; k < num_states; ++k)
-						{
-						const double conditional_likelihood = *cla++;
-						const unsigned root_tip_state = (unsigned)root_tip_codes[j];
-						const double transition_prob = root_tip_tmatrix[0][k][root_tip_state];	  // note: first index is 0 because assuming no rate heterogeneity
-						const double unnorm_prob = freqs[k]*conditional_likelihood*transition_prob;
-						total += unnorm_prob;
-						prob[offset+k] = unnorm_prob;
-						}
-					for (unsigned k = 0; k < num_states; ++k)
-						prob[offset+k] /= total; 
-					offset += num_states;
-					}
-				obs_state_counts.resize(num_states);
-				univentProbMgr.sampleRootStates(nd_univents, &prob[0], *rng.get(), true, &obs_state_counts[0]);
-				if (doSampleUnivents)
-					remapUniventsForNode(t, nd);
-				}
-			else
-				{
-				//
-				// Choose states and mappings for non-subroot internal node
-				//
-				TreeNode * par = nd->GetParent();
-				PHYCAS_ASSERT(par != NULL);
-				PHYCAS_ASSERT(par->IsInternal());
-				Univents & ndP_univents = getUniventsRef(*par);
-				const std::vector<int8_t> & par_states_vec = ndP_univents.getEndStatesVecRef();
-				const int8_t * par_states_ptr = &par_states_vec[0];
-				univentProbMgr.sampleDescendantStates(nd_univents, pmatrix, cla, par_states_ptr, *rng.get());
-				if (doSampleUnivents)
-					remapUniventsForNode(t, nd);
-				}
-			}
-		else if (doSampleUnivents)
-			remapUniventsForNode(t, nd);
-		if (false)
-			{
-			std::cerr << "\ntreeSMat after another edge:\n";
-			for (unsigned i = 0; i < num_states; ++i)
-				{
-				for (unsigned j = 0; j < num_states; ++j)
-					std::cerr << boost::str(boost::format("%10d ") % treeSMat[i][j]);
-				std::cerr << std::endl;
-				}
-			}
-		}
-	if (doSampleUnivents)
-		{
-		univentProbMgr.setIsMappingValid(true);
-		invalidUniventMappingNodes.clear();
-		}
-	//std::cerr << "in fullRemapping\n";
-	debugCheckSMatrix(t);
-	}
 
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -2536,11 +2282,12 @@ double TreeLikelihood::calcLnL(
 				for (unsigned i = 0; i < num_states*num_states; ++i)
 					treeSMat[0][i] = 0;
 				}
-
+			
 			if (false)
 				fullRemapping(t, localRng, true);
 			else
 				{
+				univentProbMgr.recalcUMat();
 				std::set<TreeNode *>::iterator ndIt = invalidUniventMappingNodes.begin(); 
 				for (;ndIt != invalidUniventMappingNodes.end(); ++ndIt)
 					remapUniventsForNode(t, *ndIt);
@@ -3534,5 +3281,274 @@ void TreeLikelihood::buildPatternReprVector(std::vector<std::string> & pattern_r
 
 	DeleteTwoDArray<int8_t>(m);
 	}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Refreshes the univent mapping for all sites over the entire tree. This function will wipe out all stored states 
+|   and times on the edges of the tree and create a fresh set compatible with the tip states.
+*/
+void TreeLikelihood::fullRemapping(
+  TreeShPtr t,		        /**< is the tree to use for the mapping */
+  LotShPtr rng,             /**< is the random number generator to use for the mapping */
+  bool doSampleUnivents)    /**< is True if ... */
+	{
+	t->renumberInternalNodes(t->GetNTips());
+	univentProbMgr.recalcUMat();
+
+	// Reset the matrix of uniformized transition counts
+	if (treeSMat == NULL)
+		{
+		treeSMat = NewTwoDArray<unsigned>(num_states, num_states); 
+		for (unsigned i = 0; i < num_states*num_states; ++i)
+			treeSMat[0][i] = 0;
+		}
+	nunivents = 0;
+
+	TreeNode * root_tip = t->GetFirstPreorder();
+	PHYCAS_ASSERT(root_tip->IsTipRoot());
+	TreeNode * subroot = root_tip->GetLeftChild();
+
+	//useAsLikelihoodRoot(subroot);
+	//invalidateAwayFromNode(*subroot);
+	//invalidateBothEnds(subroot);
+	useAsLikelihoodRoot(NULL);
+
+	// Work down the tree in postorder fashion updating conditional likelihoods
+	// (This code stolen from TreeLikelihood::calcLnLFromNode.)
+
+	// The functor below will return true if the conditional likelihood arrays pointing away from the
+	// focal_node are up-to-date, false if they need to be recomputed
+	NodeValidityChecker valid_functor = boost::bind(&TreeLikelihood::isValid, this, _1, _2);
+
+	// The iterator below will visit nodes that need their CLAs updated centripetally 
+	// (like a postorder traversal but also coming from below the focal node). Each node 
+	// visited is guaranteed by valid_functor to need its CLA updated.
+	effective_postorder_edge_iterator iter(subroot, valid_functor);
+	effective_postorder_edge_iterator iter_end;
+	for (; iter != iter_end; ++iter)
+		refreshCLA(*iter->first, iter->second);
+
+	// Must now refresh the CLA of the focal node (subroot) because this one was not
+	// recalculated by the effective_postorder_edge_iterator
+	refreshCLA(*subroot, root_tip);
+
+	// Work up the tree in preorder fashion choosing states for internal nodes along the way
+	TreeNode * nd = subroot;
+	SquareMatrix p_mat_trans_scratch(num_states, 0.0);
+	for (; nd != NULL; nd = nd->GetNextPreorder())
+		{
+		Univents & nd_univents = getUniventsRef(*nd);
+		if (nd->IsInternal())
+			{
+			// Choose states for all sites at this internal node
+			InternalData * nd_data =  nd->GetInternalData();
+			const LikeFltType * cla = nd_data->getChildCondLikePtr()->getCLA();
+			ConstPMatrices pmatrices = nd_data->getConstPMatrices();
+			double const * const * pmatrix = pmatrices[0]; // index is 0 because assuming only one rate 
+			if (nd == subroot)
+				{
+				//
+				// Choose states and mappings for the subroot node
+				//
+				// The subroot is a special case for several reasons:
+				// 1. its conditional likelihood arrays do not take into account its parent, 
+				//	  which is the tip serving as the root of the tree. 
+				// 2. this is the first node to get assigned a state, hence we must use the 
+				//	  equilibrium frequencies as the prior instead of the transition probability
+				//	  from the state below
+				// 3. because the subroot serves as the likelihood root, we must keep track
+				//	  of the frequency of each state assigned to this node in order to compute
+				//	  the likelihood (these frequencies are stored in the vector
+				//	  TreeLikelihood::obs_state_counts)
+				std::vector<LikeFltType> prob(num_states*num_patterns);
+				const std::vector<double> & freqs = model->getStateFreqs();
+
+				// Gather arrays needed from the root_tip
+				double						   root_tip_edge_len  = subroot->GetEdgeLen();
+				const TipData &				   root_tip_data	  = *(root_tip->GetTipData());
+				double * * *				   root_tip_p		  = root_tip_data.getMutableTransposedPMatrices();
+				calcPMatTranspose(root_tip_p, root_tip_data.getConstStateListPos(),	 root_tip_edge_len);
+				const double * const * const * root_tip_tmatrix	  = root_tip_data.getConstTransposedPMatrices();
+				const int8_t *				   root_tip_codes	  = root_tip_data.getConstStateCodes();
+				unsigned offset = 0;
+				for (unsigned j = 0; j < num_patterns; ++j)
+					{
+					double total = 0.0;
+					for (unsigned k = 0; k < num_states; ++k)
+						{
+						const double conditional_likelihood = *cla++;
+						const unsigned root_tip_state = (unsigned)root_tip_codes[j];
+						const double transition_prob = root_tip_tmatrix[0][k][root_tip_state];	  // note: first index is 0 because assuming no rate heterogeneity
+						const double unnorm_prob = freqs[k]*conditional_likelihood*transition_prob;
+						total += unnorm_prob;
+						prob[offset+k] = unnorm_prob;
+						}
+					for (unsigned k = 0; k < num_states; ++k)
+						prob[offset+k] /= total; 
+					offset += num_states;
+					}
+				obs_state_counts.resize(num_states);
+				univentProbMgr.sampleRootStates(nd_univents, &prob[0], *rng.get(), true, &obs_state_counts[0]);
+				if (doSampleUnivents)
+					remapUniventsForNode(t, nd);
+				}
+			else
+				{
+				//
+				// Choose states and mappings for non-subroot internal node
+				//
+				TreeNode * par = nd->GetParent();
+				PHYCAS_ASSERT(par != NULL);
+				PHYCAS_ASSERT(par->IsInternal());
+				Univents & ndP_univents = getUniventsRef(*par);
+				const std::vector<int8_t> & par_states_vec = ndP_univents.getEndStatesVecRef();
+				const int8_t * par_states_ptr = &par_states_vec[0];
+				univentProbMgr.sampleDescendantStates(nd_univents, pmatrix, cla, par_states_ptr, *rng.get());
+				if (doSampleUnivents)
+					remapUniventsForNode(t, nd);
+				}
+			}
+		else if (doSampleUnivents)
+			remapUniventsForNode(t, nd);
+		if (false)
+			{
+			std::cerr << "\ntreeSMat after another edge:\n";
+			for (unsigned i = 0; i < num_states; ++i)
+				{
+				for (unsigned j = 0; j < num_states; ++j)
+					std::cerr << boost::str(boost::format("%10d ") % treeSMat[i][j]);
+				std::cerr << std::endl;
+				}
+			}
+		}
+	if (doSampleUnivents)
+		{
+		univentProbMgr.setIsMappingValid(true);
+		invalidUniventMappingNodes.clear();
+		}
+	//std::cerr << "in fullRemapping\n";
+	debugCheckSMatrix(t);
+	}
+
+
+
+
+// Keeps the endstates constant, but generates a new mapping for the edge below nd.
+void TreeLikelihood::remapUniventsForNode(TreeShPtr t, TreeNode * nd)
+{
+	PHYCAS_ASSERT(localRng);
+	TreeNode * root_tip = t->GetFirstPreorder();
+	TreeNode * subroot = root_tip->GetLeftChild();
+
+	Univents & nd_univents = getUniventsRef(*nd);
+	const double nd_edge_len = nd->GetEdgeLen();
+	SquareMatrix p_mat_trans_scratch(num_states, 0.0);
+	double ** p_mat_trans_scratch_ptr = p_mat_trans_scratch.GetMatrix();
+	
+	unsigned ** nodeSMat = getNodeSMat(nd);
+	
+	if (false)
+		{
+		std::cerr << "\ntreeSMat before decrementing:\n";
+		for (unsigned i = 0; i < num_states; ++i)
+			{
+			for (unsigned j = 0; j < num_states; ++j)
+				std::cerr << boost::str(boost::format("%10d ") % treeSMat[i][j]);
+			std::cerr << std::endl;
+			}
+		}
+	for (unsigned i = 0; i < num_states*num_states; ++i)
+		{
+		treeSMat[0][i] -= nodeSMat[0][i];
+		nodeSMat[0][i] = 0;
+		}
+	
+	const bool forceRecalcPmat = true;
+	
+	if (nd->IsInternal())
+		{
+		// Choose states for all sites at this internal node
+		InternalData * nd_data =  nd->GetInternalData();
+		if (nd == subroot)
+			{
+			std::vector<LikeFltType> prob(num_states*num_patterns);
+			// Gather arrays needed from the root_tip
+			double						   root_tip_edge_len  = nd_edge_len;
+			const TipData &				   root_tip_data	  = *(root_tip->GetTipData());
+			double * * *				   root_tip_p		  = root_tip_data.getMutableTransposedPMatrices();
+			calcPMatTranspose(root_tip_p, root_tip_data.getConstStateListPos(),	 root_tip_edge_len);
+			const double * const * const * root_tip_tmatrix	  = root_tip_data.getConstTransposedPMatrices();
+			const int8_t *				   root_tip_codes	  = root_tip_data.getConstStateCodes();
+			fillTranspose(p_mat_trans_scratch_ptr, root_tip_tmatrix[0], num_states);
+			univentProbMgr.sampleUnivents(nd_univents, root_tip_edge_len, root_tip_codes, const_cast<const double * const*>(p_mat_trans_scratch_ptr), *localRng.get(), nodeSMat);
+			}
+		else
+			{
+			//
+			// Choose states and mappings for non-subroot internal node
+			//
+			double *** pmatrices = nd_data->getPMatrices();
+			TreeNode * par = nd->GetParent();
+			PHYCAS_ASSERT(par != NULL);
+			PHYCAS_ASSERT(par->IsInternal());
+			Univents & ndP_univents = getUniventsRef(*par);
+			const std::vector<int8_t> & par_states_vec = ndP_univents.getEndStatesVecRef();
+			const int8_t * par_states_ptr = &par_states_vec[0];
+			if (forceRecalcPmat)
+				calcPMat(pmatrices, nd_edge_len);
+			double ** pmatrix = pmatrices[0]; // index is 0 because assuming only one rate 
+			univentProbMgr.sampleUnivents(nd_univents, nd_edge_len,  par_states_ptr, pmatrix, *localRng.get(), nodeSMat);
+			}
+		}
+	else
+		{
+		// Choose mappings for tip node
+		TreeNode * par = nd->GetParent();
+		PHYCAS_ASSERT(par != NULL);
+		PHYCAS_ASSERT(par->IsInternal());
+		Univents & ndP_univents = getUniventsRef(*par);
+		const std::vector<int8_t> & par_states_vec = ndP_univents.getEndStatesVecRef();
+		const int8_t * par_states_ptr = &par_states_vec[0];
+		TipData * nd_data =	 nd->GetTipData();
+		if (forceRecalcPmat)
+			{
+			double * * * nd_p = nd_data->getMutableTransposedPMatrices();
+			calcPMatTranspose(nd_p,nd_data->getConstStateListPos(), nd_edge_len);
+			}
+		double *** tmatrices = nd_data->getTransposedPMatrices();
+		fillTranspose(p_mat_trans_scratch_ptr, tmatrices[0], num_states);
+		univentProbMgr.sampleUnivents(nd_univents, nd_edge_len, par_states_ptr, const_cast<const double **>(p_mat_trans_scratch_ptr), *localRng.get(), nodeSMat);
+		}
+
+	if (false)
+		{
+		std::cerr << "\ntreeSMat after decrementing / before incrementing:\n";
+		for (unsigned i = 0; i < num_states; ++i)
+			{
+			for (unsigned j = 0; j < num_states; ++j)
+				std::cerr << boost::str(boost::format("%10d ") % treeSMat[i][j]);
+			std::cerr << std::endl;
+			}
+		}
+
+	for (unsigned i = 0; i < num_states*num_states; ++i)
+		treeSMat[0][i] += nodeSMat[0][i];
+
+	if (false)
+		{
+		std::cerr << "\ntreeSMat after  incrementing:\n";
+		for (unsigned i = 0; i < num_states; ++i)
+			{
+			for (unsigned j = 0; j < num_states; ++j)
+				std::cerr << boost::str(boost::format("%10d ") % treeSMat[i][j]);
+			std::cerr << std::endl;
+			}
+		}
+
+	nd_univents.setValid(true);
+}
+
+
+
 
 }	// namespace phycas

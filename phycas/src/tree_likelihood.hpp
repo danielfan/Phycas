@@ -37,6 +37,8 @@
 	
 namespace phycas
 {
+unsigned ** getNodeSMat(TreeNode * nd);
+
 typedef const double * const * const * ConstPMatrices;
 typedef std::vector<unsigned int> StateListPos;
 class CondLikelihood;
@@ -144,7 +146,8 @@ class TreeLikelihood
 		void							simulateFirst(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar);
 		void							simulate(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar);
 
-		const UniventProbMgr		  & GetUniventProbMgrConstRef() const {return univentProbMgr;}
+		const UniventProbMgr &          GetUniventProbMgrConstRef() const {return univentProbMgr;}
+		UniventProbMgr &                GetUniventProbMgrRef() {return univentProbMgr;}
 		void							useUnimap(bool yes_or_no = true);
 		bool							isUsingUnimap();
 		void							fullRemapping(TreeShPtr t, LotShPtr rng, bool doSampleUnivents);
@@ -190,6 +193,9 @@ class TreeLikelihood
 		{
 		    localRng = r;
 		}
+
+		void							remapUniventsForNode(TreeShPtr, TreeNode *);
+
 	protected:
 
 		UnderflowManager				underflow_manager;		/**< The object that takes care of underflow correction when computing likelihood for large trees */
@@ -216,7 +222,6 @@ class TreeLikelihood
 		bool							debugging_now;			/**< For debugging, indicates whether user wants to see debugging output */
 
 
-		void							remapUniventsForNode(TreeShPtr, TreeNode *);
 
 	protected:
 

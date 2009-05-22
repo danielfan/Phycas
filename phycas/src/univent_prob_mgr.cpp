@@ -16,10 +16,14 @@
 |  with this program; if not, write to the Free Software Foundation, Inc.,    |
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+#include <boost/bind.hpp>
 #include "phycas/src/univent_prob_mgr.hpp"
 #include "phycas/src/tree_likelihood.hpp"
 #include "phycas/src/basic_tree.hpp"
 #include "phycas/src/basic_tree_node.hpp"
+#include "phycas/src/edge_iterators.hpp"
+#include "phycas/src/tip_data.hpp"
+#include "phycas/src/internal_data.hpp"
 
 namespace phycas
 {
@@ -183,9 +187,7 @@ void UniventProbMgr::expandUMatVect(unsigned m) const
 			logmfact[m] = logmfact[m - 1] + log((double)m);
 		std::cerr << "\nIncreasing maxm to " << maxm << std::endl;
 		for (unsigned i = 0; i <= maxm; ++i)
-			{
 			std::cerr << '\t' << i << '\t' << logmfact[i] << std::endl;
-			}
 		}
 	maxm = m;
 
@@ -338,6 +340,7 @@ void UniventProbMgr::sampleUnivents(Univents & u, const double edgelen,  const i
 			// attempt to sample m will be made.
 		double total_prob = 0.0;
 		unsigned next_z = 0;
+		//std::cerr << "Sampling " << (int)start_state << " -> " << (int)end_state << " which has trans_prob = " << trans_prob << " uni_variate=" <<uni_variate;		
 		for (;;)
 			{
 			for (unsigned z = next_z; z <= maxm; ++z)
@@ -350,6 +353,7 @@ void UniventProbMgr::sampleUnivents(Univents & u, const double edgelen,  const i
 					}
 				const double elogprm = elogprmVec[z];
 				double pij = uMatVect[z][start_state][end_state]; //@POL should uMatVect hold L matrices rather than U matrices?
+				//std::cerr << "(elogprm=" << elogprm << ", pij=" << pij << ") ";
 				const double pr = pij*elogprm/trans_prob;
 				total_prob += pr;
 				if (total_prob > uni_variate)
@@ -367,7 +371,7 @@ void UniventProbMgr::sampleUnivents(Univents & u, const double edgelen,  const i
 				break;
 			}
 		/* end  sampleM inlined manually */
-    
+    	//std::cerr << " m = " << m << '\n';
 		u.mdot += m;
 		if (doSampleTimes)
 			{
@@ -434,7 +438,7 @@ void UniventProbMgr::sampleUnivents(Univents & u, const double edgelen,  const i
 			}
 
 	  	}
-	u.is_valid = true;
+	u.setValid(true);
 	u.times_valid = this->sampleTimes;
 	}
 
@@ -551,6 +555,10 @@ double UniventProbMgr::calcUnimapLnL(
 	//std::cerr << log_likelihood << " = "<< log_basal_freqs << " + " << log_edgelen_to_mdot << " + " << log_uij_to_sij << " - " << nsites<< " * " << lambda << " *" << tree_length << std::endl;
 	return log_likelihood;
 	}
+
+
+
+
 
 } // namespace phycas
 

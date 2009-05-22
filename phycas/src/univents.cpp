@@ -37,7 +37,7 @@ void Univents::setEndStates(
   const int8_t * p)  /**< is the vector of end states to be copied to `end_states_vec' */
     {
 	PHYCAS_ASSERT(p);
-	is_valid = false;   //@POL shouldn't we also set times_valid to false here?
+	setValid(false);   //@POL shouldn't we also set times_valid to false here?
 	const unsigned n = (const unsigned)end_states_vec.size();
 	PHYCAS_ASSERT(n > 0);
 	for (unsigned i = 0; i < n; ++i)
@@ -55,7 +55,7 @@ void Univents::resize(unsigned n)
 	times.resize(n);
 	end_states_vec.resize(n);
 	mdot = UINT_MAX;
-	is_valid = false;
+	setValid(false);
 	times_valid = false;
 	}	
 
@@ -68,7 +68,9 @@ void Univents::swap(Univents & other)
 	times.swap(other.times);
 	end_states_vec.swap(other.end_states_vec);
 	std::swap(mdot, other.mdot);
-	std::swap(is_valid, other.is_valid);
+	const bool iv = this->is_valid;
+	setValid(other.is_valid);
+	other.setValid(iv);
 	std::swap(times_valid, other.times_valid);
 	}	
 

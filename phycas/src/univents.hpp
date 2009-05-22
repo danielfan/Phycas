@@ -41,10 +41,7 @@ class Univents
 		void                                setEndStates(const int8_t * p);
 
 		bool                                isValid() const;
-		void								setValid(bool v)
-		{
-		is_valid = v;
-		}
+		void								setValid(bool v);
 		bool                                timesValid() const;
 
 		const std::vector<int8_t> &         getEndStatesVecConstRef() const;
@@ -74,6 +71,11 @@ class Univents
 		/************ remember to add any new data members to swap(); *************/
 	friend class UniventProbMgr;
     };
+
+inline void Univents::setValid(bool v)
+	{
+	is_valid = v;
+	}
 
 } // phycas
 

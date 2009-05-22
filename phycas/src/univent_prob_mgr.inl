@@ -29,7 +29,7 @@ namespace phycas
 inline void UniventProbMgr::sampleDescendantStates(Univents & u, const double * const * p_mat, const LikeFltType * des_cla, const int8_t * parent_states, Lot & rng) const
 	{
 	PHYCAS_ASSERT(u.size() == u.end_states_vec.size());
-	u.is_valid = false;
+	u.setValid(false);
 	sampleDescendantStates(u.size(), &u.end_states_vec[0], p_mat, des_cla, parent_states, rng);
 	}
 
@@ -39,7 +39,7 @@ inline void UniventProbMgr::sampleDescendantStates(Univents & u, const double * 
 inline void UniventProbMgr::sampleRootStates(Univents & u, const LikeFltType * rootStatePosterior, Lot & rng, bool posteriors_normalized, unsigned * obs_state_counts) const
 	{
 	PHYCAS_ASSERT(u.size() == u.end_states_vec.size());
-	u.is_valid = false;
+	u.setValid(false);
 	sampleRootStates(u.size(), &u.end_states_vec[0], rootStatePosterior, rng, posteriors_normalized, obs_state_counts);
 	}
 
