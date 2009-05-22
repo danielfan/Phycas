@@ -67,6 +67,8 @@ double Lot::Uniform(const char * file, const int line)
 double Lot::Uniform()
 #endif
 	{
+#if 1	// original random number generator; a tiny bit slower but probably better
+
 	const unsigned a = 16807U;
 	const unsigned b15 = 32768U;
 	const unsigned b16 = 65536U;
@@ -89,6 +91,34 @@ double Lot::Uniform()
 	return retval;
 #else
 	return curr_seed * 4.6566128575e-10;
+#endif
+
+
+#else	// DLS random number generator; slightly faster
+
+#	define MASK32BITS 0x00000000FFFFFFFFL
+#	define A 				397204094			/* multiplier */
+#	define M				2147483647			/* modulus = 2^31 - 1 */
+#	define MASK_SIGN_BIT	0x80000000
+#	define MASK_31_BITS	0x7FFFFFFF
+
+	unsigned	x, y;
+	uint64_t	w;
+	
+	w = (uint64_t)A * curr_seed;
+	x = (unsigned)(w & MASK32BITS);
+	y = (unsigned)(w >> 32);
+	
+	y = (y << 1) | (x >> 31);		/* isolate high-order 31 bits */
+	x &= MASK_31_BITS;				/* isolate low-order 31 bits */
+	x += y;							/* x'(i + 1) unless overflows */
+	if (x & MASK_SIGN_BIT) 			/* overflow check */
+		x -= M;						/* deal with overflow */
+
+	curr_seed = x;
+
+	return (1.0 / (M-2)) * (curr_seed - 1);
+
 #endif
 	}
 
