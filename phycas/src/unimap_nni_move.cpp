@@ -448,7 +448,7 @@ double UnimapNNIMove::FourTaxonLnLBeforeMove()
 
     return lnlike;
 	}
-
+ 
 void UnimapNNIMove::DebugSaveNexusFile(TipData * xtd, TipData * ytd, TipData * ztd, TipData * wtd, double lnlike)
     {
     typedef boost::shared_array<const int8_t> StateArr;
