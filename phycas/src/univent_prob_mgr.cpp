@@ -59,6 +59,14 @@ UniventProbMgr::UniventProbMgr(
 		logmfact[m] = logmfact[m-1] + log((double)m);
 	}
 
+/*
+double UniventProbMgr::GetLambda() 
+	{
+	if (model->timestamp() != this->modelTimestamp)
+		recalcUMat();
+	return this->lambda;
+	}
+*/
 /*----------------------------------------------------------------------------------------------------------------------
 |	
 */

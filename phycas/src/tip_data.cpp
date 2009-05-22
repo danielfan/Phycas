@@ -85,7 +85,7 @@ TipData::TipData(
         for (unsigned i = 0; i < nPatterns; ++i)
         	{
         	const int8_t sc = state_codes[i];
-        	if (sc < 0 || sc >= nStates)
+        	if (sc < 0 || (int)sc >= (int)nStates)
         		throw XLikelihood("Sorry, we currently do not support data sets with ambiguity or gaps when you are using uniformization-based methods");
         	}
         }

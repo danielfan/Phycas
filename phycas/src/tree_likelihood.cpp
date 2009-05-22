@@ -2283,15 +2283,10 @@ double TreeLikelihood::calcLnL(
 					treeSMat[0][i] = 0;
 				}
 			
-			if (false)
-				fullRemapping(t, localRng, true);
-			else
-				{
-				univentProbMgr.recalcUMat();
-				std::set<TreeNode *>::iterator ndIt = invalidUniventMappingNodes.begin(); 
-				for (;ndIt != invalidUniventMappingNodes.end(); ++ndIt)
-					remapUniventsForNode(t, *ndIt);
-				}
+			univentProbMgr.recalcUMat();
+			std::set<TreeNode *>::iterator ndIt = invalidUniventMappingNodes.begin(); 
+			for (;ndIt != invalidUniventMappingNodes.end(); ++ndIt)
+				remapUniventsForNode(t, *ndIt);
 			
 			univentProbMgr.setIsMappingValid(true);
 			invalidUniventMappingNodes.clear();
