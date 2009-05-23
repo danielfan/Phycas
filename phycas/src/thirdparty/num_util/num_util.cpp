@@ -271,7 +271,7 @@ std::vector<int> shape(numeric::array arr){
 }
 
 int get_dim(boost::python::numeric::array arr, int dimnum){
-  assert(dimnum >= 0);
+  PHYCAS_ASSERT(dimnum >= 0);
   int the_rank=rank(arr);
   if(the_rank < dimnum){
     std::ostringstream stream;

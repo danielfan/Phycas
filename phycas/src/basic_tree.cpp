@@ -564,7 +564,7 @@ void Tree::SelectAllNodes()
 */
 TreeNode * Tree::FindMRCA(unsigned tip1, unsigned tip2)
 	{
-	assert(0);	//POL not yet written
+	PHYCAS_ASSERT(0);	//POL not yet written
 	return NULL;
 	}
 #endif
@@ -1989,7 +1989,7 @@ void Tree::setRooted()
 	{
     // Right now, this function can only be called immediately after construction or immediately after a call to Clear()
     // Much work needs to be done before an existing tree can be safely converted from unrooted to rooted
-    assert(firstPreorder == NULL);
+    PHYCAS_ASSERT(firstPreorder == NULL);
     isRooted = true;
     }
 
@@ -2000,7 +2000,7 @@ void Tree::setUnrooted()
 	{
     // Right now, this function can only be called immediately after construction or immediately after a call to Clear()
     // Much work needs to be done before an existing tree can be safely converted from rooted to unrooted
-    assert(firstPreorder == NULL);
+    PHYCAS_ASSERT(firstPreorder == NULL);
     isRooted = false;
     }
 

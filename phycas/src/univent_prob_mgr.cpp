@@ -520,7 +520,7 @@ double UniventProbMgr::calcUnimapLnL(
   const unsigned * obs_state_counts,
   const unsigned * const * sMat)
 	{
-	assert(isMappingValidVar);
+	PHYCAS_ASSERT(isMappingValidVar);
 	lambda = model->calcLMat(lnUMat);
 	double nsites = (double)num_patterns;
 

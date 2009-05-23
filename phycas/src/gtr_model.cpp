@@ -208,7 +208,7 @@ void GTR::calcPMat(double * * pMat, double edgeLength) const
 */
 double GTR::calcUniformizationLambda() const
 	{
-    assert(0);
+    PHYCAS_ASSERT(0);
     return 0.0;
 	}
 
@@ -219,7 +219,7 @@ double GTR::calcUniformizationLambda() const
 double GTR::calcLMat(double * * lMat) const
 	{
     std::cerr << "Error in GTR::calcUMat: q_matrix does not yet have the required recalcLMat function" << std::endl;
-    assert(0);
+    PHYCAS_ASSERT(0);
 	//q_matrix.recalcLMat(lMat, edgeLength);
     return 0.0;
 	}
@@ -231,7 +231,7 @@ double GTR::calcLMat(double * * lMat) const
 double GTR::calcUMat(double * * uMat) const
 	{
     std::cerr << "Error in GTR::calcLMat: q_matrix does not yet have the required recalcUMat function" << std::endl;
-    assert(0);
+    PHYCAS_ASSERT(0);
 	//q_matrix.recalcUMat(uMat, edgeLength);
     return 0.0;
 	}

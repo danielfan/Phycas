@@ -23,21 +23,6 @@
 namespace phycas
 {
 
-/*----------------------------------------------------------------------------------------------------------------------
-|	
-*/
-inline bool UnimapNNIMove::getDoSampleUnivents() const 
-    {
-    return doSampleUnivents;
-    }
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	
-*/
-inline void UnimapNNIMove::setDoSampleUnivents(bool v)
-    {
-    doSampleUnivents = v;
-    }
 
 } // namespace phycas
 #endif

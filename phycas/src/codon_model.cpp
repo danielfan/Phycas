@@ -250,7 +250,7 @@ static unsigned codon_code_to_aa_code[] =
 |	Constructor sets `num_states' data member to 61, the codon frequencies to 1/61, and `kappa' and `omega' both to 1.0.
 */
 Codon::Codon()
-  : Model(61), kappa(1.0), omega(1.0), kappa_fixed(false), omega_fixed(false)
+  : Model(61), kappa(1.0), omega(1.0), omega_fixed(false), kappa_fixed(false)
 	{
 	is_codon_model = true;
 	state_repr.reserve(64);
@@ -557,7 +557,7 @@ void Codon::calcPMat(double * * pMat, double edgeLength) const
 */
 double Codon::calcUniformizationLambda() const
 	{
-    assert(0);
+    PHYCAS_ASSERT(0);
     return 0.0;
 	}
 
@@ -568,7 +568,7 @@ double Codon::calcUniformizationLambda() const
 double Codon::calcLMat(double * * lMat) const
 	{
     std::cerr << "Error in Codon::calcLMat: q_matrix does not yet have the required recalcLMat function" << std::endl;
-    assert(0);
+    PHYCAS_ASSERT(0);
 	//updateQMatrix();
 	//q_matrix.recalcLMat(lMat, edgeLength);
     return 0.0;
@@ -581,7 +581,7 @@ double Codon::calcLMat(double * * lMat) const
 double Codon::calcUMat(double * * uMat) const
 	{
     std::cerr << "Error in Codon::calcUMat: q_matrix does not yet have the required recalcUMat function" << std::endl;
-    assert(0);
+    PHYCAS_ASSERT(0);
 	//updateQMatrix();
 	//q_matrix.recalcUMat(uMat, edgeLength);
     return 0.0;
@@ -732,7 +732,7 @@ void Codon::updateQMatrix() const
 			//outf << nchanges << '\t';
 
 			double rel_rate = 0.0;
-			//assert(nchanges > 0);
+			//PHYCAS_ASSERT(nchanges > 0);
             PHYCAS_ASSERT(nchanges > 0);
 			if (nchanges == 1)
 				{
