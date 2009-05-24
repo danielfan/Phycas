@@ -48,6 +48,9 @@ LargetSimonMove::~LargetSimonMove()
 */
 bool LargetSimonMove::update()
 	{
+	//temporary!
+	//return false;
+	
 	// The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
 	// A proposed LargetSimonMove cannot be accepted without changing edge lengths, so it is best to bail out now.
 	if (is_fixed)

@@ -69,6 +69,23 @@ void transpose(T * * mat, unsigned dim)
 			std::swap(mat[i][j], mat[j][i]);
 	}
 
+#define AA  0
+#define AC  1
+#define AG  2
+#define AT  3
+#define CA  4
+#define CC  5
+#define CG  6
+#define CT  7
+#define GA  8
+#define GC  9
+#define GG  10
+#define GT  11
+#define TA  12
+#define TC  13
+#define TG  14
+#define TT  15
+
 namespace phycas
 {
 
@@ -630,6 +647,11 @@ double TreeLikelihood::harvestLnL(
 double TreeLikelihood::harvestLnLFromValidEdge(
    ConstEdgeEndpoints & focal_edge)	/**< is the edge containing the focal node that will serve as the likelihood root */	
 	{
+	// make local variables for compiler optimization
+	unsigned ns = num_states;
+	unsigned nr = num_rates;
+	unsigned np = num_patterns;
+	
 	PHYCAS_ASSERT(focal_edge.getFocalNode() != NULL);
 	PHYCAS_ASSERT(focal_edge.getFocalNeighbor() != NULL);
 	const TreeNode * focalNeighbor = focal_edge.getFocalNeighbor();
@@ -642,10 +664,10 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 	PHYCAS_ASSERT(focalCondLike);
 	const LikeFltType * focalNodeCLA = focalCondLike->getCLA(); //PELIGROSO
 	PHYCAS_ASSERT(focalNodeCLA != NULL);
-	const unsigned singleRateCLALength = num_patterns*num_states;
+	const unsigned singleRateCLALength = np*ns;
 
 	// Get pointer to start of array holding pattern counts
-	PHYCAS_ASSERT(pattern_counts.size() == num_patterns);
+	PHYCAS_ASSERT(pattern_counts.size() == np);
 	const PatternCountType * const  counts = (const PatternCountType * const)(&pattern_counts[0]); //PELIGROSO
 
 	// Get state frequencies from model and alias rate category probability array for speed
@@ -670,24 +692,24 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 		calcPMatTranspose(p, tipData.getConstStateListPos(),  focalEdgeLen);
 		const double * const * const * tipPMatricesTrans = tipData.getConstTransposedPMatrices();
 		const int8_t * tipStateCodes = tipData.getConstStateCodes();
-		std::vector<const double *> focalNdCLAPtr(num_rates);
-		for (unsigned i = 0; i < num_rates; ++i)
+		std::vector<const double *> focalNdCLAPtr(nr);
+		for (unsigned i = 0; i < nr; ++i)
 			focalNdCLAPtr[i] = focalNodeCLA + singleRateCLALength*i;
 			
-		for (unsigned pat = 0; pat < num_patterns; ++pat)
+		for (unsigned pat = 0; pat < np; ++pat)
 			{
 			double siteLike = 0.0;
-			for (unsigned r = 0; r < num_rates; ++r)
+			for (unsigned r = 0; r < nr; ++r)
 				{
 				const double * const * const tipPMatrixT = tipPMatricesTrans[r];
 				const double * tipPMatT_pat = tipPMatrixT[tipStateCodes[pat]];
 				double siteRateLike = 0.0;
-                for (unsigned i = 0; i < num_states; ++i)
+                for (unsigned i = 0; i < ns; ++i)
                     {
 					siteRateLike += stateFreq[i] * focalNdCLAPtr[r][i] * tipPMatT_pat[i];
                     }
 				siteLike += rateCatProbArray[r] * siteRateLike;
-				focalNdCLAPtr[r] += num_states;
+				focalNdCLAPtr[r] += ns;
 				}
 
 			double log_correction_factor = underflow_manager.getCorrectionFactor(pat, focalCondLike);
@@ -758,34 +780,67 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 		ConstCondLikelihoodShPtr neighborCondLike = getValidCondLikePtr(focalNeighbor, focalNode); // 
 
 		const double * focalNeighborCLA = neighborCondLike->getCLA(); //PELIGROSO
-		std::vector<const double *> focalNdCLAPtr(num_rates);
-		std::vector<const double *> focalNeighborCLAPtr(num_rates);
-		
-		for (unsigned i = 0; i < num_rates; ++i)
+		std::vector<const double *> focalNdCLAPtr(nr);
+		std::vector<const double *> focalNeighborCLAPtr(nr);
+
+#if 1 //POLPY_NEWWAY
+		ScopedThreeDMatrix<double> piP;
+		piP.Initialize(nr, ns, ns);
+#endif
+		for (unsigned r = 0; r < nr; ++r)
 			{
-			focalNdCLAPtr[i] = focalNodeCLA + singleRateCLALength*i;
-			focalNeighborCLAPtr[i] = focalNeighborCLA + singleRateCLALength*i;
+			focalNdCLAPtr[r] = focalNodeCLA + singleRateCLALength*r;
+			focalNeighborCLAPtr[r] = focalNeighborCLA + singleRateCLALength*r;
+#if 1 // POLPY_NEWWAY
+			for (unsigned i = 0; i < ns; ++i)
+				{
+				for (unsigned j = 0; j < ns; ++j)
+					{
+					piP.ptr[r][i][j] = stateFreq[i]*childPMatrices[r][i][j];
+					}			
+				}			
+#endif
 			}
 
-		for (unsigned pat = 0; pat < num_patterns; ++pat)
+		for (unsigned pat = 0; pat < np; ++pat)
 			{
 			double siteLike = 0.0;
-			for (unsigned r = 0; r < num_rates; ++r)
+			for (unsigned r = 0; r < nr; ++r)
 				{
-				const double * const * childPMatrix = childPMatrices[r];
+				const double * focalNdCLAPtr_r = focalNdCLAPtr[r];
 				const double * neigborCLAForRate = focalNeighborCLAPtr[r];
 				double siteRateLike = 0.0;
-				for (unsigned i = 0; i < num_states; ++i)
+				
+#if 0
+				const double * const * childPMatrix = childPMatrices[r];
+				for (unsigned i = 0; i < ns; ++i)
 					{
-					double neigborLike = 0.0;
 					const double * childP_i = childPMatrix[i];
-					for (unsigned j = 0; j < num_states; ++j)
+					double neigborLike = 0.0;
+					for (unsigned j = 0; j < ns; ++j)
 						neigborLike += childP_i[j]*neigborCLAForRate[j];
-					siteRateLike += stateFreq[i]*focalNdCLAPtr[r][i]*neigborLike;
+					siteRateLike += stateFreq[i]*focalNdCLAPtr_r[i]*neigborLike;
 					}
+#else	
+				for (unsigned i = 0; i < ns; ++i)
+					{
+					const double * childP_i = piP.ptr[r][i];
+					double neigborLike = 0.0;
+#if 1
+					for (unsigned j = 0; j < ns; ++j)
+						neigborLike += childP_i[j]*neigborCLAForRate[j];
+#else
+					neigborLike =   childP_i[0]*neigborCLAForRate[0]
+					              + childP_i[1]*neigborCLAForRate[1]
+					              + childP_i[2]*neigborCLAForRate[2]
+					              + childP_i[3]*neigborCLAForRate[3];
+#endif
+					siteRateLike += focalNdCLAPtr_r[i]*neigborLike;
+					}
+#endif
 				siteLike += rateCatProbArray[r]*siteRateLike;
-				focalNdCLAPtr[r] += num_states;
-				focalNeighborCLAPtr[r] += num_states;
+				focalNdCLAPtr[r] += ns;
+				focalNeighborCLAPtr[r] += ns;
 				}
 
 			double log_correction_factor = underflow_manager.getCorrectionFactor(pat, focalCondLike);

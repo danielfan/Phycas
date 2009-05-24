@@ -136,11 +136,11 @@ TreeLikelihood::TreeLikelihood(
   model(mod), 
   rate_means(mod->getNRatesTotal(), 1.0), //POL_BOOKMARK rate_means vector init
   rate_probs(mod->getNRatesTotal(), 1.0), 
-  nevals(0),
-  debugging_now(false)
-  ,using_unimap(false),
+  debugging_now(false),
+  using_unimap(false),
   univentProbMgr(mod),
-  treeSMat(NULL)
+  treeSMat(NULL),
+  nevals(0)
     {
 	cla_pool = CondLikelihoodStorageShPtr(new CondLikelihoodStorage());
 	mod->recalcRatesAndProbs(rate_means, rate_probs);
@@ -2233,7 +2233,7 @@ double TreeLikelihood::calcLnL(
 		return 0.0;
 
 	// The variable nevals keeps track of the number of times the likelihood has been calculated		
-	++nevals;
+	incrementNumLikelihoodEvals();
 
 	// Compute likelihood using likelihood_root if specified
 	// Assume that if likelihood_root has been specified, then the necessary 
@@ -3119,7 +3119,7 @@ std::string TreeLikelihood::getStateStr(
 /*----------------------------------------------------------------------------------------------------------------------
 |	Resets private data member `nevals' to 0.
 */
-void TreeLikelihood::resetNEvals()
+void TreeLikelihood::resetNumLikelihoodEvals()
 	{
 	nevals = 0;
 	}
@@ -3127,9 +3127,17 @@ void TreeLikelihood::resetNEvals()
 /*----------------------------------------------------------------------------------------------------------------------
 |	Accessor providing access to the current value of the private data member `nevals'.
 */
-unsigned TreeLikelihood::getNEvals()
+unsigned TreeLikelihood::getNumLikelihoodEvals() const
 	{
 	return nevals;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor providing access to the current value of the private data member `nevals'.
+*/
+void TreeLikelihood::incrementNumLikelihoodEvals()
+	{
+	++nevals;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

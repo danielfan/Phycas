@@ -218,6 +218,7 @@ bool UnimapEdgeMove::update()
 	double log_posterior_ratio = 0.0;
 	const double log_prior_ratio = curr_ln_prior - prev_ln_prior;
     const double log_likelihood_ratio = (double)mdot*log(r) - nsites*uniformization_lambda*(curr_edgelen - origEdgelen);
+    likelihood->incrementNumLikelihoodEvals();
     if (is_standard_heating)
         log_posterior_ratio = heating_power*(log_likelihood_ratio + log_prior_ratio);
     else

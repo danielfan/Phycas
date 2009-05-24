@@ -191,7 +191,7 @@ alias likelihood_sources
     phycas/src/kappa_param.cpp 
     phycas/src/internal_data.cpp 
     phycas/src/thirdparty/dcdflib/src/ipmpar.c
-    phycas/src/larget_simon_move.cpp 
+    phycas/src/larget_simon_move.cpp
     phycas/src/likelihood_loops.cpp
     phycas/src/likelihood_models.cpp 
     phycas/src/likelihood_pymod.cpp 

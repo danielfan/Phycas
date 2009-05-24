@@ -289,6 +289,19 @@ MCMCChainManager::MCMCChainManager()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	For all updaters stored in `all_updaters', obtain the weight w and call the update fuction of the updater w times.
+*/
+void MCMCChainManager::updateAllUpdaters()
+	{
+	for (MCMCUpdaterVect::iterator it = all_updaters.begin(); it != all_updaters.end(); ++it)
+		{
+		unsigned w = (*it)->getWeight();
+		for (unsigned i = 0; i < w; ++i)
+			(*it)->update();
+		}
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
 |	Returns `all_updaters' data member as a const MCMCUpdaterVect reference. Used so that Python programs can iterate 
 |	through all updaters using a construct such as this: for x in chainMgr.getAllUpdaters(): ...
 */

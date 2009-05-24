@@ -171,24 +171,25 @@ class TreeLikelihood(TreeLikelihoodBase):
         """
         return TreeLikelihoodBase.listPatterns(self, False)
 
-    def resetNEvals(self):
+    def resetNumLikelihoodEvals(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Resets the number of likelihood evaluations to 0. The function
-        getNEvals can be called to obtain the number of times the likelihood
-        has been evaluated since resetNEvals was last called.
+        getNumLikelihoodEvals can be called to obtain the number of times the
+        likelihood has been evaluated since resetNumLikelihoodEvals was last
+        called.
         
         """
-        TreeLikelihoodBase.resetNEvals(self)
+        TreeLikelihoodBase.resetNumLikelihoodEvals(self)
     
-    def getNEvals(self):
+    def getNumLikelihoodEvals(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Reports the number of times the likelihood has been evaluated since
         the function resetNEvals was last called.
         
         """
-        return TreeLikelihoodBase.getNEvals(self)
+        return TreeLikelihoodBase.getNumLikelihoodEvals(self)
     
     def addDataTo(self, other_sim_data):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

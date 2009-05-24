@@ -31,7 +31,7 @@ PROFILETEST_OBJS = profiletest.o nxs_file_path.o phycas_nexus_reader.o nxsreader
 					nxsdistancesblock.o mcmc_updater.o slice_sampler.o tree_likelihood.o likelihood_models.o larget_simon_move.o \
 					mcmc_chain_manager.o probability_distribution.o univents.o internal_data.o tip_data.o univent_prob_mgr.o \
 					basic_tree.o basic_tree_node.o edgelen_master_param.o likelihood_loops.o split.o square_matrix.o \
-					basic_lot.o basic_cdf.o dcdflib.o ipmpar.o underflow_policy.o flex_rate_param.o flex_prob_param.o \
+					basic_lot.o basic_cdf.o dcdflib.o ipmpar.o underflow_manager.o flex_rate_param.o flex_prob_param.o \
 					pinvar_param.o mapping_move.o tree_manip.o hyperprior_param.o mcmc_param.o state_freq_param.o kappa_param.o \
 					jc_model.o hky_model.o gtr_model.o codon_model.o q_matrix.o omega_param.o sim_data.o gtr_rate_param.o \
 					discrete_gamma_shape_param.o linalg.o cond_likelihood_storage.o mcmc_flexcat_param.o

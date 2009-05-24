@@ -157,8 +157,9 @@ class TreeLikelihood
 		void							swapInternalDataAndEdgeLen(TreeNode * nd1, TreeNode * nd2);
 		void							addDataTo(SimData & other);
 
-		unsigned						getNEvals();
-		void							resetNEvals();
+		unsigned						getNumLikelihoodEvals() const;
+		void							incrementNumLikelihoodEvals();
+		void							resetNumLikelihoodEvals();
 
 		TreeNode *						getLikelihoodRoot();
 		void							useAsLikelihoodRoot(TreeNode * nd);
@@ -217,8 +218,6 @@ class TreeLikelihood
 		std::vector<double>				rate_means;				/**< Vector of relative rates */ //POL_BOOKMARK rate_means declaration
 		std::vector<double>				rate_probs;				/**< Vector of relative rate probabilities */
 
-		unsigned						nevals;					/**< For debugging, records the number of times calcLnL() is called */
-
 		bool							debugging_now;			/**< For debugging, indicates whether user wants to see debugging output */
 
 
@@ -246,6 +245,7 @@ class TreeLikelihood
 		std::vector<unsigned>			obs_state_counts;
 		std::set<TreeNode *>			invalidUniventMappingNodes;
         LotShPtr                        localRng;
+		unsigned						nevals;					/**< For debugging, records the number of times the likelihood is calculated */
         
 	public: //@POL these should be protected rather than public
 

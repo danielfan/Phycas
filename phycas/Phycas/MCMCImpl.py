@@ -144,6 +144,12 @@ class MCMCImpl(CommonFunctions):
             self.output(summary)
 
     def updateAllUpdaters(self, chain, chain_index, cycle):
+        for p in chain.chain_manager.getAllUpdaters():
+            w = p.getWeight()
+            for x in range(w):
+                p.update()
+
+    def obsoleteUpdateAllUpdaters(self, chain, chain_index, cycle):
         #import gc
         #gc.enable()
         if self.opts.debugging:
@@ -696,7 +702,8 @@ class MCMCImpl(CommonFunctions):
                 self.explorePrior(cycle)
             else:
                 for i,c in enumerate(self.mcmc_manager.chains):
-                    self.updateAllUpdaters(c, i, cycle)
+                    c.chain_manager.updateAllUpdaters()
+                    #self.updateAllUpdaters(c, i, cycle)
                     
             # print '******** time_stamp =',self.mcmc_manager.getColdChain().model.getTimeStamp()
                     
@@ -837,7 +844,7 @@ class MCMCImpl(CommonFunctions):
         self.showTopoPriorInfo()
         
         self.stopwatch.start()
-        self.mcmc_manager.resetNEvals()
+        self.mcmc_manager.resetNumLikelihoodEvals()
         
         if self.opts.doing_path_sampling:
             self.output('\nSampling (%d cycles for each of the %d values of beta)...' % (self.opts.ncycles, self.opts.ps_nbetavals))
@@ -921,7 +928,7 @@ class MCMCImpl(CommonFunctions):
                 self.mainMCMCLoop()
 
         self.adaptSliceSamplers()
-        total_evals = self.mcmc_manager.getTotalEvals() #self.likelihood.getNEvals()
+        total_evals = self.mcmc_manager.getTotalEvals() #self.likelihood.getNumLikelihoodEvals()
         total_secs = self.stopwatch.elapsedSeconds()
         self.output('%d likelihood evaluations in %.5f seconds' % (total_evals, total_secs))
         if (total_secs > 0.0):

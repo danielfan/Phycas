@@ -196,7 +196,7 @@ class Phycas(object):
                 outfile = file('cf.txt', 'w')
 
         self.stopwatch.start()
-        self.mcmc_manager.resetNEvals()
+        self.mcmc_manager.resetNumLikelihoodEvals()
 
         # Start of the main SAMC loop        
         for cycle in xrange(self.ncycles):
@@ -288,7 +288,7 @@ class Phycas(object):
             print ', %.1f' % c,
         print ']'
 
-        total_evals = self.mcmc_manager.getTotalEvals() #self.likelihood.getNEvals()
+        total_evals = self.mcmc_manager.getTotalEvals()
         total_secs = self.stopwatch.elapsedSeconds()
         self.output('%d likelihood evaluations in %.5f seconds' % (total_evals, total_secs))
         if (total_secs > 0.0):

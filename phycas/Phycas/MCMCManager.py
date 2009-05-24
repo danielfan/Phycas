@@ -244,24 +244,24 @@ class MarkovChain(LikelihoodCore):
 
         self.setupChain()
 
-    def resetNEvals(self):
+    def resetNumLikelihoodEvals(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Calls the resetNEvals function of self.likelihood. This resets the 
-        number of likelihood evaluations performed to 0.
+        Calls the resetNumLikelihoodEvals function of self.likelihood. This
+        resets the number of likelihood evaluations performed to 0.
 
         """
-        return self.likelihood.resetNEvals()
+        return self.likelihood.resetNumLikelihoodEvals()
     
-    def getNEvals(self):
+    def getNumLikelihoodEvals(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Calls the getNEvals function of self.likelihood. This returns the 
-        number of likelihood evaluations performed since the last call of
-        resetNEvals.
+        Calls the getNumLikelihoodEvals function of self.likelihood. This 
+        returns the number of likelihood evaluations performed since the last
+        call of resetNumLikelihoodEvals.
 
         """
-        return self.likelihood.getNEvals()
+        return self.likelihood.getNumLikelihoodEvals()
         
     def paramFileHeader(self, paramf):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -449,8 +449,6 @@ class MarkovChain(LikelihoodCore):
             self.tree_scaler_move = Likelihood.TreeScalerMove()
             self.tree_scaler_move.setName("Tree scaler move")
             self.tree_scaler_move.setWeight(self.parent.opts.tree_scaler_weight)
-            #print '@@@@@@@@@@@ self.parent.opts.tree_scaler_lambda =',self.parent.opts.tree_scaler_lambda
-            #print '@@@@@@@@@@@ self.parent.opts.tree_scaler_lambda.__class__ =',self.parent.opts.tree_scaler_lambda.__class__
             self.tree_scaler_move.setPosteriorTuningParam(self.parent.opts.tree_scaler_lambda)
             self.tree_scaler_move.setPriorTuningParam(self.parent.opts.tree_scaler_lambda0)
             self.tree_scaler_move.setTree(self.tree)
@@ -770,15 +768,15 @@ class MCMCManager:
         self.parent.phycassert(len(self.parent.heat_vector) == len(self.chains), 'length of heat vector (%d) not equal to number of chains (%d)' % (len(self.parent.heat_vector), len(self.chains)))
         self.chains[chain_index].setPower(power)
 
-    def resetNEvals(self):
+    def resetNumLikelihoodEvals(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Calls resetNEvals method for every MarkovChain in the self.chains
-        list.
+        Calls resetNumLikelihoodEvals method for every MarkovChain in the
+        self.chains list.
         
         """
         for c in self.chains:
-            c.resetNEvals()
+            c.resetNumLikelihoodEvals()
 
     def setRandomSeedAllChains(self, rnseed):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -795,13 +793,13 @@ class MCMCManager:
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Returns the total number of likelihood evaluations over all 
-        MarkovChain objects in the self.chains list by calling the getNEvals
-        method for each chain.
+        MarkovChain objects in the self.chains list by calling the 
+        getNumLikelihoodEvals method for each chain.
         
         """
         total = 0
         for c in self.chains:
-            total += c.getNEvals()
+            total += c.getNumLikelihoodEvals()
         return total
 
     def recordSample(self, cycle = -1):

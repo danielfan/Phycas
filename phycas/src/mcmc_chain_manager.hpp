@@ -93,6 +93,8 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 		void					setLastLnLike(double ln_like);
 
 		void					clear();
+		
+		void					updateAllUpdaters();
 
 		const MCMCUpdaterVect &	getAllUpdaters() const;
 

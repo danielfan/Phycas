@@ -2,7 +2,7 @@ from phycas import *
 
 model.type                  	= 'hky'
 model.edgelen_hyperprior		= None
-#model.edgelen_prior				= Exponential(1.0)
+#model.edgelen_prior			= Exponential(1.0)
 
 setMasterSeed(19375)
 mcmc.data_source         		= 'muchoratehet.nex'
@@ -41,6 +41,34 @@ if 'm' in sys.argv:
 	mcmc()
 else:
 	unimap()
+
 sumt.trees = "trees.t"
 if "s" in sys.argv:
 	sumt()
+
+# 20000
+# MrBayes 1 cpu on:   MrBayes 2 cpus on:
+# real    0m3.088s    real    0m2.479s
+# user    0m2.349s    user    0m2.356s (60% less user time)
+# sys     0m0.066s    sys     0m0.056s
+# 
+# Phycas 1 cpu on:   Phycas 2 cpus on:
+# real    0m4.958s   real    0m4.035s
+# user    0m3.934s   user    0m3.926s
+# sys     0m0.073s   sys     0m0.054s
+
+# 100000
+# MrBayes (62% less user time than before)
+# real    0m11.629s
+# user    0m11.305s
+# sys     0m0.154s
+
+# Phycas (before)
+# real    0m18.504s
+# user    0m18.282s
+# sys     0m0.090s
+
+# Phycas (after)
+# real    0m11.950s
+# user    0m11.854s
+# sys     0m0.062s
