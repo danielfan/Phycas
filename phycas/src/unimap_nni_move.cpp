@@ -103,7 +103,7 @@ bool UnimapTopoMove::update()
 		accept();
 	else
 		revert();
-	//std::cerr << nMovesAccepted << " accept decisions out of " << nMovesAttempted << " attempts.\n";
+	std::cerr << nMovesAccepted << " accept decisions out of " << nMovesAttempted << " attempts.\n";
 	return accepted;
 	}
 
@@ -453,25 +453,10 @@ UnimapTopoMove::~UnimapTopoMove()
 
 double UnimapTopoMove::FourTaxonLnLBeforeMove()
 	{
-	PHYCAS_ASSERT(origNode);
-	PHYCAS_ASSERT(origNodePar);
-	TreeNode * lower = origNode->FindNextSib();
-	PHYCAS_ASSERT(lower);
-	PHYCAS_ASSERT(origNode->CountChildren() == 2); // we haven't figured this out for polytomies
-	PHYCAS_ASSERT(origNodePar->CountChildren() == 2); // we haven't figured this out for polytomies
-	TreeNode * upLeftNd = origNode->GetLeftChild();
-	PHYCAS_ASSERT(upLeftNd);
-	TreeNode * upRightNd = upLeftNd->GetRightSib();
-	PHYCAS_ASSERT(upRightNd);
-
-	aTipData = createTipDataFromUnivents(getUniventsConstRef(*upRightNd), aTipData);
-	bTipData = createTipDataFromUnivents(getUniventsConstRef(*upLeftNd), bTipData);
-	if (!x_is_left)
-		std::swap(aTipData, bTipData);
-	TreeNode * ndGp = origNodePar->GetParent();
-	PHYCAS_ASSERT(ndGp);
-	cTipData = createTipDataFromUnivents(getUniventsConstRef(*ndGp), cTipData);
-	dTipData = createTipDataFromUnivents(getUniventsConstRef(*lower), dTipData);		
+	aTipData = createTipDataFromUnivents(getUniventsConstRef(*a), aTipData);
+	bTipData = createTipDataFromUnivents(getUniventsConstRef(*b), bTipData);
+	cTipData = createTipDataFromUnivents(getUniventsConstRef(*c), cTipData);
+	dTipData = createTipDataFromUnivents(getUniventsConstRef(*d), dTipData);		
 
 	double lnlike = FourTaxonLnLFromCorrectTipDataMembers();
 	

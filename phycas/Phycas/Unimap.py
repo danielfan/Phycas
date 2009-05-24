@@ -8,6 +8,7 @@ class Unimap(PhycasCommand):
                 ("mapping_move_weight",       1,    "Univent mapping will be performed this many times per cycle", IntArgValidate(min=0)),
                 ("unimap_edge_move_weight",   1,    "Univent edge moves will be performed this many times per cycle", IntArgValidate(min=0)),
                 ("unimap_nni_move_weight",  100,    "Unimap NNI moves will be performed this many times per cycle", IntArgValidate(min=0)),    
+                ("unimap_node_slide_move_weight",    1,    "Unimap NNI moves will be performed this many times per cycle", IntArgValidate(min=0)),    
                 )
         # Specify output options
         #self.__dict__["hidden"] = True # hide from main phycas help list of commands until working
@@ -37,5 +38,6 @@ class Unimap(PhycasCommand):
         mcmc.use_unimap = True
         mcmc.mapping_move_weight = self.mapping_move_weight
         mcmc.unimap_nni_move_weight = self.unimap_nni_move_weight
+        mcmc.unimap_node_slide_move_weight = self.unimap_node_slide_move_weight
         mcmc.unimap_edge_move_weight = self.unimap_edge_move_weight
         mcmc()

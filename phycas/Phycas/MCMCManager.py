@@ -522,6 +522,16 @@ class MarkovChain(LikelihoodCore):
             self.unimap_nni_move.setLot(self.r)
             self.chain_manager.addMove(self.unimap_nni_move)
 
+            # Create a UnimapNNIMove (replaces LargetSimonMove for unimap analyses)
+            self.unimap_node_slide_move = Likelihood.UnimapNodeSlideMove()
+            self.unimap_node_slide_move.setName("Unimap NodeSlide move")
+            self.unimap_node_slide_move.setWeight(self.parent.opts.unimap_node_slide_move_weight)
+            self.unimap_node_slide_move.setTree(self.tree)
+            self.unimap_node_slide_move.setModel(self.model)
+            self.unimap_node_slide_move.setTreeLikelihood(self.likelihood)
+            self.unimap_node_slide_move.setLot(self.r)
+            self.chain_manager.addMove(self.unimap_node_slide_move)
+
             # Create a MappingMove (to refresh the mapping for all sites)
             self.unimapping_move = Likelihood.MappingMove()
             self.unimapping_move.setName("Univent mapping move")

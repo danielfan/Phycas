@@ -21,23 +21,26 @@ mcmc.ls_move_weight				= 1
 mcmc.slice_weight           	= 1
 mcmc.debugging              	= False
 mcmc.fix_topology 				= False
-mcmc.edge_move_weight 			= 0
+mcmc.edge_move_weight 			= 1
 #mcmc.edge_move_lambda 			= 0.05
 mcmc.out.log.mode				= REPLACE
 mcmc.out.params.mode			= REPLACE
 mcmc.out.trees.mode				= REPLACE
 
 unimap.mapping_move_weight    	= 0
-unimap.unimap_nni_move_weight 	= 1
+unimap.unimap_nni_move_weight 	= 0
+unimap.unimap_node_slide_move_weight = 1
+unimap.unimap_nni_move_weight = 0.1
 unimap.unimap_edge_move_weight 	= 10
 
 if False:
 	import sys,os
 	if os.path.basename(sys.executable) == 'python_d.exe':
 		raw_input('debug stop')
-if len(sys.argv) > 1 and sys.argv[1] == 'm':
+if 'm' in sys.argv:
 	mcmc()
 else:
 	unimap()
 sumt.trees = "trees.t"
-sumt()
+if "s" in sys.argv:
+	sumt()

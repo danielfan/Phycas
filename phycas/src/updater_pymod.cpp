@@ -36,6 +36,7 @@
 #include "phycas/src/samc_move.hpp"
 #include "phycas/src/edge_move.hpp"
 #include "phycas/src/unimap_edge_move.hpp"
+#include "phycas/src/unimap_node_slide_move.hpp"
 #include "phycas/src/topo_prior_calculator.hpp"
 
 using namespace boost::python;
@@ -203,5 +204,12 @@ void updater_pymod()
 		.def("update", &phycas::UnimapEdgeMove::update)
 		.def("setLambda", &phycas::UnimapEdgeMove::setLambda)
 		.def("getLambda", &phycas::UnimapEdgeMove::getLambda)
+		;
+
+	class_<phycas::UnimapNodeSlideMove, bases<phycas::MCMCUpdater>, 
+		boost::noncopyable, boost::shared_ptr<phycas::UnimapNodeSlideMove> >("UnimapNodeSlideMove") 
+		.def("update", &phycas::UnimapNodeSlideMove::update)
+		.def("setWindowWidth", &phycas::UnimapNodeSlideMove::setWindowWidth)
+		.def("getWindowWidth", &phycas::UnimapNodeSlideMove::getWindowWidth)
 		;
 	}

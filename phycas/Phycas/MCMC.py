@@ -75,6 +75,8 @@ class MCMC(PhycasCommand):
         self.__dict__["unimap_edge_move_weight"] = 0        # Unimap edge length moves will be performed this many times per cycle
         self.__dict__["unimap_edge_move_lambda"] = 0.5      # Sets the minimum value of the tuning parameter for the UnimapEdgeMove
         self.__dict__["unimap_edge_move_lambda0"] = 0.5      # Sets the maximum value of the tuning parameter for the UnimapEdgeMove
+        self.__dict__["unimap_node_slide_move_weight"] = 0        # Unimap node_slide moves will be performed this many times per cycle
+        self.__dict__["unimap_node_slide_move_window"] = 0.05      # Sets the minimum value of the tuning parameter for the UnimapNodeSlideMove
         self.__dict__["draw_directly_from_prior"] = True    # If True, MCMCImpl.explorePrior function is used to draw samples directly from the prior during path sampling, which dramatically improves mixing compared to using MCMC proposals to explore the prior
 
         # The data members added below are hidden from the user because they are set by the ps command
