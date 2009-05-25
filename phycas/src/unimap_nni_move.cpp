@@ -327,7 +327,6 @@ void UnimapNNIMove::ProposeStateWithTemporaries(ChainManagerShPtr & p)
 
 	
 	/* This swap is the equivalent of an NNI swap of the the nodes that are closest to y and w */
-	scoringBeforeMove = false;
 	std::swap(bTipData, dTipData);
 	std::swap(b, d);
 	std::swap(bLenNd, dLenNd);
@@ -361,7 +360,6 @@ void UnimapTopoMove::proposeNewState()
     // aTipData, bTipData, cTipData, and dTipData where the tree is ((a,b), (c,d))
     // with the internal length from origNd
 
-	scoringBeforeMove = true;
 	origNode = randomInternalAboveSubroot();
 	PHYCAS_ASSERT(origNode);
 	PHYCAS_ASSERT(origNode->CountChildren() == 2); // we haven't figured this out for polytomies
@@ -408,7 +406,8 @@ void UnimapTopoMove::proposeNewState()
 	PHYCAS_ASSERT(p);
 
     //temporary!
-    likelihood->storeAllCLAs(tree);
+    scoringBeforeMove = true;
+	likelihood->storeAllCLAs(tree);
 
 	prev_ln_like = FourTaxonLnLBeforeMove();
 
@@ -427,7 +426,7 @@ void UnimapTopoMove::proposeNewState()
 	
 	ProposeStateWithTemporaries(p);
 
-
+	scoringBeforeMove = false;
     curr_ln_like = FourTaxonLnLFromCorrectTipDataMembers();
 	}
 
@@ -580,6 +579,7 @@ double UnimapTopoMove::FourTaxonLnLFromCorrectTipDataMembers()
 
 	double lnl =  HarvestLnLikeFromCondLikePar(nd_childCLPtr, nd_parentCLPtr, childPMatrix);
 #	if defined CHECK_EACH_CALC_AGAINST_PAUP
+		std::cerr << "Scoring " << (scoringBeforeMove ? "before" : "after") << " the proposal\n";
 		PHYCAS_ASSERT(CheckWithPaup(lnl));
 #	endif
 	return lnl;

@@ -32,7 +32,7 @@
 namespace phycas
 {
 
-
+bool debugOutput = false;
 
 // Choose random internal node origNode and randomly choose one of origNode's
 //	children to call x (the other is y)
@@ -48,7 +48,6 @@ namespace phycas
 // the likelihood calculations are done assuming that the tree is ((a,b),(c,d)) with the internal length from origNd)
 void UnimapNodeSlideMove::ProposeStateWithTemporaries(ChainManagerShPtr & p)
 	{
-	PHYCAS_ASSERT(false);
 	const double u = rng->Uniform(FILE_AND_LINE);
 	if (u < 0.5)
 		{
@@ -115,6 +114,8 @@ void UnimapNodeSlideMove::ProposeStateWithTemporaries(ChainManagerShPtr & p)
 				std::swap(bLenNd, dLenNd);
 				std::swap(bTipData, dTipData);
 				cLenNd->SetEdgeLen(finalDist);
+				if (debugOutput)
+					std::cerr << "changing tree in MOVE_X_TOWARD_W \n";
 				}
 			else
 				{ // w and y will be sisters
@@ -123,6 +124,8 @@ void UnimapNodeSlideMove::ProposeStateWithTemporaries(ChainManagerShPtr & p)
 				std::swap(bLenNd, cLenNd);
 				std::swap(bTipData, cTipData);
 				dLenNd->SetEdgeLen(finalDist);
+				if (debugOutput)
+					std::cerr << "changing tree in MOVE_X_TOWARD_Z \n";
 				}
 			origNode->SetEdgeLen(nniPartOfPath - finalDist);
 			a->SetEdgeLen(pathToSlideAlong - nniPartOfPath);
@@ -131,6 +134,8 @@ void UnimapNodeSlideMove::ProposeStateWithTemporaries(ChainManagerShPtr & p)
 			{ // no topology change
 			a->SetEdgeLen(pathToSlideAlong - finalDist);
 			origNode->SetEdgeLen(finalDist - nniPartOfPath);
+			if (debugOutput)
+				std::cerr << "changing tree in MOVE_X_TOWARD_??? \n";
 			}
 		}
 	else
@@ -144,6 +149,8 @@ void UnimapNodeSlideMove::ProposeStateWithTemporaries(ChainManagerShPtr & p)
 				std::swap(bLenNd, dLenNd);
 				std::swap(bTipData, dTipData);
 				cLenNd->SetEdgeLen(nniPartOfPath);
+				if (debugOutput)
+					std::cerr << "changing tree in MOVE_Z_TOWARD_Y \n";
 				}
 			else
 				{ // w and y will be sisters
@@ -152,6 +159,8 @@ void UnimapNodeSlideMove::ProposeStateWithTemporaries(ChainManagerShPtr & p)
 				std::swap(bLenNd, cLenNd);
 				std::swap(bTipData, cTipData);
 				dLenNd->SetEdgeLen(nniPartOfPath);
+				if (debugOutput)
+					std::cerr << "changing tree in MOVE_W_TOWARD_Y \n";
 				}
 			origNode->SetEdgeLen(finalDist - nniPartOfPath);
 			a->SetEdgeLen(pathToSlideAlong - finalDist);
@@ -163,6 +172,8 @@ void UnimapNodeSlideMove::ProposeStateWithTemporaries(ChainManagerShPtr & p)
 			else
 				dLenNd->SetEdgeLen(finalDist);
 			origNode->SetEdgeLen(nniPartOfPath - finalDist);
+			if (debugOutput)
+				std::cerr << "changing tree in MOVE_???_TOWARD_Y \n";
 			}
 		}
 	

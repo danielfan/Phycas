@@ -7,6 +7,7 @@ from phycas.ProbDist import StopWatch
 from phycas.ReadNexus import NexusReader
 
 
+DEBUGGING_OUTPUT = False
 
 def check(msg = 'check'):
     raw_input(msg)
@@ -702,6 +703,13 @@ class MCMCImpl(CommonFunctions):
                 self.explorePrior(cycle)
             else:
                 for i,c in enumerate(self.mcmc_manager.chains):
+                    if DEBUGGING_OUTPUT:
+                        if cycle == 0:
+                            c.r.setSeed(364665646)
+                        print "seed=", c.r.getSeed()
+                        print "   model = " + c.model.paramReport(self.mcmc_manager.parent.opts.ndecimals)
+                        print '   tree rep.%d = %s;' % (cycle + 1, c.tree.makeNewick(self.mcmc_manager.parent.opts.ndecimals))
+            
                     c.chain_manager.updateAllUpdaters()
                     #self.updateAllUpdaters(c, i, cycle)
                     
