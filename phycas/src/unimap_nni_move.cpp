@@ -515,7 +515,7 @@ void UnimapTopoMove::DebugSaveNexusFile(std::ostream & nxsf, double lnlike)
     nxsf << "end;" << std::endl;
 
     nxsf << "\nbegin trees;" << std::endl;
-	nxsf << boost::str(boost::format("  utree curr = (a:%.8f, b:%.8f, (c:%.8f, d:%.8f):%.8f);") % aLenNd->GetEdgeLen() % bLenNd->GetEdgeLen() % cLenNd->GetEdgeLen() % dLenNd->GetParent()->GetEdgeLen() % origNode->GetEdgeLen()) << std::endl;
+	nxsf << boost::str(boost::format("  utree curr = (a:%.8f, b:%.8f, (c:%.8f, d:%.8f):%.8f);") % aLenNd->GetEdgeLen() % bLenNd->GetEdgeLen() % cLenNd->GetEdgeLen() % dLenNd->GetEdgeLen() % origNode->GetEdgeLen()) << std::endl;
 	nxsf << " \nend;\n\nbegin paup;\n";
     nxsf << boost::str(boost::format("  [!***** phycas lnL = %.8f *****]") % lnlike) << std::endl;
     if (model->getModelName().compare("JC69") == 0)
@@ -579,7 +579,9 @@ double UnimapTopoMove::FourTaxonLnLFromCorrectTipDataMembers()
 	likelihood->calcCLATwoTips(*nd_parentCLPtr, *dTipData, *cTipData);
 
 	double lnl =  HarvestLnLikeFromCondLikePar(nd_childCLPtr, nd_parentCLPtr, childPMatrix);
-	PHYCAS_ASSERT(CheckWithPaup(lnl));
+#	if defined CHECK_EACH_CALC_AGAINST_PAUP
+		PHYCAS_ASSERT(CheckWithPaup(lnl));
+#	endif
 	return lnl;
 	}
 	

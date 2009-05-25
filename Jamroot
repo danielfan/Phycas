@@ -34,7 +34,7 @@ if $(NCL_ALREADY_INSTALLED) {
         if $(OSTYPE) = "darwin" {
             echo "  Looks like this is a Mac, so using toolset darwin" ;
             using darwin ;
-            alias tool_specific_requirements : : : : <toolset>darwin <cxxflags>"-g -include phycas/src/std_force_include.hpp -I$NCL_INSTALL_DIR/include" <linkflags>"-L$NCL_INSTALL_DIR/lib/ncl -lncl" ;
+            alias tool_specific_requirements : : : : <toolset>darwin <cxxflags>"-g -include phycas/src/std_force_include.hpp $CXXFLAGS -I$NCL_INSTALL_DIR/include" <linkflags>"-L$NCL_INSTALL_DIR/lib/ncl -lncl" ;
         }
         else {
             echo "  Could not identify platform.  Expecting an environmental variable:" ;
