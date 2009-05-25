@@ -469,75 +469,45 @@ double UnimapTopoMove::FourTaxonLnLBeforeMove()
     return lnlike;
 	}
 
-void UnimapTopoMove::DebugSaveNexusFile(TipData * xtd, TipData * ytd, TipData * ztd, TipData * wtd, double lnlike)
+bool UnimapTopoMove::CheckWithPaup(double lnlike)
+{
+	std::ofstream nxsf;
+	nxsf.open("debug-with-paup.nex");
+	nxsf << "#NEXUS\n";
+	DebugSaveNexusFile(nxsf, lnlike);
+	nxsf.close();
+	nxsf << "begin PAUP;\n quit ;\nend;\n";
+	return (system("./checkWithPAUP.py") == 0);
+}
+
+void UnimapTopoMove::DebugSaveNexusFile(std::ostream & nxsf, double lnlike)
     {
     typedef boost::shared_array<const int8_t> StateArr;
-    StateArr xdata = xtd->getTipStatesArray();
-    StateArr ydata = ytd->getTipStatesArray();
-    StateArr zdata = ztd->getTipStatesArray();
-    StateArr wdata = wtd->getTipStatesArray();
+    StateArr adata = aTipData->getTipStatesArray();
+    StateArr bdata = bTipData->getTipStatesArray();
+    StateArr cdata = cTipData->getTipStatesArray();
+    StateArr ddata = dTipData->getTipStatesArray();
     unsigned nchar = likelihood->getNPatterns();
     unsigned i;
-
-    std::ofstream nxsf("tmp.nex", std::ios::app);
+	const char * alphabet = "ACGT";
     //nxsf << "#nexus\n" << std::endl;
     nxsf << "begin data;" << std::endl;
     nxsf << "  dimensions ntax=4 nchar=" << nchar << ";" << std::endl;
     nxsf << "  format datatype=dna gap=- missing=?;" << std::endl;
     nxsf << "  matrix" << std::endl;
-    nxsf << "    x ";
+    nxsf << "    a ";
     for (i = 0; i < nchar; ++i)
-        {
-        if (xdata[i] == 0)
-            nxsf << "a";
-        else if (xdata[i] == 1)
-            nxsf << "c";
-        else if (xdata[i] == 2)
-            nxsf << "g";
-        else
-            nxsf << "t";
-        }
-    nxsf << std::endl;
-    nxsf << "    y ";
+        nxsf << alphabet[adata[i]];
+    nxsf << "\n    b ";
     for (i = 0; i < nchar; ++i)
-        {
-        if (ydata[i] == 0)
-            nxsf << "a";
-        else if (ydata[i] == 1)
-            nxsf << "c";
-        else if (ydata[i] == 2)
-            nxsf << "g";
-        else
-            nxsf << "t";
-        }
-    nxsf << std::endl;
-    nxsf << "    z ";
+        nxsf << alphabet[bdata[i]];
+    nxsf << "\n    c ";
     for (i = 0; i < nchar; ++i)
-        {
-        if (zdata[i] == 0)
-            nxsf << "a";
-        else if (zdata[i] == 1)
-            nxsf << "c";
-        else if (zdata[i] == 2)
-            nxsf << "g";
-        else
-            nxsf << "t";
-        }
-    nxsf << std::endl;
-    nxsf << "    w ";
+        nxsf << alphabet[cdata[i]];
+    nxsf << "\n    d ";
     for (i = 0; i < nchar; ++i)
-        {
-        if (wdata[i] == 0)
-            nxsf << "a";
-        else if (wdata[i] == 1)
-            nxsf << "c";
-        else if (wdata[i] == 2)
-            nxsf << "g";
-        else
-            nxsf << "t";
-        }
-    nxsf << std::endl;
-    nxsf << "  ;\nend;" << std::endl;
+        nxsf << alphabet[ddata[i]];
+    nxsf << "\n  ;\nend;" << std::endl;
 
     nxsf << "\nbegin paup;" << std::endl;
     nxsf << "  log file=tmp.log start replace;" << std::endl;
@@ -545,12 +515,6 @@ void UnimapTopoMove::DebugSaveNexusFile(TipData * xtd, TipData * ytd, TipData * 
     nxsf << "end;" << std::endl;
 
     nxsf << "\nbegin trees;" << std::endl;
-    nxsf << "  translate" << std::endl;
-    nxsf << "    1 x," << std::endl;
-    nxsf << "    2 y," << std::endl;
-    nxsf << "    3 z," << std::endl;
-    nxsf << "    4 w" << std::endl;
-    nxsf << "    ;" << std::endl;
 	nxsf << boost::str(boost::format("  utree curr = (a:%.8f, b:%.8f, (c:%.8f, d:%.8f):%.8f);") % aLenNd->GetEdgeLen() % bLenNd->GetEdgeLen() % cLenNd->GetEdgeLen() % dLenNd->GetParent()->GetEdgeLen() % origNode->GetEdgeLen()) << std::endl;
 	nxsf << " \nend;\n\nbegin paup;\n";
     nxsf << boost::str(boost::format("  [!***** phycas lnL = %.8f *****]") % lnlike) << std::endl;
@@ -572,8 +536,6 @@ void UnimapTopoMove::DebugSaveNexusFile(TipData * xtd, TipData * ytd, TipData * 
     nxsf << "  lscores 1 / userbrlens;" << std::endl;
     nxsf << "  log stop;" << std::endl;
     nxsf << "end;" << std::endl;
-
-    nxsf.close();
     }
 
 void UnimapTopoMove::storePMatTransposed(double **& cached, const double *** p_mat_array)
@@ -617,6 +579,7 @@ double UnimapTopoMove::FourTaxonLnLFromCorrectTipDataMembers()
 	likelihood->calcCLATwoTips(*nd_parentCLPtr, *dTipData, *cTipData);
 
 	double lnl =  HarvestLnLikeFromCondLikePar(nd_childCLPtr, nd_parentCLPtr, childPMatrix);
+	PHYCAS_ASSERT(CheckWithPaup(lnl));
 	return lnl;
 	}
 	

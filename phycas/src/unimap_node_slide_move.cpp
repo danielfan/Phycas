@@ -32,6 +32,8 @@
 namespace phycas
 {
 
+
+
 // Choose random internal node origNode and randomly choose one of origNode's
 //	children to call x (the other is y)
 // Here is the actual layout of the tree in memory
@@ -45,7 +47,8 @@ namespace phycas
 //   w
 // the likelihood calculations are done assuming that the tree is ((a,b),(c,d)) with the internal length from origNd)
 void UnimapNodeSlideMove::ProposeStateWithTemporaries(ChainManagerShPtr & p)
-	{	
+	{
+	PHYCAS_ASSERT(false);
 	const double u = rng->Uniform(FILE_AND_LINE);
 	if (u < 0.5)
 		{

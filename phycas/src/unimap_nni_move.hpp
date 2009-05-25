@@ -32,6 +32,8 @@ namespace phycas
 class MCMCChainManager;
 typedef boost::weak_ptr<MCMCChainManager> ChainManagerWkPtr;
 
+
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	
 */
@@ -55,6 +57,9 @@ class UnimapTopoMove : public MCMCUpdater
 		virtual void			setLot(LotShPtr p);
 
 	protected:
+		void DebugSaveNexusFile(std::ostream & nxsf, double lnlike);
+		bool CheckWithPaup(double lnlike);
+
 		// ProposeStateWithTemporaries is called by proposeNewState and must be defined by subclasses
 		virtual void			ProposeStateWithTemporaries(ChainManagerShPtr &) = 0;
 
@@ -63,7 +68,6 @@ class UnimapTopoMove : public MCMCUpdater
 		double					FourTaxonLnLFromCorrectTipDataMembers();
 		double					HarvestLnLikeFromCondLikePar(CondLikelihoodShPtr focalCondLike, ConstCondLikelihoodShPtr neighborCondLike, const double * const * childPMatrix);
 		void					storePMatTransposed(double **& cached, const double *** p_mat_array);
-		void					DebugSaveNexusFile(TipData * xtd, TipData * ytd, TipData * ztd, TipData * wtd, double lnlike);
 		TreeNode *				randomInternalAboveSubroot();
 		void					resampleInternalNodeStates(const LikeFltType * root_state_posterior, const LikeFltType * des_cla);
 
