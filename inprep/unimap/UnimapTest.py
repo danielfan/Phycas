@@ -6,12 +6,12 @@ model.edgelen_hyperprior		= None
 
 setMasterSeed(19375)
 mcmc.data_source         		= 'muchoratehet.nex'
-mcmc.data_source 				= 'An.nex'
 mcmc.data_source         		= 'green.nex'
+mcmc.data_source 				= 'An.nex'
 # mcmc.starting_tree_source   	= TreeCollection(newick='(1:0.096451,2:0.059414,(3:0.069940,(4:0.065929,((5:0.066647,8:0.097704):0.010055,(6:0.063657,((7:0.046537,9:0.052228):0.007358,10:0.059386):0.014523):0.012032):0.008731):0.009339):0.007606)')
 #mcmc.starting_tree_source   	= TreeCollection(newick='(1:0.10000,2:0.15000,(3:0.02500,4:0.15000):0.05000)')
 mcmc.starting_tree_source   	= randomtree() # TreeCollection(newick='(1:0.020000,2:0.0100,(3:0.0200,4:0.02000):0.02000)')
-mcmc.ncycles                	= 20000
+mcmc.ncycles                	= 200000
 mcmc.nchains					= 1
 mcmc.sample_every           	= 100
 mcmc.report_every           	= 1000
@@ -38,14 +38,15 @@ if False:
 	import sys,os
 	if os.path.basename(sys.executable) == 'python_d.exe':
 		raw_input('debug stop')
+sumt.trees = "trees.t"
 if 'm' in sys.argv:
 	mcmc()
+elif "s" in sys.argv:
+	sumt()
 else:
 	unimap()
 
-sumt.trees = "trees.t"
-if "s" in sys.argv:
-	sumt()
+
 
 # 20000
 # MrBayes 1 cpu on:   MrBayes 2 cpus on:

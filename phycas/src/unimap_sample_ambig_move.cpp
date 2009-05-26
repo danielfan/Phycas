@@ -123,6 +123,7 @@ inline void fillEndStateProb(std::vector<double> & esProb, const double * const 
 	{
 	PHYCAS_ASSERT(neighborSC >= 0 && neighborSC < numStates);
 	esProb.assign(numStates, 0.0);
+	//std::cerr << "esProb.size() == " << esProb.size() << '\n';
 	double totalProb = 0.0;
 	if (samplingTipRoot)
 		{
@@ -190,22 +191,39 @@ void UnimapSampleAmbigMove::sampleNewStateArrayForNodeAsDisconnected(TreeNode * 
 	const VecStateList & stateListVec = likelihood->getStateList();
 	const int8_t * const stateListArr = &stateListVec[0];
 	const unsigned int * const stateListPosArr = &stateListPosVec[0];
-
+	const unsigned numStateCodes = numStates + 1 + nPartialAmbigs;
 	std::vector<double> emptyCell;
-	std::vector< std::vector<double> > endStateProb(nPartialAmbigs, emptyCell);
-	
+	std::vector< std::vector<double> > endStateProb(numStateCodes, emptyCell);
+	//std::cerr << "nPartialAmbigs = " << nPartialAmbigs << '\n';
 	
 	for (std::vector<unsigned>::const_iterator iIt = ambigInds.begin(); iIt != ambigInds.end(); ++iIt)
 		{
 		unsigned i = *iIt;
 		const int_state_code_t ambigSC = scArray[i];
 		std::vector<double> & esProb = endStateProb[ambigSC];
+		//std::cerr << "ambigSC = " << (int)ambigSC << " endStateProb.size() = " << endStateProb.size() <<'\n';
+
 		if (esProb.empty())
 			{
-			unsigned indexIntoStateList = stateListPosArr[ambigSC];
-			fillEndStateProb(esProb, pMat, numStates, stateListArr, 0, indexIntoStateList, false);
- 	 	 	}
-		scVec[i] = rng->MultinomialDraw(&esProb[0], numStates);
+			if (ambigSC > (int_state_code_t) numStates)
+				{
+				unsigned indexIntoStateList = stateListPosArr[ambigSC];
+				fillEndStateProb(esProb, pMat, numStates, stateListArr, 0, indexIntoStateList, false);
+				}
+ 			else
+				{
+				PHYCAS_ASSERT(ambigSC < 0 || ambigSC == (int) numStates);
+				esProb.resize(numStates);
+				const double * pRow = *pMat;
+				for (unsigned j = 0 ; j < numStates ; ++j)
+					esProb[j] = pRow[j];
+				}
+	 	 	}
+//		std::cerr << "in sampleNewStateArrayForNodeAsDisconnected esProb.size() == " << esProb.size() << " numStates = " << numStates << '\n';
+
+		const int_state_code_t chosenStateCode = (int_state_code_t) rng->MultinomialDraw(&esProb[0], numStates);
+		PHYCAS_ASSERT(chosenStateCode >= 0 && chosenStateCode < numStates);
+		scVec[i] = chosenStateCode;
 		}
 
 
@@ -246,9 +264,10 @@ void UnimapSampleAmbigMove::proposeNewStateArrayForNode(TreeNode * nd, const std
 	const double * const * pMat = const_cast<const double * const *>(pMats[0]); //@ assumes no rate het
 	const unsigned int * const stateListPosArr = &stateListPosVec[0];
   	const unsigned numStates = likelihood->getNStates();
+	const unsigned numStateCodes = numStates + 1 + nPartialAmbigs;
 
 	std::vector<double> emptyCell;
-	std::vector< std::vector<double> > emptyRow(nPartialAmbigs, emptyCell);
+	std::vector< std::vector<double> > emptyRow(numStateCodes, emptyCell);
 	std::vector<std::vector< std::vector<double> > > endStateProb(numStates, emptyRow);
 	
 	
@@ -260,10 +279,23 @@ void UnimapSampleAmbigMove::proposeNewStateArrayForNode(TreeNode * nd, const std
 		std::vector<double> & esProb = endStateProb[neighborSC][ambigSC];
 		if (esProb.empty())
 			{
-			unsigned indexIntoStateList = stateListPosArr[ambigSC];
-			fillEndStateProb(esProb, pMat, numStates, stateListArr, neighborSC, indexIntoStateList, samplingTipRoot);
+			if (ambigSC > (int)numStates)
+				{
+				unsigned indexIntoStateList = stateListPosArr[ambigSC];
+				fillEndStateProb(esProb, pMat, numStates, stateListArr, neighborSC, indexIntoStateList, samplingTipRoot);
+				}
+			else
+				{
+				PHYCAS_ASSERT(ambigSC < 0 || ambigSC == (int) numStates);
+				esProb.resize(numStates);
+				const double * pRow = pMat[neighborSC];
+				for (unsigned j = 0 ; j < numStates ; ++j)
+					esProb[j] = pRow[j];
+				}
  	 	 	}
-		scVec[i] = rng->MultinomialDraw(&esProb[0], numStates);
+		const int_state_code_t chosenStateCode = (int_state_code_t) rng->MultinomialDraw(&esProb[0], numStates);
+		PHYCAS_ASSERT(chosenStateCode >= 0 && chosenStateCode < numStates);
+		scVec[i] = chosenStateCode;
 		}
 
 	

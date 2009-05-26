@@ -3449,6 +3449,10 @@ void TreeLikelihood::remapUniventsForNode(TreeShPtr t, TreeNode * nd)
 		{
 		// Choose states for all sites at this internal node
 		InternalData * nd_data =  nd->GetInternalData();
+		TreeNode * par = nd->GetParent();
+		PHYCAS_ASSERT(par != NULL);
+		Univents & ndP_univents = getUniventsRef(*par);
+		const std::vector<int8_t> & par_states_vec = ndP_univents.getEndStatesVecRef();
 		if (nd == subroot)
 			{
 			std::vector<LikeFltType> prob(num_states*num_patterns);
@@ -3458,21 +3462,16 @@ void TreeLikelihood::remapUniventsForNode(TreeShPtr t, TreeNode * nd)
 			double * * *				   root_tip_p		  = root_tip_data.getMutableTransposedPMatrices();
 			calcPMatTranspose(root_tip_p, root_tip_data.getConstStateListPos(),	 root_tip_edge_len);
 			const double * const * const * root_tip_tmatrix	  = root_tip_data.getConstTransposedPMatrices();
-			const int8_t *				   root_tip_codes	  = root_tip_data.getConstStateCodes();
 			fillTranspose(p_mat_trans_scratch_ptr, root_tip_tmatrix[0], num_states);
-			univentProbMgr.sampleUnivents(nd_univents, root_tip_edge_len, root_tip_codes, const_cast<const double * const*>(p_mat_trans_scratch_ptr), *localRng.get(), nodeSMat);
+			univentProbMgr.sampleUnivents(nd_univents, root_tip_edge_len, &par_states_vec[0], const_cast<const double * const*>(p_mat_trans_scratch_ptr), *localRng.get(), nodeSMat);
 			}
 		else
 			{
 			//
 			// Choose states and mappings for non-subroot internal node
 			//
-			double *** pmatrices = nd_data->getPMatrices();
-			TreeNode * par = nd->GetParent();
-			PHYCAS_ASSERT(par != NULL);
 			PHYCAS_ASSERT(par->IsInternal());
-			Univents & ndP_univents = getUniventsRef(*par);
-			const std::vector<int8_t> & par_states_vec = ndP_univents.getEndStatesVecRef();
+			double *** pmatrices = nd_data->getPMatrices();
 			const int8_t * par_states_ptr = &par_states_vec[0];
 			if (forceRecalcPmat)
 				calcPMat(pmatrices, nd_edge_len);
@@ -3480,7 +3479,7 @@ void TreeLikelihood::remapUniventsForNode(TreeShPtr t, TreeNode * nd)
 			univentProbMgr.sampleUnivents(nd_univents, nd_edge_len,  par_states_ptr, pmatrix, *localRng.get(), nodeSMat);
 			}
 		}
-	else
+	else if (!nd->IsTipRoot())
 		{
 		// Choose mappings for tip node
 		TreeNode * par = nd->GetParent();
