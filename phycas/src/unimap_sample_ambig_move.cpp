@@ -242,7 +242,7 @@ void UnimapSampleAmbigMove::proposeNewStateArrayForNode(TreeNode * nd, const std
 	const unsigned nPartialAmbigs = (unsigned)stateListPosVec.size();
 	const VecStateList & stateListVec = likelihood->getStateList();
 	const int8_t * const stateListArr = &stateListVec[0];
-	PHYCAS_ASSERT(likelihood->GetNRates() == 1);
+	PHYCAS_ASSERT(likelihood->getNRatesTotal() == 1);
 	const double * const * pMat = const_cast<const double * const *>(pMats[0]); //@ assumes no rate het
 	const unsigned int * const stateListPosArr = &stateListPosVec[0];
   	const unsigned numStates = likelihood->getNStates();
