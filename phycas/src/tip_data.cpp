@@ -60,7 +60,7 @@ TipData::TipData(
   bool                              using_unimap,       /**< is true if tips are to be prepared for uniformized mapping likelihood; it is false if tips are to be prepared for Felsenstein-style integrated likelihoods */
   unsigned				            nPatterns,			/**< is the number of site patterns */
   const std::vector<unsigned int> &	stateListPosVec,	/**< is the vector of positions of each state into the `state_codes' vector */
-  boost::shared_array<const int8_t>	stateCodesShPtr,	/**< is the `state_codes' vector */ 
+  boost::shared_array<const int_state_code_t>	stateCodesShPtr,	/**< is the `state_codes' vector */ 
   unsigned							nRates,				/**< is the number of relative rate categories */
   unsigned							nStates,			/**< is the number of states in the model */
   double * * *						pMatTranspose,		/**< is an alias to the rates by states by states pMatrix array, may be NULL */
@@ -82,11 +82,23 @@ TipData::TipData(
         {
         univents.resize(nPatterns);
         univents.setEndStates(state_codes.get());
+        std::vector<int_state_code_t> & scVec = univents.getEndStatesVecRef();
         for (unsigned i = 0; i < nPatterns; ++i)
         	{
-        	const int8_t sc = state_codes[i];
+        	const int_state_code_t sc = state_codes[i];
+        	////////////////////////////////////////////////////////////////////
+        	// @@@@
+        	// This is really dangerous. 
+        	// In this loop, we alter the ambiguous data to have state 0.
+        	// This should work because we are calling sampleTipsAsDisconnected before MCMC (in MCMCManager.py)
+        	// It is hard to guarantee this (we could add a boolean flag to the univents class
+        	//		so that we could at least flag this univent as temporarily bogus).
+        	// It would be hard to do the correct sampling here because we would need the 
+        	//		neighboring nodes and a Lot instance.
+        	////////////////////////////////////////////////////////////////////
         	if (sc < 0 || (int)sc >= (int)nStates)
-        		throw XLikelihood("Sorry, we currently do not support data sets with ambiguity or gaps when you are using uniformization-based methods");
+        		scVec[i] = 0; 
+        	// throw XLikelihood("Sorry, we currently do not support data sets with ambiguity or gaps when you are using uniformization-based methods");
         	}
         }
 	if (managePMatrices)

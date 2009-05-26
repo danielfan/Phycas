@@ -510,6 +510,17 @@ class MarkovChain(LikelihoodCore):
             self.chain_manager.addMove(self.edge_move)
 
         if self.parent.opts.use_unimap:
+            # Create a UnimapSampleAmbigMove
+            wt = self.parent.opts.unimap_sample_ambig_move_weight
+            self.unimap_sample_ambig_move = Likelihood.UnimapSampleAmbigMove(self.likelihood, self.tree, self.model, wt)
+            self.unimap_sample_ambig_move.setName("Unimap Sample Ambig move")
+            num_ambig = self.unimap_sample_ambig_move.getNumAmbigNodes()
+            if wt > 0.0 and num_ambig > 0:
+                self.unimap_sample_ambig_move.setLot(self.r)
+                self.chain_manager.addMove(self.unimap_sample_ambig_move)
+                
+            
+            
             # Create a UnimapNNIMove (replaces LargetSimonMove for unimap analyses)
             self.unimap_nni_move = Likelihood.UnimapNNIMove()
             self.unimap_nni_move.setName("Unimap NNI move")
@@ -520,7 +531,7 @@ class MarkovChain(LikelihoodCore):
             self.unimap_nni_move.setLot(self.r)
             self.chain_manager.addMove(self.unimap_nni_move)
 
-            # Create a UnimapNNIMove (replaces LargetSimonMove for unimap analyses)
+            # Create a UnimapNodeSlideMove (replaces LargetSimonMove for unimap analyses)
             self.unimap_node_slide_move = Likelihood.UnimapNodeSlideMove()
             self.unimap_node_slide_move.setName("Unimap NodeSlide move")
             self.unimap_node_slide_move.setWeight(self.parent.opts.unimap_node_slide_move_weight)
@@ -643,6 +654,8 @@ class MarkovChain(LikelihoodCore):
         self.chain_manager.finalize()
 
         if self.parent.opts.use_unimap:
+            if num_ambig > 0:
+                self.unimap_sample_ambig_move.sampleTipsAsDisconnected()
             self.likelihood.fullRemapping(self.tree, self.r, True) 
 
         # Calculate relative rates if among-site rate heterogeneity is part of the model

@@ -223,6 +223,7 @@ alias likelihood_sources
     phycas/src/unimap_nni_move.cpp 
     phycas/src/unimap_node_slide_move.cpp 
     phycas/src/unimap_edge_move.cpp 
+    phycas/src/unimap_sample_ambig_move.cpp 
     phycas/src/univent_prob_mgr.cpp 
     phycas/src/univents.cpp 
     phycas/src/updater_pymod.cpp

@@ -22,6 +22,7 @@ mcmc.slice_weight           	= 1
 mcmc.debugging              	= False
 mcmc.fix_topology 				= False
 mcmc.edge_move_weight 			= 1
+mcmc.unimap_sample_ambig_move_weight = 1
 #mcmc.edge_move_lambda 			= 0.05
 mcmc.out.log.mode				= REPLACE
 mcmc.out.params.mode			= REPLACE
@@ -29,8 +30,8 @@ mcmc.out.trees.mode				= REPLACE
 
 unimap.mapping_move_weight    	= 0
 unimap.unimap_nni_move_weight 	= 0
-unimap.unimap_node_slide_move_weight = 0
-unimap.unimap_nni_move_weight = 1
+unimap.unimap_node_slide_move_weight = 1
+unimap.unimap_nni_move_weight = 0
 unimap.unimap_edge_move_weight 	= 10
 
 if False:

@@ -103,7 +103,7 @@ bool UnimapTopoMove::update()
 		accept();
 	else
 		revert();
-	std::cerr << nMovesAccepted << " accept decisions out of " << nMovesAttempted << " attempts.\n";
+	//std::cerr << nMovesAccepted << " accept decisions out of " << nMovesAttempted << " attempts.\n";
 	return accepted;
 	}
 

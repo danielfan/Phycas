@@ -7,6 +7,7 @@ class Unimap(PhycasCommand):
         args = (
                 ("mapping_move_weight",       1,    "Univent mapping will be performed this many times per cycle", IntArgValidate(min=0)),
                 ("unimap_edge_move_weight",   1,    "Univent edge moves will be performed this many times per cycle", IntArgValidate(min=0)),
+                ("unimap_sample_ambig_move_weight",  1,    "Unimap Sample Ambiguous tip moves will be performed this many times per cycle", IntArgValidate(min=0)),    
                 ("unimap_nni_move_weight",  100,    "Unimap NNI moves will be performed this many times per cycle", IntArgValidate(min=0)),    
                 ("unimap_node_slide_move_weight",    1,    "Unimap NNI moves will be performed this many times per cycle", IntArgValidate(min=0)),    
                 )
@@ -38,6 +39,7 @@ class Unimap(PhycasCommand):
         mcmc.use_unimap = True
         mcmc.mapping_move_weight = self.mapping_move_weight
         mcmc.unimap_nni_move_weight = self.unimap_nni_move_weight
+        mcmc.unimap_sample_ambig_move_weight = self.unimap_sample_ambig_move_weight
         mcmc.unimap_node_slide_move_weight = self.unimap_node_slide_move_weight
         mcmc.unimap_edge_move_weight = self.unimap_edge_move_weight
         mcmc()

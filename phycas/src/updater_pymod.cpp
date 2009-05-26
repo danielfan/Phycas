@@ -37,6 +37,7 @@
 #include "phycas/src/edge_move.hpp"
 #include "phycas/src/unimap_edge_move.hpp"
 #include "phycas/src/unimap_node_slide_move.hpp"
+#include "phycas/src/unimap_sample_ambig_move.hpp"
 #include "phycas/src/topo_prior_calculator.hpp"
 
 using namespace boost::python;
@@ -211,5 +212,12 @@ void updater_pymod()
 		.def("update", &phycas::UnimapNodeSlideMove::update)
 		.def("setWindowWidth", &phycas::UnimapNodeSlideMove::setWindowWidth)
 		.def("getWindowWidth", &phycas::UnimapNodeSlideMove::getWindowWidth)
+		;
+
+	class_<phycas::UnimapSampleAmbigMove, bases<phycas::MCMCUpdater>, 
+		boost::noncopyable, boost::shared_ptr<phycas::UnimapSampleAmbigMove> >("UnimapSampleAmbigMove", init<TreeLikeShPtr, TreeShPtr, ModelShPtr, unsigned>()) 
+		.def("update", &phycas::UnimapSampleAmbigMove::update)
+		.def("sampleTipsAsDisconnected", &phycas::UnimapSampleAmbigMove::sampleTipsAsDisconnected)
+		.def("getNumAmbigNodes", &phycas::UnimapSampleAmbigMove::getNumAmbigNodes)
 		;
 	}

@@ -46,6 +46,7 @@ class CondLikelihoodStorage;
 typedef boost::shared_ptr<CondLikelihood> CondLikelihoodShPtr;
 typedef boost::shared_ptr<const CondLikelihood> ConstCondLikelihoodShPtr;
 class Tree;
+typedef int8_t int_state_code_t;
 typedef std::vector<unsigned int> StateListPos;
 /*----------------------------------------------------------------------------------------------------------------------
 |	The TipData class stores the data associated with each tip in the tree. The description below assumes the data was
@@ -161,13 +162,13 @@ class TipData
 	public:
 
 											TipData(unsigned nRates, unsigned nStates, CondLikelihoodStorageShPtr cla_storage);
-											TipData(bool using_unimap, unsigned nPatterns, const std::vector<unsigned int> & stateListPosVec, boost::shared_array<const int8_t> stateCodesShPtr, unsigned nRates, unsigned nStates, double * * * pMatTranspose, bool managePMatrices, CondLikelihoodStorageShPtr cla_storage);
+											TipData(bool using_unimap, unsigned nPatterns, const std::vector<unsigned int> & stateListPosVec, boost::shared_array<const int_state_code_t> stateCodesShPtr, unsigned nRates, unsigned nStates, double * * * pMatTranspose, bool managePMatrices, CondLikelihoodStorageShPtr cla_storage);
                                             ~TipData();
 
 		const double * const * const *		getConstTransposedPMatrices() const;
 		double * * *						getTransposedPMatrices();
 		double * * *						getMutableTransposedPMatrices() const;
-		const int8_t *						getConstStateCodes() const;
+		const int_state_code_t *			getConstStateCodes() const;
 
 		CondLikelihoodShPtr					getParentalCondLikePtr();
 		ConstCondLikelihoodShPtr			getValidParentalCondLikePtr() const;
@@ -183,7 +184,7 @@ class TipData
 		const Univents & 					getUniventsConstRef()const {return univents;}
 		void								swapUnivents(InternalData * other);
 
-        boost::shared_array<const int8_t>   getTipStatesArray() {return state_codes;}
+        boost::shared_array<const int_state_code_t> getTipStatesArray() {return state_codes;}
 		const StateListPos &				getConstStateListPos() const;
 
 		friend void							calcPMatTranspose(const TreeLikelihood & treeLikeInfo, const TipData & tipData, double edgeLength);
@@ -199,9 +200,9 @@ class TipData
 		CondLikelihoodShPtr					parCachedCLA;		/**< parental conditional likelihood array is stored here to make reverting MCMC moves cheap */
 		
 
-		int8_t								state;				/**< Used in simulation to temporarily store the state for one character */
+		int_state_code_t					state;				/**< Used in simulation to temporarily store the state for one character */
 		StateListPos						state_list_pos;		/**< Vector of indices into the tip-specific `state_codes' array */
-		boost::shared_array<const int8_t>	state_codes;		/**< Array of tip-specific state codes */
+		boost::shared_array<const int_state_code_t>	state_codes;		/**< Array of tip-specific state codes */
 		mutable double * * *				pMatrixTranspose;	/**< The (rate category) x (stateCode) x (ancestor state) augmented transposed transition probability matrices (points to `ownedPMatrices' if the constructor parameter `managePMatrices' parameter is true) */
 		ScopedThreeDMatrix<double>			ownedPMatrices;		/**< Vector of transposed transition matrices */
 		CondLikelihoodStorageShPtr			cla_pool;			/**< Source of CondLikelihood objects if needed */
@@ -256,7 +257,7 @@ inline double * * * TipData::getMutableTransposedPMatrices() const
 |	Accessor function that calls the get() function of the `state_codes' data member. The returned array contains the 
 |	state codes for this particular tip.
 */
-inline const int8_t * TipData::getConstStateCodes() const
+inline const int_state_code_t * TipData::getConstStateCodes() const
 	{
 	return state_codes.get();
 	}
