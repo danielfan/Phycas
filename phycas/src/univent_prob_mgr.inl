@@ -30,7 +30,7 @@ inline void UniventProbMgr::sampleDescendantStates(Univents & u, const double * 
 	{
 	PHYCAS_ASSERT(u.size() == u.end_states_vec.size());
 	u.setValid(false);
-	sampleDescendantStates(u.size(), &u.end_states_vec[0], p_mat, des_cla, parent_states, rng);
+	sampleDescendantStatesImpl(u.size(), &u.end_states_vec[0], p_mat, des_cla, parent_states, rng);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -40,7 +40,7 @@ inline void UniventProbMgr::sampleRootStates(Univents & u, const LikeFltType * r
 	{
 	PHYCAS_ASSERT(u.size() == u.end_states_vec.size());
 	u.setValid(false);
-	sampleRootStates(u.size(), &u.end_states_vec[0], rootStatePosterior, rng, posteriors_normalized, obs_state_counts);
+	sampleRootStatesImpl(u.size(), &u.end_states_vec[0], rootStatePosterior, rng, posteriors_normalized, obs_state_counts);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -50,7 +50,7 @@ inline void UniventProbMgr::sampleUnivents(Univents & u,  const double edgelen, 
 	{
 	const std::vector<int8_t> & u_end_states_vec = u.getEndStatesVecRef();
 	const int8_t * u_states_ptr = &u_end_states_vec[0];
-	sampleUnivents(u, edgelen, par_states, u_states_ptr,  p_mat, rng, s_mat);
+	sampleUniventsImpl(u, edgelen, par_states, u_states_ptr,  p_mat, rng, s_mat);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

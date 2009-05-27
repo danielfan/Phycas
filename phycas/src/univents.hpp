@@ -62,9 +62,9 @@ class Univents
 
 	private:
 		/************ remember to add any new data members to swap(); *************/
-		std::vector< StateMapping > 	    univents;		/**< univents[i][j] holds a state for univent j at site i */
+		std::vector< StateMapping > 	    univents;		/**< univents[i][j] holds a state for univent j at site i (last entry holds the state stored in end_states_vect[i]) */
 		std::vector< std::vector<double> >  times;		    /**< times[i][j] holds the fraction of the edgelen representing the time at which the univent occurred */
-		std::vector<int8_t>				    end_states_vec; /**<* end_states_vec[i] holds the end state for site i */
+		std::vector<int8_t>				    end_states_vec; /**<* end_states_vec[i] holds the end state for site i (same as univents[i][m-1]) */
 		unsigned						    mdot;			/**< the total number of univents over all sites on the edge owned by this node */
 		bool							    is_valid;       /**< */
 		bool							    times_valid;    /**< */

@@ -1,3 +1,7 @@
+#
+# NOTE: This file no longer being used as of Lawrence meeting May 2009
+#
+
 import os,sys,math,random
 from phycas import *
 from MCMCManager import LikelihoodCore

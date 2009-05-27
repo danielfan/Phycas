@@ -42,12 +42,12 @@ class UniventProbMgr
 		void                                sampleDescendantStates(Univents & u, const double * const * p_mat, const LikeFltType * des_cla, const int8_t * parent_states, Lot & rng) const;
 		void                                sampleRootStates(Univents & u, const LikeFltType * rootStatePosterior, Lot & rng, bool posteriors_normalized, unsigned * obs_state_counts = NULL) const;
 
-		void                                sampleDescendantStates(const unsigned num_patterns, int8_t * nd_states, const double * const * p_mat, const LikeFltType * des_cla, const int8_t * parent_states, Lot & rng) const;
-		void                                sampleRootStates(const unsigned num_patterns, int8_t * nd_states, const LikeFltType * rootStatePosterior, Lot & rng, bool posteriors_normalized,  unsigned * obs_state_counts = NULL) const;
+		void                                sampleDescendantStatesImpl(const unsigned num_patterns, int8_t * nd_states, const double * const * p_mat, const LikeFltType * des_cla, const int8_t * parent_states, Lot & rng) const;
+		void                                sampleRootStatesImpl(const unsigned num_patterns, int8_t * nd_states, const LikeFltType * rootStatePosterior, Lot & rng, bool posteriors_normalized,  unsigned * obs_state_counts = NULL) const;
 
 		void                                sampleUniventsKeepEndStates(Univents & u, const double edgelen, const int8_t * par_states, const double * * p_mat_transposed, Lot & rng) const;
 		void                                sampleUnivents(Univents & u,  const double edgelen, const int8_t * par_states, const double * const * p_mat, Lot & rng, unsigned ** s_mat) const;
-		void                                sampleUnivents(Univents & u, const double edgelen, const int8_t * par_states, const int8_t * des_states, const double * const * p_mat, Lot & rng, unsigned ** s_mat) const;
+		void                                sampleUniventsImpl(Univents & u, const double edgelen, const int8_t * par_states, const int8_t * des_states, const double * const * p_mat, Lot & rng, unsigned ** s_mat) const;
 		
 		const double * const *			    getUMatConst(unsigned m) const;
 		//double * *					    getUMat(unsigned m);

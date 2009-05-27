@@ -221,6 +221,7 @@ alias likelihood_sources
     phycas/src/tree_scaler_move.cpp 
     phycas/src/underflow_manager.cpp 
     phycas/src/unimap_nni_move.cpp 
+    phycas/src/unimap_fast_nni_move.cpp 
     phycas/src/unimap_node_slide_move.cpp 
     phycas/src/unimap_edge_move.cpp 
     phycas/src/unimap_sample_ambig_move.cpp 

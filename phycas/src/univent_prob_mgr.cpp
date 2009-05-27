@@ -316,39 +316,48 @@ void UniventProbMgr::sampleUniventsKeepEndStates(Univents & u, const double edge
 	const int8_t * des_states = &(u.end_states_vec[0]);
 	double ** p_mat = scratchMatTwo.GetMatrix();
 	fillTranspose(p_mat, p_mat_transposed, numStates);
-	sampleUnivents(u, edgelen, par_states, des_states, const_cast<const double * const *>(p_mat), rng, NULL);
+	sampleUniventsImpl(u, edgelen, par_states, des_states, const_cast<const double * const *>(p_mat), rng, NULL);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	
+|	This function provides a fresh mapping for all sites on one edge of the tree, storing the counts of the various
+|	possible univent transitions in the supplied matrix `s_mat'. Uses scratchMatOne.
 */
-/*==============================================================================
-| uses scratchMatOne
-*/
-void UniventProbMgr::sampleUnivents(Univents & u, const double edgelen,  const int8_t * par_states, const int8_t * des_states, const double * const * p_mat, Lot & rng, unsigned ** s_mat) const
+void UniventProbMgr::sampleUniventsImpl(
+  Univents & u, 					/**< is the univents structure for this node */
+  const double edgelen,  			/**< is the length of this node's edge */
+  const int8_t * par_states, 		/**< holds the states at the beginning of the edge for each site */
+  const int8_t * des_states, 		/**< holds the states at the end of the edge for each site */
+  const double * const * p_mat, 	/**< is the transition probability matrix */
+  Lot & rng, 						/**< is the random number generator to use */
+  unsigned * * s_mat) 				/**< is the matrix into which univent transition counts are stored */
+  const
 	{
-	const unsigned num_patterns = u.univents.size();
-	u.mdot = 0;
 	scratchMatOne.Fill(1.0);
-	const bool doSampleTimes = this->sampleTimes;
-    const double lambda_t       = edgelen*lambda;
-    const double log_lambda_t   = log(lambda_t);
 	std::vector<double> elogprmVec; // holds factors that do not depend on the start and end states
+
+	const unsigned num_patterns 	= u.univents.size();
+	u.mdot 							= 0;
+	const bool   doSampleTimes 		= this->sampleTimes;
+    const double lambda_t       	= edgelen*lambda;
+    const double log_lambda_t   	= log(lambda_t);
+    
 	for (unsigned pattern_index = 0; pattern_index < num_patterns; ++pattern_index)
 		{
-		const int8_t start_state = *par_states++;
-	    const int8_t end_state = *des_states++;
-	    // begin UniventProbMgr::unimapEdgeOneSite inlined manually 
-	    const double trans_prob = p_mat[start_state][end_state];
-		/* begin sampleM inlined manually.... */
-		unsigned m = UINT_MAX;
-		double uni_variate = rng.Uniform(FILE_AND_LINE);
-			// ok will be set to true if an m value can be sampled. The reason m might not be sampled is
-			// because maxm might be not set high enough, in which case maxm will be doubled and another
-			// attempt to sample m will be made.
-		double total_prob = 0.0;
-		unsigned next_z = 0;
-		//std::cerr << "Sampling " << (int)start_state << " -> " << (int)end_state << " which has trans_prob = " << trans_prob << " uni_variate=" <<uni_variate;		
+		//std::cerr << "---> sampling univents for site = " << pattern_index << '\n';
+
+		const int8_t	start_state	= *par_states++;
+	    const int8_t	end_state	= *des_states++;					
+	    																// begin UniventProbMgr::unimapEdgeOneSite inlined manually
+	    const double	trans_prob	= p_mat[start_state][end_state];	
+	    																// begin sampleM inlined manually.... 
+		unsigned 		m 			= UINT_MAX;
+		double 			uni_variate = rng.Uniform(FILE_AND_LINE);
+		
+		double			total_prob = 0.0;
+		unsigned 		next_z = 0;
+
+		// Sample m, the number of univents on this edge
 		for (;;)
 			{
 			for (unsigned z = next_z; z <= maxm; ++z)
@@ -361,7 +370,6 @@ void UniventProbMgr::sampleUnivents(Univents & u, const double edgelen,  const i
 					}
 				const double elogprm = elogprmVec[z];
 				double pij = uMatVect[z][start_state][end_state]; //@POL should uMatVect hold L matrices rather than U matrices?
-				//std::cerr << "(elogprm=" << elogprm << ", pij=" << pij << ") ";
 				const double pr = pij*elogprm/trans_prob;
 				total_prob += pr;
 				if (total_prob > uni_variate)
@@ -378,9 +386,11 @@ void UniventProbMgr::sampleUnivents(Univents & u, const double edgelen,  const i
 			else
 				break;
 			}
-		/* end  sampleM inlined manually */
-    	//std::cerr << " m = " << m << '\n';
+																		// end  sampleM inlined manually
+		//std::cerr << "--->  | m = " << m << '\n';
+		
 		u.mdot += m;
+		
 		if (doSampleTimes)
 			{
 			std::vector<double> & t = u.times.at(pattern_index);
@@ -390,6 +400,7 @@ void UniventProbMgr::sampleUnivents(Univents & u, const double edgelen,  const i
 				t[k] = (float)rng.Uniform(FILE_AND_LINE);
 			std::sort(t.begin(), t.end());
 			}
+			
 		StateMapping * sm = 0L;
 		if (storeUnivents)
 			{
@@ -397,6 +408,7 @@ void UniventProbMgr::sampleUnivents(Univents & u, const double edgelen,  const i
 			sm->clear();
 			sm->resize(m);
 			}
+			
 		// Now sample the m states
 		if (m == 0)
 			{
@@ -405,9 +417,10 @@ void UniventProbMgr::sampleUnivents(Univents & u, const double edgelen,  const i
 		else if (m == 1)
 			{
 			if (s_mat)
-				s_mat[start_state][end_state] += 1;		
+				s_mat[start_state][end_state] += 1;
 			if (sm)
 				(*sm)[0] = end_state;
+			//std::cerr << "--->  | s[0] = " << (int)start_state << " -> " << (int)end_state << '\n';
 			}
 		else
 			{
@@ -433,9 +446,11 @@ void UniventProbMgr::sampleUnivents(Univents & u, const double edgelen,  const i
 					}
 				PHYCAS_ASSERT(s < numStates || u < 1.0e-7);
 				if (s_mat)
-					s_mat[start_state][s] += 1;
+					//s_mat[start_state][s] += 1;	//POL this looks wrong
+					s_mat[prev_state][s] += 1;
 				if (sm)
 					(*sm)[curr_m] = s;
+				//std::cerr << "--->  | s[" << curr_m << "] = " << (int)prev_state << " -> " << (int)s << '\n';
 				curr_umat = rest_umat;
 				prev_state = s;
 				}
@@ -443,9 +458,9 @@ void UniventProbMgr::sampleUnivents(Univents & u, const double edgelen,  const i
 				s_mat[prev_state][end_state] += 1;
 			if (sm)
 				(*sm)[m-1] = end_state;
+			//std::cerr << "--->  | s[" << (m - 1) << "] = " << (int)prev_state << " -> " << (int)end_state << '\n';
 			}
-
-	  	}
+	  	}	// end of loop over patterns
 	u.setValid(true);
 	u.times_valid = this->sampleTimes;
 	}
@@ -453,7 +468,7 @@ void UniventProbMgr::sampleUnivents(Univents & u, const double edgelen,  const i
 /*----------------------------------------------------------------------------------------------------------------------
 |	
 */
-void UniventProbMgr::sampleDescendantStates(
+void UniventProbMgr::sampleDescendantStatesImpl(
 	const unsigned num_patterns, 
 	int8_t * nd_states, 
 	const double * const * p_mat, 
@@ -479,13 +494,17 @@ void UniventProbMgr::sampleDescendantStates(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	
+|	Samples a state at the root of the tree for each site i and stores the sample state in `nd_states'[i]. Must provide
+|	the multinomial probabilities in `rootStatePosterior' (this vector is nstates*nsites long). If `rootStatePosterior'
+|	is already normalized, specify true for `posteriors_normalized' to avoid the extra computation associated with
+|	normalization. The `obs_state_counts' array is assumed to be nstates long and will hold total counts of each state
+|	at the root when this function returns.
 */
-void UniventProbMgr::sampleRootStates(
+void UniventProbMgr::sampleRootStatesImpl(
 	const unsigned num_patterns,
 	int8_t * nd_states,
 	const LikeFltType * rootStatePosterior,
-	Lot &rng,
+	Lot & rng,
 	bool posteriors_normalized, 
 	unsigned * obs_state_counts) const
 	{
@@ -494,6 +513,7 @@ void UniventProbMgr::sampleRootStates(
 		for (unsigned i = 0 ; i < numStates; ++i)
 			obs_state_counts[i] = 0;
 		}
+
 	for (unsigned i = 0 ; i < num_patterns; ++i)
 		{
 		double total = 1.0;

@@ -510,6 +510,16 @@ class MarkovChain(LikelihoodCore):
             self.chain_manager.addMove(self.edge_move)
 
         if self.parent.opts.use_unimap:
+            # Create a UnimapFastNNIMove (replaces LargetSimonMove for unimap analyses)
+            self.unimap_fast_nni_move = Likelihood.UnimapFastNNIMove()
+            self.unimap_fast_nni_move.setName("Unimap Fast NNI move")
+            self.unimap_fast_nni_move.setWeight(self.parent.opts.unimap_fast_nni_move_weight)
+            self.unimap_fast_nni_move.setTree(self.tree)
+            self.unimap_fast_nni_move.setModel(self.model)
+            self.unimap_fast_nni_move.setTreeLikelihood(self.likelihood)
+            self.unimap_fast_nni_move.setLot(self.r)
+            self.chain_manager.addMove(self.unimap_fast_nni_move)
+
             # Create a UnimapSampleAmbigMove
             wt = self.parent.opts.unimap_sample_ambig_move_weight
             self.unimap_sample_ambig_move = Likelihood.UnimapSampleAmbigMove(self.likelihood, self.tree, self.model, wt)
@@ -518,9 +528,7 @@ class MarkovChain(LikelihoodCore):
             if wt > 0.0 and num_ambig > 0:
                 self.unimap_sample_ambig_move.setLot(self.r)
                 self.chain_manager.addMove(self.unimap_sample_ambig_move)
-                
-            
-            
+
             # Create a UnimapNNIMove (replaces LargetSimonMove for unimap analyses)
             self.unimap_nni_move = Likelihood.UnimapNNIMove()
             self.unimap_nni_move.setName("Unimap NNI move")

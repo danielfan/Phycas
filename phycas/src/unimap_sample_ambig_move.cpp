@@ -222,7 +222,7 @@ void UnimapSampleAmbigMove::sampleNewStateArrayForNodeAsDisconnected(TreeNode * 
 //		std::cerr << "in sampleNewStateArrayForNodeAsDisconnected esProb.size() == " << esProb.size() << " numStates = " << numStates << '\n';
 
 		const int_state_code_t chosenStateCode = (int_state_code_t) rng->MultinomialDraw(&esProb[0], numStates);
-		PHYCAS_ASSERT(chosenStateCode >= 0 && chosenStateCode < numStates);
+		PHYCAS_ASSERT(chosenStateCode >= 0 && chosenStateCode < (int_state_code_t)numStates);
 		scVec[i] = chosenStateCode;
 		}
 
@@ -294,7 +294,7 @@ void UnimapSampleAmbigMove::proposeNewStateArrayForNode(TreeNode * nd, const std
 				}
  	 	 	}
 		const int_state_code_t chosenStateCode = (int_state_code_t) rng->MultinomialDraw(&esProb[0], numStates);
-		PHYCAS_ASSERT(chosenStateCode >= 0 && chosenStateCode < numStates);
+		PHYCAS_ASSERT(chosenStateCode >= 0 && chosenStateCode < (int_state_code_t)numStates);
 		scVec[i] = chosenStateCode;
 		}
 
