@@ -106,15 +106,18 @@ MVNormalDistribution * MVNormalDistribution::Clone() const
 |	object will be left unmodified.
 */
 bool MVNormalDistribution::Fit(
-  unsigned nrows, 
-  unsigned ncols, 
-  std::vector<double> data)
+  unsigned nrows, 			/**< is the number of rows (observations) */
+  unsigned ncols, 			/**< is the number of columns (variables) */
+  std::vector<double> data)	/**< is the flattened (1st. row starts at index 0, 2nd. row starts at index ncols, etc.) two-dimensional array */
 	{
 	PHYCAS_ASSERT(nrows*ncols == data.size());
 	PHYCAS_ASSERT(nrows > 2);	// must be at least 3 observations
 	PHYCAS_ASSERT(ncols > 1);   // if not at least 2 variables, should use NormalDistribution instead
 	
-	unsigned row, i, j, k = 0, k0;
+	unsigned row, col, i, j, k;
+	
+	double mean_denom = (double)nrows;
+	double varcov_denom = (double)(nrows - 1);
 
 	// copy current mean vector in case revert necessary
 	unsigned dim = (unsigned)mean.size();
@@ -130,7 +133,7 @@ bool MVNormalDistribution::Fit(
 			s.ptr[i][j] = varcov.ptr[i][j];
 			}
 
-	// resize mean and varcov and zero out
+	// resize mean and varcov and zero out both
 	mean.resize(ncols);
 	varcov.Initialize(ncols, ncols);
 	for (i = 0; i < ncols; ++i)
@@ -140,16 +143,25 @@ bool MVNormalDistribution::Fit(
 			varcov.ptr[i][j] = 0.0;
 		}
 	
-	// estimate mean and varcov from data
+	// estimate mean from data
+	unsigned n = (unsigned)data.size();
+	for (i = 0; i < n; ++i)
+		{
+		col = i % ncols;
+		mean[col] += data[i]/mean_denom;
+		}
+		
+	// estimate covariance matrix from data
 	for (row = 0; row < nrows; ++row)
 		{
-		k0 = k;
+		k = row*ncols;
 		for (i = 0; i < ncols; ++i)
 			{
-			mean[i] += data[k++];
+			double di = data[k + i] - mean[i];
 			for (j = 0; j < ncols; ++j)
 				{
-				varcov.ptr[i][j] += data[k0 + i]*data[k0 + j];
+				double dj = data[k + j] - mean[j];
+				varcov.ptr[i][j] += di*dj/varcov_denom;
 				}
 			}
 		}

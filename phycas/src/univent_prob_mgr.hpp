@@ -66,7 +66,7 @@ class UniventProbMgr
 
 		SquareMatrix					    lnUMatMemMgt;   /**< deletes lnUMat when it goes out of scope */
 		mutable std::vector<SquareMatrix>	uMatVect;       /**< uMat[m][i][j] is the (i,j)th element of the matrix obtained by raising the uniformized transition matrix to the power m */				  
-		double * *						    lnUMat;         /**< lnUMat[i][j] is the log of the corresponding element of the uniformized transition matrix element */
+		double * *						    lnUMat;         /**< lnUMat[i][j] is the log of the (i,j)th element of the uniformized transition matrix element */
 		mutable std::vector<double>		    logmfact;       /**< contains the log of the factorial of m for m = 0..maxm */
 		mutable double					    lambda;	        /**< rate at which uniformization events, or univents, occur */
 		mutable unsigned 				    maxm;           /**< */

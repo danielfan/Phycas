@@ -2190,10 +2190,31 @@ unsigned Tree::GetNInternals()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Returns first node in the preorder sequence, which is equivalent to the tip root in an unrooted tree.
+*/
+TreeNode * Tree::GetRoot()
+	{
+	return GetFirstPreorder();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the subroot node, which is the only child of the root tip node in an unrooted tree.
+*/
+TreeNode * Tree::GetSubroot()
+	{
+	TreeNode * root_tip = GetFirstPreorder();
+	PHYCAS_ASSERT(root_tip);
+	TreeNode * subroot  = root_tip->GetLeftChild();
+	PHYCAS_ASSERT(subroot);
+	PHYCAS_ASSERT(subroot->GetNextPreorder() == subroot->GetLeftChild());
+	return subroot;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Return value of data member `firstPreorder'. Note: makes a (rather expensive) call to RefreshPreorder() if the
 |	preorder pointers need to be updated (i.e., `preorderDirty' is true).
 */
-TreeNode	* Tree::GetFirstPreorder()
+TreeNode * Tree::GetFirstPreorder()
 	{
 	if (preorderDirty)
 		RefreshPreorder();

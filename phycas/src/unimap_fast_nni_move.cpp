@@ -36,7 +36,7 @@ namespace phycas
 |	
 */
 UnimapFastNNIMove::UnimapFastNNIMove()
-  : x(0), y(0), a(0), b(0), c(0), d(0), num_states(0), smat_before(0), smat_after(0)
+  : x(0), y(0), a(0), b(0), c(0), d(0), num_states(0), num_sites(0), log_umat(0), tuning_factor(0.5)
 	{
 	}
 
@@ -45,10 +45,6 @@ UnimapFastNNIMove::UnimapFastNNIMove()
 */
 UnimapFastNNIMove::~UnimapFastNNIMove()
 	{
-	if (smat_before)
-		DeleteTwoDArray(smat_before);
-	if (smat_after)
-		DeleteTwoDArray(smat_before);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -57,27 +53,37 @@ UnimapFastNNIMove::~UnimapFastNNIMove()
 */
 bool UnimapFastNNIMove::update()
 	{
+	// If this is the first time update has been called, need to initialize num_states, num_sites and log_umat
 	if (num_states == 0)
 		{
 		num_states = likelihood->getNStates();
 		PHYCAS_ASSERT(num_states > 0);
-		PHYCAS_ASSERT(smat_before == 0);
-		smat_before = NewTwoDArray<unsigned>(num_states, num_states);
-		PHYCAS_ASSERT(smat_after == 0);
-		smat_after  = NewTwoDArray<unsigned>(num_states, num_states);
+		}
+		
+	if (log_umat == 0)
+		{
+		log_umat_caretaker.CreateMatrix(num_states, 0.0);
+		log_umat = log_umat_caretaker.GetMatrix();
 		}
 	
 	// Make sure number of states hasn't changed since we instantiated this move
 	PHYCAS_ASSERT(num_states == likelihood->getNStates());
 	
+	if (num_sites == 0)
+		{
+		num_sites = likelihood->getNPatterns();
+		PHYCAS_ASSERT(num_sites > 0);
+		}
+	
 	// The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
-	// A proposed UnimapNNIMove cannot be accepted without changing edge lengths, so it is best to bail out now.
+	// A proposed UnimapFastNNIMove cannot be accepted without changing edge lengths, so it is best to bail out now.
 	if (is_fixed)
 		return false;
 
 	++num_moves_attempted;
 
 	proposeNewState();
+	
 	// 	ChainManagerShPtr p = chain_mgr.lock();
 	// 
 	// 	double prev_posterior = 0.0;
@@ -95,7 +101,7 @@ bool UnimapFastNNIMove::update()
 	// 
 	// 	double ln_accept_ratio = curr_posterior - prev_posterior + getLnHastingsRatio();
 	double lnu = DBL_MAX;
-	double ln_accept_ratio = 1.1;	//temporary!
+	//double ln_accept_ratio = 1.1;	//temporary!
 	bool accepted = (ln_accept_ratio >= 0.0);
 	if (!accepted)
 		{
@@ -147,20 +153,77 @@ TreeNode * UnimapFastNNIMove::randomInternalAboveSubroot()
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Tallies up univents for each of the 5 involved in this move and ensures that the sMat structure stored in the node's
+|	tip data or internal data structure is correct. Also checks the mdot count stored in each node's univent structure.
+*/
+void UnimapFastNNIMove::debugCheckUnivents()
+	{
+	std::cerr << "Fast NNI move (before):" << std::endl;
+	std::cerr << "  Edge lengths\n";
+	std::cerr << "    a = " << alen_before << "\n";
+	std::cerr << "    b = " << blen_before << "\n";
+	std::cerr << "    c = " << clen_before << "\n";
+	std::cerr << "    x = " << xlen_before << "\n";
+	std::cerr << "    y = " << ylen_before << "\n";
+	std::cerr << std::endl;
+	std::cerr << "  Number of univents per edge:\n";
+	std::cerr << "    a = " << mdota_before << "\n";
+	std::cerr << "    b = " << mdotb_before << "\n";
+	std::cerr << "    c = " << mdotc_before << "\n";
+	std::cerr << "    x = " << mdotx_before << "\n";
+	std::cerr << "    y = " << mdoty_before << "\n";
+	std::cerr << std::endl;
+
+	std::cerr << "  Sum of nodeSMat matrices stored in internal or tip data structures:\n";
+	std::cerr << boost::str(boost::format("    %6.0f %6.0f %6.0f %6.0f\n") % smat_before[0][0] % smat_before[0][1] % smat_before[0][2] % smat_before[0][3] );
+	std::cerr << boost::str(boost::format("    %6.0f %6.0f %6.0f %6.0f\n") % smat_before[1][0] % smat_before[1][1] % smat_before[1][2] % smat_before[1][3] );
+	std::cerr << boost::str(boost::format("    %6.0f %6.0f %6.0f %6.0f\n") % smat_before[2][0] % smat_before[2][1] % smat_before[2][2] % smat_before[2][3] );
+	std::cerr << boost::str(boost::format("    %6.0f %6.0f %6.0f %6.0f\n") % smat_before[3][0] % smat_before[3][1] % smat_before[3][2] % smat_before[3][3] );
+	std::cerr << std::endl;
+
+	// Tally up univents along the 5 edges as a check of smat_before
+	SquareMatrix tmp2(num_states, 0.0);
+	addUniventsOneEdge(tmp2, a);
+	addUniventsOneEdge(tmp2, b);
+	addUniventsOneEdge(tmp2, c);
+	addUniventsOneEdge(tmp2, x);
+	addUniventsOneEdge(tmp2, y);
+
+	std::cerr << "  Tally of univents along the 5 edges:\n";
+	std::cerr << boost::str(boost::format("    %6.0f %6.0f %6.0f %6.0f\n") % tmp2[0][0] % tmp2[0][1] % tmp2[0][2] % tmp2[0][3] );
+	std::cerr << boost::str(boost::format("    %6.0f %6.0f %6.0f %6.0f\n") % tmp2[1][0] % tmp2[1][1] % tmp2[1][2] % tmp2[1][3] );
+	std::cerr << boost::str(boost::format("    %6.0f %6.0f %6.0f %6.0f\n") % tmp2[2][0] % tmp2[2][1] % tmp2[2][2] % tmp2[2][3] );
+	std::cerr << boost::str(boost::format("    %6.0f %6.0f %6.0f %6.0f\n") % tmp2[3][0] % tmp2[3][1] % tmp2[3][2] % tmp2[3][3] );
+	std::cerr << std::endl;
+
+	std::cerr << "Aborting because Unimap Fast NNI move not yet completely implemented" << std::endl;
+	std::exit(0);
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
 |	Stores the information needed to compute the log-likelihood for the four-taxon subtree being considered. Assumes
 |	that x, y, a, b, c and d have all been assigned.
 */
 void UnimapFastNNIMove::storeOrigEdgeInfo()
 	{
+	double uni_lambda = model->calcLMat(log_umat);
+	
 	// Save edge lengths as they were before the move is proposed
-	tlen_before = 0.0;
-	alen_before = a->GetEdgeLen(); tlen_before += alen_before;
-	blen_before = b->GetEdgeLen(); tlen_before += blen_before;
-	clen_before = c->GetEdgeLen(); tlen_before += clen_before;
-	xlen_before = x->GetEdgeLen(); tlen_before += xlen_before;
-	xlen_before = y->GetEdgeLen(); tlen_before += ylen_before;
+	alen_before = a->GetEdgeLen();
+	blen_before = b->GetEdgeLen();
+	clen_before = c->GetEdgeLen();
+	xlen_before = x->GetEdgeLen();
+	ylen_before = y->GetEdgeLen();
 
-	// Save referent to the univents structure attached to each node
+	// The sum of edge lengths is used in the likelihood calculation
+	tlen_before = 0.0;
+	tlen_before += alen_before;
+	tlen_before += blen_before;
+	tlen_before += clen_before;
+	tlen_before += xlen_before;
+	tlen_before += ylen_before;
+		
+	// Get reference to the univents structure attached to each node
 	const Univents & univents_a = getUniventsConstRef(*a);
 	const Univents & univents_b = getUniventsConstRef(*b);
 	const Univents & univents_c = getUniventsConstRef(*c);
@@ -175,70 +238,93 @@ void UnimapFastNNIMove::storeOrigEdgeInfo()
 	mdoty_before = univents_y.getMDot();
 	
 	// Initialize smat_before and smat_after to all zeros
+	smat_before.CreateMatrix(num_states, 0.0);	//this involves reallocating the matrix - should just zero it out
+	smat_after.CreateMatrix(num_states, 0.0);	//this involves reallocating the matrix - should just zero it out
+
+	// get pointers to the sMat data member for each node
+	// *** NEED TO WRITE getNodeSMat FUNCTION ***
+	unsigned * * smata = NULL; //likelihood->getNodeSMat(a);
+	unsigned * * smatb = NULL; //likelihood->getNodeSMat(b);
+	unsigned * * smatc = NULL; //likelihood->getNodeSMat(c);
+	unsigned * * smatx = NULL; //likelihood->getNodeSMat(x);
+	unsigned * * smaty = NULL; //likelihood->getNodeSMat(y);
+	
+	// add all five sMat matrices to initially empty smat_before
 	for (unsigned i = 0; i < num_states; ++i)
 		for (unsigned j = 0; j < num_states; ++j)
 			{
-			smat_before[i][j] = 0;
-			smat_after[i][j]  = 0;
+			double tmp = (double)smata[i][j]
+				+ (double)smatb[i][j]
+				+ (double)smatc[i][j]
+				+ (double)smatx[i][j]
+				+ (double)smaty[i][j];
+			smat_before[i][j] += tmp;
 			}
-	
-	// Save matrix of univent counts in smat_before before move is proposed
-	addUniventsOneEdge(smat_before, univents_a);
-	addUniventsOneEdge(smat_before, univents_b);
-	addUniventsOneEdge(smat_before, univents_c);
-	addUniventsOneEdge(smat_before, univents_x);
-	addUniventsOneEdge(smat_before, univents_y);
-	
-	if (true)
-		{
-		std::cerr << "Fast NNI move (before):" << std::endl;
-		std::cerr << "  Edge lengths\n";
-		std::cerr << "    a = " << alen_before << "\n";
-		std::cerr << "    b = " << blen_before << "\n";
-		std::cerr << "    c = " << clen_before << "\n";
-		std::cerr << "    x = " << xlen_before << "\n";
-		std::cerr << "    y = " << ylen_before << "\n";
-		std::cerr << std::endl;
-		std::cerr << "  Number of univents per edge:\n";
-		std::cerr << "    a = " << mdota_before << "\n";
-		std::cerr << "    b = " << mdotb_before << "\n";
-		std::cerr << "    c = " << mdotc_before << "\n";
-		std::cerr << "    x = " << mdotx_before << "\n";
-		std::cerr << "    y = " << mdoty_before << "\n";
-		std::cerr << std::endl;
-		std::cerr << "  Matrix of numbers of transitions:\n";
-		std::cerr << boost::str(boost::format("    %6d %6d %6d %6d\n") % smat_before[0][0] % smat_before[0][1] % smat_before[0][2] % smat_before[0][3] );
-		std::cerr << boost::str(boost::format("    %6d %6d %6d %6d\n") % smat_before[1][0] % smat_before[1][1] % smat_before[1][2] % smat_before[1][3] );
-		std::cerr << boost::str(boost::format("    %6d %6d %6d %6d\n") % smat_before[2][0] % smat_before[2][1] % smat_before[2][2] % smat_before[2][3] );
-		std::cerr << boost::str(boost::format("    %6d %6d %6d %6d\n") % smat_before[3][0] % smat_before[3][1] % smat_before[3][2] % smat_before[3][3] );
-		std::cerr << std::endl;
-		std::cerr << "Aborting because Unimap Fast NNI move not yet completely implemented" << std::endl;
-		std::exit(0);
-		}
+
+	double lnL_before	= (double)num_sites*uni_lambda*tlen_before
+						+ (double)mdota_before*log(alen_before)
+						+ (double)mdotb_before*log(blen_before)
+						+ (double)mdotc_before*log(clen_before)
+						+ (double)mdotx_before*log(xlen_before)
+						+ (double)mdoty_before*log(ylen_before);
+							
+	// the following function exits after displaying debug information
+	debugCheckUnivents();
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
-|	Adds the univents recorded in the univents structure `u' to the corresponding elements of num_states by num_states
-|	matrix `smat'.
+|	Adds the univents recorded in the univents structure of node `nd' to the corresponding elements of the num_states 
+|	by num_states matrix `smat'.
 */
-void UnimapFastNNIMove::addUniventsOneEdge(unsigned * * smat, const Univents & u)
+void UnimapFastNNIMove::addUniventsOneEdge(SquareMatrix & smat, TreeNode * nd)
 	{
-	// Code stolen from TreeLikelihood::debugCheckSMatrix
-	const std::vector<StateMapping> & 		v 			= u.getVecEventsVecConstRef();
-	const std::vector<int8_t> & 			states_vec	= u.getEndStatesVecConstRef();
-	std::vector<int8_t>::const_iterator 	statesIt 	= states_vec.begin();
-	for (std::vector<StateMapping>::const_iterator sit = v.begin(); sit != v.end(); ++sit, ++statesIt)
+	// code taken from TreeLikelihood::debugCheckSMatrix
+
+	// get reference to the univents structure for nd
+	const Univents & u = getUniventsConstRef(*nd);
+	PHYCAS_ASSERT(u.isValid());
+	
+	// get reference to the 2-d vector of univents: 
+	// univents[i][j] holds a state for univent j at site i 
+	const std::vector<StateMapping> &  univents	= u.getVecEventsVecConstRef();
+	
+	// get reference for the vector of starting states
+	const int8_t * starting_state = NULL;
+	if (nd == tree->GetSubroot())
 		{
-		PHYCAS_ASSERT(statesIt != states_vec.end());
+		// if the current node is the subroot, the starting states are the 
+		// observed states at the tip root
+		TreeNode * root_tip = tree->GetRoot();
+		const TipData &	root_tip_data = *(root_tip->GetTipData());
+		starting_state = root_tip_data.getConstStateCodes();
+		}
+	else
+		{
+		// if the current node is not the subroot, then the starting states
+		// are the ending state of the node's parent
+		TreeNode * nd_par = nd->GetParent();
+		PHYCAS_ASSERT(nd_par);
+		const Univents & upar = getUniventsConstRef(*nd_par);
+		PHYCAS_ASSERT(upar.isValid());
+		const std::vector<int8_t> & states_vec	= upar.getEndStatesVecConstRef();
+		starting_state = &states_vec[0];
+		}
+		
+	// loop over sites, adding the univents for that site on the focal branch to smat
+	for (std::vector<StateMapping>::const_iterator sit = univents.begin(); sit != univents.end(); ++sit, ++starting_state)
+		{
+		// *sit is a vector of states at each univent for the current site
 		const StateMapping & stlist = (*sit);
 		if (!stlist.empty())
 			{
-			int8_t prev_state = *statesIt;
+			//unsigned k = 0;
+			int8_t prev_state = *starting_state;
 			const StateMapping::const_iterator endIt = stlist.end();
 			for (StateMapping::const_iterator it = stlist.begin(); it != endIt; ++it)
 				{
 				const int8_t new_state = *it;
-				smat[prev_state][new_state] += 1;
+				smat[prev_state][new_state] += 1.0;
+				//std::cerr << "--->  | s[" << (k++) << "] = " << (int)prev_state << " -> " << (int)new_state << '\n';
 				prev_state = new_state;
 				}
 			}
@@ -255,12 +341,19 @@ double UnimapFastNNIMove::calcFourTaxonLogLikelihood()
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
-|	Proposes a Larget-Simon LOCAL move. This proposal does not make any changes to the tree, so a revert requires no
-|	work.
+|	Proposes a Larget-Simon LOCAL move. 
 */
 void UnimapFastNNIMove::proposeNewState()
 	{
 	// Find a random 4-taxon subtree within the larger tree
+	//
+	//      a  b
+	//       \/
+	//   c   x <- randomly-chosen non-subroot internal node
+	//    \ /
+	//     y
+	//    /
+	//   d
 	x = randomInternalAboveSubroot();
 	PHYCAS_ASSERT(x);
 	PHYCAS_ASSERT(x->CountChildren() == 2); // we haven't figured this out for polytomies
@@ -288,9 +381,182 @@ void UnimapFastNNIMove::proposeNewState()
 	double u1 = rng->Uniform(FILE_AND_LINE);
 	a_is_top = (u1 <= 0.5 ? true : false);
 	
-	// Decide whether x or y should do the sliding
+	// Decide whether lower terminus should be c or d
 	double u2 = rng->Uniform(FILE_AND_LINE);
-	sliding_x = (u2 <= 0.5 ? true : false);
+	c_is_bottom = (u2 <= 0.5 ? true : false);
+	
+	// Decide whether x or y should do the sliding
+	double u3 = rng->Uniform(FILE_AND_LINE);
+	sliding_x = (u3 <= 0.5 ? true : false);
+	
+	// Draw r, the multiplicative factor by which the chosen three-edge segment is expanded or contracted
+	double u4 = rng->Uniform(FILE_AND_LINE);
+	three_edge_length_ratio = exp(tuning_factor*(u4 - 0.5));
+	
+	// Deal with the 8 possible cases (could make this more compact, but the long way makes it easier to diagnose bugs)
+	// Note that the tree and branch lengths are not actually modified by this proposed move unless the move is accepted.
+	// Everything needed for computing the likelihood is stored in temporaries (e.g. alen_before, alen_after, etc.)
+	which_case = 0;
+	alen_after = alen_before;
+	blen_after = blen_before;
+	clen_after = clen_before;
+	xlen_after = xlen_before;
+	ylen_after = ylen_before;
+	if (sliding_x)
+		{
+		if (a_is_top)
+			{
+			if (c_is_bottom)
+				{
+				// case 1: sliding x, a is top, c is bottom
+				//       a  b
+				//       \\/
+				//   c    x* 
+				//    \\ //
+				//     y
+				//    /
+				//   d
+				which_case = 1;
+				
+				// modify edge lengths
+				alen_after = alen_before*three_edge_length_ratio;
+				xlen_after = xlen_before*three_edge_length_ratio;
+				clen_after = clen_before*three_edge_length_ratio;
+#				error begin again here
+				}
+			else 
+				{
+				// case 2: sliding x, a is top, d is bottom
+				//       a  b
+				//       \\/
+				//   c    x* 
+				//    \  //
+				//     y
+				//    //
+				//   d
+				which_case = 2;
+				
+				// modify edge lengths
+				alen_after = alen_before*three_edge_length_ratio;
+				xlen_after = xlen_before*three_edge_length_ratio;
+				ylen_after = ylen_before*three_edge_length_ratio;
+				}
+			}
+		else
+			{
+			if (c_is_bottom)
+				{
+				// case 3: sliding x, b is top, c is bottom
+				//       a  b
+				//        \//
+				//   c    x*
+				//    \\ //
+				//     y
+				//    /
+				//   d
+				which_case = 3;
+				
+				// modify edge lengths
+				blen_after = blen_before*three_edge_length_ratio;
+				xlen_after = xlen_before*three_edge_length_ratio;
+				clen_after = clen_before*three_edge_length_ratio;
+				}
+			else 
+				{
+				// case 4: sliding x, b is top, d is bottom
+				//       a  b
+				//        \//
+				//   c    x*
+				//    \ //
+				//     y
+				//    //
+				//   d
+				which_case = 4;
+				
+				// modify edge lengths
+				blen_after = blen_before*three_edge_length_ratio;
+				xlen_after = xlen_before*three_edge_length_ratio;
+				ylen_after = ylen_before*three_edge_length_ratio;
+				}
+			}
+		}
+	else
+		{
+		if (a_is_top)
+			{
+			if (c_is_bottom)
+				{
+				// case 5: sliding y, a is top, c is bottom
+				//       a  b
+				//       \\/
+				//   c    x 
+				//    \\ //
+				//     y*
+				//    /
+				//   d
+				which_case = 5;
+				
+				// modify edge lengths
+				alen_after = alen_before*three_edge_length_ratio;
+				xlen_after = xlen_before*three_edge_length_ratio;
+				clen_after = clen_before*three_edge_length_ratio;
+				}
+			else 
+				{
+				// case 6: sliding y, a is top, d is bottom
+				//       a  b
+				//       \\/
+				//   c    x 
+				//    \  //
+				//     y*
+				//    //
+				//   d
+				which_case = 6;
+				
+				// modify edge lengths
+				alen_after = alen_before*three_edge_length_ratio;
+				xlen_after = xlen_before*three_edge_length_ratio;
+				ylen_after = ylen_before*three_edge_length_ratio;
+				}
+			}
+		else
+			{
+			if (c_is_bottom)
+				{
+				// case 7: sliding y, b is top, c is bottom
+				//       a  b
+				//        \//
+				//   c    x
+				//    \\ //
+				//     y*
+				//    /
+				//   d
+				which_case = 7;
+				
+				// modify edge lengths
+				blen_after = blen_before*three_edge_length_ratio;
+				xlen_after = xlen_before*three_edge_length_ratio;
+				clen_after = clen_before*three_edge_length_ratio;
+				}
+			else 
+				{
+				// case 8: sliding y, b is top, d is bottom
+				//       a  b
+				//        \//
+				//   c    x
+				//    \  //
+				//     y*
+				//    //
+				//   d
+				which_case = 8;
+				
+				// modify edge lengths
+				blen_after = blen_before*three_edge_length_ratio;
+				xlen_after = xlen_before*three_edge_length_ratio;
+				ylen_after = ylen_before*three_edge_length_ratio;
+				}
+			}
+		}
 	}
 
 double UnimapFastNNIMove::calcEdgeLenLnPrior(const TreeNode &x, double edge_len, ChainManagerShPtr & chain_mgr) 

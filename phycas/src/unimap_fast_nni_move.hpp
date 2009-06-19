@@ -41,13 +41,13 @@ class UnimapFastNNIMove : public MCMCUpdater
 								UnimapFastNNIMove();
 								virtual ~UnimapFastNNIMove();
 
-		// These are the virtual functions in the MCMCUpdater base class that we do not overload in UnimapTopoMove
+		// These are the virtual functions in the MCMCUpdater base class that we do not overload here
 		//
 		virtual double			getLnHastingsRatio() const;
 		virtual double			getLnJacobian() const;
 		virtual void			accept();
 
-		// These are virtual functions in the MCMCUpdater base class
+		// These are virtual functions in the MCMCUpdater base class that should be overloaded
 		//
 		virtual bool			update();
 		virtual void			proposeNewState();
@@ -58,11 +58,11 @@ class UnimapFastNNIMove : public MCMCUpdater
 		double 					calcFourTaxonLogLikelihood();
 		void 					storeOrigEdgeInfo();
 		double 					calcEdgeLenLnPrior(const TreeNode & x, double edge_len, ChainManagerShPtr & chain_mgr);
-		void 					addUniventsOneEdge(unsigned * * smat, const Univents & u);
+		void 					addUniventsOneEdge(SquareMatrix & smat, TreeNode * nd);
 		TreeNode * 				randomInternalAboveSubroot();
 		TipData *				createTipDataFromUnivents(const Univents &, TipData *);
 		void					DebugSaveNexusFile(TipData * xtd, TipData * ytd, TipData * ztd, TipData * wtd, double lnlike);
-		
+		void 					debugCheckUnivents();
 		
 	protected:
 		//      a  b
@@ -79,10 +79,16 @@ class UnimapFastNNIMove : public MCMCUpdater
 		TreeNode *				c;	/**< one child of `y' (the other is `x') */
 		TreeNode *				d;	/**< the parent of `y' (may be the tip node that roots the entire tree) */
 		
-		bool					a_is_top;	/**< if true, `x'-`a' is top segment of the 3-edge path; if false, `x'-`b' is the top segment */
-		bool					sliding_x;	/**< if true, `x' slides to a random location along the 3-edge path (carrying either `a' or `b' depending on value of `a_is_top'); if false, `y' does the sliding (always carrying `c') */
+		unsigned				which_case;					/**< keeps track of which of the 8 cases was used for the proposal (needed for reverting) */
+		double					tuning_factor;				/**< determines boldness of move (larger values mean bolder moves); if m is proposed 3-edge segment before move, m' = m*exp{-tuning_factor*(u-0.5)} will be proposed new length, where u is a uniform(0,1) deviate */
+		double					three_edge_length_ratio;	/**< ratio of proposed new length of 3-edge segment to current length of 3-edge segment */
+		
+		bool					a_is_top;					/**< if true, `x'-`a' is top segment of the 3-edge path; if false, `x'-`b' is the top segment */
+		bool					c_is_bottom;				/**< if true, `y'-`c' is bottom segment of the 3-edge path; if false, `y'-`d' is the bottom segment */
+		bool					sliding_x;					/**< if true, `x' slides to a random location along the 3-edge path; if false, `y' does the sliding */
 		
 		unsigned				num_states;
+		unsigned				num_sites;
 		unsigned				num_moves_attempted;
 		unsigned				num_moves_accepted;
 		
@@ -105,8 +111,10 @@ class UnimapFastNNIMove : public MCMCUpdater
 		unsigned				mdotx_before;
 		unsigned				mdoty_before;
 		
-		unsigned * *			smat_before;
-		unsigned * *			smat_after;
+		SquareMatrix			smat_before;
+		SquareMatrix			smat_after;
+		SquareMatrix			log_umat_caretaker;
+		double * * 				log_umat;
 		
 	};
 

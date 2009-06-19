@@ -74,6 +74,8 @@ class Tree
 		unsigned 				GetNInternalsAllocated();
 		unsigned				GetNObservables();
 		TreeNode *				GetFirstPreorder();
+		TreeNode *				GetRoot();
+		TreeNode *				GetSubroot();
 		TreeNode *				GetLastPreorder();
 		const TreeNode *		GetFirstPreorderConst() const;
 		const TreeNode *		GetLastPreorderConst() const;
