@@ -19,7 +19,7 @@ class Unimap(PhycasCommand):
 
     def hidden():
         """ 
-        Overrides the PhycasCommand.hidden method to keep PS's name from being displayed 
+        Overrides the PhycasCommand.hidden method to keep SS's name from being displayed 
         in the list of classes displayed when users type help. Delete this function, or
         change its return value to False, when it is ready to be advertised.
         """
@@ -29,7 +29,7 @@ class Unimap(PhycasCommand):
     def checkSanity(self):
         """
         Place asserts in this function that should be checked before anything substantive
-        is done during a call of a PS object.
+        is done during a call of a SS object.
         """
         cf = CommonFunctions(self)
         cf.phycassert(mcmc.ncycles > 0, 'mcmc.ncycles cannot be less than 1 for path sampling')

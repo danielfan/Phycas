@@ -2,10 +2,11 @@ from phycas.Utilities.PhycasCommand import *
 from phycas.Utilities.CommonFunctions import CommonFunctions
 from phycas import mcmc
 
-class PS(PhycasCommand):
+class SS(PhycasCommand):
     def __init__(self):
         args = (   ("nbetavals", 101, "The number of values beta will take on during the run; for example, if this value is 4, then beta will take on these values: 1, 2/3, 1/3, 0", IntArgValidate(min=1)),
                    #("simpsons_method", True, "If True (recommended), Simpson's method will be used to approximate the integral; otherwise, the trapezoid method will be used.", BoolArgValidate),
+                   ("aux", True, "If True, steppingstone sampling will be performed using a multivariate normal auxiliary distribution fit to the posterior; if False, steppingstone sampling will be performed without using an auxiliary distribution.", BoolArgValidate),
                    ("maxbeta", 1.0, "The first beta value that will be sampled.", FloatArgValidate(min=0.0, max=1.0)),
                    ("minbeta", 0.0, "The last beta value that will be sampled.", FloatArgValidate(min=0.0, max=1.0)),
                    ("shape1", 0.3, "The first shape parameter of the distribution used to determine the beta values to be sampled. This distribution is, confusingly, a Beta distribution. Thus, if both shape1 and shape2 are set to 1, beta values will be chosen at uniform intervals from minbeta to maxbeta.", FloatArgValidate(greaterthan=0.0)),
@@ -21,7 +22,7 @@ class PS(PhycasCommand):
 
     def hidden():
         """ 
-        Overrides the PhycasCommand.hidden method to keep PS's name from being displayed 
+        Overrides the PhycasCommand.hidden method to keep SS's name from being displayed 
         in the list of classes displayed when users type help. Delete this function, or
         change its return value to False, when it is ready to be advertised.
         """
@@ -31,7 +32,7 @@ class PS(PhycasCommand):
     def checkSanity(self):
         """
         Place asserts in this function that should be checked before anything substantive
-        is done during a call of a PS object.
+        is done during a call of a SS object.
         """
         cf = CommonFunctions(self)
         cf.phycassert(mcmc.ncycles > 0, 'mcmc.ncycles cannot be less than 1 for path sampling')

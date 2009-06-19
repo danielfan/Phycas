@@ -214,8 +214,8 @@ sim  = Sim()
 from Phycas.Like import Like
 like = Like()
 
-from Phycas.PS import PS
-ps = PS()
+from Phycas.SS import SS
+ss = SS()
 
 from Phycas.CPO import CPO
 cpo = CPO()
