@@ -1,0 +1,104 @@
+Replacing params.p
+Replacing trees.t
+Data source:    Character matrix in memory (id 7277424) with 1296 characters for 10 taxa.  Characters from the file /Users/plewis/Documents/Projects/pdev/trunk/phycas/Tests/Data/green.nex
+Starting tree:  (1:0.03999,2:0.04457,(3:0.14114,(4:0.04487,((5:0.28800,8:0.08739):0.12362,(6:0.03459,((7:0.18301,10:0.00714):0.01489,9:0.03730):0.07226):0.01720):0.00766):0.07013):0.08682)
+
+Performing path sampling MCMC to estimate marginal likelihood.
+Likelihood will be raised to the power beta, and beta will be
+decremented from 1.0 to 0.0 in a series of steps.
+  No. steps:               5
+  No. cycles per step:     100
+  Sample every:            10
+  No. samples per step:    10
+
+
+Sampled trees will be saved in Filestream to trees.t
+Sampled parameters will be saved in Filestream to params.p
+Using standard MCMC (i.e. no uniformized mapping)
+Tip node numbers were set using the names in the tree description
+Creating one chain (i.e. not using heated chains to improve mixing)
+Starting log-likelihood = -7731.10561438
+Starting log-prior = 26.1380889715
+
+Parameter starting values and prior densities:
+  Parameter name:     master edge length parameter
+  Prior distribution: Exponential(10.00000)
+  Master parameter (no current value)
+  Prior log-density:  26.1380889715
+
+Topology prior:
+  flat across all fully-resolved tree topologies (polytomies not allowed)
+
+Sampling (100 cycles for each of the 5 values of beta)...
+5 values were chosen from a discrete
+Beta(1.00000, 1.00000) distribution:
+     1      1.00000
+     2      0.75000
+     3      0.50000
+     4      0.25000
+     5      0.00000
+An MCMC analysis will be performed exploring each of the
+power posteriors defined by these values.
+
+beta = 1.00000, cycle = 10, lnL = -7718.67738 (0.00504 secs)
+beta = 1.00000, cycle = 20, lnL = -7699.61510 (0.00887 secs)
+beta = 1.00000, cycle = 30, lnL = -7690.76205 (0.01240 secs)
+beta = 1.00000, cycle = 40, lnL = -7677.87991 (0.01626 secs)
+beta = 1.00000, cycle = 50, lnL = -7644.49886 (0.02045 secs)
+beta = 1.00000, cycle = 60, lnL = -7640.99705 (0.02436 secs)
+beta = 1.00000, cycle = 70, lnL = -7619.49836 (0.02836 secs)
+beta = 1.00000, cycle = 80, lnL = -7613.85391 (0.03227 secs)
+beta = 1.00000, cycle = 90, lnL = -7599.30344 (0.03638 secs)
+beta = 1.00000, cycle = 100, lnL = -7579.76284 (0.04054 secs)
+beta = 1.00000, cycle = 110, lnL = -7576.88276 (0.04502 secs)
+beta = 1.00000, cycle = 120, lnL = -7570.16101 (0.04933 secs)
+beta = 1.00000, cycle = 130, lnL = -7556.71102 (0.05352 secs)
+beta = 1.00000, cycle = 140, lnL = -7554.52511 (0.05765 secs)
+beta = 1.00000, cycle = 150, lnL = -7551.63507 (0.06216 secs)
+beta = 1.00000, cycle = 160, lnL = -7548.50161 (0.06608 secs)
+beta = 1.00000, cycle = 170, lnL = -7542.84848 (0.07008 secs)
+beta = 1.00000, cycle = 180, lnL = -7534.64407 (0.07439 secs)
+beta = 1.00000, cycle = 190, lnL = -7517.66429 (0.07845 secs)
+beta = 1.00000, cycle = 200, lnL = -7507.46369 (0.08248 secs)
+beta = 0.75000, cycle = 10, lnL = -7499.90682 (0.08675 secs)
+beta = 0.75000, cycle = 20, lnL = -7482.61587 (0.09091 secs)
+beta = 0.75000, cycle = 30, lnL = -7479.02432 (0.09529 secs)
+beta = 0.75000, cycle = 40, lnL = -7478.42437 (0.09922 secs)
+beta = 0.75000, cycle = 50, lnL = -7476.40646 (0.10315 secs)
+beta = 0.75000, cycle = 60, lnL = -7467.02109 (0.10773 secs)
+beta = 0.75000, cycle = 70, lnL = -7455.78436 (0.11225 secs)
+beta = 0.75000, cycle = 80, lnL = -7447.31980 (0.11676 secs)
+beta = 0.75000, cycle = 90, lnL = -7448.89440 (0.12117 secs)
+beta = 0.75000, cycle = 100, lnL = -7445.21582 (0.12575 secs)
+beta = 0.50000, cycle = 10, lnL = -7443.72193 (0.13074 secs)
+beta = 0.50000, cycle = 20, lnL = -7438.95184 (0.13478 secs)
+beta = 0.50000, cycle = 30, lnL = -7437.51299 (0.13900 secs)
+beta = 0.50000, cycle = 40, lnL = -7437.30241 (0.14295 secs)
+beta = 0.50000, cycle = 50, lnL = -7418.02153 (0.14742 secs)
+beta = 0.50000, cycle = 60, lnL = -7405.16693 (0.15142 secs)
+beta = 0.50000, cycle = 70, lnL = -7395.97539 (0.15551 secs)
+beta = 0.50000, cycle = 80, lnL = -7412.49115 (0.15965 secs)
+beta = 0.50000, cycle = 90, lnL = -7403.29767 (0.16375 secs)
+beta = 0.50000, cycle = 100, lnL = -7402.88737 (0.16806 secs)
+beta = 0.25000, cycle = 10, lnL = -7390.52742 (0.17278 secs)
+beta = 0.25000, cycle = 20, lnL = -7391.81509 (0.17707 secs)
+beta = 0.25000, cycle = 30, lnL = -7372.34745 (0.18128 secs)
+beta = 0.25000, cycle = 40, lnL = -7353.63020 (0.18544 secs)
+beta = 0.25000, cycle = 50, lnL = -7353.09589 (0.18978 secs)
+beta = 0.25000, cycle = 60, lnL = -7351.13160 (0.19402 secs)
+beta = 0.25000, cycle = 70, lnL = -7348.22040 (0.19837 secs)
+beta = 0.25000, cycle = 80, lnL = -7335.58353 (0.20245 secs)
+beta = 0.25000, cycle = 90, lnL = -7327.92633 (0.20691 secs)
+beta = 0.25000, cycle = 100, lnL = -7338.21346 (0.21108 secs)
+beta = 0.00000, cycle = 10, lnL = -7828.79705 (0.22273 secs)
+beta = 0.00000, cycle = 20, lnL = -8495.57656 (0.23384 secs)
+beta = 0.00000, cycle = 30, lnL = -8545.52936 (0.24496 secs)
+beta = 0.00000, cycle = 40, lnL = -8487.58015 (0.25613 secs)
+beta = 0.00000, cycle = 50, lnL = -8128.43278 (0.26725 secs)
+beta = 0.00000, cycle = 60, lnL = -8283.66949 (0.27835 secs)
+beta = 0.00000, cycle = 70, lnL = -7711.49665 (0.28950 secs)
+beta = 0.00000, cycle = 80, lnL = -8045.25743 (0.30060 secs)
+beta = 0.00000, cycle = 90, lnL = -8076.69168 (0.31172 secs)
+beta = 0.00000, cycle = 100, lnL = -7944.91255 (0.32285 secs)
+600 likelihood evaluations in 0.32342 seconds
+  = 1855.15563 likelihood evaluations/sec
