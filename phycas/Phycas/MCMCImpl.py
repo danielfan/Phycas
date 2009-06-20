@@ -66,12 +66,12 @@ class MCMCImpl(CommonFunctions):
         self.cycle_start            = 0     # used in path sampling to avoid starting over the cycle count for each beta value
         self.last_adaptation        = 0
         self.next_adaptation        = 0
-        self.ps_beta                = 1.0
-        self.ps_beta_index          = 0
-        self.ps_sampled_betas       = None
-        self.ps_sampled_likes       = None
-        #self.ps_delta_beta          = 0.0   # can be deleted when new system in place
-        self.phycassert(self.opts.ps_nbetavals > 0, 'ps_nbetavals cannot be less than 1')
+        self.ss_beta                = 1.0
+        self.ss_beta_index          = 0
+        self.ss_sampled_betas       = None
+        self.ss_sampled_likes       = None
+        #self.ss_delta_beta          = 0.0   # can be deleted when new system in place
+        self.phycassert(self.opts.ss_nbetavals > 0, 'ss_nbetavals cannot be less than 1')
         self.siteIndicesForPatternIndex = None
         
     def setSiteLikeFile(self, sitelikef):
@@ -288,124 +288,6 @@ class MCMCImpl(CommonFunctions):
         cum = term1 + term2
         return cum
         
-#     def calcMarginalLikelihood(self):
-#         # This function is obsolete now that the sump command computes harmonic mean estimate
-#         # It is no longer called and should be removed from the code at some point 
-#         ps_aborted = False
-#         ps_msg = ''
-#         if self.opts.doing_path_sampling:
-#             K = self.opts.ps_nbetavals
-#             if K > 1:
-#                 # Calculate marginal likelihood using the method described by Lartillot and Phillippe (2006; Syst. Biol. 55: 195-107)
-#                 # using improvements in Xie et al. (2009)
-#                 marginal_like = 0.0
-#                 if self.opts.ps_simpsons_method:
-#                     # This approach uses Simpson's method to interpolate between beta values using the
-#                     # interpolation polynomial in Lagrange form. This eliminates a big chuck of the bias
-#                     # apparent with Lartillot and Phillippe method when the number of beta values used is small
-#                     n = len(self.ps_sampled_likes[0])
-#                     if not (n == self.opts.ncycles//self.opts.sample_every):
-#                         ps_aborted = True
-#                         ps_msg = 'Path sampling marginal likelihood calculations aborted because number of sampled likelihoods (%d) did not match the expected number (%d)' % (n, self.opts.ncycles//self.opts.sample_every)
-#                     else:
-#                         mean = [sum(self.ps_sampled_likes[i])/float(n) for i in range(K)]
-#                         for i in range(K - 2):
-#                             x = [0.0]*3
-#                             x[0] = self.ps_sampled_betas[i]
-#                             x[1] = self.ps_sampled_betas[i+1]
-#                             x[2] = self.ps_sampled_betas[i+2]
-#                             y = [0.0]*3
-#                             y[0] = mean[i]
-#                             y[1] = mean[i+1]
-#                             y[2] = mean[i+2]
-#                             if i == 0:
-#                                 a = self.cumLagrange(1, x, y)
-#                                 marginal_like += a
-#                                 b = self.cumLagrange(2, x, y)
-#                                 marginal_like += (b - a)/2.0
-#                             elif i == K - 3:
-#                                 a = self.cumLagrange(1, x, y)
-#                                 marginal_like += a/2.0
-#                                 b = self.cumLagrange(2, x, y)
-#                                 marginal_like += (b - a)
-#                             else:
-#                                 b = self.cumLagrange(2, x, y)
-#                                 marginal_like += b/2.0
-#                 else:
-#                     # Get here if ps_simpsons_method is false. This approach is similar to Lartillot and Phillippe's
-#                     # 2006 method except it is generalized to allow unequal beta intervals
-#                     for i in range(K):
-#                         n = len(self.ps_sampled_likes[i])
-#                         if not (n == self.opts.ncycles//self.opts.sample_every):
-#                             ps_aborted = True
-#                             ps_msg = 'Path sampling marginal likelihood calculations aborted because number of sampled likelihoods (%d) did not match the expected number (%d)' % (n, self.opts.ncycles//self.opts.sample_every)
-#                             break
-#                         mean = sum(self.ps_sampled_likes[i])/float(n)
-#                         if i == 0:
-#                             before = self.ps_sampled_betas[0]
-#                         else:
-#                             before = self.ps_sampled_betas[i-1]
-#                         if i == K - 1:
-#                             after = self.ps_sampled_betas[K - 1]
-#                         else:
-#                             after = self.ps_sampled_betas[i+1]
-#                         diff = before - after
-#                         if diff < 0.0:
-#                             ps_aborted = True
-#                             ps_msg = 'Phycas does not currently support path sampling from prior toward posterior'
-#                             break
-#                         marginal_like += mean*diff/2.0
-#                 if not ps_aborted:
-#                     self.output('Log of marginal likelihood (thermodynamic integration method) = %.8f' % marginal_like)
-# 
-#                 if not ps_aborted:
-#                     # Calculate marginal likelihood using steppingstone sampling method
-#                     lnR = 0.0
-#                     seR = 0.0
-#                     for i in range(1,self.opts.ps_nbetavals):
-#                         # assuming that beta_incr and n are ok because ps_aborted is not true
-#                         beta_incr = self.ps_sampled_betas[i-1] - self.ps_sampled_betas[i]
-#                         n = len(self.ps_sampled_likes[i])
-#                         
-#                         # marginal likelihood calculation
-#                         tmp = 0.0
-#                         Lmax = max(self.ps_sampled_likes[i])
-#                         for lnL in self.ps_sampled_likes[i]:
-#                             tmp += math.exp(beta_incr*(lnL - Lmax))
-#                         tmp /= float(n)
-#                         lnR += beta_incr*Lmax + math.log(tmp)
-# 
-#                         # standard error calculation
-#                         tmp1 = 0.0
-#                         for lnL in self.ps_sampled_likes[i]:
-#                             aa = math.exp(beta_incr*(lnL - Lmax))/tmp
-#                             tmp1 += math.pow((aa - 1.0),2.0)
-#                         tmp1 /= float(n)
-#                         seR += tmp1/float(n)
-# 
-#                     self.output('Log of marginal likelihood (steppingstone sampling method) = %.8f (se = %.8f)' % (lnR, seR))
-#             else:
-#                 self.output('Log of marginal likelihood not computed (ps_nbetavals must be greater than 1)')
-#             if ps_aborted:
-#                 self.output(ps_msg)
-#         else:
-#             # Calculate marginal likelihood using harmonic mean method on cold chain
-#             nignored = 0
-#             n = len(self.ps_sampled_likes[0])
-#             self.phycassert(n == self.opts.ncycles//self.opts.sample_every, 'number of sampled likelihoods (%d) does not match the expected number (%d) in harmonic mean calculation' % (n, self.opts.ncycles//self.opts.sample_every))
-#             min_lnL = min(self.ps_sampled_likes[0])
-#             sum_diffs = 0.0
-#             for lnl in self.ps_sampled_likes[0]:
-#                 diff = lnl - min_lnL
-#                 if diff < 500.0:
-#                     sum_diffs += math.exp(-diff)
-#                 else:
-#                     nignored += 1
-#             log_harmonic_mean = math.log(n) + min_lnL - math.log(sum_diffs)
-#             if nignored > 0:
-#                 self.warning('ignoring %d sampled log-likelihoods in harmonic mean calculation' % nignored)
-#             self.output('Log of marginal likelihood (harmonic mean method) = %f' % log_harmonic_mean)
-
     def getStartingTree(self):
         #         if self.starting_tree is None:
         #             if False:
@@ -515,10 +397,10 @@ class MCMCImpl(CommonFunctions):
             self.phycassert(h[-1] > 0.0, 'all chain heating powers must be positive')
         self.mcmc_manager.createChains()
         self.openParameterAndTreeFiles()
-        if self.opts.doing_path_sampling:
-            self.ps_beta = self.opts.ps_maxbeta
+        if self.opts.doing_steppingstone_sampling:
+            self.ss_beta = self.opts.ss_maxbeta
             cc = self.mcmc_manager.getColdChain()
-            cc.setPower(self.ps_beta)
+            cc.setPower(self.ss_beta)
         self.siteLikeFileSetup(self.mcmc_manager.getColdChain())
         
     def beyondBurnin(self, cycle):
@@ -722,9 +604,9 @@ class MCMCImpl(CommonFunctions):
             # Provide progress report to user if it is time
             if self.opts.verbose and self.doThisCycle(cycle, self.opts.report_every):
                 self.stopwatch.normalize()
-                if self.opts.doing_path_sampling:
+                if self.opts.doing_steppingstone_sampling:
                     cold_chain_manager = self.mcmc_manager.getColdChainManager()
-                    msg = 'beta = %.5f, cycle = %d, lnL = %.5f (%.5f secs)' % (self.ps_beta, cycle + 1, cold_chain_manager.getLastLnLike(), self.stopwatch.elapsedSeconds())
+                    msg = 'beta = %.5f, cycle = %d, lnL = %.5f (%.5f secs)' % (self.ss_beta, cycle + 1, cold_chain_manager.getLastLnLike(), self.stopwatch.elapsedSeconds())
                 else:
                     if nchains == 1:
                         cold_chain_manager = self.mcmc_manager.getColdChainManager()
@@ -742,7 +624,7 @@ class MCMCImpl(CommonFunctions):
                 self.mcmc_manager.recordSample(self.cycle_start + cycle)
                 cold_chain_manager = self.mcmc_manager.getColdChainManager()
                 sampled_lnL = cold_chain_manager.getLastLnLike()
-                self.ps_sampled_likes[self.ps_beta_index].append(sampled_lnL)
+                self.ss_sampled_likes[self.ss_beta_index].append(sampled_lnL)
                 self.stopwatch.normalize()
 
             # Adapt slice samplers if it is time
@@ -790,11 +672,11 @@ class MCMCImpl(CommonFunctions):
                     self.output('Starting tree for chain %d:  %s' % (c, self.starting_tree[c]))
             else:
                 self.output('Starting tree:  %s' % str(self.starting_tree[0]))
-            if self.opts.doing_path_sampling:
+            if self.opts.doing_steppingstone_sampling:
                 self.output('\nPerforming path sampling MCMC to estimate marginal likelihood.')
                 self.output('Likelihood will be raised to the power beta, and beta will be')
                 self.output('decremented from 1.0 to 0.0 in a series of steps.')
-                self.output('  No. steps:               %s' % self.opts.ps_nbetavals)
+                self.output('  No. steps:               %s' % self.opts.ss_nbetavals)
                 self.output('  No. cycles per step:     %s' % self.opts.ncycles)
                 self.output('  Sample every:            %s' % self.opts.sample_every)
                 self.output('  No. samples per step:    %s' % self.nsamples)
@@ -854,8 +736,8 @@ class MCMCImpl(CommonFunctions):
         self.stopwatch.start()
         self.mcmc_manager.resetNumLikelihoodEvals()
         
-        if self.opts.doing_path_sampling:
-            self.output('\nSampling (%d cycles for each of the %d values of beta)...' % (self.opts.ncycles, self.opts.ps_nbetavals))
+        if self.opts.doing_steppingstone_sampling:
+            self.output('\nSampling (%d cycles for each of the %d values of beta)...' % (self.opts.ncycles, self.opts.ss_nbetavals))
         else:
             self.output('\nSampling (%d cycles)...' % self.opts.ncycles)
         if self.opts.verbose:
@@ -869,65 +751,65 @@ class MCMCImpl(CommonFunctions):
         # Lay down first line in params file (recorded as cycle 0) containing starting values of parameters
         self.mcmc_manager.recordSample()
 
-        if self.opts.doing_path_sampling:
+        if self.opts.doing_steppingstone_sampling:
             self.phycassert(self.data_matrix is not None, 'path sampling requires data')
             self.phycassert(nchains == 1, 'path sampling requires nchains to be 1')
             chain = self.mcmc_manager.getColdChain()
-            if self.opts.ps_nbetavals > 1:
+            if self.opts.ss_nbetavals > 1:
                 if False:
-                    # old way (constant ps_delta_beta)
-                    self.ps_delta_beta = float(self.opts.ps_maxbeta - self.opts.ps_minbeta)/float(self.opts.ps_nbetavals - 1)
-                    self.ps_sampled_betas = [self.opts.ps_maxbeta - self.ps_delta_beta*float(i) for i in range(self.opts.ps_nbetavals)]
+                    # old way (constant ss_delta_beta)
+                    self.ss_delta_beta = float(self.opts.ss_maxbeta - self.opts.ss_minbeta)/float(self.opts.ss_nbetavals - 1)
+                    self.ss_sampled_betas = [self.opts.ss_maxbeta - self.ss_delta_beta*float(i) for i in range(self.opts.ss_nbetavals)]
                 else:
-                    # new way (ps_delta_beta is a vector of values determined by discretized beta distribution)
-                    # Beta distribution will be divided into ps_nbetavals intervals, each of which has an equal area
-                    segment_area = 1.0/float(self.opts.ps_nbetavals - 1)
+                    # new way (ss_delta_beta is a vector of values determined by discretized beta distribution)
+                    # Beta distribution will be divided into ss_nbetavals intervals, each of which has an equal area
+                    segment_area = 1.0/float(self.opts.ss_nbetavals - 1)
                     cum_area = 0.0
                     lower_boundary = 0.0
-                    self.ps_sampled_betas = [self.opts.ps_minbeta]
-                    total_extent = float(self.opts.ps_maxbeta - self.opts.ps_minbeta)
-                    betadist = ProbDist.Beta(self.opts.ps_shape1, self.opts.ps_shape2)
-                    for i in range(self.opts.ps_nbetavals - 1):
+                    self.ss_sampled_betas = [self.opts.ss_minbeta]
+                    total_extent = float(self.opts.ss_maxbeta - self.opts.ss_minbeta)
+                    betadist = ProbDist.Beta(self.opts.ss_shape1, self.opts.ss_shape2)
+                    for i in range(self.opts.ss_nbetavals - 1):
                         cum_area += segment_area
                         upper_boundary = betadist.getQuantile(cum_area)
-                        scaled_upper_boundary = self.opts.ps_minbeta + total_extent*upper_boundary
-                        self.ps_sampled_betas.append(scaled_upper_boundary)
+                        scaled_upper_boundary = self.opts.ss_minbeta + total_extent*upper_boundary
+                        self.ss_sampled_betas.append(scaled_upper_boundary)
                         lower_boundary = upper_boundary
                         
                     # Reverse the sampled betas so that they start at 1.0 and decrease toward 0.0
-                    self.ps_sampled_betas.reverse()
+                    self.ss_sampled_betas.reverse()
                 
                 # Output the beta values that will be used
-                self.output('%d %s chosen from a discrete\nBeta(%.5f, %.5f) distribution:' % (self.opts.ps_nbetavals, (self.opts.ps_nbetavals == 1 and 'value was' or 'values were'), self.opts.ps_shape1, self.opts.ps_shape2))
-                for i,x in enumerate(self.ps_sampled_betas):
+                self.output('%d %s chosen from a discrete\nBeta(%.5f, %.5f) distribution:' % (self.opts.ss_nbetavals, (self.opts.ss_nbetavals == 1 and 'value was' or 'values were'), self.opts.ss_shape1, self.opts.ss_shape2))
+                for i,x in enumerate(self.ss_sampled_betas):
                     self.output('%6d %12.5f' % (i+1,x))
                 self.output('An MCMC analysis will be performed exploring each of the')
                 self.output('power posteriors defined by these values.')
                 self.output()
             else:
-                self.ps_sampled_betas = [self.opts.ps_minbeta]
+                self.ss_sampled_betas = [self.opts.ss_minbeta]
             
-            self.ps_sampled_likes = []
-            for self.ps_beta_index,self.ps_beta in enumerate(self.ps_sampled_betas):
-                self.ps_sampled_likes.append([])
-                chain.setPower(self.ps_beta)
-                boldness = 100.0*(1.0-self.ps_beta)
+            self.ss_sampled_likes = []
+            for self.ss_beta_index,self.ss_beta in enumerate(self.ss_sampled_betas):
+                self.ss_sampled_likes.append([])
+                chain.setPower(self.ss_beta)
+                boldness = 100.0*(1.0-self.ss_beta)
                 chain.setBoldness(boldness)
-                print 'Setting chain boldness to %g based on beta = %g' % (boldness,self.ps_beta)
+                print 'Setting chain boldness to %g based on beta = %g' % (boldness,self.ss_beta)
                 #raw_input('check')
-                if self.ps_beta_index > 0:
+                if self.ss_beta_index > 0:
                     self.burnin = 0
                 else:
                     self.burnin = self.opts.burnin
                     self.cycle_start = 0
-                if self.ps_beta == 0.0:
+                if self.ss_beta == 0.0:
                     self.mainMCMCLoop(explore_prior=True)
                 else:
                     self.mainMCMCLoop()
         else:
-            self.ps_sampled_likes = []
-            self.ps_sampled_likes.append([])
-            self.ps_beta_index = 0
+            self.ss_sampled_likes = []
+            self.ss_sampled_likes.append([])
+            self.ss_beta_index = 0
             self.cycle_start = 0
             self.burnin = self.opts.burnin
             if self.data_matrix is None:

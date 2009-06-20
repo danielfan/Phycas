@@ -82,22 +82,23 @@ class MCMC(PhycasCommand):
         self.__dict__["draw_directly_from_prior"] = True    # If True, MCMCImpl.explorePrior function is used to draw samples directly from the prior during path sampling, which dramatically improves mixing compared to using MCMC proposals to explore the prior
 
         # The data members added below are hidden from the user because they are set by the ps command
-        self.__dict__["doing_path_sampling"] = False
-        #self.__dict__["ps_simpsons_method"] = True
-        self.__dict__["ps_nbetavals"] = 101
-        self.__dict__["ps_maxbeta"] = 1.0
-        self.__dict__["ps_minbeta"] = 0.0
-        self.__dict__["ps_shape1"] = 1.0
-        self.__dict__["ps_shape2"] = 1.0
-        self.__dict__["ps_heating_likelihood"] = False
+        self.__dict__["doing_steppingstone_sampling"] = False
+        #self.__dict__["ss_simpsons_method"] = True
+        self.__dict__["ss_nbetavals"] = 101
+        self.__dict__["ss_maxbeta"] = 1.0
+        self.__dict__["ss_minbeta"] = 0.0
+        self.__dict__["ss_shape1"] = 1.0
+        self.__dict__["ss_shape2"] = 1.0
+        self.__dict__["ss_heating_likelihood"] = False
+        self.__dict__["ss_aux"] = False
         
         # The data members added below are hidden from the user because they are set by the cpo command
         self.__dict__["saving_sitelikes"] = False
         self.__dict__["sitelikef"] = None
         
         # The data members added below are hidden from the user because they are set when the mcmc command runs
-        self.__dict__["ps_sampled_likes"] = None
-        self.__dict__["ps_sampled_betas"] = None
+        self.__dict__["ss_sampled_likes"] = None
+        self.__dict__["ss_sampled_betas"] = None
         
     def checkSanity(self):
         """
@@ -105,8 +106,8 @@ class MCMC(PhycasCommand):
         is done during a call of self.run().
         """
         cf = CommonFunctions(self)
-        cf.phycassert(self.ps_nbetavals > 0, 'ps_nbetavals cannot be less than 1')
-        #cf.phycassert((self.ps_simpsons_method and self.ps_nbetavals > 2) or not self.ps_simpsons_method, 'ps_nbetavals cannot be less than 3 if ps_simpsons_method is true')
+        cf.phycassert(self.ss_nbetavals > 0, 'ss_nbetavals cannot be less than 1')
+        #cf.phycassert((self.ss_simpsons_method and self.ss_nbetavals > 2) or not self.ss_simpsons_method, 'ss_nbetavals cannot be less than 3 if ss_simpsons_method is true')
         
     def __call__(self, **kwargs):
         self.set(**kwargs)
@@ -115,6 +116,6 @@ class MCMC(PhycasCommand):
         mcmc_impl = MCMCImpl(c)
         mcmc_impl.setSiteLikeFile(self.sitelikef)
         mcmc_impl.run()
-        self.ps_sampled_betas = mcmc_impl.ps_sampled_betas
-        self.ps_sampled_likes = mcmc_impl.ps_sampled_likes
+        self.ss_sampled_betas = mcmc_impl.ss_sampled_betas
+        self.ss_sampled_likes = mcmc_impl.ss_sampled_likes
         mcmc_impl.unsetSiteLikeFile()

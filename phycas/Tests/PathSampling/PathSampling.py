@@ -39,9 +39,9 @@ mcmc.rel_rate_psi0        = 1.0
 mcmc.tree_scaler_lambda   = 0.2
 mcmc.tree_scaler_lambda0  = 0.5
 
-ps.nbetavals              = 5
-ps.maxbeta                = 1.0
-ps.minbeta                = 0.0
-ps.shape1                 = 1
-ps.shape2                 = 1
-ps()
+ss.nbetavals              = 5
+ss.maxbeta                = 1.0
+ss.minbeta                = 0.0
+ss.shape1                 = 1
+ss.shape2                 = 1
+ss()

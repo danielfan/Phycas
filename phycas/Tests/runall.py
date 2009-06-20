@@ -138,7 +138,7 @@ if __name__ == '__main__':
     runTest(outFile, "GTRTest", ["gtr_test.p", "gtr_test.t"])
     runTest(outFile, "Sump", ["logfile.txt"])
     runTest(outFile, "Sumt", ["trees.tre","splits.pdf","logfile.txt"])
-    runTest(outFile, "PathSampling", ["params.p", "trees.t"])
+    runTest(outFile, "SteppingstoneSampling", ["params.p", "trees.t"])
     runTest(outFile, "LikelihoodTest", ["simulated.nex", "check.nex"])
     runTest(outFile, "FixedParams", ["fixed.p", "fixed.t"])
     runTest(outFile, "Underflow", ["output.txt"])

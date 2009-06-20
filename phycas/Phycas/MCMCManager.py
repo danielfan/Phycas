@@ -275,7 +275,7 @@ class MarkovChain(LikelihoodCore):
 
         """
         paramf.write('[ID: %d]\n' % self.r.getInitSeed())
-        if self.parent.opts.doing_path_sampling:
+        if self.parent.opts.doing_steppingstone_sampling:
             paramf.write('Gen\tbeta\tLnL')
         else:
             paramf.write('Gen\tLnL')
@@ -675,7 +675,7 @@ class MarkovChain(LikelihoodCore):
         # Make sure each updater knows the heating power and heating type
         for updater in self.chain_manager.getAllUpdaters():
             updater.setPower(self.heating_power)
-            if self.parent.opts.ps_heating_likelihood:
+            if self.parent.opts.ss_heating_likelihood:
                 updater.setLikelihoodHeating()
             else:
                 updater.setStandardHeating()
@@ -846,7 +846,7 @@ class MCMCManager:
         # Add line to parameter file if it exists
         if self.parent.paramf:
             self.parent.paramf.write('%d\t' % (cycle + 1))
-            if self.parent.opts.doing_path_sampling:
+            if self.parent.opts.doing_steppingstone_sampling:
                 self.parent.paramf.write(float_format_str % (cold_chain.heating_power))
             for lnl in lnLikes:
                 self.parent.paramf.write(float_format_str % lnl)

@@ -84,7 +84,7 @@ class ParamSummarizer(CommonFunctions):
         cum = term0 - term1 + term2
         return -cum
         
-    def ps_simpsons(self, betas, means):
+    def ss_simpsons(self, betas, means):
         """
         This approach uses Simpson's method to interpolate between beta values using the
         interpolation polynomial in Lagrange form. Simpson' method is described in most
@@ -140,7 +140,7 @@ class ParamSummarizer(CommonFunctions):
                 #     print '(x[1] - x[2])*(y[1] + y[2])/2 = ',(x[1] - x[2])*(y[1] + y[2])/2.0
         self.output(" %.8f Path sampling method (using Simpson's rule)" % (marginal_like))
 
-    def ps_trapezoid(self, betas, means):
+    def ss_trapezoid(self, betas, means):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         This method approximates the integral under the curve defined by betas
@@ -340,11 +340,11 @@ class ParamSummarizer(CommonFunctions):
         except Exception,e:
             self.output(' %s' % e.message)
         try:
-            self.ps_trapezoid(betas, means)
+            self.ss_trapezoid(betas, means)
         except Exception,e:
             self.output(' %s' % e.message)
         #try:
-        #    self.ps_simpsons(betas, means)
+        #    self.ss_simpsons(betas, means)
         #except Exception,e:
         #    self.output(' %s' % e.message)
             

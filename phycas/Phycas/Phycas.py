@@ -46,18 +46,6 @@ class Phycas(object):
         self.samc_move_weight       = 1         # Number of times per cycle that SAMC moves will be performed (currently unused because SAMC moves are not used in standard MCMC analyses)
         self.samc_temperature       = 0.6       # Temperature used in extrapolate move to smooth out differences in probabilities of different possible attachment points
 
-        # Variables associated with path sampling (i.e. thermodynamic integration)
-        # If pathsampling() function called, ncycles will be ignored and instead the number of cycles
-        # will be ps_burnin + (ps_Q*ps_nbetavals)
-        #self.ps_toward_posterior    = True      # If True, chain will start with beta = 0.0 (exploring prior) and end up exploring posterior; otherwise, chain will begin by exploring posterior and end exploring prior
-        #self.ps_burnin              = 1000      # Number of cycles used to equilibrate before increasing beta
-        #self.ps_Q                   = 100       # Number of cycles between changes in beta
-        #self.ps_sample_every        = 1         # Determines number of times likelihood will be sampled. Number of samples for each value of beta will be ps_Q/sample_every
-        #self.ps_nbetavals           = 10        # The number of values beta will take on during the run; for example, if this value is 4, then beta will take on these values: 0, 1/3, 2/3, 1
-        #self.ps_minbeta             = 0.0       # The first beta value that will be sampled if ps_toward_posterior = True
-        #self.ps_maxbeta             = 1.0       # The last beta value that will be sampled if ps_toward_posterior = True
-        #self.ps_filename            = None      # If defined, a file by this name will be created containing the intermediate results (average log-likelihood at each step of the path)
-
         # Variables associated with Gelfand-Ghosh calculation
         self.gg_outfile             = 'gg.txt'  # File in which to save gg results (use None to not save results)
         self.gg_nreps               = 1         # The number of replicate simulations to do every MCMC sample
@@ -101,15 +89,15 @@ class Phycas(object):
         self.samc_theta             = []        # Normalizing factors (will have length ntax - 3 because levels with 1, 2 or 3 taxa are not examined)
         self.samc_distance_matrix   = None      # Holds ntax x ntax hamming distance matrix used by SamcMove
         self.stored_tree_defs       = None
-        self.ps_delta_beta          = 0.0
-        self.doing_path_sampling    = False
+        self.ss_delta_beta          = 0.0
+        self.doing_steppingstone_sampling = False
         self.path_sample            = None
         self.psf                    = None
         #self.pdf_splits_to_plot     = None
         self.param_file_name        = None  
         self.tree_file_name         = None
         self.nsamples               = None
-        self.ps_beta                = 1.0
+        self.ss_beta                = 1.0
         self.wangang_sampled_betas  = None
         self.wangang_sampled_likes  = None
         self.unimap_manager         = None
@@ -430,23 +418,23 @@ class Phycas(object):
     #    
     #log_file_name = property(getLogFile, setLogFile)
 
-    def pathsampling(self):
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
-        """
-        Performs an MCMC analysis the purpose of which is to obtain an
-        accurate estimate of the marginal likelihood of the model by path
-        sampling. See Lartillot, N., and H. Philippe. 2006. Syst. Biol. 55(2):
-        195-207.
-        
-        """
-        self.check_settings()
-        self.phycassert(self.ps_maxbeta > self.ps_minbeta, 'ps_maxbeta must be greater than ps_minbeta')
-        self.nchains = 1
-        self.ncycles = self.ps_burnin + (self.ps_Q*(self.ps_nbetavals))
-        self.ps_delta_beta = (self.ps_maxbeta - self.ps_minbeta)/float(self.ps_nbetavals - 1)
-        self.doing_path_sampling = True
-        self.setupMCMC()
-        self.runMCMC()
+	#     def pathsampling(self):
+	#         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+	#         """
+	#         Performs an MCMC analysis the purpose of which is to obtain an
+	#         accurate estimate of the marginal likelihood of the model by path
+	#         sampling. See Lartillot, N., and H. Philippe. 2006. Syst. Biol. 55(2):
+	#         195-207.
+	#         
+	#         """
+	#         self.check_settings()
+	#         self.phycassert(self.ss_maxbeta > self.ss_minbeta, 'ss_maxbeta must be greater than ss_minbeta')
+	#         self.nchains = 1
+	#         self.ncycles = self.ss_burnin + (self.ss_Q*(self.ss_nbetavals))
+	#         self.ss_delta_beta = (self.ss_maxbeta - self.ss_minbeta)/float(self.ss_nbetavals - 1)
+	#         self.doing_steppingstone_sampling = True
+	#         self.setupMCMC()
+	#         self.runMCMC()
 
     def samc(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
