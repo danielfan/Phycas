@@ -196,8 +196,8 @@ except:
 from Phycas.RandomTree import RandomTree
 randomtree = RandomTree()
 
-#from Phycas.Partition import Partition
-#partition = Partition()
+from Phycas.Partition import Partition
+partition = Partition()
 
 from Phycas.Model import Model
 model = Model()
