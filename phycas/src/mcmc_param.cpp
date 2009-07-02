@@ -36,7 +36,10 @@ void KappaParam::setModel(ModelShPtr m)
 	{
 	MCMCUpdater::setModel(m);
 	Model * p = m.get();
-	hky = dynamic_cast<HKY *>(p);	// forces inclusion of "phycas/src/likelihood_models.hpp"
+	if (m->isCodonModel())
+    	codon = dynamic_cast<Codon *>(p);	// forces inclusion of "phycas/src/likelihood_models.hpp"
+    else
+    	hky = dynamic_cast<HKY *>(p);	// forces inclusion of "phycas/src/likelihood_models.hpp"
 
 	//POL tried unsuccessfully to get this to compile as an inlined function, but VC gave me this 
 	// error (which makes sense):
@@ -54,7 +57,10 @@ void KappaParam::setModel(ModelShPtr m)
 */
 void KappaParam::setCurrValueFromModel()
 	{
-    curr_value = hky->getKappa();
+	if (hky != NULL)
+        curr_value = hky->getKappa();
+    else
+        curr_value = codon->getKappa();
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -71,8 +77,11 @@ double KappaParam::operator()(
 
 	if (k > 0.0)
 		{
-		PHYCAS_ASSERT(hky);
-		hky->setKappa(k);
+		if (hky != NULL)
+    		hky->setKappa(k);
+    	else
+    		codon->setKappa(k);
+    	
 		curr_value = k;
 		recalcPrior();
 
@@ -320,7 +329,7 @@ double StateFreqParam::operator()(
 
     if (f > 0.0)
 		{
-		PHYCAS_ASSERT(which < 4);
+		PHYCAS_ASSERT((model->isCodonModel() && which < 61) || which < 4);
 		model->setStateFreqUnnorm(which, f);
 		//state_freq.freqs[which] = f;
         //model.normalizeFreqs(state_freq.freqs);
@@ -342,7 +351,7 @@ double StateFreqParam::operator()(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Overrides base class version to set `curr_value' to the corresponding value of the `pinvar' in `model'.
+|	Overrides base class version to set `curr_value' to the corresponding value.
 */
 void HyperPriorParam::setCurrValueFromModel()
 	{

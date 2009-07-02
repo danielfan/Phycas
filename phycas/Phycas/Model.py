@@ -4,7 +4,7 @@ from phycas.ProbDist import Beta, Exponential, InverseGamma, Dirichlet
 class Model(PhycasCommand):
     def __init__(self):
         args = ( 
-                ("type",                       'hky',                                "Can be 'jc', 'hky' or 'gtr'", EnumArgValidate(['jc', 'hky', 'gtr'])),
+                ("type",                       'hky',                                "Can be 'jc', 'hky', 'gtr' or 'codon'", EnumArgValidate(['jc', 'hky', 'gtr', 'codon'])),
                 ("update_relrates_separately", True,                                 "If True, GTR relative rates will be individually updated using slice sampling; if False, they will be updated jointly using a Metropolis-Hastings move (generally both faster and better)."),
                 ("relrate_prior",              Dirichlet([1.0,1.0,1.0,1.0,1.0,1.0]), "The joint prior distribution for all six GTR relative rate parameters. Used only if update_relrates_separately is False."),
                 ("relrate_param_prior",        Exponential(1.0),                     "The prior distribution for individual GTR relative rate parameters.  Used only if update_relrates_separately is true."),
@@ -13,6 +13,9 @@ class Model(PhycasCommand):
                 ("kappa_prior",                Exponential(1.0),                     "The prior distribution for the kappa parameter in an HKY model"),
                 ("kappa",                      4.0,                                  "The current value for the kappa parameter in an HKY model", FloatArgValidate(greaterthan=0.0)),
                 ("fix_kappa",                  False,                                "If True, the HKY kappa parameter will not be modified during the course of an MCMC analysis", BoolArgValidate),
+                ("omega_prior",                Exponential(20.0),                    "The prior distribution for the omega parameter in a codon model"),
+                ("omega",                      0.05,                                 "The current value for the omega parameter in a codon model", FloatArgValidate(greaterthan=0.0)),
+                ("fix_omega",                  False,                                "If True, the omega parameter will not be modified during the course of an MCMC analysis", BoolArgValidate),
                 ("num_rates",                  1,                                    "The number of relative rates used for the discrete gamma rate heterogeneity submodel; default is rate homogeneity (i.e. 1 rate)", IntArgValidate(min=1)),
                 ("gamma_shape_prior",          Exponential(1.0),                     "The prior distribution for the shape parameter of the gamma among-site rate distribution"),
                 ("gamma_shape",                0.5,                                  "The current value for the gamma shape parameter", FloatArgValidate(greaterthan=0.0)),

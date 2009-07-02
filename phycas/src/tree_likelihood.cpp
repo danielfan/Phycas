@@ -103,6 +103,73 @@ static int8_t codon_state_codes[] =
 	60	// 63 TTT
 	};
 
+/*
+static char * codon_labels[] =
+	{
+	"AAA Lys",	// 0
+	"AAC Asn",	// 1
+	"AAG Lys",	// 2
+	"AAT Asn",	// 3
+	"ACA Thr",	// 4
+	"ACC Thr",	// 5
+	"ACG Thr",	// 6
+	"ACT Thr",	// 7
+	"AGA Arg",	// 8
+	"AGC Ser",	// 9
+	"AGG Arg",	// 10
+	"AGT Ser",	// 11
+	"ATA Leu",	// 12
+	"ATC Leu",	// 13
+	"ATG Met",	// 14
+	"ATT Leu",	// 15
+	"CAA Gln",	// 16
+	"CAC His",	// 17
+	"CAG Gln",	// 18
+	"CAT His",	// 19
+	"CCA Pro",	// 20
+	"CCC Pro",	// 21
+	"CCG Pro",	// 22
+	"CCT Pro",	// 23
+	"CGA Arg",	// 24
+	"CGC Arg",	// 25
+	"CGG Arg",	// 26
+	"CGT Arg",	// 27
+	"CTA Leu",	// 28
+	"CTC Leu",	// 29
+	"CTG Leu",	// 30
+	"CTT Leu",	// 31
+	"GAA Glu",	// 32
+	"GAC Asp",	// 33
+	"GAG Glu",	// 34
+	"GAT Asp",	// 35
+	"GCA Ala",	// 36
+	"GCC Ala",	// 37
+	"GCG Ala",	// 38
+	"GCT Ala",	// 39
+	"GGA Gly",	// 40
+	"GGC Gly",	// 41
+	"GGG Gly",	// 42
+	"GGT Gly",	// 43
+	"GTA Val",	// 44
+	"GTC Val",	// 45
+	"GTG Val",	// 46
+	"GTT Val",	// 47
+	"TAC Tyr",	// 48
+	"TAT Tyr",	// 49
+	"TCA Ser",	// 50
+	"TCC Ser",	// 51
+	"TCG Ser",	// 52
+	"TCT Ser",	// 53
+	"TGC Cys",	// 54
+	"TGG Trp",	// 55
+	"TGT Cys",	// 56
+	"TTA Leu",	// 57
+	"TTC Phe",	// 58
+	"TTG Leu",	// 59
+	"TTT Phe"	// 60
+	};
+*/
+
 namespace phycas
 {
 
@@ -2530,14 +2597,44 @@ void TreeLikelihood::copyDataFromDiscreteMatrix(
 	{
 	nTaxa = mat.getNTax();
 
-    // These assignments should be kept before compressDataMatrix because they are used there
-	state_list = mat.getStateList(); 
-	state_list_pos = mat.getStateListPos();
-
     // The compressDataMatrix function first erases, then builds, both pattern_map and 
 	// pattern_counts using the uncompressed data contained in mat
 	num_patterns = compressDataMatrix(mat);
 
+	if (model->isCodonModel()) 
+		{
+		// any ambiguity is complete ambiguity for codon models, which makes it simple to construct
+		// the state_list and state_list_pos vectors. Here is a reminder of how state_list and 
+		// state_list_pos are laid out for codon models:
+		//
+		// states          |   AAA |   AAC |   AAG |   AAT |   ACA | ... |   TTT | ambiguous 
+		// state_list      | 1  0  | 1  1  | 1  2  | 1  3  | 1  4  | ... | 1  60 | 61  0  1  2  3  4  5 ... 60
+		// state_list_pos  | 0     | 2     | 4     | 6     | 8     | ... | 120   | 122      
+		state_list.clear();
+		state_list_pos.clear();
+		for (unsigned i = 0; i < 61; ++i)
+			{
+			state_list.push_back((int8_t)1);
+			state_list.push_back((int8_t)i);
+			state_list_pos.push_back((int8_t)(2*i));
+			}
+		state_list.push_back((int8_t)61);
+		state_list_pos.push_back((int8_t)(2*61));
+		for (unsigned i = 0; i < 61; ++i)
+			{
+			state_list.push_back((int8_t)i);
+			}
+		}
+	else
+		{
+		state_list = mat.getStateList(); 
+		state_list_pos = mat.getStateListPos();
+		}
+
+	// The constant states vector stores information about which sites can potentially be
+	// constant. A site can be potentially constant for more than one state if there is
+	// ambiguity. For example, if all taxa have ?, then the site is potentially constant
+	// for all states.
     buildConstantStatesVector();
     
 	// size of likelihood_rate_site vector needs to be revisited if the number of rates subsequently changes 
@@ -2740,7 +2837,7 @@ unsigned TreeLikelihood::buildConstantStatesVector()
             if (!site_potentially_constant)                
                 break;
 
-            // Reminder of how data members state_list and state_list_pos are laid out:
+            // Reminder of how data members state_list and state_list_pos are laid out (for nucleotide data anyway):
             //                                         ?         N      {CGT}  {ACG}    R,(AG)    Y
             // states          | A | C | G | T |  - A C G T | A C G T | C G T | A G T |  A  G  | C T
             // state_list      1 0 1 1 1 2 1 3 5 -1 0 1 2 3 4 0 1 2 3 3 1 2 3 3 0 2 3 2  0  2  4 1 3
@@ -2748,6 +2845,8 @@ unsigned TreeLikelihood::buildConstantStatesVector()
 
             int code = (int)(pat->first)[taxon];
             PHYCAS_ASSERT(code >= 0);   // Mark, why don't ? and - states trigger this assert? Does this have to do with the fact that we have abandoned the Cipres version of NCL? We translate - to ? in the NxsCXXDiscreteMatrix constructor
+            PHYCAS_ASSERT(code < (int)state_list.size()); 
+            PHYCAS_ASSERT(code < (int)state_list_pos.size());
             unsigned pos = (unsigned)state_list_pos[code];
             unsigned n = (unsigned)state_list[pos];
             curr_states.clear();
@@ -2799,6 +2898,53 @@ unsigned TreeLikelihood::buildConstantStatesVector()
         }
     return num_potentially_constant;
     }
+    
+/*----------------------------------------------------------------------------------------------------------------------
+|	Increments the count corresponding to the supplied `pattern' in `pattern_map' (adding a new map element if `pattern'
+|	has not yet been seen) and adds the `pattern_index' to a list of pattern indices corresponding to the supplied
+|	`pattern' in `patternToIndex' (adding a newly-created list containing just `pattern_index' if `pattern' has not yet
+|	been seen.
+*/
+void TreeLikelihood::storePattern(
+  const std::vector<int8_t> & pattern,	/**< is the pattern to store */
+  const unsigned pattern_index,			/**< is the index of this pattern in the original data matrix */
+  const PatternCountType weight) 		/**< is the weight of this pattern (normally 1) */
+	{	
+	// Add the pattern to pattern_map if it has not yet been seen, otherwise increment 
+	// the count of this pattern if it is already in pattern_map (see item 24, p. 110, in Meyers' Efficient STL)
+	PatternMapType::iterator lowb = pattern_map.lower_bound(pattern);
+	if (lowb != pattern_map.end() && !(pattern_map.key_comp()(pattern, lowb->first)))
+		{
+		// pattern is already in pattern_map, increment count
+		lowb->second += weight;
+		//std::cerr << boost::str(boost::format("%.1f -> |") % lowb->second);
+		}
+	else
+		{
+		// pattern has not yet been stored in pattern_map
+		pattern_map.insert(lowb, PatternMapType::value_type(pattern, weight));
+		//std::cerr << boost::str(boost::format("%.1f -> |") % weight);
+		}
+	
+	// Add the pattern to patternToIndex if it has not yet been seen, otherwise increment 
+	// the count of this pattern if it is already in the map (see item 24, p. 110, in Meyers' Efficient STL)
+	typedef std::list<unsigned> IndexList;
+	typedef std::map<VecStateList, IndexList> PatternToIndex;
+	PatternToIndex::iterator pToILowB = patternToIndex.lower_bound(pattern);
+	if (pToILowB != patternToIndex.end() && !(patternToIndex.key_comp()(pattern, pToILowB->first)))
+		{
+		// a list of site indices has already been created for this pattern in patternToIndex
+		// so all we need to do is append the index pattern_index to the existing list
+		pToILowB->second.push_back(pattern_index);
+		}
+	else
+		{
+		// this pattern has not yet been seen, so need to create a list of site indices whose only
+		// element (so far) is pattern_index and insert this list into the patternToIndex map
+		IndexList ilist(1, pattern_index);	// create a list<unsigned> containing 1 element whose value is pattern_index
+		patternToIndex.insert(pToILowB, PatternToIndex::value_type(pattern, ilist));
+		}
+	}
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Copies data from `mat' to the map `pattern_map'. The resulting map holds pairs whose key is the pattern for one site
@@ -2842,18 +2988,14 @@ unsigned TreeLikelihood::compressDataMatrix(const NxsCXXDiscreteMatrix & mat) //
 		}
 	const double * wts = &(actingWeights[0]);
 
-	// patternToIndex is a map that associates a list of character indices with each pattern. Thus, if 
-	// some pattern is found at sites 0, 15, and 167, then patternToIndex.first is the pattern and 
-	// patternToIndex.second is the list<unsigned> [0, 15, 167]
-	typedef std::list<unsigned> IndexList;
-	typedef std::map<VecStateList, IndexList> PatternToIndex;
-	PatternToIndex patternToIndex;
-
-	if (model->isCodonModel()) //@POL could move this test inside the taxon-loop to avoid being so redundant
+	PHYCAS_ASSERT(patternToIndex.empty());	
+	
+	std::vector<int8_t> pattern;
+	if (model->isCodonModel()) 
 		{
 		// Loop across each triplet of sites in mat
 		for (unsigned j = 0; j < nchar; j += 3)
-			{
+			{			
 			// Suppose nchar=5 and j=3: not enough sites to make a second codon. In this example,
 			// j+2 = 5, which equals nchar, so break out of loop over sites
 			if (j+2 >= nchar)
@@ -2863,60 +3005,49 @@ unsigned TreeLikelihood::compressDataMatrix(const NxsCXXDiscreteMatrix & mat) //
 			PatternCountType charWt = (wts ? std::max(wts[j], std::max(wts[j+1], wts[j+2])) : 1.0); 
 			if (charWt > 0.0)
 				{
+				//std::cerr << std::endl;
+				
 				// Build up a vector representing the pattern of state codes at this site
-				std::vector<int8_t> pattern;
+				pattern.clear();
 				for (unsigned i = 0; i < ntax; ++i)
 					{
-					const int8_t * row	= mat.getRow(i);
-					const int8_t   code1 = row[j];
-					const int8_t   code2 = row[j+1];
-					const int8_t   code3 = row[j+2];
-					bool code1_ok = (code1 >= 0 && code1 < 4);
-					bool code2_ok = (code2 >= 0 && code2 < 4);
-					bool code3_ok = (code3 >= 0 && code3 < 4);
+					const int8_t *	row			= mat.getRow(i);
+					const int8_t	code1		= row[j];
+					const int8_t	code2		= row[j+1];
+					const int8_t	code3		= row[j+2];
+					bool			code1_ok	= (code1 >= 0 && code1 < 4);
+					bool			code2_ok	= (code2 >= 0 && code2 < 4);
+					bool			code3_ok	= (code3 >= 0 && code3 < 4);
 					if (code1_ok && code2_ok && code3_ok)
 						{
+						//std::cerr << boost::str(boost::format("(%d,%d,%d)") % (unsigned)code1 % (unsigned)code2 % (unsigned)code3);
 						const int8_t code = codon_state_codes[16*code1 + 4*code2 + code3]; // CGT = 27 = 16*1 + 4*2 + 3
 						if (code > 60)
 							throw XLikelihood(str(boost::format("Stop codon encountered for taxon %d at sites %d-%d") % (i+1) % (j+1) % (j+4)));
 						pattern.push_back(code);
 						}
 					else
+						{
+						//std::cerr << "(???)";
+						// if any site within codon is ambiguous, entire codon is treated as completely ambiguous
 						pattern.push_back((int8_t)61);
+						}
 					}
+					
+				//std::cerr << boost::str(boost::format("\n%6d -> ") % j);
+					
+				storePattern(pattern, j, charWt);
 				
-				//@POL below here same as the else block
-	
-				// Add the pattern to the map if it has not yet been seen, otherwise increment 
-				// the count of this pattern if it is already in the map (see item 24, p. 110, in Meyers' Efficient STL)
-				PatternMapType::iterator lowb = pattern_map.lower_bound(pattern);
-				if (lowb != pattern_map.end() && !(pattern_map.key_comp()(pattern, lowb->first)))
-					{
-					// pattern is already in pattern_map, increment count
-					lowb->second += charWt;
-					}
-				else
-					{
-					// pattern has not yet been stored in pattern_map
-					pattern_map.insert(lowb, PatternMapType::value_type(pattern, charWt));
-					}
-				
-				// Add the pattern to the map if it has not yet been seen, otherwise increment 
-				// the count of this pattern if it is already in the map (see item 24, p. 110, in Meyers' Efficient STL)
-				PatternToIndex::iterator pToILowB = patternToIndex.lower_bound(pattern);
-				if (pToILowB != patternToIndex.end() && !(patternToIndex.key_comp()(pattern, pToILowB->first)))
-					pToILowB->second.push_back(j);
-				else
-					{
-					IndexList ilist(1, j);	// create a list<unsigned> containing 1 element whose value is j
-					patternToIndex.insert(pToILowB, PatternToIndex::value_type(pattern, ilist));
-					}
+				//for (std::vector<int8_t>::const_iterator it = pattern.begin(); it != pattern.end(); ++it)
+				//	{
+				//	std::cerr << boost::str(boost::format("%s|") % codon_labels[(unsigned)(*it)]);
+				//	}
+				//std::cerr << std::endl;
 				}
 			}
 		}
 	else // not codon model
 		{
-		std::vector<int8_t> pattern;
         unsigned nStates = getNStates();
 
 		// Loop across each site in mat
@@ -2944,32 +3075,8 @@ unsigned TreeLikelihood::compressDataMatrix(const NxsCXXDiscreteMatrix & mat) //
                     all_missing.push_back(j);
                     continue;
                     }
-
-				// Add the pattern to the map if it has not yet been seen, otherwise increment 
-				// the count of this pattern if it is already in the map (see item 24, p. 110, in Meyers' Efficient STL)
-				PatternMapType::iterator lowb = pattern_map.lower_bound(pattern);
-				if (lowb != pattern_map.end() && !(pattern_map.key_comp()(pattern, lowb->first)))
-					{
-					// pattern is already in pattern_map, increment count
-					lowb->second += charWt;
-					}
-				else
-					{
-					// pattern has not yet been stored in pattern_map
-					pattern_map.insert(lowb, PatternMapType::value_type(pattern, charWt));
-					}
-				
-				// Add the pattern to the patternToIndex map if not already present, and then
-				// append the character index to the list of character indices associated with
-				// the pattern
-				PatternToIndex::iterator pToILowB = patternToIndex.lower_bound(pattern);
-				if (pToILowB != patternToIndex.end() && !(patternToIndex.key_comp()(pattern, pToILowB->first)))
-					pToILowB->second.push_back(j);
-				else
-					{
-					IndexList ilist(1, j);	// create a list<unsigned> containing 1 element whose value is j
-					patternToIndex.insert(pToILowB, PatternToIndex::value_type(pattern, ilist));
-					}
+                    
+				storePattern(pattern, j, charWt);
 				}
 			}
 		}   // if model->isCodonModel() ... else ...
@@ -2981,19 +3088,27 @@ unsigned TreeLikelihood::compressDataMatrix(const NxsCXXDiscreteMatrix & mat) //
 	unsigned n_inc_chars = 0;
 	for (PatternMapType::iterator mapit = pattern_map.begin(); mapit != pattern_map.end(); ++mapit, ++patternIndex)
 		{
+		// mapit->second holds the pattern count
 		pattern_counts.push_back(mapit->second);
 
-		// Find pattern in patternToIndex, which provides a list of indices of sites having that pattern
-		// For each site index in the list, add an element to the map charIndexToPatternIndex
-		// Now, charIndexToPatternIndex[i] points to the index in pattern_map for the pattern found at site i
+		// mapit->first holds the pattern (in the form of a vector of int8_t values)
 		const IndexList & inds = patternToIndex[mapit->first];
+
+		// For each site index in the inds list, add an element to the map charIndexToPatternIndex
 		for (IndexList::const_iterator indIt = inds.begin(); indIt != inds.end(); ++indIt)
 			{
 			charIndexToPatternIndex[*indIt] = patternIndex;
 			++n_inc_chars;
 			}
+			
+		// Now, charIndexToPatternIndex[i] points to the index in pattern_map for the pattern found at site i
+		// Because pattern_map is a map, not a vector, it is still not all that easy to look up the pattern corresponding
+		// to a particular site index (you have to iterate starting from pattern_map.begin()), but it is possible
 		}
 
+	// patternToIndex is just a workspace data member, so clear it before leaving to free up memory
+	patternToIndex.clear();
+	
 	if (using_unimap)
 		return n_inc_chars;
 	else

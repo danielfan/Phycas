@@ -39,6 +39,7 @@ namespace phycas
 {
 
 class HKY;
+class Codon;
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Encapsulates the transition/transversion rate ratio parameter of models such as the HKY model. This parameter is
@@ -58,9 +59,9 @@ class KappaParam : public MCMCUpdater
 	private:
 
 		HKY *			hky;
+		Codon *			codon;
 	};
 
-class Codon;
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Encapsulates the nonsynonymous/synonymous rate ratio parameter of a codon model. This parameter is commonly 

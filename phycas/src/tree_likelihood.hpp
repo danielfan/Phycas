@@ -229,12 +229,17 @@ class TreeLikelihood
 		TipData *						allocateTipData(unsigned);
 		InternalData *					allocateInternalData();
 
+		void	 						storePattern(const std::vector<int8_t> & pattern, const unsigned pattern_index, const PatternCountType weight);
 		unsigned						compressDataMatrix(const NxsCXXDiscreteMatrix &);
 
 		void							calcTMatForSim(TipData &, double);
 		void							simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar, bool refresh_probs);
 		void							calcPMatCommon(double * * *, double);
-
+		
+	private:
+		typedef std::list<unsigned>					IndexList;
+		typedef std::map<VecStateList, IndexList>	PatternToIndex;
+		PatternToIndex 					patternToIndex;			/**< map that associates a list of character indices with each pattern; for example, if some pattern is found at sites 0, 15, and 167, then patternToIndex.first is the pattern and patternToIndex.second is the list<unsigned> [0, 15, 167] */
 
 	protected:
 

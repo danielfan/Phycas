@@ -27,7 +27,7 @@ namespace phycas
 |	`curr_value' data member to 4.0 and refreshes `curr_ln_prior' accordingly.
 */
 KappaParam::KappaParam()
-  : MCMCUpdater(), hky(NULL)
+  : MCMCUpdater(), hky(NULL), codon(NULL)
 	{
 	curr_value = 4.0;
 	has_slice_sampler = true;

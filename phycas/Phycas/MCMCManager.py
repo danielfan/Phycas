@@ -84,7 +84,28 @@ class LikelihoodCore(object):
         #self.starting_edgelen_dist.setLot(self.r)
 
         # Create a substitution model
-        if self.parent.opts.model.type in ['gtr','hky']:
+        if self.parent.opts.model.type == 'codon':
+            self.parent.phycassert(not self.parent.opts.model.use_flex_model, 'Cannot currently use flex model within codon model')
+            self.parent.phycassert(self.parent.opts.model.num_rates == 1, 'Cannot currently use gamma rate heterogeneity within codon model')
+            self.parent.phycassert(not self.parent.opts.model.pinvar_model, 'Cannot currently use invariable sites model within codon model')
+            self.model = Likelihood.CodonModel()
+            self.model.setKappa(self.parent.opts.model.kappa)
+            if self.parent.opts.model.fix_kappa:
+                self.model.fixKappa()
+            self.model.setOmega(self.parent.opts.model.omega)
+            if self.parent.opts.model.fix_omega:
+                self.model.fixOmega()
+            if not self.parent.opts.model.update_freqs_separately:
+                ndimensions = self.parent.opts.model.state_freq_prior.getNParams() 
+                self.parent.phycassert(ndimensions == 61, 'state_freq_prior should be 61-dimensional, but instead has %d dimensions' % ndimensions)
+            self.parent.phycassert(self.parent.opts.model.state_freqs, 'state_freqs is None, but should be a list containing 61 (unnormalized) relative codon frequencies')
+            self.parent.phycassert(len(self.parent.opts.model.state_freqs) == 61, 'state_freqs should be a list containing exactly 61 codon frequencies; instead, it contains %d values' % len(self.parent.opts.model.state_freqs))
+            for c in range(61):
+                self.parent.phycassert(self.parent.opts.model.state_freqs[c] >= 0.0, 'state_freqs[%d] cannot be negative (%f was specified)' % (c,self.parent.opts.model.state_freqs[c]))
+            self.model.setAllStateFreqsUnnorm(self.parent.opts.model.state_freqs)
+            if self.parent.opts.model.fix_freqs:
+                self.model.fixStateFreqs()
+        elif self.parent.opts.model.type in ['gtr','hky']:
             if self.parent.opts.model.type == 'gtr':
                 self.model = Likelihood.GTRModel()
                 self.model.setRelRates(self.parent.opts.model.relrates)
@@ -235,6 +256,7 @@ class MarkovChain(LikelihoodCore):
         self.external_edgelen_prior  = cloneDistribution(self.parent.opts.model.external_edgelen_prior)
         self.internal_edgelen_prior  = cloneDistribution(self.parent.opts.model.internal_edgelen_prior)
         self.kappa_prior             = cloneDistribution(self.parent.opts.model.kappa_prior)
+        self.omega_prior             = cloneDistribution(self.parent.opts.model.omega_prior)
         self.pinvar_prior            = cloneDistribution(self.parent.opts.model.pinvar_prior)
         self.flex_prob_param_prior   = cloneDistribution(self.parent.opts.model.flex_prob_param_prior)
         self.edgelen_hyperprior      = None
@@ -386,7 +408,14 @@ class MarkovChain(LikelihoodCore):
             self.internal_edgelen_prior.setLot(self.r)
         
         # Define priors for the model parameters
-        if self.parent.opts.model.type == 'gtr':
+        if self.parent.opts.model.type == 'codon':
+            self.model.setKappaPrior(self.kappa_prior)
+            self.model.setOmegaPrior(self.omega_prior)
+            if self.parent.opts.model.update_freqs_separately:
+                self.model.setStateFreqParamPrior(self.state_freq_param_prior)
+            else:
+                self.model.setStateFreqPrior(self.state_freq_prior)
+        elif self.parent.opts.model.type == 'gtr':
             if self.parent.opts.model.update_relrates_separately:
                 self.model.setRelRateParamPrior(self.relrate_param_prior)
             else:
@@ -462,6 +491,10 @@ class MarkovChain(LikelihoodCore):
         if not self.parent.opts.model.type == 'jc' and not self.parent.opts.model.update_freqs_separately:
             # Create a StateFreqMove to update entire state frequency vector
             self.state_freq_move = Likelihood.StateFreqMove()
+            if self.parent.opts.model.type == 'codon': 
+                self.state_freq_move.setDimension(61)
+            else:
+                self.state_freq_move.setDimension(4)
             self.state_freq_move.setName("State freq move")
             self.state_freq_move.setWeight(self.parent.opts.state_freq_weight)
             self.state_freq_move.setPosteriorTuningParam(self.parent.opts.state_freq_psi)
@@ -743,6 +776,7 @@ class MCMCManager:
         self.parent.phycassert(not unimap_and_ratehet, 'Rate heterogeneity cannot (yet) be used in conjunction with use_unimap')
     
         # Create the chains
+        # print '@@@@@ heat vector =',self.parent.heat_vector
         for i, heating_power in enumerate(self.parent.heat_vector):
             markov_chain = MarkovChain(self.parent, heating_power)
             self.chains.append(markov_chain)

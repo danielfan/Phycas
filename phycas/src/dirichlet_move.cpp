@@ -159,16 +159,16 @@ void DirichletMove::proposeNewState()
     new_params = dir_forward->Sample();
 
 	//temporary!!
-	//std::cerr << boost::str(boost::format(">>>>>>>>>> boldness = %.1f, psi = %.5f\n") % boldness % psi);
-	//std::cerr << ">>>>>>>>>> orig_params: ";
-	//std::copy(orig_params.begin(), orig_params.end(), std::ostream_iterator<double>(std::cerr," "));
-	//std::cerr << "\n";
-	//std::cerr << ">>>>>>>>>> c_forward: ";
-	//std::copy(c_forward.begin(), c_forward.end(), std::ostream_iterator<double>(std::cerr," "));
-	//std::cerr << "\n";
-	//std::cerr << ">>>>>>>>>> new_params: ";
-	//std::copy(new_params.begin(), new_params.end(), std::ostream_iterator<double>(std::cerr," "));
-	//std::cerr << "\n" << std::endl;
+    //     std::cerr << boost::str(boost::format(">>>>>>>>>> boldness = %.1f, psi = %.5f\n") % boldness % psi);
+    //     std::cerr << ">>>>>>>>>> orig_params: ";
+    //     std::copy(orig_params.begin(), orig_params.end(), std::ostream_iterator<double>(std::cerr," "));
+    //     std::cerr << "\n";
+    //     std::cerr << ">>>>>>>>>> c_forward: ";
+    //     std::copy(c_forward.begin(), c_forward.end(), std::ostream_iterator<double>(std::cerr," "));
+    //     std::cerr << "\n";
+    //     std::cerr << ">>>>>>>>>> new_params: ";
+    //     std::copy(new_params.begin(), new_params.end(), std::ostream_iterator<double>(std::cerr," "));
+    //     std::cerr << "\n" << std::endl;
 
     // create vector of Dirichlet parameters for selecting old frequencies (needed for Hasting ratio calculation)
     c_reverse.resize(new_params.size());
@@ -258,9 +258,32 @@ bool DirichletMove::update()
 	double ln_accept_ratio		= curr_posterior - prev_posterior + ln_hastings;
 
     double lnu = std::log(rng->Uniform(FILE_AND_LINE));
+    
+    std::cerr << "\nDirichletMove::update" << std::endl;
+    std::cerr << boost::str(boost::format("  boldness = %.1f, psi = %.5f\n") % boldness % psi);
+    std::vector<double>::const_iterator origit = orig_params.begin();
+    std::vector<double>::const_iterator newit = new_params.begin();
+    double min_new = 1.0;
+    double max_new = 0.0;
+    for (unsigned i = 0; i < 61; ++i, ++origit, ++newit)
+        {
+        std::cerr << boost::str(boost::format("%20.6f %20.6f") % (*origit) % (*newit)) << std::endl;
+        if (*newit < min_new)
+            min_new = *newit;
+        if (*newit > max_new)
+            max_new = *newit;
+        }
+    std::cerr << "  min_new         = " << min_new << std::endl;
+    std::cerr << "  max_new         = " << max_new << std::endl;
+    std::cerr << "  curr_posterior  = " << curr_posterior << std::endl;
+    std::cerr << "  prev_posterior  = " << prev_posterior << std::endl;
+    std::cerr << "  ln_hastings     = " << ln_hastings << std::endl;
+    std::cerr << "  ln_accept_ratio = " << ln_accept_ratio << std::endl;
+    std::cerr << "  lnu             = " << lnu << std::endl;
+        
 	if (ln_accept_ratio >= 0.0 || lnu <= ln_accept_ratio)
 		{
-        //std::cerr << "ACCEPTED\n" << std::endl;
+        std::cerr << "ACCEPTED\n" << std::endl;
 		p->setLastLnPrior(curr_ln_prior);
 		p->setLastLnLike(curr_ln_like);
 		accept();
@@ -268,7 +291,7 @@ bool DirichletMove::update()
 		}
 	else
 		{
-        //std::cerr << "rejected\n" << std::endl;
+        std::cerr << "rejected\n" << std::endl;
 		curr_ln_like	= p->getLastLnLike();
 		curr_ln_prior	= p->getLastLnPrior();
 		revert();
@@ -293,6 +316,12 @@ void StateFreqMove::getParams()
 	if (model)
 		{
     	const std::vector<double> & rfreqs = model->getStateFreqs();
+    	//std::cerr << "StateFreqMove::getParams(): dim = " << dim << std::endl;
+    	//unsigned i = 0;
+    	//for (std::vector<double>::const_iterator it = rfreqs.begin(); it != rfreqs.end(); ++it, ++i)
+    	//    {
+    	//    std::cerr << boost::str(boost::format("%6d %20.12f") % i % (*it)) << std::endl;
+    	//    }
     	orig_params.resize(rfreqs.size());
 		PHYCAS_ASSERT(dim == rfreqs.size());
     	std::copy(rfreqs.begin(), rfreqs.end(), orig_params.begin());

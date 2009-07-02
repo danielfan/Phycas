@@ -490,15 +490,11 @@ void MCMCChainManager::finalize()
 	params_begin = edgelens_begin;
 	params_end = model_params_end;
 	
-	// 3 here
-	
 	// Call each updater's setChainManager member function, supplying a shared pointer to this object
 	// This allows each updater to ask the MCMCChainManager to calculate the joint prior over all
 	// parameters when needed for computing the posterior density during slice sampling
-#if 0
-	std::for_each(all_updaters.begin(), all_updaters.end(), 
-		boost::lambda::bind(&MCMCUpdater::setChainManager, *boost::lambda::_1, ChainManagerWkPtr(shared_from_this())));
-#else
+	//std::for_each(all_updaters.begin(), all_updaters.end(), 
+	//	boost::lambda::bind(&MCMCUpdater::setChainManager, *boost::lambda::_1, ChainManagerWkPtr(shared_from_this())));
 	ChainManagerWkPtr wptr(shared_from_this());
 	for (MCMCUpdaterIter uit = all_updaters.begin(); uit != all_updaters.end(); ++uit)
 		{
@@ -508,20 +504,25 @@ void MCMCChainManager::finalize()
 		//unsigned uc2 = (unsigned)(*uit).use_count();
 		//std::cerr << ">>>> updater " << nm << " (" << uc1 << " --> " << uc2 << ")" << std::endl;
 		}
-#endif
 	
-	// 4 here
-	//debugUpdaterReport("inside finalize");
+	// These lines using boost::lambda were replaced by the easier-to-understand-and-debug loop below
+	//std::for_each(params_begin, params_end, 
+	//	boost::lambda::bind(&MCMCUpdater::setCurrValueFromModel, *boost::lambda::_1));
+	//std::for_each(params_begin, params_end, 
+	//	boost::lambda::bind(&MCMCUpdater::recalcPrior, *boost::lambda::_1));
+	
+	for (MCMCUpdaterIter piter = params_begin; piter != params_end; ++piter)
+		{
+	    std::cerr << boost::str(boost::format("@@@@@ calling recalcPrior for parameter named '%s'..." ) % (*piter)->getName()) << std::endl;
+	    
+		// Call each parameter's setCurrValueFromModel member function to make sure that their 
+		// curr_value data members are up to date
+		(*piter)->setCurrValueFromModel();
 
-	// Call each parameter's setCurrValueFromModel member function to make sure that their 
-    // curr_value data members are up to date
-	std::for_each(params_begin, params_end, 
-		boost::lambda::bind(&MCMCUpdater::setCurrValueFromModel, *boost::lambda::_1));
-
-	// Call each parameter's recalcPrior member function to make sure their curr_ln_prior data members are
-	// up to date
-	std::for_each(params_begin, params_end, 
-		boost::lambda::bind(&MCMCUpdater::recalcPrior, *boost::lambda::_1));
+		// Call each parameter's recalcPrior member function to make sure their curr_ln_prior data members are
+		// up to date
+		(*piter)->recalcPrior();
+		}
 
 	//@POL Wondering why we need all these vectors? It is convenient to have one vector of updaters, but not all of 
 	// these updaters are necessarily created in MCMCChainManager::addMCMCUpdaters. When finalize() is called, we 

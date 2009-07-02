@@ -360,9 +360,6 @@ class MCMCImpl(CommonFunctions):
         mat = ds and ds.getMatrix() or None
         self._loadData(mat)
         
-        # Create a tree description to be used for building starting trees
-        #self.getStartingTree()
-
         # Determine heating levels if multiple chains
         if self.opts.heat_vector == None:
             if self.opts.nchains == 1:
@@ -395,7 +392,9 @@ class MCMCImpl(CommonFunctions):
             if h != self.heat_vector:
                 self.phycassert(False, 'chain heating powers must be in decreasing order')
             self.phycassert(h[-1] > 0.0, 'all chain heating powers must be positive')
+
         self.mcmc_manager.createChains()
+
         self.openParameterAndTreeFiles()
         if self.opts.doing_steppingstone_sampling:
             self.ss_beta = self.opts.ss_maxbeta
@@ -639,7 +638,7 @@ class MCMCImpl(CommonFunctions):
         """
         Performs the MCMC analysis. 
         
-        """
+        """        
         self.setup()
         
         # If user has set quiet to True, then phycas.output calls will have no effect

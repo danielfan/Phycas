@@ -120,6 +120,7 @@ void updater_pymod()
 		;
 	class_<phycas::DirichletMove, bases<phycas::MCMCUpdater>, 
 		boost::noncopyable, boost::shared_ptr<phycas::DirichletMove> >("DirichletMove") 
+		.def("setDimension", &phycas::DirichletMove::setDimension)
 		;
 	class_<phycas::RelRatesMove, bases<phycas::DirichletMove>, 
 		boost::noncopyable, boost::shared_ptr<phycas::RelRatesMove> >("RelRatesMove") 

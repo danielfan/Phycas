@@ -250,7 +250,7 @@ static unsigned codon_code_to_aa_code[] =
 |	Constructor sets `num_states' data member to 61, the codon frequencies to 1/61, and `kappa' and `omega' both to 1.0.
 */
 Codon::Codon()
-  : Model(61), kappa(1.0), omega(1.0), omega_fixed(false), kappa_fixed(false)
+  : Model(61), kappa_fixed(false), omega_fixed(false), kappa(1.0), omega(1.0)
 	{
 	is_codon_model = true;
 	state_repr.reserve(64);
@@ -266,9 +266,20 @@ Codon::Codon()
 				}
 			}
 		}
+		
+	std::vector<std::string>::const_iterator it;
+		
 	// ignore stop codons
+	it = state_repr.begin() + 48;
+	std::cerr << "debug deleting " << (*it) << std::endl;
 	state_repr.erase(state_repr.begin()+48);
+	
+	it = state_repr.begin() + 49;
+	std::cerr << "debug deleting " << (*it) << std::endl;
 	state_repr.erase(state_repr.begin()+49);
+
+	it = state_repr.begin() + 54;
+	std::cerr << "debug deleting " << (*it) << std::endl;
 	state_repr.erase(state_repr.begin()+54);
 
 	updateQMatrix();
@@ -284,7 +295,7 @@ Codon::Codon()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Returns a string indicating the name of this model, namely "HKY85", "HKY85+G", "HKY85+I" or "HKY85+G+I".
+|	Returns a string indicating the name of this model, namely "Codon", "Codon+G", "Codon+I" or "Codon+G+I".
 */
 std::string Codon::getModelName() const
 	{
@@ -331,19 +342,27 @@ void Codon::createParameters(
 	parameters.push_back(omega_param);
 
 	PHYCAS_ASSERT(freq_params.empty());
+    PHYCAS_ASSERT(freq_param_prior || freq_prior);
 
-	for (unsigned i = 0; i < 61; ++i)
-		{
-		MCMCUpdaterShPtr state_freq_param = MCMCUpdaterShPtr(new StateFreqParam(i));
-		std::string s = str(boost::format("freq. for codon %s") % state_repr[i]);
-		state_freq_param->setName(s);
-		state_freq_param->setTree(t);
-		state_freq_param->setStartingValue(1.0);
-		state_freq_param->setPrior(freq_param_prior);
-		if (state_freq_fixed)
-			state_freq_param->fixParameter();
-		parameters.push_back(state_freq_param);
-		freq_params.push_back(state_freq_param);
+    if (freq_param_prior)
+        {
+        // Only add frequency parameters if freqs will be updated separately
+        // The other option is to update the frequencies jointly using the 
+        // StateFreqMove Metropolis-Hastings move (in which case freq_param
+        // will be set and freq_param_prior will be empty)
+		for (unsigned i = 0; i < 61; ++i)
+			{
+			MCMCUpdaterShPtr state_freq_param = MCMCUpdaterShPtr(new StateFreqParam(i));
+			std::string s = str(boost::format("freq. for codon %s") % state_repr[i]);
+			state_freq_param->setName(s);
+			state_freq_param->setTree(t);
+			state_freq_param->setStartingValue(1.0);
+			state_freq_param->setPrior(freq_param_prior);
+			if (state_freq_fixed)
+				state_freq_param->fixParameter();
+			parameters.push_back(state_freq_param);
+			freq_params.push_back(state_freq_param);
+			}
 		}
 	}
 
@@ -532,6 +551,22 @@ void Codon::setOmegaPrior(ProbDistShPtr d)
 ProbDistShPtr Codon::getStateFreqParamPrior()
  	{
 	return freq_param_prior;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns current value of data member `freq_prior'.
+*/
+MultivarProbDistShPtr Codon::getStateFreqPrior()
+ 	{
+	return freq_prior;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets `freq_prior' data member to the supplied MultivariateProbabilityDistribution shared pointer `d'.
+*/
+void Codon::setStateFreqPrior(MultivarProbDistShPtr d)
+ 	{
+	freq_prior = d;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

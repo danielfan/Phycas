@@ -397,6 +397,9 @@ class Codon: public Model
 		void						setOmegaPrior(ProbDistShPtr d);	//ok
 		ProbDistShPtr				getOmegaPrior();	//ok
 
+        void						setStateFreqPrior(MultivarProbDistShPtr d);
+		MultivarProbDistShPtr		getStateFreqPrior();
+
 		void						setStateFreqParamPrior(ProbDistShPtr d);
 		ProbDistShPtr				getStateFreqParamPrior();
 
@@ -415,6 +418,7 @@ protected:
 	ProbDistShPtr				kappa_prior;		/**< The prior distribution governing kappa */
 	ProbDistShPtr				omega_prior;		/**< The prior distribution governing omega */
 	ProbDistShPtr				freq_param_prior;	/**< The prior distribution governing each frequency parameter */
+	MultivarProbDistShPtr		freq_prior;	        /**< The prior distribution governing the vector of frequencies (used if frequencies are updated jointly by StateFreqMove) */
 
 	bool						kappa_fixed;		/**< If true, the value of kappa will not change during MCMC updates */
 	bool						omega_fixed;		/**< If true, the value of omega will not change during MCMC updates */
