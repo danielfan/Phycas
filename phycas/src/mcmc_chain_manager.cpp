@@ -513,7 +513,7 @@ void MCMCChainManager::finalize()
 	
 	for (MCMCUpdaterIter piter = params_begin; piter != params_end; ++piter)
 		{
-	    std::cerr << boost::str(boost::format("@@@@@ calling recalcPrior for parameter named '%s'..." ) % (*piter)->getName()) << std::endl;
+	    //std::cerr << boost::str(boost::format("@@@@@ calling recalcPrior for parameter named '%s'..." ) % (*piter)->getName()) << std::endl;
 	    
 		// Call each parameter's setCurrValueFromModel member function to make sure that their 
 		// curr_value data members are up to date

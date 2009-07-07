@@ -706,8 +706,13 @@ class MarkovChain(LikelihoodCore):
         self.likelihood.recalcRelativeRates()
 
         # Make sure each updater knows the heating power and heating type
+        # and set boldness to 0 for each updater (0% boldness is the default,
+        # with more boldness used only in steppingstone sampling where bolder
+        # moves are needed as the influence of the likelihood is progressively
+        # diminished)
         for updater in self.chain_manager.getAllUpdaters():
             updater.setPower(self.heating_power)
+            updater.setBoldness(0.0)
             if self.parent.opts.ss_heating_likelihood:
                 updater.setLikelihoodHeating()
             else:

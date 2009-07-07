@@ -35,6 +35,22 @@ namespace phycas
 {
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	The default constructor sets `lambda' to the default value (0.2), sets `topol_changed' to false, and `m' and `mstar'
+|	to 0.0. All other data members are automatically initialized (shared pointers) or are initialized via a call to 
+|	reset().
+*/
+LargetSimonMove::LargetSimonMove() : MCMCUpdater()
+	{
+	is_move 		= true;
+	topol_changed	= false;
+	lambda			= 0.2;
+	m				= 0.0;
+	mstar			= 0.0;
+	three_edgelens.reserve(3);
+	reset();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Virtual destructor.
 */
 LargetSimonMove::~LargetSimonMove()
@@ -698,21 +714,6 @@ void LargetSimonMove::accept()
 		ndZ->UnselectNode();
 		}
 
-	reset();
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	The default constructor sets `lambda' to the default value (0.2), sets `topol_changed' to false, and `m' and `mstar'
-|	to 0.0. All other data members are automatically initialized (shared pointers) or are initialized via a call to 
-|	reset().
-*/
-LargetSimonMove::LargetSimonMove() : MCMCUpdater()
-	{
-	topol_changed	= false;
-	lambda			= 0.2;
-	m				= 0.0;
-	mstar			= 0.0;
-	three_edgelens.reserve(3);
 	reset();
 	}
 

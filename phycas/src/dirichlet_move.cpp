@@ -107,20 +107,18 @@ void DirichletMove::setBoldness(
 	else if (boldness > 100.0)
 		boldness = 100.0;
 
-    // compute psi from boldness value
-    //  
-    //  max_psi = 5
-    //  max_psi = 300
-    //  % represents result in column to the left
+    //  Assume:
+    //    min_psi = 5
+    //    max_psi = 300
     //
-    //  boldness     100-%    (max_psi-max_psi)*%/100   max_psi+%  
-    //      0         100              295               300
-    //    100           0                0                 5
+    //  psi = min_psi + (max_psi - min_psi)*(100 - boldness)/100
     //
-    //  psi = max_psi + (max_psi - max_psi)*(100-boldness)/100
+    //  boldness   psi calculation
+    //      0      5 + (300 - 5)*(100 - 0)/100   = 300
+    //    100      5 + (300 - 5)*(100 - 100)/100 = 5
     //
-	psi = max_psi + (max_psi - min_psi)*(100.0-boldness)/100.0;
-	std::cerr << boost::str(boost::format("####### DirichletMove::setBoldness x = %.5f, boldness = %.5f, psi = %.5f, max_psi = %.5f, min_psi = %.5f") % x % boldness % psi % max_psi % min_psi) << std::endl;
+	psi = min_psi + (max_psi - min_psi)*(100.0-boldness)/100.0;
+	std::cerr << boost::str(boost::format("####### DirichletMove::setBoldness(%.5f), boldness = %.5f, psi = %.5f, max_psi = %.5f, min_psi = %.5f") % x % boldness % psi % max_psi % min_psi) << std::endl;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -277,14 +275,14 @@ bool DirichletMove::update()
     //     std::cerr << "  max_new         = " << max_new << std::endl;
     //     std::cerr << "  curr_posterior  = " << curr_posterior << std::endl;
     //     std::cerr << "  prev_posterior  = " << prev_posterior << std::endl;
-         std::cerr << "  ln_posterior_ratio = " << (curr_posterior - prev_posterior) << std::endl;
-         std::cerr << "  ln_hastings        = " << ln_hastings << std::endl;
-         std::cerr << "  ln_accept_ratio    = " << ln_accept_ratio << std::endl;
-         std::cerr << "  lnu                = " << lnu << std::endl;
+    //     std::cerr << "  ln_posterior_ratio = " << (curr_posterior - prev_posterior) << std::endl;
+    //     std::cerr << "  ln_hastings        = " << ln_hastings << std::endl;
+    //     std::cerr << "  ln_accept_ratio    = " << ln_accept_ratio << std::endl;
+    //     std::cerr << "  lnu                = " << lnu << std::endl;
         
 	if (ln_accept_ratio >= 0.0 || lnu <= ln_accept_ratio)
 		{
-        std::cerr << "ACCEPTED\n" << std::endl;
+        //std::cerr << "ACCEPTED\n" << std::endl;
 		p->setLastLnPrior(curr_ln_prior);
 		p->setLastLnLike(curr_ln_like);
 		accept();
@@ -292,7 +290,7 @@ bool DirichletMove::update()
 		}
 	else
 		{
-        std::cerr << "rejected\n" << std::endl;
+        //std::cerr << "rejected\n" << std::endl;
 		curr_ln_like	= p->getLastLnLike();
 		curr_ln_prior	= p->getLastLnPrior();
 		revert();

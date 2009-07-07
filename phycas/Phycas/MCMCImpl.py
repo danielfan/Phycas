@@ -175,7 +175,7 @@ class MCMCImpl(CommonFunctions):
 
     def showTopoPriorInfo(self):
         m = self.mcmc_manager.getColdChain()
-        self.output('Topology prior:')
+        self.output('\nTopology prior:')
         if not self.opts.allow_polytomies:
             self.output('  flat across all fully-resolved tree topologies (polytomies not allowed)')
         else:            
@@ -575,7 +575,7 @@ class MCMCImpl(CommonFunctions):
         
     def mainMCMCLoop(self, explore_prior = False):
         nchains = len(self.mcmc_manager.chains)
-        print '******** nchains =',nchains
+        # print '******** nchains =',nchains
         self.last_adaptation = 0
         self.next_adaptation = self.opts.adapt_first
         for cycle in xrange(self.burnin + self.opts.ncycles):
@@ -721,6 +721,16 @@ class MCMCImpl(CommonFunctions):
             self.showParamInfo(p)
         for p in cold_chain_manager.getModelParams():
             self.showParamInfo(p)
+            
+        # Show updater names
+        self.output('\nHere is a list of all updaters that will be used for this analysis:')
+        for p in cold_chain_manager.getAllUpdaters():
+            if p.isMove():
+                self.output('  %s (Metropolis-Hastings)' % p.getName())
+            elif p.hasSliceSampler():
+                self.output('  %s (slice sampler)' % p.getName())
+            elif self.opts.debugging:
+                self.output('  %s (?)' % p.getName())
 
         # Debugging: show data patterns
         if self.opts.debugging:
@@ -811,8 +821,6 @@ class MCMCImpl(CommonFunctions):
             self.ss_beta_index = 0
             self.cycle_start = 0
             self.burnin = self.opts.burnin
-            chain = self.mcmc_manager.getColdChain()
-            chain.setBoldness(100.0)
             if self.data_matrix is None:
                 self.mainMCMCLoop(explore_prior=True)
             else:

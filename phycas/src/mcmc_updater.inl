@@ -223,6 +223,7 @@ inline void MCMCUpdater::setPriorTuningParam(
 inline void MCMCUpdater::setBoldness(
   double b) /**< is the new boldness value */
 	{
+	std::cerr << "Calling default (do-nothing) MCMCUpdater::setBoldness for updater named " << name << std::endl;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
