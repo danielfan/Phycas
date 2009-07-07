@@ -15,7 +15,7 @@ model.pinvar_model = False
 model.use_flex_model = False
 model.edgelen_prior = Exponential(1.0)
 model.update_freqs_separately = False
-model.state_freqs = [1.0]*61
+model.state_freqs = [1.0/61.0]*61
 model.state_freq_prior = Dirichlet([1.0]*61)
 model.state_freq_param_prior = Exponential(1.0)
 #model.update_relrates_separately = True
@@ -39,6 +39,9 @@ mcmc.slice_max_units = 0
 mcmc.starting_tree_source = randomtree(n_taxa=len(blob.taxon_labels), rng=rng)
 mcmc.rng = rng
 mcmc.data_source = blob.characters
+
+mcmc.state_freq_psi       = 30000.0     # max_psi
+mcmc.state_freq_psi0      = 2.0         # min_psi
 
 if False:
 	import sys,os

@@ -119,8 +119,8 @@ void DirichletMove::setBoldness(
     //
     //  psi = max_psi + (max_psi - max_psi)*(100-boldness)/100
     //
-	psi = max_psi + (max_psi - max_psi)*(100.0-boldness)/100.0;
-	//std::cerr << boost::str(boost::format("####### x = %.5f, boldness = %.5f, psi = %.5f") % x % boldness % psi) << std::endl;
+	psi = max_psi + (max_psi - min_psi)*(100.0-boldness)/100.0;
+	std::cerr << boost::str(boost::format("####### DirichletMove::setBoldness x = %.5f, boldness = %.5f, psi = %.5f, max_psi = %.5f, min_psi = %.5f") % x % boldness % psi % max_psi % min_psi) << std::endl;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -159,7 +159,7 @@ void DirichletMove::proposeNewState()
     new_params = dir_forward->Sample();
 
 	//temporary!!
-    //     std::cerr << boost::str(boost::format(">>>>>>>>>> boldness = %.1f, psi = %.5f\n") % boldness % psi);
+         std::cerr << boost::str(boost::format(">>>>>>>>>> boldness = %.1f, psi = %.5f\n") % boldness % psi);
     //     std::cerr << ">>>>>>>>>> orig_params: ";
     //     std::copy(orig_params.begin(), orig_params.end(), std::ostream_iterator<double>(std::cerr," "));
     //     std::cerr << "\n";
@@ -277,13 +277,14 @@ bool DirichletMove::update()
     //     std::cerr << "  max_new         = " << max_new << std::endl;
     //     std::cerr << "  curr_posterior  = " << curr_posterior << std::endl;
     //     std::cerr << "  prev_posterior  = " << prev_posterior << std::endl;
-    //     std::cerr << "  ln_hastings     = " << ln_hastings << std::endl;
-    //     std::cerr << "  ln_accept_ratio = " << ln_accept_ratio << std::endl;
-    //     std::cerr << "  lnu             = " << lnu << std::endl;
+         std::cerr << "  ln_posterior_ratio = " << (curr_posterior - prev_posterior) << std::endl;
+         std::cerr << "  ln_hastings        = " << ln_hastings << std::endl;
+         std::cerr << "  ln_accept_ratio    = " << ln_accept_ratio << std::endl;
+         std::cerr << "  lnu                = " << lnu << std::endl;
         
 	if (ln_accept_ratio >= 0.0 || lnu <= ln_accept_ratio)
 		{
-        //std::cerr << "ACCEPTED\n" << std::endl;
+        std::cerr << "ACCEPTED\n" << std::endl;
 		p->setLastLnPrior(curr_ln_prior);
 		p->setLastLnLike(curr_ln_like);
 		accept();
@@ -291,7 +292,7 @@ bool DirichletMove::update()
 		}
 	else
 		{
-        //std::cerr << "rejected\n" << std::endl;
+        std::cerr << "rejected\n" << std::endl;
 		curr_ln_like	= p->getLastLnLike();
 		curr_ln_prior	= p->getLastLnPrior();
 		revert();
@@ -316,19 +317,13 @@ void StateFreqMove::getParams()
 	if (model)
 		{
     	const std::vector<double> & rfreqs = model->getStateFreqs();
-    	//std::cerr << "StateFreqMove::getParams(): dim = " << dim << std::endl;
-    	//unsigned i = 0;
-    	//for (std::vector<double>::const_iterator it = rfreqs.begin(); it != rfreqs.end(); ++it, ++i)
-    	//    {
-    	//    std::cerr << boost::str(boost::format("%6d %20.12f") % i % (*it)) << std::endl;
-    	//    }
     	orig_params.resize(rfreqs.size());
 		PHYCAS_ASSERT(dim == rfreqs.size());
     	std::copy(rfreqs.begin(), rfreqs.end(), orig_params.begin());
     	}
     else
     	{
-    	orig_params.assign(dim, 1.0);
+    	orig_params.assign(dim, 1.0/(double)dim);
     	}
 	}
 
@@ -365,7 +360,7 @@ void RelRatesMove::getParams()
     	}
     else
     	{
-    	orig_params.assign(dim, 1.0);
+    	orig_params.assign(dim, 1.0/(double)dim);
     	}
 	}
 

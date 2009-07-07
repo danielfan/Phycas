@@ -811,6 +811,8 @@ class MCMCImpl(CommonFunctions):
             self.ss_beta_index = 0
             self.cycle_start = 0
             self.burnin = self.opts.burnin
+            chain = self.mcmc_manager.getColdChain()
+            chain.setBoldness(100.0)
             if self.data_matrix is None:
                 self.mainMCMCLoop(explore_prior=True)
             else:
