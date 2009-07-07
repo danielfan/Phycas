@@ -157,7 +157,7 @@ void DirichletMove::proposeNewState()
     new_params = dir_forward->Sample();
 
 	//temporary!!
-         std::cerr << boost::str(boost::format(">>>>>>>>>> boldness = %.1f, psi = %.5f\n") % boldness % psi);
+    //     std::cerr << boost::str(boost::format(">>>>>>>>>> boldness = %.1f, psi = %.5f\n") % boldness % psi);
     //     std::cerr << ">>>>>>>>>> orig_params: ";
     //     std::copy(orig_params.begin(), orig_params.end(), std::ostream_iterator<double>(std::cerr," "));
     //     std::cerr << "\n";
