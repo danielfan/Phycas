@@ -729,9 +729,8 @@ class MCMCImpl(CommonFunctions):
                 self.output('  %s (Metropolis-Hastings)' % p.getName())
             elif p.hasSliceSampler():
                 self.output('  %s (slice sampler)' % p.getName())
-            #elif self.opts.debugging:
             else:
-                self.output('  %s (?)' % p.getName())
+                self.output('  %s (computes prior but does not update)' % p.getName())
 
         # Debugging: show data patterns
         if self.opts.debugging:
