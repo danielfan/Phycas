@@ -40,7 +40,8 @@ using namespace phycas;
 */
 EdgeMove::EdgeMove() : MCMCUpdater()
 	{
-	lambda			= 1.0;
+	is_move = true;
+	lambda	= 1.0;
 	reset();
 	}
 

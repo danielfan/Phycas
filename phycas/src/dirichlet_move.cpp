@@ -34,6 +34,7 @@ using namespace phycas;
 */
 DirichletMove::DirichletMove() : MCMCUpdater()
 	{
+	is_move = true;
 	dim = 0;
 	boldness = 0.0;
 	max_psi = 1.0;
