@@ -147,7 +147,10 @@ void QMatrix::redimension(unsigned new_dim)
 	dimension = new_dim;
 	flat_length = new_dim*new_dim;
 	
+#if POLPY_NEWWAY
 	expwv.resize(new_dim);
+	zz.resize(new_dim*new_dim*new_dim);
+#endif
 
 	// Set the shape of a NumArray object that represents Q, P (transition probs), E (eigenvectors) or V (eigenvalues)
 	dim_vect.push_back((int)dimension);
@@ -288,6 +291,21 @@ void QMatrix::recalcQMatrixImpl()
 		clearAllExceptFreqsAndRates();
 		throw XLikelihood("Error in the calculation of eigenvectors and eigenvalues of the Q matrix");
 		}
+		
+#if POLPY_NEWWAY
+    // Precalculate eigenvector coefficients for use in recalcPMat function
+    double * zzptr = &zz[0];
+	for (unsigned i = 0; i < dimension; ++i)
+		{
+        for (unsigned j = 0; j < dimension; ++j)
+            {
+            for (unsigned k = 0; k < dimension; ++k)
+                {
+        		*zzptr++ = z[i][k]*z[j][k];
+        		}
+    		}
+        }
+#endif
 
 	q_dirty = false;
 	}
@@ -320,6 +338,7 @@ void QMatrix::recalcPMat(
 	// Real symmetric matrices can be diagonalized using Z*exp(D)*Z^T, where Z is the 
 	// orthogonal matrix of eigenvectors and D is the diagonal matrix of eigenvalues,
 	// each multiplied by time (scaled to equal expected number of substitutions)
+    double * zzptr = &zz[0];
 	for (unsigned i = 0; i < dimension; ++i)
 		{
 		double sqrtPi_i = sqrtPi[i];
@@ -329,7 +348,8 @@ void QMatrix::recalcPMat(
 			double Pij = 0.0;
 			for (unsigned k = 0; k < dimension; ++k)
 				{
-				double tmp = z[i][k]*z[j][k]*expwv[k];
+				//double tmp = z[i][k]*z[j][k]*expwv[k];
+				double tmp = (*zzptr++)*expwv[k];
 				Pij +=  tmp;
 				}
 			pmat[i][j] = Pij*factor;
