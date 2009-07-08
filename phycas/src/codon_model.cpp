@@ -375,7 +375,7 @@ void Codon::createParameters(
 */
 std::string Codon::paramHeader() const
 	{
-	std::string s = std::string("Gen\tLnL\tTL\tkappa\tomega\t");
+	std::string s = std::string("\tkappa\tomega\t");
 	for (std::vector<std::string>::const_iterator it = state_repr.begin(); it != state_repr.end(); ++it)
 		{
 		s += "freq";

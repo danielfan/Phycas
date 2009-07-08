@@ -22,6 +22,205 @@
 using namespace phycas;
 
 /*----------------------------------------------------------------------------------------------------------------------
+|
+*/
+QMatrix::QMatrix()
+  : dimension(0), flat_length(0) 
+  , qmat(0), qmat_begin(0), qmat_end(0) 
+  , w(0), w_begin(0), w_end(0)
+  , z(0), z_begin(0), z_end(0)
+  , fv(0) 
+  , q_dirty(true)
+	{
+	// Set up Q matrix representing the JC69 model by default
+	rr.assign(6, 1.0);
+	pi.assign(4, 0.25);
+	sqrtPi.assign(4, 0.5);
+	recalcQMatrix();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|
+*/
+QMatrix::~QMatrix()
+	{
+	clear();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns object to its just-constructed state, with the exception that the vectors `rr', `pi' and `sqrtPi' are not 
+|	cleared.
+*/
+void QMatrix::clearAllExceptFreqsAndRates()
+	{
+	dimension	= 0;
+	flat_length	= 0; 
+	qmat_begin	= 0; 
+	qmat_end	= 0; 
+	w_begin		= 0; 
+	w_end		= 0; 
+	z_begin		= 0; 
+	z_end		= 0; 
+
+	dim_vect.clear();
+
+	if (qmat)
+		{
+		DeleteTwoDArray<double>(qmat);
+		qmat = 0;
+		}
+	
+	if (w)
+		{
+		delete [] w;
+		w = 0;
+		}
+
+	if (fv)
+		{
+		delete [] fv;
+		fv = 0;
+		}
+
+	if (z)
+		{
+		DeleteTwoDArray<double>(z);
+		z = 0;
+		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns object to its just-constructed state by calling clearAllExceptFreqsAndRates and then also clearing the 
+|	`rr', `pi' and `sqrtPi' vectors.
+*/
+void QMatrix::clear()
+	{
+	clearAllExceptFreqsAndRates();
+	pi.clear();
+	sqrtPi.clear();
+	rr.clear();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns the current value of the data member `dimension', which is the number of rows (and
+|	columns) in the Q matrix.
+*/
+unsigned QMatrix::getDimension()
+	{
+	return dimension;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Copies elements from the supplied vector `rates' to the data member `rr' and sets `q_dirty' to true.
+*/
+void QMatrix::setRelativeRates(const std::vector<double> & rates)
+	{
+	rr.resize(rates.size());
+	std::copy(rates.begin(), rates.end(), rr.begin());
+	q_dirty = true;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Copies elements from the supplied vector `rates' to the data member `rr' and sets `q_dirty' to true.
+*/
+void QMatrix::setStateFreqs(const std::vector<double> & freqs)
+	{
+	pi.resize(freqs.size());
+	std::copy(freqs.begin(), freqs.end(), pi.begin());
+
+	sqrtPi.resize(freqs.size());
+	std::transform(pi.begin(), pi.end(), sqrtPi.begin(), boost::lambda::bind(static_cast<double(*)(double)>(&std::sqrt), boost::lambda::_1));
+
+	q_dirty = true;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Reallocates all arrays and vectors (except `rr', `pi' and `sqrtPi') according to the value of `new_dim' and sets 
+|	`dimension' equal to `new_dim' before returning. Assumes `new_dim' is greater than zero. Note that `qmat', `w', `z'
+|	and `fv' are allocated but not filled with any values when this function returns.
+*/
+void QMatrix::redimension(unsigned new_dim)
+	{
+	PHYCAS_ASSERT(new_dim > 0);
+	clearAllExceptFreqsAndRates();
+
+	dimension = new_dim;
+	flat_length = new_dim*new_dim;
+	
+	expwv.resize(new_dim);
+
+	// Set the shape of a NumArray object that represents Q, P (transition probs), E (eigenvectors) or V (eigenvalues)
+	dim_vect.push_back((int)dimension);
+	dim_vect.push_back((int)dimension);
+
+	// Create and fill qmat with default (Mk model) values 
+	qmat = NewTwoDArray<double>(dimension, dimension);
+	PHYCAS_ASSERT(qmat);
+
+	qmat_begin		= &qmat[0][0];
+	qmat_end		= qmat_begin + flat_length;
+
+	// Create w (array of eigenvalues)
+	w = new double[dimension];
+	w_begin = &w[0];
+	w_end = w_begin + dimension;
+
+	// Create z (two-dimensional array of eigenvectors)
+	z = NewTwoDArray<double>(dimension, dimension);
+	z_begin		= &z[0][0];
+	z_end		= z_begin + flat_length;
+
+	// Create fv (workspace used by EigenRealSymmetric)
+	fv = new double[dimension];
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	If `q_dirty' is true, calls recalcQMatrixImpl to recompute the `qmat', `z' and `w' data members. If `q_dirty' is 
+|	false, however, this function returns immediately and thus (because it is declared inline) is computationally 
+|	inexpensive.
+*/
+void QMatrix::recalcQMatrix()
+	{
+	if (!q_dirty)
+		return;
+	recalcQMatrixImpl();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the eigenvalues in the data member `w' as a vector. Calls recalcQMatrix first to ensure that `w' is up to 
+|	date.
+*/
+std::vector<double> QMatrix::getEigenValues()
+	{
+	recalcQMatrix();
+	std::vector<double> v(dimension, 0.0);
+	std::copy(w_begin, w_end, v.begin());
+	return v;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|
+*/
+std::string QMatrix::showQMatrix()
+	{
+	recalcQMatrix();
+	return showMatrixImpl(qmat_begin);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Stores a flattened version of the supplied 2-dimensional array `twoDarr', storing the result in the supplied VecDbl
+|	reference variable `p'. The supplied `twoDarr' should be laid out so that rows occupy contiguous memory.
+*/
+void QMatrix::flattenTwoDMatrix(VecDbl & p, double * * twoDarr, unsigned dim) const
+	{
+	unsigned flat_length = dim*dim;
+	p.reserve(flat_length);
+	double * twoD_begin = &twoDarr[0][0];
+	double * twoD_end   = twoD_begin + flat_length;
+	std::copy(twoD_begin, twoD_end, p.begin());
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Uses `pi' and `rr' vectors to create the two-dimensional array `qmat'. The data member `qmat' is reallocated if 
 |	changes in `pi' and `rr' imply a new dimension (or if `qmat' is NULL). Recomputes eigenvalues and eigenvectors 
 |	corresponding to the new Q matrix. Assumes `q_dirty' is true, and sets `q_dirty' to false when finished. Throws an 
@@ -82,7 +281,7 @@ void QMatrix::recalcQMatrixImpl()
 	PHYCAS_ASSERT(sum_for_scaling > 0.0);
 	edgelen_scaler = 1.0/sum_for_scaling;
 
-	// Calculate eigenvalues and eigenvectors
+	// Calculate eigenvalues (w) and eigenvectors (z)
 	int err_code = EigenRealSymmetric(dimension, qmat, w, z, fv);
 	if (err_code != 0)
 		{
@@ -111,6 +310,32 @@ void QMatrix::recalcPMat(
 	// implied by the Q matrix is not unity
 	double v = t*edgelen_scaler;
 
+#if POLPY_NEWWAY
+    // Precalculate exp to avoid doing the same calculation dimension*dimension times
+	for (unsigned k = 0; k < dimension; ++k)
+		{
+		expwv[k] = std::exp(w[k]*v);
+        }
+	// Exponentiate eigenvalues and put everything back together again
+	// Real symmetric matrices can be diagonalized using Z*exp(D)*Z^T, where Z is the 
+	// orthogonal matrix of eigenvectors and D is the diagonal matrix of eigenvalues,
+	// each multiplied by time (scaled to equal expected number of substitutions)
+	for (unsigned i = 0; i < dimension; ++i)
+		{
+		double sqrtPi_i = sqrtPi[i];
+		for (unsigned j = 0; j < dimension; ++j)
+			{
+			double factor = sqrtPi[j]/sqrtPi_i;
+			double Pij = 0.0;
+			for (unsigned k = 0; k < dimension; ++k)
+				{
+				double tmp = z[i][k]*z[j][k]*expwv[k];
+				Pij +=  tmp;
+				}
+			pmat[i][j] = Pij*factor;
+			}
+		}
+#else
 	// Exponentiate eigenvalues and put everything back together again
 	for (unsigned i = 0; i < dimension; ++i)
 		{
@@ -127,6 +352,7 @@ void QMatrix::recalcPMat(
 			pmat[i][j] = Pij*factor;
 			}
 		}
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -172,7 +398,7 @@ void QMatrix::recalcPMatrix(
 /*----------------------------------------------------------------------------------------------------------------------
 |
 */
-inline std::string QMatrix::showMatrixImpl(const double * q) const
+std::string QMatrix::showMatrixImpl(const double * q) const
 	{
 	unsigned i, j;
 
@@ -198,3 +424,74 @@ inline std::string QMatrix::showMatrixImpl(const double * q) const
 
 	return s;
 	}
+
+#if defined(PYTHON_ONLY)
+#if defined(USING_NUMARRAY)
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the entries in the data member `qmat' as a NumArray. Calls recalcQMatrix first to ensure that `qmat' is up
+|	to date.
+*/
+boost::python::numeric::array QMatrix::getQMatrix()
+	{
+	recalcQMatrix();
+	return num_util::makeNum(qmat_begin, dim_vect);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the eigenvectors in the data member `z' as a NumArray. Calls recalcQMatrix first to ensure that `z' is up
+|	to date.
+*/
+boost::python::numeric::array QMatrix::getEigenVectors()
+	{
+	recalcQMatrix();
+	return num_util::makeNum(z_begin, dim_vect);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the eigenvectors in the data member `z' as a NumArray. Calls recalcQMatrix first to ensure that `z' is up
+|	to date.
+*/
+boost::python::numeric::array QMatrix::getPMatrix(double edgelen)
+	{
+	std::vector<double> p;
+	recalcPMatrix(p, edgelen);
+	return num_util::makeNum(&p[0], dim_vect);	//PELIGROSO
+	}
+#else
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the entries in the data member `qmat' as a NumArray. Calls recalcQMatrix first to ensure that `qmat' is up
+|	to date.
+*/
+VecDbl QMatrix::getQMatrix()
+	{
+	recalcQMatrix();
+	VecDbl p;
+	flattenTwoDMatrix(p, qmat, dim_vect[0]); 
+	return p;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the eigenvectors in the data member `z' as a NumArray. Calls recalcQMatrix first to ensure that `z' is up
+|	to date.
+*/
+VecDbl QMatrix::getEigenVectors()
+	{
+	recalcQMatrix();
+	VecDbl p;
+	flattenTwoDMatrix(p, z, dim_vect[0]); 
+	return p;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the eigenvectors in the data member `z' as a NumArray. Calls recalcQMatrix first to ensure that `z' is up
+|	to date.
+*/
+VecDbl QMatrix::getPMatrix(double edgelen)
+	{
+	VecDbl p;
+	recalcPMatrix(p, edgelen);
+	return p;
+	}
+#endif
+#endif
+

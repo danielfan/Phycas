@@ -108,22 +108,24 @@ class QMatrix
 		std::vector<double>				sqrtPi;			/**< The square roots of the state frequencies (length equals dimension) */
 
 		std::vector<double>				rr;				/**< The relative rates (elements in the upper diagonal of the R matrix). If the R matrix is 4x4, the order of the six elements in the relrates vector should be R[0][1], R[0][2], R[0][3], R[1][2], R[1][3] and R[2][3]. The R matrix is combined with the pi vector to create the Q matrix. */
+		
+		std::vector<double>				expwv;			/**< Workspace used for precalculating exp(w*v), where w is an eigenvalue and v an edge length; used in recalcPMat */
 
-		double							edgelen_scaler;	/**< */
+		double							edgelen_scaler;	/**< factor needed */
 		double * *						qmat;			/**< */
 
 		double *						qmat_begin;		/**< */
 		double *						qmat_end;		/**< */
 
-		double *						w;				/**< */
+		double *						w;				/**< matrix of eigenvalues computed by EigenRealSymmetric*/
 		double *						w_begin;		/**< */
 		double *						w_end;			/**< */
 
-		double * *						z;				/**< */
+		double * *						z;				/**< matrix of eigenvectors computed by EigenRealSymmetric */
 		double *						z_begin;		/**< */
 		double *						z_end;			/**< */
 
-		double *						fv;				/**< */
+		double *						fv;				/**< workspace needed by EigenRealSymmetric */
 
 		bool							q_dirty;		/**< If true, then the Q-matrix has been changed and eigenvalues and eigenvectors need to be recalculated */
 	};

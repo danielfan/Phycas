@@ -783,15 +783,12 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 		std::vector<const double *> focalNdCLAPtr(nr);
 		std::vector<const double *> focalNeighborCLAPtr(nr);
 
-#if 1 //POLPY_NEWWAY
 		ScopedThreeDMatrix<double> piP;
 		piP.Initialize(nr, ns, ns);
-#endif
 		for (unsigned r = 0; r < nr; ++r)
 			{
 			focalNdCLAPtr[r] = focalNodeCLA + singleRateCLALength*r;
 			focalNeighborCLAPtr[r] = focalNeighborCLA + singleRateCLALength*r;
-#if 1 // POLPY_NEWWAY
 			for (unsigned i = 0; i < ns; ++i)
 				{
 				for (unsigned j = 0; j < ns; ++j)
@@ -799,7 +796,6 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 					piP.ptr[r][i][j] = stateFreq[i]*childPMatrices[r][i][j];
 					}			
 				}			
-#endif
 			}
 
 		for (unsigned pat = 0; pat < np; ++pat)
@@ -809,35 +805,15 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 				{
 				const double * focalNdCLAPtr_r = focalNdCLAPtr[r];
 				const double * neigborCLAForRate = focalNeighborCLAPtr[r];
-				double siteRateLike = 0.0;
-				
-#if 0
-				const double * const * childPMatrix = childPMatrices[r];
-				for (unsigned i = 0; i < ns; ++i)
-					{
-					const double * childP_i = childPMatrix[i];
-					double neigborLike = 0.0;
-					for (unsigned j = 0; j < ns; ++j)
-						neigborLike += childP_i[j]*neigborCLAForRate[j];
-					siteRateLike += stateFreq[i]*focalNdCLAPtr_r[i]*neigborLike;
-					}
-#else	
+				double siteRateLike = 0.0;	
 				for (unsigned i = 0; i < ns; ++i)
 					{
 					const double * childP_i = piP.ptr[r][i];
 					double neigborLike = 0.0;
-#if 1
 					for (unsigned j = 0; j < ns; ++j)
 						neigborLike += childP_i[j]*neigborCLAForRate[j];
-#else
-					neigborLike =   childP_i[0]*neigborCLAForRate[0]
-					              + childP_i[1]*neigborCLAForRate[1]
-					              + childP_i[2]*neigborCLAForRate[2]
-					              + childP_i[3]*neigborCLAForRate[3];
-#endif
 					siteRateLike += focalNdCLAPtr_r[i]*neigborLike;
 					}
-#endif
 				siteLike += rateCatProbArray[r]*siteRateLike;
 				focalNdCLAPtr[r] += ns;
 				focalNeighborCLAPtr[r] += ns;
