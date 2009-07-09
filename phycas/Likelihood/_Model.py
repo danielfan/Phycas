@@ -493,26 +493,22 @@ class CodonModel(CodonModelBase):
         """
         return CodonModelBase.getStateFreqs(self)
 
-    def setAllStateFreqsUnnorm(self, values):
+    def setStateFreqsUnnorm(self, values):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Sets frequency parameter for state i to values[i]. The codon states 
-        in this order: AAA, AAC, AAG, AAT, ACA, ACC, ACG, ACT, ..., TTT (with
-        the exception of the three stop codons, TAA, TAG and TGA, which are
-        never considered. Note that value can be any non-negative number;
-        there is no need to ensure that it is between 0.0 and 1.0 (although
-        there is nothing wrong with providing normalized frequencies). The
-        61 frequency parameters are normalized for use in all calculations
-        involving state frequencies. Thus, specifying 10 for each of the 61
-        state frequency parameters will result in the relative state
-        frequencies being all set to 1/61.
+        For all i, sets the frequency parameter for state i to values[i]. The
+        codon states are assumed to be in this order: AAA, AAC, AAG, AAT, 
+        ACA, ACC, ACG, ACT, ..., TTT (with the exception of the three stop
+        codons, TAA, TAG and TGA, which are never considered. Note that value
+        can be any non-negative number; there is no need to ensure that it is
+        between 0.0 and 1.0 (although there is nothing wrong with providing 
+        normalized frequencies). The 61 frequency parameters are normalized
+        for use in all calculations involving state frequencies. Thus, 
+        specifying 10 for each of the 61 state frequency parameters will
+        result in the relative state frequencies being all set to 1/61.
         
         """
-        from phycas.Utilities.CommonFunctions import CommonFunctions
-        cf = CommonFunctions(self)
-        cf.phycassert(len(values) == 61, 'Expecting list to have 61 elements setAllStateFreqsUnnorm; instead, it had %d elements' % len(values))
-        for i in range(61):
-            CodonModelBase.setStateFreqUnnorm(self, i, values[i])
+        CodonModelBase.setStateFreqsUnnorm(self, values)
 
     def setStateFreqUnnorm(self, i, value):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

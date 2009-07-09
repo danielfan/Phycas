@@ -20,7 +20,7 @@
 #include <cmath>
 #include <iostream>
 #include "ncl/nxsallocatematrix.h"
-#include "phycas/src/likelihood_models.hpp"
+#include "phycas/src/codon_model.hpp"
 #if defined(PYTHON_ONLY) && defined(USING_NUMARRAY)
 #	include <boost/python/numeric.hpp>
 #	include "phycas/src/thirdparty/num_util/num_util.h"
@@ -271,17 +271,21 @@ Codon::Codon()
 		
 	// ignore stop codons
 	it = state_repr.begin() + 48;
-	std::cerr << "debug deleting " << (*it) << std::endl;
+	//std::cerr << "debug deleting " << (*it) << std::endl;	//POLPY_NEWWAY temporary!
 	state_repr.erase(state_repr.begin()+48);
 	
 	it = state_repr.begin() + 49;
-	std::cerr << "debug deleting " << (*it) << std::endl;
+	//std::cerr << "debug deleting " << (*it) << std::endl;	//POLPY_NEWWAY temporary!
 	state_repr.erase(state_repr.begin()+49);
 
 	it = state_repr.begin() + 54;
-	std::cerr << "debug deleting " << (*it) << std::endl;
+	//std::cerr << "debug deleting " << (*it) << std::endl;	//POLPY_NEWWAY temporary!
 	state_repr.erase(state_repr.begin()+54);
 
+#if POLPY_NEWWAY
+	setAllFreqsEqual();
+#endif
+	//std::cerr << "##########      Codon::Codon is calling updateQMatrix" << std::endl;	//POLPY_NEWWAY temporary!
 	updateQMatrix();
 
 	//std::ofstream outf("debug_codon_identities.txt");
@@ -492,6 +496,10 @@ void Codon::setKappa(double k)
 	if (k <= 0.0)
 		throw XLikelihood();
 	kappa = k;
+#if POLPY_NEWWAY
+	//std::cerr << "##########      Codon::setKappa is setting kappa to " << kappa << std::endl;	//POLPY_NEWWAY temporary!
+	updateQMatrix();
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -511,6 +519,10 @@ void Codon::setOmega(double w)
 	if (w <= 0.0)
 		throw XLikelihood();
 	omega = w;
+#if POLPY_NEWWAY
+	//std::cerr << "##########      Codon::setOmega is setting omega to " << omega << std::endl;	//POLPY_NEWWAY temporary!
+	updateQMatrix();
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -583,7 +595,9 @@ void Codon::setStateFreqParamPrior(ProbDistShPtr d)
 */
 void Codon::calcPMat(double * * pMat, double edgeLength) const
 	{
-	updateQMatrix();
+#if POLPY_NEWWAY
+	//updateQMatrix();
+#endif
 	q_matrix.recalcPMat(pMat, edgeLength);
 	}
 	
@@ -623,6 +637,39 @@ double Codon::calcUMat(double * * uMat) const
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Modifier function that sets one of the state frequency parameters (the unnormalized values that determine the values
+|	in the `state_freqs' vector when normalized) in the data member vector `state_freq_unnorm'. The member function
+|	normalizeFreqs is called automatically to recalculate `state_freqs'. Assumes `param_index' is less than `num_states'
+|	(i.e. a valid index into `state_freq_unnorm) and `value' is non-negative. Most of the work is done by the base 
+|	class version (i.e. Model::setStateFreqUnnorm); however this override is necessary because of the need to inform 
+|	`q_matrix' of the change.
+*/
+void Codon::setStateFreqUnnorm(
+  unsigned param_index,		/**< the 0-based index into the `state_freq_unnorm' vector of the element to modify */
+  double value)				/**< the new value of `state_freq_unnorm'[`param_index'] */
+	{
+	Model::setStateFreqUnnorm(param_index, value);
+	q_matrix.setStateFreqs(state_freqs);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Modifier function that sets all of the state frequency parameters (the unnormalized values that determine the values
+|	in the `state_freqs' vector when normalized) in the data member vector `state_freq_unnorm'. Most of the work is done
+|	by the base class version (i.e. Model::setStateFreqsUnnorm); however this override is necessary because of the need
+|	to inform `q_matrix' of the change.
+*/
+void Codon::setStateFreqsUnnorm(
+  const std::vector<double> & values)	/**< the new unnormalized state frequencies */
+	{
+	Model::setStateFreqsUnnorm(values);
+	q_matrix.setStateFreqs(state_freqs);
+
+	//std::cerr << "@@@@@@@@@@@ Codon::setStateFreqsUnnorm" << std::endl; //POLPY_NEWWAY temporary!
+	//prevfrq.resize(state_freqs.size()); //POLPY_NEWWAY temporary!
+	//std::copy(state_freqs.begin(), state_freqs.end(), prevfrq.begin()); //POLPY_NEWWAY temporary!
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Override of Model base class function that sets all state frequencies to 1/num_states. The base class version is 
 |	called to do most of the work, and this function is responsible only for ensuring that the `q_matrix' data member 
 |	knows about the change in state frequencies.
@@ -631,6 +678,10 @@ void Codon::setAllFreqsEqual()
 	{
 	Model::setAllFreqsEqual();
 	q_matrix.setStateFreqs(state_freqs);
+	
+	//std::cerr << "@@@@@@@@@@@ Codon::setAllFreqsEqual" << std::endl; //POLPY_NEWWAY temporary!
+	//prevfrq.resize(state_freqs.size()); //POLPY_NEWWAY temporary!
+	//std::copy(state_freqs.begin(), state_freqs.end(), prevfrq.begin()); //POLPY_NEWWAY temporary!
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -720,34 +771,26 @@ inline void Codon::setNucleotideFreqs(
 	normalizeFreqs();
 	q_matrix.setStateFreqs(state_freqs);
 
-	//std::ofstream outf("debug_codon_frequencies.txt");
-	//outf << "Codon state frequencies:\n\n";
-	//unsigned z = 0;
-	//for (std::vector<double>::const_iterator it = state_freqs.begin(); it != state_freqs.end(); ++it)
-	//	{
-	//	outf << (z++) << '\t' << (*it) << '\n'; 
-	//	}
-	//outf.close();
+	//prevfrq.resize(state_freqs.size()); //POLPY_NEWWAY temporary!
+	//std::copy(state_freqs.begin(), state_freqs.end(), prevfrq.begin()); //POLPY_NEWWAY temporary!
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Uses current values of `omega' and `kappa' to update the relative rate (rr) vector inside `q_matrix'.
+|	Uses current values of `omega' and `kappa' to update the relative rate (rr) vector inside `q_matrix'. This function
+|	should only be called if either `omega' or `kappa' change because it precipitates the relatively expensive
+|	eigendecomposition.
 */
 void Codon::updateQMatrix() const
 	{
 	std::vector<double> rel_rate_vect;
-	rel_rate_vect.reserve(1830);
+	rel_rate_vect.reserve(1830);	// 1830 = 61*(61-1)/2, the number of elements in upper (or lower) triangle
 
-	//std::ofstream outf("debug_qmatrix.txt");
-	//outf << "QMatrix calculation (kappa = " << kappa << ", omega = " << omega << ")" << std::endl;
-	//outf << "from_codon" << '\t' << "to_codon" << '\t' << "from_aa" << '\t' << "to_aa" << '\t' << "nchanges" << '\t';
-	//outf << "type" << '\t' << "rate" << std::endl;
-
-	for (unsigned row = 0; row < 61; ++row)
+	for (unsigned row = 0; row < 60; ++row)
 		{
 		unsigned from_aa_state = codon_code_to_aa_code[row];
 		for (unsigned col = row + 1; col < 61; ++col)
 			{
+			// first determine number of nucleotide changes associated with the element at row, col
 			unsigned to_aa_state = codon_code_to_aa_code[col];
 			unsigned nchanges = 0;
 			char from_base = '\0';
@@ -762,13 +805,9 @@ void Codon::updateQMatrix() const
 					}
 				}
 
-			//outf << codon_code_to_triplet[row] << '\t' << codon_code_to_triplet[col] << '\t';
-			//outf << codon_code_to_aa_name[row] << '\t' << codon_code_to_aa_name[col] << '\t';
-			//outf << nchanges << '\t';
-
-			double rel_rate = 0.0;
-			//PHYCAS_ASSERT(nchanges > 0);
-            PHYCAS_ASSERT(nchanges > 0);
+			// second determine the relative rate of the element at row, col
+			double rel_rate = 0.0;			// this rate will be used if nchanges > 1
+            PHYCAS_ASSERT(nchanges > 0);	// all off-diagonal elements should require at least 1 nucleotide change
 			if (nchanges == 1)
 				{
 				// Determine transition vs. transversion
@@ -780,25 +819,42 @@ void Codon::updateQMatrix() const
 					{
 					// synonymous substitution
 					rel_rate = (transversion ? 1.0 : kappa);
-					//outf << (transversion ? "SynTrv" : "SynTrs") << '\t' << rel_rate;
 					}
 				else
 					{
 					// nonsynonymous substitution
 					rel_rate = (transversion ? omega : omega*kappa);
-					//outf << (transversion ? "NonTrv" : "NonTrs") << '\t' << rel_rate;
 					}
 				}
-			//else
-			//	outf << "" << '\t' << rel_rate;
-
-			//outf << std::endl;
-			
 			rel_rate_vect.push_back(rel_rate);
 			}
 		}
+			
+	//std::cerr << "##########      Codon::updateQMatrix" << std::endl;	//POLPY_NEWWAY temporary!
 	q_matrix.setRelativeRates(rel_rate_vect);
-	q_matrix.setStateFreqs(state_freqs);
+	
+	//POLPY_NEWWAY temporary!
+	// 	bool same = true;
+	// 	for (unsigned i = 0; i < 61; ++i)
+	// 		{
+	// 		if (prevfrq[i] != state_freqs[i])
+	// 			{
+	// 			std::cerr << "!!!!!!!!! oops! state_freqs has changed without CodonModel knowing about it" << std::endl;
+	// 			same = false;
+	// 			break;
+	// 			}
+	// 		}
+	// 	if (!same)
+	// 		{
+	// 		std::cerr << boost::str(boost::format("%15s | %15s") % "state_freqs" % "prevfrq")  << std::endl;
+	// 		for (unsigned i = 0; i < 61; ++i)
+	// 			{
+	// 			std::cerr << boost::str(boost::format("%15.5f | %15.5f") % state_freqs[i] % prevfrq[i])  << std::endl;
+	// 			}
+	// 		std::exit(0);
+	// 		}
+		
+	//q_matrix.setStateFreqs(state_freqs);	//POLPY_NEWWAY temporary!
 
 	//outf.close();
 	}

@@ -18,6 +18,7 @@
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #include "phycas/src/likelihood_models.hpp"
+#include "phycas/src/codon_model.hpp"
 #include "phycas/src/tree_likelihood.hpp"
 #include "phycas/src/probability_distribution.hpp"
 #include "phycas/src/mcmc_param.hpp"

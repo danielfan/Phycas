@@ -32,6 +32,7 @@ QMatrix::QMatrix()
   , fv(0) 
   , q_dirty(true)
 	{
+	//std::cerr << "##########      setting q_dirty to true in QMatrix::QMatrix" << std::endl;   //POLPY_NEWWAY temporary!
 	// Set up Q matrix representing the JC69 model by default
 	rr.assign(6, 1.0);
 	pi.assign(4, 0.25);
@@ -117,6 +118,7 @@ void QMatrix::setRelativeRates(const std::vector<double> & rates)
 	{
 	rr.resize(rates.size());
 	std::copy(rates.begin(), rates.end(), rr.begin());
+	//std::cerr << "##########      setting q_dirty to true in QMatrix::setRelativeRates" << std::endl;   //POLPY_NEWWAY temporary!
 	q_dirty = true;
 	}
 
@@ -130,7 +132,7 @@ void QMatrix::setStateFreqs(const std::vector<double> & freqs)
 
 	sqrtPi.resize(freqs.size());
 	std::transform(pi.begin(), pi.end(), sqrtPi.begin(), boost::lambda::bind(static_cast<double(*)(double)>(&std::sqrt), boost::lambda::_1));
-
+	//std::cerr << "@@@@@@@@@@      setting q_dirty to true in QMatrix::setStateFreqs" << std::endl;   //POLPY_NEWWAY temporary!
 	q_dirty = true;
 	}
 
@@ -149,7 +151,6 @@ void QMatrix::redimension(unsigned new_dim)
 	
 #if POLPY_NEWWAY
 	expwv.resize(new_dim);
-	zz.resize(new_dim*new_dim*new_dim);
 #endif
 
 	// Set the shape of a NumArray object that represents Q, P (transition probs), E (eigenvectors) or V (eigenvalues)
@@ -217,7 +218,7 @@ std::string QMatrix::showQMatrix()
 void QMatrix::flattenTwoDMatrix(VecDbl & p, double * * twoDarr, unsigned dim) const
 	{
 	unsigned flat_length = dim*dim;
-	p.reserve(flat_length);
+	p.resize(flat_length);
 	double * twoD_begin = &twoDarr[0][0];
 	double * twoD_end   = twoD_begin + flat_length;
 	std::copy(twoD_begin, twoD_end, p.begin());
@@ -243,7 +244,7 @@ void QMatrix::recalcQMatrixImpl()
 	unsigned dim_rr = (unsigned)((1.0 + std::sqrt(1.0 + 8.0*rr.size()))/2.0); // rr.size() = (n^2 - n)/2, so use quadratic formula to get n
 	if (dim_pi != dim_rr)
 		{
-		throw XLikelihood("Number of relative rates and number of state frequencies specified are incompatible");
+		throw XLikelihood(boost::str(boost::format("Number of relative rates (%d) and number of state frequencies (%d) specified are incompatible") % dim_rr % dim_pi));
 		}
 
 	// If qmat is NULL or dimension differs from dim_pi and dim_rr, reallocate qmat, z, w and dv
@@ -286,36 +287,27 @@ void QMatrix::recalcQMatrixImpl()
 
 	// Calculate eigenvalues (w) and eigenvectors (z)
 	int err_code = EigenRealSymmetric(dimension, qmat, w, z, fv);
+	
+	//std::cerr << "##########      EigenRealSymmetric" << std::endl;  //POLPY_NEWWAY temporary!
+	
 	if (err_code != 0)
 		{
 		clearAllExceptFreqsAndRates();
 		throw XLikelihood("Error in the calculation of eigenvectors and eigenvalues of the Q matrix");
 		}
 		
-#if POLPY_NEWWAY
-    // Precalculate eigenvector coefficients for use in recalcPMat function
-    double * zzptr = &zz[0];
-	for (unsigned i = 0; i < dimension; ++i)
-		{
-        for (unsigned j = 0; j < dimension; ++j)
-            {
-            for (unsigned k = 0; k < dimension; ++k)
-                {
-        		*zzptr++ = z[i][k]*z[j][k];
-        		}
-    		}
-        }
-#endif
-
+	//std::cerr << "##########      setting q_dirty to FALSE in QMatrix::recalcQMatrixImpl" << std::endl;   //POLPY_NEWWAY temporary!
 	q_dirty = false;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|
+|   Recomputes a transition probability matrix for an edge length `edgelen', storing it in `pmat'. If either state
+|   frequencies or relative rates have changed, the Q matrix is reconstructed and eigenvalues and eigenvectors 
+|   recomputed before the transition matrix is recomputed.
 */
 void QMatrix::recalcPMat(
-  double * * pmat,		/**< */
-  double edgelen) 		/**< */
+  double * * pmat,		/**< is the transition matrix to recalculate */
+  double edgelen) 		/**< is the edge length */
 	{
 	recalcQMatrix();
     double t = edgelen;
@@ -328,17 +320,16 @@ void QMatrix::recalcPMat(
 	// implied by the Q matrix is not unity
 	double v = t*edgelen_scaler;
 
-#if POLPY_NEWWAY
     // Precalculate exp to avoid doing the same calculation dimension*dimension times
 	for (unsigned k = 0; k < dimension; ++k)
 		{
 		expwv[k] = std::exp(w[k]*v);
         }
+        
 	// Exponentiate eigenvalues and put everything back together again
 	// Real symmetric matrices can be diagonalized using Z*exp(D)*Z^T, where Z is the 
 	// orthogonal matrix of eigenvectors and D is the diagonal matrix of eigenvalues,
 	// each multiplied by time (scaled to equal expected number of substitutions)
-    double * zzptr = &zz[0];
 	for (unsigned i = 0; i < dimension; ++i)
 		{
 		double sqrtPi_i = sqrtPi[i];
@@ -348,72 +339,53 @@ void QMatrix::recalcPMat(
 			double Pij = 0.0;
 			for (unsigned k = 0; k < dimension; ++k)
 				{
-				//double tmp = z[i][k]*z[j][k]*expwv[k];
-				double tmp = (*zzptr++)*expwv[k];
+				double tmp = z[i][k]*z[j][k]*expwv[k];
 				Pij +=  tmp;
 				}
 			pmat[i][j] = Pij*factor;
 			}
 		}
-#else
-	// Exponentiate eigenvalues and put everything back together again
-	for (unsigned i = 0; i < dimension; ++i)
-		{
-		double sqrtPi_i = sqrtPi[i];
-		for (unsigned j = 0; j < dimension; ++j)
-			{
-			double factor = sqrtPi[j]/sqrtPi_i;
-			double Pij = 0.0;
-			for (unsigned k = 0; k < dimension; ++k)
-				{
-				double tmp = z[i][k]*z[j][k]*std::exp(w[k]*v);
-				Pij +=  tmp;
-				}
-			pmat[i][j] = Pij*factor;
-			}
-		}
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
 |
 */
-void QMatrix::recalcPMatrix(
-  std::vector<double> & P,	/**< */
-  double edgelen)			/**< */
-	{
-	recalcQMatrix();
-
-    double t = edgelen;
-
-    // The next two lines fix the "Rota" bug; see BUGS file for details
-    if (t < 1.e-8) 
-        t = 1.e-8; //TreeNode::edgeLenEpsilon;
-
-    // Adjust the supplied edgelen to account for the fact that the expected number of substitutions
-	// implied by the Q matrix is not unity
-	double v = t*edgelen_scaler;
-
-	P.clear();
-	P.reserve(flat_length);
-
-	// Exponentiate eigenvalues and put everything back together again
-	for (unsigned i = 0; i < dimension; ++i)
-		{
-		double sqrtPi_i = sqrtPi[i];
-		for (unsigned j = 0; j < dimension; ++j)
-			{
-			double factor = sqrtPi[j]/sqrtPi_i;
-			double Pij = 0.0;
-			for (unsigned k = 0; k < dimension; ++k)
-				{
-				double tmp = z[i][k]*z[j][k]*std::exp(w[k]*v);
-				Pij +=  tmp;
-				}
-			P.push_back(Pij*factor);
-			}
-		}
-	}
+// void QMatrix::recalcPMatrix(
+//   std::vector<double> & P,	/**< */
+//   double edgelen)			/**< */
+// 	{
+// 	recalcQMatrix();
+// 
+//     double t = edgelen;
+// 
+//     // The next two lines fix the "Rota" bug; see BUGS file for details
+//     if (t < 1.e-8) 
+//         t = 1.e-8; //TreeNode::edgeLenEpsilon;
+// 
+//     // Adjust the supplied edgelen to account for the fact that the expected number of substitutions
+// 	// implied by the Q matrix is not unity
+// 	double v = t*edgelen_scaler;
+// 
+// 	P.clear();
+// 	P.reserve(flat_length);
+// 
+// 	// Exponentiate eigenvalues and put everything back together again
+// 	for (unsigned i = 0; i < dimension; ++i)
+// 		{
+// 		double sqrtPi_i = sqrtPi[i];
+// 		for (unsigned j = 0; j < dimension; ++j)
+// 			{
+// 			double factor = sqrtPi[j]/sqrtPi_i;
+// 			double Pij = 0.0;
+// 			for (unsigned k = 0; k < dimension; ++k)
+// 				{
+// 				double tmp = z[i][k]*z[j][k]*std::exp(w[k]*v);
+// 				Pij +=  tmp;
+// 				}
+// 			P.push_back(Pij*factor);
+// 			}
+// 		}
+// 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
 |
@@ -468,14 +440,14 @@ boost::python::numeric::array QMatrix::getEigenVectors()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Returns the eigenvectors in the data member `z' as a NumArray. Calls recalcQMatrix first to ensure that `z' is up
-|	to date.
+|	Returns the transition probability matrix as a vector of double values (where the 2-dimensional matrix is converted
+|   to a 1-dimensional vector by storing rows one after the other. Intended for debugging (not fast).
 */
 boost::python::numeric::array QMatrix::getPMatrix(double edgelen)
 	{
-	std::vector<double> p;
-	recalcPMatrix(p, edgelen);
-	return num_util::makeNum(&p[0], dim_vect);	//PELIGROSO
+	double * * pMat = NewTwoDArray<double>(dimension, dimension);
+	recalcPMat(pMat, edgelen);
+	return num_util::makeNum(pMat, dim_vect);
 	}
 #else
 /*----------------------------------------------------------------------------------------------------------------------
@@ -486,7 +458,7 @@ VecDbl QMatrix::getQMatrix()
 	{
 	recalcQMatrix();
 	VecDbl p;
-	flattenTwoDMatrix(p, qmat, dim_vect[0]); 
+	flattenTwoDMatrix(p, qmat, dimension); 
 	return p;
 	}
 
@@ -498,18 +470,21 @@ VecDbl QMatrix::getEigenVectors()
 	{
 	recalcQMatrix();
 	VecDbl p;
-	flattenTwoDMatrix(p, z, dim_vect[0]); 
+	flattenTwoDMatrix(p, z, dimension); 
 	return p;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Returns the eigenvectors in the data member `z' as a NumArray. Calls recalcQMatrix first to ensure that `z' is up
-|	to date.
+|	Returns the transition probability matrix as a vector of double values (where the 2-dimensional matrix is converted
+|   to a 1-dimensional vector by storing rows one after the other. Intended for debugging (not fast).
 */
 VecDbl QMatrix::getPMatrix(double edgelen)
 	{
+	double * * pMat = NewTwoDArray<double>(dimension, dimension);
+	recalcPMat(pMat, edgelen);
 	VecDbl p;
-	recalcPMatrix(p, edgelen);
+	flattenTwoDMatrix(p, pMat, dimension); 
+	DeleteTwoDArray<double>(pMat);
 	return p;
 	}
 #endif

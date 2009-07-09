@@ -7,41 +7,47 @@ blob = readFile(filename)
 rng = ProbDist.Lot()
 rng.setSeed(13579)
 
-model.type = 'codon'
-model.num_rates = 1
-#model.gamma_shape = 2.0
-model.pinvar_model = False
-#model.use_inverse_shape = True
-model.use_flex_model = False
-model.edgelen_prior = Exponential(1.0)
-model.update_freqs_separately = False
-model.state_freqs = [1.0/61.0]*61
-model.state_freq_prior = Dirichlet([1.0]*61)
-model.state_freq_param_prior = Exponential(1.0)
-#model.update_relrates_separately = True
+model.type                      = 'codon'
+model.num_rates                 = 1
+model.pinvar_model              = False
+model.use_flex_model            = False
+model.edgelen_hyperprior        = None
+model.edgelen_prior             = Exponential(1.0)
+model.state_freqs               = [1.0]*61
+model.state_freq_prior          = Dirichlet([1.0]*61)
+model.state_freq_param_prior    = Exponential(1.0)
 
-mcmc.out.log = 'output.txt'
-mcmc.out.log.mode = REPLACE
-mcmc.out.trees.prefix = 'trees'
-mcmc.out.trees.mode = REPLACE
-mcmc.out.params.prefix = 'params'
-mcmc.out.params.mode = REPLACE
-mcmc.nchains = 1
-mcmc.ncycles = 100
-mcmc.sample_every = 5
-mcmc.report_every = 20
-mcmc.adapt_first = 10
-mcmc.verbose = True
-mcmc.ls_move_weight = 10
-mcmc.tree_scaler_weight = 1
-mcmc.slice_weight = 1
-mcmc.slice_max_units = 0
-mcmc.starting_tree_source = randomtree(n_taxa=len(blob.taxon_labels), rng=rng)
-mcmc.rng = rng
-mcmc.data_source = blob.characters
+model.update_freqs_separately   = False
 
-mcmc.state_freq_psi       = 30000.0     # max_psi
-mcmc.state_freq_psi0      = 2.0         # min_psi
+mcmc.nchains                    = 1
+mcmc.ncycles                    = 100
+mcmc.sample_every               = 5
+mcmc.report_every               = 20
+mcmc.adapt_first                = 10
+mcmc.verbose                    = True
+
+mcmc.ls_move_weight             = 0
+mcmc.edge_move_weight           = 0
+mcmc.tree_scaler_weight         = 0
+mcmc.state_freq_weight          = 1
+mcmc.slice_weight               = 1
+
+mcmc.fix_topology           = True
+
+mcmc.slice_max_units            = 0
+mcmc.starting_tree_source       = TreeCollection(newick='(8:0.56880388,(((3:0.40888265,(1:1.03799510,2:0.41917430):0.03417782):0.16416599,4:0.29333306):0.14865078,(6:0.28599164,((7:0.14870266,10:0.32973086):0.06151508,9:0.24129778):0.17828009):0.11396143):0.15762955,5:0.29601916);') # randomtree(n_taxa=len(blob.taxon_labels), rng=rng)
+mcmc.rng                        = rng
+mcmc.data_source                = blob.characters
+
+mcmc.state_freq_psi             = 3000.0     # max_psi
+mcmc.state_freq_psi0            = 2.0         # min_psi
+
+mcmc.out.log                    = 'output.txt'
+mcmc.out.log.mode               = REPLACE
+mcmc.out.trees.prefix           = 'trees'
+mcmc.out.trees.mode             = REPLACE
+mcmc.out.params.prefix          = 'params'
+mcmc.out.params.mode            = REPLACE
 
 if False:
 	import sys,os

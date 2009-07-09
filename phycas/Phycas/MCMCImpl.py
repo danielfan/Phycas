@@ -725,12 +725,13 @@ class MCMCImpl(CommonFunctions):
         # Show updater names
         self.output('\nHere is a list of all updaters that will be used for this analysis:')
         for p in cold_chain_manager.getAllUpdaters():
-            if p.isMove():
-                self.output('  %s (Metropolis-Hastings)' % p.getName())
-            elif p.hasSliceSampler():
-                self.output('  %s (slice sampler)' % p.getName())
-            else:
-                self.output('  %s (computes prior but does not update)' % p.getName())
+            if p.getWeight() > 0:
+                if p.isMove():
+                    self.output('  %s (Metropolis-Hastings)' % p.getName())
+                elif p.hasSliceSampler():
+                    self.output('  %s (slice sampler)' % p.getName())
+                else:
+                    self.output('  %s (computes prior but does not update)' % p.getName())
 
         # Debugging: show data patterns
         if self.opts.debugging:

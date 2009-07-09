@@ -102,7 +102,7 @@ class LikelihoodCore(object):
             self.parent.phycassert(len(self.parent.opts.model.state_freqs) == 61, 'state_freqs should be a list containing exactly 61 codon frequencies; instead, it contains %d values' % len(self.parent.opts.model.state_freqs))
             for c in range(61):
                 self.parent.phycassert(self.parent.opts.model.state_freqs[c] >= 0.0, 'state_freqs[%d] cannot be negative (%f was specified)' % (c,self.parent.opts.model.state_freqs[c]))
-            self.model.setAllStateFreqsUnnorm(self.parent.opts.model.state_freqs)
+            self.model.setStateFreqsUnnorm(self.parent.opts.model.state_freqs)
             if self.parent.opts.model.fix_freqs:
                 self.model.fixStateFreqs()
         elif self.parent.opts.model.type in ['gtr','hky']:

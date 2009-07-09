@@ -332,6 +332,7 @@ void StateFreqMove::getParams()
 void StateFreqMove::setParams(
   const std::vector<double> & v)    /*< is the vector of parameter values to send to the model */
 	{
+	//std::cerr << "@@@@@@@@@@ StateFreqMove::setParams is changing model data member state_freqs" << std::endl;   //POLPY_NEWWAY temporary!
     model->setStateFreqsUnnorm(v);
 	}
 

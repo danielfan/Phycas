@@ -86,7 +86,7 @@ class QMatrix
 	private:
 
 		void							recalcPMat(double * * pmat, double edgelen);	// used by GTR
-		void							recalcPMatrix(std::vector<double> & P, double edgelen);
+		//void							recalcPMatrix(std::vector<double> & P, double edgelen);
 		std::string						showQMatrix();
 		void							clear();
 		void							recalcQMatrix();
@@ -111,7 +111,6 @@ class QMatrix
 		
 #if POLPY_NEWWAY
 		std::vector<double>				expwv;			/**< Workspace used for storing precalculated exp(w*v), where w is an eigenvalue and v an edge length; used in recalcPMat */
-		std::vector<double>				zz;			    /**< Workspace used for storing precalculated product of eigenvector elements in recalcPMat */
 #endif
 
 		double							edgelen_scaler;	/**< factor needed */
