@@ -108,8 +108,6 @@ protected:
 	// Below here are quantities that directly affect likelihood calculations and which should increment time_stamp when modified
 	double						kappa;				/**< The transition/transversion rate ratio */
 	double						omega;				/**< The nonsynonymous/synonymous rate ratio */
-	
-	//std::vector<double>         prevfrq;    //POLPY_NEWWAY temporary!
 	};
 
 typedef boost::shared_ptr<Codon> CodonShPtr;

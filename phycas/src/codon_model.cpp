@@ -271,31 +271,16 @@ Codon::Codon()
 		
 	// ignore stop codons
 	it = state_repr.begin() + 48;
-	//std::cerr << "debug deleting " << (*it) << std::endl;	//POLPY_NEWWAY temporary!
 	state_repr.erase(state_repr.begin()+48);
 	
 	it = state_repr.begin() + 49;
-	//std::cerr << "debug deleting " << (*it) << std::endl;	//POLPY_NEWWAY temporary!
 	state_repr.erase(state_repr.begin()+49);
 
 	it = state_repr.begin() + 54;
-	//std::cerr << "debug deleting " << (*it) << std::endl;	//POLPY_NEWWAY temporary!
 	state_repr.erase(state_repr.begin()+54);
 
-#if POLPY_NEWWAY
 	setAllFreqsEqual();
-#endif
-	//std::cerr << "##########      Codon::Codon is calling updateQMatrix" << std::endl;	//POLPY_NEWWAY temporary!
 	updateQMatrix();
-
-	//std::ofstream outf("debug_codon_identities.txt");
-	//outf << "Codon identities:\n\n";
-	//unsigned z = 0;
-	//for (std::vector<std::string>::const_iterator it = state_repr.begin(); it != state_repr.end(); ++it)
-	//	{
-	//	outf << (z++) << '\t' << (*it) << '\n'; 
-	//	}
-	//outf.close();
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -496,10 +481,7 @@ void Codon::setKappa(double k)
 	if (k <= 0.0)
 		throw XLikelihood();
 	kappa = k;
-#if POLPY_NEWWAY
-	//std::cerr << "##########      Codon::setKappa is setting kappa to " << kappa << std::endl;	//POLPY_NEWWAY temporary!
 	updateQMatrix();
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -519,10 +501,7 @@ void Codon::setOmega(double w)
 	if (w <= 0.0)
 		throw XLikelihood();
 	omega = w;
-#if POLPY_NEWWAY
-	//std::cerr << "##########      Codon::setOmega is setting omega to " << omega << std::endl;	//POLPY_NEWWAY temporary!
 	updateQMatrix();
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -595,9 +574,6 @@ void Codon::setStateFreqParamPrior(ProbDistShPtr d)
 */
 void Codon::calcPMat(double * * pMat, double edgeLength) const
 	{
-#if POLPY_NEWWAY
-	//updateQMatrix();
-#endif
 	q_matrix.recalcPMat(pMat, edgeLength);
 	}
 	
@@ -663,10 +639,6 @@ void Codon::setStateFreqsUnnorm(
 	{
 	Model::setStateFreqsUnnorm(values);
 	q_matrix.setStateFreqs(state_freqs);
-
-	//std::cerr << "@@@@@@@@@@@ Codon::setStateFreqsUnnorm" << std::endl; //POLPY_NEWWAY temporary!
-	//prevfrq.resize(state_freqs.size()); //POLPY_NEWWAY temporary!
-	//std::copy(state_freqs.begin(), state_freqs.end(), prevfrq.begin()); //POLPY_NEWWAY temporary!
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -678,10 +650,6 @@ void Codon::setAllFreqsEqual()
 	{
 	Model::setAllFreqsEqual();
 	q_matrix.setStateFreqs(state_freqs);
-	
-	//std::cerr << "@@@@@@@@@@@ Codon::setAllFreqsEqual" << std::endl; //POLPY_NEWWAY temporary!
-	//prevfrq.resize(state_freqs.size()); //POLPY_NEWWAY temporary!
-	//std::copy(state_freqs.begin(), state_freqs.end(), prevfrq.begin()); //POLPY_NEWWAY temporary!
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -770,9 +738,6 @@ inline void Codon::setNucleotideFreqs(
 	state_freq_unnorm[60] = freqT*freqT*freqT;	// 60 TTT
 	normalizeFreqs();
 	q_matrix.setStateFreqs(state_freqs);
-
-	//prevfrq.resize(state_freqs.size()); //POLPY_NEWWAY temporary!
-	//std::copy(state_freqs.begin(), state_freqs.end(), prevfrq.begin()); //POLPY_NEWWAY temporary!
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -830,31 +795,5 @@ void Codon::updateQMatrix() const
 			}
 		}
 			
-	//std::cerr << "##########      Codon::updateQMatrix" << std::endl;	//POLPY_NEWWAY temporary!
 	q_matrix.setRelativeRates(rel_rate_vect);
-	
-	//POLPY_NEWWAY temporary!
-	// 	bool same = true;
-	// 	for (unsigned i = 0; i < 61; ++i)
-	// 		{
-	// 		if (prevfrq[i] != state_freqs[i])
-	// 			{
-	// 			std::cerr << "!!!!!!!!! oops! state_freqs has changed without CodonModel knowing about it" << std::endl;
-	// 			same = false;
-	// 			break;
-	// 			}
-	// 		}
-	// 	if (!same)
-	// 		{
-	// 		std::cerr << boost::str(boost::format("%15s | %15s") % "state_freqs" % "prevfrq")  << std::endl;
-	// 		for (unsigned i = 0; i < 61; ++i)
-	// 			{
-	// 			std::cerr << boost::str(boost::format("%15.5f | %15.5f") % state_freqs[i] % prevfrq[i])  << std::endl;
-	// 			}
-	// 		std::exit(0);
-	// 		}
-		
-	//q_matrix.setStateFreqs(state_freqs);	//POLPY_NEWWAY temporary!
-
-	//outf.close();
 	}

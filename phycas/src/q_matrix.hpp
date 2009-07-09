@@ -109,9 +109,7 @@ class QMatrix
 
 		std::vector<double>				rr;				/**< The relative rates (elements in the upper diagonal of the R matrix). If the R matrix is 4x4, the order of the six elements in the relrates vector should be R[0][1], R[0][2], R[0][3], R[1][2], R[1][3] and R[2][3]. The R matrix is combined with the pi vector to create the Q matrix. */
 		
-#if POLPY_NEWWAY
 		std::vector<double>				expwv;			/**< Workspace used for storing precalculated exp(w*v), where w is an eigenvalue and v an edge length; used in recalcPMat */
-#endif
 
 		double							edgelen_scaler;	/**< factor needed */
 		double * *						qmat;			/**< */

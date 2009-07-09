@@ -57,7 +57,6 @@ Model::Model(
 	is_pinvar_model(false)
 	{
 	PHYCAS_ASSERT(num_states > 0);
-	//std::cerr << "@@@@@@@@@@@ Model::Model about to call Model::setAllFreqsEqual: numStates = " << numStates << std::endl; //POLPY_NEWWAY temporary!
 	setAllFreqsEqual();
 	}
 
@@ -277,8 +276,6 @@ void Model::setAllFreqsEqual()
 	state_freq_unnorm.assign(num_states, 1.0);
 	state_freqs.clear();
 	state_freqs.assign(num_states, 1.0/num_states);
-	
-	//std::cerr << "@@@@@@@@@@@ Model::setAllFreqsEqual: num_states = " << num_states << std::endl; //POLPY_NEWWAY temporary!
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

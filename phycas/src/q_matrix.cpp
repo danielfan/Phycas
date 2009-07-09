@@ -32,7 +32,6 @@ QMatrix::QMatrix()
   , fv(0) 
   , q_dirty(true)
 	{
-	//std::cerr << "##########      setting q_dirty to true in QMatrix::QMatrix" << std::endl;   //POLPY_NEWWAY temporary!
 	// Set up Q matrix representing the JC69 model by default
 	rr.assign(6, 1.0);
 	pi.assign(4, 0.25);
@@ -118,7 +117,6 @@ void QMatrix::setRelativeRates(const std::vector<double> & rates)
 	{
 	rr.resize(rates.size());
 	std::copy(rates.begin(), rates.end(), rr.begin());
-	//std::cerr << "##########      setting q_dirty to true in QMatrix::setRelativeRates" << std::endl;   //POLPY_NEWWAY temporary!
 	q_dirty = true;
 	}
 
@@ -132,7 +130,6 @@ void QMatrix::setStateFreqs(const std::vector<double> & freqs)
 
 	sqrtPi.resize(freqs.size());
 	std::transform(pi.begin(), pi.end(), sqrtPi.begin(), boost::lambda::bind(static_cast<double(*)(double)>(&std::sqrt), boost::lambda::_1));
-	//std::cerr << "@@@@@@@@@@      setting q_dirty to true in QMatrix::setStateFreqs" << std::endl;   //POLPY_NEWWAY temporary!
 	q_dirty = true;
 	}
 
@@ -149,9 +146,7 @@ void QMatrix::redimension(unsigned new_dim)
 	dimension = new_dim;
 	flat_length = new_dim*new_dim;
 	
-#if POLPY_NEWWAY
 	expwv.resize(new_dim);
-#endif
 
 	// Set the shape of a NumArray object that represents Q, P (transition probs), E (eigenvectors) or V (eigenvalues)
 	dim_vect.push_back((int)dimension);
@@ -288,15 +283,12 @@ void QMatrix::recalcQMatrixImpl()
 	// Calculate eigenvalues (w) and eigenvectors (z)
 	int err_code = EigenRealSymmetric(dimension, qmat, w, z, fv);
 	
-	//std::cerr << "##########      EigenRealSymmetric" << std::endl;  //POLPY_NEWWAY temporary!
-	
 	if (err_code != 0)
 		{
 		clearAllExceptFreqsAndRates();
 		throw XLikelihood("Error in the calculation of eigenvectors and eigenvalues of the Q matrix");
 		}
 		
-	//std::cerr << "##########      setting q_dirty to FALSE in QMatrix::recalcQMatrixImpl" << std::endl;   //POLPY_NEWWAY temporary!
 	q_dirty = false;
 	}
 

@@ -295,11 +295,11 @@ void MCMCChainManager::updateAllUpdaters()
 	{
 	for (MCMCUpdaterVect::iterator it = all_updaters.begin(); it != all_updaters.end(); ++it)
 		{
-		//std::string nm = (*it)->getName();	//POLPY_NEWWAY temporary!
+		//std::string nm = (*it)->getName();
 		unsigned w = (*it)->getWeight();
 		for (unsigned i = 0; i < w; ++i)
 			{
-			//std::cerr << "########## updating " << nm << "..." << std::endl;	//POLPY_NEWWAY temporary!
+			//std::cerr << "########## updating " << nm << "..." << std::endl;
 			(*it)->update();
 			}
 		}
