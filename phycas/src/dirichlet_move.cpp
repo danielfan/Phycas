@@ -26,6 +26,7 @@
 #include "phycas/src/dirichlet_move.hpp"
 #include "phycas/src/basic_tree.hpp"
 #include "phycas/src/tree_manip.hpp"
+#include "phycas/src/gtr_model.hpp"
 
 using namespace phycas;
 

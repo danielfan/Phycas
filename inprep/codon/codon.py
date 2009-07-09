@@ -1,4 +1,4 @@
-# This file does a short MCMC analysis under the GTR+I+G model
+# This file does a short MCMC analysis under the codon model
 
 from phycas import *
 filename = getPhycasTestData('green.nex')

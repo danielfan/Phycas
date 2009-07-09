@@ -19,7 +19,7 @@
 
 //#include <cmath>
 //#include <iostream>
-#include "phycas/src/likelihood_models.hpp"
+#include "phycas/src/gtr_model.hpp"
 //#if defined(PYTHON_ONLY) && defined(USING_NUMARRAY)
 //#	include <boost/python/numeric.hpp>
 //#	include "phycas/src/thirdparty/num_util/num_util.h"
@@ -403,6 +403,19 @@ void GTR::setStateFreqUnnorm(
   double value)				/**< the new value of `state_freq_unnorm'[`param_index'] */
 	{
 	Model::setStateFreqUnnorm(param_index, value);
+	q_matrix.setStateFreqs(state_freqs);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Modifier function that sets all of the state frequency parameters (the unnormalized values that determine the values
+|	in the `state_freqs' vector when normalized) in the data member vector `state_freq_unnorm'. The base class version
+|	is called to do most of the work, and this function is responsible only for ensuring that the `q_matrix' data member
+|	knows about the change in base frequencies.
+*/
+void GTR::setStateFreqsUnnorm(
+  const std::vector<double> & values)	/**< the new unnormalized state frequencies */
+	{
+	Model::setStateFreqsUnnorm(values);
 	q_matrix.setStateFreqs(state_freqs);
 	}
 

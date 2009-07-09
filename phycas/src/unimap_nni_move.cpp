@@ -26,6 +26,7 @@
 #include "phycas/src/basic_tree.hpp"
 #include "phycas/src/internal_data.hpp"
 #include "phycas/src/tip_data.hpp"
+#include "phycas/src/gtr_model.hpp"
 
 #include "boost/format.hpp"
 

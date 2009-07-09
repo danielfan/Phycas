@@ -25,6 +25,7 @@
 
 //#include "phycas/force_include.h"
 #include "phycas/src/likelihood_models.hpp"
+#include "phycas/src/gtr_model.hpp"
 #include "phycas/src/codon_model.hpp"
 
 using namespace boost::python;
