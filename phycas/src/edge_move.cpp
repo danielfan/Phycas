@@ -142,6 +142,7 @@ double EdgeMove::getLnJacobian() const
 */
 void EdgeMove::accept()
 	{
+	MCMCUpdater::accept();
     PHYCAS_ASSERT(likeRoot);
     likelihood->useAsLikelihoodRoot(likeRoot);
     likelihood->invalidateAwayFromNode(*likeRoot);
@@ -155,6 +156,7 @@ void EdgeMove::accept()
 */
 void EdgeMove::revert()
 	{
+	MCMCUpdater::revert();
 	origNode->SetEdgeLen(origEdgelen);
 
     PHYCAS_ASSERT(likeRoot);

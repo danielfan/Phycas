@@ -266,6 +266,7 @@ void NCatMove::proposeDelCatMove()
 */
 void NCatMove::revert()
 	{
+	MCMCUpdater::revert();
 	if (addcat_move_proposed)
 		{
 		// Delete rate just inserted

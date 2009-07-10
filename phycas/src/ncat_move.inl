@@ -28,6 +28,7 @@ namespace phycas
 */
 inline void NCatMove::accept()
 	{
+	MCMCUpdater::accept();
 	reset();
 	}
 

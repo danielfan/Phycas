@@ -57,6 +57,7 @@ inline void BushMove::setEdgeLenDistMean(
 */
 inline void BushMove::accept()
 	{
+	MCMCUpdater::accept();
 	if (add_edge_move_proposed)
 		{
 		// Keeping added edge, where orig_par was original polytomous node and orig_lchild was the added node

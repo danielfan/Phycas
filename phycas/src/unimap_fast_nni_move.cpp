@@ -598,6 +598,7 @@ TipData * UnimapFastNNIMove::createTipDataFromUnivents(const Univents & u, TipDa
 */
 void UnimapFastNNIMove::revert()
 	{
+	MCMCUpdater::revert();
 //	std::cerr << "REVERTED" << std::endl;
 	
 // 	x->SetEdgeLen(prev_x_len);
@@ -618,6 +619,7 @@ void UnimapFastNNIMove::revert()
 */
 void UnimapFastNNIMove::accept()
 	{
+	MCMCUpdater::accept();
 // 	tree_manipulator.NNISwap(z, x);
 //     
 // 	PHYCAS_ASSERT(origNode);

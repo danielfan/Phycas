@@ -407,6 +407,7 @@ bool SamcMove::update()
 */
 void SamcMove::revert()
 	{
+	MCMCUpdater::revert();
 	if (last_move_projection)
 		{
 		// Restore from cache before performing the reverse move because we originally invalidated after the forward move
@@ -443,6 +444,7 @@ void SamcMove::revert()
 */
 void SamcMove::accept()
 	{
+	MCMCUpdater::accept();
 	if (last_move_projection)
 		{
 		likelihood->discardCacheBothEnds(new_leaf_sib_parent);

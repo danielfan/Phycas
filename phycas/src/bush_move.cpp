@@ -393,6 +393,7 @@ void BushMove::finalize()
 */
 void BushMove::revert()
 	{
+	MCMCUpdater::revert();
 	if (add_edge_move_proposed)
 		{
 		// An add-edge move was previously proposed, which means a new internal node (orig_lchild) and its edge were created. 

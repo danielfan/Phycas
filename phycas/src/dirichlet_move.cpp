@@ -203,6 +203,7 @@ double DirichletMove::getLnJacobian() const
 */
 void DirichletMove::accept()
 	{
+	MCMCUpdater::accept();
 	reset();
 	}
 
@@ -212,6 +213,7 @@ void DirichletMove::accept()
 */
 void DirichletMove::revert()
 	{
+	MCMCUpdater::revert();
     setParams(orig_params);
 
     // invalidate all CLAs

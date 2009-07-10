@@ -194,7 +194,7 @@ void UnimapNodeSlideMove::ProposeStateWithTemporaries(ChainManagerShPtr & p)
 */
 void UnimapNodeSlideMove::accept()
 	{
-	++nMovesAccepted;
+	MCMCUpdater::accept();
 
 	PHYCAS_ASSERT(origNode);
 	PHYCAS_ASSERT(origNode->GetParent() == origNodePar);

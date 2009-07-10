@@ -58,8 +58,6 @@ bool UnimapTopoMove::update()
 	if (is_fixed)
 		return false;
 
-	++nMovesAttempted;
-
 	//std::cerr << "****** UnimapNNIMove::update" << std::endl;
 
 	tree->renumberInternalNodes(tree->GetNTips()); //@POL this should be somewhere else
@@ -104,7 +102,6 @@ bool UnimapTopoMove::update()
 		accept();
 	else
 		revert();
-	//std::cerr << nMovesAccepted << " accept decisions out of " << nMovesAttempted << " attempts.\n";
 	return accepted;
 	}
 
@@ -655,6 +652,7 @@ TipData * UnimapTopoMove::createTipDataFromUnivents(const Univents & u, TipData 
 */
 void UnimapTopoMove::revert()
 	{
+	MCMCUpdater::revert();
 //	std::cerr << "REVERTED" << std::endl;
 	
 	x->SetEdgeLen(prev_x_len);
@@ -701,8 +699,8 @@ void UnimapTopoMove::resampleInternalNodeStates(const LikeFltType * root_state_p
 */
 void UnimapNNIMove::accept()
 	{
+	MCMCUpdater::accept();
 	//std::cerr << "ACCEPTED" << std::endl;
-	++nMovesAccepted;
 	tree_manipulator.NNISwap(z, x);
     
 	PHYCAS_ASSERT(origNode);
@@ -732,10 +730,8 @@ UnimapTopoMove::UnimapTopoMove() : MCMCUpdater(),
   pre_y_pmat_transposed(0L),
   pre_w_pmat_transposed(0L),
   pre_z_pmat_transposed(0L),
-  doSampleInternalStates(true),
-  nMovesAccepted(0),
-  nMovesAttempted(0)
-	{
+  doSampleInternalStates(true)
+  	{
 	}
 /*----------------------------------------------------------------------------------------------------------------------
 |	

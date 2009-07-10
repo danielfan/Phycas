@@ -73,14 +73,14 @@ void	GTR::createParameters(
 	Model::createParameters(t, edgelens, edgelen_hyperparams, parameters);
 
 	PHYCAS_ASSERT(rel_rate_params.empty());
-
     PHYCAS_ASSERT(rel_rate_param_prior || rel_rate_prior);
     if (rel_rate_param_prior)
         {
-        // Only add relative rate parameters if relative rates will be updated separately
-        // The other option is to update the relative rates jointly using the 
-        // RelRateMove Metropolis-Hastings move (in which case relrate_prior
-        // will be set and relrate_param_prior will be empty)
+        // The fact that rel_rate_param_prior points to something means that the user
+        // chose to update the relative rates separately using slice sampling. If the 
+        // user had chosen to update the relative rates jointly (using the RelRateMove
+        // Metropolis-Hastings move), then relrate_prior would be set and rel_rate_param_prior
+        // would be empty.
     
         MCMCUpdaterShPtr rAC_param = MCMCUpdaterShPtr(new GTRRateParam(0));
         rAC_param->setName("rAC");

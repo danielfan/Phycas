@@ -172,6 +172,7 @@ bool TreeScalerMove::update()
 */
 void TreeScalerMove::revert()
 	{
+	MCMCUpdater::revert();
     tree->ScaleAllEdgeLens(reverse_scaler);
 	}
 
@@ -180,6 +181,7 @@ void TreeScalerMove::revert()
 */
 void TreeScalerMove::accept()
 	{
+	MCMCUpdater::accept();
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

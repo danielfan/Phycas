@@ -138,6 +138,7 @@ double UnimapEdgeMove::getLnJacobian() const
 */
 void UnimapEdgeMove::accept()
 	{
+	MCMCUpdater::accept();
 	origNode->SetEdgeLen(origEdgelen*r);
 	reset();
 	}
@@ -147,6 +148,7 @@ void UnimapEdgeMove::accept()
 */
 void UnimapEdgeMove::revert()
 	{
+	MCMCUpdater::revert();
 	reset();
 	}
 

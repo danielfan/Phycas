@@ -148,6 +148,11 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		void					releaseSharedPointers();
 		virtual bool			update();
 		virtual double			recalcLike();
+		
+		// Utilites for reporting diagnostics
+		double					getNumAttempts() const;
+		double					getNumAccepts() const;
+		void					resetDiagnostics();
 
 		// Utilities used only by parameters
 		bool					isFixed() const;
@@ -155,7 +160,7 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		void					freeParameter();
 		void					createSliceSampler();
 		virtual double			operator()(double);
-
+		
 		// Note: some member functions could be made pure virtuals were it not for a bug in the 
 		// boost::lambda library that causes compiles to fail if attempting to use boost::lambda::bind 
 		// with a shared_ptr to an abstract base class. Even if the shared_ptr points to a derived class, 
@@ -189,6 +194,8 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
         MultivarProbDistShPtr   mvprior;                /**< The probability distribution serving as the prior for a multivariate parameter */
 		SliceSamplerShPtr		slice_sampler;			/**< The slice sampler used by parameters for updating (not used by moves) */
 		ChainManagerWkPtr		chain_mgr;				/**< The object that knows how to compute the joint log prior density */
+		double					nattempts;				/**< The number of update attempts made since last call to resetDiagnostics (used only by Metropolis-Hastings moves, slice samplers maintain their own diagnostics) */
+		double					naccepts;				/**< The number of times a proposed move was accepted since last call to resetDiagnostics (used only by Metropolis-Hastings moves, slice samplers maintain their own diagnostics) */
 		double					curr_value;				/**< The current value of this parameter */
 		double					curr_ln_prior;			/**< The value of log prior after most recent call to this object's update() */
 		double					curr_ln_like;			/**< The value of log likelihood after most recent call to this object's update() */

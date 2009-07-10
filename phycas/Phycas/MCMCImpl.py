@@ -96,30 +96,6 @@ class MCMCImpl(CommonFunctions):
         self.sitelikef = None
         self.siteIndicesForPatternIndex = None
 
-    def sliceSamplerReport(self, s, nm):
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
-        """
-        Reports status of one slice sampler s that is updating a parameter
-        named nm.
-        
-        """
-        avg = float(s.getNumFuncEvals())/float(s.getNumSamples())
-        mode = s.getMode()
-        return '  mode=%.5f, avgevals=%.3f (%s)\n' % (mode, avg, nm)
-
-    def adaptOneSliceSampler(self, p):
-        self.phycassert(p, 'could not adapt slice sampler; parameter non-existant')
-        summary = ''
-        if p.hasSliceSampler():
-            s = p.getSliceSampler()
-            nm = p.getName()
-            if s.getNumSamples() > 0:
-                s.adaptSimple(self.opts.adapt_simple_param)
-                #self.total_evals += float(s.getNumFuncEvals())
-                summary = self.sliceSamplerReport(s, nm)
-                s.resetDiagnostics()
-        return summary
-        
     def adaptSliceSamplers(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -138,19 +114,37 @@ class MCMCImpl(CommonFunctions):
         # need to adapt all chains, not just the cold one!
         cold_chain_manager = self.mcmc_manager.getColdChainManager()
         for p in cold_chain_manager.getAllUpdaters():
-            summary += self.adaptOneSliceSampler(p)
+            p_summary = ''
+            nm = p.getName()
+            if p.hasSliceSampler():
+                s = p.getSliceSampler()
+                if s.getNumSamples() > 0:
+                    s.adaptSimple(self.opts.adapt_simple_param)
+                    mode = s.getMode()
+                    accept_pct = 100.0*float(s.getNumSamples())/float(s.getNumFuncEvals())
+                    p_summary += ' * efficiency = %.1f%%, mode=%.5f (%s)\n' % (accept_pct, mode, nm)
+                    s.resetDiagnostics()
+            else:
+                naccepts = p.getNumAccepts()
+                nattempts = p.getNumAttempts()
+                if nattempts > 0:
+                    accept_pct = 100.0*float(naccepts)/float(nattempts)
+                    if nattempts == 1:
+                        p_summary += '   accepted %.1f%% of 1 attempt (%s)\n' % (accept_pct, nm)
+                    else:
+                        p_summary += '   accepted %.1f%% of %d attempts (%s)\n' % (accept_pct, nattempts, nm)
+                else:
+                    accept_pct = 0.0
+                p.resetDiagnostics()
+            summary += p_summary
         
         if self.opts.verbose and summary != '':
-            self.output('\nSlice sampler diagnostics:')
+            self.output('\nUpdater diagnostics (* = slice sampler):')
             self.output(summary)
-
-    def updateAllUpdaters(self, chain, chain_index, cycle):
-        for p in chain.chain_manager.getAllUpdaters():
-            w = p.getWeight()
-            for x in range(w):
-                p.update()
-
+            
     def obsoleteUpdateAllUpdaters(self, chain, chain_index, cycle):
+        # This function abandoned; functionality moved to C++ side 
+        # for speed reasons: see MCMCChainManager::updateAllUpdaters
         #import gc
         #gc.enable()
         if self.opts.debugging:
@@ -482,19 +476,19 @@ class MCMCImpl(CommonFunctions):
             elif name == 'Proportion of invariable sites':  # C++ class PinvarParam
                 new_pinvar = chain.model.getPinvarPrior().sample()
                 chain.model.setPinvar(new_pinvar)
-            elif name == 'master edge length parameter':
+            elif name == 'master edge length':
                 pass
-            elif name == 'external edge length parameter':
+            elif name == 'external edge length':
                 pass
-            elif name == 'internal edge length parameter':
+            elif name == 'internal edge length':
                 pass
             elif name == 'Relative rates move':             # C++ class StateFreqMove
                 rate_vector = chain.model.getRelRatePrior().sample()
                 chain.model.setRelRates(rate_vector)
             elif name == 'State freq move':                # C++ class StateFreqMove
                 freq_vector = chain.model.getStateFreqPrior().sample()
-                # should use generic function below (i.e. not specific to nucleotide data)
-                chain.model.setNucleotideFreqs(freq_vector[0],freq_vector[1],freq_vector[2],freq_vector[3])
+                #chain.model.setNucleotideFreqs(freq_vector[0],freq_vector[1],freq_vector[2],freq_vector[3])
+                chain.model.setStateFreqsUnnorm(freq_vector)
             elif name == 'Edge length move':                # C++ class EdgeMove
                 pass
             elif name == 'Larget-Simon move':               # C++ class LargetSimonMove
@@ -572,6 +566,40 @@ class MCMCImpl(CommonFunctions):
         
         if self.opts.debugging:
             tmpf.close()
+            
+    def computeTimeRemaining(self, secs, ndone, ntotal):
+        if ndone < 1:
+            return ''
+        secs_remaining = float(secs)*(float(ntotal)/float(ndone) - 1.0)
+        time_left = []
+        if secs_remaining > 86400.0:
+            days_remaining = math.floor(secs_remaining/86400.0)
+            secs_remaining -= 86400.0*days_remaining
+            if days_remaining > 0:
+                if days_remaining == 1:
+                    time_left.append('1 day')
+                else:
+                    time_left.append('%d days' % days_remaining)
+        if secs_remaining > 3600.0:
+            hours_remaining = math.floor(secs_remaining/3600.0)
+            secs_remaining -= 3600.0*hours_remaining
+            if hours_remaining > 0:
+                if hours_remaining == 1:
+                    time_left.append('1 hour')
+                else:
+                    time_left.append('%d hours' % hours_remaining)
+        if secs_remaining > 60.0:
+            minutes_remaining = math.floor(secs_remaining/60.0)
+            secs_remaining -= 60.0*minutes_remaining
+            if minutes_remaining > 0:
+                if minutes_remaining == 1:
+                    time_left.append('1 minute')
+                else:
+                    time_left.append('%d minutes' % minutes_remaining)
+        if len(time_left) > 0:
+            return ', '.join(time_left) + ' remaining'
+        else:
+            return 'less than 1 minute remaining'
         
     def mainMCMCLoop(self, explore_prior = False):
         nchains = len(self.mcmc_manager.chains)
@@ -592,7 +620,6 @@ class MCMCImpl(CommonFunctions):
                         print '   tree rep.%d = %s;' % (cycle + 1, c.tree.makeNewick(self.mcmc_manager.parent.opts.ndecimals))
             
                     c.chain_manager.updateAllUpdaters()
-                    #self.updateAllUpdaters(c, i, cycle)
                     
             # print '******** time_stamp =',self.mcmc_manager.getColdChain().model.getTimeStamp()
                     
@@ -603,19 +630,23 @@ class MCMCImpl(CommonFunctions):
             # Provide progress report to user if it is time
             if self.opts.verbose and self.doThisCycle(cycle, self.opts.report_every):
                 self.stopwatch.normalize()
+                secs = self.stopwatch.elapsedSeconds()
+                time_remaining = self.computeTimeRemaining(secs, cycle + 1, self.burnin + self.opts.ncycles)
+                if time_remaining != '':
+                    time_remaining = '(' + time_remaining + ')'
                 if self.opts.doing_steppingstone_sampling:
                     cold_chain_manager = self.mcmc_manager.getColdChainManager()
-                    msg = 'beta = %.5f, cycle = %d, lnL = %.5f (%.5f secs)' % (self.ss_beta, cycle + 1, cold_chain_manager.getLastLnLike(), self.stopwatch.elapsedSeconds())
+                    msg = 'beta = %.5f, cycle = %d, lnL = %.5f %s' % (self.ss_beta, cycle + 1, cold_chain_manager.getLastLnLike(), time_remaining)
                 else:
                     if nchains == 1:
                         cold_chain_manager = self.mcmc_manager.getColdChainManager()
-                        msg = 'cycle = %d, lnL = %.5f (%.5f secs)' % (cycle + 1, cold_chain_manager.getLastLnLike(), self.stopwatch.elapsedSeconds())
+                        msg = 'cycle = %d, lnL = %.5f %s' % (cycle + 1, cold_chain_manager.getLastLnLike(), time_remaining)
                     else:
                         msg = 'cycle = %d, ' % (cycle + 1)
                         for k in range(nchains):
                             c = self.mcmc_manager.chains[k]
                             msg += 'lnL(%.3f) = %.5f, ' % (c.heating_power, c.chain_manager.getLastLnLike())
-                        msg += '(%.5f secs)' % (self.stopwatch.elapsedSeconds())
+                        msg += '%s' % time_remaining
                 self.output(msg)
 
             # Sample chain if it is time

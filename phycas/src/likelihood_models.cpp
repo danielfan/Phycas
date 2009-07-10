@@ -1082,7 +1082,7 @@ void Model::createParameters(
 
         // First the parameter governing external edge length priors
         MCMCUpdaterShPtr p_external = MCMCUpdaterShPtr(new EdgeLenMasterParam(EdgeLenMasterParam::external));
-	    std::string nm_external = str(boost::format("external edge length parameter"));
+	    std::string nm_external = str(boost::format("external edge length"));
 	    p_external->setName(nm_external);
 	    p_external->setTree(t);
 	    p_external->setPrior(externalEdgeLenPrior);
@@ -1092,7 +1092,7 @@ void Model::createParameters(
 
         // Now the parameter governing internal edge length priors
 	    MCMCUpdaterShPtr p_internal = MCMCUpdaterShPtr(new EdgeLenMasterParam(EdgeLenMasterParam::internal));
-	    std::string nm_internal = str(boost::format("internal edge length parameter"));
+	    std::string nm_internal = str(boost::format("internal edge length"));
 	    p_internal->setName(nm_internal);
 	    p_internal->setTree(t);
 	    p_internal->setPrior(internalEdgeLenPrior);
@@ -1106,7 +1106,7 @@ void Model::createParameters(
         // This edge length parameter does not actually update any edge lengths: a Metropolis proposal 
         // such as the LargetSimonMove is responsible for updating edge lengths.
         MCMCUpdaterShPtr p = MCMCUpdaterShPtr(new EdgeLenMasterParam(EdgeLenMasterParam::both));
-	    std::string nm_external = str(boost::format("master edge length parameter"));
+	    std::string nm_external = str(boost::format("master edge length"));
 	    p->setName(nm_external);
 	    p->setTree(t);
 	    p->setPrior(externalEdgeLenPrior);

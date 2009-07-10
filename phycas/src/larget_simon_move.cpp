@@ -632,6 +632,7 @@ void LargetSimonMove::defaultProposeNewState()
 */
 void LargetSimonMove::revert()
 	{
+	MCMCUpdater::revert();
 	if (star_tree_proposal)
 		{
 		orig_node->SetEdgeLen(orig_edge_len);
@@ -692,6 +693,7 @@ void LargetSimonMove::revert()
 */
 void LargetSimonMove::accept()
 	{
+	MCMCUpdater::accept();
 	if (star_tree_proposal)
 		{
 		TreeNode * nd = orig_node->IsTip() ? orig_node->GetParent() : orig_node;

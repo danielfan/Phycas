@@ -116,8 +116,6 @@ class UnimapTopoMove : public MCMCUpdater
 		CondLikelihoodShPtr		post_cla;					/**< xxxx */
 		double * * *			post_p_mat;					/**< xxxx */
 		bool					scoringBeforeMove;			/**< xxxx */
-		unsigned				nMovesAccepted;
-		unsigned				nMovesAttempted;
 	};
 
 class UnimapNNIMove : public UnimapTopoMove
