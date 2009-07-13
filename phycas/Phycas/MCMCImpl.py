@@ -64,6 +64,7 @@ class MCMCImpl(CommonFunctions):
         self.nsamples               = 0
         self.burnin                 = 0     # same as self.opts.burnin except for path sampling, when it drops to 0 after first beta value
         self.cycle_start            = 0     # used in path sampling to avoid starting over the cycle count for each beta value
+        self.cycle_stop             = 0     # total number of cycles (used for computing time remaining) 
         self.last_adaptation        = 0
         self.next_adaptation        = 0
         self.ss_beta                = 1.0
@@ -598,8 +599,10 @@ class MCMCImpl(CommonFunctions):
                     time_left.append('%d minutes' % minutes_remaining)
         if len(time_left) > 0:
             return ', '.join(time_left) + ' remaining'
+        elif math.floor(secs_remaining) == 1:
+            return '1 second remaining'
         else:
-            return 'less than 1 minute remaining'
+            return '%d seconds remaining' % math.floor(secs_remaining)
         
     def mainMCMCLoop(self, explore_prior = False):
         nchains = len(self.mcmc_manager.chains)
@@ -631,7 +634,7 @@ class MCMCImpl(CommonFunctions):
             if self.opts.verbose and self.doThisCycle(cycle, self.opts.report_every):
                 self.stopwatch.normalize()
                 secs = self.stopwatch.elapsedSeconds()
-                time_remaining = self.computeTimeRemaining(secs, cycle + 1, self.burnin + self.opts.ncycles)
+                time_remaining = self.computeTimeRemaining(secs, self.cycle_start + cycle + 1, self.cycle_stop)
                 if time_remaining != '':
                     time_remaining = '(' + time_remaining + ')'
                 if self.opts.doing_steppingstone_sampling:
@@ -838,6 +841,7 @@ class MCMCImpl(CommonFunctions):
                 chain.setBoldness(boldness)
                 print 'Setting chain boldness to %g based on beta = %g' % (boldness,self.ss_beta)
                 #raw_input('check')
+                self.cycle_stop = self.opts.burnin + len(self.ss_sampled_betas)*self.opts.ncycles
                 if self.ss_beta_index > 0:
                     self.burnin = 0
                 else:
@@ -852,6 +856,7 @@ class MCMCImpl(CommonFunctions):
             self.ss_sampled_likes.append([])
             self.ss_beta_index = 0
             self.cycle_start = 0
+            self.cycle_stop = self.opts.burnin + self.opts.ncycles
             self.burnin = self.opts.burnin
             if self.data_matrix is None:
                 self.mainMCMCLoop(explore_prior=True)
