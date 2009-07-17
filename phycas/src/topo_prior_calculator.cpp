@@ -375,13 +375,15 @@ std::vector<double> TopoPriorCalculator::GetLnCounts()
 
 /*----------------------------------------------------------------------------------------------------------------------
 |   Samples a resolution class (i.e. number of internal nodes) from the realized resolution class distribution. This
-|   function is not efficient because it calls TopoPriorCalculator::GetRealizedResClassPriorsVect, resulting in an
+|   function is not very efficient because it calls TopoPriorCalculator::GetRealizedResClassPriorsVect, resulting in an
 |   unnecessary vector copy operation.
 */
 unsigned TopoPriorCalculator::sample(
   LotShPtr rng) /**< is the random number generator to use for sampling */
 	{
     std::vector<double> v = GetRealizedResClassPriorsVect();
+#if 0
+    // Geez, what was I thinking when I wrote this?!
     double u = rng->Uniform(FILE_AND_LINE);
     double logu = (u > 0.0 ? log(u) : -DBL_MAX);
     double log_x = logu + v[0];
@@ -392,6 +394,20 @@ unsigned TopoPriorCalculator::sample(
         if (log_x <= cum)
             return i;
         }
+#else
+    double u = rng->Uniform(FILE_AND_LINE);
+    //std::cerr << "u     = " << u << std::endl;
+    //std::cerr << "v[0]  = " << v[0] << std::endl;
+    double z = v[0];
+    double cum = 0.0;
+    for (unsigned i = 1; i < v.size(); ++i)
+        {
+        //std::cerr << "v[" << i << "]  = " << v[i] << std::endl;
+        cum += exp(v[i] - z);
+        if (u <= cum)
+            return i;
+        }
+#endif
     PHYCAS_ASSERT(0);
     return (unsigned)(v.size() - 1);
     }

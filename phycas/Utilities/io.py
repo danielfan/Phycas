@@ -77,6 +77,7 @@ class TreeCollection(object):
 
     def __init__(self, **kwargs):
         self.init(**kwargs)
+        
     def init(self, **kwargs):
         """Valid keyword arguments include filename, format, newick, taxon_labels, trees and title.
         filename should be a string and should represent the path to a tree file.
@@ -110,7 +111,6 @@ class TreeCollection(object):
             else:
                 self.trees = kwargs.get("trees", [])
         self.active_taxa = self.taxon_labels
-        
 
     def reset(self):
         self.title = None
