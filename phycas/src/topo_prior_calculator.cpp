@@ -396,7 +396,7 @@ unsigned TopoPriorCalculator::sample(
         }
 #else
     double u = rng->Uniform(FILE_AND_LINE);
-    //std::cerr << "u     = " << u << std::endl;
+    //std::cerr << "TopoPriorCalculator::sample: seed = " << rng->GetSeed() << ", u = " << u << std::endl;
     //std::cerr << "v[0]  = " << v[0] << std::endl;
     double z = v[0];
     double cum = 0.0;

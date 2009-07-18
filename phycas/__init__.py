@@ -229,6 +229,9 @@ unimap = Unimap()
 def setMasterSeed(x):
     r = ProbDist.Lot()
     r.setSeed(x)
+    # dememorize random number generator
+    for i in range(1000):
+        r.uniform()
     randomtree.rng = r
     mcmc.rng = r
     sim.rng = r
