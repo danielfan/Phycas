@@ -524,7 +524,7 @@ class BinaryOutputSpec(FileOutputSpec):
         return 'REPLACE, or ADD_NUMBER'
 
 class DevNullWriter(object):
-    """Class that fulfills thet TreeWriter and MatrixWriter interface, but does
+    """Class that fulfills the TreeWriter and MatrixWriter interface, but does
     not write any data.""" 
     def writeTree(self, tree, name="", rooted=None):
         pass

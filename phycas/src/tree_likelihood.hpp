@@ -107,7 +107,11 @@ class TreeLikelihood
 		void							prepareForLikelihood(TreeShPtr);
 		void							prepareInternalNodeForLikelihood(TreeNode * nd);
 
+#if POLPY_NEWWAY
+		void							copyDataFromDiscreteMatrix(const NxsCXXDiscreteMatrix &, const std::vector<unsigned> & partition_info);
+#else
 		void							copyDataFromDiscreteMatrix(const NxsCXXDiscreteMatrix &);
+#endif
 		void							copyDataFromSimData(SimDataShPtr sim_data);
 
 		bool							invalidateNode(TreeNode * ref_nd, TreeNode * neighbor_closer_to_likelihood_root);
@@ -230,7 +234,12 @@ class TreeLikelihood
 		InternalData *					allocateInternalData();
 
 		void	 						storePattern(const std::vector<int8_t> & pattern, const unsigned pattern_index, const PatternCountType weight);
+
+#if POLPY_NEWWAY
+		unsigned						compressDataMatrix(const NxsCXXDiscreteMatrix &, const std::vector<unsigned> & partition_info);
+#else
 		unsigned						compressDataMatrix(const NxsCXXDiscreteMatrix &);
+#endif
 
 		void							calcTMatForSim(TipData &, double);
 		void							simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar, bool refresh_probs);

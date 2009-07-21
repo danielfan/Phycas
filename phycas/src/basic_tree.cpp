@@ -928,13 +928,13 @@ double Tree::calcTotalHeight()
 		HeightMap::iterator lowb = hmap.lower_bound(par_ndnum);
 		if (lowb != hmap.end() && !(hmap.key_comp()(par_ndnum, lowb->first)))
 			{
-			// entry exists already
+			// height entry exists already for this node
             if (lowb->second < max_above)
                 lowb->second = max_above;
 			}
 		else
 			{
-			// pattern has not yet been stored in pattern_map
+			// height entry does not yet exist for this node
 			hmap.insert(lowb, HeightMap::value_type(par_ndnum, max_above));
 			}
 		}

@@ -40,7 +40,7 @@ class LikelihoodCore(object):
         edge length distribution, storing it in self.starting_edgelen_dist.
         
         """
-        self.parent                 = parent
+        self.parent                 = parent    # e.g. LikeImpl, MCMCImpl, etc.
         self.model                  = None
         self.likelihood             = None
         self._tree                  = None
@@ -161,8 +161,11 @@ class LikelihoodCore(object):
         self.likelihood.setUFNumEdges(self.parent.opts.uf_num_edges)
         self.likelihood.useUnimap(self.parent.opts.use_unimap)
         if self.parent.data_matrix:
-            self.likelihood.copyDataFromDiscreteMatrix(self.parent.data_matrix)
-            #POL changed self.npatterns to self.parent.npatterns below
+            if POLPY_NEWWAY:
+                from phycas import partition
+                self.likelihood.copyDataFromDiscreteMatrix(self.parent.data_matrix, partition.getSiteModelVector())
+            else:
+                self.likelihood.copyDataFromDiscreteMatrix(self.parent.data_matrix)
             self.parent.npatterns = self.likelihood.getNPatterns()
 
         # Build the starting tree

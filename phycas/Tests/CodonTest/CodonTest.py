@@ -42,12 +42,13 @@ mcmc.data_source                = blob.characters
 mcmc.state_freq_psi             = 3000.0     # max_psi
 mcmc.state_freq_psi0            = 2.0        # min_psi
 
-mcmc.out.log                    = 'output.txt'
-mcmc.out.log.mode               = REPLACE
-mcmc.out.trees.prefix           = 'trees'
-mcmc.out.trees.mode             = REPLACE
+mcmc.out.log                    = None
+
 mcmc.out.params.prefix          = 'params'
 mcmc.out.params.mode            = REPLACE
+
+mcmc.out.trees.prefix           = 'trees'
+mcmc.out.trees.mode             = REPLACE
 
 if False:
 	import sys,os

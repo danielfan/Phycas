@@ -551,7 +551,11 @@ def readData(fn):
     #print 'taxon names =',phycas.taxon_names
     phycas.model = Likelihood.JCModel()
     phycas.likelihood = Likelihood.TreeLikelihood(phycas.model)
-    phycas.likelihood.copyDataFromDiscreteMatrix(phycas.data_matrix)
+    if POLPY_NEWWAY:
+        from phycas import partition
+        phycas.likelihood.copyDataFromDiscreteMatrix(phycas.data_matrix, partition.getSiteModelVector())
+    else:
+        phycas.likelihood.copyDataFromDiscreteMatrix(phycas.data_matrix)
     phycas.likelihood.prepareForLikelihood(phycas.tree)
 
 def createCommandFile(fn, dataf):

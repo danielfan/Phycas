@@ -115,7 +115,7 @@ def runTest(outFile, name, results):
     for f in results:
         acceptable_diff_f = os.path.join('acceptable_diff', f)
         if os.path.exists(acceptable_diff_f):
-            # right now we simpli store a line numbers in "acceptable_diff_f/filename"
+            # right now we simply store line numbers in "acceptable_diff_f/filename"
             #   for lines that can generate a diff
             acceptable_diff = [int(i.strip()) for i in open(acceptable_diff_f, "rU")]
         else:
@@ -142,6 +142,7 @@ if __name__ == '__main__':
     runTest(outFile, "LikelihoodTest", ["simulated.nex", "check.nex"])
     runTest(outFile, "FixedParams", ["fixed.p", "fixed.t"])
     runTest(outFile, "Underflow", ["output.txt"])
+    runTest(outFile, "CodonTest", ["params.p", "trees.t"])
     #runTest(outFile, "ExplorePrior", mcmcOutputs(["nodata.nex"]))
     #runTest(outFile, "FixedTopology", ["fixdtree.p", "fixdtree.t", "simulated.nex"])
     # note: should add trees.pdf to list for SumT, but slight rounding differences

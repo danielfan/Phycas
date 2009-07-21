@@ -34,7 +34,7 @@ class TreeLikelihood(TreeLikelihoodBase):
     >>> print "%.5f" % model.getKappa()
     4.36364
     >>> likelihood = Likelihood.TreeLikelihood(model)
-    >>> likelihood.copyDataFromDiscreteMatrix(data_matrix)
+    >>> likelihood.copyDataFromDiscreteMatrix(data_matrix, partition.getSiteModelVector())
     >>> for t in reader.getTrees():
     ...     tree = Phylogeny.Tree(t)
     ...     likelihood.prepareForLikelihood(tree)
@@ -53,7 +53,7 @@ class TreeLikelihood(TreeLikelihoodBase):
         """
         TreeLikelihoodBase.__init__(self, model)
 
-    def copyDataFromDiscreteMatrix(self, data_matrix):
+    def copyDataFromDiscreteMatrix(self, data_matrix, partition_info = None):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Copies data from a discrete data matrix object (such as that returned
@@ -61,7 +61,11 @@ class TreeLikelihood(TreeLikelihoodBase):
         data_matrix are compressed into data patterns and their counts.
         
         """
-        TreeLikelihoodBase.copyDataFromDiscreteMatrix(self, data_matrix.mat)
+        from phycas import POLPY_NEWWAY
+        if POLPY_NEWWAY:
+            TreeLikelihoodBase.copyDataFromDiscreteMatrix(self, data_matrix.mat, partition_info)
+        else:
+            TreeLikelihoodBase.copyDataFromDiscreteMatrix(self, data_matrix.mat)
 
     def copyDataFromSimData(self, sim_data):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -155,18 +159,15 @@ class TreeLikelihood(TreeLikelihoodBase):
         """
         TreeLikelihoodBase.simulate(self, sim_data, tree, lot, nchar)
     
-    def debugListPatterns(self):
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
-        """
-        Documentation needs to be written.
-        
-        """
-        return TreeLikelihoodBase.listPatterns(self, True)
-    
     def listPatterns(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Documentation needs to be written.
+        Returns a string containing a list of all patterns in the form of a 
+        table. The first column is the pattern index. The second column is the
+        index of the partition subset to which the pattern belongs. The third
+        column is the count (number of sites that had this pattern). Finally,
+        the pattern itself is presented as a sequence of integer global state
+        codes in the final column.
         
         """
         return TreeLikelihoodBase.listPatterns(self, False)
