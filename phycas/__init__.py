@@ -239,6 +239,7 @@ def setMasterSeed(x):
     randomtree.rng = r
     mcmc.rng = r
     sim.rng = r
+    return r
 
 def simpleOutputter(msg):
     print msg

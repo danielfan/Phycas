@@ -216,6 +216,35 @@ class BetaDistribution  : public ProbabilityDistribution
 		void 			SetMeanAndVariance(double m, double v);
 	};
 
+/*------------------------------------------------------------------------------------------------------------------------------------------------------------------
+|	Encapsulates the continuous Beta prime probability distribution with parameters alpha and beta.
+*/
+class BetaPrimeDistribution  : public ProbabilityDistribution
+	{
+		double alphaParam;
+		double betaParam;
+
+	public:
+						BetaPrimeDistribution() : alphaParam(1.0), betaParam(1.0) {}
+						BetaPrimeDistribution(double a, double b);
+						BetaPrimeDistribution(const BetaPrimeDistribution & other);
+						~BetaPrimeDistribution();
+
+        BetaPrimeDistribution * Clone() const;
+		bool			IsDiscrete() const;
+		std::string 	GetDistributionName() const;
+		std::string 	GetDistributionDescription() const;
+		double 			GetMean() const;
+		double 			GetVar() const;
+		double 			GetStdDev() const;
+		double			GetCDF(double x) const;
+		double			GetQuantile(double p) const;
+		double			Sample() const;
+		double			GetLnPDF(double x) const;
+		double			GetRelativeLnPDF(double x) const;
+		void 			SetMeanAndVariance(double m, double v);
+	};
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	A uniform probability distribution with left bound 0.0 and right bound infinity. This is an improper distribution 
 |	(the area under its density curve is infinite).

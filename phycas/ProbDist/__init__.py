@@ -16,6 +16,7 @@ from _ImproperUniformDist import *
 from _BinomialDist import *
 from _BernoulliDist import *
 from _BetaDist import *
+from _BetaPrimeDist import *
 from _DirichletDist import *
 from _MVNormalDist import *
 
@@ -27,6 +28,8 @@ def testExamples():
     r = doctest.testfile('_BernoulliDist.py')
     a[0] += r[0] ; a[1] += r[1] 
     r = doctest.testfile('_BetaDist.py')
+    a[0] += r[0] ; a[1] += r[1] 
+    r = doctest.testfile('_BetaPrimeDist.py')
     a[0] += r[0] ; a[1] += r[1] 
     r = doctest.testfile('_BinomialDist.py')
     a[0] += r[0] ; a[1] += r[1] 

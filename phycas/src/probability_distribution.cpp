@@ -130,6 +130,22 @@ BetaDistribution * BetaDistribution::Clone() const
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Initializes parameter `alphaParam' to `other.alphaParam' and `betaParam' to `other.betaParam'.
+*/
+BetaPrimeDistribution::BetaPrimeDistribution(
+  const BetaPrimeDistribution & other)	/* the beta prime distribution to clone */
+  : alphaParam(other.alphaParam), betaParam(other.betaParam)
+	{}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Initializes parameter `alphaParam' to `other.alphaParam' and `betaParam' to `other.betaParam'.
+*/
+BetaPrimeDistribution * BetaPrimeDistribution::Clone() const
+	{
+    return new BetaPrimeDistribution(alphaParam, betaParam);
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Nothing to be done in constructor.
 */
 ImproperUniformDistribution::ImproperUniformDistribution(
@@ -2228,6 +2244,142 @@ void BetaDistribution::SetMeanAndVariance(double m, double v)
 	alphaParam = m*temp/v;
 	betaParam = (1.0 - m)*temp/v;
 	}
+
+////////////////// beta prime start
+BetaPrimeDistribution::~BetaPrimeDistribution()
+	{
+	//std::cerr << "Deleting a BetaPrimeDistribution object" << std::endl;
+	}
+
+BetaPrimeDistribution::BetaPrimeDistribution(double a, double b)
+	: alphaParam(a), betaParam(b)
+	{}
+	
+bool BetaPrimeDistribution::IsDiscrete() const	
+	{
+	return false;
+	}
+	
+std::string BetaPrimeDistribution::GetDistributionName() const	
+	{
+	return "BetaPrime";
+	}
+	
+std::string BetaPrimeDistribution::GetDistributionDescription() const
+	{
+	//return MakeStrPrintF("BetaPrime(%.5f, %.5f)", alphaParam, betaParam);
+	return str(boost::format("BetaPrime(%#.5f, %#.5f)") % alphaParam % betaParam);
+	}
+	
+double BetaPrimeDistribution::GetMean() const
+	{
+	if (betaParam <= 1.0)
+		throw XProbDist("mean of BetaPrime distribution undefined");
+
+	return (alphaParam/(betaParam - 1.0));
+	}
+	
+double BetaPrimeDistribution::GetVar() const
+	{
+	if (betaParam <= 2.0)
+		throw XProbDist("variance of BetaPrime distribution undefined");
+	const double a = alphaParam;
+	const double b = betaParam;
+	double var = a*(a + b - 1.0)/((b - 2.0)*(b - 1.0)*(b - 1.0));
+	return var;
+	}
+	
+double BetaPrimeDistribution::GetStdDev() const
+	{
+	return std::sqrt(GetVar());
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|   Assume X is a BetaPrime(a,b) random variable and Y is a Beta(a,b) random variable. Since F_X(x) = F_Y(y), the 
+|	cumulative distribution of a BetaPrime(a,b) random variable X can be obtained as the cumulative distribution of the 
+|	corresponding Beta(a,b) random variable Y = X/(X+1).
+*/
+double BetaPrimeDistribution::GetCDF(double x) const
+	{
+	if (x <= 0.0)
+		return 0.0;
+
+	double y = x/(1.0 + x);
+	return cdf.CumBeta(y, alphaParam, betaParam);
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|   Assume X is a BetaPrime(a,b) random variable and Y is a Beta(a,b) random variable. Since F_X(x) = F_Y(y), the 
+|	quantiles of a BetaPrime(a,b) distribution can be obtained by transforming the corresponding quantile of a Beta(a,b)
+|	distribution. If x is the value such that F_X(x) = p, then y = x/(1 - x) is the value such that F_Y(y) = p.
+*/
+double BetaPrimeDistribution::GetQuantile(
+  double p) const   /**< is the integral from 0.0 up to x (x is the value returned) */
+	{
+	if (p <= 0.0)
+		return 0.0;
+		
+	if (p >= 1.0)
+		throw XProbDist("argument supplied to BetaPrimeDistribution::GetQuantile out of range: must be less than 1.0");
+
+	double x = cdf.BetaQuantile(p, alphaParam, betaParam);
+	double y = x/(1.0 - x);
+	return y;
+	}
+	
+double BetaPrimeDistribution::Sample() const
+	{
+	double x_1 = cdf.SampleGamma(lot->Uniform(FILE_AND_LINE), alphaParam, 1.0);
+	double x_2 = 0.0;
+	while (x_2 == 0.0)
+		x_2 = cdf.SampleGamma(lot->Uniform(FILE_AND_LINE), betaParam, 1.0); 
+
+	return x_1/x_2;
+	}
+	
+double BetaPrimeDistribution::GetLnPDF(double x) const
+	{
+	if (x <= 0.0)
+		return -DBL_MAX;
+	else
+		{
+		double a_only = alphaParam;
+		double b_only = betaParam;
+		double a_plus_b = alphaParam + betaParam;
+		double lnpdf = (a_only - 1.0)*std::log(x);
+		lnpdf -= a_plus_b*std::log(1.0 + x);
+		lnpdf += cdf.LnGamma(a_plus_b);
+		lnpdf -= cdf.LnGamma(a_only);
+		lnpdf -= cdf.LnGamma(b_only);
+
+		return lnpdf;
+		}
+	}
+	
+double BetaPrimeDistribution::GetRelativeLnPDF(double x) const
+	{
+	if (x <= 0.0)
+		return -DBL_MAX;
+	else
+		return ((alphaParam - 1.0)*std::log(x)) - ((alphaParam + betaParam - 1.0)*std::log(1.0 + x));
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Mean of a BetaPrime(a,b) random variable is a/(b - 1) and variance is a*(a + b - 1)/[(b - 2)*(b - 1)^2]. Thus, the 
+|	mean is undefined if b <= 1 and the variance is undefined if b <= 2. Given mean m and variance v, one can find a and
+|	b as follows. Letting c = m*(m+1)/v, a = m*(c+1) and b = c+2.
+*/
+void BetaPrimeDistribution::SetMeanAndVariance(double m, double v)
+	{
+	if (m <= 0.0)
+		throw XProbDist("specified mean is out of bounds for a BetaPrime distribution; should be greater than 0.0");
+	if (v <= 0.0)
+		throw XProbDist("specified variance is out of bounds, should be greater than 0.0");
+	double c   = m*(m + 1.0)/v;
+	alphaParam = m*(c + 1.0);
+	betaParam  = c + 2.0;
+	}
+////////////////// beta prime end
 
 //############################################################################################
 //###### EXPONENTIAL DISTRIBUTION INLINED FUNCTIONS ##########################################
