@@ -205,7 +205,7 @@ class SliceViewer(Frame):
         print 'range of x is [%f, %f]' % (xmin, xmax)
         print 'range of y is [%f, %f]' % (ymin, ymax)
 
-    def takeStep(self, show_slice=False, detailed=False):
+    def takeStep(self, show_slice=False, detailed=False, suppress_repaint=False):
         """
         If detailed is False, this function displays an entire slice sampling step.
         If detailed is True, this function shows the details of a single slice sampling step.
@@ -389,6 +389,8 @@ class SliceViewer(Frame):
             #print 'xleft=%f, xright=%f, xincr=%f\n' % (xleft, xright, xincr)
         else:
             self.plotter.points.append((x,y))
+            if not suppress_repaint:
+                self.plotter.repaint()
 
     def takeOverrelaxedStep(self, show_slice=False):
         self.curr = self.s.debugOverrelaxedSample()
@@ -416,14 +418,14 @@ class SliceViewer(Frame):
     #    print "resizing: x=%f, y=%f" % (event.width, event.height)
 
     # next two functions result in a single sample and show details of the slice sampling process
-    def oneStep(self, detailed=False):
-        self.takeStep(show_slice=True, detailed=detailed)
+    def oneStep(self, detailed=False, show_slice=False):
+        self.takeStep(show_slice=show_slice, detailed=detailed)
         
     def keybdOneStep(self, event):
         self.oneStep(detailed=False)
 
     def detailedStep(self):
-        self.oneStep(detailed=True)
+        self.oneStep(detailed=True, show_slice=True)
 
     def detailedBackStep(self):
         if self._step_num_within_step < 1:
@@ -470,7 +472,7 @@ class SliceViewer(Frame):
     # next two functions result in many samples but do not show details of the slice sampling process
     def manySteps(self):
         for x in range(self.manyStepsN):
-            self.takeStep()
+            self.takeStep(suppress_repaint=True)
         self.plotter.repaint()
             
     def keybdManySteps(self, event):
