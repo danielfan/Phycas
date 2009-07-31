@@ -834,7 +834,7 @@ class MCMCImpl(CommonFunctions):
                 self.ss_sampled_betas = [self.opts.ss_minbeta]
             
             self.ss_sampled_likes = []
-            for self.ss_beta_index,self.ss_beta in enumerate(self.ss_sampled_betas):
+            for self.ss_beta_index, self.ss_beta in enumerate(self.ss_sampled_betas):
                 self.ss_sampled_likes.append([])
                 chain.setPower(self.ss_beta)
                 boldness = 100.0*(1.0-self.ss_beta)

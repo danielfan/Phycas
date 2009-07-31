@@ -163,7 +163,7 @@ import ProbDist
 from ProbDist import Bernoulli, Beta, Binomial, Dirichlet, Exponential, Gamma, ImproperUniform, InverseGamma, Normal, Uniform, Lot
 import ReadNexus
 import sys, os
-from Utilities.PhycasCommand import REPLACE, APPEND, ADD_NUMBER, phycas_help, public
+from Utilities.PhycasCommand import REPLACE, APPEND, ADD_NUMBER, phycas_help
 from phycas.Utilities.DefaultData import DefaultData
 
 P = DefaultData.getInstance()

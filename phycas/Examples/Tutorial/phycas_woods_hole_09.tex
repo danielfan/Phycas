@@ -31,7 +31,7 @@
 \pagestyle{fancy}
 \fancyhf{} % clear all headers and footers
 \fancyhead[LO,RE]{Phycas demo}
-\fancyhead[RO,LE]{2008 Workshop on Molecular Evolution Woods Hole}
+\fancyhead[RO,LE]{2009 Workshop on Molecular Evolution Woods Hole}
 \fancyfoot[LO,LE]{{\footnotesize \copyright\ 2008 by Paul O. Lewis, Mark T. Holder, and David Swofford}}
 \fancyfoot[CE,CO]{}
 \fancyfoot[RO,RE]{\thepage}
@@ -52,7 +52,7 @@
 The goal of this tutorial is to help you become familiar with running \phycas and interpreting its output. 
 Don't rush things. 
 If you don't finish the lab, you can always download 
-\phycas from \url{http://www.phycas.org} when you get home and finish it there.
+\phycas from \href{http://www.phycas.org}{www.phycas.org} when you get home and finish it there.
 The manual available at the web site and the web site itself have instructions for 
 installing \phycas if you are using your own machine.
 
@@ -71,41 +71,41 @@ Stylistic conventions used in this document:
 %-------------------------------------------------------------------------------------------
 \phycas is a software package for Bayesian phylogenetic analysis written by Paul Lewis, Mark Holder and David Swofford.
 \phycas is a hybrid program: computationally-intensive tasks are implemented in C++, and the high-level
-tasks are done in \href{http://www.python.org/}{python}\footnote{The Phycas manual contains instructions for installing python if you are using an operating system
-that does not come with python installed.}.
+tasks are done in \href{http://www.python.org/}{Python}\footnote{The Phycas manual contains instructions for installing Python if you are using an operating system
+that does not come with Python installed.}.
 
-In fact, the python language is the scripting language of \phycas, and the python interpreter is
+In fact, the Python language is the scripting language of \phycas, and the Python interpreter is
 the front-end for \phycas. 
-So when you write a command file in \phycas you are actually writing a python program.
-This has advantages because python interpreter is a powerful, robust, and versatile program for interpreting text commands.
+So when you write a command file in \phycas you are actually writing a Python program.
+This has advantages because Python interpreter is a powerful, robust, and versatile program for interpreting text commands.
 However, it also means that \phycas cannot always be forgiving when it comes to the structure of commands and syntax in general.
 We have attempted to add as much flexibility as possible, but be aware that {\bf most commands are case-sensitive and you will have to pay attention to the quoting used in commands in this tutorial}.
 
 
 \subsubsection{The Phycas.app bundle}
 In the lab we will be running \phycas as a double-clickable program built around the open-source iTerm terminal application (\href{http://iterm.sourceforge.net/}{iTerm homepage}).
-You can run \phycas from any terminal by invoking python and entering the command:
+You can run \phycas from any terminal by invoking Python and entering the command:
 \begin{verbatim}
 from phycas import *
 \end{verbatim}
 You will {\bf not} have to issue this command when using the \phycas application bundle on Mac, but you {\bf will} have to use the command in all of your \phycas scripts.
 
-If you are not using the Phycas.app bundle, you will need to invoke python and enter the \cmd{from phycas import *} command.
+If you are not using the Phycas.app bundle, you will need to invoke Python and enter the \cmd{from phycas import *} command.
 In order for this to work, you have to have \phycas installed in a standard location or your shell's environmental variables must be set correctly.
 The Windows-installer for \phycas will set up your environment correctly.
-If python shows an error when you try the \cmd{from phycas import *}  command given above, then consult the \phycas manual or ask one
+If Python shows an error when you try the \cmd{from phycas import *}  command given above, then consult the \phycas manual or ask one
 of us for help configuring your environment correctly.
 
 \subsubsection{IPython}
 In the lab, the machines are configured to run \phycas through \href{http://ipython.scipy.org/moin/}{IPython} rather than Python itself.  
-IPython provides a more user-friendly environment for interactive python than the ``raw'' python interpreter.
+IPython provides a more user-friendly environment for interactive Python than the ``raw'' Python interpreter.
 The main benefits of IPython are:
 \begin{itemize}
 	\item Tab-completion of variable names (start to type the name and then hit the Tab-key to fill in the rest of the word or see a list of possible matches),
 	\item Native support for a few UNIX commands (most notably \cmd{ls} and \cmd{cd})
 	\item Support for any UNIX commands if you start the line with ! (an exclamation point). For example \cmd{!cat myscript.py | grep mcmc} would behave just like the UNIX commands \cmd{cat myscript.py | grep mcmc}
 \end{itemize}
-To indicate to \phycas that you would like to use IPython, open the \localfile{$\sim$/.phycas/active\_phycas\_env.sh} 
+To indicate to \phycas that you would like to use IPython, open the \localfile{$\sim$/.phycas/active\_phycas\_env.sh} file
 in a text editor, and change the last line to read:
 \begin{verbatim}
 export USES_I_PYTHON=1
@@ -123,7 +123,7 @@ The IPython prompt looks like this:
 \begin{verbatim}
 In [2]: 
 \end{verbatim}
-with the number in bracket indicating the number of commands executed, while the python prompt looks like this:
+with the number in bracket indicating the number of commands executed, while the Python prompt looks like this:
 \begin{verbatim}
 >>>
 \end{verbatim}
@@ -133,9 +133,9 @@ with the number in bracket indicating the number of commands executed, while the
 Locate the directory of example files labeled \localfile{PhycasWHExamples} and move it to a convenient location for you.
 
 
-You can launch the \phycas application by double-clicking the \phycas icon  (later when you have scripts written, you can launch the \phycas by dragging a python script onto the \phycas application icon).
+You can launch the \phycas application by double-clicking the \phycas icon  (later when you have scripts written, you can launch the \phycas by dragging a Python script onto the \phycas application icon).
 After the libraries have loaded you will see a prompt.
-This is the python interpreter waiting for you to give it a command.
+This is the Python interpreter waiting for you to give it a command.
 The working directory will be your home directory.
 
 \subsubsection{Changing the working directory}
@@ -148,7 +148,7 @@ In [4]: ls
 \end{verbatim}
 to change working directory, then show the path to the current directory, and finally list the directory contents.
 
-If you are using the  python interpreter (instead of the IPython interface), you have to issue the commands:
+If you are using the  Python interpreter (instead of the IPython interface), you have to issue the commands:
 \begin{verbatim}
 >>> from phycas import *
 >>> os.chdir("Desktop/PhycasTutorial")
@@ -158,12 +158,15 @@ If you are using the  python interpreter (instead of the IPython interface), you
 
 \subsubsection{Getting help}
 A good first step is to get an idea of what actions you can take. 
-Call the \cmd{help} function to see a general message about \phycas, and then
-use the \cmd{public} function to see a summary of globally available
-variables
+Call the \cmd{help} function to see a general message about \phycas
 \begin{verbatim}
 help()
-public()
+\end{verbatim}
+
+To see what functions and variables are currently available, you can 
+use the Python \cmd{dir} function
+\begin{verbatim}
+dir()
 \end{verbatim}
 
 A very long list of variables is probably not too helpful to you.
@@ -177,7 +180,7 @@ help(mcmc)
 \subsubsection{Setting up a basic MCMC analysis}
 The settings that affect the behavior of an MCMC run are all stored
 as attributes of a \phycas object with the name \cmd{mcmc}.
-In python, objects are collections of data and actions.
+In Python, objects are collections of data and actions.
 You address the attributes of an object by putting a ``.'' between
 the name of the object and the name of the attribute.
 And you change the value of an attribute by using the ``='' character
@@ -213,14 +216,14 @@ mcmc.out.params.prefix = "green"
 
 Now we will set up the length of the MCMC simulation. 
 It is important to realize that a ``cycle'' in \phycas is {\bf not}
-equivalent to a ``generation'' in \mb \citet{RonquistH2003}
+equivalent to a ``generation'' in \mb \citep{RonquistH2003}.
 In \mb each generation represents an iteration of:
 \begin{enumerate}
 	\item propose a new state,
 	\item evaluate the posterior probability density,
 	\item accept or reject the proposal
 \end{enumerate}
-But in \phycas a cycle represents a sweep of proposals over all of the parameters
+But in \phycas a cycle represents a sweep of proposals over {\bf all} of the parameters
 in model -- including several proposed changes to the topology.
 In terms of the number of updates, a cycle in \phycas is more or less equivalent (in terms 
 of the number of updates) to 100 generations in \mb\footnote{That statement is true when you use the default settings. 
@@ -248,7 +251,7 @@ mcmc.current()
 \end{verbatim}
 
 If everything looks good we can launch the run by calling the \cmd{mcmc} command
-as if it were a python function:
+as if it were a Python function:
 \begin{verbatim}
 mcmc()
 \end{verbatim}
@@ -311,8 +314,8 @@ The commands for replaying this example are shown in the section \hyperref[basic
 %\end{verbatim}
 
 
-\section{A note an scripts used in this tutorial}
-The tutorial directory has the python
+\section{A note on scripts used in this tutorial}
+The tutorial directory has the Python
 scripts \localfile{IntExtPrior.py}, \localfile{NoPolytomy.py},
 \localfile{Polytomy.py}, and \localfile{basic.py}
 that have all of the commands needed to run the tutorial.
@@ -320,9 +323,6 @@ To use those scripts, they should be in the same directory
 as the data files (or you could edit the
 filenames in the scripts to reflect the relative 
 path to the data files).
-
-Identical versions are also in the \localfile{scripts} directory
-inside the tutorial.
 I recommend leaving the copies inside the \localfile{scripts} directory 
 untouched.
 That way you can compare any changes that you have made
@@ -350,7 +350,7 @@ along with the tutorial in a step-by-step fashion.
 
 \section{Polytomy priors}
 
-One flavor of Bayesian analysis that is implemented in \phycas, but not available in many other Bayesian phylogenetic programs\footnote{Note that polytomy priors {\em are} implemented in Peter Foster's program, \href{http://bmnh.org/~pf/p4.html}{p4}, which is another C/python hybrid program.} is support for prior distributions that place non-zero probability on trees that are not fully-resolved (also referred to as trees with polytomies or trees with multifurcations).
+One flavor of Bayesian analysis that is implemented in \phycas, but not available in many other Bayesian phylogenetic programs\footnote{Note that polytomy priors {\em are} implemented in Peter Foster's program, \href{http://bmnh.org/~pf/p4.html}{p4}, which is another C/Python hybrid program.} is support for prior distributions that place non-zero probability on trees that are not fully-resolved (also referred to as trees with polytomies or trees with multifurcations).
 The details of the algorithm (and justifications for the approach) can be found in \citet{LewisHolderHolsinger2005}.
 We will be using the same data set that was used in that paper which is a set of algal sequences published by \citet{ShoupL2003}.
 
@@ -383,6 +383,7 @@ model.num_rates = 4
 \end{verbatim}
 the \cmd{model.num\_rates} is the number of variable rates that are used to approximate the Gamma distribution. 
 If you were to set \cmd{model.num\_rates = 1} then you would be selecting a single-rate model that does not use $\Gamma$-distributed rate heterogeneity at all.
+
 We can set the value of the shape parameter of the Gamma distribution, but this is just the value that the sampler will start at.  
 It is more important (in the context of setting up an MCMC run) to set the prior distribution for the  shape parameter of the gamma distribution.
 We can do this by choosing from among the continuous probability distributions over non-negative numbers.
@@ -579,7 +580,7 @@ new session, you can execute the command:
 \begin{verbatim}
 execfile("Polytomy.py")
 \end{verbatim}
-to execute a python script (in this case  \localfile{Polytomy.py}).
+to execute a Python script (in this case  \localfile{Polytomy.py}).
 
 
 \subsection{Comparing the results}
@@ -620,7 +621,7 @@ mcmc.allow_polytomies = False
 mcmc.out.trees.prefix = "int_ext_trees"
 mcmc.out.params.prefix = "int_ext_params"
 mcmc.out.log.prefix = "int_ext_output"
-sumt.trees          = "int_ext_trees.t"
+sumt.trees  = "int_ext_trees.t"
 sumt.out.log.prefix = "int_ext_sumt_output"
 sumt.out.trees.prefix = "int_ext_sumt_trees"
 sumt.out.splits.prefix = "int_ext_sumt_splits"
@@ -648,15 +649,15 @@ Please feel free to try out other aspects of \phycas, and let us know if there w
 parts of the tutorial or the user-interface of \phycas that
 you found confusing.
 
-If you are interested in programming in python
+If you are interested in programming in Python
 feel free to ask us about how you can use
 \phycas as a library of phylogenetic functions.
 
 \section{Thanks}
 We thank you for trying out \phycas and providing feedback!
 
-We would like to thank Michael Cummings and the Workshop on Molecular Evolution for hosting the debut of \phycas. Funding sources include the CIPRES grant (NSF-DBI-0306047) to Dave Swofford, a NESCent sabbatical fellowship to Paul Lewis. 
-\phycas is built using 5 open source libraries: \href{http://www.boost.org/}{boost}, \href{http://sourceforge.net/projects/ncl/}{ncl} (the NEXUS Class Library),  \href{http://iterm.sourceforge.net/}{iTerm},  \href{http://ipython.scipy.org/moin/}{IPython}, and (of course) \href{http://www.python.org/}{python}
+We would like to thank Michael Cummings and the Workshop on Molecular Evolution for hosting the  \phycas lab. Funding sources include the CIPRES grant (NSF-DBI-0306047) to Dave Swofford, a NESCent sabbatical fellowship to Paul Lewis. 
+\phycas is built using 5 open source libraries: \href{http://www.boost.org/}{boost}, \href{http://sourceforge.net/projects/ncl/}{ncl} (the NEXUS Class Library),  \href{http://iterm.sourceforge.net/}{iTerm},  \href{http://ipython.scipy.org/moin/}{IPython}, and (of course) \href{http://www.python.org/}{Python}
 
 
 \newpage
@@ -883,18 +884,18 @@ sumt()
 
 
 
-\section{Fully exploiting the python interface}
+\section{Fully exploiting the Python interface}
 This section is intended to give a feel of the advantages of using
-python as a front-end for python.
+Python as a front-end for Python.
 The primary audience is people who are comfortable dabbling with 
-python programming.
+Python programming.
 Our hope is that \phycas will be useful even if have {\bf no}
 desire to program -- so this part of the tutorial is {\bf entirely optional}.
 If you are not going to ever
-write python code to interact with \phycas, then you
+write Python code to interact with \phycas, then you
 can just quickly skip the section and finish the tutorial here.
 
-Even if you are interested in programming some in python,
+Even if you are interested in programming some in Python,
 it is probably inadvisable to type the following instructions in
 by hand.  
 The script \localfile{scripts/collapseShort.py} is provided 
@@ -916,7 +917,7 @@ Nevertheless, it would be interesting to see how such an analysis performs.
 
 In a ``normal'' program, if you wanted to try out a new methodology
 you would have to edit the source code and recompile.
-Because of the flexibility of python, however, users can actually
+Because of the flexibility of Python, however, users can actually
 alter the behavior of \phycas in very rich and powerful ways.
 If we were to look at the code for the \cmd{sumt} command we would see
 that the consensus tree is created by recording trees in a particular
@@ -935,9 +936,9 @@ data structure by calling the following method:
         return treelen
 
 \end{verbatim}
-in a python class called \cmd{TreeSummarizer}.
+in a Python class called \cmd{TreeSummarizer}.
 
-We do not have time or space to fully explain python, here.
+We do not have time or space to fully explain Python, here.
 In a nutshell this method is calling another function, \cmd{recordNodeInMaps} for 
 every node in the tree.
 By adding a test that checks if the internal branches have length greater than 0.005
@@ -974,18 +975,18 @@ Move it to the directory with the output from \localfile{NoPolytomy.py}
 
 
 
-If you {\em are} interested in using python and \phycas more
+If you {\em are} interested in using Python and \phycas more
 fully, you may be interested in seeing a full list 
 of the functions available (giving you more information
 than the \phycas functions \cmd{help} and \cmd{public}
 mentioned above).
-You can ask python for all of the variables that are in memory using the
+You can ask Python for all of the variables that are in memory using the
 \cmd{dir} function:
 \begin{verbatim}
 dir()
 \end{verbatim}
 This will return a (long) list of strings that are the names of all of the currently
-available names that python knows about.  
+available names that Python knows about.  
 You can ignore any name that starts with an underscore.
 
 

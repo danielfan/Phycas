@@ -26,35 +26,35 @@ then
   source "$env_settings_path" || exit 1
 fi
 
-if ! test -z "$PHYCAS_PYTHONPATH"
+if ! test -z "${PHYCAS_PYTHONPATH}"
 then
-	if test -z "$PYTHONPATH"
+	if test -z "${PYTHONPATH}"
 	then
-		PYTHONPATH="$PHYCAS_PYTHONPATH"
+		PYTHONPATH="${PHYCAS_PYTHONPATH}"
 	else
-		PYTHONPATH="$PYTHONPATH:$PHYCAS_PYTHONPATH"
+		PYTHONPATH="${PHYCAS_PYTHONPATH}:${PYTHONPATH}"
 	fi
 fi	
-if ! test -z "$PHYCAS_DYLD_LIBRARY_PATH"
+if ! test -z "${PHYCAS_DYLD_LIBRARY_PATH}"
 then
-	if test -z "$DYLD_LIBRARY_PATH"
+	if test -z "${DYLD_LIBRARY_PATH}"
 	then
-		DYLD_LIBRARY_PATH="$PHYCAS_DYLD_LIBRARY_PATH"
+		DYLD_LIBRARY_PATH="${PHYCAS_DYLD_LIBRARY_PATH}"
 	else
-		DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:$PHYCAS_DYLD_LIBRARY_PATH"
+		DYLD_LIBRARY_PATH="${PHYCAS_DYLD_LIBRARY_PATH}:${DYLD_LIBRARY_PATH}"
 	fi
 fi	
-if ! test -z "$PHYCAS_PATH"
+if ! test -z "${PHYCAS_PATH}"
 then
-	if test -z "$PATH"
+	if test -z "${PATH}"
 	then
-		PATH="$PHYCAS_PATH"
+		PATH="${PHYCAS_PATH}"
 	else
-		PATH="$PATH:$PHYCAS_PATH"
+		PATH="${PATH}:${PHYCAS_PATH}"
 	fi
 fi	
 export PYTHONPATH
 export DYLD_LIBRARY_PATH
 export PATH
 
-#export USES_I_PYTHON=1
+export USES_I_PYTHON=1

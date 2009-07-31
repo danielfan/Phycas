@@ -10,7 +10,7 @@
 # the Xie et al. paper for details.
 #
 # Note that this same script can be used to create both the HM estimate (call "mcmc()")
-# as well as the estimates for SS and PS (call "ps()"). 
+# as well as the estimates for SS and PS (call "ss()"). 
 
 import math, sys
 from phycas import *
@@ -94,12 +94,11 @@ mcmc.nchains                = 1         # multiple chain analyses are not yet wo
 mcmc.slice_weight           = 1         # means one slice sampling update of each model parameter per cycle
 
 # settings specific to path/steppingstone sampling
-ps.nbetavals                = 3      # number of beta values 
-ps.simpsons_method          = False  # if True, use Simpson's method; if False, use trapezoid method
-ps.minbeta                  = 0.0    # smallest beta value to be sampled
-ps.maxbeta                  = 1.0    # largest beta value to be sampled
-ps.shape1                   = 0.3    # first shape parameter of the beta sampling distribution
-ps.shape2                   = 1.0    # second shape parameter of the beta sampling distribution
+ss.nbetavals                = 3      # number of beta values 
+ss.minbeta                  = 0.0    # smallest beta value to be sampled
+ss.maxbeta                  = 1.0    # largest beta value to be sampled
+ss.shape1                   = 0.3    # first shape parameter of the beta sampling distribution
+ss.shape2                   = 1.0    # second shape parameter of the beta sampling distribution
 
 # specify whether to use Metropolis-Hastings/slice sampling when exploring the prior (False)
 # or to sample directly from the prior (True)
@@ -124,11 +123,11 @@ mcmc.rel_rate_psi0        = 2.0         # min_psi
 
 # start the MCMC analysis that will generate samples appropriate
 # for both path sampling and steppingstone sampling
-ps()
+ss()
 
 # uncomment the two lines below (and comment out the line above) to
 # estimate the marginal likelihood using the harmonic mean method
-#mcmc.ncycles *= ps.nbetavals
+#mcmc.ncycles *= ss.nbetavals
 #mcmc()
 
 # sump reads in the samples from the param file and computes the

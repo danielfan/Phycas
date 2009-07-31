@@ -3,7 +3,6 @@
 from phycas import *
 
 print help()
-print public()
 print help(readFile)
 print help(mcmc)
 print help(readFile)

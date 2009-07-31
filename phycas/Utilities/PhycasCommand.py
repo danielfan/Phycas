@@ -66,11 +66,11 @@ def str_value_for_user(value):
 def _escape_for_latex(s):
     return str(s).replace('_', '\_').replace('<','$<$').replace('>','$>$')
 
-def public(mod=None):
-    "Prints a summary of the names of the globally available objects"
-    l = globals().keys()
-    l = [i for i in l if not i.startswith("_")]
-    print two_column_str(l)
+#def public(mod=None):
+#    "Prints a summary of the names of the globally available objects"
+#    l = eval('globals().keys()')
+#    l = [i for i in l if not i.startswith("_")]
+#    print two_column_str(l)
 
 def two_column_str(p):
     p.sort()
