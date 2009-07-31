@@ -52,13 +52,10 @@ class LikelihoodCore(object):
         return self._tree
         
     def setTree(self, t):
-        print "in setTree"
         if t and not isinstance(t, Phylogeny.Tree):
-            print "in setTree coercion"
             tr = Phylogeny.Tree()
             self._tree = t.buildTree(tr)
         else:
-            print "in setTree ref"
             self._tree = t
             
     def delTree(self, t):
