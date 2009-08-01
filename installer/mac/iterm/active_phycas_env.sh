@@ -57,4 +57,4 @@ export PYTHONPATH
 export DYLD_LIBRARY_PATH
 export PATH
 
-export USES_I_PYTHON=1
+#export USES_I_PYTHON=1
