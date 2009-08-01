@@ -47,13 +47,15 @@ model.state_freqs = [0.25, 0.25, 0.25, 0.25] # order is A,C,G,T
 model.edgelen_hyperprior = None
 model.edgelen_prior = ProbDist.Exponential(1.0)
 model.relrate_prior = ProbDist.Dirichlet((1.0,1.0,1.0,1.0,1.0,1.0)) 
+model.kappa_prior = Exponential(1.0)
+model.state_freq_prior = Dirichlet((1.00000, 1.00000, 1.00000, 1.00000))
 
 # general settings 
 rng = Lot()
 rng.setSeed(13957)
 mcmc.rng = rng
 mcmc.burnin = 100 # number of cycles before any sampling is done
-mcmc.ncycles = 2000 # number of MCMC cycles per value of beta. This is not enough, We are just using this for demo purposes
+mcmc.ncycles = 10000 # number of MCMC cycles per value of beta. This is not enough, We are just using this for demo purposes
 mcmc.sample_every = 10 # log-likelihood will be sampled whenever cycle modulo ps_sample_every equals 0
 mcmc.report_every = 100
 mcmc.adapt_first = 2 
@@ -70,7 +72,7 @@ mcmc.nchains = 1 # multiple chain analyses are not yet working
 mcmc.slice_weight = 1 # means one slice sampling update of each model parameter per cycle
 
 # settings specific to path/steppingstone sampling
-ss.nbetavals = 10 # number of beta values 
+ss.nbetavals = 20 # number of beta values 
 ss.minbeta = 0.0 # smallest beta value to be sampled
 ss.maxbeta = 1.0 # largest beta value to be sampled
 ss.shape1 = 0.3 # first shape parameter of the beta sampling distribution

@@ -1,27 +1,11 @@
-# This script will regenerate the information used for the points corresponding to 
-# K = 2 in Figure 10 of this paper:
-#
-# Xie, W., P. O. Lewis, Y. Fan, L. Kuo and M.-H. Chen. 2009.
-# Improving Marginal Likelihood Estimation for Bayesian Phylogenetic 
-# Model Selection. Syst. Biol., submitted Feb. 6, 2009.
-#
-# This figure plots estimates of the marginal likelihood (y-axis) for several
-# different values of K, where K is the number of beta intervals used. See
-# the Xie et al. paper for details.
-#
-# Note that this same script can be used to create both the HM estimate (call "mcmc()")
-# as well as the estimates for SS and PS (call "ss()"). 
-
+# This script will draw trees and model parameters from the same 
 import math, sys
 from phycas import *
 
 #Toggling the following variables determines whether or not you use:
 # GTR vs HKY, and
-# Stepping stone vs harmonic mean estimator of the marginal likelihood
 use_gtr = True
-using_stepping_stone = True
-
-
+print_paup_commands = True
 # specify the data file name
 mcmc.data_source = 'simhky.nex'
 
@@ -30,47 +14,54 @@ mcmc.data_source = 'simhky.nex'
 
 if use_gtr:
     model.type = 'gtr'
-    model.relrates = [1.0, 4.0, 1.0, 1.0, 4.0, 1.0] # AC, AG, AT, CG, CT, GT
+    relrate_prior = ProbDist.Dirichlet((1.0,1.0,1.0,1.0,1.0,1.0)) 
 else:
     model.type = 'hky'
-    model.kappa = 4.0
-
+    kappa_prior = Exponential(1.0)
 
 model.num_rates = 1 # use number > 1 for discrete gamma rate heterogeneity
 model.pinvar_model = False # use True for proportion invariable sites model
 if model.num_rates > 1:
     model.gamma_shape = 0.5
 
-model.state_freqs = [0.25, 0.25, 0.25, 0.25] # order is A,C,G,T
-
 # settings relating to prior distributions
 model.edgelen_hyperprior = None
-model.edgelen_prior = ProbDist.Exponential(1.0)
-model.relrate_prior = ProbDist.Dirichlet((1.0,1.0,1.0,1.0,1.0,1.0)) 
 
-# general settings 
-rng = Lot()
-rng.setSeed(13957)
-mcmc.rng = rng
-mcmc.burnin = 100 # number of cycles before any sampling is done
-mcmc.ncycles = 2000 # number of MCMC cycles per value of beta. This is not enough, We are just using this for demo purposes
-mcmc.sample_every = 10 # log-likelihood will be sampled whenever cycle modulo ps_sample_every equals 0
-mcmc.report_every = 100
-mcmc.adapt_first = 2 
-mcmc.verbose = True
 
+
+
+state_freq_prior = Dirichlet((1.00000, 1.00000, 1.00000, 1.00000))
 
 
 file_contents = readFile("simhky.nex")
-rand_tree_source = randomtree(rng=rng, distribution='Equiprobable', edgelen_dist=ProbDist.Exponential(1.0))
+like.data_source = file_contents.characters
+
+rand_tree_source = randomtree(distribution='Equiprobable', edgelen_dist=ProbDist.Exponential(1.0))
 
 n_trees = 10
-tc = TreeCollection(trees=[rand_tree_source.next() for i in range(n_trees)])
-like.data_source = file_contents.characters
+
+if print_paup_commands:
+    sys.stderr.write("Set storebr;\n")
+
 for ind, tree in enumerate(rand_tree_source):
-    print repr(tree)
-    tc = TreeCollection(trees=[tree])
-    like.tree_source = tc
+    like.tree_source = TreeCollection(trees=[tree])
+    model.state_freqs = list(state_freq_prior.sample())
+    if use_gtr:
+        model.relrates = list(relrate_prior.sample())
+    else:
+        model.kappa = kappa_prior.sample()
+
+    if print_paup_commands:
+        sys.stderr.write("begin trees; tree tree" + str(ind) + " = [&U] " + tree.makeNewick() + ";\nend;\n")
+        if use_gtr:
+            gt = model.relrates[5]
+            rr = [str(i/gt) for i in model.relrates[:5]]
+        else:
+            rr = ['1', str(model.kappa), '1', '1', str(model.kappa)]
+        freq_sum = sum(model.state_freqs)
+        fr = [str(i/freq_sum) for i in model.state_freqs[:3]]
+        sys.stderr.write("lscore / userbr nst=6 rmat = (%s) basefreq = (%s);\n" % (" ".join(rr), " ".join(fr)))
+        
     print like()
     if ind >= 10:
         break
