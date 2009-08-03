@@ -682,13 +682,37 @@ The file is heavily commented, so you should be able to read through the file an
 
 The file also shows off some of the advantages of a Python front-end.  
 You will see two variables at the top of the file \cmdopt{use\_gtr} and \cmdopt{using\_steppingstone}.
-These can be set to True or False to toggle between the GTR or HKY models and between the steppingstone sampler versus normal MCMC.
+These can be set to \cmdopt{False} or \cmdopt{False} to toggle between the GTR or HKY models and between the steppingstone sampler versus normal MCMC.
 At several points in the file you will notice us using Python's if/else branching syntax so we can do slightly different things
 in response to the variables.
 This allows you to run all four combinations of analyses by just altering the first few lines of the file.
 
-\section{Conclusions}
-That is it for this lab! 
+Be aware that the number of cycles chosen for this lab is too short to provide reliable estimates of the marginal likelihood -- the ncycles was chosen so that the analysis would complete in a reasonable time.
+
+By changing the \cmdopt{use\_gtr} setting, perform a steppingstone sampling runs under HKY and GTR. 
+After you have saved the file you can execute it from within the Phycas.app bundle with the command:
+\begin{verbatim}
+execfile("scripts/steppingStone.py")
+\end{verbatim} 
+If you are running linux you can call the script by running:
+\begin{verbatim}
+python scripts/steppingStone.py
+\end{verbatim} 
+And on Windows the invocation is:
+\begin{verbatim}
+python scripts\steppingStone.py
+\end{verbatim} 
+
+
+
+\QandA{Did the Bayes Factor calculated using the marginal likelihoods from steppingstone sampling prefer the HKY or the GTR model? What about when you use the marginal likelihoods from the thermodynamic integration (path sampling)?}{The HKY model should be preferred, but 
+you may get different results (because our runs are so short).}
+
+If you are curious about how poorly the harmonic mean estimator does for this problem, try setting \cmdopt{using\_steppingstone} to \cmdopt{False} in the file and rerunning the analysis. \QandA{How far apart were the three different estimators of the marginal likelihood?}{Usually the steppingstone sampler and path sampler are similar while the harmonic mean estimate is much too high.}
+
+\section{Conclusions and Thanks}
+That is it for this lab! Thanks for trying out \phycas and providing feedback!
+
 
 Please feel free to try out other aspects of \phycas, and let us know if there were
 parts of the tutorial or the user-interface of \phycas that
@@ -698,10 +722,8 @@ If you are interested in programming in Python
 feel free to ask us about how you can use
 \phycas as a library of phylogenetic functions.
 
-\section{Thanks}
-We thank you for trying out \phycas and providing feedback!
 
-We would like to thank Michael Cummings and the Workshop on Molecular Evolution for hosting the  \phycas lab. Funding sources include the CIPRES grant (NSF-DBI-0306047) to Dave Swofford, a NESCent sabbatical fellowship to Paul Lewis. 
+We would also like to thank Michael Cummings and the Workshop on Molecular Evolution for hosting the  \phycas lab. Funding sources include the CIPRES grant (NSF-DBI-0306047) to Dave Swofford, a NESCent sabbatical fellowship to Paul Lewis. 
 \phycas is built using 5 open source libraries: \href{http://www.boost.org/}{boost}, \href{http://sourceforge.net/projects/ncl/}{ncl} (the NEXUS Class Library),  \href{http://iterm.sourceforge.net/}{iTerm},  \href{http://ipython.scipy.org/moin/}{IPython}, and (of course) \href{http://www.python.org/}{Python}
 
 

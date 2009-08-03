@@ -9,9 +9,9 @@ from phycas import *
 # The following variables are python variables that are not used in the rest
 #   of Phycas.  Rather they are used within this script to make it easier to 
 #   tweak the analysis and run it in a different configuration.
-use_gtr = False              # Set this to True for GTR and False for HKY 
+use_gtr = True              # Set this to True for GTR and False for HKY 
 
-using_steppingstone = False # Set this to True for the steppingstone sample
+using_steppingstone = True # Set this to True for the steppingstone sample
                             #   or False to run a typical MCMC analysis and 
                             #   report the harmonic mean.
 
@@ -34,7 +34,7 @@ if use_gtr:
 else:
     model.type = 'hky'
     model.kappa = 4.0 # this is initial value of the transitition/transversion rate ratio.
-    model.kappa_prior = Exponential(1.0)
+    model.kappa_prior = Exponential(0.3)
 
 
 model.num_rates = 1        # We won't worry with gamma-distributed rate het in this example
@@ -51,14 +51,12 @@ model.edgelen_hyperprior = None                 # ... not a hierarchical model.
 # Create a random number generator and pass it to the mcmc command so that 
 #   we can recreate this run if we want to later.
 rng = Lot()
-rng.setSeed(13957)
 mcmc.rng = rng
 
 
 # The following are general MCMC settings (not steppingstone sampling related).
-mcmc.burnin = 100       # discard the first 100 cycles
 mcmc.ncycles = 10000    # run the sample 10,000 generations at each value of beta 
-mcmc.sample_every = 10  # sample the tree every 10 cycles
+mcmc.sample_every = 20  # sample the tree every 10 cycles
 mcmc.report_every = 100 # report the status every 100 cycles
 mcmc.adapt_first = 20   # tune the slice sampler after 10 cycles
 mcmc.verbose = True
@@ -78,7 +76,7 @@ mcmc.fix_topology = True
 # The next lines control how often different moves are performed during MCMC. 
 #   The integers are the number of times the move is used per-cycle
 mcmc.slice_weight = 1 
-mcmc.edge_move_weight = 1      
+mcmc.edge_move_weight = 1
 mcmc.tree_scaler_weight = 1
 
 # specify whether to update relative rates individually using slice sampling (True) 
@@ -151,7 +149,7 @@ mcmc.out.params.prefix = fnprefix
 mcmc.out.trees.mode = REPLACE
 mcmc.out.trees.prefix = fnprefix
 
-sump.out.log.prefix = 'sumt' + fnprefix
+sump.out.log.prefix = 'sump' + fnprefix
 
 if using_steppingstone:
     # start the MCMC analysis that will generate samples appropriate
@@ -176,4 +174,4 @@ else:
 # It will perform these calculations if the .p files have the format that
 #   indicates that we have done several beta values.
 sump_filename = fnprefix + ".p"
-sump(burnin=1,file=sump_filename)
+sump(burnin=0,file=sump_filename)
