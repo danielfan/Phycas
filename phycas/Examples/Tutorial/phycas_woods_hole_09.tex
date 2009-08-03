@@ -82,12 +82,9 @@ However, it also means that \phycas cannot always be forgiving when it comes to 
 We have attempted to add as much flexibility as possible, but be aware that {\bf most commands are case-sensitive and you will have to pay attention to the quoting used in commands in this tutorial}.
 
 
+
 \subsubsection{The Phycas.app bundle}
 In the lab we will be running \phycas as a double-clickable program built around the open-source iTerm terminal application (\href{http://iterm.sourceforge.net/}{iTerm homepage}).
-You can run \phycas from any terminal by invoking Python and entering the command:
-\begin{verbatim}
-from phycas import *
-\end{verbatim}
 You will {\bf not} have to issue this command when using the \phycas application bundle on Mac, but you {\bf will} have to use the command in all of your \phycas scripts.
 
 If you are not using the Phycas.app bundle, you will need to invoke Python and enter the \cmd{from phycas import *} command.
@@ -95,6 +92,35 @@ In order for this to work, you have to have \phycas installed in a standard loca
 The Windows-installer for \phycas will set up your environment correctly.
 If Python shows an error when you try the \cmd{from phycas import *}  command given above, then consult the \phycas manual or ask one
 of us for help configuring your environment correctly.
+
+
+\subsubsection{Executing Phycas from a terminal (Windows and Linux instructions)}
+Once Phycas is fully installed, you can run \phycas from any terminal by invoking Python and then importing Phycas:
+\begin{verbatim}
+from phycas import *
+\end{verbatim}
+
+This requires that phycas is installed in a standard system-wide location or that you have ``told'' the shell where to find it.
+
+Our Windows installer puts the files in the standard system-wide location.
+The Linux build that we created for the workshop contains a shell script that you can source to set up the shell in the correct way.
+After you unpack the archive and set up your environment with the following commands:
+
+{\tt
+tar xfvj linux-phycas-1.1.5r1156.tar.bz2\\
+cd phycas-1.1.5r1156\\
+export PHYCAS\_ROOT=\`{}pwd\`{}\\
+source run\_phycas\_env.sh\\
+}\\
+After setting the PHYCAS\_ROOT and sourcing the script any terminal should be ready to run Phycas.
+
+To run interactively on Linux and use IPython interface (discussed next) you can execute the following command:
+\begin{verbatim}
+cd phycas-1.1.5r1156
+sh phycas.sh
+\end{verbatim}
+
+
 
 \subsubsection{IPython}
 In the lab, the machines are configured to run \phycas through \href{http://ipython.scipy.org/moin/}{IPython} rather than Python itself.  
@@ -317,7 +343,7 @@ The commands for replaying this example are shown in the section \hyperref[basic
 \section{A note on scripts used in this tutorial}
 The tutorial directory has the Python
 scripts \localfile{IntExtPrior.py}, \localfile{NoPolytomy.py},
-\localfile{Polytomy.py}, and \localfile{basic.py}
+\localfile{Polytomy.py}, \localfile{basic.py}, \localfile{scoreRandomTrees.py}, and  \localfile{steppingStone.py}.
 that have all of the commands needed to run the tutorial.
 To use those scripts, they should be in the same directory
 as the data files (or you could edit the
@@ -641,6 +667,25 @@ do not advocate specific prior means.
 Thus, it is possible that the prior mean of 0.0001 is simply too low (and that higher means would result in significantly improved performance).
 For some datasets, the priors that Yang and Rannala suggested do result in a majority-rule consensus tree that is less resolved than the ``normal'' Bayesian analysis (polytomies excluded and vague priors on 
 branch lengths).
+
+\section{Steppingstone sampling}
+I simulated 2,000 sites using Seq-Gen and stored it as \localfile{simhky.nex} (the model tree for the simulation is stored as \localfile{simModel.newick}).
+In this section of the lab, we'll calculate the marginal likelihood under HKY and GTR and see if the Bayes factor prefers the HKY model over the more complex model.
+
+The steppingstone sampling command in Phycas is \cmd{ss}, is actually just a wrapper around the MCMC command. 
+Most of the options that we will use are just options to the \cmd{mcmc} command, but to launch the sampler we will use the \cmd{ss()} invocation rather than \cmd{mcmc()}.
+
+Rather than type all of the commands in interactively, this exercise is best done by executing a script.
+
+Open the \localfile{scripts/steppingStone.py} file in a text editor.
+The file is heavily commented, so you should be able to read through the file and understand all of the settings.
+
+The file also shows off some of the advantages of a Python front-end.  
+You will see two variables at the top of the file \cmdopt{use\_gtr} and \cmdopt{using\_steppingstone}.
+These can be set to True or False to toggle between the GTR or HKY models and between the steppingstone sampler versus normal MCMC.
+At several points in the file you will notice us using Python's if/else branching syntax so we can do slightly different things
+in response to the variables.
+This allows you to run all four combinations of analyses by just altering the first few lines of the file.
 
 \section{Conclusions}
 That is it for this lab! 
