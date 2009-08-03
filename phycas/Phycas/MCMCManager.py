@@ -908,10 +908,12 @@ class MCMCManager:
                 for rp in probs_vector:
                     self.parent.paramf.write(float_format_str % rp)
             self.parent.paramf.write('\n')
+            self.parent.paramf.flush()
             
         # Add line to tree file if it exists
         if self.parent.treef:
             self.parent.treef.write('   tree rep.%d = %s;\n' % (cycle + 1, cold_chain.tree.makeNewick(self.parent.opts.ndecimals)))
+            self.parent.treef.flush()
 
         # Add line to sitelike file if it exists and if we are saving site-likelihoods
         if self.parent.opts.saving_sitelikes:
@@ -928,6 +930,7 @@ class MCMCManager:
                 for siteLnL in siteloglikes:
                     self.parent.sitelikef.write(float_format_str % siteLnL)
                 self.parent.sitelikef.write('\n')
+                self.parent.sitelikef.flush()
                 
     def attemptChainSwap(self, cycle):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
