@@ -55,24 +55,50 @@ rng = Lot()
 rng.setSeed(13957)
 mcmc.rng = rng
 mcmc.burnin = 100 # number of cycles before any sampling is done
-mcmc.ncycles = 10000 # number of MCMC cycles per value of beta. This is not enough, We are just using this for demo purposes
+mcmc.ncycles = 1000 # number of MCMC cycles per value of beta. This is not enough, We are just using this for demo purposes
 mcmc.sample_every = 10 # log-likelihood will be sampled whenever cycle modulo ps_sample_every equals 0
 mcmc.report_every = 100
 mcmc.adapt_first = 2 
 mcmc.verbose = True
 
 
-
-
 # specify the starting tree
-mcmc.starting_tree_source = randomtree(rng=rng)
+mcmc.starting_tree_source = TreeCollection(newick='(t1:0.074783,(((((((t2:0.017390,t3:0.013871):0.014610,t4:0.038516):0.023079,t5:0.033673):0.011254,((t6:0.000718,t7:0):0.001124,t8:0.008383):0.020560):0.022048,(t14:0.127203,t15:0.017124):0.024730):0.002278,((t9:0.048058,t10:0.059900):0.024875,((t11:0.038944,t12:0.025554):0.014442,t13:0.034559):0.022475):0.002477):0.006325,t16:0.023526):0.006762,t17:0.025302)')
 
 # probably best to *not* change any of these
 mcmc.nchains = 1 # multiple chain analyses are not yet working
 mcmc.slice_weight = 1 # means one slice sampling update of each model parameter per cycle
 
+# fix the tree topology and use EdgeMove (which only change edge lengths) instead
+# of LargetSimonMove (which changes both edge lengths and the tree topology)
+mcmc.fix_topology           = True
+mcmc.edge_move_weight       = 1      # do 100 EdgeMove updates per cycle (makes sense to set this to some multiple of the number of edges)
+
+
+# specify how many times per cycle to rescale the entire tree
+mcmc.tree_scaler_weight     = 1
+
+# specify whether to update relative rates individually using slice sampling (True) 
+# or jointly using a Metropolis-Hastings proposal (False)
+model.update_relrates_separately = False
+
+# specify how many times per cycle to propose new relative rates vector
+mcmc.rel_rate_weight        = 1
+
+# specify whether to update base frequencies individually using slice sampling (True) 
+# or jointly using a Metropolis-Hastings proposal (False)
+model.update_freqs_separately = False
+
+# specify how many times per cycle to propose a new vector of nucleotide frequencies
+mcmc.state_freq_weight      = 1
+
+# probably best to *not* change any of these
+mcmc.nchains                = 1         # multiple chain analyses are not yet working
+mcmc.slice_weight           = 1         # means one slice sampling update of each model parameter per cycle
+
+
 # settings specific to path/steppingstone sampling
-ss.nbetavals = 20 # number of beta values 
+ss.nbetavals = 5 # number of beta values 
 ss.minbeta = 0.0 # smallest beta value to be sampled
 ss.maxbeta = 1.0 # largest beta value to be sampled
 ss.shape1 = 0.3 # first shape parameter of the beta sampling distribution
@@ -94,12 +120,9 @@ mcmc.rel_rate_psi = 200.0 # max_psi
 mcmc.rel_rate_psi0 = 2.0 # min_psi
 mcmc.state_freq_psi = 200.0 # max_psi
 mcmc.state_freq_psi0 = 2.0 # min_psi
-mcmc.ls_move_lambda = 0.5 # min_lambda
-mcmc.ls_move_lambda0 = 1.0 # max_lambda
+mcmc.edge_move_lambda     = 0.5     # min_lambda
+mcmc.edge_move_lambda0    = 1.0     # max_lambda
 
-# it is pretty easy to infer the tree, so we'll turn the larget-simon move weight down
-# from 100 (the default to 10)
-mcmc.ls_move_weight = 10
 
 # This will be the prefix for the name of output files generated
 if using_stepping_stone:
