@@ -90,7 +90,7 @@ This requires that \phycas is installed in a standard system-wide location or th
 
 
 The Linux build that we created for the workshop contains a shell script that you can \cmd{source} to set up the shell in the correct way\footnote{\cmd{source} is bash command that means ``execute a script and allow it to configure the environment.'' Normally executing a script cannot change the environment of the shell that executes it}.
-After you unpack the archive and set up your environment with the following commands:\par
+To unpack the archive and set up your environment use the following commands:\par
 {\tt
 tar xfvj linux-phycas-1.1.5r1160.tar.bz2\\
 cd phycas-1.1.5r1160\\
@@ -115,10 +115,10 @@ of us for help configuring your environment correctly.
 
 \subsubsection{The Phycas.app bundle for Mac}
 Macs in the lab will be running Phycas.app, a double-clickable program built around the open-source iTerm terminal application (\href{http://iterm.sourceforge.net/}{iTerm homepage}).
-All the Phycas.app application is doing for you is: launching a terminal window, feeding the terminal the \cmd{python} command, and finally telling python to \cmd{from phycas import *}.
+All the Phycas.app application is doing for you is: launching a terminal window, feeding the terminal the \cmd{python} command, and finally telling python ``\cmd{from phycas import *}''.
 
 When you get a new window in the Phycas.app application you are automatically in \phycas, so you will not need to type in the \cmd{from phycas import *} command when you are interacting with \phycas.
-Note that you {\bf still must} use the import command in all of your \phycas scripts that you write.
+Note that you {\bf still must} use this import command in all of the \phycas scripts that you write.
 
 
 \subsubsection{IPython}
@@ -131,7 +131,8 @@ The main benefits of IPython are:
 	\item Native support for a few UNIX commands (most notably \cmd{ls} and \cmd{cd})
 	\item Support for any UNIX commands if you start the line with ! (an exclamation point). For example \cmd{!cat myscript.py | grep mcmc} would behave just like the UNIX commands \cmd{cat myscript.py | grep mcmc}
 \end{itemize}
-To indicate to \phycas that you would like to use IPython, open the \localfile{$\sim$/.phycas/active\_phycas\_env.sh} file
+The lab machines are configured to use IPython.  If you install \phycas and IPython on your own machine, then you will need to indicate to \phycas that you would like to use IPython.
+To do this,  open the \localfile{$\sim$/.phycas/active\_phycas\_env.sh} file
 in a text editor, and change the last line to read:
 \begin{verbatim}
 export USES_I_PYTHON=1
@@ -282,7 +283,7 @@ as if it were a Python function:
 mcmc()
 \end{verbatim}
 
-As in \mb, we can summarize the tree trees produced by the \cmd{mcmc} analysis
+As in \mb, we can summarize the trees produced by the \cmd{mcmc} analysis
 using a \cmd{sumt} command.
 Unlike \mb, the \cmd{sumt} command is not automatically configured to read the files
 that were just created.
