@@ -16,6 +16,7 @@
 \bibliographystyle{sysbio}
 
 \usepackage{xspace}
+\usepackage{setspace}
 \newcommand{\barLone}{\bar{L}_1}
 \newcommand{\barLzero}{\bar{L}_0}
 \newcommand{\execmd}[1]{\texttt{#1}\\}
@@ -41,8 +42,9 @@
 \usepackage{hyperref}
 \hypersetup{backref,  pdfpagemode=FullScreen,  linkcolor=blue, citecolor=red, colorlinks=true}
 \begin{document}
+\singlespacing
 \tableofcontents
-
+\onehalfspacing
 
 \newpage
 %###########################################################################################
@@ -53,7 +55,7 @@ The goal of this tutorial is to help you become familiar with running \phycas an
 Don't rush things. 
 If you don't finish the lab, you can always download 
 \phycas from \href{http://www.phycas.org}{www.phycas.org} when you get home and finish it there.
-The manual available at the web site and the web site itself have instructions for 
+The web site and the manual (available at the web site) have instructions for 
 installing \phycas if you are using your own machine.
 
 Stylistic conventions used in this document:
@@ -61,7 +63,6 @@ Stylistic conventions used in this document:
 \begin{tabular}{l}
 	Commands understood by the \phycas are in \cmd{this fixed width font} \\
 	Questions for you to answer are in {\em italics}. \\
-	Important things to note are in {\bf bold face}. \\
 	Names of files \localfile{are in  this font}.\\
 	Web site URLs look \href{http://www.google.com}{like this} and are clickable links.
 \end{tabular}
@@ -79,19 +80,7 @@ the front-end for \phycas.
 So when you write a command file in \phycas you are actually writing a Python program.
 This has advantages because Python interpreter is a powerful, robust, and versatile program for interpreting text commands.
 However, it also means that \phycas cannot always be forgiving when it comes to the structure of commands and syntax in general.
-We have attempted to add as much flexibility as possible, but be aware that {\bf most commands are case-sensitive and you will have to pay attention to the quoting used in commands in this tutorial}.
-
-
-
-\subsubsection{The Phycas.app bundle}
-In the lab we will be running \phycas as a double-clickable program built around the open-source iTerm terminal application (\href{http://iterm.sourceforge.net/}{iTerm homepage}).
-You will {\bf not} have to issue this command when using the \phycas application bundle on Mac, but you {\bf will} have to use the command in all of your \phycas scripts.
-
-If you are not using the Phycas.app bundle, you will need to invoke Python and enter the \cmd{from phycas import *} command.
-In order for this to work, you have to have \phycas installed in a standard location or your shell's environmental variables must be set correctly.
-The Windows-installer for \phycas will set up your environment correctly.
-If Python shows an error when you try the \cmd{from phycas import *}  command given above, then consult the \phycas manual or ask one
-of us for help configuring your environment correctly.
+We have attempted to add as much error checking of input as possible, but be aware that {\bf most commands are case-sensitive and you will have to pay attention to the quoting used in commands in this tutorial}.
 
 
 \subsubsection{Executing Phycas from a terminal (Windows and Linux instructions)}
@@ -99,13 +88,10 @@ Once Phycas is fully installed, you can run \phycas from any terminal by invokin
 \begin{verbatim}
 from phycas import *
 \end{verbatim}
-
 This requires that phycas is installed in a standard system-wide location or that you have ``told'' the shell where to find it.
-
 Our Windows installer puts the files in the standard system-wide location.
 The Linux build that we created for the workshop contains a shell script that you can source to set up the shell in the correct way.
-After you unpack the archive and set up your environment with the following commands:
-
+After you unpack the archive and set up your environment with the following commands:\\
 {\tt
 tar xfvj linux-phycas-1.1.5r1156.tar.bz2\\
 cd phycas-1.1.5r1156\\
@@ -114,12 +100,23 @@ source run\_phycas\_env.sh\\
 }\\
 After setting the PHYCAS\_ROOT and sourcing the script any terminal should be ready to run Phycas.
 
-To run interactively on Linux and use IPython interface (discussed next) you can execute the following command:
+To run interactively on Linux and use IPython interface (which will be discussed below) you can execute the following command:
 \begin{verbatim}
-cd phycas-1.1.5r1156
+cd phycas-1.1.5r1160
 sh phycas.sh
 \end{verbatim}
 
+
+If Python shows an error when you try the \cmd{from phycas import *}  command given above, then consult the \phycas manual or ask one
+of us for help configuring your environment correctly.
+
+
+
+\subsubsection{The Phycas.app bundle for Mac}
+Macs in the lab will be running Phycas.app, a double-clickable program built around the open-source iTerm terminal application (\href{http://iterm.sourceforge.net/}{iTerm homepage}).
+When you are using the Phycas.app bundle, you will not need to invoke Python and enter the \cmd{from phycas import *} command.
+Essentially the application brings up a terminal window, and enters the commands \cmd{python} and \cmd{from phycas import *} for you.
+Note that you {\bf will} have to use the import command in all of your \phycas scripts.
 
 
 \subsubsection{IPython}
@@ -156,7 +153,7 @@ with the number in bracket indicating the number of commands executed, while the
 
 
 \subsection{Simplest usage}
-Locate the directory of example files labeled \localfile{PhycasWHExamples} and move it to a convenient location for you.
+Locate the directory of example files labeled \localfile{phycasWoodsHole2009Demo} and move it to a convenient location for you.
 
 
 You can launch the \phycas application by double-clicking the \phycas icon  (later when you have scripts written, you can launch the \phycas by dragging a Python script onto the \phycas application icon).
@@ -384,8 +381,8 @@ This time we will pay more attention to the model and MCMC settings than we did 
 Start \phycas from a clean slate:
 \begin{enumerate}
 	\item open a new window in the \phycas application
-	\item change the working directory to a convenient location for working with the \localfile{ShoupLewis.nex}. Note that you do {\bf not} have to change your working directory to match the location to the input file.
-	However, if you do not change your working directory then you will have to make sure that you use a relative or absolute path to all of the files that you refer to instead of just using filenames.
+	\item change the working directory to a convenient location for working with the \localfile{ShoupLewis.nex} file.\footnote{Note that, when using \phycas,  you do {\bf not} have to change your working directory to match the location to the input file.
+	However, if you do not change your working directory then you will have to make sure that you use a relative or absolute path to all of the files that you refer to instead of just using filenames.}
 \end{enumerate}
 
 Read the file into memory:
@@ -393,7 +390,7 @@ Read the file into memory:
 file_contents = readFile("ShoupLewis.nex")
 mcmc.data_source = file_contents.characters
 \end{verbatim}
-if you print the \cmd{file\_contents.characters} attribute you should see that the matrix has 17 taxa and 3341 characters.
+if you print the \cmd{file\_contents.characters} attribute you should see that the matrix has 17 taxa and 3,341 characters.
 
 \subsection{Setting up the model of evolution}
 Now we will configure the model of character evolution. 
@@ -594,11 +591,14 @@ The easiest way to do this on Mac is to simply drag the \localfile{Polytomy.py} 
 
 \subsubsection{Executing a script if you are not using the double-clickable application}
 If you are {\bf not} running the double-clickable \phycas, then you can launch a new
-Terminal (or Command application on Windows) session and from the shell execute the following commands:
+Terminal (or CMD.EXE application on Windows) session.
+If you are running a with \phycas not installed in a standard location you'll have to execute the \cmd{export PHYCAS\_ROOT} and \cmd{source run\_phycas\_env.sh} commands discussed at the beginning of the lab.
+From a properly initialized shell, you can then execute the following commands:
 \begin{verbatim}
 cd <type the directory with the Polytomy.py script here>
 python -i Polytomy.py
 \end{verbatim}
+
 
 \subsubsection{Executing a script from within the same \phycas session}
 If you already have a \phycas session underway and do not want to start a
@@ -675,19 +675,20 @@ In this section of the lab, we'll calculate the marginal likelihood under HKY an
 The steppingstone sampling command in Phycas is \cmd{ss}, is actually just a wrapper around the MCMC command. 
 Most of the options that we will use are just options to the \cmd{mcmc} command, but to launch the sampler we will use the \cmd{ss()} invocation rather than \cmd{mcmc()}.
 
-Rather than type all of the commands in interactively, this exercise is best done by executing a script.
+Rather than type all of the commands in interactively, this exercise is best done by executing the script that is in the demo folder.
 
 Open the \localfile{scripts/steppingStone.py} file in a text editor.
-The file is heavily commented, so you should be able to read through the file and understand all of the settings.
+The file is heavily commented, so you should be able to read through the file and understand most of the settings. 
+Just ask me if you have questions about any of the commands.
 
 The file also shows off some of the advantages of a Python front-end.  
 You will see two variables at the top of the file \cmdopt{use\_gtr} and \cmdopt{using\_steppingstone}.
-These can be set to \cmdopt{False} or \cmdopt{False} to toggle between the GTR or HKY models and between the steppingstone sampler versus normal MCMC.
+These can be set to \cmdopt{True} or \cmdopt{False} to toggle between the GTR or HKY models and between the steppingstone sampler versus normal MCMC.
 At several points in the file you will notice us using Python's if/else branching syntax so we can do slightly different things
 in response to the variables.
 This allows you to run all four combinations of analyses by just altering the first few lines of the file.
 
-Be aware that the number of cycles chosen for this lab is too short to provide reliable estimates of the marginal likelihood -- the ncycles was chosen so that the analysis would complete in a reasonable time.
+Once again, you should be aware that the number of cycles chosen for this lab is much too small to provide reliable estimates of the marginal likelihood -- the \cmdopt{ncycles} was chosen so that the analysis would complete in a reasonable time.
 
 By changing the \cmdopt{use\_gtr} setting, perform a steppingstone sampling runs under HKY and GTR. 
 After you have saved the file you can execute it from within the Phycas.app bundle with the command:
@@ -703,12 +704,18 @@ And on Windows the invocation is:
 python scripts\steppingStone.py
 \end{verbatim} 
 
+Launch \href{http://beast.bio.ed.ac.uk/}{Tracer} and load the \localfile{.p} files from these Phycas runs.
+Recall that  $\beta$ is the power that the likelihood is raised to.
+Lower values are more like the priors.
+Notice how the $\ln L$ decreases in response to changing the $\beta$ value.
+The values for all of the parameter  are sensitive to changes in $\beta$, and at the end of the run they are drawn from the prior.
+
 
 
 \QandA{Did the Bayes Factor calculated using the marginal likelihoods from steppingstone sampling prefer the HKY or the GTR model? What about when you use the marginal likelihoods from the thermodynamic integration (path sampling)?}{The HKY model should be preferred, but 
 you may get different results (because our runs are so short).}
 
-If you are curious about how poorly the harmonic mean estimator does for this problem, try setting \cmdopt{using\_steppingstone} to \cmdopt{False} in the file and rerunning the analysis. \QandA{How far apart were the three different estimators of the marginal likelihood?}{Usually the steppingstone sampler and path sampler are similar while the harmonic mean estimate is much too high.}
+If you are curious about how poorly the harmonic mean estimator does for this problem, try setting \cmdopt{using\_steppingstone} to \cmdopt{False} in the file and rerunning the analysis. \QandA{How far apart were the three different estimators of the marginal likelihood?}{Usually the steppingstone sampler and path sampler are similar to each other while the harmonic mean estimate is much too high.}
 
 \section{Conclusions and Thanks}
 That is it for this lab! Thanks for trying out \phycas and providing feedback!

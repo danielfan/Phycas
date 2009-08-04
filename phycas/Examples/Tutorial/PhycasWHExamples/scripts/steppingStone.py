@@ -9,7 +9,7 @@ from phycas import *
 # The following variables are python variables that are not used in the rest
 #   of Phycas.  Rather they are used within this script to make it easier to 
 #   tweak the analysis and run it in a different configuration.
-use_gtr = True              # Set this to True for GTR and False for HKY 
+use_gtr = False              # Set this to True for GTR and False for HKY 
 
 using_steppingstone = True # Set this to True for the steppingstone sample
                             #   or False to run a typical MCMC analysis and 
@@ -55,10 +55,10 @@ mcmc.rng = rng
 
 
 # The following are general MCMC settings (not steppingstone sampling related).
-mcmc.ncycles = 10000    # run the sample 10,000 generations at each value of beta 
-mcmc.sample_every = 20  # sample the tree every 10 cycles
+mcmc.ncycles = 8000     # run the sample 8,000 generations at each value of beta 
+mcmc.sample_every = 20  # sample the tree every 20 cycles
 mcmc.report_every = 100 # report the status every 100 cycles
-mcmc.adapt_first = 20   # tune the slice sampler after 10 cycles
+mcmc.adapt_first = 2    # tune the slice sampler after 2 cycles
 mcmc.verbose = True
 mcmc.nchains = 1        # MCMCMC multiple chain analyses are not yet working
 
@@ -93,7 +93,7 @@ mcmc.state_freq_weight      = 1
 # settings specific to path sampling and steppingstone sampling
 # We'll be running MCMC with the likelihood raised to a power of beta for 
 #   several values of beta.
-ss.nbetavals = 20 # number of beta values
+ss.nbetavals = 15 # number of beta values
 ss.minbeta = 0.0 # smallest beta value to be sampled. 0 means sampling from the prior.
 ss.maxbeta = 1.0 # largest beta value to be sampled. 1 means sampling from the posterior.
 
