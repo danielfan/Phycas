@@ -344,7 +344,7 @@ The commands for replaying this example are shown in the section \hyperref[basic
 \section{A note on scripts used in this tutorial}
 The tutorial directory has the Python
 scripts \localfile{IntExtPrior.py}, \localfile{NoPolytomy.py},
-\localfile{Polytomy.py}, \localfile{basic.py}, \localfile{scoreRandomTrees.py}, and  \localfile{steppingStone.py}.
+\localfile{Polytomy.py}, \localfile{basic.py}, and  \localfile{steppingStone.py}
 that have all of the commands needed to run the tutorial.
 To use those scripts, they should be in the same directory
 as the data files (or you could edit the
@@ -361,7 +361,6 @@ files as you read the tutorial.
 Making mistakes, and seeing how \phycas reports
 errors will probably help you learn much more 
 than simply invoking the scripts.
-
 If you do create your own scripts, you will have to remember
 to start them with the line:
 \begin{verbatim}
@@ -447,13 +446,13 @@ model.base_freq_param_prior = Gamma(1.0, 1.0)
 \subsubsection{The priors on the tree}
 The tree and branch lengths are also important parts of our model and they need to have
 priors assigned to them.
-Currently \phycas only support a uniform priors over all tree topologies (within a
+Currently \phycas only support a uniform prior over all tree topologies (within a
 class of trees with the same number of internal nodes), so we do not have to set
 a prior on the shapes of different resolved trees.
 However we do need to say something about the branch lengths.
 
-We could use an Exponential (or Gamma distribution) for the prior on all of the branch lengths, but then we would have to choose a mean.
-Choosing a reasonable prior is important for any parameter in a Bayesian analysis, but 
+We could use an Exponential (or Gamma distribution) for the prior on all of the branch lengths, but we will also have to choose a mean value for the prior distribution.
+Choosing a reasonable prior is important for every  parameter in a Bayesian analysis, but 
 the branch length prior merits extra care because:
 \begin{enumerate}
 	\item  estimating branch lengths accurately is often crucial to getting the topology correct,
@@ -509,7 +508,7 @@ mcmc()
 \end{verbatim}
 
 After it has completed we can summarize the results.
-We can control the behavior of the MCMC with:
+We can control the behavior of the summarization with:
 \begin{verbatim}
 sumt.outgroup_taxon = "Oedogonium cardiacum"
 sumt.trees = "no_p_trees.t"
@@ -558,8 +557,8 @@ You must make these changes to the script before the line that says \cmd{mcmc()}
 The first line tells the MCMC sampler to consider polytomies and the next  two lines
 set up the prior distribution over unresolved trees.
 
-\phycas supports priors on the trees based such that different ``resolution classes'' of trees have a particular prior probability, but the easiest prior to understand (and one that seems to work well in practice) is the ``polytomy'' prior discussed by \citet{LewisHolderHolsinger2005}.
-In this prior, you specify the ratio of the prior probability of a tree over the probability of another tree that is identical to it except  that it has one fewer internal branch.
+\phycas supports priors on the trees based such that different ``resolution classes'' of trees have a particular prior probability, but the easiest prior to understand (and one that seems to work well in practice) is the ``polytomy prior'' discussed by \citet{LewisHolderHolsinger2005}.
+With this prior, you specify the ratio of the prior probability of a tree over the probability of another tree that is identical to it except  that it has one fewer internal branch.
 This is the ratio associated with collapsing a branch in the tree (the ratio that favors the 
 acceptance of a delete-edge form of the ``bush move'' in \phycas).
 Using a value for this prior ratio of $e$ (the base of the natural logarithm) was 
@@ -572,7 +571,7 @@ order to be favored over the tree with a polytomy.
 The \cmd{mcmc.topo\_prior\_C} option mentioned above is the prior ratio.
 
 
-Make sure to rename our output files, so that we do not overwrite the files that we just produced
+Make sure to rename your output files, so that we do not overwrite the files that we just produced
 in the run that did not consider polytomies:
 \begin{verbatim}
 mcmc.out.trees.prefix = "polytomy_trees"
@@ -591,7 +590,8 @@ Now we have changed the command script to run the file. Save it as \localfile{Po
 How do we tell \phycas execute a script?
 There are actually three ways to do this:
 \subsubsection{Drag-and-drop}
-The easiest way to do this on Mac is to simply drag the \localfile{Polytomy.py} file onto the \phycas icon (in the dock if \phycas is running or on the to the application icon if it is not running).
+The easiest way to do this on Mac with the Phycas.app bundle is to simply drag the \localfile{Polytomy.py} file onto the \phycas icon (in the dock if \phycas is running or on the to the application icon if it is not running).
+This will set the working directory for the \phycas run to be the directory that contains the script that was dragged onto the icon (so you may have to use absolute paths to data files in the script, if the data files are not in the same directory). 
 
 \subsubsection{Executing a script if you are not using the double-clickable application}
 If you are {\bf not} running the double-clickable \phycas, then you can launch a new
@@ -628,10 +628,9 @@ and compare the majority-rule consensus trees and the maximum a posterior trees 
 \section{Using different priors for internal and terminal edge lengths}
 \citet{YangR2005} \citep[and][]{Yang2007} suggested using prior probabilities on the internal edges of the tree that strongly favor short lengths as means of reducing the strength
 of support for some groupings in a Bayesian phylogenetic analysis.
-In fact, they suggest that the prior for internal branches which prefers shorter branch lengths more
-strongly when you have a large number of characters in your data set.
+In fact, they suggest that the prior be used to prefer shorter internal branches when you have a large number of characters in your data set.
 These suggestions are alternatives to the polytomy prior approach, and you can try it out from within 
-\phycas\footnote{You can also download a version of \mb that has been modified to perform the analysis from Ziheng's software site: \url{http://abacus.gene.ucl.ac.uk/software.html}}
+\phycas\footnote{You can also download a version of \mb that has been modified to perform the analysis from Ziheng's software site: \url{http://abacus.gene.ucl.ac.uk/software.html}}.
 It will be easiest to copy the \localfile{NoPolytomy.py} script that you created earlier 
 and modify it.
 
@@ -669,8 +668,7 @@ Note that \citet{YangR2005} do not give specific recommendations about the exact
 They discuss the way the prior mean should change as a function of the number of characters sampled, but
 do not advocate specific prior means.
 Thus, it is possible that the prior mean of 0.0001 is simply too low (and that higher means would result in significantly improved performance).
-For some datasets, the priors that Yang and Rannala suggested do result in a majority-rule consensus tree that is less resolved than the ``normal'' Bayesian analysis (polytomies excluded and vague priors on 
-branch lengths).
+For some datasets, the priors suggested by Yang and Rannala will result in a majority-rule consensus tree that is less resolved than the Bayesian analysis with polytomies forbidden and  a vague prior over branch lengths.
 
 \section{Steppingstone sampling}
 I simulated 2,000 sites using Seq-Gen and stored it as \localfile{simhky.nex} (the model tree for the simulation is stored as \localfile{simModel.newick}).
