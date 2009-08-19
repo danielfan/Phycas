@@ -10,3 +10,10 @@ o (pol) slice_max_units needs to be 0 by default - too complicated to explain in
 o (pol) finish implementing codon model
 o (pol) need to be able to restart an analysis from where it left off
 o (pol) transfer exception handling from C++ code to Python wrappers where possible, replacing exceptions	with asserts on the C++ site
+
+
+Comments/requests generated at the Woods Hole 2009 demo session:
+o (mth) Users would like a save command that generates a phycas script -- this could be tricky but pickling the list of commands might work (?) 
+o (mth) Some confusion over relrate_prior vs relrate_param_prior. Can we come up with a better system that having the update_relrates_separately  have side effects?
+o (mth) pdf generation on ubuntu was failing for lack of a font
+o (mth) need to label axes of sumt-generated pdfs
