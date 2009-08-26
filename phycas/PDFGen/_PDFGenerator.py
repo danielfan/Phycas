@@ -368,7 +368,7 @@ class PDFGenerator(object):
             assert font_face in self.xheight, 'character widths for font %s loaded but not xheight' % font_face
             return  # already been loaded
         mydir = os.path.dirname(os.path.abspath(__file__))
-        filename = '%s/AFM/%s.afm' % (mydir,font_face)
+        filename = os.path.join(mydir, 'AFM', '%s.afm' % font_face)
         assert os.path.exists(filename), 'Font metrics file %s not found' % filename
         afmdata = open(filename,'r').read()
         # Find the xheight and store
