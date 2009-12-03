@@ -61,7 +61,12 @@ class Model	{
 		void							calcPMatrices(double * * * pMat, const double * edgeLength, unsigned numRates) const;
 		virtual std::string				lookupStateRepr(int state) const;
         virtual void					createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters) const;
+#if POLPY_NEWWAY
+        virtual void					buildStateList(state_list_t &, state_list_pos_t &) const;
+#else
         virtual void					buildStateList(VecStateList &, VecStateListPos &) const;
+#endif
+
 		virtual std::string				paramHeader() const = 0;
 		virtual std::string				paramReport(unsigned ndecimals) const = 0;
 

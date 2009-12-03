@@ -852,8 +852,13 @@ void Model::setPinvarPrior(ProbDistShPtr d)
 |	nucleotide data (i.e. no ambiguities).
 */
 void Model::buildStateList(
+#if POLPY_NEWWAY
+  state_list_t & state_list,				/**< is the vector of state codes (see TipData documentation for explanation) */
+  state_list_pos_t & state_list_pos)	/**< is the vector of positions of states within `state_list' */
+#else
   VecStateList & state_list,		/**< is the vector of state codes (see TipData documentation for explanation) */
   VecStateListPos & state_list_pos)	/**< is the vector of positions of states within `state_list' */
+#endif
   const
 	{
 	state_list.clear();

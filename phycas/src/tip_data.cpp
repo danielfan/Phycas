@@ -36,40 +36,106 @@ TipData::TipData(
   unsigned nStates,		/**< is the number of states in the model */
   CondLikelihoodStorageShPtr cla_storage)
 	:
-	//parCLAValid(false)
-	//parWorkingCLA(NULL),
-	//parCachedCLA(NULL),
 	state(-1), 
 	pMatrixTranspose(NULL),
 	cla_pool(cla_storage),
 	sMat(0L)
 	{
+#if POLPY_NEWWAY
+    // not yet working for partitioned models
+#else
 	const unsigned nToStates = nStates;	// simulated data never has ambiguities, so num. rows in T matrix is just nStates
 	ownedPMatrices.Initialize(nRates, nToStates, nStates);
 	pMatrixTranspose = ownedPMatrices.ptr;
 	sMat =  NewTwoDArray<unsigned>(nStates, nStates); //@ we should make this only true in unimap mode!!!
 	for (unsigned i = 0; i < nStates*nStates ; ++i)
 		sMat[0][i] = 0;
+#endif
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Constructor for TipData objects that will be used in likelihood calculations and thus needs to store the observed
+|	data for the tip as well as information about local state codes.
+*/
+TipData::TipData(
+  bool                              			using_unimap,       /**< is true if tips are to be prepared for uniformized mapping likelihood; it is false if tips are to be prepared for Felsenstein-style integrated likelihoods */
+  unsigned				            			nPatterns,			/**< is the number of site patterns */
+  PartitionModelShPtr							partition,			/**< is the PartitionModel object containing information about the number of states and rates for each subset */
+  const state_list_pos_vect_t &					positions,			/**< is the vector of vectors of positions of each state into the `state_codes' vector */
+  const state_list_vect_t &						states,				/**< is the vector of vectors of `state_codes' */ 
+  CondLikelihoodStorageShPtr 					cla_storage)		/**< is the pool of available conditional likelihood arrays */
+	:
+    unimap(using_unimap),
+	state(-1), 
+	cla_pool(cla_storage)
+	{
+	const unsigned num_subsets = partition->getNumSubsets();
+	state_list_pos	= state_list_pos_vect_t(num_subsets);
+	state_codes 	= state_list_vect_t(num_subsets);
+	
+	for (unsigned i = 0; i < num_subsets; ++i)
+		{
+		// copy state list positions for subset i
+		state_list_pos[i].resize(positions[i].size());
+		std::copy(positions[i].begin(), positions[i].end(), state_list_pos[i].begin());
+		
+		// copy state codes for subset i
+		state_codes[i].resize(states[i].size());
+		std::copy(states[i].begin(), states[i].end(), state_codes[i].begin());
+		
+		// allocate memory for the ScopedThreeDMatrix of transition probabilities for subset i
+		const unsigned num_obs_states	= partition->subset_num_states[i] + 1 + positions[i].size();
+		const unsigned num_rates		= partition->subset_num_rates[i];
+		const unsigned num_states		= partition->subset_num_states[i];
+		pMatrixTranspose[i].Initialize(num_rates, num_obs_states, num_states);
+		}
+
+#if POLPY_OLDWAY	// unimap not yet working for partitioned models
+    if (using_unimap)
+        {
+        univents.resize(nPatterns);
+        univents.setEndStates(state_codes.get());
+        std::vector<state_code_t> & scVec = univents.getEndStatesVecRef();
+        for (unsigned i = 0; i < nPatterns; ++i)
+        	{
+        	const state_code_t sc = state_codes[i];
+        	////////////////////////////////////////////////////////////////////
+        	// @@@@
+        	// This is really dangerous. 
+        	// In this loop, we alter the ambiguous data to have state 0.
+        	// This should work because we are calling sampleTipsAsDisconnected before MCMC (in MCMCManager.py)
+        	// It is hard to guarantee this (we could add a boolean flag to the univents class
+        	//		so that we could at least flag this univent as temporarily bogus).
+        	// It would be hard to do the correct sampling here because we would need the 
+        	//		neighboring nodes and a Lot instance.
+        	////////////////////////////////////////////////////////////////////
+        	if (sc < 0 || (int)sc >= (int)nStates)
+        		scVec[i] = 0; 
+        	// throw XLikelihood("Sorry, we currently do not support data sets with ambiguity or gaps when you are using uniformization-based methods");
+        	}
+		sMat =  NewTwoDArray<unsigned>(nStates, nStates); //@ we should make this only true in unimap mode!!!
+		for (unsigned i = 0; i < nStates*nStates ; ++i)
+			sMat[0][i] = 0;
+        }
+#endif
+	}
+#else
 /*----------------------------------------------------------------------------------------------------------------------
 |	Constructor for TipData objects that will be used in likelihood calcuations and thus need to store the observed
 |	data for the tip as well as information about local state codes.
 */
 TipData::TipData(
-  bool                              using_unimap,       /**< is true if tips are to be prepared for uniformized mapping likelihood; it is false if tips are to be prepared for Felsenstein-style integrated likelihoods */
-  unsigned				            nPatterns,			/**< is the number of site patterns */
-  const std::vector<unsigned int> &	stateListPosVec,	/**< is the vector of positions of each state into the `state_codes' vector */
+  bool                              			using_unimap,       /**< is true if tips are to be prepared for uniformized mapping likelihood; it is false if tips are to be prepared for Felsenstein-style integrated likelihoods */
+  unsigned				            			nPatterns,			/**< is the number of site patterns */
+  const std::vector<unsigned int> &				stateListPosVec,	/**< is the vector of positions of each state into the `state_codes' vector */
   boost::shared_array<const int_state_code_t>	stateCodesShPtr,	/**< is the `state_codes' vector */ 
-  unsigned							nRates,				/**< is the number of relative rate categories */
-  unsigned							nStates,			/**< is the number of states in the model */
-  double * * *						pMatTranspose,		/**< is an alias to the rates by states by states pMatrix array, may be NULL */
-  bool								managePMatrices, 	/**< if true, a 3D matrix will be allocated (if pMat is also NULL, the pMatrices will alias ownedPMatrices.ptr) */ 
-  CondLikelihoodStorageShPtr 		cla_storage)
+  unsigned										nRates,				/**< is the number of relative rate categories */
+  unsigned										nStates,			/**< is the number of states in the model */
+  double * * *									pMatTranspose,		/**< is an alias to the rates by states by states pMatrix array, may be NULL */
+  bool											managePMatrices, 	/**< if true, a 3D matrix will be allocated (if pMat is also NULL, the pMatrices will alias ownedPMatrices.ptr) */ 
+  CondLikelihoodStorageShPtr 					cla_storage)
 	:
-	//parCLAValid(false),
-	//parWorkingCLA(NULL),
-	//parCachedCLA(NULL),
     unimap(using_unimap),
 	state(-1), 
 	state_list_pos(stateListPosVec), 
@@ -112,7 +178,33 @@ TipData::TipData(
 	for (unsigned i = 0; i < nStates*nStates ; ++i)
 		sMat[0][i] = 0;
 	}
+#endif
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Destructor ensures that all CLA structures are returned to `cla_pool'. The `ownedPMatrices' and `univents' data 
+|   members takes care of deleting themselves when they go out of scope.
+*/
+TipData::~TipData()
+	{
+#if POLPY_OLDWAY	// unimap not yet working for partitioned models
+	DeleteTwoDArray<unsigned>(sMat);
+#endif
+	// Invalidate the parental CLAs if they exist
+	if (parWorkingCLA)
+		{
+		cla_pool->putCondLikelihood(parWorkingCLA);
+		parWorkingCLA.reset();
+		}
+
+	// Remove cached parental CLAs if they exist
+	if (parCachedCLA)
+		{
+		cla_pool->putCondLikelihood(parCachedCLA);
+		parCachedCLA.reset();
+		}
+	}
+#else
 /*----------------------------------------------------------------------------------------------------------------------
 |	Destructor ensures that all CLA structures are returned to `cla_pool'. The `ownedPMatrices' and `univents' data 
 |   members takes care of deleting themselves when they go out of scope.
@@ -134,6 +226,7 @@ TipData::~TipData()
 		parCachedCLA.reset();
 		}
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns `parWorkingCLA' data member. If `parWorkingCLA' does not currently point to anything, a CondLikelihood 

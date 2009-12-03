@@ -32,6 +32,11 @@
 #include "phycas/src/edge_iterators.hpp"
 #include "phycas/src/univents.hpp"
 
+#if POLPY_NEWWAY
+#include "phycas/src/partition_model.hpp"
+#endif
+
+
 // formerly in tree_likelihood.inl
 #include "phycas/src/edge_endpoints.hpp"
 
@@ -190,6 +195,35 @@ const Univents & getUniventsConstRef(const TreeNode &nd)
 /*----------------------------------------------------------------------------------------------------------------------
 |	TreeLikelihood constructor.
 */
+#if POLPY_NEWWAY
+TreeLikelihood::TreeLikelihood(
+  PartitionModelShPtr mod)		/**< is the partition model */
+  :
+  likelihood_root(0),
+  store_site_likes(false),
+  no_data(false),
+  nTaxa(0),
+  partition_model(mod), 
+  debugging_now(false),
+  using_unimap(false),
+  univentProbMgr(mod),
+  treeSMat(NULL),
+  nevals(0)
+    {
+    unsigned num_subsets = partition_model->getNumSubsets();
+    rate_means.resize(num_subsets);
+    rate_probs.resize(num_subsets);
+    for (unsigned i = 0; i < num_subsets; ++i)
+    	{
+    	rate_means[i].assign(partition_model->subset_num_rates[i], 1.0);
+    	rate_probs[i].assign(partition_model->subset_num_rates[i], 1.0);
+    	partition_model->subset_model[i]->recalcRatesAndProbs(rate_means[i], rate_probs[i]);
+    	}
+	cla_pool = CondLikelihoodStorageShPtr(new CondLikelihoodStorage());
+	underflow_manager.setTriggerSensitivity(50);
+	underflow_manager.setCorrectToValue(10000.0);
+	}
+#else
 TreeLikelihood::TreeLikelihood(
   ModelShPtr mod)		/**< is the substitution model */
   :
@@ -214,6 +248,7 @@ TreeLikelihood::TreeLikelihood(
 	underflow_manager.setTriggerSensitivity(50);
 	underflow_manager.setCorrectToValue(10000.0);
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	TreeLikelihood destructor.
@@ -225,6 +260,15 @@ TreeLikelihood::~TreeLikelihood()
 		DeleteTwoDArray<unsigned>(treeSMat);
 	} 
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|   Resets the `partition_model' shared pointer.
+*/
+void TreeLikelihood::releasePartitionModel()
+    {
+	partition_model.reset();
+    }
+#else
 /*----------------------------------------------------------------------------------------------------------------------
 |   Resets the `model' shared pointer.
 */
@@ -232,6 +276,7 @@ void TreeLikelihood::releaseModel()
     {
 	model.reset();
     }
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns a reference to the vector of site likelihoods (data member `site_likelihood') computed in 
@@ -329,6 +374,9 @@ void TreeLikelihood::useUnimap(
 */
 std::string TreeLikelihood::debugShowSMatrix()
 	{
+#if POLPY_NEWWAY
+	std::string s = "TreeLikelihood::debugShowSMatrix has not yet been rewritten to accommodate partitioning";
+#else	// old way
 	unsigned i, j, v, total, trace;
 	total = 0;
 	trace = 0;
@@ -365,6 +413,7 @@ std::string TreeLikelihood::debugShowSMatrix()
 	s += boost::str(boost::format(" %8d\n") % total);
 	s += boost::str(boost::format("trace	 = %d\n") % trace);
 	s += boost::str(boost::format("nunivents = %d\n") % nunivents);
+#endif
 	return s;
 	}
 
@@ -787,10 +836,14 @@ void TreeLikelihood::slideNode(
 	}	// TreeLikelihood::slideNode
 
 
-unsigned ** getNodeSMat(TreeNode * nd)
-{
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the smat data member of the specified node's InternalData or TipData object. 
+*/
+unsigned ** getNodeSMat(
+  TreeNode * nd)	/**< is the node of interest */
+	{
 	return (nd->IsInternal() ? nd->GetInternalData()->getNodeSMat() : nd->GetTipData()->getNodeSMat());
-}
+	}
 
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -1035,6 +1088,8 @@ void TreeLikelihood::setHaveData()
 	no_data = false;
 	}
 
+#if POLPY_NEWWAY
+#else // old way
 /*----------------------------------------------------------------------------------------------------------------------
 |	Modifier function that sets the `num_patterns' data member.
 */
@@ -1043,7 +1098,20 @@ void TreeLikelihood::setNPatterns(
 	{
 	num_patterns = nPatterns;
 	}
+#endif
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Modifier function that sets the `partition_model' data member, replacing the partition model defined in the 
+|   constructor.
+*/
+void TreeLikelihood::replacePartitionModel(
+  PartitionModelShPtr m)
+	{
+	partition_model = m;
+	recalcRelativeRates();
+	}
+#else
 /*----------------------------------------------------------------------------------------------------------------------
 |	Modifier function that sets the `model' data member, replacing the model defined in the constructor.
 */
@@ -1053,7 +1121,30 @@ void TreeLikelihood::replaceModel(
 	model = m;
 	recalcRelativeRates();
 	}
+#endif
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the values of `subset_num_states' and `subset_num_rates' data members according to each `subset_model', then 
+|   calls the recalcRatesAndProbs function of the model to force recalculation of its `rate_means' and `rate_probs' 
+|   vectors. Should be called after changing the number of rate categories, the gamma shape parameter, or the pinvar 
+|   parameter of any subset model. Note that if the number of rate categories changes, trees on which likelihoods need 
+|   to be calculated also need to be re-equipped by calling prepareForLikelihood. 
+*/
+void TreeLikelihood::recalcRelativeRates()
+	{
+	for (unsigned i = 0; i < partition_model->getNumSubsets(); ++i)
+	    {
+        partition_model->subset_num_states[i] = partition_model->subset_model[i]->getNStates();
+        partition_model->subset_num_rates[i] = partition_model->subset_model[i]->getNRatesTotal();
+        partition_model->subset_model[i]->recalcRatesAndProbs(rate_means[i], rate_probs[i]); //POL_BOOKMARK recalcRatesAndProbs call
+        //unused? likelihood_rate_site.resize(num_rates*num_patterns, 0.0);
+        if (!no_data)
+            cla_pool->setCondLikeDimensions(partition_model->subset_num_patterns, partition_model->subset_num_rates, partition_model->subset_num_states);
+        underflow_manager.setDimensions(partition_model->subset_num_patterns, partition_model->subset_num_rates, partition_model->subset_num_states);
+	    }
+	}
+#else
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the values of the `num_states' and `num_rates' data members according to the model, then calls the 
 |	recalcRatesAndProbs function of the model to force recalculation of the `rate_means' and `rate_probs' vectors. 
@@ -1066,11 +1157,12 @@ void TreeLikelihood::recalcRelativeRates()
 	num_states = model->getNStates();
 	num_rates = model->getNRatesTotal();
 	model->recalcRatesAndProbs(rate_means, rate_probs); //POL_BOOKMARK recalcRatesAndProbs call
-	likelihood_rate_site.resize(num_rates*num_patterns, 0.0);
+	//unused? likelihood_rate_site.resize(num_rates*num_patterns, 0.0);
 	if (!no_data)
 		cla_pool->setCondLikeDimensions(num_patterns, num_rates, num_states);
 	underflow_manager.setDimensions(num_patterns, num_rates, num_states);
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Accessor function that returns the `cla_pool' data member.
@@ -1088,6 +1180,8 @@ unsigned TreeLikelihood::getNTaxa() const
 	return nTaxa;
 	}
 
+#if POLPY_NEWWAY
+#else // old way
 /*----------------------------------------------------------------------------------------------------------------------
 |	Accessor function that returns the `num_patterns' data member.
 */
@@ -1095,7 +1189,23 @@ unsigned TreeLikelihood::getNPatterns() const
 	{
 	return num_patterns;
 	}
+#endif
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns the number of rates for subset i. Assumes that the length of the `rate_means' vector 
+|	for subset i equals the value of the `partition_model->subset_num_rates' data member for subset i. Also assumes that
+|	the number of subsets in the partition is greater than i.
+*/
+unsigned TreeLikelihood::getNRatesTotal(
+  unsigned i) 	/**< is the subset of interest */
+  const
+	{
+	PHYCAS_ASSERT(partition_model->getNumSubsets() > i);
+	PHYCAS_ASSERT(rate_means[i].size() == partition_model->subset_num_rates[i]);
+	return partition_model->subset_num_rates[i];
+	}
+#else
 /*----------------------------------------------------------------------------------------------------------------------
 |	Accessor function that returns the `num_rates' data member. Assumes that the length of the `rate_means' vector 
 |	equals the value of the `num_rates' data member.
@@ -1105,7 +1215,20 @@ unsigned TreeLikelihood::getNRatesTotal() const
 	PHYCAS_ASSERT(rate_means.size() == num_rates);
 	return num_rates;
 	}
+#endif
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns the number of states for subset i.
+*/
+unsigned TreeLikelihood::getNStates(
+  unsigned i) 	/**< is the subset of interest */
+  const
+	{
+	PHYCAS_ASSERT(partition_model->getNumSubsets() > i);
+	return partition_model->subset_num_states[i];
+	}
+#else
 /*----------------------------------------------------------------------------------------------------------------------
 |	Accessor function that returns the `num_states' data member.
 */
@@ -1113,7 +1236,17 @@ unsigned TreeLikelihood::getNStates() const
 	{
 	return num_states;
 	}
+#endif
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns a copy of the (shared_ptr) data member `partition_model'.
+*/
+PartitionModelShPtr TreeLikelihood::getPartitionModel() const
+	{
+	return partition_model;
+	}
+#else
 /*----------------------------------------------------------------------------------------------------------------------
 |	Accessor function that returns a copy of the (shared_ptr) data member `model'.
 */
@@ -1121,7 +1254,17 @@ ModelShPtr TreeLikelihood::getModel() const
 	{
 	return model;
 	}
+#endif
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns the data member `state_list'.
+*/
+const state_list_vect_t & TreeLikelihood::getStateList() const
+	{
+	return state_list;
+	}
+#else
 /*----------------------------------------------------------------------------------------------------------------------
 |	Accessor function that returns the data member `state_list'.
 */
@@ -1129,15 +1272,38 @@ const VecStateList & TreeLikelihood::getStateList() const
 	{
 	return state_list;
 	}
+#endif
 
+#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Accessor function that returns the data member `state_list_pos'.
 */
-const VecStateListPos & TreeLikelihood::getStateListPos() const
+const state_list_pos_vect_t & TreeLikelihood::getStateListPos() const
 	{
 	return state_list_pos;
 	}
+#else
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns the data member `state_list_pos'.
+*/
+const StateListPos & TreeLikelihood::getStateListPos() const
+	{
+	return state_list_pos;
+	}
+#endif
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns `rate_means[i]'. Assumes that the number of subsets in the partition is greater than
+|	i.
+*/
+const std::vector<double> & TreeLikelihood::getRateMeans(
+  unsigned i) const	/**< is the subset for which rate means are desired */
+	{
+	PHYCAS_ASSERT(partition_model->getNumSubsets() > i);
+	return rate_means[i]; //POL_BOOKMARK TreeLikelihood::getRateMeans
+	}
+#else
 /*----------------------------------------------------------------------------------------------------------------------
 |	Accessor function that returns the data member `rate_means'.
 */
@@ -1145,8 +1311,20 @@ const std::vector<double> & TreeLikelihood::getRateMeans() const
 	{
 	return rate_means; //POL_BOOKMARK TreeLikelihood::getRateMeans
 	}
+#endif
 
-
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns `rate_probs[i]'. Assumes that the number of subsets in the partition is greater than
+|	i.
+*/
+const std::vector<double> & TreeLikelihood::getRateProbs(
+  unsigned i) const	/**< is the subset for which rate probabilities are desired */
+	{
+	PHYCAS_ASSERT(partition_model->getNumSubsets() > i);
+	return rate_probs[i];
+	}
+#else
 /*----------------------------------------------------------------------------------------------------------------------
 |	Accessor function that returns the data member `rate_probs'.
 */
@@ -1154,9 +1332,26 @@ const std::vector<double> & TreeLikelihood::getRateProbs() const
 	{
 	return rate_probs;
 	}
+#endif
 
+#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
-|	Accessor function that returns the data member `category_boundaries'.
+|   Returns a vector of lower rate category boundaries for subset i, where i=0,1,.... Assumes that the number of subsets
+|   in the partition is at least i+1.
+*/
+std::vector<double> TreeLikelihood::getCategoryLowerBoundaries(
+  unsigned i    /**< is the subset for which category lower boundaries are desired */
+  ) const
+	{
+	PHYCAS_ASSERT(partition_model->getNumSubsets() > i);
+	std::vector<double> tmp_means;
+	std::vector<double> returned_boundaries;
+	partition_model->subset_model[i]->recalcGammaRatesAndBoundaries(tmp_means, returned_boundaries);
+	return returned_boundaries;
+	}
+#else
+/*----------------------------------------------------------------------------------------------------------------------
+|   
 */
 std::vector<double> TreeLikelihood::getCategoryLowerBoundaries() const
 	{
@@ -1165,6 +1360,7 @@ std::vector<double> TreeLikelihood::getCategoryLowerBoundaries() const
 	model->recalcGammaRatesAndBoundaries(tmp_means, returned_boundaries);
 	return returned_boundaries;
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calls TreeLikelihood::simulateImpl specifying that the transition probabilities should be recalculated (or 
@@ -1187,10 +1383,6 @@ void TreeLikelihood::simulate(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, 
 	simulateImpl(sim_data, t, rng, nchar, false);	// false means do not recalculate transition probabilities
 	}
 
-// **************************************************************************************
-// ***** Former TreeLikelihood inlines (end) ********************************************
-// **************************************************************************************
-
 /*----------------------------------------------------------------------------------------------------------------------
 |	Specifies the (internal) node to use as the likelihood root (it will be stored in the `likelihood_root' data member). 
 |	The likelihood root is separate from the actual root of the tree, and specifies the node used when harvesting the 
@@ -1209,10 +1401,16 @@ void TreeLikelihood::useAsLikelihoodRoot(
 |	Updates the conditional likelihood array for `nd' in a direction away from `avoid'. All adjacent nodes (other than 
 |	`avoid') are assumed to be valid.
 */
-void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
+void TreeLikelihood::refreshCLA(
+  TreeNode & nd,            /**< is the focal node */
+  const TreeNode * avoid)   /**< is the node to avoid */
 	{
 	if (nd.IsTip())
 		return;
+		
+#if POLPY_NEWWAY
+    unsigned num_subsets = partition_model->getNumSubsets();
+#endif
 
 	PHYCAS_ASSERT(avoid != NULL);
 	//@MTH-NESCENT this const_cast should be safe because we aren't relying on const-ness of CLA's but it needs to be revisited
@@ -1243,8 +1441,58 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 		firstEdgeLen = lChild->GetEdgeLen();
 		secondNeighbor = lChild->GetRightSib();
 		}
-	
-	if (firstNeighbor->IsTip())
+
+
+#if POLPY_NEWWAY
+if (firstNeighbor->IsTip())
+		{
+		TipData & firstTD = *(firstNeighbor->GetTipData());
+        for (unsigned i = 0; i < num_subsets; ++i)
+    		calcPMatTranspose(i, firstTD.getTransposedPMatrices(i), firstTD.getConstStateListPos(i), firstEdgeLen);
+		if (secondNeighbor->IsTip())
+			{
+			// 1. both neighbors are tips
+			TipData & secondTD = *(secondNeighbor->GetTipData());
+            for (unsigned i = 0; i < num_subsets; ++i)
+                calcPMatTranspose(i, secondTD.getTransposedPMatrices(i), secondTD.getConstStateListPos(i), secondNeighbor->GetEdgeLen());
+			calcCLATwoTips(*ndCondLike, firstTD, secondTD);
+			}
+		else
+			{
+			// 2. first neighbor is a tip, but second is an internal node
+			InternalData & secondID = *(secondNeighbor->GetInternalData());
+            for (unsigned i = 0; i < num_subsets; ++i)
+			    calcPMat(i, secondID.getPMatrices(i), secondNeighbor->GetEdgeLen());
+			CondLikelihoodShPtr secCL = getCondLikePtr(secondNeighbor, &nd);
+			calcCLAOneTip(*ndCondLike, firstTD, secondID, *secCL);
+			}
+		}
+	else
+		{
+		InternalData & firstID = *(firstNeighbor->GetInternalData());
+        for (unsigned i = 0; i < num_subsets; ++i)
+    		calcPMat(i, firstID.getPMatrices(i), firstEdgeLen);
+		const CondLikelihood & firCL = *getCondLikePtr(firstNeighbor, &nd);
+		if (secondNeighbor->IsTip())
+			{
+			// 3. first neighbor internal node, but second is a tip
+			TipData & secondTD = *(secondNeighbor->GetTipData());
+            for (unsigned i = 0; i < num_subsets; ++i)
+	    		calcPMatTranspose(i, secondTD.getTransposedPMatrices(i), secondTD.getConstStateListPos(i), secondNeighbor->GetEdgeLen());
+			calcCLAOneTip(*ndCondLike, secondTD, firstID, firCL);
+			}
+		else
+			{
+			// 4. both neighbors are internal nodes
+			InternalData & secondID = *(secondNeighbor->GetInternalData());
+            for (unsigned i = 0; i < num_subsets; ++i)
+    			calcPMat(i, secondID.getPMatrices(i), secondNeighbor->GetEdgeLen());
+			const CondLikelihood & secCL = *getCondLikePtr(secondNeighbor, &nd);
+			calcCLANoTips(*ndCondLike, firstID, firCL, secondID, secCL);
+			}
+		}
+#else
+if (firstNeighbor->IsTip())
 		{
 		TipData & firstTD = *(firstNeighbor->GetTipData());
 		calcPMatTranspose(firstTD.getTransposedPMatrices(), firstTD.getConstStateListPos(), firstEdgeLen);
@@ -1252,7 +1500,7 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 			{
 			// 1. both neighbors are tips
 			TipData & secondTD = *(secondNeighbor->GetTipData());
-			calcPMatTranspose(secondTD.getTransposedPMatrices(), secondTD.getConstStateListPos(), secondNeighbor->GetEdgeLen());
+                calcPMatTranspose(secondTD.getTransposedPMatrices(), secondTD.getConstStateListPos(), secondNeighbor->GetEdgeLen());
 			calcCLATwoTips(*ndCondLike, firstTD, secondTD);
 			}
 		else
@@ -1268,7 +1516,7 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 	else
 		{
 		InternalData & firstID = *(firstNeighbor->GetInternalData());
-		calcPMat(firstID.getPMatrices(), firstEdgeLen);
+    	calcPMat(firstID.getPMatrices(), firstEdgeLen);
 		const CondLikelihood & firCL = *getCondLikePtr(firstNeighbor, &nd);
 		ConstPMatrices firPMat = firstID.getConstPMatrices();	
 		if (secondNeighbor->IsTip())
@@ -1282,13 +1530,38 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 			{
 			// 4. both neighbors are internal nodes
 			InternalData & secondID = *(secondNeighbor->GetInternalData());
-			calcPMat(secondID.getPMatrices(), secondNeighbor->GetEdgeLen());
+            calcPMat(secondID.getPMatrices(), secondNeighbor->GetEdgeLen());
 			const CondLikelihood & secCL = *getCondLikePtr(secondNeighbor, &nd);
 			ConstPMatrices secPMat = secondID.getConstPMatrices();
 			calcCLANoTips(*ndCondLike, firPMat, firCL, secPMat, secCL);
 			}
 		}
+#endif
 
+#if POLPY_NEWWAY
+	// Deal with possible polytomy in which secondNeighbor has siblings
+	for (TreeNode * currNd = secondNeighbor->GetRightSib(); currNd != NULL; currNd = currNd->GetRightSib())
+		{
+		if (currNd != avoid)
+			{
+			if (currNd->IsTip())
+				{
+				TipData & currTD = *(currNd->GetTipData());
+                for (unsigned i = 0; i < num_subsets; ++i)
+		    		calcPMatTranspose(i, currTD.getTransposedPMatrices(i), currTD.getConstStateListPos(i), currNd->GetEdgeLen());
+				conditionOnAdditionalTip(*ndCondLike, currTD);
+				}
+			else
+				{
+				InternalData & currID = *(currNd->GetInternalData());
+                for (unsigned i = 0; i < num_subsets; ++i)
+		    		calcPMat(i, currID.getPMatrices(i), currNd->GetEdgeLen());
+				const CondLikelihood & currCL = *getCondLikePtr(currNd, &nd);
+				conditionOnAdditionalInternal(*ndCondLike, currID, currCL);
+				}
+			}
+		}
+#else
 	// Deal with possible polytomy in which secondNeighbor has siblings
 	for (TreeNode * currNd = secondNeighbor->GetRightSib(); currNd != NULL; currNd = currNd->GetRightSib())
 		{
@@ -1310,6 +1583,7 @@ void TreeLikelihood::refreshCLA(TreeNode & nd, const TreeNode * avoid)
 				}
 			}
 		}
+#endif
 
 #if 0
 	// Turn this section on for debugging purposes only! Walks through conditional likelihood arrays
@@ -1438,6 +1712,9 @@ bool TreeLikelihood::invalidateBothEndsDiscardCache(TreeNode * ref_nd, TreeNode 
 	return false;
 	}
 
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the data member `cla_pool'.
+*/
 CondLikelihoodStorageShPtr TreeLikelihood::getCondLikelihoodStorage()
 	{
 	return cla_pool;
@@ -1851,11 +2128,12 @@ void TreeLikelihood::discardCacheAwayFromNode(
 |	rate category).
 */
 void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar, bool refresh_probs)
-	{
+    {
+#if POLPY_OLDWAY	// not yet working for partitioned models
 	PHYCAS_ASSERT(sim_data);
 	PHYCAS_ASSERT(rng);
 	PHYCAS_ASSERT(nchar > 0);
-
+	
 	// Recalculate transition probabilities if requested
 	if (refresh_probs)
 		{
@@ -2024,6 +2302,7 @@ void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr r
 		// should be incremented by 1
 		sim_data->insertPattern(1.0);
 		}
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -2168,6 +2447,55 @@ bool TreeLikelihood::debugCheckCLAsRemainInNode(
 	return CLAs_found;
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|   Computes the value of the log-likelihood at substitutional saturation (this occurs when all edges have infinite
+|   length). The site log-likelihood in this case is simply the sum of the logs of the equilibrium frequency of each tip
+|   state: i.e.,
+|>
+|   log-like for site j = \sum_{i=1}^{ntax} log(\pi_{s_{ij}})
+|>
+|   Meaningless if no data has been stored, so assumes that `pattern_vect' is not empty.
+*/
+double TreeLikelihood::calcLogLikeAtSubstitutionSaturation() const
+    {
+    double lnL = 0.0;
+#if POLPY_OLDWAY	// not yet implemented for partition models
+    //@POL needs to take ambiguity into account!
+    PHYCAS_ASSERT(!no_data);
+    PHYCAS_ASSERT(!pattern_vect.empty());
+
+    unsigned nss = partition_model->getNumSubsets();
+    for (unsigned i = 0; i < nss; ++i)
+        {
+		// Create a vector containing the log of each state frequency
+		unsigned nstates = getNStates(i);
+		const double * stateFreq = &partition_model->subset_model[i]->getStateFreqs()[0]; //PELIGROSO
+		double_vect_t logfreq(nstates, 0.0);
+		for (unsigned k = 0; k < nstates; ++k)
+			logfreq[k] = log(stateFreq[k]);
+			
+		for (unsigned j = subset_offset[i]; j < subset_offset[i + 1]; ++j)
+			{
+			const pattern_vect_t & 	pattern 		= pattern_vect[j];
+			const pattern_count_t & count 			= pattern_counts[j];
+			double 					site_log_like 	= 0.0;
+			pattern_t::const_iterator sit = pattern.begin();
+			// skip first element in pattern because it simply indicates the partition subset to which the patterns belongs
+			for (++sit; sit != pattern.end(); ++sit)
+				{
+				state_code_t s = (*sit);
+				PHYCAS_ASSERT(s >= (int8_t)0);
+				PHYCAS_ASSERT(s < (int8_t)nstates);
+				site_log_like += logfreq[s];
+				}
+			lnL += count*site_log_like;
+			}
+        }
+#endif
+	return lnL;
+    }
+#else	// old way
 /*----------------------------------------------------------------------------------------------------------------------
 |   Computes the value of the log-likelihood at substitutional saturation (this occurs when all edges have infinite
 |   length). The site log-likelihood in this case is simply the sum of the logs of the equilibrium frequency of each tip
@@ -2193,15 +2521,22 @@ double TreeLikelihood::calcLogLikeAtSubstitutionSaturation() const
     double lnL = 0.0;
     for (PatternMapType::const_iterator pit = pattern_map.begin(); pit != pattern_map.end(); ++pit)
         {
+#if POLPY_NEWWAY    // partitioning data
+        const pattern_t & pattern = pit->first;
+        const pattern_count_t & count = pit->second;
+        double site_log_like = 0.0;
+		pattern_t::const_iterator sit = pattern.begin();
+		// skip first element in pattern because it simply indicates the partition subset to which the patterns belongs
+        for (++sit; sit != pattern.end(); ++sit)
+#else	// old way
         const VecStateList & pattern = pit->first;
         const PatternCountType & count = pit->second;
         double site_log_like = 0.0;
-#if POLPY_NEWWAY
 		VecStateList::const_iterator sit = pattern.begin();
 		// skip first element in pattern because it simply indicates the partition subset to which the patterns belongs
         for (++sit; sit != pattern.end(); ++sit)
-#else
-        for (VecStateList::const_iterator sit = pattern.begin(); sit != pattern.end(); ++sit)
+        //obsolete 
+        //for (VecStateList::const_iterator sit = pattern.begin(); sit != pattern.end(); ++sit)
 #endif
             {
             int8_t s = (*sit);
@@ -2213,6 +2548,7 @@ double TreeLikelihood::calcLogLikeAtSubstitutionSaturation() const
         }
     return lnL;
     }
+#endif
 
 int calcLnLLevel = 0;
 /*----------------------------------------------------------------------------------------------------------------------
@@ -2228,11 +2564,12 @@ double TreeLikelihood::calcLnL(
 	if (no_data)
 		return 0.0;
 
-	// The variable nevals keeps track of the number of times the likelihood has been calculated		
+	// The variable nevals keeps track of the number of times the likelihood has been calculated
+	// You can reset this value to 0 using resetNumLikelihoodEvals()
 	incrementNumLikelihoodEvals();
 
-	// Compute likelihood using likelihood_root if specified
-	// Assume that if likelihood_root has been specified, then the necessary 
+	// If likelihood_root has not been specified, set it to the subroot node and invalidate
+	// all CLAs. If likelihood_root does already point to a node, assume that the necessary 
 	// CLA invalidations have already been performed.
 	TreeNode * nd = likelihood_root;
 	if (nd == NULL)
@@ -2247,10 +2584,12 @@ double TreeLikelihood::calcLnL(
 	PHYCAS_ASSERT(nd);
 	PHYCAS_ASSERT(nd->IsInternal());
 
+#if POLPY_OLDWAY 	// unimap not yet working for partitioned models
 	if (using_unimap)
 		{
 		if (!invalidUniventMappingNodes.empty())
 			{
+			// Create a new matrix of observed transitions
 			if (treeSMat == NULL)
 				{
 				treeSMat = NewTwoDArray<unsigned>(num_states, num_states); 
@@ -2268,9 +2607,11 @@ double TreeLikelihood::calcLnL(
 			}
 		return univentProbMgr.calcUnimapLnL(*t, num_patterns, &obs_state_counts[0], treeSMat);
 		}
+#endif
 
 	// Calculate log-likelihood using nd as the likelihood root
 	double lnL = calcLnLFromNode(*nd);
+	
 	// 	if (calcLnLLevel == 0)
 	// 		{
 	// 		calcLnLLevel = 1;
@@ -2390,7 +2731,8 @@ double TreeLikelihood::calcLnLFromNode(
 		PHYCAS_ASSERT(!focal_node.IsTip());
 
 		// valid_functor will return true if the conditional likelihood arrays pointing away from the
-		// focal_node are up-to-date, false if they need to be recomputed
+		// focal_node are up-to-date, false if they need to be recomputed. _1 is the focal node,
+		// and _2 is the "avoid" node, the node neighboring the focal node on the path to the likelihood root
 		NodeValidityChecker valid_functor = boost::bind(&TreeLikelihood::isValid, this, _1, _2);
 
 		// iter will visit nodes that need their CLAs updated centripetally (like a postorder traversal 
@@ -2400,6 +2742,7 @@ double TreeLikelihood::calcLnLFromNode(
 		effective_postorder_edge_iterator iter_end;
 		for (; iter != iter_end; ++iter)
 			{
+			// first is the focal node, second is the avoid node
 			refreshCLA(*iter->first, iter->second);
 			}
 
@@ -2411,6 +2754,7 @@ double TreeLikelihood::calcLnLFromNode(
 	return lnL;
 	}
 
+#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Allocates the TipData data structure needed to store the data for one tip (the tip corresponding to the supplied
 |	`row' index in the data matrix `mat'). Returns a pointer to the newly-created TipData structure. See documentation 
@@ -2419,12 +2763,167 @@ double TreeLikelihood::calcLnLFromNode(
 TipData * TreeLikelihood::allocateTipData(	//POLBM TreeLikelihood::allocateTipData
   unsigned row)		/**< is the row of the data matrix corresponding to the data for this tip node */
 	{
-#if POLPY_NEWWAY
 	// The first element of a pattern vector is used to store the index of the partition subset to which the pattern belongs
 	// Hence, add 1 to the requested row to get the correct element of the pattern vector
 	unsigned index_of_taxon = row + 1;
-#endif
+	
+	unsigned nsubsets = partition_model->getNumSubsets();
 
+	std::vector< std::map<int8_t, int8_t> >		globalToLocal(nsubsets);
+	std::map<int8_t, int8_t>::const_iterator	foundElement;
+	uint_vect_t									nPartialAmbig(nsubsets, 0);
+	state_list_pos_vect_t						local_state_list_pos(nsubsets);
+	state_list_vect_t							local_state_codes(nsubsets);
+	for (unsigned i = 0; i < nsubsets; ++i)
+		{
+		// these capacities are larger than they need to be
+		local_state_list_pos[i].reserve(state_list_pos[i].size());
+		local_state_codes[i].reserve(state_list[i].size());
+		}
+	
+	// Loop through all patterns for this row of the matrix. For each global state code encountered,
+	// determine which local state code it represents, and build up the tipSpecificStateCode array
+	// as we go.
+	if (using_unimap)
+		{
+#if POLPY_OLDWAY	// unimap not yet working for partitioned models
+		unsigned inc_site = 0;
+		const unsigned n_char = charIndexToPatternIndex.size();
+		for (unsigned site = 0; site < n_char; ++site)
+			{
+			unsigned pattern_index = charIndexToPatternIndex[site];
+			if (pattern_index != UINT_MAX)
+				{
+				PatternMapType::const_iterator it = pattern_map.begin();
+				// find the pattern in pattern_map corresponding to site
+				//@POL not very efficient for map types, so may be worth using a vector rather than a map for pattern_map when using_unimap is true
+				std::advance(it, pattern_index); 
+				
+				// get subset-specific info
+				const unsigned	subset 		= (unsigned)(it->first)[0];
+				const int8_t 	ns			= partition_model[subset].subset_num_states;
+				const int8_t	nsPlusOne	= ns + 1;
+				
+				const int8_t globalStateCode = (it->first)[index_of_taxon];
+
+				if (globalStateCode < nsPlusOne)
+					{
+					// no partial ambiguity, but may be gap state
+					local_state_codes[inc_site] = (globalStateCode < 0 ? ns : globalStateCode);
+					}
+				else
+					{
+					// partial ambiguity
+					foundElement = globalToLocal[subset].find(globalStateCode);
+					if (foundElement == globalToLocal[subset].end())
+						{
+						// state code needs to be added to map
+						globalToLocal[subset][globalStateCode] = nPartialAmbig[subset] + nsPlusOne;
+						local_state_list_pos.push_back(state_list_pos[globalStateCode]);
+						local_state_codes[inc_site] = nPartialAmbig[subset] + nsPlusOne;
+						nPartialAmbig[subset]++;
+						}
+					else
+						{
+						// state code is already in the map
+						local_state_codes[inc_site] = foundElement->second;
+						}
+					}
+				++inc_site;
+				}
+			}
+		PHYCAS_ASSERT(inc_site == num_patterns);
+#endif
+		}
+	else    // not unimap
+		{
+		// Example: 
+		// Here is the observed data for taxon k. The partition comprises 2 subsets: the first subset
+		// includes sites 1-4 and consists of DNA data. The second subset includes sites 5-9 and is 
+		// amino acid data.
+		//           1  2  3  4  5  6   7   8  9
+		//  taxon_k  A  C  T  R  G  V  (EQ) ?  A
+		//
+		//  DNA        ------ amino acid -----
+		//  0 A        0 A   5 E   10 L   15 S
+		//  1 C        1 R   6 Q   11 K   16 T
+		//  2 G        2 N   7 G   12 M   17 W
+		//  3 T        3 D   8 H   13 F   18 Y
+		//  4 (ACGT)   4 C   9 I   14 P   19 V
+		//  5 (AG)    20 (ARNDCEQGHILKMFPSTWYV)
+		//            21 (EQ)
+		//
+		//  If the only ambiguities in the entire data matrix were those found in taxon k,
+		//                  |-------------- subset 1 ------------|
+		//                  | -A- -C- -G- -T- -----?------ --R-- |
+		//  state_list[0]:  | 1 0 1 1 1 2 1 3 5 -1 0 1 2 3 2 0 2 |
+		//                    ^   ^   ^   ^   ^            ^      
+		//  state_list_pos:   0   2   4   6   8           14      
+		//           index:   0   1   2   3   4            5      
+
+		//                  |------------------------------------------------------------------------------------- subset 2 ----------------------------------------------------------|
+		//                  | -A- -R- -N- -D- -C- -E- -Q- -G- -H- -I- -L-- -K-- -M-- -F-- -P-- -S-- -T-- -W-- -Y-- -V-- --------------------------?---------------------------- -(EQ)-
+		//  state_list[1]:  | 1 0 1 1 1 2 1 3 1 4 1 5 1 6 1 7 1 8 1 9 1 10 1 11 1 12 1 13 1 14 1 15 1 16 1 17 1 18 1 19 21 -1 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 2 5 6 
+		//                    ^   ^   ^   ^   ^   ^   ^   ^   ^   ^   ^    ^    ^    ^    ^    ^    ^    ^    ^    ^     ^                                                      ^      
+		//  state_list_pos:   0   2   4   6   8  10  12  14  16  18  20   22   24   26   28   30   32   34   36   38    40                                                     62
+		//           index:   0   1   2   3   4   5   6   7   8   9  10   11   12   13   14   15   16   17   18   19    20                                                     21
+		//
+		for (pattern_vect_t::const_iterator it = pattern_vect.begin(); it != pattern_vect.end(); ++it)
+			{
+			// get subset-specific info
+			const unsigned 	subset 		= (unsigned)(*it)[0];
+			const int8_t 	ns			= partition_model->subset_num_states[subset];
+			const int8_t	nsPlusOne	= ns + 1;
+			
+			const int8_t globalStateCode = (*it)[index_of_taxon];
+
+			if (globalStateCode < nsPlusOne)
+				{
+				// no partial ambiguity, but may be gap state
+				state_code_t s = (globalStateCode < 0 ? ns : globalStateCode);
+				local_state_codes[subset].push_back(s);
+				}
+			else
+				{
+				// partial ambiguity
+				foundElement = globalToLocal[subset].find(globalStateCode);
+				if (foundElement == globalToLocal[subset].end())
+					{
+					// state code needs to be added to globalToLocal[subset] map
+					state_code_t s = nPartialAmbig[subset] + nsPlusOne;
+					globalToLocal[subset][globalStateCode] = s;
+					local_state_list_pos[subset].push_back(state_list_pos[subset][globalStateCode]);
+					local_state_codes[subset].push_back(s);
+					nPartialAmbig[subset]++;
+					}
+				else
+					{
+					// state code is already in the globalToLocal[subset] map
+					local_state_codes[subset].push_back(foundElement->second);
+					}
+				}
+			}
+		}
+		
+	//POL num_patterns only used by unimap part of TipData constructor
+	unsigned num_patterns = partition_model->getTotalNumPatterns();
+	
+	return new TipData( using_unimap,
+						num_patterns,
+						partition_model,
+						local_state_list_pos,	
+						local_state_codes,
+						cla_pool);
+	}
+#else	// old way
+/*----------------------------------------------------------------------------------------------------------------------
+|	Allocates the TipData data structure needed to store the data for one tip (the tip corresponding to the supplied
+|	`row' index in the data matrix `mat'). Returns a pointer to the newly-created TipData structure. See documentation 
+|	for the TipData structure for more explanation.
+*/
+TipData * TreeLikelihood::allocateTipData(	//POLBM TreeLikelihood::allocateTipData
+  unsigned row)		/**< is the row of the data matrix corresponding to the data for this tip node */
+	{
 	std::map<int8_t, int8_t>					globalToLocal;
 	std::vector<unsigned int>					stateListVec;
 	std::map<int8_t, int8_t>::const_iterator	foundElement;
@@ -2452,11 +2951,7 @@ TipData * TreeLikelihood::allocateTipData(	//POLBM TreeLikelihood::allocateTipDa
 				// find the pattern in pattern_map corresponding to site
 				//@POL not very efficient for map types, so may be worth using a vector rather than a map for pattern_map when using_unimap is true
 				std::advance(it, pattern_index); 
-#if POLPY_NEWWAY
-				const int8_t globalStateCode = (it->first)[index_of_taxon];
-#else
 				const int8_t globalStateCode = (it->first)[row];
-#endif
 
 				if (globalStateCode < nsPlusOne)
 					{
@@ -2491,11 +2986,7 @@ TipData * TreeLikelihood::allocateTipData(	//POLBM TreeLikelihood::allocateTipDa
 		unsigned i = 0;
 		for (PatternMapType::const_iterator it = pattern_map.begin(); it != pattern_map.end(); ++it, ++i)
 			{
-#if POLPY_NEWWAY
-			const int8_t globalStateCode = (it->first)[index_of_taxon];
-#else
 			const int8_t globalStateCode = (it->first)[row];
-#endif
 
 			if (globalStateCode < nsPlusOne)
 				{
@@ -2508,7 +2999,7 @@ TipData * TreeLikelihood::allocateTipData(	//POLBM TreeLikelihood::allocateTipDa
 				foundElement = globalToLocal.find(globalStateCode);
 				if (foundElement == globalToLocal.end())
 					{
-					// state code needs to be added to map
+					// state code needs to be added to globalToLocal map
 					globalToLocal[globalStateCode] = nPartialAmbig + nsPlusOne;
 					stateListVec.push_back(state_list_pos[globalStateCode]);
 					tipSpecificStateCode[i] = nPartialAmbig + nsPlusOne;
@@ -2516,7 +3007,7 @@ TipData * TreeLikelihood::allocateTipData(	//POLBM TreeLikelihood::allocateTipDa
 					}
 				else
 					{
-					// state code is already in the map
+					// state code is already in the globalToLocal map
 					tipSpecificStateCode[i] = foundElement->second;
 					}
 				}
@@ -2532,7 +3023,21 @@ TipData * TreeLikelihood::allocateTipData(	//POLBM TreeLikelihood::allocateTipDa
 						true,														// managePMatrices
 						cla_pool);
 	}
+#endif
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Allocates the InternalData data structure needed to store the conditional likelihood arrays and transition matrices
+|	needed for likelihood calcuations. Returns a pointer to a newly-constructed InternalData structure. See the 
+|	documentation for InternalData for more explanation.
+*/
+InternalData * TreeLikelihood::allocateInternalData()
+	{
+	return new InternalData(using_unimap,
+							partition_model,
+							cla_pool);					
+	}
+#else
 /*----------------------------------------------------------------------------------------------------------------------
 |	Allocates the InternalData data structure needed to store the conditional likelihood arrays and transition matrices
 |	needed for likelihood calcuations. Returns a pointer to a newly-constructed InternalData structure. See the 
@@ -2548,6 +3053,7 @@ InternalData * TreeLikelihood::allocateInternalData()
 							true,						// managePMatrices
 							cla_pool);					
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Function that deletes the TipData structure allocated by the allocateTipData() function. The intention is for this
@@ -2585,6 +3091,7 @@ void deallocateInternalData(InternalData * p)
 void TreeLikelihood::prepareForSimulation(
   TreeShPtr t)			/**< is the tree to decorate */
 	{
+#if POLPY_OLDWAY	// unimap not yet working for partitioned models
 	TreeNode::TipDataDeleter		td_deleter	= &deallocateTipData;
 	TreeNode::InternalDataDeleter	cl_deleter	= &deallocateInternalData;
 
@@ -2607,31 +3114,135 @@ void TreeLikelihood::prepareForSimulation(
 			nd->SetInternalData(cl, cl_deleter);
 			}
 		}
+#endif
 	}
 
-// BOOKMARK state_list and state_list_pos
-/*----------------------------------------------------------------------------------------------------------------------
-|	Builds `pattern_map' and `pattern_counts' using uncompressed data stored in `mat'.
-*/
 #if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Builds `pattern_vect', `pattern_counts', `pattern_to_sites' and `charIndexToPatternIndex' using uncompressed data 
+|	stored in `mat'.
+*/
 void TreeLikelihood::copyDataFromDiscreteMatrix(
   const NxsCXXDiscreteMatrix & mat,				/**< is the data source */
   const std::vector<unsigned> & partition_info)	/**< is a vector of indices storing the partition subset used by each site */
-#else
-void TreeLikelihood::copyDataFromDiscreteMatrix(
-  const NxsCXXDiscreteMatrix & mat)	/**< is the data source */
-#endif
 
+	{
+	nTaxa = mat.getNTax();
+
+    // The compressDataMatrix function first erases, then builds, both pattern_vect and 
+	// pattern_counts using the uncompressed data contained in mat
+	compressDataMatrix(mat, partition_info);
+	
+#if !defined(NDEBUG)
+	bool default_partition = (partition_info.size() == 0 ? true : false);
+#endif
+	unsigned nsubsets = partition_model->getNumSubsets();
+	PHYCAS_ASSERT((default_partition && nsubsets == 1) || (!default_partition && nsubsets > 1));
+
+	state_list.clear();
+	state_list.resize(nsubsets);
+	
+	state_list_pos.clear();
+	state_list_pos.resize(nsubsets);
+	
+	for (unsigned i = 0; i < nsubsets; ++i)
+		{
+		state_list[i].clear();
+		state_list_pos[i].clear();
+		if (partition_model->subset_model[i]->isCodonModel()) 
+			{
+			// any ambiguity is complete ambiguity for codon models, which makes it simple to construct
+			// the state_list and state_list_pos vectors. Here is a reminder of how state_list and 
+			// state_list_pos are laid out for codon models:
+			//
+			// states          |   AAA |   AAC |   AAG |   AAT |   ACA | ... |   TTT | ambiguous 
+			// state_list      | 1  0  | 1  1  | 1  2  | 1  3  | 1  4  | ... | 1  60 | 61  0  1  2  3  4  5 ... 60
+			// state_list_pos  | 0     | 2     | 4     | 6     | 8     | ... | 120   | 122      
+			state_list[i].reserve(184);
+			state_list_pos[i].reserve(62);
+			for (unsigned k = 0; k < 61; ++k)
+				{
+				state_list[i].push_back((int8_t)1);
+				state_list[i].push_back((int8_t)k);
+				state_list_pos[i].push_back((int8_t)(2*k));
+				}
+			state_list[i].push_back((int8_t)61);
+			state_list_pos[i].push_back((int8_t)(2*61));
+			for (unsigned k = 0; k < 61; ++k)
+				{
+				state_list[i].push_back((int8_t)k);
+				}
+			}
+		else	// not codon model
+			{
+			if (nsubsets == 1)
+				{
+				// get state_list and state_list_pos from mat
+				state_list[i] = mat.getStateList(); 
+				state_list_pos[i] = mat.getStateListPos();
+				}
+			else
+				{
+				// The user has specified partitioning, so we must build state_list and state_list_pos ourselves
+				// Hopefully this functionality will be returned to NCL eventually, making this section unnecessary.
+				
+				//@POL assuming DNA sequence data here
+				PHYCAS_ASSERT(partition_model->subset_num_states == 4);
+				
+				//@POL assuming any ambiguity is complete ambiguity (needs to be revised)
+				state_list[i].reserve(14);
+				state_list_pos[i].reserve(5);
+				
+				state_list_pos[i].push_back((int8_t)0);
+				state_list[i].push_back((int8_t)1); // A
+				state_list[i].push_back((int8_t)0); 
+				
+				state_list_pos[i].push_back((int8_t)2);
+				state_list[i].push_back((int8_t)1); // C
+				state_list[i].push_back((int8_t)1);
+				
+				state_list_pos[i].push_back((int8_t)4);
+				state_list[i].push_back((int8_t)1); // G
+				state_list[i].push_back((int8_t)2);
+				
+				state_list_pos[i].push_back((int8_t)6);
+				state_list[i].push_back((int8_t)1); // T
+				state_list[i].push_back((int8_t)3);
+				
+				state_list_pos[i].push_back((int8_t)8);
+				state_list[i].push_back((int8_t)5); // ?
+				state_list[i].push_back((int8_t)-1);
+				state_list[i].push_back((int8_t)0);
+				state_list[i].push_back((int8_t)1);
+				state_list[i].push_back((int8_t)2);
+				state_list[i].push_back((int8_t)3);
+				}
+			}	// not codon model
+		}	// loop over subsets
+
+	// The constant states vector stores information about which sites can potentially be
+	// constant. A site can be potentially constant for more than one state if there is
+	// ambiguity. For example, if all taxa have ?, then the site is potentially constant
+	// for all states.
+    buildConstantStatesVector();
+    
+	// The relative rate means and probabilities vectors need to be recalculated if the
+	// number of rate categories subsequently changes 
+	recalcRelativeRates();
+	}
+#else	// old way
+/*----------------------------------------------------------------------------------------------------------------------
+|	Builds `pattern_map' and `pattern_counts' using uncompressed data stored in `mat'.
+*/
+void TreeLikelihood::copyDataFromDiscreteMatrix(
+  const NxsCXXDiscreteMatrix & mat,				/**< is the data source */
+  const std::vector<unsigned> & partition_info)	/**< is a vector of indices storing the partition subset used by each site */
 	{
 	nTaxa = mat.getNTax();
 
     // The compressDataMatrix function first erases, then builds, both pattern_map and 
 	// pattern_counts using the uncompressed data contained in mat
-#if POLPY_NEWWAY
-	num_patterns = compressDataMatrix(mat, partition_info);
-#else
 	num_patterns = compressDataMatrix(mat);
-#endif
 
 	if (model->isCodonModel()) 
 		{
@@ -2672,335 +3283,280 @@ void TreeLikelihood::copyDataFromDiscreteMatrix(
 	// size of likelihood_rate_site vector needs to be revisited if the number of rates subsequently changes 
 	recalcRelativeRates();
 	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Builds `pattern_map' and `pattern_counts' using data stored in `sim_data'.
-*/
-void TreeLikelihood::copyDataFromSimData(
-  SimDataShPtr sim_data)	/**< is the data source */
-	{
-	// Copy simulated data to pattern_map
-	pattern_map = sim_data->getSimPatternMap();
-
-	// Build up counts vector
-	pattern_counts.clear();
-	for (PatternMapType::iterator it = pattern_map.begin(); it != pattern_map.end(); ++it)
-		{
-		pattern_counts.push_back(it->second);
-		}
-
-	nTaxa = sim_data->getPatternLength();
-	num_patterns = (unsigned)pattern_map.size();
-
-	model->buildStateList(state_list, state_list_pos);
-
-	// size of likelihood_rate_site vector needs to be revisited if the number of rates subsequently changes 
-	recalcRelativeRates();
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Adds data currently stored in `pattern_map' to the patterns already in `other'. Assumes that `pattern_length' for 
-|	this SimData object is identical to the `pattern_length' of `other'.
-*/
-void TreeLikelihood::addDataTo(SimData & other)
-	{
-	if (pattern_map.empty())
-		return;
-	if (other.getTotalCount() == 0)
-		{
-		PHYCAS_ASSERT(nTaxa > 0);
-		other.resetPatternLength(nTaxa);
-		}
-	PHYCAS_ASSERT(nTaxa == other.getPatternLength());
-	for (PatternMapType::iterator it = pattern_map.begin(); it != pattern_map.end(); ++it)
-		{
-		PatternCountType count = it->second;
-		VecStateList & other_pattern = other.getCurrPattern();
-		std::copy(it->first.begin(), it->first.end(), other_pattern.begin());
-		other.insertPattern(count);
-		}
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Calls allocateInternalData() to add an InternalData structure to `nd' containing the conditional likelihood arrays
-|	needed for likelihood calculations.
-*/
-void TreeLikelihood::prepareInternalNodeForLikelihood(
-  TreeNode * nd)	/**< is the node to decorate */
-	{
-	if (nd)
-		{
-    	InternalData * ndID = nd->GetInternalData();
-        if (ndID == NULL)
-            {
-    		TreeNode::InternalDataDeleter	cl_deleter	= &deallocateInternalData;
-	    	InternalData * cl = allocateInternalData();
-		    nd->SetInternalData(cl, cl_deleter);
-            }
-		}
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Decorates an interior node with conditional likelihood and transition probability structures and add to the tree's
-|	StoreInternalNode vector.
-*/
-void TreeLikelihood::addDecoratedInternalNode(
-  TreeShPtr t,		/**< is the tree to decorate */
-  unsigned num)		/**< is the number to assign to this node */
-	{
-	TreeNode::InternalDataDeleter	cl_deleter	= &deallocateInternalData;
-	InternalData * cl = allocateInternalData();
-	TreeNode * nd = t->AllocNewNode();
-	nd->SetNodeNum(num);
-	nd->SetInternalData(cl, cl_deleter);
-	t->StoreInternalNode(nd);
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Decorates a tip node with data and add to the tree's tipStorage vector.
-*/
-void TreeLikelihood::addOrphanTip(
-  TreeShPtr t,		/**< is the tree to decorate */
-  unsigned row,		/**< is the row in the data matrix to associate with the added tip */
-  std::string name) /**< is the taxon name */
-	{
-	TreeNode::TipDataDeleter td_deleter = &deallocateTipData;
-	TipData * td = allocateTipData(row);
-	TreeNode * nd = t->AllocNewNode();
-	nd->SetTipData(td, td_deleter);
-	nd->SetNodeNum(row);
-	nd->SetNodeName(name);
-	t->StoreLeafNode(nd);
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Calls allocateTipData() for all tip nodes and allocateInternalData() for all internal nodes in the supplied Tree. 
-|	Assumes each tip node number in the tree equals the appropriate row in the data matrix. 
-*/
-void TreeLikelihood::prepareForLikelihood( //POL_BOOKMARK TreeLikelihood::prepareForLikelihood
-  TreeShPtr t)									/**< is the tree to decorate */
-	{
-	// If no_data is true, it means that calcLnL will always return 0.0 immediately and 
-	// will thus never need the TipData or InternalData data structures
-	if (no_data)
-		return;
-
-	TreeNode::TipDataDeleter		td_deleter	= &deallocateTipData;
-	TreeNode::InternalDataDeleter	cl_deleter	= &deallocateInternalData;
-
-	// Put all existing conditional likelihood arrays already back into storage
-	//storeAllCLAs(t);
-	//cla_pool->clearStack();	//@POL this here only because prepareForLikelihood called in NCatMove::proposeNewState when ncat is increased
-
-	for (preorder_iterator nd = t->begin(); nd != t->end(); ++nd)
-		{
-		if (nd->IsTip())
-			{
-			unsigned row = nd->GetNodeNumber();
-			TipData * td = allocateTipData(row);
-			nd->SetTipData(td, td_deleter);
-			}
-		else
-			{
-			InternalData * cl = allocateInternalData();
-			nd->SetInternalData(cl, cl_deleter);
-			}
-		}
-	useAsLikelihoodRoot(NULL);
-
-	//@POL	should decorate any nodes in tipStorage and nodeStorage now, but should wait until those 
-	// are changed to vectors
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Returns reference to the vector data member `all_missing', which is a list of indices of sites for which all taxa
-|   show completely missing data. The first site has index 0 in the `all_missing' vector.
-*/
-const std::vector<unsigned> & TreeLikelihood::getListOfAllMissingSites() const
-    {
-    return all_missing;
-    }
-
-#if 0
-/*----------------------------------------------------------------------------------------------------------------------
-|   Returns a list of all sites with patterns comprising only two primary states and no missing data or ambiguities for
-|   any taxon.
-*/
-std::vector<unsigned> TreeLikelihood::findDataBipartitions() const
-    {
-    // needs to be written
-    }
 #endif
 
+#if POLPY_NEWWAY 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Builds up the vector data member `constant_states' based on the patterns in `pattern_map'. The `constant_states' 
-|   vector has a similar structure to the `state_list' vector. Here is an example `constant_states' vector for 4 sites:
-|>
-|   +---+---+---+---+---+---+---+---+
-|   | 0 | 1 | 0 | 1 | 3 | 2 | 0 | 2 |
-|   +---+---+---+---+---+---+---+---+
-|     ^   ^       ^       ^
-|     |   |       |       |
-|     |   |       |       4th site can potentially be constant for either A (state 0) or G (state 2)
-|     |   |       3rd site can be potentially constant for T (state 3)
-|     |   2nd site can be potentially constant for 1 state: that state (A, state 0) follows in the next cell
-|     1st site is definitely variable (hence the 0 meaning no states follow)
-|>
-|   The function returns the number of potentially constant patterns found (note the return value is NOT the number
-|   of potentially constant sites). The modifier "potentially" is needed because of ambiguities: i.e. if every taxon
-|	had missing data for a site, then one does not know if the site is constant or variable, but it is a "potentially"
-|	constant site.
+|	Copies data from `mat' to `pattern_vect' and `pattern_counts'. The `pattern_vect' vector holds the patterns while
+|	`pattern_counts' holds the count of the number of sites having each pattern. Additionally, the vectors 
+|	`pattern_to_sites' and `charIndexToPatternIndex' are built: `pattern_to_sites' allows you to get a list of sites
+|	given a specific pattern, and `charIndexToPatternIndex' lets you find the index of a pattern in `pattern_vect' and
+|	`pattern_counts' given an original site index.
 */
-unsigned TreeLikelihood::buildConstantStatesVector()
+unsigned TreeLikelihood::compressDataMatrix(
+  const NxsCXXDiscreteMatrix	&	mat,			/**< is the data source */
+  const uint_vect_t 			& 	partition_info)	/**< is a vector of indices storing the partition subset used by each site */
 	{
-    PHYCAS_ASSERT(!pattern_map.empty());
-    constant_states.clear();
-
-    unsigned num_potentially_constant = 0;
-    std::set<int> common_states;    // holds running intersection across taxa for this pattern
-    std::set<int> curr_states;      // holds states for taxon under consideration
-    std::vector<int> xset;          // temporarily holds intersection of common_states and curr_states
-
-    for (PatternMapType::const_iterator pat = pattern_map.begin(); pat != pattern_map.end(); ++pat)
-        {
-        bool site_potentially_constant = true;
-        for (unsigned taxon = 0; taxon < nTaxa; ++taxon)
-            {
-            if (!site_potentially_constant)                
-                break;
-
-            // Reminder of how data members state_list and state_list_pos are laid out (for nucleotide data anyway):
-            //                                         ?         N      {CGT}  {ACG}    R,(AG)    Y
-            // states          | A | C | G | T |  - A C G T | A C G T | C G T | A G T |  A  G  | C T
-            // state_list      1 0 1 1 1 2 1 3 5 -1 0 1 2 3 4 0 1 2 3 3 1 2 3 3 0 2 3 2  0  2  4 1 3
-            // state_list_pos  0   2   4   6   8           14        19      23      27       30
-#if POLPY_NEWWAY
-			unsigned index_of_taxon = taxon + 1;
-            int code = (int)(pat->first)[index_of_taxon];
-#else
-            int code = (int)(pat->first)[taxon];
-#endif
-            PHYCAS_ASSERT(code >= 0);   // Mark, why don't ? and - states trigger this assert? Does this have to do with the fact that we have abandoned the Cipres version of NCL? We translate - to ? in the NxsCXXDiscreteMatrix constructor
-            PHYCAS_ASSERT(code < (int)state_list.size()); 
-            PHYCAS_ASSERT(code < (int)state_list_pos.size());
-            unsigned pos = (unsigned)state_list_pos[code];
-            unsigned n = (unsigned)state_list[pos];
-            curr_states.clear();
-
-            // Insert all states for the current taxon into the curr_states set
-            for (unsigned x = pos + 1; x < pos + n + 1; ++x)
-                {
-                int c = (int)state_list[x];
-                PHYCAS_ASSERT(c >= 0);
-                if (site_potentially_constant)
-                    curr_states.insert(c);
-                }
-
-            if (taxon == 0)
-                {
-                // For first taxon, let common_states equal curr_states
-                common_states.clear();
-                common_states.insert(curr_states.begin(), curr_states.end());
-                }
-            else
-                {
-                // For subsequent taxa, common_states should contain only those states possessed
-                // by all taxa (i.e. it will be the empty set if the site is variable)
-                xset.clear();
-                std::set_intersection(common_states.begin(), common_states.end(), curr_states.begin(), curr_states.end(), back_inserter(xset));
-                if (xset.empty())
-                    site_potentially_constant = false;
-                else
-                    {
-                    common_states.clear();
-                    common_states.insert(xset.begin(), xset.end());
-                    }
-                }
-            }
-
-        if (site_potentially_constant)
-            {
-            ++num_potentially_constant;
-            constant_states.push_back((unsigned)common_states.size());
-            for (std::set<int>::const_iterator it = common_states.begin(); it != common_states.end(); ++it)
-                {
-                constant_states.push_back(*it);
-                }
-            }
-        else
-            {
-            constant_states.push_back(0);
-            }
-        }
-    return num_potentially_constant;
-    }
-    
-/*----------------------------------------------------------------------------------------------------------------------
-|	Increments the count corresponding to the supplied `pattern' in `pattern_map' (adding a new map element if `pattern'
-|	has not yet been seen) and adds the `pattern_index' to a list of pattern indices corresponding to the supplied
-|	`pattern' in `patternToIndex' (adding a newly-created list containing just `pattern_index' if `pattern' has not yet
-|	been seen.
-*/
-void TreeLikelihood::storePattern(
-  const std::vector<int8_t> & pattern,	/**< is the pattern to store */
-  const unsigned pattern_index,			/**< is the index of this pattern in the original data matrix */
-  const PatternCountType weight) 		/**< is the weight of this pattern (normally 1) */
-	{	
-	// Add the pattern to pattern_map if it has not yet been seen, otherwise increment 
-	// the count of this pattern if it is already in pattern_map (see item 24, p. 110, in Meyers' Efficient STL)
-	PatternMapType::iterator lowb = pattern_map.lower_bound(pattern);
-	if (lowb != pattern_map.end() && !(pattern_map.key_comp()(pattern, lowb->first)))
-		{
-		// pattern is already in pattern_map, increment count
-		lowb->second += weight;
-		//std::cerr << boost::str(boost::format("%.1f -> |") % lowb->second);
-		}
-	else
-		{
-		// pattern has not yet been stored in pattern_map
-		pattern_map.insert(lowb, PatternMapType::value_type(pattern, weight));
-		//std::cerr << boost::str(boost::format("%.1f -> |") % weight);
-		}
+	unsigned 						ntax 		= mat.getNTax();
+	unsigned 						nchar 		= mat.getNChar();
+	unsigned 						nsubsets 	= partition_model->getNumSubsets();	
 	
-	// Add the pattern to patternToIndex if it has not yet been seen, otherwise increment 
-	// the count of this pattern if it is already in the map (see item 24, p. 110, in Meyers' Efficient STL)
-	typedef std::list<unsigned> IndexList;
-	typedef std::map<VecStateList, IndexList> PatternToIndex;
-	PatternToIndex::iterator pToILowB = patternToIndex.lower_bound(pattern);
-	if (pToILowB != patternToIndex.end() && !(patternToIndex.key_comp()(pattern, pToILowB->first)))
+	typedef std::vector< pattern_map_t > pattern_map_vect_t;
+	pattern_map_vect_t 				pattern_map(nsubsets);
+	pattern_to_sites_map_t 			pattern_to_sites_map;
+	
+	// If user has not decided to partition the data, then the partition_info vector should be empty
+	bool default_partition = (partition_info.size() == 0 ? true : false);
+	
+	// If user did decide to partition the data, then the partition_info vector should have a length
+	// equal to the number of sites
+	if (!default_partition && partition_info.size() != nchar)
+		throw XLikelihood(str(boost::format("Partition scheme accounts for %d characters; however, there are %d characters in the data matrix") % partition_info.size() % nchar));
+
+	// Initialize the charIndexToPatternIndex vector, which will allow us to later locate the
+	// pattern associated with any given site in the original data matrix
+	charIndexToPatternIndex.assign(nchar, UINT_MAX);
+
+    // Create actingWeights vector and copy the integer weights from mat into it
+    // If there are no integer weights in mat, copy the floating point weights instead
+    // if floating point weights have been defined
+	const int_vect_t & iwts = mat.getIntWeightsConst();
+	double_vect_t actingWeights(nchar, 1.0);
+	if (!iwts.empty())
 		{
-		// a list of site indices has already been created for this pattern in patternToIndex
-		// so all we need to do is append the index pattern_index to the existing list
-		pToILowB->second.push_back(pattern_index);
+		PHYCAS_ASSERT(iwts.size() >= nchar);
+		for (unsigned j = 0; j < nchar; ++j)
+			actingWeights[j] = (double)iwts.at(j);
 		}
 	else
 		{
-		// this pattern has not yet been seen, so need to create a list of site indices whose only
-		// element (so far) is pattern_index and insert this list into the patternToIndex map
-		IndexList ilist(1, pattern_index);	// create a list<unsigned> containing 1 element whose value is pattern_index
-		patternToIndex.insert(pToILowB, PatternToIndex::value_type(pattern, ilist));
+		const double_vect_t & dwts = mat.getDblWeightsConst();
+		if (!dwts.empty())
+			{
+			actingWeights = dwts;
+			PHYCAS_ASSERT(actingWeights.size() >= nchar);	//@POL why > nchar? shouldn't it just be == nchar?
+			}
 		}
-	}
 
+    // Set corresponding actingWeights elements to zero if any characters have been excluded in mat
+	const uint_set_t & excl = mat.getExcludedCharIndices();
+	for (uint_set_t::const_iterator eIt = excl.begin(); eIt != excl.end(); ++eIt)
+		{
+		PHYCAS_ASSERT(*eIt < nchar);
+		actingWeights[*eIt] = 0.0;
+		}
+	const double * wts = &(actingWeights[0]);	// PELIGROSO
+
+	PHYCAS_ASSERT(patternToIndex.empty());	
+	
+	int8_vect_t pattern;
+	for (unsigned j = 0; j < nchar;)
+		{
+		unsigned subset = partition_info[j];	
+		bool codon_model = partition_model->subset_model[subset]->isCodonModel();
+		
+		if (codon_model)
+			{
+			// 2nd and 3rd positions should be assigned to same subset if codon model is used
+			PHYCAS_ASSERT(partition_info.size() > j + 2);
+			PHYCAS_ASSERT(partition_info[j + 1] == subset);
+			PHYCAS_ASSERT(partition_info[j + 2] == subset);
+			
+			// Suppose nchar=5 and j=3: not enough sites to make a second codon. In this example,
+			// j+2 = 5, which equals nchar, so break out of loop over sites
+			if (j+2 >= nchar)
+				break;
+
+			// here we (arbitrarily) use the max weight of any char in the codon
+			pattern_count_t charWt = (wts ? std::max(wts[j], std::max(wts[j+1], wts[j+2])) : 1.0); 
+			if (charWt > 0.0)
+				{
+				//std::cerr << std::endl;
+				
+				// Build up a vector representing the pattern of state codes at this site
+				pattern.clear();
+
+				// The index of the partition subset fills the first slot in the pattern
+				pattern.push_back((int8_t)subset);
+
+				for (unsigned i = 0; i < ntax; ++i)
+					{
+					const int8_t *	row			= mat.getRow(i);
+					const int8_t	code1		= row[j];
+					const int8_t	code2		= row[j + 1];
+					const int8_t	code3		= row[j + 2];
+					bool			code1_ok	= (code1 >= 0 && code1 < 4);
+					bool			code2_ok	= (code2 >= 0 && code2 < 4);
+					bool			code3_ok	= (code3 >= 0 && code3 < 4);
+					if (code1_ok && code2_ok && code3_ok)
+						{
+						//std::cerr << boost::str(boost::format("(%d,%d,%d)") % (unsigned)code1 % (unsigned)code2 % (unsigned)code3);
+						const int8_t code = codon_state_codes[16*code1 + 4*code2 + code3]; // CGT = 27 = 16*1 + 4*2 + 3
+						if (code > 60)
+							throw XLikelihood(str(boost::format("Stop codon encountered for taxon %d at sites %d-%d") % (i+1) % (j+1) % (j+4)));
+						pattern.push_back(code);
+						}
+					else
+						{
+						//std::cerr << "(???)";
+						// if any site within codon is ambiguous, entire codon is treated as completely ambiguous
+						pattern.push_back((int8_t)61);
+						}
+					}
+					
+				//std::cerr << boost::str(boost::format("\n%6d -> ") % j);
+					
+				storePattern(pattern_map[subset], pattern_to_sites_map, pattern, j, charWt);
+				
+				//for (std::vector<int8_t>::const_iterator it = pattern.begin(); it != pattern.end(); ++it)
+				//	{
+				//	std::cerr << boost::str(boost::format("%s|") % codon_labels[(unsigned)(*it)]);
+				//	}
+				//std::cerr << std::endl;
+				}
+			j += 3;
+			}
+		else	// model for site j is not a codon model
+			{
+			unsigned nStates = getNStates(subset);
+	
+			pattern_count_t charWt = (wts ? wts[j] : 1.0); 
+			if (charWt > 0.0)
+				{
+				// Build up a vector representing the pattern of state codes at this site
+				pattern.clear();
+				
+				// The index of the partition subset fills the first slot in the pattern
+				pattern.push_back((int8_t)subset);
+
+				unsigned num_all_missing = 0;
+				for (unsigned i = 0; i < ntax; ++i)
+					{
+					const int8_t * row	= mat.getRow(i);
+					const int8_t   code = row[j];
+
+					if (default_partition)
+						{
+						pattern.push_back(code);
+						if ((unsigned)code == nStates)	
+							++num_all_missing;
+						}
+					else
+						{
+						//@POL any ambiguity is treated as ? for partitioned data (for now)
+						//@POL if this is relaxed, need to revisit TreeLikelihood::copyDataFromDiscreteMatrix,
+						//@POL which currently constructs a state_list without partial ambiguities 
+						if (code >= 0 && code < (state_code_t)nStates)	//POLBM
+							pattern.push_back(code);
+						else
+							{
+							pattern.push_back((state_code_t)nStates);
+							++num_all_missing;
+							}
+						}
+					}
+
+				// Do not include the pattern if it contains only completely missing data
+				// for all taxa
+				if (num_all_missing == ntax)
+					{
+					all_missing.push_back(j);
+					continue;
+					}
+					
+				storePattern(pattern_map[subset], pattern_to_sites_map, pattern, j, charWt);
+				}
+			++j;
+			}	// not a codon model
+		}	// loop over sites
+	
+	// Build subset_offset, pattern_counts, pattern_vect, pattern_to_sites and charIndexToPatternIndex before 
+	// leaving this function (whereupon pattern_map and pattern_to_sites_map will be destroyed)
+	unsigned npatterns = 0;
+	for (unsigned i = 0; i < nsubsets; ++i)
+		npatterns += (unsigned)pattern_map[i].size();
+
+	subset_offset.clear();
+	subset_offset.reserve(nsubsets + 1);
+	
+	pattern_counts.clear();
+	pattern_counts.reserve(npatterns);
+	
+	pattern_vect.clear();
+	pattern_vect.reserve(npatterns);
+	
+	pattern_to_sites.clear();
+	pattern_to_sites.reserve(npatterns);
+	
+	unsigned pattern_index = 0;
+	unsigned n_inc_chars = 0;
+	for (unsigned i = 0; i < nsubsets; ++i)
+		{
+		subset_offset.push_back(pattern_index);
+		for (pattern_map_t::iterator mapit = pattern_map[i].begin(); mapit != pattern_map[i].end(); ++mapit, ++pattern_index)
+			{
+			// mapit->first holds the pattern in the form of a vector of int8_t values
+			pattern_vect.push_back(mapit->first);
+			
+			// mapit->second holds the pattern count
+			pattern_counts.push_back(mapit->second);
+	
+			// get list of sites that had this pattern
+			const uint_list_t & sites = pattern_to_sites_map[mapit->first];
+			
+			// add this sites list to pattern_to_sites vector
+			pattern_to_sites.push_back(sites);
+	
+			// For each site index in the sites list, add an element to the map charIndexToPatternIndex
+			// Now, charIndexToPatternIndex[i] points to the index in pattern_vect for the pattern found at site i
+			for (uint_list_t::const_iterator sitesIt = sites.begin(); sitesIt != sites.end(); ++sitesIt)
+				{
+				charIndexToPatternIndex[*sitesIt] = pattern_index;
+				++n_inc_chars;
+				}			
+			}	// loop over patterns in subset i
+		}	// loop over subsets
+		
+	PHYCAS_ASSERT(partition_model->getTotalNumPatterns() == pattern_index);
+	subset_offset.push_back(pattern_index);
+	
+	// There should no longer be any elements in charIndexToPatternIndex that have the value UINT_MAX
+	PHYCAS_ASSERT(std::find(charIndexToPatternIndex.begin(), charIndexToPatternIndex.end(), UINT_MAX) == charIndexToPatternIndex.end());
+
+	// pattern_map and pattern_to_sites_map are just temporary containers. The information originally in
+	// pattern_map is now in pattern_vect and pattern_counts, and the information originally in 
+	// pattern_to_sites_map is now in charIndexToPatternIndex and pattern_to_sites.
+	pattern_map.clear();
+	pattern_to_sites_map.clear();
+	
+	if (using_unimap)
+		return n_inc_chars;
+	else
+		return npatterns;
+	}
+#else //old way
 /*----------------------------------------------------------------------------------------------------------------------
 |	Copies data from `mat' to the map `pattern_map'. The resulting map holds pairs whose key is the pattern for one site
 |	and whose value is a count of the number of sites having that pattern. The counts from `pattern_map' are transferred  
 |	to the `pattern_counts' vector (vectors are more efficient containers for use during likelihood calculations).
 */
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY    // partitioning data
 unsigned TreeLikelihood::compressDataMatrix(
   const NxsCXXDiscreteMatrix & mat,				/**< is the data source */
   const std::vector<unsigned> & partition_info)	/**< is a vector of indices storing the partition subset used by each site */
 #else
 unsigned TreeLikelihood::compressDataMatrix(
-  const NxsCXXDiscreteMatrix & mat) //POL_BOOKMARK TreeLikelihood::compressDataMatrix
+  const NxsCXXDiscreteMatrix & mat)				/**< is the data source */
+//obsolete
+// unsigned TreeLikelihood::compressDataMatrix(
+//   const NxsCXXDiscreteMatrix & mat) //POL_BOOKMARK TreeLikelihood::compressDataMatrix
 #endif
 	{
 	pattern_map.clear();
 	unsigned ntax = mat.getNTax();
 	unsigned nchar = mat.getNChar();
 	
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY    // partitioning data
 	// If user has not decided to partition the data, then the partition_info vector should be empty
 	bool default_partition = (partition_info.size() == 0 ? true : false);
 	
@@ -3062,7 +3618,7 @@ unsigned TreeLikelihood::compressDataMatrix(
 				
 				// Build up a vector representing the pattern of state codes at this site
 				pattern.clear();
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY    // partitioning data
 				// The index of the partition subset fills the first slot in the pattern
 				int8_t index_of_subset = 0;
 				if (!default_partition)
@@ -3119,7 +3675,7 @@ unsigned TreeLikelihood::compressDataMatrix(
 				// Build up a vector representing the pattern of state codes at this site
 				pattern.clear();
 				
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY    // partitioning data
 				// The index of the partition subset fills the first slot in the pattern
 				int8_t index_of_subset = 0;
 				if (!default_partition)
@@ -3182,7 +3738,568 @@ unsigned TreeLikelihood::compressDataMatrix(
 	else
 		return (unsigned)pattern_map.size();
 	}
+#endif
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Builds `pattern_vect' and `pattern_counts' using data stored in `sim_data'.
+*/
+void TreeLikelihood::copyDataFromSimData(
+  SimDataShPtr sim_data)	/**< is the data source */
+	{
+#if 0 // simulation stuff not working with partitioning yet
+	// Copy simulated data to pattern_map
+	pattern_map = sim_data->getSimPatternMap();
+
+	// Build up counts vector
+	pattern_counts.clear();
+	for (PatternMapType::iterator it = pattern_map.begin(); it != pattern_map.end(); ++it)
+		{
+		pattern_counts.push_back(it->second);
+		}
+
+	nTaxa = sim_data->getPatternLength();
+	num_patterns = (unsigned)pattern_map.size();
+
+	model->buildStateList(state_list, state_list_pos);
+
+	// size of likelihood_rate_site vector needs to be revisited if the number of rates subsequently changes 
+	recalcRelativeRates();
+#endif
+	}
+#else	// old way
+/*----------------------------------------------------------------------------------------------------------------------
+|	Builds `pattern_map' and `pattern_counts' using data stored in `sim_data'.
+*/
+void TreeLikelihood::copyDataFromSimData(
+  SimDataShPtr sim_data)	/**< is the data source */
+	{
+	// Copy simulated data to pattern_map
+	pattern_map = sim_data->getSimPatternMap();
+
+	// Build up counts vector
+	pattern_counts.clear();
+	for (PatternMapType::iterator it = pattern_map.begin(); it != pattern_map.end(); ++it)
+		{
+		pattern_counts.push_back(it->second);
+		}
+
+	nTaxa = sim_data->getPatternLength();
+	num_patterns = (unsigned)pattern_map.size();
+
+	model->buildStateList(state_list, state_list_pos);
+
+	// size of likelihood_rate_site vector needs to be revisited if the number of rates subsequently changes 
+	recalcRelativeRates();
+	}
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Adds data currently stored in `pattern_vect' to the patterns already in `other'. Assumes that `pattern_length' for 
+|	this SimData object is identical to the `pattern_length' of `other'.
+*/
+void TreeLikelihood::addDataTo(SimData & other)
+	{
+#if 0 // simulation stuff not working with partitioning yet	
+	if (pattern_map.empty())
+		return;
+	if (other.getTotalCount() == 0)
+		{
+		PHYCAS_ASSERT(nTaxa > 0);
+		other.resetPatternLength(nTaxa);
+		}
+	PHYCAS_ASSERT(nTaxa == other.getPatternLength());
+	for (PatternMapType::iterator it = pattern_map.begin(); it != pattern_map.end(); ++it)
+		{
+		PatternCountType count = it->second;
+		VecStateList & other_pattern = other.getCurrPattern();
+		std::copy(it->first.begin(), it->first.end(), other_pattern.begin());
+		other.insertPattern(count);
+		}
+#endif
+	}
+#else	// old way
+/*----------------------------------------------------------------------------------------------------------------------
+|	Adds data currently stored in `pattern_map' to the patterns already in `other'. Assumes that `pattern_length' for 
+|	this SimData object is identical to the `pattern_length' of `other'.
+*/
+void TreeLikelihood::addDataTo(SimData & other)
+	{
+	if (pattern_map.empty())
+		return;
+	if (other.getTotalCount() == 0)
+		{
+		PHYCAS_ASSERT(nTaxa > 0);
+		other.resetPatternLength(nTaxa);
+		}
+	PHYCAS_ASSERT(nTaxa == other.getPatternLength());
+	for (PatternMapType::iterator it = pattern_map.begin(); it != pattern_map.end(); ++it)
+		{
+		PatternCountType count = it->second;
+		VecStateList & other_pattern = other.getCurrPattern();
+		std::copy(it->first.begin(), it->first.end(), other_pattern.begin());
+		other.insertPattern(count);
+		}
+	}
+#endif
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Calls allocateInternalData() to add an InternalData structure to `nd' containing the conditional likelihood arrays
+|	needed for likelihood calculations.
+*/
+void TreeLikelihood::prepareInternalNodeForLikelihood(
+  TreeNode * nd)	/**< is the node to decorate */
+	{
+	if (nd)
+		{
+    	InternalData * ndID = nd->GetInternalData();
+        if (ndID == NULL)
+            {
+    		TreeNode::InternalDataDeleter cl_deleter = &deallocateInternalData;
+	    	InternalData * cl = allocateInternalData();
+		    nd->SetInternalData(cl, cl_deleter);
+            }
+		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Decorates an interior node with conditional likelihood and transition probability structures and add to the tree's
+|	StoreInternalNode vector.
+*/
+void TreeLikelihood::addDecoratedInternalNode(
+  TreeShPtr t,		/**< is the tree to decorate */
+  unsigned num)		/**< is the number to assign to this node */
+	{
+	TreeNode::InternalDataDeleter	cl_deleter	= &deallocateInternalData;
+	InternalData * cl = allocateInternalData();
+	TreeNode * nd = t->AllocNewNode();
+	nd->SetNodeNum(num);
+	nd->SetInternalData(cl, cl_deleter);
+	t->StoreInternalNode(nd);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Decorates a tip node with data and add to the tree's tipStorage vector.
+*/
+void TreeLikelihood::addOrphanTip(
+  TreeShPtr t,		/**< is the tree to decorate */
+  unsigned row,		/**< is the row in the data matrix to associate with the added tip */
+  std::string name) /**< is the taxon name */
+	{
+	TreeNode::TipDataDeleter td_deleter = &deallocateTipData;
+	TipData * td = allocateTipData(row);
+	TreeNode * nd = t->AllocNewNode();
+	nd->SetTipData(td, td_deleter);
+	nd->SetNodeNum(row);
+	nd->SetNodeName(name);
+	t->StoreLeafNode(nd);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Calls allocateTipData() for all tip nodes and allocateInternalData() for all internal nodes in the supplied Tree. 
+|	Assumes each tip node number in the tree equals the appropriate row in the data matrix. 
+*/
+void TreeLikelihood::prepareForLikelihood( //POL_BOOKMARK TreeLikelihood::prepareForLikelihood
+  TreeShPtr t)		/**< is the tree to decorate */
+	{
+	// If no_data is true, it means that calcLnL will always return 0.0 immediately and 
+	// will thus never need the TipData or InternalData data structures
+	if (no_data)
+		return;
+
+	TreeNode::TipDataDeleter		td_deleter	= &deallocateTipData;
+	TreeNode::InternalDataDeleter	cl_deleter	= &deallocateInternalData;
+
+	// Put all existing conditional likelihood arrays already back into storage
+	//storeAllCLAs(t);	//@POL why are these two lines commented out? Seems like a good idea to clear the cla stack at this point.
+	//cla_pool->clearStack();	//@POL this here only because prepareForLikelihood called in NCatMove::proposeNewState when ncat is increased
+
+	for (preorder_iterator nd = t->begin(); nd != t->end(); ++nd)
+		{
+		if (nd->IsTip())
+			{
+			unsigned row = nd->GetNodeNumber();
+			TipData * td = allocateTipData(row);
+			nd->SetTipData(td, td_deleter);
+			}
+		else
+			{
+			InternalData * cl = allocateInternalData();
+			nd->SetInternalData(cl, cl_deleter);
+			}
+		}
+	useAsLikelihoodRoot(NULL);
+
+	//@POL	should decorate any nodes in tipStorage and nodeStorage now, but should wait until those 
+	// are changed to vectors
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns reference to the vector data member `all_missing', which is a list of indices of sites for which all taxa
+|   show completely missing data. The first site has index 0 in the `all_missing' vector.
+*/
+const std::vector<unsigned> & TreeLikelihood::getListOfAllMissingSites() const
+    {
+    return all_missing;
+    }
+
+#if 0
+/*----------------------------------------------------------------------------------------------------------------------
+|   Returns a list of all sites with patterns comprising only two primary states and no missing data or ambiguities for
+|   any taxon.
+*/
+std::vector<unsigned> TreeLikelihood::findDataBipartitions() const
+    {
+    // needs to be written
+    }
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Builds up the vector data member `constant_states' based on the patterns in `pattern_vect'. The `constant_states' 
+|   vector has a similar structure to the `state_list' vector. Here is an example `constant_states' vector for 4 sites:
+|>
+|   +---+---+---+---+---+---+---+---+
+|   | 0 | 1 | 0 | 1 | 3 | 2 | 0 | 2 |
+|   +---+---+---+---+---+---+---+---+
+|     ^   ^       ^       ^
+|     |   |       |       |
+|     |   |       |       4th site can potentially be constant for either A (state 0) or G (state 2)
+|     |   |       3rd site can be potentially constant for T (state 3)
+|     |   2nd site can be potentially constant for 1 state: that state (A, state 0) follows in the next cell
+|     1st site is definitely variable (hence the 0 meaning no states follow)
+|>
+|   The function returns the number of potentially constant patterns found (note the return value is NOT the number
+|   of potentially constant sites). The modifier "potentially" is needed because of ambiguities: i.e. if every taxon
+|	had missing data for a site, then one does not know if the site is constant or variable, but it is a "potentially"
+|	constant site.
+*/
+unsigned TreeLikelihood::buildConstantStatesVector()
+	{
+    PHYCAS_ASSERT(!pattern_vect.empty());
+    constant_states.clear();
+
+    unsigned 	num_potentially_constant = 0;
+    int_set_t 	common_states;		// holds running intersection across taxa for this pattern
+    int_set_t 	curr_states;		// holds states for taxon under consideration
+    int_vect_t 	xset;				// temporarily holds intersection of common_states and curr_states
+
+    for (pattern_vect_t::const_iterator pat = pattern_vect.begin(); pat != pattern_vect.end(); ++pat)
+        {
+		// get subset-specific info
+		//@POL if slow, consider using subset_offset here to avoid setting subset and ns for each pattern
+		const unsigned subset = (unsigned)(*pat)[0];
+        bool site_potentially_constant = true;
+        for (unsigned taxon = 0; taxon < nTaxa; ++taxon)
+            {
+            if (!site_potentially_constant)                
+                break;
+
+            // Reminder of how data members state_list and state_list_pos are laid out (for nucleotide data anyway):
+            //                                         ?         N      {CGT}  {ACG}    R,(AG)    Y
+            // states          | A | C | G | T |  - A C G T | A C G T | C G T | A G T |  A  G  | C T
+            // state_list      1 0 1 1 1 2 1 3 5 -1 0 1 2 3 4 0 1 2 3 3 1 2 3 3 0 2 3 2  0  2  4 1 3
+            // state_list_pos  0   2   4   6   8           14        19      23      27       30
+			unsigned index_of_taxon = taxon + 1;
+            int code = (int)(*pat)[index_of_taxon];
+            PHYCAS_ASSERT(code >= 0);   // Mark, why don't ? and - states trigger this assert? Does this have to do with the fact that we have abandoned the Cipres version of NCL? We translate - to ? in the NxsCXXDiscreteMatrix constructor
+            PHYCAS_ASSERT(code < (int)state_list[subset].size()); 
+            PHYCAS_ASSERT(code < (int)state_list_pos[subset].size());
+            unsigned pos = (unsigned)state_list_pos[subset][code];
+            unsigned n = (unsigned)state_list[subset][pos];
+
+            // Insert all states for the current taxon into the curr_states set
+            curr_states.clear();
+            for (unsigned x = pos + 1; x < pos + n + 1; ++x)
+                {
+                int c = (int)state_list[subset][x];
+                PHYCAS_ASSERT(c >= 0);
+                if (site_potentially_constant)
+                    curr_states.insert(c);
+                }
+
+            if (taxon == 0)
+                {
+                // For first taxon, let common_states equal curr_states
+                common_states.clear();
+                common_states.insert(curr_states.begin(), curr_states.end());
+                }
+            else
+                {
+                // For subsequent taxa, common_states should contain only those states possessed
+                // by all taxa (i.e. it will be the empty set if the site is variable)
+                xset.clear();
+                std::set_intersection(common_states.begin(), common_states.end(), curr_states.begin(), curr_states.end(), back_inserter(xset));
+                if (xset.empty())
+                    site_potentially_constant = false;
+                else
+                    {
+                    common_states.clear();
+                    common_states.insert(xset.begin(), xset.end());
+                    }
+                }
+            }
+
+        if (site_potentially_constant)
+            {
+            ++num_potentially_constant;
+            constant_states.push_back((unsigned)common_states.size());
+            for (std::set<int>::const_iterator it = common_states.begin(); it != common_states.end(); ++it)
+                {
+                constant_states.push_back(*it);
+                }
+            }
+        else
+            {
+            constant_states.push_back(0);
+            }
+        }
+    return num_potentially_constant;
+    }
+#else	// old way
+/*----------------------------------------------------------------------------------------------------------------------
+|	Builds up the vector data member `constant_states' based on the patterns in `pattern_map'. The `constant_states' 
+|   vector has a similar structure to the `state_list' vector. Here is an example `constant_states' vector for 4 sites:
+|>
+|   +---+---+---+---+---+---+---+---+
+|   | 0 | 1 | 0 | 1 | 3 | 2 | 0 | 2 |
+|   +---+---+---+---+---+---+---+---+
+|     ^   ^       ^       ^
+|     |   |       |       |
+|     |   |       |       4th site can potentially be constant for either A (state 0) or G (state 2)
+|     |   |       3rd site can be potentially constant for T (state 3)
+|     |   2nd site can be potentially constant for 1 state: that state (A, state 0) follows in the next cell
+|     1st site is definitely variable (hence the 0 meaning no states follow)
+|>
+|   The function returns the number of potentially constant patterns found (note the return value is NOT the number
+|   of potentially constant sites). The modifier "potentially" is needed because of ambiguities: i.e. if every taxon
+|	had missing data for a site, then one does not know if the site is constant or variable, but it is a "potentially"
+|	constant site.
+*/
+unsigned TreeLikelihood::buildConstantStatesVector()
+	{
+    PHYCAS_ASSERT(!pattern_map.empty());
+    constant_states.clear();
+
+    unsigned num_potentially_constant = 0;
+    std::set<int> common_states;    // holds running intersection across taxa for this pattern
+    std::set<int> curr_states;      // holds states for taxon under consideration
+    std::vector<int> xset;          // temporarily holds intersection of common_states and curr_states
+
+    for (PatternMapType::const_iterator pat = pattern_map.begin(); pat != pattern_map.end(); ++pat)
+        {
+        bool site_potentially_constant = true;
+        for (unsigned taxon = 0; taxon < nTaxa; ++taxon)
+            {
+            if (!site_potentially_constant)                
+                break;
+
+            // Reminder of how data members state_list and state_list_pos are laid out (for nucleotide data anyway):
+            //                                         ?         N      {CGT}  {ACG}    R,(AG)    Y
+            // states          | A | C | G | T |  - A C G T | A C G T | C G T | A G T |  A  G  | C T
+            // state_list      1 0 1 1 1 2 1 3 5 -1 0 1 2 3 4 0 1 2 3 3 1 2 3 3 0 2 3 2  0  2  4 1 3
+            // state_list_pos  0   2   4   6   8           14        19      23      27       30
+#if POLPY_NEWWAY    // partitioning data
+			unsigned index_of_taxon = taxon + 1;
+            int code = (int)(*pat)[index_of_taxon];
+#else
+            int code = (int)(pat->first)[taxon];
+#endif
+            PHYCAS_ASSERT(code >= 0);   // Mark, why don't ? and - states trigger this assert? Does this have to do with the fact that we have abandoned the Cipres version of NCL? We translate - to ? in the NxsCXXDiscreteMatrix constructor
+            PHYCAS_ASSERT(code < (int)state_list.size()); 
+            PHYCAS_ASSERT(code < (int)state_list_pos.size());
+            unsigned pos = (unsigned)state_list_pos[code];
+            unsigned n = (unsigned)state_list[pos];
+            curr_states.clear();
+
+            // Insert all states for the current taxon into the curr_states set
+            for (unsigned x = pos + 1; x < pos + n + 1; ++x)
+                {
+                int c = (int)state_list[x];
+                PHYCAS_ASSERT(c >= 0);
+                if (site_potentially_constant)
+                    curr_states.insert(c);
+                }
+
+            if (taxon == 0)
+                {
+                // For first taxon, let common_states equal curr_states
+                common_states.clear();
+                common_states.insert(curr_states.begin(), curr_states.end());
+                }
+            else
+                {
+                // For subsequent taxa, common_states should contain only those states possessed
+                // by all taxa (i.e. it will be the empty set if the site is variable)
+                xset.clear();
+                std::set_intersection(common_states.begin(), common_states.end(), curr_states.begin(), curr_states.end(), back_inserter(xset));
+                if (xset.empty())
+                    site_potentially_constant = false;
+                else
+                    {
+                    common_states.clear();
+                    common_states.insert(xset.begin(), xset.end());
+                    }
+                }
+            }
+
+        if (site_potentially_constant)
+            {
+            ++num_potentially_constant;
+            constant_states.push_back((unsigned)common_states.size());
+            for (std::set<int>::const_iterator it = common_states.begin(); it != common_states.end(); ++it)
+                {
+                constant_states.push_back(*it);
+                }
+            }
+        else
+            {
+            constant_states.push_back(0);
+            }
+        }
+    return num_potentially_constant;
+    }
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Increments the count corresponding to the supplied `pattern' in `pattern_vect' (adding a new map element if `pattern'
+|	has not yet been seen) and adds the `pattern_index' to a list of pattern indices corresponding to the supplied
+|	`pattern' in `patternToIndex' (adding a newly-created list containing just `pattern_index' if `pattern' has not yet
+|	been seen.
+*/
+void TreeLikelihood::storePattern(
+  pattern_map_t & pattern_map,					/**< is the map into which to store pattern */
+  pattern_to_sites_map_t & pattern_to_site_map,	/**< is the map into which to store the original site index of this pattern */
+  const std::vector<int8_t> & pattern,			/**< is the pattern to store */
+  const unsigned int site_index,				/**< is the index of the site in the original data matrix */
+  const pattern_count_t weight) 				/**< is the weight of this pattern (normally 1.0) */
+	{	
+	// Add the pattern to pattern_map if it has not yet been seen, otherwise increment 
+	// the count of this pattern if it is already in pattern_map (see item 24, p. 110, in Meyers' Efficient STL)
+	pattern_map_t::iterator lowb = pattern_map.lower_bound(pattern);
+	if (lowb != pattern_map.end() && !(pattern_map.key_comp()(pattern, lowb->first)))
+		{
+		// pattern is already in pattern_map, increment count
+		lowb->second += weight;
+		//std::cerr << boost::str(boost::format("%.1f -> |") % lowb->second);
+		}
+	else
+		{
+		// pattern has not yet been stored in pattern_map
+		pattern_map.insert(lowb, pattern_map_t::value_type(pattern, weight));
+		//std::cerr << boost::str(boost::format("%.1f -> |") % weight);
+		}
+	
+	// Add the pattern to pattern_to_site_map if it has not yet been seen, otherwise increment 
+	// the count of this pattern if it is already in the map (see item 24, p. 110, in Meyers' Efficient STL)
+	pattern_to_sites_map_t::iterator pToILowB = pattern_to_site_map.lower_bound(pattern);
+	if (pToILowB != pattern_to_site_map.end() && !(pattern_to_site_map.key_comp()(pattern, pToILowB->first)))
+		{
+		// a list of site indices has already been created for this pattern in pattern_to_site_map
+		// so all we need to do is append the index site_index to the existing list
+		pToILowB->second.push_back(site_index);
+		}
+	else
+		{
+		// this pattern has not yet been seen, so need to create a list of site indices whose only
+		// element (so far) is site_index and insert this list into the pattern_to_site_map map
+		uint_list_t ilist(1, site_index);	// create a list containing 1 element whose value is site_index
+		pattern_to_site_map.insert(pToILowB, pattern_to_sites_map_t::value_type(pattern, ilist));
+		}
+	}
+#else
+/*----------------------------------------------------------------------------------------------------------------------
+|	Increments the count corresponding to the supplied `pattern' in `pattern_map' (adding a new map element if `pattern'
+|	has not yet been seen) and adds the `pattern_index' to a list of pattern indices corresponding to the supplied
+|	`pattern' in `patternToIndex' (adding a newly-created list containing just `pattern_index' if `pattern' has not yet
+|	been seen.
+*/
+void TreeLikelihood::storePattern(
+  const std::vector<int8_t> & pattern,	/**< is the pattern to store */
+  const unsigned pattern_index,			/**< is the index of this pattern in the original data matrix */
+  const PatternCountType weight) 		/**< is the weight of this pattern (normally 1) */
+	{	
+	// Add the pattern to pattern_map if it has not yet been seen, otherwise increment 
+	// the count of this pattern if it is already in pattern_map (see item 24, p. 110, in Meyers' Efficient STL)
+	PatternMapType::iterator lowb = pattern_map.lower_bound(pattern);
+	if (lowb != pattern_map.end() && !(pattern_map.key_comp()(pattern, lowb->first)))
+		{
+		// pattern is already in pattern_map, increment count
+		lowb->second += weight;
+		//std::cerr << boost::str(boost::format("%.1f -> |") % lowb->second);
+		}
+	else
+		{
+		// pattern has not yet been stored in pattern_map
+		pattern_map.insert(lowb, PatternMapType::value_type(pattern, weight));
+		//std::cerr << boost::str(boost::format("%.1f -> |") % weight);
+		}
+	
+	// Add the pattern to patternToIndex if it has not yet been seen, otherwise increment 
+	// the count of this pattern if it is already in the map (see item 24, p. 110, in Meyers' Efficient STL)
+	typedef std::list<unsigned> IndexList;
+	typedef std::map<VecStateList, IndexList> PatternToIndex;
+	PatternToIndex::iterator pToILowB = patternToIndex.lower_bound(pattern);
+	if (pToILowB != patternToIndex.end() && !(patternToIndex.key_comp()(pattern, pToILowB->first)))
+		{
+		// a list of site indices has already been created for this pattern in patternToIndex
+		// so all we need to do is append the index pattern_index to the existing list
+		pToILowB->second.push_back(pattern_index);
+		}
+	else
+		{
+		// this pattern has not yet been seen, so need to create a list of site indices whose only
+		// element (so far) is pattern_index and insert this list into the patternToIndex map
+		IndexList ilist(1, pattern_index);	// create a list<unsigned> containing 1 element whose value is pattern_index
+		patternToIndex.insert(pToILowB, PatternToIndex::value_type(pattern, ilist));
+		}
+	}
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Creates a string representation of the supplied `state'. For example, if `state' equals 1 (where model is a 
+|	standard DNA model), the string returned would be "C". If, however, `state' was 7 (again, standard DNA model), then
+|	there is some ambiguity present and the string returned might look something like "{AC}" (the string returned 
+|	depends of course on the actual meaning of the global state code 7).
+*/
+std::string TreeLikelihood::getStateStr(
+  unsigned i,				/**< is the partition subset */
+  state_code_t state) const /**< is the global state code to be converted to a std::string */
+	{
+	std::string s;
+	const state_code_t ns = partition_model->subset_num_states[i];
+	const state_code_t nsPlusOne = ns + 1;
+
+	if (state < nsPlusOne)
+		{
+		// either no ambiguity or complete ambiguity
+		s << partition_model->subset_model[i]->lookupStateRepr((int)state);
+		}
+	else
+		{
+		// `state' represents partial ambiguity
+
+		// First, find location of the definition of `state' in the global state list
+		unsigned pos = state_list_pos[i][(unsigned)state];
+		pattern_t::const_iterator it = state_list[i].begin() + pos;
+
+		// Now get the number of basic states composing `state'
+		unsigned n = *it++;
+
+		// Walk down global state list converting states into strings
+		s << "(";
+		for (unsigned k = 0; k < n; ++k)
+			{
+			s << partition_model->subset_model[i]->lookupStateRepr((int)*it++);
+			}
+		s << ")";
+		}
+	return s;
+	}
+#else	// old way
 /*----------------------------------------------------------------------------------------------------------------------
 |	Creates a string representation of the supplied `state'. For example, if `state' equals 1 (where model is a 
 |	standard DNA model), the string returned would be "C". If, however, `state' was 7 (again, standard DNA model), then
@@ -3221,6 +4338,7 @@ std::string TreeLikelihood::getStateStr(
 		}
 	return s;
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Resets private data member `nevals' to 0.
@@ -3246,6 +4364,64 @@ void TreeLikelihood::incrementNumLikelihoodEvals()
 	++nevals;
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Assuming TreeLikelihood::compressDataMatrix has been called, so that `pattern_vect' is up-to-date, returns a string 
+|	listing all observed patterns and their frequencies.
+*/
+std::string TreeLikelihood::listPatterns(
+  bool show_coded_states)	/**< if true, output global state codes used internally; otherwise, do the translation back to the original state representations */
+	{
+	string_vect_t		state_repr;
+	std::string 		s;
+	unsigned 			nsubsets = partition_model->getNumSubsets();
+	
+	uint_vect_t						pattern_tally(nsubsets, 0);
+	std::vector< pattern_count_t >	sites_tally(nsubsets, 0);
+	
+	for (unsigned i = 0; i < nsubsets; ++i)
+		{
+		for (unsigned j = subset_offset[i]; j < subset_offset[i + 1]; ++j)
+			{
+			const pattern_t & 	p = pattern_vect[j];
+			pattern_count_t 	c = pattern_counts[j];
+			
+			// Increment tally of patterns and sites for this subset
+			pattern_tally[i] += 1;
+			sites_tally[i] += c;
+							
+			s << str(boost::format("%6d %6d %6.1f ") % j % i % c);
+	
+			unsigned ntax = (unsigned)p.size();
+			if (show_coded_states)
+				{
+				// start at 1 because first element is index of partition subset
+				for (unsigned k = 1; k < ntax + 1; ++k)
+					{
+					s << str(boost::format("%d ") % (int)(p[k]));
+					}
+				}
+			else
+				{
+				// start at 1 because first element is index of partition subset
+				for (unsigned k = 1; k < ntax + 1; ++k)
+					{
+					s << str(boost::format("%s") % getStateStr(i, p[k]));
+					}
+				}
+			s << '\n';
+			}
+		}
+
+	s << "\nTotals for each subset of the partition:\n";
+	s << boost::str(boost::format("\n%12s %12s %12s") % "subset" % "patterns" % "sites");
+	for (unsigned i = 0; i < nsubsets; ++i)
+		{
+		s << boost::str(boost::format("\n%12d %12d %12d") % i % pattern_tally[i] % sites_tally[i]);
+		}
+	return s;
+	}
+#else	// old way
 /*----------------------------------------------------------------------------------------------------------------------
 |	Assuming TreeLikelihood::compressDataMatrix has been called, so that `pattern_map' is up-to-date, returns a string 
 |	listing all observed patterns and their frequencies.
@@ -3253,7 +4429,7 @@ void TreeLikelihood::incrementNumLikelihoodEvals()
 std::string TreeLikelihood::listPatterns(
   bool show_coded_states)	/**< if true, output global state codes used internally; otherwise, do the translation back to the original state representations */
 	{
-#if POLPY_NEWWAY
+#if POLPY_OLDWAY    // partitioning data
 	typedef std::pair<unsigned, unsigned> TallyMapCounts;
 	typedef std::map< unsigned, TallyMapCounts > TallyMap;
 	typedef std::pair<unsigned, TallyMapCounts> TallyMapPair;
@@ -3268,8 +4444,8 @@ std::string TreeLikelihood::listPatterns(
 	for (; it != pattern_map.end(); ++it, ++i)
 		{
 		const std::vector<int8_t> & p = it->first;
-		PatternCountType c = it->second;
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY    // partitioning data
+		pattern_count_t c = it->second;
 		unsigned index_of_subset = (unsigned)p[0];
 		
 		// Increment tally of sites for this subset
@@ -3284,12 +4460,27 @@ std::string TreeLikelihood::listPatterns(
 			
 		s << str(boost::format("%6d %6d %6.1f ") % i % index_of_subset % c);
 #else
-		s << str(boost::format("%6d %6.1f ") % i % c);
+		PatternCountType c = it->second;
+		unsigned index_of_subset = (unsigned)p[0];
+		
+		// Increment tally of sites for this subset
+		std::pair< TallyMapIterator, bool > ret = tally.insert(TallyMapPair(index_of_subset, TallyMapCounts(1, (unsigned)c)));	
+		if (ret.second == false)
+			{
+			// entry for this subset already exists
+			TallyMapIterator it = ret.first;
+			it->second.first  += 1;
+			it->second.second += (unsigned)c;
+			}
+			
+		s << str(boost::format("%6d %6d %6.1f ") % i % index_of_subset % c);
+		//obsolete
+		//s << str(boost::format("%6d %6.1f ") % i % c);
 #endif
 		unsigned ntax = (unsigned)p.size();
 		if (show_coded_states)
 			{
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY    // partitioning data
 			// start at 1 because first element is index of partition subset
 			for (unsigned j = 1; j < ntax + 1; ++j)
 				{
@@ -3304,7 +4495,7 @@ std::string TreeLikelihood::listPatterns(
 			}
 		else
 			{
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY    // partitioning data
 			// start at 1 because first element is index of partition subset
 			for (unsigned j = 1; j < ntax + 1; ++j)
 				{
@@ -3319,7 +4510,7 @@ std::string TreeLikelihood::listPatterns(
 			}
 		s << '\n';
 		}
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY    // partitioning data
 	s << "\nTotals for each subset of the partition:\n";
 	s << boost::str(boost::format("\n%12s %12s %12s") % "subset" % "patterns" % "sites");
 	for (tallyit = tally.begin(); tallyit != tally.end(); ++tallyit)
@@ -3332,7 +4523,78 @@ std::string TreeLikelihood::listPatterns(
 #endif
 	return s;
 	}
+#endif
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	First erases `pattern_repr', then builds it into a vector of pattern representation strings. When the function 
+|	returns, each element of `pattern_repr' is a string containing global state codes separated by whitespace. This 
+|	function is intended to be used for debugging purposes, where it is sometimes helpful to be sure of exactly which
+|	data pattern is being operated upon. Thus, no particular effort has been made to make this function efficient.
+*/
+void TreeLikelihood::buildPatternReprVector(string_vect_t & pattern_repr, TreeShPtr t)
+	{
+	unsigned nTips	= t->GetNTips();
+	unsigned npatterns = partition_model->getTotalNumPatterns();
+
+	pattern_repr.clear();
+	pattern_repr.reserve(npatterns);
+	
+	// Recreate the data matrix in terms of tip-specific state codes
+	state_code_t * * m = NewTwoDArray<state_code_t>(nTips, npatterns);
+
+	for (preorder_iterator nd = t->begin(); nd != t->end(); ++nd)
+		{
+		if (nd->IsTip())
+			{
+			// get node number i
+			unsigned i = nd->GetNodeNumber();
+			PHYCAS_ASSERT(i >= 0 && i < nTips);
+			
+			// get tip-specific state code array
+			TipData * tipData = nd->GetTipData();
+			PHYCAS_ASSERT(tipData);
+
+			// fill row i of data matrix
+			unsigned subset = 0;
+			for (unsigned j = 0; j < npatterns; ++j)
+				{
+				if (j >= subset_offset[subset + 1])
+					subset++;
+				const state_code_t * tipCodes = tipData->getConstStateCodes(subset);
+	
+				// get position vector that allows us to translate tip-specific state codes into global state codes
+				const state_list_pos_t & local_statelist_pos = tipData->getConstStateListPos(subset);
+
+				int8_t global_code = tipCodes[j];
+				int8_t offset = global_code - ((int8_t)npatterns + 1);
+				if (offset >= 0)
+					{
+					unsigned pos = local_statelist_pos[offset];
+					for (unsigned m = 0; m < (unsigned)state_list_pos[subset].size(); ++m)
+						{
+						if (state_list_pos[subset][m] == pos)
+							global_code = (state_code_t)m;
+						}
+					}
+				m[i][j] = global_code;
+				}
+			}
+		}
+
+	for (unsigned j = 0; j < npatterns; ++j)
+		{
+		std::string s;
+		for (unsigned i = 0; i < nTips; ++i)
+			{
+			s << (int)m[i][j] << " ";
+			}
+		pattern_repr.push_back(s);
+		}
+
+	DeleteTwoDArray<state_code_t>(m);
+	}
+#else	// old way
 /*----------------------------------------------------------------------------------------------------------------------
 |	First erases `pattern_repr', then builds it into a vector of pattern representation strings. When the function 
 |	returns, each element of `pattern_repr' is a string containing global state codes separated by whitespace. This 
@@ -3417,7 +4679,7 @@ void TreeLikelihood::buildPatternReprVector(std::vector<std::string> & pattern_r
 
 	DeleteTwoDArray<int8_t>(m);
 	}
-
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Refreshes the univent mapping for all sites over the entire tree. This function will wipe out all stored states 
@@ -3428,6 +4690,7 @@ void TreeLikelihood::fullRemapping(
   LotShPtr rng,             /**< is the random number generator to use for the mapping */
   bool doSampleUnivents)    /**< is True if ... */
 	{
+#if POLPY_OLDWAY	// unimap not yet working for partitioned models 
 	std::cerr << "\nFULL REMAPPING!!!!\n" << std::endl;
 	t->renumberInternalNodes(t->GetNTips());
 	univentProbMgr.recalcUMat();
@@ -3566,6 +4829,7 @@ void TreeLikelihood::fullRemapping(
 	//std::cerr << "in fullRemapping\n";
 	
 	//debugCheckSMatrix(t);
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -3573,6 +4837,7 @@ void TreeLikelihood::fullRemapping(
 */
 void TreeLikelihood::remapUniventsForNode(TreeShPtr t, TreeNode * nd)
 	{
+#if POLPY_OLDWAY	// unimap not yet working for partitioned models 
 	PHYCAS_ASSERT(localRng);
 	TreeNode * root_tip = t->GetFirstPreorder();
 	TreeNode * subroot = root_tip->GetLeftChild();
@@ -3686,6 +4951,7 @@ void TreeLikelihood::remapUniventsForNode(TreeShPtr t, TreeNode * nd)
 		}
 
 	nd_univents.setValid(true);
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -3695,6 +4961,7 @@ void TreeLikelihood::remapUniventsForNode(TreeShPtr t, TreeNode * nd)
 void TreeLikelihood::debugCheckSMatrix(
   TreeShPtr t)	/**< is the tree to use */
 	{
+#if POLPY_OLDWAY	// unimap not yet working for partitioned models 
 	std::cerr << "debugCheckSMatrix\n";
 	PHYCAS_ASSERT(isUsingUnimap());
 
@@ -3828,6 +5095,8 @@ void TreeLikelihood::debugCheckSMatrix(
 			
 	PHYCAS_ASSERT(ok);
 	DeleteTwoDArray(debugSMat);
+#endif
 	}
 
 }	// namespace phycas
+

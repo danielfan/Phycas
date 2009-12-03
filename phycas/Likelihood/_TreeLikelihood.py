@@ -62,7 +62,7 @@ class TreeLikelihood(TreeLikelihoodBase):
         
         """
         from phycas import POLPY_NEWWAY
-        if POLPY_NEWWAY:
+        if POLPY_NEWWAY:  # partitioning data
             TreeLikelihoodBase.copyDataFromDiscreteMatrix(self, data_matrix.mat, partition_info)
         else:
             TreeLikelihoodBase.copyDataFromDiscreteMatrix(self, data_matrix.mat)

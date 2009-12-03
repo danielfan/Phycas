@@ -22,7 +22,11 @@
 
 #include "phycas/src/states_patterns.hpp"
 
+#if POLPY_NEWWAY
+typedef	pattern_map_t	SimPatternMapType;
+#else // old way
 typedef	PatternMapType	SimPatternMapType;
+#endif
 
 namespace phycas
 {
@@ -52,7 +56,11 @@ class SimData
 		void						resetPatternLength(unsigned ntaxa);
 		void						wipePattern();
 		void						setState(unsigned pos, int8_t state);
+#if POLPY_NEWWAY
+		void						insertPattern(pattern_count_t count);
+#else // old way
 		void						insertPattern(PatternCountType count);
+#endif
 
         void                        buildBinVector(unsigned nstates);
 		std::vector<double>		    getBinnedCounts();
@@ -61,37 +69,64 @@ class SimData
 		double						calctBinned(unsigned nstates);
 		void						includeDataFrom(SimData &);
 		unsigned					getPatternLength();
+#if POLPY_NEWWAY
+		pattern_t &					getCurrPattern();
+		pattern_count_t				getTotalCount();
+#else
 		VecStateList &				getCurrPattern();
 		PatternCountType			getTotalCount();
+#endif
 		unsigned					getNUniquePatterns();
+#if POLPY_NEWWAY
+		void						addDataTo(SimData & other, pattern_count_t mult);
+		void						setTotalCount(pattern_count_t total);
+		void						multBy(pattern_count_t factor);
+		void						divideBy(pattern_count_t factor);
+#else // old way
 		void						addDataTo(SimData & other, PatternCountType mult);
-		void						setNumAdditions(unsigned n);
-		unsigned					getNumAdditions();
 		void						setTotalCount(PatternCountType total);
 		void						multBy(PatternCountType factor);
 		void						divideBy(PatternCountType factor);
+#endif
+		void						setNumAdditions(unsigned n);
+		unsigned					getNumAdditions();
 
 		std::string					patternTable(const StringVect & state_symbols);
 		void						saveToNexusFile(const std::string filename, const StringVect & taxon_names, const std::string datatype, const StringVect & state_symbols);
 
+#if POLPY_NEWWAY
+		const static state_code_t	missing_state;			/**< The value that represents missing data */
+#else
 		const static int8_t			missing_state;			/**< The value that represents missing data */
+#endif
 
 		const SimPatternMapType &	getSimPatternMap() const;
 
 	private:
 
+#if POLPY_NEWWAY
+		void						insertPatternToRunningAverage(pattern_count_t count, pattern_count_t p);
+#else // old way
 		void						insertPatternToRunningAverage(PatternCountType count, PatternCountType p);
+#endif
 
 	private:
 
-		PatternCountType			total_count;			/**< The number of patterns inserted since sim_pattern_map was last cleared (note that this is not sim_pattern_map.size(), but instead equals the sum of all the counts) */
 		unsigned					pattern_length;			/**< Number of taxa, used to reserve elements in new pattern vectors */
 		SimPatternMapType			sim_pattern_map;		/**< Keys are patterns, values are pattern counts */
-		VecStateList				tmp_pattern;			/**< Workspace for building up a pattern */
 		std::string					outstr;					/**< Workspace for building up a tabular representation of `sim_pattern_map' (used by showPatternMap function) */
-        std::vector<double>         binv;                   /**< Stores binned counts if calctBinned is called; otherwise, will be an empty vector. */
 
+#if POLPY_NEWWAY
+        double_vect_t		        binv;                   /**< Stores binned counts if calctBinned is called; otherwise, will be an empty vector. */
+		pattern_t					tmp_pattern;			/**< Workspace for building up a pattern */
+		pattern_count_t				total_count;			/**< The number of patterns inserted since sim_pattern_map was last cleared (note that this is not sim_pattern_map.size(), but instead equals the sum of all the counts) */
+        std::vector<pattern_t>   	patternVect;            // temporary debugging aid
+#else
+        std::vector<double>         binv;                   /**< Stores binned counts if calctBinned is called; otherwise, will be an empty vector. */
+		VecStateList				tmp_pattern;			/**< Workspace for building up a pattern */
+		PatternCountType			total_count;			/**< The number of patterns inserted since sim_pattern_map was last cleared (note that this is not sim_pattern_map.size(), but instead equals the sum of all the counts) */
         std::vector<VecStateList>   patternVect;            // temporary debugging aid
+#endif
 	};
 
 typedef boost::shared_ptr<SimData>	SimDataShPtr;

@@ -125,7 +125,7 @@ class Partition(PhycasCommand):
             
         # self not already copied, so copy it now
         new_partition = Partition()
-        new_partition.name             = copy.deepcopy(self.name, memo)
+        new_partition.name = copy.deepcopy(self.name, memo)
         memo[self] = new_partition
         return new_partition
         
@@ -140,7 +140,7 @@ class Partition(PhycasCommand):
                 nm = 'default'
             else:
                 nm = self.subset[x][0]
-            print '%6d %12d %s' % (i,x,nm)
+            #print '--> %6d %6d %s' % (i,x,nm)
 
     def __call__(self, **kwargs):
         """

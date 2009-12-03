@@ -28,6 +28,10 @@
 #include "phycas/src/states_patterns.hpp"
 #include "phycas/src/univents.hpp"
 
+#if POLPY_NEWWAY
+#include "phycas/src/partition_model.hpp"
+#endif
+
 struct CIPRES_Matrix;
 
 namespace CipresNative
@@ -40,6 +44,98 @@ namespace phycas
 class CondLikelihood;
 class CondLikelihoodStorage;
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	The InternalData class stores the data structures needed for computing likelihoods on trees. This includes both
+|	condition likelihood arrays and transition probability matrices. A Conditional Likelihood Array (CLA) is stored
+|	internally as a std::vector<double>, but the accessor function getCLA() returns a pointer to the first element so
+|	the array can be efficiently traversed during update loops. The CLAs are laid out as follows (for 3 relative rate
+|	categores and DNA data):
+|>
+|	+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---
+|	|					 pattern 1					|					 pattern 2					|					
+|	+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---
+|	|	  rate 1	|	  rate 2	|	  rate 3	|	  rate 1	|	  rate 2	|	  rate 3	|	  rate 1	|	
+|	+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---
+|	| A | C | G | T | A | C | G | T | A | C | G | T | A | C | G | T | A | C | G | T | A | C | G | T | A | C | G | T | A 
+|	+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---
+|					  ^
+|>
+|	The element above indicated by the symbol ^ would represent the probability of that part of data pattern 1 above 
+|	this node given that the relative rate was rate 2 and this node had state A. The `ownedPMatrices' data member stores
+|	an array of two-dimensional transition matrices similar to the following (for 3 relative rate categories, DNA data).
+|	All elements of all of these transition matrices are laid out to occupy one contiguous block of memory; the index of 
+|	each element in memory is indicated by the numbers inside the cells below. Note that this order is compatible with
+|	the layout of the CLA to minimize cache faults as the CLAs are computed.
+|>
+|				to state			   to state				  to state	   
+|			A	 C	  G	   T	   A	C	 G	  T		  A	   C	G	 T
+|	f	 +----+----+----+----+	+----+----+----+----+  +----+----+----+----+
+|	r  A |	0 |	 1 |  2 |  3 |	| 16 | 17 | 18 | 19 |  | 32 | 33 | 34 | 35 |
+|	o	 +----+----+----+----+	+----+----+----+----+  +----+----+----+----+
+|	m  C |	4 |	 5 |  6 |  7 |	| 20 | 21 | 22 | 23 |  | 36 | 37 | 38 | 39 |
+|		 +----+----+----+----+	+----+----+----+----+  +----+----+----+----+
+|	s  G |	8 |	 9 | 10 | 11 |	| 24 | 25 | 26 | 27 |  | 40 | 41 | 42 | 43 |
+|	t	 +----+----+----+----+	+----+----+----+----+  +----+----+----+----+
+|	a  T | 12 | 13 | 14 | 15 |	| 28 | 29 | 30 | 31 |  | 44 | 45 | 46 | 47 |
+|	t	 +----+----+----+----+	+----+----+----+----+  +----+----+----+----+
+|	e			 rate 1					rate 2				   rate 3	  
+|>
+*/
+class InternalData
+  : boost::noncopyable
+	{
+	friend class TreeLikelihood;
+	friend class InternalDataTest;
+
+	public:
+
+													~InternalData();
+
+		unsigned									getCLASize() const;
+		double * * *								getPMatrices(unsigned i);
+		double * * *								getMutablePMatrices(unsigned i) const;
+		const double * const * const *				getConstPMatrices(unsigned i) const;
+					
+		CondLikelihoodShPtr							getChildCondLikePtr();
+		CondLikelihoodShPtr							getParentalCondLikePtr();
+		ConstCondLikelihoodShPtr					getValidChildCondLikePtr() const;
+		ConstCondLikelihoodShPtr					getValidParentalCondLikePtr() const;
+		
+		bool										filialCLAValid() const;
+		bool										filialCLACached() const;
+		bool										parentalCLAValid() const;
+		bool										parentalCLACached() const;
+
+		unsigned 									getNumUnivents(unsigned i) const {return univents.getNumEvents(i);}
+		std::vector<unsigned>						getUniventStates(unsigned i) const {return univents.getEventsVec(i);}
+		std::vector<double>   						getUniventTimes(unsigned i) const {return univents.getTimes(i);}
+		Univents & 									getUniventsRef() {return univents;}
+		const Univents & 							getUniventsConstRef()const {return univents;}
+		unsigned **									getNodeSMat() {return sMat;}
+		
+	private:
+													InternalData(bool using_unimap, PartitionModelShPtr partition, CondLikelihoodStorageShPtr cla_storage);
+
+		bool										unimap;			/**< true if internal nodes are to be prepared for uniformized mapping likelihood; false if internal nodes are to be prepared for Felsenstein-style integrated likelihoods */
+		
+		Univents									univents;
+		void										swapUnivents(InternalData * other);
+
+		//CLA's for an edge from a node to its parent are stored in the node's InternalData (or TipData).
+		//bool										parCLAValid;	/**< true if parWorkingCLA is valid */
+		CondLikelihoodShPtr							parWorkingCLA;	/**< conditional likelihood array for the parent node and beyond (valid if it points to something, invalid otherwise) */
+		CondLikelihoodShPtr							parCachedCLA;	/**< parental conditional likelihood array is stored here to make reverting MCMC moves cheap */
+		//bool										childCLAValid;	/**< true if childWorkingCLA is valid. */
+		CondLikelihoodShPtr							childWorkingCLA;/**< conditional likelihood array for this node and above (valid if it points to something, invalid otherwise) */ 
+		CondLikelihoodShPtr							childCachedCLA; /**< filial conditional likelihood array is stored here to make reverting MCMC moves cheap */
+
+		state_code_t								state;			/**< Used in simulation to temporarily store the state for one character */
+		std::vector< ScopedThreeDMatrix<double> >	pMatrices;		/**< pMatrix[s][r] is the transition matrix for subset s and relative rate r */
+		CondLikelihoodStorageShPtr					cla_pool;		/**< CondLikelihood object storage facility */
+		unsigned **									sMat;
+	};
+#else // old way
 /*----------------------------------------------------------------------------------------------------------------------
 |	The InternalData class stores the data structures needed for computing likelihoods on trees. This includes both
 |	condition likelihood arrays and transition probability matrices. A Conditional Likelihood Array (CLA) is stored
@@ -108,8 +204,8 @@ class InternalData
 		Univents & 						getUniventsRef() {return univents;}
 		const Univents & 				getUniventsConstRef()const {return univents;}
 		unsigned **						getNodeSMat() {return sMat;}
+		
 	private:
-	
 										InternalData(bool using_unimap, unsigned nPatterns, unsigned nRates, unsigned nStates, double * * * pMatrices, bool managePMatrices, CondLikelihoodStorageShPtr cla_storage);
 
 		bool							unimap;			/**< true if internal nodes are to be prepared for uniformized mapping likelihood; false if internal nodes are to be prepared for Felsenstein-style integrated likelihoods */
@@ -131,6 +227,7 @@ class InternalData
 		CondLikelihoodStorageShPtr		cla_pool;		/**< CondLikelihood object storage facility */
 		unsigned **						sMat;
 	};
+#endif
 	
 typedef boost::shared_ptr<InternalData>			InternalDataShPtr;
 typedef std::vector<InternalDataShPtr>			VecInternalDataShPtr;
@@ -139,6 +236,16 @@ typedef std::vector<InternalDataShPtr>			VecInternalDataShPtr;
 // ***** InternalData inlines ***********************************************************
 // **************************************************************************************
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns the data member `pMatrices'.
+*/
+inline double * * * InternalData::getPMatrices(
+  unsigned i)		/**< is the subset of the partition */
+	{
+	return pMatrices[i].ptr;
+	}
+#else // old way
 /*----------------------------------------------------------------------------------------------------------------------
 |	Accessor function that returns the data member `pMatrices'.
 */
@@ -146,7 +253,18 @@ inline double * * * InternalData::getPMatrices()
 	{
 	return pMatrices;
 	}
+#endif
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns the data member `pMatrices'.
+*/
+inline double * * * InternalData::getMutablePMatrices(
+  unsigned i) const		/**< is the subset of the partition */
+	{
+	return pMatrices[i].ptr;
+	}
+#else // old way
 /*----------------------------------------------------------------------------------------------------------------------
 |	Accessor function that returns the data member `pMatrices'.
 */
@@ -154,7 +272,18 @@ inline double * * * InternalData::getMutablePMatrices() const
 	{
 	return pMatrices;
 	}
+#endif
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns the data member `pMatrices'.
+*/
+inline const double * const * const * InternalData::getConstPMatrices(
+  unsigned i) const		/**< is the subset of the partition */
+	{
+	return pMatrices[i].ptr;
+	}
+#else // old way
 /*----------------------------------------------------------------------------------------------------------------------
 |	Accessor function that returns the data member `pMatrices'.
 */
@@ -162,6 +291,7 @@ inline const double * const * const * InternalData::getConstPMatrices() const
 	{
 	return pMatrices;
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns `childWorkingCLA' data member. If `childWorkingCLA' does not currently point to anything, a CondLikelihood 

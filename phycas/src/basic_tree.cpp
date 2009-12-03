@@ -1149,7 +1149,7 @@ bool Tree::DebugCheckTree(bool allowDegTwo, bool checkDataPointers, int verbosit
                     }
 				}
 			}
-#if POLPY_OLDWAY
+#if 0
 		PHYCAS_ASSERT(&*currNd->tree == this);
 #endif
 		if (!preorderDirty) 
@@ -2023,7 +2023,7 @@ TreeNode * Tree::GetNewNode()
 TreeNode * Tree::AllocNewNode()
 	{
 	TreeNode * nd = new TreeNode();
-#if POLPY_OLDWAY
+#if 0
 #	error Should not be compiled
 	nd->SetTreeShPtr(TreeShPtr(this));
 #endif
@@ -2047,7 +2047,7 @@ void Tree::Reserve(
 	for (unsigned i = 0; i < num_nodes_needed; ++i)
 		{
         TreeNode * nd = new TreeNode();
-#if POLPY_OLDWAY
+#if 0
         nd->SetTreeShPtr(TreeShPtr(this));
 #endif
 		internalNodeStorage.push(nd);

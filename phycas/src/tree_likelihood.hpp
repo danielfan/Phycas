@@ -34,7 +34,10 @@
 #include "phycas/src/underflow_manager.hpp"
 #include "phycas/src/univent_prob_mgr.hpp"
 
-	
+#if POLPY_NEWWAY
+#include "phycas/src/partition_model.hpp"
+#endif
+
 namespace phycas
 {
 unsigned ** getNodeSMat(TreeNode * nd);
@@ -68,37 +71,61 @@ class TreeLikelihood
 	{
 	public:
 
+#if POLPY_NEWWAY
+										TreeLikelihood(PartitionModelShPtr);
+#else
 										TreeLikelihood(ModelShPtr);
+#endif
 								virtual ~TreeLikelihood(); //needed as long as startTreeViewer is virtual
 
 		// Accessors
 		unsigned						getNTaxa() const;
+#if POLPY_NEWWAY
+		PartitionModelShPtr				getPartitionModel() const;
+		const double_vect_t &			getRateMeans(unsigned i) const;
+		const double_vect_t &			getRateProbs(unsigned i) const;
+		unsigned						getNRatesTotal(unsigned i) const;
+		double_vect_t					getCategoryLowerBoundaries(unsigned i) const;
+		unsigned						getNStates(unsigned i) const;
+		const state_list_vect_t &		getStateList() const;
+		const state_list_pos_vect_t &	getStateListPos() const;
+		void							replacePartitionModel(PartitionModelShPtr);
+		const count_vect_t &			getPatternCounts() const;
+#else
 		unsigned						getNPatterns() const;
+		const std::vector<double> &		getRateMeans() const;
+		const std::vector<double> &		getRateProbs() const;
 		unsigned						getNRatesTotal() const;
+		std::vector<double>				getCategoryLowerBoundaries() const;
 		unsigned						getNStates() const;
 		ModelShPtr						getModel() const;
 		const VecStateList &			getStateList() const;
-		const VecStateListPos &			getStateListPos() const;
-		const std::vector<double> &		getRateMeans() const;
-		const std::vector<double> &		getRateProbs() const;
+		const StateListPos &			getStateListPos() const;
+		void							replaceModel(ModelShPtr);
+		const CountVectorType &			getPatternCounts() const;
+#endif
 		void							recalcRelativeRates();
-		std::vector<double>				getCategoryLowerBoundaries() const;
 		const std::vector<unsigned> &	getListOfAllMissingSites() const;
 		const std::vector<double> &		getSiteLikelihoods() const;
 		const std::vector<double> &		getSiteUF() const;
 		bool							storingSiteLikelihoods() const;
-		const CountVectorType &			getPatternCounts() const;
 		const std::vector<unsigned> &	getCharIndexToPatternIndex() const;
 
 		// Modifiers
+#if POLPY_NEWWAY
+#else // old way
 		void							setNPatterns(unsigned npatterns);
-		void							replaceModel(ModelShPtr);
+#endif
 		void							setNoData();
 		void							setHaveData();
 		void							storeSiteLikelihoods(bool yes);
 
 		// Utilities
+#if POLPY_NEWWAY
+		void							releasePartitionModel();
+#else
 		void							releaseModel();
+#endif
 		double							calcLogLikeAtSubstitutionSaturation() const;
 
 		void							addOrphanTip(TreeShPtr t, unsigned row, std::string name);
@@ -107,10 +134,12 @@ class TreeLikelihood
 		void							prepareForLikelihood(TreeShPtr);
 		void							prepareInternalNodeForLikelihood(TreeNode * nd);
 
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY    // partitioning data
 		void							copyDataFromDiscreteMatrix(const NxsCXXDiscreteMatrix &, const std::vector<unsigned> & partition_info);
 #else
-		void							copyDataFromDiscreteMatrix(const NxsCXXDiscreteMatrix &);
+		void							copyDataFromDiscreteMatrix(const NxsCXXDiscreteMatrix &, const std::vector<unsigned> & partition_info);
+		//obsolete
+		//void							copyDataFromDiscreteMatrix(const NxsCXXDiscreteMatrix &);
 #endif
 		void							copyDataFromSimData(SimDataShPtr sim_data);
 
@@ -143,7 +172,11 @@ class TreeLikelihood
 		double							calcLnL(TreeShPtr);
 
 		std::string						listPatterns(bool translate);
+#if POLPY_NEWWAY
+		std::string						getStateStr(unsigned i, state_code_t state) const;
+#else // old way
 		std::string						getStateStr(int8_t state) const;
+#endif
 
 		void							setDebug(bool on);
 
@@ -174,6 +207,17 @@ class TreeLikelihood
 
 		void							setUFNumEdges(unsigned nedges);
 
+#if POLPY_NEWWAY
+		void							calcPMatTranspose(unsigned i, double * * * transPMats, const uint_vect_t & stateListPosVec, double edgeLength);
+		void							calcPMat(unsigned i, double * * * p, double edgeLength); //
+
+		void							calcCLATwoTips(CondLikelihood & condLike, const TipData & leftTip, const TipData & rightTip);
+		void							calcCLAOneTip(CondLikelihood & condLike, const TipData & leftChild, const InternalData & rightChild, const CondLikelihood & rightCondLike);
+		void							calcCLANoTips(CondLikelihood & condLike, const InternalData & leftChild, const CondLikelihood & leftCondLike, const InternalData & rightChild, const CondLikelihood & rightCondLike);
+  
+		void							conditionOnAdditionalTip(CondLikelihood & condLike, const TipData & tipData);
+		void							conditionOnAdditionalInternal(CondLikelihood & condLike, const InternalData & child, const CondLikelihood & childCondLike);
+#else
 		void							calcPMatTranspose(double * * *, const StateListPos &, double);
 		void							calcPMat(double * * *, double); //
 
@@ -183,6 +227,7 @@ class TreeLikelihood
   
 		void							conditionOnAdditionalTip(CondLikelihood &, const TipData &);
 		void							conditionOnAdditionalInternal(CondLikelihood &, ConstPMatrices , const CondLikelihood &);
+#endif
 
 		double							harvestLnL(EdgeEndpoints & focalEdge);
 		double							harvestLnLFromValidEdge(ConstEdgeEndpoints & focalEdge);
@@ -211,20 +256,27 @@ class TreeLikelihood
 		bool							store_site_likes;		/**< If true, calcLnL always stores the site likelihoods in the `site_likelihood' data member; if false, the `site_likelihood' data member is not updated by calcLnL */
 		bool							no_data;				/**< If true, calcLnL always returns 0.0 (useful for allowing MCMC to explore the prior) */
 
-		unsigned						nTaxa;					/**< The number of taxa (i.e. the number of elements in each pattern stored in pattern_map) */
+		unsigned						nTaxa;					/**< The number of taxa */
+#if POLPY_NEWWAY
+		PartitionModelShPtr				partition_model;		/**< The object that holds information about the model applied to each subset of the data partition */
+		
+		//@POL these next four should logically be inside the PartitionModel class
+		double_vect_vect_t				rate_means;				/**< Vector of relative rate vectors (one rate vector for each partition subset) */ 
+		double_vect_vect_t				rate_probs;				/**< Vector of relative rate probability vectors  (one probability vector for each partition subset) */
+		state_list_vect_t				state_list;				/**< `state_list[i]' provides a vector of state code definitions for subset i */
+		state_list_pos_vect_t			state_list_pos;			/**< `state_list_pos[i]' is a vector of positions of states in `state_list[i]' */
+#else
 		unsigned						num_patterns;			/**< The number of site patterns */
 		unsigned						num_states;				/**< The number of states */
 		unsigned						num_rates;				/**< The number of relative rate categories */
 		ModelShPtr						model;					/**< The substitution model */
-		VecStateList					state_list;				/**< The global lookup table for decoding coded states */
-		VecStateListPos					state_list_pos;			/**< The vector of positions of states in `state_list' */
-
 		std::vector<double>				rate_means;				/**< Vector of relative rates */ //POL_BOOKMARK rate_means declaration
 		std::vector<double>				rate_probs;				/**< Vector of relative rate probabilities */
+		VecStateList					state_list;				/**< The global lookup table for decoding coded states */
+		StateListPos					state_list_pos;			/**< The vector of positions of states in `state_list' */
+#endif
 
 		bool							debugging_now;			/**< For debugging, indicates whether user wants to see debugging output */
-
-
 
 	protected:
 
@@ -233,22 +285,26 @@ class TreeLikelihood
 		TipData *						allocateTipData(unsigned);
 		InternalData *					allocateInternalData();
 
-		void	 						storePattern(const std::vector<int8_t> & pattern, const unsigned pattern_index, const PatternCountType weight);
-
-#if POLPY_NEWWAY
+#if POLPY_NEWWAY    // partitioning data
+		void	 						storePattern(pattern_map_t & pattern_map, pattern_to_sites_map_t & pattern_to_site_map, const std::vector<int8_t> & pattern, const unsigned pattern_index, const pattern_count_t weight);
 		unsigned						compressDataMatrix(const NxsCXXDiscreteMatrix &, const std::vector<unsigned> & partition_info);
+		void							calcPMatCommon(unsigned i, double * * * pMatrices, double edgeLength);
 #else
+		void	 						storePattern(const std::vector<int8_t> & pattern, const unsigned pattern_index, const PatternCountType weight);
 		unsigned						compressDataMatrix(const NxsCXXDiscreteMatrix &);
+		void							calcPMatCommon(double * * *, double);
 #endif
 
 		void							calcTMatForSim(TipData &, double);
 		void							simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar, bool refresh_probs);
-		void							calcPMatCommon(double * * *, double);
-		
+
 	private:
+#if POLPY_NEWWAY
+#else
 		typedef std::list<unsigned>					IndexList;
 		typedef std::map<VecStateList, IndexList>	PatternToIndex;
 		PatternToIndex 					patternToIndex;			/**< map that associates a list of character indices with each pattern; for example, if some pattern is found at sites 0, 15, and 167, then patternToIndex.first is the pattern and patternToIndex.second is the list<unsigned> [0, 15, 167] */
+#endif
 
 	protected:
 
@@ -263,14 +319,26 @@ class TreeLikelihood
         
 	public: //@POL these should be protected rather than public
 
-		std::vector<double>				likelihood_rate_site;	/**< Vector of likelihoods for each rate/site combination */
-		CountVectorType					pattern_counts;			/**< vector of pattern counts */
-		PatternMapType					pattern_map;			/**< keys are patterns, values are pattern counts */
-		std::vector<double>				site_likelihood;		/**< site_likelihood[pat] stores the site likelihood for pattern pat, but only if `store_site_likes' is true */
-		std::vector<unsigned>			charIndexToPatternIndex; /**< maps original character index to the index in compressed pattern "matrix" */
-		std::vector<unsigned>			constant_states;		/**< keeps track of the states for potentially constant sites. See TreeLikelihood::buildConstantStatesVector for description of the structure of this vector. */
-		std::vector<unsigned>			all_missing;			/**< keeps track of sites excluded automatically because they have missing data for all taxa. */
-		std::vector<double>				site_uf;				/**< site_uf[pat] stores the underflow correction factor used for pattern pat, but only if `store_site_likes' is true */
+#if POLPY_NEWWAY
+		count_vect_t					pattern_counts;				/**< vector of pattern counts */
+		uint_vect_t						subset_offset;				/**< `subset_offset'[i] holds the index into `pattern_vect' where the patterns from subset i begin. The number of elements is one greater than the number of subsets (the last element holds num_patterns to make it easy to find the end of any subset, including the last subset). */
+		pattern_vect_t					pattern_vect;				/**< vector of patterns (all patterns for a given partition subset are contiguous, but within a subset, order may differ from data file order) */
+		double_vect_t					site_likelihood;			/**< site_likelihood[pat] stores the site likelihood for pattern pat, but only if `store_site_likes' is true */
+		pattern_to_sites_t				pattern_to_sites;			/**< vector of lists that provides a list of character indices for each pattern in `pattern_vect'. For example, if pattern j is found at sites 0, 15, and 167, then pattern_to_sites[j] is the list [0, 15, 167] */
+		uint_vect_t						charIndexToPatternIndex; 	/**< maps original character index to the position of the corresponding element in `pattern_vect' */
+		uint_vect_t						constant_states;			/**< keeps track of the states for potentially constant sites. See TreeLikelihood::buildConstantStatesVector for description of the structure of this vector. */
+		uint_vect_t						all_missing;				/**< keeps track of sites excluded automatically because they have missing data for all taxa. */
+		double_vect_t					site_uf;					/**< site_uf[pat] stores the underflow correction factor used for pattern pat, but only if `store_site_likes' is true */
+#else
+		//unused? std::vector<double>	likelihood_rate_site;		/**< Vector of likelihoods for each rate/site combination */
+		CountVectorType					pattern_counts;				/**< vector of pattern counts */
+		PatternMapType					pattern_map;				/**< keys are patterns, values are pattern counts */
+		std::vector<double>				site_likelihood;			/**< site_likelihood[pat] stores the site likelihood for pattern pat, but only if `store_site_likes' is true */
+		std::vector<unsigned>			charIndexToPatternIndex; 	/**< maps original character index to the position of the corresponding element in `pattern_map' */
+		std::vector<unsigned>			constant_states;			/**< keeps track of the states for potentially constant sites. See TreeLikelihood::buildConstantStatesVector for description of the structure of this vector. */
+		std::vector<unsigned>			all_missing;				/**< keeps track of sites excluded automatically because they have missing data for all taxa. */
+		std::vector<double>				site_uf;					/**< site_uf[pat] stores the underflow correction factor used for pattern pat, but only if `store_site_likes' is true */
+#endif
 
 
 	};

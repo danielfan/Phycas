@@ -783,7 +783,7 @@ void SliceSampler::SetXValue(
 	if (x != lastSampled.first)
 		{
 		lastSampled.first = x;
-#if POLPY_OLDWAY
+#if 0
 		FuncToSampleShPtr fsh = func.lock();
 		PHYCAS_ASSERT(fsh);
 		lastSampled.second = (*fsh)(x);

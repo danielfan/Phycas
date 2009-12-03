@@ -36,7 +36,7 @@ class ParamSummarizer(CommonFunctions):
         
         """
         CommonFunctions.__init__(self, opts)
-        
+
     def interpolate(self, xx, x, y):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
@@ -189,25 +189,31 @@ class ParamSummarizer(CommonFunctions):
         if betas[0] != 1.0 or betas[-1] != 0.0:
             raise Exception('Steppingstone sampling requires beta values to be ordered from 1.0 (first) to 0.0 (last)')
         for i in range(1,nbetas):
+            # find the difference between the two beta values for ratio i
             blarger = betas[i - 1]
             bsmaller = betas[i]
             beta_incr = blarger - bsmaller
+            
+            # find the maximum loglike
             loglikes = likes[bsmaller]
-            tmp = 0.0
             n = len(loglikes)
             Lmax = max(loglikes)
+            
+            # find the log of the ratio of normalizing constants for ratio i
+            tmp = 0.0
             for lnL in loglikes:
                 tmp += math.exp(beta_incr*(lnL - Lmax))
             tmp /= float(n)
-            lnR += beta_incr*Lmax + math.log(tmp)
+            lnRk = beta_incr*Lmax + math.log(tmp)
+            lnR += lnRk
         
             # standard error calculation
             tmp1 = 0.0
             for lnL in loglikes:
                 aa = math.exp(beta_incr*(lnL - Lmax))/tmp
                 tmp1 += math.pow((aa - 1.0),2.0)
-            tmp1 /= float(n)
-            seR += tmp1/float(n)
+            seR += tmp1
+        seR /= math.pow(float(n), 2.0)
         self.output(' %.8f Steppingstone sampling method (se = %.8f)' % (lnR, seR))
         
     def autocorr_ess(self, values):

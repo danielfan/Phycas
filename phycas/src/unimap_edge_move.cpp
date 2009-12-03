@@ -197,6 +197,9 @@ void UnimapEdgeMove::proposeNewState()
 */
 bool UnimapEdgeMove::update()
 	{
+#if POLPY_NEWWAY	//unimap not yet working with partitioning
+	return true;
+#else
 	// The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
 	// A proposed UnimapEdgeMove cannot be accepted without changing edge lengths, so it is best to just bail out now.
 	if (is_fixed)
@@ -247,5 +250,6 @@ bool UnimapEdgeMove::update()
 		revert();
 		return false;
 		}
+#endif
 	}
 

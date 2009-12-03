@@ -45,6 +45,10 @@
 #include "phycas/src/q_matrix.hpp"
 #include "phycas/src/xlikelihood.hpp"
 
+#if POLPY_NEWWAY
+#include "phycas/src/partition_model.hpp"
+#endif
+
 void model_pymod();
 void updater_pymod();
 
@@ -69,6 +73,25 @@ void translateXLikelihood(const XLikelihood &e)
 // link, then see the example at the bottom of the page that results from clicking
 // on the "call_method.hpp" link (under the category "Function Invocation and 
 // Creation").
+
+#if POLPY_NEWWAY
+class TreeLikelihoodWrapper : public TreeLikelihood
+	{
+	public:
+		TreeLikelihoodWrapper(PyObject * self, PartitionModelShPtr m) : TreeLikelihood(m), m_self(self) 
+			{
+			}
+		virtual ~TreeLikelihoodWrapper() {} //@POL may need to delete uMat here (see TreeLikelihood::~TreeLikelihood)
+
+		int startTreeViewer(TreeShPtr t, std::string msg, unsigned site) const 
+			{ 
+			return call_method<int,TreeShPtr,std::string>(m_self, "startTreeViewer", t, msg, site); 
+			}
+
+	private:
+		PyObject * const m_self;
+	};
+#else // old way
 class TreeLikelihoodWrapper : public TreeLikelihood
 	{
 	public:
@@ -85,6 +108,7 @@ class TreeLikelihoodWrapper : public TreeLikelihood
 	private:
 		PyObject * const m_self;
 	};
+#endif
 
 BOOST_PYTHON_MODULE(_LikelihoodBase)
 {
@@ -144,7 +168,11 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("getTotalCount", &phycas::SimData::getTotalCount)
         .def("getBinnedCounts", &phycas::SimData::getBinnedCounts)
 		;
+#if POLPY_NEWWAY
+	class_<TreeLikelihood, TreeLikelihoodWrapper, boost::noncopyable>("TreeLikelihoodBase", init<boost::shared_ptr<PartitionModel> >())
+#else // old way
 	class_<TreeLikelihood, TreeLikelihoodWrapper, boost::noncopyable>("TreeLikelihoodBase", init<boost::shared_ptr<Model> >())
+#endif
         .def("calcLogLikeAtSubstitutionSaturation", &TreeLikelihood::calcLogLikeAtSubstitutionSaturation)
 		.def("getPatternCounts", &TreeLikelihood::getPatternCounts, return_value_policy<copy_const_reference>())
 		.def("getCharIndexToPatternIndex", &TreeLikelihood::getCharIndexToPatternIndex, return_value_policy<copy_const_reference>())
@@ -158,7 +186,11 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("prepareForLikelihood", &TreeLikelihood::prepareForLikelihood)
 		.def("addOrphanTip", &TreeLikelihood::addOrphanTip)
 		.def("addDecoratedInternalNode", &TreeLikelihood::addDecoratedInternalNode)
+#if POLPY_NEWWAY
+		.def("replaceModel", &TreeLikelihood::replacePartitionModel)
+#else // old way
 		.def("replaceModel", &TreeLikelihood::replaceModel)
+#endif
 		.def("invalidateAwayFromNode", &TreeLikelihood::invalidateAwayFromNode)
 		.def("calcLnLFromNode", &TreeLikelihood::calcLnLFromNode)
 		.def("calcLnL", &TreeLikelihood::calcLnL)
@@ -176,7 +208,10 @@ BOOST_PYTHON_MODULE(_LikelihoodBase)
 		.def("getListOfAllMissingSites", &TreeLikelihood::getListOfAllMissingSites, return_value_policy<copy_const_reference>())
 		.def("setNoData", &TreeLikelihood::setNoData)
 		.def("setHaveData", &TreeLikelihood::setHaveData)
+#if POLPY_NEWWAY
+#else // old way
 		.def("getNPatterns", &TreeLikelihood::getNPatterns)
+#endif
 		.def("getLikelihoodRootNodeNum", &TreeLikelihood::getLikelihoodRootNodeNum)
 		.def("useUnimap", &TreeLikelihood::useUnimap)
 		.def("isUsingUnimap", &TreeLikelihood::isUsingUnimap)

@@ -487,7 +487,15 @@ double NormalDistribution::GetRelativeLnPDF(
 	double term1 = x - mean;
 	double term2 = sqrt2_const*sd;
 	double term3 = term1/term2;
-	double lnpdf = pow(term3, 2.0);
+	double lnpdf = -pow(term3, 2.0);
+	//std::cerr << "NormalDistribution::GetRelativeLnPDF: x = " << x;
+	//std::cerr << ", lnpdf = " << lnpdf;
+	//std::cerr << ", mean = " << mean;
+	//std::cerr << ", sd = " << sd;
+	//std::cerr << ", term1 = " << term1;
+	//std::cerr << ", term2 = " << term2;
+	//std::cerr << ", term3 = " << term3;
+	//std::cerr << std::endl;
 	return lnpdf;
 	}
 

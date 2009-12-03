@@ -169,13 +169,15 @@ install DataMatrix : _DataMatrixBase : <location>phycas/DataMatrix ;
 
 # Build and install the Likelihood extension
 alias likelihood_sources
-  : phycas/src/basic_cdf.cpp
+  : phycas/src/tree_likelihood.cpp 
+    phycas/src/basic_cdf.cpp
     phycas/src/basic_lot.cpp
     phycas/src/basic_tree.cpp 
     phycas/src/basic_tree_node.cpp 
     phycas/src/boost_assertion_failed.cpp
     phycas/src/bush_move.cpp 
     phycas/src/codon_model.cpp
+    phycas/src/cond_likelihood.cpp
     phycas/src/cond_likelihood_storage.cpp
     phycas/src/discrete_gamma_shape_param.cpp
     phycas/src/thirdparty/dcdflib/src/dcdflib.c
@@ -217,7 +219,7 @@ alias likelihood_sources
     phycas/src/state_freq_param.cpp
     phycas/src/tip_data.cpp 
     phycas/src/topo_prior_calculator.cpp 
-    phycas/src/tree_likelihood.cpp 
+    phycas/src/partition_model.cpp 
     phycas/src/tree_scaler_move.cpp 
     phycas/src/underflow_manager.cpp 
     phycas/src/unimap_nni_move.cpp 

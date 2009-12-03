@@ -67,12 +67,44 @@ void UnderflowManager::setCorrectToValue(
 	underflow_max_value = maxval;
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the `num_rates', `num_patterns', and `num_states' vectors to `nr', `np' and `ns', respectively. Assumes
+|	that the number of rates and states are greater than zero for every partition subset.
+*/
+void UnderflowManager::setDimensions(
+  const uint_vect_t & np,	/**< is a vector of the number of patterns in the data for each partition subset */
+  const uint_vect_t & nr, 	/**< is a vector of the number of relative rates used in modeling among-site rate variation for each partition subset */
+  const uint_vect_t & ns)	/**< is a vector of the number of states for each partition subset */
+	{
+	// Note: num_patterns can legitimately be 0 if running with no data. In this case, no underflow
+    // correction is ever needed, and all member functions are no-ops
+    total_patterns = (unsigned)std::accumulate(np.begin(), np.end(), 0);
+	PHYCAS_ASSERT(std::accumulate(nr.begin(), nr.end(), 0) > 0);
+	PHYCAS_ASSERT(std::accumulate(ns.begin(), ns.end(), 0) > 0);
+	
+	unsigned sz = (unsigned)np.size();
+	PHYCAS_ASSERT(nr.size() == (unsigned)sz);
+	PHYCAS_ASSERT(ns.size() == (unsigned)sz);
+	
+	num_patterns.resize(sz);
+	num_rates.resize(sz);
+	num_states.resize(sz);
+	
+	for (unsigned i = 0; i < sz; ++i)
+		{
+		num_patterns[i]	= np[i];
+		num_rates[i]	= nr[i];
+		num_states[i]	= ns[i];
+		}
+	}
+#else // old way
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the `num_rates', `num_patterns', and `num_states' data members to `nr', `np' and `ns', respectively. Assumes
 |	that all three values are greater than zero.
 */
 void UnderflowManager::setDimensions(
-  unsigned np,	/**< is the number of patterns in the data */
+  unsigned np,	/**< isthe number of patterns in the data */
   unsigned nr, 	/**< is the number of relative rates used in modeling among-site rate variation */
   unsigned ns)	/**< is the number of states */
 	{
@@ -84,6 +116,7 @@ void UnderflowManager::setDimensions(
 	num_rates = nr;
 	num_states = ns;
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Handles case of a node subtending two tips. In this case, the number of edges traversed is just two, and thus no
@@ -95,11 +128,19 @@ void UnderflowManager::twoTips(
   CondLikelihood & cond_like) /**< is the conditional likelihood array to correct */
   const
 	{
+#if POLPY_NEWWAY
+    if (total_patterns > 0)
+        {
+	    cond_like.setUnderflowNumEdges(2);
+	    cond_like.zeroUF();
+        }
+#else // old way
     if (num_patterns > 0)
         {
 	    cond_like.setUnderflowNumEdges(2);
 	    cond_like.zeroUF();
         }
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -113,6 +154,16 @@ double UnderflowManager::correctSiteLike(
   const
 	{
 	double site_uf_factor = 0.0;
+#if POLPY_NEWWAY
+    if (total_patterns > 0)
+        {
+	    PHYCAS_ASSERT(condlike_shptr);
+	    UnderflowType const * uf = condlike_shptr->getUF();
+	    PHYCAS_ASSERT(uf != NULL);
+	    site_uf_factor = (double)uf[pat];
+	    site_like -= site_uf_factor;
+        }
+#else // old way
     if (num_patterns > 0)
         {
 	    PHYCAS_ASSERT(condlike_shptr);
@@ -121,6 +172,7 @@ double UnderflowManager::correctSiteLike(
 	    site_uf_factor = (double)uf[pat];
 	    site_like -= site_uf_factor;
         }
+#endif
 	return site_uf_factor;
 	}
 
@@ -134,6 +186,15 @@ double UnderflowManager::getCorrectionFactor(
   const
 	{
 	double site_uf_factor = 0.0;
+#if POLPY_NEWWAY
+    if (total_patterns > 0)
+        {
+	    PHYCAS_ASSERT(condlike_shptr);
+	    UnderflowType const * uf = condlike_shptr->getUF();
+	    PHYCAS_ASSERT(uf != NULL);
+	    site_uf_factor = (double)uf[pat];
+        }
+#else // old way
     if (num_patterns > 0)
         {
 	    PHYCAS_ASSERT(condlike_shptr);
@@ -141,6 +202,7 @@ double UnderflowManager::getCorrectionFactor(
 	    PHYCAS_ASSERT(uf != NULL);
 	    site_uf_factor = (double)uf[pat];
         }
+#endif
 	return site_uf_factor;
 	}	
 
@@ -156,13 +218,23 @@ void UnderflowManager::check(
   CondLikelihood & cond_like,				/**< the conditional likelihood array object of the focal internal node */
   const CondLikelihood & left_cond_like,	/**< the conditional likelihood array object of an internal node that is one immediate descendant of the focal node */ 
   const CondLikelihood & right_cond_like, 	/**< the conditional likelihood array object of an internal node that is the other immediate descendant of the focal node (if one descendant is a tip, left_cond_like and right_cond_like should refer to the same object) */
+#if POLPY_NEWWAY  
+  const count_vect_t & counts,				/**< the pattern counts vector */
+#else	// old way
   const CountVectorType & counts,			/**< the pattern counts vector */
+#endif
   bool polytomy)							/**< true if in the process of dealing with additional children (beyond first two) in a polytomy */
   const
 	{
+#if POLPY_NEWWAY
+    if (total_patterns == 0)
+        return;
+#else // old way
     if (num_patterns == 0)
         return;
+#endif
 
+#if POLPY_OLDWAY	// punting here - will need to work on this for partitioned case
     // Determine whether we are dealing with 
     // case 1: one tip child and one internal node child
     // case 2: two internal node children (= no_tips)
@@ -317,6 +389,7 @@ void UnderflowManager::check(
 			}
 		}
 	cond_like.setUnderflowNumEdges(nedges);
+#endif
 	}
 
 } // namespace phycas

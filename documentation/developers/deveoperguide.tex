@@ -53,10 +53,10 @@
 }
 
 \input{defs}
-\input{setbmp}
-\input{seteps}
+%\input{setbmp}
+%\input{seteps}
 
-\includeonly{info,paramsmoves}
+\includeonly{info,data,likelihood,paramsmoves}
 
 % Use the natbib package for the bibliography
 \usepackage[round]{natbib}
@@ -65,6 +65,16 @@
 % Use the graphicx package to incorporate and scale
 % encapsulated postscript figures
 \usepackage{graphicx}
+
+% Keep hyperref last among includes
+\usepackage{hyperref}\hypersetup{backref, linkcolor=blue, urlcolor=blue, colorlinks=true, citecolor=blue, hyperindex=true, 
+pdfstartview=FitB, 
+pdfstartpage=1,
+pdftitle={Phycas Developer Manual},
+pdfauthor={Paul O. Lewis, Mark T. Holder, and David L. Swofford}, 
+pdfsubject={Phycas Developer Manual},
+pdfkeywords={phylogenetics, Bayesian, Markov chain Monte Carlo, MCMC}}
+% pdfpagemode=FullScreen,  
 
 \begin{document}
 
@@ -76,6 +86,8 @@
 \include{info}
 \tableofcontents
 
+\include{data}
+\include{likelihood}
 \include{paramsmoves}
 
 \bibliography{developerguide}

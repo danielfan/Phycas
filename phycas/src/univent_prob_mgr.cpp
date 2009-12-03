@@ -32,7 +32,12 @@ namespace phycas
 |	Constructor
 */
 UniventProbMgr::UniventProbMgr(
+#if POLPY_NEWWAY
+  PartitionModelShPtr modelArg)  /**< is a shared pointer to the partition model object */
+#else // old way
   ModelShPtr modelArg)  /**< is a shared pointer to the model object */
+#endif
+#if POLPY_OLDWAY
   : lnUMatMemMgt(modelArg->getNStates(), 0.0)
   , numStates(modelArg->getNStates())
   , model(modelArg)
@@ -40,6 +45,7 @@ UniventProbMgr::UniventProbMgr(
   , scratchMatOne(modelArg->getNStates(), 0.0)
   , scratchMatTwo(modelArg->getNStates(), 0.0)
   , storeUnivents(true), isMappingValidVar(false)
+#endif
 	{
 	lnUMat = lnUMatMemMgt.GetMatrix();
 	
@@ -72,6 +78,7 @@ double UniventProbMgr::GetLambda()
 */
 void UniventProbMgr::recalcUMat()
     {
+#if POLPY_OLDWAY	// unimap not yet working with partitioning
 	this->lambda = model->calcLMat(lnUMat);
 	uMatVect.resize(2);
     unsigned prev_maxm = maxm;
@@ -93,6 +100,7 @@ void UniventProbMgr::recalcUMat()
 	 // the reduceMaxm bit here is a hack to try to reduce maxm as opposed to allowing it to continue to creep up.
 	const unsigned reduceMaxm = 2;
 	expandUMatVect(prev_maxm > ( reduceMaxm + 2) ? prev_maxm - reduceMaxm : prev_maxm);
+#endif
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -105,6 +113,9 @@ unsigned UniventProbMgr::sampleM(
   double edgelen,                   /**< is the length of the edge in expected number of substitutions per site */
   Lot & rng) const /**< is the random number generator to use for the mapping */
     {
+#if POLPY_NEWWAY	// unimap not yet working with partitioning
+	return 0;
+#else
     unsigned m = UINT_MAX;
     std::vector<double> probm;
     std::vector<double> cumprm;
@@ -148,6 +159,7 @@ unsigned UniventProbMgr::sampleM(
     // Subtract cumprm.begin() from it to yield the sampled value of m
     PHYCAS_ASSERT(m != UINT_MAX);
     return m;
+#endif
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -155,6 +167,7 @@ unsigned UniventProbMgr::sampleM(
 */
 void UniventProbMgr::expandUMatVect(unsigned m) const 
 	{
+#if POLPY_OLDWAY	// unimap not yet working with partitioning
 	if (m <= maxm)
 		return;
 		
@@ -198,7 +211,7 @@ void UniventProbMgr::expandUMatVect(unsigned m) const
 			std::cerr << '\t' << i << '\t' << logmfact[i] << std::endl;
 		}
 	maxm = m;
-
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -214,6 +227,7 @@ void UniventProbMgr::unimapEdgeOneSite(
   bool doSampleTimes,
   Lot & rng) const /**< is the random number generator to use for the mapping */
 	{
+#if POLPY_OLDWAY	// unimap not yet working with partitioning
     unsigned m = sampleM(start_state, end_state, transition_prob, edgelen, rng);
     u.mdot += m;
 	if (doSampleTimes)
@@ -303,6 +317,7 @@ void UniventProbMgr::unimapEdgeOneSite(
 			sm[m-1] = end_state;
 #		endif //SIMULATE_MAPPINGS_GIVEN_M
 		}
+#endif
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -333,6 +348,7 @@ void UniventProbMgr::sampleUniventsImpl(
   unsigned * * s_mat) 				/**< is the matrix into which univent transition counts are stored */
   const
 	{
+#if POLPY_OLDWAY	// unimap not yet working with partitioning
 	scratchMatOne.Fill(1.0);
 	std::vector<double> elogprmVec; // holds factors that do not depend on the start and end states
 
@@ -463,6 +479,7 @@ void UniventProbMgr::sampleUniventsImpl(
 	  	}	// end of loop over patterns
 	u.setValid(true);
 	u.times_valid = this->sampleTimes;
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -476,6 +493,7 @@ void UniventProbMgr::sampleDescendantStatesImpl(
 	const int8_t * parent_states,
 	Lot & rng) const
 	{
+#if POLPY_OLDWAY	// unimap not yet working with partitioning
 	std::vector<double> post_prob(numStates);
 	
 	for (unsigned i = 0 ; i < num_patterns; ++i)
@@ -491,6 +509,7 @@ void UniventProbMgr::sampleDescendantStatesImpl(
 			post_prob[j] /= total;
 		nd_states[i] = rng.MultinomialDraw(&post_prob[0], numStates);
 		}
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -508,6 +527,7 @@ void UniventProbMgr::sampleRootStatesImpl(
 	bool posteriors_normalized, 
 	unsigned * obs_state_counts) const
 	{
+#if POLPY_OLDWAY	// unimap not yet working with partitioning
 	if (obs_state_counts)
 		{
 		for (unsigned i = 0 ; i < numStates; ++i)
@@ -525,6 +545,7 @@ void UniventProbMgr::sampleRootStatesImpl(
 			obs_state_counts[st] += 1;
 		rootStatePosterior += numStates;
 		}
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -540,6 +561,9 @@ double UniventProbMgr::calcUnimapLnL(
   const unsigned * obs_state_counts,
   const unsigned * const * sMat)
 	{
+#if POLPY_NEWWAY	// unimap not yet working with partitioning
+	return 0.0;
+#else
 	PHYCAS_ASSERT(isMappingValidVar);
 	lambda = model->calcLMat(lnUMat);
 	double nsites = (double)num_patterns;
@@ -582,11 +606,8 @@ double UniventProbMgr::calcUnimapLnL(
 	//std::cerr << "log_likelihood = log_basal_freqs + log_edgelen_to_mdot + log_uij_to_sij - nsites*lambda*tree_length;\n";
 	//std::cerr << log_likelihood << " = "<< log_basal_freqs << " + " << log_edgelen_to_mdot << " + " << log_uij_to_sij << " - " << nsites<< " * " << lambda << " *" << tree_length << std::endl;
 	return log_likelihood;
+#endif
 	}
-
-
-
-
 
 } // namespace phycas
 

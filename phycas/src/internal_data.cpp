@@ -24,6 +24,40 @@
 namespace phycas
 {
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Constructor initializes the conditional likelihood vectors using `nRates' and `nStates', and initializes the 
+|	`pMatrices' data member using `pMat'. The parameter `managePMatrices' determines whether to allocate space for the 
+|	transition probability matrices.
+*/
+InternalData::InternalData(
+  bool					using_unimap,		/**< is true if internal nodes are to be prepared for uniformized mapping likelihood; it is false if internal nodes are to be prepared for Felsenstein-style integrated likelihoods */
+  PartitionModelShPtr	partition,			/**< is the PartitionModel object containing information about the number of states and rates for each subset */
+  CondLikelihoodStorageShPtr cla_storage)
+	:
+	unimap(using_unimap),
+	state(-1), 
+	cla_pool(cla_storage),
+	sMat(0L)
+	{
+	if (using_unimap)
+		{
+#if POLPY_OLDWAY	// not yet working for partitioned model
+		univents.resize(nPatterns);
+		sMat =  NewTwoDArray<unsigned>(nStates, nStates);
+		for (unsigned i = 0; i < nStates*nStates ; ++i)
+			sMat[0][i] = 0;
+#endif			
+		}
+	const unsigned num_subsets = partition->getNumSubsets();
+	for (unsigned i = 0; i < num_subsets; ++i)
+		{
+		const unsigned num_rates	= partition->subset_num_rates[i];
+		const unsigned num_states	= partition->subset_num_states[i];
+		pMatrices[i].Initialize(num_rates, num_states, num_states);
+		}
+	}
+#else // old way
 /*----------------------------------------------------------------------------------------------------------------------
 |	Constructor initializes the conditional likelihood vectors using `nRates' and `nStates', and initializes the 
 |	`pMatrices' data member using `pMat'. The parameter `managePMatrices' determines whether to allocate space for the 
@@ -64,6 +98,7 @@ InternalData::InternalData(
 			pMatrices = ownedPMatrices.ptr;
 		}
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Destructor ensures that all CLA structures are returned to `cla_pool'. The `ownedPMatrices' and `univents' data 

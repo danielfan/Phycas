@@ -771,7 +771,7 @@ class MCMCImpl(CommonFunctions):
         if self.opts.debugging:
             cold_chain = self.mcmc_manager.getColdChain()
             s = cold_chain.likelihood.listPatterns()
-            print '\nDebug Info: List of data patterns and their frequencies:'
+            print '\nDebug Info: List of data patterns and their frequencies (see TreeLikelihood::listPatterns):'
             print s
 
         # Show information about topology prior to be used

@@ -158,7 +158,7 @@ class LikelihoodCore(object):
         self.likelihood.setUFNumEdges(self.parent.opts.uf_num_edges)
         self.likelihood.useUnimap(self.parent.opts.use_unimap)
         if self.parent.data_matrix:
-            if POLPY_NEWWAY:
+            if POLPY_NEWWAY:    # partitioning data
                 from phycas import partition
                 self.likelihood.copyDataFromDiscreteMatrix(self.parent.data_matrix, partition.getSiteModelVector())
             else:

@@ -45,6 +45,7 @@ UnimapSampleAmbigMove::UnimapSampleAmbigMove(
   ModelShPtr model,
   unsigned weight)
   	{
+#if 0 && POLPY_NEWWAY	// unimap not yet working with partitioning
   	this->setTreeLikelihood(treeLike);
   	this->setTree(t);
   	this->setModel(model);
@@ -72,6 +73,7 @@ UnimapSampleAmbigMove::UnimapSampleAmbigMove(
 				}
 			}
 		}
+#endif
 	}
 
 /*--------------------------------------------------------------------------------------------------------------------------
@@ -121,6 +123,7 @@ void fillEndStateProb(std::vector<double> & esProb, const double * const * pMat,
 
 inline void fillEndStateProb(std::vector<double> & esProb, const double * const * pMat, const unsigned numStates, const int8_t * const stateListArr, const unsigned neighborSC, unsigned indexIntoStateList, const bool samplingTipRoot)
 	{
+#if 0 && POLPY_NEWWAY	// unimap not yet working with partitioning
 	PHYCAS_ASSERT(neighborSC >= 0 && neighborSC < numStates);
 	esProb.assign(numStates, 0.0);
 	//std::cerr << "esProb.size() == " << esProb.size() << '\n';
@@ -152,11 +155,13 @@ inline void fillEndStateProb(std::vector<double> & esProb, const double * const 
 	// normalize (in the case of non-? states, totalProb will be a sub probability.
 	for (unsigned i = 0; i < numStates; ++i)
 		esProb[i] /= totalProb;
+#endif
 	}
 	
 	
 void UnimapSampleAmbigMove::sampleTipsAsDisconnected()
 	{
+#if 0 && POLPY_NEWWAY	// unimap not yet working with partitioning
 	AmbigTipMap::iterator ndIt = ambigTipToAmbigCol.begin();
 	for (; ndIt != ambigTipToAmbigCol.end(); ++ndIt)
 		{
@@ -164,6 +169,7 @@ void UnimapSampleAmbigMove::sampleTipsAsDisconnected()
 		const std::vector<unsigned> & ambigInds = ndIt->second;
 		sampleNewStateArrayForNodeAsDisconnected(nd, ambigInds);
 		}
+#endif
 	}
 
 
@@ -173,6 +179,7 @@ void UnimapSampleAmbigMove::sampleTipsAsDisconnected()
 */
 void UnimapSampleAmbigMove::sampleNewStateArrayForNodeAsDisconnected(TreeNode * nd, const std::vector<unsigned> & ambigInds)
 	{
+#if 0 && POLPY_NEWWAY	// unimap not yet working with partitioning
 	PHYCAS_ASSERT(nd->IsTip());
 	TipData * td = nd->GetTipData();
 	PHYCAS_ASSERT(td);	
@@ -229,6 +236,7 @@ void UnimapSampleAmbigMove::sampleNewStateArrayForNodeAsDisconnected(TreeNode * 
 
 	likelihood->flagNodeWithInvalidUnivents(nd);
 	univents.setValid(false);
+#endif
 	}
 
 
@@ -238,6 +246,7 @@ void UnimapSampleAmbigMove::sampleNewStateArrayForNodeAsDisconnected(TreeNode * 
 */
 void UnimapSampleAmbigMove::proposeNewStateArrayForNode(TreeNode * nd, const std::vector<unsigned> & ambigInds)
 	{
+#if 0 && POLPY_NEWWAY	// unimap not yet working with partitioning
 	PHYCAS_ASSERT(nd->IsTip());
 	TipData * td = nd->GetTipData();
 	PHYCAS_ASSERT(td);
@@ -307,6 +316,7 @@ void UnimapSampleAmbigMove::proposeNewStateArrayForNode(TreeNode * nd, const std
 
 	likelihood->flagNodeWithInvalidUnivents(nd);
 	univents.setValid(false);
+#endif
 	}
 
 /*--------------------------------------------------------------------------------------------------------------------------
@@ -314,6 +324,7 @@ void UnimapSampleAmbigMove::proposeNewStateArrayForNode(TreeNode * nd, const std
 */
 void UnimapSampleAmbigMove::proposeNewState()
 	{
+#if 0 && POLPY_NEWWAY	// unimap not yet working with partitioning
 	AmbigTipMap::iterator ndIt = ambigTipToAmbigCol.begin();
 	for (; ndIt != ambigTipToAmbigCol.end(); ++ndIt)
 		{
@@ -321,6 +332,7 @@ void UnimapSampleAmbigMove::proposeNewState()
 		const std::vector<unsigned> & ambigInds = ndIt->second;
 		proposeNewStateArrayForNode(nd, ambigInds);
 		}
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

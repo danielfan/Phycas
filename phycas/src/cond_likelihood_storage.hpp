@@ -51,10 +51,17 @@ class CondLikelihoodStorage
 		void							putCondLikelihood(CondLikelihoodShPtr p);
 		void							fillTo(unsigned capacity);
 
+#if POLPY_NEWWAY
+		unsigned						getNumPatterns(unsigned i) const;
+		unsigned						getNumRates(unsigned i) const;
+		unsigned						getNumStates(unsigned i) const;
+		void							setCondLikeDimensions(const uint_vect_t & np, const uint_vect_t & nr, const uint_vect_t & ns);
+#else // old way
 		unsigned						getNumPatterns() const;
 		unsigned						getNumRates() const;
 		unsigned						getNumStates() const;
 		void							setCondLikeDimensions(unsigned np, unsigned nr, unsigned ns);
+#endif
 
 		void							setReallocMin(unsigned sz);
 		void							clearStack();
@@ -65,9 +72,15 @@ class CondLikelihoodStorage
 
 	private:
 
+#if POLPY_NEWWAY
+		uint_vect_t						num_patterns;	/**< The number of data patterns vector (needed for the CondLikelihood constructor) */
+		uint_vect_t						num_rates;		/**< The number of discrete rate categories vector (needed for the CondLikelihood constructor) */
+		uint_vect_t						num_states;		/**< The number of states vector (needed for the CondLikelihood constructor) */
+#else // old way
 		unsigned						num_patterns;	/**< The number of data patterns (needed for the CondLikelihood constructor) */
 		unsigned						num_rates;		/**< The number of discrete rate categories (needed for the CondLikelihood constructor) */
 		unsigned						num_states;		/**< The number of states (needed for the CondLikelihood constructor) */
+#endif
 		unsigned						num_created;	/**< The total number of CondLikelihood objects created in the lifetime of this object */
 		unsigned						realloc_min;	/**< When a request is made and `cl_stack' is empty, `realloc_min' new objects are created and added to the stack */
 		std::stack<CondLikelihoodShPtr>	cl_stack;		/**< The stack of CondLikelihoodShPtr */
