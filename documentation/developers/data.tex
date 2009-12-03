@@ -1,0 +1,152 @@
+\chapter{Data} 
+
+This chapter contains notes on how data are stored in Phycas. All of this discussion concerns the C++ code, not the Python code, which simply wraps the C++ functions. This documentation does not get into the real nitty-gritty, but instead is designed as an overview; if you want to know the details see the bodies of the functions referenced.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Definitions of terms and acronyms}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{description}
+\item[global state code] Character states are represented by integers called state codes internally. The first $k$ global state codes (i.e. $0, 1, \cdots, k$) correspond to the $k$ primary character states. Global state code $k$ is the state of complete amgibuity. Global state codes larger than $k$ represent partial ambiguities encountered in the data file. All partial ambiguities, regardless of taxon, are given a global state code. When storing data for a single taxon, the global state codes not found in the data for that taxon are eliminated. Thus, there may be fewer local (i.e. taxon-specific) state codes than global state codes.
+\item[local state code] The index into a row of an augmented, transposed transition probability matrix. The local state code for primary character states is an integer less than $k$, the number of primary states (e.g. 0, 1, 2 or 3 for DNA sequence data). The $k$th. local state code always represents the state of complete ambiguity. Local state codes larger than $k$ represent partial ambiguities found in the data file. See definition of global state code for more information.
+\end{description}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Data structures used in storing data}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{From NEXUS file to pattern map}
+
+The description below assumes the data was read from the following NEXUS data file ({\tt ambig.nex}):
+\begin{verbatim}
+#nexus
+
+begin data;
+  dimensions ntax=4 nchar=5;
+  format datatype=dna missing=? gap=-;
+  matrix
+	taxon1 A ? T   G    {CGT}
+	taxon2 A C - {AGT}    T 
+	taxon3 A C -   N    (AG)
+	taxon4 A C T   R      Y
+  ;
+end;
+\end{verbatim}
+
+\subsubsection{No partitioning}
+
+The above NEXUS file is stored internally in {\tt pattern\_map}, an STL map associating a key consisting of an STL vector of {\tt int8\_t} (holding the partition index followed by the state for every taxon) with a double value (the pattern count). The {\tt int8\_t} data type is used to save space (it is a signed char). A double is used to store the count because sometimes fractional counts are needed (e.g. Gelfand-Ghosh posterior predictive loss model selection). The {\tt pattern\_map} is built in the function {\tt TreeLikelihood::compressDataMatrix}. Iterating through the map reveals something like the following:
+\begin{verbatim}
+subset   0   0   0   0   0  |
+taxon1   0   4   3   2   6  |
+taxon2   0   1  -1   7   3  | key
+taxon3   0   1  -1   5   8  |
+taxon4   0   1   3   8   9  |
+count   1.0 1.0 1.0 1.0 1.0 <- value
+\end{verbatim}
+Each element of the map is a column in the above representation. Each key consists of a vector of length 5, and each value consists of a count (which is always 1.0 here since there are no duplicated patterns). The first element of each key vector provides the subset of the partition; since partitioning is not done here, every pattern is in the 0th partition. Note that state code 4 is used for complete ambiguity whereas -1 is used to indicate non-existence as opposed to complete ambiguity. The global state list position vector {\tt TreeLikelihood::state\_list\_pos} would now look like this 
+\begin{verbatim}
+  0 2 4 6 8 14 19 23 27 30
+\end{verbatim}
+Each of the above values represents an index into the global state list, {\tt TreeLikelihood::state\_list}, which looks like this:
+\begin{verbatim}
+  1 0 1 1 1 2 1 3 5 -1 0 1 2 3 4 0 1 2 3 3 1 2 3 3 0 2 3 2 0 2 2 1 3
+\end{verbatim}
+The table below explains this enigmatic global state list. The asterisks in the first column mark the elements of the global state list position vector given above. The second column is the global state list, which is also given above. The third column contains the codes used for states internally. Finally, the last column relates these global state codes to the representation in the original nexus file. Horizontal lines mark the boundaries between states. The first state list element in each section holds the number of subsequent state list elements that need to be read in order to fully characterize the state or state combination. The unambiguous states come first, followed by the state code representing complete ambiguity (corresponding to the missing data symbol --- usually ? --- in the nexus data file). After that, ambiguous states are added as they are encountered in the data file (e.g., the next global state code is 5, corresponding to `N' in the nexus file, which means ``A, C, G or T''). The gap (or inapplicable) state is always represented by -1 and has no separate entry in the global state list.
+\begin{center}
+\begin{tabular}{ccccc}
+ global  & global  &         &    & representation         \\
+ state   & state   &         &    & in nexus file          \\
+index    &  list   & code    &             & ambig.nex              \\ \hline
+$\ast$0  &    1    &    0    & $\longrightarrow$ &  A                     \\
+   1     &    0    &         &             &                        \\ \hline
+$\ast$2  &    1    &    1    & $\longrightarrow $ &  C                     \\
+   3     &    1    &         &             &                        \\ \hline
+$\ast$4  &    1    &    2    & $\longrightarrow $ &  G                     \\
+   5     &    2    &         &             &                        \\ \hline
+$\ast$6  &    1    &    3    & $\longrightarrow $ &  T                     \\
+   7     &    3    &         &             &                        \\ \hline
+$\ast$8  &    5    &    4    & $\longrightarrow $ &  ?                     \\
+   9     &   -1    &         &             &                        \\
+  10     &    0    &  \multicolumn{3}{c}{Note that ? allows gaps}   \\
+  11     &    1    &  \multicolumn{3}{c}{in addition to A, C, G or} \\
+  12     &    2    &  \multicolumn{3}{c}{T, so it is even more}     \\
+  13     &    3    &  \multicolumn{3}{c}{ambiguous than N}          \\ \hline
+$\ast$14 &    4    &    5    & $\longrightarrow $ &  N                     \\
+  15     &    0    &         &             &                        \\
+  16     &    1    &         &             &                        \\
+  17     &    2    &         &             &                        \\
+  18     &    3    &         &             &                        \\ \hline
+$\ast$19 &    3    &    6    & $\longrightarrow $ &  {CGT}                 \\
+  20     &    1    &         &             &                        \\
+  21     &    2    &         &             &                        \\
+  22     &    3    &         &             &                        \\ \hline
+$\ast$23 &    3    &    7    & $\longrightarrow $ &  {AGT}                 \\
+  24     &    0    &         &             &                        \\
+  25     &    2    &         &             &                        \\
+  26     &    3    &         &             &                        \\ \hline
+$\ast$27 &    2    &    8    & $\longrightarrow $ &  R, {AG}               \\
+  28     &    0    &         &             &                        \\
+  29     &    2    &         &             &                        \\ \hline
+$\ast$30 &    2    &    9    & $\longrightarrow $ &  Y                     \\
+  31     &    1    &         &             &                        \\
+  32     &    3    &         &             &                        \\ \hline
+\end{tabular}
+\end{center}
+
+\subsubsection{Partitioning}
+
+Suppose now that the first 3 sites had been assigned to one subset of a bipartition and the remaining 2 sites to the other subset. The {\tt pattern\_map} would now look like this:
+\begin{verbatim}
+subset   0   0   0   1   1  |
+taxon1   0   4   3   2   6  |
+taxon2   0   1  -1   7   3  | key
+taxon3   0   1  -1   5   8  |
+taxon4   0   1   3   8   9  |
+count   1.0 1.0 1.0 1.0 1.0 <- value
+\end{verbatim}
+and the global state list would look a bit different:
+\begin{verbatim}
+  1 0  1 1  1 2  1 3  5 -1 0 1 2 3 
+  1 0  1 1  1 2  1 3  5 -1 0 1 2 3  4 0 1 2 3  3 1 2 3  3 0 2 3  2 0 2  2 1 3
+\end{verbatim}
+% 0    2    4    6    8
+%
+% 1    1    1    2    2             2          3        3        4      4
+% 4    6    8    0    2             8          3        7        1      4
+I've split it into 2 lines, one for each subset. The first subset exhibit only complete ambiguities (gap and ?), so the state list for this subset consists only of 8 elements representing the 4 primary DNA states followed by 6 more elements to represent the state of complete ambiguity. The second subset starts out identically: even though there are no gap or ? states in this subset, the sequence {\tt 5 -1 0 1 2 3} is always included. There are 5 more ambiguous states in this subset to contend with, however: {\tt \{CGT\}}, {\tt \{AGT\}}, {\tt N}, {\tt (AG)}, and {\tt Y}. This explains the additional 19 elements tacked on to the end of the state list for this subset.
+
+The {\tt state\_list\_pos} vector now looks like this:
+\begin{verbatim}
+  0 2 4 6 8 14 16 18 20 22 28 33 37 41 44
+\end{verbatim}
+% 0 1 2 3 4  5  6  7  8  9 10 11 12 13 14
+Thus, to locate state 6 in the second subset, we need to know where the second subset starts in the {\tt state\_list\_pos} vector. For that, we ask {\tt subset\_offset}, which has the following 2 elements:
+\begin{verbatim} 
+0 5
+\end{verbatim}
+Adding 6 (state code) to 5 (the offset for the 2nd. subset) yields 11, and {\tt state\_list\_pos[11]} equals 33, which is the index of the element in {\tt state\_list} corresponding to (the start of) state 6.
+
+\subsection{Local state codes}
+For large datasets with many different ambiguity combinations, the global state list could grow quite large. Each state code ends up being a row in the augmented transposed transition probability matrix used in computing conditional likelihood arrays, and it could be quite inefficient if these augmented matrices had many unnecessary rows. Thus, when a row in the global matrix is copied to the tip of a tree, where it is used to compute likelihoods, a translation is done into local state codes. The local codes are identical to the global codes for the primary states and the state representing complete ambiguity, but may differ from the global codes for codes representing partial ambiguities. To illustrate, consider taxon4 in the example. It has these states in the NEXUS data file:
+\begin{verbatim}
+  A	 C	T  R  Y
+\end{verbatim}
+which translate to these global state codes:
+\begin{verbatim}
+  0	 1	3  8  9
+\end{verbatim}
+When copied to a tip node in a tree, however, these codes become translated to
+\begin{verbatim}
+  0	 1	3  5  6
+\end{verbatim}
+Global codes 8 and 9 have become 5 and 6, respectively.
+
+Note that the constructor is private and thus TipData objects can only be created by the friend function {\em allocateTipData()}.
+
+
+
+	
