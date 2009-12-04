@@ -37,6 +37,8 @@
 using namespace phycas;
 //bool Tree::gDebugOutput = true;
 
+#define INTERNAL_NODENUM_OFFSET 1000
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets firstPreorder to NULL and calls Clear() to initialize data members.
 */
@@ -1013,6 +1015,66 @@ std::string Tree::DebugWalkTree(bool preorder, unsigned verbosity)
 	return s;
 	}
 
+static int nodeIndex(TreeNode *p)
+	{
+	return (p == NULL) ? -1 : p->GetNodeNumber();
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|
+|	Recursive component of listTree (below).
+*/
+void Tree::recDebugListTree(TreeNode *p, int nindent)
+	{
+	TreeNode *q;
+
+	if (p != NULL)
+		{
+		unsigned nodeNum = p->GetNodeNumber();
+		const char * nodeName = p->GetNodeName().c_str();
+		if (p->NoChildren())
+			fprintf(stderr, "%*cNode %d \"%s\" ", nindent, ' ', nodeNum, nodeName);
+		else
+			fprintf(stderr, "%*cNode %d ", nindent, ' ', nodeNum);
+
+		fprintf(stderr, "(");
+		fprintf(stderr, "a=%d l=%d r=%d", nodeIndex(p->par), nodeIndex(p->lChild), nodeIndex(p->rSib));
+#		if SHOW_TRAVSEQ
+			fprintf(stderr, " next=%d prev=%d", nodeIndex(p->nextPreorder), nodeIndex(p->prevPreorder));
+#		endif
+#		if SHOW_EDGELEN
+			fprintf(stderr, " v=%g", p->edgeLen);
+#		endif
+
+		fprintf(stderr, ")\n");
+//		if (abortRequested())
+//			return;
+
+		q = p->lChild;
+		while (q != NULL)
+			{
+			recDebugListTree(q, nindent + 1);
+//			if (abortRequested())
+//				return;
+			q = q->rSib;
+			}
+		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|
+|	Shows tree topology and pointers (for debugging).
+*/
+void Tree::debugListTree()
+	{
+	recDebugListTree(GetRoot(), 2);
+//	fprintf(stderr, "  (specialNode=%d", nodeDex(tree->specialNode));
+//#	if SHOW_TRAVSEQ
+//		fprintf(stderr, " lastPreorder=%d", nodeDex(tree->lastPreorder));
+//#	endif
+//	myputs(")\n");
+	}
+
 void Tree::debugMode(bool turn_on)
 	{
 	//Tree::gDebugOutput = turn_on;
@@ -1332,7 +1394,7 @@ void Tree::BuildFromString(
 					// Right paren means we are leaving a node for its parent, so set node number now if internal node
 					if (nd->IsInternal() && nd->NumberNotYetAssigned())
 						{
-						nd->nodeNum = nInternals++;
+						nd->nodeNum = INTERNAL_NODENUM_OFFSET + nInternals++;
 						}
 					// Go down a level
 					nd = nd->GetParent();
@@ -1355,7 +1417,8 @@ void Tree::BuildFromString(
 					// Comma means we are leaving a node to create its sibling, so set node number now if internal
 					if (nd->IsInternal() && nd->NumberNotYetAssigned())
 						{
-						nd->nodeNum = nInternals++;
+//						nd->nodeNum = nInternals++;
+						nd->nodeNum = INTERNAL_NODENUM_OFFSET + nInternals++;
 						}
 					// Create the sibling
 					nd->rSib = GetNewNode();
@@ -1523,7 +1586,7 @@ void Tree::BuildFromString(
 
 		if (firstPreorder->NumberNotYetAssigned())
 			{
-			firstPreorder->nodeNum = nInternals++;
+			firstPreorder->nodeNum = INTERNAL_NODENUM_OFFSET + nInternals++;
 			}
 		firstPreorder->SetEdgeLen(0.0);
 		if (nEdgeLengths > 0)

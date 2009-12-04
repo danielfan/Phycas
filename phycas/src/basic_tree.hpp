@@ -131,6 +131,7 @@ class Tree
 		std::string				DebugWalkTree(bool preorder = true, unsigned verbosity = 0);
 		bool					DebugCheckTree(bool allowDegTwo, bool checkDataPointers, int verbosity) const;
 		void					DebugHere(std::string s);
+		void		 			debugListTree();
 
         void                    debugMode(bool turn_on);
 
@@ -156,6 +157,9 @@ class Tree
 		TreeNode *				FindLastPreorderInClade(TreeNode * start);
 		void					DetachSubtree(TreeNode * s);
 		void					InsertSubtree(TreeNode * s, TreeNode * u, bool on_right,  TreeNode * targetSib = NULL);
+		
+		void 					recDebugListTree(TreeNode *p, int nindent);
+
 
 	protected:
 
