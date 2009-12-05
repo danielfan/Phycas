@@ -1,0 +1,637 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		7A0946FF10CAF0FD00CEFDE0 /* conversions_pymod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945C810CAEFB900CEFDE0 /* conversions_pymod.cpp */; };
+		7A09470410CAF10500CEFDE0 /* boost_assertion_failed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945BB10CAEFB900CEFDE0 /* boost_assertion_failed.cpp */; };
+		7A09470710CAF12800CEFDE0 /* basic_tree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945B810CAEFB900CEFDE0 /* basic_tree.cpp */; };
+		7A09470810CAF12900CEFDE0 /* basic_tree_node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945B510CAEFB900CEFDE0 /* basic_tree_node.cpp */; };
+		7A09470910CAF12A00CEFDE0 /* basic_tree.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 7A0945B910CAEFB900CEFDE0 /* basic_tree.hpp */; };
+		7A09470A10CAF12A00CEFDE0 /* basic_tree_node.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 7A0945B610CAEFB900CEFDE0 /* basic_tree_node.hpp */; };
+		7A09470E10CAF13B00CEFDE0 /* split.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 7A09462310CAEFB900CEFDE0 /* split.hpp */; };
+		7A09470F10CAF13B00CEFDE0 /* split.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09462210CAEFB900CEFDE0 /* split.cpp */; };
+		7A09471210CAF14300CEFDE0 /* phycas_string.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 7A09460D10CAEFB900CEFDE0 /* phycas_string.hpp */; };
+		7A09471310CAF14300CEFDE0 /* phycas_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09460C10CAEFB900CEFDE0 /* phycas_string.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		5073E0C609E734A800EC74B6 /* phycasProj.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; path = phycasProj.xcconfig; sourceTree = "<group>"; };
+		5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; path = phycasTarget.xcconfig; sourceTree = "<group>"; };
+		7A0945AF10CAEFB900CEFDE0 /* basic_cdf.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = basic_cdf.cpp; path = ../../phycas/src/basic_cdf.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945B010CAEFB900CEFDE0 /* basic_cdf.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = basic_cdf.hpp; path = ../../phycas/src/basic_cdf.hpp; sourceTree = SOURCE_ROOT; };
+		7A0945B110CAEFB900CEFDE0 /* basic_cdf.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = basic_cdf.inl; path = ../../phycas/src/basic_cdf.inl; sourceTree = SOURCE_ROOT; };
+		7A0945B210CAEFB900CEFDE0 /* basic_lot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = basic_lot.cpp; path = ../../phycas/src/basic_lot.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945B310CAEFB900CEFDE0 /* basic_lot.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = basic_lot.hpp; path = ../../phycas/src/basic_lot.hpp; sourceTree = SOURCE_ROOT; };
+		7A0945B410CAEFB900CEFDE0 /* basic_lot.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = basic_lot.inl; path = ../../phycas/src/basic_lot.inl; sourceTree = SOURCE_ROOT; };
+		7A0945B510CAEFB900CEFDE0 /* basic_tree_node.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = basic_tree_node.cpp; path = ../../phycas/src/basic_tree_node.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945B610CAEFB900CEFDE0 /* basic_tree_node.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = basic_tree_node.hpp; path = ../../phycas/src/basic_tree_node.hpp; sourceTree = SOURCE_ROOT; };
+		7A0945B710CAEFB900CEFDE0 /* basic_tree_node.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = basic_tree_node.inl; path = ../../phycas/src/basic_tree_node.inl; sourceTree = SOURCE_ROOT; };
+		7A0945B810CAEFB900CEFDE0 /* basic_tree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = basic_tree.cpp; path = ../../phycas/src/basic_tree.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945B910CAEFB900CEFDE0 /* basic_tree.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = basic_tree.hpp; path = ../../phycas/src/basic_tree.hpp; sourceTree = SOURCE_ROOT; };
+		7A0945BA10CAEFB900CEFDE0 /* basic_tree.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = basic_tree.inl; path = ../../phycas/src/basic_tree.inl; sourceTree = SOURCE_ROOT; };
+		7A0945BB10CAEFB900CEFDE0 /* boost_assertion_failed.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = boost_assertion_failed.cpp; path = ../../phycas/src/boost_assertion_failed.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945BC10CAEFB900CEFDE0 /* bush_move.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bush_move.cpp; path = ../../phycas/src/bush_move.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945BD10CAEFB900CEFDE0 /* bush_move.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = bush_move.hpp; path = ../../phycas/src/bush_move.hpp; sourceTree = SOURCE_ROOT; };
+		7A0945BE10CAEFB900CEFDE0 /* bush_move.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = bush_move.inl; path = ../../phycas/src/bush_move.inl; sourceTree = SOURCE_ROOT; };
+		7A0945BF10CAEFB900CEFDE0 /* codon_model.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = codon_model.cpp; path = ../../phycas/src/codon_model.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945C010CAEFB900CEFDE0 /* codon_model.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = codon_model.hpp; path = ../../phycas/src/codon_model.hpp; sourceTree = SOURCE_ROOT; };
+		7A0945C110CAEFB900CEFDE0 /* codon_model.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = codon_model.inl; path = ../../phycas/src/codon_model.inl; sourceTree = SOURCE_ROOT; };
+		7A0945C210CAEFB900CEFDE0 /* cond_likelihood_storage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cond_likelihood_storage.cpp; path = ../../phycas/src/cond_likelihood_storage.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945C310CAEFB900CEFDE0 /* cond_likelihood_storage.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = cond_likelihood_storage.hpp; path = ../../phycas/src/cond_likelihood_storage.hpp; sourceTree = SOURCE_ROOT; };
+		7A0945C410CAEFB900CEFDE0 /* cond_likelihood_storage.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = cond_likelihood_storage.inl; path = ../../phycas/src/cond_likelihood_storage.inl; sourceTree = SOURCE_ROOT; };
+		7A0945C510CAEFB900CEFDE0 /* cond_likelihood.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cond_likelihood.cpp; path = ../../phycas/src/cond_likelihood.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945C610CAEFB900CEFDE0 /* cond_likelihood.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = cond_likelihood.hpp; path = ../../phycas/src/cond_likelihood.hpp; sourceTree = SOURCE_ROOT; };
+		7A0945C710CAEFB900CEFDE0 /* cond_likelihood.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = cond_likelihood.inl; path = ../../phycas/src/cond_likelihood.inl; sourceTree = SOURCE_ROOT; };
+		7A0945C810CAEFB900CEFDE0 /* conversions_pymod.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = conversions_pymod.cpp; path = ../../phycas/src/conversions_pymod.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945C910CAEFB900CEFDE0 /* data_matrix_pymod.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = data_matrix_pymod.cpp; path = ../../phycas/src/data_matrix_pymod.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945CA10CAEFB900CEFDE0 /* dirichlet_move.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = dirichlet_move.cpp; path = ../../phycas/src/dirichlet_move.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945CB10CAEFB900CEFDE0 /* dirichlet_move.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = dirichlet_move.hpp; path = ../../phycas/src/dirichlet_move.hpp; sourceTree = SOURCE_ROOT; };
+		7A0945CC10CAEFB900CEFDE0 /* dirichlet_move.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = dirichlet_move.inl; path = ../../phycas/src/dirichlet_move.inl; sourceTree = SOURCE_ROOT; };
+		7A0945CD10CAEFB900CEFDE0 /* discrete_gamma_shape_param.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = discrete_gamma_shape_param.cpp; path = ../../phycas/src/discrete_gamma_shape_param.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945CE10CAEFB900CEFDE0 /* dls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dls.h; path = ../../phycas/src/dls.h; sourceTree = SOURCE_ROOT; };
+		7A0945CF10CAEFB900CEFDE0 /* edge_endpoints.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = edge_endpoints.hpp; path = ../../phycas/src/edge_endpoints.hpp; sourceTree = SOURCE_ROOT; };
+		7A0945D010CAEFB900CEFDE0 /* edge_iterators.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = edge_iterators.hpp; path = ../../phycas/src/edge_iterators.hpp; sourceTree = SOURCE_ROOT; };
+		7A0945D110CAEFB900CEFDE0 /* edge_move.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = edge_move.cpp; path = ../../phycas/src/edge_move.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945D210CAEFB900CEFDE0 /* edge_move.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = edge_move.hpp; path = ../../phycas/src/edge_move.hpp; sourceTree = SOURCE_ROOT; };
+		7A0945D310CAEFB900CEFDE0 /* edge_move.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = edge_move.inl; path = ../../phycas/src/edge_move.inl; sourceTree = SOURCE_ROOT; };
+		7A0945D410CAEFB900CEFDE0 /* edgelen_master_param.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = edgelen_master_param.cpp; path = ../../phycas/src/edgelen_master_param.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945D510CAEFB900CEFDE0 /* flex_prob_param.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = flex_prob_param.cpp; path = ../../phycas/src/flex_prob_param.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945D610CAEFB900CEFDE0 /* flex_rate_param.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = flex_rate_param.cpp; path = ../../phycas/src/flex_rate_param.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945D710CAEFB900CEFDE0 /* gtr_model.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = gtr_model.cpp; path = ../../phycas/src/gtr_model.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945D810CAEFB900CEFDE0 /* gtr_model.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = gtr_model.hpp; path = ../../phycas/src/gtr_model.hpp; sourceTree = SOURCE_ROOT; };
+		7A0945D910CAEFB900CEFDE0 /* gtr_rate_param.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = gtr_rate_param.cpp; path = ../../phycas/src/gtr_rate_param.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945DA10CAEFB900CEFDE0 /* hky_model.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = hky_model.cpp; path = ../../phycas/src/hky_model.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945DB10CAEFB900CEFDE0 /* hyperprior_param.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = hyperprior_param.cpp; path = ../../phycas/src/hyperprior_param.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945DC10CAEFB900CEFDE0 /* internal_data.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = internal_data.cpp; path = ../../phycas/src/internal_data.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945DD10CAEFB900CEFDE0 /* internal_data.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = internal_data.hpp; path = ../../phycas/src/internal_data.hpp; sourceTree = SOURCE_ROOT; };
+		7A0945DE10CAEFB900CEFDE0 /* jc_model.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = jc_model.cpp; path = ../../phycas/src/jc_model.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945DF10CAEFB900CEFDE0 /* kappa_param.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = kappa_param.cpp; path = ../../phycas/src/kappa_param.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945E010CAEFB900CEFDE0 /* larget_simon_move.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = larget_simon_move.cpp; path = ../../phycas/src/larget_simon_move.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945E110CAEFB900CEFDE0 /* larget_simon_move.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = larget_simon_move.hpp; path = ../../phycas/src/larget_simon_move.hpp; sourceTree = SOURCE_ROOT; };
+		7A0945E210CAEFB900CEFDE0 /* larget_simon_move.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = larget_simon_move.inl; path = ../../phycas/src/larget_simon_move.inl; sourceTree = SOURCE_ROOT; };
+		7A0945E310CAEFB900CEFDE0 /* likelihood_loops.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = likelihood_loops.cpp; path = ../../phycas/src/likelihood_loops.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945E410CAEFB900CEFDE0 /* likelihood_models.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = likelihood_models.cpp; path = ../../phycas/src/likelihood_models.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945E510CAEFB900CEFDE0 /* likelihood_models.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = likelihood_models.hpp; path = ../../phycas/src/likelihood_models.hpp; sourceTree = SOURCE_ROOT; };
+		7A0945E610CAEFB900CEFDE0 /* likelihood_models.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = likelihood_models.inl; path = ../../phycas/src/likelihood_models.inl; sourceTree = SOURCE_ROOT; };
+		7A0945E710CAEFB900CEFDE0 /* likelihood_pymod.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = likelihood_pymod.cpp; path = ../../phycas/src/likelihood_pymod.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945E810CAEFB900CEFDE0 /* linalg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = linalg.c; path = ../../phycas/src/linalg.c; sourceTree = SOURCE_ROOT; };
+		7A0945E910CAEFB900CEFDE0 /* linalg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = linalg.cpp; path = ../../phycas/src/linalg.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945EA10CAEFB900CEFDE0 /* linalg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = linalg.h; path = ../../phycas/src/linalg.h; sourceTree = SOURCE_ROOT; };
+		7A0945EB10CAEFB900CEFDE0 /* mapping_move.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mapping_move.cpp; path = ../../phycas/src/mapping_move.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945EC10CAEFB900CEFDE0 /* mapping_move.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = mapping_move.hpp; path = ../../phycas/src/mapping_move.hpp; sourceTree = SOURCE_ROOT; };
+		7A0945ED10CAEFB900CEFDE0 /* mcmc_chain_manager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mcmc_chain_manager.cpp; path = ../../phycas/src/mcmc_chain_manager.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945EE10CAEFB900CEFDE0 /* mcmc_chain_manager.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = mcmc_chain_manager.hpp; path = ../../phycas/src/mcmc_chain_manager.hpp; sourceTree = SOURCE_ROOT; };
+		7A0945EF10CAEFB900CEFDE0 /* mcmc_chain_manager.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = mcmc_chain_manager.inl; path = ../../phycas/src/mcmc_chain_manager.inl; sourceTree = SOURCE_ROOT; };
+		7A0945F010CAEFB900CEFDE0 /* mcmc_flexcat_param.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mcmc_flexcat_param.cpp; path = ../../phycas/src/mcmc_flexcat_param.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945F110CAEFB900CEFDE0 /* mcmc_move.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = mcmc_move.hpp; path = ../../phycas/src/mcmc_move.hpp; sourceTree = SOURCE_ROOT; };
+		7A0945F210CAEFB900CEFDE0 /* mcmc_move.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = mcmc_move.inl; path = ../../phycas/src/mcmc_move.inl; sourceTree = SOURCE_ROOT; };
+		7A0945F310CAEFB900CEFDE0 /* mcmc_param.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mcmc_param.cpp; path = ../../phycas/src/mcmc_param.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945F410CAEFB900CEFDE0 /* mcmc_param.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = mcmc_param.hpp; path = ../../phycas/src/mcmc_param.hpp; sourceTree = SOURCE_ROOT; };
+		7A0945F510CAEFB900CEFDE0 /* mcmc_param.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = mcmc_param.inl; path = ../../phycas/src/mcmc_param.inl; sourceTree = SOURCE_ROOT; };
+		7A0945F610CAEFB900CEFDE0 /* mcmc_updater.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mcmc_updater.cpp; path = ../../phycas/src/mcmc_updater.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945F710CAEFB900CEFDE0 /* mcmc_updater.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = mcmc_updater.hpp; path = ../../phycas/src/mcmc_updater.hpp; sourceTree = SOURCE_ROOT; };
+		7A0945F810CAEFB900CEFDE0 /* mcmc_updater.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = mcmc_updater.inl; path = ../../phycas/src/mcmc_updater.inl; sourceTree = SOURCE_ROOT; };
+		7A0945F910CAEFB900CEFDE0 /* model_pymod.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = model_pymod.cpp; path = ../../phycas/src/model_pymod.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945FA10CAEFB900CEFDE0 /* mvnormal_distribution.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mvnormal_distribution.cpp; path = ../../phycas/src/mvnormal_distribution.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945FB10CAEFB900CEFDE0 /* mvnormal_distribution.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = mvnormal_distribution.hpp; path = ../../phycas/src/mvnormal_distribution.hpp; sourceTree = SOURCE_ROOT; };
+		7A0945FC10CAEFB900CEFDE0 /* ncat_move.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ncat_move.cpp; path = ../../phycas/src/ncat_move.cpp; sourceTree = SOURCE_ROOT; };
+		7A0945FD10CAEFB900CEFDE0 /* ncat_move.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ncat_move.hpp; path = ../../phycas/src/ncat_move.hpp; sourceTree = SOURCE_ROOT; };
+		7A0945FE10CAEFB900CEFDE0 /* ncat_move.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ncat_move.inl; path = ../../phycas/src/ncat_move.inl; sourceTree = SOURCE_ROOT; };
+		7A0945FF10CAEFB900CEFDE0 /* ncl_pymod.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ncl_pymod.cpp; path = ../../phycas/src/ncl_pymod.cpp; sourceTree = SOURCE_ROOT; };
+		7A09460010CAEFB900CEFDE0 /* nopython_force_include.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = nopython_force_include.hpp; path = ../../phycas/src/nopython_force_include.hpp; sourceTree = SOURCE_ROOT; };
+		7A09460110CAEFB900CEFDE0 /* nxs_file_path.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxs_file_path.cpp; path = ../../phycas/src/nxs_file_path.cpp; sourceTree = SOURCE_ROOT; };
+		7A09460210CAEFB900CEFDE0 /* nxs_file_path.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = nxs_file_path.hpp; path = ../../phycas/src/nxs_file_path.hpp; sourceTree = SOURCE_ROOT; };
+		7A09460310CAEFB900CEFDE0 /* omega_param.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = omega_param.cpp; path = ../../phycas/src/omega_param.cpp; sourceTree = SOURCE_ROOT; };
+		7A09460410CAEFB900CEFDE0 /* partition_model.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = partition_model.cpp; path = ../../phycas/src/partition_model.cpp; sourceTree = SOURCE_ROOT; };
+		7A09460510CAEFB900CEFDE0 /* partition_model.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = partition_model.hpp; path = ../../phycas/src/partition_model.hpp; sourceTree = SOURCE_ROOT; };
+		7A09460610CAEFB900CEFDE0 /* pdfgen_pymod.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pdfgen_pymod.cpp; path = ../../phycas/src/pdfgen_pymod.cpp; sourceTree = SOURCE_ROOT; };
+		7A09460710CAEFB900CEFDE0 /* pdfgen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pdfgen.cpp; path = ../../phycas/src/pdfgen.cpp; sourceTree = SOURCE_ROOT; };
+		7A09460810CAEFB900CEFDE0 /* pdfgen.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = pdfgen.hpp; path = ../../phycas/src/pdfgen.hpp; sourceTree = SOURCE_ROOT; };
+		7A09460910CAEFB900CEFDE0 /* phycas_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = phycas_config.h; path = ../../phycas/src/phycas_config.h; sourceTree = SOURCE_ROOT; };
+		7A09460A10CAEFB900CEFDE0 /* phycas_nexus_reader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = phycas_nexus_reader.cpp; path = ../../phycas/src/phycas_nexus_reader.cpp; sourceTree = SOURCE_ROOT; };
+		7A09460B10CAEFB900CEFDE0 /* phycas_nexus_reader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = phycas_nexus_reader.hpp; path = ../../phycas/src/phycas_nexus_reader.hpp; sourceTree = SOURCE_ROOT; };
+		7A09460C10CAEFB900CEFDE0 /* phycas_string.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = phycas_string.cpp; path = ../../phycas/src/phycas_string.cpp; sourceTree = SOURCE_ROOT; };
+		7A09460D10CAEFB900CEFDE0 /* phycas_string.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = phycas_string.hpp; path = ../../phycas/src/phycas_string.hpp; sourceTree = SOURCE_ROOT; };
+		7A09460E10CAEFB900CEFDE0 /* phycas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = phycas.h; path = ../../phycas/src/phycas.h; sourceTree = SOURCE_ROOT; };
+		7A09460F10CAEFB900CEFDE0 /* phylogeny_pymod.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = phylogeny_pymod.cpp; path = ../../phycas/src/phylogeny_pymod.cpp; sourceTree = SOURCE_ROOT; };
+		7A09461010CAEFB900CEFDE0 /* pinvar_param.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pinvar_param.cpp; path = ../../phycas/src/pinvar_param.cpp; sourceTree = SOURCE_ROOT; };
+		7A09461110CAEFB900CEFDE0 /* probability_distribution.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = probability_distribution.cpp; path = ../../phycas/src/probability_distribution.cpp; sourceTree = SOURCE_ROOT; };
+		7A09461210CAEFB900CEFDE0 /* probability_distribution.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = probability_distribution.hpp; path = ../../phycas/src/probability_distribution.hpp; sourceTree = SOURCE_ROOT; };
+		7A09461310CAEFB900CEFDE0 /* probability_distribution.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = probability_distribution.inl; path = ../../phycas/src/probability_distribution.inl; sourceTree = SOURCE_ROOT; };
+		7A09461410CAEFB900CEFDE0 /* probdist_pymod.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = probdist_pymod.cpp; path = ../../phycas/src/probdist_pymod.cpp; sourceTree = SOURCE_ROOT; };
+		7A09461510CAEFB900CEFDE0 /* q_matrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = q_matrix.cpp; path = ../../phycas/src/q_matrix.cpp; sourceTree = SOURCE_ROOT; };
+		7A09461610CAEFB900CEFDE0 /* q_matrix.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = q_matrix.hpp; path = ../../phycas/src/q_matrix.hpp; sourceTree = SOURCE_ROOT; };
+		7A09461710CAEFB900CEFDE0 /* q_matrix.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = q_matrix.inl; path = ../../phycas/src/q_matrix.inl; sourceTree = SOURCE_ROOT; };
+		7A09461810CAEFB900CEFDE0 /* read_nexus_pymod.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = read_nexus_pymod.cpp; path = ../../phycas/src/read_nexus_pymod.cpp; sourceTree = SOURCE_ROOT; };
+		7A09461910CAEFB900CEFDE0 /* samc_move.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = samc_move.cpp; path = ../../phycas/src/samc_move.cpp; sourceTree = SOURCE_ROOT; };
+		7A09461A10CAEFB900CEFDE0 /* samc_move.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = samc_move.hpp; path = ../../phycas/src/samc_move.hpp; sourceTree = SOURCE_ROOT; };
+		7A09461B10CAEFB900CEFDE0 /* samc_move.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = samc_move.inl; path = ../../phycas/src/samc_move.inl; sourceTree = SOURCE_ROOT; };
+		7A09461C10CAEFB900CEFDE0 /* sim_data.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sim_data.cpp; path = ../../phycas/src/sim_data.cpp; sourceTree = SOURCE_ROOT; };
+		7A09461D10CAEFB900CEFDE0 /* sim_data.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = sim_data.hpp; path = ../../phycas/src/sim_data.hpp; sourceTree = SOURCE_ROOT; };
+		7A09461E10CAEFB900CEFDE0 /* sim_data.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = sim_data.inl; path = ../../phycas/src/sim_data.inl; sourceTree = SOURCE_ROOT; };
+		7A09461F10CAEFB900CEFDE0 /* slice_sampler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = slice_sampler.cpp; path = ../../phycas/src/slice_sampler.cpp; sourceTree = SOURCE_ROOT; };
+		7A09462010CAEFB900CEFDE0 /* slice_sampler.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = slice_sampler.hpp; path = ../../phycas/src/slice_sampler.hpp; sourceTree = SOURCE_ROOT; };
+		7A09462110CAEFB900CEFDE0 /* split_prior.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = split_prior.hpp; path = ../../phycas/src/split_prior.hpp; sourceTree = SOURCE_ROOT; };
+		7A09462210CAEFB900CEFDE0 /* split.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = split.cpp; path = ../../phycas/src/split.cpp; sourceTree = SOURCE_ROOT; };
+		7A09462310CAEFB900CEFDE0 /* split.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = split.hpp; path = ../../phycas/src/split.hpp; sourceTree = SOURCE_ROOT; };
+		7A09462410CAEFB900CEFDE0 /* square_matrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = square_matrix.cpp; path = ../../phycas/src/square_matrix.cpp; sourceTree = SOURCE_ROOT; };
+		7A09462510CAEFB900CEFDE0 /* square_matrix.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = square_matrix.hpp; path = ../../phycas/src/square_matrix.hpp; sourceTree = SOURCE_ROOT; };
+		7A09462610CAEFB900CEFDE0 /* state_freq_param.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = state_freq_param.cpp; path = ../../phycas/src/state_freq_param.cpp; sourceTree = SOURCE_ROOT; };
+		7A09462710CAEFB900CEFDE0 /* states_patterns.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = states_patterns.hpp; path = ../../phycas/src/states_patterns.hpp; sourceTree = SOURCE_ROOT; };
+		7A09462810CAEFB900CEFDE0 /* std_force_include.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = std_force_include.hpp; path = ../../phycas/src/std_force_include.hpp; sourceTree = SOURCE_ROOT; };
+		7A09462910CAEFB900CEFDE0 /* stop_watch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = stop_watch.cpp; path = ../../phycas/src/stop_watch.cpp; sourceTree = SOURCE_ROOT; };
+		7A09462A10CAEFB900CEFDE0 /* stop_watch.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = stop_watch.hpp; path = ../../phycas/src/stop_watch.hpp; sourceTree = SOURCE_ROOT; };
+		7A09462B10CAEFB900CEFDE0 /* stop_watch.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = stop_watch.inl; path = ../../phycas/src/stop_watch.inl; sourceTree = SOURCE_ROOT; };
+		7A09462F10CAEFB900CEFDE0 /* dcdflib.chs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dcdflib.chs; sourceTree = "<group>"; };
+		7A09463010CAEFB900CEFDE0 /* dcdflib.fdoc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dcdflib.fdoc; sourceTree = "<group>"; };
+		7A09463110CAEFB900CEFDE0 /* dcdflib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dcdflib.h; sourceTree = "<group>"; };
+		7A09463210CAEFB900CEFDE0 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		7A09463410CAEFB900CEFDE0 /* cdflib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cdflib.h; sourceTree = "<group>"; };
+		7A09463510CAEFB900CEFDE0 /* dcdflib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dcdflib.c; sourceTree = "<group>"; };
+		7A09463610CAEFB900CEFDE0 /* dcdflib.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dcdflib.cpp; sourceTree = "<group>"; };
+		7A09463710CAEFB900CEFDE0 /* ipmpar.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ipmpar.c; sourceTree = "<group>"; };
+		7A09463810CAEFB900CEFDE0 /* ipmpar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ipmpar.cpp; sourceTree = "<group>"; };
+		7A09463A10CAEFB900CEFDE0 /* num_util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = num_util.cpp; sourceTree = "<group>"; };
+		7A09463B10CAEFB900CEFDE0 /* num_util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = num_util.h; sourceTree = "<group>"; };
+		7A09463C10CAEFB900CEFDE0 /* pyconversions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pyconversions.h; sourceTree = "<group>"; };
+		7A09463D10CAEFB900CEFDE0 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		7A09463E10CAEFB900CEFDE0 /* tip_data.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tip_data.cpp; path = ../../phycas/src/tip_data.cpp; sourceTree = SOURCE_ROOT; };
+		7A09463F10CAEFB900CEFDE0 /* tip_data.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = tip_data.hpp; path = ../../phycas/src/tip_data.hpp; sourceTree = SOURCE_ROOT; };
+		7A09464010CAEFB900CEFDE0 /* topo_prior_calculator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = topo_prior_calculator.cpp; path = ../../phycas/src/topo_prior_calculator.cpp; sourceTree = SOURCE_ROOT; };
+		7A09464110CAEFB900CEFDE0 /* topo_prior_calculator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = topo_prior_calculator.hpp; path = ../../phycas/src/topo_prior_calculator.hpp; sourceTree = SOURCE_ROOT; };
+		7A09464210CAEFB900CEFDE0 /* topo_prior_calculator.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = topo_prior_calculator.inl; path = ../../phycas/src/topo_prior_calculator.inl; sourceTree = SOURCE_ROOT; };
+		7A09464310CAEFB900CEFDE0 /* tree_iterators.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = tree_iterators.hpp; path = ../../phycas/src/tree_iterators.hpp; sourceTree = SOURCE_ROOT; };
+		7A09464410CAEFB900CEFDE0 /* tree_likelihood.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tree_likelihood.cpp; path = ../../phycas/src/tree_likelihood.cpp; sourceTree = SOURCE_ROOT; };
+		7A09464510CAEFB900CEFDE0 /* tree_likelihood.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = tree_likelihood.hpp; path = ../../phycas/src/tree_likelihood.hpp; sourceTree = SOURCE_ROOT; };
+		7A09464610CAEFB900CEFDE0 /* tree_likelihood.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = tree_likelihood.inl; path = ../../phycas/src/tree_likelihood.inl; sourceTree = SOURCE_ROOT; };
+		7A09464710CAEFB900CEFDE0 /* tree_manip.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tree_manip.cpp; path = ../../phycas/src/tree_manip.cpp; sourceTree = SOURCE_ROOT; };
+		7A09464810CAEFB900CEFDE0 /* tree_manip.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = tree_manip.hpp; path = ../../phycas/src/tree_manip.hpp; sourceTree = SOURCE_ROOT; };
+		7A09464910CAEFB900CEFDE0 /* tree_manip.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = tree_manip.inl; path = ../../phycas/src/tree_manip.inl; sourceTree = SOURCE_ROOT; };
+		7A09464A10CAEFB900CEFDE0 /* tree_scaler_move.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tree_scaler_move.cpp; path = ../../phycas/src/tree_scaler_move.cpp; sourceTree = SOURCE_ROOT; };
+		7A09464B10CAEFB900CEFDE0 /* tree_scaler_move.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = tree_scaler_move.hpp; path = ../../phycas/src/tree_scaler_move.hpp; sourceTree = SOURCE_ROOT; };
+		7A09464C10CAEFB900CEFDE0 /* tree_scaler_move.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = tree_scaler_move.inl; path = ../../phycas/src/tree_scaler_move.inl; sourceTree = SOURCE_ROOT; };
+		7A09464D10CAEFB900CEFDE0 /* tree_score.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = tree_score.hpp; path = ../../phycas/src/tree_score.hpp; sourceTree = SOURCE_ROOT; };
+		7A09464E10CAEFB900CEFDE0 /* underflow_manager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = underflow_manager.cpp; path = ../../phycas/src/underflow_manager.cpp; sourceTree = SOURCE_ROOT; };
+		7A09464F10CAEFB900CEFDE0 /* underflow_manager.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = underflow_manager.hpp; path = ../../phycas/src/underflow_manager.hpp; sourceTree = SOURCE_ROOT; };
+		7A09465010CAEFB900CEFDE0 /* underflow_manager.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = underflow_manager.inl; path = ../../phycas/src/underflow_manager.inl; sourceTree = SOURCE_ROOT; };
+		7A09465110CAEFB900CEFDE0 /* unimap_edge_move.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = unimap_edge_move.cpp; path = ../../phycas/src/unimap_edge_move.cpp; sourceTree = SOURCE_ROOT; };
+		7A09465210CAEFB900CEFDE0 /* unimap_edge_move.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = unimap_edge_move.hpp; path = ../../phycas/src/unimap_edge_move.hpp; sourceTree = SOURCE_ROOT; };
+		7A09465310CAEFB900CEFDE0 /* unimap_edge_move.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = unimap_edge_move.inl; path = ../../phycas/src/unimap_edge_move.inl; sourceTree = SOURCE_ROOT; };
+		7A09465410CAEFB900CEFDE0 /* unimap_fast_nni_move.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = unimap_fast_nni_move.cpp; path = ../../phycas/src/unimap_fast_nni_move.cpp; sourceTree = SOURCE_ROOT; };
+		7A09465510CAEFB900CEFDE0 /* unimap_fast_nni_move.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = unimap_fast_nni_move.hpp; path = ../../phycas/src/unimap_fast_nni_move.hpp; sourceTree = SOURCE_ROOT; };
+		7A09465610CAEFB900CEFDE0 /* unimap_fast_nni_move.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = unimap_fast_nni_move.inl; path = ../../phycas/src/unimap_fast_nni_move.inl; sourceTree = SOURCE_ROOT; };
+		7A09465710CAEFB900CEFDE0 /* unimap_nni_move.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = unimap_nni_move.cpp; path = ../../phycas/src/unimap_nni_move.cpp; sourceTree = SOURCE_ROOT; };
+		7A09465810CAEFB900CEFDE0 /* unimap_nni_move.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = unimap_nni_move.hpp; path = ../../phycas/src/unimap_nni_move.hpp; sourceTree = SOURCE_ROOT; };
+		7A09465910CAEFB900CEFDE0 /* unimap_nni_move.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = unimap_nni_move.inl; path = ../../phycas/src/unimap_nni_move.inl; sourceTree = SOURCE_ROOT; };
+		7A09465A10CAEFB900CEFDE0 /* unimap_node_slide_move.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = unimap_node_slide_move.cpp; path = ../../phycas/src/unimap_node_slide_move.cpp; sourceTree = SOURCE_ROOT; };
+		7A09465B10CAEFB900CEFDE0 /* unimap_node_slide_move.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = unimap_node_slide_move.hpp; path = ../../phycas/src/unimap_node_slide_move.hpp; sourceTree = SOURCE_ROOT; };
+		7A09465C10CAEFB900CEFDE0 /* unimap_sample_ambig_move.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = unimap_sample_ambig_move.cpp; path = ../../phycas/src/unimap_sample_ambig_move.cpp; sourceTree = SOURCE_ROOT; };
+		7A09465D10CAEFB900CEFDE0 /* unimap_sample_ambig_move.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = unimap_sample_ambig_move.hpp; path = ../../phycas/src/unimap_sample_ambig_move.hpp; sourceTree = SOURCE_ROOT; };
+		7A09465E10CAEFB900CEFDE0 /* univent_prob_mgr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = univent_prob_mgr.cpp; path = ../../phycas/src/univent_prob_mgr.cpp; sourceTree = SOURCE_ROOT; };
+		7A09465F10CAEFB900CEFDE0 /* univent_prob_mgr.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = univent_prob_mgr.hpp; path = ../../phycas/src/univent_prob_mgr.hpp; sourceTree = SOURCE_ROOT; };
+		7A09466010CAEFB900CEFDE0 /* univent_prob_mgr.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = univent_prob_mgr.inl; path = ../../phycas/src/univent_prob_mgr.inl; sourceTree = SOURCE_ROOT; };
+		7A09466110CAEFB900CEFDE0 /* univents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = univents.cpp; path = ../../phycas/src/univents.cpp; sourceTree = SOURCE_ROOT; };
+		7A09466210CAEFB900CEFDE0 /* univents.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = univents.hpp; path = ../../phycas/src/univents.hpp; sourceTree = SOURCE_ROOT; };
+		7A09466310CAEFB900CEFDE0 /* univents.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = univents.inl; path = ../../phycas/src/univents.inl; sourceTree = SOURCE_ROOT; };
+		7A09466410CAEFB900CEFDE0 /* updater_pymod.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = updater_pymod.cpp; path = ../../phycas/src/updater_pymod.cpp; sourceTree = SOURCE_ROOT; };
+		7A09466510CAEFB900CEFDE0 /* xlikelihood.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = xlikelihood.hpp; path = ../../phycas/src/xlikelihood.hpp; sourceTree = SOURCE_ROOT; };
+		7A09466610CAEFB900CEFDE0 /* xphycas.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = xphycas.hpp; path = ../../phycas/src/xphycas.hpp; sourceTree = SOURCE_ROOT; };
+		7A09466710CAEFB900CEFDE0 /* xphylogeny.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = xphylogeny.hpp; path = ../../phycas/src/xphylogeny.hpp; sourceTree = SOURCE_ROOT; };
+		7A09466810CAEFB900CEFDE0 /* xprobdist.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = xprobdist.hpp; path = ../../phycas/src/xprobdist.hpp; sourceTree = SOURCE_ROOT; };
+		D2AAC09D05546B4700DB518D /* libphycas.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libphycas.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D2AAC09B05546B4700DB518D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		034768DDFF38A45A11DB9C8B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D2AAC09D05546B4700DB518D /* libphycas.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0867D691FE84028FC02AAC07 /* phycas */ = {
+			isa = PBXGroup;
+			children = (
+				5073E0CA09E734BC00EC74B6 /* Configuration Files */,
+				08FB77ACFE841707C02AAC07 /* Source */,
+				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
+				034768DDFF38A45A11DB9C8B /* Products */,
+			);
+			name = phycas;
+			sourceTree = "<group>";
+		};
+		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "External Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+		08FB77ACFE841707C02AAC07 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				7A09462C10CAEFB900CEFDE0 /* thirdparty */,
+				7A0945AF10CAEFB900CEFDE0 /* basic_cdf.cpp */,
+				7A0945B010CAEFB900CEFDE0 /* basic_cdf.hpp */,
+				7A0945B110CAEFB900CEFDE0 /* basic_cdf.inl */,
+				7A0945B210CAEFB900CEFDE0 /* basic_lot.cpp */,
+				7A0945B310CAEFB900CEFDE0 /* basic_lot.hpp */,
+				7A0945B410CAEFB900CEFDE0 /* basic_lot.inl */,
+				7A0945B510CAEFB900CEFDE0 /* basic_tree_node.cpp */,
+				7A0945B610CAEFB900CEFDE0 /* basic_tree_node.hpp */,
+				7A0945B710CAEFB900CEFDE0 /* basic_tree_node.inl */,
+				7A0945B810CAEFB900CEFDE0 /* basic_tree.cpp */,
+				7A0945B910CAEFB900CEFDE0 /* basic_tree.hpp */,
+				7A0945BA10CAEFB900CEFDE0 /* basic_tree.inl */,
+				7A0945BB10CAEFB900CEFDE0 /* boost_assertion_failed.cpp */,
+				7A0945BC10CAEFB900CEFDE0 /* bush_move.cpp */,
+				7A0945BD10CAEFB900CEFDE0 /* bush_move.hpp */,
+				7A0945BE10CAEFB900CEFDE0 /* bush_move.inl */,
+				7A0945BF10CAEFB900CEFDE0 /* codon_model.cpp */,
+				7A0945C010CAEFB900CEFDE0 /* codon_model.hpp */,
+				7A0945C110CAEFB900CEFDE0 /* codon_model.inl */,
+				7A0945C210CAEFB900CEFDE0 /* cond_likelihood_storage.cpp */,
+				7A0945C310CAEFB900CEFDE0 /* cond_likelihood_storage.hpp */,
+				7A0945C410CAEFB900CEFDE0 /* cond_likelihood_storage.inl */,
+				7A0945C510CAEFB900CEFDE0 /* cond_likelihood.cpp */,
+				7A0945C610CAEFB900CEFDE0 /* cond_likelihood.hpp */,
+				7A0945C710CAEFB900CEFDE0 /* cond_likelihood.inl */,
+				7A0945C810CAEFB900CEFDE0 /* conversions_pymod.cpp */,
+				7A0945C910CAEFB900CEFDE0 /* data_matrix_pymod.cpp */,
+				7A0945CA10CAEFB900CEFDE0 /* dirichlet_move.cpp */,
+				7A0945CB10CAEFB900CEFDE0 /* dirichlet_move.hpp */,
+				7A0945CC10CAEFB900CEFDE0 /* dirichlet_move.inl */,
+				7A0945CD10CAEFB900CEFDE0 /* discrete_gamma_shape_param.cpp */,
+				7A0945CE10CAEFB900CEFDE0 /* dls.h */,
+				7A0945CF10CAEFB900CEFDE0 /* edge_endpoints.hpp */,
+				7A0945D010CAEFB900CEFDE0 /* edge_iterators.hpp */,
+				7A0945D110CAEFB900CEFDE0 /* edge_move.cpp */,
+				7A0945D210CAEFB900CEFDE0 /* edge_move.hpp */,
+				7A0945D310CAEFB900CEFDE0 /* edge_move.inl */,
+				7A0945D410CAEFB900CEFDE0 /* edgelen_master_param.cpp */,
+				7A0945D510CAEFB900CEFDE0 /* flex_prob_param.cpp */,
+				7A0945D610CAEFB900CEFDE0 /* flex_rate_param.cpp */,
+				7A0945D710CAEFB900CEFDE0 /* gtr_model.cpp */,
+				7A0945D810CAEFB900CEFDE0 /* gtr_model.hpp */,
+				7A0945D910CAEFB900CEFDE0 /* gtr_rate_param.cpp */,
+				7A0945DA10CAEFB900CEFDE0 /* hky_model.cpp */,
+				7A0945DB10CAEFB900CEFDE0 /* hyperprior_param.cpp */,
+				7A0945DC10CAEFB900CEFDE0 /* internal_data.cpp */,
+				7A0945DD10CAEFB900CEFDE0 /* internal_data.hpp */,
+				7A0945DE10CAEFB900CEFDE0 /* jc_model.cpp */,
+				7A0945DF10CAEFB900CEFDE0 /* kappa_param.cpp */,
+				7A0945E010CAEFB900CEFDE0 /* larget_simon_move.cpp */,
+				7A0945E110CAEFB900CEFDE0 /* larget_simon_move.hpp */,
+				7A0945E210CAEFB900CEFDE0 /* larget_simon_move.inl */,
+				7A0945E310CAEFB900CEFDE0 /* likelihood_loops.cpp */,
+				7A0945E410CAEFB900CEFDE0 /* likelihood_models.cpp */,
+				7A0945E510CAEFB900CEFDE0 /* likelihood_models.hpp */,
+				7A0945E610CAEFB900CEFDE0 /* likelihood_models.inl */,
+				7A0945E710CAEFB900CEFDE0 /* likelihood_pymod.cpp */,
+				7A0945E810CAEFB900CEFDE0 /* linalg.c */,
+				7A0945E910CAEFB900CEFDE0 /* linalg.cpp */,
+				7A0945EA10CAEFB900CEFDE0 /* linalg.h */,
+				7A0945EB10CAEFB900CEFDE0 /* mapping_move.cpp */,
+				7A0945EC10CAEFB900CEFDE0 /* mapping_move.hpp */,
+				7A0945ED10CAEFB900CEFDE0 /* mcmc_chain_manager.cpp */,
+				7A0945EE10CAEFB900CEFDE0 /* mcmc_chain_manager.hpp */,
+				7A0945EF10CAEFB900CEFDE0 /* mcmc_chain_manager.inl */,
+				7A0945F010CAEFB900CEFDE0 /* mcmc_flexcat_param.cpp */,
+				7A0945F110CAEFB900CEFDE0 /* mcmc_move.hpp */,
+				7A0945F210CAEFB900CEFDE0 /* mcmc_move.inl */,
+				7A0945F310CAEFB900CEFDE0 /* mcmc_param.cpp */,
+				7A0945F410CAEFB900CEFDE0 /* mcmc_param.hpp */,
+				7A0945F510CAEFB900CEFDE0 /* mcmc_param.inl */,
+				7A0945F610CAEFB900CEFDE0 /* mcmc_updater.cpp */,
+				7A0945F710CAEFB900CEFDE0 /* mcmc_updater.hpp */,
+				7A0945F810CAEFB900CEFDE0 /* mcmc_updater.inl */,
+				7A0945F910CAEFB900CEFDE0 /* model_pymod.cpp */,
+				7A0945FA10CAEFB900CEFDE0 /* mvnormal_distribution.cpp */,
+				7A0945FB10CAEFB900CEFDE0 /* mvnormal_distribution.hpp */,
+				7A0945FC10CAEFB900CEFDE0 /* ncat_move.cpp */,
+				7A0945FD10CAEFB900CEFDE0 /* ncat_move.hpp */,
+				7A0945FE10CAEFB900CEFDE0 /* ncat_move.inl */,
+				7A0945FF10CAEFB900CEFDE0 /* ncl_pymod.cpp */,
+				7A09460010CAEFB900CEFDE0 /* nopython_force_include.hpp */,
+				7A09460110CAEFB900CEFDE0 /* nxs_file_path.cpp */,
+				7A09460210CAEFB900CEFDE0 /* nxs_file_path.hpp */,
+				7A09460310CAEFB900CEFDE0 /* omega_param.cpp */,
+				7A09460410CAEFB900CEFDE0 /* partition_model.cpp */,
+				7A09460510CAEFB900CEFDE0 /* partition_model.hpp */,
+				7A09460610CAEFB900CEFDE0 /* pdfgen_pymod.cpp */,
+				7A09460710CAEFB900CEFDE0 /* pdfgen.cpp */,
+				7A09460810CAEFB900CEFDE0 /* pdfgen.hpp */,
+				7A09460910CAEFB900CEFDE0 /* phycas_config.h */,
+				7A09460A10CAEFB900CEFDE0 /* phycas_nexus_reader.cpp */,
+				7A09460B10CAEFB900CEFDE0 /* phycas_nexus_reader.hpp */,
+				7A09460C10CAEFB900CEFDE0 /* phycas_string.cpp */,
+				7A09460D10CAEFB900CEFDE0 /* phycas_string.hpp */,
+				7A09460E10CAEFB900CEFDE0 /* phycas.h */,
+				7A09460F10CAEFB900CEFDE0 /* phylogeny_pymod.cpp */,
+				7A09461010CAEFB900CEFDE0 /* pinvar_param.cpp */,
+				7A09461110CAEFB900CEFDE0 /* probability_distribution.cpp */,
+				7A09461210CAEFB900CEFDE0 /* probability_distribution.hpp */,
+				7A09461310CAEFB900CEFDE0 /* probability_distribution.inl */,
+				7A09461410CAEFB900CEFDE0 /* probdist_pymod.cpp */,
+				7A09461510CAEFB900CEFDE0 /* q_matrix.cpp */,
+				7A09461610CAEFB900CEFDE0 /* q_matrix.hpp */,
+				7A09461710CAEFB900CEFDE0 /* q_matrix.inl */,
+				7A09461810CAEFB900CEFDE0 /* read_nexus_pymod.cpp */,
+				7A09461910CAEFB900CEFDE0 /* samc_move.cpp */,
+				7A09461A10CAEFB900CEFDE0 /* samc_move.hpp */,
+				7A09461B10CAEFB900CEFDE0 /* samc_move.inl */,
+				7A09461C10CAEFB900CEFDE0 /* sim_data.cpp */,
+				7A09461D10CAEFB900CEFDE0 /* sim_data.hpp */,
+				7A09461E10CAEFB900CEFDE0 /* sim_data.inl */,
+				7A09461F10CAEFB900CEFDE0 /* slice_sampler.cpp */,
+				7A09462010CAEFB900CEFDE0 /* slice_sampler.hpp */,
+				7A09462110CAEFB900CEFDE0 /* split_prior.hpp */,
+				7A09462210CAEFB900CEFDE0 /* split.cpp */,
+				7A09462310CAEFB900CEFDE0 /* split.hpp */,
+				7A09462410CAEFB900CEFDE0 /* square_matrix.cpp */,
+				7A09462510CAEFB900CEFDE0 /* square_matrix.hpp */,
+				7A09462610CAEFB900CEFDE0 /* state_freq_param.cpp */,
+				7A09462710CAEFB900CEFDE0 /* states_patterns.hpp */,
+				7A09462810CAEFB900CEFDE0 /* std_force_include.hpp */,
+				7A09462910CAEFB900CEFDE0 /* stop_watch.cpp */,
+				7A09462A10CAEFB900CEFDE0 /* stop_watch.hpp */,
+				7A09462B10CAEFB900CEFDE0 /* stop_watch.inl */,
+				7A09463E10CAEFB900CEFDE0 /* tip_data.cpp */,
+				7A09463F10CAEFB900CEFDE0 /* tip_data.hpp */,
+				7A09464010CAEFB900CEFDE0 /* topo_prior_calculator.cpp */,
+				7A09464110CAEFB900CEFDE0 /* topo_prior_calculator.hpp */,
+				7A09464210CAEFB900CEFDE0 /* topo_prior_calculator.inl */,
+				7A09464310CAEFB900CEFDE0 /* tree_iterators.hpp */,
+				7A09464410CAEFB900CEFDE0 /* tree_likelihood.cpp */,
+				7A09464510CAEFB900CEFDE0 /* tree_likelihood.hpp */,
+				7A09464610CAEFB900CEFDE0 /* tree_likelihood.inl */,
+				7A09464710CAEFB900CEFDE0 /* tree_manip.cpp */,
+				7A09464810CAEFB900CEFDE0 /* tree_manip.hpp */,
+				7A09464910CAEFB900CEFDE0 /* tree_manip.inl */,
+				7A09464A10CAEFB900CEFDE0 /* tree_scaler_move.cpp */,
+				7A09464B10CAEFB900CEFDE0 /* tree_scaler_move.hpp */,
+				7A09464C10CAEFB900CEFDE0 /* tree_scaler_move.inl */,
+				7A09464D10CAEFB900CEFDE0 /* tree_score.hpp */,
+				7A09464E10CAEFB900CEFDE0 /* underflow_manager.cpp */,
+				7A09464F10CAEFB900CEFDE0 /* underflow_manager.hpp */,
+				7A09465010CAEFB900CEFDE0 /* underflow_manager.inl */,
+				7A09465110CAEFB900CEFDE0 /* unimap_edge_move.cpp */,
+				7A09465210CAEFB900CEFDE0 /* unimap_edge_move.hpp */,
+				7A09465310CAEFB900CEFDE0 /* unimap_edge_move.inl */,
+				7A09465410CAEFB900CEFDE0 /* unimap_fast_nni_move.cpp */,
+				7A09465510CAEFB900CEFDE0 /* unimap_fast_nni_move.hpp */,
+				7A09465610CAEFB900CEFDE0 /* unimap_fast_nni_move.inl */,
+				7A09465710CAEFB900CEFDE0 /* unimap_nni_move.cpp */,
+				7A09465810CAEFB900CEFDE0 /* unimap_nni_move.hpp */,
+				7A09465910CAEFB900CEFDE0 /* unimap_nni_move.inl */,
+				7A09465A10CAEFB900CEFDE0 /* unimap_node_slide_move.cpp */,
+				7A09465B10CAEFB900CEFDE0 /* unimap_node_slide_move.hpp */,
+				7A09465C10CAEFB900CEFDE0 /* unimap_sample_ambig_move.cpp */,
+				7A09465D10CAEFB900CEFDE0 /* unimap_sample_ambig_move.hpp */,
+				7A09465E10CAEFB900CEFDE0 /* univent_prob_mgr.cpp */,
+				7A09465F10CAEFB900CEFDE0 /* univent_prob_mgr.hpp */,
+				7A09466010CAEFB900CEFDE0 /* univent_prob_mgr.inl */,
+				7A09466110CAEFB900CEFDE0 /* univents.cpp */,
+				7A09466210CAEFB900CEFDE0 /* univents.hpp */,
+				7A09466310CAEFB900CEFDE0 /* univents.inl */,
+				7A09466410CAEFB900CEFDE0 /* updater_pymod.cpp */,
+				7A09466510CAEFB900CEFDE0 /* xlikelihood.hpp */,
+				7A09466610CAEFB900CEFDE0 /* xphycas.hpp */,
+				7A09466710CAEFB900CEFDE0 /* xphylogeny.hpp */,
+				7A09466810CAEFB900CEFDE0 /* xprobdist.hpp */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		5073E0CA09E734BC00EC74B6 /* Configuration Files */ = {
+			isa = PBXGroup;
+			children = (
+				5073E0C609E734A800EC74B6 /* phycasProj.xcconfig */,
+				5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */,
+			);
+			name = "Configuration Files";
+			sourceTree = "<group>";
+		};
+		7A09462C10CAEFB900CEFDE0 /* thirdparty */ = {
+			isa = PBXGroup;
+			children = (
+				7A09462D10CAEFB900CEFDE0 /* dcdflib */,
+				7A09463910CAEFB900CEFDE0 /* num_util */,
+				7A09463C10CAEFB900CEFDE0 /* pyconversions.h */,
+				7A09463D10CAEFB900CEFDE0 /* README */,
+			);
+			name = thirdparty;
+			path = ../../phycas/src/thirdparty;
+			sourceTree = SOURCE_ROOT;
+		};
+		7A09462D10CAEFB900CEFDE0 /* dcdflib */ = {
+			isa = PBXGroup;
+			children = (
+				7A09462E10CAEFB900CEFDE0 /* doc */,
+				7A09463210CAEFB900CEFDE0 /* README */,
+				7A09463310CAEFB900CEFDE0 /* src */,
+			);
+			path = dcdflib;
+			sourceTree = "<group>";
+		};
+		7A09462E10CAEFB900CEFDE0 /* doc */ = {
+			isa = PBXGroup;
+			children = (
+				7A09462F10CAEFB900CEFDE0 /* dcdflib.chs */,
+				7A09463010CAEFB900CEFDE0 /* dcdflib.fdoc */,
+				7A09463110CAEFB900CEFDE0 /* dcdflib.h */,
+			);
+			path = doc;
+			sourceTree = "<group>";
+		};
+		7A09463310CAEFB900CEFDE0 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				7A09463410CAEFB900CEFDE0 /* cdflib.h */,
+				7A09463510CAEFB900CEFDE0 /* dcdflib.c */,
+				7A09463610CAEFB900CEFDE0 /* dcdflib.cpp */,
+				7A09463710CAEFB900CEFDE0 /* ipmpar.c */,
+				7A09463810CAEFB900CEFDE0 /* ipmpar.cpp */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		7A09463910CAEFB900CEFDE0 /* num_util */ = {
+			isa = PBXGroup;
+			children = (
+				7A09463A10CAEFB900CEFDE0 /* num_util.cpp */,
+				7A09463B10CAEFB900CEFDE0 /* num_util.h */,
+			);
+			path = num_util;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		D2AAC09905546B4700DB518D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7A09470910CAF12A00CEFDE0 /* basic_tree.hpp in Headers */,
+				7A09470A10CAF12A00CEFDE0 /* basic_tree_node.hpp in Headers */,
+				7A09470E10CAF13B00CEFDE0 /* split.hpp in Headers */,
+				7A09471210CAF14300CEFDE0 /* phycas_string.hpp in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		D2AAC09C05546B4700DB518D /* Conversions */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB916008733D950010E9CD /* Build configuration list for PBXNativeTarget "Conversions" */;
+			buildPhases = (
+				D2AAC09905546B4700DB518D /* Headers */,
+				D2AAC09B05546B4700DB518D /* Frameworks */,
+				D2AAC09A05546B4700DB518D /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Conversions;
+			productName = libphycas;
+			productReference = D2AAC09D05546B4700DB518D /* libphycas.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0867D690FE84028FC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB916408733D950010E9CD /* Build configuration list for PBXProject "phycas" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 1;
+			mainGroup = 0867D691FE84028FC02AAC07 /* phycas */;
+			productRefGroup = 034768DDFF38A45A11DB9C8B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D2AAC09C05546B4700DB518D /* Conversions */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D2AAC09A05546B4700DB518D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7A0946FF10CAF0FD00CEFDE0 /* conversions_pymod.cpp in Sources */,
+				7A09470410CAF10500CEFDE0 /* boost_assertion_failed.cpp in Sources */,
+				7A09470710CAF12800CEFDE0 /* basic_tree.cpp in Sources */,
+				7A09470810CAF12900CEFDE0 /* basic_tree_node.cpp in Sources */,
+				7A09470F10CAF13B00CEFDE0 /* split.cpp in Sources */,
+				7A09471310CAF14300CEFDE0 /* phycas_string.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB916108733D950010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
+			buildSettings = {
+				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+			};
+			name = Debug;
+		};
+		1DEB916208733D950010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
+			buildSettings = {
+				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+			};
+			name = Release;
+		};
+		1DEB916508733D950010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5073E0C609E734A800EC74B6 /* phycasProj.xcconfig */;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(PYTHON_ROOT)/include/python2.6",
+					"$(NCL_ROOT)",
+					"$(BOOST_ROOT)",
+				);
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.6;
+				USER_HEADER_SEARCH_PATHS = "$(PHYCAS_ROOT)";
+			};
+			name = Debug;
+		};
+		1DEB916608733D950010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5073E0C609E734A800EC74B6 /* phycasProj.xcconfig */;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(PYTHON_ROOT)/include/python2.6",
+					"$(NCL_ROOT)",
+					"$(BOOST_ROOT)",
+				);
+				PREBINDING = NO;
+				SDKROOT = macosx10.6;
+				USER_HEADER_SEARCH_PATHS = "$(PHYCAS_ROOT)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB916008733D950010E9CD /* Build configuration list for PBXNativeTarget "Conversions" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB916108733D950010E9CD /* Debug */,
+				1DEB916208733D950010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB916408733D950010E9CD /* Build configuration list for PBXProject "phycas" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB916508733D950010E9CD /* Debug */,
+				1DEB916608733D950010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0867D690FE84028FC02AAC07 /* Project object */;
+}

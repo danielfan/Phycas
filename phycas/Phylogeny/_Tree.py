@@ -12,7 +12,7 @@ class Tree(TreeBase):
     functions of other classes.
 
     """
-    def __init__(self, builder=None, newick=None, zero_based=False, taxon_labels=None):
+    def __init__(self, builder=None, newick=None, zero_based=False, taxon_labels=None, rooted=False):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Calls clear() to initialize data members.
@@ -29,6 +29,7 @@ class Tree(TreeBase):
 
         """
         TreeBase.__init__(self)
+        self.setRootedness(rooted)
         if builder:
             builder.buildTree(self)
         elif newick:
@@ -453,6 +454,7 @@ class Tree(TreeBase):
 
         """
         self.taxon_labels = taxon_names
+        print "rectifyNumbers: taxon_names =", taxon_names
         return TreeBase.rectifyNumbers(self, taxon_names)
 
     def rectifyNames(self, taxon_names):

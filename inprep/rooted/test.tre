@@ -1,0 +1,40 @@
+#NEXUS 
+
+begin paup;
+	set storebrlens;
+end;
+
+Begin trees;  [Treefile saved Thursday, December 3, 2009  12:00 PM]
+[!
+>Data file = green.nex
+>UPGMA search settings:
+>  Ties (if encountered) will be broken systematically
+>  Distance measure = uncorrected ("p")
+>  (Tree is rooted)
+]
+	Translate
+		1 Chara_connivens_L13476,
+		2 Conocephalum_conicum_U87067,
+		3 Bazzania_trilobata_L11056,
+		4 Sphagnum_palustre_L13485,
+		[
+		5 Osmunda_cinnamomea_D14882,
+		6 Picea_pungens_AF456382,
+		7 Iris_unguicularis_AJ309693,
+		8 Asplenium_nidus_AF525270,
+		9 Nicotiana_tabacum_J01450,
+		10 Avena_sativa_L15300
+		]
+		;
+
+tree a = [&R] ((1:0.2,2:0.2):0.2,(3:0.2,4:0.2):0.2);
+[
+tree a = [&U] (1:0.1,2:0.1,(3:0.1,4:0.1):0.1);
+tree a = [&U] (1:0.2,2:0.2,(3:0.2,4:0.2):0.2);
+tree a = [&R] ((1:0.1,2:0.1):0.1,(3:0.1,4:0.1):0.1);
+]
+[
+tree PAUP_1 = [&R] (1:0.13973713,(((((2:0.07249025,4:0.07249025):0.01473172,3:0.08722197):0.02154054,5:0.10876251):0.00625065,(6:0.08788983,((7:0.04900465,9:0.04900465):0.01434271,10:0.06334736):0.02454247):0.02712334):0.01974071,8:0.13475387):0.00498327):0;
+tree PAUP_1 = [&U] (1:0.13973713,((((2:0.07249025,4:0.07249025):0.01473172,3:0.08722197):0.02154054,5:0.10876251):0.00625065,(6:0.08788983,((7:0.04900465,9:0.04900465):0.01434271,10:0.06334736):0.02454247):0.02712334):0.01974071,8:0.13475387);
+]
+End;

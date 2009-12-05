@@ -22,6 +22,7 @@
   
 #if defined(PYTHON_ONLY)
 #	include <Python.h>
+//#	include <Python/Python.h>	// this is probably better for OS X, but we'll just use an appropriate search path within the framework for now
 #endif
 
 #if defined(NDEBUG)

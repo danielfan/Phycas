@@ -168,7 +168,7 @@ class TreeLikelihood
 
 		bool							isValid(const TreeNode *focal, const TreeNode *avoidNd);
 		void							refreshCLA(TreeNode & nd, const TreeNode * avoid);
-		double							calcLnLFromNode(TreeNode & focal_node);
+		double							calcLnLFromNode(TreeNode & focal_node, TreeShPtr t);
 		double							calcLnL(TreeShPtr);
 
 		std::string						listPatterns(bool translate);
@@ -229,8 +229,9 @@ class TreeLikelihood
 		void							conditionOnAdditionalInternal(CondLikelihood &, ConstPMatrices , const CondLikelihood &);
 #endif
 
-		double							harvestLnL(EdgeEndpoints & focalEdge);
+		double							harvestLnL(EdgeEndpoints & focalEdge, TreeShPtr t);
 		double							harvestLnLFromValidEdge(ConstEdgeEndpoints & focalEdge);
+		double							harvestLnLFromValidNode(TreeNode *focalNode);
 
 		unsigned						buildConstantStatesVector();
 

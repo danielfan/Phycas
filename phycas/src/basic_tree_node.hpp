@@ -136,7 +136,7 @@ class TreeNode
 		TreeNode *			rSib;					/**< points to sibling on right */
 		TreeNode *			nextPreorder;			/**< points to next node in preorder sequence */
 		TreeNode *			prevPreorder;			/**< points to previous node in preorder sequence */
-		bool				observable;				/**< true if data could be observed for this node */
+		//bool				observable;				/**< true if data could be observed for this node */
 
 		float				support;				/**< used to hold support value (bootstrap proportion or Bayesian posterior probability */
 		double				tmp;					/**< temporary non-persistant workspace to be used within individual methods */

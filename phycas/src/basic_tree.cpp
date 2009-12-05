@@ -1042,11 +1042,8 @@ void Tree::recDebugListTree(TreeNode *p, int nindent)
 #		if SHOW_TRAVSEQ
 			fprintf(stderr, " next=%d prev=%d", nodeIndex(p->nextPreorder), nodeIndex(p->prevPreorder));
 #		endif
-#		if SHOW_EDGELEN
-			fprintf(stderr, " v=%g", p->edgeLen);
-#		endif
 
-		fprintf(stderr, ")\n");
+		fprintf(stderr, "): %g\n", p->edgeLen);
 //		if (abortRequested())
 //			return;
 
@@ -1612,7 +1609,11 @@ void Tree::BuildFromString(
             first_tip->par = firstPreorder;
             first_tip->rSib = firstPreorder->lChild;
             first_tip->lChild = NULL;
-            first_tip->nodeNum = nTips;
+            #if 0//@TEMP DEL
+            first_tip->nodeNum = UINT_MAX;
+            #else
+            first_tip->nodeNum = 4;
+            #endif
             first_tip->nodeName = "root";
             first_tip->SetUnobservable();
             first_tip->SetEdgeLen(0.0);
@@ -1629,7 +1630,7 @@ void Tree::BuildFromString(
 			    // Assuming that tip node numbers start at 1
 			    for (preorder_iterator nd = begin(); nd != end(); ++nd)
 				    {
-				    if (nd->IsTip())
+				    if (nd->IsObservable())
 					    {
                         if (nd->nodeNum == 0)
                             {
@@ -2045,6 +2046,8 @@ void Tree::SetAllEdgeLens(double v)
 	std::for_each(begin(), end(), boost::lambda::bind(&TreeNode::SetEdgeLen, boost::lambda::_1, v));
 	}
 
+#if 0//use setRootedness instead
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Converts the tree to a rooted tree (if it is not already a rooted tree) and sets `isRooted' data member to true.
 */
@@ -2066,6 +2069,42 @@ void Tree::setUnrooted()
     PHYCAS_ASSERT(firstPreorder == NULL);
     isRooted = false;
     }
+
+#else//new
+
+void Tree::setRootedness(bool rooted)
+	{
+	PHYCAS_ASSERT(firstPreorder == NULL);		// should only come here for an uninitialized Tree
+	isRooted = rooted;
+
+	#if 0//
+	if (rooted != isRooted)
+		{
+		isRooted = rooted;
+        if (rooted)
+            {
+            // Add a fake tip node as the left child of the curent root node and let first_tip point to it
+            first_tip = GetNewNode();
+            first_tip->par = firstPreorder;
+            first_tip->rSib = firstPreorder->lChild;
+            first_tip->lChild = NULL;
+            first_tip->nodeNum = nTips;
+            first_tip->nodeName = "root";
+            first_tip->SetUnobservable();
+            first_tip->SetEdgeLen(0.0);
+            firstPreorder->lChild = first_tip;
+            }
+        else
+        	{
+        	//need to deroot
+        	}
+  
+		RerootAtThisTip(first_tip);
+    #endif//
+
+    }
+
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Pulls a node out of storage, if `internalNodeStorage' is not empty; otherwise, allocates memory for a new TreeNode. If it

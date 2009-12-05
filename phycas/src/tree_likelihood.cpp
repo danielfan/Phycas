@@ -1444,7 +1444,7 @@ void TreeLikelihood::refreshCLA(
 
 
 #if POLPY_NEWWAY
-if (firstNeighbor->IsTip())
+	if (firstNeighbor->IsTip())
 		{
 		TipData & firstTD = *(firstNeighbor->GetTipData());
         for (unsigned i = 0; i < num_subsets; ++i)
@@ -1492,7 +1492,7 @@ if (firstNeighbor->IsTip())
 			}
 		}
 #else
-if (firstNeighbor->IsTip())
+	if (firstNeighbor->IsTip())
 		{
 		TipData & firstTD = *(firstNeighbor->GetTipData());
 		calcPMatTranspose(firstTD.getTransposedPMatrices(), firstTD.getConstStateListPos(), firstEdgeLen);
@@ -2610,7 +2610,7 @@ double TreeLikelihood::calcLnL(
 #endif
 
 	// Calculate log-likelihood using nd as the likelihood root
-	double lnL = calcLnLFromNode(*nd);
+	double lnL = calcLnLFromNode(*nd, t);
 	
 	// 	if (calcLnLLevel == 0)
 	// 		{
@@ -2721,9 +2721,11 @@ void TreeLikelihood::debugSaveCLAs(TreeShPtr t, std::string fn, bool overwrite)
 |	but not necessarily the root of the tree).
 */
 double TreeLikelihood::calcLnLFromNode(
-  TreeNode & focal_node)	/**< is the likelihood root (i.e. node around which the likelihood will be computed) */
+  TreeNode & focal_node,	/**< is the likelihood root (i.e. node around which the likelihood will be computed) */
+  TreeShPtr t)				/**< is the tree */
 	{
 	double lnL;
+//printf("in calcLnLFromNode with focal_node=%d\n", focal_node.GetNodeNumber());//
 	if (no_data)
 		lnL =  0.0;
 	else
@@ -2749,7 +2751,7 @@ double TreeLikelihood::calcLnLFromNode(
 		// We have now brought all neighboring CLAs up-to-date, so we can now call harvestLnL to
 		// compute the likelihood
 		EdgeEndpoints edge(&focal_node, NULL);
-		lnL = harvestLnL(edge);
+		lnL = harvestLnL(edge, t);
 		}
 	return lnL;
 	}

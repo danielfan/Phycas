@@ -307,7 +307,6 @@ class SliceSampler(SliceSamplerBase):
         
         """
         assert self.getNumSamples() > 0, 'must draw at least one sample before calling adaptSimple()'
-        print "IN adaptSimple with multiplier = ", multiplier
         SliceSamplerBase.adaptSimple(self, multiplier)
 
     def adaptNeal(self, multiplier):

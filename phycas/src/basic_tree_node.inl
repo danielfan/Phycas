@@ -67,7 +67,8 @@ inline float TreeNode::GetX()
 */
 inline void TreeNode::SetObservable()
 	{
-	observable = true;
+	// observable has been deprecated
+//	observable = true;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -75,7 +76,8 @@ inline void TreeNode::SetObservable()
 */
 inline void TreeNode::SetUnobservable()
 	{
-	observable = false;
+	// observable has been deprecated
+//	observable = false;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -183,7 +185,11 @@ inline bool TreeNode::IsTip() const
 */
 inline bool TreeNode::IsObservable() const
 	{
+	#if 0//
 	return observable;
+	#else//
+	return (IsTip() && (nodeNum != UINT_MAX));
+	#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -197,7 +203,7 @@ inline bool TreeNode::IsObservable() const
 */
 inline void TreeNode::SetObservable(bool is_observable)
 	{
-	observable = is_observable;
+//	observable = is_observable;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

@@ -42,7 +42,7 @@ TreeNode::TreeNode()
   rSib(0),
   nextPreorder(0),
   prevPreorder(0),
-  observable(false),
+  //observable(false),
   support(0.0),
   tmp(0.0),
   x(0.0),
@@ -85,7 +85,7 @@ void TreeNode::Clear()
 	nodeNum			= TreeNode::nodeNumInitValue;
 	edgeLen			= TreeNode::edgeLenInitValue;
 	nodeName		= "";
-	observable		= false;
+	//observable		= false;
 	support			= 0.0;
 	tmp				= 0.0;
 	x				= 0.0;

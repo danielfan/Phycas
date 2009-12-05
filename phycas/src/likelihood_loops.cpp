@@ -1081,17 +1081,27 @@ void TreeLikelihood::conditionOnAdditionalInternal(
 	underflow_manager.check(condLike, condLike, childCondLike, pattern_counts, true);	// last argument is polytomy
 #endif
 	}
+	
+//move this to member fxn of Tree
+static int nodeIndex(TreeNode *p)
+	{
+	return (p == NULL) ? -1 : p->GetNodeNumber();
+	}
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Called after neighboring conditional likelihood arrays are brought up-to-date. The focal_neighbor of focal_edge is 
 |   NULL if this function is called from TreeLikelihood::calcLnLFromNode (which is the usual situation).
 */
 double TreeLikelihood::harvestLnL(
-   EdgeEndpoints & focal_edge) /**< is a pair of TreeNode pointers, the first of which points to the likelihood root node and the second is usually NULL */
+   EdgeEndpoints & focal_edge,	/**< is a pair of TreeNode pointers, the first of which points to the likelihood root node and the second is usually NULL */
+   TreeShPtr t)					/**< is the tree */
 	{
+#if 0//old
 	// Get the focal node
 	TreeNode * focal_node = focal_edge.getFocalNode();
 	PHYCAS_ASSERT(focal_node != NULL);
+
+printf("in harvestLnL with EdgeEndpoints=(%d,%d)\n", nodeIndex(focal_edge.getFocalNode()), nodeIndex(focal_edge.getFocalNeighbor()));//
 
 	// If the focal neighbor is NULL (the usual case), let the parent of the focal node be the focal neighbor
 	TreeNode * focal_neighbor = focal_edge.getFocalNeighbor();
@@ -1106,6 +1116,46 @@ double TreeLikelihood::harvestLnL(
 	refreshCLA(*focal_node, focal_neighbor);
 	ConstEdgeEndpoints c(focal_node, focal_neighbor);
 	return harvestLnLFromValidEdge(c);
+#else
+	double lnL;
+
+	// Get the focal node
+	TreeNode * focal_node = focal_edge.getFocalNode();
+	PHYCAS_ASSERT(focal_node != NULL);
+
+//printf("in harvestLnL with EdgeEndpoints=(%d,%d)\n", nodeIndex(focal_edge.getFocalNode()), nodeIndex(focal_edge.getFocalNeighbor()));//
+
+	TreeNode * focal_neighbor = focal_edge.getFocalNeighbor();
+	if (focal_neighbor == NULL)
+		{
+		focal_neighbor = focal_node->GetParent();
+		focal_edge.setFocalNeighbor(focal_neighbor);
+		}
+	PHYCAS_ASSERT(focal_neighbor != NULL);
+
+	// Recompute the conditional likelihood array of the focal node
+//printf("calling refreshCLA\n");//
+	refreshCLA(*focal_node, focal_neighbor);
+//printf("back from refreshCLA\n");//
+
+//printf("getting ready\n");//
+	if (t->IsRooted())
+		{
+//printf("calling rooted version\n");
+		lnL = harvestLnLFromValidNode(focal_node);
+		}
+	else
+		{
+		// If the focal neighbor is NULL (the usual case), let the parent of the focal node be the focal neighbor
+//printf("calling unrooted version\n");
+		ConstEdgeEndpoints c(focal_node, focal_neighbor);
+		lnL = harvestLnLFromValidEdge(c);
+		}
+		
+//printf("returning lnL=%g\n", lnL);//
+	return lnL;
+
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -1676,6 +1726,125 @@ double TreeLikelihood::harvestLnLFromValidEdge(
             }   // loop over patterns
         }   // focal neighbor is not a tip
 #endif
+    
+        return lnLikelihood;
+    }
+
+double TreeLikelihood::harvestLnLFromValidNode(
+   TreeNode *focalNode)	/**< a node whose conditional likelihoods are now valid and ready for final likelihood calculation */	
+    {
+   // Make local variables for compiler optimization
+    unsigned ns = num_states;
+    unsigned nr = num_rates;
+    unsigned np = num_patterns;
+    
+    // Create convenience variables focalNode, focalNeighbor, actualChild, focalEdgeLen, focalCondLike, focalNodeCLA,
+    // and singleRateCLALength
+    PHYCAS_ASSERT(focalNode->IsInternal());
+    InternalData * id = focalNode->GetInternalData();
+    ConstCondLikelihoodShPtr focalCondLike = id->getValidChildCondLikePtr();
+    PHYCAS_ASSERT(focalCondLike);
+    const LikeFltType * focalNodeCLA = focalCondLike->getCLA(); //PELIGROSO
+    PHYCAS_ASSERT(focalNodeCLA != NULL);
+    const unsigned singleRateCLALength = np*ns;
+
+    // Get pointer to start of array holding pattern counts
+    PHYCAS_ASSERT(pattern_counts.size() == np);
+    const PatternCountType * const counts = (const PatternCountType * const)(&pattern_counts[0]); //PELIGROSO
+
+    // Get state frequencies from model and alias rate category probability array for speed
+    const double * stateFreq = &model->getStateFreqs()[0]; //PELIGROSO
+    const double * rateCatProbArray = &rate_probs[0]; //PELIGROSO
+
+    bool is_pinvar = model->isPinvarModel();
+    double pinvar = model->getPinvar();
+    const unsigned * pinvar_states = &constant_states[0]; //PELIGROSO
+
+    if (store_site_likes)
+        {	
+        site_likelihood.clear();
+        site_uf.clear();
+        }
+
+    double lnLikelihood = 0.0;
+
+	std::vector<const double *> focalNdCLAPtr(nr);
+	for (unsigned r = 0; r < nr; ++r)
+		focalNdCLAPtr[r] = focalNodeCLA + singleRateCLALength*r;
+
+	for (unsigned pat = 0; pat < np; ++pat)
+		{
+		double siteLike = 0.0;
+		for (unsigned r = 0; r < nr; ++r)
+			{
+			const double * focalNdCLAPtr_r = focalNdCLAPtr[r];
+			double siteLike_r = 0.0;	
+			for (unsigned i = 0; i < ns; ++i)
+				siteLike_r += focalNdCLAPtr_r[i];
+			siteLike += rateCatProbArray[r]*siteLike_r;
+			focalNdCLAPtr[r] += ns;
+			}
+
+		double log_correction_factor = underflow_manager.getCorrectionFactor(pat, focalCondLike);
+
+		if (is_pinvar)
+			{
+			double pinvar_like = 0.0;
+			unsigned num_pinvar_states = *pinvar_states++;
+			if (num_pinvar_states > 0)
+				{
+				//DLS: this can all be precalculated in one trip through the patterns, just adding a single value to the likelihoods not conditioned on the site being constant
+				for (unsigned i = 0; i < num_pinvar_states; ++i)
+					pinvar_like += stateFreq[*pinvar_states++];
+				
+				if (log_correction_factor != 0.0)
+					{
+					// If variable part of site-likelihood has been corrected for underflow,
+					// we must also correct the invariable component
+					
+					// find correction factor (f) for pinvar_like
+					double underflow_max_value = underflow_manager.getUnderflowMaxValue();
+					PHYCAS_ASSERT(pinvar_like > underflow_max_value/DBL_MAX);
+					double ratio = underflow_max_value/pinvar_like;
+					double log_ratio = std::log(ratio);
+					double f = std::floor(log_ratio);
+					
+					if (f < log_correction_factor)
+						{
+						double expdiff = exp(f - log_correction_factor);
+						pinvar_like *= exp(f);
+						siteLike *= expdiff;
+						log_correction_factor = f;
+						}
+					else
+						{
+						// since log_correction_factor <= f, and since exp(f) is in no danger of overflowing,
+						// we need not worry about exp(log_correction_factor) overflowing
+						double expc = exp(log_correction_factor);
+						pinvar_like *= expc;
+						}
+					}
+				siteLike = pinvar*pinvar_like + (1.0 - pinvar)*siteLike;
+				}
+			else
+				{
+				// This pattern is not constant (or even potentially constant), so the probability 
+				// of the data given invariability is zero
+				siteLike = (1.0 - pinvar)*siteLike;
+				}
+			}
+
+		double site_lnL = std::log(siteLike);
+		site_lnL -= log_correction_factor;
+		
+		if (store_site_likes)
+			{
+			site_likelihood.push_back(site_lnL);
+			site_uf.push_back(log_correction_factor);
+			}
+			
+		lnLikelihood += counts[pat]*site_lnL;
+		}   // loop over patterns
     
         return lnLikelihood;
     }

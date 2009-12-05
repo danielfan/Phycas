@@ -95,8 +95,12 @@ class Tree
 		bool					TipNumbersSetUsingNames() const;
 
         // Modifiers
+        #if 0//
         void                    setRooted();
         void                    setUnrooted();
+        #else
+        void					setRootedness(bool rooted);
+        #endif
 		
 		// Utilities
 		//
