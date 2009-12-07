@@ -3,7 +3,7 @@ warnings.filterwarnings('ignore', '.*second conversion method ignored.*', Runtim
 
 from phycas.Conversions import *
 from _PyDistributionBase import PyDistributionBase
-from _ProbDist import *
+from _ProbDistExt import *
 from _Lot import *
 from _StopWatch import *
 from _SliceSampler import *

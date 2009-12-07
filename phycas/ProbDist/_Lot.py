@@ -1,4 +1,4 @@
-from _ProbDist import *
+from _ProbDistExt import *
 
 class Lot(LotBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

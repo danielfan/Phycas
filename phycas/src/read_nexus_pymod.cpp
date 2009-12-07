@@ -623,7 +623,7 @@ std::vector<std::string> PhycasNexusReader::GetTaxLabels() const
 	
 #endif
 
-BOOST_PYTHON_MODULE(_ReadNexus)
+BOOST_PYTHON_MODULE(_ReadNexusExt)
 {
 	class_<NxsFullTreeDescription>("FullTreeDescription", init<NxsFullTreeDescription>())
 		.def("getName", &NxsFullTreeDescription::GetName, return_value_policy<copy_const_reference>())

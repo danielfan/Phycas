@@ -110,7 +110,7 @@ class TreeLikelihoodWrapper : public TreeLikelihood
 	};
 #endif
 
-BOOST_PYTHON_MODULE(_LikelihoodBase)
+BOOST_PYTHON_MODULE(_LikelihoodExt)
 {
 #if defined(USING_NUMARRAY)
 #error USING_NUMARRAY defined

@@ -28,9 +28,9 @@
 
 using namespace boost::python;
 
-BOOST_PYTHON_MODULE(_DataMatrixBase)
+BOOST_PYTHON_MODULE(_DataMatrixExt)
 {
-	class_<NxsCXXDiscreteMatrix, boost::noncopyable>("DataMatrixBase", no_init)
+	class_<NxsCXXDiscreteMatrix, boost::noncopyable>("DataMatrixExt", no_init)
 		.def("getDatatype",  &NxsCXXDiscreteMatrix::getDatatype)
 		.def("getNChar", &NxsCXXDiscreteMatrix::getNChar)
 		.def("getNTax", &NxsCXXDiscreteMatrix::getNTax)

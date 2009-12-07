@@ -52,7 +52,7 @@ void translateXPhylogeny(const XPhylogeny &e)
     PyErr_SetString(PyExc_Exception, e.what());
     }
 
-BOOST_PYTHON_MODULE(_Phylogeny)
+BOOST_PYTHON_MODULE(_PhylogenyExt)
 {
 	// These function pointers are used to distinguish const from non-const member functions with the same name
 	// see http://www.boost.org/libs/python/doc/tutorial/doc/html/python/functions.html#python.overloading

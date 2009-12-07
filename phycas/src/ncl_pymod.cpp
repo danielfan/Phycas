@@ -1,3 +1,5 @@
+//FILE IS NO LONGER USED:
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
 |  Phycas: Python software for phylogenetic analysis                          |
 |  Copyright (C) 2006 Mark T. Holder, Paul O. Lewis and David L. Swofford     |
@@ -25,6 +27,8 @@
 using namespace boost::python;
 
 #include "ncl.h"
+
+#error "I didn't think this was being used any more"
 
 BOOST_PYTHON_MODULE(_NCLBase)
 {

@@ -1,5 +1,5 @@
 from _PyDistributionBase import PyDistributionBase
-from _ProbDist import *
+from _ProbDistExt import *
 
 class InverseGamma(InverseGammaDistBase, PyDistributionBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

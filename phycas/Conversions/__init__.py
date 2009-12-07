@@ -1,4 +1,4 @@
-from _Conversions import *
+from _ConversionsExt import *
 
 import os
 from phycas import release_version

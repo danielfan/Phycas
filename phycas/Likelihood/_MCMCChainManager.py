@@ -1,6 +1,6 @@
 #TODO  Is this being used???
 
-from _LikelihoodBase import *
+from _LikelihoodExt import *
 
 class MCMCChainManager(MCMCChainManagerBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

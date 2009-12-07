@@ -20,6 +20,8 @@
 #ifndef STD_FORCE_INCLUDE_HPP
 #define STD_FORCE_INCLUDE_HPP
 
+#if defined(__cplusplus)
+
 // This file (or one like it) should be specified as the force include file (a header file that is 
 // included first in every source code file in the project).
 
@@ -63,4 +65,5 @@
 
 #include "phycas/src/phycas_config.h"
 
-#endif
+#endif	/* defined(__cplusplus) */
+#endif	/* STD_FORCE_INCLUDE_HPP */

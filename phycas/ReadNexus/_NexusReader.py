@@ -1,4 +1,4 @@
-from _ReadNexus import *
+from _ReadNexusExt import *
 from phycas.DataMatrix._DataMatrix import DataMatrix
 import re
 

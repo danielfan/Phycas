@@ -6,18 +6,191 @@
 	objectVersion = 45;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		7A98F74C10CD7D1A001E79F7 /* All_Extensions */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 7A98F74F10CD7D38001E79F7 /* Build configuration list for PBXAggregateTarget "All_Extensions" */;
+			buildPhases = (
+			);
+			dependencies = (
+				7A98F75110CD7D3A001E79F7 /* PBXTargetDependency */,
+				7A98F75310CD7D3A001E79F7 /* PBXTargetDependency */,
+				7A98F75510CD7D3A001E79F7 /* PBXTargetDependency */,
+				7A98F75710CD7D3A001E79F7 /* PBXTargetDependency */,
+				7A98F75910CD7D3A001E79F7 /* PBXTargetDependency */,
+				7A98F75B10CD7D3A001E79F7 /* PBXTargetDependency */,
+			);
+			name = All_Extensions;
+			productName = AllExtensions;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		7A0946FF10CAF0FD00CEFDE0 /* conversions_pymod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945C810CAEFB900CEFDE0 /* conversions_pymod.cpp */; };
 		7A09470410CAF10500CEFDE0 /* boost_assertion_failed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945BB10CAEFB900CEFDE0 /* boost_assertion_failed.cpp */; };
 		7A09470710CAF12800CEFDE0 /* basic_tree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945B810CAEFB900CEFDE0 /* basic_tree.cpp */; };
 		7A09470810CAF12900CEFDE0 /* basic_tree_node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945B510CAEFB900CEFDE0 /* basic_tree_node.cpp */; };
-		7A09470910CAF12A00CEFDE0 /* basic_tree.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 7A0945B910CAEFB900CEFDE0 /* basic_tree.hpp */; };
-		7A09470A10CAF12A00CEFDE0 /* basic_tree_node.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 7A0945B610CAEFB900CEFDE0 /* basic_tree_node.hpp */; };
-		7A09470E10CAF13B00CEFDE0 /* split.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 7A09462310CAEFB900CEFDE0 /* split.hpp */; };
 		7A09470F10CAF13B00CEFDE0 /* split.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09462210CAEFB900CEFDE0 /* split.cpp */; };
-		7A09471210CAF14300CEFDE0 /* phycas_string.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 7A09460D10CAEFB900CEFDE0 /* phycas_string.hpp */; };
 		7A09471310CAF14300CEFDE0 /* phycas_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09460C10CAEFB900CEFDE0 /* phycas_string.cpp */; };
+		7A98EBF410CD37FE001E79F7 /* libboost_python.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98EBF310CD37FE001E79F7 /* libboost_python.dylib */; };
+		7A98F26510CD38C2001E79F7 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26410CD38C2001E79F7 /* Python.framework */; };
+		7A98F26D10CD3BD3001E79F7 /* libncl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26C10CD3BD3001E79F7 /* libncl.dylib */; };
+		7A98F27810CD3C22001E79F7 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26410CD38C2001E79F7 /* Python.framework */; };
+		7A98F27910CD3C22001E79F7 /* libncl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26C10CD3BD3001E79F7 /* libncl.dylib */; };
+		7A98F27C10CD3C22001E79F7 /* boost_assertion_failed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945BB10CAEFB900CEFDE0 /* boost_assertion_failed.cpp */; };
+		7A98F28A10CD3C78001E79F7 /* data_matrix_pymod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945C910CAEFB900CEFDE0 /* data_matrix_pymod.cpp */; };
+		7A98F30610CD4FDD001E79F7 /* libboost_python.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98EBF310CD37FE001E79F7 /* libboost_python.dylib */; };
+		7A98F30D10CD5025001E79F7 /* boost_assertion_failed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945BB10CAEFB900CEFDE0 /* boost_assertion_failed.cpp */; };
+		7A98F31110CD5025001E79F7 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26410CD38C2001E79F7 /* Python.framework */; };
+		7A98F31210CD5025001E79F7 /* libncl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26C10CD3BD3001E79F7 /* libncl.dylib */; };
+		7A98F31810CD5090001E79F7 /* probdist_pymod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09461410CAEFB900CEFDE0 /* probdist_pymod.cpp */; };
+		7A98F31D10CD5099001E79F7 /* phycas_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09460C10CAEFB900CEFDE0 /* phycas_string.cpp */; };
+		7A98F32010CD50A2001E79F7 /* basic_cdf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945AF10CAEFB900CEFDE0 /* basic_cdf.cpp */; };
+		7A98F32110CD50A4001E79F7 /* basic_lot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945B210CAEFB900CEFDE0 /* basic_lot.cpp */; };
+		7A98F32710CD50AF001E79F7 /* linalg.c in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945E810CAEFB900CEFDE0 /* linalg.c */; };
+		7A98F32D10CD50CB001E79F7 /* stop_watch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09462910CAEFB900CEFDE0 /* stop_watch.cpp */; };
+		7A98F33010CD50F2001E79F7 /* dcdflib.c in Sources */ = {isa = PBXBuildFile; fileRef = 7A09463510CAEFB900CEFDE0 /* dcdflib.c */; };
+		7A98F33110CD50F8001E79F7 /* ipmpar.c in Sources */ = {isa = PBXBuildFile; fileRef = 7A09463710CAEFB900CEFDE0 /* ipmpar.c */; };
+		7A98F33610CD511F001E79F7 /* mvnormal_distribution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945FA10CAEFB900CEFDE0 /* mvnormal_distribution.cpp */; };
+		7A98F33810CD5126001E79F7 /* probability_distribution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09461110CAEFB900CEFDE0 /* probability_distribution.cpp */; };
+		7A98F33B10CD5130001E79F7 /* slice_sampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09461F10CAEFB900CEFDE0 /* slice_sampler.cpp */; };
+		7A98F34210CD533E001E79F7 /* libboost_python.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98EBF310CD37FE001E79F7 /* libboost_python.dylib */; };
+		7A98F38210CD5730001E79F7 /* boost_assertion_failed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945BB10CAEFB900CEFDE0 /* boost_assertion_failed.cpp */; };
+		7A98F39010CD5730001E79F7 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26410CD38C2001E79F7 /* Python.framework */; };
+		7A98F39C10CD5821001E79F7 /* tree_likelihood.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09464410CAEFB900CEFDE0 /* tree_likelihood.cpp */; };
+		7A98F3A010CD582C001E79F7 /* basic_cdf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945AF10CAEFB900CEFDE0 /* basic_cdf.cpp */; };
+		7A98F3A110CD5833001E79F7 /* basic_lot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945B210CAEFB900CEFDE0 /* basic_lot.cpp */; };
+		7A98F3A210CD583A001E79F7 /* basic_tree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945B810CAEFB900CEFDE0 /* basic_tree.cpp */; };
+		7A98F3AB10CD5860001E79F7 /* basic_tree_node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945B510CAEFB900CEFDE0 /* basic_tree_node.cpp */; };
+		7A98F3AE10CD5867001E79F7 /* bush_move.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945BC10CAEFB900CEFDE0 /* bush_move.cpp */; };
+		7A98F3B110CD586D001E79F7 /* codon_model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945BF10CAEFB900CEFDE0 /* codon_model.cpp */; };
+		7A98F3B510CD587E001E79F7 /* cond_likelihood.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945C510CAEFB900CEFDE0 /* cond_likelihood.cpp */; };
+		7A98F3B610CD587E001E79F7 /* cond_likelihood_storage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945C210CAEFB900CEFDE0 /* cond_likelihood_storage.cpp */; };
+		7A98F3B910CD5886001E79F7 /* discrete_gamma_shape_param.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945CD10CAEFB900CEFDE0 /* discrete_gamma_shape_param.cpp */; };
+		7A98F3BB10CD589F001E79F7 /* dcdflib.c in Sources */ = {isa = PBXBuildFile; fileRef = 7A09463510CAEFB900CEFDE0 /* dcdflib.c */; };
+		7A98F3BE10CD58AC001E79F7 /* edgelen_master_param.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945D410CAEFB900CEFDE0 /* edgelen_master_param.cpp */; };
+		7A98F3BF10CD58B0001E79F7 /* edge_move.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945D110CAEFB900CEFDE0 /* edge_move.cpp */; };
+		7A98F3C210CD58BC001E79F7 /* flex_prob_param.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945D510CAEFB900CEFDE0 /* flex_prob_param.cpp */; };
+		7A98F3C310CD58BE001E79F7 /* flex_rate_param.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945D610CAEFB900CEFDE0 /* flex_rate_param.cpp */; };
+		7A98F3C610CD58C4001E79F7 /* gtr_rate_param.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945D910CAEFB900CEFDE0 /* gtr_rate_param.cpp */; };
+		7A98F3C710CD58CA001E79F7 /* gtr_model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945D710CAEFB900CEFDE0 /* gtr_model.cpp */; };
+		7A98F3C910CD58D2001E79F7 /* hky_model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945DA10CAEFB900CEFDE0 /* hky_model.cpp */; };
+		7A98F3DA10CD58DD001E79F7 /* hyperprior_param.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945DB10CAEFB900CEFDE0 /* hyperprior_param.cpp */; };
+		7A98F3DD10CD58E2001E79F7 /* jc_model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945DE10CAEFB900CEFDE0 /* jc_model.cpp */; };
+		7A98F3E010CD58E8001E79F7 /* kappa_param.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945DF10CAEFB900CEFDE0 /* kappa_param.cpp */; };
+		7A98F3E310CD58F1001E79F7 /* internal_data.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945DC10CAEFB900CEFDE0 /* internal_data.cpp */; };
+		7A98F3E610CD5903001E79F7 /* ipmpar.c in Sources */ = {isa = PBXBuildFile; fileRef = 7A09463710CAEFB900CEFDE0 /* ipmpar.c */; };
+		7A98F3E910CD590A001E79F7 /* larget_simon_move.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945E010CAEFB900CEFDE0 /* larget_simon_move.cpp */; };
+		7A98F3EA10CD591C001E79F7 /* likelihood_models.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945E410CAEFB900CEFDE0 /* likelihood_models.cpp */; };
+		7A98F3EB10CD591F001E79F7 /* likelihood_loops.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945E310CAEFB900CEFDE0 /* likelihood_loops.cpp */; };
+		7A98F3EC10CD592F001E79F7 /* likelihood_pymod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945E710CAEFB900CEFDE0 /* likelihood_pymod.cpp */; };
+		7A98F3EE10CD5936001E79F7 /* linalg.c in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945E810CAEFB900CEFDE0 /* linalg.c */; };
+		7A98F3F310CD5943001E79F7 /* model_pymod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945F910CAEFB900CEFDE0 /* model_pymod.cpp */; };
+		7A98F3F510CD595D001E79F7 /* mcmc_chain_manager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945ED10CAEFB900CEFDE0 /* mcmc_chain_manager.cpp */; };
+		7A98F3F610CD5967001E79F7 /* mcmc_param.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945F310CAEFB900CEFDE0 /* mcmc_param.cpp */; };
+		7A98F3F710CD596D001E79F7 /* mcmc_flexcat_param.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945F010CAEFB900CEFDE0 /* mcmc_flexcat_param.cpp */; };
+		7A98F3F810CD5976001E79F7 /* mcmc_updater.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945F610CAEFB900CEFDE0 /* mcmc_updater.cpp */; };
+		7A98F3FA10CD5986001E79F7 /* ncat_move.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945FC10CAEFB900CEFDE0 /* ncat_move.cpp */; };
+		7A98F3FB10CD598D001E79F7 /* mapping_move.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945EB10CAEFB900CEFDE0 /* mapping_move.cpp */; };
+		7A98F3FD10CD5998001E79F7 /* omega_param.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09460310CAEFB900CEFDE0 /* omega_param.cpp */; };
+		7A98F40210CD599F001E79F7 /* phycas_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09460C10CAEFB900CEFDE0 /* phycas_string.cpp */; };
+		7A98F40510CD59B0001E79F7 /* pinvar_param.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09461010CAEFB900CEFDE0 /* pinvar_param.cpp */; };
+		7A98F40810CD59B8001E79F7 /* probability_distribution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09461110CAEFB900CEFDE0 /* probability_distribution.cpp */; };
+		7A98F40A10CD59C0001E79F7 /* q_matrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09461510CAEFB900CEFDE0 /* q_matrix.cpp */; };
+		7A98F40D10CD59CA001E79F7 /* samc_move.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09461910CAEFB900CEFDE0 /* samc_move.cpp */; };
+		7A98F40E10CD59D0001E79F7 /* slice_sampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09461F10CAEFB900CEFDE0 /* slice_sampler.cpp */; };
+		7A98F41110CD59D8001E79F7 /* sim_data.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09461C10CAEFB900CEFDE0 /* sim_data.cpp */; };
+		7A98F41510CD59EA001E79F7 /* split.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09462210CAEFB900CEFDE0 /* split.cpp */; };
+		7A98F41710CD59F1001E79F7 /* square_matrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09462410CAEFB900CEFDE0 /* square_matrix.cpp */; };
+		7A98F41B10CD59F7001E79F7 /* dirichlet_move.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945CA10CAEFB900CEFDE0 /* dirichlet_move.cpp */; };
+		7A98F42010CD5A05001E79F7 /* state_freq_param.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09462610CAEFB900CEFDE0 /* state_freq_param.cpp */; };
+		7A98F42310CD5A0E001E79F7 /* tip_data.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09463E10CAEFB900CEFDE0 /* tip_data.cpp */; };
+		7A98F42710CD5A14001E79F7 /* topo_prior_calculator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09464010CAEFB900CEFDE0 /* topo_prior_calculator.cpp */; };
+		7A98F42A10CD5A1B001E79F7 /* partition_model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09460410CAEFB900CEFDE0 /* partition_model.cpp */; };
+		7A98F42F10CD5A24001E79F7 /* tree_scaler_move.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09464A10CAEFB900CEFDE0 /* tree_scaler_move.cpp */; };
+		7A98F43210CD5A2B001E79F7 /* underflow_manager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09464E10CAEFB900CEFDE0 /* underflow_manager.cpp */; };
+		7A98F43510CD5A38001E79F7 /* unimap_edge_move.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09465110CAEFB900CEFDE0 /* unimap_edge_move.cpp */; };
+		7A98F43710CD5A43001E79F7 /* unimap_nni_move.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09465710CAEFB900CEFDE0 /* unimap_nni_move.cpp */; };
+		7A98F43810CD5A48001E79F7 /* unimap_node_slide_move.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09465A10CAEFB900CEFDE0 /* unimap_node_slide_move.cpp */; };
+		7A98F43910CD5A4B001E79F7 /* unimap_sample_ambig_move.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09465C10CAEFB900CEFDE0 /* unimap_sample_ambig_move.cpp */; };
+		7A98F43C10CD5A59001E79F7 /* univent_prob_mgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09465E10CAEFB900CEFDE0 /* univent_prob_mgr.cpp */; };
+		7A98F43D10CD5A5A001E79F7 /* univents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09466110CAEFB900CEFDE0 /* univents.cpp */; };
+		7A98F44210CD5A6A001E79F7 /* updater_pymod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09466410CAEFB900CEFDE0 /* updater_pymod.cpp */; };
+		7A98F44810CD5B25001E79F7 /* libboost_python.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98EBF310CD37FE001E79F7 /* libboost_python.dylib */; };
+		7A98F45210CD5B90001E79F7 /* libncl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26C10CD3BD3001E79F7 /* libncl.dylib */; };
+		7A98F45A10CD5C39001E79F7 /* tree_manip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09464710CAEFB900CEFDE0 /* tree_manip.cpp */; };
+		7A98F51C10CD62EF001E79F7 /* boost_assertion_failed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945BB10CAEFB900CEFDE0 /* boost_assertion_failed.cpp */; };
+		7A98F51F10CD62EF001E79F7 /* libboost_python.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98EBF310CD37FE001E79F7 /* libboost_python.dylib */; };
+		7A98F52010CD62EF001E79F7 /* libncl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26C10CD3BD3001E79F7 /* libncl.dylib */; };
+		7A98F52110CD62EF001E79F7 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26410CD38C2001E79F7 /* Python.framework */; };
+		7A98F53210CD6398001E79F7 /* phylogeny_pymod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09460F10CAEFB900CEFDE0 /* phylogeny_pymod.cpp */; };
+		7A98F53510CD63A9001E79F7 /* basic_lot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945B210CAEFB900CEFDE0 /* basic_lot.cpp */; };
+		7A98F53610CD63AB001E79F7 /* basic_tree_node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945B510CAEFB900CEFDE0 /* basic_tree_node.cpp */; };
+		7A98F53710CD63B1001E79F7 /* basic_cdf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945AF10CAEFB900CEFDE0 /* basic_cdf.cpp */; };
+		7A98F53810CD63B6001E79F7 /* basic_tree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945B810CAEFB900CEFDE0 /* basic_tree.cpp */; };
+		7A98F53B10CD63BF001E79F7 /* split.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09462210CAEFB900CEFDE0 /* split.cpp */; };
+		7A98F53E10CD63C8001E79F7 /* dcdflib.c in Sources */ = {isa = PBXBuildFile; fileRef = 7A09463510CAEFB900CEFDE0 /* dcdflib.c */; };
+		7A98F54110CD63D1001E79F7 /* ipmpar.c in Sources */ = {isa = PBXBuildFile; fileRef = 7A09463710CAEFB900CEFDE0 /* ipmpar.c */; };
+		7A98F54610CD63DA001E79F7 /* phycas_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09460C10CAEFB900CEFDE0 /* phycas_string.cpp */; };
+		7A98F55010CD6448001E79F7 /* tree_manip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09464710CAEFB900CEFDE0 /* tree_manip.cpp */; };
+		7A98F56410CD6484001E79F7 /* boost_assertion_failed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945BB10CAEFB900CEFDE0 /* boost_assertion_failed.cpp */; };
+		7A98F56710CD6484001E79F7 /* libboost_python.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98EBF310CD37FE001E79F7 /* libboost_python.dylib */; };
+		7A98F56810CD6484001E79F7 /* libncl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26C10CD3BD3001E79F7 /* libncl.dylib */; };
+		7A98F56910CD6484001E79F7 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26410CD38C2001E79F7 /* Python.framework */; };
+		7A98F57710CD64EE001E79F7 /* basic_cdf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945AF10CAEFB900CEFDE0 /* basic_cdf.cpp */; };
+		7A98F57C10CD64FA001E79F7 /* nxs_file_path.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09460110CAEFB900CEFDE0 /* nxs_file_path.cpp */; };
+		7A98F57E10CD6507001E79F7 /* read_nexus_pymod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09461810CAEFB900CEFDE0 /* read_nexus_pymod.cpp */; };
+		7A98F57F10CD650D001E79F7 /* phycas_nexus_reader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09460A10CAEFB900CEFDE0 /* phycas_nexus_reader.cpp */; };
+		7A98F58310CD651B001E79F7 /* probability_distribution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09461110CAEFB900CEFDE0 /* probability_distribution.cpp */; };
+		7A98F58510CD6529001E79F7 /* basic_lot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945B210CAEFB900CEFDE0 /* basic_lot.cpp */; };
+		7A98F58B10CD653A001E79F7 /* ipmpar.c in Sources */ = {isa = PBXBuildFile; fileRef = 7A09463710CAEFB900CEFDE0 /* ipmpar.c */; };
+		7A98F59010CD655C001E79F7 /* dcdflib.c in Sources */ = {isa = PBXBuildFile; fileRef = 7A09463510CAEFB900CEFDE0 /* dcdflib.c */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		7A98F75010CD7D3A001E79F7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D2AAC09C05546B4700DB518D /* Conversions */;
+			remoteInfo = Conversions;
+		};
+		7A98F75210CD7D3A001E79F7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A98F27010CD3C22001E79F7 /* DataMatrix */;
+			remoteInfo = DataMatrix;
+		};
+		7A98F75410CD7D3A001E79F7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A98F38010CD5730001E79F7 /* Likelihood */;
+			remoteInfo = Likelihood;
+		};
+		7A98F75610CD7D3A001E79F7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A98F51A10CD62EF001E79F7 /* Phylogeny */;
+			remoteInfo = Phylogeny;
+		};
+		7A98F75810CD7D3A001E79F7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A98F30B10CD5025001E79F7 /* ProbDist */;
+			remoteInfo = ProbDist;
+		};
+		7A98F75A10CD7D3A001E79F7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A98F56210CD6484001E79F7 /* ReadNexus */;
+			remoteInfo = ReadNexus;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		5073E0C609E734A800EC74B6 /* phycasProj.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; path = phycasProj.xcconfig; sourceTree = "<group>"; };
@@ -203,14 +376,121 @@
 		7A09466610CAEFB900CEFDE0 /* xphycas.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = xphycas.hpp; path = ../../phycas/src/xphycas.hpp; sourceTree = SOURCE_ROOT; };
 		7A09466710CAEFB900CEFDE0 /* xphylogeny.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = xphylogeny.hpp; path = ../../phycas/src/xphylogeny.hpp; sourceTree = SOURCE_ROOT; };
 		7A09466810CAEFB900CEFDE0 /* xprobdist.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = xprobdist.hpp; path = ../../phycas/src/xprobdist.hpp; sourceTree = SOURCE_ROOT; };
-		D2AAC09D05546B4700DB518D /* libphycas.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libphycas.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		7A98EBF310CD37FE001E79F7 /* libboost_python.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_python.dylib; path = ../../phycas/Conversions/libboost_python.dylib; sourceTree = SOURCE_ROOT; };
+		7A98F26410CD38C2001E79F7 /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = /System/Library/Frameworks/Python.framework; sourceTree = "<absolute>"; };
+		7A98F26C10CD3BD3001E79F7 /* libncl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libncl.dylib; path = ../../phycas/Conversions/libncl.dylib; sourceTree = SOURCE_ROOT; };
+		7A98F28410CD3C22001E79F7 /* _DataMatrixExt.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = _DataMatrixExt.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		7A98F31710CD5025001E79F7 /* _ProbDistExt.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = _ProbDistExt.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		7A98F39610CD5730001E79F7 /* _LikelihoodExt.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = _LikelihoodExt.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		7A98F52610CD62EF001E79F7 /* _PhylogenyExt.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = _PhylogenyExt.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		7A98F56E10CD6484001E79F7 /* _ReadNexusExt.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = _ReadNexusExt.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		7A98F5FE10CD6DB8001E79F7 /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = __init__.py; sourceTree = "<group>"; };
+		7A98F60910CD6DD5001E79F7 /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = __init__.py; sourceTree = "<group>"; };
+		7A98F60B10CD6DD5001E79F7 /* _DataMatrix.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _DataMatrix.py; sourceTree = "<group>"; };
+		7A98F61210CD6DEC001E79F7 /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = __init__.py; sourceTree = "<group>"; };
+		7A98F61610CD6DEC001E79F7 /* _MCMCChainManager.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _MCMCChainManager.py; sourceTree = "<group>"; };
+		7A98F61810CD6DEC001E79F7 /* _Model.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _Model.py; sourceTree = "<group>"; };
+		7A98F61A10CD6DEC001E79F7 /* _QMatrix.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _QMatrix.py; sourceTree = "<group>"; };
+		7A98F61C10CD6DEC001E79F7 /* _SimData.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _SimData.py; sourceTree = "<group>"; };
+		7A98F61E10CD6DEC001E79F7 /* _TopoPriorCalculator.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _TopoPriorCalculator.py; sourceTree = "<group>"; };
+		7A98F62010CD6DEC001E79F7 /* _TreeLikelihood.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _TreeLikelihood.py; sourceTree = "<group>"; };
+		7A98F62510CD6E34001E79F7 /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = __init__.py; sourceTree = "<group>"; };
+		7A98F62910CD6E34001E79F7 /* _Split.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _Split.py; sourceTree = "<group>"; };
+		7A98F62B10CD6E34001E79F7 /* _Tree.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _Tree.py; sourceTree = "<group>"; };
+		7A98F62D10CD6E34001E79F7 /* _TreeManip.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _TreeManip.py; sourceTree = "<group>"; };
+		7A98F62F10CD6E34001E79F7 /* _TreeNode.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _TreeNode.py; sourceTree = "<group>"; };
+		7A98F63A10CD6E79001E79F7 /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = __init__.py; sourceTree = "<group>"; };
+		7A98F63C10CD6E79001E79F7 /* _BernoulliDist.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _BernoulliDist.py; sourceTree = "<group>"; };
+		7A98F63E10CD6E79001E79F7 /* _BetaDist.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _BetaDist.py; sourceTree = "<group>"; };
+		7A98F64010CD6E79001E79F7 /* _BetaPrimeDist.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _BetaPrimeDist.py; sourceTree = "<group>"; };
+		7A98F64210CD6E79001E79F7 /* _BinomialDist.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _BinomialDist.py; sourceTree = "<group>"; };
+		7A98F64410CD6E79001E79F7 /* _DirichletDist.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _DirichletDist.py; sourceTree = "<group>"; };
+		7A98F64610CD6E79001E79F7 /* _ExponentialDist.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _ExponentialDist.py; sourceTree = "<group>"; };
+		7A98F64810CD6E79001E79F7 /* _GammaDist.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _GammaDist.py; sourceTree = "<group>"; };
+		7A98F64A10CD6E79001E79F7 /* _ImproperUniformDist.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _ImproperUniformDist.py; sourceTree = "<group>"; };
+		7A98F64C10CD6E79001E79F7 /* _InverseGammaDist.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _InverseGammaDist.py; sourceTree = "<group>"; };
+		7A98F64E10CD6E79001E79F7 /* _Lot.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _Lot.py; sourceTree = "<group>"; };
+		7A98F65010CD6E79001E79F7 /* _MVNormalDist.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _MVNormalDist.py; sourceTree = "<group>"; };
+		7A98F65210CD6E79001E79F7 /* _NormalDist.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _NormalDist.py; sourceTree = "<group>"; };
+		7A98F65610CD6E79001E79F7 /* _PyDistributionBase.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _PyDistributionBase.py; sourceTree = "<group>"; };
+		7A98F65810CD6E79001E79F7 /* _SliceSampler.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _SliceSampler.py; sourceTree = "<group>"; };
+		7A98F65A10CD6E79001E79F7 /* _StopWatch.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _StopWatch.py; sourceTree = "<group>"; };
+		7A98F65C10CD6E79001E79F7 /* _UniformDist.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _UniformDist.py; sourceTree = "<group>"; };
+		7A98F69A10CD6F71001E79F7 /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = __init__.py; sourceTree = "<group>"; };
+		7A98F69C10CD6F71001E79F7 /* _NexusReader.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _NexusReader.py; sourceTree = "<group>"; };
+		7A98F80110CD85D8001E79F7 /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = __init__.py; path = ../../phycas/Utilities/__init__.py; sourceTree = "<group>"; };
+		7A98F80310CD85D8001E79F7 /* CommonFunctions.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = CommonFunctions.py; path = ../../phycas/Utilities/CommonFunctions.py; sourceTree = "<group>"; };
+		7A98F80510CD85D8001E79F7 /* DefaultData.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = DefaultData.py; path = ../../phycas/Utilities/DefaultData.py; sourceTree = "<group>"; };
+		7A98F80710CD85D8001E79F7 /* enotify.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = enotify.py; path = ../../phycas/Utilities/enotify.py; sourceTree = "<group>"; };
+		7A98F80810CD85D8001E79F7 /* flexplot.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = flexplot.py; path = ../../phycas/Utilities/flexplot.py; sourceTree = "<group>"; };
+		7A98F80910CD85D8001E79F7 /* GlobalState.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = GlobalState.py; path = ../../phycas/Utilities/GlobalState.py; sourceTree = "<group>"; };
+		7A98F80B10CD85D8001E79F7 /* io.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = io.py; path = ../../phycas/Utilities/io.py; sourceTree = "<group>"; };
+		7A98F80D10CD85D8001E79F7 /* kappa2tratio.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = kappa2tratio.py; path = ../../phycas/Utilities/kappa2tratio.py; sourceTree = "<group>"; };
+		7A98F80E10CD85D8001E79F7 /* PDFTree.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = PDFTree.py; path = ../../phycas/Utilities/PDFTree.py; sourceTree = "<group>"; };
+		7A98F81010CD85D8001E79F7 /* PhycasCommand.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = PhycasCommand.py; path = ../../phycas/Utilities/PhycasCommand.py; sourceTree = "<group>"; };
+		7A98F81210CD85D8001E79F7 /* PhycasUpdateCheck.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = PhycasUpdateCheck.py; path = ../../phycas/Utilities/PhycasUpdateCheck.py; sourceTree = "<group>"; };
+		7A98F81410CD85D8001E79F7 /* tratio2kappa.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = tratio2kappa.py; path = ../../phycas/Utilities/tratio2kappa.py; sourceTree = "<group>"; };
+		D2AAC09D05546B4700DB518D /* _ConversionsExt.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = _ConversionsExt.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		7A98F27610CD3C22001E79F7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7A98F30610CD4FDD001E79F7 /* libboost_python.dylib in Frameworks */,
+				7A98F27910CD3C22001E79F7 /* libncl.dylib in Frameworks */,
+				7A98F27810CD3C22001E79F7 /* Python.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7A98F30F10CD5025001E79F7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7A98F34210CD533E001E79F7 /* libboost_python.dylib in Frameworks */,
+				7A98F31210CD5025001E79F7 /* libncl.dylib in Frameworks */,
+				7A98F31110CD5025001E79F7 /* Python.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7A98F38E10CD5730001E79F7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7A98F44810CD5B25001E79F7 /* libboost_python.dylib in Frameworks */,
+				7A98F45210CD5B90001E79F7 /* libncl.dylib in Frameworks */,
+				7A98F39010CD5730001E79F7 /* Python.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7A98F51E10CD62EF001E79F7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7A98F51F10CD62EF001E79F7 /* libboost_python.dylib in Frameworks */,
+				7A98F52010CD62EF001E79F7 /* libncl.dylib in Frameworks */,
+				7A98F52110CD62EF001E79F7 /* Python.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7A98F56610CD6484001E79F7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7A98F56710CD6484001E79F7 /* libboost_python.dylib in Frameworks */,
+				7A98F56810CD6484001E79F7 /* libncl.dylib in Frameworks */,
+				7A98F56910CD6484001E79F7 /* Python.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D2AAC09B05546B4700DB518D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7A98EBF410CD37FE001E79F7 /* libboost_python.dylib in Frameworks */,
+				7A98F26D10CD3BD3001E79F7 /* libncl.dylib in Frameworks */,
+				7A98F26510CD38C2001E79F7 /* Python.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -220,7 +500,12 @@
 		034768DDFF38A45A11DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D2AAC09D05546B4700DB518D /* libphycas.dylib */,
+				D2AAC09D05546B4700DB518D /* _ConversionsExt.dylib */,
+				7A98F28410CD3C22001E79F7 /* _DataMatrixExt.dylib */,
+				7A98F31710CD5025001E79F7 /* _ProbDistExt.dylib */,
+				7A98F39610CD5730001E79F7 /* _LikelihoodExt.dylib */,
+				7A98F52610CD62EF001E79F7 /* _PhylogenyExt.dylib */,
+				7A98F56E10CD6484001E79F7 /* _ReadNexusExt.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -229,7 +514,8 @@
 			isa = PBXGroup;
 			children = (
 				5073E0CA09E734BC00EC74B6 /* Configuration Files */,
-				08FB77ACFE841707C02AAC07 /* Source */,
+				7A98F5F110CD6D69001E79F7 /* Python source */,
+				08FB77ACFE841707C02AAC07 /* C++ Source */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
 				034768DDFF38A45A11DB9C8B /* Products */,
 			);
@@ -239,11 +525,14 @@
 		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				7A98EBF310CD37FE001E79F7 /* libboost_python.dylib */,
+				7A98F26C10CD3BD3001E79F7 /* libncl.dylib */,
+				7A98F26410CD38C2001E79F7 /* Python.framework */,
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";
 		};
-		08FB77ACFE841707C02AAC07 /* Source */ = {
+		08FB77ACFE841707C02AAC07 /* C++ Source */ = {
 			isa = PBXGroup;
 			children = (
 				7A09462C10CAEFB900CEFDE0 /* thirdparty */,
@@ -416,7 +705,7 @@
 				7A09466710CAEFB900CEFDE0 /* xphylogeny.hpp */,
 				7A09466810CAEFB900CEFDE0 /* xprobdist.hpp */,
 			);
-			name = Source;
+			name = "C++ Source";
 			sourceTree = "<group>";
 		};
 		5073E0CA09E734BC00EC74B6 /* Configuration Files */ = {
@@ -481,30 +770,216 @@
 			path = num_util;
 			sourceTree = "<group>";
 		};
+		7A98F5F110CD6D69001E79F7 /* Python source */ = {
+			isa = PBXGroup;
+			children = (
+				7A98F5FD10CD6DB8001E79F7 /* Conversions */,
+				7A98F60810CD6DD5001E79F7 /* DataMatrix */,
+				7A98F61110CD6DEC001E79F7 /* Likelihood */,
+				7A98F62410CD6E34001E79F7 /* Phylogeny */,
+				7A98F66E10CD6F25001E79F7 /* ProbDist */,
+				7A98F69910CD6F71001E79F7 /* ReadNexus */,
+				7A98F81610CD85E5001E79F7 /* Utilities */,
+			);
+			name = "Python source";
+			sourceTree = "<group>";
+		};
+		7A98F5FD10CD6DB8001E79F7 /* Conversions */ = {
+			isa = PBXGroup;
+			children = (
+				7A98F5FE10CD6DB8001E79F7 /* __init__.py */,
+			);
+			name = Conversions;
+			path = ../../phycas/Conversions;
+			sourceTree = SOURCE_ROOT;
+		};
+		7A98F60810CD6DD5001E79F7 /* DataMatrix */ = {
+			isa = PBXGroup;
+			children = (
+				7A98F60910CD6DD5001E79F7 /* __init__.py */,
+				7A98F60B10CD6DD5001E79F7 /* _DataMatrix.py */,
+			);
+			name = DataMatrix;
+			path = ../../phycas/DataMatrix;
+			sourceTree = SOURCE_ROOT;
+		};
+		7A98F61110CD6DEC001E79F7 /* Likelihood */ = {
+			isa = PBXGroup;
+			children = (
+				7A98F61210CD6DEC001E79F7 /* __init__.py */,
+				7A98F61610CD6DEC001E79F7 /* _MCMCChainManager.py */,
+				7A98F61810CD6DEC001E79F7 /* _Model.py */,
+				7A98F61A10CD6DEC001E79F7 /* _QMatrix.py */,
+				7A98F61C10CD6DEC001E79F7 /* _SimData.py */,
+				7A98F61E10CD6DEC001E79F7 /* _TopoPriorCalculator.py */,
+				7A98F62010CD6DEC001E79F7 /* _TreeLikelihood.py */,
+			);
+			name = Likelihood;
+			path = ../../phycas/Likelihood;
+			sourceTree = SOURCE_ROOT;
+		};
+		7A98F62410CD6E34001E79F7 /* Phylogeny */ = {
+			isa = PBXGroup;
+			children = (
+				7A98F62510CD6E34001E79F7 /* __init__.py */,
+				7A98F62910CD6E34001E79F7 /* _Split.py */,
+				7A98F62B10CD6E34001E79F7 /* _Tree.py */,
+				7A98F62D10CD6E34001E79F7 /* _TreeManip.py */,
+				7A98F62F10CD6E34001E79F7 /* _TreeNode.py */,
+			);
+			name = Phylogeny;
+			path = ../../phycas/Phylogeny;
+			sourceTree = SOURCE_ROOT;
+		};
+		7A98F66E10CD6F25001E79F7 /* ProbDist */ = {
+			isa = PBXGroup;
+			children = (
+				7A98F64E10CD6E79001E79F7 /* _Lot.py */,
+				7A98F63E10CD6E79001E79F7 /* _BetaDist.py */,
+				7A98F65210CD6E79001E79F7 /* _NormalDist.py */,
+				7A98F64410CD6E79001E79F7 /* _DirichletDist.py */,
+				7A98F63C10CD6E79001E79F7 /* _BernoulliDist.py */,
+				7A98F65010CD6E79001E79F7 /* _MVNormalDist.py */,
+				7A98F63A10CD6E79001E79F7 /* __init__.py */,
+				7A98F65810CD6E79001E79F7 /* _SliceSampler.py */,
+				7A98F65C10CD6E79001E79F7 /* _UniformDist.py */,
+				7A98F64C10CD6E79001E79F7 /* _InverseGammaDist.py */,
+				7A98F64610CD6E79001E79F7 /* _ExponentialDist.py */,
+				7A98F64010CD6E79001E79F7 /* _BetaPrimeDist.py */,
+				7A98F64210CD6E79001E79F7 /* _BinomialDist.py */,
+				7A98F65A10CD6E79001E79F7 /* _StopWatch.py */,
+				7A98F64A10CD6E79001E79F7 /* _ImproperUniformDist.py */,
+				7A98F64810CD6E79001E79F7 /* _GammaDist.py */,
+				7A98F65610CD6E79001E79F7 /* _PyDistributionBase.py */,
+			);
+			name = ProbDist;
+			path = ../../phycas/ProbDist;
+			sourceTree = SOURCE_ROOT;
+		};
+		7A98F69910CD6F71001E79F7 /* ReadNexus */ = {
+			isa = PBXGroup;
+			children = (
+				7A98F69A10CD6F71001E79F7 /* __init__.py */,
+				7A98F69C10CD6F71001E79F7 /* _NexusReader.py */,
+			);
+			name = ReadNexus;
+			path = ../../phycas/ReadNexus;
+			sourceTree = SOURCE_ROOT;
+		};
+		7A98F81610CD85E5001E79F7 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				7A98F80B10CD85D8001E79F7 /* io.py */,
+				7A98F80710CD85D8001E79F7 /* enotify.py */,
+				7A98F80910CD85D8001E79F7 /* GlobalState.py */,
+				7A98F80810CD85D8001E79F7 /* flexplot.py */,
+				7A98F81010CD85D8001E79F7 /* PhycasCommand.py */,
+				7A98F80510CD85D8001E79F7 /* DefaultData.py */,
+				7A98F81410CD85D8001E79F7 /* tratio2kappa.py */,
+				7A98F80310CD85D8001E79F7 /* CommonFunctions.py */,
+				7A98F80110CD85D8001E79F7 /* __init__.py */,
+				7A98F80E10CD85D8001E79F7 /* PDFTree.py */,
+				7A98F81210CD85D8001E79F7 /* PhycasUpdateCheck.py */,
+				7A98F80D10CD85D8001E79F7 /* kappa2tratio.py */,
+			);
+			name = Utilities;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
-/* Begin PBXHeadersBuildPhase section */
-		D2AAC09905546B4700DB518D /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				7A09470910CAF12A00CEFDE0 /* basic_tree.hpp in Headers */,
-				7A09470A10CAF12A00CEFDE0 /* basic_tree_node.hpp in Headers */,
-				7A09470E10CAF13B00CEFDE0 /* split.hpp in Headers */,
-				7A09471210CAF14300CEFDE0 /* phycas_string.hpp in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
-
 /* Begin PBXNativeTarget section */
+		7A98F27010CD3C22001E79F7 /* DataMatrix */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7A98F28110CD3C22001E79F7 /* Build configuration list for PBXNativeTarget "DataMatrix" */;
+			buildPhases = (
+				7A98F27A10CD3C22001E79F7 /* Sources */,
+				7A98F27610CD3C22001E79F7 /* Frameworks */,
+				7A98F2FA10CD4F35001E79F7 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DataMatrix;
+			productName = libphycas;
+			productReference = 7A98F28410CD3C22001E79F7 /* _DataMatrixExt.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		7A98F30B10CD5025001E79F7 /* ProbDist */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7A98F31410CD5025001E79F7 /* Build configuration list for PBXNativeTarget "ProbDist" */;
+			buildPhases = (
+				7A98F30C10CD5025001E79F7 /* Sources */,
+				7A98F30F10CD5025001E79F7 /* Frameworks */,
+				7A98F31310CD5025001E79F7 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ProbDist;
+			productName = libphycas;
+			productReference = 7A98F31710CD5025001E79F7 /* _ProbDistExt.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		7A98F38010CD5730001E79F7 /* Likelihood */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7A98F39310CD5730001E79F7 /* Build configuration list for PBXNativeTarget "Likelihood" */;
+			buildPhases = (
+				7A98F38110CD5730001E79F7 /* Sources */,
+				7A98F38E10CD5730001E79F7 /* Frameworks */,
+				7A98F39210CD5730001E79F7 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Likelihood;
+			productName = libphycas;
+			productReference = 7A98F39610CD5730001E79F7 /* _LikelihoodExt.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		7A98F51A10CD62EF001E79F7 /* Phylogeny */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7A98F52310CD62EF001E79F7 /* Build configuration list for PBXNativeTarget "Phylogeny" */;
+			buildPhases = (
+				7A98F51B10CD62EF001E79F7 /* Sources */,
+				7A98F51E10CD62EF001E79F7 /* Frameworks */,
+				7A98F52210CD62EF001E79F7 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Phylogeny;
+			productName = libphycas;
+			productReference = 7A98F52610CD62EF001E79F7 /* _PhylogenyExt.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		7A98F56210CD6484001E79F7 /* ReadNexus */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7A98F56B10CD6484001E79F7 /* Build configuration list for PBXNativeTarget "ReadNexus" */;
+			buildPhases = (
+				7A98F56310CD6484001E79F7 /* Sources */,
+				7A98F56610CD6484001E79F7 /* Frameworks */,
+				7A98F56A10CD6484001E79F7 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ReadNexus;
+			productName = libphycas;
+			productReference = 7A98F56E10CD6484001E79F7 /* _ReadNexusExt.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		D2AAC09C05546B4700DB518D /* Conversions */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1DEB916008733D950010E9CD /* Build configuration list for PBXNativeTarget "Conversions" */;
 			buildPhases = (
-				D2AAC09905546B4700DB518D /* Headers */,
-				D2AAC09B05546B4700DB518D /* Frameworks */,
 				D2AAC09A05546B4700DB518D /* Sources */,
+				D2AAC09B05546B4700DB518D /* Frameworks */,
+				7A98F29A10CD4031001E79F7 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -512,7 +987,7 @@
 			);
 			name = Conversions;
 			productName = libphycas;
-			productReference = D2AAC09D05546B4700DB518D /* libphycas.dylib */;
+			productReference = D2AAC09D05546B4700DB518D /* _ConversionsExt.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 /* End PBXNativeTarget section */
@@ -528,12 +1003,229 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				7A98F74C10CD7D1A001E79F7 /* All_Extensions */,
 				D2AAC09C05546B4700DB518D /* Conversions */,
+				7A98F27010CD3C22001E79F7 /* DataMatrix */,
+				7A98F38010CD5730001E79F7 /* Likelihood */,
+				7A98F51A10CD62EF001E79F7 /* Phylogeny */,
+				7A98F30B10CD5025001E79F7 /* ProbDist */,
+				7A98F56210CD6484001E79F7 /* ReadNexus */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		7A98F29A10CD4031001E79F7 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/bin/python $PHYCAS_ROOT/XCode/copy_dylib.py";
+		};
+		7A98F2FA10CD4F35001E79F7 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/bin/python $PHYCAS_ROOT/XCode/copy_dylib.py";
+		};
+		7A98F31310CD5025001E79F7 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/bin/python $PHYCAS_ROOT/XCode/copy_dylib.py";
+		};
+		7A98F39210CD5730001E79F7 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/bin/python $PHYCAS_ROOT/XCode/copy_dylib.py";
+		};
+		7A98F52210CD62EF001E79F7 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/bin/python $PHYCAS_ROOT/XCode/copy_dylib.py";
+		};
+		7A98F56A10CD6484001E79F7 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/bin/python $PHYCAS_ROOT/XCode/copy_dylib.py";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		7A98F27A10CD3C22001E79F7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7A98F27C10CD3C22001E79F7 /* boost_assertion_failed.cpp in Sources */,
+				7A98F28A10CD3C78001E79F7 /* data_matrix_pymod.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7A98F30C10CD5025001E79F7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7A98F30D10CD5025001E79F7 /* boost_assertion_failed.cpp in Sources */,
+				7A98F31810CD5090001E79F7 /* probdist_pymod.cpp in Sources */,
+				7A98F31D10CD5099001E79F7 /* phycas_string.cpp in Sources */,
+				7A98F32010CD50A2001E79F7 /* basic_cdf.cpp in Sources */,
+				7A98F32110CD50A4001E79F7 /* basic_lot.cpp in Sources */,
+				7A98F32710CD50AF001E79F7 /* linalg.c in Sources */,
+				7A98F32D10CD50CB001E79F7 /* stop_watch.cpp in Sources */,
+				7A98F33010CD50F2001E79F7 /* dcdflib.c in Sources */,
+				7A98F33110CD50F8001E79F7 /* ipmpar.c in Sources */,
+				7A98F33610CD511F001E79F7 /* mvnormal_distribution.cpp in Sources */,
+				7A98F33810CD5126001E79F7 /* probability_distribution.cpp in Sources */,
+				7A98F33B10CD5130001E79F7 /* slice_sampler.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7A98F38110CD5730001E79F7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7A98F38210CD5730001E79F7 /* boost_assertion_failed.cpp in Sources */,
+				7A98F39C10CD5821001E79F7 /* tree_likelihood.cpp in Sources */,
+				7A98F3A010CD582C001E79F7 /* basic_cdf.cpp in Sources */,
+				7A98F3A110CD5833001E79F7 /* basic_lot.cpp in Sources */,
+				7A98F3A210CD583A001E79F7 /* basic_tree.cpp in Sources */,
+				7A98F3AB10CD5860001E79F7 /* basic_tree_node.cpp in Sources */,
+				7A98F3AE10CD5867001E79F7 /* bush_move.cpp in Sources */,
+				7A98F3B110CD586D001E79F7 /* codon_model.cpp in Sources */,
+				7A98F3B510CD587E001E79F7 /* cond_likelihood.cpp in Sources */,
+				7A98F3B610CD587E001E79F7 /* cond_likelihood_storage.cpp in Sources */,
+				7A98F3B910CD5886001E79F7 /* discrete_gamma_shape_param.cpp in Sources */,
+				7A98F3BB10CD589F001E79F7 /* dcdflib.c in Sources */,
+				7A98F3BE10CD58AC001E79F7 /* edgelen_master_param.cpp in Sources */,
+				7A98F3BF10CD58B0001E79F7 /* edge_move.cpp in Sources */,
+				7A98F3C210CD58BC001E79F7 /* flex_prob_param.cpp in Sources */,
+				7A98F3C310CD58BE001E79F7 /* flex_rate_param.cpp in Sources */,
+				7A98F3C610CD58C4001E79F7 /* gtr_rate_param.cpp in Sources */,
+				7A98F3C710CD58CA001E79F7 /* gtr_model.cpp in Sources */,
+				7A98F3C910CD58D2001E79F7 /* hky_model.cpp in Sources */,
+				7A98F3DA10CD58DD001E79F7 /* hyperprior_param.cpp in Sources */,
+				7A98F3DD10CD58E2001E79F7 /* jc_model.cpp in Sources */,
+				7A98F3E010CD58E8001E79F7 /* kappa_param.cpp in Sources */,
+				7A98F3E310CD58F1001E79F7 /* internal_data.cpp in Sources */,
+				7A98F3E610CD5903001E79F7 /* ipmpar.c in Sources */,
+				7A98F3E910CD590A001E79F7 /* larget_simon_move.cpp in Sources */,
+				7A98F3EA10CD591C001E79F7 /* likelihood_models.cpp in Sources */,
+				7A98F3EB10CD591F001E79F7 /* likelihood_loops.cpp in Sources */,
+				7A98F3EC10CD592F001E79F7 /* likelihood_pymod.cpp in Sources */,
+				7A98F3EE10CD5936001E79F7 /* linalg.c in Sources */,
+				7A98F3F310CD5943001E79F7 /* model_pymod.cpp in Sources */,
+				7A98F3F510CD595D001E79F7 /* mcmc_chain_manager.cpp in Sources */,
+				7A98F3F610CD5967001E79F7 /* mcmc_param.cpp in Sources */,
+				7A98F3F710CD596D001E79F7 /* mcmc_flexcat_param.cpp in Sources */,
+				7A98F3F810CD5976001E79F7 /* mcmc_updater.cpp in Sources */,
+				7A98F3FA10CD5986001E79F7 /* ncat_move.cpp in Sources */,
+				7A98F3FB10CD598D001E79F7 /* mapping_move.cpp in Sources */,
+				7A98F3FD10CD5998001E79F7 /* omega_param.cpp in Sources */,
+				7A98F40210CD599F001E79F7 /* phycas_string.cpp in Sources */,
+				7A98F40510CD59B0001E79F7 /* pinvar_param.cpp in Sources */,
+				7A98F40810CD59B8001E79F7 /* probability_distribution.cpp in Sources */,
+				7A98F40A10CD59C0001E79F7 /* q_matrix.cpp in Sources */,
+				7A98F40D10CD59CA001E79F7 /* samc_move.cpp in Sources */,
+				7A98F40E10CD59D0001E79F7 /* slice_sampler.cpp in Sources */,
+				7A98F41110CD59D8001E79F7 /* sim_data.cpp in Sources */,
+				7A98F41510CD59EA001E79F7 /* split.cpp in Sources */,
+				7A98F41710CD59F1001E79F7 /* square_matrix.cpp in Sources */,
+				7A98F41B10CD59F7001E79F7 /* dirichlet_move.cpp in Sources */,
+				7A98F42010CD5A05001E79F7 /* state_freq_param.cpp in Sources */,
+				7A98F42310CD5A0E001E79F7 /* tip_data.cpp in Sources */,
+				7A98F42710CD5A14001E79F7 /* topo_prior_calculator.cpp in Sources */,
+				7A98F42A10CD5A1B001E79F7 /* partition_model.cpp in Sources */,
+				7A98F42F10CD5A24001E79F7 /* tree_scaler_move.cpp in Sources */,
+				7A98F43210CD5A2B001E79F7 /* underflow_manager.cpp in Sources */,
+				7A98F43510CD5A38001E79F7 /* unimap_edge_move.cpp in Sources */,
+				7A98F43710CD5A43001E79F7 /* unimap_nni_move.cpp in Sources */,
+				7A98F43810CD5A48001E79F7 /* unimap_node_slide_move.cpp in Sources */,
+				7A98F43910CD5A4B001E79F7 /* unimap_sample_ambig_move.cpp in Sources */,
+				7A98F43C10CD5A59001E79F7 /* univent_prob_mgr.cpp in Sources */,
+				7A98F43D10CD5A5A001E79F7 /* univents.cpp in Sources */,
+				7A98F44210CD5A6A001E79F7 /* updater_pymod.cpp in Sources */,
+				7A98F45A10CD5C39001E79F7 /* tree_manip.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7A98F51B10CD62EF001E79F7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7A98F51C10CD62EF001E79F7 /* boost_assertion_failed.cpp in Sources */,
+				7A98F53210CD6398001E79F7 /* phylogeny_pymod.cpp in Sources */,
+				7A98F53510CD63A9001E79F7 /* basic_lot.cpp in Sources */,
+				7A98F53610CD63AB001E79F7 /* basic_tree_node.cpp in Sources */,
+				7A98F53710CD63B1001E79F7 /* basic_cdf.cpp in Sources */,
+				7A98F53810CD63B6001E79F7 /* basic_tree.cpp in Sources */,
+				7A98F53B10CD63BF001E79F7 /* split.cpp in Sources */,
+				7A98F53E10CD63C8001E79F7 /* dcdflib.c in Sources */,
+				7A98F54110CD63D1001E79F7 /* ipmpar.c in Sources */,
+				7A98F54610CD63DA001E79F7 /* phycas_string.cpp in Sources */,
+				7A98F55010CD6448001E79F7 /* tree_manip.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7A98F56310CD6484001E79F7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7A98F56410CD6484001E79F7 /* boost_assertion_failed.cpp in Sources */,
+				7A98F57710CD64EE001E79F7 /* basic_cdf.cpp in Sources */,
+				7A98F57C10CD64FA001E79F7 /* nxs_file_path.cpp in Sources */,
+				7A98F57E10CD6507001E79F7 /* read_nexus_pymod.cpp in Sources */,
+				7A98F57F10CD650D001E79F7 /* phycas_nexus_reader.cpp in Sources */,
+				7A98F58310CD651B001E79F7 /* probability_distribution.cpp in Sources */,
+				7A98F58510CD6529001E79F7 /* basic_lot.cpp in Sources */,
+				7A98F58B10CD653A001E79F7 /* ipmpar.c in Sources */,
+				7A98F59010CD655C001E79F7 /* dcdflib.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D2AAC09A05546B4700DB518D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -549,12 +1241,55 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		7A98F75110CD7D3A001E79F7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D2AAC09C05546B4700DB518D /* Conversions */;
+			targetProxy = 7A98F75010CD7D3A001E79F7 /* PBXContainerItemProxy */;
+		};
+		7A98F75310CD7D3A001E79F7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7A98F27010CD3C22001E79F7 /* DataMatrix */;
+			targetProxy = 7A98F75210CD7D3A001E79F7 /* PBXContainerItemProxy */;
+		};
+		7A98F75510CD7D3A001E79F7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7A98F38010CD5730001E79F7 /* Likelihood */;
+			targetProxy = 7A98F75410CD7D3A001E79F7 /* PBXContainerItemProxy */;
+		};
+		7A98F75710CD7D3A001E79F7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7A98F51A10CD62EF001E79F7 /* Phylogeny */;
+			targetProxy = 7A98F75610CD7D3A001E79F7 /* PBXContainerItemProxy */;
+		};
+		7A98F75910CD7D3A001E79F7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7A98F30B10CD5025001E79F7 /* ProbDist */;
+			targetProxy = 7A98F75810CD7D3A001E79F7 /* PBXContainerItemProxy */;
+		};
+		7A98F75B10CD7D3A001E79F7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7A98F56210CD6484001E79F7 /* ReadNexus */;
+			targetProxy = 7A98F75A10CD7D3A001E79F7 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
 		1DEB916108733D950010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
 			buildSettings = {
 				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../phycas/Conversions\"",
+					"\"$(SRCROOT)/../../phycas/DataMatrix\"",
+					"\"$(SRCROOT)/../../phycas/Likelihood\"",
+					"\"$(SRCROOT)/../../phycas/Phylogeny\"",
+					"\"$(SRCROOT)/../../phycas/ProbDist\"",
+					"\"$(SRCROOT)/../../phycas/ReadNexus\"",
+				);
+				PRODUCT_NAME = _ConversionsExt;
 			};
 			name = Debug;
 		};
@@ -563,6 +1298,16 @@
 			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
 			buildSettings = {
 				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../phycas/Conversions\"",
+					"\"$(SRCROOT)/../../phycas/DataMatrix\"",
+					"\"$(SRCROOT)/../../phycas/Likelihood\"",
+					"\"$(SRCROOT)/../../phycas/Phylogeny\"",
+					"\"$(SRCROOT)/../../phycas/ProbDist\"",
+					"\"$(SRCROOT)/../../phycas/ReadNexus\"",
+				);
+				PRODUCT_NAME = _ConversionsExt;
 			};
 			name = Release;
 		};
@@ -573,15 +1318,13 @@
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(PYTHON_ROOT)/include/python2.6",
 					"$(NCL_ROOT)",
 					"$(BOOST_ROOT)",
 				);
+				LIBRARY_SEARCH_PATHS = "\"$(PHYCAS_ROOT)/phycas/Conversions\"";
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
 				SDKROOT = macosx10.6;
@@ -595,18 +1338,128 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(PYTHON_ROOT)/include/python2.6",
 					"$(NCL_ROOT)",
 					"$(BOOST_ROOT)",
 				);
+				LIBRARY_SEARCH_PATHS = "\"$(PHYCAS_ROOT)/phycas/Conversions\"";
+				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
 				SDKROOT = macosx10.6;
 				USER_HEADER_SEARCH_PATHS = "$(PHYCAS_ROOT)";
+			};
+			name = Release;
+		};
+		7A98F28210CD3C22001E79F7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
+			buildSettings = {
+				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				PRODUCT_NAME = _DataMatrixExt;
+			};
+			name = Debug;
+		};
+		7A98F28310CD3C22001E79F7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
+			buildSettings = {
+				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				PRODUCT_NAME = _DataMatrixExt;
+			};
+			name = Release;
+		};
+		7A98F31510CD5025001E79F7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
+			buildSettings = {
+				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				PRODUCT_NAME = _ProbDistExt;
+			};
+			name = Debug;
+		};
+		7A98F31610CD5025001E79F7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
+			buildSettings = {
+				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				PRODUCT_NAME = _ProbDistExt;
+			};
+			name = Release;
+		};
+		7A98F39410CD5730001E79F7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
+			buildSettings = {
+				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				PRODUCT_NAME = _LikelihoodExt;
+			};
+			name = Debug;
+		};
+		7A98F39510CD5730001E79F7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
+			buildSettings = {
+				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				PRODUCT_NAME = _LikelihoodExt;
+			};
+			name = Release;
+		};
+		7A98F52410CD62EF001E79F7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
+			buildSettings = {
+				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				PRODUCT_NAME = _PhylogenyExt;
+			};
+			name = Debug;
+		};
+		7A98F52510CD62EF001E79F7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
+			buildSettings = {
+				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				PRODUCT_NAME = _PhylogenyExt;
+			};
+			name = Release;
+		};
+		7A98F56C10CD6484001E79F7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
+			buildSettings = {
+				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				PRODUCT_NAME = _ReadNexusExt;
+			};
+			name = Debug;
+		};
+		7A98F56D10CD6484001E79F7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
+			buildSettings = {
+				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				PRODUCT_NAME = _ReadNexusExt;
+			};
+			name = Release;
+		};
+		7A98F74D10CD7D1A001E79F7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = All_Extensions;
+			};
+			name = Debug;
+		};
+		7A98F74E10CD7D1A001E79F7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = All_Extensions;
+				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -627,6 +1480,60 @@
 			buildConfigurations = (
 				1DEB916508733D950010E9CD /* Debug */,
 				1DEB916608733D950010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7A98F28110CD3C22001E79F7 /* Build configuration list for PBXNativeTarget "DataMatrix" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7A98F28210CD3C22001E79F7 /* Debug */,
+				7A98F28310CD3C22001E79F7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7A98F31410CD5025001E79F7 /* Build configuration list for PBXNativeTarget "ProbDist" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7A98F31510CD5025001E79F7 /* Debug */,
+				7A98F31610CD5025001E79F7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7A98F39310CD5730001E79F7 /* Build configuration list for PBXNativeTarget "Likelihood" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7A98F39410CD5730001E79F7 /* Debug */,
+				7A98F39510CD5730001E79F7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7A98F52310CD62EF001E79F7 /* Build configuration list for PBXNativeTarget "Phylogeny" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7A98F52410CD62EF001E79F7 /* Debug */,
+				7A98F52510CD62EF001E79F7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7A98F56B10CD6484001E79F7 /* Build configuration list for PBXNativeTarget "ReadNexus" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7A98F56C10CD6484001E79F7 /* Debug */,
+				7A98F56D10CD6484001E79F7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7A98F74F10CD7D38001E79F7 /* Build configuration list for PBXAggregateTarget "All_Extensions" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7A98F74D10CD7D1A001E79F7 /* Debug */,
+				7A98F74E10CD7D1A001E79F7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -35,7 +35,7 @@
 #include "ncl/nxscdiscretematrix.h"	// int8_t typedef //POL 18Mar2006
 using namespace boost::python;
 
-BOOST_PYTHON_MODULE(_Conversions)
+BOOST_PYTHON_MODULE(_ConversionsExt)
 {
 #if defined(USING_NUMARRAY)
 	// these lines required by num_util

@@ -122,9 +122,9 @@ alias conversions_sources
     phycas/src/split.cpp
     phycas/src/phycas_string.cpp
     tool_specific_requirements ;
-python-extension _Conversions : conversions_sources ;
+python-extension _ConversionsExt : conversions_sources ;
 install Conversions 
-  : _Conversions 
+  : _ConversionsExt 
   : <location>phycas/Conversions 
     <install-dependencies>on 
     <install-type>LIB ;  # note: tried using <dll-path> but it seemed to have no effect 
@@ -156,16 +156,16 @@ alias probdist_sources
     phycas/src/probability_distribution.cpp
     phycas/src/slice_sampler.cpp
     tool_specific_requirements ;
-python-extension _ProbDist : probdist_sources ;
-install ProbDist : _ProbDist : <location>phycas/ProbDist ;
+python-extension _ProbDistExt : probdist_sources ;
+install ProbDist : _ProbDistExt : <location>phycas/ProbDist ;
 
 # Build and install the DataMatrix extension
 alias datamatrix_sources
   : phycas/src/data_matrix_pymod.cpp
     phycas/src/boost_assertion_failed.cpp
     tool_specific_requirements ;
-python-extension _DataMatrixBase : datamatrix_sources ;
-install DataMatrix : _DataMatrixBase : <location>phycas/DataMatrix ;
+python-extension _DataMatrixExt : datamatrix_sources ;
+install DataMatrix : _DataMatrixExt : <location>phycas/DataMatrix ;
 
 # Build and install the Likelihood extension
 alias likelihood_sources
@@ -232,8 +232,8 @@ alias likelihood_sources
     phycas/src/updater_pymod.cpp
     [ obj likelihood_tree_manip_obj : phycas/src/tree_manip.cpp tool_specific_requirements ]
     tool_specific_requirements ;
-python-extension _LikelihoodBase : likelihood_sources ;
-install Likelihood : _LikelihoodBase : <location>phycas/Likelihood ;
+python-extension _LikelihoodExt : likelihood_sources ;
+install Likelihood : _LikelihoodExt : <location>phycas/Likelihood ;
 
 # Build and install the Phylogeny extension
 alias phylogeny_sources
@@ -249,8 +249,8 @@ alias phylogeny_sources
     phycas/src/thirdparty/dcdflib/src/ipmpar.c
     phycas/src/phycas_string.cpp 
     tool_specific_requirements ;
-python-extension _Phylogeny : phylogeny_sources ;
-install Phylogeny : _Phylogeny : <location>phycas/Phylogeny ;
+python-extension _PhylogenyExt : phylogeny_sources ;
+install Phylogeny : _PhylogenyExt : <location>phycas/Phylogeny ;
 
 # Build and install the ReadNexus extension
 alias readnexus_sources
@@ -264,5 +264,5 @@ alias readnexus_sources
     phycas/src/thirdparty/dcdflib/src/dcdflib.c
     phycas/src/thirdparty/dcdflib/src/ipmpar.c
     tool_specific_requirements ;
-python-extension _ReadNexus : readnexus_sources ;
-install ReadNexus : _ReadNexus : <location>phycas/ReadNexus ;
+python-extension _ReadNexusExt : readnexus_sources ;
+install ReadNexus : _ReadNexusExt : <location>phycas/ReadNexus ;

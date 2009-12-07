@@ -1,4 +1,4 @@
-from _LikelihoodBase import *
+from _LikelihoodExt import *
 
 class SimData(SimDataBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

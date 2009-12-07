@@ -1,4 +1,4 @@
-from _Phylogeny import *
+from _PhylogenyExt import *
 
 class TreeManip(TreeManipBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

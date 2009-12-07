@@ -1,4 +1,4 @@
-from _Phylogeny import *
+from _PhylogenyExt import *
 from phycas.ReadNexus._NexusReader import TreeDescription
 
 class Tree(TreeBase):
@@ -454,7 +454,6 @@ class Tree(TreeBase):
 
         """
         self.taxon_labels = taxon_names
-        print "rectifyNumbers: taxon_names =", taxon_names
         return TreeBase.rectifyNumbers(self, taxon_names)
 
     def rectifyNames(self, taxon_names):

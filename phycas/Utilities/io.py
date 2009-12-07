@@ -201,8 +201,6 @@ class TreeCollection(object):
 			self._needToRelabel = False
 			return True
 		if self.taxon_labels:
-			print "_checkActiveTaxa: self.taxon_labels=", self.taxon_labels
-			print "                  al               =", al
 			tl = [i.lower() for i in self.taxon_labels]
 			if al != tl:
 				for a in al:

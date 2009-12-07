@@ -65,7 +65,7 @@ void translateXProbDist(const XProbDist &e)
     PyErr_SetString(PyExc_Exception, e.what());
     }
 
-BOOST_PYTHON_MODULE(_ProbDist)
+BOOST_PYTHON_MODULE(_ProbDistExt)
 {
 	def("getEffectiveLnZero", getEffectiveLnZero);
 

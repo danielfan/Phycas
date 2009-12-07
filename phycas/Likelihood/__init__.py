@@ -2,7 +2,7 @@ import warnings
 warnings.filterwarnings('ignore', '.*second conversion method ignored.*', RuntimeWarning)
 
 from phycas.Conversions import *
-from _LikelihoodBase import *
+from _LikelihoodExt import *
 from _TreeLikelihood import *
 from _Model import *
 from _MCMCChainManager import *

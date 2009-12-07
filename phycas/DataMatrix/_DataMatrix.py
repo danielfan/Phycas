@@ -1,4 +1,4 @@
-from _DataMatrixBase import DataMatrixBase
+from _DataMatrixExt import DataMatrixExt
 
 class BogusDataMatrix(object):
     def getNChar(self): return 0
@@ -12,9 +12,9 @@ class BogusDataMatrix(object):
     def getFloatWeights(self): return tuple()
     def getExcludedIndicesWeights(self): return tuple()
 
-class DataMatrix(DataMatrixBase):
+class DataMatrix(DataMatrixExt):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
-    """Wraps a DataMatrixBase object and enables access to fields. Note that
+    """Wraps a DataMatrixExt object and enables access to fields. Note that
     this class may be expanded later to allow editing, but (given that it 
     is tedious to recode a matrix's underlying data structure via python)
     only editing of the cell (no new state combinations will be introduced).
@@ -35,21 +35,21 @@ class DataMatrix(DataMatrixBase):
     Generic_Datatype = 4
     NEXUS_DATATYPE_NAMES = ("DNA", "RNA", "Protein", "Standard", "Standard")
 
-    def __init__(self, dataMatrixBaseObj, taxa=None):
+    def __init__(self, dataMatrixExtObj, taxa=None):
         "intended to be called by the phycas internal functions only"
         self._reset()
-        if isinstance(dataMatrixBaseObj, DataMatrix):
-            dataMatrixBaseObj = dataMatrixBaseObj.mat
+        if isinstance(dataMatrixExtObj, DataMatrix):
+            dataMatrixExtObj = dataMatrixExtObj.mat
             if not taxa:
-                taxa = dataMatrixBaseObj.taxa
+                taxa = dataMatrixExtObj.taxa
         self.taxa = taxa
-        if dataMatrixBaseObj is None:
+        if dataMatrixExtObj is None:
             self.n_states = 0
             self.mat = BogusDataMatrix()
             return
-        self.mat = dataMatrixBaseObj
-        self.n_states = dataMatrixBaseObj.getNStates()
-        raw_symbols_list = dataMatrixBaseObj.getSymbolsList()
+        self.mat = dataMatrixExtObj
+        self.n_states = dataMatrixExtObj.getNStates()
+        raw_symbols_list = dataMatrixExtObj.getSymbolsList()
         assert(len(raw_symbols_list) >= self.n_states)
         for n in range(self.n_states):
             i = raw_symbols_list[n]
