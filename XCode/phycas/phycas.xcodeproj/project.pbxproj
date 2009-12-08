@@ -23,6 +23,30 @@
 			name = All_Extensions;
 			productName = AllExtensions;
 		};
+		7AB51D5510CDA72D00A865FF /* All_Libraries */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 7AB51D5E10CDA7A200A865FF /* Build configuration list for PBXAggregateTarget "All_Libraries" */;
+			buildPhases = (
+			);
+			dependencies = (
+				7AB51D5910CDA74900A865FF /* PBXTargetDependency */,
+				7AB51D5B10CDA75000A865FF /* PBXTargetDependency */,
+			);
+			name = All_Libraries;
+			productName = All_Libraries;
+		};
+		7AB51D6C10CDADC700A865FF /* Everything */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 7AB51D7B10CDAE0400A865FF /* Build configuration list for PBXAggregateTarget "Everything" */;
+			buildPhases = (
+			);
+			dependencies = (
+				7AB51D7010CDADDF00A865FF /* PBXTargetDependency */,
+				7AB51D7210CDADE300A865FF /* PBXTargetDependency */,
+			);
+			name = Everything;
+			productName = Everything;
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
@@ -32,16 +56,11 @@
 		7A09470810CAF12900CEFDE0 /* basic_tree_node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945B510CAEFB900CEFDE0 /* basic_tree_node.cpp */; };
 		7A09470F10CAF13B00CEFDE0 /* split.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09462210CAEFB900CEFDE0 /* split.cpp */; };
 		7A09471310CAF14300CEFDE0 /* phycas_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09460C10CAEFB900CEFDE0 /* phycas_string.cpp */; };
-		7A98EBF410CD37FE001E79F7 /* libboost_python.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98EBF310CD37FE001E79F7 /* libboost_python.dylib */; };
-		7A98F26510CD38C2001E79F7 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26410CD38C2001E79F7 /* Python.framework */; };
-		7A98F26D10CD3BD3001E79F7 /* libncl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26C10CD3BD3001E79F7 /* libncl.dylib */; };
-		7A98F27810CD3C22001E79F7 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26410CD38C2001E79F7 /* Python.framework */; };
 		7A98F27910CD3C22001E79F7 /* libncl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26C10CD3BD3001E79F7 /* libncl.dylib */; };
 		7A98F27C10CD3C22001E79F7 /* boost_assertion_failed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945BB10CAEFB900CEFDE0 /* boost_assertion_failed.cpp */; };
 		7A98F28A10CD3C78001E79F7 /* data_matrix_pymod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945C910CAEFB900CEFDE0 /* data_matrix_pymod.cpp */; };
 		7A98F30610CD4FDD001E79F7 /* libboost_python.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98EBF310CD37FE001E79F7 /* libboost_python.dylib */; };
 		7A98F30D10CD5025001E79F7 /* boost_assertion_failed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945BB10CAEFB900CEFDE0 /* boost_assertion_failed.cpp */; };
-		7A98F31110CD5025001E79F7 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26410CD38C2001E79F7 /* Python.framework */; };
 		7A98F31210CD5025001E79F7 /* libncl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26C10CD3BD3001E79F7 /* libncl.dylib */; };
 		7A98F31810CD5090001E79F7 /* probdist_pymod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09461410CAEFB900CEFDE0 /* probdist_pymod.cpp */; };
 		7A98F31D10CD5099001E79F7 /* phycas_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09460C10CAEFB900CEFDE0 /* phycas_string.cpp */; };
@@ -56,7 +75,6 @@
 		7A98F33B10CD5130001E79F7 /* slice_sampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09461F10CAEFB900CEFDE0 /* slice_sampler.cpp */; };
 		7A98F34210CD533E001E79F7 /* libboost_python.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98EBF310CD37FE001E79F7 /* libboost_python.dylib */; };
 		7A98F38210CD5730001E79F7 /* boost_assertion_failed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945BB10CAEFB900CEFDE0 /* boost_assertion_failed.cpp */; };
-		7A98F39010CD5730001E79F7 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26410CD38C2001E79F7 /* Python.framework */; };
 		7A98F39C10CD5821001E79F7 /* tree_likelihood.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09464410CAEFB900CEFDE0 /* tree_likelihood.cpp */; };
 		7A98F3A010CD582C001E79F7 /* basic_cdf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945AF10CAEFB900CEFDE0 /* basic_cdf.cpp */; };
 		7A98F3A110CD5833001E79F7 /* basic_lot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945B210CAEFB900CEFDE0 /* basic_lot.cpp */; };
@@ -122,7 +140,6 @@
 		7A98F51C10CD62EF001E79F7 /* boost_assertion_failed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945BB10CAEFB900CEFDE0 /* boost_assertion_failed.cpp */; };
 		7A98F51F10CD62EF001E79F7 /* libboost_python.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98EBF310CD37FE001E79F7 /* libboost_python.dylib */; };
 		7A98F52010CD62EF001E79F7 /* libncl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26C10CD3BD3001E79F7 /* libncl.dylib */; };
-		7A98F52110CD62EF001E79F7 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26410CD38C2001E79F7 /* Python.framework */; };
 		7A98F53210CD6398001E79F7 /* phylogeny_pymod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09460F10CAEFB900CEFDE0 /* phylogeny_pymod.cpp */; };
 		7A98F53510CD63A9001E79F7 /* basic_lot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945B210CAEFB900CEFDE0 /* basic_lot.cpp */; };
 		7A98F53610CD63AB001E79F7 /* basic_tree_node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945B510CAEFB900CEFDE0 /* basic_tree_node.cpp */; };
@@ -136,7 +153,6 @@
 		7A98F56410CD6484001E79F7 /* boost_assertion_failed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945BB10CAEFB900CEFDE0 /* boost_assertion_failed.cpp */; };
 		7A98F56710CD6484001E79F7 /* libboost_python.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98EBF310CD37FE001E79F7 /* libboost_python.dylib */; };
 		7A98F56810CD6484001E79F7 /* libncl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26C10CD3BD3001E79F7 /* libncl.dylib */; };
-		7A98F56910CD6484001E79F7 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26410CD38C2001E79F7 /* Python.framework */; };
 		7A98F57710CD64EE001E79F7 /* basic_cdf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945AF10CAEFB900CEFDE0 /* basic_cdf.cpp */; };
 		7A98F57C10CD64FA001E79F7 /* nxs_file_path.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09460110CAEFB900CEFDE0 /* nxs_file_path.cpp */; };
 		7A98F57E10CD6507001E79F7 /* read_nexus_pymod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09461810CAEFB900CEFDE0 /* read_nexus_pymod.cpp */; };
@@ -145,6 +161,61 @@
 		7A98F58510CD6529001E79F7 /* basic_lot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945B210CAEFB900CEFDE0 /* basic_lot.cpp */; };
 		7A98F58B10CD653A001E79F7 /* ipmpar.c in Sources */ = {isa = PBXBuildFile; fileRef = 7A09463710CAEFB900CEFDE0 /* ipmpar.c */; };
 		7A98F59010CD655C001E79F7 /* dcdflib.c in Sources */ = {isa = PBXBuildFile; fileRef = 7A09463510CAEFB900CEFDE0 /* dcdflib.c */; };
+		7AB51C4D10CD9D7500A865FF /* numeric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C1510CD9CE100A865FF /* numeric.cpp */; };
+		7AB51C4E10CD9D7600A865FF /* long.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C1310CD9CE100A865FF /* long.cpp */; };
+		7AB51C4F10CD9D7700A865FF /* function.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C1910CD9CE100A865FF /* function.cpp */; };
+		7AB51C5010CD9D7700A865FF /* errors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C0F10CD9CE100A865FF /* errors.cpp */; };
+		7AB51C5110CD9D7800A865FF /* builtin_converters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C0A10CD9CE100A865FF /* builtin_converters.cpp */; };
+		7AB51C5210CD9D7900A865FF /* import.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C1110CD9CE100A865FF /* import.cpp */; };
+		7AB51C5310CD9D7900A865FF /* function_doc_signature.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C1A10CD9CE100A865FF /* function_doc_signature.cpp */; };
+		7AB51C5410CD9D7A00A865FF /* pickle_support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C1E10CD9CE100A865FF /* pickle_support.cpp */; };
+		7AB51C5510CD9D7B00A865FF /* object_protocol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C2110CD9CE100A865FF /* object_protocol.cpp */; };
+		7AB51C5610CD9D7C00A865FF /* arg_to_python_base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C0910CD9CE100A865FF /* arg_to_python_base.cpp */; };
+		7AB51C5710CD9D7C00A865FF /* inheritance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C1B10CD9CE100A865FF /* inheritance.cpp */; };
+		7AB51C5810CD9D7D00A865FF /* type_id.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C0D10CD9CE100A865FF /* type_id.cpp */; };
+		7AB51C5910CD9D7D00A865FF /* wrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C2510CD9CE100A865FF /* wrapper.cpp */; };
+		7AB51C5A10CD9D7E00A865FF /* tuple.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C2410CD9CE100A865FF /* tuple.cpp */; };
+		7AB51C5B10CD9D7E00A865FF /* stl_iterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C1F10CD9CE100A865FF /* stl_iterator.cpp */; };
+		7AB51C5C10CD9D7F00A865FF /* iterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C1C10CD9CE100A865FF /* iterator.cpp */; };
+		7AB51C5D10CD9D8100A865FF /* str.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C2310CD9CE100A865FF /* str.cpp */; };
+		7AB51C5E10CD9D8200A865FF /* list.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C1210CD9CE100A865FF /* list.cpp */; };
+		7AB51C5F10CD9D8200A865FF /* module.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C1410CD9CE100A865FF /* module.cpp */; };
+		7AB51C6010CD9D8300A865FF /* enum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C1810CD9CE100A865FF /* enum.cpp */; };
+		7AB51C6110CD9D8400A865FF /* registry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C0C10CD9CE100A865FF /* registry.cpp */; };
+		7AB51C6210CD9D8400A865FF /* slice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C2210CD9CE100A865FF /* slice.cpp */; };
+		7AB51C6310CD9D8500A865FF /* life_support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C1D10CD9CE100A865FF /* life_support.cpp */; };
+		7AB51C6410CD9D8700A865FF /* dict.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C0E10CD9CE100A865FF /* dict.cpp */; };
+		7AB51C6510CD9D8700A865FF /* object_operators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C2010CD9CE100A865FF /* object_operators.cpp */; };
+		7AB51C6610CD9D8800A865FF /* exec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C1010CD9CE100A865FF /* exec.cpp */; };
+		7AB51C6710CD9D8800A865FF /* from_python.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C0B10CD9CE100A865FF /* from_python.cpp */; };
+		7AB51C6810CD9D8900A865FF /* class.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C1710CD9CE100A865FF /* class.cpp */; };
+		7AB51CD910CDA37700A865FF /* libboost_python.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98EBF310CD37FE001E79F7 /* libboost_python.dylib */; };
+		7AB51CDA10CDA37700A865FF /* libncl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26C10CD3BD3001E79F7 /* libncl.dylib */; };
+		7AB51CE810CDA3B200A865FF /* nxscxxdiscretematrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CA110CDA26800A865FF /* nxscxxdiscretematrix.cpp */; };
+		7AB51CEC10CDA3B200A865FF /* nxsdatablock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CA310CDA26800A865FF /* nxsdatablock.cpp */; };
+		7AB51CED10CDA3B200A865FF /* nxsunalignedblock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CC110CDA26800A865FF /* nxsunalignedblock.cpp */; };
+		7AB51CEF10CDA3B200A865FF /* nxsreader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CB310CDA26800A865FF /* nxsreader.cpp */; };
+		7AB51CF110CDA3B200A865FF /* nxstaxablock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CB910CDA26800A865FF /* nxstaxablock.cpp */; };
+		7AB51CF410CDA3B200A865FF /* nxsblock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C9C10CDA26800A865FF /* nxsblock.cpp */; };
+		7AB51CF610CDA3B200A865FF /* nxspublicblocks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CB110CDA26800A865FF /* nxspublicblocks.cpp */; };
+		7AB51CF710CDA3B200A865FF /* nxsassumptionsblock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C9A10CDA26800A865FF /* nxsassumptionsblock.cpp */; };
+		7AB51CFE10CDA3B200A865FF /* nxstreesblock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CBD10CDA26800A865FF /* nxstreesblock.cpp */; };
+		7AB51D0210CDA3B200A865FF /* nxstoken.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CBB10CDA26800A865FF /* nxstoken.cpp */; };
+		7AB51D0410CDA3B200A865FF /* nxscharactersblock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C9F10CDA26800A865FF /* nxscharactersblock.cpp */; };
+		7AB51D0810CDA3B200A865FF /* nxsstring.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CB710CDA26800A865FF /* nxsstring.cpp */; };
+		7AB51D0A10CDA3B200A865FF /* nxstreestream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CBF10CDA26800A865FF /* nxstreestream.cpp */; };
+		7AB51D0B10CDA3B200A865FF /* nxssetreader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CB510CDA26800A865FF /* nxssetreader.cpp */; };
+		7AB51D0C10CDA3B200A865FF /* nxsdistancedatum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CA710CDA26800A865FF /* nxsdistancedatum.cpp */; };
+		7AB51D0D10CDA3B200A865FF /* nxsmultiformat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CAF10CDA26800A865FF /* nxsmultiformat.cpp */; };
+		7AB51D0E10CDA3B200A865FF /* nxsexception.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CAD10CDA26800A865FF /* nxsexception.cpp */; };
+		7AB51D0F10CDA3B200A865FF /* nxsdistancesblock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CA910CDA26800A865FF /* nxsdistancesblock.cpp */; };
+		7AB51E9010CDF4C600A865FF /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7AB51E8F10CDF4C600A865FF /* libpython2.6.dylib */; };
+		7AB51E9110CDF4C600A865FF /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7AB51E8F10CDF4C600A865FF /* libpython2.6.dylib */; };
+		7AB51E9210CDF4C600A865FF /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7AB51E8F10CDF4C600A865FF /* libpython2.6.dylib */; };
+		7AB51E9310CDF4C600A865FF /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7AB51E8F10CDF4C600A865FF /* libpython2.6.dylib */; };
+		7AB51E9410CDF4C600A865FF /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7AB51E8F10CDF4C600A865FF /* libpython2.6.dylib */; };
+		7AB51E9510CDF4C600A865FF /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7AB51E8F10CDF4C600A865FF /* libpython2.6.dylib */; };
+		7AB51E9610CDF4C600A865FF /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7AB51E8F10CDF4C600A865FF /* libpython2.6.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -152,43 +223,71 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = D2AAC09C05546B4700DB518D /* Conversions */;
+			remoteGlobalIDString = D2AAC09C05546B4700DB518D;
 			remoteInfo = Conversions;
 		};
 		7A98F75210CD7D3A001E79F7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 7A98F27010CD3C22001E79F7 /* DataMatrix */;
+			remoteGlobalIDString = 7A98F27010CD3C22001E79F7;
 			remoteInfo = DataMatrix;
 		};
 		7A98F75410CD7D3A001E79F7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 7A98F38010CD5730001E79F7 /* Likelihood */;
+			remoteGlobalIDString = 7A98F38010CD5730001E79F7;
 			remoteInfo = Likelihood;
 		};
 		7A98F75610CD7D3A001E79F7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 7A98F51A10CD62EF001E79F7 /* Phylogeny */;
+			remoteGlobalIDString = 7A98F51A10CD62EF001E79F7;
 			remoteInfo = Phylogeny;
 		};
 		7A98F75810CD7D3A001E79F7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 7A98F30B10CD5025001E79F7 /* ProbDist */;
+			remoteGlobalIDString = 7A98F30B10CD5025001E79F7;
 			remoteInfo = ProbDist;
 		};
 		7A98F75A10CD7D3A001E79F7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 7A98F56210CD6484001E79F7 /* ReadNexus */;
+			remoteGlobalIDString = 7A98F56210CD6484001E79F7;
 			remoteInfo = ReadNexus;
+		};
+		7AB51D5810CDA74900A865FF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7AB51C4910CD9D5700A865FF;
+			remoteInfo = LocalBoost;
+		};
+		7AB51D5A10CDA75000A865FF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7AB51CDF10CDA39200A865FF;
+			remoteInfo = NCL;
+		};
+		7AB51D6F10CDADDF00A865FF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A98F74C10CD7D1A001E79F7;
+			remoteInfo = All_Extensions;
+		};
+		7AB51D7110CDADE300A865FF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7AB51D5510CDA72D00A865FF;
+			remoteInfo = All_Libraries;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -377,7 +476,6 @@
 		7A09466710CAEFB900CEFDE0 /* xphylogeny.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = xphylogeny.hpp; path = ../../phycas/src/xphylogeny.hpp; sourceTree = SOURCE_ROOT; };
 		7A09466810CAEFB900CEFDE0 /* xprobdist.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = xprobdist.hpp; path = ../../phycas/src/xprobdist.hpp; sourceTree = SOURCE_ROOT; };
 		7A98EBF310CD37FE001E79F7 /* libboost_python.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_python.dylib; path = ../../phycas/Conversions/libboost_python.dylib; sourceTree = SOURCE_ROOT; };
-		7A98F26410CD38C2001E79F7 /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = /System/Library/Frameworks/Python.framework; sourceTree = "<absolute>"; };
 		7A98F26C10CD3BD3001E79F7 /* libncl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libncl.dylib; path = ../../phycas/Conversions/libncl.dylib; sourceTree = SOURCE_ROOT; };
 		7A98F28410CD3C22001E79F7 /* _DataMatrixExt.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = _DataMatrixExt.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A98F31710CD5025001E79F7 /* _ProbDistExt.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = _ProbDistExt.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -430,6 +528,82 @@
 		7A98F81010CD85D8001E79F7 /* PhycasCommand.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = PhycasCommand.py; path = ../../phycas/Utilities/PhycasCommand.py; sourceTree = "<group>"; };
 		7A98F81210CD85D8001E79F7 /* PhycasUpdateCheck.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = PhycasUpdateCheck.py; path = ../../phycas/Utilities/PhycasUpdateCheck.py; sourceTree = "<group>"; };
 		7A98F81410CD85D8001E79F7 /* tratio2kappa.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = tratio2kappa.py; path = ../../phycas/Utilities/tratio2kappa.py; sourceTree = "<group>"; };
+		7AB51C0910CD9CE100A865FF /* arg_to_python_base.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = arg_to_python_base.cpp; sourceTree = "<group>"; };
+		7AB51C0A10CD9CE100A865FF /* builtin_converters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = builtin_converters.cpp; sourceTree = "<group>"; };
+		7AB51C0B10CD9CE100A865FF /* from_python.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = from_python.cpp; sourceTree = "<group>"; };
+		7AB51C0C10CD9CE100A865FF /* registry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = registry.cpp; sourceTree = "<group>"; };
+		7AB51C0D10CD9CE100A865FF /* type_id.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = type_id.cpp; sourceTree = "<group>"; };
+		7AB51C0E10CD9CE100A865FF /* dict.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = dict.cpp; path = ../../../../../../tools/boost_1_41_0/libs/python/src/dict.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51C0F10CD9CE100A865FF /* errors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = errors.cpp; path = ../../../../../../tools/boost_1_41_0/libs/python/src/errors.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51C1010CD9CE100A865FF /* exec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = exec.cpp; path = ../../../../../../tools/boost_1_41_0/libs/python/src/exec.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51C1110CD9CE100A865FF /* import.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = import.cpp; path = ../../../../../../tools/boost_1_41_0/libs/python/src/import.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51C1210CD9CE100A865FF /* list.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = list.cpp; path = ../../../../../../tools/boost_1_41_0/libs/python/src/list.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51C1310CD9CE100A865FF /* long.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = long.cpp; path = ../../../../../../tools/boost_1_41_0/libs/python/src/long.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51C1410CD9CE100A865FF /* module.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = module.cpp; path = ../../../../../../tools/boost_1_41_0/libs/python/src/module.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51C1510CD9CE100A865FF /* numeric.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = numeric.cpp; path = ../../../../../../tools/boost_1_41_0/libs/python/src/numeric.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51C1710CD9CE100A865FF /* class.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = class.cpp; sourceTree = "<group>"; };
+		7AB51C1810CD9CE100A865FF /* enum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = enum.cpp; sourceTree = "<group>"; };
+		7AB51C1910CD9CE100A865FF /* function.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = function.cpp; sourceTree = "<group>"; };
+		7AB51C1A10CD9CE100A865FF /* function_doc_signature.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = function_doc_signature.cpp; sourceTree = "<group>"; };
+		7AB51C1B10CD9CE100A865FF /* inheritance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = inheritance.cpp; sourceTree = "<group>"; };
+		7AB51C1C10CD9CE100A865FF /* iterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = iterator.cpp; sourceTree = "<group>"; };
+		7AB51C1D10CD9CE100A865FF /* life_support.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = life_support.cpp; sourceTree = "<group>"; };
+		7AB51C1E10CD9CE100A865FF /* pickle_support.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pickle_support.cpp; sourceTree = "<group>"; };
+		7AB51C1F10CD9CE100A865FF /* stl_iterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stl_iterator.cpp; sourceTree = "<group>"; };
+		7AB51C2010CD9CE100A865FF /* object_operators.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = object_operators.cpp; path = ../../../../../../tools/boost_1_41_0/libs/python/src/object_operators.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51C2110CD9CE100A865FF /* object_protocol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = object_protocol.cpp; path = ../../../../../../tools/boost_1_41_0/libs/python/src/object_protocol.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51C2210CD9CE100A865FF /* slice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = slice.cpp; path = ../../../../../../tools/boost_1_41_0/libs/python/src/slice.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51C2310CD9CE100A865FF /* str.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = str.cpp; path = ../../../../../../tools/boost_1_41_0/libs/python/src/str.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51C2410CD9CE100A865FF /* tuple.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tuple.cpp; path = ../../../../../../tools/boost_1_41_0/libs/python/src/tuple.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51C2510CD9CE100A865FF /* wrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wrapper.cpp; path = ../../../../../../tools/boost_1_41_0/libs/python/src/wrapper.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51C4A10CD9D5700A865FF /* libboost_python.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libboost_python.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		7AB51C9710CDA26800A865FF /* Makefile.am */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Makefile.am; path = ../../../../ncl/branches/v2.2/ncl/Makefile.am; sourceTree = SOURCE_ROOT; };
+		7AB51C9810CDA26800A865FF /* ncl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ncl.h; path = ../../../../ncl/branches/v2.2/ncl/ncl.h; sourceTree = SOURCE_ROOT; };
+		7AB51C9910CDA26800A865FF /* nxsallocatematrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsallocatematrix.h; path = ../../../../ncl/branches/v2.2/ncl/nxsallocatematrix.h; sourceTree = SOURCE_ROOT; };
+		7AB51C9A10CDA26800A865FF /* nxsassumptionsblock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxsassumptionsblock.cpp; path = ../../../../ncl/branches/v2.2/ncl/nxsassumptionsblock.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51C9B10CDA26800A865FF /* nxsassumptionsblock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsassumptionsblock.h; path = ../../../../ncl/branches/v2.2/ncl/nxsassumptionsblock.h; sourceTree = SOURCE_ROOT; };
+		7AB51C9C10CDA26800A865FF /* nxsblock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxsblock.cpp; path = ../../../../ncl/branches/v2.2/ncl/nxsblock.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51C9D10CDA26800A865FF /* nxsblock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsblock.h; path = ../../../../ncl/branches/v2.2/ncl/nxsblock.h; sourceTree = SOURCE_ROOT; };
+		7AB51C9E10CDA26800A865FF /* nxscdiscretematrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxscdiscretematrix.h; path = ../../../../ncl/branches/v2.2/ncl/nxscdiscretematrix.h; sourceTree = SOURCE_ROOT; };
+		7AB51C9F10CDA26800A865FF /* nxscharactersblock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxscharactersblock.cpp; path = ../../../../ncl/branches/v2.2/ncl/nxscharactersblock.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51CA010CDA26800A865FF /* nxscharactersblock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxscharactersblock.h; path = ../../../../ncl/branches/v2.2/ncl/nxscharactersblock.h; sourceTree = SOURCE_ROOT; };
+		7AB51CA110CDA26800A865FF /* nxscxxdiscretematrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxscxxdiscretematrix.cpp; path = ../../../../ncl/branches/v2.2/ncl/nxscxxdiscretematrix.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51CA210CDA26800A865FF /* nxscxxdiscretematrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxscxxdiscretematrix.h; path = ../../../../ncl/branches/v2.2/ncl/nxscxxdiscretematrix.h; sourceTree = SOURCE_ROOT; };
+		7AB51CA310CDA26800A865FF /* nxsdatablock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxsdatablock.cpp; path = ../../../../ncl/branches/v2.2/ncl/nxsdatablock.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51CA410CDA26800A865FF /* nxsdatablock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsdatablock.h; path = ../../../../ncl/branches/v2.2/ncl/nxsdatablock.h; sourceTree = SOURCE_ROOT; };
+		7AB51CA510CDA26800A865FF /* nxsdefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsdefs.h; path = ../../../../ncl/branches/v2.2/ncl/nxsdefs.h; sourceTree = SOURCE_ROOT; };
+		7AB51CA610CDA26800A865FF /* nxsdiscretedatum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsdiscretedatum.h; path = ../../../../ncl/branches/v2.2/ncl/nxsdiscretedatum.h; sourceTree = SOURCE_ROOT; };
+		7AB51CA710CDA26800A865FF /* nxsdistancedatum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxsdistancedatum.cpp; path = ../../../../ncl/branches/v2.2/ncl/nxsdistancedatum.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51CA810CDA26800A865FF /* nxsdistancedatum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsdistancedatum.h; path = ../../../../ncl/branches/v2.2/ncl/nxsdistancedatum.h; sourceTree = SOURCE_ROOT; };
+		7AB51CA910CDA26800A865FF /* nxsdistancesblock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxsdistancesblock.cpp; path = ../../../../ncl/branches/v2.2/ncl/nxsdistancesblock.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51CAA10CDA26800A865FF /* nxsdistancesblock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsdistancesblock.h; path = ../../../../ncl/branches/v2.2/ncl/nxsdistancesblock.h; sourceTree = SOURCE_ROOT; };
+		7AB51CAB10CDA26800A865FF /* nxsemptyblock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxsemptyblock.cpp; path = ../../../../ncl/branches/v2.2/ncl/nxsemptyblock.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51CAC10CDA26800A865FF /* nxsemptyblock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsemptyblock.h; path = ../../../../ncl/branches/v2.2/ncl/nxsemptyblock.h; sourceTree = SOURCE_ROOT; };
+		7AB51CAD10CDA26800A865FF /* nxsexception.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxsexception.cpp; path = ../../../../ncl/branches/v2.2/ncl/nxsexception.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51CAE10CDA26800A865FF /* nxsexception.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsexception.h; path = ../../../../ncl/branches/v2.2/ncl/nxsexception.h; sourceTree = SOURCE_ROOT; };
+		7AB51CAF10CDA26800A865FF /* nxsmultiformat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxsmultiformat.cpp; path = ../../../../ncl/branches/v2.2/ncl/nxsmultiformat.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51CB010CDA26800A865FF /* nxsmultiformat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsmultiformat.h; path = ../../../../ncl/branches/v2.2/ncl/nxsmultiformat.h; sourceTree = SOURCE_ROOT; };
+		7AB51CB110CDA26800A865FF /* nxspublicblocks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxspublicblocks.cpp; path = ../../../../ncl/branches/v2.2/ncl/nxspublicblocks.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51CB210CDA26800A865FF /* nxspublicblocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxspublicblocks.h; path = ../../../../ncl/branches/v2.2/ncl/nxspublicblocks.h; sourceTree = SOURCE_ROOT; };
+		7AB51CB310CDA26800A865FF /* nxsreader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxsreader.cpp; path = ../../../../ncl/branches/v2.2/ncl/nxsreader.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51CB410CDA26800A865FF /* nxsreader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsreader.h; path = ../../../../ncl/branches/v2.2/ncl/nxsreader.h; sourceTree = SOURCE_ROOT; };
+		7AB51CB510CDA26800A865FF /* nxssetreader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxssetreader.cpp; path = ../../../../ncl/branches/v2.2/ncl/nxssetreader.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51CB610CDA26800A865FF /* nxssetreader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxssetreader.h; path = ../../../../ncl/branches/v2.2/ncl/nxssetreader.h; sourceTree = SOURCE_ROOT; };
+		7AB51CB710CDA26800A865FF /* nxsstring.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxsstring.cpp; path = ../../../../ncl/branches/v2.2/ncl/nxsstring.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51CB810CDA26800A865FF /* nxsstring.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsstring.h; path = ../../../../ncl/branches/v2.2/ncl/nxsstring.h; sourceTree = SOURCE_ROOT; };
+		7AB51CB910CDA26800A865FF /* nxstaxablock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxstaxablock.cpp; path = ../../../../ncl/branches/v2.2/ncl/nxstaxablock.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51CBA10CDA26800A865FF /* nxstaxablock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxstaxablock.h; path = ../../../../ncl/branches/v2.2/ncl/nxstaxablock.h; sourceTree = SOURCE_ROOT; };
+		7AB51CBB10CDA26800A865FF /* nxstoken.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxstoken.cpp; path = ../../../../ncl/branches/v2.2/ncl/nxstoken.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51CBC10CDA26800A865FF /* nxstoken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxstoken.h; path = ../../../../ncl/branches/v2.2/ncl/nxstoken.h; sourceTree = SOURCE_ROOT; };
+		7AB51CBD10CDA26800A865FF /* nxstreesblock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxstreesblock.cpp; path = ../../../../ncl/branches/v2.2/ncl/nxstreesblock.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51CBE10CDA26800A865FF /* nxstreesblock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxstreesblock.h; path = ../../../../ncl/branches/v2.2/ncl/nxstreesblock.h; sourceTree = SOURCE_ROOT; };
+		7AB51CBF10CDA26800A865FF /* nxstreestream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxstreestream.cpp; path = ../../../../ncl/branches/v2.2/ncl/nxstreestream.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51CC010CDA26800A865FF /* nxstreestream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxstreestream.h; path = ../../../../ncl/branches/v2.2/ncl/nxstreestream.h; sourceTree = SOURCE_ROOT; };
+		7AB51CC110CDA26800A865FF /* nxsunalignedblock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxsunalignedblock.cpp; path = ../../../../ncl/branches/v2.2/ncl/nxsunalignedblock.cpp; sourceTree = SOURCE_ROOT; };
+		7AB51CC210CDA26800A865FF /* nxsunalignedblock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsunalignedblock.h; path = ../../../../ncl/branches/v2.2/ncl/nxsunalignedblock.h; sourceTree = SOURCE_ROOT; };
+		7AB51CC310CDA26800A865FF /* nxsutilcopy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsutilcopy.h; path = ../../../../ncl/branches/v2.2/ncl/nxsutilcopy.h; sourceTree = SOURCE_ROOT; };
+		7AB51CE010CDA39200A865FF /* libncl.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libncl.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		7AB51E8F10CDF4C600A865FF /* libpython2.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpython2.6.dylib; path = ../../../../../../pydebug/lib/libpython2.6.dylib; sourceTree = SOURCE_ROOT; };
 		D2AAC09D05546B4700DB518D /* _ConversionsExt.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = _ConversionsExt.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -440,7 +614,7 @@
 			files = (
 				7A98F30610CD4FDD001E79F7 /* libboost_python.dylib in Frameworks */,
 				7A98F27910CD3C22001E79F7 /* libncl.dylib in Frameworks */,
-				7A98F27810CD3C22001E79F7 /* Python.framework in Frameworks */,
+				7AB51E9110CDF4C600A865FF /* libpython2.6.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -450,7 +624,7 @@
 			files = (
 				7A98F34210CD533E001E79F7 /* libboost_python.dylib in Frameworks */,
 				7A98F31210CD5025001E79F7 /* libncl.dylib in Frameworks */,
-				7A98F31110CD5025001E79F7 /* Python.framework in Frameworks */,
+				7AB51E9410CDF4C600A865FF /* libpython2.6.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -460,7 +634,7 @@
 			files = (
 				7A98F44810CD5B25001E79F7 /* libboost_python.dylib in Frameworks */,
 				7A98F45210CD5B90001E79F7 /* libncl.dylib in Frameworks */,
-				7A98F39010CD5730001E79F7 /* Python.framework in Frameworks */,
+				7AB51E9210CDF4C600A865FF /* libpython2.6.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -470,7 +644,7 @@
 			files = (
 				7A98F51F10CD62EF001E79F7 /* libboost_python.dylib in Frameworks */,
 				7A98F52010CD62EF001E79F7 /* libncl.dylib in Frameworks */,
-				7A98F52110CD62EF001E79F7 /* Python.framework in Frameworks */,
+				7AB51E9310CDF4C600A865FF /* libpython2.6.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -480,7 +654,22 @@
 			files = (
 				7A98F56710CD6484001E79F7 /* libboost_python.dylib in Frameworks */,
 				7A98F56810CD6484001E79F7 /* libncl.dylib in Frameworks */,
-				7A98F56910CD6484001E79F7 /* Python.framework in Frameworks */,
+				7AB51E9510CDF4C600A865FF /* libpython2.6.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7AB51C4810CD9D5700A865FF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7AB51E9610CDF4C600A865FF /* libpython2.6.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7AB51CDE10CDA39200A865FF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -488,9 +677,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7A98EBF410CD37FE001E79F7 /* libboost_python.dylib in Frameworks */,
-				7A98F26D10CD3BD3001E79F7 /* libncl.dylib in Frameworks */,
-				7A98F26510CD38C2001E79F7 /* Python.framework in Frameworks */,
+				7AB51CD910CDA37700A865FF /* libboost_python.dylib in Frameworks */,
+				7AB51CDA10CDA37700A865FF /* libncl.dylib in Frameworks */,
+				7AB51E9010CDF4C600A865FF /* libpython2.6.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -506,6 +695,8 @@
 				7A98F39610CD5730001E79F7 /* _LikelihoodExt.dylib */,
 				7A98F52610CD62EF001E79F7 /* _PhylogenyExt.dylib */,
 				7A98F56E10CD6484001E79F7 /* _ReadNexusExt.dylib */,
+				7AB51C4A10CD9D5700A865FF /* libboost_python.dylib */,
+				7AB51CE010CDA39200A865FF /* libncl.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -516,6 +707,8 @@
 				5073E0CA09E734BC00EC74B6 /* Configuration Files */,
 				7A98F5F110CD6D69001E79F7 /* Python source */,
 				08FB77ACFE841707C02AAC07 /* C++ Source */,
+				7AB51C9610CDA1A600A865FF /* NCL source */,
+				7AB51C0710CD9C1800A865FF /* Boost Python source */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
 				034768DDFF38A45A11DB9C8B /* Products */,
 			);
@@ -527,7 +720,7 @@
 			children = (
 				7A98EBF310CD37FE001E79F7 /* libboost_python.dylib */,
 				7A98F26C10CD3BD3001E79F7 /* libncl.dylib */,
-				7A98F26410CD38C2001E79F7 /* Python.framework */,
+				7AB51E8F10CDF4C600A865FF /* libpython2.6.dylib */,
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";
@@ -885,7 +1078,129 @@
 			name = Utilities;
 			sourceTree = "<group>";
 		};
+		7AB51C0710CD9C1800A865FF /* Boost Python source */ = {
+			isa = PBXGroup;
+			children = (
+				7AB51C0810CD9CE100A865FF /* converter */,
+				7AB51C0E10CD9CE100A865FF /* dict.cpp */,
+				7AB51C0F10CD9CE100A865FF /* errors.cpp */,
+				7AB51C1010CD9CE100A865FF /* exec.cpp */,
+				7AB51C1110CD9CE100A865FF /* import.cpp */,
+				7AB51C1210CD9CE100A865FF /* list.cpp */,
+				7AB51C1310CD9CE100A865FF /* long.cpp */,
+				7AB51C1410CD9CE100A865FF /* module.cpp */,
+				7AB51C1510CD9CE100A865FF /* numeric.cpp */,
+				7AB51C1610CD9CE100A865FF /* object */,
+				7AB51C2010CD9CE100A865FF /* object_operators.cpp */,
+				7AB51C2110CD9CE100A865FF /* object_protocol.cpp */,
+				7AB51C2210CD9CE100A865FF /* slice.cpp */,
+				7AB51C2310CD9CE100A865FF /* str.cpp */,
+				7AB51C2410CD9CE100A865FF /* tuple.cpp */,
+				7AB51C2510CD9CE100A865FF /* wrapper.cpp */,
+			);
+			name = "Boost Python source";
+			sourceTree = "<group>";
+		};
+		7AB51C0810CD9CE100A865FF /* converter */ = {
+			isa = PBXGroup;
+			children = (
+				7AB51C0910CD9CE100A865FF /* arg_to_python_base.cpp */,
+				7AB51C0A10CD9CE100A865FF /* builtin_converters.cpp */,
+				7AB51C0B10CD9CE100A865FF /* from_python.cpp */,
+				7AB51C0C10CD9CE100A865FF /* registry.cpp */,
+				7AB51C0D10CD9CE100A865FF /* type_id.cpp */,
+			);
+			name = converter;
+			path = ../../../../../../tools/boost_1_41_0/libs/python/src/converter;
+			sourceTree = SOURCE_ROOT;
+		};
+		7AB51C1610CD9CE100A865FF /* object */ = {
+			isa = PBXGroup;
+			children = (
+				7AB51C1710CD9CE100A865FF /* class.cpp */,
+				7AB51C1810CD9CE100A865FF /* enum.cpp */,
+				7AB51C1910CD9CE100A865FF /* function.cpp */,
+				7AB51C1A10CD9CE100A865FF /* function_doc_signature.cpp */,
+				7AB51C1B10CD9CE100A865FF /* inheritance.cpp */,
+				7AB51C1C10CD9CE100A865FF /* iterator.cpp */,
+				7AB51C1D10CD9CE100A865FF /* life_support.cpp */,
+				7AB51C1E10CD9CE100A865FF /* pickle_support.cpp */,
+				7AB51C1F10CD9CE100A865FF /* stl_iterator.cpp */,
+			);
+			name = object;
+			path = ../../../../../../tools/boost_1_41_0/libs/python/src/object;
+			sourceTree = SOURCE_ROOT;
+		};
+		7AB51C9610CDA1A600A865FF /* NCL source */ = {
+			isa = PBXGroup;
+			children = (
+				7AB51C9710CDA26800A865FF /* Makefile.am */,
+				7AB51C9810CDA26800A865FF /* ncl.h */,
+				7AB51C9910CDA26800A865FF /* nxsallocatematrix.h */,
+				7AB51C9A10CDA26800A865FF /* nxsassumptionsblock.cpp */,
+				7AB51C9B10CDA26800A865FF /* nxsassumptionsblock.h */,
+				7AB51C9C10CDA26800A865FF /* nxsblock.cpp */,
+				7AB51C9D10CDA26800A865FF /* nxsblock.h */,
+				7AB51C9E10CDA26800A865FF /* nxscdiscretematrix.h */,
+				7AB51C9F10CDA26800A865FF /* nxscharactersblock.cpp */,
+				7AB51CA010CDA26800A865FF /* nxscharactersblock.h */,
+				7AB51CA110CDA26800A865FF /* nxscxxdiscretematrix.cpp */,
+				7AB51CA210CDA26800A865FF /* nxscxxdiscretematrix.h */,
+				7AB51CA310CDA26800A865FF /* nxsdatablock.cpp */,
+				7AB51CA410CDA26800A865FF /* nxsdatablock.h */,
+				7AB51CA510CDA26800A865FF /* nxsdefs.h */,
+				7AB51CA610CDA26800A865FF /* nxsdiscretedatum.h */,
+				7AB51CA710CDA26800A865FF /* nxsdistancedatum.cpp */,
+				7AB51CA810CDA26800A865FF /* nxsdistancedatum.h */,
+				7AB51CA910CDA26800A865FF /* nxsdistancesblock.cpp */,
+				7AB51CAA10CDA26800A865FF /* nxsdistancesblock.h */,
+				7AB51CAB10CDA26800A865FF /* nxsemptyblock.cpp */,
+				7AB51CAC10CDA26800A865FF /* nxsemptyblock.h */,
+				7AB51CAD10CDA26800A865FF /* nxsexception.cpp */,
+				7AB51CAE10CDA26800A865FF /* nxsexception.h */,
+				7AB51CAF10CDA26800A865FF /* nxsmultiformat.cpp */,
+				7AB51CB010CDA26800A865FF /* nxsmultiformat.h */,
+				7AB51CB110CDA26800A865FF /* nxspublicblocks.cpp */,
+				7AB51CB210CDA26800A865FF /* nxspublicblocks.h */,
+				7AB51CB310CDA26800A865FF /* nxsreader.cpp */,
+				7AB51CB410CDA26800A865FF /* nxsreader.h */,
+				7AB51CB510CDA26800A865FF /* nxssetreader.cpp */,
+				7AB51CB610CDA26800A865FF /* nxssetreader.h */,
+				7AB51CB710CDA26800A865FF /* nxsstring.cpp */,
+				7AB51CB810CDA26800A865FF /* nxsstring.h */,
+				7AB51CB910CDA26800A865FF /* nxstaxablock.cpp */,
+				7AB51CBA10CDA26800A865FF /* nxstaxablock.h */,
+				7AB51CBB10CDA26800A865FF /* nxstoken.cpp */,
+				7AB51CBC10CDA26800A865FF /* nxstoken.h */,
+				7AB51CBD10CDA26800A865FF /* nxstreesblock.cpp */,
+				7AB51CBE10CDA26800A865FF /* nxstreesblock.h */,
+				7AB51CBF10CDA26800A865FF /* nxstreestream.cpp */,
+				7AB51CC010CDA26800A865FF /* nxstreestream.h */,
+				7AB51CC110CDA26800A865FF /* nxsunalignedblock.cpp */,
+				7AB51CC210CDA26800A865FF /* nxsunalignedblock.h */,
+				7AB51CC310CDA26800A865FF /* nxsutilcopy.h */,
+			);
+			name = "NCL source";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		7AB51C4610CD9D5700A865FF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7AB51CDC10CDA39200A865FF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
 		7A98F27010CD3C22001E79F7 /* DataMatrix */ = {
@@ -973,6 +1288,42 @@
 			productReference = 7A98F56E10CD6484001E79F7 /* _ReadNexusExt.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		7AB51C4910CD9D5700A865FF /* BoostPython */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7AB51C7010CD9DBD00A865FF /* Build configuration list for PBXNativeTarget "BoostPython" */;
+			buildPhases = (
+				7AB51C4610CD9D5700A865FF /* Headers */,
+				7AB51C4710CD9D5700A865FF /* Sources */,
+				7AB51C4810CD9D5700A865FF /* Frameworks */,
+				7AB51C7510CD9F5000A865FF /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BoostPython;
+			productName = LocalBoost;
+			productReference = 7AB51C4A10CD9D5700A865FF /* libboost_python.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		7AB51CDF10CDA39200A865FF /* NCL */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7AB51CE310CDA3B100A865FF /* Build configuration list for PBXNativeTarget "NCL" */;
+			buildPhases = (
+				7AB51CDC10CDA39200A865FF /* Headers */,
+				7AB51CDD10CDA39200A865FF /* Sources */,
+				7AB51CDE10CDA39200A865FF /* Frameworks */,
+				7AB51D2A10CDA57E00A865FF /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NCL;
+			productName = NCL;
+			productReference = 7AB51CE010CDA39200A865FF /* libncl.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		D2AAC09C05546B4700DB518D /* Conversions */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1DEB916008733D950010E9CD /* Build configuration list for PBXNativeTarget "Conversions" */;
@@ -1003,6 +1354,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				7AB51D6C10CDADC700A865FF /* Everything */,
+				7AB51D5510CDA72D00A865FF /* All_Libraries */,
 				7A98F74C10CD7D1A001E79F7 /* All_Extensions */,
 				D2AAC09C05546B4700DB518D /* Conversions */,
 				7A98F27010CD3C22001E79F7 /* DataMatrix */,
@@ -1010,6 +1363,8 @@
 				7A98F51A10CD62EF001E79F7 /* Phylogeny */,
 				7A98F30B10CD5025001E79F7 /* ProbDist */,
 				7A98F56210CD6484001E79F7 /* ReadNexus */,
+				7AB51C4910CD9D5700A865FF /* BoostPython */,
+				7AB51CDF10CDA39200A865FF /* NCL */,
 			);
 		};
 /* End PBXProject section */
@@ -1092,6 +1447,32 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "/usr/bin/python $PHYCAS_ROOT/XCode/copy_dylib.py";
+		};
+		7AB51C7510CD9F5000A865FF /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp $TARGET_BUILD_DIR/lib$PRODUCT_NAME.dylib $PHYCAS_ROOT/phycas/Conversions";
+		};
+		7AB51D2A10CDA57E00A865FF /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp $TARGET_BUILD_DIR/lib$PRODUCT_NAME.dylib $PHYCAS_ROOT/phycas/Conversions";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1226,6 +1607,66 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7AB51C4710CD9D5700A865FF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7AB51C4D10CD9D7500A865FF /* numeric.cpp in Sources */,
+				7AB51C4E10CD9D7600A865FF /* long.cpp in Sources */,
+				7AB51C4F10CD9D7700A865FF /* function.cpp in Sources */,
+				7AB51C5010CD9D7700A865FF /* errors.cpp in Sources */,
+				7AB51C5110CD9D7800A865FF /* builtin_converters.cpp in Sources */,
+				7AB51C5210CD9D7900A865FF /* import.cpp in Sources */,
+				7AB51C5310CD9D7900A865FF /* function_doc_signature.cpp in Sources */,
+				7AB51C5410CD9D7A00A865FF /* pickle_support.cpp in Sources */,
+				7AB51C5510CD9D7B00A865FF /* object_protocol.cpp in Sources */,
+				7AB51C5610CD9D7C00A865FF /* arg_to_python_base.cpp in Sources */,
+				7AB51C5710CD9D7C00A865FF /* inheritance.cpp in Sources */,
+				7AB51C5810CD9D7D00A865FF /* type_id.cpp in Sources */,
+				7AB51C5910CD9D7D00A865FF /* wrapper.cpp in Sources */,
+				7AB51C5A10CD9D7E00A865FF /* tuple.cpp in Sources */,
+				7AB51C5B10CD9D7E00A865FF /* stl_iterator.cpp in Sources */,
+				7AB51C5C10CD9D7F00A865FF /* iterator.cpp in Sources */,
+				7AB51C5D10CD9D8100A865FF /* str.cpp in Sources */,
+				7AB51C5E10CD9D8200A865FF /* list.cpp in Sources */,
+				7AB51C5F10CD9D8200A865FF /* module.cpp in Sources */,
+				7AB51C6010CD9D8300A865FF /* enum.cpp in Sources */,
+				7AB51C6110CD9D8400A865FF /* registry.cpp in Sources */,
+				7AB51C6210CD9D8400A865FF /* slice.cpp in Sources */,
+				7AB51C6310CD9D8500A865FF /* life_support.cpp in Sources */,
+				7AB51C6410CD9D8700A865FF /* dict.cpp in Sources */,
+				7AB51C6510CD9D8700A865FF /* object_operators.cpp in Sources */,
+				7AB51C6610CD9D8800A865FF /* exec.cpp in Sources */,
+				7AB51C6710CD9D8800A865FF /* from_python.cpp in Sources */,
+				7AB51C6810CD9D8900A865FF /* class.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7AB51CDD10CDA39200A865FF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7AB51CE810CDA3B200A865FF /* nxscxxdiscretematrix.cpp in Sources */,
+				7AB51CEC10CDA3B200A865FF /* nxsdatablock.cpp in Sources */,
+				7AB51CED10CDA3B200A865FF /* nxsunalignedblock.cpp in Sources */,
+				7AB51CEF10CDA3B200A865FF /* nxsreader.cpp in Sources */,
+				7AB51CF110CDA3B200A865FF /* nxstaxablock.cpp in Sources */,
+				7AB51CF410CDA3B200A865FF /* nxsblock.cpp in Sources */,
+				7AB51CF610CDA3B200A865FF /* nxspublicblocks.cpp in Sources */,
+				7AB51CF710CDA3B200A865FF /* nxsassumptionsblock.cpp in Sources */,
+				7AB51CFE10CDA3B200A865FF /* nxstreesblock.cpp in Sources */,
+				7AB51D0210CDA3B200A865FF /* nxstoken.cpp in Sources */,
+				7AB51D0410CDA3B200A865FF /* nxscharactersblock.cpp in Sources */,
+				7AB51D0810CDA3B200A865FF /* nxsstring.cpp in Sources */,
+				7AB51D0A10CDA3B200A865FF /* nxstreestream.cpp in Sources */,
+				7AB51D0B10CDA3B200A865FF /* nxssetreader.cpp in Sources */,
+				7AB51D0C10CDA3B200A865FF /* nxsdistancedatum.cpp in Sources */,
+				7AB51D0D10CDA3B200A865FF /* nxsmultiformat.cpp in Sources */,
+				7AB51D0E10CDA3B200A865FF /* nxsexception.cpp in Sources */,
+				7AB51D0F10CDA3B200A865FF /* nxsdistancesblock.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D2AAC09A05546B4700DB518D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1272,6 +1713,26 @@
 			target = 7A98F56210CD6484001E79F7 /* ReadNexus */;
 			targetProxy = 7A98F75A10CD7D3A001E79F7 /* PBXContainerItemProxy */;
 		};
+		7AB51D5910CDA74900A865FF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7AB51C4910CD9D5700A865FF /* BoostPython */;
+			targetProxy = 7AB51D5810CDA74900A865FF /* PBXContainerItemProxy */;
+		};
+		7AB51D5B10CDA75000A865FF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7AB51CDF10CDA39200A865FF /* NCL */;
+			targetProxy = 7AB51D5A10CDA75000A865FF /* PBXContainerItemProxy */;
+		};
+		7AB51D7010CDADDF00A865FF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7A98F74C10CD7D1A001E79F7 /* All_Extensions */;
+			targetProxy = 7AB51D6F10CDADDF00A865FF /* PBXContainerItemProxy */;
+		};
+		7AB51D7210CDADE300A865FF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7AB51D5510CDA72D00A865FF /* All_Libraries */;
+			targetProxy = 7AB51D7110CDADE300A865FF /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
@@ -1288,6 +1749,7 @@
 					"\"$(SRCROOT)/../../phycas/Phylogeny\"",
 					"\"$(SRCROOT)/../../phycas/ProbDist\"",
 					"\"$(SRCROOT)/../../phycas/ReadNexus\"",
+					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
 				);
 				PRODUCT_NAME = _ConversionsExt;
 			};
@@ -1306,6 +1768,7 @@
 					"\"$(SRCROOT)/../../phycas/Phylogeny\"",
 					"\"$(SRCROOT)/../../phycas/ProbDist\"",
 					"\"$(SRCROOT)/../../phycas/ReadNexus\"",
+					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
 				);
 				PRODUCT_NAME = _ConversionsExt;
 			};
@@ -1324,7 +1787,10 @@
 					"$(NCL_ROOT)",
 					"$(BOOST_ROOT)",
 				);
-				LIBRARY_SEARCH_PATHS = "\"$(PHYCAS_ROOT)/phycas/Conversions\"";
+				LIBRARY_SEARCH_PATHS = (
+					"$(PYTHON_ROOT)",
+					"\"$(PHYCAS_ROOT)/phycas/Conversions\"",
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
 				SDKROOT = macosx10.6;
@@ -1344,7 +1810,10 @@
 					"$(NCL_ROOT)",
 					"$(BOOST_ROOT)",
 				);
-				LIBRARY_SEARCH_PATHS = "\"$(PHYCAS_ROOT)/phycas/Conversions\"";
+				LIBRARY_SEARCH_PATHS = (
+					"$(PYTHON_ROOT)",
+					"\"$(PHYCAS_ROOT)/phycas/Conversions\"",
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
 				SDKROOT = macosx10.6;
@@ -1357,6 +1826,10 @@
 			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
 			buildSettings = {
 				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
+				);
 				PRODUCT_NAME = _DataMatrixExt;
 			};
 			name = Debug;
@@ -1366,6 +1839,10 @@
 			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
 			buildSettings = {
 				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
+				);
 				PRODUCT_NAME = _DataMatrixExt;
 			};
 			name = Release;
@@ -1375,6 +1852,10 @@
 			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
 			buildSettings = {
 				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
+				);
 				PRODUCT_NAME = _ProbDistExt;
 			};
 			name = Debug;
@@ -1384,6 +1865,10 @@
 			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
 			buildSettings = {
 				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
+				);
 				PRODUCT_NAME = _ProbDistExt;
 			};
 			name = Release;
@@ -1393,6 +1878,10 @@
 			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
 			buildSettings = {
 				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
+				);
 				PRODUCT_NAME = _LikelihoodExt;
 			};
 			name = Debug;
@@ -1402,6 +1891,10 @@
 			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
 			buildSettings = {
 				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
+				);
 				PRODUCT_NAME = _LikelihoodExt;
 			};
 			name = Release;
@@ -1411,6 +1904,10 @@
 			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
 			buildSettings = {
 				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
+				);
 				PRODUCT_NAME = _PhylogenyExt;
 			};
 			name = Debug;
@@ -1420,6 +1917,10 @@
 			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
 			buildSettings = {
 				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
+				);
 				PRODUCT_NAME = _PhylogenyExt;
 			};
 			name = Release;
@@ -1429,6 +1930,10 @@
 			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
 			buildSettings = {
 				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
+				);
 				PRODUCT_NAME = _ReadNexusExt;
 			};
 			name = Debug;
@@ -1438,6 +1943,10 @@
 			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
 			buildSettings = {
 				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
+				);
 				PRODUCT_NAME = _ReadNexusExt;
 			};
 			name = Release;
@@ -1459,6 +1968,120 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				PRODUCT_NAME = All_Extensions;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		7AB51C4B10CD9D5800A865FF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = boost_python;
+			};
+			name = Debug;
+		};
+		7AB51C4C10CD9D5800A865FF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_PREFIX = lib;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = boost_python;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		7AB51CE110CDA39300A865FF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/lib;
+				PREBINDING = NO;
+				PRODUCT_NAME = ncl;
+			};
+			name = Debug;
+		};
+		7AB51CE210CDA39300A865FF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_PREFIX = lib;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/lib;
+				PREBINDING = NO;
+				PRODUCT_NAME = ncl;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		7AB51D5610CDA72D00A865FF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = All_Libraries;
+			};
+			name = Debug;
+		};
+		7AB51D5710CDA72D00A865FF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = All_Libraries;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		7AB51D6D10CDADC800A865FF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = Everything;
+			};
+			name = Debug;
+		};
+		7AB51D6E10CDADC800A865FF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = Everything;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -1534,6 +2157,42 @@
 			buildConfigurations = (
 				7A98F74D10CD7D1A001E79F7 /* Debug */,
 				7A98F74E10CD7D1A001E79F7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7AB51C7010CD9DBD00A865FF /* Build configuration list for PBXNativeTarget "BoostPython" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7AB51C4B10CD9D5800A865FF /* Debug */,
+				7AB51C4C10CD9D5800A865FF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7AB51CE310CDA3B100A865FF /* Build configuration list for PBXNativeTarget "NCL" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7AB51CE110CDA39300A865FF /* Debug */,
+				7AB51CE210CDA39300A865FF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7AB51D5E10CDA7A200A865FF /* Build configuration list for PBXAggregateTarget "All_Libraries" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7AB51D5610CDA72D00A865FF /* Debug */,
+				7AB51D5710CDA72D00A865FF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7AB51D7B10CDAE0400A865FF /* Build configuration list for PBXAggregateTarget "Everything" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7AB51D6D10CDADC800A865FF /* Debug */,
+				7AB51D6E10CDADC800A865FF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

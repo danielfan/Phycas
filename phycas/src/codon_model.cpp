@@ -28,7 +28,7 @@
 using std::cout;
 using namespace phycas;
 
-static char * codon_code_to_triplet[] =
+static const char * codon_code_to_triplet[] =
 	{
 	"AAA",
 	"AAC",
@@ -254,7 +254,7 @@ Codon::Codon()
 	{
 	is_codon_model = true;
 	state_repr.reserve(64);
-	char * bases[] = {"A", "C", "G", "T"};
+	const char * bases[] = {"A", "C", "G", "T"};
 	for (unsigned i = 0; i < 4; ++i)
 		{
 		for (unsigned j = 0; j < 4; ++j)

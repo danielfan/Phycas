@@ -2,6 +2,7 @@ import sys
 from phycas import *
 
 if __name__ == '__main__':
+	raw_input("HERE WE GO")
 	#filename = getPhycasTestData('green.nex')
 	#filename = 'test.nex'
 	filename = 'junk.nex'
