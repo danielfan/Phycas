@@ -603,7 +603,7 @@
 		7AB51CC210CDA26800A865FF /* nxsunalignedblock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsunalignedblock.h; path = ../../../../ncl/branches/v2.2/ncl/nxsunalignedblock.h; sourceTree = SOURCE_ROOT; };
 		7AB51CC310CDA26800A865FF /* nxsutilcopy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsutilcopy.h; path = ../../../../ncl/branches/v2.2/ncl/nxsutilcopy.h; sourceTree = SOURCE_ROOT; };
 		7AB51CE010CDA39200A865FF /* libncl.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libncl.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		7AB51E8F10CDF4C600A865FF /* libpython2.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpython2.6.dylib; path = ../../../../../../pydebug/lib/libpython2.6.dylib; sourceTree = SOURCE_ROOT; };
+		7AB51E8F10CDF4C600A865FF /* libpython2.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpython2.6.dylib; path = lib/libpython2.6.dylib; sourceTree = PYTHON_ROOT; };
 		D2AAC09D05546B4700DB518D /* _ConversionsExt.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = _ConversionsExt.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -1789,7 +1789,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(PYTHON_ROOT)",
-					"\"$(PHYCAS_ROOT)/phycas/Conversions\"",
+					"$(PHYCAS_ROOT)/phycas/Conversions",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
@@ -1812,7 +1812,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(PYTHON_ROOT)",
-					"\"$(PHYCAS_ROOT)/phycas/Conversions\"",
+					"$(PHYCAS_ROOT)/phycas/Conversions",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
