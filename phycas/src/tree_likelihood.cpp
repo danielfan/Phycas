@@ -2564,6 +2564,10 @@ double TreeLikelihood::calcLnL(
 	if (no_data)
 		return 0.0;
 
+//@TEMP force crash to test entry into debugger
+//char*p=NULL;
+//*p='a';
+
 	// The variable nevals keeps track of the number of times the likelihood has been calculated
 	// You can reset this value to 0 using resetNumLikelihoodEvals()
 	incrementNumLikelihoodEvals();
