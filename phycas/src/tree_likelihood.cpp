@@ -3921,8 +3921,13 @@ void TreeLikelihood::prepareForLikelihood( //POL_BOOKMARK TreeLikelihood::prepar
 	// Put all existing conditional likelihood arrays already back into storage
 	//storeAllCLAs(t);	//@POL why are these two lines commented out? Seems like a good idea to clear the cla stack at this point.
 	//cla_pool->clearStack();	//@POL this here only because prepareForLikelihood called in NCatMove::proposeNewState when ncat is increased
+	
+	preorder_iterator nd = t->begin();
+	
+	if (t->IsRooted())		//skip artificial root node for rooted trees
+		++nd;
 
-	for (preorder_iterator nd = t->begin(); nd != t->end(); ++nd)
+	for ( ; nd != t->end(); ++nd)
 		{
 		if (nd->IsTip())
 			{
