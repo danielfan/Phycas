@@ -35,6 +35,10 @@
 #include "phycas/src/edge_endpoints.hpp"
 #include <numeric>
 
+//for XCode debugging:
+#include <CoreServices/CoreServices.h>
+#undef check	// defined somewhere due to above include
+
 #include <iostream>
 using std::cerr;
 using std::endl;
@@ -1738,6 +1742,9 @@ double TreeLikelihood::harvestLnLFromValidNode(
     unsigned nr = num_rates;
     unsigned np = num_patterns;
     
+	printf("in harvestLnLFromValidNode\n");//temp
+	DebugStr("\pin harvestLnLFromValidNode 2");//temp
+	
     // Create convenience variables focalNode, focalNeighbor, actualChild, focalEdgeLen, focalCondLike, focalNodeCLA,
     // and singleRateCLALength
     PHYCAS_ASSERT(focalNode->IsInternal());
@@ -1780,7 +1787,7 @@ double TreeLikelihood::harvestLnLFromValidNode(
 			const double * focalNdCLAPtr_r = focalNdCLAPtr[r];
 			double siteLike_r = 0.0;	
 			for (unsigned i = 0; i < ns; ++i)
-				siteLike_r += focalNdCLAPtr_r[i];
+				siteLike_r += focalNdCLAPtr_r[i]*stateFreq[i];
 			siteLike += rateCatProbArray[r]*siteLike_r;
 			focalNdCLAPtr[r] += ns;
 			}

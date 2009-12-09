@@ -1408,6 +1408,7 @@ void TreeLikelihood::refreshCLA(
 	if (nd.IsTip())
 		return;
 		
+printf("ENTERING refreshCLA with nd=%d avoid=%d\n", nd.GetNodeNumber(), (avoid==NULL) ? - 1 : avoid->GetNodeNumber());
 #if POLPY_NEWWAY
     unsigned num_subsets = partition_model->getNumSubsets();
 #endif

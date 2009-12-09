@@ -56,6 +56,7 @@
 		7A09470810CAF12900CEFDE0 /* basic_tree_node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945B510CAEFB900CEFDE0 /* basic_tree_node.cpp */; };
 		7A09470F10CAF13B00CEFDE0 /* split.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09462210CAEFB900CEFDE0 /* split.cpp */; };
 		7A09471310CAF14300CEFDE0 /* phycas_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09460C10CAEFB900CEFDE0 /* phycas_string.cpp */; };
+		7A22C1EA10CEEBB70043120B /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A22C13010CEEB8B0043120B /* CoreServices.framework */; };
 		7A98F27910CD3C22001E79F7 /* libncl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26C10CD3BD3001E79F7 /* libncl.dylib */; };
 		7A98F27C10CD3C22001E79F7 /* boost_assertion_failed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945BB10CAEFB900CEFDE0 /* boost_assertion_failed.cpp */; };
 		7A98F28A10CD3C78001E79F7 /* data_matrix_pymod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945C910CAEFB900CEFDE0 /* data_matrix_pymod.cpp */; };
@@ -475,6 +476,7 @@
 		7A09466610CAEFB900CEFDE0 /* xphycas.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = xphycas.hpp; path = ../../phycas/src/xphycas.hpp; sourceTree = SOURCE_ROOT; };
 		7A09466710CAEFB900CEFDE0 /* xphylogeny.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = xphylogeny.hpp; path = ../../phycas/src/xphylogeny.hpp; sourceTree = SOURCE_ROOT; };
 		7A09466810CAEFB900CEFDE0 /* xprobdist.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = xprobdist.hpp; path = ../../phycas/src/xprobdist.hpp; sourceTree = SOURCE_ROOT; };
+		7A22C13010CEEB8B0043120B /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		7A98EBF310CD37FE001E79F7 /* libboost_python.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_python.dylib; path = phycas/Conversions/libboost_python.dylib; sourceTree = PHYCAS_ROOT; };
 		7A98F26C10CD3BD3001E79F7 /* libncl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libncl.dylib; path = phycas/Conversions/libncl.dylib; sourceTree = PHYCAS_ROOT; };
 		7A98F28410CD3C22001E79F7 /* _DataMatrixExt.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = _DataMatrixExt.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -632,6 +634,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7A22C1EA10CEEBB70043120B /* CoreServices.framework in Frameworks */,
 				7A98F44810CD5B25001E79F7 /* libboost_python.dylib in Frameworks */,
 				7A98F45210CD5B90001E79F7 /* libncl.dylib in Frameworks */,
 				7AC2D53510CEE35D002FAA70 /* libpython2.6.dylib in Frameworks */,
@@ -718,6 +721,7 @@
 		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				7A22C13010CEEB8B0043120B /* CoreServices.framework */,
 				7AC2D53110CEE35D002FAA70 /* libpython2.6.dylib */,
 				7A98EBF310CD37FE001E79F7 /* libboost_python.dylib */,
 				7A98F26C10CD3BD3001E79F7 /* libncl.dylib */,

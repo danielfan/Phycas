@@ -2,7 +2,7 @@ import sys
 from phycas import *
 
 if __name__ == '__main__':
-	raw_input("HERE WE GO")
+	#raw_input("HERE WE GO")
 	#filename = getPhycasTestData('green.nex')
 	#filename = 'test.nex'
 	filename = 'junk.nex'
@@ -13,6 +13,8 @@ if __name__ == '__main__':
 		t.debugListTree()
 	like.starting_edgelen_dist = None
 	model.type = 'jc'
+	model.pinvar=.2
+	model.pinvar_model = True
 	#model.curr()
 	#print model.state_freqs
 	#like.store_site_likes = True

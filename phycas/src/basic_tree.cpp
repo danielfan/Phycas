@@ -37,7 +37,7 @@
 using namespace phycas;
 //bool Tree::gDebugOutput = true;
 
-#define INTERNAL_NODENUM_OFFSET 0//1000
+#define INTERNAL_NODENUM_OFFSET 1000
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets firstPreorder to NULL and calls Clear() to initialize data members.
