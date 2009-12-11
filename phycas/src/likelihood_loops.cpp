@@ -36,8 +36,8 @@
 #include <numeric>
 
 //for XCode debugging:
-#include <CoreServices/CoreServices.h>
-#undef check	// defined somewhere due to above include
+//#include <CoreServices/CoreServices.h>
+//#undef check	// defined somewhere due to above include
 
 #include <iostream>
 using std::cerr;
@@ -1742,8 +1742,8 @@ double TreeLikelihood::harvestLnLFromValidNode(
     unsigned nr = num_rates;
     unsigned np = num_patterns;
     
-	printf("in harvestLnLFromValidNode\n");//temp
-	DebugStr("\pin harvestLnLFromValidNode 2");//temp
+	//printf("in harvestLnLFromValidNode\n");//temp
+	//DebugStr("\pin harvestLnLFromValidNode 2");//temp
 	
     // Create convenience variables focalNode, focalNeighbor, actualChild, focalEdgeLen, focalCondLike, focalNodeCLA,
     // and singleRateCLALength

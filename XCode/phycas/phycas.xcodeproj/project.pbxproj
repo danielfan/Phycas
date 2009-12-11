@@ -210,13 +210,13 @@
 		7AB51D0D10CDA3B200A865FF /* nxsmultiformat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CAF10CDA26800A865FF /* nxsmultiformat.cpp */; };
 		7AB51D0E10CDA3B200A865FF /* nxsexception.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CAD10CDA26800A865FF /* nxsexception.cpp */; };
 		7AB51D0F10CDA3B200A865FF /* nxsdistancesblock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CA910CDA26800A865FF /* nxsdistancesblock.cpp */; };
-		7AC2D53210CEE35D002FAA70 /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7AC2D53110CEE35D002FAA70 /* libpython2.6.dylib */; };
-		7AC2D53310CEE35D002FAA70 /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7AC2D53110CEE35D002FAA70 /* libpython2.6.dylib */; };
-		7AC2D53410CEE35D002FAA70 /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7AC2D53110CEE35D002FAA70 /* libpython2.6.dylib */; };
-		7AC2D53510CEE35D002FAA70 /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7AC2D53110CEE35D002FAA70 /* libpython2.6.dylib */; };
-		7AC2D53610CEE35D002FAA70 /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7AC2D53110CEE35D002FAA70 /* libpython2.6.dylib */; };
-		7AC2D53710CEE35D002FAA70 /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7AC2D53110CEE35D002FAA70 /* libpython2.6.dylib */; };
-		7AC2D53810CEE35D002FAA70 /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7AC2D53110CEE35D002FAA70 /* libpython2.6.dylib */; };
+		D13CAB8F10D1D72200813B89 /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */; };
+		D13CAB9010D1D72200813B89 /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */; };
+		D13CAB9110D1D72200813B89 /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */; };
+		D13CAB9210D1D72200813B89 /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */; };
+		D13CAB9310D1D72300813B89 /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */; };
+		D13CAB9410D1D72300813B89 /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */; };
+		D13CAB9510D1D72300813B89 /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -605,7 +605,7 @@
 		7AB51CC210CDA26800A865FF /* nxsunalignedblock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsunalignedblock.h; path = ../../../../ncl/branches/v2.2/ncl/nxsunalignedblock.h; sourceTree = SOURCE_ROOT; };
 		7AB51CC310CDA26800A865FF /* nxsutilcopy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsutilcopy.h; path = ../../../../ncl/branches/v2.2/ncl/nxsutilcopy.h; sourceTree = SOURCE_ROOT; };
 		7AB51CE010CDA39200A865FF /* libncl.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libncl.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		7AC2D53110CEE35D002FAA70 /* libpython2.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpython2.6.dylib; path = lib/libpython2.6.dylib; sourceTree = PYTHON_ROOT; };
+		D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpython2.6.dylib; path = lib/libpython2.6.dylib; sourceTree = PYTHON_ROOT; };
 		D2AAC09D05546B4700DB518D /* _ConversionsExt.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = _ConversionsExt.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -616,7 +616,7 @@
 			files = (
 				7A98F30610CD4FDD001E79F7 /* libboost_python.dylib in Frameworks */,
 				7A98F27910CD3C22001E79F7 /* libncl.dylib in Frameworks */,
-				7AC2D53210CEE35D002FAA70 /* libpython2.6.dylib in Frameworks */,
+				D13CAB9110D1D72200813B89 /* libpython2.6.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -626,7 +626,7 @@
 			files = (
 				7A98F34210CD533E001E79F7 /* libboost_python.dylib in Frameworks */,
 				7A98F31210CD5025001E79F7 /* libncl.dylib in Frameworks */,
-				7AC2D53710CEE35D002FAA70 /* libpython2.6.dylib in Frameworks */,
+				D13CAB9410D1D72300813B89 /* libpython2.6.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -637,7 +637,7 @@
 				7A22C1EA10CEEBB70043120B /* CoreServices.framework in Frameworks */,
 				7A98F44810CD5B25001E79F7 /* libboost_python.dylib in Frameworks */,
 				7A98F45210CD5B90001E79F7 /* libncl.dylib in Frameworks */,
-				7AC2D53510CEE35D002FAA70 /* libpython2.6.dylib in Frameworks */,
+				D13CAB9210D1D72200813B89 /* libpython2.6.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -647,7 +647,7 @@
 			files = (
 				7A98F51F10CD62EF001E79F7 /* libboost_python.dylib in Frameworks */,
 				7A98F52010CD62EF001E79F7 /* libncl.dylib in Frameworks */,
-				7AC2D53610CEE35D002FAA70 /* libpython2.6.dylib in Frameworks */,
+				D13CAB9310D1D72300813B89 /* libpython2.6.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -657,7 +657,7 @@
 			files = (
 				7A98F56710CD6484001E79F7 /* libboost_python.dylib in Frameworks */,
 				7A98F56810CD6484001E79F7 /* libncl.dylib in Frameworks */,
-				7AC2D53810CEE35D002FAA70 /* libpython2.6.dylib in Frameworks */,
+				D13CAB9510D1D72300813B89 /* libpython2.6.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -665,7 +665,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7AC2D53310CEE35D002FAA70 /* libpython2.6.dylib in Frameworks */,
+				D13CAB8F10D1D72200813B89 /* libpython2.6.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -682,7 +682,7 @@
 			files = (
 				7AB51CD910CDA37700A865FF /* libboost_python.dylib in Frameworks */,
 				7AB51CDA10CDA37700A865FF /* libncl.dylib in Frameworks */,
-				7AC2D53410CEE35D002FAA70 /* libpython2.6.dylib in Frameworks */,
+				D13CAB9010D1D72200813B89 /* libpython2.6.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -722,9 +722,9 @@
 			isa = PBXGroup;
 			children = (
 				7A22C13010CEEB8B0043120B /* CoreServices.framework */,
-				7AC2D53110CEE35D002FAA70 /* libpython2.6.dylib */,
 				7A98EBF310CD37FE001E79F7 /* libboost_python.dylib */,
 				7A98F26C10CD3BD3001E79F7 /* libncl.dylib */,
+				D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */,
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";
@@ -1748,6 +1748,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
+					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
 				);
 				PRODUCT_NAME = _ConversionsExt;
 			};
@@ -1761,6 +1762,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
+					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
 				);
 				PRODUCT_NAME = _ConversionsExt;
 			};
@@ -1816,6 +1818,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
 					"\"$(SRCROOT)/../../../../../../pydebug/lib/python2.6/config\"",
+					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
 				);
 				PRODUCT_NAME = _DataMatrixExt;
 			};
@@ -1830,6 +1833,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
 					"\"$(SRCROOT)/../../../../../../pydebug/lib/python2.6/config\"",
+					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
 				);
 				PRODUCT_NAME = _DataMatrixExt;
 			};
@@ -1843,6 +1847,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
+					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
 				);
 				PRODUCT_NAME = _ProbDistExt;
 			};
@@ -1856,6 +1861,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
+					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
 				);
 				PRODUCT_NAME = _ProbDistExt;
 			};
@@ -1869,6 +1875,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
+					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
 				);
 				PRODUCT_NAME = _LikelihoodExt;
 			};
@@ -1882,6 +1889,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
+					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
 				);
 				PRODUCT_NAME = _LikelihoodExt;
 			};
@@ -1895,6 +1903,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
+					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
 				);
 				PRODUCT_NAME = _PhylogenyExt;
 			};
@@ -1908,6 +1917,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
+					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
 				);
 				PRODUCT_NAME = _PhylogenyExt;
 			};
@@ -1921,6 +1931,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
+					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
 				);
 				PRODUCT_NAME = _ReadNexusExt;
 			};
@@ -1934,6 +1945,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
+					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
 				);
 				PRODUCT_NAME = _ReadNexusExt;
 			};
@@ -1973,6 +1985,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
+					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = boost_python;
@@ -1991,6 +2004,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
+					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = boost_python;

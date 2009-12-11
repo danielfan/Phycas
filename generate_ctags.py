@@ -11,7 +11,7 @@ if len(projectDir) == 0:
     projectDir = '/Users/plewis/Documents/Projects/pdev/trunk'
     print '  Set projectDir to',projectDir
 projectName = 'Phycas'
-ctagsExecutablePath = "/Users/swofford/Applications/text_editors/BBEdit_8/BBEdit.app/Contents/MacOS/ctags"
+ctagsExecutablePath = os.path.join(os.environ["BBEDIT_ROOT"],"Contents/MacOS/ctags")
 baseArgs = '--excmd=number --tag-relative=no --fields=+a+m+n+S -f /tmp/tags -R'
 appendArg = '--append'
 os.chdir('/')

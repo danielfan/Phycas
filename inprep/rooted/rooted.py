@@ -4,8 +4,8 @@ from phycas import *
 if __name__ == '__main__':
 	#raw_input("HERE WE GO")
 	#filename = getPhycasTestData('green.nex')
-	#filename = 'test.nex'
-	filename = 'junk.nex'
+	filename = 'test.nex'
+	#filename = 'junk.nex'
 	blob = readFile(filename)
 	like.data_source = blob.characters
 	like.tree_source = TreeCollection(filename='test.tre')
