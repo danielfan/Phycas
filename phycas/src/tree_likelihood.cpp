@@ -3123,7 +3123,7 @@ void TreeLikelihood::prepareForSimulation(
 		}
 #endif
 	}
-
+		
 #if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Builds `pattern_vect', `pattern_counts', `pattern_to_sites' and `charIndexToPatternIndex' using uncompressed data 
@@ -3194,7 +3194,7 @@ void TreeLikelihood::copyDataFromDiscreteMatrix(
 				// Hopefully this functionality will be returned to NCL eventually, making this section unnecessary.
 				
 				//@POL assuming DNA sequence data here
-				PHYCAS_ASSERT(partition_model->subset_num_states == 4);
+				PHYCAS_ASSERT(partition_model->subset_num_states[i] == 4);
 				
 				//@POL assuming any ambiguity is complete ambiguity (needs to be revised)
 				state_list[i].reserve(14);
@@ -3353,8 +3353,6 @@ unsigned TreeLikelihood::compressDataMatrix(
 		actingWeights[*eIt] = 0.0;
 		}
 	const double * wts = &(actingWeights[0]);	// PELIGROSO
-
-	PHYCAS_ASSERT(patternToIndex.empty());	
 	
 	int8_vect_t pattern;
 	for (unsigned j = 0; j < nchar;)

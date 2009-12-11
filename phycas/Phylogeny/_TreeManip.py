@@ -166,7 +166,7 @@ class TreeManip(TreeManipBase):
         >>> tm = Phylogeny.TreeManip(t)
         >>> tm.setRandomEdgeLengths(dist)
         >>> print t.walkPreorder()
-        1 -> [2] -> [0] -> 2 -> 5 -> [1] -> 3 -> 4
+        1 -> [1002] -> [1000] -> 2 -> 5 -> [1001] -> 3 -> 4
         >>> print t.makeNewick()
         (1:0.32887,(2:0.02039,5:1.18233):0.90722,(3:3.41679,4:0.72478):0.56683)
 
@@ -191,7 +191,7 @@ class TreeManip(TreeManipBase):
         >>> tm = Phylogeny.TreeManip(t)
         >>> tm.setRandomInternalExternalEdgeLengths(idist, edist)
         >>> print t.walkPreorder()
-        1 -> [2] -> [0] -> 2 -> 5 -> [1] -> 3 -> 4
+        1 -> [1002] -> [1000] -> 2 -> 5 -> [1001] -> 3 -> 4
         >>> print t.makeNewick()
         (1:0.01644,(2:0.01019,5:0.59116):0.04536,(3:1.70839,4:0.36239):0.02834)
 

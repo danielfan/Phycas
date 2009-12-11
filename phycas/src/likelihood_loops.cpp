@@ -1200,7 +1200,7 @@ double TreeLikelihood::harvestLnLFromValidEdge(
     PHYCAS_ASSERT(focalNeighborCLA != NULL);
 
     // Get pointer to start of array holding pattern counts
-    PHYCAS_ASSERT(pattern_counts.size() == np);
+	PHYCAS_ASSERT(pattern_counts.size() == std::accumulate(partition_model->subset_num_patterns.begin(), partition_model->subset_num_patterns.end(), 0));
     const pattern_count_t * const counts = (const pattern_count_t * const)(&pattern_counts[0]); //PELIGROSO
     
     // Get pointer to start of array holding number of potentially constant states for each pattern
@@ -1733,17 +1733,173 @@ double TreeLikelihood::harvestLnLFromValidEdge(
     
         return lnLikelihood;
     }
+	
+#if POLPY_NEWWAY
+double TreeLikelihood::harvestLnLFromValidNode(
+   TreeNode * focalNode)	/**< a node whose conditional likelihoods are now valid and ready for final likelihood calculation */	
+	{
+    // Create convenience variables focalNode, focalNeighbor, actualChild, focalEdgeLen, focalCondLike, focalNodeCLA,
+    // and singleRateCLALength
+    PHYCAS_ASSERT(focalNode->IsInternal());
+    InternalData * id = focalNode->GetInternalData();
+    ConstCondLikelihoodShPtr focalCondLike = id->getValidChildCondLikePtr();
+    PHYCAS_ASSERT(focalCondLike);
+    const LikeFltType * focalNodeCLA = focalCondLike->getCLA(); //PELIGROSO
+    PHYCAS_ASSERT(focalNodeCLA != NULL);
 
+    // Get pointer to start of array holding pattern counts
+	PHYCAS_ASSERT(pattern_counts.size() == std::accumulate(partition_model->subset_num_patterns.begin(), partition_model->subset_num_patterns.end(), 0));
+    const pattern_count_t * const counts = (const pattern_count_t * const)(&pattern_counts[0]); //PELIGROSO
+
+	// Get pointer to start of array holding number of potentially constant states for each pattern
+	// A potentially constant state for a pattern is a state present in all taxa with unambiguous data.
+	// If there are ambiguities, then it is possible that the pattern is not constant depending on 
+	// the way these ambiguities are resolved. Here is what this vector looks like:
+	// +---+---+---+---+---+---+---+---+
+	// | 0 | 1 | 0 | 1 | 3 | 2 | 0 | 2 |
+	// +---+---+---+---+---+---+---+---+
+	//   ^   ^       ^       ^
+	//   |   |       |       |
+	//   |   |       |       4th site can potentially be constant for either A (state 0) or G (state 2)
+	//   |   |       3rd site can be potentially constant for T (state 3)
+	//   |   2nd site can be potentially constant for 1 state: that state (A, state 0) follows in the next cell
+	//   1st site is definitely variable (hence the 0 meaning no states follow)
+	const unsigned * pinvar_states = &constant_states[0]; //PELIGROSO
+
+	// The rate_probs vector holds rate probs for all subsets. For example, here is what it would look like
+	// if the first of 3 subsets had 4 rate categories, the second subset had 1 rate category (i.e.
+	// rate homogeneity model), and the third subset had 2 rate categories:
+	//	+------+------+------+------+----------+------+------+
+	//	|          subset 1         | subset 2 |   subset 3  |
+	//	+------+------+------+------+----------+------+------+
+	//	| 0.25 | 0.25 | 0.25 | 0.25 |   1.00   | 0.50 | 0.50 |
+	//	+------+------+------+------+----------+------+------+
+	// The rate_prob_start variable holds the index of the first element in this vector for the current
+	// subset; for the example above, it would start at 0 for the first subset, then change to 4 for the
+	// second subset, and end at 5 for the third and final subset.
+	unsigned rate_prob_start = 0;
+	unsigned pattern_start = 0;
+
+	if (store_site_likes)
+        {	
+        site_likelihood.clear();
+        site_uf.clear();
+        }
+
+    double lnLikelihood = 0.0;
+
+	unsigned num_subsets = partition_model->getNumSubsets();
+	for (unsigned i = 0; i < num_subsets; ++i)
+		{
+		// Make local variables for compiler optimization
+		unsigned		ns					= partition_model->subset_num_states[i];
+		unsigned		nr					= partition_model->subset_num_rates[i];
+		unsigned		np					= partition_model->subset_num_patterns[i];
+		const unsigned	singleRateCLALength	= np*ns;
+		
+		// Get state frequencies from model and alias rate category probability array for speed
+		const double *	stateFreq			= &partition_model->subset_model[i]->getStateFreqs()[0]; //PELIGROSO
+		const double * 	rateCatProbArray	= &rate_probs[i][rate_prob_start]; //PELIGROSO
+		
+		bool			is_pinvar			= partition_model->subset_model[i]->isPinvarModel();
+		double			pinvar				= partition_model->subset_model[i]->getPinvar();
+			
+		std::vector<const double *> focalNdCLAPtr(nr);
+		for (unsigned r = 0; r < nr; ++r)
+			focalNdCLAPtr[r] = focalNodeCLA + singleRateCLALength*r;
+		
+		for (unsigned pat = 0; pat < np; ++pat)
+			{
+			double siteLike = 0.0;
+			for (unsigned r = 0; r < nr; ++r)
+				{
+				const double * focalNdCLAPtr_r = focalNdCLAPtr[r];
+				double siteLike_r = 0.0;	
+				for (unsigned i = 0; i < ns; ++i)
+					siteLike_r += focalNdCLAPtr_r[i]*stateFreq[i];
+				siteLike += rateCatProbArray[r]*siteLike_r;
+				focalNdCLAPtr[r] += ns;
+				}
+			
+			double log_correction_factor = underflow_manager.getCorrectionFactor(pat, focalCondLike);
+			
+			if (is_pinvar)
+				{
+				double pinvar_like = 0.0;
+				unsigned num_pinvar_states = *pinvar_states++;
+				if (num_pinvar_states > 0)
+					{
+					//DLS: this can all be precalculated in one trip through the patterns, just adding a single value to the likelihoods not conditioned on the site being constant
+					for (unsigned i = 0; i < num_pinvar_states; ++i)
+						pinvar_like += stateFreq[*pinvar_states++];
+					
+					if (log_correction_factor != 0.0)
+						{
+						// If variable part of site-likelihood has been corrected for underflow,
+						// we must also correct the invariable component
+						
+						// find correction factor (f) for pinvar_like
+						double underflow_max_value = underflow_manager.getUnderflowMaxValue();
+						PHYCAS_ASSERT(pinvar_like > underflow_max_value/DBL_MAX);
+						double ratio = underflow_max_value/pinvar_like;
+						double log_ratio = std::log(ratio);
+						double f = std::floor(log_ratio);
+						
+						if (f < log_correction_factor)
+							{
+							double expdiff = exp(f - log_correction_factor);
+							pinvar_like *= exp(f);
+							siteLike *= expdiff;
+							log_correction_factor = f;
+							}
+						else
+							{
+							// since log_correction_factor <= f, and since exp(f) is in no danger of overflowing,
+							// we need not worry about exp(log_correction_factor) overflowing
+							double expc = exp(log_correction_factor);
+							pinvar_like *= expc;
+							}
+						}
+					siteLike = pinvar*pinvar_like + (1.0 - pinvar)*siteLike;
+					}
+				else
+					{
+					// This pattern is not constant (or even potentially constant), so the probability 
+					// of the data given invariability is zero
+					siteLike = (1.0 - pinvar)*siteLike;
+					}
+			}
+			
+			double site_lnL = std::log(siteLike);
+			site_lnL -= log_correction_factor;
+			
+			if (store_site_likes)
+				{
+				site_likelihood.push_back(site_lnL);
+				site_uf.push_back(log_correction_factor);
+				}
+			
+			lnLikelihood += counts[pat]*site_lnL;
+			}   // loop over patterns
+			
+		rate_prob_start += nr;
+		pattern_start += np;
+		}	// loop over subsets of partition
+		
+    
+        return lnLikelihood;
+    }
+#else //old way
 double TreeLikelihood::harvestLnLFromValidNode(
    TreeNode *focalNode)	/**< a node whose conditional likelihoods are now valid and ready for final likelihood calculation */	
-    {
+	{
    // Make local variables for compiler optimization
     unsigned ns = num_states;
     unsigned nr = num_rates;
     unsigned np = num_patterns;
     
-	//printf("in harvestLnLFromValidNode\n");//temp
-	//DebugStr("\pin harvestLnLFromValidNode 2");//temp
+	//printf(in harvestLnLFromValidNoden);//temp
+	//DebugStr(pin harvestLnLFromValidNode 2);//temp
 	
     // Create convenience variables focalNode, focalNeighbor, actualChild, focalEdgeLen, focalCondLike, focalNodeCLA,
     // and singleRateCLALength
@@ -1855,5 +2011,6 @@ double TreeLikelihood::harvestLnLFromValidNode(
     
         return lnLikelihood;
     }
+#endif
 
 } //namespace phycas

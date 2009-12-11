@@ -606,6 +606,33 @@
 		7AB51CC310CDA26800A865FF /* nxsutilcopy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsutilcopy.h; path = ../../../../ncl/branches/v2.2/ncl/nxsutilcopy.h; sourceTree = SOURCE_ROOT; };
 		7AB51CE010CDA39200A865FF /* libncl.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libncl.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpython2.6.dylib; path = lib/libpython2.6.dylib; sourceTree = PYTHON_ROOT; };
+		D1ABDDD510D2D41400EDC77A /* partition.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = partition.py; path = inprep/partition/partition.py; sourceTree = PHYCAS_ROOT; };
+		D1ABDDE310D2D60000EDC77A /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = __init__.py; path = phycas/Phycas/__init__.py; sourceTree = PHYCAS_ROOT; };
+		D1ABDDE410D2D60000EDC77A /* BrownianImpl.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = BrownianImpl.py; path = phycas/Phycas/BrownianImpl.py; sourceTree = PHYCAS_ROOT; };
+		D1ABDDE510D2D60000EDC77A /* CPO.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = CPO.py; path = phycas/Phycas/CPO.py; sourceTree = PHYCAS_ROOT; };
+		D1ABDDE610D2D60000EDC77A /* CPOImpl.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = CPOImpl.py; path = phycas/Phycas/CPOImpl.py; sourceTree = PHYCAS_ROOT; };
+		D1ABDDE710D2D60000EDC77A /* GammaNylDNA4.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = GammaNylDNA4.py; path = phycas/Phycas/GammaNylDNA4.py; sourceTree = PHYCAS_ROOT; };
+		D1ABDDE810D2D60000EDC77A /* GGImpl.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = GGImpl.py; path = phycas/Phycas/GGImpl.py; sourceTree = PHYCAS_ROOT; };
+		D1ABDDE910D2D60000EDC77A /* Like.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = Like.py; path = phycas/Phycas/Like.py; sourceTree = PHYCAS_ROOT; };
+		D1ABDDEA10D2D60000EDC77A /* LikeImpl.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = LikeImpl.py; path = phycas/Phycas/LikeImpl.py; sourceTree = PHYCAS_ROOT; };
+		D1ABDDEB10D2D60000EDC77A /* MCMC.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = MCMC.py; path = phycas/Phycas/MCMC.py; sourceTree = PHYCAS_ROOT; };
+		D1ABDDEC10D2D60000EDC77A /* MCMCImpl.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = MCMCImpl.py; path = phycas/Phycas/MCMCImpl.py; sourceTree = PHYCAS_ROOT; };
+		D1ABDDED10D2D60000EDC77A /* MCMCManager.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = MCMCManager.py; path = phycas/Phycas/MCMCManager.py; sourceTree = PHYCAS_ROOT; };
+		D1ABDDEE10D2D60000EDC77A /* Model.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = Model.py; path = phycas/Phycas/Model.py; sourceTree = PHYCAS_ROOT; };
+		D1ABDDEF10D2D60000EDC77A /* Partition.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = Partition.py; path = phycas/Phycas/Partition.py; sourceTree = PHYCAS_ROOT; };
+		D1ABDDF010D2D60000EDC77A /* Phycas.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = Phycas.py; path = phycas/Phycas/Phycas.py; sourceTree = PHYCAS_ROOT; };
+		D1ABDDF110D2D60000EDC77A /* RandomTree.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = RandomTree.py; path = phycas/Phycas/RandomTree.py; sourceTree = PHYCAS_ROOT; };
+		D1ABDDF210D2D60000EDC77A /* RandomTreeImpl.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = RandomTreeImpl.py; path = phycas/Phycas/RandomTreeImpl.py; sourceTree = PHYCAS_ROOT; };
+		D1ABDDF310D2D60000EDC77A /* Sim.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = Sim.py; path = phycas/Phycas/Sim.py; sourceTree = PHYCAS_ROOT; };
+		D1ABDDF410D2D60000EDC77A /* SimImpl.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = SimImpl.py; path = phycas/Phycas/SimImpl.py; sourceTree = PHYCAS_ROOT; };
+		D1ABDDF510D2D60000EDC77A /* SS.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = SS.py; path = phycas/Phycas/SS.py; sourceTree = PHYCAS_ROOT; };
+		D1ABDDF610D2D60000EDC77A /* SumP.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = SumP.py; path = phycas/Phycas/SumP.py; sourceTree = PHYCAS_ROOT; };
+		D1ABDDF710D2D60000EDC77A /* SumPImpl.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = SumPImpl.py; path = phycas/Phycas/SumPImpl.py; sourceTree = PHYCAS_ROOT; };
+		D1ABDDF810D2D60000EDC77A /* SumT.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = SumT.py; path = phycas/Phycas/SumT.py; sourceTree = PHYCAS_ROOT; };
+		D1ABDDF910D2D60000EDC77A /* SumTImpl.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = SumTImpl.py; path = phycas/Phycas/SumTImpl.py; sourceTree = PHYCAS_ROOT; };
+		D1ABDDFA10D2D60000EDC77A /* Unimap.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = Unimap.py; path = phycas/Phycas/Unimap.py; sourceTree = PHYCAS_ROOT; };
+		D1ABDDFB10D2D60000EDC77A /* UnimapImpl.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = UnimapImpl.py; path = phycas/Phycas/UnimapImpl.py; sourceTree = PHYCAS_ROOT; };
+		D1ABDDFC10D2D64800EDC77A /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = __init__.py; path = phycas/__init__.py; sourceTree = PHYCAS_ROOT; };
 		D2AAC09D05546B4700DB518D /* _ConversionsExt.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = _ConversionsExt.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -970,6 +997,9 @@
 		7A98F5F110CD6D69001E79F7 /* Python source */ = {
 			isa = PBXGroup;
 			children = (
+				D1ABDDFC10D2D64800EDC77A /* __init__.py */,
+				D1ABDDE210D2D58F00EDC77A /* Phycas */,
+				D1ABDDD310D2D39B00EDC77A /* InPrep */,
 				7A98F5FD10CD6DB8001E79F7 /* Conversions */,
 				7A98F60810CD6DD5001E79F7 /* DataMatrix */,
 				7A98F61110CD6DEC001E79F7 /* Likelihood */,
@@ -1185,6 +1215,54 @@
 				7AB51CC310CDA26800A865FF /* nxsutilcopy.h */,
 			);
 			name = "NCL source";
+			sourceTree = "<group>";
+		};
+		D1ABDDD310D2D39B00EDC77A /* InPrep */ = {
+			isa = PBXGroup;
+			children = (
+				D1ABDDD410D2D3B700EDC77A /* partition */,
+			);
+			name = InPrep;
+			sourceTree = "<group>";
+		};
+		D1ABDDD410D2D3B700EDC77A /* partition */ = {
+			isa = PBXGroup;
+			children = (
+				D1ABDDD510D2D41400EDC77A /* partition.py */,
+			);
+			name = partition;
+			sourceTree = "<group>";
+		};
+		D1ABDDE210D2D58F00EDC77A /* Phycas */ = {
+			isa = PBXGroup;
+			children = (
+				D1ABDDE310D2D60000EDC77A /* __init__.py */,
+				D1ABDDE410D2D60000EDC77A /* BrownianImpl.py */,
+				D1ABDDE510D2D60000EDC77A /* CPO.py */,
+				D1ABDDE610D2D60000EDC77A /* CPOImpl.py */,
+				D1ABDDE710D2D60000EDC77A /* GammaNylDNA4.py */,
+				D1ABDDE810D2D60000EDC77A /* GGImpl.py */,
+				D1ABDDE910D2D60000EDC77A /* Like.py */,
+				D1ABDDEA10D2D60000EDC77A /* LikeImpl.py */,
+				D1ABDDEB10D2D60000EDC77A /* MCMC.py */,
+				D1ABDDEC10D2D60000EDC77A /* MCMCImpl.py */,
+				D1ABDDED10D2D60000EDC77A /* MCMCManager.py */,
+				D1ABDDEE10D2D60000EDC77A /* Model.py */,
+				D1ABDDEF10D2D60000EDC77A /* Partition.py */,
+				D1ABDDF010D2D60000EDC77A /* Phycas.py */,
+				D1ABDDF110D2D60000EDC77A /* RandomTree.py */,
+				D1ABDDF210D2D60000EDC77A /* RandomTreeImpl.py */,
+				D1ABDDF310D2D60000EDC77A /* Sim.py */,
+				D1ABDDF410D2D60000EDC77A /* SimImpl.py */,
+				D1ABDDF510D2D60000EDC77A /* SS.py */,
+				D1ABDDF610D2D60000EDC77A /* SumP.py */,
+				D1ABDDF710D2D60000EDC77A /* SumPImpl.py */,
+				D1ABDDF810D2D60000EDC77A /* SumT.py */,
+				D1ABDDF910D2D60000EDC77A /* SumTImpl.py */,
+				D1ABDDFA10D2D60000EDC77A /* Unimap.py */,
+				D1ABDDFB10D2D60000EDC77A /* UnimapImpl.py */,
+			);
+			name = Phycas;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1871,6 +1949,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
 			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1927,6 +2008,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
 			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

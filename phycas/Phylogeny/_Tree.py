@@ -168,7 +168,7 @@ class Tree(TreeBase):
         >>> t2 = Tree()
         >>> t2.buildFromString('(c,d,(a, b))')
         >>> print t2.walkPreorder()
-        c -> [1] -> d -> [0] -> a -> b
+        c -> [1001] -> d -> [1000] -> a -> b
 
         """
         TreeBase.buildFromString(self, newick, zero_based_tips)
@@ -324,7 +324,7 @@ class Tree(TreeBase):
         >>> t9 = Tree()
         >>> t9.buildFromString('(fish,shark,(bird, mammal))')
         >>> print t9.walkPreorder()
-        fish -> [1] -> shark -> [0] -> bird -> mammal
+        fish -> [1001] -> shark -> [1000] -> bird -> mammal
 
         """
         return TreeBase.debugWalkTree(self, True, verbosity)
@@ -345,7 +345,7 @@ class Tree(TreeBase):
         >>> tA = Tree()
         >>> tA.buildFromString('(fish,shark,(bird, mammal))')
         >>> print tA.walkPostorder()
-        mammal -> bird -> [0] -> shark -> [1] -> fish
+        mammal -> bird -> [1000] -> shark -> [1001] -> fish
 
         """
         return TreeBase.debugWalkTree(self, False, verbosity)
@@ -360,14 +360,14 @@ class Tree(TreeBase):
         >>> tC = Tree()
         >>> tC.buildFromString('((a,b),c,(d,e))')
         >>> print tC.walkPreorder()
-        a -> [0] -> b -> [2] -> c -> [1] -> d -> e
+        a -> [1000] -> b -> [1002] -> c -> [1001] -> d -> e
         >>> tC.rerootAtTip(5)
         Traceback (most recent call last):
             ...
         Exception: there is no tip node having number 5
         >>> tC.rerootAtTip(4)
         >>> print tC.walkPreorder()
-        e -> [1] -> d -> [2] -> c -> [0] -> b -> a
+        e -> [1001] -> d -> [1002] -> c -> [1000] -> b -> a
 
         """
         return TreeBase.rerootAtTip(self, num)
@@ -447,10 +447,10 @@ class Tree(TreeBase):
         >>> t = Tree()
         >>> t.buildFromString('((a,b),c,(d,e))')
         >>> print t.walkPreorder(verbosity=1)
-        a (0) -> ? [0] -> b (1) -> ? [2] -> c (2) -> ? [1] -> d (3) -> e (4)
+        a (0) -> ? [1000] -> b (1) -> ? [1002] -> c (2) -> ? [1001] -> d (3) -> e (4)
         >>> t.rectifyNumbers(['e','d','c','b','a'])
         >>> print t.walkPreorder(verbosity=1)
-        a (4) -> ? [0] -> b (3) -> ? [2] -> c (2) -> ? [1] -> d (1) -> e (0)
+        a (4) -> ? [1000] -> b (3) -> ? [1002] -> c (2) -> ? [1001] -> d (1) -> e (0)
 
         """
         self.taxon_labels = taxon_names
@@ -467,10 +467,10 @@ class Tree(TreeBase):
         >>> t = Tree()
         >>> t.buildFromString('((a,b),c,(d,e))')
         >>> print t.walkPreorder(verbosity=1)
-        a (0) -> ? [0] -> b (1) -> ? [2] -> c (2) -> ? [1] -> d (3) -> e (4)
+        a (0) -> ? [1000] -> b (1) -> ? [1002] -> c (2) -> ? [1001] -> d (3) -> e (4)
         >>> t.rectifyNames(['e','d','c','b','a'])
         >>> print t.walkPreorder(verbosity=1)
-        e (0) -> ? [0] -> d (1) -> ? [2] -> c (2) -> ? [1] -> b (3) -> a (4)
+        e (0) -> ? [1000] -> d (1) -> ? [1002] -> c (2) -> ? [1001] -> b (3) -> a (4)
 
         """
         self.taxon_labels = taxon_names
