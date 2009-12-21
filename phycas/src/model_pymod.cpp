@@ -44,7 +44,7 @@ void model_pymod()
 		.def("getEigenValues", &QMatrix::getEigenValues)
 		;
 #endif
-	class_<phycas::Model, boost::noncopyable>("Model", no_init)
+	class_<phycas::Model, boost::noncopyable, boost::shared_ptr<phycas::Model> >("Model", no_init)
 		.def("fixEdgeLenHyperprior", &phycas::Model::fixEdgeLenHyperprior)
 		.def("freeEdgeLenHyperprior", &phycas::Model::freeEdgeLenHyperprior)
 		.def("fixEdgeLengths", &phycas::Model::fixEdgeLengths)

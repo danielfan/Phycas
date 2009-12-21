@@ -12,7 +12,7 @@
 #    ]
 
 POLPY_NEWWAY = True
-partitioning = True
+partitioning = False
 
 def name_of(_obj):
     k=None
@@ -198,14 +198,14 @@ except:
 from Phycas.RandomTree import RandomTree
 randomtree = RandomTree()
 
+from Phycas.Model import Model
+model = Model()
+
 from Phycas.Partition import Partition,Subset
 partition = Partition()
 
 # note: Subset is not derived from PhycasCommand, it exists only to make defining partition subsets clearer for those familiar with Nexus
 subset = Subset()    
-
-from Phycas.Model import Model
-model = Model()
 
 from Phycas.SumT import SumT
 sumt = SumT()

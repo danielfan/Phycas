@@ -38,18 +38,32 @@ class PartitionModel
 	
 public:
 
-        							PartitionModel();
-    virtual							~PartitionModel();
-    
-    unsigned                        getNumSubsets();
-    unsigned                        getTotalNumPatterns();
+        								PartitionModel();
+    virtual								~PartitionModel();
+    	
+	// Utilities
+    unsigned                        	getNumSubsets();
+    unsigned                        	getTotalNumPatterns();
+	
+	// Accessors
+	const std::vector<ModelShPtr>	&	getModelsVect() const;
+	const std::vector<unsigned>		&	getNumPatternsVect() const;
+	const std::vector<unsigned>		&	getNumStatesVect() const;
+	const std::vector<unsigned>		&	getNumRatesVect() const;
+	
+	// Setters
+	void								addModel(ModelShPtr m);
+	void								setModelsVect(const std::vector<ModelShPtr> & models);
+	void								setNumPatternsVect(const std::vector<unsigned> & npatterns);
+	void								setNumStatesVect(const std::vector<unsigned> & nstates);
+	void								setNumRatesVect(const std::vector<unsigned> & nrates);
 
 private:
     
-    std::vector<unsigned>           subset_num_patterns;	/**< The number of site patterns for each partition subset */
-    std::vector<unsigned>           subset_num_states;		/**< The number of states for each partition subset */
-    std::vector<unsigned>           subset_num_rates;		/**< The number of relative rate categories for each partition subset */
-    std::vector<ModelShPtr>			subset_model;			/**< The substitution model for each partition subset */
+    std::vector<unsigned>           	subset_num_patterns;	/**< The number of site patterns for each partition subset */
+    std::vector<unsigned>           	subset_num_states;		/**< The number of states for each partition subset */
+    std::vector<unsigned>           	subset_num_rates;		/**< The number of relative rate categories for each partition subset */
+    std::vector<ModelShPtr>				subset_model;			/**< The substitution model for each partition subset */
 };  // class PartitionModel
 
 typedef boost::shared_ptr<PartitionModel> PartitionModelShPtr;

@@ -1,6 +1,6 @@
 from phycas.Utilities.PhycasCommand import *
 from phycas.Utilities.CommonFunctions import CommonFunctions
-from phycas import model, randomtree, P
+from phycas import model, partition, partitioning, randomtree, P
 from phycas.Phycas.MCMCImpl import MCMCImpl
 #from phycas.ProbDist import Beta, Exponential, InverseGamma
 import copy
@@ -16,6 +16,7 @@ class MCMC(PhycasCommand):
 				("verbose",					True,	 "You will get more output if True, less output if False", BoolArgValidate),
 				("quiet",				   False,	 "If True, output will only be sent to the log file if open (see below); if False, output will be sent to the console as well", BoolArgValidate),
 				("model",				   model,	 "Specifies the model to use. By default, uses the predefined model object. Type model.help to set the settings for this model."),
+				("partition",          partition,	 "Specifies the partition to use. By default, uses the predefined partition object."),
 				("data_source",		P.characters,	 "The DataSource that provides the data, if any, to be used in the MCMC analysis. Should be a DataSource object", DataSourceValidate),
 				("starting_tree_source",	None,	 "A TreeCollection that will serve as the source of the starting tree topology. If a string is passed in, it is interpreted as a the path to a file with trees.", TreeSourceValidate),
 				("tree_topology",			None,	 "Unused unless starting_tree_source is 'usertree', in which case this should be a standard newick string representation of the tree topology; e.g. '(A:0.01,B:0.071,(C:0.013,D:0.021):0.037)'"),
@@ -113,9 +114,7 @@ class MCMC(PhycasCommand):
 		self.set(**kwargs)
 		#self.checkSanity()
 		c = copy.deepcopy(self)
-		#print '==> about to instantiate MCMCImpl...'
 		mcmc_impl = MCMCImpl(c)
-		#print '==> after instantiating MCMCImpl...'
 		mcmc_impl.setSiteLikeFile(self.sitelikef)
 		mcmc_impl.run()
 		self.ss_sampled_betas = mcmc_impl.ss_sampled_betas

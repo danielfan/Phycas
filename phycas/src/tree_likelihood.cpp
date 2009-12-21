@@ -36,6 +36,8 @@
 #include "phycas/src/partition_model.hpp"
 #endif
 
+//#include <CoreServices/CoreServices.h>
+//#undef check	
 
 // formerly in tree_likelihood.inl
 #include "phycas/src/edge_endpoints.hpp"
@@ -199,11 +201,11 @@ const Univents & getUniventsConstRef(const TreeNode &nd)
 TreeLikelihood::TreeLikelihood(
   PartitionModelShPtr mod)		/**< is the partition model */
   :
+  partition_model(mod),
   likelihood_root(0),
   store_site_likes(false),
   no_data(false),
   nTaxa(0),
-  partition_model(mod), 
   debugging_now(false),
   using_unimap(false),
   univentProbMgr(mod),
@@ -218,6 +220,10 @@ TreeLikelihood::TreeLikelihood(
     	rate_means[i].assign(partition_model->subset_num_rates[i], 1.0);
     	rate_probs[i].assign(partition_model->subset_num_rates[i], 1.0);
     	partition_model->subset_model[i]->recalcRatesAndProbs(rate_means[i], rate_probs[i]);
+		std::cerr << "Rate means and probs for model " << i << "(" << partition_model->subset_model[i]->getModelName() << ") in TreeLikelihood::TreeLikelihood:" << std::endl;//temp
+		std::copy(rate_means[i].begin(), rate_means[i].end(), std::ostream_iterator<double>(std::cerr," "));//temp
+		std::copy(rate_probs[i].begin(), rate_probs[i].end(), std::ostream_iterator<double>(std::cerr," "));//temp
+		std::cerr << std::endl;
     	}
 	cla_pool = CondLikelihoodStorageShPtr(new CondLikelihoodStorage());
 	underflow_manager.setTriggerSensitivity(50);
@@ -3138,6 +3144,7 @@ void TreeLikelihood::copyDataFromDiscreteMatrix(
 
     // The compressDataMatrix function first erases, then builds, both pattern_vect and 
 	// pattern_counts using the uncompressed data contained in mat
+	unsigned sz = (unsigned)partition_info.size();
 	compressDataMatrix(mat, partition_info);
 	
 #if !defined(NDEBUG)
@@ -3304,6 +3311,8 @@ unsigned TreeLikelihood::compressDataMatrix(
   const NxsCXXDiscreteMatrix	&	mat,			/**< is the data source */
   const uint_vect_t 			& 	partition_info)	/**< is a vector of indices storing the partition subset used by each site */
 	{
+	//DebugStr("\pin TreeLikelihood::compressDataMatrix...");
+	
 	unsigned 						ntax 		= mat.getNTax();
 	unsigned 						nchar 		= mat.getNChar();
 	unsigned 						nsubsets 	= partition_model->getNumSubsets();	
@@ -3478,8 +3487,14 @@ unsigned TreeLikelihood::compressDataMatrix(
 	// Build subset_offset, pattern_counts, pattern_vect, pattern_to_sites and charIndexToPatternIndex before 
 	// leaving this function (whereupon pattern_map and pattern_to_sites_map will be destroyed)
 	unsigned npatterns = 0;
+	std::vector<unsigned> npatterns_vect(nsubsets, 0);
 	for (unsigned i = 0; i < nsubsets; ++i)
-		npatterns += (unsigned)pattern_map[i].size();
+		{
+		unsigned np = (unsigned)pattern_map[i].size();
+		npatterns_vect[i] = np;
+		npatterns += np;
+		}
+	partition_model->setNumPatternsVect(npatterns_vect);
 
 	subset_offset.clear();
 	subset_offset.reserve(nsubsets + 1);

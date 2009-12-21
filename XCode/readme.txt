@@ -39,44 +39,46 @@ environmental variables in the lower part:
 	PYTHONPATH			$(PHYCAS_ROOT)
 Finally, in the "Debugging" section, be sure "Break on Debugger() and DebugStr()" is checked.
 
+Lazy symbol loading
+-------------------
+Because of the somewhat non-standard nature of phycas (combining C++ with Python code), it is 
+necessary to uncheck "Load symbols lazily" in the "symbol Loading Options" section of the
+Debugging tab in the main XCode Preferences dialog. Failing to do with will result in breakpoints
+that are ignored (although DebugStr calls still work: see below) and turn yellow when the program
+is running.
+
+Using DebugStr
+--------------
+Although using ordinary breakpoints are usually preferable, you can include code to cause the 
+debugger to stop at a place of your choosing. (Note that you might not realize that the debugger 
+has stopped, for it doesn't pop to the foreground automatically.) For example, including this line...
+
+  DebugStr("\pin harvestLnLFromValidNode");
+  
+will stop the debugger after displaying the string "in harvestLnLFromValidNode" (the initial \p
+is required because this is a "Pascal string"). At the top of a file in which you want to 
+use DebugStr, include the following
+
+#include <CoreServices/CoreServices.h>
+#undef check	
+
+The "#undef check" is needed because CoreServices.h defines a macro named "check" and this 
+conflicts with some phycas functions (e.g. UnderflowManager::check).
+
 Drawbacks
 ---------
-Unfortunately, there seem to be some bugs in XCode that make using it a bit inconvenient at present.
-Hopefully we can find workarounds in the near future for these problems.
+Unfortunately, there seems to be one bug in XCode that makes sharing it across different users
+a bit inconvenient at present. Hopefully we can find a workaround in the near future for this 
+problem.
 
-Current drawbacks:
-
-1. Even though we specified Path Type to be "Relative to PYTHON_ROOT" for libpython2.6.dylib, this
-   one item in the "External Frameworks and Libraries" section of the project needs to be added by
-   every user separately. If you simply update to obtain a fresh version of the XCode project, you
-   will find link errors when you build. These will go away if you delete libpython 2.6.dylib from
-   the project, then simply add it back in by dragging it from a Finder window to the "External 
-   Frameworks and Libraries" section of the project. We think this is because the file 
-   project.pbxproj (within phycas.xcodeproj) stores a file reference that is unique to a particular
-   user (and perhaps a particular computer) and invalid when the user changes. Thus, whenever any
-   one of us (svn) commits, the XCode project will be screwed up for everyone else when they (svn) 
-   update.
+Even though we specified Path Type to be "Relative to PYTHON_ROOT" for libpython2.6.dylib, this
+one item in the "External Frameworks and Libraries" section of the project needs to be added by
+every user separately. If you simply update to obtain a fresh version of the XCode project, you
+will find link errors when you build. These will go away if you delete libpython 2.6.dylib from
+the project, then simply add it back in by dragging it from a Finder window to the "External 
+Frameworks and Libraries" section of the project. We think this is because the file 
+project.pbxproj (within phycas.xcodeproj) stores a file reference that is unique to a particular
+user (and perhaps a particular computer) and invalid when the user changes. Thus, whenever any
+one of us (svn) commits, the XCode project will be screwed up for everyone else when they (svn) 
+update.
    
-2. Ordinary breakpoints seem to be ignored. This deals a major blow to the usefulness of the XCode
-   project, but so far no workaround has been found. This must stem from the fact that we are 
-   trying to debug code that was loaded by an executable (python) that is not itself built by this 
-   project. Breakpoints are also ignored if you start python separately and use Run | Attach to
-   process... and give it the process ID of the python process. It seems like someone should have
-   noticed this by now, but we couldn't find anybody that had even asked about this on the 
-   newsgroups.
-
-   You can include code to cause the debugger to stop at a place of your choosing. (Note that you 
-   might not realize that the debugger has stopped, for it doesn't pop to the foreground.) For 
-   example, including this line...
-   
-      DebugStr("\pin harvestLnLFromValidNode");
-      
-   will stop the debugger after displaying the string "in harvestLnLFromValidNode" (the initial \p
-   is required because this is a "Pascal string"). At the top of a file in which you want to 
-   use DebugStr, include the following
-   
-   #include <CoreServices/CoreServices.h>
-   #undef check	
-   
-   The "#undef check" is needed because CoreServices.h defines a macro named "check" and this 
-   conflicts with some phycas functions (e.g. UnderflowManager::check).

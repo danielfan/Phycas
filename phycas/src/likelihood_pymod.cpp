@@ -169,6 +169,16 @@ BOOST_PYTHON_MODULE(_LikelihoodExt)
         .def("getBinnedCounts", &phycas::SimData::getBinnedCounts)
 		;
 #if POLPY_NEWWAY
+	class_<PartitionModel, boost::noncopyable, boost::shared_ptr<PartitionModel> >("PartitionModelBase")
+		.def("addModel", &phycas::PartitionModel::addModel)
+		.def("setModelsVect", &phycas::PartitionModel::setModelsVect)
+		.def("getModelsVect", &phycas::PartitionModel::getModelsVect, return_value_policy<copy_const_reference>())
+		.def("getNumStatesVect", &phycas::PartitionModel::getNumStatesVect, return_value_policy<copy_const_reference>())
+		.def("getNumRatesVect", &phycas::PartitionModel::getNumRatesVect, return_value_policy<copy_const_reference>())
+		.def("getNumPatternsVect", &phycas::PartitionModel::getNumPatternsVect, return_value_policy<copy_const_reference>())
+		.def("getTotalNumPatterns", &phycas::PartitionModel::getTotalNumPatterns)
+		.def("getNumSubsets", &phycas::PartitionModel::getNumSubsets)
+		;
 	class_<TreeLikelihood, TreeLikelihoodWrapper, boost::noncopyable>("TreeLikelihoodBase", init<boost::shared_ptr<PartitionModel> >())
 #else // old way
 	class_<TreeLikelihood, TreeLikelihoodWrapper, boost::noncopyable>("TreeLikelihoodBase", init<boost::shared_ptr<Model> >())

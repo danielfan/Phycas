@@ -54,19 +54,29 @@ else:
 setMasterSeed(13579)
 filename = getPhycasTestData('green.nex')
 blob = readFile(filename)
-mcmc.data_source = blob.characters
-mcmc.out.log = 'output.txt'
-mcmc.out.log.mode = REPLACE
-mcmc.out.trees.prefix = 'gtr_test'
-mcmc.out.trees.mode = REPLACE
-mcmc.out.params.prefix = 'gtr_test'
-mcmc.out.params.mode = REPLACE
-mcmc.nchains = 1
-mcmc.ncycles = 1
-mcmc.sample_every = 1
-mcmc.report_every = 1
-#mcmc.starting_tree_source = randomtree(n_taxa=len(blob.taxon_labels))
-#mcmc.starting_tree_source = TreeCollection(newick='(1:0.258008,2:0.086726,(3:0.113174,(4:0.086740,((5:0.078662,8:0.183070):0.051180,(6:0.087103,((7:0.046703,10:0.098804):0.021001,9:0.072890):0.052088):0.034684):0.033875):0.044762):0.026713);') 
-mcmc.starting_tree_source = TreeCollection(newick='((((((9:0.1,(7:0.1,10:0.1):0.1):0.1,6:0.1):0.1,(5:0.1,8:0.1):0.1):0.1,4:0.1):0.1,3:0.1):0.1,2:0.1,1:0.1);') 
-mcmc.debugging = False
-mcmc()
+
+if True:
+	like.data_source = blob.characters
+	like.tree_source = TreeCollection(newick='((((((9:0.1,(7:0.1,10:0.1):0.1):0.1,6:0.1):0.1,(5:0.1,8:0.1):0.1):0.1,4:0.1):0.1,3:0.1):0.1,2:0.1,1:0.1);') 
+	like.starting_edgelen_dist = None
+	like.store_site_likes = True
+	print '==> calling like() <=='
+	lnL = like()
+	print 'log-likelihood =',lnL
+else:
+	mcmc.data_source = blob.characters
+	mcmc.out.log = 'output.txt'
+	mcmc.out.log.mode = REPLACE
+	mcmc.out.trees.prefix = 'gtr_test'
+	mcmc.out.trees.mode = REPLACE
+	mcmc.out.params.prefix = 'gtr_test'
+	mcmc.out.params.mode = REPLACE
+	mcmc.nchains = 1
+	mcmc.ncycles = 1
+	mcmc.sample_every = 1
+	mcmc.report_every = 1
+	#mcmc.starting_tree_source = randomtree(n_taxa=len(blob.taxon_labels))
+	#mcmc.starting_tree_source = TreeCollection(newick='(1:0.258008,2:0.086726,(3:0.113174,(4:0.086740,((5:0.078662,8:0.183070):0.051180,(6:0.087103,((7:0.046703,10:0.098804):0.021001,9:0.072890):0.052088):0.034684):0.033875):0.044762):0.026713);') 
+	mcmc.starting_tree_source = TreeCollection(newick='((((((9:0.1,(7:0.1,10:0.1):0.1):0.1,6:0.1):0.1,(5:0.1,8:0.1):0.1):0.1,4:0.1):0.1,3:0.1):0.1,2:0.1,1:0.1);') 
+	mcmc.debugging = False
+	mcmc()

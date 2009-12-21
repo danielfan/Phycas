@@ -72,9 +72,9 @@ class TreeLikelihood
 	public:
 
 #if POLPY_NEWWAY
-										TreeLikelihood(PartitionModelShPtr);
+										TreeLikelihood(PartitionModelShPtr mod);
 #else
-										TreeLikelihood(ModelShPtr);
+										TreeLikelihood(ModelShPtr mod);
 #endif
 								virtual ~TreeLikelihood(); //needed as long as startTreeViewer is virtual
 

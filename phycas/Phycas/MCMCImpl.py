@@ -26,6 +26,8 @@ class MCMCImpl(CommonFunctions):
 		
 		"""
 		CommonFunctions.__init__(self, opts)
+		self.models					= None		# This variable is set in setup
+		
 		# These copied over from Phycas.py - many are not used and should be weeded out
 		self.data_matrix			= None
 		self.file_name_trees_stored = None
@@ -38,7 +40,10 @@ class MCMCImpl(CommonFunctions):
 		self.warn_tip_numbers		= False		# True only if tip numbers were not able to be created using the tip names in the tree description (always False if starting_tree_source == 'random' because BuildTreeFromString is not called in this case)
 		self.ntax					= 0			# Will hold the actual number of taxa after data file read
 		self.nchar					= 0			# Will hold the actual number of characters after data file has been read
-		self.npatterns				= 0			# Will hold the actual number of patterns after data file has been read
+		if partitioning:
+			self.npatterns			= []		# Will hold the actual number of patterns for each subset after data file has been read
+		else:
+			self.npatterns			= 0			# Will hold the actual number of patterns after data file has been read
 		self.taxon_labels			= []		# Will hold taxon labels from data file or default names if self.data_source equals None
 		self.paramf					= None
 		self.treef					= None
@@ -333,27 +338,57 @@ class MCMCImpl(CommonFunctions):
 		6) establishes an output log file name if requested
 		
 		"""
-		if self.opts.model.edgelen_prior is not None:
-			# set both internal and external edge length priors to edgelen_prior
-			self.opts.model.internal_edgelen_prior = self.opts.model.edgelen_prior
-			self.opts.model.external_edgelen_prior = self.opts.model.edgelen_prior
-		else:
-			# Ensure that user has specified both internal and external edge length priors
-			self.phycassert(self.opts.model.internal_edgelen_prior is not None, 'internal_edgelen_prior cannot be None if edgelen_prior is None')
-			self.phycassert(self.opts.model.external_edgelen_prior is not None, 'external_edgelen_prior cannot be None if edgelen_prior is None')
-			
-		if self.opts.model.edgelen_hyperprior is not None:
-			# Ensure that both internal and external edgelen priors are Exponential
-			if self.opts.model.internal_edgelen_prior.getDistName() != 'Exponential':
-				self.opts.model.internal_edgelen_prior = Exponential(1.0)
-				self.warning('internal_edgelen_prior reset to Exponential because edgelen_hyperprior was specified')
-			if self.opts.model.external_edgelen_prior.getDistName() != 'Exponential':
-				self.opts.model.external_edgelen_prior = Exponential(1.0)
-				self.warning('external_edgelen_prior reset to Exponential because edgelen_hyperprior was specified')
-
 		ds = self.opts.data_source
 		mat = ds and ds.getMatrix() or None
 		self._loadData(mat)
+		
+		# POL line below is not right, should be able to run without data
+		self.phycassert(self.nchar > 0, 'Expecting nchar to be greater than 0 in MCMCImpl.setup') 
+		
+		if partitioning:
+			# Next line creates a default partition if a partition was not defined by the user
+			self.opts.partition.validate(self.nchar)
+		
+			self.models			= [m for (n,s,m) in self.opts.partition.subset]
+			self.model_names	= [n for (n,s,m) in self.opts.partition.subset]
+			
+			for m,n in zip(self.models, self.model_names):
+				#print '==> checking model %s' % n
+				if m.edgelen_prior is not None:
+					# set both internal and external edge length priors to edgelen_prior
+					m.internal_edgelen_prior = m.edgelen_prior
+					m.external_edgelen_prior = m.edgelen_prior
+				else:
+					# Ensure that user has specified both internal and external edge length priors
+					self.phycassert(m.internal_edgelen_prior is not None, 'In model %s, internal_edgelen_prior cannot be None if edgelen_prior is None' % n)
+					self.phycassert(m.external_edgelen_prior is not None, 'In model %s, external_edgelen_prior cannot be None if edgelen_prior is None' % n)
+					
+				if m.edgelen_hyperprior is not None:
+					# Ensure that both internal and external edgelen priors are Exponential
+					if m.internal_edgelen_prior.getDistName() != 'Exponential':
+						m.internal_edgelen_prior = Exponential(1.0)
+						self.warning('In model %s, internal_edgelen_prior reset to Exponential because edgelen_hyperprior was specified' % n)
+					if m.external_edgelen_prior.getDistName() != 'Exponential':
+						m.external_edgelen_prior = Exponential(1.0)
+						self.warning('In model %s, external_edgelen_prior reset to Exponential because edgelen_hyperprior was specified' % n)
+		else:
+			if self.opts.model.edgelen_prior is not None:
+				# set both internal and external edge length priors to edgelen_prior
+				self.opts.model.internal_edgelen_prior = self.opts.model.edgelen_prior
+				self.opts.model.external_edgelen_prior = self.opts.model.edgelen_prior
+			else:
+				# Ensure that user has specified both internal and external edge length priors
+				self.phycassert(self.opts.model.internal_edgelen_prior is not None, 'In model %s, internal_edgelen_prior cannot be None if edgelen_prior is None' % n)
+				self.phycassert(self.opts.model.external_edgelen_prior is not None, 'In model %s, external_edgelen_prior cannot be None if edgelen_prior is None' % n)
+				
+			if self.opts.model.edgelen_hyperprior is not None:
+				# Ensure that both internal and external edgelen priors are Exponential
+				if self.opts.model.internal_edgelen_prior.getDistName() != 'Exponential':
+					self.opts.model.internal_edgelen_prior = Exponential(1.0)
+					self.warning('In model %s, internal_edgelen_prior reset to Exponential because edgelen_hyperprior was specified' % n)
+				if self.opts.model.external_edgelen_prior.getDistName() != 'Exponential':
+					self.opts.model.external_edgelen_prior = Exponential(1.0)
+					self.warning('In model %s, external_edgelen_prior reset to Exponential because edgelen_hyperprior was specified' % n)
 		
 		# Determine heating levels if multiple chains
 		if self.opts.heat_vector == None:
@@ -673,9 +708,7 @@ class MCMCImpl(CommonFunctions):
 		Performs the MCMC analysis. 
 		
 		"""		   
-		#print '==> just inside MCMCImpl.run()...'
 		self.setup()
-		#print '==> after calling MCMCImpl.setup()...'
 		
 		# If user has set quiet to True, then phycas.output calls will have no effect
 		self.quiet = self.opts.quiet
