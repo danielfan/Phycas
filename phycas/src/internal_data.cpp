@@ -50,6 +50,7 @@ InternalData::InternalData(
 #endif			
 		}
 	const unsigned num_subsets = partition->getNumSubsets();
+	pMatrices.resize(num_subsets);
 	for (unsigned i = 0; i < num_subsets; ++i)
 		{
 		const unsigned num_rates	= partition->subset_num_rates[i];

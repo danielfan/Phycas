@@ -70,7 +70,10 @@ class CondLikelihood
 		std::vector<UnderflowType>	underflowExponVec;					/**< Stores log of the underflow correction factor for each pattern. Used if UnderflowManager is in effect */
 
 		unsigned 					numEdgesSinceUnderflowProtection;	/**< The number of edges traversed since the underflow protection factor was last updated */
+		
+#if POLPY_NEWWAY
 		unsigned 					total_num_patterns;					/**< The number of patterns over all partition subsets */
+#endif
 	};
 
 typedef boost::shared_ptr<CondLikelihood> CondLikelihoodShPtr;

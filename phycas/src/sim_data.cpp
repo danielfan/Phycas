@@ -330,6 +330,11 @@ void SimData::saveToNexusFile(
   const std::string datatype,			/**< is a string to be used as the NEXUS datatype (e.g. "dna" or "standard") */	
   const StringVect & state_symbols)		/**< is a vector of strings representing states (e.g. {"A", "C", "G", "T"}). Note that each state symbol should be a string of length 1 (i.e. a single character) */	
 	{
+	std::cerr << "taxon_names size = " << taxon_names.size() << std::endl;
+	std::cerr << "pattern_length   = " << pattern_length << std::endl;
+	std::cerr << "taxon_names: ";
+	std::copy(taxon_names.begin(), taxon_names.end(), std::ostream_iterator<std::string>(std::cerr, "|"));
+	
 	PHYCAS_ASSERT(state_symbols.size() > 0);
 	PHYCAS_ASSERT(taxon_names.size() == pattern_length);
 

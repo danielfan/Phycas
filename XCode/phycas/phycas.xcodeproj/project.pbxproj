@@ -606,6 +606,7 @@
 		7AB51CC310CDA26800A865FF /* nxsutilcopy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsutilcopy.h; path = ../../../../ncl/branches/v2.2/ncl/nxsutilcopy.h; sourceTree = SOURCE_ROOT; };
 		7AB51CE010CDA39200A865FF /* libncl.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libncl.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpython2.6.dylib; path = lib/libpython2.6.dylib; sourceTree = PYTHON_ROOT; };
+		D17574CD10EB942400D4E2B0 /* partition.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = partition.py; path = ../../inprep/partition/partition.py; sourceTree = SOURCE_ROOT; };
 		D1ABDDD510D2D41400EDC77A /* partition.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = partition.py; path = inprep/partition/partition.py; sourceTree = PHYCAS_ROOT; };
 		D1ABDDE310D2D60000EDC77A /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = __init__.py; path = phycas/Phycas/__init__.py; sourceTree = PHYCAS_ROOT; };
 		D1ABDDE410D2D60000EDC77A /* BrownianImpl.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = BrownianImpl.py; path = phycas/Phycas/BrownianImpl.py; sourceTree = PHYCAS_ROOT; };
@@ -997,6 +998,7 @@
 		7A98F5F110CD6D69001E79F7 /* Python source */ = {
 			isa = PBXGroup;
 			children = (
+				D17574C410EB940500D4E2B0 /* InPrep */,
 				D1ABDDFC10D2D64800EDC77A /* __init__.py */,
 				D1ABDDE210D2D58F00EDC77A /* Phycas */,
 				D1ABDDD310D2D39B00EDC77A /* InPrep */,
@@ -1215,6 +1217,22 @@
 				7AB51CC310CDA26800A865FF /* nxsutilcopy.h */,
 			);
 			name = "NCL source";
+			sourceTree = "<group>";
+		};
+		D17574C410EB940500D4E2B0 /* InPrep */ = {
+			isa = PBXGroup;
+			children = (
+				D17574C510EB940C00D4E2B0 /* Partition */,
+			);
+			name = InPrep;
+			sourceTree = "<group>";
+		};
+		D17574C510EB940C00D4E2B0 /* Partition */ = {
+			isa = PBXGroup;
+			children = (
+				D17574CD10EB942400D4E2B0 /* partition.py */,
+			);
+			name = Partition;
 			sourceTree = "<group>";
 		};
 		D1ABDDD310D2D39B00EDC77A /* InPrep */ = {

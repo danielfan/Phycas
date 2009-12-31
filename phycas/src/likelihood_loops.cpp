@@ -195,7 +195,7 @@ void TreeLikelihood::calcTMatForSim(
   TipData &	tipData, 
   double	edgeLength)
 	{
-#if POLPY_OLDWAY	
+#if POLPY_OLDWAY	// simulations not yet working with partitioning
 	double * * * transPMats = tipData.getTransposedPMatrices();
 	calcPMatCommon(transPMats,  edgeLength);
 
@@ -1168,19 +1168,34 @@ printf("in harvestLnL with EdgeEndpoints=(%d,%d)\n", nodeIndex(focal_edge.getFoc
 |
 |	Conditional likelihood arrays are laid out as follows for DNA data:
 |>
-|	+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
-|	|                            rate 1                             | ...
-|	+---+---+---+---+---+---+---+---+---------------+---+---+---+---+
-|	|   pattern 1   |   pattern 2   |      ...      |   pattern n   | ...
-|	+---+---+---+---+---+---+---+---+---------------+---+---+---+---+
-|	| A | C | G | T | A | C | G | T |      ...      | A | C | G | T | ...
-|	+---+---+---+---+---+---+---+---+---------------+---+---+---+---+
+|	+-----------------------------------------------------+-----------------------------------------------------+
+|	|                        rate 1                       |                        rate 2                       | ...
+|	+-----------------------------------------------------+-----------------------------------------------------+
+|	|   pattern 1   |   pattern 2   | ... |   pattern n   |   pattern 1   |   pattern 2   | ... |   pattern n   | ...
+|	+-----------------------------------------------------+-----------------------------------------------------+
+|	| A | C | G | T | A | C | G | T | ... | A | C | G | T | A | C | G | T | A | C | G | T | ... | A | C | G | T | ...
+|	+-----------------------------------------------------+-----------------------------------------------------+
+|>	
+|	For partitioned data (first subset with 2 rates and 3 binary patterns, second subset with 1 rate and 2 DNA 
+|	patterns):
+|>
+|	+-----------------------+-----------------------+-------------------------------+
+|	|                    subset 1                   |           subset 2            |
+|	+-----------------------+-----------------------+-------------------------------+
+|	|           r1          |           r2          |               r1              |
+|	+-----------------------+-----------------------+-------------------------------+
+|	|  p1   |  p2   |  p3   |  p1   |  p2   |  p3   |      p1       |       p2      |
+|	+-----------------------+-----------------------+-------------------------------+
+|	| 0 | 1 | 0 | 1 | 0 | 1 | 0 | 1 | 0 | 1 | 0 | 1 | A | C | G | T | A | C | G | T |
+|	+-----------------------+-----------------------+-------------------------------+
 |>	
 */
 double TreeLikelihood::harvestLnLFromValidEdge(
    ConstEdgeEndpoints & focal_edge)	/**< is the edge containing the focal node that will serve as the likelihood root */	
     {
 #if POLPY_NEWWAY
+	debugCompressedDataInfo("compressed_data_info.txt");
+	
     // Create convenience variables focalNode, focalNeighbor, actualChild, focalEdgeLen, focalCondLike, focalNodeCLA,
     // and singleRateCLALength
     PHYCAS_ASSERT(focal_edge.getFocalNode() != NULL);
@@ -1194,10 +1209,6 @@ double TreeLikelihood::harvestLnLFromValidEdge(
     PHYCAS_ASSERT(focalCondLike);
     const LikeFltType * 		focalNodeCLA 		= focalCondLike->getCLA(); //PELIGROSO
     PHYCAS_ASSERT(focalNodeCLA != NULL);
-	ConstCondLikelihoodShPtr	neighborCondLike	= getValidCondLikePtr(focalNeighbor, focalNode);
-    PHYCAS_ASSERT(neighborCondLike);
-	const double *				focalNeighborCLA	= neighborCondLike->getCLA(); //PELIGROSO
-    PHYCAS_ASSERT(focalNeighborCLA != NULL);
 
     // Get pointer to start of array holding pattern counts
 	PHYCAS_ASSERT(pattern_counts.size() == std::accumulate(partition_model->subset_num_patterns.begin(), partition_model->subset_num_patterns.end(), 0));
@@ -1217,32 +1228,20 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 	//   |   2nd site can be potentially constant for 1 state: that state (A, state 0) follows in the next cell
 	//   1st site is definitely variable (hence the 0 meaning no states follow)
     const unsigned * pinvar_states = &constant_states[0]; //PELIGROSO
-    
-    // The rate_probs vector holds rate probs for all subsets. For example, here is what it would look like
-    // if the first of 3 subsets had 4 rate categories, the second subset had 1 rate category (i.e.
-    // rate homogeneity model), and the third subset had 2 rate categories:
-    //	+------+------+------+------+----------+------+------+
-    //	|          subset 1         | subset 2 |   subset 3  |
-    //	+------+------+------+------+----------+------+------+
-    //	| 0.25 | 0.25 | 0.25 | 0.25 |   1.00   | 0.50 | 0.50 |
-    //	+------+------+------+------+----------+------+------+
-    // The rate_prob_start variable holds the index of the first element in this vector for the current
-    // subset; for the example above, it would start at 0 for the first subset, then change to 4 for the
-    // second subset, and end at 5 for the third and final subset.
-    unsigned rate_prob_start = 0;
-    
+        
     unsigned pattern_start = 0;
+	unsigned cum_cla_pos = 0;
 
     if (store_site_likes)
         {	
         site_likelihood.clear();
         site_uf.clear();
         }
-
+		
     double lnLikelihood = 0.0;
     unsigned num_subsets = partition_model->getNumSubsets();
     for (unsigned i = 0; i < num_subsets; ++i)
-        {
+        {		
         // Make local variables for compiler optimization
         unsigned		ns					= partition_model->subset_num_states[i];
         unsigned		nr					= partition_model->subset_num_rates[i];
@@ -1251,7 +1250,9 @@ double TreeLikelihood::harvestLnLFromValidEdge(
             
         // Get state frequencies from model and alias rate category probability array for speed
         const double *	stateFreq			= &partition_model->subset_model[i]->getStateFreqs()[0]; //PELIGROSO
-        const double * 	rateCatProbArray	= &rate_probs[i][rate_prob_start]; //PELIGROSO
+
+        //const double * 	rateCatProbArray	= &rate_probs[i][rate_prob_start]; //PELIGROSO
+        const double * 	rateCatProbArray	= &rate_probs[i][0]; //PELIGROSO
     
         bool			is_pinvar			= partition_model->subset_model[i]->isPinvarModel();
         double			pinvar				= partition_model->subset_model[i]->getPinvar();
@@ -1263,7 +1264,7 @@ double TreeLikelihood::harvestLnLFromValidEdge(
             const double * const * const *	tipPMatricesTrans	= tipData.getConstTransposedPMatrices(i);
             const int8_t *					tipStateCodes		= tipData.getConstStateCodes(i);
             std::vector<const double *> 	focalNdCLAPtr(nr);
-            
+			
             // Compute transition probability matrices (one for each relative rate) for the edge
             // connecting the tip node to the focal node
             calcPMatTranspose(i, p, tipData.getConstStateListPos(i),  focalEdgeLen);
@@ -1271,27 +1272,32 @@ double TreeLikelihood::harvestLnLFromValidEdge(
             // Set focalNdCLAPtr so that element r points to the CLA of the first state of the
             // starting pattern for relative rate r
             for (unsigned r = 0; r < nr; ++r)
-                focalNdCLAPtr[r] = focalNodeCLA + singleRateCLALength*r + ns*pattern_start;
+            	focalNdCLAPtr[r] = focalNodeCLA + cum_cla_pos + singleRateCLALength*r;
                 
             for (unsigned pat = pattern_start; pat < pattern_start + np; ++pat)
                 {
+				// get index of pattern relative to first pattern in current partition subset
+				unsigned relpat = pat - subset_offset[i];
+				
                 // Compute the site likelihood for the current pattern
                 double siteLike = 0.0;
                 for (unsigned r = 0; r < nr; ++r)
                     {
                     const double * const * const	tipPMatrixT		= tipPMatricesTrans[r];
-                    const double *					tipPMatT_pat	= tipPMatrixT[tipStateCodes[pat]];
+					int8_t							from_state		= tipStateCodes[relpat];
+                    const double *					tipPMatT_pat	= tipPMatrixT[from_state];
                     double 							siteRateLike 	= 0.0;
                     
                     // Go through possible states at the internal (focal) node
                     for (unsigned s = 0; s < ns; ++s)
                         {
                         double frq 		= stateFreq[s];			// frequency of state s
-                        double clike 	= focalNdCLAPtr[r][s];	// likelihood conditional on state s at focal node
+                        double clike 	= focalNdCLAPtr[r][s];	// likelihood conditional of state s at focal node
                         double tprob	= tipPMatT_pat[s];		// trans. prob. of tip state to state s
-                        siteRateLike += frq*clike*tprob;		//@POL this assumes time-reversible model (using tipPMatT_pat backwards)
+                        siteRateLike += frq*clike*tprob;		//@POL does this assume time-reversible model (using tipPMatT_pat backwards)?
                         }
-                    siteLike += siteRateLike*rateCatProbArray[r];
+					double rate_cat_prob = rateCatProbArray[r];
+                    siteLike += siteRateLike*rate_cat_prob;
                     
                     // Increment starting positions to next pattern for this relative rate
                     focalNdCLAPtr[r] += ns;
@@ -1360,6 +1366,10 @@ double TreeLikelihood::harvestLnLFromValidEdge(
             }
         else    // focalNeighbor is not a tip
             {
+			ConstCondLikelihoodShPtr	neighborCondLike	= getValidCondLikePtr(focalNeighbor, focalNode);
+			PHYCAS_ASSERT(neighborCondLike);
+			const double *				focalNeighborCLA	= neighborCondLike->getCLA(); //PELIGROSO
+			PHYCAS_ASSERT(focalNeighborCLA != NULL);
             const InternalData *			neighborID		= focalNeighbor->GetInternalData();
             const double * const * const *	childPMatrices	= neighborID->getConstPMatrices(i);
             
@@ -1491,9 +1501,9 @@ double TreeLikelihood::harvestLnLFromValidEdge(
                 lnLikelihood += counts[pat]*site_lnL;
                 }
             }
-            rate_prob_start += nr;
             pattern_start += np;
-        }   // loop over subsets of partition        
+			cum_cla_pos += nr*np*ns;
+        }   // loop over subsets of partition   
 #else	// old way
     // Make local variables for compiler optimization
     unsigned ns = num_states;
@@ -1766,6 +1776,7 @@ double TreeLikelihood::harvestLnLFromValidNode(
 	//   1st site is definitely variable (hence the 0 meaning no states follow)
 	const unsigned * pinvar_states = &constant_states[0]; //PELIGROSO
 
+	// The following explanation is not correct - now separate vectors for each subset
 	// The rate_probs vector holds rate probs for all subsets. For example, here is what it would look like
 	// if the first of 3 subsets had 4 rate categories, the second subset had 1 rate category (i.e.
 	// rate homogeneity model), and the third subset had 2 rate categories:
@@ -1777,7 +1788,7 @@ double TreeLikelihood::harvestLnLFromValidNode(
 	// The rate_prob_start variable holds the index of the first element in this vector for the current
 	// subset; for the example above, it would start at 0 for the first subset, then change to 4 for the
 	// second subset, and end at 5 for the third and final subset.
-	unsigned rate_prob_start = 0;
+	//unsigned rate_prob_start = 0;
 	unsigned pattern_start = 0;
 
 	if (store_site_likes)
@@ -1799,7 +1810,9 @@ double TreeLikelihood::harvestLnLFromValidNode(
 		
 		// Get state frequencies from model and alias rate category probability array for speed
 		const double *	stateFreq			= &partition_model->subset_model[i]->getStateFreqs()[0]; //PELIGROSO
-		const double * 	rateCatProbArray	= &rate_probs[i][rate_prob_start]; //PELIGROSO
+		
+		//const double * 	rateCatProbArray	= &rate_probs[i][rate_prob_start]; //PELIGROSO
+		const double * 	rateCatProbArray	= &rate_probs[i][0]; //PELIGROSO
 		
 		bool			is_pinvar			= partition_model->subset_model[i]->isPinvarModel();
 		double			pinvar				= partition_model->subset_model[i]->getPinvar();
@@ -1882,7 +1895,7 @@ double TreeLikelihood::harvestLnLFromValidNode(
 			lnLikelihood += counts[pat]*site_lnL;
 			}   // loop over patterns
 			
-		rate_prob_start += nr;
+		//rate_prob_start += nr;
 		pattern_start += np;
 		}	// loop over subsets of partition
 		

@@ -110,12 +110,12 @@ class Tree;
 |	which translate to these global state codes:
 |>
 |	  TreeLikelihood::state_list[0]: 0 1 3  
-|	  TreeLikelihood::state_list[0]: 8 9
+|	  TreeLikelihood::state_list[1]: 8 9
 |>
 |	When copied to a tip node in a tree, however, these codes become translated to
 |>
 |	  TipData::state_list[0]: 0 1 3  
-|	  TipData::state_list[0]: 5 6
+|	  TipData::state_list[1]: 5 6
 |>
 |	Global codes 8 and 9 have become local codes 5 and 6, respectively.
 |	
@@ -155,6 +155,7 @@ class TipData
 		void										swapUnivents(InternalData * other);
 	
         state_list_vect_t &							getTipStatesArray() {return state_codes;}
+        const state_list_vect_t &					getConstTipStatesArray() const {return state_codes;}
 		const uint_vect_t &							getConstStateListPos(unsigned i) const;
 	
 		friend void									calcPMatTranspose(const TreeLikelihood & treeLikeInfo, const TipData & tipData, double edgeLength);

@@ -74,6 +74,7 @@ TipData::TipData(
 	state_list_pos	= state_list_pos_vect_t(num_subsets);
 	state_codes 	= state_list_vect_t(num_subsets);
 	
+	pMatrixTranspose.resize(num_subsets);	
 	for (unsigned i = 0; i < num_subsets; ++i)
 		{
 		// copy state list positions for subset i

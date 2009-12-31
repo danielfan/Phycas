@@ -107,6 +107,9 @@ def runTest(outFile, name, results):
     outStream.close()
     prevDir = os.path.abspath(os.curdir)
     os.chdir(name)
+    for f in results:   
+        if os.path.exists(f):    # remove output files so that we can detect
+            os.remove(f)    # if a script fails to create a new one
     interpreter = 'python'
     if sys.platform == 'win32' and debugging:
         interpreter = 'python_d'

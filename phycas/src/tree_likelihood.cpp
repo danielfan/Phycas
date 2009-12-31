@@ -220,10 +220,10 @@ TreeLikelihood::TreeLikelihood(
     	rate_means[i].assign(partition_model->subset_num_rates[i], 1.0);
     	rate_probs[i].assign(partition_model->subset_num_rates[i], 1.0);
     	partition_model->subset_model[i]->recalcRatesAndProbs(rate_means[i], rate_probs[i]);
-		std::cerr << "Rate means and probs for model " << i << "(" << partition_model->subset_model[i]->getModelName() << ") in TreeLikelihood::TreeLikelihood:" << std::endl;//temp
-		std::copy(rate_means[i].begin(), rate_means[i].end(), std::ostream_iterator<double>(std::cerr," "));//temp
-		std::copy(rate_probs[i].begin(), rate_probs[i].end(), std::ostream_iterator<double>(std::cerr," "));//temp
-		std::cerr << std::endl;
+		//std::cerr << "Rate means and probs for model " << i << "(" << partition_model->subset_model[i]->getModelName() << ") in TreeLikelihood::TreeLikelihood:" << std::endl;//temp
+		//std::copy(rate_means[i].begin(), rate_means[i].end(), std::ostream_iterator<double>(std::cerr," "));//temp
+		//std::copy(rate_probs[i].begin(), rate_probs[i].end(), std::ostream_iterator<double>(std::cerr," "));//temp
+		//std::cerr << std::endl;
     	}
 	cla_pool = CondLikelihoodStorageShPtr(new CondLikelihoodStorage());
 	underflow_manager.setTriggerSensitivity(50);
@@ -1141,14 +1141,13 @@ void TreeLikelihood::recalcRelativeRates()
 	{
 	for (unsigned i = 0; i < partition_model->getNumSubsets(); ++i)
 	    {
-        partition_model->subset_num_states[i] = partition_model->subset_model[i]->getNStates();
-        partition_model->subset_num_rates[i] = partition_model->subset_model[i]->getNRatesTotal();
+		PHYCAS_ASSERT(partition_model->subset_num_states[i] == partition_model->subset_model[i]->getNStates());
+		PHYCAS_ASSERT(partition_model->subset_num_rates[i] == partition_model->subset_model[i]->getNRatesTotal());
         partition_model->subset_model[i]->recalcRatesAndProbs(rate_means[i], rate_probs[i]); //POL_BOOKMARK recalcRatesAndProbs call
-        //unused? likelihood_rate_site.resize(num_rates*num_patterns, 0.0);
-        if (!no_data)
-            cla_pool->setCondLikeDimensions(partition_model->subset_num_patterns, partition_model->subset_num_rates, partition_model->subset_num_states);
-        underflow_manager.setDimensions(partition_model->subset_num_patterns, partition_model->subset_num_rates, partition_model->subset_num_states);
 	    }
+	if (!no_data)
+		cla_pool->setCondLikeDimensions(partition_model->subset_num_patterns, partition_model->subset_num_rates, partition_model->subset_num_states);
+	underflow_manager.setDimensions(partition_model->subset_num_patterns, partition_model->subset_num_rates, partition_model->subset_num_states);
 	}
 #else
 /*----------------------------------------------------------------------------------------------------------------------
@@ -2136,7 +2135,7 @@ void TreeLikelihood::discardCacheAwayFromNode(
 */
 void TreeLikelihood::simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar, bool refresh_probs)
     {
-#if POLPY_OLDWAY	// not yet working for partitioned models
+#if POLPY_OLDWAY	// simulations not yet working with partitioning
 	PHYCAS_ASSERT(sim_data);
 	PHYCAS_ASSERT(rng);
 	PHYCAS_ASSERT(nchar > 0);
@@ -2742,7 +2741,7 @@ double TreeLikelihood::calcLnLFromNode(
 	else
 		{
 		PHYCAS_ASSERT(!focal_node.IsTip());
-
+		
 		// valid_functor will return true if the conditional likelihood arrays pointing away from the
 		// focal_node are up-to-date, false if they need to be recomputed. _1 is the focal node,
 		// and _2 is the "avoid" node, the node neighboring the focal node on the path to the likelihood root
@@ -2758,7 +2757,7 @@ double TreeLikelihood::calcLnLFromNode(
 			// first is the focal node, second is the avoid node
 			refreshCLA(*iter->first, iter->second);
 			}
-
+		
 		// We have now brought all neighboring CLAs up-to-date, so we can now call harvestLnL to
 		// compute the likelihood
 		EdgeEndpoints edge(&focal_node, NULL);
@@ -3104,7 +3103,7 @@ void deallocateInternalData(InternalData * p)
 void TreeLikelihood::prepareForSimulation(
   TreeShPtr t)			/**< is the tree to decorate */
 	{
-#if POLPY_OLDWAY	// unimap not yet working for partitioned models
+#if POLPY_OLDWAY	// simulations not yet working with partitioning
 	TreeNode::TipDataDeleter		td_deleter	= &deallocateTipData;
 	TreeNode::InternalDataDeleter	cl_deleter	= &deallocateInternalData;
 
@@ -3144,7 +3143,7 @@ void TreeLikelihood::copyDataFromDiscreteMatrix(
 
     // The compressDataMatrix function first erases, then builds, both pattern_vect and 
 	// pattern_counts using the uncompressed data contained in mat
-	unsigned sz = (unsigned)partition_info.size();
+	//unsigned sz = (unsigned)partition_info.size();
 	compressDataMatrix(mat, partition_info);
 	
 #if !defined(NDEBUG)
@@ -3301,6 +3300,49 @@ void TreeLikelihood::copyDataFromDiscreteMatrix(
 
 #if POLPY_NEWWAY 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Saves information about the compressed data to a file named `filename'. All of the information displayed is 
+|	saved by the TreeLikelihood::compressDataMatrix function.
+*/
+void TreeLikelihood::debugCompressedDataInfo(
+  std::string filename)	/**< is the name of the file that will hold the info about the compressed data matrix */
+	{
+	// This function should be combined with listPatterns, which has similar functionality
+	unsigned sz = (unsigned)pattern_vect[0].size();
+	std::string format_str = boost::str(boost::format("%%12s\t%%12s\t%%12s\t%%%ds\t%%12s\t%%s") % (2*(sz - 1)));
+	std::ofstream outf(filename.c_str());
+	outf << "pcs = potentially constant states\n" << std::endl;
+	outf << boost::str(boost::format(format_str) % "index" % "subset" % "pcs" % "pattern " % "count" % "sites") << std::endl;
+
+	unsigned total_patterns = (unsigned)pattern_vect.size();
+	unsigned j = 0;	//index into constant states vector
+	for (unsigned i = 0; i < total_patterns; ++i)
+		{
+		const uint_list_t & sites = pattern_to_sites[i];
+		const int8_vect_t & states = pattern_vect[i];
+		
+		unsigned sub = *(states.begin());
+		unsigned num_cs = constant_states[j];
+		outf << boost::str(boost::format("%12d\t%12d\t%12d\t") % i % sub % num_cs);
+		
+		std::copy(states.begin() + 1, states.end(), std::ostream_iterator<int>(outf," "));
+		outf << "\t";
+
+		unsigned cnt = pattern_counts[i];
+		outf << boost::str(boost::format("%12d\t") % cnt);
+
+		std::copy(sites.begin(), sites.end(), std::ostream_iterator<unsigned>(outf," "));
+		outf << "\t";
+		
+		outf << std::endl;
+		
+		j += num_cs + 1;
+		}
+	outf.close();
+	}
+#endif
+	
+#if POLPY_NEWWAY 
+/*----------------------------------------------------------------------------------------------------------------------
 |	Copies data from `mat' to `pattern_vect' and `pattern_counts'. The `pattern_vect' vector holds the patterns while
 |	`pattern_counts' holds the count of the number of sites having each pattern. Additionally, the vectors 
 |	`pattern_to_sites' and `charIndexToPatternIndex' are built: `pattern_to_sites' allows you to get a list of sites
@@ -3366,15 +3408,18 @@ unsigned TreeLikelihood::compressDataMatrix(
 	int8_vect_t pattern;
 	for (unsigned j = 0; j < nchar;)
 		{
-		unsigned subset = partition_info[j];	
+		unsigned subset = default_partition ? 0 : partition_info[j];
 		bool codon_model = partition_model->subset_model[subset]->isCodonModel();
 		
 		if (codon_model)
 			{
-			// 2nd and 3rd positions should be assigned to same subset if codon model is used
-			PHYCAS_ASSERT(partition_info.size() > j + 2);
-			PHYCAS_ASSERT(partition_info[j + 1] == subset);
-			PHYCAS_ASSERT(partition_info[j + 2] == subset);
+			if (!default_partition)
+				{
+				// 2nd and 3rd positions should be assigned to same subset if codon model is used
+				PHYCAS_ASSERT(partition_info.size() > j + 2);
+				PHYCAS_ASSERT(partition_info[j + 1] == subset);
+				PHYCAS_ASSERT(partition_info[j + 2] == subset);
+				}
 			
 			// Suppose nchar=5 and j=3: not enough sites to make a second codon. In this example,
 			// j+2 = 5, which equals nchar, so break out of loop over sites

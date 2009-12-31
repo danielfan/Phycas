@@ -109,6 +109,34 @@ class LikelihoodCore(object):
 				m.fixStateFreqs()
 		else:
 			m = Likelihood.JCModel()
+			
+		# If rate heterogeneity is to be assumed, add it to the model here
+		# Note must defer setting up pattern specific rates model until we know number of patterns
+		if model_spec.use_flex_model:
+			m.setNGammaRates(model_spec.num_rates)
+			m.setFlexModel()
+			m.setFlexRateUpperBound(model_spec.flex_L)
+		elif model_spec.num_rates > 1:
+			m.setNGammaRates(model_spec.num_rates)
+			m.setPriorOnShapeInverse(model_spec.use_inverse_shape)	   #POL should be named useInverseShape rather than setPriorOnShapeInverse
+			m.setShape(model_spec.gamma_shape)
+			if model_spec.fix_shape:
+				m.fixShape()
+		else:
+			m.setNGammaRates(1)
+			
+		if model_spec.pinvar_model:
+			assert not model_spec.use_flex_model, 'Cannot currently use flex model with pinvar'
+			m.setPinvarModel()
+			m.setPinvar(model_spec.pinvar)
+			if model_spec.fix_pinvar:
+				m.fixPinvar()
+		else:
+			m.setNotPinvarModel()
+
+		if model_spec.fix_edgelens:
+			m.fixEdgeLengths()
+			
 		return m
 
 	def setupCore(self):
@@ -127,26 +155,33 @@ class LikelihoodCore(object):
 		#self.starting_edgelen_dist.setLot(self.r)
 
 		if partitioning:
-			from phycas import partition
+			from phycas import partition,model
 			# Create the object
 			self.partition_model = Likelihood.PartitionModelBase()
-			for m in partition.getModels():
-				# m is an interface model object (i.e. Model defined in Phycas/Model.py), 
+			models = partition.getModels()
+			if len(models) < 1:
+				# model is an interface model object (i.e. Model defined in Phycas/Model.py), 
 				# not an actual model object (e.g. JCModel defined in Likelihood/_Model.py).
 				# Need to create a real model using the interface specification
 				# and add the real model to partition_model.
-				mod = self.createModel(m)
+				mod = self.createModel(model)
 				self.partition_model.addModel(mod)
+			else:
+				for m in models:
+					# m is an interface model object (i.e. Model defined in Phycas/Model.py), 
+					# not an actual model object (e.g. JCModel defined in Likelihood/_Model.py).
+					# Need to create a real model using the interface specification
+					# and add the real model to partition_model.
+					mod = self.createModel(m)
+					self.partition_model.addModel(mod)
 			self.likelihood = Likelihood.TreeLikelihood(self.partition_model)
 			self.likelihood.setLot(self.r)
 			self.likelihood.setUFNumEdges(self.parent.opts.uf_num_edges)
 			self.likelihood.useUnimap(self.parent.opts.use_unimap)
 			if self.parent.data_matrix:
 				if POLPY_NEWWAY:	# partitioning data
-					print '===> here1 <==='
-					print 'partition.getSiteModelVector():\n  ',partition.getSiteModelVector()
+					# print 'partition.getSiteModelVector():\n  ',partition.getSiteModelVector()
 					self.likelihood.copyDataFromDiscreteMatrix(self.parent.data_matrix, partition.getSiteModelVector())
-					print '===> here2 <==='
 				else:
 					self.likelihood.copyDataFromDiscreteMatrix(self.parent.data_matrix)
 		else:
@@ -404,14 +439,14 @@ class MarkovChain(LikelihoodCore):
 		treef.write('#NEXUS\n')
 		treef.write('[ID: %d]\n' % self.r.getInitSeed())
 		treef.write('begin trees;\n')
-		treef.write('	translate\n')
+		treef.write('\ttranslate\n')
 		for i in range(self.parent.ntax):
 			if self.parent.taxon_labels[i].find(' ') < 0:
 				# no spaces found in name
-				treef.write('		%d %s%s\n' % (i + 1, self.parent.taxon_labels[i], i == self.parent.ntax - 1 and ';' or ','))
+				treef.write('\t\t%d %s%s\n' % (i + 1, self.parent.taxon_labels[i], i == self.parent.ntax - 1 and ';' or ','))
 			else:
 				# at least one space in taxon name, so enclose name in quotes
-				treef.write("		%d '%s'%s\n" % (i + 1, self.parent.taxon_labels[i], i == self.parent.ntax - 1 and ';' or ','))
+				treef.write("\t\t%d '%s'%s\n" % (i + 1, self.parent.taxon_labels[i], i == self.parent.ntax - 1 and ';' or ','))
 
 	def setPower(self, power):
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -462,7 +497,7 @@ class MarkovChain(LikelihoodCore):
 		"""
 		LikelihoodCore.setupCore(self)
 		LikelihoodCore.prepareForLikelihood(self)
-		
+				
 		# Make sure that each prior is using the same pseudorandom number generator object
 		self.kappa_prior.setLot(self.r)
 		self.relrate_prior.setLot(self.r)
@@ -983,7 +1018,7 @@ class MCMCManager:
 			
 		# Add line to tree file if it exists
 		if self.parent.treef:
-			self.parent.treef.write('	tree rep.%d = %s;\n' % (cycle + 1, cold_chain.tree.makeNewick(self.parent.opts.ndecimals)))
+			self.parent.treef.write('\ttree rep.%d = %s;\n' % (cycle + 1, cold_chain.tree.makeNewick(self.parent.opts.ndecimals)))
 			self.parent.treef.flush()
 
 		# Add line to sitelike file if it exists and if we are saving site-likelihoods

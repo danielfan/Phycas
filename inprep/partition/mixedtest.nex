@@ -1,0 +1,14 @@
+#nexus
+
+begin data;
+  dimensions ntax=4 nchar=9;
+  format datatype=mixed(dna:1-4,protein:5-9) missing=? gap=-;
+  matrix
+	A  ACTR GV(EQ)?A
+	B  ACTA GVEIA
+	C  ACCG GVELA
+	D  ACCG GVQLA
+    ;
+end;
+
+[Z -> E or Q]

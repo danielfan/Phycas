@@ -310,9 +310,9 @@ void CondLikelihoodStorage::setCondLikeDimensions(const uint_vect_t & np, const 
 	unsigned sz = (unsigned)np.size();
 	PHYCAS_ASSERT(nr.size() == sz);
 	PHYCAS_ASSERT(ns.size() == sz);
-	PHYCAS_ASSERT(num_patterns.size() == sz);
-	PHYCAS_ASSERT(num_rates.size() == sz);
-	PHYCAS_ASSERT(num_states.size() == sz);
+	
+	bool no_old = (num_patterns.size() == 0) || (num_rates.size() == 0) || (num_states.size() == 0);
+	bool old = !no_old;
 	
 	unsigned newlen = 0;
 	unsigned oldlen = 0;
@@ -322,12 +322,16 @@ void CondLikelihoodStorage::setCondLikeDimensions(const uint_vect_t & np, const 
 		PHYCAS_ASSERT(nr[i] > 0);
 		PHYCAS_ASSERT(ns[i] > 0);
 		newlen += np[i]*nr[i]*ns[i];
-		oldlen += num_patterns[i]*num_rates[i]*num_states[i];
+		if (old)
+			oldlen += num_patterns[i]*num_rates[i]*num_states[i];
 		}
 	
 	if (newlen > oldlen)
 		{
 		clearStack();
+		num_patterns.resize(sz);
+		num_rates.resize(sz);
+		num_states.resize(sz);
 		std::copy(np.begin(), np.end(), num_patterns.begin());
 		std::copy(nr.begin(), nr.end(), num_rates.begin());
 		std::copy(ns.begin(), ns.end(), num_states.begin());
