@@ -50,6 +50,18 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		2D7C9B1411076FB50028BDAD /* libboost_python.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C9B1311076FB50028BDAD /* libboost_python.dylib */; };
+		2D7C9B1511076FB50028BDAD /* libboost_python.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C9B1311076FB50028BDAD /* libboost_python.dylib */; };
+		2D7C9B1611076FB50028BDAD /* libboost_python.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C9B1311076FB50028BDAD /* libboost_python.dylib */; };
+		2D7C9B1711076FB50028BDAD /* libboost_python.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C9B1311076FB50028BDAD /* libboost_python.dylib */; };
+		2D7C9B1811076FB50028BDAD /* libboost_python.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C9B1311076FB50028BDAD /* libboost_python.dylib */; };
+		2D7C9B1911076FB50028BDAD /* libboost_python.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C9B1311076FB50028BDAD /* libboost_python.dylib */; };
+		2D7C9B1F11076FE60028BDAD /* libncl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C9B1E11076FE60028BDAD /* libncl.dylib */; };
+		2D7C9B2011076FE60028BDAD /* libncl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C9B1E11076FE60028BDAD /* libncl.dylib */; };
+		2D7C9B2111076FE60028BDAD /* libncl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C9B1E11076FE60028BDAD /* libncl.dylib */; };
+		2D7C9B2211076FE60028BDAD /* libncl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C9B1E11076FE60028BDAD /* libncl.dylib */; };
+		2D7C9B2311076FE60028BDAD /* libncl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C9B1E11076FE60028BDAD /* libncl.dylib */; };
+		2D7C9B2411076FE60028BDAD /* libncl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C9B1E11076FE60028BDAD /* libncl.dylib */; };
 		7A0946FF10CAF0FD00CEFDE0 /* conversions_pymod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945C810CAEFB900CEFDE0 /* conversions_pymod.cpp */; };
 		7A09470410CAF10500CEFDE0 /* boost_assertion_failed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945BB10CAEFB900CEFDE0 /* boost_assertion_failed.cpp */; };
 		7A09470710CAF12800CEFDE0 /* basic_tree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945B810CAEFB900CEFDE0 /* basic_tree.cpp */; };
@@ -57,12 +69,9 @@
 		7A09470F10CAF13B00CEFDE0 /* split.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09462210CAEFB900CEFDE0 /* split.cpp */; };
 		7A09471310CAF14300CEFDE0 /* phycas_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09460C10CAEFB900CEFDE0 /* phycas_string.cpp */; };
 		7A22C1EA10CEEBB70043120B /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A22C13010CEEB8B0043120B /* CoreServices.framework */; };
-		7A98F27910CD3C22001E79F7 /* libncl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26C10CD3BD3001E79F7 /* libncl.dylib */; };
 		7A98F27C10CD3C22001E79F7 /* boost_assertion_failed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945BB10CAEFB900CEFDE0 /* boost_assertion_failed.cpp */; };
 		7A98F28A10CD3C78001E79F7 /* data_matrix_pymod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945C910CAEFB900CEFDE0 /* data_matrix_pymod.cpp */; };
-		7A98F30610CD4FDD001E79F7 /* libboost_python.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98EBF310CD37FE001E79F7 /* libboost_python.dylib */; };
 		7A98F30D10CD5025001E79F7 /* boost_assertion_failed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945BB10CAEFB900CEFDE0 /* boost_assertion_failed.cpp */; };
-		7A98F31210CD5025001E79F7 /* libncl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26C10CD3BD3001E79F7 /* libncl.dylib */; };
 		7A98F31810CD5090001E79F7 /* probdist_pymod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09461410CAEFB900CEFDE0 /* probdist_pymod.cpp */; };
 		7A98F31D10CD5099001E79F7 /* phycas_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09460C10CAEFB900CEFDE0 /* phycas_string.cpp */; };
 		7A98F32010CD50A2001E79F7 /* basic_cdf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945AF10CAEFB900CEFDE0 /* basic_cdf.cpp */; };
@@ -74,7 +83,6 @@
 		7A98F33610CD511F001E79F7 /* mvnormal_distribution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945FA10CAEFB900CEFDE0 /* mvnormal_distribution.cpp */; };
 		7A98F33810CD5126001E79F7 /* probability_distribution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09461110CAEFB900CEFDE0 /* probability_distribution.cpp */; };
 		7A98F33B10CD5130001E79F7 /* slice_sampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09461F10CAEFB900CEFDE0 /* slice_sampler.cpp */; };
-		7A98F34210CD533E001E79F7 /* libboost_python.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98EBF310CD37FE001E79F7 /* libboost_python.dylib */; };
 		7A98F38210CD5730001E79F7 /* boost_assertion_failed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945BB10CAEFB900CEFDE0 /* boost_assertion_failed.cpp */; };
 		7A98F39C10CD5821001E79F7 /* tree_likelihood.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09464410CAEFB900CEFDE0 /* tree_likelihood.cpp */; };
 		7A98F3A010CD582C001E79F7 /* basic_cdf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945AF10CAEFB900CEFDE0 /* basic_cdf.cpp */; };
@@ -135,12 +143,8 @@
 		7A98F43C10CD5A59001E79F7 /* univent_prob_mgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09465E10CAEFB900CEFDE0 /* univent_prob_mgr.cpp */; };
 		7A98F43D10CD5A5A001E79F7 /* univents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09466110CAEFB900CEFDE0 /* univents.cpp */; };
 		7A98F44210CD5A6A001E79F7 /* updater_pymod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09466410CAEFB900CEFDE0 /* updater_pymod.cpp */; };
-		7A98F44810CD5B25001E79F7 /* libboost_python.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98EBF310CD37FE001E79F7 /* libboost_python.dylib */; };
-		7A98F45210CD5B90001E79F7 /* libncl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26C10CD3BD3001E79F7 /* libncl.dylib */; };
 		7A98F45A10CD5C39001E79F7 /* tree_manip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09464710CAEFB900CEFDE0 /* tree_manip.cpp */; };
 		7A98F51C10CD62EF001E79F7 /* boost_assertion_failed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945BB10CAEFB900CEFDE0 /* boost_assertion_failed.cpp */; };
-		7A98F51F10CD62EF001E79F7 /* libboost_python.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98EBF310CD37FE001E79F7 /* libboost_python.dylib */; };
-		7A98F52010CD62EF001E79F7 /* libncl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26C10CD3BD3001E79F7 /* libncl.dylib */; };
 		7A98F53210CD6398001E79F7 /* phylogeny_pymod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09460F10CAEFB900CEFDE0 /* phylogeny_pymod.cpp */; };
 		7A98F53510CD63A9001E79F7 /* basic_lot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945B210CAEFB900CEFDE0 /* basic_lot.cpp */; };
 		7A98F53610CD63AB001E79F7 /* basic_tree_node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945B510CAEFB900CEFDE0 /* basic_tree_node.cpp */; };
@@ -152,8 +156,6 @@
 		7A98F54610CD63DA001E79F7 /* phycas_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09460C10CAEFB900CEFDE0 /* phycas_string.cpp */; };
 		7A98F55010CD6448001E79F7 /* tree_manip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09464710CAEFB900CEFDE0 /* tree_manip.cpp */; };
 		7A98F56410CD6484001E79F7 /* boost_assertion_failed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945BB10CAEFB900CEFDE0 /* boost_assertion_failed.cpp */; };
-		7A98F56710CD6484001E79F7 /* libboost_python.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98EBF310CD37FE001E79F7 /* libboost_python.dylib */; };
-		7A98F56810CD6484001E79F7 /* libncl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26C10CD3BD3001E79F7 /* libncl.dylib */; };
 		7A98F57710CD64EE001E79F7 /* basic_cdf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945AF10CAEFB900CEFDE0 /* basic_cdf.cpp */; };
 		7A98F57C10CD64FA001E79F7 /* nxs_file_path.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09460110CAEFB900CEFDE0 /* nxs_file_path.cpp */; };
 		7A98F57E10CD6507001E79F7 /* read_nexus_pymod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09461810CAEFB900CEFDE0 /* read_nexus_pymod.cpp */; };
@@ -190,8 +192,6 @@
 		7AB51C6610CD9D8800A865FF /* exec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C1010CD9CE100A865FF /* exec.cpp */; };
 		7AB51C6710CD9D8800A865FF /* from_python.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C0B10CD9CE100A865FF /* from_python.cpp */; };
 		7AB51C6810CD9D8900A865FF /* class.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C1710CD9CE100A865FF /* class.cpp */; };
-		7AB51CD910CDA37700A865FF /* libboost_python.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98EBF310CD37FE001E79F7 /* libboost_python.dylib */; };
-		7AB51CDA10CDA37700A865FF /* libncl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A98F26C10CD3BD3001E79F7 /* libncl.dylib */; };
 		7AB51CE810CDA3B200A865FF /* nxscxxdiscretematrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CA110CDA26800A865FF /* nxscxxdiscretematrix.cpp */; };
 		7AB51CEC10CDA3B200A865FF /* nxsdatablock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CA310CDA26800A865FF /* nxsdatablock.cpp */; };
 		7AB51CED10CDA3B200A865FF /* nxsunalignedblock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CC110CDA26800A865FF /* nxsunalignedblock.cpp */; };
@@ -204,7 +204,6 @@
 		7AB51D0210CDA3B200A865FF /* nxstoken.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CBB10CDA26800A865FF /* nxstoken.cpp */; };
 		7AB51D0410CDA3B200A865FF /* nxscharactersblock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C9F10CDA26800A865FF /* nxscharactersblock.cpp */; };
 		7AB51D0810CDA3B200A865FF /* nxsstring.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CB710CDA26800A865FF /* nxsstring.cpp */; };
-		7AB51D0A10CDA3B200A865FF /* nxstreestream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CBF10CDA26800A865FF /* nxstreestream.cpp */; };
 		7AB51D0B10CDA3B200A865FF /* nxssetreader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CB510CDA26800A865FF /* nxssetreader.cpp */; };
 		7AB51D0C10CDA3B200A865FF /* nxsdistancedatum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CA710CDA26800A865FF /* nxsdistancedatum.cpp */; };
 		7AB51D0D10CDA3B200A865FF /* nxsmultiformat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CAF10CDA26800A865FF /* nxsmultiformat.cpp */; };
@@ -293,6 +292,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2D7C9B1311076FB50028BDAD /* libboost_python.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_python.dylib; path = phycas/Conversions/libboost_python.dylib; sourceTree = PHYCAS_ROOT; };
+		2D7C9B1E11076FE60028BDAD /* libncl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libncl.dylib; path = phycas/Conversions/libncl.dylib; sourceTree = PHYCAS_ROOT; };
 		5073E0C609E734A800EC74B6 /* phycasProj.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; path = phycasProj.xcconfig; sourceTree = "<group>"; };
 		5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; path = phycasTarget.xcconfig; sourceTree = "<group>"; };
 		7A0945AF10CAEFB900CEFDE0 /* basic_cdf.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = basic_cdf.cpp; path = ../../phycas/src/basic_cdf.cpp; sourceTree = SOURCE_ROOT; };
@@ -477,8 +478,6 @@
 		7A09466710CAEFB900CEFDE0 /* xphylogeny.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = xphylogeny.hpp; path = ../../phycas/src/xphylogeny.hpp; sourceTree = SOURCE_ROOT; };
 		7A09466810CAEFB900CEFDE0 /* xprobdist.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = xprobdist.hpp; path = ../../phycas/src/xprobdist.hpp; sourceTree = SOURCE_ROOT; };
 		7A22C13010CEEB8B0043120B /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
-		7A98EBF310CD37FE001E79F7 /* libboost_python.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_python.dylib; path = phycas/Conversions/libboost_python.dylib; sourceTree = PHYCAS_ROOT; };
-		7A98F26C10CD3BD3001E79F7 /* libncl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libncl.dylib; path = phycas/Conversions/libncl.dylib; sourceTree = PHYCAS_ROOT; };
 		7A98F28410CD3C22001E79F7 /* _DataMatrixExt.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = _DataMatrixExt.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A98F31710CD5025001E79F7 /* _ProbDistExt.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = _ProbDistExt.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A98F39610CD5730001E79F7 /* _LikelihoodExt.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = _LikelihoodExt.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -559,51 +558,49 @@
 		7AB51C2410CD9CE100A865FF /* tuple.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tuple.cpp; path = libs/python/src/tuple.cpp; sourceTree = BOOST_ROOT; };
 		7AB51C2510CD9CE100A865FF /* wrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wrapper.cpp; path = libs/python/src/wrapper.cpp; sourceTree = BOOST_ROOT; };
 		7AB51C4A10CD9D5700A865FF /* libboost_python.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libboost_python.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		7AB51C9710CDA26800A865FF /* Makefile.am */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Makefile.am; path = ../../../../ncl/branches/v2.2/ncl/Makefile.am; sourceTree = SOURCE_ROOT; };
-		7AB51C9810CDA26800A865FF /* ncl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ncl.h; path = ../../../../ncl/branches/v2.2/ncl/ncl.h; sourceTree = SOURCE_ROOT; };
-		7AB51C9910CDA26800A865FF /* nxsallocatematrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsallocatematrix.h; path = ../../../../ncl/branches/v2.2/ncl/nxsallocatematrix.h; sourceTree = SOURCE_ROOT; };
+		7AB51C9710CDA26800A865FF /* Makefile.am */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Makefile.am; path = ncl/Makefile.am; sourceTree = NCL_ROOT; };
+		7AB51C9810CDA26800A865FF /* ncl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ncl.h; path = ncl/ncl.h; sourceTree = NCL_ROOT; };
+		7AB51C9910CDA26800A865FF /* nxsallocatematrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsallocatematrix.h; path = ncl/nxsallocatematrix.h; sourceTree = NCL_ROOT; };
 		7AB51C9A10CDA26800A865FF /* nxsassumptionsblock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxsassumptionsblock.cpp; path = ncl/nxsassumptionsblock.cpp; sourceTree = NCL_ROOT; };
-		7AB51C9B10CDA26800A865FF /* nxsassumptionsblock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsassumptionsblock.h; path = ../../../../ncl/branches/v2.2/ncl/nxsassumptionsblock.h; sourceTree = SOURCE_ROOT; };
+		7AB51C9B10CDA26800A865FF /* nxsassumptionsblock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsassumptionsblock.h; path = ncl/nxsassumptionsblock.h; sourceTree = NCL_ROOT; };
 		7AB51C9C10CDA26800A865FF /* nxsblock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxsblock.cpp; path = ncl/nxsblock.cpp; sourceTree = NCL_ROOT; };
-		7AB51C9D10CDA26800A865FF /* nxsblock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsblock.h; path = ../../../../ncl/branches/v2.2/ncl/nxsblock.h; sourceTree = SOURCE_ROOT; };
-		7AB51C9E10CDA26800A865FF /* nxscdiscretematrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxscdiscretematrix.h; path = ../../../../ncl/branches/v2.2/ncl/nxscdiscretematrix.h; sourceTree = SOURCE_ROOT; };
+		7AB51C9D10CDA26800A865FF /* nxsblock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsblock.h; path = ncl/nxsblock.h; sourceTree = NCL_ROOT; };
+		7AB51C9E10CDA26800A865FF /* nxscdiscretematrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxscdiscretematrix.h; path = ncl/nxscdiscretematrix.h; sourceTree = NCL_ROOT; };
 		7AB51C9F10CDA26800A865FF /* nxscharactersblock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxscharactersblock.cpp; path = ncl/nxscharactersblock.cpp; sourceTree = NCL_ROOT; };
-		7AB51CA010CDA26800A865FF /* nxscharactersblock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxscharactersblock.h; path = ../../../../ncl/branches/v2.2/ncl/nxscharactersblock.h; sourceTree = SOURCE_ROOT; };
+		7AB51CA010CDA26800A865FF /* nxscharactersblock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxscharactersblock.h; path = ncl/nxscharactersblock.h; sourceTree = NCL_ROOT; };
 		7AB51CA110CDA26800A865FF /* nxscxxdiscretematrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxscxxdiscretematrix.cpp; path = ncl/nxscxxdiscretematrix.cpp; sourceTree = NCL_ROOT; };
-		7AB51CA210CDA26800A865FF /* nxscxxdiscretematrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxscxxdiscretematrix.h; path = ../../../../ncl/branches/v2.2/ncl/nxscxxdiscretematrix.h; sourceTree = SOURCE_ROOT; };
+		7AB51CA210CDA26800A865FF /* nxscxxdiscretematrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxscxxdiscretematrix.h; path = ncl/nxscxxdiscretematrix.h; sourceTree = NCL_ROOT; };
 		7AB51CA310CDA26800A865FF /* nxsdatablock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxsdatablock.cpp; path = ncl/nxsdatablock.cpp; sourceTree = NCL_ROOT; };
-		7AB51CA410CDA26800A865FF /* nxsdatablock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsdatablock.h; path = ../../../../ncl/branches/v2.2/ncl/nxsdatablock.h; sourceTree = SOURCE_ROOT; };
-		7AB51CA510CDA26800A865FF /* nxsdefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsdefs.h; path = ../../../../ncl/branches/v2.2/ncl/nxsdefs.h; sourceTree = SOURCE_ROOT; };
-		7AB51CA610CDA26800A865FF /* nxsdiscretedatum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsdiscretedatum.h; path = ../../../../ncl/branches/v2.2/ncl/nxsdiscretedatum.h; sourceTree = SOURCE_ROOT; };
+		7AB51CA410CDA26800A865FF /* nxsdatablock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsdatablock.h; path = ncl/nxsdatablock.h; sourceTree = NCL_ROOT; };
+		7AB51CA510CDA26800A865FF /* nxsdefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsdefs.h; path = ncl/nxsdefs.h; sourceTree = NCL_ROOT; };
+		7AB51CA610CDA26800A865FF /* nxsdiscretedatum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsdiscretedatum.h; path = ncl/nxsdiscretedatum.h; sourceTree = NCL_ROOT; };
 		7AB51CA710CDA26800A865FF /* nxsdistancedatum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxsdistancedatum.cpp; path = ncl/nxsdistancedatum.cpp; sourceTree = NCL_ROOT; };
-		7AB51CA810CDA26800A865FF /* nxsdistancedatum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsdistancedatum.h; path = ../../../../ncl/branches/v2.2/ncl/nxsdistancedatum.h; sourceTree = SOURCE_ROOT; };
+		7AB51CA810CDA26800A865FF /* nxsdistancedatum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsdistancedatum.h; path = ncl/nxsdistancedatum.h; sourceTree = NCL_ROOT; };
 		7AB51CA910CDA26800A865FF /* nxsdistancesblock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxsdistancesblock.cpp; path = ncl/nxsdistancesblock.cpp; sourceTree = NCL_ROOT; };
-		7AB51CAA10CDA26800A865FF /* nxsdistancesblock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsdistancesblock.h; path = ../../../../ncl/branches/v2.2/ncl/nxsdistancesblock.h; sourceTree = SOURCE_ROOT; };
-		7AB51CAB10CDA26800A865FF /* nxsemptyblock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxsemptyblock.cpp; path = ../../../../ncl/branches/v2.2/ncl/nxsemptyblock.cpp; sourceTree = SOURCE_ROOT; };
-		7AB51CAC10CDA26800A865FF /* nxsemptyblock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsemptyblock.h; path = ../../../../ncl/branches/v2.2/ncl/nxsemptyblock.h; sourceTree = SOURCE_ROOT; };
+		7AB51CAA10CDA26800A865FF /* nxsdistancesblock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsdistancesblock.h; path = ncl/nxsdistancesblock.h; sourceTree = NCL_ROOT; };
+		7AB51CAB10CDA26800A865FF /* nxsemptyblock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxsemptyblock.cpp; path = ncl/nxsemptyblock.cpp; sourceTree = NCL_ROOT; };
+		7AB51CAC10CDA26800A865FF /* nxsemptyblock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsemptyblock.h; path = ncl/nxsemptyblock.h; sourceTree = NCL_ROOT; };
 		7AB51CAD10CDA26800A865FF /* nxsexception.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxsexception.cpp; path = ncl/nxsexception.cpp; sourceTree = NCL_ROOT; };
-		7AB51CAE10CDA26800A865FF /* nxsexception.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsexception.h; path = ../../../../ncl/branches/v2.2/ncl/nxsexception.h; sourceTree = SOURCE_ROOT; };
+		7AB51CAE10CDA26800A865FF /* nxsexception.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsexception.h; path = ncl/nxsexception.h; sourceTree = NCL_ROOT; };
 		7AB51CAF10CDA26800A865FF /* nxsmultiformat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxsmultiformat.cpp; path = ncl/nxsmultiformat.cpp; sourceTree = NCL_ROOT; };
-		7AB51CB010CDA26800A865FF /* nxsmultiformat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsmultiformat.h; path = ../../../../ncl/branches/v2.2/ncl/nxsmultiformat.h; sourceTree = SOURCE_ROOT; };
+		7AB51CB010CDA26800A865FF /* nxsmultiformat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsmultiformat.h; path = ncl/nxsmultiformat.h; sourceTree = NCL_ROOT; };
 		7AB51CB110CDA26800A865FF /* nxspublicblocks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxspublicblocks.cpp; path = ncl/nxspublicblocks.cpp; sourceTree = NCL_ROOT; };
-		7AB51CB210CDA26800A865FF /* nxspublicblocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxspublicblocks.h; path = ../../../../ncl/branches/v2.2/ncl/nxspublicblocks.h; sourceTree = SOURCE_ROOT; };
+		7AB51CB210CDA26800A865FF /* nxspublicblocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxspublicblocks.h; path = ncl/nxspublicblocks.h; sourceTree = NCL_ROOT; };
 		7AB51CB310CDA26800A865FF /* nxsreader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxsreader.cpp; path = ncl/nxsreader.cpp; sourceTree = NCL_ROOT; };
-		7AB51CB410CDA26800A865FF /* nxsreader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsreader.h; path = ../../../../ncl/branches/v2.2/ncl/nxsreader.h; sourceTree = SOURCE_ROOT; };
+		7AB51CB410CDA26800A865FF /* nxsreader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsreader.h; path = ncl/nxsreader.h; sourceTree = NCL_ROOT; };
 		7AB51CB510CDA26800A865FF /* nxssetreader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxssetreader.cpp; path = ncl/nxssetreader.cpp; sourceTree = NCL_ROOT; };
-		7AB51CB610CDA26800A865FF /* nxssetreader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxssetreader.h; path = ../../../../ncl/branches/v2.2/ncl/nxssetreader.h; sourceTree = SOURCE_ROOT; };
+		7AB51CB610CDA26800A865FF /* nxssetreader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxssetreader.h; path = ncl/nxssetreader.h; sourceTree = NCL_ROOT; };
 		7AB51CB710CDA26800A865FF /* nxsstring.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxsstring.cpp; path = ncl/nxsstring.cpp; sourceTree = NCL_ROOT; };
-		7AB51CB810CDA26800A865FF /* nxsstring.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsstring.h; path = ../../../../ncl/branches/v2.2/ncl/nxsstring.h; sourceTree = SOURCE_ROOT; };
+		7AB51CB810CDA26800A865FF /* nxsstring.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsstring.h; path = ncl/nxsstring.h; sourceTree = NCL_ROOT; };
 		7AB51CB910CDA26800A865FF /* nxstaxablock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxstaxablock.cpp; path = ncl/nxstaxablock.cpp; sourceTree = NCL_ROOT; };
-		7AB51CBA10CDA26800A865FF /* nxstaxablock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxstaxablock.h; path = ../../../../ncl/branches/v2.2/ncl/nxstaxablock.h; sourceTree = SOURCE_ROOT; };
+		7AB51CBA10CDA26800A865FF /* nxstaxablock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxstaxablock.h; path = ncl/nxstaxablock.h; sourceTree = NCL_ROOT; };
 		7AB51CBB10CDA26800A865FF /* nxstoken.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxstoken.cpp; path = ncl/nxstoken.cpp; sourceTree = NCL_ROOT; };
-		7AB51CBC10CDA26800A865FF /* nxstoken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxstoken.h; path = ../../../../ncl/branches/v2.2/ncl/nxstoken.h; sourceTree = SOURCE_ROOT; };
+		7AB51CBC10CDA26800A865FF /* nxstoken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxstoken.h; path = ncl/nxstoken.h; sourceTree = NCL_ROOT; };
 		7AB51CBD10CDA26800A865FF /* nxstreesblock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxstreesblock.cpp; path = ncl/nxstreesblock.cpp; sourceTree = NCL_ROOT; };
-		7AB51CBE10CDA26800A865FF /* nxstreesblock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxstreesblock.h; path = ../../../../ncl/branches/v2.2/ncl/nxstreesblock.h; sourceTree = SOURCE_ROOT; };
-		7AB51CBF10CDA26800A865FF /* nxstreestream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxstreestream.cpp; path = ncl/nxstreestream.cpp; sourceTree = NCL_ROOT; };
-		7AB51CC010CDA26800A865FF /* nxstreestream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxstreestream.h; path = ../../../../ncl/branches/v2.2/ncl/nxstreestream.h; sourceTree = SOURCE_ROOT; };
+		7AB51CBE10CDA26800A865FF /* nxstreesblock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxstreesblock.h; path = ncl/nxstreesblock.h; sourceTree = NCL_ROOT; };
 		7AB51CC110CDA26800A865FF /* nxsunalignedblock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxsunalignedblock.cpp; path = ncl/nxsunalignedblock.cpp; sourceTree = NCL_ROOT; };
-		7AB51CC210CDA26800A865FF /* nxsunalignedblock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsunalignedblock.h; path = ../../../../ncl/branches/v2.2/ncl/nxsunalignedblock.h; sourceTree = SOURCE_ROOT; };
-		7AB51CC310CDA26800A865FF /* nxsutilcopy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsutilcopy.h; path = ../../../../ncl/branches/v2.2/ncl/nxsutilcopy.h; sourceTree = SOURCE_ROOT; };
+		7AB51CC210CDA26800A865FF /* nxsunalignedblock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsunalignedblock.h; path = ncl/nxsunalignedblock.h; sourceTree = NCL_ROOT; };
+		7AB51CC310CDA26800A865FF /* nxsutilcopy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsutilcopy.h; path = ncl/nxsutilcopy.h; sourceTree = NCL_ROOT; };
 		7AB51CE010CDA39200A865FF /* libncl.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libncl.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpython2.6.dylib; path = lib/libpython2.6.dylib; sourceTree = PYTHON_ROOT; };
 		D17574CD10EB942400D4E2B0 /* partition.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = partition.py; path = ../../inprep/partition/partition.py; sourceTree = SOURCE_ROOT; };
@@ -642,9 +639,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7A98F30610CD4FDD001E79F7 /* libboost_python.dylib in Frameworks */,
-				7A98F27910CD3C22001E79F7 /* libncl.dylib in Frameworks */,
 				D13CAB9110D1D72200813B89 /* libpython2.6.dylib in Frameworks */,
+				2D7C9B1511076FB50028BDAD /* libboost_python.dylib in Frameworks */,
+				2D7C9B2011076FE60028BDAD /* libncl.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -652,9 +649,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7A98F34210CD533E001E79F7 /* libboost_python.dylib in Frameworks */,
-				7A98F31210CD5025001E79F7 /* libncl.dylib in Frameworks */,
 				D13CAB9410D1D72300813B89 /* libpython2.6.dylib in Frameworks */,
+				2D7C9B1811076FB50028BDAD /* libboost_python.dylib in Frameworks */,
+				2D7C9B2311076FE60028BDAD /* libncl.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -663,9 +660,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				7A22C1EA10CEEBB70043120B /* CoreServices.framework in Frameworks */,
-				7A98F44810CD5B25001E79F7 /* libboost_python.dylib in Frameworks */,
-				7A98F45210CD5B90001E79F7 /* libncl.dylib in Frameworks */,
 				D13CAB9210D1D72200813B89 /* libpython2.6.dylib in Frameworks */,
+				2D7C9B1611076FB50028BDAD /* libboost_python.dylib in Frameworks */,
+				2D7C9B2111076FE60028BDAD /* libncl.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -673,9 +670,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7A98F51F10CD62EF001E79F7 /* libboost_python.dylib in Frameworks */,
-				7A98F52010CD62EF001E79F7 /* libncl.dylib in Frameworks */,
 				D13CAB9310D1D72300813B89 /* libpython2.6.dylib in Frameworks */,
+				2D7C9B1711076FB50028BDAD /* libboost_python.dylib in Frameworks */,
+				2D7C9B2211076FE60028BDAD /* libncl.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -683,9 +680,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7A98F56710CD6484001E79F7 /* libboost_python.dylib in Frameworks */,
-				7A98F56810CD6484001E79F7 /* libncl.dylib in Frameworks */,
 				D13CAB9510D1D72300813B89 /* libpython2.6.dylib in Frameworks */,
+				2D7C9B1911076FB50028BDAD /* libboost_python.dylib in Frameworks */,
+				2D7C9B2411076FE60028BDAD /* libncl.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -708,9 +705,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7AB51CD910CDA37700A865FF /* libboost_python.dylib in Frameworks */,
-				7AB51CDA10CDA37700A865FF /* libncl.dylib in Frameworks */,
 				D13CAB9010D1D72200813B89 /* libpython2.6.dylib in Frameworks */,
+				2D7C9B1411076FB50028BDAD /* libboost_python.dylib in Frameworks */,
+				2D7C9B1F11076FE60028BDAD /* libncl.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -749,9 +746,9 @@
 		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				2D7C9B1E11076FE60028BDAD /* libncl.dylib */,
+				2D7C9B1311076FB50028BDAD /* libboost_python.dylib */,
 				7A22C13010CEEB8B0043120B /* CoreServices.framework */,
-				7A98EBF310CD37FE001E79F7 /* libboost_python.dylib */,
-				7A98F26C10CD3BD3001E79F7 /* libncl.dylib */,
 				D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */,
 			);
 			name = "External Frameworks and Libraries";
@@ -1210,8 +1207,6 @@
 				7AB51CBC10CDA26800A865FF /* nxstoken.h */,
 				7AB51CBD10CDA26800A865FF /* nxstreesblock.cpp */,
 				7AB51CBE10CDA26800A865FF /* nxstreesblock.h */,
-				7AB51CBF10CDA26800A865FF /* nxstreestream.cpp */,
-				7AB51CC010CDA26800A865FF /* nxstreestream.h */,
 				7AB51CC110CDA26800A865FF /* nxsunalignedblock.cpp */,
 				7AB51CC210CDA26800A865FF /* nxsunalignedblock.h */,
 				7AB51CC310CDA26800A865FF /* nxsutilcopy.h */,
@@ -1758,7 +1753,6 @@
 				7AB51D0210CDA3B200A865FF /* nxstoken.cpp in Sources */,
 				7AB51D0410CDA3B200A865FF /* nxscharactersblock.cpp in Sources */,
 				7AB51D0810CDA3B200A865FF /* nxsstring.cpp in Sources */,
-				7AB51D0A10CDA3B200A865FF /* nxstreestream.cpp in Sources */,
 				7AB51D0B10CDA3B200A865FF /* nxssetreader.cpp in Sources */,
 				7AB51D0C10CDA3B200A865FF /* nxsdistancedatum.cpp in Sources */,
 				7AB51D0D10CDA3B200A865FF /* nxsmultiformat.cpp in Sources */,
@@ -1845,6 +1839,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
 					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
+					"\"$(SRCROOT)/../../phycas/Conversions\"",
 				);
 				PRODUCT_NAME = _ConversionsExt;
 			};
@@ -1859,6 +1854,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
 					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
+					"\"$(SRCROOT)/../../phycas/Conversions\"",
 				);
 				PRODUCT_NAME = _ConversionsExt;
 			};
@@ -1877,10 +1873,13 @@
 					"$(NCL_ROOT)",
 					"$(BOOST_ROOT)",
 				);
-				LIBRARY_SEARCH_PATHS = "$(PHYCAS_ROOT)/phycas/Conversions";
+				LIBRARY_SEARCH_PATHS = (
+					"$(PYTHON_ROOT)/lib",
+					"$(PHYCAS_ROOT)/phycas/Conversions",
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx10.5;
 				USER_HEADER_SEARCH_PATHS = "$(PHYCAS_ROOT)";
 			};
 			name = Debug;
@@ -1900,7 +1899,7 @@
 				LIBRARY_SEARCH_PATHS = "$(PHYCAS_ROOT)/phycas/Conversions";
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx10.5;
 				USER_HEADER_SEARCH_PATHS = "$(PHYCAS_ROOT)";
 			};
 			name = Release;
@@ -1915,6 +1914,7 @@
 					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
 					"\"$(SRCROOT)/../../../../../../pydebug/lib/python2.6/config\"",
 					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
+					"\"$(SRCROOT)/../../phycas/Conversions\"",
 				);
 				PRODUCT_NAME = _DataMatrixExt;
 			};
@@ -1930,6 +1930,7 @@
 					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
 					"\"$(SRCROOT)/../../../../../../pydebug/lib/python2.6/config\"",
 					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
+					"\"$(SRCROOT)/../../phycas/Conversions\"",
 				);
 				PRODUCT_NAME = _DataMatrixExt;
 			};
@@ -1944,6 +1945,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
 					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
+					"\"$(SRCROOT)/../../phycas/Conversions\"",
 				);
 				PRODUCT_NAME = _ProbDistExt;
 			};
@@ -1958,6 +1960,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
 					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
+					"\"$(SRCROOT)/../../phycas/Conversions\"",
 				);
 				PRODUCT_NAME = _ProbDistExt;
 			};
@@ -1976,6 +1979,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
 					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
+					"\"$(SRCROOT)/../../phycas/Conversions\"",
 				);
 				PRODUCT_NAME = _LikelihoodExt;
 			};
@@ -1990,6 +1994,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
 					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
+					"\"$(SRCROOT)/../../phycas/Conversions\"",
 				);
 				PRODUCT_NAME = _LikelihoodExt;
 			};
@@ -2004,6 +2009,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
 					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
+					"\"$(SRCROOT)/../../phycas/Conversions\"",
 				);
 				PRODUCT_NAME = _PhylogenyExt;
 			};
@@ -2018,6 +2024,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
 					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
+					"\"$(SRCROOT)/../../phycas/Conversions\"",
 				);
 				PRODUCT_NAME = _PhylogenyExt;
 			};
@@ -2034,6 +2041,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
 					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
+					"\"$(SRCROOT)/../../phycas/Conversions\"",
 				);
 				PRODUCT_NAME = _ReadNexusExt;
 			};
@@ -2048,6 +2056,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
 					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
+					"\"$(SRCROOT)/../../phycas/Conversions\"",
 				);
 				PRODUCT_NAME = _ReadNexusExt;
 			};
@@ -2078,12 +2087,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				DEPLOYMENT_LOCATION = NO;
 				EXECUTABLE_PREFIX = lib;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				INSTALL_PATH = /usr/local/lib;
+				INSTALL_PATH = "$(PHYCAS_ROOT)/phycas/Conversions";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
@@ -2123,7 +2133,7 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				INSTALL_PATH = /usr/local/lib;
+				INSTALL_PATH = "$(PHYCAS_ROOT)/phycas/Conversions";
 				PREBINDING = NO;
 				PRODUCT_NAME = ncl;
 			};
