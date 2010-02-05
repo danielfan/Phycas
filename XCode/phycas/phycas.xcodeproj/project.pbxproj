@@ -604,7 +604,7 @@
 		7AB51CE010CDA39200A865FF /* libncl.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libncl.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpython2.6.dylib; path = lib/libpython2.6.dylib; sourceTree = PYTHON_ROOT; };
 		D17574CD10EB942400D4E2B0 /* partition.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = partition.py; path = ../../inprep/partition/partition.py; sourceTree = SOURCE_ROOT; };
-		D1ABDDD510D2D41400EDC77A /* partition.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = partition.py; path = inprep/partition/partition.py; sourceTree = PHYCAS_ROOT; };
+		D1829B31110E22AC00F200D6 /* nxscdiscretematrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxscdiscretematrix.h; path = ../../../../ndev/branches/v2.2/ncl/nxscdiscretematrix.h; sourceTree = SOURCE_ROOT; };
 		D1ABDDE310D2D60000EDC77A /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = __init__.py; path = phycas/Phycas/__init__.py; sourceTree = PHYCAS_ROOT; };
 		D1ABDDE410D2D60000EDC77A /* BrownianImpl.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = BrownianImpl.py; path = phycas/Phycas/BrownianImpl.py; sourceTree = PHYCAS_ROOT; };
 		D1ABDDE510D2D60000EDC77A /* CPO.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = CPO.py; path = phycas/Phycas/CPO.py; sourceTree = PHYCAS_ROOT; };
@@ -631,6 +631,11 @@
 		D1ABDDFA10D2D60000EDC77A /* Unimap.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = Unimap.py; path = phycas/Phycas/Unimap.py; sourceTree = PHYCAS_ROOT; };
 		D1ABDDFB10D2D60000EDC77A /* UnimapImpl.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = UnimapImpl.py; path = phycas/Phycas/UnimapImpl.py; sourceTree = PHYCAS_ROOT; };
 		D1ABDDFC10D2D64800EDC77A /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = __init__.py; path = phycas/__init__.py; sourceTree = PHYCAS_ROOT; };
+		D1AC9562111A0AF500335CDA /* runall.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = runall.py; path = ../../phycas/Tests/runall.py; sourceTree = SOURCE_ROOT; };
+		D1BB2656111094A6002A8F79 /* LikelihoodCore.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = LikelihoodCore.py; path = ../../phycas/Phycas/LikelihoodCore.py; sourceTree = SOURCE_ROOT; };
+		D1BB2657111094A6002A8F79 /* MarkovChain.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = MarkovChain.py; path = ../../phycas/Phycas/MarkovChain.py; sourceTree = SOURCE_ROOT; };
+		D1D55522111B7A9A001BD7CD /* LikelihoodTest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = LikelihoodTest.py; path = ../../phycas/Tests/LikelihoodTest/LikelihoodTest.py; sourceTree = SOURCE_ROOT; };
+		D1F281C3111B422C00FDE78C /* GTRTest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = GTRTest.py; path = ../../phycas/Tests/GTRTest/GTRTest.py; sourceTree = SOURCE_ROOT; };
 		D2AAC09D05546B4700DB518D /* _ConversionsExt.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = _ConversionsExt.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -995,10 +1000,10 @@
 		7A98F5F110CD6D69001E79F7 /* Python source */ = {
 			isa = PBXGroup;
 			children = (
+				D1AC9561111A0A9E00335CDA /* Tests */,
 				D17574C410EB940500D4E2B0 /* InPrep */,
 				D1ABDDFC10D2D64800EDC77A /* __init__.py */,
 				D1ABDDE210D2D58F00EDC77A /* Phycas */,
-				D1ABDDD310D2D39B00EDC77A /* InPrep */,
 				7A98F5FD10CD6DB8001E79F7 /* Conversions */,
 				7A98F60810CD6DD5001E79F7 /* DataMatrix */,
 				7A98F61110CD6DEC001E79F7 /* Likelihood */,
@@ -1178,6 +1183,7 @@
 				7AB51C9F10CDA26800A865FF /* nxscharactersblock.cpp */,
 				7AB51CA010CDA26800A865FF /* nxscharactersblock.h */,
 				7AB51CA110CDA26800A865FF /* nxscxxdiscretematrix.cpp */,
+				D1829B31110E22AC00F200D6 /* nxscdiscretematrix.h */,
 				7AB51CA210CDA26800A865FF /* nxscxxdiscretematrix.h */,
 				7AB51CA310CDA26800A865FF /* nxsdatablock.cpp */,
 				7AB51CA410CDA26800A865FF /* nxsdatablock.h */,
@@ -1230,22 +1236,6 @@
 			name = Partition;
 			sourceTree = "<group>";
 		};
-		D1ABDDD310D2D39B00EDC77A /* InPrep */ = {
-			isa = PBXGroup;
-			children = (
-				D1ABDDD410D2D3B700EDC77A /* partition */,
-			);
-			name = InPrep;
-			sourceTree = "<group>";
-		};
-		D1ABDDD410D2D3B700EDC77A /* partition */ = {
-			isa = PBXGroup;
-			children = (
-				D1ABDDD510D2D41400EDC77A /* partition.py */,
-			);
-			name = partition;
-			sourceTree = "<group>";
-		};
 		D1ABDDE210D2D58F00EDC77A /* Phycas */ = {
 			isa = PBXGroup;
 			children = (
@@ -1257,9 +1247,11 @@
 				D1ABDDE810D2D60000EDC77A /* GGImpl.py */,
 				D1ABDDE910D2D60000EDC77A /* Like.py */,
 				D1ABDDEA10D2D60000EDC77A /* LikeImpl.py */,
+				D1BB2656111094A6002A8F79 /* LikelihoodCore.py */,
+				D1BB2657111094A6002A8F79 /* MarkovChain.py */,
+				D1ABDDED10D2D60000EDC77A /* MCMCManager.py */,
 				D1ABDDEB10D2D60000EDC77A /* MCMC.py */,
 				D1ABDDEC10D2D60000EDC77A /* MCMCImpl.py */,
-				D1ABDDED10D2D60000EDC77A /* MCMCManager.py */,
 				D1ABDDEE10D2D60000EDC77A /* Model.py */,
 				D1ABDDEF10D2D60000EDC77A /* Partition.py */,
 				D1ABDDF010D2D60000EDC77A /* Phycas.py */,
@@ -1276,6 +1268,32 @@
 				D1ABDDFB10D2D60000EDC77A /* UnimapImpl.py */,
 			);
 			name = Phycas;
+			sourceTree = "<group>";
+		};
+		D1AC9561111A0A9E00335CDA /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				D1D55521111B7A81001BD7CD /* LikelihoodTest */,
+				D1F281C2111B420F00FDE78C /* GTRTest */,
+				D1AC9562111A0AF500335CDA /* runall.py */,
+			);
+			name = Tests;
+			sourceTree = "<group>";
+		};
+		D1D55521111B7A81001BD7CD /* LikelihoodTest */ = {
+			isa = PBXGroup;
+			children = (
+				D1D55522111B7A9A001BD7CD /* LikelihoodTest.py */,
+			);
+			name = LikelihoodTest;
+			sourceTree = "<group>";
+		};
+		D1F281C2111B420F00FDE78C /* GTRTest */ = {
+			isa = PBXGroup;
+			children = (
+				D1F281C3111B422C00FDE78C /* GTRTest.py */,
+			);
+			name = GTRTest;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

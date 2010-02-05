@@ -29,7 +29,10 @@ namespace phycas
 OmegaParam::OmegaParam()
   : MCMCUpdater(), codon(NULL)
 	{
+#if POLPY_NEWWAY
+#else //old way
 	curr_value = 1.0;
+#endif
 	has_slice_sampler = true;
 	is_move = false;
 	is_master_param = false;

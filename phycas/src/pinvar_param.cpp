@@ -28,7 +28,10 @@ namespace phycas
 PinvarParam::PinvarParam()
   : MCMCUpdater()
 	{
+#if POLPY_NEWWAY
+#else //old way
 	curr_value = 0.5;
+#endif
 	has_slice_sampler = true;
 	is_move = false;
 	is_master_param = false;

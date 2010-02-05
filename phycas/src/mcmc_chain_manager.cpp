@@ -162,7 +162,18 @@ void MCMCChainManager::refreshLastLnPrior()
 		{
 		throw XLikelihood("cannot call refreshLastLnPrior() for chain manager before calling finalize()");
 		}
-
+		
+#if POLPY_NEWWAY
+	// Visit all updaters and let those who are prior stewards update their component of the joint prior.
+	last_ln_prior = 0.0;
+	for (MCMCUpdaterIter it = all_updaters.begin(); it != all_updaters.end(); ++it)
+		{
+		MCMCUpdaterShPtr s = *it;
+		double this_ln_prior = s->recalcPrior();
+		last_ln_prior += this_ln_prior;
+		//std::cerr << boost::str(boost::format("Current prior = %g, Cumulative = %g, name = '%s'") % this_ln_prior % last_ln_prior % s->getName()) << std::endl;
+		}
+#else
 	// Go through all parameters and get each of them to recalculate the prior probability density for their
 	// current value (don't call getLnPrior() because this will return value of a data member but will not 
 	// force a recalculation)
@@ -171,8 +182,10 @@ void MCMCChainManager::refreshLastLnPrior()
 		{
 		MCMCUpdaterShPtr s = *p;
 		double this_ln_prior = s->recalcPrior();
+		std::cerr << boost::str(boost::format("Recalculating prior for parameter %s: %g") % s->getName() % this_ln_prior) << std::endl;
 		last_ln_prior += this_ln_prior;
 		}
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -182,6 +195,16 @@ void MCMCChainManager::refreshLastLnPrior()
 |   by calling the model's createParameters() member function. This function does not call the finalize() function, 
 |   however, in case other parameters need to be added after this function is called.
 */
+#if POLPY_NEWWAY
+void MCMCChainManager::addMCMCUpdaters(
+  ModelShPtr m,						/**< is the substitution model */
+  TreeShPtr t,						/**< is the tree */
+  TreeLikeShPtr like,				/**< is the likelihood calculator */
+  LotShPtr r,						/**< is the pseudo-random number generator */
+  unsigned max_units,				/**< is the maximum number of slice sampler units to use in each update */
+  unsigned weight,					/**< is the weight to be used for all parameters added by this function */
+  bool add_edgelen_params)			/**< if true, edge length parameters and hyperparameters will be added */
+#else //old way
 void MCMCChainManager::addMCMCUpdaters(
   ModelShPtr m,						/**< is the substitution model */
   TreeShPtr t,						/**< is the tree */
@@ -189,6 +212,7 @@ void MCMCChainManager::addMCMCUpdaters(
   LotShPtr r,						/**< is the pseudo-random number generator */
   unsigned max_units,				/**< is the maximum number of slice sampler units to use in each update */
   unsigned weight)					/**< is the weight to be used for all parameters added by this function */
+#endif
 	{
 	//std::cerr << "\n***** model.getExternalEdgeLenPrior() upon entering MCMCChainManager::addMCMCUpdaters: use count = " << m->getExternalEdgeLenPrior().use_count() << std::endl;
 	
@@ -208,6 +232,19 @@ void MCMCChainManager::addMCMCUpdaters(
 		{
 		throw XLikelihood("Error in MCMCChainManager::addMCMCUpdaters: no model defined");
 		}
+#if POLPY_NEWWAY
+	if (add_edgelen_params)
+		{
+		if (!m->getInternalEdgeLenPrior())
+			{
+			throw XLikelihood("Error in MCMCChainManager::addMCMCUpdaters: no internal edge length prior defined");
+			}
+		if (!m->getExternalEdgeLenPrior())
+			{
+			throw XLikelihood("Error in MCMCChainManager::addMCMCUpdaters: no external edge length prior defined");
+			}
+		}
+#else //old way
 	if (!m->getInternalEdgeLenPrior())
 		{
 		throw XLikelihood("Error in MCMCChainManager::addMCMCUpdaters: no internal edge length prior defined");
@@ -216,18 +253,55 @@ void MCMCChainManager::addMCMCUpdaters(
 		{
 		throw XLikelihood("Error in MCMCChainManager::addMCMCUpdaters: no external edge length prior defined");
 		}
+#endif
 
 	MCMCUpdaterIter iter;
 	MCMCUpdaterVect edgelens;
 	MCMCUpdaterVect edgelen_hyperparams;
 	MCMCUpdaterVect parameters;
 
+#if POLPY_NEWWAY
+	// Ask the model to create the edge length parameters, edge length hyperparameters, and 
+	// its own model-specific parameters.
+	m->createParameters(t, edgelens, edgelen_hyperparams, parameters, add_edgelen_params);
+
+	if (add_edgelen_params)
+		{
+		// Add the edge length parameters (might be master parameters for internal and external edges or, 
+		// one edge length master parameter that governs all edges in the tree)
+		for (iter = edgelens.begin(); iter != edgelens.end(); ++iter)
+			{
+			MCMCUpdaterShPtr p = (*iter);
+			p->setWeight(weight);
+			p->setMaxUnits(max_units);
+			p->setModel(m);
+			p->setTreeLikelihood(like);
+			p->setLot(r);
+			addEdgeLenParam(p);
+			//std::cerr << ">>>>> adding edge length parameter in MCMCChainManager::addMCMCUpdaters: use count = " << p.use_count() << std::endl;
+			//std::cerr << "\n***** model.getExternalEdgeLenPrior() after adding edge length parameter: use count = " << m->getExternalEdgeLenPrior().use_count() << std::endl;
+			}
+
+		// Add the edge length hyperparameters (if any were created)
+		for (iter = edgelen_hyperparams.begin(); iter != edgelen_hyperparams.end(); ++iter)
+			{
+			MCMCUpdaterShPtr p = (*iter);
+			p->setWeight(weight);
+			p->setMaxUnits(max_units);
+			p->setModel(m);
+			p->setTreeLikelihood(like);
+			p->setLot(r);
+			addEdgeLenHyperparam(p);
+			//std::cerr << ">>>>> adding edge length hyperparameters in MCMCChainManager::addMCMCUpdaters: use count = " << p.use_count() << std::endl;
+			}
+		}
+#else
 	// Ask the model to create the edge length parameters, edge length hyperparameters, and 
 	// its own model-specific parameters.
 	m->createParameters(t, edgelens, edgelen_hyperparams, parameters);
 
 	// Add the edge length parameters (might be master parameters for internal and external edges or, 
-    // one edge length master parameter that governs all edges in the tree)
+	// one edge length master parameter that governs all edges in the tree)
 	for (iter = edgelens.begin(); iter != edgelens.end(); ++iter)
 		{
 		MCMCUpdaterShPtr p = (*iter);
@@ -253,29 +327,20 @@ void MCMCChainManager::addMCMCUpdaters(
 		addEdgeLenHyperparam(p);
 		//std::cerr << ">>>>> adding edge length hyperparameters in MCMCChainManager::addMCMCUpdaters: use count = " << p.use_count() << std::endl;
 		}
+#endif			
+
+	//std::cerr << boost::str(boost::format("~~~ length of parameters vector is %d") % parameters.size()) << std::endl;
 
 	for (iter = parameters.begin(); iter != parameters.end(); ++iter)
 		{
-#if 1
 		(*iter)->setWeight(weight);
 		(*iter)->setMaxUnits(max_units);
 		(*iter)->setModel(m);
 		(*iter)->setTreeLikelihood(like);
 		(*iter)->setLot(r);
+		//std::cerr << boost::str(boost::format("~~~ calling MCMCChainManager::addModelParam for parameter %s") % (*iter)->getName()) << std::endl;
 		addModelParam(*iter);
-		//std::cerr << ">>>>> adding model parameter (" << (*iter)->getName() << ") in MCMCChainManager::addMCMCUpdaters: use count = " << (*iter).use_count() << std::endl;
-#else
-		MCMCUpdaterShPtr p = (*iter);
-		p->setWeight(weight);
-		p->setMaxUnits(max_units);
-		p->setModel(m);
-		p->setTreeLikelihood(like);
-		p->setLot(r);
-		addModelParam(p);
-		//std::cerr << ">>>>> adding model parameter (" << p->getName() << ") in MCMCChainManager::addMCMCUpdaters: use count = " << p.use_count() << std::endl;
-#endif
 		}
-	//std::cerr << "\n***** model.getExternalEdgeLenPrior() upon exiting MCMCChainManager::addMCMCUpdaters: use count = " << m->getExternalEdgeLenPrior().use_count() << std::endl;
 	}
 
 ////////////////////////////////////////// inserted contents of mcmc_chain_manager.inl here /////////////////////////////
@@ -295,12 +360,14 @@ void MCMCChainManager::updateAllUpdaters()
 	{
 	for (MCMCUpdaterVect::iterator it = all_updaters.begin(); it != all_updaters.end(); ++it)
 		{
-		//std::string nm = (*it)->getName();
+		//std::string nm = (*it)->getName();	//temp
 		unsigned w = (*it)->getWeight();
 		for (unsigned i = 0; i < w; ++i)
 			{
-			//std::cerr << "########## updating " << nm << "..." << std::endl;
+			//std::cerr << "########## updating " << nm << "..." << std::endl;	//temp
+			//(*it)->setSaveDebugInfo(true);//temp
 			(*it)->update();
+			//std::cerr << boost::str(boost::format("%s | %s") % nm % (*it)->getDebugInfo()) << std::endl;
 			}
 		}
 	}
@@ -399,7 +466,11 @@ void MCMCChainManager::setEdgeLenHyperparam(
   double v)     /**< is the value to set */
 	{
     PHYCAS_ASSERT(i < edge_len_hyperparams.size());
+#if POLPY_NEWWAY
+	edge_len_hyperparams[i]->sendCurrValueToModel(v);
+#else //old way
 	edge_len_hyperparams[i]->setCurrValue(v);
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -509,19 +580,16 @@ void MCMCChainManager::finalize()
 		//std::cerr << ">>>> updater " << nm << " (" << uc1 << " --> " << uc2 << ")" << std::endl;
 		}
 	
-	// These lines using boost::lambda were replaced by the easier-to-understand-and-debug loop below
-	//std::for_each(params_begin, params_end, 
-	//	boost::lambda::bind(&MCMCUpdater::setCurrValueFromModel, *boost::lambda::_1));
-	//std::for_each(params_begin, params_end, 
-	//	boost::lambda::bind(&MCMCUpdater::recalcPrior, *boost::lambda::_1));
-	
 	for (MCMCUpdaterIter piter = params_begin; piter != params_end; ++piter)
 		{
 	    //std::cerr << boost::str(boost::format("@@@@@ calling recalcPrior for parameter named '%s'..." ) % (*piter)->getName()) << std::endl;
 	    
+#if POLPY_NEWWAY
+#else //old way
 		// Call each parameter's setCurrValueFromModel member function to make sure that their 
 		// curr_value data members are up to date
 		(*piter)->setCurrValueFromModel();
+#endif
 
 		// Call each parameter's recalcPrior member function to make sure their curr_ln_prior data members are
 		// up to date
@@ -536,6 +604,36 @@ void MCMCChainManager::finalize()
 	// the beginning and end of each section of the all_updaters vector anyway.
 
 	dirty = false;
+	
+#if 0
+	std::cerr << std::endl;
+	std::cerr << "##############################################" << std::endl;
+	std::cerr << "Here are the updaters that can compute priors:" << std::endl;
+	for (MCMCUpdaterIter it = all_updaters.begin(); it != all_updaters.end(); ++it)
+		{
+		MCMCUpdaterShPtr s = *it;
+		if (s->computesUnivariatePrior())
+			std::cerr << boost::str(boost::format("  '%s' (univariate prior)") % s->getName()) << std::endl;
+		else if (s->computesMultivariatePrior())
+			std::cerr << boost::str(boost::format("  '%s' (multivariate prior)") % s->getName()) << std::endl;
+		else
+			std::cerr << boost::str(boost::format("  '%s' (does not compute prior)") % s->getName()) << std::endl;
+		}
+		
+	std::cerr << std::endl;
+	std::cerr << "##############################################" << std::endl;
+	std::cerr << "Here is the list of just the parameters:" << std::endl;
+	for (MCMCUpdaterIter p = params_begin; p != params_end; ++p)
+		{
+		MCMCUpdaterShPtr s = *p;
+		if (s->computesUnivariatePrior())
+			std::cerr << boost::str(boost::format("  '%s' (univariate prior)") % s->getName()) << std::endl;
+		else if (s->computesMultivariatePrior())
+			std::cerr << boost::str(boost::format("  '%s' (multivariate prior)") % s->getName()) << std::endl;
+		else
+			std::cerr << boost::str(boost::format("  '%s' (does not compute prior)") % s->getName()) << std::endl;
+		}
+#endif
 	}
 
 // Using USE_PARTIAL_SUM_FUNCTOR is slightly faster, but makes the assumption that the edge length prior

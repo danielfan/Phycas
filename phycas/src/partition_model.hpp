@@ -46,7 +46,8 @@ public:
     unsigned                        	getTotalNumPatterns();
 	
 	// Accessors
-	const std::vector<ModelShPtr>	&	getModelsVect() const;
+	ModelShPtr							getModel(unsigned i) {return subset_model[i];}
+	const ModelVect					&	getModelsVect() const;
 	const std::vector<unsigned>		&	getNumPatternsVect() const;
 	const std::vector<unsigned>		&	getNumStatesVect() const;
 	const std::vector<unsigned>		&	getNumRatesVect() const;
@@ -63,7 +64,7 @@ private:
     std::vector<unsigned>           	subset_num_patterns;	/**< The number of site patterns for each partition subset */
     std::vector<unsigned>           	subset_num_states;		/**< The number of states for each partition subset */
     std::vector<unsigned>           	subset_num_rates;		/**< The number of relative rate categories for each partition subset */
-    std::vector<ModelShPtr>				subset_model;			/**< The substitution model for each partition subset */
+    ModelVect							subset_model;			/**< The substitution model for each partition subset */
 };  // class PartitionModel
 
 typedef boost::shared_ptr<PartitionModel> PartitionModelShPtr;

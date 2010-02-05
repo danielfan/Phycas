@@ -24,9 +24,12 @@
 #include <boost/shared_ptr.hpp>						// for boost::shared_ptr
 #include <boost/weak_ptr.hpp>						// for boost::weak_ptr
 #include <boost/enable_shared_from_this.hpp>		// for boost::enable_shared_from_this
-#include "phycas/src/tree_manip.hpp"			// for TreeManip
+#include "phycas/src/tree_manip.hpp"				// for TreeManip
 #include "phycas/src/slice_sampler.hpp"
 #include "phycas/src/probability_distribution.hpp"
+#if POLPY_NEWWAY
+#	include "phycas/src/states_patterns.hpp"		// for double_vect
+#endif
 
 namespace phycas
 {
@@ -95,6 +98,10 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		bool					isHyperParameter() const;
 		bool					hasSliceSampler() const;
 		bool					isMove() const;
+#if POLPY_NEWWAY
+		bool					computesUnivariatePrior();
+		bool					computesMultivariatePrior();
+#endif		
 
 		// Accessors
 		const std::string &		getName() const;
@@ -115,7 +122,10 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 
 		// Accessors used only by parameters
 		SliceSamplerShPtr		getSliceSampler();
+#if POLPY_NEWWAY
+#else //old way
 		double					getCurrValue() const;
+#endif
 
 		// Accessors used only by moves
 		ProbDistShPtr			getPriorDist();
@@ -140,9 +150,20 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		virtual void			setStartingValue(double x);
 		virtual void			setPriorMeanAndVariance(double m, double v);
 		virtual double			recalcPrior();
+
+#if POLPY_NEWWAY
+		// Univariate case
+        virtual void			sendCurrValueToModel(double v);
+        virtual double			getCurrValueFromModel();
+		
+		// Multivariate case
+        virtual void			sendCurrValuesToModel(double_vect_t & v);
+        virtual void			getCurrValuesFromModel(double_vect_t & v);
+        virtual double_vect_t	listCurrValuesFromModel();
+#else //old way
         virtual void            setCurrValue(double x);
         virtual void            setCurrValueFromModel();
-
+#endif
 
 		// Utilities
 		void					releaseSharedPointers();

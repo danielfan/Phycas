@@ -1194,7 +1194,7 @@ double TreeLikelihood::harvestLnLFromValidEdge(
    ConstEdgeEndpoints & focal_edge)	/**< is the edge containing the focal node that will serve as the likelihood root */	
     {
 #if POLPY_NEWWAY
-	debugCompressedDataInfo("compressed_data_info.txt");
+	//debugCompressedDataInfo("compressed_data_info.txt");
 	
     // Create convenience variables focalNode, focalNeighbor, actualChild, focalEdgeLen, focalCondLike, focalNodeCLA,
     // and singleRateCLALength

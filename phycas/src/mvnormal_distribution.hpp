@@ -43,6 +43,9 @@ class MVNormalDistribution : public MultivariateProbabilityDistribution
                         					MVNormalDistribution(const MVNormalDistribution & other);
 											~MVNormalDistribution() {}
 	
+#if POLPY_NEWWAY
+        MVNormalDistribution * 				cloneAndSetLot(Lot * other) const;
+#endif
         MVNormalDistribution * 				Clone() const;
         
         bool								Fit(unsigned nrows, unsigned ncols, std::vector<double> data);

@@ -34,6 +34,9 @@ HyperPriorParam::HyperPriorParam()
     // python/C++ container conversions)
     std::cerr << "*** fatal error: default constructor used for HyperPriorParam ***" << std::endl;
     std::exit(0);
+#if POLPY_NEWWAY
+	internal_edges = true;
+#endif
 	curr_value = 0.1;
 	has_slice_sampler = true;
 	is_move = false;
@@ -41,6 +44,25 @@ HyperPriorParam::HyperPriorParam()
 	is_hyper_param = true;
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	The constructor of HyperPriorParam simply calls the base class (MCMCUpdater) constructor. Like other parameters,
+|   sets `is_move' to false and `has_slice_sampler' to true. Because this is a hyperparameter, sets `is_hyper_param' to 
+|   true. Also sets `is_master_param' to false, `curr_value' to 0.1 and `edgelen_master_param' to the supplied edge
+|   length master parameter shared pointer `p'.
+*/
+HyperPriorParam::HyperPriorParam(
+  EdgeLenMasterParamShPtr p,    /**> is the edge length master parameter whose prior this parameter controls */
+  bool for_internal_edges)		/**< is true if this hyperprior applies only to internal edges (or to all edges) and false if it applies only to external edges */
+  : MCMCUpdater(), internal_edges(for_internal_edges), edgelen_master_param(p)
+	{
+	curr_value = 0.1;
+	has_slice_sampler = true;
+	is_move = false;
+	is_master_param = false;
+	is_hyper_param = true;
+	}
+#else //old way
 /*----------------------------------------------------------------------------------------------------------------------
 |	The constructor of HyperPriorParam simply calls the base class (MCMCUpdater) constructor. Like other parameters,
 |   sets `is_move' to false and `has_slice_sampler' to true. Because this is a hyperparameter, sets `is_hyper_param' to 
@@ -57,6 +79,7 @@ HyperPriorParam::HyperPriorParam(
 	is_master_param = false;
 	is_hyper_param = true;
 	}
+#endif
 	
 /*----------------------------------------------------------------------------------------------------------------------
 |	Destructor.

@@ -104,7 +104,11 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 
         MCMCUpdaterVect         getEdgeLenHyperparams() const;
 
+#if POLPY_NEWWAY
+        void					addMCMCUpdaters(ModelShPtr m, TreeShPtr t, TreeLikeShPtr like, LotShPtr r, unsigned max_units, unsigned weight, bool add_edgelen_params);
+#else //old way
         void					addMCMCUpdaters(ModelShPtr m, TreeShPtr t, TreeLikeShPtr like, LotShPtr r, unsigned max_units, unsigned weight);
+#endif
         
         void					debugUpdaterReport(std::string s);
 

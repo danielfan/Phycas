@@ -67,7 +67,7 @@ setMasterSeed(13579)
 filename = getPhycasTestData('green.nex')
 blob = readFile(filename)
 
-if True:
+if False:
 	like.data_source = blob.characters
 	like.tree_source = TreeCollection(newick='((((((9:0.1,(7:0.1,10:0.1):0.1):0.1,6:0.1):0.1,(5:0.1,8:0.1):0.1):0.1,4:0.1):0.1,3:0.1):0.1,2:0.1,1:0.1);') 
 	like.starting_edgelen_dist = None
@@ -84,7 +84,7 @@ else:
 	mcmc.out.params.prefix = 'gtr_test'
 	mcmc.out.params.mode = REPLACE
 	mcmc.nchains = 1
-	mcmc.ncycles = 1
+	mcmc.ncycles = 100
 	mcmc.sample_every = 1
 	mcmc.report_every = 1
 	#mcmc.starting_tree_source = randomtree(n_taxa=len(blob.taxon_labels))

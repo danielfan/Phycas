@@ -89,6 +89,19 @@ MVNormalDistribution::MVNormalDistribution(
 	InitMVNorm();
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Creates a new object that is a clone of this object, calls the new objects SetLot member function (passing the 
+|	supplied Lot object `other'), and returns a pointer to it. The caller is expected to manage the new object. 
+*/
+MVNormalDistribution * MVNormalDistribution::cloneAndSetLot(Lot * other) const
+	{
+    MVNormalDistribution * clone = new MVNormalDistribution(*this);
+	clone->SetLot(other);
+	return clone;
+    }
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Creates a new object that is a clone of this object and returns a pointer to it. Caller is expected to manage the
 |   new object. 

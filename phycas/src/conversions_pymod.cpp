@@ -32,7 +32,6 @@
 #	include "phycas/src/thirdparty/num_util/num_util.h"
 #endif
 #include "phycas/src/thirdparty/pyconversions.h"	// from HippoDraw
-#include "ncl/nxscdiscretematrix.h"	// int8_t typedef //POL 18Mar2006
 using namespace boost::python;
 
 BOOST_PYTHON_MODULE(_ConversionsExt)

@@ -199,14 +199,20 @@ class MCMCImpl(CommonFunctions):
 			self.output()
 
 	def showParamInfo(self, p):
-		self.output('  Parameter name:	   %s' % p.getName())
-		self.output('  Prior distribution: %s' % p.getPriorDescr())
-		if p.isMasterParameter():
-			self.output('  Master parameter (no current value)')
-		else:
-			self.output('  Current value:	   %s' % p.getCurrValue())
-		self.output('  Prior log-density:  %s' % p.getLnPrior())
-		self.output()
+		if p.computesUnivariatePrior() or p.computesMultivariatePrior():
+			self.output('  Parameter name:	   %s' % p.getName())
+			self.output('  Prior distribution: %s' % p.getPriorDescr())
+			if p.isMasterParameter():
+				self.output('  Master parameter (no current value)')
+			else:
+				if p.computesUnivariatePrior():
+					v = p.getCurrValueFromModel()
+					self.output('  Current value:	   %s' % v)
+				else:
+					v = p.listCurrValuesFromModel()
+					self.output('  Current value:	   %s' % ','.join(['%.5f' % x for x in v]))				
+			self.output('  Prior log-density:  %s' % p.getLnPrior())
+			self.output()
 				
 	def treeFileOpen(self):
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -518,10 +524,10 @@ class MCMCImpl(CommonFunctions):
 				pass
 			elif name == 'internal edge length':
 				pass
-			elif name == 'Relative rates move':				# C++ class StateFreqMove
+			elif name == 'Relative rates':				# C++ class StateFreqMove
 				rate_vector = chain.model.getRelRatePrior().sample()
 				chain.model.setRelRates(rate_vector)
-			elif name == 'State freq move':				   # C++ class StateFreqMove
+			elif name == 'State freqs':				   # C++ class StateFreqMove
 				freq_vector = chain.model.getStateFreqPrior().sample()
 				#chain.model.setNucleotideFreqs(freq_vector[0],freq_vector[1],freq_vector[2],freq_vector[3])
 				chain.model.setStateFreqsUnnorm(freq_vector)
@@ -780,16 +786,18 @@ class MCMCImpl(CommonFunctions):
 			if c.heating_power == 1.0:
 				self.output('Starting log-likelihood = %s' % c.chain_manager.getLastLnLike())
 				self.output('Starting log-prior = %s' % c.chain_manager.getLastLnPrior())
-
+		
 		# Show starting parameter info 
 		self.output('\nParameter starting values and prior densities:')
 		cold_chain_manager = self.mcmc_manager.getColdChainManager()
-		for p in cold_chain_manager.getEdgeLenParams():
+		for p in cold_chain_manager.getAllUpdaters():
 			self.showParamInfo(p)
-		for p in cold_chain_manager.getEdgeLenHyperparams():
-			self.showParamInfo(p)
-		for p in cold_chain_manager.getModelParams():
-			self.showParamInfo(p)
+		#for p in cold_chain_manager.getEdgeLenParams():
+		#	self.showParamInfo(p)
+		#for p in cold_chain_manager.getEdgeLenHyperparams():
+		#	self.showParamInfo(p)
+		#for p in cold_chain_manager.getModelParams():
+		#	self.showParamInfo(p)
 			
 		# Show updater names
 		self.output('\nHere is a list of all updaters that will be used for this analysis:')

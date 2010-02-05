@@ -80,11 +80,19 @@ class Codon: public Model
 		void						setStateFreqParamPrior(ProbDistShPtr d);
 		ProbDistShPtr				getStateFreqParamPrior();
 
+#if POLPY_NEWWAY
+		virtual std::string			paramHeader(std::string suffix) const;
+#else //old way
 		virtual std::string			paramHeader() const;
+#endif
 		virtual std::string			paramReport(unsigned ndecimals) const;
 
 		void						updateQMatrix() const;
+#if POLPY_NEWWAY
+		virtual void				createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters, bool add_edgelen_params) const;
+#else //old way
 		virtual void				createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters) const;
+#endif
 		double						calcUniformizationLambda() const;
         double					    calcLMat(double * * lMat) const;
         double					    calcUMat(double * * uMat) const;

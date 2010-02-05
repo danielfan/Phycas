@@ -64,13 +64,26 @@ std::string GTR::getModelName() const
 |	parameters related to rate heterogeneity. This function then adds additional GTR-specific parameters to the 
 |	supplied `parameters' vector. This incudes the four base frequencies and six relative rate parameters.
 */
+#if POLPY_NEWWAY
+void	GTR::createParameters(
+  TreeShPtr t,								/**< is the tree (the nodes of which are needed for creating edge length parameters) */
+  MCMCUpdaterVect & edgelens,				/**< is the vector of edge length parameters to fill */
+  MCMCUpdaterVect & edgelen_hyperparams,	/**< is the edge length hyperparameter */
+  MCMCUpdaterVect & parameters,				/**< is the vector of model-specific parameters to fill */
+  bool add_edgelen_params) const			/**< if true, edge length parameters and hyperparams will be added; if false, the `edgelens' and `edgelen_hyperparams' vectors returned will be empty */
+#else //old way
 void	GTR::createParameters(
   TreeShPtr t,								/**< is the tree (the nodes of which are needed for creating edge length parameters) */
   MCMCUpdaterVect & edgelens,				/**< is the vector of edge length parameters to fill */
   MCMCUpdaterVect & edgelen_hyperparams,	/**< is the edge length hyperparameter */
   MCMCUpdaterVect & parameters) const		/**< is the vector of model-specific parameters to fill */
+#endif
 	{
+#if POLPY_NEWWAY
+	Model::createParameters(t, edgelens, edgelen_hyperparams, parameters, add_edgelen_params);
+#else //old way
 	Model::createParameters(t, edgelens, edgelen_hyperparams, parameters);
+#endif
 
 	PHYCAS_ASSERT(rel_rate_params.empty());
     PHYCAS_ASSERT(rel_rate_param_prior || rel_rate_prior);
@@ -458,6 +471,29 @@ void GTR::setStateFreqPrior(MultivarProbDistShPtr d)
 |	frequencies, the gamma shape parameter (if the number of rates is greater than 1) and the pinvar parameter (if
 |	an invariable sites model is being used).
 */
+#if POLPY_NEWWAY
+std::string GTR::paramHeader(
+  std::string suffix) const	/**< is the suffix to tack onto the parameter names for this model (useful for partitioned models to show to which partition subset the parameter belongs) */
+	{
+	std::string s = boost::str(boost::format("\trAC%s\trAG%s\trAT%s\trCG%s\trCT%s\trGT%s\tfreqA%s\tfreqC%s\tfreqG%s\tfreqT%s") % suffix % suffix % suffix % suffix % suffix % suffix % suffix % suffix % suffix % suffix);
+	if (is_flex_model)
+		{
+		s += "\tncat";
+		s += suffix;
+		}
+	else if (num_gamma_rates > 1)
+		{
+		s += "\tshape";
+		s += suffix;
+		}
+	if (is_pinvar_model)
+		{
+		s += "\tpinvar";
+		s += suffix;
+		}
+	return s;
+	}
+#else //old way
 std::string GTR::paramHeader() const
 	{
 	std::string s = std::string("\trAC\trAG\trAT\trCG\trCT\trGT\tfreqA\tfreqC\tfreqG\tfreqT");
@@ -470,9 +506,12 @@ std::string GTR::paramHeader() const
 		s += "\tshape";
 		}
 	if (is_pinvar_model)
+		{
 		s += "\tpinvar";
+		}
 	return s;
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Overrides the pure virtual base class version to generate a string of tab-separated values of model-specific 

@@ -138,21 +138,45 @@ bool MCMCUpdater::update()
     return false;
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns true if the `prior' data member points to something.
+*/
+bool MCMCUpdater::computesUnivariatePrior()
+	{
+	if (prior)
+		return true;
+	else
+		return false;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns true if the `mvprior' data member points to something.
+*/
+bool MCMCUpdater::computesMultivariatePrior()
+	{
+	if (mvprior)
+		return true;
+	else
+		return false;
+	}
+#endif		
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns true if the value of the data member `is_move' is false, and vice versa.
 */
-bool	MCMCUpdater::isParameter() const
+bool MCMCUpdater::isParameter() const
 	{
 	return !is_move;
 	}
-
+	
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the value of the data member `is_master_param', which is true if this is a master parameter (a parameter
 |	object that computes the joint prior density for several model parameters but does not update any of them. This 
 |	function can be queried if it is important to know whether the data member 'curr_value' is meaningful (it is not
 |	in the case of a master parameter).
 */
-bool	MCMCUpdater::isMasterParameter() const
+bool MCMCUpdater::isMasterParameter() const
 	{
 	return is_master_param;
 	}
@@ -392,6 +416,54 @@ double MCMCUpdater::setCurrLnPrior(
 	return curr_ln_prior;
     }
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Calls GetLnPDF function of prior to recalculate `curr_ln_prior'. This function is important because the 
+|	tempting getLnPrior() member function only returns the value of `curr_ln_prior' (it does not recalculate anything).
+*/
+double MCMCUpdater::recalcPrior()
+	{
+	// Many moves will not have a prior assigned to them. In these cases, just return 0.0,
+	// which will have no effect on the cumulative log-prior.
+	if (!(prior || mvprior))
+		{
+		//std::cerr << boost::str(boost::format("~~~ updater named '%s' cannot compute prior") % name) << std::endl;		
+		return 0.0;
+		}
+		
+	if (prior)
+		{
+		double value = getCurrValueFromModel();
+		try 
+			{
+			curr_ln_prior = prior->GetLnPDF(value);
+			}
+		catch(XProbDist &)
+			{
+			PHYCAS_ASSERT(0);
+			}
+		//std::cerr << boost::str(boost::format("~~~ updater named '%s' computed univariate prior for value %g to be %g") % name % value % curr_ln_prior) << std::endl;
+		return curr_ln_prior;
+		}
+	else
+		{
+		double_vect_t values;
+		getCurrValuesFromModel(values);	
+		try 
+			{
+			curr_ln_prior = mvprior->GetLnPDF(values);
+			}
+		catch(XProbDist &)
+			{
+			PHYCAS_ASSERT(0);
+			}
+		//std::cerr << boost::str(boost::format("~~~ updater named '%s' computed multivariate prior for vector ") % name);
+		//std::copy(values.begin(), values.end(), std::ostream_iterator<double>(std::cerr," "));
+		//std::cerr << boost::str(boost::format(" to be %g") % curr_ln_prior) << std::endl;
+		return curr_ln_prior;
+		}
+	}
+#else //old way
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calls `prior'->GetLnPDF(`curr_value') to recalculate `curr_ln_prior'. This function is important because the 
 |	tempting getLnPrior() member function only returns the value of `curr_ln_prior' (it does not recalculate anything).
@@ -408,6 +480,7 @@ double MCMCUpdater::recalcPrior()
 		}
 	return curr_ln_prior;
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the log likelihood just after this updater's update() member function was last called.
@@ -431,9 +504,20 @@ const std::string & MCMCUpdater::getName() const
 */
 std::string MCMCUpdater::getPriorDescr() const
 	{
+#if POLPY_NEWWAY
+	if (prior)
+		return prior->GetDistributionDescription();
+	else if (mvprior)
+		return mvprior->GetDistributionDescription();
+	else
+		return "(no prior defined)";
+#else //old way
 	return prior->GetDistributionDescription();
+#endif
 	}
 
+#if POLPY_NEWWAY
+#else //old way
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the current value of the updater (the value of the parameter just after its operator() was last called).
 */
@@ -441,6 +525,7 @@ double MCMCUpdater::getCurrValue() const
 	{
 	return curr_value;
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the `name' data member of this move to the supplied string.
@@ -551,6 +636,8 @@ void MCMCUpdater::releaseSharedPointers()
 	slice_sampler.reset();
 	}
 	
+#if POLPY_NEWWAY
+#else //old way
 /*----------------------------------------------------------------------------------------------------------------------
 |   Set `curr_value' data member to the supplied value `x'. Not ordinarily used, but useful for debugging.
 */
@@ -559,7 +646,53 @@ void MCMCUpdater::setCurrValue(
 	{
     curr_value = x;
 	}
+#endif
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	This base class version does nothing. Derived classes representing model parameters should override this 
+|	method to set the value of the corresponding parameter in `model' to the supplied value `v'.
+*/
+void MCMCUpdater::sendCurrValueToModel(double v)
+	{
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	This base class version returns a bogus value. Derived classes representing model parameters should override this 
+|	method to return the current value of the corresponding parameter in `model'.
+*/
+double MCMCUpdater::getCurrValueFromModel()
+	{
+	return DBL_MAX;
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	This base class version does nothing. Derived classes representing model parameters should override this 
+|	method to set the values of the corresponding multivariate parameter in `model' to the supplied vector `v'.
+*/
+void MCMCUpdater::sendCurrValuesToModel(double_vect_t & v)
+	{
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	This base class version simply clears the supplied vector `v'. Derived classes representing model parameters should
+|	override this method to return the current vector of parameter values from `model'.
+*/
+void MCMCUpdater::getCurrValuesFromModel(double_vect_t & v)
+	{
+	v.clear();
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	This base class version simply returns an empty vector. Derived classes representing model parameters should
+|	override this method to return the current vector of parameter values from `model'.
+*/
+double_vect_t MCMCUpdater::listCurrValuesFromModel()
+	{
+	double_vect_t v;
+	return v;
+	}
+#else //old way
 /*----------------------------------------------------------------------------------------------------------------------
 |	This base class version does nothing. Derived classes representing model parameters should override this method to 
 |   set their `curr_value' data member to the corresponding value in `model'.
@@ -567,6 +700,7 @@ void MCMCUpdater::setCurrValue(
 void MCMCUpdater::setCurrValueFromModel()
 	{
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calls `likelihood'->calcLnL(`tree') to recalculate `curr_ln_like'. This function is important because the 

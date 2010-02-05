@@ -60,6 +60,11 @@ class DirichletMove : public MCMCUpdater
 
 		// Utilities
 		void						reset();
+#if POLPY_NEWWAY
+		virtual void				sendCurrValuesToModel(double_vect_t & v) {}
+		virtual void				getCurrValuesFromModel(double_vect_t & v) {}
+		virtual double_vect_t		listCurrValuesFromModel();
+#endif
         virtual void                getParams() {}
         virtual void                setParams(const std::vector<double> & v) {}
 
@@ -104,6 +109,11 @@ class StateFreqMove : public DirichletMove
 									StateFreqMove();
                                     virtual ~StateFreqMove() {}
 
+#if POLPY_NEWWAY
+		virtual void				sendCurrValuesToModel(double_vect_t & v);
+		virtual void				getCurrValuesFromModel(double_vect_t & v);
+		virtual double_vect_t		listCurrValuesFromModel();
+#endif
         virtual void                getParams();
         virtual void                setParams(const std::vector<double> & v);
 
@@ -123,6 +133,11 @@ class RelRatesMove : public DirichletMove
 									RelRatesMove();
                                     virtual ~RelRatesMove() {}
 
+#if POLPY_NEWWAY
+		virtual void				sendCurrValuesToModel(double_vect_t & v);
+		virtual void				getCurrValuesFromModel(double_vect_t & v);
+		virtual double_vect_t		listCurrValuesFromModel();
+#endif
         virtual void                getParams();
         virtual void                setParams(const std::vector<double> & v);
 

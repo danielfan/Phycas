@@ -62,7 +62,7 @@ unsigned PartitionModel::getTotalNumPatterns()
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns const reference to `subset_model' vector.
 */
-const std::vector<ModelShPtr> & PartitionModel::getModelsVect() const
+const ModelVect & PartitionModel::getModelsVect() const
 	{
 	return subset_model;
 	}
@@ -108,7 +108,7 @@ void PartitionModel::addModel(ModelShPtr m)
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets `subset_model' to a copy of the supplied vector `models'.
 */
-void PartitionModel::setModelsVect(const std::vector<ModelShPtr> & models)
+void PartitionModel::setModelsVect(const ModelVect & models)
 	{
 	unsigned new_size = (unsigned)models.size();
 	PHYCAS_ASSERT(new_size > 0);
@@ -120,7 +120,7 @@ void PartitionModel::setModelsVect(const std::vector<ModelShPtr> & models)
 	subset_num_rates.resize(new_size);
 	subset_num_states.resize(new_size);
 	subset_num_patterns.resize(new_size);
-	for (unsigned i; i < new_size; ++i)
+	for (unsigned i = 0; i < new_size; ++i)
 		{
 		subset_num_states[i] = subset_model[i]->getNStates();
 		subset_num_rates[i] = subset_model[i]->getNRatesTotal();

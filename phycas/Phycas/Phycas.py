@@ -1,5 +1,7 @@
 import os, sys, math, threading, types, copy
-import MCMCManager  # poorly named, as MCMCManager is now only one of many classes within
+import LikelihoodCore 
+import MarkovChain
+import MCMCManager 
 from phycas.Conversions import *
 from phycas.Likelihood import *
 #from phycas.PDFGen import *
@@ -64,7 +66,7 @@ class Phycas(object):
         self.file_name_data_stored  = None
         self.file_name_trees_stored = None
         self.do_marginal_like       = False
-        self.mcmc_manager           = MCMCManager.MCMCManager(self)
+        #(commented out to see if really being used anywhere) self.mcmc_manager           = MCMCManager.MCMCManager(self)
         self.heat_vector            = None      # Leave set to None unless you are implementing some ad hoc heating scheme. This vector ordinarily computed using self.nchains and self.heating_lambda
         self.stopwatch              = StopWatch()
         self.sim_model_tree         = None      # Will hold the model tree used by simulateDNA 

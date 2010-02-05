@@ -54,6 +54,29 @@ void KappaParam::setModel(ModelShPtr m)
 	// function back to mcmc_param.inl
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Overrides base class version to set the kappa value in either `hky' or `codon' (whichever is relevant) to `v'.
+*/
+void KappaParam::sendCurrValueToModel(double v)
+	{
+	if (hky != NULL)
+		hky->setKappa(v);
+	else
+		codon->setKappa(v);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Overrides base class version to return the kappa value in either `hky' or `codon' (whichever is relevant).
+*/
+double KappaParam::getCurrValueFromModel()
+	{
+	if (hky != NULL)
+        return hky->getKappa();
+    else
+        return codon->getKappa();
+	}
+#else //old way
 /*----------------------------------------------------------------------------------------------------------------------
 |	Overrides base class version to set `curr_value' to the kappa value in `model'.
 */
@@ -64,6 +87,7 @@ void KappaParam::setCurrValueFromModel()
     else
         curr_value = codon->getKappa();
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	KappaParam is a functor whose operator() returns a value proportional to the full-conditional posterior probability 
@@ -79,12 +103,16 @@ double KappaParam::operator()(
 
 	if (k > 0.0)
 		{
+    	
+#if POLPY_NEWWAY
+		sendCurrValueToModel(k);
+#else //old way
 		if (hky != NULL)
     		hky->setKappa(k);
     	else
     		codon->setKappa(k);
-    	
 		curr_value = k;
+#endif
 		recalcPrior();
 
 		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
@@ -116,6 +144,23 @@ void GTRRateParam::setModel(ModelShPtr m)
 	// If tempted to move this to mcmc_param.inl, see comment in KappaParam::setModel function
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Overrides base class version to set the appropriate relative rate in `model' to the value `v'.
+*/
+void GTRRateParam::sendCurrValueToModel(double v)
+	{
+	gtr->setRelRateUnnorm(which, v);
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Overrides base class version to return the appropriate relative rate value in `model'.
+*/
+double GTRRateParam::getCurrValueFromModel()
+	{
+    return gtr->getRelRateUnnorm(which);
+	}
+#else //old way
 /*----------------------------------------------------------------------------------------------------------------------
 |	Overrides base class version to set `curr_value' to the corresponding relative rate value in `model'.
 */
@@ -123,6 +168,7 @@ void GTRRateParam::setCurrValueFromModel()
 	{
     curr_value = gtr->getRelRateUnnorm(which);
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	GTRRateParam is a functor whose operator() returns a value proportional to the full-conditional posterior 
@@ -140,8 +186,12 @@ double GTRRateParam::operator()(
 		{
 		PHYCAS_ASSERT(which < 6);
 		PHYCAS_ASSERT(gtr);
+#if POLPY_NEWWAY
+		sendCurrValueToModel(r);
+#else //old way
 		gtr->setRelRateUnnorm(which, r);
         curr_value = r;
+#endif
 		recalcPrior();
 		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
         curr_ln_like = likelihood->calcLnL(tree);
@@ -180,6 +230,23 @@ void OmegaParam::setModel(ModelShPtr m)
 	// function back to mcmc_param.inl
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Overrides base class version to set the value of `omega' in `model' to `v'.
+*/
+void OmegaParam::sendCurrValueToModel(double v)
+	{
+	codon->setOmega(v);
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Overrides base class version to return the value of `omega' in `model'.
+*/
+double OmegaParam::getCurrValueFromModel()
+	{
+    return codon->getOmega();
+	}
+#else //old way
 /*----------------------------------------------------------------------------------------------------------------------
 |	Overrides base class version to set `curr_value' to the value of `omega' in `model'.
 */
@@ -187,6 +254,7 @@ void OmegaParam::setCurrValueFromModel()
 	{
     curr_value = codon->getOmega();
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	OmegaParam is a functor whose operator() returns a value proportional to the full-conditional posterior probability 
@@ -203,8 +271,12 @@ double OmegaParam::operator()(
 	if (w > 0.0)
 		{
 		PHYCAS_ASSERT(codon);
+#if POLPY_NEWWAY
+		sendCurrValueToModel(w);
+#else //old way
 		codon->setOmega(w);
 		curr_value = w;
+#endif
 		recalcPrior();
 
 		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
@@ -222,6 +294,27 @@ double OmegaParam::operator()(
         return ln_zero;
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Overrides base class version to set the value of `gamma_shape' in `model' to `v'.
+*/
+void DiscreteGammaShapeParam::sendCurrValueToModel(double v)
+	{
+	if (shape_inverted)
+		model->setShape(1.0/v);	// change the gamma shape parameter in the model
+	else
+		model->setShape(v);	// change the gamma shape parameter in the model
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Overrides base class version to return the value of `gamma_shape' in `model'.
+*/
+double DiscreteGammaShapeParam::getCurrValueFromModel()
+	{
+	double a = model->getShape();
+    return (shape_inverted ? (1.0/a) : a);
+	}
+#else //old way
 /*----------------------------------------------------------------------------------------------------------------------
 |	Overrides base class version to set `curr_value' to the value of `gamma_shape' in `model'.
 */
@@ -229,6 +322,7 @@ void DiscreteGammaShapeParam::setCurrValueFromModel()
 	{
     curr_value = model->getShape();
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	DiscreteGammaShapeParam is a functor whose operator() returns a value proportional to the full-conditional posterior
@@ -244,12 +338,21 @@ double DiscreteGammaShapeParam::operator()(
 
 	if (a > 0.0)
 		{
+#if POLPY_NEWWAY
+		sendCurrValueToModel(a);
+		recalcPrior(); // base class function that recomputes curr_ln_prior for the value curr_value
+#else //old way
+		if (shape_inverted)
+			model->setShape(1.0/a);	// change the gamma shape parameter in the model
+		else
+			model->setShape(a);	// change the gamma shape parameter in the model
 		curr_value = a;
 		recalcPrior(); // base class function that recomputes curr_ln_prior for the value curr_value
 		if (shape_inverted)
 			model->setShape(1.0/a);	// change the gamma shape parameter in the model
 		else
 			model->setShape(a);	// change the gamma shape parameter in the model
+#endif
 		likelihood->recalcRelativeRates();	// must do this whenever model's shape parameter changes
 		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
 		curr_ln_like = likelihood->calcLnL(tree);
@@ -266,6 +369,23 @@ double DiscreteGammaShapeParam::operator()(
         return ln_zero;
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Overrides base class version to set the value of `pinvar' in `model' to `v'.
+*/
+void PinvarParam::sendCurrValueToModel(double v)
+	{
+	model->setPinvar(v);
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Overrides base class version to return the value of `pinvar' in `model'.
+*/
+double PinvarParam::getCurrValueFromModel()
+	{
+    return model->getPinvar();
+	}
+#else //old way
 /*----------------------------------------------------------------------------------------------------------------------
 |	Overrides base class version to set `curr_value' to the value of `pinvar' in `model'.
 */
@@ -273,6 +393,7 @@ void PinvarParam::setCurrValueFromModel()
 	{
     curr_value = model->getPinvar();
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	PinvarParam is a functor whose operator() returns a value proportional to the full-conditional posterior
@@ -288,9 +409,15 @@ double PinvarParam::operator()(
 
 	if (pinv >= 0.0 && pinv < 1.0)
 		{
+#if POLPY_NEWWAY
+		sendCurrValueToModel(pinv);
+		recalcPrior(); // base class function that recomputes curr_ln_prior for the value curr_value
+#else //old way
+		model->setPinvar(pinv);
 		curr_value = pinv;
 		recalcPrior(); // base class function that recomputes curr_ln_prior for the value curr_value
 		model->setPinvar(pinv);	// change the proportion of invariable sites parameter in the model
+#endif
 		likelihood->recalcRelativeRates();	// must do this whenever model's rate heterogeneity status changes
 		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
 		curr_ln_like = likelihood->calcLnL(tree);
@@ -307,6 +434,23 @@ double PinvarParam::operator()(
         return ln_zero;
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Overrides base class version to set the appropriate unnormalized state frequency in `model' to `v'.
+*/
+void StateFreqParam::sendCurrValueToModel(double v)
+	{
+	model->setStateFreqUnnorm(which, v);
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Overrides base class version to return the appropriate unnormalized state frequency in `model'.
+*/
+double StateFreqParam::getCurrValueFromModel()
+	{
+    return model->getStateFreqUnnorm(which);
+	}
+#else //old way
 /*----------------------------------------------------------------------------------------------------------------------
 |	Overrides base class version to set `curr_value' to the corresponding value of the `pinvar' in `model'.
 */
@@ -314,6 +458,7 @@ void StateFreqParam::setCurrValueFromModel()
 	{
     curr_value = model->getStateFreqUnnorm(which);
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	StateFreqParam is a functor whose operator() returns a value proportional to the full-conditional posterior 
@@ -332,10 +477,14 @@ double StateFreqParam::operator()(
     if (f > 0.0)
 		{
 		PHYCAS_ASSERT((model->isCodonModel() && which < 61) || which < 4);
-		model->setStateFreqUnnorm(which, f);
 		//state_freq.freqs[which] = f;
         //model.normalizeFreqs(state_freq.freqs);
+#if POLPY_NEWWAY
+		sendCurrValueToModel(f);
+#else //old way
+		model->setStateFreqUnnorm(which, f);
         curr_value = f;
+#endif
 		recalcPrior();
 		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
         curr_ln_like = likelihood->calcLnL(tree);
@@ -352,6 +501,29 @@ double StateFreqParam::operator()(
         return ln_zero;
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Overrides base class version to set value of hyperparameter in `model' to `v'.
+*/
+void HyperPriorParam::sendCurrValueToModel(double v)
+	{
+	if (internal_edges)
+		model->setInternalEdgelenHyperparam(v);
+	else
+		model->setExternalEdgelenHyperparam(v);
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Overrides base class version to return value of hyperparameter from model.
+*/
+double HyperPriorParam::getCurrValueFromModel()
+	{
+	if (internal_edges)
+		return model->getInternalEdgelenHyperparam();
+	else 
+		return model->getExternalEdgelenHyperparam();
+	}
+#else //old way
 /*----------------------------------------------------------------------------------------------------------------------
 |	Overrides base class version to set `curr_value' to the corresponding value.
 */
@@ -359,6 +531,7 @@ void HyperPriorParam::setCurrValueFromModel()
 	{
     //@POL hyperparameters should be part of the model, but currently they are not
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	HyperPriorParam is a functor whose operator() returns a value proportional to the full-conditional posterior 
@@ -375,10 +548,19 @@ double HyperPriorParam::operator()(
 
 	if (mu > 0.0)
 		{
+#if POLPY_NEWWAY
+		sendCurrValueToModel(mu);
+#else //old way
+		if (internal_edges)
+			model->setInternalEdgelenHyperparam(mu);
+		else:
+			model->setExternalEdgelenHyperparam(mu);
+		curr_value = mu;
+#endif
+		recalcPrior();
+
 		// no need to invalidate all CLAs because only the prior is changing
 		curr_ln_like = likelihood->calcLnL(tree);
-		curr_value = mu;
-		recalcPrior();
 
 		edgelen_master_param->setPriorMeanAndVariance(mu, mu*mu); //@POL note that this implicitly assumes an exponential edge length prior
         edgeLensLnPrior = edgelen_master_param->recalcPrior();

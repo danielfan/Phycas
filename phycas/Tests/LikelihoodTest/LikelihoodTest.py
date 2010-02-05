@@ -7,7 +7,7 @@
 # likelihood calculations.
 
 from phycas import *
-from phycas.Phycas import Phycas
+
 def tryAllModels(fn):
 	# Create string containing PAUP commands that will be added to the end of the
 	# file fn to check results - we will add more commands to this string as we go
@@ -25,16 +25,13 @@ def tryAllModels(fn):
 	print '\nGTR+G+I model'
 	if partitioning:
 		model.type = 'gtr'
-		model.setRelRates([1.8, 4.0, 1.5, 1.2, 5.0, 1.0])
-		model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
-		model.setNGammaRates(4)
-		model.setShape(1.2)
-		model.setPinvarModel()
-		model.setPinvar(0.3)
-		likelihood.replaceModel(model)
-		likelihood.prepareForLikelihood(phycas.tree)
-		raw_input('debug stop')
-		lnL = likelihood.calcLnL(phycas.tree)
+		model.relrates = [1.8, 4.0, 1.5, 1.2, 5.0, 1.0]
+		model.state_freqs = [0.1, 0.2, 0.3, 0.4]
+		model.num_rates = 4
+		model.gamma_shape = 1.2
+		model.pinvar_model = True
+		model.pinvar = 0.3
+		lnL = like()
 	else:
 		phycas.model = Likelihood.GTRModel()
 		phycas.model.setRelRates([1.8, 4.0, 1.5, 1.2, 5.0, 1.0])
@@ -55,16 +52,25 @@ def tryAllModels(fn):
 
 	# Compute likelihood using the GTR+I model
 	print '\nGTR+I model'
-	phycas.model = Likelihood.GTRModel()
-	phycas.model.setRelRates([1.8, 4.0, 1.5, 1.2, 5.0, 1.0])
-	phycas.model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
-	phycas.model.setNGammaRates(1)
-	#phycas.model.setShape(1.2)
-	phycas.model.setPinvarModel()
-	phycas.model.setPinvar(0.3)
-	phycas.likelihood.replaceModel(phycas.model)
-	phycas.likelihood.prepareForLikelihood(phycas.tree)
-	lnL = phycas.likelihood.calcLnL(phycas.tree)
+	if partitioning:
+		model.type = 'gtr'
+		model.relrates = [1.8, 4.0, 1.5, 1.2, 5.0, 1.0]
+		model.state_freqs = [0.1, 0.2, 0.3, 0.4]
+		model.num_rates = 1
+		model.pinvar_model = True
+		model.pinvar = 0.3
+		lnL = like()
+	else:
+		phycas.model = Likelihood.GTRModel()
+		phycas.model.setRelRates([1.8, 4.0, 1.5, 1.2, 5.0, 1.0])
+		phycas.model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
+		phycas.model.setNGammaRates(1)
+		#phycas.model.setShape(1.2)
+		phycas.model.setPinvarModel()
+		phycas.model.setPinvar(0.3)
+		phycas.likelihood.replaceModel(phycas.model)
+		phycas.likelihood.prepareForLikelihood(phycas.tree)
+		lnL = phycas.likelihood.calcLnL(phycas.tree)
 	#ref_lnL = lnL
 	print 'lnL = %.5f (%.5f worse than the reference lnL)' % (lnL, ref_lnL - lnL)
 	paup_commands.append('\n[!\n***** GTR+I (using GTRModel) *****]')
@@ -74,15 +80,24 @@ def tryAllModels(fn):
 
 	# Compute likelihood using the GTR+G model
 	print '\nGTR+G model'
-	phycas.model = Likelihood.GTRModel()
-	phycas.model.setRelRates([1.8, 4.0, 1.5, 1.2, 5.0, 1.0])
-	phycas.model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
-	phycas.model.setNGammaRates(4)
-	phycas.model.setShape(1.2)
-	phycas.model.setNotPinvarModel()
-	phycas.likelihood.replaceModel(phycas.model)
-	phycas.likelihood.prepareForLikelihood(phycas.tree)
-	lnL = phycas.likelihood.calcLnL(phycas.tree)
+	if partitioning:
+		model.type = 'gtr'
+		model.relrates = [1.8, 4.0, 1.5, 1.2, 5.0, 1.0]
+		model.state_freqs = [0.1, 0.2, 0.3, 0.4]
+		model.num_rates = 4
+		model.gamma_shape = 1.2
+		model.pinvar_model = False
+		lnL = like()
+	else:	
+		phycas.model = Likelihood.GTRModel()
+		phycas.model.setRelRates([1.8, 4.0, 1.5, 1.2, 5.0, 1.0])
+		phycas.model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
+		phycas.model.setNGammaRates(4)
+		phycas.model.setShape(1.2)
+		phycas.model.setNotPinvarModel()
+		phycas.likelihood.replaceModel(phycas.model)
+		phycas.likelihood.prepareForLikelihood(phycas.tree)
+		lnL = phycas.likelihood.calcLnL(phycas.tree)
 	print 'lnL = %.5f (%.5f worse than the reference lnL)' % (lnL, ref_lnL - lnL)
 	paup_commands.append('\n[!\n***** GTR+G (using GTRModel) *****]')
 	paup_commands.append('lset nst=6 basefreq=(0.1 0.2 0.3) rmatrix=(1.8 4.0 1.5 1.2 5.0) rates=gamma shape=1.2 pinvar=0.0;')
@@ -114,15 +129,24 @@ def tryAllModels(fn):
 
 	# Compute likelihood using the GTR model
 	print '\nGTR model'
-	phycas.model = Likelihood.GTRModel()
-	phycas.model.setRelRates([1.8, 4.0, 1.5, 1.2, 5.0, 1.0])
-	phycas.model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
-	phycas.model.setNGammaRates(1)
-	#phycas.model.setShape(1.2)
-	phycas.model.setNotPinvarModel()
-	phycas.likelihood.replaceModel(phycas.model)
-	phycas.likelihood.prepareForLikelihood(phycas.tree)
-	lnL = phycas.likelihood.calcLnL(phycas.tree)
+	if partitioning:
+		model.type = 'gtr'
+		model.relrates = [1.8, 4.0, 1.5, 1.2, 5.0, 1.0]
+		model.state_freqs = [0.1, 0.2, 0.3, 0.4]
+		model.num_rates = 1
+		model.pinvar_model = False
+		model.pinvar = 0.3
+		lnL = like()
+	else:
+		phycas.model = Likelihood.GTRModel()
+		phycas.model.setRelRates([1.8, 4.0, 1.5, 1.2, 5.0, 1.0])
+		phycas.model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
+		phycas.model.setNGammaRates(1)
+		#phycas.model.setShape(1.2)
+		phycas.model.setNotPinvarModel()
+		phycas.likelihood.replaceModel(phycas.model)
+		phycas.likelihood.prepareForLikelihood(phycas.tree)
+		lnL = phycas.likelihood.calcLnL(phycas.tree)
 	print 'lnL = %.5f (%.5f worse than reference lnL)' % (lnL, ref_lnL - lnL)
 	paup_commands.append('\n[!\n***** GTR (using GTRModel) *****]')
 	paup_commands.append('lset nst=6 basefreq=(0.1 0.2 0.3) rmatrix=(1.8 4.0 1.5 1.2 5.0) rates=equal pinvar=0.0;')
@@ -134,16 +158,26 @@ def tryAllModels(fn):
 
 	# Compute likelihood using the HKY+G+I model
 	print '\nHKY+G+I model'
-	phycas.model = Likelihood.HKYModel()
-	phycas.model.setKappa(4.0)
-	phycas.model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
-	phycas.model.setNGammaRates(4)
-	phycas.model.setShape(1.2)
-	phycas.model.setPinvarModel()
-	phycas.model.setPinvar(0.3)
-	phycas.likelihood.replaceModel(phycas.model)
-	phycas.likelihood.prepareForLikelihood(phycas.tree)
-	lnL = phycas.likelihood.calcLnL(phycas.tree)
+	if partitioning:
+		model.type = 'hky'
+		model.kappa = 4.0
+		model.state_freqs = [0.1, 0.2, 0.3, 0.4]
+		model.num_rates = 4
+		model.gamma_shape = 1.2
+		model.pinvar_model = True
+		model.pinvar = 0.3
+		lnL = like()
+	else:
+		phycas.model = Likelihood.HKYModel()
+		phycas.model.setKappa(4.0)
+		phycas.model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
+		phycas.model.setNGammaRates(4)
+		phycas.model.setShape(1.2)
+		phycas.model.setPinvarModel()
+		phycas.model.setPinvar(0.3)
+		phycas.likelihood.replaceModel(phycas.model)
+		phycas.likelihood.prepareForLikelihood(phycas.tree)
+		lnL = phycas.likelihood.calcLnL(phycas.tree)
 	ref_lnL = lnL
 	print 'lnL = %.5f (%.5f worse than the reference lnL)' % (lnL, ref_lnL - lnL)
 	paup_commands.append('\n[!\n***** HKY+G+I (using HKYModel) *****]')
@@ -153,16 +187,26 @@ def tryAllModels(fn):
 
 	# Compute likelihood using the HKY+I model
 	print '\nHKY+I model'
-	phycas.model = Likelihood.HKYModel()
-	phycas.model.setKappa(4.0)
-	phycas.model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
-	phycas.model.setNGammaRates(1)
-	#phycas.model.setShape(1.2)
-	phycas.model.setPinvarModel()
-	phycas.model.setPinvar(0.3)
-	phycas.likelihood.replaceModel(phycas.model)
-	phycas.likelihood.prepareForLikelihood(phycas.tree)
-	lnL = phycas.likelihood.calcLnL(phycas.tree)
+	if partitioning:
+		model.type = 'hky'
+		model.kappa = 4.0
+		model.state_freqs = [0.1, 0.2, 0.3, 0.4]
+		model.num_rates = 1
+		#model.gamma_shape = 1.2
+		model.pinvar_model = True
+		model.pinvar = 0.3
+		lnL = like()
+	else:
+		phycas.model = Likelihood.HKYModel()
+		phycas.model.setKappa(4.0)
+		phycas.model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
+		phycas.model.setNGammaRates(1)
+		#phycas.model.setShape(1.2)
+		phycas.model.setPinvarModel()
+		phycas.model.setPinvar(0.3)
+		phycas.likelihood.replaceModel(phycas.model)
+		phycas.likelihood.prepareForLikelihood(phycas.tree)
+		lnL = phycas.likelihood.calcLnL(phycas.tree)
 	ref_lnL = lnL
 	print 'lnL = %.5f (%.5f worse than the reference lnL)' % (lnL, ref_lnL - lnL)
 	paup_commands.append('\n[!\n***** HKY+I (using HKYModel) *****]')
@@ -172,15 +216,25 @@ def tryAllModels(fn):
 
 	# Compute likelihood using the HKY+G model
 	print '\nHKY+G model'
-	phycas.model = Likelihood.HKYModel()
-	phycas.model.setKappa(4.0)
-	phycas.model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
-	phycas.model.setNGammaRates(4)
-	phycas.model.setShape(1.2)
-	phycas.model.setNotPinvarModel()
-	phycas.likelihood.replaceModel(phycas.model)
-	phycas.likelihood.prepareForLikelihood(phycas.tree)
-	lnL = phycas.likelihood.calcLnL(phycas.tree)
+	if partitioning:
+		model.type = 'hky'
+		model.kappa = 4.0
+		model.state_freqs = [0.1, 0.2, 0.3, 0.4]
+		model.num_rates = 4
+		model.gamma_shape = 1.2
+		model.pinvar_model = False
+		#model.pinvar = 0.3
+		lnL = like()
+	else:
+		phycas.model = Likelihood.HKYModel()
+		phycas.model.setKappa(4.0)
+		phycas.model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
+		phycas.model.setNGammaRates(4)
+		phycas.model.setShape(1.2)
+		phycas.model.setNotPinvarModel()
+		phycas.likelihood.replaceModel(phycas.model)
+		phycas.likelihood.prepareForLikelihood(phycas.tree)
+		lnL = phycas.likelihood.calcLnL(phycas.tree)
 	print 'lnL = %.5f (%.5f worse than the reference lnL)' % (lnL, ref_lnL - lnL)
 	paup_commands.append('\n[!\n***** HKY+G (using HKYModel) *****]')
 	paup_commands.append('lset nst=2 variant=hky basefreq=(0.1 0.2 0.3) tratio=1.8333333 rates=gamma shape=1.2 pinvar=0.0;')
@@ -189,15 +243,25 @@ def tryAllModels(fn):
 
 	# Compute likelihood using the HKY model
 	print '\nHKY model'
-	phycas.model = Likelihood.HKYModel()
-	phycas.model.setKappa(4.0)
-	phycas.model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
-	phycas.model.setNGammaRates(1)
-	#phycas.model.setShape(1.2)
-	phycas.model.setNotPinvarModel()
-	phycas.likelihood.replaceModel(phycas.model)
-	phycas.likelihood.prepareForLikelihood(phycas.tree)
-	lnL = phycas.likelihood.calcLnL(phycas.tree)
+	if partitioning:
+		model.type = 'hky'
+		model.kappa = 4.0
+		model.state_freqs = [0.1, 0.2, 0.3, 0.4]
+		model.num_rates = 1
+		#model.gamma_shape = 1.2
+		model.pinvar_model = False
+		#model.pinvar = 0.3
+		lnL = like()
+	else:
+		phycas.model = Likelihood.HKYModel()
+		phycas.model.setKappa(4.0)
+		phycas.model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
+		phycas.model.setNGammaRates(1)
+		#phycas.model.setShape(1.2)
+		phycas.model.setNotPinvarModel()
+		phycas.likelihood.replaceModel(phycas.model)
+		phycas.likelihood.prepareForLikelihood(phycas.tree)
+		lnL = phycas.likelihood.calcLnL(phycas.tree)
 	print 'lnL = %.5f (%.5f worse than reference lnL)' % (lnL, ref_lnL - lnL)
 	paup_commands.append('\n[!\n***** HKY (using HKYModel) *****]')
 	paup_commands.append('lset nst=2 variant=hky basefreq=(0.1 0.2 0.3) tratio=1.8333333 rates=equal pinvar=0.0;')
@@ -206,16 +270,26 @@ def tryAllModels(fn):
 
 	# Compute likelihood using the F81+G+I model
 	print '\nF81+G+I model'
-	phycas.model = Likelihood.HKYModel()
-	phycas.model.setKappa(1.0)
-	phycas.model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
-	phycas.model.setNGammaRates(4)
-	phycas.model.setShape(1.2)
-	phycas.model.setPinvarModel()
-	phycas.model.setPinvar(0.3)
-	phycas.likelihood.replaceModel(phycas.model)
-	phycas.likelihood.prepareForLikelihood(phycas.tree)
-	lnL = phycas.likelihood.calcLnL(phycas.tree)
+	if partitioning:
+		model.type = 'hky'
+		model.kappa = 1.0
+		model.state_freqs = [0.1, 0.2, 0.3, 0.4]
+		model.num_rates = 4
+		model.gamma_shape = 1.2
+		model.pinvar_model = True
+		model.pinvar = 0.3
+		lnL = like()
+	else:
+		phycas.model = Likelihood.HKYModel()
+		phycas.model.setKappa(1.0)
+		phycas.model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
+		phycas.model.setNGammaRates(4)
+		phycas.model.setShape(1.2)
+		phycas.model.setPinvarModel()
+		phycas.model.setPinvar(0.3)
+		phycas.likelihood.replaceModel(phycas.model)
+		phycas.likelihood.prepareForLikelihood(phycas.tree)
+		lnL = phycas.likelihood.calcLnL(phycas.tree)
 	print 'lnL = %.5f (%.5f worse than reference lnL)' % (lnL, ref_lnL - lnL)
 	paup_commands.append('[!\n***** F81+G+I (using HKYModel) *****]')
 	paup_commands.append('lset nst=1 basefreq=(0.1 0.2 0.3) rates=gamma shape=1.2 pinvar=0.3;')
@@ -224,16 +298,26 @@ def tryAllModels(fn):
 
 	# Compute likelihood using the F81+I model
 	print '\nF81+I model'
-	phycas.model = Likelihood.HKYModel()
-	phycas.model.setKappa(1.0)
-	phycas.model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
-	phycas.model.setNGammaRates(1)
-	#phycas.model.setShape(1.2)
-	phycas.model.setPinvarModel()
-	phycas.model.setPinvar(0.3)
-	phycas.likelihood.replaceModel(phycas.model)
-	phycas.likelihood.prepareForLikelihood(phycas.tree)
-	lnL = phycas.likelihood.calcLnL(phycas.tree)
+	if partitioning:
+		model.type = 'hky'
+		model.kappa = 1.0
+		model.state_freqs = [0.1, 0.2, 0.3, 0.4]
+		model.num_rates = 1
+		#model.gamma_shape = 1.2
+		model.pinvar_model = True
+		model.pinvar = 0.3
+		lnL = like()
+	else:
+		phycas.model = Likelihood.HKYModel()
+		phycas.model.setKappa(1.0)
+		phycas.model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
+		phycas.model.setNGammaRates(1)
+		#phycas.model.setShape(1.2)
+		phycas.model.setPinvarModel()
+		phycas.model.setPinvar(0.3)
+		phycas.likelihood.replaceModel(phycas.model)
+		phycas.likelihood.prepareForLikelihood(phycas.tree)
+		lnL = phycas.likelihood.calcLnL(phycas.tree)
 	print 'lnL = %.5f (%.5f worse than reference lnL)' % (lnL, ref_lnL - lnL)
 	paup_commands.append('[!\n***** F81+I (using HKYModel) *****]')
 	paup_commands.append('lset nst=1 basefreq=(0.1 0.2 0.3) rates=equal pinvar=0.3;')
@@ -242,15 +326,25 @@ def tryAllModels(fn):
 
 	# Compute likelihood using the F81+G model
 	print '\nF81+G model'
-	phycas.model = Likelihood.HKYModel()
-	phycas.model.setKappa(1.0)
-	phycas.model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
-	phycas.model.setNGammaRates(4)
-	phycas.model.setShape(1.2)
-	phycas.model.setNotPinvarModel()
-	phycas.likelihood.replaceModel(phycas.model)
-	phycas.likelihood.prepareForLikelihood(phycas.tree)
-	lnL = phycas.likelihood.calcLnL(phycas.tree)
+	if partitioning:
+		model.type = 'hky'
+		model.kappa = 1.0
+		model.state_freqs = [0.1, 0.2, 0.3, 0.4]
+		model.num_rates = 4
+		model.gamma_shape = 1.2
+		model.pinvar_model = False
+		#model.pinvar = 0.3
+		lnL = like()
+	else:
+		phycas.model = Likelihood.HKYModel()
+		phycas.model.setKappa(1.0)
+		phycas.model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
+		phycas.model.setNGammaRates(4)
+		phycas.model.setShape(1.2)
+		phycas.model.setNotPinvarModel()
+		phycas.likelihood.replaceModel(phycas.model)
+		phycas.likelihood.prepareForLikelihood(phycas.tree)
+		lnL = phycas.likelihood.calcLnL(phycas.tree)
 	print 'lnL = %.5f (%.5f worse than reference lnL)' % (lnL, ref_lnL - lnL)
 	paup_commands.append('[!\n***** F81+G (using HKYModel) *****]')
 	paup_commands.append('lset nst=1 basefreq=(0.1 0.2 0.3) rates=gamma shape=1.2 pinvar=0.0;')
@@ -259,15 +353,25 @@ def tryAllModels(fn):
 
 	# Compute likelihood using the F81 model
 	print '\nF81 model'
-	phycas.model = Likelihood.HKYModel()
-	phycas.model.setKappa(1.0)
-	phycas.model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
-	phycas.model.setNGammaRates(1)
-	#phycas.model.setShape(1.2)
-	phycas.model.setNotPinvarModel()
-	phycas.likelihood.replaceModel(phycas.model)
-	phycas.likelihood.prepareForLikelihood(phycas.tree)
-	lnL = phycas.likelihood.calcLnL(phycas.tree)
+	if partitioning:
+		model.type = 'hky'
+		model.kappa = 1.0
+		model.state_freqs = [0.1, 0.2, 0.3, 0.4]
+		model.num_rates = 1
+		#model.gamma_shape = 1.2
+		model.pinvar_model = False
+		#model.pinvar = 0.3
+		lnL = like()
+	else:
+		phycas.model = Likelihood.HKYModel()
+		phycas.model.setKappa(1.0)
+		phycas.model.setNucleotideFreqs(0.1, 0.2, 0.3, 0.4)
+		phycas.model.setNGammaRates(1)
+		#phycas.model.setShape(1.2)
+		phycas.model.setNotPinvarModel()
+		phycas.likelihood.replaceModel(phycas.model)
+		phycas.likelihood.prepareForLikelihood(phycas.tree)
+		lnL = phycas.likelihood.calcLnL(phycas.tree)
 	print 'lnL = %.5f (%.5f worse than reference lnL)' % (lnL, ref_lnL - lnL)
 	paup_commands.append('[!\n***** F81 (using HKYModel) *****]')
 	paup_commands.append('lset nst=1 basefreq=(0.1 0.2 0.3) rates=equal pinvar=0.0;')
@@ -276,16 +380,26 @@ def tryAllModels(fn):
 
 	# Compute likelihood using the K80+G+I model
 	print '\nK80+G+I model'
-	phycas.model = Likelihood.HKYModel()
-	phycas.model.setKappa(4.0)
-	phycas.model.setAllFreqsEqual()
-	phycas.model.setNGammaRates(4)
-	phycas.model.setShape(1.2)
-	phycas.model.setPinvarModel()
-	phycas.model.setPinvar(0.3)
-	phycas.likelihood.replaceModel(phycas.model)
-	phycas.likelihood.prepareForLikelihood(phycas.tree)
-	lnL = phycas.likelihood.calcLnL(phycas.tree)
+	if partitioning:
+		model.type = 'hky'
+		model.kappa = 4.0
+		model.state_freqs = [0.25, 0.25, 0.25, 0.25]
+		model.num_rates = 4
+		model.gamma_shape = 1.2
+		model.pinvar_model = True
+		model.pinvar = 0.3
+		lnL = like()
+	else:
+		phycas.model = Likelihood.HKYModel()
+		phycas.model.setKappa(4.0)
+		phycas.model.setAllFreqsEqual()
+		phycas.model.setNGammaRates(4)
+		phycas.model.setShape(1.2)
+		phycas.model.setPinvarModel()
+		phycas.model.setPinvar(0.3)
+		phycas.likelihood.replaceModel(phycas.model)
+		phycas.likelihood.prepareForLikelihood(phycas.tree)
+		lnL = phycas.likelihood.calcLnL(phycas.tree)
 	print 'lnL = %.5f (%.5f worse than reference lnL)' % (lnL, ref_lnL - lnL)
 	paup_commands.append('[!\n***** K80+G+I (using HKYModel) *****]')
 	paup_commands.append('lset nst=2 basefreq=equal tratio=2.0 rates=gamma shape=1.2 pinvar=0.3;')
@@ -294,16 +408,26 @@ def tryAllModels(fn):
 
 	# Compute likelihood using the K80+I model
 	print '\nK80+I model'
-	phycas.model = Likelihood.HKYModel()
-	phycas.model.setKappa(4.0)
-	phycas.model.setAllFreqsEqual()
-	phycas.model.setNGammaRates(1)
-	#phycas.model.setShape(1.2)
-	phycas.model.setPinvarModel()
-	phycas.model.setPinvar(0.3)
-	phycas.likelihood.replaceModel(phycas.model)
-	phycas.likelihood.prepareForLikelihood(phycas.tree)
-	lnL = phycas.likelihood.calcLnL(phycas.tree)
+	if partitioning:
+		model.type = 'hky'
+		model.kappa = 4.0
+		model.state_freqs = [0.25, 0.25, 0.25, 0.25]
+		model.num_rates = 1
+		#model.gamma_shape = 1.2
+		model.pinvar_model = True
+		model.pinvar = 0.3
+		lnL = like()
+	else:
+		phycas.model = Likelihood.HKYModel()
+		phycas.model.setKappa(4.0)
+		phycas.model.setAllFreqsEqual()
+		phycas.model.setNGammaRates(1)
+		#phycas.model.setShape(1.2)
+		phycas.model.setPinvarModel()
+		phycas.model.setPinvar(0.3)
+		phycas.likelihood.replaceModel(phycas.model)
+		phycas.likelihood.prepareForLikelihood(phycas.tree)
+		lnL = phycas.likelihood.calcLnL(phycas.tree)
 	print 'lnL = %.5f (%.5f worse than reference lnL)' % (lnL, ref_lnL - lnL)
 	paup_commands.append('[!\n***** K80+I (using HKYModel) *****]')
 	paup_commands.append('lset nst=2 basefreq=equal tratio=2.0 rates=equal pinvar=0.3;')
@@ -312,15 +436,25 @@ def tryAllModels(fn):
 
 	# Compute likelihood using the K80+G model
 	print '\nK80+G model'
-	phycas.model = Likelihood.HKYModel()
-	phycas.model.setKappa(4.0)
-	phycas.model.setAllFreqsEqual()
-	phycas.model.setNGammaRates(4)
-	phycas.model.setShape(1.2)
-	phycas.model.setNotPinvarModel()
-	phycas.likelihood.replaceModel(phycas.model)
-	phycas.likelihood.prepareForLikelihood(phycas.tree)
-	lnL = phycas.likelihood.calcLnL(phycas.tree)
+	if partitioning:
+		model.type = 'hky'
+		model.kappa = 4.0
+		model.state_freqs = [0.25, 0.25, 0.25, 0.25]
+		model.num_rates = 4
+		model.gamma_shape = 1.2
+		model.pinvar_model = False
+		#model.pinvar = 0.3
+		lnL = like()
+	else:
+		phycas.model = Likelihood.HKYModel()
+		phycas.model.setKappa(4.0)
+		phycas.model.setAllFreqsEqual()
+		phycas.model.setNGammaRates(4)
+		phycas.model.setShape(1.2)
+		phycas.model.setNotPinvarModel()
+		phycas.likelihood.replaceModel(phycas.model)
+		phycas.likelihood.prepareForLikelihood(phycas.tree)
+		lnL = phycas.likelihood.calcLnL(phycas.tree)
 	print 'lnL = %.5f (%.5f worse than reference lnL)' % (lnL, ref_lnL - lnL)
 	paup_commands.append('[!\n***** K80+G (using HKYModel) *****]')
 	paup_commands.append('lset nst=2 basefreq=equal tratio=2.0 rates=gamma shape=1.2 pinvar=0.0;')
@@ -329,15 +463,25 @@ def tryAllModels(fn):
 
 	# Compute likelihood using the K80 model
 	print '\nK80 model'
-	phycas.model = Likelihood.HKYModel()
-	phycas.model.setKappa(4.0)
-	phycas.model.setAllFreqsEqual()
-	phycas.model.setNGammaRates(1)
-	#phycas.model.setShape(1.2)
-	phycas.model.setNotPinvarModel()
-	phycas.likelihood.replaceModel(phycas.model)
-	phycas.likelihood.prepareForLikelihood(phycas.tree)
-	lnL = phycas.likelihood.calcLnL(phycas.tree)
+	if partitioning:
+		model.type = 'hky'
+		model.kappa = 4.0
+		model.state_freqs = [0.25, 0.25, 0.25, 0.25]
+		model.num_rates = 1
+		#model.gamma_shape = 1.2
+		model.pinvar_model = False
+		#model.pinvar = 0.3
+		lnL = like()
+	else:
+		phycas.model = Likelihood.HKYModel()
+		phycas.model.setKappa(4.0)
+		phycas.model.setAllFreqsEqual()
+		phycas.model.setNGammaRates(1)
+		#phycas.model.setShape(1.2)
+		phycas.model.setNotPinvarModel()
+		phycas.likelihood.replaceModel(phycas.model)
+		phycas.likelihood.prepareForLikelihood(phycas.tree)
+		lnL = phycas.likelihood.calcLnL(phycas.tree)
 	print 'lnL = %.5f (%.5f worse than reference lnL)' % (lnL, ref_lnL - lnL)
 	paup_commands.append('[!\n***** K80 (using HKYModel) *****]')
 	paup_commands.append('lset nst=2 basefreq=equal tratio=2.0 rates=equal pinvar=0.0;')
@@ -346,16 +490,26 @@ def tryAllModels(fn):
 
 	# Compute likelihood using the JC+G+I model
 	print '\nJC+G+I model'
-	phycas.model = Likelihood.HKYModel()
-	phycas.model.setKappa(1.0)
-	phycas.model.setAllFreqsEqual()
-	phycas.model.setNGammaRates(4)
-	phycas.model.setShape(1.2)
-	phycas.model.setPinvarModel()
-	phycas.model.setPinvar(0.3)
-	phycas.likelihood.replaceModel(phycas.model)
-	phycas.likelihood.prepareForLikelihood(phycas.tree)
-	lnL = phycas.likelihood.calcLnL(phycas.tree)
+	if partitioning:
+		model.type = 'hky'
+		model.kappa = 1.0
+		model.state_freqs = [0.25, 0.25, 0.25, 0.25]
+		model.num_rates = 4
+		model.gamma_shape = 1.2
+		model.pinvar_model = True
+		model.pinvar = 0.3
+		lnL = like()
+	else:
+		phycas.model = Likelihood.HKYModel()
+		phycas.model.setKappa(1.0)
+		phycas.model.setAllFreqsEqual()
+		phycas.model.setNGammaRates(4)
+		phycas.model.setShape(1.2)
+		phycas.model.setPinvarModel()
+		phycas.model.setPinvar(0.3)
+		phycas.likelihood.replaceModel(phycas.model)
+		phycas.likelihood.prepareForLikelihood(phycas.tree)
+		lnL = phycas.likelihood.calcLnL(phycas.tree)
 	print 'lnL = %.5f (%.5f worse than reference lnL)' % (lnL, ref_lnL - lnL)
 	paup_commands.append('[!\n***** JC+G+I (using HKYModel) *****]')
 	paup_commands.append('lset nst=1 basefreq=equal rates=gamma shape=1.2 pinvar=0.3;')
@@ -364,16 +518,26 @@ def tryAllModels(fn):
 
 	# Compute likelihood using the JC+I model
 	print '\nJC+I model'
-	phycas.model = Likelihood.HKYModel()
-	phycas.model.setKappa(1.0)
-	phycas.model.setAllFreqsEqual()
-	phycas.model.setNGammaRates(1)
-	#phycas.model.setShape(1.2)
-	phycas.model.setPinvarModel()
-	phycas.model.setPinvar(0.3)
-	phycas.likelihood.replaceModel(phycas.model)
-	phycas.likelihood.prepareForLikelihood(phycas.tree)
-	lnL = phycas.likelihood.calcLnL(phycas.tree)
+	if partitioning:
+		model.type = 'hky'
+		model.kappa = 1.0
+		model.state_freqs = [0.25, 0.25, 0.25, 0.25]
+		model.num_rates = 1
+		#model.gamma_shape = 1.2
+		model.pinvar_model = True
+		model.pinvar = 0.3
+		lnL = like()
+	else:
+		phycas.model = Likelihood.HKYModel()
+		phycas.model.setKappa(1.0)
+		phycas.model.setAllFreqsEqual()
+		phycas.model.setNGammaRates(1)
+		#phycas.model.setShape(1.2)
+		phycas.model.setPinvarModel()
+		phycas.model.setPinvar(0.3)
+		phycas.likelihood.replaceModel(phycas.model)
+		phycas.likelihood.prepareForLikelihood(phycas.tree)
+		lnL = phycas.likelihood.calcLnL(phycas.tree)
 	print 'lnL = %.5f (%.5f worse than reference lnL)' % (lnL, ref_lnL - lnL)
 	paup_commands.append('[!\n***** JC+I (using HKYModel) *****]')
 	paup_commands.append('lset nst=1 basefreq=equal rates=equal pinvar=0.3;')
@@ -382,15 +546,25 @@ def tryAllModels(fn):
 
 	# Compute likelihood using the JC+G model
 	print '\nJC+G model'
-	phycas.model = Likelihood.HKYModel()
-	phycas.model.setKappa(1.0)
-	phycas.model.setAllFreqsEqual()
-	phycas.model.setNGammaRates(4)
-	phycas.model.setShape(1.2)
-	phycas.model.setNotPinvarModel()
-	phycas.likelihood.replaceModel(phycas.model)
-	phycas.likelihood.prepareForLikelihood(phycas.tree)
-	lnL = phycas.likelihood.calcLnL(phycas.tree)
+	if partitioning:
+		model.type = 'hky'
+		model.kappa = 1.0
+		model.state_freqs = [0.25, 0.25, 0.25, 0.25]
+		model.num_rates = 4
+		model.gamma_shape = 1.2
+		model.pinvar_model = False
+		#model.pinvar = 0.3
+		lnL = like()
+	else:
+		phycas.model = Likelihood.HKYModel()
+		phycas.model.setKappa(1.0)
+		phycas.model.setAllFreqsEqual()
+		phycas.model.setNGammaRates(4)
+		phycas.model.setShape(1.2)
+		phycas.model.setNotPinvarModel()
+		phycas.likelihood.replaceModel(phycas.model)
+		phycas.likelihood.prepareForLikelihood(phycas.tree)
+		lnL = phycas.likelihood.calcLnL(phycas.tree)
 	print 'lnL = %.5f (%.5f worse than reference lnL)' % (lnL, ref_lnL - lnL)
 	paup_commands.append('[!\n***** JC+G (using HKYModel) *****]')
 	paup_commands.append('lset nst=1 basefreq=equal rates=gamma shape=1.2 pinvar=0.0;')
@@ -399,15 +573,25 @@ def tryAllModels(fn):
 
 	# Compute likelihood using the JC model
 	print '\nJC model'
-	phycas.model = Likelihood.HKYModel()
-	phycas.model.setKappa(1.0)
-	phycas.model.setAllFreqsEqual()
-	phycas.model.setNGammaRates(1)
-	#phycas.model.setShape(1.2)
-	phycas.model.setNotPinvarModel()
-	phycas.likelihood.replaceModel(phycas.model)
-	phycas.likelihood.prepareForLikelihood(phycas.tree)
-	lnL = phycas.likelihood.calcLnL(phycas.tree)
+	if partitioning:
+		model.type = 'hky'
+		model.kappa = 1.0
+		model.state_freqs = [0.25, 0.25, 0.25, 0.25]
+		model.num_rates = 1
+		#model.gamma_shape = 1.2
+		model.pinvar_model = False
+		#model.pinvar = 0.3
+		lnL = like()
+	else:
+		phycas.model = Likelihood.HKYModel()
+		phycas.model.setKappa(1.0)
+		phycas.model.setAllFreqsEqual()
+		phycas.model.setNGammaRates(1)
+		#phycas.model.setShape(1.2)
+		phycas.model.setNotPinvarModel()
+		phycas.likelihood.replaceModel(phycas.model)
+		phycas.likelihood.prepareForLikelihood(phycas.tree)
+		lnL = phycas.likelihood.calcLnL(phycas.tree)
 	print 'lnL = %.5f (%.5f worse than reference lnL)' % (lnL, ref_lnL - lnL)
 	paup_commands.append('[!\n***** JC (using HKYModel) *****]')
 	paup_commands.append('lset nst=1 basefreq=equal rates=equal pinvar=0.0;')
@@ -417,67 +601,107 @@ def tryAllModels(fn):
 	print
 	print '************** Testing JCModel *******************'
 
-	# Compute likelihood using the JC model
-	print '\nJC model'
-	phycas.model = Likelihood.JCModel()
-	phycas.model.setNGammaRates(1)
-	#phycas.model.setShape(1.2)
-	phycas.model.setNotPinvarModel()
-	phycas.likelihood.replaceModel(phycas.model)
-	phycas.likelihood.prepareForLikelihood(phycas.tree)
-	lnL = phycas.likelihood.calcLnL(phycas.tree)
+	# Compute likelihood using the JC+G+I model
+	print '\nJC+G+I model'
+	if partitioning:
+		model.type = 'jc'
+		#model.kappa = 1.0
+		#model.state_freqs = [0.25, 0.25, 0.25, 0.25]
+		model.num_rates = 4
+		model.gamma_shape = 1.2
+		model.pinvar_model = True
+		model.pinvar = 0.3
+		lnL = like()
+	else:
+		phycas.model = Likelihood.JCModel()
+		phycas.model.setNGammaRates(4)
+		phycas.model.setShape(1.2)
+		phycas.model.setPinvarModel()
+		phycas.model.setPinvar(0.3)
+		phycas.likelihood.replaceModel(phycas.model)
+		phycas.likelihood.prepareForLikelihood(phycas.tree)
+		lnL = phycas.likelihood.calcLnL(phycas.tree)
 	print 'lnL = %.5f (%.5f worse than reference lnL)' % (lnL, ref_lnL - lnL)
-	paup_commands.append('[!\n***** JC (using JCModel) *****]')
-	paup_commands.append('lset nst=1 basefreq=equal rates=equal pinvar=0.0;')
+	paup_commands.append('[!\n***** JC+G+I (using JCModel) *****]')
+	paup_commands.append('lset nst=1 basefreq=equal rates=gamma shape=1.2 pinvar=0.3;')
 	paup_commands.append('lscores 1 / userbrlen;')
-	paup_commands.append('[!Phycas JC lnL = %.5f]' % lnL)
-
-	# Compute likelihood using the JC+G model
-	print '\nJC+G model'
-	phycas.model = Likelihood.JCModel()
-	phycas.model.setNGammaRates(4)
-	phycas.model.setShape(1.2)
-	phycas.model.setNotPinvarModel()
-	phycas.likelihood.replaceModel(phycas.model)
-	phycas.likelihood.prepareForLikelihood(phycas.tree)
-	lnL = phycas.likelihood.calcLnL(phycas.tree)
-	print 'lnL = %.5f (%.5f worse than reference lnL)' % (lnL, ref_lnL - lnL)
-	paup_commands.append('[!\n***** JC+G (using JCModel) *****]')
-	paup_commands.append('lset nst=1 basefreq=equal rates=gamma shape=1.2 pinvar=0.0;')
-	paup_commands.append('lscores 1 / userbrlen;')
-	paup_commands.append('[!Phycas JC+G lnL = %.5f]' % lnL)
+	paup_commands.append('[!Phycas JC+G+I lnL = %.5f]' % lnL)
 
 	# Compute likelihood using the JC+I model
 	print '\nJC+I model'
-	phycas.model = Likelihood.JCModel()
-	phycas.model.setNGammaRates(1)
-	#phycas.model.setShape(1.2)
-	phycas.model.setPinvarModel()
-	phycas.model.setPinvar(0.3)
-	phycas.likelihood.replaceModel(phycas.model)
-	phycas.likelihood.prepareForLikelihood(phycas.tree)
-	lnL = phycas.likelihood.calcLnL(phycas.tree)
+	if partitioning:
+		model.type = 'jc'
+		#model.kappa = 1.0
+		#model.state_freqs = [0.25, 0.25, 0.25, 0.25]
+		model.num_rates = 1
+		#model.gamma_shape = 1.2
+		model.pinvar_model = True
+		model.pinvar = 0.3
+		lnL = like()
+	else:
+		phycas.model = Likelihood.JCModel()
+		phycas.model.setNGammaRates(1)
+		#phycas.model.setShape(1.2)
+		phycas.model.setPinvarModel()
+		phycas.model.setPinvar(0.3)
+		phycas.likelihood.replaceModel(phycas.model)
+		phycas.likelihood.prepareForLikelihood(phycas.tree)
+		lnL = phycas.likelihood.calcLnL(phycas.tree)
 	print 'lnL = %.5f (%.5f worse than reference lnL)' % (lnL, ref_lnL - lnL)
 	paup_commands.append('[!\n***** JC+I (using JCModel) *****]')
 	paup_commands.append('lset nst=1 basefreq=equal rates=equal pinvar=0.3;')
 	paup_commands.append('lscores 1 / userbrlen;')
 	paup_commands.append('[!Phycas JC+I lnL = %.5f]' % lnL)
 
-	# Compute likelihood using the JC+G+I model
-	print '\nJC+G+I model'
-	phycas.model = Likelihood.JCModel()
-	phycas.model.setNGammaRates(4)
-	phycas.model.setShape(1.2)
-	phycas.model.setPinvarModel()
-	phycas.model.setPinvar(0.3)
-	phycas.likelihood.replaceModel(phycas.model)
-	phycas.likelihood.prepareForLikelihood(phycas.tree)
-	lnL = phycas.likelihood.calcLnL(phycas.tree)
+	# Compute likelihood using the JC+G model
+	print '\nJC+G model'
+	if partitioning:
+		model.type = 'jc'
+		#model.kappa = 1.0
+		#model.state_freqs = [0.25, 0.25, 0.25, 0.25]
+		model.num_rates = 4
+		model.gamma_shape = 1.2
+		model.pinvar_model = False
+		#model.pinvar = 0.3
+		lnL = like()
+	else:
+		phycas.model = Likelihood.JCModel()
+		phycas.model.setNGammaRates(4)
+		phycas.model.setShape(1.2)
+		phycas.model.setNotPinvarModel()
+		phycas.likelihood.replaceModel(phycas.model)
+		phycas.likelihood.prepareForLikelihood(phycas.tree)
+		lnL = phycas.likelihood.calcLnL(phycas.tree)
 	print 'lnL = %.5f (%.5f worse than reference lnL)' % (lnL, ref_lnL - lnL)
-	paup_commands.append('[!\n***** JC+G+I (using JCModel) *****]')
-	paup_commands.append('lset nst=1 basefreq=equal rates=gamma shape=1.2 pinvar=0.3;')
+	paup_commands.append('[!\n***** JC+G (using JCModel) *****]')
+	paup_commands.append('lset nst=1 basefreq=equal rates=gamma shape=1.2 pinvar=0.0;')
 	paup_commands.append('lscores 1 / userbrlen;')
-	paup_commands.append('[!Phycas JC+G+I lnL = %.5f]' % lnL)
+	paup_commands.append('[!Phycas JC+G lnL = %.5f]' % lnL)
+
+	# Compute likelihood using the JC model
+	print '\nJC model'
+	if partitioning:
+		model.type = 'jc'
+		#model.kappa = 1.0
+		#model.state_freqs = [0.25, 0.25, 0.25, 0.25]
+		model.num_rates = 1
+		#model.gamma_shape = 1.2
+		model.pinvar_model = False
+		#model.pinvar = 0.3
+		lnL = like()
+	else:
+		phycas.model = Likelihood.JCModel()
+		phycas.model.setNGammaRates(1)
+		#phycas.model.setShape(1.2)
+		phycas.model.setNotPinvarModel()
+		phycas.likelihood.replaceModel(phycas.model)
+		phycas.likelihood.prepareForLikelihood(phycas.tree)
+		lnL = phycas.likelihood.calcLnL(phycas.tree)
+	print 'lnL = %.5f (%.5f worse than reference lnL)' % (lnL, ref_lnL - lnL)
+	paup_commands.append('[!\n***** JC (using JCModel) *****]')
+	paup_commands.append('lset nst=1 basefreq=equal rates=equal pinvar=0.0;')
+	paup_commands.append('lscores 1 / userbrlen;')
+	paup_commands.append('[!Phycas JC lnL = %.5f]' % lnL)
 
 	# Add a PAUP block to the file named fn to make it easy to check the results
 	f = file(fn, 'a')
@@ -488,16 +712,16 @@ def tryAllModels(fn):
 	f.write('\n')
 	f.write('\nbegin trees;')
 	f.write('\n  translate')
-	for i,nm in enumerate(phycas.taxon_names):
+	for i,nm in enumerate(blob.taxon_labels):
 		if nm.count(' ') > 0:
-			f.write("\n    %d '%s'" % (i, nm))
+			f.write("\n    %d '%s'" % (i+1, nm))
 		else:
-			f.write("\n    %d %s" % (i, nm))
-		if i < len(phycas.taxon_names) - 1:
+			f.write("\n    %d %s" % (i+1, nm))
+		if i < len(blob.taxon_labels) - 1:
 			f.write(',')
 		else:
 			f.write(';')
-	f.write('\n  utree simtree = %s;' % model_tree)
+	f.write('\n  utree t = %s' % model_tree_str)
 	f.write('\nend;')
 	f.write('\n')
 	f.write('\nbegin paup;')
@@ -508,7 +732,10 @@ def tryAllModels(fn):
 	f.write('\n')
 	f.close()
 
+	raw_input('debug stop')
+	
 def simulateData(fn):
+    # NOT YET READY FOR PARTITIONED VERSION
 	# Define the names of the taxa to use when the simulated data set is saved to a file
 	phycas.taxon_names = ['P. parksii', 'P. articulata', 'P._gracilis', 'P. macrophylla']
 
@@ -552,25 +779,6 @@ def simulateData(fn):
 	# we can compute the likelihood for the simulated data
 	phycas.likelihood.copyDataFromSimData(sim_data)	   
 
-def readData(fn):
-	phycas.reader = ReadNexus.NexusReader()
-	phycas.reader.readFile(fn)
-	phycas.data_matrix = phycas.reader.getLastDiscreteMatrix(True)
-	phycas.ntax = phycas.data_matrix.getNTax()
-	phycas.nchar = phycas.data_matrix.getNChar()
-	phycas.taxon_names = phycas.reader.getTaxLabels()
-	#print 'ntax =',phycas.ntax
-	#print 'nchar =',phycas.nchar
-	#print 'taxon names =',phycas.taxon_names
-	phycas.model = Likelihood.JCModel()
-	phycas.likelihood = Likelihood.TreeLikelihood(phycas.model)
-	if POLPY_NEWWAY:
-		from phycas import partition
-		phycas.likelihood.copyDataFromDiscreteMatrix(phycas.data_matrix, partition.getSiteModelVector())
-	else:
-		phycas.likelihood.copyDataFromDiscreteMatrix(phycas.data_matrix)
-	phycas.likelihood.prepareForLikelihood(phycas.tree)
-
 def createCommandFile(fn, dataf):
 	outf = file(fn, 'w')
 	outf.write('#nexus\n\n')
@@ -578,44 +786,42 @@ def createCommandFile(fn, dataf):
 	outf.write("  set nowarnroot;\n")
 	outf.write("  exe '%s';\n" % dataf)
 	outf.write('end;\n')
-	outf.close()	
-
+	outf.close()
+	
 if __name__ == '__main__':	  
-	phycas = Phycas()
-
-	# Create a model tree
-	phycas.tree = Phylogeny.Tree()
-	model_tree = '(0:0.1,1:0.15,(2:0.025,3:0.15):0.05)'
-	phycas.tree.buildFromString(model_tree, True)	# 2nd arg. is zero_based_tips
-
-	#m = Lock()
-	#tv = TreeViewer(tree=phycas.tree, mutex=m)
-	#tv.start()
-
 	print
 	print '+------------------------------------------------+'
 	print '|		   Analyzing nyldna4.nex				|'
 	print '+------------------------------------------------+'
-	#dataf = getPhycasTestData('nyldna4-compressed.nex')
 	dataf = getPhycasTestData('nyldna4.nex')
-	readData(dataf)
+	blob = readFile(dataf)
+
+	# Create a model tree
+	model_tree_str = '(1:0.1,2:0.15,(3:0.025,4:0.15):0.05);'
+	model_tree = TreeCollection(newick=model_tree_str) 
+
+	like.data_source = blob.characters
+	like.tree_source = model_tree
+	like.starting_edgelen_dist = None
+	like.store_site_likes = False
+	
 	createCommandFile('check.nex', dataf)
 	tryAllModels('check.nex')
 
-	doingSimTest = False
-	if doingSimTest:
-		print
-		print '+------------------------------------------------+'
-		print '|		  Analyzing Simulated Data				|'
-		print '+------------------------------------------------+'
-	
-		simulateData('simulated.nex')
-		tryAllModels('simulated.nex')
-	else:
-		d = os.path.dirname(__file__)
-		o = open(os.path.join(d, 'reference_output','simulated.nex'), "rU")
-		t = open("simulated.nex", "w")
-		t.write(o.read())
-		t.close()
-		o.close()
+	#doingSimTest = False
+	#if doingSimTest:
+	#	print
+	#	print '+------------------------------------------------+'
+	#	print '|		  Analyzing Simulated Data				|'
+	#	print '+------------------------------------------------+'
+	#
+	#	simulateData('simulated.nex')
+	#	tryAllModels('simulated.nex')
+	#else:
+	#	d = os.path.dirname(__file__)
+	#	o = open(os.path.join(d, 'reference_output','simulated.nex'), "rU")
+	#	t = open("simulated.nex", "w")
+	#	t.write(o.read())
+	#	t.close()
+	#	o.close()
 

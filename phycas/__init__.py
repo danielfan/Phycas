@@ -12,7 +12,7 @@
 #    ]
 
 POLPY_NEWWAY = True
-partitioning = False
+partitioning = True
 
 def name_of(_obj):
     k=None

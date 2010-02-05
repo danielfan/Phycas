@@ -127,7 +127,11 @@ bool TreeScalerMove::update()
     proposeNewState();
 
     likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
+#if POLPY_NEWWAY
 	double curr_ln_prior		= recalcPrior();
+#else //old way
+	double curr_ln_prior		= recalcPrior();
+#endif
 	double curr_ln_like			= likelihood->calcLnL(tree);
 
     double prev_posterior = 0.0;
@@ -149,7 +153,10 @@ bool TreeScalerMove::update()
     double lnu = std::log(rng->Uniform(FILE_AND_LINE));
 	if (ln_accept_ratio >= 0.0 || lnu <= ln_accept_ratio)
 		{
-        //std::cerr << "ACCEPTED\n" << std::endl;
+	    if (save_debug_info)
+    	    {
+			debug_info = boost::str(boost::format("ACCEPT, forward_scaler = %.5f, prev_ln_prior = %.5f, curr_ln_prior = %.5f, prev_ln_like = %.5f, curr_ln_like = %.5f, lnu = %.5f, ln_accept_ratio = %.5f") % forward_scaler % prev_ln_prior % curr_ln_prior % prev_ln_like % curr_ln_like % lnu % ln_accept_ratio);
+			}
 		p->setLastLnPrior(curr_ln_prior);
 		p->setLastLnLike(curr_ln_like);
 		accept();
@@ -157,7 +164,10 @@ bool TreeScalerMove::update()
 		}
 	else
 		{
-        //std::cerr << "rejected\n" << std::endl;
+	    if (save_debug_info)
+    	    {
+			debug_info = boost::str(boost::format("REJECT, forward_scaler = %.5f, prev_ln_prior = %.5f, curr_ln_prior = %.5f, prev_ln_like = %.5f, curr_ln_like = %.5f, lnu = %.5f, ln_accept_ratio = %.5f") % forward_scaler % prev_ln_prior % curr_ln_prior % prev_ln_like % curr_ln_like % lnu % ln_accept_ratio);
+			}
 		curr_ln_like	= p->getLastLnLike();
 		curr_ln_prior	= p->getLastLnPrior();
 		revert();
@@ -188,7 +198,7 @@ void TreeScalerMove::accept()
 |	Computes the joint log prior over all edges in the associated tree and sets `curr_ln_prior'.
 */
 double TreeScalerMove::recalcPrior()
-	{
+	{	
     // Loop through all EdgeLenMasterParam objects and call the recalcPrior function of each.
     // Each EdgeLenMasterParam object knows how to compute the prior for the edge lengths it controls.
     curr_ln_prior = 0.0;

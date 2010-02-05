@@ -145,7 +145,7 @@ bool LargetSimonMove::update()
 #if 0
             debug_info = str(boost::format("LargetSimonMove: case %d, topology %s, x=%f, y=%f, z=%f, newX=%f, newY=%f, newZ=%f, %s") % which_case % (topol_changed ? "changed" : "unchanged") % x % y % z % (ndX->GetEdgeLen()) % (ndY->GetEdgeLen()) % (ndZ->GetEdgeLen()) % (accepted ? "accepted" : "rejected"));
 #else
-            debug_info = str(boost::format("LargetSimonMove: topology %s, case = %d, x=%f, y=%f, z=%f, newX=%f, newY=%f, newZ=%f, %s, lnu = %.5f, lnr = %.5f, curr = %.5f, prev = %.5f") 
+            debug_info = boost::str(boost::format("LargetSimonMove: topology %s, case = %d, x=%f, y=%f, z=%f, newX=%f, newY=%f, newZ=%f, %s, lnu = %.5f, lnr = %.5f, curr = %.5f, prev = %.5f") 
                 % (topol_changed ? "changed" : "unchanged") 
                 % which_case
                 % x 
@@ -155,7 +155,7 @@ bool LargetSimonMove::update()
                 % (ndY->GetEdgeLen()) 
                 % (ndZ->GetEdgeLen()) 
                 % (accepted ? "accepted" : "rejected")
-                % lnu
+                % (lnu == DBL_MAX ? -1.0 : lnu)
                 % ln_accept_ratio
                 % curr_posterior
                 % prev_posterior);
