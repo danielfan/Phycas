@@ -286,7 +286,15 @@ bool DirichletMove::update()
         
 	if (ln_accept_ratio >= 0.0 || lnu <= ln_accept_ratio)
 		{
-        //std::cerr << "ACCEPTED\n" << std::endl;
+	    if (save_debug_info)
+    	    {
+			debug_info = boost::str(boost::format("ACCEPT, prev_ln_prior = %.5f, curr_ln_prior = %.5f, prev_ln_like = %.5f, curr_ln_like = %.5f, lnu = %.5f, ln_accept_ratio = %.5f\norig_params: ") % prev_ln_prior % curr_ln_prior % prev_ln_like % curr_ln_like % lnu % ln_accept_ratio);
+			for (std::vector<double>::const_iterator it = orig_params.begin(); it != orig_params.end(); ++it)
+				debug_info += boost::str(boost::format("%15.8f ") % (*it));
+			debug_info += "\nnew_params:  ";
+			for (std::vector<double>::const_iterator it = new_params.begin(); it != new_params.end(); ++it)
+				debug_info += boost::str(boost::format("%15.8f ") % (*it));
+			}
 		p->setLastLnPrior(curr_ln_prior);
 		p->setLastLnLike(curr_ln_like);
 		accept();
@@ -294,7 +302,15 @@ bool DirichletMove::update()
 		}
 	else
 		{
-        //std::cerr << "rejected\n" << std::endl;
+	    if (save_debug_info)
+    	    {
+			debug_info = boost::str(boost::format("REJECT, prev_ln_prior = %.5f, curr_ln_prior = %.5f, prev_ln_like = %.5f, curr_ln_like = %.5f, lnu = %.5f, ln_accept_ratio = %.5f\norig_params: ") % prev_ln_prior % curr_ln_prior % prev_ln_like % curr_ln_like % lnu % ln_accept_ratio);
+			for (std::vector<double>::const_iterator it = orig_params.begin(); it != orig_params.end(); ++it)
+				debug_info += boost::str(boost::format("%15.8f ") % (*it));
+			debug_info += "\nnew_params:  ";
+			for (std::vector<double>::const_iterator it = new_params.begin(); it != new_params.end(); ++it)
+				debug_info += boost::str(boost::format("%15.8f ") % (*it));
+			}
 		curr_ln_like	= p->getLastLnLike();
 		curr_ln_prior	= p->getLastLnPrior();
 		revert();
@@ -324,7 +340,7 @@ StateFreqMove::StateFreqMove() : DirichletMove()
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the state frequencies of the associated HKY or GTR model to those in the supplied vector `v'.
 */
-void StateFreqMove::sendCurrValuesToModel(double_vect_t & v)
+void StateFreqMove::sendCurrValuesToModel(const double_vect_t & v)
 	{
 	PHYCAS_ASSERT(dim == v.size());
 	model->setStateFreqsUnnorm(v);
@@ -414,7 +430,7 @@ RelRatesMove::RelRatesMove() : DirichletMove()
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the relative rates of the associated GTR model to those in the supplied vector `v'.
 */
-void RelRatesMove::sendCurrValuesToModel(double_vect_t & v)
+void RelRatesMove::sendCurrValuesToModel(const double_vect_t & v)
 	{
 	PHYCAS_ASSERT(dim == v.size());
 	GTR * gtr_model = dynamic_cast<GTR *>(model.get());
@@ -497,4 +513,82 @@ void RelRatesMove::setParams(
     GTR * gtr_model = dynamic_cast<GTR *>(model.get());
     gtr_model->setRelRates(v);
 	}
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	The constructor simply calls the base class (DirichletMove) constructor.
+*/
+SubsetRelRatesMove::SubsetRelRatesMove() : DirichletMove()
+	{
+	dim = 1;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the relative rates of the associated partition model to those in the supplied vector `v'.
+*/
+void SubsetRelRatesMove::sendCurrValuesToModel(const double_vect_t & v)
+	{
+	PHYCAS_ASSERT(dim == v.size());
+	partition_model->setSubsetRelRatesVect(v);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Obtains the current relative rates from the model, storing them in the supplied vector `v'.
+*/
+void SubsetRelRatesMove::getCurrValuesFromModel(double_vect_t & v)
+	{
+	const std::vector<double> & rrates = partition_model->getSubsetRelRatesVect();
+	PHYCAS_ASSERT(dim == rrates.size());
+	v.resize(rrates.size());
+	std::copy(rrates.begin(), rrates.end(), v.begin());
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Obtains the current relative rates from the model, returning them as an anonymous vector.
+*/
+double_vect_t SubsetRelRatesMove::listCurrValuesFromModel()
+	{
+	double_vect_t v(dim);
+	const double_vect_t & rrates = partition_model->getSubsetRelRatesVect();
+	PHYCAS_ASSERT(dim == rrates.size());
+	std::copy(rrates.begin(), rrates.end(), v.begin());
+	return v;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Obtains the current relative rates from the model, storing them in the data member `orig_params'.
+*/
+void SubsetRelRatesMove::getParams()
+	{
+	getCurrValuesFromModel(orig_params);
+	
+	// need to modify the values obtained from the model because the model maintains relative rates (mean 1.0)
+	// but for Dirichlet move we need to work with parameters that sum to 1.0
+	std::transform(orig_params.begin(), orig_params.end(), orig_params.begin(), boost::lambda::_1/(double)dim);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Replaces the relative rates in the model with those supplied in the vector `v'.
+*/
+void SubsetRelRatesMove::setParams(
+  const std::vector<double> & v)    /*< is the vector of parameter values to send to the model */
+	{
+	// need to modify the values in v because the model maintains relative rates (mean 1.0)
+	// but for Dirichlet move we work with parameters that sum to 1.0
+	double_vect_t vcopy(v.size());
+	std::transform(v.begin(), v.end(), vcopy.begin(), boost::lambda::_1*(double)dim);
+	
+    sendCurrValuesToModel(vcopy);
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets `partition_model' to the supplied `m'.
+*/
+void SubsetRelRatesMove::setPartitionModel(
+  PartitionModelShPtr m)    /*< is a shared pointer to the new partition model */
+	{
+	partition_model = m;
+	}
+
+#endif
 

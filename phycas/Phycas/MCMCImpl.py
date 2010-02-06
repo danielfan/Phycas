@@ -136,9 +136,9 @@ class MCMCImpl(CommonFunctions):
 				if nattempts > 0:
 					accept_pct = 100.0*float(naccepts)/float(nattempts)
 					if nattempts == 1:
-						p_summary += '	 accepted %.1f%% of 1 attempt (%s)\n' % (accept_pct, nm)
+						p_summary += '   accepted %.1f%% of 1 attempt (%s)\n' % (accept_pct, nm)
 					else:
-						p_summary += '	 accepted %.1f%% of %d attempts (%s)\n' % (accept_pct, nattempts, nm)
+						p_summary += '   accepted %.1f%% of %d attempts (%s)\n' % (accept_pct, nattempts, nm)
 				else:
 					accept_pct = 0.0
 				p.resetDiagnostics()
@@ -635,7 +635,7 @@ class MCMCImpl(CommonFunctions):
 			secs_remaining -= 60.0*minutes_remaining
 			if minutes_remaining > 0:
 				if minutes_remaining == 1:
-					time_left.append('1 minute')
+					time_left.append('less than 2 minutes')
 				else:
 					time_left.append('%d minutes' % minutes_remaining)
 		if len(time_left) > 0:
@@ -725,21 +725,24 @@ class MCMCImpl(CommonFunctions):
 
 		self.nsamples = self.opts.ncycles//self.opts.sample_every
 		nchains = len(self.mcmc_manager.chains)
+		cold_chain = self.mcmc_manager.getColdChain()
 		
 		if self.opts.verbose:
 			if self.data_matrix == None:
 				self.output('Data source:	 None (running MCMC with no data to explore prior)')
 			else:
 				self.output('Data source:	 %s' % str_value_for_user(self.opts.data_source))
-				all_missing = self.mcmc_manager.getColdChain().likelihood.getListOfAllMissingSites()
+				self.output('  No. taxa:                %d' % self.ntax)
+				self.output('  No. included characters: %d' % cold_chain.likelihood.sumPatternCounts())
+				all_missing = cold_chain.likelihood.getListOfAllMissingSites()
 				num_excluded = len(all_missing)
 				if num_excluded > 0:
-					self.output('*** Note: the following %d sites were automatically excluded because' % num_excluded)
-					self.output('*** they exhibited completely missing data for all taxa:')
+					self.output('  *** Note: the following %d sites were automatically excluded because' % num_excluded)
+					self.output('  *** they exhibited completely missing data for all taxa:')
 					while len(all_missing) > 0:
 						tmp = all_missing[:10]
 						all_missing = all_missing[10:]
-						self.output('***   '+','.join([str(i+1) for i in tmp]))
+						self.output('  ***   '+','.join([str(i+1) for i in tmp]))
 						
 			if nchains > 1:
 				for c in range(nchains):
@@ -812,7 +815,7 @@ class MCMCImpl(CommonFunctions):
 
 		# Debugging: show data patterns
 		if self.opts.debugging:
-			cold_chain = self.mcmc_manager.getColdChain()
+			#cold_chain = self.mcmc_manager.getColdChain()
 			s = cold_chain.likelihood.listPatterns()
 			print '\nDebug Info: List of data patterns and their frequencies (see TreeLikelihood::listPatterns):'
 			print s

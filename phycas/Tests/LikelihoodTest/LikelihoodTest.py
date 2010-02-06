@@ -731,8 +731,6 @@ def tryAllModels(fn):
 	f.write('\nend;')
 	f.write('\n')
 	f.close()
-
-	raw_input('debug stop')
 	
 def simulateData(fn):
     # NOT YET READY FOR PARTITIONED VERSION

@@ -120,7 +120,15 @@ def runTest(outFile, name, results):
         if os.path.exists(acceptable_diff_f):
             # right now we simply store line numbers in "acceptable_diff_f/filename"
             #   for lines that can generate a diff
-            acceptable_diff = [int(i.strip()) for i in open(acceptable_diff_f, "rU")]
+            acceptable_diff = []
+            lines = open(acceptable_diff_f, "rU").readlines()
+            for line in lines:
+                stripped_line = line.strip()
+                if len(stripped_line) > 0:
+                    i = int(line.strip())
+                    acceptable_diff.append(i)
+            print 'acceptable_diff =',acceptable_diff
+            #acceptable_diff = [int(i.strip()) for i in open(acceptable_diff_f, "rU")]
         else:
             acceptable_diff = ()
         runDiff(f, os.path.join('reference_output', f), outFile, acceptable_diff)
@@ -143,6 +151,7 @@ if __name__ == '__main__':
     runTest(outFile, "Sumt", ["trees.tre","splits.pdf","logfile.txt"])
     #runTest(outFile, "SteppingstoneSampling", ["params.p", "trees.t"])
     runTest(outFile, "LikelihoodTest", ["check.nex"])
+    runTest(outFile, "partition", ["parttest.p","parttest.t","parttest.txt"])
     runTest(outFile, "FixedParams", ["fixed.p", "fixed.t"])
     runTest(outFile, "Underflow", ["output.txt"])
     runTest(outFile, "CodonTest", ["params.p", "trees.t"])

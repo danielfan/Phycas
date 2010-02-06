@@ -157,7 +157,7 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
         virtual double			getCurrValueFromModel();
 		
 		// Multivariate case
-        virtual void			sendCurrValuesToModel(double_vect_t & v);
+        virtual void			sendCurrValuesToModel(const double_vect_t & v);
         virtual void			getCurrValuesFromModel(double_vect_t & v);
         virtual double_vect_t	listCurrValuesFromModel();
 #else //old way

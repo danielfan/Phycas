@@ -670,7 +670,7 @@ double MCMCUpdater::getCurrValueFromModel()
 |	This base class version does nothing. Derived classes representing model parameters should override this 
 |	method to set the values of the corresponding multivariate parameter in `model' to the supplied vector `v'.
 */
-void MCMCUpdater::sendCurrValuesToModel(double_vect_t & v)
+void MCMCUpdater::sendCurrValuesToModel(const double_vect_t & v)
 	{
 	}
 

@@ -67,6 +67,53 @@ const ModelVect & PartitionModel::getModelsVect() const
 	return subset_model;
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns const reference to `subset_relrates' vector.
+*/
+double PartitionModel::getSubsetRelRate(unsigned i) const
+	{
+	PHYCAS_ASSERT(subset_relrates.size() > i);
+	return subset_relrates[i];
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns const reference to `subset_relrates' vector.
+*/
+const std::vector<double> & PartitionModel::getSubsetRelRatesVect() const
+	{
+	return subset_relrates;
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns const reference to `subset_relrates' vector.
+*/
+MultivarProbDistShPtr PartitionModel::getSubsetRelRatePrior() const
+	{
+	return subset_relrate_prior;
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Replaces the values in the data member vector `subset_relrates' with those in the supplied `rrates' vector.
+*/
+void PartitionModel::setSubsetRelRatesVect(
+  const std::vector<double> & rrates)	/**< is the vector of relative rates */
+	{
+	PHYCAS_ASSERT(rrates.size() == getNumSubsets());
+	PHYCAS_ASSERT(subset_relrates.size() == getNumSubsets());
+	std::copy(rrates.begin(), rrates.end(), subset_relrates.begin());
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Replaces the multivariate probability distribution (`subset_relrate_prior') used for subset relative rates.
+*/
+void PartitionModel::setSubsetRelRatePrior(
+  MultivarProbDistShPtr rrate_prior)	/**< is the new relative rate prior */
+	{
+	subset_relrate_prior = rrate_prior;
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns const reference to `subset_num_patterns' vector.
 */
@@ -98,8 +145,7 @@ void PartitionModel::addModel(ModelShPtr m)
 	{
 	PHYCAS_ASSERT(m);
 	subset_model.push_back(m);
-	
-	// Update subset_num_rates and subset_num_states vectors
+	subset_relrates.push_back(1.0);
 	subset_num_states.push_back(m->getNStates());
 	subset_num_rates.push_back(m->getNRatesTotal());
 	subset_num_patterns.push_back(0);	// can't get this from model
@@ -114,6 +160,8 @@ void PartitionModel::setModelsVect(const ModelVect & models)
 	PHYCAS_ASSERT(new_size > 0);
 	subset_model.resize(new_size);
 	std::copy(models.begin(), models.end(), subset_model.begin());
+	
+	subset_relrates.assign(new_size, 1.0);
 	
 	// Go ahead and setup subset_num_rates and subset_num_states vectors
 	// according to the models

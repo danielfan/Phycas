@@ -1,0 +1,38 @@
+#nexus
+
+begin data;
+  dimensions ntax=10 nchar=198;
+  format datatype=dna;
+  matrix
+    A    agtttttatggtgaccttaagtgattaagagccggcttacccgccgtaagacccgacttgcggggtcattctcaatcgtgcaaaaccaatagctaggagtgcggggctccgttgtgctaaacggagttaacgacaaagggagtggtcgcggtaggctgcggcgtcaaatggctcgcatacaacaatggaaaactgccc
+    B    attttttttggtgactttaagtgattaagagccaatttacccgccgtaagccccgacttcctgggtcattctcaatcgacccaaaccaatagctatgagtacggggctccgttgtgctaaactgagttaacgacaaacggagtggtcgcggtcggctgcggcatcaaatggctcgcatacaaccatggaaaactgccc
+    C    agtttttatgatgaccttaagtgatgaagagccggcttacccgccgtaagacccgacttgcggggtcattctcaatcgtgcaaaatcaatagctaggagtgcggggctccgttgtgctaaacggagttaacgacaaagggagtggtcgcggtaggctgcggcgtcaaatggctcgcatacaacaatggaaaactgccc
+    D    agttctaatggtgagattaagtgattaagaacccgctaacctgcggtaggacccgactggtgcgatcattctcaatcgtacaacattatgagccaggagtgcggggctccgctgtggtaaacgtcgttaccgacgaagggagtggtcgcggtcggctgcggcgtcatagccctgtgatgcaacagttgaaaagtggcc
+    E    agtttctctggtgacatcaagtgatgaagaacgggcgtaccggccgtaagaccctacttgcgggatcatgctcaatggtccaaaaccaatagctaggagtgggggggggcgtggagctagacggtgttatcgacagagggagtggtcgcggggggctgcggcgtcaattggttcgcataaaacaaaggaagactgctc
+    F    agctgtggtggtgaccttaagagattaagagccggcttacccgccatgagaccagacttacggggtcattctcaatcgaccaaaaccggttgctaggagtgatgggcgccgtggtgctaattggagctaacgcagaaggcagtggtcgcggtcggctatggcgtcaaaaggatcgcgtacaacaatggaagagtggcc
+    G    agtttatatggtgaccgtaagtgattaacagcctgcttaccggccatcagactcgccttgcgggcacattctcaatcgagcaaaaccactagctaggagtgcagggctccgttgtgttagacgaagttaacgacaaagggaatgggggcggacggctgcggggtcgcatgggtcgtatgcaacattgcaaaaccgccc
+    H    aatttttatgatgaccttaagtgattaagagccggcttacccgccataagacccgacttgcggggtcattctcaatcgagcaaaaccaatggctaggagagcggggcgccgttgtgctaaacggagttaacgacgaagggagtggtcgcggtcggctggggcgtcaaatggctcgcatacaacaatggcaaactgccc
+    I    agttttaatggtgaccttaagagattaagatccggcttacccgccataagaccagacttatggggtcattctcaagcgagctaaaccgagagaaaataatgcggagcgtcgttgtgctaaacggagtcaacacctaatggagtggccacggtcggctgtggcgtcaaatggctcgaatataaaaatggaaaactgccg
+    J    agttgataggatggccttaagtgatgaagacccggataacccgccgtacaacccggcttgcggcgtccttcacgatcgaacaagatcagtagctaaaagtgcgaggttcggtttttctaaacggtgttagagagaagggaagtggcagtggtaggcaacgacgtcaaatggcgcgtatgcaacaatgtgaaaccgccc
+  ;
+end;
+
+[
+tree used for simulation:
+(1:0.01061,((2:0.09757,(((6:0.09717,9:0.20048):0.01014,8:0.04944):0.01216,7:0.18755):0.01477):0.00935,4:0.26665):0.00472,((3:0.00159,10:0.19388):0.00844,5:0.18752):0.00503)
+]
+
+begin trees;
+  translate
+    1 A,
+    2 B,
+    3 C,
+    4 D,
+    5 E,
+    6 F,
+    7 G,
+    8 H,
+    9 I,
+    10 J;
+  utree simtree = (1:0.01061,((2:0.09757,(((6:0.09717,9:0.20048):0.01014,8:0.04944):0.01216,7:0.18755):0.01477):0.00935,4:0.26665):0.00472,((3:0.00159,10:0.19388):0.00844,5:0.18752):0.00503);
+end;

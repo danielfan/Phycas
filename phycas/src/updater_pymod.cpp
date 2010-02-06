@@ -133,6 +133,13 @@ void updater_pymod()
 		boost::noncopyable, boost::shared_ptr<phycas::DirichletMove> >("DirichletMove") 
 		.def("setDimension", &phycas::DirichletMove::setDimension)
 		;
+#if POLPY_NEWWAY
+	class_<phycas::SubsetRelRatesMove, bases<phycas::DirichletMove>, 
+		boost::noncopyable, boost::shared_ptr<phycas::SubsetRelRatesMove> >("SubsetRelRatesMove") 
+		.def("setPartitionModel", &phycas::SubsetRelRatesMove::setPartitionModel)
+		.def("update", &phycas::SubsetRelRatesMove::update)
+		;
+#endif
 	class_<phycas::RelRatesMove, bases<phycas::DirichletMove>, 
 		boost::noncopyable, boost::shared_ptr<phycas::RelRatesMove> >("RelRatesMove") 
 		.def("update", &phycas::RelRatesMove::update)

@@ -112,11 +112,12 @@ void TreeLikelihood::calcPMatCommon(
   double		edgeLength)		/**< is the edge length */
 	{
 	unsigned nr = partition_model->subset_num_rates[i];
+	double subset_relrate = partition_model->getSubsetRelRate(i);
 	PHYCAS_ASSERT(nr > 0);
 	vector<double> scaled_edges(nr);
 	for (unsigned r = 0; r < nr; ++r)
 		{
-		scaled_edges[r] = edgeLength*rate_means[i][r];
+		scaled_edges[r] = subset_relrate*edgeLength*rate_means[i][r];
 		}
 	partition_model->subset_model[i]->calcPMatrices(pMatrices, &scaled_edges[0], nr); //PELIGROSO
 	}

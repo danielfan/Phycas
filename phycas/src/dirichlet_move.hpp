@@ -61,7 +61,7 @@ class DirichletMove : public MCMCUpdater
 		// Utilities
 		void						reset();
 #if POLPY_NEWWAY
-		virtual void				sendCurrValuesToModel(double_vect_t & v) {}
+		virtual void				sendCurrValuesToModel(const double_vect_t & v) {}
 		virtual void				getCurrValuesFromModel(double_vect_t & v) {}
 		virtual double_vect_t		listCurrValuesFromModel();
 #endif
@@ -110,7 +110,7 @@ class StateFreqMove : public DirichletMove
                                     virtual ~StateFreqMove() {}
 
 #if POLPY_NEWWAY
-		virtual void				sendCurrValuesToModel(double_vect_t & v);
+		virtual void				sendCurrValuesToModel(const double_vect_t & v);
 		virtual void				getCurrValuesFromModel(double_vect_t & v);
 		virtual double_vect_t		listCurrValuesFromModel();
 #endif
@@ -134,7 +134,7 @@ class RelRatesMove : public DirichletMove
                                     virtual ~RelRatesMove() {}
 
 #if POLPY_NEWWAY
-		virtual void				sendCurrValuesToModel(double_vect_t & v);
+		virtual void				sendCurrValuesToModel(const double_vect_t & v);
 		virtual void				getCurrValuesFromModel(double_vect_t & v);
 		virtual double_vect_t		listCurrValuesFromModel();
 #endif
@@ -145,6 +145,32 @@ class RelRatesMove : public DirichletMove
 
 		RelRatesMove &				operator=(const RelRatesMove &);	// never use - don't define
     };
+	
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	A SubsetRelRatesMove proposes new subset relative rates that are slightly different than the current rates by  
+|   sampling from a Dirichlet distribution with parameters equal to the current rates multiplied by a large value (the 
+|   tuning parameter 'psi').
+*/
+class SubsetRelRatesMove : public DirichletMove
+	{
+	public:
+									SubsetRelRatesMove();
+                                    virtual ~SubsetRelRatesMove() {}
+
+		virtual void				sendCurrValuesToModel(const double_vect_t & v);
+		virtual void				getCurrValuesFromModel(double_vect_t & v);
+		virtual double_vect_t		listCurrValuesFromModel();
+        virtual void                getParams();
+        virtual void                setParams(const std::vector<double> & v);
+		void						setPartitionModel(PartitionModelShPtr m);
+
+	private:
+
+		PartitionModelShPtr			partition_model;
+		SubsetRelRatesMove &		operator=(const SubsetRelRatesMove &);	// never use - don't define
+    };
+#endif
 
 } // namespace phycas
 

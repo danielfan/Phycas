@@ -195,6 +195,10 @@ class MCMCManager:
 			if partitioning:
 				# record parameter values for each model in partition
 				nmodels = cold_chain.partition_model.getNumSubsets()
+				if nmodels > 1:
+					for i in range(nmodels):
+						ssrr = cold_chain.partition_model.getSubsetRelRate(i)
+						self.parent.paramf.write(float_format_str % ssrr)					
 				for i in range(nmodels):
 					m = cold_chain.partition_model.getModel(i)
 					self.parent.paramf.write(m.paramReport(self.parent.opts.ndecimals))

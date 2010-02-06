@@ -1177,6 +1177,16 @@ const CondLikelihoodStorageShPtr TreeLikelihood::getCLAStorage() const
 	return cla_pool;
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Utility function that returns the sum of pattern counts stored in the `pattern_counts' data member.
+*/
+unsigned TreeLikelihood::sumPatternCounts() const
+	{
+	return std::accumulate(pattern_counts.begin(), pattern_counts.end(), 0);
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Accessor function that returns the `nTaxa' data member.
 */

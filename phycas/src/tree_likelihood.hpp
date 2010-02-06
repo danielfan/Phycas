@@ -122,6 +122,7 @@ class TreeLikelihood
 
 		// Utilities
 #if POLPY_NEWWAY
+		unsigned						sumPatternCounts() const;
 		void							releasePartitionModel();
 #else
 		void							releaseModel();

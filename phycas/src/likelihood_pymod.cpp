@@ -178,6 +178,7 @@ BOOST_PYTHON_MODULE(_LikelihoodExt)
 		.def("getNumRatesVect", &phycas::PartitionModel::getNumRatesVect, return_value_policy<copy_const_reference>())
 		.def("getNumPatternsVect", &phycas::PartitionModel::getNumPatternsVect, return_value_policy<copy_const_reference>())
 		.def("getTotalNumPatterns", &phycas::PartitionModel::getTotalNumPatterns)
+		.def("getSubsetRelRate", &phycas::PartitionModel::getSubsetRelRate)
 		.def("getNumSubsets", &phycas::PartitionModel::getNumSubsets)
 		;
 	class_<TreeLikelihood, TreeLikelihoodWrapper, boost::noncopyable>("TreeLikelihoodBase", init<boost::shared_ptr<PartitionModel> >())
@@ -198,6 +199,7 @@ BOOST_PYTHON_MODULE(_LikelihoodExt)
 		.def("addOrphanTip", &TreeLikelihood::addOrphanTip)
 		.def("addDecoratedInternalNode", &TreeLikelihood::addDecoratedInternalNode)
 #if POLPY_NEWWAY
+		.def("sumPatternCounts", &TreeLikelihood::sumPatternCounts)
 		.def("replaceModel", &TreeLikelihood::replacePartitionModel)
 #else // old way
 		.def("replaceModel", &TreeLikelihood::replaceModel)

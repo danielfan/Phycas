@@ -28,12 +28,26 @@ class MarkovChain(LikelihoodCore):
 		"""
 		LikelihoodCore.__init__(self, parent)
 		
-		self.parent					= parent
-		self.boldness				= 0.0
-		self.heating_power			= power
-		self.chain_manager			= None
-		self.state_freq_moves		= []
-		self.rel_rate_moves			= []
+		self.parent						= parent	# Note: self.parent is the MCMCImpl object
+		self.boldness					= 0.0
+		self.heating_power				= power
+		self.chain_manager				= None
+		self.tree_scaler_move			= None		
+		self.subset_relrates_move		= None
+		self.edge_move					= None
+		self.unimap_fast_nni_move		= None
+		self.unimap_sample_ambig_move	= None
+		self.unimap_nni_move			= None
+		self.unimap_node_slide_move		= None
+		self.unimapping_move			= None
+		self.unimap_edge_move			= None
+		self.larget_simon_move			= None
+		self.ncat_move					= None
+		self.bush_move					= None
+		self.topo_prior_calculator		= None
+		
+		self.state_freq_moves			= []
+		self.rel_rate_moves				= []
 		if not partitioning:
 			self.relrate_prior			 = cloneDistribution(self.parent.opts.model.relrate_prior)
 			self.relrate_param_prior	 = cloneDistribution(self.parent.opts.model.relrate_param_prior)
@@ -100,6 +114,9 @@ class MarkovChain(LikelihoodCore):
 		
 		if partitioning:
 			nmodels = self.partition_model.getNumSubsets()
+			if nmodels > 1:
+				for i in range(nmodels):
+					paramf.write('\tm_%d' % (i+1,))
 			for i in range(nmodels):
 				m = self.partition_model.getModel(i)
 				if nmodels > 1:
@@ -433,7 +450,32 @@ class MarkovChain(LikelihoodCore):
 				self.tree_scaler_move.fixParameter()
 			self.chain_manager.addMove(self.tree_scaler_move)
 
-		if not partitioning:
+		if partitioning:
+			# If more than one partition subset, add a SubsetRelRate move to modify the 
+			# vector of relative substitution rates for each subset
+			if (nmodels > 1):
+				self.subset_relrates_move = Likelihood.SubsetRelRatesMove()
+				self.subset_relrates_move.setDimension(nmodels)
+				self.subset_relrates_move.setName("Subset relative rates")
+				self.subset_relrates_move.setWeight(self.parent.opts.subset_relrates_weight)
+				self.subset_relrates_move.setPosteriorTuningParam(self.parent.opts.subset_relrates_psi)
+				self.subset_relrates_move.setPriorTuningParam(self.parent.opts.subset_relrates_psi0)
+				self.subset_relrates_move.setTree(self.tree)
+				self.subset_relrates_move.setModel(None)	# the model data member is ignored in this case; instead, the partition model stores the parameters
+				self.subset_relrates_move.setPartitionModel(self.partition_model)
+				self.subset_relrates_move.setTreeLikelihood(self.likelihood)
+				self.subset_relrates_move.setLot(self.r)
+				if partition.fix_subset_relrates:
+					self.subset_relrates_move.fixParameter()
+				if partition.subset_relrates_prior is None:
+					param_list = tuple([1.0]*nmodels)
+					self.subset_relrates_move.setMultivarPrior(Dirichlet(param_list))
+				else:
+					self.parent.phycassert(partition.subset_relrates_prior.getDistName() == 'Dirichlet', 'partition.subset_relrates_prior must be of type Dirichlet')
+					self.parent.phycassert(partition.subset_relrates_prior.getNParams() == nmodels, 'partition.subset_relrates_prior has dimension %d, but there are %d subsets in the partition. Try setting partion.subset_relrates_prior = None to get default flat Dirichlet prior of the appropriate dimension' % (partition.subset_relrates_prior.getNParams(), nmodels))
+					self.subset_relrates_move.setMultivarPrior(partition.subset_relrates_prior)
+				self.chain_manager.addMove(self.subset_relrates_move)
+		else:
 			if not self.parent.opts.model.type == 'jc' and not self.parent.opts.model.update_freqs_separately:
 				# Create a StateFreqMove to update entire state frequency vector
 				self.state_freq_move = Likelihood.StateFreqMove()
