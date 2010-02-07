@@ -3475,7 +3475,7 @@ unsigned TreeLikelihood::compressDataMatrix(
 					
 				//std::cerr << boost::str(boost::format("\n%6d -> ") % j);
 					
-				storePattern(pattern_map[subset], pattern_to_sites_map, pattern, j, charWt);
+				storePattern(pattern_map[subset], pattern_to_sites_map, pattern, j, charWt, codon_model);
 				
 				//for (std::vector<int8_t>::const_iterator it = pattern.begin(); it != pattern.end(); ++it)
 				//	{
@@ -3533,7 +3533,7 @@ unsigned TreeLikelihood::compressDataMatrix(
 					continue;
 					}
 					
-				storePattern(pattern_map[subset], pattern_to_sites_map, pattern, j, charWt);
+				storePattern(pattern_map[subset], pattern_to_sites_map, pattern, j, charWt, codon_model);
 				}
 			++j;
 			}	// not a codon model
@@ -4255,7 +4255,8 @@ void TreeLikelihood::storePattern(
   pattern_to_sites_map_t & pattern_to_site_map,	/**< is the map into which to store the original site index of this pattern */
   const std::vector<int8_t> & pattern,			/**< is the pattern to store */
   const unsigned int site_index,				/**< is the index of the site in the original data matrix */
-  const pattern_count_t weight) 				/**< is the weight of this pattern (normally 1.0) */
+  const pattern_count_t weight, 				/**< is the weight of this pattern (normally 1.0) */
+  bool codon_model)								/**< if true, site_index and following two sites will be stored in the vector of sites having this pattern; if false, only site_index will be stored */
 	{	
 	// Add the pattern to pattern_map if it has not yet been seen, otherwise increment 
 	// the count of this pattern if it is already in pattern_map (see item 24, p. 110, in Meyers' Efficient STL)
@@ -4272,7 +4273,7 @@ void TreeLikelihood::storePattern(
 		pattern_map.insert(lowb, pattern_map_t::value_type(pattern, weight));
 		//std::cerr << boost::str(boost::format("%.1f -> |") % weight);
 		}
-	
+			
 	// Add the pattern to pattern_to_site_map if it has not yet been seen, otherwise increment 
 	// the count of this pattern if it is already in the map (see item 24, p. 110, in Meyers' Efficient STL)
 	pattern_to_sites_map_t::iterator pToILowB = pattern_to_site_map.lower_bound(pattern);
@@ -4281,12 +4282,22 @@ void TreeLikelihood::storePattern(
 		// a list of site indices has already been created for this pattern in pattern_to_site_map
 		// so all we need to do is append the index site_index to the existing list
 		pToILowB->second.push_back(site_index);
+		if (codon_model)
+			{
+			pToILowB->second.push_back(site_index + 1);
+			pToILowB->second.push_back(site_index + 2);
+			}
 		}
 	else
 		{
 		// this pattern has not yet been seen, so need to create a list of site indices whose only
 		// element (so far) is site_index and insert this list into the pattern_to_site_map map
 		uint_list_t ilist(1, site_index);	// create a list containing 1 element whose value is site_index
+		if (codon_model)
+			{
+			ilist.push_back(site_index + 1);
+			ilist.push_back(site_index + 2);
+			}
 		pattern_to_site_map.insert(pToILowB, pattern_to_sites_map_t::value_type(pattern, ilist));
 		}
 	}

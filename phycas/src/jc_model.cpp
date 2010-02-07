@@ -60,37 +60,9 @@ std::string JC::getModelName() const
 |	number of rates is greater than 1) and the pinvar parameter (if an invariable sites model is being used).
 */
 #if POLPY_NEWWAY
-std::string JC::paramHeader(
-  std::string suffix) const	/**< is the suffix to tack onto the parameter names for this model (useful for partitioned models to show to which partition subset the parameter belongs) */
+std::string JC::paramHeader() const	/**< is the suffix to tack onto the parameter names for this model (useful for partitioned models to show to which partition subset the parameter belongs) */
 	{
-	std::string s = "";
-	if (is_flex_model)
-		{
-		s += "\tncat";
-		s += suffix;
-		//unsigned i;
-		//for ( i = 0; i < num_gamma_rates; ++i)
-		//	{
-		//	s += "\trate";
-		//	s += i;
-		//	}
-		//for ( i = 0; i < num_gamma_rates; ++i)
-		//	{
-		//	s += "\trateprob";
-		//	s += i;
-		//	}
-		}
-	else if (num_gamma_rates > 1)
-		{
-		s += "\tshape";
-		s += suffix;
-		}
-	if (is_pinvar_model)
-		{
-		s += "\tpinvar";
-		s += suffix;
-		}
-	return s;
+	return Model::paramHeader();
 	}
 #else //old way
 std::string JC::paramHeader() const
@@ -130,6 +102,9 @@ std::string JC::paramReport(
 	{
     std::string fmt = boost::str(boost::format("%%.%df\t") % ndecimals);
 	std::string s;
+#if POLPY_NEWWAY
+	s += Model::paramReport(ndecimals);
+#else	//old way
 	if (is_flex_model)
 		{
 		s += str(boost::format("%d\t") % num_gamma_rates);
@@ -158,6 +133,7 @@ std::string JC::paramReport(
 		s += str(boost::format(fmt) % pinvar);
 		//s += str(boost::format("\t%.5f") % pinvar);
         }
+#endif
 	return s;
 	}
 

@@ -309,7 +309,7 @@ class HyperPriorParam : public MCMCUpdater
 	public:
 							HyperPriorParam();
 #if POLPY_NEWWAY
-							HyperPriorParam(EdgeLenMasterParamShPtr p, bool for_internal_edges);
+							HyperPriorParam(EdgeLenMasterParamShPtr p, bool for_external_edges);
 #else //old way
 							HyperPriorParam(EdgeLenMasterParamShPtr p);
 #endif
@@ -326,7 +326,7 @@ class HyperPriorParam : public MCMCUpdater
 
     private:
 
-		bool						internal_edges;			/**< if true this parameter governs the hyperprior for internal edge lengths (or all edge lengths); if false, this parameter governs only the hyperprior for external edge lengths */
+		bool						external_edges;			/**< if true this parameter governs the hyperprior for external edge lengths (or all edge lengths); if false, this parameter governs only the hyperprior for internal edge lengths */
         EdgeLenMasterParamShPtr		edgelen_master_param;   /**> is the edge length master parameter whose prior this parameter controls */
 	};
 

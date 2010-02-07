@@ -70,7 +70,7 @@ void	GTR::createParameters(
   MCMCUpdaterVect & edgelens,				/**< is the vector of edge length parameters to fill */
   MCMCUpdaterVect & edgelen_hyperparams,	/**< is the edge length hyperparameter */
   MCMCUpdaterVect & parameters,				/**< is the vector of model-specific parameters to fill */
-  bool add_edgelen_params) const			/**< if true, edge length parameters and hyperparams will be added; if false, the `edgelens' and `edgelen_hyperparams' vectors returned will be empty */
+  int subset_pos) 							/**< if 0 (first subset) or -1 (only subset), edge length parameters and hyperparams will be added; otherwise, the `edgelens' and `edgelen_hyperparams' vectors returned will be empty */
 #else //old way
 void	GTR::createParameters(
   TreeShPtr t,								/**< is the tree (the nodes of which are needed for creating edge length parameters) */
@@ -80,7 +80,7 @@ void	GTR::createParameters(
 #endif
 	{
 #if POLPY_NEWWAY
-	Model::createParameters(t, edgelens, edgelen_hyperparams, parameters, add_edgelen_params);
+	Model::createParameters(t, edgelens, edgelen_hyperparams, parameters, subset_pos);
 #else //old way
 	Model::createParameters(t, edgelens, edgelen_hyperparams, parameters);
 #endif
@@ -96,7 +96,14 @@ void	GTR::createParameters(
         // would be empty.
     
         MCMCUpdaterShPtr rAC_param = MCMCUpdaterShPtr(new GTRRateParam(0));
+#if POLPY_NEWWAY
+		if (subset_pos < 0)
+			rAC_param->setName("rAC");
+		else 
+			rAC_param->setName(boost::str(boost::format("rAC_%d") % (subset_pos + 1)));
+#else //old way
         rAC_param->setName("rAC");
+#endif
         rAC_param->setTree(t);
         rAC_param->setStartingValue(1.0);
         rAC_param->setPrior(rel_rate_param_prior);
@@ -106,7 +113,14 @@ void	GTR::createParameters(
         rel_rate_params.push_back(rAC_param);
     
         MCMCUpdaterShPtr rAG_param = MCMCUpdaterShPtr(new GTRRateParam(1));
+#if POLPY_NEWWAY
+		if (subset_pos < 0)
+			rAG_param->setName("rAG");
+		else 
+			rAG_param->setName(boost::str(boost::format("rAG_%d") % (subset_pos + 1)));
+#else //old way
         rAG_param->setName("rAG");
+#endif
         rAG_param->setTree(t);
         rAG_param->setStartingValue(4.0);
         rAG_param->setPrior(rel_rate_param_prior);
@@ -116,7 +130,14 @@ void	GTR::createParameters(
         rel_rate_params.push_back(rAG_param);
     
         MCMCUpdaterShPtr rAT_param = MCMCUpdaterShPtr(new GTRRateParam(2));
+#if POLPY_NEWWAY
+		if (subset_pos < 0)
+			rAT_param->setName("rAT");
+		else 
+			rAT_param->setName(boost::str(boost::format("rAT_%d") % (subset_pos + 1)));
+#else //old way
         rAT_param->setName("rAT");
+#endif
         rAT_param->setTree(t);
         rAT_param->setStartingValue(1.0);
         rAT_param->setPrior(rel_rate_param_prior);
@@ -126,7 +147,14 @@ void	GTR::createParameters(
         rel_rate_params.push_back(rAT_param);
     
         MCMCUpdaterShPtr rCG_param = MCMCUpdaterShPtr(new GTRRateParam(3));
+#if POLPY_NEWWAY
+		if (subset_pos < 0)
+			rCG_param->setName("rCG");
+		else 
+			rCG_param->setName(boost::str(boost::format("rCG_%d") % (subset_pos + 1)));
+#else //old way
         rCG_param->setName("rCG");
+#endif
         rCG_param->setTree(t);
         rCG_param->setStartingValue(1.0);
         rCG_param->setPrior(rel_rate_param_prior);
@@ -136,7 +164,14 @@ void	GTR::createParameters(
         rel_rate_params.push_back(rCG_param);
     
         MCMCUpdaterShPtr rCT_param = MCMCUpdaterShPtr(new GTRRateParam(4));
+#if POLPY_NEWWAY
+		if (subset_pos < 0)
+			rCT_param->setName("rCT");
+		else 
+			rCT_param->setName(boost::str(boost::format("rCT_%d") % (subset_pos + 1)));
+#else //old way
         rCT_param->setName("rCT");
+#endif
         rCT_param->setTree(t);
         rCT_param->setStartingValue(4.0);
         rCT_param->setPrior(rel_rate_param_prior);
@@ -146,7 +181,14 @@ void	GTR::createParameters(
         rel_rate_params.push_back(rCT_param);
     
         MCMCUpdaterShPtr rGT_param = MCMCUpdaterShPtr(new GTRRateParam(5));
+#if POLPY_NEWWAY
+		if (subset_pos < 0)
+			rGT_param->setName("rGT");
+		else 
+			rGT_param->setName(boost::str(boost::format("rGT_%d") % (subset_pos + 1)));
+#else //old way
         rGT_param->setName("rGT");
+#endif
         rGT_param->setStartingValue(1.0);
         rGT_param->setTree(t);
         rGT_param->setPrior(rel_rate_param_prior);
@@ -166,7 +208,14 @@ void	GTR::createParameters(
         // will be set and freq_param_prior will be empty)
 
 	    MCMCUpdaterShPtr freqA_param = MCMCUpdaterShPtr(new StateFreqParam(0));
+#if POLPY_NEWWAY
+		if (subset_pos < 0)
+			freqA_param->setName("freqA");
+		else 
+			freqA_param->setName(boost::str(boost::format("freqA_%d") % (subset_pos + 1)));
+#else //old way
 	    freqA_param->setName("base freq. A");
+#endif
 	    freqA_param->setTree(t);
 	    freqA_param->setStartingValue(1.0);
 	    freqA_param->setPrior(freq_param_prior);
@@ -176,7 +225,14 @@ void	GTR::createParameters(
 	    freq_params.push_back(freqA_param);
 
 	    MCMCUpdaterShPtr freqC_param = MCMCUpdaterShPtr(new StateFreqParam(1));
+#if POLPY_NEWWAY
+		if (subset_pos < 0)
+			freqC_param->setName("freqC");
+		else 
+			freqC_param->setName(boost::str(boost::format("freqC_%d") % (subset_pos + 1)));
+#else //old way
 	    freqC_param->setName("base freq. C");
+#endif
 	    freqC_param->setTree(t);
 	    freqC_param->setStartingValue(1.0);
 	    freqC_param->setPrior(freq_param_prior);
@@ -186,7 +242,14 @@ void	GTR::createParameters(
 	    freq_params.push_back(freqC_param);
 
 	    MCMCUpdaterShPtr freqG_param = MCMCUpdaterShPtr(new StateFreqParam(2));
+#if POLPY_NEWWAY
+		if (subset_pos < 0)
+			freqG_param->setName("freqG");
+		else 
+			freqG_param->setName(boost::str(boost::format("freqG_%d") % (subset_pos + 1)));
+#else //old way
 	    freqG_param->setName("base freq. G");
+#endif
 	    freqG_param->setTree(t);
 	    freqG_param->setStartingValue(1.0);
 	    freqG_param->setPrior(freq_param_prior);
@@ -196,7 +259,14 @@ void	GTR::createParameters(
 	    freq_params.push_back(freqG_param);
 
 	    MCMCUpdaterShPtr freqT_param = MCMCUpdaterShPtr(new StateFreqParam(3));
+#if POLPY_NEWWAY
+		if (subset_pos < 0)
+			freqT_param->setName("freqT");
+		else 
+			freqT_param->setName(boost::str(boost::format("freqT_%d") % (subset_pos + 1)));
+#else //old way
 	    freqT_param->setName("base freq. T");
+#endif
 	    freqT_param->setTree(t);
 	    freqT_param->setStartingValue(1.0);
 	    freqT_param->setPrior(freq_param_prior);
@@ -472,25 +542,14 @@ void GTR::setStateFreqPrior(MultivarProbDistShPtr d)
 |	an invariable sites model is being used).
 */
 #if POLPY_NEWWAY
-std::string GTR::paramHeader(
-  std::string suffix) const	/**< is the suffix to tack onto the parameter names for this model (useful for partitioned models to show to which partition subset the parameter belongs) */
+std::string GTR::paramHeader() const	/**< is the suffix to tack onto the parameter names for this model (useful for partitioned models to show to which partition subset the parameter belongs) */
 	{
-	std::string s = boost::str(boost::format("\trAC%s\trAG%s\trAT%s\trCG%s\trCT%s\trGT%s\tfreqA%s\tfreqC%s\tfreqG%s\tfreqT%s") % suffix % suffix % suffix % suffix % suffix % suffix % suffix % suffix % suffix % suffix);
-	if (is_flex_model)
-		{
-		s += "\tncat";
-		s += suffix;
-		}
-	else if (num_gamma_rates > 1)
-		{
-		s += "\tshape";
-		s += suffix;
-		}
-	if (is_pinvar_model)
-		{
-		s += "\tpinvar";
-		s += suffix;
-		}
+	std::string s;
+	for (MCMCUpdaterVect::const_iterator rit = rel_rate_params.begin(); rit != rel_rate_params.end(); ++rit)
+		s += boost::str(boost::format("\t%s") % (*rit)->getName());
+	for (MCMCUpdaterVect::const_iterator fit = freq_params.begin(); fit != freq_params.end(); ++fit)
+		s += boost::str(boost::format("\t%s") % (*fit)->getName());
+	s += Model::paramHeader();
 	return s;
 	}
 #else //old way
@@ -524,6 +583,7 @@ std::string GTR::paramReport(
 	PHYCAS_ASSERT(rel_rates.size() == 6);
 	PHYCAS_ASSERT(state_freqs.size() == 4);
     std::string fmt = boost::str(boost::format("%%.%df\t") % ndecimals);
+
 	std::string s = str(boost::format(fmt) % rel_rates[0]);
 	s += str(boost::format(fmt) % rel_rates[1]);
 	s += str(boost::format(fmt) % rel_rates[2]);
@@ -531,26 +591,32 @@ std::string GTR::paramReport(
 	s += str(boost::format(fmt) % rel_rates[4]);
 	s += str(boost::format(fmt) % rel_rates[5]);
 	//std::string s = str(boost::format("\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f") % rel_rates[0] % rel_rates[1] % rel_rates[2] % rel_rates[3] % rel_rates[4] % rel_rates[5]);
+	
 	s += str(boost::format(fmt) % state_freqs[0]);
 	s += str(boost::format(fmt) % state_freqs[1]);
 	s += str(boost::format(fmt) % state_freqs[2]);
 	s += str(boost::format(fmt) % state_freqs[3]);
 	//s += str(boost::format("\t%.5f\t%.5f\t%.5f\t%.5f") % state_freqs[0] % state_freqs[1] % state_freqs[2] % state_freqs[3]);
+	
+#if POLPY_NEWWAY
+	s += Model::paramReport(ndecimals);
+#else //old way
 	if (is_flex_model)
 		{
-		s += str(boost::format("%d\t") % num_gamma_rates);
-		//s += str(boost::format("\t%d") % num_gamma_rates);
+		s += str(boost::format("%d	") % num_gamma_rates);
+		//s += str(boost::format("	%d") % num_gamma_rates);
 		}
 	else if (num_gamma_rates > 1)
 		{
 		s += str(boost::format(fmt) % gamma_shape);
-		//s += str(boost::format("\t%.5f") % gamma_shape);
+		//s += str(boost::format("	%.5f") % gamma_shape);
 		}
 	if (is_pinvar_model)
         {
 		s += str(boost::format(fmt) % pinvar);
-		//s += str(boost::format("\t%.5f") % pinvar);
+		//s += str(boost::format("	%.5f") % pinvar);
         }
+#endif
 	return s;
 	}
 

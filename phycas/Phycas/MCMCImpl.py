@@ -432,8 +432,9 @@ class MCMCImpl(CommonFunctions):
 		self.mcmc_manager.createChains()
 
 		self.openParameterAndTreeFiles()
+		
 		if self.opts.doing_steppingstone_sampling:
-			self.ss_beta = self.opts.ss_maxbeta
+			self.ss_beta = self.opts.ss_maxbeta		# start with posterior (ss_beta = 1) and work toward the prior (ss_beta = 0)
 			cc = self.mcmc_manager.getColdChain()
 			cc.setPower(self.ss_beta)
 		self.siteLikeFileSetup(self.mcmc_manager.getColdChain())
@@ -459,23 +460,37 @@ class MCMCImpl(CommonFunctions):
 			name = p.getName()
 			if name == 'edge length hyperparameter':	# C++ class HyperPriorParam
 				# Choose hyperparam, then use it to choose new edge lengths for a newly-created tree
-				if chain.model.isSeparateInternalExternalEdgeLenPriors():
-					edgelen_hyperparam = chain.model.getEdgeLenHyperPrior().sample()
+				if partitioning:
+					m = chain.partition_model.getModel(0)
+				else:
+					m = chain.model
+				if m.isSeparateInternalExternalEdgeLenPriors():
+					# draw an edge length hyperparameter value for external edges
+					edgelen_hyperparam = m.getEdgeLenHyperPrior().sample()
 					chain.chain_manager.setEdgeLenHyperparam(0, edgelen_hyperparam)
-					chain.model.getExternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
-					edgelen_hyperparam = chain.model.getEdgeLenHyperPrior().sample()
+					m.getExternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
+					
+					# draw an edge length hyperparameter value for internal edges
+					edgelen_hyperparam = m.getEdgeLenHyperPrior().sample()
 					chain.chain_manager.setEdgeLenHyperparam(1, edgelen_hyperparam)
-					chain.model.getInternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
+					m.getInternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
 				else:
-					edgelen_hyperparam = chain.model.getEdgeLenHyperPrior().sample()
+					# draw an edge length hyperparameter value that applies to all edges
+					edgelen_hyperparam = m.getEdgeLenHyperPrior().sample()
 					chain.chain_manager.setEdgeLenHyperparam(0, edgelen_hyperparam)
-					chain.model.getInternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
-					chain.model.getExternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
+					m.getInternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
+					m.getExternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
 				if self.opts.fix_topology:
-					tm.setRandomInternalExternalEdgeLengths(chain.model.getInternalEdgeLenPrior(), chain.model.getExternalEdgeLenPrior()) 
+					tm.setRandomInternalExternalEdgeLengths(m.getInternalEdgeLenPrior(), m.getExternalEdgeLenPrior()) 
 				else:
-					tm.equiprobTree(chain.tree.getNTips(), chain.r, chain.model.getInternalEdgeLenPrior(), chain.model.getExternalEdgeLenPrior())
+					tm.equiprobTree(chain.tree.getNTips(), chain.r, m.getInternalEdgeLenPrior(), m.getExternalEdgeLenPrior())
 				edgelens_generated = True
+			elif name == 'master edge length':
+				pass
+			elif name == 'external edge length':
+				pass
+			elif name == 'internal edge length':
+				pass
 			elif name == 'trs/trv rate ratio':				# C++ class KappaParam
 				new_kappa = chain.model.getKappaPrior().sample()
 				chain.model.setKappa(new_kappa)
@@ -518,12 +533,6 @@ class MCMCImpl(CommonFunctions):
 			elif name == 'Proportion of invariable sites':	# C++ class PinvarParam
 				new_pinvar = chain.model.getPinvarPrior().sample()
 				chain.model.setPinvar(new_pinvar)
-			elif name == 'master edge length':
-				pass
-			elif name == 'external edge length':
-				pass
-			elif name == 'internal edge length':
-				pass
 			elif name == 'Relative rates':				# C++ class StateFreqMove
 				rate_vector = chain.model.getRelRatePrior().sample()
 				chain.model.setRelRates(rate_vector)
@@ -750,7 +759,7 @@ class MCMCImpl(CommonFunctions):
 			else:
 				self.output('Starting tree:	 %s' % str(self.starting_tree[0]))
 			if self.opts.doing_steppingstone_sampling:
-				self.output('\nPerforming path sampling MCMC to estimate marginal likelihood.')
+				self.output('\nPerforming steppingstone sampling to estimate marginal likelihood.')
 				self.output('Likelihood will be raised to the power beta, and beta will be')
 				self.output('decremented from 1.0 to 0.0 in a series of steps.')
 				self.output('  No. steps:				%s' % self.opts.ss_nbetavals)

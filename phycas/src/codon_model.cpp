@@ -308,7 +308,7 @@ void Codon::createParameters(
   MCMCUpdaterVect & edgelens,				/**< is the vector of edge length parameters to fill */
   MCMCUpdaterVect & edgelen_hyperparams,	/**< is the vector of edge length hyperparameters to fill */
   MCMCUpdaterVect & parameters,				/**< is the vector of model-specific parameters to fill */
-  bool add_edgelen_params) const			/**< if true, edge length parameters and hyperparams will be added; if false, the `edgelens' and `edgelen_hyperparams' vectors returned will be empty */
+  int subset_pos)							/**< if 0 (first subset) or -1 (only subset), edge length parameters and hyperparams will be added; otherwise, the `edgelens' and `edgelen_hyperparams' vectors returned will be empty */
 #else //old way
 void Codon::createParameters(
   TreeShPtr t,								/**< is the tree (the nodes of which are needed for creating edge length parameters) */
@@ -318,14 +318,21 @@ void Codon::createParameters(
 #endif
 	{
 #if POLPY_NEWWAY
-	Model::createParameters(t, edgelens, edgelen_hyperparams, parameters, add_edgelen_params);
+	Model::createParameters(t, edgelens, edgelen_hyperparams, parameters, subset_pos);
 #else //old way
 	Model::createParameters(t, edgelens, edgelen_hyperparams, parameters);
 #endif
 
 	PHYCAS_ASSERT(!kappa_param);
 	kappa_param = MCMCUpdaterShPtr(new KappaParam());
-	kappa_param->setName("trs/trv rate ratio");
+#if POLPY_NEWWAY
+	if (subset_pos < 0)
+		kappa_param->setName("kappa");
+	else 
+		kappa_param->setName(boost::str(boost::format("kappa_%d") % (subset_pos + 1)));
+#else //old way
+		kappa_param->setName("trs/trv rate ratio");
+#endif
 	kappa_param->setStartingValue(4.0);
 	kappa_param->setTree(t);
 	kappa_param->setPrior(kappa_prior);
@@ -335,7 +342,14 @@ void Codon::createParameters(
 
 	PHYCAS_ASSERT(!omega_param);
 	omega_param = MCMCUpdaterShPtr(new OmegaParam());
+#if POLPY_NEWWAY
+	if (subset_pos < 0)
+		omega_param->setName("omega");
+	else 
+		omega_param->setName(boost::str(boost::format("omega_%d") % (subset_pos + 1)));
+#else //old way
 	omega_param->setName("nonsynon./synon. rate ratio");
+#endif
 	omega_param->setStartingValue(1.0);
 	omega_param->setTree(t);
 	omega_param->setPrior(omega_prior);
@@ -350,13 +364,29 @@ void Codon::createParameters(
         {
         // Only add frequency parameters if freqs will be updated separately
         // The other option is to update the frequencies jointly using the 
-        // StateFreqMove Metropolis-Hastings move (in which case freq_param
+        // StateFreqMove Metropolis-Hastings move (in which case freq_prior
         // will be set and freq_param_prior will be empty)
+		freq_name.clear();
 		for (unsigned i = 0; i < 61; ++i)
 			{
 			MCMCUpdaterShPtr state_freq_param = MCMCUpdaterShPtr(new StateFreqParam(i));
+#if POLPY_NEWWAY
+			if (subset_pos < 0)
+				{
+				std::string nm = boost::str(boost::format("freq%s") % state_repr[i]);
+				freq_name.push_back(nm);
+				state_freq_param->setName(nm);
+				}
+			else 
+				{
+				std::string nm = boost::str(boost::format("freq%s_%d") % state_repr[i] % (subset_pos + 1));
+				freq_name.push_back(nm);
+				state_freq_param->setName(nm);
+				}
+#else //old way
 			std::string s = str(boost::format("freq. for codon %s") % state_repr[i]);
 			state_freq_param->setName(s);
+#endif
 			state_freq_param->setTree(t);
 			state_freq_param->setStartingValue(1.0);
 			state_freq_param->setPrior(freq_param_prior);
@@ -364,6 +394,26 @@ void Codon::createParameters(
 				state_freq_param->fixParameter();
 			parameters.push_back(state_freq_param);
 			freq_params.push_back(state_freq_param);
+			}
+		}
+	else
+		{
+        // Frequencies are being updated jointly using the StateFreqMove Metropolis-Hastings move, but we still 
+		// must report the frequencies in the param file, and thus will need names of all the state frequencies
+		// to use as headers
+		freq_name.clear();
+		for (unsigned i = 0; i < 61; ++i)
+			{
+			if (subset_pos < 0)
+				{
+				std::string nm = boost::str(boost::format("freq%s") % state_repr[i]);
+				freq_name.push_back(nm);
+				}
+			else 
+				{
+				std::string nm = boost::str(boost::format("freq%s_%d") % state_repr[i] % (subset_pos + 1));
+				freq_name.push_back(nm);
+				}
 			}
 		}
 	}
@@ -376,32 +426,16 @@ void Codon::createParameters(
 |	sites model is being used)
 */
 #if POLPY_NEWWAY
-std::string Codon::paramHeader(
-  std::string suffix) const	/**< is the suffix to tack onto the parameter names for this model (useful for partitioned models to show to which partition subset the parameter belongs) */
+std::string Codon::paramHeader() const	/**< is the suffix to tack onto the parameter names for this model (useful for partitioned models to show to which partition subset the parameter belongs) */
 	{
-	std::string s = boost::str(boost::format("\tkappa%s\tomega%s\t") % suffix % suffix);
-	for (std::vector<std::string>::const_iterator it = state_repr.begin(); it != state_repr.end(); ++it)
+	std::string s;
+	s += boost::str(boost::format("\t%s") % kappa_param->getName());
+	s += boost::str(boost::format("\t%s") % omega_param->getName());
+	for (string_vect_t::const_iterator it = freq_name.begin(); it != freq_name.end(); ++it)
 		{
-		s += "freq";
-		s += (*it); 
-		s += suffix;
-		s += '\t';
+		s += boost::str(boost::format("\t%s") % (*it)); 
 		}
-	if (is_flex_model)
-		{
-		s += "\tncat";
-		s += suffix;
-		}
-	else if (num_gamma_rates > 1)
-		{
-		s += "\tshape";
-		s += suffix;
-		}
-	if (is_pinvar_model)
-		{
-		s += "\tpinvar";
-		s += suffix;
-		}
+	s += Model::paramHeader();
 	return s;
 	}
 #else //old way
@@ -444,6 +478,9 @@ std::string Codon::paramReport(
 		s += str(boost::format(fmt) % state_freqs[i]);
 		//s += str(boost::format("%.5f\t") % state_freqs[i]);
 		}
+#if POLPY_NEWWAY
+	s += Model::paramReport(ndecimals);
+#else	//old way
 	if (is_flex_model)
 		{
 		s += str(boost::format("%d\t") % num_gamma_rates);
@@ -459,6 +496,7 @@ std::string Codon::paramReport(
 		s += str(boost::format(fmt) % pinvar);
 		//s += str(boost::format("\t%.5f") % pinvar);
         }
+#endif
 	return s;
 	}
 

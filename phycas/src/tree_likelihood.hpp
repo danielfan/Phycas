@@ -289,7 +289,7 @@ class TreeLikelihood
 
 #if POLPY_NEWWAY    // partitioning data
 		void							debugCompressedDataInfo(std::string filename);
-		void	 						storePattern(pattern_map_t & pattern_map, pattern_to_sites_map_t & pattern_to_site_map, const std::vector<int8_t> & pattern, const unsigned pattern_index, const pattern_count_t weight);
+		void	 						storePattern(pattern_map_t & pattern_map, pattern_to_sites_map_t & pattern_to_site_map, const std::vector<int8_t> & pattern, const unsigned pattern_index, const pattern_count_t weight, bool codon_model);
 		unsigned						compressDataMatrix(const NxsCXXDiscreteMatrix &, const std::vector<unsigned> & partition_info);
 		void							calcPMatCommon(unsigned i, double * * * pMatrices, double edgeLength);
 #else

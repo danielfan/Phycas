@@ -14,202 +14,202 @@ Starting log-likelihood = -6983.86059941
 Starting log-prior = 38.9810403424
 
 Parameter starting values and prior densities:
-  Parameter name:	   Subset relative rates
+  Parameter name:	   subset_relrates
   Prior distribution: Dirichlet(1.00000,1.00000,1.00000)
   Current value:	   1.00000,1.00000,1.00000
   Prior log-density:  0.69314718056
 
-  Parameter name:	   master edge length
+  Parameter name:	   master_edgelen
   Prior distribution: Exponential(10.00000)
   Master parameter (no current value)
   Prior log-density:  22.1439465809
 
-  Parameter name:	   rAC
+  Parameter name:	   rAC_1
   Prior distribution: Exponential(1.00000)
   Current value:	   0.126648
   Prior log-density:  -0.126648
 
-  Parameter name:	   rAG
+  Parameter name:	   rAG_1
   Prior distribution: Exponential(1.00000)
   Current value:	   0.077024
   Prior log-density:  -0.077024
 
-  Parameter name:	   rAT
+  Parameter name:	   rAT_1
   Prior distribution: Exponential(1.00000)
   Current value:	   0.053009
   Prior log-density:  -0.053009
 
-  Parameter name:	   rCG
+  Parameter name:	   rCG_1
   Prior distribution: Exponential(1.00000)
   Current value:	   0.052451
   Prior log-density:  -0.052451
 
-  Parameter name:	   rCT
+  Parameter name:	   rCT_1
   Prior distribution: Exponential(1.00000)
   Current value:	   0.660005
   Prior log-density:  -0.660005
 
-  Parameter name:	   rGT
+  Parameter name:	   rGT_1
   Prior distribution: Exponential(1.00000)
   Current value:	   0.030864
   Prior log-density:  -0.030864
 
-  Parameter name:	   base freq. A
+  Parameter name:	   freqA_1
   Prior distribution: Exponential(1.00000)
   Current value:	   0.20413
   Prior log-density:  -0.20413
 
-  Parameter name:	   base freq. C
+  Parameter name:	   freqC_1
   Prior distribution: Exponential(1.00000)
   Current value:	   0.257487
   Prior log-density:  -0.257487
 
-  Parameter name:	   base freq. G
+  Parameter name:	   freqG_1
   Prior distribution: Exponential(1.00000)
   Current value:	   0.255923
   Prior log-density:  -0.255923
 
-  Parameter name:	   base freq. T
+  Parameter name:	   freqT_1
   Prior distribution: Exponential(1.00000)
   Current value:	   0.28246
   Prior log-density:  -0.28246
 
-  Parameter name:	   rAC
+  Parameter name:	   rAC_2
   Prior distribution: Exponential(1.00000)
   Current value:	   0.013481
   Prior log-density:  -0.013481
 
-  Parameter name:	   rAG
+  Parameter name:	   rAG_2
   Prior distribution: Exponential(1.00000)
   Current value:	   0.038521
   Prior log-density:  -0.038521
 
-  Parameter name:	   rAT
+  Parameter name:	   rAT_2
   Prior distribution: Exponential(1.00000)
   Current value:	   0.046651
   Prior log-density:  -0.046651
 
-  Parameter name:	   rCG
+  Parameter name:	   rCG_2
   Prior distribution: Exponential(1.00000)
   Current value:	   0.105936
   Prior log-density:  -0.105936
 
-  Parameter name:	   rCT
+  Parameter name:	   rCT_2
   Prior distribution: Exponential(1.00000)
   Current value:	   0.758869
   Prior log-density:  -0.758869
 
-  Parameter name:	   rGT
+  Parameter name:	   rGT_2
   Prior distribution: Exponential(1.00000)
   Current value:	   0.036542
   Prior log-density:  -0.036542
 
-  Parameter name:	   base freq. A
+  Parameter name:	   freqA_2
   Prior distribution: Exponential(1.00000)
   Current value:	   0.179386
   Prior log-density:  -0.179386
 
-  Parameter name:	   base freq. C
+  Parameter name:	   freqC_2
   Prior distribution: Exponential(1.00000)
   Current value:	   0.345455
   Prior log-density:  -0.345455
 
-  Parameter name:	   base freq. G
+  Parameter name:	   freqG_2
   Prior distribution: Exponential(1.00000)
   Current value:	   0.127428
   Prior log-density:  -0.127428
 
-  Parameter name:	   base freq. T
+  Parameter name:	   freqT_2
   Prior distribution: Exponential(1.00000)
   Current value:	   0.34773
   Prior log-density:  -0.34773
 
-  Parameter name:	   rAC
+  Parameter name:	   rAC_3
   Prior distribution: Exponential(1.00000)
   Current value:	   0.067018
   Prior log-density:  -0.067018
 
-  Parameter name:	   rAG
+  Parameter name:	   rAG_3
   Prior distribution: Exponential(1.00000)
   Current value:	   0.346256
   Prior log-density:  -0.346256
 
-  Parameter name:	   rAT
+  Parameter name:	   rAT_3
   Prior distribution: Exponential(1.00000)
   Current value:	   0.055179
   Prior log-density:  -0.055179
 
-  Parameter name:	   rCG
+  Parameter name:	   rCG_3
   Prior distribution: Exponential(1.00000)
   Current value:	   0.070112
   Prior log-density:  -0.070112
 
-  Parameter name:	   rCT
+  Parameter name:	   rCT_3
   Prior distribution: Exponential(1.00000)
   Current value:	   0.402758
   Prior log-density:  -0.402758
 
-  Parameter name:	   rGT
+  Parameter name:	   rGT_3
   Prior distribution: Exponential(1.00000)
   Current value:	   0.058677
   Prior log-density:  -0.058677
 
-  Parameter name:	   base freq. A
+  Parameter name:	   freqA_3
   Prior distribution: Exponential(1.00000)
   Current value:	   0.340719
   Prior log-density:  -0.340719
 
-  Parameter name:	   base freq. C
+  Parameter name:	   freqC_3
   Prior distribution: Exponential(1.00000)
   Current value:	   0.103901
   Prior log-density:  -0.103901
 
-  Parameter name:	   base freq. G
+  Parameter name:	   freqG_3
   Prior distribution: Exponential(1.00000)
   Current value:	   0.115752
   Prior log-density:  -0.115752
 
-  Parameter name:	   base freq. T
+  Parameter name:	   freqT_3
   Prior distribution: Exponential(1.00000)
   Current value:	   0.439628
   Prior log-density:  -0.439628
 
 
 Here is a list of all updaters that will be used for this analysis:
-  Tree scaler move (Metropolis-Hastings)
-  Subset relative rates (Metropolis-Hastings)
-  Larget-Simon move (Metropolis-Hastings)
-  master edge length (computes prior but does not update)
-  rAC (slice sampler)
-  rAG (slice sampler)
-  rAT (slice sampler)
-  rCG (slice sampler)
-  rCT (slice sampler)
-  rGT (slice sampler)
-  base freq. A (slice sampler)
-  base freq. C (slice sampler)
-  base freq. G (slice sampler)
-  base freq. T (slice sampler)
-  rAC (slice sampler)
-  rAG (slice sampler)
-  rAT (slice sampler)
-  rCG (slice sampler)
-  rCT (slice sampler)
-  rGT (slice sampler)
-  base freq. A (slice sampler)
-  base freq. C (slice sampler)
-  base freq. G (slice sampler)
-  base freq. T (slice sampler)
-  rAC (slice sampler)
-  rAG (slice sampler)
-  rAT (slice sampler)
-  rCG (slice sampler)
-  rCT (slice sampler)
-  rGT (slice sampler)
-  base freq. A (slice sampler)
-  base freq. C (slice sampler)
-  base freq. G (slice sampler)
-  base freq. T (slice sampler)
+  tree_scaler (Metropolis-Hastings)
+  subset_relrates (Metropolis-Hastings)
+  larget_simon_local (Metropolis-Hastings)
+  master_edgelen (computes prior but does not update)
+  rAC_1 (slice sampler)
+  rAG_1 (slice sampler)
+  rAT_1 (slice sampler)
+  rCG_1 (slice sampler)
+  rCT_1 (slice sampler)
+  rGT_1 (slice sampler)
+  freqA_1 (slice sampler)
+  freqC_1 (slice sampler)
+  freqG_1 (slice sampler)
+  freqT_1 (slice sampler)
+  rAC_2 (slice sampler)
+  rAG_2 (slice sampler)
+  rAT_2 (slice sampler)
+  rCG_2 (slice sampler)
+  rCT_2 (slice sampler)
+  rGT_2 (slice sampler)
+  freqA_2 (slice sampler)
+  freqC_2 (slice sampler)
+  freqG_2 (slice sampler)
+  freqT_2 (slice sampler)
+  rAC_3 (slice sampler)
+  rAG_3 (slice sampler)
+  rAT_3 (slice sampler)
+  rCG_3 (slice sampler)
+  rCT_3 (slice sampler)
+  rGT_3 (slice sampler)
+  freqA_3 (slice sampler)
+  freqC_3 (slice sampler)
+  freqG_3 (slice sampler)
+  freqT_3 (slice sampler)
 
 Topology prior:
   flat across all fully-resolved tree topologies (polytomies not allowed)
@@ -227,39 +227,39 @@ cycle = 90, lnL = -6187.11946 (0 seconds remaining)
 cycle = 100, lnL = -6171.66460 (0 seconds remaining)
 
 Updater diagnostics (* = slice sampler):
-   accepted 23.0% of 100 attempts (Tree scaler move)
-   accepted 37.0% of 100 attempts (Subset relative rates)
-   accepted 10.0% of 100 attempts (Larget-Simon move)
- * efficiency = 16.7%, mode=0.92941 (rAC)
- * efficiency = 16.2%, mode=0.24035 (rAG)
- * efficiency = 17.4%, mode=0.23373 (rAT)
- * efficiency = 16.5%, mode=0.32456 (rCG)
- * efficiency = 16.3%, mode=2.15148 (rCT)
- * efficiency = 16.1%, mode=0.25174 (rGT)
- * efficiency = 14.7%, mode=0.89844 (base freq. A)
- * efficiency = 15.4%, mode=0.77340 (base freq. C)
- * efficiency = 16.6%, mode=1.31938 (base freq. G)
- * efficiency = 15.3%, mode=0.70396 (base freq. T)
- * efficiency = 16.4%, mode=0.26449 (rAC)
- * efficiency = 16.8%, mode=1.05115 (rAG)
- * efficiency = 16.6%, mode=0.76281 (rAT)
- * efficiency = 15.8%, mode=1.87653 (rCG)
- * efficiency = 14.6%, mode=1.70609 (rCT)
- * efficiency = 15.6%, mode=0.42223 (rGT)
- * efficiency = 15.9%, mode=1.30459 (base freq. A)
- * efficiency = 15.2%, mode=1.03749 (base freq. C)
- * efficiency = 15.0%, mode=0.86107 (base freq. G)
- * efficiency = 15.5%, mode=1.22947 (base freq. T)
- * efficiency = 15.1%, mode=0.19329 (rAC)
- * efficiency = 16.1%, mode=2.83960 (rAG)
- * efficiency = 13.8%, mode=0.40914 (rAT)
- * efficiency = 16.9%, mode=0.25452 (rCG)
- * efficiency = 16.9%, mode=2.85924 (rCT)
- * efficiency = 15.6%, mode=0.33851 (rGT)
- * efficiency = 15.3%, mode=1.45426 (base freq. A)
- * efficiency = 13.4%, mode=0.72064 (base freq. C)
- * efficiency = 13.0%, mode=0.64456 (base freq. G)
- * efficiency = 15.3%, mode=2.15730 (base freq. T)
+   accepted 23.0% of 100 attempts (tree_scaler)
+   accepted 37.0% of 100 attempts (subset_relrates)
+   accepted 10.0% of 100 attempts (larget_simon_local)
+ * efficiency = 16.7%, mode=0.92941 (rAC_1)
+ * efficiency = 16.2%, mode=0.24035 (rAG_1)
+ * efficiency = 17.4%, mode=0.23373 (rAT_1)
+ * efficiency = 16.5%, mode=0.32456 (rCG_1)
+ * efficiency = 16.3%, mode=2.15148 (rCT_1)
+ * efficiency = 16.1%, mode=0.25174 (rGT_1)
+ * efficiency = 14.7%, mode=0.89844 (freqA_1)
+ * efficiency = 15.4%, mode=0.77340 (freqC_1)
+ * efficiency = 16.6%, mode=1.31938 (freqG_1)
+ * efficiency = 15.3%, mode=0.70396 (freqT_1)
+ * efficiency = 16.4%, mode=0.26449 (rAC_2)
+ * efficiency = 16.8%, mode=1.05115 (rAG_2)
+ * efficiency = 16.6%, mode=0.76281 (rAT_2)
+ * efficiency = 15.8%, mode=1.87653 (rCG_2)
+ * efficiency = 14.6%, mode=1.70609 (rCT_2)
+ * efficiency = 15.6%, mode=0.42223 (rGT_2)
+ * efficiency = 15.9%, mode=1.30459 (freqA_2)
+ * efficiency = 15.2%, mode=1.03749 (freqC_2)
+ * efficiency = 15.0%, mode=0.86107 (freqG_2)
+ * efficiency = 15.5%, mode=1.22947 (freqT_2)
+ * efficiency = 15.1%, mode=0.19329 (rAC_3)
+ * efficiency = 16.1%, mode=2.83960 (rAG_3)
+ * efficiency = 13.8%, mode=0.40914 (rAT_3)
+ * efficiency = 16.9%, mode=0.25452 (rCG_3)
+ * efficiency = 16.9%, mode=2.85924 (rCT_3)
+ * efficiency = 15.6%, mode=0.33851 (rGT_3)
+ * efficiency = 15.3%, mode=1.45426 (freqA_3)
+ * efficiency = 13.4%, mode=0.72064 (freqC_3)
+ * efficiency = 13.0%, mode=0.64456 (freqG_3)
+ * efficiency = 15.3%, mode=2.15730 (freqT_3)
 
-17682 likelihood evaluations in 2.16633 seconds
-  = 8162.21019 likelihood evaluations/sec
+17682 likelihood evaluations in 2.15739 seconds
+  = 8195.99943 likelihood evaluations/sec

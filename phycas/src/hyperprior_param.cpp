@@ -35,7 +35,7 @@ HyperPriorParam::HyperPriorParam()
     std::cerr << "*** fatal error: default constructor used for HyperPriorParam ***" << std::endl;
     std::exit(0);
 #if POLPY_NEWWAY
-	internal_edges = true;
+	external_edges = true;
 #endif
 	curr_value = 0.1;
 	has_slice_sampler = true;
@@ -53,8 +53,8 @@ HyperPriorParam::HyperPriorParam()
 */
 HyperPriorParam::HyperPriorParam(
   EdgeLenMasterParamShPtr p,    /**> is the edge length master parameter whose prior this parameter controls */
-  bool for_internal_edges)		/**< is true if this hyperprior applies only to internal edges (or to all edges) and false if it applies only to external edges */
-  : MCMCUpdater(), internal_edges(for_internal_edges), edgelen_master_param(p)
+  bool for_external_edges)		/**< is true if this hyperprior applies only to external edges (or to all edges) and false if it applies only to internal edges */
+  : MCMCUpdater(), external_edges(for_external_edges), edgelen_master_param(p)
 	{
 	curr_value = 0.1;
 	has_slice_sampler = true;

@@ -233,6 +233,10 @@ bool DirichletMove::update()
 
 	proposeNewState();
 
+	// Note that it is not really correct to use a Dirichlet prior here because transformed versions of the
+	// orig_params values are used in the likelihood function. However, the transformation only adds a constant
+	// (i.e., -log(nsubsets)) to the log prior and thus this constant cancels out in the ln_accept_ratio.
+	// More care should be taken when reporting the log prior or when estimating marginal likelihoods.
     double prev_ln_prior		= mvprior->GetRelativeLnPDF(orig_params);
 	double prev_ln_like			= p->getLastLnLike();
 

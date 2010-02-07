@@ -61,19 +61,15 @@ class Model	{
 		void							calcPMatrices(double * * * pMat, const double * edgeLength, unsigned numRates) const;
 		virtual std::string				lookupStateRepr(int state) const;
 #if POLPY_NEWWAY
-        virtual void					createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters, bool add_edgelen_params) const;
+        virtual void					createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters, int subset_pos);
         virtual void					buildStateList(state_list_t &, state_list_pos_t &) const;
 #else
         virtual void					createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters) const;
         virtual void					buildStateList(VecStateList &, VecStateListPos &) const;
 #endif
 
-#if POLPY_NEWWAY
-		virtual std::string				paramHeader(std::string suffix) const = 0;
-#else //old way
-		virtual std::string				paramHeader() const = 0;
-#endif
-		virtual std::string				paramReport(unsigned ndecimals) const = 0;
+		virtual std::string				paramHeader() const;
+		virtual std::string				paramReport(unsigned ndecimals) const;
 
 		virtual double					calcUniformizationLambda() const = 0;
 		virtual double					calcLMat(double * * lMat) const = 0;
@@ -196,6 +192,7 @@ protected:
 protected:
 
 #if POLPY_NEWWAY
+	int								subset_index;				/**< The index of the partition subset to which this parameter belongs (set in createParameters function and mostly used in forming parameter names) */
 	double							internal_edgelen_hyperparam;	/**< The internal edge length hyperparameter */
 	double							external_edgelen_hyperparam;	/**< The external edge length hyperparameter */
 #endif
@@ -264,11 +261,7 @@ class JC: public Model
 		void					calcPMat(double * * pMat, double edgeLength) const;
         double					calcLMat(double * * lMat) const;
         double					calcUMat(double * * uMat) const;
-#if POLPY_NEWWAY
-        virtual std::string		paramHeader(std::string suffix) const;
-#else //old way
         virtual std::string		paramHeader() const;
-#endif
 		virtual std::string		paramReport(unsigned ndecimals) const;
 	};
 
@@ -285,7 +278,7 @@ class HKY: public Model
 									
 		virtual std::string			getModelName() const;
 #if POLPY_NEWWAY
-        virtual void				createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters, bool add_edgelen_params) const;
+        virtual void				createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters, int subset_pos);
 #else //old way
         virtual void				createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters) const;
 #endif
@@ -312,11 +305,7 @@ class HKY: public Model
 		void						setStateFreqParamPrior(ProbDistShPtr d);
 		ProbDistShPtr				getStateFreqParamPrior();
 
-#if POLPY_NEWWAY
-		virtual std::string			paramHeader(std::string suffix) const;
-#else //old way
 		virtual std::string			paramHeader() const;
-#endif
 		virtual std::string			paramReport(unsigned ndecimals) const;
 
 protected:

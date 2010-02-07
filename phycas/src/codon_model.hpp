@@ -80,16 +80,12 @@ class Codon: public Model
 		void						setStateFreqParamPrior(ProbDistShPtr d);
 		ProbDistShPtr				getStateFreqParamPrior();
 
-#if POLPY_NEWWAY
-		virtual std::string			paramHeader(std::string suffix) const;
-#else //old way
 		virtual std::string			paramHeader() const;
-#endif
 		virtual std::string			paramReport(unsigned ndecimals) const;
 
 		void						updateQMatrix() const;
 #if POLPY_NEWWAY
-		virtual void				createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters, bool add_edgelen_params) const;
+		virtual void				createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters, int subset_pos);
 #else //old way
 		virtual void				createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters) const;
 #endif
@@ -104,6 +100,8 @@ protected:
 	ProbDistShPtr				omega_prior;		/**< The prior distribution governing omega */
 	ProbDistShPtr				freq_param_prior;	/**< The prior distribution governing each frequency parameter */
 	MultivarProbDistShPtr		freq_prior;	        /**< The prior distribution governing the vector of frequencies (used if frequencies are updated jointly by StateFreqMove) */
+	
+	string_vect_t				freq_name;			/**< Holds names of the 61 state frequencies (e.g. freqAAA, freqAAC, ...) used as headers in the param file */
 
 	bool						kappa_fixed;		/**< If true, the value of kappa will not change during MCMC updates */
 	bool						omega_fixed;		/**< If true, the value of omega will not change during MCMC updates */

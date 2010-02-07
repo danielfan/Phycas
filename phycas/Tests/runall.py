@@ -90,11 +90,13 @@ def runDiff(a, b, outFile, acceptable_diffs=()):
         else:
             t = ". See the end of the %s." % (outFile)
         fout.close()
-        sys.exit("Script aborted because of failed example.\nOutput differed from the expected output%s\n" % t)
+        sys.exit("Script aborted because of failed example (%s).\nOutput differed from the expected output%s\n" % (last_test,t))
     fa.close()
     fb.close()
     
 def runTest(outFile, name, results):
+    global last_test
+    last_test = name
     print("\n")
     print("________________________________________")
     print("|\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/|")
@@ -135,6 +137,7 @@ def runTest(outFile, name, results):
     os.chdir(prevDir)
 
 if __name__ == '__main__':
+    last_test = None
     if 'python_d' in sys.executable:
         debugging = True
     scriptPar = os.path.split(os.path.abspath(sys.argv[0]))[0]

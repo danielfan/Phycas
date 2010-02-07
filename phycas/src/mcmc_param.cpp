@@ -507,10 +507,10 @@ double StateFreqParam::operator()(
 */
 void HyperPriorParam::sendCurrValueToModel(double v)
 	{
-	if (internal_edges)
-		model->setInternalEdgelenHyperparam(v);
-	else
+	if (external_edges)
 		model->setExternalEdgelenHyperparam(v);
+	else
+		model->setInternalEdgelenHyperparam(v);
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
@@ -518,10 +518,10 @@ void HyperPriorParam::sendCurrValueToModel(double v)
 */
 double HyperPriorParam::getCurrValueFromModel()
 	{
-	if (internal_edges)
-		return model->getInternalEdgelenHyperparam();
-	else 
+	if (external_edges)
 		return model->getExternalEdgelenHyperparam();
+	else 
+		return model->getInternalEdgelenHyperparam();
 	}
 #else //old way
 /*----------------------------------------------------------------------------------------------------------------------
@@ -551,10 +551,10 @@ double HyperPriorParam::operator()(
 #if POLPY_NEWWAY
 		sendCurrValueToModel(mu);
 #else //old way
-		if (internal_edges)
-			model->setInternalEdgelenHyperparam(mu);
-		else:
+		if (external_edges)
 			model->setExternalEdgelenHyperparam(mu);
+		else:
+			model->setInternalEdgelenHyperparam(mu);
 		curr_value = mu;
 #endif
 		recalcPrior();

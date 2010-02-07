@@ -73,7 +73,7 @@ void	HKY::createParameters(
   MCMCUpdaterVect & edgelens,				/**< is the vector of edge length parameters to fill */
   MCMCUpdaterVect & edgelen_hyperparams,	/**< is the edge length hyperparameter */
   MCMCUpdaterVect & parameters,				/**< is the vector of model-specific parameters to fill */
-  bool add_edgelen_params) const			/**< if true, edge length parameters and hyperparams will be added; if false, the `edgelens' and `edgelen_hyperparams' vectors returned will be empty */
+  int subset_pos) 							/**< if 0 (first subset) or -1 (only subset), edge length parameters and hyperparams will be added; otherwise, the `edgelens' and `edgelen_hyperparams' vectors returned will be empty */
 #else //old way
 void	HKY::createParameters(
   TreeShPtr t,								/**< is the tree (the nodes of which are needed for creating edge length parameters) */
@@ -83,14 +83,21 @@ void	HKY::createParameters(
 #endif
 	{
 #if POLPY_NEWWAY
-	Model::createParameters(t, edgelens, edgelen_hyperparams, parameters, add_edgelen_params);
+	Model::createParameters(t, edgelens, edgelen_hyperparams, parameters, subset_pos);
 #else //old way
 	Model::createParameters(t, edgelens, edgelen_hyperparams, parameters);
 #endif
 
 	PHYCAS_ASSERT(!kappa_param);
 	kappa_param = MCMCUpdaterShPtr(new KappaParam());
+#if POLPY_NEWWAY
+	if (subset_pos < 0)
+		kappa_param->setName("kappa");
+	else 
+		kappa_param->setName(boost::str(boost::format("kappa_%d") % (subset_pos + 1)));
+#else //old way
 	kappa_param->setName("trs/trv rate ratio");
+#endif
 	kappa_param->setStartingValue(4.0);
 	kappa_param->setTree(t);
 	kappa_param->setPrior(kappa_prior);
@@ -109,7 +116,14 @@ void	HKY::createParameters(
         // will be set and freq_param_prior will be empty)
 
 	    MCMCUpdaterShPtr freqA_param = MCMCUpdaterShPtr(new StateFreqParam(0));
+#if POLPY_NEWWAY
+		if (subset_pos < 0)
+			freqA_param->setName("freqA");
+		else 
+			freqA_param->setName(boost::str(boost::format("freqA_%d") % (subset_pos + 1)));
+#else //old way
 	    freqA_param->setName("base freq. A");
+#endif
 	    freqA_param->setTree(t);
 	    freqA_param->setStartingValue(1.0);
 	    freqA_param->setPrior(freq_param_prior);
@@ -119,7 +133,14 @@ void	HKY::createParameters(
 	    freq_params.push_back(freqA_param);
 
 	    MCMCUpdaterShPtr freqC_param = MCMCUpdaterShPtr(new StateFreqParam(1));
+#if POLPY_NEWWAY
+		if (subset_pos < 0)
+			freqC_param->setName("freqC");
+		else 
+			freqC_param->setName(boost::str(boost::format("freqC_%d") % (subset_pos + 1)));
+#else //old way
 	    freqC_param->setName("base freq. C");
+#endif
 	    freqC_param->setTree(t);
 	    freqC_param->setStartingValue(1.0);
 	    freqC_param->setPrior(freq_param_prior);
@@ -129,7 +150,14 @@ void	HKY::createParameters(
 	    freq_params.push_back(freqC_param);
 
 	    MCMCUpdaterShPtr freqG_param = MCMCUpdaterShPtr(new StateFreqParam(2));
+#if POLPY_NEWWAY
+		if (subset_pos < 0)
+			freqG_param->setName("freqG");
+		else 
+			freqG_param->setName(boost::str(boost::format("freqG_%d") % (subset_pos + 1)));
+#else //old way
 	    freqG_param->setName("base freq. G");
+#endif
 	    freqG_param->setTree(t);
 	    freqG_param->setStartingValue(1.0);
 	    freqG_param->setPrior(freq_param_prior);
@@ -139,7 +167,14 @@ void	HKY::createParameters(
 	    freq_params.push_back(freqG_param);
 
 	    MCMCUpdaterShPtr freqT_param = MCMCUpdaterShPtr(new StateFreqParam(3));
+#if POLPY_NEWWAY
+		if (subset_pos < 0)
+			freqT_param->setName("freqT");
+		else 
+			freqT_param->setName(boost::str(boost::format("freqT_%d") % (subset_pos + 1)));
+#else //old way
 	    freqT_param->setName("base freq. T");
+#endif
 	    freqT_param->setTree(t);
 	    freqT_param->setStartingValue(1.0);
 	    freqT_param->setPrior(freq_param_prior);
@@ -158,39 +193,13 @@ void	HKY::createParameters(
 |	is being used)
 */
 #if POLPY_NEWWAY
-std::string HKY::paramHeader(
-  std::string suffix) const	/**< is the suffix to tack onto the parameter names for this model (useful for partitioned models to show to which partition subset the parameter belongs) */
+std::string HKY::paramHeader() const
 	{
-	std::string s = boost::str(boost::format("\tkappa%s\tfreqA%s\tfreqC%s\tfreqG%s\tfreqT%s") % suffix % suffix % suffix % suffix % suffix);
-	if (is_flex_model)
-		{
-		s += "\tncat";
-		s += suffix;
-
-		//std::ofstream ratef("flex_rates.txt");
-		//ratef << str(boost::format("%12s\t%12s\t%12s\t%12s\n") % "i" % "n" % "rate" % "prob");
-		//ratef.close();
-
-		//unsigned i;
-		//for ( i = 0; i < num_gamma_rates; ++i)
-		//	{
-		//	s += str(boost::format("\trate%d") % i);
-		//	}
-		//for ( i = 0; i < num_gamma_rates; ++i)
-		//	{
-		//	s += str(boost::format("\trateprob%d") % i);
-		//	}
-		}
-	else if (num_gamma_rates > 1)
-		{
-		s += "\tshape";
-		s += suffix;
-		}
-	if (is_pinvar_model)
-		{
-		s += "\tpinvar";
-		s += suffix;
-		}
+	std::string s;
+	s += boost::str(boost::format("\t%s") % kappa_param->getName());
+	for (MCMCUpdaterVect::const_iterator fit = freq_params.begin(); fit != freq_params.end(); ++fit)
+		s += boost::str(boost::format("\t%s") % (*fit)->getName());
+	s += Model::paramHeader();
 	return s;
 	}
 #else //old way
@@ -239,6 +248,9 @@ std::string HKY::paramReport(
 	s += str(boost::format(fmt) % state_freqs[2]);
 	s += str(boost::format(fmt) % state_freqs[3]);
 	//std::string s = str(boost::format("\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f") % kappa % state_freqs[0] % state_freqs[1] % state_freqs[2] % state_freqs[3]);
+#if POLPY_NEWWAY
+	s += Model::paramReport(ndecimals);
+#else	//old way
 	if (is_flex_model)
 		{
 		s += str(boost::format("%d\t") % num_gamma_rates);
@@ -272,6 +284,7 @@ std::string HKY::paramReport(
 		s += str(boost::format(fmt) % pinvar);
 		//s += str(boost::format("\t%.5f") % pinvar);
         }
+#endif
 	return s;
 	}
 

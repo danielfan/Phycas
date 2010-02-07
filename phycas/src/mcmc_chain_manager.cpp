@@ -203,7 +203,7 @@ void MCMCChainManager::addMCMCUpdaters(
   LotShPtr r,						/**< is the pseudo-random number generator */
   unsigned max_units,				/**< is the maximum number of slice sampler units to use in each update */
   unsigned weight,					/**< is the weight to be used for all parameters added by this function */
-  bool add_edgelen_params)			/**< if true, edge length parameters and hyperparameters will be added */
+  int subset_pos)					/**< if 0 (first subset) or -1 (only subset), edge length parameters and hyperparams will be added */
 #else //old way
 void MCMCChainManager::addMCMCUpdaters(
   ModelShPtr m,						/**< is the substitution model */
@@ -233,7 +233,7 @@ void MCMCChainManager::addMCMCUpdaters(
 		throw XLikelihood("Error in MCMCChainManager::addMCMCUpdaters: no model defined");
 		}
 #if POLPY_NEWWAY
-	if (add_edgelen_params)
+	if (subset_pos <= 0)
 		{
 		if (!m->getInternalEdgeLenPrior())
 			{
@@ -263,12 +263,13 @@ void MCMCChainManager::addMCMCUpdaters(
 #if POLPY_NEWWAY
 	// Ask the model to create the edge length parameters, edge length hyperparameters, and 
 	// its own model-specific parameters.
-	m->createParameters(t, edgelens, edgelen_hyperparams, parameters, add_edgelen_params);
+	m->createParameters(t, edgelens, edgelen_hyperparams, parameters, subset_pos);
 
-	if (add_edgelen_params)
+	if (subset_pos <= 0)
 		{
-		// Add the edge length parameters (might be master parameters for internal and external edges or, 
-		// one edge length master parameter that governs all edges in the tree)
+		// Add the edge length parameters. If length 2, then first will be the master parameter for external edges
+		// and the second will be the master parameter for the external edges. If length 1, then it will be the
+		// edge length master parameter that governs all edges in the tree.
 		for (iter = edgelens.begin(); iter != edgelens.end(); ++iter)
 			{
 			MCMCUpdaterShPtr p = (*iter);
@@ -278,11 +279,12 @@ void MCMCChainManager::addMCMCUpdaters(
 			p->setTreeLikelihood(like);
 			p->setLot(r);
 			addEdgeLenParam(p);
-			//std::cerr << ">>>>> adding edge length parameter in MCMCChainManager::addMCMCUpdaters: use count = " << p.use_count() << std::endl;
-			//std::cerr << "\n***** model.getExternalEdgeLenPrior() after adding edge length parameter: use count = " << m->getExternalEdgeLenPrior().use_count() << std::endl;
 			}
 
-		// Add the edge length hyperparameters (if any were created)
+		// Add the edge length hyperparameters (if any were created). If length 2, then first will be the hyperparameter 
+		// governing the mean of the external edge length prior and the second will be the hyperparameter governing
+		// the mean of the internal edge length prior. If length 1, then it will be the hyperparameter governing the
+		// mean of the prior for all edge lengths.
 		for (iter = edgelen_hyperparams.begin(); iter != edgelen_hyperparams.end(); ++iter)
 			{
 			MCMCUpdaterShPtr p = (*iter);
@@ -292,7 +294,6 @@ void MCMCChainManager::addMCMCUpdaters(
 			p->setTreeLikelihood(like);
 			p->setLot(r);
 			addEdgeLenHyperparam(p);
-			//std::cerr << ">>>>> adding edge length hyperparameters in MCMCChainManager::addMCMCUpdaters: use count = " << p.use_count() << std::endl;
 			}
 		}
 #else

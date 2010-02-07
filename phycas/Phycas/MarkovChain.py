@@ -119,29 +119,27 @@ class MarkovChain(LikelihoodCore):
 					paramf.write('\tm_%d' % (i+1,))
 			for i in range(nmodels):
 				m = self.partition_model.getModel(i)
-				if nmodels > 1:
-					paramf.write(m.paramHeader('_%d' % (i+1,)))
-				else:
-					paramf.write(m.paramHeader(''))
-				if m.hasEdgeLenHyperPrior():
-					if m.isSeparateInternalExternalEdgeLenPriors():
-						if nmodels > 1:
-							paramf.write('\thyper(external)_%d' % (i+1,))
-							paramf.write('\thyper(internal)_%d' % (i+1,))
-						else:
-							paramf.write('\thyper(external)')
-							paramf.write('\thyper(internal)')
-						
-					else:
-						if nmodels > 1:
-							paramf.write('\thyper(all)_%d' % (i+1,))
-						else:
-							paramf.write('\thyper(all)')
-				if m.isFlexModel():
-					if nmodels > 1:
-						paramf.write('\trates_probs_%d' % (i+1,))
-					else:
-						paramf.write('\trates_probs')
+				paramf.write(m.paramHeader())
+				# HYPERPRIOR STUFF
+				#if m.hasEdgeLenHyperPrior():
+				#	if m.isSeparateInternalExternalEdgeLenPriors():
+				#		if nmodels > 1:
+				#			paramf.write('\thyper(external)_%d' % (i+1,))
+				#			paramf.write('\thyper(internal)_%d' % (i+1,))
+				#		else:
+				#			paramf.write('\thyper(external)')
+				#			paramf.write('\thyper(internal)')
+				#		
+				#	else:
+				#		if nmodels > 1:
+				#			paramf.write('\thyper(all)_%d' % (i+1,))
+				#		else:
+				#			paramf.write('\thyper(all)')
+				#if m.isFlexModel():
+				#	if nmodels > 1:
+				#		paramf.write('\trates_probs_%d' % (i+1,))
+				#	else:
+				#		paramf.write('\trates_probs')
 		else:
 			# Note: model data member inherited from LikelihoodCore
 			paramf.write(self.model.paramHeader())
@@ -253,7 +251,7 @@ class MarkovChain(LikelihoodCore):
 				if mspec.edgelen_hyperprior is not None:
 					m.setEdgeLenHyperPrior(mspec.edgelen_hyperprior.cloneAndSetLot(self.r))
 					if mspec.fix_edgelen_hyperparam:
-						m.fixEdgeLenHyperprior()	#POL should be named fixEdgeLenHyperparam
+						m.fixEdgeLenHyperprior()	#@POL should be named fixEdgeLenHyperparam
 				else:
 					m.setEdgeLenHyperPrior(None)
 					
@@ -291,7 +289,10 @@ class MarkovChain(LikelihoodCore):
 					m.setPinvarPrior(mspec.pinvar_prior.cloneAndSetLot(self.r))
 				
 				# Add all necessary updaters to the MCMCManager
-				add_edgelen_params = (i == 0)
+				if nmodels == 1:
+					subset_pos = -1
+				else:
+					subset_pos = i
 				self.chain_manager.addMCMCUpdaters(
 					m,									# substitution model
 					self.tree,							# tree
@@ -300,7 +301,7 @@ class MarkovChain(LikelihoodCore):
 					#False,								# separate_edgelen_params (deprecated: always False)
 					self.parent.opts.slice_max_units,	# maximum number of slice units allowed
 					self.parent.opts.slice_weight,		# weight for each parameter added
-					add_edgelen_params)					# only add edge length params for first subset
+					subset_pos)							# i is the subset (needed so that add edge length params will only be added for for first subset)
 					
 				# Add subset-model-specific moves
 				if not mspec.type == 'jc' and not mspec.update_freqs_separately:
@@ -311,9 +312,9 @@ class MarkovChain(LikelihoodCore):
 					else:
 						sfm.setDimension(4)
 					if nmodels > 1:
-						sfm.setName("State freqs %d" % (i+1,))
+						sfm.setName("state_freqs_%d" % (i+1,))
 					else:
-						sfm.setName("State freqs")
+						sfm.setName("state_freqs")
 					sfm.setWeight(self.parent.opts.state_freq_weight)
 					sfm.setPosteriorTuningParam(self.parent.opts.state_freq_psi)
 					sfm.setPriorTuningParam(self.parent.opts.state_freq_psi0)
@@ -331,9 +332,9 @@ class MarkovChain(LikelihoodCore):
 					# Create a RelRateMove to update entire relative rates vector
 					rrm = Likelihood.RelRatesMove()
 					if nmodels > 1:
-						rrm.setName("Relative rates %d" % (i+1,))
+						rrm.setName("relrates_%d" % (i+1,))
 					else:
-						rrm.setName("Relative rates")
+						rrm.setName("relrates")
 					rrm.setWeight(self.parent.opts.rel_rate_weight)
 					rrm.setPosteriorTuningParam(self.parent.opts.rel_rate_psi)
 					rrm.setPriorTuningParam(self.parent.opts.rel_rate_psi0)
@@ -438,7 +439,10 @@ class MarkovChain(LikelihoodCore):
 		# than Metropolis-Hastings updates: most "moves" in parent are Metropolis-Hastings.
 		if self.parent.opts.tree_scaler_weight > 0:
 			self.tree_scaler_move = Likelihood.TreeScalerMove()
-			self.tree_scaler_move.setName("Tree scaler move")
+			if partitioning:
+				self.tree_scaler_move.setName("tree_scaler")
+			else:
+				self.tree_scaler_move.setName("Tree scaler move")
 			self.tree_scaler_move.setWeight(self.parent.opts.tree_scaler_weight)
 			self.tree_scaler_move.setPosteriorTuningParam(self.parent.opts.tree_scaler_lambda)
 			self.tree_scaler_move.setPriorTuningParam(self.parent.opts.tree_scaler_lambda0)
@@ -456,7 +460,10 @@ class MarkovChain(LikelihoodCore):
 			if (nmodels > 1):
 				self.subset_relrates_move = Likelihood.SubsetRelRatesMove()
 				self.subset_relrates_move.setDimension(nmodels)
-				self.subset_relrates_move.setName("Subset relative rates")
+				if partitioning:
+					self.subset_relrates_move.setName("subset_relrates")
+				else:
+					self.subset_relrates_move.setName("Subset relative rates")
 				self.subset_relrates_move.setWeight(self.parent.opts.subset_relrates_weight)
 				self.subset_relrates_move.setPosteriorTuningParam(self.parent.opts.subset_relrates_psi)
 				self.subset_relrates_move.setPriorTuningParam(self.parent.opts.subset_relrates_psi0)
@@ -600,7 +607,10 @@ class MarkovChain(LikelihoodCore):
 			# Create a LargetSimonMove object to handle Metropolis-Hastings
 			# updates to the tree topology and edge lengths
 			self.larget_simon_move = Likelihood.LargetSimonMove()
-			self.larget_simon_move.setName("Larget-Simon move")
+			if partitioning:
+				self.larget_simon_move.setName("larget_simon_local")
+			else:
+				self.larget_simon_move.setName("Larget-Simon move")
 			self.larget_simon_move.setWeight(self.parent.opts.ls_move_weight)
 			self.larget_simon_move.setPosteriorTuningParam(self.parent.opts.ls_move_lambda)
 			self.larget_simon_move.setPriorTuningParam(self.parent.opts.ls_move_lambda0)
