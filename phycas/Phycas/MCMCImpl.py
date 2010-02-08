@@ -73,7 +73,6 @@ class MCMCImpl(CommonFunctions):
 		self.ss_beta_index			= 0
 		self.ss_sampled_betas		= None
 		self.ss_sampled_likes		= None
-		#self.ss_delta_beta			 = 0.0	 # can be deleted when new system in place
 		self.phycassert(self.opts.ss_nbetavals > 0, 'ss_nbetavals cannot be less than 1')
 		self.siteIndicesForPatternIndex = None
 		
@@ -412,7 +411,8 @@ class MCMCImpl(CommonFunctions):
 		self.openParameterAndTreeFiles()
 		
 		if self.opts.doing_steppingstone_sampling:
-			self.ss_beta = self.opts.ss_maxbeta		# start with posterior (ss_beta = 1) and work toward the prior (ss_beta = 0)
+			# start with posterior (ss_beta = 1) and work toward the prior (ss_beta = 0)
+			self.ss_beta = self.opts.ss_maxbeta		
 			cc = self.mcmc_manager.getColdChain()
 			cc.setPower(self.ss_beta)
 		self.siteLikeFileSetup(self.mcmc_manager.getColdChain())
@@ -425,6 +425,18 @@ class MCMCImpl(CommonFunctions):
 		c = cycle + 1
 		return ((c % mod) == 0)
 		
+	def getModelIndex(self, name):
+		"""
+		If an updater has name like 'rAC_k', this function will return the model index k-1.
+		If an updater has name 'rAC', returns model index 0.
+		"""
+		import re
+		mo = re.search('_([0-9]+)$',name)
+		if mo is not None:
+			return int(mo.group(1)) - 1
+		else:
+			return 0
+		
 	def explorePrior(self, cycle):
 		chain_index = 0
 		chain = self.mcmc_manager.getColdChain()
@@ -433,118 +445,148 @@ class MCMCImpl(CommonFunctions):
 			tmpf = file('debug_info.txt', 'a')
 			tmpf.write('************** cycle=%d, chain=%d\n' % (cycle,chain_index))
 		edgelens_generated = False
+		
+		nmodels = chain.partition_model.getNumSubsets()
+		unpartitioned = (nmodels == 1)
+
 		for p in chain.chain_manager.getAllUpdaters():
 			w = p.getWeight()
 			name = p.getName()
-			if name == 'edge length hyperparameter':	# C++ class HyperPriorParam
-				# Choose hyperparam, then use it to choose new edge lengths for a newly-created tree
-				m = chain.partition_model.getModel(0)
-				if m.isSeparateInternalExternalEdgeLenPriors():
-					# draw an edge length hyperparameter value for external edges
-					edgelen_hyperparam = m.getEdgeLenHyperPrior().sample()
-					chain.chain_manager.setEdgeLenHyperparam(0, edgelen_hyperparam)
-					m.getExternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
-					
-					# draw an edge length hyperparameter value for internal edges
-					edgelen_hyperparam = m.getEdgeLenHyperPrior().sample()
-					chain.chain_manager.setEdgeLenHyperparam(1, edgelen_hyperparam)
-					m.getInternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
-				else:
-					# draw an edge length hyperparameter value that applies to all edges
-					edgelen_hyperparam = m.getEdgeLenHyperPrior().sample()
-					chain.chain_manager.setEdgeLenHyperparam(0, edgelen_hyperparam)
-					m.getInternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
-					m.getExternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
-				if self.opts.fix_topology:
-					tm.setRandomInternalExternalEdgeLengths(m.getInternalEdgeLenPrior(), m.getExternalEdgeLenPrior()) 
-				else:
-					tm.equiprobTree(chain.tree.getNTips(), chain.r, m.getInternalEdgeLenPrior(), m.getExternalEdgeLenPrior())
-				edgelens_generated = True
-			elif name == 'master edge length':
+			if (name.find('edgelen_hyper') == 0) or (name.find('external_hyper') == 0) or (name.find('internal_hyper') == 0):	# C++ class HyperPriorParam
+				if not edgelens_generated:
+					# Choose hyperparam, then use it to choose new edge lengths for a newly-created tree
+					m = chain.partition_model.getModel(0)
+					if m.isSeparateInternalExternalEdgeLenPriors():
+						# draw an edge length hyperparameter value for external edges
+						edgelen_hyperparam = m.getEdgeLenHyperPrior().sample()
+						chain.chain_manager.setEdgeLenHyperparam(0, edgelen_hyperparam)
+						m.getExternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
+						
+						# draw an edge length hyperparameter value for internal edges
+						edgelen_hyperparam = m.getEdgeLenHyperPrior().sample()
+						chain.chain_manager.setEdgeLenHyperparam(1, edgelen_hyperparam)
+						m.getInternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
+					else:
+						# draw an edge length hyperparameter value that applies to all edges
+						edgelen_hyperparam = m.getEdgeLenHyperPrior().sample()
+						chain.chain_manager.setEdgeLenHyperparam(0, edgelen_hyperparam)
+						m.getInternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
+						m.getExternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
+					if self.opts.fix_topology:
+						tm.setRandomInternalExternalEdgeLengths(m.getInternalEdgeLenPrior(), m.getExternalEdgeLenPrior()) 
+					else:
+						tm.equiprobTree(chain.tree.getNTips(), chain.r, m.getInternalEdgeLenPrior(), m.getExternalEdgeLenPrior())
+					edgelens_generated = True
+			elif name.find('master_edgelen') == 0:
 				pass
-			elif name == 'external edge length':
+			elif name.find('external_edgelen') == 0:
 				pass
-			elif name == 'internal edge length':
+			elif name.find('internal_edgelen') == 0:
 				pass
-			elif name == 'trs/trv rate ratio':				# C++ class KappaParam
-				new_kappa = chain.model.getKappaPrior().sample()
-				chain.model.setKappa(new_kappa)
-			elif name == 'nonsynon./synon. rate ratio':		 # C++ class OmegaParam
-				new_omega = chain.model.getOmegaPrior().sample()
-				chain.model.setOmega(new_omega)
-			elif name == 'rAC':					   # C++ class GTRRateParam
-				new_rAC = chain.model.getRelRateParamPrior().sample()
-				chain.model.setRelRateUnnorm(0, new_rAC) 
-			elif name == 'rAG':					   # C++ class GTRRateParam
-				new_rAG = chain.model.getRelRateParamPrior().sample()
-				chain.model.setRelRateUnnorm(1, new_rAG) 
-			elif name == 'rAT':					   # C++ class GTRRateParam
-				new_rAT = chain.model.getRelRateParamPrior().sample()
-				chain.model.setRelRateUnnorm(2, new_rAT) 
-			elif name == 'rCG':					   # C++ class GTRRateParam
-				new_rCG = chain.model.getRelRateParamPrior().sample()
-				chain.model.setRelRateUnnorm(3, new_rCG) 
-			elif name == 'rCT':					   # C++ class GTRRateParam
-				new_rCT = chain.model.getRelRateParamPrior().sample()
-				chain.model.setRelRateUnnorm(4, new_rCT) 
-			elif name == 'rGT':					   # C++ class GTRRateParam
-				new_rGT = chain.model.getRelRateParamPrior().sample()
-				chain.model.setRelRateUnnorm(5, new_rGT) 
-			elif name == 'base freq. A':					# C++ class StateFreqParam
-				new_freq_param_A = chain.model.getStateFreqParamPrior().sample()
-				chain.model.setStateFreqParam(0, new_freq_param_A) 
-			elif name == 'base freq. C':					# C++ class StateFreqParam
-				new_freq_param_C = chain.model.getStateFreqParamPrior().sample()
-				chain.model.setStateFreqParam(1, new_freq_param_C) 
-			elif name == 'base freq. G':					# C++ class StateFreqParam
-				new_freq_param_G = chain.model.getStateFreqParamPrior().sample()
-				chain.model.setStateFreqParam(2, new_freq_param_G) 
-			elif name == 'base freq. T':					# C++ class StateFreqParam
-				new_freq_param_T = chain.model.getStateFreqParamPrior().sample()
-				chain.model.setStateFreqParam(3, new_freq_param_T) 
-			elif name == 'Discrete gamma shape':			# C++ class DiscreteGammaShapeParam
-				new_gamma_shape = chain.model.getDiscreteGammaShapePrior().sample()
-				chain.model.setShape(new_gamma_shape)
-			elif name == 'Proportion of invariable sites':	# C++ class PinvarParam
-				new_pinvar = chain.model.getPinvarPrior().sample()
-				chain.model.setPinvar(new_pinvar)
-			elif name == 'Relative rates':				# C++ class StateFreqMove
-				rate_vector = chain.model.getRelRatePrior().sample()
-				chain.model.setRelRates(rate_vector)
-			elif name == 'State freqs':				   # C++ class StateFreqMove
-				freq_vector = chain.model.getStateFreqPrior().sample()
-				#chain.model.setNucleotideFreqs(freq_vector[0],freq_vector[1],freq_vector[2],freq_vector[3])
-				chain.model.setStateFreqsUnnorm(freq_vector)
-			elif name == 'Edge length move':				# C++ class EdgeMove
+			elif name.find('subset_relrates') == 0:
+				new_subset_relrate_vector = chain.partition_model.getSubsetRelRatePrior().sample()
+				# Drawing values from a Dirichlet prior, but relative rates should have mean 1, not sum to 1,
+				# so multiply each by the value nmodels to correct this
+				chain.partition_model.setSubsetRelRatesVect([x*float(nmodels) for x in new_subset_relrate_vector])
+			elif name.find('kappa') == 0:							# C++ class KappaParam
+				i = unpartitioned and 0 or self.getModelIndex(name)
+				m = chain.partition_model.getModel(i)
+				new_kappa = m.getKappaPrior().sample()
+				m.setKappa(new_kappa)
+			elif name.find('omega') == 0:							# C++ class OmegaParam
+				i = unpartitioned and 0 or self.getModelIndex(name)
+				m = chain.partition_model.getModel(i)
+				new_omega = m.getOmegaPrior().sample()
+				m.setOmega(new_omega)
+			elif name.find('rAC') == 0:								# C++ class GTRRateParam
+				i = unpartitioned and 0 or self.getModelIndex(name)
+				m = chain.partition_model.getModel(i)
+				new_rAC = m.getRelRateParamPrior().sample()
+				m.setRelRateUnnorm(0, new_rAC) 
+			elif name.find('rAG') == 0:								# C++ class GTRRateParam
+				i = unpartitioned and 0 or self.getModelIndex(name)
+				m = chain.partition_model.getModel(i)
+				new_rAG = m.getRelRateParamPrior().sample()
+				m.setRelRateUnnorm(1, new_rAG) 
+			elif name.find('rAT') == 0:								# C++ class GTRRateParam
+				i = unpartitioned and 0 or self.getModelIndex(name)
+				m = chain.partition_model.getModel(i)
+				new_rAT = m.getRelRateParamPrior().sample()
+				m.setRelRateUnnorm(2, new_rAT) 
+			elif name.find('rCG') == 0:								# C++ class GTRRateParam
+				i = unpartitioned and 0 or self.getModelIndex(name)
+				m = chain.partition_model.getModel(i)
+				new_rCG = m.getRelRateParamPrior().sample()
+				m.setRelRateUnnorm(3, new_rCG) 
+			elif name.find('rCT') == 0:								# C++ class GTRRateParam
+				i = unpartitioned and 0 or self.getModelIndex(name)
+				m = chain.partition_model.getModel(i)
+				new_rCT = m.getRelRateParamPrior().sample()
+				m.setRelRateUnnorm(4, new_rCT) 
+			elif name.find('rGT') == 0:								# C++ class GTRRateParam
+				i = unpartitioned and 0 or self.getModelIndex(name)
+				m = chain.partition_model.getModel(i)
+				new_rGT = m.getRelRateParamPrior().sample()
+				m.setRelRateUnnorm(5, new_rGT) 
+			elif name.find('freqA') == 0:							# C++ class StateFreqParam
+				new_freq_param_A = m.getStateFreqParamPrior().sample()
+				m.setStateFreqParam(0, new_freq_param_A) 
+			elif name.find('freqC') == 0:							# C++ class StateFreqParam
+				i = unpartitioned and 0 or self.getModelIndex(name)
+				m = chain.partition_model.getModel(i)
+				new_freq_param_C = m.getStateFreqParamPrior().sample()
+				m.setStateFreqParam(1, new_freq_param_C) 
+			elif name.find('freqG') == 0:							# C++ class StateFreqParam
+				i = unpartitioned and 0 or self.getModelIndex(name)
+				m = chain.partition_model.getModel(i)
+				new_freq_param_G = m.getStateFreqParamPrior().sample()
+				m.setStateFreqParam(2, new_freq_param_G) 
+			elif name.find('freqT') == 0:							# C++ class StateFreqParam
+				i = unpartitioned and 0 or self.getModelIndex(name)
+				m = chain.partition_model.getModel(i)
+				new_freq_param_T = m.getStateFreqParamPrior().sample()
+				m.setStateFreqParam(3, new_freq_param_T) 
+			elif name.find('gamma_shape') == 0:						# C++ class DiscreteGammaShapeParam
+				i = unpartitioned and 0 or self.getModelIndex(name)
+				m = chain.partition_model.getModel(i)
+				new_gamma_shape = m.getDiscreteGammaShapePrior().sample()
+				m.setShape(new_gamma_shape)
+			elif name.find('pinvar') == 0:							# C++ class PinvarParam
+				i = unpartitioned and 0 or self.getModelIndex(name)
+				m = chain.partition_model.getModel(i)
+				new_pinvar = m.getPinvarPrior().sample()
+				m.setPinvar(new_pinvar)
+			elif name.find('relrates') == 0:						# C++ class RelRatesMove
+				i = unpartitioned and 0 or self.getModelIndex(name)
+				m = chain.partition_model.getModel(i)
+				rate_vector = m.getRelRatePrior().sample()
+				# Drawing values from a Dirichlet prior, but relative rates should have mean 1, not sum 1,
+				# so multiply each by the value nmodels to correct this. 
+				m.setRelRates([6.0*x for x in rate_vector])
+			elif name.find('state_freqs') == 0:						# C++ class StateFreqMove
+				i = unpartitioned and 0 or self.getModelIndex(name)
+				m = chain.partition_model.getModel(i)
+				freq_vector = m.getStateFreqPrior().sample()
+				m.setStateFreqsUnnorm(freq_vector)
+			elif name.find('edge_move') == 0:						# C++ class EdgeMove
 				pass
-			elif name == 'Larget-Simon move':				# C++ class LargetSimonMove
+			elif name.find('larget_simon_local') == 0:				# C++ class LargetSimonMove
 				pass
-			elif name == 'Tree scaler move':				# C++ class TreeScalerMove
+			elif name.find('tree_scaler') == 0:						# C++ class TreeScalerMove
 				pass
-			elif name == 'Bush move':						# C++ class BushMove
+			elif name.find('bush_move') == 0:						# C++ class BushMove
 				pass	# polytomies handled further down (by randomly pruning fully-resolved equiprobable tree)
-			elif name == 'FLEX probs':						# C++ class FlexProbParam
-				self.phycassert(0, 'sampling directly from the prior not yet implemented for FLEX model (workaround: specify mcmc.draw_directly_from_prior = False)')
-			elif name == 'FLEX rates':						# C++ class FlexRateParam
-				self.phycassert(0, 'sampling directly from the prior not yet implemented for FLEX model (workaround: specify mcmc.draw_directly_from_prior = False)')
-			elif name == 'NCat move':						# C++ class NCatMove
-				self.phycassert(0, 'sampling directly from the prior not yet implemented for FLEX model (workaround: specify mcmc.draw_directly_from_prior = False)')
-			elif name == 'Univent mapping move':			# C++ class MappingMove
-				self.phycassert(0, 'sampling directly from the prior not yet implemented for unimap analyses (workaround: specify mcmc.draw_directly_from_prior = False)')
-			elif name == 'Unimap NNI move':					# C++ class UnimapNNIMove
-				self.phycassert(0, 'sampling directly from the prior not yet implemented for unimap analyses (workaround: specify mcmc.draw_directly_from_prior = False)')
-			elif name == 'SAMC move':						# C++ class SamcMove
-				self.phycassert(0, 'sampling directly from the prior not yet implemented for SAMC (workaround: specify mcmc.draw_directly_from_prior = False)')
 			else:
 				self.phycassert(0, 'model uses an updater (%s) that has not yet been added to MCMCImpl.explorePrior (workaround: specify mcmc.draw_directly_from_prior = False)' % name)
 
 		# If no edge length hyperprior was specified, then build the tree with edge lengths now
 
 		if not edgelens_generated:
+			m = chain.partition_model.getModel(0)
 			if self.opts.fix_topology:
-				tm.setRandomInternalExternalEdgeLengths(chain.model.getInternalEdgeLenPrior(), chain.model.getExternalEdgeLenPrior()) 
+				tm.setRandomInternalExternalEdgeLengths(m.getInternalEdgeLenPrior(), m.getExternalEdgeLenPrior()) 
 			else:
-				tm.equiprobTree(chain.tree.getNTips(), chain.r, chain.model.getInternalEdgeLenPrior(), chain.model.getExternalEdgeLenPrior())
+				tm.equiprobTree(chain.tree.getNTips(), chain.r, m.getInternalEdgeLenPrior(), m.getExternalEdgeLenPrior())
 			
 		if self.opts.allow_polytomies:
 			# Choose number of internal nodes
@@ -558,7 +600,7 @@ class MCMCImpl(CommonFunctions):
 				tm.deleteRandomInternalEdge(chain.r)
 				
 		chain.prepareForLikelihood()
-		chain.likelihood.replaceModel(chain.model)
+		chain.likelihood.replaceModel(chain.partition_model)
 				
 		if False:
 			# debugging code
@@ -830,28 +872,23 @@ class MCMCImpl(CommonFunctions):
 			self.phycassert(nchains == 1, 'path sampling requires nchains to be 1')
 			chain = self.mcmc_manager.getColdChain()
 			if self.opts.ss_nbetavals > 1:
-				if False:
-					# old way (constant ss_delta_beta)
-					self.ss_delta_beta = float(self.opts.ss_maxbeta - self.opts.ss_minbeta)/float(self.opts.ss_nbetavals - 1)
-					self.ss_sampled_betas = [self.opts.ss_maxbeta - self.ss_delta_beta*float(i) for i in range(self.opts.ss_nbetavals)]
-				else:
-					# new way (ss_delta_beta is a vector of values determined by discretized beta distribution)
-					# Beta distribution will be divided into ss_nbetavals intervals, each of which has an equal area
-					segment_area = 1.0/float(self.opts.ss_nbetavals - 1)
-					cum_area = 0.0
-					lower_boundary = 0.0
-					self.ss_sampled_betas = [self.opts.ss_minbeta]
-					total_extent = float(self.opts.ss_maxbeta - self.opts.ss_minbeta)
-					betadist = ProbDist.Beta(self.opts.ss_shape1, self.opts.ss_shape2)
-					for i in range(self.opts.ss_nbetavals - 1):
-						cum_area += segment_area
-						upper_boundary = betadist.getQuantile(cum_area)
-						scaled_upper_boundary = self.opts.ss_minbeta + total_extent*upper_boundary
-						self.ss_sampled_betas.append(scaled_upper_boundary)
-						lower_boundary = upper_boundary
-						
-					# Reverse the sampled betas so that they start at 1.0 and decrease toward 0.0
-					self.ss_sampled_betas.reverse()
+				# Set up the list ss_sampled_betas
+				# Beta distribution will be divided into ss_nbetavals intervals, each of which has an equal area
+				segment_area = 1.0/float(self.opts.ss_nbetavals - 1)
+				cum_area = 0.0
+				lower_boundary = 0.0
+				self.ss_sampled_betas = [self.opts.ss_minbeta]
+				total_extent = float(self.opts.ss_maxbeta - self.opts.ss_minbeta)
+				betadist = ProbDist.Beta(self.opts.ss_shape1, self.opts.ss_shape2)
+				for i in range(self.opts.ss_nbetavals - 1):
+					cum_area += segment_area
+					upper_boundary = betadist.getQuantile(cum_area)
+					scaled_upper_boundary = self.opts.ss_minbeta + total_extent*upper_boundary
+					self.ss_sampled_betas.append(scaled_upper_boundary)
+					lower_boundary = upper_boundary
+					
+				# Reverse ss_sampled_betas so that sampled beta values start at 1.0 and decrease toward 0.0
+				self.ss_sampled_betas.reverse()
 				
 				# Output the beta values that will be used
 				self.output('%d %s chosen from a discrete\nBeta(%.5f, %.5f) distribution:' % (self.opts.ss_nbetavals, (self.opts.ss_nbetavals == 1 and 'value was' or 'values were'), self.opts.ss_shape1, self.opts.ss_shape2))
@@ -863,14 +900,14 @@ class MCMCImpl(CommonFunctions):
 			else:
 				self.ss_sampled_betas = [self.opts.ss_minbeta]
 			
+			# Run the main MCMC loop for each beta value in ss_sampled_betas
 			self.ss_sampled_likes = []
 			for self.ss_beta_index, self.ss_beta in enumerate(self.ss_sampled_betas):
 				self.ss_sampled_likes.append([])
 				chain.setPower(self.ss_beta)
-				boldness = 100.0*(1.0-self.ss_beta)
+				boldness = 100.0*(1.0 - self.ss_beta)
 				chain.setBoldness(boldness)
 				print 'Setting chain boldness to %g based on beta = %g' % (boldness,self.ss_beta)
-				#raw_input('check')
 				self.cycle_stop = self.opts.burnin + len(self.ss_sampled_betas)*self.opts.ncycles
 				if self.ss_beta_index > 0:
 					self.burnin = 0

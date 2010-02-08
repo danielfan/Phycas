@@ -93,6 +93,9 @@ class GTR: public Model
 		mutable MCMCUpdaterVect		rel_rate_params;	    /**< A vector containing copies of all six relative rate parameters (saved so that fixed/free status can be changed) */
 		mutable QMatrix				q_matrix;			    /**< A QMatrix object used to compute transition probabilities */
 
+		string_vect_t				relrate_name;			/**< Holds names of the 6 relative rates (e.g. rAC, rAG, rAT, rCG, rCT, rGT) used as headers in the param file */
+		string_vect_t				freq_name;				/**< Holds names of the 4 state frequencies (e.g. freqA, freqC, freqG, freqT) used as headers in the param file */
+		
 		// Below here are quantities that directly affect likelihood calculations and which should increment time_stamp when modified
 		std::vector<double>			rel_rates;			    /**< A vector containing the six relative rates */
 	};

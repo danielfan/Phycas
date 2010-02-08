@@ -183,7 +183,10 @@ class MarkovChain(LikelihoodCore):
 		modelspecs = partition.getModels()	# partition here refers to the global object (associated with the Phycas partition command)
 		print 'modelspecs has length %d:' % len(modelspecs)
 		nmodels = self.partition_model.getNumSubsets()
-		print 'partition_model contains %d models:' % nmodels
+		if nmodels == 1:
+			print 'partition_model contains 1 model (i.e. unpartitioned)'
+		else:
+			print 'partition_model contains %d models' % nmodels
 		self.chain_manager = Likelihood.MCMCChainManager()
 		for i in range(nmodels):
 			m = self.partition_model.getModel(i)
@@ -219,10 +222,12 @@ class MarkovChain(LikelihoodCore):
 				if mspec.update_relrates_separately:
 					m.setRelRateParamPrior(mspec.relrate_param_prior.cloneAndSetLot(self.r))
 				else:
+					self.parent.phycassert(mspec.relrate_prior.getDistName() == 'Dirichlet', 'mspec.relrate_prior must be of type Dirichlet')
 					m.setRelRatePrior(mspec.relrate_prior)
 				if mspec.update_freqs_separately:
 					m.setStateFreqParamPrior(mspec.state_freq_param_prior.cloneAndSetLot(self.r))
 				else:
+					self.parent.phycassert(mspec.state_freq_prior.getDistName() == 'Dirichlet', 'mspec.state_freq_prior must be of type Dirichlet')
 					m.setStateFreqPrior(mspec.state_freq_prior.cloneAndSetLot(self.r))
 			elif mspec.type == 'hky':
 				m.setKappaPrior(mspec.kappa_prior.cloneAndSetLot(self.r))
@@ -342,18 +347,21 @@ class MarkovChain(LikelihoodCore):
 				self.subset_relrates_move.fixParameter()
 			if partition.subset_relrates_prior is None:
 				param_list = tuple([1.0]*nmodels)
-				self.subset_relrates_move.setMultivarPrior(Dirichlet(param_list))
+				d = Dirichlet(param_list)
+				self.subset_relrates_move.setMultivarPrior(d)
+				self.partition_model.setSubsetRelRatePrior(d)
 			else:
 				self.parent.phycassert(partition.subset_relrates_prior.getDistName() == 'Dirichlet', 'partition.subset_relrates_prior must be of type Dirichlet')
 				self.parent.phycassert(partition.subset_relrates_prior.getNParams() == nmodels, 'partition.subset_relrates_prior has dimension %d, but there are %d subsets in the partition. Try setting partion.subset_relrates_prior = None to get default flat Dirichlet prior of the appropriate dimension' % (partition.subset_relrates_prior.getNParams(), nmodels))
 				self.subset_relrates_move.setMultivarPrior(partition.subset_relrates_prior)
+				self.partition_model.setSubsetRelRatePrior(partition.subset_relrates_prior)
 			self.chain_manager.addMove(self.subset_relrates_move)
 		
 		if self.parent.opts.fix_topology:
 			# Create an EdgeMove object to handle Metropolis-Hastings
 			# updates to the edge lengths only (does not change the topology)
 			self.edge_move = Likelihood.EdgeMove()
-			self.edge_move.setName("Edge length move")
+			self.edge_move.setName("edge_move")
 			self.edge_move.setWeight(self.parent.opts.edge_move_weight)
 			self.edge_move.setPosteriorTuningParam(self.parent.opts.edge_move_lambda)
 			self.edge_move.setPriorTuningParam(self.parent.opts.edge_move_lambda0)
@@ -369,7 +377,7 @@ class MarkovChain(LikelihoodCore):
 		if self.parent.opts.use_unimap:
 			# Create a UnimapFastNNIMove (replaces LargetSimonMove for unimap analyses)
 			self.unimap_fast_nni_move = Likelihood.UnimapFastNNIMove()
-			self.unimap_fast_nni_move.setName("Unimap Fast NNI move")
+			self.unimap_fast_nni_move.setName("unimap_fastNNI_move")
 			self.unimap_fast_nni_move.setWeight(self.parent.opts.unimap_fast_nni_move_weight)
 			self.unimap_fast_nni_move.setTree(self.tree)
 			self.unimap_fast_nni_move.setModel(model0)
@@ -380,7 +388,7 @@ class MarkovChain(LikelihoodCore):
 			# Create a UnimapSampleAmbigMove
 			wt = self.parent.opts.unimap_sample_ambig_move_weight
 			self.unimap_sample_ambig_move = Likelihood.UnimapSampleAmbigMove(self.likelihood, self.tree, model0, wt)
-			self.unimap_sample_ambig_move.setName("Unimap Sample Ambig move")
+			self.unimap_sample_ambig_move.setName("unimap_sample_ambig_move")
 			num_ambig = self.unimap_sample_ambig_move.getNumAmbigNodes()
 			if wt > 0.0 and num_ambig > 0:
 				self.unimap_sample_ambig_move.setLot(self.r)
@@ -388,7 +396,7 @@ class MarkovChain(LikelihoodCore):
 
 			# Create a UnimapNNIMove (replaces LargetSimonMove for unimap analyses)
 			self.unimap_nni_move = Likelihood.UnimapNNIMove()
-			self.unimap_nni_move.setName("Unimap NNI move")
+			self.unimap_nni_move.setName("unimap_NNI_move")
 			self.unimap_nni_move.setWeight(self.parent.opts.unimap_nni_move_weight)
 			self.unimap_nni_move.setTree(self.tree)
 			self.unimap_nni_move.setModel(model0)
@@ -398,7 +406,7 @@ class MarkovChain(LikelihoodCore):
 
 			# Create a UnimapNodeSlideMove (replaces LargetSimonMove for unimap analyses)
 			self.unimap_node_slide_move = Likelihood.UnimapNodeSlideMove()
-			self.unimap_node_slide_move.setName("Unimap NodeSlide move")
+			self.unimap_node_slide_move.setName("unimap_nodeslide_move")
 			self.unimap_node_slide_move.setWeight(self.parent.opts.unimap_node_slide_move_weight)
 			self.unimap_node_slide_move.setTree(self.tree)
 			self.unimap_node_slide_move.setModel(model0)
@@ -408,7 +416,7 @@ class MarkovChain(LikelihoodCore):
 
 			# Create a MappingMove (to refresh the mapping for all sites)
 			self.unimapping_move = Likelihood.MappingMove()
-			self.unimapping_move.setName("Univent mapping move")
+			self.unimapping_move.setName("univent_mapping_move")
 			self.unimapping_move.setWeight(self.parent.opts.mapping_move_weight)
 			self.unimapping_move.setTree(self.tree)
 			self.unimapping_move.setModel(model0)
@@ -419,7 +427,7 @@ class MarkovChain(LikelihoodCore):
 			# Create a UnimapEdgeMove object to handle Metropolis-Hastings
 			# updates to the edge lengths only (does not change the topology)
 			self.unimap_edge_move = Likelihood.UnimapEdgeMove()
-			self.unimap_edge_move.setName("Unimap edge length move")
+			self.unimap_edge_move.setName("unimap_edge_length_move")
 			self.unimap_edge_move.setWeight(self.parent.opts.unimap_edge_move_weight)
 			self.unimap_edge_move.setPosteriorTuningParam(self.parent.opts.unimap_edge_move_lambda)
 			self.unimap_edge_move.setPriorTuningParam(self.parent.opts.unimap_edge_move_lambda0)
@@ -488,7 +496,7 @@ class MarkovChain(LikelihoodCore):
 				self.topo_prior_calculator.chooseResolutionClassPrior()
 				
 			# Continue setting up BushMove object
-			self.bush_move.setName("Bush move")
+			self.bush_move.setName("bush_move")
 			self.bush_move.setWeight(self.parent.opts.bush_move_weight)
 			self.bush_move.setTree(self.tree)
 			self.bush_move.setModel(model0)
