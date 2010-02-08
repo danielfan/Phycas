@@ -11,9 +11,6 @@
 #    'Examples',
 #    ]
 
-POLPY_NEWWAY = True
-partitioning = True
-
 def name_of(_obj):
     k=None
     v=None

@@ -25,10 +25,7 @@ class LikeImpl(CommonFunctions):
 		self.ntax				   = None
 		self.nchar				   = None
 		self.reader				   = NexusReader()
-		if partitioning:
-			self.npatterns			= []		# Will hold the actual number of patterns for each subset after data file has been read
-		else:
-			self.npatterns			= 0			# Will hold the actual number of patterns after data file has been read
+		self.npatterns			= []		# Will hold the actual number of patterns for each subset after data file has been read
 
 	def _loadData(self, matrix):
 		self.data_matrix = matrix

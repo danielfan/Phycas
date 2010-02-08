@@ -41,9 +41,7 @@ TipData::TipData(
 	cla_pool(cla_storage),
 	sMat(0L)
 	{
-#if POLPY_NEWWAY
-    // not yet working for partitioned models
-#else
+#if DISABLED_UNTIL_SIMULATION_WORKING_WITH_PARTITIONING
 	const unsigned nToStates = nStates;	// simulated data never has ambiguities, so num. rows in T matrix is just nStates
 	ownedPMatrices.Initialize(nRates, nToStates, nStates);
 	pMatrixTranspose = ownedPMatrices.ptr;
@@ -53,7 +51,6 @@ TipData::TipData(
 #endif
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Constructor for TipData objects that will be used in likelihood calculations and thus needs to store the observed
 |	data for the tip as well as information about local state codes.
@@ -92,7 +89,7 @@ TipData::TipData(
 		pMatrixTranspose[i].Initialize(num_rates, num_obs_states, num_states);
 		}
 
-#if POLPY_OLDWAY	// unimap not yet working for partitioned models
+#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
     if (using_unimap)
         {
         univents.resize(nPatterns);
@@ -121,74 +118,14 @@ TipData::TipData(
         }
 #endif
 	}
-#else
-/*----------------------------------------------------------------------------------------------------------------------
-|	Constructor for TipData objects that will be used in likelihood calcuations and thus need to store the observed
-|	data for the tip as well as information about local state codes.
-*/
-TipData::TipData(
-  bool                              			using_unimap,       /**< is true if tips are to be prepared for uniformized mapping likelihood; it is false if tips are to be prepared for Felsenstein-style integrated likelihoods */
-  unsigned				            			nPatterns,			/**< is the number of site patterns */
-  const std::vector<unsigned int> &				stateListPosVec,	/**< is the vector of positions of each state into the `state_codes' vector */
-  boost::shared_array<const int_state_code_t>	stateCodesShPtr,	/**< is the `state_codes' vector */ 
-  unsigned										nRates,				/**< is the number of relative rate categories */
-  unsigned										nStates,			/**< is the number of states in the model */
-  double * * *									pMatTranspose,		/**< is an alias to the rates by states by states pMatrix array, may be NULL */
-  bool											managePMatrices, 	/**< if true, a 3D matrix will be allocated (if pMat is also NULL, the pMatrices will alias ownedPMatrices.ptr) */ 
-  CondLikelihoodStorageShPtr 					cla_storage)
-	:
-    unimap(using_unimap),
-	state(-1), 
-	state_list_pos(stateListPosVec), 
-	state_codes(stateCodesShPtr), 
-	pMatrixTranspose(pMatTranspose),
-	cla_pool(cla_storage)
-	{
-	const unsigned nObservedStates = nStates + 1 + state_list_pos.size();
-    if (using_unimap)
-        {
-        univents.resize(nPatterns);
-        univents.setEndStates(state_codes.get());
-        std::vector<int_state_code_t> & scVec = univents.getEndStatesVecRef();
-        for (unsigned i = 0; i < nPatterns; ++i)
-        	{
-        	const int_state_code_t sc = state_codes[i];
-        	////////////////////////////////////////////////////////////////////
-        	// @@@@
-        	// This is really dangerous. 
-        	// In this loop, we alter the ambiguous data to have state 0.
-        	// This should work because we are calling sampleTipsAsDisconnected before MCMC (in MCMCManager.py)
-        	// It is hard to guarantee this (we could add a boolean flag to the univents class
-        	//		so that we could at least flag this univent as temporarily bogus).
-        	// It would be hard to do the correct sampling here because we would need the 
-        	//		neighboring nodes and a Lot instance.
-        	////////////////////////////////////////////////////////////////////
-        	if (sc < 0 || (int)sc >= (int)nStates)
-        		scVec[i] = 0; 
-        	// throw XLikelihood("Sorry, we currently do not support data sets with ambiguity or gaps when you are using uniformization-based methods");
-        	}
-        }
-	if (managePMatrices)
-		{
-		ownedPMatrices.Initialize(nRates, nObservedStates, nStates);
-		//@POL 31-Oct-2005 what if managePMatrices is true, but pMatrixTranspose is not NULL?
-		if (pMatrixTranspose == NULL)
-			pMatrixTranspose = ownedPMatrices.ptr;
-		}
-	sMat =  NewTwoDArray<unsigned>(nStates, nStates); //@ we should make this only true in unimap mode!!!
-	for (unsigned i = 0; i < nStates*nStates ; ++i)
-		sMat[0][i] = 0;
-	}
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Destructor ensures that all CLA structures are returned to `cla_pool'. The `ownedPMatrices' and `univents' data 
 |   members takes care of deleting themselves when they go out of scope.
 */
 TipData::~TipData()
 	{
-#if POLPY_OLDWAY	// unimap not yet working for partitioned models
+#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
 	DeleteTwoDArray<unsigned>(sMat);
 #endif
 	// Invalidate the parental CLAs if they exist
@@ -205,29 +142,6 @@ TipData::~TipData()
 		parCachedCLA.reset();
 		}
 	}
-#else
-/*----------------------------------------------------------------------------------------------------------------------
-|	Destructor ensures that all CLA structures are returned to `cla_pool'. The `ownedPMatrices' and `univents' data 
-|   members takes care of deleting themselves when they go out of scope.
-*/
-TipData::~TipData()
-	{
-	DeleteTwoDArray<unsigned>(sMat);
-	// Invalidate the parental CLAs if they exist
-	if (parWorkingCLA)
-		{
-		cla_pool->putCondLikelihood(parWorkingCLA);
-		parWorkingCLA.reset();
-		}
-
-	// Remove cached parental CLAs if they exist
-	if (parCachedCLA)
-		{
-		cla_pool->putCondLikelihood(parCachedCLA);
-		parCachedCLA.reset();
-		}
-	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns `parWorkingCLA' data member. If `parWorkingCLA' does not currently point to anything, a CondLikelihood 

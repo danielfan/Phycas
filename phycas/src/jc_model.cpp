@@ -59,39 +59,10 @@ std::string JC::getModelName() const
 |	compatability with MrBayes). The JC model provides additional column labels for the gamma shape parameter (if the 
 |	number of rates is greater than 1) and the pinvar parameter (if an invariable sites model is being used).
 */
-#if POLPY_NEWWAY
 std::string JC::paramHeader() const	/**< is the suffix to tack onto the parameter names for this model (useful for partitioned models to show to which partition subset the parameter belongs) */
 	{
 	return Model::paramHeader();
 	}
-#else //old way
-std::string JC::paramHeader() const
-	{
-	std::string s = "";
-	if (is_flex_model)
-		{
-		s += "\tncat";
-		//unsigned i;
-		//for ( i = 0; i < num_gamma_rates; ++i)
-		//	{
-		//	s += "\trate";
-		//	s += i;
-		//	}
-		//for ( i = 0; i < num_gamma_rates; ++i)
-		//	{
-		//	s += "\trateprob";
-		//	s += i;
-		//	}
-		}
-	else if (num_gamma_rates > 1)
-		{
-		s += "\tshape";
-		}
-	if (is_pinvar_model)
-		s += "\tpinvar";
-	return s;
-	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	The only parameters in the JC model are edge lengths, which are not reported by this function, but we must provide
@@ -100,41 +71,7 @@ std::string JC::paramHeader() const
 std::string JC::paramReport(
   unsigned ndecimals) const /**< floating point precision to use */
 	{
-    std::string fmt = boost::str(boost::format("%%.%df\t") % ndecimals);
-	std::string s;
-#if POLPY_NEWWAY
-	s += Model::paramReport(ndecimals);
-#else	//old way
-	if (is_flex_model)
-		{
-		s += str(boost::format("%d\t") % num_gamma_rates);
-		//s += str(boost::format("\t%d") % num_gamma_rates);
-
-		//std::vector<double> rates(num_gamma_rates, 0.0);
-		//std::vector<double> probs(num_gamma_rates, 0.0);
-		//normalizeRatesAndProbs(rates, probs);
-		//unsigned i;
-		//for ( i = 0; i < num_gamma_rates; ++i)
-		//	{
-		//	s += str(boost::format("\t%.5f") % rates[i]);
-		//	}
-		//for ( i = 0; i < num_gamma_rates; ++i)
-		//	{
-		//	s += str(boost::format("\t%.5f") % probs[i]);
-		//	}
-		}
-	else if (num_gamma_rates > 1)
-		{
-		s += str(boost::format(fmt) % gamma_shape);
-		//s += str(boost::format("\t%.5f") % gamma_shape);
-		}
-	if (is_pinvar_model)
-        {
-		s += str(boost::format(fmt) % pinvar);
-		//s += str(boost::format("\t%.5f") % pinvar);
-        }
-#endif
-	return s;
+	return Model::paramReport(ndecimals);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

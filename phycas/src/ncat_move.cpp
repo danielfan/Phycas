@@ -71,7 +71,7 @@ void NCatMove::reset()
 */
 void NCatMove::proposeNewState()
 	{
-#if POLPY_OLDWAY	// NCatMove not yet ready for partitioning
+#if DISABLED_UNTIL_FLEXCAT_WORKING_WITH_PARTITIONING
 	ncat_before = model->getNGammaRates();
 	addcat_move_proposed = (ncat_before == 1 ? true : (bool)(rng->Uniform(FILE_AND_LINE) < phi));
 

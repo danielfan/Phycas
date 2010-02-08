@@ -141,9 +141,8 @@ class BernoulliDistribution : public ProbabilityDistribution
 							~BernoulliDistribution();
 
         BernoulliDistribution * Clone() const;
-#if POLPY_NEWWAY
         BernoulliDistribution * cloneAndSetLot(Lot * other) const;
-#endif
+
 		virtual	bool		IsDiscrete() const;
 		virtual std::string	GetDistributionName() const;
 		virtual std::string	GetDistributionDescription() const;
@@ -168,9 +167,7 @@ class BinomialDistribution : public BernoulliDistribution
 							BinomialDistribution(const BinomialDistribution & other);
 							~BinomialDistribution();
 
-#if POLPY_NEWWAY
         BinomialDistribution * cloneAndSetLot(Lot * other) const;
-#endif
         BinomialDistribution * Clone() const;
 		virtual	bool		IsDiscrete() const;
 		virtual std::string	GetDistributionName() const;
@@ -207,9 +204,7 @@ class BetaDistribution  : public ProbabilityDistribution
 						BetaDistribution(const BetaDistribution & other);
 						~BetaDistribution();
 
-#if POLPY_NEWWAY
         BetaDistribution * cloneAndSetLot(Lot * other) const;
-#endif
         BetaDistribution * Clone() const;
 		bool			IsDiscrete() const;
 		std::string 	GetDistributionName() const;
@@ -239,9 +234,7 @@ class BetaPrimeDistribution  : public ProbabilityDistribution
 						BetaPrimeDistribution(const BetaPrimeDistribution & other);
 						~BetaPrimeDistribution();
 
-#if POLPY_NEWWAY
         BetaPrimeDistribution * cloneAndSetLot(Lot * other) const;
-#endif
         BetaPrimeDistribution * Clone() const;
 		bool			IsDiscrete() const;
 		std::string 	GetDistributionName() const;
@@ -268,9 +261,7 @@ class ImproperUniformDistribution : public ProbabilityDistribution
 					ImproperUniformDistribution(const ImproperUniformDistribution & other);
 					~ImproperUniformDistribution();
 
-#if POLPY_NEWWAY
         ImproperUniformDistribution * cloneAndSetLot(Lot * other) const;
-#endif
         ImproperUniformDistribution * Clone() const;
 		bool		IsDiscrete() const;
 		std::string	GetDistributionName() const;
@@ -296,9 +287,7 @@ class UniformDistribution : public ProbabilityDistribution
 					UniformDistribution(const UniformDistribution & other);
 					~UniformDistribution();
 
-#if POLPY_NEWWAY
         UniformDistribution * cloneAndSetLot(Lot * other) const;
-#endif
         UniformDistribution * Clone() const;
 		bool		IsDiscrete() const;
 		std::string	GetDistributionName() const;
@@ -330,9 +319,7 @@ class GammaDistribution : public ProbabilityDistribution
 					    GammaDistribution(const GammaDistribution & other);
 						~GammaDistribution();
 
-#if POLPY_NEWWAY
         GammaDistribution * cloneAndSetLot(Lot * other) const;
-#endif
         GammaDistribution * Clone() const;
 		bool			IsDiscrete() const;
 		std::string		GetDistributionName() const;
@@ -367,9 +354,7 @@ class InverseGammaDistribution : public GammaDistribution
 					InverseGammaDistribution(const InverseGammaDistribution & other);
 					~InverseGammaDistribution();
 
-#if POLPY_NEWWAY
         InverseGammaDistribution * cloneAndSetLot(Lot * other) const;
-#endif
         InverseGammaDistribution * Clone() const;
 		bool		IsDiscrete() const;
 		std::string	GetDistributionName() const;
@@ -395,9 +380,7 @@ class ExponentialDistribution : public GammaDistribution
                     ExponentialDistribution(const ExponentialDistribution & other);
 					~ExponentialDistribution();
 
-#if POLPY_NEWWAY
         ExponentialDistribution * cloneAndSetLot(Lot * other) const;
-#endif
         ExponentialDistribution * Clone() const;
 		bool		IsDiscrete() const;
 		std::string	GetDistributionName() const;
@@ -417,9 +400,7 @@ class NormalDistribution : public ProbabilityDistribution
 					NormalDistribution(const NormalDistribution & other);
 					~NormalDistribution();
 
-#if POLPY_NEWWAY
         NormalDistribution * cloneAndSetLot(Lot * other) const;
-#endif
         NormalDistribution * Clone() const;
 		bool		IsDiscrete() const;
 		std::string	GetDistributionName() const;
@@ -453,9 +434,7 @@ class DirichletDistribution : public MultivariateProbabilityDistribution
                         					DirichletDistribution(const DirichletDistribution & other);
 											~DirichletDistribution() {}
 	
-#if POLPY_NEWWAY
         DirichletDistribution * 			cloneAndSetLot(Lot * other) const;
-#endif
         DirichletDistribution * 			Clone() const;
 		void								SetLot(Lot * other);
 		void								ResetLot();

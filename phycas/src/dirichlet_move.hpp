@@ -60,11 +60,9 @@ class DirichletMove : public MCMCUpdater
 
 		// Utilities
 		void						reset();
-#if POLPY_NEWWAY
 		virtual void				sendCurrValuesToModel(const double_vect_t & v) {}
 		virtual void				getCurrValuesFromModel(double_vect_t & v) {}
 		virtual double_vect_t		listCurrValuesFromModel();
-#endif
         virtual void                getParams() {}
         virtual void                setParams(const std::vector<double> & v) {}
 
@@ -109,11 +107,9 @@ class StateFreqMove : public DirichletMove
 									StateFreqMove();
                                     virtual ~StateFreqMove() {}
 
-#if POLPY_NEWWAY
 		virtual void				sendCurrValuesToModel(const double_vect_t & v);
 		virtual void				getCurrValuesFromModel(double_vect_t & v);
 		virtual double_vect_t		listCurrValuesFromModel();
-#endif
         virtual void                getParams();
         virtual void                setParams(const std::vector<double> & v);
 
@@ -133,11 +129,9 @@ class RelRatesMove : public DirichletMove
 									RelRatesMove();
                                     virtual ~RelRatesMove() {}
 
-#if POLPY_NEWWAY
 		virtual void				sendCurrValuesToModel(const double_vect_t & v);
 		virtual void				getCurrValuesFromModel(double_vect_t & v);
 		virtual double_vect_t		listCurrValuesFromModel();
-#endif
         virtual void                getParams();
         virtual void                setParams(const std::vector<double> & v);
 
@@ -146,7 +140,6 @@ class RelRatesMove : public DirichletMove
 		RelRatesMove &				operator=(const RelRatesMove &);	// never use - don't define
     };
 	
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	A SubsetRelRatesMove proposes new subset relative rates that are slightly different than the current rates by  
 |   sampling from a Dirichlet distribution with parameters equal to the current rates multiplied by a large value (the 
@@ -170,7 +163,6 @@ class SubsetRelRatesMove : public DirichletMove
 		PartitionModelShPtr			partition_model;
 		SubsetRelRatesMove &		operator=(const SubsetRelRatesMove &);	// never use - don't define
     };
-#endif
 
 } // namespace phycas
 

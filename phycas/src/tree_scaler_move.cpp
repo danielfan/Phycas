@@ -127,11 +127,7 @@ bool TreeScalerMove::update()
     proposeNewState();
 
     likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
-#if POLPY_NEWWAY
 	double curr_ln_prior		= recalcPrior();
-#else //old way
-	double curr_ln_prior		= recalcPrior();
-#endif
 	double curr_ln_like			= likelihood->calcLnL(tree);
 
     double prev_posterior = 0.0;

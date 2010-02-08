@@ -37,11 +37,7 @@ class CondLikelihood
 	{
 	public:
 
-#if POLPY_NEWWAY
 									CondLikelihood(const uint_vect_t & npatterns, const uint_vect_t & nrates, const uint_vect_t & nstates);
-#else // old way
-									CondLikelihood(unsigned npatterns, unsigned nrates, unsigned nstates);
-#endif
 
 		LikeFltType *				getCLA();
 		LikeFltType *				getCLA() const;
@@ -57,9 +53,7 @@ class CondLikelihood
 		unsigned					getUnderflowNumEdges() const;
 		void						setUnderflowNumEdges(unsigned n);
 		
-#if POLPY_NEWWAY
 		static unsigned				calcCLALength(const uint_vect_t & npatterns, const uint_vect_t & nrates, const uint_vect_t & nstates);
-#endif
 
 	private:
 
@@ -71,9 +65,7 @@ class CondLikelihood
 
 		unsigned 					numEdgesSinceUnderflowProtection;	/**< The number of edges traversed since the underflow protection factor was last updated */
 		
-#if POLPY_NEWWAY
 		unsigned 					total_num_patterns;					/**< The number of patterns over all partition subsets */
-#endif
 	};
 
 typedef boost::shared_ptr<CondLikelihood> CondLikelihoodShPtr;

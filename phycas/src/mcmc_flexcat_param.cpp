@@ -28,7 +28,6 @@
 namespace phycas
 {
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Overrides base class version to set the value representing this flex rate param in `model' to `v'.
 */
@@ -45,16 +44,6 @@ double FlexRateParam::getCurrValueFromModel()
 	{
     return model->getFlexRateUnnorm(which);
 	}
-#else	//old way
-/*----------------------------------------------------------------------------------------------------------------------
-|	Overrides base class version to set `curr_value' to the corresponding value in the `gamma_rates_unnorm' vector in 
-|   `model'.
-*/
-void FlexRateParam::setCurrValueFromModel()
-	{
-    curr_value = model->getFlexRateUnnorm(which);
-	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	FlexRateParam is a functor whose operator() returns a value proportional to the full-conditional posterior
@@ -72,14 +61,8 @@ double FlexRateParam::operator()(
 
     if (r > left_value && r < right_value)
 		{
-#if POLPY_NEWWAY
 		sendCurrValueToModel(r);
 		likelihood->recalcRelativeRates();	// must do this whenever one of the relative rates changes
-#else //old way
-		model->setFlexRateUnnorm(which, r);
-		likelihood->recalcRelativeRates();	// must do this whenever one of the relative rates changes
-        curr_value = r;
-#endif
 		recalcPrior();
 		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
         curr_ln_like = likelihood->calcLnL(tree);
@@ -96,7 +79,6 @@ double FlexRateParam::operator()(
         return ln_zero;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Overrides base class version to set relevant value from the `gamma_rate_probs' vector in `model' to `v'.
 */
@@ -112,16 +94,6 @@ double FlexProbParam::getCurrValueFromModel()
 	{
     return model->getFlexProbUnnorm(which);
 	}
-#else //old way
-/*----------------------------------------------------------------------------------------------------------------------
-|	Overrides base class version to set `curr_value' to the corresponding value in the `gamma_rate_probs' vector in 
-|   `model'.
-*/
-void FlexProbParam::setCurrValueFromModel()
-	{
-    curr_value = model->getFlexProbUnnorm(which);
-	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	FlexProbParam is a functor whose operator() returns a value proportional to the full-conditional posterior
@@ -137,14 +109,8 @@ double FlexProbParam::operator()(
 
     if (f > 0.0)
 		{
-#if POLPY_NEWWAY
 		sendCurrValueToModel(f);
 		likelihood->recalcRelativeRates();	// must do this whenever one of the rate probabilities changes
-#else //old way
-		model->setFlexProbUnnorm(which, f);
-		likelihood->recalcRelativeRates();	// must do this whenever one of the rate probabilities changes
-        curr_value = f;
-#endif
 		recalcPrior();
 		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
         curr_ln_like = likelihood->calcLnL(tree);

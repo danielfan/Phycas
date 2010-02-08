@@ -340,7 +340,6 @@ StateFreqMove::StateFreqMove() : DirichletMove()
 	dim = 4;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the state frequencies of the associated HKY or GTR model to those in the supplied vector `v'.
 */
@@ -388,29 +387,13 @@ double_vect_t StateFreqMove::listCurrValuesFromModel()
     	}
 	return v;
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Obtains the current state frequencies from the model, storing them in the data member `orig_params'.
 */
 void StateFreqMove::getParams()
 	{
-#if POLPY_NEWWAY
 	getCurrValuesFromModel(orig_params);
-#else //old way
-	PHYCAS_ASSERT(dim > 0);
-	if (model)
-		{
-    	const std::vector<double> & rfreqs = model->getStateFreqs();
-    	orig_params.resize(rfreqs.size());
-		PHYCAS_ASSERT(dim == rfreqs.size());
-    	std::copy(rfreqs.begin(), rfreqs.end(), orig_params.begin());
-    	}
-    else
-    	{
-    	orig_params.assign(dim, 1.0/(double)dim);
-    	}
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -430,7 +413,6 @@ RelRatesMove::RelRatesMove() : DirichletMove()
 	dim = 6;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the relative rates of the associated GTR model to those in the supplied vector `v'.
 */
@@ -482,30 +464,13 @@ double_vect_t RelRatesMove::listCurrValuesFromModel()
     	}
 	return v;
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Obtains the current relative rates from the model, storing them in the data member `orig_params'.
 */
 void RelRatesMove::getParams()
 	{
-#if POLPY_NEWWAY
 	getCurrValuesFromModel(orig_params);
-#else //old way
-	PHYCAS_ASSERT(dim > 0);
-	GTR * gtr_model = dynamic_cast<GTR *>(model.get());
-	if (gtr_model)
-		{
-		const std::vector<double> & rrates = gtr_model->getRelRates();
-		PHYCAS_ASSERT(dim == rrates.size());
-		orig_params.resize(rrates.size());
-		std::copy(rrates.begin(), rrates.end(), orig_params.begin());
-    	}
-    else
-    	{
-    	orig_params.assign(dim, 1.0/(double)dim);
-    	}
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -518,7 +483,6 @@ void RelRatesMove::setParams(
     gtr_model->setRelRates(v);
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	The constructor simply calls the base class (DirichletMove) constructor.
 */
@@ -593,6 +557,4 @@ void SubsetRelRatesMove::setPartitionModel(
 	{
 	partition_model = m;
 	}
-
-#endif
 

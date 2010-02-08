@@ -39,20 +39,12 @@ class UnderflowManager
 									
 		void 						setTriggerSensitivity(unsigned nedges);
 		void						setCorrectToValue(double maxval);
-#if POLPY_NEWWAY
 		void 						setDimensions(const uint_vect_t & np, const uint_vect_t & nr, const uint_vect_t & ns);
-#else // old way
-		void 						setDimensions(unsigned np, unsigned nr, unsigned ns);
-#endif
 		
 		double                      getUnderflowMaxValue() const;
 		
 		void 						twoTips(CondLikelihood & cond_like) const;
-#if POLPY_NEWWAY		
 		void						check(CondLikelihood & cond_like, const CondLikelihood & left_cond_like, const CondLikelihood & right_cond_like, const count_vect_t & counts, bool polytomy) const;
-#else	// old way
-		void						check(CondLikelihood & cond_like, const CondLikelihood & left_cond_like, const CondLikelihood & right_cond_like, const CountVectorType & counts, bool polytomy) const;
-#endif
 
 		double						getCorrectionFactor(unsigned pat, ConstCondLikelihoodShPtr condlike_shptr) const;
 		double						correctSiteLike(double & site_like, unsigned pat, ConstCondLikelihoodShPtr condlike_shptr) const;
@@ -60,16 +52,10 @@ class UnderflowManager
 
 	protected:
 	
-#if POLPY_NEWWAY
 		uint_vect_t					num_rates;				/**< Vector of the number of among-site rate categories for each partition subset */
 		uint_vect_t					num_patterns;			/**< Vector of the number of data patterns for each partition subset */
 		uint_vect_t 				num_states;				/**< Vector of the number of states for each partition subset */
 		unsigned					total_patterns;			/**< The total number of patterns over all partition subsets */
-#else // old way
-		unsigned					num_rates;				/**< Number of among-site rate categories */
-		unsigned					num_patterns;			/**< Number of data patterns */
-		unsigned 					num_states;				/**< Number of states */
-#endif
 		unsigned					underflow_num_edges;    /**< Number of edges to traverse before underflow risk is evaluated */
 		double						underflow_max_value;    /**< Maximum of the `num_states' conditional likelihoods for a given rate and pattern after underflow correction */
 		mutable std::vector<double>	underflow_work;			/**< Workspace used when correcting for underflow (will have length equal to num_patterns) */

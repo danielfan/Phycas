@@ -34,11 +34,9 @@ using namespace phycas;
 Model::Model(
   unsigned numStates)	/**< is the number of basic states (e.g. 4 for DNA) */
 	:
-#if POLPY_NEWWAY
 	subset_index(-1),
 	internal_edgelen_hyperparam(0.1),
 	external_edgelen_hyperparam(0.1),
-#endif
    	separate_int_ext_edgelen_priors(false),
 	state_freq_fixed(false),
 	edge_lengths_fixed(false),	
@@ -183,7 +181,6 @@ ProbDistShPtr Model::getEdgeLenHyperPrior()
 	return edgeLenHyperPrior;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Predicate that returns value of `is_flex_model' data member.
 */
@@ -203,7 +200,6 @@ bool Model::hasEdgeLenHyperPrior()
 	else 
 		return false;
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes all `numRates' transition probability matrices. Assumes edge lengths in `edgeLength' array have already
@@ -879,13 +875,8 @@ void Model::setPinvarPrior(ProbDistShPtr d)
 |	nucleotide data (i.e. no ambiguities).
 */
 void Model::buildStateList(
-#if POLPY_NEWWAY
   state_list_t & state_list,				/**< is the vector of state codes (see TipData documentation for explanation) */
   state_list_pos_t & state_list_pos)	/**< is the vector of positions of states within `state_list' */
-#else
-  VecStateList & state_list,		/**< is the vector of state codes (see TipData documentation for explanation) */
-  VecStateListPos & state_list_pos)	/**< is the vector of positions of states within `state_list' */
-#endif
   const
 	{
 	state_list.clear();
@@ -1092,27 +1083,18 @@ double Model::getStateFreqUnnorm(
 |	length parameters, the edge length hyperparameters and rate heterogeneity (gamma shape and pinvar) parameters are 
 |	created.
 */
-#if POLPY_NEWWAY
 void Model::createParameters(
   TreeShPtr t,									    /**< is the tree (the nodes of which are needed for creating edge length parameters) */
   MCMCUpdaterVect & edgelens_vect_ref,			    /**< is the vector of edge length parameters to fill */
   MCMCUpdaterVect & edgelen_hyperparams_vect_ref,	/**< is the vector of edge length hyperparameters to fill */
   MCMCUpdaterVect & parameters_vect_ref,		    /**< is the vector of model-specific parameters to fill */
   int subset_pos) 									/**< if 0 (first subset) or -1 (only subset), edge length parameters and hyperparams will be added; otherwise, the `edgelens' and `edgelen_hyperparams' vectors returned will be empty */
-#else //old way
-void Model::createParameters(
-  TreeShPtr t,									    /**< is the tree (the nodes of which are needed for creating edge length parameters) */
-  MCMCUpdaterVect & edgelens_vect_ref,			    /**< is the vector of edge length parameters to fill */
-  MCMCUpdaterVect & edgelen_hyperparams_vect_ref,	/**< is the vector of edge length hyperparameters to fill */
-  MCMCUpdaterVect & parameters_vect_ref) const	    /**< is the vector of model-specific parameters to fill */
-#endif
     {
 	PHYCAS_ASSERT(t);
 	PHYCAS_ASSERT(edgelens_vect_ref.empty());
 	PHYCAS_ASSERT(edgelen_hyperparams_vect_ref.empty());
 	PHYCAS_ASSERT(parameters_vect_ref.empty());
 	
-#if POLPY_NEWWAY
 	subset_index = subset_pos;
 	if (subset_index <= 0)
 		{
@@ -1202,78 +1184,6 @@ void Model::createParameters(
 		edgelen_hyper_params.resize(edgelen_hyperparams_vect_ref.size());
 		std::copy(edgelen_hyperparams_vect_ref.begin(), edgelen_hyperparams_vect_ref.end(), edgelen_hyper_params.begin());
 	}
-#else	//old way
-	// Add the edge length parameter(s)
-	if (separate_int_ext_edgelen_priors)
-		{
-		// Add two edge length parameters to manage the priors for all edge lengths in the tree;
-		// One of these two parameters will be in charge of the prior on internal edge lengths,
-		// whereas the other will be in charge of external edge lengths. These edge length parameters 
-		// do not actually update any edge lengths: a Metropolis proposal such as the LargetSimonMove 
-		// is responsible for updating edge lengths.
-
-		// First the parameter governing external edge length priors
-		MCMCUpdaterShPtr p_external = MCMCUpdaterShPtr(new EdgeLenMasterParam(EdgeLenMasterParam::external));
-		std::string nm_external = str(boost::format("external edge length"));
-		p_external->setName(nm_external);
-		p_external->setTree(t);
-		p_external->setPrior(externalEdgeLenPrior);
-		if (edge_lengths_fixed)
-			p_external->fixParameter();
-		edgelens_vect_ref.push_back(p_external);
-
-		// Now the parameter governing internal edge length priors
-		MCMCUpdaterShPtr p_internal = MCMCUpdaterShPtr(new EdgeLenMasterParam(EdgeLenMasterParam::internal));
-		std::string nm_internal = str(boost::format("internal edge length"));
-		p_internal->setName(nm_internal);
-		p_internal->setTree(t);
-		p_internal->setPrior(internalEdgeLenPrior);
-		if (edge_lengths_fixed)
-			p_internal->fixParameter();
-		edgelens_vect_ref.push_back(p_internal);
-		}
-	else
-		{
-		// Add one edge length parameter to manage the priors for all edge lengths in the tree. 
-		// This edge length parameter does not actually update any edge lengths: a Metropolis proposal 
-		// such as the LargetSimonMove is responsible for updating edge lengths.
-		MCMCUpdaterShPtr p = MCMCUpdaterShPtr(new EdgeLenMasterParam(EdgeLenMasterParam::both));
-		std::string nm_external = str(boost::format("master edge length"));
-		p->setName(nm_external);
-		p->setTree(t);
-		p->setPrior(externalEdgeLenPrior);
-		if (edge_lengths_fixed)
-			p->fixParameter();
-		edgelens_vect_ref.push_back(p);
-		//std::cerr << "\n>>>>> MASTER EDGE LENGH PARAMETER use count = 2? " << p.use_count() << std::endl;
-		}
-	
-	// Save a vector of shared pointers so that we can modify their fixed/free status if we need to
-	edgelen_params.resize(edgelens_vect_ref.size());
-	std::copy(edgelens_vect_ref.begin(), edgelens_vect_ref.end(), edgelen_params.begin());
-
-	// Add edge length hyperparameters if requested
-	if (edgeLenHyperPrior)
-		{
-		// For each edge length parameter, create an edge length hyperparameter, passing it a shared
-		// pointer to the corresponding edge length parameter 
-		for (MCMCUpdaterVect::iterator it = edgelen_params.begin(); it != edgelen_params.end(); ++it)
-			{
-			EdgeLenMasterParamShPtr pit = boost::shared_dynamic_cast<EdgeLenMasterParam>(*it);
-			MCMCUpdaterShPtr p = MCMCUpdaterShPtr(new HyperPriorParam(pit));
-			p->setName(std::string("edge length hyperparameter"));
-			p->setTree(t);
-			p->setPrior(edgeLenHyperPrior);
-			if (edgelen_hyperprior_fixed)
-				p->fixParameter();
-			edgelen_hyperparams_vect_ref.push_back(p);
-			}
-
-		// Save a vector of shared pointers so that we can modify their fixed/free status if we need to
-		edgelen_hyper_params.resize(edgelen_hyperparams_vect_ref.size());
-		std::copy(edgelen_hyperparams_vect_ref.begin(), edgelen_hyperparams_vect_ref.end(), edgelen_hyper_params.begin());
-		}
-#endif
 
 	// Create any model-specific parameters and add to the parameters vector
 	if (is_flex_model)
@@ -1299,14 +1209,10 @@ void Model::createParameters(
 		std::sort(gamma_rates_unnorm.begin(), gamma_rates_unnorm.end());
 
 		MCMCUpdaterShPtr rate_param = MCMCUpdaterShPtr(new FlexRateParam(num_flex_spacers, flex_upper_rate_bound, gamma_rates_unnorm));
-#if POLPY_NEWWAY
 		if (subset_pos < 0)
 			rate_param->setName(std::string("FLEXrates")); 
 		else
 			rate_param->setName(boost::str(boost::format("FLEXrates_%d") % (subset_pos + 1)));
-#else //old way
-		rate_param->setName("FLEX rates"); 
-#endif
 		rate_param->setTree(t);
 		rate_param->setPrior(flex_rate_param_prior);
 		if (flex_rates_fixed)
@@ -1315,14 +1221,10 @@ void Model::createParameters(
 		flex_rate_params.push_back(rate_param);
 
 		MCMCUpdaterShPtr prob_param = MCMCUpdaterShPtr(new FlexProbParam(gamma_rate_probs));
-#if POLPY_NEWWAY
 		if (subset_pos < 0)
 			prob_param->setName(std::string("FLEXprobs")); 
 		else
 			prob_param->setName(boost::str(boost::format("FLEXprobs_%d") % (subset_pos + 1)));
-#else //old way
-		prob_param->setName("FLEX probs");
-#endif
 		prob_param->setTree(t);
 		prob_param->setPrior(flex_prob_param_prior);
 		if (flex_probs_fixed)
@@ -1335,7 +1237,6 @@ void Model::createParameters(
 		PHYCAS_ASSERT(num_gamma_rates > 1);
 		PHYCAS_ASSERT(!gamma_shape_param);
 		gamma_shape_param = MCMCUpdaterShPtr(new DiscreteGammaShapeParam(invert_shape));
-#if POLPY_NEWWAY
         if (invert_shape)
 			{
 			if (subset_pos < 0)
@@ -1350,12 +1251,6 @@ void Model::createParameters(
 			else
 				gamma_shape_param->setName(boost::str(boost::format("gamma_shape_%d") % (subset_pos + 1)));
 			}
-#else //old way
-        if (invert_shape)
-    		gamma_shape_param->setName("Discrete gamma variance");
-        else
-    		gamma_shape_param->setName("Discrete gamma shape"); 
-#endif
         gamma_shape_param->setStartingValue(gamma_shape);
 		gamma_shape_param->setTree(t);
 		gamma_shape_param->setPrior(gamma_shape_prior);
@@ -1369,14 +1264,10 @@ void Model::createParameters(
 		{
 		PHYCAS_ASSERT(!pinvar_param);
 		pinvar_param = MCMCUpdaterShPtr(new PinvarParam());
-#if POLPY_NEWWAY
 		if (subset_pos < 0)
 			pinvar_param->setName(std::string("pinvar")); 
 		else
 			pinvar_param->setName(boost::str(boost::format("pinvar_%d") % (subset_pos + 1)));
-#else //old way
-		pinvar_param->setName("Proportion of invariable sites");
-#endif
         pinvar_param->setStartingValue(pinvar);
 		pinvar_param->setTree(t);
 		pinvar_param->setPrior(pinvar_prior);
@@ -1386,7 +1277,6 @@ void Model::createParameters(
 		}
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	This function provides the names of the columns that appear in the parameter file (i.e. the "*.p" file created by 
 |	MrBayes). All parameter files, regardless of the model, have "Gen", "LnL" and "TL" as the first three columns (for 
@@ -1457,7 +1347,6 @@ std::string Model::paramReport(
 		}
 	return s;
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Stores a flattened version of the supplied 2-dimensional array `twoDarr', storing the result in the supplied VecDbl

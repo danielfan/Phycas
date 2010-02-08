@@ -148,9 +148,7 @@ BOOST_PYTHON_MODULE(_ProbDistExt)
 	class_<MVNormalDistribution, bases<MultivariateProbabilityDistribution> >("MVNormalDistBase")
 		.def(init<const std::vector<double> &, const std::vector<double> &>())
 		.def(init<const MVNormalDistribution &>())
-#if POLPY_NEWWAY
 		.def("cloneAndSetLot", &MVNormalDistribution::cloneAndSetLot, return_value_policy<manage_new_object>())
-#endif
 		.def("clone", &MVNormalDistribution::Clone, return_value_policy<manage_new_object>())
 		.def("fit", &MVNormalDistribution::Fit)
 		.def("isDiscrete", &MVNormalDistribution::IsDiscrete)
@@ -176,9 +174,7 @@ BOOST_PYTHON_MODULE(_ProbDistExt)
 	class_<DirichletDistribution, bases<MultivariateProbabilityDistribution> >("DirichletDistBase")
 		.def(init<const std::vector<double> &>())
 		.def(init<const DirichletDistribution &>())
-#if POLPY_NEWWAY
 		.def("cloneAndSetLot", &DirichletDistribution::cloneAndSetLot, return_value_policy<manage_new_object>())
-#endif
 		.def("clone", &DirichletDistribution::Clone, return_value_policy<manage_new_object>())
 		.def("isDiscrete", &DirichletDistribution::IsDiscrete)
 		.def("getDistName", &DirichletDistribution::GetDistributionName)
@@ -202,9 +198,7 @@ BOOST_PYTHON_MODULE(_ProbDistExt)
 	class_<BetaDistribution, bases<ProbabilityDistribution, AdHocDensity> >("BetaDistBase")
 		.def(init<double, double>())
 		.def(init<const BetaDistribution &>())
-#if POLPY_NEWWAY
 		.def("cloneAndSetLot", &BetaDistribution::cloneAndSetLot, return_value_policy<manage_new_object>())
-#endif
 		.def("clone", &BetaDistribution::Clone, return_value_policy<manage_new_object>())
 		.def("isDiscrete", &BetaDistribution::IsDiscrete)
 		.def("getDistName", &BetaDistribution::GetDistributionName)
@@ -227,9 +221,7 @@ BOOST_PYTHON_MODULE(_ProbDistExt)
 	class_<BetaPrimeDistribution, bases<ProbabilityDistribution, AdHocDensity> >("BetaPrimeDistBase")
 		.def(init<double, double>())
 		.def(init<const BetaPrimeDistribution &>())
-#if POLPY_NEWWAY
 		.def("cloneAndSetLot", &BetaPrimeDistribution::cloneAndSetLot, return_value_policy<manage_new_object>())
-#endif
 		.def("clone", &BetaPrimeDistribution::Clone, return_value_policy<manage_new_object>())
 		.def("isDiscrete", &BetaPrimeDistribution::IsDiscrete)
 		.def("getDistName", &BetaPrimeDistribution::GetDistributionName)
@@ -251,9 +243,7 @@ BOOST_PYTHON_MODULE(_ProbDistExt)
 	class_<BernoulliDistribution, bases<ProbabilityDistribution> >("BernoulliDistBase")
 		.def(init<double>())
 		.def(init<const BernoulliDistribution &>())
-#if POLPY_NEWWAY
 		.def("cloneAndSetLot", &BernoulliDistribution::cloneAndSetLot, return_value_policy<manage_new_object>())
-#endif
 		.def("clone", &BernoulliDistribution::Clone, return_value_policy<manage_new_object>())
 		.def("isDiscrete", &BernoulliDistribution::IsDiscrete)
 		.def("getDistName", &BernoulliDistribution::GetDistributionName)
@@ -274,9 +264,7 @@ BOOST_PYTHON_MODULE(_ProbDistExt)
 	class_<BinomialDistribution, bases<ProbabilityDistribution> >("BinomialDistBase")
 		.def(init<double, double>())
 		.def(init<const BinomialDistribution &>())
-#if POLPY_NEWWAY
 		.def("cloneAndSetLot", &BinomialDistribution::cloneAndSetLot, return_value_policy<manage_new_object>())
-#endif
 		.def("clone", &BinomialDistribution::Clone, return_value_policy<manage_new_object>())
 		.def("isDiscrete", &BinomialDistribution::IsDiscrete)
 		.def("getDistName", &BinomialDistribution::GetDistributionName)
@@ -296,9 +284,7 @@ BOOST_PYTHON_MODULE(_ProbDistExt)
 		;
 	class_<ImproperUniformDistribution, bases<ProbabilityDistribution, AdHocDensity> >("ImproperUniformDistBase")
 		.def(init<const ImproperUniformDistribution &>())
-#if POLPY_NEWWAY
 		.def("cloneAndSetLot", &ImproperUniformDistribution::cloneAndSetLot, return_value_policy<manage_new_object>())
-#endif
 		.def("clone", &ImproperUniformDistribution::Clone, return_value_policy<manage_new_object>())
 		.def("isDiscrete", &ImproperUniformDistribution::IsDiscrete)
 		.def("getDistName", &ImproperUniformDistribution::GetDistributionName)
@@ -319,9 +305,7 @@ BOOST_PYTHON_MODULE(_ProbDistExt)
 	class_<UniformDistribution, bases<ProbabilityDistribution, AdHocDensity> >("UniformDistBase")
 		.def(init<double, double>())
 		.def(init<const UniformDistribution &>())
-#if POLPY_NEWWAY
 		.def("cloneAndSetLot", &UniformDistribution::cloneAndSetLot, return_value_policy<manage_new_object>())
-#endif
 		.def("clone", &UniformDistribution::Clone, return_value_policy<manage_new_object>())
 		.def("isDiscrete", &UniformDistribution::IsDiscrete)
 		.def("getDistName", &UniformDistribution::GetDistributionName)
@@ -342,9 +326,7 @@ BOOST_PYTHON_MODULE(_ProbDistExt)
 	class_<GammaDistribution, bases<ProbabilityDistribution, AdHocDensity> >("GammaDistBase")
 		.def(init<double, double>())
 		.def(init<const GammaDistribution &>())
-#if POLPY_NEWWAY
 		.def("cloneAndSetLot", &GammaDistribution::cloneAndSetLot, return_value_policy<manage_new_object>())
-#endif
 		.def("clone", &GammaDistribution::Clone, return_value_policy<manage_new_object>())
 		.def("isDiscrete", &GammaDistribution::IsDiscrete)
 		.def("getDistName", &GammaDistribution::GetDistributionName)
@@ -365,9 +347,7 @@ BOOST_PYTHON_MODULE(_ProbDistExt)
 	class_<ExponentialDistribution, bases<GammaDistribution, ProbabilityDistribution, AdHocDensity> >("ExponentialDistBase")
 		.def(init<double>())
 		.def(init<const ExponentialDistribution &>())
-#if POLPY_NEWWAY
 		.def("cloneAndSetLot", &ExponentialDistribution::cloneAndSetLot, return_value_policy<manage_new_object>())
-#endif
 		.def("clone", &ExponentialDistribution::Clone, return_value_policy<manage_new_object>())
 		.def("isDiscrete", &ExponentialDistribution::IsDiscrete)
 		.def("getDistName", &ExponentialDistribution::GetDistributionName)
@@ -388,9 +368,7 @@ BOOST_PYTHON_MODULE(_ProbDistExt)
 	class_<InverseGammaDistribution, bases<ProbabilityDistribution, AdHocDensity> >("InverseGammaDistBase")
 		.def(init<double, double>())
 		.def(init<const InverseGammaDistribution &>())
-#if POLPY_NEWWAY
 		.def("cloneAndSetLot", &InverseGammaDistribution::cloneAndSetLot, return_value_policy<manage_new_object>())
-#endif
 		.def("clone", &InverseGammaDistribution::Clone, return_value_policy<manage_new_object>())
 		.def("isDiscrete", &InverseGammaDistribution::IsDiscrete)
 		.def("getDistName", &InverseGammaDistribution::GetDistributionName)
@@ -411,9 +389,7 @@ BOOST_PYTHON_MODULE(_ProbDistExt)
 	class_<NormalDistribution, bases<ProbabilityDistribution, AdHocDensity> >("NormalDistBase")
 		.def(init<double, double>())
 		.def(init<const NormalDistribution &>())
-#if POLPY_NEWWAY
 		.def("cloneAndSetLot", &NormalDistribution::cloneAndSetLot, return_value_policy<manage_new_object>())
-#endif
 		.def("clone", &NormalDistribution::Clone, return_value_policy<manage_new_object>())
 		.def("isDiscrete", &NormalDistribution::IsDiscrete)
 		.def("getDistName", &NormalDistribution::GetDistributionName)

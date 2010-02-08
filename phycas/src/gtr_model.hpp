@@ -48,11 +48,7 @@ class GTR: public Model
 										}
 
 		virtual std::string			getModelName() const;
-#if POLPY_NEWWAY
 		virtual void				createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters, int subset_pos);
-#else //old way
-		virtual void				createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters) const;
-#endif
 		double						calcUniformizationLambda() const;
         double					    calcLMat(double * * lMat) const;
         double					    calcUMat(double * * uMat) const;

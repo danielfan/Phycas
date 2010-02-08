@@ -23,7 +23,6 @@
 namespace phycas
 {
 
-#if POLPY_NEWWAY
 unsigned CondLikelihood::calcCLALength(
   const uint_vect_t & npatterns, 	/**< is a vector containing the number of data patterns for each partition subset */
   const uint_vect_t & nrates, 		/**< is a vector containing the number of among-site relative rate categories for each partition subset */
@@ -40,10 +39,8 @@ unsigned CondLikelihood::calcCLALength(
 		}
 	return total;
 	}
-#endif
 
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	CondLikelihood constructor. Allocates `npatterns'*`nrates'*`nstates' elements to the conditional likelihood vector 
 |	`claVec', allocates `npatterns' elements to the vector `underflowExpon', and sets `numEdgesSinceUnderflowProtection'
@@ -68,28 +65,6 @@ CondLikelihood::CondLikelihood(
 	cla = &claVec[0];
 	uf = &underflowExponVec[0];
 	}
-#else // old way
-/*----------------------------------------------------------------------------------------------------------------------
-|	CondLikelihood constructor. Allocates `npatterns'*`nrates'*`nstates' elements to the conditional likelihood vector 
-|	`claVec', allocates `npatterns' elements to the vector `underflowExpon', and sets `numEdgesSinceUnderflowProtection'
-|	to UINT_MAX. Sets data member `cla' to point to the first element of the `claVec' vector and `uf' to point to the
-|	first element of `underflowExponVec'. All three arguments shoudl be non-zero, and no error checking is done to 
-|	ensure this because CondLikelihood objects are managed exclusively by CondLikelihoodStorage class, which ensures
-|	that the dimensions are valid.
-*/
-CondLikelihood::CondLikelihood(
-  unsigned npatterns,	/**< is the number of data patterns */
-  unsigned nrates,		/**< is the number of among-site relative rate categories */
-  unsigned nstates)		/**< is the number of states */
-  :
-  claVec(npatterns*nrates*nstates),
-  underflowExponVec(npatterns),
-  numEdgesSinceUnderflowProtection(UINT_MAX)
-	{
-	cla = &claVec[0];
-	uf = &underflowExponVec[0];
-	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns current value of the data member `numEdgesSinceUnderflowProtection'.

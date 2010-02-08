@@ -192,45 +192,30 @@ class MCMCManager:
 			else:
 				self.parent.paramf.write(float_format_str % cold_chain.tree.edgeLenSum())
 			
-			if partitioning:
-				# record parameter values for each model in partition
-				nmodels = cold_chain.partition_model.getNumSubsets()
-				if nmodels > 1:
-					for i in range(nmodels):
-						ssrr = cold_chain.partition_model.getSubsetRelRate(i)
-						self.parent.paramf.write(float_format_str % ssrr)					
+			# record parameter values for each model in partition
+			nmodels = cold_chain.partition_model.getNumSubsets()
+			if nmodels > 1:
 				for i in range(nmodels):
-					m = cold_chain.partition_model.getModel(i)
-					self.parent.paramf.write(m.paramReport(self.parent.opts.ndecimals))
-					#if m.hasEdgeLenHyperPrior():
-					#	if m.isSeparateInternalExternalEdgeLenPriors():
-					#		self.parent.paramf.write(float_format_str % m.getExternalEdgelenHyperparam())
-					#		self.parent.paramf.write(float_format_str % m.getInternalEdgelenHyperparam())
-					#	else:
-					#		self.parent.paramf.write(float_format_str % m.getInternalEdgelenHyperparam())
-					#if m.isFlexModel():
-					#	rates_vector = cold_chain.likelihood.getRateMeans()
-					#	for rr in rates_vector:
-					#		self.parent.paramf.write(float_format_str % rr)
-					#	probs_vector = cold_chain.likelihood.getRateProbs()
-					#	for rp in probs_vector:
-					#		self.parent.paramf.write(float_format_str % rp)
-				self.parent.paramf.write('\n')
-				self.parent.paramf.flush()
-			else:
-				self.parent.paramf.write(cold_chain.model.paramReport(self.parent.opts.ndecimals))
-				if self.parent.opts.model.edgelen_hyperprior is not None:
-					for p in cold_chain.chain_manager.getEdgeLenHyperparams():
-						self.parent.paramf.write(float_format_str % p.getCurrValue())
-				if self.parent.opts.model.use_flex_model:
-					rates_vector = cold_chain.likelihood.getRateMeans()
-					for rr in rates_vector:
-						self.parent.paramf.write(float_format_str % rr)
-					probs_vector = cold_chain.likelihood.getRateProbs()
-					for rp in probs_vector:
-						self.parent.paramf.write(float_format_str % rp)
-				self.parent.paramf.write('\n')
-				self.parent.paramf.flush()
+					ssrr = cold_chain.partition_model.getSubsetRelRate(i)
+					self.parent.paramf.write(float_format_str % ssrr)					
+			for i in range(nmodels):
+				m = cold_chain.partition_model.getModel(i)
+				self.parent.paramf.write(m.paramReport(self.parent.opts.ndecimals))
+				#if m.hasEdgeLenHyperPrior():
+				#	if m.isSeparateInternalExternalEdgeLenPriors():
+				#		self.parent.paramf.write(float_format_str % m.getExternalEdgelenHyperparam())
+				#		self.parent.paramf.write(float_format_str % m.getInternalEdgelenHyperparam())
+				#	else:
+				#		self.parent.paramf.write(float_format_str % m.getInternalEdgelenHyperparam())
+				#if m.isFlexModel():
+				#	rates_vector = cold_chain.likelihood.getRateMeans()
+				#	for rr in rates_vector:
+				#		self.parent.paramf.write(float_format_str % rr)
+				#	probs_vector = cold_chain.likelihood.getRateProbs()
+				#	for rp in probs_vector:
+				#		self.parent.paramf.write(float_format_str % rp)
+			self.parent.paramf.write('\n')
+			self.parent.paramf.flush()
 			
 		# Add line to tree file if it exists
 		if self.parent.treef:

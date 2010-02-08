@@ -48,21 +48,6 @@ class MarkovChain(LikelihoodCore):
 		
 		self.state_freq_moves			= []
 		self.rel_rate_moves				= []
-		if not partitioning:
-			self.relrate_prior			 = cloneDistribution(self.parent.opts.model.relrate_prior)
-			self.relrate_param_prior	 = cloneDistribution(self.parent.opts.model.relrate_param_prior)
-			self.state_freq_prior		 = cloneDistribution(self.parent.opts.model.state_freq_prior)
-			self.state_freq_param_prior	 = cloneDistribution(self.parent.opts.model.state_freq_param_prior)
-			self.gamma_shape_prior		 = cloneDistribution(self.parent.opts.model.gamma_shape_prior)
-			self.external_edgelen_prior	 = cloneDistribution(self.parent.opts.model.external_edgelen_prior)
-			self.internal_edgelen_prior	 = cloneDistribution(self.parent.opts.model.internal_edgelen_prior)
-			self.kappa_prior			 = cloneDistribution(self.parent.opts.model.kappa_prior)
-			self.omega_prior			 = cloneDistribution(self.parent.opts.model.omega_prior)
-			self.pinvar_prior			 = cloneDistribution(self.parent.opts.model.pinvar_prior)
-			self.flex_prob_param_prior	 = cloneDistribution(self.parent.opts.model.flex_prob_param_prior)
-			self.edgelen_hyperprior		 = None
-			if self.parent.opts.model.edgelen_hyperprior is not None:
-				self.edgelen_hyperprior	 = cloneDistribution(self.parent.opts.model.edgelen_hyperprior)
 
 		self.setupChain()
 
@@ -112,45 +97,13 @@ class MarkovChain(LikelihoodCore):
 		else:
 			paramf.write('\tTL')
 		
-		if partitioning:
-			nmodels = self.partition_model.getNumSubsets()
-			if nmodels > 1:
-				for i in range(nmodels):
-					paramf.write('\tm_%d' % (i+1,))
+		nmodels = self.partition_model.getNumSubsets()
+		if nmodels > 1:
 			for i in range(nmodels):
-				m = self.partition_model.getModel(i)
-				paramf.write(m.paramHeader())
-				# HYPERPRIOR STUFF
-				#if m.hasEdgeLenHyperPrior():
-				#	if m.isSeparateInternalExternalEdgeLenPriors():
-				#		if nmodels > 1:
-				#			paramf.write('\thyper(external)_%d' % (i+1,))
-				#			paramf.write('\thyper(internal)_%d' % (i+1,))
-				#		else:
-				#			paramf.write('\thyper(external)')
-				#			paramf.write('\thyper(internal)')
-				#		
-				#	else:
-				#		if nmodels > 1:
-				#			paramf.write('\thyper(all)_%d' % (i+1,))
-				#		else:
-				#			paramf.write('\thyper(all)')
-				#if m.isFlexModel():
-				#	if nmodels > 1:
-				#		paramf.write('\trates_probs_%d' % (i+1,))
-				#	else:
-				#		paramf.write('\trates_probs')
-		else:
-			# Note: model data member inherited from LikelihoodCore
-			paramf.write(self.model.paramHeader())
-			if self.parent.opts.model.edgelen_hyperprior is not None:
-				if self.parent.opts.model.internal_edgelen_prior is self.parent.opts.model.external_edgelen_prior:
-					paramf.write('\thyper(all)')
-				else:
-					paramf.write('\thyper(external)')
-					paramf.write('\thyper(internal)')
-			if self.parent.opts.model.use_flex_model:
-				paramf.write('\trates_probs')
+				paramf.write('\tm_%d' % (i+1,))
+		for i in range(nmodels):
+			m = self.partition_model.getModel(i)
+			paramf.write(m.paramHeader())
 
 	def treeFileHeader(self, treef):
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -225,224 +178,141 @@ class MarkovChain(LikelihoodCore):
 		LikelihoodCore.setupCore(self)
 		LikelihoodCore.prepareForLikelihood(self)
 		
-		if partitioning:
-			from phycas import partition,model
-			# add priors to models already added (by LikelihoodCore.setupCore) to partition_model
-			modelspecs = partition.getModels()	# partition here refers to the global object (associated with the Phycas partition command)
-			print 'modelspecs has length %d:' % len(modelspecs)
-			nmodels = self.partition_model.getNumSubsets()
-			print 'partition_model contains %d models:' % nmodels
-			self.chain_manager = Likelihood.MCMCChainManager()
-			for i in range(nmodels):
-				m = self.partition_model.getModel(i)
-				# print '--> adding prior info to partition subset %d (%s model)' % (i, m.getModelName())
-				mspec = modelspecs[i]
+		from phycas import partition,model
+		# add priors to models already added (by LikelihoodCore.setupCore) to partition_model
+		modelspecs = partition.getModels()	# partition here refers to the global object (associated with the Phycas partition command)
+		print 'modelspecs has length %d:' % len(modelspecs)
+		nmodels = self.partition_model.getNumSubsets()
+		print 'partition_model contains %d models:' % nmodels
+		self.chain_manager = Likelihood.MCMCChainManager()
+		for i in range(nmodels):
+			m = self.partition_model.getModel(i)
+			# print '--> adding prior info to partition subset %d (%s model)' % (i, m.getModelName())
+			mspec = modelspecs[i]
 
-				# Copy priors related to edge lengths
-				# Note: while these priors are copied for every subset, only those for the
-				# first subset are actually used (at this writing, 31 Jan 2010) because both
-				# tree topology and edge lengths are always (at this writing) linked across subsets
-				separate_edge_len_dists = mspec.internal_edgelen_prior is not mspec.external_edgelen_prior
-				m.separateInternalExternalEdgeLenPriors(separate_edge_len_dists)
-				if mspec.external_edgelen_prior is not None:
-					m.setExternalEdgeLenPrior(mspec.external_edgelen_prior.cloneAndSetLot(self.r))
-				if mspec.internal_edgelen_prior is not None:
-					m.setInternalEdgeLenPrior(mspec.internal_edgelen_prior.cloneAndSetLot(self.r))
-				if mspec.edgelen_hyperprior is not None:
-					m.setEdgeLenHyperPrior(mspec.edgelen_hyperprior.cloneAndSetLot(self.r))
-					if mspec.fix_edgelen_hyperparam:
-						m.fixEdgeLenHyperprior()	#@POL should be named fixEdgeLenHyperparam
-				else:
-					m.setEdgeLenHyperPrior(None)
-					
-				# Copy priors for this model's parameters
-				if mspec.type == 'codon':
-					m.setKappaPrior(mspec.kappa_prior.cloneAndSetLot(self.r))
-					m.setOmegaPrior(mspec.omega_prior.cloneAndSetLot(self.r))
-					if mspec.update_freqs_separately:
-						m.setStateFreqParamPrior(mspec.state_freq_param_prior.cloneAndSetLot(self.r))
-					else:
-						m.setStateFreqPrior(mspec.state_freq_prior.cloneAndSetLot(self.r))
-				elif mspec.type == 'gtr':
-					if mspec.update_relrates_separately:
-						m.setRelRateParamPrior(mspec.relrate_param_prior.cloneAndSetLot(self.r))
-					else:
-						m.setRelRatePrior(mspec.relrate_prior)
-					if mspec.update_freqs_separately:
-						m.setStateFreqParamPrior(mspec.state_freq_param_prior.cloneAndSetLot(self.r))
-					else:
-						m.setStateFreqPrior(mspec.state_freq_prior.cloneAndSetLot(self.r))
-				elif mspec.type == 'hky':
-					m.setKappaPrior(mspec.kappa_prior.cloneAndSetLot(self.r))
-					if mspec.update_freqs_separately:
-						m.setStateFreqParamPrior(mspec.state_freq_param_prior.cloneAndSetLot(self.r))
-					else:
-						m.setStateFreqPrior(mspec.state_freq_prior.cloneAndSetLot(self.r))
-
-				# Copy priors related to among-site rate heterogeneity
-				if mspec.use_flex_model:
-					m.setNumFlexSpacers(mspec.flex_num_spacers)
-					m.setFLEXProbParamPrior(mspec.flex_prob_param_prior.cloneAndSetLot(self.r))
-				elif mspec.num_rates > 1:
-					m.setDiscreteGammaShapePrior(mspec.gamma_shape_prior.cloneAndSetLot(self.r))
-				if mspec.pinvar_model:
-					m.setPinvarPrior(mspec.pinvar_prior.cloneAndSetLot(self.r))
-				
-				# Add all necessary updaters to the MCMCManager
-				if nmodels == 1:
-					subset_pos = -1
-				else:
-					subset_pos = i
-				self.chain_manager.addMCMCUpdaters(
-					m,									# substitution model
-					self.tree,							# tree
-					self.likelihood,					# likelihood calculation machinery
-					self.r,								# pseudorandom number generator
-					#False,								# separate_edgelen_params (deprecated: always False)
-					self.parent.opts.slice_max_units,	# maximum number of slice units allowed
-					self.parent.opts.slice_weight,		# weight for each parameter added
-					subset_pos)							# i is the subset (needed so that add edge length params will only be added for for first subset)
-					
-				# Add subset-model-specific moves
-				if not mspec.type == 'jc' and not mspec.update_freqs_separately:
-					# Create a StateFreqMove to update entire state frequency vector
-					sfm = Likelihood.StateFreqMove()
-					if mspec.type == 'codon': 
-						sfm.setDimension(61)
-					else:
-						sfm.setDimension(4)
-					if nmodels > 1:
-						sfm.setName("state_freqs_%d" % (i+1,))
-					else:
-						sfm.setName("state_freqs")
-					sfm.setWeight(self.parent.opts.state_freq_weight)
-					sfm.setPosteriorTuningParam(self.parent.opts.state_freq_psi)
-					sfm.setPriorTuningParam(self.parent.opts.state_freq_psi0)
-					sfm.setTree(self.tree)
-					sfm.setModel(m)
-					sfm.setTreeLikelihood(self.likelihood)
-					sfm.setLot(self.r)
-					if m.stateFreqsFixed():
-						sfm.fixParameter()
-					sfm.setMultivarPrior(mspec.state_freq_prior)
-					self.chain_manager.addMove(sfm)
-					self.state_freq_moves.append(sfm)
-				
-				if mspec.type == 'gtr' and not mspec.update_relrates_separately:
-					# Create a RelRateMove to update entire relative rates vector
-					rrm = Likelihood.RelRatesMove()
-					if nmodels > 1:
-						rrm.setName("relrates_%d" % (i+1,))
-					else:
-						rrm.setName("relrates")
-					rrm.setWeight(self.parent.opts.rel_rate_weight)
-					rrm.setPosteriorTuningParam(self.parent.opts.rel_rate_psi)
-					rrm.setPriorTuningParam(self.parent.opts.rel_rate_psi0)
-					rrm.setTree(self.tree)
-					rrm.setModel(m)
-					rrm.setTreeLikelihood(self.likelihood)
-					rrm.setLot(self.r)
-					#if self.model.relRatesFixed():
-					#	 rrm.fixParameter()
-					rrm.setMultivarPrior(mspec.relrate_prior)
-					self.chain_manager.addMove(rrm)
-					self.rel_rate_moves.append(rrm)
-
-			self.likelihood.replaceModel(self.partition_model)			
-		else:	# old way			
-			# Make sure that each prior is using the same pseudorandom number generator object
-			self.kappa_prior.setLot(self.r)
-			self.relrate_prior.setLot(self.r)
-			self.state_freq_prior.setLot(self.r)
-			self.state_freq_param_prior.setLot(self.r)
-			self.flex_prob_param_prior.setLot(self.r)
-			self.gamma_shape_prior.setLot(self.r)
-			self.pinvar_prior.setLot(self.r)
-			if self.edgelen_hyperprior is not None:
-				self.edgelen_hyperprior.setLot(self.r)
-			if self.parent.opts.model.external_edgelen_prior is not None:
-				self.external_edgelen_prior.setLot(self.r)
-			if self.parent.opts.model.internal_edgelen_prior is not None:
-				self.internal_edgelen_prior.setLot(self.r)
-			
-			# Define priors for the model parameters
-			if self.parent.opts.model.type == 'codon':
-				self.model.setKappaPrior(self.kappa_prior)
-				self.model.setOmegaPrior(self.omega_prior)
-				if self.parent.opts.model.update_freqs_separately:
-					self.model.setStateFreqParamPrior(self.state_freq_param_prior)
-				else:
-					self.model.setStateFreqPrior(self.state_freq_prior)
-			elif self.parent.opts.model.type == 'gtr':
-				if self.parent.opts.model.update_relrates_separately:
-					self.model.setRelRateParamPrior(self.relrate_param_prior)
-				else:
-					self.model.setRelRatePrior(self.relrate_prior)
-				if self.parent.opts.model.update_freqs_separately:
-					self.model.setStateFreqParamPrior(self.state_freq_param_prior)
-				else:
-					self.model.setStateFreqPrior(self.state_freq_prior)
-			elif self.parent.opts.model.type == 'hky':
-				self.model.setKappaPrior(self.kappa_prior)
-				if self.parent.opts.model.update_freqs_separately:
-					self.model.setStateFreqParamPrior(self.state_freq_param_prior)
-				else:
-					self.model.setStateFreqPrior(self.state_freq_prior)
-
-			# If rate heterogeneity is to be assumed, add priors for these model parameters here
-			if self.parent.opts.model.use_flex_model:
-				self.model.setNumFlexSpacers(self.parent.opts.model.flex_num_spacers)
-				self.model.setFLEXProbParamPrior(self.flex_prob_param_prior)
-			elif self.parent.opts.model.num_rates > 1:
-				self.model.setDiscreteGammaShapePrior(self.gamma_shape_prior)
-			if self.parent.opts.model.pinvar_model:
-				self.model.setPinvarPrior(self.pinvar_prior)
-			
-			# Define edge length prior distributions
-			separate_edge_len_dists = self.parent.opts.model.internal_edgelen_prior is not self.parent.opts.model.external_edgelen_prior
-			self.model.separateInternalExternalEdgeLenPriors(separate_edge_len_dists)
-			self.model.setExternalEdgeLenPrior(self.external_edgelen_prior)
-			self.model.setInternalEdgeLenPrior(self.internal_edgelen_prior)
-
-			if self.parent.opts.model.edgelen_hyperprior is not None:
-				#self.edgelen_hyperprior.setMeanAndVariance(1.0, 10.0)
-				self.model.setEdgeLenHyperPrior(self.edgelen_hyperprior)
-				#todo self.model.starting_edgelen_hyperparam
-				if self.parent.opts.model.fix_edgelen_hyperparam:
-					self.model.fixEdgeLenHyperprior()	#POL should be named fixEdgeLenHyperparam
+			# Copy priors related to edge lengths
+			# Note: while these priors are copied for every subset, only those for the
+			# first subset are actually used (at this writing, 31 Jan 2010) because both
+			# tree topology and edge lengths are always (at this writing) linked across subsets
+			separate_edge_len_dists = mspec.internal_edgelen_prior is not mspec.external_edgelen_prior
+			m.separateInternalExternalEdgeLenPriors(separate_edge_len_dists)
+			if mspec.external_edgelen_prior is not None:
+				m.setExternalEdgeLenPrior(mspec.external_edgelen_prior.cloneAndSetLot(self.r))
+			if mspec.internal_edgelen_prior is not None:
+				m.setInternalEdgeLenPrior(mspec.internal_edgelen_prior.cloneAndSetLot(self.r))
+			if mspec.edgelen_hyperprior is not None:
+				m.setEdgeLenHyperPrior(mspec.edgelen_hyperprior.cloneAndSetLot(self.r))
+				if mspec.fix_edgelen_hyperparam:
+					m.fixEdgeLenHyperprior()	#@POL should be named fixEdgeLenHyperparam
 			else:
-				self.model.setEdgeLenHyperPrior(None)
+				m.setEdgeLenHyperPrior(None)
+				
+			# Copy priors for this model's parameters
+			if mspec.type == 'codon':
+				m.setKappaPrior(mspec.kappa_prior.cloneAndSetLot(self.r))
+				m.setOmegaPrior(mspec.omega_prior.cloneAndSetLot(self.r))
+				if mspec.update_freqs_separately:
+					m.setStateFreqParamPrior(mspec.state_freq_param_prior.cloneAndSetLot(self.r))
+				else:
+					m.setStateFreqPrior(mspec.state_freq_prior.cloneAndSetLot(self.r))
+			elif mspec.type == 'gtr':
+				if mspec.update_relrates_separately:
+					m.setRelRateParamPrior(mspec.relrate_param_prior.cloneAndSetLot(self.r))
+				else:
+					m.setRelRatePrior(mspec.relrate_prior)
+				if mspec.update_freqs_separately:
+					m.setStateFreqParamPrior(mspec.state_freq_param_prior.cloneAndSetLot(self.r))
+				else:
+					m.setStateFreqPrior(mspec.state_freq_prior.cloneAndSetLot(self.r))
+			elif mspec.type == 'hky':
+				m.setKappaPrior(mspec.kappa_prior.cloneAndSetLot(self.r))
+				if mspec.update_freqs_separately:
+					m.setStateFreqParamPrior(mspec.state_freq_param_prior.cloneAndSetLot(self.r))
+				else:
+					m.setStateFreqPrior(mspec.state_freq_prior.cloneAndSetLot(self.r))
 
-			self.likelihood.replaceModel(self.model)			
-
-			# Create an MCMCChainManager object and add all necessary updaters
-			self.chain_manager = Likelihood.MCMCChainManager()
+			# Copy priors related to among-site rate heterogeneity
+			if mspec.use_flex_model:
+				m.setNumFlexSpacers(mspec.flex_num_spacers)
+				m.setFLEXProbParamPrior(mspec.flex_prob_param_prior.cloneAndSetLot(self.r))
+			elif mspec.num_rates > 1:
+				m.setDiscreteGammaShapePrior(mspec.gamma_shape_prior.cloneAndSetLot(self.r))
+			if mspec.pinvar_model:
+				m.setPinvarPrior(mspec.pinvar_prior.cloneAndSetLot(self.r))
+			
+			# Add all necessary updaters to the MCMCManager
+			if nmodels == 1:
+				subset_pos = -1
+			else:
+				subset_pos = i
 			self.chain_manager.addMCMCUpdaters(
-				self.model,							# substitution model
+				m,									# substitution model
 				self.tree,							# tree
 				self.likelihood,					# likelihood calculation machinery
 				self.r,								# pseudorandom number generator
 				#False,								# separate_edgelen_params (deprecated: always False)
 				self.parent.opts.slice_max_units,	# maximum number of slice units allowed
-				self.parent.opts.slice_weight)		# weight for each parameter added
+				self.parent.opts.slice_weight,		# weight for each parameter added
+				subset_pos)							# i is the subset (needed so that add edge length params will only be added for for first subset)
+				
+			# Add subset-model-specific moves
+			if not mspec.type == 'jc' and not mspec.update_freqs_separately:
+				# Create a StateFreqMove to update entire state frequency vector
+				sfm = Likelihood.StateFreqMove()
+				if mspec.type == 'codon': 
+					sfm.setDimension(61)
+				else:
+					sfm.setDimension(4)
+				if nmodels > 1:
+					sfm.setName("state_freqs_%d" % (i+1,))
+				else:
+					sfm.setName("state_freqs")
+				sfm.setWeight(self.parent.opts.state_freq_weight)
+				sfm.setPosteriorTuningParam(self.parent.opts.state_freq_psi)
+				sfm.setPriorTuningParam(self.parent.opts.state_freq_psi0)
+				sfm.setTree(self.tree)
+				sfm.setModel(m)
+				sfm.setTreeLikelihood(self.likelihood)
+				sfm.setLot(self.r)
+				if m.stateFreqsFixed():
+					sfm.fixParameter()
+				sfm.setMultivarPrior(mspec.state_freq_prior)
+				self.chain_manager.addMove(sfm)
+				self.state_freq_moves.append(sfm)
+			
+			if mspec.type == 'gtr' and not mspec.update_relrates_separately:
+				# Create a RelRateMove to update entire relative rates vector
+				rrm = Likelihood.RelRatesMove()
+				if nmodels > 1:
+					rrm.setName("relrates_%d" % (i+1,))
+				else:
+					rrm.setName("relrates")
+				rrm.setWeight(self.parent.opts.rel_rate_weight)
+				rrm.setPosteriorTuningParam(self.parent.opts.rel_rate_psi)
+				rrm.setPriorTuningParam(self.parent.opts.rel_rate_psi0)
+				rrm.setTree(self.tree)
+				rrm.setModel(m)
+				rrm.setTreeLikelihood(self.likelihood)
+				rrm.setLot(self.r)
+				#if self.model.relRatesFixed():
+				#	 rrm.fixParameter()
+				rrm.setMultivarPrior(mspec.relrate_prior)
+				self.chain_manager.addMove(rrm)
+				self.rel_rate_moves.append(rrm)
+
+		self.likelihood.replaceModel(self.partition_model)			
 				
 		if self.parent.opts.data_source is None:
 			self.likelihood.setNoData() # user apparently wants to run MCMC with no data
 			
-		if partitioning:
-			model0 = self.partition_model.getModel(0)
-		else:
-			model0 = self.model
+		model0 = self.partition_model.getModel(0)
 		
 		# Create a TreeScalerMove object to handle scaling the entire tree to allow faster
 		# convergence in edge lengths. This move is unusual in using slice sampling rather
 		# than Metropolis-Hastings updates: most "moves" in parent are Metropolis-Hastings.
 		if self.parent.opts.tree_scaler_weight > 0:
 			self.tree_scaler_move = Likelihood.TreeScalerMove()
-			if partitioning:
-				self.tree_scaler_move.setName("tree_scaler")
-			else:
-				self.tree_scaler_move.setName("Tree scaler move")
+			self.tree_scaler_move.setName("tree_scaler")
 			self.tree_scaler_move.setWeight(self.parent.opts.tree_scaler_weight)
 			self.tree_scaler_move.setPosteriorTuningParam(self.parent.opts.tree_scaler_lambda)
 			self.tree_scaler_move.setPriorTuningParam(self.parent.opts.tree_scaler_lambda0)
@@ -454,71 +324,30 @@ class MarkovChain(LikelihoodCore):
 				self.tree_scaler_move.fixParameter()
 			self.chain_manager.addMove(self.tree_scaler_move)
 
-		if partitioning:
-			# If more than one partition subset, add a SubsetRelRate move to modify the 
-			# vector of relative substitution rates for each subset
-			if (nmodels > 1):
-				self.subset_relrates_move = Likelihood.SubsetRelRatesMove()
-				self.subset_relrates_move.setDimension(nmodels)
-				if partitioning:
-					self.subset_relrates_move.setName("subset_relrates")
-				else:
-					self.subset_relrates_move.setName("Subset relative rates")
-				self.subset_relrates_move.setWeight(self.parent.opts.subset_relrates_weight)
-				self.subset_relrates_move.setPosteriorTuningParam(self.parent.opts.subset_relrates_psi)
-				self.subset_relrates_move.setPriorTuningParam(self.parent.opts.subset_relrates_psi0)
-				self.subset_relrates_move.setTree(self.tree)
-				self.subset_relrates_move.setModel(None)	# the model data member is ignored in this case; instead, the partition model stores the parameters
-				self.subset_relrates_move.setPartitionModel(self.partition_model)
-				self.subset_relrates_move.setTreeLikelihood(self.likelihood)
-				self.subset_relrates_move.setLot(self.r)
-				if partition.fix_subset_relrates:
-					self.subset_relrates_move.fixParameter()
-				if partition.subset_relrates_prior is None:
-					param_list = tuple([1.0]*nmodels)
-					self.subset_relrates_move.setMultivarPrior(Dirichlet(param_list))
-				else:
-					self.parent.phycassert(partition.subset_relrates_prior.getDistName() == 'Dirichlet', 'partition.subset_relrates_prior must be of type Dirichlet')
-					self.parent.phycassert(partition.subset_relrates_prior.getNParams() == nmodels, 'partition.subset_relrates_prior has dimension %d, but there are %d subsets in the partition. Try setting partion.subset_relrates_prior = None to get default flat Dirichlet prior of the appropriate dimension' % (partition.subset_relrates_prior.getNParams(), nmodels))
-					self.subset_relrates_move.setMultivarPrior(partition.subset_relrates_prior)
-				self.chain_manager.addMove(self.subset_relrates_move)
-		else:
-			if not self.parent.opts.model.type == 'jc' and not self.parent.opts.model.update_freqs_separately:
-				# Create a StateFreqMove to update entire state frequency vector
-				self.state_freq_move = Likelihood.StateFreqMove()
-				if self.parent.opts.model.type == 'codon': 
-					self.state_freq_move.setDimension(61)
-				else:
-					self.state_freq_move.setDimension(4)
-				self.state_freq_move.setName("State freqs")
-				self.state_freq_move.setWeight(self.parent.opts.state_freq_weight)
-				self.state_freq_move.setPosteriorTuningParam(self.parent.opts.state_freq_psi)
-				self.state_freq_move.setPriorTuningParam(self.parent.opts.state_freq_psi0)
-				self.state_freq_move.setWeight(self.parent.opts.state_freq_weight)
-				self.state_freq_move.setTree(self.tree)
-				self.state_freq_move.setModel(self.model)
-				self.state_freq_move.setTreeLikelihood(self.likelihood)
-				self.state_freq_move.setLot(self.r)
-				if self.model.stateFreqsFixed():
-					self.state_freq_move.fixParameter()
-				self.state_freq_move.setMultivarPrior(self.state_freq_prior)
-				self.chain_manager.addMove(self.state_freq_move)
-			
-			if self.parent.opts.model.type == 'gtr' and not self.parent.opts.model.update_relrates_separately:
-				# Create a RelRateMove to update entire relative rates vector
-				self.rel_rate_move = Likelihood.RelRatesMove()
-				self.rel_rate_move.setName("Relative rates")
-				self.rel_rate_move.setWeight(self.parent.opts.rel_rate_weight)
-				self.rel_rate_move.setPosteriorTuningParam(self.parent.opts.rel_rate_psi)
-				self.rel_rate_move.setPriorTuningParam(self.parent.opts.rel_rate_psi0)
-				self.rel_rate_move.setTree(self.tree)
-				self.rel_rate_move.setModel(self.model)
-				self.rel_rate_move.setTreeLikelihood(self.likelihood)
-				self.rel_rate_move.setLot(self.r)
-				#if self.model.relRatesFixed():
-				#	 self.rel_rate_move.fixParameter()
-				self.rel_rate_move.setMultivarPrior(self.relrate_prior)
-				self.chain_manager.addMove(self.rel_rate_move)
+		# If more than one partition subset, add a SubsetRelRate move to modify the 
+		# vector of relative substitution rates for each subset
+		if (nmodels > 1):
+			self.subset_relrates_move = Likelihood.SubsetRelRatesMove()
+			self.subset_relrates_move.setDimension(nmodels)
+			self.subset_relrates_move.setName("subset_relrates")
+			self.subset_relrates_move.setWeight(self.parent.opts.subset_relrates_weight)
+			self.subset_relrates_move.setPosteriorTuningParam(self.parent.opts.subset_relrates_psi)
+			self.subset_relrates_move.setPriorTuningParam(self.parent.opts.subset_relrates_psi0)
+			self.subset_relrates_move.setTree(self.tree)
+			self.subset_relrates_move.setModel(None)	# the model data member is ignored in this case; instead, the partition model stores the parameters
+			self.subset_relrates_move.setPartitionModel(self.partition_model)
+			self.subset_relrates_move.setTreeLikelihood(self.likelihood)
+			self.subset_relrates_move.setLot(self.r)
+			if partition.fix_subset_relrates:
+				self.subset_relrates_move.fixParameter()
+			if partition.subset_relrates_prior is None:
+				param_list = tuple([1.0]*nmodels)
+				self.subset_relrates_move.setMultivarPrior(Dirichlet(param_list))
+			else:
+				self.parent.phycassert(partition.subset_relrates_prior.getDistName() == 'Dirichlet', 'partition.subset_relrates_prior must be of type Dirichlet')
+				self.parent.phycassert(partition.subset_relrates_prior.getNParams() == nmodels, 'partition.subset_relrates_prior has dimension %d, but there are %d subsets in the partition. Try setting partion.subset_relrates_prior = None to get default flat Dirichlet prior of the appropriate dimension' % (partition.subset_relrates_prior.getNParams(), nmodels))
+				self.subset_relrates_move.setMultivarPrior(partition.subset_relrates_prior)
+			self.chain_manager.addMove(self.subset_relrates_move)
 		
 		if self.parent.opts.fix_topology:
 			# Create an EdgeMove object to handle Metropolis-Hastings
@@ -607,10 +436,7 @@ class MarkovChain(LikelihoodCore):
 			# Create a LargetSimonMove object to handle Metropolis-Hastings
 			# updates to the tree topology and edge lengths
 			self.larget_simon_move = Likelihood.LargetSimonMove()
-			if partitioning:
-				self.larget_simon_move.setName("larget_simon_local")
-			else:
-				self.larget_simon_move.setName("Larget-Simon move")
+			self.larget_simon_move.setName("larget_simon_local")
 			self.larget_simon_move.setWeight(self.parent.opts.ls_move_weight)
 			self.larget_simon_move.setPosteriorTuningParam(self.parent.opts.ls_move_lambda)
 			self.larget_simon_move.setPriorTuningParam(self.parent.opts.ls_move_lambda0)
@@ -623,52 +449,29 @@ class MarkovChain(LikelihoodCore):
 				self.larget_simon_move.fixParameter()
 			self.chain_manager.addMove(self.larget_simon_move)
 
-		if partitioning:
-			# If requested, create an NCatMove object to allow the number of rate categories to change
-			if self.parent.opts.model.use_flex_model:
-				self.parent.phycassert(False, 'Cannot use flex model at present because this part of phycas has not yet been rewritten to accommodate the possibility of partitioning')
+		# If requested, create an NCatMove object to allow the number of rate categories to change
+		if self.parent.opts.model.use_flex_model:
+			self.parent.phycassert(False, 'Cannot use flex model at present because this part of phycas has not yet been rewritten to accommodate the possibility of partitioning')
 
-				# Create an NCatMove object
-				#self.ncat_move = Likelihood.NCatMove()
-				
-				# Set up features specific to NCatMove
-				#self.ncat_move.setCatProbPrior(self.flex_prob_param_prior)
-				#self.ncat_move.setL(self.parent.opts.model.flex_L)
-				#self.ncat_move.setS(self.parent.opts.model.flex_num_spacers)
-				#self.ncat_move.setLambda(self.parent.opts.model.flex_lambda)
-				#self.ncat_move.setPhi(self.parent.opts.model.flex_phi)
+			# Create an NCatMove object
+			#self.ncat_move = Likelihood.NCatMove()
+			
+			# Set up features specific to NCatMove
+			#self.ncat_move.setCatProbPrior(self.flex_prob_param_prior)
+			#self.ncat_move.setL(self.parent.opts.model.flex_L)
+			#self.ncat_move.setS(self.parent.opts.model.flex_num_spacers)
+			#self.ncat_move.setLambda(self.parent.opts.model.flex_lambda)
+			#self.ncat_move.setPhi(self.parent.opts.model.flex_phi)
 
-				# Continue setting up NCatMove object
-				#self.ncat_move.setName("NCat move")
-				#self.ncat_move.setWeight(self.parent.opts.model.flex_ncat_move_weight)
-				#self.ncat_move.setTree(self.tree)
-				#self.ncat_move.setModel(model0)
-				#self.ncat_move.setTreeLikelihood(self.likelihood)
-				#self.ncat_move.setLot(self.r)
-				
-				#self.chain_manager.addMove(self.ncat_move)
-		else:
-			# If requested, create an NCatMove object to allow the number of rate categories to change
-			if self.parent.opts.model.use_flex_model:
-				# Create an NCatMove object
-				self.ncat_move = Likelihood.NCatMove()
-				
-				# Set up features specific to NCatMove
-				self.ncat_move.setCatProbPrior(self.flex_prob_param_prior)
-				self.ncat_move.setL(self.parent.opts.model.flex_L)
-				self.ncat_move.setS(self.parent.opts.model.flex_num_spacers)
-				self.ncat_move.setLambda(self.parent.opts.model.flex_lambda)
-				self.ncat_move.setPhi(self.parent.opts.model.flex_phi)
-
-				# Continue setting up NCatMove object
-				self.ncat_move.setName("NCat move")
-				self.ncat_move.setWeight(self.parent.opts.model.flex_ncat_move_weight)
-				self.ncat_move.setTree(self.tree)
-				self.ncat_move.setModel(self.model)
-				self.ncat_move.setTreeLikelihood(self.likelihood)
-				self.ncat_move.setLot(self.r)
-				
-				self.chain_manager.addMove(self.ncat_move)
+			# Continue setting up NCatMove object
+			#self.ncat_move.setName("NCat move")
+			#self.ncat_move.setWeight(self.parent.opts.model.flex_ncat_move_weight)
+			#self.ncat_move.setTree(self.tree)
+			#self.ncat_move.setModel(model0)
+			#self.ncat_move.setTreeLikelihood(self.likelihood)
+			#self.ncat_move.setLot(self.r)
+			
+			#self.chain_manager.addMove(self.ncat_move)
 			
 		# If requested, create a BushMove object to allow polytomous trees
 		if self.parent.opts.allow_polytomies:

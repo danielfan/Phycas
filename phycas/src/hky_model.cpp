@@ -67,37 +67,21 @@ std::string HKY::getModelName() const
 |	supplied `parameters' vector. This incudes the four base frequencies as well as the transition/transversion rate 
 |	ratio kappa.
 */
-#if POLPY_NEWWAY
 void	HKY::createParameters(
   TreeShPtr t,								/**< is the tree (the nodes of which are needed for creating edge length parameters) */
   MCMCUpdaterVect & edgelens,				/**< is the vector of edge length parameters to fill */
   MCMCUpdaterVect & edgelen_hyperparams,	/**< is the edge length hyperparameter */
   MCMCUpdaterVect & parameters,				/**< is the vector of model-specific parameters to fill */
   int subset_pos) 							/**< if 0 (first subset) or -1 (only subset), edge length parameters and hyperparams will be added; otherwise, the `edgelens' and `edgelen_hyperparams' vectors returned will be empty */
-#else //old way
-void	HKY::createParameters(
-  TreeShPtr t,								/**< is the tree (the nodes of which are needed for creating edge length parameters) */
-  MCMCUpdaterVect & edgelens,				/**< is the vector of edge length parameters to fill */
-  MCMCUpdaterVect & edgelen_hyperparams,	/**< is the edge length hyperparameter */
-  MCMCUpdaterVect & parameters) const		/**< is the vector of model-specific parameters to fill */
-#endif
 	{
-#if POLPY_NEWWAY
 	Model::createParameters(t, edgelens, edgelen_hyperparams, parameters, subset_pos);
-#else //old way
-	Model::createParameters(t, edgelens, edgelen_hyperparams, parameters);
-#endif
 
 	PHYCAS_ASSERT(!kappa_param);
 	kappa_param = MCMCUpdaterShPtr(new KappaParam());
-#if POLPY_NEWWAY
 	if (subset_pos < 0)
 		kappa_param->setName("kappa");
 	else 
 		kappa_param->setName(boost::str(boost::format("kappa_%d") % (subset_pos + 1)));
-#else //old way
-	kappa_param->setName("trs/trv rate ratio");
-#endif
 	kappa_param->setStartingValue(4.0);
 	kappa_param->setTree(t);
 	kappa_param->setPrior(kappa_prior);
@@ -116,14 +100,10 @@ void	HKY::createParameters(
         // will be set and freq_param_prior will be empty)
 
 	    MCMCUpdaterShPtr freqA_param = MCMCUpdaterShPtr(new StateFreqParam(0));
-#if POLPY_NEWWAY
 		if (subset_pos < 0)
 			freqA_param->setName("freqA");
 		else 
 			freqA_param->setName(boost::str(boost::format("freqA_%d") % (subset_pos + 1)));
-#else //old way
-	    freqA_param->setName("base freq. A");
-#endif
 	    freqA_param->setTree(t);
 	    freqA_param->setStartingValue(1.0);
 	    freqA_param->setPrior(freq_param_prior);
@@ -133,14 +113,10 @@ void	HKY::createParameters(
 	    freq_params.push_back(freqA_param);
 
 	    MCMCUpdaterShPtr freqC_param = MCMCUpdaterShPtr(new StateFreqParam(1));
-#if POLPY_NEWWAY
 		if (subset_pos < 0)
 			freqC_param->setName("freqC");
 		else 
 			freqC_param->setName(boost::str(boost::format("freqC_%d") % (subset_pos + 1)));
-#else //old way
-	    freqC_param->setName("base freq. C");
-#endif
 	    freqC_param->setTree(t);
 	    freqC_param->setStartingValue(1.0);
 	    freqC_param->setPrior(freq_param_prior);
@@ -150,14 +126,10 @@ void	HKY::createParameters(
 	    freq_params.push_back(freqC_param);
 
 	    MCMCUpdaterShPtr freqG_param = MCMCUpdaterShPtr(new StateFreqParam(2));
-#if POLPY_NEWWAY
 		if (subset_pos < 0)
 			freqG_param->setName("freqG");
 		else 
 			freqG_param->setName(boost::str(boost::format("freqG_%d") % (subset_pos + 1)));
-#else //old way
-	    freqG_param->setName("base freq. G");
-#endif
 	    freqG_param->setTree(t);
 	    freqG_param->setStartingValue(1.0);
 	    freqG_param->setPrior(freq_param_prior);
@@ -167,14 +139,10 @@ void	HKY::createParameters(
 	    freq_params.push_back(freqG_param);
 
 	    MCMCUpdaterShPtr freqT_param = MCMCUpdaterShPtr(new StateFreqParam(3));
-#if POLPY_NEWWAY
 		if (subset_pos < 0)
 			freqT_param->setName("freqT");
 		else 
 			freqT_param->setName(boost::str(boost::format("freqT_%d") % (subset_pos + 1)));
-#else //old way
-	    freqT_param->setName("base freq. T");
-#endif
 	    freqT_param->setTree(t);
 	    freqT_param->setStartingValue(1.0);
 	    freqT_param->setPrior(freq_param_prior);
@@ -192,7 +160,6 @@ void	HKY::createParameters(
 |	shape parameter (if the number of rates is greater than 1) and the pinvar parameter (if an invariable sites model 
 |	is being used)
 */
-#if POLPY_NEWWAY
 std::string HKY::paramHeader() const
 	{
 	std::string s;
@@ -202,37 +169,6 @@ std::string HKY::paramHeader() const
 	s += Model::paramHeader();
 	return s;
 	}
-#else //old way
-std::string HKY::paramHeader() const
-	{
-	std::string s = std::string("\tkappa\tfreqA\tfreqC\tfreqG\tfreqT");
-	if (is_flex_model)
-		{
-		s += "\tncat";
-
-		//std::ofstream ratef("flex_rates.txt");
-		//ratef << str(boost::format("%12s\t%12s\t%12s\t%12s\n") % "i" % "n" % "rate" % "prob");
-		//ratef.close();
-
-		//unsigned i;
-		//for ( i = 0; i < num_gamma_rates; ++i)
-		//	{
-		//	s += str(boost::format("\trate%d") % i);
-		//	}
-		//for ( i = 0; i < num_gamma_rates; ++i)
-		//	{
-		//	s += str(boost::format("\trateprob%d") % i);
-		//	}
-		}
-	else if (num_gamma_rates > 1)
-		{
-		s += "\tshape";
-		}
-	if (is_pinvar_model)
-		s += "\tpinvar";
-	return s;
-	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Overrides the pure virtual base class version to generate a string of tab-separated values of model-specific 
@@ -248,43 +184,7 @@ std::string HKY::paramReport(
 	s += str(boost::format(fmt) % state_freqs[2]);
 	s += str(boost::format(fmt) % state_freqs[3]);
 	//std::string s = str(boost::format("\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f") % kappa % state_freqs[0] % state_freqs[1] % state_freqs[2] % state_freqs[3]);
-#if POLPY_NEWWAY
 	s += Model::paramReport(ndecimals);
-#else	//old way
-	if (is_flex_model)
-		{
-		s += str(boost::format("%d\t") % num_gamma_rates);
-		//s += str(boost::format("\t%d") % num_gamma_rates);
-
-		//std::ofstream ratef("flex_rates.txt", std::ios::out | std::ios::app);
-		//for (unsigned i = 0; i < num_gamma_rates; ++i)
-		//	ratef << str(boost::format("%12d\t%12d\t%12.5f\t%12.5f\n") % i % num_gamma_rates % gamma_rates_unnorm[i] % gamma_rate_probs[i]);
-		//ratef.close();
-
-		//std::vector<double> rates(num_gamma_rates, 0.0);
-		//std::vector<double> probs(num_gamma_rates, 0.0);
-		//normalizeRatesAndProbs(rates, probs);
-		//unsigned i;
-		//for ( i = 0; i < num_gamma_rates; ++i)
-		//	{
-		//	s += str(boost::format("\t%.5f") % rates[i]);
-		//	}
-		//for ( i = 0; i < num_gamma_rates; ++i)
-		//	{
-		//	s += str(boost::format("\t%.5f") % probs[i]);
-		//	}
-		}
-	else if (num_gamma_rates > 1)
-		{
-		s += str(boost::format(fmt) % gamma_shape);
-		//s += str(boost::format("\t%.5f") % gamma_shape);
-		}
-	if (is_pinvar_model)
-        {
-		s += str(boost::format(fmt) % pinvar);
-		//s += str(boost::format("\t%.5f") % pinvar);
-        }
-#endif
 	return s;
 	}
 

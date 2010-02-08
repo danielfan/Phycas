@@ -48,11 +48,9 @@ public:
 	// Accessors
 	ModelShPtr							getModel(unsigned i) {return subset_model[i];}
 	const ModelVect					&	getModelsVect() const;
-#if POLPY_NEWWAY
 	double								getSubsetRelRate(unsigned i) const;
 	const std::vector<double>		&	getSubsetRelRatesVect() const;
 	MultivarProbDistShPtr				getSubsetRelRatePrior() const;
-#endif
 	const std::vector<unsigned>		&	getNumPatternsVect() const;
 	const std::vector<unsigned>		&	getNumStatesVect() const;
 	const std::vector<unsigned>		&	getNumRatesVect() const;
@@ -60,20 +58,16 @@ public:
 	// Setters
 	void								addModel(ModelShPtr m);
 	void								setModelsVect(const std::vector<ModelShPtr> & models);
-#if POLPY_NEWWAY
 	void								setSubsetRelRatesVect(const std::vector<double> & rrates);
 	void								setSubsetRelRatePrior(MultivarProbDistShPtr rrate_prior);
-#endif
 	void								setNumPatternsVect(const std::vector<unsigned> & npatterns);
 	void								setNumStatesVect(const std::vector<unsigned> & nstates);
 	void								setNumRatesVect(const std::vector<unsigned> & nrates);
 
 private:
     
-#if POLPY_NEWWAY
 	MultivarProbDistShPtr				subset_relrate_prior;	/**< The prior on subset relative rates */
     std::vector<double>           		subset_relrates;		/**< The relative rates for each partition subset */
-#endif
     std::vector<unsigned>           	subset_num_patterns;	/**< The number of site patterns for each partition subset */
     std::vector<unsigned>           	subset_num_states;		/**< The number of states for each partition subset */
     std::vector<unsigned>           	subset_num_rates;		/**< The number of relative rate categories for each partition subset */

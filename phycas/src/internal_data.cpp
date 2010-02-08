@@ -24,7 +24,6 @@
 namespace phycas
 {
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Constructor initializes the conditional likelihood vectors using `nRates' and `nStates', and initializes the 
 |	`pMatrices' data member using `pMat'. The parameter `managePMatrices' determines whether to allocate space for the 
@@ -42,7 +41,7 @@ InternalData::InternalData(
 	{
 	if (using_unimap)
 		{
-#if POLPY_OLDWAY	// not yet working for partitioned model
+#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
 		univents.resize(nPatterns);
 		sMat =  NewTwoDArray<unsigned>(nStates, nStates);
 		for (unsigned i = 0; i < nStates*nStates ; ++i)
@@ -58,48 +57,6 @@ InternalData::InternalData(
 		pMatrices[i].Initialize(num_rates, num_states, num_states);
 		}
 	}
-#else // old way
-/*----------------------------------------------------------------------------------------------------------------------
-|	Constructor initializes the conditional likelihood vectors using `nRates' and `nStates', and initializes the 
-|	`pMatrices' data member using `pMat'. The parameter `managePMatrices' determines whether to allocate space for the 
-|	transition probability matrices.
-*/
-InternalData::InternalData(
-  bool					using_unimap,		/**< is true if internal nodes are to be prepared for uniformized mapping likelihood; it is false if internal nodes are to be prepared for Felsenstein-style integrated likelihoods */
-  unsigned				nPatterns,			/**< is the number of site patterns */
-  unsigned				nRates,				/**< is the number of relative rate categories */
-  unsigned				nStates,			/**< is the number of states in the model */
-  double * * *			pMat,				/**< is an alias to the rates by states by states `pMatrix' array, and may be NULL */
-  bool					managePMatrices,	/**< if true, a 3D matrix will be allocated (if `pMat' is also NULL, `pMatrices' will alias `ownedPMatrices.ptr') */ 
-  CondLikelihoodStorageShPtr cla_storage)
-	:
-	//parCLAValid(false),
-	//parWorkingCLA(NULL),	
-	//parCachedCLA(NULL),
-	//childCLAValid(false),
-	//childWorkingCLA(NULL),
-	//childCachedCLA(NULL),
-	unimap(using_unimap),
-	state(-1), 
-	pMatrices(pMat),
-	cla_pool(cla_storage),
-	sMat(0L)
-	{
-	if (using_unimap)
-		{
-		univents.resize(nPatterns);
-		sMat =  NewTwoDArray<unsigned>(nStates, nStates);
-		for (unsigned i = 0; i < nStates*nStates ; ++i)
-			sMat[0][i] = 0;
-		}
-	if (managePMatrices)
-		{
-		ownedPMatrices.Initialize(nRates, nStates, nStates);
-		if (pMatrices == NULL)
-			pMatrices = ownedPMatrices.ptr;
-		}
-	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Destructor ensures that all CLA structures are returned to `cla_pool'. The `ownedPMatrices' and `univents' data 

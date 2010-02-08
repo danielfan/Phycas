@@ -135,7 +135,7 @@ TreeNode * UnimapTopoMove::randomInternalAboveSubroot()
 
 void UnimapNNIMove::calculatePairwiseDistances()
 	{
-#if POLPY_OLDWAY	// unimap not yet working with partitioning
+#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
 	dXY = dWX =  dXZ =  dWY =  dYZ =  dWZ = 0.0;
 	/* This is called before the swap so "x" is "b" and "z" is "d" */
 	const int8_t * xStates = bTipData->getTipStatesArray().get();
@@ -337,7 +337,7 @@ void UnimapNNIMove::ProposeStateWithTemporaries(ChainManagerShPtr & p)
 */
 void UnimapTopoMove::proposeNewState()
 	{
-#if POLPY_OLDWAY	// not yet working for partitioned models
+#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
     // Choose random internal node origNode and randomly choose one of origNode's children to call x (the other is y)
     // Here is the actual layout of the tree in memory
     //
@@ -454,9 +454,7 @@ UnimapTopoMove::~UnimapTopoMove()
 
 double UnimapTopoMove::FourTaxonLnLBeforeMove()
 	{
-#if POLPY_NEWWAY	// unimap not yet working with partitioning
-	return 0.0;
-#else
+#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING	
 	aTipData = createTipDataFromUnivents(getUniventsConstRef(*a), aTipData);
 	bTipData = createTipDataFromUnivents(getUniventsConstRef(*b), bTipData);
 	cTipData = createTipDataFromUnivents(getUniventsConstRef(*c), cTipData);
@@ -471,6 +469,8 @@ double UnimapTopoMove::FourTaxonLnLBeforeMove()
 
 
     return lnlike;
+#else
+	return 0.0;
 #endif
 	}
 
@@ -487,7 +487,7 @@ bool UnimapTopoMove::CheckWithPaup(double lnlike)
 
 void UnimapTopoMove::DebugSaveNexusFile(std::ostream & nxsf, double lnlike)
     {
-#if POLPY_OLDWAY	// unimap not yet working with partitioning
+#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
     typedef boost::shared_array<const int8_t> StateArr;
     StateArr adata = aTipData->getTipStatesArray();
     StateArr bdata = bTipData->getTipStatesArray();
@@ -547,7 +547,7 @@ void UnimapTopoMove::DebugSaveNexusFile(std::ostream & nxsf, double lnlike)
 
 void UnimapTopoMove::storePMatTransposed(double **& cached, const double *** p_mat_array)
 	{
-#if POLPY_OLDWAY	// unimap not yet working with partitioning
+#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
 	const unsigned nStates = likelihood->getNStates();
 	if (!cached)
 		cached = NewTwoDArray<double>(nStates + 1, nStates + 1);
@@ -561,9 +561,7 @@ void UnimapTopoMove::storePMatTransposed(double **& cached, const double *** p_m
 	
 double UnimapTopoMove::FourTaxonLnLFromCorrectTipDataMembers()
 	{
-#if POLPY_NEWWAY
-	return 0.0;
-#else // old way
+#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
 	CondLikelihoodShPtr nd_childCLPtr, nd_parentCLPtr;
 	double *** p_mat;
 	if (scoringBeforeMove)
@@ -596,6 +594,8 @@ double UnimapTopoMove::FourTaxonLnLFromCorrectTipDataMembers()
 		PHYCAS_ASSERT(CheckWithPaup(lnl));
 #	endif
 	return lnl;
+#else // old way
+	return 0.0;
 #endif
 	}
 	
@@ -604,9 +604,7 @@ double UnimapTopoMove::HarvestLnLikeFromCondLikePar(
   ConstCondLikelihoodShPtr neighborCondLike, 
   const double * const * childPMatrix)
 	{
-#if POLPY_NEWWAY	// unimap not working yet with partitioning
-	return 0.0;
-#else
+#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
 	LikeFltType * focalNdCLAPtr = focalCondLike->getCLA(); //PELIGROSO
 	PHYCAS_ASSERT(focalNdCLAPtr);
 	const unsigned num_patterns = likelihood->getNPatterns();
@@ -635,15 +633,15 @@ double UnimapTopoMove::HarvestLnLikeFromCondLikePar(
 		lnLikelihood += site_lnL;
 		}
 	return lnLikelihood;
+#else
+	return 0.0;
 #endif
 	}
 
 	
 TipData * UnimapTopoMove::createTipDataFromUnivents(const Univents & u, TipData *td)
 	{
-#if POLPY_NEWWAY	// unimap not working yet with partitioning
-	return NULL;
-#else
+#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
 	if (td)
 		{
 		/* this is the one place in which we overwrite the state codes */
@@ -667,6 +665,8 @@ TipData * UnimapTopoMove::createTipDataFromUnivents(const Univents & u, TipData 
 						likelihood->getCondLikelihoodStorage());
 		}
 	return td;
+#else
+	return NULL;
 #endif
 	}
 

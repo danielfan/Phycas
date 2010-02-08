@@ -44,10 +44,7 @@ class LikelihoodCore(object):
 		self.likelihood				= None
 		self._tree					= None
 		self.r						= self.parent._getLot()
-		if partitioning:
-			self.partition_model		= None
-		else:
-			self.model					= None
+		self.partition_model		= None
 
 	def getTree(self):
 		if self._tree is None:
@@ -163,122 +160,31 @@ class LikelihoodCore(object):
 		self.r = self.parent._getLot()
 		#self.starting_edgelen_dist.setLot(self.r)
 		
-		if partitioning:
-			from phycas import partition,model
-			# Create the object
-			self.partition_model = Likelihood.PartitionModelBase()
-			modelspecs = partition.getModels()
-			if len(modelspecs) < 1:
-				# model is an interface model object (i.e. Model defined in Phycas/Model.py), 
+		from phycas import partition,model
+		# Create the object
+		self.partition_model = Likelihood.PartitionModelBase()
+		modelspecs = partition.getModels()
+		if len(modelspecs) < 1:
+			# model is an interface model object (i.e. Model defined in Phycas/Model.py), 
+			# not an actual model object (e.g. JCModel defined in Likelihood/_Model.py).
+			# Need to create a real model using the interface specification
+			# and add the real model to partition_model.
+			mod = self.createModel(model)
+			self.partition_model.addModel(mod)
+		else:
+			for m in modelspecs:
+				# m is an interface model object (i.e. Model defined in Phycas/Model.py), 
 				# not an actual model object (e.g. JCModel defined in Likelihood/_Model.py).
 				# Need to create a real model using the interface specification
 				# and add the real model to partition_model.
-				mod = self.createModel(model)
+				mod = self.createModel(m)
 				self.partition_model.addModel(mod)
-			else:
-				for m in modelspecs:
-					# m is an interface model object (i.e. Model defined in Phycas/Model.py), 
-					# not an actual model object (e.g. JCModel defined in Likelihood/_Model.py).
-					# Need to create a real model using the interface specification
-					# and add the real model to partition_model.
-					mod = self.createModel(m)
-					self.partition_model.addModel(mod)
-			self.likelihood = Likelihood.TreeLikelihood(self.partition_model)
-			self.likelihood.setLot(self.r)
-			self.likelihood.setUFNumEdges(self.parent.opts.uf_num_edges)
-			self.likelihood.useUnimap(self.parent.opts.use_unimap)
-			if self.parent.data_matrix:
-				if POLPY_NEWWAY:	# partitioning data
-					# print 'partition.getSiteModelVector():\n  ',partition.getSiteModelVector()
-					self.likelihood.copyDataFromDiscreteMatrix(self.parent.data_matrix, partition.getSiteModelVector())
-				else:
-					self.likelihood.copyDataFromDiscreteMatrix(self.parent.data_matrix)
-		else:
-			# Not partitioning
-			# Create a substitution model (should replace with call to createModel member function)
-			if self.parent.opts.model.type == 'codon':
-				self.parent.phycassert(not self.parent.opts.model.use_flex_model, 'Cannot currently use flex model within codon model')
-				self.parent.phycassert(self.parent.opts.model.num_rates == 1, 'Cannot currently use gamma rate heterogeneity within codon model')
-				self.parent.phycassert(not self.parent.opts.model.pinvar_model, 'Cannot currently use invariable sites model within codon model')
-				self.model = Likelihood.CodonModel()
-				self.model.setKappa(self.parent.opts.model.kappa)
-				if self.parent.opts.model.fix_kappa:
-					self.model.fixKappa()
-				self.model.setOmega(self.parent.opts.model.omega)
-				if self.parent.opts.model.fix_omega:
-					self.model.fixOmega()
-				if not self.parent.opts.model.update_freqs_separately:
-					ndimensions = self.parent.opts.model.state_freq_prior.getNParams() 
-					self.parent.phycassert(ndimensions == 61, 'state_freq_prior should be 61-dimensional, but instead has %d dimensions' % ndimensions)
-				self.parent.phycassert(self.parent.opts.model.state_freqs, 'state_freqs is None, but should be a list containing 61 (unnormalized) relative codon frequencies')
-				self.parent.phycassert(len(self.parent.opts.model.state_freqs) == 61, 'state_freqs should be a list containing exactly 61 codon frequencies; instead, it contains %d values' % len(self.parent.opts.model.state_freqs))
-				for c in range(61):
-					self.parent.phycassert(self.parent.opts.model.state_freqs[c] >= 0.0, 'state_freqs[%d] cannot be negative (%f was specified)' % (c,self.parent.opts.model.state_freqs[c]))
-				self.model.setStateFreqsUnnorm(self.parent.opts.model.state_freqs)
-				if self.parent.opts.model.fix_freqs:
-					self.model.fixStateFreqs()
-			elif self.parent.opts.model.type in ['gtr','hky']:
-				if self.parent.opts.model.type == 'gtr':
-					self.model = Likelihood.GTRModel()
-					self.model.setRelRates(self.parent.opts.model.relrates)
-					if self.parent.opts.model.fix_relrates:
-						self.model.fixRelRates()
-				else:
-					self.model = Likelihood.HKYModel()
-					self.model.setKappa(self.parent.opts.model.kappa)
-					if self.parent.opts.model.fix_kappa:
-						self.model.fixKappa()
-				self.parent.phycassert(self.parent.opts.model.state_freqs, 'state_freqs is None, but should be a list containing 4 (unnormalized) relative base frequencies')
-				self.parent.phycassert(len(self.parent.opts.model.state_freqs) == 4, 'state_freqs should be a list containing exactly 4 base frequencies; instead, it contains %d values' % len(self.parent.opts.model.state_freqs))
-				self.parent.phycassert(self.parent.opts.model.state_freqs[0] >= 0.0, 'state_freqs[0] cannot be negative (%f was specified)' % self.parent.opts.model.state_freqs[0])
-				self.parent.phycassert(self.parent.opts.model.state_freqs[1] >= 0.0, 'state_freqs[1] cannot be negative (%f was specified)' % self.parent.opts.model.state_freqs[1])
-				self.parent.phycassert(self.parent.opts.model.state_freqs[2] >= 0.0, 'state_freqs[2] cannot be negative (%f was specified)' % self.parent.opts.model.state_freqs[2])
-				self.parent.phycassert(self.parent.opts.model.state_freqs[3] >= 0.0, 'state_freqs[3] cannot be negative (%f was specified)' % self.parent.opts.model.state_freqs[3])
-				self.model.setNucleotideFreqs(self.parent.opts.model.state_freqs[0], self.parent.opts.model.state_freqs[1], self.parent.opts.model.state_freqs[2], self.parent.opts.model.state_freqs[3])  #POL should be named setStateFreqs?
-				if self.parent.opts.model.fix_freqs:
-					self.model.fixStateFreqs()
-			else:
-				self.model = Likelihood.JCModel()
-
-			# If rate heterogeneity is to be assumed, add it to the model here
-			# Note must defer setting up pattern specific rates model until we know number of patterns
-			if self.parent.opts.model.use_flex_model:
-				self.model.setNGammaRates(self.parent.opts.model.num_rates)
-				self.model.setFlexModel()
-				self.model.setFlexRateUpperBound(self.parent.opts.model.flex_L)
-			elif self.parent.opts.model.num_rates > 1:
-				self.model.setNGammaRates(self.parent.opts.model.num_rates)
-				self.model.setPriorOnShapeInverse(self.parent.opts.model.use_inverse_shape)	   #POL should be named useInverseShape rather than setPriorOnShapeInverse
-				self.model.setShape(self.parent.opts.model.gamma_shape)
-				if self.parent.opts.model.fix_shape:
-					self.model.fixShape()
-			else:
-				self.model.setNGammaRates(1)
-				
-			if self.parent.opts.model.pinvar_model:
-				assert not self.parent.opts.model.use_flex_model, 'Cannot currently use flex model with pinvar'
-				self.model.setPinvarModel()
-				self.model.setPinvar(self.parent.opts.model.pinvar)
-				if self.parent.opts.model.fix_pinvar:
-					self.model.fixPinvar()
-			else:
-				self.model.setNotPinvarModel()
-
-			if self.parent.opts.model.fix_edgelens:
-				self.model.fixEdgeLengths()
-			
-			# Create the object
-			self.likelihood = Likelihood.TreeLikelihood(self.model)
-			self.likelihood.setLot(self.r)
-			self.likelihood.setUFNumEdges(self.parent.opts.uf_num_edges)
-			self.likelihood.useUnimap(self.parent.opts.use_unimap)
-			if self.parent.data_matrix:
-				if POLPY_NEWWAY:	# partitioning data
-					from phycas import partition
-					self.likelihood.copyDataFromDiscreteMatrix(self.parent.data_matrix, partition.getSiteModelVector())
-				else:
-					self.likelihood.copyDataFromDiscreteMatrix(self.parent.data_matrix)
-				self.parent.npatterns = self.likelihood.getNPatterns()
+		self.likelihood = Likelihood.TreeLikelihood(self.partition_model)
+		self.likelihood.setLot(self.r)
+		self.likelihood.setUFNumEdges(self.parent.opts.uf_num_edges)
+		self.likelihood.useUnimap(self.parent.opts.use_unimap)
+		if self.parent.data_matrix:
+			self.likelihood.copyDataFromDiscreteMatrix(self.parent.data_matrix, partition.getSiteModelVector())
 
 		# Build the starting tree
 		self.tree = self.parent.getStartingTree()

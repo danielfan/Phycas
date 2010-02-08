@@ -111,11 +111,7 @@ std::string FlexRateParam::getPriorDescr() const
 double FlexRateParam::recalcPrior()
 	{
 	refreshLeftRightValues();
-#if POLPY_NEWWAY
     double curr_value = flex_rates[which];
-#else //old way
-    PHYCAS_ASSERT(curr_value == flex_rates[which]);
-#endif
 	curr_ln_prior = (double)nspacers*(std::log(curr_value - left_value) + std::log(right_value - curr_value));
 	return curr_ln_prior;
 	}

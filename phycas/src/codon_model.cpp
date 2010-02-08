@@ -302,37 +302,21 @@ std::string Codon::getModelName() const
 |	supplied `parameters' vector. This incudes the codon frequencies as well as the transition/transversion rate 
 |	ratio kappa and the nonsynonymous/synonymous rate ratio omega.
 */
-#if POLPY_NEWWAY
 void Codon::createParameters(
   TreeShPtr t,								/**< is the tree (the nodes of which are needed for creating edge length parameters) */
   MCMCUpdaterVect & edgelens,				/**< is the vector of edge length parameters to fill */
   MCMCUpdaterVect & edgelen_hyperparams,	/**< is the vector of edge length hyperparameters to fill */
   MCMCUpdaterVect & parameters,				/**< is the vector of model-specific parameters to fill */
   int subset_pos)							/**< if 0 (first subset) or -1 (only subset), edge length parameters and hyperparams will be added; otherwise, the `edgelens' and `edgelen_hyperparams' vectors returned will be empty */
-#else //old way
-void Codon::createParameters(
-  TreeShPtr t,								/**< is the tree (the nodes of which are needed for creating edge length parameters) */
-  MCMCUpdaterVect & edgelens,				/**< is the vector of edge length parameters to fill */
-  MCMCUpdaterVect & edgelen_hyperparams,	/**< is the vector of edge length hyperparameters to fill */
-  MCMCUpdaterVect & parameters) const		/**< is the vector of model-specific parameters to fill */
-#endif
 	{
-#if POLPY_NEWWAY
 	Model::createParameters(t, edgelens, edgelen_hyperparams, parameters, subset_pos);
-#else //old way
-	Model::createParameters(t, edgelens, edgelen_hyperparams, parameters);
-#endif
 
 	PHYCAS_ASSERT(!kappa_param);
 	kappa_param = MCMCUpdaterShPtr(new KappaParam());
-#if POLPY_NEWWAY
 	if (subset_pos < 0)
 		kappa_param->setName("kappa");
 	else 
 		kappa_param->setName(boost::str(boost::format("kappa_%d") % (subset_pos + 1)));
-#else //old way
-		kappa_param->setName("trs/trv rate ratio");
-#endif
 	kappa_param->setStartingValue(4.0);
 	kappa_param->setTree(t);
 	kappa_param->setPrior(kappa_prior);
@@ -342,14 +326,10 @@ void Codon::createParameters(
 
 	PHYCAS_ASSERT(!omega_param);
 	omega_param = MCMCUpdaterShPtr(new OmegaParam());
-#if POLPY_NEWWAY
 	if (subset_pos < 0)
 		omega_param->setName("omega");
 	else 
 		omega_param->setName(boost::str(boost::format("omega_%d") % (subset_pos + 1)));
-#else //old way
-	omega_param->setName("nonsynon./synon. rate ratio");
-#endif
 	omega_param->setStartingValue(1.0);
 	omega_param->setTree(t);
 	omega_param->setPrior(omega_prior);
@@ -370,7 +350,6 @@ void Codon::createParameters(
 		for (unsigned i = 0; i < 61; ++i)
 			{
 			MCMCUpdaterShPtr state_freq_param = MCMCUpdaterShPtr(new StateFreqParam(i));
-#if POLPY_NEWWAY
 			if (subset_pos < 0)
 				{
 				std::string nm = boost::str(boost::format("freq%s") % state_repr[i]);
@@ -383,10 +362,6 @@ void Codon::createParameters(
 				freq_name.push_back(nm);
 				state_freq_param->setName(nm);
 				}
-#else //old way
-			std::string s = str(boost::format("freq. for codon %s") % state_repr[i]);
-			state_freq_param->setName(s);
-#endif
 			state_freq_param->setTree(t);
 			state_freq_param->setStartingValue(1.0);
 			state_freq_param->setPrior(freq_param_prior);
@@ -425,7 +400,6 @@ void Codon::createParameters(
 |	the gamma shape parameter (if the number of rates is greater than 1) and the pinvar parameter (if an invariable 
 |	sites model is being used)
 */
-#if POLPY_NEWWAY
 std::string Codon::paramHeader() const	/**< is the suffix to tack onto the parameter names for this model (useful for partitioned models to show to which partition subset the parameter belongs) */
 	{
 	std::string s;
@@ -438,29 +412,6 @@ std::string Codon::paramHeader() const	/**< is the suffix to tack onto the param
 	s += Model::paramHeader();
 	return s;
 	}
-#else //old way
-std::string Codon::paramHeader() const
-	{
-	std::string s = std::string("\tkappa\tomega\t");
-	for (std::vector<std::string>::const_iterator it = state_repr.begin(); it != state_repr.end(); ++it)
-		{
-		s += "freq";
-		s += (*it); 
-		s += '\t';
-		}
-	if (is_flex_model)
-		{
-		s += "\tncat";
-		}
-	else if (num_gamma_rates > 1)
-		{
-		s += "\tshape";
-		}
-	if (is_pinvar_model)
-		s += "\tpinvar";
-	return s;
-	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Overrides the pure virtual base class version to generate a string of tab-separated values of model-specific 
@@ -478,25 +429,7 @@ std::string Codon::paramReport(
 		s += str(boost::format(fmt) % state_freqs[i]);
 		//s += str(boost::format("%.5f\t") % state_freqs[i]);
 		}
-#if POLPY_NEWWAY
 	s += Model::paramReport(ndecimals);
-#else	//old way
-	if (is_flex_model)
-		{
-		s += str(boost::format("%d\t") % num_gamma_rates);
-		//s += str(boost::format("\t%d") % num_gamma_rates);
-		}
-	else if (num_gamma_rates > 1)
-		{
-		s += str(boost::format(fmt) % gamma_shape);
-		//s += str(boost::format("\t%.5f") % gamma_shape);
-		}
-	if (is_pinvar_model)
-        {
-		s += str(boost::format(fmt) % pinvar);
-		//s += str(boost::format("\t%.5f") % pinvar);
-        }
-#endif
 	return s;
 	}
 

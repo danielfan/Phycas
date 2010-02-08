@@ -51,12 +51,8 @@ class KappaParam : public MCMCUpdater
 						KappaParam();
 						virtual ~KappaParam(); 
 
-#if POLPY_NEWWAY
         virtual void	sendCurrValueToModel(double v);
         virtual double  getCurrValueFromModel();
-#else //old way
-        virtual void    setCurrValueFromModel();
-#endif
 		virtual void	setModel(ModelShPtr p);
 		virtual bool	update();				// override virtual from MCMCUpdater base class
 		virtual double	operator()(double k);	// override pure virtual from AdHocDensity (base class of MCMCUpdater)
@@ -81,12 +77,8 @@ class OmegaParam : public MCMCUpdater
 							//std::cerr << "OmegaParam dying..." << std::endl;
 							}
 
-#if POLPY_NEWWAY
         virtual void	sendCurrValueToModel(double v);
         virtual double 	getCurrValueFromModel();
-#else //old way
-        virtual void    setCurrValueFromModel();
-#endif
 		virtual void	setModel(ModelShPtr p);
 		virtual bool	update();				// override virtual from MCMCUpdater base class
 		virtual double	operator()(double k);	// override pure virtual from AdHocDensity (base class of MCMCUpdater)
@@ -110,12 +102,8 @@ class GTRRateParam : public MCMCUpdater
 							//std::cerr << "GTRRateParam dying..." << std::endl;
 							}
 
-#if POLPY_NEWWAY
         virtual void	sendCurrValueToModel(double v);
         virtual double  getCurrValueFromModel();
-#else //old way
-        virtual void    setCurrValueFromModel();
-#endif
 		virtual void	setModel(ModelShPtr p);
 		virtual bool	update();				// override virtual from MCMCUpdater base class
 		virtual double	operator()(double k);	// override pure virtual from AdHocDensity (base class of MCMCUpdater)
@@ -135,12 +123,8 @@ class DiscreteGammaShapeParam : public MCMCUpdater
 						DiscreteGammaShapeParam(bool invert);
 						virtual ~DiscreteGammaShapeParam();
 
-#if POLPY_NEWWAY
         virtual void	sendCurrValueToModel(double v);
         virtual double	getCurrValueFromModel();
-#else //old way
-        virtual void    setCurrValueFromModel();
-#endif
 		virtual bool	update();				// override virtual from MCMCUpdater base class
 		virtual double	operator()(double k);	// override pure virtual from AdHocDensity (base class of MCMCUpdater)
 
@@ -161,12 +145,8 @@ class PinvarParam : public MCMCUpdater
 							//std::cerr << "PinvarParam dying..." << std::endl;
 							}
 
-#if POLPY_NEWWAY
         virtual void	sendCurrValueToModel(double v);
         virtual double 	getCurrValueFromModel();
-#else //old way
-        virtual void    setCurrValueFromModel();
-#endif
 		virtual bool	update();				// override virtual from MCMCUpdater base class
 		virtual double	operator()(double k);	// override pure virtual from AdHocDensity (base class of MCMCUpdater)
 	};
@@ -185,12 +165,8 @@ class FlexRateParam : public MCMCUpdater
 										//std::cerr << "FlexRateParam dying..." << std::endl;
 										}
 	
-#if POLPY_NEWWAY
         virtual void				sendCurrValueToModel(double v);
         virtual double				getCurrValueFromModel();
-#else //old way
-        virtual void                setCurrValueFromModel();
-#endif
 		virtual bool				update();				// override virtual from MCMCUpdater base class
 		virtual std::string			getPriorDescr() const;	// override virtual from MCMCUpdater base class
 		virtual double				recalcPrior();			// override virtual from MCMCUpdater base class
@@ -225,12 +201,8 @@ class FlexProbParam : public MCMCUpdater
 									//std::cerr << "FlexProbParam dying..." << std::endl;
 									}
 	
-#if POLPY_NEWWAY
         virtual void			sendCurrValueToModel(double v);
         virtual double          getCurrValueFromModel();
-#else //old way
-        virtual void            setCurrValueFromModel();
-#endif
 		virtual bool			update();				// override virtual from MCMCUpdater base class
 		virtual void			setLot(LotShPtr r);
 		virtual double			operator()(double f);
@@ -252,12 +224,8 @@ class StateFreqParam : public MCMCUpdater
 							StateFreqParam(unsigned w);
 							virtual ~StateFreqParam();
 	
-#if POLPY_NEWWAY
         virtual void		sendCurrValueToModel(double v);
         virtual double      getCurrValueFromModel();
-#else //old way
-        virtual void        setCurrValueFromModel();
-#endif
 		virtual bool		update();				// override virtual from MCMCUpdater base class
 		virtual double		operator()(double k);
 
@@ -308,19 +276,11 @@ class HyperPriorParam : public MCMCUpdater
 	{
 	public:
 							HyperPriorParam();
-#if POLPY_NEWWAY
 							HyperPriorParam(EdgeLenMasterParamShPtr p, bool for_external_edges);
-#else //old way
-							HyperPriorParam(EdgeLenMasterParamShPtr p);
-#endif
 							virtual ~HyperPriorParam();
 
-#if POLPY_NEWWAY
         virtual void		sendCurrValueToModel(double v);
         virtual double      getCurrValueFromModel();
-#else //old way
-        virtual void        setCurrValueFromModel();
-#endif
 		virtual bool		update();				// override virtual from MCMCUpdater base class
 		virtual double		operator()(double k);	
 

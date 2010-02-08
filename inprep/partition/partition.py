@@ -10,7 +10,7 @@
 
 from phycas import *
 
-if partitioning:
+if True:
 	print '==> Setting up partition model...'
 	
 	if False:

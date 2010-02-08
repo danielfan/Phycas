@@ -32,11 +32,6 @@ StateFreqParam::StateFreqParam(
   unsigned w)		/**< The 0-based index of the base frequency being managed by this object (0=A, 1=C, 2=G and 3=T) */
   : MCMCUpdater(),  which(w)
 	{
-#if POLPY_NEWWAY
-#else //old way
-	curr_value = 1.0;
-#endif
-
 	has_slice_sampler = true;
 	is_move = false;
 	is_master_param = false;

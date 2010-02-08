@@ -635,6 +635,7 @@
 		D1BB2656111094A6002A8F79 /* LikelihoodCore.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = LikelihoodCore.py; path = ../../phycas/Phycas/LikelihoodCore.py; sourceTree = SOURCE_ROOT; };
 		D1BB2657111094A6002A8F79 /* MarkovChain.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = MarkovChain.py; path = ../../phycas/Phycas/MarkovChain.py; sourceTree = SOURCE_ROOT; };
 		D1D55522111B7A9A001BD7CD /* LikelihoodTest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = LikelihoodTest.py; path = ../../phycas/Tests/LikelihoodTest/LikelihoodTest.py; sourceTree = SOURCE_ROOT; };
+		D1D66464112051EE00BA8E47 /* partition.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = partition.py; path = ../../phycas/Tests/partition/partition.py; sourceTree = SOURCE_ROOT; };
 		D1F281C3111B422C00FDE78C /* GTRTest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = GTRTest.py; path = ../../phycas/Tests/GTRTest/GTRTest.py; sourceTree = SOURCE_ROOT; };
 		D2AAC09D05546B4700DB518D /* _ConversionsExt.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = _ConversionsExt.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -1273,6 +1274,7 @@
 		D1AC9561111A0A9E00335CDA /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				D1D66463112051D800BA8E47 /* partition */,
 				D1D55521111B7A81001BD7CD /* LikelihoodTest */,
 				D1F281C2111B420F00FDE78C /* GTRTest */,
 				D1AC9562111A0AF500335CDA /* runall.py */,
@@ -1286,6 +1288,14 @@
 				D1D55522111B7A9A001BD7CD /* LikelihoodTest.py */,
 			);
 			name = LikelihoodTest;
+			sourceTree = "<group>";
+		};
+		D1D66463112051D800BA8E47 /* partition */ = {
+			isa = PBXGroup;
+			children = (
+				D1D66464112051EE00BA8E47 /* partition.py */,
+			);
+			name = partition;
 			sourceTree = "<group>";
 		};
 		D1F281C2111B420F00FDE78C /* GTRTest */ = {

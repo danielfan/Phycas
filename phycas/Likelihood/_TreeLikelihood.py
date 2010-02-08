@@ -61,11 +61,7 @@ class TreeLikelihood(TreeLikelihoodBase):
         data_matrix are compressed into data patterns and their counts.
         
         """
-        from phycas import POLPY_NEWWAY
-        if POLPY_NEWWAY:  # partitioning data
-            TreeLikelihoodBase.copyDataFromDiscreteMatrix(self, data_matrix.mat, partition_info)
-        else:
-            TreeLikelihoodBase.copyDataFromDiscreteMatrix(self, data_matrix.mat)
+        TreeLikelihoodBase.copyDataFromDiscreteMatrix(self, data_matrix.mat, partition_info)
 
     def copyDataFromSimData(self, sim_data):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

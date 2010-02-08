@@ -49,16 +49,11 @@ void updater_pymod()
    	class_<phycas::MCMCUpdater, bases<AdHocDensity>, boost::noncopyable, boost::shared_ptr<phycas::MCMCUpdater> >("MCMCUpdaterBase", no_init)
 		.def("getLnPrior", &MCMCUpdater::getLnPrior)
 		.def("getLnLike", &MCMCUpdater::getLnLike)
-#if POLPY_NEWWAY
 		.def("computesUnivariatePrior", &MCMCUpdater::computesUnivariatePrior)
 		.def("computesMultivariatePrior", &MCMCUpdater::computesMultivariatePrior)
 		.def("getCurrValueFromModel", &MCMCUpdater::getCurrValueFromModel)
 		.def("getCurrValuesFromModel", &MCMCUpdater::getCurrValuesFromModel)
 		.def("listCurrValuesFromModel", &MCMCUpdater::listCurrValuesFromModel)
-#else //old way
-		.def("getCurrValue", &MCMCUpdater::getCurrValue)
-		.def("setCurrValue", &MCMCUpdater::setCurrValue)
-#endif
 		.def("getName", &MCMCUpdater::getName, return_value_policy<copy_const_reference>())
 		.def("getPriorDescr", &MCMCUpdater::getPriorDescr)
 		.def("getWeight", &MCMCUpdater::getWeight)
@@ -133,13 +128,11 @@ void updater_pymod()
 		boost::noncopyable, boost::shared_ptr<phycas::DirichletMove> >("DirichletMove") 
 		.def("setDimension", &phycas::DirichletMove::setDimension)
 		;
-#if POLPY_NEWWAY
 	class_<phycas::SubsetRelRatesMove, bases<phycas::DirichletMove>, 
 		boost::noncopyable, boost::shared_ptr<phycas::SubsetRelRatesMove> >("SubsetRelRatesMove") 
 		.def("setPartitionModel", &phycas::SubsetRelRatesMove::setPartitionModel)
 		.def("update", &phycas::SubsetRelRatesMove::update)
 		;
-#endif
 	class_<phycas::RelRatesMove, bases<phycas::DirichletMove>, 
 		boost::noncopyable, boost::shared_ptr<phycas::RelRatesMove> >("RelRatesMove") 
 		.def("update", &phycas::RelRatesMove::update)

@@ -138,7 +138,6 @@ bool MCMCUpdater::update()
     return false;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns true if the `prior' data member points to something.
 */
@@ -160,7 +159,6 @@ bool MCMCUpdater::computesMultivariatePrior()
 	else
 		return false;
 	}
-#endif		
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns true if the value of the data member `is_move' is false, and vice versa.
@@ -416,7 +414,6 @@ double MCMCUpdater::setCurrLnPrior(
 	return curr_ln_prior;
     }
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calls GetLnPDF function of prior to recalculate `curr_ln_prior'. This function is important because the 
 |	tempting getLnPrior() member function only returns the value of `curr_ln_prior' (it does not recalculate anything).
@@ -463,24 +460,6 @@ double MCMCUpdater::recalcPrior()
 		return curr_ln_prior;
 		}
 	}
-#else //old way
-/*----------------------------------------------------------------------------------------------------------------------
-|	Calls `prior'->GetLnPDF(`curr_value') to recalculate `curr_ln_prior'. This function is important because the 
-|	tempting getLnPrior() member function only returns the value of `curr_ln_prior' (it does not recalculate anything).
-*/
-double MCMCUpdater::recalcPrior()
-	{
-	try 
-		{
-		curr_ln_prior = prior->GetLnPDF(curr_value);
-		}
-	catch(XProbDist &)
-		{
-		curr_ln_prior = prior->GetRelativeLnPDF(curr_value);
-		}
-	return curr_ln_prior;
-	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the log likelihood just after this updater's update() member function was last called.
@@ -504,28 +483,14 @@ const std::string & MCMCUpdater::getName() const
 */
 std::string MCMCUpdater::getPriorDescr() const
 	{
-#if POLPY_NEWWAY
 	if (prior)
 		return prior->GetDistributionDescription();
 	else if (mvprior)
 		return mvprior->GetDistributionDescription();
 	else
 		return "(no prior defined)";
-#else //old way
-	return prior->GetDistributionDescription();
-#endif
 	}
 
-#if POLPY_NEWWAY
-#else //old way
-/*----------------------------------------------------------------------------------------------------------------------
-|	Returns the current value of the updater (the value of the parameter just after its operator() was last called).
-*/
-double MCMCUpdater::getCurrValue() const
-	{
-	return curr_value;
-	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the `name' data member of this move to the supplied string.
@@ -636,19 +601,7 @@ void MCMCUpdater::releaseSharedPointers()
 	slice_sampler.reset();
 	}
 	
-#if POLPY_NEWWAY
-#else //old way
-/*----------------------------------------------------------------------------------------------------------------------
-|   Set `curr_value' data member to the supplied value `x'. Not ordinarily used, but useful for debugging.
-*/
-void MCMCUpdater::setCurrValue(
-  double x) /**< is the value to which `curr_value' should be set */
-	{
-    curr_value = x;
-	}
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	This base class version does nothing. Derived classes representing model parameters should override this 
 |	method to set the value of the corresponding parameter in `model' to the supplied value `v'.
@@ -692,15 +645,6 @@ double_vect_t MCMCUpdater::listCurrValuesFromModel()
 	double_vect_t v;
 	return v;
 	}
-#else //old way
-/*----------------------------------------------------------------------------------------------------------------------
-|	This base class version does nothing. Derived classes representing model parameters should override this method to 
-|   set their `curr_value' data member to the corresponding value in `model'.
-*/
-void MCMCUpdater::setCurrValueFromModel()
-	{
-	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calls `likelihood'->calcLnL(`tree') to recalculate `curr_ln_like'. This function is important because the 

@@ -25,10 +25,7 @@
 #include "phycas/src/square_matrix.hpp"
 #include "phycas/src/univents.hpp"
 #include "phycas/src/likelihood_models.hpp"
-
-#if POLPY_NEWWAY
 #include "phycas/src/partition_model.hpp"
-#endif
 
 namespace phycas
 {
@@ -41,11 +38,7 @@ class Tree;
 class UniventProbMgr
     {
 	public:
-#if POLPY_NEWWAY
 		                                    UniventProbMgr(PartitionModelShPtr);
-#else // old way
-		                                    UniventProbMgr(ModelShPtr);
-#endif
 		
 		void                                sampleDescendantStates(Univents & u, const double * const * p_mat, const LikeFltType * des_cla, const int8_t * parent_states, Lot & rng) const;
 		void                                sampleRootStates(Univents & u, const LikeFltType * rootStatePosterior, Lot & rng, bool posteriors_normalized, unsigned * obs_state_counts = NULL) const;
@@ -79,11 +72,7 @@ class UniventProbMgr
 		mutable double					    lambda;	        /**< rate at which uniformization events, or univents, occur */
 		mutable unsigned 				    maxm;           /**< */
 		unsigned						    numStates;      /**< */
-#if POLPY_NEWWAY
 		PartitionModelShPtr					model;          /**< */
-#else // old way
-		ModelShPtr						    model;          /**< */
-#endif
 		bool							    sampleTimes;    /**< */
 		mutable SquareMatrix			    scratchMatOne;  /**< */
 		mutable SquareMatrix			    scratchMatTwo;  /**< */

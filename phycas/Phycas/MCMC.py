@@ -1,6 +1,6 @@
 from phycas.Utilities.PhycasCommand import *
 from phycas.Utilities.CommonFunctions import CommonFunctions
-from phycas import model, partition, partitioning, randomtree, P
+from phycas import model, partition, randomtree, P
 from phycas.Phycas.MCMCImpl import MCMCImpl
 #from phycas.ProbDist import Beta, Exponential, InverseGamma
 import copy

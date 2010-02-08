@@ -60,13 +60,8 @@ class Model	{
 		virtual void					calcPMat(double * * pMat, double edgeLength) const = 0;
 		void							calcPMatrices(double * * * pMat, const double * edgeLength, unsigned numRates) const;
 		virtual std::string				lookupStateRepr(int state) const;
-#if POLPY_NEWWAY
         virtual void					createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters, int subset_pos);
         virtual void					buildStateList(state_list_t &, state_list_pos_t &) const;
-#else
-        virtual void					createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters) const;
-        virtual void					buildStateList(VecStateList &, VecStateListPos &) const;
-#endif
 
 		virtual std::string				paramHeader() const;
 		virtual std::string				paramReport(unsigned ndecimals) const;
@@ -158,7 +153,6 @@ class Model	{
 		void							setInternalEdgeLenPrior(ProbDistShPtr d);
 		ProbDistShPtr					getEdgeLenHyperPrior();
 		//ProbDistShPtr					getEdgeLenPrior();
-#if POLPY_NEWWAY
 		bool							isFlexModel();
 		bool							hasEdgeLenHyperPrior();
 		void							setInternalEdgelenHyperparam(double mu) {internal_edgelen_hyperparam = mu;}
@@ -166,7 +160,6 @@ class Model	{
 
 		void							setExternalEdgelenHyperparam(double mu) {external_edgelen_hyperparam = mu;}
 		double							getExternalEdgelenHyperparam() {return external_edgelen_hyperparam;}
-#endif
 		ProbDistShPtr					getExternalEdgeLenPrior();
 		ProbDistShPtr					getInternalEdgeLenPrior();
         void                            separateInternalExternalEdgeLenPriors(bool separate);
@@ -191,11 +184,9 @@ protected:
 
 protected:
 
-#if POLPY_NEWWAY
 	int								subset_index;				/**< The index of the partition subset to which this parameter belongs (set in createParameters function and mostly used in forming parameter names) */
 	double							internal_edgelen_hyperparam;	/**< The internal edge length hyperparameter */
 	double							external_edgelen_hyperparam;	/**< The external edge length hyperparameter */
-#endif
 	ProbDistShPtr					edgeLenHyperPrior;			/**< The prior distribution governing the mean of the edge length prior if a hierarchical model is used */
 	ProbDistShPtr					internalEdgeLenPrior;		/**< The prior distribution governing internal edge lengths */
 	ProbDistShPtr					externalEdgeLenPrior;		/**< The prior distribution governing external edge lengths */
@@ -277,11 +268,7 @@ class HKY: public Model
 									~HKY();
 									
 		virtual std::string			getModelName() const;
-#if POLPY_NEWWAY
         virtual void				createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters, int subset_pos);
-#else //old way
-        virtual void				createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters) const;
-#endif
 		double						calcUniformizationLambda() const;
         double					    calcLMat(double * * lMat) const;
         double					    calcUMat(double * * uMat) const;

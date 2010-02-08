@@ -67,7 +67,6 @@ const ModelVect & PartitionModel::getModelsVect() const
 	return subset_model;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns const reference to `subset_relrates' vector.
 */
@@ -112,7 +111,6 @@ void PartitionModel::setSubsetRelRatePrior(
 	{
 	subset_relrate_prior = rrate_prior;
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns const reference to `subset_num_patterns' vector.

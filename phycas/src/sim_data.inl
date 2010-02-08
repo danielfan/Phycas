@@ -65,15 +65,9 @@ inline void SimData::resetPatternLength(
 	clear();
 	pattern_length = ntaxa;
 
-#if POLPY_NEWWAY
 	// Create a VecStateList vector with ntaxa elements all of which are -1
 	// and swap into tmp_pattern so that tmp_pattern now has the correct size
 	pattern_t v(ntaxa, missing_state);	// GCC 3.2.3 (Red Hat Linux 3.2.3-20) requires this split 
-#else	// old way
-	// Create a VecStateList vector with ntaxa elements all of which are -1
-	// and swap into tmp_pattern so that tmp_pattern now has the correct size
-	VecStateList v(ntaxa, missing_state);	// GCC 3.2.3 (Red Hat Linux 3.2.3-20) requires this split 
-#endif
 	tmp_pattern.swap(v);					// into two lines 
 	}
 
@@ -82,11 +76,7 @@ inline void SimData::resetPatternLength(
 */
 inline void SimData::wipePattern()
 	{
-#if POLPY_NEWWAY
 	tmp_pattern.assign((pattern_t::size_type)pattern_length, SimData::missing_state); 
-#else	// old way
-	tmp_pattern.assign((VecStateList::size_type)pattern_length, SimData::missing_state); 
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -164,7 +154,6 @@ inline void SimData::debugAppendCountsToFile(std::string row_name, std::string f
 
 #else
 
-#if POLPY_NEWWAY
 	SimPatternMapType::iterator it = sim_pattern_map.begin();
 	pattern_count_t count = (pattern_count_t)(it->second);
 	outf << count;
@@ -174,18 +163,6 @@ inline void SimData::debugAppendCountsToFile(std::string row_name, std::string f
 		count = (pattern_count_t)(it->second);
 		outf << '\t' << count;
 		}
-#else // old way
-	SimPatternMapType::iterator it = sim_pattern_map.begin();
-	PatternCountType count = (PatternCountType)(it->second);
-	outf << count;
-	++it;
-	for (; it != sim_pattern_map.end(); ++it)
-		{
-		count = (PatternCountType)(it->second);
-		outf << '\t' << count;
-		}
-#endif
-
 #endif
 
 	outf << std::endl;
@@ -205,11 +182,7 @@ inline std::vector<std::string> SimData::getPatterns(std::vector<std::string> sy
 		{
 		// Create a string out of the pattern
 		std::string s;
-#if POLPY_NEWWAY
 		for (pattern_t::const_iterator i = it->first.begin(); i != it->first.end(); ++i)
-#else // old way
-		for (VecStateList::const_iterator i = it->first.begin(); i != it->first.end(); ++i)
-#endif
 			{
 			s += symbols.at(*i);
 			}
@@ -280,7 +253,6 @@ inline void SimData::setState(
 	tmp_pattern[pos] = state;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns a reference to the `tmp_pattern' data member.
 */
@@ -288,15 +260,6 @@ inline pattern_t & SimData::getCurrPattern()
 	{
 	return tmp_pattern;
 	}
-#else // old way
-/*----------------------------------------------------------------------------------------------------------------------
-|	Returns a reference to the `tmp_pattern' data member.
-*/
-inline VecStateList & SimData::getCurrPattern()
-	{
-	return tmp_pattern;
-	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the value of the `pattern_length' data member.
@@ -306,7 +269,6 @@ inline unsigned SimData::getPatternLength()
 	return pattern_length;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the value of the `total_count' data member, which represents the total number of patterns added (not 
 |	`sim_pattern_map'.size()).
@@ -315,18 +277,7 @@ inline pattern_count_t SimData::getTotalCount()
 	{
 	return total_count;
 	}
-#else // old way
-/*----------------------------------------------------------------------------------------------------------------------
-|	Returns the value of the `total_count' data member, which represents the total number of patterns added (not 
-|	`sim_pattern_map'.size()).
-*/
-inline PatternCountType SimData::getTotalCount()
-	{
-	return total_count;
-	}
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the value of the `total_count' data member, which represents the sum of all pattern counts (not 
 |	`sim_pattern_map'.size()).
@@ -336,16 +287,6 @@ inline void SimData::setTotalCount(
 	{
 	total_count = total;
 	}
-#else // old way
-/*----------------------------------------------------------------------------------------------------------------------
-|	Sets the value of the `total_count' data member, which represents the sum of all pattern counts (not 
-|	`sim_pattern_map'.size()).
-*/
-inline void SimData::setTotalCount(PatternCountType total)
-	{
-	total_count = total;
-	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the value `sim_pattern_map'.size(), the number of unique patterns currently stored.
@@ -359,11 +300,7 @@ inline unsigned SimData::getNUniquePatterns()
 |	Divides the count associated with every pattern in `sim_pattern_map' by `factor'. Also divides `total_count' by
 |	`factor'. Assumes `factor' is greater than zero. 
 */
-#if POLPY_NEWWAY
 inline void SimData::divideBy(pattern_count_t factor)
-#else // old way
-inline void SimData::divideBy(PatternCountType factor)
-#endif
 	{
 	PHYCAS_ASSERT(factor > 0.0);
 
@@ -379,11 +316,7 @@ inline void SimData::divideBy(PatternCountType factor)
 |	Multiplies the count associated with every pattern in `sim_pattern_map' by `factor'. Also multiplies `total_count'
 |	`factor'. Assumes `factor' is greater than zero. 
 */
-#if POLPY_NEWWAY
 inline void SimData::multBy(pattern_count_t factor)
-#else // old way
-inline void SimData::multBy(PatternCountType factor)
-#endif
 	{
 	if (sim_pattern_map.empty())
 		return;

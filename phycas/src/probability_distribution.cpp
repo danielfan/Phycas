@@ -56,7 +56,6 @@ ExponentialDistribution::ExponentialDistribution(
   	{
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Creates a new object that is a clone of this object, calls the new objects SetLot member function (passing the 
 |	supplied Lot object `other'), and returns a pointer to it. The caller is expected to manage the new object. 
@@ -70,7 +69,6 @@ ExponentialDistribution * ExponentialDistribution::cloneAndSetLot(Lot * other) c
 	clone->SetLot(other);
 	return clone;
     }
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Creates a new object that is a clone of this object and returns a pointer to it. Caller is expected to manage the
@@ -93,7 +91,6 @@ BernoulliDistribution::BernoulliDistribution(
   	{
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Creates a new object that is a clone of this object, calls the new objects SetLot member function (passing the 
 |	supplied Lot object `other'), and returns a pointer to it. The caller is expected to manage the new object. 
@@ -104,7 +101,6 @@ BernoulliDistribution * BernoulliDistribution::cloneAndSetLot(Lot * other) const
 	clone->SetLot(other);
 	return clone;
     }
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Creates a new object that is a clone of this object and returns a pointer to it. Caller is expected to manage the
@@ -133,7 +129,6 @@ BinomialDistribution::BinomialDistribution(
 		lnq = -DBL_MAX;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Creates a new object that is a clone of this object, calls the new objects SetLot member function (passing the 
 |	supplied Lot object `other'), and returns a pointer to it. The caller is expected to manage the new object. 
@@ -144,7 +139,6 @@ BinomialDistribution * BinomialDistribution::cloneAndSetLot(Lot * other) const
 	clone->SetLot(other);
 	return clone;
     }
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Creates a new object that is a clone of this object and returns a pointer to it. Caller is expected to manage the
@@ -163,7 +157,6 @@ BetaDistribution::BetaDistribution(
   : alphaParam(other.alphaParam), betaParam(other.betaParam)
 	{}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Creates a new object that is a clone of this object, calls the new objects SetLot member function (passing the 
 |	supplied Lot object `other'), and returns a pointer to it. The caller is expected to manage the new object. 
@@ -174,7 +167,6 @@ BetaDistribution * BetaDistribution::cloneAndSetLot(Lot * other) const
 	clone->SetLot(other);
 	return clone;
     }
-#endif
 	
 /*----------------------------------------------------------------------------------------------------------------------
 |	Initializes parameter `alphaParam' to `other.alphaParam' and `betaParam' to `other.betaParam'.
@@ -192,7 +184,6 @@ BetaPrimeDistribution::BetaPrimeDistribution(
   : alphaParam(other.alphaParam), betaParam(other.betaParam)
 	{}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Creates a new object that is a clone of this object, calls the new objects SetLot member function (passing the 
 |	supplied Lot object `other'), and returns a pointer to it. The caller is expected to manage the new object. 
@@ -203,7 +194,6 @@ BetaPrimeDistribution * BetaPrimeDistribution::cloneAndSetLot(Lot * other) const
 	clone->SetLot(other);
 	return clone;
     }
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Initializes parameter `alphaParam' to `other.alphaParam' and `betaParam' to `other.betaParam'.
@@ -221,7 +211,6 @@ ImproperUniformDistribution::ImproperUniformDistribution(
   	{
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Creates a new object that is a clone of this object, calls the new objects SetLot member function (passing the 
 |	supplied Lot object `other'), and returns a pointer to it. The caller is expected to manage the new object. 
@@ -232,7 +221,6 @@ ImproperUniformDistribution * ImproperUniformDistribution::cloneAndSetLot(Lot * 
 	clone->SetLot(other);
 	return clone;
     }
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Creates a new object that is a clone of this object and returns a pointer to it. Caller is expected to manage the
@@ -253,7 +241,6 @@ UniformDistribution::UniformDistribution(
 	log_density = -1.0*std::log(b-a);
 	}
  
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Creates a new object that is a clone of this object, calls the new objects SetLot member function (passing the 
 |	supplied Lot object `other'), and returns a pointer to it. The caller is expected to manage the new object. 
@@ -264,7 +251,6 @@ UniformDistribution * UniformDistribution::cloneAndSetLot(Lot * other) const
 	clone->SetLot(other);
 	return clone;
     }
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Creates a new object that is a clone of this object and returns a pointer to it. Caller is expected to manage the
@@ -285,7 +271,6 @@ GammaDistribution::GammaDistribution(
 	ComputeLnConst();
 	}
  
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Creates a new object that is a clone of this object, calls the new objects SetLot member function (passing the 
 |	supplied Lot object `other'), and returns a pointer to it. The caller is expected to manage the new object. 
@@ -296,7 +281,6 @@ GammaDistribution * GammaDistribution::cloneAndSetLot(Lot * other) const
 	clone->SetLot(other);
 	return clone;
     }
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Creates a new object that is a clone of this object and returns a pointer to it. Caller is expected to manage the
@@ -316,7 +300,6 @@ InverseGammaDistribution::InverseGammaDistribution(
   	{
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Creates a new object that is a clone of this object, calls the new objects SetLot member function (passing the 
 |	supplied Lot object `other'), and returns a pointer to it. The caller is expected to manage the new object. 
@@ -327,7 +310,6 @@ InverseGammaDistribution * InverseGammaDistribution::cloneAndSetLot(Lot * other)
 	clone->SetLot(other);
 	return clone;
     }
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Creates a new object that is a clone of this object and returns a pointer to it. Caller is expected to manage the
@@ -360,7 +342,6 @@ NormalDistribution::NormalDistribution(
 	ComputeLnConst();
 	}
  
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Creates a new object that is a clone of this object, calls the new objects SetLot member function (passing the 
 |	supplied Lot object `other'), and returns a pointer to it. The caller is expected to manage the new object. 
@@ -371,7 +352,6 @@ NormalDistribution * NormalDistribution::cloneAndSetLot(Lot * other) const
 	clone->SetLot(other);
 	return clone;
     }
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Creates a new object that is a clone of this object and returns a pointer to it. Caller is expected to manage the
@@ -400,7 +380,6 @@ DirichletDistribution::DirichletDistribution(
 	    paramDistributions.push_back(GammaDistribution(*it));
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Creates a new object that is a clone of this object, calls the new objects SetLot member function (passing the 
 |	supplied Lot object `other'), and returns a pointer to it. The caller is expected to manage the new object. 
@@ -411,7 +390,6 @@ DirichletDistribution * DirichletDistribution::cloneAndSetLot(Lot * other) const
 	clone->SetLot(other);
 	return clone;
     }
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Creates a new object that is a clone of this object and returns a pointer to it. Caller is expected to manage the

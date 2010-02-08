@@ -54,7 +54,6 @@ typedef std::vector< std::string >		string_vect_t;
 #	include <stdint.h>
 #endif
 
-#if POLPY_NEWWAY
 typedef std::vector< int8_t >						int8_vect_t;	
 typedef std::vector< int8_t >						state_list_t;	
 typedef std::vector< state_list_t >					state_list_vect_t;	
@@ -68,16 +67,6 @@ typedef	std::vector<int8_vect_t>					pattern_vect_t;
 typedef std::vector< uint_list_t > 					pattern_to_sites_t;
 typedef std::map<int8_vect_t, uint_list_t>			pattern_to_sites_map_t;
 typedef	std::vector<pattern_count_t>				count_vect_t;
-#else
-typedef std::vector<int8_t>							VecStateList;
-typedef std::vector<unsigned int>					StateListPos;		
-typedef std::vector<unsigned int>					VecStateListPos;		
-typedef int8_t 										int_state_code_t;
-typedef double										PatternCountType;
-typedef	std::map<VecStateList, PatternCountType>	PatternMapType;
-typedef	std::vector<PatternCountType>				CountVectorType;
-#endif
-
 typedef std::vector< int8_t >                       StateMapping;
 
 #endif

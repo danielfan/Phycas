@@ -97,7 +97,7 @@ std::vector<double> SimData::getBinnedCounts()
 void SimData::buildBinVector(
   unsigned nstates)   /**< is the number of states */
 	{
-#if POLPY_OLDWAY	// simulations not yet working with partitioning
+#if DISABLED_UNTIL_SIMULATION_WORKING_WITH_PARTITIONING
 	unsigned nbins = 2*nstates - 1;
     binv.clear();
 	binv.resize(nbins, 0.0);
@@ -413,13 +413,8 @@ void SimData::saveToNexusFile(
 |	over all patterns. The calling routine is responsible for updating total_count.
 */
 void SimData::insertPatternToRunningAverage(
-#if POLPY_NEWWAY
   pattern_count_t count,	/**< is the number of times this pattern was seen */
   pattern_count_t p)		/**< is the inverse of the number of datasets added */
-#else // old way
-  PatternCountType count,	/**< is the number of times this pattern was seen */
-  PatternCountType p)		/**< is the inverse of the number of datasets added */
-#endif
 	{
 	// In debug build, check to make sure there are no elements in tmp_pattern that still equal
 	// missing_state (if assert trips, it means that not all elements of tmp_pattern have been 
@@ -433,15 +428,9 @@ void SimData::insertPatternToRunningAverage(
 	if (lowb != sim_pattern_map.end() && !(sim_pattern_map.key_comp()(tmp_pattern, lowb->first)))
 		{
 		// Pattern is already in sim_pattern_map, so just modify its count
-#if POLPY_NEWWAY
 		pattern_count_t curr = lowb->second;
 		pattern_count_t one_minus_p = (pattern_count_t)(1.0 - p);
 		pattern_count_t new_value = curr*one_minus_p + count*p;
-#else // old way
-		PatternCountType curr = lowb->second;
-		PatternCountType one_minus_p = (PatternCountType)(1.0 - p);
-		PatternCountType new_value = curr*one_minus_p + count*p;
-#endif
 		lowb->second = new_value;
 
 		std::ofstream f("smuteye2.txt", std::ios::out | std::ios::app);
@@ -464,12 +453,8 @@ void SimData::insertPatternToRunningAverage(
 |	`tmp_pattern' with invalid values. Finally, increments total_count to reflect the new total number of counts 
 |	over all patterns.
 */
-#if POLPY_NEWWAY
 void SimData::insertPattern(
   pattern_count_t count)	/**< is the count to be associated with the pattern now stored in `tmp_pattern' */
-#else // old way
-void SimData::insertPattern(PatternCountType count)
-#endif
 	{
 	// In debug build, check to make sure there are no elements in tmp_pattern that still equal
 	// missing_state (if assert trips, it means that not all elements of tmp_pattern have been 
@@ -503,15 +488,11 @@ void SimData::insertPattern(PatternCountType count)
 |	where `mult' is handy. Assumes that `mult' is positive and non-zero. Assumes that `pattern_length' for this SimData
 |	object is identical to the `pattern_length' of `other'.
 */
-#if POLPY_NEWWAY
 void SimData::addDataTo(
   SimData & other, 			/**< is the SimData object that will receive the data currently contained in this SimData object */
   pattern_count_t mult)		/**< is the factor multiplied by each pattern's count before pattern is stored in `other' */
-#else // old way
-void SimData::addDataTo(SimData & other, PatternCountType mult)
-#endif
 	{
-#if POLPY_OLDWAY	// simulations not yet working with partitioning
+#if DISABLED_UNTIL_SIMULATION_WORKING_WITH_PARTITIONING
 	PHYCAS_ASSERT(mult > 0.0);
 
 	// If this object has no patterns, return immediately
