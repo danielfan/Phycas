@@ -152,6 +152,30 @@ void MCMCChainManager::refreshLastLnLike()
 #endif
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Calculates and returns the log of the joint working prior by calling recalcWorkingPrior() for all parameters.
+*/
+double MCMCChainManager::recalcLnWorkingPrior() const
+	{
+	// Might need to add more checks here
+	if (dirty)
+		{
+		throw XLikelihood("cannot call recalcLnWorkingPrior() for chain manager before calling finalize()");
+		}
+		
+	// Visit all updaters and let those who are prior stewards update their component of the joint prior.
+	double ln_working_prior = 0.0;
+	for (MCMCUpdaterConstIter it = all_updaters.begin(); it != all_updaters.end(); ++it)
+		{
+		const boost::shared_ptr<MCMCUpdater> s = *it;
+		double this_ln_prior = s->recalcWorkingPrior();
+		ln_working_prior += this_ln_prior;
+		}
+	return ln_working_prior;
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Refreshes `last_ln_prior' by calling recalcPrior() for all parameters.
 */
@@ -165,9 +189,9 @@ void MCMCChainManager::refreshLastLnPrior()
 		
 	// Visit all updaters and let those who are prior stewards update their component of the joint prior.
 	last_ln_prior = 0.0;
-	for (MCMCUpdaterIter it = all_updaters.begin(); it != all_updaters.end(); ++it)
+	for (MCMCUpdaterConstIter it = all_updaters.begin(); it != all_updaters.end(); ++it)
 		{
-		MCMCUpdaterShPtr s = *it;
+		const boost::shared_ptr<MCMCUpdater> s = *it;
 		double this_ln_prior = s->recalcPrior();
 		last_ln_prior += this_ln_prior;
 		//std::cerr << boost::str(boost::format("Current prior = %g, Cumulative = %g, name = '%s'") % this_ln_prior % last_ln_prior % s->getName()) << std::endl;
@@ -609,7 +633,7 @@ double MCMCChainManager::calcExternalEdgeLenPriorUnnorm(
 		}
 	catch(XProbDist &)
 		{
-		tmp =  p->GetRelativeLnPDF(v);
+		PHYCAS_ASSERT(0);
 		}
     return tmp;
     }
@@ -631,7 +655,7 @@ double MCMCChainManager::calcInternalEdgeLenPriorUnnorm(double v) const
 		}
 	catch(XProbDist &)
 		{
-		tmp =  p->GetRelativeLnPDF(v);
+		PHYCAS_ASSERT(0);
 		}
     return tmp;
     }
@@ -643,14 +667,14 @@ double MCMCChainManager::calcInternalEdgeLenPriorUnnorm(double v) const
 */
 double MCMCChainManager::calcJointLnPrior()
 	{
-	if (all_updaters.empty())
-		{
-		throw XLikelihood("should not call MCMCChainManager::calcJointLnPrior before calling MCMCChainManager::finalize");
-		}
-
-	last_ln_prior = std::accumulate(params_begin, params_end, 0.0, 
-		boost::lambda::_1 += boost::lambda::bind(&MCMCUpdater::getLnPrior, *boost::lambda::_2));
-
+	//	if (all_updaters.empty())
+	//		{
+	//		throw XLikelihood("should not call MCMCChainManager::calcJointLnPrior before calling MCMCChainManager::finalize");
+	//		}
+	//
+	//	last_ln_prior = std::accumulate(params_begin, params_end, 0.0, 
+	//		boost::lambda::_1 += boost::lambda::bind(&MCMCUpdater::getLnPrior, *boost::lambda::_2));
+	refreshLastLnPrior();
 	return last_ln_prior;
 	}
 
@@ -691,7 +715,7 @@ double MCMCChainManager::partialEdgeLenPrior(const std::vector<double> & edge_le
 			}
 		catch(XProbDist &)
 			{
-			tmp =  p->GetRelativeLnPDF(*it);
+		    PHYCAS_ASSERT(0);
 			}
 		partial_prior_sum += tmp;
 		}

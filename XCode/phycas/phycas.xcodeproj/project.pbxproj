@@ -216,6 +216,7 @@
 		D13CAB9310D1D72300813B89 /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */; };
 		D13CAB9410D1D72300813B89 /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */; };
 		D13CAB9510D1D72300813B89 /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */; };
+		D1C27E9E1123322A00911D1C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A22C13010CEEB8B0043120B /* CoreServices.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -602,6 +603,7 @@
 		7AB51CC210CDA26800A865FF /* nxsunalignedblock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsunalignedblock.h; path = ncl/nxsunalignedblock.h; sourceTree = NCL_ROOT; };
 		7AB51CC310CDA26800A865FF /* nxsutilcopy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsutilcopy.h; path = ncl/nxsutilcopy.h; sourceTree = NCL_ROOT; };
 		7AB51CE010CDA39200A865FF /* libncl.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libncl.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		D10DDE0C1125D4C500CC55F3 /* scubed.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = scubed.py; path = ../../inprep/scubed/scubed.py; sourceTree = SOURCE_ROOT; };
 		D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpython2.6.dylib; path = lib/libpython2.6.dylib; sourceTree = PYTHON_ROOT; };
 		D17574CD10EB942400D4E2B0 /* partition.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = partition.py; path = ../../inprep/partition/partition.py; sourceTree = SOURCE_ROOT; };
 		D1829B31110E22AC00F200D6 /* nxscdiscretematrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxscdiscretematrix.h; path = ../../../../ndev/branches/v2.2/ncl/nxscdiscretematrix.h; sourceTree = SOURCE_ROOT; };
@@ -676,6 +678,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D1C27E9E1123322A00911D1C /* CoreServices.framework in Frameworks */,
 				D13CAB9310D1D72300813B89 /* libpython2.6.dylib in Frameworks */,
 				2D7C9B1711076FB50028BDAD /* libboost_python.dylib in Frameworks */,
 				2D7C9B2211076FE60028BDAD /* libncl.dylib in Frameworks */,
@@ -1221,9 +1224,18 @@
 			name = "NCL source";
 			sourceTree = "<group>";
 		};
+		D10DDE0B1125D4B100CC55F3 /* scubed */ = {
+			isa = PBXGroup;
+			children = (
+				D10DDE0C1125D4C500CC55F3 /* scubed.py */,
+			);
+			name = scubed;
+			sourceTree = "<group>";
+		};
 		D17574C410EB940500D4E2B0 /* InPrep */ = {
 			isa = PBXGroup;
 			children = (
+				D10DDE0B1125D4B100CC55F3 /* scubed */,
 				D17574C510EB940C00D4E2B0 /* Partition */,
 			);
 			name = InPrep;
@@ -2032,6 +2044,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
 			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

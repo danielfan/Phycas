@@ -18,6 +18,7 @@
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #include "mcmc_param.hpp"
+#include "likelihood_models.hpp"
 
 namespace phycas
 {
@@ -49,4 +50,29 @@ bool PinvarParam::update()
         }
 	return true;
 	}
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Override of base class version adds the current pinvar parameter value to the data already stored in 
+|	`fitting_sample'.
+*/
+void PinvarParam::educateWorkingPrior()
+	{
+	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
+	double pinv = getCurrValueFromModel();
+	fitting_sample.push_back(pinv);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Use samples in `fitting_sample' to parameterize `working_prior'. This function is called during s-cubed style
+|	steppingstone sampling after the initial phase of sampling from the posterior so that the working prior can be
+|	used for the remaining phases. Assumes `fitting_sample' has more than 1 element. Assigns a BetaDistribution object
+|	to `working_prior'.
+*/
+void PinvarParam::finalizeWorkingPrior()
+	{
+	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
+	fitBetaWorkingPrior();
+	}
+#endif
 }

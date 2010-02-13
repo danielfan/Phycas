@@ -40,7 +40,7 @@ void FlexRateParam::sendCurrValueToModel(double v)
 |	Overrides base class version to return the current value repreenting this flex rate param from the 
 |	`gamma_rates_unnorm' vector in `model'.
 */
-double FlexRateParam::getCurrValueFromModel()
+double FlexRateParam::getCurrValueFromModel() const
 	{
     return model->getFlexRateUnnorm(which);
 	}
@@ -90,7 +90,7 @@ void FlexProbParam::sendCurrValueToModel(double v)
 /*----------------------------------------------------------------------------------------------------------------------
 |	Overrides base class version to return relevant value from the `gamma_rate_probs' vector in `model'.
 */
-double FlexProbParam::getCurrValueFromModel()
+double FlexProbParam::getCurrValueFromModel() const
 	{
     return model->getFlexProbUnnorm(which);
 	}

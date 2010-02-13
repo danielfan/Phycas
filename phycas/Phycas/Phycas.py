@@ -243,7 +243,7 @@ class Phycas(object):
                 nsamples += 1
                 if not max_lnL or lnL > max_lnL:
                     max_lnL = lnL
-                self.mcmc_manager.recordSample(cycle)
+                self.mcmc_manager.recordSample(False, cycle)
                 outstr = "nsamples = %d, cycle = %d, lnL = %f, best = %f" % (nsamples,cycle,lnL,max_lnL)
                 print outstr
             else:

@@ -100,6 +100,16 @@ std::string FlexRateParam::getPriorDescr() const
 	return std::string("Order statistics prior");
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	todo
+*/
+double FlexRateParam::recalcWorkingPrior() const
+	{
+	return 0.0;	//POLPY_TODO
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the order statistics prior used for relative rates in the FLEX model, and sets `curr_ln_prior'. The order 
 |	statistics prior is largest when `curr_value' is between `left_value' and `right_value' and becomes tiny if 
@@ -145,4 +155,29 @@ bool FlexRateParam::update()
         }
 	return true;
 	}
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Override of base class version adds the current flex rate parameter value to the data already stored in 
+|	`fitting_sample'.
+*/
+void FlexRateParam::educateWorkingPrior()
+	{
+	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
+	double flexrate = getCurrValueFromModel();
+	fitting_sample.push_back(flexrate);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Use samples in `fitting_sample' to parameterize `working_prior'. This function is called during s-cubed style
+|	steppingstone sampling after the initial phase of sampling from the posterior so that the working prior can be
+|	used for the remaining phases. Assumes `fitting_sample' has more than 1 element. Assigns a GammaDistribution object
+|	to `working_prior'.
+*/
+void FlexRateParam::finalizeWorkingPrior()
+	{
+	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
+	fitGammaWorkingPrior();
+	}
+#endif
 }

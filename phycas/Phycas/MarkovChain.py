@@ -91,7 +91,7 @@ class MarkovChain(LikelihoodCore):
 			paramf.write('Gen\tLnL')
 			
 		if self.parent.opts.fix_topology:
-			nbrlens = 2*self.parent.ntax - 3	# will need to be changed if rooted trees allowed
+			nbrlens = self.tree.getNNodes() - 1
 			for i in range(nbrlens):
 				paramf.write('\tbrlen%d' % (i+1))
 		else:
@@ -104,6 +104,17 @@ class MarkovChain(LikelihoodCore):
 		for i in range(nmodels):
 			m = self.partition_model.getModel(i)
 			paramf.write(m.paramHeader())
+			
+	def sssFileHeader(self, sssf):
+		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+		"""
+		Opens the .sss file for saving samples needed by sump command to 
+		compute an estimate of the marginal likelihood using smoothed 
+		steppingstone sampling.
+		
+		"""
+		sssf.write('[ID: %d]\n' % self.r.getInitSeed())
+		sssf.write('cycle\tbeta\tlnLike\tlnPrior\tlnWorkingPrior')
 
 	def treeFileHeader(self, treef):
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|

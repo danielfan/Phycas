@@ -38,6 +38,16 @@ class MCMCManager:
 		m = self.getColdChain()
 		m.paramFileHeader(paramf)
 
+	def sssFileHeader(self, sssf):
+		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+		"""
+		Simply passes the file object sssf on to the sssFileHeader method
+		of the MarkovChain object representing the cold chain.
+		
+		"""
+		m = self.getColdChain()
+		m.sssFileHeader(sssf)
+
 	def treeFileHeader(self, treef):
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
 		"""
@@ -155,12 +165,14 @@ class MCMCManager:
 			total += c.getNumLikelihoodEvals()
 		return total
 
-	def recordSample(self, cycle = -1):
+	def recordSample(self, dofit, cycle = -1):
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
 		"""
 		Records the current tree topology and edge lengths by adding a line to
 		the tree file, and records tree length and substitution parameters
-		by adding a line to the parameter file.
+		by adding a line to the parameter file. If dofit is True, add to 
+		the fitting sample of each updater. The fitting sample is used to 
+		construct a working prior for steppingstone sampling.
 		
 		"""
 		# Note: self.parent is the MCMCImpl object
@@ -176,6 +188,34 @@ class MCMCManager:
 		# Only record samples from the current cold chain
 		cold_chain = self.parent.mcmc_manager.getColdChain()
 		
+		# Add to fitting samples if dofit is True
+		if (dofit):
+			all_updaters = cold_chain.chain_manager.getAllUpdaters() 
+			for u in all_updaters:		# good candidate for moving into C++
+				u.educateWorkingPrior()
+		
+		# Add line to sss file if it exists
+		if self.parent.opts.ssobj and self.parent.opts.ssobj.scubed and (cycle > -1) and not dofit:
+			# cycle
+			self.parent.sssf.write('%d\t' % (cycle + 1))
+			
+			# beta
+			self.parent.sssf.write(float_format_str % (cold_chain.heating_power))
+			
+			# lnL
+			self.parent.sssf.write(float_format_str % lnLikes[0])
+			
+			# lnPrior
+			ln_prior = cold_chain.chain_manager.calcJointLnPrior()
+			self.parent.sssf.write(float_format_str % ln_prior)
+			
+			# lnWorkingPrior
+			ln_working_prior = cold_chain.chain_manager.recalcLnWorkingPrior()
+			self.parent.sssf.write(float_format_str % ln_working_prior)
+			
+			self.parent.sssf.write('\n')
+			self.parent.sssf.flush()
+
 		# Add line to parameter file if it exists
 		if self.parent.paramf:
 			self.parent.paramf.write('%d\t' % (cycle + 1))
@@ -188,7 +228,8 @@ class MCMCManager:
 			
 			# tree length
 			if self.parent.opts.fix_topology:
-				self.parent.paramf.write('%s\t' % '\t'.join([float_format_notab_str % brlen for brlen in cold_chain.tree.edgeLens()]))
+				all_edgelens = cold_chain.tree.edgeLens()
+				self.parent.paramf.write('%s\t' % '\t'.join([float_format_notab_str % brlen for brlen in all_edgelens]))
 			else:
 				self.parent.paramf.write(float_format_str % cold_chain.tree.edgeLenSum())
 			

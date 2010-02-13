@@ -18,6 +18,7 @@
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #include "mcmc_param.hpp"
+#include "likelihood_models.hpp"
 
 namespace phycas
 {
@@ -89,4 +90,29 @@ bool HyperPriorParam::update()
         }
 	return true;
 	}
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Override of base class version adds the current edge length hyperparameter value to the data already stored in 
+|	`fitting_sample'.
+*/
+void HyperPriorParam::educateWorkingPrior()
+	{
+	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
+	double hyperparam = getCurrValueFromModel();
+	fitting_sample.push_back(hyperparam);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Use samples in `fitting_sample' to parameterize `working_prior'. This function is called during s-cubed style
+|	steppingstone sampling after the initial phase of sampling from the posterior so that the working prior can be
+|	used for the remaining phases. Assumes `fitting_sample' has more than 1 element. Assigns a GammaDistribution object
+|	to `working_prior'.
+*/
+void HyperPriorParam::finalizeWorkingPrior()
+	{
+	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
+	fitGammaWorkingPrior();
+	}
+#endif
 }

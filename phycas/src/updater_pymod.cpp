@@ -54,6 +54,12 @@ void updater_pymod()
 		.def("getCurrValueFromModel", &MCMCUpdater::getCurrValueFromModel)
 		.def("getCurrValuesFromModel", &MCMCUpdater::getCurrValuesFromModel)
 		.def("listCurrValuesFromModel", &MCMCUpdater::listCurrValuesFromModel)
+#if POLPY_NEWWAY
+		.def("recalcWorkingPrior", &MCMCUpdater::recalcWorkingPrior)
+		.def("educateWorkingPrior", &MCMCUpdater::educateWorkingPrior)
+		.def("finalizeWorkingPrior", &MCMCUpdater::finalizeWorkingPrior)
+		.def("getWorkingPriorDescr", &MCMCUpdater::getWorkingPriorDescr)
+#endif
 		.def("getName", &MCMCUpdater::getName, return_value_policy<copy_const_reference>())
 		.def("getPriorDescr", &MCMCUpdater::getPriorDescr)
 		.def("getWeight", &MCMCUpdater::getWeight)

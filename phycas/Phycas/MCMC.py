@@ -87,14 +87,8 @@ class MCMC(PhycasCommand):
 
 		# The data members added below are hidden from the user because they are set by the ps command
 		self.__dict__["doing_steppingstone_sampling"] = False
-		#self.__dict__["ss_simpsons_method"] = True
-		self.__dict__["ss_nbetavals"] = 101
-		self.__dict__["ss_maxbeta"] = 1.0
-		self.__dict__["ss_minbeta"] = 0.0
-		self.__dict__["ss_shape1"] = 1.0
-		self.__dict__["ss_shape2"] = 1.0
 		self.__dict__["ss_heating_likelihood"] = False
-		self.__dict__["ss_aux"] = False
+		self.__dict__["ssobj"] = None
 		
 		# The data members added below are hidden from the user because they are set by the cpo command
 		self.__dict__["saving_sitelikes"] = False
@@ -110,8 +104,7 @@ class MCMC(PhycasCommand):
 		is done during a call of self.run().
 		"""
 		cf = CommonFunctions(self)
-		cf.phycassert(self.ss_nbetavals > 0, 'ss_nbetavals cannot be less than 1')
-		#cf.phycassert((self.ss_simpsons_method and self.ss_nbetavals > 2) or not self.ss_simpsons_method, 'ss_nbetavals cannot be less than 3 if ss_simpsons_method is true')
+		cf.phycassert(self.ssobj.nbetavals > 0, 'ss.nbetavals cannot be less than 1')
 		
 	def __call__(self, **kwargs):
 		self.set(**kwargs)

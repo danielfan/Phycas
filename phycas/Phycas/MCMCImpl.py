@@ -42,6 +42,7 @@ class MCMCImpl(CommonFunctions):
 		self.nchar					= 0			# Will hold the actual number of characters after data file has been read
 		self.npatterns			= []		# Will hold the actual number of patterns for each subset after data file has been read
 		self.taxon_labels			= []		# Will hold taxon labels from data file or default names if self.data_source equals None
+		self.sssf					= None
 		self.paramf					= None
 		self.treef					= None
 		self.sitelikef				= None
@@ -73,7 +74,6 @@ class MCMCImpl(CommonFunctions):
 		self.ss_beta_index			= 0
 		self.ss_sampled_betas		= None
 		self.ss_sampled_likes		= None
-		self.phycassert(self.opts.ss_nbetavals > 0, 'ss_nbetavals cannot be less than 1')
 		self.siteIndicesForPatternIndex = None
 		
 	def setSiteLikeFile(self, sitelikef):
@@ -235,7 +235,10 @@ class MCMCImpl(CommonFunctions):
 	def paramFileOpen(self):
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
 		"""
-		Opens the parameter file and writes a header line.
+		Opens the parameter file and writes a header line. Additionally, if
+		performing smoothed steppingstone sampling, opens a file with 
+		extension .sss to hold the likelihood, prior and working prior samples
+		needed to estimate the marginal likelihood.
 		
 		"""
 		#self.param_file_name = self.opts.out.params
@@ -250,9 +253,24 @@ class MCMCImpl(CommonFunctions):
 		if self.paramf:
 			self.mcmc_manager.paramFileHeader(self.paramf)
 			self.paramf.write('\n')
+			
+		if self.opts.doing_steppingstone_sampling and self.opts.ssobj.scubed:
+			sss_file_spec = self.opts.ssobj.out.sss
+			self.sssf = None
+			try:
+				self.sssf = sss_file_spec.open(self.stdout)
+			except:
+				print '*** Attempt to open sss file (%s) failed.' % self.opts.out.sss.filename
+
+			if self.sssf:
+				self.mcmc_manager.sssFileHeader(self.sssf)
+				self.sssf.write('\n')
 
 	def paramFileClose(self):
-		self.paramf.close()
+		if self.paramf is not None:
+			self.paramf.close()
+		if self.sssf is not None:
+			self.sssf.close()
 
 	def openParameterAndTreeFiles(self):
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -412,7 +430,7 @@ class MCMCImpl(CommonFunctions):
 		
 		if self.opts.doing_steppingstone_sampling:
 			# start with posterior (ss_beta = 1) and work toward the prior (ss_beta = 0)
-			self.ss_beta = self.opts.ss_maxbeta		
+			self.ss_beta = self.opts.ssobj.maxbeta		
 			cc = self.mcmc_manager.getColdChain()
 			cc.setPower(self.ss_beta)
 		self.siteLikeFileSetup(self.mcmc_manager.getColdChain())
@@ -638,6 +656,8 @@ class MCMCImpl(CommonFunctions):
 	def computeTimeRemaining(self, secs, ndone, ntotal):
 		if ndone < 1:
 			return ''
+		days_remaining = 0
+		hours_remaining = 0
 		secs_remaining = float(secs)*(float(ntotal)/float(ndone) - 1.0)
 		time_left = []
 		if secs_remaining > 86400.0:
@@ -660,7 +680,7 @@ class MCMCImpl(CommonFunctions):
 			minutes_remaining = math.floor(secs_remaining/60.0)
 			secs_remaining -= 60.0*minutes_remaining
 			if minutes_remaining > 0:
-				if minutes_remaining == 1:
+				if minutes_remaining == 1 and (days_remaining + hours_remaining) == 0:
 					time_left.append('less than 2 minutes')
 				else:
 					time_left.append('%d minutes' % minutes_remaining)
@@ -721,7 +741,10 @@ class MCMCImpl(CommonFunctions):
 
 			# Sample chain if it is time
 			if self.beyondBurnin(cycle) and self.doThisCycle(cycle - self.burnin, self.opts.sample_every):
-				self.mcmc_manager.recordSample(self.cycle_start + cycle)
+				if self.opts.doing_steppingstone_sampling and self.opts.ssobj.scubed and self.ss_beta_index == 0:
+					self.mcmc_manager.recordSample(True, self.cycle_start + cycle)
+				else:
+					self.mcmc_manager.recordSample(False, self.cycle_start + cycle)
 				cold_chain_manager = self.mcmc_manager.getColdChainManager()
 				sampled_lnL = cold_chain_manager.getLastLnLike()
 				self.ss_sampled_likes[self.ss_beta_index].append(sampled_lnL)
@@ -779,7 +802,7 @@ class MCMCImpl(CommonFunctions):
 				self.output('\nPerforming steppingstone sampling to estimate marginal likelihood.')
 				self.output('Likelihood will be raised to the power beta, and beta will be')
 				self.output('decremented from 1.0 to 0.0 in a series of steps.')
-				self.output('  No. steps:				%s' % self.opts.ss_nbetavals)
+				self.output('  No. steps:				%s' % self.opts.ssobj.nbetavals)
 				self.output('  No. cycles per step:		%s' % self.opts.ncycles)
 				self.output('  Sample every:			%s' % self.opts.sample_every)
 				self.output('  No. samples per step:	%s' % self.nsamples)
@@ -853,7 +876,7 @@ class MCMCImpl(CommonFunctions):
 		self.mcmc_manager.resetNumLikelihoodEvals()
 		
 		if self.opts.doing_steppingstone_sampling:
-			self.output('\nSampling (%d cycles for each of the %d values of beta)...' % (self.opts.ncycles, self.opts.ss_nbetavals))
+			self.output('\nSampling (%d cycles for each of the %d values of beta)...' % (self.opts.ncycles, self.opts.ssobj.nbetavals))
 		else:
 			self.output('\nSampling (%d cycles)...' % self.opts.ncycles)
 		if self.opts.verbose:
@@ -865,25 +888,25 @@ class MCMCImpl(CommonFunctions):
 		#self.next_adaptation = self.opts.adapt_first
 
 		# Lay down first line in params file (recorded as cycle 0) containing starting values of parameters
-		self.mcmc_manager.recordSample()
-
+		self.mcmc_manager.recordSample(False)
+		
 		if self.opts.doing_steppingstone_sampling:
 			self.phycassert(self.data_matrix is not None, 'path sampling requires data')
 			self.phycassert(nchains == 1, 'path sampling requires nchains to be 1')
 			chain = self.mcmc_manager.getColdChain()
-			if self.opts.ss_nbetavals > 1:
+			if self.opts.ssobj.nbetavals > 1:
 				# Set up the list ss_sampled_betas
 				# Beta distribution will be divided into ss_nbetavals intervals, each of which has an equal area
-				segment_area = 1.0/float(self.opts.ss_nbetavals - 1)
+				segment_area = 1.0/float(self.opts.ssobj.nbetavals - 1)
 				cum_area = 0.0
 				lower_boundary = 0.0
-				self.ss_sampled_betas = [self.opts.ss_minbeta]
-				total_extent = float(self.opts.ss_maxbeta - self.opts.ss_minbeta)
-				betadist = ProbDist.Beta(self.opts.ss_shape1, self.opts.ss_shape2)
-				for i in range(self.opts.ss_nbetavals - 1):
+				self.ss_sampled_betas = [self.opts.ssobj.minbeta]
+				total_extent = float(self.opts.ssobj.maxbeta - self.opts.ssobj.minbeta)
+				betadist = ProbDist.Beta(self.opts.ssobj.shape1, self.opts.ssobj.shape2)
+				for i in range(self.opts.ssobj.nbetavals - 1):
 					cum_area += segment_area
 					upper_boundary = betadist.getQuantile(cum_area)
-					scaled_upper_boundary = self.opts.ss_minbeta + total_extent*upper_boundary
+					scaled_upper_boundary = self.opts.ssobj.minbeta + total_extent*upper_boundary
 					self.ss_sampled_betas.append(scaled_upper_boundary)
 					lower_boundary = upper_boundary
 					
@@ -891,18 +914,31 @@ class MCMCImpl(CommonFunctions):
 				self.ss_sampled_betas.reverse()
 				
 				# Output the beta values that will be used
-				self.output('%d %s chosen from a discrete\nBeta(%.5f, %.5f) distribution:' % (self.opts.ss_nbetavals, (self.opts.ss_nbetavals == 1 and 'value was' or 'values were'), self.opts.ss_shape1, self.opts.ss_shape2))
+				self.output('%d %s chosen from a discrete\nBeta(%.5f, %.5f) distribution:' % (self.opts.ssobj.nbetavals, (self.opts.ssobj.nbetavals == 1 and 'value was' or 'values were'), self.opts.ssobj.shape1, self.opts.ssobj.shape2))
 				for i,x in enumerate(self.ss_sampled_betas):
 					self.output('%6d %12.5f' % (i+1,x))
 				self.output('An MCMC analysis will be performed exploring each of the')
 				self.output('power posteriors defined by these values.')
 				self.output()
 			else:
-				self.ss_sampled_betas = [self.opts.ss_minbeta]
+				self.ss_sampled_betas = [self.opts.ssobj.minbeta]
 			
 			# Run the main MCMC loop for each beta value in ss_sampled_betas
 			self.ss_sampled_likes = []
 			for self.ss_beta_index, self.ss_beta in enumerate(self.ss_sampled_betas):
+				if self.ss_beta_index > 0 and self.opts.ssobj.scubed:
+				
+					# if using working prior with steppingstone sampling, it is now time to 
+					# parameterize the working prior for all updaters so that in the sequel
+					# the working prior can be used
+					self.output('\nWorking prior details:')
+					all_updaters = cold_chain.chain_manager.getAllUpdaters() 
+					for u in all_updaters:		# good candidate for moving into C++
+						if u.computesUnivariatePrior() or u.computesMultivariatePrior():
+							u.finalizeWorkingPrior()
+							self.output('  %s --> %s' % (u.getName(), u.getWorkingPriorDescr()))
+					self.output()
+							
 				self.ss_sampled_likes.append([])
 				chain.setPower(self.ss_beta)
 				boldness = 100.0*(1.0 - self.ss_beta)

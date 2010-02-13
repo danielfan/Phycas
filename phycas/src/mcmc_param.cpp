@@ -68,7 +68,7 @@ void KappaParam::sendCurrValueToModel(double v)
 /*----------------------------------------------------------------------------------------------------------------------
 |	Overrides base class version to return the kappa value in either `hky' or `codon' (whichever is relevant).
 */
-double KappaParam::getCurrValueFromModel()
+double KappaParam::getCurrValueFromModel() const
 	{
 	if (hky != NULL)
         return hky->getKappa();
@@ -134,7 +134,7 @@ void GTRRateParam::sendCurrValueToModel(double v)
 /*----------------------------------------------------------------------------------------------------------------------
 |	Overrides base class version to return the appropriate relative rate value in `model'.
 */
-double GTRRateParam::getCurrValueFromModel()
+double GTRRateParam::getCurrValueFromModel() const
 	{
     return gtr->getRelRateUnnorm(which);
 	}
@@ -205,7 +205,7 @@ void OmegaParam::sendCurrValueToModel(double v)
 /*----------------------------------------------------------------------------------------------------------------------
 |	Overrides base class version to return the value of `omega' in `model'.
 */
-double OmegaParam::getCurrValueFromModel()
+double OmegaParam::getCurrValueFromModel() const
 	{
     return codon->getOmega();
 	}
@@ -257,7 +257,7 @@ void DiscreteGammaShapeParam::sendCurrValueToModel(double v)
 /*----------------------------------------------------------------------------------------------------------------------
 |	Overrides base class version to return the value of `gamma_shape' in `model'.
 */
-double DiscreteGammaShapeParam::getCurrValueFromModel()
+double DiscreteGammaShapeParam::getCurrValueFromModel() const
 	{
 	double a = model->getShape();
     return (shape_inverted ? (1.0/a) : a);
@@ -306,7 +306,7 @@ void PinvarParam::sendCurrValueToModel(double v)
 /*----------------------------------------------------------------------------------------------------------------------
 |	Overrides base class version to return the value of `pinvar' in `model'.
 */
-double PinvarParam::getCurrValueFromModel()
+double PinvarParam::getCurrValueFromModel() const
 	{
     return model->getPinvar();
 	}
@@ -354,7 +354,7 @@ void StateFreqParam::sendCurrValueToModel(double v)
 /*----------------------------------------------------------------------------------------------------------------------
 |	Overrides base class version to return the appropriate unnormalized state frequency in `model'.
 */
-double StateFreqParam::getCurrValueFromModel()
+double StateFreqParam::getCurrValueFromModel() const
 	{
     return model->getStateFreqUnnorm(which);
 	}
@@ -409,7 +409,7 @@ void HyperPriorParam::sendCurrValueToModel(double v)
 /*----------------------------------------------------------------------------------------------------------------------
 |	Overrides base class version to return value of hyperparameter from model.
 */
-double HyperPriorParam::getCurrValueFromModel()
+double HyperPriorParam::getCurrValueFromModel() const
 	{
 	if (external_edges)
 		return model->getExternalEdgelenHyperparam();

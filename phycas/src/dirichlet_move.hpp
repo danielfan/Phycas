@@ -61,7 +61,7 @@ class DirichletMove : public MCMCUpdater
 		// Utilities
 		void						reset();
 		virtual void				sendCurrValuesToModel(const double_vect_t & v) {}
-		virtual void				getCurrValuesFromModel(double_vect_t & v) {}
+		virtual void				getCurrValuesFromModel(double_vect_t & v) const {}
 		virtual double_vect_t		listCurrValuesFromModel();
         virtual void                getParams() {}
         virtual void                setParams(const std::vector<double> & v) {}
@@ -76,6 +76,11 @@ class DirichletMove : public MCMCUpdater
 		virtual void				proposeNewState();
 		virtual void				revert();
 		virtual void				accept();
+		
+#if POLPY_NEWWAY
+		virtual void				educateWorkingPrior();
+		virtual void				finalizeWorkingPrior();
+#endif
 
 	private:
 
@@ -107,8 +112,12 @@ class StateFreqMove : public DirichletMove
 									StateFreqMove();
                                     virtual ~StateFreqMove() {}
 
+#if POLPY_NEWWAY
+		virtual void				educateWorkingPrior();
+#endif
+
 		virtual void				sendCurrValuesToModel(const double_vect_t & v);
-		virtual void				getCurrValuesFromModel(double_vect_t & v);
+		virtual void				getCurrValuesFromModel(double_vect_t & v) const;
 		virtual double_vect_t		listCurrValuesFromModel();
         virtual void                getParams();
         virtual void                setParams(const std::vector<double> & v);
@@ -129,8 +138,12 @@ class RelRatesMove : public DirichletMove
 									RelRatesMove();
                                     virtual ~RelRatesMove() {}
 
+#if POLPY_NEWWAY
+		virtual void				educateWorkingPrior();
+#endif
+
 		virtual void				sendCurrValuesToModel(const double_vect_t & v);
-		virtual void				getCurrValuesFromModel(double_vect_t & v);
+		virtual void				getCurrValuesFromModel(double_vect_t & v) const;
 		virtual double_vect_t		listCurrValuesFromModel();
         virtual void                getParams();
         virtual void                setParams(const std::vector<double> & v);
@@ -151,8 +164,12 @@ class SubsetRelRatesMove : public DirichletMove
 									SubsetRelRatesMove();
                                     virtual ~SubsetRelRatesMove() {}
 
+#if POLPY_NEWWAY
+		virtual void				educateWorkingPrior();
+#endif
+
 		virtual void				sendCurrValuesToModel(const double_vect_t & v);
-		virtual void				getCurrValuesFromModel(double_vect_t & v);
+		virtual void				getCurrValuesFromModel(double_vect_t & v) const;
 		virtual double_vect_t		listCurrValuesFromModel();
         virtual void                getParams();
         virtual void                setParams(const std::vector<double> & v);

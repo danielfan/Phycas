@@ -1291,6 +1291,53 @@ double Tree::EdgeLenSum()
 	return sum;
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the sum of all internal edge lengths in the tree. Uses preorder pointers to walk through tree, calling 
+|	RefreshPreorder() if these pointers have never been set or have been invalidated.
+*/
+double Tree::internalEdgeLenSum()
+	{
+	if (!HasEdgeLens())
+		throw XPhylogeny("no edge lengths were specified for this tree");
+
+	if (preorderDirty)
+		RefreshPreorder();
+
+	double sum = 0.0;
+	TreeNode *nd = GetFirstPreorder();
+	for (nd = nd->GetNextPreorder(); nd != NULL; nd = nd->GetNextPreorder())
+		{
+		if (nd->IsInternal())
+			sum += nd->GetEdgeLen();
+		}
+	return sum;
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the sum of all internal edge lengths in the tree. Uses preorder pointers to walk through tree, calling 
+|	RefreshPreorder() if these pointers have never been set or have been invalidated.
+*/
+double Tree::externalEdgeLenSum()
+	{
+	if (!HasEdgeLens())
+		throw XPhylogeny("no edge lengths were specified for this tree");
+
+	if (preorderDirty)
+		RefreshPreorder();
+
+	double sum = 0.0;
+	TreeNode *nd = GetFirstPreorder();
+	for (nd = nd->GetNextPreorder(); nd != NULL; nd = nd->GetNextPreorder())
+		{
+		if (nd->IsTip())
+			sum += nd->GetEdgeLen();
+		}
+	return sum;
+	}
+#endif
+
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets `nTips' and `nInternals' to their correct values. Uses preorder pointers to walk through tree, calling 
 |	RefreshPreorder() if these pointers have never been set or have been invalidated. 

@@ -61,4 +61,29 @@ bool DiscreteGammaShapeParam::update()
         }
 	return true;
 	}
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Override of base class version adds the current gamma shape parameter value to the data already stored in 
+|	`fitting_sample'.
+*/
+void DiscreteGammaShapeParam::educateWorkingPrior()
+	{
+	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
+	double shape = getCurrValueFromModel();
+	fitting_sample.push_back(shape);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Use samples in `fitting_sample' to parameterize `working_prior'. This function is called during s-cubed style
+|	steppingstone sampling after the initial phase of sampling from the posterior so that the working prior can be
+|	used for the remaining phases. Assumes `fitting_sample' has more than 1 element. Assigns a GammaDistribution object
+|	to `working_prior'.
+*/
+void DiscreteGammaShapeParam::finalizeWorkingPrior()
+	{
+	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
+	fitGammaWorkingPrior();
+	}
+#endif
 }

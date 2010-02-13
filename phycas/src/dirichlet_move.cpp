@@ -237,14 +237,14 @@ bool DirichletMove::update()
 	// orig_params values are used in the likelihood function. However, the transformation only adds a constant
 	// (i.e., -log(nsubsets)) to the log prior and thus this constant cancels out in the ln_accept_ratio.
 	// More care should be taken when reporting the log prior or when estimating marginal likelihoods.
-    double prev_ln_prior		= mvprior->GetRelativeLnPDF(orig_params);
+    double prev_ln_prior		= mv_prior->GetLnPDF(orig_params);
 	double prev_ln_like			= p->getLastLnLike();
 
     // replace current parameter values with new ones
     setParams(new_params);
     likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
 
-	double curr_ln_prior		= mvprior->GetRelativeLnPDF(new_params);
+	double curr_ln_prior		= mv_prior->GetLnPDF(new_params);
 	double curr_ln_like			= likelihood->calcLnL(tree);
 
     double prev_posterior = 0.0;
@@ -332,6 +332,84 @@ double_vect_t DirichletMove::listCurrValuesFromModel()
 	return v;
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Override this base class version to add the current parameter vector to the data already stored in 
+|	`mv_fitting_sample'.
+*/
+void DirichletMove::educateWorkingPrior()
+	{
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Use samples in `fitting_sample' to parameterize `working_prior'. This function is called during s-cubed style
+|	steppingstone sampling after the initial phase of sampling from the posterior so that the working prior can be
+|	used for the remaining phases. Assumes `fitting_sample' has more than 1 element. Assigns a DirichletDistribution 
+|	object to `working_prior'.
+*/
+void DirichletMove::finalizeWorkingPrior()
+	{
+	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
+	PHYCAS_ASSERT(mv_fitting_sample.size() > 1);
+
+	// Let a, b, c, d be the parameters of a Dirichlet(a,b,c,d).
+	// Let phi = a + b + c + d
+	// Let mu_1, mu_2, mu_3, and mu_4 be sample means
+	// Let s_1^2, s_2^2, s_3^2, and s_4^2 be sample variances
+	// Noting that mu_1 = a/phi, mu_2 = b/phi, mu_3 = c/phi and mu_4 = d/phi
+	// and noting that s_1^2 = a*(b + c + d)/[phi^2*(phi + 1)], etc., and
+	// letting z = s_1^2/mu_1 + s_2^2/mu_2 + s_3^2/mu_3 + s_4^2/mu_4,
+	// phi can be estimated as (3/z) - 1, where the 3 is really k-1 
+	// and k is the number of Dirichlet parameters. Now, 
+	// a = mu_1*phi, b = mu_2*phi, c = mu_3*phi and d = mu_4*phi
+	
+	// First compute the sample means and variances using the data stored in mv_working_prior
+	double_vect_t sums(dim, 0.0);
+	double_vect_t ss(dim, 0.0);
+	double n = 0.0;
+	for (double_vect_vect_t::iterator i = mv_fitting_sample.begin(); i != mv_fitting_sample.end(); ++i)
+		{
+		unsigned k = 0;
+		n += 1.0;
+		for (double_vect_t::iterator j = (*i).begin(); j != (*i).end(); ++j)
+			{
+			double v = (*j);
+			sums[k] += v;
+			ss[k++] += v*v;
+			}
+		}
+		
+	double_vect_t means(dim, 0.0);
+	double_vect_t variances(dim, 0.0);
+	for (unsigned i = 0; i < dim; ++i)
+		{
+		double mean = sums[i]/n;
+		means[i] = mean;
+		variances[i] = (ss[i] - n*mean*mean)/(n - 1.0);
+		}
+	
+	// Now compute the Dirichlet parameters
+	double z = 0.0;
+	for (unsigned i = 0; i < dim; ++i)
+		{
+		z += variances[i]/means[i];
+		}
+	double phi = (double)(dim - 1)/z - 1.0;
+	double_vect_t params;
+	for (unsigned i = 0; i < dim; ++i)
+		{
+		params.push_back(phi*means[i]);
+		}
+	mv_working_prior = MultivarProbDistShPtr(new DirichletDistribution(params));
+	//	if (params.size() == 4)
+	//		std::cerr << boost::str(boost::format("@@@@@@@@@ working prior is Dirichlet(%g,%g,%g,%g) for updater %s") % params[0] % params[1] % params[2] % params[3] % getName()) << std::endl;
+	//	else if (params.size() == 6)
+	//		std::cerr << boost::str(boost::format("@@@@@@@@@ working prior is Dirichlet(%g,%g,%g,%g,%g,%g) for updater %s") % params[0] % params[1] % params[2] % params[3] % params[4] % params[5] % getName()) << std::endl;
+	//	else
+	//		std::cerr << boost::str(boost::format("@@@@@@@@@ working prior is Dirichlet(not 4 or 6 params) for updater %s") % getName()) << std::endl;
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	The constructor simply calls the base class (DirichletMove) constructor.
 */
@@ -339,6 +417,19 @@ StateFreqMove::StateFreqMove() : DirichletMove()
 	{
 	dim = 4;
 	}
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Override of base class version adds the current vector of state frequencies to the data already stored in 
+|	`mv_fitting_sample'.
+*/
+void StateFreqMove::educateWorkingPrior()
+	{
+	double_vect_t rfreqs;
+	getCurrValuesFromModel(rfreqs);
+	mv_fitting_sample.push_back(rfreqs);
+	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the state frequencies of the associated HKY or GTR model to those in the supplied vector `v'.
@@ -352,7 +443,7 @@ void StateFreqMove::sendCurrValuesToModel(const double_vect_t & v)
 /*----------------------------------------------------------------------------------------------------------------------
 |	Obtains the current state frequencies from the model, storing them in the supplied vector `v'.
 */
-void StateFreqMove::getCurrValuesFromModel(double_vect_t & v)
+void StateFreqMove::getCurrValuesFromModel(double_vect_t & v) const
 	{
 	PHYCAS_ASSERT(dim > 0);
 	if (model)
@@ -413,6 +504,19 @@ RelRatesMove::RelRatesMove() : DirichletMove()
 	dim = 6;
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Override of base class version adds the current vector of relative rates to the data already stored in 
+|	`mv_fitting_sample'.
+*/
+void RelRatesMove::educateWorkingPrior()
+	{
+	double_vect_t rrates;
+	getCurrValuesFromModel(rrates);
+	mv_fitting_sample.push_back(rrates);
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the relative rates of the associated GTR model to those in the supplied vector `v'.
 */
@@ -427,7 +531,7 @@ void RelRatesMove::sendCurrValuesToModel(const double_vect_t & v)
 /*----------------------------------------------------------------------------------------------------------------------
 |	Obtains the current relative rates from the model, storing them in the supplied vector `v'.
 */
-void RelRatesMove::getCurrValuesFromModel(double_vect_t & v)
+void RelRatesMove::getCurrValuesFromModel(double_vect_t & v) const
 	{
 	PHYCAS_ASSERT(dim > 0);
 	GTR * gtr_model = dynamic_cast<GTR *>(model.get());
@@ -491,6 +595,19 @@ SubsetRelRatesMove::SubsetRelRatesMove() : DirichletMove()
 	dim = 1;
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Override of base class version adds the current vector of subset relative rates to the data already stored in 
+|	`mv_fitting_sample'.
+*/
+void SubsetRelRatesMove::educateWorkingPrior()
+	{
+	double_vect_t rrates;
+	getCurrValuesFromModel(rrates);
+	mv_fitting_sample.push_back(rrates);
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the relative rates of the associated partition model to those in the supplied vector `v'.
 */
@@ -503,7 +620,7 @@ void SubsetRelRatesMove::sendCurrValuesToModel(const double_vect_t & v)
 /*----------------------------------------------------------------------------------------------------------------------
 |	Obtains the current relative rates from the model, storing them in the supplied vector `v'.
 */
-void SubsetRelRatesMove::getCurrValuesFromModel(double_vect_t & v)
+void SubsetRelRatesMove::getCurrValuesFromModel(double_vect_t & v) const
 	{
 	const std::vector<double> & rrates = partition_model->getSubsetRelRatesVect();
 	PHYCAS_ASSERT(dim == rrates.size());

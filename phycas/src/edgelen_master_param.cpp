@@ -77,12 +77,56 @@ double EdgeLenMasterParam::lnPriorOneEdge(TreeNode & nd) const
 		    }
 	    catch(XProbDist &)
 		    {
-		    retval = prior->GetRelativeLnPDF(v);
+		    PHYCAS_ASSERT(0);
 		    }
 
 	    return retval;
         }
 	}
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Member function that exists only to facilitate using boost::lambda::bind to be used in the getLnPrior() function. It
+|	returns the log of the working prior probability density evaluated at the current edge length associated with `nd'.
+*/
+double EdgeLenMasterParam::lnWorkingPriorOneEdge(TreeNode & nd) const
+	{
+    bool skip = (nd.IsTipRoot())
+                || ((edgeLenType == EdgeLenMasterParam::internal) && (!nd.IsInternal()))
+                || ((edgeLenType == EdgeLenMasterParam::external) && (nd.IsInternal()));
+	if (skip)
+        {
+		return 0.0;
+        }
+    else
+        {
+        double v = nd.GetEdgeLen();
+
+	    double retval = 0.0;
+	    try 
+		    {
+		    retval = working_prior->GetLnPDF(v);
+		    }
+	    catch(XProbDist &)
+		    {
+		    PHYCAS_ASSERT(0);
+		    }
+
+	    return retval;
+        }
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Loops through all nodes in the tree and computes the log of the working prior for each edge that it is responsible
+|	for (according to its `edgeLenType'). Returns sum of these log working prior values.
+*/
+double EdgeLenMasterParam::recalcWorkingPrior() const
+	{
+    double lnwp = std::accumulate(tree->begin(), tree->end(), 0.0,
+	    boost::lambda::_1 += boost::lambda::bind(&EdgeLenMasterParam::lnWorkingPriorOneEdge, this, boost::lambda::_2));
+	return lnwp;
+	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the joint log prior over a set of edges in the associated tree and sets `curr_ln_prior'. The set of edges
@@ -109,4 +153,65 @@ void EdgeLenMasterParam::setPriorMeanAndVariance(double m, double v)
 	recalcPrior();
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Overrides base class version to add the current sum of edge lengths to the data already stored in `fitting_sample'.
+|	Depending on the value of the data member `edgeLenType' (internal, external, or both), the value stored will be the
+|	sum of internal, external or all edge lengths, respectively.
+*/
+void EdgeLenMasterParam::educateWorkingPrior()
+	{
+	PHYCAS_ASSERT(isPriorSteward());			// only prior stewards should be building working priors
+	PHYCAS_ASSERT(tree);	
+	PHYCAS_ASSERT(tree->GetNInternals() > 0);	
+	PHYCAS_ASSERT(tree->GetNTips() > 0);	
+	PHYCAS_ASSERT(tree->GetNInternals() + tree->GetNTips() == tree->GetNNodes());	
+	double edgelen_sum = 0.0;
+	double num_edgelens = 0.0;
+	if (edgeLenType == internal)
+		{
+		edgelen_sum = tree->internalEdgeLenSum();
+		num_edgelens = (double)(tree->GetNInternals() - 1);
+		}
+	else if (edgeLenType == external)
+		{
+		edgelen_sum = tree->externalEdgeLenSum();
+		num_edgelens = (double)tree->GetNTips();
+		}
+	else
+		{
+		edgelen_sum = tree->EdgeLenSum();
+		num_edgelens = (double)(tree->GetNNodes() - 1);
+		}
+	double edgelen_mean = edgelen_sum/num_edgelens;
+	fitting_sample.push_back(edgelen_mean);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Use samples in `fitting_sample' to parameterize `working_prior'. This function is called during s-cubed style
+|	steppingstone sampling after the initial phase of sampling from the posterior so that the working prior can be
+|	used for the remaining phases. Assumes `fitting_sample' has more than 1 element. Assigns a GammaDistribution object
+|	to `working_prior'.
+*/
+void EdgeLenMasterParam::finalizeWorkingPrior()
+	{
+	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
+	fitGammaWorkingPrior();
+	
+	// correct variance of working prior to reflect number of edge lengths 
+	double m = working_prior->GetMean();
+	double v = working_prior->GetVar();
+	double num_edgelens = 0.0;
+	if (edgeLenType == internal)
+		num_edgelens = (double)(tree->GetNInternals() - 1);
+	else if (edgeLenType == external)
+		num_edgelens = (double)tree->GetNTips();
+	else
+		num_edgelens = (double)(tree->GetNNodes() - 1);
+	v *= num_edgelens;
+	working_prior->SetMeanAndVariance(m, v);
+	
+	// std::cerr << boost::str(boost::format("@@@@@@@@@ --> working prior of %s adjusted to have mean = %g, variance = %g, based on %g %s edge lengths") % getName() % m % v % num_edgelens % (edgeLenType == internal ? "internal" : (edgeLenType == external ? "external" : "total") ) ) << std::endl;
+	}
+#endif
 }

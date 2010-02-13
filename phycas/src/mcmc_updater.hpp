@@ -91,6 +91,9 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 								virtual	~MCMCUpdater();
 
 		// Predicates
+#if POLPY_NEWWAY
+		bool					isPriorSteward() const;
+#endif
 		bool					isParameter() const;
 		bool					isMasterParameter() const;
 		bool					isHyperParameter() const;
@@ -105,6 +108,9 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		double					getLnLike() const;
 		double					getLnPrior() const;
 		virtual std::string 	getPriorDescr() const;
+#if POLPY_NEWWAY
+		virtual std::string 	getWorkingPriorDescr() const;
+#endif
 		LotShPtr				getLot();
         std::string             getDebugInfo() const;
         void                    setPower(double p);
@@ -137,6 +143,9 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
         void                    setSaveDebugInfo(bool save_info);
 		virtual void			setPrior(ProbDistShPtr p);
 		virtual void			setMultivarPrior(MultivarProbDistShPtr p);
+#if POLPY_NEWWAY
+		virtual double		 	recalcWorkingPrior() const;
+#endif
 
 		// Modifiers used only by parameters
 		virtual void			setStartingValue(double x);
@@ -145,11 +154,11 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 
 		// Univariate case
         virtual void			sendCurrValueToModel(double v);
-        virtual double			getCurrValueFromModel();
+        virtual double			getCurrValueFromModel() const;
 		
 		// Multivariate case
         virtual void			sendCurrValuesToModel(const double_vect_t & v);
-        virtual void			getCurrValuesFromModel(double_vect_t & v);
+        virtual void			getCurrValuesFromModel(double_vect_t & v) const;
         virtual double_vect_t	listCurrValuesFromModel();
 
 		// Utilities
@@ -168,6 +177,13 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		void					freeParameter();
 		void					createSliceSampler();
 		virtual double			operator()(double);
+		
+#if POLPY_NEWWAY
+		void 					fitBetaWorkingPrior();
+		void 					fitGammaWorkingPrior();
+		virtual void			educateWorkingPrior();
+		virtual void			finalizeWorkingPrior();
+#endif
 		
 		// Note: some member functions could be made pure virtuals were it not for a bug in the 
 		// boost::lambda library that causes compiles to fail if attempting to use boost::lambda::bind 
@@ -198,8 +214,14 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		ModelShPtr				model;					/**< The substitution model to be used in computing the likelihood */
 		TreeLikeShPtr			likelihood;				/**< The object that knows how to calculate the likelihood */
 		LotShPtr				rng;					/**< The pseudorandom number generator object used in updating parameter value */
-		ProbDistShPtr			prior;					/**< The probability distribution serving as the prior for a parameter */
-        MultivarProbDistShPtr   mvprior;                /**< The probability distribution serving as the prior for a multivariate parameter */
+		ProbDistShPtr			prior;					/**< The probability distribution serving as the prior for a univariate parameter */
+        MultivarProbDistShPtr   mv_prior;               /**< The probability distribution serving as the prior for a multivariate parameter */
+#if POLPY_NEWWAY
+		ProbDistShPtr			working_prior;			/**< The probability distribution serving as the working prior for a univariate parameter */
+        MultivarProbDistShPtr   mv_working_prior;       /**< The probability distribution serving as the working prior for a multivariate parameter */
+		double_vect_t			fitting_sample;			/**< Storage for sample used in fitting a univariate working prior during steppingstone sampling */
+		double_vect_vect_t		mv_fitting_sample;		/**< Storage for sample used in fitting a multivariate working prior during steppingstone sampling */
+#endif
 		SliceSamplerShPtr		slice_sampler;			/**< The slice sampler used by parameters for updating (not used by moves) */
 		ChainManagerWkPtr		chain_mgr;				/**< The object that knows how to compute the joint log prior density */
 		double					nattempts;				/**< The number of update attempts made since last call to resetDiagnostics (used only by Metropolis-Hastings moves, slice samplers maintain their own diagnostics) */
@@ -222,6 +244,7 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 
 typedef std::vector<MCMCUpdaterShPtr>		MCMCUpdaterVect;
 typedef MCMCUpdaterVect::iterator			MCMCUpdaterIter;
+typedef MCMCUpdaterVect::const_iterator		MCMCUpdaterConstIter;
 
 } // namespace phycas
 

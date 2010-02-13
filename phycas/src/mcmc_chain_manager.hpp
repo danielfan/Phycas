@@ -80,6 +80,10 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 		double					recalcEdgeLenPriors(double mu, double var);
 		void					refreshLastLnLike();
 		void					refreshLastLnPrior();
+		
+#if POLPY_NEWWAY
+		double 					recalcLnWorkingPrior() const;
+#endif
 
 		double					getLastLnPrior() const;
 		void					setLastLnPrior(double ln_prior);

@@ -60,6 +60,17 @@ MCMCUpdater::~MCMCUpdater()
 	//std::cerr << "\n\n>>>>MCMCUpdater dying..." << std::endl;
 	}
 	
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns true if either `prior' or `mv_prior' exist. If either of these exists, then this updater is responsible for
+|	calculating some component of the joint prior (i.e. it is a prior steward).
+*/
+bool MCMCUpdater::isPriorSteward() const
+	{
+	return (prior || mv_prior);
+	}
+#endif
+	
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the value of the data member `nattempts', which stores the number of Metropolis-Hastings proposals attempted
 |   since the last call to resetDiagnostics. Assumes this updater is a Metropolis-Hastings move; an assert will trip in
@@ -150,11 +161,11 @@ bool MCMCUpdater::computesUnivariatePrior()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Returns true if the `mvprior' data member points to something.
+|	Returns true if the `mv_prior' data member points to something.
 */
 bool MCMCUpdater::computesMultivariatePrior()
 	{
-	if (mvprior)
+	if (mv_prior)
 		return true;
 	else
 		return false;
@@ -409,10 +420,50 @@ double MCMCUpdater::setCurrLnPrior(
 		}
 	catch(XProbDist &)
 		{
-		curr_ln_prior = prior->GetRelativeLnPDF(x);
+		PHYCAS_ASSERT(0);
 		}
 	return curr_ln_prior;
     }
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Retrieves current value for the parameter being managed by this updater, then returns log of the working prior 
+|	probability density at that value. If this updater is not a prior steward, simply returns 0.0.
+*/
+double MCMCUpdater::recalcWorkingPrior() const
+	{
+	if (!isPriorSteward())
+		return 0.0;
+		
+	double lnwp = 0.0;
+	if (working_prior)
+		{
+		double value = getCurrValueFromModel();
+		try 
+			{
+			lnwp = working_prior->GetLnPDF(value);
+			}
+		catch(XProbDist &)
+			{
+			PHYCAS_ASSERT(0);
+			}
+		}
+	else
+		{
+		double_vect_t values;
+		getCurrValuesFromModel(values);	
+		try 
+			{
+			lnwp = mv_working_prior->GetLnPDF(values);
+			}
+		catch(XProbDist &)
+			{
+			PHYCAS_ASSERT(0);
+			}
+		}
+	return lnwp;
+	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calls GetLnPDF function of prior to recalculate `curr_ln_prior'. This function is important because the 
@@ -422,7 +473,7 @@ double MCMCUpdater::recalcPrior()
 	{
 	// Many moves will not have a prior assigned to them. In these cases, just return 0.0,
 	// which will have no effect on the cumulative log-prior.
-	if (!(prior || mvprior))
+	if (!(prior || mv_prior))
 		{
 		//std::cerr << boost::str(boost::format("~~~ updater named '%s' cannot compute prior") % name) << std::endl;		
 		return 0.0;
@@ -448,7 +499,7 @@ double MCMCUpdater::recalcPrior()
 		getCurrValuesFromModel(values);	
 		try 
 			{
-			curr_ln_prior = mvprior->GetLnPDF(values);
+			curr_ln_prior = mv_prior->GetLnPDF(values);
 			}
 		catch(XProbDist &)
 			{
@@ -485,12 +536,11 @@ std::string MCMCUpdater::getPriorDescr() const
 	{
 	if (prior)
 		return prior->GetDistributionDescription();
-	else if (mvprior)
-		return mvprior->GetDistributionDescription();
+	else if (mv_prior)
+		return mv_prior->GetDistributionDescription();
 	else
 		return "(no prior defined)";
 	}
-
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the `name' data member of this move to the supplied string.
@@ -552,11 +602,11 @@ void MCMCUpdater::setPrior(ProbDistShPtr p)
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Sets the `mvprior' data member to the supplied MultivariateProbabilityDistribution shared pointer.
+|	Sets the `mv_prior' data member to the supplied MultivariateProbabilityDistribution shared pointer.
 */
 void MCMCUpdater::setMultivarPrior(MultivarProbDistShPtr p)
 	{
-	mvprior = p;
+	mv_prior = p;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -597,7 +647,7 @@ void MCMCUpdater::releaseSharedPointers()
 	tree.reset();
 	rng.reset();
 	prior.reset();
-	mvprior.reset();
+	mv_prior.reset();
 	slice_sampler.reset();
 	}
 	
@@ -614,7 +664,7 @@ void MCMCUpdater::sendCurrValueToModel(double v)
 |	This base class version returns a bogus value. Derived classes representing model parameters should override this 
 |	method to return the current value of the corresponding parameter in `model'.
 */
-double MCMCUpdater::getCurrValueFromModel()
+double MCMCUpdater::getCurrValueFromModel() const
 	{
 	return DBL_MAX;
 	}
@@ -631,7 +681,7 @@ void MCMCUpdater::sendCurrValuesToModel(const double_vect_t & v)
 |	This base class version simply clears the supplied vector `v'. Derived classes representing model parameters should
 |	override this method to return the current vector of parameter values from `model'.
 */
-void MCMCUpdater::getCurrValuesFromModel(double_vect_t & v)
+void MCMCUpdater::getCurrValuesFromModel(double_vect_t & v) const
 	{
 	v.clear();
 	}
@@ -733,4 +783,97 @@ bool MCMCUpdater::isNoHeating() const
 	{
 	return (heating_power == 1.0);
 	}
+	
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns a const reference to the string returned by the GetDistributionDescription() function of the 
+|	`working_prior' or `mv_working_prior' data member, whichever is appropriate.
+*/
+std::string MCMCUpdater::getWorkingPriorDescr() const
+	{
+	if (prior && working_prior)
+		return working_prior->GetDistributionDescription();
+	else if (mv_prior && mv_working_prior)
+		return mv_working_prior->GetDistributionDescription();
+	else
+		return "(no working prior defined)";
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	This base class version does nothing, but derived classes should override this function and use it to add to the
+|	data stored in `fitting_sample' (or `mv_fitting_sample'). The data thus stored will be used to construct a working
+|	prior for use in steppingstone sampling when MCMCUpdater::finalizeWorkingPrior() is called.
+*/
+void MCMCUpdater::educateWorkingPrior()
+	{
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	This base class version does nothing, but derived classes should override this function and use it to fit the data
+|	stored in `fitting_sample' (or `mv_fitting_sample') to a working prior distribution stored in `working_prior' (or
+|	`mv_working_prior').
+*/
+void MCMCUpdater::finalizeWorkingPrior()
+	{
+	// std::cerr << boost::str(boost::format("@@@@@@@@@ updater named %s called base class version of finalizeWorkingPrior, which does nothing") % getName()) << std::endl;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Use samples in `fitting_sample' to parameterize a new BetaDistribution, which is then stored in `working_prior'. 
+|	Assumes `fitting_sample' has more than 1 element. 
+*/
+void MCMCUpdater::fitBetaWorkingPrior()
+	{
+	PHYCAS_ASSERT(fitting_sample.size() > 1);
+	double n = (double)fitting_sample.size();
+	double sum = 0.0;
+	double sum_of_squares = 0.0;
+	for (double_vect_t::iterator i = fitting_sample.begin(); i != fitting_sample.end(); ++i)
+		{
+		double v = (*i);
+		sum += v;
+		sum_of_squares += v*v;
+		}
+	double mean = sum/n;
+	double variance = (sum_of_squares - n*mean*mean)/(n - 1.0);
+
+	// Let a, b be the parameters of a Beta(a,b) and let phi = a + b
+	// Note that:
+	//     mean = a/phi
+	//   1-mean = b/phi
+	// variance = a*b/[phi^2*(phi + 1)]
+	// Letting z = mean*(1-mean)/variance,
+	// phi can be estimated as z - 1
+	// Now, a = mean*phi and b = (1-mean)*phi
+	double phi = mean*(1.0-mean)/variance - 1.0;
+	double a = phi*mean;
+	double b = phi*(1.0 - mean);
+	working_prior = ProbDistShPtr(new BetaDistribution(a, b));
+	// std::cerr << boost::str(boost::format("@@@@@@@@@ working prior is Beta(%g, %g) for updater %s: mean = %g, variance = %g") % a % b % getName() % mean % variance) << std::endl;
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Use samples in `fitting_sample' to parameterize a new GammaDistribution, which is then stored in `working_prior'. 
+|	Assumes `fitting_sample' has more than 1 element. 
+*/
+void MCMCUpdater::fitGammaWorkingPrior()
+	{
+	PHYCAS_ASSERT(fitting_sample.size() > 1);
+	double n = (double)fitting_sample.size();
+	double sum = 0.0;
+	double sum_of_squares = 0.0;
+	for (double_vect_t::iterator i = fitting_sample.begin(); i != fitting_sample.end(); ++i)
+		{
+		double v = (*i);
+		sum += v;
+		sum_of_squares += v*v;
+		}
+	double mean = sum/n;	// shape*scale
+	double variance = (sum_of_squares - n*mean*mean)/(n - 1.0);	// shape*scale^2
+	double scale = variance/mean;
+	double shape = mean/scale;
+	// std::cerr << boost::str(boost::format("@@@@@@@@@ working prior is Gamma(%g,%g) for updater %s: mean = %g, variance = %g") % shape % scale % getName() % mean % variance) << std::endl;
+	working_prior = ProbDistShPtr(new GammaDistribution(shape, scale));
+	}
+#endif	
 }	// namespace phycas
