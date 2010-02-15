@@ -239,13 +239,19 @@ bool DirichletMove::update()
 	// More care should be taken when reporting the log prior or when estimating marginal likelihoods.
     double prev_ln_prior		= mv_prior->GetLnPDF(orig_params);
 	double prev_ln_like			= p->getLastLnLike();
+#if POLPY_NEWWAY
+	double prev_ln_working_prior = (use_working_prior ? mv_working_prior->GetLnPDF(orig_params) : 0.0);
+#endif
 
     // replace current parameter values with new ones
     setParams(new_params);
     likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
 
 	double curr_ln_prior		= mv_prior->GetLnPDF(new_params);
-	double curr_ln_like			= likelihood->calcLnL(tree);
+	double curr_ln_like			= (heating_power > 0.0 ? likelihood->calcLnL(tree) : 0.0);
+#if POLPY_NEWWAY
+	double curr_ln_working_prior = (use_working_prior ? mv_working_prior->GetLnPDF(new_params) : 0.0);
+#endif
 
     double prev_posterior = 0.0;
 	double curr_posterior = 0.0;
@@ -253,6 +259,13 @@ bool DirichletMove::update()
         {
         prev_posterior = heating_power*(prev_ln_like + prev_ln_prior);
 	    curr_posterior = heating_power*(curr_ln_like + curr_ln_prior);
+#if POLPY_NEWWAY
+		if (use_working_prior)
+			{
+			prev_posterior += (1.0 - heating_power)*prev_ln_working_prior;
+			curr_posterior += (1.0 - heating_power)*curr_ln_working_prior;
+			}
+#endif
         }
     else
         {
@@ -292,12 +305,17 @@ bool DirichletMove::update()
 		{
 	    if (save_debug_info)
     	    {
-			debug_info = boost::str(boost::format("ACCEPT, prev_ln_prior = %.5f, curr_ln_prior = %.5f, prev_ln_like = %.5f, curr_ln_like = %.5f, lnu = %.5f, ln_accept_ratio = %.5f\norig_params: ") % prev_ln_prior % curr_ln_prior % prev_ln_like % curr_ln_like % lnu % ln_accept_ratio);
+			debug_info = boost::str(boost::format("ACCEPT, prev_ln_working_prior = %.5f, curr_ln_working_prior = %.5f, prev_ln_prior = %.5f, curr_ln_prior = %.5f, prev_ln_like = %.5f, curr_ln_like = %.5f, lnu = %.5f, ln_accept_ratio = %.5f\norig_params: ") % prev_ln_working_prior % curr_ln_working_prior % prev_ln_prior % curr_ln_prior % prev_ln_like % curr_ln_like % lnu % ln_accept_ratio);
 			for (std::vector<double>::const_iterator it = orig_params.begin(); it != orig_params.end(); ++it)
 				debug_info += boost::str(boost::format("%15.8f ") % (*it));
 			debug_info += "\nnew_params:  ";
 			for (std::vector<double>::const_iterator it = new_params.begin(); it != new_params.end(); ++it)
 				debug_info += boost::str(boost::format("%15.8f ") % (*it));
+			debug_info += "\nc_forward:  ";
+			for (std::vector<double>::const_iterator it = c_forward.begin(); it != c_forward.end(); ++it)
+				debug_info += boost::str(boost::format("%15.8f ") % (*it));
+			debug_info += "\ndir_forward:  ";
+			debug_info += dir_forward->GetDistributionDescription();
 			}
 		p->setLastLnPrior(curr_ln_prior);
 		p->setLastLnLike(curr_ln_like);
@@ -308,12 +326,17 @@ bool DirichletMove::update()
 		{
 	    if (save_debug_info)
     	    {
-			debug_info = boost::str(boost::format("REJECT, prev_ln_prior = %.5f, curr_ln_prior = %.5f, prev_ln_like = %.5f, curr_ln_like = %.5f, lnu = %.5f, ln_accept_ratio = %.5f\norig_params: ") % prev_ln_prior % curr_ln_prior % prev_ln_like % curr_ln_like % lnu % ln_accept_ratio);
+			debug_info = boost::str(boost::format("REJECT, prev_ln_working_prior = %.5f, curr_ln_working_prior = %.5f, prev_ln_prior = %.5f, curr_ln_prior = %.5f, prev_ln_like = %.5f, curr_ln_like = %.5f, lnu = %.5f, ln_accept_ratio = %.5f\norig_params: ") % prev_ln_working_prior % curr_ln_working_prior % prev_ln_prior % curr_ln_prior % prev_ln_like % curr_ln_like % lnu % ln_accept_ratio);
 			for (std::vector<double>::const_iterator it = orig_params.begin(); it != orig_params.end(); ++it)
 				debug_info += boost::str(boost::format("%15.8f ") % (*it));
 			debug_info += "\nnew_params:  ";
 			for (std::vector<double>::const_iterator it = new_params.begin(); it != new_params.end(); ++it)
 				debug_info += boost::str(boost::format("%15.8f ") % (*it));
+			debug_info += "\nc_forward:  ";
+			for (std::vector<double>::const_iterator it = c_forward.begin(); it != c_forward.end(); ++it)
+				debug_info += boost::str(boost::format("%15.8f ") % (*it));
+			debug_info += "\ndir_forward:  ";
+			debug_info += dir_forward->GetDistributionDescription();
 			}
 		curr_ln_like	= p->getLastLnLike();
 		curr_ln_prior	= p->getLastLnPrior();

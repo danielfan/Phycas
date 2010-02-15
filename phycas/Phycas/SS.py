@@ -44,13 +44,16 @@ class SS(PhycasCommand):
 	def __call__(self, **kwargs):
 		self.set(**kwargs)
 		self.checkSanity()
+		prev_draw_from_prior = mcmc.draw_directly_from_prior
 		mcmc.doing_steppingstone_sampling = True
 		mcmc.ssobj = self
 		if self.scubed:
 			mcmc.ss_heating_likelihood = False
+			mcmc.draw_directly_from_prior = False
 		else:
 			mcmc.ss_heating_likelihood = True
 		mcmc()
+		mcmc.draw_directly_from_prior = prev_draw_from_prior
 		mcmc.ss_heating_likelihood = False
 		mcmc.doing_steppingstone_sampling = False
 		mcmc.ssobj = None

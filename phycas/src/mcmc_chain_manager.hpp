@@ -82,7 +82,9 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 		void					refreshLastLnPrior();
 		
 #if POLPY_NEWWAY
-		double 					recalcLnWorkingPrior() const;
+        double                  calcExternalEdgeLenWorkingPrior(double v) const;
+        double                  calcInternalEdgeLenWorkingPrior(double v) const;
+		double 					recalcLnWorkingPrior(bool temp_debug = false) const;
 #endif
 
 		double					getLastLnPrior() const;

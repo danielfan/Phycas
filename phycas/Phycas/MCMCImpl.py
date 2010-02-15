@@ -716,9 +716,13 @@ class MCMCImpl(CommonFunctions):
 			# Attempt to swap two random chains
 			if nchains > 1:
 				self.mcmc_manager.attemptChainSwap(cycle)
-					
+	
 			# Provide progress report to user if it is time
 			if self.opts.verbose and self.doThisCycle(cycle, self.opts.report_every):
+				# Refresh log-likelihood of cold chain if necessary
+				if self.ss_beta == 0.0:
+					self.mcmc_manager.getColdChainManager().refreshLastLnLike()
+						
 				self.stopwatch.normalize()
 				secs = self.stopwatch.elapsedSeconds()
 				time_remaining = self.computeTimeRemaining(secs, self.cycle_start + cycle + 1, self.cycle_stop)
@@ -741,6 +745,11 @@ class MCMCImpl(CommonFunctions):
 
 			# Sample chain if it is time
 			if self.beyondBurnin(cycle) and self.doThisCycle(cycle - self.burnin, self.opts.sample_every):
+				# Refresh log-likelihood(s) if necessary
+				if self.ss_beta == 0.0:
+					for i,c in enumerate(self.mcmc_manager.chains):
+						c.chain_manager.refreshLastLnLike()
+						
 				if self.opts.doing_steppingstone_sampling and self.opts.ssobj.scubed and self.ss_beta_index == 0:
 					self.mcmc_manager.recordSample(True, self.cycle_start + cycle)
 				else:
@@ -855,6 +864,7 @@ class MCMCImpl(CommonFunctions):
 		self.output('\nHere is a list of all updaters that will be used for this analysis:')
 		for p in cold_chain_manager.getAllUpdaters():
 			if p.getWeight() > 0:
+				p.setUseWorkingPrior(False)
 				if p.isMove():
 					self.output('  %s (Metropolis-Hastings)' % p.getName())
 				elif p.hasSliceSampler():
@@ -925,19 +935,21 @@ class MCMCImpl(CommonFunctions):
 			
 			# Run the main MCMC loop for each beta value in ss_sampled_betas
 			self.ss_sampled_likes = []
+			working_priors_calculated = False
 			for self.ss_beta_index, self.ss_beta in enumerate(self.ss_sampled_betas):
-				if self.ss_beta_index > 0 and self.opts.ssobj.scubed:
-				
+				if self.ss_beta_index > 0 and self.opts.ssobj.scubed and not working_priors_calculated:
 					# if using working prior with steppingstone sampling, it is now time to 
 					# parameterize the working prior for all updaters so that in the sequel
 					# the working prior can be used
 					self.output('\nWorking prior details:')
 					all_updaters = cold_chain.chain_manager.getAllUpdaters() 
 					for u in all_updaters:		# good candidate for moving into C++
+						u.setUseWorkingPrior(True)
 						if u.computesUnivariatePrior() or u.computesMultivariatePrior():
 							u.finalizeWorkingPrior()
 							self.output('  %s --> %s' % (u.getName(), u.getWorkingPriorDescr()))
 					self.output()
+					working_priors_calculated = True
 							
 				self.ss_sampled_likes.append([])
 				chain.setPower(self.ss_beta)

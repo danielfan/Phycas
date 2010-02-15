@@ -95,13 +95,23 @@ double KappaParam::operator()(
 		recalcPrior();
 
 		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
-		curr_ln_like = likelihood->calcLnL(tree);
+		curr_ln_like = (heating_power > 0.0 ? likelihood->calcLnL(tree) : 0.0);
 		ChainManagerShPtr p = chain_mgr.lock();
 		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
 
         if (is_standard_heating)
-            return heating_power*(curr_ln_like + curr_ln_prior);
+#if POLPY_NEWWAY
+			if (use_working_prior)
+				{
+				double curr_ln_working_prior = working_prior->GetLnPDF(k);
+				return heating_power*(curr_ln_like + curr_ln_prior) + (1.0 - heating_power)*curr_ln_working_prior;
+				}
+			else 
+				return heating_power*(curr_ln_like + curr_ln_prior);
+#else //old way
+			return heating_power*(curr_ln_like + curr_ln_prior);
+#endif
         else
             return heating_power*curr_ln_like + curr_ln_prior;
 		}
@@ -158,13 +168,23 @@ double GTRRateParam::operator()(
 		sendCurrValueToModel(r);
 		recalcPrior();
 		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
-        curr_ln_like = likelihood->calcLnL(tree);
+        curr_ln_like = (heating_power > 0.0 ? likelihood->calcLnL(tree) : 0.0);
 		ChainManagerShPtr p = chain_mgr.lock();
 		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
 
         if (is_standard_heating)
-            return heating_power*(curr_ln_like + curr_ln_prior);
+#if POLPY_NEWWAY
+			if (use_working_prior)
+				{
+				double curr_ln_working_prior = working_prior->GetLnPDF(r);
+				return heating_power*(curr_ln_like + curr_ln_prior) + (1.0 - heating_power)*curr_ln_working_prior;
+				}
+			else 
+				return heating_power*(curr_ln_like + curr_ln_prior);
+#else //old way
+			return heating_power*(curr_ln_like + curr_ln_prior);
+#endif
         else
             return heating_power*curr_ln_like + curr_ln_prior;
 		}
@@ -229,13 +249,23 @@ double OmegaParam::operator()(
 		recalcPrior();
 
 		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
-		curr_ln_like = likelihood->calcLnL(tree);
+		curr_ln_like = (heating_power > 0.0 ? likelihood->calcLnL(tree) : 0.0);
 		ChainManagerShPtr p = chain_mgr.lock();
 		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
 
         if (is_standard_heating)
-            return heating_power*(curr_ln_like + curr_ln_prior);
+#if POLPY_NEWWAY
+			if (use_working_prior)
+				{
+				double curr_ln_working_prior = working_prior->GetLnPDF(w);
+				return heating_power*(curr_ln_like + curr_ln_prior) + (1.0 - heating_power)*curr_ln_working_prior;
+				}
+			else 
+				return heating_power*(curr_ln_like + curr_ln_prior);
+#else //old way
+			return heating_power*(curr_ln_like + curr_ln_prior);
+#endif
         else
             return heating_power*curr_ln_like + curr_ln_prior;
 		}
@@ -281,13 +311,23 @@ double DiscreteGammaShapeParam::operator()(
 		recalcPrior(); // base class function that recomputes curr_ln_prior for the value curr_value
 		likelihood->recalcRelativeRates();	// must do this whenever model's shape parameter changes
 		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
-		curr_ln_like = likelihood->calcLnL(tree);
+		curr_ln_like = (heating_power > 0.0 ? likelihood->calcLnL(tree) : 0.0);
 		ChainManagerShPtr p = chain_mgr.lock();
 		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
 
         if (is_standard_heating)
-            return heating_power*(curr_ln_like + curr_ln_prior);
+#if POLPY_NEWWAY
+			if (use_working_prior)
+				{
+				double curr_ln_working_prior = working_prior->GetLnPDF(a);
+				return heating_power*(curr_ln_like + curr_ln_prior) + (1.0 - heating_power)*curr_ln_working_prior;
+				}
+			else 
+				return heating_power*(curr_ln_like + curr_ln_prior);
+#else //old way
+			return heating_power*(curr_ln_like + curr_ln_prior);
+#endif
         else
             return heating_power*curr_ln_like + curr_ln_prior;
 		}
@@ -329,13 +369,23 @@ double PinvarParam::operator()(
 		recalcPrior(); // base class function that recomputes curr_ln_prior for the value curr_value
 		likelihood->recalcRelativeRates();	// must do this whenever model's rate heterogeneity status changes
 		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
-		curr_ln_like = likelihood->calcLnL(tree);
+		curr_ln_like = (heating_power > 0.0 ? likelihood->calcLnL(tree) : 0.0);
 		ChainManagerShPtr p = chain_mgr.lock();
 		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
 
         if (is_standard_heating)
-            return heating_power*(curr_ln_like + curr_ln_prior);
+#if POLPY_NEWWAY
+			if (use_working_prior)
+				{
+				double curr_ln_working_prior = working_prior->GetLnPDF(pinv);
+				return heating_power*(curr_ln_like + curr_ln_prior) + (1.0 - heating_power)*curr_ln_working_prior;
+				}
+			else 
+				return heating_power*(curr_ln_like + curr_ln_prior);
+#else //old way
+			return heating_power*(curr_ln_like + curr_ln_prior);
+#endif
         else
             return heating_power*curr_ln_like + curr_ln_prior;
 		}
@@ -381,13 +431,23 @@ double StateFreqParam::operator()(
 		sendCurrValueToModel(f);
 		recalcPrior();
 		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
-        curr_ln_like = likelihood->calcLnL(tree);
+        curr_ln_like = (heating_power > 0.0 ? likelihood->calcLnL(tree) : 0.0);
 		ChainManagerShPtr p = chain_mgr.lock();
 		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
 
         if (is_standard_heating)
-            return heating_power*(curr_ln_like + curr_ln_prior);
+#if POLPY_NEWWAY
+			if (use_working_prior)
+				{
+				double curr_ln_working_prior = working_prior->GetLnPDF(f);
+				return heating_power*(curr_ln_like + curr_ln_prior) + (1.0 - heating_power)*curr_ln_working_prior;
+				}
+			else 
+				return heating_power*(curr_ln_like + curr_ln_prior);
+#else //old way
+			return heating_power*(curr_ln_like + curr_ln_prior);
+#endif
         else
             return heating_power*curr_ln_like + curr_ln_prior;
 		}
@@ -436,6 +496,7 @@ double HyperPriorParam::operator()(
 		recalcPrior();
 
 		// no need to invalidate all CLAs because only the prior is changing
+		//@POL the likelihood is not even needed here because mu does not appear in the likelihood function anywhere
 		curr_ln_like = likelihood->calcLnL(tree);
 
 		edgelen_master_param->setPriorMeanAndVariance(mu, mu*mu); //@POL note that this implicitly assumes an exponential edge length prior
@@ -447,7 +508,17 @@ double HyperPriorParam::operator()(
 		p->setLastLnLike(curr_ln_like);
 
         if (is_standard_heating)
-            return heating_power*(curr_ln_like + edgeLensLnPrior + curr_ln_prior);
+#if POLPY_NEWWAY
+			if (use_working_prior)
+				{
+				double curr_ln_working_prior = working_prior->GetLnPDF(mu);
+				return heating_power*(curr_ln_like + edgeLensLnPrior + curr_ln_prior) + (1.0 - heating_power)*curr_ln_working_prior;
+				}
+			else 
+				return heating_power*(curr_ln_like + edgeLensLnPrior + curr_ln_prior);
+#else //old way
+			return heating_power*(curr_ln_like + edgeLensLnPrior + curr_ln_prior);
+#endif
         else
             return heating_power*curr_ln_like + edgeLensLnPrior + curr_ln_prior;
 		}

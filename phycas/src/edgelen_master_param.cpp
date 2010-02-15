@@ -89,7 +89,7 @@ double EdgeLenMasterParam::lnPriorOneEdge(TreeNode & nd) const
 |	Member function that exists only to facilitate using boost::lambda::bind to be used in the getLnPrior() function. It
 |	returns the log of the working prior probability density evaluated at the current edge length associated with `nd'.
 */
-double EdgeLenMasterParam::lnWorkingPriorOneEdge(TreeNode & nd) const
+double EdgeLenMasterParam::lnWorkingPriorOneEdge(bool temp_debugging, TreeNode & nd) const
 	{
     bool skip = (nd.IsTipRoot())
                 || ((edgeLenType == EdgeLenMasterParam::internal) && (!nd.IsInternal()))
@@ -111,7 +111,8 @@ double EdgeLenMasterParam::lnWorkingPriorOneEdge(TreeNode & nd) const
 		    {
 		    PHYCAS_ASSERT(0);
 		    }
-
+		if (temp_debugging)
+			std::cerr << boost::str(boost::format("%.8f <-- %.8f <-- %s <-- %s") % retval % v % working_prior->GetDistributionDescription() % getName()) << std::endl;//temp
 	    return retval;
         }
 	}
@@ -120,10 +121,10 @@ double EdgeLenMasterParam::lnWorkingPriorOneEdge(TreeNode & nd) const
 |	Loops through all nodes in the tree and computes the log of the working prior for each edge that it is responsible
 |	for (according to its `edgeLenType'). Returns sum of these log working prior values.
 */
-double EdgeLenMasterParam::recalcWorkingPrior() const
+double EdgeLenMasterParam::recalcWorkingPrior(bool temp_debug) const
 	{
     double lnwp = std::accumulate(tree->begin(), tree->end(), 0.0,
-	    boost::lambda::_1 += boost::lambda::bind(&EdgeLenMasterParam::lnWorkingPriorOneEdge, this, boost::lambda::_2));
+	    boost::lambda::_1 += boost::lambda::bind(&EdgeLenMasterParam::lnWorkingPriorOneEdge, this, temp_debug, boost::lambda::_2));
 	return lnwp;
 	}
 #endif

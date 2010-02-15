@@ -239,13 +239,23 @@ bool EdgeMove::update()
 	//double prev_ln_prior		= p->partialEdgeLenPrior(one_edgelen);
     bool is_internal_edge       = origNode->IsInternal();
     double prev_ln_prior		= (is_internal_edge ? p->calcInternalEdgeLenPriorUnnorm(origEdgelen) : p->calcExternalEdgeLenPriorUnnorm(origEdgelen));
+#if POLPY_NEWWAY
+	double prev_ln_working_prior = 0.0;
+	if (use_working_prior)
+		prev_ln_working_prior = (is_internal_edge ? p->calcInternalEdgeLenWorkingPrior(origEdgelen) : p->calcExternalEdgeLenWorkingPrior(origEdgelen));
+#endif
 
-	double curr_ln_like			= likelihood->calcLnL(tree);
+	double curr_ln_like			= (heating_power > 0.0 ? likelihood->calcLnL(tree) : 0.0);
 
 	//one_edgelen[0]				= origNode->GetEdgeLen();
 	//double curr_ln_prior		= p->partialEdgeLenPrior(one_edgelen);
     double curr_edgelen         = origNode->GetEdgeLen();
 	double curr_ln_prior		= (is_internal_edge ? p->calcInternalEdgeLenPriorUnnorm(curr_edgelen) : p->calcExternalEdgeLenPriorUnnorm(curr_edgelen));
+#if POLPY_NEWWAY
+	double curr_ln_working_prior = 0.0;
+	if (use_working_prior)
+		curr_ln_working_prior = (is_internal_edge ? p->calcInternalEdgeLenWorkingPrior(curr_edgelen) : p->calcExternalEdgeLenWorkingPrior(curr_edgelen));
+#endif
 
     double prev_posterior = 0.0;
 	double curr_posterior = 0.0;
@@ -256,6 +266,13 @@ bool EdgeMove::update()
         {
         prev_posterior = heating_power*(prev_ln_like + prev_ln_prior);
 	    curr_posterior = heating_power*(curr_ln_like + curr_ln_prior);
+#if POLPY_NEWWAY
+		if (use_working_prior)
+			{
+			prev_posterior += (1.0 - heating_power)*prev_ln_working_prior;
+			curr_posterior += (1.0 - heating_power)*curr_ln_working_prior;
+			}
+#endif
 #if defined(DEBUG_LOG)
         doof << boost::str(boost::format("std\t%.5f\t%.5f\t%.5f\t%.5f\t") % heating_power % curr_ln_like % curr_ln_prior % curr_posterior);
 #endif

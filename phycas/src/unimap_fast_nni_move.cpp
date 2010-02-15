@@ -53,6 +53,9 @@ UnimapFastNNIMove::~UnimapFastNNIMove()
 */
 bool UnimapFastNNIMove::update()
 	{
+#if POLPY_NEWWAY
+	PHYCAS_ASSERT(0);	// need to take account of working_prior
+#endif
 	// If this is the first time update has been called, need to initialize num_states, num_sites and log_umat
 	if (num_states == 0)
 		{

@@ -56,6 +56,9 @@ double FlexRateParam::operator()(
 	{
 	curr_ln_like = ln_zero;
 	curr_ln_prior = 0.0;
+#if POLPY_NEWWAY
+	PHYCAS_ASSERT(0);	// curr_ln_prior = 0.0 sounds wrong, also need to account for working prior
+#endif
 
 	refreshLeftRightValues();
 
@@ -65,15 +68,28 @@ double FlexRateParam::operator()(
 		likelihood->recalcRelativeRates();	// must do this whenever one of the relative rates changes
 		recalcPrior();
 		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
-        curr_ln_like = likelihood->calcLnL(tree);
+        curr_ln_like = (heating_power > 0.0 ? likelihood->calcLnL(tree) : 0.0);
 		ChainManagerShPtr p = chain_mgr.lock();
 		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
 
+#if POLPY_NEWWAY
+        if (is_standard_heating)
+			if (working_prior)
+				{
+				double curr_ln_working_prior = recalcWorkingPrior();
+	            return heating_power*(curr_ln_like + curr_ln_prior) + (1.0 - heating_power)*curr_ln_working_prior;
+				}
+			else
+	            return heating_power*(curr_ln_like + curr_ln_prior);
+        else
+            return heating_power*curr_ln_like + curr_ln_prior;
+#else //old way
         if (is_standard_heating)
             return heating_power*(curr_ln_like + curr_ln_prior);
         else
             return heating_power*curr_ln_like + curr_ln_prior;
+#endif
 		}
     else
         return ln_zero;
@@ -106,6 +122,9 @@ double FlexProbParam::operator()(
 	{
 	curr_ln_like = ln_zero;
 	curr_ln_prior = 0.0;
+#if POLPY_NEWWAY
+	PHYCAS_ASSERT(0);	// curr_ln_prior = 0.0 sounds wrong, also need to account for working prior
+#endif
 
     if (f > 0.0)
 		{
@@ -113,15 +132,28 @@ double FlexProbParam::operator()(
 		likelihood->recalcRelativeRates();	// must do this whenever one of the rate probabilities changes
 		recalcPrior();
 		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
-        curr_ln_like = likelihood->calcLnL(tree);
+        curr_ln_like = (heating_power > 0.0 ? likelihood->calcLnL(tree) : 0.0);
 		ChainManagerShPtr p = chain_mgr.lock();
 		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
 
+#if POLPY_NEWWAY
+        if (is_standard_heating)
+			if (working_prior)
+				{
+				double curr_ln_working_prior = recalcWorkingPrior();
+	            return heating_power*(curr_ln_like + curr_ln_prior) + (1.0 - heating_power)*curr_ln_working_prior;
+				}
+			else
+	            return heating_power*(curr_ln_like + curr_ln_prior);
+        else
+            return heating_power*curr_ln_like + curr_ln_prior;
+#else //old way
         if (is_standard_heating)
             return heating_power*(curr_ln_like + curr_ln_prior);
         else
             return heating_power*curr_ln_like + curr_ln_prior;
+#endif
 		}
     else
         return ln_zero;

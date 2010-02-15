@@ -312,6 +312,9 @@ bool NCatMove::update()
 	ChainManagerShPtr p = chain_mgr.lock();
 	PHYCAS_ASSERT(p);
 	double prev_ln_like = p->getLastLnLike();
+#if POLPY_NEWWAY
+	PHYCAS_ASSERT(0);	// need to take account of working_prior
+#endif
 
 	proposeNewState();
 

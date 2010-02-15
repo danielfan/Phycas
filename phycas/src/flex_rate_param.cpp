@@ -104,7 +104,7 @@ std::string FlexRateParam::getPriorDescr() const
 /*----------------------------------------------------------------------------------------------------------------------
 |	todo
 */
-double FlexRateParam::recalcWorkingPrior() const
+double FlexRateParam::recalcWorkingPrior(bool temp_debug) const
 	{
 	return 0.0;	//POLPY_TODO
 	}

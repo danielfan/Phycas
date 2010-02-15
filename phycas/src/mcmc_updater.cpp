@@ -46,6 +46,9 @@ MCMCUpdater::MCMCUpdater()
   slice_max_units(UINT_MAX),
   heating_power(1.0),
   is_standard_heating(true),
+#if POLPY_NEWWAY
+  use_working_prior(false),
+#endif
   save_debug_info(false)
 	{
 	//ln_zero = std::log(std::numeric_limits<double>::denorm_min()); // this doesn't work, lnL can get much lower than the log of dnorm_min!
@@ -427,10 +430,27 @@ double MCMCUpdater::setCurrLnPrior(
 
 #if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
+|	Returns the current value of data member `use_working_prior'.
+*/
+bool MCMCUpdater::useWorkingPrior() const
+	{
+	return use_working_prior;
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the value of the data member `use_working_prior'.
+*/
+void MCMCUpdater::setUseWorkingPrior(
+  bool b)	/**< is the new value for `use_working_prior' */
+	{
+	use_working_prior = b;
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
 |	Retrieves current value for the parameter being managed by this updater, then returns log of the working prior 
 |	probability density at that value. If this updater is not a prior steward, simply returns 0.0.
 */
-double MCMCUpdater::recalcWorkingPrior() const
+double MCMCUpdater::recalcWorkingPrior(bool temp_debug) const
 	{
 	if (!isPriorSteward())
 		return 0.0;
@@ -439,6 +459,7 @@ double MCMCUpdater::recalcWorkingPrior() const
 	if (working_prior)
 		{
 		double value = getCurrValueFromModel();
+
 		try 
 			{
 			lnwp = working_prior->GetLnPDF(value);
@@ -446,6 +467,10 @@ double MCMCUpdater::recalcWorkingPrior() const
 		catch(XProbDist &)
 			{
 			PHYCAS_ASSERT(0);
+			}
+		if (temp_debug)
+			{
+			std::cerr << boost::str(boost::format("%.8f <-- %.8f <-- %s <-- %s") % lnwp % value % working_prior->GetDistributionDescription() % getName()) << std::endl;//temp
 			}
 		}
 	else
@@ -459,6 +484,12 @@ double MCMCUpdater::recalcWorkingPrior() const
 		catch(XProbDist &)
 			{
 			PHYCAS_ASSERT(0);
+			}
+		if (temp_debug)
+			{
+			std::cerr << boost::str(boost::format("%.8f <-- {") % lnwp);//temp
+			std::copy(values.begin(), values.end(), std::ostream_iterator<double>(std::cerr, " "));//temp
+			std::cerr << boost::str(boost::format("} <-- %s <-- %s") % mv_working_prior->GetDistributionDescription() % getName()) << std::endl;//temp
 			}
 		}
 	return lnwp;
@@ -744,6 +775,16 @@ double MCMCUpdater::getPower() const
 	return heating_power;
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns true if either the data member `working_prior' or the data member `mv_working_prior' points to an object.
+*/
+bool MCMCUpdater::isWorkingPrior() const
+	{
+	return (working_prior || mv_working_prior);
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the data member `is_standard_heating' to true.
 */
@@ -785,6 +826,17 @@ bool MCMCUpdater::isNoHeating() const
 	}
 	
 #if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the log of the working prior density at the supplied value `x'. Assumes `working_prior' (or 
+|	`mv_working_prior') exists, whichever is appropriate.
+*/
+double MCMCUpdater::calcLnWorkingPriorPDF(
+  double x) const	/**< is the value at which the log density is to be computed */
+	{
+	PHYCAS_ASSERT(prior && working_prior);	// if this function is called, updater should be a prior steward and have a working_prior data member that actually points to something
+	return working_prior->GetLnPDF(x);
+	}
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns a const reference to the string returned by the GetDistributionDescription() function of the 
 |	`working_prior' or `mv_working_prior' data member, whichever is appropriate.

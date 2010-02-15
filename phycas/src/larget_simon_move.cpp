@@ -81,18 +81,83 @@ bool LargetSimonMove::update()
 
 	proposeNewState();
 
-    curr_ln_like = likelihood->calcLnL(tree);
+    curr_ln_like = (heating_power > 0.0 ? likelihood->calcLnL(tree) : 0.0);
 
 	double prev_ln_prior = 0.0;
+#if POLPY_NEWWAY
+	double prev_ln_working_prior = 0.0;
+	double curr_ln_working_prior = 0.0;
+#endif
 	if (star_tree_proposal)
 		{
-		prev_ln_prior		= p->calcExternalEdgeLenPriorUnnorm(orig_edge_len);
+		prev_ln_prior			= p->calcExternalEdgeLenPriorUnnorm(orig_edge_len);
+#if POLPY_NEWWAY
+		prev_ln_working_prior	= (use_working_prior ? p->calcExternalEdgeLenWorkingPrior(orig_edge_len) : 0.0);
+#endif
 
         double curr_edgelen = orig_node->GetEdgeLen();
 		curr_ln_prior		= p->calcExternalEdgeLenPriorUnnorm(curr_edgelen);
+#if POLPY_NEWWAY
+		curr_ln_working_prior	= (use_working_prior ? p->calcExternalEdgeLenWorkingPrior(curr_edgelen) : 0.0);
+#endif
 		}
 	else
 		{
+#if POLPY_NEWWAY
+        PHYCAS_ASSERT(ndY->IsInternal());
+        double xnew = ndX->GetEdgeLen();
+		if (ndX->IsInternal())
+			{
+			prev_ln_prior  = p->calcInternalEdgeLenPriorUnnorm(x);
+			curr_ln_prior  = p->calcInternalEdgeLenPriorUnnorm(xnew);
+			if (use_working_prior)
+				{
+				prev_ln_working_prior = p->calcInternalEdgeLenWorkingPrior(x);
+				curr_ln_working_prior = p->calcInternalEdgeLenWorkingPrior(xnew);
+				}
+			}
+		else 
+			{
+			prev_ln_prior  = p->calcExternalEdgeLenPriorUnnorm(x);
+			curr_ln_prior  = p->calcExternalEdgeLenPriorUnnorm(xnew);
+			if (use_working_prior)
+				{
+				prev_ln_working_prior = p->calcExternalEdgeLenWorkingPrior(x);
+				curr_ln_working_prior = p->calcExternalEdgeLenWorkingPrior(xnew);
+				}
+			}
+			
+        double ynew = ndY->GetEdgeLen();
+        prev_ln_prior += p->calcInternalEdgeLenPriorUnnorm(y);
+        curr_ln_prior += p->calcInternalEdgeLenPriorUnnorm(ynew);
+		if (use_working_prior)
+			{
+			prev_ln_working_prior += p->calcInternalEdgeLenWorkingPrior(y);
+			curr_ln_working_prior += p->calcInternalEdgeLenWorkingPrior(ynew);
+			}
+		
+        double znew = ndZ->GetEdgeLen();
+		if (ndZ->IsInternal())
+			{
+    	    prev_ln_prior += p->calcInternalEdgeLenPriorUnnorm(z);
+    	    curr_ln_prior += p->calcInternalEdgeLenPriorUnnorm(znew);
+			if (use_working_prior)
+				{
+				prev_ln_working_prior += p->calcInternalEdgeLenWorkingPrior(z);
+				curr_ln_working_prior += p->calcInternalEdgeLenWorkingPrior(znew);
+				}
+			}
+		else 
+			{
+	        prev_ln_prior += p->calcExternalEdgeLenPriorUnnorm(z);
+	        curr_ln_prior += p->calcExternalEdgeLenPriorUnnorm(znew);
+			if (use_working_prior)
+				{
+				prev_ln_working_prior += p->calcExternalEdgeLenWorkingPrior(z);
+				curr_ln_working_prior += p->calcExternalEdgeLenWorkingPrior(znew);
+				}
+			}
+#else //old way
         PHYCAS_ASSERT(ndY->IsInternal());
         prev_ln_prior  = (ndX->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(x) : p->calcExternalEdgeLenPriorUnnorm(x));
         prev_ln_prior += p->calcInternalEdgeLenPriorUnnorm(y);
@@ -106,6 +171,7 @@ bool LargetSimonMove::update()
 
         double znew = ndZ->GetEdgeLen();
         curr_ln_prior += (ndZ->IsInternal() ? p->calcInternalEdgeLenPriorUnnorm(znew) : p->calcExternalEdgeLenPriorUnnorm(znew));
+#endif
 		}
 
     double prev_posterior = 0.0;
@@ -114,6 +180,13 @@ bool LargetSimonMove::update()
         {
         prev_posterior = heating_power*(prev_ln_like + prev_ln_prior);
 	    curr_posterior = heating_power*(curr_ln_like + curr_ln_prior);
+#if POLPY_NEWWAY
+		if (use_working_prior)
+			{
+			prev_posterior += (1.0 - heating_power)*prev_ln_working_prior;
+			curr_posterior += (1.0 - heating_power)*curr_ln_working_prior;
+			}
+#endif
         }
     else
         {

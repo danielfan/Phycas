@@ -93,6 +93,7 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		// Predicates
 #if POLPY_NEWWAY
 		bool					isPriorSteward() const;
+		bool					useWorkingPrior() const;
 #endif
 		bool					isParameter() const;
 		bool					isMasterParameter() const;
@@ -144,7 +145,8 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		virtual void			setPrior(ProbDistShPtr p);
 		virtual void			setMultivarPrior(MultivarProbDistShPtr p);
 #if POLPY_NEWWAY
-		virtual double		 	recalcWorkingPrior() const;
+		void					setUseWorkingPrior(bool b);
+		virtual double		 	recalcWorkingPrior(bool temp_debug = false) const;
 #endif
 
 		// Modifiers used only by parameters
@@ -179,6 +181,9 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		virtual double			operator()(double);
 		
 #if POLPY_NEWWAY
+		// Utilities related to working priors used in steppingstone sampling
+		bool 					isWorkingPrior() const;
+		double					calcLnWorkingPriorPDF(double x) const;
 		void 					fitBetaWorkingPrior();
 		void 					fitGammaWorkingPrior();
 		virtual void			educateWorkingPrior();
@@ -217,6 +222,7 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		ProbDistShPtr			prior;					/**< The probability distribution serving as the prior for a univariate parameter */
         MultivarProbDistShPtr   mv_prior;               /**< The probability distribution serving as the prior for a multivariate parameter */
 #if POLPY_NEWWAY
+		bool					use_working_prior;		/**< If true, the (presumably already parameterized) working prior will be used in computing the power posterior in steppingstone sampling */
 		ProbDistShPtr			working_prior;			/**< The probability distribution serving as the working prior for a univariate parameter */
         MultivarProbDistShPtr   mv_working_prior;       /**< The probability distribution serving as the working prior for a multivariate parameter */
 		double_vect_t			fitting_sample;			/**< Storage for sample used in fitting a univariate working prior during steppingstone sampling */

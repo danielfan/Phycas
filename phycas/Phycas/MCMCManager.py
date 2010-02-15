@@ -179,14 +179,14 @@ class MCMCManager:
 		float_format_str = '%%.%df\t' % self.parent.opts.ndecimals
 		float_format_notab_str = '%%.%df' % self.parent.opts.ndecimals
 		
+		# Only record samples from the current cold chain
+		cold_chain = self.parent.mcmc_manager.getColdChain()
+		
 		# Gather log-likelihoods, and if path sampling save in path_sample list for later
 		lnLikes = []
 		for i,c in enumerate(self.chains):
 			lnLi = c.chain_manager.getLastLnLike()
 			lnLikes.append(lnLi)
-		
-		# Only record samples from the current cold chain
-		cold_chain = self.parent.mcmc_manager.getColdChain()
 		
 		# Add to fitting samples if dofit is True
 		if (dofit):
@@ -210,7 +210,13 @@ class MCMCManager:
 			self.parent.sssf.write(float_format_str % ln_prior)
 			
 			# lnWorkingPrior
-			ln_working_prior = cold_chain.chain_manager.recalcLnWorkingPrior()
+			#print
+			#print '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@'
+			#print '@@@@@@@@@@@@@@ Recalculating working prior in recordSample @@@@@@@@@@@@@@@@@@@'
+			#print '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@'
+			ln_working_prior = cold_chain.chain_manager.recalcLnWorkingPrior(False)
+			#print '@@@@@@@@@@@@@@ log working prior = %.8f' % ln_working_prior
+			#print
 			self.parent.sssf.write(float_format_str % ln_working_prior)
 			
 			self.parent.sssf.write('\n')

@@ -156,20 +156,23 @@ void MCMCChainManager::refreshLastLnLike()
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calculates and returns the log of the joint working prior by calling recalcWorkingPrior() for all parameters.
 */
-double MCMCChainManager::recalcLnWorkingPrior() const
+double MCMCChainManager::recalcLnWorkingPrior(bool temp_debug) const
 	{
 	// Might need to add more checks here
 	if (dirty)
 		{
 		throw XLikelihood("cannot call recalcLnWorkingPrior() for chain manager before calling finalize()");
 		}
-		
+	
+	if (temp_debug)
+		std::cerr << "\nIn MCMCChainManager::recalcLnWorkingPrior()..." << std::endl;//temp
+	
 	// Visit all updaters and let those who are prior stewards update their component of the joint prior.
 	double ln_working_prior = 0.0;
 	for (MCMCUpdaterConstIter it = all_updaters.begin(); it != all_updaters.end(); ++it)
 		{
 		const boost::shared_ptr<MCMCUpdater> s = *it;
-		double this_ln_prior = s->recalcWorkingPrior();
+		double this_ln_prior = s->recalcWorkingPrior(temp_debug);	// updaters who are not prior stewards return 0.0 
 		ln_working_prior += this_ln_prior;
 		}
 	return ln_working_prior;
@@ -309,6 +312,7 @@ MCMCChainManager::MCMCChainManager()
 	{
 	}
 
+#define DEBUG_UPDATERS  0
 /*----------------------------------------------------------------------------------------------------------------------
 |	For all updaters stored in `all_updaters', obtain the weight w and call the update fuction of the updater w times.
 */
@@ -316,15 +320,23 @@ void MCMCChainManager::updateAllUpdaters()
 	{
 	for (MCMCUpdaterVect::iterator it = all_updaters.begin(); it != all_updaters.end(); ++it)
 		{
-		//std::string nm = (*it)->getName();	//temp
+#if DEBUG_UPDATERS
+		std::string nm = (*it)->getName();
 		unsigned w = (*it)->getWeight();
 		for (unsigned i = 0; i < w; ++i)
 			{
-			//std::cerr << "########## updating " << nm << "..." << std::endl;	//temp
-			//(*it)->setSaveDebugInfo(true);//temp
+			std::cerr << "########## updating " << nm << "..." << std::endl;
+			(*it)->setSaveDebugInfo(true);
 			(*it)->update();
-			//std::cerr << boost::str(boost::format("%s | %s") % nm % (*it)->getDebugInfo()) << std::endl;
+			std::cerr << boost::str(boost::format("%s | %s") % nm % (*it)->getDebugInfo()) << std::endl;
 			}
+#else
+		unsigned w = (*it)->getWeight();
+		for (unsigned i = 0; i < w; ++i)
+			{
+			(*it)->update();
+			}
+#endif
 		}
 	}
 	
@@ -637,6 +649,36 @@ double MCMCChainManager::calcExternalEdgeLenPriorUnnorm(
 		}
     return tmp;
     }
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Computes the log of the working prior for the supplied external edge length.
+*/
+double MCMCChainManager::calcExternalEdgeLenWorkingPrior(
+  double v) const	/**< is the edge length for which the working prior log density should be computed */
+	{
+	// If there are two edge_length_parameters, first is for external and second is for internal edges
+	// (see MCMCChainManager::addMCMCUpdaters). If only one, it handles all edge lengths, so in this
+	// case (external edge length) we know we should go with the first one.
+    const MCMCUpdaterVect & edge_length_params = getEdgeLenParams();
+	return edge_length_params[0]->calcLnWorkingPriorPDF(v);
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Computes the log of the working prior for the supplied internal edge length.
+*/
+double MCMCChainManager::calcInternalEdgeLenWorkingPrior(
+  double v) const	/**< is the edge length for which the working prior log density should be computed */
+	{	
+	// If there are two edge_length_parameters, first is for external and second is for internal edges
+	// (see MCMCChainManager::addMCMCUpdaters). If only one, it handles all edge lengths.
+	const MCMCUpdaterVect & edge_length_params = getEdgeLenParams();
+	if (edge_length_params.size() == 2)
+		return edge_length_params[1]->calcLnWorkingPriorPDF(v);
+	else 
+		return edge_length_params[0]->calcLnWorkingPriorPDF(v);
+	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the unnormalized prior for the supplied edge length using the prior for internal edge lengths.

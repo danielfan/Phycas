@@ -55,6 +55,10 @@ BushMove::BushMove()
 */
 bool BushMove::update()
 	{
+#if POLPY_NEWWAY
+	PHYCAS_ASSERT(0);	// need to accommodate working prior
+#endif
+	
 	// The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
 	// A proposed BushMove cannot be accepted without changing edge lengths, so it is best to bail out now.
 	if (is_fixed)
@@ -71,7 +75,7 @@ bool BushMove::update()
 
 	proposeNewState();
 
-	double curr_ln_like				= likelihood->calcLnL(tree);
+	double curr_ln_like				= (heating_power > 0.0 ? likelihood->calcLnL(tree) : 0.0);
 
 	//likelihood->startTreeViewer(tree, str(boost::format("Bush move PROPOSED (%s)") % (add_edge_move_proposed ? "add edge" : "delete edge")));
 

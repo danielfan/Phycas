@@ -188,7 +188,7 @@ class FlexRateParam : public MCMCUpdater
 #if POLPY_NEWWAY
 		void						educateWorkingPrior();
 		void						finalizeWorkingPrior();
-		double						recalcWorkingPrior() const;
+		double						recalcWorkingPrior(bool temp_debug = false) const;
 #endif
         virtual void				sendCurrValueToModel(double v);
         virtual double				getCurrValueFromModel() const;
@@ -289,7 +289,7 @@ class EdgeLenMasterParam : public MCMCUpdater
 #if POLPY_NEWWAY
 		void				educateWorkingPrior();
 		void				finalizeWorkingPrior();
-		double				recalcWorkingPrior() const;
+		double				recalcWorkingPrior(bool temp_debug = false) const;
 #endif
 		virtual double		recalcPrior();
 		virtual void		setPriorMeanAndVariance(double m, double v);
@@ -297,7 +297,7 @@ class EdgeLenMasterParam : public MCMCUpdater
 	protected:
 
 #if POLPY_NEWWAY
-		double				lnWorkingPriorOneEdge(TreeNode & nd) const;
+		double				lnWorkingPriorOneEdge(bool temp_debug, TreeNode & nd) const;
 #endif
 		double				lnPriorOneEdge(TreeNode & nd) const;
 

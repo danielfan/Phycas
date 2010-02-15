@@ -55,6 +55,7 @@ void updater_pymod()
 		.def("getCurrValuesFromModel", &MCMCUpdater::getCurrValuesFromModel)
 		.def("listCurrValuesFromModel", &MCMCUpdater::listCurrValuesFromModel)
 #if POLPY_NEWWAY
+		.def("setUseWorkingPrior", &MCMCUpdater::setUseWorkingPrior)
 		.def("recalcWorkingPrior", &MCMCUpdater::recalcWorkingPrior)
 		.def("educateWorkingPrior", &MCMCUpdater::educateWorkingPrior)
 		.def("finalizeWorkingPrior", &MCMCUpdater::finalizeWorkingPrior)
