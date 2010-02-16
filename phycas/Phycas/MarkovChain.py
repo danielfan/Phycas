@@ -86,9 +86,12 @@ class MarkovChain(LikelihoodCore):
 		# Note: r data member inherited from LikelihoodCore
 		paramf.write('[ID: %d]\n' % self.r.getInitSeed())
 		if self.parent.opts.doing_steppingstone_sampling:
-			paramf.write('Gen\tbeta\tLnL')
+			paramf.write('Gen\tbeta\tlnL\tlnPrior')
 		else:
-			paramf.write('Gen\tLnL')
+			paramf.write('Gen\tlnL\tlnPrior')
+
+		if self.parent.opts.doing_steppingstone_sampling and self.parent.opts.ssobj.scubed:
+			paramf.write('\tlnWorkPr')
 			
 		if self.parent.opts.fix_topology:
 			nbrlens = self.tree.getNNodes() - 1
@@ -105,16 +108,16 @@ class MarkovChain(LikelihoodCore):
 			m = self.partition_model.getModel(i)
 			paramf.write(m.paramHeader())
 			
-	def sssFileHeader(self, sssf):
-		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
-		"""
-		Opens the .sss file for saving samples needed by sump command to 
-		compute an estimate of the marginal likelihood using smoothed 
-		steppingstone sampling.
-		
-		"""
-		sssf.write('[ID: %d]\n' % self.r.getInitSeed())
-		sssf.write('cycle\tbeta\tlnLike\tlnPrior\tlnWorkingPrior')
+	#def sssFileHeader(self, sssf):
+	#	#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+	#	"""
+	#	Opens the .sss file for saving samples needed by sump command to 
+	#	compute an estimate of the marginal likelihood using smoothed 
+	#	steppingstone sampling.
+	#	
+	#	"""
+	#	sssf.write('[ID: %d]\n' % self.r.getInitSeed())
+	#	sssf.write('cycle\tbeta\tlnLike\tlnPrior\tlnWorkingPrior')
 
 	def treeFileHeader(self, treef):
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|

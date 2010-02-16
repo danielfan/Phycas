@@ -42,7 +42,7 @@ class MCMCImpl(CommonFunctions):
 		self.nchar					= 0			# Will hold the actual number of characters after data file has been read
 		self.npatterns			= []		# Will hold the actual number of patterns for each subset after data file has been read
 		self.taxon_labels			= []		# Will hold taxon labels from data file or default names if self.data_source equals None
-		self.sssf					= None
+		#self.sssf					= None
 		self.paramf					= None
 		self.treef					= None
 		self.sitelikef				= None
@@ -254,23 +254,23 @@ class MCMCImpl(CommonFunctions):
 			self.mcmc_manager.paramFileHeader(self.paramf)
 			self.paramf.write('\n')
 			
-		if self.opts.doing_steppingstone_sampling and self.opts.ssobj.scubed:
-			sss_file_spec = self.opts.ssobj.out.sss
-			self.sssf = None
-			try:
-				self.sssf = sss_file_spec.open(self.stdout)
-			except:
-				print '*** Attempt to open sss file (%s) failed.' % self.opts.out.sss.filename
-
-			if self.sssf:
-				self.mcmc_manager.sssFileHeader(self.sssf)
-				self.sssf.write('\n')
+		#if self.opts.doing_steppingstone_sampling and self.opts.ssobj.scubed:
+		#	sss_file_spec = self.opts.ssobj.out.sss
+		#	self.sssf = None
+		#	try:
+		#		self.sssf = sss_file_spec.open(self.stdout)
+		#	except:
+		#		print '*** Attempt to open sss file (%s) failed.' % self.opts.out.sss.filename
+		#
+		#	if self.sssf:
+		#		self.mcmc_manager.sssFileHeader(self.sssf)
+		#		self.sssf.write('\n')
 
 	def paramFileClose(self):
 		if self.paramf is not None:
 			self.paramf.close()
-		if self.sssf is not None:
-			self.sssf.close()
+		#if self.sssf is not None:
+		#	self.sssf.close()
 
 	def openParameterAndTreeFiles(self):
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|

@@ -38,15 +38,15 @@ class MCMCManager:
 		m = self.getColdChain()
 		m.paramFileHeader(paramf)
 
-	def sssFileHeader(self, sssf):
-		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
-		"""
-		Simply passes the file object sssf on to the sssFileHeader method
-		of the MarkovChain object representing the cold chain.
-		
-		"""
-		m = self.getColdChain()
-		m.sssFileHeader(sssf)
+	#def sssFileHeader(self, sssf):
+	#	#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+	#	"""
+	#	Simply passes the file object sssf on to the sssFileHeader method
+	#	of the MarkovChain object representing the cold chain.
+	#	
+	#	"""
+	#	m = self.getColdChain()
+	#	m.sssFileHeader(sssf)
 
 	def treeFileHeader(self, treef):
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -195,36 +195,33 @@ class MCMCManager:
 				u.educateWorkingPrior()
 		
 		# Add line to sss file if it exists
-		if self.parent.opts.ssobj and self.parent.opts.ssobj.scubed and (cycle > -1) and not dofit:
-			# cycle
-			self.parent.sssf.write('%d\t' % (cycle + 1))
-			
-			# beta
-			self.parent.sssf.write(float_format_str % (cold_chain.heating_power))
-			
-			# lnL
-			self.parent.sssf.write(float_format_str % lnLikes[0])
-			
-			# lnPrior
-			ln_prior = cold_chain.chain_manager.calcJointLnPrior()
-			self.parent.sssf.write(float_format_str % ln_prior)
-			
-			# lnWorkingPrior
-			#print
-			#print '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@'
-			#print '@@@@@@@@@@@@@@ Recalculating working prior in recordSample @@@@@@@@@@@@@@@@@@@'
-			#print '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@'
-			ln_working_prior = cold_chain.chain_manager.recalcLnWorkingPrior(False)
-			#print '@@@@@@@@@@@@@@ log working prior = %.8f' % ln_working_prior
-			#print
-			self.parent.sssf.write(float_format_str % ln_working_prior)
-			
-			self.parent.sssf.write('\n')
-			self.parent.sssf.flush()
+		#if self.parent.opts.ssobj and self.parent.opts.ssobj.scubed and (cycle > -1) and not dofit:
+		#	# cycle
+		#	self.parent.sssf.write('%d\t' % (cycle + 1))
+		#	
+		#	# beta
+		#	self.parent.sssf.write(float_format_str % (cold_chain.heating_power))
+		#	
+		#	# lnL
+		#	self.parent.sssf.write(float_format_str % lnLikes[0])
+		#	
+		#	# lnPrior
+		#	ln_prior = cold_chain.chain_manager.calcJointLnPrior()
+		#	self.parent.sssf.write(float_format_str % ln_prior)
+		#	
+		#	# lnWorkingPrior
+		#	ln_working_prior = cold_chain.chain_manager.recalcLnWorkingPrior(False)
+		#	self.parent.sssf.write(float_format_str % ln_working_prior)
+		#	
+		#	self.parent.sssf.write('\n')
+		#	self.parent.sssf.flush()
 
 		# Add line to parameter file if it exists
 		if self.parent.paramf:
+			# cycle
 			self.parent.paramf.write('%d\t' % (cycle + 1))
+			
+			# beta
 			if self.parent.opts.doing_steppingstone_sampling:
 				self.parent.paramf.write(float_format_str % (cold_chain.heating_power))
 				
@@ -232,6 +229,18 @@ class MCMCManager:
 			for lnl in lnLikes:
 				self.parent.paramf.write(float_format_str % lnl)
 			
+			# lnPrior
+			ln_prior = cold_chain.chain_manager.calcJointLnPrior()
+			self.parent.paramf.write(float_format_str % ln_prior)
+			
+			# lnWorkingPrior
+			if self.parent.opts.doing_steppingstone_sampling and self.parent.opts.ssobj and self.parent.opts.ssobj.scubed:
+				if (cycle > -1) and not dofit:
+					ln_working_prior = cold_chain.chain_manager.recalcLnWorkingPrior(False)
+				else:
+					ln_working_prior = 0.0
+				self.parent.paramf.write(float_format_str % ln_working_prior)
+	
 			# tree length
 			if self.parent.opts.fix_topology:
 				all_edgelens = cold_chain.tree.edgeLens()
