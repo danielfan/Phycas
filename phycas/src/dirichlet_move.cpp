@@ -239,9 +239,7 @@ bool DirichletMove::update()
 	// More care should be taken when reporting the log prior or when estimating marginal likelihoods.
     double prev_ln_prior		= mv_prior->GetLnPDF(orig_params);
 	double prev_ln_like			= p->getLastLnLike();
-#if POLPY_NEWWAY
 	double prev_ln_working_prior = (use_working_prior ? mv_working_prior->GetLnPDF(orig_params) : 0.0);
-#endif
 
     // replace current parameter values with new ones
     setParams(new_params);
@@ -249,9 +247,7 @@ bool DirichletMove::update()
 
 	double curr_ln_prior		= mv_prior->GetLnPDF(new_params);
 	double curr_ln_like			= (heating_power > 0.0 ? likelihood->calcLnL(tree) : 0.0);
-#if POLPY_NEWWAY
 	double curr_ln_working_prior = (use_working_prior ? mv_working_prior->GetLnPDF(new_params) : 0.0);
-#endif
 
     double prev_posterior = 0.0;
 	double curr_posterior = 0.0;
@@ -259,13 +255,11 @@ bool DirichletMove::update()
         {
         prev_posterior = heating_power*(prev_ln_like + prev_ln_prior);
 	    curr_posterior = heating_power*(curr_ln_like + curr_ln_prior);
-#if POLPY_NEWWAY
 		if (use_working_prior)
 			{
 			prev_posterior += (1.0 - heating_power)*prev_ln_working_prior;
 			curr_posterior += (1.0 - heating_power)*curr_ln_working_prior;
 			}
-#endif
         }
     else
         {
@@ -355,7 +349,6 @@ double_vect_t DirichletMove::listCurrValuesFromModel()
 	return v;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Override this base class version to add the current parameter vector to the data already stored in 
 |	`mv_fitting_sample'.
@@ -431,7 +424,6 @@ void DirichletMove::finalizeWorkingPrior()
 	//	else
 	//		std::cerr << boost::str(boost::format("@@@@@@@@@ working prior is Dirichlet(not 4 or 6 params) for updater %s") % getName()) << std::endl;
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	The constructor simply calls the base class (DirichletMove) constructor.
@@ -441,7 +433,6 @@ StateFreqMove::StateFreqMove() : DirichletMove()
 	dim = 4;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Override of base class version adds the current vector of state frequencies to the data already stored in 
 |	`mv_fitting_sample'.
@@ -452,7 +443,6 @@ void StateFreqMove::educateWorkingPrior()
 	getCurrValuesFromModel(rfreqs);
 	mv_fitting_sample.push_back(rfreqs);
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the state frequencies of the associated HKY or GTR model to those in the supplied vector `v'.
@@ -527,7 +517,6 @@ RelRatesMove::RelRatesMove() : DirichletMove()
 	dim = 6;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Override of base class version adds the current vector of relative rates to the data already stored in 
 |	`mv_fitting_sample'.
@@ -538,7 +527,6 @@ void RelRatesMove::educateWorkingPrior()
 	getCurrValuesFromModel(rrates);
 	mv_fitting_sample.push_back(rrates);
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the relative rates of the associated GTR model to those in the supplied vector `v'.
@@ -618,7 +606,6 @@ SubsetRelRatesMove::SubsetRelRatesMove() : DirichletMove()
 	dim = 1;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Override of base class version adds the current vector of subset relative rates to the data already stored in 
 |	`mv_fitting_sample'.
@@ -629,7 +616,6 @@ void SubsetRelRatesMove::educateWorkingPrior()
 	getCurrValuesFromModel(rrates);
 	mv_fitting_sample.push_back(rrates);
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the relative rates of the associated partition model to those in the supplied vector `v'.

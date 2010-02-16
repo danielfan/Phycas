@@ -56,10 +56,8 @@ double FlexRateParam::operator()(
 	{
 	curr_ln_like = ln_zero;
 	curr_ln_prior = 0.0;
-#if POLPY_NEWWAY
-	PHYCAS_ASSERT(0);	// curr_ln_prior = 0.0 sounds wrong, also need to account for working prior
-#endif
-
+	
+#if DISABLED_UNTIL_WORKING_PRIOR_ACCOMMODATED
 	refreshLeftRightValues();
 
     if (r > left_value && r < right_value)
@@ -73,7 +71,6 @@ double FlexRateParam::operator()(
 		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
 
-#if POLPY_NEWWAY
         if (is_standard_heating)
 			if (working_prior)
 				{
@@ -84,15 +81,12 @@ double FlexRateParam::operator()(
 	            return heating_power*(curr_ln_like + curr_ln_prior);
         else
             return heating_power*curr_ln_like + curr_ln_prior;
-#else //old way
-        if (is_standard_heating)
-            return heating_power*(curr_ln_like + curr_ln_prior);
-        else
-            return heating_power*curr_ln_like + curr_ln_prior;
-#endif
 		}
     else
         return ln_zero;
+#else
+	return 0.0;
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -122,10 +116,8 @@ double FlexProbParam::operator()(
 	{
 	curr_ln_like = ln_zero;
 	curr_ln_prior = 0.0;
-#if POLPY_NEWWAY
-	PHYCAS_ASSERT(0);	// curr_ln_prior = 0.0 sounds wrong, also need to account for working prior
-#endif
-
+	
+#if DISABLED_UNTIL_WORKING_PRIOR_ACCOMMODATED
     if (f > 0.0)
 		{
 		sendCurrValueToModel(f);
@@ -137,7 +129,6 @@ double FlexProbParam::operator()(
 		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
 
-#if POLPY_NEWWAY
         if (is_standard_heating)
 			if (working_prior)
 				{
@@ -148,15 +139,12 @@ double FlexProbParam::operator()(
 	            return heating_power*(curr_ln_like + curr_ln_prior);
         else
             return heating_power*curr_ln_like + curr_ln_prior;
-#else //old way
-        if (is_standard_heating)
-            return heating_power*(curr_ln_like + curr_ln_prior);
-        else
-            return heating_power*curr_ln_like + curr_ln_prior;
-#endif
 		}
     else
         return ln_zero;
+#else
+	return 0.0;
+#endif
 	}
 
 }	// namespace phycas

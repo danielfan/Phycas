@@ -102,9 +102,7 @@ BOOST_PYTHON_MODULE(_LikelihoodExt)
 	class_<phycas::MCMCChainManager, boost::noncopyable, boost::shared_ptr<phycas::MCMCChainManager> >("MCMCChainManagerBase")
 		.def("finalize", &MCMCChainManager::finalize)
 		.def("calcJointLnPrior", &MCMCChainManager::calcJointLnPrior)
-#if POLPY_NEWWAY
 		.def("recalcLnWorkingPrior", &MCMCChainManager::recalcLnWorkingPrior)
-#endif
 		.def("addMove", &MCMCChainManager::addMove)
 		.def("addModelParam", &MCMCChainManager::addModelParam)
 		.def("addEdgeLenParam", &MCMCChainManager::addEdgeLenParam)

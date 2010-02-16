@@ -46,9 +46,7 @@ MCMCUpdater::MCMCUpdater()
   slice_max_units(UINT_MAX),
   heating_power(1.0),
   is_standard_heating(true),
-#if POLPY_NEWWAY
   use_working_prior(false),
-#endif
   save_debug_info(false)
 	{
 	//ln_zero = std::log(std::numeric_limits<double>::denorm_min()); // this doesn't work, lnL can get much lower than the log of dnorm_min!
@@ -63,7 +61,6 @@ MCMCUpdater::~MCMCUpdater()
 	//std::cerr << "\n\n>>>>MCMCUpdater dying..." << std::endl;
 	}
 	
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns true if either `prior' or `mv_prior' exist. If either of these exists, then this updater is responsible for
 |	calculating some component of the joint prior (i.e. it is a prior steward).
@@ -72,7 +69,6 @@ bool MCMCUpdater::isPriorSteward() const
 	{
 	return (prior || mv_prior);
 	}
-#endif
 	
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the value of the data member `nattempts', which stores the number of Metropolis-Hastings proposals attempted
@@ -428,7 +424,6 @@ double MCMCUpdater::setCurrLnPrior(
 	return curr_ln_prior;
     }
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the current value of data member `use_working_prior'.
 */
@@ -494,7 +489,6 @@ double MCMCUpdater::recalcWorkingPrior(bool temp_debug) const
 		}
 	return lnwp;
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calls GetLnPDF function of prior to recalculate `curr_ln_prior'. This function is important because the 
@@ -775,7 +769,6 @@ double MCMCUpdater::getPower() const
 	return heating_power;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns true if either the data member `working_prior' or the data member `mv_working_prior' points to an object.
 */
@@ -783,7 +776,6 @@ bool MCMCUpdater::isWorkingPrior() const
 	{
 	return (working_prior || mv_working_prior);
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the data member `is_standard_heating' to true.
@@ -825,7 +817,6 @@ bool MCMCUpdater::isNoHeating() const
 	return (heating_power == 1.0);
 	}
 	
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the log of the working prior density at the supplied value `x'. Assumes `working_prior' (or 
 |	`mv_working_prior') exists, whichever is appropriate.
@@ -927,5 +918,4 @@ void MCMCUpdater::fitGammaWorkingPrior()
 	// std::cerr << boost::str(boost::format("@@@@@@@@@ working prior is Gamma(%g,%g) for updater %s: mean = %g, variance = %g") % shape % scale % getName() % mean % variance) << std::endl;
 	working_prior = ProbDistShPtr(new GammaDistribution(shape, scale));
 	}
-#endif	
 }	// namespace phycas

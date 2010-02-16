@@ -73,7 +73,6 @@ bool FlexProbParam::update()
     return true;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Override of base class version adds the current flex prob parameter value to the data already stored in 
 |	`fitting_sample'.
@@ -96,5 +95,4 @@ void FlexProbParam::finalizeWorkingPrior()
 	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
 	fitGammaWorkingPrior();
 	}
-#endif
 }

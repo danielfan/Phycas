@@ -101,7 +101,6 @@ double KappaParam::operator()(
 		p->setLastLnLike(curr_ln_like);
 
         if (is_standard_heating)
-#if POLPY_NEWWAY
 			if (use_working_prior)
 				{
 				double curr_ln_working_prior = working_prior->GetLnPDF(k);
@@ -109,9 +108,6 @@ double KappaParam::operator()(
 				}
 			else 
 				return heating_power*(curr_ln_like + curr_ln_prior);
-#else //old way
-			return heating_power*(curr_ln_like + curr_ln_prior);
-#endif
         else
             return heating_power*curr_ln_like + curr_ln_prior;
 		}
@@ -174,7 +170,6 @@ double GTRRateParam::operator()(
 		p->setLastLnLike(curr_ln_like);
 
         if (is_standard_heating)
-#if POLPY_NEWWAY
 			if (use_working_prior)
 				{
 				double curr_ln_working_prior = working_prior->GetLnPDF(r);
@@ -182,9 +177,6 @@ double GTRRateParam::operator()(
 				}
 			else 
 				return heating_power*(curr_ln_like + curr_ln_prior);
-#else //old way
-			return heating_power*(curr_ln_like + curr_ln_prior);
-#endif
         else
             return heating_power*curr_ln_like + curr_ln_prior;
 		}
@@ -255,7 +247,6 @@ double OmegaParam::operator()(
 		p->setLastLnLike(curr_ln_like);
 
         if (is_standard_heating)
-#if POLPY_NEWWAY
 			if (use_working_prior)
 				{
 				double curr_ln_working_prior = working_prior->GetLnPDF(w);
@@ -263,9 +254,6 @@ double OmegaParam::operator()(
 				}
 			else 
 				return heating_power*(curr_ln_like + curr_ln_prior);
-#else //old way
-			return heating_power*(curr_ln_like + curr_ln_prior);
-#endif
         else
             return heating_power*curr_ln_like + curr_ln_prior;
 		}
@@ -317,7 +305,6 @@ double DiscreteGammaShapeParam::operator()(
 		p->setLastLnLike(curr_ln_like);
 
         if (is_standard_heating)
-#if POLPY_NEWWAY
 			if (use_working_prior)
 				{
 				double curr_ln_working_prior = working_prior->GetLnPDF(a);
@@ -325,9 +312,6 @@ double DiscreteGammaShapeParam::operator()(
 				}
 			else 
 				return heating_power*(curr_ln_like + curr_ln_prior);
-#else //old way
-			return heating_power*(curr_ln_like + curr_ln_prior);
-#endif
         else
             return heating_power*curr_ln_like + curr_ln_prior;
 		}
@@ -375,7 +359,6 @@ double PinvarParam::operator()(
 		p->setLastLnLike(curr_ln_like);
 
         if (is_standard_heating)
-#if POLPY_NEWWAY
 			if (use_working_prior)
 				{
 				double curr_ln_working_prior = working_prior->GetLnPDF(pinv);
@@ -383,9 +366,6 @@ double PinvarParam::operator()(
 				}
 			else 
 				return heating_power*(curr_ln_like + curr_ln_prior);
-#else //old way
-			return heating_power*(curr_ln_like + curr_ln_prior);
-#endif
         else
             return heating_power*curr_ln_like + curr_ln_prior;
 		}
@@ -437,7 +417,6 @@ double StateFreqParam::operator()(
 		p->setLastLnLike(curr_ln_like);
 
         if (is_standard_heating)
-#if POLPY_NEWWAY
 			if (use_working_prior)
 				{
 				double curr_ln_working_prior = working_prior->GetLnPDF(f);
@@ -445,9 +424,6 @@ double StateFreqParam::operator()(
 				}
 			else 
 				return heating_power*(curr_ln_like + curr_ln_prior);
-#else //old way
-			return heating_power*(curr_ln_like + curr_ln_prior);
-#endif
         else
             return heating_power*curr_ln_like + curr_ln_prior;
 		}
@@ -508,7 +484,6 @@ double HyperPriorParam::operator()(
 		p->setLastLnLike(curr_ln_like);
 
         if (is_standard_heating)
-#if POLPY_NEWWAY
 			if (use_working_prior)
 				{
 				double curr_ln_working_prior = working_prior->GetLnPDF(mu);
@@ -516,9 +491,6 @@ double HyperPriorParam::operator()(
 				}
 			else 
 				return heating_power*(curr_ln_like + edgeLensLnPrior + curr_ln_prior);
-#else //old way
-			return heating_power*(curr_ln_like + edgeLensLnPrior + curr_ln_prior);
-#endif
         else
             return heating_power*curr_ln_like + edgeLensLnPrior + curr_ln_prior;
 		}

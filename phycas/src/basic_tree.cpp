@@ -1291,7 +1291,6 @@ double Tree::EdgeLenSum()
 	return sum;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the sum of all internal edge lengths in the tree. Uses preorder pointers to walk through tree, calling 
 |	RefreshPreorder() if these pointers have never been set or have been invalidated.
@@ -1335,7 +1334,6 @@ double Tree::externalEdgeLenSum()
 		}
 	return sum;
 	}
-#endif
 
 
 /*----------------------------------------------------------------------------------------------------------------------

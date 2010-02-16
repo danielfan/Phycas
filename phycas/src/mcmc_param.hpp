@@ -51,10 +51,8 @@ class KappaParam : public MCMCUpdater
 						KappaParam();
 						virtual ~KappaParam(); 
 
-#if POLPY_NEWWAY
 		void			educateWorkingPrior();
 		void			finalizeWorkingPrior();
-#endif
         virtual void	sendCurrValueToModel(double v);
         virtual double  getCurrValueFromModel() const;
 		virtual void	setModel(ModelShPtr p);
@@ -81,10 +79,8 @@ class OmegaParam : public MCMCUpdater
 							//std::cerr << "OmegaParam dying..." << std::endl;
 							}
 
-#if POLPY_NEWWAY
 		void			educateWorkingPrior();
 		void			finalizeWorkingPrior();
-#endif
         virtual void	sendCurrValueToModel(double v);
         virtual double 	getCurrValueFromModel() const;
 		virtual void	setModel(ModelShPtr p);
@@ -110,10 +106,8 @@ class GTRRateParam : public MCMCUpdater
 							//std::cerr << "GTRRateParam dying..." << std::endl;
 							}
 
-#if POLPY_NEWWAY
 		void			educateWorkingPrior();
 		void			finalizeWorkingPrior();
-#endif
         virtual void	sendCurrValueToModel(double v);
         virtual double  getCurrValueFromModel() const;
 		virtual void	setModel(ModelShPtr p);
@@ -135,10 +129,8 @@ class DiscreteGammaShapeParam : public MCMCUpdater
 						DiscreteGammaShapeParam(bool invert);
 						virtual ~DiscreteGammaShapeParam();
 
-#if POLPY_NEWWAY
 		void			educateWorkingPrior();
 		void			finalizeWorkingPrior();
-#endif
         virtual void	sendCurrValueToModel(double v);
         virtual double	getCurrValueFromModel() const;
 		virtual bool	update();				// override virtual from MCMCUpdater base class
@@ -161,10 +153,8 @@ class PinvarParam : public MCMCUpdater
 							//std::cerr << "PinvarParam dying..." << std::endl;
 							}
 
-#if POLPY_NEWWAY
 		void			educateWorkingPrior();
 		void			finalizeWorkingPrior();
-#endif
         virtual void	sendCurrValueToModel(double v);
         virtual double 	getCurrValueFromModel() const;
 		virtual bool	update();				// override virtual from MCMCUpdater base class
@@ -185,11 +175,9 @@ class FlexRateParam : public MCMCUpdater
 										//std::cerr << "FlexRateParam dying..." << std::endl;
 										}
 	
-#if POLPY_NEWWAY
 		void						educateWorkingPrior();
 		void						finalizeWorkingPrior();
 		double						recalcWorkingPrior(bool temp_debug = false) const;
-#endif
         virtual void				sendCurrValueToModel(double v);
         virtual double				getCurrValueFromModel() const;
 		virtual bool				update();				// override virtual from MCMCUpdater base class
@@ -226,10 +214,8 @@ class FlexProbParam : public MCMCUpdater
 									//std::cerr << "FlexProbParam dying..." << std::endl;
 									}
 	
-#if POLPY_NEWWAY
 		void					educateWorkingPrior();
 		void					finalizeWorkingPrior();
-#endif
         virtual void			sendCurrValueToModel(double v);
         virtual double          getCurrValueFromModel() const;
 		virtual bool			update();				// override virtual from MCMCUpdater base class
@@ -253,10 +239,8 @@ class StateFreqParam : public MCMCUpdater
 							StateFreqParam(unsigned w);
 							virtual ~StateFreqParam();
 	
-#if POLPY_NEWWAY
 		void				educateWorkingPrior();
 		void				finalizeWorkingPrior();
-#endif
         virtual void		sendCurrValueToModel(double v);
         virtual double      getCurrValueFromModel() const;
 		virtual bool		update();				// override virtual from MCMCUpdater base class
@@ -286,19 +270,15 @@ class EdgeLenMasterParam : public MCMCUpdater
                             EdgeLenMasterParam(EdgeLenMasterParam::EdgeLenType t = EdgeLenMasterParam::both);
 							virtual ~EdgeLenMasterParam();
 							
-#if POLPY_NEWWAY
 		void				educateWorkingPrior();
 		void				finalizeWorkingPrior();
 		double				recalcWorkingPrior(bool temp_debug = false) const;
-#endif
 		virtual double		recalcPrior();
 		virtual void		setPriorMeanAndVariance(double m, double v);
 
 	protected:
 
-#if POLPY_NEWWAY
 		double				lnWorkingPriorOneEdge(bool temp_debug, TreeNode & nd) const;
-#endif
 		double				lnPriorOneEdge(TreeNode & nd) const;
 
     private:
@@ -320,10 +300,8 @@ class HyperPriorParam : public MCMCUpdater
 							HyperPriorParam(EdgeLenMasterParamShPtr p, bool for_external_edges);
 							virtual ~HyperPriorParam();
 
-#if POLPY_NEWWAY
 		void				educateWorkingPrior();
 		void				finalizeWorkingPrior();
-#endif
         virtual void		sendCurrValueToModel(double v);
         virtual double      getCurrValueFromModel() const;
 		virtual bool		update();				// override virtual from MCMCUpdater base class

@@ -62,7 +62,6 @@ bool DiscreteGammaShapeParam::update()
 	return true;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Override of base class version adds the current gamma shape parameter value to the data already stored in 
 |	`fitting_sample'.
@@ -85,5 +84,4 @@ void DiscreteGammaShapeParam::finalizeWorkingPrior()
 	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
 	fitGammaWorkingPrior();
 	}
-#endif
 }

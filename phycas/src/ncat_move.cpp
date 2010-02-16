@@ -304,6 +304,7 @@ void NCatMove::revert()
 */
 bool NCatMove::update()
 	{
+	bool accepted = false;
 	total_updates++;
 
 	if (is_fixed)
@@ -312,10 +313,8 @@ bool NCatMove::update()
 	ChainManagerShPtr p = chain_mgr.lock();
 	PHYCAS_ASSERT(p);
 	double prev_ln_like = p->getLastLnLike();
-#if POLPY_NEWWAY
-	PHYCAS_ASSERT(0);	// need to take account of working_prior
-#endif
-
+	
+#if DISABLED_UNTIL_WORKING_PRIOR_ACCOMMODATED
 	proposeNewState();
 
 	likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
@@ -400,7 +399,7 @@ bool NCatMove::update()
 	std::cerr << "  u               = " << u << std::endl;
 #endif
 
-    bool accepted = (ln_accept_ratio >= 0.0 || std::log(u) <= ln_accept_ratio);
+    accepted = (ln_accept_ratio >= 0.0 || std::log(u) <= ln_accept_ratio);
 
     if (save_debug_info)
         {
@@ -449,6 +448,7 @@ bool NCatMove::update()
 		}
 
 	std::cerr << "\n" << std::endl;
-#endif
+#endif	//SHOW_DEBUGGING_OUTPUT
+#endif	//DISABLED_UNTIL_WORKING_PRIOR_ACCOMMODATED
 	return accepted;
 	}

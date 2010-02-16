@@ -58,7 +58,6 @@ bool GTRRateParam::update()
 	return true;
 	}
 	
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Override of base class version adds the current GTR relative rate parameter value to the data already stored in 
 |	`fitting_sample'.
@@ -81,5 +80,4 @@ void GTRRateParam::finalizeWorkingPrior()
 	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
 	fitGammaWorkingPrior();
 	}
-#endif
 }

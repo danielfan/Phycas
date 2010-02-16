@@ -5,21 +5,24 @@ from phycas.Utilities.CommonFunctions import CommonFunctions
 
 class VarianceZeroError(Exception):
 	def __init__(self):
-		self.message = 'Cannot calculate autocorrelation because variance is zero'
-	def __str__(self):
-		return self.message
+		Exception('Cannot calculate autocorrelation because variance is zero')
+		#self.message = 'Cannot calculate autocorrelation because variance is zero'
+	#def __str__(self):
+	#	return self.message
 	
 class VarianceUndefinedError(Exception):
 	def __init__(self):
-		self.message = 'Cannot calculate standard deviation because sample size is less than 2'
-	def __str__(self):
-		return self.message
+		Exception('Cannot calculate standard deviation because sample size is less than 2')
+		#self.message = 'Cannot calculate standard deviation because sample size is less than 2'
+	#def __str__(self):
+	#	return self.message
 	
 class InvalidNumberOfColumnsError(Exception):
 	def __init__(self, nparts, nexpected, line_num):
-		self.message = 'Number of values (%d) on line %d inconsistent with number of column headers (%d)' % (nparts, line_num, nexpected)
-	def __str__(self):
-		return self.message
+		Excpetion('Number of values (%d) on line %d inconsistent with number of column headers (%d)' % (nparts, line_num, nexpected))
+		#self.message = 'Number of values (%d) on line %d inconsistent with number of column headers (%d)' % (nparts, line_num, nexpected)
+	#def __str__(self):
+	#	return self.message
 
 class ParamSummarizer(CommonFunctions):
 	#---+----|----+----|----+----|----+----|----+----|----+----|----+----|

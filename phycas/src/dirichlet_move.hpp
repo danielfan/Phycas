@@ -77,10 +77,8 @@ class DirichletMove : public MCMCUpdater
 		virtual void				revert();
 		virtual void				accept();
 		
-#if POLPY_NEWWAY
 		virtual void				educateWorkingPrior();
 		virtual void				finalizeWorkingPrior();
-#endif
 
 	private:
 
@@ -112,9 +110,7 @@ class StateFreqMove : public DirichletMove
 									StateFreqMove();
                                     virtual ~StateFreqMove() {}
 
-#if POLPY_NEWWAY
 		virtual void				educateWorkingPrior();
-#endif
 
 		virtual void				sendCurrValuesToModel(const double_vect_t & v);
 		virtual void				getCurrValuesFromModel(double_vect_t & v) const;
@@ -138,9 +134,7 @@ class RelRatesMove : public DirichletMove
 									RelRatesMove();
                                     virtual ~RelRatesMove() {}
 
-#if POLPY_NEWWAY
 		virtual void				educateWorkingPrior();
-#endif
 
 		virtual void				sendCurrValuesToModel(const double_vect_t & v);
 		virtual void				getCurrValuesFromModel(double_vect_t & v) const;
@@ -164,9 +158,7 @@ class SubsetRelRatesMove : public DirichletMove
 									SubsetRelRatesMove();
                                     virtual ~SubsetRelRatesMove() {}
 
-#if POLPY_NEWWAY
 		virtual void				educateWorkingPrior();
-#endif
 
 		virtual void				sendCurrValuesToModel(const double_vect_t & v);
 		virtual void				getCurrValuesFromModel(double_vect_t & v) const;

@@ -53,9 +53,8 @@ UnimapFastNNIMove::~UnimapFastNNIMove()
 */
 bool UnimapFastNNIMove::update()
 	{
-#if POLPY_NEWWAY
-	PHYCAS_ASSERT(0);	// need to take account of working_prior
-#endif
+	bool accepted = false;
+#if DISABLED_UNTIL_WORKING_PRIOR_ACCOMMODATED
 	// If this is the first time update has been called, need to initialize num_states, num_sites and log_umat
 	if (num_states == 0)
 		{
@@ -105,7 +104,7 @@ bool UnimapFastNNIMove::update()
 	// 	double ln_accept_ratio = curr_posterior - prev_posterior + getLnHastingsRatio();
 	double lnu = DBL_MAX;
 	//double ln_accept_ratio = 1.1;	//temporary!
-	bool accepted = (ln_accept_ratio >= 0.0);
+	accepted = (ln_accept_ratio >= 0.0);
 	if (!accepted)
 		{
 		double u = rng->Uniform(FILE_AND_LINE);
@@ -124,6 +123,7 @@ bool UnimapFastNNIMove::update()
 	else
 		revert();
 	//std::cerr << num_moves_accepted << " accept decisions out of " << num_moves_attempted << " attempts.\n";
+#endif
 	return accepted;
 	}
 

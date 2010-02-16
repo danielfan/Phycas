@@ -100,15 +100,16 @@ std::string FlexRateParam::getPriorDescr() const
 	return std::string("Order statistics prior");
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	todo
 */
 double FlexRateParam::recalcWorkingPrior(bool temp_debug) const
 	{
-	return 0.0;	//POLPY_TODO
+#if DISABLED_UNTIL_WORKING_PRIOR_ACCOMMODATED
+	// TODO
+#endif	
+	return 0.0;
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the order statistics prior used for relative rates in the FLEX model, and sets `curr_ln_prior'. The order 
@@ -156,7 +157,6 @@ bool FlexRateParam::update()
 	return true;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Override of base class version adds the current flex rate parameter value to the data already stored in 
 |	`fitting_sample'.
@@ -179,5 +179,4 @@ void FlexRateParam::finalizeWorkingPrior()
 	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
 	fitGammaWorkingPrior();
 	}
-#endif
 }

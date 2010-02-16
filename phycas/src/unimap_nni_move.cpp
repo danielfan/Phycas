@@ -53,9 +53,8 @@ void UnimapNNIMove::setLot(LotShPtr p)
 */
 bool UnimapTopoMove::update()
 	{
-#if POLPY_NEWWAY
-	PHYCAS_ASSERT(0);	// need to take account of working_prior
-#endif
+	bool accepted = false;
+#if DISABLED_UNTIL_WORKING_PRIOR_ACCOMMODATED
 	// The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
 	// A proposed UnimapNNIMove cannot be accepted without changing edge lengths, so it is best to bail out now.
 	if (is_fixed)
@@ -88,7 +87,7 @@ bool UnimapTopoMove::update()
 	//bool accepted = (ln_accept_ratio >= 0.0 || lnu <= ln_accept_ratio);
 	//bool accepted = (ln_accept_ratio >= 0.0 || std::log(rng->Uniform(FILE_AND_LINE)) <= ln_accept_ratio);
 	double lnu = DBL_MAX;
-	bool accepted = (ln_accept_ratio >= 0.0);
+	accepted = (ln_accept_ratio >= 0.0);
 	if (!accepted)
 		{
 		double u = rng->Uniform(FILE_AND_LINE);
@@ -105,6 +104,7 @@ bool UnimapTopoMove::update()
 		accept();
 	else
 		revert();
+#endif
 	return accepted;
 	}
 

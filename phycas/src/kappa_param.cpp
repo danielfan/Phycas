@@ -63,7 +63,6 @@ bool KappaParam::update()
 	return true;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Override of base class version adds the current kappa parameter value to the data already stored in 
 |	`fitting_sample'.
@@ -86,5 +85,4 @@ void KappaParam::finalizeWorkingPrior()
 	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
 	fitGammaWorkingPrior();
 	}
-#endif
 }

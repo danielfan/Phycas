@@ -152,7 +152,6 @@ void MCMCChainManager::refreshLastLnLike()
 #endif
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calculates and returns the log of the joint working prior by calling recalcWorkingPrior() for all parameters.
 */
@@ -177,7 +176,6 @@ double MCMCChainManager::recalcLnWorkingPrior(bool temp_debug) const
 		}
 	return ln_working_prior;
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Refreshes `last_ln_prior' by calling recalcPrior() for all parameters.
@@ -650,7 +648,6 @@ double MCMCChainManager::calcExternalEdgeLenPriorUnnorm(
     return tmp;
     }
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the log of the working prior for the supplied external edge length.
 */
@@ -678,7 +675,6 @@ double MCMCChainManager::calcInternalEdgeLenWorkingPrior(
 	else 
 		return edge_length_params[0]->calcLnWorkingPriorPDF(v);
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the unnormalized prior for the supplied edge length using the prior for internal edge lengths.

@@ -84,7 +84,6 @@ double EdgeLenMasterParam::lnPriorOneEdge(TreeNode & nd) const
         }
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Member function that exists only to facilitate using boost::lambda::bind to be used in the getLnPrior() function. It
 |	returns the log of the working prior probability density evaluated at the current edge length associated with `nd'.
@@ -127,7 +126,6 @@ double EdgeLenMasterParam::recalcWorkingPrior(bool temp_debug) const
 	    boost::lambda::_1 += boost::lambda::bind(&EdgeLenMasterParam::lnWorkingPriorOneEdge, this, temp_debug, boost::lambda::_2));
 	return lnwp;
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the joint log prior over a set of edges in the associated tree and sets `curr_ln_prior'. The set of edges
@@ -154,7 +152,6 @@ void EdgeLenMasterParam::setPriorMeanAndVariance(double m, double v)
 	recalcPrior();
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Overrides base class version to add the current sum of edge lengths to the data already stored in `fitting_sample'.
 |	Depending on the value of the data member `edgeLenType' (internal, external, or both), the value stored will be the
@@ -214,5 +211,4 @@ void EdgeLenMasterParam::finalizeWorkingPrior()
 	
 	// std::cerr << boost::str(boost::format("@@@@@@@@@ --> working prior of %s adjusted to have mean = %g, variance = %g, based on %g %s edge lengths") % getName() % m % v % num_edgelens % (edgeLenType == internal ? "internal" : (edgeLenType == external ? "external" : "total") ) ) << std::endl;
 	}
-#endif
 }

@@ -59,9 +59,7 @@ class TreeScalerMove : public MCMCUpdater
 		virtual void	accept();
 		virtual double	getLnHastingsRatio() const;
 		
-#if POLPY_NEWWAY		
 		double			recalcWorkingPriorForMove() const;	// recomputes working prior for purpose of this move only (not used to recompute joint working prior)
-#endif
 
     private:
 

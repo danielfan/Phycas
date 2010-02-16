@@ -65,7 +65,6 @@ bool StateFreqParam::update()
 	return true;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Override of base class version adds the current state frequency parameter value to the data already stored in 
 |	`fitting_sample'.
@@ -88,5 +87,4 @@ void StateFreqParam::finalizeWorkingPrior()
 	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
 	fitGammaWorkingPrior();
 	}
-#endif
 }

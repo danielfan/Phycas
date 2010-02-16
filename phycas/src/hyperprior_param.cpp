@@ -91,7 +91,6 @@ bool HyperPriorParam::update()
 	return true;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Override of base class version adds the current edge length hyperparameter value to the data already stored in 
 |	`fitting_sample'.
@@ -114,5 +113,4 @@ void HyperPriorParam::finalizeWorkingPrior()
 	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
 	fitGammaWorkingPrior();
 	}
-#endif
 }
