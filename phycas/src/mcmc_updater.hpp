@@ -141,7 +141,7 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		virtual void			setPrior(ProbDistShPtr p);
 		virtual void			setMultivarPrior(MultivarProbDistShPtr p);
 		void					setUseWorkingPrior(bool b);
-		virtual double		 	recalcWorkingPrior(bool temp_debug = false) const;
+		virtual double		 	recalcWorkingPrior() const;
 
 		// Modifiers used only by parameters
 		virtual void			setStartingValue(double x);

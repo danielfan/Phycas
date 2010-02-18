@@ -155,7 +155,7 @@ void MCMCChainManager::refreshLastLnLike()
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calculates and returns the log of the joint working prior by calling recalcWorkingPrior() for all parameters.
 */
-double MCMCChainManager::recalcLnWorkingPrior(bool temp_debug) const
+double MCMCChainManager::recalcLnWorkingPrior() const
 	{
 	// Might need to add more checks here
 	if (dirty)
@@ -163,16 +163,19 @@ double MCMCChainManager::recalcLnWorkingPrior(bool temp_debug) const
 		throw XLikelihood("cannot call recalcLnWorkingPrior() for chain manager before calling finalize()");
 		}
 	
-	if (temp_debug)
-		std::cerr << "\nIn MCMCChainManager::recalcLnWorkingPrior()..." << std::endl;//temp
+	//std::cerr << "\nIn MCMCChainManager::recalcLnWorkingPrior()..." << std::endl;//temp
 	
 	// Visit all updaters and let those who are prior stewards update their component of the joint prior.
 	double ln_working_prior = 0.0;
 	for (MCMCUpdaterConstIter it = all_updaters.begin(); it != all_updaters.end(); ++it)
 		{
 		const boost::shared_ptr<MCMCUpdater> s = *it;
-		double this_ln_prior = s->recalcWorkingPrior(temp_debug);	// updaters who are not prior stewards return 0.0 
-		ln_working_prior += this_ln_prior;
+		if (s->isPriorSteward())
+			{
+			double this_ln_prior = s->recalcWorkingPrior();
+			ln_working_prior += this_ln_prior;
+			//std::cerr << boost::str(boost::format("@@@@@@@@@@ this working prior = %g, cumulative = %g, name = '%s'") % this_ln_prior % ln_working_prior % s->getName()) << std::endl;
+			}
 		}
 	return ln_working_prior;
 	}
@@ -193,9 +196,12 @@ void MCMCChainManager::refreshLastLnPrior()
 	for (MCMCUpdaterConstIter it = all_updaters.begin(); it != all_updaters.end(); ++it)
 		{
 		const boost::shared_ptr<MCMCUpdater> s = *it;
-		double this_ln_prior = s->recalcPrior();
-		last_ln_prior += this_ln_prior;
-		//std::cerr << boost::str(boost::format("Current prior = %g, Cumulative = %g, name = '%s'") % this_ln_prior % last_ln_prior % s->getName()) << std::endl;
+		if (s->isPriorSteward())
+			{
+			double this_ln_prior = s->recalcPrior();
+			last_ln_prior += this_ln_prior;
+			//std::cerr << boost::str(boost::format("@@@@@@@@@@ Current prior = %g, Cumulative = %g, name = '%s'") % this_ln_prior % last_ln_prior % s->getName()) << std::endl;
+			}
 		}
 	}
 
@@ -648,6 +654,23 @@ double MCMCChainManager::calcExternalEdgeLenPriorUnnorm(
     return tmp;
     }
 
+#if USING_EDGE_SPECIFIC_WORKING_PRIORS
+/*----------------------------------------------------------------------------------------------------------------------
+|	Computes the log of the working prior for the supplied external edge length.
+*/
+double MCMCChainManager::calcExternalEdgeLenWorkingPrior(
+  const TreeNode & nd,	/**< is the node for which the working prior log density should be computed */
+  double v) const		/**< is the edge length for which the working prior log density should be computed */
+	{
+	// If there are two edge_length_parameters, first is for external and second is for internal edges
+	// (see MCMCChainManager::addMCMCUpdaters). If only one, it handles all edge lengths, so in this
+	// case (external edge length) we know we should go with the first one.
+    const MCMCUpdaterVect & edge_length_params = getEdgeLenParams();
+	EdgeLenMasterParam * p = dynamic_cast<EdgeLenMasterParam *>(edge_length_params[0].get());
+	PHYCAS_ASSERT(p);
+	return p->lnWorkingPriorOneEdge(nd, v);
+	}
+#else
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the log of the working prior for the supplied external edge length.
 */
@@ -660,7 +683,35 @@ double MCMCChainManager::calcExternalEdgeLenWorkingPrior(
     const MCMCUpdaterVect & edge_length_params = getEdgeLenParams();
 	return edge_length_params[0]->calcLnWorkingPriorPDF(v);
 	}
+#endif
 	
+#if USING_EDGE_SPECIFIC_WORKING_PRIORS
+/*----------------------------------------------------------------------------------------------------------------------
+|	Computes the log of the working prior for the supplied internal edge length.
+*/
+double MCMCChainManager::calcInternalEdgeLenWorkingPrior(
+  const TreeNode & nd,		/**< is the node for which the working prior log density should be computed */
+  double v) const			/**< is the edge length for which the working prior log density should be computed */
+	{	
+	// If there are two edge_length_parameters, first is for external and second is for internal edges
+	// (see MCMCChainManager::addMCMCUpdaters). If only one, it handles all edge lengths.
+	const MCMCUpdaterVect & edge_length_params = getEdgeLenParams();
+	if (edge_length_params.size() == 2)
+		{
+		EdgeLenMasterParam * p = dynamic_cast<EdgeLenMasterParam *>(edge_length_params[1].get());
+		PHYCAS_ASSERT(p);
+		return p->lnWorkingPriorOneEdge(nd, v);
+		//return edge_length_params[1]->lnWorkingPriorOneEdge(nd, false);
+		}
+	else 
+		{
+		EdgeLenMasterParam * p = dynamic_cast<EdgeLenMasterParam *>(edge_length_params[0].get());
+		PHYCAS_ASSERT(p);
+		return p->lnWorkingPriorOneEdge(nd, v);
+		//return edge_length_params[0]->lnWorkingPriorOneEdge(nd, false);
+		}
+	}
+#else
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the log of the working prior for the supplied internal edge length.
 */
@@ -675,6 +726,7 @@ double MCMCChainManager::calcInternalEdgeLenWorkingPrior(
 	else 
 		return edge_length_params[0]->calcLnWorkingPriorPDF(v);
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the unnormalized prior for the supplied edge length using the prior for internal edge lengths.

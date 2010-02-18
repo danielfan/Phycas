@@ -73,6 +73,9 @@ bool LargetSimonMove::update()
 		return false;
 
     tree->renumberInternalNodes(tree->GetNTips()); //@POL this should be somewhere else
+#if USING_EDGE_SPECIFIC_WORKING_PRIORS
+	tree->RecalcAllSplits(tree->GetNTips());
+#endif
 
     ChainManagerShPtr p = chain_mgr.lock();
 	PHYCAS_ASSERT(p);
@@ -89,11 +92,19 @@ bool LargetSimonMove::update()
 	if (star_tree_proposal)
 		{
 		prev_ln_prior			= p->calcExternalEdgeLenPriorUnnorm(orig_edge_len);
+#if USING_EDGE_SPECIFIC_WORKING_PRIORS
+		prev_ln_working_prior	= (use_working_prior ? p->calcExternalEdgeLenWorkingPrior(*orig_node, orig_edge_len) : 0.0);
+#else
 		prev_ln_working_prior	= (use_working_prior ? p->calcExternalEdgeLenWorkingPrior(orig_edge_len) : 0.0);
+#endif
 
         double curr_edgelen = orig_node->GetEdgeLen();
 		curr_ln_prior		= p->calcExternalEdgeLenPriorUnnorm(curr_edgelen);
+#if USING_EDGE_SPECIFIC_WORKING_PRIORS
+		curr_ln_working_prior	= (use_working_prior ? p->calcExternalEdgeLenWorkingPrior(*orig_node, curr_edgelen) : 0.0);
+#else
 		curr_ln_working_prior	= (use_working_prior ? p->calcExternalEdgeLenWorkingPrior(curr_edgelen) : 0.0);
+#endif
 		}
 	else
 		{
@@ -105,8 +116,13 @@ bool LargetSimonMove::update()
 			curr_ln_prior  = p->calcInternalEdgeLenPriorUnnorm(xnew);
 			if (use_working_prior)
 				{
+#if USING_EDGE_SPECIFIC_WORKING_PRIORS
+				prev_ln_working_prior = p->calcInternalEdgeLenWorkingPrior(*ndX, x);
+				curr_ln_working_prior = p->calcInternalEdgeLenWorkingPrior(*ndX, xnew);
+#else
 				prev_ln_working_prior = p->calcInternalEdgeLenWorkingPrior(x);
 				curr_ln_working_prior = p->calcInternalEdgeLenWorkingPrior(xnew);
+#endif
 				}
 			}
 		else 
@@ -115,8 +131,13 @@ bool LargetSimonMove::update()
 			curr_ln_prior  = p->calcExternalEdgeLenPriorUnnorm(xnew);
 			if (use_working_prior)
 				{
+#if USING_EDGE_SPECIFIC_WORKING_PRIORS
+				prev_ln_working_prior = p->calcExternalEdgeLenWorkingPrior(*ndX, x);
+				curr_ln_working_prior = p->calcExternalEdgeLenWorkingPrior(*ndX, xnew);
+#else
 				prev_ln_working_prior = p->calcExternalEdgeLenWorkingPrior(x);
 				curr_ln_working_prior = p->calcExternalEdgeLenWorkingPrior(xnew);
+#endif
 				}
 			}
 			
@@ -125,8 +146,13 @@ bool LargetSimonMove::update()
         curr_ln_prior += p->calcInternalEdgeLenPriorUnnorm(ynew);
 		if (use_working_prior)
 			{
+#if USING_EDGE_SPECIFIC_WORKING_PRIORS
+			prev_ln_working_prior += p->calcInternalEdgeLenWorkingPrior(*ndY, y);
+			curr_ln_working_prior += p->calcInternalEdgeLenWorkingPrior(*ndY, ynew);
+#else
 			prev_ln_working_prior += p->calcInternalEdgeLenWorkingPrior(y);
 			curr_ln_working_prior += p->calcInternalEdgeLenWorkingPrior(ynew);
+#endif
 			}
 		
         double znew = ndZ->GetEdgeLen();
@@ -136,8 +162,13 @@ bool LargetSimonMove::update()
     	    curr_ln_prior += p->calcInternalEdgeLenPriorUnnorm(znew);
 			if (use_working_prior)
 				{
+#if USING_EDGE_SPECIFIC_WORKING_PRIORS
+				prev_ln_working_prior += p->calcInternalEdgeLenWorkingPrior(*ndZ, z);
+				curr_ln_working_prior += p->calcInternalEdgeLenWorkingPrior(*ndZ, znew);
+#else
 				prev_ln_working_prior += p->calcInternalEdgeLenWorkingPrior(z);
 				curr_ln_working_prior += p->calcInternalEdgeLenWorkingPrior(znew);
+#endif
 				}
 			}
 		else 
@@ -146,8 +177,13 @@ bool LargetSimonMove::update()
 	        curr_ln_prior += p->calcExternalEdgeLenPriorUnnorm(znew);
 			if (use_working_prior)
 				{
+#if USING_EDGE_SPECIFIC_WORKING_PRIORS
+				prev_ln_working_prior += p->calcExternalEdgeLenWorkingPrior(*ndZ, z);
+				curr_ln_working_prior += p->calcExternalEdgeLenWorkingPrior(*ndZ, znew);
+#else
 				prev_ln_working_prior += p->calcExternalEdgeLenWorkingPrior(z);
 				curr_ln_working_prior += p->calcExternalEdgeLenWorkingPrior(znew);
+#endif
 				}
 			}
 		}

@@ -103,7 +103,7 @@ std::string FlexRateParam::getPriorDescr() const
 /*----------------------------------------------------------------------------------------------------------------------
 |	todo
 */
-double FlexRateParam::recalcWorkingPrior(bool temp_debug) const
+double FlexRateParam::recalcWorkingPrior() const
 	{
 #if DISABLED_UNTIL_WORKING_PRIOR_ACCOMMODATED
 	// TODO

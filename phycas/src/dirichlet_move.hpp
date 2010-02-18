@@ -159,6 +159,7 @@ class SubsetRelRatesMove : public DirichletMove
                                     virtual ~SubsetRelRatesMove() {}
 
 		virtual void				educateWorkingPrior();
+		double 						recalcWorkingPrior() const;
 
 		virtual void				sendCurrValuesToModel(const double_vect_t & v);
 		virtual void				getCurrValuesFromModel(double_vect_t & v) const;

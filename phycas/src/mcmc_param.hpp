@@ -26,6 +26,12 @@
 #include <boost/enable_shared_from_this.hpp>		// for boost::enable_shared_from_this
 #include "phycas/src/mcmc_updater.hpp"				// for MCMCUpdater base class
 
+#define USING_EDGE_SPECIFIC_WORKING_PRIORS 1
+
+#if USING_EDGE_SPECIFIC_WORKING_PRIORS
+#include "phycas/src/split.hpp"
+#endif
+
 //struct CIPRES_Matrix;
 
 //namespace CipresNative
@@ -177,7 +183,7 @@ class FlexRateParam : public MCMCUpdater
 	
 		void						educateWorkingPrior();
 		void						finalizeWorkingPrior();
-		double						recalcWorkingPrior(bool temp_debug = false) const;
+		double						recalcWorkingPrior() const;
         virtual void				sendCurrValueToModel(double v);
         virtual double				getCurrValueFromModel() const;
 		virtual bool				update();				// override virtual from MCMCUpdater base class
@@ -251,6 +257,19 @@ class StateFreqParam : public MCMCUpdater
 		unsigned			which;
 };
 
+#if USING_EDGE_SPECIFIC_WORKING_PRIORS
+/*----------------------------------------------------------------------------------------------------------------------
+|	Structure combining a vector of doubles (`fs') for storing a fitting sample and a probability distribution shared 
+|	pointer to store the working prior (`wp') that is parameterized using the fitting sample. This structure is used
+|	as the value for a map (data member `edge_working_prior') in EdgeLenMasterParam objects.
+*/
+struct EdgeWorkingPrior
+	{
+	double_vect_t	fs;		/**< vector of doubles representing samples upon which the `edge_working_prior' will be based */
+	ProbDistShPtr	wp;		/**< Gamma working prior distribution */
+	};
+#endif
+	
 /*----------------------------------------------------------------------------------------------------------------------
 |	Represents all edge lengths in the associated Tree; i.e., and edge length "master" parameter. An edge length master 
 |	parameter does not update any particular edge length (that is left up to one of the defined moves, such as a 
@@ -272,20 +291,32 @@ class EdgeLenMasterParam : public MCMCUpdater
 							
 		void				educateWorkingPrior();
 		void				finalizeWorkingPrior();
-		double				recalcWorkingPrior(bool temp_debug = false) const;
+		double				recalcWorkingPrior() const;
+		double				lnWorkingPriorOneEdge(const TreeNode & nd, double v) const;
+#if POLPY_NEWWAY
+		std::string 		getWorkingPriorDescr() const;
+#endif
+
 		virtual double		recalcPrior();
 		virtual void		setPriorMeanAndVariance(double m, double v);
 
 	protected:
 
-		double				lnWorkingPriorOneEdge(bool temp_debug, TreeNode & nd) const;
 		double				lnPriorOneEdge(TreeNode & nd) const;
 
     private:
 	
-        EdgeLenType         edgeLenType;    /**> holds the edge length type, which determines for which edge lengths the prior is computed when recalcPrior is called */
+#if USING_EDGE_SPECIFIC_WORKING_PRIORS
+		std::map<Split,EdgeWorkingPrior>	edge_working_prior;		/**< maps splits (keys) to EdgeWorkingPrior structs (values) so that the working prior distribution can be fetched given the split corresponding to any given node in the tree */
+#endif
+        EdgeLenType         				edgeLenType;    /**> holds the edge length type, which determines for which edge lengths the prior is computed when recalcPrior is called */
 	};
 
+#if USING_EDGE_SPECIFIC_WORKING_PRIORS
+typedef std::map<Split,EdgeWorkingPrior>::iterator			WorkingPriorMapIter;
+typedef std::map<Split,EdgeWorkingPrior>::const_iterator	WorkingPriorMapConstIter;
+typedef std::pair<Split,EdgeWorkingPrior> 					WorkingPriorMapPair;
+#endif
 typedef boost::shared_ptr<EdgeLenMasterParam> EdgeLenMasterParamShPtr;
 
 /*----------------------------------------------------------------------------------------------------------------------

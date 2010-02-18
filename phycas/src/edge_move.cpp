@@ -181,11 +181,9 @@ void EdgeMove::proposeNewState()
 	unsigned numEdges = tree->GetNNodes() - 1;
 	unsigned k = rng->SampleUInt(numEdges);
 	unsigned i = 0;
-	//@POL this loop is crying out for the for_each algorithm
 	for (origNode = tree->GetFirstPreorder(); origNode != NULL; origNode = origNode->GetNextPreorder())
 		{
 		// All nodes have an edge associated with them except for the root
-		//
 		if (!origNode->IsTipRoot())
 			{
 			if (i == k)
@@ -202,7 +200,6 @@ void EdgeMove::proposeNewState()
     //origNode->UnselectNode();
 
 	// Modify the edge
-	//
 	double m		= origNode->GetEdgeLen();
 	double mstar	= m*std::exp(lambda*(rng->Uniform(FILE_AND_LINE) - 0.5));
 	origNode->SetEdgeLen(mstar);
@@ -240,8 +237,13 @@ bool EdgeMove::update()
     bool is_internal_edge       = origNode->IsInternal();
     double prev_ln_prior		= (is_internal_edge ? p->calcInternalEdgeLenPriorUnnorm(origEdgelen) : p->calcExternalEdgeLenPriorUnnorm(origEdgelen));
 	double prev_ln_working_prior = 0.0;
+#if USING_EDGE_SPECIFIC_WORKING_PRIORS
+	if (use_working_prior)
+		prev_ln_working_prior = (is_internal_edge ? p->calcInternalEdgeLenWorkingPrior(*origNode, origEdgelen) : p->calcExternalEdgeLenWorkingPrior(*origNode, origEdgelen));
+#else
 	if (use_working_prior)
 		prev_ln_working_prior = (is_internal_edge ? p->calcInternalEdgeLenWorkingPrior(origEdgelen) : p->calcExternalEdgeLenWorkingPrior(origEdgelen));
+#endif
 
 	double curr_ln_like			= (heating_power > 0.0 ? likelihood->calcLnL(tree) : 0.0);
 
@@ -250,8 +252,13 @@ bool EdgeMove::update()
     double curr_edgelen         = origNode->GetEdgeLen();
 	double curr_ln_prior		= (is_internal_edge ? p->calcInternalEdgeLenPriorUnnorm(curr_edgelen) : p->calcExternalEdgeLenPriorUnnorm(curr_edgelen));
 	double curr_ln_working_prior = 0.0;
+#if USING_EDGE_SPECIFIC_WORKING_PRIORS
+	if (use_working_prior)
+		curr_ln_working_prior = (is_internal_edge ? p->calcInternalEdgeLenWorkingPrior(*origNode, curr_edgelen) : p->calcExternalEdgeLenWorkingPrior(*origNode, curr_edgelen));
+#else
 	if (use_working_prior)
 		curr_ln_working_prior = (is_internal_edge ? p->calcInternalEdgeLenWorkingPrior(curr_edgelen) : p->calcExternalEdgeLenWorkingPrior(curr_edgelen));
+#endif
 
     double prev_posterior = 0.0;
 	double curr_posterior = 0.0;

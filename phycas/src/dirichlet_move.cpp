@@ -607,6 +607,30 @@ SubsetRelRatesMove::SubsetRelRatesMove() : DirichletMove()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Override of base class version is necessary because subset relative rates have mean 1 rather than summing to 1.
+*/
+double SubsetRelRatesMove::recalcWorkingPrior() const
+	{
+	double_vect_t values;
+	getCurrValuesFromModel(values);	
+	
+	// need to modify the values obtained from the model because the model maintains relative rates (mean 1.0)
+	// but for Dirichlet move we need to work with parameters that sum to 1.0
+	std::transform(values.begin(), values.end(), values.begin(), boost::lambda::_1/(double)dim);
+	
+	double lnwp = 0.0;
+	try 
+		{
+		lnwp = mv_working_prior->GetLnPDF(values);
+		}
+	catch(XProbDist &)
+		{
+		PHYCAS_ASSERT(0);
+		}
+	return lnwp;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Override of base class version adds the current vector of subset relative rates to the data already stored in 
 |	`mv_fitting_sample'.
 */
@@ -614,6 +638,14 @@ void SubsetRelRatesMove::educateWorkingPrior()
 	{
 	double_vect_t rrates;
 	getCurrValuesFromModel(rrates);
+
+	// need to modify the values obtained from the model because the model maintains relative rates (mean 1.0)
+	// but for Dirichlet move we need to work with parameters that sum to 1.0
+	std::transform(rrates.begin(), rrates.end(), rrates.begin(), boost::lambda::_1/(double)dim);
+	
+	//std::copy(rrates.begin(), rrates.end(), std::ostream_iterator<double>(std::cerr, " "));//temp
+	//std::cerr << "sum = " << std::accumulate(rrates.begin(), rrates.end(), 0.0) << std::endl;
+	
 	mv_fitting_sample.push_back(rrates);
 	}
 

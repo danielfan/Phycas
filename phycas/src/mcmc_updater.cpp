@@ -33,7 +33,9 @@ namespace phycas
 |	Bayesian analysis.
 */
 MCMCUpdater::MCMCUpdater()
-  : nattempts(0.0),
+  : 
+  use_working_prior(false),
+  nattempts(0.0),
   naccepts(0.0),
   curr_value(0.1), 
   curr_ln_prior(0.0), 
@@ -46,7 +48,6 @@ MCMCUpdater::MCMCUpdater()
   slice_max_units(UINT_MAX),
   heating_power(1.0),
   is_standard_heating(true),
-  use_working_prior(false),
   save_debug_info(false)
 	{
 	//ln_zero = std::log(std::numeric_limits<double>::denorm_min()); // this doesn't work, lnL can get much lower than the log of dnorm_min!
@@ -445,7 +446,7 @@ void MCMCUpdater::setUseWorkingPrior(
 |	Retrieves current value for the parameter being managed by this updater, then returns log of the working prior 
 |	probability density at that value. If this updater is not a prior steward, simply returns 0.0.
 */
-double MCMCUpdater::recalcWorkingPrior(bool temp_debug) const
+double MCMCUpdater::recalcWorkingPrior() const
 	{
 	if (!isPriorSteward())
 		return 0.0;
@@ -463,10 +464,7 @@ double MCMCUpdater::recalcWorkingPrior(bool temp_debug) const
 			{
 			PHYCAS_ASSERT(0);
 			}
-		if (temp_debug)
-			{
-			std::cerr << boost::str(boost::format("%.8f <-- %.8f <-- %s <-- %s") % lnwp % value % working_prior->GetDistributionDescription() % getName()) << std::endl;//temp
-			}
+		//std::cerr << boost::str(boost::format("%.8f <-- %.8f <-- %s <-- %s") % lnwp % value % working_prior->GetDistributionDescription() % getName()) << std::endl;//temp
 		}
 	else
 		{
@@ -480,12 +478,9 @@ double MCMCUpdater::recalcWorkingPrior(bool temp_debug) const
 			{
 			PHYCAS_ASSERT(0);
 			}
-		if (temp_debug)
-			{
-			std::cerr << boost::str(boost::format("%.8f <-- {") % lnwp);//temp
-			std::copy(values.begin(), values.end(), std::ostream_iterator<double>(std::cerr, " "));//temp
-			std::cerr << boost::str(boost::format("} <-- %s <-- %s") % mv_working_prior->GetDistributionDescription() % getName()) << std::endl;//temp
-			}
+		//std::cerr << boost::str(boost::format("%.8f <-- {") % lnwp);//temp
+		//std::copy(values.begin(), values.end(), std::ostream_iterator<double>(std::cerr, " "));//temp
+		//std::cerr << boost::str(boost::format("} <-- %s <-- %s") % mv_working_prior->GetDistributionDescription() % getName()) << std::endl;//temp
 		}
 	return lnwp;
 	}

@@ -31,8 +31,8 @@ model.edgelen_hyperprior            = None
 model.edgelen_prior                 = ProbDist.Exponential(10.0)
 
 mcmc.rng                  = rng
-mcmc.burnin               = 100
-mcmc.ncycles              = 1000
+mcmc.burnin               = 1000
+mcmc.ncycles              = 10000
 mcmc.sample_every         = 10
 mcmc.report_every         = 100
 mcmc.data_source          = getPhycasTestData('green.nex')
@@ -69,7 +69,7 @@ mcmc.tree_scaler_weight	  = 1
 mcmc.tree_scaler_lambda   = 0.2
 mcmc.tree_scaler_lambda0  = 0.2
 
-ss.nbetavals              = 5
+ss.nbetavals              = 3
 ss.maxbeta                = 1.0
 ss.minbeta                = 0.0
 ss.shape1                 = 1

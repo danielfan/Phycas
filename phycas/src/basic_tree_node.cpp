@@ -101,6 +101,16 @@ double TreeNode::GetEdgeLen() const
 	return edgeLen;
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the split associated with this node.
+*/
+const Split & TreeNode::GetSplitConst() const
+	{
+	return split;
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the split associated with this node.
 */

@@ -81,9 +81,15 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 		void					refreshLastLnLike();
 		void					refreshLastLnPrior();
 		
+#if USING_EDGE_SPECIFIC_WORKING_PRIORS
+        double                  calcExternalEdgeLenWorkingPrior(const TreeNode & nd, double v) const;
+        double                  calcInternalEdgeLenWorkingPrior(const TreeNode & nd, double v) const;
+#else
         double                  calcExternalEdgeLenWorkingPrior(double v) const;
         double                  calcInternalEdgeLenWorkingPrior(double v) const;
-		double 					recalcLnWorkingPrior(bool temp_debug = false) const;
+#endif
+		
+		double 					recalcLnWorkingPrior() const;
 
 		double					getLastLnPrior() const;
 		void					setLastLnPrior(double ln_prior);

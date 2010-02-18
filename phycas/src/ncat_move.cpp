@@ -312,9 +312,9 @@ bool NCatMove::update()
 
 	ChainManagerShPtr p = chain_mgr.lock();
 	PHYCAS_ASSERT(p);
-	double prev_ln_like = p->getLastLnLike();
 	
 #if DISABLED_UNTIL_WORKING_PRIOR_ACCOMMODATED
+	double prev_ln_like = p->getLastLnLike();
 	proposeNewState();
 
 	likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs

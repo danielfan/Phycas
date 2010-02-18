@@ -231,10 +231,12 @@ class ParamSummarizer(CommonFunctions):
 		making use of a for details.
 		
 		"""
-		# Calculate marginal likelihood using steppingstone sampling method
-		# betas is a list of beta values ordered from the first sampled to the last sampled
-		# likes is a map: i.e. likes[b] holds list of log-likelihoods sampled for beta value b
-		# Assumes that betas[0] = 1.0 and betas[-1] = 0.0
+		# Calculate marginal likelihood using steppingstone sampling method.
+		# betas is a list of beta values ordered from the first sampled to the last sampled.
+		# likes is a map: i.e. likes[b] holds list of log-likelihoods sampled for beta value b.
+		# priors is a map: i.e. priors[b] holds list of log-priors sampled for beta value b.
+		# working_priors is a map: i.e. working_priors[b] holds list of log-working-priors 
+		# sampled for beta value b. Assumes that betas[0] = 1.0 and betas[-1] = 0.0.
 		likes = p['lnL']
 		priors = p['lnPrior']
 		working_priors = p['lnWorkPr']
@@ -243,7 +245,10 @@ class ParamSummarizer(CommonFunctions):
 		if betas[0] != 1.0 or betas[-1] != 0.0:
 			raise Exception('Steppingstone sampling requires beta values to be ordered from 1.0 (first) to 0.0 (last)')
 			
+		self.output(' %10s %10s %10s %15s %15s %15s' % ('b_(k-1)','beta_incr','n','lnLmax','lnRk','lnR(cum)'))
 		for i in range(1,nbetas):
+			#self.output('\nk = %d:' % i)
+			
 			# find the difference between the two beta values for ratio i
 			blarger = betas[i - 1]
 			bsmaller = betas[i]
@@ -260,10 +265,12 @@ class ParamSummarizer(CommonFunctions):
 			tmp = 0.0
 			for lnL,lnp,lnwp in zip(loglikes,logpriors,logwpriors):
 				log_term = beta_incr*(lnL + lnp - lnwp - Lmax)
+				#self.output('--> %15.5f %15.5f %15.5f %15.5f %15.5f' % (lnL,lnp,lnwp,Lmax,log_term))
 				tmp += math.exp(log_term)
 			tmp /= float(n)
 			lnRk = beta_incr*Lmax + math.log(tmp)
 			lnR += lnRk
+			self.output(' %10.3f %10.3f %10d %15.6f %15.6f %15.6f' % (bsmaller, beta_incr, n, Lmax, lnRk, lnR))
 		
 		self.output(' %.8f Stabilized Steppingstone Sampling (SSS) method' % lnR)
 		

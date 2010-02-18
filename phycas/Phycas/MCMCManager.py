@@ -194,28 +194,6 @@ class MCMCManager:
 			for u in all_updaters:		# good candidate for moving into C++
 				u.educateWorkingPrior()
 		
-		# Add line to sss file if it exists
-		#if self.parent.opts.ssobj and self.parent.opts.ssobj.scubed and (cycle > -1) and not dofit:
-		#	# cycle
-		#	self.parent.sssf.write('%d\t' % (cycle + 1))
-		#	
-		#	# beta
-		#	self.parent.sssf.write(float_format_str % (cold_chain.heating_power))
-		#	
-		#	# lnL
-		#	self.parent.sssf.write(float_format_str % lnLikes[0])
-		#	
-		#	# lnPrior
-		#	ln_prior = cold_chain.chain_manager.calcJointLnPrior()
-		#	self.parent.sssf.write(float_format_str % ln_prior)
-		#	
-		#	# lnWorkingPrior
-		#	ln_working_prior = cold_chain.chain_manager.recalcLnWorkingPrior(False)
-		#	self.parent.sssf.write(float_format_str % ln_working_prior)
-		#	
-		#	self.parent.sssf.write('\n')
-		#	self.parent.sssf.flush()
-
 		# Add line to parameter file if it exists
 		if self.parent.paramf:
 			# cycle
@@ -236,7 +214,7 @@ class MCMCManager:
 			# lnWorkingPrior
 			if self.parent.opts.doing_steppingstone_sampling and self.parent.opts.ssobj and self.parent.opts.ssobj.scubed:
 				if (cycle > -1) and not dofit:
-					ln_working_prior = cold_chain.chain_manager.recalcLnWorkingPrior(False)
+					ln_working_prior = cold_chain.chain_manager.recalcLnWorkingPrior()
 				else:
 					ln_working_prior = 0.0
 				self.parent.paramf.write(float_format_str % ln_working_prior)
