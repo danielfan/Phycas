@@ -281,8 +281,8 @@ class RelativeRateDistribution(RelRateDistBase, PyDistributionBase):
 
         >>> from phycas.ProbDist import *
         >>> d = RelativeRateDistribution((1,2,3))
-        >>> print d.getLnPDF((0.5, 1.0, 1.5))
-        -3.88362353091
+        >>> print '%.12f' % d.getLnPDF((0.5, 1.0, 1.5))
+        -0.587786664902
 
         For example, the 3-parameter RelativeRateDistribution(a,b,c) density is
 

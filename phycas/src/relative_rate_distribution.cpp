@@ -230,8 +230,8 @@ double_vect_t RelativeRateDistribution::Sample() const
 |	dX/dY = 1/2
 |>
 |	Thus, the density of Y will be one half the Beta density evaluated at y/2. This generalizes to the Dirichlet: the
-|	density of a value y of a random variable Y having an n-parameter relative rate distribution will be 1/n times the
-|	corresponding Dirichlet pdf evaluated at the point y/n.
+|	density of a value y of a random variable Y having an n-parameter relative rate distribution will be the
+|	corresponding Dirichlet pdf evaluated at the point y/n divided by n^(n-1).
 */
 double RelativeRateDistribution::GetLnPDF(
   const double_vect_t & x) const 	/**< is the point at which to evaluate the density */
@@ -248,7 +248,8 @@ double RelativeRateDistribution::GetLnPDF(
 	//std::cerr << "@@@@@@@@@@ sum_params = " << sum_params << std::endl;
 
 	double ln_pdf = DirichletDistribution::GetLnPDF(tmp);
-	ln_pdf -= log((double)dim);
+	double n = (double)dim;
+	ln_pdf -= (n - 1.0)*log(n);
 	return ln_pdf;
 	}
 
