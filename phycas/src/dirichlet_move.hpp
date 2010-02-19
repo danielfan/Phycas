@@ -159,7 +159,11 @@ class SubsetRelRatesMove : public DirichletMove
                                     virtual ~SubsetRelRatesMove() {}
 
 		virtual void				educateWorkingPrior();
+#if POLPY_NEWWAY
+		// relrate prior issue
+#else
 		double 						recalcWorkingPrior() const;
+#endif
 
 		virtual void				sendCurrValuesToModel(const double_vect_t & v);
 		virtual void				getCurrValuesFromModel(double_vect_t & v) const;

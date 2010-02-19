@@ -525,9 +525,9 @@ double MCMCUpdater::recalcPrior()
 			{
 			PHYCAS_ASSERT(0);
 			}
-		//std::cerr << boost::str(boost::format("~~~ updater named '%s' computed multivariate prior for vector ") % name);
-		//std::copy(values.begin(), values.end(), std::ostream_iterator<double>(std::cerr," "));
-		//std::cerr << boost::str(boost::format(" to be %g") % curr_ln_prior) << std::endl;
+		//std::cerr << boost::str(boost::format("~~~ updater named '%s' computed multivariate prior for vector ") % name);//temp
+		//std::copy(values.begin(), values.end(), std::ostream_iterator<double>(std::cerr," "));//temp
+		//std::cerr << boost::str(boost::format(" to be %g") % curr_ln_prior) << std::endl;//temp
 		return curr_ln_prior;
 		}
 	}

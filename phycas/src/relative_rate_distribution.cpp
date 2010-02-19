@@ -222,15 +222,33 @@ double_vect_t RelativeRateDistribution::Sample() const
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Returns the natural logarithm of the probability density function evaluated at the supplied point `x'.
+|	Returns the natural logarithm of the probability density function evaluated at the supplied point `x'. To derive
+|	the relative rate distribution density, imagine a random variable X ~ Beta(a,b) and let Y=2X. Y now has a relative
+|	rate distribution with density
+|>
+|	f_Y(y) = f_X(y/2) dX/dY
+|	dX/dY = 1/2
+|>
+|	Thus, the density of Y will be one half the Beta density evaluated at y/2. This generalizes to the Dirichlet: the
+|	density of a value y of a random variable Y having an n-parameter relative rate distribution will be 1/n times the
+|	corresponding Dirichlet pdf evaluated at the point y/n.
 */
 double RelativeRateDistribution::GetLnPDF(
   const double_vect_t & x) const 	/**< is the point at which to evaluate the density */
 	{
+	//std::cerr << "@@@@@@@@@@ RelativeRateDistribution::GetLnPDF(): x @@@@@@@@@@" << std::endl;
+	//std::copy(x.begin(), x.end(), std::ostream_iterator<double>(std::cerr, " "));
+	//std::cerr << "@@@@@@@@@@ sum_params = " << sum_params << std::endl;
+
 	double_vect_t tmp(dim, 0.0);
 	std::transform(x.begin(), x.end(), tmp.begin(), boost::lambda::_1/(double)dim);
+
+	//std::cerr << "@@@@@@@@@@ RelativeRateDistribution::GetLnPDF(): tmp @@@@@@@@@@" << std::endl;
+	//std::copy(tmp.begin(), tmp.end(), std::ostream_iterator<double>(std::cerr, " "));
+	//std::cerr << "@@@@@@@@@@ sum_params = " << sum_params << std::endl;
+
 	double ln_pdf = DirichletDistribution::GetLnPDF(tmp);
-	ln_pdf -= (sum_params - 1.0)*log((double)dim);
+	ln_pdf -= log((double)dim);
 	return ln_pdf;
 	}
 

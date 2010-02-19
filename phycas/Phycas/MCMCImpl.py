@@ -468,6 +468,8 @@ class MCMCImpl(CommonFunctions):
 		unpartitioned = (nmodels == 1)
 
 		for p in chain.chain_manager.getAllUpdaters():
+			if p.isFixed():
+				continue
 			w = p.getWeight()
 			name = p.getName()
 			if (name.find('edgelen_hyper') == 0) or (name.find('external_hyper') == 0) or (name.find('internal_hyper') == 0):	# C++ class HyperPriorParam
@@ -503,9 +505,7 @@ class MCMCImpl(CommonFunctions):
 				pass
 			elif name.find('subset_relrates') == 0:
 				new_subset_relrate_vector = chain.partition_model.getSubsetRelRatePrior().sample()
-				# Drawing values from a Dirichlet prior, but relative rates should have mean 1, not sum to 1,
-				# so multiply each by the value nmodels to correct this
-				chain.partition_model.setSubsetRelRatesVect([x*float(nmodels) for x in new_subset_relrate_vector])
+				chain.partition_model.setSubsetRelRatesVect(new_subset_relrate_vector)
 			elif name.find('kappa') == 0:							# C++ class KappaParam
 				i = unpartitioned and 0 or self.getModelIndex(name)
 				m = chain.partition_model.getModel(i)
