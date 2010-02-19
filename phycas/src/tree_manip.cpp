@@ -703,21 +703,24 @@ void TreeManip::equiprobTree(
 	tree->RefreshPreorder();
 
     // Set edge lengths
+	bool set_all_edge_lengths_to_one = false;
     if (internal_edge_dist && !external_edge_dist)
         external_edge_dist = internal_edge_dist;
     else if (external_edge_dist && !internal_edge_dist)
         internal_edge_dist = external_edge_dist;
+	else if (!internal_edge_dist && !external_edge_dist)
+		set_all_edge_lengths_to_one = true;
 		
     double tree_length = 0.0;
     for (std::vector<TreeNode *>::iterator it = receptive.begin(); it != receptive.end(); ++it)
         {
         TreeNode * nd = (*it);
         double new_edgelen = 1.0;
-        if (nd->IsInternal())
+        if (nd->IsInternal() && !set_all_edge_lengths_to_one)
             {
 			new_edgelen = internal_edge_dist->Sample();
             }
-        else
+        else if (!set_all_edge_lengths_to_one)
             {
 			new_edgelen = external_edge_dist->Sample();
             }

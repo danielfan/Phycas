@@ -27,6 +27,10 @@
 #include <cmath>
 #include "ncl/nxsdefs.h"
 
+#if POLPY_NEWWAY
+#include "phycas/src/states_patterns.hpp"
+#endif
+
 #include <boost/shared_ptr.hpp>
 #include <boost/format.hpp>
 #include "basic_cdf.hpp"
@@ -426,6 +430,9 @@ class NormalDistribution : public ProbabilityDistribution
 
 	};
 	
+/*------------------------------------------------------------------------------------------------------------------------------------------------------------------
+|	The Dirichlet distribution, with the number of parameters determined by the number of params supplied to the constructor. 
+*/
 class DirichletDistribution : public MultivariateProbabilityDistribution
 	{
 	public:
@@ -465,7 +472,13 @@ class DirichletDistribution : public MultivariateProbabilityDistribution
 		unsigned							GetNParams() const;
 		const GammaDistribution 			&GetDistributionOnParameter(unsigned i) const;
 
+	
+#if POLPY_NEWWAY
+    protected:
+		void								initialize(const double_vect_t & params);
+#else
     private:
+#endif
 
 		std::vector<double>					dirParams;
 		std::vector<GammaDistribution>		paramDistributions;

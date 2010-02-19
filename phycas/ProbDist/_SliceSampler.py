@@ -151,13 +151,13 @@ class SliceSampler(SliceSamplerBase):
         >>> print round(info[1], 12) # x-coord of vertical line
         0.1
         >>> print round(info[2], 12) # log(y-coord of top of vertical line)
-        -1.0
+        1.30258509299
         >>> print round(info[3], 12) # left edge of slice
         -0.249143314404
         >>> print round(info[4], 12) # right edge of slice
         0.481004689004
         >>> print round(info[5], 12) # log of slice y-coord
-        -1.33135259061
+        0.97123250238
         >>> print round(info[6], 12) # slice unit width
         1.0
         >>> for x in info[7:]:       # failed samples
@@ -217,13 +217,13 @@ class SliceSampler(SliceSamplerBase):
         >>> print "%.1f"  % info[1] # x-coord of vertical line
         0.1
         >>> print "%.1f"  % info[2] # log(y-coord of top of vertical line)
-        -1.0
+        1.3
         >>> print "%.12f" % info[3] # left edge of slice
         -0.000000381470
         >>> print "%.12f" % info[4] # right edge of slice
         0.133135414124
         >>> print "%.12f" % info[5] # log of slice y-coord
-        -1.331352590614
+        0.971232502380
 
         Notes:
         1. In overrelaxed slice sampling, the left and right edges of the
@@ -541,7 +541,7 @@ class SliceSampler(SliceSamplerBase):
         >>> print round(ss.sample(), 12)
         0.087950013611
         >>> print ss.getSliceYValue()
-        -14.9203464313
+        1.6559680552
 
         """
         assert self.getNumSamples() > 0, 'must draw at least one sample before calling getSliceYValue()'
@@ -788,10 +788,10 @@ class SliceSampler(SliceSamplerBase):
         >>> ss = SliceSampler(Lot(73915), Beta(2.0, 2.0))
         >>> first = ss.sample()
         >>> print round(ss.getLnDensityAtMode(), 12)
-        -1.42073614232
+        0.371023326913
         >>> next_ten = [ss.sample() for i in range(10)]
         >>> print round(ss.getLnDensityAtMode(), 12)
-        -1.3863336662
+        0.405425803026
 
         """
         assert self.getNumSamples() > 0, 'must draw at least one sample before calling getLnDensityAtMode()'

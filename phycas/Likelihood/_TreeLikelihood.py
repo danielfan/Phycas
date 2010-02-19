@@ -33,7 +33,9 @@ class TreeLikelihood(TreeLikelihoodBase):
     >>> model.setKappaFromTRatio(2.0)
     >>> print "%.5f" % model.getKappa()
     4.36364
-    >>> likelihood = Likelihood.TreeLikelihood(model)
+	>>> partition_model = Likelihood.PartitionModelBase()
+	>>> partition_model.addModel(model)
+    >>> likelihood = Likelihood.TreeLikelihood(partition_model)
     >>> likelihood.copyDataFromDiscreteMatrix(data_matrix, partition.getSiteModelVector())
     >>> for t in reader.getTrees():
     ...     tree = Phylogeny.Tree(t)
@@ -214,7 +216,7 @@ class TreeLikelihood(TreeLikelihoodBase):
         """
         TreeLikelihoodBase.recalcRelativeRates(self)
 
-    def getCategoryLowerBoundaries(self):
+    def getCategoryLowerBoundaries(self, subset_index):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Returns tuple comprising the lower bounds for all rate categories. In
@@ -229,9 +231,9 @@ class TreeLikelihood(TreeLikelihoodBase):
         getRateMeans function.
         
         """
-        return TreeLikelihoodBase.getCategoryLowerBoundaries(self)
+        return TreeLikelihoodBase.getCategoryLowerBoundaries(self, subset_index)
     
-    def getRateMeans(self):
+    def getRateMeans(self, subset_index):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Returns tuple comprising the mean rate for all rate categories. In
@@ -282,9 +284,11 @@ class TreeLikelihood(TreeLikelihoodBase):
         >>> 
         >>> m.setShape(0.2)
         >>> m.setNGammaRates(4)
-        >>> t = Likelihood.TreeLikelihood(m)
-        >>> mean  = t.getRateMeans()
-        >>> lower = t.getCategoryLowerBoundaries()
+        >>> partition_model = Likelihood.PartitionModelBase()
+        >>> partition_model.addModel(m)
+        >>> t = Likelihood.TreeLikelihood(partition_model)
+        >>> mean  = t.getRateMeans(0)
+        >>> lower = t.getCategoryLowerBoundaries(0)
         >>> print 'No. categories = %d' % (m.getNGammaRates())
         No. categories = 4
         >>> print 'Gamma shape = %.5f' % (m.getShape())
@@ -300,8 +304,8 @@ class TreeLikelihood(TreeLikelihoodBase):
         >>> 
         >>> m.setShape(100.0)
         >>> t.recalcRelativeRates()
-        >>> mean  = t.getRateMeans()
-        >>> lower = t.getCategoryLowerBoundaries()
+        >>> mean  = t.getRateMeans(0)
+        >>> lower = t.getCategoryLowerBoundaries(0)
         >>> print 'Gamma shape = %.5f' % (m.getShape())
         Gamma shape = 100.00000
         >>> for i in range(4):
@@ -312,7 +316,7 @@ class TreeLikelihood(TreeLikelihoodBase):
             1.065511     1.129806
             
         """
-        return TreeLikelihoodBase.getRateMeans(self)
+        return TreeLikelihoodBase.getRateMeans(self, subset_index)
 
     def getNPatterns(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

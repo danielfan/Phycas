@@ -91,6 +91,7 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 								virtual	~MCMCUpdater();
 
 		// Predicates
+		bool					isFixed() const;
 		bool					isPriorSteward() const;
 		bool					useWorkingPrior() const;
 		bool					isParameter() const;
@@ -168,7 +169,6 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		void					resetDiagnostics();
 
 		// Utilities used only by parameters
-		bool					isFixed() const;
 		void					fixParameter();
 		void					freeParameter();
 		void					createSliceSampler();

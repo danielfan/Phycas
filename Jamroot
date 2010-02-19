@@ -154,6 +154,7 @@ alias probdist_sources
     phycas/src/thirdparty/dcdflib/src/ipmpar.c
     phycas/src/mvnormal_distribution.cpp
     phycas/src/probability_distribution.cpp
+    phycas/src/relative_rate_distribution.cpp
     phycas/src/slice_sampler.cpp
     tool_specific_requirements ;
 python-extension _ProbDistExt : probdist_sources ;

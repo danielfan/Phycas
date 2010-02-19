@@ -27,12 +27,15 @@
 
 #include <boost/python.hpp>
 
-#include "basic_lot.hpp"
-#include "probability_distribution.hpp"
-#include "mvnormal_distribution.hpp"
-#include "stop_watch.hpp"
-#include "slice_sampler.hpp"
-#include "xprobdist.hpp"
+#include "phycas/src/basic_lot.hpp"
+#include "phycas/src/probability_distribution.hpp"
+#include "phycas/src/mvnormal_distribution.hpp"
+#if POLPY_NEWWAY
+#include "phycas/src/relative_rate_distribution.hpp"
+#endif
+#include "phycas/src/stop_watch.hpp"
+#include "phycas/src/slice_sampler.hpp"
+#include "phycas/src/xprobdist.hpp"
 
 using namespace boost::python;
 using namespace phycas;
@@ -194,6 +197,32 @@ BOOST_PYTHON_MODULE(_ProbDistExt)
 		.def("getVarCovarMatrix", &DirichletDistribution::GetVarCovarMatrix)
 		.def("getNParams", &DirichletDistribution::GetNParams)
 		;
+		
+#if POLPY_NEWWAY
+	class_<RelativeRateDistribution, bases<MultivariateProbabilityDistribution> >("RelRateDistBase")
+		.def(init<const std::vector<double> &>())
+		.def(init<const RelativeRateDistribution &>())
+		.def("cloneAndSetLot", &RelativeRateDistribution::cloneAndSetLot, return_value_policy<manage_new_object>())
+		.def("clone", &RelativeRateDistribution::Clone, return_value_policy<manage_new_object>())
+		.def("isDiscrete", &RelativeRateDistribution::IsDiscrete)
+		.def("getDistName", &RelativeRateDistribution::GetDistributionName)
+		.def("__str__", &RelativeRateDistribution::GetDescriptionForPython)
+		.def("__repr__", &RelativeRateDistribution::GetDescriptionForPython)
+		.def("setLot", &RelativeRateDistribution::SetLot)
+		.def("setSeed", &RelativeRateDistribution::SetSeed)
+		.def("resetLot", &RelativeRateDistribution::ResetLot)
+		.def("getMean", &RelativeRateDistribution::GetMean)
+		.def("getVar", &RelativeRateDistribution::GetVar)
+		.def("getStdDev", &RelativeRateDistribution::GetStdDev)
+		.def("approxCDF", &RelativeRateDistribution::ApproxCDF)
+		.def("sample", &RelativeRateDistribution::Sample)
+		.def("getLnPDF", &RelativeRateDistribution::GetLnPDF)
+		.def("getRelativeLnPDF", &RelativeRateDistribution::GetRelativeLnPDF)
+		.def("setMeanAndVariance", &RelativeRateDistribution::SetMeanAndVariance)
+		.def("getVarCovarMatrix", &RelativeRateDistribution::GetVarCovarMatrix)
+		.def("getNParams", &RelativeRateDistribution::GetNParams)
+		;
+#endif
 		
 	class_<BetaDistribution, bases<ProbabilityDistribution, AdHocDensity> >("BetaDistBase")
 		.def(init<double, double>())

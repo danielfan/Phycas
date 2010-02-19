@@ -359,16 +359,18 @@ class MarkovChain(LikelihoodCore):
 			self.subset_relrates_move.setLot(self.r)
 			if partition.fix_subset_relrates:
 				self.subset_relrates_move.fixParameter()
-			if partition.subset_relrates_prior is None:
-				param_list = tuple([1.0]*nmodels)
-				d = Dirichlet(param_list)
-				self.subset_relrates_move.setMultivarPrior(d)
-				self.partition_model.setSubsetRelRatePrior(d)
 			else:
-				self.parent.phycassert(partition.subset_relrates_prior.getDistName() == 'Dirichlet', 'partition.subset_relrates_prior must be of type Dirichlet')
-				self.parent.phycassert(partition.subset_relrates_prior.getNParams() == nmodels, 'partition.subset_relrates_prior has dimension %d, but there are %d subsets in the partition. Try setting partion.subset_relrates_prior = None to get default flat Dirichlet prior of the appropriate dimension' % (partition.subset_relrates_prior.getNParams(), nmodels))
-				self.subset_relrates_move.setMultivarPrior(partition.subset_relrates_prior)
-				self.partition_model.setSubsetRelRatePrior(partition.subset_relrates_prior)
+				# only assign a prior distribution if subset relative rates are not fixed
+				if partition.subset_relrates_prior is None:
+					param_list = tuple([1.0]*nmodels)
+					d = Dirichlet(param_list)
+					self.subset_relrates_move.setMultivarPrior(d)
+					self.partition_model.setSubsetRelRatePrior(d)
+				else:
+					self.parent.phycassert(partition.subset_relrates_prior.getDistName() == 'Dirichlet', 'partition.subset_relrates_prior must be of type Dirichlet')
+					self.parent.phycassert(partition.subset_relrates_prior.getNParams() == nmodels, 'partition.subset_relrates_prior has dimension %d, but there are %d subsets in the partition. Try setting partion.subset_relrates_prior = None to get default flat Dirichlet prior of the appropriate dimension' % (partition.subset_relrates_prior.getNParams(), nmodels))
+					self.subset_relrates_move.setMultivarPrior(partition.subset_relrates_prior)
+					self.partition_model.setSubsetRelRatePrior(partition.subset_relrates_prior)
 			self.chain_manager.addMove(self.subset_relrates_move)
 		
 		if self.parent.opts.fix_topology:

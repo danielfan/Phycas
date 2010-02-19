@@ -217,6 +217,7 @@
 		D13CAB9410D1D72300813B89 /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */; };
 		D13CAB9510D1D72300813B89 /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */; };
 		D1C27E9E1123322A00911D1C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A22C13010CEEB8B0043120B /* CoreServices.framework */; };
+		D1F9EFCE112DD2FA00654AD4 /* relative_rate_distribution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D1F9EFC7112D9B4C00654AD4 /* relative_rate_distribution.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -640,6 +641,9 @@
 		D1D55522111B7A9A001BD7CD /* LikelihoodTest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = LikelihoodTest.py; path = ../../phycas/Tests/LikelihoodTest/LikelihoodTest.py; sourceTree = SOURCE_ROOT; };
 		D1D66464112051EE00BA8E47 /* partition.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = partition.py; path = ../../phycas/Tests/partition/partition.py; sourceTree = SOURCE_ROOT; };
 		D1F281C3111B422C00FDE78C /* GTRTest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = GTRTest.py; path = ../../phycas/Tests/GTRTest/GTRTest.py; sourceTree = SOURCE_ROOT; };
+		D1F9EFC7112D9B4C00654AD4 /* relative_rate_distribution.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = relative_rate_distribution.cpp; path = ../../phycas/src/relative_rate_distribution.cpp; sourceTree = SOURCE_ROOT; };
+		D1F9EFC8112D9B4C00654AD4 /* relative_rate_distribution.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = relative_rate_distribution.hpp; path = ../../phycas/src/relative_rate_distribution.hpp; sourceTree = SOURCE_ROOT; };
+		D1F9F020112DF42600654AD4 /* _RelRateDist.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _RelRateDist.py; sourceTree = "<group>"; };
 		D2AAC09D05546B4700DB518D /* _ConversionsExt.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = _ConversionsExt.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -874,6 +878,8 @@
 				7A09461610CAEFB900CEFDE0 /* q_matrix.hpp */,
 				7A09461710CAEFB900CEFDE0 /* q_matrix.inl */,
 				7A09461810CAEFB900CEFDE0 /* read_nexus_pymod.cpp */,
+				D1F9EFC7112D9B4C00654AD4 /* relative_rate_distribution.cpp */,
+				D1F9EFC8112D9B4C00654AD4 /* relative_rate_distribution.hpp */,
 				7A09461910CAEFB900CEFDE0 /* samc_move.cpp */,
 				7A09461A10CAEFB900CEFDE0 /* samc_move.hpp */,
 				7A09461B10CAEFB900CEFDE0 /* samc_move.inl */,
@@ -1074,6 +1080,7 @@
 				7A98F63E10CD6E79001E79F7 /* _BetaDist.py */,
 				7A98F65210CD6E79001E79F7 /* _NormalDist.py */,
 				7A98F64410CD6E79001E79F7 /* _DirichletDist.py */,
+				D1F9F020112DF42600654AD4 /* _RelRateDist.py */,
 				7A98F63C10CD6E79001E79F7 /* _BernoulliDist.py */,
 				7A98F65010CD6E79001E79F7 /* _MVNormalDist.py */,
 				7A98F63A10CD6E79001E79F7 /* __init__.py */,
@@ -1646,6 +1653,7 @@
 				7A98F33110CD50F8001E79F7 /* ipmpar.c in Sources */,
 				7A98F33610CD511F001E79F7 /* mvnormal_distribution.cpp in Sources */,
 				7A98F33810CD5126001E79F7 /* probability_distribution.cpp in Sources */,
+				D1F9EFCE112DD2FA00654AD4 /* relative_rate_distribution.cpp in Sources */,
 				7A98F33B10CD5130001E79F7 /* slice_sampler.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

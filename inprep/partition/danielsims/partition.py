@@ -1,9 +1,13 @@
 from phycas import *
 
 data_file_name = 'data186.nex'
-master_seed = 54322
+master_seed = 1861
 partitioned_analysis = True
-scubed = False
+scubed = True
+num_cycles = 2000
+num_cycles_per_sample = 10
+num_beta_values = 11
+estimate_subset_relative_rates = False
 
 setMasterSeed(master_seed)
 blob = readFile(data_file_name)
@@ -34,6 +38,11 @@ if partitioned_analysis:
     m2 = model()
     
     half_way = nchar/2
+    partition.subset_relrates = [1.0,1.0]
+    if estimate_subset_relative_rates:
+        partition.fix_subset_relrates = False
+    else:
+        partition.fix_subset_relrates = True
     partition.addSubset(subset(1,half_way),         m1, 'first_half')
     partition.addSubset(subset(half_way + 1,nchar), m2, 'last_half')
     partition()
@@ -46,7 +55,7 @@ else:
     model.edgelen_prior = Exponential(10.0)
     model.edgelen_hyperprior = None
     
-pfx = data_file_name + '_%s_%s_%d' % (partitioned_analysis and 'partitioned' or 'unpartitioned',scubed and 'sss' or 'ss',master_seed)
+pfx = data_file_name + '_%s_%s_%s_%d' % (partitioned_analysis and 'partitioned' or 'unpartitioned',scubed and 'sss' or 'ss',estimate_subset_relative_rates and 'ssrrvar' or 'ssrrfix',master_seed)
 mcmc.data_source = blob.characters
 mcmc.out.log.prefix = pfx
 mcmc.out.log.mode = REPLACE
@@ -55,9 +64,9 @@ mcmc.out.trees.mode = REPLACE
 mcmc.out.params.prefix = pfx
 mcmc.out.params.mode = REPLACE
 mcmc.nchains = 1
-mcmc.ncycles = 2000
+mcmc.ncycles = num_cycles
 mcmc.adapt_first = 2
-mcmc.sample_every = 10
+mcmc.sample_every = num_cycles_per_sample
 mcmc.report_every = 100
 
 mcmc.state_freq_weight = 10
@@ -76,7 +85,7 @@ else:
 	mcmc.rel_rate_psi = 500.0
 	mcmc.rel_rate_psi0 = 1.0
 
-mcmc.subset_relrates_weight = 1
+mcmc.subset_relrates_weight = 0
 if scubed:
 	mcmc.subset_relrates_psi = 300.0
 	mcmc.subset_relrates_psi0 = 300.0
@@ -108,7 +117,7 @@ else:
 
 mcmc.fix_topology = True
 
-ss.nbetavals = 11
+ss.nbetavals = num_beta_values
 if scubed:
 	ss.shape1 = 1.0
 	ss.shape2 = 1.0
