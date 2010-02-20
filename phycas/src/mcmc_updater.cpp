@@ -913,4 +913,28 @@ void MCMCUpdater::fitGammaWorkingPrior()
 	// std::cerr << boost::str(boost::format("@@@@@@@@@ working prior is Gamma(%g,%g) for updater %s: mean = %g, variance = %g") % shape % scale % getName() % mean % variance) << std::endl;
 	working_prior = ProbDistShPtr(new GammaDistribution(shape, scale));
 	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Use samples in `fitting_sample' to parameterize a new LognormalDistribution, which is then stored in `working_prior'. 
+|	Assumes `fitting_sample' has more than 1 element. 
+*/
+void MCMCUpdater::fitLognormalWorkingPrior()
+	{
+	PHYCAS_ASSERT(fitting_sample.size() > 1);
+	double n = (double)fitting_sample.size();
+	double sum = 0.0;
+	double sum_of_squares = 0.0;
+	for (double_vect_t::iterator i = fitting_sample.begin(); i != fitting_sample.end(); ++i)
+		{
+		double v = (*i);
+		double logv = log(v);
+		sum += logv;
+		sum_of_squares += logv*logv;
+		}
+	double logmean = sum/n;	
+	double logvar = (sum_of_squares - n*logmean*logmean)/(n - 1.0);
+	double logsd = sqrt(logvar);
+	working_prior = ProbDistShPtr(new LognormalDistribution(logmean, logsd));
+	}
+	
 }	// namespace phycas

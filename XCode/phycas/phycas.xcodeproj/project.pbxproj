@@ -217,6 +217,7 @@
 		D13CAB9410D1D72300813B89 /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */; };
 		D13CAB9510D1D72300813B89 /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */; };
 		D19A89B5113050A2001004D2 /* lognormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D19A89B31130507A001004D2 /* lognormal.cpp */; };
+		D19A8A0C11307E88001004D2 /* lognormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D19A89B31130507A001004D2 /* lognormal.cpp */; };
 		D1C27E9E1123322A00911D1C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A22C13010CEEB8B0043120B /* CoreServices.framework */; };
 		D1F9EFCE112DD2FA00654AD4 /* relative_rate_distribution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D1F9EFC7112D9B4C00654AD4 /* relative_rate_distribution.cpp */; };
 /* End PBXBuildFile section */
@@ -1699,6 +1700,7 @@
 				7A98F3EB10CD591F001E79F7 /* likelihood_loops.cpp in Sources */,
 				7A98F3EC10CD592F001E79F7 /* likelihood_pymod.cpp in Sources */,
 				7A98F3EE10CD5936001E79F7 /* linalg.c in Sources */,
+				D19A8A0C11307E88001004D2 /* lognormal.cpp in Sources */,
 				7A98F3F310CD5943001E79F7 /* model_pymod.cpp in Sources */,
 				7A98F3F510CD595D001E79F7 /* mcmc_chain_manager.cpp in Sources */,
 				7A98F3F610CD5967001E79F7 /* mcmc_param.cpp in Sources */,

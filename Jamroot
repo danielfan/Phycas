@@ -200,6 +200,7 @@ alias likelihood_sources
     phycas/src/likelihood_models.cpp 
     phycas/src/likelihood_pymod.cpp 
     phycas/src/linalg.c
+    phycas/src/lognormal.cpp
     phycas/src/model_pymod.cpp
     phycas/src/mcmc_chain_manager.cpp 
     phycas/src/mcmc_param.cpp 

@@ -27,6 +27,7 @@
 #include "phycas/src/tree_manip.hpp"				// for TreeManip
 #include "phycas/src/slice_sampler.hpp"
 #include "phycas/src/probability_distribution.hpp"
+#include "phycas/src/lognormal.hpp"
 #include "phycas/src/states_patterns.hpp"		// for double_vect
 
 namespace phycas
@@ -179,6 +180,7 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		double					calcLnWorkingPriorPDF(double x) const;
 		void 					fitBetaWorkingPrior();
 		void 					fitGammaWorkingPrior();
+		void					fitLognormalWorkingPrior();
 		virtual void			educateWorkingPrior();
 		virtual void			finalizeWorkingPrior();
 		

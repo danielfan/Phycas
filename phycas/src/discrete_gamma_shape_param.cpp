@@ -82,6 +82,7 @@ void DiscreteGammaShapeParam::educateWorkingPrior()
 void DiscreteGammaShapeParam::finalizeWorkingPrior()
 	{
 	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
-	fitGammaWorkingPrior();
+	//fitGammaWorkingPrior();
+	fitLognormalWorkingPrior();
 	}
 }
