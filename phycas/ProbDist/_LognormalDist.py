@@ -1,79 +1,81 @@
 from _PyDistributionBase import PyDistributionBase
 from _ProbDistExt import *
 
-class Normal(NormalDistBase, PyDistributionBase):
+class Lognormal(LognormalDistBase, PyDistributionBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
-    Represents the univariate normal probability distribution.
+    Represents the univariate lognormal probability distribution.
 
     """
-    def __init__(self, mean, stddev):
+    def __init__(self, logm, logstddev):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Specify the mean and standard deviation when creating a new Normal
-        object. e.g.,
+        Specify the mean and standard deviation of the log of a lognormal
+		random variable when creating a new Lognormal object. e.g.,  
+		X ~ Lognormal(0.0, 1.0) results in a distribution such that the mean
+		of log(X) is 0.0 and the standard deviation of log(X) is 1.0.
 
         >>> from phycas.ProbDist import *
-        >>> d = Normal(2, 3)
-        >>> print d.getMean()
-        2.0
-        >>> print d.getStdDev()
-        3.0
+        >>> d = Lognormal(0.0, 1.0)
+        >>> print '%.5f' % d.getMean()
+        1.64872
+        >>> print '%.5f' % d.getStdDev()
+        2.16120
 
         """
-        NormalDistBase.__init__(self, mean, stddev)
+        LognormalDistBase.__init__(self, logm, logstddev)
         
     def clone(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Creates a copy of this Normal distribution.
+        Creates a copy of this Lognormal distribution.
         
         """
-        return NormalDistBase.clone(self)
+        return LognormalDistBase.clone(self)
         
     def isDiscrete(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Always returns False because the normal distribution is continuous.
+        Always returns False because the lognormal distribution is continuous.
         
         """
-        return NormalDistBase.isDiscrete(self)
+        return LognormalDistBase.isDiscrete(self)
         
     def getDistName(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Returns the string 'Normal'
+        Returns the string 'Lognormal'
         
         """
-        return NormalDistBase.getDistName(self)
+        return LognormalDistBase.getDistName(self)
         
     def __str__(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Returns a string that could be used to initialize another Normal
+        Returns a string that could be used to initialize another Lognormal
         object identical to this one. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = Normal(2, 3)
+        >>> d = Lognormal(2, 3)
         >>> print d.__str__()
-        Normal(2.00000, 3.00000)
+        Lognormal(2.00000, 3.00000)
         
         """
-        return NormalDistBase.__str__(self)
+        return LognormalDistBase.__str__(self)
         
     def __repr__(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Returns a string that could be used to initialize another Normal
+        Returns a string that could be used to initialize another Lognormal
         object identical to this one. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = Normal(2, 3)
+        >>> d = Lognormal(2, 3)
         >>> print d.__repr__()
-        Normal(2.00000, 3.00000)
+        Lognormal(2.00000, 3.00000)
         
         """
-        return NormalDistBase.__repr__(self)
+        return LognormalDistBase.__repr__(self)
         
     def setLot(self, lot):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -83,14 +85,14 @@ class Normal(NormalDistBase, PyDistributionBase):
 
         >>> g = Lot()
         >>> g.setSeed(1357)
-        >>> d1 = Normal(0.0, 1.0)
-        >>> d2 = Normal(10.0, 1.0)
+        >>> d1 = Lognormal(0.0, 1.0)
+        >>> d2 = Lognormal(10.0, 1.0)
         >>> d1.setLot(g)
         >>> d2.setLot(g)
         >>> print "%.12f" % d1.sample()
-        -2.303677281009
+        0.099890840821
         >>> print "%.12f" % d2.sample()
-        9.991924830267
+        21849.314570637751
         
         In this example, both d1 and d2 use the same random number generator
         when their sample functions are called. Generating all random numbers
@@ -103,7 +105,7 @@ class Normal(NormalDistBase, PyDistributionBase):
         replicate results.
 
         """
-        return NormalDistBase.setLot(self, lot)
+        return LognormalDistBase.setLot(self, lot)
         
     def setSeed(self, seed):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -116,18 +118,18 @@ class Normal(NormalDistBase, PyDistributionBase):
         the setSeed function of that Lot ojbect. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = Normal(2, 3)
+        >>> d = Lognormal(2, 3)
         >>> d.setSeed(135)
         >>> print "%.12f" % d.sample()
-        -7.221565598551
+        0.000730657606
         >>> print "%.12f" % d.sample()
-        4.095823211335
+        60.088784571183
         >>> d.setSeed(135)
         >>> print "%.12f" % d.sample()
-        -7.221565598551
+        0.000730657606
 
         """
-        return NormalDistBase.setSeed(self, seed)
+        return LognormalDistBase.setSeed(self, seed)
         
     def resetLot(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -138,7 +140,7 @@ class Normal(NormalDistBase, PyDistributionBase):
         external random number generator.
 
         """
-        return NormalDistBase.resetLot(self)
+        return LognormalDistBase.resetLot(self)
         
     def getMean(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -148,12 +150,12 @@ class Normal(NormalDistBase, PyDistributionBase):
         from this distribution).
 
         >>> from phycas.ProbDist import *
-        >>> d = Normal(2, 3)
-        >>> print d.getMean()
-        2.0
+        >>> d = Lognormal(2, 3)
+        >>> print '%.5f' % d.getMean()
+        665.14163
 
         """
-        return NormalDistBase.getMean(self)
+        return LognormalDistBase.getMean(self)
         
     def getVar(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -163,12 +165,12 @@ class Normal(NormalDistBase, PyDistributionBase):
         samples from this distribution).
 
         >>> from phycas.ProbDist import *
-        >>> d = Normal(2, 3)
-        >>> print d.getVar()
-        9.0
+        >>> d = Lognormal(2, 3)
+        >>> print '%.5f' % d.getVar()
+        3584470432.73958
 
         """
-        return NormalDistBase.getVar(self)
+        return LognormalDistBase.getVar(self)
         
     def getStdDev(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -178,12 +180,12 @@ class Normal(NormalDistBase, PyDistributionBase):
         called to generate samples from this distribution).
 
         >>> from phycas.ProbDist import *
-        >>> d = Normal(2, 3)
-        >>> print d.getStdDev()
-        3.0
+        >>> d = Lognormal(2, 3)
+        >>> print '%.5f' % d.getStdDev()
+        59870.44707
 
         """
-        return NormalDistBase.getStdDev(self)
+        return LognormalDistBase.getStdDev(self)
         
     def getCDF(self, x):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -193,32 +195,32 @@ class Normal(NormalDistBase, PyDistributionBase):
         negative infinity up to the value x.
 
         >>> from phycas.ProbDist import *
-        >>> d = Normal(0, 3)
-        >>> print d.getCDF(0.0)
-        0.5
+        >>> d = Lognormal(0, 3)
+        >>> print '%.5f' % d.getCDF(0.0)
+        0.00000
 
         """
-        return NormalDistBase.getCDF(self, x)
+        return LognormalDistBase.getCDF(self, x)
         
     def sample(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Draws a single sampled value from the normal distribution specified
-        by this Normal object. Python list comprehensions can be used to
+        Draws a single value from the lognormal distribution specified
+        by this Lognormal object. Python list comprehensions can be used to
         store many simulated samples for use in subsequent calculations.
 
         >>> from phycas.ProbDist import *
-        >>> d = Normal(0, 3)
+        >>> d = Lognormal(0, 3)
         >>> d.setSeed(97531)
         >>> samples = [d.sample() for i in range(3)]
         >>> for x in samples:
-        ...    print round(x,6)
-        2.151006
-        -6.76991
-        4.733003
+        ...    print '%.5f' % x
+        8.59350
+        0.00115
+        113.63627
 
         """
-        return NormalDistBase.sample(self)
+        return LognormalDistBase.sample(self)
         
     def getLnPDF(self, x):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -227,45 +229,45 @@ class Normal(NormalDistBase, PyDistributionBase):
         Returns the natural logarithm of the density at x. e.g.,
 
         >>> from phycas.ProbDist import *
-        >>> d = Normal(0, 3)
+        >>> d = Lognormal(0, 3)
         >>> ln_pdf = d.getLnPDF(1.0)
-        >>> print '%.9f' % ln_pdf
-        -2.073106377
+        >>> print '%.5f' % ln_pdf
+        -2.01755
 
-        The normal density is
+        The lognormal density f(x) is
 
-              1           / -(x - mean)^2 \
-        ------------- exp| --------------- |
-        sd*sqrt(2*pi)     \    2*sd^2     /
+				1              / (log(x) - logmean)^2 \
+        ------------------ exp| ---------------------- |
+        x*logsd*sqrt(2*pi)     \      2*logsd^2       /
         
-        If mean = 0.0, sd = 3.0 and x = 1.0. The density is
+        If logmean = 0.5, logsd = 3.0 and x = 1.0, the density would thus be
 
-            1        / -1.0 \    0.945959
-        -------- exp| -----  | = -------- = 0.12579
-        7.519884     \ 18.0 /    7.519884
+            1        / (0 - 0.5)^2 \    1.01399
+        -------- exp| ------------  | = ------- = 0.13484
+        7.51988      \    18.0     /    7.51988
 
         The natural log (i.e., logarithm base e) density is
 
-        -(x - mean)^2
-        ------------- - log(sd) - 0.5*log(2*pi)
-            2*sd^2
+        (log(x) - logmean)^2
+        -------------------- - log(x) - log(logsd) - 0.5*log(2*pi)
+               2*logsd^2
 
-        and the log density for the above example is thus
+        and thus the log density for the above example is
 
-        -1/18 - log(3) - 0.5*log(2*3.1415927)
-        = -0.055556 - 1.098612 - 0.91894
-        = -2.07311
+        (0.5)^2/18.0 - log(1) - log(3.0) - 0.5*log(2*3.1415927)
+        = -2.00366
         
         """
-        return NormalDistBase.getLnPDF(self, x)
+        return LognormalDistBase.getLnPDF(self, x)
         
     def getRelativeLnPDF(self, x):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-		Identical to GetLnPDF(x).
+		Simply returns the log of the probability density function (i.e. 
+		this function is identical to getLnPDF.
 		        
         """
-        return NormalDistBase.getRelativeLnPDF(self, x)
+        return LognormalDistBase.getRelativeLnPDF(self, x)
         
     def setMeanAndVariance(self, mean, var):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -273,17 +275,17 @@ class Normal(NormalDistBase, PyDistributionBase):
         Sets the mean and variance of this distribution. 
 
         >>> from phycas.ProbDist import *
-        >>> d = Normal(2, 3)
-        >>> print d.getMean()
-        2.0
-        >>> print d.getVar()
-        9.0
+        >>> d = Lognormal(2, 3)
+        >>> print '%.5f' % d.getMean()
+        665.14163
+        >>> print'%.5f' %  d.getVar()
+        3584470432.73958
         >>> d.setMeanAndVariance(5, 4)
-        >>> print d.getMean()
-        5.0
-        >>> print d.getVar()
-        4.0
+        >>> print '%.5f' % d.getMean()
+        5.00000
+        >>> print '%.5f' % d.getVar()
+        4.00000
         
         """
-        return NormalDistBase.setMeanAndVariance(self, mean, var)
+        return LognormalDistBase.setMeanAndVariance(self, mean, var)
     

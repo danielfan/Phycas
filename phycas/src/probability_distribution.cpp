@@ -593,35 +593,12 @@ double NormalDistribution::Sample() const
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	The probability density function of the normal distribution is 
-|>
-|	              1            /  (x - mean)^2 \
-|	f(x) = --------------- exp| --------------- |
-|	       sd (2 pi)^{0.5}     \     2 sd^2    /
-|>
-|	This function returns the natural log of the density function at `x':
-|>
-|	ln[f(x)] = (x - mu)^2/(2 sd^2) - ln[sd] - ln[2*pi]/2.0
-|<
-|	The sum of the last two terms are precalculated and available as the variable `ln_const', but this function only
-|	returns the first term because all we need is something proportional to the density at `x'.
+|	Identical to GetLnPDF().
 */
 double NormalDistribution::GetRelativeLnPDF(
   double x)   const	/* the value for which the density function is to be evaluated */
 	{
-	double term1 = x - mean;
-	double term2 = sqrt2_const*sd;
-	double term3 = term1/term2;
-	double lnpdf = -pow(term3, 2.0);
-	//std::cerr << "NormalDistribution::GetRelativeLnPDF: x = " << x;
-	//std::cerr << ", lnpdf = " << lnpdf;
-	//std::cerr << ", mean = " << mean;
-	//std::cerr << ", sd = " << sd;
-	//std::cerr << ", term1 = " << term1;
-	//std::cerr << ", term2 = " << term2;
-	//std::cerr << ", term3 = " << term3;
-	//std::cerr << std::endl;
-	return lnpdf;
+	return GetLnPDF(x);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -631,7 +608,12 @@ double NormalDistribution::GetRelativeLnPDF(
 double NormalDistribution::GetLnPDF(
   double x)   const /* the value for which the density function is to be evaluated */
 	{
-	return (GetRelativeLnPDF(x) + ln_const);
+	double term1 = x - mean;
+	double term2 = sqrt2_const*sd;
+	double term3 = term1/term2;
+	double lnpdf = -pow(term3, 2.0);
+	lnpdf += ln_const;
+	return lnpdf;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

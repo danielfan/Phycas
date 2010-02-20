@@ -216,6 +216,7 @@
 		D13CAB9310D1D72300813B89 /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */; };
 		D13CAB9410D1D72300813B89 /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */; };
 		D13CAB9510D1D72300813B89 /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */; };
+		D19A89B5113050A2001004D2 /* lognormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D19A89B31130507A001004D2 /* lognormal.cpp */; };
 		D1C27E9E1123322A00911D1C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A22C13010CEEB8B0043120B /* CoreServices.framework */; };
 		D1F9EFCE112DD2FA00654AD4 /* relative_rate_distribution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D1F9EFC7112D9B4C00654AD4 /* relative_rate_distribution.cpp */; };
 /* End PBXBuildFile section */
@@ -609,6 +610,9 @@
 		D17574CD10EB942400D4E2B0 /* partition.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = partition.py; path = ../../inprep/partition/partition.py; sourceTree = SOURCE_ROOT; };
 		D1814096112C826C00D91CF6 /* partition.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = partition.py; path = ../../inprep/partition/danielsims/partition.py; sourceTree = SOURCE_ROOT; };
 		D1829B31110E22AC00F200D6 /* nxscdiscretematrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxscdiscretematrix.h; path = ../../../../ndev/branches/v2.2/ncl/nxscdiscretematrix.h; sourceTree = SOURCE_ROOT; };
+		D19A89B31130507A001004D2 /* lognormal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = lognormal.cpp; path = ../../phycas/src/lognormal.cpp; sourceTree = SOURCE_ROOT; };
+		D19A89B41130507A001004D2 /* lognormal.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = lognormal.hpp; path = ../../phycas/src/lognormal.hpp; sourceTree = SOURCE_ROOT; };
+		D19A89E111307128001004D2 /* _LognormalDist.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _LognormalDist.py; sourceTree = "<group>"; };
 		D1ABDDE310D2D60000EDC77A /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = __init__.py; path = phycas/Phycas/__init__.py; sourceTree = PHYCAS_ROOT; };
 		D1ABDDE410D2D60000EDC77A /* BrownianImpl.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = BrownianImpl.py; path = phycas/Phycas/BrownianImpl.py; sourceTree = PHYCAS_ROOT; };
 		D1ABDDE510D2D60000EDC77A /* CPO.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = CPO.py; path = phycas/Phycas/CPO.py; sourceTree = PHYCAS_ROOT; };
@@ -832,6 +836,8 @@
 				7A0945E810CAEFB900CEFDE0 /* linalg.c */,
 				7A0945E910CAEFB900CEFDE0 /* linalg.cpp */,
 				7A0945EA10CAEFB900CEFDE0 /* linalg.h */,
+				D19A89B31130507A001004D2 /* lognormal.cpp */,
+				D19A89B41130507A001004D2 /* lognormal.hpp */,
 				7A0945EB10CAEFB900CEFDE0 /* mapping_move.cpp */,
 				7A0945EC10CAEFB900CEFDE0 /* mapping_move.hpp */,
 				7A0945ED10CAEFB900CEFDE0 /* mcmc_chain_manager.cpp */,
@@ -1076,6 +1082,7 @@
 		7A98F66E10CD6F25001E79F7 /* ProbDist */ = {
 			isa = PBXGroup;
 			children = (
+				D19A89E111307128001004D2 /* _LognormalDist.py */,
 				7A98F64E10CD6E79001E79F7 /* _Lot.py */,
 				7A98F63E10CD6E79001E79F7 /* _BetaDist.py */,
 				7A98F65210CD6E79001E79F7 /* _NormalDist.py */,
@@ -1648,6 +1655,7 @@
 				7A98F32010CD50A2001E79F7 /* basic_cdf.cpp in Sources */,
 				7A98F32110CD50A4001E79F7 /* basic_lot.cpp in Sources */,
 				7A98F32710CD50AF001E79F7 /* linalg.c in Sources */,
+				D19A89B5113050A2001004D2 /* lognormal.cpp in Sources */,
 				7A98F32D10CD50CB001E79F7 /* stop_watch.cpp in Sources */,
 				7A98F33010CD50F2001E79F7 /* dcdflib.c in Sources */,
 				7A98F33110CD50F8001E79F7 /* ipmpar.c in Sources */,

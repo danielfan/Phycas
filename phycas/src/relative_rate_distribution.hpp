@@ -34,7 +34,6 @@
 
 namespace phycas
 {
-
 	
 /*------------------------------------------------------------------------------------------------------------------------------------------------------------------
 |	This distribution is essentially a Dirichlet distribution modified so that the parameters have mean 1 rather than sum 1. It is useful as a prior for relative

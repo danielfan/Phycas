@@ -8,6 +8,7 @@ from _Lot import *
 from _StopWatch import *
 from _SliceSampler import *
 from _NormalDist import *
+from _LognormalDist import *
 from _GammaDist import *
 from _ExponentialDist import *
 from _InverseGammaDist import *
@@ -41,6 +42,10 @@ def testExamples():
     r = doctest.testfile('_MVNormalDist.py')
     a[0] += r[0] ; a[1] += r[1] 
     r = doctest.testfile('_ExponentialDist.py')
+    a[0] += r[0] ; a[1] += r[1] 
+    r = doctest.testfile('_NormalDist.py')
+    a[0] += r[0] ; a[1] += r[1] 
+    r = doctest.testfile('_LognormalDist.py')
     a[0] += r[0] ; a[1] += r[1] 
     r = doctest.testfile('_GammaDist.py')
     a[0] += r[0] ; a[1] += r[1] 

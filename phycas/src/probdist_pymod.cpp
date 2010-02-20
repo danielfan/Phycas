@@ -31,6 +31,7 @@
 #include "phycas/src/probability_distribution.hpp"
 #include "phycas/src/mvnormal_distribution.hpp"
 #include "phycas/src/relative_rate_distribution.hpp"
+#include "phycas/src/lognormal.hpp"
 #include "phycas/src/stop_watch.hpp"
 #include "phycas/src/slice_sampler.hpp"
 #include "phycas/src/xprobdist.hpp"
@@ -431,6 +432,27 @@ BOOST_PYTHON_MODULE(_ProbDistExt)
 		.def("getLnPDF", &NormalDistribution::GetLnPDF)
 		.def("getRelativeLnPDF", &NormalDistribution::GetRelativeLnPDF)
 		.def("setMeanAndVariance", &NormalDistribution::SetMeanAndVariance)
+		;
+	class_<LognormalDistribution, bases<ProbabilityDistribution, AdHocDensity> >("LognormalDistBase")
+		.def(init<double, double>())
+		.def(init<const LognormalDistribution &>())
+		.def("cloneAndSetLot", &LognormalDistribution::cloneAndSetLot, return_value_policy<manage_new_object>())
+		.def("clone", &LognormalDistribution::Clone, return_value_policy<manage_new_object>())
+		.def("isDiscrete", &LognormalDistribution::IsDiscrete)
+		.def("getDistName", &LognormalDistribution::GetDistributionName)
+		.def("__str__", &LognormalDistribution::GetDistributionDescription)
+		.def("__repr__", &LognormalDistribution::GetDistributionDescription)
+		.def("setLot", &LognormalDistribution::SetLot)
+		.def("setSeed", &LognormalDistribution::SetSeed)
+		.def("resetLot", &LognormalDistribution::ResetLot)
+		.def("getMean", &LognormalDistribution::GetMean)
+		.def("getVar", &LognormalDistribution::GetVar)
+		.def("getStdDev", &LognormalDistribution::GetStdDev)
+		.def("getCDF", &LognormalDistribution::GetCDF)
+		.def("sample", &LognormalDistribution::Sample)
+		.def("getLnPDF", &LognormalDistribution::GetLnPDF)
+		.def("getRelativeLnPDF", &LognormalDistribution::GetRelativeLnPDF)
+		.def("setMeanAndVariance", &LognormalDistribution::SetMeanAndVariance)
 		;
 	register_exception_translator<XProbDist>(&translateXProbDist);
 }
