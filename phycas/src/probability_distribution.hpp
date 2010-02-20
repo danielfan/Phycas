@@ -27,9 +27,7 @@
 #include <cmath>
 #include "ncl/nxsdefs.h"
 
-#if POLPY_NEWWAY
 #include "phycas/src/states_patterns.hpp"
-#endif
 
 #include <boost/shared_ptr.hpp>
 #include <boost/format.hpp>
@@ -473,12 +471,11 @@ class DirichletDistribution : public MultivariateProbabilityDistribution
 		const GammaDistribution 			&GetDistributionOnParameter(unsigned i) const;
 
 	
-#if POLPY_NEWWAY
     protected:
+	
 		void								initialize(const double_vect_t & params);
-#else
-    private:
-#endif
+		
+    protected:
 
 		std::vector<double>					dirParams;
 		std::vector<GammaDistribution>		paramDistributions;

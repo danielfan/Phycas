@@ -30,9 +30,7 @@
 #include "phycas/src/basic_lot.hpp"
 #include "phycas/src/probability_distribution.hpp"
 #include "phycas/src/mvnormal_distribution.hpp"
-#if POLPY_NEWWAY
 #include "phycas/src/relative_rate_distribution.hpp"
-#endif
 #include "phycas/src/stop_watch.hpp"
 #include "phycas/src/slice_sampler.hpp"
 #include "phycas/src/xprobdist.hpp"
@@ -198,7 +196,6 @@ BOOST_PYTHON_MODULE(_ProbDistExt)
 		.def("getNParams", &DirichletDistribution::GetNParams)
 		;
 		
-#if POLPY_NEWWAY
 	class_<RelativeRateDistribution, bases<MultivariateProbabilityDistribution> >("RelRateDistBase")
 		.def(init<const std::vector<double> &>())
 		.def(init<const RelativeRateDistribution &>())
@@ -222,7 +219,6 @@ BOOST_PYTHON_MODULE(_ProbDistExt)
 		.def("getVarCovarMatrix", &RelativeRateDistribution::GetVarCovarMatrix)
 		.def("getNParams", &RelativeRateDistribution::GetNParams)
 		;
-#endif
 		
 	class_<BetaDistribution, bases<ProbabilityDistribution, AdHocDensity> >("BetaDistBase")
 		.def(init<double, double>())

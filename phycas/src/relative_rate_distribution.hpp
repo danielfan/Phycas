@@ -36,7 +36,6 @@ namespace phycas
 {
 
 	
-#if POLPY_NEWWAY
 /*------------------------------------------------------------------------------------------------------------------------------------------------------------------
 |	This distribution is essentially a Dirichlet distribution modified so that the parameters have mean 1 rather than sum 1. It is useful as a prior for relative
 |	rates (e.g. subset relative rates in a partitioned model).
@@ -75,8 +74,6 @@ class RelativeRateDistribution : public DirichletDistribution
 		double								sum_params;		/**< The sum of the dirichlet parameters stored in the data member `dirParams', which is provided by the base class */
 	};
 	
-#endif
-
 } // namespace phycas
 
 #endif

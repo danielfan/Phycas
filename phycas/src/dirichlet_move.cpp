@@ -606,34 +606,6 @@ SubsetRelRatesMove::SubsetRelRatesMove() : DirichletMove()
 	dim = 1;
 	}
 
-#if POLPY_NEWWAY
-		// relrate prior issue
-#else //old way
-/*----------------------------------------------------------------------------------------------------------------------
-|	Override of base class version is necessary because subset relative rates have mean 1 rather than summing to 1.
-*/
-double SubsetRelRatesMove::recalcWorkingPrior() const
-	{
-	double_vect_t values;
-	getCurrValuesFromModel(values);	
-	
-	// need to modify the values obtained from the model because the model maintains relative rates (mean 1.0)
-	// but for Dirichlet move we need to work with parameters that sum to 1.0
-	std::transform(values.begin(), values.end(), values.begin(), boost::lambda::_1/(double)dim);
-	
-	double lnwp = 0.0;
-	try 
-		{
-		lnwp = mv_working_prior->GetLnPDF(values);
-		}
-	catch(XProbDist &)
-		{
-		PHYCAS_ASSERT(0);
-		}
-	return lnwp;
-	}
-#endif
-
 /*----------------------------------------------------------------------------------------------------------------------
 |	Override of base class version adds the current vector of subset relative rates to the data already stored in 
 |	`mv_fitting_sample'.
@@ -643,14 +615,6 @@ void SubsetRelRatesMove::educateWorkingPrior()
 	double_vect_t rrates;
 	getCurrValuesFromModel(rrates);
 
-#if POLPY_NEWWAY
-		// relrate prior issue
-#else	//old way
-	// need to modify the values obtained from the model because the model maintains relative rates (mean 1.0)
-	// but for Dirichlet move we need to work with parameters that sum to 1.0
-	std::transform(rrates.begin(), rrates.end(), rrates.begin(), boost::lambda::_1/(double)dim);
-#endif
-	
 	//std::copy(rrates.begin(), rrates.end(), std::ostream_iterator<double>(std::cerr, " "));//temp
 	//std::cerr << "sum = " << std::accumulate(rrates.begin(), rrates.end(), 0.0) << std::endl;
 	
@@ -695,14 +659,6 @@ double_vect_t SubsetRelRatesMove::listCurrValuesFromModel()
 void SubsetRelRatesMove::getParams()
 	{
 	getCurrValuesFromModel(orig_params);
-	
-#if POLPY_NEWWAY
-		// relrate prior issue
-#else //old way
-	// need to modify the values obtained from the model because the model maintains relative rates (mean 1.0)
-	// but for Dirichlet move we need to work with parameters that sum to 1.0
-	std::transform(orig_params.begin(), orig_params.end(), orig_params.begin(), boost::lambda::_1/(double)dim);
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -711,17 +667,8 @@ void SubsetRelRatesMove::getParams()
 void SubsetRelRatesMove::setParams(
   const std::vector<double> & v)    /*< is the vector of parameter values to send to the model */
 	{
-#if POLPY_NEWWAY
-	// relrate prior issue
     sendCurrValuesToModel(v);
-#else //old way
-	// need to modify the values in v because the model maintains relative rates (mean 1.0)
-	// but for Dirichlet move we work with parameters that sum to 1.0
-	double_vect_t vcopy(v.size());
-	std::transform(v.begin(), v.end(), vcopy.begin(), boost::lambda::_1*(double)dim);
-    sendCurrValuesToModel(vcopy);
-#endif
-		}
+	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets `partition_model' to the supplied `m'.

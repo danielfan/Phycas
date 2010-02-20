@@ -91,9 +91,7 @@ class TreeNode
 		const TipData *			GetTipData() const;
 		const InternalData *	GetInternalData() const;
 		Split &					GetSplit();
-#if POLPY_NEWWAY
 		const Split &			GetSplitConst() const;
-#endif
 
 		// Modifiers
 		void			SetObservable();

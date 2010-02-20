@@ -84,7 +84,6 @@ double EdgeLenMasterParam::lnPriorOneEdge(TreeNode & nd) const
         }
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Reports the distribution being used for both the generic `working_prior' as well as the edge-specific working
 |	priors for edges that were sampled before the working priors were finalized.
@@ -118,7 +117,6 @@ std::string EdgeLenMasterParam::getWorkingPriorDescr() const
 
 	return s;
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Member function that exists only to facilitate using boost::lambda::bind to be used in the getLnPrior() function. It

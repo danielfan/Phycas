@@ -1805,42 +1805,9 @@ DirichletDistribution::DirichletDistribution()
 */
 DirichletDistribution::DirichletDistribution(const std::vector<double> & params) 
 	{
-#if POLPY_NEWWAY
 	initialize(params);
-#else //old way
-	unsigned params_size = (unsigned)params.size();
-	PHYCAS_ASSERT(params_size > 1);
-
-	// Reserve necessary space to save copying
-	//
-	dirParams.reserve(params_size);
-	scratchSpace.reserve(params_size);
-	paramDistributions.reserve(params_size);
-
-#	if 0   //@POL Mark, this causes an "out of keys" compiler error on VC
-#		if defined NCL_NXS_THROW_UNDEFINED
-		if (params.size() < 2)
-			throw NxsX_UndefinedException("Illegal Dirichlet", __FILE__, __LINE__);
-#		endif
-#	endif
-
-	std::vector<double>::const_iterator iter;
-	for (iter = params.begin(); iter != params.end(); ++iter)
-		{
-		double c_i = *iter;
-		dirParams.push_back(c_i);
-		scratchSpace.push_back(0.0);
-    	paramDistributions.push_back(GammaDistribution(c_i, 1.0));
-		}
-
-	for (unsigned i = 0; i < paramDistributions.size(); ++i)
-		{
-		paramDistributions[i].SetLot(&myLot);
-		}
-#endif
 	}
 	
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Initializes a DirichletDistribution based on the parameter values supplied in the vector `params'.
 */
@@ -1876,7 +1843,6 @@ void DirichletDistribution::initialize(
 		paramDistributions[i].SetLot(&myLot);
 		}
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Replaces the random number generator used with the MultivariateProbabilityDistribution::Sample member function. 

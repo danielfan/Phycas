@@ -293,9 +293,7 @@ class EdgeLenMasterParam : public MCMCUpdater
 		void				finalizeWorkingPrior();
 		double				recalcWorkingPrior() const;
 		double				lnWorkingPriorOneEdge(const TreeNode & nd, double v) const;
-#if POLPY_NEWWAY
 		std::string 		getWorkingPriorDescr() const;
-#endif
 
 		virtual double		recalcPrior();
 		virtual void		setPriorMeanAndVariance(double m, double v);

@@ -345,7 +345,6 @@ std::string Split::CreateNewickRepresentation(
         s += str(boost::format("%d,") % taxon_number);
         }
 
-#if POLPY_NEWWAY
     // Now for the "off" bits
     std::vector<unsigned> off_bits;
     GetOffListImpl(off_bits);
@@ -365,24 +364,6 @@ std::string Split::CreateNewickRepresentation(
 		s += ')';
 		}
 	s += ')';
-#else //old way
-    s += '(';
-
-    // Now for the "off" bits
-    std::vector<unsigned> off_bits;
-    GetOffListImpl(off_bits);
-    std::vector<unsigned>::const_iterator j = off_bits.begin();
-    taxon_index = *j;
-    taxon_number = (zero_based ? taxon_index : taxon_index + 1);
-    s += str(boost::format("%d") % taxon_number);
-    for (++j; j != off_bits.end(); ++j)
-        {
-        taxon_index = *j;
-        taxon_number = (zero_based ? taxon_index : taxon_index + 1);
-        s += str(boost::format(",%d") % taxon_number);
-        }
-	s += "))";
-#endif
 	return s;
 	}
 
