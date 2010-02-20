@@ -213,7 +213,8 @@ double LognormalDistribution::GetLnPDF(
 	double logx = std::log(x);
 	double term1 = std::pow(logx - logmean, 2.0);
 	double term2 = 2.0*logsd_squared;
-	double lnpdf = term1/term2 - logx + ln_const;
+	double term3 = term1/term2;
+	double lnpdf = -term3 - logx + ln_const;
 	return lnpdf;
 	}
 

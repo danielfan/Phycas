@@ -1,12 +1,12 @@
 from phycas import *
 
 data_file_name = 'data162.nex'
-master_seed = 1629
-partitioned_analysis = False
+master_seed = 16219
+partitioned_analysis = True
 plus_gamma = True
 scubed = True
-num_beta_values = 11
-num_cycles = 2000
+num_beta_values = 2
+num_cycles = 1000
 num_cycles_per_sample = 10
 estimate_subset_relative_rates = False
 

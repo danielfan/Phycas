@@ -230,21 +230,21 @@ class Lognormal(LognormalDistBase, PyDistributionBase):
 
         >>> from phycas.ProbDist import *
         >>> d = Lognormal(0, 3)
-        >>> ln_pdf = d.getLnPDF(1.0)
+        >>> ln_pdf = d.getLnPDF(1)
         >>> print '%.5f' % ln_pdf
         -2.01755
 
         The lognormal density f(x) is
 
-				1              / (log(x) - logmean)^2 \
+				1              / -(log(x) - logmean)^2 \
         ------------------ exp| ---------------------- |
-        x*logsd*sqrt(2*pi)     \      2*logsd^2       /
+        x*logsd*sqrt(2*pi)     \      2*logsd^2        /
         
         If logmean = 0.5, logsd = 3.0 and x = 1.0, the density would thus be
 
-            1        / (0 - 0.5)^2 \    1.01399
-        -------- exp| ------------  | = ------- = 0.13484
-        7.51988      \    18.0     /    7.51988
+            1        /  -1  \    1.013985788
+        -------- exp| -----  | = ----------- = 0.134840601
+        7.51988      \ 4*18 /    7.519884824
 
         The natural log (i.e., logarithm base e) density is
 
@@ -254,7 +254,7 @@ class Lognormal(LognormalDistBase, PyDistributionBase):
 
         and thus the log density for the above example is
 
-        (0.5)^2/18.0 - log(1) - log(3.0) - 0.5*log(2*3.1415927)
+        -(0.5)^2/18.0 - log(1) - log(3.0) - 0.5*log(2*3.1415927)
         = -2.00366
         
         """
