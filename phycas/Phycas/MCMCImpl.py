@@ -751,9 +751,9 @@ class MCMCImpl(CommonFunctions):
 						c.chain_manager.refreshLastLnLike()
 						
 				if self.opts.doing_steppingstone_sampling and self.opts.ssobj.scubed and self.ss_beta_index == 0:
-					self.mcmc_manager.recordSample(True, self.cycle_start + cycle)
+					self.mcmc_manager.recordSample(True, self.cycle_start + cycle)	# dofit = True (i.e. educate working prior) if doing SSS and currently exploring the posterior
 				else:
-					self.mcmc_manager.recordSample(False, self.cycle_start + cycle)
+					self.mcmc_manager.recordSample(False, self.cycle_start + cycle)	# dofit = False
 				cold_chain_manager = self.mcmc_manager.getColdChainManager()
 				sampled_lnL = cold_chain_manager.getLastLnLike()
 				self.ss_sampled_likes[self.ss_beta_index].append(sampled_lnL)
@@ -966,7 +966,7 @@ class MCMCImpl(CommonFunctions):
 					self.mainMCMCLoop(explore_prior=True)
 				else:
 					self.mainMCMCLoop()
-		else:
+		else:	# not doing steppingstone sampling
 			self.ss_sampled_likes = []
 			self.ss_sampled_likes.append([])
 			self.ss_beta_index = 0

@@ -66,6 +66,9 @@ class LikeImpl(CommonFunctions):
 		self._loadData(mat)
 		
 		self.starting_tree =  self.getStartingTree()
+		if self.opts.preorder_edgelens is not None:
+			self.starting_tree.replaceEdgeLens(self.opts.preorder_edgelens)
+			print '@@@@@@@@@@ self.starting_tree.makeNewick() =',self.starting_tree.makeNewick()
 		core = LikelihoodCore(self)
 		core.setupCore()
 		core.prepareForLikelihood()

@@ -152,24 +152,20 @@ void DirichletMove::proposeNewState()
     unsigned sz = (unsigned)orig_params.size();
     c_forward.resize(sz);
 	std::transform(orig_params.begin(), orig_params.end(), c_forward.begin(), 1.0 + boost::lambda::_1*psi);
+
+	//std::cerr << "c_forward:" << std::endl;
+	//std::copy(c_forward.begin(), c_forward.end(), std::ostream_iterator<double>(std::cerr, " "));
+	//std::cerr << std::endl;
 	
 	// create Dirichlet distribution and sample from it to get proposed frequencies
     dir_forward = DirichletShPtr(new DirichletDistribution(c_forward));
     dir_forward->SetLot(getLot().get());
     new_params = dir_forward->Sample();
 
-	//temporary!!
-    //     std::cerr << boost::str(boost::format(">>>>>>>>>> boldness = %.1f, psi = %.5f\n") % boldness % psi);
-    //     std::cerr << ">>>>>>>>>> orig_params: ";
-    //     std::copy(orig_params.begin(), orig_params.end(), std::ostream_iterator<double>(std::cerr," "));
-    //     std::cerr << "\n";
-    //     std::cerr << ">>>>>>>>>> c_forward: ";
-    //     std::copy(c_forward.begin(), c_forward.end(), std::ostream_iterator<double>(std::cerr," "));
-    //     std::cerr << "\n";
-    //     std::cerr << ">>>>>>>>>> new_params: ";
-    //     std::copy(new_params.begin(), new_params.end(), std::ostream_iterator<double>(std::cerr," "));
-    //     std::cerr << "\n" << std::endl;
-
+	//std::cerr << "new_params:" << std::endl;
+	//std::copy(new_params.begin(), new_params.end(), std::ostream_iterator<double>(std::cerr, " "));
+	//std::cerr << std::endl;
+	
     // create vector of Dirichlet parameters for selecting old frequencies (needed for Hasting ratio calculation)
     c_reverse.resize(new_params.size());
 	std::transform(new_params.begin(), new_params.end(), c_reverse.begin(), 1.0 + boost::lambda::_1*psi);
@@ -654,20 +650,44 @@ double_vect_t SubsetRelRatesMove::listCurrValuesFromModel()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Obtains the current relative rates from the model, storing them in the data member `orig_params'.
+|	Obtains the current relative rates from the model, storing them in the data member `orig_params'. Because subset
+|	relative rates have mean 1 rather than sum 1, and since the base class DirichletMove expects the parameters to 
+|	sum to 1, each value in `orig_params' is transformed by dividing by `dim' (the length of the `orig_params' vector).
 */
 void SubsetRelRatesMove::getParams()
 	{
 	getCurrValuesFromModel(orig_params);
+
+	//std::cerr << "orig_params before transforming:" << std::endl;
+	//std::copy(orig_params.begin(), orig_params.end(), std::ostream_iterator<double>(std::cerr, " "));
+	//std::cerr << std::endl;
+
+	std::transform(orig_params.begin(), orig_params.end(), orig_params.begin(), boost::lambda::_1/(double)dim);
+
+	//std::cerr << "orig_params after transforming by dividing by 2:" << std::endl;
+	//std::copy(orig_params.begin(), orig_params.end(), std::ostream_iterator<double>(std::cerr, " "));
+	//std::cerr << std::endl;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Replaces the relative rates in the model with those supplied in the vector `v'.
+|	Replaces the relative rates in the model with those supplied in the vector `v'. The values supplied are multiplied
+|	by `dim' (the length of the vector) before sending to the model. See explanation in documentation for 
+|	SubsetRelRatesMove::getParams().
 */
 void SubsetRelRatesMove::setParams(
   const std::vector<double> & v)    /*< is the vector of parameter values to send to the model */
 	{
-    sendCurrValuesToModel(v);
+	double_vect_t vcopy(dim);
+	std::transform(v.begin(), v.end(), vcopy.begin(), boost::lambda::_1*(double)dim);
+
+	//std::cerr << "v:" << std::endl;
+	//std::copy(v.begin(), v.end(), std::ostream_iterator<double>(std::cerr, " "));
+	//std::cerr << std::endl;
+	//std::cerr << "vcopy (equals v*2):" << std::endl;
+	//std::copy(vcopy.begin(), vcopy.end(), std::ostream_iterator<double>(std::cerr, " "));
+	//std::cerr << std::endl;
+
+    sendCurrValuesToModel(vcopy);
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------

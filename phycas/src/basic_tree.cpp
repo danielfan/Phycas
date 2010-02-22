@@ -1237,7 +1237,8 @@ bool Tree::DebugCheckTree(bool allowDegTwo, bool checkDataPointers, int verbosit
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Returns a vector of doubles each element of which is one branch length.
+|	Returns a vector of doubles each element of which is one edge length. Edges are traversed in preorder fashion,
+|	starting with the leftmost child of the root node (root node itself has no edge length).
 */
 std::vector<double> Tree::EdgeLens()
 	{
@@ -1260,6 +1261,58 @@ std::vector<double> Tree::EdgeLens()
 		
 	return v;
 	}
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Perform a preorder traversal of the tree and replace the existing edge lengths with those in the supplied vector
+|	`new_edgelens'.
+*/
+void Tree::replaceEdgeLens(
+  std::vector<double> new_edgelens)	/**< vector of edge lengths to be used to replace existing edge lengths in preorder traversal */
+	{
+	PHYCAS_ASSERT(GetNNodes() == new_edgelens.size() + 1);
+	unsigned i = 0;
+	for (preorder_iterator nd = begin(); nd != end(); ++nd)
+		{
+		if (!nd->IsAnyRoot())
+			{
+			double v = new_edgelens[i++];
+			//std::cerr << boost::str(boost::format("@@@@@@@@@@ %.5f %.5f %s") % nd->GetEdgeLen() % v % nd->GetNodeName()) << std::endl;
+			nd->SetEdgeLen(v);
+			}
+		}
+	}
+#endif
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns a string containing a key showing the bipartitions associated with each edge in the tree. Edges are
+|	traversed in preorder fashion, starting with the leftmost child of the root node (root node itself is skipped).
+*/
+std::string Tree::KeyToEdges()
+	{
+	if (!HasEdgeLens())
+		throw XPhylogeny("no edge lengths were specified for this tree");
+
+	unsigned nnodes = GetNNodes();
+	unsigned ntaxa = GetNObservables();
+	RecalcAllSplits(ntaxa);
+	if (preorderDirty)
+		RefreshPreorder();
+
+	std::string key_to_edges = "edge\tbipartition\n";
+	
+	TreeNode * nd = GetFirstPreorder();
+	unsigned i = 1;
+	for (nd = nd->GetNextPreorder(); nd != NULL; nd = nd->GetNextPreorder(), ++i)
+		{
+		const Split & s = nd->GetSplitConst();
+		key_to_edges += boost::str(boost::format("%d\t%s\n") % i % s.CreatePatternRepresentation());
+		}
+		
+	return key_to_edges;
+	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the sum of all edge lengths in the tree.  Uses preorder pointers to walk through tree, calling 

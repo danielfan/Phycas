@@ -103,6 +103,10 @@ BOOST_PYTHON_MODULE(_PhylogenyExt)
 		.def("buildFromString", &Tree::BuildFromString)
 		.def("edgeLenSum", &Tree::EdgeLenSum)
 		.def("edgeLens", &Tree::EdgeLens)
+#if POLPY_NEWWAY
+		.def("keyToEdges", &Tree::KeyToEdges)
+		.def("replaceEdgeLens", &Tree::replaceEdgeLens)
+#endif
 		.def("setAllEdgeLens", &Tree::SetAllEdgeLens)
 		.def("debugWalkTree", &Tree::DebugWalkTree)
 		.def("debugCheckTree", &Tree::DebugCheckTree)

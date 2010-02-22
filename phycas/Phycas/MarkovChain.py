@@ -97,6 +97,7 @@ class MarkovChain(LikelihoodCore):
 			nbrlens = self.tree.getNNodes() - 1
 			for i in range(nbrlens):
 				paramf.write('\tbrlen%d' % (i+1))
+			self.parent.output('\nKey to the edges (preorder traversal):\n%s' % self.tree.keyToEdges())
 		else:
 			paramf.write('\tTL')
 		
@@ -360,6 +361,7 @@ class MarkovChain(LikelihoodCore):
 			if partition.fix_subset_relrates:
 				self.subset_relrates_move.fixParameter()
 			else:
+				self.subset_relrates_move.freeParameter()
 				# only assign a prior distribution if subset relative rates are not fixed
 				if partition.subset_relrates_prior is None:
 					param_list = tuple([1.0]*nmodels)

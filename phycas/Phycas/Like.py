@@ -33,6 +33,9 @@ class Like(PhycasCommand):
         self.__dict__["pattern_counts"]    = []
         self.__dict__["char_to_pattern"]    = []
         self.__dict__["site_uf"]    = []
+		
+		# The following data members are hidden from user but useful for developers in debugging
+        self.__dict__["preorder_edgelens"]    = None	# can provide a vector of edgelens that will be substituted before likelihood is computed
         
     def getSiteLikes(self):
         '''

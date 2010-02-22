@@ -104,6 +104,10 @@ class Tree
 		
 		// Utilities
 		//
+#if POLPY_NEWWAY
+		std::string				KeyToEdges();
+		void					replaceEdgeLens(std::vector<double> new_edgelens);
+#endif
 		void					Clear();
         void                    stripNodeNames();
         void                    renumberInternalNodes(unsigned start_at);
