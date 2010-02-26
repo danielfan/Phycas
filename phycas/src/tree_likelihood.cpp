@@ -1239,6 +1239,12 @@ void TreeLikelihood::refreshCLA(
 	if (nd.IsTip())
 		return;
 		
+	//if (const_cast<TreeNode *>(avoid)->GetParent() == &nd)
+	//	{
+	//	std::cerr << "@@@@@@@@@@ avoid = " << avoid->GetNodeNumber() << std::endl;
+	//	std::cerr << "@@@@@@@@@@ nd    = " << nd.GetNodeNumber() << std::endl;
+	//	} 
+		
 //printf("ENTERING refreshCLA with nd=%d avoid=%d\n", nd.GetNodeNumber(), (avoid==NULL) ? - 1 : avoid->GetNodeNumber());
     unsigned num_subsets = partition_model->getNumSubsets();
 
@@ -1271,7 +1277,6 @@ void TreeLikelihood::refreshCLA(
 		firstEdgeLen = lChild->GetEdgeLen();
 		secondNeighbor = lChild->GetRightSib();
 		}
-
 
 	if (firstNeighbor->IsTip())
 		{
@@ -2288,7 +2293,16 @@ double TreeLikelihood::calcLnL(
 		// The subroot node will be the new likelihood_root
 		likelihood_root = nd;
 		}
-
+	
+	//if (0)
+	//	{
+	//	likelihood_root = nd->GetLeftChild()->GetRightSib();
+	//	nd = likelihood_root;
+	//	}
+	//nd->SelectNode();
+	//startTreeViewer(t, "in TreeLikelihood::calcLnL");
+	//nd->UnselectNode();
+	
 	PHYCAS_ASSERT(nd);
 	PHYCAS_ASSERT(nd->IsInternal());
 
@@ -2453,6 +2467,8 @@ double TreeLikelihood::calcLnLFromNode(
 		for (; iter != iter_end; ++iter)
 			{
 			// first is the focal node, second is the avoid node
+			//if (iter->second->GetParent() == iter->first)
+			//	startTreeViewer(t, boost::str(boost::format("avoid = %d, nd = %d") % iter->second->GetNodeNumber() % iter->first->GetNodeNumber()));
 			refreshCLA(*iter->first, iter->second);
 			}
 		
@@ -3678,7 +3694,9 @@ void TreeLikelihood::fullRemapping(
 	effective_postorder_edge_iterator iter(subroot, valid_functor);
 	effective_postorder_edge_iterator iter_end;
 	for (; iter != iter_end; ++iter)
+		{
 		refreshCLA(*iter->first, iter->second);
+		}
 
 	// Must now refresh the CLA of the focal node (subroot) because this one was not
 	// recalculated by the effective_postorder_edge_iterator

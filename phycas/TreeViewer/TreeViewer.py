@@ -109,7 +109,7 @@ class TreeCanvas(Tkinter.Canvas):
         self.CLA_radius = 2   # radius of circle plotted for each CLA
         
         # font-related
-        self.font = tkFont.Font(family='Courier', size=8)
+        self.font = tkFont.Font(family='Courier', size=12)
         fm = self.font.metrics()
         self.font_height = fm['ascent'] + fm['descent']
         self.font_Mwidth = self.font.measure('M')

@@ -208,6 +208,9 @@ class MarkovChain(LikelihoodCore):
 			# print '--> adding prior info to partition subset %d (%s model)' % (i, m.getModelName())
 			mspec = modelspecs[i]
 
+			implemented = not (self.parent.opts.fix_topology and mspec.edgelen_hyperprior is not None)
+			self.parent.phycassert(implemented, 'Cannot currently specify an edge length hyperprior and fix the topology at the same time')
+			
 			# Copy priors related to edge lengths
 			# Note: while these priors are copied for every subset, only those for the
 			# first subset are actually used (at this writing, 31 Jan 2010) because both
@@ -260,6 +263,12 @@ class MarkovChain(LikelihoodCore):
 			if mspec.pinvar_model:
 				m.setPinvarPrior(mspec.pinvar_prior.cloneAndSetLot(self.r))
 			
+			#NEWWAY
+			if self.parent.opts.fix_topology:
+				m.setEdgeSpecificParams(True)
+			else:
+				m.setEdgeSpecificParams(False)
+				
 			# Add all necessary updaters to the MCMCManager
 			if nmodels == 1:
 				subset_pos = -1
@@ -375,22 +384,23 @@ class MarkovChain(LikelihoodCore):
 					self.partition_model.setSubsetRelRatePrior(partition.subset_relrates_prior)
 			self.chain_manager.addMove(self.subset_relrates_move)
 		
-		if self.parent.opts.fix_topology:
-			# Create an EdgeMove object to handle Metropolis-Hastings
-			# updates to the edge lengths only (does not change the topology)
-			self.edge_move = Likelihood.EdgeMove()
-			self.edge_move.setName("edge_move")
-			self.edge_move.setWeight(self.parent.opts.edge_move_weight)
-			self.edge_move.setPosteriorTuningParam(self.parent.opts.edge_move_lambda)
-			self.edge_move.setPriorTuningParam(self.parent.opts.edge_move_lambda0)
-			self.edge_move.setTree(self.tree)
-			self.edge_move.setModel(model0)
-			self.edge_move.setTreeLikelihood(self.likelihood)
-			self.edge_move.setLot(self.r)
-			self.edge_move.setLambda(self.parent.opts.edge_move_lambda)
-			if model0.edgeLengthsFixed():
-				self.edge_move.fixParameter()
-			self.chain_manager.addMove(self.edge_move)
+		#OLDWAY
+		#if self.parent.opts.fix_topology:
+		#	# Create an EdgeMove object to handle Metropolis-Hastings
+		#	# updates to the edge lengths only (does not change the topology)
+		#	self.edge_move = Likelihood.EdgeMove()
+		#	self.edge_move.setName("edge_move")
+		#	self.edge_move.setWeight(self.parent.opts.edge_move_weight)
+		#	self.edge_move.setPosteriorTuningParam(self.parent.opts.edge_move_lambda)
+		#	self.edge_move.setPriorTuningParam(self.parent.opts.edge_move_lambda0)
+		#	self.edge_move.setTree(self.tree)
+		#	self.edge_move.setModel(model0)
+		#	self.edge_move.setTreeLikelihood(self.likelihood)
+		#	self.edge_move.setLot(self.r)
+		#	self.edge_move.setLambda(self.parent.opts.edge_move_lambda)
+		#	if model0.edgeLengthsFixed():
+		#		self.edge_move.fixParameter()
+		#	self.chain_manager.addMove(self.edge_move)
 
 		if self.parent.opts.use_unimap:
 			# Create a UnimapFastNNIMove (replaces LargetSimonMove for unimap analyses)

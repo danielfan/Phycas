@@ -857,6 +857,8 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 					double rate_cat_prob = rateCatProbArray[r];
                     siteLike += siteRateLike*rate_cat_prob;
                     
+					//std::cerr << boost::str(boost::format("i = %d, r = %d, siteRateLike = %.8f") % i % r % siteRateLike) << std::endl;
+
                     // Increment starting positions to next pattern for this relative rate
                     focalNdCLAPtr[r] += ns;
                     }
@@ -914,6 +916,8 @@ double TreeLikelihood::harvestLnLFromValidEdge(
                 double site_lnL = std::log(siteLike);
                 site_lnL -= log_correction_factor;
     
+				//std::cerr << boost::str(boost::format("--> i = %d, siteLike = %.8f, site_lnL = %.8f") % i % siteLike % site_lnL) << std::endl;
+
                 if (store_site_likes)
                     {
                     site_likelihood.push_back(site_lnL);
@@ -937,6 +941,16 @@ double TreeLikelihood::harvestLnLFromValidEdge(
     
     		// Create vectors whose elements point to the starting state CLA for each rate
     		// Each element is updated after each pattern to point ns ahead to the next pattern.
+			// 
+			// +-----------------------------------------------------------------------------------------------+-------------------------------+
+			// |                                            subset 1                                           |           subset 2            |
+			// +-----------------------------------------------------------------------------------------------+-------------------------------+
+			// |                      r1                       |                      r2                       |               r1              |
+			// +-----------------------------------------------+-----------------------------------------------+-------------------------------+
+			// |      p1       |      p2       |       p3      |      p1       |      p2       |      p3       |      p1       |       p2      |
+			// +-----------------------------------------------+-----------------------------------------------+-------------------------------+
+			// | A | C | G | T | A | C | G | T | A | C | G | T | A | C | G | T | A | C | G | T | A | C | G | T | A | C | G | T | A | C | G | T |
+			// +-----------------------------------------------+-----------------------------------------------+-------------------------------+
             std::vector<const double *> focalNdCLAPtr(nr);
             std::vector<const double *> focalNeighborCLAPtr(nr);
     
@@ -951,13 +965,16 @@ double TreeLikelihood::harvestLnLFromValidEdge(
 			// of piP matrix.
             for (unsigned r = 0; r < nr; ++r)
                 {
-                focalNdCLAPtr[r]		= focalNodeCLA		+ singleRateCLALength*r	+ ns*pattern_start;
-                focalNeighborCLAPtr[r]	= focalNeighborCLA	+ singleRateCLALength*r	+ ns*pattern_start;
+				//std::cerr << "childPMatrices[" << r << "]" << std::endl;
+                focalNdCLAPtr[r]		= focalNodeCLA		+ singleRateCLALength*r	+ cum_cla_pos;	// bug fixed in svn revision 1209: cum_cla_pos was ns*pattern_start, which
+                focalNeighborCLAPtr[r]	= focalNeighborCLA	+ singleRateCLALength*r	+ cum_cla_pos;	// doesn't work because ns might differ across subsets
                 for (unsigned neighbor_state = 0; neighbor_state < ns; ++neighbor_state)
                     {
+					//std::cerr << boost::str(boost::format("> stateFreq[%d] = %.8f") % neighbor_state % stateFreq[neighbor_state]) << std::endl;
                     for (unsigned focal_state = 0; focal_state < ns; ++focal_state)
                         {
                         piP.ptr[r][neighbor_state][focal_state] = stateFreq[neighbor_state]*childPMatrices[r][neighbor_state][focal_state];
+						//std::cerr << boost::str(boost::format("  focal_state = %d, neighbor_state = %.8f, childPMatrices[r][neighbor_state][focal_state] = %.8f") % focal_state % neighbor_state % childPMatrices[r][neighbor_state][focal_state]) << std::endl;
                         }			
                     }			
                 }
@@ -985,7 +1002,10 @@ double TreeLikelihood::harvestLnLFromValidEdge(
                         	double Ln 		= neighborCLAForRate[neighbor_state];
                         	double piPnf 	= piP_focal_state[neighbor_state];	//@POL this assumes time-reversible model (using piP backwards)
                             neigborLike += piPnf*Ln;	
+							//std::cerr << boost::str(boost::format("  focal_state = %d, neighbor_state = %.8f, Lf = %.8f, Ln = %.8f, piPnf = %.8f, neigborLike(cum) = %.8f") % focal_state % neighbor_state % Lf % Ln % piPnf % neigborLike) << std::endl;
                             }
+						
+						//std::cerr << boost::str(boost::format("i = %d, r = %d, focal_state = %d, neighborLike = %.8f, Lf = %.8f, siteRateLike = %.8f") % i % r % focal_state % neigborLike % Lf % (Lf*neigborLike)) << std::endl;
                             
                         siteRateLike += Lf*neigborLike;
                         } 
@@ -1007,7 +1027,7 @@ double TreeLikelihood::harvestLnLFromValidEdge(
                         {
                         // This pattern is at least potentially constant, so we must compute pinvar_like, 
                         // the likelihood conditional on the site having rate = 0
-                        for (unsigned i = 0; i < num_pinvar_states; ++i)
+                        for (unsigned j = 0; j < num_pinvar_states; ++j)
                             pinvar_like += stateFreq[*pinvar_states++];
                         
                         if (log_correction_factor != 0.0)
@@ -1050,6 +1070,8 @@ double TreeLikelihood::harvestLnLFromValidEdge(
                 double site_lnL = std::log(siteLike);
                 site_lnL -= log_correction_factor;
                 
+				//std::cerr << boost::str(boost::format("--> i = %d, siteLike = %.8f, site_lnL = %.8f") % i % siteLike % site_lnL) << std::endl;
+						
                 if (store_site_likes)
                     {
                     site_likelihood.push_back(site_lnL);

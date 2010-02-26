@@ -20,6 +20,7 @@
 #include <cmath>
 #include <iostream>
 #include "phycas/src/likelihood_models.hpp"
+#include "phycas/src/basic_tree.hpp"
 #if defined(PYTHON_ONLY) && defined(USING_NUMARRAY)
 #	include <boost/python/numeric.hpp>
 #	include "phycas/src/thirdparty/num_util/num_util.h"
@@ -37,6 +38,9 @@ Model::Model(
 	subset_index(-1),
 	internal_edgelen_hyperparam(0.1),
 	external_edgelen_hyperparam(0.1),
+#if POLPY_NEWWAY
+   	separate_edgelen_params(false),
+#endif
    	separate_int_ext_edgelen_priors(false),
 	state_freq_fixed(false),
 	edge_lengths_fixed(false),	
@@ -112,6 +116,17 @@ bool Model::isCodonModel() const
 	{
 	return is_codon_model;
 	}
+
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets value of data member `separate_edgelen_params' to supplied value `param_for_each_edgelen'.
+*/
+void Model::setEdgeSpecificParams(
+  bool param_for_each_edgelen)
+    {
+    separate_edgelen_params = param_for_each_edgelen;
+    }
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets value of data member `separate_int_ext_edgelen_priors' to supplied value `separate'.
@@ -1099,6 +1114,32 @@ void Model::createParameters(
 	if (subset_index <= 0)
 		{
 		// Add the edge length parameter(s)
+#if POLPY_NEWWAY
+		if (separate_edgelen_params)
+			{
+			// Add an EdgeLengthParam for every node that has an associated edge length
+			for (preorder_iterator nd = t->begin(); nd != t->end(); ++nd)
+				{
+				if (nd->IsAnyRoot())
+					continue;
+				EdgeLenParam * p = new EdgeLenParam();
+				p->setTreeNode(*nd);
+				MCMCUpdaterShPtr edge_len_param = MCMCUpdaterShPtr(p);
+				edge_len_param->setName(boost::str(boost::format("edgelen_%d") % nd->GetNodeNumber())); 
+				edge_len_param->setStartingValue(nd->GetEdgeLen());
+				edge_len_param->setTree(t);
+				if (separate_int_ext_edgelen_priors && nd->IsInternal())
+					edge_len_param->setPrior(internalEdgeLenPrior);
+				else 
+					edge_len_param->setPrior(externalEdgeLenPrior);
+				if (edge_lengths_fixed)
+					edge_len_param->fixParameter();	
+				edgelens_vect_ref.push_back(edge_len_param);
+				}
+			}
+		else 	// add one or two EdgeLenMasterParams who have the job of computing the prior
+#endif
+
 		if (separate_int_ext_edgelen_priors)
 			{
 			// Add two edge length parameters to manage the priors for all edge lengths in the tree;

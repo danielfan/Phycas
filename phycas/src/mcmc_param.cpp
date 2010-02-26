@@ -29,51 +29,98 @@
 namespace phycas
 {
 
+#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
-|	This override of the base class virtual function uses dynamic_cast to set the `hky' data member from the supplied
-|	model shared pointer. Having an HKY pointer allows this parameter to call HKY-specific member functions that are not
-|	present in the base class Model (such as setKappa).
+|	Constructor calls the base class (MCMCUpdater) constructor and initializes its HKY pointer to NULL. Also sets the
+|	`curr_value' data member to 4.0 and refreshes `curr_ln_prior' accordingly.
 */
-void KappaParam::setModel(ModelShPtr m)
+EdgeLenParam::EdgeLenParam()
+  : MCMCUpdater(), my_node(NULL)
 	{
-	MCMCUpdater::setModel(m);
-	Model * p = m.get();
-	if (m->isCodonModel())
-    	codon = dynamic_cast<Codon *>(p);	// forces inclusion of "phycas/src/likelihood_models.hpp"
-    else
-    	hky = dynamic_cast<HKY *>(p);	// forces inclusion of "phycas/src/likelihood_models.hpp"
-
-	//POL tried unsuccessfully to get this to compile as an inlined function, but VC gave me this 
-	// error (which makes sense):
-	//
-	// ...mcmc_param.inl(43) : error C2680: 'phycas::HKY *' : 
-	//  invalid target type for dynamic_cast
-	//  'HKY' : class must be defined before using in a dynamic_cast
-	//
-	// Decided to add this comment because otherwise I will forget this and be tempted to move the 
-	// function back to mcmc_param.inl
+	curr_value = 0.01;
+	has_slice_sampler = true;
+	is_move = false;
+	is_master_param = false;
+	is_hyper_param = false;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Overrides base class version to set the kappa value in either `hky' or `codon' (whichever is relevant) to `v'.
+|	Destructor.
 */
-void KappaParam::sendCurrValueToModel(double v)
+EdgeLenParam::~EdgeLenParam() 
 	{
-	if (hky != NULL)
-		hky->setKappa(v);
-	else
-		codon->setKappa(v);
+	//std::cerr << "\n>>>>> EdgeLenParam dying..." << std::endl;
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Calls the sample() member function of the `slice_sampler' data member.
+*/
+bool EdgeLenParam::update()
+	{
+	if (is_fixed)
+		return false;
+		
+	if (my_node->IsInternal())
+		likelihood->useAsLikelihoodRoot(my_node);
+	else 
+		likelihood->useAsLikelihoodRoot(my_node->GetParent());
+	likelihood->invalidateAwayFromNode(*my_node);
+	
+	slice_sampler->Sample();
+	
+    if (save_debug_info)
+        {
+        debug_info = str(boost::format("EdgeLenParam %f") % (slice_sampler->GetLastSampledXValue()));
+        }
+	return true;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Overrides base class version to return the kappa value in either `hky' or `codon' (whichever is relevant).
+|	Override of base class version adds the current edge length to the data already stored in `fitting_sample'.
 */
-double KappaParam::getCurrValueFromModel() const
+void EdgeLenParam::educateWorkingPrior()
 	{
-	if (hky != NULL)
-        return hky->getKappa();
-    else
-        return codon->getKappa();
+	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
+	double edgelen = getCurrValueFromModel();
+	fitting_sample.push_back(edgelen);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Use samples in `fitting_sample' to parameterize `working_prior'. This function is called during s-cubed style
+|	steppingstone sampling after the initial phase of sampling from the posterior so that the working prior can be
+|	used for the remaining phases. Assumes `fitting_sample' has more than 1 element. Assigns a GammaDistribution object
+|	to `working_prior'.
+*/
+void EdgeLenParam::finalizeWorkingPrior()
+	{
+	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
+	fitGammaWorkingPrior();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Overrides base class version to set the edge length to `v'.
+*/
+void EdgeLenParam::sendCurrValueToModel(double v)
+	{
+	PHYCAS_ASSERT(my_node != NULL);
+	my_node->SetEdgeLen(v);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Overrides base class version to return the edge length currently stored in the tree.
+*/
+double EdgeLenParam::getCurrValueFromModel() const
+	{
+	PHYCAS_ASSERT(my_node != NULL);
+	return my_node->GetEdgeLen();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets private data member `my_node' to point to the supplied TreeNode `nd'.
+*/
+void EdgeLenParam::setTreeNode(TreeNode & nd)
+	{
+	my_node = &nd;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -82,20 +129,37 @@ double KappaParam::getCurrValueFromModel() const
 |	out of bounds (i.e. <= 0.0), the return value is -DBL_MAX (closest we can come to a log posterior equal to negative
 |	infinity).
 */
-double KappaParam::operator()(
-  double k)	/**< is a new value for the parameter kappa */
+double EdgeLenParam::operator()(
+  double v)	/**< is a new value for the edge length parameter */
 	{
+	PHYCAS_ASSERT(my_node != NULL);
 	curr_ln_like = ln_zero;
 	curr_ln_prior = 0.0;
 
-	if (k > 0.0)
+	if (v > 0.0)
 		{
-    	
-		sendCurrValueToModel(k);
+		sendCurrValueToModel(v);
 		recalcPrior();
 
-		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
+		// specifying NULL as likelihood root invalidates all CLAs
+		// but here we want to specify my_node in order to minimize recalculation of CLAs
+		//likelihood->storeAllCLAs(tree);
+		//if (my_node->IsInternal())
+		//	likelihood->useAsLikelihoodRoot(my_node);
+		//else 
+		//	likelihood->useAsLikelihoodRoot(my_node->GetParent());
+		//likelihood->invalidateAwayFromNode(*my_node);
+		//likelihood->invalidateBothEnds(my_node);
+		//likelihood->useAsLikelihoodRoot(NULL);
+		
+		//std::cerr << "@@@@@@@@@@ Updating edge length for " << my_node->GetNodeNumber() << std::endl;
+			
+		//likelihood->startTreeViewer(tree, boost::str(boost::format("Before calcLnL: new edge length = %.6f") % v));
+		
 		curr_ln_like = (heating_power > 0.0 ? likelihood->calcLnL(tree) : 0.0);
+		
+		//likelihood->startTreeViewer(tree, boost::str(boost::format("After calcLnL: curr_ln_like = %.6f") % curr_ln_like));
+		
 		ChainManagerShPtr p = chain_mgr.lock();
 		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
@@ -103,7 +167,7 @@ double KappaParam::operator()(
         if (is_standard_heating)
 			if (use_working_prior)
 				{
-				double curr_ln_working_prior = working_prior->GetLnPDF(k);
+				double curr_ln_working_prior = working_prior->GetLnPDF(v);
 				return heating_power*(curr_ln_like + curr_ln_prior) + (1.0 - heating_power)*curr_ln_working_prior;
 				}
 			else 
@@ -114,6 +178,7 @@ double KappaParam::operator()(
     else
         return ln_zero;
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	This override of the base class virtual function uses dynamic_cast to set the `gtr' data member from the supplied
@@ -250,64 +315,6 @@ double OmegaParam::operator()(
 			if (use_working_prior)
 				{
 				double curr_ln_working_prior = working_prior->GetLnPDF(w);
-				return heating_power*(curr_ln_like + curr_ln_prior) + (1.0 - heating_power)*curr_ln_working_prior;
-				}
-			else 
-				return heating_power*(curr_ln_like + curr_ln_prior);
-        else
-            return heating_power*curr_ln_like + curr_ln_prior;
-		}
-    else
-        return ln_zero;
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Overrides base class version to set the value of `gamma_shape' in `model' to `v'.
-*/
-void DiscreteGammaShapeParam::sendCurrValueToModel(double v)
-	{
-	if (shape_inverted)
-		model->setShape(1.0/v);	// change the gamma shape parameter in the model
-	else
-		model->setShape(v);	// change the gamma shape parameter in the model
-	}
-	
-/*----------------------------------------------------------------------------------------------------------------------
-|	Overrides base class version to return the value of `gamma_shape' in `model'.
-*/
-double DiscreteGammaShapeParam::getCurrValueFromModel() const
-	{
-	double a = model->getShape();
-    return (shape_inverted ? (1.0/a) : a);
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	DiscreteGammaShapeParam is a functor whose operator() returns a value proportional to the full-conditional posterior
-|	probability density for a particular value of the gamma shape parameter. If the supplied gamma shape value `a' is
-|	out of bounds (i.e. <= 0.0), the return value is -DBL_MAX (closest we can come to a log posterior equal to negative
-|	infinity).
-*/
-double DiscreteGammaShapeParam::operator()(
-  double a)	/**< is a new value for the gamma shape parameter */
-	{
-	curr_ln_like = ln_zero;
-	curr_ln_prior = 0.0;
-
-	if (a > 0.0)
-		{
-		sendCurrValueToModel(a);
-		recalcPrior(); // base class function that recomputes curr_ln_prior for the value curr_value
-		likelihood->recalcRelativeRates();	// must do this whenever model's shape parameter changes
-		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
-		curr_ln_like = (heating_power > 0.0 ? likelihood->calcLnL(tree) : 0.0);
-		ChainManagerShPtr p = chain_mgr.lock();
-		PHYCAS_ASSERT(p);
-		p->setLastLnLike(curr_ln_like);
-
-        if (is_standard_heating)
-			if (use_working_prior)
-				{
-				double curr_ln_working_prior = working_prior->GetLnPDF(a);
 				return heating_power*(curr_ln_like + curr_ln_prior) + (1.0 - heating_power)*curr_ln_working_prior;
 				}
 			else 

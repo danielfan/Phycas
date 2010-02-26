@@ -17,7 +17,10 @@
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#include "mcmc_param.hpp"
+#include "phycas/src/mcmc_param.hpp"
+#include "phycas/src/likelihood_models.hpp"
+#include "phycas/src/tree_likelihood.hpp"
+#include "phycas/src/mcmc_chain_manager.hpp"
 
 namespace phycas
 {
@@ -63,6 +66,64 @@ bool DiscreteGammaShapeParam::update()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Overrides base class version to set the value of `gamma_shape' in `model' to `v'.
+*/
+void DiscreteGammaShapeParam::sendCurrValueToModel(double v)
+	{
+	if (shape_inverted)
+		model->setShape(1.0/v);	// change the gamma shape parameter in the model
+	else
+		model->setShape(v);	// change the gamma shape parameter in the model
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Overrides base class version to return the value of `gamma_shape' in `model'.
+*/
+double DiscreteGammaShapeParam::getCurrValueFromModel() const
+	{
+	double a = model->getShape();
+    return (shape_inverted ? (1.0/a) : a);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	DiscreteGammaShapeParam is a functor whose operator() returns a value proportional to the full-conditional posterior
+|	probability density for a particular value of the gamma shape parameter. If the supplied gamma shape value `a' is
+|	out of bounds (i.e. <= 0.0), the return value is -DBL_MAX (closest we can come to a log posterior equal to negative
+|	infinity).
+*/
+double DiscreteGammaShapeParam::operator()(
+  double a)	/**< is a new value for the gamma shape parameter */
+	{
+	curr_ln_like = ln_zero;
+	curr_ln_prior = 0.0;
+
+	if (a > 0.0)
+		{
+		sendCurrValueToModel(a);
+		recalcPrior(); // base class function that recomputes curr_ln_prior for the value curr_value
+		likelihood->recalcRelativeRates();	// must do this whenever model's shape parameter changes
+		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
+		curr_ln_like = (heating_power > 0.0 ? likelihood->calcLnL(tree) : 0.0);
+		ChainManagerShPtr p = chain_mgr.lock();
+		PHYCAS_ASSERT(p);
+		p->setLastLnLike(curr_ln_like);
+
+        if (is_standard_heating)
+			if (use_working_prior)
+				{
+				double curr_ln_working_prior = working_prior->GetLnPDF(a);
+				return heating_power*(curr_ln_like + curr_ln_prior) + (1.0 - heating_power)*curr_ln_working_prior;
+				}
+			else 
+				return heating_power*(curr_ln_like + curr_ln_prior);
+        else
+            return heating_power*curr_ln_like + curr_ln_prior;
+		}
+    else
+        return ln_zero;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Override of base class version adds the current gamma shape parameter value to the data already stored in 
 |	`fitting_sample'.
 */
@@ -82,7 +143,7 @@ void DiscreteGammaShapeParam::educateWorkingPrior()
 void DiscreteGammaShapeParam::finalizeWorkingPrior()
 	{
 	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
-	//fitGammaWorkingPrior();
-	fitLognormalWorkingPrior();
+	fitGammaWorkingPrior();
+	//fitLognormalWorkingPrior();
 	}
 }

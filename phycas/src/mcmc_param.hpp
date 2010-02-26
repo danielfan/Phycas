@@ -270,11 +270,35 @@ struct EdgeWorkingPrior
 	};
 #endif
 	
+#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
-|	Represents all edge lengths in the associated Tree; i.e., and edge length "master" parameter. An edge length master 
-|	parameter does not update any particular edge length (that is left up to one of the defined moves, such as a 
-|	`LargetSimonMove); instead, its	job is to compute the joint prior over all edge lengths. The update() member 
-|	function and operator() of an EdgeLenMasterParam are not overridden because they do nothing.
+|	Encapsulates an edge length parameter. It is only used in the case of a fixed topology, otherwise edge lengths are
+|	updated using a `LargetSimonMove' or a `BushMove' updater.
+*/
+class EdgeLenParam : public MCMCUpdater
+	{
+	public:
+						EdgeLenParam();
+						virtual ~EdgeLenParam(); 
+
+		void			educateWorkingPrior();
+		void			finalizeWorkingPrior();
+        virtual void	sendCurrValueToModel(double v);
+        virtual double  getCurrValueFromModel() const;
+		void			setTreeNode(TreeNode & nd);
+		virtual bool	update();				// override virtual from MCMCUpdater base class
+		virtual double	operator()(double k);	// override pure virtual from AdHocDensity (base class of MCMCUpdater)
+		
+	private:
+		TreeNode *		my_node;
+	};
+#endif
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Represents all edge lengths in the associated Tree. An edge length master parameter does not update any particular 
+|	edge length (that is left up to one of the defined moves, such as a `LargetSimonMove'); instead, its	job is to 
+|	compute the joint prior over all edge lengths. The update() member function and operator() of an EdgeLenMasterParam
+|	are not overridden because they do nothing.
 */
 class EdgeLenMasterParam : public MCMCUpdater
 	{

@@ -17,8 +17,10 @@
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#include "mcmc_param.hpp"
-#include "codon_model.hpp"
+#include "phycas/src/mcmc_param.hpp"
+#include "phycas/src/codon_model.hpp"
+#include "phycas/src/tree_likelihood.hpp"
+#include "phycas/src/mcmc_chain_manager.hpp"
 
 namespace phycas
 {
@@ -85,4 +87,91 @@ void KappaParam::finalizeWorkingPrior()
 	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
 	fitGammaWorkingPrior();
 	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Overrides base class version to set the kappa value in either `hky' or `codon' (whichever is relevant) to `v'.
+*/
+void KappaParam::sendCurrValueToModel(double v)
+	{
+	if (hky != NULL)
+		hky->setKappa(v);
+	else
+		codon->setKappa(v);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Overrides base class version to return the kappa value in either `hky' or `codon' (whichever is relevant).
+*/
+double KappaParam::getCurrValueFromModel() const
+	{
+	if (hky != NULL)
+        return hky->getKappa();
+    else
+        return codon->getKappa();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	KappaParam is a functor whose operator() returns a value proportional to the full-conditional posterior probability 
+|	density for a particular value of kappa, the transition/transversion rate ratio. If the supplied kappa value `k' is
+|	out of bounds (i.e. <= 0.0), the return value is -DBL_MAX (closest we can come to a log posterior equal to negative
+|	infinity).
+*/
+double KappaParam::operator()(
+  double k)	/**< is a new value for the parameter kappa */
+	{
+	curr_ln_like = ln_zero;
+	curr_ln_prior = 0.0;
+
+	if (k > 0.0)
+		{
+    	
+		sendCurrValueToModel(k);
+		recalcPrior();
+
+		likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
+		curr_ln_like = (heating_power > 0.0 ? likelihood->calcLnL(tree) : 0.0);
+		ChainManagerShPtr p = chain_mgr.lock();
+		PHYCAS_ASSERT(p);
+		p->setLastLnLike(curr_ln_like);
+
+        if (is_standard_heating)
+			if (use_working_prior)
+				{
+				double curr_ln_working_prior = working_prior->GetLnPDF(k);
+				return heating_power*(curr_ln_like + curr_ln_prior) + (1.0 - heating_power)*curr_ln_working_prior;
+				}
+			else 
+				return heating_power*(curr_ln_like + curr_ln_prior);
+        else
+            return heating_power*curr_ln_like + curr_ln_prior;
+		}
+    else
+        return ln_zero;
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	This override of the base class virtual function uses dynamic_cast to set the `hky' data member from the supplied
+|	model shared pointer. Having an HKY pointer allows this parameter to call HKY-specific member functions that are not
+|	present in the base class Model (such as setKappa).
+*/
+void KappaParam::setModel(ModelShPtr m)
+	{
+	MCMCUpdater::setModel(m);
+	Model * p = m.get();
+	if (m->isCodonModel())
+    	codon = dynamic_cast<Codon *>(p);	// forces inclusion of "phycas/src/likelihood_models.hpp"
+    else
+    	hky = dynamic_cast<HKY *>(p);	// forces inclusion of "phycas/src/likelihood_models.hpp"
+
+	//POL tried unsuccessfully to get this to compile as an inlined function, but VC gave me this 
+	// error (which makes sense):
+	//
+	// ...mcmc_param.inl(43) : error C2680: 'phycas::HKY *' : 
+	//  invalid target type for dynamic_cast
+	//  'HKY' : class must be defined before using in a dynamic_cast
+	//
+	// Decided to add this comment because otherwise I will forget this and be tempted to move the 
+	// function back to mcmc_param.inl
+	}
+
 }

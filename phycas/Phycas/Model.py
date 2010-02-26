@@ -115,7 +115,7 @@ class Model(PhycasCommand):
 
 		memo[self] = new_model
 		return new_model
-
+		
 	def __call__(self, **kwargs):
 		self.set(**kwargs)
 		return self.saveas()
