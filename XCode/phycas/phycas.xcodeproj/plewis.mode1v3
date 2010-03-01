@@ -293,7 +293,7 @@
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 26}, {292, 1061}}</string>
+							<string>{{0, 47}, {292, 1061}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -312,7 +312,7 @@
 							<real>292</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>111 55 1809 1120 0 0 1920 1178 </string>
+						<string>88 58 1809 1120 0 0 1920 1178 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -330,7 +330,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>MarkovChain.py</string>
+								<string>unimap_nni_move.cpp</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -338,14 +338,13 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>MarkovChain.py</string>
+										<string>unimap_nni_move.cpp</string>
 										<key>_historyCapacity</key>
 										<integer>20</integer>
 										<key>bookmark</key>
-										<string>D17DA6801137851100962860</string>
+										<string>D1FAF5E7113949DC00F834E6</string>
 										<key>history</key>
 										<array>
-											<string>D1D5D67D11355F270065B187</string>
 											<string>D1D5D6AF1135688C0065B187</string>
 											<string>D102FBC911367A52007AE8DD</string>
 											<string>D102FBCA11367A52007AE8DD</string>
@@ -364,7 +363,8 @@
 											<string>D17DA66A113783A100962860</string>
 											<string>D17DA66C113783A100962860</string>
 											<string>D17DA67F1137851100962860</string>
-											<string>D17DA67B1137850F00962860</string>
+											<string>D1FAF5E5113949DC00F834E6</string>
+											<string>D1FAF5E6113949DC00F834E6</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -376,14 +376,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1495, 965}}</string>
+								<string>{{0, 0}, {1495, 961}}</string>
 								<key>RubberWindowFrame</key>
-								<string>111 55 1809 1120 0 0 1920 1178 </string>
+								<string>88 58 1809 1120 0 0 1920 1178 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>965pt</string>
+							<string>961pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -396,14 +396,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 970}, {1495, 109}}</string>
+								<string>{{0, 966}, {1495, 113}}</string>
 								<key>RubberWindowFrame</key>
-								<string>111 55 1809 1120 0 0 1920 1178 </string>
+								<string>88 58 1809 1120 0 0 1920 1178 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>109pt</string>
+							<string>113pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -422,9 +422,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>D17DA6811137851100962860</string>
+				<string>D1FAF5E8113949DC00F834E6</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>D17DA6821137851100962860</string>
+				<string>D1FAF5E9113949DC00F834E6</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -567,7 +567,7 @@
 		<string>/Users/plewis/Documents/Projects/pdev/trunk/XCode/phycas/phycas.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>111 55 1809 1120 0 0 1920 1178 </string>
+	<string>88 58 1809 1120 0 0 1920 1178 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>
@@ -644,7 +644,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>D13CAB7410D1D30500813B89</string>
-				<string>D17DA6791137850F00962860</string>
+				<string>D1FAF5D9113949DA00F834E6</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -799,14 +799,12 @@
 							<key>Dock</key>
 							<array>
 								<dict>
-									<key>BecomeActive</key>
-									<true/>
 									<key>ContentConfiguration</key>
 									<dict>
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>MarkovChain.py</string>
+										<string>tree_likelihood.cpp</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -827,6 +825,8 @@
 							<string>671pt</string>
 						</dict>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -862,8 +862,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>D17DA67D1137850F00962860</string>
-				<string>D17DA67E1137850F00962860</string>
+				<string>D1FAF5E3113949DA00F834E6</string>
+				<string>D1FAF5E4113949DA00F834E6</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>
