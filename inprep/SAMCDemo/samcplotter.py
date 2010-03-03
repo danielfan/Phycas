@@ -108,31 +108,51 @@ class Plotter(Canvas):
             Canvas.create_text(self, self.analtype_pos[0], self.analtype_pos[1] + 1.5*self.analtype_font_height, text=str(anal_modifier), justify=CENTER, font=self.analtypemodifier_font, fill=self.axisfont_color)
             dist_name = self.demo.d.getName()
             Canvas.create_text(self, self.distname_pos[0], self.distname_pos[1], text=str(dist_name), anchor=CENTER, font=self.distname_font, fill=self.axisfont_color)
-        if self.demo.using_samc:
+        if self.demo.using_samc and self.demo.m is not None:
             prev_y_lo = self.bottom
             m = self.demo.m
             sz = self.demo.sample_size
             if sz == 0:
                 sz = 1
+            # For distributions labeled as top_heavy, the level lines are scrunched together closely at the bottom
+            # and leave no room to show thetas and counts. For these distributions, put all theta and count reports
+            # in the top part of the plot area
+            # m = 4
+            # i = 3  top - 1*font_height = top - (m - 3)*font_height
+            # i = 2  top - 2*font_height = top - (m - 2)*font_height
+            # i = 1  top - 3*font_height = top - (m - 1)*font_height
+            # i = 0  top - 4*font_height = top - (m - 0)*font_height 
             for i in range(m - 1):
                 q = self.demo.theta[i]
                 p = self.demo.est_pi[i]
                 f = self.demo.levels[i]
-                y_lo = prev_y_lo
                 y_hi = self.bottom - self.yaxislen*((f - self.ylow)/(self.yhigh - self.ylow))
-                y_avg = (y_lo + y_hi)/2.0
+                if self.demo.d.top_heavy:
+                    y_avg = self.top + self.font_height + 2.0*self.font_height*float(m - i)
+                else:
+                    y_lo = prev_y_lo
+                    y_avg = (y_lo + y_hi)/2.0
                 Canvas.create_line(self, self.left, y_hi, self.right, y_hi, width=LINE_WIDTH, fill='white')
-                Canvas.create_text(self, self.left + self.offset, y_avg, text=str('theta = %.3f' % q), anchor=W, font=self.font, fill=self.axisfont_color)
-                Canvas.create_text(self, self.right - 2*self.offset, y_avg, text=str('count = %d' % p), anchor=E, font=self.font, fill=self.axisfont_color)
+                if self.demo.d.levels_on_right:
+                    Canvas.create_text(self, self.right - 2*self.offset, y_avg, text=str('level %d, theta = %.3f, count = %d' % (i,q,p)), anchor=E, font=self.font, fill=self.axisfont_color)
+                else:
+                    Canvas.create_text(self, self.left + self.offset, y_avg, text=str('level %d, theta = %.3f' % (i,q)), anchor=W, font=self.font, fill=self.axisfont_color)
+                    Canvas.create_text(self, self.right - 2*self.offset, y_avg, text=str('count = %d' % p), anchor=E, font=self.font, fill=self.axisfont_color)
                 prev_y_lo = y_hi
             i = m - 1
             q = self.demo.theta[i]
             p = self.demo.est_pi[i]
-            y_lo = prev_y_lo
             y_hi = self.top
-            y_avg = (y_lo + y_hi)/2.0
-            Canvas.create_text(self, self.left + self.offset, y_avg, text=str('theta = %.3f' % q), anchor=W, font=self.font, fill=self.axisfont_color)
-            Canvas.create_text(self, self.right - 2*self.offset, y_avg, text=str('count = %d' % p), anchor=E, font=self.font, fill=self.axisfont_color)
+            if self.demo.d.top_heavy:
+                y_avg = self.top + self.font_height + 2.0*self.font_height
+            else:
+                y_lo = prev_y_lo
+                y_avg = (y_lo + y_hi)/2.0
+            if self.demo.d.levels_on_right:
+                Canvas.create_text(self, self.right - 2*self.offset, y_avg, text=str('level %d, theta = %.3f, count = %d' % (i,q,p)), anchor=E, font=self.font, fill=self.axisfont_color)
+            else:
+                Canvas.create_text(self, self.left + self.offset, y_avg, text=str('level %d, theta = %.3f' % (i,q)), anchor=W, font=self.font, fill=self.axisfont_color)
+                Canvas.create_text(self, self.right - 2*self.offset, y_avg, text=str('count = %d' % p), anchor=E, font=self.font, fill=self.axisfont_color)
 
     def xtranslate(self, x):
         return int(self.left + self.xaxislen*((x - self.xlow)/(self.xhigh - self.xlow)))
