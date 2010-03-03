@@ -196,9 +196,8 @@ void MCMCChainManager::refreshLastLnPrior()
 	for (MCMCUpdaterConstIter it = all_updaters.begin(); it != all_updaters.end(); ++it)
 		{
 		const boost::shared_ptr<MCMCUpdater> s = *it;
-		if (s->isPriorSteward())
+		if (s->isPriorSteward() && !s->isFixed())
 			{
-			PHYCAS_ASSERT(!s->isFixed());
 			double this_ln_prior = s->recalcPrior();
 			last_ln_prior += this_ln_prior;
 			//std::cerr << boost::str(boost::format("@@@@@@@@@@ Current prior = %g, Cumulative = %g, name = '%s'") % this_ln_prior % last_ln_prior % s->getName()) << std::endl;

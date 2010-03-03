@@ -132,8 +132,7 @@ class Partition(PhycasCommand):
 				assigned_subset = self.subset[assigned_index]
 				self.cf.phycassert(False, 'site %d has already been assigned a model by subset %s' % (s,assigned_subset[0]))
 			self.sitemodel[s - 1] = subset_index
-			
-		#raw_input('length of sitemodel = %d' % len(self.sitemodel))
+		
 		self.subset.append((name, sitelist, model_for_sites))
 		
 	def save(self):

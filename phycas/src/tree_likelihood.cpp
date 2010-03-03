@@ -3326,8 +3326,9 @@ unsigned TreeLikelihood::buildConstantStatesVector()
     int_set_t 	curr_states;		// holds states for taxon under consideration
     int_vect_t 	xset;				// temporarily holds intersection of common_states and curr_states
 
+	unsigned pattern_index = 0;//temp!
     for (pattern_vect_t::const_iterator pat = pattern_vect.begin(); pat != pattern_vect.end(); ++pat)
-        {
+		{
 		// get subset-specific info
 		//@POL if slow, consider using subset_offset here to avoid setting subset and ns for each pattern
 		const unsigned subset = (unsigned)(*pat)[0];
@@ -3342,20 +3343,21 @@ unsigned TreeLikelihood::buildConstantStatesVector()
             // states          | A | C | G | T |  - A C G T | A C G T | C G T | A G T |  A  G  | C T
             // state_list      1 0 1 1 1 2 1 3 5 -1 0 1 2 3 4 0 1 2 3 3 1 2 3 3 0 2 3 2  0  2  4 1 3
             // state_list_pos  0   2   4   6   8           14        19      23      27       30
-			unsigned index_of_taxon = taxon + 1;
+			unsigned index_of_taxon = taxon + 1;	// add 1 because first element of pattern is the subset index
             int code = (int)(*pat)[index_of_taxon];
             PHYCAS_ASSERT(code >= 0);   // Mark, why don't ? and - states trigger this assert? Does this have to do with the fact that we have abandoned the Cipres version of NCL? We translate - to ? in the NxsCXXDiscreteMatrix constructor
             PHYCAS_ASSERT(code < (int)state_list[subset].size()); 
             PHYCAS_ASSERT(code < (int)state_list_pos[subset].size());
             unsigned pos = (unsigned)state_list_pos[subset][code];
-            unsigned n = (unsigned)state_list[subset][pos];
+            unsigned nstates = (unsigned)state_list[subset][pos];
+			++pos;	// skip the number of states so that pos indicates index of first (of perhaps several) possible state(s)
 
             // Insert all states for the current taxon into the curr_states set
             curr_states.clear();
-            for (unsigned x = pos + 1; x < pos + n + 1; ++x)
+            for (unsigned x = pos; x < pos + nstates; ++x)
                 {
                 int c = (int)state_list[subset][x];
-                PHYCAS_ASSERT(c >= 0);
+                PHYCAS_ASSERT(c >= -1);
                 if (site_potentially_constant)
                     curr_states.insert(c);
                 }
@@ -3395,6 +3397,7 @@ unsigned TreeLikelihood::buildConstantStatesVector()
             {
             constant_states.push_back(0);
             }
+		++pattern_index;//temp!
         }
     return num_potentially_constant;
     }

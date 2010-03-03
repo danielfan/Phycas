@@ -608,6 +608,7 @@
 		7AB51CE010CDA39200A865FF /* libncl.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libncl.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		D10DDE0C1125D4C500CC55F3 /* scubed.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = scubed.py; path = ../../inprep/scubed/scubed.py; sourceTree = SOURCE_ROOT; };
 		D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpython2.6.dylib; path = lib/libpython2.6.dylib; sourceTree = PYTHON_ROOT; };
+		D16413A4113E3D340031F70F /* turtles.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = turtles.py; path = ../../inprep/partition/turtles/turtles.py; sourceTree = SOURCE_ROOT; };
 		D17574CD10EB942400D4E2B0 /* partition.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = partition.py; path = ../../inprep/partition/partition.py; sourceTree = SOURCE_ROOT; };
 		D1814096112C826C00D91CF6 /* partition.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = partition.py; path = ../../inprep/partition/danielsims/partition.py; sourceTree = SOURCE_ROOT; };
 		D1829B31110E22AC00F200D6 /* nxscdiscretematrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxscdiscretematrix.h; path = ../../../../ndev/branches/v2.2/ncl/nxscdiscretematrix.h; sourceTree = SOURCE_ROOT; };
@@ -1248,6 +1249,14 @@
 			name = scubed;
 			sourceTree = "<group>";
 		};
+		D16413A3113E3D1A0031F70F /* turtles */ = {
+			isa = PBXGroup;
+			children = (
+				D16413A4113E3D340031F70F /* turtles.py */,
+			);
+			name = turtles;
+			sourceTree = "<group>";
+		};
 		D17574C410EB940500D4E2B0 /* InPrep */ = {
 			isa = PBXGroup;
 			children = (
@@ -1260,6 +1269,7 @@
 		D17574C510EB940C00D4E2B0 /* Partition */ = {
 			isa = PBXGroup;
 			children = (
+				D16413A3113E3D1A0031F70F /* turtles */,
 				D1814095112C824D00D91CF6 /* danielsims */,
 				D17574CD10EB942400D4E2B0 /* partition.py */,
 			);
