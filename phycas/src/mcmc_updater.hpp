@@ -120,6 +120,10 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
         bool                    isLikelihoodHeating() const;
         bool                    isNoHeating() const;
         double                  setCurrLnPrior(double x);
+		
+#if POLPY_NEWWAY
+        void                    setEnergyLevels(const double_vect_t & elevels);
+#endif
 
 		// Accessors used only by parameters
 		SliceSamplerShPtr		getSliceSampler();
@@ -238,6 +242,9 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
         double                  heating_power;          /**< The power to which the posterior (in standard heating) or just the likelihood (in likelihood heating) is raised. To not heat, specify 1.0. */
         bool                    is_standard_heating;    /**< If true, standard heating is used (posterior is raised to the power `heating_power'); otherwise, likelihood heating is used (just the likelihood is raised to the power `heating_power') */
 		bool                    save_debug_info;		/**< If true, information about the last update will be stored in debug_info string */
+#if POLPY_NEWWAY
+        double_vect_t           energy_levels;			/**< If non-empty, SAMC analysis is being performed using these energy levels (which are on the log scale). */
+#endif
 	};
 
 typedef std::vector<MCMCUpdaterShPtr>		MCMCUpdaterVect;

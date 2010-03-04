@@ -19,7 +19,7 @@ class VarianceUndefinedError(Exception):
 	
 class InvalidNumberOfColumnsError(Exception):
 	def __init__(self, nparts, nexpected, line_num):
-		Excpetion('Number of values (%d) on line %d inconsistent with number of column headers (%d)' % (nparts, line_num, nexpected))
+		Exception('Number of values (%d) on line %d inconsistent with number of column headers (%d)' % (nparts, line_num, nexpected))
 		#self.message = 'Number of values (%d) on line %d inconsistent with number of column headers (%d)' % (nparts, line_num, nexpected)
 	#def __str__(self):
 	#	return self.message

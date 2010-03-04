@@ -67,7 +67,7 @@ std::string HKY::getModelName() const
 |	supplied `parameters' vector. This incudes the four base frequencies as well as the transition/transversion rate 
 |	ratio kappa.
 */
-void	HKY::createParameters(
+void HKY::createParameters(
   TreeShPtr t,								/**< is the tree (the nodes of which are needed for creating edge length parameters) */
   MCMCUpdaterVect & edgelens,				/**< is the vector of edge length parameters to fill */
   MCMCUpdaterVect & edgelen_hyperparams,	/**< is the edge length hyperparameter */
@@ -75,6 +75,23 @@ void	HKY::createParameters(
   int subset_pos) 							/**< if 0 (first subset) or -1 (only subset), edge length parameters and hyperparams will be added; otherwise, the `edgelens' and `edgelen_hyperparams' vectors returned will be empty */
 	{
 	Model::createParameters(t, edgelens, edgelen_hyperparams, parameters, subset_pos);
+
+	freq_name.clear();
+	if (subset_pos < 0)
+		{
+		freq_name.push_back("freqA");
+		freq_name.push_back("freqC");
+		freq_name.push_back("freqG");
+		freq_name.push_back("freqT");
+		}
+	else 
+		{
+		unsigned m = subset_pos + 1;
+		freq_name.push_back(boost::str(boost::format("freqA_%d") % m));
+		freq_name.push_back(boost::str(boost::format("freqC_%d") % m));
+		freq_name.push_back(boost::str(boost::format("freqG_%d") % m));
+		freq_name.push_back(boost::str(boost::format("freqT_%d") % m));
+		}
 
 	PHYCAS_ASSERT(!kappa_param);
 	kappa_param = MCMCUpdaterShPtr(new KappaParam());
@@ -164,8 +181,10 @@ std::string HKY::paramHeader() const
 	{
 	std::string s;
 	s += boost::str(boost::format("\t%s") % kappa_param->getName());
-	for (MCMCUpdaterVect::const_iterator fit = freq_params.begin(); fit != freq_params.end(); ++fit)
-		s += boost::str(boost::format("\t%s") % (*fit)->getName());
+	for (string_vect_t::const_iterator it = freq_name.begin(); it != freq_name.end(); ++it)
+		{
+		s += boost::str(boost::format("\t%s") % (*it)); 
+		}
 	s += Model::paramHeader();
 	return s;
 	}

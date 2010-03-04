@@ -740,6 +740,23 @@ double MCMCUpdater::getLnPrior() const
 	return curr_ln_prior;
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the `energy_levels' data member to a copy of the supplied values. If `elevels' is empty, clears `energy_levels'.
+*/
+void MCMCUpdater::setEnergyLevels(
+  const double_vect_t & elevels)
+	{
+	if (elevels.empty())
+		energy_levels.clear();
+	else
+		{
+		energy_levels.resize(elevels.size());
+		std::copy(elevels.begin(), elevels.end(), energy_levels.begin());
+		}
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the power used in heating (variable `heating_power') to the specified value `p'.
 */

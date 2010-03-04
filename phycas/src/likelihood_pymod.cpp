@@ -120,6 +120,9 @@ BOOST_PYTHON_MODULE(_LikelihoodExt)
 		.def("clear", &MCMCChainManager::clear)
 		.def("refreshLastLnLike", &MCMCChainManager::refreshLastLnLike)
 		.def("refreshLastLnPrior", &MCMCChainManager::refreshLastLnPrior)
+#if POLPY_NEWWAY
+		.def("initSAMC", &MCMCChainManager::initSAMC)
+#endif
 		;
 	class_<std::vector<MCMCUpdaterShPtr> >("paramVec", no_init)
 		.def("__iter__",  iterator<std::vector<MCMCUpdaterShPtr> >())

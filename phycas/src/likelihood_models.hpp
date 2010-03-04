@@ -309,6 +309,8 @@ protected:
 	bool						kappa_fixed;		/**< If true, the value of kappa will not change during MCMC updates */
 	mutable MCMCUpdaterShPtr	kappa_param;		/**< Copy of the kappa parameter (saved so that fixed/free status can be changed) */
 
+	string_vect_t				freq_name;				/**< Holds names of the 4 state frequencies (e.g. freqA, freqC, freqG, freqT) used as headers in the param file */
+
 	// Below here are quantities that directly affect likelihood calculations and which should increment time_stamp when modified
 	double						kappa;				/**< The transition/transversion rate ratio */
 	};

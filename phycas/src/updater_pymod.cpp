@@ -97,6 +97,9 @@ void updater_pymod()
 		.def("isStandardHeating", &MCMCUpdater::isStandardHeating)
 		.def("isLikelihoodHeating", &MCMCUpdater::isLikelihoodHeating)
 		.def("isNoHeating", &MCMCUpdater::isNoHeating)
+#if POLPY_NEWWAY
+		.def("setEnergyLevels", &MCMCUpdater::setEnergyLevels)
+#endif
 		;
 	class_<phycas::KappaParam, bases<phycas::MCMCUpdater, AdHocDensity>, 
 		boost::noncopyable, boost::shared_ptr<phycas::KappaParam> >("KappaParam")

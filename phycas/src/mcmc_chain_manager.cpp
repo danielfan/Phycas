@@ -17,6 +17,9 @@
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+#include <iterator>		// for std::distance 
+#include <algorithm>	// for std::lower_bound  
+
 //#include "phycas/force_include.h"
 #include "phycas/src/likelihood_models.hpp"
 #include "phycas/src/mcmc_chain_manager.hpp"
@@ -312,10 +315,82 @@ void MCMCChainManager::addMCMCUpdaters(
 |	The MCMCChainManager constructor does nothing.
 */
 MCMCChainManager::MCMCChainManager() 
-  : last_ln_like(0.0), last_ln_prior(0.0), dirty(true)
+  : last_ln_like(0.0), last_ln_prior(0.0), doing_samc(false), samc_gain(1.0), dirty(true)
 	{
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the `energy_levels' data member to a copy of the supplied values. If `elevels' is empty, clears `energy_levels'.
+*/
+void MCMCChainManager::initSAMC(
+  const double_vect_t & elevels)
+	{
+	if (elevels.empty())
+		{
+		samc_loglevels.clear();
+		samc_pi.clear();
+		samc_theta.clear();
+		samc_count.clear();
+		}
+	else
+		{
+		unsigned m = (unsigned)(elevels.size() + 1);
+		double freq = 1.0/(double)m;
+		
+		samc_loglevels.resize(m - 1);
+		std::copy(elevels.begin(), elevels.end(), samc_loglevels.begin());
+		
+		samc_pi.resize(m);
+		samc_pi.assign(m, freq);
+		
+		samc_theta.resize(m);
+		samc_theta.assign(m, 0.0);
+		
+		samc_count.resize(m);
+		samc_count.assign(m, 0);
+		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Updates the SAMC weights based on the energy level of the most recent sampled point.
+*/
+void MCMCChainManager::updateSAMCWeights(
+  double logf)	/**< is the log posterior of the current point */
+	{
+	PHYCAS_ASSERT(doing_samc);
+	
+	// Suppose logf = -0.51 and supposing also that these are the m = 5 levels:
+	//
+	// level 4
+	// --------  0.00
+	// level 3
+	// -------- -0.29
+	// level 2        <-- -0.51
+	// -------- -0.69
+	// level 1
+	// -------- -1.39
+	// level 0
+	//
+	// then x_index = 2.
+	double_vect_t::iterator it = std::lower_bound(samc_loglevels.begin(), samc_loglevels.end(), logf);
+	unsigned x_index = (unsigned)std::distance(it, samc_loglevels.begin());
+
+	// update counts
+	samc_count[x_index] += 1;
+	
+	// update weights        
+	unsigned m = (unsigned)samc_loglevels.size();    
+	for (unsigned i = 0; i < m; ++i)
+		{
+		if (x_index == i)
+			samc_theta[i] += samc_gain*(1.0 - samc_pi[i]);
+		else
+			samc_theta[i] += samc_gain*(0.0 - samc_pi[i]);
+		}
+	}
+#endif
+	
 #define DEBUG_UPDATERS  0
 /*----------------------------------------------------------------------------------------------------------------------
 |	For all updaters stored in `all_updaters', obtain the weight w and call the update fuction of the updater w times.

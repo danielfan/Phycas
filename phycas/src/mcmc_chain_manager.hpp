@@ -118,6 +118,11 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
         
         void					debugUpdaterReport(std::string s);
 
+#if POLPY_NEWWAY
+		void 					initSAMC(const double_vect_t & elevels);
+		void 					updateSAMCWeights(double logf);
+#endif
+
 	public:
 		// magic workaround for avoiding bogus error when compiling with darwin GCC 3.3 build 1640: 
 		// error: cannot dynamic_cast `p' (of type `class phycas::MCMCChainManager*') to type `void*' (source type is not polymorphic)
@@ -133,6 +138,15 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 
 	private:
 
+#if POLPY_NEWWAY
+		// SAMC-related 
+		bool 					doing_samc;				/**< If true, SAMC analysis will be performed */
+		uint_vect_t 			samc_count;				/**< Vector of counts of the number of times each energy level has been sampled in a SAMC analysis */
+		double_vect_t			samc_loglevels;			/**< Vector of energy level boundaries (log scale) sorted from smallest (element 0) to largest (last element) */
+		double_vect_t			samc_theta;				/**< Vector of weights associated with each energy level in a SAMC analysis (these weights affect the acceptance probability of Metropolis moves) */
+		double_vect_t			samc_pi;				/**< Vector of frequencies associated with each energy level (SAMC analysis is expected to visit level i in proportion to samc_pi[i]) */
+		double					samc_gain;				/**< The factor determining the magnitude of the adjustment made to weights in samc_theta after each update */
+#endif
 		bool					dirty;					/**< If true, means just constructed or at least one updater has been added since finalize() was last called; false means ready to use the all_updaters vector */
 
 		MCMCUpdaterIter			moves_begin;			/**< Iterator positioned at the first move */
