@@ -71,9 +71,12 @@ bool KappaParam::update()
 */
 void KappaParam::educateWorkingPrior()
 	{
-	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
-	double kappa = getCurrValueFromModel();
-	fitting_sample.push_back(kappa);
+	if (!isFixed())
+		{
+		PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
+		double kappa = getCurrValueFromModel();
+		fitting_sample.push_back(kappa);
+		}
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

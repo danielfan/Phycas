@@ -79,9 +79,12 @@ bool FlexProbParam::update()
 */
 void FlexProbParam::educateWorkingPrior()
 	{
-	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
-	double flexprob = getCurrValueFromModel();
-	fitting_sample.push_back(flexprob);
+	if (!isFixed())
+		{
+		PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
+		double flexprob = getCurrValueFromModel();
+		fitting_sample.push_back(flexprob);
+		}
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

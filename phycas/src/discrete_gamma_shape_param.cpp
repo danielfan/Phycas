@@ -129,9 +129,12 @@ double DiscreteGammaShapeParam::operator()(
 */
 void DiscreteGammaShapeParam::educateWorkingPrior()
 	{
-	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
-	double shape = getCurrValueFromModel();
-	fitting_sample.push_back(shape);
+	if (!isFixed())
+		{
+		PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
+		double shape = getCurrValueFromModel();
+		fitting_sample.push_back(shape);
+		}
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

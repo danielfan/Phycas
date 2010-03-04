@@ -71,9 +71,12 @@ bool StateFreqParam::update()
 */
 void StateFreqParam::educateWorkingPrior()
 	{
-	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
-	double freq = getCurrValueFromModel();
-	fitting_sample.push_back(freq);
+	if (!isFixed())
+		{
+		PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
+		double freq = getCurrValueFromModel();
+		fitting_sample.push_back(freq);
+		}
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

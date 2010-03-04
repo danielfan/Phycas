@@ -1092,11 +1092,15 @@ const CondLikelihoodStorageShPtr TreeLikelihood::getCLAStorage() const
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Utility function that returns the sum of pattern counts stored in the `pattern_counts' data member.
+|	Utility function that returns the sum of pattern counts stored in the `pattern_counts' data member. Note that this
+|	function casts the sum of pattern counts (which are doubles) to an unsigned value. This is only strictly appropriate
+|	if the pattern counts are actually whole numbers, but in many (all?) cases where fractional pattern counts are used
+|	e.g. Gelfand-Ghosh method), the sum of the pattern counts should be a whole number even though individual pattern 
+|	counts are not.
 */
 unsigned TreeLikelihood::sumPatternCounts() const
 	{
-	return std::accumulate(pattern_counts.begin(), pattern_counts.end(), 0);
+	return (unsigned)std::accumulate(pattern_counts.begin(), pattern_counts.end(), 0.0);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

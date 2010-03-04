@@ -448,7 +448,7 @@ void MCMCUpdater::setUseWorkingPrior(
 */
 double MCMCUpdater::recalcWorkingPrior() const
 	{
-	if (!isPriorSteward())
+	if (isFixed() || !isPriorSteward())
 		return 0.0;
 		
 	double lnwp = 0.0;
@@ -879,32 +879,35 @@ void MCMCUpdater::finalizeWorkingPrior()
 */
 void MCMCUpdater::fitBetaWorkingPrior()
 	{
-	PHYCAS_ASSERT(fitting_sample.size() > 1);
-	double n = (double)fitting_sample.size();
-	double sum = 0.0;
-	double sum_of_squares = 0.0;
-	for (double_vect_t::iterator i = fitting_sample.begin(); i != fitting_sample.end(); ++i)
+	if (!isFixed())
 		{
-		double v = (*i);
-		sum += v;
-		sum_of_squares += v*v;
-		}
-	double mean = sum/n;
-	double variance = (sum_of_squares - n*mean*mean)/(n - 1.0);
+		PHYCAS_ASSERT(fitting_sample.size() > 1);
+		double n = (double)fitting_sample.size();
+		double sum = 0.0;
+		double sum_of_squares = 0.0;
+		for (double_vect_t::iterator i = fitting_sample.begin(); i != fitting_sample.end(); ++i)
+			{
+			double v = (*i);
+			sum += v;
+			sum_of_squares += v*v;
+			}
+		double mean = sum/n;
+		double variance = (sum_of_squares - n*mean*mean)/(n - 1.0);
 
-	// Let a, b be the parameters of a Beta(a,b) and let phi = a + b
-	// Note that:
-	//     mean = a/phi
-	//   1-mean = b/phi
-	// variance = a*b/[phi^2*(phi + 1)]
-	// Letting z = mean*(1-mean)/variance,
-	// phi can be estimated as z - 1
-	// Now, a = mean*phi and b = (1-mean)*phi
-	double phi = mean*(1.0-mean)/variance - 1.0;
-	double a = phi*mean;
-	double b = phi*(1.0 - mean);
-	working_prior = ProbDistShPtr(new BetaDistribution(a, b));
-	// std::cerr << boost::str(boost::format("@@@@@@@@@ working prior is Beta(%g, %g) for updater %s: mean = %g, variance = %g") % a % b % getName() % mean % variance) << std::endl;
+		// Let a, b be the parameters of a Beta(a,b) and let phi = a + b
+		// Note that:
+		//     mean = a/phi
+		//   1-mean = b/phi
+		// variance = a*b/[phi^2*(phi + 1)]
+		// Letting z = mean*(1-mean)/variance,
+		// phi can be estimated as z - 1
+		// Now, a = mean*phi and b = (1-mean)*phi
+		double phi = mean*(1.0-mean)/variance - 1.0;
+		double a = phi*mean;
+		double b = phi*(1.0 - mean);
+		working_prior = ProbDistShPtr(new BetaDistribution(a, b));
+		// std::cerr << boost::str(boost::format("@@@@@@@@@ working prior is Beta(%g, %g) for updater %s: mean = %g, variance = %g") % a % b % getName() % mean % variance) << std::endl;
+		}
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
@@ -913,22 +916,26 @@ void MCMCUpdater::fitBetaWorkingPrior()
 */
 void MCMCUpdater::fitGammaWorkingPrior()
 	{
-	PHYCAS_ASSERT(fitting_sample.size() > 1);
-	double n = (double)fitting_sample.size();
-	double sum = 0.0;
-	double sum_of_squares = 0.0;
-	for (double_vect_t::iterator i = fitting_sample.begin(); i != fitting_sample.end(); ++i)
+	if (!isFixed())
 		{
-		double v = (*i);
-		sum += v;
-		sum_of_squares += v*v;
+		PHYCAS_ASSERT(fitting_sample.size() > 1);
+		double n = (double)fitting_sample.size();
+		double sum = 0.0;
+		double sum_of_squares = 0.0;
+		for (double_vect_t::iterator i = fitting_sample.begin(); i != fitting_sample.end(); ++i)
+			{
+			double v = (*i);
+			sum += v;
+			sum_of_squares += v*v;
+			}
+		double mean = sum/n;	// shape*scale
+		double variance = (sum_of_squares - n*mean*mean)/(n - 1.0);	// shape*scale^2
+		double scale = variance/mean;
+		PHYCAS_ASSERT(scale > 0.0);
+		double shape = mean/scale;
+		// std::cerr << boost::str(boost::format("@@@@@@@@@ working prior is Gamma(%g,%g) for updater %s: mean = %g, variance = %g") % shape % scale % getName() % mean % variance) << std::endl;
+		working_prior = ProbDistShPtr(new GammaDistribution(shape, scale));
 		}
-	double mean = sum/n;	// shape*scale
-	double variance = (sum_of_squares - n*mean*mean)/(n - 1.0);	// shape*scale^2
-	double scale = variance/mean;
-	double shape = mean/scale;
-	// std::cerr << boost::str(boost::format("@@@@@@@@@ working prior is Gamma(%g,%g) for updater %s: mean = %g, variance = %g") % shape % scale % getName() % mean % variance) << std::endl;
-	working_prior = ProbDistShPtr(new GammaDistribution(shape, scale));
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
@@ -937,21 +944,24 @@ void MCMCUpdater::fitGammaWorkingPrior()
 */
 void MCMCUpdater::fitLognormalWorkingPrior()
 	{
-	PHYCAS_ASSERT(fitting_sample.size() > 1);
-	double n = (double)fitting_sample.size();
-	double sum = 0.0;
-	double sum_of_squares = 0.0;
-	for (double_vect_t::iterator i = fitting_sample.begin(); i != fitting_sample.end(); ++i)
+	if (!isFixed())
 		{
-		double v = (*i);
-		double logv = log(v);
-		sum += logv;
-		sum_of_squares += logv*logv;
+		PHYCAS_ASSERT(fitting_sample.size() > 1);
+		double n = (double)fitting_sample.size();
+		double sum = 0.0;
+		double sum_of_squares = 0.0;
+		for (double_vect_t::iterator i = fitting_sample.begin(); i != fitting_sample.end(); ++i)
+			{
+			double v = (*i);
+			double logv = log(v);
+			sum += logv;
+			sum_of_squares += logv*logv;
+			}
+		double logmean = sum/n;	
+		double logvar = (sum_of_squares - n*logmean*logmean)/(n - 1.0);
+		double logsd = sqrt(logvar);
+		working_prior = ProbDistShPtr(new LognormalDistribution(logmean, logsd));
 		}
-	double logmean = sum/n;	
-	double logvar = (sum_of_squares - n*logmean*logmean)/(n - 1.0);
-	double logsd = sqrt(logvar);
-	working_prior = ProbDistShPtr(new LognormalDistribution(logmean, logsd));
 	}
 	
 }	// namespace phycas

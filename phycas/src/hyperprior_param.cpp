@@ -97,9 +97,12 @@ bool HyperPriorParam::update()
 */
 void HyperPriorParam::educateWorkingPrior()
 	{
-	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
-	double hyperparam = getCurrValueFromModel();
-	fitting_sample.push_back(hyperparam);
+	if (!isFixed())
+		{
+		PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
+		double hyperparam = getCurrValueFromModel();
+		fitting_sample.push_back(hyperparam);
+		}
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

@@ -64,9 +64,12 @@ bool GTRRateParam::update()
 */
 void GTRRateParam::educateWorkingPrior()
 	{
-	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
-	double rateparam = getCurrValueFromModel();
-	fitting_sample.push_back(rateparam);
+	if (!isFixed())
+		{
+		PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
+		double rateparam = getCurrValueFromModel();
+		fitting_sample.push_back(rateparam);
+		}
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

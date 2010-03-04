@@ -361,64 +361,67 @@ void DirichletMove::educateWorkingPrior()
 */
 void DirichletMove::finalizeWorkingPrior()
 	{
-	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
-	PHYCAS_ASSERT(mv_fitting_sample.size() > 1);
+	if (!isFixed())
+		{
+		PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
+		PHYCAS_ASSERT(mv_fitting_sample.size() > 1);
 
-	// Let a, b, c, d be the parameters of a Dirichlet(a,b,c,d).
-	// Let phi = a + b + c + d
-	// Let mu_1, mu_2, mu_3, and mu_4 be sample means
-	// Let s_1^2, s_2^2, s_3^2, and s_4^2 be sample variances
-	// Noting that mu_1 = a/phi, mu_2 = b/phi, mu_3 = c/phi and mu_4 = d/phi
-	// and noting that s_1^2 = a*(b + c + d)/[phi^2*(phi + 1)], etc., and
-	// letting z = s_1^2/mu_1 + s_2^2/mu_2 + s_3^2/mu_3 + s_4^2/mu_4,
-	// phi can be estimated as (3/z) - 1, where the 3 is really k-1 
-	// and k is the number of Dirichlet parameters. Now, 
-	// a = mu_1*phi, b = mu_2*phi, c = mu_3*phi and d = mu_4*phi
-	
-	// First compute the sample means and variances using the data stored in mv_working_prior
-	double_vect_t sums(dim, 0.0);
-	double_vect_t ss(dim, 0.0);
-	double n = 0.0;
-	for (double_vect_vect_t::iterator i = mv_fitting_sample.begin(); i != mv_fitting_sample.end(); ++i)
-		{
-		unsigned k = 0;
-		n += 1.0;
-		for (double_vect_t::iterator j = (*i).begin(); j != (*i).end(); ++j)
-			{
-			double v = (*j);
-			sums[k] += v;
-			ss[k++] += v*v;
-			}
-		}
+		// Let a, b, c, d be the parameters of a Dirichlet(a,b,c,d).
+		// Let phi = a + b + c + d
+		// Let mu_1, mu_2, mu_3, and mu_4 be sample means
+		// Let s_1^2, s_2^2, s_3^2, and s_4^2 be sample variances
+		// Noting that mu_1 = a/phi, mu_2 = b/phi, mu_3 = c/phi and mu_4 = d/phi
+		// and noting that s_1^2 = a*(b + c + d)/[phi^2*(phi + 1)], etc., and
+		// letting z = s_1^2/mu_1 + s_2^2/mu_2 + s_3^2/mu_3 + s_4^2/mu_4,
+		// phi can be estimated as (3/z) - 1, where the 3 is really k-1 
+		// and k is the number of Dirichlet parameters. Now, 
+		// a = mu_1*phi, b = mu_2*phi, c = mu_3*phi and d = mu_4*phi
 		
-	double_vect_t means(dim, 0.0);
-	double_vect_t variances(dim, 0.0);
-	for (unsigned i = 0; i < dim; ++i)
-		{
-		double mean = sums[i]/n;
-		means[i] = mean;
-		variances[i] = (ss[i] - n*mean*mean)/(n - 1.0);
+		// First compute the sample means and variances using the data stored in mv_working_prior
+		double_vect_t sums(dim, 0.0);
+		double_vect_t ss(dim, 0.0);
+		double n = 0.0;
+		for (double_vect_vect_t::iterator i = mv_fitting_sample.begin(); i != mv_fitting_sample.end(); ++i)
+			{
+			unsigned k = 0;
+			n += 1.0;
+			for (double_vect_t::iterator j = (*i).begin(); j != (*i).end(); ++j)
+				{
+				double v = (*j);
+				sums[k] += v;
+				ss[k++] += v*v;
+				}
+			}
+			
+		double_vect_t means(dim, 0.0);
+		double_vect_t variances(dim, 0.0);
+		for (unsigned i = 0; i < dim; ++i)
+			{
+			double mean = sums[i]/n;
+			means[i] = mean;
+			variances[i] = (ss[i] - n*mean*mean)/(n - 1.0);
+			}
+		
+		// Now compute the Dirichlet parameters
+		double z = 0.0;
+		for (unsigned i = 0; i < dim; ++i)
+			{
+			z += variances[i]/means[i];
+			}
+		double phi = (double)(dim - 1)/z - 1.0;
+		double_vect_t params;
+		for (unsigned i = 0; i < dim; ++i)
+			{
+			params.push_back(phi*means[i]);
+			}
+		mv_working_prior = MultivarProbDistShPtr(new DirichletDistribution(params));
+		//	if (params.size() == 4)
+		//		std::cerr << boost::str(boost::format("@@@@@@@@@ working prior is Dirichlet(%g,%g,%g,%g) for updater %s") % params[0] % params[1] % params[2] % params[3] % getName()) << std::endl;
+		//	else if (params.size() == 6)
+		//		std::cerr << boost::str(boost::format("@@@@@@@@@ working prior is Dirichlet(%g,%g,%g,%g,%g,%g) for updater %s") % params[0] % params[1] % params[2] % params[3] % params[4] % params[5] % getName()) << std::endl;
+		//	else
+		//		std::cerr << boost::str(boost::format("@@@@@@@@@ working prior is Dirichlet(not 4 or 6 params) for updater %s") % getName()) << std::endl;
 		}
-	
-	// Now compute the Dirichlet parameters
-	double z = 0.0;
-	for (unsigned i = 0; i < dim; ++i)
-		{
-		z += variances[i]/means[i];
-		}
-	double phi = (double)(dim - 1)/z - 1.0;
-	double_vect_t params;
-	for (unsigned i = 0; i < dim; ++i)
-		{
-		params.push_back(phi*means[i]);
-		}
-	mv_working_prior = MultivarProbDistShPtr(new DirichletDistribution(params));
-	//	if (params.size() == 4)
-	//		std::cerr << boost::str(boost::format("@@@@@@@@@ working prior is Dirichlet(%g,%g,%g,%g) for updater %s") % params[0] % params[1] % params[2] % params[3] % getName()) << std::endl;
-	//	else if (params.size() == 6)
-	//		std::cerr << boost::str(boost::format("@@@@@@@@@ working prior is Dirichlet(%g,%g,%g,%g,%g,%g) for updater %s") % params[0] % params[1] % params[2] % params[3] % params[4] % params[5] % getName()) << std::endl;
-	//	else
-	//		std::cerr << boost::str(boost::format("@@@@@@@@@ working prior is Dirichlet(not 4 or 6 params) for updater %s") % getName()) << std::endl;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -435,9 +438,12 @@ StateFreqMove::StateFreqMove() : DirichletMove()
 */
 void StateFreqMove::educateWorkingPrior()
 	{
-	double_vect_t rfreqs;
-	getCurrValuesFromModel(rfreqs);
-	mv_fitting_sample.push_back(rfreqs);
+	if (!isFixed())
+		{
+		double_vect_t rfreqs;
+		getCurrValuesFromModel(rfreqs);
+		mv_fitting_sample.push_back(rfreqs);
+		}
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -519,9 +525,12 @@ RelRatesMove::RelRatesMove() : DirichletMove()
 */
 void RelRatesMove::educateWorkingPrior()
 	{
-	double_vect_t rrates;
-	getCurrValuesFromModel(rrates);
-	mv_fitting_sample.push_back(rrates);
+	if (!isFixed())
+		{
+		double_vect_t rrates;
+		getCurrValuesFromModel(rrates);
+		mv_fitting_sample.push_back(rrates);
+		}
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -608,13 +617,16 @@ SubsetRelRatesMove::SubsetRelRatesMove() : DirichletMove()
 */
 void SubsetRelRatesMove::educateWorkingPrior()
 	{
-	double_vect_t rrates;
-	getCurrValuesFromModel(rrates);
+	if (!isFixed())
+		{
+		double_vect_t rrates;
+		getCurrValuesFromModel(rrates);
 
-	//std::copy(rrates.begin(), rrates.end(), std::ostream_iterator<double>(std::cerr, " "));//temp
-	//std::cerr << "sum = " << std::accumulate(rrates.begin(), rrates.end(), 0.0) << std::endl;
-	
-	mv_fitting_sample.push_back(rrates);
+		//std::copy(rrates.begin(), rrates.end(), std::ostream_iterator<double>(std::cerr, " "));//temp
+		//std::cerr << "sum = " << std::accumulate(rrates.begin(), rrates.end(), 0.0) << std::endl;
+		
+		mv_fitting_sample.push_back(rrates);
+		}
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

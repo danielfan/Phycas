@@ -80,9 +80,12 @@ bool EdgeLenParam::update()
 */
 void EdgeLenParam::educateWorkingPrior()
 	{
-	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
-	double edgelen = getCurrValueFromModel();
-	fitting_sample.push_back(edgelen);
+	if (!isFixed())
+		{
+		PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
+		double edgelen = getCurrValueFromModel();
+		fitting_sample.push_back(edgelen);
+		}
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

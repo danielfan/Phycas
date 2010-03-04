@@ -57,9 +57,12 @@ bool PinvarParam::update()
 */
 void PinvarParam::educateWorkingPrior()
 	{
-	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
-	double pinv = getCurrValueFromModel();
-	fitting_sample.push_back(pinv);
+	if (!isFixed())
+		{
+		PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
+		double pinv = getCurrValueFromModel();
+		fitting_sample.push_back(pinv);
+		}
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

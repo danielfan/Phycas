@@ -227,7 +227,8 @@ double TreeScalerMove::recalcWorkingPriorForMove() const
     const MCMCUpdaterVect & edge_length_params = p->getEdgeLenParams();
     for (MCMCUpdaterVect::const_iterator it = edge_length_params.begin(); it != edge_length_params.end(); ++it)
         {
-        ln_working_prior += (*it)->recalcWorkingPrior();
+		if (!(*it)->isFixed())
+	        ln_working_prior += (*it)->recalcWorkingPrior();
         }
 
 	return ln_working_prior;

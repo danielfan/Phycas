@@ -163,9 +163,12 @@ bool FlexRateParam::update()
 */
 void FlexRateParam::educateWorkingPrior()
 	{
-	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
-	double flexrate = getCurrValueFromModel();
-	fitting_sample.push_back(flexrate);
+	if (!isFixed())
+		{
+		PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
+		double flexrate = getCurrValueFromModel();
+		fitting_sample.push_back(flexrate);
+		}
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

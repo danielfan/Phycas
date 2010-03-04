@@ -60,9 +60,12 @@ bool OmegaParam::update()
 */
 void OmegaParam::educateWorkingPrior()
 	{
-	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
-	double omega = getCurrValueFromModel();
-	fitting_sample.push_back(omega);
+	if (!isFixed())
+		{
+		PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
+		double omega = getCurrValueFromModel();
+		fitting_sample.push_back(omega);
+		}
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
