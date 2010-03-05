@@ -120,7 +120,10 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 
 #if POLPY_NEWWAY
 		void 					initSAMC(const double_vect_t & elevels);
-		void 					updateSAMCWeights(double logf);
+		unsigned 				getSAMCEnergyLevel(double logf)	const;
+		double 					getSAMCWeight(unsigned i) const;
+		void 					updateSAMCWeights(unsigned i);
+		bool					doingSAMC() const;
 #endif
 
 	public:
@@ -141,6 +144,7 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 #if POLPY_NEWWAY
 		// SAMC-related 
 		bool 					doing_samc;				/**< If true, SAMC analysis will be performed */
+		double 					samc_best;				/**< The best log posterior that SAMC has seen so far */
 		uint_vect_t 			samc_count;				/**< Vector of counts of the number of times each energy level has been sampled in a SAMC analysis */
 		double_vect_t			samc_loglevels;			/**< Vector of energy level boundaries (log scale) sorted from smallest (element 0) to largest (last element) */
 		double_vect_t			samc_theta;				/**< Vector of weights associated with each energy level in a SAMC analysis (these weights affect the acceptance probability of Metropolis moves) */

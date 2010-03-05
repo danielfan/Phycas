@@ -315,11 +315,20 @@ void MCMCChainManager::addMCMCUpdaters(
 |	The MCMCChainManager constructor does nothing.
 */
 MCMCChainManager::MCMCChainManager() 
-  : last_ln_like(0.0), last_ln_prior(0.0), doing_samc(false), samc_gain(1.0), dirty(true)
+  : last_ln_like(0.0), last_ln_prior(0.0), doing_samc(false), samc_best(-DBL_MAX), samc_gain(1.0), dirty(true)
 	{
 	}
 
 #if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the value of the data member `doing_samc' which is set to true if initSAMC is called with a non-empty vector
+|	of log energy levels and is set to false if initSAMC is never called or is called with an empty vector.
+*/
+bool MCMCChainManager::doingSAMC() const
+	{
+	return doing_samc;
+	}
+	
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the `energy_levels' data member to a copy of the supplied values. If `elevels' is empty, clears `energy_levels'.
 */
@@ -328,6 +337,7 @@ void MCMCChainManager::initSAMC(
 	{
 	if (elevels.empty())
 		{
+		doing_samc = false;
 		samc_loglevels.clear();
 		samc_pi.clear();
 		samc_theta.clear();
@@ -335,6 +345,7 @@ void MCMCChainManager::initSAMC(
 		}
 	else
 		{
+		doing_samc = true;
 		unsigned m = (unsigned)(elevels.size() + 1);
 		double freq = 1.0/(double)m;
 		
@@ -351,12 +362,12 @@ void MCMCChainManager::initSAMC(
 		samc_count.assign(m, 0);
 		}
 	}
-
+	
 /*----------------------------------------------------------------------------------------------------------------------
-|	Updates the SAMC weights based on the energy level of the most recent sampled point.
+|	Returns the index of the energy level of the most recent sampled point based on the supplied `logf'.
 */
-void MCMCChainManager::updateSAMCWeights(
-  double logf)	/**< is the log posterior of the current point */
+unsigned MCMCChainManager::getSAMCEnergyLevel(
+  double logf)	const 	/**< is the log posterior of the current point */
 	{
 	PHYCAS_ASSERT(doing_samc);
 	
@@ -373,20 +384,42 @@ void MCMCChainManager::updateSAMCWeights(
 	// level 0
 	//
 	// then x_index = 2.
-	double_vect_t::iterator it = std::lower_bound(samc_loglevels.begin(), samc_loglevels.end(), logf);
+	double_vect_t::const_iterator it = std::lower_bound(samc_loglevels.begin(), samc_loglevels.end(), logf);
 	unsigned x_index = (unsigned)std::distance(it, samc_loglevels.begin());
+	return x_index;
+	}
 
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the SAMC weight of the most recent sampled point based on the supplied energy level index `i'.
+*/
+double MCMCChainManager::getSAMCWeight(
+  unsigned i) const 	/**< is the index of the energy level of the current point */
+	{
+	PHYCAS_ASSERT(doing_samc);
+	PHYCAS_ASSERT(i < samc_theta.size());
+	return samc_theta[i];
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Updates the SAMC weights based on the supplied energy level `i' of the most recent sampled point.
+*/
+void MCMCChainManager::updateSAMCWeights(
+  unsigned i)	/**< is the index of the level to which the current point belongs */
+	{
+	PHYCAS_ASSERT(doing_samc);
+	PHYCAS_ASSERT(i < samc_count.size());
+	
 	// update counts
-	samc_count[x_index] += 1;
+	samc_count[i] += 1;
 	
 	// update weights        
 	unsigned m = (unsigned)samc_loglevels.size();    
-	for (unsigned i = 0; i < m; ++i)
+	for (unsigned j = 0; j < m; ++j)
 		{
-		if (x_index == i)
-			samc_theta[i] += samc_gain*(1.0 - samc_pi[i]);
+		if (i == j)
+			samc_theta[j] += samc_gain*(1.0 - samc_pi[j]);
 		else
-			samc_theta[i] += samc_gain*(0.0 - samc_pi[i]);
+			samc_theta[j] += samc_gain*(0.0 - samc_pi[j]);
 		}
 	}
 #endif
@@ -414,7 +447,20 @@ void MCMCChainManager::updateAllUpdaters()
 		for (unsigned i = 0; i < w; ++i)
 			{
 			(*it)->update();
-			}
+
+			if (doing_samc)
+				{
+				double logf = getLastLnLike() + getLastLnPrior();
+				if (logf > samc_best)
+					{
+					samc_best = logf;
+					std::cerr << "\n>>>>> new best: " << logf << std::endl;//temp
+					std::cerr << ">>>>> counts:   ";
+					std::copy(samc_count.begin(), samc_count.end(), std::ostream_iterator<unsigned>(std::cerr, " "));
+					std::cerr << std::endl;
+					}
+				}
+			} 
 #endif
 		}
 	}

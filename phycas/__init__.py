@@ -213,6 +213,9 @@ sump = SumP()
 from Phycas.MCMC import MCMC
 mcmc = MCMC()
 
+from Phycas.SAMC import SAMC
+samc = SAMC()
+
 from Phycas.Sim import Sim
 sim  = Sim()
 

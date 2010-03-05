@@ -19,6 +19,7 @@
 
 #include "mcmc_param.hpp"
 #include "likelihood_models.hpp"
+#include "phycas/src/mcmc_chain_manager.hpp"
 
 namespace phycas
 {
@@ -81,6 +82,14 @@ bool HyperPriorParam::update()
 		slice_sampler->Sample();
 		}
 
+	ChainManagerShPtr p = chain_mgr.lock();
+	if (p->doingSAMC())
+		{
+		double logf = slice_sampler->GetLastSampledYValue();
+		unsigned i = p->getSAMCEnergyLevel(logf);
+		p->updateSAMCWeights(i);
+		}
+	
     if (save_debug_info)
         {
         if (slice_sampler)

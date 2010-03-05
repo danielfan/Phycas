@@ -455,7 +455,6 @@ double MCMCUpdater::recalcWorkingPrior() const
 	if (working_prior)
 		{
 		double value = getCurrValueFromModel();
-
 		try 
 			{
 			lnwp = working_prior->GetLnPDF(value);
@@ -472,6 +471,7 @@ double MCMCUpdater::recalcWorkingPrior() const
 		getCurrValuesFromModel(values);	
 		try 
 			{
+			PHYCAS_ASSERT(mv_working_prior);
 			lnwp = mv_working_prior->GetLnPDF(values);
 			}
 		catch(XProbDist &)

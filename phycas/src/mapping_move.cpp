@@ -46,6 +46,8 @@ MappingMove::~MappingMove()
 */
 bool MappingMove::update()
 	{
+	//need to SAMCize
+	
     PHYCAS_ASSERT(likelihood->isUsingUnimap());
 
 	//std::cerr << "****** MappingMove::update" << std::endl;

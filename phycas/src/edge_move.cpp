@@ -220,6 +220,8 @@ void EdgeMove::proposeNewState()
 */
 bool EdgeMove::update()
 	{
+	//need to SAMCize
+	
 	// The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
 	// A proposed EdgeMove cannot be accepted without changing edge lengths, so it is best to just bail out now.
 	if (is_fixed)

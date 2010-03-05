@@ -48,6 +48,8 @@ void FlexProbParam::setLot(LotShPtr r)
 */
 bool FlexProbParam::update()
 	{
+	//need to SAMCize
+	
 	if (is_fixed)
 		return false;
 

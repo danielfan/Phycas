@@ -75,6 +75,8 @@ class MCMCImpl(CommonFunctions):
 		self.ss_sampled_betas		= None
 		self.ss_sampled_likes		= None
 		self.siteIndicesForPatternIndex = None
+		self.samc_best				= None
+		self.samc_log_file			= None
 		
 	def setSiteLikeFile(self, sitelikef):
 		if sitelikef is not None:
@@ -785,6 +787,9 @@ class MCMCImpl(CommonFunctions):
 		nchains = len(self.mcmc_manager.chains)
 		cold_chain = self.mcmc_manager.getColdChain()
 		
+		if self.opts.doing_samc:
+			self.samc_best = self.opts.samcobj.lolog
+		
 		if self.opts.verbose:
 			if self.data_matrix == None:
 				self.output('Data source:	 None (running MCMC with no data to explore prior)')
@@ -939,15 +944,16 @@ class MCMCImpl(CommonFunctions):
 			for self.ss_beta_index, self.ss_beta in enumerate(self.ss_sampled_betas):
 				if self.ss_beta_index > 0 and self.opts.ssobj.scubed and not working_priors_calculated:
 					# if using working prior with steppingstone sampling, it is now time to 
-					# parameterize the working prior for all updaters so that in the sequel
-					# the working prior can be used
+					# parameterize the working prior for all updaters so that this working prior
+					# can be used in the sequel
 					self.output('\nWorking prior details:')
 					all_updaters = cold_chain.chain_manager.getAllUpdaters() 
 					for u in all_updaters:		# good candidate for moving into C++
-						u.setUseWorkingPrior(True)
-						if u.computesUnivariatePrior() or u.computesMultivariatePrior():
-							u.finalizeWorkingPrior()
-							self.output('  %s --> %s' % (u.getName(), u.getWorkingPriorDescr()))
+						if not u.isFixed():
+							u.setUseWorkingPrior(True)
+							if u.computesUnivariatePrior() or u.computesMultivariatePrior():
+								u.finalizeWorkingPrior()
+								self.output('  %s --> %s' % (u.getName(), u.getWorkingPriorDescr()))
 					self.output()
 					working_priors_calculated = True
 							

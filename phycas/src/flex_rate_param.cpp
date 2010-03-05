@@ -132,6 +132,8 @@ double FlexRateParam::recalcPrior()
 */
 bool FlexRateParam::update()
 	{
+	//need to SAMCize
+	
 	if (is_fixed)
 		return false;
 

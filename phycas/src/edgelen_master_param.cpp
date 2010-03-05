@@ -171,6 +171,7 @@ double EdgeLenMasterParam::lnWorkingPriorOneEdge(const TreeNode & nd, double v) 
 			}
 
 #else
+		PHYCAS_ASSERT(working_prior);
 	    try 
 		    {
 		    retval = working_prior->GetLnPDF(v);
@@ -341,6 +342,7 @@ void EdgeLenMasterParam::finalizeWorkingPrior()
 		fitGammaWorkingPrior();
 		
 		// correct variance of working prior to reflect number of edge lengths 
+		PHYCAS_ASSERT(working_prior);
 		double m = working_prior->GetMean();
 		double v = working_prior->GetVar();
 		double num_edgelens = 0.0;

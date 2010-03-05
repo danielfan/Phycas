@@ -18,6 +18,7 @@
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #include "mcmc_param.hpp"
+#include "phycas/src/mcmc_chain_manager.hpp"
 
 namespace phycas
 {
@@ -54,10 +55,16 @@ bool StateFreqParam::update()
 	if (is_fixed)
 		return false;
 
-//	std::cerr << "****** StateFreqParam::update" << std::endl;
-
 	slice_sampler->Sample();
 
+	ChainManagerShPtr p = chain_mgr.lock();
+	if (p->doingSAMC())
+		{
+		double logf = slice_sampler->GetLastSampledYValue();
+		unsigned i = p->getSAMCEnergyLevel(logf);
+		p->updateSAMCWeights(i);
+		}
+	
     if (save_debug_info)
         {
         debug_info = str(boost::format("StateFreqParam %f") % (slice_sampler->GetLastSampledXValue()));

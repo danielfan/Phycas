@@ -607,6 +607,7 @@
 		7AB51CC310CDA26800A865FF /* nxsutilcopy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsutilcopy.h; path = ncl/nxsutilcopy.h; sourceTree = NCL_ROOT; };
 		7AB51CE010CDA39200A865FF /* libncl.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libncl.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		D10DDE0C1125D4C500CC55F3 /* scubed.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = scubed.py; path = ../../inprep/scubed/scubed.py; sourceTree = SOURCE_ROOT; };
+		D11644911140CA8A005C1038 /* turtlesamc.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = turtlesamc.py; path = ../../inprep/partition/turtles/turtlesamc.py; sourceTree = SOURCE_ROOT; };
 		D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpython2.6.dylib; path = lib/libpython2.6.dylib; sourceTree = PYTHON_ROOT; };
 		D153D7D7113EE73E009C94FE /* SAMC.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = SAMC.py; path = ../../phycas/Phycas/SAMC.py; sourceTree = SOURCE_ROOT; };
 		D16413A4113E3D340031F70F /* turtles.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = turtles.py; path = ../../inprep/partition/turtles/turtles.py; sourceTree = SOURCE_ROOT; };
@@ -1253,6 +1254,7 @@
 		D16413A3113E3D1A0031F70F /* turtles */ = {
 			isa = PBXGroup;
 			children = (
+				D11644911140CA8A005C1038 /* turtlesamc.py */,
 				D16413A4113E3D340031F70F /* turtles.py */,
 			);
 			name = turtles;

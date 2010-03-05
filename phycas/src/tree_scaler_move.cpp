@@ -134,22 +134,39 @@ bool TreeScalerMove::update()
 
     double prev_posterior = 0.0;
 	double curr_posterior = 0.0;
-    if (is_standard_heating)
-        {
-        prev_posterior = heating_power*(prev_ln_like + prev_ln_prior);
-	    curr_posterior = heating_power*(curr_ln_like + curr_ln_prior);
-		if (use_working_prior)
-			{
-			prev_posterior += (1.0 - heating_power)*prev_ln_working_prior;
-			curr_posterior += (1.0 - heating_power)*curr_ln_working_prior;
-			}
-        }
+	unsigned prev_samc_index = UINT_MAX;
+	unsigned curr_samc_index = UINT_MAX;
+	if (p->doingSAMC())
+		{
+		prev_posterior		= prev_ln_like + prev_ln_prior;
+		prev_samc_index		= p->getSAMCEnergyLevel(prev_posterior);
+		double prev_theta	= p->getSAMCWeight(prev_samc_index);
+		prev_posterior		-= prev_theta;
+		
+		curr_posterior		= curr_ln_like + curr_ln_prior;
+		curr_samc_index		= p->getSAMCEnergyLevel(curr_posterior);
+		double curr_theta	= p->getSAMCWeight(curr_samc_index);
+		curr_posterior		-= curr_theta;
+		}
     else
-        {
-        prev_posterior = heating_power*prev_ln_like + prev_ln_prior;
-	    curr_posterior = heating_power*curr_ln_like + curr_ln_prior;
-        }
-
+		{
+		if (is_standard_heating)
+			{
+			prev_posterior = heating_power*(prev_ln_like + prev_ln_prior);
+			curr_posterior = heating_power*(curr_ln_like + curr_ln_prior);
+			if (use_working_prior)
+				{
+				prev_posterior += (1.0 - heating_power)*prev_ln_working_prior;
+				curr_posterior += (1.0 - heating_power)*curr_ln_working_prior;
+				}
+			}
+		else
+			{
+			prev_posterior = heating_power*prev_ln_like + prev_ln_prior;
+			curr_posterior = heating_power*curr_ln_like + curr_ln_prior;
+			}
+		}
+		
 	double ln_hastings			= getLnHastingsRatio();
 	double ln_accept_ratio		= curr_posterior - prev_posterior + ln_hastings;
 
@@ -162,6 +179,8 @@ bool TreeScalerMove::update()
 			}
 		p->setLastLnPrior(curr_ln_prior);
 		p->setLastLnLike(curr_ln_like);
+		if (p->doingSAMC())
+			p->updateSAMCWeights(curr_samc_index);
 		accept();
 		return true;
 		}
@@ -173,6 +192,8 @@ bool TreeScalerMove::update()
 			}
 		curr_ln_like	= p->getLastLnLike();
 		curr_ln_prior	= p->getLastLnPrior();
+		if (p->doingSAMC())
+			p->updateSAMCWeights(prev_samc_index);
 		revert();
 		return false;
 		}
