@@ -20,6 +20,7 @@
 #include <numeric>										// for std::accumulate
 #include "mcmc_param.hpp"
 #include "phycas/src/basic_tree.hpp"				// for Tree::begin() and Tree::end()
+#include "phycas/src/mcmc_chain_manager.hpp"
 
 // these were at the top of basic_tree.inl
 #include <boost/lambda/lambda.hpp>
@@ -223,9 +224,12 @@ double EdgeLenMasterParam::recalcWorkingPrior() const
 */
 double EdgeLenMasterParam::recalcPrior()
 	{
-    curr_ln_prior = std::accumulate(tree->begin(), tree->end(), 0.0,
-	    boost::lambda::_1 += boost::lambda::bind(&EdgeLenMasterParam::lnPriorOneEdge, this, boost::lambda::_2));
-
+	curr_ln_prior = 0.0;
+	if (!chain_mgr.lock()->getSAMCLikelihoodOnly())
+		{
+	    curr_ln_prior = std::accumulate(tree->begin(), tree->end(), 0.0,
+		    boost::lambda::_1 += boost::lambda::bind(&EdgeLenMasterParam::lnPriorOneEdge, this, boost::lambda::_2));
+		}
 	return curr_ln_prior;
 	}
 

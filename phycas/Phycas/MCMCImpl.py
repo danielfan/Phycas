@@ -77,6 +77,7 @@ class MCMCImpl(CommonFunctions):
 		self.siteIndicesForPatternIndex = None
 		self.samc_best				= None
 		self.samc_log_file			= None
+		self.samc_ref_tree			= None
 		
 	def setSiteLikeFile(self, sitelikef):
 		if sitelikef is not None:
@@ -712,6 +713,7 @@ class MCMCImpl(CommonFunctions):
 						print '	  tree rep.%d = %s;' % (cycle + 1, c.tree.makeNewick(self.mcmc_manager.parent.opts.ndecimals))
 			
 					c.chain_manager.updateAllUpdaters()
+					c.chain_manager.updateSAMCGain(cycle + 1)
 					
 			# print '******** time_stamp =',self.mcmc_manager.getColdChain().model.getTimeStamp()
 					
@@ -737,6 +739,22 @@ class MCMCImpl(CommonFunctions):
 					if nchains == 1:
 						cold_chain_manager = self.mcmc_manager.getColdChainManager()
 						msg = 'cycle = %d, lnL = %.5f %s' % (cycle + 1, cold_chain_manager.getLastLnLike(), time_remaining)
+						if self.opts.doing_samc:
+							wts = cold_chain_manager.getSAMCWeights()
+							cnts = cold_chain_manager.getSAMCCounts()
+							nlev = len(wts)
+							msg += "\nSAMC report:"
+							msg += "\n  best score: %.6f" % cold_chain_manager.getSAMCBest()
+							msg += "\n  RF distance: %d" % cold_chain_manager.getSAMCRobinsonFouldsBest()
+							#msg += "\n  RF distance: %.6f" % cold_chain_manager.calcRFDistance(self.samc_ref_tree)
+							msg += "\n  pi RMSE:    %.6f" % cold_chain_manager.getSAMCPiRMSE()
+							#msg += "\n  counts:     %s" % ','.join(['%d' % c for c in cold_chain_manager.getSAMCCounts()])
+							msg += "\n  counts min = %d, max = %d (%s)" % (min(cnts), max(cnts), ','.join(['%d' % c for c in cnts]))
+							#msg += "\n  weights:    %s" % ','.join(['%g' % w for w in cold_chain_manager.getSAMCWeights()])
+							msg += "\n  theta min = %g, max = %g, 1st = %g, last = %g" % (min(wts), max(wts), wts[0], wts[nlev-1])
+							#pis = cold_chain_manager.getSAMCPi()
+							#msg += "\n  pi min = %g, max = %g" % (min(pis), max(pis))
+							msg += "\n  gain:       %g\n" % cold_chain_manager.getSAMCGain()
 					else:
 						msg = 'cycle = %d, ' % (cycle + 1)
 						for k in range(nchains):
@@ -788,7 +806,22 @@ class MCMCImpl(CommonFunctions):
 		cold_chain = self.mcmc_manager.getColdChain()
 		
 		if self.opts.doing_samc:
+			# Make sure cold chain manager knows which to use during SAMC, the posterior or the likelihood
+			cold_chain.chain_manager.setSAMCLikelihoodOnly(self.opts.samcobj.likelihood_only)
+			
+			# if a reference tree was specified, create that tree now
+			tr_source = self.opts.samcobj.reference_tree_source
+			if tr_source is not None:
+				try:
+					tr_source.setActiveTaxonLabels(self.taxon_labels)
+					i = iter(tr_source)
+					self.samc_ref_tree = i.next()
+				except:
+					self.stdout.error("A SAMC reference tree could not be obtained from the specified reference_tree_source")
+					raise
 			self.samc_best = self.opts.samcobj.lolog
+			if self.samc_ref_tree is not None:
+				cold_chain.chain_manager.setSAMCRefTree(self.samc_ref_tree)
 		
 		if self.opts.verbose:
 			if self.data_matrix == None:

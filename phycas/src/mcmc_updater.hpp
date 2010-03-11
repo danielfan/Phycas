@@ -122,6 +122,7 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
         double                  setCurrLnPrior(double x);
 		
 #if POLPY_NEWWAY
+        TreeShPtr               getTree();
         void                    setEnergyLevels(const double_vect_t & elevels);
 #endif
 

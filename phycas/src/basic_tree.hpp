@@ -41,6 +41,11 @@
 
 namespace phycas{
 
+#if POLPY_NEWWAY
+#include "phycas/src/split.hpp"
+typedef std::set<Split> TreeID;
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Encapsulates the notion of a phylogenetic tree. This class has only methods necessary for representing the tree, 
 |	copying trees from other trees, manipulating the tree, and representing the tree graphically. It does not perform 
@@ -85,6 +90,11 @@ class Tree
 		
         unsigned                NumInternalNodesStored();
         unsigned                NumTipNodesStored();
+		
+#if POLPY_NEWWAY
+		const TreeID & 			getTreeID() const;
+#endif
+		
 
 		// Predicates
 		//
@@ -107,6 +117,8 @@ class Tree
 #if POLPY_NEWWAY
 		std::string				KeyToEdges();
 		void					replaceEdgeLens(std::vector<double> new_edgelens);
+		unsigned 				robinsonFoulds(TreeShPtr other);
+		void 					buildTreeID();
 #endif
 		void					Clear();
         void                    stripNodeNames();
@@ -173,7 +185,7 @@ class Tree
 
 	protected:
 
-		//TreeID					tree_id;			/**< A vector of splits that uniquely identify the tree topology */
+		TreeID					tree_id;			/**< A vector of splits that uniquely identify the tree topology */
 		bool					treeid_valid;			/**< True if the tree_id data member is valid; if false, call RefreshTreeID to make it valid again */
 		TreeNodeStack			tipStorage;			    /**< A stack of pointers to (tip) TreeNode objects */
 		TreeNodeStack			internalNodeStorage;	/**< A stack of pointers to (internal) TreeNode objects */

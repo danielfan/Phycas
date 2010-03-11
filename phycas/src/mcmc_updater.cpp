@@ -23,6 +23,7 @@
 #include "phycas/src/mcmc_updater.hpp"
 #include "phycas/src/mcmc_param.hpp"
 #include "phycas/src/basic_tree.hpp"
+#include "phycas/src/mcmc_chain_manager.hpp"
 
 namespace phycas
 {
@@ -499,6 +500,11 @@ double MCMCUpdater::recalcPrior()
 		return 0.0;
 		}
 		
+	if (chain_mgr.lock()->getSAMCLikelihoodOnly())
+		{
+		return 0.0;
+		}
+		
 	if (prior)
 		{
 		double value = getCurrValueFromModel();
@@ -741,6 +747,14 @@ double MCMCUpdater::getLnPrior() const
 	}
 
 #if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the log prior just after this updater's update() member function was last called.
+*/
+TreeShPtr MCMCUpdater::getTree()
+	{
+	return tree;
+	}
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the `energy_levels' data member to a copy of the supplied values. If `elevels' is empty, clears `energy_levels'.
 */

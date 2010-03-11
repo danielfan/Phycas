@@ -17,6 +17,8 @@
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+#include <fstream>//temp 
+
 #include <iterator>		// for std::distance 
 #include <algorithm>	// for std::lower_bound  
 
@@ -188,6 +190,12 @@ double MCMCChainManager::recalcLnWorkingPrior() const
 */
 void MCMCChainManager::refreshLastLnPrior()
 	{
+	last_ln_prior = 0.0;
+	if (samc_likelihood_only)
+		{
+		return;
+		}
+		
 	// Might need to add more checks here
 	if (dirty)
 		{
@@ -195,7 +203,6 @@ void MCMCChainManager::refreshLastLnPrior()
 		}
 		
 	// Visit all updaters and let those who are prior stewards update their component of the joint prior.
-	last_ln_prior = 0.0;
 	for (MCMCUpdaterConstIter it = all_updaters.begin(); it != all_updaters.end(); ++it)
 		{
 		const boost::shared_ptr<MCMCUpdater> s = *it;
@@ -315,7 +322,7 @@ void MCMCChainManager::addMCMCUpdaters(
 |	The MCMCChainManager constructor does nothing.
 */
 MCMCChainManager::MCMCChainManager() 
-  : last_ln_like(0.0), last_ln_prior(0.0), doing_samc(false), samc_best(-DBL_MAX), samc_gain(1.0), dirty(true)
+  : last_ln_like(0.0), last_ln_prior(0.0), doing_samc(false), samc_likelihood_only(false), samc_best(-DBL_MAX), samc_rfbest(UINT_MAX), samc_gain(1.0), samc_t0(50.0), samc_eta(0.6), dirty(true)
 	{
 	}
 
@@ -352,6 +359,12 @@ void MCMCChainManager::initSAMC(
 		samc_loglevels.resize(m - 1);
 		std::copy(elevels.begin(), elevels.end(), samc_loglevels.begin());
 		
+		std::cerr << "\n>>>>> elevels: ";
+		std::copy(elevels.begin(), elevels.end(), std::ostream_iterator<double>(std::cerr, " "));
+		std::cerr << "\n>>>>> loglevels: ";
+		std::copy(samc_loglevels.begin(), samc_loglevels.end(), std::ostream_iterator<double>(std::cerr, " "));
+		std::cerr << "\n" << std::endl;
+	
 		samc_pi.resize(m);
 		samc_pi.assign(m, freq);
 		
@@ -385,7 +398,16 @@ unsigned MCMCChainManager::getSAMCEnergyLevel(
 	//
 	// then x_index = 2.
 	double_vect_t::const_iterator it = std::lower_bound(samc_loglevels.begin(), samc_loglevels.end(), logf);
-	unsigned x_index = (unsigned)std::distance(it, samc_loglevels.begin());
+	unsigned x_index = (unsigned)samc_loglevels.size();
+	if (it != samc_loglevels.end())
+		x_index = (unsigned)std::distance(samc_loglevels.begin(), it);
+	
+	//std::cerr << "\n>>>>> loglevels: ";
+	//std::copy(samc_loglevels.begin(), samc_loglevels.end(), std::ostream_iterator<double>(std::cerr, " "));
+	//std::cerr << "\n>>>>> logf    = " << logf;
+	//std::cerr << "\n>>>>> x_index = " << x_index;
+	//std::cerr << "\n" << std::endl;
+	
 	return x_index;
 	}
 
@@ -401,6 +423,136 @@ double MCMCChainManager::getSAMCWeight(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Returns the value of the data member `samc_gain'.
+*/
+double MCMCChainManager::getSAMCGain() const
+	{
+	PHYCAS_ASSERT(doing_samc);
+	return samc_gain;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the value of the data member `samc_best'.
+*/
+double MCMCChainManager::getSAMCBest() const
+	{
+	PHYCAS_ASSERT(doing_samc);
+	return samc_best;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the vector of SAMC weights (data member `samc_theta') associated with each SAMC energy level.
+*/
+double_vect_t MCMCChainManager::getSAMCWeights() const
+	{
+	PHYCAS_ASSERT(doing_samc);
+	return samc_theta;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the vector of SAMC energy level proportions (data member `samc_pi') associated with each SAMC energy level.
+*/
+double_vect_t MCMCChainManager::getSAMCPi() const
+	{
+	PHYCAS_ASSERT(doing_samc);
+	return samc_pi;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the vector of SAMC energy level proportions (data member `samc_pi') associated with each SAMC energy level.
+*/
+unsigned MCMCChainManager::calcRFDistance(TreeShPtr ref_tree) const
+	{
+	PHYCAS_ASSERT(doing_samc);
+	MCMCUpdaterShPtr u = *params_begin;
+	return u->getTree()->robinsonFoulds(ref_tree);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the current value of the data member `samc_rfbest', which is the last-calculated Robinson-Foulds distance
+|	between the SAMC reference tree and the best tree seen thus far.
+*/
+unsigned MCMCChainManager::getSAMCRobinsonFouldsBest() const
+	{
+	PHYCAS_ASSERT(doing_samc);
+	return samc_rfbest;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the current value of the data member `samc_likelihood_only', which determines whether the normalized
+|	likelihood or the posterior will be sampled during SAMC analyses.
+*/
+bool MCMCChainManager::getSAMCLikelihoodOnly() const
+	{
+	PHYCAS_ASSERT(doing_samc);
+	return samc_likelihood_only;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the root mean square error of the energy level proportions. This serves as a measure of how well the SAMC
+|	analysis is converging.
+*/
+double MCMCChainManager::getSAMCPiRMSE() const
+	{
+	PHYCAS_ASSERT(doing_samc);
+	
+	double rmse = 0.0;
+	unsigned nlevels = (unsigned)samc_count.size();
+	PHYCAS_ASSERT(nlevels > 0);
+	unsigned total_count = std::accumulate(samc_count.begin(), samc_count.end(), 0);
+	for (unsigned i = 0; i < nlevels; ++i)
+		{
+		double term = ((double)samc_count[i]/(double)total_count) - samc_pi[i];
+		rmse += pow(term, 2.0);
+		//std::cerr << boost::str(boost::format("term = %g, count = %d, pi = %g, rmse = %g") % term % samc_count[i] % samc_pi[i] % rmse) << std::endl;
+		}
+	//std::cerr << std::endl;
+	
+	return sqrt(rmse);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the counts of visits to each SAMC energy level.
+*/
+uint_vect_t MCMCChainManager::getSAMCCounts() const
+	{
+	PHYCAS_ASSERT(doing_samc);
+	return samc_count;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the value of `samc_likelihood_only', which indicates, if true, that SAMC analyses should explore the likelihood
+|	surface, not the posterior. If false, SAMC analyses will explore the usual posterior distribution.
+*/
+void MCMCChainManager::setSAMCLikelihoodOnly(
+  bool likelihood_only_status) 	/**< is the desired setting for `samc_likelihood_only'  */
+	{
+	PHYCAS_ASSERT(doing_samc);
+	samc_likelihood_only = likelihood_only_status;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the value of `samc_ref_tree', which should be a shared pointer to the best tree known.
+*/
+void MCMCChainManager::setSAMCRefTree(
+  TreeShPtr ref_tree) 	/**< is the SAMC reference tree */
+	{
+	PHYCAS_ASSERT(doing_samc);
+	samc_ref_tree = ref_tree;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the value of `samc_best', which should be the log posterior of the best point sampled by SAMC thus far.
+*/
+void MCMCChainManager::setSAMCBest(
+  double new_best) 	/**< is the new best log posterior value */
+	{
+	PHYCAS_ASSERT(doing_samc);
+	PHYCAS_ASSERT(new_best > samc_best);
+	samc_best = new_best;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Updates the SAMC weights based on the supplied energy level `i' of the most recent sampled point.
 */
 void MCMCChainManager::updateSAMCWeights(
@@ -413,7 +565,7 @@ void MCMCChainManager::updateSAMCWeights(
 	samc_count[i] += 1;
 	
 	// update weights        
-	unsigned m = (unsigned)samc_loglevels.size();    
+	unsigned m = (unsigned)samc_theta.size();    
 	for (unsigned j = 0; j < m; ++j)
 		{
 		if (i == j)
@@ -421,6 +573,18 @@ void MCMCChainManager::updateSAMCWeights(
 		else
 			samc_theta[j] += samc_gain*(0.0 - samc_pi[j]);
 		}
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Updates the SAMC gain based on the supplied time `t'.
+*/
+void MCMCChainManager::updateSAMCGain(
+  unsigned t)	/**< is the current number of cycles */
+	{
+	PHYCAS_ASSERT(doing_samc);
+	double denom = (t > samc_t0 ? t : samc_t0);
+	double log_gain = samc_eta*(std::log(samc_t0) - std::log(denom));
+	samc_gain = std::exp(log_gain);	
 	}
 #endif
 	
@@ -447,17 +611,30 @@ void MCMCChainManager::updateAllUpdaters()
 		for (unsigned i = 0; i < w; ++i)
 			{
 			(*it)->update();
-
-			if (doing_samc)
+			
+			double logf = getLastLnLike();// + getLastLnPrior();
+			if (logf > samc_best)
 				{
-				double logf = getLastLnLike() + getLastLnPrior();
-				if (logf > samc_best)
+				samc_best = logf;
+				}
+			if (samc_ref_tree)
+				{
+				TreeShPtr curr_tree = (*it)->getTree();
+				unsigned tmp = curr_tree->robinsonFoulds(samc_ref_tree);
+				if (tmp == 0 && samc_rfbest > 0)
 					{
-					samc_best = logf;
-					std::cerr << "\n>>>>> new best: " << logf << std::endl;//temp
-					std::cerr << ">>>>> counts:   ";
-					std::copy(samc_count.begin(), samc_count.end(), std::ostream_iterator<unsigned>(std::cerr, " "));
-					std::cerr << std::endl;
+					std::ofstream doof("samc_first_rf0.tre");
+					doof << curr_tree->MakeNewick() << std::endl;
+					doof << curr_tree->MakeNumberedNewick() << std::endl;
+					doof.close();
+					}
+				if (tmp < samc_rfbest)
+					{
+					samc_rfbest = tmp;
+					std::ofstream doof("samc_best.tre");
+					doof << curr_tree->MakeNewick() << std::endl;
+					doof << curr_tree->MakeNumberedNewick() << std::endl;
+					doof.close();
 					}
 				}
 			} 
@@ -759,6 +936,9 @@ void MCMCChainManager::finalize()
 double MCMCChainManager::calcExternalEdgeLenPriorUnnorm(
   double v) const
 	{
+	if (samc_likelihood_only)
+		return 0.0;
+		
     // The first edge length parameter always governs external edge lengths
     PHYCAS_ASSERT((edgelens_end - edgelens_begin) >= 1);
 	MCMCUpdaterShPtr u = *edgelens_begin;
@@ -854,6 +1034,9 @@ double MCMCChainManager::calcInternalEdgeLenWorkingPrior(
 */
 double MCMCChainManager::calcInternalEdgeLenPriorUnnorm(double v) const
 	{
+	if (samc_likelihood_only)
+		return 0.0;
+		
     // The first edge length parameter governs internal edge lengths if there is only one edge length parameter.
     // If there are two edge length parameters, then the second one always governs internal edge lengths
 	bool two_edgelen_priors = (edgelens_end - edgelens_begin == 2);

@@ -222,17 +222,19 @@ void TreeScalerMove::accept()
 |	Computes the joint log prior over all edges in the associated tree and sets `curr_ln_prior'.
 */
 double TreeScalerMove::recalcPrior()
-	{	
+	{
     // Loop through all EdgeLenMasterParam objects and call the recalcPrior function of each.
     // Each EdgeLenMasterParam object knows how to compute the prior for the edge lengths it controls.
     curr_ln_prior = 0.0;
 	ChainManagerShPtr p = chain_mgr.lock();
-    const MCMCUpdaterVect & edge_length_params = p->getEdgeLenParams();
-    for (MCMCUpdaterVect::const_iterator it = edge_length_params.begin(); it != edge_length_params.end(); ++it)
-        {
-        curr_ln_prior += (*it)->recalcPrior();
-        }
-
+	if (!p->getSAMCLikelihoodOnly())
+		{
+		const MCMCUpdaterVect & edge_length_params = p->getEdgeLenParams();
+		for (MCMCUpdaterVect::const_iterator it = edge_length_params.begin(); it != edge_length_params.end(); ++it)
+			{
+			curr_ln_prior += (*it)->recalcPrior();
+			}
+		}
 	return curr_ln_prior;
 	}
 

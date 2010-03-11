@@ -106,6 +106,8 @@ BOOST_PYTHON_MODULE(_PhylogenyExt)
 #if POLPY_NEWWAY
 		.def("keyToEdges", &Tree::KeyToEdges)
 		.def("replaceEdgeLens", &Tree::replaceEdgeLens)
+		.def("robinsonFoulds", &Tree::robinsonFoulds)
+		.def("buildTreeID", &Tree::buildTreeID)
 #endif
 		.def("setAllEdgeLens", &Tree::SetAllEdgeLens)
 		.def("debugWalkTree", &Tree::DebugWalkTree)

@@ -236,7 +236,7 @@ bool DirichletMove::update()
 	// orig_params values are used in the likelihood function. However, the transformation only adds a constant
 	// (i.e., -log(nsubsets)) to the log prior and thus this constant cancels out in the ln_accept_ratio.
 	// More care should be taken when reporting the log prior or when estimating marginal likelihoods.
-    double prev_ln_prior		= mv_prior->GetLnPDF(orig_params);
+    double prev_ln_prior		= (p->getSAMCLikelihoodOnly() ? 0.0 : mv_prior->GetLnPDF(orig_params));
 	double prev_ln_like			= p->getLastLnLike();
 	PHYCAS_ASSERT(!use_working_prior || mv_working_prior);
 	double prev_ln_working_prior = (use_working_prior ? mv_working_prior->GetLnPDF(orig_params) : 0.0);
@@ -245,7 +245,7 @@ bool DirichletMove::update()
     setParams(new_params);
     likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
 
-	double curr_ln_prior		= mv_prior->GetLnPDF(new_params);
+	double curr_ln_prior		= (p->getSAMCLikelihoodOnly() ? 0.0 : mv_prior->GetLnPDF(new_params));
 	double curr_ln_like			= (heating_power > 0.0 ? likelihood->calcLnL(tree) : 0.0);
 	double curr_ln_working_prior = (use_working_prior ? mv_working_prior->GetLnPDF(new_params) : 0.0);
 

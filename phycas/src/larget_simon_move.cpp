@@ -194,12 +194,25 @@ bool LargetSimonMove::update()
 		prev_posterior		= prev_ln_like + prev_ln_prior;
 		prev_samc_index		= p->getSAMCEnergyLevel(prev_posterior);
 		double prev_theta	= p->getSAMCWeight(prev_samc_index);
-		prev_posterior		-= prev_theta;
 		
 		curr_posterior		= curr_ln_like + curr_ln_prior;
 		curr_samc_index		= p->getSAMCEnergyLevel(curr_posterior);
 		double curr_theta	= p->getSAMCWeight(curr_samc_index);
+		
+		bool debug_now = (curr_samc_index > prev_samc_index) && (curr_samc_index > 45);
+		
+		if (debug_now)
+			{
+			std::cerr << boost::str(boost::format("@@@@@ %d -> %d, post_diff = %.5f, weight_diff = %.5f") % prev_samc_index % curr_samc_index % (curr_posterior - prev_posterior) % (prev_theta - curr_theta));
+			} 
+			
+		prev_posterior		-= prev_theta;
 		curr_posterior		-= curr_theta;
+		
+		if (debug_now)
+			{
+			std::cerr << boost::str(boost::format(", total_diff = %.5f") % (curr_posterior - prev_posterior)) << std::endl;
+			} 
 		}
     else
 		{

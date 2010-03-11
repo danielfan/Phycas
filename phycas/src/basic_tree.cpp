@@ -1294,7 +1294,7 @@ std::string Tree::KeyToEdges()
 	if (!HasEdgeLens())
 		throw XPhylogeny("no edge lengths were specified for this tree");
 
-	unsigned nnodes = GetNNodes();
+	//unsigned nnodes = GetNNodes();
 	unsigned ntaxa = GetNObservables();
 	RecalcAllSplits(ntaxa);
 	if (preorderDirty)
@@ -1969,6 +1969,9 @@ std::string & Tree::AppendNewick(
 void Tree::RecalcAllSplits(
   unsigned max_nbits)   /**< is the maximum number of bits to allow in each split */
     {
+#if POLPY_NEWWAY
+	tree_id.clear();
+#endif
     std::vector<unsigned> tips_seen;
     for (TreeNode * nd = GetLastPreorder(); nd != NULL; nd = nd->GetNextPostorder())
         {
@@ -2014,6 +2017,9 @@ void Tree::RecalcAllSplits(
             if (nd->IsObservable())
                 s.SetBit(nn);
             }
+#if POLPY_NEWWAY
+		tree_id.insert(s);
+#endif
         }
     }
 
@@ -2126,6 +2132,88 @@ void Tree::DebugHere(
 	{
 	std::cerr << "~~~~~~~ " << s << " ~~~~~~~" << std::endl;
 	}
+	
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns a const reference to the data member `tree_id'. 
+*/
+const TreeID & Tree::getTreeID() const
+	{
+	return tree_id;
+	}
+		
+/*----------------------------------------------------------------------------------------------------------------------
+|	Calls RecalcAllSplits to build tree id by adding the split associated with every internal edge to the data member
+|	`tree_id'. 
+*/
+void Tree::buildTreeID()
+	{
+	RecalcAllSplits(GetNTips());
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Calculates and returns the Robinson-Foulds distance between this tree and `other'. 
+*/
+unsigned Tree::robinsonFoulds(TreeShPtr other)
+	{
+	buildTreeID();
+	other->buildTreeID();
+	const TreeID & other_tree_id = other->getTreeID();
+	
+	TreeID::iterator first1 = tree_id.begin();
+	TreeID::iterator first2 = other_tree_id.begin();
+	TreeID::iterator last1 = tree_id.end();
+	TreeID::iterator last2 = other_tree_id.end();
+	
+	// a  1 3   5   7 
+	// b      4 5 6 7 8
+	// 5 differences (1 3 4 6 8)
+	
+	// times
+	// thru
+	// loop   first1  first2  
+	// ---------------------
+	//  1       1       4     <- advance first1, num_differences = 1
+	//  2       3       4     <- advance first1, num_differences = 2
+	//  3       5       4     <- advance first2, num_differences = 3
+	//  4       5       5     <- advance both
+	//  5       7       6     <- advance first2, num_differences = 4
+	//  6       7       7     <- advance both
+	//  7       -       8     <- stop because first1 == last1, num_differences = 5
+	
+	unsigned num_differences = 0;
+	while (first1 != last1 && first2 != last2)
+		{
+		if (*first1 < *first2) 
+			{
+			++num_differences;
+			++first1;
+			}
+		else if (*first2 < *first1)
+			{
+			++num_differences;
+			++first2;
+			}
+		else 
+			{
+			++first1; 
+			++first2;
+			}
+
+		}
+		
+	if (first1 == last1 && first2 != last2)
+		{
+		num_differences += std::distance(first2, last2);
+		}
+	else if (first2 == last2 && first1 != last1)
+		{
+		num_differences += std::distance(first1, last1);
+		}
+	return num_differences;
+	}
+
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Scales all edge lengths in the tree by multiplying them by the supplied value `scaling_factor'.

@@ -4,9 +4,11 @@ from phycas import mcmc
 
 class SAMC(PhycasCommand):
 	def __init__(self):
-		args = (   ("nlevels", 5, "The number of energy levels used to partition the parameter space", IntArgValidate(min=3)),
-				   ("hilog", 0.0, "The natural logarithm of the posterior for a relatively good tree under the model to be used for the SAMC analysis.", FloatArgValidate()),
-				   ("lolog", 0.0, "The natural logarithm of the posterior for a relatively bad (e.g. random) tree under the model to be used for the SAMC analysis.", FloatArgValidate()),
+		args = (   ("nlevels",                 50, "The number of energy levels used to partition the parameter space", IntArgValidate(min=3)),
+				   ("hilog",                  0.0, "The natural logarithm of the posterior for a relatively good tree under the model to be used for the SAMC analysis.", FloatArgValidate()),
+				   ("lolog",                  0.0, "The natural logarithm of the posterior for a relatively bad (e.g. random) tree under the model to be used for the SAMC analysis.", FloatArgValidate()),
+				   ("likelihood_only",      False, "If True, SAMC analysis will use an improper prior such that the posterior is equivalent to the normalized likelihood surface. If False, SAMC will be based on the usual posterior distribution (with a proper joint prior).", BoolArgValidate),
+				   ("reference_tree_source", None, "A TreeCollection that will serve as the source of the reference tree topology. The reference tree should represent the best tree topology known for the current model and data set. Specifying a reference tree makes it possible to determine if and when SAMC finds that tree topology. If a string is passed in, it is interpreted as a the path to a file with trees.", TreeSourceValidate),
 				)
 		# Specify output options
 		#self.__dict__["hidden"] = True # hide from main phycas help list of commands until working
@@ -36,6 +38,7 @@ class SAMC(PhycasCommand):
 		"""
 		cf = CommonFunctions(self)
 		cf.phycassert(mcmc.ncycles > 0, 'mcmc.ncycles cannot be less than 1 for SAMC analyses')
+		cf.phycassert(self.hilog > self.lolog, 'samc.hilog must be greater than samc.lolog')
 		
 	def initLevels(self):
 		"""
@@ -44,13 +47,12 @@ class SAMC(PhycasCommand):
 		will be equally spaced (on the log scale) between hilog and lolog.
 		"""
 		n = self.nlevels
-		self.energy_levels = [0.0]*n
-		self.energy_levels[0] = self.lolog
-		self.energy_levels[n-1] = self.hilog
+		self.energy_levels = [0.0]*(n-1)
 		incr = (self.hilog - self.lolog)/float(n-2)
+		raw_input('incr = %g' % incr)
 		prevlog = self.lolog
-		for i in range(1, n-1):
-			self.energy_levels[i] = prevlog + incr
+		for i in range(n-1):
+			self.energy_levels[i] = prevlog + incr*float(i)
 		
 	def __call__(self, **kwargs):
 		self.set(**kwargs)

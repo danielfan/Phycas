@@ -120,10 +120,23 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 
 #if POLPY_NEWWAY
 		void 					initSAMC(const double_vect_t & elevels);
+		unsigned 				calcRFDistance(TreeShPtr ref_tree) const;
+		unsigned				getSAMCRobinsonFouldsBest() const;
 		unsigned 				getSAMCEnergyLevel(double logf)	const;
 		double 					getSAMCWeight(unsigned i) const;
+		void 					updateSAMCGain(unsigned t);
 		void 					updateSAMCWeights(unsigned i);
 		bool					doingSAMC() const;
+		double					getSAMCGain() const;
+		double					getSAMCBest() const;
+		double 					getSAMCPiRMSE() const;
+		bool 					getSAMCLikelihoodOnly() const;
+		void					setSAMCBest(double new_best);
+		void 					setSAMCRefTree(TreeShPtr ref_tree);
+		void 					setSAMCLikelihoodOnly(bool likelihood_only_status);
+		uint_vect_t				getSAMCCounts() const;
+		double_vect_t 			getSAMCWeights() const;
+		double_vect_t 			getSAMCPi() const;
 #endif
 
 	public:
@@ -144,12 +157,17 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 #if POLPY_NEWWAY
 		// SAMC-related 
 		bool 					doing_samc;				/**< If true, SAMC analysis will be performed */
+		bool 					samc_likelihood_only;	/**< If true, SAMC analysis will be based on the normalized likelihood (improper prior) rather than the usual posterior (proper prior) */
 		double 					samc_best;				/**< The best log posterior that SAMC has seen so far */
+		unsigned				samc_rfbest;			/**< The smallest Robinson-Foulds distance (between samc_ref_tree and a tree that arises during MCMC) that SAMC has seen so far */
+		TreeShPtr				samc_ref_tree;			/**< The best tree known for the data set being analyzed (SAMC should find this tree if it is working correctly). Ok to leave set to nothing. */
 		uint_vect_t 			samc_count;				/**< Vector of counts of the number of times each energy level has been sampled in a SAMC analysis */
 		double_vect_t			samc_loglevels;			/**< Vector of energy level boundaries (log scale) sorted from smallest (element 0) to largest (last element) */
 		double_vect_t			samc_theta;				/**< Vector of weights associated with each energy level in a SAMC analysis (these weights affect the acceptance probability of Metropolis moves) */
 		double_vect_t			samc_pi;				/**< Vector of frequencies associated with each energy level (SAMC analysis is expected to visit level i in proportion to samc_pi[i]) */
 		double					samc_gain;				/**< The factor determining the magnitude of the adjustment made to weights in samc_theta after each update */
+		double					samc_t0;				/**< The gain at time t is samc_gain = (samc_t0/max(samc_t0,t))^samc_eta */
+		double					samc_eta;				/**< The gain at time t is samc_gain = (samc_t0/max(samc_t0,t))^samc_eta */
 #endif
 		bool					dirty;					/**< If true, means just constructed or at least one updater has been added since finalize() was last called; false means ready to use the all_updaters vector */
 

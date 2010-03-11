@@ -24,6 +24,7 @@
 // I am gradually incorporating the functions needed by the new Phycas
 
 #include "boost/shared_ptr.hpp"
+#include "phycas/src/basic_tree.hpp"
 
 namespace phycas
 {
@@ -33,10 +34,8 @@ typedef boost::shared_ptr<ProbabilityDistribution> ProbDistShPtr;
 
 class TreeNode;
 
-class Tree;
 typedef boost::shared_ptr<Tree> TreeShPtr;
 
-class TreeID;
 typedef boost::shared_ptr<TreeID> TreeIDShPtr;
 
 class Lot;
