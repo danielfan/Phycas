@@ -287,6 +287,7 @@ class TreeLikelihood(TreeLikelihoodBase):
         >>> partition_model = Likelihood.PartitionModelBase()
         >>> partition_model.addModel(m)
         >>> t = Likelihood.TreeLikelihood(partition_model)
+		>>> t.setNoData()
         >>> mean  = t.getRateMeans(0)
         >>> lower = t.getCategoryLowerBoundaries(0)
         >>> print 'No. categories = %d' % (m.getNGammaRates())

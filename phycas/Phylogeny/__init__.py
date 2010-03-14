@@ -9,14 +9,19 @@ from _Split import *
 
 #print 'importing Phylogeny...'
 
-def testExamples():
+def testExamples(verbose = False):
     import doctest
     a = [0,0]
+
+    if verbose: print '...testing examples in file _Tree.py'
     r = doctest.testfile('_Tree.py')
     a[0] += r[0] ; a[1] += r[1]
+
+    if verbose: print '...testing examples in file _TreeManip.py'
     r = doctest.testfile('_TreeManip.py')
     a[0] += r[0] ; a[1] += r[1]
+
+    if verbose: print '...testing examples in file _Split.py'
     r = doctest.testfile('_Split.py')
     a[0] += r[0] ; a[1] += r[1]
     return tuple(a)
-    

@@ -484,7 +484,6 @@ unsigned MCMCChainManager::getSAMCRobinsonFouldsBest() const
 */
 bool MCMCChainManager::getSAMCLikelihoodOnly() const
 	{
-	PHYCAS_ASSERT(doing_samc);
 	return samc_likelihood_only;
 	}
 
@@ -556,7 +555,7 @@ void MCMCChainManager::setSAMCBest(
 |	Updates the SAMC weights based on the supplied energy level `i' of the most recent sampled point.
 */
 void MCMCChainManager::updateSAMCWeights(
-  unsigned i)	/**< is the index of the level to which the current point belongs */
+  unsigned i)	/**< is the index of the level to which the current point belongs, with i == 0 representing the highest energy (lowest posterior density) */
 	{
 	PHYCAS_ASSERT(doing_samc);
 	PHYCAS_ASSERT(i < samc_count.size());
@@ -565,13 +564,18 @@ void MCMCChainManager::updateSAMCWeights(
 	samc_count[i] += 1;
 	
 	// update weights        
-	unsigned m = (unsigned)samc_theta.size();    
-	for (unsigned j = 0; j < m; ++j)
+	unsigned m = (unsigned)samc_theta.size();
+	for (unsigned j = 1; j < m; ++j)
 		{
-		if (i == j)
-			samc_theta[j] += samc_gain*(1.0 - samc_pi[j]);
-		else
-			samc_theta[j] += samc_gain*(0.0 - samc_pi[j]);
+		if (samc_count[j] > 0)
+			{
+			// The following leaves samc_theta[0] equal to its initial value, 0.0
+			double i_equals_0 = (i == 0 ? 1.0 : 0.0);
+			double i_equals_j = (i == j ? 1.0 : 0.0);
+			double first_term  = i_equals_j - samc_pi[j];
+			double second_term = i_equals_0 - samc_pi[0];
+			samc_theta[j] += samc_gain*(first_term - second_term);
+			}
 		}
 	}
 	
@@ -624,16 +628,14 @@ void MCMCChainManager::updateAllUpdaters()
 				if (tmp == 0 && samc_rfbest > 0)
 					{
 					std::ofstream doof("samc_first_rf0.tre");
-					doof << curr_tree->MakeNewick() << std::endl;
-					doof << curr_tree->MakeNumberedNewick() << std::endl;
+					doof << "#nexus\n\nbegin trees;\n  tree samc_first_rf0 = [&U] " << curr_tree->MakeNewick() << ";\nend;" << std::endl;
 					doof.close();
 					}
 				if (tmp < samc_rfbest)
 					{
 					samc_rfbest = tmp;
 					std::ofstream doof("samc_best.tre");
-					doof << curr_tree->MakeNewick() << std::endl;
-					doof << curr_tree->MakeNumberedNewick() << std::endl;
+					doof << "#nexus\n\nbegin trees;\n  tree samc_best = [&U] " << curr_tree->MakeNewick() << ";\nend;" << std::endl;
 					doof.close();
 					}
 				}

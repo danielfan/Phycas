@@ -49,7 +49,7 @@ class SAMC(PhycasCommand):
 		n = self.nlevels
 		self.energy_levels = [0.0]*(n-1)
 		incr = (self.hilog - self.lolog)/float(n-2)
-		raw_input('incr = %g' % incr)
+		#raw_input('incr = %g' % incr)
 		prevlog = self.lolog
 		for i in range(n-1):
 			self.energy_levels[i] = prevlog + incr*float(i)

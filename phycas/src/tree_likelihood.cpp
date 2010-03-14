@@ -3330,7 +3330,6 @@ unsigned TreeLikelihood::buildConstantStatesVector()
     int_set_t 	curr_states;		// holds states for taxon under consideration
     int_vect_t 	xset;				// temporarily holds intersection of common_states and curr_states
 
-	unsigned pattern_index = 0;//temp!
     for (pattern_vect_t::const_iterator pat = pattern_vect.begin(); pat != pattern_vect.end(); ++pat)
 		{
 		// get subset-specific info
@@ -3401,7 +3400,6 @@ unsigned TreeLikelihood::buildConstantStatesVector()
             {
             constant_states.push_back(0);
             }
-		++pattern_index;//temp!
         }
     return num_potentially_constant;
     }

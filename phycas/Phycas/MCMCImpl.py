@@ -713,7 +713,8 @@ class MCMCImpl(CommonFunctions):
 						print '	  tree rep.%d = %s;' % (cycle + 1, c.tree.makeNewick(self.mcmc_manager.parent.opts.ndecimals))
 			
 					c.chain_manager.updateAllUpdaters()
-					c.chain_manager.updateSAMCGain(cycle + 1)
+					if self.opts.doing_samc:
+						c.chain_manager.updateSAMCGain(cycle + 1)
 					
 			# print '******** time_stamp =',self.mcmc_manager.getColdChain().model.getTimeStamp()
 					

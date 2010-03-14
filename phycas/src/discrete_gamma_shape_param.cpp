@@ -56,6 +56,7 @@ bool DiscreteGammaShapeParam::update()
 		{
 		return false;
 		}
+		
 	slice_sampler->Sample();
     
 	ChainManagerShPtr p = chain_mgr.lock();

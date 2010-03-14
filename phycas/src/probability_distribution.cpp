@@ -405,7 +405,6 @@ DirichletDistribution * DirichletDistribution::Clone() const
 */
 double ProbabilityDistribution::operator()(double x)
 	{
-	PHYCAS_ASSERT(0);	// just checking to see if this is being used anywhere: I guess so!
 	return GetLnPDF(x);
 	}
 
