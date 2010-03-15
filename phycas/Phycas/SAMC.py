@@ -7,6 +7,8 @@ class SAMC(PhycasCommand):
 		args = (   ("nlevels",                 50, "The number of energy levels used to partition the parameter space", IntArgValidate(min=3)),
 				   ("hilog",                  0.0, "The natural logarithm of the posterior for a relatively good tree under the model to be used for the SAMC analysis.", FloatArgValidate()),
 				   ("lolog",                  0.0, "The natural logarithm of the posterior for a relatively bad (e.g. random) tree under the model to be used for the SAMC analysis.", FloatArgValidate()),
+				   ("gain_t0",               50.0, "The numerator in the gain factor update formula. Larger values maintain larger gain factors longer.", FloatArgValidate(greaterthan=0.0)),
+				   ("gain_eta",               0.6, "The power in the gain factor update formula. Must be greater than 0.5 and less than or equal to 1.0.", FloatArgValidate(greaterthan=0.5,max=1.0)),
 				   ("likelihood_only",      False, "If True, SAMC analysis will use an improper prior such that the posterior is equivalent to the normalized likelihood surface. If False, SAMC will be based on the usual posterior distribution (with a proper joint prior).", BoolArgValidate),
 				   ("reference_tree_source", None, "A TreeCollection that will serve as the source of the reference tree topology. The reference tree should represent the best tree topology known for the current model and data set. Specifying a reference tree makes it possible to determine if and when SAMC finds that tree topology. If a string is passed in, it is interpreted as a the path to a file with trees.", TreeSourceValidate),
 				)

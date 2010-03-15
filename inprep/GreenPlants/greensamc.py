@@ -110,5 +110,6 @@ if __name__ == '__main__':
     samc.hilog = high_logf
     samc.lolog = low_logf
     samc.likelihood_only = False
+	samc.t0
     samc.reference_tree_source = TreeCollection(newick=garli_best_tree)
     samc()

@@ -340,7 +340,9 @@ bool MCMCChainManager::doingSAMC() const
 |	Sets the `energy_levels' data member to a copy of the supplied values. If `elevels' is empty, clears `energy_levels'.
 */
 void MCMCChainManager::initSAMC(
-  const double_vect_t & elevels)
+  const double_vect_t & elevels,
+  double t0,
+  double eta)
 	{
 	if (elevels.empty())
 		{
@@ -349,10 +351,14 @@ void MCMCChainManager::initSAMC(
 		samc_pi.clear();
 		samc_theta.clear();
 		samc_count.clear();
+		samc_t0 = 50.0;
+		samc_eta = 0.6;
 		}
 	else
 		{
 		doing_samc = true;
+		samc_t0 = t0;
+		samc_eta = eta;
 		unsigned m = (unsigned)(elevels.size() + 1);
 		double freq = 1.0/(double)m;
 		

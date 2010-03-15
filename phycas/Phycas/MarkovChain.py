@@ -589,5 +589,5 @@ class MarkovChain(LikelihoodCore):
 		# If doing SAMC, make sure the chain_manager knows the energy levels
 		# The call to initSAMC also initializes the other SAMC-related variables 
 		if self.parent.opts.doing_samc:
-			self.chain_manager.initSAMC(self.parent.opts.samcobj.energy_levels)
+			self.chain_manager.initSAMC(self.parent.opts.samcobj.energy_levels, self.parent.opts.samcobj.gain_t0, self.parent.opts.samcobj.gain_eta)
 				

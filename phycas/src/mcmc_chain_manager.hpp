@@ -119,7 +119,7 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
         void					debugUpdaterReport(std::string s);
 
 #if POLPY_NEWWAY
-		void 					initSAMC(const double_vect_t & elevels);
+		void 					initSAMC(const double_vect_t & elevels, double t0, double eta);
 		unsigned 				calcRFDistance(TreeShPtr ref_tree) const;
 		unsigned				getSAMCRobinsonFouldsBest() const;
 		unsigned 				getSAMCEnergyLevel(double logf)	const;
