@@ -646,6 +646,7 @@
 		D1AC9562111A0AF500335CDA /* runall.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = runall.py; path = ../../phycas/Tests/runall.py; sourceTree = SOURCE_ROOT; };
 		D1BB2656111094A6002A8F79 /* LikelihoodCore.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = LikelihoodCore.py; path = ../../phycas/Phycas/LikelihoodCore.py; sourceTree = SOURCE_ROOT; };
 		D1BB2657111094A6002A8F79 /* MarkovChain.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = MarkovChain.py; path = ../../phycas/Phycas/MarkovChain.py; sourceTree = SOURCE_ROOT; };
+		D1C47254114C725F00DE4DBD /* greensamc.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = greensamc.py; path = ../../inprep/GreenPlants/greensamc.py; sourceTree = SOURCE_ROOT; };
 		D1D55522111B7A9A001BD7CD /* LikelihoodTest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = LikelihoodTest.py; path = ../../phycas/Tests/LikelihoodTest/LikelihoodTest.py; sourceTree = SOURCE_ROOT; };
 		D1D66464112051EE00BA8E47 /* partition.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = partition.py; path = ../../phycas/Tests/partition/partition.py; sourceTree = SOURCE_ROOT; };
 		D1F281C3111B422C00FDE78C /* GTRTest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = GTRTest.py; path = ../../phycas/Tests/GTRTest/GTRTest.py; sourceTree = SOURCE_ROOT; };
@@ -1263,6 +1264,7 @@
 		D17574C410EB940500D4E2B0 /* InPrep */ = {
 			isa = PBXGroup;
 			children = (
+				D1C47253114C724800DE4DBD /* GreenPlants */,
 				D10DDE0B1125D4B100CC55F3 /* scubed */,
 				D17574C510EB940C00D4E2B0 /* Partition */,
 			);
@@ -1331,6 +1333,14 @@
 				D1AC9562111A0AF500335CDA /* runall.py */,
 			);
 			name = Tests;
+			sourceTree = "<group>";
+		};
+		D1C47253114C724800DE4DBD /* GreenPlants */ = {
+			isa = PBXGroup;
+			children = (
+				D1C47254114C725F00DE4DBD /* greensamc.py */,
+			);
+			name = GreenPlants;
 			sourceTree = "<group>";
 		};
 		D1D55521111B7A81001BD7CD /* LikelihoodTest */ = {

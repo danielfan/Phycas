@@ -20,8 +20,8 @@ brlen_prior_rate = 10.0
 # GARLI stepwise addition starting tree GTR+I+G log-likelihood: -184486.1703
 # MLEs based on GARLI run
 # lnL = -143141.70740369
-relrate_MLEs    = [0.083300459	0.337671194	0.035578485	0.155295237	0.30941329	0.078741336]
-state_freq_MLEs = [0.31736 0.16151 0.12182 0.39931]
+relrate_MLEs    = [0.083300459,0.337671194,0.035578485,0.155295237,0.30941329,0.078741336]
+state_freq_MLEs = [0.31736,0.16151,0.12182,0.39931]
 pinvar_MLE      = 0.13611
 shape_MLE       = 0.59322
 
@@ -104,6 +104,7 @@ if __name__ == '__main__':
     mcmc.ncycles = num_cycles
     mcmc.sample_every = sample_freq
     mcmc.report_every = print_freq
+    mcmc.uf_num_edges = 25
 
     samc.nlevels = num_energy_levels
     samc.hilog = high_logf

@@ -21,6 +21,10 @@ This chapter contains notes on how likelihoods are calculated in Phycas. All of 
 
 \subsection{Conditional likelihood arrays (CLAs)}
 
+Here is the layout of a conditional likelihood array. In this case, the data is partitioned into two subsets, the first with 10 DNA characters (and a model that specifies 3 rate categories) and the second comprises 3 2-state morphological characters (no rate heterogeneity).
+
+THE LAYOUT BELOW IS INCORRECT - PATTERNS ARE NESTED WITHIN RATES!
+
 \resizebox{5.5in}{!} {
 \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c} \hline
 \multicolumn{12}{|c|}{Pattern 1} & \multicolumn{12}{c|}{Pattern 2} & \multicolumn{5}{c}{} \\ \hline
@@ -30,8 +34,20 @@ A & C & G & T & A & C & G & T & A & C & G & T & A & C & G & T & A & C & G & T & 
 \multicolumn{4}{c}{} & \multicolumn{1}{c}{$\uparrow$} &   \multicolumn{24}{c}{} 
 \end{tabular}
 }
+$\cdots$
 
-The element indicated by the arrow represents the probability of data pattern 1 ``above'' this node given that the relative rate was 2 and this node had state A. ``Above'' is in quotes because it is possible that the likelihood root is a descendant of the focal node, in which case the subtree involved may be pointing down rather than up. Note that nothing special need be done to accommodate partitioning; a different model may be used to compute the conditional likelihood for pattern 1 vs. pattern 2, for example.
+$\cdots$
+\resizebox{3.5in}{!} {
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|} \hline
+\multicolumn{12}{|c|}{Pattern 10} & \multicolumn{2}{|c|}{11} & \multicolumn{2}{|c|}{12} & \multicolumn{2}{|c|}{13} \\ \hline
+\multicolumn{4}{|c|}{Rate 1} & \multicolumn{4}{c|}{Rate 2} & \multicolumn{4}{c|}{Rate 3} & \multicolumn{2}{c|}{} & \multicolumn{2}{c|}{} & \multicolumn{2}{c|}{} \\ \hline
+A & C & G & T & A & C & G & T & A & C & G & T & 0 & 1 & 0 & 1 & 0 & 1 \\ \hline
+\end{tabular}
+}
+
+Note that a single conditional likelihood array spans all partition subsets. It is therefore not possible to determine the length of the CLA by multiplying $(\mbox{no. patterns})\times(\mbox{no. rates})\times(\mbox{no. states})$ because (no. rates) and (no. states) can differ between partition subsets.
+
+The element indicated by the arrow represents the probability of data pattern 1 ``above'' this node given that the relative rate was 2 and this node had state A. ``Above'' is in quotes because it is possible that the likelihood root is a descendant of the focal node, in which case the subtree involved may be pointing down rather than up. Note that nothing special need be done to accommodate partitioning; different models are being used here to compute the conditional likelihood for pattern 10 vs. pattern 11, for example.
 
 The CLAs are managed by the ConditionalLikelihood class. The InternalData and TipData classes each have a data member {\tt cla\_pool} that stores a stack of ConditionalLikelihood objects. Each InternalData object also has four ConditionalLikelihood shared pointers: {\tt parWorkingCLA} and {\tt parCachedCLA} store CLAs that are valid for subtrees rooted at the parent node, while {\tt childWorkingCLA} and {\tt childCachedCLA} store CLAs that are valid for subtrees rooted at the node that owns them. The ``cached'' versions allow temporary storage for use during Metropolis-Hastings proposals; if a proposed move is rejected, the cached versions are swapped back in rather than being recalculated. TipData objects have only the {\tt parWorkingCLA} and {\tt parCachedCLA} data members.
 
