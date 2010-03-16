@@ -48,13 +48,23 @@ class SAMC(PhycasCommand):
 		and level nlevels-1 being highest (above the level set by hilog). The remaining nlevels-3 boundaries
 		will be equally spaced (on the log scale) between hilog and lolog.
 		"""
-		n = self.nlevels
-		self.energy_levels = [0.0]*(n-1)
-		incr = (self.hilog - self.lolog)/float(n-2)
-		#raw_input('incr = %g' % incr)
-		prevlog = self.lolog
-		for i in range(n-1):
-			self.energy_levels[i] = prevlog + incr*float(i)
+		if True:
+			n = self.nlevels - 2
+			self.energy_levels = [0.0]*(n+1)
+			a = 2.0*(self.hilog - self.lolog - float(n))/float(n*(n-1))
+			self.energy_levels[0] = self.lolog
+			prevlog = self.energy_levels[0]
+			for i in range(n):
+				self.energy_levels[i+1] = prevlog + 1.0 + a*float(i)
+				prevlog = self.energy_levels[i+1]
+		else:
+			n = self.nlevels
+			self.energy_levels = [0.0]*(n-1)
+			incr = (self.hilog - self.lolog)/float(n-2)
+			#raw_input('incr = %g' % incr)
+			prevlog = self.lolog
+			for i in range(n-1):
+				self.energy_levels[i] = prevlog + incr*float(i)		
 		
 	def __call__(self, **kwargs):
 		self.set(**kwargs)

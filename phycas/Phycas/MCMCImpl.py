@@ -747,14 +747,15 @@ class MCMCImpl(CommonFunctions):
 							msg += "\nSAMC report:"
 							msg += "\n  best score: %.6f" % cold_chain_manager.getSAMCBest()
 							msg += "\n  RF distance: %d" % cold_chain_manager.getSAMCRobinsonFouldsBest()
-							#msg += "\n  RF distance: %.6f" % cold_chain_manager.calcRFDistance(self.samc_ref_tree)
 							msg += "\n  pi RMSE:    %.6f" % cold_chain_manager.getSAMCPiRMSE()
-							#msg += "\n  counts:     %s" % ','.join(['%d' % c for c in cold_chain_manager.getSAMCCounts()])
-							msg += "\n  counts min = %d, max = %d (%s)" % (min(cnts), max(cnts), ','.join(['%d' % c for c in cnts]))
-							#msg += "\n  weights:    %s" % ','.join(['%g' % w for w in cold_chain_manager.getSAMCWeights()])
-							msg += "\n  theta min = %g, max = %g, 1st = %g, last = %g" % (min(wts), max(wts), wts[0], wts[nlev-1])
-							#pis = cold_chain_manager.getSAMCPi()
-							#msg += "\n  pi min = %g, max = %g" % (min(pis), max(pis))
+							if len(cnts) > 20:
+								msg += "\n  counts min = %d, max = %d (%s...%s)" % (min(cnts), max(cnts), ','.join(['%d' % c for c in cnts[:10]]), ','.join(['%d' % c for c in cnts[-10:]]))
+							else:
+								msg += "\n  counts min = %d, max = %d (%s)" % (min(cnts), max(cnts), ','.join(['%d' % c for c in cnts]))
+							if len(wts) > 20:
+								msg += "\n  theta min = %g, max = %g (%s...%s)" % (min(wts), max(wts), ','.join(['%d' % c for c in wts[:10]]), ','.join(['%d' % c for c in wts[-10:]]))
+							else:
+								msg += "\n  theta min = %g, max = %g (%s)" % (min(wts), max(wts), ','.join(['%d' % c for c in wts]))
 							msg += "\n  gain:       %g\n" % cold_chain_manager.getSAMCGain()
 					else:
 						msg = 'cycle = %d, ' % (cycle + 1)
