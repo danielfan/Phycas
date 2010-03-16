@@ -135,6 +135,7 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 		void 					setSAMCRefTree(TreeShPtr ref_tree);
 		void 					setSAMCLikelihoodOnly(bool likelihood_only_status);
 		uint_vect_t				getSAMCCounts() const;
+		double_vect_t			getSAMCLogLevels() const;
 		double_vect_t 			getSAMCWeights() const;
 		double_vect_t 			getSAMCPi() const;
 #endif

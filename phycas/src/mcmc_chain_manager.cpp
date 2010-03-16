@@ -390,7 +390,7 @@ unsigned MCMCChainManager::getSAMCEnergyLevel(
 	{
 	PHYCAS_ASSERT(doing_samc);
 	
-	// Suppose logf = -0.51 and supposing also that these are the m = 5 levels:
+	// Suppose logf = -0.51 and supposing also that these are the n = 5 levels:
 	//
 	// level 4
 	// --------  0.00
@@ -407,12 +407,14 @@ unsigned MCMCChainManager::getSAMCEnergyLevel(
 	unsigned x_index = (unsigned)samc_loglevels.size();
 	if (it != samc_loglevels.end())
 		x_index = (unsigned)std::distance(samc_loglevels.begin(), it);
-	
-	//std::cerr << "\n>>>>> loglevels: ";
-	//std::copy(samc_loglevels.begin(), samc_loglevels.end(), std::ostream_iterator<double>(std::cerr, " "));
-	//std::cerr << "\n>>>>> logf    = " << logf;
-	//std::cerr << "\n>>>>> x_index = " << x_index;
-	//std::cerr << "\n" << std::endl;
+	//else 
+	//	{
+	//	std::cerr << "\n>>>>> loglevels: ";
+	//	std::copy(samc_loglevels.begin(), samc_loglevels.end(), std::ostream_iterator<double>(std::cerr, " "));
+	//	std::cerr << "\n>>>>> logf    = " << logf;
+	//	std::cerr << "\n>>>>> x_index = " << x_index;
+	//	std::cerr << "\n" << std::endl;
+	//	}
 	
 	return x_index;
 	}
@@ -453,6 +455,15 @@ double_vect_t MCMCChainManager::getSAMCWeights() const
 	{
 	PHYCAS_ASSERT(doing_samc);
 	return samc_theta;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the vector of SAMC log energy level boundaries (data member `samc_loglevels').
+*/
+double_vect_t MCMCChainManager::getSAMCLogLevels() const
+	{
+	PHYCAS_ASSERT(doing_samc);
+	return samc_loglevels;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -626,6 +637,10 @@ void MCMCChainManager::updateAllUpdaters()
 			if (logf > samc_best)
 				{
 				samc_best = logf;
+				TreeShPtr curr_tree = (*it)->getTree();
+				std::ofstream doof("samc_best.tre");
+				doof << "#nexus\n\nbegin trees;\n  tree samc_best = [&U] " << curr_tree->MakeNewick() << ";\nend;" << std::endl;
+				doof.close();
 				}
 			if (samc_ref_tree)
 				{
@@ -640,8 +655,8 @@ void MCMCChainManager::updateAllUpdaters()
 				if (tmp < samc_rfbest)
 					{
 					samc_rfbest = tmp;
-					std::ofstream doof("samc_best.tre");
-					doof << "#nexus\n\nbegin trees;\n  tree samc_best = [&U] " << curr_tree->MakeNewick() << ";\nend;" << std::endl;
+					std::ofstream doof("samc_best_rf.tre");
+					doof << "#nexus\n\nbegin trees;\n  tree samc_best_rf = [&U] " << curr_tree->MakeNewick() << ";\nend;" << std::endl;
 					doof.close();
 					}
 				}

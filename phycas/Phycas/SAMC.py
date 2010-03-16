@@ -49,14 +49,14 @@ class SAMC(PhycasCommand):
 		will be equally spaced (on the log scale) between hilog and lolog.
 		"""
 		if True:
-			n = self.nlevels - 2
-			self.energy_levels = [0.0]*(n+1)
-			a = 2.0*(self.hilog - self.lolog - float(n))/float(n*(n-1))
-			self.energy_levels[0] = self.lolog
-			prevlog = self.energy_levels[0]
-			for i in range(n):
-				self.energy_levels[i+1] = prevlog + 1.0 + a*float(i)
-				prevlog = self.energy_levels[i+1]
+			m = self.nlevels - 2
+			self.energy_levels = [0.0]*(m+1)
+			a = 2.0*(self.hilog - self.lolog - float(m))/float(m*(m-1))
+			self.energy_levels[m] = self.hilog
+			prevlog = self.energy_levels[m]
+			for i in range(m):
+				currlog = prevlog - (1.0 + a*float(i))
+				prevlog = self.energy_levels[m-i-1] = currlog
 		else:
 			n = self.nlevels
 			self.energy_levels = [0.0]*(n-1)

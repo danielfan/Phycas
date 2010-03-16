@@ -180,7 +180,9 @@ bool TreeScalerMove::update()
 		p->setLastLnPrior(curr_ln_prior);
 		p->setLastLnLike(curr_ln_like);
 		if (p->doingSAMC())
+			{
 			p->updateSAMCWeights(curr_samc_index);
+			}
 		accept();
 		return true;
 		}
@@ -193,7 +195,9 @@ bool TreeScalerMove::update()
 		curr_ln_like	= p->getLastLnLike();
 		curr_ln_prior	= p->getLastLnPrior();
 		if (p->doingSAMC())
+			{
 			p->updateSAMCWeights(prev_samc_index);
+			}
 		revert();
 		return false;
 		}

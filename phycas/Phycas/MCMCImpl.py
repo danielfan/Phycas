@@ -743,11 +743,16 @@ class MCMCImpl(CommonFunctions):
 						if self.opts.doing_samc:
 							wts = cold_chain_manager.getSAMCWeights()
 							cnts = cold_chain_manager.getSAMCCounts()
+							lvls = cold_chain_manager.getSAMCLogLevels()
 							nlev = len(wts)
 							msg += "\nSAMC report:"
 							msg += "\n  best score: %.6f" % cold_chain_manager.getSAMCBest()
 							msg += "\n  RF distance: %d" % cold_chain_manager.getSAMCRobinsonFouldsBest()
 							msg += "\n  pi RMSE:    %.6f" % cold_chain_manager.getSAMCPiRMSE()
+							if len(lvls) > 20:
+								msg += "\n  levels min = %d, max = %d (%s...%s)" % (min(lvls), max(lvls), ','.join(['%d' % c for c in lvls[:10]]), ','.join(['%d' % c for c in lvls[-10:]]))
+							else:
+								msg += "\n  levels min = %d, max = %d (%s)" % (min(lvls), max(lvls), ','.join(['%d' % c for c in lvls]))
 							if len(cnts) > 20:
 								msg += "\n  counts min = %d, max = %d (%s...%s)" % (min(cnts), max(cnts), ','.join(['%d' % c for c in cnts[:10]]), ','.join(['%d' % c for c in cnts[-10:]]))
 							else:
