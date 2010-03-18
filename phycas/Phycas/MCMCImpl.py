@@ -695,6 +695,7 @@ class MCMCImpl(CommonFunctions):
 			return '%d seconds remaining' % math.floor(secs_remaining)
 		
 	def mainMCMCLoop(self, explore_prior = False):
+		levels_file_created = False	#temp!
 		nchains = len(self.mcmc_manager.chains)
 		# print '******** nchains =',nchains
 		self.last_adaptation = 0
@@ -750,18 +751,32 @@ class MCMCImpl(CommonFunctions):
 							msg += "\n  RF distance: %d" % cold_chain_manager.getSAMCRobinsonFouldsBest()
 							msg += "\n  pi RMSE:    %.6f" % cold_chain_manager.getSAMCPiRMSE()
 							if len(lvls) > 20:
-								msg += "\n  levels min = %d, max = %d (%s...%s)" % (min(lvls), max(lvls), ','.join(['%d' % c for c in lvls[:10]]), ','.join(['%d' % c for c in lvls[-10:]]))
+								msg += "\n  levels min = %d, max = %d (%s...%s)" % (min(lvls), max(lvls), ','.join(['%g' % c for c in lvls[:10]]), ','.join(['%g' % c for c in lvls[-10:]]))
 							else:
-								msg += "\n  levels min = %d, max = %d (%s)" % (min(lvls), max(lvls), ','.join(['%d' % c for c in lvls]))
+								msg += "\n  levels min = %d, max = %d (%s)" % (min(lvls), max(lvls), ','.join(['%g' % c for c in lvls]))
 							if len(cnts) > 20:
-								msg += "\n  counts min = %d, max = %d (%s...%s)" % (min(cnts), max(cnts), ','.join(['%d' % c for c in cnts[:10]]), ','.join(['%d' % c for c in cnts[-10:]]))
+								msg += "\n  counts min = %d, max = %d (%s...%s), sum = %d" % (min(cnts), max(cnts), ','.join(['%d' % c for c in cnts[:10]]), ','.join(['%d' % c for c in cnts[-10:]]),sum(cnts))
 							else:
-								msg += "\n  counts min = %d, max = %d (%s)" % (min(cnts), max(cnts), ','.join(['%d' % c for c in cnts]))
+								msg += "\n  counts min = %d, max = %d (%s), sum = %d" % (min(cnts), max(cnts), ','.join(['%d' % c for c in cnts]),sum(cnts))
 							if len(wts) > 20:
 								msg += "\n  theta min = %g, max = %g (%s...%s)" % (min(wts), max(wts), ','.join(['%d' % c for c in wts[:10]]), ','.join(['%d' % c for c in wts[-10:]]))
 							else:
 								msg += "\n  theta min = %g, max = %g (%s)" % (min(wts), max(wts), ','.join(['%d' % c for c in wts]))
 							msg += "\n  gain:       %g\n" % cold_chain_manager.getSAMCGain()
+							if not levels_file_created:
+								#temp!
+								levelsf = open('samc_trace.R','w')
+								#levelsf.write('levels <- c(%s)\n' % ','.join(['%g' % c for c in lvls]))
+								levelsf.write('lnf <- read.table("/Users/plewis/Documents/Projects/pdev/trunk/inprep/GreenPlants/samc_trace.txt", header=FALSE)\n')
+								#levelsf.write('plot(lnf$V1,type="l",ylim=c(min(lnf$V1),max(levels)))\n')
+								levelsf.write('plot(lnf$V1,type="l",ylim=c(-173624,-171612))\n')
+								levelsf.write('points(lnf$V2,col="red",pch=46)\n')
+								levelsf.write('points(lnf$V3,col="red",pch=46)\n')
+								#levelsf.write('abline(h=levels,col="red")\n')
+								levelsf.close()
+								levels_file_created = True
+							# After each round of updates, raise the "water level" by 2 log likelihood units
+							cold_chain_manager.adjustSAMCLevels(2.0);
 					else:
 						msg = 'cycle = %d, ' % (cycle + 1)
 						for k in range(nchains):
@@ -829,6 +844,9 @@ class MCMCImpl(CommonFunctions):
 			self.samc_best = self.opts.samcobj.lolog
 			if self.samc_ref_tree is not None:
 				cold_chain.chain_manager.setSAMCRefTree(self.samc_ref_tree)
+		#else:
+		#	cold_chain.chain_manager.setSAMCLikelihoodOnly(True)
+		#	raw_input('debug setting samc_likelihood_only for mcmc')
 		
 		if self.opts.verbose:
 			if self.data_matrix == None:
@@ -1031,6 +1049,9 @@ class MCMCImpl(CommonFunctions):
 		if (total_secs > 0.0):
 			self.output('  = %.5f likelihood evaluations/sec' % (total_evals/total_secs))
 
+		if self.opts.doing_samc:
+			cold_chain.chain_manager.finalizeSAMC()
+			
 		if self.treef:
 			self.treeFileClose()
 		if self.paramf:

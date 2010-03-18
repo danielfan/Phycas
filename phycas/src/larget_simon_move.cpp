@@ -82,6 +82,12 @@ bool LargetSimonMove::update()
 	proposeNewState();
 
     curr_ln_like = (heating_power > 0.0 ? likelihood->calcLnL(tree) : 0.0);
+	
+	//temp!
+	//if (curr_ln_like > -173410.0)
+	//	{
+	//	std::cerr << "Yeah!" << std::endl;
+	//	}
 
 	double prev_ln_prior = 0.0;
 	double prev_ln_working_prior = 0.0;
@@ -199,7 +205,13 @@ bool LargetSimonMove::update()
 		curr_samc_index		= p->getSAMCEnergyLevel(curr_posterior);
 		double curr_theta	= p->getSAMCWeight(curr_samc_index);
 		
-		bool debug_now = (curr_samc_index > prev_samc_index) && (curr_samc_index > 45);
+		//temp!
+		//p->debugAddSAMCProposalPair(prev_samc_index, curr_samc_index);
+		
+		PHYCAS_ASSERT(prev_samc_index < UINT_MAX);
+		PHYCAS_ASSERT(curr_samc_index < UINT_MAX);
+		
+		//bool debug_now = (curr_samc_index > prev_samc_index) && (curr_samc_index > 45);
 		
 		//if (debug_now)
 		//	{
@@ -233,6 +245,7 @@ bool LargetSimonMove::update()
 			}
 		}
 		
+	
 	double ln_accept_ratio = curr_posterior - prev_posterior + getLnHastingsRatio() + getLnJacobian();
     //double lnu = std::log(rng->Uniform(FILE_AND_LINE));
     //bool accepted = (ln_accept_ratio >= 0.0 || lnu <= ln_accept_ratio);
@@ -281,7 +294,7 @@ bool LargetSimonMove::update()
 		p->setLastLnPrior(curr_ln_prior);
 		p->setLastLnLike(curr_ln_like);
 		if (p->doingSAMC())
-			p->updateSAMCWeights(curr_samc_index);
+			p->updateSAMCWeights(prev_samc_index);
 		accept();
 		return true;
 		}

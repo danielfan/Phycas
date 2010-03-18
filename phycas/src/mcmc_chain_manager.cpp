@@ -322,7 +322,17 @@ void MCMCChainManager::addMCMCUpdaters(
 |	The MCMCChainManager constructor does nothing.
 */
 MCMCChainManager::MCMCChainManager() 
-  : last_ln_like(0.0), last_ln_prior(0.0), doing_samc(false), samc_likelihood_only(false), samc_best(-DBL_MAX), samc_rfbest(UINT_MAX), samc_gain(1.0), samc_t0(50.0), samc_eta(0.6), dirty(true)
+  : last_ln_like(0.0)
+  , last_ln_prior(0.0)
+  , doing_samc(false)
+  , samc_likelihood_only(false)
+  , samc_best(-DBL_MAX)
+  , samc_rfbest(UINT_MAX)
+  , samc_gain(1.0)
+  , samc_t0(50.0)
+  , samc_eta(0.6)
+  , samc_proposal_matrix(0)
+  , dirty(true)
 	{
 	}
 
@@ -334,6 +344,40 @@ MCMCChainManager::MCMCChainManager()
 bool MCMCChainManager::doingSAMC() const
 	{
 	return doing_samc;
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Cleans up SAMC-related data structures.
+*/
+void MCMCChainManager::finalizeSAMC()
+	{
+	std::cerr << ">>>>>>>>> In MCMCChainManager::finalizeSAMC <<<<<<<<<<" << std::endl;
+	if (samc_proposal_matrix)
+		{
+		unsigned i, j;
+		unsigned sz = (unsigned)samc_count.size();
+		
+		// save the proposal matrix to a file
+		std::cerr << ">>>>>>>>> Saving the SAMC proposal matrix to file proposal_matrix.txt <<<<<<<<<<" << std::endl;
+		std::ofstream doof("proposal_matrix.txt");
+		for (i = 0; i < sz; ++i)
+			{
+			for (j = 0; j < sz; ++j)
+				{
+				doof << boost::str(boost::format("%12d\t") % samc_proposal_matrix[i][j]);
+				}			
+			doof << std::endl;
+			}
+		doof.close();
+		
+		// delete storage for the proposal matrix
+		for (i = 0; i < sz; ++i)
+			{
+			delete [] samc_proposal_matrix[i];
+			}
+		delete [] samc_proposal_matrix;
+		samc_proposal_matrix = 0;
+		}
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
@@ -380,6 +424,27 @@ void MCMCChainManager::initSAMC(
 		samc_count.resize(m);
 		samc_count.assign(m, 0);
 		}
+	}
+		
+/*----------------------------------------------------------------------------------------------------------------------
+|	Adds 1 to the count of proposals from level `from_level' to level `to_level'.
+*/
+void MCMCChainManager::debugAddSAMCProposalPair(
+  unsigned from_level,	/**< is the current energy level */
+  unsigned to_level)	/**< is the proposed level */
+	{
+	if (!samc_proposal_matrix)
+		{
+		unsigned sz = (unsigned)samc_count.size();
+		samc_proposal_matrix = new unsigned *[sz];
+		for (unsigned i = 0; i < sz; ++i)
+			{
+			samc_proposal_matrix[i] = new unsigned[sz];
+			for (unsigned j = 0; j < sz; ++j)
+				samc_proposal_matrix[i][j] = 0;
+			}
+		}
+	++samc_proposal_matrix[from_level][to_level];
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
@@ -523,7 +588,7 @@ double MCMCChainManager::getSAMCPiRMSE() const
 		//std::cerr << boost::str(boost::format("term = %g, count = %d, pi = %g, rmse = %g") % term % samc_count[i] % samc_pi[i] % rmse) << std::endl;
 		}
 	//std::cerr << std::endl;
-	
+	rmse /= (double)nlevels;
 	return sqrt(rmse);
 	}
 
@@ -543,7 +608,7 @@ uint_vect_t MCMCChainManager::getSAMCCounts() const
 void MCMCChainManager::setSAMCLikelihoodOnly(
   bool likelihood_only_status) 	/**< is the desired setting for `samc_likelihood_only'  */
 	{
-	PHYCAS_ASSERT(doing_samc);
+	//temp! PHYCAS_ASSERT(doing_samc);
 	samc_likelihood_only = likelihood_only_status;
 	}
 
@@ -568,6 +633,18 @@ void MCMCChainManager::setSAMCBest(
 	samc_best = new_best;
 	}
 
+/*----------------------------------------------------------------------------------------------------------------------
+|	Raises (if `incr' is positive) or lowers (if `incr' is negative) each level boundary by an amount `incr'.
+*/
+void MCMCChainManager::adjustSAMCLevels(
+  double incr)	/**< is the amount by which to adjust all level boundaries */
+	{
+	std::transform(samc_loglevels.begin(), samc_loglevels.end(), samc_loglevels.begin(), boost::lambda::_1 + incr);
+	unsigned sz = (unsigned)samc_count.size();
+	samc_count.assign(sz, 0);
+	//samc_theta.assign(sz, 0.0);
+	}
+	
 /*----------------------------------------------------------------------------------------------------------------------
 |	Updates the SAMC weights based on the supplied energy level `i' of the most recent sampled point.
 */
@@ -610,11 +687,15 @@ void MCMCChainManager::updateSAMCGain(
 #endif
 	
 #define DEBUG_UPDATERS  0
+#define DEBUG_SAMC      0
 /*----------------------------------------------------------------------------------------------------------------------
 |	For all updaters stored in `all_updaters', obtain the weight w and call the update fuction of the updater w times.
 */
 void MCMCChainManager::updateAllUpdaters()
 	{
+#if DEBUG_SAMC
+	std::ofstream tmpf("samc_trace.txt", std::ios::out | std::ios::app);
+#endif	
 	for (MCMCUpdaterVect::iterator it = all_updaters.begin(); it != all_updaters.end(); ++it)
 		{
 #if DEBUG_UPDATERS
@@ -633,36 +714,53 @@ void MCMCChainManager::updateAllUpdaters()
 			{
 			(*it)->update();
 			
-			double logf = getLastLnLike();// + getLastLnPrior();
-			if (logf > samc_best)
+#if DEBUG_SAMC
+			double tmp_last_ln_prior = getLastLnPrior();//temp!
+			calcJointLnPrior();//temp!
+			if (fabs(tmp_last_ln_prior - getLastLnPrior()) > 0.01)
 				{
-				samc_best = logf;
-				TreeShPtr curr_tree = (*it)->getTree();
-				std::ofstream doof("samc_best.tre");
-				doof << "#nexus\n\nbegin trees;\n  tree samc_best = [&U] " << curr_tree->MakeNewick() << ";\nend;" << std::endl;
-				doof.close();
+				std::cerr << "@@@@@@@@@@@@@@@@@@@@@@@ BAD BAD BAD BAD BAD BAD @@@@@@@@@@@@@@@@@@@@@@" << std::endl;
 				}
-			if (samc_ref_tree)
+#endif	
+			double logf = getLastLnLike() + getLastLnPrior();
+#if DEBUG_SAMC
+			tmpf << boost::str(boost::format("%.6f\t%.6f\t%.6f\n") % logf % (*samc_loglevels.begin()) % (*samc_loglevels.rbegin()));
+#endif	
+			if (doing_samc)
 				{
-				TreeShPtr curr_tree = (*it)->getTree();
-				unsigned tmp = curr_tree->robinsonFoulds(samc_ref_tree);
-				if (tmp == 0 && samc_rfbest > 0)
+				if (logf > samc_best)
 					{
-					std::ofstream doof("samc_first_rf0.tre");
-					doof << "#nexus\n\nbegin trees;\n  tree samc_first_rf0 = [&U] " << curr_tree->MakeNewick() << ";\nend;" << std::endl;
+					samc_best = logf;
+					TreeShPtr curr_tree = (*it)->getTree();
+					std::ofstream doof("samc_best.tre");
+					doof << "#nexus\n\nbegin trees;\n  tree samc_best = [&U] " << curr_tree->MakeNewick() << ";\nend;" << std::endl;
 					doof.close();
 					}
-				if (tmp < samc_rfbest)
+				if (samc_ref_tree)
 					{
-					samc_rfbest = tmp;
-					std::ofstream doof("samc_best_rf.tre");
-					doof << "#nexus\n\nbegin trees;\n  tree samc_best_rf = [&U] " << curr_tree->MakeNewick() << ";\nend;" << std::endl;
-					doof.close();
+					TreeShPtr curr_tree = (*it)->getTree();
+					unsigned tmp = curr_tree->robinsonFoulds(samc_ref_tree);
+					if (tmp == 0 && samc_rfbest > 0)
+						{
+						std::ofstream doof("samc_first_rf0.tre");
+						doof << "#nexus\n\nbegin trees;\n  tree samc_first_rf0 = [&U] " << curr_tree->MakeNewick() << ";\nend;" << std::endl;
+						doof.close();
+						}
+					if (tmp < samc_rfbest)
+						{
+						samc_rfbest = tmp;
+						std::ofstream doof("samc_best_rf.tre");
+						doof << "#nexus\n\nbegin trees;\n  tree samc_best_rf = [&U] " << curr_tree->MakeNewick() << ";\nend;" << std::endl;
+						doof.close();
+						}
 					}
 				}
 			} 
 #endif
 		}
+#if DEBUG_SAMC
+	tmpf.close();
+#endif	
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------

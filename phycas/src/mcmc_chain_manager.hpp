@@ -120,12 +120,15 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 
 #if POLPY_NEWWAY
 		void 					initSAMC(const double_vect_t & elevels, double t0, double eta);
+		void 					finalizeSAMC();
 		unsigned 				calcRFDistance(TreeShPtr ref_tree) const;
 		unsigned				getSAMCRobinsonFouldsBest() const;
+		void 					debugAddSAMCProposalPair(unsigned from_level, unsigned to_level);
 		unsigned 				getSAMCEnergyLevel(double logf)	const;
 		double 					getSAMCWeight(unsigned i) const;
 		void 					updateSAMCGain(unsigned t);
 		void 					updateSAMCWeights(unsigned i);
+		void 					adjustSAMCLevels(double incr);
 		bool					doingSAMC() const;
 		double					getSAMCGain() const;
 		double					getSAMCBest() const;
@@ -169,6 +172,7 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 		double					samc_gain;				/**< The factor determining the magnitude of the adjustment made to weights in samc_theta after each update */
 		double					samc_t0;				/**< The gain at time t is samc_gain = (samc_t0/max(samc_t0,t))^samc_eta */
 		double					samc_eta;				/**< The gain at time t is samc_gain = (samc_t0/max(samc_t0,t))^samc_eta */
+		unsigned * *			samc_proposal_matrix;	/**< Used by debugAddSAMCProposalPair (only allocated on first call to debugAddSAMCProposalPair) */
 #endif
 		bool					dirty;					/**< If true, means just constructed or at least one updater has been added since finalize() was last called; false means ready to use the all_updaters vector */
 
