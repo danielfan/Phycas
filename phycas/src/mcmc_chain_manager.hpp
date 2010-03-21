@@ -128,7 +128,7 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 		double 					getSAMCWeight(unsigned i) const;
 		void 					updateSAMCGain(unsigned t);
 		void 					updateSAMCWeights(unsigned i);
-		void 					adjustSAMCLevels(double incr);
+		void 					adjustSAMCLevels(double incr, bool fix_levels_now);
 		bool					doingSAMC() const;
 		double					getSAMCGain() const;
 		double					getSAMCBest() const;

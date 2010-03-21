@@ -700,6 +700,9 @@ class MCMCImpl(CommonFunctions):
 		# print '******** nchains =',nchains
 		self.last_adaptation = 0
 		self.next_adaptation = self.opts.adapt_first
+		if self.opts.doing_samc:
+			samc_raising_sea_level = True
+			samc_consecutive_max_rmse = 0	# stores number of consecutive cycles in which lowest energy level is the only level visited
 		for cycle in xrange(self.burnin + self.opts.ncycles):
 			# Update all updaters
 			if explore_prior and self.opts.draw_directly_from_prior:
@@ -775,8 +778,23 @@ class MCMCImpl(CommonFunctions):
 								#levelsf.write('abline(h=levels,col="red")\n')
 								levelsf.close()
 								levels_file_created = True
+															
 							# After each round of updates, raise the "water level" by 2 log likelihood units
-							cold_chain_manager.adjustSAMCLevels(2.0);
+							# until samc_consecutive_max_rmse reaches 20, at which point we tell adjustSAMCLevels
+							# that we are ready to fix the energy levels
+							if samc_raising_sea_level:
+								# adjust samc_consecutive_max_rmse
+								if cnts[0] == sum(cnts):
+									samc_consecutive_max_rmse += 1
+								else:
+									samc_consecutive_max_rmse = 0
+								# check if time to fix levels
+								if samc_consecutive_max_rmse > 20: 
+									samc_raising_sea_level = False
+									self.output('\n>>>>>>>>>>>>>>>>>>>> fixing levels <<<<<<<<<<<<<<<<<<<<\n') 
+									cold_chain_manager.adjustSAMCLevels(300.0, True); # fix at 50 levels, each 1 log unit apart, with lowest at current level
+								else:
+									cold_chain_manager.adjustSAMCLevels(3.0, False); # 2nd arg False means we want to continue raising sea level
 					else:
 						msg = 'cycle = %d, ' % (cycle + 1)
 						for k in range(nchains):

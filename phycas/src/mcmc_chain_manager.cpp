@@ -637,12 +637,42 @@ void MCMCChainManager::setSAMCBest(
 |	Raises (if `incr' is positive) or lowers (if `incr' is negative) each level boundary by an amount `incr'.
 */
 void MCMCChainManager::adjustSAMCLevels(
-  double incr)	/**< is the amount by which to adjust all level boundaries */
+  double incr,			/**< is the amount by which to adjust all level boundaries (if fix_levels_now is False) or the point at which to fix the highest level (if fix_levels_now is True) */
+  bool fix_levels_now)	/**< determines whether we continue to raise the sea level or fix the energy level boundaries */
 	{
-	std::transform(samc_loglevels.begin(), samc_loglevels.end(), samc_loglevels.begin(), boost::lambda::_1 + incr);
-	unsigned sz = (unsigned)samc_count.size();
-	samc_count.assign(sz, 0);
-	//samc_theta.assign(sz, 0.0);
+	if (fix_levels_now)
+		{
+		double lowest  = *(samc_loglevels.begin());
+		double highest = lowest + incr;
+		
+		// reset level boundaries
+		samc_loglevels.clear();
+		for (double logf = lowest; logf < highest; logf += 10.0)
+			{
+			samc_loglevels.push_back(logf);
+			}
+		unsigned nboundaries = (unsigned)samc_loglevels.size();
+		unsigned nlevels = nboundaries + 1;
+		PHYCAS_ASSERT(nlevels > 1);
+		
+		// reset counts
+		samc_count.resize(nlevels);
+		samc_count.assign(nlevels, 0);
+		
+		// reset weights
+		samc_theta.resize(nlevels);
+		samc_theta.assign(nlevels, 0.0);
+		
+		// reset stationary frequencies
+		samc_pi.resize(nlevels);
+		samc_pi.assign(nlevels, 1.0/(double)nlevels);
+		}
+	else 
+		{
+		std::transform(samc_loglevels.begin(), samc_loglevels.end(), samc_loglevels.begin(), boost::lambda::_1 + incr);
+		unsigned sz = (unsigned)samc_count.size();
+		samc_count.assign(sz, 0);
+		}
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
@@ -687,7 +717,7 @@ void MCMCChainManager::updateSAMCGain(
 #endif
 	
 #define DEBUG_UPDATERS  0
-#define DEBUG_SAMC      0
+#define DEBUG_SAMC      1
 /*----------------------------------------------------------------------------------------------------------------------
 |	For all updaters stored in `all_updaters', obtain the weight w and call the update fuction of the updater w times.
 */

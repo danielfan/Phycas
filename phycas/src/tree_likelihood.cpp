@@ -2861,8 +2861,8 @@ void TreeLikelihood::debugCompressedDataInfo(
 		std::copy(states.begin() + 1, states.end(), std::ostream_iterator<int>(outf," "));
 		outf << "\t";
 
-		unsigned cnt = pattern_counts[i];
-		outf << boost::str(boost::format("%12d\t") % cnt);
+		double cnt = pattern_counts[i]; 
+		outf << boost::str(boost::format("%12g\t") % cnt);
 
 		std::copy(sites.begin(), sites.end(), std::ostream_iterator<unsigned>(outf," "));
 		outf << "\t";
