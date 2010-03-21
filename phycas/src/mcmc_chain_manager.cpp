@@ -717,7 +717,7 @@ void MCMCChainManager::updateSAMCGain(
 #endif
 	
 #define DEBUG_UPDATERS  0
-#define DEBUG_SAMC      1
+#define DEBUG_SAMC      0
 /*----------------------------------------------------------------------------------------------------------------------
 |	For all updaters stored in `all_updaters', obtain the weight w and call the update fuction of the updater w times.
 */
