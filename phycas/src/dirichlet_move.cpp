@@ -433,12 +433,14 @@ void DirichletMove::finalizeWorkingPrior()
 			{
 			z += variances[i]/means[i];
 			}
+			
 		double phi = (double)(dim - 1)/z - 1.0;
 		double_vect_t params;
 		for (unsigned i = 0; i < dim; ++i)
 			{
 			params.push_back(phi*means[i]);
 			}
+			
 		mv_working_prior = MultivarProbDistShPtr(new DirichletDistribution(params));
 		//	if (params.size() == 4)
 		//		std::cerr << boost::str(boost::format("@@@@@@@@@ working prior is Dirichlet(%g,%g,%g,%g) for updater %s") % params[0] % params[1] % params[2] % params[3] % getName()) << std::endl;
@@ -646,10 +648,7 @@ void SubsetRelRatesMove::educateWorkingPrior()
 		{
 		double_vect_t rrates;
 		getCurrValuesFromModel(rrates);
-
-		//std::copy(rrates.begin(), rrates.end(), std::ostream_iterator<double>(std::cerr, " "));//temp
-		//std::cerr << "sum = " << std::accumulate(rrates.begin(), rrates.end(), 0.0) << std::endl;
-		
+		std::transform(rrates.begin(), rrates.end(), rrates.begin(), boost::lambda::_1/(double)dim);
 		mv_fitting_sample.push_back(rrates);
 		}
 	}
@@ -734,5 +733,30 @@ void SubsetRelRatesMove::setPartitionModel(
   PartitionModelShPtr m)    /*< is a shared pointer to the new partition model */
 	{
 	partition_model = m;
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Retrieves current value for the parameter being managed by this updater, then returns log of the working prior 
+|	probability density at that value. If this updater is not a prior steward, simply returns 0.0.
+*/
+double SubsetRelRatesMove::recalcWorkingPrior() const
+	{
+	if (isFixed() || !isPriorSteward())
+		return 0.0;
+		
+	double lnwp = 0.0;
+	double_vect_t values;
+	getCurrValuesFromModel(values);	
+	std::transform(values.begin(), values.end(), values.begin(), boost::lambda::_1/(double)dim);
+	try 
+		{
+		PHYCAS_ASSERT(mv_working_prior);
+		lnwp = mv_working_prior->GetLnPDF(values);
+		}
+	catch(XProbDist &)
+		{
+		PHYCAS_ASSERT(0);
+		}
+	return lnwp;
 	}
 
