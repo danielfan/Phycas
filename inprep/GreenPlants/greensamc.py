@@ -6,7 +6,7 @@ num_cycles = 1000
 sample_freq = 100
 print_freq = 1
 
-num_energy_levels = 20
+num_energy_levels = 500
 high_logf = -171612	# -171612.284680 garli best JC lnL
 low_logf  = -173600	# -173599.8 nj starting tree lnL
 # high_logf - low_logf = -171612 - (-173600) = 1988

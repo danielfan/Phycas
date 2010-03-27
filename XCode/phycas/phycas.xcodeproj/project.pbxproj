@@ -654,6 +654,7 @@
 		D1F9EFC7112D9B4C00654AD4 /* relative_rate_distribution.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = relative_rate_distribution.cpp; path = ../../phycas/src/relative_rate_distribution.cpp; sourceTree = SOURCE_ROOT; };
 		D1F9EFC8112D9B4C00654AD4 /* relative_rate_distribution.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = relative_rate_distribution.hpp; path = ../../phycas/src/relative_rate_distribution.hpp; sourceTree = SOURCE_ROOT; };
 		D1F9F020112DF42600654AD4 /* _RelRateDist.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _RelRateDist.py; sourceTree = "<group>"; };
+		D1F9FF15115D3F8500E7EA96 /* cicadas_test.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = cicadas_test.py; path = ../../inprep/partition/cicadas/cicadas_test.py; sourceTree = SOURCE_ROOT; };
 		D2AAC09D05546B4700DB518D /* _ConversionsExt.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = _ConversionsExt.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -1284,6 +1285,7 @@
 		D17574C510EB940C00D4E2B0 /* Partition */ = {
 			isa = PBXGroup;
 			children = (
+				D1F206F8115AA01400E37D14 /* cicadas */,
 				D16413A3113E3D1A0031F70F /* turtles */,
 				D1814095112C824D00D91CF6 /* danielsims */,
 				D17574CD10EB942400D4E2B0 /* partition.py */,
@@ -1367,6 +1369,14 @@
 				D1D66464112051EE00BA8E47 /* partition.py */,
 			);
 			name = partition;
+			sourceTree = "<group>";
+		};
+		D1F206F8115AA01400E37D14 /* cicadas */ = {
+			isa = PBXGroup;
+			children = (
+				D1F9FF15115D3F8500E7EA96 /* cicadas_test.py */,
+			);
+			name = cicadas;
 			sourceTree = "<group>";
 		};
 		D1F281C2111B420F00FDE78C /* GTRTest */ = {

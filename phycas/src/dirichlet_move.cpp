@@ -757,6 +757,8 @@ double SubsetRelRatesMove::recalcWorkingPrior() const
 		{
 		PHYCAS_ASSERT(0);
 		}
+	double n = (double)n;
+	lnwp -= (n - 1.0)*log(n);
 	return lnwp;
 	}
 

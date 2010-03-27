@@ -855,6 +855,24 @@ double MCMCUpdater::calcLnWorkingPriorPDF(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Returns the `working_prior' data member.
+*/
+double MCMCUpdater::sampleWorkingPrior() const
+	{
+	PHYCAS_ASSERT(working_prior);
+	return working_prior->Sample();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the `mv_working_prior' data member.
+*/
+double_vect_t MCMCUpdater::sampleMultivariateWorkingPrior() const
+	{
+	PHYCAS_ASSERT(mv_working_prior);
+	return mv_working_prior->Sample();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Returns a const reference to the string returned by the GetDistributionDescription() function of the 
 |	`working_prior' or `mv_working_prior' data member, whichever is appropriate.
 */

@@ -416,7 +416,28 @@ void MCMCChainManager::initSAMC(
 		std::cerr << "\n" << std::endl;
 	
 		samc_pi.resize(m);
+#if 0
 		samc_pi.assign(m, freq);
+#else
+		double factor = 2.0;
+		double largest_factor = exp(log(DBL_MAX)/(double)m);
+		if (factor > largest_factor)
+			factor = largest_factor;
+		std::cerr << "@#@#@#@#@#@#@#@#@#@#@# m              = " << m << " @#@#@#@#@#@#@#@#@#@#@#" << std::endl;
+		std::cerr << "@#@#@#@#@#@#@#@#@#@#@# factor         = " << factor << " @#@#@#@#@#@#@#@#@#@#@#" << std::endl;
+		std::cerr << "@#@#@#@#@#@#@#@#@#@#@# largest_factor = " << largest_factor << " @#@#@#@#@#@#@#@#@#@#@#" << std::endl;
+		double norm_const = (pow(factor, (double)m) - 1.0)/(factor - 1.0);
+		double curr = 1.0;
+		double check_sum = 0.0;
+		for (unsigned i = 0; i < m; ++i)
+			{
+			samc_pi[i] = curr/norm_const;
+			curr *= factor;
+			check_sum += samc_pi[i];
+			}
+		PHYCAS_ASSERT(fabs(check_sum - 1.0) < 0.001);
+		std::cerr << "@#@#@#@#@#@#@#@#@#@#@# check_sum      = " << check_sum << " @#@#@#@#@#@#@#@#@#@#@#" << std::endl;
+#endif
 		
 		samc_theta.resize(m);
 		samc_theta.assign(m, 0.0);

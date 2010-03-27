@@ -110,6 +110,8 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		double					getLnPrior() const;
 		virtual std::string 	getPriorDescr() const;
 		virtual std::string 	getWorkingPriorDescr() const;
+		double					sampleWorkingPrior() const;
+		double_vect_t			sampleMultivariateWorkingPrior() const;
 		LotShPtr				getLot();
         std::string             getDebugInfo() const;
         void                    setPower(double p);

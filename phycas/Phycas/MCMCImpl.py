@@ -458,6 +458,74 @@ class MCMCImpl(CommonFunctions):
 		else:
 			return 0
 		
+	############################ exploreWorkingPrior ############################
+	def exploreWorkingPrior(self, cycle):
+		chain_index = 0
+		cold_chain = self.mcmc_manager.getColdChain()
+		#tm = Phylogeny.TreeManip(cold_chain.tree)
+		
+		nmodels = cold_chain.partition_model.getNumSubsets()
+		unpartitioned = (nmodels == 1)
+
+		new_edge_lens = []
+		
+		all_updaters = cold_chain.chain_manager.getAllUpdaters() 
+		for u in all_updaters:		# good candidate for moving into C++
+			if u.isFixed() or not u.isPriorSteward():
+				continue
+			name = u.getName()
+			if name.find('relrates') == 0:						# C++ class RelRatesMove
+				i = unpartitioned and 0 or self.getModelIndex(name)
+				m = cold_chain.partition_model.getModel(i)
+				rate_vector = u.sampleMultivariateWorkingPrior()
+				m.setRelRates(rate_vector)
+			elif name.find('state_freqs') == 0:					# C++ class StateFreqMove
+				i = unpartitioned and 0 or self.getModelIndex(name)
+				m = cold_chain.partition_model.getModel(i)
+				freq_vector = u.sampleMultivariateWorkingPrior()
+				m.setStateFreqsUnnorm(freq_vector)
+			elif name.find('subset_relrates') == 0:					# C++ class SubsetRelRatesMove
+				v = u.sampleMultivariateWorkingPrior()
+				d = float(len(v))
+				rates_vector = [d*x for x in v]
+				cold_chain.partition_model.setSubsetRelRatesVect(rates_vector)
+			elif name.find('gamma_shape') == 0:						# C++ class DiscreteGammaShapeParam
+				i = unpartitioned and 0 or self.getModelIndex(name)
+				m = cold_chain.partition_model.getModel(i)
+				new_gamma_shape = u.sampleWorkingPrior()
+				m.setShape(new_gamma_shape)
+			elif name.find('pinvar') == 0:							# C++ class PinvarParam
+				i = unpartitioned and 0 or self.getModelIndex(name)
+				m = cold_chain.partition_model.getModel(i)
+				new_pinvar = u.sampleWorkingPrior()
+				m.setPinvar(new_pinvar)
+			elif name.find('edgelen') == 0:
+				# depends on edge length updaters being in preorder sequence
+				edgelen = u.sampleWorkingPrior()
+				new_edge_lens.append(edgelen)
+			else:
+				self.phycassert(0, 'model uses an updater (%s) that has not yet been added to MCMCImpl.exploreWorkingPrior (workaround: specify mcmc.draw_directly_from_prior = False)' % name)
+		
+		i = 0
+		for nd in cold_chain.tree:
+			if nd.isRoot():
+				continue
+			nd.setEdgeLen(new_edge_lens[i])
+			i += 1
+					
+		# replace the model
+		cold_chain.prepareForLikelihood()
+		cold_chain.likelihood.replaceModel(cold_chain.partition_model)
+		
+		# recalculate the likelihood
+		cold_chain_manager = self.mcmc_manager.getColdChainManager()
+		cold_chain_manager.refreshLastLnLike()
+		cold_chain_manager.refreshLastLnPrior()
+		
+		# what about polytomies?
+											
+		############################ exploreWorkingPrior ############################
+		
 	def explorePrior(self, cycle):
 		chain_index = 0
 		chain = self.mcmc_manager.getColdChain()
@@ -701,12 +769,16 @@ class MCMCImpl(CommonFunctions):
 		self.last_adaptation = 0
 		self.next_adaptation = self.opts.adapt_first
 		if self.opts.doing_samc:
-			samc_raising_sea_level = True
+			samc_raising_sea_level = False
 			samc_consecutive_max_rmse = 0	# stores number of consecutive cycles in which lowest energy level is the only level visited
 		for cycle in xrange(self.burnin + self.opts.ncycles):
 			# Update all updaters
 			if explore_prior and self.opts.draw_directly_from_prior:
-				self.explorePrior(cycle)
+				# Note: wasting effort here, only need to draw a sample from the prior when it is time to sample
+				if self.opts.ssobj.scubed:
+					self.exploreWorkingPrior(cycle)
+				else:
+					self.explorePrior(cycle)
 			else:
 				for i,c in enumerate(self.mcmc_manager.chains):
 					if DEBUGGING_OUTPUT:
@@ -808,7 +880,9 @@ class MCMCImpl(CommonFunctions):
 				# Refresh log-likelihood(s) if necessary
 				if self.ss_beta == 0.0:
 					for i,c in enumerate(self.mcmc_manager.chains):
+						# is this necessary?
 						c.chain_manager.refreshLastLnLike()
+						c.chain_manager.refreshLastLnPrior()
 						
 				if self.opts.doing_steppingstone_sampling and self.opts.ssobj.scubed and self.ss_beta_index == 0:
 					self.mcmc_manager.recordSample(True, self.cycle_start + cycle)	# dofit = True (i.e. educate working prior) if doing SSS and currently exploring the posterior
