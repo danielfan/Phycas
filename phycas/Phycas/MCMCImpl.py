@@ -460,6 +460,7 @@ class MCMCImpl(CommonFunctions):
 		
 	############################ exploreWorkingPrior ############################
 	def exploreWorkingPrior(self, cycle):
+		#raw_input('entering exploreWorkingPrior')
 		chain_index = 0
 		cold_chain = self.mcmc_manager.getColdChain()
 		#tm = Phylogeny.TreeManip(cold_chain.tree)
