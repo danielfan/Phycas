@@ -3,15 +3,15 @@ from phycas import *
 pid_offset = -1	# this amount added to pid 
 nschemes = 4
 nmethods = 2
-nseeds   = 2
+nseeds   = 10
 
 dry_run          = False
 fixed_topology   = True
-num_beta_values  = 3
-burn_in          = 10000
-cycles_per_beta  = 50000
-sample_freq      = 100
-print_freq       = 1000
+num_beta_values  = 5
+burn_in          = 0
+cycles_per_beta  = 600
+sample_freq      = 1
+print_freq       = 100
 data_file_name   = 'marshall.nex'
 
 # HKY+G ml tree
