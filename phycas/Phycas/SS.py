@@ -6,6 +6,7 @@ class SS(PhycasCommand):
 	def __init__(self):
 		args = (   ("nbetavals", 101, "The number of values beta will take on during the run; for example, if this value is 4, then beta will take on these values: 1, 2/3, 1/3, 0", IntArgValidate(min=1)),
 				   ("scubed", True, "If True, steppingstone sampling will be performed using a working prior fit to the posterior (this greatly improves the accuracy of steppingstone sampling and is strongly recommended); if False, steppingstone sampling will be performed without using a working prior distribution.", BoolArgValidate),
+				   ("xcycles", 0, "The number of extra cycles (above and beyond mcmc.ncycles) that will be spent exploring the posterior (additional posterior cycles help scubed analyses formulate an effective working prior).", IntArgValidate(min=0)),
 				   ("maxbeta", 1.0, "The first beta value that will be sampled.", FloatArgValidate(min=0.0, max=1.0)),
 				   ("minbeta", 0.0, "The last beta value that will be sampled.", FloatArgValidate(min=0.0, max=1.0)),
 				   ("shape1", 0.3, "The first shape parameter of the distribution used to determine the beta values to be sampled. This distribution is, confusingly, a Beta distribution. Thus, if both shape1 and shape2 are set to 1, beta values will be chosen at uniform intervals from minbeta to maxbeta.", FloatArgValidate(greaterthan=0.0)),

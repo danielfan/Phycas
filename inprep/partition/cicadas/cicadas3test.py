@@ -10,6 +10,7 @@ fixed_topology   = True
 num_beta_values  = 3
 burn_in          = 0
 cycles_per_beta  = 50
+xtra             = 50
 sample_freq      = 1
 print_freq       = 10
 data_file_name   = 'marshall.nex'
@@ -210,6 +211,7 @@ def runMCMC(fnprefix, method_index):
         ss.shape1 = 1.0
         ss.shape2 = 1.0
         ss.scubed = True
+        ss.xcycles = xtra
         if not dry_run:
             ss()
     

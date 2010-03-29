@@ -66,6 +66,7 @@ class MCMCImpl(CommonFunctions):
 		self.unimap_manager			= None
 		self.nsamples				= 0
 		self.burnin					= 0		# same as self.opts.burnin except for path sampling, when it drops to 0 after first beta value
+		self.ncycles				= 0		# same as self.ncycles except for steppingstone sampling, when ss.xcycles are added to mcmc.ncycles for the first (beta = 1) step
 		self.cycle_start			= 0		# used in path sampling to avoid starting over the cycle count for each beta value
 		self.cycle_stop				= 0		# total number of cycles (used for computing time remaining) 
 		self.last_adaptation		= 0
@@ -772,7 +773,7 @@ class MCMCImpl(CommonFunctions):
 		if self.opts.doing_samc:
 			samc_raising_sea_level = False
 			samc_consecutive_max_rmse = 0	# stores number of consecutive cycles in which lowest energy level is the only level visited
-		for cycle in xrange(self.burnin + self.opts.ncycles):
+		for cycle in xrange(self.burnin + self.ncycles):
 			# Update all updaters
 			if explore_prior and self.opts.draw_directly_from_prior:
 				# Note: wasting effort here, only need to draw a sample from the prior when it is time to sample
@@ -899,7 +900,7 @@ class MCMCImpl(CommonFunctions):
 				self.adaptSliceSamplers()
 				self.next_adaptation += 2*(self.next_adaptation - self.last_adaptation)
 				self.last_adaptation = cycle + 1
-		self.cycle_start += self.burnin + self.opts.ncycles
+		self.cycle_start += self.burnin + self.ncycles
 		
 	def run(self):
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -1113,11 +1114,13 @@ class MCMCImpl(CommonFunctions):
 				boldness = 100.0*(1.0 - self.ss_beta)
 				chain.setBoldness(boldness)
 				print 'Setting chain boldness to %g based on beta = %g' % (boldness,self.ss_beta)
-				self.cycle_stop = self.opts.burnin + len(self.ss_sampled_betas)*self.opts.ncycles
+				self.cycle_stop = self.opts.burnin + len(self.ss_sampled_betas)*self.opts.ncycles + self.opts.ssobj.xcycles
 				if self.ss_beta_index > 0:
 					self.burnin = 0
+					self.ncycles = self.opts.ncycles
 				else:
 					self.burnin = self.opts.burnin
+					self.ncycles = self.opts.ncycles + self.opts.ssobj.xcycles
 					self.cycle_start = 0
 				if self.ss_beta == 0.0:
 					self.mainMCMCLoop(explore_prior=True)
@@ -1130,6 +1133,7 @@ class MCMCImpl(CommonFunctions):
 			self.cycle_start = 0
 			self.cycle_stop = self.opts.burnin + self.opts.ncycles
 			self.burnin = self.opts.burnin
+			self.ncycles = self.opts.ncycles
 			if self.data_matrix is None:
 				self.mainMCMCLoop(explore_prior=True)
 			else:
