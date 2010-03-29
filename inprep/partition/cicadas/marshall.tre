@@ -1,0 +1,42 @@
+
+Begin trees;  [Treefile saved Wednesday, March 24, 2010  2:23 PM]
+[!
+>Data file = marshall.nex
+>Tree(s) input to PAUP* as user-defined tree(s)
+]
+	Translate
+		1 Kikihia_acoustica,
+		2 Kikihia_angusta,
+		3 Kikihia_aotea_east,
+		4 Kikihia_aotea_west,
+		5 Kikihia_astragali,
+		6 Kikihia_balaena,
+		7 Kikihia_cauta,
+		8 Kikihia_convicta,
+		9 Kikihia_cutora_cumberi,
+		10 Kikihia_cutora_cutora,
+		11 Kikihia_dugdalei,
+		12 Kikihia_cutora_exulis,
+		13 Kikihia_horologium,
+		14 Kikihia_laneorum,
+		15 Kikihia_longula,
+		16 Kikihia_murihikua,
+		17 Kikihia_muta_east,
+		18 Kikihia_muta,
+		19 Kikihia_nelsonensis,
+		20 Kikihia_westlandica_north,
+		21 Kikihia_ochrina,
+		22 Kikihia_paxillulae,
+		23 Kikihia_peninsularis,
+		24 Kikihia_rosea,
+		25 Kikihia_scutellaris,
+		26 Kikihia_subalpina,
+		27 Kikihia_flemingi,
+		28 Kikihia_westlandica_south,
+		29 Kikihia_tasmani,
+		30 Kikihia_tuta,
+		31 Rhodopsalta_microdora,
+		32 Maoricicada_cassiope
+		;
+tree Fig._4B = [&U] (1:0.00155349,((((((2:0.00313198,16:0.00393977):0.02205944,((20:0.00609907,29:0.00668693):0.01295303,28:0.01768460):0.00791425):0.01246952,(26:0.01287999,27:0.01262314):0.02946479):0.01254132,(((((3:0.00811268,15:0.01095734):0.00206885,4:0.01206558):0.00467611,5:0.01820641,((17:0.01336253,18:0.01060919):0.00301371,19:0.01227330):0.00150356):0.00369882,30:0.01212312):0.01038863,22:0.01914910):0.02284554,(7:0.07564186,25:0.07701641,(31:0.13105682,32:0.09451660):0.09029667):0.03628257,(((((8:0.01356633,(10:0.00382838,12:0.00672068):0.00445306):0.02049844,9:0.02080556):0.00181409,14:0.01538416):0.00385776,11:0.02083608):0.00401140,21:0.05064474):0.02132007,13:0.03572793):0.00518702,23:0.02468321):0.01596404,6:0.01404921):0.01540777,24:0.00372350);
+End;

@@ -1,0 +1,26 @@
+Cicadas2.py
+
+Partition scheme 0:
+  hm: -10462.69714 (n = 2, max-min = 4.38273)
+  ss: -10589.78646 (n = 2, max-min = 0.15788)
+Partition scheme 1:
+  hm: -10438.47724 (n = 2, max-min = 3.22781)
+  ss: -10611.23896 (n = 2, max-min = 2.59592)
+Partition scheme 2:
+  (no data)
+  ss: -10156.29576 (n = 2, max-min = 1.56892)
+
+Cicada3.py
+
+Partition scheme 0: unpartitioned
+  hm: -10457.58321 (n = 2, max-min = 0.31337)
+  ss: -10547.64882 (n = 2, max-min = 1.07354)
+Partition scheme 1: by codon
+  hm: -9902.78597 (n = 2, max-min = 6.82985)
+  ss: -10048.10223 (n = 2, max-min = 3.79456)
+Partition scheme 2: by gene
+  hm: -10421.92800 (n = 2, max-min = 0.31387)
+  ss: -10588.97335 (n = 2, max-min = 0.53761)
+Partition scheme 3: by gene and codon
+  (no data)
+  ss: -10130.58249 (n = 2, max-min = 1.00701)
