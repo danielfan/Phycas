@@ -219,6 +219,7 @@ BOOST_PYTHON_MODULE(_ProbDistExt)
 		.def("setMeanAndVariance", &RelativeRateDistribution::SetMeanAndVariance)
 		.def("getVarCovarMatrix", &RelativeRateDistribution::GetVarCovarMatrix)
 		.def("getNParams", &RelativeRateDistribution::GetNParams)
+		.def("setCoefficients", &RelativeRateDistribution::SetCoefficients)
 		;
 		
 	class_<BetaDistribution, bases<ProbabilityDistribution, AdHocDensity> >("BetaDistBase")

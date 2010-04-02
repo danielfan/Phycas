@@ -36,8 +36,8 @@ namespace phycas
 {
 	
 /*------------------------------------------------------------------------------------------------------------------------------------------------------------------
-|	This distribution is essentially a Dirichlet distribution modified so that the parameters have mean 1 rather than sum 1. It is useful as a prior for relative
-|	rates (e.g. subset relative rates in a partitioned model).
+|	This is the distribution of a relative rates vector X = (x1, x2, ..., xn) when the vector Y = (p1 x1, p2 x2, ..., pn xn) ~ Dirichlet(c1, c2, ..., cn). It is 
+|	useful as a prior for relative rates of subsets in a partition model, where the coefficients p1, p2, ..., pn are the relative sizes of the subsets.
 */
 class RelativeRateDistribution : public DirichletDistribution
 	{
@@ -61,6 +61,7 @@ class RelativeRateDistribution : public DirichletDistribution
 		double								GetLnPDF(const std::vector<double> &x) const;
 		double								GetRelativeLnPDF(const std::vector<double> &x) const;
 		void 								SetMeanAndVariance(const std::vector<double> &m, const std::vector<double> &v);
+		void 								SetCoefficients(const std::vector<double> & coeff);
 		unsigned							GetNParams() const;
 #		if defined(PYTHON_ONLY)
 		//void								AltSetMeanAndVariance(std::vector<double> m, std::vector<double> v);
@@ -69,8 +70,10 @@ class RelativeRateDistribution : public DirichletDistribution
 
     private:
 	
-		unsigned							dim;			/**< The dimension, which equals the number of parameters and is used to transform the mean, variance and density from Dirichlet to values appropriate for a relative rate distribution */
+		unsigned							dim;			/**< The dimension, which equals the number of parameters (used to initialze the coefficients) */
+		double_vect_t						p;				/**< The coefficients used to weight the relative rates */
 		double								sum_params;		/**< The sum of the dirichlet parameters stored in the data member `dirParams', which is provided by the base class */
+		double								log_prod_p;		/**< The sum of the log(p_i), i = 1, 2, ..., dim */
 	};
 	
 } // namespace phycas

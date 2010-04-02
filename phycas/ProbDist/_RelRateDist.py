@@ -281,24 +281,34 @@ class RelativeRateDistribution(RelRateDistBase, PyDistributionBase):
 
         >>> from phycas.ProbDist import *
         >>> d = RelativeRateDistribution((1,2,3))
-        >>> print '%.12f' % d.getLnPDF((0.5, 1.0, 1.5))
-        -0.587786664902
+		>>> d.setCoefficients((1.0/6.0,1.0/3.0,1.0/2.0))
+        >>> print '%.12f' % d.getLnPDF((0.5, 1.0))
+        -0.972632485808
 
-        For example, the 3-parameter RelativeRateDistribution(a,b,c) density is
+        The 3-parameter RelativeRateDistribution(a,b,c) density defined in the
+		exampel above is
 
-        Gamma(a+b+c) p^(a-1) q^(b-1) (3-p-q)^(c-1)
-        ------------------------------------------
-           3^(a+b+c-1) Gamma(a) Gamma(b) Gamma(c)
+			  (x1*p1)^(a-1) (x2*p2)^(b-1) (x3*p3)^(c-1)
+        p1 p2 -----------------------------------------
+			  Gamma(a) Gamma(b) Gamma(c) / Gamma(a+b+c)
         
-        where a = 1, b = 2, c = 3, p = 0.5, q = 1.0, r = 1.5 and
+        where a = 1, b = 2, c = 3, p1 = 1/6, p2 = 1/3, p3 = 1/2 and
         Gamma is the Gamma function, not the Gamma probability distribution.
-        Note that the argument x is a tuple, which in this example would be
+        Note that the argument x is a tuple, which in this example could be
+		supplied as either
 
-        x = (p, q, 3-p-q) = (0.5, 1.0, 1.5)
+        x = (0.5, 1.0)
+		
+		or
+		
+        x = (0.5, 1.0, 7/6)
+		
+		(The final value x3 is determined by x1, x2, p1, p2 and p3 and thus
+		does not need to be supplied.)
                 
         """
         nparams = RelRateDistBase.getNParams(self)
-        assert nparams == len(x), 'Vector supplied to getLnPDF has length %d but length expected was %d' % (len(x), nparams)
+        assert len(x) >= nparams - 1, 'Vector supplied to getLnPDF has length %d but should be greater than or equal to %d' % (len(x), nparams - 1)
         return RelRateDistBase.getLnPDF(self, x)
         
     def getRelativeLnPDF(self, x):
@@ -310,6 +320,18 @@ class RelativeRateDistribution(RelRateDistBase, PyDistributionBase):
         nparams = RelRateDistBase.getNParams(self)
         assert nparams == len(x), 'Vector supplied to getRelativeLnPDF has length %d but length expected was %d' % (len(x), nparams)
         return RelRateDistBase.getRelativeLnPDF(self, x)
+        
+    def setCoefficients(self, p):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Allows user to provide coefficients for this distribution, overriding
+		the default coefficients, which are all 1/dim, where dim is the 
+		dimension (number of parameters).
+        
+        """
+        nparams = RelRateDistBase.getNParams(self)
+        assert nparams == len(p), 'Vector supplied to setCoefficients has length %d but length expected was %d' % (len(x), nparams)
+        return RelRateDistBase.setCoefficients(self, p)
         
     # Uncomment this version if numarray is re-introduced
     #def setMeanAndVariance(self, mean, variance):

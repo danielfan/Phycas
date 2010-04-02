@@ -40,18 +40,26 @@ RelativeRateDistribution::RelativeRateDistribution()
   : DirichletDistribution(), dim(2)
 	{
 	sum_params = std::accumulate(dirParams.begin(), dirParams.end(), 0.0);
+	p.resize(2);
+	p.assign(2, 0.5);
+	log_prod_p = -log(2.0);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Creates a RelativeRateDistribution based on the parameter values supplied in the vector `params'.
+|	Creates a RelativeRateDistribution based on the parameter values supplied in the vector `params'. The coefficients
+|	are initially all equal to 1/dim.
 */
 RelativeRateDistribution::RelativeRateDistribution(
-  const double_vect_t & params) /**< is the vector of parameters, which are assumed to have mean 1.0 (i.e. the sum of the elements of the `params' vector is equal to the length of the `params' vector) */
+  const double_vect_t & params) /**< is the vector of parameters */
   : DirichletDistribution(params), dim(2)
 	{
 	PHYCAS_ASSERT(params.size() > 1);
 	dim = (unsigned)params.size();
 	sum_params = std::accumulate(dirParams.begin(), dirParams.end(), 0.0);
+	p.resize(dim);
+	p.assign(dim, 1.0/dim);
+	double d = (double)dim;
+	log_prod_p = -(d - 1.0)*log(d);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -73,13 +81,22 @@ RelativeRateDistribution::RelativeRateDistribution(
 		
 	dim = other.dim;
 	sum_params = other.sum_params;
+	log_prod_p = other.log_prod_p;
+	p.resize(dim);
+	std::copy(other.p.begin(), other.p.end(), p.begin());
 	}
 
+/*----------------------------------------------------------------------------------------------------------------------
+|   Returns the string "RelativeRateDistribution".
+*/
 std::string RelativeRateDistribution::GetDistributionName() const 
 	{
 	return "RelativeRateDistribution";
 	}
 
+/*----------------------------------------------------------------------------------------------------------------------
+|   Returns a string similar to "RelativeRateDistribution(1.0,1.0,1.0)".
+*/
 std::string RelativeRateDistribution::GetDistributionDescription() const 
 	{
 	PHYCAS_ASSERT(dim > 1);
@@ -128,18 +145,10 @@ std::string RelativeRateDistribution::GetDescriptionForPython() const
 double_vect_t RelativeRateDistribution::GetMean() const 
 	{
 	double_vect_t retvect(dim, 0.0);
-	double x = (double)dim;
-	
-	//std::cerr << "@@@@@@@@@@ RelativeRateDistribution::GetMean(): dirParams @@@@@@@@@@" << std::endl;
-	//std::copy(dirParams.begin(), dirParams.end(), std::ostream_iterator<double>(std::cerr, " "));
-	//std::cerr << "@@@@@@@@@@ sum_params = " << sum_params << std::endl;
-	
-	std::transform(dirParams.begin(), dirParams.end(), retvect.begin(), x*boost::lambda::_1/sum_params);
-
-	//std::cerr << "@@@@@@@@@@ RelativeRateDistribution::GetMean(): retvect @@@@@@@@@@" << std::endl;
-	//std::copy(retvect.begin(), retvect.end(), std::ostream_iterator<double>(std::cerr, " "));
-	//std::cerr << "@@@@@@@@@@ sum_params = " << sum_params << std::endl;
-	
+	for (unsigned i = 0; i < dim; ++i)
+		{
+		retvect[i] = dirParams[i]/(p[i]*sum_params);
+		}
 	return retvect;
 	}
 
@@ -150,12 +159,11 @@ double_vect_t RelativeRateDistribution::GetMean() const
 double_vect_t RelativeRateDistribution::GetVar() const 
 	{
 	double_vect_t retvect(dim, 0.0);
-
-	double x = (double)dim;
-	double c = sum_params;
-	double denom = c*c*(c + 1.0);
-	std::transform(dirParams.begin(), dirParams.end(), retvect.begin(), x*x*(boost::lambda::_1)*(c - boost::lambda::_1)/denom);
-
+	double denom = sum_params*sum_params*(sum_params + 1.0);
+	for (unsigned i = 0; i < dim; ++i)
+		{
+		retvect[i] = dirParams[i]*(sum_params - dirParams[i])/(denom*p[i]*p[i]);
+		}
 	return retvect;
 	}
 
@@ -166,16 +174,11 @@ double_vect_t RelativeRateDistribution::GetVar() const
 double_vect_t RelativeRateDistribution::GetStdDev() const 
 	{
 	double_vect_t retvect(dim, 0.0);
-
-	double x = (double)dim;
-	double c = sum_params;
-	double denom = c*c*(c + 1.0);
-	double_vect_t::iterator dest = retvect.begin();
-	for (double_vect_t::const_iterator it = dirParams.begin(); it != dirParams.end(); ++it)
+	double denom = sum_params*sqrt(sum_params + 1.0);
+	for (unsigned i = 0; i < dim; ++i)
 		{
-		double v = (*it);
-		double dirvar = v*(c - v)/denom;
-		*dest++ = x*std::sqrt(dirvar);
+		double numer = dirParams[i]*(sum_params - dirParams[i]);
+		retvect[i] = sqrt(numer)/(denom*p[i]);
 		}
 	return retvect;
 	}
@@ -196,8 +199,10 @@ double RelativeRateDistribution::ApproxCDF(
 	PHYCAS_ASSERT(nsamples > 0);
 	PHYCAS_ASSERT(x.size() >= dim - 1);
 	double_vect_t tmp(x.size(), 0.0);
-	double z = (double)dim;
-	std::transform(x.begin(), x.end(), tmp.begin(), boost::lambda::_1/z);
+	for (unsigned i = 0; i < dim; ++i)
+		{
+		tmp[i] = p[i]*x[i];
+		}
 	return DirichletDistribution::ApproxCDF(tmp, nsamples);
 	}
 
@@ -216,41 +221,50 @@ double_vect_t RelativeRateDistribution::Sample() const
 		sum += y;
 		}
 
-	double z = (double)dim;
-	std::transform(scratchSpace.begin(), scratchSpace.end(), x.begin(), z*boost::lambda::_1/sum);
+	for (unsigned i = 0; i < dim; ++i)
+		{
+		x[i] = scratchSpace[i]/(p[i]*sum);
+		}
 	return x;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the natural logarithm of the probability density function evaluated at the supplied point `x'. To derive
-|	the relative rate distribution density, imagine a random variable X ~ Beta(a,b) and let Y=2X. Y now has a relative
+|	the relative rate distribution density, imagine a random variable Y ~ Beta(a,b) and assume X=Y/p. X has a relative
 |	rate distribution with density
 |>
-|	f_Y(y) = f_X(y/2) dX/dY
-|	dX/dY = 1/2
+|	f_X(x) = f_Y(pX) dy/dx
+|	dy/dx = p
 |>
-|	Thus, the density of Y will be one half the Beta density evaluated at y/2. This generalizes to the Dirichlet: the
-|	density of a value y of a random variable Y having an n-parameter relative rate distribution will be the
-|	corresponding Dirichlet pdf evaluated at the point y/n divided by n^(n-1).
+|	Thus, the density of X will be p times the Beta density evaluated at pX. This generalizes to the Dirichlet: the
+|	density of a value x of a random variable X having an n-parameter relative rate distribution will be p_1 p_2 ... p_n
+|	times the corresponding Dirichlet pdf evaluated at the point (p_1 x_1, p_2 x_2, ..., p_n x_n), where p_i is the
+|	weight associated with subset i and the sum of the p_i values equals 1.
 */
 double RelativeRateDistribution::GetLnPDF(
   const double_vect_t & x) const 	/**< is the point at which to evaluate the density */
 	{
-	//std::cerr << "@@@@@@@@@@ RelativeRateDistribution::GetLnPDF(): x @@@@@@@@@@" << std::endl;
-	//std::copy(x.begin(), x.end(), std::ostream_iterator<double>(std::cerr, " "));
-	//std::cerr << "@@@@@@@@@@ sum_params = " << sum_params << std::endl;
-
-	double_vect_t tmp(dim, 0.0);
-	std::transform(x.begin(), x.end(), tmp.begin(), boost::lambda::_1/(double)dim);
-
-	//std::cerr << "@@@@@@@@@@ RelativeRateDistribution::GetLnPDF(): tmp @@@@@@@@@@" << std::endl;
-	//std::copy(tmp.begin(), tmp.end(), std::ostream_iterator<double>(std::cerr, " "));
-	//std::cerr << "@@@@@@@@@@ sum_params = " << sum_params << std::endl;
-
-	double ln_pdf = DirichletDistribution::GetLnPDF(tmp);
-	double n = (double)dim;
-	ln_pdf -= (n - 1.0)*log(n);
-	return ln_pdf;
+	unsigned sz = (unsigned)x.size();
+	if (sz == dim || sz == dim - 1)
+		{
+		double_vect_t tmp(dim, 0.0);
+		std::transform(x.begin(), x.end(), p.begin(), tmp.begin(), boost::lambda::_1*boost::lambda::_2);
+		double sum_tmp = std::accumulate(tmp.begin(), tmp.end(), 0.0);
+		if (sz == dim - 1)
+			{
+			// last element of tmp needs to be calculated because supplied vector x was one element short
+			tmp[sz] = 1.0 - sum_tmp;
+			sum_tmp = 1.0;
+			double ln_pdf = log_prod_p + DirichletDistribution::GetLnPDF(tmp);
+			return ln_pdf;
+			}
+		if (fabs(sum_tmp - 1.0) > 0.0000001)
+			throw XProbDist(boost::str(boost::format("Vector supplied to RelativeRateDistribution::GetLnPDF is not valid: sum of transformed elements was %g but was expected to be 1.0") % sum_tmp));
+		double ln_pdf = log_prod_p + DirichletDistribution::GetLnPDF(tmp);
+		return ln_pdf;
+		}
+	else 
+		throw XProbDist(boost::str(boost::format("Vector supplied to RelativeRateDistribution::GetLnPDF has dimension %d but dimension should be either %d or %d") % sz % dim % (dim-1)));
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -270,7 +284,6 @@ double_vect_t RelativeRateDistribution::GetVarCovarMatrix()
 	{
 	unsigned i, j;
 
-	double x = (double)dim;
 	double c = sum_params;
 	double denom = c*c*(c + 1.0);
 
@@ -281,12 +294,12 @@ double_vect_t RelativeRateDistribution::GetVarCovarMatrix()
 			{
 			if (i == j)
 				{
-				double var_i = x*x*dirParams[i]*(c - dirParams[i])/denom;
+				double var_i = dirParams[i]*(c - dirParams[i])/(p[i]*p[i]*denom);
 				V.push_back(var_i);
 				}
 			else
 				{
-				double cov_ij = -x*x*dirParams[i]*dirParams[j]/denom;
+				double cov_ij = -dirParams[i]*dirParams[j]/(p[i]*p[j]*denom);
 				V.push_back(cov_ij);
 				}
 			}
@@ -298,7 +311,11 @@ double_vect_t RelativeRateDistribution::GetVarCovarMatrix()
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets parameters of the distribution from the vector of means and vector of variances (note: v is not the variance
-|	covariance matrix, but just a single-dimensional array of variances - the covariances are not needed).
+|	covariance matrix, but just a single-dimensional array of variances - the covariances are not needed). Specifically,
+|	if X is a relative rate vector, and Yi = Xi*pi, then E[Yi] = pi*E[Xi] and Var(Yi) = pi^2*Var(Xi). Thus, simple
+|	transformations of the means (E[Xi]) and variances (Var(Xi)) of the elements of X (supplied in the form of `m' and
+|	`v') can be turned over to the DirichletDistribution::SetMeanAndVariance function to parameterize the underlying
+|	Dirichlet base class data members.
 */
 void RelativeRateDistribution::SetMeanAndVariance(
   const double_vect_t & m, 	/**< is the vector of means */
@@ -309,30 +326,11 @@ void RelativeRateDistribution::SetMeanAndVariance(
 	if (dim != (unsigned)v.size())
 		throw XProbDist(boost::str(boost::format("Variance vector supplied to SetMeanAndVariance has dimension %d but RelativeRateDistribution has dimension %d") % (unsigned)v.size() % dim));
 		
-	double x = (double)dim;
-
-	//std::cerr << "@@@@@@@@@@ RelativeRateDistribution::SetMeanAndVariance(): m @@@@@@@@@@" << std::endl;
-	//std::copy(m.begin(), m.end(), std::ostream_iterator<double>(std::cerr, " "));
-	//std::cerr << "@@@@@@@@@@ sum_params = " << sum_params << std::endl;
-
 	double_vect_t transformed_means(dim);
-	std::transform(m.begin(), m.end(), transformed_means.begin(), boost::lambda::_1/x);
+	std::transform(m.begin(), m.end(), p.begin(), transformed_means.begin(), boost::lambda::_1*boost::lambda::_2);
 	
-	//std::cerr << "@@@@@@@@@@ RelativeRateDistribution::SetMeanAndVariance(): transformed_means @@@@@@@@@@" << std::endl;
-	//std::copy(transformed_means.begin(), transformed_means.end(), std::ostream_iterator<double>(std::cerr, " "));
-	//std::cerr << "@@@@@@@@@@ sum_params = " << sum_params << std::endl;
-	
-	//std::cerr << "@@@@@@@@@@ RelativeRateDistribution::SetMeanAndVariance(): v @@@@@@@@@@" << std::endl;
-	//std::copy(v.begin(), v.end(), std::ostream_iterator<double>(std::cerr, " "));
-	//std::cerr << "@@@@@@@@@@ sum_params = " << sum_params << std::endl;
-	
-	double xsquared = x*x;
 	double_vect_t transformed_variances(dim);
-	std::transform(v.begin(), v.end(), transformed_variances.begin(), boost::lambda::_1/xsquared);
-	
-	//std::cerr << "@@@@@@@@@@ RelativeRateDistribution::SetMeanAndVariance(): transformed_variances @@@@@@@@@@" << std::endl;
-	//std::copy(transformed_variances.begin(), transformed_variances.end(), std::ostream_iterator<double>(std::cerr, " "));
-	//std::cerr << "@@@@@@@@@@ sum_params = " << sum_params << std::endl;
+	std::transform(v.begin(), v.end(), p.begin(), transformed_variances.begin(), boost::lambda::_1*boost::lambda::_2*boost::lambda::_2);
 	
 	DirichletDistribution::SetMeanAndVariance(transformed_means, transformed_variances);
 	sum_params = std::accumulate(dirParams.begin(), dirParams.end(), 0.0);
@@ -365,6 +363,37 @@ RelativeRateDistribution * RelativeRateDistribution::Clone() const
 	{
     return new RelativeRateDistribution(*this);
     }
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Copies the supplied coefficiences in `coeff' to the data member `p'. 
+*/
+void RelativeRateDistribution::SetCoefficients(
+  const double_vect_t & coeff)	/**< is the new vector of coefficients */
+	{
+	// Throw exception if coeff has an incorrect number of elements
+	if (dim != (unsigned)coeff.size())
+		throw XProbDist(boost::str(boost::format("Coefficient vector supplied to RelativeRateDistribution::SetCoefficients has dimension %d but RelativeRateDistribution has dimension %d") % (unsigned)coeff.size() % dim));
+
+	// Throw exception if any elements of coeff are negative or zero
+	for (double_vect_t::const_iterator it = coeff.begin(); it != coeff.end(); ++it)
+		{
+		double x = *it;
+		if (x <= 0.0)
+			throw XProbDist(boost::str(boost::format("Coefficient vector supplied to RelativeRateDistribution::SetCoefficients has at least one element (%g) with value less than or equal to zero") % x));
+		}
+			
+	// Don't assume that the elements of coeff add up to 1.0
+	double sum_coeff = std::accumulate(coeff.begin(), coeff.end(), 0.0);			
+	std::transform(coeff.begin(), coeff.end(), p.begin(), boost::lambda::_1/sum_coeff);
+	
+	// Recalculate log_prod_p
+	log_prod_p = 0.0;
+	for (unsigned i = 0; i < dim - 1; ++i)
+		{
+		log_prod_p += log(p[i]);
+		}
+    }
+
 
 } // namespace phycas
 

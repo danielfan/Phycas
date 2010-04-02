@@ -375,11 +375,13 @@ class MarkovChain(LikelihoodCore):
 				if partition.subset_relrates_prior is None:
 					param_list = tuple([1.0]*nmodels)
 					d = ProbDist.RelativeRateDistribution(param_list)
+					d.setCoefficients(partition.getSubsetProportions())
 					self.subset_relrates_move.setMultivarPrior(d)
 					self.partition_model.setSubsetRelRatePrior(d)
 				else:
 					self.parent.phycassert(partition.subset_relrates_prior.getDistName() == 'RelativeRateDistribution', 'partition.subset_relrates_prior must be of type RelativeRateDistribution')
 					self.parent.phycassert(partition.subset_relrates_prior.getNParams() == nmodels, 'partition.subset_relrates_prior has dimension %d, but there are %d subsets in the partition. Try setting partion.subset_relrates_prior = None to get default flat Dirichlet prior of the appropriate dimension' % (partition.subset_relrates_prior.getNParams(), nmodels))
+					partition.subset_relrates_prior.setCoefficients(partition.getSubsetProportions())
 					self.subset_relrates_move.setMultivarPrior(partition.subset_relrates_prior)
 					self.partition_model.setSubsetRelRatePrior(partition.subset_relrates_prior)
 			self.chain_manager.addMove(self.subset_relrates_move)

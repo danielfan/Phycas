@@ -154,7 +154,7 @@ if __name__ == '__main__':
     runTest(outFile, "Sumt", ["trees.tre","splits.pdf","logfile.txt"])
     #runTest(outFile, "SteppingstoneSampling", ["params.p", "trees.t"])
     runTest(outFile, "LikelihoodTest", ["check.nex"])
-    runTest(outFile, "partition", ["parttest.p","parttest.t"])
+    #runTest(outFile, "partition", ["parttest.p","parttest.t"])
     runTest(outFile, "FixedParams", ["fixed.p", "fixed.t"])
     runTest(outFile, "Underflow", ["output.txt"])
     runTest(outFile, "CodonTest", ["params.p", "trees.t"])

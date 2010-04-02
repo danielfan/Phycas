@@ -153,16 +153,41 @@ class Partition(PhycasCommand):
 		
 	def partitionReport(self):
 		"""
-		Ensures that no site has more than one model and issues a summary of the 
-		partitioning scheme.
+		Outputs a summary of the partitioning scheme.
 		"""
-		print 'Assignment of subsets to sites:'
-		for i,x in enumerate(self.sitemodel):
-			if x < 0:
-				nm = 'default'
-			else:
-				nm = self.subset[x][0]
-			#print '--> %6d %6d %s' % (i,x,nm)
+		cf = CommonFunctions(self)
+		cf.output('Partition report:')
+		cf.output('%12s %12s %12s   %s' % ('subset', 'size', 'model', 'name'))
+		for i,(n,s,m) in enumerate(self.subset):
+			model_descr = m.type.upper()
+			if m.pinvar_model:
+				model_descr += '+I'
+			if m.num_rates > 1:
+				model_descr += '+G'
+			cf.output('%12d %12d %12s   %s' % (i+1, len(s), model_descr, n))
+			
+	def getSubsetProportions(self):
+		"""
+		Obtains a list of the number of sites in each subset from getSubsetSizes, then
+		returns a normalized vector in which these subset sizes are divided by the 
+		total number of sites.
+		"""
+		proportions = []
+		size_vect = self.getSubsetSizes()
+		n = float(sum(size_vect))
+		for s in size_vect:
+			proportions.append(float(s)/n)
+		return proportions;
+
+	def getSubsetSizes(self):
+		"""
+		Extracts the length of the sitelist for each subset in self.subset, which 
+		is a list of tuples (name, sitelist, model).
+		"""
+		size_vect = []
+		for s in self.subset:
+			size_vect.append(len(s[1]))
+		return size_vect;
 
 	def __call__(self, **kwargs):
 		"""
