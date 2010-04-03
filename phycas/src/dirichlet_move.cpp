@@ -18,6 +18,7 @@
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #include "phycas/src/probability_distribution.hpp"
+#include "phycas/src/relative_rate_distribution.hpp"
 #include "phycas/src/likelihood_models.hpp"
 #include "phycas/src/basic_tree_node.hpp"
 #include "phycas/src/tree_likelihood.hpp"
@@ -149,8 +150,7 @@ void DirichletMove::proposeNewState()
     
     // create vector of Dirichlet parameters for selecting new parameter values (by multiplying
     // each current parameter value by the value `psi')
-    unsigned sz = (unsigned)orig_params.size();
-    c_forward.resize(sz);
+    c_forward.resize(orig_params.size());
 	std::transform(orig_params.begin(), orig_params.end(), c_forward.begin(), 1.0 + boost::lambda::_1*psi);
 
 	//std::cerr << "c_forward:" << std::endl;
@@ -183,7 +183,10 @@ void DirichletMove::proposeNewState()
 */
 double DirichletMove::getLnHastingsRatio() const
 	{
-    return (dir_reverse->GetLnPDF(orig_params) - dir_forward->GetLnPDF(new_params));
+	double log_prob_reverse_move = dir_reverse->GetLnPDF(orig_params);
+	double log_prob_forward_move = dir_forward->GetLnPDF(new_params);
+    double log_hastings_ratio = log_prob_reverse_move - log_prob_forward_move;
+	return log_hastings_ratio;
 	}
 
 /*--------------------------------------------------------------------------------------------------------------------------
@@ -382,7 +385,7 @@ void DirichletMove::educateWorkingPrior()
 |	Use samples in `fitting_sample' to parameterize `working_prior'. This function is called during s-cubed style
 |	steppingstone sampling after the initial phase of sampling from the posterior so that the working prior can be
 |	used for the remaining phases. Assumes `fitting_sample' has more than 1 element. Assigns a DirichletDistribution 
-|	object to `working_prior'.
+|	object to `mv_working_prior'.
 */
 void DirichletMove::finalizeWorkingPrior()
 	{
@@ -635,12 +638,41 @@ void RelRatesMove::setParams(
 */
 SubsetRelRatesMove::SubsetRelRatesMove() : DirichletMove()
 	{
-	dim = 1;
+	p.resize(dim);
+	p.assign(dim, 1.0/(double)dim);
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the proportions of sites in each subset of the partition. These are stored in the data member `p' and used by
+|	SubsetRelRatesMove::setParams and SubsetRelRatesMove::getParams. Assumes the number of supplied proportions equals
+|	the number of partition subsets, and that no individual element of `proportions' is zero or negative. The supplied
+|	proportions are normalized, so it is ok to supply proportions that do not sum to 1.0.
+*/
+void SubsetRelRatesMove::setSubsetProportions(
+  const double_vect_t & proportions)	/**< is a vector of proportions of sites within each partition subset */
+	{
+	if (proportions.size() != dim)
+		throw XProbDist(boost::str(boost::format("Expecting number of proportions (%d) to equal number of subsets (%d)") % proportions.size() % dim));
+		
+	for (double_vect_t::const_iterator it = proportions.begin(); it != proportions.end(); ++it)
+		{
+		double x = *it;
+		if (x <= 0.0)
+			throw XProbDist(boost::str(boost::format("Expecting subset proportions to all be greater than zero, but found at least one exception (%g)") % x));
+		}
+		
+	double sum_proportions = std::accumulate(proportions.begin(), proportions.end(), 0.0);
+				
+	p.resize(dim);
+	std::transform(proportions.begin(), proportions.end(), p.begin(), boost::lambda::_1/sum_proportions);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Override of base class version adds the current vector of subset relative rates to the data already stored in 
-|	`mv_fitting_sample'.
+|	`mv_fitting_sample'. The relative rates are retrieved from the model using 
+|	SubsetRelRatesMove::getCurrValuesFromModel, then transformed by multiplying each relative rate by the corresponding
+|	coefficient before storing in `mv_fitting_sample'. This is done so that the machinery of DirichletDistribution can
+|	be used to do the fitting.
 */
 void SubsetRelRatesMove::educateWorkingPrior()
 	{
@@ -648,13 +680,14 @@ void SubsetRelRatesMove::educateWorkingPrior()
 		{
 		double_vect_t rrates;
 		getCurrValuesFromModel(rrates);
-		std::transform(rrates.begin(), rrates.end(), rrates.begin(), boost::lambda::_1/(double)dim);
+		std::transform(rrates.begin(), rrates.end(), p.begin(), rrates.begin(), boost::lambda::_1*boost::lambda::_2);
 		mv_fitting_sample.push_back(rrates);
 		}
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Sets the relative rates of the associated partition model to those in the supplied vector `v'.
+|	Sets the relative rates of the associated partition model to those in the supplied vector `v'. No transformation of
+|	the relative rates is done by this function.
 */
 void SubsetRelRatesMove::sendCurrValuesToModel(const double_vect_t & v)
 	{
@@ -663,7 +696,8 @@ void SubsetRelRatesMove::sendCurrValuesToModel(const double_vect_t & v)
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Obtains the current relative rates from the model, storing them in the supplied vector `v'.
+|	Obtains the current relative rates from the model, storing them in the supplied vector `v'. No transformation of
+|	the relative rates is done by this function.
 */
 void SubsetRelRatesMove::getCurrValuesFromModel(double_vect_t & v) const
 	{
@@ -674,7 +708,8 @@ void SubsetRelRatesMove::getCurrValuesFromModel(double_vect_t & v) const
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
-|	Obtains the current relative rates from the model, returning them as an anonymous vector.
+|	Obtains the current relative rates from the model, returning them as an anonymous vector. No transformation of
+|	the relative rates is done by this function.
 */
 double_vect_t SubsetRelRatesMove::listCurrValuesFromModel()
 	{
@@ -686,47 +721,6 @@ double_vect_t SubsetRelRatesMove::listCurrValuesFromModel()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Obtains the current relative rates from the model, storing them in the data member `orig_params'. Because subset
-|	relative rates have mean 1 rather than sum 1, and since the base class DirichletMove expects the parameters to 
-|	sum to 1, each value in `orig_params' is transformed by dividing by `dim' (the length of the `orig_params' vector).
-*/
-void SubsetRelRatesMove::getParams()
-	{
-	getCurrValuesFromModel(orig_params);
-
-	//std::cerr << "orig_params before transforming:" << std::endl;
-	//std::copy(orig_params.begin(), orig_params.end(), std::ostream_iterator<double>(std::cerr, " "));
-	//std::cerr << std::endl;
-
-	std::transform(orig_params.begin(), orig_params.end(), orig_params.begin(), boost::lambda::_1/(double)dim);
-
-	//std::cerr << "orig_params after transforming by dividing by 2:" << std::endl;
-	//std::copy(orig_params.begin(), orig_params.end(), std::ostream_iterator<double>(std::cerr, " "));
-	//std::cerr << std::endl;
-	}
-
-/*----------------------------------------------------------------------------------------------------------------------
-|	Replaces the relative rates in the model with those supplied in the vector `v'. The values supplied are multiplied
-|	by `dim' (the length of the vector) before sending to the model. See explanation in documentation for 
-|	SubsetRelRatesMove::getParams().
-*/
-void SubsetRelRatesMove::setParams(
-  const std::vector<double> & v)    /*< is the vector of parameter values to send to the model */
-	{
-	double_vect_t vcopy(dim);
-	std::transform(v.begin(), v.end(), vcopy.begin(), boost::lambda::_1*(double)dim);
-
-	//std::cerr << "v:" << std::endl;
-	//std::copy(v.begin(), v.end(), std::ostream_iterator<double>(std::cerr, " "));
-	//std::cerr << std::endl;
-	//std::cerr << "vcopy (equals v*2):" << std::endl;
-	//std::copy(vcopy.begin(), vcopy.end(), std::ostream_iterator<double>(std::cerr, " "));
-	//std::cerr << std::endl;
-
-    sendCurrValuesToModel(vcopy);
-	}
-	
-/*----------------------------------------------------------------------------------------------------------------------
 |	Sets `partition_model' to the supplied `m'.
 */
 void SubsetRelRatesMove::setPartitionModel(
@@ -735,6 +729,7 @@ void SubsetRelRatesMove::setPartitionModel(
 	partition_model = m;
 	}
 	
+#if 0
 /*----------------------------------------------------------------------------------------------------------------------
 |	Retrieves current value for the parameter being managed by this updater, then returns log of the working prior 
 |	probability density at that value. If this updater is not a prior steward, simply returns 0.0.
@@ -747,7 +742,6 @@ double SubsetRelRatesMove::recalcWorkingPrior() const
 	double lnwp = 0.0;
 	double_vect_t values;
 	getCurrValuesFromModel(values);	
-	std::transform(values.begin(), values.end(), values.begin(), boost::lambda::_1/(double)dim);
 	try 
 		{
 		PHYCAS_ASSERT(mv_working_prior);
@@ -757,8 +751,296 @@ double SubsetRelRatesMove::recalcWorkingPrior() const
 		{
 		PHYCAS_ASSERT(0);
 		}
-	double n = (double)dim;
-	lnwp -= (n - 1.0)*log(n);
 	return lnwp;
+	}
+#endif
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Use samples in `fitting_sample' to parameterize `working_prior'. This function is called during s-cubed style
+|	steppingstone sampling after the initial phase of sampling from the posterior so that the working prior can be
+|	used for the remaining phases. Assumes `fitting_sample' has more than 1 element. Assigns a RelativeRateDistribution 
+|	object to `mv_working_prior'.
+*/
+void SubsetRelRatesMove::finalizeWorkingPrior()
+	{
+#if 0
+	if (!isFixed())
+		{
+		PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
+		PHYCAS_ASSERT(mv_fitting_sample.size() > 1);
+
+		// Let a, b, c, d be the parameters of a Dirichlet(a,b,c,d).
+		// Let phi = a + b + c + d
+		// Let mu_1, mu_2, mu_3, and mu_4 be sample means
+		// Let s_1^2, s_2^2, s_3^2, and s_4^2 be sample variances
+		// Noting that mu_1 = a/phi, mu_2 = b/phi, mu_3 = c/phi and mu_4 = d/phi
+		// and noting that s_1^2 = a*(b + c + d)/[phi^2*(phi + 1)], etc., and
+		// letting z = s_1^2/mu_1 + s_2^2/mu_2 + s_3^2/mu_3 + s_4^2/mu_4,
+		// phi can be estimated as (3/z) - 1, where the 3 is really k-1 
+		// and k is the number of Dirichlet parameters. Now, 
+		// a = mu_1*phi, b = mu_2*phi, c = mu_3*phi and d = mu_4*phi
+		
+		// First compute the sample means and variances using the data stored in mv_working_prior
+		double_vect_t sums(dim, 0.0);
+		double_vect_t ss(dim, 0.0);
+		double n = 0.0;
+		for (double_vect_vect_t::iterator i = mv_fitting_sample.begin(); i != mv_fitting_sample.end(); ++i)
+			{
+			unsigned k = 0;
+			n += 1.0;
+			for (double_vect_t::iterator j = (*i).begin(); j != (*i).end(); ++j)
+				{
+				double v = (*j);
+				sums[k] += v;
+				ss[k++] += v*v;
+				}
+			}
+			
+		double_vect_t means(dim, 0.0);
+		double_vect_t variances(dim, 0.0);
+		for (unsigned i = 0; i < dim; ++i)
+			{
+			double mean = sums[i]/n;
+			means[i] = mean;
+			variances[i] = (ss[i] - n*mean*mean)/(n - 1.0);
+			}
+		
+		// Now compute the Dirichlet parameters
+		double z = 0.0;
+		for (unsigned i = 0; i < dim; ++i)
+			{
+			z += variances[i]/means[i];
+			}
+			
+		double phi = (double)(dim - 1)/z - 1.0;
+		double_vect_t params;
+		for (unsigned i = 0; i < dim; ++i)
+			{
+			params.push_back(phi*means[i]);
+			}
+			
+		mv_working_prior = MultivarProbDistShPtr(new DirichletDistribution(params));
+		//	if (params.size() == 4)
+		//		std::cerr << boost::str(boost::format("@@@@@@@@@ working prior is Dirichlet(%g,%g,%g,%g) for updater %s") % params[0] % params[1] % params[2] % params[3] % getName()) << std::endl;
+		//	else if (params.size() == 6)
+		//		std::cerr << boost::str(boost::format("@@@@@@@@@ working prior is Dirichlet(%g,%g,%g,%g,%g,%g) for updater %s") % params[0] % params[1] % params[2] % params[3] % params[4] % params[5] % getName()) << std::endl;
+		//	else
+		//		std::cerr << boost::str(boost::format("@@@@@@@@@ working prior is Dirichlet(not 4 or 6 params) for updater %s") % getName()) << std::endl;
+		}
+#endif
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Obtains the current relative rates from the model by calling SubsetRelRatesMove::getCurrValuesFromModel.
+*/
+void SubsetRelRatesMove::getParams()
+	{
+	getCurrValuesFromModel(orig_relrates);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Replaces the relative rates in the model with those supplied in the vector `v'.
+*/
+void SubsetRelRatesMove::setParams(
+  const double_vect_t & v)    /*< is the vector of parameter values to send to the model */
+	{
+	PHYCAS_ASSERT(v.size() == dim);
+    sendCurrValuesToModel(v);
+	}
+	
+/*--------------------------------------------------------------------------------------------------------------------------
+|   Chooses a new vector of state frequencies using a sharp Dirichlet distribution centered at the original frequencies.
+*/
+void SubsetRelRatesMove::proposeNewState()
+	{
+	//std::cerr << ">>>>>>>>>> orig_relrates:" << std::endl;
+	//std::copy(orig_relrates.begin(), orig_relrates.end(), std::ostream_iterator<double>(std::cerr, " "));
+	//std::cerr << " sum = " << std::accumulate(orig_relrates.begin(), orig_relrates.end(), 0.0) << std::endl;
+	//std::cerr << std::endl;
+	
+	// transform relative rates using coefficients so that elements of orig_params sum to 1
+	orig_params.resize(orig_relrates.size());
+	std::transform(orig_relrates.begin(), orig_relrates.end(), p.begin(), orig_params.begin(), boost::lambda::_1*boost::lambda::_2);
+	
+	//std::cerr << ">>>>>>>>>> orig_params (transformed version of orig_relrates):" << std::endl;
+	//std::copy(orig_params.begin(), orig_params.end(), std::ostream_iterator<double>(std::cerr, " "));
+	//std::cerr << " sum = " << std::accumulate(orig_params.begin(), orig_params.end(), 0.0) << std::endl;
+	
+    // create vector of Dirichlet parameters for selecting new relative rate values
+	// The parameter vector for this temporary distribution is obtained by multiplying
+    // each of the current relative rates by the value `psi', which is usually very large (e.g. 1000)
+    c_forward.resize(orig_params.size());
+	std::transform(orig_params.begin(), orig_params.end(), c_forward.begin(), 1.0 + boost::lambda::_1*psi);
+
+	//std::cerr << ">>>>>>>>>> c_forward:" << std::endl;
+	//std::copy(c_forward.begin(), c_forward.end(), std::ostream_iterator<double>(std::cerr, " "));
+	//std::cerr << std::endl;
+	
+	// create Dirichlet distribution and sample from it
+    dir_forward = DirichletShPtr(new DirichletDistribution(c_forward));
+    dir_forward->SetLot(getLot().get());
+	new_params.resize(orig_params.size());
+    new_params = dir_forward->Sample();
+
+	//std::cerr << ">>>>>>>>>> new_params:" << std::endl;
+	//std::copy(new_params.begin(), new_params.end(), std::ostream_iterator<double>(std::cerr, " "));
+	//std::cerr << " sum = " << std::accumulate(new_params.begin(), new_params.end(), 0.0) << std::endl;
+	
+    // create vector of Dirichlet parameters for selecting old frequencies (needed for Hasting ratio calculation)
+    c_reverse.resize(new_params.size());
+	std::transform(new_params.begin(), new_params.end(), c_reverse.begin(), 1.0 + boost::lambda::_1*psi);
+    dir_reverse = DirichletShPtr(new DirichletDistribution(c_reverse));
+
+	// transform new_params using coefficients so that elements of new_relrates are equal to proposed new relative rates
+	new_relrates.resize(new_params.size());
+	std::transform(new_params.begin(), new_params.end(), p.begin(), new_relrates.begin(), boost::lambda::_1/boost::lambda::_2);
+	
+	//std::cerr << ">>>>>>>>>> new_relrates (transformed version of new_params):" << std::endl;
+	//std::copy(new_relrates.begin(), new_relrates.end(), std::ostream_iterator<double>(std::cerr, " "));
+	//std::cerr << " sum = " << std::accumulate(new_relrates.begin(), new_relrates.end(), 0.0) << std::endl;
+	}
+
+/*--------------------------------------------------------------------------------------------------------------------------
+|	Called if the proposed move is accepted. Simply calls the reset() function.
+*/
+void SubsetRelRatesMove::accept()
+	{
+	MCMCUpdater::accept();
+	reset();
+	}
+
+/*--------------------------------------------------------------------------------------------------------------------------
+|	Called if the proposed move is rejected. Calls the reset() function after reinstating the original relative rates
+|   and ensuring that all conditional likelihood arrays will be recalculated when the likelihood is next calculated.
+*/
+void SubsetRelRatesMove::revert()
+	{
+	MCMCUpdater::revert();
+    setParams(orig_relrates);
+
+    // invalidate all CLAs
+    likelihood->useAsLikelihoodRoot(NULL);	
+
+	reset();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Calls proposeNewState(), then decides whether to accept or reject the proposed new state, calling accept() or 
+|	revert(), whichever is appropriate.
+*/
+bool SubsetRelRatesMove::update()
+	{
+	if (is_fixed)
+		return false;
+		
+	ChainManagerShPtr p = chain_mgr.lock();
+	PHYCAS_ASSERT(p);
+
+    // copy the current subset relative rates from the model to the data member orig_params
+    getParams();
+    
+	proposeNewState();
+
+    double prev_ln_prior		= (p->getSAMCLikelihoodOnly() ? 0.0 : mv_prior->GetLnPDF(orig_relrates));
+	double prev_ln_like			= p->getLastLnLike();
+	PHYCAS_ASSERT(!use_working_prior || mv_working_prior);
+	double prev_ln_working_prior = (use_working_prior ? mv_working_prior->GetLnPDF(orig_relrates) : 0.0);
+
+    // replace current parameter values with new ones
+    setParams(new_relrates);
+    likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
+
+	double curr_ln_prior		= (p->getSAMCLikelihoodOnly() ? 0.0 : mv_prior->GetLnPDF(new_relrates));
+	double curr_ln_like			= (heating_power > 0.0 ? likelihood->calcLnL(tree) : 0.0);
+	double curr_ln_working_prior = (use_working_prior ? mv_working_prior->GetLnPDF(new_relrates) : 0.0);
+
+    double prev_posterior = 0.0;
+	double curr_posterior = 0.0;
+	unsigned prev_samc_index = UINT_MAX;
+	unsigned curr_samc_index = UINT_MAX;
+	
+	if (p->doingSAMC())
+		{
+		prev_posterior		= prev_ln_like + prev_ln_prior;
+		prev_samc_index		= p->getSAMCEnergyLevel(prev_posterior);
+		double prev_theta	= p->getSAMCWeight(prev_samc_index);
+		prev_posterior		-= prev_theta;
+		
+		curr_posterior		= curr_ln_like + curr_ln_prior;
+		curr_samc_index		= p->getSAMCEnergyLevel(curr_posterior);
+		double curr_theta	= p->getSAMCWeight(curr_samc_index);
+		curr_posterior		-= curr_theta;
+		}
+    else
+		{
+		if (is_standard_heating)
+			{
+			prev_posterior = heating_power*(prev_ln_like + prev_ln_prior);
+			curr_posterior = heating_power*(curr_ln_like + curr_ln_prior);
+			if (use_working_prior)
+				{
+				prev_posterior += (1.0 - heating_power)*prev_ln_working_prior;
+				curr_posterior += (1.0 - heating_power)*curr_ln_working_prior;
+				}
+			}
+		else
+			{
+			prev_posterior = heating_power*prev_ln_like + prev_ln_prior;
+			curr_posterior = heating_power*curr_ln_like + curr_ln_prior;
+			}
+		}
+	double ln_hastings			= getLnHastingsRatio();
+	double ln_accept_ratio		= curr_posterior - prev_posterior + ln_hastings;
+
+    double lnu = std::log(rng->Uniform(FILE_AND_LINE));
+
+	//std::cerr << ">>>>>>>>>> ln_accept_ratio:" << ln_accept_ratio << std::endl;
+            
+	if (ln_accept_ratio >= 0.0 || lnu <= ln_accept_ratio)
+		{
+	    if (save_debug_info)
+    	    {
+			debug_info = boost::str(boost::format("ACCEPT, prev_ln_working_prior = %.5f, curr_ln_working_prior = %.5f, prev_ln_prior = %.5f, curr_ln_prior = %.5f, prev_ln_like = %.5f, curr_ln_like = %.5f, lnu = %.5f, ln_accept_ratio = %.5f\norig_params: ") % prev_ln_working_prior % curr_ln_working_prior % prev_ln_prior % curr_ln_prior % prev_ln_like % curr_ln_like % lnu % ln_accept_ratio);
+			for (std::vector<double>::const_iterator it = orig_params.begin(); it != orig_params.end(); ++it)
+				debug_info += boost::str(boost::format("%15.8f ") % (*it));
+			debug_info += "\nnew_params:  ";
+			for (std::vector<double>::const_iterator it = new_params.begin(); it != new_params.end(); ++it)
+				debug_info += boost::str(boost::format("%15.8f ") % (*it));
+			debug_info += "\nc_forward:  ";
+			for (std::vector<double>::const_iterator it = c_forward.begin(); it != c_forward.end(); ++it)
+				debug_info += boost::str(boost::format("%15.8f ") % (*it));
+			debug_info += "\ndir_forward:  ";
+			debug_info += dir_forward->GetDistributionDescription();
+			}
+		p->setLastLnPrior(curr_ln_prior);
+		p->setLastLnLike(curr_ln_like);
+		if (p->doingSAMC())
+			p->updateSAMCWeights(curr_samc_index);
+		accept();
+		return true;
+		}
+	else
+		{
+	    if (save_debug_info)
+    	    {
+			debug_info = boost::str(boost::format("REJECT, prev_ln_working_prior = %.5f, curr_ln_working_prior = %.5f, prev_ln_prior = %.5f, curr_ln_prior = %.5f, prev_ln_like = %.5f, curr_ln_like = %.5f, lnu = %.5f, ln_accept_ratio = %.5f\norig_params: ") % prev_ln_working_prior % curr_ln_working_prior % prev_ln_prior % curr_ln_prior % prev_ln_like % curr_ln_like % lnu % ln_accept_ratio);
+			for (std::vector<double>::const_iterator it = orig_params.begin(); it != orig_params.end(); ++it)
+				debug_info += boost::str(boost::format("%15.8f ") % (*it));
+			debug_info += "\nnew_params:  ";
+			for (std::vector<double>::const_iterator it = new_params.begin(); it != new_params.end(); ++it)
+				debug_info += boost::str(boost::format("%15.8f ") % (*it));
+			debug_info += "\nc_forward:  ";
+			for (std::vector<double>::const_iterator it = c_forward.begin(); it != c_forward.end(); ++it)
+				debug_info += boost::str(boost::format("%15.8f ") % (*it));
+			debug_info += "\ndir_forward:  ";
+			debug_info += dir_forward->GetDistributionDescription();
+			}
+		curr_ln_like	= p->getLastLnLike();
+		curr_ln_prior	= p->getLastLnPrior();
+		if (p->doingSAMC())
+			p->updateSAMCWeights(prev_samc_index);
+		revert();
+		return false;
+		}
 	}
 

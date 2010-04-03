@@ -27,6 +27,7 @@
 #include "phycas/src/tree_manip.hpp"				// for TreeManip
 #include "phycas/src/slice_sampler.hpp"
 #include "phycas/src/probability_distribution.hpp"
+#include "phycas/src/relative_rate_distribution.hpp"
 #include "phycas/src/lognormal.hpp"
 #include "phycas/src/states_patterns.hpp"		// for double_vect
 

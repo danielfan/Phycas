@@ -143,6 +143,7 @@ void updater_pymod()
 	class_<phycas::SubsetRelRatesMove, bases<phycas::DirichletMove>, 
 		boost::noncopyable, boost::shared_ptr<phycas::SubsetRelRatesMove> >("SubsetRelRatesMove") 
 		.def("setPartitionModel", &phycas::SubsetRelRatesMove::setPartitionModel)
+		.def("setSubsetProportions", &phycas::SubsetRelRatesMove::setSubsetProportions)
 		.def("update", &phycas::SubsetRelRatesMove::update)
 		;
 	class_<phycas::RelRatesMove, bases<phycas::DirichletMove>, 

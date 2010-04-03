@@ -242,7 +242,23 @@ void UnderflowManager::check(
 						double curr = *cla++;
 						unsigned curr_pattern = subset_starting_pattern + pat;
 						if (curr > underflow_work[curr_pattern])
+							{
+							if (pat == 1)//temp
+								{
+								std::cerr << "@@@@@@@@@@ underflow_num_edges = " << underflow_num_edges << std::endl;
+								std::cerr << "@@@@@@@@@@ nr                  = " << nr << std::endl;
+								std::cerr << "@@@@@@@@@@ np                  = " << np << std::endl;
+								std::cerr << "@@@@@@@@@@ ns                  = " << ns << std::endl;
+								std::cerr << "@@@@@@@@@@ k                   = " << k << std::endl;
+								std::cerr << "@@@@@@@@@@ r                   = " << r << std::endl;
+								std::cerr << "@@@@@@@@@@ curr_pattern        = " << curr_pattern << std::endl;
+								std::cerr << "@@@@@@@@@@ pat                 = " << pat << std::endl;
+								std::cerr << "@@@@@@@@@@ i                   = " << i << std::endl;
+								std::cerr << "@@@@@@@@@@ curr                = " << curr << std::endl;
+								std::cerr << std::endl;
+								}
 							underflow_work[curr_pattern] = curr;
+							}
 						}
 					}
 				}
@@ -270,6 +286,14 @@ void UnderflowManager::check(
 			unsigned condlikes_per_rate = np*ns;
 			for (unsigned pat = 0; pat < np; ++pat)
 				{
+				if (underflow_work[curr_pattern] <= 0.0)//temp
+					{
+					std::cerr << "@@@@@@@@@@ underflow_num_edges          = " << underflow_num_edges << std::endl;
+					std::cerr << "@@@@@@@@@@ k                            = " << k << std::endl;
+					std::cerr << "@@@@@@@@@@ curr_pattern                 = " << curr_pattern << std::endl;
+					std::cerr << "@@@@@@@@@@ underflow_work[curr_pattern] = " << underflow_work[curr_pattern] << std::endl;
+					std::cerr << std::endl;
+					}
 				PHYCAS_ASSERT(underflow_work[curr_pattern] > 0.0);
 				double ratio = underflow_max_value/underflow_work[curr_pattern];
 				double log_ratio = std::log(ratio);

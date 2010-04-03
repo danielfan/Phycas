@@ -76,6 +76,8 @@ class RelativeRateDistribution : public DirichletDistribution
 		double								log_prod_p;		/**< The sum of the log(p_i), i = 1, 2, ..., dim */
 	};
 	
+typedef boost::shared_ptr<RelativeRateDistribution> RelativeRateDistributionShPtr;
+
 } // namespace phycas
 
 #endif

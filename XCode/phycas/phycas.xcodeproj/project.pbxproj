@@ -216,6 +216,7 @@
 		D13CAB9310D1D72300813B89 /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */; };
 		D13CAB9410D1D72300813B89 /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */; };
 		D13CAB9510D1D72300813B89 /* libpython2.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */; };
+		D183E6D711668139002AB4A3 /* relative_rate_distribution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D1F9EFC7112D9B4C00654AD4 /* relative_rate_distribution.cpp */; };
 		D19A89B5113050A2001004D2 /* lognormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D19A89B31130507A001004D2 /* lognormal.cpp */; };
 		D19A8A0C11307E88001004D2 /* lognormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D19A89B31130507A001004D2 /* lognormal.cpp */; };
 		D1C27E9E1123322A00911D1C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A22C13010CEEB8B0043120B /* CoreServices.framework */; };
@@ -1760,6 +1761,7 @@
 				7A98F40210CD599F001E79F7 /* phycas_string.cpp in Sources */,
 				7A98F40510CD59B0001E79F7 /* pinvar_param.cpp in Sources */,
 				7A98F40810CD59B8001E79F7 /* probability_distribution.cpp in Sources */,
+				D183E6D711668139002AB4A3 /* relative_rate_distribution.cpp in Sources */,
 				7A98F40A10CD59C0001E79F7 /* q_matrix.cpp in Sources */,
 				7A98F40D10CD59CA001E79F7 /* samc_move.cpp in Sources */,
 				7A98F40E10CD59D0001E79F7 /* slice_sampler.cpp in Sources */,

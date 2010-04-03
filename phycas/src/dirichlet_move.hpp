@@ -159,18 +159,27 @@ class SubsetRelRatesMove : public DirichletMove
                                     virtual ~SubsetRelRatesMove() {}
 
 		virtual void				educateWorkingPrior();
-		double 						recalcWorkingPrior() const;
+		//double 						recalcWorkingPrior() const;
+		virtual void				finalizeWorkingPrior();
 
 		virtual void				sendCurrValuesToModel(const double_vect_t & v);
 		virtual void				getCurrValuesFromModel(double_vect_t & v) const;
 		virtual double_vect_t		listCurrValuesFromModel();
         virtual void                getParams();
-        virtual void                setParams(const std::vector<double> & v);
+        virtual void                setParams(const double_vect_t & v);
 		void						setPartitionModel(PartitionModelShPtr m);
+		void						setSubsetProportions(const double_vect_t & proportions);
+		virtual void				proposeNewState();
+		virtual bool				update();
+		virtual void				accept();
+		virtual void 				revert();
 
 	private:
 
-		PartitionModelShPtr			partition_model;
+		double_vect_t 				new_relrates;	    /**< Proposed new relative rate values */
+		double_vect_t 				orig_relrates;		/**< Saved relative rate values (in case revert is necessary) */
+		double_vect_t				p;					/**< Vector of proportion of sites in each subset */
+		PartitionModelShPtr			partition_model;	/**< Pointer to the partition model */
 		SubsetRelRatesMove &		operator=(const SubsetRelRatesMove &);	// never use - don't define
     };
 
