@@ -329,7 +329,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>dirichlet_move.cpp</string>
+								<string>underflow_manager.cpp</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -337,11 +337,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>dirichlet_move.cpp</string>
+										<string>underflow_manager.cpp</string>
 										<key>_historyCapacity</key>
 										<integer>20</integer>
 										<key>bookmark</key>
-										<string>D12955BA1167A42E00C37FFB</string>
+										<string>D1BE10C51168159500148C22</string>
 										<key>history</key>
 										<array>
 											<string>D183E64111664464002AB4A3</string>
@@ -354,7 +354,6 @@
 											<string>D183E6C01166733C002AB4A3</string>
 											<string>D183E6D01166802E002AB4A3</string>
 											<string>D183E6FB11668882002AB4A3</string>
-											<string>D183E6FC11668882002AB4A3</string>
 											<string>D183E6FD11668882002AB4A3</string>
 											<string>D183E6FE11668882002AB4A3</string>
 											<string>D12955721166D94400C37FFB</string>
@@ -363,7 +362,8 @@
 											<string>D12955AB1167A27000C37FFB</string>
 											<string>D12955AC1167A27000C37FFB</string>
 											<string>D12955AD1167A27000C37FFB</string>
-											<string>D12955AE1167A27000C37FFB</string>
+											<string>D1BE10C31168159500148C22</string>
+											<string>D1BE10C41168159500148C22</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -375,14 +375,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1518, 846}}</string>
+								<string>{{0, 0}, {1518, 841}}</string>
 								<key>RubberWindowFrame</key>
 								<string>54 55 1866 1123 0 0 1920 1178 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>846pt</string>
+							<string>841pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -395,14 +395,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 851}, {1518, 231}}</string>
+								<string>{{0, 846}, {1518, 236}}</string>
 								<key>RubberWindowFrame</key>
 								<string>54 55 1866 1123 0 0 1920 1178 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>231pt</string>
+							<string>236pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -421,9 +421,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>D12955B01167A27000C37FFB</string>
+				<string>D1BE10C61168159500148C22</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>D12955B11167A27000C37FFB</string>
+				<string>D1BE10C71168159500148C22</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -562,10 +562,6 @@
 	<key>WindowOrderList</key>
 	<array>
 		<string>1C530D57069F1CE1000CFCEE</string>
-		<string>D12955B21167A27000C37FFB</string>
-		<string>D12955B31167A27000C37FFB</string>
-		<string>1C78EAAD065D492600B07095</string>
-		<string>1CD10A99069EF8BA00B06720</string>
 		<string>D13CAB7410D1D30500813B89</string>
 		<string>/Users/plewis/Documents/Projects/pdev/trunk/XCode/phycas/phycas.xcodeproj</string>
 	</array>
@@ -586,14 +582,12 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>dirichlet_move.cpp</string>
+								<string></string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
@@ -649,7 +643,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>D13CAB7410D1D30500813B89</string>
-				<string>D129558C116799E400C37FFB</string>
+				<string>D1BE10B91168157800148C22</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -804,14 +798,12 @@
 							<key>Dock</key>
 							<array>
 								<dict>
-									<key>BecomeActive</key>
-									<true/>
 									<key>ContentConfiguration</key>
 									<dict>
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>relative_rate_distribution.cpp</string>
+										<string>underflow_manager.cpp</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -832,6 +824,8 @@
 							<string>723pt</string>
 						</dict>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -867,8 +861,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>D129559F11679C8700C37FFB</string>
-				<string>D12955A011679C8700C37FFB</string>
+				<string>D1BE10BF1168157800148C22</string>
+				<string>D1BE10C01168157800148C22</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>

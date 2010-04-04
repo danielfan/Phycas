@@ -207,8 +207,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 291998338;
-			PBXWorkspaceStateSaveDate = 291998338;
+			PBXPerProjectTemplateStateSaveDate = 292033796;
+			PBXWorkspaceStateSaveDate = 292033796;
 		};
 		perUserProjectItems = {
 			D12955721166D94400C37FFB /* PBXTextBookmark */ = D12955721166D94400C37FFB /* PBXTextBookmark */;
@@ -217,8 +217,6 @@
 			D12955AB1167A27000C37FFB /* PBXTextBookmark */ = D12955AB1167A27000C37FFB /* PBXTextBookmark */;
 			D12955AC1167A27000C37FFB /* PBXTextBookmark */ = D12955AC1167A27000C37FFB /* PBXTextBookmark */;
 			D12955AD1167A27000C37FFB /* PBXTextBookmark */ = D12955AD1167A27000C37FFB /* PBXTextBookmark */;
-			D12955AE1167A27000C37FFB /* PBXTextBookmark */ = D12955AE1167A27000C37FFB /* PBXTextBookmark */;
-			D12955BA1167A42E00C37FFB /* PBXTextBookmark */ = D12955BA1167A42E00C37FFB /* PBXTextBookmark */;
 			D183E64111664464002AB4A3 /* PBXTextBookmark */ = D183E64111664464002AB4A3 /* PBXTextBookmark */;
 			D183E656116645F6002AB4A3 /* PBXTextBookmark */ = D183E656116645F6002AB4A3 /* PBXTextBookmark */;
 			D183E657116645F6002AB4A3 /* PBXTextBookmark */ = D183E657116645F6002AB4A3 /* PBXTextBookmark */;
@@ -229,9 +227,11 @@
 			D183E6C01166733C002AB4A3 /* PBXTextBookmark */ = D183E6C01166733C002AB4A3 /* PBXTextBookmark */;
 			D183E6D01166802E002AB4A3 /* PBXTextBookmark */ = D183E6D01166802E002AB4A3 /* PBXTextBookmark */;
 			D183E6FB11668882002AB4A3 /* PBXTextBookmark */ = D183E6FB11668882002AB4A3 /* PBXTextBookmark */;
-			D183E6FC11668882002AB4A3 /* PBXTextBookmark */ = D183E6FC11668882002AB4A3 /* PBXTextBookmark */;
 			D183E6FD11668882002AB4A3 /* PBXTextBookmark */ = D183E6FD11668882002AB4A3 /* PBXTextBookmark */;
 			D183E6FE11668882002AB4A3 /* PBXTextBookmark */ = D183E6FE11668882002AB4A3 /* PBXTextBookmark */;
+			D1BE10C31168159500148C22 /* PBXTextBookmark */ = D1BE10C31168159500148C22 /* PBXTextBookmark */;
+			D1BE10C41168159500148C22 /* PBXTextBookmark */ = D1BE10C41168159500148C22 /* PBXTextBookmark */;
+			D1BE10C51168159500148C22 /* PBXTextBookmark */ = D1BE10C51168159500148C22 /* PBXTextBookmark */;
 		};
 		sourceControlManager = D13CAB7610D1D30500813B89 /* Source Control */;
 		userBookmarkGroup = D1E5684310D981970061671E /* PBXBookmarkGroup */;
@@ -375,9 +375,9 @@
 	};
 	7A0945CA10CAEFB900CEFDE0 /* dirichlet_move.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1817, 13221}}";
-			sepNavSelRange = "{37728, 0}";
-			sepNavVisRange = "{35423, 3344}";
+			sepNavIntBoundsRect = "{{0, 0}, {1594, 13598}}";
+			sepNavSelRange = "{38254, 0}";
+			sepNavVisRange = "{35423, 3614}";
 			sepNavWindowFrame = "{{663, 107}, {1257, 1041}}";
 		};
 	};
@@ -437,8 +437,8 @@
 	7A0945D410CAEFB900CEFDE0 /* edgelen_master_param.cpp */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1817, 5200}}";
-			sepNavSelRange = "{6438, 6}";
-			sepNavVisRange = "{4626, 2446}";
+			sepNavSelRange = "{6003, 7}";
+			sepNavVisRange = "{4983, 2089}";
 			sepNavWindowFrame = "{{248, 398}, {1143, 1067}}";
 		};
 	};
@@ -583,9 +583,9 @@
 	};
 	7A0945ED10CAEFB900CEFDE0 /* mcmc_chain_manager.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1516, 17199}}";
-			sepNavSelRange = "{16366, 4}";
-			sepNavVisRange = "{15521, 1858}";
+			sepNavIntBoundsRect = "{{0, 0}, {1817, 17186}}";
+			sepNavSelRange = "{29235, 7}";
+			sepNavVisRange = "{28119, 1959}";
 			sepNavWindowFrame = "{{245, 191}, {1648, 1098}}";
 		};
 	};
@@ -958,9 +958,9 @@
 	};
 	7A09464E10CAEFB900CEFDE0 /* underflow_manager.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1867, 6656}}";
-			sepNavSelRange = "{12010, 0}";
-			sepNavVisRange = "{11151, 3072}";
+			sepNavIntBoundsRect = "{{0, 0}, {1867, 6058}}";
+			sepNavSelRange = "{11663, 0}";
+			sepNavVisRange = "{11151, 2915}";
 		};
 	};
 	7A09464F10CAEFB900CEFDE0 /* underflow_manager.hpp */ = {
@@ -1672,6 +1672,7 @@
 	};
 	D12955AA1167A27000C37FFB /* stl_algo.h */ = {
 		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
 		name = stl_algo.h;
 		path = "/Developer/SDKs/MacOSX10.5.sdk/usr/include/c++/4.0.0/bits/stl_algo.h";
 		sourceTree = "<absolute>";
@@ -1705,26 +1706,6 @@
 		rType = 0;
 		vrLen = 2375;
 		vrLoc = 6309;
-	};
-	D12955AE1167A27000C37FFB /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A0945CA10CAEFB900CEFDE0 /* dirichlet_move.cpp */;
-		name = "dirichlet_move.cpp: 200";
-		rLen = 811;
-		rLoc = 8985;
-		rType = 0;
-		vrLen = 2314;
-		vrLoc = 7823;
-	};
-	D12955BA1167A42E00C37FFB /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A0945CA10CAEFB900CEFDE0 /* dirichlet_move.cpp */;
-		name = "dirichlet_move.cpp: 900";
-		rLen = 0;
-		rLoc = 38254;
-		rType = 0;
-		vrLen = 3537;
-		vrLoc = 35466;
 	};
 	D12BB490112CABE50051ADD8 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -2505,16 +2486,6 @@
 		vrLen = 4200;
 		vrLoc = 0;
 	};
-	D183E6FC11668882002AB4A3 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A09464E10CAEFB900CEFDE0 /* underflow_manager.cpp */;
-		name = "underflow_manager.cpp: 251";
-		rLen = 0;
-		rLoc = 12010;
-		rType = 0;
-		vrLen = 3072;
-		vrLoc = 11151;
-	};
 	D183E6FD11668882002AB4A3 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = D1ABDDEB10D2D60000EDC77A /* MCMC.py */;
@@ -2937,6 +2908,33 @@
 			sepNavVisRange = "{14749, 3292}";
 			sepNavWindowFrame = "{{827, 376}, {1257, 1041}}";
 		};
+	};
+	D1BE10C31168159500148C22 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A0945CA10CAEFB900CEFDE0 /* dirichlet_move.cpp */;
+		name = "dirichlet_move.cpp: 900";
+		rLen = 0;
+		rLoc = 38254;
+		rType = 0;
+		vrLen = 3614;
+		vrLoc = 35423;
+	};
+	D1BE10C41168159500148C22 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A09464E10CAEFB900CEFDE0 /* underflow_manager.cpp */;
+		rLen = 0;
+		rLoc = 11663;
+		rType = 0;
+	};
+	D1BE10C51168159500148C22 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A09464E10CAEFB900CEFDE0 /* underflow_manager.cpp */;
+		name = "underflow_manager.cpp: 246";
+		rLen = 0;
+		rLoc = 11663;
+		rType = 0;
+		vrLen = 2915;
+		vrLoc = 11151;
 	};
 	D1C47254114C725F00DE4DBD /* greensamc.py */ = {
 		uiCtxt = {
