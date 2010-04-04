@@ -487,9 +487,7 @@ class MCMCImpl(CommonFunctions):
 				freq_vector = u.sampleMultivariateWorkingPrior()
 				m.setStateFreqsUnnorm(freq_vector)
 			elif name.find('subset_relrates') == 0:					# C++ class SubsetRelRatesMove
-				v = u.sampleMultivariateWorkingPrior()
-				d = float(len(v))
-				rates_vector = [d*x for x in v]
+				rates_vector = u.sampleMultivariateWorkingPrior()
 				cold_chain.partition_model.setSubsetRelRatesVect(rates_vector)
 			elif name.find('gamma_shape') == 0:						# C++ class DiscreteGammaShapeParam
 				i = unpartitioned and 0 or self.getModelIndex(name)

@@ -1,0 +1,36 @@
+Used SeqGen 1.5.3
+true TL: 1.1301
+
+Large subset:
+-------------
+model: K80+G, shape=0.2, ncat=4, pinvar=0, kappa=2
+sites: 2000
+tree: marshall_sansrna.tre
+brlen scaling: 1.0
+seed:  72247
+
+estimates:
+-ln L            12452.44
+Ti/tv:
+  exp. ratio     1.980739
+  kappa          3.961478
+Shape            0.247305
+P_inv           0.0741620
+TL: 1.1641
+
+Small subset:
+-------------
+model: K80+G, shape=0.2, ncat=4, pinvar=0, kappa=2
+sites: 200
+tree: marshall_sansrna.tre
+brlen scaling: 10.0
+seed:  72247
+
+estimates:
+-ln L           3617.574
+Ti/tv:
+  exp. ratio    2.009162
+  kappa         4.018324
+Shape           0.221241
+P_inv         7.8808e-09
+TL: 9.4953

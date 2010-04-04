@@ -1,0 +1,8 @@
+
+begin paup;
+  set crit=like;
+  gettrees file=marshall_sansrna.tre;
+  lset nst=2 basefreq=equal tratio=estimate rates=gamma ncat=4 shape=estimate pinvar=estimate;
+  lscores 1;
+  savetree file=doof.tre brlens;
+end;
