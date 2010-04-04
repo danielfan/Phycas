@@ -729,32 +729,6 @@ void SubsetRelRatesMove::setPartitionModel(
 	partition_model = m;
 	}
 	
-#if 0
-/*----------------------------------------------------------------------------------------------------------------------
-|	Retrieves current value for the parameter being managed by this updater, then returns log of the working prior 
-|	probability density at that value. If this updater is not a prior steward, simply returns 0.0.
-*/
-double SubsetRelRatesMove::recalcWorkingPrior() const
-	{
-	if (isFixed() || !isPriorSteward())
-		return 0.0;
-		
-	double lnwp = 0.0;
-	double_vect_t values;
-	getCurrValuesFromModel(values);	
-	try 
-		{
-		PHYCAS_ASSERT(mv_working_prior);
-		lnwp = mv_working_prior->GetLnPDF(values);
-		}
-	catch(XProbDist &)
-		{
-		PHYCAS_ASSERT(0);
-		}
-	return lnwp;
-	}
-#endif
-
 /*----------------------------------------------------------------------------------------------------------------------
 |	Use samples in `fitting_sample' to parameterize `working_prior'. This function is called during s-cubed style
 |	steppingstone sampling after the initial phase of sampling from the posterior so that the working prior can be
@@ -763,7 +737,6 @@ double SubsetRelRatesMove::recalcWorkingPrior() const
 */
 void SubsetRelRatesMove::finalizeWorkingPrior()
 	{
-#if 0
 	if (!isFixed())
 		{
 		PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
@@ -819,15 +792,10 @@ void SubsetRelRatesMove::finalizeWorkingPrior()
 			params.push_back(phi*means[i]);
 			}
 			
-		mv_working_prior = MultivarProbDistShPtr(new DirichletDistribution(params));
-		//	if (params.size() == 4)
-		//		std::cerr << boost::str(boost::format("@@@@@@@@@ working prior is Dirichlet(%g,%g,%g,%g) for updater %s") % params[0] % params[1] % params[2] % params[3] % getName()) << std::endl;
-		//	else if (params.size() == 6)
-		//		std::cerr << boost::str(boost::format("@@@@@@@@@ working prior is Dirichlet(%g,%g,%g,%g,%g,%g) for updater %s") % params[0] % params[1] % params[2] % params[3] % params[4] % params[5] % getName()) << std::endl;
-		//	else
-		//		std::cerr << boost::str(boost::format("@@@@@@@@@ working prior is Dirichlet(not 4 or 6 params) for updater %s") % getName()) << std::endl;
+		RelativeRateDistribution * rrd = new RelativeRateDistribution(params);
+		rrd->SetCoefficients(p);
+		mv_working_prior = MultivarProbDistShPtr(rrd);
 		}
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
