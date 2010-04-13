@@ -741,6 +741,11 @@ void MCMCChainManager::updateSAMCGain(
 	
 #define DEBUG_UPDATERS  0
 #define DEBUG_SAMC      0//temp
+
+#if DEBUG_SAMC
+unsigned samc_trace_count = 0;
+unsigned samc_trace_mod = 100;
+#endif	
 /*----------------------------------------------------------------------------------------------------------------------
 |	For all updaters stored in `all_updaters', obtain the weight w and call the update fuction of the updater w times.
 */
@@ -777,7 +782,15 @@ void MCMCChainManager::updateAllUpdaters()
 #endif	
 			double logf = getLastLnLike() + getLastLnPrior();
 #if DEBUG_SAMC
-			tmpf << boost::str(boost::format("%.6f\n") % logf);
+			if (samc_trace_count % samc_trace_mod == 0)
+				{
+				tmpf << boost::str(boost::format("%.6f\n") % logf);
+				samc_trace_count = 0;
+				}
+			else {
+				++samc_trace_count;
+			}
+
 #endif	
 			if (doing_samc)
 				{

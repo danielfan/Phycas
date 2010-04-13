@@ -12,7 +12,7 @@
 			D1B793CC1168FF5E007A03AF /* relative_rate_distribution.cpp:216 */,
 			D1B793F611690430007A03AF /* probability_distribution.cpp:2034 */,
 			D1B793FA116907C6007A03AF /* mcmc_updater.cpp:872 */,
-			D1242DEF116B8B8600001E4F /* mcmc_chain_manager.cpp:775 */,
+			D1242DEF116B8B8600001E4F /* mcmc_chain_manager.cpp:780 */,
 		);
 		codeSenseManager = D13CAB7710D1D30500813B89 /* Code sense */;
 		executables = (
@@ -211,14 +211,15 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 292868575;
-			PBXWorkspaceStateSaveDate = 292868575;
+			PBXPerProjectTemplateStateSaveDate = 292870073;
+			PBXWorkspaceStateSaveDate = 292870073;
 		};
 		perUserProjectItems = {
 			D1111B69116F6BDE00E892C5 /* PBXTextBookmark */ = D1111B69116F6BDE00E892C5 /* PBXTextBookmark */;
 			D1111B7F116F754200E892C5 /* PBXTextBookmark */ = D1111B7F116F754200E892C5 /* PBXTextBookmark */;
-			D11C346B1174D7220058B139 /* PBXTextBookmark */ = D11C346B1174D7220058B139 /* PBXTextBookmark */;
-			D11C346C1174D7220058B139 /* PBXTextBookmark */ = D11C346C1174D7220058B139 /* PBXTextBookmark */;
+			D11C347C1174D9330058B139 /* PBXTextBookmark */ = D11C347C1174D9330058B139 /* PBXTextBookmark */;
+			D11C34801174D9340058B139 /* PBXTextBookmark */ = D11C34801174D9340058B139 /* PBXTextBookmark */;
+			D11C34811174D9340058B139 /* PBXTextBookmark */ = D11C34811174D9340058B139 /* PBXTextBookmark */;
 			D123DFD81172594C00AFB7CF /* PBXTextBookmark */ = D123DFD81172594C00AFB7CF /* PBXTextBookmark */;
 			D123DFEE11725C9D00AFB7CF /* PBXTextBookmark */ = D123DFEE11725C9D00AFB7CF /* PBXTextBookmark */;
 			D1242DD2116B8A9B00001E4F /* PBXTextBookmark */ = D1242DD2116B8A9B00001E4F /* PBXTextBookmark */;
@@ -227,7 +228,6 @@
 			D12955A91167A27000C37FFB /* PBXTextBookmark */ = D12955A91167A27000C37FFB /* PBXTextBookmark */;
 			D12955AB1167A27000C37FFB /* PBXTextBookmark */ = D12955AB1167A27000C37FFB /* PBXTextBookmark */;
 			D12A9BE8117409B90010AA56 /* PBXTextBookmark */ = D12A9BE8117409B90010AA56 /* PBXTextBookmark */;
-			D12A9BFB11740B340010AA56 /* PBXTextBookmark */ = D12A9BFB11740B340010AA56 /* PBXTextBookmark */;
 			D16EB4211173E08900FBF397 /* PBXTextBookmark */ = D16EB4211173E08900FBF397 /* PBXTextBookmark */;
 			D197638811682A8400392AFB /* PBXTextBookmark */ = D197638811682A8400392AFB /* PBXTextBookmark */;
 			D197639711683B4E00392AFB /* PBXTextBookmark */ = D197639711683B4E00392AFB /* PBXTextBookmark */;
@@ -594,9 +594,9 @@
 	};
 	7A0945ED10CAEFB900CEFDE0 /* mcmc_chain_manager.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1817, 17017}}";
-			sepNavSelRange = "{28345, 14}";
-			sepNavVisRange = "{26991, 2334}";
+			sepNavIntBoundsRect = "{{0, 0}, {1817, 17264}}";
+			sepNavSelRange = "{29922, 0}";
+			sepNavVisRange = "{28363, 2040}";
 			sepNavWindowFrame = "{{245, 191}, {1648, 1098}}";
 		};
 	};
@@ -1381,7 +1381,7 @@
 		fRef = 7A0945ED10CAEFB900CEFDE0 /* mcmc_chain_manager.cpp */;
 		name = "MCMCChainManager::updateAllUpdaters";
 		rLen = 35;
-		rLoc = 28641;
+		rLoc = 28727;
 		rType = 0;
 		vrLen = 2199;
 		vrLoc = 25397;
@@ -1637,17 +1637,14 @@
 			sepNavVisRange = "{0, 2449}";
 		};
 	};
-	D11C346B1174D7220058B139 /* PBXTextBookmark */ = {
+	D11C347C1174D9330058B139 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 7A0945ED10CAEFB900CEFDE0 /* mcmc_chain_manager.cpp */;
-		name = "mcmc_chain_manager.cpp: 743";
 		rLen = 10;
-		rLoc = 28371;
+		rLoc = 28804;
 		rType = 0;
-		vrLen = 3426;
-		vrLoc = 26308;
 	};
-	D11C346C1174D7220058B139 /* PBXTextBookmark */ = {
+	D11C34801174D9340058B139 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = D153D7D7113EE73E009C94FE /* SAMC.py */;
 		name = "SAMC.py: 78";
@@ -1656,6 +1653,16 @@
 		rType = 0;
 		vrLen = 5057;
 		vrLoc = 0;
+	};
+	D11C34811174D9340058B139 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A0945ED10CAEFB900CEFDE0 /* mcmc_chain_manager.cpp */;
+		name = "mcmc_chain_manager.cpp: 755";
+		rLen = 10;
+		rLoc = 28804;
+		rType = 0;
+		vrLen = 3271;
+		vrLoc = 26308;
 	};
 	D1215FB21154435E006726CE /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -1707,7 +1714,7 @@
 		vrLen = 3805;
 		vrLoc = 22910;
 	};
-	D1242DEF116B8B8600001E4F /* mcmc_chain_manager.cpp:775 */ = {
+	D1242DEF116B8B8600001E4F /* mcmc_chain_manager.cpp:780 */ = {
 		isa = PBXFileBreakpoint;
 		actions = (
 		);
@@ -1719,7 +1726,7 @@
 		functionName = "MCMCChainManager::updateAllUpdaters()";
 		hitCount = 1;
 		ignoreCount = 0;
-		lineNumber = 775;
+		lineNumber = 780;
 		location = _LikelihoodExt.so;
 		modificationTime = 292260773.793815;
 		originalNumberOfMultipleMatches = 1;
@@ -1789,16 +1796,6 @@
 		rType = 0;
 		vrLen = 4241;
 		vrLoc = 34497;
-	};
-	D12A9BFB11740B340010AA56 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D153D7D7113EE73E009C94FE /* SAMC.py */;
-		name = "SAMC.py: 56";
-		rLen = 0;
-		rLoc = 3845;
-		rType = 0;
-		vrLen = 2390;
-		vrLoc = 2672;
 	};
 	D12BB490112CABE50051ADD8 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -2154,7 +2151,7 @@
 	};
 	D153D7D7113EE73E009C94FE /* SAMC.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {3064, 1316}}";
+			sepNavIntBoundsRect = "{{0, 0}, {3064, 1314}}";
 			sepNavSelRange = "{4589, 0}";
 			sepNavVisRange = "{0, 5057}";
 		};
@@ -2332,7 +2329,7 @@
 		fRef = 7A0945ED10CAEFB900CEFDE0 /* mcmc_chain_manager.cpp */;
 		name = "MCMCChainManager::getEdgeLenParams";
 		rLen = 34;
-		rLoc = 32434;
+		rLoc = 32646;
 		rType = 0;
 		vrLen = 2776;
 		vrLoc = 13315;
@@ -2440,7 +2437,7 @@
 		fRef = 7A0945ED10CAEFB900CEFDE0 /* mcmc_chain_manager.cpp */;
 		name = "todo MCMCChainManager::calcInternalEdgeLenWorkingPrior";
 		rLen = 49;
-		rLoc = 46241;
+		rLoc = 46453;
 		rType = 0;
 		vrLen = 2967;
 		vrLoc = 27763;
@@ -2450,7 +2447,7 @@
 		fRef = 7A0945ED10CAEFB900CEFDE0 /* mcmc_chain_manager.cpp */;
 		name = "todo MCMCChainManager::calcExternalEdgeLenWorkingPrior";
 		rLen = 49;
-		rLoc = 44454;
+		rLoc = 44666;
 		rType = 0;
 		vrLen = 3905;
 		vrLoc = 27204;
@@ -3045,7 +3042,7 @@
 		fRef = 7A0945ED10CAEFB900CEFDE0 /* mcmc_chain_manager.cpp */;
 		name = "MCMCChainManager::updateAllUpdaters";
 		rLen = 35;
-		rLoc = 28641;
+		rLoc = 28727;
 		rType = 0;
 		vrLen = 2123;
 		vrLoc = 12586;
