@@ -420,18 +420,20 @@ void MCMCChainManager::initSAMC(
 		samc_pi.assign(m, freq);
 #else
 		double factor = 2.0;
-		double largest_factor = exp(log(DBL_MAX)/(double)m);
-		if (factor > largest_factor)
+		double largest_factor = exp(log(DBL_MAX)/(double)(m + 1));
+		if (largest_factor > factor)
 			factor = largest_factor;
 		std::cerr << "@#@#@#@#@#@#@#@#@#@#@# m              = " << m << " @#@#@#@#@#@#@#@#@#@#@#" << std::endl;
 		std::cerr << "@#@#@#@#@#@#@#@#@#@#@# factor         = " << factor << " @#@#@#@#@#@#@#@#@#@#@#" << std::endl;
 		std::cerr << "@#@#@#@#@#@#@#@#@#@#@# largest_factor = " << largest_factor << " @#@#@#@#@#@#@#@#@#@#@#" << std::endl;
 		double norm_const = (pow(factor, (double)m) - 1.0)/(factor - 1.0);
+		std::cerr << "@#@#@#@#@#@#@#@#@#@#@# norm_const = " << norm_const << " @#@#@#@#@#@#@#@#@#@#@#" << std::endl;
 		double curr = 1.0;
 		double check_sum = 0.0;
 		for (unsigned i = 0; i < m; ++i)
 			{
 			samc_pi[i] = curr/norm_const;
+			std::cerr << "@#@#@#@#@#@#@#@#@#@#@# " << boost::str(boost::format("samc_pi[%d] = %.9f") % i % samc_pi[i]) << " @#@#@#@#@#@#@#@#@#@#@#" << std::endl;
 			curr *= factor;
 			check_sum += samc_pi[i];
 			}
@@ -738,7 +740,7 @@ void MCMCChainManager::updateSAMCGain(
 #endif
 	
 #define DEBUG_UPDATERS  0
-#define DEBUG_SAMC      0
+#define DEBUG_SAMC      0//temp
 /*----------------------------------------------------------------------------------------------------------------------
 |	For all updaters stored in `all_updaters', obtain the weight w and call the update fuction of the updater w times.
 */
@@ -775,7 +777,7 @@ void MCMCChainManager::updateAllUpdaters()
 #endif	
 			double logf = getLastLnLike() + getLastLnPrior();
 #if DEBUG_SAMC
-			tmpf << boost::str(boost::format("%.6f\t%.6f\t%.6f\n") % logf % (*samc_loglevels.begin()) % (*samc_loglevels.rbegin()));
+			tmpf << boost::str(boost::format("%.6f\n") % logf);
 #endif	
 			if (doing_samc)
 				{

@@ -4,7 +4,7 @@ from phycas import mcmc
 
 class SAMC(PhycasCommand):
 	def __init__(self):
-		args = (   ("nlevels",                 50, "The number of energy levels used to partition the parameter space", IntArgValidate(min=3)),
+		args = (   ("nlevels",                 50, "The number of energy levels used to partition the parameter space", IntArgValidate(min=2)),
 				   ("hilog",                  0.0, "The natural logarithm of the posterior for a relatively good tree under the model to be used for the SAMC analysis.", FloatArgValidate()),
 				   ("lolog",                  0.0, "The natural logarithm of the posterior for a relatively bad (e.g. random) tree under the model to be used for the SAMC analysis.", FloatArgValidate()),
 				   ("gain_t0",               50.0, "The numerator in the gain factor update formula. Larger values maintain larger gain factors longer.", FloatArgValidate(greaterthan=0.0)),
@@ -40,7 +40,7 @@ class SAMC(PhycasCommand):
 		"""
 		cf = CommonFunctions(self)
 		cf.phycassert(mcmc.ncycles > 0, 'mcmc.ncycles cannot be less than 1 for SAMC analyses')
-		cf.phycassert(self.hilog > self.lolog, 'samc.hilog must be greater than samc.lolog')
+		cf.phycassert(self.hilog >= self.lolog, 'samc.hilog must be greater than or equal to samc.lolog')
 		
 	def initLevels(self):
 		"""
@@ -53,7 +53,7 @@ class SAMC(PhycasCommand):
 		equally_spaced   = 2
 		up_from_bottom   = 3
 		
-		choice = up_from_bottom
+		choice = equally_spaced
 		
 		if choice == wider_at_bottom:
 			m = self.nlevels - 2
@@ -75,7 +75,7 @@ class SAMC(PhycasCommand):
 		elif choice == equally_spaced:
 			m = self.nlevels - 2
 			incr = (self.hilog - self.lolog)/float(m)
-			raw_input('incr = %g' % incr)
+			print 'incr = %g' % incr
 			self.energy_levels = [0.0]*(m + 1)
 			for i in range(m + 1):
 				self.energy_levels[i] = self.lolog + incr*float(i)

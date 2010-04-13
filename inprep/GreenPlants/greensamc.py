@@ -2,13 +2,15 @@ from phycas import *
 
 data_file_name   = 'greenrbcl.nex'
 rnseed = 160923
-num_cycles = 1000
+num_cycles = 10000
 sample_freq = 100
-print_freq = 1
+print_freq = 10
 
-num_energy_levels = 500
+num_energy_levels = 100
+#high_logf = -172750	# -171612.284680 garli best JC lnL
+#low_logf  = -172750	# -173599.8 nj starting tree lnL
 high_logf = -171612	# -171612.284680 garli best JC lnL
-low_logf  = -173600	# -173599.8 nj starting tree lnL
+low_logf  = -172500	# -173599.8 nj starting tree lnL
 # high_logf - low_logf = -171612 - (-173600) = 1988
 # a = 2*(T - n)/(n*(n-1))
 #   = 2*(1988 - 100)/(100*99) = 0.3814

@@ -43,6 +43,11 @@ double getEffectiveLnZero()
 	{
 	return -DBL_MAX;
 	}
+	
+double lnGamma(double x)
+	{
+	return CDF().LnGamma(x);
+	}
 
 // The following wrapper struct is needed because we will potentially be deriving Python classes from AdHocDensity
 // This struct is thus only necessary if we plan to do something like this in Python:
@@ -70,6 +75,7 @@ void translateXProbDist(const XProbDist &e)
 BOOST_PYTHON_MODULE(_ProbDistExt)
 {
 	def("getEffectiveLnZero", getEffectiveLnZero);
+	def("lnGamma", lnGamma);
 
 #if defined(USING_NUMARRAY)
 	// these lines required by num_util

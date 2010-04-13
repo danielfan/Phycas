@@ -841,13 +841,13 @@ class MCMCImpl(CommonFunctions):
 							if not levels_file_created:
 								#temp!
 								levelsf = open('samc_trace.R','w')
-								#levelsf.write('levels <- c(%s)\n' % ','.join(['%g' % c for c in lvls]))
+								levelsf.write('levels <- c(%s)\n' % ','.join(['%g' % c for c in lvls]))
 								levelsf.write('lnf <- read.table("/Users/plewis/Documents/Projects/pdev/trunk/inprep/GreenPlants/samc_trace.txt", header=FALSE)\n')
 								#levelsf.write('plot(lnf$V1,type="l",ylim=c(min(lnf$V1),max(levels)))\n')
 								levelsf.write('plot(lnf$V1,type="l",ylim=c(-173624,-171612))\n')
-								levelsf.write('points(lnf$V2,col="red",pch=46)\n')
-								levelsf.write('points(lnf$V3,col="red",pch=46)\n')
-								#levelsf.write('abline(h=levels,col="red")\n')
+								#levelsf.write('points(lnf$V2,col="red",pch=46)\n')
+								#levelsf.write('points(lnf$V3,col="red",pch=46)\n')
+								levelsf.write('abline(h=levels,col="red")\n')
 								levelsf.close()
 								levels_file_created = True
 															
