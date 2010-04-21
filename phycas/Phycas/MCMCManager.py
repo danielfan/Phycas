@@ -220,11 +220,10 @@ class MCMCManager:
 				self.parent.paramf.write(float_format_str % ln_working_prior)
 	
 			# tree length
+			self.parent.paramf.write(float_format_str % cold_chain.tree.edgeLenSum())
 			if self.parent.opts.fix_topology:
 				all_edgelens = cold_chain.tree.edgeLens()
 				self.parent.paramf.write('%s\t' % '\t'.join([float_format_notab_str % brlen for brlen in all_edgelens]))
-			else:
-				self.parent.paramf.write(float_format_str % cold_chain.tree.edgeLenSum())
 			
 			# record parameter values for each model in partition
 			nmodels = cold_chain.partition_model.getNumSubsets()

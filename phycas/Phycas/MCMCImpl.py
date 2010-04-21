@@ -499,6 +499,31 @@ class MCMCImpl(CommonFunctions):
 				m = cold_chain.partition_model.getModel(i)
 				new_pinvar = u.sampleWorkingPrior()
 				m.setPinvar(new_pinvar)
+			elif name.find('kappa') == 0:							# C++ class KappaParam
+				i = unpartitioned and 0 or self.getModelIndex(name)
+				m = cold_chain.partition_model.getModel(i)
+				new_kappa = u.sampleWorkingPrior()
+				m.setKappa(new_kappa)
+			elif name.find('freqA') == 0:							# C++ class StateFreqParam
+				i = unpartitioned and 0 or self.getModelIndex(name)
+				m = cold_chain.partition_model.getModel(i)
+				new_freqA = u.sampleWorkingPrior()
+				m.setStateFreqUnnorm(0, new_freqA)
+			elif name.find('freqC') == 0:							# C++ class StateFreqParam
+				i = unpartitioned and 0 or self.getModelIndex(name)
+				m = cold_chain.partition_model.getModel(i)
+				new_freqC = u.sampleWorkingPrior()
+				m.setStateFreqUnnorm(1, new_freqC)
+			elif name.find('freqG') == 0:							# C++ class StateFreqParam
+				i = unpartitioned and 0 or self.getModelIndex(name)
+				m = cold_chain.partition_model.getModel(i)
+				new_freqG = u.sampleWorkingPrior()
+				m.setStateFreqUnnorm(2, new_freqG)
+			elif name.find('freqT') == 0:							# C++ class StateFreqParam
+				i = unpartitioned and 0 or self.getModelIndex(name)
+				m = cold_chain.partition_model.getModel(i)
+				new_freqT = u.sampleWorkingPrior()
+				m.setStateFreqUnnorm(3, new_freqT)
 			elif name.find('edgelen') == 0:
 				# depends on edge length updaters being in preorder sequence
 				edgelen = u.sampleWorkingPrior()

@@ -431,6 +431,8 @@ void DirichletMove::finalizeWorkingPrior()
 			}
 		
 		// Now compute the Dirichlet parameters
+#if 0
+		// Paul's method-of-moments approach		
 		double z = 0.0;
 		for (unsigned i = 0; i < dim; ++i)
 			{
@@ -438,6 +440,22 @@ void DirichletMove::finalizeWorkingPrior()
 			}
 			
 		double phi = (double)(dim - 1)/z - 1.0;
+#else
+		// Ming-hui Chen's least squares approach (better)
+		// estimates phi by minimizing difference between 
+		// means[i]*(1 - means[i])/(phi+1) and variances[i]
+		// for all parameters
+		double numer_sum = 0.0;
+		double denom_sum = 0.0;
+		for (unsigned i = 0; i < dim; ++i)
+			{
+			double u = means[i];
+			double s = variances[i];
+			numer_sum += pow(u*(1.0 - u), 2.0);
+			denom_sum += s*u*(1.0 - u);
+			}
+		double phi = (numer_sum/denom_sum) - 1.0;
+#endif		
 		double_vect_t params;
 		for (unsigned i = 0; i < dim; ++i)
 			{
@@ -779,6 +797,8 @@ void SubsetRelRatesMove::finalizeWorkingPrior()
 			}
 		
 		// Now compute the Dirichlet parameters
+#if 0
+		// Paul's method-of-moments approach
 		double z = 0.0;
 		for (unsigned i = 0; i < dim; ++i)
 			{
@@ -786,6 +806,22 @@ void SubsetRelRatesMove::finalizeWorkingPrior()
 			}
 			
 		double phi = (double)(dim - 1)/z - 1.0;
+#else
+		// Ming-hui Chen's least squares approach (better)
+		// estimates phi by minimizing difference between 
+		// means[i]*(1 - means[i])/(phi+1) and variances[i]
+		// for all parameters
+		double numer_sum = 0.0;
+		double denom_sum = 0.0;
+		for (unsigned i = 0; i < dim; ++i)
+			{
+			double u = means[i];
+			double s = variances[i];
+			numer_sum += pow(u*(1.0 - u), 2.0);
+			denom_sum += s*u*(1.0 - u);
+			}
+		double phi = (numer_sum/denom_sum) - 1.0;
+#endif		
 		double_vect_t params;
 		for (unsigned i = 0; i < dim; ++i)
 			{

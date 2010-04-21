@@ -57,7 +57,7 @@ mcmc.subset_relrates_weight = 10
 mcmc.subset_relrates_psi  = 1000.0
 mcmc.subset_relrates_psi0 = 1000.0
 
-mcmc.tree_scaler_weight = 0
+mcmc.tree_scaler_weight = 1
 
 mcmc.slice_weight = 1
 

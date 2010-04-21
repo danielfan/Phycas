@@ -141,7 +141,7 @@ double EdgeLenMasterParam::lnWorkingPriorOneEdge(const TreeNode & nd, double v) 
 		if (edge_working_prior.find(s) == edge_working_prior.end())
 			{
 			// There is no edge-specific working prior for this edge, so use generic one
-			std::cerr << boost::str(boost::format("@@@@@@@@@@ Using generic working prior for edge having this split: %s") % s.CreateNewickRepresentation()) << std::endl;//temp
+			//std::cerr << boost::str(boost::format("@@@@@@@@@@ Using generic working prior for edge having this split: %s") % s.CreateNewickRepresentation()) << std::endl;//temp
 			PHYCAS_ASSERT(working_prior);
 			try 
 				{

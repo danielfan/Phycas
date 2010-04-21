@@ -93,13 +93,12 @@ class MarkovChain(LikelihoodCore):
 		if self.parent.opts.doing_steppingstone_sampling and self.parent.opts.ssobj.scubed:
 			paramf.write('\tlnWorkPr')
 			
+		paramf.write('\tTL')
 		if self.parent.opts.fix_topology:
 			nbrlens = self.tree.getNNodes() - 1
 			for i in range(nbrlens):
 				paramf.write('\tbrlen%d' % (i+1))
 			self.parent.output('\nKey to the edges (preorder traversal):\n%s' % self.tree.keyToEdges())
-		else:
-			paramf.write('\tTL')
 		
 		nmodels = self.partition_model.getNumSubsets()
 		if nmodels > 1:

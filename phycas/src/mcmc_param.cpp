@@ -65,7 +65,14 @@ bool EdgeLenParam::update()
 	else 
 		likelihood->useAsLikelihoodRoot(my_node->GetParent());
 	likelihood->invalidateAwayFromNode(*my_node);
-	
+
+	double current_brlen = getCurrValueFromModel();
+	//double last_sampled_brlen = slice_sampler->GetLastSampledXValue();
+	//if (fabs(current_brlen - last_sampled_brlen) > 0.00001)
+	//	{
+	//	std::cerr << "BAD BAD! BAD!!" << std::endl;
+	//	}
+	slice_sampler->SetXValue(current_brlen);
 	slice_sampler->Sample();
 	
 	ChainManagerShPtr p = chain_mgr.lock();
@@ -135,8 +142,8 @@ void EdgeLenParam::setTreeNode(TreeNode & nd)
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	KappaParam is a functor whose operator() returns a value proportional to the full-conditional posterior probability 
-|	density for a particular value of kappa, the transition/transversion rate ratio. If the supplied kappa value `k' is
+|	EdgeLenParam is a functor whose operator() returns a value proportional to the full-conditional posterior probability 
+|	density for a particular value of the edge length managed by this object. If the supplied kappa value `v' is
 |	out of bounds (i.e. <= 0.0), the return value is -DBL_MAX (closest we can come to a log posterior equal to negative
 |	infinity).
 */
@@ -161,7 +168,7 @@ double EdgeLenParam::operator()(
 		//	likelihood->useAsLikelihoodRoot(my_node->GetParent());
 		//likelihood->invalidateAwayFromNode(*my_node);
 		//likelihood->invalidateBothEnds(my_node);
-		//likelihood->useAsLikelihoodRoot(NULL);
+		//likelihood->useAsLikelihoodRoot(NULL);//temp
 		
 		//std::cerr << "@@@@@@@@@@ Updating edge length for " << my_node->GetNodeNumber() << std::endl;
 			

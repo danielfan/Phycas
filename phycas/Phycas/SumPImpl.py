@@ -245,7 +245,7 @@ class ParamSummarizer(CommonFunctions):
 		if betas[0] != 1.0 or betas[-1] != 0.0:
 			raise Exception('Steppingstone sampling requires beta values to be ordered from 1.0 (first) to 0.0 (last)')
 			
-		self.output(' %10s %10s %10s %15s %15s %15s' % ('b_(k-1)','beta_incr','n','lnLmax','lnRk','lnR(cum)'))
+		self.output(' %10s %10s %10s %15s %15s %15s' % ('b_(k-1)','beta_incr','n','eta_k','lnRk','lnR(cum)'))
 		for i in range(1,nbetas):
 			#self.output('\nk = %d:' % i)
 			
@@ -254,23 +254,23 @@ class ParamSummarizer(CommonFunctions):
 			bsmaller = betas[i]
 			beta_incr = blarger - bsmaller
 			
-			# find the maximum loglike
+			# find the maximum term (lnL + lnp - lnwp)
 			loglikes = likes[bsmaller]
 			logpriors = priors[bsmaller]
 			logwpriors = working_priors[bsmaller]
 			n = len(loglikes)
-			Lmax = max(loglikes)
+			etak = max([(lnL + lnp - lnwp) for lnL,lnp,lnwp in zip(loglikes,logpriors,logwpriors)])
 			
 			# find the log of the ratio of normalizing constants for ratio i
 			tmp = 0.0
 			for lnL,lnp,lnwp in zip(loglikes,logpriors,logwpriors):
-				log_term = beta_incr*(lnL + lnp - lnwp - Lmax)
-				#self.output('--> %15.5f %15.5f %15.5f %15.5f %15.5f' % (lnL,lnp,lnwp,Lmax,log_term))
+				log_term = beta_incr*(lnL + lnp - lnwp - etak)
+				#self.output('--> %15.5f %15.5f %15.5f %15.5f %15.5f' % (lnL,lnp,lnwp,etak,log_term))
 				tmp += math.exp(log_term)
 			tmp /= float(n)
-			lnRk = beta_incr*Lmax + math.log(tmp)
+			lnRk = beta_incr*etak + math.log(tmp)
 			lnR += lnRk
-			self.output(' %10.3f %10.3f %10d %15.6f %15.6f %15.6f' % (bsmaller, beta_incr, n, Lmax, lnRk, lnR))
+			self.output(' %10.3f %10.3f %10d %15.6f %15.6f %15.6f' % (bsmaller, beta_incr, n, etak, lnRk, lnR))
 		
 		self.output(' %.8f Stabilized Steppingstone Sampling (SSS) method' % lnR)
 		
