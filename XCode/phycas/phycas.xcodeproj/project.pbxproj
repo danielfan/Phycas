@@ -97,8 +97,6 @@
 		7A98F3BB10CD589F001E79F7 /* dcdflib.c in Sources */ = {isa = PBXBuildFile; fileRef = 7A09463510CAEFB900CEFDE0 /* dcdflib.c */; };
 		7A98F3BE10CD58AC001E79F7 /* edgelen_master_param.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945D410CAEFB900CEFDE0 /* edgelen_master_param.cpp */; };
 		7A98F3BF10CD58B0001E79F7 /* edge_move.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945D110CAEFB900CEFDE0 /* edge_move.cpp */; };
-		7A98F3C210CD58BC001E79F7 /* flex_prob_param.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945D510CAEFB900CEFDE0 /* flex_prob_param.cpp */; };
-		7A98F3C310CD58BE001E79F7 /* flex_rate_param.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945D610CAEFB900CEFDE0 /* flex_rate_param.cpp */; };
 		7A98F3C610CD58C4001E79F7 /* gtr_rate_param.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945D910CAEFB900CEFDE0 /* gtr_rate_param.cpp */; };
 		7A98F3C710CD58CA001E79F7 /* gtr_model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945D710CAEFB900CEFDE0 /* gtr_model.cpp */; };
 		7A98F3C910CD58D2001E79F7 /* hky_model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945DA10CAEFB900CEFDE0 /* hky_model.cpp */; };
@@ -115,16 +113,13 @@
 		7A98F3F310CD5943001E79F7 /* model_pymod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945F910CAEFB900CEFDE0 /* model_pymod.cpp */; };
 		7A98F3F510CD595D001E79F7 /* mcmc_chain_manager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945ED10CAEFB900CEFDE0 /* mcmc_chain_manager.cpp */; };
 		7A98F3F610CD5967001E79F7 /* mcmc_param.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945F310CAEFB900CEFDE0 /* mcmc_param.cpp */; };
-		7A98F3F710CD596D001E79F7 /* mcmc_flexcat_param.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945F010CAEFB900CEFDE0 /* mcmc_flexcat_param.cpp */; };
 		7A98F3F810CD5976001E79F7 /* mcmc_updater.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945F610CAEFB900CEFDE0 /* mcmc_updater.cpp */; };
-		7A98F3FA10CD5986001E79F7 /* ncat_move.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945FC10CAEFB900CEFDE0 /* ncat_move.cpp */; };
 		7A98F3FB10CD598D001E79F7 /* mapping_move.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945EB10CAEFB900CEFDE0 /* mapping_move.cpp */; };
 		7A98F3FD10CD5998001E79F7 /* omega_param.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09460310CAEFB900CEFDE0 /* omega_param.cpp */; };
 		7A98F40210CD599F001E79F7 /* phycas_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09460C10CAEFB900CEFDE0 /* phycas_string.cpp */; };
 		7A98F40510CD59B0001E79F7 /* pinvar_param.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09461010CAEFB900CEFDE0 /* pinvar_param.cpp */; };
 		7A98F40810CD59B8001E79F7 /* probability_distribution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09461110CAEFB900CEFDE0 /* probability_distribution.cpp */; };
 		7A98F40A10CD59C0001E79F7 /* q_matrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09461510CAEFB900CEFDE0 /* q_matrix.cpp */; };
-		7A98F40D10CD59CA001E79F7 /* samc_move.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09461910CAEFB900CEFDE0 /* samc_move.cpp */; };
 		7A98F40E10CD59D0001E79F7 /* slice_sampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09461F10CAEFB900CEFDE0 /* slice_sampler.cpp */; };
 		7A98F41110CD59D8001E79F7 /* sim_data.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09461C10CAEFB900CEFDE0 /* sim_data.cpp */; };
 		7A98F41510CD59EA001E79F7 /* split.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09462210CAEFB900CEFDE0 /* split.cpp */; };
@@ -339,8 +334,6 @@
 		7A0945D210CAEFB900CEFDE0 /* edge_move.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = edge_move.hpp; path = ../../phycas/src/edge_move.hpp; sourceTree = SOURCE_ROOT; };
 		7A0945D310CAEFB900CEFDE0 /* edge_move.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = edge_move.inl; path = ../../phycas/src/edge_move.inl; sourceTree = SOURCE_ROOT; };
 		7A0945D410CAEFB900CEFDE0 /* edgelen_master_param.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = edgelen_master_param.cpp; path = ../../phycas/src/edgelen_master_param.cpp; sourceTree = SOURCE_ROOT; };
-		7A0945D510CAEFB900CEFDE0 /* flex_prob_param.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = flex_prob_param.cpp; path = ../../phycas/src/flex_prob_param.cpp; sourceTree = SOURCE_ROOT; };
-		7A0945D610CAEFB900CEFDE0 /* flex_rate_param.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = flex_rate_param.cpp; path = ../../phycas/src/flex_rate_param.cpp; sourceTree = SOURCE_ROOT; };
 		7A0945D710CAEFB900CEFDE0 /* gtr_model.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = gtr_model.cpp; path = ../../phycas/src/gtr_model.cpp; sourceTree = SOURCE_ROOT; };
 		7A0945D810CAEFB900CEFDE0 /* gtr_model.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = gtr_model.hpp; path = ../../phycas/src/gtr_model.hpp; sourceTree = SOURCE_ROOT; };
 		7A0945D910CAEFB900CEFDE0 /* gtr_rate_param.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = gtr_rate_param.cpp; path = ../../phycas/src/gtr_rate_param.cpp; sourceTree = SOURCE_ROOT; };
@@ -366,7 +359,6 @@
 		7A0945ED10CAEFB900CEFDE0 /* mcmc_chain_manager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mcmc_chain_manager.cpp; path = ../../phycas/src/mcmc_chain_manager.cpp; sourceTree = SOURCE_ROOT; };
 		7A0945EE10CAEFB900CEFDE0 /* mcmc_chain_manager.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = mcmc_chain_manager.hpp; path = ../../phycas/src/mcmc_chain_manager.hpp; sourceTree = SOURCE_ROOT; };
 		7A0945EF10CAEFB900CEFDE0 /* mcmc_chain_manager.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = mcmc_chain_manager.inl; path = ../../phycas/src/mcmc_chain_manager.inl; sourceTree = SOURCE_ROOT; };
-		7A0945F010CAEFB900CEFDE0 /* mcmc_flexcat_param.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mcmc_flexcat_param.cpp; path = ../../phycas/src/mcmc_flexcat_param.cpp; sourceTree = SOURCE_ROOT; };
 		7A0945F110CAEFB900CEFDE0 /* mcmc_move.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = mcmc_move.hpp; path = ../../phycas/src/mcmc_move.hpp; sourceTree = SOURCE_ROOT; };
 		7A0945F210CAEFB900CEFDE0 /* mcmc_move.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = mcmc_move.inl; path = ../../phycas/src/mcmc_move.inl; sourceTree = SOURCE_ROOT; };
 		7A0945F310CAEFB900CEFDE0 /* mcmc_param.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mcmc_param.cpp; path = ../../phycas/src/mcmc_param.cpp; sourceTree = SOURCE_ROOT; };
@@ -378,9 +370,6 @@
 		7A0945F910CAEFB900CEFDE0 /* model_pymod.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = model_pymod.cpp; path = ../../phycas/src/model_pymod.cpp; sourceTree = SOURCE_ROOT; };
 		7A0945FA10CAEFB900CEFDE0 /* mvnormal_distribution.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mvnormal_distribution.cpp; path = ../../phycas/src/mvnormal_distribution.cpp; sourceTree = SOURCE_ROOT; };
 		7A0945FB10CAEFB900CEFDE0 /* mvnormal_distribution.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = mvnormal_distribution.hpp; path = ../../phycas/src/mvnormal_distribution.hpp; sourceTree = SOURCE_ROOT; };
-		7A0945FC10CAEFB900CEFDE0 /* ncat_move.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ncat_move.cpp; path = ../../phycas/src/ncat_move.cpp; sourceTree = SOURCE_ROOT; };
-		7A0945FD10CAEFB900CEFDE0 /* ncat_move.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ncat_move.hpp; path = ../../phycas/src/ncat_move.hpp; sourceTree = SOURCE_ROOT; };
-		7A0945FE10CAEFB900CEFDE0 /* ncat_move.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ncat_move.inl; path = ../../phycas/src/ncat_move.inl; sourceTree = SOURCE_ROOT; };
 		7A0945FF10CAEFB900CEFDE0 /* ncl_pymod.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ncl_pymod.cpp; path = ../../phycas/src/ncl_pymod.cpp; sourceTree = SOURCE_ROOT; };
 		7A09460010CAEFB900CEFDE0 /* nopython_force_include.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = nopython_force_include.hpp; path = ../../phycas/src/nopython_force_include.hpp; sourceTree = SOURCE_ROOT; };
 		7A09460110CAEFB900CEFDE0 /* nxs_file_path.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxs_file_path.cpp; path = ../../phycas/src/nxs_file_path.cpp; sourceTree = SOURCE_ROOT; };
@@ -407,9 +396,6 @@
 		7A09461610CAEFB900CEFDE0 /* q_matrix.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = q_matrix.hpp; path = ../../phycas/src/q_matrix.hpp; sourceTree = SOURCE_ROOT; };
 		7A09461710CAEFB900CEFDE0 /* q_matrix.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = q_matrix.inl; path = ../../phycas/src/q_matrix.inl; sourceTree = SOURCE_ROOT; };
 		7A09461810CAEFB900CEFDE0 /* read_nexus_pymod.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = read_nexus_pymod.cpp; path = ../../phycas/src/read_nexus_pymod.cpp; sourceTree = SOURCE_ROOT; };
-		7A09461910CAEFB900CEFDE0 /* samc_move.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = samc_move.cpp; path = ../../phycas/src/samc_move.cpp; sourceTree = SOURCE_ROOT; };
-		7A09461A10CAEFB900CEFDE0 /* samc_move.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = samc_move.hpp; path = ../../phycas/src/samc_move.hpp; sourceTree = SOURCE_ROOT; };
-		7A09461B10CAEFB900CEFDE0 /* samc_move.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = samc_move.inl; path = ../../phycas/src/samc_move.inl; sourceTree = SOURCE_ROOT; };
 		7A09461C10CAEFB900CEFDE0 /* sim_data.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sim_data.cpp; path = ../../phycas/src/sim_data.cpp; sourceTree = SOURCE_ROOT; };
 		7A09461D10CAEFB900CEFDE0 /* sim_data.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = sim_data.hpp; path = ../../phycas/src/sim_data.hpp; sourceTree = SOURCE_ROOT; };
 		7A09461E10CAEFB900CEFDE0 /* sim_data.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = sim_data.inl; path = ../../phycas/src/sim_data.inl; sourceTree = SOURCE_ROOT; };
@@ -526,7 +512,6 @@
 		7A98F80310CD85D8001E79F7 /* CommonFunctions.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = CommonFunctions.py; path = ../../phycas/Utilities/CommonFunctions.py; sourceTree = "<group>"; };
 		7A98F80510CD85D8001E79F7 /* DefaultData.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = DefaultData.py; path = ../../phycas/Utilities/DefaultData.py; sourceTree = "<group>"; };
 		7A98F80710CD85D8001E79F7 /* enotify.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = enotify.py; path = ../../phycas/Utilities/enotify.py; sourceTree = "<group>"; };
-		7A98F80810CD85D8001E79F7 /* flexplot.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = flexplot.py; path = ../../phycas/Utilities/flexplot.py; sourceTree = "<group>"; };
 		7A98F80910CD85D8001E79F7 /* GlobalState.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = GlobalState.py; path = ../../phycas/Utilities/GlobalState.py; sourceTree = "<group>"; };
 		7A98F80B10CD85D8001E79F7 /* io.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = io.py; path = ../../phycas/Utilities/io.py; sourceTree = "<group>"; };
 		7A98F80D10CD85D8001E79F7 /* kappa2tratio.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = kappa2tratio.py; path = ../../phycas/Utilities/kappa2tratio.py; sourceTree = "<group>"; };
@@ -818,8 +803,6 @@
 				7A0945D210CAEFB900CEFDE0 /* edge_move.hpp */,
 				7A0945D310CAEFB900CEFDE0 /* edge_move.inl */,
 				7A0945D410CAEFB900CEFDE0 /* edgelen_master_param.cpp */,
-				7A0945D510CAEFB900CEFDE0 /* flex_prob_param.cpp */,
-				7A0945D610CAEFB900CEFDE0 /* flex_rate_param.cpp */,
 				7A0945D710CAEFB900CEFDE0 /* gtr_model.cpp */,
 				7A0945D810CAEFB900CEFDE0 /* gtr_model.hpp */,
 				7A0945D910CAEFB900CEFDE0 /* gtr_rate_param.cpp */,
@@ -847,7 +830,6 @@
 				7A0945ED10CAEFB900CEFDE0 /* mcmc_chain_manager.cpp */,
 				7A0945EE10CAEFB900CEFDE0 /* mcmc_chain_manager.hpp */,
 				7A0945EF10CAEFB900CEFDE0 /* mcmc_chain_manager.inl */,
-				7A0945F010CAEFB900CEFDE0 /* mcmc_flexcat_param.cpp */,
 				7A0945F110CAEFB900CEFDE0 /* mcmc_move.hpp */,
 				7A0945F210CAEFB900CEFDE0 /* mcmc_move.inl */,
 				7A0945F310CAEFB900CEFDE0 /* mcmc_param.cpp */,
@@ -859,9 +841,6 @@
 				7A0945F910CAEFB900CEFDE0 /* model_pymod.cpp */,
 				7A0945FA10CAEFB900CEFDE0 /* mvnormal_distribution.cpp */,
 				7A0945FB10CAEFB900CEFDE0 /* mvnormal_distribution.hpp */,
-				7A0945FC10CAEFB900CEFDE0 /* ncat_move.cpp */,
-				7A0945FD10CAEFB900CEFDE0 /* ncat_move.hpp */,
-				7A0945FE10CAEFB900CEFDE0 /* ncat_move.inl */,
 				7A0945FF10CAEFB900CEFDE0 /* ncl_pymod.cpp */,
 				7A09460010CAEFB900CEFDE0 /* nopython_force_include.hpp */,
 				7A09460110CAEFB900CEFDE0 /* nxs_file_path.cpp */,
@@ -890,9 +869,6 @@
 				7A09461810CAEFB900CEFDE0 /* read_nexus_pymod.cpp */,
 				D1F9EFC7112D9B4C00654AD4 /* relative_rate_distribution.cpp */,
 				D1F9EFC8112D9B4C00654AD4 /* relative_rate_distribution.hpp */,
-				7A09461910CAEFB900CEFDE0 /* samc_move.cpp */,
-				7A09461A10CAEFB900CEFDE0 /* samc_move.hpp */,
-				7A09461B10CAEFB900CEFDE0 /* samc_move.inl */,
 				7A09461C10CAEFB900CEFDE0 /* sim_data.cpp */,
 				7A09461D10CAEFB900CEFDE0 /* sim_data.hpp */,
 				7A09461E10CAEFB900CEFDE0 /* sim_data.inl */,
@@ -1126,7 +1102,6 @@
 				7A98F80B10CD85D8001E79F7 /* io.py */,
 				7A98F80710CD85D8001E79F7 /* enotify.py */,
 				7A98F80910CD85D8001E79F7 /* GlobalState.py */,
-				7A98F80810CD85D8001E79F7 /* flexplot.py */,
 				7A98F81010CD85D8001E79F7 /* PhycasCommand.py */,
 				7A98F80510CD85D8001E79F7 /* DefaultData.py */,
 				7A98F81410CD85D8001E79F7 /* tratio2kappa.py */,
@@ -1698,8 +1673,6 @@
 				7A98F3BB10CD589F001E79F7 /* dcdflib.c in Sources */,
 				7A98F3BE10CD58AC001E79F7 /* edgelen_master_param.cpp in Sources */,
 				7A98F3BF10CD58B0001E79F7 /* edge_move.cpp in Sources */,
-				7A98F3C210CD58BC001E79F7 /* flex_prob_param.cpp in Sources */,
-				7A98F3C310CD58BE001E79F7 /* flex_rate_param.cpp in Sources */,
 				7A98F3C610CD58C4001E79F7 /* gtr_rate_param.cpp in Sources */,
 				7A98F3C710CD58CA001E79F7 /* gtr_model.cpp in Sources */,
 				7A98F3C910CD58D2001E79F7 /* hky_model.cpp in Sources */,
@@ -1717,9 +1690,7 @@
 				7A98F3F310CD5943001E79F7 /* model_pymod.cpp in Sources */,
 				7A98F3F510CD595D001E79F7 /* mcmc_chain_manager.cpp in Sources */,
 				7A98F3F610CD5967001E79F7 /* mcmc_param.cpp in Sources */,
-				7A98F3F710CD596D001E79F7 /* mcmc_flexcat_param.cpp in Sources */,
 				7A98F3F810CD5976001E79F7 /* mcmc_updater.cpp in Sources */,
-				7A98F3FA10CD5986001E79F7 /* ncat_move.cpp in Sources */,
 				7A98F3FB10CD598D001E79F7 /* mapping_move.cpp in Sources */,
 				7A98F3FD10CD5998001E79F7 /* omega_param.cpp in Sources */,
 				7A98F40210CD599F001E79F7 /* phycas_string.cpp in Sources */,
@@ -1727,7 +1698,6 @@
 				7A98F40810CD59B8001E79F7 /* probability_distribution.cpp in Sources */,
 				D183E6D711668139002AB4A3 /* relative_rate_distribution.cpp in Sources */,
 				7A98F40A10CD59C0001E79F7 /* q_matrix.cpp in Sources */,
-				7A98F40D10CD59CA001E79F7 /* samc_move.cpp in Sources */,
 				7A98F40E10CD59D0001E79F7 /* slice_sampler.cpp in Sources */,
 				7A98F41110CD59D8001E79F7 /* sim_data.cpp in Sources */,
 				7A98F41510CD59EA001E79F7 /* split.cpp in Sources */,

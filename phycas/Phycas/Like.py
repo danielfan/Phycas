@@ -33,9 +33,6 @@ class Like(PhycasCommand):
         self.__dict__["char_to_pattern"]    = []
         self.__dict__["site_uf"]    = []
 		
-		# FLEXCAT_MODEL
-        #self.__dict__["use_flex_model"]  = False
-		
 		# The following data members are hidden from user but useful for developers in debugging
         self.__dict__["preorder_edgelens"]    = None	# can provide a vector of edgelens that will be substituted before likelihood is computed
         

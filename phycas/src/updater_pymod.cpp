@@ -32,9 +32,6 @@
 #include "phycas/src/unimap_fast_nni_move.hpp"
 #include "phycas/src/tree_scaler_move.hpp"
 #include "phycas/src/dirichlet_move.hpp"
-#if defined(FLEXCAT_MODEL)
-#	include "phycas/src/ncat_move.hpp"
-#endif
 #include "phycas/src/bush_move.hpp"
 #include "phycas/src/edge_move.hpp"
 #include "phycas/src/unimap_edge_move.hpp"
@@ -193,25 +190,6 @@ void updater_pymod()
 		.def("finalize", &phycas::BushMove::finalize)
 		.def("getTopoPriorCalculator", &phycas::BushMove::getTopoPriorCalculator)
 		;
-#if defined(FLEXCAT_MODEL)
-	class_<phycas::NCatMove, bases<phycas::MCMCUpdater>, 
-		boost::noncopyable, boost::shared_ptr<phycas::NCatMove> >("NCatMove") 
-		.def("update", &phycas::NCatMove::update)
-		.def("addCatMoveProposed", &phycas::NCatMove::addCatMoveProposed)
-		.def("getPhi", &phycas::NCatMove::getPhi)
-		.def("setPhi", &phycas::NCatMove::setPhi)
-		.def("getLambda", &phycas::NCatMove::getLambda)
-		.def("setLambda", &phycas::NCatMove::setLambda)
-		.def("getNCatMax", &phycas::NCatMove::getNCatMax)
-		.def("setNCatMax", &phycas::NCatMove::setNCatMax)
-		.def("getS", &phycas::NCatMove::getS)
-		.def("setS", &phycas::NCatMove::setS)
-		.def("getL", &phycas::NCatMove::getL)
-		.def("setL", &phycas::NCatMove::setL)
-		.def("getCatProbPrior", &phycas::NCatMove::getCatProbPrior)
-		.def("setCatProbPrior", &phycas::NCatMove::setCatProbPrior)
-		;
-#endif
 	class_<phycas::EdgeMove, bases<phycas::MCMCUpdater>, 
 		boost::noncopyable, boost::shared_ptr<phycas::EdgeMove> >("EdgeMove") 
 		.def("update", &phycas::EdgeMove::update)

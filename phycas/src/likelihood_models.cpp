@@ -45,13 +45,6 @@ Model::Model(
 	state_freq_fixed(false),
 	edge_lengths_fixed(false),	
 	edgelen_hyperprior_fixed(false),
-#if defined(FLEXCAT_MODEL)		
-	flex_upper_rate_bound(1.0),
-	num_flex_spacers(1),
-	flex_probs_fixed(false),
-	flex_rates_fixed(false),
-	is_flex_model(false),
-#endif
 	pinvar_fixed(false),
 	gamma_shape_fixed(false),
     invert_shape(false),
@@ -87,10 +80,6 @@ void Model::Clear()
 	freq_params.clear();
 	edgelen_hyper_params.clear();
 	edgelen_params.clear();
-#if defined(FLEXCAT_MODEL)		
-	flex_rate_params.clear();
-	flex_prob_params.clear();
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -105,10 +94,6 @@ void Model::releaseUpdaters()
 	edgeLenHyperPrior.reset();
 	internalEdgeLenPrior.reset();
 	externalEdgeLenPrior.reset();
-#if defined(FLEXCAT_MODEL)		
-	flex_prob_param_prior.reset();
-	flex_rate_param_prior.reset();
-#endif
 	pinvar_param.reset();	
 	pinvar_prior.reset();
 	gamma_shape_param.reset();
@@ -202,16 +187,6 @@ ProbDistShPtr Model::getEdgeLenHyperPrior()
 	return edgeLenHyperPrior;
 	}
 
-#if defined(FLEXCAT_MODEL)		
-/*----------------------------------------------------------------------------------------------------------------------
-|	Predicate that returns value of `is_flex_model' data member.
-*/
-bool Model::isFlexModel()
-	{
-	return is_flex_model;
-	}
-#endif
-	
 /*----------------------------------------------------------------------------------------------------------------------
 |	Predicate that returns true if `edgeLenHyperPrior' actually points to something, and returns false if no edge length
 |	hyperprior probability distribution was assigned.
@@ -599,243 +574,6 @@ void Model::freeStateFreqs()
 		}
 	}
 
-#if defined(FLEXCAT_MODEL)		
-/*----------------------------------------------------------------------------------------------------------------------
-|	Sets the data member `is_flex_model' to true. A subsequent call to the createParameters member function will
-|	result in `num_gamma_rates' FlexRateParam and FlexProbParam objects being added to the list of updaters for this 
-|	model.
-*/
-void Model::setFlexModel()
-	{
-	++time_stamp;
-	is_flex_model = true;
-	}
-#endif
-
-#if defined(FLEXCAT_MODEL)		
-/*----------------------------------------------------------------------------------------------------------------------
-|	Sets the data member `flex_upper_rate_bound' to `new_upper_bound'. Rescales all existing unnormalized relative rate
-|	parameter values in the vector `gamma_rates_unnorm' to accommodate the new upper bound. Assumes that 
-|	`new_upper_bound' is greater than zero. Returns immediately if `new_upper_bound' is identical to current value of
-|	`flex_upper_rate_bound'.
-*/
-void Model::setFlexRateUpperBound(double new_upper_bound)
-	{
-	++time_stamp;
-	double old_upper_bound = flex_upper_rate_bound;
-	if (new_upper_bound == old_upper_bound)
-		return;
-	PHYCAS_ASSERT(new_upper_bound > 0.0);
-	flex_upper_rate_bound = new_upper_bound;
-	double mult_factor = new_upper_bound/old_upper_bound;
-	std::for_each(gamma_rates_unnorm.begin(), gamma_rates_unnorm.end(), boost::lambda::_1 *= mult_factor);
-	}
-#endif
-
-#if defined(FLEXCAT_MODEL)		
-/*----------------------------------------------------------------------------------------------------------------------
-|	Sets the data member `num_flex_spacers' to `s'. See the data member `num_flex_spacers' and the function 
-|	FlexRateParam::recalcPrior for more information on FLEX model spacers.
-*/
-void Model::setNumFlexSpacers(unsigned s)
-	{
-	num_flex_spacers = s;
-	}
-#endif
-
-#if defined(FLEXCAT_MODEL)		
-/*----------------------------------------------------------------------------------------------------------------------
-|	Sets the data member `is_flex_model' to false. No FlexRateParam or FlexProbParam objects will be added in a 
-|	subsequent call to the createParameters member function.
-*/
-void Model::setNotFlexModel()
-	{
-	++time_stamp;
-	is_flex_model = false;
-	}
-#endif
-
-#if defined(FLEXCAT_MODEL)		
-/*----------------------------------------------------------------------------------------------------------------------
-|	Sets the data member `flex_probs_fixed' to true. The fixParameter member function of all FlexProbParam objects is 
-|	either called immediately (if the `flex_prob_params' vector is not empty) or is called in createParameters (when 
-|	`flex_prob_params' is built).
-*/
-void Model::fixFlexProbs()
-	{
-	flex_probs_fixed = true;
-	if (!flex_prob_params.empty())
-		{
-		//@POL good place to use std::for_each with a boost::lambda functor?
-		for (MCMCUpdaterVect::iterator it = flex_prob_params.begin(); it != flex_prob_params.end(); ++it)
-			(*it)->fixParameter();
-		}
-	}
-#endif
-
-#if defined(FLEXCAT_MODEL)		
-/*----------------------------------------------------------------------------------------------------------------------
-|	Sets the data member `flex_probs_fixed' to false. The freeParameter member function of all FlexProbParam objects is 
-|	called immediately if the `flex_prob_params' vector is not empty.
-*/
-void Model::freeFlexProbs()
-	{
-	flex_probs_fixed = false;
-	if (!flex_prob_params.empty())
-		{
-		//@POL good place to use std::for_each with a boost::lambda functor?
-		for (MCMCUpdaterVect::iterator it = flex_prob_params.begin(); it != flex_prob_params.end(); ++it)
-			(*it)->freeParameter();
-		}
-	}
-#endif
-
-#if defined(FLEXCAT_MODEL)		
-/*----------------------------------------------------------------------------------------------------------------------
-|	Sets the data member `flex_rates_fixed' to true. The fixParameter member function of all FlexRateParam objects is 
-|	either called immediately (if the `flex_rate_params' vector is not empty) or is called in createParameters (when 
-|	`flex_rate_params' is built).
-*/
-void Model::fixFlexRates()
-	{
-	flex_rates_fixed = true;
-	if (!flex_rate_params.empty())
-		{
-		//@POL good place to use std::for_each with a boost::lambda functor?
-		for (MCMCUpdaterVect::iterator it = flex_rate_params.begin(); it != flex_rate_params.end(); ++it)
-			(*it)->fixParameter();
-		}
-	}
-#endif
-
-#if defined(FLEXCAT_MODEL)		
-/*----------------------------------------------------------------------------------------------------------------------
-|	Sets the data member `flex_rates_fixed' to false. The freeParameter member function of all FlexRateParam objects is 
-|	called immediately if the `flex_rate_params' vector is not empty.
-*/
-void Model::freeFlexRates()
-	{
-	flex_rates_fixed = false;
-	if (!flex_rate_params.empty())
-		{
-		//@POL good place to use std::for_each with a boost::lambda functor?
-		for (MCMCUpdaterVect::iterator it = flex_rate_params.begin(); it != flex_rate_params.end(); ++it)
-			(*it)->freeParameter();
-		}
-	}
-#endif
-
-#if defined(FLEXCAT_MODEL)		
-/*----------------------------------------------------------------------------------------------------------------------
-|	Sets value of data member `flex_prob_param_prior'.
-*/
-void Model::setFLEXProbParamPrior(ProbDistShPtr d)
- 	{
-	flex_prob_param_prior = d;
-	}
-#endif
-
-#if defined(FLEXCAT_MODEL)		
-/*----------------------------------------------------------------------------------------------------------------------
-|	Returns current value of data member `flex_prob_param_prior'.
-*/
-ProbDistShPtr Model::getFLEXProbParamPrior()
- 	{
-	return flex_prob_param_prior;
-	}
-#endif
-
-#if defined(FLEXCAT_MODEL)		
-/*----------------------------------------------------------------------------------------------------------------------
-|	Modifier function that sets one of the FLEX rate parameters (the unnormalized values that determine the values in 
-|	the `TreeLikelihood::rate_means' vector when normalized) in the data member vector `gamma_rates_unnorm'. The 
-|	function Model::recalcRatesAndProbs should be called to recalculate `TreeLikelihood::rate_means' before the 
-|	likelihood is computed (ideally immediately after setFlexRateUnnorm is called). Assumes `param_index' is less than 
-|	`num_gamma_rates' (i.e. a valid index into `gamma_rates_unnorm') and `value' is non-negative.
-*/
-void Model::setFlexRateUnnorm(
-  unsigned param_index,		/**< the 0-based index into the `gamma_rates_unnorm' vector of the element to modify */
-  double value)				/**< the new value of `gamma_rates_unnorm'[`param_index'] */
-	{
-	++time_stamp;
-	PHYCAS_ASSERT(gamma_rates_unnorm.size() == num_gamma_rates);
-	PHYCAS_ASSERT(param_index < num_gamma_rates);
-	PHYCAS_ASSERT(value >= 0.0);
-	gamma_rates_unnorm[param_index] = value;
-	}
-#endif
-
-#if defined(FLEXCAT_MODEL)		
-/*----------------------------------------------------------------------------------------------------------------------
-|	Modifier function that sets one of the FLEX rate probability parameters (the unnormalized values that determine the 
-|	values in the `TreeLikelihood::rate_probs' vector when normalized) in the data member vector `gamma_rate_probs'. 
-|	The function Model::recalcRatesAndProbs should be called to recalculate `TreeLikelihood::rate_probs' before the 
-|	likelihood is computed (ideally immediately after setFlexProbUnnorm is called). Assumes `param_index' is less than 
-|	`num_gamma_rates' (i.e. a valid index into `gamma_rate_probs') and `value' is non-negative.
-*/
-void Model::setFlexProbUnnorm(
-  unsigned param_index,		/**< the 0-based index into the `gamma_rate_probs' vector of the element to modify */
-  double value)				/**< the new value of `gamma_rate_probs'[`param_index'] */
-	{
-	++time_stamp;
-	PHYCAS_ASSERT(gamma_rate_probs.size() == num_gamma_rates);
-	PHYCAS_ASSERT(param_index < num_gamma_rates);
-	PHYCAS_ASSERT(value >= 0.0);
-	gamma_rate_probs[param_index] = value;
-	}
-#endif
-
-#if defined(FLEXCAT_MODEL)		
-/*----------------------------------------------------------------------------------------------------------------------
-|	Normalizes the rates stored in `gamma_rates_unnorm' so that their mean (using probabilities in `gamma_rate_probs')
-|	equals 1.0. Normalizes the probabilities stored in `gamma_rate_probs' so that their sum is 1.0. Copies normalized
-|	rates to supplied vector `rates' and normalized probabilities to the supplied vector `probs'. Resizes `rates' and
-|	`probs' if necessary.
-*/
-void Model::normalizeRatesAndProbs(
-  std::vector<double> & rates,		/**< is the vector to receive the normalized rates */
-  std::vector<double> & probs)		/**< is the vector to receive the normalized probabilities */
-  const
-	{
-	// c*r0*p0 + c*r1*p1 + c*r2*p2 + c*r3*p3 = 1.0
-	// c*(r0*p0 + r1*p1 + r2*p2 + r3*p3) = 1.0
-	// c = 1/(r0*p0 + r1*p1 + r2*p2 + r3*p3)
-	//
-	PHYCAS_ASSERT((unsigned)gamma_rates_unnorm.size() == num_gamma_rates);
-	PHYCAS_ASSERT((unsigned)gamma_rate_probs.size() == num_gamma_rates);
-	rates.resize(num_gamma_rates, 0.0);
-	probs.resize(num_gamma_rates, 0.0);
-	std::vector<double>::const_iterator rates_it = gamma_rates_unnorm.begin();
-	std::vector<double>::const_iterator probs_it = gamma_rate_probs.begin();
-	unsigned i;
-
-	// normalize the probabilities first (we will need them to normalize the rates)
-	double prob_sum = 0.0;
-	for (i = 0; i < num_gamma_rates; ++i)
-		{
-		PHYCAS_ASSERT(gamma_rate_probs[i] > 0.0);
-		prob_sum += gamma_rate_probs[i];
-		}
-	double prob_normalizer = 1.0/prob_sum;
-
-	// normalize the rates and copy the probs
-	double rate_prob_sum = 0.0;
-	for (i = 0; i < num_gamma_rates; ++i)
-		{
-		probs[i] = gamma_rate_probs[i]*prob_normalizer;
-		PHYCAS_ASSERT(gamma_rates_unnorm[i] > 0.0);
-		rate_prob_sum += gamma_rates_unnorm[i]*probs[i];
-		}
-	double rate_normalizer = 1.0/rate_prob_sum;
-
-	// copy the rates
-	for (i = 0; i < num_gamma_rates; ++i)
-		{
-		rates[i] = gamma_rates_unnorm[i]*rate_normalizer;
-		}
-	}
-#endif
-
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the current value of the data member `is_pinvar_model'.
 */
@@ -980,48 +718,37 @@ void Model::recalcRatesAndProbs( //POL_BOOKMARK Model::recalcRatesAndProbs
   std::vector<double> & rates, 
   std::vector<double> & probs) const
 	{
-#if defined(FLEXCAT_MODEL)		
-	if (is_flex_model)
+	std::vector<double> boundaries;
+
+	if (is_pinvar_model)
 		{
-		normalizeRatesAndProbs(rates, probs);
+		PHYCAS_ASSERT(pinvar < 1.0);
+		double one_minus_pinvar = 1.0 - pinvar;
+
+		// First calculate the gamma rates alone
+		std::vector<double> gamma_rates;
+		recalcGammaRatesAndBoundaries(gamma_rates, boundaries);
+
+		// Copy the rate probabilities directly
+		probs.resize(num_gamma_rates, 0.0);
+		std::copy(gamma_rate_probs.begin(), gamma_rate_probs.end(), probs.begin());
+
+		// Adjust gamma_rates using pinvar and save to rates vector
+		rates.resize(num_gamma_rates, 0.0);
+		std::vector<double>::iterator       rates_iter       = rates.begin();
+		std::vector<double>::const_iterator gamma_rates_iter = gamma_rates.begin();
+		for (unsigned i = 0; i < num_gamma_rates; ++i)
+			{
+			*rates_iter++ = (*gamma_rates_iter++)/one_minus_pinvar;
+			}
 		}
 	else
 		{
-#endif
-		std::vector<double> boundaries;
-
-	    if (is_pinvar_model)
-		    {
-		    PHYCAS_ASSERT(pinvar < 1.0);
-		    double one_minus_pinvar = 1.0 - pinvar;
-
-		    // First calculate the gamma rates alone
-		    std::vector<double> gamma_rates;
-		    recalcGammaRatesAndBoundaries(gamma_rates, boundaries);
-
-		    // Copy the rate probabilities directly
-		    probs.resize(num_gamma_rates, 0.0);
-		    std::copy(gamma_rate_probs.begin(), gamma_rate_probs.end(), probs.begin());
-
-		    // Adjust gamma_rates using pinvar and save to rates vector
-		    rates.resize(num_gamma_rates, 0.0);
-		    std::vector<double>::iterator       rates_iter       = rates.begin();
-		    std::vector<double>::const_iterator gamma_rates_iter = gamma_rates.begin();
-		    for (unsigned i = 0; i < num_gamma_rates; ++i)
-			    {
-			    *rates_iter++ = (*gamma_rates_iter++)/one_minus_pinvar;
-			    }
-		    }
-	    else
-		    {
-		    // The rates and probs computed by recalcGammaRatesAndBoundaries are what we need if is_pinvar_model is false
-		    recalcGammaRatesAndBoundaries(rates, boundaries);
-		    probs.resize(num_gamma_rates, 0.0);
-		    std::copy(gamma_rate_probs.begin(), gamma_rate_probs.end(), probs.begin());
-		    }
-#if defined(FLEXCAT_MODEL)		
+		// The rates and probs computed by recalcGammaRatesAndBoundaries are what we need if is_pinvar_model is false
+		recalcGammaRatesAndBoundaries(rates, boundaries);
+		probs.resize(num_gamma_rates, 0.0);
+		std::copy(gamma_rate_probs.begin(), gamma_rate_probs.end(), probs.begin());
 		}
-#endif		
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -1103,28 +830,6 @@ void Model::recalcGammaRatesAndBoundaries(std::vector<double> & rates, std::vect
 		//std::cerr << str(boost::format("%6d %12.6f %12.6f") % (i-1) % boundaries[i-1] % rates[i-1]) << std::endl;
 		}
 	}
-
-#if defined(FLEXCAT_MODEL)		
-/*----------------------------------------------------------------------------------------------------------------------
-|	Returns the value of `gamma_rates_unnorm[param_index]'.
-*/
-double Model::getFlexRateUnnorm(
-  unsigned param_index)		/**< the 0-based index into the `gamma_rates_unnorm' vector of the element to return */
-	{
-	return gamma_rates_unnorm[param_index];
-	}
-#endif
-
-#if defined(FLEXCAT_MODEL)		
-/*----------------------------------------------------------------------------------------------------------------------
-|	Returns the value of `gamma_rate_probs[param_index]'.
-*/
-double Model::getFlexProbUnnorm(
-  unsigned param_index)		/**< the 0-based index into the `gamma_rate_probs' vector of the element to return */
-	{
-	return gamma_rate_probs[param_index];
-	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the value of `state_freq_unnorm[param_index]'.
@@ -1268,56 +973,6 @@ void Model::createParameters(
 		std::copy(edgelen_hyperparams_vect_ref.begin(), edgelen_hyperparams_vect_ref.end(), edgelen_hyper_params.begin());
 	}
 
-#if defined(FLEXCAT_MODEL)		
-	// Create any model-specific parameters and add to the parameters vector
-	if (is_flex_model)
-		{
-		gamma_rates_unnorm.resize(num_gamma_rates, 0.0);
-		PHYCAS_ASSERT(flex_rate_params.empty());
-		PHYCAS_ASSERT(flex_prob_params.empty());
-		for (unsigned i = 0; i < num_gamma_rates; ++i)
-			{ //POL_BOOKMARK creating flex model parameters
-			// start with rates drawn from Uniform(0.0, flex_upper_rate_bound)
-			//@POL to do this right, need to draw from prior, but if number of spacers is small, drawing from
-            // Uniform(0,flex_upper_rate_bound) will give almost the same results
-			double u = flex_prob_param_prior->GetLot()->Uniform(FILE_AND_LINE);
-			gamma_rates_unnorm[i] = flex_upper_rate_bound*u;
-			//old way: gamma_rates_unnorm[i] = flex_upper_rate_bound*(double)(i + 1)/(double)(num_gamma_rates + 1);
-
-			// start with probabilities drawn from the prior
-			PHYCAS_ASSERT(flex_prob_param_prior);
-			gamma_rate_probs[i] = flex_prob_param_prior->Sample();
-			}
-
-		// Rates must be sorted from lowest to highest to begin with
-		std::sort(gamma_rates_unnorm.begin(), gamma_rates_unnorm.end());
-
-		MCMCUpdaterShPtr rate_param = MCMCUpdaterShPtr(new FlexRateParam(num_flex_spacers, flex_upper_rate_bound, gamma_rates_unnorm));
-		if (subset_pos < 0)
-			rate_param->setName(std::string("FLEXrates")); 
-		else
-			rate_param->setName(boost::str(boost::format("FLEXrates_%d") % (subset_pos + 1)));
-		rate_param->setTree(t);
-		rate_param->setPrior(flex_rate_param_prior);
-		if (flex_rates_fixed)
-			rate_param->fixParameter();
-		parameters_vect_ref.push_back(rate_param);
-		flex_rate_params.push_back(rate_param);
-
-		MCMCUpdaterShPtr prob_param = MCMCUpdaterShPtr(new FlexProbParam(gamma_rate_probs));
-		if (subset_pos < 0)
-			prob_param->setName(std::string("FLEXprobs")); 
-		else
-			prob_param->setName(boost::str(boost::format("FLEXprobs_%d") % (subset_pos + 1)));
-		prob_param->setTree(t);
-		prob_param->setPrior(flex_prob_param_prior);
-		if (flex_probs_fixed)
-			prob_param->fixParameter();
-		parameters_vect_ref.push_back(prob_param);
-		flex_prob_params.push_back(prob_param);
-		}
-	else 
-#endif
 	if (num_gamma_rates > 1)
 		{
 		PHYCAS_ASSERT(num_gamma_rates > 1);
@@ -1380,16 +1035,6 @@ std::string Model::paramHeader() const
 	if (is_pinvar_model)
 		s += boost::str(boost::format("\t%s") % pinvar_param->getName());
 
-#if defined(FLEXCAT_MODEL)		
-	if (is_flex_model)
-		{
-		for (MCMCUpdaterVect::const_iterator rit = flex_rate_params.begin(); rit != flex_rate_params.end(); ++rit)
-			s += boost::str(boost::format("\t%s") % (*rit)->getName());
-		for (MCMCUpdaterVect::const_iterator pit = flex_prob_params.begin(); pit != flex_prob_params.end(); ++pit)
-			s += boost::str(boost::format("\t%s") % (*pit)->getName());
-		}
-	else 
-#endif
 	if (num_gamma_rates > 1)
 		{
 		s += boost::str(boost::format("\t%s") % gamma_shape_param->getName());
@@ -1426,13 +1071,6 @@ std::string Model::paramReport(
 		s += boost::str(boost::format(fmt) % pinvar);
         }
 		
-#if defined(FLEXCAT_MODEL)		
-	if (is_flex_model)
-		{
-		s += boost::str(boost::format("%d	") % num_gamma_rates);
-		}
-	else 
-#endif
 	if (num_gamma_rates > 1)
 		{
 		s += boost::str(boost::format(fmt) % gamma_shape);

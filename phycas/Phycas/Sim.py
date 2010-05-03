@@ -27,9 +27,6 @@ class Sim(PhycasCommand):
         self.__dict__["use_unimap"]     = False
         self.__dict__["data_source"]    = None
 		
-		# FLEXCAT_MODEL
-        #self.__dict__["use_flex_model"] = False
-		
     def __call__(self, **kwargs):
         self.set(**kwargs)
         simulate = SimImpl(self)

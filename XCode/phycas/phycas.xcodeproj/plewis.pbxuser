@@ -22,15 +22,7 @@
 			D1328DC7111DF9E600E05D16 /* Run Steppingstone Test */,
 			D147B5FE111F4DDF00094934 /* Run FixedParams Test */,
 			D147B62B111F509A00094934 /* Run Codon Test */,
-			D1D664EC112073C900BA8E47 /* Run Daniel */,
-			D1EC25C01123072E0017DDA8 /* Run Hummingbirds */,
-			D10DDE0F1125D57700CC55F3 /* Run scubed */,
 			D19DDD6B1127480C00524862 /* Run all tests */,
-			D164139D113E3C540031F70F /* Run turtle SAMC */,
-			D172BB3411414B6A001AFCD1 /* Run turtles */,
-			D1FBFB7A114C216200E95532 /* Run greensamc */,
-			D117870D1158290800DFDE81 /* Run challenge */,
-			D1F206F4115A9FDC00E37D14 /* Run cicadas */,
 			D164C4A71164EC0E00DB2E59 /* Run pinvar paradox */,
 		);
 		expressions = (
@@ -106,7 +98,7 @@
 				PBXFileTableDataSourceColumnWidthsKey = (
 					22,
 					300,
-					1826,
+					1588,
 				);
 				PBXFileTableDataSourceColumnsKey = (
 					PBXExecutablesDataSource_ActiveFlagID,
@@ -210,8 +202,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 294599218;
-			PBXWorkspaceStateSaveDate = 294599218;
+			PBXPerProjectTemplateStateSaveDate = 294600639;
+			PBXWorkspaceStateSaveDate = 294600639;
 		};
 		perUserProjectItems = {
 			D105634C118A309B0075DC51 /* PBXTextBookmark */ = D105634C118A309B0075DC51 /* PBXTextBookmark */;
@@ -221,10 +213,10 @@
 			D1060D42118F229B004BE274 /* PBXTextBookmark */ = D1060D42118F229B004BE274 /* PBXTextBookmark */;
 			D1060D56118F2341004BE274 /* PBXTextBookmark */ = D1060D56118F2341004BE274 /* PBXTextBookmark */;
 			D1060D8D118F38EF004BE274 /* PBXTextBookmark */ = D1060D8D118F38EF004BE274 /* PBXTextBookmark */;
-			D1060DB3118F3BBB004BE274 /* PBXTextBookmark */ = D1060DB3118F3BBB004BE274 /* PBXTextBookmark */;
 			D1060DB4118F3BBB004BE274 /* PBXTextBookmark */ = D1060DB4118F3BBB004BE274 /* PBXTextBookmark */;
-			D1060DB5118F3BBB004BE274 /* PBXTextBookmark */ = D1060DB5118F3BBB004BE274 /* PBXTextBookmark */;
-			D1060DB6118F3BBB004BE274 /* PBXTextBookmark */ = D1060DB6118F3BBB004BE274 /* PBXTextBookmark */;
+			D1060DD8118F40BA004BE274 /* PBXTextBookmark */ = D1060DD8118F40BA004BE274 /* PBXTextBookmark */;
+			D1060DDE118F419B004BE274 /* PBXTextBookmark */ = D1060DDE118F419B004BE274 /* PBXTextBookmark */;
+			D1060DDF118F419B004BE274 /* PBXTextBookmark */ = D1060DDF118F419B004BE274 /* PBXTextBookmark */;
 			D110796B118C843600440CE9 /* PBXTextBookmark */ = D110796B118C843600440CE9 /* PBXTextBookmark */;
 			D110797B118C85F200440CE9 /* PBXTextBookmark */ = D110797B118C85F200440CE9 /* PBXTextBookmark */;
 			D110797C118C85F200440CE9 /* PBXTextBookmark */ = D110797C118C85F200440CE9 /* PBXTextBookmark */;
@@ -232,7 +224,6 @@
 			D117ADAB118922C40000E126 /* PBXTextBookmark */ = D117ADAB118922C40000E126 /* PBXTextBookmark */;
 			D15B6F7D11811AD500651A2D /* PBXTextBookmark */ = D15B6F7D11811AD500651A2D /* PBXTextBookmark */;
 			D17E0E9711808D4D004475B7 /* PBXTextBookmark */ = D17E0E9711808D4D004475B7 /* PBXTextBookmark */;
-			D1AB7C70117F9B4100037911 /* PBXTextBookmark */ = D1AB7C70117F9B4100037911 /* PBXTextBookmark */;
 			D1EA4320118E4AD90023B0A0 /* PBXTextBookmark */ = D1EA4320118E4AD90023B0A0 /* PBXTextBookmark */;
 			D1EA4321118E4AD90023B0A0 /* PBXTextBookmark */ = D1EA4321118E4AD90023B0A0 /* PBXTextBookmark */;
 		};
@@ -452,20 +443,6 @@
 			sepNavWindowFrame = "{{248, 398}, {1143, 1067}}";
 		};
 	};
-	7A0945D510CAEFB900CEFDE0 /* flex_prob_param.cpp */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 1378}}";
-			sepNavSelRange = "{2429, 0}";
-			sepNavVisRange = "{2021, 1747}";
-		};
-	};
-	7A0945D610CAEFB900CEFDE0 /* flex_rate_param.cpp */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 2392}}";
-			sepNavSelRange = "{1660, 4}";
-			sepNavVisRange = "{0, 3217}";
-		};
-	};
 	7A0945D710CAEFB900CEFDE0 /* gtr_model.cpp */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1817, 7462}}";
@@ -549,17 +526,17 @@
 	};
 	7A0945E410CAEFB900CEFDE0 /* likelihood_models.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 19851}}";
-			sepNavSelRange = "{58196, 4}";
-			sepNavVisRange = "{57019, 1839}";
+			sepNavIntBoundsRect = "{{0, 0}, {1890, 14729}}";
+			sepNavSelRange = "{31713, 0}";
+			sepNavVisRange = "{31076, 3150}";
 			sepNavWindowFrame = "{{548, 159}, {1674, 1327}}";
 		};
 	};
 	7A0945E510CAEFB900CEFDE0 /* likelihood_models.hpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 4472}}";
-			sepNavSelRange = "{2871, 0}";
-			sepNavVisRange = "{1551, 2282}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 3692}}";
+			sepNavSelRange = "{12179, 0}";
+			sepNavVisRange = "{8414, 4666}";
 		};
 	};
 	7A0945E610CAEFB900CEFDE0 /* likelihood_models.inl */ = {
@@ -613,13 +590,6 @@
 			sepNavVisRange = "{0, 1942}";
 		};
 	};
-	7A0945F010CAEFB900CEFDE0 /* mcmc_flexcat_param.cpp */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 1963}}";
-			sepNavSelRange = "{1941, 4}";
-			sepNavVisRange = "{0, 2955}";
-		};
-	};
 	7A0945F210CAEFB900CEFDE0 /* mcmc_move.inl */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1385, 1521}}";
@@ -636,9 +606,9 @@
 	};
 	7A0945F410CAEFB900CEFDE0 /* mcmc_param.hpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 4992}}";
-			sepNavSelRange = "{8534, 4}";
-			sepNavVisRange = "{7648, 1854}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 4134}}";
+			sepNavSelRange = "{6299, 0}";
+			sepNavVisRange = "{5857, 2361}";
 			sepNavWindowFrame = "{{739, 150}, {1444, 1248}}";
 		};
 	};
@@ -666,9 +636,9 @@
 	};
 	7A0945F910CAEFB900CEFDE0 /* model_pymod.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 2535}}";
-			sepNavSelRange = "{5069, 0}";
-			sepNavVisRange = "{2856, 3201}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 2340}}";
+			sepNavSelRange = "{3100, 0}";
+			sepNavVisRange = "{2856, 3160}";
 		};
 	};
 	7A0945FA10CAEFB900CEFDE0 /* mvnormal_distribution.cpp */ = {
@@ -684,27 +654,6 @@
 			sepNavIntBoundsRect = "{{0, 0}, {1682, 1196}}";
 			sepNavSelRange = "{2980, 16}";
 			sepNavVisRange = "{1750, 1769}";
-		};
-	};
-	7A0945FC10CAEFB900CEFDE0 /* ncat_move.cpp */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 5967}}";
-			sepNavSelRange = "{1746, 4}";
-			sepNavVisRange = "{80, 2376}";
-		};
-	};
-	7A0945FD10CAEFB900CEFDE0 /* ncat_move.hpp */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {2168, 1677}}";
-			sepNavSelRange = "{5947, 0}";
-			sepNavVisRange = "{2978, 2970}";
-		};
-	};
-	7A0945FE10CAEFB900CEFDE0 /* ncat_move.inl */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 2366}}";
-			sepNavSelRange = "{1440, 0}";
-			sepNavVisRange = "{0, 2517}";
 		};
 	};
 	7A09460010CAEFB900CEFDE0 /* nopython_force_include.hpp */ = {
@@ -822,27 +771,6 @@
 			sepNavVisRange = "{17528, 1798}";
 		};
 	};
-	7A09461910CAEFB900CEFDE0 /* samc_move.cpp */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 6786}}";
-			sepNavSelRange = "{1168, 8}";
-			sepNavVisRange = "{0, 2442}";
-		};
-	};
-	7A09461A10CAEFB900CEFDE0 /* samc_move.hpp */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {2091, 1573}}";
-			sepNavSelRange = "{2147, 4}";
-			sepNavVisRange = "{0, 2399}";
-		};
-	};
-	7A09461B10CAEFB900CEFDE0 /* samc_move.inl */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 823}}";
-			sepNavSelRange = "{1561, 0}";
-			sepNavVisRange = "{0, 1562}";
-		};
-	};
 	7A09461C10CAEFB900CEFDE0 /* sim_data.cpp */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1793, 8021}}";
@@ -951,9 +879,9 @@
 	};
 	7A09464410CAEFB900CEFDE0 /* tree_likelihood.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1890, 53560}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1890, 53417}}";
 			sepNavSelRange = "{124096, 4}";
-			sepNavVisRange = "{122555, 2966}";
+			sepNavVisRange = "{122555, 2973}";
 			sepNavWindowFrame = "{{342, 0}, {1257, 1041}}";
 		};
 	};
@@ -1066,9 +994,9 @@
 	};
 	7A09466410CAEFB900CEFDE0 /* updater_pymod.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 3185}}";
-			sepNavSelRange = "{10756, 4}";
-			sepNavVisRange = "{9205, 2834}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 2886}}";
+			sepNavSelRange = "{10642, 0}";
+			sepNavVisRange = "{9063, 2988}";
 		};
 	};
 	7A09466810CAEFB900CEFDE0 /* xprobdist.hpp */ = {
@@ -1226,8 +1154,8 @@
 	7A98F80110CD85D8001E79F7 /* __init__.py */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1726, 666}}";
-			sepNavSelRange = "{49, 0}";
-			sepNavVisRange = "{0, 223}";
+			sepNavSelRange = "{31, 0}";
+			sepNavVisRange = "{0, 179}";
 		};
 	};
 	7A98F80310CD85D8001E79F7 /* CommonFunctions.py */ = {
@@ -1235,13 +1163,6 @@
 			sepNavIntBoundsRect = "{{0, 0}, {1594, 1118}}";
 			sepNavSelRange = "{560, 15}";
 			sepNavVisRange = "{0, 1952}";
-		};
-	};
-	7A98F80810CD85D8001E79F7 /* flexplot.py */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 1872}}";
-			sepNavSelRange = "{43, 4}";
-			sepNavVisRange = "{0, 1860}";
 		};
 	};
 	7A98F80B10CD85D8001E79F7 /* io.py */ = {
@@ -1456,7 +1377,7 @@
 		fRef = D1BB2657111094A6002A8F79 /* MarkovChain.py */;
 		name = "MarkovChain.py: 267";
 		rLen = 21;
-		rLoc = 11311;
+		rLoc = 11124;
 		rType = 0;
 		vrLen = 3096;
 		vrLoc = 10425;
@@ -1476,7 +1397,7 @@
 		fRef = 7A0945E410CAEFB900CEFDE0 /* likelihood_models.cpp */;
 		name = "likelihood_models.cpp: 772";
 		rLen = 0;
-		rLoc = 33024;
+		rLoc = 23547;
 		rType = 0;
 		vrLen = 3054;
 		vrLoc = 31263;
@@ -1511,49 +1432,52 @@
 		vrLen = 2920;
 		vrLoc = 12024;
 	};
-	D1060DB3118F3BBB004BE274 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A0945FC10CAEFB900CEFDE0 /* ncat_move.cpp */;
-		name = "ncat_move.cpp: 76";
-		rLen = 4;
-		rLoc = 3139;
-		rType = 0;
-		vrLen = 2215;
-		vrLoc = 2015;
-	};
 	D1060DB4118F3BBB004BE274 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 7A09466410CAEFB900CEFDE0 /* updater_pymod.cpp */;
 		name = "updater_pymod.cpp: 197";
-		rLen = 4;
-		rLoc = 10756;
+		rLen = 0;
+		rLoc = 10642;
 		rType = 0;
 		vrLen = 4122;
 		vrLoc = 8465;
 	};
-	D1060DB5118F3BBB004BE274 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A09464410CAEFB900CEFDE0 /* tree_likelihood.cpp */;
-		rLen = 4;
-		rLoc = 124096;
-		rType = 0;
-	};
-	D1060DB6118F3BBB004BE274 /* PBXTextBookmark */ = {
+	D1060DD8118F40BA004BE274 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 7A09464410CAEFB900CEFDE0 /* tree_likelihood.cpp */;
 		name = "tree_likelihood.cpp: 3257";
 		rLen = 4;
 		rLoc = 124096;
 		rType = 0;
-		vrLen = 2966;
+		vrLen = 2973;
 		vrLoc = 122555;
+	};
+	D1060DDE118F419B004BE274 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1F281C3111B422C00FDE78C /* GTRTest.py */;
+		name = "GTRTest.py: 16";
+		rLen = 0;
+		rLoc = 316;
+		rType = 0;
+		vrLen = 1125;
+		vrLoc = 0;
+	};
+	D1060DDF118F419B004BE274 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A0945E410CAEFB900CEFDE0 /* likelihood_models.cpp */;
+		name = "likelihood_models.cpp: 765";
+		rLen = 0;
+		rLoc = 31713;
+		rType = 0;
+		vrLen = 3150;
+		vrLoc = 31076;
 	};
 	D10DDDB91125AA6300CC55F3 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 7A0945F410CAEFB900CEFDE0 /* mcmc_param.hpp */;
 		name = "EdgeLenMasterParam : public MCMCUpdater";
 		rLen = 39;
-		rLoc = 12006;
+		rLoc = 9295;
 		rType = 0;
 		vrLen = 2501;
 		vrLoc = 9097;
@@ -1565,83 +1489,6 @@
 			sepNavVisRange = "{114, 2162}";
 			sepNavWindowFrame = "{{79, 506}, {1143, 1067}}";
 		};
-	};
-	D10DDE0F1125D57700CC55F3 /* Run scubed */ = {
-		isa = PBXExecutable;
-		activeArgIndices = (
-			YES,
-		);
-		argumentStrings = (
-			scubed.py,
-		);
-		autoAttachOnCrash = 1;
-		breakpointsEnabled = 1;
-		configStateDict = {
-			"PBXLSLaunchAction-0" = {
-				PBXLSLaunchAction = 0;
-				PBXLSLaunchStartAction = 1;
-				PBXLSLaunchStdioStyle = 2;
-				PBXLSLaunchStyle = 0;
-				class = PBXLSRunLaunchConfig;
-				commandLineArgs = (
-				);
-				displayName = "Executable Runner";
-				environment = {
-				};
-				identifier = com.apple.Xcode.launch.runConfig;
-				remoteHostInfo = "";
-				startActionInfo = "";
-			};
-		};
-		customDataFormattersEnabled = 1;
-		dataTipCustomDataFormattersEnabled = 1;
-		dataTipShowTypeColumn = 1;
-		dataTipSortType = 0;
-		debuggerPlugin = GDBDebugging;
-		disassemblyDisplayState = 0;
-		dylibVariantSuffix = "";
-		enableDebugStr = 1;
-		environmentEntries = (
-			{
-				active = YES;
-				name = DYLD_LIBRARY_PATH;
-				value = "$(PHYCAS_ROOT)/phycas/Conversions";
-			},
-			{
-				active = YES;
-				name = PYTHONPATH;
-				value = "$(PHYCAS_ROOT)";
-			},
-		);
-		executableSystemSymbolLevel = 0;
-		executableUserSymbolLevel = 0;
-		launchableReference = D10DDE101125D57700CC55F3 /* python */;
-		libgmallocEnabled = 0;
-		name = "Run scubed";
-		savedGlobals = {
-		};
-		showTypeColumn = 0;
-		sourceDirectories = (
-		);
-		startupPath = /Users/plewis/Documents/Projects/pdev/trunk/inprep/scubed;
-		variableFormatDictionary = {
-			$fctrl = 1;
-			$fioff = 1;
-			$fiseg = 1;
-			$fooff = 1;
-			$fop = 1;
-			$foseg = 1;
-			$fstat = 1;
-			$ftag = 1;
-			"0-std::vector<double,std::allocator<double> >-phycas::TreeLikelihood::recalcRelativeRates" = 2;
-		};
-	};
-	D10DDE101125D57700CC55F3 /* python */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = "compiled.mach-o.executable";
-		name = python;
-		path = /Users/plewis/pydbg/bin/python;
-		sourceTree = "<absolute>";
 	};
 	D110796B118C843600440CE9 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -1712,87 +1559,6 @@
 		rType = 0;
 		vrLen = 2214;
 		vrLoc = 8125;
-	};
-	D117870D1158290800DFDE81 /* Run challenge */ = {
-		isa = PBXExecutable;
-		activeArgIndices = (
-			YES,
-			YES,
-			YES,
-		);
-		argumentStrings = (
-			challenge.py,
-			1,
-			1,
-		);
-		autoAttachOnCrash = 1;
-		breakpointsEnabled = 1;
-		configStateDict = {
-			"PBXLSLaunchAction-0" = {
-				PBXLSLaunchAction = 0;
-				PBXLSLaunchStartAction = 1;
-				PBXLSLaunchStdioStyle = 2;
-				PBXLSLaunchStyle = 0;
-				class = PBXLSRunLaunchConfig;
-				commandLineArgs = (
-				);
-				displayName = "Executable Runner";
-				environment = {
-				};
-				identifier = com.apple.Xcode.launch.runConfig;
-				remoteHostInfo = "";
-				startActionInfo = "";
-			};
-		};
-		customDataFormattersEnabled = 1;
-		dataTipCustomDataFormattersEnabled = 1;
-		dataTipShowTypeColumn = 1;
-		dataTipSortType = 0;
-		debuggerPlugin = GDBDebugging;
-		disassemblyDisplayState = 0;
-		dylibVariantSuffix = "";
-		enableDebugStr = 1;
-		environmentEntries = (
-			{
-				active = YES;
-				name = DYLD_LIBRARY_PATH;
-				value = "$(PHYCAS_ROOT)/phycas/Conversions";
-			},
-			{
-				active = YES;
-				name = PYTHONPATH;
-				value = "$(PHYCAS_ROOT)";
-			},
-		);
-		executableSystemSymbolLevel = 0;
-		executableUserSymbolLevel = 0;
-		launchableReference = D117870E1158290800DFDE81 /* python */;
-		libgmallocEnabled = 0;
-		name = "Run challenge";
-		savedGlobals = {
-		};
-		showTypeColumn = 0;
-		sourceDirectories = (
-		);
-		startupPath = /Users/plewis/Documents/Projects/pdev/trunk/inprep/partition/turtles/challenge;
-		variableFormatDictionary = {
-			$fctrl = 1;
-			$fioff = 1;
-			$fiseg = 1;
-			$fooff = 1;
-			$fop = 1;
-			$foseg = 1;
-			$fstat = 1;
-			$ftag = 1;
-			"0-std::vector<double,std::allocator<double> >-phycas::TreeLikelihood::recalcRelativeRates" = 2;
-		};
-	};
-	D117870E1158290800DFDE81 /* python */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = "compiled.mach-o.executable";
-		name = python;
-		path = /Users/plewis/pydbg/bin/python;
-		sourceTree = "<absolute>";
 	};
 	D117AD911189215B0000E126 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -2203,83 +1969,6 @@
 		vrLen = 9551;
 		vrLoc = 157;
 	};
-	D164139D113E3C540031F70F /* Run turtle SAMC */ = {
-		isa = PBXExecutable;
-		activeArgIndices = (
-			YES,
-		);
-		argumentStrings = (
-			turtlesamc.py,
-		);
-		autoAttachOnCrash = 1;
-		breakpointsEnabled = 1;
-		configStateDict = {
-			"PBXLSLaunchAction-0" = {
-				PBXLSLaunchAction = 0;
-				PBXLSLaunchStartAction = 1;
-				PBXLSLaunchStdioStyle = 2;
-				PBXLSLaunchStyle = 0;
-				class = PBXLSRunLaunchConfig;
-				commandLineArgs = (
-				);
-				displayName = "Executable Runner";
-				environment = {
-				};
-				identifier = com.apple.Xcode.launch.runConfig;
-				remoteHostInfo = "";
-				startActionInfo = "";
-			};
-		};
-		customDataFormattersEnabled = 1;
-		dataTipCustomDataFormattersEnabled = 1;
-		dataTipShowTypeColumn = 1;
-		dataTipSortType = 0;
-		debuggerPlugin = GDBDebugging;
-		disassemblyDisplayState = 0;
-		dylibVariantSuffix = "";
-		enableDebugStr = 1;
-		environmentEntries = (
-			{
-				active = YES;
-				name = DYLD_LIBRARY_PATH;
-				value = "$(PHYCAS_ROOT)/phycas/Conversions";
-			},
-			{
-				active = YES;
-				name = PYTHONPATH;
-				value = "$(PHYCAS_ROOT)";
-			},
-		);
-		executableSystemSymbolLevel = 0;
-		executableUserSymbolLevel = 0;
-		launchableReference = D164139E113E3C540031F70F /* python */;
-		libgmallocEnabled = 0;
-		name = "Run turtle SAMC";
-		savedGlobals = {
-		};
-		showTypeColumn = 0;
-		sourceDirectories = (
-		);
-		startupPath = /Users/plewis/Documents/Projects/pdev/trunk/inprep/partition/turtles;
-		variableFormatDictionary = {
-			$fctrl = 1;
-			$fioff = 1;
-			$fiseg = 1;
-			$fooff = 1;
-			$fop = 1;
-			$foseg = 1;
-			$fstat = 1;
-			$ftag = 1;
-			"0-std::vector<double,std::allocator<double> >-phycas::TreeLikelihood::recalcRelativeRates" = 2;
-		};
-	};
-	D164139E113E3C540031F70F /* python */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = "compiled.mach-o.executable";
-		name = python;
-		path = /Users/plewis/pydbg/bin/python;
-		sourceTree = "<absolute>";
-	};
 	D164C4A71164EC0E00DB2E59 /* Run pinvar paradox */ = {
 		isa = PBXExecutable;
 		activeArgIndices = (
@@ -2374,87 +2063,6 @@
 		vrLen = 2776;
 		vrLoc = 13315;
 	};
-	D172BB3411414B6A001AFCD1 /* Run turtles */ = {
-		isa = PBXExecutable;
-		activeArgIndices = (
-			YES,
-			YES,
-			YES,
-		);
-		argumentStrings = (
-			turtles.py,
-			1,
-			10,
-		);
-		autoAttachOnCrash = 1;
-		breakpointsEnabled = 1;
-		configStateDict = {
-			"PBXLSLaunchAction-0" = {
-				PBXLSLaunchAction = 0;
-				PBXLSLaunchStartAction = 1;
-				PBXLSLaunchStdioStyle = 2;
-				PBXLSLaunchStyle = 0;
-				class = PBXLSRunLaunchConfig;
-				commandLineArgs = (
-				);
-				displayName = "Executable Runner";
-				environment = {
-				};
-				identifier = com.apple.Xcode.launch.runConfig;
-				remoteHostInfo = "";
-				startActionInfo = "";
-			};
-		};
-		customDataFormattersEnabled = 1;
-		dataTipCustomDataFormattersEnabled = 1;
-		dataTipShowTypeColumn = 1;
-		dataTipSortType = 0;
-		debuggerPlugin = GDBDebugging;
-		disassemblyDisplayState = 0;
-		dylibVariantSuffix = "";
-		enableDebugStr = 1;
-		environmentEntries = (
-			{
-				active = YES;
-				name = DYLD_LIBRARY_PATH;
-				value = "$(PHYCAS_ROOT)/phycas/Conversions";
-			},
-			{
-				active = YES;
-				name = PYTHONPATH;
-				value = "$(PHYCAS_ROOT)";
-			},
-		);
-		executableSystemSymbolLevel = 0;
-		executableUserSymbolLevel = 0;
-		launchableReference = D172BB3511414B6A001AFCD1 /* python */;
-		libgmallocEnabled = 0;
-		name = "Run turtles";
-		savedGlobals = {
-		};
-		showTypeColumn = 0;
-		sourceDirectories = (
-		);
-		startupPath = /Users/plewis/Documents/Projects/pdev/trunk/inprep/partition/turtles;
-		variableFormatDictionary = {
-			$fctrl = 1;
-			$fioff = 1;
-			$fiseg = 1;
-			$fooff = 1;
-			$fop = 1;
-			$foseg = 1;
-			$fstat = 1;
-			$ftag = 1;
-			"0-std::vector<double,std::allocator<double> >-phycas::TreeLikelihood::recalcRelativeRates" = 2;
-		};
-	};
-	D172BB3511414B6A001AFCD1 /* python */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = "compiled.mach-o.executable";
-		name = python;
-		path = /Users/plewis/pydbg/bin/python;
-		sourceTree = "<absolute>";
-	};
 	D17574CD10EB942400D4E2B0 /* partition.py */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1755, 1300}}";
@@ -2497,7 +2105,7 @@
 		fRef = 7A0945F410CAEFB900CEFDE0 /* mcmc_param.hpp */;
 		name = "class EdgeLenMasterParam";
 		rLen = 24;
-		rLoc = 12000;
+		rLoc = 9289;
 		rType = 0;
 		vrLen = 2989;
 		vrLoc = 10247;
@@ -2562,7 +2170,7 @@
 		fRef = D1ABDDED10D2D60000EDC77A /* MCMCManager.py */;
 		name = recordSample;
 		rLen = 12;
-		rLoc = 6125;
+		rLoc = 5893;
 		rType = 0;
 		vrLen = 1712;
 		vrLoc = 5342;
@@ -2674,16 +2282,6 @@
 		vrLen = 2758;
 		vrLoc = 7700;
 	};
-	D1AB7C70117F9B4100037911 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1ABDDF610D2D60000EDC77A /* SumP.py */;
-		name = "SumP.py: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 1582;
-		vrLoc = 0;
-	};
 	D1ABDDE310D2D60000EDC77A /* __init__.py */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1578, 811}}";
@@ -2714,16 +2312,16 @@
 	};
 	D1ABDDE810D2D60000EDC77A /* GGImpl.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 6721}}";
-			sepNavSelRange = "{11248, 4}";
-			sepNavVisRange = "{9405, 2826}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 6370}}";
+			sepNavSelRange = "{9774, 0}";
+			sepNavVisRange = "{8614, 2302}";
 		};
 	};
 	D1ABDDE910D2D60000EDC77A /* Like.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 988}}";
-			sepNavSelRange = "{2280, 0}";
-			sepNavVisRange = "{1521, 2158}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 949}}";
+			sepNavSelRange = "{2253, 0}";
+			sepNavVisRange = "{1521, 2126}";
 		};
 	};
 	D1ABDDEA10D2D60000EDC77A /* LikeImpl.py */ = {
@@ -2750,17 +2348,17 @@
 	};
 	D1ABDDED10D2D60000EDC77A /* MCMCManager.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 4498}}";
-			sepNavSelRange = "{9277, 0}";
-			sepNavVisRange = "{8282, 2340}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 4394}}";
+			sepNavSelRange = "{8996, 0}";
+			sepNavVisRange = "{7813, 2319}";
 			sepNavWindowFrame = "{{215, 119}, {1158, 979}}";
 		};
 	};
 	D1ABDDEE10D2D60000EDC77A /* Model.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {3582, 1729}}";
-			sepNavSelRange = "{6593, 4}";
-			sepNavVisRange = "{1657, 6321}";
+			sepNavIntBoundsRect = "{{0, 0}, {3582, 1313}}";
+			sepNavSelRange = "{7477, 0}";
+			sepNavVisRange = "{6562, 2567}";
 		};
 	};
 	D1ABDDEF10D2D60000EDC77A /* Partition.py */ = {
@@ -2780,8 +2378,8 @@
 	D1ABDDF310D2D60000EDC77A /* Sim.py */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {2728, 666}}";
-			sepNavSelRange = "{2452, 0}";
-			sepNavVisRange = "{0, 2673}";
+			sepNavSelRange = "{2453, 0}";
+			sepNavVisRange = "{0, 2603}";
 		};
 	};
 	D1ABDDF410D2D60000EDC77A /* SimImpl.py */ = {
@@ -2821,9 +2419,9 @@
 	};
 	D1ABDDFB10D2D60000EDC77A /* UnimapImpl.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 2743}}";
-			sepNavSelRange = "{7943, 4}";
-			sepNavVisRange = "{7680, 2718}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 2730}}";
+			sepNavSelRange = "{7862, 0}";
+			sepNavVisRange = "{7680, 2657}";
 		};
 	};
 	D1ABDDFC10D2D64800EDC77A /* __init__.py */ = {
@@ -2977,16 +2575,16 @@
 	};
 	D1BB2656111094A6002A8F79 /* LikelihoodCore.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 3107}}";
-			sepNavSelRange = "{6196, 4}";
-			sepNavVisRange = "{4140, 2458}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 3055}}";
+			sepNavSelRange = "{5811, 0}";
+			sepNavVisRange = "{3783, 2476}";
 		};
 	};
 	D1BB2657111094A6002A8F79 /* MarkovChain.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 7514}}";
-			sepNavSelRange = "{22566, 4}";
-			sepNavVisRange = "{21915, 2340}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 7098}}";
+			sepNavSelRange = "{22332, 0}";
+			sepNavVisRange = "{21863, 2245}";
 			sepNavWindowFrame = "{{827, 376}, {1257, 1041}}";
 		};
 	};
@@ -2995,7 +2593,7 @@
 		fRef = D1BB2657111094A6002A8F79 /* MarkovChain.py */;
 		name = partition.fix_subset_relrates;
 		rLen = 29;
-		rLoc = 15970;
+		rLoc = 15783;
 		rType = 0;
 		vrLen = 3613;
 		vrLoc = 13157;
@@ -3110,86 +2708,6 @@
 			sepNavSelRange = "{29, 0}";
 			sepNavVisRange = "{0, 2213}";
 		};
-	};
-	D1D664EC112073C900BA8E47 /* Run Daniel */ = {
-		isa = PBXExecutable;
-		activeArgIndices = (
-			NO,
-			YES,
-		);
-		argumentStrings = (
-			partition.py,
-			simple.py,
-		);
-		autoAttachOnCrash = 1;
-		breakpointsEnabled = 1;
-		configStateDict = {
-			"PBXLSLaunchAction-0" = {
-				PBXLSLaunchAction = 0;
-				PBXLSLaunchStartAction = 1;
-				PBXLSLaunchStdioStyle = 2;
-				PBXLSLaunchStyle = 0;
-				class = PBXLSRunLaunchConfig;
-				commandLineArgs = (
-				);
-				displayName = "Executable Runner";
-				environment = {
-				};
-				identifier = com.apple.Xcode.launch.runConfig;
-				remoteHostInfo = "";
-				startActionInfo = "";
-			};
-		};
-		customDataFormattersEnabled = 1;
-		dataTipCustomDataFormattersEnabled = 1;
-		dataTipShowTypeColumn = 1;
-		dataTipSortType = 0;
-		debuggerPlugin = GDBDebugging;
-		disassemblyDisplayState = 0;
-		dylibVariantSuffix = "";
-		enableDebugStr = 1;
-		environmentEntries = (
-			{
-				active = YES;
-				name = DYLD_LIBRARY_PATH;
-				value = "$(PHYCAS_ROOT)/phycas/Conversions";
-			},
-			{
-				active = YES;
-				name = PYTHONPATH;
-				value = "$(PHYCAS_ROOT)";
-			},
-		);
-		executableSystemSymbolLevel = 0;
-		executableUserSymbolLevel = 0;
-		launchableReference = D1D664ED112073C900BA8E47 /* python */;
-		libgmallocEnabled = 0;
-		name = "Run Daniel";
-		savedGlobals = {
-		};
-		showTypeColumn = 0;
-		sourceDirectories = (
-		);
-		startupPath = /Users/plewis/Documents/Projects/pdev/trunk/inprep/partition/danielsims;
-		variableFormatDictionary = {
-			$fctrl = 1;
-			$fioff = 1;
-			$fiseg = 1;
-			$fooff = 1;
-			$fop = 1;
-			$foseg = 1;
-			$fstat = 1;
-			$ftag = 1;
-			$mxcsr = 1;
-			"0-std::vector<double,std::allocator<double> >-phycas::TreeLikelihood::recalcRelativeRates" = 2;
-		};
-	};
-	D1D664ED112073C900BA8E47 /* python */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = "compiled.mach-o.executable";
-		name = python;
-		path = /Users/plewis/pydbg/bin/python;
-		sourceTree = "<absolute>";
 	};
 	D1DC338810ECFED800AC60EC /* Run Simulator Test */ = {
 		isa = PBXExecutable;
@@ -3312,169 +2830,11 @@
 		vrLen = 1728;
 		vrLoc = 9620;
 	};
-	D1EC25C01123072E0017DDA8 /* Run Hummingbirds */ = {
-		isa = PBXExecutable;
-		activeArgIndices = (
-			YES,
-		);
-		argumentStrings = (
-			hummingbirds.py,
-		);
-		autoAttachOnCrash = 1;
-		breakpointsEnabled = 1;
-		configStateDict = {
-			"PBXLSLaunchAction-0" = {
-				PBXLSLaunchAction = 0;
-				PBXLSLaunchStartAction = 1;
-				PBXLSLaunchStdioStyle = 2;
-				PBXLSLaunchStyle = 0;
-				class = PBXLSRunLaunchConfig;
-				commandLineArgs = (
-				);
-				displayName = "Executable Runner";
-				environment = {
-				};
-				identifier = com.apple.Xcode.launch.runConfig;
-				remoteHostInfo = "";
-				startActionInfo = "";
-			};
-		};
-		customDataFormattersEnabled = 1;
-		dataTipCustomDataFormattersEnabled = 1;
-		dataTipShowTypeColumn = 1;
-		dataTipSortType = 0;
-		debuggerPlugin = GDBDebugging;
-		disassemblyDisplayState = 0;
-		dylibVariantSuffix = "";
-		enableDebugStr = 1;
-		environmentEntries = (
-			{
-				active = YES;
-				name = DYLD_LIBRARY_PATH;
-				value = "$(PHYCAS_ROOT)/phycas/Conversions";
-			},
-			{
-				active = YES;
-				name = PYTHONPATH;
-				value = "$(PHYCAS_ROOT)";
-			},
-		);
-		executableSystemSymbolLevel = 0;
-		executableUserSymbolLevel = 0;
-		launchableReference = D1EC25C11123072E0017DDA8 /* python */;
-		libgmallocEnabled = 0;
-		name = "Run Hummingbirds";
-		savedGlobals = {
-		};
-		showTypeColumn = 0;
-		sourceDirectories = (
-		);
-		startupPath = /Users/plewis/Documents/Projects/pdev/trunk/inprep/partition/hummingbirds;
-		variableFormatDictionary = {
-			$fctrl = 1;
-			$fioff = 1;
-			$fiseg = 1;
-			$fooff = 1;
-			$fop = 1;
-			$foseg = 1;
-			$fstat = 1;
-			$ftag = 1;
-			"0-std::vector<double,std::allocator<double> >-phycas::TreeLikelihood::recalcRelativeRates" = 2;
-		};
-	};
-	D1EC25C11123072E0017DDA8 /* python */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = "compiled.mach-o.executable";
-		name = python;
-		path = /Users/plewis/pydbg/bin/python;
-		sourceTree = "<absolute>";
-	};
-	D1F206F4115A9FDC00E37D14 /* Run cicadas */ = {
-		isa = PBXExecutable;
-		activeArgIndices = (
-			YES,
-			YES,
-			YES,
-		);
-		argumentStrings = (
-			test.py,
-			1,
-			3,
-		);
-		autoAttachOnCrash = 1;
-		breakpointsEnabled = 1;
-		configStateDict = {
-			"PBXLSLaunchAction-0" = {
-				PBXLSLaunchAction = 0;
-				PBXLSLaunchStartAction = 1;
-				PBXLSLaunchStdioStyle = 2;
-				PBXLSLaunchStyle = 0;
-				class = PBXLSRunLaunchConfig;
-				commandLineArgs = (
-				);
-				displayName = "Executable Runner";
-				environment = {
-				};
-				identifier = com.apple.Xcode.launch.runConfig;
-				remoteHostInfo = "";
-				startActionInfo = "";
-			};
-		};
-		customDataFormattersEnabled = 1;
-		dataTipCustomDataFormattersEnabled = 1;
-		dataTipShowTypeColumn = 1;
-		dataTipSortType = 0;
-		debuggerPlugin = GDBDebugging;
-		disassemblyDisplayState = 0;
-		dylibVariantSuffix = "";
-		enableDebugStr = 1;
-		environmentEntries = (
-			{
-				active = YES;
-				name = DYLD_LIBRARY_PATH;
-				value = "$(PHYCAS_ROOT)/phycas/Conversions";
-			},
-			{
-				active = YES;
-				name = PYTHONPATH;
-				value = "$(PHYCAS_ROOT)";
-			},
-		);
-		executableSystemSymbolLevel = 0;
-		executableUserSymbolLevel = 0;
-		launchableReference = D1F206F5115A9FDC00E37D14 /* python */;
-		libgmallocEnabled = 0;
-		name = "Run cicadas";
-		savedGlobals = {
-		};
-		showTypeColumn = 0;
-		sourceDirectories = (
-		);
-		startupPath = /Users/plewis/Documents/Projects/pdev/trunk/inprep/partition/cicadas/;
-		variableFormatDictionary = {
-			$fctrl = 1;
-			$fioff = 1;
-			$fiseg = 1;
-			$fooff = 1;
-			$fop = 1;
-			$foseg = 1;
-			$fstat = 1;
-			$ftag = 1;
-			"0-std::vector<double,std::allocator<double> >-phycas::TreeLikelihood::recalcRelativeRates" = 2;
-		};
-	};
-	D1F206F5115A9FDC00E37D14 /* python */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = "compiled.mach-o.executable";
-		name = python;
-		path = /Users/plewis/pydbg/bin/python;
-		sourceTree = "<absolute>";
-	};
 	D1F281C3111B422C00FDE78C /* GTRTest.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 666}}";
-			sepNavSelRange = "{331, 0}";
-			sepNavVisRange = "{0, 1172}";
+			sepNavIntBoundsRect = "{{0, 0}, {1890, 1003}}";
+			sepNavSelRange = "{316, 0}";
+			sepNavVisRange = "{0, 1125}";
 		};
 	};
 	D1F7C57E11440C0800226585 /* PBXTextBookmark */ = {
@@ -3548,83 +2908,6 @@
 		rType = 0;
 		vrLen = 2506;
 		vrLoc = 8468;
-	};
-	D1FBFB7A114C216200E95532 /* Run greensamc */ = {
-		isa = PBXExecutable;
-		activeArgIndices = (
-			YES,
-		);
-		argumentStrings = (
-			greensamc.py,
-		);
-		autoAttachOnCrash = 1;
-		breakpointsEnabled = 1;
-		configStateDict = {
-			"PBXLSLaunchAction-0" = {
-				PBXLSLaunchAction = 0;
-				PBXLSLaunchStartAction = 1;
-				PBXLSLaunchStdioStyle = 2;
-				PBXLSLaunchStyle = 0;
-				class = PBXLSRunLaunchConfig;
-				commandLineArgs = (
-				);
-				displayName = "Executable Runner";
-				environment = {
-				};
-				identifier = com.apple.Xcode.launch.runConfig;
-				remoteHostInfo = "";
-				startActionInfo = "";
-			};
-		};
-		customDataFormattersEnabled = 1;
-		dataTipCustomDataFormattersEnabled = 1;
-		dataTipShowTypeColumn = 1;
-		dataTipSortType = 0;
-		debuggerPlugin = GDBDebugging;
-		disassemblyDisplayState = 0;
-		dylibVariantSuffix = "";
-		enableDebugStr = 1;
-		environmentEntries = (
-			{
-				active = YES;
-				name = DYLD_LIBRARY_PATH;
-				value = "$(PHYCAS_ROOT)/phycas/Conversions";
-			},
-			{
-				active = YES;
-				name = PYTHONPATH;
-				value = "$(PHYCAS_ROOT)";
-			},
-		);
-		executableSystemSymbolLevel = 0;
-		executableUserSymbolLevel = 0;
-		launchableReference = D1FBFB7B114C216200E95532 /* python */;
-		libgmallocEnabled = 0;
-		name = "Run greensamc";
-		savedGlobals = {
-		};
-		showTypeColumn = 0;
-		sourceDirectories = (
-		);
-		startupPath = /Users/plewis/Documents/Projects/pdev/trunk/inprep/GreenPlants;
-		variableFormatDictionary = {
-			$fctrl = 1;
-			$fioff = 1;
-			$fiseg = 1;
-			$fooff = 1;
-			$fop = 1;
-			$foseg = 1;
-			$fstat = 1;
-			$ftag = 1;
-			"0-std::vector<double,std::allocator<double> >-phycas::TreeLikelihood::recalcRelativeRates" = 2;
-		};
-	};
-	D1FBFB7B114C216200E95532 /* python */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = "compiled.mach-o.executable";
-		name = python;
-		path = /Users/plewis/pydbg/bin/python;
-		sourceTree = "<absolute>";
 	};
 	D1FCD082114700A5002828B8 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;

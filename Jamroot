@@ -185,8 +185,6 @@ alias likelihood_sources
     phycas/src/thirdparty/dcdflib/src/dcdflib.c
     phycas/src/edgelen_master_param.cpp
     phycas/src/edge_move.cpp 
-    #phycas/src/flex_prob_param.cpp
-    #phycas/src/flex_rate_param.cpp 
     phycas/src/gtr_model.cpp 
     phycas/src/gtr_rate_param.cpp 
     phycas/src/hky_model.cpp 
@@ -204,9 +202,7 @@ alias likelihood_sources
     phycas/src/model_pymod.cpp
     phycas/src/mcmc_chain_manager.cpp 
     phycas/src/mcmc_param.cpp 
-    #phycas/src/mcmc_flexcat_param.cpp 
     phycas/src/mcmc_updater.cpp 
-    phycas/src/ncat_move.cpp 
     phycas/src/mapping_move.cpp 
     phycas/src/omega_param.cpp 
     phycas/src/phycas_string.cpp 

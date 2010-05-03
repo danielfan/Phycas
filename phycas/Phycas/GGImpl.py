@@ -69,11 +69,6 @@ class GelfandGhosh(object):
         self.is_invariable_sites_model = False
         self.is_discrete_gamma_model = False
 		
-		# FLEXCAT_MODEL
-        #self.is_flex_model = False
-        #self.ncat_index = 0
-        #self.first_flexrate_index = 0
-		
         self.num_edgelen_hyperparams = 0
         self.taxon_labels = []
 
@@ -129,10 +124,6 @@ class GelfandGhosh(object):
         pinvar_str = self.is_invariable_sites_model and '+I' or ''
         dgamma_str = self.is_discrete_gamma_model and '+G' or ''
 		
-		# FLEXCAT_MODEL
-        #flex_str = self.is_flex_model and '+FLEX' or ''
-        #model_str = '%s%s%s%s' % (self.model_type, pinvar_str, dgamma_str, flex_str)
-
         model_str = '%s%s%s' % (self.model_type, pinvar_str, dgamma_str)
         self.phycas.output('  Information about the substitution model:')
         self.phycas.output('    model name:  %s' % model_str)
@@ -167,12 +158,6 @@ class GelfandGhosh(object):
         self.is_invariable_sites_model = ('pinvar' in headers)
         self.is_discrete_gamma_model = ('shape' in headers)
 		
-		# FLEXCAT_MODEL
-        #if 'rates_probs' in headers:
-        #    self.is_flex_model = True
-        #    self.ncat_index = headers.index('ncat')
-        #    self.first_flexrate_index = headers.index('rates_probs')
-		
         if 'hyper(all)' in headers:
             self.num_edgelen_hyperparams = 1
         elif 'hyper(external)' in headers:
@@ -202,11 +187,6 @@ class GelfandGhosh(object):
         # HKY+gamma:
         #   Gen          LnL     TL    kappa    freqA    freqC    freqG    freqT    shape hyper(all)
         #   20000  -5258.755  0.541  4.41408  0.20816  0.29738  0.27837  0.21609  0.16325    0.21676
-		# FLEXCAT_MODEL
-        # HKY+FLEX model: 
-        #   Gen          LnL     TL    kappa    freqA    freqC    freqG    freqT  ncat  hyper(all)  rates_probs
-        #   19980  -5259.917  0.570  3.97815  0.21272  0.30260  0.29701  0.18767     2     0.14564  0.14355  3.46689  0.74229  0.25771
-        #   20000  -5260.538  0.573  5.39023  0.21662  0.29483  0.28883  0.19972     3     0.21985  0.07716  3.73220  3.75277  0.74855  0.06705  0.18440
         parameters = self.params[i+2].split()
         cycle = int(parameters[0])
         if self.model_type == 'HKY':
@@ -221,19 +201,6 @@ class GelfandGhosh(object):
             print 'GTR model forthcoming'
             sys.exit()
         #@POL need to handle codon model
-		# FLEXCAT_MODEL
-        #if self.is_flex_model:
-        #    self.model.setFlexModel()
-        #    self.num_rates = int(parameters[self.ncat_index])
-        #    self.model.setNGammaRates(self.num_rates)
-        #    for rindex in range(self.num_rates):
-        #        rate = float(parameters[self.first_flexrate_index + rindex])
-        #        self.model.setFlexRateUnnorm(rindex, rate)
-        #        prob = float(parameters[self.first_flexrate_index + self.num_rates + rindex])
-        #        self.model.setFlexProbUnnorm(rindex, prob)
-        #        #print 'rate =', rate,', prob =', prob
-        #    #raw_input('GGImpl.py stopped in parameterizeModelForSimulation')
-        #elif 
 		if self.is_invariable_sites_model and self.is_discrete_gamma_model:
             self.model.setPinvar(float(parameters[8]))
             self.model.setShape(float(parameters[9]))

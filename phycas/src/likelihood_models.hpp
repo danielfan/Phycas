@@ -103,25 +103,6 @@ class Model	{
 		void							fixStateFreqs();
 		void							freeStateFreqs();
 		
-#if defined(FLEXCAT_MODEL)		
-		// Member functions related to the flexcat model
-        void							setFlexRateUpperBound(double new_upper_bound);
-		void							setNumFlexSpacers(unsigned s);
-		void							setFlexModel();
-		void							setNotFlexModel();
-		void							fixFlexProbs();
-		void							freeFlexProbs();
-		void							fixFlexRates();
-		void							freeFlexRates();
-		void							setFLEXProbParamPrior(ProbDistShPtr d);
-		ProbDistShPtr					getFLEXProbParamPrior();
-		virtual void					setFlexRateUnnorm(unsigned param_index, double value);
-		virtual void					setFlexProbUnnorm(unsigned param_index, double value);
-		double                          getFlexRateUnnorm(unsigned param_index);
-		double					        getFlexProbUnnorm(unsigned param_index);
-		void							normalizeRatesAndProbs(std::vector<double> & rates, std::vector<double> & probs) const;
-#endif
-		
 		// Member functions related to proportion of invariable sites
         bool							isPinvarModel();
         void							setPinvarModel();
@@ -157,9 +138,6 @@ class Model	{
 		void							setInternalEdgeLenPrior(ProbDistShPtr d);
 		ProbDistShPtr					getEdgeLenHyperPrior();
 		//ProbDistShPtr					getEdgeLenPrior();
-#if defined(FLEXCAT_MODEL)		
-		bool							isFlexModel();
-#endif
 		bool							hasEdgeLenHyperPrior();
 		void							setInternalEdgelenHyperparam(double mu) {internal_edgelen_hyperparam = mu;}
 		double							getInternalEdgelenHyperparam() {return internal_edgelen_hyperparam;}
@@ -211,16 +189,6 @@ protected:
     mutable MCMCUpdaterVect			edgelen_params;				/**< Vector of shared pointers to the edge length parameters (need to retain pointers to these so that their fixed/free status can be changed) */
 	bool							edge_lengths_fixed;			/**< If true, the value of the edge lengths will not change during MCMC updates */
 	bool							edgelen_hyperprior_fixed;	/**< If true, the value of the edge length hyperprior will not change during MCMC updates */
-#if defined(FLEXCAT_MODEL)		
-	mutable double					flex_upper_rate_bound;		/**< Largest possible unnormalized relative rate parameter value (lower bound is always 0.0) */
-	mutable unsigned				num_flex_spacers;			/**< The number of spacers between rates in the FLEX model rate prior. Spacers act like repelling magnets, keeping adjacent rates from getting too close together. Adding more spacers between each pair of adjacent rates increases the repulsive force. Changing the number of spacers is the only modification allowed to the FLEX model rate prior. */
-	bool							flex_probs_fixed;			/**< If true, the values in `flex_prob_params' will not change during MCMC updates */
-	bool							flex_rates_fixed;			/**< If true, the values in `flex_rate_params' will not change during MCMC updates */
-	mutable MCMCUpdaterVect			flex_rate_params;			/**< Vector of shared pointers to the relative rate parameters used in the FLEX model (need to retain pointers to these so that the fixed/free status can be changed) */	
-	mutable MCMCUpdaterVect			flex_prob_params;			/**< Vector of shared pointers to the rate probability parameters used in the FLEX model (need to retain pointers to these so that the fixed/free status can be changed) */	
-	ProbDistShPtr					flex_prob_param_prior;		/**< The prior distribution governing all `num_gamma_rate' FLEX probability parameters */
-	ProbDistShPtr					flex_rate_param_prior;		/**< The prior distribution governing all `num_gamma_rate' FLEX rate parameters */
-#endif
 	bool							pinvar_fixed;				/**< If true, the value of pinvar will not change during MCMC updates */
 	mutable MCMCUpdaterShPtr		pinvar_param;				/**< Shared pointer to the proportion of invariable sites parameter (need to retain a pointer so that the fixed/free status can be changed) */
 	ProbDistShPtr					pinvar_prior;				/**< The prior distribution governing the proportion of invariable sites parameter */
@@ -240,9 +208,6 @@ protected:
 	mutable std::vector<double>		gamma_rate_probs;			/**< A vector of probabilities that a site falls in any given rate category (length is `num_gamma_rates') */
 	double							gamma_shape;				/**< Used for discrete gamma rate heterogeneity */
 	double							pinvar;						/**< The proportion of invariable sites. If non-zero, the model becomes an invariable-sites ("I") model. */
-#if defined(FLEXCAT_MODEL)		
-	bool							is_flex_model;				/**< If true, the FLEX model of rate heterogeneity will be used instead of the discrete gamma model */
-#endif
 	bool							is_codon_model;				/**< If true, nucleotide states will be interpreted as triplets when creating TipData structures for tree */
 	bool							is_pinvar_model;			/**< If true, a parameter for pinvar will be added to MCMC analysis (pinvar_fixed determines whether it is updated or not) */
 	
