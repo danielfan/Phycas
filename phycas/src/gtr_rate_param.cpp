@@ -54,15 +54,6 @@ bool GTRRateParam::update()
     
 	ChainManagerShPtr p = chain_mgr.lock();
 	
-#if defined(SAMC_TWO)
-	if (p->doingSAMC())
-		{
-		double logf = slice_sampler->GetLastSampledYValue();
-		unsigned i = p->getSAMCEnergyLevel(logf);
-		p->updateSAMCWeights(i);
-		}
-#endif
-	
     if (save_debug_info)
         {
         debug_info = str(boost::format("GTRRateParam %f") % (slice_sampler->GetLastSampledXValue()));

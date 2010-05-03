@@ -224,19 +224,8 @@ double EdgeLenMasterParam::recalcWorkingPrior() const
 */
 double EdgeLenMasterParam::recalcPrior()
 	{
-	curr_ln_prior = 0.0;
-	
-#if defined(SAMC_TWO)
-	if (!chain_mgr.lock()->getSAMCLikelihoodOnly())
-		{
-	    curr_ln_prior = std::accumulate(tree->begin(), tree->end(), 0.0,
-		    boost::lambda::_1 += boost::lambda::bind(&EdgeLenMasterParam::lnPriorOneEdge, this, boost::lambda::_2));
-		}
-#else
 	curr_ln_prior = std::accumulate(tree->begin(), tree->end(), 0.0,
 		boost::lambda::_1 += boost::lambda::bind(&EdgeLenMasterParam::lnPriorOneEdge, this, boost::lambda::_2));
-#endif
-
 	return curr_ln_prior;
 	}
 

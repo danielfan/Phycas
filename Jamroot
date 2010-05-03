@@ -214,7 +214,6 @@ alias likelihood_sources
     phycas/src/probability_distribution.cpp 
     phycas/src/relative_rate_distribution.cpp 
     phycas/src/q_matrix.cpp
-    phycas/src/samc_move.cpp 
     phycas/src/sim_data.cpp 
     phycas/src/slice_sampler.cpp
     phycas/src/split.cpp 

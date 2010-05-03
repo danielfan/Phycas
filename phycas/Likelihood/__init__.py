@@ -10,9 +10,6 @@ from _SimData import *
 from _TopoPriorCalculator import *
 from _QMatrix import *
 
-# SAMC_ONE
-#from _SamcMove import *
-
 #print 'importing Likelihood...'
 
 def testExamples(verbose = False):

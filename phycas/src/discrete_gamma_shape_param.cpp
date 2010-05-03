@@ -61,15 +61,6 @@ bool DiscreteGammaShapeParam::update()
     
 	ChainManagerShPtr p = chain_mgr.lock();
 	
-#if defined(SAMC_TWO)
-	if (p->doingSAMC())
-		{
-		double logf = slice_sampler->GetLastSampledYValue();
-		unsigned i = p->getSAMCEnergyLevel(logf);
-		p->updateSAMCWeights(i);
-		}
-#endif
-	
     if (save_debug_info)
         {
         debug_info = str(boost::format("DiscreteGammaShapeParam %f") % (slice_sampler->GetLastSampledXValue()));
@@ -120,29 +111,6 @@ double DiscreteGammaShapeParam::operator()(
 		PHYCAS_ASSERT(p);
 		p->setLastLnLike(curr_ln_like);
 
-#if defined(SAMC_TWO)
-		if (p->doingSAMC())
-			{
-			double log_posterior = curr_ln_like + curr_ln_prior;
-			unsigned i = p->getSAMCEnergyLevel(log_posterior);
-			double curr_theta = p->getSAMCWeight(i);
-			return (log_posterior - curr_theta);
-			}
-		else 
-			{
-			if (is_standard_heating)
-				if (use_working_prior)
-					{
-					PHYCAS_ASSERT(working_prior);
-					double curr_ln_working_prior = working_prior->GetLnPDF(a);
-					return heating_power*(curr_ln_like + curr_ln_prior) + (1.0 - heating_power)*curr_ln_working_prior;
-					}
-				else 
-					return heating_power*(curr_ln_like + curr_ln_prior);
-			else
-				return heating_power*curr_ln_like + curr_ln_prior;
-			}
-#else	//not SAMC_TWO
 		if (is_standard_heating)
 			if (use_working_prior)
 				{
@@ -154,7 +122,6 @@ double DiscreteGammaShapeParam::operator()(
 				return heating_power*(curr_ln_like + curr_ln_prior);
 		else
 			return heating_power*curr_ln_like + curr_ln_prior;
-#endif	//SAMC_TWO
 		}
     else
         return ln_zero;

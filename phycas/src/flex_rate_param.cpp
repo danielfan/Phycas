@@ -122,9 +122,6 @@ double FlexRateParam::recalcWorkingPrior() const
 */
 double FlexRateParam::recalcPrior()
 	{
-#if defined(SAMC_TWO)
-	PHYCAS_ASSERT(!chain_mgr.lock()->getSAMCLikelihoodOnly());
-#endif
 	refreshLeftRightValues();
     double curr_value = flex_rates[which];
 	curr_ln_prior = (double)nspacers*(std::log(curr_value - left_value) + std::log(right_value - curr_value));

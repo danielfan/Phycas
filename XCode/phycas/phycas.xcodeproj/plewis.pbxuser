@@ -11,7 +11,7 @@
 			D129559911679C8500C37FFB /* relative_rate_distribution.cpp:262 */,
 			D1B793CC1168FF5E007A03AF /* relative_rate_distribution.cpp:216 */,
 			D1B793F611690430007A03AF /* probability_distribution.cpp:2034 */,
-			D1B793FA116907C6007A03AF /* mcmc_updater.cpp:874 */,
+			D1B793FA116907C6007A03AF /* mcmc_updater.cpp:850 */,
 		);
 		codeSenseManager = D13CAB7710D1D30500813B89 /* Code sense */;
 		executables = (
@@ -210,27 +210,26 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 294591085;
-			PBXWorkspaceStateSaveDate = 294591085;
+			PBXPerProjectTemplateStateSaveDate = 294593227;
+			PBXWorkspaceStateSaveDate = 294593227;
 		};
 		perUserProjectItems = {
 			D105634C118A309B0075DC51 /* PBXTextBookmark */ = D105634C118A309B0075DC51 /* PBXTextBookmark */;
 			D1060CE3118F1993004BE274 /* PBXTextBookmark */ = D1060CE3118F1993004BE274 /* PBXTextBookmark */;
 			D1060CF7118F1AC3004BE274 /* PBXTextBookmark */ = D1060CF7118F1AC3004BE274 /* PBXTextBookmark */;
 			D1060CFD118F1C4D004BE274 /* PBXTextBookmark */ = D1060CFD118F1C4D004BE274 /* PBXTextBookmark */;
-			D1060D05118F1CF6004BE274 /* PBXTextBookmark */ = D1060D05118F1CF6004BE274 /* PBXTextBookmark */;
 			D1060D08118F1D3A004BE274 /* PBXTextBookmark */ = D1060D08118F1D3A004BE274 /* PBXTextBookmark */;
-			D1060D09118F1D3A004BE274 /* PBXTextBookmark */ = D1060D09118F1D3A004BE274 /* PBXTextBookmark */;
-			D1060D0C118F1DCE004BE274 /* PBXTextBookmark */ = D1060D0C118F1DCE004BE274 /* PBXTextBookmark */;
+			D1060D42118F229B004BE274 /* PBXTextBookmark */ = D1060D42118F229B004BE274 /* PBXTextBookmark */;
+			D1060D56118F2341004BE274 /* PBXTextBookmark */ = D1060D56118F2341004BE274 /* PBXTextBookmark */;
+			D1060D57118F2341004BE274 /* PBXTextBookmark */ = D1060D57118F2341004BE274 /* PBXTextBookmark */;
+			D1060D58118F2341004BE274 /* PBXTextBookmark */ = D1060D58118F2341004BE274 /* PBXTextBookmark */;
 			D110796B118C843600440CE9 /* PBXTextBookmark */ = D110796B118C843600440CE9 /* PBXTextBookmark */;
 			D110797B118C85F200440CE9 /* PBXTextBookmark */ = D110797B118C85F200440CE9 /* PBXTextBookmark */;
 			D110797C118C85F200440CE9 /* PBXTextBookmark */ = D110797C118C85F200440CE9 /* PBXTextBookmark */;
 			D117AD911189215B0000E126 /* PBXTextBookmark */ = D117AD911189215B0000E126 /* PBXTextBookmark */;
 			D117ADAB118922C40000E126 /* PBXTextBookmark */ = D117ADAB118922C40000E126 /* PBXTextBookmark */;
-			D15B6F7C11811AD500651A2D /* PBXTextBookmark */ = D15B6F7C11811AD500651A2D /* PBXTextBookmark */;
 			D15B6F7D11811AD500651A2D /* PBXTextBookmark */ = D15B6F7D11811AD500651A2D /* PBXTextBookmark */;
 			D17E0E9711808D4D004475B7 /* PBXTextBookmark */ = D17E0E9711808D4D004475B7 /* PBXTextBookmark */;
-			D1AB7C6B117F989F00037911 /* PBXTextBookmark */ = D1AB7C6B117F989F00037911 /* PBXTextBookmark */;
 			D1AB7C6F117F9B4100037911 /* PBXTextBookmark */ = D1AB7C6F117F9B4100037911 /* PBXTextBookmark */;
 			D1AB7C70117F9B4100037911 /* PBXTextBookmark */ = D1AB7C70117F9B4100037911 /* PBXTextBookmark */;
 			D1EA4320118E4AD90023B0A0 /* PBXTextBookmark */ = D1EA4320118E4AD90023B0A0 /* PBXTextBookmark */;
@@ -293,16 +292,16 @@
 	};
 	7A0945B910CAEFB900CEFDE0 /* basic_tree.hpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 2821}}";
-			sepNavSelRange = "{2985, 22}";
-			sepNavVisRange = "{1952, 1675}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 2951}}";
+			sepNavSelRange = "{2985, 0}";
+			sepNavVisRange = "{1952, 1713}";
 		};
 	};
 	7A0945BC10CAEFB900CEFDE0 /* bush_move.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 9542}}";
-			sepNavSelRange = "{2781, 22}";
-			sepNavVisRange = "{2410, 1771}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 9477}}";
+			sepNavSelRange = "{2781, 0}";
+			sepNavVisRange = "{2410, 1774}";
 		};
 	};
 	7A0945BD10CAEFB900CEFDE0 /* bush_move.hpp */ = {
@@ -385,9 +384,9 @@
 	};
 	7A0945CA10CAEFB900CEFDE0 /* dirichlet_move.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {2756, 14183}}";
-			sepNavSelRange = "{45285, 4}";
-			sepNavVisRange = "{42754, 2580}";
+			sepNavIntBoundsRect = "{{0, 0}, {2756, 13065}}";
+			sepNavSelRange = "{40845, 0}";
+			sepNavVisRange = "{38279, 2602}";
 			sepNavWindowFrame = "{{663, 107}, {1257, 1041}}";
 		};
 	};
@@ -408,9 +407,9 @@
 	};
 	7A0945CD10CAEFB900CEFDE0 /* discrete_gamma_shape_param.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 2639}}";
-			sepNavSelRange = "{5338, 4}";
-			sepNavVisRange = "{4680, 1732}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 2041}}";
+			sepNavSelRange = "{5356, 0}";
+			sepNavVisRange = "{4539, 2061}";
 			sepNavWindowFrame = "{{311, 75}, {1648, 1098}}";
 		};
 	};
@@ -446,9 +445,9 @@
 	};
 	7A0945D410CAEFB900CEFDE0 /* edgelen_master_param.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 5304}}";
-			sepNavSelRange = "{8853, 22}";
-			sepNavVisRange = "{7766, 2168}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 5200}}";
+			sepNavSelRange = "{9002, 0}";
+			sepNavVisRange = "{7820, 2376}";
 			sepNavWindowFrame = "{{248, 398}, {1143, 1067}}";
 		};
 	};
@@ -461,9 +460,9 @@
 	};
 	7A0945D610CAEFB900CEFDE0 /* flex_rate_param.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 2470}}";
-			sepNavSelRange = "{6482, 0}";
-			sepNavVisRange = "{4872, 2217}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 2431}}";
+			sepNavSelRange = "{5959, 0}";
+			sepNavVisRange = "{4872, 2158}";
 		};
 	};
 	7A0945D710CAEFB900CEFDE0 /* gtr_model.cpp */ = {
@@ -483,9 +482,9 @@
 	};
 	7A0945D910CAEFB900CEFDE0 /* gtr_rate_param.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 1248}}";
-			sepNavSelRange = "{2982, 4}";
-			sepNavVisRange = "{1911, 1728}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 1157}}";
+			sepNavSelRange = "{2825, 0}";
+			sepNavVisRange = "{1914, 2073}";
 		};
 	};
 	7A0945DA10CAEFB900CEFDE0 /* hky_model.cpp */ = {
@@ -497,9 +496,9 @@
 	};
 	7A0945DB10CAEFB900CEFDE0 /* hyperprior_param.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 1716}}";
-			sepNavSelRange = "{4258, 4}";
-			sepNavVisRange = "{2937, 1621}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 1586}}";
+			sepNavSelRange = "{4101, 0}";
+			sepNavVisRange = "{3615, 1811}";
 			sepNavWindowFrame = "{{802, 346}, {1257, 1041}}";
 		};
 	};
@@ -526,24 +525,24 @@
 	};
 	7A0945DF10CAEFB900CEFDE0 /* kappa_param.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 2808}}";
-			sepNavSelRange = "{6256, 4}";
-			sepNavVisRange = "{6013, 1726}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 2392}}";
+			sepNavSelRange = "{6274, 0}";
+			sepNavVisRange = "{5601, 1886}";
 		};
 	};
 	7A0945E010CAEFB900CEFDE0 /* larget_simon_move.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 12675}}";
-			sepNavSelRange = "{11028, 4}";
-			sepNavVisRange = "{9742, 1791}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 12129}}";
+			sepNavSelRange = "{9675, 0}";
+			sepNavVisRange = "{9111, 1698}";
 			sepNavWindowFrame = "{{2560, 295}, {1648, 1050}}";
 		};
 	};
 	7A0945E310CAEFB900CEFDE0 /* likelihood_loops.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1890, 15470}}";
-			sepNavSelRange = "{54827, 0}";
-			sepNavVisRange = "{51439, 4048}";
+			sepNavIntBoundsRect = "{{0, 0}, {1890, 15873}}";
+			sepNavSelRange = "{51928, 0}";
+			sepNavVisRange = "{51410, 4178}";
 			sepNavWindowFrame = "{{1078, 304}, {1257, 1041}}";
 		};
 	};
@@ -571,9 +570,9 @@
 	};
 	7A0945E710CAEFB900CEFDE0 /* likelihood_pymod.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 3679}}";
-			sepNavSelRange = "{6773, 4}";
-			sepNavVisRange = "{4536, 3229}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 3263}}";
+			sepNavSelRange = "{5805, 0}";
+			sepNavVisRange = "{5029, 3504}";
 			sepNavWindowFrame = "{{101, 511}, {1257, 1041}}";
 		};
 	};
@@ -593,17 +592,17 @@
 	};
 	7A0945ED10CAEFB900CEFDE0 /* mcmc_chain_manager.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1890, 18031}}";
-			sepNavSelRange = "{30538, 0}";
-			sepNavVisRange = "{29183, 2393}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 10881}}";
+			sepNavSelRange = "{13725, 0}";
+			sepNavVisRange = "{12604, 1951}";
 			sepNavWindowFrame = "{{245, 191}, {1648, 1098}}";
 		};
 	};
 	7A0945EE10CAEFB900CEFDE0 /* mcmc_chain_manager.hpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 2756}}";
-			sepNavSelRange = "{9887, 4}";
-			sepNavVisRange = "{6543, 4360}";
+			sepNavIntBoundsRect = "{{0, 0}, {2133, 2262}}";
+			sepNavSelRange = "{7081, 0}";
+			sepNavVisRange = "{6360, 3020}";
 		};
 	};
 	7A0945EF10CAEFB900CEFDE0 /* mcmc_chain_manager.inl */ = {
@@ -629,9 +628,9 @@
 	};
 	7A0945F310CAEFB900CEFDE0 /* mcmc_param.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 8801}}";
-			sepNavSelRange = "{24156, 4}";
-			sepNavVisRange = "{23515, 1726}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 6851}}";
+			sepNavSelRange = "{20685, 0}";
+			sepNavVisRange = "{18774, 1974}";
 		};
 	};
 	7A0945F410CAEFB900CEFDE0 /* mcmc_param.hpp */ = {
@@ -651,17 +650,17 @@
 	};
 	7A0945F610CAEFB900CEFDE0 /* mcmc_updater.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1890, 13338}}";
-			sepNavSelRange = "{31302, 0}";
-			sepNavVisRange = "{30597, 2636}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 13156}}";
+			sepNavSelRange = "{31179, 0}";
+			sepNavVisRange = "{30882, 1732}";
 			sepNavWindowFrame = "{{167, 18}, {1257, 1041}}";
 		};
 	};
 	7A0945F710CAEFB900CEFDE0 /* mcmc_updater.hpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1748, 3328}}";
-			sepNavSelRange = "{14539, 0}";
-			sepNavVisRange = "{10058, 4912}";
+			sepNavIntBoundsRect = "{{0, 0}, {1748, 3302}}";
+			sepNavSelRange = "{14540, 0}";
+			sepNavVisRange = "{10016, 4772}";
 		};
 	};
 	7A0945F910CAEFB900CEFDE0 /* model_pymod.cpp */ = {
@@ -709,9 +708,9 @@
 	};
 	7A09460310CAEFB900CEFDE0 /* omega_param.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 1209}}";
-			sepNavSelRange = "{2736, 4}";
-			sepNavVisRange = "{1559, 1814}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 1118}}";
+			sepNavSelRange = "{2579, 0}";
+			sepNavVisRange = "{1965, 1919}";
 		};
 	};
 	7A09460410CAEFB900CEFDE0 /* partition_model.cpp */ = {
@@ -759,9 +758,9 @@
 	};
 	7A09461010CAEFB900CEFDE0 /* pinvar_param.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 1209}}";
-			sepNavSelRange = "{2435, 4}";
-			sepNavVisRange = "{1200, 1653}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 1079}}";
+			sepNavSelRange = "{2278, 0}";
+			sepNavVisRange = "{1826, 1755}";
 		};
 	};
 	7A09461110CAEFB900CEFDE0 /* probability_distribution.cpp */ = {
@@ -803,9 +802,9 @@
 	};
 	7A09461910CAEFB900CEFDE0 /* samc_move.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 6851}}";
-			sepNavSelRange = "{20801, 0}";
-			sepNavVisRange = "{18862, 1940}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 6786}}";
+			sepNavSelRange = "{1168, 8}";
+			sepNavVisRange = "{0, 2442}";
 		};
 	};
 	7A09461A10CAEFB900CEFDE0 /* samc_move.hpp */ = {
@@ -866,16 +865,16 @@
 	};
 	7A09462310CAEFB900CEFDE0 /* split.hpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 2015}}";
-			sepNavSelRange = "{2317, 4}";
-			sepNavVisRange = "{0, 2879}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 1963}}";
+			sepNavSelRange = "{2278, 0}";
+			sepNavVisRange = "{800, 2205}";
 		};
 	};
 	7A09462610CAEFB900CEFDE0 /* state_freq_param.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 1352}}";
-			sepNavSelRange = "{3057, 4}";
-			sepNavVisRange = "{2269, 2135}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 1235}}";
+			sepNavSelRange = "{2900, 0}";
+			sepNavVisRange = "{2295, 1898}";
 		};
 	};
 	7A09462710CAEFB900CEFDE0 /* states_patterns.hpp */ = {
@@ -967,9 +966,9 @@
 	};
 	7A09464A10CAEFB900CEFDE0 /* tree_scaler_move.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {2175, 3952}}";
-			sepNavSelRange = "{5624, 22}";
-			sepNavVisRange = "{5279, 2124}";
+			sepNavIntBoundsRect = "{{0, 0}, {2175, 3094}}";
+			sepNavSelRange = "{8503, 0}";
+			sepNavVisRange = "{7426, 1995}";
 			sepNavWindowFrame = "{{56, 60}, {1143, 1067}}";
 		};
 	};
@@ -1045,9 +1044,9 @@
 	};
 	7A09466410CAEFB900CEFDE0 /* updater_pymod.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1890, 3341}}";
-			sepNavSelRange = "{5668, 0}";
-			sepNavVisRange = "{9657, 4064}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 3159}}";
+			sepNavSelRange = "{10678, 0}";
+			sepNavVisRange = "{9779, 2670}";
 		};
 	};
 	7A09466810CAEFB900CEFDE0 /* xprobdist.hpp */ = {
@@ -1082,8 +1081,8 @@
 	7A98F61210CD6DEC001E79F7 /* __init__.py */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1726, 666}}";
-			sepNavSelRange = "{344, 0}";
-			sepNavVisRange = "{0, 1368}";
+			sepNavSelRange = "{334, 0}";
+			sepNavVisRange = "{0, 1331}";
 		};
 	};
 	7A98F61610CD6DEC001E79F7 /* _MCMCChainManager.py */ = {
@@ -1394,7 +1393,7 @@
 		fRef = 7A0945ED10CAEFB900CEFDE0 /* mcmc_chain_manager.cpp */;
 		name = "MCMCChainManager::updateAllUpdaters";
 		rLen = 35;
-		rLoc = 29429;
+		rLoc = 14293;
 		rType = 0;
 		vrLen = 2199;
 		vrLoc = 25397;
@@ -1424,7 +1423,7 @@
 		fRef = 7A0945F610CAEFB900CEFDE0 /* mcmc_updater.cpp */;
 		name = "mcmc_updater.cpp: 759";
 		rLen = 0;
-		rLoc = 31302;
+		rLoc = 31179;
 		rType = 0;
 		vrLen = 2636;
 		vrLoc = 30597;
@@ -1434,20 +1433,10 @@
 		fRef = 7A09466410CAEFB900CEFDE0 /* updater_pymod.cpp */;
 		name = "updater_pymod.cpp: 106";
 		rLen = 0;
-		rLoc = 5668;
+		rLoc = 5581;
 		rType = 0;
 		vrLen = 4064;
 		vrLoc = 9657;
-	};
-	D1060D05118F1CF6004BE274 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A0945ED10CAEFB900CEFDE0 /* mcmc_chain_manager.cpp */;
-		name = "mcmc_chain_manager.cpp: 839";
-		rLen = 0;
-		rLoc = 30538;
-		rType = 0;
-		vrLen = 2393;
-		vrLoc = 29183;
 	};
 	D1060D08118F1D3A004BE274 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -1459,25 +1448,42 @@
 		vrLen = 3054;
 		vrLoc = 31263;
 	};
-	D1060D09118F1D3A004BE274 /* PBXTextBookmark */ = {
+	D1060D42118F229B004BE274 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 7A0945E310CAEFB900CEFDE0 /* likelihood_loops.cpp */;
-		name = "likelihood_loops.cpp: 772";
+		name = "likelihood_loops.cpp: 1044";
 		rLen = 0;
-		rLoc = 35396;
+		rLoc = 51928;
 		rType = 0;
-		vrLen = 4581;
-		vrLoc = 32502;
+		vrLen = 4178;
+		vrLoc = 51410;
 	};
-	D1060D0C118F1DCE004BE274 /* PBXTextBookmark */ = {
+	D1060D56118F2341004BE274 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
-		fRef = 7A0945E310CAEFB900CEFDE0 /* likelihood_loops.cpp */;
-		name = "likelihood_loops.cpp: 1104";
+		fRef = D1ABDDFC10D2D64800EDC77A /* __init__.py */;
+		name = "__init__.py: 216";
 		rLen = 0;
-		rLoc = 54827;
+		rLoc = 7204;
 		rType = 0;
-		vrLen = 4048;
-		vrLoc = 51439;
+		vrLen = 1839;
+		vrLoc = 5999;
+	};
+	D1060D57118F2341004BE274 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A0945ED10CAEFB900CEFDE0 /* mcmc_chain_manager.cpp */;
+		rLen = 0;
+		rLoc = 13725;
+		rType = 0;
+	};
+	D1060D58118F2341004BE274 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A0945ED10CAEFB900CEFDE0 /* mcmc_chain_manager.cpp */;
+		name = "mcmc_chain_manager.cpp: 329";
+		rLen = 0;
+		rLoc = 13882;
+		rType = 0;
+		vrLen = 2920;
+		vrLoc = 12024;
 	};
 	D10DDDB91125AA6300CC55F3 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -1634,14 +1640,6 @@
 		vrLen = 3263;
 		vrLoc = 33031;
 	};
-	D11644911140CA8A005C1038 /* turtlesamc.py */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {4723, 2535}}";
-			sepNavSelRange = "{10, 0}";
-			sepNavVisRange = "{0, 4495}";
-			sepNavWindowFrame = "{{2575, 440}, {1648, 1050}}";
-		};
-	};
 	D11694A31149506E00EF71BC /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 7A0945ED10CAEFB900CEFDE0 /* mcmc_chain_manager.cpp */;
@@ -1733,13 +1731,6 @@
 		path = /Users/plewis/pydbg/bin/python;
 		sourceTree = "<absolute>";
 	};
-	D117871611582A4D00DFDE81 /* challenge.py */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {4772, 1976}}";
-			sepNavSelRange = "{2341, 24}";
-			sepNavVisRange = "{0, 2449}";
-		};
-	};
 	D117AD911189215B0000E126 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = D1ABDDEE10D2D60000EDC77A /* Model.py */;
@@ -1764,8 +1755,8 @@
 		isa = PBXTextBookmark;
 		fRef = 7A0945ED10CAEFB900CEFDE0 /* mcmc_chain_manager.cpp */;
 		name = "MCMCChainManager::adjustSAMCLevels";
-		rLen = 34;
-		rLoc = 26258;
+		rLen = 0;
+		rLoc = 14047;
 		rType = 0;
 		vrLen = 2065;
 		vrLoc = 23380;
@@ -2134,27 +2125,10 @@
 		fRef = 7A0945CA10CAEFB900CEFDE0 /* dirichlet_move.cpp */;
 		name = "SubsetRelRatesMove::recalcWorkingPrior";
 		rLen = 0;
-		rLoc = 28886;
+		rLoc = 25971;
 		rType = 0;
 		vrLen = 1573;
 		vrLoc = 25428;
-	};
-	D153D7D7113EE73E009C94FE /* SAMC.py */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {3064, 1105}}";
-			sepNavSelRange = "{10, 0}";
-			sepNavVisRange = "{0, 3759}";
-		};
-	};
-	D15B6F7C11811AD500651A2D /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1ABDDFC10D2D64800EDC77A /* __init__.py */;
-		name = "__init__.py: 284";
-		rLen = 13;
-		rLoc = 8883;
-		rType = 0;
-		vrLen = 1665;
-		vrLoc = 7368;
 	};
 	D15B6F7D11811AD500651A2D /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -2242,13 +2216,6 @@
 		name = python;
 		path = /Users/plewis/pydbg/bin/python;
 		sourceTree = "<absolute>";
-	};
-	D16413A4113E3D340031F70F /* turtles.py */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {4751, 5967}}";
-			sepNavSelRange = "{302, 0}";
-			sepNavVisRange = "{0, 4775}";
-		};
 	};
 	D164C4A71164EC0E00DB2E59 /* Run pinvar paradox */ = {
 		isa = PBXExecutable;
@@ -2339,7 +2306,7 @@
 		fRef = 7A0945ED10CAEFB900CEFDE0 /* mcmc_chain_manager.cpp */;
 		name = "MCMCChainManager::getEdgeLenParams";
 		rLen = 34;
-		rLoc = 33523;
+		rLoc = 16611;
 		rType = 0;
 		vrLen = 2776;
 		vrLoc = 13315;
@@ -2447,7 +2414,7 @@
 		fRef = 7A0945ED10CAEFB900CEFDE0 /* mcmc_chain_manager.cpp */;
 		name = "todo MCMCChainManager::calcInternalEdgeLenWorkingPrior";
 		rLen = 49;
-		rLoc = 47359;
+		rLoc = 30374;
 		rType = 0;
 		vrLen = 2967;
 		vrLoc = 27763;
@@ -2457,7 +2424,7 @@
 		fRef = 7A0945ED10CAEFB900CEFDE0 /* mcmc_chain_manager.cpp */;
 		name = "todo MCMCChainManager::calcExternalEdgeLenWorkingPrior";
 		rLen = 49;
-		rLoc = 45572;
+		rLoc = 28587;
 		rType = 0;
 		vrLen = 3905;
 		vrLoc = 27204;
@@ -2522,7 +2489,7 @@
 		fRef = D1ABDDEC10D2D60000EDC77A /* MCMCImpl.py */;
 		name = paramFileOpen;
 		rLen = 13;
-		rLoc = 10206;
+		rLoc = 9857;
 		rType = 0;
 		vrLen = 1446;
 		vrLoc = 9753;
@@ -2532,7 +2499,7 @@
 		fRef = D1ABDDED10D2D60000EDC77A /* MCMCManager.py */;
 		name = recordSample;
 		rLen = 12;
-		rLoc = 6310;
+		rLoc = 6102;
 		rType = 0;
 		vrLen = 1712;
 		vrLoc = 5342;
@@ -2644,16 +2611,6 @@
 		vrLen = 2758;
 		vrLoc = 7700;
 	};
-	D1AB7C6B117F989F00037911 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A0945CD10CAEFB900CEFDE0 /* discrete_gamma_shape_param.cpp */;
-		name = "discrete_gamma_shape_param.cpp: 169";
-		rLen = 17;
-		rLoc = 7437;
-		rType = 0;
-		vrLen = 2316;
-		vrLoc = 4694;
-	};
 	D1AB7C6F117F9B4100037911 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 7A0945CB10CAEFB900CEFDE0 /* dirichlet_move.hpp */;
@@ -2725,24 +2682,24 @@
 	};
 	D1ABDDEB10D2D60000EDC77A /* MCMC.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {2980, 1612}}";
-			sepNavSelRange = "{12476, 4}";
-			sepNavVisRange = "{7974, 4703}";
+			sepNavIntBoundsRect = "{{0, 0}, {2980, 1547}}";
+			sepNavSelRange = "{12307, 0}";
+			sepNavVisRange = "{9381, 3699}";
 		};
 	};
 	D1ABDDEC10D2D60000EDC77A /* MCMCImpl.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 15470}}";
-			sepNavSelRange = "{51978, 4}";
-			sepNavVisRange = "{50224, 1853}";
+			sepNavIntBoundsRect = "{{0, 0}, {1776, 14157}}";
+			sepNavSelRange = "{2756, 0}";
+			sepNavVisRange = "{968, 3138}";
 			sepNavWindowFrame = "{{100, 511}, {1257, 1041}}";
 		};
 	};
 	D1ABDDED10D2D60000EDC77A /* MCMCManager.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 4589}}";
-			sepNavSelRange = "{2953, 0}";
-			sepNavVisRange = "{1881, 2253}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 4576}}";
+			sepNavSelRange = "{2746, 0}";
+			sepNavVisRange = "{1881, 2140}";
 			sepNavWindowFrame = "{{215, 119}, {1158, 979}}";
 		};
 	};
@@ -2762,9 +2719,9 @@
 	};
 	D1ABDDF010D2D60000EDC77A /* Phycas.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 7371}}";
-			sepNavSelRange = "{21655, 4}";
-			sepNavVisRange = "{20017, 1921}";
+			sepNavIntBoundsRect = "{{0, 0}, {2525, 4017}}";
+			sepNavSelRange = "{10692, 0}";
+			sepNavVisRange = "{9539, 2458}";
 		};
 	};
 	D1ABDDF310D2D60000EDC77A /* Sim.py */ = {
@@ -2818,9 +2775,9 @@
 	};
 	D1ABDDFC10D2D64800EDC77A /* __init__.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 3887}}";
-			sepNavSelRange = "{7255, 4}";
-			sepNavVisRange = "{6613, 1052}";
+			sepNavIntBoundsRect = "{{0, 0}, {1890, 3627}}";
+			sepNavSelRange = "{7204, 0}";
+			sepNavVisRange = "{5999, 1839}";
 		};
 	};
 	D1AC95421119E28400335CDA /* Run GTR Test */ = {
@@ -2948,7 +2905,7 @@
 		originalNumberOfMultipleMatches = 1;
 		state = 0;
 	};
-	D1B793FA116907C6007A03AF /* mcmc_updater.cpp:874 */ = {
+	D1B793FA116907C6007A03AF /* mcmc_updater.cpp:850 */ = {
 		isa = PBXFileBreakpoint;
 		actions = (
 		);
@@ -2960,7 +2917,7 @@
 		functionName = "MCMCUpdater::sampleMultivariateWorkingPrior()";
 		hitCount = 0;
 		ignoreCount = 0;
-		lineNumber = 874;
+		lineNumber = 850;
 		modificationTime = 293048131.200397;
 		originalNumberOfMultipleMatches = 1;
 		state = 0;
@@ -2974,17 +2931,10 @@
 	};
 	D1BB2657111094A6002A8F79 /* MarkovChain.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 7891}}";
-			sepNavSelRange = "{27035, 4}";
-			sepNavVisRange = "{24854, 2204}";
+			sepNavIntBoundsRect = "{{0, 0}, {1726, 7605}}";
+			sepNavSelRange = "{24737, 0}";
+			sepNavVisRange = "{23721, 2115}";
 			sepNavWindowFrame = "{{827, 376}, {1257, 1041}}";
-		};
-	};
-	D1C47254114C725F00DE4DBD /* greensamc.py */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {143813, 1404}}";
-			sepNavSelRange = "{10, 0}";
-			sepNavVisRange = "{0, 103038}";
 		};
 	};
 	D1CD07901131C4CF00290AC7 /* PBXTextBookmark */ = {
@@ -3002,7 +2952,7 @@
 		fRef = 7A0945ED10CAEFB900CEFDE0 /* mcmc_chain_manager.cpp */;
 		name = "MCMCChainManager::updateAllUpdaters";
 		rLen = 35;
-		rLoc = 29429;
+		rLoc = 14293;
 		rType = 0;
 		vrLen = 2123;
 		vrLoc = 12586;
@@ -3294,7 +3244,7 @@
 		fRef = 7A0945BC10CAEFB900CEFDE0 /* bush_move.cpp */;
 		name = "bush_move.cpp: 64";
 		rLen = 0;
-		rLoc = 3136;
+		rLoc = 3046;
 		rType = 0;
 		vrLen = 2073;
 		vrLoc = 2410;
@@ -3304,7 +3254,7 @@
 		fRef = D1ABDDEC10D2D60000EDC77A /* MCMCImpl.py */;
 		name = "MCMCImpl.py: 261";
 		rLen = 5;
-		rLoc = 10999;
+		rLoc = 10650;
 		rType = 0;
 		vrLen = 1728;
 		vrLoc = 9620;
@@ -3531,7 +3481,7 @@
 		fRef = D1ABDDEC10D2D60000EDC77A /* MCMCImpl.py */;
 		name = exploreWorkingPrior;
 		rLen = 19;
-		rLoc = 19084;
+		rLoc = 18735;
 		rType = 0;
 		vrLen = 3195;
 		vrLoc = 18416;
@@ -3628,7 +3578,7 @@
 		fRef = 7A0945ED10CAEFB900CEFDE0 /* mcmc_chain_manager.cpp */;
 		name = "MCMCChainManager::calcRFDistance";
 		rLen = 32;
-		rLoc = 22206;
+		rLoc = 13896;
 		rType = 0;
 		vrLen = 1554;
 		vrLoc = 17550;

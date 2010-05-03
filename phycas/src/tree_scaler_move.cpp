@@ -135,40 +135,6 @@ bool TreeScalerMove::update()
     double prev_posterior = 0.0;
 	double curr_posterior = 0.0;
 
-#if defined(SAMC_TWO)
-	unsigned prev_samc_index = UINT_MAX;
-	unsigned curr_samc_index = UINT_MAX;
-	if (p->doingSAMC())
-		{
-		prev_posterior		= prev_ln_like + prev_ln_prior;
-		prev_samc_index		= p->getSAMCEnergyLevel(prev_posterior);
-		double prev_theta	= p->getSAMCWeight(prev_samc_index);
-		prev_posterior		-= prev_theta;
-		
-		curr_posterior		= curr_ln_like + curr_ln_prior;
-		curr_samc_index		= p->getSAMCEnergyLevel(curr_posterior);
-		double curr_theta	= p->getSAMCWeight(curr_samc_index);
-		curr_posterior		-= curr_theta;
-		}
-    else
-		{
-		if (is_standard_heating)
-			{
-			prev_posterior = heating_power*(prev_ln_like + prev_ln_prior);
-			curr_posterior = heating_power*(curr_ln_like + curr_ln_prior);
-			if (use_working_prior)
-				{
-				prev_posterior += (1.0 - heating_power)*prev_ln_working_prior;
-				curr_posterior += (1.0 - heating_power)*curr_ln_working_prior;
-				}
-			}
-		else
-			{
-			prev_posterior = heating_power*prev_ln_like + prev_ln_prior;
-			curr_posterior = heating_power*curr_ln_like + curr_ln_prior;
-			}
-		}
-#else	// not SAMC_TWO
 	if (is_standard_heating)
 		{
 		prev_posterior = heating_power*(prev_ln_like + prev_ln_prior);
@@ -184,7 +150,6 @@ bool TreeScalerMove::update()
 		prev_posterior = heating_power*prev_ln_like + prev_ln_prior;
 		curr_posterior = heating_power*curr_ln_like + curr_ln_prior;
 		}
-#endif	//SAMC_TWO
 		
 	double ln_hastings			= getLnHastingsRatio();
 	double ln_accept_ratio		= curr_posterior - prev_posterior + ln_hastings;
@@ -198,12 +163,6 @@ bool TreeScalerMove::update()
 			}
 		p->setLastLnPrior(curr_ln_prior);
 		p->setLastLnLike(curr_ln_like);
-#if defined(SAMC_TWO)
-		if (p->doingSAMC())
-			{
-			p->updateSAMCWeights(curr_samc_index);
-			}
-#endif	//SAMC_TWO
 		accept();
 		return true;
 		}
@@ -215,12 +174,6 @@ bool TreeScalerMove::update()
 			}
 		curr_ln_like	= p->getLastLnLike();
 		curr_ln_prior	= p->getLastLnPrior();
-#if defined(SAMC_TWO)
-		if (p->doingSAMC())
-			{
-			p->updateSAMCWeights(prev_samc_index);
-			}
-#endif	//SAMC_TWO
 		revert();
 		return false;
 		}
@@ -254,22 +207,11 @@ double TreeScalerMove::recalcPrior()
     // Each EdgeLenMasterParam object knows how to compute the prior for the edge lengths it controls.
     curr_ln_prior = 0.0;
 	ChainManagerShPtr p = chain_mgr.lock();
-#if defined(SAMC_TWO)
-	if (!p->getSAMCLikelihoodOnly())
-		{
-		const MCMCUpdaterVect & edge_length_params = p->getEdgeLenParams();
-		for (MCMCUpdaterVect::const_iterator it = edge_length_params.begin(); it != edge_length_params.end(); ++it)
-			{
-			curr_ln_prior += (*it)->recalcPrior();
-			}
-		}
-#else	//not SAMC_TWO
 	const MCMCUpdaterVect & edge_length_params = p->getEdgeLenParams();
 	for (MCMCUpdaterVect::const_iterator it = edge_length_params.begin(); it != edge_length_params.end(); ++it)
 		{
 		curr_ln_prior += (*it)->recalcPrior();
 		}
-#endif	//SAMC_TWO
 	return curr_ln_prior;
 	}
 

@@ -188,60 +188,21 @@ bool LargetSimonMove::update()
     double prev_posterior = 0.0;
 	double curr_posterior = 0.0;
 	
-#if defined(SAMC_TWO)
-	unsigned prev_samc_index = UINT_MAX;
-	unsigned curr_samc_index = UINT_MAX;
-	if (p->doingSAMC())
+	if (is_standard_heating)
 		{
-		prev_posterior		= prev_ln_like + prev_ln_prior;
-		prev_samc_index		= p->getSAMCEnergyLevel(prev_posterior);
-		double prev_theta	= p->getSAMCWeight(prev_samc_index);
-		
-		curr_posterior		= curr_ln_like + curr_ln_prior;
-		curr_samc_index		= p->getSAMCEnergyLevel(curr_posterior);
-		double curr_theta	= p->getSAMCWeight(curr_samc_index);
-		
-		PHYCAS_ASSERT(prev_samc_index < UINT_MAX);
-		PHYCAS_ASSERT(curr_samc_index < UINT_MAX);
-		
-		prev_posterior		-= prev_theta;
-		curr_posterior		-= curr_theta;
-		}
-    else
-		{
-		if (is_standard_heating)
+		prev_posterior = heating_power*(prev_ln_like + prev_ln_prior);
+		curr_posterior = heating_power*(curr_ln_like + curr_ln_prior);
+		if (use_working_prior)
 			{
-			prev_posterior = heating_power*(prev_ln_like + prev_ln_prior);
-			curr_posterior = heating_power*(curr_ln_like + curr_ln_prior);
-			if (use_working_prior)
-				{
-				prev_posterior += (1.0 - heating_power)*prev_ln_working_prior;
-				curr_posterior += (1.0 - heating_power)*curr_ln_working_prior;
-				}
-			}
-		else
-			{
-			prev_posterior = heating_power*prev_ln_like + prev_ln_prior;
-			curr_posterior = heating_power*curr_ln_like + curr_ln_prior;
+			prev_posterior += (1.0 - heating_power)*prev_ln_working_prior;
+			curr_posterior += (1.0 - heating_power)*curr_ln_working_prior;
 			}
 		}
-#else	//not SAMC_TWO
-		if (is_standard_heating)
-			{
-			prev_posterior = heating_power*(prev_ln_like + prev_ln_prior);
-			curr_posterior = heating_power*(curr_ln_like + curr_ln_prior);
-			if (use_working_prior)
-				{
-				prev_posterior += (1.0 - heating_power)*prev_ln_working_prior;
-				curr_posterior += (1.0 - heating_power)*curr_ln_working_prior;
-				}
-			}
-		else
-			{
-			prev_posterior = heating_power*prev_ln_like + prev_ln_prior;
-			curr_posterior = heating_power*curr_ln_like + curr_ln_prior;
-			}
-#endif	//SAMC_TWO
+	else
+		{
+		prev_posterior = heating_power*prev_ln_like + prev_ln_prior;
+		curr_posterior = heating_power*curr_ln_like + curr_ln_prior;
+		}
 	
 	double ln_accept_ratio = curr_posterior - prev_posterior + getLnHastingsRatio() + getLnJacobian();
     //double lnu = std::log(rng->Uniform(FILE_AND_LINE));
@@ -286,11 +247,6 @@ bool LargetSimonMove::update()
 		p->setLastLnPrior(curr_ln_prior);
 		p->setLastLnLike(curr_ln_like);
 		
-#if defined(SAMC_TWO)
-		if (p->doingSAMC())
-			p->updateSAMCWeights(prev_samc_index);
-#endif
-			
 		accept();
 		return true;
 		}
@@ -298,11 +254,6 @@ bool LargetSimonMove::update()
 		{
 		curr_ln_like	= p->getLastLnLike();
 		curr_ln_prior	= p->getLastLnPrior();
-
-#if defined(SAMC_TWO)
-		if (p->doingSAMC())
-			p->updateSAMCWeights(prev_samc_index);
-#endif
 
 		revert();
 

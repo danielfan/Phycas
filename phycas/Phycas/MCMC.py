@@ -90,11 +90,6 @@ class MCMC(PhycasCommand):
 		self.__dict__["ss_heating_likelihood"] = False
 		self.__dict__["ssobj"] = None
 		
-		# SAMC_TWO
-		# The data members added below are hidden from the user because they are set by the samc command
-		#self.__dict__["doing_samc"] = False
-		#self.__dict__["samcobj"] = None
-		
 		# The data members added below are hidden from the user because they are set by the cpo command
 		self.__dict__["saving_sitelikes"] = False
 		self.__dict__["sitelikef"] = None

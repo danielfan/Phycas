@@ -62,10 +62,6 @@ class Tree
 		friend class BushMove;
 		friend class TreeLikelihood;
 
-#if defined(SAMC_ONE)
-		friend class SamcMove;
-#endif
-
 		typedef std::vector<TreeNode *> TreeNodeVec;
 		typedef std::stack<TreeNode *> TreeNodeStack;
 

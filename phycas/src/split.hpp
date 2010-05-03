@@ -39,10 +39,6 @@ class Split
 	{
     friend class Tree;
 	
-#if defined(SAMC_ONE)
-    friend class SamcMove;
-#endif
-
 	public:
 
 							    Split();

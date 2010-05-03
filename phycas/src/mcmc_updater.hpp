@@ -247,9 +247,6 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
         bool                    is_standard_heating;    /**< If true, standard heating is used (posterior is raised to the power `heating_power'); otherwise, likelihood heating is used (just the likelihood is raised to the power `heating_power') */
 		bool                    save_debug_info;		/**< If true, information about the last update will be stored in debug_info string */
 		
-#if defined(SAMC_TWO)
-        double_vect_t           energy_levels;			/**< If non-empty, SAMC analysis is being performed using these energy levels (which are on the log scale). */
-#endif
 	};
 
 typedef std::vector<MCMCUpdaterShPtr>		MCMCUpdaterVect;

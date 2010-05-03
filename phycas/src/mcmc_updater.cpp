@@ -500,13 +500,6 @@ double MCMCUpdater::recalcPrior()
 		return 0.0;
 		}
 		
-#if defined(SAMC_TWO)
-	if (chain_mgr.lock()->getSAMCLikelihoodOnly())
-		{
-		return 0.0;
-		}
-#endif
-		
 	if (prior)
 		{
 		double value = getCurrValueFromModel();
@@ -755,23 +748,6 @@ TreeShPtr MCMCUpdater::getTree()
 	{
 	return tree;
 	}
-
-#if defined(SAMC_TWO)
-/*----------------------------------------------------------------------------------------------------------------------
-|	Sets the `energy_levels' data member to a copy of the supplied values. If `elevels' is empty, clears `energy_levels'.
-*/
-void MCMCUpdater::setEnergyLevels(
-  const double_vect_t & elevels)
-	{
-	if (elevels.empty())
-		energy_levels.clear();
-	else
-		{
-		energy_levels.resize(elevels.size());
-		std::copy(elevels.begin(), elevels.end(), energy_levels.begin());
-		}
-	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the power used in heating (variable `heating_power') to the specified value `p'.
