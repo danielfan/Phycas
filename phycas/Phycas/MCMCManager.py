@@ -70,13 +70,15 @@ class MCMCManager:
 		# Note: self.parent is the MCMCImpl object
 		
 		# Sanity checks
-		unimap_and_flex			   = (self.parent.opts.use_unimap and self.parent.opts.model.use_flex_model)
 		unimap_and_ratehet		   = (self.parent.opts.use_unimap and self.parent.opts.model.num_rates > 1)
 		unimap_and_polytomies	   = (self.parent.opts.use_unimap and self.parent.opts.allow_polytomies)
 		unimap_and_multiple_chains = (self.parent.opts.use_unimap and self.parent.opts.nchains > 1)
 		
+		# FLEXCAT_MODEL
+		#unimap_and_flex			   = (self.parent.opts.use_unimap and self.parent.opts.model.use_flex_model)
+		#self.parent.phycassert(not unimap_and_flex, 'Flex model cannot (yet) be used in conjunction with use_unimap')
+		
 		self.parent.phycassert(not unimap_and_polytomies, 'Allowing polytomies cannot (yet) be used in conjunction with use_unimap')
-		self.parent.phycassert(not unimap_and_flex, 'Flex model cannot (yet) be used in conjunction with use_unimap')
 		self.parent.phycassert(not unimap_and_ratehet, 'Rate heterogeneity cannot (yet) be used in conjunction with use_unimap')
 	
 		# Create the chains
@@ -239,6 +241,8 @@ class MCMCManager:
 				#		self.parent.paramf.write(float_format_str % m.getInternalEdgelenHyperparam())
 				#	else:
 				#		self.parent.paramf.write(float_format_str % m.getInternalEdgelenHyperparam())
+				
+				# FLEXCAT_MODEL
 				#if m.isFlexModel():
 				#	rates_vector = cold_chain.likelihood.getRateMeans()
 				#	for rr in rates_vector:

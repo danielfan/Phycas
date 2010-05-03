@@ -25,7 +25,6 @@ class Like(PhycasCommand):
         # to prevent users from adding new data members (to prevent accidental misspellings from causing problems)
         self.__dict__["random_seed"] = 0
         self.__dict__["fix_edgelens"]   = False
-        self.__dict__["use_flex_model"]  = False
         self.__dict__["uf_num_edges"]   = 50
         self.__dict__["use_unimap"]     = False
         self.__dict__["data_source"]    = 'file'
@@ -33,6 +32,9 @@ class Like(PhycasCommand):
         self.__dict__["pattern_counts"]    = []
         self.__dict__["char_to_pattern"]    = []
         self.__dict__["site_uf"]    = []
+		
+		# FLEXCAT_MODEL
+        #self.__dict__["use_flex_model"]  = False
 		
 		# The following data members are hidden from user but useful for developers in debugging
         self.__dict__["preorder_edgelens"]    = None	# can provide a vector of edgelens that will be substituted before likelihood is computed

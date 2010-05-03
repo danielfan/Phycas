@@ -45,10 +45,13 @@ Model::Model(
 	state_freq_fixed(false),
 	edge_lengths_fixed(false),	
 	edgelen_hyperprior_fixed(false),
+#if defined(FLEXCAT_MODEL)		
 	flex_upper_rate_bound(1.0),
 	num_flex_spacers(1),
 	flex_probs_fixed(false),
 	flex_rates_fixed(false),
+	is_flex_model(false),
+#endif
 	pinvar_fixed(false),
 	gamma_shape_fixed(false),
     invert_shape(false),
@@ -59,7 +62,6 @@ Model::Model(
 	gamma_rate_probs(1, 1.0), 
 	gamma_shape(0.5),
 	pinvar(0.0), 
-	is_flex_model(false),
 	is_codon_model(false),
 	is_pinvar_model(false)
 	{
@@ -85,8 +87,10 @@ void Model::Clear()
 	freq_params.clear();
 	edgelen_hyper_params.clear();
 	edgelen_params.clear();
+#if defined(FLEXCAT_MODEL)		
 	flex_rate_params.clear();
 	flex_prob_params.clear();
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -101,8 +105,10 @@ void Model::releaseUpdaters()
 	edgeLenHyperPrior.reset();
 	internalEdgeLenPrior.reset();
 	externalEdgeLenPrior.reset();
+#if defined(FLEXCAT_MODEL)		
 	flex_prob_param_prior.reset();
 	flex_rate_param_prior.reset();
+#endif
 	pinvar_param.reset();	
 	pinvar_prior.reset();
 	gamma_shape_param.reset();
@@ -196,6 +202,7 @@ ProbDistShPtr Model::getEdgeLenHyperPrior()
 	return edgeLenHyperPrior;
 	}
 
+#if defined(FLEXCAT_MODEL)		
 /*----------------------------------------------------------------------------------------------------------------------
 |	Predicate that returns value of `is_flex_model' data member.
 */
@@ -203,6 +210,7 @@ bool Model::isFlexModel()
 	{
 	return is_flex_model;
 	}
+#endif
 	
 /*----------------------------------------------------------------------------------------------------------------------
 |	Predicate that returns true if `edgeLenHyperPrior' actually points to something, and returns false if no edge length
@@ -591,6 +599,7 @@ void Model::freeStateFreqs()
 		}
 	}
 
+#if defined(FLEXCAT_MODEL)		
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the data member `is_flex_model' to true. A subsequent call to the createParameters member function will
 |	result in `num_gamma_rates' FlexRateParam and FlexProbParam objects being added to the list of updaters for this 
@@ -601,7 +610,9 @@ void Model::setFlexModel()
 	++time_stamp;
 	is_flex_model = true;
 	}
+#endif
 
+#if defined(FLEXCAT_MODEL)		
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the data member `flex_upper_rate_bound' to `new_upper_bound'. Rescales all existing unnormalized relative rate
 |	parameter values in the vector `gamma_rates_unnorm' to accommodate the new upper bound. Assumes that 
@@ -619,7 +630,9 @@ void Model::setFlexRateUpperBound(double new_upper_bound)
 	double mult_factor = new_upper_bound/old_upper_bound;
 	std::for_each(gamma_rates_unnorm.begin(), gamma_rates_unnorm.end(), boost::lambda::_1 *= mult_factor);
 	}
+#endif
 
+#if defined(FLEXCAT_MODEL)		
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the data member `num_flex_spacers' to `s'. See the data member `num_flex_spacers' and the function 
 |	FlexRateParam::recalcPrior for more information on FLEX model spacers.
@@ -628,7 +641,9 @@ void Model::setNumFlexSpacers(unsigned s)
 	{
 	num_flex_spacers = s;
 	}
+#endif
 
+#if defined(FLEXCAT_MODEL)		
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the data member `is_flex_model' to false. No FlexRateParam or FlexProbParam objects will be added in a 
 |	subsequent call to the createParameters member function.
@@ -638,7 +653,9 @@ void Model::setNotFlexModel()
 	++time_stamp;
 	is_flex_model = false;
 	}
+#endif
 
+#if defined(FLEXCAT_MODEL)		
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the data member `flex_probs_fixed' to true. The fixParameter member function of all FlexProbParam objects is 
 |	either called immediately (if the `flex_prob_params' vector is not empty) or is called in createParameters (when 
@@ -654,7 +671,9 @@ void Model::fixFlexProbs()
 			(*it)->fixParameter();
 		}
 	}
+#endif
 
+#if defined(FLEXCAT_MODEL)		
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the data member `flex_probs_fixed' to false. The freeParameter member function of all FlexProbParam objects is 
 |	called immediately if the `flex_prob_params' vector is not empty.
@@ -669,7 +688,9 @@ void Model::freeFlexProbs()
 			(*it)->freeParameter();
 		}
 	}
+#endif
 
+#if defined(FLEXCAT_MODEL)		
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the data member `flex_rates_fixed' to true. The fixParameter member function of all FlexRateParam objects is 
 |	either called immediately (if the `flex_rate_params' vector is not empty) or is called in createParameters (when 
@@ -685,7 +706,9 @@ void Model::fixFlexRates()
 			(*it)->fixParameter();
 		}
 	}
+#endif
 
+#if defined(FLEXCAT_MODEL)		
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the data member `flex_rates_fixed' to false. The freeParameter member function of all FlexRateParam objects is 
 |	called immediately if the `flex_rate_params' vector is not empty.
@@ -700,7 +723,9 @@ void Model::freeFlexRates()
 			(*it)->freeParameter();
 		}
 	}
+#endif
 
+#if defined(FLEXCAT_MODEL)		
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets value of data member `flex_prob_param_prior'.
 */
@@ -708,7 +733,9 @@ void Model::setFLEXProbParamPrior(ProbDistShPtr d)
  	{
 	flex_prob_param_prior = d;
 	}
+#endif
 
+#if defined(FLEXCAT_MODEL)		
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns current value of data member `flex_prob_param_prior'.
 */
@@ -716,7 +743,9 @@ ProbDistShPtr Model::getFLEXProbParamPrior()
  	{
 	return flex_prob_param_prior;
 	}
+#endif
 
+#if defined(FLEXCAT_MODEL)		
 /*----------------------------------------------------------------------------------------------------------------------
 |	Modifier function that sets one of the FLEX rate parameters (the unnormalized values that determine the values in 
 |	the `TreeLikelihood::rate_means' vector when normalized) in the data member vector `gamma_rates_unnorm'. The 
@@ -734,7 +763,9 @@ void Model::setFlexRateUnnorm(
 	PHYCAS_ASSERT(value >= 0.0);
 	gamma_rates_unnorm[param_index] = value;
 	}
+#endif
 
+#if defined(FLEXCAT_MODEL)		
 /*----------------------------------------------------------------------------------------------------------------------
 |	Modifier function that sets one of the FLEX rate probability parameters (the unnormalized values that determine the 
 |	values in the `TreeLikelihood::rate_probs' vector when normalized) in the data member vector `gamma_rate_probs'. 
@@ -752,7 +783,9 @@ void Model::setFlexProbUnnorm(
 	PHYCAS_ASSERT(value >= 0.0);
 	gamma_rate_probs[param_index] = value;
 	}
+#endif
 
+#if defined(FLEXCAT_MODEL)		
 /*----------------------------------------------------------------------------------------------------------------------
 |	Normalizes the rates stored in `gamma_rates_unnorm' so that their mean (using probabilities in `gamma_rate_probs')
 |	equals 1.0. Normalizes the probabilities stored in `gamma_rate_probs' so that their sum is 1.0. Copies normalized
@@ -801,6 +834,7 @@ void Model::normalizeRatesAndProbs(
 		rates[i] = gamma_rates_unnorm[i]*rate_normalizer;
 		}
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the current value of the data member `is_pinvar_model'.
@@ -946,12 +980,14 @@ void Model::recalcRatesAndProbs( //POL_BOOKMARK Model::recalcRatesAndProbs
   std::vector<double> & rates, 
   std::vector<double> & probs) const
 	{
+#if defined(FLEXCAT_MODEL)		
 	if (is_flex_model)
 		{
 		normalizeRatesAndProbs(rates, probs);
 		}
 	else
 		{
+#endif
 		std::vector<double> boundaries;
 
 	    if (is_pinvar_model)
@@ -983,7 +1019,9 @@ void Model::recalcRatesAndProbs( //POL_BOOKMARK Model::recalcRatesAndProbs
 		    probs.resize(num_gamma_rates, 0.0);
 		    std::copy(gamma_rate_probs.begin(), gamma_rate_probs.end(), probs.begin());
 		    }
+#if defined(FLEXCAT_MODEL)		
 		}
+#endif		
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -1066,6 +1104,7 @@ void Model::recalcGammaRatesAndBoundaries(std::vector<double> & rates, std::vect
 		}
 	}
 
+#if defined(FLEXCAT_MODEL)		
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the value of `gamma_rates_unnorm[param_index]'.
 */
@@ -1074,7 +1113,9 @@ double Model::getFlexRateUnnorm(
 	{
 	return gamma_rates_unnorm[param_index];
 	}
+#endif
 
+#if defined(FLEXCAT_MODEL)		
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the value of `gamma_rate_probs[param_index]'.
 */
@@ -1083,6 +1124,7 @@ double Model::getFlexProbUnnorm(
 	{
 	return gamma_rate_probs[param_index];
 	}
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the value of `state_freq_unnorm[param_index]'.
@@ -1226,6 +1268,7 @@ void Model::createParameters(
 		std::copy(edgelen_hyperparams_vect_ref.begin(), edgelen_hyperparams_vect_ref.end(), edgelen_hyper_params.begin());
 	}
 
+#if defined(FLEXCAT_MODEL)		
 	// Create any model-specific parameters and add to the parameters vector
 	if (is_flex_model)
 		{
@@ -1273,7 +1316,9 @@ void Model::createParameters(
 		parameters_vect_ref.push_back(prob_param);
 		flex_prob_params.push_back(prob_param);
 		}
-	else if (num_gamma_rates > 1)
+	else 
+#endif
+	if (num_gamma_rates > 1)
 		{
 		PHYCAS_ASSERT(num_gamma_rates > 1);
 		PHYCAS_ASSERT(!gamma_shape_param);
@@ -1335,6 +1380,7 @@ std::string Model::paramHeader() const
 	if (is_pinvar_model)
 		s += boost::str(boost::format("\t%s") % pinvar_param->getName());
 
+#if defined(FLEXCAT_MODEL)		
 	if (is_flex_model)
 		{
 		for (MCMCUpdaterVect::const_iterator rit = flex_rate_params.begin(); rit != flex_rate_params.end(); ++rit)
@@ -1342,7 +1388,9 @@ std::string Model::paramHeader() const
 		for (MCMCUpdaterVect::const_iterator pit = flex_prob_params.begin(); pit != flex_prob_params.end(); ++pit)
 			s += boost::str(boost::format("\t%s") % (*pit)->getName());
 		}
-	else if (num_gamma_rates > 1)
+	else 
+#endif
+	if (num_gamma_rates > 1)
 		{
 		s += boost::str(boost::format("\t%s") % gamma_shape_param->getName());
 		}
@@ -1378,11 +1426,14 @@ std::string Model::paramReport(
 		s += boost::str(boost::format(fmt) % pinvar);
         }
 		
+#if defined(FLEXCAT_MODEL)		
 	if (is_flex_model)
 		{
 		s += boost::str(boost::format("%d	") % num_gamma_rates);
 		}
-	else if (num_gamma_rates > 1)
+	else 
+#endif
+	if (num_gamma_rates > 1)
 		{
 		s += boost::str(boost::format(fmt) % gamma_shape);
 		}

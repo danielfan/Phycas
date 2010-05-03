@@ -154,7 +154,10 @@ class UnimapImpl(object):
             self.model = Likelihood.JCModel()
 
         # If rate heterogeneity is to be assumed, add it to the model here
-        self.phycas.phycassert(not self.opts.use_flex_model, 'Flex model not allowed in uniformized mapping MCMC')
+		
+		# FLEXCAT_MODEL
+        #self.phycas.phycassert(not self.opts.use_flex_model, 'Flex model not allowed in uniformized mapping MCMC')
+		
         self.phycas.phycassert(self.opts.num_rates == 1, 'Among-site rate heterogeneity submodels are not allowed in uniformized mapping MCMC at the present time')
         self.model.setNGammaRates(1)
 

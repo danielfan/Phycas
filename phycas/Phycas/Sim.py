@@ -22,12 +22,14 @@ class Sim(PhycasCommand):
         #
         # The roundabout way of introducing these data members is necessary because PhycasCommand.__setattr__ tries
         # to prevent users from adding new data members (to prevent accidental misspellings from causing problems)
-        self.__dict__["use_flex_model"] = False
         self.__dict__["fix_edgelens"]   = False
         self.__dict__["uf_num_edges"]   = 50
         self.__dict__["use_unimap"]     = False
         self.__dict__["data_source"]    = None
-
+		
+		# FLEXCAT_MODEL
+        #self.__dict__["use_flex_model"] = False
+		
     def __call__(self, **kwargs):
         self.set(**kwargs)
         simulate = SimImpl(self)

@@ -12,7 +12,10 @@ model.num_rates = 4
 model.gamma_shape = 2.0
 model.pinvar_model = True
 model.use_inverse_shape = True
-model.use_flex_model = False
+
+# FLEXCAT_MODEL
+#model.use_flex_model = False
+
 model.edgelen_prior = Exponential(1.0)
 model.update_freqs_separately = True
 model.update_relrates_separately = True

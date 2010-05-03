@@ -73,7 +73,8 @@ class LikelihoodCore(object):
 		
 		"""
 		if model_spec.type == 'codon':
-			self.parent.phycassert(not model_spec.use_flex_model, 'Cannot currently use flex model within codon model')
+			# FLEXCAT_MODEL
+			#self.parent.phycassert(not model_spec.use_flex_model, 'Cannot currently use flex model within codon model')
 			self.parent.phycassert(model_spec.num_rates == 1, 'Cannot currently use gamma rate heterogeneity within codon model')
 			self.parent.phycassert(not model_spec.pinvar_model, 'Cannot currently use invariable sites model within codon model')
 			m = Likelihood.CodonModel()
@@ -118,11 +119,13 @@ class LikelihoodCore(object):
 			
 		# If rate heterogeneity is to be assumed, add it to the model here
 		# Note must defer setting up pattern specific rates model until we know number of patterns
-		if model_spec.use_flex_model:
-			m.setNGammaRates(model_spec.num_rates)
-			m.setFlexModel()
-			m.setFlexRateUpperBound(model_spec.flex_L)
-		elif model_spec.num_rates > 1:
+		# FLEXCAT_MODEL
+		#if model_spec.use_flex_model:
+		#	m.setNGammaRates(model_spec.num_rates)
+		#	m.setFlexModel()
+		#	m.setFlexRateUpperBound(model_spec.flex_L)
+		#elif 
+		if model_spec.num_rates > 1:
 			m.setNGammaRates(model_spec.num_rates)
 			m.setPriorOnShapeInverse(model_spec.use_inverse_shape)	   #POL should be named useInverseShape rather than setPriorOnShapeInverse
 			m.setShape(model_spec.gamma_shape)
@@ -132,7 +135,8 @@ class LikelihoodCore(object):
 			m.setNGammaRates(1)
 			
 		if model_spec.pinvar_model:
-			assert not model_spec.use_flex_model, 'Cannot currently use flex model with pinvar'
+			# FLEXCAT_MODEL
+			#assert not model_spec.use_flex_model, 'Cannot currently use flex model with pinvar'
 			m.setPinvarModel()
 			m.setPinvar(model_spec.pinvar)
 			if model_spec.fix_pinvar:

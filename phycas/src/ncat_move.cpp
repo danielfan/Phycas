@@ -17,6 +17,8 @@
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+#if defined(FLEXCAT_MODEL)
+
 //#include "phycas/force_include.h"
 #include "phycas/src/probability_distribution.hpp"
 #include "phycas/src/likelihood_models.hpp"
@@ -452,3 +454,6 @@ bool NCatMove::update()
 #endif	//DISABLED_UNTIL_WORKING_PRIOR_ACCOMMODATED
 	return accepted;
 	}
+	
+#endif	//FLEXCAT_MODEL
+

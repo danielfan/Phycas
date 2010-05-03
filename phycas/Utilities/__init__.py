@@ -1,5 +1,6 @@
 __all__ = [ "CommonFunctions",
-            "flexplot",
+			# FLEXCAT_MODEL
+            #"flexplot",
             "io",
             "kappa2tratio",
             "PhycasUpdateCheck",

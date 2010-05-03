@@ -10,7 +10,8 @@ rng.setSeed(13579)
 model.type                      = 'codon'
 model.num_rates                 = 1
 model.pinvar_model              = False
-model.use_flex_model            = False
+# FLEXCAT_MODEL
+#model.use_flex_model            = False
 model.edgelen_hyperprior        = None
 model.edgelen_prior             = Exponential(1.0)
 model.state_freqs               = [1.0/61.0]*61

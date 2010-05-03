@@ -42,7 +42,8 @@ class MarkovChain(LikelihoodCore):
 		self.unimapping_move			= None
 		self.unimap_edge_move			= None
 		self.larget_simon_move			= None
-		self.ncat_move					= None
+		# FLEXCAT_MOVE
+		#self.ncat_move					= None
 		self.bush_move					= None
 		self.topo_prior_calculator		= None
 		
@@ -254,10 +255,12 @@ class MarkovChain(LikelihoodCore):
 					m.setStateFreqPrior(mspec.state_freq_prior.cloneAndSetLot(self.r))
 
 			# Copy priors related to among-site rate heterogeneity
-			if mspec.use_flex_model:
-				m.setNumFlexSpacers(mspec.flex_num_spacers)
-				m.setFLEXProbParamPrior(mspec.flex_prob_param_prior.cloneAndSetLot(self.r))
-			elif mspec.num_rates > 1:
+			# FLEXCAT_MODEL
+			#if mspec.use_flex_model:
+			#	m.setNumFlexSpacers(mspec.flex_num_spacers)
+			#	m.setFLEXProbParamPrior(mspec.flex_prob_param_prior.cloneAndSetLot(self.r))
+			#elif
+			if mspec.num_rates > 1:
 				m.setDiscreteGammaShapePrior(mspec.gamma_shape_prior.cloneAndSetLot(self.r))
 			if mspec.pinvar_model:
 				m.setPinvarPrior(mspec.pinvar_prior.cloneAndSetLot(self.r))
@@ -488,29 +491,30 @@ class MarkovChain(LikelihoodCore):
 				self.larget_simon_move.fixParameter()
 			self.chain_manager.addMove(self.larget_simon_move)
 
-		# If requested, create an NCatMove object to allow the number of rate categories to change
-		if self.parent.opts.model.use_flex_model:
-			self.parent.phycassert(False, 'Cannot use flex model at present because this part of phycas has not yet been rewritten to accommodate the possibility of partitioning')
-
-			# Create an NCatMove object
-			#self.ncat_move = Likelihood.NCatMove()
-			
-			# Set up features specific to NCatMove
-			#self.ncat_move.setCatProbPrior(self.flex_prob_param_prior)
-			#self.ncat_move.setL(self.parent.opts.model.flex_L)
-			#self.ncat_move.setS(self.parent.opts.model.flex_num_spacers)
-			#self.ncat_move.setLambda(self.parent.opts.model.flex_lambda)
-			#self.ncat_move.setPhi(self.parent.opts.model.flex_phi)
-
-			# Continue setting up NCatMove object
-			#self.ncat_move.setName("NCat move")
-			#self.ncat_move.setWeight(self.parent.opts.model.flex_ncat_move_weight)
-			#self.ncat_move.setTree(self.tree)
-			#self.ncat_move.setModel(model0)
-			#self.ncat_move.setTreeLikelihood(self.likelihood)
-			#self.ncat_move.setLot(self.r)
-			
-			#self.chain_manager.addMove(self.ncat_move)
+		# FLEXCAT_MODEL
+		## If requested, create an NCatMove object to allow the number of rate categories to change
+		#if self.parent.opts.model.use_flex_model:
+		#	self.parent.phycassert(False, 'Cannot use flex model at present because this part of phycas has not yet been rewritten to accommodate the possibility of partitioning')
+		#
+		#	# Create an NCatMove object
+		#	#self.ncat_move = Likelihood.NCatMove()
+		#	
+		#	# Set up features specific to NCatMove
+		#	#self.ncat_move.setCatProbPrior(self.flex_prob_param_prior)
+		#	#self.ncat_move.setL(self.parent.opts.model.flex_L)
+		#	#self.ncat_move.setS(self.parent.opts.model.flex_num_spacers)
+		#	#self.ncat_move.setLambda(self.parent.opts.model.flex_lambda)
+		#	#self.ncat_move.setPhi(self.parent.opts.model.flex_phi)
+		#
+		#	# Continue setting up NCatMove object
+		#	#self.ncat_move.setName("NCat move")
+		#	#self.ncat_move.setWeight(self.parent.opts.model.flex_ncat_move_weight)
+		#	#self.ncat_move.setTree(self.tree)
+		#	#self.ncat_move.setModel(model0)
+		#	#self.ncat_move.setTreeLikelihood(self.likelihood)
+		#	#self.ncat_move.setLot(self.r)
+		#	
+		#	#self.chain_manager.addMove(self.ncat_move)
 			
 		# If requested, create a BushMove object to allow polytomous trees
 		if self.parent.opts.allow_polytomies:

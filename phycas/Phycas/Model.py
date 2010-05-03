@@ -37,13 +37,14 @@ class Model(PhycasCommand):
 				("external_edgelen_prior",	   Exponential(2.0),					 "Can be used to set a prior distribution for external edges that differs from that applied to internal edges. If this is set to something besides None, you should also set internal_edgelen_prior appropriately. Setting the edgelen_prior option sets both external_edgelen_prior and internal_edgelen_prior to the same value"),
 				("edgelen_prior",			   None,								 "Sets both internal_edgelen_prior and external_edgelen_prior to the supplied value. Use this setting if you want all edges in the tree to have the same prior distribution. Using this setting will overwrite any values previously supplied for internal_edgelen_prior and external_edgelen_prior"),
 				("fix_edgelens",			   False,								 "not yet documented", BoolArgValidate),
-				("use_flex_model",			   False,								 "not yet documented", BoolArgValidate),
-				("flex_ncat_move_weight",	   1,									 "Number of times each cycle to attempt an ncat move", IntArgValidate(min=0)),
-				("flex_num_spacers",		   1,									 "Number of fake rates between each adjacent pair of real rates", IntArgValidate(min=1)),
-				("flex_phi",				   0.25,								 "Proportion of ncat moves in which ncat is incremented (ncat is decremented with probability 1 - flex_phi)", ProbArgValidate()),
-				("flex_L",					   1.0,									 "Upper bound of interval used for unnormalized relative rate parameter values", FloatArgValidate(greaterthan=0.0)),
-				("flex_lambda",				   1.0,									 "Parameter of Poisson prior on the number of extra categories", FloatArgValidate(greaterthan=0.0)),
-				("flex_prob_param_prior",	   Exponential(1.0),					 "not yet documented"),
+				# FLEXCAT_MODEL
+				#("use_flex_model",			   False,								 "not yet documented", BoolArgValidate),
+				#("flex_ncat_move_weight",	   1,									 "Number of times each cycle to attempt an ncat move", IntArgValidate(min=0)),
+				#("flex_num_spacers",		   1,									 "Number of fake rates between each adjacent pair of real rates", IntArgValidate(min=1)),
+				#("flex_phi",				   0.25,								 "Proportion of ncat moves in which ncat is incremented (ncat is decremented with probability 1 - flex_phi)", ProbArgValidate()),
+				#("flex_L",					   1.0,									 "Upper bound of interval used for unnormalized relative rate parameter values", FloatArgValidate(greaterthan=0.0)),
+				#("flex_lambda",				   1.0,									 "Parameter of Poisson prior on the number of extra categories", FloatArgValidate(greaterthan=0.0)),
+				#("flex_prob_param_prior",	   Exponential(1.0),					 "not yet documented"),
 				)
 		PhycasCommand.__init__(self, args, "model", "Defines a substitution model.")
 
@@ -72,13 +73,14 @@ class Model(PhycasCommand):
 		new_model.use_inverse_shape				= copy.deepcopy(self.use_inverse_shape, memo)
 		new_model.pinvar_model					= copy.deepcopy(self.pinvar_model, memo)
 
-		new_model.use_flex_model				= copy.deepcopy(self.use_flex_model, memo)		  
-		new_model.flex_ncat_move_weight			= copy.deepcopy(self.flex_ncat_move_weight, memo)
-		new_model.flex_num_spacers				= copy.deepcopy(self.flex_num_spacers, memo)
-		new_model.flex_phi						= copy.deepcopy(self.flex_phi, memo)
-		new_model.flex_L						= copy.deepcopy(self.flex_L, memo)
-		new_model.flex_lambda					= copy.deepcopy(self.flex_lambda, memo)
-		new_model.flex_prob_param_prior			= copy.deepcopy(self.flex_prob_param_prior, memo)
+		# FLEXCAT_MODEL
+		#new_model.use_flex_model				= copy.deepcopy(self.use_flex_model, memo)		  
+		#new_model.flex_ncat_move_weight			= copy.deepcopy(self.flex_ncat_move_weight, memo)
+		#new_model.flex_num_spacers				= copy.deepcopy(self.flex_num_spacers, memo)
+		#new_model.flex_phi						= copy.deepcopy(self.flex_phi, memo)
+		#new_model.flex_L						= copy.deepcopy(self.flex_L, memo)
+		#new_model.flex_lambda					= copy.deepcopy(self.flex_lambda, memo)
+		#new_model.flex_prob_param_prior			= copy.deepcopy(self.flex_prob_param_prior, memo)
 
 		new_model.relrate_param_prior			= copy.deepcopy(self.relrate_param_prior, memo)
 		new_model.relrate_prior					= copy.deepcopy(self.relrate_prior, memo)
