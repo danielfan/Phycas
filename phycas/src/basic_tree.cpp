@@ -756,7 +756,7 @@ void Tree::DetachSubtree(
 	//@POL This function was stolen from the TreeManip class - makes more sense here
 	PHYCAS_ASSERT(s != NULL);
 	PHYCAS_ASSERT(!s->IsTipRoot());
-	PHYCAS_ASSERT(!s->GetParent()->IsTipRoot());
+	//PHYCAS_ASSERT(!s->GetParent()->IsTipRoot());
 	//if (s->GetParent()->IsTipRoot())
 	//	{
 	//	std::cerr << "oops" << std::endl;

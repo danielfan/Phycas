@@ -30,6 +30,19 @@
 #define POLPY_NEWWAY  1
 #define POLPY_OLDWAY  !(POLPY_NEWWAY)
 
+#if ! defined(NDEBUG)
+//#	define BOOST_DEBUG_PYTHON
+//#	define BOOST_ALL_NO_LIB
+#	define BOOST_ENABLE_ASSERT_HANDLER
+#endif
+
+#undef DECLARING_ALL_EXCEPTIONS
+#if defined DECLARING_ALL_EXCEPTIONS
+#	define X_SPEC_THROW(x) throw(x)
+#else
+#	define X_SPEC_THROW(x) 
+#endif
+
 #include "phycas/src/phycas_config.h"
 
 #endif

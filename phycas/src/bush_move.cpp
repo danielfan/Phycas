@@ -38,8 +38,9 @@ using namespace phycas;
 |	finally calls BushMove::reset to re-initialize all other variables.
 */
 BushMove::BushMove()
-  :MCMCUpdater()
+  : MCMCUpdater()
 	{
+	is_move = true;
 	edgelen_mean = 1.0;
 	topo_prior_calculator = TopoPriorCalculatorShPtr(new TopoPriorCalculator());
 

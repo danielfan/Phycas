@@ -740,7 +740,7 @@ void MCMCChainManager::updateSAMCGain(
 #endif
 	
 #define DEBUG_UPDATERS  0
-#define DEBUG_SAMC      0//temp
+#define DEBUG_SAMC      0
 
 #if DEBUG_SAMC
 unsigned samc_trace_count = 0;
