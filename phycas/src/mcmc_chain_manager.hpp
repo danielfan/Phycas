@@ -118,10 +118,10 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
         
         void					debugUpdaterReport(std::string s);
 
-#if POLPY_NEWWAY
+		unsigned 				calcRFDistance(TreeShPtr ref_tree) const;
+#if defined(SAMC_TWO)
 		void 					initSAMC(const double_vect_t & elevels, double t0, double eta);
 		void 					finalizeSAMC();
-		unsigned 				calcRFDistance(TreeShPtr ref_tree) const;
 		unsigned				getSAMCRobinsonFouldsBest() const;
 		void 					debugAddSAMCProposalPair(unsigned from_level, unsigned to_level);
 		unsigned 				getSAMCEnergyLevel(double logf)	const;
@@ -158,7 +158,7 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 
 	private:
 
-#if POLPY_NEWWAY
+#if defined(SAMC_TWO)
 		// SAMC-related 
 		bool 					doing_samc;				/**< If true, SAMC analysis will be performed */
 		bool 					samc_likelihood_only;	/**< If true, SAMC analysis will be based on the normalized likelihood (improper prior) rather than the usual posterior (proper prior) */

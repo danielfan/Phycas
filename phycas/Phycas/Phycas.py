@@ -40,13 +40,14 @@ class Phycas(object):
         # Variables associated with the brownian command
         self.brownian_input_tree_file    = None           # Set to the name of the input tree file. This setting should not be None at the time the brownian method is called.
 
+		# SAMC_ONE
         # Variables associated with SAMC analyses
-        self.doing_samc             = False     # If True, using Cheon and Liang "SSAMC" method
-        self.samc_move_edgelen_mean = 1.0       # Specifies mean of exponential edge length generation distribution used by SamcMove when new edges are created
-        self.samc_move_debug        = False     # If set to True, output will be saved to a file named cf.txt (if it doesn't exist) or, if cf.txt already exists, the output will be compared to cf.txt and the program will halt if a discrepency is found
-        self.samc_t0                = 10000.0   # Samc_gain_factor = samc_t0/max(samc_t0, cycle)
-        self.samc_move_weight       = 1         # Number of times per cycle that SAMC moves will be performed (currently unused because SAMC moves are not used in standard MCMC analyses)
-        self.samc_temperature       = 0.6       # Temperature used in extrapolate move to smooth out differences in probabilities of different possible attachment points
+        #self.doing_samc             = False     # If True, using Cheon and Liang "SSAMC" method
+        #self.samc_move_edgelen_mean = 1.0       # Specifies mean of exponential edge length generation distribution used by SamcMove when new edges are created
+        #self.samc_move_debug        = False     # If set to True, output will be saved to a file named cf.txt (if it doesn't exist) or, if cf.txt already exists, the output will be compared to cf.txt and the program will halt if a discrepency is found
+        #self.samc_t0                = 10000.0   # Samc_gain_factor = samc_t0/max(samc_t0, cycle)
+        #self.samc_move_weight       = 1         # Number of times per cycle that SAMC moves will be performed (currently unused because SAMC moves are not used in standard MCMC analyses)
+        #self.samc_temperature       = 0.6       # Temperature used in extrapolate move to smooth out differences in probabilities of different possible attachment points
 
         # Variables associated with Gelfand-Ghosh calculation
         self.gg_outfile             = 'gg.txt'  # File in which to save gg results (use None to not save results)
@@ -88,8 +89,11 @@ class Phycas(object):
         self.logf                   = None
         self._logFileName           = None
         self.addition_sequence      = []        # List of taxon numbers for addition sequence
-        self.samc_theta             = []        # Normalizing factors (will have length ntax - 3 because levels with 1, 2 or 3 taxa are not examined)
-        self.samc_distance_matrix   = None      # Holds ntax x ntax hamming distance matrix used by SamcMove
+		
+		# SAMC_ONE
+        #self.samc_theta             = []        # Normalizing factors (will have length ntax - 3 because levels with 1, 2 or 3 taxa are not examined)
+        #self.samc_distance_matrix   = None      # Holds ntax x ntax hamming distance matrix used by SamcMove
+		
         self.stored_tree_defs       = None
         self.ss_delta_beta          = 0.0
         self.doing_steppingstone_sampling = False
@@ -152,137 +156,138 @@ class Phycas(object):
 
     edgelen_prior = property(getEdgelenPrior, setEdgelenPrior)
     
-    def runSAMC(self):
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
-        """
-        Performs the SSAMC analysis.
-        
-        """
-        if self.samc_move_debug:
-            stop_at_cycle = -1  # set this to the cycle you want to examine in detail, or -1 to ignore
-
-        nsamples = 0
-        max_lnL = None
-        current_level = 0
-        prev_level = 0
-        addseq = self.addition_sequence
-        chain = self.mcmc_manager.getColdChain()
-        mgr = self.mcmc_manager.getColdChainManager()
-        ls = chain.larget_simon_move
-        samc_move = chain.samc_move
-        max_level = len(addseq) - 4
-        num_levels = len(addseq) - 3
-        counts = [0]*(max_level + 1)
-        mgr.refreshLastLnPrior()
-        mgr.refreshLastLnLike()
-        ln_proposal_ratio = 0.0 # always 0.0 because \tilde{T}_{m,m-1} = \tilde{T}_{m,m+1} = 1/3
-        ls_accepted = [0]*num_levels
-        ls_tried = [0]*num_levels
-        if self.samc_move_debug:
-            outvect = None
-            if os.path.exists('cf.txt'):
-                outvect = file('cf.txt', 'r').readlines()
-            else:
-                outfile = file('cf.txt', 'w')
-
-        self.stopwatch.start()
-        self.mcmc_manager.resetNumLikelihoodEvals()
-
-        # Start of the main SAMC loop        
-        for cycle in xrange(self.ncycles):
-
-            if self.samc_move_debug:
-                chain.tree.debugMode(False)
-                if cycle == stop_at_cycle:
-                    chain.tree.debugMode(True)
-                    raw_input('Stopped at beginning of cycle %d. Press enter to continue...' % stop_at_cycle)
-
-            # proposal for changing current level
-            u = chain.r.uniform()
-            proposed_level = current_level
-            if u < 1.0/3.0:
-                if current_level > 0:
-                    proposed_level = current_level - 1
-            elif u > 2.0/3.0:
-                if current_level < max_level:
-                    proposed_level = current_level + 1
-                    
-            if proposed_level == current_level:
-                c = "*"
-                samc_move.setSaveDebugInfo(True)
-                if ls.update():
-                    ls_accepted[current_level] += 1
-                    ls_tried[current_level] += 1
-                    c = "*"
-                else:
-                    ls_tried[current_level] += 1
-                    c = "* :("
-            elif proposed_level > current_level:
-                leaf_num = self.addition_sequence[proposed_level + 3]
-                theta_diff = self.samc_theta[current_level] - self.samc_theta[proposed_level]
-                if samc_move.extrapolate(leaf_num, theta_diff, ln_proposal_ratio):
-                    current_level = proposed_level
-                    c = "+"
-                else:
-                    c = "+ :("                    
-            else:
-                leaf_num = self.addition_sequence[current_level + 3]
-                theta_diff = self.samc_theta[current_level] - self.samc_theta[proposed_level]
-                if samc_move.project(leaf_num, theta_diff, ln_proposal_ratio):
-                    current_level = proposed_level
-                    c = "-"
-                else:
-                    c = "- :("                    
-
-            # Bump up the normalizing constant for the current level
-            gain_factor = self.samc_t0/max([self.samc_t0, float(cycle)])
-            self.samc_theta[current_level] += gain_factor
-            lnL = chain.calcLnLikelihood()
-
-            if current_level == max_level:
-                nsamples += 1
-                if not max_lnL or lnL > max_lnL:
-                    max_lnL = lnL
-                self.mcmc_manager.recordSample(False, cycle)
-                outstr = "nsamples = %d, cycle = %d, lnL = %f, best = %f" % (nsamples,cycle,lnL,max_lnL)
-                print outstr
-            else:
-                assert current_level < max_level, 'max_level is not max. level'
-                outstr = "cycle = %d, level = %d: lnL =%f %s" % (cycle, current_level, lnL, c)
-            #outstr = "cycle = %d, level = %d: lnL =%*f %s" % (cycle, current_level, 15*current_level, lnL, c)
-            #print outstr
-
-            if self.samc_move_debug:
-                #if chain.debugCheckForUncachedCLAs():
-                #    sys.exit('cached CLAs found at cycle %d' % cycle)
-                if outvect:
-                    if outvect[cycle].strip() != outstr:
-                        print outvect[cycle].strip(),' <-- expected'
-                        sys.exit('output differs from expected at cycle %d' % cycle)
-                else:
-                    outfile.write('%s\n' % outstr)
-
-            prev_level = current_level
-            counts[current_level] += 1
-            
-        if self.samc_move_debug and not outvect:
-            outfile.close()
-            
-        print "ls accept pct =", [n > 0 and (100.0*float(a)/float(n) or 0) for a,n in zip(ls_accepted,ls_tried)]
-        print "theta vector = ", self.samc_theta
-        print "counts = ", counts
-        avg_count = float(sum(counts))/float(len(counts))
-        normalized_counts = [100.0*float(c)/avg_count for c in counts]
-        print "normalized_counts = [%.1f" % normalized_counts[0],
-        for c in normalized_counts[1:]:
-            print ', %.1f' % c,
-        print ']'
-
-        total_evals = self.mcmc_manager.getTotalEvals()
-        total_secs = self.stopwatch.elapsedSeconds()
-        self.output('%d likelihood evaluations in %.5f seconds' % (total_evals, total_secs))
-        if (total_secs > 0.0):
-            self.output('  = %.5f likelihood evaluations/sec' % (total_evals/total_secs))
+	# SAMC_ONE
+	#def runSAMC(self):
+	#	#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+	#	"""
+	#	Performs the SSAMC analysis.
+	#	
+	#	"""
+	#	if self.samc_move_debug:
+	#		stop_at_cycle = -1  # set this to the cycle you want to examine in detail, or -1 to ignore
+	#
+	#	nsamples = 0
+	#	max_lnL = None
+	#	current_level = 0
+	#	prev_level = 0
+	#	addseq = self.addition_sequence
+	#	chain = self.mcmc_manager.getColdChain()
+	#	mgr = self.mcmc_manager.getColdChainManager()
+	#	ls = chain.larget_simon_move
+	#	samc_move = chain.samc_move
+	#	max_level = len(addseq) - 4
+	#	num_levels = len(addseq) - 3
+	#	counts = [0]*(max_level + 1)
+	#	mgr.refreshLastLnPrior()
+	#	mgr.refreshLastLnLike()
+	#	ln_proposal_ratio = 0.0 # always 0.0 because \tilde{T}_{m,m-1} = \tilde{T}_{m,m+1} = 1/3
+	#	ls_accepted = [0]*num_levels
+	#	ls_tried = [0]*num_levels
+	#	if self.samc_move_debug:
+	#		outvect = None
+	#		if os.path.exists('cf.txt'):
+	#			outvect = file('cf.txt', 'r').readlines()
+	#		else:
+	#			outfile = file('cf.txt', 'w')
+	#
+	#	self.stopwatch.start()
+	#	self.mcmc_manager.resetNumLikelihoodEvals()
+	#
+	#	# Start of the main SAMC loop        
+	#	for cycle in xrange(self.ncycles):
+	#
+	#		if self.samc_move_debug:
+	#			chain.tree.debugMode(False)
+	#			if cycle == stop_at_cycle:
+	#				chain.tree.debugMode(True)
+	#				raw_input('Stopped at beginning of cycle %d. Press enter to continue...' % stop_at_cycle)
+	#
+	#		# proposal for changing current level
+	#		u = chain.r.uniform()
+	#		proposed_level = current_level
+	#		if u < 1.0/3.0:
+	#			if current_level > 0:
+	#				proposed_level = current_level - 1
+	#		elif u > 2.0/3.0:
+	#			if current_level < max_level:
+	#				proposed_level = current_level + 1
+	#				
+	#		if proposed_level == current_level:
+	#			c = "*"
+	#			samc_move.setSaveDebugInfo(True)
+	#			if ls.update():
+	#				ls_accepted[current_level] += 1
+	#				ls_tried[current_level] += 1
+	#				c = "*"
+	#			else:
+	#				ls_tried[current_level] += 1
+	#				c = "* :("
+	#		elif proposed_level > current_level:
+	#			leaf_num = self.addition_sequence[proposed_level + 3]
+	#			theta_diff = self.samc_theta[current_level] - self.samc_theta[proposed_level]
+	#			if samc_move.extrapolate(leaf_num, theta_diff, ln_proposal_ratio):
+	#				current_level = proposed_level
+	#				c = "+"
+	#			else:
+	#				c = "+ :("                    
+	#		else:
+	#			leaf_num = self.addition_sequence[current_level + 3]
+	#			theta_diff = self.samc_theta[current_level] - self.samc_theta[proposed_level]
+	#			if samc_move.project(leaf_num, theta_diff, ln_proposal_ratio):
+	#				current_level = proposed_level
+	#				c = "-"
+	#			else:
+	#				c = "- :("                    
+	#
+	#		# Bump up the normalizing constant for the current level
+	#		gain_factor = self.samc_t0/max([self.samc_t0, float(cycle)])
+	#		self.samc_theta[current_level] += gain_factor
+	#		lnL = chain.calcLnLikelihood()
+	#
+	#		if current_level == max_level:
+	#			nsamples += 1
+	#			if not max_lnL or lnL > max_lnL:
+	#				max_lnL = lnL
+	#			self.mcmc_manager.recordSample(False, cycle)
+	#			outstr = "nsamples = %d, cycle = %d, lnL = %f, best = %f" % (nsamples,cycle,lnL,max_lnL)
+	#			print outstr
+	#		else:
+	#			assert current_level < max_level, 'max_level is not max. level'
+	#			outstr = "cycle = %d, level = %d: lnL =%f %s" % (cycle, current_level, lnL, c)
+	#		#outstr = "cycle = %d, level = %d: lnL =%*f %s" % (cycle, current_level, 15*current_level, lnL, c)
+	#		#print outstr
+	#
+	#		if self.samc_move_debug:
+	#			#if chain.debugCheckForUncachedCLAs():
+	#			#    sys.exit('cached CLAs found at cycle %d' % cycle)
+	#			if outvect:
+	#				if outvect[cycle].strip() != outstr:
+	#					print outvect[cycle].strip(),' <-- expected'
+	#					sys.exit('output differs from expected at cycle %d' % cycle)
+	#			else:
+	#				outfile.write('%s\n' % outstr)
+	#
+	#		prev_level = current_level
+	#		counts[current_level] += 1
+	#		
+	#	if self.samc_move_debug and not outvect:
+	#		outfile.close()
+	#		
+	#	print "ls accept pct =", [n > 0 and (100.0*float(a)/float(n) or 0) for a,n in zip(ls_accepted,ls_tried)]
+	#	print "theta vector = ", self.samc_theta
+	#	print "counts = ", counts
+	#	avg_count = float(sum(counts))/float(len(counts))
+	#	normalized_counts = [100.0*float(c)/avg_count for c in counts]
+	#	print "normalized_counts = [%.1f" % normalized_counts[0],
+	#	for c in normalized_counts[1:]:
+	#		print ', %.1f' % c,
+	#	print ']'
+	#
+	#	total_evals = self.mcmc_manager.getTotalEvals()
+	#	total_secs = self.stopwatch.elapsedSeconds()
+	#	self.output('%d likelihood evaluations in %.5f seconds' % (total_evals, total_secs))
+	#	if (total_secs > 0.0):
+	#		self.output('  = %.5f likelihood evaluations/sec' % (total_evals/total_secs))
     
     def readTreesFromFile(self):
         if not self.file_name_trees_stored or (self.tree_file_name != self.file_name_trees_stored):
@@ -292,116 +297,120 @@ class Phycas(object):
             self.phycassert(len(self.stored_tree_defs) > 0, 'expecting a trees block defining at least one tree in the nexus data file %s' % self.tree_file_name)
             self.file_name_trees_stored = self.tree_file_name    # prevents rereading same tree file later
 
-    def distanceToTaxaSet(self, leaf, taxon_set, d):
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
-        """
-        Finds the minimum distance between a leaf and the members of a set of
-        taxa.
-        """
-        
-        min_dist = float('1e3000')
-        for i in taxon_set:
-            d_i = d[leaf][i]
-            if d_i < min_dist:
-                min_dist = d_i
-        return min_dist
-        
-    def getSamcAdditionSequence(self):
-        
-        n = self.ntax
-        d = self.calcDistances()
-        self.samc_distance_matrix = d
-
-        # Compute the addition order.  First find the most distant pair.
-        max_dist = -1.0
-        for i in range(n):
-            for j in range(i+1,n):
-                dij = d[i][j]
-                if dij > max_dist:
-                    max_dist = dij
-                    self.addition_sequence = [i,j]
-
-        # level_set = [self.addition_sequence]
-        available_set = range(n)
-        available_set.remove(self.addition_sequence[0])
-        available_set.remove(self.addition_sequence[1])
-        # print "level 2 self.addition_sequence =>", self.addition_sequence
-
-        for level in range(2,n):
-            max_dist = -1.0
-            for i in available_set:
-                d_to_set = self.distanceToTaxaSet(i, self.addition_sequence, d)
-                if d_to_set > max_dist:
-                    max_dist = d_to_set
-                    next_i = i
-            self.addition_sequence.append(next_i)
-            available_set.remove(next_i)
-            #print "level", level, " self.addition_sequence =>", self.addition_sequence
-            
-    def getSamcStartingTree(self):
-        #POL TEMP: not the best way to deal with this. See LikelihoodCore.__init__()
-        r = Lot()
-        r.setSeed(int(self.random_seed))
-        self.starting_edgelen_dist.setLot(r)
-
-        addseq = self.addition_sequence
-        brlens = [self.starting_edgelen_dist.sample() for i in range(5)]
-        self.tree_topology = Newick("((%d:%.5f,%d:%.5f):%.5f,%d:%.5f,%d:%.5f)" % (
-                             addseq[0] + 1, brlens[0], addseq[1] + 1, brlens[1], brlens[4], addseq[2] + 1,
-                             brlens[2], addseq[3] + 1, brlens[3]), Newick.ONE_BASED_TAXA_NUMBERS)
-        self.starting_tree_source = 'usertree'
-        self.starting_tree = self.tree_topology
-        print "starting tree = ", self.tree_topology
-        
-    def setupSAMC(self):
-        # Read the data
-        self.phycassert(self.data_source == 'file', "This only works for data read from a file (specify data_source == 'file')")
-        self.readDataFromFile()
-        self.phycassert(len(self.taxon_labels) == self.ntax, "Number of taxon labels does not match number of taxa.")
-
-        if self.nchains != 1:
-            print "Note: nchains reset to 1 for SSAMC"
-            self.nchains = 1
-
-        if not self.addition_sequence:
-            self.getSamcAdditionSequence()
-            
-        if not self.tree_topology:
-            self.getSamcStartingTree()
-
-        # Initialize vector of normalizing constant parameters
-        # Subtract 3 because never examine levels in which number of taxa < 4
-        nlevels = len(self.addition_sequence) - 3
-        self.samc_theta = [0.0]*(nlevels)
-        
-        # Set up MCMC chain
-        self.heat_vector = [1.0]
-        self.mcmc_manager.createChains()
-
-        # TODO: createChains, when it calls prepareForLikelihood, should add all tips
-        # and all internal nodes to vectors (not stacks) and use pointers to the appropriate
-        # elements in the tree itself
-
-        # Create tip nodes not already in tree and add them to tree's
-        # tip node storage vector in reverse order
-        internal_node_number = self.ntax
-        m = self.mcmc_manager.getColdChain()
-        for row in self.addition_sequence[-1:3:-1]:
-            m.likelihood.addOrphanTip(m.tree, row, '%d' % (row+1))
-            m.likelihood.addDecoratedInternalNode(m.tree, internal_node_number)
-            internal_node_number += 1
-
-        # samc_move needs a copy of the distance matrix for purposes of selecting
-        # a node to which to join the next taxon in the addition sequence in
-        # extrapolate moves
-        for row in self.samc_distance_matrix:
-            m.samc_move.setDistanceMatrixRow(row)
-
-        # Set the number of taxa and temperature
-        m.samc_move.setNTax(self.ntax)
-        m.samc_move.setTemperature(self.samc_temperature)
-
-        self.openParameterAndTreeFiles()
+	# SAMC_ONE	
+    #def distanceToTaxaSet(self, leaf, taxon_set, d):
+    #    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+    #    """
+    #    Finds the minimum distance between a leaf and the members of a set of
+    #    taxa.
+    #    """
+    #    
+    #    min_dist = float('1e3000')
+    #   for i in taxon_set:
+    #        d_i = d[leaf][i]
+    #        if d_i < min_dist:
+    #           min_dist = d_i
+    #    return min_dist
+     
+	# SAMC_ONE
+    #def getSamcAdditionSequence(self):
+    #    
+    #    n = self.ntax
+    #    d = self.calcDistances()
+    #    self.samc_distance_matrix = d
+	#
+    #    # Compute the addition order.  First find the most distant pair.
+    #    max_dist = -1.0
+    #    for i in range(n):
+    #        for j in range(i+1,n):
+    #            dij = d[i][j]
+    #            if dij > max_dist:
+    #                max_dist = dij
+    #                self.addition_sequence = [i,j]
+	#
+    #    # level_set = [self.addition_sequence]
+    #    available_set = range(n)
+    #    available_set.remove(self.addition_sequence[0])
+    #    available_set.remove(self.addition_sequence[1])
+    #    # print "level 2 self.addition_sequence =>", self.addition_sequence
+	#
+    #    for level in range(2,n):
+    #        max_dist = -1.0
+    #        for i in available_set:
+    #            d_to_set = self.distanceToTaxaSet(i, self.addition_sequence, d)
+    #            if d_to_set > max_dist:
+    #                max_dist = d_to_set
+    #                next_i = i
+    #        self.addition_sequence.append(next_i)
+    #        available_set.remove(next_i)
+    #        #print "level", level, " self.addition_sequence =>", self.addition_sequence
+       
+	# SAMC_ONE
+    #def getSamcStartingTree(self):
+    #    #POL TEMP: not the best way to deal with this. See LikelihoodCore.__init__()
+    #    r = Lot()
+    #    r.setSeed(int(self.random_seed))
+    #    self.starting_edgelen_dist.setLot(r)
+	#
+    #    addseq = self.addition_sequence
+    #    brlens = [self.starting_edgelen_dist.sample() for i in range(5)]
+    #    self.tree_topology = Newick("((%d:%.5f,%d:%.5f):%.5f,%d:%.5f,%d:%.5f)" % (
+    #                         addseq[0] + 1, brlens[0], addseq[1] + 1, brlens[1], brlens[4], addseq[2] + 1,
+    #                         brlens[2], addseq[3] + 1, brlens[3]), Newick.ONE_BASED_TAXA_NUMBERS)
+    #    self.starting_tree_source = 'usertree'
+    #    self.starting_tree = self.tree_topology
+    #    print "starting tree = ", self.tree_topology
+     
+	# SAMC_ONE
+    #def setupSAMC(self):
+    #    # Read the data
+    #    self.phycassert(self.data_source == 'file', "This only works for data read from a file (specify data_source == 'file')")
+    #    self.readDataFromFile()
+    #    self.phycassert(len(self.taxon_labels) == self.ntax, "Number of taxon labels does not match number of taxa.")
+	#
+    #    if self.nchains != 1:
+    #        print "Note: nchains reset to 1 for SSAMC"
+    #        self.nchains = 1
+	#
+    #    if not self.addition_sequence:
+    #        self.getSamcAdditionSequence()
+    #        
+    #    if not self.tree_topology:
+    #        self.getSamcStartingTree()
+	#
+    #    # Initialize vector of normalizing constant parameters
+    #    # Subtract 3 because never examine levels in which number of taxa < 4
+    #    nlevels = len(self.addition_sequence) - 3
+    #    self.samc_theta = [0.0]*(nlevels)
+    #    
+    #    # Set up MCMC chain
+    #    self.heat_vector = [1.0]
+    #    self.mcmc_manager.createChains()
+	#
+    #    # TODO: createChains, when it calls prepareForLikelihood, should add all tips
+    #    # and all internal nodes to vectors (not stacks) and use pointers to the appropriate
+    #    # elements in the tree itself
+	#
+    #    # Create tip nodes not already in tree and add them to tree's
+    #    # tip node storage vector in reverse order
+    #    internal_node_number = self.ntax
+    #    m = self.mcmc_manager.getColdChain()
+    #    for row in self.addition_sequence[-1:3:-1]:
+    #        m.likelihood.addOrphanTip(m.tree, row, '%d' % (row+1))
+    #        m.likelihood.addDecoratedInternalNode(m.tree, internal_node_number)
+    #        internal_node_number += 1
+	#
+    #    # samc_move needs a copy of the distance matrix for purposes of selecting
+    #    # a node to which to join the next taxon in the addition sequence in
+    #    # extrapolate moves
+    #    for row in self.samc_distance_matrix:
+    #        m.samc_move.setDistanceMatrixRow(row)
+	#
+    #    # Set the number of taxa and temperature
+    #    m.samc_move.setNTax(self.ntax)
+    #    m.samc_move.setTemperature(self.samc_temperature)
+	#
+    #    self.openParameterAndTreeFiles()
         
     #def setLogFile(self, filename):
     #    # Open a log file if requested
@@ -438,16 +447,17 @@ class Phycas(object):
 	#         self.setupMCMC()
 	#         self.runMCMC()
 
-    def samc(self):
-        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
-        """
-        Performs a sequential stochastic Markov chain analysis.
-        
-        """
-        self.check_settings()
-        self.doing_samc = True;
-        self.setupSAMC()
-        self.runSAMC()
+	# SAMC_ONE
+    #def samc(self):
+    #    #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+    #    """
+    #    Performs a sequential stochastic Markov chain analysis.
+    #    
+    #    """
+    #    self.check_settings()
+    #    self.doing_samc = True;
+    #    self.setupSAMC()
+    #    self.runSAMC()
 
     def likelihoods(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

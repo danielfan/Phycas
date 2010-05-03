@@ -1,3 +1,4 @@
+# SAMC_ONE
 from phycas.Utilities.PhycasCommand import *
 from phycas.Utilities.CommonFunctions import CommonFunctions
 from phycas import mcmc

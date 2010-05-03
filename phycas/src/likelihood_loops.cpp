@@ -769,7 +769,7 @@ double TreeLikelihood::harvestLnLFromValidEdge(
     PHYCAS_ASSERT(focalNodeCLA != NULL);
 
     // Get pointer to start of array holding pattern counts
-	PHYCAS_ASSERT(pattern_counts.size() == std::accumulate(partition_model->subset_num_patterns.begin(), partition_model->subset_num_patterns.end(), 0));
+	PHYCAS_ASSERT((unsigned)pattern_counts.size() == std::accumulate(partition_model->subset_num_patterns.begin(), partition_model->subset_num_patterns.end(), (unsigned)0));
     const pattern_count_t * const counts = (const pattern_count_t * const)(&pattern_counts[0]); //PELIGROSO
     
     // Get pointer to start of array holding number of potentially constant states for each pattern
@@ -1101,7 +1101,7 @@ double TreeLikelihood::harvestLnLFromValidNode(
     PHYCAS_ASSERT(focalNodeCLA != NULL);
 
     // Get pointer to start of array holding pattern counts
-	PHYCAS_ASSERT(pattern_counts.size() == std::accumulate(partition_model->subset_num_patterns.begin(), partition_model->subset_num_patterns.end(), 0));
+	PHYCAS_ASSERT((unsigned)pattern_counts.size() == std::accumulate(partition_model->subset_num_patterns.begin(), partition_model->subset_num_patterns.end(), (unsigned)0));
     const pattern_count_t * const counts = (const pattern_count_t * const)(&pattern_counts[0]); //PELIGROSO
 
 	// Get pointer to start of array holding number of potentially constant states for each pattern

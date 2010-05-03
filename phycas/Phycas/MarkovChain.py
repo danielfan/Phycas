@@ -541,7 +541,7 @@ class MarkovChain(LikelihoodCore):
 			
 			self.chain_manager.addMove(self.bush_move)
 
-		# REVISIT LATER
+		# SAMC_ONE
 		#if self.parent.doing_samc:
 		#	 self.samc_move = Likelihood.SamcMove(self.starting_edgelen_dist)
 		#
@@ -583,14 +583,16 @@ class MarkovChain(LikelihoodCore):
 			else:
 				updater.setStandardHeating()
 				
+			# SAMC_TWO
 			# If doing SAMC, make sure each updater knows the energy levels 
 			# This call to setEnergyLevels serves to notify each updater that
 			# a SAMC analysis is being done
-			if self.parent.opts.doing_samc:
-				updater.setEnergyLevels(self.parent.opts.samcobj.energy_levels)
+			#if self.parent.opts.doing_samc:
+			#	updater.setEnergyLevels(self.parent.opts.samcobj.energy_levels)
 				
+		# SAMC_TWO
 		# If doing SAMC, make sure the chain_manager knows the energy levels
 		# The call to initSAMC also initializes the other SAMC-related variables 
-		if self.parent.opts.doing_samc:
-			self.chain_manager.initSAMC(self.parent.opts.samcobj.energy_levels, self.parent.opts.samcobj.gain_t0, self.parent.opts.samcobj.gain_eta)
+		#if self.parent.opts.doing_samc:
+		#	self.chain_manager.initSAMC(self.parent.opts.samcobj.energy_levels, self.parent.opts.samcobj.gain_t0, self.parent.opts.samcobj.gain_eta)
 				

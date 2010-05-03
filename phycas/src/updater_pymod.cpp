@@ -34,7 +34,9 @@
 #include "phycas/src/dirichlet_move.hpp"
 #include "phycas/src/ncat_move.hpp"
 #include "phycas/src/bush_move.hpp"
-#include "phycas/src/samc_move.hpp"
+#if defined(SAMC_ONE)
+#	include "phycas/src/samc_move.hpp"
+#endif
 #include "phycas/src/edge_move.hpp"
 #include "phycas/src/unimap_edge_move.hpp"
 #include "phycas/src/unimap_node_slide_move.hpp"
@@ -101,7 +103,7 @@ void updater_pymod()
 		.def("isStandardHeating", &MCMCUpdater::isStandardHeating)
 		.def("isLikelihoodHeating", &MCMCUpdater::isLikelihoodHeating)
 		.def("isNoHeating", &MCMCUpdater::isNoHeating)
-#if POLPY_NEWWAY
+#if defined(SAMC_TWO)
 		.def("setEnergyLevels", &MCMCUpdater::setEnergyLevels)
 #endif
 		;
@@ -195,6 +197,7 @@ void updater_pymod()
 		.def("finalize", &phycas::BushMove::finalize)
 		.def("getTopoPriorCalculator", &phycas::BushMove::getTopoPriorCalculator)
 		;
+#if defined(SAMC_ONE)
 	class_<phycas::SamcMove, bases<phycas::MCMCUpdater>, 
 		boost::noncopyable, boost::shared_ptr<phycas::SamcMove> >("SamcMove", init<ProbDistShPtr>()) 
 		.def("extrapolate", &phycas::SamcMove::extrapolate)
@@ -207,6 +210,7 @@ void updater_pymod()
 		.def("setNTax", &phycas::SamcMove::setNTax)
 		.def("getNTax", &phycas::SamcMove::getNTax)
 		;
+#endif
 	class_<phycas::NCatMove, bases<phycas::MCMCUpdater>, 
 		boost::noncopyable, boost::shared_ptr<phycas::NCatMove> >("NCatMove") 
 		.def("update", &phycas::NCatMove::update)

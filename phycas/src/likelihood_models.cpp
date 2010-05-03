@@ -768,8 +768,8 @@ void Model::normalizeRatesAndProbs(
 	// c*(r0*p0 + r1*p1 + r2*p2 + r3*p3) = 1.0
 	// c = 1/(r0*p0 + r1*p1 + r2*p2 + r3*p3)
 	//
-	PHYCAS_ASSERT(gamma_rates_unnorm.size() == num_gamma_rates);
-	PHYCAS_ASSERT(gamma_rate_probs.size() == num_gamma_rates);
+	PHYCAS_ASSERT((unsigned)gamma_rates_unnorm.size() == num_gamma_rates);
+	PHYCAS_ASSERT((unsigned)gamma_rate_probs.size() == num_gamma_rates);
 	rates.resize(num_gamma_rates, 0.0);
 	probs.resize(num_gamma_rates, 0.0);
 	std::vector<double>::const_iterator rates_it = gamma_rates_unnorm.begin();

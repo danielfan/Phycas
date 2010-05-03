@@ -56,7 +56,10 @@ BushMove::BushMove()
 */
 bool BushMove::update()
 	{
+#if defined(SAMC_TWO)
 	PHYCAS_ASSERT(!chain_mgr.lock()->getSAMCLikelihoodOnly());
+#endif
+
 #if DISABLED_UNTIL_WORKING_PRIOR_ACCOMMODATED
 	
 	// The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.

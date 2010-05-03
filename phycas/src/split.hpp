@@ -38,7 +38,10 @@ typedef std::vector<split_t>    SplitTVect;
 class Split
 	{
     friend class Tree;
+	
+#if defined(SAMC_ONE)
     friend class SamcMove;
+#endif
 
 	public:
 

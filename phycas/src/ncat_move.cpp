@@ -304,8 +304,6 @@ void NCatMove::revert()
 */
 bool NCatMove::update()
 	{
-	//need to SAMCize
-	
 	bool accepted = false;
 	total_updates++;
 

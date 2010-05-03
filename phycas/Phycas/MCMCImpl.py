@@ -55,8 +55,11 @@ class MCMCImpl(CommonFunctions):
 		self.reader					= NexusReader()
 		#self._logFileName			 = None
 		self.addition_sequence		= []		# List of taxon numbers for addition sequence
-		self.samc_theta				= []		# Normalizing factors (will have length ntax - 3 because levels with 1, 2 or 3 taxa are not examined)
-		self.samc_distance_matrix	= None		# Holds ntax x ntax hamming distance matrix used by SamcMove
+		
+		# SAMC_ONE
+		#self.samc_theta				= []		# Normalizing factors (will have length ntax - 3 because levels with 1, 2 or 3 taxa are not examined)
+		#self.samc_distance_matrix	= None		# Holds ntax x ntax hamming distance matrix used by SamcMove
+		
 		self.stored_tree_defs		= None
 		self.psf					= None
 		self.pdf_splits_to_plot		= None
@@ -76,9 +79,11 @@ class MCMCImpl(CommonFunctions):
 		self.ss_sampled_betas		= None
 		self.ss_sampled_likes		= None
 		self.siteIndicesForPatternIndex = None
-		self.samc_best				= None
-		self.samc_log_file			= None
-		self.samc_ref_tree			= None
+		
+		# SAMC_TWO
+		#self.samc_best				= None
+		#self.samc_log_file			= None
+		#elf.samc_ref_tree			= None
 		
 	def setSiteLikeFile(self, sitelikef):
 		if sitelikef is not None:
@@ -793,9 +798,12 @@ class MCMCImpl(CommonFunctions):
 		# print '******** nchains =',nchains
 		self.last_adaptation = 0
 		self.next_adaptation = self.opts.adapt_first
-		if self.opts.doing_samc:
-			samc_raising_sea_level = False
-			samc_consecutive_max_rmse = 0	# stores number of consecutive cycles in which lowest energy level is the only level visited
+		
+		# SAMC_TWO
+		#if self.opts.doing_samc:
+		#	samc_raising_sea_level = False
+		#	samc_consecutive_max_rmse = 0	# stores number of consecutive cycles in which lowest energy level is the only level visited
+		
 		for cycle in xrange(self.burnin + self.ncycles):
 			# Update all updaters
 			if explore_prior and self.opts.draw_directly_from_prior:
@@ -814,8 +822,10 @@ class MCMCImpl(CommonFunctions):
 						print '	  tree rep.%d = %s;' % (cycle + 1, c.tree.makeNewick(self.mcmc_manager.parent.opts.ndecimals))
 			
 					c.chain_manager.updateAllUpdaters()
-					if self.opts.doing_samc:
-						c.chain_manager.updateSAMCGain(cycle + 1)
+					
+					# SAMC_TWO
+					#if self.opts.doing_samc:
+					#	c.chain_manager.updateSAMCGain(cycle + 1)
 					
 			# print '******** time_stamp =',self.mcmc_manager.getColdChain().model.getTimeStamp()
 					
@@ -841,57 +851,59 @@ class MCMCImpl(CommonFunctions):
 					if nchains == 1:
 						cold_chain_manager = self.mcmc_manager.getColdChainManager()
 						msg = 'cycle = %d, lnL = %.5f %s' % (cycle + 1, cold_chain_manager.getLastLnLike(), time_remaining)
-						if self.opts.doing_samc:
-							wts = cold_chain_manager.getSAMCWeights()
-							cnts = cold_chain_manager.getSAMCCounts()
-							lvls = cold_chain_manager.getSAMCLogLevels()
-							nlev = len(wts)
-							msg += "\nSAMC report:"
-							msg += "\n  best score: %.6f" % cold_chain_manager.getSAMCBest()
-							msg += "\n  RF distance: %d" % cold_chain_manager.getSAMCRobinsonFouldsBest()
-							msg += "\n  pi RMSE:    %.6f" % cold_chain_manager.getSAMCPiRMSE()
-							if len(lvls) > 20:
-								msg += "\n  levels min = %d, max = %d (%s...%s)" % (min(lvls), max(lvls), ','.join(['%g' % c for c in lvls[:10]]), ','.join(['%g' % c for c in lvls[-10:]]))
-							else:
-								msg += "\n  levels min = %d, max = %d (%s)" % (min(lvls), max(lvls), ','.join(['%g' % c for c in lvls]))
-							if len(cnts) > 20:
-								msg += "\n  counts min = %d, max = %d (%s...%s), sum = %d" % (min(cnts), max(cnts), ','.join(['%d' % c for c in cnts[:10]]), ','.join(['%d' % c for c in cnts[-10:]]),sum(cnts))
-							else:
-								msg += "\n  counts min = %d, max = %d (%s), sum = %d" % (min(cnts), max(cnts), ','.join(['%d' % c for c in cnts]),sum(cnts))
-							if len(wts) > 20:
-								msg += "\n  theta min = %g, max = %g (%s...%s)" % (min(wts), max(wts), ','.join(['%d' % c for c in wts[:10]]), ','.join(['%d' % c for c in wts[-10:]]))
-							else:
-								msg += "\n  theta min = %g, max = %g (%s)" % (min(wts), max(wts), ','.join(['%d' % c for c in wts]))
-							msg += "\n  gain:       %g\n" % cold_chain_manager.getSAMCGain()
-							if not levels_file_created:
-								#temp!
-								levelsf = open('samc_trace.R','w')
-								levelsf.write('levels <- c(%s)\n' % ','.join(['%g' % c for c in lvls]))
-								levelsf.write('lnf <- read.table("/Users/plewis/Documents/Projects/pdev/trunk/inprep/GreenPlants/samc_trace.txt", header=FALSE)\n')
-								#levelsf.write('plot(lnf$V1,type="l",ylim=c(min(lnf$V1),max(levels)))\n')
-								levelsf.write('plot(lnf$V1,type="l",ylim=c(-173624,-171612))\n')
-								#levelsf.write('points(lnf$V2,col="red",pch=46)\n')
-								#levelsf.write('points(lnf$V3,col="red",pch=46)\n')
-								levelsf.write('abline(h=levels,col="red")\n')
-								levelsf.close()
-								levels_file_created = True
-															
-							# After each round of updates, raise the "water level" by 2 log likelihood units
-							# until samc_consecutive_max_rmse reaches 20, at which point we tell adjustSAMCLevels
-							# that we are ready to fix the energy levels
-							if samc_raising_sea_level:
-								# adjust samc_consecutive_max_rmse
-								if cnts[0] == sum(cnts):
-									samc_consecutive_max_rmse += 1
-								else:
-									samc_consecutive_max_rmse = 0
-								# check if time to fix levels
-								if samc_consecutive_max_rmse > 20: 
-									samc_raising_sea_level = False
-									self.output('\n>>>>>>>>>>>>>>>>>>>> fixing levels <<<<<<<<<<<<<<<<<<<<\n') 
-									cold_chain_manager.adjustSAMCLevels(300.0, True); # fix at 50 levels, each 1 log unit apart, with lowest at current level
-								else:
-									cold_chain_manager.adjustSAMCLevels(3.0, False); # 2nd arg False means we want to continue raising sea level
+						
+						# SAMC_TWO
+						#if self.opts.doing_samc:
+						#	wts = cold_chain_manager.getSAMCWeights()
+						#	cnts = cold_chain_manager.getSAMCCounts()
+						#	lvls = cold_chain_manager.getSAMCLogLevels()
+						#	nlev = len(wts)
+						#	msg += "\nSAMC report:"
+						#	msg += "\n  best score: %.6f" % cold_chain_manager.getSAMCBest()
+						#	msg += "\n  RF distance: %d" % cold_chain_manager.getSAMCRobinsonFouldsBest()
+						#	msg += "\n  pi RMSE:    %.6f" % cold_chain_manager.getSAMCPiRMSE()
+						#	if len(lvls) > 20:
+						#		msg += "\n  levels min = %d, max = %d (%s...%s)" % (min(lvls), max(lvls), ','.join(['%g' % c for c in lvls[:10]]), ','.join(['%g' % c for c in lvls[-10:]]))
+						#	else:
+						#		msg += "\n  levels min = %d, max = %d (%s)" % (min(lvls), max(lvls), ','.join(['%g' % c for c in lvls]))
+						#	if len(cnts) > 20:
+						#		msg += "\n  counts min = %d, max = %d (%s...%s), sum = %d" % (min(cnts), max(cnts), ','.join(['%d' % c for c in cnts[:10]]), ','.join(['%d' % c for c in cnts[-10:]]),sum(cnts))
+						#	else:
+						#		msg += "\n  counts min = %d, max = %d (%s), sum = %d" % (min(cnts), max(cnts), ','.join(['%d' % c for c in cnts]),sum(cnts))
+						#	if len(wts) > 20:
+						#		msg += "\n  theta min = %g, max = %g (%s...%s)" % (min(wts), max(wts), ','.join(['%d' % c for c in wts[:10]]), ','.join(['%d' % c for c in wts[-10:]]))
+						#	else:
+						#		msg += "\n  theta min = %g, max = %g (%s)" % (min(wts), max(wts), ','.join(['%d' % c for c in wts]))
+						#	msg += "\n  gain:       %g\n" % cold_chain_manager.getSAMCGain()
+						#	if not levels_file_created:
+						#		#temp!
+						#		levelsf = open('samc_trace.R','w')
+						#		levelsf.write('levels <- c(%s)\n' % ','.join(['%g' % c for c in lvls]))
+						#		levelsf.write('lnf <- read.table("/Users/plewis/Documents/Projects/pdev/trunk/inprep/GreenPlants/samc_trace.txt", header=FALSE)\n')
+						#		#levelsf.write('plot(lnf$V1,type="l",ylim=c(min(lnf$V1),max(levels)))\n')
+						#		levelsf.write('plot(lnf$V1,type="l",ylim=c(-173624,-171612))\n')
+						#		#levelsf.write('points(lnf$V2,col="red",pch=46)\n')
+						#		#levelsf.write('points(lnf$V3,col="red",pch=46)\n')
+						#		levelsf.write('abline(h=levels,col="red")\n')
+						#		levelsf.close()
+						#		levels_file_created = True
+						#									
+						#	# After each round of updates, raise the "water level" by 2 log likelihood units
+						#	# until samc_consecutive_max_rmse reaches 20, at which point we tell adjustSAMCLevels
+						#	# that we are ready to fix the energy levels
+						#	if samc_raising_sea_level:
+						#		# adjust samc_consecutive_max_rmse
+						#		if cnts[0] == sum(cnts):
+						#			samc_consecutive_max_rmse += 1
+						#		else:
+						#			samc_consecutive_max_rmse = 0
+						#		# check if time to fix levels
+						#		if samc_consecutive_max_rmse > 20: 
+						#			samc_raising_sea_level = False
+						#			self.output('\n>>>>>>>>>>>>>>>>>>>> fixing levels <<<<<<<<<<<<<<<<<<<<\n') 
+						#			cold_chain_manager.adjustSAMCLevels(300.0, True); # fix at 50 levels, each 1 log unit apart, with lowest at current level
+						#		else:
+						#			cold_chain_manager.adjustSAMCLevels(3.0, False); # 2nd arg False means we want to continue raising sea level
 					else:
 						msg = 'cycle = %d, ' % (cycle + 1)
 						for k in range(nchains):
@@ -944,26 +956,24 @@ class MCMCImpl(CommonFunctions):
 		nchains = len(self.mcmc_manager.chains)
 		cold_chain = self.mcmc_manager.getColdChain()
 		
-		if self.opts.doing_samc:
-			# Make sure cold chain manager knows which to use during SAMC, the posterior or the likelihood
-			cold_chain.chain_manager.setSAMCLikelihoodOnly(self.opts.samcobj.likelihood_only)
-			
-			# if a reference tree was specified, create that tree now
-			tr_source = self.opts.samcobj.reference_tree_source
-			if tr_source is not None:
-				try:
-					tr_source.setActiveTaxonLabels(self.taxon_labels)
-					i = iter(tr_source)
-					self.samc_ref_tree = i.next()
-				except:
-					self.stdout.error("A SAMC reference tree could not be obtained from the specified reference_tree_source")
-					raise
-			self.samc_best = self.opts.samcobj.lolog
-			if self.samc_ref_tree is not None:
-				cold_chain.chain_manager.setSAMCRefTree(self.samc_ref_tree)
-		#else:
-		#	cold_chain.chain_manager.setSAMCLikelihoodOnly(True)
-		#	raw_input('debug setting samc_likelihood_only for mcmc')
+		# SAMC_TWO
+		#if self.opts.doing_samc:
+		#	# Make sure cold chain manager knows which to use during SAMC, the posterior or the likelihood
+		#	cold_chain.chain_manager.setSAMCLikelihoodOnly(self.opts.samcobj.likelihood_only)
+		#	
+		#	# if a reference tree was specified, create that tree now
+		#	tr_source = self.opts.samcobj.reference_tree_source
+		#	if tr_source is not None:
+		#		try:
+		#			tr_source.setActiveTaxonLabels(self.taxon_labels)
+		#			i = iter(tr_source)
+		#			self.samc_ref_tree = i.next()
+		#		except:
+		#			self.stdout.error("A SAMC reference tree could not be obtained from the specified reference_tree_source")
+		#			raise
+		#	self.samc_best = self.opts.samcobj.lolog
+		#	if self.samc_ref_tree is not None:
+		#		cold_chain.chain_manager.setSAMCRefTree(self.samc_ref_tree)
 		
 		if self.opts.verbose:
 			if self.data_matrix == None:
@@ -1169,8 +1179,9 @@ class MCMCImpl(CommonFunctions):
 		if (total_secs > 0.0):
 			self.output('  = %.5f likelihood evaluations/sec' % (total_evals/total_secs))
 
-		if self.opts.doing_samc:
-			cold_chain.chain_manager.finalizeSAMC()
+		# SAMC_TWO
+		#if self.opts.doing_samc:
+		#	cold_chain.chain_manager.finalizeSAMC()
 			
 		if self.treef:
 			self.treeFileClose()

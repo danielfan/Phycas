@@ -1,3 +1,4 @@
+# SAMC_TWO
 from phycas import *
 
 data_file_name   = 'greenrbcl.nex'

@@ -500,10 +500,12 @@ double MCMCUpdater::recalcPrior()
 		return 0.0;
 		}
 		
+#if defined(SAMC_TWO)
 	if (chain_mgr.lock()->getSAMCLikelihoodOnly())
 		{
 		return 0.0;
 		}
+#endif
 		
 	if (prior)
 		{
@@ -746,7 +748,6 @@ double MCMCUpdater::getLnPrior() const
 	return curr_ln_prior;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the log prior just after this updater's update() member function was last called.
 */
@@ -755,6 +756,7 @@ TreeShPtr MCMCUpdater::getTree()
 	return tree;
 	}
 
+#if defined(SAMC_TWO)
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the `energy_levels' data member to a copy of the supplied values. If `elevels' is empty, clears `energy_levels'.
 */

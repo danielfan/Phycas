@@ -16,6 +16,7 @@
 |  with this program; if not, write to the Free Software Foundation, Inc.,	  |
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.				  |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+#if defined(SAMC_ONE)
 
 #if ! defined(SAMC_MOVE_HPP)
 #define SAMC_MOVE_HPP
@@ -115,3 +116,5 @@ class SamcMove : public MCMCUpdater
 #include "phycas/src/samc_move.inl"
 
 #endif
+
+#endif //if defined(SAMC_ONE)

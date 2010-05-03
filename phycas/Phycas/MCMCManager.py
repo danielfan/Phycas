@@ -74,8 +74,11 @@ class MCMCManager:
 		unimap_and_ratehet		   = (self.parent.opts.use_unimap and self.parent.opts.model.num_rates > 1)
 		unimap_and_polytomies	   = (self.parent.opts.use_unimap and self.parent.opts.allow_polytomies)
 		unimap_and_multiple_chains = (self.parent.opts.use_unimap and self.parent.opts.nchains > 1)
+		
+		# SAMC_ONE
 		#unimap_and_samc			= (self.parent.opts.use_unimap and self.parent.opts.doing_samc)
 		#self.parent.phycassert(not unimap_and_samc, 'SAMC cannot (yet) be used in conjunction with use_unimap')
+		
 		self.parent.phycassert(not unimap_and_polytomies, 'Allowing polytomies cannot (yet) be used in conjunction with use_unimap')
 		self.parent.phycassert(not unimap_and_flex, 'Flex model cannot (yet) be used in conjunction with use_unimap')
 		self.parent.phycassert(not unimap_and_ratehet, 'Rate heterogeneity cannot (yet) be used in conjunction with use_unimap')

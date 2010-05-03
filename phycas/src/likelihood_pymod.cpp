@@ -120,7 +120,8 @@ BOOST_PYTHON_MODULE(_LikelihoodExt)
 		.def("clear", &MCMCChainManager::clear)
 		.def("refreshLastLnLike", &MCMCChainManager::refreshLastLnLike)
 		.def("refreshLastLnPrior", &MCMCChainManager::refreshLastLnPrior)
-#if POLPY_NEWWAY
+		.def("calcRFDistance", &MCMCChainManager::calcRFDistance) 
+#if defined(SAMC_TWO)
 		.def("initSAMC", &MCMCChainManager::initSAMC)
 		.def("finalizeSAMC", &MCMCChainManager::finalizeSAMC)
 		.def("updateSAMCGain", &MCMCChainManager::updateSAMCGain)
@@ -137,7 +138,6 @@ BOOST_PYTHON_MODULE(_LikelihoodExt)
 		.def("getSAMCPiRMSE", &MCMCChainManager::getSAMCPiRMSE)
 		.def("getSAMCLikelihoodOnly", &MCMCChainManager::getSAMCLikelihoodOnly)
 		.def("getSAMCRobinsonFouldsBest", &MCMCChainManager::getSAMCRobinsonFouldsBest)
-		.def("calcRFDistance", &MCMCChainManager::calcRFDistance) 
 #endif
 		;
 	class_<std::vector<MCMCUpdaterShPtr> >("paramVec", no_init)

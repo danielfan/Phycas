@@ -187,6 +187,8 @@ bool LargetSimonMove::update()
 
     double prev_posterior = 0.0;
 	double curr_posterior = 0.0;
+	
+#if defined(SAMC_TWO)
 	unsigned prev_samc_index = UINT_MAX;
 	unsigned curr_samc_index = UINT_MAX;
 	if (p->doingSAMC())
@@ -223,7 +225,23 @@ bool LargetSimonMove::update()
 			curr_posterior = heating_power*curr_ln_like + curr_ln_prior;
 			}
 		}
-		
+#else	//not SAMC_TWO
+		if (is_standard_heating)
+			{
+			prev_posterior = heating_power*(prev_ln_like + prev_ln_prior);
+			curr_posterior = heating_power*(curr_ln_like + curr_ln_prior);
+			if (use_working_prior)
+				{
+				prev_posterior += (1.0 - heating_power)*prev_ln_working_prior;
+				curr_posterior += (1.0 - heating_power)*curr_ln_working_prior;
+				}
+			}
+		else
+			{
+			prev_posterior = heating_power*prev_ln_like + prev_ln_prior;
+			curr_posterior = heating_power*curr_ln_like + curr_ln_prior;
+			}
+#endif	//SAMC_TWO
 	
 	double ln_accept_ratio = curr_posterior - prev_posterior + getLnHastingsRatio() + getLnJacobian();
     //double lnu = std::log(rng->Uniform(FILE_AND_LINE));
@@ -246,9 +264,6 @@ bool LargetSimonMove::update()
             }
         else
             {
-#if 0
-            debug_info = str(boost::format("LargetSimonMove: case %d, topology %s, x=%f, y=%f, z=%f, newX=%f, newY=%f, newZ=%f, %s") % which_case % (topol_changed ? "changed" : "unchanged") % x % y % z % (ndX->GetEdgeLen()) % (ndY->GetEdgeLen()) % (ndZ->GetEdgeLen()) % (accepted ? "accepted" : "rejected"));
-#else
             debug_info = boost::str(boost::format("LargetSimonMove: topology %s, case = %d, x=%f, y=%f, z=%f, newX=%f, newY=%f, newZ=%f, %s, lnu = %.5f, lnr = %.5f, curr = %.5f, prev = %.5f") 
                 % (topol_changed ? "changed" : "unchanged") 
                 % which_case
@@ -263,8 +278,6 @@ bool LargetSimonMove::update()
                 % ln_accept_ratio
                 % curr_posterior
                 % prev_posterior);
-#endif
-            //debug_info = str(boost::format("LargetSimonMove: curr_posterior=%f prev_posterior=%f getLnHastingsRatio()=%f ln_accept_ratio=%f") % curr_posterior % prev_posterior % getLnHastingsRatio() % ln_accept_ratio);
             }
         }
     
@@ -272,8 +285,12 @@ bool LargetSimonMove::update()
 		{
 		p->setLastLnPrior(curr_ln_prior);
 		p->setLastLnLike(curr_ln_like);
+		
+#if defined(SAMC_TWO)
 		if (p->doingSAMC())
 			p->updateSAMCWeights(prev_samc_index);
+#endif
+			
 		accept();
 		return true;
 		}
@@ -281,8 +298,12 @@ bool LargetSimonMove::update()
 		{
 		curr_ln_like	= p->getLastLnLike();
 		curr_ln_prior	= p->getLastLnPrior();
+
+#if defined(SAMC_TWO)
 		if (p->doingSAMC())
 			p->updateSAMCWeights(prev_samc_index);
+#endif
+
 		revert();
 
         //@POL 14-Mar-2008 First part of assert below added because prev_likelihood_root can legitimately be NULL

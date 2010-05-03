@@ -235,11 +235,11 @@ bool DirichletMove::update()
 
 	proposeNewState();
 
-	// Note that it may seem incorrect to use a Dirichlet prior here because transformed versions of the
-	// orig_params values are used in the likelihood function. However, the transformation only adds a constant
-	// (i.e., -log(nsubsets)) to the log prior and thus this constant cancels out in the ln_accept_ratio.
-	// More care should be taken when reporting the log prior or when estimating marginal likelihoods.
+#if defined(SAMC_TWO)
     double prev_ln_prior		= (p->getSAMCLikelihoodOnly() ? 0.0 : mv_prior->GetLnPDF(orig_params));
+#else
+    double prev_ln_prior		= mv_prior->GetLnPDF(orig_params);
+#endif
 	double prev_ln_like			= p->getLastLnLike();
 	PHYCAS_ASSERT(!use_working_prior || mv_working_prior);
 	double prev_ln_working_prior = (use_working_prior ? mv_working_prior->GetLnPDF(orig_params) : 0.0);
@@ -248,12 +248,19 @@ bool DirichletMove::update()
     setParams(new_params);
     likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
 
+#if defined(SAMC_TWO)
 	double curr_ln_prior		= (p->getSAMCLikelihoodOnly() ? 0.0 : mv_prior->GetLnPDF(new_params));
+#else
+	double curr_ln_prior		= mv_prior->GetLnPDF(new_params);
+#endif
+
 	double curr_ln_like			= (heating_power > 0.0 ? likelihood->calcLnL(tree) : 0.0);
 	double curr_ln_working_prior = (use_working_prior ? mv_working_prior->GetLnPDF(new_params) : 0.0);
 
     double prev_posterior = 0.0;
 	double curr_posterior = 0.0;
+
+#if defined(SAMC_TWO)
 	unsigned prev_samc_index = UINT_MAX;
 	unsigned curr_samc_index = UINT_MAX;
 	
@@ -287,6 +294,24 @@ bool DirichletMove::update()
 			curr_posterior = heating_power*curr_ln_like + curr_ln_prior;
 			}
 		}
+#else	//not SAMC_TWO
+		if (is_standard_heating)
+			{
+			prev_posterior = heating_power*(prev_ln_like + prev_ln_prior);
+			curr_posterior = heating_power*(curr_ln_like + curr_ln_prior);
+			if (use_working_prior)
+				{
+				prev_posterior += (1.0 - heating_power)*prev_ln_working_prior;
+				curr_posterior += (1.0 - heating_power)*curr_ln_working_prior;
+				}
+			}
+		else
+			{
+			prev_posterior = heating_power*prev_ln_like + prev_ln_prior;
+			curr_posterior = heating_power*curr_ln_like + curr_ln_prior;
+			}
+#endif	//SAMC_TWO
+
 	double ln_hastings			= getLnHastingsRatio();
 	double ln_accept_ratio		= curr_posterior - prev_posterior + ln_hastings;
 
@@ -333,8 +358,12 @@ bool DirichletMove::update()
 			}
 		p->setLastLnPrior(curr_ln_prior);
 		p->setLastLnLike(curr_ln_like);
+		
+#if defined(SAMC_TWO)
 		if (p->doingSAMC())
 			p->updateSAMCWeights(curr_samc_index);
+#endif
+
 		accept();
 		return true;
 		}
@@ -356,8 +385,12 @@ bool DirichletMove::update()
 			}
 		curr_ln_like	= p->getLastLnLike();
 		curr_ln_prior	= p->getLastLnPrior();
+
+#if defined(SAMC_TWO)
 		if (p->doingSAMC())
 			p->updateSAMCWeights(prev_samc_index);
+#endif
+
 		revert();
 		return false;
 		}
@@ -945,7 +978,12 @@ bool SubsetRelRatesMove::update()
     
 	proposeNewState();
 
+#if defined(SAMC_TWO)
     double prev_ln_prior		= (p->getSAMCLikelihoodOnly() ? 0.0 : mv_prior->GetLnPDF(orig_relrates));
+#else
+    double prev_ln_prior		= mv_prior->GetLnPDF(orig_relrates);
+#endif
+
 	double prev_ln_like			= p->getLastLnLike();
 	PHYCAS_ASSERT(!use_working_prior || mv_working_prior);
 	double prev_ln_working_prior = (use_working_prior ? mv_working_prior->GetLnPDF(orig_relrates) : 0.0);
@@ -954,12 +992,19 @@ bool SubsetRelRatesMove::update()
     setParams(new_relrates);
     likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
 
+#if defined(SAMC_TWO)
 	double curr_ln_prior		= (p->getSAMCLikelihoodOnly() ? 0.0 : mv_prior->GetLnPDF(new_relrates));
+#else
+	double curr_ln_prior		= mv_prior->GetLnPDF(new_relrates);
+#endif
+
 	double curr_ln_like			= (heating_power > 0.0 ? likelihood->calcLnL(tree) : 0.0);
 	double curr_ln_working_prior = (use_working_prior ? mv_working_prior->GetLnPDF(new_relrates) : 0.0);
 
     double prev_posterior = 0.0;
 	double curr_posterior = 0.0;
+	
+#if defined(SAMC_TWO)
 	unsigned prev_samc_index = UINT_MAX;
 	unsigned curr_samc_index = UINT_MAX;
 	
@@ -993,6 +1038,24 @@ bool SubsetRelRatesMove::update()
 			curr_posterior = heating_power*curr_ln_like + curr_ln_prior;
 			}
 		}
+#else	//not SAMC_TWO
+		if (is_standard_heating)
+			{
+			prev_posterior = heating_power*(prev_ln_like + prev_ln_prior);
+			curr_posterior = heating_power*(curr_ln_like + curr_ln_prior);
+			if (use_working_prior)
+				{
+				prev_posterior += (1.0 - heating_power)*prev_ln_working_prior;
+				curr_posterior += (1.0 - heating_power)*curr_ln_working_prior;
+				}
+			}
+		else
+			{
+			prev_posterior = heating_power*prev_ln_like + prev_ln_prior;
+			curr_posterior = heating_power*curr_ln_like + curr_ln_prior;
+			}
+#endif	//SAMC_TWO
+		
 	double ln_hastings			= getLnHastingsRatio();
 	double ln_accept_ratio		= curr_posterior - prev_posterior + ln_hastings;
 
@@ -1018,8 +1081,12 @@ bool SubsetRelRatesMove::update()
 			}
 		p->setLastLnPrior(curr_ln_prior);
 		p->setLastLnLike(curr_ln_like);
+		
+#if defined(SAMC_TWO)
 		if (p->doingSAMC())
 			p->updateSAMCWeights(curr_samc_index);
+#endif
+			
 		accept();
 		return true;
 		}
@@ -1041,8 +1108,12 @@ bool SubsetRelRatesMove::update()
 			}
 		curr_ln_like	= p->getLastLnLike();
 		curr_ln_prior	= p->getLastLnPrior();
+
+#if defined(SAMC_TWO)
 		if (p->doingSAMC())
 			p->updateSAMCWeights(prev_samc_index);
+#endif
+
 		revert();
 		return false;
 		}

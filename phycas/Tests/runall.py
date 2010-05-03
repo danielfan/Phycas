@@ -165,7 +165,6 @@ if __name__ == '__main__':
     # why the rounding should be different between Intel Mac and Intel PC!
 
     # Still need to get these working...
-    #runTest(outFile, "SAMCTest", ["cf.txt", "samc_output.p", "samc_output.t"])
     #runTest(outFile, "GelfandGhosh", ["ggout.txt", "analHKY.nex.p", "analHKY.nex.t", "analHKYflex.nex.p", "analHKYflex.nex.t", "analHKYg.nex.p", "analHKYg.nex.t"])
     #runTest(outFile, "Polytomies", ["simHKY.nex"] + mcmcOutputs(["HKYpolytomy"]))
 

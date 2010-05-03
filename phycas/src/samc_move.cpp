@@ -17,6 +17,8 @@
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.				  |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+#if defined(SAMC_ONE)
+
 #include "phycas/src/probability_distribution.hpp"
 #include "phycas/src/likelihood_models.hpp"
 #include "phycas/src/tree_likelihood.hpp"
@@ -505,3 +507,5 @@ double SamcMove::getTemperature() const
 	{
 	return temperature;
 	}
+	
+#endif	//SAMC_ONE
