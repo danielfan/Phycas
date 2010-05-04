@@ -72,9 +72,7 @@ void model_pymod()
 		.def("getInternalEdgeLenPrior", &phycas::Model::getInternalEdgeLenPrior)
 		.def("setInternalEdgeLenPrior", &phycas::Model::setInternalEdgeLenPrior)
 		.def("isSeparateInternalExternalEdgeLenPriors", &phycas::Model::isSeparateInternalExternalEdgeLenPriors)
-#if POLPY_NEWWAY
 		.def("setEdgeSpecificParams", &phycas::Model::setEdgeSpecificParams)
-#endif
 		.def("separateInternalExternalEdgeLenPriors", &phycas::Model::separateInternalExternalEdgeLenPriors)
 		.def("hasEdgeLenHyperPrior", &phycas::Model::hasEdgeLenHyperPrior)
 		.def("getInternalEdgelenHyperparam", &phycas::Model::getInternalEdgelenHyperparam)

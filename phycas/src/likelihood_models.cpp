@@ -38,9 +38,7 @@ Model::Model(
 	subset_index(-1),
 	internal_edgelen_hyperparam(0.1),
 	external_edgelen_hyperparam(0.1),
-#if POLPY_NEWWAY
    	separate_edgelen_params(false),
-#endif
    	separate_int_ext_edgelen_priors(false),
 	state_freq_fixed(false),
 	edge_lengths_fixed(false),	
@@ -108,7 +106,6 @@ bool Model::isCodonModel() const
 	return is_codon_model;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets value of data member `separate_edgelen_params' to supplied value `param_for_each_edgelen'.
 */
@@ -117,7 +114,6 @@ void Model::setEdgeSpecificParams(
     {
     separate_edgelen_params = param_for_each_edgelen;
     }
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets value of data member `separate_int_ext_edgelen_priors' to supplied value `separate'.
@@ -861,7 +857,6 @@ void Model::createParameters(
 	if (subset_index <= 0)
 		{
 		// Add the edge length parameter(s)
-#if POLPY_NEWWAY
 		if (separate_edgelen_params)
 			{
 			// Add an EdgeLengthParam for every node that has an associated edge length
@@ -884,10 +879,7 @@ void Model::createParameters(
 				edgelens_vect_ref.push_back(edge_len_param);
 				}
 			}
-		else 	// add one or two EdgeLenMasterParams who have the job of computing the prior
-#endif
-
-		if (separate_int_ext_edgelen_priors)
+		else if (separate_int_ext_edgelen_priors)
 			{
 			// Add two edge length parameters to manage the priors for all edge lengths in the tree;
 			// The first of these two parameters will be in charge of the prior on external edge lengths,

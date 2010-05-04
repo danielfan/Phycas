@@ -203,7 +203,6 @@ struct EdgeWorkingPrior
 	};
 #endif
 	
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Encapsulates an edge length parameter. It is only used in the case of a fixed topology, otherwise edge lengths are
 |	updated using a `LargetSimonMove' or a `BushMove' updater.
@@ -225,7 +224,6 @@ class EdgeLenParam : public MCMCUpdater
 	private:
 		TreeNode *		my_node;
 	};
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Represents all edge lengths in the associated Tree. An edge length master parameter does not update any particular 
@@ -255,6 +253,11 @@ class EdgeLenMasterParam : public MCMCUpdater
 		virtual double		recalcPrior();
 		virtual void		setPriorMeanAndVariance(double m, double v);
 
+#if USING_EDGE_SPECIFIC_WORKING_PRIORS
+		void				setMinWorkingPriorSampleSize(unsigned n);
+		void				useEdgeSpecificWorkingPriors(bool use_it);
+#endif
+
 	protected:
 
 		double				lnPriorOneEdge(TreeNode & nd) const;
@@ -262,9 +265,11 @@ class EdgeLenMasterParam : public MCMCUpdater
     private:
 	
 #if USING_EDGE_SPECIFIC_WORKING_PRIORS
-		std::map<Split,EdgeWorkingPrior>	edge_working_prior;		/**< maps splits (keys) to EdgeWorkingPrior structs (values) so that the working prior distribution can be fetched given the split corresponding to any given node in the tree */
+		bool								use_edge_specific_working_priors;	/**< if true, `edge_working_prior' will be used; otherwise, a single generic working prior will be used for all edge lengths */
+		unsigned							min_working_prior_sample_size;		/**< minimum number of samples needed for a given split to construct a split-specific edge length working prior */
+		std::map<Split,EdgeWorkingPrior>	edge_working_prior;					/**< maps splits (keys) to EdgeWorkingPrior structs (values) so that the working prior distribution can be fetched given the split corresponding to any given node in the tree */
 #endif
-        EdgeLenType         				edgeLenType;    /**> holds the edge length type, which determines for which edge lengths the prior is computed when recalcPrior is called */
+        EdgeLenType         				edgeLenType;   						/**> holds the edge length type, which determines for which edge lengths the prior is computed when recalcPrior is called */
 	};
 
 #if USING_EDGE_SPECIFIC_WORKING_PRIORS

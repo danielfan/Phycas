@@ -148,9 +148,7 @@ class Model	{
 		ProbDistShPtr					getInternalEdgeLenPrior();
         void                            separateInternalExternalEdgeLenPriors(bool separate);
         bool                            isSeparateInternalExternalEdgeLenPriors() const;
-#if POLPY_NEWWAY
         void                            setEdgeSpecificParams(bool param_for_each_edgelen);
-#endif
 
 		// Utility functions
 		void flattenTwoDMatrix(VecDbl & p, double * * twoDarr, unsigned dim) const;
@@ -177,9 +175,7 @@ protected:
 	ProbDistShPtr					edgeLenHyperPrior;			/**< The prior distribution governing the mean of the edge length prior if a hierarchical model is used */
 	ProbDistShPtr					internalEdgeLenPrior;		/**< The prior distribution governing internal edge lengths */
 	ProbDistShPtr					externalEdgeLenPrior;		/**< The prior distribution governing external edge lengths */
-#if POLPY_NEWWAY
     bool                            separate_edgelen_params;    /**> If true, each edge length in the (fixed) tree topology will have its own updater */
-#endif
     bool                            separate_int_ext_edgelen_priors;    /**> If true, internal edge lengths have a different prior than external edge lengths */
 	std::vector<double>				state_freqs;				/**< A vector of relative state frequencies (length is `num_states') */
 	std::vector<std::string>		state_repr;					/**< A vector of strings representing the states allowed by this model */

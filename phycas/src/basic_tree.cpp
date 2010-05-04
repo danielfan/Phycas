@@ -1262,7 +1262,6 @@ std::vector<double> Tree::EdgeLens()
 	return v;
 	}
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Perform a preorder traversal of the tree and replace the existing edge lengths with those in the supplied vector
 |	`new_edgelens'.
@@ -1282,9 +1281,7 @@ void Tree::replaceEdgeLens(
 			}
 		}
 	}
-#endif
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns a string containing a key showing the bipartitions associated with each edge in the tree. Edges are
 |	traversed in preorder fashion, starting with the leftmost child of the root node (root node itself is skipped).
@@ -1312,7 +1309,6 @@ std::string Tree::KeyToEdges()
 		
 	return key_to_edges;
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the sum of all edge lengths in the tree.  Uses preorder pointers to walk through tree, calling 
@@ -1969,9 +1965,7 @@ std::string & Tree::AppendNewick(
 void Tree::RecalcAllSplits(
   unsigned max_nbits)   /**< is the maximum number of bits to allow in each split */
     {
-#if POLPY_NEWWAY
 	tree_id.clear();
-#endif
     std::vector<unsigned> tips_seen;
     for (TreeNode * nd = GetLastPreorder(); nd != NULL; nd = nd->GetNextPostorder())
         {
@@ -2017,9 +2011,7 @@ void Tree::RecalcAllSplits(
             if (nd->IsObservable())
                 s.SetBit(nn);
             }
-#if POLPY_NEWWAY
 		tree_id.insert(s);
-#endif
         }
     }
 
@@ -2133,7 +2125,6 @@ void Tree::DebugHere(
 	std::cerr << "~~~~~~~ " << s << " ~~~~~~~" << std::endl;
 	}
 	
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns a const reference to the data member `tree_id'. 
 */
@@ -2212,8 +2203,6 @@ unsigned Tree::robinsonFoulds(TreeShPtr other)
 		}
 	return num_differences;
 	}
-
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Scales all edge lengths in the tree by multiplying them by the supplied value `scaling_factor'.

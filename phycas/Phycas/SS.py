@@ -9,6 +9,7 @@ class SS(PhycasCommand):
 				   ("xcycles", 0, "The number of extra cycles (above and beyond mcmc.ncycles) that will be spent exploring the posterior (additional posterior cycles help scubed analyses formulate an effective working prior).", IntArgValidate(min=0)),
 				   ("maxbeta", 1.0, "The first beta value that will be sampled.", FloatArgValidate(min=0.0, max=1.0)),
 				   ("minbeta", 0.0, "The last beta value that will be sampled.", FloatArgValidate(min=0.0, max=1.0)),
+				   ("minsample", 10, "Minimum sample size needed to create a split-specific edge length working prior.", IntArgValidate(min=0)),
 				   ("shape1", 1.0, "The first shape parameter of the distribution used to determine the beta values to be sampled. This distribution is, confusingly, a Beta distribution. Thus, if both shape1 and shape2 are set to 1, beta values will be chosen at uniform intervals from minbeta to maxbeta.", FloatArgValidate(greaterthan=0.0)),
 				   ("shape2", 1.0, "The second shape parameter of the distribution used to determine the beta values to be sampled. This distribution is, confusingly, a Beta distribution. Thus, if both shape1 and shape2 are set to 1, beta values will be chosen at uniform intervals from minbeta to maxbeta.", FloatArgValidate(greaterthan=0.0)),
 				)
@@ -41,6 +42,7 @@ class SS(PhycasCommand):
 		"""
 		cf = CommonFunctions(self)
 		cf.phycassert(mcmc.ncycles > 0, 'mcmc.ncycles cannot be less than 1 for steppingstone sampling')
+		#cf.phycassert(ss.nbetavals > 0, 'ss.nbetavals cannot be less than 1')
 		
 	def __call__(self, **kwargs):
 		self.set(**kwargs)

@@ -88,6 +88,7 @@ class MCMC(PhycasCommand):
 		# The data members added below are hidden from the user because they are set by the ss command
 		self.__dict__["doing_steppingstone_sampling"] = False
 		self.__dict__["ss_heating_likelihood"] = False
+		self.__dict__["ss_single_edgelen_working_prior"] = False
 		self.__dict__["ssobj"] = None
 		
 		# The data members added below are hidden from the user because they are set by the cpo command
@@ -103,12 +104,16 @@ class MCMC(PhycasCommand):
 		Place asserts in this function that should be checked before anything substantive
 		is done during a call of self.run().
 		"""
-		cf = CommonFunctions(self)
-		cf.phycassert(self.ssobj.nbetavals > 0, 'ss.nbetavals cannot be less than 1')
+		pass
+		#cf = CommonFunctions(self)
 		
 	def __call__(self, **kwargs):
 		self.set(**kwargs)
-		#self.checkSanity()
+		self.checkSanity()
+		if self.fix_topology:
+			self.ss_single_edgelen_working_prior = False
+		else:
+			self.ss_single_edgelen_working_prior = True
 		c = copy.deepcopy(self)
 		mcmc_impl = MCMCImpl(c)
 		mcmc_impl.setSiteLikeFile(self.sitelikef)

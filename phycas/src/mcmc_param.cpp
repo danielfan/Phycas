@@ -29,7 +29,6 @@
 namespace phycas
 {
 
-#if POLPY_NEWWAY
 /*----------------------------------------------------------------------------------------------------------------------
 |	Constructor calls the base class (MCMCUpdater) constructor and initializes its HKY pointer to NULL. Also sets the
 |	`curr_value' data member to 4.0 and refreshes `curr_ln_prior' accordingly.
@@ -191,7 +190,6 @@ double EdgeLenParam::operator()(
     else
         return ln_zero;
 	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	This override of the base class virtual function uses dynamic_cast to set the `gtr' data member from the supplied

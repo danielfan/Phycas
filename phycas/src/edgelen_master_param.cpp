@@ -21,6 +21,7 @@
 #include "mcmc_param.hpp"
 #include "phycas/src/basic_tree.hpp"				// for Tree::begin() and Tree::end()
 #include "phycas/src/mcmc_chain_manager.hpp"
+#include <boost/format.hpp>
 
 // these were at the top of basic_tree.inl
 #include <boost/lambda/lambda.hpp>
@@ -38,7 +39,7 @@ namespace phycas
 */
 EdgeLenMasterParam::EdgeLenMasterParam(
   EdgeLenMasterParam::EdgeLenType t)    /**> is the edge length type (internal, external or both) */
-  : MCMCUpdater(), edgeLenType(t)
+  : MCMCUpdater(), edgeLenType(t), use_edge_specific_working_priors(false), min_working_prior_sample_size(10)
 	{
 	has_slice_sampler = false;
 	is_move = false;
@@ -53,6 +54,32 @@ EdgeLenMasterParam::~EdgeLenMasterParam()
 	{
 	//std::cerr << "\n>>>>> EdgeLenMasterParam dying..." << std::endl;
 	}
+	
+#if USING_EDGE_SPECIFIC_WORKING_PRIORS
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the minimum acceptable sample size for creating a split-specific edge length working prior. If the actual 
+|	sample size is less than the supplied value `n', a generic working prior will be used for that particular split.
+|	Assumes that `n' is greater than 1.
+*/
+void EdgeLenMasterParam::setMinWorkingPriorSampleSize(
+  unsigned n)	/**< is the minimum sample size to set */
+	{
+	PHYCAS_ASSERT(n > 1);
+	min_working_prior_sample_size = n;
+	}
+#endif
+	
+#if USING_EDGE_SPECIFIC_WORKING_PRIORS
+/*----------------------------------------------------------------------------------------------------------------------
+|	If `use_it' is true, then split-specific edge length working priors will be constructed for all edges seen during
+|	an MCMC analysis. If `use_it' is false, then a single generic edge length working prior will be used for all edges.
+*/
+void EdgeLenMasterParam::useEdgeSpecificWorkingPriors(
+  bool use_it)	/**< should be true if you wish to use split-specific edge length working priors */
+	{
+	use_edge_specific_working_priors = use_it;
+	}
+#endif
 	
 /*----------------------------------------------------------------------------------------------------------------------
 |	Member function that exists only to facilitate using boost::lambda::bind to be used in the getLnPrior() function. It
@@ -92,29 +119,38 @@ double EdgeLenMasterParam::lnPriorOneEdge(TreeNode & nd) const
 std::string EdgeLenMasterParam::getWorkingPriorDescr() const
 	{
 	std::string s;
+#if USING_EDGE_SPECIFIC_WORKING_PRIORS
+	std::string typestr = "all";
+	if (edgeLenType == internal)
+		typestr = "internal";
+	else if (edgeLenType == external)
+		typestr = "external";
+		
 	if (prior && working_prior)
 		{
-		s += working_prior->GetDistributionDescription();
-		s += " will be used for lengths of edges not yet seen";
+		s += boost::str(boost::format("%s will be used for lengths of %s edges") % working_prior->GetDistributionDescription() % typestr);
 		}
 	else if (mv_prior && mv_working_prior)
 		{
-		s += mv_working_prior->GetDistributionDescription();
-		s += " will be used for lengths of edges not yet seen";
+		s += boost::str(boost::format("%s will be used for lengths of %s edges") % mv_working_prior->GetDistributionDescription() % typestr);
 		}
 	else 
 		{
 		s += "no generic edge working prior exists at this point";
 		}
-	
-	s += "\n    Here are the working priors that will be used for edges already seen:";
-	for (WorkingPriorMapConstIter it = edge_working_prior.begin(); it != edge_working_prior.end(); ++it)
+
+	if (use_edge_specific_working_priors)
 		{
-		s += "\n      ";
-		s += it->second.wp->GetDistributionDescription();
-		s += " will be used for ";
-		s += it->first.CreateNewickRepresentation();
+		s += "\n    Here are the working priors that will be used for edges already seen:";
+		for (WorkingPriorMapConstIter it = edge_working_prior.begin(); it != edge_working_prior.end(); ++it)
+			{
+			s += "\n      ";
+			s += it->second.wp->GetDistributionDescription();
+			s += " will be used for ";
+			s += it->first.CreateNewickRepresentation();
+			}
 		}
+#endif
 
 	return s;
 	}
@@ -137,11 +173,33 @@ double EdgeLenMasterParam::lnWorkingPriorOneEdge(const TreeNode & nd, double v) 
 		double retval = 0.0;
 		
 #if USING_EDGE_SPECIFIC_WORKING_PRIORS
-		const Split & s = nd.GetSplitConst();
-		if (edge_working_prior.find(s) == edge_working_prior.end())
+		bool use_generic = true;
+		if (use_edge_specific_working_priors)
+			{
+			const Split & s = nd.GetSplitConst();
+			if (edge_working_prior.find(s) != edge_working_prior.end())
+				{
+				// Found edge-specific working prior for this edge 
+				WorkingPriorMapConstIter ewp = edge_working_prior.find(s);
+				if ((*ewp).second.wp)
+					{
+					try 
+						{
+						// edge_working_prior[s] retrieves EdgeWorkingPrior struct for this split, of 
+						// which 'second' is the working prior distribution shared pointer
+						retval = (*ewp).second.wp->GetLnPDF(v);
+						}
+					catch(XProbDist &)
+						{
+						PHYCAS_ASSERT(0);
+						}
+					use_generic = false;
+					}
+				}
+			}
+		if (use_generic)
 			{
 			// There is no edge-specific working prior for this edge, so use generic one
-			//std::cerr << boost::str(boost::format("@@@@@@@@@@ Using generic working prior for edge having this split: %s") % s.CreateNewickRepresentation()) << std::endl;//temp
 			PHYCAS_ASSERT(working_prior);
 			try 
 				{
@@ -151,26 +209,7 @@ double EdgeLenMasterParam::lnWorkingPriorOneEdge(const TreeNode & nd, double v) 
 				{
 				PHYCAS_ASSERT(0);
 				}
-			//std::cerr << boost::str(boost::format("%.8f <-- %.8f <-- %s <-- %s") % retval % v % working_prior->GetDistributionDescription() % getName()) << std::endl;//temp
 			}
-		else 
-			{
-			// Found edge-specific working prior for this edge 
-			WorkingPriorMapConstIter ewp = edge_working_prior.find(s);
-			try 
-				{
-				// edge_working_prior[s] retrieves EdgeWorkingPrior struct for this split, of 
-				// which 'second' is the working prior distribution shared pointer
-				PHYCAS_ASSERT((*ewp).second.wp);
-				retval = (*ewp).second.wp->GetLnPDF(v);
-				}
-			catch(XProbDist &)
-				{
-				PHYCAS_ASSERT(0);
-				}
-			//std::cerr << boost::str(boost::format("%.8f <-- %.8f <-- %s <-- %s") % retval % v % (*ewp).second.wp->GetDistributionDescription() % getName()) << std::endl;//temp
-			}
-
 #else
 		PHYCAS_ASSERT(working_prior);
 	    try 
@@ -281,46 +320,49 @@ void EdgeLenMasterParam::educateWorkingPrior()
 		fitting_sample.push_back(edgelen_mean);
 		
 #if USING_EDGE_SPECIFIC_WORKING_PRIORS
-		// Second, use the current edge lengths to educate the working prior specific to the edges that
-		// happen to be in the current tree. If the tree topology is fixed, then all working priors will
-		// be specific working priors stored in the `edge_working_prior' map, and in this case the 
-		// workign prior stored in the data member `working_prior' will never be needed. If the topology
-		// is not fixed, however, then after the working priors in the `edge_working_prior' map have been
-		// finalized, we may (probably will) encounter splits that have never been seen before. For these
-		// edges, the MCMCUpdater::working_prior will be used.
-		//std::cerr << "--------- processing tree ----------" << std::endl;
-		unsigned ntips = tree->GetNTips();
-		tree->RecalcAllSplits(ntips);
-		for (preorder_iterator nd = tree->begin(); nd != tree->end(); ++nd)
+		if (use_edge_specific_working_priors)
 			{
-			//Split & sref = nd->GetSplit();
-			//std::cerr << "@@@@@@@@@@ nd = " << nd->GetNodeNumber() << ", s = " << sref.CreateNewickRepresentation() << std::endl;
-			bool skip = (nd->IsAnyRoot())
-						|| ((edgeLenType == EdgeLenMasterParam::internal) && (!nd->IsInternal()))
-						|| ((edgeLenType == EdgeLenMasterParam::external) && (nd->IsInternal()));
-			if (!skip)
+			// Second, use the current edge lengths to educate the working prior specific to the edges that
+			// happen to be in the current tree. If the tree topology is fixed, then all working priors will
+			// be specific working priors stored in the `edge_working_prior' map, and in this case the 
+			// working prior stored in the data member `working_prior' will never be needed. If the topology
+			// is not fixed, however, then after the working priors in the `edge_working_prior' map have been
+			// finalized, we may (probably will) encounter splits that have never been seen before. For these
+			// edges, the MCMCUpdater::working_prior will be used.
+			//std::cerr << "--------- processing tree ----------" << std::endl;
+			unsigned ntips = tree->GetNTips();
+			tree->RecalcAllSplits(ntips);
+			for (preorder_iterator nd = tree->begin(); nd != tree->end(); ++nd)
 				{
-				double edgelen = nd->GetEdgeLen();
-				Split s = nd->GetSplit();
-				WorkingPriorMapIter it = edge_working_prior.find(s);
-				if (it == edge_working_prior.end())
+				//Split & sref = nd->GetSplit();
+				//std::cerr << "@@@@@@@@@@ nd = " << nd->GetNodeNumber() << ", s = " << sref.CreateNewickRepresentation() << std::endl;
+				bool skip = (nd->IsAnyRoot())
+							|| ((edgeLenType == EdgeLenMasterParam::internal) && (!nd->IsInternal()))
+							|| ((edgeLenType == EdgeLenMasterParam::external) && (nd->IsInternal()));
+				if (!skip)
 					{
-					// Might need to check inverse of split - following line is designed to find out if this will be needed
-					//PHYCAS_ASSERT(edge_working_prior.find(s.InvertSplit()) == edge_working_prior.end());
-					
-					// Split s was NOT found in the map, so add a new element
-					//std::cerr << "@@@@@@@@@@ adding a new element to edge_working_prior map" << std::endl;
-					EdgeWorkingPrior e;
-					e.fs.push_back(edgelen);
-					edge_working_prior.insert(WorkingPriorMapPair(s,e));
-					}
-				else 
-					{
-					// Split s WAS found in the map, so just add edgelen to the existing fitting sample vector
-					EdgeWorkingPrior & e = (*it).second;
-					e.fs.push_back(edgelen);
-					//unsigned n = (unsigned)e.fs.size();
-					//std::cerr << boost::str(boost::format("@@@@@@@@@@ extending existing edge_working_prior element that now has %d elements") % n)<< std::endl;
+					double edgelen = nd->GetEdgeLen();
+					Split s = nd->GetSplit();
+					WorkingPriorMapIter it = edge_working_prior.find(s);
+					if (it == edge_working_prior.end())
+						{
+						// Might need to check inverse of split - following line is designed to find out if this will be needed
+						//PHYCAS_ASSERT(edge_working_prior.find(s.InvertSplit()) == edge_working_prior.end());
+						
+						// Split s was NOT found in the map, so add a new element
+						//std::cerr << "@@@@@@@@@@ adding a new element to edge_working_prior map" << std::endl;
+						EdgeWorkingPrior e;
+						e.fs.push_back(edgelen);
+						edge_working_prior.insert(WorkingPriorMapPair(s,e));
+						}
+					else 
+						{
+						// Split s WAS found in the map, so just add edgelen to the existing fitting sample vector
+						EdgeWorkingPrior & e = (*it).second;
+						e.fs.push_back(edgelen);
+						//unsigned n = (unsigned)e.fs.size();
+						//std::cerr << boost::str(boost::format("@@@@@@@@@@ extending existing edge_working_prior element that now has %d elements") % n)<< std::endl;
+						}
 					}
 				}
 			}
@@ -356,32 +398,45 @@ void EdgeLenMasterParam::finalizeWorkingPrior()
 		working_prior->SetMeanAndVariance(m, v);
 		
 #if USING_EDGE_SPECIFIC_WORKING_PRIORS
-		for (WorkingPriorMapIter it = edge_working_prior.begin(); it != edge_working_prior.end(); ++it)
+		if (use_edge_specific_working_priors)
 			{
-			PHYCAS_ASSERT((*it).second.fs.size() > 1);
-			double n = (double)(*it).second.fs.size();
-			double sum = 0.0;
-			double sum_of_squares = 0.0;
-			for (double_vect_t::iterator i = (*it).second.fs.begin(); i != (*it).second.fs.end(); ++i)
+			for (WorkingPriorMapIter it = edge_working_prior.begin(); it != edge_working_prior.end(); ++it)
 				{
-				double v = (*i);
-				sum += v;
-				sum_of_squares += v*v;
+				if ((*it).second.fs.size() < min_working_prior_sample_size)
+					{
+					// Sample size is not great enough to create a split-specific edge length working prior
+					// Reset wp to indicate that no working prior actually exists for this split. If wp does not point to anything, 
+					// then a generic working prior will be used in EdgeLenMasterParam::lnWorkingPriorOneEdge
+					(*it).second.wp.reset();
+					}
+				else 
+					{
+					// We have a sufficient sample size to create a split-specific edge length working prior
+					double n = (double)(*it).second.fs.size();
+					double sum = 0.0;
+					double sum_of_squares = 0.0;
+					for (double_vect_t::iterator i = (*it).second.fs.begin(); i != (*it).second.fs.end(); ++i)
+						{
+						double v = (*i);
+						sum += v;
+						sum_of_squares += v*v;
+						}
+					double mean = sum/n;	// shape*scale
+					double variance = (sum_of_squares - n*mean*mean)/(n - 1.0);	// shape*scale^2
+					double scale = variance/mean;
+					double shape = mean/scale;
+					(*it).second.wp = ProbDistShPtr(new GammaDistribution(shape, scale));
+					
+					//std::cerr << boost::str(boost::format("@@@@@@@@@ split %s has %d elements: mean = %g, variance = %g, shape = %g, scale = %g") 
+					//	% (*it).first.CreateNewickRepresentation() 
+					//	% (*it).second.fs.size() 
+					//	% mean
+					//	% variance
+					//	% shape
+					//	% scale)
+					//	<< std::endl;
+					}
 				}
-			double mean = sum/n;	// shape*scale
-			double variance = (sum_of_squares - n*mean*mean)/(n - 1.0);	// shape*scale^2
-			double scale = variance/mean;
-			double shape = mean/scale;
-			(*it).second.wp = ProbDistShPtr(new GammaDistribution(shape, scale));
-			
-			//std::cerr << boost::str(boost::format("@@@@@@@@@ split %s has %d elements: mean = %g, variance = %g, shape = %g, scale = %g") 
-			//	% (*it).first.CreateNewickRepresentation() 
-			//	% (*it).second.fs.size() 
-			//	% mean
-			//	% variance
-			//	% shape
-			//	% scale)
-			//	<< std::endl;
 			}
 #endif
 		}

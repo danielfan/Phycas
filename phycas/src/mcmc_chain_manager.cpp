@@ -670,6 +670,37 @@ double MCMCChainManager::calcExternalEdgeLenPriorUnnorm(
 		}
     return tmp;
     }
+	
+#if USING_EDGE_SPECIFIC_WORKING_PRIORS
+/*----------------------------------------------------------------------------------------------------------------------
+|	Informs the EdgeLenMasterParam objects of a new minimum sample size `n' needed for constructing split-specific edge
+|	length working priors. If `n' is zero, this effectively turns off the use of split-specific edge length working
+|	priors, in which case a single working prior will be constructed and used for all edge lengths. This is only relevant
+|	if a steppingstone analysis is being performed.
+*/
+void MCMCChainManager::setMinSSWPSampleSize(
+  unsigned n)	/**< is the minimum sample size needed to create a split-specific edge length working prior */
+	{
+	// If there are two edge_length_parameters then the first is for external and second is for internal edges
+	// (see MCMCChainManager::addMCMCUpdaters). If there is only one, it handles all edge lengths, so in this
+	// case (external edge length) we know we should go with the first one.
+    const MCMCUpdaterVect & edge_length_params = getEdgeLenParams();
+	EdgeLenMasterParam * p = dynamic_cast<EdgeLenMasterParam *>(edge_length_params[0].get());
+	
+	// If p is NULL, then there are no EdgeLenMasterParam objects, which means that the topology is fixed and
+	// an EdgeLenParam has been assigned to each edge. In this case we can just exit.
+	if (p)
+		{
+		if (n > 0)
+			{
+			p->useEdgeSpecificWorkingPriors(true);
+			p->setMinWorkingPriorSampleSize(n);
+			}
+		else 
+			p->useEdgeSpecificWorkingPriors(false);
+		}
+	}
+#endif
 
 #if USING_EDGE_SPECIFIC_WORKING_PRIORS
 /*----------------------------------------------------------------------------------------------------------------------

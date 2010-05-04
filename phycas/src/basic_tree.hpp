@@ -41,10 +41,8 @@
 
 namespace phycas{
 
-#if POLPY_NEWWAY
 #include "phycas/src/split.hpp"
 typedef std::set<Split> TreeID;
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Encapsulates the notion of a phylogenetic tree. This class has only methods necessary for representing the tree, 
@@ -90,9 +88,7 @@ class Tree
         unsigned                NumInternalNodesStored();
         unsigned                NumTipNodesStored();
 		
-#if POLPY_NEWWAY
 		const TreeID & 			getTreeID() const;
-#endif
 		
 
 		// Predicates
@@ -113,12 +109,10 @@ class Tree
 		
 		// Utilities
 		//
-#if POLPY_NEWWAY
 		std::string				KeyToEdges();
 		void					replaceEdgeLens(std::vector<double> new_edgelens);
 		unsigned 				robinsonFoulds(TreeShPtr other);
 		void 					buildTreeID();
-#endif
 		void					Clear();
         void                    stripNodeNames();
         void                    renumberInternalNodes(unsigned start_at);

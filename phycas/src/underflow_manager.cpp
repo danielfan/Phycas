@@ -213,15 +213,12 @@ void UnderflowManager::check(
 		nedges += 1 + cond_like.getUnderflowNumEdges() + right_cond_like.getUnderflowNumEdges();
 		}
 			
-#if POLPY_NEWWAY
 	unsigned nsubsets = (unsigned)num_patterns.size();
-#endif
 	bool do_correction = (nedges >= underflow_num_edges);
 	if (do_correction)
 		{
 		// We've traversed enough edges that it is time to take another factor out for underflow control
 		
-#if POLPY_NEWWAY
 		// Begin by finding, for each pattern, the largest conditional likelihood over all rates and states 
 		// (store these in underflow_work vector)
 		underflow_work.resize(total_patterns);
@@ -335,90 +332,10 @@ void UnderflowManager::check(
 			}	// loop over subsets
 		nedges = 0;
 		}
-#else //old way
-		// Begin by finding, for each pattern, the largest conditional likelihood over all rates and states 
-		// (store these in underflow_work vector)
-		underflow_work.resize(num_patterns*num_states);
-		underflow_work.assign(num_patterns*num_states, 0.0);
-		LikeFltType * cla = cond_like.getCLA();
-		for (unsigned r = 0; r < num_rates; ++r)
-			{
-			for (unsigned pat = 0; pat < num_patterns; ++pat)
-				{
-				for (unsigned i = 0; i < num_states; ++i)
-					{
-					double curr = *cla++;
-					if (curr > underflow_work[pat])
-						underflow_work[pat] = curr;
-					}
-				}
-			}
-
-		// Assume that x is the largest of the num_rates*num_states conditional likelihoods
-		// for a given pattern. Find factor g such that g*x = underflow_max_value. Suppose
-		// x = 0.05 and underflow_max_value = 10000, g = 10000/0.05 = 200,000 = e^{12.206}
-		// In this case, we would add the integer component of the exponent (i.e. 12) to
-		// the underflow correction for this pattern and adjust all conditional likelihoods 
-		// by a factor f = e^{12} = 22026.46579. So, the conditional likelihood 0.05 now
-		// becomes 0.05*e^{12} = 1101.32329. 
-		cla = cond_like.getCLA();
-		UnderflowType *	uf = cond_like.getUF();
-		UnderflowType const * uf_left = left_cond_like.getUF();
-		UnderflowType const * uf_right = right_cond_like.getUF();
-		unsigned condlikes_per_rate = num_patterns*num_states;
-		for (unsigned pat = 0; pat < num_patterns; ++pat)
-			{
-			PHYCAS_ASSERT(underflow_work[pat] > 0.0);
-			double ratio = underflow_max_value/underflow_work[pat];
-			double log_ratio = std::log(ratio);
-			double f = std::floor(log_ratio);
-			//double f = floor(log(underflow_max_value/underflow_work[pat]));
-			double expf = exp(f);
-			LikeFltType * claPat = &cla[num_states*pat];
-			for (unsigned r = 0; r < num_rates; ++r, claPat += condlikes_per_rate)
-				{
-				for (unsigned i = 0; i < num_states; ++i)
-					{
-					claPat[i] *= expf;
-					}
-				}
-			if (which == one_tip)
-				{
-				// cond_like, left_cond_like == right_cond_like
-				// uf_left is same object as uf_right in this case
-				*uf = *uf_left + (UnderflowType)f;
-				++uf_left;
-				}
-			else if (which == no_tips)
-				{
-				// cond_like, left_cond_like, right_cond_like
-				*uf = *uf_left + *uf_right + (UnderflowType)f;
-				++uf_left;
-				++uf_right;
-				}
-			else if (which == xtra_tip)
-				{
-				// cond_like == left_cond_like == right_cond_like
-				// nothing above this point to take account of
-				*uf += (UnderflowType)f;
-				}
-			else	// xtra_internal
-				{
-				// cond_like == left_cond_like, right_cond_like
-				*uf += *uf_right + (UnderflowType)f;
-				++uf_right;
-				}
-			++uf;
-			}
-		nedges = 0;
-		}
-#endif
 	else
 		{
 		// No underflow correction needed, but need to propagate current underflow correction
 		// information down the tree
-		
-#if POLPY_NEWWAY
 		UnderflowType *	uf = cond_like.getUF();
 		UnderflowType const * uf_left = left_cond_like.getUF();
 		UnderflowType const * uf_right = right_cond_like.getUF();
@@ -454,40 +371,6 @@ void UnderflowManager::check(
 					}
 				}
 			}
-#else //old way
-		UnderflowType *	uf = cond_like.getUF();
-		UnderflowType const * uf_left = left_cond_like.getUF();
-		UnderflowType const * uf_right = right_cond_like.getUF();
-		// should move loop inside the conditionals for speed
-		for (unsigned pat = 0; pat < num_patterns; ++pat, ++uf)
-			{
-			if (which == one_tip)
-				{
-				// cond_like, left_cond_like == right_cond_like
-				// uf_left is same object as uf_right in this case
-				*uf = *uf_left;
-				++uf_left;
-				}
-			else if (which == no_tips)
-				{
-				// cond_like, left_cond_like, right_cond_like
-				*uf = *uf_left + *uf_right;
-				++uf_left;
-				++uf_right;
-				}
-			else if (which == xtra_tip)
-				{
-				// cond_like == left_cond_like == right_cond_like
-				// nothing above this point to take account of
-				}
-			else	// xtra_internal
-				{
-				// cond_like == left_cond_like, right_cond_like
-				*uf += *uf_right;
-				++uf_right;
-				}
-			}
-#endif
 		}
 	cond_like.setUnderflowNumEdges(nedges);
 	}

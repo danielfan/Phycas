@@ -254,18 +254,6 @@ class MCMCImpl(CommonFunctions):
 			self.mcmc_manager.paramFileHeader(self.paramf)
 			self.paramf.write('\n')
 			
-		#if self.opts.doing_steppingstone_sampling and self.opts.ssobj.scubed:
-		#	sss_file_spec = self.opts.ssobj.out.sss
-		#	self.sssf = None
-		#	try:
-		#		self.sssf = sss_file_spec.open(self.stdout)
-		#	except:
-		#		print '*** Attempt to open sss file (%s) failed.' % self.opts.out.sss.filename
-		#
-		#	if self.sssf:
-		#		self.mcmc_manager.sssFileHeader(self.sssf)
-		#		self.sssf.write('\n')
-
 	def paramFileClose(self):
 		if self.paramf is not None:
 			self.paramf.close()
@@ -793,7 +781,6 @@ class MCMCImpl(CommonFunctions):
 		for cycle in xrange(self.burnin + self.ncycles):
 			# Update all updaters
 			if explore_prior and self.opts.draw_directly_from_prior:
-				# Note: wasting effort here, only need to draw a sample from the prior when it is time to sample
 				if self.opts.ssobj.scubed:
 					self.exploreWorkingPrior(cycle)
 				else:
@@ -851,7 +838,7 @@ class MCMCImpl(CommonFunctions):
 						c.chain_manager.refreshLastLnPrior()
 						
 				if self.opts.doing_steppingstone_sampling and self.opts.ssobj.scubed and self.ss_beta_index == 0:
-					self.mcmc_manager.recordSample(True, self.cycle_start + cycle)	# dofit = True (i.e. educate working prior) if doing SSS and currently exploring the posterior
+					self.mcmc_manager.recordSample(True, self.cycle_start + cycle)	# dofit = True (i.e. educate the working prior if doing SS and currently exploring the posterior)
 				else:
 					self.mcmc_manager.recordSample(False, self.cycle_start + cycle)	# dofit = False
 				cold_chain_manager = self.mcmc_manager.getColdChainManager()
@@ -907,6 +894,12 @@ class MCMCImpl(CommonFunctions):
 					self.output('Starting tree for chain %d:  %s' % (c, self.starting_tree[c]))
 			else:
 				self.output('Starting tree:	 %s' % str(self.starting_tree[0]))
+			
+			if self.opts.fix_topology:
+				self.output('\nTree topology fixed.\n')
+			else:
+				self.output('\nTree topology free to vary.\n')
+			
 			if self.opts.doing_steppingstone_sampling:
 				self.output('\nPerforming steppingstone sampling to estimate marginal likelihood.')
 				self.output('Likelihood will be raised to the power beta, and beta will be')

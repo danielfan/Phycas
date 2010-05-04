@@ -260,7 +260,7 @@ class MarkovChain(LikelihoodCore):
 			if mspec.pinvar_model:
 				m.setPinvarPrior(mspec.pinvar_prior.cloneAndSetLot(self.r))
 			
-			#NEWWAY
+			# If user specifies fixed tree topology, make each edge length a separate parameter; otherwise, use edge length master parameters
 			if self.parent.opts.fix_topology:
 				m.setEdgeSpecificParams(True)
 			else:
@@ -271,6 +271,7 @@ class MarkovChain(LikelihoodCore):
 				subset_pos = -1
 			else:
 				subset_pos = i
+				
 			self.chain_manager.addMCMCUpdaters(
 				m,									# substitution model
 				self.tree,							# tree
@@ -280,6 +281,9 @@ class MarkovChain(LikelihoodCore):
 				self.parent.opts.slice_max_units,	# maximum number of slice units allowed
 				self.parent.opts.slice_weight,		# weight for each parameter added
 				subset_pos)							# i is the subset (needed so that add edge length params will only be added for for first subset)
+				
+			if self.parent.opts.doing_steppingstone_sampling:
+				self.chain_manager.setMinSSWPSampleSize(self.parent.opts.ssobj.minsample)
 				
 			# Add subset-model-specific moves
 			if not mspec.type == 'jc' and not mspec.update_freqs_separately:
