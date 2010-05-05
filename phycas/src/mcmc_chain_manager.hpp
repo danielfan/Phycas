@@ -81,14 +81,9 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 		void					refreshLastLnLike();
 		void					refreshLastLnPrior();
 		
-#if USING_EDGE_SPECIFIC_WORKING_PRIORS
 		void					setMinSSWPSampleSize(unsigned n);
         double                  calcExternalEdgeLenWorkingPrior(const TreeNode & nd, double v) const;
         double                  calcInternalEdgeLenWorkingPrior(const TreeNode & nd, double v) const;
-#else
-        double                  calcExternalEdgeLenWorkingPrior(double v) const;
-        double                  calcInternalEdgeLenWorkingPrior(double v) const;
-#endif
 		
 		double 					recalcLnWorkingPrior() const;
 

@@ -55,7 +55,6 @@ EdgeLenMasterParam::~EdgeLenMasterParam()
 	//std::cerr << "\n>>>>> EdgeLenMasterParam dying..." << std::endl;
 	}
 	
-#if USING_EDGE_SPECIFIC_WORKING_PRIORS
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the minimum acceptable sample size for creating a split-specific edge length working prior. If the actual 
 |	sample size is less than the supplied value `n', a generic working prior will be used for that particular split.
@@ -67,9 +66,7 @@ void EdgeLenMasterParam::setMinWorkingPriorSampleSize(
 	PHYCAS_ASSERT(n > 1);
 	min_working_prior_sample_size = n;
 	}
-#endif
 	
-#if USING_EDGE_SPECIFIC_WORKING_PRIORS
 /*----------------------------------------------------------------------------------------------------------------------
 |	If `use_it' is true, then split-specific edge length working priors will be constructed for all edges seen during
 |	an MCMC analysis. If `use_it' is false, then a single generic edge length working prior will be used for all edges.
@@ -79,7 +76,6 @@ void EdgeLenMasterParam::useEdgeSpecificWorkingPriors(
 	{
 	use_edge_specific_working_priors = use_it;
 	}
-#endif
 	
 /*----------------------------------------------------------------------------------------------------------------------
 |	Member function that exists only to facilitate using boost::lambda::bind to be used in the getLnPrior() function. It
@@ -119,7 +115,6 @@ double EdgeLenMasterParam::lnPriorOneEdge(TreeNode & nd) const
 std::string EdgeLenMasterParam::getWorkingPriorDescr() const
 	{
 	std::string s;
-#if USING_EDGE_SPECIFIC_WORKING_PRIORS
 	std::string typestr = "all";
 	if (edgeLenType == internal)
 		typestr = "internal";
@@ -150,7 +145,6 @@ std::string EdgeLenMasterParam::getWorkingPriorDescr() const
 			s += it->first.CreateNewickRepresentation();
 			}
 		}
-#endif
 
 	return s;
 	}
@@ -172,7 +166,6 @@ double EdgeLenMasterParam::lnWorkingPriorOneEdge(const TreeNode & nd, double v) 
         {
 		double retval = 0.0;
 		
-#if USING_EDGE_SPECIFIC_WORKING_PRIORS
 		bool use_generic = true;
 		if (use_edge_specific_working_priors)
 			{
@@ -210,18 +203,6 @@ double EdgeLenMasterParam::lnWorkingPriorOneEdge(const TreeNode & nd, double v) 
 				PHYCAS_ASSERT(0);
 				}
 			}
-#else
-		PHYCAS_ASSERT(working_prior);
-	    try 
-		    {
-		    retval = working_prior->GetLnPDF(v);
-		    }
-	    catch(XProbDist &)
-		    {
-		    PHYCAS_ASSERT(0);
-		    }
-		//std::cerr << boost::str(boost::format("%.8f <-- %.8f <-- %s <-- %s") % retval % v % working_prior->GetDistributionDescription() % getName()) << std::endl;//temp
-#endif
 
 		return retval;
 		}
@@ -237,7 +218,6 @@ double EdgeLenMasterParam::recalcWorkingPrior() const
 	// don't need to check isPriorSteward() (as in MCMCUpdater::recalcWorkingPrior) because we know
 	// that EdgeLenMasterParam is a prior steward
 
-#if USING_EDGE_SPECIFIC_WORKING_PRIORS
 	double lnwp = 0.0;
 	if (!isFixed())
 		{
@@ -247,14 +227,6 @@ double EdgeLenMasterParam::recalcWorkingPrior() const
 			}
 		}
 	return lnwp;
-#else
-	if (!isFixed())
-		{
-	    double lnwp = std::accumulate(tree->begin(), tree->end(), 0.0,
-		    boost::lambda::_1 += boost::lambda::bind(&EdgeLenMasterParam::lnWorkingPriorOneEdge, this, boost::lambda::_2));
-		}
-	return lnwp;
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -319,7 +291,6 @@ void EdgeLenMasterParam::educateWorkingPrior()
 		double edgelen_mean = edgelen_sum/num_edgelens;
 		fitting_sample.push_back(edgelen_mean);
 		
-#if USING_EDGE_SPECIFIC_WORKING_PRIORS
 		if (use_edge_specific_working_priors)
 			{
 			// Second, use the current edge lengths to educate the working prior specific to the edges that
@@ -366,7 +337,6 @@ void EdgeLenMasterParam::educateWorkingPrior()
 					}
 				}
 			}
-#endif
 		}
 	}
 
@@ -397,7 +367,6 @@ void EdgeLenMasterParam::finalizeWorkingPrior()
 		v *= num_edgelens;
 		working_prior->SetMeanAndVariance(m, v);
 		
-#if USING_EDGE_SPECIFIC_WORKING_PRIORS
 		if (use_edge_specific_working_priors)
 			{
 			for (WorkingPriorMapIter it = edge_working_prior.begin(); it != edge_working_prior.end(); ++it)
@@ -438,7 +407,6 @@ void EdgeLenMasterParam::finalizeWorkingPrior()
 					}
 				}
 			}
-#endif
 		}
 	}
 }

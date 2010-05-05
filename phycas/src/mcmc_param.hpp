@@ -25,21 +25,7 @@
 #include <boost/weak_ptr.hpp>						// for boost::weak_ptr
 #include <boost/enable_shared_from_this.hpp>		// for boost::enable_shared_from_this
 #include "phycas/src/mcmc_updater.hpp"				// for MCMCUpdater base class
-
-#define USING_EDGE_SPECIFIC_WORKING_PRIORS 1
-
-#if USING_EDGE_SPECIFIC_WORKING_PRIORS
 #include "phycas/src/split.hpp"
-#endif
-
-//struct CIPRES_Matrix;
-
-//namespace CipresNative
-//{
-//class DiscreteMatrix;
-//}
-	
-//class ProbabilityDistribution;
 
 namespace phycas
 {
@@ -190,7 +176,6 @@ class StateFreqParam : public MCMCUpdater
 		unsigned			which;
 };
 
-#if USING_EDGE_SPECIFIC_WORKING_PRIORS
 /*----------------------------------------------------------------------------------------------------------------------
 |	Structure combining a vector of doubles (`fs') for storing a fitting sample and a probability distribution shared 
 |	pointer to store the working prior (`wp') that is parameterized using the fitting sample. This structure is used
@@ -201,7 +186,6 @@ struct EdgeWorkingPrior
 	double_vect_t	fs;		/**< vector of doubles representing samples upon which the `edge_working_prior' will be based */
 	ProbDistShPtr	wp;		/**< Gamma working prior distribution */
 	};
-#endif
 	
 /*----------------------------------------------------------------------------------------------------------------------
 |	Encapsulates an edge length parameter. It is only used in the case of a fixed topology, otherwise edge lengths are
@@ -253,10 +237,8 @@ class EdgeLenMasterParam : public MCMCUpdater
 		virtual double		recalcPrior();
 		virtual void		setPriorMeanAndVariance(double m, double v);
 
-#if USING_EDGE_SPECIFIC_WORKING_PRIORS
 		void				setMinWorkingPriorSampleSize(unsigned n);
 		void				useEdgeSpecificWorkingPriors(bool use_it);
-#endif
 
 	protected:
 
@@ -266,18 +248,14 @@ class EdgeLenMasterParam : public MCMCUpdater
 	
         EdgeLenType         				edgeLenType;   						/**> holds the edge length type, which determines for which edge lengths the prior is computed when recalcPrior is called */
 		
-#if USING_EDGE_SPECIFIC_WORKING_PRIORS
 		bool								use_edge_specific_working_priors;	/**< if true, `edge_working_prior' will be used; otherwise, a single generic working prior will be used for all edge lengths */
 		unsigned							min_working_prior_sample_size;		/**< minimum number of samples needed for a given split to construct a split-specific edge length working prior */
 		std::map<Split,EdgeWorkingPrior>	edge_working_prior;					/**< maps splits (keys) to EdgeWorkingPrior structs (values) so that the working prior distribution can be fetched given the split corresponding to any given node in the tree */
-#endif
 	};
 
-#if USING_EDGE_SPECIFIC_WORKING_PRIORS
 typedef std::map<Split,EdgeWorkingPrior>::iterator			WorkingPriorMapIter;
 typedef std::map<Split,EdgeWorkingPrior>::const_iterator	WorkingPriorMapConstIter;
 typedef std::pair<Split,EdgeWorkingPrior> 					WorkingPriorMapPair;
-#endif
 typedef boost::shared_ptr<EdgeLenMasterParam> EdgeLenMasterParamShPtr;
 
 /*----------------------------------------------------------------------------------------------------------------------

@@ -671,7 +671,6 @@ double MCMCChainManager::calcExternalEdgeLenPriorUnnorm(
     return tmp;
     }
 	
-#if USING_EDGE_SPECIFIC_WORKING_PRIORS
 /*----------------------------------------------------------------------------------------------------------------------
 |	Informs the EdgeLenMasterParam objects of a new minimum sample size `n' needed for constructing split-specific edge
 |	length working priors. If `n' is zero, this effectively turns off the use of split-specific edge length working
@@ -700,9 +699,7 @@ void MCMCChainManager::setMinSSWPSampleSize(
 			p->useEdgeSpecificWorkingPriors(false);
 		}
 	}
-#endif
 
-#if USING_EDGE_SPECIFIC_WORKING_PRIORS
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the log of the working prior for the supplied external edge length.
 */
@@ -718,22 +715,7 @@ double MCMCChainManager::calcExternalEdgeLenWorkingPrior(
 	PHYCAS_ASSERT(p);
 	return p->lnWorkingPriorOneEdge(nd, v);
 	}
-#else
-/*----------------------------------------------------------------------------------------------------------------------
-|	Computes the log of the working prior for the supplied external edge length.
-*/
-double MCMCChainManager::calcExternalEdgeLenWorkingPrior(
-  double v) const	/**< is the edge length for which the working prior log density should be computed */
-	{
-	// If there are two edge_length_parameters, first is for external and second is for internal edges
-	// (see MCMCChainManager::addMCMCUpdaters). If only one, it handles all edge lengths, so in this
-	// case (external edge length) we know we should go with the first one.
-    const MCMCUpdaterVect & edge_length_params = getEdgeLenParams();
-	return edge_length_params[0]->calcLnWorkingPriorPDF(v);
-	}
-#endif
 	
-#if USING_EDGE_SPECIFIC_WORKING_PRIORS
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the log of the working prior for the supplied internal edge length.
 */
@@ -759,22 +741,6 @@ double MCMCChainManager::calcInternalEdgeLenWorkingPrior(
 		//return edge_length_params[0]->lnWorkingPriorOneEdge(nd, false);
 		}
 	}
-#else
-/*----------------------------------------------------------------------------------------------------------------------
-|	Computes the log of the working prior for the supplied internal edge length.
-*/
-double MCMCChainManager::calcInternalEdgeLenWorkingPrior(
-  double v) const	/**< is the edge length for which the working prior log density should be computed */
-	{	
-	// If there are two edge_length_parameters, first is for external and second is for internal edges
-	// (see MCMCChainManager::addMCMCUpdaters). If only one, it handles all edge lengths.
-	const MCMCUpdaterVect & edge_length_params = getEdgeLenParams();
-	if (edge_length_params.size() == 2)
-		return edge_length_params[1]->calcLnWorkingPriorPDF(v);
-	else 
-		return edge_length_params[0]->calcLnWorkingPriorPDF(v);
-	}
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes the unnormalized prior for the supplied edge length using the prior for internal edge lengths.
