@@ -510,23 +510,24 @@ class MCMCImpl(CommonFunctions):
 				m = cold_chain.partition_model.getModel(i)
 				new_freqT = u.sampleWorkingPrior()
 				m.setStateFreqUnnorm(3, new_freqT)
-			elif name.find('edgelen') == 0:
+			elif name.find('edgelen') == 0:							# C++ class EdgeLenParam
 				# depends on edge length updaters being in preorder sequence
 				edgelen = u.sampleWorkingPrior()
 				new_edge_lens.append(edgelen)
-			elif name.find('master_edgelen') == 0:
+			elif name.find('master_edgelen') == 0:					# C++ class EdgeLenMasterParam
 				num_edge_lens = cold_chain.tree.getNNodes() - 1
 				new_edge_lens = [u.sampleWorkingPrior() for j in range(num_edge_lens)]
-			elif name.find('external_edgelen') == 0:
+			elif name.find('external_edgelen') == 0:				# C++ class EdgeLenMasterParam
 				num_edge_lens = cold_chain.tree.getNTips() - 1
 				new_external_edge_lens = [u.sampleWorkingPrior() for j in range(num_edge_lens)]
-			elif name.find('internal_edgelen') == 0:
+			elif name.find('internal_edgelen') == 0:				# C++ class EdgeLenMasterParam
 				num_edge_lens = cold_chain.tree.getNInternals()
 				new_internal_edge_lens = [u.sampleWorkingPrior() for j in range(num_edge_lens)]
 			else:
 				self.phycassert(0, 'model uses an updater (%s) that has not yet been added to MCMCImpl.exploreWorkingPrior (workaround: specify mcmc.draw_directly_from_prior = False)' % name)
 		
 		if new_internal_edge_lens is not None:
+			# Case of a separate master edge length parameter for internals and tips
 			self.phycassert(new_external_edge_lens is not None, 'not expecting new_external_edge_lens to be None in MCMCImpl.exploreWorkingPrior') 
 			i = 0	# indexes internals
 			j = 0	# indexes tips
@@ -542,6 +543,7 @@ class MCMCImpl(CommonFunctions):
 				else:
 					self.phycassert(0, 'nd is neither a tip nor an internal node in MCMCImpl.exploreWorkingPrior')
 		else:
+			# Case of fixed topology (and hence each edge has its own length parameter) or there is a single master edge length parameter governing both tips and internals
 			self.phycassert(len(new_edge_lens) == cold_chain.tree.getNNodes() - 1, 'new_edge_lens has %d elements but expecting %d in MCMCImpl.exploreWorkingPrior' % (len(new_edge_lens), cold_chain.tree.getNNodes() - 1)) 
 			i = 0
 			for nd in cold_chain.tree:
@@ -561,7 +563,7 @@ class MCMCImpl(CommonFunctions):
 		
 		# what about polytomies?
 											
-		############################ exploreWorkingPrior ############################
+		############################ end exploreWorkingPrior ############################
 		
 	def explorePrior(self, cycle):
 		chain_index = 0
