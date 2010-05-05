@@ -21,8 +21,8 @@
 #include <iostream>
 #include <boost/assert.hpp>
 
-/* #define DEBUG_INPUT_ON_ASSERT
-   #define CRASH_ON_ASSERT
+#define DEBUG_INPUT_ON_ASSERT
+/*    #define CRASH_ON_ASSERT
 */
 #if defined(BOOST_ENABLE_ASSERT_HANDLER)
 void boost::assertion_failed(char const * expr, char const * function, char const * file, long line)

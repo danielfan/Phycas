@@ -1070,11 +1070,12 @@ class MCMCImpl(CommonFunctions):
 						if not u.isFixed():
 							u.setUseWorkingPrior(True)
 							if u.computesUnivariatePrior() or u.computesMultivariatePrior():
+								self.output('  Finalizing working prior for %s...' % u.getName())
 								u.finalizeWorkingPrior()
 								self.output('  %s --> %s' % (u.getName(), u.getWorkingPriorDescr()))
 					self.output()
 					working_priors_calculated = True
-							
+					
 				self.ss_sampled_likes.append([])
 				chain.setPower(self.ss_beta)
 				boldness = 100.0*(1.0 - self.ss_beta)

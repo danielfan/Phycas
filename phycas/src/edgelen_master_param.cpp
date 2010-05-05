@@ -139,10 +139,13 @@ std::string EdgeLenMasterParam::getWorkingPriorDescr() const
 		s += "\n    Here are the working priors that will be used for edges already seen:";
 		for (WorkingPriorMapConstIter it = edge_working_prior.begin(); it != edge_working_prior.end(); ++it)
 			{
-			s += "\n      ";
-			s += it->second.wp->GetDistributionDescription();
-			s += " will be used for ";
-			s += it->first.CreateNewickRepresentation();
+			if (it->second.wp)
+				{
+				s += "\n      ";
+				s += it->second.wp->GetDistributionDescription();
+				s += " will be used for ";
+				s += it->first.CreateNewickRepresentation();
+				}
 			}
 		}
 

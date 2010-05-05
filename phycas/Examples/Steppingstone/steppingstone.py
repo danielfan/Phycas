@@ -8,8 +8,8 @@ cycles_per_beta    = 1000   # 1000
 sample_freq        = 1
 print_freq         = 100    # 100
 rseed              = 13579
-min_wp_sample_size = 0
-fixed_topology     = False
+fixed_topology     = True
+min_wp_sample_size = 10     # not applicable if fixed_topology
 data_file_name     = 'marshall.nex'
 
 # HKY+G ml tree
