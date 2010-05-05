@@ -264,12 +264,13 @@ class EdgeLenMasterParam : public MCMCUpdater
 
     private:
 	
+        EdgeLenType         				edgeLenType;   						/**> holds the edge length type, which determines for which edge lengths the prior is computed when recalcPrior is called */
+		
 #if USING_EDGE_SPECIFIC_WORKING_PRIORS
 		bool								use_edge_specific_working_priors;	/**< if true, `edge_working_prior' will be used; otherwise, a single generic working prior will be used for all edge lengths */
 		unsigned							min_working_prior_sample_size;		/**< minimum number of samples needed for a given split to construct a split-specific edge length working prior */
 		std::map<Split,EdgeWorkingPrior>	edge_working_prior;					/**< maps splits (keys) to EdgeWorkingPrior structs (values) so that the working prior distribution can be fetched given the split corresponding to any given node in the tree */
 #endif
-        EdgeLenType         				edgeLenType;   						/**> holds the edge length type, which determines for which edge lengths the prior is computed when recalcPrior is called */
 	};
 
 #if USING_EDGE_SPECIFIC_WORKING_PRIORS

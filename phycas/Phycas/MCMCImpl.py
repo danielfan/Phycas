@@ -454,6 +454,8 @@ class MCMCImpl(CommonFunctions):
 		unpartitioned = (nmodels == 1)
 
 		new_edge_lens = []
+		new_internal_edge_lens = None
+		new_external_edge_lens = None
 		
 		all_updaters = cold_chain.chain_manager.getAllUpdaters() 
 		for u in all_updaters:		# good candidate for moving into C++
@@ -512,15 +514,41 @@ class MCMCImpl(CommonFunctions):
 				# depends on edge length updaters being in preorder sequence
 				edgelen = u.sampleWorkingPrior()
 				new_edge_lens.append(edgelen)
+			elif name.find('master_edgelen') == 0:
+				num_edge_lens = cold_chain.tree.getNNodes() - 1
+				new_edge_lens = [u.sampleWorkingPrior() for j in range(num_edge_lens)]
+			elif name.find('external_edgelen') == 0:
+				num_edge_lens = cold_chain.tree.getNTips() - 1
+				new_external_edge_lens = [u.sampleWorkingPrior() for j in range(num_edge_lens)]
+			elif name.find('internal_edgelen') == 0:
+				num_edge_lens = cold_chain.tree.getNInternals()
+				new_internal_edge_lens = [u.sampleWorkingPrior() for j in range(num_edge_lens)]
 			else:
 				self.phycassert(0, 'model uses an updater (%s) that has not yet been added to MCMCImpl.exploreWorkingPrior (workaround: specify mcmc.draw_directly_from_prior = False)' % name)
 		
-		i = 0
-		for nd in cold_chain.tree:
-			if nd.isRoot():
-				continue
-			nd.setEdgeLen(new_edge_lens[i])
-			i += 1
+		if new_internal_edge_lens is not None:
+			self.phycassert(new_external_edge_lens is not None, 'not expecting new_external_edge_lens to be None in MCMCImpl.exploreWorkingPrior') 
+			i = 0	# indexes internals
+			j = 0	# indexes tips
+			for nd in cold_chain.tree:
+				if nd.isRoot():
+					continue
+				elif nd.isInternal():
+					nd.setEdgeLen(new_internal_edge_lens[i])
+					i += 1
+				elif nd.isTip():
+					nd.setEdgeLen(new_external_edge_lens[j])
+					j += 1
+				else:
+					self.phycassert(0, 'nd is neither a tip nor an internal node in MCMCImpl.exploreWorkingPrior')
+		else:
+			self.phycassert(len(new_edge_lens) == cold_chain.tree.getNNodes() - 1, 'new_edge_lens has %d elements but expecting %d in MCMCImpl.exploreWorkingPrior' % (len(new_edge_lens), cold_chain.tree.getNNodes() - 1)) 
+			i = 0
+			for nd in cold_chain.tree:
+				if nd.isRoot():
+					continue
+				nd.setEdgeLen(new_edge_lens[i])
+				i += 1
 					
 		# replace the model
 		cold_chain.prepareForLikelihood()
