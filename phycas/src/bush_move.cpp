@@ -56,8 +56,6 @@ BushMove::BushMove()
 */
 bool BushMove::update()
 	{
-#if DISABLED_UNTIL_WORKING_PRIOR_ACCOMMODATED
-	
 	// The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
 	// A proposed BushMove cannot be accepted without changing edge lengths, so it is best to bail out now.
 	if (is_fixed)
@@ -144,9 +142,6 @@ bool BushMove::update()
 		revert();
 		return false;
 		}
-#else
-	return false;
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

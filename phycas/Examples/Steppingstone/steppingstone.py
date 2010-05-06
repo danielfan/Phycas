@@ -2,14 +2,13 @@ from phycas import *
 
 method             = 'ss'     # 'ss' (steppingstone) or 'hm' (harmonic mean)
 partition_scheme   = 'codon'  # 'unpartitioned', 'gene', 'codon', or 'genecodon'
-num_beta_values    = 25     # 25
-burn_in            = 500    # 500
-cycles_per_beta    = 1000   # 1000
-sample_freq        = 1
-print_freq         = 100    # 100
+num_beta_values    = 25       # 25
+burn_in            = 500      # 500
+cycles_per_beta    = 1000     # 1000
+sample_freq        = 1        # 1
+print_freq         = 100      # 100
 rseed              = 13579
-fixed_topology     = True
-min_wp_sample_size = 10     # not applicable if fixed_topology
+
 data_file_name     = 'marshall.nex'
 
 # HKY+G ml tree
@@ -161,7 +160,7 @@ def runMCMC(fnprefix):
     #mcmc.starting_tree_source = randomtree(n_taxa=len(blob.taxon_labels))
     mcmc.starting_tree_source = TreeCollection(newick=user_tree_def)
     mcmc.debugging = False
-    mcmc.fix_topology = fixed_topology
+    mcmc.fix_topology = True
     mcmc.adapt_first = 2
     mcmc.sample_every = sample_freq
     mcmc.report_every = print_freq
@@ -182,7 +181,7 @@ def runMCMC(fnprefix):
         ss.shape2 = 1.0
         ss.scubed = True
         ss.xcycles = xtra
-        ss.minsample = min_wp_sample_size
+        #ss.minsample = min_wp_sample_size
         ss()
     else:
         print "method must be either 'hm' or 'ss'"

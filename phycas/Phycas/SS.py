@@ -41,8 +41,8 @@ class SS(PhycasCommand):
 		is done during a call of a SS object.
 		"""
 		cf = CommonFunctions(self)
-		cf.phycassert(mcmc.ncycles > 0, 'mcmc.ncycles cannot be less than 1 for steppingstone sampling')
-		#cf.phycassert(ss.nbetavals > 0, 'ss.nbetavals cannot be less than 1')
+		cf.phycassert(mcmc.ncycles > 0, 'mcmc.ncycles cannot be less than 1 for the stepping-stone method')
+		cf.phycassert(mcmc.fix_topology == True, "mcmc.fix_topology must be True to use the stepping-stone method (we're working on relaxing this requirement)")
 		
 	def __call__(self, **kwargs):
 		self.set(**kwargs)

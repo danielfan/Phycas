@@ -2,7 +2,7 @@
 {
 	0867D690FE84028FC02AAC07 /* Project object */ = {
 		activeBuildConfigurationName = Debug;
-		activeExecutable = D164C4A71164EC0E00DB2E59 /* Run steppingstone */;
+		activeExecutable = D12D34A611925D3D007B58E9 /* Run paradox */;
 		activeTarget = 7AB51D6C10CDADC700A865FF /* Everything */;
 		addToTargets = (
 			7AB51D6C10CDADC700A865FF /* Everything */,
@@ -26,6 +26,7 @@
 			D147B62B111F509A00094934 /* Run Codon Test */,
 			D19DDD6B1127480C00524862 /* Run all tests */,
 			D164C4A71164EC0E00DB2E59 /* Run steppingstone */,
+			D12D34A611925D3D007B58E9 /* Run paradox */,
 		);
 		expressions = (
 			log_correction_factor,
@@ -100,7 +101,7 @@
 				PBXFileTableDataSourceColumnWidthsKey = (
 					22,
 					300,
-					1310,
+					1258.58349609375,
 				);
 				PBXFileTableDataSourceColumnsKey = (
 					PBXExecutablesDataSource_ActiveFlagID,
@@ -204,15 +205,10 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 294763044;
-			PBXWorkspaceStateSaveDate = 294763044;
+			PBXPerProjectTemplateStateSaveDate = 294860858;
+			PBXWorkspaceStateSaveDate = 294860858;
 		};
 		perUserProjectItems = {
-			D11380CF1190B6CA0073BA3B /* PBXTextBookmark */ = D11380CF1190B6CA0073BA3B /* PBXTextBookmark */;
-			D11381391190C1F80073BA3B /* PBXTextBookmark */ = D11381391190C1F80073BA3B /* PBXTextBookmark */;
-			D113814D1190C2AE0073BA3B /* PBXTextBookmark */ = D113814D1190C2AE0073BA3B /* PBXTextBookmark */;
-			D113814E1190C2AE0073BA3B /* PBXTextBookmark */ = D113814E1190C2AE0073BA3B /* PBXTextBookmark */;
-			D11B66EF1190EBE20048585C /* PBXTextBookmark */ = D11B66EF1190EBE20048585C /* PBXTextBookmark */;
 			D11B67011190F82F0048585C /* PBXTextBookmark */ = D11B67011190F82F0048585C /* PBXTextBookmark */;
 			D11B67021190F82F0048585C /* PBXTextBookmark */ = D11B67021190F82F0048585C /* PBXTextBookmark */;
 			D11D17181191B0C40013E629 /* PBXTextBookmark */ = D11D17181191B0C40013E629 /* PBXTextBookmark */;
@@ -226,8 +222,14 @@
 			D11D1AC21191DE84009F9107 /* PBXTextBookmark */ = D11D1AC21191DE84009F9107 /* PBXTextBookmark */;
 			D11D1AC31191DE84009F9107 /* PBXTextBookmark */ = D11D1AC31191DE84009F9107 /* PBXTextBookmark */;
 			D11D1AC41191DE84009F9107 /* PBXTextBookmark */ = D11D1AC41191DE84009F9107 /* PBXTextBookmark */;
-			D11D1AC51191DE84009F9107 /* PBXTextBookmark */ = D11D1AC51191DE84009F9107 /* PBXTextBookmark */;
-			D11D1AC61191DE84009F9107 /* PBXTextBookmark */ = D11D1AC61191DE84009F9107 /* PBXTextBookmark */;
+			D12D34B411925F78007B58E9 /* PBXTextBookmark */ = D12D34B411925F78007B58E9 /* PBXTextBookmark */;
+			D1E03EB8119337F0006ED5EA /* PBXTextBookmark */ = D1E03EB8119337F0006ED5EA /* PBXTextBookmark */;
+			D1E03EB9119337F0006ED5EA /* PBXTextBookmark */ = D1E03EB9119337F0006ED5EA /* PBXTextBookmark */;
+			D1E03EBA119337F0006ED5EA /* PBXTextBookmark */ = D1E03EBA119337F0006ED5EA /* PBXTextBookmark */;
+			D1E03EBB119337F0006ED5EA /* PBXTextBookmark */ = D1E03EBB119337F0006ED5EA /* PBXTextBookmark */;
+			D1E03EBC119337F0006ED5EA /* PBXTextBookmark */ = D1E03EBC119337F0006ED5EA /* PBXTextBookmark */;
+			D1E03EBE119337F0006ED5EA /* PBXTextBookmark */ = D1E03EBE119337F0006ED5EA /* PBXTextBookmark */;
+			D1E03ECF119338A5006ED5EA /* PBXTextBookmark */ = D1E03ECF119338A5006ED5EA /* PBXTextBookmark */;
 		};
 		sourceControlManager = D13CAB7610D1D30500813B89 /* Source Control */;
 		userBuildSettings = {
@@ -299,9 +301,9 @@
 	};
 	7A0945BC10CAEFB900CEFDE0 /* bush_move.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 9477}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1561, 9529}}";
 			sepNavSelRange = "{2781, 0}";
-			sepNavVisRange = "{2410, 1774}";
+			sepNavVisRange = "{2290, 2086}";
 		};
 	};
 	7A0945BD10CAEFB900CEFDE0 /* bush_move.hpp */ = {
@@ -1369,56 +1371,6 @@
 			sepNavWindowFrame = "{{79, 506}, {1143, 1067}}";
 		};
 	};
-	D11380CF1190B6CA0073BA3B /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A98F61610CD6DEC001E79F7 /* _MCMCChainManager.py */;
-		name = "_MCMCChainManager.py: 102";
-		rLen = 15;
-		rLoc = 2383;
-		rType = 0;
-		vrLen = 1484;
-		vrLoc = 0;
-	};
-	D11381391190C1F80073BA3B /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A0945F610CAEFB900CEFDE0 /* mcmc_updater.cpp */;
-		name = "mcmc_updater.cpp: 947";
-		rLen = 0;
-		rLoc = 38923;
-		rType = 0;
-		vrLen = 2473;
-		vrLoc = 36892;
-	};
-	D113814D1190C2AE0073BA3B /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A09460410CAEFB900CEFDE0 /* partition_model.cpp */;
-		name = "partition_model.cpp: 211";
-		rLen = 0;
-		rLoc = 8757;
-		rType = 0;
-		vrLen = 2451;
-		vrLoc = 6306;
-	};
-	D113814E1190C2AE0073BA3B /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A09463E10CAEFB900CEFDE0 /* tip_data.cpp */;
-		name = "tip_data.cpp: 34";
-		rLen = 7;
-		rLoc = 1983;
-		rType = 0;
-		vrLen = 3187;
-		vrLoc = 1441;
-	};
-	D11B66EF1190EBE20048585C /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A09463F10CAEFB900CEFDE0 /* tip_data.hpp */;
-		name = "tip_data.hpp: 122";
-		rLen = 14;
-		rLoc = 5240;
-		rType = 0;
-		vrLen = 3769;
-		vrLoc = 6243;
-	};
 	D11B67011190F82F0048585C /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 7A98F62B10CD6E34001E79F7 /* _Tree.py */;
@@ -1483,7 +1435,7 @@
 		ignoreCount = 0;
 		lineNumber = 179;
 		location = _LikelihoodExt.so;
-		modificationTime = 294772118.29071;
+		modificationTime = 294804857.516735;
 		originalNumberOfMultipleMatches = 1;
 		state = 1;
 	};
@@ -1519,6 +1471,7 @@
 	};
 	D11D1A8A1191BF56009F9107 /* invoke.hpp */ = {
 		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.cpp.h;
 		name = invoke.hpp;
 		path = /Users/plewis/boost_1_41_0/boost/python/detail/invoke.hpp;
 		sourceTree = "<absolute>";
@@ -1535,6 +1488,7 @@
 	};
 	D11D1A8C1191BF56009F9107 /* caller.hpp */ = {
 		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.cpp.h;
 		name = caller.hpp;
 		path = /Users/plewis/boost_1_41_0/boost/python/detail/caller.hpp;
 		sourceTree = "<absolute>";
@@ -1551,14 +1505,10 @@
 	};
 	D11D1A8E1191BF56009F9107 /* py_function.hpp */ = {
 		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.cpp.h;
 		name = py_function.hpp;
 		path = /Users/plewis/boost_1_41_0/boost/python/object/py_function.hpp;
 		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1721, 2249}}";
-			sepNavSelRange = "{3744, 0}";
-			sepNavVisRange = "{0, 1141}";
-		};
 	};
 	D11D1AA31191C2BB009F9107 /* boost_assertion_failed.cpp:30 */ = {
 		isa = PBXFileBreakpoint;
@@ -1574,7 +1524,7 @@
 		ignoreCount = 0;
 		lineNumber = 30;
 		location = libboost_python.dylib;
-		modificationTime = 294772118.291224;
+		modificationTime = 294804857.517053;
 		originalNumberOfMultipleMatches = 1;
 		state = 1;
 	};
@@ -1608,23 +1558,6 @@
 		vrLen = 2073;
 		vrLoc = 14924;
 	};
-	D11D1AC51191DE84009F9107 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1ABDDEC10D2D60000EDC77A /* MCMCImpl.py */;
-		rLen = 12;
-		rLoc = 35029;
-		rType = 0;
-	};
-	D11D1AC61191DE84009F9107 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1ABDDEC10D2D60000EDC77A /* MCMCImpl.py */;
-		name = "MCMCImpl.py: 805";
-		rLen = 0;
-		rLoc = 35108;
-		rType = 0;
-		vrLen = 2428;
-		vrLoc = 34959;
-	};
 	D129559911679C8500C37FFB /* relative_rate_distribution.cpp:262 */ = {
 		isa = PBXFileBreakpoint;
 		actions = (
@@ -1639,9 +1572,96 @@
 		ignoreCount = 0;
 		lineNumber = 262;
 		location = _ProbDistExt.so;
-		modificationTime = 294772118.278548;
+		modificationTime = 294804857.514721;
 		originalNumberOfMultipleMatches = 1;
 		state = 1;
+	};
+	D12D34A611925D3D007B58E9 /* Run paradox */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+			YES,
+		);
+		argumentStrings = (
+			Paradox.py,
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 1;
+		configStateDict = {
+			"PBXLSLaunchAction-0" = {
+				PBXLSLaunchAction = 0;
+				PBXLSLaunchStartAction = 1;
+				PBXLSLaunchStdioStyle = 2;
+				PBXLSLaunchStyle = 0;
+				class = PBXLSRunLaunchConfig;
+				commandLineArgs = (
+				);
+				displayName = "Executable Runner";
+				environment = {
+				};
+				identifier = com.apple.Xcode.launch.runConfig;
+				remoteHostInfo = "";
+				startActionInfo = "";
+			};
+		};
+		customDataFormattersEnabled = 1;
+		dataTipCustomDataFormattersEnabled = 1;
+		dataTipShowTypeColumn = 1;
+		dataTipSortType = 0;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		dylibVariantSuffix = "";
+		enableDebugStr = 1;
+		environmentEntries = (
+			{
+				active = YES;
+				name = DYLD_LIBRARY_PATH;
+				value = "$(PHYCAS_ROOT)/phycas/Conversions";
+			},
+			{
+				active = YES;
+				name = PYTHONPATH;
+				value = "$(PHYCAS_ROOT)";
+			},
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		launchableReference = D12D34A711925D3D007B58E9 /* python */;
+		libgmallocEnabled = 0;
+		name = "Run paradox";
+		savedGlobals = {
+		};
+		showTypeColumn = 0;
+		sourceDirectories = (
+		);
+		startupPath = /Users/plewis/Documents/Projects/pdev/trunk/phycas/Examples/Paradox;
+		variableFormatDictionary = {
+			$fctrl = 1;
+			$fioff = 1;
+			$fiseg = 1;
+			$fooff = 1;
+			$fop = 1;
+			$foseg = 1;
+			$fstat = 1;
+			$ftag = 1;
+			"0-std::vector<double,std::allocator<double> >-phycas::TreeLikelihood::recalcRelativeRates" = 2;
+		};
+	};
+	D12D34A711925D3D007B58E9 /* python */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = "compiled.mach-o.executable";
+		name = python;
+		path = /Users/plewis/pydbg/bin/python;
+		sourceTree = "<absolute>";
+	};
+	D12D34B411925F78007B58E9 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1ABDDEC10D2D60000EDC77A /* MCMCImpl.py */;
+		name = "MCMCImpl.py: 805";
+		rLen = 0;
+		rLoc = 35108;
+		rType = 0;
+		vrLen = 2436;
+		vrLoc = 34951;
 	};
 	D1328DC7111DF9E600E05D16 /* Run Steppingstone Test */ = {
 		isa = PBXExecutable;
@@ -2220,31 +2240,31 @@
 	D1ABDDEB10D2D60000EDC77A /* MCMC.py */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {2980, 1612}}";
-			sepNavSelRange = "{12348, 5}";
-			sepNavVisRange = "{10249, 3144}";
+			sepNavSelRange = "{2357, 12}";
+			sepNavVisRange = "{201, 9475}";
 		};
 	};
 	D1ABDDEC10D2D60000EDC77A /* MCMCImpl.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1561, 14586}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1561, 14534}}";
 			sepNavSelRange = "{35108, 0}";
-			sepNavVisRange = "{34959, 2428}";
+			sepNavVisRange = "{34951, 2436}";
 			sepNavWindowFrame = "{{100, 511}, {1257, 1041}}";
 		};
 	};
 	D1ABDDED10D2D60000EDC77A /* MCMCManager.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1561, 4355}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1561, 4394}}";
 			sepNavSelRange = "{7033, 19}";
-			sepNavVisRange = "{6775, 2474}";
+			sepNavVisRange = "{6775, 2328}";
 			sepNavWindowFrame = "{{215, 119}, {1158, 979}}";
 		};
 	};
 	D1ABDDEE10D2D60000EDC77A /* Model.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {3582, 1313}}";
+			sepNavIntBoundsRect = "{{0, 0}, {3582, 1508}}";
 			sepNavSelRange = "{7477, 0}";
-			sepNavVisRange = "{6562, 2567}";
+			sepNavVisRange = "{0, 7078}";
 		};
 	};
 	D1ABDDEF10D2D60000EDC77A /* Partition.py */ = {
@@ -2277,14 +2297,14 @@
 	};
 	D1ABDDF510D2D60000EDC77A /* SS.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {2420, 824}}";
-			sepNavSelRange = "{3191, 0}";
-			sepNavVisRange = "{0, 3969}";
+			sepNavIntBoundsRect = "{{0, 0}, {2420, 806}}";
+			sepNavSelRange = "{3591, 0}";
+			sepNavVisRange = "{45, 3964}";
 		};
 	};
 	D1ABDDF610D2D60000EDC77A /* SumP.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1578, 806}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1561, 772}}";
 			sepNavSelRange = "{0, 0}";
 			sepNavVisRange = "{0, 1582}";
 		};
@@ -2415,7 +2435,7 @@
 		ignoreCount = 0;
 		lineNumber = 216;
 		location = _ProbDistExt.so;
-		modificationTime = 294772118.279107;
+		modificationTime = 294804857.515633;
 		originalNumberOfMultipleMatches = 1;
 		state = 1;
 	};
@@ -2440,7 +2460,7 @@
 		ignoreCount = 0;
 		lineNumber = 2034;
 		location = _ReadNexusExt.so;
-		modificationTime = 294772118.279379;
+		modificationTime = 294804857.516008;
 		originalNumberOfMultipleMatches = 1;
 		state = 1;
 	};
@@ -2458,7 +2478,7 @@
 		ignoreCount = 0;
 		lineNumber = 850;
 		location = _LikelihoodExt.so;
-		modificationTime = 294772118.279687;
+		modificationTime = 294804857.516421;
 		originalNumberOfMultipleMatches = 1;
 		state = 1;
 	};
@@ -2633,6 +2653,76 @@
 		name = python;
 		path = /Users/plewis/pydbg/bin/python;
 		sourceTree = "<absolute>";
+	};
+	D1E03EB8119337F0006ED5EA /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A0945BC10CAEFB900CEFDE0 /* bush_move.cpp */;
+		name = "bush_move.cpp: 59";
+		rLen = 0;
+		rLoc = 2781;
+		rType = 0;
+		vrLen = 2086;
+		vrLoc = 2290;
+	};
+	D1E03EB9119337F0006ED5EA /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1ABDDF610D2D60000EDC77A /* SumP.py */;
+		name = "SumP.py: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 1582;
+		vrLoc = 0;
+	};
+	D1E03EBA119337F0006ED5EA /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1ABDDED10D2D60000EDC77A /* MCMCManager.py */;
+		name = "MCMCManager.py: 192";
+		rLen = 19;
+		rLoc = 7033;
+		rType = 0;
+		vrLen = 2328;
+		vrLoc = 6775;
+	};
+	D1E03EBB119337F0006ED5EA /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1ABDDEE10D2D60000EDC77A /* Model.py */;
+		name = "Model.py: 68";
+		rLen = 0;
+		rLoc = 7477;
+		rType = 0;
+		vrLen = 7078;
+		vrLoc = 0;
+	};
+	D1E03EBC119337F0006ED5EA /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1ABDDEB10D2D60000EDC77A /* MCMC.py */;
+		name = "MCMC.py: 23";
+		rLen = 12;
+		rLoc = 2357;
+		rType = 0;
+		vrLen = 9475;
+		vrLoc = 201;
+	};
+	D1E03EBE119337F0006ED5EA /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1ABDDF510D2D60000EDC77A /* SS.py */;
+		name = "SS.py: 45";
+		rLen = 0;
+		rLoc = 3503;
+		rType = 0;
+		vrLen = 4008;
+		vrLoc = 45;
+	};
+	D1E03ECF119338A5006ED5EA /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1ABDDF510D2D60000EDC77A /* SS.py */;
+		name = "SS.py: 45";
+		rLen = 0;
+		rLoc = 3591;
+		rType = 0;
+		vrLen = 3964;
+		vrLoc = 45;
 	};
 	D1F281C3111B422C00FDE78C /* GTRTest.py */ = {
 		uiCtxt = {
