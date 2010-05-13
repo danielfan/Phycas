@@ -19,10 +19,13 @@ model.update_relrates_separately = True
 
 mcmc.out.log = 'output.txt'
 mcmc.out.log.mode = REPLACE
+
 mcmc.out.trees.prefix = 'gtr_test'
 mcmc.out.trees.mode = REPLACE
+
 mcmc.out.params.prefix = 'gtr_test'
 mcmc.out.params.mode = REPLACE
+
 mcmc.nchains = 1
 mcmc.ncycles = 20
 mcmc.sample_every = 5

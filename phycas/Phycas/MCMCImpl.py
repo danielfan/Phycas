@@ -350,12 +350,14 @@ class MCMCImpl(CommonFunctions):
 		mat = ds and ds.getMatrix() or None
 		self._loadData(mat)
 		
-		# POL line below is not right, should be able to run without data
-		self.phycassert(self.nchar > 0, 'Expecting nchar to be greater than 0 in MCMCImpl.setup') 
+		#print 'In MCMCImpl.py, function setup():'
+		#print '  mat =', mat
+		#print '  self.nchar = %d' % self.nchar
+		#raw_input('debug check')
 		
 		# Next line creates a default partition if a partition was not defined by the user
 		self.opts.partition.validate(self.nchar)
-	
+
 		self.models			= [m for (n,s,m) in self.opts.partition.subset]
 		self.model_names	= [n for (n,s,m) in self.opts.partition.subset]
 		
@@ -378,7 +380,7 @@ class MCMCImpl(CommonFunctions):
 				if m.external_edgelen_prior.getDistName() != 'Exponential':
 					m.external_edgelen_prior = Exponential(1.0)
 					self.warning('In model %s, external_edgelen_prior reset to Exponential because edgelen_hyperprior was specified' % n)
-		
+			
 		# Determine heating levels if multiple chains
 		if self.opts.heat_vector == None:
 			if self.opts.nchains == 1:
@@ -811,7 +813,7 @@ class MCMCImpl(CommonFunctions):
 		for cycle in xrange(self.burnin + self.ncycles):
 			# Update all updaters
 			if explore_prior and self.opts.draw_directly_from_prior:
-				if self.opts.ssobj.scubed:
+				if self.opts.doing_steppingstone_sampling and self.opts.ssobj.scubed:
 					self.exploreWorkingPrior(cycle)
 				else:
 					self.explorePrior(cycle)

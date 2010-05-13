@@ -191,9 +191,15 @@ class MarkovChain(LikelihoodCore):
 		
 		"""
 		LikelihoodCore.setupCore(self)
+
+		from phycas import partition,model
+		if self.parent.opts.partition.noData():
+			#print 'setting noData in setupChain in MarkovChain.py'
+			#raw_input('debug check')
+			self.likelihood.setNoData()
+			
 		LikelihoodCore.prepareForLikelihood(self)
 		
-		from phycas import partition,model
 		# add priors to models already added (by LikelihoodCore.setupCore) to partition_model
 		modelspecs = partition.getModels()	# partition here refers to the global object (associated with the Phycas partition command)
 		print 'modelspecs has length %d:' % len(modelspecs)
@@ -204,8 +210,10 @@ class MarkovChain(LikelihoodCore):
 			print 'partition_model contains %d models' % nmodels
 		self.chain_manager = Likelihood.MCMCChainManager()
 		for i in range(nmodels):
+			# get the Model (as defined in likelihood_models.cpp) associated with partition subset i
 			m = self.partition_model.getModel(i)
-			# print '--> adding prior info to partition subset %d (%s model)' % (i, m.getModelName())
+
+			# get the model specification (defined in Model.py) stored in (Python) partition object
 			mspec = modelspecs[i]
 
 			implemented = not (self.parent.opts.fix_topology and mspec.edgelen_hyperprior is not None)
@@ -306,7 +314,7 @@ class MarkovChain(LikelihoodCore):
 				sfm.setLot(self.r)
 				if m.stateFreqsFixed():
 					sfm.fixParameter()
-				sfm.setMultivarPrior(mspec.state_freq_prior)
+				sfm.setMultivarPrior(mspec.state_freq_prior.cloneAndSetLot(self.r))
 				self.chain_manager.addMove(sfm)
 				self.state_freq_moves.append(sfm)
 			
@@ -326,7 +334,7 @@ class MarkovChain(LikelihoodCore):
 				rrm.setLot(self.r)
 				#if self.model.relRatesFixed():
 				#	 rrm.fixParameter()
-				rrm.setMultivarPrior(mspec.relrate_prior)
+				rrm.setMultivarPrior(mspec.relrate_prior.cloneAndSetLot(self.r))
 				self.chain_manager.addMove(rrm)
 				self.rel_rate_moves.append(rrm)
 
@@ -379,14 +387,14 @@ class MarkovChain(LikelihoodCore):
 					param_list = tuple([1.0]*nmodels)
 					d = ProbDist.RelativeRateDistribution(param_list)
 					d.setCoefficients(subset_proportions)
-					self.subset_relrates_move.setMultivarPrior(d)
-					self.partition_model.setSubsetRelRatePrior(d)
+					self.subset_relrates_move.setMultivarPrior(d.cloneAndSetLot(self.r))
+					self.partition_model.setSubsetRelRatePrior(d.cloneAndSetLot(self.r))
 				else:
 					self.parent.phycassert(partition.subset_relrates_prior.getDistName() == 'RelativeRateDistribution', 'partition.subset_relrates_prior must be of type RelativeRateDistribution')
 					self.parent.phycassert(partition.subset_relrates_prior.getNParams() == nmodels, 'partition.subset_relrates_prior has dimension %d, but there are %d subsets in the partition. Try setting partion.subset_relrates_prior = None to get default flat Dirichlet prior of the appropriate dimension' % (partition.subset_relrates_prior.getNParams(), nmodels))
 					partition.subset_relrates_prior.setCoefficients(subset_proportions)
-					self.subset_relrates_move.setMultivarPrior(partition.subset_relrates_prior)
-					self.partition_model.setSubsetRelRatePrior(partition.subset_relrates_prior)
+					self.subset_relrates_move.setMultivarPrior(partition.subset_relrates_prior.cloneAndSetLot(self.r))
+					self.partition_model.setSubsetRelRatePrior(partition.subset_relrates_prior.cloneAndSetLot(self.r))
 			self.chain_manager.addMove(self.subset_relrates_move)
 		
 		#OLDWAY

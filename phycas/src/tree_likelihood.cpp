@@ -2735,11 +2735,21 @@ void TreeLikelihood::copyDataFromDiscreteMatrix(
 	//unsigned sz = (unsigned)partition_info.size();
 	compressDataMatrix(mat, partition_info);
 	
-#if !defined(NDEBUG)
-	bool default_partition = (partition_info.size() == 0 ? true : false);
+#if POLPY_NEWWAY
+	// nothing
+#else	
+#	if !defined(NDEBUG)
+		bool default_partition = (partition_info.size() == 0 ? true : false);
+#	endif
 #endif
+
 	unsigned nsubsets = partition_model->getNumSubsets();
+
+#if POLPY_NEWWAY
+	// nothing
+#else	
 	PHYCAS_ASSERT((default_partition && nsubsets == 1) || (!default_partition && nsubsets > 1));
+#endif
 
 	state_list.clear();
 	state_list.resize(nsubsets);
@@ -2785,6 +2795,7 @@ void TreeLikelihood::copyDataFromDiscreteMatrix(
 				}
 			else
 				{
+				//@POL Kansas2010 TODO
 				// The user has specified partitioning, so we must build state_list and state_list_pos ourselves
 				// Hopefully this functionality will be returned to NCL eventually, making this section unnecessary.
 				
@@ -2885,7 +2896,7 @@ unsigned TreeLikelihood::compressDataMatrix(
   const NxsCXXDiscreteMatrix	&	mat,			/**< is the data source */
   const uint_vect_t 			& 	partition_info)	/**< is a vector of indices storing the partition subset used by each site */
 	{
-	//DebugStr("\pin TreeLikelihood::compressDataMatrix...");
+	std::cerr << "Entering TreeLikelihood::compressDataMatrix..." << std::endl;//tmp
 	
 	unsigned 						ntax 		= mat.getNTax();
 	unsigned 						nchar 		= mat.getNChar();

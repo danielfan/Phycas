@@ -10,12 +10,16 @@ class Subset(object):
 		
 	def __call__(self, first_site, last_site, step_size = 1):
 		"""
-		Creates a range using the supplied first site, last site and step size.
+		Creates a range using the supplied first site, last site and step size. If first_site and last_site are both zero,
+		however, returns None.
 		"""
-		self.start = int(first_site)
-		self.stop = int(last_site) + 1
-		self.incr = int(step_size)
-		return range(self.start, self.stop, self.incr)
+		if (first_site == 0) and (last_site == 0):
+			return None
+		else:
+			self.start = int(first_site)
+			self.stop = int(last_site) + 1
+			self.incr = int(step_size)
+			return range(self.start, self.stop, self.incr)
 
 class Partition(PhycasCommand):
 	"""
@@ -34,6 +38,9 @@ class Partition(PhycasCommand):
 		# Specify output options
 		PhycasCommand.__init__(self, args, "partition", "Sets up a data partitioning scheme, allowing different models to be applied to different data subsets.")
 
+		# set to True if data for at least one character is provided
+		self.__dict__['is_data'] = False
+		
 		# a list containing (name, sitelist, model) tuples
 		self.__dict__['subset'] = []
 		
@@ -54,6 +61,9 @@ class Partition(PhycasCommand):
 	hidden = staticmethod(hidden)
 	
 	def flatten(self, alist):
+		#print 'flattend: alist =', alist
+		#raw_input('debug check')
+		
 		flattened = []
 		for s in alist:
 			if s.__class__.__name__ == 'list' or s.__class__.__name__ == 'tuple':
@@ -66,14 +76,16 @@ class Partition(PhycasCommand):
 					flattened.append(s)
 				else:
 					self.cf.phycassert(False, 'elements of site lists must be of type int; you supplied a value of type %s' % s.__class__)
-			 
 		return flattened
 		
 	def getSiteModelVector(self):
-		if len(self.subset) < 2:
-			# user has not specified a partition, so return an empty list (which will signify
-			# the default partition)
-			self.sitemodel = []
+		# if POLPY_NEWWAY
+		# else
+		#if len(self.subset) < 2:
+		#	# user has not specified a partition, so return an empty list (which will signify
+		#	# the default partition)
+		#	self.sitemodel = []
+		# endif
 		return self.sitemodel
 		
 	def getModels(self):
@@ -82,13 +94,31 @@ class Partition(PhycasCommand):
 		"""
 		return [m for n,s,m in self.subset]
 		
+	def noData(self):
+		return not self.is_data 
+		
 	def validate(self, nsites):
 		"""
 		If user has not specified a partition, create a default partition now using the current model.
 		"""
-		if len(self.subset) < 2:
-			self.sitemodel = []
-			self.addSubset(range(1, nsites + 1), model, 'default')
+		if nsites > 0:
+			self.is_data = True
+		else:
+			self.is_data = False
+		
+		# Better check to make sure user did not define empty subsets
+		if self.is_data:
+			num_empty_subsets = 0
+			for i,(n,s,m) in enumerate(self.subset):
+				if s is None or len(s) == 0:
+					num_empty_subsets += 1
+			self.cf.phycassert(num_empty_subsets == 0 or num_empty_subsets == len(self.subset), 'There should either be no empty subsets, or all subsets should be empty. In this case, %d of %d subsets were empty' % (num_empty_subsets, len(self.subset)))
+		
+		if self.is_data:
+			if len(self.subset) < 2:
+				# the following effort appears to be wiped out by subsequent call to getSiteModelVector
+				self.sitemodel = []
+				self.addSubset(range(1, nsites + 1), model, 'default')
 	
 	def addSubset(self, sites, model_for_sites, name = None):
 		"""
@@ -107,21 +137,27 @@ class Partition(PhycasCommand):
 		self.cf.output('Processing subset %s...' % name)
 			
 		# make a copy of the supplied list in order to flatten it (if necessary)
-		sitelist = self.flatten(sites)
-		sitelist.sort()
-		
+		if sites is None:
+			# No sites were specified. User apparently wishes to just explore the prior for this subset
+			sitelist = []
+		else:
+			sitelist = self.flatten(sites)
+			sitelist.sort()
+				
 		# expand sitemodel list if last site in sorted `sites' list is larger
 		# than the last site in self.sitemodel
 		curr_size = len(self.sitemodel)
-		needed_size = sitelist[-1]
+		needed_size = len(sitelist) > 0 and sitelist[-1] or 0
 		if curr_size < needed_size:
 			xtra = [-1]*(needed_size - curr_size)
 			self.sitemodel.extend(xtra)
 			
-		#print 'adding subset named ',name
-		#print 'curr_size	=',curr_size
-		#print 'needed_size =',needed_size
-		#print 'size		=',len(self.sitemodel)
+		#print 'In addSubset:'
+		#print '  adding subset named ',name
+		#print '  curr_size	=',curr_size
+		#print '  needed_size =',needed_size
+		#print '  length of self.sitemodel =',len(self.sitemodel)
+		#raw_input('debug check')
 
 		# add sites in sitelist to sitemodel (the master list)
 		for s in sitelist:
@@ -170,13 +206,24 @@ class Partition(PhycasCommand):
 		"""
 		Obtains a list of the number of sites in each subset from getSubsetSizes, then
 		returns a normalized vector in which these subset sizes are divided by the 
-		total number of sites.
+		total number of sites. If all subsets have size 0, then the proportion of each
+		subset is set to 1/number_of_subsets.
 		"""
 		proportions = []
 		size_vect = self.getSubsetSizes()
-		n = float(sum(size_vect))
-		for s in size_vect:
-			proportions.append(float(s)/n)
+		
+		n = sum(size_vect)
+		if n == 0:
+			num_subsets = len(size_vect)
+			p = 1.0/float(num_subsets)
+			proportions = [p]*num_subsets
+		else:
+			for s in size_vect:
+				proportions.append(float(s)/float(n))
+
+		#print 'partition.getSubsetProportions: proportions =',proportions
+		#raw_input('debug check')
+		
 		return proportions;
 
 	def getSubsetSizes(self):
