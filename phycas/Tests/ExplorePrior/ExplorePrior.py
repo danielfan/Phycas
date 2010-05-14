@@ -22,9 +22,8 @@ model.gamma_shape_prior.setMeanAndVariance(0.5, 2.0)
 
 m2 = model()
 
-# Note two ways to specify zero sites for a partition subset
-partition.addSubset(subset(0,0), m1, 'first')
-partition.addSubset(None,        m2, 'second')
+partition.addSubset(subset(1,300),    m1, 'small')
+partition.addSubset(subset(301,1000), m2, 'large')
 partition()
 
 mcmc.data_source              = None
@@ -41,9 +40,9 @@ mcmc.out.trees.mode           = REPLACE
 mcmc.out.params.prefix        = 'nodata.nex'
 mcmc.out.params.mode          = REPLACE
 
-mcmc.ncycles                  = 10000# originally 1000
+mcmc.ncycles                  = 1000
 mcmc.nchains                  = 1
-mcmc.sample_every             = 1 # originally 20
+mcmc.sample_every             = 20
 mcmc.report_every             = mcmc.ncycles//100
 mcmc.adapt_first              = 100
 mcmc.verbose                  = True

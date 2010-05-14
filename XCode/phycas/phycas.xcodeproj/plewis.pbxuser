@@ -201,47 +201,32 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 295458576;
-			PBXWorkspaceStateSaveDate = 295458576;
+			PBXPerProjectTemplateStateSaveDate = 295497798;
+			PBXWorkspaceStateSaveDate = 295497798;
 		};
 		perUserProjectItems = {
-			D150D0F6119C32D100BC8288 = D150D0F6119C32D100BC8288 /* PBXTextBookmark */;
 			D150D123119C3B7900BC8288 = D150D123119C3B7900BC8288 /* PBXTextBookmark */;
 			D150D124119C3B7900BC8288 = D150D124119C3B7900BC8288 /* PBXTextBookmark */;
 			D150D126119C3B7900BC8288 = D150D126119C3B7900BC8288 /* PBXTextBookmark */;
 			D150D127119C3B7900BC8288 = D150D127119C3B7900BC8288 /* PBXTextBookmark */;
 			D150D128119C3B7900BC8288 = D150D128119C3B7900BC8288 /* PBXTextBookmark */;
 			D150D129119C3B7900BC8288 = D150D129119C3B7900BC8288 /* PBXTextBookmark */;
-			D150D12A119C3B7900BC8288 = D150D12A119C3B7900BC8288 /* PBXTextBookmark */;
-			D150D12B119C3B7900BC8288 = D150D12B119C3B7900BC8288 /* PBXTextBookmark */;
-			D150D12C119C3B7900BC8288 = D150D12C119C3B7900BC8288 /* PBXTextBookmark */;
-			D150D12D119C3B7900BC8288 = D150D12D119C3B7900BC8288 /* PBXTextBookmark */;
-			D150D137119C581C00BC8288 /* PBXTextBookmark */ = D150D137119C581C00BC8288 /* PBXTextBookmark */;
-			D150D13B119C5AB900BC8288 /* PBXTextBookmark */ = D150D13B119C5AB900BC8288 /* PBXTextBookmark */;
-			D150D13C119C5AB900BC8288 /* PBXTextBookmark */ = D150D13C119C5AB900BC8288 /* PBXTextBookmark */;
-			D150D141119C5ADE00BC8288 /* PBXTextBookmark */ = D150D141119C5ADE00BC8288 /* PBXTextBookmark */;
-			D150D142119C5AE300BC8288 /* PBXTextBookmark */ = D150D142119C5AE300BC8288 /* PBXTextBookmark */;
-			D150D143119C620300BC8288 /* PBXTextBookmark */ = D150D143119C620300BC8288 /* PBXTextBookmark */;
-			D150D144119C620300BC8288 /* PBXTextBookmark */ = D150D144119C620300BC8288 /* PBXTextBookmark */;
-			D150D145119C620300BC8288 /* PBXTextBookmark */ = D150D145119C620300BC8288 /* PBXTextBookmark */;
-			D150D146119C620300BC8288 /* PBXTextBookmark */ = D150D146119C620300BC8288 /* PBXTextBookmark */;
-			D150D147119C620300BC8288 /* PBXTextBookmark */ = D150D147119C620300BC8288 /* PBXTextBookmark */;
-			D150D148119C624600BC8288 /* PBXTextBookmark */ = D150D148119C624600BC8288 /* PBXTextBookmark */;
-			D150D149119C624600BC8288 /* PBXTextBookmark */ = D150D149119C624600BC8288 /* PBXTextBookmark */;
-			D150D14A119C624600BC8288 /* PBXTextBookmark */ = D150D14A119C624600BC8288 /* PBXTextBookmark */;
-			D150D14B119C624600BC8288 /* PBXTextBookmark */ = D150D14B119C624600BC8288 /* PBXTextBookmark */;
-			D150D14C119C624900BC8288 /* PBXTextBookmark */ = D150D14C119C624900BC8288 /* PBXTextBookmark */;
-			D150D14D119C624900BC8288 /* PBXTextBookmark */ = D150D14D119C624900BC8288 /* PBXTextBookmark */;
-			D150D14E119C64D600BC8288 /* PBXTextBookmark */ = D150D14E119C64D600BC8288 /* PBXTextBookmark */;
-			D150D14F119C64D600BC8288 /* PBXTextBookmark */ = D150D14F119C64D600BC8288 /* PBXTextBookmark */;
-			D150D150119C64D600BC8288 /* PBXTextBookmark */ = D150D150119C64D600BC8288 /* PBXTextBookmark */;
-			D1623502119499DF00ECB58C = D1623502119499DF00ECB58C /* PBXTextBookmark */;
-			D1623503119499DF00ECB58C = D1623503119499DF00ECB58C /* PBXTextBookmark */;
+			D150D143119C620300BC8288 = D150D143119C620300BC8288 /* PBXTextBookmark */;
+			D150D145119C620300BC8288 = D150D145119C620300BC8288 /* PBXTextBookmark */;
+			D150D151119C6C8900BC8288 = D150D151119C6C8900BC8288 /* PBXTextBookmark */;
+			D150D152119C6C8900BC8288 = D150D152119C6C8900BC8288 /* PBXTextBookmark */;
+			D15E6093119CEC6C00E16520 = D15E6093119CEC6C00E16520 /* PBXTextBookmark */;
+			D15E6097119CEC6D00E16520 = D15E6097119CEC6D00E16520 /* PBXTextBookmark */;
+			D15E6098119CEC6D00E16520 = D15E6098119CEC6D00E16520 /* PBXTextBookmark */;
+			D15E6099119CEC6D00E16520 = D15E6099119CEC6D00E16520 /* PBXTextBookmark */;
+			D15E60A2119CF07200E16520 /* PBXTextBookmark */ = D15E60A2119CF07200E16520 /* PBXTextBookmark */;
+			D15E60A6119CF08200E16520 /* PBXTextBookmark */ = D15E60A6119CF08200E16520 /* PBXTextBookmark */;
+			D15E60A9119CF08A00E16520 /* PBXTextBookmark */ = D15E60A9119CF08A00E16520 /* PBXTextBookmark */;
+			D15E60AA119CF08A00E16520 /* PBXTextBookmark */ = D15E60AA119CF08A00E16520 /* PBXTextBookmark */;
 			D1623504119499DF00ECB58C = D1623504119499DF00ECB58C /* PBXTextBookmark */;
 			D1623505119499DF00ECB58C = D1623505119499DF00ECB58C /* PBXTextBookmark */;
 			D162350C1194A71B00ECB58C = D162350C1194A71B00ECB58C /* PBXTextBookmark */;
 			D1849A38119B721900528F3A = D1849A38119B721900528F3A /* PBXTextBookmark */;
-			D1EB522C119430940021AE79 = D1EB522C119430940021AE79 /* PBXTextBookmark */;
 			D1F2ED2E1199D9DA0029B820 = D1F2ED2E1199D9DA0029B820 /* PBXTextBookmark */;
 			D1FE6569119A033F00CD903B = D1FE6569119A033F00CD903B /* PBXTextBookmark */;
 			D1FE657D119A08F500CD903B = D1FE657D119A08F500CD903B /* PBXTextBookmark */;
@@ -1793,16 +1778,6 @@
 		path = /Users/plewis/pydbg/bin/python;
 		sourceTree = "<absolute>";
 	};
-	D150D0F6119C32D100BC8288 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1BB2657111094A6002A8F79 /* MarkovChain.py */;
-		name = "MarkovChain.py: 376";
-		rLen = 20;
-		rLoc = 16250;
-		rType = 0;
-		vrLen = 3459;
-		vrLoc = 14587;
-	};
 	D150D107119C38B500BC8288 /* tree_likelihood.cpp:3260 */ = {
 		isa = PBXFileBreakpoint;
 		actions = (
@@ -1975,93 +1950,6 @@
 		vrLen = 1307;
 		vrLoc = 79726;
 	};
-	D150D12A119C3B7900BC8288 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1F9EFC7112D9B4C00654AD4 /* relative_rate_distribution.cpp */;
-		name = "relative_rate_distribution.cpp: 216";
-		rLen = 19;
-		rLoc = 9017;
-		rType = 0;
-		vrLen = 2227;
-		vrLoc = 7889;
-	};
-	D150D12B119C3B7900BC8288 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A09464410CAEFB900CEFDE0 /* tree_likelihood.cpp */;
-		name = "tree_likelihood.cpp: 2689";
-		rLen = 20;
-		rLoc = 102341;
-		rType = 0;
-		vrLen = 2580;
-		vrLoc = 101184;
-	};
-	D150D12C119C3B7900BC8288 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1ABDDEF10D2D60000EDC77A /* Partition.py */;
-		name = "Partition.py: 197";
-		rLen = 20;
-		rLoc = 7291;
-		rType = 0;
-		vrLen = 1647;
-		vrLoc = 6177;
-	};
-	D150D12D119C3B7900BC8288 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1ABDDEF10D2D60000EDC77A /* Partition.py */;
-		name = "Partition.py: 113";
-		rLen = 12;
-		rLoc = 4043;
-		rType = 0;
-		vrLen = 1716;
-		vrLoc = 3620;
-	};
-	D150D137119C581C00BC8288 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1ABDDEF10D2D60000EDC77A /* Partition.py */;
-		name = "Partition.py: 115";
-		rLen = 0;
-		rLoc = 4100;
-		rType = 0;
-		vrLen = 1941;
-		vrLoc = 3701;
-	};
-	D150D13B119C5AB900BC8288 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1ABDDEF10D2D60000EDC77A /* Partition.py */;
-		rLen = 20;
-		rLoc = 7291;
-		rType = 0;
-	};
-	D150D13C119C5AB900BC8288 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1ABDDEF10D2D60000EDC77A /* Partition.py */;
-		name = "Partition.py: 224";
-		rLen = 0;
-		rLoc = 7940;
-		rType = 0;
-		vrLen = 1650;
-		vrLoc = 6795;
-	};
-	D150D141119C5ADE00BC8288 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1ABDDEF10D2D60000EDC77A /* Partition.py */;
-		name = "Partition.py: 205";
-		rLen = 20;
-		rLoc = 7291;
-		rType = 0;
-		vrLen = 1707;
-		vrLoc = 6488;
-	};
-	D150D142119C5AE300BC8288 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1ABDDEF10D2D60000EDC77A /* Partition.py */;
-		name = "Partition.py: 224";
-		rLen = 0;
-		rLoc = 7940;
-		rType = 0;
-		vrLen = 1650;
-		vrLoc = 6795;
-	};
 	D150D143119C620300BC8288 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 7A0945E510CAEFB900CEFDE0 /* likelihood_models.hpp */;
@@ -2071,16 +1959,6 @@
 		rType = 0;
 		vrLen = 4087;
 		vrLoc = 9424;
-	};
-	D150D144119C620300BC8288 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1ABDDEF10D2D60000EDC77A /* Partition.py */;
-		name = "Partition.py: 224";
-		rLen = 0;
-		rLoc = 7940;
-		rType = 0;
-		vrLen = 1753;
-		vrLoc = 3278;
 	};
 	D150D145119C620300BC8288 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -2092,101 +1970,7 @@
 		vrLen = 6888;
 		vrLoc = 189;
 	};
-	D150D146119C620300BC8288 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1BB2657111094A6002A8F79 /* MarkovChain.py */;
-		name = "MarkovChain.py: 216";
-		rLen = 0;
-		rLoc = 8426;
-		rType = 0;
-		vrLen = 2859;
-		vrLoc = 7687;
-	};
-	D150D147119C620300BC8288 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1BB2657111094A6002A8F79 /* MarkovChain.py */;
-		name = "MarkovChain.py: 397";
-		rLen = 0;
-		rLoc = 17714;
-		rType = 0;
-		vrLen = 3380;
-		vrLoc = 14656;
-	};
-	D150D148119C624600BC8288 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1BB2657111094A6002A8F79 /* MarkovChain.py */;
-		name = "MarkovChain.py: 198";
-		rLen = 0;
-		rLoc = 7585;
-		rType = 0;
-		vrLen = 2554;
-		vrLoc = 6284;
-	};
-	D150D149119C624600BC8288 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1ABDDEF10D2D60000EDC77A /* Partition.py */;
-		name = "Partition.py: 225";
-		rLen = 0;
-		rLoc = 7944;
-		rType = 0;
-		vrLen = 1688;
-		vrLoc = 6820;
-	};
-	D150D14A119C624600BC8288 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1ABDDEC10D2D60000EDC77A /* MCMCImpl.py */;
-		rLen = 11;
-		rLoc = 14557;
-		rType = 0;
-	};
-	D150D14B119C624600BC8288 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1ABDDEC10D2D60000EDC77A /* MCMCImpl.py */;
-		name = "MCMCImpl.py: 356";
-		rLen = 0;
-		rLoc = 14546;
-		rType = 0;
-		vrLen = 2566;
-		vrLoc = 14369;
-	};
-	D150D14C119C624900BC8288 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1BB2657111094A6002A8F79 /* MarkovChain.py */;
-		rLen = 11;
-		rLoc = 7596;
-		rType = 0;
-	};
-	D150D14D119C624900BC8288 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1BB2657111094A6002A8F79 /* MarkovChain.py */;
-		name = "MarkovChain.py: 198";
-		rLen = 11;
-		rLoc = 7596;
-		rType = 0;
-		vrLen = 2159;
-		vrLoc = 6425;
-	};
-	D150D14E119C64D600BC8288 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1BB2657111094A6002A8F79 /* MarkovChain.py */;
-		name = "MarkovChain.py: 198";
-		rLen = 11;
-		rLoc = 7596;
-		rType = 0;
-		vrLen = 2159;
-		vrLoc = 6425;
-	};
-	D150D14F119C64D600BC8288 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A09464410CAEFB900CEFDE0 /* tree_likelihood.cpp */;
-		name = "tree_likelihood.cpp: 2689";
-		rLen = 20;
-		rLoc = 102341;
-		rType = 0;
-		vrLen = 2388;
-		vrLoc = 101184;
-	};
-	D150D150119C64D600BC8288 /* PBXTextBookmark */ = {
+	D150D151119C6C8900BC8288 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 7A09464410CAEFB900CEFDE0 /* tree_likelihood.cpp */;
 		name = "tree_likelihood.cpp: 2899";
@@ -2196,25 +1980,89 @@
 		vrLen = 2499;
 		vrLoc = 109737;
 	};
-	D1623502119499DF00ECB58C /* PBXTextBookmark */ = {
+	D150D152119C6C8900BC8288 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
-		fRef = 7A98F61210CD6DEC001E79F7 /* __init__.py */;
-		name = "__init__.py: 11";
+		fRef = D1ABDDEF10D2D60000EDC77A /* Partition.py */;
+		name = "Partition.py: 224";
 		rLen = 0;
-		rLoc = 332;
+		rLoc = 7940;
 		rType = 0;
-		vrLen = 1331;
-		vrLoc = 0;
+		vrLen = 2369;
+		vrLoc = 4345;
 	};
-	D1623503119499DF00ECB58C /* PBXTextBookmark */ = {
+	D15E6093119CEC6C00E16520 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
-		fRef = D1ABDDE310D2D60000EDC77A /* __init__.py */;
-		name = "__init__.py: 1";
-		rLen = 0;
-		rLoc = 0;
+		fRef = D1F9EFC7112D9B4C00654AD4 /* relative_rate_distribution.cpp */;
+		rLen = 20;
+		rLoc = 13147;
 		rType = 0;
-		vrLen = 132;
-		vrLoc = 0;
+	};
+	D15E6097119CEC6D00E16520 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1BB2657111094A6002A8F79 /* MarkovChain.py */;
+		name = "MarkovChain.py: 392";
+		rLen = 0;
+		rLoc = 16743;
+		rType = 0;
+		vrLen = 4310;
+		vrLoc = 14065;
+	};
+	D15E6098119CEC6D00E16520 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1F9F020112DF42600654AD4 /* _RelRateDist.py */;
+		name = "_RelRateDist.py: 398";
+		rLen = 18;
+		rLoc = 16338;
+		rType = 0;
+		vrLen = 3481;
+		vrLoc = 13532;
+	};
+	D15E6099119CEC6D00E16520 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1F9EFC7112D9B4C00654AD4 /* relative_rate_distribution.cpp */;
+		name = "relative_rate_distribution.cpp: 320";
+		rLen = 20;
+		rLoc = 13147;
+		rType = 0;
+		vrLen = 3168;
+		vrLoc = 11632;
+	};
+	D15E60A2119CF07200E16520 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1BB2657111094A6002A8F79 /* MarkovChain.py */;
+		rLen = 0;
+		rLoc = 16743;
+		rType = 0;
+	};
+	D15E60A6119CF08200E16520 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1BB2657111094A6002A8F79 /* MarkovChain.py */;
+		name = "MarkovChain.py: 390";
+		rLen = 0;
+		rLoc = 16743;
+		rType = 0;
+		vrLen = 3711;
+		vrLoc = 14706;
+	};
+	D15E60A9119CF08A00E16520 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1F9EFC7112D9B4C00654AD4 /* relative_rate_distribution.cpp */;
+		name = "relative_rate_distribution.cpp: 320";
+		rLen = 20;
+		rLoc = 13147;
+		rType = 0;
+		vrLen = 3168;
+		vrLoc = 11632;
+	};
+	D15E60AA119CF08A00E16520 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1BB2657111094A6002A8F79 /* MarkovChain.py */;
+		name = "MarkovChain.py: 390";
+		rLen = 0;
+		rLoc = 16743;
+		rType = 0;
+		vrLen = 4317;
+		vrLoc = 14066;
 	};
 	D1623504119499DF00ECB58C /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -2541,8 +2389,8 @@
 	D1ABDDEF10D2D60000EDC77A /* Partition.py */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {2126, 3198}}";
-			sepNavSelRange = "{7944, 0}";
-			sepNavVisRange = "{6820, 1688}";
+			sepNavSelRange = "{7940, 0}";
+			sepNavVisRange = "{4345, 2369}";
 		};
 	};
 	D1ABDDF010D2D60000EDC77A /* Phycas.py */ = {
@@ -2708,10 +2556,10 @@
 	};
 	D1BB2657111094A6002A8F79 /* MarkovChain.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1561, 7501}}";
-			sepNavSelRange = "{7596, 11}";
-			sepNavVisRange = "{6425, 2159}";
-			sepNavWindowFrame = "{{827, 376}, {1257, 1041}}";
+			sepNavIntBoundsRect = "{{0, 0}, {2581, 7033}}";
+			sepNavSelRange = "{16743, 0}";
+			sepNavVisRange = "{14066, 4317}";
+			sepNavWindowFrame = "{{663, 137}, {1257, 1041}}";
 		};
 	};
 	D1D55522111B7A9A001BD7CD /* LikelihoodTest.py */ = {
@@ -2871,16 +2719,6 @@
 		path = /Users/plewis/pydbg/bin/python;
 		sourceTree = "<absolute>";
 	};
-	D1EB522C119430940021AE79 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1ABDDF510D2D60000EDC77A /* SS.py */;
-		name = "SS.py: 45";
-		rLen = 0;
-		rLoc = 3591;
-		rType = 0;
-		vrLen = 3964;
-		vrLoc = 0;
-	};
 	D1F281C3111B422C00FDE78C /* GTRTest.py */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1726, 780}}";
@@ -2900,9 +2738,9 @@
 	};
 	D1F9EFC7112D9B4C00654AD4 /* relative_rate_distribution.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1561, 5226}}";
-			sepNavSelRange = "{9017, 19}";
-			sepNavVisRange = "{7889, 2227}";
+			sepNavIntBoundsRect = "{{0, 0}, {1561, 5109}}";
+			sepNavSelRange = "{13147, 20}";
+			sepNavVisRange = "{11632, 3168}";
 			sepNavWindowFrame = "{{76, 169}, {1789, 1404}}";
 		};
 	};
@@ -2915,9 +2753,9 @@
 	};
 	D1F9F020112DF42600654AD4 /* _RelRateDist.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1594, 6409}}";
-			sepNavSelRange = "{11214, 0}";
-			sepNavVisRange = "{9931, 2945}";
+			sepNavIntBoundsRect = "{{0, 0}, {1561, 6318}}";
+			sepNavSelRange = "{16338, 18}";
+			sepNavVisRange = "{13532, 3481}";
 		};
 	};
 	D1FE65561199FEB100CD903B /* PBXBookmarkGroup */ = {
