@@ -275,15 +275,11 @@ class MCMCImpl(CommonFunctions):
 		self.treeFileOpen()
 		
 	def _loadData(self, matrix):
+		self.phycassert(matrix is not None, 'Tried to load data from a non-existant matrix')
 		self.data_matrix = matrix
-		if matrix is None:			  
-			self.taxon_labels = []
-			self.ntax = 0
-			self.nchar = 0 # used for Gelfand-Ghosh simulations only
-		else:
-			self.taxon_labels = matrix.taxa
-			self.ntax = self.data_matrix.getNTax()
-			self.nchar = self.data_matrix.getNChar() # used for Gelfand-Ghosh simulations only
+		self.taxon_labels = matrix.taxa
+		self.ntax = self.data_matrix.getNTax()
+		self.nchar = self.data_matrix.getNChar() # used for Gelfand-Ghosh simulations only
 		self.phycassert(len(self.taxon_labels) == self.ntax, "Number of taxon labels does not match number of taxa.")
 		
 	def cumLagrange(self, which, x, y):
@@ -347,8 +343,19 @@ class MCMCImpl(CommonFunctions):
 		
 		"""
 		ds = self.opts.data_source
-		mat = ds and ds.getMatrix() or None
-		self._loadData(mat)
+		if ds is None:
+			# User apparently wants to run without data
+			self.data_matrix = None
+			self.ntax = self.opts.ntax
+			self.nchar = 0 # used for Gelfand-Ghosh simulations only
+			self.phycassert(self.ntax > 0, 'Number of taxa (mcmc.ntax) should be > 0 if mcmc.data_source is None')
+			self.taxon_labels = ['taxon%d' % (i+1,) for i in range(self.ntax)]
+		else:
+			mat = ds.getMatrix()
+			self.phycassert(mat is not None, 'Data matrix could not be input')
+			self._loadData(mat)
+			self.phycassert(self.ntax > 0, 'Number of taxa in data matrix was 0')
+			
 		
 		#print 'In MCMCImpl.py, function setup():'
 		#print '  mat =', mat

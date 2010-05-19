@@ -119,6 +119,9 @@ class Partition(PhycasCommand):
 				# the following effort appears to be wiped out by subsequent call to getSiteModelVector
 				self.sitemodel = []
 				self.addSubset(range(1, nsites + 1), model, 'default')
+		else:
+			if self.subset is None or len(self.subset) == 0:
+				self.addSubset(range(1,1), model, 'default')
 	
 	def addSubset(self, sites, model_for_sites, name = None):
 		"""

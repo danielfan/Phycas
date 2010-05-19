@@ -134,14 +134,15 @@ class MarkovChain(LikelihoodCore):
 		treef.write('#NEXUS\n')
 		treef.write('[ID: %d]\n' % self.r.getInitSeed())
 		treef.write('begin trees;\n')
-		treef.write('\ttranslate\n')
-		for i in range(self.parent.ntax):
-			if self.parent.taxon_labels[i].find(' ') < 0:
-				# no spaces found in name
-				treef.write('\t\t%d %s%s\n' % (i + 1, self.parent.taxon_labels[i], i == self.parent.ntax - 1 and ';' or ','))
-			else:
-				# at least one space in taxon name, so enclose name in quotes
-				treef.write("\t\t%d '%s'%s\n" % (i + 1, self.parent.taxon_labels[i], i == self.parent.ntax - 1 and ';' or ','))
+		if self.parent.ntax > 0:
+			treef.write('\ttranslate\n')
+			for i in range(self.parent.ntax):
+				if self.parent.taxon_labels[i].find(' ') < 0:
+					# no spaces found in name
+					treef.write('\t\t%d %s%s\n' % (i + 1, self.parent.taxon_labels[i], i == self.parent.ntax - 1 and ';' or ','))
+				else:
+					# at least one space in taxon name, so enclose name in quotes
+					treef.write("\t\t%d '%s'%s\n" % (i + 1, self.parent.taxon_labels[i], i == self.parent.ntax - 1 and ';' or ','))
 
 	def setPower(self, power):
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
