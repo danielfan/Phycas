@@ -73,6 +73,7 @@ class TreeLikelihood
 
 		// Accessors
 		unsigned						getNTaxa() const;
+		unsigned						getNPatterns() const;
 		PartitionModelShPtr				getPartitionModel() const;
 		const double_vect_t &			getRateMeans(unsigned i) const;
 		const double_vect_t &			getRateProbs(unsigned i) const;

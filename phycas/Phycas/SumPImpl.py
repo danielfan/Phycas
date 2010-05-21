@@ -547,16 +547,108 @@ class ParamSummarizer(CommonFunctions):
 		self.output()
 		self.harmonic_mean(params['lnL'])
 		
-	def run(self):
+	def calcLogHM(self, vect_of_log_values):  
+		logn = math.log(float(len(vect_of_log_values)))      
+		logLmax = max(vect_of_log_values)
+		sum_log_diffs = 0.0
+		for logx in vect_of_log_values:
+			sum_log_diffs += math.exp(logLmax - logx)
+		loghm = logn + logLmax - math.log(sum_log_diffs)
+		return loghm
+
+	def _cpoOpenRFile(self):
+		if self._cpoRFile is None:
+			sp = self.optsout.cpoplot 
+			self._cpoRFilename = sp._getFilename()
+			self._cpoRFile = sp.open(self.stdout)
+		return self._cpoRFile
+		
+	def cpo_summary(self, lines, burnin):
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
 		"""
-		Reads the contents of the param file and decides whether to use the 
-		marginal_likelihood or std_summary functions to summarize the data
-		therein. The marginal_likelihood function is called if the second
-		header is "beta"; otherwise, std_summary is called.
+		Produces an R file containing commands for producing a plot of CPO
+		(Conditional Predictive Ordinates). This plot has site position as the
+		x-coordinate and site CPO as the y-coordinate. The title of the plot
+		contains the summary measure (sum of CPO over all sites).
 		
 		"""
-		fn = self.opts.file
+		self.output('\nCPO analysis')
+		
+		# Each line in lines comprises nsites log-site-likelihood values (one sample from the chain)
+		nsites = len(lines[0].split())
+		loglikes = [[] for i in range(nsites)]
+
+		# Create nsites lists, each of which holds all log-site-likelihood values sampled from one site
+		for line in lines:
+			parts = line.split()
+			for i,logx in enumerate(parts):
+				loglikes[i].append(float(logx))
+			
+		# Compute the log-CPO measure for each site, and the sum over all sites	
+		yvect = []
+		total_cpo = 0.0
+		for i in range(nsites):
+			loghm = self.calcLogHM(loglikes[i])
+			total_cpo += loghm
+			yvect.append(loghm)
+		self.output('Model CPO = %.5f' % total_cpo)
+		
+		# Use nearest neighbor smoother to produce a more easily-interpreted plot
+		
+		# Smoothing algorithm:
+		#
+		#    ysmoothed[i] = (sum_j w_j y_j) / (sum_j w_j)
+		#
+		# where: j is the set [x_{i-m}, ..., x_{i-1}, x_i, x_{i+1}, ..., x_{i+m}]
+		#        w_j = exp{-(x_i - x_j)^2/(2*var)}
+		#        x_i is the position of site i (i.e. for the 5th site, x_i = 5.0)
+		# note: setting m to nsites seems to work pretty well, so might as well
+		#       just use this vale of m and save the user having yet another
+		#       setting to worry about.
+		
+		m = nsites	# m is the number of neighbors to each side of site i 
+		sd = self.opts.cposmooth	# use standard deviation sd for Gaussian weights
+		var = math.pow(sd,2.0)
+		denom = 2.0*var
+		ysmoothed = []
+		for i in range(nsites):
+			low = i - m
+			high = i + m
+			if low < 0:
+				low = 0
+			if high > nsites - 1:
+				high = nsites - 1
+			yvalues = yvect[low:high+1]
+			xvalues = range(low, high+1)
+			assert len(xvalues) == len(yvalues), '%d != %d for i = %d' % (len(xvalues),len(yvalues),i)
+			weights = [math.exp(-math.pow(-(float(x) - float(i)), 2.0)/denom) for x in xvalues]
+			wy = [w*y for w,y in zip(weights,yvalues)]
+			yavg = sum(wy)/sum(weights)
+			ysmoothed.append(yavg)
+			
+		self._cpoRFilename = None
+		self._cpoRFile = None
+
+		if bool(self.optsout.cpoplot):
+			try:
+				self._cpoOpenRFile()
+				self._cpoRFile.write('# plot of log(CPO) across sites\n')
+				self._cpoRFile.write('quartz(bg="white")\n')
+				self._cpoRFile.write('x = c(%s)\n' % ','.join(['%d' % x for x in range(nsites)]))
+				self._cpoRFile.write('y = c(%s)\n' % ','.join(['%g' % y for y in yvect]))
+				self._cpoRFile.write("plot(x, y, type='l', main='Overall CPO = %.5f', xlab='Site', ylab = 'CPO')\n" % total_cpo)
+				self._cpoRFile.write('\n# plot of estimated probability density of log(CPO) values\n')
+				self._cpoRFile.write('quartz(bg="white")\n')
+				self._cpoRFile.write('plot(density(y))\n')
+				self._cpoRFile.write('\n# Smoothed plot of log(CPO) across sites\n')
+				self._cpoRFile.write('quartz(bg="white")\n')
+				self._cpoRFile.write('ysmoothed = c(%s)\n' % ','.join(['%g' % y for y in ysmoothed]))
+				self._cpoRFile.write("plot(x, ysmoothed, type='l', main='Smoothed using standard deviation %g', xlab='Site', ylab = 'CPO')\n" % sd)
+			finally:
+				if self._cpoRFile:
+					self.optsout.cpoplot.close()
+		
+	def handleFile(self, fn):
 		burnin = self.opts.burnin
 		lines = open(fn, 'r').readlines()
 		if len(lines) < 3 + burnin:
@@ -570,4 +662,29 @@ class ParamSummarizer(CommonFunctions):
 					print e
 			else:
 				self.std_summary(headers, lines, burnin)
-
+				
+	def handleCPOFile(self, cpofn):
+		burnin = self.opts.burnin
+		lines = open(cpofn, 'r').readlines()
+		if len(lines) < 3 + burnin:
+			self.output("File '%s' does not look like a site likelihood file (too few lines)")
+		else:
+			self.cpo_summary(lines, burnin)
+		
+	def run(self):
+		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+		"""
+		Reads the contents of the param file and decides whether to use the 
+		marginal_likelihood or std_summary functions to summarize the data
+		therein. The marginal_likelihood function is called if the second
+		header is "beta"; otherwise, std_summary is called. If a cpofile
+		name has been specified, computes conditional predictive ordinates.
+		
+		"""
+		fn = self.opts.file
+		cpofn = self.opts.cpofile
+		self.phycassert(len(fn) + len(cpofn) > 0, "Must specify either a parameter file ('file') or file of site likelihoods ('cpofile') when invoking the sump command")
+		if len(fn) > 0:
+			self.handleFile(fn)
+		if len(cpofn) > 0:
+			self.handleCPOFile(cpofn)

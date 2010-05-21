@@ -208,6 +208,7 @@ BOOST_PYTHON_MODULE(_LikelihoodExt)
 		.def("setLot", &TreeLikelihood::setLot)
 		//.def("setDebug", &TreeLikelihood::setDebug)
 		.def("debugCheckForUncachedCLAs", &TreeLikelihood::debugCheckForUncachedCLAs)
+		.def("getNPatterns", &TreeLikelihood::getNPatterns)
 		;
 	class_<TipData, boost::noncopyable>("TipData", no_init)
 		.def("parentalCLAValid", &TipData::parentalCLAValid)

@@ -1104,6 +1104,15 @@ unsigned TreeLikelihood::sumPatternCounts() const
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Accessor function that returns the length of the `pattern_counts' vector, which is equal to the number of stored
+|	patterns.
+*/
+unsigned TreeLikelihood::getNPatterns() const
+	{
+	return (unsigned)pattern_counts.size();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Accessor function that returns the `nTaxa' data member.
 */
 unsigned TreeLikelihood::getNTaxa() const
