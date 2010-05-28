@@ -636,7 +636,7 @@ BOOST_PYTHON_MODULE(_ReadNexusExt)
 		.def("size", &std::vector<NxsFullTreeDescription>::size)
 		;
    
-	class_<PhycasNexusReader>("NexusReaderBase", init<int>())
+	class_<PhycasNexusReader, boost::noncopyable>("NexusReaderBase", init<int>())
 		.def("readFile", &PhycasNexusReader::ReadFilePath)
 		.def("getNChar", &PhycasNexusReader::GetNChar)
 		.def("getErrorMessage", &PhycasNexusReader::GetErrorMessage)
