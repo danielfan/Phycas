@@ -1290,6 +1290,9 @@ void TreeLikelihood::refreshCLA(
 		firstEdgeLen = lChild->GetEdgeLen();
 		secondNeighbor = lChild->GetRightSib();
 		}
+		
+	PHYCAS_ASSERT(firstNeighbor != NULL);
+	PHYCAS_ASSERT(secondNeighbor != NULL);
 
 	if (firstNeighbor->IsTip())
 		{
@@ -2461,6 +2464,7 @@ double TreeLikelihood::calcLnLFromNode(
 	{
 	double lnL;
 //printf("in calcLnLFromNode with focal_node=%d\n", focal_node.GetNodeNumber());//
+
 	if (no_data)
 		lnL =  0.0;
 	else

@@ -323,7 +323,11 @@ class MCMCImpl(CommonFunctions):
 		except:
 			self.stdout.error("A starting tree could not be obtained from the starting_tree_source")
 			raise
-		return self.starting_tree[-1]
+		t = self.starting_tree[-1]
+		num_degree_two_nodes = t.deroot()
+		if num_degree_two_nodes > 0:
+			self.stdout.warning("A total of %d degree-2 nodes were removed from tree defined in starting_tree_source" % num_degree_two_nodes)
+		return t
 
 	def setup(self):
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -499,6 +503,48 @@ class MCMCImpl(CommonFunctions):
 				m = cold_chain.partition_model.getModel(i)
 				new_kappa = u.sampleWorkingPrior()
 				m.setKappa(new_kappa)
+			elif name.find('rAC') == 0:							# C++ class StateFreqParam
+				i = unpartitioned and 0 or self.getModelIndex(name)
+				m = cold_chain.partition_model.getModel(i)
+				rr = list(m.getRelRates())
+				new_rAC = u.sampleWorkingPrior()
+				rr[0] = new_rAC
+				m.setRelRates(rr)
+			elif name.find('rAG') == 0:							# C++ class StateFreqParam
+				i = unpartitioned and 0 or self.getModelIndex(name)
+				m = cold_chain.partition_model.getModel(i)
+				rr = list(m.getRelRates())
+				new_rAG = u.sampleWorkingPrior()
+				rr[1] = new_rAG
+				m.setRelRates(rr)
+			elif name.find('rAT') == 0:							# C++ class StateFreqParam
+				i = unpartitioned and 0 or self.getModelIndex(name)
+				m = cold_chain.partition_model.getModel(i)
+				rr = list(m.getRelRates())
+				new_rAT = u.sampleWorkingPrior()
+				rr[2] = new_rAT
+				m.setRelRates(rr)
+			elif name.find('rCG') == 0:							# C++ class StateFreqParam
+				i = unpartitioned and 0 or self.getModelIndex(name)
+				m = cold_chain.partition_model.getModel(i)
+				rr = list(m.getRelRates())
+				new_rCG = u.sampleWorkingPrior()
+				rr[3] = new_rCG
+				m.setRelRates(rr)
+			elif name.find('rCT') == 0:							# C++ class StateFreqParam
+				i = unpartitioned and 0 or self.getModelIndex(name)
+				m = cold_chain.partition_model.getModel(i)
+				rr = list(m.getRelRates())
+				new_rCT = u.sampleWorkingPrior()
+				rr[4] = new_rCT
+				m.setRelRates(rr)
+			elif name.find('rGT') == 0:							# C++ class StateFreqParam
+				i = unpartitioned and 0 or self.getModelIndex(name)
+				m = cold_chain.partition_model.getModel(i)
+				rr = list(m.getRelRates())
+				new_rGT = u.sampleWorkingPrior()
+				rr[5] = new_rGT
+				m.setRelRates(rr)
 			elif name.find('freqA') == 0:							# C++ class StateFreqParam
 				i = unpartitioned and 0 or self.getModelIndex(name)
 				m = cold_chain.partition_model.getModel(i)

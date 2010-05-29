@@ -31,6 +31,7 @@
 #include "phycas/src/tree_iterators.hpp"
 #include "phycas/src/xphylogeny.hpp"
 #include "phycas/src/phycas_string.hpp"
+#include <boost/enable_shared_from_this.hpp>		// for boost::enable_shared_from_this
 
 //	To do next:
 //		o ASCII tree drawing
@@ -50,7 +51,7 @@ typedef std::set<Split> TreeID;
 |	any specialized activities, such as computing its own likelihood: these sorts of activities are left to member
 |	functions of other classes.
 */
-class Tree
+class Tree : public boost::enable_shared_from_this<Tree>
 	{
 	public:
 		//static bool gDebugOutput;
@@ -140,6 +141,7 @@ class Tree
 		void					UnselectAllNodes();
 		//TreeNode *				FindMRCA(unsigned tip1, unsigned tip2);
 		void					Ladderize(bool right);
+		unsigned 				deroot();
 
 		// Debugging
 		//

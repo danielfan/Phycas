@@ -118,6 +118,8 @@ alias conversions_sources
   : phycas/src/conversions_pymod.cpp
     phycas/src/boost_assertion_failed.cpp
     phycas/src/basic_tree.cpp
+    phycas/src/basic_lot.cpp
+    phycas/src/tree_manip.cpp
     phycas/src/basic_tree_node.cpp
     phycas/src/split.cpp
     phycas/src/phycas_string.cpp

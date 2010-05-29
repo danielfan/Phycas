@@ -22,6 +22,7 @@
 #include <cctype>
 //#include "phycas/src/phycas_string.hpp"
 #include "phycas/src/basic_tree.hpp"
+#include "phycas/src/tree_manip.hpp"
 #include "phycas/src/xphylogeny.hpp"
 
 #include <boost/format.hpp>
@@ -56,7 +57,7 @@ Tree::Tree()
 */
 Tree::~Tree()
 	{
-	//std::cerr << "\n>>>>> Tree dying..." << std::endl;
+	//std::cerr << "\n>>>>> Tree dying..." << std::endl;//tmp
 	Clear(); 
 	while (!internalNodeStorage.empty()) 
 	    {
@@ -799,6 +800,55 @@ void Tree::DetachSubtree(
 	this->InvalidateNodeCounts();
 	}
 
+/*----------------------------------------------------------------------------------------------------------------------
+|	Traverses the tree in postorder fashion looking for a node having only one child. If such a node is found, detaches
+|	the child and uses it to replace the parent node, thus eliminating the degree-2 node. Returns the number of such
+|	degree-2 nodes found (in case caller wishes to warn user if this number is greater than 1, which probably signifies
+|	an error).
+*/
+unsigned Tree::deroot()
+	{
+	unsigned number_of_incisions = 0;
+	TreeNode * start_at = GetFirstPreorder();
+	PHYCAS_ASSERT(start_at != NULL);
+	start_at = start_at->GetNextPreorder();
+	for (TreeNode * nd = start_at; nd != NULL; nd = nd->GetNextPreorder())
+		{
+		if (nd->IsInternal() && nd->CountChildren() == 1)
+			{
+			TreeNode * nd_rSib   = nd->rSib;
+			TreeNode * nd_parent = nd->GetParent();
+			TreeNode * nd_child  = nd->GetLeftChild();
+
+			PHYCAS_ASSERT(nd_parent != NULL);
+			PHYCAS_ASSERT(nd_child != NULL);			
+
+			TreeManip::InsertMode insert_where = TreeManip::kOnLeft;
+			TreeNode * target_sib = nd_rSib;
+			if (nd_rSib == NULL)
+				{
+				// nd is rightmost child, insert nd_child to right of nd's left sibling
+				insert_where = TreeManip::kOnRight;
+				target_sib = nd_parent->GetLeftChild();
+				while (target_sib->rSib != nd)
+					target_sib = target_sib->GetRightSib();
+				}
+			
+			TreeManip tm(shared_from_this());			
+			tm.DetachSubtree(nd_child);
+			tm.DetachSubtree(nd);
+			StoreInternalNode(nd);
+			tm.InsertSubtree(nd_child, nd_parent, insert_where, target_sib);
+
+			nd = nd_parent;
+			++number_of_incisions;
+			}
+		}
+			
+	DebugCheckTree(false, true, 2);
+	return number_of_incisions;
+	}
+	
 /*----------------------------------------------------------------------------------------------------------------------
 |	Performs a postorder traversal and, for each internal node visited, sorts clades from smallest to largest. If the
 |	`right' argument is true, then the largest clades will be on the right after ladderization. If the `right' argument
