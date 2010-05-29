@@ -227,11 +227,11 @@ void UnimapFastNNIMove::storeOrigEdgeInfo()
 	tlen_before += ylen_before;
 		
 	// Get reference to the univents structure attached to each node
-	const Univents & univents_a = getUniventsConstRef(*a);
-	const Univents & univents_b = getUniventsConstRef(*b);
-	const Univents & univents_c = getUniventsConstRef(*c);
-	const Univents & univents_x = getUniventsConstRef(*x);
-	const Univents & univents_y = getUniventsConstRef(*y);
+	const Univents & univents_a = getUniventsConstRef(*a, subsetIndex);
+	const Univents & univents_b = getUniventsConstRef(*b, subsetIndex);
+	const Univents & univents_c = getUniventsConstRef(*c, subsetIndex);
+	const Univents & univents_x = getUniventsConstRef(*x, subsetIndex);
+	const Univents & univents_y = getUniventsConstRef(*y, subsetIndex);
 	
 	// Save mdot for each edge before the move is proposed
 	mdota_before = univents_a.getMDot();
@@ -284,7 +284,7 @@ void UnimapFastNNIMove::addUniventsOneEdge(SquareMatrix & smat, TreeNode * nd)
 	// code taken from TreeLikelihood::debugCheckSMatrix
 
 	// get reference to the univents structure for nd
-	const Univents & u = getUniventsConstRef(*nd);
+	const Univents & u = getUniventsConstRef(*nd, subsetIndex);
 	PHYCAS_ASSERT(u.isValid());
 	
 	// get reference to the 2-d vector of univents: 
@@ -307,7 +307,7 @@ void UnimapFastNNIMove::addUniventsOneEdge(SquareMatrix & smat, TreeNode * nd)
 		// are the ending state of the node's parent
 		TreeNode * nd_par = nd->GetParent();
 		PHYCAS_ASSERT(nd_par);
-		const Univents & upar = getUniventsConstRef(*nd_par);
+		const Univents & upar = getUniventsConstRef(*nd_par, subsetIndex);
 		PHYCAS_ASSERT(upar.isValid());
 		const std::vector<int8_t> & states_vec	= upar.getEndStatesVecConstRef();
 		starting_state = &states_vec[0];

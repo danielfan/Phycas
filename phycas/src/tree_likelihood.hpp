@@ -58,8 +58,10 @@ class Lot;
 typedef boost::shared_ptr<Lot>	LotShPtr;
 
 class Univents;
-Univents & getUniventsRef(TreeNode &);
-const Univents & getUniventsConstRef(const TreeNode &);
+Univents & getUniventsRef(TreeNode &, unsigned subsetIndex);
+const Univents & getUniventsConstRef(const TreeNode &, unsigned subsetIndex);
+std::vector<Univents> & getUniventsVectorRef(TreeNode &);
+const std::vector<Univents> & getUniventsVectorConstRef(const TreeNode &);
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Used for computing the likelihood on a tree.

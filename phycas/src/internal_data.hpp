@@ -103,19 +103,21 @@ class InternalData
 		bool										parentalCLAValid() const;
 		bool										parentalCLACached() const;
 
-		unsigned 									getNumUnivents(unsigned i) const {return univents.getNumEvents(i);}
-		std::vector<unsigned>						getUniventStates(unsigned i) const {return univents.getEventsVec(i);}
-		std::vector<double>   						getUniventTimes(unsigned i) const {return univents.getTimes(i);}
-		Univents & 									getUniventsRef() {return univents;}
-		const Univents & 							getUniventsConstRef()const {return univents;}
-		unsigned **									getNodeSMat() {return sMat;}
+		unsigned 									getNumUnivents(unsigned subsetIndex, unsigned i) const {return univents[subsetIndex].getNumEvents(i);}
+		std::vector<unsigned>						getUniventStates(unsigned subsetIndex, unsigned i) const {return univents[subsetIndex].getEventsVec(i);}
+		std::vector<double>   						getUniventTimes(unsigned subsetIndex, unsigned i) const {return univents[subsetIndex].getTimes(i);}
+		Univents & 									getUniventsRef(unsigned subsetIndex) {return univents[subsetIndex];}
+		const Univents & 							getUniventsConstRef(unsigned subsetIndex)const {return univents[subsetIndex];}
+		std::vector<Univents >& 					getUniventsVectorRef() {return univents;}
+		const std::vector<Univents> & 				getUniventsVectorConstRef()const {return univents;}
+		unsigned **									getNodeSMat(unsigned subsetIndex) {return sMat[subsetIndex];}
 		
 	private:
 													InternalData(bool using_unimap, PartitionModelShPtr partition, CondLikelihoodStorageShPtr cla_storage);
 
 		bool										unimap;			/**< true if internal nodes are to be prepared for uniformized mapping likelihood; false if internal nodes are to be prepared for Felsenstein-style integrated likelihoods */
 		
-		Univents									univents;
+		std::vector<Univents>						univents;
 		void										swapUnivents(InternalData * other);
 
 		//CLA's for an edge from a node to its parent are stored in the node's InternalData (or TipData).
@@ -129,7 +131,7 @@ class InternalData
 		state_code_t								state;			/**< Used in simulation to temporarily store the state for one character */
 		std::vector< ScopedThreeDMatrix<double> >	pMatrices;		/**< pMatrix[s][r] is the transition matrix for subset s and relative rate r */
 		CondLikelihoodStorageShPtr					cla_pool;		/**< CondLikelihood object storage facility */
-		unsigned **									sMat;
+		std::vector<unsigned** >		    		sMat;
 	};
 	
 typedef boost::shared_ptr<InternalData>			InternalDataShPtr;

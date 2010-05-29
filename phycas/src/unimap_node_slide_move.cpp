@@ -221,7 +221,12 @@ void UnimapNodeSlideMove::accept()
 		}
 	
 	if (doSampleInternalStates)
-		resampleInternalNodeStates(post_root_posterior->getCLA(), post_cla->getCLA());
+		{
+		unsigned numModelSubsets = getUniventsVectorConstRef(*origNode).size();
+
+		for (unsigned i = 0 ; i < numModelSubsets; ++i)
+			resampleInternalNodeStates(post_root_posterior->getCLA(), post_cla->getCLA(), i);
+		}
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

@@ -52,6 +52,7 @@ public:
 	const std::vector<double>		&	getSubsetRelRatesVect() const;
 	MultivarProbDistShPtr				getSubsetRelRatePrior() const;
 	const std::vector<unsigned>		&	getNumPatternsVect() const;
+	unsigned							getNumPatterns(unsigned i) const {return subset_num_patterns[i];}
 	const std::vector<unsigned>		&	getNumStatesVect() const;
 	const std::vector<unsigned>		&	getNumRatesVect() const;
 	

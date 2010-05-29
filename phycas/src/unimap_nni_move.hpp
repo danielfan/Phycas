@@ -69,7 +69,7 @@ class UnimapTopoMove : public MCMCUpdater
 		double					HarvestLnLikeFromCondLikePar(CondLikelihoodShPtr focalCondLike, ConstCondLikelihoodShPtr neighborCondLike, const double * const * childPMatrix);
 		void					storePMatTransposed(double **& cached, const double *** p_mat_array);
 		TreeNode *				randomInternalAboveSubroot();
-		void					resampleInternalNodeStates(const LikeFltType * root_state_posterior, const LikeFltType * des_cla);
+		void					resampleInternalNodeStates(const LikeFltType * root_state_posterior, const LikeFltType * des_cla, unsigned subsetIndex);
 
 		TreeNode *				origNode;
 		TreeNode *				origNodePar; /**< */
@@ -116,6 +116,7 @@ class UnimapTopoMove : public MCMCUpdater
 		CondLikelihoodShPtr		post_cla;					/**< xxxx */
 		double * * *			post_p_mat;					/**< xxxx */
 		bool					scoringBeforeMove;			/**< xxxx */
+		
 	};
 
 class UnimapNNIMove : public UnimapTopoMove

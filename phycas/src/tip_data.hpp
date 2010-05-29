@@ -143,12 +143,15 @@ class TipData
 		bool										parentalCLAValid() const;
 		bool										parentalCLACached() const;
 	
-		unsigned 									getNumUnivents(unsigned i) const {return univents.getNumEvents(i);}
-		std::vector<unsigned>						getUniventStates(unsigned i) const {return univents.getEventsVec(i);}
-		std::vector<double>   						getUniventTimes(unsigned i) const {return univents.getTimes(i);}
-	
-		Univents & 									getUniventsRef() {return univents;}
-		const Univents & 							getUniventsConstRef()const {return univents;}
+		unsigned 									getNumUnivents(unsigned subsetIndex, unsigned i) const {return univents[subsetIndex].getNumEvents(i);}
+		std::vector<unsigned>						getUniventStates(unsigned subsetIndex, unsigned i) const {return univents[subsetIndex].getEventsVec(i);}
+		std::vector<double>   						getUniventTimes(unsigned subsetIndex, unsigned i) const {return univents[subsetIndex].getTimes(i);}
+		
+		
+		std::vector<Univents> & 					getUniventsVectorRef() {return univents;}
+		const std::vector<Univents> & 				getUniventsVectorConstRef()const {return univents;}
+		Univents & 									getUniventsRef(unsigned subsetIndex) {return univents[subsetIndex];}
+		const Univents & 							getUniventsConstRef(unsigned subsetIndex)const {return univents[subsetIndex];}
 		void										swapUnivents(InternalData * other);
 	
         state_list_vect_t &							getTipStatesArray() {return state_codes;}
@@ -156,12 +159,12 @@ class TipData
 		const uint_vect_t &							getConstStateListPos(unsigned i) const;
 	
 		friend void									calcPMatTranspose(const TreeLikelihood & treeLikeInfo, const TipData & tipData, double edgeLength);
-		unsigned ** 								getNodeSMat() {return sMat;}
+		unsigned ** 								getNodeSMat(unsigned subsetIndex) {return sMat[subsetIndex];}
 
 	private:
 
 		bool										unimap;				/**< true if tips are to be prepared for uniformized mapping likelihood; false if tips are to be prepared for Felsenstein-style integrated likelihoods */
-		Univents									univents;			/**< univents[i][j].first holds the state for univent j at site i, whereas univents[i][j].second holds the fraction of the edgelen representing the time at which the univent occurred */
+		std::vector<Univents>									univents;			/**< univents[i][j].first holds the state for univent j at site i, whereas univents[i][j].second holds the fraction of the edgelen representing the time at which the univent occurred */
 																		// conditional likelihood of the rest of the tree
 		//bool										parCLAValid;
 		CondLikelihoodShPtr							parWorkingCLA;		/**< conditional likelihood array for parent and beyond (valid if it points to something, invalid otherwise) */
@@ -173,7 +176,7 @@ class TipData
 		state_list_vect_t							state_codes;		/**< Array of tip-specific state codes */
 		std::vector< ScopedThreeDMatrix<double> >	pMatrixTranspose;	/**< pMatrixTranspose[s][r] is the transposed transition matrix for subset s and relative rate r */
 		CondLikelihoodStorageShPtr					cla_pool;			/**< Source of CondLikelihood objects if needed */
-		unsigned **									sMat;
+		std::vector<unsigned **> sMat;
 	};
 	
 typedef boost::shared_ptr<TipData> TipDataShPtr;

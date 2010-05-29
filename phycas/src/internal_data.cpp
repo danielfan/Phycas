@@ -39,22 +39,30 @@ InternalData::InternalData(
 	cla_pool(cla_storage),
 	sMat(0L)
 	{
+	const unsigned num_subsets = partition->getNumSubsets();
 	if (using_unimap)
 		{
-#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
-		univents.resize(nPatterns);
-		sMat =  NewTwoDArray<unsigned>(nStates, nStates);
-		for (unsigned i = 0; i < nStates*nStates ; ++i)
-			sMat[0][i] = 0;
-#endif			
+		univents.resize(num_subsets);
+		for (unsigned i = 0; i < num_subsets; ++i)
+			{
+			unsigned num_patterns = partition->getNumPatterns(i);
+			univents[i].resize(num_patterns);
+			const unsigned num_states	= partition->subset_num_states[i];
+			unsigned ** sMatPtr =  NewTwoDArray<unsigned>(num_states, num_states);
+			for (unsigned j = 0; j < num_states*num_states ; ++j)
+				sMatPtr[0][j] = 0;
+			sMat.push_back(sMatPtr);
+			}
 		}
-	const unsigned num_subsets = partition->getNumSubsets();
-	pMatrices.resize(num_subsets);
-	for (unsigned i = 0; i < num_subsets; ++i)
+	else
 		{
-		const unsigned num_rates	= partition->subset_num_rates[i];
-		const unsigned num_states	= partition->subset_num_states[i];
-		pMatrices[i].Initialize(num_rates, num_states, num_states);
+		pMatrices.resize(num_subsets);
+		for (unsigned i = 0; i < num_subsets; ++i)
+			{
+			const unsigned num_rates	= partition->subset_num_rates[i];
+			const unsigned num_states	= partition->subset_num_states[i];
+			pMatrices[i].Initialize(num_rates, num_states, num_states);
+			}
 		}
 	}
 
@@ -91,7 +99,9 @@ InternalData::~InternalData()
 		cla_pool->putCondLikelihood(childCachedCLA);
 		childCachedCLA.reset();
 		}
-	DeleteTwoDArray<unsigned>(sMat);
+	for (std::vector<unsigned **>::iterator smIt = sMat.begin(); smIt != sMat.end() ; ++smIt)
+		DeleteTwoDArray<unsigned>(*smIt);
+	sMat.clear();
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

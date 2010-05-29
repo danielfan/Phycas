@@ -177,14 +177,24 @@ static char * codon_labels[] =
 namespace phycas
 {
 
-Univents & getUniventsRef(TreeNode &nd)
+Univents & getUniventsRef(TreeNode &nd, unsigned subsetIndex)
 	{
-	return (nd.IsTip() ? nd.GetTipData()->getUniventsRef() : nd.GetInternalData()->getUniventsRef());
+	return (nd.IsTip() ? nd.GetTipData()->getUniventsRef(subsetIndex) : nd.GetInternalData()->getUniventsRef(subsetIndex));
 	}
 
-const Univents & getUniventsConstRef(const TreeNode &nd) 
+std::vector<Univents> & getUniventsVectorRef(TreeNode &nd)
 	{
-	return (nd.IsTip() ? nd.GetTipData()->getUniventsConstRef() : nd.GetInternalData()->getUniventsConstRef());
+	return (nd.IsTip() ? nd.GetTipData()->getUniventsVectorRef() : nd.GetInternalData()->getUniventsVectorRef());
+	}
+
+const std::vector<Univents> & getUniventsVectorConstRef(const TreeNode &nd)
+	{
+	return (nd.IsTip() ? nd.GetTipData()->getUniventsVectorConstRef() : nd.GetInternalData()->getUniventsVectorConstRef());
+	}
+
+const Univents & getUniventsConstRef(const TreeNode &nd, unsigned subsetIndex) 
+	{
+	return (nd.IsTip() ? nd.GetTipData()->getUniventsConstRef(subsetIndex) : nd.GetInternalData()->getUniventsConstRef(subsetIndex));
 	}
 
 // **************************************************************************************
@@ -804,9 +814,10 @@ void TreeLikelihood::slideNode(
 |	Returns the smat data member of the specified node's InternalData or TipData object. 
 */
 unsigned ** getNodeSMat(
-  TreeNode * nd)	/**< is the node of interest */
+  TreeNode * nd,	/**< is the node of interest */
+  unsigned subsetIndex)
 	{
-	return (nd->IsInternal() ? nd->GetInternalData()->getNodeSMat() : nd->GetTipData()->getNodeSMat());
+	return (nd->IsInternal() ? nd->GetInternalData()->getNodeSMat(subsetIndex) : nd->GetTipData()->getNodeSMat(subsetIndex));
 	}
 
 
@@ -3984,7 +3995,7 @@ void TreeLikelihood::debugCheckSMatrix(
 		for (++nd; nd != t->end(); ++nd)
 			{
 			// get reference to the univents structure for nd
-			const Univents & u = getUniventsConstRef(*nd);
+			const Univents & u = getUniventsConstRef(*nd, subsetIndex);
 			PHYCAS_ASSERT(u.isValid());
 			
 			// get reference for the 2-d vector of univents: univents[i][j] holds a state for univent j at site i 
@@ -4005,7 +4016,7 @@ void TreeLikelihood::debugCheckSMatrix(
 				// are the ending state of the node's parent
 				TreeNode * nd_par = nd->GetParent();
 				PHYCAS_ASSERT(nd_par);
-				const Univents & upar = getUniventsConstRef(*nd_par);
+				const Univents & upar = getUniventsConstRef(*nd_par, subsetIndex);
 				PHYCAS_ASSERT(upar.isValid());
 				const std::vector<int8_t> & states_vec	= upar.getEndStatesVecConstRef();
 				starting_state = &states_vec[0];
@@ -4036,7 +4047,7 @@ void TreeLikelihood::debugCheckSMatrix(
 		preorder_iterator nd = t->begin();	// skip the tip root node
 		for (++nd; nd != t->end(); ++nd)
 			{
-			const Univents & 						u 			= getUniventsConstRef(*nd);
+			const Univents & 						u 			= getUniventsConstRef(*nd, subsetIndex);
 			PHYCAS_ASSERT(u.isValid());
 			const std::vector<StateMapping> & 		v 			= u.getVecEventsVecConstRef();
 			const std::vector<int8_t> & 			states_vec	= u.getEndStatesVecConstRef();

@@ -181,13 +181,18 @@ void UnimapEdgeMove::proposeNewState()
 		}
 
 	// Modify the edge
-	const Univents & u =  getUniventsConstRef(*origNode);
-	if (!u.isValid())
+	const std::vector<Univents> & uVec =  getUniventsVectorConstRef(*origNode);
+	mdot = 0;
+	for (std::vector<Univents>::const_iterator uVecIt = uVec.begin(); uVecIt != uVec.end(); ++uVecIt)
 		{
-		likelihood->GetUniventProbMgrRef().recalcUMat();
-		likelihood->remapUniventsForNode(tree, origNode);
+		const Univents & u = *uVecIt;
+		if (!u.isValid())
+			{
+			likelihood->GetUniventProbMgrRef().recalcUMat();
+			likelihood->remapUniventsForNode(tree, origNode);
+			}
+		mdot += u.getMDot();
 		}
-	mdot = u.getMDot();
 	r = std::exp(lambda*(rng->Uniform(FILE_AND_LINE) - 0.5));
 	}
 

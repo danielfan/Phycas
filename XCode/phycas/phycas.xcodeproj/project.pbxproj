@@ -1885,8 +1885,6 @@
 				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
-					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
 					"\"$(SRCROOT)/../../phycas/Conversions\"",
 				);
 				PRODUCT_NAME = _ConversionsExt;
@@ -1959,9 +1957,6 @@
 				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
-					"\"$(SRCROOT)/../../../../../../pydebug/lib/python2.6/config\"",
-					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
 					"\"$(SRCROOT)/../../phycas/Conversions\"",
 				);
 				PRODUCT_NAME = _DataMatrixExt;
@@ -2145,11 +2140,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = "$(PHYCAS_ROOT)/phycas/Conversions";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
-					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PREBINDING = NO;
 				PRODUCT_NAME = boost_python;
 			};

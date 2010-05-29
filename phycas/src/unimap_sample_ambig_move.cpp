@@ -250,7 +250,7 @@ void UnimapSampleAmbigMove::proposeNewStateArrayForNode(TreeNode * nd, const std
 	const bool samplingTipRoot = nd->IsTipRoot();
 	const TreeNode * neighbor = (samplingTipRoot ? nd->GetLeftChildConst() : nd->GetParentConst());
 	PHYCAS_ASSERT(neighbor);
-	const Univents & neighborUnivents = getUniventsConstRef(*neighbor);
+	const Univents & neighborUnivents = getUniventsConstRef(*neighbor, subsetIndex);
 	const std::vector<int_state_code_t> & neighborStateCodes = neighborUnivents.getEndStatesVecConstRef();
 	
 	Univents & univents = td->getUniventsRef();

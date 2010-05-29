@@ -579,7 +579,7 @@ double UniventProbMgr::calcUnimapLnL(
 		{
 		double edgelen = nd->GetEdgeLen();
 		tree_length += edgelen;
-		const Univents &u =  getUniventsConstRef(*nd);
+		const Univents &u =  getUniventsConstRef(*nd, subsetIndex);
 		log_edgelen_to_mdot += u.getMDot()*log(edgelen);
 		}
 

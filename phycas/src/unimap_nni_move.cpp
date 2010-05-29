@@ -458,10 +458,10 @@ UnimapTopoMove::~UnimapTopoMove()
 double UnimapTopoMove::FourTaxonLnLBeforeMove()
 	{
 #if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING	
-	aTipData = createTipDataFromUnivents(getUniventsConstRef(*a), aTipData);
-	bTipData = createTipDataFromUnivents(getUniventsConstRef(*b), bTipData);
-	cTipData = createTipDataFromUnivents(getUniventsConstRef(*c), cTipData);
-	dTipData = createTipDataFromUnivents(getUniventsConstRef(*d), dTipData);		
+	aTipData = createTipDataFromUnivents(getUniventsConstRef(*a, subsetIndex), aTipData);
+	bTipData = createTipDataFromUnivents(getUniventsConstRef(*b, subsetIndex), bTipData);
+	cTipData = createTipDataFromUnivents(getUniventsConstRef(*c, subsetIndex), cTipData);
+	dTipData = createTipDataFromUnivents(getUniventsConstRef(*d, subsetIndex), dTipData);		
 
 	double lnlike = FourTaxonLnLFromCorrectTipDataMembers();
 	
@@ -692,34 +692,39 @@ void UnimapTopoMove::revert()
 	origNodePar->SetEdgeLen(prev_ndP_len);
 	
 	if (doSampleInternalStates)
-		resampleInternalNodeStates(pre_root_posterior->getCLA(), pre_cla->getCLA());
+		{
+		unsigned numModelSubsets = getUniventsVectorConstRef(*x).size();
+
+		for (unsigned i = 0 ; i < numModelSubsets; ++i)
+			resampleInternalNodeStates(pre_root_posterior->getCLA(), pre_cla->getCLA(), i);
+		}
 	}
 
-void UnimapTopoMove::resampleInternalNodeStates(const LikeFltType * root_state_posterior, const LikeFltType * des_cla)
+void UnimapTopoMove::resampleInternalNodeStates(const LikeFltType * root_state_posterior, const LikeFltType * des_cla, unsigned subsetIndex)
 {
 	const UniventProbMgr & upm = likelihood->GetUniventProbMgrConstRef();
 	Lot & rngRef = *rng;
 	
 	TreeNode * aPar = a->GetParent();
 	PHYCAS_ASSERT(aPar && (aPar == origNode || aPar == origNodePar));
-	Univents & ndU = getUniventsRef(*aPar);
+	Univents & ndU = getUniventsRef(*aPar, subsetIndex);
 	upm.sampleRootStates(ndU, root_state_posterior, rngRef, false, NULL);
 	TreeNode * otherInternal = (aPar == origNode ? origNodePar : origNode);
 	PHYCAS_ASSERT(otherInternal);
-	Univents & ndPU = getUniventsRef(*otherInternal);
+	Univents & ndPU = getUniventsRef(*otherInternal, subsetIndex);
 	const int8_t * nd_states = &(ndU.getEndStatesVecConstRef()[0]);
 	upm.sampleDescendantStates(ndPU, (const double **) pre_p_mat[0], des_cla, nd_states, rngRef);
 	
 	likelihood->flagNodeWithInvalidUnivents(x);
-	getUniventsRef(*x).setValid(false);
+	getUniventsRef(*x, subsetIndex).setValid(false);
 	likelihood->flagNodeWithInvalidUnivents(y);
-	getUniventsRef(*y).setValid(false);
+	getUniventsRef(*y, subsetIndex).setValid(false);
 	likelihood->flagNodeWithInvalidUnivents(z);
-	getUniventsRef(*z).setValid(false);
+	getUniventsRef(*z, subsetIndex).setValid(false);
 	likelihood->flagNodeWithInvalidUnivents(origNode);
-	getUniventsRef(*origNode).setValid(false);
+	getUniventsRef(*origNode, subsetIndex).setValid(false);
 	likelihood->flagNodeWithInvalidUnivents(origNodePar);
-	getUniventsRef(*origNodePar).setValid(false);
+	getUniventsRef(*origNodePar, subsetIndex).setValid(false);
 }
 /*--------------------------------------------------------------------------------------------------------------------------
 |	Called if the move is accepted.
@@ -734,7 +739,12 @@ void UnimapNNIMove::accept()
 	PHYCAS_ASSERT(origNode->GetParent() == origNodePar);
 
 	if (doSampleInternalStates)
-		resampleInternalNodeStates(post_root_posterior->getCLA(), post_cla->getCLA());
+		{
+		unsigned numModelSubsets = getUniventsVectorConstRef(*a).size();
+
+		for (unsigned i = 0 ; i < numModelSubsets; ++i)
+			resampleInternalNodeStates(post_root_posterior->getCLA(), post_cla->getCLA(), i);
+		}
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
