@@ -200,7 +200,6 @@
 		7AB51D0410CDA3B200A865FF /* nxscharactersblock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51C9F10CDA26800A865FF /* nxscharactersblock.cpp */; };
 		7AB51D0810CDA3B200A865FF /* nxsstring.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CB710CDA26800A865FF /* nxsstring.cpp */; };
 		7AB51D0B10CDA3B200A865FF /* nxssetreader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CB510CDA26800A865FF /* nxssetreader.cpp */; };
-		7AB51D0C10CDA3B200A865FF /* nxsdistancedatum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CA710CDA26800A865FF /* nxsdistancedatum.cpp */; };
 		7AB51D0D10CDA3B200A865FF /* nxsmultiformat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CAF10CDA26800A865FF /* nxsmultiformat.cpp */; };
 		7AB51D0E10CDA3B200A865FF /* nxsexception.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CAD10CDA26800A865FF /* nxsexception.cpp */; };
 		7AB51D0F10CDA3B200A865FF /* nxsdistancesblock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CA910CDA26800A865FF /* nxsdistancesblock.cpp */; };
@@ -565,12 +564,9 @@
 		7AB51CA410CDA26800A865FF /* nxsdatablock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsdatablock.h; path = ncl/nxsdatablock.h; sourceTree = NCL_ROOT; };
 		7AB51CA510CDA26800A865FF /* nxsdefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsdefs.h; path = ncl/nxsdefs.h; sourceTree = NCL_ROOT; };
 		7AB51CA610CDA26800A865FF /* nxsdiscretedatum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsdiscretedatum.h; path = ncl/nxsdiscretedatum.h; sourceTree = NCL_ROOT; };
-		7AB51CA710CDA26800A865FF /* nxsdistancedatum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxsdistancedatum.cpp; path = ncl/nxsdistancedatum.cpp; sourceTree = NCL_ROOT; };
 		7AB51CA810CDA26800A865FF /* nxsdistancedatum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsdistancedatum.h; path = ncl/nxsdistancedatum.h; sourceTree = NCL_ROOT; };
 		7AB51CA910CDA26800A865FF /* nxsdistancesblock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxsdistancesblock.cpp; path = ncl/nxsdistancesblock.cpp; sourceTree = NCL_ROOT; };
 		7AB51CAA10CDA26800A865FF /* nxsdistancesblock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsdistancesblock.h; path = ncl/nxsdistancesblock.h; sourceTree = NCL_ROOT; };
-		7AB51CAB10CDA26800A865FF /* nxsemptyblock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxsemptyblock.cpp; path = ncl/nxsemptyblock.cpp; sourceTree = NCL_ROOT; };
-		7AB51CAC10CDA26800A865FF /* nxsemptyblock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsemptyblock.h; path = ncl/nxsemptyblock.h; sourceTree = NCL_ROOT; };
 		7AB51CAD10CDA26800A865FF /* nxsexception.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxsexception.cpp; path = ncl/nxsexception.cpp; sourceTree = NCL_ROOT; };
 		7AB51CAE10CDA26800A865FF /* nxsexception.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsexception.h; path = ncl/nxsexception.h; sourceTree = NCL_ROOT; };
 		7AB51CAF10CDA26800A865FF /* nxsmultiformat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nxsmultiformat.cpp; path = ncl/nxsmultiformat.cpp; sourceTree = NCL_ROOT; };
@@ -598,7 +594,6 @@
 		D164C4B01164ED8E00DB2E59 /* pinvar_paradox.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = pinvar_paradox.py; path = ../../inprep/partition/cicadas/pinvar_paradox/analysis/pinvar_paradox.py; sourceTree = SOURCE_ROOT; };
 		D17574CD10EB942400D4E2B0 /* partition.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = partition.py; path = ../../inprep/partition/partition.py; sourceTree = SOURCE_ROOT; };
 		D1814096112C826C00D91CF6 /* partition.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = partition.py; path = ../../inprep/partition/danielsims/partition.py; sourceTree = SOURCE_ROOT; };
-		D1829B31110E22AC00F200D6 /* nxscdiscretematrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxscdiscretematrix.h; path = ../../../../ndev/branches/v2.2/ncl/nxscdiscretematrix.h; sourceTree = SOURCE_ROOT; };
 		D19A89B31130507A001004D2 /* lognormal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = lognormal.cpp; path = ../../phycas/src/lognormal.cpp; sourceTree = SOURCE_ROOT; };
 		D19A89B41130507A001004D2 /* lognormal.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = lognormal.hpp; path = ../../phycas/src/lognormal.hpp; sourceTree = SOURCE_ROOT; };
 		D19A89E111307128001004D2 /* _LognormalDist.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = _LognormalDist.py; sourceTree = "<group>"; };
@@ -1182,18 +1177,14 @@
 				7AB51C9F10CDA26800A865FF /* nxscharactersblock.cpp */,
 				7AB51CA010CDA26800A865FF /* nxscharactersblock.h */,
 				7AB51CA110CDA26800A865FF /* nxscxxdiscretematrix.cpp */,
-				D1829B31110E22AC00F200D6 /* nxscdiscretematrix.h */,
 				7AB51CA210CDA26800A865FF /* nxscxxdiscretematrix.h */,
 				7AB51CA310CDA26800A865FF /* nxsdatablock.cpp */,
 				7AB51CA410CDA26800A865FF /* nxsdatablock.h */,
 				7AB51CA510CDA26800A865FF /* nxsdefs.h */,
 				7AB51CA610CDA26800A865FF /* nxsdiscretedatum.h */,
-				7AB51CA710CDA26800A865FF /* nxsdistancedatum.cpp */,
 				7AB51CA810CDA26800A865FF /* nxsdistancedatum.h */,
 				7AB51CA910CDA26800A865FF /* nxsdistancesblock.cpp */,
 				7AB51CAA10CDA26800A865FF /* nxsdistancesblock.h */,
-				7AB51CAB10CDA26800A865FF /* nxsemptyblock.cpp */,
-				7AB51CAC10CDA26800A865FF /* nxsemptyblock.h */,
 				7AB51CAD10CDA26800A865FF /* nxsexception.cpp */,
 				7AB51CAE10CDA26800A865FF /* nxsexception.h */,
 				7AB51CAF10CDA26800A865FF /* nxsmultiformat.cpp */,
@@ -1808,7 +1799,6 @@
 				7AB51D0410CDA3B200A865FF /* nxscharactersblock.cpp in Sources */,
 				7AB51D0810CDA3B200A865FF /* nxsstring.cpp in Sources */,
 				7AB51D0B10CDA3B200A865FF /* nxssetreader.cpp in Sources */,
-				7AB51D0C10CDA3B200A865FF /* nxsdistancedatum.cpp in Sources */,
 				7AB51D0D10CDA3B200A865FF /* nxsmultiformat.cpp in Sources */,
 				7AB51D0E10CDA3B200A865FF /* nxsexception.cpp in Sources */,
 				7AB51D0F10CDA3B200A865FF /* nxsdistancesblock.cpp in Sources */,
