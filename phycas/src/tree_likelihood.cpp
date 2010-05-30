@@ -2710,11 +2710,8 @@ TipData * TreeLikelihood::allocateTipData(	//POLBM TreeLikelihood::allocateTipDa
 		}
 #	endif
 		
-	//POL num_patterns only used by unimap part of TipData constructor
-	unsigned num_patterns = partition_model->getTotalNumPatterns();
 	
 	return new TipData( using_unimap,
-						num_patterns,
 						partition_model,
 						local_state_list_pos,	
 						local_state_codes,

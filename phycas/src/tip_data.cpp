@@ -57,7 +57,6 @@ TipData::TipData(
 */
 TipData::TipData(
   bool                              			using_unimap,       /**< is true if tips are to be prepared for uniformized mapping likelihood; it is false if tips are to be prepared for Felsenstein-style integrated likelihoods */
-  unsigned				            			nPatterns,			/**< is the number of site patterns */
   PartitionModelShPtr							partition,			/**< is the PartitionModel object containing information about the number of states and rates for each subset */
   const state_list_pos_vect_t &					positions,			/**< is the vector of vectors of positions of each state into the `state_codes' vector */
   const state_list_vect_t &						states,				/**< is the vector of vectors of `state_codes' */ 
@@ -87,15 +86,16 @@ TipData::TipData(
 		const unsigned num_obs_states	= partition->subset_num_states[i] + 1 + positions[i].size();
 		const unsigned num_rates		= partition->subset_num_rates[i];
 		const unsigned num_states		= partition->subset_num_states[i];
+		const unsigned num_patterns = partition->subset_num_patterns[i];
 		pMatrixTranspose[i].Initialize(num_rates, num_obs_states, num_states);
 
 #		if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
 			if (using_unimap)
 				{
-				univents[i].resize(nPatterns);
+				univents[i].resize(num_patterns);
 				univents[i].setEndStates(&subset_state_codes[0]);
 				std::vector<state_code_t> & scVec = univents[i].getEndStatesVecRef();
-				for (unsigned k = 0; k < nPatterns; ++i)
+				for (unsigned k = 0; k < num_patterns; ++i)
 					{
 					const state_code_t sc = subset_state_codes[0];
 					////////////////////////////////////////////////////////////////////

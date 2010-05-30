@@ -64,7 +64,7 @@ class UnimapTopoMove : public MCMCUpdater
 		// ProposeStateWithTemporaries is called by proposeNewState and must be defined by subclasses
 		virtual void			ProposeStateWithTemporaries(ChainManagerShPtr &) = 0;
 
-		TipData *				createTipDataFromUnivents(const Univents &, TipData *, unsigned subsetIndex);
+		TipData *				createTipDataFromUnivents(const std::vector<Univents> &, TipData *);
 		double					FourTaxonLnLBeforeMove();
 		double					FourTaxonLnLFromCorrectTipDataMembers(unsigned subsetIndex);
 		double					HarvestLnLikeFromCondLikePar(CondLikelihoodShPtr focalCondLike, ConstCondLikelihoodShPtr neighborCondLike, const double * const * childPMatrix, unsigned subsetIndex);
@@ -89,10 +89,10 @@ class UnimapTopoMove : public MCMCUpdater
 		TreeNode *				bLenNd;						/**< xxxx */
 		TreeNode *				cLenNd;						/**< xxxx */
 		TreeNode *				dLenNd;						/**< xxxx */
-		std::vector<TipData *>				aTipData;					/**< xxxx */
-		std::vector<TipData *>				bTipData;					/**< xxxx */
-		std::vector<TipData *>				cTipData;					/**< xxxx */
-		std::vector<TipData *>				dTipData;					/**< xxxx */
+		TipData *				aTipData;					/**< xxxx */
+		TipData *				bTipData;					/**< xxxx */
+		TipData *				cTipData;					/**< xxxx */
+		TipData *				dTipData;					/**< xxxx */
 		
 		std::vector<double	* *	>			pre_x_pmat_transposed;		/**< xxxx */
 		std::vector<double	* *	>			pre_y_pmat_transposed;		/**< xxxx */

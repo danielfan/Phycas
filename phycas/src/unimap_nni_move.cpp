@@ -168,10 +168,10 @@ void UnimapNNIMove::calculatePairwiseDistancesForSubset(unsigned subsetIndex)
 #if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
 	dXY = dWX =  dXZ =  dWY =  dYZ =  dWZ = 0.0;
 	/* This is called before the swap so "x" is "b" and "z" is "d" */
-	const int8_t * xStates = &(bTipData[subsetIndex]->getTipStatesArray(subsetIndex)[0]);
-	const int8_t * yStates = &(aTipData[subsetIndex]->getTipStatesArray(subsetIndex)[0]);
-	const int8_t * wStates = &(cTipData[subsetIndex]->getTipStatesArray(subsetIndex)[0]);
-	const int8_t * zStates = &(dTipData[subsetIndex]->getTipStatesArray(subsetIndex)[0]);
+	const int8_t * xStates = &(bTipData->getTipStatesArray(subsetIndex)[0]);
+	const int8_t * yStates = &(aTipData->getTipStatesArray(subsetIndex)[0]);
+	const int8_t * wStates = &(cTipData->getTipStatesArray(subsetIndex)[0]);
+	const int8_t * zStates = &(dTipData->getTipStatesArray(subsetIndex)[0]);
 	PartitionModelShPtr partModel = likelihood->getPartitionModel();
 	const unsigned num_patterns = partModel->getNumPatterns(subsetIndex);
 	for (unsigned i = 0; i < num_patterns; ++i)
@@ -487,10 +487,10 @@ UnimapTopoMove::~UnimapTopoMove()
 	const unsigned numSubsets = likelihood->getNumSubsets();
 	for (unsigned i = 0; i < numSubsets; ++i)
 		{
-		delete aTipData[i];
-		delete bTipData[i];
-		delete cTipData[i];
-		delete dTipData[i];
+		delete aTipData;
+		delete bTipData;
+		delete cTipData;
+		delete dTipData;
 		DeleteTwoDArray<double> (pre_w_pmat_transposed[i]);
 		DeleteTwoDArray<double> (pre_x_pmat_transposed[i]);
 		DeleteTwoDArray<double> (pre_y_pmat_transposed[i]);
@@ -502,24 +502,20 @@ double UnimapTopoMove::FourTaxonLnLBeforeMove()
 	{
 #if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING	
 	const unsigned numSubsets = likelihood->getNumSubsets();
-	aTipData.resize(numSubsets);
-	bTipData.resize(numSubsets);
-	cTipData.resize(numSubsets);
-	dTipData.resize(numSubsets);
+	aTipData = createTipDataFromUnivents(getUniventsVectorConstRef(*a), aTipData);
+	bTipData = createTipDataFromUnivents(getUniventsVectorConstRef(*b), bTipData);
+	cTipData = createTipDataFromUnivents(getUniventsVectorConstRef(*c), cTipData);
+	dTipData = createTipDataFromUnivents(getUniventsVectorConstRef(*d), dTipData);		
+
 	double lnlike = 0.0;
 	for (unsigned i = 0; i < numSubsets; ++i)
 		{
-		aTipData[i] = createTipDataFromUnivents(getUniventsConstRef(*a, i), aTipData[i], i);
-		bTipData[i] = createTipDataFromUnivents(getUniventsConstRef(*b, i), bTipData[i], i);
-		cTipData[i] = createTipDataFromUnivents(getUniventsConstRef(*c, i), cTipData[i], i);
-		dTipData[i] = createTipDataFromUnivents(getUniventsConstRef(*d, i), dTipData[i], i);		
-	
 		lnlike += FourTaxonLnLFromCorrectTipDataMembers(i);
 		
-		storePMatTransposed(pre_y_pmat_transposed[i], (const double ***) aTipData[i]->getTransposedPMatrices(i), i);
-		storePMatTransposed(pre_x_pmat_transposed[i], (const double ***) bTipData[i]->getTransposedPMatrices(i), i);
-		storePMatTransposed(pre_w_pmat_transposed[i], (const double ***) cTipData[i]->getTransposedPMatrices(i), i);
-		storePMatTransposed(pre_z_pmat_transposed[i], (const double ***) dTipData[i]->getTransposedPMatrices(i), i);
+		storePMatTransposed(pre_y_pmat_transposed[i], (const double ***) aTipData->getTransposedPMatrices(i), i);
+		storePMatTransposed(pre_x_pmat_transposed[i], (const double ***) bTipData->getTransposedPMatrices(i), i);
+		storePMatTransposed(pre_w_pmat_transposed[i], (const double ***) cTipData->getTransposedPMatrices(i), i);
+		storePMatTransposed(pre_z_pmat_transposed[i], (const double ***) dTipData->getTransposedPMatrices(i), i);
 
 		}
     return lnlike;
@@ -543,10 +539,10 @@ void UnimapTopoMove::DebugSaveNexusFile(std::ostream & nxsf, double lnlike, unsi
     {
 #if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
     typedef boost::shared_array<const int8_t> StateArr;
-    state_list_t & adata = aTipData[subsetIndex]->getTipStatesArray(subsetIndex);
-    state_list_t & bdata = bTipData[subsetIndex]->getTipStatesArray(subsetIndex);
-    state_list_t & cdata = cTipData[subsetIndex]->getTipStatesArray(subsetIndex);
-    state_list_t & ddata = dTipData[subsetIndex]->getTipStatesArray(subsetIndex);
+    state_list_t & adata = aTipData->getTipStatesArray(subsetIndex);
+    state_list_t & bdata = bTipData->getTipStatesArray(subsetIndex);
+    state_list_t & cdata = cTipData->getTipStatesArray(subsetIndex);
+    state_list_t & ddata = dTipData->getTipStatesArray(subsetIndex);
     unsigned nchar = likelihood->getNumPatterns();
     unsigned i;
 	const char * alphabet = "ACGT";
@@ -631,16 +627,16 @@ double UnimapTopoMove::FourTaxonLnLFromCorrectTipDataMembers(unsigned subsetInde
 		p_mat = post_p_mat[subsetIndex];
 		}
 
-    likelihood->calcPMatTranspose(subsetIndex, aTipData[subsetIndex]->getTransposedPMatrices(subsetIndex), aTipData[subsetIndex]->getConstStateListPos(subsetIndex), aLenNd->GetEdgeLen());
-    likelihood->calcPMatTranspose(subsetIndex, bTipData[subsetIndex]->getTransposedPMatrices(subsetIndex), bTipData[subsetIndex]->getConstStateListPos(subsetIndex), bLenNd->GetEdgeLen());
-    likelihood->calcPMatTranspose(subsetIndex, cTipData[subsetIndex]->getTransposedPMatrices(subsetIndex), cTipData[subsetIndex]->getConstStateListPos(subsetIndex), cLenNd->GetEdgeLen());
-    likelihood->calcPMatTranspose(subsetIndex, dTipData[subsetIndex]->getTransposedPMatrices(subsetIndex), dTipData[subsetIndex]->getConstStateListPos(subsetIndex), dLenNd->GetEdgeLen());
+    likelihood->calcPMatTranspose(subsetIndex, aTipData->getTransposedPMatrices(subsetIndex), aTipData->getConstStateListPos(subsetIndex), aLenNd->GetEdgeLen());
+    likelihood->calcPMatTranspose(subsetIndex, bTipData->getTransposedPMatrices(subsetIndex), bTipData->getConstStateListPos(subsetIndex), bLenNd->GetEdgeLen());
+    likelihood->calcPMatTranspose(subsetIndex, cTipData->getTransposedPMatrices(subsetIndex), cTipData->getConstStateListPos(subsetIndex), cLenNd->GetEdgeLen());
+    likelihood->calcPMatTranspose(subsetIndex, dTipData->getTransposedPMatrices(subsetIndex), dTipData->getConstStateListPos(subsetIndex), dLenNd->GetEdgeLen());
 
 	
 	likelihood->calcPMat(subsetIndex, p_mat, origNode->GetEdgeLen());
 	const double * const *  childPMatrix = p_mat[0];
-	likelihood->calcCLATwoTips(*nd_childCLPtr, *bTipData[subsetIndex], *aTipData[subsetIndex]);
-	likelihood->calcCLATwoTips(*nd_parentCLPtr, *dTipData[subsetIndex], *cTipData[subsetIndex]);
+	likelihood->calcCLATwoTips(*nd_childCLPtr, *bTipData, *aTipData);
+	likelihood->calcCLATwoTips(*nd_parentCLPtr, *dTipData, *cTipData);
 
 	double lnl =  HarvestLnLikeFromCondLikePar(nd_childCLPtr, nd_parentCLPtr, childPMatrix, subsetIndex);
 #	if defined CHECK_EACH_CALC_AGAINST_PAUP
@@ -694,30 +690,41 @@ double UnimapTopoMove::HarvestLnLikeFromCondLikePar(
 	}
 
 	
-TipData * UnimapTopoMove::createTipDataFromUnivents(const Univents & u, TipData *td, unsigned subsetIndex)
+TipData * UnimapTopoMove::createTipDataFromUnivents(const std::vector<Univents> & uv, TipData *td)
 	{
 #if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
 	if (td)
 		{
-		/* this is the one place in which we overwrite the state codes */
-		int8_t * stateCodes = const_cast<int8_t *>(&(td->getTipStatesArray(subsetIndex)[0]));
-		u.fillStateCodeArray(stateCodes);
+		unsigned subsetIndex = 0;
+		for (std::vector<Univents>::const_iterator uvIt = uv.begin(); uvIt != uv.end(); ++uvIt, ++subsetIndex)
+			{
+			const Univents & u = *uvIt;
+			/* this is the one place in which we overwrite the state codes */
+			int8_t * stateCodes = const_cast<int8_t *>(&(td->getTipStatesArray(subsetIndex)[0]));
+			u.fillStateCodeArray(stateCodes);
+			}
 		}
 	else
 		{
-		const unsigned num_patterns = likelihood->getNumPatterns();
-		state_list_t tipSpecificStateCode;
-		tipSpecificStateCode.resize(num_patterns);
-		u.fillStateCodeArray(&tipSpecificStateCode[0]);
-		std::vector<unsigned int> emptyStateListVec;
-		PHYCAS_ASSERT(false); // the next few lines are wrong...
-		td = 0L; /*new TipData(	true,
-						num_patterns,
-						likelihood->getPartitionModel(),
-						emptyStateListVec,												// stateListPosVec
+		state_list_vect_t tipSpecificStateCode;
+		const unsigned numSubsets = likelihood->getNumSubsets();
+		tipSpecificStateCode.resize(numSubsets);
+		PartitionModelShPtr partModPtr = likelihood->getPartitionModel();
+		unsigned subsetIndex = 0;
+		state_list_pos_vect_t emptyStateListPosVec(numSubsets);
+		for (std::vector<Univents>::const_iterator uvIt = uv.begin(); uvIt != uv.end(); ++uvIt, ++subsetIndex)
+			{
+			const Univents & u = *uvIt;
+			state_list_t & tssc = tipSpecificStateCode[subsetIndex];
+			tssc.resize(partModPtr->getNumPatterns(subsetIndex));
+			u.fillStateCodeArray(&tssc[0]);
+			}
+		td =new TipData(	true,
+						partModPtr,
+						emptyStateListPosVec,												// stateListPosVec
 						tipSpecificStateCode,	// stateCodesShPtr
 						likelihood->getCondLikelihoodStorage());
-						*/
+					
 		}
 	return td;
 #else

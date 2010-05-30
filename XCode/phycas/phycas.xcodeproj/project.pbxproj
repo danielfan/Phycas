@@ -1986,8 +1986,6 @@
 				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
-					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
 					"\"$(SRCROOT)/../../phycas/Conversions\"",
 				);
 				PRODUCT_NAME = _ProbDistExt;
@@ -2020,8 +2018,6 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
-					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
 					"\"$(SRCROOT)/../../phycas/Conversions\"",
 				);
 				PRODUCT_NAME = _LikelihoodExt;
@@ -2053,8 +2049,6 @@
 				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
-					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
 					"\"$(SRCROOT)/../../phycas/Conversions\"",
 				);
 				PRODUCT_NAME = _PhylogenyExt;
@@ -2085,8 +2079,6 @@
 				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../../../../../pydebug/lib\"",
-					"\"$(SRCROOT)/../../../../../../pydbg/lib\"",
 					"\"$(SRCROOT)/../../phycas/Conversions\"",
 				);
 				PRODUCT_NAME = _ReadNexusExt;

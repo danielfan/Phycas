@@ -129,7 +129,7 @@ class TipData
 													// this constructor only used for simulations, and thus will be converted to work with partitioning later
 													TipData(unsigned nRates, unsigned nStates, CondLikelihoodStorageShPtr cla_storage);
 													
-													TipData(bool using_unimap, unsigned nPatterns, PartitionModelShPtr partition, const state_list_pos_vect_t & positions, const state_list_vect_t & states, CondLikelihoodStorageShPtr cla_storage);
+													TipData(bool using_unimap, PartitionModelShPtr partition, const state_list_pos_vect_t & positions, const state_list_vect_t & states, CondLikelihoodStorageShPtr cla_storage);
                                            	 		~TipData();
 	
 		const double * const * const *				getConstTransposedPMatrices(unsigned i) const;
