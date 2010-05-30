@@ -37,13 +37,13 @@
 
 namespace phycas
 {
-unsigned ** getNodeSMat(TreeNode * nd);
+unsigned ** getNodeSMat(TreeNode * nd, unsigned subsetIndex);
 
 typedef const double * const * const * ConstPMatrices;
 typedef std::vector<unsigned int> StateListPos;
 class CondLikelihood;
 class Tree;
-
+class TreeLikelihood;
 template<typename T> class GenericEdgeEndpoints;
 typedef GenericEdgeEndpoints<TreeNode *> EdgeEndpoints;
 typedef GenericEdgeEndpoints<const TreeNode *> ConstEdgeEndpoints;
@@ -63,6 +63,50 @@ const Univents & getUniventsConstRef(const TreeNode &, unsigned subsetIndex);
 std::vector<Univents> & getUniventsVectorRef(TreeNode &);
 const std::vector<Univents> & getUniventsVectorConstRef(const TreeNode &);
 
+
+class TreeUniventSubsetStruct
+{
+	public:
+		
+		TreeUniventSubsetStruct(ModelShPtr model, unsigned numPatterns, unsigned subsetIndex);
+		~TreeUniventSubsetStruct();
+		const UniventProbMgr &          GetUniventProbMgrConstRef() const {return univentProbMgr;}
+		UniventProbMgr &                GetUniventProbMgrRef() {return univentProbMgr;}
+		std::string debugShowSMatrix() const;
+		void							flagNodeWithInvalidUnivents(TreeNode *nd)
+			{
+			this->invalidUniventMappingNodes.insert(nd);
+			}
+		ModelShPtr getModel() {return univentProbMgr.getModel();}
+		
+		unsigned getNumStates() const {return univentProbMgr.getNumStates();}
+		unsigned getNumPatterns() const {return numPatterns;}
+		void fullRemapping(
+					  TreeShPtr t,		        /**< is the tree to use for the mapping */
+					  LotShPtr rng,             /**< is the random number generator to use for the mapping */
+					  bool doSampleUnivents,
+					  TreeLikelihood &);
+		double calcUnimapLnL(TreeShPtr t, TreeLikelihood & treeLike);
+		void							remapUniventsForNode(TreeShPtr, TreeNode *, TreeLikelihood & treeLike);
+
+		void                            setLot(LotShPtr r)
+		{
+		    localRng = r;
+		}
+
+		void debugCheckSMatrix(TreeShPtr t);
+
+	private:
+        LotShPtr                        localRng;
+		UniventProbMgr					univentProbMgr;
+		unsigned * *					treeSMat;					/**< sMat[i][j] is total number of univents in which state i changes to state j */
+		unsigned						nunivents;				/**< total number of univents over all edges and all sites */
+		std::vector<unsigned>			obs_state_counts;
+		std::set<TreeNode *>			invalidUniventMappingNodes;
+		unsigned numPatterns;
+		unsigned subsetIndex;
+};
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Used for computing the likelihood on a tree.
 */
@@ -75,13 +119,20 @@ class TreeLikelihood
 
 		// Accessors
 		unsigned						getNTaxa() const;
-		unsigned						getNPatterns() const;
+		unsigned						getNumPatterns() const;
+		unsigned                        getNumSubsets() const 
+			{
+			if (!partition_model)
+				return 1;
+			return partition_model->getNumSubsets();
+			}
+
 		PartitionModelShPtr				getPartitionModel() const;
 		const double_vect_t &			getRateMeans(unsigned i) const;
 		const double_vect_t &			getRateProbs(unsigned i) const;
 		unsigned						getNRatesTotal(unsigned i) const;
 		double_vect_t					getCategoryLowerBoundaries(unsigned i) const;
-		unsigned						getNStates(unsigned i) const;
+		unsigned						getNumStates(unsigned i) const;
 		const state_list_vect_t &		getStateList() const;
 		const state_list_pos_vect_t &	getStateListPos() const;
 		void							replacePartitionModel(PartitionModelShPtr);
@@ -148,8 +199,14 @@ class TreeLikelihood
 		void							simulateFirst(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar);
 		void							simulate(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar);
 
-		const UniventProbMgr &          GetUniventProbMgrConstRef() const {return univentProbMgr;}
-		UniventProbMgr &                GetUniventProbMgrRef() {return univentProbMgr;}
+		const UniventProbMgr &          GetUniventProbMgrConstRef(unsigned subsetIndex) const 
+			{
+			return univentStructVec.at(subsetIndex)->GetUniventProbMgrConstRef();
+			}
+		UniventProbMgr &                GetUniventProbMgrRef(unsigned subsetIndex) 
+			{
+			return univentStructVec.at(subsetIndex)->GetUniventProbMgrRef();
+			}
 		void							useUnimap(bool yes_or_no = true);
 		bool							isUsingUnimap();
 		void							fullRemapping(TreeShPtr t, LotShPtr rng, bool doSampleUnivents);
@@ -191,14 +248,14 @@ class TreeLikelihood
 		CondLikelihoodStorageShPtr		getCondLikelihoodStorage();
 		void							flagNodeWithInvalidUnivents(TreeNode *nd)
 		{
-			invalidUniventMappingNodes.insert(nd);
+		for (std::vector<TreeUniventSubsetStruct*>::iterator usvIt = this->univentStructVec.begin(); usvIt != this->univentStructVec.end(); ++usvIt)
+			(*usvIt)->flagNodeWithInvalidUnivents(nd);
 		}
 		void                            setLot(LotShPtr r)
 		{
-		    localRng = r;
+		    for (std::vector<TreeUniventSubsetStruct*>::iterator i = univentStructVec.begin(); i != univentStructVec.end(); ++i)
+		    	(*i)->setLot(r);
 		}
-
-		void							remapUniventsForNode(TreeShPtr, TreeNode *);
 
 	protected:
 
@@ -241,12 +298,9 @@ class TreeLikelihood
 	protected:
 
 		bool							using_unimap;			/**< if true, uniformized mapping likelihoods will be used; if false, Felsenstein-style integrated likelihoods will be used */
-		UniventProbMgr					univentProbMgr;
-		unsigned * *					treeSMat;					/**< sMat[i][j] is total number of univents in which state i changes to state j */
-		unsigned						nunivents;				/**< total number of univents over all edges and all sites */
-		std::vector<unsigned>			obs_state_counts;
-		std::set<TreeNode *>			invalidUniventMappingNodes;
-        LotShPtr                        localRng;
+
+		std::vector<TreeUniventSubsetStruct*>	univentStructVec;
+
 		unsigned						nevals;					/**< For debugging, records the number of times the likelihood is calculated */
         
 	public: //@POL these should be protected rather than public

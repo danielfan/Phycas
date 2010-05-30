@@ -138,14 +138,42 @@ TreeNode * UnimapTopoMove::randomInternalAboveSubroot()
 
 void UnimapNNIMove::calculatePairwiseDistances()
 	{
-#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
+	double tmpXY = 0.0;
+	double tmpWX = 0.0;
+	double tmpXZ = 0.0;
+	double tmpWY = 0.0;
+	double tmpYZ = 0.0;
+	double totalNumPatterns = 0.0;
+	PartitionModelShPtr partModel = likelihood->getPartitionModel();
+	for (unsigned subsetIndex = 0; subsetIndex < likelihood->getNumSubsets(); ++subsetIndex)
+		{
+		const double num_patterns = (double) partModel->getNumPatterns(subsetIndex);
+		calculatePairwiseDistancesForSubset(subsetIndex);
+		tmpXY += dXY*num_patterns;
+		tmpWX += dWX*num_patterns;
+		tmpXZ += dXZ*num_patterns;
+		tmpWY += dWY*num_patterns;
+		tmpYZ += dYZ*num_patterns;
+		totalNumPatterns += num_patterns;
+		}
+	dXY = tmpXY /totalNumPatterns;
+	dWX = tmpWX /totalNumPatterns;
+	dXZ = tmpXZ /totalNumPatterns;
+	dWY = tmpWY /totalNumPatterns;
+	dYZ = tmpYZ /totalNumPatterns;
+	}
+
+void UnimapNNIMove::calculatePairwiseDistancesForSubset(unsigned subsetIndex)
+	{
+#if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
 	dXY = dWX =  dXZ =  dWY =  dYZ =  dWZ = 0.0;
 	/* This is called before the swap so "x" is "b" and "z" is "d" */
-	const int8_t * xStates = bTipData->getTipStatesArray().get();
-	const int8_t * yStates = aTipData->getTipStatesArray().get();
-	const int8_t * wStates = cTipData->getTipStatesArray().get();
-	const int8_t * zStates = dTipData->getTipStatesArray().get();
-	const unsigned num_patterns = likelihood->getNPatterns();
+	const int8_t * xStates = &(bTipData[subsetIndex]->getTipStatesArray(subsetIndex)[0]);
+	const int8_t * yStates = &(aTipData[subsetIndex]->getTipStatesArray(subsetIndex)[0]);
+	const int8_t * wStates = &(cTipData[subsetIndex]->getTipStatesArray(subsetIndex)[0]);
+	const int8_t * zStates = &(dTipData[subsetIndex]->getTipStatesArray(subsetIndex)[0]);
+	PartitionModelShPtr partModel = likelihood->getPartitionModel();
+	const unsigned num_patterns = partModel->getNumPatterns(subsetIndex);
 	for (unsigned i = 0; i < num_patterns; ++i)
 		{
 		const int8_t x = *xStates++;
@@ -340,7 +368,7 @@ void UnimapNNIMove::ProposeStateWithTemporaries(ChainManagerShPtr & p)
 */
 void UnimapTopoMove::proposeNewState()
 	{
-#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
+#if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
     // Choose random internal node origNode and randomly choose one of origNode's children to call x (the other is y)
     // Here is the actual layout of the tree in memory
     //
@@ -395,16 +423,24 @@ void UnimapTopoMove::proposeNewState()
 	
 	InternalData * nd_internal_data = origNode->GetInternalData();
 	PHYCAS_ASSERT(nd_internal_data);
-	pre_root_posterior = nd_internal_data->getParentalCondLikePtr();
-	pre_cla = nd_internal_data->getChildCondLikePtr();
-	pre_p_mat = nd_internal_data->getMutablePMatrices();
-	
 	InternalData * ndp_internal_data = origNodePar->GetInternalData();
 	PHYCAS_ASSERT(ndp_internal_data);
-	post_root_posterior = ndp_internal_data->getParentalCondLikePtr();
-	post_cla = ndp_internal_data->getChildCondLikePtr();
-	post_p_mat = ndp_internal_data->getMutablePMatrices();
-
+	const unsigned numSubsets = likelihood->getNumSubsets();
+	pre_root_posterior.resize(numSubsets);
+	pre_cla.resize(numSubsets);
+	pre_p_mat.resize(numSubsets);
+	post_root_posterior.resize(numSubsets);
+	post_cla.resize(numSubsets);
+	post_p_mat.resize(numSubsets);
+	for (unsigned i = 0; i < numSubsets; ++i)
+		{
+		pre_root_posterior[i] = nd_internal_data->getParentalCondLikePtr();
+		pre_cla[i] = nd_internal_data->getChildCondLikePtr();
+		pre_p_mat[i] = nd_internal_data->getMutablePMatrices(i);
+		post_root_posterior[i] = ndp_internal_data->getParentalCondLikePtr();
+		post_cla[i] = ndp_internal_data->getChildCondLikePtr();
+		post_p_mat[i] = ndp_internal_data->getMutablePMatrices(i);
+		}
 
 	ChainManagerShPtr p = chain_mgr.lock();
 	PHYCAS_ASSERT(p);
@@ -431,7 +467,9 @@ void UnimapTopoMove::proposeNewState()
 	ProposeStateWithTemporaries(p);
 
 	scoringBeforeMove = false;
-    curr_ln_like = FourTaxonLnLFromCorrectTipDataMembers();
+    curr_ln_like = 0.0;
+	for (unsigned i = 0; i < numSubsets; ++i)
+	    curr_ln_like += FourTaxonLnLFromCorrectTipDataMembers(i);
 #endif
 	}
 
@@ -445,58 +483,71 @@ double calcEdgeLenLnPrior(const TreeNode &x, double edge_len, ChainManagerShPtr 
 
 UnimapTopoMove::~UnimapTopoMove()
 	{
-	delete aTipData;
-	delete bTipData;
-	delete cTipData;
-	delete dTipData;
-	DeleteTwoDArray<double> (pre_w_pmat_transposed);
-	DeleteTwoDArray<double> (pre_x_pmat_transposed);
-	DeleteTwoDArray<double> (pre_y_pmat_transposed);
-	DeleteTwoDArray<double> (pre_z_pmat_transposed);
+	
+	const unsigned numSubsets = likelihood->getNumSubsets();
+	for (unsigned i = 0; i < numSubsets; ++i)
+		{
+		delete aTipData[i];
+		delete bTipData[i];
+		delete cTipData[i];
+		delete dTipData[i];
+		DeleteTwoDArray<double> (pre_w_pmat_transposed[i]);
+		DeleteTwoDArray<double> (pre_x_pmat_transposed[i]);
+		DeleteTwoDArray<double> (pre_y_pmat_transposed[i]);
+		DeleteTwoDArray<double> (pre_z_pmat_transposed[i]);
+		}
 	}
 
 double UnimapTopoMove::FourTaxonLnLBeforeMove()
 	{
-#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING	
-	aTipData = createTipDataFromUnivents(getUniventsConstRef(*a, subsetIndex), aTipData);
-	bTipData = createTipDataFromUnivents(getUniventsConstRef(*b, subsetIndex), bTipData);
-	cTipData = createTipDataFromUnivents(getUniventsConstRef(*c, subsetIndex), cTipData);
-	dTipData = createTipDataFromUnivents(getUniventsConstRef(*d, subsetIndex), dTipData);		
-
-	double lnlike = FourTaxonLnLFromCorrectTipDataMembers();
+#if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING	
+	const unsigned numSubsets = likelihood->getNumSubsets();
+	aTipData.resize(numSubsets);
+	bTipData.resize(numSubsets);
+	cTipData.resize(numSubsets);
+	dTipData.resize(numSubsets);
+	double lnlike = 0.0;
+	for (unsigned i = 0; i < numSubsets; ++i)
+		{
+		aTipData[i] = createTipDataFromUnivents(getUniventsConstRef(*a, i), aTipData[i], i);
+		bTipData[i] = createTipDataFromUnivents(getUniventsConstRef(*b, i), bTipData[i], i);
+		cTipData[i] = createTipDataFromUnivents(getUniventsConstRef(*c, i), cTipData[i], i);
+		dTipData[i] = createTipDataFromUnivents(getUniventsConstRef(*d, i), dTipData[i], i);		
 	
-	storePMatTransposed(pre_y_pmat_transposed, (const double ***) aTipData->getTransposedPMatrices());
-	storePMatTransposed(pre_x_pmat_transposed, (const double ***) bTipData->getTransposedPMatrices());
-	storePMatTransposed(pre_w_pmat_transposed, (const double ***) cTipData->getTransposedPMatrices());
-	storePMatTransposed(pre_z_pmat_transposed, (const double ***) dTipData->getTransposedPMatrices());
+		lnlike += FourTaxonLnLFromCorrectTipDataMembers(i);
+		
+		storePMatTransposed(pre_y_pmat_transposed[i], (const double ***) aTipData[i]->getTransposedPMatrices(i), i);
+		storePMatTransposed(pre_x_pmat_transposed[i], (const double ***) bTipData[i]->getTransposedPMatrices(i), i);
+		storePMatTransposed(pre_w_pmat_transposed[i], (const double ***) cTipData[i]->getTransposedPMatrices(i), i);
+		storePMatTransposed(pre_z_pmat_transposed[i], (const double ***) dTipData[i]->getTransposedPMatrices(i), i);
 
-
+		}
     return lnlike;
 #else
 	return 0.0;
 #endif
 	}
 
-bool UnimapTopoMove::CheckWithPaup(double lnlike)
+bool UnimapTopoMove::CheckWithPaup(double lnlike, unsigned subsetIndex)
 {
 	std::ofstream nxsf;
 	nxsf.open("debug-with-paup.nex");
 	nxsf << "#NEXUS\n";
-	DebugSaveNexusFile(nxsf, lnlike);
+	DebugSaveNexusFile(nxsf, lnlike, subsetIndex);
 	nxsf.close();
 	nxsf << "begin PAUP;\n quit ;\nend;\n";
 	return (system("./checkWithPAUP.py") == 0);
 }
 
-void UnimapTopoMove::DebugSaveNexusFile(std::ostream & nxsf, double lnlike)
+void UnimapTopoMove::DebugSaveNexusFile(std::ostream & nxsf, double lnlike, unsigned subsetIndex)
     {
-#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
+#if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
     typedef boost::shared_array<const int8_t> StateArr;
-    StateArr adata = aTipData->getTipStatesArray();
-    StateArr bdata = bTipData->getTipStatesArray();
-    StateArr cdata = cTipData->getTipStatesArray();
-    StateArr ddata = dTipData->getTipStatesArray();
-    unsigned nchar = likelihood->getNPatterns();
+    state_list_t & adata = aTipData[subsetIndex]->getTipStatesArray(subsetIndex);
+    state_list_t & bdata = bTipData[subsetIndex]->getTipStatesArray(subsetIndex);
+    state_list_t & cdata = cTipData[subsetIndex]->getTipStatesArray(subsetIndex);
+    state_list_t & ddata = dTipData[subsetIndex]->getTipStatesArray(subsetIndex);
+    unsigned nchar = likelihood->getNumPatterns();
     unsigned i;
 	const char * alphabet = "ACGT";
     //nxsf << "#nexus\n" << std::endl;
@@ -548,10 +599,10 @@ void UnimapTopoMove::DebugSaveNexusFile(std::ostream & nxsf, double lnlike)
 #endif
     }
 
-void UnimapTopoMove::storePMatTransposed(double **& cached, const double *** p_mat_array)
+void UnimapTopoMove::storePMatTransposed(double **& cached, const double *** p_mat_array, unsigned subsetIndex)
 	{
-#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
-	const unsigned nStates = likelihood->getNStates();
+#if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
+	const unsigned nStates = likelihood->getNumStates(subsetIndex);
 	if (!cached)
 		cached = NewTwoDArray<double>(nStates + 1, nStates + 1);
 	for (unsigned i = 0; i < nStates; ++i)
@@ -562,39 +613,39 @@ void UnimapTopoMove::storePMatTransposed(double **& cached, const double *** p_m
 #endif
 	}
 	
-double UnimapTopoMove::FourTaxonLnLFromCorrectTipDataMembers()
+double UnimapTopoMove::FourTaxonLnLFromCorrectTipDataMembers(unsigned subsetIndex)
 	{
-#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
+#if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
 	CondLikelihoodShPtr nd_childCLPtr, nd_parentCLPtr;
 	double *** p_mat;
 	if (scoringBeforeMove)
 		{
-		nd_childCLPtr = pre_root_posterior;
-		nd_parentCLPtr = pre_cla;
-		p_mat = pre_p_mat;
+		nd_childCLPtr = pre_root_posterior[subsetIndex];
+		nd_parentCLPtr = pre_cla[subsetIndex];
+		p_mat = pre_p_mat[subsetIndex];
 		}
 	else
 		{
-		nd_childCLPtr = post_root_posterior;
-		nd_parentCLPtr = post_cla;
-		p_mat = post_p_mat;
+		nd_childCLPtr = post_root_posterior[subsetIndex];
+		nd_parentCLPtr = post_cla[subsetIndex];
+		p_mat = post_p_mat[subsetIndex];
 		}
 
-    likelihood->calcPMatTranspose(aTipData->getTransposedPMatrices(), aTipData->getConstStateListPos(), aLenNd->GetEdgeLen());
-    likelihood->calcPMatTranspose(bTipData->getTransposedPMatrices(), bTipData->getConstStateListPos(), bLenNd->GetEdgeLen());
-    likelihood->calcPMatTranspose(cTipData->getTransposedPMatrices(), cTipData->getConstStateListPos(), cLenNd->GetEdgeLen());
-    likelihood->calcPMatTranspose(dTipData->getTransposedPMatrices(), dTipData->getConstStateListPos(), dLenNd->GetEdgeLen());
+    likelihood->calcPMatTranspose(subsetIndex, aTipData[subsetIndex]->getTransposedPMatrices(subsetIndex), aTipData[subsetIndex]->getConstStateListPos(subsetIndex), aLenNd->GetEdgeLen());
+    likelihood->calcPMatTranspose(subsetIndex, bTipData[subsetIndex]->getTransposedPMatrices(subsetIndex), bTipData[subsetIndex]->getConstStateListPos(subsetIndex), bLenNd->GetEdgeLen());
+    likelihood->calcPMatTranspose(subsetIndex, cTipData[subsetIndex]->getTransposedPMatrices(subsetIndex), cTipData[subsetIndex]->getConstStateListPos(subsetIndex), cLenNd->GetEdgeLen());
+    likelihood->calcPMatTranspose(subsetIndex, dTipData[subsetIndex]->getTransposedPMatrices(subsetIndex), dTipData[subsetIndex]->getConstStateListPos(subsetIndex), dLenNd->GetEdgeLen());
 
 	
-	likelihood->calcPMat(p_mat, origNode->GetEdgeLen());
+	likelihood->calcPMat(subsetIndex, p_mat, origNode->GetEdgeLen());
 	const double * const *  childPMatrix = p_mat[0];
-	likelihood->calcCLATwoTips(*nd_childCLPtr, *bTipData, *aTipData);
-	likelihood->calcCLATwoTips(*nd_parentCLPtr, *dTipData, *cTipData);
+	likelihood->calcCLATwoTips(*nd_childCLPtr, *bTipData[subsetIndex], *aTipData[subsetIndex]);
+	likelihood->calcCLATwoTips(*nd_parentCLPtr, *dTipData[subsetIndex], *cTipData[subsetIndex]);
 
-	double lnl =  HarvestLnLikeFromCondLikePar(nd_childCLPtr, nd_parentCLPtr, childPMatrix);
+	double lnl =  HarvestLnLikeFromCondLikePar(nd_childCLPtr, nd_parentCLPtr, childPMatrix, subsetIndex);
 #	if defined CHECK_EACH_CALC_AGAINST_PAUP
 		std::cerr << "Scoring " << (scoringBeforeMove ? "before" : "after") << " the proposal\n";
-		PHYCAS_ASSERT(CheckWithPaup(lnl));
+		PHYCAS_ASSERT(CheckWithPaup(lnl, subsetIndex));
 #	endif
 	return lnl;
 #else // old way
@@ -605,13 +656,14 @@ double UnimapTopoMove::FourTaxonLnLFromCorrectTipDataMembers()
 double UnimapTopoMove::HarvestLnLikeFromCondLikePar(
   CondLikelihoodShPtr focalCondLike, 
   ConstCondLikelihoodShPtr neighborCondLike, 
-  const double * const * childPMatrix)
+  const double * const * childPMatrix,
+  unsigned subsetIndex)
 	{
-#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
+#if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
 	LikeFltType * focalNdCLAPtr = focalCondLike->getCLA(); //PELIGROSO
 	PHYCAS_ASSERT(focalNdCLAPtr);
-	const unsigned num_patterns = likelihood->getNPatterns();
-	const unsigned num_states = likelihood->getNStates();
+	const unsigned num_patterns = likelihood->getPartitionModel()->getNumPatterns(subsetIndex);
+	const unsigned num_states = likelihood->getNumStates(subsetIndex);
 		// Get state frequencies from model and alias rate category probability array for speed
 	const double * stateFreq = &model->getStateFreqs()[0]; //PELIGROSO
 	double lnLikelihood = 0.0;
@@ -642,30 +694,30 @@ double UnimapTopoMove::HarvestLnLikeFromCondLikePar(
 	}
 
 	
-TipData * UnimapTopoMove::createTipDataFromUnivents(const Univents & u, TipData *td)
+TipData * UnimapTopoMove::createTipDataFromUnivents(const Univents & u, TipData *td, unsigned subsetIndex)
 	{
-#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
+#if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
 	if (td)
 		{
 		/* this is the one place in which we overwrite the state codes */
-		int8_t * stateCodes = const_cast<int8_t *>(td->getTipStatesArray().get());
+		int8_t * stateCodes = const_cast<int8_t *>(&(td->getTipStatesArray(subsetIndex)[0]));
 		u.fillStateCodeArray(stateCodes);
 		}
 	else
 		{
-		const unsigned num_patterns = likelihood->getNPatterns();
-		int8_t * tipSpecificStateCode = new int8_t[num_patterns];
-		u.fillStateCodeArray(tipSpecificStateCode);
+		const unsigned num_patterns = likelihood->getNumPatterns();
+		state_list_t tipSpecificStateCode;
+		tipSpecificStateCode.resize(num_patterns);
+		u.fillStateCodeArray(&tipSpecificStateCode[0]);
 		std::vector<unsigned int> emptyStateListVec;
-		td = new TipData(	true,
+		PHYCAS_ASSERT(false); // the next few lines are wrong...
+		td = 0L; /*new TipData(	true,
 						num_patterns,
+						likelihood->getPartitionModel(),
 						emptyStateListVec,												// stateListPosVec
-						boost::shared_array<const int8_t>(tipSpecificStateCode),	// stateCodesShPtr
-						1,													// number of relative rate categories
-						likelihood->getNStates(),													// number of states in the model
-						NULL,
-						true,														// managePMatrices
+						tipSpecificStateCode,	// stateCodesShPtr
 						likelihood->getCondLikelihoodStorage());
+						*/
 		}
 	return td;
 #else
@@ -696,13 +748,13 @@ void UnimapTopoMove::revert()
 		unsigned numModelSubsets = getUniventsVectorConstRef(*x).size();
 
 		for (unsigned i = 0 ; i < numModelSubsets; ++i)
-			resampleInternalNodeStates(pre_root_posterior->getCLA(), pre_cla->getCLA(), i);
+			resampleInternalNodeStates(pre_root_posterior[i]->getCLA(), pre_cla[i]->getCLA(), i);
 		}
 	}
 
 void UnimapTopoMove::resampleInternalNodeStates(const LikeFltType * root_state_posterior, const LikeFltType * des_cla, unsigned subsetIndex)
 {
-	const UniventProbMgr & upm = likelihood->GetUniventProbMgrConstRef();
+	const UniventProbMgr & upm = likelihood->GetUniventProbMgrConstRef(subsetIndex);
 	Lot & rngRef = *rng;
 	
 	TreeNode * aPar = a->GetParent();
@@ -743,7 +795,7 @@ void UnimapNNIMove::accept()
 		unsigned numModelSubsets = getUniventsVectorConstRef(*a).size();
 
 		for (unsigned i = 0 ; i < numModelSubsets; ++i)
-			resampleInternalNodeStates(post_root_posterior->getCLA(), post_cla->getCLA(), i);
+			resampleInternalNodeStates(post_root_posterior[i]->getCLA(), post_cla[i]->getCLA(), i);
 		}
 	}
 

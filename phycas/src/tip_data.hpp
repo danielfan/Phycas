@@ -154,8 +154,8 @@ class TipData
 		const Univents & 							getUniventsConstRef(unsigned subsetIndex)const {return univents[subsetIndex];}
 		void										swapUnivents(InternalData * other);
 	
-        state_list_vect_t &							getTipStatesArray() {return state_codes;}
-        const state_list_vect_t &					getConstTipStatesArray() const {return state_codes;}
+        state_list_t & 								getTipStatesArray(unsigned i) {return state_codes.at(i);}
+        const state_list_t &						getConstTipStatesArray(unsigned i) const {return state_codes.at(i);}
 		const uint_vect_t &							getConstStateListPos(unsigned i) const;
 	
 		friend void									calcPMatTranspose(const TreeLikelihood & treeLikeInfo, const TipData & tipData, double edgeLength);

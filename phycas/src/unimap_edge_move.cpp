@@ -180,6 +180,8 @@ void UnimapEdgeMove::proposeNewState()
 			}
 		}
 
+#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
+# error "not fixed yet"
 	// Modify the edge
 	const std::vector<Univents> & uVec =  getUniventsVectorConstRef(*origNode);
 	mdot = 0;
@@ -194,6 +196,7 @@ void UnimapEdgeMove::proposeNewState()
 		mdot += u.getMDot();
 		}
 	r = std::exp(lambda*(rng->Uniform(FILE_AND_LINE) - 0.5));
+#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -202,7 +205,7 @@ void UnimapEdgeMove::proposeNewState()
 */
 bool UnimapEdgeMove::update()
 	{
-#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
+#if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
 	// The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
 	// A proposed UnimapEdgeMove cannot be accepted without changing edge lengths, so it is best to just bail out now.
 	if (is_fixed)
@@ -214,7 +217,7 @@ bool UnimapEdgeMove::update()
 	PHYCAS_ASSERT(p);
 
 	proposeNewState();
-	double nsites = (double)likelihood->getNPatterns();
+	double nsites = (double)likelihood->getNumPatterns();
 	double uniformization_lambda = model->calcUniformizationLambda();
 	
     bool is_internal_edge       = origNode->IsInternal();

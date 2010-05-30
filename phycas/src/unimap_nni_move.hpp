@@ -57,17 +57,18 @@ class UnimapTopoMove : public MCMCUpdater
 		virtual void			setLot(LotShPtr p);
 
 	protected:
-		void DebugSaveNexusFile(std::ostream & nxsf, double lnlike);
-		bool CheckWithPaup(double lnlike);
+
+		void DebugSaveNexusFile(std::ostream & nxsf, double lnlike, unsigned subsetIndex);
+		bool CheckWithPaup(double lnlike, unsigned);
 
 		// ProposeStateWithTemporaries is called by proposeNewState and must be defined by subclasses
 		virtual void			ProposeStateWithTemporaries(ChainManagerShPtr &) = 0;
 
-		TipData *				createTipDataFromUnivents(const Univents &, TipData *);
+		TipData *				createTipDataFromUnivents(const Univents &, TipData *, unsigned subsetIndex);
 		double					FourTaxonLnLBeforeMove();
-		double					FourTaxonLnLFromCorrectTipDataMembers();
-		double					HarvestLnLikeFromCondLikePar(CondLikelihoodShPtr focalCondLike, ConstCondLikelihoodShPtr neighborCondLike, const double * const * childPMatrix);
-		void					storePMatTransposed(double **& cached, const double *** p_mat_array);
+		double					FourTaxonLnLFromCorrectTipDataMembers(unsigned subsetIndex);
+		double					HarvestLnLikeFromCondLikePar(CondLikelihoodShPtr focalCondLike, ConstCondLikelihoodShPtr neighborCondLike, const double * const * childPMatrix, unsigned subsetIndex);
+		void					storePMatTransposed(double **& cached, const double *** p_mat_array, unsigned subsetIndex);
 		TreeNode *				randomInternalAboveSubroot();
 		void					resampleInternalNodeStates(const LikeFltType * root_state_posterior, const LikeFltType * des_cla, unsigned subsetIndex);
 
@@ -88,15 +89,15 @@ class UnimapTopoMove : public MCMCUpdater
 		TreeNode *				bLenNd;						/**< xxxx */
 		TreeNode *				cLenNd;						/**< xxxx */
 		TreeNode *				dLenNd;						/**< xxxx */
-		TipData *				aTipData;					/**< xxxx */
-		TipData *				bTipData;					/**< xxxx */
-		TipData *				cTipData;					/**< xxxx */
-		TipData *				dTipData;					/**< xxxx */
+		std::vector<TipData *>				aTipData;					/**< xxxx */
+		std::vector<TipData *>				bTipData;					/**< xxxx */
+		std::vector<TipData *>				cTipData;					/**< xxxx */
+		std::vector<TipData *>				dTipData;					/**< xxxx */
 		
-		double	* *				pre_x_pmat_transposed;		/**< xxxx */
-		double	* *				pre_y_pmat_transposed;		/**< xxxx */
-		double	* *				pre_w_pmat_transposed;		/**< xxxx */
-		double	* *				pre_z_pmat_transposed;		/**< xxxx */
+		std::vector<double	* *	>			pre_x_pmat_transposed;		/**< xxxx */
+		std::vector<double	* *	>			pre_y_pmat_transposed;		/**< xxxx */
+		std::vector<double	* *	>			pre_w_pmat_transposed;		/**< xxxx */
+		std::vector<double	* *	>			pre_z_pmat_transposed;		/**< xxxx */
 
 		bool					doSampleInternalStates;
 
@@ -109,12 +110,12 @@ class UnimapTopoMove : public MCMCUpdater
 
 		double					prev_ln_prior;				/**< The log prior of the starting state */
 		double					prev_ln_like;				/**< The log likelihood of the starting state */
-		CondLikelihoodShPtr		pre_root_posterior;			/**< xxxx */
-		CondLikelihoodShPtr		pre_cla;					/**< xxxx */
-		double * * *			pre_p_mat;					/**< xxxx */
-		CondLikelihoodShPtr		post_root_posterior;		/**< xxxx */
-		CondLikelihoodShPtr		post_cla;					/**< xxxx */
-		double * * *			post_p_mat;					/**< xxxx */
+		std::vector<CondLikelihoodShPtr>		pre_root_posterior;			/**< xxxx */
+		std::vector<CondLikelihoodShPtr>		pre_cla;					/**< xxxx */
+		std::vector<double * * *>			pre_p_mat;					/**< xxxx */
+		std::vector<CondLikelihoodShPtr>		post_root_posterior;		/**< xxxx */
+		std::vector<CondLikelihoodShPtr>		post_cla;					/**< xxxx */
+		std::vector<double * * *>			post_p_mat;					/**< xxxx */
 		bool					scoringBeforeMove;			/**< xxxx */
 		
 	};
@@ -137,6 +138,7 @@ class UnimapNNIMove : public UnimapTopoMove
 		virtual void			ProposeStateWithTemporaries(ChainManagerShPtr &);
 
 		void					calculatePairwiseDistances();
+		void					calculatePairwiseDistancesForSubset(unsigned subsetIndex);
 		void					calculateProposalDist(bool);
 
 		virtual double			calcProposalLnDensity(double mean, double x);

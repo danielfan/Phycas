@@ -74,49 +74,52 @@ TipData::TipData(
 	pMatrixTranspose.resize(num_subsets);	
 	for (unsigned i = 0; i < num_subsets; ++i)
 		{
+		state_list_t & subset_state_codes = state_codes[i];
 		// copy state list positions for subset i
 		state_list_pos[i].resize(positions[i].size());
 		std::copy(positions[i].begin(), positions[i].end(), state_list_pos[i].begin());
 		
 		// copy state codes for subset i
-		state_codes[i].resize(states[i].size());
-		std::copy(states[i].begin(), states[i].end(), state_codes[i].begin());
+		subset_state_codes.resize(states[i].size());
+		std::copy(states[i].begin(), states[i].end(), subset_state_codes.begin());
 		
 		// allocate memory for the ScopedThreeDMatrix of transition probabilities for subset i
 		const unsigned num_obs_states	= partition->subset_num_states[i] + 1 + positions[i].size();
 		const unsigned num_rates		= partition->subset_num_rates[i];
 		const unsigned num_states		= partition->subset_num_states[i];
 		pMatrixTranspose[i].Initialize(num_rates, num_obs_states, num_states);
-		}
 
-#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
-    if (using_unimap)
-        {
-        univents.resize(nPatterns);
-        univents.setEndStates(state_codes.get());
-        std::vector<state_code_t> & scVec = univents.getEndStatesVecRef();
-        for (unsigned i = 0; i < nPatterns; ++i)
-        	{
-        	const state_code_t sc = state_codes[i];
-        	////////////////////////////////////////////////////////////////////
-        	// @@@@
-        	// This is really dangerous. 
-        	// In this loop, we alter the ambiguous data to have state 0.
-        	// This should work because we are calling sampleTipsAsDisconnected before MCMC (in MCMCManager.py)
-        	// It is hard to guarantee this (we could add a boolean flag to the univents class
-        	//		so that we could at least flag this univent as temporarily bogus).
-        	// It would be hard to do the correct sampling here because we would need the 
-        	//		neighboring nodes and a Lot instance.
-        	////////////////////////////////////////////////////////////////////
-        	if (sc < 0 || (int)sc >= (int)nStates)
-        		scVec[i] = 0; 
-        	// throw XLikelihood("Sorry, we currently do not support data sets with ambiguity or gaps when you are using uniformization-based methods");
-        	}
-		sMat =  NewTwoDArray<unsigned>(nStates, nStates); //@ we should make this only true in unimap mode!!!
-		for (unsigned i = 0; i < nStates*nStates ; ++i)
-			sMat[0][i] = 0;
-        }
-#endif
+#		if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
+			if (using_unimap)
+				{
+				univents[i].resize(nPatterns);
+				univents[i].setEndStates(&subset_state_codes[0]);
+				std::vector<state_code_t> & scVec = univents[i].getEndStatesVecRef();
+				for (unsigned k = 0; k < nPatterns; ++i)
+					{
+					const state_code_t sc = subset_state_codes[0];
+					////////////////////////////////////////////////////////////////////
+					// @@@@
+					// This is really dangerous. 
+					// In this loop, we alter the ambiguous data to have state 0.
+					// This should work because we are calling sampleTipsAsDisconnected before MCMC (in MCMCManager.py)
+					// It is hard to guarantee this (we could add a boolean flag to the univents class
+					//		so that we could at least flag this univent as temporarily bogus).
+					// It would be hard to do the correct sampling here because we would need the 
+					//		neighboring nodes and a Lot instance.
+					////////////////////////////////////////////////////////////////////
+					if (sc < 0 || (int)sc >= (int)num_states)
+						scVec[k] = 0; 
+					// throw XLikelihood("Sorry, we currently do not support data sets with ambiguity or gaps when you are using uniformization-based methods");
+					}
+				unsigned ** s =  NewTwoDArray<unsigned>(num_states, num_states); //@ we should make this only true in unimap mode!!!
+				sMat[i] = s;
+				for (unsigned j = 0; i < num_states*num_states ; ++j)
+					sMat[0][j] = 0;
+				}
+#		endif
+
+		}
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -125,9 +128,8 @@ TipData::TipData(
 */
 TipData::~TipData()
 	{
-#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
-	DeleteTwoDArray<unsigned>(sMat);
-#endif
+	for (std::vector<unsigned **>::iterator sIt = sMat.begin(); sIt != sMat.end(); ++sIt)
+		DeleteTwoDArray<unsigned>(*sIt);
 	// Invalidate the parental CLAs if they exist
 	if (parWorkingCLA)
 		{

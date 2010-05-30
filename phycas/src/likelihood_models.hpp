@@ -80,7 +80,7 @@ class Model	{
 											{return time_stamp;}
 
 		// Member functions related to relative state frequencies
-		unsigned						getNStates() const;
+		unsigned						getNumStates() const;
 		const std::vector<double>	&	getStateFreqs() const;
 		virtual void					setNucleotideFreqs(double freqA, double freqC, double freqG, double freqT);
 		virtual void					setAllFreqsEqual();

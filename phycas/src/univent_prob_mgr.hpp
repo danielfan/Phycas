@@ -38,7 +38,7 @@ class Tree;
 class UniventProbMgr
     {
 	public:
-		                                    UniventProbMgr(PartitionModelShPtr);
+		                                    UniventProbMgr(ModelShPtr);
 		
 		void                                sampleDescendantStates(Univents & u, const double * const * p_mat, const LikeFltType * des_cla, const int8_t * parent_states, Lot & rng) const;
 		void                                sampleRootStates(Univents & u, const LikeFltType * rootStatePosterior, Lot & rng, bool posteriors_normalized, unsigned * obs_state_counts = NULL) const;
@@ -53,10 +53,13 @@ class UniventProbMgr
 		const double * const *			    getUMatConst(unsigned m) const;
 		//double * *					    getUMat(unsigned m);
 		void							    recalcUMat();
-		double							    calcUnimapLnL(const Tree & t, const unsigned num_patterns, const unsigned * obs_state_counts, const unsigned * const  * sMat);
+		double							    calcUnimapLnL(const Tree & t, const unsigned num_patterns, const unsigned * obs_state_counts, const unsigned * const  * sMat, unsigned subsetIndex);
 		
 		bool								isMappingValid() const {return isMappingValidVar;}
 		void								setIsMappingValid(bool v) {isMappingValidVar = v;}
+		unsigned getNumStates() const {return model->getNumStates();}
+		ModelShPtr getModel() const {return model;}
+		
 	private:
 
 		void                                unimapEdgeOneSite(Univents &u, unsigned index, int8_t start_state, int8_t end_state, double transition_prob, double edgelen, bool sampleTimes, Lot & rng) const;
@@ -72,7 +75,7 @@ class UniventProbMgr
 		mutable double					    lambda;	        /**< rate at which uniformization events, or univents, occur */
 		mutable unsigned 				    maxm;           /**< */
 		unsigned						    numStates;      /**< */
-		PartitionModelShPtr					model;          /**< */
+		ModelShPtr							model;          /**< */
 		bool							    sampleTimes;    /**< */
 		mutable SquareMatrix			    scratchMatOne;  /**< */
 		mutable SquareMatrix			    scratchMatTwo;  /**< */

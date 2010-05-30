@@ -42,8 +42,8 @@ public:
     virtual								~PartitionModel();
     	
 	// Utilities
-    unsigned                        	getNumSubsets();
-    unsigned                        	getTotalNumPatterns();
+    unsigned                        	getNumSubsets() const;
+    unsigned                        	getTotalNumPatterns() const;
 	
 	// Accessors
 	ModelShPtr							getModel(unsigned i) {return subset_model[i];}

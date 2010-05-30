@@ -40,7 +40,7 @@ PartitionModel::~PartitionModel()
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns current number of subsets by returning the length of the `subset_model' vector.
 */
-unsigned PartitionModel::getNumSubsets()
+unsigned PartitionModel::getNumSubsets() const
     {
     // In debug mode check to make sure everyone agrees about the number of subsets
     PHYCAS_ASSERT(subset_num_patterns.size() == subset_model.size());
@@ -53,7 +53,7 @@ unsigned PartitionModel::getNumSubsets()
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns the total number of patterns (sum over all partition subsets).
 */
-unsigned PartitionModel::getTotalNumPatterns()
+unsigned PartitionModel::getTotalNumPatterns() const
     {
     //@POL need to make total_num_patterns data member if this function is called often!
     return (unsigned)std::accumulate(subset_num_patterns.begin(), subset_num_patterns.end(), 0);
@@ -144,7 +144,7 @@ void PartitionModel::addModel(ModelShPtr m)
 	PHYCAS_ASSERT(m);
 	subset_model.push_back(m);
 	subset_relrates.push_back(1.0);
-	subset_num_states.push_back(m->getNStates());
+	subset_num_states.push_back(m->getNumStates());
 	subset_num_rates.push_back(m->getNRatesTotal());
 	subset_num_patterns.push_back(0);	// can't get this from model
 	}
@@ -168,7 +168,7 @@ void PartitionModel::setModelsVect(const ModelVect & models)
 	subset_num_patterns.resize(new_size);
 	for (unsigned i = 0; i < new_size; ++i)
 		{
-		subset_num_states[i] = subset_model[i]->getNStates();
+		subset_num_states[i] = subset_model[i]->getNumStates();
 		subset_num_rates[i] = subset_model[i]->getNRatesTotal();
 		subset_num_patterns[i] = 0;	// can't get this from model
 		}

@@ -197,6 +197,47 @@ const Univents & getUniventsConstRef(const TreeNode &nd, unsigned subsetIndex)
 	return (nd.IsTip() ? nd.GetTipData()->getUniventsConstRef(subsetIndex) : nd.GetInternalData()->getUniventsConstRef(subsetIndex));
 	}
 
+
+TreeUniventSubsetStruct::TreeUniventSubsetStruct(ModelShPtr mod, unsigned np, unsigned subsetInd)
+	:univentProbMgr(mod),
+	 treeSMat(NULL),
+	 numPatterns(np),
+	 subsetIndex(subsetInd)
+	{
+	}
+
+TreeUniventSubsetStruct::~TreeUniventSubsetStruct()
+{
+	if (treeSMat != NULL)
+		DeleteTwoDArray<unsigned>(treeSMat);
+}
+
+
+
+double TreeUniventSubsetStruct::calcUnimapLnL(TreeShPtr t, TreeLikelihood & treeLike)
+{
+	const unsigned num_states = getNumStates();
+	if (!invalidUniventMappingNodes.empty())
+		{
+		// Create a new matrix of observed transitions
+		if (treeSMat == NULL)
+			{
+			treeSMat = NewTwoDArray<unsigned>(num_states, num_states); 
+			for (unsigned i = 0; i < num_states*num_states; ++i)
+				treeSMat[0][i] = 0;
+			}
+		
+		univentProbMgr.recalcUMat();
+		std::set<TreeNode *>::iterator ndIt = invalidUniventMappingNodes.begin(); 
+		for (;ndIt != invalidUniventMappingNodes.end(); ++ndIt)
+			remapUniventsForNode(t, *ndIt, treeLike);
+		
+		univentProbMgr.setIsMappingValid(true);
+		invalidUniventMappingNodes.clear();
+		}
+	const unsigned num_patterns = getNumPatterns();
+	return univentProbMgr.calcUnimapLnL(*t, num_patterns, &obs_state_counts[0], treeSMat, subsetIndex);
+}
 // **************************************************************************************
 // ***** Former TreeLikelihood inlines (begin) ******************************************
 // **************************************************************************************
@@ -214,10 +255,14 @@ TreeLikelihood::TreeLikelihood(
   partition_model(mod),
   debugging_now(false),
   using_unimap(false),
-  univentProbMgr(mod),
-  treeSMat(NULL),
   nevals(0)
     {
+    for (unsigned i = 0; i < mod->getNumSubsets(); ++i)
+		{
+		ModelShPtr subsetModel = mod->getModel(i);
+		univentStructVec.push_back(new TreeUniventSubsetStruct(subsetModel, mod->getNumPatterns(i), i));
+		}
+
     unsigned num_subsets = partition_model->getNumSubsets();
     rate_means.resize(num_subsets);
     rate_probs.resize(num_subsets);
@@ -236,14 +281,18 @@ TreeLikelihood::TreeLikelihood(
 	underflow_manager.setCorrectToValue(10000.0);
 	}
 
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	TreeLikelihood destructor.
 */
 TreeLikelihood::~TreeLikelihood()
 	{
 	//std::cerr << "\n>>>>> TreeLikelihood dying..." << std::endl;
-	if (treeSMat != NULL)
-		DeleteTwoDArray<unsigned>(treeSMat);
+	std::vector<TreeUniventSubsetStruct*>::iterator usvIt = univentStructVec.begin();
+	for (; usvIt != univentStructVec.end(); ++usvIt)
+		{
+		delete *usvIt;
+		}
 	} 
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -345,50 +394,64 @@ void TreeLikelihood::useUnimap(
 	using_unimap = yes_or_no;
 	}
 
+
+
+std::string TreeUniventSubsetStruct::debugShowSMatrix() const
+{
+	std::string s;
+#if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
+		unsigned i, j, v, total, trace;
+		total = 0;
+		trace = 0;
+		const unsigned num_states = getNumStates();
+		std::vector<unsigned> rowsum(num_states, 0);
+		std::vector<unsigned> colsum(num_states, 0);
+		s = str(boost::format(" %8s") % " ");
+		for (j = 0; j < num_states; ++j)
+			{
+			s += boost::str(boost::format(" %8d") % j);
+			}
+		s += boost::str(boost::format(" %8s\n") % std::string("sum"));
+		for (i = 0; i < num_states; ++i)
+			{
+			s += boost::str(boost::format(" %8d") % i);
+			for (j = 0; j < num_states; ++j)
+				{
+				v = treeSMat[i][j];
+				s += boost::str(boost::format(" %8d") % v);
+				total += v;
+				rowsum[i] += v;
+				colsum[j] += v;
+				if (i == j)
+					trace += v;
+				}
+			s += boost::str(boost::format(" %8d\n") % rowsum[i]);
+			}
+
+		// print out row of column sums, then total at the end
+		s += boost::str(boost::format(" %8s") % std::string("sum"));
+		for (j = 0; j < num_states; ++j)
+			{
+			s += boost::str(boost::format(" %8d") % colsum[j]);
+			}
+		s += boost::str(boost::format(" %8d\n") % total);
+		s += boost::str(boost::format("trace	 = %d\n") % trace);
+		s += boost::str(boost::format("nunivents = %d\n") % nunivents);
+#endif
+	return s;
+}
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns a string representation of the current value of `treeSMat' for debugging purposes.
 */
 std::string TreeLikelihood::debugShowSMatrix()
 	{
-#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
-	unsigned i, j, v, total, trace;
-	total = 0;
-	trace = 0;
-	std::vector<unsigned> rowsum(num_states, 0);
-	std::vector<unsigned> colsum(num_states, 0);
-	std::string s = str(boost::format(" %8s") % " ");
-	for (j = 0; j < num_states; ++j)
+	std::string s;
+	for (unsigned ii = 0; ii < getNumSubsets(); ++ii)
 		{
-		s += boost::str(boost::format(" %8d") % j);
+		s += boost::str(boost::format("Subset %8d\n") % ii);
+		s += univentStructVec.at(ii)->debugShowSMatrix();
 		}
-	s += boost::str(boost::format(" %8s\n") % std::string("sum"));
-	for (i = 0; i < num_states; ++i)
-		{
-		s += boost::str(boost::format(" %8d") % i);
-		for (j = 0; j < num_states; ++j)
-			{
-			v = treeSMat[i][j];
-			s += boost::str(boost::format(" %8d") % v);
-			total += v;
-			rowsum[i] += v;
-			colsum[j] += v;
-			if (i == j)
-				trace += v;
-			}
-		s += boost::str(boost::format(" %8d\n") % rowsum[i]);
-		}
-
-	// print out row of column sums, then total at the end
-	s += boost::str(boost::format(" %8s") % std::string("sum"));
-	for (j = 0; j < num_states; ++j)
-		{
-		s += boost::str(boost::format(" %8d") % colsum[j]);
-		}
-	s += boost::str(boost::format(" %8d\n") % total);
-	s += boost::str(boost::format("trace	 = %d\n") % trace);
-	s += boost::str(boost::format("nunivents = %d\n") % nunivents);
-#endif
-	return std::string("");
+	return s;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -1085,7 +1148,7 @@ void TreeLikelihood::recalcRelativeRates()
 	{
 	for (unsigned i = 0; i < partition_model->getNumSubsets(); ++i)
 	    {
-		PHYCAS_ASSERT(partition_model->subset_num_states[i] == partition_model->subset_model[i]->getNStates());
+		PHYCAS_ASSERT(partition_model->subset_num_states[i] == partition_model->subset_model[i]->getNumStates());
 		PHYCAS_ASSERT(partition_model->subset_num_rates[i] == partition_model->subset_model[i]->getNRatesTotal());
         partition_model->subset_model[i]->recalcRatesAndProbs(rate_means[i], rate_probs[i]); //POL_BOOKMARK recalcRatesAndProbs call
 	    }
@@ -1118,7 +1181,7 @@ unsigned TreeLikelihood::sumPatternCounts() const
 |	Accessor function that returns the length of the `pattern_counts' vector, which is equal to the number of stored
 |	patterns.
 */
-unsigned TreeLikelihood::getNPatterns() const
+unsigned TreeLikelihood::getNumPatterns() const
 	{
 	return (unsigned)pattern_counts.size();
 	}
@@ -1148,7 +1211,7 @@ unsigned TreeLikelihood::getNRatesTotal(
 /*----------------------------------------------------------------------------------------------------------------------
 |	Accessor function that returns the number of states for subset i.
 */
-unsigned TreeLikelihood::getNStates(
+unsigned TreeLikelihood::getNumStates(
   unsigned i) 	/**< is the subset of interest */
   const
 	{
@@ -2259,7 +2322,7 @@ double TreeLikelihood::calcLogLikeAtSubstitutionSaturation() const
     for (unsigned i = 0; i < nss; ++i)
         {
 		// Create a vector containing the log of each state frequency
-		unsigned nstates = getNStates(i);
+		unsigned nstates = getNumStates(i);
 		const double * stateFreq = &partition_model->subset_model[i]->getStateFreqs()[0]; //PELIGROSO
 		double_vect_t logfreq(nstates, 0.0);
 		for (unsigned k = 0; k < nstates; ++k)
@@ -2333,28 +2396,14 @@ double TreeLikelihood::calcLnL(
 	PHYCAS_ASSERT(nd);
 	PHYCAS_ASSERT(nd->IsInternal());
 
-#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
+#if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
 	if (using_unimap)
 		{
-		if (!invalidUniventMappingNodes.empty())
-			{
-			// Create a new matrix of observed transitions
-			if (treeSMat == NULL)
-				{
-				treeSMat = NewTwoDArray<unsigned>(num_states, num_states); 
-				for (unsigned i = 0; i < num_states*num_states; ++i)
-					treeSMat[0][i] = 0;
-				}
-			
-			univentProbMgr.recalcUMat();
-			std::set<TreeNode *>::iterator ndIt = invalidUniventMappingNodes.begin(); 
-			for (;ndIt != invalidUniventMappingNodes.end(); ++ndIt)
-				remapUniventsForNode(t, *ndIt);
-			
-			univentProbMgr.setIsMappingValid(true);
-			invalidUniventMappingNodes.clear();
-			}
-		return univentProbMgr.calcUnimapLnL(*t, num_patterns, &obs_state_counts[0], treeSMat);
+		double allSubsetsLnL = 0.0;
+		std::vector<TreeUniventSubsetStruct*>::iterator usvIt = univentStructVec.begin();
+		for (; usvIt != univentStructVec.end(); ++usvIt)
+			allSubsetsLnL += (*usvIt)->calcUnimapLnL(t, *this);
+		return allSubsetsLnL;
 		}
 #endif
 
@@ -2533,13 +2582,14 @@ TipData * TreeLikelihood::allocateTipData(	//POLBM TreeLikelihood::allocateTipDa
 		local_state_list_pos[i].reserve(state_list_pos[i].size());
 		local_state_codes[i].reserve(state_list[i].size());
 		}
+#if 0 && DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
 	
 	// Loop through all patterns for this row of the matrix. For each global state code encountered,
 	// determine which local state code it represents, and build up the tipSpecificStateCode array
 	// as we go.
 	if (using_unimap)
 		{
-#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
+		
 		unsigned inc_site = 0;
 		const unsigned n_char = charIndexToPatternIndex.size();
 		for (unsigned site = 0; site < n_char; ++site)
@@ -2586,10 +2636,10 @@ TipData * TreeLikelihood::allocateTipData(	//POLBM TreeLikelihood::allocateTipDa
 				}
 			}
 		PHYCAS_ASSERT(inc_site == num_patterns);
-#endif
 		}
 	else    // not unimap
 		{
+#endif
 		// Example: 
 		// Here is the observed data for taxon k. The partition comprises 2 subsets: the first subset
 		// includes sites 1-4 and consists of DNA data. The second subset includes sites 5-9 and is 
@@ -2656,7 +2706,9 @@ TipData * TreeLikelihood::allocateTipData(	//POLBM TreeLikelihood::allocateTipDa
 					}
 				}
 			}
+#	if 0
 		}
+#	endif
 		
 	//POL num_patterns only used by unimap part of TipData constructor
 	unsigned num_patterns = partition_model->getTotalNumPatterns();
@@ -3044,7 +3096,7 @@ unsigned TreeLikelihood::compressDataMatrix(
 			}
 		else	// model for site j is not a codon model
 			{
-			unsigned nStates = getNStates(subset);
+			unsigned nStates = getNumStates(subset);
 	
 			pattern_count_t charWt = (wts ? wts[j] : 1.0); 
 			if (charWt > 0.0)
@@ -3697,29 +3749,16 @@ void TreeLikelihood::fullRemapping(
   LotShPtr rng,             /**< is the random number generator to use for the mapping */
   bool doSampleUnivents)    /**< is True if ... */
 	{
-#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING 
 	std::cerr << "\nFULL REMAPPING!!!!\n" << std::endl;
 	t->renumberInternalNodes(t->GetNTips());
-	univentProbMgr.recalcUMat();
 
-	// Reset the global matrix of uniformized transition counts
-	if (treeSMat == NULL)
-		{
-		treeSMat = NewTwoDArray<unsigned>(num_states, num_states); 
-		for (unsigned i = 0; i < num_states*num_states; ++i)
-			treeSMat[0][i] = 0;
-		}
-	nunivents = 0;
+	useAsLikelihoodRoot(NULL);
 
 	// Locate the root and subroot nodes
 	TreeNode * root_tip = t->GetFirstPreorder();
 	PHYCAS_ASSERT(root_tip->IsTipRoot());
 	TreeNode * subroot = root_tip->GetLeftChild();
 
-	//useAsLikelihoodRoot(subroot);
-	//invalidateAwayFromNode(*subroot);
-	//invalidateBothEnds(subroot);
-	useAsLikelihoodRoot(NULL);
 
 	// Work down the tree in postorder fashion updating conditional likelihoods
 	// (This code stolen from TreeLikelihood::calcLnLFromNode.)
@@ -3742,18 +3781,50 @@ void TreeLikelihood::fullRemapping(
 	// recalculated by the effective_postorder_edge_iterator
 	refreshCLA(*subroot, root_tip);
 
+	
+	std::vector<TreeUniventSubsetStruct*>::iterator usvIt = univentStructVec.begin();
+	for (; usvIt != univentStructVec.end(); ++usvIt)
+		{
+		(*usvIt)->fullRemapping(t, rng, doSampleUnivents, *this);
+		}
+	}
+
+void TreeUniventSubsetStruct::fullRemapping(
+  TreeShPtr t,		        /**< is the tree to use for the mapping */
+  LotShPtr rng,             /**< is the random number generator to use for the mapping */
+  bool doSampleUnivents,
+  TreeLikelihood & treeLike)    /**< is True if ... */
+	{
+	const unsigned num_states = getNumStates();
+	const unsigned num_patterns = getNumPatterns();
+	univentProbMgr.recalcUMat();
+	
+
+	// Reset the global matrix of uniformized transition counts
+	if (treeSMat == NULL)
+		{
+		treeSMat = NewTwoDArray<unsigned>(num_states, num_states); 
+		for (unsigned i = 0; i < num_states*num_states; ++i)
+			treeSMat[0][i] = 0;
+		}
+	nunivents = 0;
+
+	TreeNode * root_tip = t->GetFirstPreorder();
+	PHYCAS_ASSERT(root_tip->IsTipRoot());
+	TreeNode * subroot = root_tip->GetLeftChild();
+
 	// Work up the tree in preorder fashion choosing states for internal nodes along the way
 	TreeNode * nd = subroot;
 	SquareMatrix p_mat_trans_scratch(num_states, 0.0);
 	for (; nd != NULL; nd = nd->GetNextPreorder())
 		{
-		Univents & nd_univents = getUniventsRef(*nd);
+		Univents & nd_univents = getUniventsRef(*nd, subsetIndex);
 		if (nd->IsInternal())
 			{
 			// Choose states for all sites at this internal node
 			InternalData * nd_data =  nd->GetInternalData();
 			const LikeFltType * cla = nd_data->getChildCondLikePtr()->getCLA();
-			ConstPMatrices pmatrices = nd_data->getConstPMatrices();
+			ConstPMatrices pmatrices = nd_data->getConstPMatrices(subsetIndex);
 			double const * const * pmatrix = pmatrices[0]; // index is 0 because assuming only one rate 
 			if (nd == subroot)
 				{
@@ -3770,15 +3841,15 @@ void TreeLikelihood::fullRemapping(
 				//	  the likelihood (these frequencies are stored in the vector
 				//	  TreeLikelihood::obs_state_counts)
 				std::vector<LikeFltType> prob(num_states*num_patterns);
-				const std::vector<double> & freqs = model->getStateFreqs();
+				const std::vector<double> & freqs = getModel()->getStateFreqs();
 
 				// Gather arrays needed from the root_tip
 				double						   root_tip_edge_len  = subroot->GetEdgeLen();
 				const TipData &				   root_tip_data	  = *(root_tip->GetTipData());
-				double * * *				   root_tip_p		  = root_tip_data.getMutableTransposedPMatrices();
-				calcPMatTranspose(root_tip_p, root_tip_data.getConstStateListPos(),	 root_tip_edge_len);
-				const double * const * const * root_tip_tmatrix	  = root_tip_data.getConstTransposedPMatrices();
-				const int8_t *				   root_tip_codes	  = root_tip_data.getConstStateCodes();
+				double * * *				   root_tip_p		  = root_tip_data.getMutableTransposedPMatrices(subsetIndex);
+				treeLike.calcPMatTranspose(subsetIndex, root_tip_p, root_tip_data.getConstStateListPos(subsetIndex),	 root_tip_edge_len);
+				const double * const * const * root_tip_tmatrix	  = root_tip_data.getConstTransposedPMatrices(subsetIndex);
+				const int8_t *				   root_tip_codes	  = root_tip_data.getConstStateCodes(subsetIndex);
 				unsigned offset = 0;
 				for (unsigned j = 0; j < num_patterns; ++j)
 					{
@@ -3799,7 +3870,7 @@ void TreeLikelihood::fullRemapping(
 				obs_state_counts.resize(num_states);
 				univentProbMgr.sampleRootStates(nd_univents, &prob[0], *rng.get(), true, &obs_state_counts[0]);
 				if (doSampleUnivents)
-					remapUniventsForNode(t, nd);
+					remapUniventsForNode(t, nd, treeLike);
 				}
 			else
 				{
@@ -3808,16 +3879,16 @@ void TreeLikelihood::fullRemapping(
 				TreeNode * par = nd->GetParent();
 				PHYCAS_ASSERT(par != NULL);
 				PHYCAS_ASSERT(par->IsInternal());
-				Univents & ndP_univents = getUniventsRef(*par);
+				Univents & ndP_univents = getUniventsRef(*par, subsetIndex);
 				const std::vector<int8_t> & par_states_vec = ndP_univents.getEndStatesVecRef();
 				const int8_t * par_states_ptr = &par_states_vec[0];
 				univentProbMgr.sampleDescendantStates(nd_univents, pmatrix, cla, par_states_ptr, *rng.get());
 				if (doSampleUnivents)
-					remapUniventsForNode(t, nd);
+					remapUniventsForNode(t, nd, treeLike);
 				}
 			}
 		else if (doSampleUnivents)
-			remapUniventsForNode(t, nd);
+			remapUniventsForNode(t, nd, treeLike);
 			
 		if (false)
 			{
@@ -3838,25 +3909,26 @@ void TreeLikelihood::fullRemapping(
 	//std::cerr << "in fullRemapping\n";
 	
 	//debugCheckSMatrix(t);
-#endif
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
 |   Keeps the endstates constant, but generates a new mapping for the edge below nd.
 */
-void TreeLikelihood::remapUniventsForNode(TreeShPtr t, TreeNode * nd)
+void TreeUniventSubsetStruct::remapUniventsForNode(TreeShPtr t, TreeNode * nd, TreeLikelihood & treeLike)
 	{
-#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING 
+#if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING 
 	PHYCAS_ASSERT(localRng);
 	TreeNode * root_tip = t->GetFirstPreorder();
 	TreeNode * subroot = root_tip->GetLeftChild();
 
-	Univents & nd_univents = getUniventsRef(*nd);
+	Univents & nd_univents = getUniventsRef(*nd, subsetIndex);
 	const double nd_edge_len = nd->GetEdgeLen();
+	const unsigned num_states = getNumStates();
+	const unsigned num_patterns = getNumPatterns();
 	SquareMatrix p_mat_trans_scratch(num_states, 0.0);
 	double * * p_mat_trans_scratch_ptr = p_mat_trans_scratch.GetMatrix();
 	
-	unsigned * * nodeSMat = getNodeSMat(nd);
+	unsigned * * nodeSMat = getNodeSMat(nd, subsetIndex);
 	
 	if (false)
 		{
@@ -3886,7 +3958,7 @@ void TreeLikelihood::remapUniventsForNode(TreeShPtr t, TreeNode * nd)
 		InternalData * nd_data =  nd->GetInternalData();
 		TreeNode * par = nd->GetParent();
 		PHYCAS_ASSERT(par != NULL);
-		Univents & ndP_univents = getUniventsRef(*par);
+		Univents & ndP_univents = getUniventsRef(*par, subsetIndex);
 		const std::vector<int8_t> & par_states_vec = ndP_univents.getEndStatesVecRef();
 		if (nd == subroot)
 			{
@@ -3894,9 +3966,9 @@ void TreeLikelihood::remapUniventsForNode(TreeShPtr t, TreeNode * nd)
 			// Gather arrays needed from the root_tip
 			double						   root_tip_edge_len  = nd_edge_len;
 			const TipData &				   root_tip_data	  = *(root_tip->GetTipData());
-			double * * *				   root_tip_p		  = root_tip_data.getMutableTransposedPMatrices();
-			calcPMatTranspose(root_tip_p, root_tip_data.getConstStateListPos(),	 root_tip_edge_len);
-			const double * const * const * root_tip_tmatrix	  = root_tip_data.getConstTransposedPMatrices();
+			double * * *				   root_tip_p		  = root_tip_data.getMutableTransposedPMatrices(subsetIndex);
+			treeLike.calcPMatTranspose(subsetIndex, root_tip_p, root_tip_data.getConstStateListPos(subsetIndex), root_tip_edge_len);
+			const double * const * const * root_tip_tmatrix	  = root_tip_data.getConstTransposedPMatrices(subsetIndex);
 			fillTranspose(p_mat_trans_scratch_ptr, root_tip_tmatrix[0], num_states);
 			univentProbMgr.sampleUnivents(nd_univents, root_tip_edge_len, &par_states_vec[0], const_cast<const double * const*>(p_mat_trans_scratch_ptr), *localRng.get(), nodeSMat);
 			}
@@ -3906,10 +3978,10 @@ void TreeLikelihood::remapUniventsForNode(TreeShPtr t, TreeNode * nd)
 			// Choose states and mappings for non-subroot internal node
 			//
 			PHYCAS_ASSERT(par->IsInternal());
-			double *** pmatrices = nd_data->getPMatrices();
+			double *** pmatrices = nd_data->getPMatrices(subsetIndex);
 			const int8_t * par_states_ptr = &par_states_vec[0];
 			if (forceRecalcPmat)
-				calcPMat(pmatrices, nd_edge_len);
+				treeLike.calcPMat(subsetIndex, pmatrices, nd_edge_len);
 			double * * pmatrix = pmatrices[0]; // index is 0 because assuming only one rate 
 			univentProbMgr.sampleUnivents(nd_univents, nd_edge_len,  par_states_ptr, pmatrix, *localRng.get(), nodeSMat);
 			}
@@ -3920,16 +3992,16 @@ void TreeLikelihood::remapUniventsForNode(TreeShPtr t, TreeNode * nd)
 		TreeNode * par = nd->GetParent();
 		PHYCAS_ASSERT(par != NULL);
 		PHYCAS_ASSERT(par->IsInternal());
-		Univents & ndP_univents = getUniventsRef(*par);
+		Univents & ndP_univents = getUniventsRef(*par, subsetIndex);
 		const std::vector<int8_t> & par_states_vec = ndP_univents.getEndStatesVecRef();
 		const int8_t * par_states_ptr = &par_states_vec[0];
 		TipData * nd_data =	 nd->GetTipData();
 		if (forceRecalcPmat)
 			{
-			double * * * nd_p = nd_data->getMutableTransposedPMatrices();
-			calcPMatTranspose(nd_p,nd_data->getConstStateListPos(), nd_edge_len);
+			double * * * nd_p = nd_data->getMutableTransposedPMatrices(subsetIndex);
+			treeLike.calcPMatTranspose(subsetIndex, nd_p,nd_data->getConstStateListPos(subsetIndex), nd_edge_len);
 			}
-		double * * * tmatrices = nd_data->getTransposedPMatrices();
+		double * * * tmatrices = nd_data->getTransposedPMatrices(subsetIndex);
 		fillTranspose(p_mat_trans_scratch_ptr, tmatrices[0], num_states);
 		univentProbMgr.sampleUnivents(nd_univents, nd_edge_len, par_states_ptr, const_cast<const double **>(p_mat_trans_scratch_ptr), *localRng.get(), nodeSMat);
 		}
@@ -3970,10 +4042,18 @@ void TreeLikelihood::remapUniventsForNode(TreeShPtr t, TreeNode * nd)
 void TreeLikelihood::debugCheckSMatrix(
   TreeShPtr t)	/**< is the tree to use */
 	{
-#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING 
-	std::cerr << "debugCheckSMatrix\n";
 	PHYCAS_ASSERT(isUsingUnimap());
+	std::vector<TreeUniventSubsetStruct*>::iterator usvIt = univentStructVec.begin();
+	for (; usvIt != univentStructVec.end(); ++usvIt)
+		(*usvIt)->debugCheckSMatrix(t);
+	}
 
+void TreeUniventSubsetStruct::debugCheckSMatrix(
+  TreeShPtr t)	/**< is the tree to use */
+	{
+#if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING 
+	std::cerr << "debugCheckSMatrix\n";
+	const unsigned num_states = getNumStates();
 	unsigned * * debugSMat = NewTwoDArray<unsigned>(num_states, num_states); 
 
 	// Zero every element of debugSMat
@@ -4008,7 +4088,7 @@ void TreeLikelihood::debugCheckSMatrix(
 				// if the current node is the subroot, the starting states are the 
 				// observed states at the tip root
 				const TipData &	root_tip_data = *(root_tip->GetTipData());
-				starting_state = root_tip_data.getConstStateCodes();
+				starting_state = root_tip_data.getConstStateCodes(subsetIndex);
 				}
 			else
 				{

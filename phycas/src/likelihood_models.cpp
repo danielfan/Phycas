@@ -212,7 +212,7 @@ void Model::calcPMatrices(
 /*----------------------------------------------------------------------------------------------------------------------
 |	Accessor function that returns value of data member `num_states'.
 */
-unsigned Model::getNStates() const
+unsigned Model::getNumStates() const
 	{
 	return num_states;
 	}

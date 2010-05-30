@@ -50,8 +50,8 @@ UnimapSampleAmbigMove::UnimapSampleAmbigMove(
   	this->setTree(t);
   	this->setModel(model);
   	this->setWeight(weight);
-  	const unsigned numPatterns = treeLike->getNPatterns();
-  	const unsigned numStates = treeLike->getNStates();
+  	const unsigned numPatterns = treeLike->getNumPatterns();
+  	const unsigned numStates = treeLike->getNumStates();
 	for (TreeNode * nd = tree->GetFirstPreorder(); nd ; nd = nd->GetNextPreorder())
 		{
 		if (nd->IsTip())
@@ -186,7 +186,7 @@ void UnimapSampleAmbigMove::sampleNewStateArrayForNodeAsDisconnected(TreeNode * 
 
 	const std::vector<double> & sf = model->getStateFreqs();
 	const double * iniSF = & sf[0];
-  	const unsigned numStates = likelihood->getNStates();
+  	const unsigned numStates = likelihood->getNumStates();
 	std::vector<const double *> fakePMat(numStates, iniSF);
 	const double * const * pMat = &fakePMat[0];
 
@@ -269,7 +269,7 @@ void UnimapSampleAmbigMove::proposeNewStateArrayForNode(TreeNode * nd, const std
 	PHYCAS_ASSERT(likelihood->getNRatesTotal() == 1);
 	const double * const * pMat = const_cast<const double * const *>(pMats[0]); //@ assumes no rate het
 	const unsigned int * const stateListPosArr = &stateListPosVec[0];
-  	const unsigned numStates = likelihood->getNStates();
+  	const unsigned numStates = likelihood->getNumStates();
 	const unsigned numStateCodes = numStates + 1 + nPartialAmbigs;
 
 	std::vector<double> emptyCell;

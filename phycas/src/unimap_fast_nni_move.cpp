@@ -58,7 +58,7 @@ bool UnimapFastNNIMove::update()
 	// If this is the first time update has been called, need to initialize num_states, num_sites and log_umat
 	if (num_states == 0)
 		{
-		num_states = likelihood->getNStates();
+		num_states = likelihood->getNumStates();
 		PHYCAS_ASSERT(num_states > 0);
 		}
 		
@@ -69,11 +69,11 @@ bool UnimapFastNNIMove::update()
 		}
 	
 	// Make sure number of states hasn't changed since we instantiated this move
-	PHYCAS_ASSERT(num_states == likelihood->getNStates());
+	PHYCAS_ASSERT(num_states == likelihood->getNumStates());
 	
 	if (num_sites == 0)
 		{
-		num_sites = likelihood->getNPatterns();
+		num_sites = likelihood->getNumPatterns();
 		PHYCAS_ASSERT(num_sites > 0);
 		}
 	
@@ -579,7 +579,7 @@ TipData * UnimapFastNNIMove::createTipDataFromUnivents(const Univents & u, TipDa
 		}
 	else
 		{
-		const unsigned num_patterns = likelihood->getNPatterns();
+		const unsigned num_patterns = likelihood->getNumPatterns();
 		int8_t * tipSpecificStateCode = new int8_t[num_patterns];
 		u.fillStateCodeArray(tipSpecificStateCode);
 		std::vector<unsigned int> emptyStateListVec;
@@ -588,7 +588,7 @@ TipData * UnimapFastNNIMove::createTipDataFromUnivents(const Univents & u, TipDa
 						emptyStateListVec,												// stateListPosVec
 						boost::shared_array<const int8_t>(tipSpecificStateCode),	// stateCodesShPtr
 						1,													// number of relative rate categories
-						likelihood->getNStates(),													// number of states in the model
+						likelihood->getNumStates(),													// number of states in the model
 						NULL,
 						true,														// managePMatrices
 						likelihood->getCondLikelihoodStorage());
@@ -663,7 +663,7 @@ void UnimapFastNNIMove::DebugSaveNexusFile(TipData * xtd, TipData * ytd, TipData
     StateArr ydata = ytd->getTipStatesArray();
     StateArr zdata = ztd->getTipStatesArray();
     StateArr wdata = wtd->getTipStatesArray();
-    unsigned nchar = likelihood->getNPatterns();
+    unsigned nchar = likelihood->getNumPatterns();
     unsigned i;
 
     std::ofstream nxsf("tmp.nex", std::ios::app);
