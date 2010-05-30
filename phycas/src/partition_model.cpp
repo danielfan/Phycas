@@ -204,8 +204,9 @@ void PartitionModel::setNumSitesVect(const std::vector<unsigned> & nsites)
 	std::copy(nsites.begin(), nsites.end(), subset_num_sites.begin());
 	
 	//tmp
-	std::cerr << "\nDebug output: here are the number of sites in each subset:\n" << std::endl;
+	std::cerr << "\nDebug output: here are the number of sites in each subset:\n**********\n";
 	std::copy(subset_num_sites.begin(), subset_num_sites.end(), std::ostream_iterator<unsigned>(std::cerr, " "));
+	std::cerr << "\n**********\n" << std::endl;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
