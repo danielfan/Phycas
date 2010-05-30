@@ -37,7 +37,7 @@ typedef boost::weak_ptr<MCMCChainManager>			ChainManagerWkPtr;
 class UnimapSampleAmbigMove : public MCMCUpdater
 	{
 	public:
-		UnimapSampleAmbigMove(TreeLikeShPtr treeLike, TreeShPtr t, ModelShPtr model, unsigned weight);
+		UnimapSampleAmbigMove(TreeLikeShPtr treeLike, TreeShPtr t, unsigned weight);
 		virtual ~UnimapSampleAmbigMove() 
 			{
 			}
@@ -67,12 +67,13 @@ class UnimapSampleAmbigMove : public MCMCUpdater
 
 	protected:
 	
-	
-		typedef std::map<TreeNode *, std::vector<unsigned> > AmbigTipMap;
+		typedef std::vector<std::vector<unsigned> > AmbigIndices;
+		
+		typedef std::map<TreeNode *, AmbigIndices > AmbigTipMap;
 		AmbigTipMap ambigTipToAmbigCol;
 		
-		void proposeNewStateArrayForNode(TreeNode * nd, const std::vector<unsigned> & ambigInds);
-		void sampleNewStateArrayForNodeAsDisconnected(TreeNode * nd, const std::vector<unsigned> & ambigInds);
+		void proposeNewStateArrayForNode(TreeNode * nd, const std::vector<unsigned> & ambigInds, unsigned subsetIndex);
+		void sampleNewStateArrayForNodeAsDisconnected(TreeNode * nd, const std::vector<unsigned> & ambigInds, unsigned subsetIndex);
 
 
 	};

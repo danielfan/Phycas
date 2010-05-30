@@ -257,6 +257,7 @@ class TreeLikelihood
 		    	(*i)->setLot(r);
 		}
 
+		TreeUniventSubsetStruct			*getUniventStructVec(unsigned subsetIndex) {return univentStructVec.at(subsetIndex);}
 	protected:
 
 		UnderflowManager				underflow_manager;		/**< The object that takes care of underflow correction when computing likelihood for large trees */

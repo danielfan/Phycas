@@ -54,8 +54,15 @@ public:
 	const std::vector<unsigned>		&	getNumPatternsVect() const;
 	unsigned							getNumPatterns(unsigned i) const {return subset_num_patterns[i];}
 	const std::vector<unsigned>		&	getNumStatesVect() const;
+	unsigned							getNumStates(unsigned i) const {return subset_num_states[i];}
 	const std::vector<unsigned>		&	getNumRatesVect() const;
-	
+	unsigned							getNumRates(unsigned i) const {return subset_num_rates[i];}
+	unsigned	 						getNumSites(unsigned i) const 
+			{
+			assert(false); // Oh, Paul...
+			return 1; 
+			}
+
 	// Setters
 	void								addModel(ModelShPtr m);
 	void								setModelsVect(const std::vector<ModelShPtr> & models);

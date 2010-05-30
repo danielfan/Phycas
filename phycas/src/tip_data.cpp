@@ -43,8 +43,8 @@ TipData::TipData(
 	{
 #if DISABLED_UNTIL_SIMULATION_WORKING_WITH_PARTITIONING
 	const unsigned nToStates = nStates;	// simulated data never has ambiguities, so num. rows in T matrix is just nStates
-	ownedPMatrices.Initialize(nRates, nToStates, nStates);
-	pMatrixTranspose = ownedPMatrices.ptr;
+	//ownedPMatrices.Initialize(nRates, nToStates, nStates);
+	for pMatrixTranspose = ownedPMatrices.ptr;
 	sMat =  NewTwoDArray<unsigned>(nStates, nStates); //@ we should make this only true in unimap mode!!!
 	for (unsigned i = 0; i < nStates*nStates ; ++i)
 		sMat[0][i] = 0;

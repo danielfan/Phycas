@@ -211,7 +211,7 @@ void updater_pymod()
 		;
 
 	class_<phycas::UnimapSampleAmbigMove, bases<phycas::MCMCUpdater>, 
-		boost::noncopyable, boost::shared_ptr<phycas::UnimapSampleAmbigMove> >("UnimapSampleAmbigMove", init<TreeLikeShPtr, TreeShPtr, ModelShPtr, unsigned>()) 
+		boost::noncopyable, boost::shared_ptr<phycas::UnimapSampleAmbigMove> >("UnimapSampleAmbigMove", init<TreeLikeShPtr, TreeShPtr, unsigned>()) 
 		.def("update", &phycas::UnimapSampleAmbigMove::update)
 		.def("sampleTipsAsDisconnected", &phycas::UnimapSampleAmbigMove::sampleTipsAsDisconnected)
 		.def("getNumAmbigNodes", &phycas::UnimapSampleAmbigMove::getNumAmbigNodes)

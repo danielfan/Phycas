@@ -78,6 +78,7 @@ class UnimapEdgeMove : public MCMCUpdater
         
 		double						origEdgelen;	/**< Length of modified edge saved (in case revert is necessary) */
 		TreeNode *					origNode;		/**< Node owning the modified edge (in case revert is necessary) */
+//		std::vector<unsigned>		mdot;			/**< Number of univents over all sites for this edge */
 		unsigned					mdot;			/**< Number of univents over all sites for this edge */
 		double						r;				/**< ratio of new edgelen to original edgelen */
 	};

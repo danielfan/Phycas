@@ -153,6 +153,8 @@ void UnimapEdgeMove::revert()
 	}
 
 /*--------------------------------------------------------------------------------------------------------------------------
+|	First we regenerate a mapping
+|
 |	Chooses a random edge and changes its current length m to a new length m* using the following formula, where `lambda' is
 |	a tuning parameter.
 |>
@@ -180,20 +182,21 @@ void UnimapEdgeMove::proposeNewState()
 			}
 		}
 
-#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
-# error "not fixed yet"
+#if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
 	// Modify the edge
 	const std::vector<Univents> & uVec =  getUniventsVectorConstRef(*origNode);
 	mdot = 0;
+	unsigned subsetIndex = 0;
 	for (std::vector<Univents>::const_iterator uVecIt = uVec.begin(); uVecIt != uVec.end(); ++uVecIt)
 		{
 		const Univents & u = *uVecIt;
 		if (!u.isValid())
 			{
-			likelihood->GetUniventProbMgrRef().recalcUMat();
-			likelihood->remapUniventsForNode(tree, origNode);
+			likelihood->GetUniventProbMgrRef(subsetIndex).recalcUMat();
+			likelihood->getUniventStructVec(subsetIndex)->remapUniventsForNode(tree, origNode, *likelihood);
 			}
 		mdot += u.getMDot();
+		subsetIndex += 1;
 		}
 	r = std::exp(lambda*(rng->Uniform(FILE_AND_LINE) - 0.5));
 #endif
@@ -202,6 +205,9 @@ void UnimapEdgeMove::proposeNewState()
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calls proposeNewState(), then decides whether to accept or reject the proposed new state, calling accept() or 
 |	revert(), whichever is appropriate.
+|
+| We actually generate a new mapping all the time (in proposeNewState).  Then we change the branch length.  The branch length
+|	change might be rejected.
 */
 bool UnimapEdgeMove::update()
 	{
@@ -217,8 +223,14 @@ bool UnimapEdgeMove::update()
 	PHYCAS_ASSERT(p);
 
 	proposeNewState();
-	double nsites = (double)likelihood->getNumPatterns();
-	double uniformization_lambda = model->calcUniformizationLambda();
+	PartitionModelShPtr partModel = likelihood->getPartitionModel();
+	const double nSubsets = partModel->getNumSubsets();
+	std::vector<double> uniformization_lambda(nSubsets);
+	for (unsigned i = 0; i < nSubsets; ++i)
+		{
+		ModelShPtr subMod = partModel->getModel(i);
+		uniformization_lambda.push_back(subMod->calcUniformizationLambda());
+		}
 	
     bool is_internal_edge       = origNode->IsInternal();
     double prev_ln_prior		= (is_internal_edge ? p->calcInternalEdgeLenPriorUnnorm(origEdgelen) : p->calcExternalEdgeLenPriorUnnorm(origEdgelen));
@@ -228,7 +240,15 @@ bool UnimapEdgeMove::update()
 
 	double log_posterior_ratio = 0.0;
 	const double log_prior_ratio = curr_ln_prior - prev_ln_prior;
-    const double log_likelihood_ratio = (double)mdot*log(r) - nsites*uniformization_lambda*(curr_edgelen - origEdgelen);
+
+    double log_likelihood_ratio = (double)mdot*log(r);
+	
+	const double edgeLenDiff = (curr_edgelen - origEdgelen);
+	for (unsigned i = 0; i < nSubsets; ++i)
+		{
+		log_likelihood_ratio -= partModel->getNumSites(i)*uniformization_lambda[i]*edgeLenDiff;
+		}
+
     likelihood->incrementNumLikelihoodEvals();
     if (is_standard_heating)
         log_posterior_ratio = heating_power*(log_likelihood_ratio + log_prior_ratio);

@@ -42,35 +42,41 @@ using namespace phycas;
 UnimapSampleAmbigMove::UnimapSampleAmbigMove(
   TreeLikeShPtr treeLike,
   TreeShPtr t,
-  ModelShPtr model,
   unsigned weight)
   	{
-#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
+#if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
   	this->setTreeLikelihood(treeLike);
   	this->setTree(t);
-  	this->setModel(model);
+	PartitionModelShPtr partModel = treeLike->getPartitionModel();
   	this->setWeight(weight);
-  	const unsigned numPatterns = treeLike->getNumPatterns();
-  	const unsigned numStates = treeLike->getNumStates();
+  	const unsigned numSubsets = treeLike->getNumSubsets();
 	for (TreeNode * nd = tree->GetFirstPreorder(); nd ; nd = nd->GetNextPreorder())
 		{
 		if (nd->IsTip())
 			{
-			std::list<unsigned> ambigIndList;
-			TipData * td = nd->GetTipData();
-			PHYCAS_ASSERT(td);
-			const int8_t * scArray = td->getConstStateCodes();
-	        for (unsigned i = 0; i < numPatterns; ++i)
-	        	{
-	        	const int_state_code_t sc = scArray[i];
-				if (sc < 0 || sc >= (int_state_code_t)numStates)
-        			ambigIndList.push_back(i);
-	        	}
-	        if (!ambigIndList.empty())
-	        	{
-	        	std::vector<unsigned> ambigIndVec(ambigIndList.begin(), ambigIndList.end());
-	        	ambigTipToAmbigCol[nd] = ambigIndVec;
+			bool hasAmbig = false;
+			std::list<std::vector<unsigned> > ambigForAllSubsets;
+			for (unsigned subsetIndex = 0; subsetIndex < numSubsets; ++subsetIndex)
+				{
+				std::list<unsigned> ambigIndList;
+				TipData * td = nd->GetTipData();
+				PHYCAS_ASSERT(td);
+				const unsigned numPatterns = partModel->getNumPatterns(subsetIndex);
+				const unsigned numStates = partModel->getNumStates(subsetIndex);
+				const int8_t * scArray = td->getConstStateCodes(subsetIndex);
+				for (unsigned i = 0; i < numPatterns; ++i)
+					{
+					const int8_t sc = scArray[i];
+					if (sc < 0 || sc >= (int8_t)numStates)
+						ambigIndList.push_back(i);
+					}
+				if (!ambigIndList.empty())
+					hasAmbig = true;
+				std::vector<unsigned> ambigIndVec(ambigIndList.begin(), ambigIndList.end());
+				ambigForAllSubsets.push_back(ambigIndVec);
 				}
+			if (hasAmbig)
+				ambigTipToAmbigCol[nd] = AmbigIndices(ambigForAllSubsets.begin(), ambigForAllSubsets.end());
 			}
 		}
 #endif
@@ -123,7 +129,7 @@ void fillEndStateProb(std::vector<double> & esProb, const double * const * pMat,
 
 inline void fillEndStateProb(std::vector<double> & esProb, const double * const * pMat, const unsigned numStates, const int8_t * const stateListArr, const unsigned neighborSC, unsigned indexIntoStateList, const bool samplingTipRoot)
 	{
-#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
+#if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
 	PHYCAS_ASSERT(neighborSC >= 0 && neighborSC < numStates);
 	esProb.assign(numStates, 0.0);
 	//std::cerr << "esProb.size() == " << esProb.size() << '\n';
@@ -160,13 +166,18 @@ inline void fillEndStateProb(std::vector<double> & esProb, const double * const 
 	
 void UnimapSampleAmbigMove::sampleTipsAsDisconnected()
 	{
-#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
+#if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
 	AmbigTipMap::iterator ndIt = ambigTipToAmbigCol.begin();
 	for (; ndIt != ambigTipToAmbigCol.end(); ++ndIt)
 		{
 		TreeNode * nd = ndIt->first;
-		const std::vector<unsigned> & ambigInds = ndIt->second;
-		sampleNewStateArrayForNodeAsDisconnected(nd, ambigInds);
+		const AmbigIndices & indicesForAllSubsets = ndIt->second;
+		unsigned subsetIndex = 0;
+		for (AmbigIndices::const_iterator perSubsetIt = indicesForAllSubsets.begin();  perSubsetIt != indicesForAllSubsets.end() ; ++ perSubsetIt, ++subsetIndex)
+			{
+			const std::vector<unsigned> & ambigInds = *perSubsetIt;
+			sampleNewStateArrayForNodeAsDisconnected(nd, ambigInds, subsetIndex);
+			}
 		}
 #endif
 	}
@@ -174,25 +185,26 @@ void UnimapSampleAmbigMove::sampleTipsAsDisconnected()
 /*--------------------------------------------------------------------------------------------------------------------------
 | Updates a single node.
 */
-void UnimapSampleAmbigMove::sampleNewStateArrayForNodeAsDisconnected(TreeNode * nd, const std::vector<unsigned> & ambigInds)
+void UnimapSampleAmbigMove::sampleNewStateArrayForNodeAsDisconnected(TreeNode * nd, const std::vector<unsigned> & ambigInds, unsigned subsetIndex)
 	{
-#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
+#if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
 	PHYCAS_ASSERT(nd->IsTip());
 	TipData * td = nd->GetTipData();
-	PHYCAS_ASSERT(td);	
-	Univents & univents = td->getUniventsRef();
-	std::vector<int_state_code_t> & scVec = univents.getEndStatesVecRef();
-	const int_state_code_t * scArray = td->getConstStateCodes();
+	PHYCAS_ASSERT(td);
+	PartitionModelShPtr partModel = likelihood->getPartitionModel();
+	Univents & univents = td->getUniventsRef(subsetIndex);
+	std::vector<int8_t> & scVec = univents.getEndStatesVecRef();
+	const int8_t * scArray = td->getConstStateCodes(subsetIndex);
 
 	const std::vector<double> & sf = model->getStateFreqs();
 	const double * iniSF = & sf[0];
-  	const unsigned numStates = likelihood->getNumStates();
+  	const unsigned numStates = partModel->getNumStates(subsetIndex);
 	std::vector<const double *> fakePMat(numStates, iniSF);
 	const double * const * pMat = &fakePMat[0];
 
-	const StateListPos & stateListPosVec = td->getConstStateListPos();
+	const StateListPos & stateListPosVec = td->getConstStateListPos(subsetIndex);
 	const unsigned nPartialAmbigs = (unsigned)stateListPosVec.size();
-	const VecStateList & stateListVec = likelihood->getStateList();
+	const state_list_t & stateListVec = likelihood->getStateList()[subsetIndex];
 	const int8_t * const stateListArr = &stateListVec[0];
 	const unsigned int * const stateListPosArr = &stateListPosVec[0];
 	const unsigned numStateCodes = numStates + 1 + nPartialAmbigs;
@@ -203,13 +215,13 @@ void UnimapSampleAmbigMove::sampleNewStateArrayForNodeAsDisconnected(TreeNode * 
 	for (std::vector<unsigned>::const_iterator iIt = ambigInds.begin(); iIt != ambigInds.end(); ++iIt)
 		{
 		unsigned i = *iIt;
-		const int_state_code_t ambigSC = scArray[i];
+		const int8_t ambigSC = scArray[i];
 		std::vector<double> & esProb = endStateProb[ambigSC];
 		//std::cerr << "ambigSC = " << (int)ambigSC << " endStateProb.size() = " << endStateProb.size() <<'\n';
 
 		if (esProb.empty())
 			{
-			if (ambigSC > (int_state_code_t) numStates)
+			if (ambigSC > (int8_t) numStates)
 				{
 				unsigned indexIntoStateList = stateListPosArr[ambigSC];
 				fillEndStateProb(esProb, pMat, numStates, stateListArr, 0, indexIntoStateList, false);
@@ -225,8 +237,8 @@ void UnimapSampleAmbigMove::sampleNewStateArrayForNodeAsDisconnected(TreeNode * 
 	 	 	}
 //		std::cerr << "in sampleNewStateArrayForNodeAsDisconnected esProb.size() == " << esProb.size() << " numStates = " << numStates << '\n';
 
-		const int_state_code_t chosenStateCode = (int_state_code_t) rng->MultinomialDraw(&esProb[0], numStates);
-		PHYCAS_ASSERT(chosenStateCode >= 0 && chosenStateCode < (int_state_code_t)numStates);
+		const int8_t chosenStateCode = (int8_t) rng->MultinomialDraw(&esProb[0], numStates);
+		PHYCAS_ASSERT(chosenStateCode >= 0 && chosenStateCode < (int8_t)numStates);
 		scVec[i] = chosenStateCode;
 		}
 
@@ -241,35 +253,36 @@ void UnimapSampleAmbigMove::sampleNewStateArrayForNodeAsDisconnected(TreeNode * 
 /*--------------------------------------------------------------------------------------------------------------------------
 | Updates a single node.
 */
-void UnimapSampleAmbigMove::proposeNewStateArrayForNode(TreeNode * nd, const std::vector<unsigned> & ambigInds)
+void UnimapSampleAmbigMove::proposeNewStateArrayForNode(TreeNode * nd, const std::vector<unsigned> & ambigInds, unsigned subsetIndex)
 	{
-#if DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
+#if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
 	PHYCAS_ASSERT(nd->IsTip());
+	PartitionModelShPtr partModel = likelihood->getPartitionModel();
 	TipData * td = nd->GetTipData();
 	PHYCAS_ASSERT(td);
 	const bool samplingTipRoot = nd->IsTipRoot();
 	const TreeNode * neighbor = (samplingTipRoot ? nd->GetLeftChildConst() : nd->GetParentConst());
 	PHYCAS_ASSERT(neighbor);
 	const Univents & neighborUnivents = getUniventsConstRef(*neighbor, subsetIndex);
-	const std::vector<int_state_code_t> & neighborStateCodes = neighborUnivents.getEndStatesVecConstRef();
+	const std::vector<int8_t> & neighborStateCodes = neighborUnivents.getEndStatesVecConstRef();
 	
-	Univents & univents = td->getUniventsRef();
-	std::vector<int_state_code_t> & scVec = univents.getEndStatesVecRef();
-	const int_state_code_t * scArray = td->getConstStateCodes();
-	double * * * pMats = td->getTransposedPMatrices();
+	Univents & univents = td->getUniventsRef(subsetIndex);
+	std::vector<int8_t> & scVec = univents.getEndStatesVecRef();
+	const int8_t * scArray = td->getConstStateCodes(subsetIndex);
+	double * * * pMats = td->getTransposedPMatrices(subsetIndex);
 
 	const double edgeLen = (samplingTipRoot ? neighbor->GetEdgeLen() : nd->GetEdgeLen());
-	likelihood->calcPMat(pMats, edgeLen);
+	likelihood->calcPMat(subsetIndex, pMats, edgeLen);
 
 
-	const StateListPos & stateListPosVec = td->getConstStateListPos();
+	const StateListPos & stateListPosVec = td->getConstStateListPos(subsetIndex);
 	const unsigned nPartialAmbigs = (unsigned)stateListPosVec.size();
-	const VecStateList & stateListVec = likelihood->getStateList();
+	const state_list_t & stateListVec = likelihood->getStateList().at(subsetIndex);
 	const int8_t * const stateListArr = &stateListVec[0];
-	PHYCAS_ASSERT(likelihood->getNRatesTotal() == 1);
+	PHYCAS_ASSERT(partModel->getNumRates(subsetIndex) == 1);
 	const double * const * pMat = const_cast<const double * const *>(pMats[0]); //@ assumes no rate het
 	const unsigned int * const stateListPosArr = &stateListPosVec[0];
-  	const unsigned numStates = likelihood->getNumStates();
+  	const unsigned numStates = likelihood->getNumStates(subsetIndex);
 	const unsigned numStateCodes = numStates + 1 + nPartialAmbigs;
 
 	std::vector<double> emptyCell;
@@ -280,8 +293,8 @@ void UnimapSampleAmbigMove::proposeNewStateArrayForNode(TreeNode * nd, const std
 	for (std::vector<unsigned>::const_iterator iIt = ambigInds.begin(); iIt != ambigInds.end(); ++iIt)
 		{
 		unsigned i = *iIt;
-		const int_state_code_t neighborSC = neighborStateCodes[i];
-		const int_state_code_t ambigSC = scArray[i];
+		const int8_t neighborSC = neighborStateCodes[i];
+		const int8_t ambigSC = scArray[i];
 		std::vector<double> & esProb = endStateProb[neighborSC][ambigSC];
 		if (esProb.empty())
 			{
@@ -299,8 +312,8 @@ void UnimapSampleAmbigMove::proposeNewStateArrayForNode(TreeNode * nd, const std
 					esProb[j] = pRow[j];
 				}
  	 	 	}
-		const int_state_code_t chosenStateCode = (int_state_code_t) rng->MultinomialDraw(&esProb[0], numStates);
-		PHYCAS_ASSERT(chosenStateCode >= 0 && chosenStateCode < (int_state_code_t)numStates);
+		const int8_t chosenStateCode = (int8_t) rng->MultinomialDraw(&esProb[0], numStates);
+		PHYCAS_ASSERT(chosenStateCode >= 0 && chosenStateCode < (int8_t)numStates);
 		scVec[i] = chosenStateCode;
 		}
 
@@ -309,7 +322,7 @@ void UnimapSampleAmbigMove::proposeNewStateArrayForNode(TreeNode * nd, const std
 	//	in an inconsistent state. Above we call calcPMatCommon which may flag the pmat as "clean"
 	//	but it may not have all of the partial ambiguity columns, and it will not be 
 	//	the transpose of the pMat (which is what it usually stored at a tip).
-	likelihood->calcPMatTranspose(pMats, stateListPosVec, nd->GetEdgeLen());
+	likelihood->calcPMatTranspose(subsetIndex, pMats, stateListPosVec, nd->GetEdgeLen());
 
 	likelihood->flagNodeWithInvalidUnivents(nd);
 	univents.setValid(false);
@@ -326,8 +339,13 @@ void UnimapSampleAmbigMove::proposeNewState()
 	for (; ndIt != ambigTipToAmbigCol.end(); ++ndIt)
 		{
 		TreeNode * nd = ndIt->first;
-		const std::vector<unsigned> & ambigInds = ndIt->second;
-		proposeNewStateArrayForNode(nd, ambigInds);
+		const AmbigIndices & indicesForAllSubsets = ndIt->second;
+		unsigned subsetIndex = 0;
+		for (AmbigIndices::const_iterator perSubsetIt = indicesForAllSubsets.begin();  perSubsetIt != indicesForAllSubsets.end() ; ++ perSubsetIt, ++subsetIndex)
+			{
+			const std::vector<unsigned> & ambigInds = *perSubsetIt;
+			proposeNewStateArrayForNode(nd, ambigInds subsetIndex);
+			}
 		}
 #endif
 	}
