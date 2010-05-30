@@ -57,11 +57,7 @@ public:
 	unsigned							getNumStates(unsigned i) const {return subset_num_states[i];}
 	const std::vector<unsigned>		&	getNumRatesVect() const;
 	unsigned							getNumRates(unsigned i) const {return subset_num_rates[i];}
-	unsigned	 						getNumSites(unsigned i) const 
-			{
-			assert(false); // Oh, Paul...
-			return 1; 
-			}
+	unsigned	 						getNumSites(unsigned i) const; 
 
 	// Setters
 	void								addModel(ModelShPtr m);
@@ -69,6 +65,7 @@ public:
 	void								setSubsetRelRatesVect(const std::vector<double> & rrates);
 	void								setSubsetRelRatePrior(MultivarProbDistShPtr rrate_prior);
 	void								setNumPatternsVect(const std::vector<unsigned> & npatterns);
+	void								setNumSitesVect(const std::vector<unsigned> & nsites);
 	void								setNumStatesVect(const std::vector<unsigned> & nstates);
 	void								setNumRatesVect(const std::vector<unsigned> & nrates);
 
@@ -77,6 +74,7 @@ private:
 	MultivarProbDistShPtr				subset_relrate_prior;	/**< The prior on subset relative rates */
     std::vector<double>           		subset_relrates;		/**< The relative rates for each partition subset */
     std::vector<unsigned>           	subset_num_patterns;	/**< The number of site patterns for each partition subset */
+    std::vector<unsigned>           	subset_num_sites;		/**< The number of sites in each partition subset */
     std::vector<unsigned>           	subset_num_states;		/**< The number of states for each partition subset */
     std::vector<unsigned>           	subset_num_rates;		/**< The number of relative rate categories for each partition subset */
     ModelVect							subset_model;			/**< The substitution model for each partition subset */

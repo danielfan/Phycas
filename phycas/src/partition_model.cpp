@@ -121,6 +121,14 @@ const std::vector<unsigned> & PartitionModel::getNumPatternsVect() const
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Returns the number of sites in partition subset `i' by summing pattern counts over patterns in that subset.
+*/
+unsigned PartitionModel::getNumSites(unsigned i) const
+	{
+	return std::accumulate(subset_num_sites.begin(), subset_num_sites.end(), 0);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Returns const reference to `subset_num_states' vector.
 */
 const std::vector<unsigned> & PartitionModel::getNumStatesVect() const
@@ -183,6 +191,21 @@ void PartitionModel::setNumPatternsVect(const std::vector<unsigned> & npatterns)
 	PHYCAS_ASSERT(new_size > 0);
 	subset_num_patterns.resize(new_size);
 	std::copy(npatterns.begin(), npatterns.end(), subset_num_patterns.begin());
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets `subset_num_sites' to a copy of the supplied vector `nsites'.
+*/
+void PartitionModel::setNumSitesVect(const std::vector<unsigned> & nsites)
+	{
+	unsigned new_size = (unsigned)nsites.size();
+	PHYCAS_ASSERT(new_size > 0);
+	subset_num_sites.resize(new_size);
+	std::copy(nsites.begin(), nsites.end(), subset_num_sites.begin());
+	
+	//tmp
+	std::cerr << "\nDebug output: here are the number of sites in each subset:\n" << std::endl;
+	std::copy(subset_num_sites.begin(), subset_num_sites.end(), std::ostream_iterator<unsigned>(std::cerr, " "));
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

@@ -3171,17 +3171,20 @@ unsigned TreeLikelihood::compressDataMatrix(
 	
 	unsigned pattern_index = 0;
 	unsigned n_inc_chars = 0;
+	std::vector<unsigned> nsites_vect(nsubsets, 0);
 	for (unsigned i = 0; i < nsubsets; ++i)
 		{
+		unsigned num_sites_this_subset = 0;
 		subset_offset.push_back(pattern_index);
 		for (pattern_map_t::iterator mapit = pattern_map[i].begin(); mapit != pattern_map[i].end(); ++mapit, ++pattern_index)
-			{
+			{			
 			// mapit->first holds the pattern in the form of a vector of int8_t values
 			pattern_vect.push_back(mapit->first);
 			
 			// mapit->second holds the pattern count
 			pattern_counts.push_back(mapit->second);
-	
+			num_sites_this_subset += mapit->second;
+
 			// get list of sites that had this pattern
 			const uint_list_t & sites = pattern_to_sites_map[mapit->first];
 			
@@ -3196,7 +3199,9 @@ unsigned TreeLikelihood::compressDataMatrix(
 				++n_inc_chars;
 				}			
 			}	// loop over patterns in subset i
+		nsites_vect.push_back(num_sites_this_subset);
 		}	// loop over subsets
+	partition_model->setNumSitesVect(nsites_vect);
 		
 	PHYCAS_ASSERT(partition_model->getTotalNumPatterns() == pattern_index);
 	subset_offset.push_back(pattern_index);

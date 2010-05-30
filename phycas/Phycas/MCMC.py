@@ -84,6 +84,7 @@ class MCMC(PhycasCommand):
 		self.__dict__["unimap_node_slide_move_weight"] = 0		  # Unimap node_slide moves will be performed this many times per cycle
 		self.__dict__["unimap_node_slide_move_window"] = 0.05	   # Sets the minimum value of the tuning parameter for the UnimapNodeSlideMove
 		self.__dict__["draw_directly_from_prior"] = True	# If True, MCMCImpl.explorePrior function is used to draw samples directly from the prior during path sampling, which dramatically improves mixing compared to using MCMC proposals to explore the prior
+		self.__dict__["reference_tree_source"] = None	# A TreeCollection that will serve as the source of the reference tree topology. The reference tree should represent the best tree topology known for the current model and data set. Specifying a reference tree makes it possible to determine if and when SAMC finds that tree topology. If a string is passed in, it is interpreted as a the path to a file with trees.
 
 		# The data members added below are hidden from the user because they are set by the ss command
 		self.__dict__["doing_steppingstone_sampling"] = False
