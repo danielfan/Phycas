@@ -122,6 +122,7 @@ void Split::CreateFromPattern(
     {
     unsigned slen = (unsigned)s.size();
     std::vector<unsigned> on_bits;
+	excl_bits.clear();
     for (unsigned k = 0; k < slen; ++k)
         {
         if (s[k] == on_symbol)

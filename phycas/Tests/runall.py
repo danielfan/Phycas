@@ -1,6 +1,7 @@
 import os, sys, re
 import difflib
 debugging = False
+import phycas
 
 def mcmcOutputs(prefList):
     return [(pref + suff) for pref in prefList for suff in [".p", ".t"]]
@@ -112,9 +113,9 @@ def runTest(outFile, name, results):
     for f in results:   
         if os.path.exists(f):    # remove output files so that we can detect
             os.remove(f)    # if a script fails to create a new one
-    interpreter = 'python'
-    if sys.platform == 'win32' and debugging:
-        interpreter = 'python_d'
+    interpreter = sys.executable
+    #if sys.platform == 'win32' and debugging:
+    #    interpreter = 'python_d'
     if os.system('%s %s.py' % (interpreter,name)) != 0:
        sys.exit("Script aborted because of failed example")
     for f in results:
