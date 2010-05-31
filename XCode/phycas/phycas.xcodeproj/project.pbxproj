@@ -592,6 +592,7 @@
 		7AB51CC310CDA26800A865FF /* nxsutilcopy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nxsutilcopy.h; path = ncl/nxsutilcopy.h; sourceTree = NCL_ROOT; };
 		7AB51CE010CDA39200A865FF /* libncl.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libncl.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		D10DDE0C1125D4C500CC55F3 /* scubed.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = scubed.py; path = ../../inprep/scubed/scubed.py; sourceTree = SOURCE_ROOT; };
+		D11BACAB11B430400084D645 /* SplitTest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = SplitTest.py; path = ../../phycas/Tests/SplitTest/SplitTest.py; sourceTree = SOURCE_ROOT; };
 		D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpython2.6.dylib; path = lib/libpython2.6.dylib; sourceTree = PYTHON_ROOT; };
 		D164C4B01164ED8E00DB2E59 /* pinvar_paradox.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = pinvar_paradox.py; path = ../../inprep/partition/cicadas/pinvar_paradox/analysis/pinvar_paradox.py; sourceTree = SOURCE_ROOT; };
 		D17574CD10EB942400D4E2B0 /* partition.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = partition.py; path = ../../inprep/partition/partition.py; sourceTree = SOURCE_ROOT; };
@@ -629,6 +630,7 @@
 		D1B793DB11690025007A03AF /* test.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = test.py; path = ../../inprep/partition/cicadas/test.py; sourceTree = SOURCE_ROOT; };
 		D1BB2656111094A6002A8F79 /* LikelihoodCore.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = LikelihoodCore.py; path = ../../phycas/Phycas/LikelihoodCore.py; sourceTree = SOURCE_ROOT; };
 		D1BB2657111094A6002A8F79 /* MarkovChain.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = MarkovChain.py; path = ../../phycas/Phycas/MarkovChain.py; sourceTree = SOURCE_ROOT; };
+		D1C50BC511B456E5008D9B73 /* Unimap.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = Unimap.py; path = ../../phycas/Tests/Unimap/Unimap.py; sourceTree = SOURCE_ROOT; };
 		D1D55522111B7A9A001BD7CD /* LikelihoodTest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = LikelihoodTest.py; path = ../../phycas/Tests/LikelihoodTest/LikelihoodTest.py; sourceTree = SOURCE_ROOT; };
 		D1D66464112051EE00BA8E47 /* partition.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = partition.py; path = ../../phycas/Tests/partition/partition.py; sourceTree = SOURCE_ROOT; };
 		D1F281C3111B422C00FDE78C /* GTRTest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = GTRTest.py; path = ../../phycas/Tests/GTRTest/GTRTest.py; sourceTree = SOURCE_ROOT; };
@@ -1220,6 +1222,14 @@
 			name = scubed;
 			sourceTree = "<group>";
 		};
+		D11BACAA11B4301A0084D645 /* SplitTest */ = {
+			isa = PBXGroup;
+			children = (
+				D11BACAB11B430400084D645 /* SplitTest.py */,
+			);
+			name = SplitTest;
+			sourceTree = "<group>";
+		};
 		D17574C410EB940500D4E2B0 /* InPrep */ = {
 			isa = PBXGroup;
 			children = (
@@ -1284,12 +1294,22 @@
 		D1AC9561111A0A9E00335CDA /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				D1C50BC411B456B5008D9B73 /* Unimap */,
+				D11BACAA11B4301A0084D645 /* SplitTest */,
 				D1D66463112051D800BA8E47 /* partition */,
 				D1D55521111B7A81001BD7CD /* LikelihoodTest */,
 				D1F281C2111B420F00FDE78C /* GTRTest */,
 				D1AC9562111A0AF500335CDA /* runall.py */,
 			);
 			name = Tests;
+			sourceTree = "<group>";
+		};
+		D1C50BC411B456B5008D9B73 /* Unimap */ = {
+			isa = PBXGroup;
+			children = (
+				D1C50BC511B456E5008D9B73 /* Unimap.py */,
+			);
+			name = Unimap;
 			sourceTree = "<group>";
 		};
 		D1D55521111B7A81001BD7CD /* LikelihoodTest */ = {

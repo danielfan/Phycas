@@ -224,7 +224,7 @@ bool UnimapEdgeMove::update()
 
 	proposeNewState();
 	PartitionModelShPtr partModel = likelihood->getPartitionModel();
-	const double nSubsets = partModel->getNumSubsets();
+	const unsigned nSubsets = partModel->getNumSubsets();
 	std::vector<double> uniformization_lambda(nSubsets);
 	for (unsigned i = 0; i < nSubsets; ++i)
 		{
