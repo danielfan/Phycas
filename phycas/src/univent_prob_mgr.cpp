@@ -77,20 +77,16 @@ void UniventProbMgr::recalcUMat()
 #if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
 	this->lambda = model->calcLMat(lnUMat);
 	uMatVect.resize(2);
+	if (uMatVect[0].GetDimension() == 0)
+		uMatVect[0].CreateMatrix(numStates, 0.0);
+	uMatVect[0].Identity();
+
+	if (uMatVect[1].GetDimension() == 0)
+		uMatVect[1].CreateMatrix(numStates, 0.0);
+	double * * oneUPtr = uMatVect[1].GetMatrix();
+	lambda = model->calcUMat(oneUPtr);
+
     unsigned prev_maxm = maxm;
-	for (unsigned m = 0; m <= 2; ++m)
-        {
-        if (uMatVect[m].GetDimension() == 0)
-            uMatVect[m].CreateMatrix(numStates, 0.0);
-        if (m == 0)
-            uMatVect[m].Identity();
-        else if (m == 1)
-            {
-            // uniformized transition matrix
-            double * * oneUPtr = uMatVect[m].GetMatrix();
-            lambda = model->calcUMat(oneUPtr);
-            }
-		}
 	maxm = 1;
 
 	 // the reduceMaxm bit here is a hack to try to reduce maxm as opposed to allowing it to continue to creep up.

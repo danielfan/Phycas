@@ -39,7 +39,7 @@ typedef boost::weak_ptr<MCMCChainManager> ChainManagerWkPtr;
 class UnimapNodeSlideMove : public UnimapTopoMove
 	{
 	public:
-						        UnimapNodeSlideMove();
+						        UnimapNodeSlideMove(TreeLikeShPtr treeLike);
 						        virtual ~UnimapNodeSlideMove() {}
 
 		virtual double			getLnHastingsRatio() const;

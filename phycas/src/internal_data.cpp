@@ -37,9 +37,10 @@ InternalData::InternalData(
 	unimap(using_unimap),
 	state(-1), 
 	cla_pool(cla_storage),
-	sMat(0L)
+	sMat()
 	{
 	const unsigned num_subsets = partition->getNumSubsets();
+	
 	if (using_unimap)
 		{
 		univents.resize(num_subsets);
@@ -54,15 +55,12 @@ InternalData::InternalData(
 			sMat.push_back(sMatPtr);
 			}
 		}
-	else
+	pMatrices.resize(num_subsets);
+	for (unsigned i = 0; i < num_subsets; ++i)
 		{
-		pMatrices.resize(num_subsets);
-		for (unsigned i = 0; i < num_subsets; ++i)
-			{
-			const unsigned num_rates	= partition->subset_num_rates[i];
-			const unsigned num_states	= partition->subset_num_states[i];
-			pMatrices[i].Initialize(num_rates, num_states, num_states);
-			}
+		const unsigned num_rates	= partition->subset_num_rates[i];
+		const unsigned num_states	= partition->subset_num_states[i];
+		pMatrices[i].Initialize(num_rates, num_states, num_states);
 		}
 	}
 

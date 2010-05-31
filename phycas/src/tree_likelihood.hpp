@@ -93,6 +93,10 @@ class TreeUniventSubsetStruct
 		{
 		    localRng = r;
 		}
+		LotShPtr 						getLot() const
+		{
+		    return localRng;
+		}
 
 		void debugCheckSMatrix(TreeShPtr t);
 
@@ -253,6 +257,7 @@ class TreeLikelihood
 		}
 		void                            setLot(LotShPtr r)
 		{
+			univentRNG = r;
 		    for (std::vector<TreeUniventSubsetStruct*>::iterator i = univentStructVec.begin(); i != univentStructVec.end(); ++i)
 		    	(*i)->setLot(r);
 		}
@@ -293,7 +298,8 @@ class TreeLikelihood
 
 		void							calcTMatForSim(TipData &, double);
 		void							simulateImpl(SimDataShPtr sim_data, TreeShPtr t, LotShPtr rng, unsigned nchar, bool refresh_probs);
-
+		void							createNewUniventsStructs();
+		LotShPtr						univentRNG;
 	private:
 
 	protected:

@@ -234,7 +234,7 @@ void UnimapNodeSlideMove::accept()
 |	to 0.0. All other data members are automatically initialized (shared pointers) or are initialized via a call to 
 |	reset().
 */
-UnimapNodeSlideMove::UnimapNodeSlideMove() : UnimapTopoMove(),
+UnimapNodeSlideMove::UnimapNodeSlideMove(TreeLikeShPtr treeLike) : UnimapTopoMove(treeLike),
   moveType(MOVE_X_TOWARD_W),
   windowSize(0.05)
 	{

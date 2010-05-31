@@ -124,7 +124,7 @@ void updater_pymod()
 	//	.def("update", &phycas::UnimapFastNNIMove::update)
 	//	;
 	class_<phycas::UnimapNNIMove, bases<phycas::MCMCUpdater>, 
-		boost::noncopyable, boost::shared_ptr<phycas::UnimapNNIMove> >("UnimapNNIMove") 
+		boost::noncopyable, boost::shared_ptr<phycas::UnimapNNIMove> >("UnimapNNIMove", init<TreeLikeShPtr>()) 
 		.def("update", &phycas::UnimapNNIMove::update)
 		;
 	class_<phycas::TreeScalerMove, bases<phycas::MCMCUpdater>, 
@@ -204,7 +204,7 @@ void updater_pymod()
 		;
 
 	class_<phycas::UnimapNodeSlideMove, bases<phycas::MCMCUpdater>, 
-		boost::noncopyable, boost::shared_ptr<phycas::UnimapNodeSlideMove> >("UnimapNodeSlideMove") 
+		boost::noncopyable, boost::shared_ptr<phycas::UnimapNodeSlideMove> >("UnimapNodeSlideMove", init<TreeLikeShPtr>())
 		.def("update", &phycas::UnimapNodeSlideMove::update)
 		.def("setWindowWidth", &phycas::UnimapNodeSlideMove::setWindowWidth)
 		.def("getWindowWidth", &phycas::UnimapNodeSlideMove::getWindowWidth)

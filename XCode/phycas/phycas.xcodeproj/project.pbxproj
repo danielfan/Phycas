@@ -1914,6 +1914,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				GCC_PREPROCESSOR_DEFINITIONS = _GLIBCXX_DEBUG;
 				HEADER_SEARCH_PATHS = (
 					"$(PYTHON_ROOT)/include/python2.6",
 					"$(NCL_ROOT)",
@@ -2215,6 +2216,7 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				"New Setting" = "";
 				PRODUCT_NAME = Everything;
 			};
 			name = Debug;

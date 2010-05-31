@@ -772,7 +772,7 @@ void UnimapTopoMove::resampleInternalNodeStates(const LikeFltType * root_state_p
 	PHYCAS_ASSERT(otherInternal);
 	Univents & ndPU = getUniventsRef(*otherInternal, subsetIndex);
 	const int8_t * nd_states = &(ndU.getEndStatesVecConstRef()[0]);
-	upm.sampleDescendantStates(ndPU, (const double **) pre_p_mat[0], des_cla, nd_states, rngRef);
+	upm.sampleDescendantStates(ndPU, (const double **) pre_p_mat[subsetIndex][0], des_cla, nd_states, rngRef);
 	
 	likelihood->flagNodeWithInvalidUnivents(x);
 	getUniventsRef(*x, subsetIndex).setValid(false);
@@ -809,7 +809,7 @@ void UnimapNNIMove::accept()
 /*----------------------------------------------------------------------------------------------------------------------
 |	
 */
-UnimapTopoMove::UnimapTopoMove() : MCMCUpdater(),
+UnimapTopoMove::UnimapTopoMove(TreeLikeShPtr treeLikePtr) : MCMCUpdater(),
   x(0),
   y(0),
   z(0),
@@ -822,17 +822,46 @@ UnimapTopoMove::UnimapTopoMove() : MCMCUpdater(),
   bTipData(0),
   cTipData(0),
   dTipData(0),
-  pre_x_pmat_transposed(0L),
-  pre_y_pmat_transposed(0L),
-  pre_w_pmat_transposed(0L),
-  pre_z_pmat_transposed(0L),
+  pre_x_pmat_transposed(),
+  pre_y_pmat_transposed(),
+  pre_w_pmat_transposed(),
+  pre_z_pmat_transposed(),
   doSampleInternalStates(true)
   	{
+	this->setTreeLikelihood(treeLikePtr);
+	}
+
+void UnimapTopoMove::setTreeLikelihood(TreeLikeShPtr treeLike)
+	{
+	PartitionModelShPtr partModel = treeLike->getPartitionModel();
+	const unsigned numSubsets = partModel->getNumSubsets();
+	pre_x_pmat_transposed.clear();
+	pre_y_pmat_transposed.clear();
+	pre_w_pmat_transposed.clear();
+	pre_z_pmat_transposed.clear();
+	pre_root_posterior.clear();
+	pre_cla.clear();
+	pre_p_mat.clear();
+	post_root_posterior.clear();
+	post_cla.clear();
+	post_p_mat.clear();
+
+	pre_x_pmat_transposed.resize(numSubsets);
+	pre_y_pmat_transposed.resize(numSubsets);
+	pre_w_pmat_transposed.resize(numSubsets);
+	pre_z_pmat_transposed.resize(numSubsets);
+	pre_root_posterior.resize(numSubsets);
+	pre_cla.resize(numSubsets);
+	pre_p_mat.resize(numSubsets);
+	post_root_posterior.resize(numSubsets);
+	post_cla.resize(numSubsets);
+	post_p_mat.resize(numSubsets);
+	MCMCUpdater::setTreeLikelihood(treeLike);
 	}
 /*----------------------------------------------------------------------------------------------------------------------
 |	
 */
-UnimapNNIMove::UnimapNNIMove() : UnimapTopoMove()
+UnimapNNIMove::UnimapNNIMove(TreeLikeShPtr treeLike) : UnimapTopoMove(treeLike)
 	{
 	min_edge_len_mean = 0.02;
 	edge_len_prop_cv = 1;

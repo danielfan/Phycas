@@ -40,7 +40,7 @@ typedef boost::weak_ptr<MCMCChainManager> ChainManagerWkPtr;
 class UnimapTopoMove : public MCMCUpdater
 	{
 	public:
-								UnimapTopoMove();
+								UnimapTopoMove(TreeLikeShPtr treeLike);
 								virtual ~UnimapTopoMove();
 
 		// These are the virtual functions in the MCMCUpdater base class that we do not overload in UnimapTopoMove
@@ -55,6 +55,7 @@ class UnimapTopoMove : public MCMCUpdater
 		virtual void			proposeNewState();
 		virtual void			revert();
 		virtual void			setLot(LotShPtr p);
+		virtual void			setTreeLikelihood(TreeLikeShPtr treeLike);
 
 	protected:
 
@@ -110,11 +111,11 @@ class UnimapTopoMove : public MCMCUpdater
 
 		double					prev_ln_prior;				/**< The log prior of the starting state */
 		double					prev_ln_like;				/**< The log likelihood of the starting state */
-		std::vector<CondLikelihoodShPtr>		pre_root_posterior;			/**< xxxx */
-		std::vector<CondLikelihoodShPtr>		pre_cla;					/**< xxxx */
+		std::vector<CondLikelihoodShPtr>	pre_root_posterior;			/**< xxxx */
+		std::vector<CondLikelihoodShPtr>	pre_cla;					/**< xxxx */
 		std::vector<double * * *>			pre_p_mat;					/**< xxxx */
-		std::vector<CondLikelihoodShPtr>		post_root_posterior;		/**< xxxx */
-		std::vector<CondLikelihoodShPtr>		post_cla;					/**< xxxx */
+		std::vector<CondLikelihoodShPtr>	post_root_posterior;		/**< xxxx */
+		std::vector<CondLikelihoodShPtr>	post_cla;					/**< xxxx */
 		std::vector<double * * *>			post_p_mat;					/**< xxxx */
 		bool					scoringBeforeMove;			/**< xxxx */
 		
@@ -123,7 +124,7 @@ class UnimapTopoMove : public MCMCUpdater
 class UnimapNNIMove : public UnimapTopoMove
 	{
 	public:
-								UnimapNNIMove();
+								UnimapNNIMove(TreeLikeShPtr treeLike);
 								virtual ~UnimapNNIMove() {}
 
 		// These are virtual functions in the UnimapTopoMove base class

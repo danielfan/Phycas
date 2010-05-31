@@ -257,12 +257,6 @@ TreeLikelihood::TreeLikelihood(
   using_unimap(false),
   nevals(0)
     {
-    for (unsigned i = 0; i < mod->getNumSubsets(); ++i)
-		{
-		ModelShPtr subsetModel = mod->getModel(i);
-		univentStructVec.push_back(new TreeUniventSubsetStruct(subsetModel, mod->getNumPatterns(i), i));
-		}
-
     unsigned num_subsets = partition_model->getNumSubsets();
     rate_means.resize(num_subsets);
     rate_probs.resize(num_subsets);
@@ -2915,8 +2909,27 @@ void TreeLikelihood::copyDataFromDiscreteMatrix(
 	// The relative rate means and probabilities vectors need to be recalculated if the
 	// number of rate categories subsequently changes 
 	recalcRelativeRates();
+	
+	createNewUniventsStructs();
 	}
 
+void TreeLikelihood::createNewUniventsStructs()
+	{
+	LotShPtr rng = univentRNG;
+	for (std::vector<TreeUniventSubsetStruct*>::iterator i = univentStructVec.begin(); i != univentStructVec.end(); ++i)
+		{
+		rng = (*i)->getLot();
+		delete *i;
+		}
+	univentStructVec.clear();
+	for (unsigned i = 0; i < partition_model->getNumSubsets(); ++i)
+		{
+		ModelShPtr subsetModel = partition_model->getModel(i);
+		univentStructVec.push_back(new TreeUniventSubsetStruct(subsetModel, partition_model->getNumPatterns(i), i));
+		}
+	if (rng)
+		setLot(rng);	
+	}
 /*----------------------------------------------------------------------------------------------------------------------
 |	Saves information about the compressed data to a file named `filename'. All of the information displayed is 
 |	saved by the TreeLikelihood::compressDataMatrix function.
@@ -3931,7 +3944,7 @@ void TreeUniventSubsetStruct::remapUniventsForNode(TreeShPtr t, TreeNode * nd, T
 	double * * p_mat_trans_scratch_ptr = p_mat_trans_scratch.GetMatrix();
 	
 	unsigned * * nodeSMat = getNodeSMat(nd, subsetIndex);
-	
+	assert(nodeSMat);
 	if (false)
 		{
 		std::cerr << "\n@@@@@ working on node " << nd->GetNodeNumber() << (nd == root_tip ? " (root_tip) " : "") <<  (nd == subroot ? " (subroot) " : "") << " @@@@@\n";
