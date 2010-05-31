@@ -3656,21 +3656,22 @@ std::string TreeLikelihood::listPatterns(
 							
 			s << str(boost::format("%6d %6d %6.1f ") % j % i % c);
 	
-			unsigned ntax = (unsigned)p.size();
 			if (show_coded_states)
 				{
 				// start at 1 because first element is index of partition subset
-				for (unsigned k = 1; k < ntax + 1; ++k)
+				for (unsigned k = 1; k < p.size(); ++k)
 					{
-					s << str(boost::format("%d ") % (int)(p[k]));
+					int8_t el = p[k];
+					s << str(boost::format("%d ") % (int)(el));
 					}
 				}
 			else
 				{
 				// start at 1 because first element is index of partition subset
-				for (unsigned k = 1; k < ntax + 1; ++k)
+				for (unsigned k = 1; k < p.size(); ++k)
 					{
-					s << str(boost::format("%s") % getStateStr(i, p[k]));
+					int8_t el = p[k];
+					s << str(boost::format("%s") % getStateStr(i,el));
 					}
 				}
 			s << '\n';

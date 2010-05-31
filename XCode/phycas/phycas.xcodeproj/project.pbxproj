@@ -1914,7 +1914,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
-				GCC_PREPROCESSOR_DEFINITIONS = _GLIBCXX_DEBUG;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				HEADER_SEARCH_PATHS = (
 					"$(PYTHON_ROOT)/include/python2.6",
 					"$(NCL_ROOT)",
@@ -1950,6 +1950,181 @@
 				USER_HEADER_SEARCH_PATHS = "$(PHYCAS_ROOT)";
 			};
 			name = Release;
+		};
+		2D45B9F511B439CB006924B4 /* SlowDebug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5073E0C609E734A800EC74B6 /* phycasProj.xcconfig */;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				GCC_PREPROCESSOR_DEFINITIONS = _GLIBCXX_DEBUG;
+				HEADER_SEARCH_PATHS = (
+					"$(PYTHON_ROOT)/include/python2.6",
+					"$(NCL_ROOT)",
+					"$(BOOST_ROOT)",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(PYTHON_ROOT)/lib",
+					"$(PHYCAS_ROOT)/phycas/Conversions",
+				);
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.5;
+				USER_HEADER_SEARCH_PATHS = "$(PHYCAS_ROOT)";
+			};
+			name = SlowDebug;
+		};
+		2D45B9F611B439CB006924B4 /* SlowDebug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				"New Setting" = "";
+				PRODUCT_NAME = Everything;
+			};
+			name = SlowDebug;
+		};
+		2D45B9F711B439CB006924B4 /* SlowDebug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = All_Libraries;
+			};
+			name = SlowDebug;
+		};
+		2D45B9F811B439CB006924B4 /* SlowDebug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = All_Extensions;
+			};
+			name = SlowDebug;
+		};
+		2D45B9F911B439CB006924B4 /* SlowDebug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DEPLOYMENT_LOCATION = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = "$(PHYCAS_ROOT)/phycas/Conversions";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				PREBINDING = NO;
+				PRODUCT_NAME = boost_python;
+			};
+			name = SlowDebug;
+		};
+		2D45B9FA11B439CB006924B4 /* SlowDebug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = "$(PHYCAS_ROOT)/phycas/Conversions";
+				PREBINDING = NO;
+				PRODUCT_NAME = ncl;
+			};
+			name = SlowDebug;
+		};
+		2D45B9FB11B439CB006924B4 /* SlowDebug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
+			buildSettings = {
+				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../phycas/Conversions\"",
+				);
+				PRODUCT_NAME = _ConversionsExt;
+			};
+			name = SlowDebug;
+		};
+		2D45B9FC11B439CB006924B4 /* SlowDebug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
+			buildSettings = {
+				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../phycas/Conversions\"",
+				);
+				PRODUCT_NAME = _DataMatrixExt;
+			};
+			name = SlowDebug;
+		};
+		2D45B9FD11B439CB006924B4 /* SlowDebug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DEBUGGING_SYMBOLS = full;
+				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../phycas/Conversions\"",
+				);
+				PRODUCT_NAME = _LikelihoodExt;
+			};
+			name = SlowDebug;
+		};
+		2D45B9FE11B439CB006924B4 /* SlowDebug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DEBUGGING_SYMBOLS = full;
+				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../phycas/Conversions\"",
+				);
+				PRODUCT_NAME = _PhylogenyExt;
+			};
+			name = SlowDebug;
+		};
+		2D45B9FF11B439CB006924B4 /* SlowDebug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
+			buildSettings = {
+				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../phycas/Conversions\"",
+				);
+				PRODUCT_NAME = _ProbDistExt;
+			};
+			name = SlowDebug;
+		};
+		2D45BA0011B439CB006924B4 /* SlowDebug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_PREFIX_HEADER = "$(PHYCAS_ROOT)/phycas/src/std_force_include.hpp";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../phycas/Conversions\"",
+				);
+				PRODUCT_NAME = _ReadNexusExt;
+			};
+			name = SlowDebug;
 		};
 		7A98F28210CD3C22001E79F7 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -2239,6 +2414,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB916108733D950010E9CD /* Debug */,
+				2D45B9FB11B439CB006924B4 /* SlowDebug */,
 				1DEB916208733D950010E9CD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2248,6 +2424,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB916508733D950010E9CD /* Debug */,
+				2D45B9F511B439CB006924B4 /* SlowDebug */,
 				1DEB916608733D950010E9CD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2257,6 +2434,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7A98F28210CD3C22001E79F7 /* Debug */,
+				2D45B9FC11B439CB006924B4 /* SlowDebug */,
 				7A98F28310CD3C22001E79F7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2266,6 +2444,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7A98F31510CD5025001E79F7 /* Debug */,
+				2D45B9FF11B439CB006924B4 /* SlowDebug */,
 				7A98F31610CD5025001E79F7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2275,6 +2454,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7A98F39410CD5730001E79F7 /* Debug */,
+				2D45B9FD11B439CB006924B4 /* SlowDebug */,
 				7A98F39510CD5730001E79F7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2284,6 +2464,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7A98F52410CD62EF001E79F7 /* Debug */,
+				2D45B9FE11B439CB006924B4 /* SlowDebug */,
 				7A98F52510CD62EF001E79F7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2293,6 +2474,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7A98F56C10CD6484001E79F7 /* Debug */,
+				2D45BA0011B439CB006924B4 /* SlowDebug */,
 				7A98F56D10CD6484001E79F7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2302,6 +2484,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7A98F74D10CD7D1A001E79F7 /* Debug */,
+				2D45B9F811B439CB006924B4 /* SlowDebug */,
 				7A98F74E10CD7D1A001E79F7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2311,6 +2494,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7AB51C4B10CD9D5800A865FF /* Debug */,
+				2D45B9F911B439CB006924B4 /* SlowDebug */,
 				7AB51C4C10CD9D5800A865FF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2320,6 +2504,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7AB51CE110CDA39300A865FF /* Debug */,
+				2D45B9FA11B439CB006924B4 /* SlowDebug */,
 				7AB51CE210CDA39300A865FF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2329,6 +2514,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7AB51D5610CDA72D00A865FF /* Debug */,
+				2D45B9F711B439CB006924B4 /* SlowDebug */,
 				7AB51D5710CDA72D00A865FF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2338,6 +2524,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7AB51D6D10CDADC800A865FF /* Debug */,
+				2D45B9F611B439CB006924B4 /* SlowDebug */,
 				7AB51D6E10CDADC800A865FF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
