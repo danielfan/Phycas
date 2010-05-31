@@ -1,12 +1,9 @@
 from phycas import *
 
+setMasterSeed(19375)
 model.type                  = 'hky'
-
 mcmc.use_unimap             = True
-mcmc.outfile_prefix         = 'unitest'
-mcmc.random_seed            = 19375
 mcmc.data_source         = 'green.nex'
-mcmc.starting_tree_source   = 'random'
 mcmc.ncycles                = 100
 mcmc.sample_every           = 1
 mcmc.report_every           = 10

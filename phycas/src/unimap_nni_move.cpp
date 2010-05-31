@@ -54,7 +54,7 @@ void UnimapNNIMove::setLot(LotShPtr p)
 bool UnimapTopoMove::update()
 	{
 	bool accepted = false;
-#if DISABLED_UNTIL_WORKING_PRIOR_ACCOMMODATED
+#if 1 ||  DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
 	// The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
 	// A proposed UnimapNNIMove cannot be accepted without changing edge lengths, so it is best to bail out now.
 	if (is_fixed)

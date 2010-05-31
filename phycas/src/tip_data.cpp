@@ -70,7 +70,10 @@ TipData::TipData(
 	state_list_pos	= state_list_pos_vect_t(num_subsets);
 	state_codes 	= state_list_vect_t(num_subsets);
 	
-	pMatrixTranspose.resize(num_subsets);	
+	pMatrixTranspose.resize(num_subsets);
+	univents.resize(num_subsets);
+	sMat.resize(num_subsets);
+	
 	for (unsigned i = 0; i < num_subsets; ++i)
 		{
 		state_list_t & subset_state_codes = state_codes[i];
@@ -92,10 +95,11 @@ TipData::TipData(
 #		if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
 			if (using_unimap)
 				{
-				univents[i].resize(num_patterns);
-				univents[i].setEndStates(&subset_state_codes[0]);
-				std::vector<state_code_t> & scVec = univents[i].getEndStatesVecRef();
-				for (unsigned k = 0; k < num_patterns; ++i)
+				Univents & u = univents[i];
+				u.resize(num_patterns);
+				u.setEndStates(&subset_state_codes[0]);
+				std::vector<state_code_t> & scVec = u.getEndStatesVecRef();
+				for (unsigned k = 0; k < num_patterns; ++k)
 					{
 					const state_code_t sc = subset_state_codes[0];
 					////////////////////////////////////////////////////////////////////
@@ -113,9 +117,9 @@ TipData::TipData(
 					// throw XLikelihood("Sorry, we currently do not support data sets with ambiguity or gaps when you are using uniformization-based methods");
 					}
 				unsigned ** s =  NewTwoDArray<unsigned>(num_states, num_states); //@ we should make this only true in unimap mode!!!
+				for (unsigned j = 0; j < num_states*num_states ; ++j)
+					s[0][j] = 0;
 				sMat[i] = s;
-				for (unsigned j = 0; i < num_states*num_states ; ++j)
-					sMat[0][j] = 0;
 				}
 #		endif
 

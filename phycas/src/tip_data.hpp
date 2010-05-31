@@ -164,7 +164,7 @@ class TipData
 	private:
 
 		bool										unimap;				/**< true if tips are to be prepared for uniformized mapping likelihood; false if tips are to be prepared for Felsenstein-style integrated likelihoods */
-		std::vector<Univents>									univents;			/**< univents[i][j].first holds the state for univent j at site i, whereas univents[i][j].second holds the fraction of the edgelen representing the time at which the univent occurred */
+		std::vector<Univents>						univents;			/**< univents[i][j].first holds the state for univent j at site i, whereas univents[i][j].second holds the fraction of the edgelen representing the time at which the univent occurred */
 																		// conditional likelihood of the rest of the tree
 		//bool										parCLAValid;
 		CondLikelihoodShPtr							parWorkingCLA;		/**< conditional likelihood array for parent and beyond (valid if it points to something, invalid otherwise) */

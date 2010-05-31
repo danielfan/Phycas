@@ -3199,7 +3199,7 @@ unsigned TreeLikelihood::compressDataMatrix(
 				++n_inc_chars;
 				}			
 			}	// loop over patterns in subset i
-		nsites_vect.push_back(num_sites_this_subset);
+		nsites_vect[i] = num_sites_this_subset;
 		}	// loop over subsets
 	partition_model->setNumSitesVect(nsites_vect);
 		
