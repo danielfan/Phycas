@@ -162,7 +162,7 @@ void UnimapNNIMove::calculatePairwiseDistances()
 	dWY = tmpWY /totalNumPatterns;
 	dYZ = tmpYZ /totalNumPatterns;
 	
-	std::cerr << "pairwise diffs"
+	std::cerr << "pairwiseDiffs: " << dXY << ' ' << dWX << ' ' << dXZ << ' ' << dWY << ' ' << dYZ << '\n';
 	}
 
 void UnimapNNIMove::calculatePairwiseDistancesForSubset(unsigned subsetIndex)
