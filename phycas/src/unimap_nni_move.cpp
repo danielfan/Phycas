@@ -242,7 +242,7 @@ void UnimapNNIMove::calculatePairwiseDistancesForSubset(unsigned subsetIndex)
 					dWZ += 1.0;
 					}
 				}
-}
+			}
 		}
 	double dnp = (double) num_patterns;
 	dXY /= dnp;
