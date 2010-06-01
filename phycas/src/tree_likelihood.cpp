@@ -3168,7 +3168,6 @@ unsigned TreeLikelihood::compressDataMatrix(
 		npatterns_vect[i] = np;
 		npatterns += np;
 		}
-	partition_model->setNumPatternsVect(npatterns_vect);
 
 	subset_offset.clear();
 	subset_offset.reserve(nsubsets + 1);
@@ -3189,32 +3188,63 @@ unsigned TreeLikelihood::compressDataMatrix(
 		{
 		unsigned num_sites_this_subset = 0;
 		subset_offset.push_back(pattern_index);
-		for (pattern_map_t::iterator mapit = pattern_map[i].begin(); mapit != pattern_map[i].end(); ++mapit, ++pattern_index)
+		for (pattern_map_t::iterator mapit = pattern_map[i].begin(); mapit != pattern_map[i].end(); ++mapit)
 			{			
-			// mapit->first holds the pattern in the form of a vector of int8_t values
-			pattern_vect.push_back(mapit->first);
-			
-			// mapit->second holds the pattern count
-			pattern_counts.push_back(mapit->second);
-			num_sites_this_subset += mapit->second;
-
-			// get list of sites that had this pattern
-			const uint_list_t & sites = pattern_to_sites_map[mapit->first];
-			
-			// add this sites list to pattern_to_sites vector
-			pattern_to_sites.push_back(sites);
-	
-			// For each site index in the sites list, add an element to the map charIndexToPatternIndex
-			// Now, charIndexToPatternIndex[i] points to the index in pattern_vect for the pattern found at site i
-			for (uint_list_t::const_iterator sitesIt = sites.begin(); sitesIt != sites.end(); ++sitesIt)
+			if (using_unimap)
 				{
-				charIndexToPatternIndex[*sitesIt] = pattern_index;
-				++n_inc_chars;
-				}			
+				// get list of sites that had this pattern
+				const uint_list_t & sites = pattern_to_sites_map[mapit->first];
+				for (uint_list_t::const_iterator sitesIt = sites.begin(); sitesIt != sites.end(); ++sitesIt)
+					{	
+					// mapit->first holds the pattern in the form of a vector of int8_t values
+					pattern_vect.push_back(mapit->first);
+					pattern_counts.push_back(1);
+					num_sites_this_subset += 1;
+
+				
+					// add this sites list to pattern_to_sites vector
+					uint_list_t v(1, *sitesIt);
+					pattern_to_sites.push_back(v);
+		
+					charIndexToPatternIndex[*sitesIt] = pattern_index++;
+					++n_inc_chars;
+					}
+
+				}
+			else
+				{
+				// mapit->first holds the pattern in the form of a vector of int8_t values
+				pattern_vect.push_back(mapit->first);
+			
+				// mapit->second holds the pattern count
+				pattern_counts.push_back(mapit->second);
+				num_sites_this_subset += mapit->second;
+
+				// get list of sites that had this pattern
+				const uint_list_t & sites = pattern_to_sites_map[mapit->first];
+				
+				// add this sites list to pattern_to_sites vector
+				pattern_to_sites.push_back(sites);
+		
+				// For each site index in the sites list, add an element to the map charIndexToPatternIndex
+				// Now, charIndexToPatternIndex[i] points to the index in pattern_vect for the pattern found at site i
+				for (uint_list_t::const_iterator sitesIt = sites.begin(); sitesIt != sites.end(); ++sitesIt)
+					{
+					charIndexToPatternIndex[*sitesIt] = pattern_index;
+					++n_inc_chars;
+					}			
+					
+				++pattern_index;
+				}
+
 			}	// loop over patterns in subset i
 		nsites_vect[i] = num_sites_this_subset;
 		}	// loop over subsets
 	partition_model->setNumSitesVect(nsites_vect);
+	if (using_unimap)
+		partition_model->setNumPatternsVect(nsites_vect);
+	else
+		partition_model->setNumPatternsVect(npatterns_vect);
 		
 	PHYCAS_ASSERT(partition_model->getTotalNumPatterns() == pattern_index);
 	subset_offset.push_back(pattern_index);
@@ -3229,10 +3259,7 @@ unsigned TreeLikelihood::compressDataMatrix(
 	pattern_map.clear();
 	pattern_to_sites_map.clear();
 	
-	if (using_unimap)
-		return n_inc_chars;
-	else
-		return npatterns;
+	return npatterns;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

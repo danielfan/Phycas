@@ -143,6 +143,7 @@ void UnimapNNIMove::calculatePairwiseDistances()
 	double tmpXZ = 0.0;
 	double tmpWY = 0.0;
 	double tmpYZ = 0.0;
+	double tmpWZ = 0.0;
 	double totalNumPatterns = 0.0;
 	PartitionModelShPtr partModel = likelihood->getPartitionModel();
 	for (unsigned subsetIndex = 0; subsetIndex < likelihood->getNumSubsets(); ++subsetIndex)
@@ -153,6 +154,7 @@ void UnimapNNIMove::calculatePairwiseDistances()
 		tmpWX += dWX*num_patterns;
 		tmpXZ += dXZ*num_patterns;
 		tmpWY += dWY*num_patterns;
+		tmpWZ += dWZ*num_patterns;
 		tmpYZ += dYZ*num_patterns;
 		totalNumPatterns += num_patterns;
 		}
@@ -160,9 +162,10 @@ void UnimapNNIMove::calculatePairwiseDistances()
 	dWX = tmpWX /totalNumPatterns;
 	dXZ = tmpXZ /totalNumPatterns;
 	dWY = tmpWY /totalNumPatterns;
+	dWZ = tmpWZ /totalNumPatterns;
 	dYZ = tmpYZ /totalNumPatterns;
 	
-	std::cerr << "pairwiseDiffs: " << dXY << ' ' << dWX << ' ' << dXZ << ' ' << dWY << ' ' << dYZ << '\n';
+//	std::cerr << "pairwiseDiffs: " << dXY << ' ' << dWX << ' ' << dXZ << ' ' << dWY << ' ' << dWZ << ' ' << dYZ << '\n';
 	}
 
 void UnimapNNIMove::calculatePairwiseDistancesForSubset(unsigned subsetIndex)
