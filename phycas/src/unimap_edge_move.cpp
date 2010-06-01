@@ -221,6 +221,8 @@ bool UnimapEdgeMove::update()
 
 	ChainManagerShPtr p = chain_mgr.lock();
 	PHYCAS_ASSERT(p);
+	
+	//likelihood->fullRemapping(tree, rng, true); ///@TEMP!!!!
 
 	proposeNewState();
 	PartitionModelShPtr partModel = likelihood->getPartitionModel();
@@ -229,7 +231,7 @@ bool UnimapEdgeMove::update()
 	for (unsigned i = 0; i < nSubsets; ++i)
 		{
 		ModelShPtr subMod = partModel->getModel(i);
-		uniformization_lambda.push_back(subMod->calcUniformizationLambda());
+		uniformization_lambda[i] = subMod->calcUniformizationLambda();
 		}
 	
     bool is_internal_edge       = origNode->IsInternal();
@@ -246,7 +248,10 @@ bool UnimapEdgeMove::update()
 	const double edgeLenDiff = (curr_edgelen - origEdgelen);
 	for (unsigned i = 0; i < nSubsets; ++i)
 		{
-		log_likelihood_ratio -= partModel->getNumSites(i)*uniformization_lambda[i]*edgeLenDiff;
+		const unsigned numSites = partModel->getNumSites(i);
+		const double ul = uniformization_lambda[i];
+		PHYCAS_ASSERT(ul > 0.0);
+		log_likelihood_ratio -= numSites*ul*edgeLenDiff;
 		}
 
     likelihood->incrementNumLikelihoodEvals();

@@ -3964,7 +3964,7 @@ void TreeUniventSubsetStruct::remapUniventsForNode(TreeShPtr t, TreeNode * nd, T
 	TreeNode * root_tip = t->GetFirstPreorder();
 	TreeNode * subroot = root_tip->GetLeftChild();
 
-	Univents & nd_univents = getUniventsRef(*nd, subsetIndex);
+	Univents & nd_univents = getUniventsRef(*nd, this->subsetIndex);
 	const double nd_edge_len = nd->GetEdgeLen();
 	const unsigned num_states = getNumStates();
 	const unsigned num_patterns = getNumPatterns();

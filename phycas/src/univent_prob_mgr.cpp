@@ -90,8 +90,9 @@ void UniventProbMgr::recalcUMat()
 	maxm = 1;
 
 	 // the reduceMaxm bit here is a hack to try to reduce maxm as opposed to allowing it to continue to creep up.
-	const unsigned reduceMaxm = 2;
-	expandUMatVect(prev_maxm > ( reduceMaxm + 2) ? prev_maxm - reduceMaxm : prev_maxm);
+	 //TEMP!!
+	//const unsigned reduceMaxm = 2;
+	//expandUMatVect(prev_maxm > ( reduceMaxm + 2) ? prev_maxm - reduceMaxm : prev_maxm);
 #endif
     }
 
@@ -126,6 +127,8 @@ unsigned UniventProbMgr::sampleM(
         double log_trans_prob = log(transition_prob);
         for (unsigned z = 0; z <= maxm; ++z)
             {
+			PHYCAS_ASSERT(z < 2 || logmfact[z] > 0);
+
             double logprm = (double)z*log_lambda_t - lambda_t - logmfact[z] - log_trans_prob;
             double pij = uMatVect[z][start_state][end_state]; //@POL should uMatVect hold L matrices rather than U matrices?
             probm.push_back(pij*exp(logprm));
@@ -157,18 +160,23 @@ unsigned UniventProbMgr::sampleM(
 /*----------------------------------------------------------------------------------------------------------------------
 |	
 */
-void UniventProbMgr::expandUMatVect(unsigned m) const 
+void UniventProbMgr::expandUMatVect(unsigned newMaxM) const 
 	{
 #if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
-	if (m <= maxm)
+	if (newMaxM <= maxm)
 		return;
+	
+	if (newMaxM > 8)
+		{
+		std::cerr << "newMaxM = " << newMaxM << std::endl;
+		}
 		
 	PHYCAS_ASSERT(maxm >= 1);
-	uMatVect.resize(m + 2);
+	uMatVect.resize(newMaxM + 1);
 	// we could get better cache efficiency by storing the transpose of one uMatVect
 	// whenever we calculate it in 
 	const double * const * onePtr = const_cast<const double * const * >(uMatVect[1].GetMatrix());
-	for (unsigned k = maxm + 1; k <= m + 1; ++k)
+	for (unsigned k = maxm + 1; k <= newMaxM; ++k)
 		{
 		
 		if (uMatVect[k].GetDimension() == 0)
@@ -189,20 +197,18 @@ void UniventProbMgr::expandUMatVect(unsigned m) const
 			}
 		}
 
-	// The m that was sampled was greater than maxm, indicating that 
-	// maxm is not large enough, so double maxm and try again
 	const unsigned prevlogmfactsize = logmfact.size();
-	if (m > prevlogmfactsize)
+	if (newMaxM > prevlogmfactsize)
 		{
 		// extend logmfact vector
-		logmfact.resize(m + 1, 0.0);
-		for (unsigned m = prevlogmfactsize; m <= maxm; ++m)
-			logmfact[m] = logmfact[m - 1] + log((double)m);
+		logmfact.resize(newMaxM + 1, 0.0);
+		for (unsigned i = prevlogmfactsize; i <= newMaxM; ++i)
+			logmfact[i] = logmfact[i - 1] + log((double)i);
 		std::cerr << "\nIncreasing maxm to " << maxm << std::endl;
-		for (unsigned i = 0; i <= maxm; ++i)
+		for (unsigned i = 0; i <= newMaxM; ++i)
 			std::cerr << '\t' << i << '\t' << logmfact[i] << std::endl;
 		}
-	maxm = m;
+	maxm = newMaxM;
 #endif
 	}
 
@@ -373,6 +379,7 @@ void UniventProbMgr::sampleUniventsImpl(
 				if (z >= elogprmVec.size())
 					{
 					elogprmVec.reserve(maxm);
+					PHYCAS_ASSERT(z < 2 || logmfact[z] > 0);
 					elogprmVec.push_back(exp((double)z*log_lambda_t - lambda_t - logmfact[z]));
 					PHYCAS_ASSERT(z < elogprmVec.size());
 					}
@@ -389,6 +396,8 @@ void UniventProbMgr::sampleUniventsImpl(
 			if (m == UINT_MAX)
 				{
 				next_z = maxm + 1;
+				// The m that was sampled was greater than maxm, indicating that 
+				// maxm is not large enough, so double maxm and try again
 				expandUMatVect(maxm*2);
 				}
 			else

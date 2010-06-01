@@ -32,7 +32,7 @@
 
 namespace phycas
 {
-bool modify_terminal_edges = false;
+bool modify_terminal_edges = true;
 /*----------------------------------------------------------------------------------------------------------------------
 |	
 */
@@ -79,10 +79,8 @@ bool UnimapTopoMove::update()
 		prev_posterior = heating_power*prev_ln_like + prev_ln_prior;
 		curr_posterior = heating_power*curr_ln_like + curr_ln_prior;
 		}
-
-	double ln_accept_ratio = curr_posterior - prev_posterior + getLnHastingsRatio();
-	//std::cerr << "ln_accept_ratio = curr_posterior - prev_posterior + ln_density_reverse_move - ln_density_forward_move;\n";
-	//std::cerr << ln_accept_ratio << "   " << curr_posterior << "   " <<prev_posterior << "   " << ln_density_reverse_move << "   " << ln_density_forward_move << "\n\n";
+	const double ln_hastings =  getLnHastingsRatio();
+	double ln_accept_ratio = curr_posterior - prev_posterior + ln_hastings;
 	//double lnu = std::log(rng->Uniform(FILE_AND_LINE));
 	//bool accepted = (ln_accept_ratio >= 0.0 || lnu <= ln_accept_ratio);
 	//bool accepted = (ln_accept_ratio >= 0.0 || std::log(rng->Uniform(FILE_AND_LINE)) <= ln_accept_ratio);
@@ -98,8 +96,12 @@ bool UnimapTopoMove::update()
 	//std::cerr << lnu << "   " << ln_accept_ratio << "   " << curr_posterior << "   " <<prev_posterior << "   " << ln_density_reverse_move << "   " << ln_density_forward_move << "\n\n";
 
     if (save_debug_info)
-        debug_info = str(boost::format("swapping %d <-> %d (%s, lnR = %.5f)") % x->GetNodeNumber() % z->GetNodeNumber() % (accepted ? "accepted" : "rejected") % ln_accept_ratio);
-    
+        {
+		std::cerr << "ln_accept_ratio = curr_posterior - prev_posterior + ln_hastings \n";
+		 std::cerr << ln_accept_ratio << "   " << curr_posterior << "   " <<prev_posterior << ' '<< ln_hastings << "\n\n";
+		
+		debug_info = str(boost::format("swapping %d <-> %d (%s, lnR = %.5f)") % x->GetNodeNumber() % z->GetNodeNumber() % (accepted ? "accepted" : "rejected") % ln_accept_ratio);
+    	}
     if (accepted)
 		accept();
 	else
@@ -259,7 +261,7 @@ void UnimapNNIMove::calculatePairwiseDistancesForSubset(unsigned subsetIndex)
 
 void UnimapNNIMove::calculateProposalDist(bool before_swap)
 	{
-	if (!before_swap)
+	if (before_swap)
 		{
 		propMeanX = std::max(min_edge_len_mean, (2*dXY + dXZ + dWX - dYZ - dWY)/4.0);
 		propMeanY = std::max(min_edge_len_mean, (2*dXY + dYZ + dWY - dXZ - dWX)/4.0);
@@ -275,6 +277,7 @@ void UnimapNNIMove::calculateProposalDist(bool before_swap)
 		propMeanZ = std::max(min_edge_len_mean, (2*dYZ + dXZ + dWZ - dXY - dWY)/4.0);
 		propMeanInternal = std::max(min_edge_len_mean, (dXZ + dWZ + dXY + dWY - 2*dYZ - 2*dWX)/4.0);
 		}
+
 	}
 
 double UnimapNNIMove::calcProposalLnDensity(double mean, double x)
@@ -324,7 +327,7 @@ void UnimapNNIMove::ProposeStateWithTemporaries(ChainManagerShPtr & p)
 	double xLen, yLen, zLen, ndLen, ndPLen;
 	if (modify_terminal_edges)
 		{
-		xLen= proposeEdgeLen(propMeanX);
+		xLen = proposeEdgeLen(propMeanX);
 		yLen = proposeEdgeLen(propMeanY);
 		zLen = proposeEdgeLen(propMeanZ);
 		ndPLen = proposeEdgeLen(propMeanW);
@@ -332,11 +335,11 @@ void UnimapNNIMove::ProposeStateWithTemporaries(ChainManagerShPtr & p)
 		}
 	else
 		{
-		xLen = prev_x_len;
-		yLen = prev_y_len;
-		zLen = prev_z_len;
-		ndPLen = prev_ndP_len;
-		ndLen = proposeEdgeLen(0.1);
+		xLen = proposeEdgeLen(propMeanX);
+		yLen = prev_y_len; // proposeEdgeLen(propMeanY);
+		zLen = proposeEdgeLen(propMeanZ);
+		ndPLen = proposeEdgeLen(propMeanW);
+		ndLen = proposeEdgeLen(propMeanInternal);
 		}
 	
 	//std::cerr << boost::str(boost::format("tree before [%.5f] = (x:%.5f,y:%.5f,(z:%.5f,w:%.5f):%.5f);\n") % prev_ln_like % prev_x_len % prev_y_len % prev_z_len % prev_ndP_len % prev_nd_len);
@@ -612,7 +615,18 @@ void UnimapTopoMove::storePMatTransposed(double **& cached, const double *** p_m
 		}
 #endif
 	}
-	
+
+
+/*
+| uses the aliases a, b, c, and d to calculate a 4-taxon likelihood.  The likelihood is always calculated as if the tree were:
+    //      a  b        
+    //       \/         
+    //   c   nd_childCLPtr	
+    //    \ /           
+    //    nd_parentCLPtr
+    //    /
+    //   d
+*/
 double UnimapTopoMove::FourTaxonLnLFromCorrectTipDataMembers(unsigned subsetIndex)
 	{
 #if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
@@ -630,6 +644,8 @@ double UnimapTopoMove::FourTaxonLnLFromCorrectTipDataMembers(unsigned subsetInde
 		nd_parentCLPtr = post_cla;
 		p_mat = post_p_mat[subsetIndex];
 		}
+	PHYCAS_ASSERT(dLenNd == d);
+	PHYCAS_ASSERT(bLenNd == b);
 
     likelihood->calcPMatTranspose(subsetIndex, aTipData->getTransposedPMatrices(subsetIndex), aTipData->getConstStateListPos(subsetIndex), aLenNd->GetEdgeLen());
     likelihood->calcPMatTranspose(subsetIndex, bTipData->getTransposedPMatrices(subsetIndex), bTipData->getConstStateListPos(subsetIndex), bLenNd->GetEdgeLen());
@@ -645,7 +661,10 @@ double UnimapTopoMove::FourTaxonLnLFromCorrectTipDataMembers(unsigned subsetInde
 	double lnl =  HarvestLnLikeFromCondLikePar(nd_childCLPtr, nd_parentCLPtr, childPMatrix, subsetIndex);
 #	if defined CHECK_EACH_CALC_AGAINST_PAUP
 		std::cerr << "Scoring " << (scoringBeforeMove ? "before" : "after") << " the proposal\n";
-		PHYCAS_ASSERT(CheckWithPaup(lnl, subsetIndex));
+		if (!CheckWithPaup(lnl, subsetIndex))
+			{
+			PHYCAS_ASSERT(false);
+			}
 #	endif
 	return lnl;
 #else // old way
@@ -868,6 +887,12 @@ UnimapNNIMove::UnimapNNIMove(TreeLikeShPtr treeLike) : UnimapTopoMove(treeLike)
 */
 double UnimapNNIMove::getLnHastingsRatio() const
 	{
+	if (save_debug_info)
+		{
+		std::cerr << "ln_density_reverse_move - ln_density_forward_move;\n";
+		std::cerr << ln_density_reverse_move << "   " << ln_density_forward_move << "\n\n";
+		}
+
 	return ln_density_reverse_move - ln_density_forward_move;
 	}
 
