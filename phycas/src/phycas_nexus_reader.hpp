@@ -35,7 +35,9 @@ class PhycasNexusReader: public PublicNexusReader
 			:PublicNexusReader(blocksToRead, mode),
 			activeTaxaBlockIndex(UINT_MAX),
 			activeCharactersBlockIndex(UINT_MAX)
-			{}
+			{
+			this->SetWarningOutputLevel(SKIPPING_CONTENT_WARNING);
+			}
 			
 		~PhycasNexusReader();
 			

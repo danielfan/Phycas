@@ -161,6 +161,8 @@ void UnimapNNIMove::calculatePairwiseDistances()
 	dXZ = tmpXZ /totalNumPatterns;
 	dWY = tmpWY /totalNumPatterns;
 	dYZ = tmpYZ /totalNumPatterns;
+	
+	std::cerr << "pairwise diffs"
 	}
 
 void UnimapNNIMove::calculatePairwiseDistancesForSubset(unsigned subsetIndex)
@@ -426,19 +428,18 @@ void UnimapTopoMove::proposeNewState()
 	InternalData * ndp_internal_data = origNodePar->GetInternalData();
 	PHYCAS_ASSERT(ndp_internal_data);
 	const unsigned numSubsets = likelihood->getNumSubsets();
-	pre_root_posterior.resize(numSubsets);
-	pre_cla.resize(numSubsets);
+
+	pre_root_posterior = nd_internal_data->getParentalCondLikePtr();
+	pre_cla = nd_internal_data->getChildCondLikePtr();
+	post_root_posterior = ndp_internal_data->getParentalCondLikePtr();
+	post_cla = ndp_internal_data->getChildCondLikePtr();
+
 	pre_p_mat.resize(numSubsets);
-	post_root_posterior.resize(numSubsets);
-	post_cla.resize(numSubsets);
 	post_p_mat.resize(numSubsets);
+	
 	for (unsigned i = 0; i < numSubsets; ++i)
 		{
-		pre_root_posterior[i] = nd_internal_data->getParentalCondLikePtr();
-		pre_cla[i] = nd_internal_data->getChildCondLikePtr();
 		pre_p_mat[i] = nd_internal_data->getMutablePMatrices(i);
-		post_root_posterior[i] = ndp_internal_data->getParentalCondLikePtr();
-		post_cla[i] = ndp_internal_data->getChildCondLikePtr();
 		post_p_mat[i] = ndp_internal_data->getMutablePMatrices(i);
 		}
 
@@ -616,14 +617,14 @@ double UnimapTopoMove::FourTaxonLnLFromCorrectTipDataMembers(unsigned subsetInde
 	double *** p_mat;
 	if (scoringBeforeMove)
 		{
-		nd_childCLPtr = pre_root_posterior[subsetIndex];
-		nd_parentCLPtr = pre_cla[subsetIndex];
+		nd_childCLPtr = pre_root_posterior;
+		nd_parentCLPtr = pre_cla;
 		p_mat = pre_p_mat[subsetIndex];
 		}
 	else
 		{
-		nd_childCLPtr = post_root_posterior[subsetIndex];
-		nd_parentCLPtr = post_cla[subsetIndex];
+		nd_childCLPtr = post_root_posterior;
+		nd_parentCLPtr = post_cla;
 		p_mat = post_p_mat[subsetIndex];
 		}
 
@@ -755,7 +756,7 @@ void UnimapTopoMove::revert()
 		unsigned numModelSubsets = getUniventsVectorConstRef(*x).size();
 
 		for (unsigned i = 0 ; i < numModelSubsets; ++i)
-			resampleInternalNodeStates(pre_root_posterior[i]->getCLA(), pre_cla[i]->getCLA(), i);
+			resampleInternalNodeStates(pre_root_posterior->getCLA(), pre_cla->getCLA(), i);
 		}
 	}
 
@@ -802,7 +803,7 @@ void UnimapNNIMove::accept()
 		unsigned numModelSubsets = getUniventsVectorConstRef(*a).size();
 
 		for (unsigned i = 0 ; i < numModelSubsets; ++i)
-			resampleInternalNodeStates(post_root_posterior[i]->getCLA(), post_cla[i]->getCLA(), i);
+			resampleInternalNodeStates(post_root_posterior->getCLA(), post_cla->getCLA(), i);
 		}
 	}
 
@@ -839,22 +840,14 @@ void UnimapTopoMove::setTreeLikelihood(TreeLikeShPtr treeLike)
 	pre_y_pmat_transposed.clear();
 	pre_w_pmat_transposed.clear();
 	pre_z_pmat_transposed.clear();
-	pre_root_posterior.clear();
-	pre_cla.clear();
 	pre_p_mat.clear();
-	post_root_posterior.clear();
-	post_cla.clear();
 	post_p_mat.clear();
 
 	pre_x_pmat_transposed.resize(numSubsets);
 	pre_y_pmat_transposed.resize(numSubsets);
 	pre_w_pmat_transposed.resize(numSubsets);
 	pre_z_pmat_transposed.resize(numSubsets);
-	pre_root_posterior.resize(numSubsets);
-	pre_cla.resize(numSubsets);
 	pre_p_mat.resize(numSubsets);
-	post_root_posterior.resize(numSubsets);
-	post_cla.resize(numSubsets);
 	post_p_mat.resize(numSubsets);
 	MCMCUpdater::setTreeLikelihood(treeLike);
 	}

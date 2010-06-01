@@ -111,11 +111,11 @@ class UnimapTopoMove : public MCMCUpdater
 
 		double					prev_ln_prior;				/**< The log prior of the starting state */
 		double					prev_ln_like;				/**< The log likelihood of the starting state */
-		std::vector<CondLikelihoodShPtr>	pre_root_posterior;			/**< xxxx */
-		std::vector<CondLikelihoodShPtr>	pre_cla;					/**< xxxx */
+		CondLikelihoodShPtr	pre_root_posterior;			/**< xxxx */
+		CondLikelihoodShPtr	pre_cla;					/**< xxxx */
+		CondLikelihoodShPtr	post_root_posterior;		/**< xxxx */
+		CondLikelihoodShPtr	post_cla;					/**< xxxx */
 		std::vector<double * * *>			pre_p_mat;					/**< xxxx */
-		std::vector<CondLikelihoodShPtr>	post_root_posterior;		/**< xxxx */
-		std::vector<CondLikelihoodShPtr>	post_cla;					/**< xxxx */
 		std::vector<double * * *>			post_p_mat;					/**< xxxx */
 		bool					scoringBeforeMove;			/**< xxxx */
 		
