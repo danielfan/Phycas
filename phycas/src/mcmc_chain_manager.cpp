@@ -345,40 +345,64 @@ unsigned MCMCChainManager::calcRFDistance(TreeShPtr ref_tree) const
 
 #define DEBUG_UPDATERS 1
 #define DEBUG_UPDATERS_ENV_SENS 1
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	For all updaters stored in `all_updaters', obtain the weight w and call the update fuction of the updater w times.
+*/
+void MCMCChainManager::verboseUpdateAllUpdaters()
+	{
+	for (MCMCUpdaterVect::iterator it = all_updaters.begin(); it != all_updaters.end(); ++it)
+		{
+		std::string nm = (*it)->getName();
+		unsigned w = (*it)->getWeight();
+		for (unsigned i = 0; i < w; ++i)
+			{
+			std::cerr << "########## updating " << nm << "..." << std::endl;
+			(*it)->setSaveDebugInfo(true);
+			(*it)->update();
+			std::cerr << boost::str(boost::format("%s | %s") % nm % (*it)->getDebugInfo()) << std::endl;
+			}
+		}
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	For all updaters stored in `all_updaters', obtain the weight w and call the update fuction of the updater w times.
+*/
+void MCMCChainManager::quietUpdateAllUpdaters()
+	{
+	for (MCMCUpdaterVect::iterator it = all_updaters.begin(); it != all_updaters.end(); ++it)
+		{
+		std::string nm = (*it)->getName();
+		unsigned w = (*it)->getWeight();
+		for (unsigned i = 0; i < w; ++i)
+			{
+			(*it)->update();
+			}
+		}
+	}
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	For all updaters stored in `all_updaters', obtain the weight w and call the update fuction of the updater w times.
 */
 void MCMCChainManager::updateAllUpdaters()
 	{
-	for (MCMCUpdaterVect::iterator it = all_updaters.begin(); it != all_updaters.end(); ++it)
-		{
-		
-#if DEBUG_UPDATERS
+#	if DEBUG_UPDATERS
 #		if DEBUG_UPDATERS_ENV_SENS
-		const char * upEnv = getenv("DEBUG_UPDATE_ALL_UPDATERS");
-		if (upEnv && upEnv[0] == '1')
+			const char * upEnv = getenv("DEBUG_UPDATE_ALL_UPDATERS");
+			if (upEnv && upEnv[0] == '1')
+				verboseUpdateAllUpdaters();
+			else 
+				quietUpdateAllUpdaters();
+#		else
+			verboseUpdateAllUpdaters();
 #		endif
-			{
-			std::string nm = (*it)->getName();
-			unsigned w = (*it)->getWeight();
-			for (unsigned i = 0; i < w; ++i)
-				{
-				std::cerr << "########## updating " << nm << "..." << std::endl;
-				(*it)->setSaveDebugInfo(true);
-				(*it)->update();
-				std::cerr << boost::str(boost::format("%s | %s") % nm % (*it)->getDebugInfo()) << std::endl;
-				}
-			}
-#else	//not DEBUG_UPDATERS
-		unsigned w = (*it)->getWeight();
-		for (unsigned i = 0; i < w; ++i)
-			{
-			(*it)->update();
-			} 
-#endif	//DEBUG_UPDATERS
-		}
+#	else
+		quietUpdateAllUpdaters();
+#	endif
 	}
-	
+
+
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns `all_updaters' data member as a const MCMCUpdaterVect reference. Used so that Python programs can iterate 
 |	through all updaters using a construct such as this: for x in chainMgr.getAllUpdaters(): ...

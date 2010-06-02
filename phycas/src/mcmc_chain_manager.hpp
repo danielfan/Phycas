@@ -132,6 +132,9 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 		double					last_ln_prior;			/**< The current log joint prior of the chain */
 
 	private:
+	
+		void verboseUpdateAllUpdaters();
+		void quietUpdateAllUpdaters();
 
 		bool					dirty;					/**< If true, means just constructed or at least one updater has been added since finalize() was last called; false means ready to use the all_updaters vector */
 

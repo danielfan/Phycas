@@ -48,6 +48,7 @@ void UnimapTopoMove::setLot(LotShPtr p)
 */
 bool UnimapTopoMove::update()
 	{
+	PHYCAS_ASSERT(false);
 	bool accepted = false;
 #if 1 ||  DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
 	// The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
@@ -927,6 +928,7 @@ void UnimapLargetSimonMove::setLot(LotShPtr p)
 */
 void UnimapLargetSimonMove::ProposeStateWithTemporaries(ChainManagerShPtr & p)
 	{
+	PHYCAS_ASSERT(false);
 	wOnThreeEdgePath = rng->Boolean();
 	TreeNode * lowerEdgeNd = (wOnThreeEdgePath ? origNodePar : z );
 	const double lowerEdgeLen =  lowerEdgeNd->GetEdgeLen();
