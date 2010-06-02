@@ -132,6 +132,20 @@ END;
             
     finish = finish_block
 
+class CharacterSuperMatrix(object): # Kansas2010Todo
+	def __init__(self, list_of_matrices):
+		self.matrix_list = list_of_matrices
+	def getNChar(self):
+		return sum([i.getNChar() for i in self.matrix_list]
+	def getNTax(self):
+		return sum([i.getNTax() for i in self.matrix_list]
+	def getNSubsets(self):
+		return len(self.matrix_list)
+	def getTaxLabels(self):
+		for i in self.matrix_list[1:]
+			phycassert(self.matrix_list[0].taxa == i.taxa)
+		return self.matrix_list[0].taxa
+	
 class NexusReader(NexusReaderBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
@@ -189,9 +203,12 @@ class NexusReader(NexusReaderBase):
     
     def getLastDiscreteMatrix(self, gaps_to_missing=True):
         if self._raw_mat is None:
-            self._raw_mat = getLastNexusDiscreteMatrix(self, gaps_to_missing)
-            return DataMatrix(self._raw_mat, self.taxa)
-        return self._raw_mat
+            o = getLastNexusDiscreteMatrix(self, gaps_to_missing)
+			n = o.getNumMatrices()
+			self._raw_matrix_list = [o.getMatrix(i) for i in range(n)]
+            self._data_matrices = CharacterSuperMatrix([DataMatrix(i, self.taxa) for i in self._raw_matrix_list])
+			return self._data_matrices
+        return self._data_matrices
 
     def writeNEXUS(self, out, appending=False):
         nw = NexusWriter(out, appending, self.getTaxLabels())

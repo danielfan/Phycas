@@ -38,8 +38,7 @@ TipData::TipData(
 	:
 	state(-1), 
 	pMatrixTranspose(NULL),
-	cla_pool(cla_storage),
-	sMat(0L)	// Kansas2010 warning: passing NULL to non-pointer argument 1 of ‘std::vector<_Tp, _Alloc>::vector(size_t, const _Tp&, const _Alloc&) [with _Tp = ScopedThreeDMatrix<double>, _Alloc = std::allocator<ScopedThreeDMatrix<double> >]’
+	cla_pool(cla_storage)
 	{
 #if DISABLED_UNTIL_SIMULATION_WORKING_WITH_PARTITIONING
 	const unsigned nToStates = nStates;	// simulated data never has ambiguities, so num. rows in T matrix is just nStates

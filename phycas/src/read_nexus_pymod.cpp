@@ -461,38 +461,6 @@ class PhycasNexusReader: public PublicNexusReader
 		NxsTaxaBlock * getActiveTaxaBlock() const;
 	};
 
-NxsCXXDiscreteMatrix * GetLastDiscreteMatrix(PhycasNexusReader & nexusReader, bool convertGapsToMissing);
-NxsCXXDiscreteMatrix * createNativeDiscreteMatrix(PhycasNexusReader & nexusReader, NxsTaxaBlock * taxaBlockPtr, unsigned int charBlockIndex, bool convertGapsToMissing);
-
-NxsCXXDiscreteMatrix * GetLastDiscreteMatrix(PhycasNexusReader & nexusReader, bool convertGapsToMissing = false)
-	{
-	return createNativeDiscreteMatrix(nexusReader, 0L, UINT_MAX, convertGapsToMissing);
-	}
-
-NxsCXXDiscreteMatrix * createNativeDiscreteMatrix(PhycasNexusReader & nexusReader, NxsTaxaBlock * taxaBlockPtr, unsigned int charBlockIndex, bool convertGapsToMissing)
-	{
-	NxsCharactersBlock * cb;
-	if (charBlockIndex == UINT_MAX || taxaBlockPtr == NULL)
-		cb = nexusReader.getActiveCharactersBlock();
-	else
-		cb = nexusReader.GetCharactersBlock(taxaBlockPtr, charBlockIndex);
-	if (cb == 0L)
-		return NULL;
-	std::vector<const NxsDiscreteDatatypeMapper *> mappers = cb->GetAllDatatypeMappers();
-	if (mappers.size() > 1)
-		{
-		std::string m("Characters block contains more than one datatype. Phycas cannot understand such matrices.");
-		nexusReader.NexusWarn(m, NxsReader::SKIPPING_CONTENT_WARNING, 0, -1, -1);
-		return NULL;
-		}
-	if (mappers.empty() || mappers[0] == NULL)
-		{
-		std::string m("Characters block does not contain a matrix with a valid mapping data structure. Please report this error to the developers of Phycas.");
-		nexusReader.NexusWarn(m, NxsReader::SKIPPING_CONTENT_WARNING, 0, -1, -1);
-		return NULL;
-		}
-	return new NxsCXXDiscreteMatrix(*cb, convertGapsToMissing);
-	}
 
 void PhycasNexusReader::NexusError(const std::string &msg, file_pos pos, unsigned line, unsigned col, CmdResult , NxsBlock* )
 	{
@@ -643,6 +611,11 @@ BOOST_PYTHON_MODULE(_ReadNexusExt)
 		.def("getTrees", &PhycasNexusReader::GetTrees, return_value_policy<copy_const_reference>())
 		.def("getTaxLabels", &PhycasNexusReader::GetTaxLabels)
 		.def("clear", &PhycasNexusReader::Clear)
+		;
+
+	class_<CharSuperMatrix, boost::noncopyable>("CharSuperMatrix", no_init)
+		.def("getNumMatrices", &CharSuperMatrix::GetNumMatrices)
+		.def("getMatrix", &CharSuperMatrix::GetMatrix, return_value_policy<manage_new_object>())
 		;
 	
 	def("getLastNexusDiscreteMatrix", GetLastDiscreteMatrix, return_value_policy<manage_new_object>());

@@ -85,9 +85,23 @@ class PhycasNexusReader: public PublicNexusReader
 		unsigned							columnOfError ;
 
 	};
-	
-typedef boost::shared_ptr<PhycasNexusReader> PhycasNexusReaderShPtr;
 
-NxsCXXDiscreteMatrix * GetLastDiscreteMatrix(PhycasNexusReader & nexusReader, bool convertGapsToMissing);
-NxsCXXDiscreteMatrix * createNativeDiscreteMatrix(PhycasNexusReader & nexusReader, NxsTaxaBlock * taxaBlockPtr, unsigned int charBlockIndex, bool convertGapsToMissing);
+
+class CharSuperMatrix
+	{
+	public:
+		CharSuperMatrix(){}
+		CharSuperMatrix(std::vector<NxsCXXDiscreteMatrix *> mats) : allSubmatrices(mats) {}
+	
+		unsigned GetNumMatrices() const {return allSubmatrices.size();}
+		NxsCXXDiscreteMatrix * GetMatrix(unsigned i) { return allSubmatrices.at(i);}
+		
+	public:
+		
+		std::vector<NxsCXXDiscreteMatrix *> allSubmatrices;
+	};
+CharSuperMatrix * GetLastDiscreteMatrix(PhycasNexusReader & nexusReader, bool convertGapsToMissing);
+CharSuperMatrix * createNativeDiscreteMatrix(PhycasNexusReader & nexusReader, NxsTaxaBlock * taxaBlockPtr, unsigned int charBlockIndex, bool convertGapsToMissing);
+
+typedef boost::shared_ptr<PhycasNexusReader> PhycasNexusReaderShPtr;
 

@@ -130,7 +130,7 @@ class GelfandGhosh(object):
         self.phycas.output()
 
     def getData(self):
-        self.data_matrix = phycas.readData(self.datafname)
+        self.data_matrix = phycas.readData(self.datafname)[0]
         self.taxon_labels = data_reader.getTaxLabels()
         self.ntax = self.data_matrix.getNTax()
         self.nchar = self.data_matrix.getNChar()

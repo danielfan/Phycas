@@ -25,7 +25,7 @@ class DataMatrix(DataMatrixExt):
     in phycas.Utilities.io).
     
     >>> from phycas.Utilities.io import readData, getPhycasTestData
-    >>> matrix = readData(getPhycasTestData("nyldna4.nex"))
+    >>> matrix = readData(getPhycasTestData("nyldna4.nex"))[0]
 
     """
     DNA_Datatype = 0
@@ -108,7 +108,7 @@ class DataMatrix(DataMatrixExt):
         Returns the number of characters in the data matrix.
 
         >>> from phycas.Utilities.io import readData, getPhycasTestData
-        >>> m = readData(getPhycasTestData("nyldna4.nex"))
+        >>> m = readData(getPhycasTestData("nyldna4.nex"))[0]
         >>> m.getNChar()
         3080
         >>> m.n_char
@@ -126,7 +126,7 @@ class DataMatrix(DataMatrixExt):
         Returns the number of taxa in the data matrix.
 
         >>> from phycas.Utilities.io import readData, getPhycasTestData
-        >>> m = readData(getPhycasTestData("nyldna4.nex"))
+        >>> m = readData(getPhycasTestData("nyldna4.nex"))[0]
         >>> m.getNTax()
         4
         
@@ -150,7 +150,7 @@ class DataMatrix(DataMatrixExt):
         ambiguities are coded as separate states.
 
         >>> from phycas.Utilities.io import readData, getPhycasTestData
-        >>> m = readData(getPhycasTestData("nyldna4.nex"))
+        >>> m = readData(getPhycasTestData("nyldna4.nex"))[0]
         >>> m.getNStates()
         4
         >>> m.n_states
@@ -167,7 +167,7 @@ class DataMatrix(DataMatrixExt):
         recoded, and getStateList() returns the codes used.
 
         >>> from phycas.Utilities.io import readData, getPhycasTestData
-        >>> m = readData(getPhycasTestData("nyldna4.nex"))
+        >>> m = readData(getPhycasTestData("nyldna4.nex"))[0]
         >>> print m.getSymbolsList()
         ['A', 'C', 'G', 'T', '?', 'B', 'D', 'H', 'K', 'M', 'R', 'S', 'V', 'W', 'Y']
 
@@ -185,7 +185,7 @@ class DataMatrix(DataMatrixExt):
         the original meaning of these coded states.
 
         >>> from phycas.Utilities.io import readData, getPhycasTestData
-        >>> m = readData(getPhycasTestData("nyldna4.nex"))
+        >>> m = readData(getPhycasTestData("nyldna4.nex"))[0]
         >>> print m.getStateList()
         (1, 0, 1, 1, 1, 2, 1, 3, 4, 0, 1, 2, 3, 3, 1, 2, 3, 3, 0, 2, 3, 3, 0, 1, 3, 2, 2, 3, 2, 0, 1, 2, 0, 2, 2, 1, 2, 3, 0, 1, 2, 2, 0, 3, 2, 1, 3)
 
@@ -231,7 +231,7 @@ class DataMatrix(DataMatrixExt):
         in the data matrix into the state list.
 
         >>> from phycas.Utilities.io import readData, getPhycasTestData
-        >>> m = readData(getPhycasTestData("nyldna4.nex"))
+        >>> m = readData(getPhycasTestData("nyldna4.nex"))[0]
         >>> print m.getStateListPos()
         (0, 2, 4, 6, 8, 13, 17, 21, 25, 28, 31, 34, 37, 41, 44)
 
@@ -309,7 +309,7 @@ class DataMatrix(DataMatrixExt):
         Returns the number of characters in the data matrix.
 
         >>> from phycas.Utilities.io import readData, getPhycasTestData
-        >>> m = readData(getPhycasTestData("nyldna4-compressed.nex"))
+        >>> m = readData(getPhycasTestData("nyldna4-compressed.nex"))[0]
         >>> m.getExcludedIndices()
         (181,)
 
