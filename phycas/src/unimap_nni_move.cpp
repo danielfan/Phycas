@@ -48,7 +48,6 @@ void UnimapTopoMove::setLot(LotShPtr p)
 */
 bool UnimapTopoMove::update()
 	{
-	PHYCAS_ASSERT(false);
 	bool accepted = false;
 #if 1 ||  DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
 	// The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
@@ -102,6 +101,19 @@ bool UnimapTopoMove::update()
 		accept();
 	else
 		revert();
+
+
+#	if FOUR_TAXON_TEST
+		if (isFirstTime)
+			isFirstTime = false;
+		else
+			PHYCAS_ASSERT(fabs(cached_posterior - prev_posterior) < 0.0001);
+
+		if (accepted)
+			cached_posterior = curr_posterior;
+		else 
+			cached_posterior = prev_posterior;
+#	endif
 #endif
 	return accepted;
 	}
@@ -621,6 +633,7 @@ UnimapTopoMove::UnimapTopoMove(TreeLikeShPtr treeLikePtr) : MCMCUpdater(),
   	{
 	is_move = true;
 	this->setTreeLikelihood(treeLikePtr);
+	isFirstTime = true;
 	}
 
 void UnimapTopoMove::setTreeLikelihood(TreeLikeShPtr treeLike)
@@ -825,7 +838,6 @@ double UnimapNNIMove::proposeEdgeLen(double mean)
 */
 void UnimapNNIMove::ProposeStateWithTemporaries(ChainManagerShPtr & p)
 	{
-	
 	calculatePairwiseDistances();
 	calculateProposalDist(true);
 	ln_density_reverse_move = calcProposalLnDensity(propMeanX, prev_x_len);
@@ -928,7 +940,6 @@ void UnimapLargetSimonMove::setLot(LotShPtr p)
 */
 void UnimapLargetSimonMove::ProposeStateWithTemporaries(ChainManagerShPtr & p)
 	{
-	PHYCAS_ASSERT(false);
 	wOnThreeEdgePath = rng->Boolean();
 	TreeNode * lowerEdgeNd = (wOnThreeEdgePath ? origNodePar : z );
 	const double lowerEdgeLen =  lowerEdgeNd->GetEdgeLen();
@@ -937,7 +948,7 @@ void UnimapLargetSimonMove::ProposeStateWithTemporaries(ChainManagerShPtr & p)
 	const double mstar = m*expandContractFactor;
 	detachUpperNode = rng->Boolean();
 	const double newPlacement = mstar*rng->Uniform(FILE_AND_LINE);
-	bool topoChanging = false;
+	topoChanging = false;
 	if (detachUpperNode)
 		{
 		const double lowerEdgeLenStar = lowerEdgeLen*expandContractFactor;
@@ -1005,10 +1016,13 @@ void UnimapLargetSimonMove::ProposeStateWithTemporaries(ChainManagerShPtr & p)
 void UnimapLargetSimonMove::accept()
 	{
 	MCMCUpdater::accept();
-	if (swapYwithZ)
-		tree_manipulator.NNISwap(y, z);
-	else
-		tree_manipulator.NNISwap(z, x);
+	if (topoChanging)
+		{
+		if (swapYwithZ)
+			tree_manipulator.NNISwap(y, z);
+		else
+			tree_manipulator.NNISwap(z, x);
+		}
     
 	PHYCAS_ASSERT(origNode);
 	PHYCAS_ASSERT(origNode->GetParent() == origNodePar);
@@ -1020,6 +1034,7 @@ void UnimapLargetSimonMove::accept()
 		for (unsigned i = 0 ; i < numModelSubsets; ++i)
 			resampleInternalNodeStates(post_root_posterior->getCLA(), post_cla->getCLA(), i);
 		}
+
 	}
 
 	

@@ -119,6 +119,9 @@ class UnimapTopoMove : public MCMCUpdater
 		std::vector<double * * *>			post_p_mat;					/**< xxxx */
 		bool					scoringBeforeMove;			/**< xxxx */
 		
+		bool isFirstTime;
+		double cached_posterior;
+
 	};
 
 class UnimapNNIMove : public UnimapTopoMove
@@ -189,6 +192,7 @@ class UnimapLargetSimonMove : public UnimapTopoMove
 		double expandContractFactor;
 		bool detachUpperNode;
 		bool swapYwithZ;
+		bool topoChanging;
 	};
 
 } // namespace phycas
