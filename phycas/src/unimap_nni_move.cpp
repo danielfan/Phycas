@@ -1000,7 +1000,7 @@ void UnimapLargetSimonMove::accept()
 	{
 	MCMCUpdater::accept();
 	if (swapYwithZ)
-		tree_manipulator.NNISwap(y, x);
+		tree_manipulator.NNISwap(y, z);
 	else
 		tree_manipulator.NNISwap(z, x);
     
