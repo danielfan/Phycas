@@ -16,7 +16,7 @@
 |  with this program; if not, write to the Free Software Foundation, Inc.,    |
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
+#include <boost/math/special_functions/fpclassify.hpp>
 #include "phycas/src/probability_distribution.hpp"
 #include "phycas/src/relative_rate_distribution.hpp"
 #include "phycas/src/likelihood_models.hpp"

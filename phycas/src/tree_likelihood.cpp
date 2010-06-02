@@ -3792,7 +3792,8 @@ void TreeLikelihood::fullRemapping(
   LotShPtr rng,             /**< is the random number generator to use for the mapping */
   bool doSampleUnivents)    /**< is True if ... */
 	{
-	std::cerr << "\nFULL REMAPPING!!!!\n" << std::endl;
+	//std::cerr << "\nFULL REMAPPING!!!!\n" << std::endl;
+	std::cerr << "!";
 	t->renumberInternalNodes(t->GetNTips());
 
 	useAsLikelihoodRoot(NULL);

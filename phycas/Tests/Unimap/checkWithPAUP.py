@@ -1,10 +1,10 @@
-#!/Users/mholder/db_snow_leopard_prefix/bin/python
+#!/usr/bin/python
 import sys
 import subprocess
 import re
 lnLPat = re.compile(r"^[0-9]+\s+(-[.0-9]+)\s+.*")
 f = open("paupStdOut", "w")
-subprocess.call(["/Users/mholder/shell/cipres_tools/bin/paup", "-n", "debug-with-paup.nex"], stdout=f)
+subprocess.call(["/Users/plewis/Other/paupb10/paup", "-n", "debug-with-paup.nex"], stdout=f)
 f.close()
 
 expectedLnLPattern = re.compile("phycas lnL = (-[.0-9]+) .*")

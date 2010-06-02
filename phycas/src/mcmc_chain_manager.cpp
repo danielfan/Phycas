@@ -32,6 +32,15 @@
 namespace phycas
 {
 
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the value of `samc_ref_tree', which should be a shared pointer to the best tree known.
+*/
+void MCMCChainManager::setRefTree(
+  TreeShPtr t) 	/**< is the reference tree */
+	{
+	ref_tree = t;
+	}
+	
 void MCMCChainManager::debugUpdaterReport(std::string s)
 	{
 	std::cerr << "\n>>>>> MCMCChainManager updater report (" << s << ") <<<<<" << std::endl;

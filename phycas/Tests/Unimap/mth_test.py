@@ -1,7 +1,7 @@
 import sys
 from phycas import *
 
-setMasterSeed(19375)
+setMasterSeed(9375)
 model.type                  = 'jc'
 model.edgelen_hyperprior = None
 model.edgelen_prior = Exponential(10.0)
@@ -14,7 +14,6 @@ fn = sys.argv[2]
 file_pref = fn.split('.')[0]
 mcmc.data_source = fn
 
-
 if mcmc.use_unimap:
     prefix = 'uni'
 else:
@@ -25,9 +24,9 @@ elif fixed_topo:
     suffix = 'fix_topo'
 else:
     suffix = ''
-mcmc.out.params = prefix + '_' + file_pref + '_' + suffix + '_' + 'params'
-mcmc.out.trees = prefix + '_' + file_pref + '_' + suffix + '_' + 'trees'
-mcmc.out.log = prefix + '_' + file_pref + '_' + suffix + '_' + 'log'
+mcmc.out.params.prefix = prefix + '_' + file_pref + '_' + suffix + '_' + 'params'
+mcmc.out.trees.prefix = prefix + '_' + file_pref + '_' + suffix + '_' + 'trees'
+mcmc.out.log.prefix = prefix + '_' + file_pref + '_' + suffix + '_' + 'log'
 
 mcmc.out.log.mode = REPLACE
 mcmc.out.params.mode = REPLACE
@@ -39,15 +38,17 @@ mcmc.mapping_move_weight    = 1
 
 if mcmc.use_unimap:
     if fixed_tree:
-        mcmc.starting_tree_source = TreeCollection(newick='(1:0.05,2:0.05,(3:0.05,4:0.05):0.05);')
-        mcmc.mapping_move_weight = 1
-        mcmc.unimap_nni_move_weight = 0
+        mcmc.starting_tree_source = TreeCollection(newick='(1:0.12662,(3:0.08749,(((8:0.13250,5:0.07222):0.02915,((10:0.06949,(9:0.06137,7:0.06202):0.01706):0.03601,6:0.07307):0.02516):0.02575,4:0.07395):0.02633):0.02879,2:0.05046);')
+        mcmc.mapping_move_weight = 0
+        mcmc.unimap_edge_move_weight = 1
+        mcmc.unimap_nni_move_weight = 1
         mcmc.unimap_sample_ambig_move_weight = 0
     elif fixed_topo:
         raise NotImplementedError()
     else:
         mcmc.mapping_move_weight = 0
         mcmc.unimap_nni_move_weight = 1
+        mcmc.unimap_edge_move_weight = 1
         mcmc.unimap_sample_ambig_move_weight = 1
         mcmc.ncycles = 50000
         mcmc.sample_every = 10
@@ -72,15 +73,15 @@ if do_mcmc:
     print mcmc.curr
     mcmc()
 
-sumt.out.splits = prefix + '_' + file_pref + '_' + suffix + '_' + 'sumt_splits'
-sumt.out.trees = prefix + '_' + file_pref + '_' + suffix + '_' + 'sumt_trees'
-sumt.out.log = prefix + '_' + file_pref + '_' + suffix + '_' + 'sumt_log'
+sumt.out.splits.prefix = prefix + '_' + file_pref + '_' + suffix + '_' + 'sumt_splits'
+sumt.out.trees.prefix = prefix + '_' + file_pref + '_' + suffix + '_' + 'sumt_trees'
+sumt.out.log.prefix = prefix + '_' + file_pref + '_' + suffix + '_' + 'sumt_log'
 
 sumt.out.log.mode = REPLACE
 sumt.out.splits.mode = REPLACE
 sumt.out.trees.mode = REPLACE
 
-sumt.trees = prefix + '_' + file_pref + '_' + suffix + '_' + 'trees'
+sumt.trees = prefix + '_' + file_pref + '_' + suffix + '_' + 'trees.t'
 
 sumt.tree_credible_prob = 1.0
 

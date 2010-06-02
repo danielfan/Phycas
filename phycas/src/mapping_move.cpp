@@ -54,7 +54,7 @@ bool MappingMove::update()
     
 	if (recalcLnInRemap)
 		{
-		std::cerr << "recalculating lnL in remapping\n";
+		//std::cerr << "recalculating lnL in remapping\n";
 		ChainManagerShPtr p = chain_mgr.lock();
 		curr_ln_like = likelihood->calcLnL(tree);
 		p->setLastLnLike(curr_ln_like);

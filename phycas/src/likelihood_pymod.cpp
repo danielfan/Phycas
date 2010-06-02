@@ -120,6 +120,8 @@ BOOST_PYTHON_MODULE(_LikelihoodExt)
 		.def("clear", &MCMCChainManager::clear)
 		.def("refreshLastLnLike", &MCMCChainManager::refreshLastLnLike)
 		.def("refreshLastLnPrior", &MCMCChainManager::refreshLastLnPrior)
+		.def("setRefTree", &MCMCChainManager::setRefTree) 
+		.def("getRefTree", &MCMCChainManager::getRefTree) 
 		.def("calcRFDistance", &MCMCChainManager::calcRFDistance) 
 		.def("setMinSSWPSampleSize", &MCMCChainManager::setMinSSWPSampleSize)
 		;

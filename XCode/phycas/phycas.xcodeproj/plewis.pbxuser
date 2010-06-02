@@ -2,12 +2,13 @@
 {
 	0867D690FE84028FC02AAC07 /* Project object */ = {
 		activeBuildConfigurationName = Debug;
-		activeExecutable = D1C50BA511B452B9008D9B73 /* Run unimap */;
+		activeExecutable = D17D35E311B5774F00E122F4 /* Run mth test */;
 		activeTarget = 7AB51D6C10CDADC700A865FF /* Everything */;
 		addToTargets = (
 			7AB51D6C10CDADC700A865FF /* Everything */,
 		);
 		breakpoints = (
+			D17D365C11B5BD9400E122F4 /* unimap_nni_move.cpp:820 */,
 		);
 		codeSenseManager = D13CAB7710D1D30500813B89 /* Code sense */;
 		executables = (
@@ -24,6 +25,7 @@
 			D12D34A611925D3D007B58E9 /* Run paradox */,
 			D132274A11AEA9410003E7B5 /* Run jockusch */,
 			D1C50BA511B452B9008D9B73 /* Run unimap */,
+			D17D35E311B5774F00E122F4 /* Run mth test */,
 		);
 		expressions = (
 			log_correction_factor,
@@ -60,11 +62,11 @@
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
 					20,
-					406,
+					398,
 					20,
-					358,
-					358,
-					359,
+					350,
+					350,
+					352,
 					20,
 				);
 				PBXFileTableDataSourceColumnsKey = (
@@ -84,7 +86,7 @@
 				PBXFileTableDataSourceColumnWidthsKey = (
 					200,
 					360,
-					1021,
+					893,
 				);
 				PBXFileTableDataSourceColumnsKey = (
 					PBXBookmarksDataSource_LocationID,
@@ -98,7 +100,7 @@
 				PBXFileTableDataSourceColumnWidthsKey = (
 					22,
 					300,
-					899,
+					1131,
 				);
 				PBXFileTableDataSourceColumnsKey = (
 					PBXExecutablesDataSource_ActiveFlagID,
@@ -111,7 +113,7 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					1011,
+					1243,
 					20,
 					48,
 					43,
@@ -133,7 +135,7 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXFindDataSource_LocationID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					794,
-					699,
+					760,
 				);
 				PBXFileTableDataSourceColumnsKey = (
 					PBXFindDataSource_MessageID,
@@ -147,7 +149,7 @@
 					16,
 					200,
 					50,
-					1345,
+					1280.20849609375,
 				);
 				PBXFileTableDataSourceColumnsKey = (
 					PBXSymbolsDataSource_SymbolTypeIconID,
@@ -202,31 +204,31 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 297038495;
-			PBXWorkspaceStateSaveDate = 297038495;
+			PBXPerProjectTemplateStateSaveDate = 297133953;
+			PBXWorkspaceStateSaveDate = 297133953;
 		};
 		perUserProjectItems = {
-			D11BACAE11B430850084D645 = D11BACAE11B430850084D645 /* PBXTextBookmark */;
-			D11BACC811B431DB0084D645 = D11BACC811B431DB0084D645 /* PBXTextBookmark */;
-			D11BACD611B435F00084D645 = D11BACD611B435F00084D645 /* PBXTextBookmark */;
-			D11BACD711B435F00084D645 = D11BACD711B435F00084D645 /* PBXTextBookmark */;
-			D1234FF611B21CE200BDD033 = D1234FF611B21CE200BDD033 /* PBXTextBookmark */;
-			D1234FF711B21CE200BDD033 = D1234FF711B21CE200BDD033 /* PBXTextBookmark */;
-			D141EDE911B2CF46008112B7 = D141EDE911B2CF46008112B7 /* PBXTextBookmark */;
-			D141EDEA11B2CF46008112B7 = D141EDEA11B2CF46008112B7 /* PBXTextBookmark */;
-			D141EDFC11B2F9A0008112B7 = D141EDFC11B2F9A0008112B7 /* PBXTextBookmark */;
-			D141EE1011B30456008112B7 = D141EE1011B30456008112B7 /* PBXTextBookmark */;
-			D141EE1111B30456008112B7 = D141EE1111B30456008112B7 /* PBXTextBookmark */;
-			D141EE1211B30456008112B7 = D141EE1211B30456008112B7 /* PBXTextBookmark */;
-			D141EE1311B30456008112B7 = D141EE1311B30456008112B7 /* PBXTextBookmark */;
-			D141EE1411B30456008112B7 = D141EE1411B30456008112B7 /* PBXTextBookmark */;
-			D1C3F00211B31105000F3DBF = D1C3F00211B31105000F3DBF /* PBXTextBookmark */;
-			D1C3F00311B31105000F3DBF = D1C3F00311B31105000F3DBF /* PBXTextBookmark */;
-			D1C50BC611B456FC008D9B73 = D1C50BC611B456FC008D9B73 /* PBXTextBookmark */;
-			D1C50BD911B46651008D9B73 = D1C50BD911B46651008D9B73 /* PBXTextBookmark */;
-			D1C50BDB11B46651008D9B73 = D1C50BDB11B46651008D9B73 /* PBXTextBookmark */;
-			D1C50BE411B47108008D9B73 = D1C50BE411B47108008D9B73 /* PBXTextBookmark */;
-			D1EE39D011B1C9C900E82C69 = D1EE39D011B1C9C900E82C69 /* PBXTextBookmark */;
+			D17D360E11B5954000E122F4 /* PBXTextBookmark */ = D17D360E11B5954000E122F4 /* PBXTextBookmark */;
+			D17D364411B5B3E400E122F4 /* PBXTextBookmark */ = D17D364411B5B3E400E122F4 /* PBXTextBookmark */;
+			D17D365311B5BD0F00E122F4 /* PBXTextBookmark */ = D17D365311B5BD0F00E122F4 /* PBXTextBookmark */;
+			D17D365411B5BD0F00E122F4 /* PBXTextBookmark */ = D17D365411B5BD0F00E122F4 /* PBXTextBookmark */;
+			D17D365511B5BD0F00E122F4 /* PBXTextBookmark */ = D17D365511B5BD0F00E122F4 /* PBXTextBookmark */;
+			D17D365611B5BD0F00E122F4 /* PBXTextBookmark */ = D17D365611B5BD0F00E122F4 /* PBXTextBookmark */;
+			D17D366A11B5BE9D00E122F4 /* PBXTextBookmark */ = D17D366A11B5BE9D00E122F4 /* PBXTextBookmark */;
+			D17D366B11B5BE9D00E122F4 /* PBXTextBookmark */ = D17D366B11B5BE9D00E122F4 /* PBXTextBookmark */;
+			D17D366C11B5BE9D00E122F4 /* PBXTextBookmark */ = D17D366C11B5BE9D00E122F4 /* PBXTextBookmark */;
+			D17D366D11B5BE9D00E122F4 /* PBXTextBookmark */ = D17D366D11B5BE9D00E122F4 /* PBXTextBookmark */;
+			D17D367811B5D34300E122F4 /* PBXTextBookmark */ = D17D367811B5D34300E122F4 /* PBXTextBookmark */;
+			D17D367911B5D34300E122F4 /* PBXTextBookmark */ = D17D367911B5D34300E122F4 /* PBXTextBookmark */;
+			D17D369B11B5E37F00E122F4 /* PBXTextBookmark */ = D17D369B11B5E37F00E122F4 /* PBXTextBookmark */;
+			D17D369D11B5E37F00E122F4 /* PBXTextBookmark */ = D17D369D11B5E37F00E122F4 /* PBXTextBookmark */;
+			D17D369F11B5E37F00E122F4 /* PBXTextBookmark */ = D17D369F11B5E37F00E122F4 /* PBXTextBookmark */;
+			D17D36A511B5E46D00E122F4 /* PBXTextBookmark */ = D17D36A511B5E46D00E122F4 /* PBXTextBookmark */;
+			D17D36B711B5E8B400E122F4 /* PBXTextBookmark */ = D17D36B711B5E8B400E122F4 /* PBXTextBookmark */;
+			D17D36BE11B5EAC400E122F4 /* PBXTextBookmark */ = D17D36BE11B5EAC400E122F4 /* PBXTextBookmark */;
+			D17D36C011B5EB6D00E122F4 /* PBXTextBookmark */ = D17D36C011B5EB6D00E122F4 /* PBXTextBookmark */;
+			D17D36C111B5EB6D00E122F4 /* PBXTextBookmark */ = D17D36C111B5EB6D00E122F4 /* PBXTextBookmark */;
+			D17D36D511B5EF3500E122F4 /* PBXTextBookmark */ = D17D36D511B5EF3500E122F4 /* PBXTextBookmark */;
 		};
 		sourceControlManager = D13CAB7610D1D30500813B89 /* Source Control */;
 		userBookmarkGroup = D1FE65561199FEB100CD903B /* PBXBookmarkGroup */;
@@ -277,9 +279,9 @@
 	};
 	7A0945B810CAEFB900CEFDE0 /* basic_tree.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1113, 35035}}";
-			sepNavSelRange = "{72972, 8}";
-			sepNavVisRange = "{72195, 1508}";
+			sepNavIntBoundsRect = "{{0, 0}, {1433, 34970}}";
+			sepNavSelRange = "{75684, 0}";
+			sepNavVisRange = "{72441, 2525}";
 			sepNavWindowFrame = "{{164, 64}, {1648, 1050}}";
 		};
 	};
@@ -384,9 +386,9 @@
 	};
 	7A0945CA10CAEFB900CEFDE0 /* dirichlet_move.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1500, 12922}}";
-			sepNavSelRange = "{25153, 20}";
-			sepNavVisRange = "{24058, 2564}";
+			sepNavIntBoundsRect = "{{0, 0}, {2756, 12649}}";
+			sepNavSelRange = "{38038, 21}";
+			sepNavVisRange = "{37277, 3048}";
 			sepNavWindowFrame = "{{663, 107}, {1257, 1041}}";
 		};
 	};
@@ -422,9 +424,9 @@
 	};
 	7A0945D110CAEFB900CEFDE0 /* edge_move.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1500, 3952}}";
-			sepNavSelRange = "{6574, 8}";
-			sepNavVisRange = "{5796, 1504}";
+			sepNavIntBoundsRect = "{{0, 0}, {1500, 3991}}";
+			sepNavSelRange = "{7739, 67}";
+			sepNavVisRange = "{6887, 1578}";
 			sepNavWindowFrame = "{{510, 200}, {1319, 1109}}";
 		};
 	};
@@ -518,10 +520,17 @@
 	};
 	7A0945E010CAEFB900CEFDE0 /* larget_simon_move.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 11414}}";
-			sepNavSelRange = "{5910, 0}";
-			sepNavVisRange = "{3515, 2257}";
+			sepNavIntBoundsRect = "{{0, 0}, {2140, 11661}}";
+			sepNavSelRange = "{9296, 15}";
+			sepNavVisRange = "{7212, 2188}";
 			sepNavWindowFrame = "{{2560, 295}, {1648, 1050}}";
+		};
+	};
+	7A0945E110CAEFB900CEFDE0 /* larget_simon_move.hpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1433, 1807}}";
+			sepNavSelRange = "{3294, 11}";
+			sepNavVisRange = "{1759, 2403}";
 		};
 	};
 	7A0945E310CAEFB900CEFDE0 /* likelihood_loops.cpp */ = {
@@ -556,9 +565,9 @@
 	};
 	7A0945E710CAEFB900CEFDE0 /* likelihood_pymod.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1455, 3224}}";
-			sepNavSelRange = "{11695, 0}";
-			sepNavVisRange = "{0, 4072}";
+			sepNavIntBoundsRect = "{{0, 0}, {1500, 3445}}";
+			sepNavSelRange = "{5894, 14}";
+			sepNavVisRange = "{3890, 2547}";
 			sepNavWindowFrame = "{{101, 511}, {1257, 1041}}";
 		};
 	};
@@ -571,9 +580,9 @@
 	};
 	7A0945EB10CAEFB900CEFDE0 /* mapping_move.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 858}}";
-			sepNavSelRange = "{2466, 0}";
-			sepNavVisRange = "{1120, 1757}";
+			sepNavIntBoundsRect = "{{0, 0}, {1433, 858}}";
+			sepNavSelRange = "{2591, 13}";
+			sepNavVisRange = "{480, 2399}";
 		};
 	};
 	7A0945EC10CAEFB900CEFDE0 /* mapping_move.hpp */ = {
@@ -585,17 +594,17 @@
 	};
 	7A0945ED10CAEFB900CEFDE0 /* mcmc_chain_manager.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1500, 10764}}";
-			sepNavSelRange = "{13914, 14}";
-			sepNavVisRange = "{13026, 1844}";
+			sepNavIntBoundsRect = "{{0, 0}, {1500, 10985}}";
+			sepNavSelRange = "{14236, 14}";
+			sepNavVisRange = "{13231, 1744}";
 			sepNavWindowFrame = "{{245, 191}, {1648, 1098}}";
 		};
 	};
 	7A0945EE10CAEFB900CEFDE0 /* mcmc_chain_manager.hpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1561, 2262}}";
-			sepNavSelRange = "{5024, 12}";
-			sepNavVisRange = "{4482, 2339}";
+			sepNavIntBoundsRect = "{{0, 0}, {2133, 2223}}";
+			sepNavSelRange = "{6290, 14}";
+			sepNavVisRange = "{5685, 3472}";
 		};
 	};
 	7A0945EF10CAEFB900CEFDE0 /* mcmc_chain_manager.inl */ = {
@@ -643,17 +652,17 @@
 	};
 	7A0945F610CAEFB900CEFDE0 /* mcmc_updater.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1455, 12311}}";
-			sepNavSelRange = "{15433, 16}";
-			sepNavVisRange = "{14253, 3301}";
+			sepNavIntBoundsRect = "{{0, 0}, {1500, 12415}}";
+			sepNavSelRange = "{4554, 13}";
+			sepNavVisRange = "{3662, 2243}";
 			sepNavWindowFrame = "{{167, 18}, {1257, 1041}}";
 		};
 	};
 	7A0945F710CAEFB900CEFDE0 /* mcmc_updater.hpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1748, 3315}}";
-			sepNavSelRange = "{5254, 92}";
-			sepNavVisRange = "{8972, 5469}";
+			sepNavIntBoundsRect = "{{0, 0}, {1748, 3354}}";
+			sepNavSelRange = "{12193, 8}";
+			sepNavVisRange = "{9566, 5111}";
 		};
 	};
 	7A0945F910CAEFB900CEFDE0 /* model_pymod.cpp */ = {
@@ -879,39 +888,39 @@
 	};
 	7A09463E10CAEFB900CEFDE0 /* tip_data.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1643, 1950}}";
-			sepNavSelRange = "{1983, 7}";
-			sepNavVisRange = "{1441, 3187}";
+			sepNavIntBoundsRect = "{{0, 0}, {1720, 1976}}";
+			sepNavSelRange = "{2268, 0}";
+			sepNavVisRange = "{0, 5069}";
 			sepNavWindowFrame = "{{69, 132}, {1257, 1041}}";
 		};
 	};
 	7A09463F10CAEFB900CEFDE0 /* tip_data.hpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1811, 3393}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1811, 3432}}";
 			sepNavSelRange = "{5240, 14}";
-			sepNavVisRange = "{6243, 3769}";
+			sepNavVisRange = "{5310, 5456}";
 		};
 	};
 	7A09464310CAEFB900CEFDE0 /* tree_iterators.hpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1498, 1378}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1433, 1313}}";
 			sepNavSelRange = "{2087, 17}";
-			sepNavVisRange = "{1614, 1513}";
+			sepNavVisRange = "{1473, 1923}";
 		};
 	};
 	7A09464410CAEFB900CEFDE0 /* tree_likelihood.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1405, 54912}}";
-			sepNavSelRange = "{140821, 0}";
-			sepNavVisRange = "{139210, 2237}";
+			sepNavIntBoundsRect = "{{0, 0}, {1500, 55354}}";
+			sepNavSelRange = "{144799, 0}";
+			sepNavVisRange = "{143890, 1551}";
 			sepNavWindowFrame = "{{377, -168}, {1257, 1041}}";
 		};
 	};
 	7A09464510CAEFB900CEFDE0 /* tree_likelihood.hpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {2441, 4173}}";
-			sepNavSelRange = "{14004, 71}";
-			sepNavVisRange = "{12782, 3300}";
+			sepNavIntBoundsRect = "{{0, 0}, {2441, 4303}}";
+			sepNavSelRange = "{3232, 13}";
+			sepNavVisRange = "{2150, 1752}";
 		};
 	};
 	7A09464610CAEFB900CEFDE0 /* tree_likelihood.inl */ = {
@@ -974,9 +983,9 @@
 	};
 	7A09465110CAEFB900CEFDE0 /* unimap_edge_move.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1113, 3445}}";
-			sepNavSelRange = "{9479, 18}";
-			sepNavVisRange = "{7914, 2212}";
+			sepNavIntBoundsRect = "{{0, 0}, {1433, 3965}}";
+			sepNavSelRange = "{8236, 22}";
+			sepNavVisRange = "{8567, 2294}";
 		};
 	};
 	7A09465210CAEFB900CEFDE0 /* unimap_edge_move.hpp */ = {
@@ -988,16 +997,37 @@
 	};
 	7A09465410CAEFB900CEFDE0 /* unimap_fast_nni_move.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1385, 10413}}";
-			sepNavSelRange = "{22614, 8}";
-			sepNavVisRange = "{21969, 1295}";
+			sepNavIntBoundsRect = "{{0, 0}, {1433, 9841}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 2559}";
+		};
+	};
+	7A09465510CAEFB900CEFDE0 /* unimap_fast_nni_move.hpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1433, 1638}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 2392}";
+		};
+	};
+	7A09465610CAEFB900CEFDE0 /* unimap_fast_nni_move.inl */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1433, 765}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 1591}";
 		};
 	};
 	7A09465710CAEFB900CEFDE0 /* unimap_nni_move.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1817, 10101}}";
-			sepNavSelRange = "{13814, 6}";
-			sepNavVisRange = "{12759, 1792}";
+			sepNavIntBoundsRect = "{{0, 0}, {1500, 12194}}";
+			sepNavSelRange = "{9316, 0}";
+			sepNavVisRange = "{8586, 1760}";
+		};
+	};
+	7A09465810CAEFB900CEFDE0 /* unimap_nni_move.hpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1530, 2249}}";
+			sepNavSelRange = "{3356, 8}";
+			sepNavVisRange = "{2512, 2723}";
 		};
 	};
 	7A09465A10CAEFB900CEFDE0 /* unimap_node_slide_move.cpp */ = {
@@ -1023,9 +1053,9 @@
 	};
 	7A09465E10CAEFB900CEFDE0 /* univent_prob_mgr.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1275, 7826}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1433, 7774}}";
 			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 2184}";
+			sepNavVisRange = "{0, 2790}";
 		};
 	};
 	7A09465F10CAEFB900CEFDE0 /* univent_prob_mgr.hpp */ = {
@@ -1081,9 +1111,9 @@
 	};
 	7A98F61610CD6DEC001E79F7 /* _MCMCChainManager.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 1638}}";
-			sepNavSelRange = "{66, 16}";
-			sepNavVisRange = "{0, 1214}";
+			sepNavIntBoundsRect = "{{0, 0}, {1500, 1612}}";
+			sepNavSelRange = "{1588, 13}";
+			sepNavVisRange = "{795, 1514}";
 		};
 	};
 	7A98F61810CD6DEC001E79F7 /* _Model.py */ = {
@@ -1216,18 +1246,25 @@
 			sepNavVisRange = "{0, 2292}";
 		};
 	};
+	7A98F80910CD85D8001E79F7 /* GlobalState.py */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1500, 637}}";
+			sepNavSelRange = "{401, 14}";
+			sepNavVisRange = "{250, 1695}";
+		};
+	};
 	7A98F80B10CD85D8001E79F7 /* io.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1594, 3484}}";
-			sepNavSelRange = "{506, 0}";
-			sepNavVisRange = "{0, 2724}";
+			sepNavIntBoundsRect = "{{0, 0}, {1500, 3380}}";
+			sepNavSelRange = "{3687, 8}";
+			sepNavVisRange = "{2748, 1542}";
 		};
 	};
 	7A98F81010CD85D8001E79F7 /* PhycasCommand.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {2014, 16510}}";
-			sepNavSelRange = "{18736, 3}";
-			sepNavVisRange = "{17990, 1825}";
+			sepNavIntBoundsRect = "{{0, 0}, {1500, 16848}}";
+			sepNavSelRange = "{37314, 14}";
+			sepNavVisRange = "{36411, 1458}";
 		};
 	};
 	7AB51C0A10CD9CE100A865FF /* builtin_converters.cpp */ = {
@@ -1427,70 +1464,10 @@
 	};
 	D11BACAB11B430400084D645 /* SplitTest.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1113, 1638}}";
-			sepNavSelRange = "{3130, 0}";
-			sepNavVisRange = "{2259, 1676}";
+			sepNavIntBoundsRect = "{{0, 0}, {1432, 1172}}";
+			sepNavSelRange = "{3579, 0}";
+			sepNavVisRange = "{0, 3579}";
 		};
-	};
-	D11BACAE11B430850084D645 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A09460410CAEFB900CEFDE0 /* partition_model.cpp */;
-		name = "partition_model.cpp: 199";
-		rLen = 15;
-		rLoc = 8416;
-		rType = 0;
-		vrLen = 2316;
-		vrLoc = 7379;
-	};
-	D11BACC811B431DB0084D645 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1AC9562111A0AF500335CDA /* runall.py */;
-		name = "runall.py: 115";
-		rLen = 0;
-		rLoc = 3409;
-		rType = 0;
-		vrLen = 2461;
-		vrLoc = 2894;
-	};
-	D11BACD611B435F00084D645 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D11BACAB11B430400084D645 /* SplitTest.py */;
-		name = "SplitTest.py: 100";
-		rLen = 0;
-		rLoc = 3130;
-		rType = 0;
-		vrLen = 1676;
-		vrLoc = 2259;
-	};
-	D11BACD711B435F00084D645 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A09462310CAEFB900CEFDE0 /* split.hpp */;
-		name = "split.hpp: 42";
-		rLen = 0;
-		rLoc = 2278;
-		rType = 0;
-		vrLen = 2885;
-		vrLoc = 1542;
-	};
-	D1234FF611B21CE200BDD033 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A0945B810CAEFB900CEFDE0 /* basic_tree.cpp */;
-		name = "basic_tree.cpp: 2196";
-		rLen = 8;
-		rLoc = 72972;
-		rType = 0;
-		vrLen = 1508;
-		vrLoc = 72195;
-	};
-	D1234FF711B21CE200BDD033 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1ABDDEC10D2D60000EDC77A /* MCMCImpl.py */;
-		name = "MCMCImpl.py: 914";
-		rLen = 6;
-		rLoc = 39711;
-		rType = 0;
-		vrLen = 2247;
-		vrLoc = 38471;
 	};
 	D12D34A611925D3D007B58E9 /* Run paradox */ = {
 		isa = PBXExecutable;
@@ -1814,86 +1791,6 @@
 		path = /Users/plewis/pydbg/bin/python;
 		sourceTree = "<absolute>";
 	};
-	D141EDE911B2CF46008112B7 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A09465D10CAEFB900CEFDE0 /* unimap_sample_ambig_move.hpp */;
-		name = "unimap_sample_ambig_move.hpp: 37";
-		rLen = 11;
-		rLoc = 2052;
-		rType = 0;
-		vrLen = 1778;
-		vrLoc = 1522;
-	};
-	D141EDEA11B2CF46008112B7 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A0945F710CAEFB900CEFDE0 /* mcmc_updater.hpp */;
-		name = "mcmc_updater.hpp: 89";
-		rLen = 92;
-		rLoc = 5254;
-		rType = 0;
-		vrLen = 5469;
-		vrLoc = 8972;
-	};
-	D141EDFC11B2F9A0008112B7 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A09464510CAEFB900CEFDE0 /* tree_likelihood.hpp */;
-		name = "tree_likelihood.hpp: 64";
-		rLen = 0;
-		rLoc = 2516;
-		rType = 0;
-		vrLen = 2165;
-		vrLoc = 1926;
-	};
-	D141EE1011B30456008112B7 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A09465C10CAEFB900CEFDE0 /* unimap_sample_ambig_move.cpp */;
-		name = "unimap_sample_ambig_move.cpp: 339";
-		rLen = 31;
-		rLoc = 13730;
-		rType = 0;
-		vrLen = 1923;
-		vrLoc = 11961;
-	};
-	D141EE1111B30456008112B7 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A09465210CAEFB900CEFDE0 /* unimap_edge_move.hpp */;
-		name = "unimap_edge_move.hpp: 38";
-		rLen = 8;
-		rLoc = 2086;
-		rType = 0;
-		vrLen = 2056;
-		vrLoc = 1760;
-	};
-	D141EE1211B30456008112B7 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A09465110CAEFB900CEFDE0 /* unimap_edge_move.cpp */;
-		name = "unimap_edge_move.cpp: 238";
-		rLen = 18;
-		rLoc = 9479;
-		rType = 0;
-		vrLen = 2212;
-		vrLoc = 7914;
-	};
-	D141EE1311B30456008112B7 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A0945CB10CAEFB900CEFDE0 /* dirichlet_move.hpp */;
-		name = "dirichlet_move.hpp: 171";
-		rLen = 20;
-		rLoc = 7989;
-		rType = 0;
-		vrLen = 2296;
-		vrLoc = 6395;
-	};
-	D141EE1411B30456008112B7 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A0945CA10CAEFB900CEFDE0 /* dirichlet_move.cpp */;
-		name = "dirichlet_move.cpp: 625";
-		rLen = 20;
-		rLoc = 25153;
-		rType = 0;
-		vrLen = 2849;
-		vrLoc = 23943;
-	};
 	D147B5FE111F4DDF00094934 /* Run FixedParams Test */ = {
 		isa = PBXExecutable;
 		activeArgIndices = (
@@ -2125,16 +2022,6 @@
 		path = /Users/plewis/pydbg/bin/python;
 		sourceTree = "<absolute>";
 	};
-	D150D122119C3B7700BC8288 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1ABDDEF10D2D60000EDC77A /* Partition.py */;
-		name = "*** begin again here ***";
-		rLen = 12;
-		rLoc = 4043;
-		rType = 0;
-		vrLen = 1716;
-		vrLoc = 3620;
-	};
 	D164C4A71164EC0E00DB2E59 /* Run steppingstone */ = {
 		isa = PBXExecutable;
 		activeArgIndices = (
@@ -2225,6 +2112,335 @@
 			sepNavSelRange = "{329, 0}";
 			sepNavVisRange = "{808, 2714}";
 		};
+	};
+	D17D35E311B5774F00E122F4 /* Run mth test */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+			YES,
+			YES,
+			YES,
+		);
+		argumentStrings = (
+			mth_test.py,
+			uni,
+			green4.nex,
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 1;
+		configStateDict = {
+			"PBXLSLaunchAction-0" = {
+				PBXLSLaunchAction = 0;
+				PBXLSLaunchStartAction = 1;
+				PBXLSLaunchStdioStyle = 2;
+				PBXLSLaunchStyle = 0;
+				class = PBXLSRunLaunchConfig;
+				commandLineArgs = (
+				);
+				displayName = "Executable Runner";
+				environment = {
+				};
+				identifier = com.apple.Xcode.launch.runConfig;
+				remoteHostInfo = "";
+				startActionInfo = "";
+			};
+		};
+		customDataFormattersEnabled = 1;
+		dataTipCustomDataFormattersEnabled = 1;
+		dataTipShowTypeColumn = 1;
+		dataTipSortType = 0;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		dylibVariantSuffix = "";
+		enableDebugStr = 1;
+		environmentEntries = (
+			{
+				active = YES;
+				name = DYLD_LIBRARY_PATH;
+				value = "$(PHYCAS_ROOT)/phycas/Conversions";
+			},
+			{
+				active = YES;
+				name = PYTHONPATH;
+				value = "$(PHYCAS_ROOT)";
+			},
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		launchableReference = D17D35E411B5774F00E122F4 /* python */;
+		libgmallocEnabled = 0;
+		name = "Run mth test";
+		savedGlobals = {
+		};
+		showTypeColumn = 0;
+		sourceDirectories = (
+		);
+		startupPath = /Users/plewis/Documents/Projects/pdev/trunk/phycas/Tests/Unimap;
+		variableFormatDictionary = {
+			$fctrl = 1;
+			$fioff = 1;
+			$fiseg = 1;
+			$fooff = 1;
+			$fop = 1;
+			$foseg = 1;
+			$fstat = 1;
+			$ftag = 1;
+			"0-std::vector<double,std::allocator<double> >-phycas::TreeLikelihood::recalcRelativeRates" = 2;
+		};
+	};
+	D17D35E411B5774F00E122F4 /* python */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = "compiled.mach-o.executable";
+		name = python;
+		path = /Users/plewis/pydbg/bin/python;
+		sourceTree = "<absolute>";
+	};
+	D17D360E11B5954000E122F4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A09464410CAEFB900CEFDE0 /* tree_likelihood.cpp */;
+		name = "tree_likelihood.cpp: 3211";
+		rLen = 23;
+		rLoc = 120934;
+		rType = 0;
+		vrLen = 2464;
+		vrLoc = 119615;
+	};
+	D17D364411B5B3E400E122F4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A09465110CAEFB900CEFDE0 /* unimap_edge_move.cpp */;
+		name = "unimap_edge_move.cpp: 212";
+		rLen = 22;
+		rLoc = 8236;
+		rType = 0;
+		vrLen = 2294;
+		vrLoc = 8567;
+	};
+	D17D365311B5BD0F00E122F4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A09465E10CAEFB900CEFDE0 /* univent_prob_mgr.cpp */;
+		name = "univent_prob_mgr.cpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 2790;
+		vrLoc = 0;
+	};
+	D17D365411B5BD0F00E122F4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A09465610CAEFB900CEFDE0 /* unimap_fast_nni_move.inl */;
+		name = "unimap_fast_nni_move.inl: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 1591;
+		vrLoc = 0;
+	};
+	D17D365511B5BD0F00E122F4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A09465510CAEFB900CEFDE0 /* unimap_fast_nni_move.hpp */;
+		name = "unimap_fast_nni_move.hpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 2392;
+		vrLoc = 0;
+	};
+	D17D365611B5BD0F00E122F4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A09465410CAEFB900CEFDE0 /* unimap_fast_nni_move.cpp */;
+		name = "unimap_fast_nni_move.cpp: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 2559;
+		vrLoc = 0;
+	};
+	D17D365C11B5BD9400E122F4 /* unimap_nni_move.cpp:820 */ = {
+		isa = PBXFileBreakpoint;
+		actions = (
+		);
+		breakpointStyle = 0;
+		continueAfterActions = 0;
+		countType = 0;
+		delayBeforeContinue = 0;
+		fileReference = 7A09465710CAEFB900CEFDE0 /* unimap_nni_move.cpp */;
+		functionName = "UnimapNNIMove::accept()";
+		hitCount = 1;
+		ignoreCount = 0;
+		lineNumber = 820;
+		location = _LikelihoodExt.so;
+		modificationTime = 297123247.439271;
+		originalNumberOfMultipleMatches = 1;
+		state = 1;
+	};
+	D17D366A11B5BE9D00E122F4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A0945E010CAEFB900CEFDE0 /* larget_simon_move.cpp */;
+		name = "larget_simon_move.cpp: 240";
+		rLen = 15;
+		rLoc = 9296;
+		rType = 0;
+		vrLen = 2188;
+		vrLoc = 7212;
+	};
+	D17D366B11B5BE9D00E122F4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A0945E110CAEFB900CEFDE0 /* larget_simon_move.hpp */;
+		name = "larget_simon_move.hpp: 60";
+		rLen = 11;
+		rLoc = 3294;
+		rType = 0;
+		vrLen = 2403;
+		vrLoc = 1759;
+	};
+	D17D366C11B5BE9D00E122F4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A0945F710CAEFB900CEFDE0 /* mcmc_updater.hpp */;
+		name = "mcmc_updater.hpp: 231";
+		rLen = 8;
+		rLoc = 12193;
+		rType = 0;
+		vrLen = 5111;
+		vrLoc = 9566;
+	};
+	D17D366D11B5BE9D00E122F4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A0945F610CAEFB900CEFDE0 /* mcmc_updater.cpp */;
+		name = "mcmc_updater.cpp: 252";
+		rLen = 0;
+		rLoc = 11034;
+		rType = 0;
+		vrLen = 2654;
+		vrLoc = 9829;
+	};
+	D17D367811B5D34300E122F4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A09465710CAEFB900CEFDE0 /* unimap_nni_move.cpp */;
+		name = "unimap_nni_move.cpp: 666";
+		rLen = 0;
+		rLoc = 23567;
+		rType = 0;
+		vrLen = 2596;
+		vrLoc = 22555;
+	};
+	D17D367911B5D34300E122F4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A0945EB10CAEFB900CEFDE0 /* mapping_move.cpp */;
+		name = "mapping_move.cpp: 53";
+		rLen = 13;
+		rLoc = 2591;
+		rType = 0;
+		vrLen = 2399;
+		vrLoc = 480;
+	};
+	D17D369811B5E1E500E122F4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1ABDDED10D2D60000EDC77A /* MCMCManager.py */;
+		name = recordSample;
+		rLen = 12;
+		rLoc = 5893;
+		rType = 0;
+		vrLen = 1669;
+		vrLoc = 5106;
+	};
+	D17D369B11B5E37F00E122F4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A0945ED10CAEFB900CEFDE0 /* mcmc_chain_manager.cpp */;
+		name = "mcmc_chain_manager.cpp: 39";
+		rLen = 12;
+		rLoc = 2074;
+		rType = 0;
+		vrLen = 2230;
+		vrLoc = 1558;
+	};
+	D17D369D11B5E37F00E122F4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A0945B810CAEFB900CEFDE0 /* basic_tree.cpp */;
+		name = "basic_tree.cpp: 2271";
+		rLen = 0;
+		rLoc = 75684;
+		rType = 0;
+		vrLen = 2525;
+		vrLoc = 72441;
+	};
+	D17D369F11B5E37F00E122F4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1ABDDEF10D2D60000EDC77A /* Partition.py */;
+		name = "Partition.py: 113";
+		rLen = 12;
+		rLoc = 4043;
+		rType = 0;
+		vrLen = 1938;
+		vrLoc = 3481;
+	};
+	D17D36A411B5E42000E122F4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1ABDDEC10D2D60000EDC77A /* MCMCImpl.py */;
+		name = storeRefTreeIfSupplied;
+		rLen = 22;
+		rLoc = 13948;
+		rType = 0;
+		vrLen = 2538;
+		vrLoc = 12679;
+	};
+	D17D36A511B5E46D00E122F4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1BB2657111094A6002A8F79 /* MarkovChain.py */;
+		name = paramFileHeader;
+		rLen = 15;
+		rLoc = 2614;
+		rType = 0;
+		vrLen = 1619;
+		vrLoc = 2487;
+	};
+	D17D36B711B5E8B400E122F4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1ABDDEB10D2D60000EDC77A /* MCMC.py */;
+		name = "MCMC.py: 81";
+		rLen = 23;
+		rLoc = 11208;
+		rType = 0;
+		vrLen = 4268;
+		vrLoc = 9381;
+	};
+	D17D36BE11B5EAC400E122F4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7A0945EE10CAEFB900CEFDE0 /* mcmc_chain_manager.hpp */;
+		name = "mcmc_chain_manager.hpp: 119";
+		rLen = 14;
+		rLoc = 6290;
+		rType = 0;
+		vrLen = 3472;
+		vrLoc = 5685;
+	};
+	D17D36C011B5EB6D00E122F4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1ABDDED10D2D60000EDC77A /* MCMCManager.py */;
+		name = "MCMCManager.py: 221";
+		rLen = 0;
+		rLoc = 8133;
+		rType = 0;
+		vrLen = 2230;
+		vrLoc = 6290;
+	};
+	D17D36C111B5EB6D00E122F4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1ABDDEC10D2D60000EDC77A /* MCMCImpl.py */;
+		name = "MCMCImpl.py: 345";
+		rLen = 0;
+		rLoc = 14426;
+		rType = 0;
+		vrLen = 2586;
+		vrLoc = 12679;
+	};
+	D17D36D511B5EF3500E122F4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1BB2657111094A6002A8F79 /* MarkovChain.py */;
+		name = "MarkovChain.py: 101";
+		rLen = 0;
+		rLoc = 3700;
+		rType = 0;
+		vrLen = 2308;
+		vrLoc = 2145;
 	};
 	D1814096112C826C00D91CF6 /* partition.py */ = {
 		uiCtxt = {
@@ -2383,23 +2599,23 @@
 	D1ABDDEB10D2D60000EDC77A /* MCMC.py */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {2980, 1625}}";
-			sepNavSelRange = "{10248, 0}";
-			sepNavVisRange = "{7809, 5996}";
+			sepNavSelRange = "{11208, 23}";
+			sepNavVisRange = "{9381, 4268}";
 		};
 	};
 	D1ABDDEC10D2D60000EDC77A /* MCMCImpl.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1776, 15548}}";
-			sepNavSelRange = "{39711, 6}";
-			sepNavVisRange = "{38471, 2247}";
+			sepNavIntBoundsRect = "{{0, 0}, {1776, 15496}}";
+			sepNavSelRange = "{14426, 0}";
+			sepNavVisRange = "{13589, 1727}";
 			sepNavWindowFrame = "{{100, 511}, {1257, 1041}}";
 		};
 	};
 	D1ABDDED10D2D60000EDC77A /* MCMCManager.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 4511}}";
-			sepNavSelRange = "{1641, 14}";
-			sepNavVisRange = "{1302, 2179}";
+			sepNavIntBoundsRect = "{{0, 0}, {1500, 4485}}";
+			sepNavSelRange = "{8080, 0}";
+			sepNavVisRange = "{6902, 1731}";
 			sepNavWindowFrame = "{{215, 119}, {1158, 979}}";
 		};
 	};
@@ -2412,9 +2628,9 @@
 	};
 	D1ABDDEF10D2D60000EDC77A /* Partition.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {2126, 3237}}";
-			sepNavSelRange = "{7758, 14}";
-			sepNavVisRange = "{2499, 1388}";
+			sepNavIntBoundsRect = "{{0, 0}, {2126, 3133}}";
+			sepNavSelRange = "{4043, 12}";
+			sepNavVisRange = "{3481, 1938}";
 		};
 	};
 	D1ABDDF010D2D60000EDC77A /* Phycas.py */ = {
@@ -2482,9 +2698,9 @@
 	};
 	D1ABDDFB10D2D60000EDC77A /* UnimapImpl.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1726, 2730}}";
-			sepNavSelRange = "{7862, 0}";
-			sepNavVisRange = "{7680, 2657}";
+			sepNavIntBoundsRect = "{{0, 0}, {1433, 2717}}";
+			sepNavSelRange = "{9400, 0}";
+			sepNavVisRange = "{7159, 3338}";
 		};
 	};
 	D1ABDDFC10D2D64800EDC77A /* __init__.py */ = {
@@ -2594,31 +2810,11 @@
 	};
 	D1BB2657111094A6002A8F79 /* MarkovChain.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {2581, 7267}}";
-			sepNavSelRange = "{16285, 20}";
-			sepNavVisRange = "{14813, 3260}";
+			sepNavIntBoundsRect = "{{0, 0}, {1433, 7670}}";
+			sepNavSelRange = "{3700, 0}";
+			sepNavVisRange = "{2145, 2308}";
 			sepNavWindowFrame = "{{663, 137}, {1257, 1041}}";
 		};
-	};
-	D1C3F00211B31105000F3DBF /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A0945C210CAEFB900CEFDE0 /* cond_likelihood_storage.cpp */;
-		name = "cond_likelihood_storage.cpp: 83";
-		rLen = 0;
-		rLoc = 3808;
-		rType = 0;
-		vrLen = 2235;
-		vrLoc = 3002;
-	};
-	D1C3F00311B31105000F3DBF /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A09460510CAEFB900CEFDE0 /* partition_model.hpp */;
-		name = "partition_model.hpp: 77";
-		rLen = 16;
-		rLoc = 3948;
-		rType = 0;
-		vrLen = 2560;
-		vrLoc = 1917;
 	};
 	D1C50BA511B452B9008D9B73 /* Run unimap */ = {
 		isa = PBXExecutable;
@@ -2626,7 +2822,7 @@
 			YES,
 		);
 		argumentStrings = (
-			Unimap.py,
+			pol.py,
 		);
 		autoAttachOnCrash = 1;
 		breakpointsEnabled = 1;
@@ -2697,55 +2893,12 @@
 		path = /Users/plewis/pydbg/bin/python;
 		sourceTree = "<absolute>";
 	};
-	D1C50BC611B456FC008D9B73 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A09462210CAEFB900CEFDE0 /* split.cpp */;
-		name = "split.cpp: 234";
-		rLen = 0;
-		rLoc = 10715;
-		rType = 0;
-		vrLen = 3124;
-		vrLoc = 9300;
-	};
-	D1C50BD911B46651008D9B73 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A09464410CAEFB900CEFDE0 /* tree_likelihood.cpp */;
-		name = "tree_likelihood.cpp: 3681";
-		rLen = 0;
-		rLoc = 140821;
-		rType = 0;
-		vrLen = 2237;
-		vrLoc = 139210;
-	};
-	D1C50BDB11B46651008D9B73 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1ABDDEB10D2D60000EDC77A /* MCMC.py */;
-		name = "MCMC.py: 71";
-		rLen = 0;
-		rLoc = 10248;
-		rType = 0;
-		vrLen = 5831;
-		vrLoc = 7974;
-	};
-	D1C50BE411B47108008D9B73 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1ABDDEB10D2D60000EDC77A /* MCMC.py */;
-		name = "MCMC.py: 71";
-		rLen = 0;
-		rLoc = 10248;
-		rType = 0;
-		vrLen = 5996;
-		vrLoc = 7809;
-	};
-	D1D497D311A304A9008713DB /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1ABDDEC10D2D60000EDC77A /* MCMCImpl.py */;
-		name = openParameterAndTreeFiles;
-		rLen = 25;
-		rLoc = 18094;
-		rType = 0;
-		vrLen = 1995;
-		vrLoc = 16362;
+	D1C50BC511B456E5008D9B73 /* Unimap.py */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1432, 1172}}";
+			sepNavSelRange = "{257, 19}";
+			sepNavVisRange = "{0, 573}";
+		};
 	};
 	D1D55522111B7A9A001BD7CD /* LikelihoodTest.py */ = {
 		uiCtxt = {
@@ -2904,16 +3057,6 @@
 		path = /Users/plewis/pydbg/bin/python;
 		sourceTree = "<absolute>";
 	};
-	D1EE39D011B1C9C900E82C69 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A0945DC10CAEFB900CEFDE0 /* internal_data.cpp */;
-		name = "internal_data.cpp: 44";
-		rLen = 6;
-		rLoc = 2243;
-		rType = 0;
-		vrLen = 1642;
-		vrLoc = 1695;
-	};
 	D1F281C3111B422C00FDE78C /* GTRTest.py */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1726, 780}}";
@@ -2946,43 +3089,11 @@
 	D1FE65561199FEB100CD903B /* PBXBookmarkGroup */ = {
 		isa = PBXBookmarkGroup;
 		children = (
-			D1FE6574119A058100CD903B /* PBXTextBookmark */,
-			D1FE6575119A058B00CD903B /* PBXTextBookmark */,
-			D1FE6576119A059C00CD903B /* PBXTextBookmark */,
-			D150D122119C3B7700BC8288 /* PBXTextBookmark */,
-			D1D497D311A304A9008713DB /* PBXTextBookmark */,
+			D17D369811B5E1E500E122F4 /* PBXTextBookmark */,
+			D17D36A411B5E42000E122F4 /* PBXTextBookmark */,
+			D17D36A511B5E46D00E122F4 /* PBXTextBookmark */,
 		);
 		name = Root;
-	};
-	D1FE6574119A058100CD903B /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1BB2657111094A6002A8F79 /* MarkovChain.py */;
-		name = setupChain;
-		rLen = 10;
-		rLoc = 6733;
-		rType = 0;
-		vrLen = 2581;
-		vrLoc = 6569;
-	};
-	D1FE6575119A058B00CD903B /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1ABDDEF10D2D60000EDC77A /* Partition.py */;
-		name = validate;
-		rLen = 8;
-		rLoc = 3679;
-		rType = 0;
-		vrLen = 1873;
-		vrLoc = 2376;
-	};
-	D1FE6576119A059C00CD903B /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1ABDDEC10D2D60000EDC77A /* MCMCImpl.py */;
-		name = setup;
-		rLen = 5;
-		rLoc = 13758;
-		rType = 0;
-		vrLen = 2694;
-		vrLoc = 13415;
 	};
 	D2AAC09C05546B4700DB518D /* Conversions */ = {
 		activeExec = 0;

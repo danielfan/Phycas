@@ -216,6 +216,11 @@ class MCMCManager:
 					ln_working_prior = 0.0
 				self.parent.paramf.write(float_format_str % ln_working_prior)
 	
+			# Robinson-Foulds distance between sampled tree and reference tree
+			if cold_chain.chain_manager.getRefTree() is not None:
+				dRF = cold_chain.chain_manager.calcRFDistance(cold_chain.chain_manager.getRefTree())
+				self.parent.paramf.write('%d\t' % dRF)
+			
 			# tree length
 			self.parent.paramf.write(float_format_str % cold_chain.tree.edgeLenSum())
 			if self.parent.opts.fix_topology:

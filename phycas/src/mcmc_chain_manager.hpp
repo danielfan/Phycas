@@ -114,6 +114,8 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
         
         void					debugUpdaterReport(std::string s);
 
+		TreeShPtr				getRefTree() {return ref_tree;}
+		void 					setRefTree(TreeShPtr t);
 		unsigned 				calcRFDistance(TreeShPtr ref_tree) const;
 
 	public:
@@ -132,6 +134,8 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 	private:
 
 		bool					dirty;					/**< If true, means just constructed or at least one updater has been added since finalize() was last called; false means ready to use the all_updaters vector */
+
+		TreeShPtr				ref_tree;				/**< A reference tree for the data set being analyzed that can be used to compare to the current tree. Ok to leave set to nothing. */
 
 		MCMCUpdaterIter			moves_begin;			/**< Iterator positioned at the first move */
 		MCMCUpdaterIter			moves_end;				/**< Iterator positioned just beyond the last move */

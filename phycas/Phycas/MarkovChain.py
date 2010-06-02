@@ -93,7 +93,12 @@ class MarkovChain(LikelihoodCore):
 
 		if self.parent.opts.doing_steppingstone_sampling and self.parent.opts.ssobj.scubed:
 			paramf.write('\tlnWorkPr')
-			
+
+		# If the user has defined a reference tree, add a column for the Robinson-Founds
+		# distance between the sampled tree and the reference tree
+		if self.parent.ref_tree is not None:
+			paramf.write('\tdRF')
+						
 		paramf.write('\tTL')
 		if self.parent.opts.fix_topology:
 			nbrlens = self.tree.getNNodes() - 1

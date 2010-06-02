@@ -2206,21 +2206,32 @@ unsigned Tree::robinsonFoulds(TreeShPtr other)
 	TreeID::iterator last1 = tree_id.end();
 	TreeID::iterator last2 = other_tree_id.end();
 	
-	// a  1 3   5   7 
-	// b      4 5 6 7 8
-	// 5 differences (1 3 4 6 8)
+	// The tree id is a std::set of Split objects. We can determine if a split is in one tree and not the other
+	// by comparing the two split objects with the < operator. Suppose there are 5 splits in each of two trees
+	// (tree A and tree B), but the trees are not identical and only splits 5 and 7 are in both trees:
+	//
+	// A  1 2 3 - 5 - 7 -
+	// B  - - - 4 5 6 7 8
+	//
+	// Define dAB to be the number of splits in A that are absent in B. Thus, dAB = 3. Likewise, dBA equals
+	// the number of splits in B that are absent in A (3). In this case, dAB = dBA because both trees are
+	// fully resolved. If one of the two trees was less resolved than the other, then dAB would differ from
+	// dBA. This function calculates dAB and dBA separately and adds them together to obtain the return value.
+	// Thus, for the example above, the result returned would be 6 (splits 1, 2, 3, 4, 6 and 8 are in one
+	// tree and not the other).
 	
 	// times
 	// thru
 	// loop   first1  first2  
 	// ---------------------
 	//  1       1       4     <- advance first1, num_differences = 1
-	//  2       3       4     <- advance first1, num_differences = 2
-	//  3       5       4     <- advance first2, num_differences = 3
-	//  4       5       5     <- advance both
-	//  5       7       6     <- advance first2, num_differences = 4
-	//  6       7       7     <- advance both
-	//  7       -       8     <- stop because first1 == last1, num_differences = 5
+	//  2       2       4     <- advance first1, num_differences = 2
+	//  3       3       4     <- advance first1, num_differences = 3
+	//  4       5       4     <- advance first2, num_differences = 4
+	//  5       5       5     <- advance both
+	//  6       7       6     <- advance first2, num_differences = 5
+	//  7       7       7     <- advance both
+	//  8       -       8     <- stop because first1 == last1, num_differences = 6
 	
 	unsigned num_differences = 0;
 	while (first1 != last1 && first2 != last2)
@@ -2240,15 +2251,18 @@ unsigned Tree::robinsonFoulds(TreeShPtr other)
 			++first1; 
 			++first2;
 			}
-
 		}
-		
+
+	// Take care of incrementing num_differences to account for the fact that one
+	// split set extends further than the other (i.e. step 8 in the example above)
 	if (first1 == last1 && first2 != last2)
 		{
+		// tree id 2 (i.e. other tree) still has some elements left
 		num_differences += std::distance(first2, last2);
 		}
 	else if (first2 == last2 && first1 != last1)
 		{
+		// tree id 1 (i.e. this tree) still has some elements left
 		num_differences += std::distance(first1, last1);
 		}
 	return num_differences;

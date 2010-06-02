@@ -472,6 +472,10 @@ void UnimapTopoMove::proposeNewState()
 	prev_ln_prior += calcEdgeLenLnPrior(*origNodePar, prev_ndP_len, p);
 	
 	ProposeStateWithTemporaries(p);
+	
+	//origNode->SelectNode();
+	//likelihood->startTreeViewer(tree, "Just after ProposeStateWithTemporaries called in UnimapTopoMove::proposeNewState");
+	//origNode->UnselectNode();
 
 	scoringBeforeMove = false;
     curr_ln_like = 0.0;
@@ -580,7 +584,7 @@ void UnimapTopoMove::DebugSaveNexusFile(std::ostream & nxsf, double lnlike, unsi
     nxsf << "\nbegin trees;" << std::endl;
 	nxsf << boost::str(boost::format("  utree curr = (a:%.8f, b:%.8f, (c:%.8f, d:%.8f):%.8f);") % aLenNd->GetEdgeLen() % bLenNd->GetEdgeLen() % cLenNd->GetEdgeLen() % dLenNd->GetEdgeLen() % origNode->GetEdgeLen()) << std::endl;
 	nxsf << " \nend;\n\nbegin paup;\n";
-    nxsf << boost::str(boost::format("  [!***** phycas lnL = %.8f *****]") % lnlike) << std::endl;
+    nxsf << boost::str(boost::format("  [!***** phycas lnL = %.8f (model = %s) *****]") % lnlike % model->getModelName()) << std::endl;
     if (model->getModelName().compare("JC69") == 0)
         nxsf << "  lset nst=1 basefreq=equal;" << std::endl;
     else if (model->getModelName().compare("HKY85") == 0)

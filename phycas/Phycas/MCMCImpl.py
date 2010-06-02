@@ -55,7 +55,7 @@ class MCMCImpl(CommonFunctions):
 		self.reader					= NexusReader()
 		#self._logFileName			 = None
 		self.addition_sequence		= []		# List of taxon numbers for addition sequence
-		
+		self.ref_tree				= None		# a reference tree against which the current MCMC tree can be compared (user specifies with, e.g., "mcmc.reference_tree_source = TreeCollection(file='hkyml.tre')")
 		self.stored_tree_defs		= None
 		self.psf					= None
 		self.pdf_splits_to_plot		= None
@@ -328,6 +328,21 @@ class MCMCImpl(CommonFunctions):
 		if num_degree_two_nodes > 0:
 			self.stdout.warning("A total of %d degree-2 nodes were removed from tree defined in starting_tree_source" % num_degree_two_nodes)
 		return t
+		
+	def storeRefTreeIfSupplied(self):
+		cold_chain = self.mcmc_manager.getColdChain()
+		
+		# If a reference tree was specified, create that tree now
+		tr_source = self.opts.reference_tree_source
+		if tr_source is not None:
+			try:
+				tr_source.setActiveTaxonLabels(self.taxon_labels)
+				i = iter(tr_source)
+				self.ref_tree = i.next()
+			except:
+				self.stdout.error("A reference tree could not be obtained from the specified reference_tree_source")
+		if self.ref_tree is not None:
+			cold_chain.chain_manager.setRefTree(self.ref_tree)
 
 	def setup(self):
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -426,7 +441,7 @@ class MCMCImpl(CommonFunctions):
 			self.phycassert(h[-1] > 0.0, 'all chain heating powers must be positive')
 
 		self.mcmc_manager.createChains()
-
+		self.storeRefTreeIfSupplied()
 		self.openParameterAndTreeFiles()
 		
 		if self.opts.doing_steppingstone_sampling:
@@ -487,6 +502,9 @@ class MCMCImpl(CommonFunctions):
 				m.setStateFreqsUnnorm(freq_vector)
 			elif name.find('subset_relrates') == 0:					# C++ class SubsetRelRatesMove
 				rates_vector = u.sampleMultivariateWorkingPrior()
+				while min(rates_vector) == 0.0:
+					self.output('\nWarning: resampling working prior for subset relative rates because first draw contained\n  an element equal to zero: (%s)' % ','.join(['%g' % r for r in rates_vector]))
+					rates_vector = u.sampleMultivariateWorkingPrior()
 				cold_chain.partition_model.setSubsetRelRatesVect(rates_vector)
 			elif name.find('gamma_shape') == 0:						# C++ class DiscreteGammaShapeParam
 				i = unpartitioned and 0 or self.getModelIndex(name)
@@ -615,6 +633,7 @@ class MCMCImpl(CommonFunctions):
 		cold_chain_manager = self.mcmc_manager.getColdChainManager()
 		cold_chain_manager.refreshLastLnLike()
 		cold_chain_manager.refreshLastLnPrior()
+
 		
 		# what about polytomies?
 											
@@ -955,6 +974,7 @@ class MCMCImpl(CommonFunctions):
 
 		self.nsamples = self.opts.ncycles//self.opts.sample_every
 		nchains = len(self.mcmc_manager.chains)
+		
 		cold_chain = self.mcmc_manager.getColdChain()
 		
 		if self.opts.verbose:
