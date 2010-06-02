@@ -94,10 +94,15 @@ class MarkovChain(LikelihoodCore):
 		if self.parent.opts.doing_steppingstone_sampling and self.parent.opts.ssobj.scubed:
 			paramf.write('\tlnWorkPr')
 
-		# If the user has defined a reference tree, add a column for the Robinson-Founds
+		# If the user has defined a reference tree, add a column for the Robinson-Foulds
 		# distance between the sampled tree and the reference tree
 		if self.parent.ref_tree is not None:
 			paramf.write('\tdRF')
+						
+		# If using a model that allows polytomies, include a column indicating the 
+		# resolution class of the tree
+		if self.parent.opts.allow_polytomies:
+			paramf.write('\tResClass')
 						
 		paramf.write('\tTL')
 		if self.parent.opts.fix_topology:

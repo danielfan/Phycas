@@ -221,6 +221,11 @@ class MCMCManager:
 				dRF = cold_chain.chain_manager.calcRFDistance(cold_chain.chain_manager.getRefTree())
 				self.parent.paramf.write('%d\t' % dRF)
 			
+			# If using a polytomy model, record the resolution class of the sampled tree
+			if self.parent.opts.allow_polytomies:
+				ninternals = cold_chain.tree.getNInternals()
+				self.parent.paramf.write('%d\t' % ninternals)
+			
 			# tree length
 			self.parent.paramf.write(float_format_str % cold_chain.tree.edgeLenSum())
 			if self.parent.opts.fix_topology:
