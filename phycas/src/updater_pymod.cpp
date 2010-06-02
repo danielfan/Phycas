@@ -216,4 +216,11 @@ void updater_pymod()
 		.def("sampleTipsAsDisconnected", &phycas::UnimapSampleAmbigMove::sampleTipsAsDisconnected)
 		.def("getNumAmbigNodes", &phycas::UnimapSampleAmbigMove::getNumAmbigNodes)
 		;
+
+	class_<phycas::UnimapLargetSimonMove, bases<phycas::MCMCUpdater>, 
+		boost::noncopyable, boost::shared_ptr<phycas::UnimapLargetSimonMove> >("UnimapLSMove", init<TreeLikeShPtr>()) 
+		.def("update", &phycas::UnimapLargetSimonMove::update)
+		.def("setLambda", &phycas::UnimapLargetSimonMove::setLambda)
+		.def("getLambda", &phycas::UnimapLargetSimonMove::getLambda)
+		;
 	}

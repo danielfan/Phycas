@@ -523,8 +523,8 @@ double UnimapTopoMove::FourTaxonLnLBeforeMove()
 		{
 		lnlike += FourTaxonLnLFromCorrectTipDataMembers(i);
 		
-		storePMatTransposed(pre_y_pmat_transposed[i], (const double ***) aTipData->getTransposedPMatrices(i), i);
-		storePMatTransposed(pre_x_pmat_transposed[i], (const double ***) bTipData->getTransposedPMatrices(i), i);
+		storePMatTransposed(pre_y_pmat_transposed[i], (const double ***) aTipData->getTransposedPMatrices(i), i); // we cache this, but never use it!!!!
+		storePMatTransposed(pre_x_pmat_transposed[i], (const double ***) bTipData->getTransposedPMatrices(i), i); 
 		storePMatTransposed(pre_w_pmat_transposed[i], (const double ***) cTipData->getTransposedPMatrices(i), i);
 		storePMatTransposed(pre_z_pmat_transposed[i], (const double ***) dTipData->getTransposedPMatrices(i), i);
 
@@ -626,7 +626,7 @@ void UnimapTopoMove::storePMatTransposed(double **& cached, const double *** p_m
     //      a  b        
     //       \/         
     //   c   nd_childCLPtr	
-    //    \ /           
+    //    \ /             <=== length is always origNode->GetEdgeLen()
     //    nd_parentCLPtr
     //    /
     //   d
@@ -904,6 +904,139 @@ double UnimapNNIMove::getLnHastingsRatio() const
 |	Returns the natural log of the Jacobian for this move.
 */
 double UnimapNNIMove::getLnJacobian() const
+	{
+	return 0.0;
+	}
+
+
+
+
+void UnimapLargetSimonMove::setLot(LotShPtr p)
+	{
+	UnimapTopoMove::setLot(p);
+	}
+
+
+/*******************************************************************************
+*	the move selects a three-edge path: X ---- origNode --- origNodePar ----- (W or Z)
+*	 the edge connecting the last selected node (W or Z) will be referred to as the lowerEdge
+*/
+void UnimapLargetSimonMove::ProposeStateWithTemporaries(ChainManagerShPtr & p)
+	{
+	wOnThreeEdgePath = rng->Boolean();
+	TreeNode * lowerEdgeNd = (wOnThreeEdgePath ? origNodePar : z );
+	const double lowerEdgeLen =  lowerEdgeNd->GetEdgeLen();
+	const double m = prev_x_len + prev_nd_len + lowerEdgeLen;
+	expandContractFactor = exp(lambda*(rng->Uniform(FILE_AND_LINE) - 0.5));
+	const double mstar = m*expandContractFactor;
+	detachUpperNode = rng->Boolean();
+	const double newPlacement = mstar*rng->Uniform(FILE_AND_LINE);
+	bool topoChanging = false;
+	if (detachUpperNode)
+		{
+		const double lowerEdgeLenStar = lowerEdgeLen*expandContractFactor;
+		if (newPlacement > lowerEdgeLenStar)
+			{// no topo change
+			x->SetEdgeLen(mstar - newPlacement);
+			origNode->SetEdgeLen(newPlacement - lowerEdgeLenStar);
+			lowerEdgeNd->SetEdgeLen(lowerEdgeLenStar);
+			}
+		else
+			{// topo change
+			x->SetEdgeLen(mstar - lowerEdgeLenStar);
+			origNode->SetEdgeLen(lowerEdgeLenStar - newPlacement);
+			lowerEdgeNd->SetEdgeLen(newPlacement);
+			topoChanging = true;
+			}
+		}
+	else
+		{
+		const double upperEdgeLenStar = (prev_nd_len + lowerEdgeLen)*expandContractFactor;
+		if (newPlacement < upperEdgeLenStar)
+			{// no topo change
+			x->SetEdgeLen(mstar - upperEdgeLenStar);
+			origNode->SetEdgeLen(upperEdgeLenStar - newPlacement);
+			lowerEdgeNd->SetEdgeLen(newPlacement);
+			}
+		else
+			{// topo change
+			x->SetEdgeLen(mstar - newPlacement);
+			origNode->SetEdgeLen(newPlacement - upperEdgeLenStar);
+			lowerEdgeNd->SetEdgeLen(upperEdgeLenStar);
+			topoChanging = true;
+			}
+		}
+	if (topoChanging)
+		{
+		if (wOnThreeEdgePath)
+			{ // w and y should be "sister".  So swap the a (y's alias) and d (z's alias)
+			std::swap(aTipData, dTipData);
+			std::swap(a, d);
+			std::swap(aLenNd, dLenNd);
+			swapYwithZ = true;
+			}
+		else
+			{ // w and x should be "sister".  So swap the b (x's alias) and d (z's alias)
+			std::swap(bTipData, dTipData);
+			std::swap(b, d);
+			std::swap(bLenNd, dLenNd);
+			swapYwithZ = false;
+			}
+		}
+	curr_ln_prior 	= calcEdgeLenLnPrior(*x, x->GetEdgeLen(), p)
+					+ calcEdgeLenLnPrior(*y, y->GetEdgeLen(), p)
+					+ calcEdgeLenLnPrior(*z, z->GetEdgeLen(), p)
+					+ calcEdgeLenLnPrior(*origNode, origNode->GetEdgeLen(), p)
+					+ calcEdgeLenLnPrior(*origNodePar, origNodePar->GetEdgeLen(), p);
+
+	
+	}
+	
+
+/*--------------------------------------------------------------------------------------------------------------------------
+|	Called if the move is accepted.
+*/
+void UnimapLargetSimonMove::accept()
+	{
+	MCMCUpdater::accept();
+	if (swapYwithZ)
+		tree_manipulator.NNISwap(y, x);
+	else
+		tree_manipulator.NNISwap(z, x);
+    
+	PHYCAS_ASSERT(origNode);
+	PHYCAS_ASSERT(origNode->GetParent() == origNodePar);
+
+	if (doSampleInternalStates)
+		{
+		unsigned numModelSubsets = getUniventsVectorConstRef(*a).size();
+
+		for (unsigned i = 0 ; i < numModelSubsets; ++i)
+			resampleInternalNodeStates(post_root_posterior->getCLA(), post_cla->getCLA(), i);
+		}
+	}
+
+	
+/*----------------------------------------------------------------------------------------------------------------------
+|	
+*/
+UnimapLargetSimonMove::UnimapLargetSimonMove(TreeLikeShPtr treeLike) : UnimapTopoMove(treeLike)
+	{
+	lambda = 0.2;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the natural log of the Hastings ratio for this move.
+*/
+double UnimapLargetSimonMove::getLnHastingsRatio() const
+	{
+	return 3.0*(std::log(expandContractFactor));	
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Returns the natural log of the Jacobian for this move.
+*/
+double UnimapLargetSimonMove::getLnJacobian() const
 	{
 	return 0.0;
 	}

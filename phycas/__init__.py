@@ -11,6 +11,9 @@
 #    'Examples',
 #    ]
 
+import os
+
+
 def name_of(_obj):
     k=None
     v=None
@@ -131,7 +134,6 @@ _phycas_branch = "$HeadURL$"
 # created automatically when bjam is run (using a make rule in the Jamroot file)
 _phycas_revision = '?'
 try:
-    import os
     svnverfile = 'svnver.txt'
     svnverdir = os.path.dirname(__file__)
     svnverpath = os.path.join(svnverdir,svnverfile)
@@ -141,7 +143,6 @@ except:
 
 #from Phycas import Phycas
 if not _user_ini_checked:
-    import os
     _user_ini_checked = True
     p = os.path.expanduser("~/.phycas/startup.py")
     if os.path.exists(p):

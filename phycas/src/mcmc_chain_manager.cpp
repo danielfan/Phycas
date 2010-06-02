@@ -343,7 +343,7 @@ unsigned MCMCChainManager::calcRFDistance(TreeShPtr ref_tree) const
 	return u->getTree()->robinsonFoulds(ref_tree);
 	}
 
-#define DEBUG_UPDATERS 0
+#define DEBUG_UPDATERS 1
 /*----------------------------------------------------------------------------------------------------------------------
 |	For all updaters stored in `all_updaters', obtain the weight w and call the update fuction of the updater w times.
 */

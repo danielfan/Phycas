@@ -165,6 +165,32 @@ class UnimapNNIMove : public UnimapTopoMove
 		double					propMeanInternal;			/**< xxxx */
 	};
 
+
+class UnimapLargetSimonMove : public UnimapTopoMove
+	{
+	public:
+								UnimapLargetSimonMove(TreeLikeShPtr treeLike);
+								virtual ~UnimapLargetSimonMove() {}
+
+		// These are virtual functions in the UnimapTopoMove base class
+		//
+		virtual double			getLnHastingsRatio() const;
+		virtual double			getLnJacobian() const;
+		virtual void			accept();
+
+		virtual void			setLot(LotShPtr p);
+		void setLambda(double v) {lambda = v;}
+		double getLambda() const {return lambda;}
+	protected:
+		virtual void			ProposeStateWithTemporaries(ChainManagerShPtr &);
+
+		double lambda; /* lambda in LS-terminology */
+		bool wOnThreeEdgePath;
+		double expandContractFactor;
+		bool detachUpperNode;
+		bool swapYwithZ;
+	};
+
 } // namespace phycas
 
 #include "phycas/src/unimap_nni_move.inl"

@@ -443,9 +443,12 @@ class MarkovChain(LikelihoodCore):
 			self.unimap_sample_ambig_move = Likelihood.UnimapSampleAmbigMove(self.likelihood, self.tree, wt)
 			self.unimap_sample_ambig_move.setName("unimap_sample_ambig_move")
 			num_ambig = self.unimap_sample_ambig_move.getNumAmbigNodes()
-			if wt > 0.0 and num_ambig > 0:
-				self.unimap_sample_ambig_move.setLot(self.r)
-				self.chain_manager.addMove(self.unimap_sample_ambig_move)
+			if num_ambig > 0:
+				if wt > 0.0:
+					self.unimap_sample_ambig_move.setLot(self.r)
+					self.chain_manager.addMove(self.unimap_sample_ambig_move)
+				else:
+					self.parent.phycassert(False, "unimap_sample_ambig_move_weight was set to 0, but %d ambiguous leaves were found" % num_ambig)
 
 			# Create a UnimapNNIMove (replaces LargetSimonMove for unimap analyses)
 			self.unimap_nni_move = Likelihood.UnimapNNIMove(self.likelihood)
@@ -455,6 +458,15 @@ class MarkovChain(LikelihoodCore):
 			self.unimap_nni_move.setModel(model0)
 			self.unimap_nni_move.setLot(self.r)
 			self.chain_manager.addMove(self.unimap_nni_move)
+
+			# Create a UnimapLSMove (replaces LargetSimonMove for unimap analyses)
+			self.unimap_ls_move = Likelihood.UnimapLSMove(self.likelihood)
+			self.unimap_ls_move.setName("unimap_LS_move")
+			self.unimap_ls_move.setWeight(self.parent.opts.unimap_ls_move_weight)
+			self.unimap_ls_move.setTree(self.tree)
+			self.unimap_ls_move.setModel(model0)
+			self.unimap_ls_move.setLot(self.r)
+			self.chain_manager.addMove(self.unimap_ls_move)
 
 			# Create a UnimapNodeSlideMove (replaces LargetSimonMove for unimap analyses)
 			self.unimap_node_slide_move = Likelihood.UnimapNodeSlideMove(self.likelihood)

@@ -196,7 +196,8 @@ void UnimapSampleAmbigMove::sampleNewStateArrayForNodeAsDisconnected(TreeNode * 
 	std::vector<int8_t> & scVec = univents.getEndStatesVecRef();
 	const int8_t * scArray = td->getConstStateCodes(subsetIndex);
 
-	const std::vector<double> & sf = model->getStateFreqs();
+	ModelShPtr mod = partModel->getModel(subsetIndex);
+	const std::vector<double> & sf = mod->getStateFreqs();
 	const double * iniSF = & sf[0];
   	const unsigned numStates = partModel->getNumStates(subsetIndex);
 	std::vector<const double *> fakePMat(numStates, iniSF);
@@ -236,7 +237,7 @@ void UnimapSampleAmbigMove::sampleNewStateArrayForNodeAsDisconnected(TreeNode * 
 				}
 	 	 	}
 //		std::cerr << "in sampleNewStateArrayForNodeAsDisconnected esProb.size() == " << esProb.size() << " numStates = " << numStates << '\n';
-
+		PHYCAS_ASSERT(rng);
 		const int8_t chosenStateCode = (int8_t) rng->MultinomialDraw(&esProb[0], numStates);
 		PHYCAS_ASSERT(chosenStateCode >= 0 && chosenStateCode < (int8_t)numStates);
 		scVec[i] = chosenStateCode;
