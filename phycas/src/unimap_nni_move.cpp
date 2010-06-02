@@ -41,11 +41,6 @@ void UnimapTopoMove::setLot(LotShPtr p)
 	MCMCUpdater::setLot(p);
 	}
 
-void UnimapNNIMove::setLot(LotShPtr p)
-	{
-	UnimapTopoMove::setLot(p);
-	gammaDist.SetLot(rng.get());
-	}
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Calls proposeNewState(), then decides whether to accept or reject the proposed new state, calling accept() or 
@@ -138,238 +133,6 @@ TreeNode * UnimapTopoMove::randomInternalAboveSubroot()
     return nd;
     }
 
-void UnimapNNIMove::calculatePairwiseDistances()
-	{
-	double tmpXY = 0.0;
-	double tmpWX = 0.0;
-	double tmpXZ = 0.0;
-	double tmpWY = 0.0;
-	double tmpYZ = 0.0;
-	double tmpWZ = 0.0;
-	double totalNumPatterns = 0.0;
-	PartitionModelShPtr partModel = likelihood->getPartitionModel();
-	for (unsigned subsetIndex = 0; subsetIndex < likelihood->getNumSubsets(); ++subsetIndex)
-		{
-		const double num_patterns = (double) partModel->getNumPatterns(subsetIndex);
-		calculatePairwiseDistancesForSubset(subsetIndex);
-		tmpXY += dXY*num_patterns;
-		tmpWX += dWX*num_patterns;
-		tmpXZ += dXZ*num_patterns;
-		tmpWY += dWY*num_patterns;
-		tmpWZ += dWZ*num_patterns;
-		tmpYZ += dYZ*num_patterns;
-		totalNumPatterns += num_patterns;
-		}
-	dXY = tmpXY /totalNumPatterns;
-	dWX = tmpWX /totalNumPatterns;
-	dXZ = tmpXZ /totalNumPatterns;
-	dWY = tmpWY /totalNumPatterns;
-	dWZ = tmpWZ /totalNumPatterns;
-	dYZ = tmpYZ /totalNumPatterns;
-	
-//	std::cerr << "pairwiseDiffs: " << dXY << ' ' << dWX << ' ' << dXZ << ' ' << dWY << ' ' << dWZ << ' ' << dYZ << '\n';
-	}
-
-void UnimapNNIMove::calculatePairwiseDistancesForSubset(unsigned subsetIndex)
-	{
-#if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
-	dXY = dWX =  dXZ =  dWY =  dYZ =  dWZ = 0.0;
-	/* This is called before the swap so "x" is "b" and "z" is "d" */
-	const int8_t * xStates = &(bTipData->getTipStatesArray(subsetIndex)[0]);
-	const int8_t * yStates = &(aTipData->getTipStatesArray(subsetIndex)[0]);
-	const int8_t * wStates = &(cTipData->getTipStatesArray(subsetIndex)[0]);
-	const int8_t * zStates = &(dTipData->getTipStatesArray(subsetIndex)[0]);
-	PartitionModelShPtr partModel = likelihood->getPartitionModel();
-	const unsigned num_patterns = partModel->getNumPatterns(subsetIndex);
-	for (unsigned i = 0; i < num_patterns; ++i)
-		{
-		const int8_t x = *xStates++;
-		const int8_t y = *yStates++;
-		const int8_t w = *wStates++;
-		const int8_t z = *zStates++;
-		if (x != y)
-			{
-			dXY += 1.0;
-			if (x != w)
-				{
-				dWX += 1.0;
-				if (x != z)
-					{
-					dXZ += 1.0;
-					if (y != w)
-						dWY += 1.0;
-					if (y != z)
-						dYZ += 1.0;
-					if (w != z)
-						dWZ += 1.0;
-					}
-				else
-					{
-					dYZ += 1.0;
-					dWZ += 1.0;
-					if (y != w)
-						dWY += 1.0;
-					}
-				}
-			else
-				{
-				dWY += 1.0;
-				if (x != z)
-					{
-					dXZ += 1.0;
-					dWZ += 1.0;
-					}
-				if (y != z)
-					dYZ += 1.0;
-				}
-			
-			}
-		else
-			{
-			if (x != w)
-				{
-				dWX += 1.0;
-				dWY += 1.0;
-				if (x != z)
-					{
-					dXZ += 1.0;
-					dYZ += 1.0;
-					}
-				if (w != z)
-					dWZ += 1.0;
-				}
-			else
-				{			
-				if (x != z)
-					{
-					dXZ += 1.0;
-					dYZ += 1.0;
-					dWZ += 1.0;
-					}
-				}
-			}
-		}
-	double dnp = (double) num_patterns;
-	dXY /= dnp;
-	dWX /= dnp;
-	dXZ /= dnp;
-	dWY /= dnp;
-	dYZ /= dnp;
-	dWZ /= dnp;
-#endif
-	}
-
-void UnimapNNIMove::calculateProposalDist(bool before_swap)
-	{
-	if (before_swap)
-		{
-		propMeanX = std::max(min_edge_len_mean, (2*dXY + dXZ + dWX - dYZ - dWY)/4.0);
-		propMeanY = std::max(min_edge_len_mean, (2*dXY + dYZ + dWY - dXZ - dWX)/4.0);
-		propMeanZ = std::max(min_edge_len_mean, (2*dWZ + dXZ + dYZ - dWX - dWY)/4.0); 
-		propMeanW = std::max(min_edge_len_mean, (2*dWZ + dWX + dWY - dXZ - dXY)/4.0);
-		propMeanInternal = std::max(min_edge_len_mean, (dXZ + dWX + dYZ + dWY - 2*dXY - 2*dWZ)/4.0);
-		}
-	else
-		{
-		propMeanX = std::max(min_edge_len_mean, (2*dWX + dXZ + dXY - dWZ - dWY)/4.0); 
-		propMeanY = std::max(min_edge_len_mean, (2*dYZ + dXY + dWY - dXZ - dWZ)/4.0);
-		propMeanW = std::max(min_edge_len_mean, (2*dWX + dWZ + dWY - dXZ - dXY)/4.0);
-		propMeanZ = std::max(min_edge_len_mean, (2*dYZ + dXZ + dWZ - dXY - dWY)/4.0);
-		propMeanInternal = std::max(min_edge_len_mean, (dXZ + dWZ + dXY + dWY - 2*dYZ - 2*dWX)/4.0);
-		}
-
-	}
-
-double UnimapNNIMove::calcProposalLnDensity(double mean, double x)
-	{
-	const double variance = (edge_len_prop_cv*edge_len_prop_cv*mean*mean);
-	gammaDist.SetMeanAndVariance(mean, variance);
-	return gammaDist.GetLnPDF(x);
-	}
-
-double UnimapNNIMove::proposeEdgeLen(double mean)
-	{
-	const double variance = (edge_len_prop_cv*edge_len_prop_cv*mean*mean);
-	gammaDist.SetMeanAndVariance(mean, variance);
-	return gammaDist.Sample();
-	}
-
-
-
-/*******************************************************************************
-*	Alter branch lengths is called in the context:
-
-##########################################################
-	prev_ln_like = FourTaxonLnLBeforeMove();
-	ProposeStateWithTemporaries(p);
-    curr_ln_like = FourTaxonLnLFromCorrectTipDataMembers();
-##########################################################
-
-	so it should:
-		1. calculate the temporaries needed to calc the Hastings ratio,
-		2. calculate the curr_ln_prior
-		3. set the branches to the proposed branch lengths,
-		4. swap ySis with wSis and ySisTipData with wSisTipData if there is an NNI move
-*/
-void UnimapNNIMove::ProposeStateWithTemporaries(ChainManagerShPtr & p)
-	{
-	
-	calculatePairwiseDistances();
-	calculateProposalDist(true);
-	ln_density_reverse_move = calcProposalLnDensity(propMeanX, prev_x_len);
-	ln_density_reverse_move += calcProposalLnDensity(propMeanY, prev_y_len);
-	ln_density_reverse_move += calcProposalLnDensity(propMeanW, prev_ndP_len);
-	ln_density_reverse_move += calcProposalLnDensity(propMeanZ, prev_z_len);
-	ln_density_reverse_move += calcProposalLnDensity(propMeanInternal, prev_nd_len);
-	
-		
-	calculateProposalDist(false);
-	double xLen, yLen, zLen, ndLen, ndPLen;
-	if (modify_terminal_edges)
-		{
-		xLen = proposeEdgeLen(propMeanX);
-		yLen = proposeEdgeLen(propMeanY);
-		zLen = proposeEdgeLen(propMeanZ);
-		ndPLen = proposeEdgeLen(propMeanW);
-		ndLen = proposeEdgeLen(propMeanInternal);
-		}
-	else
-		{
-		xLen = proposeEdgeLen(propMeanX);
-		yLen = prev_y_len; // proposeEdgeLen(propMeanY);
-		zLen = proposeEdgeLen(propMeanZ);
-		ndPLen = proposeEdgeLen(propMeanW);
-		ndLen = proposeEdgeLen(propMeanInternal);
-		}
-	
-	//std::cerr << boost::str(boost::format("tree before [%.5f] = (x:%.5f,y:%.5f,(z:%.5f,w:%.5f):%.5f);\n") % prev_ln_like % prev_x_len % prev_y_len % prev_z_len % prev_ndP_len % prev_nd_len);
-	
-	x->SetEdgeLen(xLen);
-	y->SetEdgeLen(yLen);
-	z->SetEdgeLen(zLen);
-	origNode->SetEdgeLen(ndLen);
-	origNodePar->SetEdgeLen(ndPLen);
-
-	ln_density_forward_move = calcProposalLnDensity(propMeanX, xLen);
-	ln_density_forward_move += calcProposalLnDensity(propMeanY, yLen);
-	ln_density_forward_move += calcProposalLnDensity(propMeanW, ndPLen);
-	ln_density_forward_move += calcProposalLnDensity(propMeanZ, zLen);
-	ln_density_forward_move += calcProposalLnDensity(propMeanInternal, ndLen);
-
-	//std::cerr << boost::str(boost::format("tree after = (z:%.5f,y:%.5f,(x:%.5f,w:%.5f):%.5f);\n") % zLen % yLen % xLen % ndPLen % ndLen);
-        
-	curr_ln_prior 	= calcEdgeLenLnPrior(*x, xLen, p)
-					+ calcEdgeLenLnPrior(*y, yLen, p)
-					+ calcEdgeLenLnPrior(*z, zLen, p)
-					+ calcEdgeLenLnPrior(*origNode, ndLen, p)
-					+ calcEdgeLenLnPrior(*origNodePar, ndPLen, p);
-
-	
-	/* This swap is the equivalent of an NNI swap of the the nodes that are closest to y and w */
-	std::swap(bTipData, dTipData);
-	std::swap(b, d);
-	std::swap(bLenNd, dLenNd);
-	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
 |	
@@ -855,6 +618,7 @@ UnimapTopoMove::UnimapTopoMove(TreeLikeShPtr treeLikePtr) : MCMCUpdater(),
   pre_z_pmat_transposed(),
   doSampleInternalStates(true)
   	{
+	is_move = true;
 	this->setTreeLikelihood(treeLikePtr);
 	}
 
@@ -876,6 +640,246 @@ void UnimapTopoMove::setTreeLikelihood(TreeLikeShPtr treeLike)
 	pre_p_mat.resize(numSubsets);
 	post_p_mat.resize(numSubsets);
 	MCMCUpdater::setTreeLikelihood(treeLike);
+	}
+
+
+void UnimapNNIMove::setLot(LotShPtr p)
+	{
+	UnimapTopoMove::setLot(p);
+	gammaDist.SetLot(rng.get());
+	}
+
+void UnimapNNIMove::calculatePairwiseDistances()
+	{
+	double tmpXY = 0.0;
+	double tmpWX = 0.0;
+	double tmpXZ = 0.0;
+	double tmpWY = 0.0;
+	double tmpYZ = 0.0;
+	double tmpWZ = 0.0;
+	double totalNumPatterns = 0.0;
+	PartitionModelShPtr partModel = likelihood->getPartitionModel();
+	for (unsigned subsetIndex = 0; subsetIndex < likelihood->getNumSubsets(); ++subsetIndex)
+		{
+		const double num_patterns = (double) partModel->getNumPatterns(subsetIndex);
+		calculatePairwiseDistancesForSubset(subsetIndex);
+		tmpXY += dXY*num_patterns;
+		tmpWX += dWX*num_patterns;
+		tmpXZ += dXZ*num_patterns;
+		tmpWY += dWY*num_patterns;
+		tmpWZ += dWZ*num_patterns;
+		tmpYZ += dYZ*num_patterns;
+		totalNumPatterns += num_patterns;
+		}
+	dXY = tmpXY /totalNumPatterns;
+	dWX = tmpWX /totalNumPatterns;
+	dXZ = tmpXZ /totalNumPatterns;
+	dWY = tmpWY /totalNumPatterns;
+	dWZ = tmpWZ /totalNumPatterns;
+	dYZ = tmpYZ /totalNumPatterns;
+	
+//	std::cerr << "pairwiseDiffs: " << dXY << ' ' << dWX << ' ' << dXZ << ' ' << dWY << ' ' << dWZ << ' ' << dYZ << '\n';
+	}
+
+void UnimapNNIMove::calculatePairwiseDistancesForSubset(unsigned subsetIndex)
+	{
+#if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
+	dXY = dWX =  dXZ =  dWY =  dYZ =  dWZ = 0.0;
+	/* This is called before the swap so "x" is "b" and "z" is "d" */
+	const int8_t * xStates = &(bTipData->getTipStatesArray(subsetIndex)[0]);
+	const int8_t * yStates = &(aTipData->getTipStatesArray(subsetIndex)[0]);
+	const int8_t * wStates = &(cTipData->getTipStatesArray(subsetIndex)[0]);
+	const int8_t * zStates = &(dTipData->getTipStatesArray(subsetIndex)[0]);
+	PartitionModelShPtr partModel = likelihood->getPartitionModel();
+	const unsigned num_patterns = partModel->getNumPatterns(subsetIndex);
+	for (unsigned i = 0; i < num_patterns; ++i)
+		{
+		const int8_t x = *xStates++;
+		const int8_t y = *yStates++;
+		const int8_t w = *wStates++;
+		const int8_t z = *zStates++;
+		if (x != y)
+			{
+			dXY += 1.0;
+			if (x != w)
+				{
+				dWX += 1.0;
+				if (x != z)
+					{
+					dXZ += 1.0;
+					if (y != w)
+						dWY += 1.0;
+					if (y != z)
+						dYZ += 1.0;
+					if (w != z)
+						dWZ += 1.0;
+					}
+				else
+					{
+					dYZ += 1.0;
+					dWZ += 1.0;
+					if (y != w)
+						dWY += 1.0;
+					}
+				}
+			else
+				{
+				dWY += 1.0;
+				if (x != z)
+					{
+					dXZ += 1.0;
+					dWZ += 1.0;
+					}
+				if (y != z)
+					dYZ += 1.0;
+				}
+			
+			}
+		else
+			{
+			if (x != w)
+				{
+				dWX += 1.0;
+				dWY += 1.0;
+				if (x != z)
+					{
+					dXZ += 1.0;
+					dYZ += 1.0;
+					}
+				if (w != z)
+					dWZ += 1.0;
+				}
+			else
+				{			
+				if (x != z)
+					{
+					dXZ += 1.0;
+					dYZ += 1.0;
+					dWZ += 1.0;
+					}
+				}
+			}
+		}
+	double dnp = (double) num_patterns;
+	dXY /= dnp;
+	dWX /= dnp;
+	dXZ /= dnp;
+	dWY /= dnp;
+	dYZ /= dnp;
+	dWZ /= dnp;
+#endif
+	}
+
+void UnimapNNIMove::calculateProposalDist(bool before_swap)
+	{
+	if (before_swap)
+		{
+		propMeanX = std::max(min_edge_len_mean, (2*dXY + dXZ + dWX - dYZ - dWY)/4.0);
+		propMeanY = std::max(min_edge_len_mean, (2*dXY + dYZ + dWY - dXZ - dWX)/4.0);
+		propMeanZ = std::max(min_edge_len_mean, (2*dWZ + dXZ + dYZ - dWX - dWY)/4.0); 
+		propMeanW = std::max(min_edge_len_mean, (2*dWZ + dWX + dWY - dXZ - dXY)/4.0);
+		propMeanInternal = std::max(min_edge_len_mean, (dXZ + dWX + dYZ + dWY - 2*dXY - 2*dWZ)/4.0);
+		}
+	else
+		{
+		propMeanX = std::max(min_edge_len_mean, (2*dWX + dXZ + dXY - dWZ - dWY)/4.0); 
+		propMeanY = std::max(min_edge_len_mean, (2*dYZ + dXY + dWY - dXZ - dWZ)/4.0);
+		propMeanW = std::max(min_edge_len_mean, (2*dWX + dWZ + dWY - dXZ - dXY)/4.0);
+		propMeanZ = std::max(min_edge_len_mean, (2*dYZ + dXZ + dWZ - dXY - dWY)/4.0);
+		propMeanInternal = std::max(min_edge_len_mean, (dXZ + dWZ + dXY + dWY - 2*dYZ - 2*dWX)/4.0);
+		}
+
+	}
+
+double UnimapNNIMove::calcProposalLnDensity(double mean, double x)
+	{
+	const double variance = (edge_len_prop_cv*edge_len_prop_cv*mean*mean);
+	gammaDist.SetMeanAndVariance(mean, variance);
+	return gammaDist.GetLnPDF(x);
+	}
+
+double UnimapNNIMove::proposeEdgeLen(double mean)
+	{
+	const double variance = (edge_len_prop_cv*edge_len_prop_cv*mean*mean);
+	gammaDist.SetMeanAndVariance(mean, variance);
+	return gammaDist.Sample();
+	}
+
+
+
+/*******************************************************************************
+*	Alter branch lengths is called in the context:
+
+##########################################################
+	prev_ln_like = FourTaxonLnLBeforeMove();
+	ProposeStateWithTemporaries(p);
+    curr_ln_like = FourTaxonLnLFromCorrectTipDataMembers();
+##########################################################
+
+	so it should:
+		1. calculate the temporaries needed to calc the Hastings ratio,
+		2. calculate the curr_ln_prior
+		3. set the branches to the proposed branch lengths,
+		4. swap ySis with wSis and ySisTipData with wSisTipData if there is an NNI move
+*/
+void UnimapNNIMove::ProposeStateWithTemporaries(ChainManagerShPtr & p)
+	{
+	
+	calculatePairwiseDistances();
+	calculateProposalDist(true);
+	ln_density_reverse_move = calcProposalLnDensity(propMeanX, prev_x_len);
+	ln_density_reverse_move += calcProposalLnDensity(propMeanY, prev_y_len);
+	ln_density_reverse_move += calcProposalLnDensity(propMeanW, prev_ndP_len);
+	ln_density_reverse_move += calcProposalLnDensity(propMeanZ, prev_z_len);
+	ln_density_reverse_move += calcProposalLnDensity(propMeanInternal, prev_nd_len);
+	
+		
+	calculateProposalDist(false);
+	double xLen, yLen, zLen, ndLen, ndPLen;
+	if (modify_terminal_edges)
+		{
+		xLen = proposeEdgeLen(propMeanX);
+		yLen = proposeEdgeLen(propMeanY);
+		zLen = proposeEdgeLen(propMeanZ);
+		ndPLen = proposeEdgeLen(propMeanW);
+		ndLen = proposeEdgeLen(propMeanInternal);
+		}
+	else
+		{
+		xLen = proposeEdgeLen(propMeanX);
+		yLen = prev_y_len; // proposeEdgeLen(propMeanY);
+		zLen = proposeEdgeLen(propMeanZ);
+		ndPLen = proposeEdgeLen(propMeanW);
+		ndLen = proposeEdgeLen(propMeanInternal);
+		}
+	
+	//std::cerr << boost::str(boost::format("tree before [%.5f] = (x:%.5f,y:%.5f,(z:%.5f,w:%.5f):%.5f);\n") % prev_ln_like % prev_x_len % prev_y_len % prev_z_len % prev_ndP_len % prev_nd_len);
+	
+	x->SetEdgeLen(xLen);
+	y->SetEdgeLen(yLen);
+	z->SetEdgeLen(zLen);
+	origNode->SetEdgeLen(ndLen);
+	origNodePar->SetEdgeLen(ndPLen);
+
+	ln_density_forward_move = calcProposalLnDensity(propMeanX, xLen);
+	ln_density_forward_move += calcProposalLnDensity(propMeanY, yLen);
+	ln_density_forward_move += calcProposalLnDensity(propMeanW, ndPLen);
+	ln_density_forward_move += calcProposalLnDensity(propMeanZ, zLen);
+	ln_density_forward_move += calcProposalLnDensity(propMeanInternal, ndLen);
+
+	//std::cerr << boost::str(boost::format("tree after = (z:%.5f,y:%.5f,(x:%.5f,w:%.5f):%.5f);\n") % zLen % yLen % xLen % ndPLen % ndLen);
+        
+	curr_ln_prior 	= calcEdgeLenLnPrior(*x, xLen, p)
+					+ calcEdgeLenLnPrior(*y, yLen, p)
+					+ calcEdgeLenLnPrior(*z, zLen, p)
+					+ calcEdgeLenLnPrior(*origNode, ndLen, p)
+					+ calcEdgeLenLnPrior(*origNodePar, ndPLen, p);
+
+	
+	/* This swap is the equivalent of an NNI swap of the the nodes that are closest to y and w */
+	std::swap(bTipData, dTipData);
+	std::swap(b, d);
+	std::swap(bLenNd, dLenNd);
 	}
 /*----------------------------------------------------------------------------------------------------------------------
 |	
