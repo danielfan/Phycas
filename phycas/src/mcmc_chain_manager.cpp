@@ -16,6 +16,7 @@
 |  with this program; if not, write to the Free Software Foundation, Inc.,    |
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.                |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+#include <cstdlib>
 
 #include <fstream>//temp 
 
@@ -28,7 +29,6 @@
 #include "phycas/src/xlikelihood.hpp"
 #include "phycas/src/basic_tree.hpp"
 #include "phycas/src/mapping_move.hpp"
-
 namespace phycas
 {
 
@@ -344,6 +344,7 @@ unsigned MCMCChainManager::calcRFDistance(TreeShPtr ref_tree) const
 	}
 
 #define DEBUG_UPDATERS 1
+#define DEBUG_UPDATERS_ENV_SENS 1
 /*----------------------------------------------------------------------------------------------------------------------
 |	For all updaters stored in `all_updaters', obtain the weight w and call the update fuction of the updater w times.
 */
@@ -351,15 +352,22 @@ void MCMCChainManager::updateAllUpdaters()
 	{
 	for (MCMCUpdaterVect::iterator it = all_updaters.begin(); it != all_updaters.end(); ++it)
 		{
+		
 #if DEBUG_UPDATERS
-		std::string nm = (*it)->getName();
-		unsigned w = (*it)->getWeight();
-		for (unsigned i = 0; i < w; ++i)
+#		if DEBUG_UPDATERS_ENV_SENS
+		const char * upEnv = getenv("DEBUG_UPDATE_ALL_UPDATERS");
+		if (upEnv && upEnv[0] == '1')
+#		endif
 			{
-			std::cerr << "########## updating " << nm << "..." << std::endl;
-			(*it)->setSaveDebugInfo(true);
-			(*it)->update();
-			std::cerr << boost::str(boost::format("%s | %s") % nm % (*it)->getDebugInfo()) << std::endl;
+			std::string nm = (*it)->getName();
+			unsigned w = (*it)->getWeight();
+			for (unsigned i = 0; i < w; ++i)
+				{
+				std::cerr << "########## updating " << nm << "..." << std::endl;
+				(*it)->setSaveDebugInfo(true);
+				(*it)->update();
+				std::cerr << boost::str(boost::format("%s | %s") % nm % (*it)->getDebugInfo()) << std::endl;
+				}
 			}
 #else	//not DEBUG_UPDATERS
 		unsigned w = (*it)->getWeight();
