@@ -42,7 +42,7 @@
 #endif
 
 using namespace boost::python;
-
+//using namespace phycas;
 void translate(const NxsException & e)
 	{
 	// Use the Python 'C' API to set up an exception object
@@ -74,9 +74,9 @@ BOOST_PYTHON_MODULE(_ReadNexusExt)
 		.def("clear", &PhycasNexusReader::Clear)
 		;
 
-	class_<CharSuperMatrix, boost::noncopyable>("CharSuperMatrix", no_init)
-		.def("getNumMatrices", &CharSuperMatrix::GetNumMatrices)
-		.def("getMatrix", &CharSuperMatrix::GetMatrix, return_value_policy<manage_new_object>())
+	class_<phycas::CharSuperMatrix, boost::noncopyable>("CharSuperMatrix", no_init)
+		.def("getNumMatrices", &phycas::CharSuperMatrix::GetNumMatrices)
+		.def("getMatrix", &phycas::CharSuperMatrix::GetMatrix, return_value_policy<manage_new_object>())
 		;
 	
 	def("getLastNexusDiscreteMatrix", GetLastDiscreteMatrix, return_value_policy<manage_new_object>());

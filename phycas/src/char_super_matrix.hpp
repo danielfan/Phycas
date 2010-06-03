@@ -42,8 +42,10 @@ class CharSuperMatrix
 		std::vector<NxsCXXDiscreteMatrix *> allSubmatrices;
 	};
 	
-CharSuperMatrix * GetLastDiscreteMatrix(PhycasNexusReader & nexusReader, bool convertGapsToMissing);
-CharSuperMatrix * createNativeDiscreteMatrix(PhycasNexusReader & nexusReader, NxsTaxaBlock * taxaBlockPtr, unsigned int charBlockIndex, bool convertGapsToMissing);
 
 }	// namespace phycas
+
+phycas::CharSuperMatrix * GetLastDiscreteMatrix(PhycasNexusReader & nexusReader, bool convertGapsToMissing);
+phycas::CharSuperMatrix * createNativeDiscreteMatrix(PhycasNexusReader & nexusReader, NxsTaxaBlock * taxaBlockPtr, unsigned int charBlockIndex, bool convertGapsToMissing);
+
 #endif

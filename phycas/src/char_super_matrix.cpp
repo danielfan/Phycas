@@ -20,13 +20,13 @@
 #include "phycas/src/char_super_matrix.hpp"
 #include "phycas/src/phycas_nexus_reader.hpp"
 
-using namespace phycas;
-CharSuperMatrix * GetLastDiscreteMatrix(PhycasNexusReader & nexusReader, bool convertGapsToMissing = false)
+// using namespace phycas;
+phycas::CharSuperMatrix * GetLastDiscreteMatrix(PhycasNexusReader & nexusReader, bool convertGapsToMissing = false)
 	{
 	return createNativeDiscreteMatrix(nexusReader, 0L, UINT_MAX, convertGapsToMissing);
 	}
 
-CharSuperMatrix * createNativeDiscreteMatrix(PhycasNexusReader & nexusReader, NxsTaxaBlock * taxaBlockPtr, unsigned int charBlockIndex, bool convertGapsToMissing)
+phycas::CharSuperMatrix * createNativeDiscreteMatrix(PhycasNexusReader & nexusReader, NxsTaxaBlock * taxaBlockPtr, unsigned int charBlockIndex, bool convertGapsToMissing)
 	{
 	NxsCharactersBlock * cb;
 	if (charBlockIndex == UINT_MAX || taxaBlockPtr == NULL)
@@ -68,5 +68,5 @@ CharSuperMatrix * createNativeDiscreteMatrix(PhycasNexusReader & nexusReader, Nx
 		}
 	else
 		vmats.push_back(new NxsCXXDiscreteMatrix(*cb, convertGapsToMissing));
-	return new CharSuperMatrix(vmats);
+	return new phycas::CharSuperMatrix(vmats);
 	}
