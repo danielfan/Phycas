@@ -28,6 +28,34 @@ using namespace phycas;
 #include "phycas/src/basic_lot.hpp"
 
 /*----------------------------------------------------------------------------------------------------------------------
+|   Selects an internal node at random from a discrete uniform distribution with the constraint that the returned node
+|   is not equal to the subroot (the sole child of the tip node serving as the root).
+*/
+TreeNode * randomInternalAboveSubroot(Tree & tree, Lot & rng)
+    {
+	// Avoiding the "subroot" node (only child of the tip serving as the root), so the number of 
+	// acceptable nodes is one fewer than the number of internal nodes
+	unsigned numAcceptableNodes = tree.GetNInternals() - 1;
+
+	unsigned ypos = rng.SampleUInt(numAcceptableNodes);
+	unsigned i = 0;
+    TreeNode * nd = tree.GetFirstPreorder();
+	for (; nd != NULL; nd = nd->GetNextPreorder())
+		{
+		if (nd->IsInternal() && !nd->GetParentConst()->IsTipRoot())
+			{
+			if (i == ypos)
+				break;
+			++i;
+			}
+		}
+	PHYCAS_ASSERT(nd->GetLeftChild() != NULL);
+	PHYCAS_ASSERT(nd->GetParentConst() != NULL);
+	PHYCAS_ASSERT(!nd->GetParent()->IsTipRoot());
+    return nd;
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	The default constructor does not set the data member `tree'. You should set `tree' using the SetTree() member
 |	function before using any of the other member functions, most of which assume that `tree' points to a Tree object.
 */

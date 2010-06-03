@@ -1,0 +1,96 @@
+#NEXUS 
+
+Begin trees;  [Treefile saved Monday, May 31, 2010  11:38 AM]
+[!
+>Data file = rbcl50.nex
+>Heuristic search settings:
+>  Optimality criterion = likelihood
+>    Likelihood settings:
+>      Number of substitution types = 2 (HKY85 variant)
+>      Transition/transversion ratio = 1.84089 (kappa = 3.5936138)
+>      Assumed state frequencies (set by user):
+>        A=0.23948  C=0.25738  G=0.19666  T=0.30648
+>      These settings correspond to the HKY85 model
+>      Among-site rate variation:
+>        Assumed proportion of invariable sites  = none
+>        Distribution of rates at variable sites = equal
+>      Number of distinct data patterns under this model = 700
+>      Molecular clock not enforced
+>      Starting branch lengths obtained using Rogers-Swofford approximation method
+>      Trees with approximate likelihoods 5% or further from the target score are rejected without additional iteration
+>      Branch-length optimization = one-dimensional Newton-Raphson with pass limit=20, tolerance=1e-07
+>      -ln L (unconstrained) = unavailable due to missing-data and/or ambiguities
+>      Vector processing enabled
+>      Conditional likelihoods rescaled when they drop below 1e-20
+>  
+>  Starting tree(s) obtained via stepwise addition
+>    Addition sequence: as-is
+>    Number of trees held at each step = 1
+>  Branch-swapping algorithm: tree-bisection-reconnection (TBR) with reconnection limit = 8
+>    Steepest descent option not in effect
+>  Initial 'Maxtrees' setting = 100
+>  Branches collapsed (creating polytomies) if branch length is less than or equal to 1e-08
+>  'MulTrees' option in effect
+>  No topological constraints in effect
+>  Trees are unrooted
+>
+>Heuristic search completed
+>  Total number of rearrangements tried = 19692
+>  Score of best tree(s) found = 19644.63
+>  Number of trees retained = 1
+>  Time used = 00:08:09 (CPU time = 00:12:34.8)
+]
+	Translate
+		1 Mangifera_indica_U39269.2_Mango,
+		2 Toxicodendron_radicans_U39271.2_Poison_Ivy,
+		3 Taraxacum_officinale_AY395562.1_Dandelion,
+		4 Sassafras_albidum_AF206819.1_Sassafras,
+		5 Ranunculus_trichophyllus_L08766.1_Buttercup,
+		6 Acer_saccharum_L01881.2_Sugar_Maple,
+		7 Camellia_sinensis_AF380037.1_Tea,
+		8 Humulus_lupulus_AF206777.1_Hops,
+		9 Cichorium_intybus_L13652.1_Chicory,
+		10 Sambucus_racemosa_AF446928.1_Elderberry,
+		11 Triticum_aestivum_AB042240.3_Wheat,
+		12 Bambusa_valida_AJ746171.1_Bamboo,
+		13 Carex_hostiana_L12672.2,
+		14 Zingiber_gramineum_L05465.1_Z._officinale_is_Ginger,
+		15 Zea_mays_Z11973.1_Corn,
+		16 Smilax_glauca_AF206822.1_Greenbriar,
+		17 Typha_latifolia_M91634.1_Cattail,
+		18 Cinnamomum_camphora_L12641.2_Cinnamon,
+		19 Nuphar_advena_DQ069501.1_Water_Lily,
+		20 Oryza_sativa_DQ167807.1_Rice,
+		21 Pseudotsuga_menziesii_X52937.1_Douglas_Fir,
+		22 Picea_pungens_AF456382.1_Blue_Spruce,
+		23 Pinus_radiata_AY497250.1_Monterrey_Pine,
+		24 Abies_magnifica_X58391.1_Red_Fir,
+		25 Sciadopitys_verticillata_L25753.2,
+		26 Larix_occidentalis_X63663.1_Western_Larch,
+		27 Cedrus_deodara_AF456381.1_Deodar_Cedar,
+		28 Taxodium_distichum_S75127.1_Bald_Cypress,
+		29 Metasequoia_glyptostroboides_AJ235805.1_Dawn_Redwood,
+		30 Sequoia_sempervirens_L25755.2_California_Redwood,
+		31 Dennstaedtia_punctilobula_U05918.1_Hay_Scented_Fern,
+		32 Pteridium_aquilinum_U05939.1_Bracken_Fern,
+		33 Osmunda_cinnamomea_D14882.1_Cinnamon_Fern,
+		34 Matteuccia_struthiopteris_U05930.1,
+		35 Botrychium_biternatum_L13474.1,
+		36 Adiantum_capillus_veneris_AY178864.1,
+		37 Tortula_obtusissima_AF226823.1,
+		38 Sphagnum_palustre_L13485.1,
+		39 Fontinalis_dalecarlica_AF231074.1,
+		40 Funaria_hygrometrica_AF226818.1,
+		41 Dicranum_scoparium_AF231067.1,
+		42 Marchantia_polymorpha_U87079.1,
+		43 Ulva_lactuca_AB097623.1,
+		44 Codium_fragile_M67453.1,
+		45 Pediastrum_duplex_AB084333.1,
+		46 Eudorina_elegans_D88803.1,
+		47 Klebsormidium_sp._L13478.1,
+		48 Coleochaete_orbicularis_L13477.1,
+		49 Nitella_translucens_L13482.1,
+		50 Chara_connivens_L13476.1
+		;
+tree PAUP_1 = [&U] (1:0.01508050,2:0.00932320,((((((3:0.00708411,9:0.01076624):0.03081019,10:0.01731908):0.00701667,7:0.02376387):0.00742232,((((4:0.00171941,18:0.00445981):0.01959624,19:0.04581060):0.00499642,(((((((11:0.02301558,15:0.02426396):0.00634466,(12:0.01083599,20:0.01334188):0.00297581):0.05805784,13:0.05132133):0.01437685,17:0.01797703):0.00736881,14:0.05863548):0.00686923,16:0.03875144):0.01304962,((((((21:0.00769504,26:0.00386224):0.00500430,24:0.01201663):0.00156514,(22:0.00849588,23:0.01696399):0.00359556):0.00285860,27:0.01070555):0.03349051,(25:0.03862291,(28:0.02186586,(29:0.00452512,30:0.00399525):0.01262848):0.02795382):0.01164338):0.02243124,(((((31:0.04208599,32:0.03603262):0.01751835,34:0.04955962):0.02808677,36:0.08407268):0.06838802,(33:0.04961739,35:0.10522456):0.02646563):0.03341164,(((((37:0.02004678,41:0.03000002):0.01140227,39:0.03060838):0.00792217,40:0.05483179):0.02043628,(42:0.07063447,((((43:0.07499014,(45:0.07610734,46:0.07022224):0.05876925):0.05532034,44:0.10434174):0.05856253,(49:0.04562233,50:0.05062566):0.05506745):0.01621280,(47:0.19719939,48:0.06504121):0.03253770):0.02515146):0.01290328):0.03775633,38:0.06088553):0.03637039):0.03152851):0.05057409):0.00939284):0.01505213,5:0.05008989):0.01166639):0.00992485,8:0.03772235):0.02787252,6:0.02969637):0.00830760);
+End;

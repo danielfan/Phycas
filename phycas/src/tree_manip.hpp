@@ -95,6 +95,8 @@ class TreeManip
 		TreeShPtr	tree;	/**< The tree to be manipulated */
 
 	};
+	
+TreeNode * randomInternalAboveSubroot(const Tree &, Lot &);
 
 } // namespace phycas
 

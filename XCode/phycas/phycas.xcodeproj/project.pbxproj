@@ -203,7 +203,6 @@
 		7AB51D0D10CDA3B200A865FF /* nxsmultiformat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CAF10CDA26800A865FF /* nxsmultiformat.cpp */; };
 		7AB51D0E10CDA3B200A865FF /* nxsexception.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CAD10CDA26800A865FF /* nxsexception.cpp */; };
 		7AB51D0F10CDA3B200A865FF /* nxsdistancesblock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CA910CDA26800A865FF /* nxsdistancesblock.cpp */; };
-		D11BC11611B74F950011F82A /* char_super_matrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11BC11511B74F950011F82A /* char_super_matrix.cpp */; };
 		D11BC11711B74F950011F82A /* char_super_matrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11BC11511B74F950011F82A /* char_super_matrix.cpp */; };
 		D11D1AA21191C2A7009F9107 /* boost_assertion_failed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945BB10CAEFB900CEFDE0 /* boost_assertion_failed.cpp */; };
 		D11EF46B11AEE2ED00AAD3E0 /* tree_manip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09464710CAEFB900CEFDE0 /* tree_manip.cpp */; };
@@ -1737,7 +1736,6 @@
 				7A98F43D10CD5A5A001E79F7 /* univents.cpp in Sources */,
 				7A98F44210CD5A6A001E79F7 /* updater_pymod.cpp in Sources */,
 				7A98F45A10CD5C39001E79F7 /* tree_manip.cpp in Sources */,
-				D11BC11611B74F950011F82A /* char_super_matrix.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
