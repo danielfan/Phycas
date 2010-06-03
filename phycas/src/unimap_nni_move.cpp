@@ -66,7 +66,7 @@ bool UnimapTopoMove::update()
 	bool accepted = false;
 	
 #if 1 ||  DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
-	tree->renumberInternalNodes(tree->GetNTips()); //@POL this should be somewhere else
+	//tree->renumberInternalNodes(tree->GetNTips()); //@POL this should be somewhere else
 
 	proposeNewState();
 	ChainManagerShPtr p = chain_mgr.lock();
@@ -274,7 +274,7 @@ void UnimapTopoMove::proposeNewState()
 
     //temporary!
     scoringBeforeMove = true;
-	likelihood->storeAllCLAs(tree);
+	//likelihood->storeAllCLAs(tree);
 
 	prev_ln_like = FourTaxonLnLBeforeMove();
 
