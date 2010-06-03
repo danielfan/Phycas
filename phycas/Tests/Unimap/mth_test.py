@@ -2,10 +2,9 @@ import sys
 from phycas import *
 
 setMasterSeed(9375)
-model.type                  = 'hky'
+model.type                  = 'jc'
 model.edgelen_hyperprior = None
 model.edgelen_prior = Exponential(10.0)
-model.num_rates = 1
 
 fixed_tree = 'FIXEDTREE' in sys.argv[1].upper()
 fixed_topo = 'FIXEDTOPO' in sys.argv[1].upper()
@@ -49,14 +48,14 @@ if mcmc.use_unimap:
     else:
         #mcmc.starting_tree_source = TreeCollection(newick='(1:0.12695,2:0.04969,(3:0.08372,(((6:0.07076,((9:0.05874,7:0.04764):0.01801,10:0.06761):0.03612):0.02586,(8:0.12347,5:0.06710):0.02890):0.02613,4:0.07260):0.02658):0.02408);')
         mcmc.mapping_move_weight = 0
-        mcmc.unimap_ls_move_weight = 10
-        #mcmc.unimap_nni_move_weight = 10
-        mcmc.unimap_edge_move_weight = 10
-        mcmc.unimap_sample_ambig_move_weight = 10
-        mcmc.ncycles = 1000000
-        mcmc.sample_every = 100
-        mcmc.unimap_thread_count = 2
-        
+        mcmc.unimap_ls_move_weight = 1
+        mcmc.unimap_nni_move_weight = 0
+        mcmc.unimap_edge_move_weight = 0
+        mcmc.unimap_thread_count = 1
+        mcmc.unimap_sample_ambig_move_weight = 1
+        mcmc.ncycles = 50000
+        mcmc.sample_every = 10
+        mcmc.reference_tree_source = 'hky50taxaML.tre'        
 else:
     if fixed_tree:
         raise NotImplementedError()
@@ -66,7 +65,7 @@ else:
         mcmc.ls_move_weight = 100
 mcmc.tree_scaler_weight     = 0
 mcmc.slice_weight           = 1
-mcmc.debugging              = True
+mcmc.debugging              = False
 
 if False:
 	import sys,os
@@ -89,8 +88,7 @@ sumt.trees = prefix + '_' + file_pref + '_' + suffix + '_' + 'trees'
 
 sumt.tree_credible_prob = 1.0
 
-#sumt()
-
+sumt()
 
 
 

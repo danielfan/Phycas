@@ -26,18 +26,22 @@ class UnimapSpreadingWrapper(object):
 			mcmc.chain_manager.addMove(m)
 
 	def setSaveDebugInfo(self, f):
-		return self.unimap_spreader_move.setSaveDebugInfo(f)
+		self.unimap_spreader_move.setSaveDebugInfo(f)
+		for m in self.unimap_ls_move_list:
+			m.setSaveDebugInfo(f)
 	def getName(self):
 		return self.unimap_spreader_move.getName()
 	def getDebugInfo(self):
 		return self.unimap_spreader_move.getDebugInfo()
 	def update(self):
+		#import pdb; pdb.set_trace()
 		self.unimap_spreader_move.update()
 		threads = [Thread(target=i.update) for i in self.unimap_ls_move_list]
 		for t in threads:
 			t.start()
 		for t in threads:
 			t.join()
+		print "all threads done!"
 		return True
 		
 	

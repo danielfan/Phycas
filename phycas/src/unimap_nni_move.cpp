@@ -48,8 +48,6 @@ void UnimapTopoMove::setLot(LotShPtr p)
 */
 bool UnimapTopoMove::update()
 	{
-	bool accepted = false;
-#if 1 ||  DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
 	// The only case in which is_fixed is true occurs when the user decides to fix the edge lengths.
 	// A proposed UnimapNNIMove cannot be accepted without changing edge lengths, so it is best to bail out now.
 	if (is_fixed)
@@ -62,6 +60,9 @@ bool UnimapTopoMove::update()
 		ndQ.pop();
 		return false;
 		}
+	bool accepted = false;
+	
+#if 1 ||  DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
 	tree->renumberInternalNodes(tree->GetNTips()); //@POL this should be somewhere else
 
 	proposeNewState();
@@ -120,9 +121,9 @@ bool UnimapTopoMove::update()
 			cached_posterior = prev_posterior;
 #	endif
 #endif
+
 	return accepted;
 	}
-
 TreeNode * randomInternalAboveSubroot(Tree & tree, Lot &rng)
     {
 	// Avoiding the "subroot" node (only child of the tip serving as the root), so the number of 
@@ -204,7 +205,7 @@ void UnimapTopoMove::proposeNewState()
     // When calculating likelihoods we refer to the tip data as 
     // aTipData, bTipData, cTipData, and dTipData where the tree is ((a,b), (c,d))
     // with the internal length from origNd
-
+	//std::cerr << "UnimapTopoMove::proposeNewState " << this->getName() << '\n';
 	if (ndQ.empty())
 		origNode = randomInternalAboveSubroot();
 	else
@@ -1159,6 +1160,7 @@ bool UnimapTopoMoveSpreader::conflictsWithPrevious(TreeNode *nd) const
 
 bool UnimapTopoMoveSpreader::update()
 	{
+	//std::cerr << "UnimapTopoMoveSpreader::update " << this->getName() << '\n';
 	PHYCAS_ASSERT(!topoMoves.empty());
 	const unsigned numUpdaters = topoMoves.size();
 	
