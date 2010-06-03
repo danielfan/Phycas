@@ -133,16 +133,19 @@ END;
     finish = finish_block
 
 class CharacterSuperMatrix(object): # Kansas2010Todo
-    def __init__(self, list_of_matrices):
-        self.matrix_list = list_of_matrices
+    def __init__(self, raw_supermatrix, taxa):
+        self.raw_supermatrix = raw_supermatrix
+        n = raw_supermatrix.getNumMatrices()
+        self._raw_matrix_list = [raw_supermatrix.getMatrix(i) for i in range(n)]
+        self.matrix_list = [DataMatrix(i, taxa) for i in self._raw_matrix_list]
     def getNChar(self):
-        return sum([i.getNChar() for i in self.matrix_list]
+        return sum([i.getNChar() for i in self.matrix_list])
     def getNTax(self):
-        return sum([i.getNTax() for i in self.matrix_list]
+        return sum([i.getNTax() for i in self.matrix_list])
     def getNSubsets(self):
         return len(self.matrix_list)
     def getTaxLabels(self):
-        for i in self.matrix_list[1:]
+        for i in self.matrix_list[1:]:
             phycassert(self.matrix_list[0].taxa == i.taxa)
         return self.matrix_list[0].taxa
     
@@ -166,7 +169,7 @@ class NexusReader(NexusReaderBase):
         """
         NexusReaderBase.__init__(self, -1)
         self.taxa = None
-        self._raw_mat = None
+        self._data_matrices = None
 
     def readFile(self, fn):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -175,7 +178,7 @@ class NexusReader(NexusReaderBase):
 
         """
         self.taxa = None
-        self._raw_mat = None
+        self._data_matrices = None
         NexusReaderBase.readFile(self, fn)
         self.taxa = NexusReaderBase.getTaxLabels(self)
         if _ROUND_TRIP_EVERY_NEXUS_READ:
@@ -202,11 +205,9 @@ class NexusReader(NexusReaderBase):
         return [TreeDescription(t) for t in NexusReaderBase.getTrees(self)]
     
     def getLastDiscreteMatrix(self, gaps_to_missing=True):
-        if self._raw_mat is None:
+        if self._data_matrices is None:
             o = getLastNexusDiscreteMatrix(self, gaps_to_missing)
-            n = o.getNumMatrices()
-            self._raw_matrix_list = [o.getMatrix(i) for i in range(n)]
-            self._data_matrices = CharacterSuperMatrix([DataMatrix(i, self.taxa) for i in self._raw_matrix_list])
+            self._data_matrices = CharacterSuperMatrix(o, self.taxa)
             return self._data_matrices
         return self._data_matrices
 
