@@ -59,7 +59,7 @@ class effective_postorder_edge_iterator
 		void						BuildStackFromNodeAndSiblings(TreeNode *, const TreeNode *);
 
 		NodeValidityChecker			isValidChecker;
-		std::stack<EdgeEndpoints>	edge_stack;
+		std::stack<EdgeEndpoints>	edgeStack;
 		mutable EdgeEndpoints		topOfEdgeStack;
 		TreeNode *					effectiveRoot;
 	};
@@ -122,14 +122,14 @@ inline effective_postorder_edge_iterator::effective_postorder_edge_iterator(
 #endif
 
 		// 
-		edge_stack.push(EdgeEndpoints(currAnc, currAvoidNode));
+		edgeStack.push(EdgeEndpoints(currAnc, currAvoidNode));
 		BuildStackFromNodeAndSiblings(currAnc->GetLeftChild(), currAvoidNode);
 		currAvoidNode = currAnc;
 		}
 
-	// Make sure we look like a default-constructed object if there are no edges in edge_stack
+	// Make sure we look like a default-constructed object if there are no edges in edgeStack
 	// This allows the iterator to determine when it has reached the end
-	if (edge_stack.empty())
+	if (edgeStack.empty())
 		effectiveRoot = NULL;
 	}
 
@@ -145,7 +145,7 @@ inline void effective_postorder_edge_iterator::BuildStackFromNodeAndSiblings(Tre
 		return;
 
 	// Create a temporary stack of nodes to remember
-	std::stack<TreeNode *> nd_stack;
+	std::stack<TreeNode *> ndStack;
 
 	// Visit all nodes in the subtree extending up from curr's parent (with the exception 
 	// of the subtree whose root is nodeToSkip)
@@ -164,25 +164,25 @@ inline void effective_postorder_edge_iterator::BuildStackFromNodeAndSiblings(Tre
 			{
 			// edge was not valid:
 			//   - push edge onto edge stack
-			//   - if curr has a sibling, push that sibling onto nd_stack (i.e. remember it so we can deal with it later)
+			//   - if curr has a sibling, push that sibling onto ndStack (i.e. remember it so we can deal with it later)
 			//   - let curr be curr's left child
-			edge_stack.push(EdgeEndpoints(curr, par));
+			edgeStack.push(EdgeEndpoints(curr, par));
 			TreeNode * r = curr->GetRightSib();
 			if (r != NULL && r == nodeToSkip)
 				r = r->GetRightSib();
 			if (r != NULL)
-				nd_stack.push(r);
+				ndStack.push(r);
 			curr = curr->GetLeftChild();
 			}
 
 		if (curr == NULL)
 			{
 			// we've come to the end of the road for this subtree
-			// let curr be node on top of nd_stack
-			if (nd_stack.empty())
+			// let curr be node on top of ndStack
+			if (ndStack.empty())
 				break;
-			curr = nd_stack.top();
-			nd_stack.pop();
+			curr = ndStack.top();
+			ndStack.pop();
 			}
 		}
 	}
@@ -192,10 +192,10 @@ inline void effective_postorder_edge_iterator::BuildStackFromNodeAndSiblings(Tre
 */
 inline void effective_postorder_edge_iterator::increment()
 	{
-	if (!edge_stack.empty())
+	if (!edgeStack.empty())
 		{
-		edge_stack.pop();
-		if (edge_stack.empty())
+		edgeStack.pop();
+		if (edgeStack.empty())
 			effectiveRoot = NULL;
 		}
 	else
@@ -211,9 +211,9 @@ inline bool effective_postorder_edge_iterator::equal(effective_postorder_edge_it
     {
     if (this->effectiveRoot != other.effectiveRoot)
     	return false;
-    if (edge_stack.empty())
-    	return other.edge_stack.empty();
-    return (!other.edge_stack.empty()) && (edge_stack.top().first == other.edge_stack.top().first);
+    if (edgeStack.empty())
+    	return other.edgeStack.empty();
+    return (!other.edgeStack.empty()) && (edgeStack.top().first == other.edgeStack.top().first);
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -221,8 +221,8 @@ inline bool effective_postorder_edge_iterator::equal(effective_postorder_edge_it
 */
 inline EdgeEndpoints & effective_postorder_edge_iterator::dereference() const
     {
-	PHYCAS_ASSERT(!edge_stack.empty());
-	topOfEdgeStack = edge_stack.top();
+	PHYCAS_ASSERT(!edgeStack.empty());
+	topOfEdgeStack = edgeStack.top();
     return topOfEdgeStack;
     }
 
