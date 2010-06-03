@@ -127,6 +127,8 @@ bool UnimapTopoMove::update()
 
 	return accepted;
 	}
+
+
 TreeNode * randomInternalAboveSubroot(Tree & tree, Lot &rng)
     {
 	// Avoiding the "subroot" node (only child of the tip serving as the root), so the number of 
@@ -150,35 +152,6 @@ TreeNode * randomInternalAboveSubroot(Tree & tree, Lot &rng)
 	PHYCAS_ASSERT(!nd->GetParent()->IsTipRoot());
     return nd;
     }
-
-/*----------------------------------------------------------------------------------------------------------------------
-|   Selects an internal node at random from a discrete uniform distribution with the constraint that the returned node
-|   is not equal to the subroot (the sole child of the tip node serving as the root).
-*/
-TreeNode * UnimapTopoMove::randomInternalAboveSubroot()
-    {
-	// Avoiding the "subroot" node (only child of the tip serving as the root), so the number of 
-	// acceptable nodes is one fewer than the number of internal nodes
-	unsigned numAcceptableNodes = tree->GetNInternals() - 1;
-
-	unsigned ypos = rng->SampleUInt(numAcceptableNodes);
-	unsigned i = 0;
-    TreeNode * nd = tree->GetFirstPreorder();
-	for (; nd != NULL; nd = nd->GetNextPreorder())
-		{
-		if (nd->IsInternal() && !nd->GetParentConst()->IsTipRoot())
-			{
-			if (i == ypos)
-				break;
-			++i;
-			}
-		}
-	PHYCAS_ASSERT(nd->GetLeftChild() != NULL);
-	PHYCAS_ASSERT(nd->GetParentConst() != NULL);
-	PHYCAS_ASSERT(!nd->GetParent()->IsTipRoot());
-    return nd;
-    }
-
 	
 /*----------------------------------------------------------------------------------------------------------------------
 |	
@@ -210,7 +183,10 @@ void UnimapTopoMove::proposeNewState()
     // with the internal length from origNd
 	std::cerr << "UnimapTopoMove::proposeNewState " << this->getName() << '\n';
 	if (ndQ.empty())
-		origNode = randomInternalAboveSubroot();
+		{
+		origNode = randomInternalAboveSubroot(*tree, *rng);
+		PHYCAS_ASSERT(false);
+		}
 	else
 		{
 		origNode = ndQ.front();

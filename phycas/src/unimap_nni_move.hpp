@@ -73,7 +73,6 @@ class UnimapTopoMove : public MCMCUpdater
 		double					FourTaxonLnLFromCorrectTipDataMembers(unsigned subsetIndex);
 		double					HarvestLnLikeFromCondLikePar(CondLikelihoodShPtr focalCondLike, ConstCondLikelihoodShPtr neighborCondLike, const double * const * childPMatrix, unsigned subsetIndex);
 		void					storePMatTransposed(double **& cached, const double *** p_mat_array, unsigned subsetIndex);
-		TreeNode *				randomInternalAboveSubroot();
 		void					resampleInternalNodeStates(const LikeFltType * root_state_posterior, const LikeFltType * des_cla, unsigned subsetIndex);
 
 
