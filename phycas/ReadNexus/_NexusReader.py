@@ -148,6 +148,10 @@ class CharacterSuperMatrix(object): # Kansas2010Todo
         for i in self.matrix_list[1:]:
             phycassert(self.matrix_list[0].taxa == i.taxa)
         return self.matrix_list[0].taxa
+    n_char = property(getNChar)
+    n_tax = property(getNTax)
+    n_subsets = property(getNSubsets)
+    taxa = property(getTaxLabels)
     
 class NexusReader(NexusReaderBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -174,7 +178,7 @@ class NexusReader(NexusReaderBase):
     def readFile(self, fn):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-        Need to write.
+        Need to              write.
 
         """
         self.taxa = None

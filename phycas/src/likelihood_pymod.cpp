@@ -45,7 +45,7 @@
 #include "phycas/src/q_matrix.hpp"
 #include "phycas/src/xlikelihood.hpp"
 #include "phycas/src/partition_model.hpp"
-
+#include "phycas/src/char_super_matrix.hpp"
 void model_pymod();
 void updater_pymod();
 

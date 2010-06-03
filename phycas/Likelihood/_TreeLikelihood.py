@@ -55,7 +55,7 @@ class TreeLikelihood(TreeLikelihoodBase):
         """
         TreeLikelihoodBase.__init__(self, model)
 
-    def copyDataFromDiscreteMatrix(self, data_matrix, partition_info = None):
+    def copyDataFromDiscreteMatrix(self, data_matrix, partition_info):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Copies data from a discrete data matrix object (such as that returned
@@ -63,7 +63,7 @@ class TreeLikelihood(TreeLikelihoodBase):
         data_matrix are compressed into data patterns and their counts.
         
         """
-        TreeLikelihoodBase.copyDataFromDiscreteMatrix(self, data_matrix.mat, partition_info)
+        TreeLikelihoodBase.copyDataFromDiscreteMatrix(self, data_matrix.raw_supermatrix, partition_info)
 
     def copyDataFromSimData(self, sim_data):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

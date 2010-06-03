@@ -21,6 +21,7 @@
 #include <numeric>
 #include <boost/bind.hpp>
 #include <boost/format.hpp>
+#include "phycas/src/char_super_matrix.hpp"
 #include "phycas/src/basic_tree.hpp"
 #include "phycas/src/likelihood_models.hpp"
 #include "phycas/src/tree_likelihood.hpp"
@@ -32,7 +33,7 @@
 #include "phycas/src/edge_iterators.hpp"
 #include "phycas/src/univents.hpp"
 #include "phycas/src/partition_model.hpp"
-
+#include "phycas/src/char_super_matrix.hpp"
 //#include <CoreServices/CoreServices.h>
 //#undef check	
 
@@ -2791,16 +2792,16 @@ void TreeLikelihood::prepareForSimulation(
 |	stored in `mat'.
 */
 void TreeLikelihood::copyDataFromDiscreteMatrix(
-  const NxsCXXDiscreteMatrix & mat,				/**< is the data source */
+  const CharSuperMatrix * mat,				/**< is the data source */
   const std::vector<unsigned> & partition_info)	/**< is a vector of indices storing the partition subset used by each site */
 
 	{
-	nTaxa = mat.getNTax();
+	nTaxa = mat->getNTax();
 
     // The compressDataMatrix function first erases, then builds, both pattern_vect and 
 	// pattern_counts using the uncompressed data contained in mat
 	//unsigned sz = (unsigned)partition_info.size();
-	compressDataMatrix(mat, partition_info);
+	compressDataMatrix(*mat->GetMatrix(0), partition_info);
 	
 #if POLPY_NEWWAY
 	// nothing
@@ -2854,11 +2855,12 @@ void TreeLikelihood::copyDataFromDiscreteMatrix(
 			}
 		else	// not codon model
 			{
+			NxsCXXDiscreteMatrix & singleMat = *(mat->GetMatrix(i));
 			if (nsubsets == 1)
 				{
 				// get state_list and state_list_pos from mat
-				state_list[i] = mat.getStateList(); 
-				state_list_pos[i] = mat.getStateListPos();
+				state_list[i] = singleMat.getStateList(); 
+				state_list_pos[i] = singleMat.getStateListPos();
 				}
 			else
 				{
@@ -2979,7 +2981,7 @@ void TreeLikelihood::debugCompressedDataInfo(
 |	`pattern_counts' given an original site index.
 */
 unsigned TreeLikelihood::compressDataMatrix(
-  const NxsCXXDiscreteMatrix	&	mat,			/**< is the data source */
+  const NxsCXXDiscreteMatrix & mat,			/**< is the data source */
   const uint_vect_t 			& 	partition_info)	/**< is a vector of indices storing the partition subset used by each site */
 	{
 	std::cerr << "Entering TreeLikelihood::compressDataMatrix..." << std::endl;//tmp

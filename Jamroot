@@ -181,7 +181,6 @@ alias likelihood_sources
     phycas/src/boost_assertion_failed.cpp
     phycas/src/bush_move.cpp 
     phycas/src/codon_model.cpp
-    phycas/src/char_super_matrix.cpp
     phycas/src/cond_likelihood.cpp
     phycas/src/cond_likelihood_storage.cpp
     phycas/src/discrete_gamma_shape_param.cpp

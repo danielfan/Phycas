@@ -35,7 +35,8 @@ class CharSuperMatrix
 		CharSuperMatrix(std::vector<NxsCXXDiscreteMatrix *> mats) : allSubmatrices(mats) {}
 	
 		unsigned GetNumMatrices() const {return allSubmatrices.size();}
-		NxsCXXDiscreteMatrix * GetMatrix(unsigned i) { return allSubmatrices.at(i);}
+		unsigned getNTax() const {return allSubmatrices[0]->getNTax();}
+		NxsCXXDiscreteMatrix * GetMatrix(unsigned i) const { return allSubmatrices.at(i);}
 		
 	public:
 		

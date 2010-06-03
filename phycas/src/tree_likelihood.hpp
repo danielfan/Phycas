@@ -37,6 +37,7 @@
 
 namespace phycas
 {
+class CharSuperMatrix;
 unsigned ** getNodeSMat(TreeNode * nd, unsigned subsetIndex);
 
 typedef const double * const * const * ConstPMatrices;
@@ -164,7 +165,7 @@ class TreeLikelihood
 		void							prepareForLikelihood(TreeShPtr);
 		void							prepareInternalNodeForLikelihood(TreeNode * nd);
 
-		void							copyDataFromDiscreteMatrix(const NxsCXXDiscreteMatrix &, const std::vector<unsigned> & partition_info);
+		void							copyDataFromDiscreteMatrix(const CharSuperMatrix *, const std::vector<unsigned> & partition_info);
 		void							copyDataFromSimData(SimDataShPtr sim_data);
 
 		bool							invalidateNode(TreeNode * ref_nd, TreeNode * neighbor_closer_to_likelihood_root);
