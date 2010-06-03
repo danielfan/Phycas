@@ -203,6 +203,8 @@
 		7AB51D0D10CDA3B200A865FF /* nxsmultiformat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CAF10CDA26800A865FF /* nxsmultiformat.cpp */; };
 		7AB51D0E10CDA3B200A865FF /* nxsexception.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CAD10CDA26800A865FF /* nxsexception.cpp */; };
 		7AB51D0F10CDA3B200A865FF /* nxsdistancesblock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB51CA910CDA26800A865FF /* nxsdistancesblock.cpp */; };
+		D11BC11611B74F950011F82A /* char_super_matrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11BC11511B74F950011F82A /* char_super_matrix.cpp */; };
+		D11BC11711B74F950011F82A /* char_super_matrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11BC11511B74F950011F82A /* char_super_matrix.cpp */; };
 		D11D1AA21191C2A7009F9107 /* boost_assertion_failed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945BB10CAEFB900CEFDE0 /* boost_assertion_failed.cpp */; };
 		D11EF46B11AEE2ED00AAD3E0 /* tree_manip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A09464710CAEFB900CEFDE0 /* tree_manip.cpp */; };
 		D11EF46E11AEE30E00AAD3E0 /* basic_lot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945B210CAEFB900CEFDE0 /* basic_lot.cpp */; };
@@ -593,6 +595,8 @@
 		7AB51CE010CDA39200A865FF /* libncl.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libncl.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		D10DDE0C1125D4C500CC55F3 /* scubed.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = scubed.py; path = ../../inprep/scubed/scubed.py; sourceTree = SOURCE_ROOT; };
 		D11BACAB11B430400084D645 /* SplitTest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = SplitTest.py; path = ../../phycas/Tests/SplitTest/SplitTest.py; sourceTree = SOURCE_ROOT; };
+		D11BC11511B74F950011F82A /* char_super_matrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = char_super_matrix.cpp; path = ../../phycas/src/char_super_matrix.cpp; sourceTree = SOURCE_ROOT; };
+		D11BC11811B74FBA0011F82A /* char_super_matrix.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = char_super_matrix.hpp; path = ../../phycas/src/char_super_matrix.hpp; sourceTree = SOURCE_ROOT; };
 		D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpython2.6.dylib; path = lib/libpython2.6.dylib; sourceTree = PYTHON_ROOT; };
 		D164C4B01164ED8E00DB2E59 /* pinvar_paradox.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = pinvar_paradox.py; path = ../../inprep/partition/cicadas/pinvar_paradox/analysis/pinvar_paradox.py; sourceTree = SOURCE_ROOT; };
 		D17574CD10EB942400D4E2B0 /* partition.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = partition.py; path = ../../inprep/partition/partition.py; sourceTree = SOURCE_ROOT; };
@@ -781,6 +785,8 @@
 				7A0945BC10CAEFB900CEFDE0 /* bush_move.cpp */,
 				7A0945BD10CAEFB900CEFDE0 /* bush_move.hpp */,
 				7A0945BE10CAEFB900CEFDE0 /* bush_move.inl */,
+				D11BC11811B74FBA0011F82A /* char_super_matrix.hpp */,
+				D11BC11511B74F950011F82A /* char_super_matrix.cpp */,
 				7A0945BF10CAEFB900CEFDE0 /* codon_model.cpp */,
 				7A0945C010CAEFB900CEFDE0 /* codon_model.hpp */,
 				7A0945C110CAEFB900CEFDE0 /* codon_model.inl */,
@@ -1731,6 +1737,7 @@
 				7A98F43D10CD5A5A001E79F7 /* univents.cpp in Sources */,
 				7A98F44210CD5A6A001E79F7 /* updater_pymod.cpp in Sources */,
 				7A98F45A10CD5C39001E79F7 /* tree_manip.cpp in Sources */,
+				D11BC11611B74F950011F82A /* char_super_matrix.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1765,6 +1772,7 @@
 				7A98F58510CD6529001E79F7 /* basic_lot.cpp in Sources */,
 				7A98F58B10CD653A001E79F7 /* ipmpar.c in Sources */,
 				7A98F59010CD655C001E79F7 /* dcdflib.c in Sources */,
+				D11BC11711B74F950011F82A /* char_super_matrix.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

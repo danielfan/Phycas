@@ -20,6 +20,7 @@
 #include <boost/shared_ptr.hpp>
 #include "ncl/nxspublicblocks.h"
 #include "phycas/src/nxs_file_path.hpp"
+#include "phycas/src/char_super_matrix.hpp"
 
 enum CmdResult
 	{
@@ -86,22 +87,6 @@ class PhycasNexusReader: public PublicNexusReader
 
 	};
 
-
-class CharSuperMatrix
-	{
-	public:
-		CharSuperMatrix(){}
-		CharSuperMatrix(std::vector<NxsCXXDiscreteMatrix *> mats) : allSubmatrices(mats) {}
-	
-		unsigned GetNumMatrices() const {return allSubmatrices.size();}
-		NxsCXXDiscreteMatrix * GetMatrix(unsigned i) { return allSubmatrices.at(i);}
-		
-	public:
-		
-		std::vector<NxsCXXDiscreteMatrix *> allSubmatrices;
-	};
-CharSuperMatrix * GetLastDiscreteMatrix(PhycasNexusReader & nexusReader, bool convertGapsToMissing);
-CharSuperMatrix * createNativeDiscreteMatrix(PhycasNexusReader & nexusReader, NxsTaxaBlock * taxaBlockPtr, unsigned int charBlockIndex, bool convertGapsToMissing);
 
 typedef boost::shared_ptr<PhycasNexusReader> PhycasNexusReaderShPtr;
 

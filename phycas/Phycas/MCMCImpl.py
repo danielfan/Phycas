@@ -277,7 +277,7 @@ class MCMCImpl(CommonFunctions):
 	def _loadData(self, matrix):
 		self.phycassert(matrix is not None, 'Tried to load data from a non-existant matrix')
 		self.data_matrix = matrix
-		self.taxon_labels = matrix.taxa
+		self.taxon_labels = matrix.getTaxLabels()
 		self.ntax = self.data_matrix.getNTax()
 		self.nchar = self.data_matrix.getNChar() # used for Gelfand-Ghosh simulations only
 		self.phycassert(len(self.taxon_labels) == self.ntax, "Number of taxon labels does not match number of taxa.")
