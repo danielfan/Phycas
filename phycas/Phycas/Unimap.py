@@ -8,6 +8,7 @@ class Unimap(PhycasCommand):
                 ("mapping_move_weight",       1,    "Univent mapping will be performed this many times per cycle", IntArgValidate(min=0)),
                 ("unimap_edge_move_weight",   1,    "Univent edge moves will be performed this many times per cycle", IntArgValidate(min=0)),
                 ("unimap_sample_ambig_move_weight",  1,    "Unimap Sample Ambiguous tip moves will be performed this many times per cycle", IntArgValidate(min=0)),    
+                ("unimap_thread_count", 1, 'the number of threads to spawn to perform simultaneous unimap ls moves', IntArgValidate(min=1)),
                 ("unimap_nni_move_weight",  100,    "Unimap NNI moves will be performed this many times per cycle", IntArgValidate(min=0)),    
                 ("unimap_ls_move_weight",  100,    "Unimap LS moves will be performed this many times per cycle", IntArgValidate(min=0)),    
                 ("unimap_fast_nni_move_weight",  0,    "Unimap Fast NNI moves will be performed this many times per cycle", IntArgValidate(min=0)),    
@@ -42,6 +43,7 @@ class Unimap(PhycasCommand):
         mcmc.mapping_move_weight = self.mapping_move_weight
         mcmc.unimap_fast_nni_move_weight = self.unimap_fast_nni_move_weight
         mcmc.unimap_nni_move_weight = self.unimap_nni_move_weight
+        mcmc.unimap_thread_count = self.unimap_thread_count
         mcmc.unimap_ls_move_weight = self.unimap_ls_move_weight
         mcmc.unimap_sample_ambig_move_weight = self.unimap_sample_ambig_move_weight
         mcmc.unimap_node_slide_move_weight = self.unimap_node_slide_move_weight

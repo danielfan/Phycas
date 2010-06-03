@@ -223,4 +223,10 @@ void updater_pymod()
 		.def("setLambda", &phycas::UnimapLargetSimonMove::setLambda)
 		.def("getLambda", &phycas::UnimapLargetSimonMove::getLambda)
 		;
+
+	class_<phycas::UnimapTopoMoveSpreader, bases<phycas::MCMCUpdater>, 
+		boost::noncopyable, boost::shared_ptr<phycas::UnimapTopoMoveSpreader> >("UnimapTopoMoveSpreader") 
+		.def("update", &phycas::UnimapTopoMoveSpreader::update)
+		.def("add", &phycas::UnimapTopoMoveSpreader::add)
+		;
 	}

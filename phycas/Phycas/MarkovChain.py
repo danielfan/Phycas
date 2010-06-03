@@ -5,6 +5,36 @@ import phycas.ProbDist as ProbDist
 import phycas.Likelihood as Likelihood
 from LikelihoodCore import LikelihoodCore
 
+
+
+from threading import Thread
+class UnimapSpreadingWrapper(object):
+	def __init__(self, mcmc):
+		self.unimap_ls_move_list = [Likelihood.UnimapLSMove(mcmc.likelihood) for i in range(mcmc.parent.opts.unimap_thread_count)]
+		self.unimap_spreader_move = UnimapTopoMoveSpreader()
+		self.unimap_spreader_move.setName("unimap_topo_move_spreader")
+		self.unimap_spreader_move.setWeight(mcmc.parent.opts.unimap_ls_move_weight)
+		self.unimap_spreader_move.setTree(mcmc.tree)
+		self.unimap_spreader_move.setLot(mcmc.r)
+		for n, m in enumerate(self.unimap_ls_move_list):
+			self.unimap_spreader_move.add(m)
+			m.setName("unimap_LS_move %d" % n)
+			m.setWeight(1)
+			m.setTree(mcmc.tree)
+			m.setModel(model0)
+			m.setLot(mcmc.r)
+
+	def update(self):
+		self.unimap_spreader_move.update()
+		threads = [Thread(target=i.update) for i in self.unimap_ls_move_list]
+		for t in threads:
+			t.start()
+		for t in threads:
+			t.join()
+		return True
+		
+	
+	
 class MarkovChain(LikelihoodCore):
 	#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
 	"""
@@ -49,6 +79,7 @@ class MarkovChain(LikelihoodCore):
 		
 		self.state_freq_moves			= []
 		self.rel_rate_moves				= []
+		self.all_updaters_list = None
 
 		self.setupChain()
 
@@ -450,6 +481,23 @@ class MarkovChain(LikelihoodCore):
 				else:
 					self.parent.phycassert(False, "unimap_sample_ambig_move_weight was set to 0, but %d ambiguous leaves were found" % num_ambig)
 
+			# Create a UnimapLSMove (replaces LargetSimonMove for unimap analyses)
+			
+			if self.parent.opts.unimap_thread_count > 1 and (self.parent.opts.unimap_ls_move_weight > 0):
+				if self.parent.opts.unimap_ls_move_weight > 1:
+					self.output('Warning: use of unimap_thread_count > 1 means that the unimap_ls_move_weight will be reset to 1')
+				self.unimap_spreader_move = UnimapSpreadingWrapper(self)
+				self.chain_manager.addMove(self.unimap_spreader_move)
+			else:
+				# Create a UnimapLSMove (replaces LargetSimonMove for unimap analyses)
+				self.unimap_ls_move = Likelihood.UnimapLSMove(self.likelihood)
+				self.unimap_ls_move.setName("unimap_LS_move")
+				self.unimap_ls_move.setWeight(self.parent.opts.unimap_ls_move_weight)
+				self.unimap_ls_move.setTree(self.tree)
+				self.unimap_ls_move.setModel(model0)
+				self.unimap_ls_move.setLot(self.r)
+				self.chain_manager.addMove(self.unimap_ls_move)
+
 			# Create a UnimapNNIMove (replaces LargetSimonMove for unimap analyses)
 			self.unimap_nni_move = Likelihood.UnimapNNIMove(self.likelihood)
 			self.unimap_nni_move.setName("unimap_NNI_move")
@@ -459,14 +507,6 @@ class MarkovChain(LikelihoodCore):
 			self.unimap_nni_move.setLot(self.r)
 			self.chain_manager.addMove(self.unimap_nni_move)
 
-			# Create a UnimapLSMove (replaces LargetSimonMove for unimap analyses)
-			self.unimap_ls_move = Likelihood.UnimapLSMove(self.likelihood)
-			self.unimap_ls_move.setName("unimap_LS_move")
-			self.unimap_ls_move.setWeight(self.parent.opts.unimap_ls_move_weight)
-			self.unimap_ls_move.setTree(self.tree)
-			self.unimap_ls_move.setModel(model0)
-			self.unimap_ls_move.setLot(self.r)
-			self.chain_manager.addMove(self.unimap_ls_move)
 
 			# Create a UnimapNodeSlideMove (replaces LargetSimonMove for unimap analyses)
 			self.unimap_node_slide_move = Likelihood.UnimapNodeSlideMove(self.likelihood)
@@ -574,3 +614,4 @@ class MarkovChain(LikelihoodCore):
 				updater.setLikelihoodHeating()
 			else:
 				updater.setStandardHeating()
+

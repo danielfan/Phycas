@@ -55,6 +55,7 @@ if mcmc.use_unimap:
         mcmc.unimap_sample_ambig_move_weight = 10
         mcmc.ncycles = 1000000
         mcmc.sample_every = 100
+        mcmc.unimap_thread_count = 2
         
 else:
     if fixed_tree:

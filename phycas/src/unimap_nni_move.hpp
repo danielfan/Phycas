@@ -19,6 +19,7 @@
 
 #if ! defined(UNIMAP_NNI_MOVE_HPP)
 #define UNIMAP_NNI_MOVE_HPP
+#include <queue>							
 
 #include <vector>							// for std::vector
 #include <boost/shared_ptr.hpp>				// for boost::shared_ptr
@@ -57,6 +58,8 @@ class UnimapTopoMove : public MCMCUpdater
 		virtual void			setLot(LotShPtr p);
 		virtual void			setTreeLikelihood(TreeLikeShPtr treeLike);
 
+
+		void queueNode(TreeNode *nd) {ndQ.push(nd);}
 	protected:
 
 		void DebugSaveNexusFile(std::ostream & nxsf, double lnlike, unsigned subsetIndex);
@@ -73,6 +76,8 @@ class UnimapTopoMove : public MCMCUpdater
 		TreeNode *				randomInternalAboveSubroot();
 		void					resampleInternalNodeStates(const LikeFltType * root_state_posterior, const LikeFltType * des_cla, unsigned subsetIndex);
 
+
+		std::queue<TreeNode *>  ndQ;
 		TreeNode *				origNode;
 		TreeNode *				origNodePar; /**< */
 
@@ -193,6 +198,21 @@ class UnimapLargetSimonMove : public UnimapTopoMove
 		bool detachUpperNode;
 		bool swapYwithZ;
 		bool topoChanging;
+	};
+	
+
+class UnimapTopoMoveSpreader: public MCMCUpdater
+	{
+	public:
+		UnimapTopoMoveSpreader() {}
+		void add(UnimapTopoMove *m) {topoMoves.insert(m);}
+		
+		bool update();
+	private:
+		std::set<UnimapTopoMove *> topoMoves;
+		std::set<TreeNode*> selectedNodes;
+		std::vector<TreeNode *> queued;
+		bool conflictsWithPrevious(TreeNode *) const ;
 	};
 
 } // namespace phycas

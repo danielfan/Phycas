@@ -77,6 +77,7 @@ class MCMC(PhycasCommand):
 		self.__dict__["mapping_move_weight"] = 1			# Univent mapping will be performed this many times per cycle
 		self.__dict__["unimap_fast_nni_move_weight"] = 0	# Unimap Fast NNI moves will be performed this many times per cycle
 		self.__dict__["unimap_nni_move_weight"] = 100		# Unimap NNI moves will be performed this many times per cycle
+		self.__dict__["unimap_thread_count"] = 1		# the number of threads to spawn to perform simultaneous unimap ls moves 
 		self.__dict__["unimap_ls_move_weight"] = 100		# Unimap Larget-Simon moves will be performed this many times per cycle
 		self.__dict__["unimap_sample_ambig_move_weight"] = 1 # Unimap Sample Ambig moves will be performed this many times per cycle
 		self.__dict__["unimap_edge_move_weight"] = 0		# Unimap edge length moves will be performed this many times per cycle

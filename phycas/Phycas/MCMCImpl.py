@@ -152,8 +152,11 @@ class MCMCImpl(CommonFunctions):
 		if self.opts.debugging:
 			tmpf = file('debug_info.txt', 'a')
 			tmpf.write('************** cycle=%d, chain=%d\n' % (cycle,chain_index))
-		for p in chain.chain_manager.getAllUpdaters():
-			w = p.getWeight()
+		
+		if chain.all_updaters_list is None:
+			chain.all_updaters_list = [(m, m.getWeight()) for m in  chain.chain_manager.getAllUpdaters()]
+		for t in chain.all_updaters_list:
+			p, w = t
 			#print "param = %s (weight = %f), chain = %d" % (p.getName(), w, chain_index)
 			for x in range(w):
 				if self.opts.debugging:
@@ -882,6 +885,8 @@ class MCMCImpl(CommonFunctions):
 		self.last_adaptation = 0
 		self.next_adaptation = self.opts.adapt_first
 		
+		CPP_UPDATER = False # using python obsoleteUpdateAllUpdaters
+		
 		for cycle in xrange(self.burnin + self.ncycles):
 			# Update all updaters
 			if explore_prior and self.opts.draw_directly_from_prior:
@@ -898,8 +903,11 @@ class MCMCImpl(CommonFunctions):
 						print "	  model = " + c.model.paramReport(self.mcmc_manager.parent.opts.ndecimals)
 						print '	  tree rep.%d = %s;' % (cycle + 1, c.tree.makeNewick(self.mcmc_manager.parent.opts.ndecimals))
 			
-					c.chain_manager.updateAllUpdaters()
-					
+					if CPP_UPDATER:
+						c.chain_manager.updateAllUpdaters()
+					else:
+						self.obsoleteUpdateAllUpdaters(c, i, cycle)
+
 			# print '******** time_stamp =',self.mcmc_manager.getColdChain().model.getTimeStamp()
 					
 			# Attempt to swap two random chains

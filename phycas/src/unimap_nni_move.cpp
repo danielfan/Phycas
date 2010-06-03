@@ -57,6 +57,11 @@ bool UnimapTopoMove::update()
 
 	//std::cerr << "****** UnimapNNIMove::update" << std::endl;
 
+	if (!ndQ.empty() && ndQ.front() == 0L) // a 0L in the ndQ is a signal to do nothing.
+		{
+		ndQ.pop();
+		return false;
+		}
 	tree->renumberInternalNodes(tree->GetNTips()); //@POL this should be somewhere else
 
 	proposeNewState();
@@ -118,6 +123,30 @@ bool UnimapTopoMove::update()
 	return accepted;
 	}
 
+TreeNode * randomInternalAboveSubroot(Tree & tree, Lot &rng)
+    {
+	// Avoiding the "subroot" node (only child of the tip serving as the root), so the number of 
+	// acceptable nodes is one fewer than the number of internal nodes
+	unsigned numAcceptableNodes = tree.GetNInternals() - 1;
+
+	unsigned ypos = rng.SampleUInt(numAcceptableNodes);
+	unsigned i = 0;
+    TreeNode * nd = tree.GetFirstPreorder();
+	for (; nd != NULL; nd = nd->GetNextPreorder())
+		{
+		if (nd->IsInternal() && !nd->GetParentConst()->IsTipRoot())
+			{
+			if (i == ypos)
+				break;
+			++i;
+			}
+		}
+	PHYCAS_ASSERT(nd->GetLeftChild() != NULL);
+	PHYCAS_ASSERT(nd->GetParentConst() != NULL);
+	PHYCAS_ASSERT(!nd->GetParent()->IsTipRoot());
+    return nd;
+    }
+
 /*----------------------------------------------------------------------------------------------------------------------
 |   Selects an internal node at random from a discrete uniform distribution with the constraint that the returned node
 |   is not equal to the subroot (the sole child of the tip node serving as the root).
@@ -176,7 +205,13 @@ void UnimapTopoMove::proposeNewState()
     // aTipData, bTipData, cTipData, and dTipData where the tree is ((a,b), (c,d))
     // with the internal length from origNd
 
-	origNode = randomInternalAboveSubroot();
+	if (ndQ.empty())
+		origNode = randomInternalAboveSubroot();
+	else
+		{
+		origNode = ndQ.front();
+		ndQ.pop();
+		}
 	PHYCAS_ASSERT(origNode);
 	PHYCAS_ASSERT(origNode->CountChildren() == 2); // we haven't figured this out for polytomies
 	origNodePar = origNode->GetParent();
@@ -1060,6 +1095,95 @@ double UnimapLargetSimonMove::getLnHastingsRatio() const
 double UnimapLargetSimonMove::getLnJacobian() const
 	{
 	return 0.0;
+	}
+	
+
+void FillSetWithNdsInQuartet(TreeNode *nd, std::set<TreeNode*> & ndForbidden)
+{
+	ndForbidden.insert(nd);
+	
+	TreeNode * par = nd->GetParent();
+	PHYCAS_ASSERT(par);
+	ndForbidden.insert(par);
+	
+	TreeNode * scratch = par->GetLeftChild(); 
+	PHYCAS_ASSERT(scratch);
+	ndForbidden.insert(scratch);
+
+	scratch = scratch->GetRightSib(); 
+	PHYCAS_ASSERT(scratch);
+	ndForbidden.insert(scratch);
+	
+	PHYCAS_ASSERT(scratch->GetRightSib() == 0L); // does not work with polytomies
+	
+	scratch = par->GetParent(); 
+	PHYCAS_ASSERT(scratch);
+	ndForbidden.insert(scratch);
+
+	scratch = nd->GetLeftChild(); 
+	PHYCAS_ASSERT(scratch);
+	ndForbidden.insert(scratch);
+
+	scratch = scratch->GetRightSib(); 
+	PHYCAS_ASSERT(scratch);
+	ndForbidden.insert(scratch);
+
+	PHYCAS_ASSERT(scratch->GetRightSib() == 0L); // does not work with polytomies
+}
+
+/// assumes nd is from randomInternalAboveSubroot
+bool UnimapTopoMoveSpreader::conflictsWithPrevious(TreeNode *nd) const 
+	{
+	std::set<TreeNode*> ndForbidden;
+	FillSetWithNdsInQuartet(nd, ndForbidden);
+	
+	for(std::set<TreeNode*>::const_iterator nIt = selectedNodes.begin(); nIt != selectedNodes.end(); ++nIt)
+		{
+		TreeNode * prev = *nIt;
+		if(prev == 0L)
+			continue;
+		std::set<TreeNode*> prevForbidden;
+		FillSetWithNdsInQuartet(prev, prevForbidden);
+		
+		if (ndForbidden.find(prev) != ndForbidden.end())
+			return true;
+		if (ndForbidden.find(prev->GetParent()) != ndForbidden.end())
+			return true;
+		if (prevForbidden.find(nd) != prevForbidden.end())
+			return true;
+		if (prevForbidden.find(nd->GetParent()) != prevForbidden.end())
+			return true;
+		}
+	return false;
+	}
+
+bool UnimapTopoMoveSpreader::update()
+	{
+	PHYCAS_ASSERT(!topoMoves.empty());
+	const unsigned numUpdaters = topoMoves.size();
+	
+	selectedNodes.clear();
+	queued.clear();
+
+	for(unsigned i = 0; i < numUpdaters; ++i)
+		{
+		TreeNode * nextNd = randomInternalAboveSubroot(*tree, *rng);
+		if (conflictsWithPrevious(nextNd))
+			{ // give it one more shot...
+			nextNd = randomInternalAboveSubroot(*tree, *rng);
+			if (conflictsWithPrevious(nextNd))
+				nextNd = 0L;
+			}
+		queued.push_back(nextNd);
+		selectedNodes.insert(nextNd);
+		}
+	PHYCAS_ASSERT(queued.size() == numUpdaters);
+	
+	unsigned i = 0;
+	for (std::set<UnimapTopoMove *>::iterator upIt = topoMoves.begin(); upIt != topoMoves.end(); ++upIt)
+		(*upIt)->queueNode(queued[i]);
+
+	return false;
 	}
 
 }	// namespace phycas
