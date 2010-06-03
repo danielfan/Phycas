@@ -17,6 +17,8 @@
 |  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.				  |
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 #include <fstream>
+#include <boost/bind.hpp>
+#include <boost/thread/thread.hpp>
 #include "phycas/src/probability_distribution.hpp"
 #include "phycas/src/likelihood_models.hpp"
 #include "phycas/src/basic_tree_node.hpp"
@@ -58,6 +60,7 @@ bool UnimapTopoMove::update()
 	if (!ndQ.empty() && ndQ.front() == 0L) // a 0L in the ndQ is a signal to do nothing.
 		{
 		ndQ.pop();
+		PHYCAS_ASSERT(ndQ.empty());
 		return false;
 		}
 	bool accepted = false;
@@ -205,13 +208,14 @@ void UnimapTopoMove::proposeNewState()
     // When calculating likelihoods we refer to the tip data as 
     // aTipData, bTipData, cTipData, and dTipData where the tree is ((a,b), (c,d))
     // with the internal length from origNd
-	//std::cerr << "UnimapTopoMove::proposeNewState " << this->getName() << '\n';
+	std::cerr << "UnimapTopoMove::proposeNewState " << this->getName() << '\n';
 	if (ndQ.empty())
 		origNode = randomInternalAboveSubroot();
 	else
 		{
 		origNode = ndQ.front();
 		ndQ.pop();
+		PHYCAS_ASSERT(ndQ.empty());
 		}
 	PHYCAS_ASSERT(origNode);
 	PHYCAS_ASSERT(origNode->CountChildren() == 2); // we haven't figured this out for polytomies
@@ -248,9 +252,13 @@ void UnimapTopoMove::proposeNewState()
 	const unsigned numSubsets = likelihood->getNumSubsets();
 
 	pre_root_posterior = nd_internal_data->getParentalCondLikePtr();
+	PHYCAS_ASSERT(pre_root_posterior);
 	pre_cla = nd_internal_data->getChildCondLikePtr();
+	PHYCAS_ASSERT(pre_cla);
 	post_root_posterior = ndp_internal_data->getParentalCondLikePtr();
+	PHYCAS_ASSERT(post_root_posterior);
 	post_cla = ndp_internal_data->getChildCondLikePtr();
+	PHYCAS_ASSERT(post_cla);
 
 	pre_p_mat.resize(numSubsets);
 	post_p_mat.resize(numSubsets);
@@ -1158,9 +1166,37 @@ bool UnimapTopoMoveSpreader::conflictsWithPrevious(TreeNode *nd) const
 	return false;
 	}
 
+/*struct LargetSimonCallable
+	{
+		LargetSimonCallable(UnimapTopoMove *m) :move (m) {}
+		
+		void operator()();
+		
+	private:
+		UnimapTopoMove * move; 
+	}
+	
+void LargetSimonCallable::operator()()
+	{
+	move->update();
+	}
+*/	
+class CU {
+	public:
+		CU(UnimapTopoMove * m): move(m){}
+
+		void operator()() 
+		{
+			if (move)
+				move->update();
+		}
+	UnimapTopoMove * move;
+};
+
+
 bool UnimapTopoMoveSpreader::update()
 	{
-	//std::cerr << "UnimapTopoMoveSpreader::update " << this->getName() << '\n';
+	std::cerr << "UnimapTopoMoveSpreader::update " << this->getName() << '\n';
 	PHYCAS_ASSERT(!topoMoves.empty());
 	const unsigned numUpdaters = topoMoves.size();
 	
@@ -1169,6 +1205,8 @@ bool UnimapTopoMoveSpreader::update()
 
 	for(unsigned i = 0; i < numUpdaters; ++i)
 		{
+		PHYCAS_ASSERT(tree);
+		PHYCAS_ASSERT(rng);
 		TreeNode * nextNd = randomInternalAboveSubroot(*tree, *rng);
 		if (conflictsWithPrevious(nextNd))
 			{ // give it one more shot...
@@ -1182,10 +1220,18 @@ bool UnimapTopoMoveSpreader::update()
 	PHYCAS_ASSERT(queued.size() == numUpdaters);
 	
 	unsigned i = 0;
-	for (std::set<UnimapTopoMove *>::iterator upIt = topoMoves.begin(); upIt != topoMoves.end(); ++upIt)
+	for (std::set<UnimapTopoMove *>::iterator upIt = topoMoves.begin(); upIt != topoMoves.end(); ++upIt, ++i)
 		(*upIt)->queueNode(queued[i]);
 
-	return false;
+	std::vector<UnimapTopoMove *> tmv(topoMoves.begin(), topoMoves.end());
+	
+	CU cu0(tmv.at(0));
+	CU cu1(tmv.at(1));
+	boost::thread thrd0(cu0);
+	boost::thread thrd1(cu1);
+	thrd0.join();
+	thrd1.join();
+	return true;
 	}
 
 }	// namespace phycas

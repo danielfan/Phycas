@@ -51,7 +51,7 @@ if mcmc.use_unimap:
         mcmc.unimap_ls_move_weight = 1
         mcmc.unimap_nni_move_weight = 0
         mcmc.unimap_edge_move_weight = 0
-        mcmc.unimap_thread_count = 1
+        mcmc.unimap_thread_count = 2
         mcmc.unimap_sample_ambig_move_weight = 1
         mcmc.ncycles = 50000
         mcmc.sample_every = 10

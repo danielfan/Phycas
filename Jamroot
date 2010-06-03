@@ -50,6 +50,7 @@ if $(NCL_ALREADY_INSTALLED) {
     project phycas 
       : requirements 
           <library>/boost/python//boost_python 
+          <library>/boost/thread//boost_thread 
           <include>. 
           <include>./phycas/src 
           <link>shared ;

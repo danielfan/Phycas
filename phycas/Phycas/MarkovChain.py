@@ -36,6 +36,7 @@ class UnimapSpreadingWrapper(object):
 	def update(self):
 		#import pdb; pdb.set_trace()
 		self.unimap_spreader_move.update()
+		return True
 		threads = [Thread(target=i.update) for i in self.unimap_ls_move_list]
 		for t in threads:
 			t.start()
