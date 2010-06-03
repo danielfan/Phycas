@@ -155,6 +155,7 @@ class MCMCImpl(CommonFunctions):
 		
 		if chain.all_updaters_list is None:
 			chain.all_updaters_list = [(m, m.getWeight()) for m in  chain.chain_manager.getAllUpdaters()]
+			chain.all_updaters_list.extend(chain.python_only_moves)
 		for t in chain.all_updaters_list:
 			p, w = t
 			#print "param = %s (weight = %f), chain = %d" % (p.getName(), w, chain_index)

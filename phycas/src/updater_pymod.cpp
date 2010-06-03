@@ -123,7 +123,12 @@ void updater_pymod()
 	//	boost::noncopyable, boost::shared_ptr<phycas::UnimapFastNNIMove> >("UnimapFastNNIMove") 
 	//	.def("update", &phycas::UnimapFastNNIMove::update)
 	//	;
-	class_<phycas::UnimapNNIMove, bases<phycas::MCMCUpdater>, 
+
+	class_<phycas::UnimapTopoMove, bases<phycas::MCMCUpdater>, 
+		boost::noncopyable, boost::shared_ptr<phycas::UnimapTopoMove> >("UnimapTopoMove", no_init)
+		;
+
+	class_<phycas::UnimapNNIMove, bases<phycas::UnimapTopoMove>, 
 		boost::noncopyable, boost::shared_ptr<phycas::UnimapNNIMove> >("UnimapNNIMove", init<TreeLikeShPtr>()) 
 		.def("update", &phycas::UnimapNNIMove::update)
 		;
@@ -217,7 +222,7 @@ void updater_pymod()
 		.def("getNumAmbigNodes", &phycas::UnimapSampleAmbigMove::getNumAmbigNodes)
 		;
 
-	class_<phycas::UnimapLargetSimonMove, bases<phycas::MCMCUpdater>, 
+	class_<phycas::UnimapLargetSimonMove, bases<phycas::UnimapTopoMove>, 
 		boost::noncopyable, boost::shared_ptr<phycas::UnimapLargetSimonMove> >("UnimapLSMove", init<TreeLikeShPtr>()) 
 		.def("update", &phycas::UnimapLargetSimonMove::update)
 		.def("setLambda", &phycas::UnimapLargetSimonMove::setLambda)
@@ -227,6 +232,6 @@ void updater_pymod()
 	class_<phycas::UnimapTopoMoveSpreader, bases<phycas::MCMCUpdater>, 
 		boost::noncopyable, boost::shared_ptr<phycas::UnimapTopoMoveSpreader> >("UnimapTopoMoveSpreader") 
 		.def("update", &phycas::UnimapTopoMoveSpreader::update)
-		.def("add", &phycas::UnimapTopoMoveSpreader::add)
+		.def("add", &phycas::UnimapTopoMoveSpreader::addTopoMoveSpreader)
 		;
 	}

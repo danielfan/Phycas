@@ -11,7 +11,7 @@ from threading import Thread
 class UnimapSpreadingWrapper(object):
 	def __init__(self, mcmc):
 		self.unimap_ls_move_list = [Likelihood.UnimapLSMove(mcmc.likelihood) for i in range(mcmc.parent.opts.unimap_thread_count)]
-		self.unimap_spreader_move = UnimapTopoMoveSpreader()
+		self.unimap_spreader_move = Likelihood.UnimapTopoMoveSpreader()
 		self.unimap_spreader_move.setName("unimap_topo_move_spreader")
 		self.unimap_spreader_move.setWeight(mcmc.parent.opts.unimap_ls_move_weight)
 		self.unimap_spreader_move.setTree(mcmc.tree)
@@ -19,11 +19,18 @@ class UnimapSpreadingWrapper(object):
 		for n, m in enumerate(self.unimap_ls_move_list):
 			self.unimap_spreader_move.add(m)
 			m.setName("unimap_LS_move %d" % n)
-			m.setWeight(1)
+			m.setWeight(0)
 			m.setTree(mcmc.tree)
-			m.setModel(model0)
+			m.setModel(mcmc.partition_model.getModel(0))
 			m.setLot(mcmc.r)
+			mcmc.chain_manager.addMove(m)
 
+	def setSaveDebugInfo(self, f):
+		return self.unimap_spreader_move.setSaveDebugInfo(f)
+	def getName(self):
+		return self.unimap_spreader_move.getName()
+	def getDebugInfo(self):
+		return self.unimap_spreader_move.getDebugInfo()
 	def update(self):
 		self.unimap_spreader_move.update()
 		threads = [Thread(target=i.update) for i in self.unimap_ls_move_list]
@@ -241,7 +248,9 @@ class MarkovChain(LikelihoodCore):
 			self.likelihood.setNoData()
 			
 		LikelihoodCore.prepareForLikelihood(self)
-		
+
+		self.python_only_moves = []
+
 		# add priors to models already added (by LikelihoodCore.setupCore) to partition_model
 		modelspecs = partition.getModels()	# partition here refers to the global object (associated with the Phycas partition command)
 		print 'modelspecs has length %d:' % len(modelspecs)
@@ -484,10 +493,9 @@ class MarkovChain(LikelihoodCore):
 			# Create a UnimapLSMove (replaces LargetSimonMove for unimap analyses)
 			
 			if self.parent.opts.unimap_thread_count > 1 and (self.parent.opts.unimap_ls_move_weight > 0):
-				if self.parent.opts.unimap_ls_move_weight > 1:
-					self.output('Warning: use of unimap_thread_count > 1 means that the unimap_ls_move_weight will be reset to 1')
 				self.unimap_spreader_move = UnimapSpreadingWrapper(self)
-				self.chain_manager.addMove(self.unimap_spreader_move)
+				self.python_only_moves.append((self.unimap_spreader_move, self.parent.opts.unimap_ls_move_weight))
+				#self.chain_manager.addMove(self.unimap_spreader_move)
 			else:
 				# Create a UnimapLSMove (replaces LargetSimonMove for unimap analyses)
 				self.unimap_ls_move = Likelihood.UnimapLSMove(self.likelihood)

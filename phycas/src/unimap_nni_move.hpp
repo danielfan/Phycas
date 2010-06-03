@@ -205,7 +205,7 @@ class UnimapTopoMoveSpreader: public MCMCUpdater
 	{
 	public:
 		UnimapTopoMoveSpreader() {}
-		void add(UnimapTopoMove *m) {topoMoves.insert(m);}
+		void addTopoMoveSpreader(UnimapTopoMove &m) {topoMoves.insert(&m);}
 		
 		bool update();
 	private:
