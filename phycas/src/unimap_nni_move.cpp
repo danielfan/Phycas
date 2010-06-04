@@ -1196,17 +1196,39 @@ bool UnimapTopoMoveSpreader::update()
 	PHYCAS_ASSERT(queued.size() == numUpdaters);
 	
 	unsigned i = 0;
+	std::vector<CU> cuVec;
+	cuVec.reserve(topoMoves.size());
 	for (std::set<UnimapTopoMove *>::iterator upIt = topoMoves.begin(); upIt != topoMoves.end(); ++upIt, ++i)
+		{
 		(*upIt)->queueNode(queued[i]);
+		cuVec.push_back(CU(*upIt));
+		}
+		
+	std::vector<boost::thread *> threadVec;
+	threadVec.reserve(topoMoves.size());
+	for (std::vector<CU>::iterator cuIt = cuVec.begin(); cuIt != cuVec.end(); ++cuIt)
+		threadVec.push_back(new boost::thread(*cuIt));
 
-	std::vector<UnimapTopoMove *> tmv(topoMoves.begin(), topoMoves.end());
 	
-	CU cu0(tmv.at(0));
-	CU cu1(tmv.at(1));
-	boost::thread thrd0(cu0);
-	boost::thread thrd1(cu1);
-	thrd0.join();
-	thrd1.join();
+	try
+		{
+		for (unsigned threadInd = 0; threadInd < threadVec.size(); ++threadInd)
+			{
+			boost::thread * t = threadVec[threadInd];
+			t->join();
+			threadVec[threadInd] = 0L;
+			delete t;
+			}
+		}
+	catch(...)
+		{
+		for (std::vector<boost::thread *>::iterator thIt = threadVec.begin(); thIt != threadVec.end(); ++thIt)
+			{
+			boost::thread * t = *thIt;
+			if (t)
+				delete t;
+			}
+		}
 	return true;
 	}
 
