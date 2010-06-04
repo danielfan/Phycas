@@ -205,6 +205,7 @@ class UnimapTopoMoveSpreader: public MCMCUpdater
 	public:
 		UnimapTopoMoveSpreader() {}
 		void addTopoMoveSpreader(UnimapTopoMove &m) {topoMoves.insert(&m);}
+		void debugShowSelectedSubtrees();
 		
 		bool update();
 	private:

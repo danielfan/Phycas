@@ -1,6 +1,9 @@
 import sys
 from phycas import *
 
+# call as follows:
+# python mth_test.py uni rbcl50.nex
+
 setMasterSeed(9375)
 model.type                  = 'jc'
 model.edgelen_hyperprior = None
@@ -55,6 +58,7 @@ if mcmc.use_unimap:
         mcmc.unimap_sample_ambig_move_weight = 1
         mcmc.ncycles = 50000
         mcmc.sample_every = 10
+        mcmc.report_every = 10000
         mcmc.reference_tree_source = 'hky50taxaML.tre'        
 else:
     if fixed_tree:
@@ -88,7 +92,7 @@ sumt.trees = prefix + '_' + file_pref + '_' + suffix + '_' + 'trees'
 
 sumt.tree_credible_prob = 1.0
 
-sumt()
+#sumt()
 
 
 

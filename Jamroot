@@ -90,6 +90,7 @@ else {
     project phycas 
       : requirements 
           <library>/boost/python//boost_python 
+          <library>/boost/thread//boost_thread 
           <library>/ncl//ncl
           <threading>multi
           <include>. 

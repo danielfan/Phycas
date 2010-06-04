@@ -181,7 +181,7 @@ void UnimapTopoMove::proposeNewState()
     // When calculating likelihoods we refer to the tip data as 
     // aTipData, bTipData, cTipData, and dTipData where the tree is ((a,b), (c,d))
     // with the internal length from origNd
-	std::cerr << "UnimapTopoMove::proposeNewState " << this->getName() << '\n';
+	//std::cerr << "UnimapTopoMove::proposeNewState " << this->getName() << '\n';
 	if (ndQ.empty())
 		{
 		origNode = randomInternalAboveSubroot(*tree, *rng);
@@ -1169,10 +1169,25 @@ class CU {
 	UnimapTopoMove * move;
 };
 
+// Not currently working for some reason...
+//
+// void UnimapTopoMoveSpreader::debugShowSelectedSubtrees()
+// 	{
+// 	std::set<TreeNode *>::iterator ndIt;
+// 	for (ndIt = selectedNodes.begin(); ndIt != selectedNodes.end(); ++ndIt)
+// 		{
+// 		(*ndIt)->SelectNode();
+// 		}
+// 	likelihood->startTreeViewer(tree, "Nodes selected by UnimapTopoMoveSpreader");	
+// 	for (ndIt = selectedNodes.begin(); ndIt != selectedNodes.end(); ++ndIt)
+// 		{
+// 		(*ndIt)->UnselectNode();
+// 		}
+// 	}
 
 bool UnimapTopoMoveSpreader::update()
 	{
-	std::cerr << "UnimapTopoMoveSpreader::update " << this->getName() << '\n';
+	//std::cerr << "UnimapTopoMoveSpreader::update " << this->getName() << '\n';
 	PHYCAS_ASSERT(!topoMoves.empty());
 	const unsigned numUpdaters = topoMoves.size();
 	
@@ -1209,7 +1224,8 @@ bool UnimapTopoMoveSpreader::update()
 	for (std::vector<CU>::iterator cuIt = cuVec.begin(); cuIt != cuVec.end(); ++cuIt)
 		threadVec.push_back(new boost::thread(*cuIt));
 
-	
+	//debugShowSelectedSubtrees();
+
 	try
 		{
 		for (unsigned threadInd = 0; threadInd < threadVec.size(); ++threadInd)
