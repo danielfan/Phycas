@@ -3794,6 +3794,7 @@ void TreeLikelihood::fullRemapping(
   LotShPtr rng,             /**< is the random number generator to use for the mapping */
   bool doSampleUnivents)    /**< is True if ... */
 	{
+	//std::cerr << '.';
 	//std::cerr << "\nFULL REMAPPING!!!!\n!" << std::endl;
 	t->renumberInternalNodes(t->GetNTips());
 
@@ -3832,6 +3833,8 @@ void TreeLikelihood::fullRemapping(
 		{
 		(*usvIt)->fullRemapping(t, rng, doSampleUnivents, *this);
 		}
+		
+	//std::cerr << ':';	
 	}
 
 void TreeUniventSubsetStruct::fullRemapping(
