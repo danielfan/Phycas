@@ -101,8 +101,8 @@ bool UnimapTopoMove::update()
 
     if (save_debug_info)
         {
-		std::cerr << "ln_accept_ratio = curr_posterior - prev_posterior + ln_hastings \n";
-		 std::cerr << ln_accept_ratio << "   " << curr_posterior << "   " <<prev_posterior << ' '<< ln_hastings << "\n\n";
+		//std::cerr << "ln_accept_ratio = curr_posterior - prev_posterior + ln_hastings \n";
+		//std::cerr << ln_accept_ratio << "   " << curr_posterior << "   " <<prev_posterior << ' '<< ln_hastings << "\n\n";
 		
 		debug_info = str(boost::format("swapping %d <-> %d (%s, lnR = %.5f)") % x->GetNodeNumber() % z->GetNodeNumber() % (accepted ? "accepted" : "rejected") % ln_accept_ratio);
     	}
