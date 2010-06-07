@@ -19,19 +19,32 @@
 
 #if ! defined(UNIMAP_NNI_MOVE_HPP)
 #define UNIMAP_NNI_MOVE_HPP
+
 #include <queue>							
+
 
 #include <vector>							// for std::vector
 #include <boost/shared_ptr.hpp>				// for boost::shared_ptr
 #include <boost/weak_ptr.hpp>				// for boost::weak_ptr
+
+#define USING_THREAD_BARRIERS 1
+
+#if defined(USING_THREAD_BARRIERS) && USING_THREAD_BARRIERS
+#	include <boost/thread/barrier.hpp>
+#endif
+
+
 #include "phycas/src/mcmc_updater.hpp"		// for base class MCMCUpdater
 #include "phycas/src/mcmc_chain_manager.hpp"
-
+#include "phycas/src/univents.hpp"
+#include "phycas/src/cond_likelihood.hpp"
 namespace phycas
 {
 
 class MCMCChainManager;
 typedef boost::weak_ptr<MCMCChainManager> ChainManagerWkPtr;
+class CondLikelihoodStorage;
+typedef boost::shared_ptr<CondLikelihoodStorage> CondLikelihoodStorageShPtr;
 
 
 
@@ -60,8 +73,11 @@ class UnimapTopoMove : public MCMCUpdater
 
 
 		void queueNode(TreeNode *nd) {ndQ.push(nd);}
-	protected:
 
+		void acquireCondLikeArrays(InternalData & id);
+	protected:
+		void releaseCondLikeArrays();
+		
 		void DebugSaveNexusFile(std::ostream & nxsf, double lnlike, unsigned subsetIndex);
 		bool CheckWithPaup(double lnlike, unsigned);
 
@@ -119,6 +135,9 @@ class UnimapTopoMove : public MCMCUpdater
 		CondLikelihoodShPtr	pre_cla;					/**< xxxx */
 		CondLikelihoodShPtr	post_root_posterior;		/**< xxxx */
 		CondLikelihoodShPtr	post_cla;					/**< xxxx */
+		CondLikelihoodStorageShPtr cla_pool;
+		
+		
 		std::vector<double * * *>			pre_p_mat;					/**< xxxx */
 		std::vector<double * * *>			post_p_mat;					/**< xxxx */
 		bool					scoringBeforeMove;			/**< xxxx */
@@ -200,10 +219,20 @@ class UnimapLargetSimonMove : public UnimapTopoMove
 	};
 	
 
+
+#if defined(USING_THREAD_BARRIERS) && USING_THREAD_BARRIERS
+	class DualBarrierUpdater;
+#endif
+
 class UnimapTopoMoveSpreader: public MCMCUpdater
 	{
 	public:
-		UnimapTopoMoveSpreader() {}
+		UnimapTopoMoveSpreader()
+#		if defined(USING_THREAD_BARRIERS) && USING_THREAD_BARRIERS
+			:startUpdateBarrier(0L),
+			afterUpdateBarrier(0L)
+#		endif
+		 {}
 		void addTopoMoveSpreader(UnimapTopoMove &m) {topoMoves.insert(&m);}
 		void debugShowSelectedSubtrees();
 		
@@ -213,6 +242,15 @@ class UnimapTopoMoveSpreader: public MCMCUpdater
 		std::set<TreeNode*> selectedNodes;
 		std::vector<TreeNode *> queued;
 		bool conflictsWithPrevious(TreeNode *) const ;
+		
+#		if defined(USING_THREAD_BARRIERS) && USING_THREAD_BARRIERS
+			std::vector<boost::thread *> threadVec;
+			std::vector<DualBarrierUpdater *> updaterWithBarriers;
+			std::vector<UnimapTopoMove *> topoMovesVec;
+			boost::barrier *startUpdateBarrier;
+			boost::barrier *afterUpdateBarrier;
+#		endif
+
 	};
 
 } // namespace phycas

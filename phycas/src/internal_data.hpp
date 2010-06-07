@@ -112,6 +112,8 @@ class InternalData
 		const std::vector<Univents> & 				getUniventsVectorConstRef()const {return univents;}
 		unsigned **									getNodeSMat(unsigned subsetIndex) {return sMat[subsetIndex];}
 		
+		
+		CondLikelihoodStorageShPtr					getCondLikeStoragePool() const {return cla_pool;}
 	private:
 													InternalData(bool using_unimap, PartitionModelShPtr partition, CondLikelihoodStorageShPtr cla_storage);
 

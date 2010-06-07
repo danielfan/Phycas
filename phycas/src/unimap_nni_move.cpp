@@ -19,17 +19,21 @@
 #include <fstream>
 #include <boost/bind.hpp>
 #include <boost/thread/thread.hpp>
+
+
+#include "phycas/src/unimap_nni_move.hpp"
+
+
 #include "phycas/src/probability_distribution.hpp"
 #include "phycas/src/likelihood_models.hpp"
 #include "phycas/src/basic_tree_node.hpp"
 #include "phycas/src/tree_likelihood.hpp"
 #include "phycas/src/xlikelihood.hpp"
-#include "phycas/src/unimap_nni_move.hpp"
 #include "phycas/src/basic_tree.hpp"
 #include "phycas/src/internal_data.hpp"
 #include "phycas/src/tip_data.hpp"
 #include "phycas/src/gtr_model.hpp"
-
+#include "phycas/src/cond_likelihood_storage.hpp"
 #include "boost/format.hpp"
 
 namespace phycas
@@ -152,7 +156,35 @@ TreeNode * randomInternalAboveSubroot(Tree & tree, Lot &rng)
 	PHYCAS_ASSERT(!nd->GetParent()->IsTipRoot());
     return nd;
     }
-	
+
+
+void  UnimapTopoMove::releaseCondLikeArrays()
+	{
+	if (cla_pool)
+		{
+		if (pre_root_posterior)
+			cla_pool->putCondLikelihood(pre_root_posterior);
+		pre_root_posterior = CondLikelihoodShPtr();
+		if (pre_cla)
+			cla_pool->putCondLikelihood(pre_cla);
+		pre_cla = CondLikelihoodShPtr();
+		if (post_root_posterior)
+			cla_pool->putCondLikelihood(post_root_posterior);
+		post_root_posterior = CondLikelihoodShPtr();
+		if (post_cla)
+			cla_pool->putCondLikelihood(post_cla);
+		pre_root_posterior = CondLikelihoodShPtr();
+		}
+	}
+void  UnimapTopoMove::acquireCondLikeArrays(InternalData & id)
+	{
+	releaseCondLikeArrays();
+	cla_pool = id.getCondLikeStoragePool();
+	pre_root_posterior = cla_pool->getCondLikelihood();
+	pre_cla = cla_pool->getCondLikelihood();
+	post_root_posterior = cla_pool->getCondLikelihood();
+	post_cla = cla_pool->getCondLikelihood();
+	}
 /*----------------------------------------------------------------------------------------------------------------------
 |	
 */
@@ -185,7 +217,7 @@ void UnimapTopoMove::proposeNewState()
 	if (ndQ.empty())
 		{
 		origNode = randomInternalAboveSubroot(*tree, *rng);
-		PHYCAS_ASSERT(false);
+		PHYCAS_ASSERT(false); //temporary
 		}
 	else
 		{
@@ -227,14 +259,21 @@ void UnimapTopoMove::proposeNewState()
 	PHYCAS_ASSERT(ndp_internal_data);
 	const unsigned numSubsets = likelihood->getNumSubsets();
 
-	pre_root_posterior = nd_internal_data->getParentalCondLikePtr();
-	PHYCAS_ASSERT(pre_root_posterior);
-	pre_cla = nd_internal_data->getChildCondLikePtr();
-	PHYCAS_ASSERT(pre_cla);
-	post_root_posterior = ndp_internal_data->getParentalCondLikePtr();
-	PHYCAS_ASSERT(post_root_posterior);
-	post_cla = ndp_internal_data->getChildCondLikePtr();
-	PHYCAS_ASSERT(post_cla);
+#	if defined (BORROW_COND_LIKE_PTR)
+		pre_root_posterior = nd_internal_data->getParentalCondLikePtr();
+		PHYCAS_ASSERT(pre_root_posterior);
+		pre_cla = nd_internal_data->getChildCondLikePtr();
+		PHYCAS_ASSERT(pre_cla);
+		post_root_posterior = ndp_internal_data->getParentalCondLikePtr();
+		PHYCAS_ASSERT(post_root_posterior);
+		post_cla = ndp_internal_data->getChildCondLikePtr();
+		PHYCAS_ASSERT(post_cla);
+#	else
+		if (!pre_root_posterior)
+			{
+			acquireCondLikeArrays(*nd_internal_data);
+			}
+#	endif
 
 	pre_p_mat.resize(numSubsets);
 	post_p_mat.resize(numSubsets);
@@ -303,6 +342,8 @@ UnimapTopoMove::~UnimapTopoMove()
 		DeleteTwoDArray<double> (pre_y_pmat_transposed[i]);
 		DeleteTwoDArray<double> (pre_z_pmat_transposed[i]);
 		}
+	releaseCondLikeArrays();
+
 	}
 
 double UnimapTopoMove::FourTaxonLnLBeforeMove()
@@ -479,14 +520,15 @@ double UnimapTopoMove::HarvestLnLikeFromCondLikePar(
   unsigned subsetIndex)
 	{
 #if 1 || DISABLED_UNTIL_UNIMAP_WORKING_WITH_PARTITIONING
+	double lnLikelihood = 0.0;
+	for (unsigned rep = 0; rep < 1; ++rep){
 	LikeFltType * focalNdCLAPtr = focalCondLike->getCLA(); //PELIGROSO
 	PHYCAS_ASSERT(focalNdCLAPtr);
 	const unsigned num_patterns = likelihood->getPartitionModel()->getNumPatterns(subsetIndex);
 	const unsigned num_states = likelihood->getNumStates(subsetIndex);
 		// Get state frequencies from model and alias rate category probability array for speed
 	const double * stateFreq = &model->getStateFreqs()[0]; //PELIGROSO
-	double lnLikelihood = 0.0;
-
+	
 	const double * focalNeighborCLAPtr = neighborCondLike->getCLA(); //PELIGROSO
 	for (unsigned pat = 0; pat < num_patterns; ++pat)
 		{
@@ -506,6 +548,7 @@ double UnimapTopoMove::HarvestLnLikeFromCondLikePar(
 
 		lnLikelihood += site_lnL;
 		}
+	}
 	return lnLikelihood;
 #else
 	return 0.0;
@@ -1157,17 +1200,81 @@ void LargetSimonCallable::operator()()
 	move->update();
 	}
 */	
-class CU {
-	public:
-		CU(UnimapTopoMove * m): move(m){}
+#if defined(USING_THREAD_BARRIERS)
+			
 
-		void operator()() 
-		{
-			if (move)
-				move->update();
-		}
-	UnimapTopoMove * move;
-};
+	class DualBarrierUpdater {
+		public:
+			DualBarrierUpdater(MCMCUpdater * m, boost::barrier *startBarrier, boost::barrier *afterBarrier)
+				:number(0),
+				theStartUpdateBarrier(startBarrier),
+				theAfterUpdateBarrier(afterBarrier),
+				move(m) 
+				{}
+	
+			void operator()() 
+			{
+				while (true)
+					{
+					//std::cerr << "DBU # " << number << " start =" << (long)theStartUpdateBarrier << "\n";
+					if (theStartUpdateBarrier)
+						{
+						theStartUpdateBarrier->wait();
+						}
+
+					if (move)
+						move->update();
+					//std::cerr << "DBU # " << number << " after =" << (long)theAfterUpdateBarrier << "\n";
+					// while this wait blocks, the "start" barrier will be installed
+					if (theAfterUpdateBarrier) 
+						theAfterUpdateBarrier->wait();
+					else
+						{
+						PHYCAS_ASSERT(0);
+						std::cerr << "DBU # " << number << " exiting for lack of afterBarrier\n";
+						break;
+						}
+					}
+			}
+	
+
+			unsigned number;
+		private:
+			boost::barrier *theStartUpdateBarrier;
+			boost::barrier *theAfterUpdateBarrier;
+			MCMCUpdater * move;
+	};
+
+
+	class SimplePtrCaller {
+		public:
+			SimplePtrCaller(DualBarrierUpdater * m): dbu(m){}
+	
+			void operator()() 
+			{
+				if (dbu)
+					(*dbu)();
+			}
+		private:
+			DualBarrierUpdater * dbu;
+	};
+
+#else 
+	class CU {
+		public:
+			CU(UnimapTopoMove * m): move(m){}
+	
+			void operator()() 
+			{
+				if (move)
+					move->update();
+			}
+		UnimapTopoMove * move;
+	};
+
+
+
+#endif
 
 // Not currently working for some reason...
 //
@@ -1210,41 +1317,116 @@ bool UnimapTopoMoveSpreader::update()
 		}
 	PHYCAS_ASSERT(queued.size() == numUpdaters);
 	
-	unsigned i = 0;
-	std::vector<CU> cuVec;
-	cuVec.reserve(topoMoves.size());
-	for (std::set<UnimapTopoMove *>::iterator upIt = topoMoves.begin(); upIt != topoMoves.end(); ++upIt, ++i)
-		{
-		(*upIt)->queueNode(queued[i]);
-		cuVec.push_back(CU(*upIt));
-		}
+#	if defined(USING_THREAD_BARRIERS) && USING_THREAD_BARRIERS
+		if (threadVec.empty())
+			{
+			PHYCAS_ASSERT(topoMovesVec.empty());
+			PHYCAS_ASSERT(threadVec.empty());
+			PHYCAS_ASSERT(updaterWithBarriers.empty());
+			PHYCAS_ASSERT(afterUpdateBarrier == 0L);
+			startUpdateBarrier = new boost::barrier(1 + numUpdaters);
+			afterUpdateBarrier = new boost::barrier(1 + numUpdaters);
+			unsigned i = 0;
+			unsigned prevSeed = rng->GetSeed();
+			for (std::set<UnimapTopoMove *>::iterator upIt = topoMoves.begin(); upIt != topoMoves.end(); ++upIt, ++i)
+				{
+				PHYCAS_ASSERT(*upIt);
+				UnimapTopoMove *move = *upIt;
+				
+				// give the move a new Lot object, so that the threads will not compete for random numbers from the same Lot
+				//	this should make runs repeatable...
+				LotShPtr nl(new Lot());
+				unsigned seedForMove;
+				unsigned seedOffset = 10*(1+i);
+				if (prevSeed > seedOffset + 1)
+					seedForMove = prevSeed - seedOffset;
+				else
+					seedForMove = UINT_MAX - seedOffset;
+				nl->SetSeed(seedForMove);
+				move->setLot(nl);
+				
+				
+				TreeNode * nodeForMove = queued[i];
+				PHYCAS_ASSERT(nodeForMove);
+				InternalData * nd_internal_data = nodeForMove->GetInternalData();
+				PHYCAS_ASSERT(nd_internal_data);
+				move->acquireCondLikeArrays(*nd_internal_data);
+				
+				topoMovesVec.push_back(move);
+				DualBarrierUpdater * dbu = new DualBarrierUpdater(move, startUpdateBarrier, afterUpdateBarrier);
+				dbu->number = i;
+				updaterWithBarriers.push_back(dbu);
+				SimplePtrCaller x(dbu);
+				threadVec.push_back(new boost::thread(x));
+				}
+			}
+	
 		
-	std::vector<boost::thread *> threadVec;
-	threadVec.reserve(topoMoves.size());
-	for (std::vector<CU>::iterator cuIt = cuVec.begin(); cuIt != cuVec.end(); ++cuIt)
-		threadVec.push_back(new boost::thread(*cuIt));
-
-	//debugShowSelectedSubtrees();
-
-	try
-		{
-		for (unsigned threadInd = 0; threadInd < threadVec.size(); ++threadInd)
+		PHYCAS_ASSERT(threadVec.size() == numUpdaters);
+		PHYCAS_ASSERT(updaterWithBarriers.size() == numUpdaters);
+		PHYCAS_ASSERT(topoMovesVec.size() == numUpdaters);
+		PHYCAS_ASSERT(startUpdateBarrier);
+		PHYCAS_ASSERT(afterUpdateBarrier);
+		
+		
+		for (unsigned threadInd = 0; threadInd < numUpdaters; ++threadInd)
 			{
-			boost::thread * t = threadVec[threadInd];
-			t->join();
-			threadVec[threadInd] = 0L;
-			delete t;
+			UnimapTopoMove * move = topoMovesVec[threadInd];
+			PHYCAS_ASSERT(move);
+			TreeNode * nodeForMove = queued[threadInd];
+			move->queueNode(nodeForMove);
+			DualBarrierUpdater * dbu = updaterWithBarriers[threadInd];
+			PHYCAS_ASSERT(dbu);
 			}
-		}
-	catch(...)
-		{
-		for (std::vector<boost::thread *>::iterator thIt = threadVec.begin(); thIt != threadVec.end(); ++thIt)
+		
+		// trigger the realease of the other threads
+		//std::cerr << "Master about to wait on start barrier" << (long)startUpdateBarrier << "\n";
+		startUpdateBarrier->wait(); // this should return instantly
+
+
+		//std::cerr << "Master about to wait on afterUpdateBarrier barrier" << (long)afterUpdateBarrier << "\n";
+		afterUpdateBarrier->wait();
+
+		return true;
+			
+#	else
+		unsigned i = 0;
+		
+		std::vector<CU> cuVec;
+		cuVec.reserve(topoMoves.size());
+		for (std::set<UnimapTopoMove *>::iterator upIt = topoMoves.begin(); upIt != topoMoves.end(); ++upIt, ++i)
 			{
-			boost::thread * t = *thIt;
-			if (t)
+			(*upIt)->queueNode(queued[i]);
+			cuVec.push_back(CU(*upIt));
+			}
+			
+		std::vector<boost::thread *> threadVec;
+		threadVec.reserve(topoMoves.size());
+		for (std::vector<CU>::iterator cuIt = cuVec.begin(); cuIt != cuVec.end(); ++cuIt)
+			threadVec.push_back(new boost::thread(*cuIt));
+	
+		//debugShowSelectedSubtrees();
+	
+		try
+			{
+			for (unsigned threadInd = 0; threadInd < threadVec.size(); ++threadInd)
+				{
+				boost::thread * t = threadVec[threadInd];
+				t->join();
+				threadVec[threadInd] = 0L;
 				delete t;
+				}
 			}
-		}
+		catch(...)
+			{
+			for (std::vector<boost::thread *>::iterator thIt = threadVec.begin(); thIt != threadVec.end(); ++thIt)
+				{
+				boost::thread * t = *thIt;
+				if (t)
+					delete t;
+				}
+			}
+#	endif
 	return true;
 	}
 
