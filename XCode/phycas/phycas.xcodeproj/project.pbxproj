@@ -611,6 +611,7 @@
 		D11BC11511B74F950011F82A /* char_super_matrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = char_super_matrix.cpp; path = ../../phycas/src/char_super_matrix.cpp; sourceTree = SOURCE_ROOT; };
 		D11BC11811B74FBA0011F82A /* char_super_matrix.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = char_super_matrix.hpp; path = ../../phycas/src/char_super_matrix.hpp; sourceTree = SOURCE_ROOT; };
 		D13CAB8E10D1D72200813B89 /* libpython2.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpython2.6.dylib; path = lib/libpython2.6.dylib; sourceTree = PYTHON_ROOT; };
+		D147CA4711BBF61400AE29FC /* uni738taxa.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = uni738taxa.py; path = ../../inprep/unimap738/uni738taxa.py; sourceTree = SOURCE_ROOT; };
 		D164C4B01164ED8E00DB2E59 /* pinvar_paradox.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = pinvar_paradox.py; path = ../../inprep/partition/cicadas/pinvar_paradox/analysis/pinvar_paradox.py; sourceTree = SOURCE_ROOT; };
 		D17574CD10EB942400D4E2B0 /* partition.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = partition.py; path = ../../inprep/partition/partition.py; sourceTree = SOURCE_ROOT; };
 		D1814096112C826C00D91CF6 /* partition.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = partition.py; path = ../../inprep/partition/danielsims/partition.py; sourceTree = SOURCE_ROOT; };
@@ -621,7 +622,6 @@
 		D1A8CC0511BACBA400A2A901 /* thread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = thread.cpp; path = libs/thread/src/pthread/thread.cpp; sourceTree = BOOST_ROOT; };
 		D1A8CC0611BACBA400A2A901 /* timeconv.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = timeconv.inl; path = libs/thread/src/pthread/timeconv.inl; sourceTree = BOOST_ROOT; };
 		D1A8CC0911BACBC200A2A901 /* tss_null.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tss_null.cpp; path = libs/thread/src/tss_null.cpp; sourceTree = BOOST_ROOT; };
-		D1A8CC1211BACCAD00A2A901 /* uni738taxa2.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = uni738taxa2.py; path = ../../phycas/Tests/Unimap/uni2/uni738taxa2.py; sourceTree = SOURCE_ROOT; };
 		D1ABDDE310D2D60000EDC77A /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = __init__.py; path = phycas/Phycas/__init__.py; sourceTree = PHYCAS_ROOT; };
 		D1ABDDE410D2D60000EDC77A /* BrownianImpl.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = BrownianImpl.py; path = phycas/Phycas/BrownianImpl.py; sourceTree = PHYCAS_ROOT; };
 		D1ABDDE510D2D60000EDC77A /* CPO.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = CPO.py; path = phycas/Phycas/CPO.py; sourceTree = PHYCAS_ROOT; };
@@ -1264,9 +1264,18 @@
 			name = SplitTest;
 			sourceTree = "<group>";
 		};
+		D147CA4311BBF5D500AE29FC /* unimap738 */ = {
+			isa = PBXGroup;
+			children = (
+				D147CA4711BBF61400AE29FC /* uni738taxa.py */,
+			);
+			name = unimap738;
+			sourceTree = "<group>";
+		};
 		D17574C410EB940500D4E2B0 /* InPrep */ = {
 			isa = PBXGroup;
 			children = (
+				D147CA4311BBF5D500AE29FC /* unimap738 */,
 				D10DDE0B1125D4B100CC55F3 /* scubed */,
 				D17574C510EB940C00D4E2B0 /* Partition */,
 			);
@@ -1352,7 +1361,6 @@
 		D1C50BC411B456B5008D9B73 /* Unimap */ = {
 			isa = PBXGroup;
 			children = (
-				D1A8CC1211BACCAD00A2A901 /* uni738taxa2.py */,
 				D1C50BC511B456E5008D9B73 /* Unimap.py */,
 			);
 			name = Unimap;

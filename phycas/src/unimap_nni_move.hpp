@@ -233,7 +233,7 @@ class UnimapTopoMoveSpreader: public MCMCUpdater
 			afterUpdateBarrier(0L)
 #		endif
 		 {}
-		void addTopoMoveSpreader(UnimapTopoMove &m) {topoMoves.insert(&m);}
+		void addTopoMoveToSpreader(UnimapTopoMove &m) {topoMoves.insert(&m);}
 		void debugShowSelectedSubtrees();
 		
 		bool update();

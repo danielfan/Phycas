@@ -2798,10 +2798,13 @@ void TreeLikelihood::copyDataFromDiscreteMatrix(
 	{
 	nTaxa = mat->getNTax();
 
-    // The compressDataMatrix function first erases, then builds, both pattern_vect and 
-	// pattern_counts using the uncompressed data contained in mat
-	//unsigned sz = (unsigned)partition_info.size();
-	compressDataMatrix(*mat->GetMatrix(0), partition_info);
+	// Currently, can only deal with the first matrix stored in the CharSuperMatrix object. The CharSuperMatrix object 
+	// will contain multiple matrices if the nexus file contains a mixed datatype data block
+	NxsCXXDiscreteMatrix & singleMat = *(mat->GetMatrix(0));
+	
+    // The compressDataMatrix function first erases, then builds, both pattern_vect and pattern_counts using the uncompressed data contained in mat
+	//@POL commented out: compressDataMatrix(*mat->GetMatrix(0), partition_info);
+	compressDataMatrix(singleMat, partition_info);
 	
 #if POLPY_NEWWAY
 	// nothing
@@ -2855,7 +2858,7 @@ void TreeLikelihood::copyDataFromDiscreteMatrix(
 			}
 		else	// not codon model
 			{
-			NxsCXXDiscreteMatrix & singleMat = *(mat->GetMatrix(i));
+			//@POL commented out: NxsCXXDiscreteMatrix & singleMat = *(mat->GetMatrix(i));
 			if (nsubsets == 1)
 				{
 				// get state_list and state_list_pos from mat

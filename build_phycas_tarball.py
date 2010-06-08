@@ -34,7 +34,7 @@ tarfile = 'phycas_distr.tar'
 # Specify the root directory (everything in this dir will be tarred except those files and dirs specifically excluded)
 rootdir = './phycas'
 
-# Spedify directories to be ignored
+# Specify directories to be ignored
 rmlist = ['.svn','src']
 
 # Spedify valid file name extensions (files with other extensions will be skipped)
@@ -45,24 +45,27 @@ invalid = sets.Set()
 
 # This function handles each directory encounteed in os.path.walk
 def visit(outf, dirname, names):
-        # walk lets you delete directories from names, which prevents these from being visited
-        for r in rmlist:
-                if r in names:
-                        names.remove(r)
-        for fn in names:
-                fp = os.path.join(dirname,fn)
-                if not os.path.isdir(fp):
-                        x = os.path.splitext(fp)[1]
-                        if x in validset:
-                                os.system('tar rf %s %s' % (tarpath, fp))
-                                outf.write('%s\n' % fp)
-                        else:
-				a,b = os.path.splitext(fn)
-				if a.find('libboost_python') > -1:
-					os.system('tar rf %s %s' % (tarpath, fp))
-					outf.write('%s\n' % fp)
-				else:
-                                	invalid.add(x)
+    # walk lets you delete directories from names, which prevents these from being visited
+    for r in rmlist:
+        if r in names:
+            names.remove(r)
+    for fn in names:
+        fp = os.path.join(dirname,fn)
+        if not os.path.isdir(fp):
+            x = os.path.splitext(fp)[1]
+            if x in validset:
+                os.system('tar rf %s %s' % (tarpath, fp))
+                outf.write('%s\n' % fp)
+            else:
+                a,b = os.path.splitext(fn)
+                if a.find('libboost_python') > -1:
+                    os.system('tar rf %s %s' % (tarpath, fp))
+                    outf.write('%s\n' % fp)
+                elif a.find('libboost_thread') > -1:
+                    os.system('tar rf %s %s' % (tarpath, fp))
+                    outf.write('%s\n' % fp)
+                else:
+                    invalid.add(x)
 
 # Open the manifest file, which will contain the path of every file included in the tar file
 outf = open('distr_manifest.txt', 'w')

@@ -1321,7 +1321,6 @@ bool UnimapTopoMoveSpreader::update()
 		if (threadVec.empty())
 			{
 			PHYCAS_ASSERT(topoMovesVec.empty());
-			PHYCAS_ASSERT(threadVec.empty());
 			PHYCAS_ASSERT(updaterWithBarriers.empty());
 			PHYCAS_ASSERT(afterUpdateBarrier == 0L);
 			startUpdateBarrier = new boost::barrier(1 + numUpdaters);
@@ -1344,7 +1343,6 @@ bool UnimapTopoMoveSpreader::update()
 					seedForMove = UINT_MAX - seedOffset;
 				nl->SetSeed(seedForMove);
 				move->setLot(nl);
-				
 				
 				TreeNode * nodeForMove = queued[i];
 				PHYCAS_ASSERT(nodeForMove);

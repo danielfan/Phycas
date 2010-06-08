@@ -5,9 +5,7 @@ import phycas.ProbDist as ProbDist
 import phycas.Likelihood as Likelihood
 from LikelihoodCore import LikelihoodCore
 
-
-
-from threading import Thread
+#from threading import Thread
 class UnimapSpreadingWrapper(object):
 	def __init__(self, mcmc):
 		self.unimap_ls_move_list = [Likelihood.UnimapLSMove(mcmc.likelihood) for i in range(mcmc.parent.opts.unimap_thread_count)]
@@ -17,7 +15,7 @@ class UnimapSpreadingWrapper(object):
 		self.unimap_spreader_move.setTree(mcmc.tree)
 		self.unimap_spreader_move.setLot(mcmc.r)
 		for n, m in enumerate(self.unimap_ls_move_list):
-			self.unimap_spreader_move.add(m)
+			self.unimap_spreader_move.addTopoMoveToSpreader(m)
 			m.setName("unimap_LS_move %d" % n)
 			m.setWeight(0)
 			m.setTree(mcmc.tree)
@@ -37,15 +35,14 @@ class UnimapSpreadingWrapper(object):
 		#import pdb; pdb.set_trace()
 		self.unimap_spreader_move.update()
 		return True
-		threads = [Thread(target=i.update) for i in self.unimap_ls_move_list]
-		for t in threads:
-			t.start()
-		for t in threads:
-			t.join()
-		print "all threads done!"
-		return True
-		
-	
+		# below here is old code that failed to be truly parallel due to the Python GIL
+		#threads = [Thread(target=i.update) for i in self.unimap_ls_move_list]
+		#for t in threads:
+		#	t.start()
+		#for t in threads:
+		#	t.join()
+		#print "all threads done!"
+		#return True
 	
 class MarkovChain(LikelihoodCore):
 	#---+----|----+----|----+----|----+----|----+----|----+----|----+----|

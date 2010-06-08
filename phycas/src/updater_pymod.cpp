@@ -232,6 +232,6 @@ void updater_pymod()
 	class_<phycas::UnimapTopoMoveSpreader, bases<phycas::MCMCUpdater>, 
 		boost::noncopyable, boost::shared_ptr<phycas::UnimapTopoMoveSpreader> >("UnimapTopoMoveSpreader") 
 		.def("update", &phycas::UnimapTopoMoveSpreader::update)
-		.def("add", &phycas::UnimapTopoMoveSpreader::addTopoMoveSpreader)
+		.def("addTopoMoveToSpreader", &phycas::UnimapTopoMoveSpreader::addTopoMoveToSpreader)
 		;
 	}
