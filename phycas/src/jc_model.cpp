@@ -90,9 +90,13 @@ std::string JC::paramReport(
 */
 void JC::calcPMat(double * * pMat, double edgeLength) const
 	{
+	// The next two lines fix the "Jockusch" bug (see bug 8 in the BUGS file for details)
+    if (edgeLength < 1.e-8) 
+        edgeLength = 1.e-8; //TreeNode::edgeLenEpsilon;
 	const double exp_term = exp(-(4.0/3.0)*edgeLength);
 	const double prob_change = 0.25 - 0.25*exp_term;
 	const double prob_nochange = 0.25 + 0.75*exp_term;
+	PHYCAS_ASSERT(prob_change >= 0.0);
 	pMat[0][0] = prob_nochange;
 	pMat[0][1] = prob_change;
 	pMat[0][2] = prob_change;

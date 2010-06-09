@@ -210,7 +210,7 @@ void TreeLikelihood::calcCLATwoTips(
 	{
     // cla is the conditional likelihood array we are updating
     LikeFltType * cla = condLike.getCLA();
-
+	
     unsigned num_subsets = partition_model->getNumSubsets();
     for (unsigned i = 0; i < num_subsets; ++i)
         {
@@ -1149,6 +1149,11 @@ double TreeLikelihood::harvestLnLFromValidNode(
 		unsigned		ns					= partition_model->subset_num_states[i];
 		unsigned		nr					= partition_model->subset_num_rates[i];
 		unsigned		np					= partition_model->subset_num_patterns[i];
+		
+		//temp!
+		double ssrr = partition_model->getSubsetRelRate(i);
+		std::cerr << "Subset relative rate for subset " << i << " is " << ssrr << std::endl;
+		
 		const unsigned	singleRateCLALength	= np*ns;
 		
 		// Get state frequencies from model and alias rate category probability array for speed

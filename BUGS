@@ -5,6 +5,18 @@ to fix, and documenting them helps to avoid repeating history. Minor bugs repres
 cosmetic glitches that are easy to work around and do not take long to fix. Minor bugs 
 are best documented in SVN comments.
 
+Bug 8: the "Jockusch" bug (fixed in revision 1315 on 9-June-2010)
+-----------------------------------------------------------------
+Named for the person (Elizabeth Jockusch) whose data set triggered this investigation.
+This is essentially the same bug as the Rota bug (Bug 3), except caused by a very
+small subset relative rate rather than by a combination of extreme rate heterogeneity
+and extreme state frequencies. The reason that the Rota bug fix didn't solve this
+problem was that JC::calcPMat was not touched in fixing the Rota bug due to the
+fact that extreme base frequencies were needed to trigger the Rota bug. The Jockush
+bug can occur even under the JC model, however, so the fix was to check edge lengths 
+in JC::calcPMat and ensure that a minimum edge length is enforced there as well as
+in HKY::calcPMat and QMatrix::recalcPMat.
+
 Bug 7: the "underflow" bug (fixed in revision 1050 on 13 Mar 2009)
 ------------------------------------------------------------------
 Thanks to Federico Plazzi and Mark Clements for alerting us to this problem.

@@ -31,7 +31,7 @@ class Partition(PhycasCommand):
 		args =	(
 				('name', 					'mypart', 	'Choose a name for this partitioning scheme'),
 				('fix_subset_relrates',		False,		'If True, the vector of subset relative rates will not be modified during the course of an MCMC analysis', BoolArgValidate),
-				('subset_relrates',			None,		'The vector of subset relative rates. If None, the vector of subset relative rates be set to a vector of the appropriate dimension consisting of all 1.0', BoolArgValidate),
+				('subset_relrates',			None,		'The vector of subset relative rates. If None, the vector of subset relative rates be set to a vector of the appropriate dimension consisting of all 1.0'),
 				('subset_relrates_prior',	None,		'The joint prior distribution for the relative rates of partition subsets. If specified, this should be a RelativeRateDistribution with dimension equal to the number of subsets. If None, a flat RelativeRateDistribution prior will be generated.'),
 				)
 		

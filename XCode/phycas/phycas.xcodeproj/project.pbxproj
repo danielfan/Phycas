@@ -654,6 +654,7 @@
 		D1BB2656111094A6002A8F79 /* LikelihoodCore.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = LikelihoodCore.py; path = ../../phycas/Phycas/LikelihoodCore.py; sourceTree = SOURCE_ROOT; };
 		D1BB2657111094A6002A8F79 /* MarkovChain.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = MarkovChain.py; path = ../../phycas/Phycas/MarkovChain.py; sourceTree = SOURCE_ROOT; };
 		D1C50BC511B456E5008D9B73 /* Unimap.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = Unimap.py; path = ../../phycas/Tests/Unimap/Unimap.py; sourceTree = SOURCE_ROOT; };
+		D1D3ED1C11C021C100A53554 /* nanissue.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = nanissue.py; path = ../../inprep/jockusch_problem/nanissue.py; sourceTree = SOURCE_ROOT; };
 		D1D55522111B7A9A001BD7CD /* LikelihoodTest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = LikelihoodTest.py; path = ../../phycas/Tests/LikelihoodTest/LikelihoodTest.py; sourceTree = SOURCE_ROOT; };
 		D1D66464112051EE00BA8E47 /* partition.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = partition.py; path = ../../phycas/Tests/partition/partition.py; sourceTree = SOURCE_ROOT; };
 		D1F281C3111B422C00FDE78C /* GTRTest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = GTRTest.py; path = ../../phycas/Tests/GTRTest/GTRTest.py; sourceTree = SOURCE_ROOT; };
@@ -1316,6 +1317,7 @@
 		D1A9CEE811BEB11A0064BADB /* jockusch_problem */ = {
 			isa = PBXGroup;
 			children = (
+				D1D3ED1C11C021C100A53554 /* nanissue.py */,
 				D1A9CEE911BEB1330064BADB /* mtDNA10part.py */,
 			);
 			name = jockusch_problem;

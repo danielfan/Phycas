@@ -173,6 +173,15 @@ class LikelihoodCore(object):
 				# and add the real model to partition_model.
 				mod = self.createModel(m)
 				self.partition_model.addModel(mod)
+				
+		# If user has specified subset relative rates in the partition interface, transfer 
+		# those now to partition_model
+		if partition.subset_relrates is not None:
+			num_subset_relrates = len(partition.subset_relrates)
+			num_subsets = len(modelspecs)
+			self.parent.phycassert(num_subset_relrates == num_subsets, 'Length of partition.subset_relrates list (%d) should equal the number of subsets defined (%d)' % (num_subset_relrates, num_subsets))
+			self.partition_model.setSubsetRelRatesVect(partition.subset_relrates)
+		 
 		self.likelihood = Likelihood.TreeLikelihood(self.partition_model)
 		self.likelihood.setLot(self.r)
 		self.likelihood.setUFNumEdges(self.parent.opts.uf_num_edges)

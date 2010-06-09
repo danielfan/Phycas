@@ -13,6 +13,7 @@ class Like(PhycasCommand):
                 ("tree_source",             randomtree(),               "TreeCollection that will provide the tree.", TreeSourceValidate),
                 ("starting_edgelen_dist",   Exponential(10.0),          "Used to select the starting edge lengths when tree_source is 'random'"),
                 ("store_site_likes",         False,                      "If True, site log-likelihoods will be stored and can be retrieved using the getSiteLikes() function"),
+				("uf_num_edges",			  50,	 "Number of edges to traverse before taking action to prevent underflow", IntArgValidate(min=1)),
                 ]
                 )
         PhycasCommand.__init__(self, args, "like", "Calculates the log-likelihood under the current model.")
@@ -25,7 +26,7 @@ class Like(PhycasCommand):
         # to prevent users from adding new data members (to prevent accidental misspellings from causing problems)
         self.__dict__["random_seed"] = 0
         self.__dict__["fix_edgelens"]   = False
-        self.__dict__["uf_num_edges"]   = 50
+        #self.__dict__["uf_num_edges"]   = 50
         self.__dict__["use_unimap"]     = False
         self.__dict__["data_source"]    = 'file'
         self.__dict__["site_likes"]    = []
