@@ -622,6 +622,7 @@
 		D1A8CC0511BACBA400A2A901 /* thread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = thread.cpp; path = libs/thread/src/pthread/thread.cpp; sourceTree = BOOST_ROOT; };
 		D1A8CC0611BACBA400A2A901 /* timeconv.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = timeconv.inl; path = libs/thread/src/pthread/timeconv.inl; sourceTree = BOOST_ROOT; };
 		D1A8CC0911BACBC200A2A901 /* tss_null.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tss_null.cpp; path = libs/thread/src/tss_null.cpp; sourceTree = BOOST_ROOT; };
+		D1A9CEE911BEB1330064BADB /* mtDNA10part.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = mtDNA10part.py; path = ../../inprep/jockusch_problem/mtDNA10part.py; sourceTree = SOURCE_ROOT; };
 		D1ABDDE310D2D60000EDC77A /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = __init__.py; path = phycas/Phycas/__init__.py; sourceTree = PHYCAS_ROOT; };
 		D1ABDDE410D2D60000EDC77A /* BrownianImpl.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = BrownianImpl.py; path = phycas/Phycas/BrownianImpl.py; sourceTree = PHYCAS_ROOT; };
 		D1ABDDE510D2D60000EDC77A /* CPO.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = CPO.py; path = phycas/Phycas/CPO.py; sourceTree = PHYCAS_ROOT; };
@@ -1275,6 +1276,7 @@
 		D17574C410EB940500D4E2B0 /* InPrep */ = {
 			isa = PBXGroup;
 			children = (
+				D1A9CEE811BEB11A0064BADB /* jockusch_problem */,
 				D147CA4311BBF5D500AE29FC /* unimap738 */,
 				D10DDE0B1125D4B100CC55F3 /* scubed */,
 				D17574C510EB940C00D4E2B0 /* Partition */,
@@ -1309,6 +1311,14 @@
 				D1A8CC0611BACBA400A2A901 /* timeconv.inl */,
 			);
 			name = "Boost Thread source";
+			sourceTree = "<group>";
+		};
+		D1A9CEE811BEB11A0064BADB /* jockusch_problem */ = {
+			isa = PBXGroup;
+			children = (
+				D1A9CEE911BEB1330064BADB /* mtDNA10part.py */,
+			);
+			name = jockusch_problem;
 			sourceTree = "<group>";
 		};
 		D1ABDDE210D2D58F00EDC77A /* Phycas */ = {

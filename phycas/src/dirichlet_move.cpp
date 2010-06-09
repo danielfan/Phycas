@@ -412,10 +412,29 @@ void DirichletMove::finalizeWorkingPrior()
 			}
 		double phi = (numer_sum/denom_sum) - 1.0;
 #endif		
+		double min_param = phi*means[0];
 		double_vect_t params;
 		for (unsigned i = 0; i < dim; ++i)
 			{
-			params.push_back(phi*means[i]);
+			double curr_param = phi*means[i];
+			if (curr_param < min_param)
+				min_param = curr_param;
+			params.push_back(curr_param);
+			}
+			
+		// This is an ad hoc solution (otherwise known as a HACK!); need to find a 
+		// way to stabilize the likelihood calculation to avoid nan results when subset 
+		// relative rates are very small
+		if (min_param < 0.5)
+			{
+			params.clear();
+			for (unsigned i = 0; i < dim; ++i)
+				{
+				double curr_param = phi*means[i];
+				if (curr_param < min_param)
+					curr_param = 0.5;
+				params.push_back(curr_param);
+				}
 			}
 			
 		mv_working_prior = MultivarProbDistShPtr(new DirichletDistribution(params));

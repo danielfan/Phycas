@@ -270,6 +270,7 @@ class ParamSummarizer(CommonFunctions):
 			tmp /= float(n)
 			lnRk = beta_incr*etak + math.log(tmp)
 			lnR += lnRk
+			#import pdb; pdb.set_trace()
 			self.output(' %10.3f %10.3f %10d %15.6f %15.6f %15.6f' % (bsmaller, beta_incr, n, etak, lnRk, lnR))
 		
 		self.output(' %.8f Stabilized Steppingstone Sampling (SSS) method' % lnR)

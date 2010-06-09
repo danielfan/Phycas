@@ -190,20 +190,20 @@ class Partition(PhycasCommand):
 		memo[self] = new_partition
 		return new_partition
 		
-	def partitionReport(self):
+	def partitionReport(self, reporter):
 		"""
 		Outputs a summary of the partitioning scheme.
 		"""
-		cf = CommonFunctions(self)
-		cf.output('Partition report:')
-		cf.output('%12s %12s %12s   %s' % ('subset', 'size', 'model', 'name'))
+		#cf = CommonFunctions(self)
+		reporter.output('Partition report:')
+		reporter.output('%12s %12s %12s   %s' % ('subset', 'size', 'model', 'name'))
 		for i,(n,s,m) in enumerate(self.subset):
 			model_descr = m.type.upper()
 			if m.pinvar_model:
 				model_descr += '+I'
 			if m.num_rates > 1:
 				model_descr += '+G'
-			cf.output('%12d %12d %12s   %s' % (i+1, len(s), model_descr, n))
+			reporter.output('%12d %12d %12s   %s' % (i+1, len(s), model_descr, n))
 			
 	def getSubsetProportions(self):
 		"""
@@ -241,8 +241,8 @@ class Partition(PhycasCommand):
 
 	def __call__(self, **kwargs):
 		"""
-		Calling a Partition object results in partitionReport() being called, which in turn
-		does some sanity checks and issues a summary of the partitioning scheme.
+		This function should perform some sanity checks, but right now it does nothing.
 		"""
-		self.set(**kwargs)
-		return self.partitionReport()
+		pass
+		#self.set(**kwargs)
+		#return self.partitionReport()

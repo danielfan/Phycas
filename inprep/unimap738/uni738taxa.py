@@ -71,7 +71,7 @@ if __name__ == '__main__':
     # unimap-specific settings
     mcmc.use_unimap = True
     mcmc.mapping_move_weight = 1
-    mcmc.unimap_ls_move_weight = 10
+    mcmc.unimap_ls_move_weight = 1
     mcmc.unimap_nni_move_weight = 0
     mcmc.unimap_edge_move_weight = 0
     mcmc.unimap_thread_count = 2

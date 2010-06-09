@@ -387,6 +387,9 @@ class MCMCImpl(CommonFunctions):
 		
 		# Next line creates a default partition if a partition was not defined by the user
 		self.opts.partition.validate(self.nchar)
+		
+		# Ask for a partition report, passing self as the reporter (object that has an output function)
+		self.opts.partition.partitionReport(self)
 
 		self.models			= [m for (n,s,m) in self.opts.partition.subset]
 		self.model_names	= [n for (n,s,m) in self.opts.partition.subset]
@@ -506,9 +509,11 @@ class MCMCImpl(CommonFunctions):
 				m.setStateFreqsUnnorm(freq_vector)
 			elif name.find('subset_relrates') == 0:					# C++ class SubsetRelRatesMove
 				rates_vector = u.sampleMultivariateWorkingPrior()
-				while min(rates_vector) == 0.0:
-					self.output('\nWarning: resampling working prior for subset relative rates because first draw contained\n  an element equal to zero: (%s)' % ','.join(['%g' % r for r in rates_vector]))
+				num_retries = 0
+				while min(rates_vector) < 1.e-6 and num_retries < 10:
+					self.warning('resampling working prior for subset relative rates because first draw contained\n  an element very close to zero: (%s)' % ','.join(['%g' % r for r in rates_vector]))
 					rates_vector = u.sampleMultivariateWorkingPrior()
+					num_retries += 1
 				cold_chain.partition_model.setSubsetRelRatesVect(rates_vector)
 			elif name.find('gamma_shape') == 0:						# C++ class DiscreteGammaShapeParam
 				i = unpartitioned and 0 or self.getModelIndex(name)
@@ -628,6 +633,11 @@ class MCMCImpl(CommonFunctions):
 					continue
 				nd.setEdgeLen(new_edge_lens[i])
 				i += 1
+
+		# turn on underflow avoidance machinery unconditionally to avoid getting nan for log-likelihood
+		# (The nan log-likelihoods can arise when subset relative rates are very small, but truncation is not a viable
+		# option because that would change the working prior and thus affect the marginal likelihood estimate.)
+		#cold_chain.likelihood.setUFNumEdges(2)	# this idea didn't work
 					
 		# replace the model
 		cold_chain.prepareForLikelihood()
@@ -638,7 +648,6 @@ class MCMCImpl(CommonFunctions):
 		cold_chain_manager.refreshLastLnLike()
 		cold_chain_manager.refreshLastLnPrior()
 
-		
 		# what about polytomies?
 											
 		############################ end exploreWorkingPrior ############################
