@@ -422,21 +422,6 @@ void DirichletMove::finalizeWorkingPrior()
 			params.push_back(curr_param);
 			}
 			
-		// This is an ad hoc solution (otherwise known as a HACK!); need to find a 
-		// way to stabilize the likelihood calculation to avoid nan results when subset 
-		// relative rates are very small
-		if (min_param < 0.5)
-			{
-			params.clear();
-			for (unsigned i = 0; i < dim; ++i)
-				{
-				double curr_param = phi*means[i];
-				if (curr_param < min_param)
-					curr_param = 0.5;
-				params.push_back(curr_param);
-				}
-			}
-			
 		mv_working_prior = MultivarProbDistShPtr(new DirichletDistribution(params));
 		//	if (params.size() == 4)
 		//		std::cerr << boost::str(boost::format("@@@@@@@@@ working prior is Dirichlet(%g,%g,%g,%g) for updater %s") % params[0] % params[1] % params[2] % params[3] % getName()) << std::endl;
