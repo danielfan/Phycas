@@ -115,7 +115,6 @@ bool UnimapTopoMove::update()
 	else
 		revert();
 
-
 #	if FOUR_TAXON_TEST
 		if (isFirstTime)
 			isFirstTime = false;
@@ -131,7 +130,6 @@ bool UnimapTopoMove::update()
 
 	return accepted;
 	}
-
 
 TreeNode * randomInternalAboveSubroot(Tree & tree, Lot &rng)
     {
@@ -1200,51 +1198,85 @@ void LargetSimonCallable::operator()()
 	move->update();
 	}
 */	
-#if defined(USING_THREAD_BARRIERS)
-			
-
-	class DualBarrierUpdater {
+#if defined(USING_THREAD_BARRIERS) && USING_THREAD_BARRIERS
+	class DualBarrierUpdater 
+		{
 		public:
-			DualBarrierUpdater(MCMCUpdater * m, boost::barrier *startBarrier, boost::barrier *afterBarrier)
+			DualBarrierUpdater(MCMCUpdater * m, boost::barrier * startBarrier, boost::barrier * afterBarrier, boost::mutex & mx)
 				:number(0),
 				theStartUpdateBarrier(startBarrier),
 				theAfterUpdateBarrier(afterBarrier),
-				move(m) 
+				io_mutex(mx),
+				move(m)
+				//,zzz(0.0)
 				{}
 	
 			void operator()() 
-			{
+				{
 				while (true)
 					{
 					//std::cerr << "DBU # " << number << " start =" << (long)theStartUpdateBarrier << "\n";
 					if (theStartUpdateBarrier)
 						{
 						theStartUpdateBarrier->wait();
+						//if (theStartUpdateBarrier->wait())
+						//	{
+						//	boost::mutex::scoped_lock scoped_lock(io_mutex);
+						//	std::cerr << boost::str(boost::format("before >> Thread %d received TRUE from theStartUpdateBarrier->wait()") % number) << "\n";
+						//	}
+						//else 
+						//	{
+						//	boost::mutex::scoped_lock scoped_lock(io_mutex);
+						//	std::cerr << boost::str(boost::format("before >> Thread %d received FALSE from theStartUpdateBarrier->wait()") % number) << "\n";
+						//	}
 						}
 
 					if (move)
 						move->update();
+						
+					//for (unsigned z = 0; z < 2000000; z++)
+					//	{
+					//	for (unsigned zz = 0; zz < 2000000; zz++)
+					//		{
+					//		zzz += log(z);
+					//		zzz += log(zz);
+					//		}	
+					//	}	
+						
 					//std::cerr << "DBU # " << number << " after =" << (long)theAfterUpdateBarrier << "\n";
 					// while this wait blocks, the "start" barrier will be installed
 					if (theAfterUpdateBarrier) 
+						{
 						theAfterUpdateBarrier->wait();
+						//if (theAfterUpdateBarrier->wait())
+						//	{
+						//	boost::mutex::scoped_lock scoped_lock(io_mutex);
+						//	std::cerr << boost::str(boost::format("after >> Thread %d received TRUE from theAfterUpdateBarrier->wait()") % number) << "\n";
+						//	}
+						//else 
+						//	{
+						//	boost::mutex::scoped_lock scoped_lock(io_mutex);
+						//	std::cerr << boost::str(boost::format("after >> Thread %d received FALSE from theAfterUpdateBarrier->wait()") % number) << "\n";
+						//	}
+						}
 					else
 						{
 						PHYCAS_ASSERT(0);
-						std::cerr << "DBU # " << number << " exiting for lack of afterBarrier\n";
+						//std::cerr << "DBU # " << number << " exiting for lack of afterBarrier\n";
 						break;
 						}
 					}
-			}
-	
+				}
 
 			unsigned number;
+			
 		private:
-			boost::barrier *theStartUpdateBarrier;
-			boost::barrier *theAfterUpdateBarrier;
-			MCMCUpdater * move;
+			boost::mutex	& io_mutex; 
+			boost::barrier	* theStartUpdateBarrier;
+			boost::barrier	* theAfterUpdateBarrier;
+			MCMCUpdater		* move;
+			//double			  zzz;
 	};
-
 
 	class SimplePtrCaller {
 		public:
@@ -1258,7 +1290,6 @@ void LargetSimonCallable::operator()()
 		private:
 			DualBarrierUpdater * dbu;
 	};
-
 #else 
 	class CU {
 		public:
@@ -1271,9 +1302,6 @@ void LargetSimonCallable::operator()()
 			}
 		UnimapTopoMove * move;
 	};
-
-
-
 #endif
 
 // Not currently working for some reason...
@@ -1351,21 +1379,19 @@ bool UnimapTopoMoveSpreader::update()
 				move->acquireCondLikeArrays(*nd_internal_data);
 				
 				topoMovesVec.push_back(move);
-				DualBarrierUpdater * dbu = new DualBarrierUpdater(move, startUpdateBarrier, afterUpdateBarrier);
+				DualBarrierUpdater * dbu = new DualBarrierUpdater(move, startUpdateBarrier, afterUpdateBarrier, io_mutex);
 				dbu->number = i;
 				updaterWithBarriers.push_back(dbu);
 				SimplePtrCaller x(dbu);
 				threadVec.push_back(new boost::thread(x));
 				}
 			}
-	
 		
 		PHYCAS_ASSERT(threadVec.size() == numUpdaters);
 		PHYCAS_ASSERT(updaterWithBarriers.size() == numUpdaters);
 		PHYCAS_ASSERT(topoMovesVec.size() == numUpdaters);
 		PHYCAS_ASSERT(startUpdateBarrier);
 		PHYCAS_ASSERT(afterUpdateBarrier);
-		
 		
 		for (unsigned threadInd = 0; threadInd < numUpdaters; ++threadInd)
 			{
@@ -1377,13 +1403,35 @@ bool UnimapTopoMoveSpreader::update()
 			PHYCAS_ASSERT(dbu);
 			}
 		
+		//{
+		//	boost::mutex::scoped_lock scoped_lock(io_mutex);
+		//	std::cerr << "Threads about to wait on start barrier" << (long)startUpdateBarrier << "\n";
+		//}
 		// trigger the realease of the other threads
-		//std::cerr << "Master about to wait on start barrier" << (long)startUpdateBarrier << "\n";
 		startUpdateBarrier->wait(); // this should return instantly
-
+		//if (startUpdateBarrier->wait()) // this should return instantly
+		//	{
+		//	boost::mutex::scoped_lock scoped_lock(io_mutex);
+		//	std::cerr << "before >> Master received TRUE from startUpdateBarrier->wait()" << "\n";
+		//	}
+		//else 
+		//	{
+		//	boost::mutex::scoped_lock scoped_lock(io_mutex);
+		//	std::cerr << "before >> Master received FALSE from startUpdateBarrier->wait()" << "\n";
+		//	}
 
 		//std::cerr << "Master about to wait on afterUpdateBarrier barrier" << (long)afterUpdateBarrier << "\n";
 		afterUpdateBarrier->wait();
+		//if (afterUpdateBarrier->wait())
+		//	{
+		//	boost::mutex::scoped_lock scoped_lock(io_mutex);
+		//	std::cerr << "after >> Master received TRUE from afterUpdateBarrier->wait()" << "\n";
+		//	}
+		//else 
+		//	{
+		//	boost::mutex::scoped_lock scoped_lock(io_mutex);
+		//	std::cerr << "after >> Master received FALSE from afterUpdateBarrier->wait()" << "\n";
+		//	}
 
 		return true;
 			

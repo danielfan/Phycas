@@ -217,8 +217,6 @@ class UnimapLargetSimonMove : public UnimapTopoMove
 		bool swapYwithZ;
 		bool topoChanging;
 	};
-	
-
 
 #if defined(USING_THREAD_BARRIERS) && USING_THREAD_BARRIERS
 	class DualBarrierUpdater;
@@ -244,6 +242,7 @@ class UnimapTopoMoveSpreader: public MCMCUpdater
 		bool conflictsWithPrevious(TreeNode *) const ;
 		
 #		if defined(USING_THREAD_BARRIERS) && USING_THREAD_BARRIERS
+			boost::mutex io_mutex;
 			std::vector<boost::thread *> threadVec;
 			std::vector<DualBarrierUpdater *> updaterWithBarriers;
 			std::vector<UnimapTopoMove *> topoMovesVec;
