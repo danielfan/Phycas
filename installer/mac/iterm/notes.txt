@@ -40,7 +40,6 @@ package a new version of Phycas.app by simply refilling the .app bundle.
 
 This should produce a new $PHYCAS_ROOT/installer/mac/iterm/Phycas-1.0.dmg
 
-
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 III. Notes on failed attempt to bundle IPython, readline, and Python in the .app
 bundle

@@ -147,7 +147,8 @@ class Lognormal(LognormalDistBase, PyDistributionBase):
         """
         Returns the mean of the distribution. This is the theoretical mean
         (i.e., it will not change if sample is called to generate samples
-        from this distribution).
+        from this distribution). The mean of a Lognormal(logmean, logsd) 
+		random variable is exp(logmean + logsd^2/2)
 
         >>> from phycas.ProbDist import *
         >>> d = Lognormal(2, 3)
@@ -162,7 +163,8 @@ class Lognormal(LognormalDistBase, PyDistributionBase):
         """
         Returns the variance of the distribution. This is the theoretical
         variance (i.e., it will not change if sample is called to generate
-        samples from this distribution).
+        samples from this distribution). The variance of a Lognormal(logmean, 
+		logsd) random variable is (exp(logsd^2) - 1)*exp(2*logmean + logsd^2).
 
         >>> from phycas.ProbDist import *
         >>> d = Lognormal(2, 3)

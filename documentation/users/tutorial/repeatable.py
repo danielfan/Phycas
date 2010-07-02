@@ -1,9 +1,6 @@
 from phycas import *
 
-r = ProbDist.Lot()
-r.setSeed(98765)
-randomtree.rng = r
-mcmc.rng = r
+setMasterSeed(98765)
 
 mcmc.data_source = 'green.nex'
 mcmc.out.log = 'repeatable.log'
