@@ -668,7 +668,7 @@ class ParamSummarizer(CommonFunctions):
 		burnin = self.opts.burnin
 		lines = open(cpofn, 'r').readlines()
 		if len(lines) < 3 + burnin:
-			self.output("File '%s' does not look like a site likelihood file (too few lines)")
+			self.output("File '%s' does not look like a site likelihood file (too few lines)" % cpofn)
 		else:
 			self.cpo_summary(lines, burnin)
 		

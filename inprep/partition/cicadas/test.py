@@ -218,7 +218,7 @@ def runMCMC(fnprefix, method_index):
         ss.nbetavals = num_beta_values
         ss.shape1 = 1.0
         ss.shape2 = 1.0
-        ss.scubed = True
+        ss.ti = False
         ss.xcycles = xtra
         if not dry_run:
             ss()

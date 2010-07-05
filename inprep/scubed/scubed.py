@@ -74,7 +74,7 @@ ss.maxbeta                = 1.0
 ss.minbeta                = 0.0
 ss.shape1                 = 1
 ss.shape2                 = 1
-ss.scubed                 = True
+ss.ti                     = False
 #ss()
 
 sump.file				  = 'sss.p'

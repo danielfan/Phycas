@@ -76,9 +76,9 @@ class MCMCImpl(CommonFunctions):
 		self.ss_sampled_likes		= None
 		self.siteIndicesForPatternIndex = None
 		
-	def setSiteLikeFile(self, sitelikef):
-		if sitelikef is not None:
-			self.sitelikef = sitelikef
+	#def setSiteLikeFile(self, sitelikef):
+	#	if sitelikef is not None:
+	#		self.sitelikef = sitelikef
 			
 	def siteLikeFileSetup(self, coldchain):
 		if self.sitelikef is not None:
@@ -94,9 +94,9 @@ class MCMCImpl(CommonFunctions):
 			for i,p in enumerate(v):
 				self.siteIndicesForPatternIndex[p].append(i)
 
-	def unsetSiteLikeFile(self):
-		self.sitelikef = None
-		self.siteIndicesForPatternIndex = None
+	#def unsetSiteLikeFile(self):
+	#	self.sitelikef = None
+	#	self.siteIndicesForPatternIndex = None
 
 	def adaptSliceSamplers(self):
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -214,6 +214,35 @@ class MCMCImpl(CommonFunctions):
 			self.output('  Prior log-density:  %s' % p.getLnPrior())
 			self.output()
 				
+	def siteLikeFileOpen(self):
+		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+		"""
+		Opens the site log-likelihood file.
+
+		"""
+		self.phycassert(self.sitelikef is None, 'Attempt made to open MCMCImpl.sitelikef, but it is already open!')
+		sitelnl_file_spec = self.opts.out.sitelikes
+		try:
+			self.sitelikef = sitelnl_file_spec.open(self.stdout)
+			#raw_input('%s.sitelikef was opened successfully' % self.__class__.__name__)
+		except:
+			print '*** Attempt to open site log-likelihood file (%s) failed.' % self.opts.out.sitelike.filename
+			#raw_input('siteLikeFileOpen failed')
+
+		if self.sitelikef:
+			print 'Site log-likelihood file was opened successfully'
+			#mcmc.sitelikef = self.sitelikef
+
+	def siteLikeFileClose(self):
+		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+		"""
+		Closes the site log-likelihood file.
+
+		"""
+		self.phycassert(self.sitelikef is not None, 'Attempt made to close MCMCImpl.sitelikef, but it is not open!')
+		self.sitelikef.close()
+		self.sitelikef = None
+
 	def treeFileOpen(self):
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
 		"""
@@ -895,7 +924,7 @@ class MCMCImpl(CommonFunctions):
 		for cycle in xrange(self.burnin + self.ncycles):
 			# Update all updaters
 			if explore_prior and self.opts.draw_directly_from_prior:
-				if self.opts.doing_steppingstone_sampling and self.opts.ssobj.scubed:
+				if self.opts.doing_steppingstone_sampling and not self.opts.ssobj.ti:
 					self.exploreWorkingPrior(cycle)
 				else:
 					self.explorePrior(cycle)
@@ -954,7 +983,7 @@ class MCMCImpl(CommonFunctions):
 						c.chain_manager.refreshLastLnLike()
 						c.chain_manager.refreshLastLnPrior()
 						
-				if self.opts.doing_steppingstone_sampling and self.opts.ssobj.scubed and self.ss_beta_index == 0:
+				if self.opts.doing_steppingstone_sampling and (not self.opts.ssobj.ti) and self.ss_beta_index == 0:
 					self.mcmc_manager.recordSample(True, self.cycle_start + cycle)	# dofit = True (i.e. educate the working prior if doing SS and currently exploring the posterior)
 				else:
 					self.mcmc_manager.recordSample(False, self.cycle_start + cycle)	# dofit = False
@@ -1148,7 +1177,7 @@ class MCMCImpl(CommonFunctions):
 			self.ss_sampled_likes = []
 			working_priors_calculated = False
 			for self.ss_beta_index, self.ss_beta in enumerate(self.ss_sampled_betas):
-				if self.ss_beta_index > 0 and self.opts.ssobj.scubed and not working_priors_calculated:
+				if self.ss_beta_index > 0 and (not self.opts.ssobj.ti) and not working_priors_calculated:
 					# if using working prior with steppingstone sampling, it is now time to 
 					# parameterize the working prior for all updaters so that this working prior
 					# can be used in the sequel

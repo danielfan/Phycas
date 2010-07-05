@@ -209,7 +209,7 @@ class MCMCManager:
 			self.parent.paramf.write(float_format_str % ln_prior)
 			
 			# lnWorkingPrior
-			if self.parent.opts.doing_steppingstone_sampling and self.parent.opts.ssobj and self.parent.opts.ssobj.scubed:
+			if self.parent.opts.doing_steppingstone_sampling and self.parent.opts.ssobj and not self.parent.opts.ssobj.ti:
 				if (cycle > -1) and not dofit:
 					ln_working_prior = cold_chain.chain_manager.recalcLnWorkingPrior()
 				else:
@@ -256,22 +256,25 @@ class MCMCManager:
 			self.parent.treef.write('\ttree rep.%d = %s;\n' % (cycle + 1, cold_chain.tree.makeNewick(self.parent.opts.ndecimals)))
 			self.parent.treef.flush()
 
-		# Add line to sitelike file if it exists and if we are saving site-likelihoods
-		if self.parent.opts.saving_sitelikes:
-			if self.parent.sitelikef:
-				cold_chain.likelihood.storeSiteLikelihoods(True)
-				cold_chain.likelihood.calcLnL(cold_chain.tree)
-				cold_chain.likelihood.storeSiteLikelihoods(False)
-				
-				patternLnLikes = cold_chain.likelihood.getSiteLikelihoods()
-				siteloglikes = [0.0]*self.parent.nchar
-				for i,patternLnL in enumerate(patternLnLikes):
-					for site in self.parent.siteIndicesForPatternIndex[i]:
-						siteloglikes[site] = patternLnL
-				for siteLnL in siteloglikes:
-					self.parent.sitelikef.write(float_format_str % siteLnL)
-				self.parent.sitelikef.write('\n')
-				self.parent.sitelikef.flush()
+		# If we are saving site-likelihoods, and if the sitelikes file exists, add line to sitelikes file 
+		#raw_input('self.parent = %s' % self.parent.__class__.__name__)
+		if self.parent.sitelikef:
+			#raw_input('%s.sitelikef is True' % self.parent.__class__.__name__)
+			cold_chain.likelihood.storeSiteLikelihoods(True)
+			cold_chain.likelihood.calcLnL(cold_chain.tree)
+			cold_chain.likelihood.storeSiteLikelihoods(False)
+			
+			patternLnLikes = cold_chain.likelihood.getSiteLikelihoods()
+			siteloglikes = [0.0]*self.parent.nchar
+			for i,patternLnL in enumerate(patternLnLikes):
+				for site in self.parent.siteIndicesForPatternIndex[i]:
+					siteloglikes[site] = patternLnL
+			for siteLnL in siteloglikes:
+				self.parent.sitelikef.write(float_format_str % siteLnL)
+			self.parent.sitelikef.write('\n')
+			self.parent.sitelikef.flush()
+		#else:
+		#	raw_input('%s.sitelikef is False' % self.parent.__class__.__name__)
 								
 	def attemptChainSwap(self, cycle):
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|

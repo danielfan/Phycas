@@ -224,8 +224,8 @@ like = Like()
 from Phycas.SS import SS
 ss = SS()
 
-from Phycas.CPO import CPO
-cpo = CPO()
+#from Phycas.CPO import CPO
+#cpo = CPO()
 
 from Phycas.Unimap import Unimap
 unimap = Unimap()

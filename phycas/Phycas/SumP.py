@@ -8,8 +8,7 @@ class SumP(PhycasCommand):
         args = (   
                    ("burnin",   1, "Number of lines from the input list of trees to skip (first line stores starting parameter values, so this value should normally be at least 1)", IntArgValidate(min=0)),
                    ("file",    "", "Name of file containing sampled parameter values", FileExistsValidate),
-                   ("cpofile", "", "Name of file containing sampled site likelihoods for calculation of Conditional Predictive Ordinates (CPO)", FileExistsValidate),
-                   ("cposmooth", 20.0, "Standard deviation to use in smoothing CPO plot", FloatArgValidate(min=1.0))
+                   ("cpofile", "", "Name of file containing sampled site likelihoods for calculation of Conditional Predictive Ordinates (CPO)", FileExistsValidate)
                 )
         o = PhycasCommandOutputOptions()
         o.__dict__["_help_order"] = ["log","cpoplot"]
@@ -18,6 +17,11 @@ class SumP(PhycasCommand):
         cpoplot_spec = ROutputSpec(prefix='sumpCPO', help_str="The file specified by this setting saves the R commands to produce a plot of CPO values across sites. If set to None, no R file will be generated.")
         o.__dict__["cpoplot"] = cpoplot_spec
         PhycasCommand.__init__(self, args, "sump", "The sump command is used to summarize a sample of parameter values produced by an MCMC simulation.", o)
+
+        # The data members added below should be hidden from the user because they are for use by phycas developers.
+        # The roundabout way of introducing these data members is necessary because PhycasCommand.__setattr__ tries
+        # to prevent users from adding new data members (to prevent accidental misspellings from causing problems)
+        self.__dict__["cposmooth"] = 20.0	# ("cposmooth", 20.0, "Standard deviation to use in smoothing CPO plot", FloatArgValidate(min=1.0))
         
     def hidden():
         """ 

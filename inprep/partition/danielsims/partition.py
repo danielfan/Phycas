@@ -238,11 +238,11 @@ else:
         if scubed:
             ss.shape1 = 1.0
             ss.shape2 = 1.0
-            ss.scubed = True
+            ss.ti = False
         else:
             ss.shape1 = 0.3
             ss.shape2 = 1.0
-            ss.scubed = False
+            ss.ti = True
         ss()
 
     sump.file = pfx + '.p'

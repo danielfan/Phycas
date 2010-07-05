@@ -131,7 +131,7 @@ class MarkovChain(LikelihoodCore):
 		else:
 			paramf.write('Gen\tlnL\tlnPrior')
 
-		if self.parent.opts.doing_steppingstone_sampling and self.parent.opts.ssobj.scubed:
+		if self.parent.opts.doing_steppingstone_sampling and not self.parent.opts.ssobj.ti:
 			paramf.write('\tlnWorkPr')
 
 		# If the user has defined a reference tree, add a column for the Robinson-Foulds
