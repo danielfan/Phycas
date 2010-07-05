@@ -34,6 +34,9 @@
 % bold math
 \usepackage{bm}
 
+% cancel 
+\usepackage{cancel}
+
 % Make document single-spaced
 \renewcommand{\baselinestretch}{1.0}
 
@@ -781,6 +784,130 @@ sumt()
 \subsection{Running \pathname{partition.py}} \label{subsec:runningpartitionpy}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Run the \pathname{partition.py} in Python as described for \pathname{basic.py} (see section \ref{subsec:runningbasicpy} on page \pageref{subsec:runningbasicpy}). In the end, you should several files. The files \pathname{params.p}, \pathname{trees.t} and \pathname{mcmcoutput.txt} were produced by the \cmd{mcmc} command. The files \pathname{sumtoutput.txt}, \pathname{sumt\_splits.pdf}, \pathname{sumt\_trees.pdf} and \pathname{sumt\_trees.tre} were produced by the \cmd{sumt} command.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% Estimating the marginal likelihood using the stepping stone method %%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Estimating the marginal likelihood using the stepping stone method}\label{sec:marginallikelihood}
+There are two papers \citep{FanWuChenKuoLewis2010,XieLewisFanKuoChen2010} describing the stepping stone (SS) method, but at this time (5 July 2010) neither one has been published. The paper by \citet{FanWuChenKuoLewis2010} describes the method used below. Both papers are available upon request.
+
+To estimate the marginal likelihood using the steppingstone method, a special MCMC analysis is conducted that begins by exploring the posterior distribution but transitions slowly to exploring a reference distribution.  The reference distribution is similar to the actual prior in that the joint reference distribution comprises a product of independent probability distributions, but differs from the actual prior in that a sample from the posterior distribution is used to inform the reference distribution. For example, if the sample posterior mean and variance of a particular branch length parameter is available, the component of the reference distribution associated with that branch length would be a Gamma distribution with this mean and variance. 
+
+Technically, the distribution explored by Phycas when performing a steppingstone analysis is a "power posterior" distribution:
+
+\[f_{\beta}(\theta|y) = \left[ f(y|\theta) p(\theta) \right]^{\beta} \left[ \pi_0(\theta) \right]^{1 - \beta}\]
+
+Note that when $\beta = 1$, the power posterior equals the posterior (the reference distribution term $\pi_0(\theta)$ disappears), whereas when $\beta = 0$, the first term disappears leaving only the reference distribution. During an analysis, $\beta$ begins at 1 (posterior) and is decreased every \opt{mcmc}{ncycles} cycles until, ultimately, it equals 0 (reference distribution) for the last \opt{mcmc}{ncycles} cycles. The number of $\beta$ values visited equals \opt{ss}{nbetavals}. The period of time at the beginning spent exploring the posterior is not actually used by the stepping stone method, but is required if a pre-existing sample from the posterior is not available for the purpose of parameterizing the reference distribution. Phycas allows you to spend longer on this first step (see \opt{ss}{xcycles}) in order to obtain a better posterior sample.
+
+The way the stepping stone method works is to attempt to estimate well a series of ratios of normalizing constants. Each ratio in the series represents a stepping stone along a path bridging the posterior to the reference distribution. The product of the ratios in this series provides an estimate of the marginal likelihood. The estimate of each ratio is based on samples taken from an MCMC analysis that is exploring the power posterior associated with one particular value of $\beta$ (the $\beta$ value associated with the denominator of each ratio). Letting subscripts represent $\beta$ values, here is the entire series assuming that 5 $\beta$ values (0.8, 0.6, 0.4, 0.2, and 0.0) were visited during the course of the analysis:
+
+\[\frac{c_{1.0}}{c_{0.0}} = \left(\frac{c_{1.0}}{\cancel{c_{0.8}}}\right) \left(\frac{\cancel{c_{0.8}}}{\cancel{c_{0.6}}}\right) \left(\frac{\cancel{c_{0.6}}}{\cancel{c_{0.4}}}\right) \left(\frac{\cancel{c_{0.4}}}{\cancel{c_{0.2}}}\right) \left(\frac{\cancel{c_{0.2}}}{c_{0.0}}\right)\]
+
+Note that the denominator of one ratio cancels the numerator of the adjacent ratio so that the product of all ratios is $c_{1.0}/c_{0.0}$. The value $c_{1.0}$ is the normalizing constant when $\beta = 1.0$, and thus is the quantity of interest: the normalizing constant of the posterior distribution (otherwise known as the marginal likelihood). The value $c_{0.0}$ is the normalizing constant when $\beta = 0.0$ (reference distribution), which is always equal to 1.0.
+
+Why estimate all those ratios if almost everything cancels? The answer is that, like jumping a creek, it helps to have stepping stones. Estimating the ratio $c_{1.0}/c_{0.0}$ is difficult because even though the reference distribution is made to be as close as possible to the posterior, it is nevertheless very simple compared to the posterior (a good deal of the correlation among parameters is missing because the reference distribution is a product of independent probability distributions). Each ratio in the product above, however, is much easier to estimate because the distribution on top is quite similar to the one on the bottom, a situation in which importance sampling work well.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{The \pathname{steppingstone.py} script}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+To initiate a steppingstone analysis, use the \cmd{ss} command {\em instead of} the\cmd{mcmc} command. Here is the entire \pathname{steppingstone.py} script. 
+
+\begin{verbatim}
+from phycas import * 
+mcmc.data_source = 'green.nex'
+ 
+model.type="hky"
+model.state_freqs = [0.25, 0.25, 0.25, 0.25]
+model.fix_freqs = True
+model.kappa = 2.0
+model.kappa_prior = BetaPrime(1.0, 1.0)
+model.num_rates = 4
+model.gamma_shape = 0.5
+model.gamma_shape_prior = Exponential(1.0)
+ 
+m1 = model()
+m2 = model()
+ 
+model.fix_freqs = False
+ 
+m3 = model()
+ 
+first      = subset(1, 1296, 3)
+second = subset(2, 1296, 3)
+third     = subset(3, 1296, 3)
+ 
+partition.addSubset(first, m1, "First codon positions")
+partition.addSubset(second, m2, "Second codon positions")
+partition.addSubset(third, m3, "Third codon positions")
+partition()
+ 
+mcmc.fix_topology = True
+mcmc.starting_tree_source = TreeCollection(newick='(1:0.31,2:0.10,(3:0.13,(4:0.09,((5:0.10,6:0.20):0.06,(7:0.10,((8:0.05,10:0.11):0.02,9:0.08):0.06):0.04):0.04):0.05):0.03)')
+ 
+ss.nbetaval = 11
+mcmc.ncycles = 1000
+ss.xcycles = 1000
+ss()
+sump.file = 'params.p'
+sump()
+\end{verbatim}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Line-by-line explanation} \label{subsec:steppingstonepyexplanation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Most of this script was described in the previous section (see section~\ref{subsec:partitionpyexplanation}), so we will start with the line containing the \opt{mcmc}{fix\_topology} setting.
+
+\begin{samepage}
+\begin{verbatim}
+mcmc.fix_topology = True
+\end{verbatim}
+\pointup\ This line tells Phycas that we wish to fix the tree topology (i.e. not allow the tree topology to change throughout the MCMC analysis). While this is not strictly necessary, it does improve the efficiency of the stepping stone estimation somewhat because the reference distribution can contain terms for each individual branch length parameter, making it a much better match to the posterior. If the topology changes, then a single distribution must be used to describe all branch length parameters. Because some branch lengths are short, and others long, using a single distribution will necessarily have a large variance and not fit any specific branch length marginal posterior distribution as well as a reference distribution dedicated to that particular branch length parameter.
+\end{samepage}
+
+\begin{samepage}
+\begin{verbatim}
+mcmc.starting_tree_source = TreeCollection(newick='(1:0.31,2:0.10,(3:0.13,(4:0.09,((5:0.10,6:0.20):0.06,(7:0.10,((8:0.05,10:0.11):0.02,9:0.08):0.06):0.04):0.04):0.05):0.03)')
+\end{verbatim}
+\pointup\ Because we are fixing the tree topology, we should specify the tree topology that we wish to use. This line defines a tree topology by creating a \cmd{TreeCollection} object containing a single tree. That single tree is described by the string passed in via the \code{newick} argument. Tree descriptions passed in this way should have taxa identified by numbers (starting with 1), and the numbers should reference the position of the taxon in the data file. 
+\end{samepage}
+
+\begin{samepage}
+\begin{verbatim}
+ss.nbetaval = 11
+\end{verbatim}
+\pointup\ This specifies the number of ``stepping stones''to use in estimating the marginal likelihood. With this setting, the following 11 beta values would be used: 1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0. 
+\end{samepage}
+
+\begin{samepage}
+\begin{verbatim}
+mcmc.ncycles = 1000
+\end{verbatim}
+\pointup\ The \cmd{ss} command uses the \cmd{mcmc} to do almost all of the work. Hence, the setting \opt{mcmc}{ncycles} specifies the number of parameter update cycles devoted to each beta value visited. Note that this is the number of cycles per beta value. If you specified \opt{ss}{nbetaval} to be 11 and \opt{mcmc}{ncycles} to be 1000, then the total number of cycles would be 11 times 1000, or 11000 cycles.
+\end{samepage}
+
+This example uses 11 beta values, but is this enough? Generally the more stepping stones (i.e. beta values) used, the better the estimate will be, but the quality of the estimate also depends on the quality of the reference distribution. If the reference distribution approximates the posterior well, then fewer beta values are needed (and fewer samples per beta value are needed). If the reference distribution exactly equals the posterior, then only a single sample from the reference distribution (beta = 0.0) would be needed to determine the marginal likelihood exactly, This utopia is never achievable because if one actually knew the posterior distribution exactly, then one would also know the normalizing constant exactly and hence you would not need to estimate it! In practice, it probably makes sense to start with, say, 11 $\beta$ values, and a reasonable number (e.g. 1000) cycles per $\beta$ value. I would do another run, however, doubling both values to see if it makes a big difference. If it does, then probably the first run was not long enough (and perhaps the second run too). 
+
+\begin{samepage}
+\begin{verbatim}
+ss.xcycles = 1000
+\end{verbatim}
+\pointup\ This represents the number of extra cycles spent on the posterior distribution. Because the reference distribution is created based on a sample from the posterior, it may make sense to spend a little more time on the first stepping stone (when $\beta = 1$ and the MCMC sampler is exploring the posterior) than on the other $\beta$ values. Our (limited) experience shows that it is not worth spending an exorbitant amount of time on the posterior; a small sample seems to work quite well (assuming the tree topology is fixed).
+\end{samepage}
+
+\begin{samepage}
+\begin{verbatim}
+ss()
+\end{verbatim}
+\pointup\ This command starts the analysis. It essentially causes the \cmd{mcmc} command to be run for each $\beta$ value visited.
+\end{samepage}
+
+\begin{samepage}
+\begin{verbatim}
+sump.file = 'params.p'
+sump()
+\end{verbatim}
+\pointup\ The \cmd{sump} command is used to summarize the parameter file produced by the \cmd{ss} command and calculate the estimate of the marginal likelihood. The name of the parameter file to summarize must be supplied in the \opt{sump}{file} setting.
+\end{samepage}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% Probability Distributions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
