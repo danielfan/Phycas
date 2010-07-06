@@ -167,7 +167,7 @@ Two memory leaks were fixed prior to this release. For a description of the leak
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{How to use this manual} %%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-This manual begins with a description of some things you can do with Phycas that you cannot do with most other Bayesian phylogenetics software. Following this features section (section~\ref{sec:features}) is a tutorial showing you how to perform some simple analyses. This tutorial (sections~\ref{sec:warmup} to \ref{sec:definingpartitionmodel}) does not attempt to explain all possible settings. The online help system provides details about settings not mentioned in the tutorial. After these initial sections, the manual switches to reference style, detailing probability distributions (section~\ref{sec:probdist}) that can be used as priors, and describing the models of character evolution (section~\ref{sec:models}) available in Phycas. Toward the end you will find a discussion (section~\ref{sec:designprinciples}) of design principles (e.g. Why did we decide to extend Python rather than write a stand-alone program? Why is there no graphical interface?) followed by an annotated listing (section~\ref{sec:phycassettings}) of Phycas settings. The final section (section~\ref{sec:install}) is devoted to the details of getting Phycas (and Python) installed on your computer system.
+This manual begins with a description of some things you can do with Phycas that you cannot do with most other Bayesian phylogenetics software. Following this features section (section~\ref{sec:features}) is a tutorial showing you how to perform some simple analyses. This tutorial (sections~\ref{sec:warmup} to \ref{sec:polytomyanalyses}) does not attempt to explain all possible settings. The online help system provides details about settings not mentioned in the tutorial. After these initial sections, the manual switches to reference style, detailing probability distributions (section~\ref{sec:probdist}) that can be used as priors, and describing the models of character evolution (section~\ref{sec:models}) available in Phycas. Toward the end you will find a discussion (section~\ref{sec:designprinciples}) of design principles (e.g. Why did we decide to extend Python rather than write a stand-alone program? Why is there no graphical interface?) followed by an annotated listing (section~\ref{sec:phycassettings}) of Phycas settings. The final section (section~\ref{sec:install}) is devoted to the details of getting Phycas (and Python) installed on your computer system.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% Features %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -786,14 +786,14 @@ sumt()
 Run the \pathname{partition.py} in Python as described for \pathname{basic.py} (see section \ref{subsec:runningbasicpy} on page \pageref{subsec:runningbasicpy}). In the end, you should several files. The files \pathname{params.p}, \pathname{trees.t} and \pathname{mcmcoutput.txt} were produced by the \cmd{mcmc} command. The files \pathname{sumtoutput.txt}, \pathname{sumt\_splits.pdf}, \pathname{sumt\_trees.pdf} and \pathname{sumt\_trees.tre} were produced by the \cmd{sumt} command.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%% Estimating the marginal likelihood using the stepping stone method %%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% Estimating marginal likelihoods %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Estimating the marginal likelihood using the stepping stone method}\label{sec:marginallikelihood}
-There are two papers \citep{FanWuChenKuoLewis2010,XieLewisFanKuoChen2010} describing the stepping stone (SS) method, but at this time (5 July 2010) neither one has been published. The paper by \citet{FanWuChenKuoLewis2010} describes the method used below. Both papers are available upon request.
+\section{Estimating marginal likelihoods}\label{sec:marginallikelihood}
+There are two papers \citep{FanWuChenKuoLewis2010,XieLewisFanKuoChen2010} describing the stepping stone (SS) method for estimating the marginal likelihood of a model, but at this time (6 July 2010) neither one has been published. The paper by \citet{FanWuChenKuoLewis2010} describes the method used below. Both papers are available upon request.
 
 To estimate the marginal likelihood using the steppingstone method, a special MCMC analysis is conducted that begins by exploring the posterior distribution but transitions slowly to exploring a reference distribution.  The reference distribution is similar to the actual prior in that the joint reference distribution comprises a product of independent probability distributions, but differs from the actual prior in that a sample from the posterior distribution is used to inform the reference distribution. For example, if the sample posterior mean and variance of a particular branch length parameter is available, the component of the reference distribution associated with that branch length would be a Gamma distribution with this mean and variance. 
 
-Technically, the distribution explored by Phycas when performing a steppingstone analysis is a "power posterior" distribution:
+Technically, the distribution explored by Phycas when performing a steppingstone analysis is a ``power posterior'' distribution:
 
 \[f_{\beta}(\theta|y) = \left[ f(y|\theta) p(\theta) \right]^{\beta} \left[ \pi_0(\theta) \right]^{1 - \beta}\]
 
@@ -907,6 +907,183 @@ sump.file = 'params.p'
 sump()
 \end{verbatim}
 \pointup\ The \cmd{sump} command is used to summarize the parameter file produced by the \cmd{ss} command and calculate the estimate of the marginal likelihood. The name of the parameter file to summarize must be supplied in the \opt{sump}{file} setting.
+\end{samepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% Polytomy analyses %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Polytomy analyses}\label{sec:polytomyanalyses}
+
+Unlike most other programs for Bayesian phylogenetic inference, Phycas can be set up to allow its Markov chain to visit tree topologies containing polytomies. In the most extreme case, Phycas could even spend time on the star tree (i.e. a tree with only one internal node). The reasons one might want to do this are outlined in \citet*{LewisHolderHolsinger2005}. Phycas is not the only software package out there that does this. In fact, there are two others that I know of: Crux (written by Jason Evans, \url{http://www.canonware.com/Crux/}) and p4 (written by Peter Foster, \url{http://bmnh.org/~pf/p4.html}).
+To convert an existing phycas Python script into one that allows polytomies, you need add only three lines:
+\begin{verbatim}
+mcmc.allow_polytomies = True
+mcmc.polytomy_prior   = True
+mcmc.topo_prior_C     = exp(1.0)
+\end{verbatim}
+The setting \opt{mcmc}{allow\_polytomies}, when set to \code{True}, tells Phycas that you wish for unresolved trees to be visited in addition to fully-resolved trees. Unresolved trees are tree topologies with at least one \term{polytomy} (an internal node with at least four connecting edges). A fully-resolved unrooted tree has exactly three edges connecting to each internal node. The next two lines determine the kind of topology prior you wish to use. There are two major possibilities: (1) a polytomy prior and (2) a prior on resolution class.
+
+The first (\term{polytomy prior}) is the easiest to understand, is the one implied by the command \opt{mcmc}{polytomy\_prior}\code{ = True}, and is the only one we will use in the following exercises. In the polytomy prior, the relative prior probability of a tree with $n$ internal nodes differs from the prior probability of a tree with $n + 1$ internal nodes by the factor \opt{mcmc}{topo\_prior\_C}. If \opt{mcmc}{topo\_prior\_C} is set equal to 1.0, then every tree topology, regardless of the number of internal nodes, would have the same prior probability. Setting \opt{mcmc}{topo\_prior\_C} to a value greater than 1 favors less-resolved trees. If we used the command \opt{mcmc}{topo\_prior\_C}\code{ = exp(1.0)}, then the factor used would be $e^1$ (approximately 2.718), and a fully-resolved tree would need to have a likelihood 1 unit higher (on the log scale) to be favored over a tree with one fewer internal node (and hence 1 fewer edge). To push the bar even higher, you could set \opt{mcmc}{topo\_prior\_C}\code{ = exp(2.0)}, which sets the factor to $e^2$ and requires a more-resolved tree to be higher by 2 log-likelihood units to equal a tree with one more polytomy.
+
+You might ask ``Why should the prior favor less-resolved trees?'' If you are tempted to perform a polytomy-friendly analysis in the first place, it is probably because you fear that a false clade will receive undue support. In such situations, you may prefer to be conservative, not only allowing polytomous trees into the analysis but actually making it extra hard for a false clade to receive high support.
+
+The second possible prior allowed by Phycas is the \term{resolution class prior}. This prior not only takes account of the number of internal nodes, but also the number of possible trees that have that particular number of internal nodes. A tree topology in resolution class $k$ has $k$ internal nodes. For example, in a 4-taxon problem, there is a single star tree (resolution class 1) but 3 fully-resolved trees (resolution class 2). Suppose you conducted an MCMC analysis for a 4-taxon problem that explored the prior, using a polytomy prior with \opt{mcmc}{topo\_prior\_C}\code{ = 1}. In this case, every tree topology has the same prior probability as every other tree topology, yet the resulting sample would be dominated by fully-resolved trees! In fact, there should be 3 times as many fully-resolved trees as unresolved (star) trees showing up in the sample there are 3 possible unresolved trees but only 1 star tree. Using a resolution class prior, you could create a prior that results in each resolution class being C times more probable, a priori, than the next lower resolution class. For the 4-taxon case, making the star tree 3 times more probable than any one fully-resolved topology results in a flat resolution class prior. An MCMC sample would contain roughly the same number of star trees as fully-resolved trees. To use a resolution class prior, set \opt{mcmc}{polytomy\_prior}\code{ = False} and set \opt{mcmc}{topo\_prior\_C} to the desired ratio of adjacent resolution class priors.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Exploring the polytomy prior}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+It is instructive to run Phycas without data in order to explore the prior. Let's begin by figuring out what to expect. For a 5-taxon problem, there are 15 possible fully-resolved trees (resolution class 3), 10 trees with 2 internal nodes (resolution class 2), and 1 star tree (resolution class 1). Below is a table showing the expected results (prior probabilities of each of the 26 possible tree topologies) for both a polytomy prior and a resolution class prior when \opt{mcmc}{topo\_prior\_C} equals 1.0:
+\begin{tabular}{ccccc}
+Tree Number & Resolution Class & Tree Topology & Polytomy Prior & Resolution Class Prior \\ \hline
+1	 &   1	  	&  (1,2,3,4,5)	  	&    0.03846	&    0.33330 \\
+2	 & 	 2		&  (1,2,(3,4,5))	& 	 0.03846	& 	 0.03333 \\
+3	 & 	 2		&  (1,3,(2,4,5))	& 	 0.03846	& 	 0.03333 \\
+4	 & 	 2		&  (1,4,(2,3,5))	& 	 0.03846	& 	 0.03333 \\
+5	 & 	 2		&  (1,5,(2,3,4))	& 	 0.03846	& 	 0.03333 \\
+6	 & 	 2		&  (2,3,(1,4,5))	& 	 0.03846	& 	 0.03333 \\
+7	 & 	 2		&  (2,4,(1,3,5))	& 	 0.03846	& 	 0.03333 \\
+8	 & 	 2		&  (2,5,(1,3,4))	& 	 0.03846	& 	 0.03333 \\
+9	 & 	 2		&  (3,4,(1,2,5))	& 	 0.03846	& 	 0.03333 \\
+10	 & 	 2		&  (3,5,(1,2,4))	& 	 0.03846	& 	 0.03333 \\
+11	 & 	 2	  	&  (4,5,(1,2,3))	& 	 0.03846	&    0.03333 \\
+12	 & 	 3		&  (1,5,(2,3,4))	& 	 0.03846	& 	 0.02222 \\
+13   &   3		&  (2,5,(1,(3,4))	& 	 0.03846	& 	 0.02222 \\
+14	 & 	 3		&  (1,2,(5,(3,4))	& 	 0.03846	& 	 0.02222 \\
+15	 & 	 3		&  (1,2,(3,(4,5))	& 	 0.03846	& 	 0.02222 \\
+16	 & 	 3		&  (1,2,(4,(3,5))	& 	 0.03846	& 	 0.02222 \\
+17	 & 	 3		&  (1,5,(3,(2,4))	& 	 0.03846	& 	 0.02222 \\
+18	 & 	 3		&  (3,5,(1,(2,4))	& 	 0.03846	& 	 0.02222 \\
+19	 & 	 3		&  (1,3,(5,(2,4))	& 	 0.03846	& 	 0.02222 \\
+20	 & 	 3		&  (1,3,(2,(4,5))	& 	 0.03846	& 	 0.02222 \\
+21	 & 	 3		&  (1,3,(4,(2,5))	& 	 0.03846	& 	 0.02222 \\
+22	 & 	 3		&  (1,5,(4,(2,3))	& 	 0.03846	& 	 0.02222 \\
+23	 & 	 3		&  (4,5,(1,(2,3))	& 	 0.03846	& 	 0.02222 \\
+24	 & 	 3		&  (1,4,(5,(2,3))	& 	 0.03846	& 	 0.02222 \\
+25	 & 	 3		&  (1,4,(2,(3,5))	& 	 0.03846	& 	 0.02222 \\
+26	 & 	 3	  	&  (1,4,(3,(2,5))	& 	 0.03846	&    0.02222 \\ \hline
+\end{tabular}
+For the polytomy prior, each of the 26 tree topologies shows up in 1/26 (3.846\%) of the sample. Note that, as a class, fully-resolved trees dominate the sample (57.7\%) even though, individually, they are as frequent as any other tree topology. That is because there are 15 tree topologies in this class (resolution class 3), but only 10 in resolution class 2 and only 1 in resolution class 1 (the star tree).
+
+In the resolution class prior column, note that each of the fully resolved trees shows up 2.222\% of the time, but because there are 15 of these fully-resolved tree topologies, as a class they make up 15*2.222 = 33.33\% of the sample. Likewise, the tree topologies in resolution class 2 show up individually only 3.333\% of the time, but as a class they make up 33.33\%. Finally, the star tree, being alone in its resolution class, makes up 33.33\% of the sample.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{The \pathname{polytomy.py} script}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Set up an analysis that will explore one of these priors. Here is a minimal phycas Python script to explore the resolution class prior for 5 taxa. Name this script \pathname{polytomy.py}.
+\begin{verbatim}
+from phycas import *
+
+mcmc.allow_polytomies = True
+mcmc.polytomy_prior   = False
+mcmc.topo_prior_C     = 1.0
+
+mcmc.data_source = None
+mcmc.ntax = 5 
+  
+mcmc.ncycles = 20000
+mcmc.sample_every = 1 
+
+mcmc()
+
+sumt.trees = 'trees.t'
+sumt.burnin = 1
+sumt.tree_credible_prob = 1.0
+sumt()
+\end{verbatim}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Line-by-line explanation} \label{subsec:steppingstonepyexplanation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{samepage}
+\begin{verbatim}
+from phycas import *
+\end{verbatim}
+\pointup\ This is the mandatory starting line for any Phycas Python script. It imports all the functionality defined by Phycas into your Python implementation.
+\end{samepage}
+
+\begin{samepage}
+\begin{verbatim}
+mcmc.allow_polytomies = True
+\end{verbatim}
+\pointup\ This line tells Phycas to consider unresolved trees when performing a Bayesian MCMC analysis. If this were set to \code{False} (the default), only fully resolved trees would be allowed.
+\end{samepage}
+
+\begin{samepage}
+\begin{verbatim}
+mcmc.polytomy_prior   = False
+\end{verbatim}
+\pointup\ Setting \opt{mcmc}{polytomy\_prior} to \code{True} tells Phycas that you want to use a \term{polytomy prior}. Setting \opt{mcmc}{polytomy\_prior} to \code{False}, as we've done here, chooses a \term{resolution class prior}.
+\end{samepage}
+
+\begin{samepage}
+\begin{verbatim}
+mcmc.topo_prior_C     = 1.0
+\end{verbatim}
+\pointup\ This sets the ``strength'' of the resolution class prior. Specifying 1.0 here means that each resolution class will be represented equally in a sample from the prior. This effectively emphasizes tree topologies in resolution classes that have fewer members. For example, even though the star tree is the only member of the resolution class 1, it will be visited as often as the fully-resolved resolution class, which contains a potentially huge number of tree topologies (2,027,025 unrooted, fully-resolved tree topologies for just 10 taxa). Specifying 2.0 here would mean each resolution class is twice as probable as the next higher resolution class (by higher, I mean more resolved; i.e. having one more internal node).
+\end{samepage}
+
+\begin{samepage}
+\begin{verbatim}
+mcmc.data_source = None
+\end{verbatim}
+\pointup\ Setting \opt{mcmc}{data\_source} to \code{None} (be sure to capitalize the \code{None} so that Python recognizes it) tells Phycas that we are not specifying a data set for this analysis. The MCMC analysis will explore the prior rather than the posterior in this case.
+\end{samepage}
+
+\begin{samepage}
+\begin{verbatim}
+mcmc.ntax = 5
+\end{verbatim}
+\pointup\ Normally, Phycas ascertains the number of taxa from the data file, but since we are running without data we need to tell Phycas how many taxa to assume. The \opt{mcmc}{ntax} setting accomplishes that.
+\end{samepage}
+
+\begin{samepage}
+\begin{verbatim}
+mcmc.ncycles = 20000
+\end{verbatim}
+\pointup\ The \opt{mcmc}{ncycles} setting tells Phycas how many parameter update cycles to perform. Phycas will normally update each parameter once during a single cycle, but edge length parameters make this a bit complicated. If the tree topology is fixed, each branch length is updated once per cycle. In the present example, the tree topology is free to vary, which means that edge lengths are updated using a Metropolis-Hastings proposal (the LOCAL move) that selects three edges at random to modify. This proposal is, by default, attempted 100 times per cycle, so some edge length parameters will probably get updated more than once, and others not at all, during a single update cycle.
+\end{samepage}
+
+\begin{samepage}
+\begin{verbatim}
+mcmc.sample_every = 1
+\end{verbatim}
+\pointup\ The \opt{mcmc}{sample\_every} setting establishes how often a sample will be saved to the \pathname{params.p} file. In this case, we are saving a sample after every cycles. If this setting had been 10, then we would only save a sample after every 10 cycles.
+\end{samepage}
+
+\begin{samepage}
+\begin{verbatim}
+mcmc()
+\end{verbatim}
+\pointup\ The \cmd{mcmc} command initiates the MCMC analysis.
+\end{samepage}
+
+\begin{samepage}
+\begin{verbatim}
+sumt.trees = 'trees.t'
+\end{verbatim}
+\pointup\ The \cmd{sumt} command summarizes the trees and splits sampled during an MCMC analysis. This \opt{sumt}{trees} setting tells the \cmd{sumt} command what file to summarize. The \pathname{trees.t} file is created by the \cmd{mcmc} command.
+\end{samepage}
+
+\begin{samepage}
+\begin{verbatim}
+sumt.burnin = 1
+\end{verbatim}
+\pointup\ The first tree saved in a tree file produced during an MCMC analysis is the starting tree, which is never a valid sample from the posterior distribution. Thus, the \opt{sumt}{burnin} setting above tells Phycas to not count the first tree in the \pathname{trees.t} file. If we had specified 10 instead of 1 for the \opt{sumt}{burnin} setting, then Phycas would have ignored the first ten trees it found in the \pathname{trees.t} file.
+\end{samepage}
+
+\begin{samepage}
+\begin{verbatim}
+sumt.tree_credible_prob = 1.0
+\end{verbatim}
+\pointup\ Normally, the \cmd{sumt} command produces a PDF file containing a graphical representation of all trees in the 95\% credible set. To determine the 95\% credible set, Phycas sorts tree topologies by their marginal posterior probability (with the largest posteriors first) and adds tree topologies to the credible set until the cumulative posterior probability first exceeds 0.95. The \opt{sumt}{tree\_credible\_prob} setting tells Phycas what the cutoff should be. The default value is 0.95, but here we are making it 1.0 so that all trees sampled will be included in the credible set (and any summary statistics produced). Ordinarily, this might be a dangerous thing to do. Imagine if your \pathname{trees.t} file contained 20000 distinct tree topologies. The resulting PDF file would be enormous! In this case it is safe because we know there are only 15 possible tree topologies for 5 taxa.
+\end{samepage}
+
+\begin{samepage}
+\begin{verbatim}
+sumt()
+\end{verbatim}
+\pointup\ This line calls the \cmd{sumt}. It essentially tells Phycas that we have finished setting up the \cmd{sumt} command and are ready for it to run.
 \end{samepage}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
