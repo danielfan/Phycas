@@ -1,4 +1,4 @@
-\subsubsection{Input options:}\begin{description}
+\paragraph[Input options]{Input options:}\begin{description}
 \item[\bftt  nbetavals] The number of values beta will take on during the run; for example, if this value is 4, then beta will take on these values: 1, 2/3, 1/3, 0 (default: {\bftt  101})
 \item[\bftt  ti] If True, the marginal likelihood will be estimated using thermodynamic integration and the stepping stone method with reference distribution equal to the prior; if False (the default), the stepping stone method with reference distribution approximating the posterior will be used (this greatly improves the accuracy of the stepping stone method and is strongly recommended). (default: {\bftt  False})
 \item[\bftt  xcycles] The number of extra cycles (above and beyond mcmc.ncycles) that will be spent exploring the posterior (additional posterior cycles help stepping stone analyses formulate an effective reference distribution). (default: {\bftt  0})

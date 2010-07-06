@@ -19,6 +19,9 @@
 % Put numbers in section and subsection headings, but not subsubsection headings
 \setcounter{secnumdepth}{2}
 
+% Include sections, subsections, and subsubsections (but not paragraphs or subparagraphs) in the Table Of Contents
+\setcounter{tocdepth}{3}
+
 % Specify by how much to indent paragraphs
 \setlength{\parindent}{0ex}
 
@@ -132,7 +135,7 @@ pdfkeywords={phylogenetics, Bayesian, Markov chain Monte Carlo, MCMC}}
 \maketitle
 
 \tableofcontents
-
+\clearpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% Introduction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -143,12 +146,12 @@ Phycas (\url{http://www.phycas.org}) is an extension of the Python programming l
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{What's new in version 1.2?} %%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-This version adds support for data partitioning, changes the name of the \cmd{ps} command to \cmd{ss}, and adds the \cmd{cpo} command. Phycas supports a limited form of data partitioning at present in that topology and edge lengths are always linked across partition subsets and all other model parameters are unlinked. The name change from \cmd{ps} to \cmd{ss} reflects the fact that the primary purpose of the command is to use the Stepping Stone method, and ``ps'' stands for ``path sampling,'' a name that was never used even by the authors of the thermodynamic integration approach! Finally, the \cmd{cpo} command is identical to the \cmd{mcmc} command except that it saves the site log-likelihoods to a file and estimates the Conditional Predictive Ordinate for each site using those stored site log-likelihoods. See section \ref{cpo} for details. 
+This version was released on July 7, 2010, and corresponds with SourceForge SVN revision number XXXX. It adds support for data partitioning, changes the name of the \cmd{ps} command to \cmd{ss}, and adds the \cmd{cpo} command. Phycas supports a limited form of data partitioning at present in that topology and edge lengths are always linked across partition subsets and all other model parameters are unlinked. The name change from \cmd{ps} to \cmd{ss} reflects the fact that the primary purpose of the command is to use the Stepping Stone method, and ``ps'' stands for ``path sampling,'' a name that was never used even by the authors of the thermodynamic integration approach! Finally, the \cmd{cpo} command is identical to the \cmd{mcmc} command except that it saves the site log-likelihoods to a file and estimates the Conditional Predictive Ordinate for each site using those stored site log-likelihoods. See section \ref{cpo} for details. 
 
-Other changes include the following:
-\begin{itemize}
-\item The process of specifying a master pseudorandom number seed has been simplified. You can now simply insert the command \code{setMasterSeed(13579)}\index{setMasterSeed} just after the \code{from phycas import *} command to set the master random number seed to the value 13579.
-\end{itemize}
+The process of specifying a master pseudorandom number seed has been simplified in version 1.2. You can now simply insert the command \code{setMasterSeed(13579)}\index{setMasterSeed} just after the \code{from phycas import *} command to set the master random number seed to the value 13579.
+
+\subsubsection{Bugs fixed}
+The BUGS file documents two additional bug fixes prior to this release. They are the ``underflow'' bug (brought to our attention by Federico Plazzi and Mark Clements), which resulted in incorrect likelihood calculations for large trees when a ``+I'' model was in use, and the ``Jockusch'' bug (brought to our attention by Elizabeth Jockusch), which resulted in ``not-a-number'' likelihoods when a particular subset relative rate was very tiny.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{What's new in version 1.1.x?} %%%%%%%%
@@ -167,7 +170,7 @@ Two memory leaks were fixed prior to this release. For a description of the leak
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{How to use this manual} %%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-This manual begins with a description of some things you can do with Phycas that you cannot do with most other Bayesian phylogenetics software. Following this features section (section~\ref{sec:features}) is a tutorial showing you how to perform some simple analyses. This tutorial (sections~\ref{sec:warmup} to \ref{sec:polytomyanalyses}) does not attempt to explain all possible settings. The online help system provides details about settings not mentioned in the tutorial. After these initial sections, the manual switches to reference style, detailing probability distributions (section~\ref{sec:probdist}) that can be used as priors, and describing the models of character evolution (section~\ref{sec:models}) available in Phycas. Toward the end you will find a discussion (section~\ref{sec:designprinciples}) of design principles (e.g. Why did we decide to extend Python rather than write a stand-alone program? Why is there no graphical interface?) followed by an annotated listing (section~\ref{sec:phycassettings}) of Phycas settings. The final section (section~\ref{sec:install}) is devoted to the details of getting Phycas (and Python) installed on your computer system.
+This manual begins with a description of some things you can do with Phycas that you cannot do with most other Bayesian phylogenetics software. Following this features section (section~\ref{sec:features}) is a tutorial (section~\ref{sec:tutorial}) showing you how to perform some simple analyses. This tutorial does not attempt to explain all possible settings. The online help system provides details about settings not mentioned in the tutorial. After these initial sections, the manual switches to reference style (section~\ref{sec:reference}), detailing probability distributions (section~\ref{subsec:probdist}) that can be used as priors, and describing the models of character evolution (section~\ref{subsec:models}) available in Phycas. Toward the end you will find an annotated listing (section~\ref{subsec:phycassettings}) of Phycas settings. This is followed by a discussion (section~\ref{sec:designprinciples}) of design principles (e.g. Why did we decide to extend Python rather than write a stand-alone program? Why is there no graphical interface?). The final section (section~\ref{sec:install}) is devoted to the details of getting Phycas (and Python) installed on your computer system.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% Features %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -224,15 +227,20 @@ Conditional predictive ordinates (CPO) provide a way to assess the fit of the mo
 To get Phycas to calculate CPO values, specify \code{True} for \opt{mcmc}{save\_sitelikes}. This will cause Phycas to save a (sometimes very large) ``sitelikes'' file containing the site log-likelihoods for every site for every sample. Thus, if your alignment comprises 2000 sites and you specify \opt{mcmc}{ncycles} to be 10000 and \opt{mcmc}{sample\_every} to be 10, then this file will contain 1000 rows and 2000 columns. The name of the file produced can be specified with \opt{mcmc}{out.sitelikes} setting (the file will be named \code{sitelikes.txt} by default). You must used the command \cmd{sump} to summarize this file after the analysis is finished. Set the option \opt{sump}{cpofile} equal to a string specifying the name of the file of site likelihoods produced by the \cmd{mcmc} command. You must specify \opt{sump}{cpofile} even if you did not modify \opt{mcmc}{out.sitelikes} because, by default, the \cmd{sump} command does not even look for a file of site likelihoods to summarize. In its summary, the \cmd{sump} command will use the harmonic mean of the site likelihoods in one column of the sitelikes file as the estimate of the CPO for the site represented by that column. (If you calculate these in some other program, such as Excel, note that the estimator equals the log of the harmonic mean of the sampled site likelihoods, not the harmonic mean of the sampled site log-likelihoods.) While the harmonic mean method is unstable for estimating the overall marginal likelihood, it provides a stable and accurate method for estimating CPO values. The \cmd{sump} command will not only output the overall log CPO (calculated as the sum over sites of the log CPO at each site), but will generate a file containing the commands for generating a plot of log(CPO) vs. site in the software R (\url{http://www.r-project.org/}).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% Tutorial %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Tutorial} \label{sec:tutorial}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% Warming up to Phycas %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Warming up to Phycas} \label{sec:warmup}
+\subsection{Warming up to Phycas} \label{subsec:warmup}
 
-Phycas is an extension of Python, so to use it you must first start Python. In this section, you will learn how to invoke Phycas commands from the Python command line. After you become familiar with the basic commands, you will probably want to create a file containing the Phycas commands for a particular analysis. Creating such a file (a Python \term{script}) makes it easier to remember exactly what analyses you performed at some later time. If you want to redo an analysis, having the commands in a script file means you do not have to type the majority of the commands over again. We will switch to using scripts in section~\ref{sec:basic} (``A basic analysis'').
+Phycas is an extension of Python, so to use it you must first start Python. In this section, you will learn how to invoke Phycas commands from the Python command line. After you become familiar with the basic commands, you will probably want to create a file containing the Phycas commands for a particular analysis. Creating such a file (a Python \term{script}) makes it easier to remember exactly what analyses you performed at some later time. If you want to redo an analysis, having the commands in a script file means you do not have to type the majority of the commands over again. We will switch to using scripts in section~\ref{subsec:basic} (``A basic analysis'').
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{First things first}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{First things first}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 The way Phycas is run depends on the operating system you are using. If you are using the Windows or Linux versions, you start Phycas by opening a terminal (in Windows this is referred to as a ``console window'' or ``command prompt'') and typing \code{python} to invoke Python. If you are using a Mac, you will have downloaded the \phycasapp\ bundle that is built around the open-source terminal program iTerm (\url{http://iterm.sourceforge.net/}). Starting \phycasapp\ by double-clicking the Phycas icon automatically starts an iTerm terminal, invokes Python, and loads Phycas.
 
@@ -264,9 +272,9 @@ Phycas is an ``extension'' of Python, but you must import extensions in order fo
 
 All the instructions for the rest of the manual will be executed the same way regardless of whether Phycas running from a Windows console window, a Linux terminal or the \pathname{Phycas} application.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Getting help}
-%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Getting help}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Now type \cmd{help} at the Python prompt. This will display the following help message:
 \begin{verbatim}
 >>> help
@@ -366,7 +374,7 @@ Error: name 'gtr' is not defined
 Note that python is forgiving about whether you use double-quotes to delimit strings or single-quotes -- either will work to tell Python that you mean a string rather than the name of a variable.
 Do not be confused by the subtle differences in typesetting within this manual. In all cases you should use plain quotes in Python (not the ``back-tick'' character or any special curved quote that is found in some word-processing programs).
 
-The option \opt{model}{kappa\_prior} specifies the prior probability distribution to use for the transition/transversion rate ratio. Phycas defines several probability distributions for use as priors. In this case, the current value of \optval{Exponential(1.00000)} indicates that the $\kappa$ parameter will be assigned an exponential(1) prior distribution. See section~\ref{sec:probdist} (p.~\pageref{sec:probdist}) for a complete list of probability distributions available within Phycas.
+The option \opt{model}{kappa\_prior} specifies the prior probability distribution to use for the transition/transversion rate ratio. Phycas defines several probability distributions for use as priors. In this case, the current value of \optval{Exponential(1.00000)} indicates that the $\kappa$ parameter will be assigned an exponential(1) prior distribution. See section~\ref{subsec:probdist} (p.~\pageref{subsec:probdist}) for a complete list of probability distributions available within Phycas.
 
 The option \opt{model}{relrates} specifies the values of the six GTR relative rates parameters. The square brackets around the value of the \opt{model}{relrates} parameter, \optval{[1.0, 4.0, 1.0, 1.0, 4.0, 1.0]}, indicate that you should specify the six relative rate values as a Python \term{list}. The description (``The current values for GTR relative rates. These should be specified in this order: A$<$-$>$C, A$<$-$>$G, A$<$-$>$T, C$<$-$>$G, C$<$-$>$T, G$<$-$>$T.'') indicates the expected order for the six relative rate values. The \opt{model}{relrates} option and others like it, such as \opt{model}{kappa}, \opt{model}{state\_freqs}, \opt{model}{gamma\_shape}, and \opt{model}{pinvar} are used for a variety of purposes: (1) to set the starting values for an MCMC analysis (the \cmd{mcmc} command); (2) to specify the values of parameters for simulations (the \cmd{sim} command); or (3) to specify the values of parameters for calculating the likelihood (the \cmd{like} command).
 
@@ -375,20 +383,20 @@ The \opt{model}{fix\_relrates} command is used to specify whether the relative r
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% A basic analysis %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{A basic analysis} \label{sec:basic}
+\subsection{A basic analysis} \label{subsec:basic}
 
 The next task is to create a Python script containing the commands to carry out a basic MCMC analysis. A Python script is a file containing Python source code (including Phycas commands). When submitted to the Python interpreter (a computer program), the commands in the script file are read and executed.  
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Before proceeding...}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Before proceeding...}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Exit your current Python session by typing \keycmd{Ctrl-d} (MacOS or Linux) or \keycmd{Ctrl-z} (Windows). If you are using \phycasapp\ on MacOS, type \keycmd{Ctrl-d} one more time to exit the terminal shell (this will make the iTerm window disappear). 
 
 Create a new, empty directory (a.k.a. folder) in which to experiment. Copy the file \pathname{green.nex} into the new directory. This file can be found under your Phycas installation directory at the location \pathname{phycas/Tests/Data/green.nex}. If you have no idea where your Phycas installation directory is located, please refer to the relevant subsection of the installation instructions (either section~\ref{subsubsec:installfolderwindows} if you are using Windows, or section~\ref{subsubsec:installfoldermac} if you are using a Mac).
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{The {\em basic.py} script}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{The {\em basic.py} script}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Create a new (plain text\footnote{It is important to save the file using plain text format. Most word processing programs, such as \trademark{Microsoft} \trademark{Word}, save files by default in a format that contains a lot of extra, proprietary information. All such programs have the option to save the file as plain text. It is best to create Python scripts using an editor that {\em only} saves files as plain text. Examples (for \trademark{Windows}) include Notepad++ and Pythonwin (or the simple Notepad program that comes with \trademark{Windows}). For Macs, Text Wrangler or BBEdit are good choices. Python comes with its own editor, named Idle, that is also a good (if slightly sluggish) choice. jEdit (\url{http://www.jedit.org/}) is a Java-Based text editor that works well on all platforms.}) file in the folder (which should contain only the file \pathname{green.nex}). Name the new file \pathname{basic.py} and type (or copy/paste) the following lines into the file:
 \begin{verbatim}
 from phycas import *
@@ -402,9 +410,10 @@ mcmc.sample_every = 10
 mcmc()
 \end{verbatim}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Line-by-line explanation} \label{subsec:basicpyexplanation}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Line-by-line explanation} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{subsubsec:basicpyexplanation}
 \begin{samepage}
 \begin{verbatim}
 from phycas import *
@@ -457,7 +466,7 @@ mcmc.out.params.prefix = 'green'
 mcmc.ncycles = 2000
 \end{verbatim}
 \pointup\ The option \opt{mcmc}{ncycles} determines the length of the MCMC run. Cycles in Phycas are {\em not} the same as generations in MrBayes. About two orders of magnitude {\em fewer} Phycas cycles are needed than MrBayes generations, so a 2000 cycle Phycas run corresponds (roughly) to a 200,000 generation MrBayes run. This does not mean that Phycas runs faster (or slower) than MrBayes; it simply means that Phycas does more work during a single ``cycle'' than MrBayes does in one ``generation.''\footnote
-%
+
 {To compare the speed of MrBayes with Phycas, you should compare the time it takes, on average, to calculate the likelihood, which is the most computationally expensive task either program performs. Phycas reports this average value at the end of a run. MrBayes computes the likelihood roughly one time per generation if you specify \code{mcmcp nrun=1 nchain=1}. Also, be sure to compare the two programs under the same model and on the same dataset and with the same computer!}
 \end{samepage}
 
@@ -486,17 +495,18 @@ to save the current model settings to a variable named \code{m1}\footnote
 %
 {The name ``m1'' here is arbitrary, but you should be careful to avoid using names that are identical to those Phycas uses. For example, if you named your model ``mcmc'', then you would lose the ability to perform an MCMC analysis because you have redifined the name ``mcmc'' to mean something else!}
 %
-. Why would you want to save your model? It is necessary to save the model if you are planning to partition your data because the partitioning commands require you to specify a model (e.g. ``m1'') along with the set of sites to which that model applies. You will read more about partitioning in section~\ref{subsec:partitioning} on page~\pageref{subsec:partitioning}.
+. Why would you want to save your model? It is necessary to save the model if you are planning to partition your data because the partitioning commands require you to specify a model (e.g. ``m1'') along with the set of sites to which that model applies. You will read more about partitioning in section~\ref{subsec:definingpartitionmodel} on page~\pageref{subsec:definingpartitionmodel}.
 
 The \code{randomtrees()} invocation returns a \code{TreeCollection} that holds a set of simulated trees and is another example of a command that does not produce visible output.
 \end{samepage}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Running \pathname{basic.py}} \label{subsec:runningbasicpy}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Running \pathname{basic.py}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{subsubsec:runningbasicpy}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{If you are using Windows...} 
+{\bf If you are using Windows...} 
 
 To execute the \pathname{basic.py} script you just created, open a console window, navigate\footnote{We suggest you read section~\ref{subsubsec:winconsole}, where a registry trick is described that enables you to open a console window positioned at a particular directory by right-clicking the name of the folder in and Explorer or My Computer window. This saves having to navigate to the directory after opening the console window, which can be a very tedious and time consuming operation if the directory in which your script resides is nested deep inside your file system.} to the directory containing the script and type the following at the command prompt:
 %
@@ -505,18 +515,18 @@ python basic.py
 \end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{If you are using MacOS...} 
+{\bf If you are using MacOS...} 
 
 Locate your \pathname{basic.py} file in a Finder window, then drag it onto the \phycasapp\ icon \phycasicon. (NOTE: be sure to drop the \pathname{basic.py} file, NOT the data file, onto the \phycasapp\ icon.) It should start running immediately and leave you with a Python prompt \code{>>>} when it is finished. Press \keycmd{Ctrl-d} twice (once to exit Python, a second time to exit the iTerm session).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Regardless of your operating system...} 
+{\bf Regardless of your operating system...} 
 
 The program should run for a few minutes, creating three files (\pathname{basic.log}, \pathname{green.t} and \pathname{green.p}) as it runs. The file \pathname{green.t} is the tree file containing the trees sampled during the MCMC run, while \pathname{green.p} is the parameter file containing samples of model parameters. These files are equivalent to their counterparts in MrBayes.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{A word about pseudorandom numbers in Phycas} \label{subsec:rng}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{A word about pseudorandom numbers in Phycas}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 You will notice that if you run \pathname{basic.py} twice, the results will differ slightly the second time. This is because Phycas seeds its pseudorandom number generator using the system clock, and as a result, an entirely different series of pseudorandom numbers is used for the second MCMC analysis compared to the first MCMC analysis. The results are comparable, and both are equally valid, but most of the time you would like to have the option of exactly repeating an analysis (for example, you might want to make the Phycas script used to obtain the results for a published paper available to reviewers or the scientific community). To do this in Phycas, you must use the \cmd{setMasterSeed} command.
 
@@ -547,13 +557,13 @@ Pseudorandom numbers (as the name suggests) are not really random, but they beha
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% Summarizing tree files %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Summarizing tree files}
+\subsection{Summarizing tree files}
 
 Phycas provides the \cmd{sumt} method for summarizing an input tree file. While analogous, Phycas' \cmd{sumt} method differs somewhat from the MrBayes sumt command. The example below stands alone, however there is no reason why you could not place the following statements after the \cmd{mcmc} call in the previous \pathname{basic.py} example. For now, however, create a new file named \pathname{summarize.py} (in the same folder housing \pathname{basic.py}), enter the text of the example script below into the file, and save the file.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Example script}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Example script}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{verbatim}
 from phycas import *
 sumt.trees = 'green.t'
@@ -563,14 +573,14 @@ sumt.burnin = 1
 sumt()
 \end{verbatim}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Line-by-line explanation}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Line-by-line explanation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{samepage}
 \begin{verbatim}
 from phycas import *
 \end{verbatim}
-\pointup\ These two lines were explained previously in the explanation of the \pathname{basic.py} script on page~\pageref{subsec:basicpyexplanation}. (This line would not be necessary if the \code{sumt} commands were appended to the end of \pathname{basic.py}.)
+\pointup\ These two lines were explained previously in the explanation of the \pathname{basic.py} script on page~\pageref{subsubsec:basicpyexplanation}. (This line would not be necessary if the \code{sumt} commands were appended to the end of \pathname{basic.py}.)
 \end{samepage}
 
 \begin{samepage}
@@ -620,15 +630,16 @@ sumt()
 \item[k] This is the number of sojourns made by the split or tree topology. A sojourn is a sequence of sampled trees in which the split or topology appears, preceded and followed by a sampled tree lacking that split or topology.
 \end{description}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Running \pathname{summarize.py}}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Using the same procedure outlined in section~\ref{subsec:runningbasicpy}, run your \pathname{summarize.py} script. This will produce the files \pathname{trees.tre}, \pathname{trees.pdf} and \pathname{splits.pdf}. You can open the PDF files and view or print the figures therein.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Running \pathname{summarize.py}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Using the same procedure outlined in section~\ref{subsubsec:runningbasicpy}, run your \pathname{summarize.py} script. This will produce the files \pathname{trees.tre}, \pathname{trees.pdf} and \pathname{splits.pdf}. You can open the PDF files and view or print the figures therein.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% Defining a partition model %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Defining a partition model}\label{sec:definingpartitionmodel}
+\subsection{Defining a partition model}
+\label{subsec:definingpartitionmodel}
 
 This section describes \term{partitioning}, which is dividing your data set into subsets of sites and applying a separate model to each subset. We will use the term \term{partition} to mean ``wall'' and a \term{partitioning} to mean a particular division of sites into mutually-exclusive subsets. This differs from common usage, where the term partition is used to mean a subset of sites, but is in line with mathematical usage of the term.
 
@@ -636,9 +647,9 @@ To create a \term{partition model} in Phycas, you first define models for all su
 
 I will use the following specification to illustrate how to set up a partitioned model and then you will be given the chance to apply it to real protein-coding gene set. The model that we will set up separates first, second and third codon positions. You will apply a separate K80+G model to the first and second codon positions and an HKY+G model to third positions.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{The {\em partition.py} script}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{The {\em partition.py} script}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Create a new file in a folder containing the file \pathname{green.nex}. Name the new file \pathname{partition.py} and type (or copy/paste) the following lines into the file:
 \begin{verbatim}
 from phycas import *
@@ -674,9 +685,10 @@ sumt.trees = 'trees.t'
 sumt()
 \end{verbatim}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Line-by-line explanation} \label{subsec:partitionpyexplanation}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Line-by-line explanation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{subsubsec:partitionpyexplanation}
 
 \begin{samepage}
 \begin{verbatim}
@@ -780,15 +792,16 @@ sumt()
 \pointup\ Finally, let's follow the \cmd{mcmc} command with a \cmd{sumt} command to provide a summary of the posterior distribution of trees. The setting \opt{sumt}{trees} tells the \cmd{sumt} command what file to process. (The \cmd{sumt} command does not assume a default file name for the tree file to process, so the name of the file to process must be declared explicitly.)
 \end{samepage}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Running \pathname{partition.py}} \label{subsec:runningpartitionpy}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Run the \pathname{partition.py} in Python as described for \pathname{basic.py} (see section \ref{subsec:runningbasicpy} on page \pageref{subsec:runningbasicpy}). In the end, you should several files. The files \pathname{params.p}, \pathname{trees.t} and \pathname{mcmcoutput.txt} were produced by the \cmd{mcmc} command. The files \pathname{sumtoutput.txt}, \pathname{sumt\_splits.pdf}, \pathname{sumt\_trees.pdf} and \pathname{sumt\_trees.tre} were produced by the \cmd{sumt} command.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Running \pathname{partition.py}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Run the \pathname{partition.py} in Python as described for \pathname{basic.py} (see section \ref{subsubsec:runningbasicpy} on page \pageref{subsubsec:runningbasicpy}). In the end, you should several files. The files \pathname{params.p}, \pathname{trees.t} and \pathname{mcmcoutput.txt} were produced by the \cmd{mcmc} command. The files \pathname{sumtoutput.txt}, \pathname{sumt\_splits.pdf}, \pathname{sumt\_trees.pdf} and \pathname{sumt\_trees.tre} were produced by the \cmd{sumt} command.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%% Estimating marginal likelihoods %%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% Estimating marginal likelihoods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Estimating marginal likelihoods}\label{sec:marginallikelihood}
+\subsection{Estimating marginal likelihoods}
+
 There are two papers \citep{FanWuChenKuoLewis2010,XieLewisFanKuoChen2010} describing the stepping stone (SS) method for estimating the marginal likelihood of a model, but at this time (6 July 2010) neither one has been published. The paper by \citet{FanWuChenKuoLewis2010} describes the method used below. Both papers are available upon request.
 
 To estimate the marginal likelihood using the steppingstone method, a special MCMC analysis is conducted that begins by exploring the posterior distribution but transitions slowly to exploring a reference distribution.  The reference distribution is similar to the actual prior in that the joint reference distribution comprises a product of independent probability distributions, but differs from the actual prior in that a sample from the posterior distribution is used to inform the reference distribution. For example, if the sample posterior mean and variance of a particular branch length parameter is available, the component of the reference distribution associated with that branch length would be a Gamma distribution with this mean and variance. 
@@ -807,9 +820,9 @@ Note that the denominator of one ratio cancels the numerator of the adjacent rat
 
 Why estimate all those ratios if almost everything cancels? The answer is that, like jumping a creek, it helps to have stepping stones. Estimating the ratio $c_{1.0}/c_{0.0}$ is difficult because even though the reference distribution is made to be as close as possible to the posterior, it is nevertheless very simple compared to the posterior (a good deal of the correlation among parameters is missing because the reference distribution is a product of independent probability distributions). Each ratio in the product above, however, is much easier to estimate because the distribution on top is quite similar to the one on the bottom, a situation in which importance sampling work well.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{The \pathname{steppingstone.py} script}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{The \pathname{steppingstone.py} script}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 To initiate a steppingstone analysis, use the \cmd{ss} command {\em instead of} the\cmd{mcmc} command. Here is the entire \pathname{steppingstone.py} script. 
 
 \begin{verbatim}
@@ -852,10 +865,10 @@ sump.file = 'params.p'
 sump()
 \end{verbatim}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Line-by-line explanation} \label{subsec:steppingstonepyexplanation}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Most of this script was described in the previous section (see section~\ref{subsec:partitionpyexplanation}), so we will start with the line containing the \opt{mcmc}{fix\_topology} setting.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Line-by-line explanation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Most of this script was described in the previous section (see section~\ref{subsubsec:partitionpyexplanation}), so we will start with the line containing the \opt{mcmc}{fix\_topology} setting.
 
 \begin{samepage}
 \begin{verbatim}
@@ -912,7 +925,7 @@ sump()
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% Polytomy analyses %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Polytomy analyses}\label{sec:polytomyanalyses}
+\subsection{Polytomy analyses}
 
 Unlike most other programs for Bayesian phylogenetic inference, Phycas can be set up to allow its Markov chain to visit tree topologies containing polytomies. In the most extreme case, Phycas could even spend time on the star tree (i.e. a tree with only one internal node). The reasons one might want to do this are outlined in \citet*{LewisHolderHolsinger2005}. Phycas is not the only software package out there that does this. In fact, there are two others that I know of: Crux (written by Jason Evans, \url{http://www.canonware.com/Crux/}) and p4 (written by Peter Foster, \url{http://bmnh.org/~pf/p4.html}).
 To convert an existing phycas Python script into one that allows polytomies, you need add only three lines:
@@ -930,7 +943,7 @@ You might ask ``Why should the prior favor less-resolved trees?'' If you are tem
 The second possible prior allowed by Phycas is the \term{resolution class prior}. This prior not only takes account of the number of internal nodes, but also the number of possible trees that have that particular number of internal nodes. A tree topology in resolution class $k$ has $k$ internal nodes. For example, in a 4-taxon problem, there is a single star tree (resolution class 1) but 3 fully-resolved trees (resolution class 2). Suppose you conducted an MCMC analysis for a 4-taxon problem that explored the prior, using a polytomy prior with \opt{mcmc}{topo\_prior\_C}\code{ = 1}. In this case, every tree topology has the same prior probability as every other tree topology, yet the resulting sample would be dominated by fully-resolved trees! In fact, there should be 3 times as many fully-resolved trees as unresolved (star) trees showing up in the sample there are 3 possible unresolved trees but only 1 star tree. Using a resolution class prior, you could create a prior that results in each resolution class being C times more probable, a priori, than the next lower resolution class. For the 4-taxon case, making the star tree 3 times more probable than any one fully-resolved topology results in a flat resolution class prior. An MCMC sample would contain roughly the same number of star trees as fully-resolved trees. To use a resolution class prior, set \opt{mcmc}{polytomy\_prior}\code{ = False} and set \opt{mcmc}{topo\_prior\_C} to the desired ratio of adjacent resolution class priors.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Exploring the polytomy prior}
+\subsubsection{Exploring the polytomy prior}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 It is instructive to run Phycas without data in order to explore the prior. Let's begin by figuring out what to expect. For a 5-taxon problem, there are 15 possible fully-resolved trees (resolution class 3), 10 trees with 2 internal nodes (resolution class 2), and 1 star tree (resolution class 1). Below is a table showing the expected results (prior probabilities of each of the 26 possible tree topologies) for both a polytomy prior and a resolution class prior when \opt{mcmc}{topo\_prior\_C} equals 1.0:
@@ -968,7 +981,7 @@ For the polytomy prior, each of the 26 tree topologies shows up in 1/26 (3.846\%
 In the resolution class prior column, note that each of the fully resolved trees shows up 2.222\% of the time, but because there are 15 of these fully-resolved tree topologies, as a class they make up 15*2.222 = 33.33\% of the sample. Likewise, the tree topologies in resolution class 2 show up individually only 3.333\% of the time, but as a class they make up 33.33\%. Finally, the star tree, being alone in its resolution class, makes up 33.33\% of the sample.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{The \pathname{polytomy.py} script}
+\subsubsection{The \pathname{polytomy.py} script}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Set up an analysis that will explore one of these priors. Here is a minimal phycas Python script to explore the resolution class prior for 5 taxa. Name this script \pathname{polytomy.py}.
 \begin{verbatim}
@@ -992,9 +1005,9 @@ sumt.tree_credible_prob = 1.0
 sumt()
 \end{verbatim}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Line-by-line explanation} \label{subsec:steppingstonepyexplanation}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Line-by-line explanation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{samepage}
 \begin{verbatim}
 from phycas import *
@@ -1087,20 +1100,25 @@ sumt()
 \end{samepage}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% Reference %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Reference} \label{sec:reference}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% Probability Distributions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Probability Distributions}\label{sec:probdist}
+\subsection{Probability Distributions}\label{subsec:probdist}
 
 Phycas defines several probability distributions. Several of these (Uniform, Beta, Exponential, Gamma, InverseGamma) are commonly used as prior distributions for model parameters. Others (Bernoulli, BetaPrime, Binomial, Normal) are less commonly used as prior distributions in Bayesian phylogenetics, but are nevertheless useful for other reasons. This section briefly describes each of these distributions. 
 
-%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Terminology}
-%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Terminology}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The \term{support} of a distribution is the set of values for which the density function is greater than zero. A distribution is a \term{discrete distribution} if the number of possible values is finite and each value is associated with a non-zero probability. Discrete distributions are associated with {\em probability} functions, $p(y|\params)$, that serve to provide the probability associated with each possible value. A distribution is a \term{continuous distribution} if the number of possible values is infinite and thus each particular value has probability zero. Continuous distributions are associated with {\em probability density} functions (\term{pdf}s). The pdf, $f(y|\params)$, provides the {\em relative} probability of each value. The pdf is scaled so that it integrates to 1.0, allowing specific {\em areas} under the pdf to be interpreted as probabilities. The \term{indicator function} \one{x=y} takes on the value 1.0 if and only if the condition in the subscript is true (i.e., $x=y$ in this example).
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Using probability distributions in Phycas}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Using probability distributions in Phycas}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 In most cases, you will need to prefix the names of distributions with \code{ProbDist}. For example:
 %
 \begin{verbatim}
@@ -1216,13 +1234,13 @@ compatibility with functions of the same name in other distributions.
 25.0
 \end{verbatim}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Probability distributions available in Phycas}\label{availabledistributions}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Bernoulli}\label{bernoullidist}\index{Bernoulli distribution}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Probability distributions available in Phycas}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Bernoulli}
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\index{Bernoulli distribution}
 \renewcommand{\arraystretch}{1.5}
 
 This distribution is provided for completeness, but currently there are no parameters in Phycas for which this distribution should be used as a prior. There are only two possible values (0 and 1), so Bernoulli distributions are appropriate for modeling stochastic processes that are characterized by presence vs. absence of something, or success vs. failure.
@@ -1236,9 +1254,10 @@ Expected value:       & & $E[y] = p$ \\
 Variance:             & & $\Var(y) = p(1-p)$ 
 \end{tabular}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Beta}\label{betadist}\index{Beta distribution}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Beta}
+%%%%%%%%%%%%%%%%%%%%
+\index{Beta distribution}
 
 Beta distributions are popular as priors for parameters whose support is the interval [0.0, 1.0], such as proportions. The proportion of invariable sites parameter (often abbreviated pinvar) has a Beta prior by default in Phycas. The quantity $\Gamma(x)$ that appears in the pdf is the \term{gamma function}, which for integral values of $x$ is equal to $(x-1)!$.
 
@@ -1251,9 +1270,10 @@ Expected value:       & & $E[y] = \frac{\alpha}{\alpha + \beta}$ \\
 Variance:             & & $\Var(y) = \frac{\alpha \beta}{(\alpha + \beta)^2 \; (\alpha + \beta + 1)}$ 
 \end{tabular}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{BetaPrime}\label{betaprimedist}\index{BetaPrime distribution}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{BetaPrime}
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\index{BetaPrime distribution}
 
 The main use of the BetaPrime distribution in Phycas is to provide a prior distribution for the $\kappa$ parameter (the transition/transversion rate ratio in the HKY model) that is comparable to the prior used by MrBayes. In MrBayes, the $\kappa$ parameter is not given a prior directly; instead, a Beta prior is applied (by default) to the two relative rates in the HKY rate matrix (the transition rate and the transversion rate). Specifying a BetaPrime(a,b) prior on $\kappa$ in Phycas is equivalent to specifying a Beta(a,b) prior on the transition and transversion rates in MrBayes. You are of course free to use any other univariate distribution as a prior for $\kappa$ in Phycas; the BetaPrime distribution is only provided to make it possible to conduct Phcyas analyses that are comparable to MrBayes analyses. Note that the mean of the BetaPrime distribution is undefined if $\alpha$ is less than or equal to 1, and the variance is undefined if $\beta$ is less than or equal to 2.
 
@@ -1266,9 +1286,10 @@ Expected value:       & & $E[y] = \frac{\alpha}{\beta - 1}$ \\
 Variance:             & & $\Var(y) = \frac{\alpha (\alpha + \beta - 1)}{(\beta - 2)(\beta - 1)^2}$
 \end{tabular}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Binomial}\label{binomialdist}\index{Binomial distribution}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Binomial}
+%%%%%%%%%%%%%%%%%%%%%%%%
+\index{Binomial distribution}
 
 The Binomial distribution is not currently useful as a prior distribution in Phycas, and is provided for the sake of completeness. The Binomial distribution is commonly used to model counts of the number of trials satisfying some condition (a ``success''). For example, the number of heads out of 10 (independent) flips of a coin follows a Binomial distribution. The parameter of the distribution is the probability that the condition (e.g. heads) is satisfied on any given trial.
 
@@ -1281,9 +1302,10 @@ Expected value:       & & $E[y] = n p$ \\
 Variance:             & & $\Var(y) = n p(1-p)$ 
 \end{tabular}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-\subsubsection{Dirichlet}\label{dirichletdist}\index{Dirichlet distribution}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Dirichlet}
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\index{Dirichlet distribution}
 
 The Dirichlet distribution is used as a prior for quantities that must sum to 1.0, such as state frequencies. The parameters of a Dirichlet distribution are positive real numbers. If all parameters are equal, the Dirichlet distribution is symmetric. For example, a Dirichlet(10,10,10,10) distribution would yield samples of nucleotide frequencies in which no one nucleotide predominates. Furthermore, if all Dirichlet parameters equal 1, then every combination of values has equal probability density. Thus, in a Dirichlet(1,1,1,1) distribution of nucleotide frequencies, extreme frequencies (e.g., 0.001, 0.001, 0.001, 0.997) have just as much of a chance of showing up in a sample as equal frequencies (i.e., 0.25, 0.25, 0.25, 0.25).
 \begin{indentednote}
@@ -1307,9 +1329,10 @@ Variance:             & & $\Var(y_i) = \frac{c_i (\ccdot - c_i)}{\ccdot^2 (\ccdo
 Covariance:           & & $\Cov(y_i,y_j) = \frac{-c_i c_j}{\ccdot^2 (\ccdot + 1)}$ 
 \end{tabular}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Exponential}\label{exponentialdist}\index{Exponential distribution}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Exponential}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\index{Exponential distribution}
 
 The Exponential distribution is a special case of the Gamma distribution (in which the shape parameter equals 1.0). The Exponential distribution is a common prior for parameters whose support equals the positive real numbers, such as edge lengths, transition/transversion rate ratio ($\kappa$), nonsynonymous/synonymous rate ratio ($\omega$), the shape parameter of the discretized Gamma distribution used to model among-site rate heterogeneity, GTR model relative rates (exchangeabilities), and unnormalized parameters governing base frequencies.
 
@@ -1322,9 +1345,10 @@ Expected value:       & & $E[y] = 1/\lambda$ \\
 Variance:             & & $\Var(y) = 1/\lambda^2$ 
 \end{tabular}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Gamma}\label{gammadist}\index{Gamma distribution}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Gamma}
+%%%%%%%%%%%%%%%%%%%%%
+\index{Gamma distribution}
 
 The Gamma distribution (or its special case, the Exponential distribution) is commonly used as a prior distribution for parameters defined on the positive half of the real number line. The Gamma distribution assigns probability zero for any value less than zero. Gamma distributions with shapes less than 1 have a pdf mode greater than zero. Those with shape equal to 1 are identical to Exponential distributions. In this case, the highest point reached by the pdf is $\beta$ and occurs at the value zero. If the shape is greater than 1, the pdf approaches infinity as zero is approached. The quantity $\Gamma(\alpha)$ that appears in the pdf is the \term{gamma function}, which for integral values of $\alpha$ is equal to $(\alpha-1)!$.
 
@@ -1337,9 +1361,10 @@ Expected value:       & & $E[y] = \alpha \beta$ \\
 Variance:             & & $\Var(y) = \alpha \beta^2$ 
 \end{tabular}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{InverseGamma}\label{inversegammadist}\index{Inverse gamma distribution}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{InverseGamma}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\index{Inverse gamma distribution}
 
 The Inverse Gamma distribution with parameters $\alpha$ and $\beta$ is the distribution of the quantity $1/y$ if $y$ has a Gamma($\alpha,\beta$) distribution. In Phycas, the Inverse Gamma distribution is primarily used as an edge length hyperprior (see section~\ref{hierarchicalmodels} on hierarchical models). The mean of an Inverse Gamma distribution is undefined unless the shape parameter $\alpha$ is greater than 1; the variance is undefined unless $\alpha > 2$.
 
@@ -1352,9 +1377,10 @@ Expected value:       & & $E[y] = \frac{1}{\beta \;(\alpha-1)}$ \\
 Variance:             & & $\Var(y) = \frac{1}{\beta^2 \; (\alpha-1)^2 \; (\alpha-2)}$ 
 \end{tabular}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Lognormal}\label{lognormaldist}\index{Lognormal distribution}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Lognormal}
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\index{Lognormal distribution}
 
 Specifying a Lognormal($\mu$,$\sigma$) distribution for a random variable $Y$ means that $\log(Y)$ is normally distributed with mean $\mu$ and variance $\sigma^2$. It is important to remember that $\mu$ and $\sigma$ do {\em not} represent the mean and variance of the variable $Y$ that is distributed lognormally (tricky!). Unlike the Normal distribution, which has support ($-\infty$,$\infty$), the support for Lognormal is [0,$\infty$), which makes it applicable to the same parameters as the Gamma distribution.
 
@@ -1367,9 +1393,10 @@ Expected value:       & & $E[y] = e^{\mu + \frac{\sigma^2}{2}}$ \\
 Variance:             & & $\Var(y) = \left( e^{\sigma^2} - 1 \right) e^{2 \mu + \sigma^2}$ 
 \end{tabular}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Normal}\label{normaldist}\index{Normal distribution}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Normal}
+%%%%%%%%%%%%%%%%%%%%%%
+\index{Normal distribution}
 
 The normal distribution does not get a lot of use as a prior distribution because its support includes the negative real numbers, and most parameters used in Bayesian phylogenetics only make sense if they are positive.
 
@@ -1382,9 +1409,10 @@ Expected value:       & & $E[y] = \mu$ \\
 Variance:             & & $\Var(y) = \sigma^2$ 
 \end{tabular}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{RelativeRate}\label{relratedist}\index{Relative rate distribution}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{RelativeRate}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\index{Relative rate distribution}
 
 The Relative Rate Distribution is used as a prior for the subset relative rates in a partitioned data model. The Relative Rate Distribution is very similar to a Dirichlet distribution. A vector of relative rates has mean equal to 1.0, however, which makes a Dirichlet distribution inappropriate (the sum, not the mean, of the components of a Dirichlet-distributed random variable is 1). The distinction between a Relative Rate distribution and a Dirichlet distribution mainly arises in the model selection context when the Stepping Stone method is begin used to estimate marginal (model) likelihoods. In the Stepping Stone method, constants that appear in prior distribution probability density functions must be fully specified. This is not necessary for Bayesian MCMC analyses because such constants cancel out.
 
@@ -1411,9 +1439,10 @@ Variance:             & & $\Var(y_i) = \frac{c_i (\ccdot - c_i)}{p_i^2 \ccdot^2 
 Covariance:           & & $\Cov(y_i,y_j) = \frac{-c_i c_j}{p_i p_j \ccdot^2 (\ccdot + 1)}$ 
 \end{tabular}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Uniform}\label{uniform}\index{Uniform distribution}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Uniform}
+%%%%%%%%%%%%%%%%%%%%%%%
+\index{Uniform distribution}
 
 The Uniform distribution has been used extensively as a prior for many different continuous model parameters; however, because Uniform distributions must be truncated in order to be proper, their use as prior distributions can have some surprising effects (see \citet{Felsenstein2004} for a good discussion of the problems with truncated Uniform priors).
 
@@ -1429,13 +1458,9 @@ Variance:             & & $\Var(y) = \frac{(b - a)^2}{12}$
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% Models %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Models}\label{sec:models}
+\subsection{Models}\label{subsec:models}
 
 Phycas implements the standard suite of nucleotide models: JC, F81, K80, HKY, and GTR with their I, G and I+G rate heterogeneity versions. The following sections illustrate how to set up each of the five basic classes of models listed above and how to add discrete gamma and/or proportion of invariable sites rate heterogeneity to any model.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{The basic substitution models}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%
 \subsubsection{JC}
@@ -1547,10 +1572,6 @@ model.type = 'gtr'
 \end{verbatim}
 \end{samepage}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Adding rate heterogeneity}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Proportion of invariable-sites}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1568,6 +1589,12 @@ A ``$+G$'' version \citep{Yang1994} of any of the basic substitution models mean
 \begin{verbatim}
 model.num_rates = 4
 \end{verbatim}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% Settings %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Settings}\label{subsec:phycassettings}
+\input{cmdsettings}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% Design principles %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1599,12 +1626,6 @@ We feel, however, that using a powerful, existing computing language to communic
 All scripting-based languages (R, Python, Perl, Ruby) are relatively slow compared to compiled languages such as C and C++. Fortunately, the Boost Python library (\url{http://www.boost.org/libs/python/doc/}) has made it easy to write the parts of Phycas that need to be fast in C++ and export these routines so that they can be called from Python. As a result, Phycas competes favorably with any phylogenetic software application out there in terms of speed. If you make speed comparisons of Phycas to other programs, be sure to compare them in a fair way. Phycas uses a different definition of ``generation'' than does MrBayes, for example. Because a ``cycle'' in Phycas is equivalent to more than 100 ``generations'' in MrBayes, it is easy to conclude that Phycas is slow compared to MrBayes. To be fair, compare instead the time required for some (large) number likelihood calculations under comparable models. Phycas makes this easy by reporting the number of likelihood calculations performed and the time required at the end of an MCMC analysis\index{comparing speed}. The number of likelihood calculations used by MrBayes for a single chain equals simply the number of generations.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%% Settings %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Settings}\label{sec:phycassettings}
-\input{cmdsettings}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% Installing Phycas %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Installing Phycas}\label{sec:install}
@@ -1615,7 +1636,8 @@ All scripting-based languages (R, Python, Perl, Ruby) are relatively slow compar
 
 These instructions assume you are using \trademark{Windows} \trademark{XP} or \trademark{Vista}.
 
-\subsubsection{\trademark{Windows} console} \label{subsubsec:winconsole}
+\subsubsection{\trademark{Windows} console}
+\label{subsubsec:winconsole}
 
 One very handy feature that does not come with \trademark{Windows} is the ability to open a command console by using the right-click speed menu in \trademark{Explorer}. The web site \url{http://www.commandline.co.uk/cmdhere/} describes how to add this functionality, which will make Phycas {\em much} easier to use (it is not required, however, in order to use Phycas). The basic procedure is to create a file named \pathname{cmdhere.reg} with the following text (or download the file from the web site above):
 %

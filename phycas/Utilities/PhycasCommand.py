@@ -1138,11 +1138,11 @@ class PhycasManualGenerator(object):
         f = open(self.command.help.cmd_name+'.tex', 'w')
         opts = self.command.__dict__["_options"]
         if opts:
-            f.write("\subsubsection{Input options:}")
+            f.write("\paragraph[Input options]{Input options:}")
             opts._write_latex(f)
         out = self.command.__dict__['out']
         if out:
-            f.write("\subsubsection{Output options:}")
+            f.write("\paragraph[Output options]{Output options:}")
             out._write_latex(f, 'out')
         f.close()
 
