@@ -73,24 +73,29 @@ def _escape_for_latex(s):
 #    print two_column_str(l)
 
 def two_column_str(p):
-    p.sort()
-    half = len(p)/2
-    ait = iter(p[:half])
-    bit = iter(p[half:])
-    o = []
-    done = False
-    while not done:
-        a, b = ("", "")
-        try:
-            a = ait.next()
-            b = bit.next()
-        except StopIteration:
-            done = True
-        r = PhycasTablePrinter.format_help(a, b)
-        o.append(r)
-    return "\n".join(o)
-    
-    
+	p.sort()
+	if len(p) % 2 == 0:
+		half = len(p)/2		# p has an even number of elements
+	else:
+		half = len(p)/2 + 1	# p has an odd number of elements
+	ait = iter(p[:half])
+	bit = iter(p[half:])
+	o = []
+	done = False
+	while not done:
+		a, b = ("", "")
+		try:
+			a = ait.next()
+		except StopIteration:
+			done = True
+		try:
+			b = bit.next()
+		except StopIteration:
+			done = True
+		r = PhycasTablePrinter.format_help(a, b)
+		o.append(r)
+	return "\n".join(o)
+
 class PhycasHelp(object):
     _phycas_cmd_classes = set()
     def __str__(self):
@@ -316,7 +321,7 @@ class FileOutputSpec(PhycasOutput):
             opts_help.extend(self._options._help_str_list(pref))
         return opts_help
 
-    def _write_latex_item(self, out, pref=""):
+    def _write_latex_item(self, out, pref="", cmdname=""): 
         """Generates a list of strings formatted for displaying help
         Assumes that PhycasTablePrinter._reset_term_width has been called 
         more recently than the last terminal width change)."""
@@ -325,22 +330,22 @@ class FileOutputSpec(PhycasOutput):
         else:
             dpref = ""
             
-        out.write("\item[\\bftt  %s] %s" % (_escape_for_latex(pref) , _escape_for_latex(self._help_str)))
+        out.write("\index{%s!%s}\item[\\bftt  %s] %s\n" % (cmdname,  _escape_for_latex(pref), _escape_for_latex(pref), _escape_for_latex(self._help_str)))
         fmt_def = " (default :%s)"
         d = self.prefix and (fmt_def % _escape_for_latex(repr(self.filename))) or ""
-        out.write("\item[\\bftt  %sprefix] %s%s\n" % (dpref, "file prefix (appropriate suffix will be added)", d))
+        out.write("\index{%s!%sprefix}\item[\\bftt  %sprefix] %s%s\n" % (cmdname, dpref, dpref, "file prefix (appropriate suffix will be added)", d))
         d = self.filename and (fmt_def % _escape_for_latex(repr(self.filename))) or ""
-        out.write("\item[\\bftt  %sfilename] %s%s\n" % (dpref, "The full file name. Specifying this field preempts `prefix` setting.", d))
+        out.write("\index{%s!%sfilename}\item[\\bftt  %sfilename] %s%s\n" % (cmdname, dpref, dpref, "The full file name. Specifying this field preempts `prefix` setting.", d))
         d = _escape_for_latex(self.mode)
-        out.write("\item[\\bftt  %smode] %s%s\n" % (dpref, 
+        out.write("\index{%s!%smode}\item[\\bftt  %smode] %s%s\n" % (cmdname, dpref, dpref, 
                                                    _escape_for_latex('Controls the behavior when the file is present. Valid settings are %s. ADD_NUMBER indicates that a number will be added to the end of the file name (or prefix) to make the name unique' % self._getValidModeNames()),
                                                    d))
         if len(self._valid_formats) > 1:
             d = _escape_for_latex(FileFormats.to_str(self.format))
             h = _escape_for_latex('Format of the file valid settings are %s' % self._getValidFormatNames())
-            out.write("\item[\\bftt  %smode] %s%s\n" % (dpref, h, d))
+            out.write("\index{%s!%smode}\item[\\bftt  %smode] %s%s\n" % (cmdname, dpref, dpref, h, d))
         if self._options:
-            self._options._write_latex_item(out, pref)
+            self._options._write_latex_item(out, pref, cmdname)
 
     def _current_str_list(self, pref=""):
         """Generates a list of strings formatted for displaying current value.
@@ -724,13 +729,13 @@ class PhycasCommandOutputOptions(object):
         self._write_latex(latex, pref)
         return latex.getvalue()
 
-    def _write_latex(self, out, pref=""):
+    def _write_latex(self, out, pref="", cmdname=""):
         out.write('\\begin{description}\n')
-        out.write('\item[\\bftt  %s.level] Controls the amount of output (verbosity) of the command (default: OutFilter.%s)\n' % (pref, OutFilter.to_str(self.level)))
+        out.write('\index{%s!%s.level}\item[\\bftt  %s.level] Controls the amount of output (verbosity) of the command (default: OutFilter.%s)\n' % (cmdname, pref, pref, OutFilter.to_str(self.level)))
         for n in self.__dict__["_help_order"]:
             a = self.__dict__[n]
             which = '%s.%s' % (pref,n)
-            a._write_latex_item(out, which)
+            a._write_latex_item(out, which, cmdname)
         out.write('\\end{description}\n')
 
     def _current_str_list(self, pref=""):
@@ -802,12 +807,12 @@ class PhycasCmdOpts(object):
         self._write_latex(latex)
         return latex.getvalue()
 
-    def _write_latex(self, out, pref=""):
+    def _write_latex(self, out, pref="", cmdname=""):
         out.write('\\begin{description}\n')
-        self._write_latex_item(out, pref)
+        self._write_latex_item(out, pref, cmdname)
         out.write('\\end{description}\n')
         
-    def _write_latex_item(self, out, pref=""):
+    def _write_latex_item(self, out, pref="", cmdname=""):
         "writes the options as items in LaTeX"
         if pref:
             dpref = _escape_for_latex(pref + ".")
@@ -825,7 +830,7 @@ class PhycasCmdOpts(object):
             else:
                 default_value = '{\\bftt  %s}' % str(o_default_value)
             descrip = o[2]
-            out.write('\item[\\bftt  %s%s] %s' % (dpref, _escape_for_latex(name) , _escape_for_latex(descrip)))
+            out.write('\index{%s!%s}\item[\\bftt  %s%s] %s' % (cmdname, _escape_for_latex(name), dpref, _escape_for_latex(name), _escape_for_latex(descrip)))
             if default_value:
                 out.write(' (default: %s)\n' % _escape_for_latex(default_value))
             else:
@@ -1139,11 +1144,11 @@ class PhycasManualGenerator(object):
         opts = self.command.__dict__["_options"]
         if opts:
             f.write("\paragraph[Input options]{Input options:}")
-            opts._write_latex(f)
+            opts._write_latex(f, '', self.command.help.cmd_name)
         out = self.command.__dict__['out']
         if out:
             f.write("\paragraph[Output options]{Output options:}")
-            out._write_latex(f, 'out')
+            out._write_latex(f, 'out', self.command.help.cmd_name)
         f.close()
 
     def __str__(self):

@@ -26,6 +26,16 @@ class SumT(PhycasCommand):
         # that can be processed by the user after sumt has been run
         self.__dict__["split_info"] = None
 
+    def hidden():
+        """ 
+        Overrides the PhycasCommand.hidden method to keep SumT's name from being displayed 
+        in the list of classes displayed when users type help. Delete this function, or
+        change its return value to False, when it is ready to be advertised.
+        """
+        return False
+        
+    hidden = staticmethod(hidden)
+
     def __call__(self, **kwargs):
         self.set(**kwargs)
         c = copy.deepcopy(self)

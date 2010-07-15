@@ -1,4 +1,5 @@
 from phycas import *
+setMasterSeed(98765)
 mcmc.data_source = 'green.nex'
 mcmc.out.log = 'basic.log'
 mcmc.out.log.mode = REPLACE
