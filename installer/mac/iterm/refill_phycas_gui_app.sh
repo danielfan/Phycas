@@ -9,7 +9,7 @@ fi
 if test -z "$sv"
 then
 	echo "Cannot create distribution with out-of-date source"
-	echo "MANUAL_PHYCAS_REVISION_TAG is unset and svnversion returned" `svnversion`
+	echo "MANUAL_PHYCAS_REVISION_TAG is unset and svnversion returned" `svnversion -n ../../../..`
 	exit 1
 else
 	echo "building distro for revision $sv"

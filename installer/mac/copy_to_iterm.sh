@@ -10,10 +10,10 @@ then
 		then
 			if test "$2" = "to"
 			then
-				cp $file $itermdir/$file
+				cp -v $file $itermdir/$file
 			elif test "$2" = "from"
 			then
-				cp $itermdir/$file $file
+				cp -v $itermdir/$file $file
 			elif test "$2" = "diff"
 			then
 				diff -u $itermdir/$file $file

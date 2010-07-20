@@ -30,6 +30,11 @@ then
 	ditto -rsrc "$PHYCAS_ROOT/LICENSE" "phycasimg/LICENSE" || exit
 	ditto -rsrc "README" "phycasimg/README" || exit
 	ditto -rsrc "$PHYCAS_ROOT/documentation/users/manual.pdf" "phycasimg/manual.pdf" || exit
+	ditto -rsrc "$PHYCAS_ROOT/documentation/users/tutorial/basic.py" "phycasimg/tutorial/basic.py" || exit
+	ditto -rsrc "$PHYCAS_ROOT/documentation/users/tutorial/summarize.py" "phycasimg/tutorial/summarize.py" || exit
+	ditto -rsrc "$PHYCAS_ROOT/documentation/users/tutorial/partition.py" "phycasimg/tutorial/partition.py" || exit
+	ditto -rsrc "$PHYCAS_ROOT/documentation/users/tutorial/steppingstone.py" "phycasimg/tutorial/steppingstone.py" || exit
+	ditto -rsrc "$PHYCAS_ROOT/documentation/users/tutorial/polytomy.py" "phycasimg/tutorial/polytomy.py" || exit
 	# mkdir "phycasimg/PhycasTutorial"
 	# mkdir "phycasimg/PhycasTutorial/scripts"
 	# for f in $PHYCAS_ROOT/phycas/Examples/Tutorial/PhycasWHExamples/*nex

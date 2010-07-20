@@ -1,16 +1,22 @@
 Welcome to the MacOS version of Phycas!
 
-We recommend dragging the Phycas application and manual.pdf file
-to your Applications folder. Double-clicking the Phycas application
-actually launches an iTerm (http://iterm.sourceforge.net/) terminal
-session. You can begin using Phycas as soon as you see the Python
-prompt. The manual.pdf file contains the user manual, which explains
-how to use Phycas for Bayesian phylogeneic analyses.
+We recommend dragging the Phycas application file to your Applications
+folder (and from there to your dock to make a convenient alias). 
+Starting the Phycas application actually launches an iTerm 
+(http://iterm.sourceforge.net/) terminal session. You can begin using
+Phycas as soon as you see the Python prompt (which is three greater-than
+symbols in a row: >>>). 
+
+The manual.pdf file contains the user manual, which explains
+how to use Phycas for Bayesian phylogeneic analyses. Inside the manual
+you will find a tutorial, and to save you typing we've included a 
+tutorial folder containing the scripts referenced in the tutorial.
 
 You can get the latest version of Phycas from http://phycas.org/
 
-Phycas' authors:
+Authors of Phycas:
 
 Paul O. Lewis (paul.lewis@uconn.edu)
 Mark T. Holder (mtholder@ku.edu)
 David L. Swofford (david.swofford@duke.edu)
+
