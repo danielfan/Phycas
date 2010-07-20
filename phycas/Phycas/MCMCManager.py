@@ -240,7 +240,8 @@ class MCMCManager:
 					self.parent.paramf.write(float_format_str % ssrr)					
 			for i in range(nmodels):
 				m = cold_chain.partition_model.getModel(i)
-				self.parent.paramf.write(m.paramReport(self.parent.opts.ndecimals))
+				include_edgelen_hyperparams = (i == 0)
+				self.parent.paramf.write(m.paramReport(self.parent.opts.ndecimals, include_edgelen_hyperparams))
 				#if m.hasEdgeLenHyperPrior():
 				#	if m.isSeparateInternalExternalEdgeLenPriors():
 				#		self.parent.paramf.write(float_format_str % m.getExternalEdgelenHyperparam())

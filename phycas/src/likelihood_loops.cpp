@@ -702,6 +702,7 @@ printf("in harvestLnL with EdgeEndpoints=(%d,%d)\n", nodeIndex(focal_edge.getFoc
 //printf("back from refreshCLA\n");//
 
 //printf("getting ready\n");//
+	PHYCAS_ASSERT(t);
 	if (t->IsRooted())
 		{
 //printf("calling rooted version\n");

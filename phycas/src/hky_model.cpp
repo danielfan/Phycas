@@ -194,7 +194,8 @@ std::string HKY::paramHeader() const
 |	parameters suitable for saving in a sampled parameter file (e.g. like the .p files saved by MrBayes).
 */
 std::string HKY::paramReport(
-  unsigned ndecimals) const /**< floating point precision to use */
+  unsigned ndecimals,						/**< floating point precision to use */
+  bool include_edgelen_hyperparams) const	/**< if true, include values of edge length hyperparameters */
 	{
     std::string fmt = boost::str(boost::format("%%.%df\t") % ndecimals);
 	std::string s = str(boost::format(fmt) % kappa);
@@ -203,7 +204,7 @@ std::string HKY::paramReport(
 	s += str(boost::format(fmt) % state_freqs[2]);
 	s += str(boost::format(fmt) % state_freqs[3]);
 	//std::string s = str(boost::format("\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f") % kappa % state_freqs[0] % state_freqs[1] % state_freqs[2] % state_freqs[3]);
-	s += Model::paramReport(ndecimals);
+	s += Model::paramReport(ndecimals, include_edgelen_hyperparams);
 	return s;
 	}
 

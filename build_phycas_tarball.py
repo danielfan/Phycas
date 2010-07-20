@@ -23,6 +23,10 @@
 # or like this (in your .bashrc file):
 # 
 # export LD_LIBRARY_PATH="/usr/lib/python2.5/site-packages/phycas/Conversions"
+#
+# Note also that if you compiled NCL using configure/make, then the ncl library is
+# probably at /usr/local/lib/ncl and thus outside the phycas directory (it will 
+# therefore not be included in the tarball).
 
 import os
 import sets
@@ -37,7 +41,7 @@ rootdir = './phycas'
 # Specify directories to be ignored
 rmlist = ['.svn','src']
 
-# Spedify valid file name extensions (files with other extensions will be skipped)
+# Specify valid file name extensions (files with other extensions will be skipped)
 validset = sets.Set(['.py','.so','.afm','.p','.t','.tre','.nex','.pdf','.html','.txt'])
 
 # This set will hold file name extensions encountered that were not in validset

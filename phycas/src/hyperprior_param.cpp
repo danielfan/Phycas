@@ -36,7 +36,11 @@ HyperPriorParam::HyperPriorParam()
     // python/C++ container conversions)
     std::cerr << "*** fatal error: default constructor used for HyperPriorParam ***" << std::endl;
     std::exit(0);
+#if POLPY_NEWWAY
+	edge_type = all;
+#else
 	external_edges = true;
+#endif
 	curr_value = 0.1;
 	has_slice_sampler = true;
 	is_move = false;
@@ -50,6 +54,18 @@ HyperPriorParam::HyperPriorParam()
 |   true. Also sets `is_master_param' to false, `curr_value' to 0.1 and `edgelen_master_param' to the supplied edge
 |   length master parameter shared pointer `p'.
 */
+#if POLPY_NEWWAY
+HyperPriorParam::HyperPriorParam(
+  HyperPriorParam::EdgeTypeEnum t)		/**< determines which type of edges (internal, external, all) are managed by this hyperparameter */
+  : MCMCUpdater(), edge_type(t)
+	{
+	curr_value = 0.1;
+	has_slice_sampler = true;
+	is_move = false;
+	is_master_param = false;
+	is_hyper_param = true;
+	}
+#else
 HyperPriorParam::HyperPriorParam(
   EdgeLenMasterParamShPtr p,    /**> is the edge length master parameter whose prior this parameter controls */
   bool for_external_edges)		/**< is true if this hyperprior applies only to external edges (or to all edges) and false if it applies only to internal edges */
@@ -61,6 +77,7 @@ HyperPriorParam::HyperPriorParam(
 	is_master_param = false;
 	is_hyper_param = true;
 	}
+#endif
 	
 /*----------------------------------------------------------------------------------------------------------------------
 |	Destructor.
@@ -82,7 +99,7 @@ bool HyperPriorParam::update()
 		slice_sampler->Sample();
 		}
 
-	ChainManagerShPtr p = chain_mgr.lock();
+	//ChainManagerShPtr p = chain_mgr.lock();
 	
     if (save_debug_info)
         {

@@ -77,7 +77,11 @@ class MCMCChainManager : public MCMCChainManagerThisShPtr
 
 		void					finalize();
 
-		double					recalcEdgeLenPriors(double mu, double var);
+		//double					recalcEdgeLenPriors(double mu, double var);
+		double					reviseInternalEdgeLenPrior(double mu);
+		double					reviseExternalEdgeLenPrior(double mu);
+		double					reviseAllEdgeLenPriors(double mu);
+		
 		void					refreshLastLnLike();
 		void					refreshLastLnPrior();
 		

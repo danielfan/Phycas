@@ -22,12 +22,12 @@ class MCMCChainManager(MCMCChainManagerBase):
         """
         return MCMCChainManagerBase.finalize(self)
 
-    def recalcEdgeLenPriors(self, mu, var):
-        """
-        Sorry, no documentation yet.
-        
-        """
-        return MCMCChainManagerBase.recalcEdgeLenPriors(self, mu, var)
+    #def recalcEdgeLenPriors(self, mu, var):
+    #    """
+    #    Sorry, no documentation yet.
+    #    
+    #    """
+    #    return MCMCChainManagerBase.recalcEdgeLenPriors(self, mu, var)
 
     def calcJointLnPrior(self):
         """

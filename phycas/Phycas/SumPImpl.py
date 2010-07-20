@@ -5,24 +5,21 @@ from phycas.Utilities.CommonFunctions import CommonFunctions
 
 class VarianceZeroError(Exception):
 	def __init__(self):
-		Exception('Cannot calculate autocorrelation because variance is zero')
-		#self.message = 'Cannot calculate autocorrelation because variance is zero'
-	#def __str__(self):
-	#	return self.message
+		self.msg = 'Cannot calculate autocorrelation because variance is zero'
+	def __str__(self):
+		return self.msg
 	
 class VarianceUndefinedError(Exception):
 	def __init__(self):
-		Exception('Cannot calculate standard deviation because sample size is less than 2')
-		#self.message = 'Cannot calculate standard deviation because sample size is less than 2'
-	#def __str__(self):
-	#	return self.message
+		self.msg = 'Cannot calculate standard deviation because sample size is less than 2'
+	def __str__(self):
+		return self.msg
 	
 class InvalidNumberOfColumnsError(Exception):
 	def __init__(self, nparts, nexpected, line_num):
-		Exception('Number of values (%d) on line %d inconsistent with number of column headers (%d)' % (nparts, line_num, nexpected))
-		#self.message = 'Number of values (%d) on line %d inconsistent with number of column headers (%d)' % (nparts, line_num, nexpected)
-	#def __str__(self):
-	#	return self.message
+		self.msg = 'Number of values (%d) on line %d inconsistent with number of column headers (%d)' % (nparts, line_num, nexpected)
+	def __str__(self):
+		return self.msg
 
 class ParamSummarizer(CommonFunctions):
 	#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -219,16 +216,17 @@ class ParamSummarizer(CommonFunctions):
 		seR /= math.pow(float(n), 2.0)
 		self.output(' %.8f Steppingstone Sampling (SS) method (se = %.8f)' % (lnR, seR))
 		
-	def sss(self, betas, p):
+	def gss(self, betas, p):
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
 		"""
-		This SSS (Stabilized Steppingstone Sampling) method estimates the 
+		This generalized stepping stone (gss) method estimates the 
 		marginal likelihood using the product of ratios (the stepping stones) 
 		bridging the gap between the posterior and the prior. Each ratio is 
 		estimated using importance sampling, with the importance distribution
 		being the power posterior defined by the smaller of the two beta
 		values in the ratio. It differs from SS (Steppingstone Sampling) in
-		making use of a for details.
+		making use of a reference distribution that may not be equivalent to
+		the prior.
 		
 		"""
 		# Calculate marginal likelihood using steppingstone sampling method.
@@ -239,13 +237,13 @@ class ParamSummarizer(CommonFunctions):
 		# sampled for beta value b. Assumes that betas[0] = 1.0 and betas[-1] = 0.0.
 		likes = p['lnL']
 		priors = p['lnPrior']
-		working_priors = p['lnWorkPr']
+		working_priors = p['lnRefDens']
 		lnR = 0.0
 		nbetas = len(betas)
 		if betas[0] != 1.0 or betas[-1] != 0.0:
 			raise Exception('Steppingstone sampling requires beta values to be ordered from 1.0 (first) to 0.0 (last)')
 			
-		self.output(' %10s %10s %10s %15s %15s %15s' % ('b_(k-1)','beta_incr','n','eta_k','lnRk','lnR(cum)'))
+		self.output(' %10s %10s %10s %15s %15s' % ('b_(k-1)','beta_incr','n','lnRk','lnR(cum)'))
 		for i in range(1,nbetas):
 			#self.output('\nk = %d:' % i)
 			
@@ -271,9 +269,9 @@ class ParamSummarizer(CommonFunctions):
 			lnRk = beta_incr*etak + math.log(tmp)
 			lnR += lnRk
 			#import pdb; pdb.set_trace()
-			self.output(' %10.3f %10.3f %10d %15.6f %15.6f %15.6f' % (bsmaller, beta_incr, n, etak, lnRk, lnR))
+			self.output(' %10.3f %10.3f %10d %15.6f %15.6f' % (bsmaller, beta_incr, n, lnRk, lnR))
 		
-		self.output(' %.8f Stabilized Steppingstone Sampling (SSS) method' % lnR)
+		self.output(' %.8f Generalized Stepping Stone method' % lnR)
 		
 	def autocorr_ess(self, values):
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -349,11 +347,11 @@ class ParamSummarizer(CommonFunctions):
 				# continuing previous beta value
 				for h,x in zip(headers,parts):
 					params[h][beta].append(float(x))
-					
+										
 		# Output first-order autocorrelation for each parameter (as well as the log-likelihood,
 		# prior and, if present, the working prior) for each beta value separately
 		self.output('\nAutocorrelations (lag 1):\n')
-		self.output('%12s%s' % ('beta ->',' '.join(['%12.5f' % b for b in betas])))
+		self.output('%15s%s' % ('beta ->',' '.join(['%12.5f' % b for b in betas])))
 		for h in headers[2:]:	# skip 'Gen' and 'beta' headers
 			s = []
 			for b in betas:
@@ -364,36 +362,41 @@ class ParamSummarizer(CommonFunctions):
 					s.append('%12s' % '---')
 				else:
 					s.append('%12.5f' % r)
-			self.output('%12s%s' % (h,' '.join(s)))
+			self.output('%15s%s' % (h,' '.join(s)))
 
 		# Output effective sample size for each parameter (as well as the log-likelihood,
 		# prior and, if present, the working prior) for each beta value separately
-		actual_sample_size = len(params['lnL'][1.0])
-		all_same = True
-		self.output('\nEffective sample sizes (actual sample size = %d):\n' % actual_sample_size)
-		self.output('%12s%s' % ('beta ->',' '.join(['%12.5f' % b for b in betas])))
+		actual_sample_sizes = [len(params['lnL'][b]) for b in betas]
+		self.output('\nEffective and actual sample sizes:\n')
+		self.output('%15s%s' % ('beta ->', ' '.join(['%12.5f' % b for b in betas])))
+		self.output('%15s%s' % ('actual', ' '.join(['%12d' % n for n in actual_sample_sizes])))
+		sample_size_discrepancy = False
 		for h in headers[2:]:	# skip 'Gen' and 'beta' headers
 			s = []
-			for b in betas:
+			for b_index,b in enumerate(betas):
 				p = params[h][b]
-				n = len(p)
-				if n != actual_sample_size:
-					all_same = False
+				ss_ok = (len(p) == actual_sample_sizes[b_index])
+				if ss_ok:
+					asterisk = ''
+				else:
+					sample_size_discrepancy = True
+					asterisk = '*'
 				try:
 					r,ess = self.autocorr_ess(p)
 				except VarianceZeroError:
-					s.append('%12s' % '---')
+					s.append('%12s%s' % ('---',asterisk))
 				else:
-					s.append('%12.1f' % ess)
-			self.output('%12s%s' % (h,' '.join(s)))
-		if not all_same:
-			self.output('\nWarning: actual sample sizes varied across beta values and/or parameters!')
+					s.append('%12.1f%s' % (ess,asterisk))
+			self.output('%15s%s' % (h,' '.join(s)))
+			
+		if sample_size_discrepancy:
+			self.warning('* indicates discrepancy between actual sample size for lnL and at least one other parameter')			
 
-		if headers[4] == 'lnWorkPr':
-			# Estimate marginal likelihood using stabilized steppingstone sampling (sss)
+		if headers[4] == 'lnRefDens':
+			# Estimate marginal likelihood using generalized stepping stone method (gss)
 			self.output('\nMarginal likelihood estimate:')
 			try:
-				self.sss(betas, params)
+				self.gss(betas, params)
 			except Exception,e:
 				self.output(' %s' % e.message)
 		else:
@@ -533,18 +536,18 @@ class ParamSummarizer(CommonFunctions):
 		self.output('\nSummary statistics:\n')
 		stats_headers = ('param','n') + self.summary_stats(None)
 		sz = len(stats_headers)
-		sss = '%12s'*sz + '\n'
-		self.output(sss % stats_headers)
+		gss = '%12s'*sz + '\n'
+		self.output(gss % stats_headers)
 		for h in headers[1:]:	# skip 'Gen' header
 			v = params[h]
 			try:
 				stats = (h,len(v)) + self.summary_stats(v)
-				sss = '%12s' + '%12d' + '%12.5f'*(sz - 2)
-				self.output(sss % stats)
+				gss = '%12s' + '%12d' + '%12.5f'*(sz - 2)
+				self.output(gss % stats)
 			except (VarianceZeroError,VarianceUndefinedError):
-				sss = '%12s'*sz + '\n'
+				gss = '%12s'*sz + '\n'
 				sub = tuple(['---']*sz)
-				self.output(sss % sub)
+				self.output(gss % sub)
 		self.output()
 		self.harmonic_mean(params['lnL'])
 		
@@ -659,7 +662,7 @@ class ParamSummarizer(CommonFunctions):
 			if headers[1] == 'beta':
 				try:
 					self.marginal_likelihood(headers, lines, burnin)
-				except InvalidNumberOfColumnsError, e:
+				except InvalidNumberOfColumnsError as e:
 					print e
 			else:
 				self.std_summary(headers, lines, burnin)

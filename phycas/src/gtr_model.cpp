@@ -510,7 +510,8 @@ std::string GTR::paramHeader() const	/**< is the suffix to tack onto the paramet
 |	the `state_freqs' vector has length 4 and the `rel_rates' vector has length 6.
 */
 std::string GTR::paramReport(
-  unsigned ndecimals) const /**< floating point precision to use */
+  unsigned ndecimals, 						/**< floating point precision to use */
+  bool include_edgelen_hyperparams) const	/**< if true, include values of edge length hyperparameters */
 	{
 	PHYCAS_ASSERT(rel_rates.size() == 6);
 	PHYCAS_ASSERT(state_freqs.size() == 4);
@@ -530,7 +531,7 @@ std::string GTR::paramReport(
 	s += str(boost::format(fmt) % state_freqs[3]);
 	//s += str(boost::format("\t%.5f\t%.5f\t%.5f\t%.5f") % state_freqs[0] % state_freqs[1] % state_freqs[2] % state_freqs[3]);
 	
-	s += Model::paramReport(ndecimals);
+	s += Model::paramReport(ndecimals, include_edgelen_hyperparams);
 	return s;
 	}
 

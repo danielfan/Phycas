@@ -66,7 +66,7 @@ class Model	{
         virtual void					buildStateList(state_list_t &, state_list_pos_t &) const;
 
 		virtual std::string				paramHeader() const;
-		virtual std::string				paramReport(unsigned ndecimals) const;
+		virtual std::string				paramReport(unsigned ndecimals, bool include_edgelen_hyperparams) const;
 
 		virtual double					calcUniformizationLambda() const = 0;
 		virtual double					calcLMat(double * * lMat) const = 0;
@@ -230,7 +230,7 @@ class JC: public Model
         double					calcLMat(double * * lMat) const;
         double					calcUMat(double * * uMat) const;
         virtual std::string		paramHeader() const;
-		virtual std::string		paramReport(unsigned ndecimals) const;
+		virtual std::string		paramReport(unsigned ndecimals, bool include_edgelen_hyperparams) const;
 	};
 
 typedef boost::shared_ptr<JC> JCShPtr;
@@ -270,7 +270,7 @@ class HKY: public Model
 		ProbDistShPtr				getStateFreqParamPrior();
 
 		virtual std::string			paramHeader() const;
-		virtual std::string			paramReport(unsigned ndecimals) const;
+		virtual std::string			paramReport(unsigned ndecimals, bool include_edgelen_hyperparams) const;
 
 protected:
 	

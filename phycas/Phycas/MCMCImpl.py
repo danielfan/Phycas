@@ -7,8 +7,6 @@ from phycas.ProbDist import StopWatch
 from phycas.ReadNexus import NexusReader
 
 
-DEBUGGING_OUTPUT = False
-
 def check(msg = 'check'):
 	raw_input(msg)
 
@@ -249,8 +247,6 @@ class MCMCImpl(CommonFunctions):
 		Opens the tree file and writes a translate table.
 		
 		"""
-		#self.tree_file_name = self.opts.out.trees
-		
 		tree_file_spec = self.opts.out.trees
 		self.treef = None
 		try:
@@ -268,14 +264,9 @@ class MCMCImpl(CommonFunctions):
 	def paramFileOpen(self):
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
 		"""
-		Opens the parameter file and writes a header line. Additionally, if
-		performing smoothed steppingstone sampling, opens a file with 
-		extension .sss to hold the likelihood, prior and working prior samples
-		needed to estimate the marginal likelihood.
+		Opens the parameter file and writes a header line.
 		
 		"""
-		#self.param_file_name = self.opts.out.params
-		
 		param_file_spec = self.opts.out.params
 		self.paramf = None
 		try:
@@ -290,8 +281,6 @@ class MCMCImpl(CommonFunctions):
 	def paramFileClose(self):
 		if self.paramf is not None:
 			self.paramf.close()
-		#if self.sssf is not None:
-		#	self.sssf.close()
 
 	def openParameterAndTreeFiles(self):
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -509,10 +498,9 @@ class MCMCImpl(CommonFunctions):
 		
 	############################ exploreWorkingPrior ############################
 	def exploreWorkingPrior(self, cycle):
-		#raw_input('entering exploreWorkingPrior')
 		chain_index = 0
 		cold_chain = self.mcmc_manager.getColdChain()
-		#tm = Phylogeny.TreeManip(cold_chain.tree)
+		tm = Phylogeny.TreeManip(cold_chain.tree)
 		
 		nmodels = cold_chain.partition_model.getNumSubsets()
 		unpartitioned = (nmodels == 1)
@@ -526,7 +514,42 @@ class MCMCImpl(CommonFunctions):
 			if u.isFixed() or not u.isPriorSteward():
 				continue
 			name = u.getName()
-			if name.find('relrates') == 0:						# C++ class RelRatesMove
+			# Open issue: can we completely ignore hyperparameters in stepping stone analyses?
+			# For now, I'm assuming we can (edge length parameters, or master edge length parameters,
+			# each have their own reference distributions that can be used for sampling, and the 
+			# effects of the hyperpriors will be made in the parameterization of those reference
+			# distributions
+			#if name.find('edgelen_hyper') == 0:	# C++ class HyperPriorParam
+			#	# draw an edge length hyperparameter value that applies to all edges
+			#	edgelen_hyperparam = u.sampleWorkingPrior()
+			#	chain.chain_manager.setEdgeLenHyperparam(0, edgelen_hyperparam)
+			#	# model for first (0th) subset handles edge lengths
+			#	m = chain.partition_model.getModel(0)
+			#	m.getInternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
+			#	m.getExternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
+			#elif name.find('external_hyper') == 0:	# C++ class HyperPriorParam
+			#	# draw an edge length hyperparameter value for external edges
+			#	edgelen_hyperparam = u.sampleWorkingPrior()
+			#	chain.chain_manager.setEdgeLenHyperparam(0, edgelen_hyperparam)
+			#	# model for first (0th) subset handles edge lengths
+			#	m = chain.partition_model.getModel(0)
+			#	self.phycassert(m.isSeparateInternalExternalEdgeLenPriors(), "found updater named 'external_hyper' but isSeparateInternalExternalEdgeLenPriors returns False")
+			#	m.getExternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
+			#elif name.find('internal_hyper') == 0:	# C++ class HyperPriorParam
+			#	# draw an edge length hyperparameter value for external edges
+			#	edgelen_hyperparam = u.sampleWorkingPrior()
+			#	chain.chain_manager.setEdgeLenHyperparam(1, edgelen_hyperparam)
+			#	# model for first (0th) subset handles edge lengths
+			#	m = chain.partition_model.getModel(0)
+			#	self.phycassert(m.isSeparateInternalExternalEdgeLenPriors(), "found updater named 'internal_hyper' but isSeparateInternalExternalEdgeLenPriors returns False")
+			#	m.getInternalEdgeLenPrior().setMeanAndVariance(1.0/edgelen_hyperparam, 0.0) # 2nd arg. (variance) ignored for exponential distributions
+			if name.find('edgelen_hyper') == 0:
+				pass
+			elif name.find('external_hyper') == 0:
+				pass
+			elif name.find('internal_hyper') == 0:
+				pass
+			elif name.find('relrates') == 0:						# C++ class RelRatesMove
 				i = unpartitioned and 0 or self.getModelIndex(name)
 				m = cold_chain.partition_model.getModel(i)
 				rate_vector = u.sampleMultivariateWorkingPrior()
@@ -930,13 +953,6 @@ class MCMCImpl(CommonFunctions):
 					self.explorePrior(cycle)
 			else:
 				for i,c in enumerate(self.mcmc_manager.chains):
-					if DEBUGGING_OUTPUT:
-						if cycle == 0:
-							c.r.setSeed(364665646)
-						print "seed=", c.r.getSeed()
-						print "	  model = " + c.model.paramReport(self.mcmc_manager.parent.opts.ndecimals)
-						print '	  tree rep.%d = %s;' % (cycle + 1, c.tree.makeNewick(self.mcmc_manager.parent.opts.ndecimals))
-			
 					if CPP_UPDATER:
 						c.chain_manager.updateAllUpdaters()
 					else:

@@ -132,7 +132,7 @@ class MarkovChain(LikelihoodCore):
 			paramf.write('Gen\tlnL\tlnPrior')
 
 		if self.parent.opts.doing_steppingstone_sampling and not self.parent.opts.ssobj.ti:
-			paramf.write('\tlnWorkPr')
+			paramf.write('\tlnRefDens')
 
 		# If the user has defined a reference tree, add a column for the Robinson-Foulds
 		# distance between the sampled tree and the reference tree
@@ -159,17 +159,6 @@ class MarkovChain(LikelihoodCore):
 			m = self.partition_model.getModel(i)
 			paramf.write(m.paramHeader())
 			
-	#def sssFileHeader(self, sssf):
-	#	#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
-	#	"""
-	#	Opens the .sss file for saving samples needed by sump command to 
-	#	compute an estimate of the marginal likelihood using smoothed 
-	#	steppingstone sampling.
-	#	
-	#	"""
-	#	sssf.write('[ID: %d]\n' % self.r.getInitSeed())
-	#	sssf.write('cycle\tbeta\tlnLike\tlnPrior\tlnWorkingPrior')
-
 	def treeFileHeader(self, treef):
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
 		"""
@@ -269,14 +258,20 @@ class MarkovChain(LikelihoodCore):
 			# get the model specification (defined in Model.py) stored in (Python) partition object
 			mspec = modelspecs[i]
 
-			implemented = not (self.parent.opts.fix_topology and mspec.edgelen_hyperprior is not None)
-			self.parent.phycassert(implemented, 'Cannot currently specify an edge length hyperprior and fix the topology at the same time')
+			#implemented = not (self.parent.opts.fix_topology and mspec.edgelen_hyperprior is not None)
+			#self.parent.phycassert(implemented, 'Cannot currently specify an edge length hyperprior and fix the topology at the same time')
 			
 			# Copy priors related to edge lengths
 			# Note: while these priors are copied for every subset, only those for the
 			# first subset are actually used (at this writing, 31 Jan 2010) because both
 			# tree topology and edge lengths are always (at this writing) linked across subsets
-			separate_edge_len_dists = mspec.internal_edgelen_prior is not mspec.external_edgelen_prior
+			
+			# POLPY_NEWWAY 	// no touch
+			separate_edge_len_dists = mspec.separate_edgelen_hyper
+			# else
+			#separate_edge_len_dists = mspec.internal_edgelen_prior is not mspec.external_edgelen_prior
+			
+			#raw_input('separate_edge_len_dists = %s' % (separate_edge_len_dists and 'yes' or 'no'))
 			m.separateInternalExternalEdgeLenPriors(separate_edge_len_dists)
 			if mspec.external_edgelen_prior is not None:
 				m.setExternalEdgeLenPrior(mspec.external_edgelen_prior.cloneAndSetLot(self.r))
@@ -338,7 +333,7 @@ class MarkovChain(LikelihoodCore):
 				self.tree,							# tree
 				self.likelihood,					# likelihood calculation machinery
 				self.r,								# pseudorandom number generator
-				#False,								# separate_edgelen_params (deprecated: always False)
+				#False,								# separate_edgelen_params (separate_edgelen_params is now True only if topology is fixed)
 				self.parent.opts.slice_max_units,	# maximum number of slice units allowed
 				self.parent.opts.slice_weight,		# weight for each parameter added
 				subset_pos)							# i is the subset (needed so that add edge length params will only be added for for first subset)

@@ -98,12 +98,12 @@ double EdgeLenMasterParam::lnPriorOneEdge(TreeNode & nd) const
 	    try 
 		    {
 		    retval = prior->GetLnPDF(v);
+			//std::cerr << "+++++ " << nd.GetNodeNumber() << " --> " << v << " --> " << retval << std::endl;	//@@@
 		    }
 	    catch(XProbDist &)
 		    {
 		    PHYCAS_ASSERT(0);
 		    }
-
 	    return retval;
         }
 	}

@@ -69,9 +69,10 @@ std::string JC::paramHeader() const	/**< is the suffix to tack onto the paramete
 |	an override of the pure virtual base class version.
 */
 std::string JC::paramReport(
-  unsigned ndecimals) const /**< floating point precision to use */
+  unsigned ndecimals,						/**< floating point precision to use */
+  bool include_edgelen_hyperparams) const	/**< if true, include values of edge length hyperparameters */
 	{
-	return Model::paramReport(ndecimals);
+	return Model::paramReport(ndecimals, include_edgelen_hyperparams);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------

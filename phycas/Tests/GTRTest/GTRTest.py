@@ -14,6 +14,8 @@ model.pinvar_model = True
 model.use_inverse_shape = True
 
 model.edgelen_prior = Exponential(1.0)
+model.separate_edgelen_hyper = False
+
 model.update_freqs_separately = True
 model.update_relrates_separately = True
 

@@ -17,9 +17,7 @@ class SS(PhycasCommand):
 		#self.__dict__["hidden"] = True # hide from main phycas help list of commands until working
 		#o = PhycasCommandOutputOptions()
 		#o.__dict__["_help_order"] = ["sss"]
-		#sss = TextOutputSpec(prefix='marglike', suffix=".sss", help_str="The text file in which all sampled likelihood, prior and working prior values are saved if performing smoothed steppingstone sampling. This file is needed by the sump command to estimate the marginal likelihood.")
-		#o.__dict__["sss"] = sss
-		PhycasCommand.__init__(self, args, "ss", "Performs steppingstone sampling (and also path sampling/thermodynamic integration) for purposes of estimating the marginal likelihood of the current model.")
+		PhycasCommand.__init__(self, args, "ss", "Performs stepping stone method (and also thermodynamic integration) for purposes of estimating the marginal likelihood of the current model.")
 
 		# The data members added below are hidden from the user because they are set when the mcmc command runs
 		self.__dict__["sampled_likes"] = None

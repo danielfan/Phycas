@@ -196,6 +196,11 @@ class EdgeLenParam : public MCMCUpdater
 	public:
 						EdgeLenParam();
 						virtual ~EdgeLenParam(); 
+						
+#if POLPY_NEWWAY
+		bool			isInternalEdge();
+		bool			isExternalEdge();
+#endif						
 
 		void			educateWorkingPrior();
 		void			finalizeWorkingPrior();
@@ -205,7 +210,7 @@ class EdgeLenParam : public MCMCUpdater
 		virtual bool	update();				// override virtual from MCMCUpdater base class
 		virtual double	operator()(double k);	// override pure virtual from AdHocDensity (base class of MCMCUpdater)
 		
-	private:
+	//temp private:
 		TreeNode *		my_node;
 	};
 
@@ -267,9 +272,17 @@ class HyperPriorParam : public MCMCUpdater
 	{
 	public:
 							HyperPriorParam();
+#if POLPY_NEWWAY
+							enum EdgeTypeEnum {all, internal, external};
+							HyperPriorParam(EdgeTypeEnum t);
+#else
 							HyperPriorParam(EdgeLenMasterParamShPtr p, bool for_external_edges);
+#endif
 							virtual ~HyperPriorParam();
 
+#if POLPY_NEWWAY
+		void				setEdgeLenMasterParam(EdgeLenMasterParamShPtr p) {edgelen_master_param = p;}
+#endif
 		void				educateWorkingPrior();
 		void				finalizeWorkingPrior();
         virtual void		sendCurrValueToModel(double v);
@@ -279,7 +292,11 @@ class HyperPriorParam : public MCMCUpdater
 
     private:
 
+#if POLPY_NEWWAY
+		EdgeTypeEnum				edge_type;				/**< governs the type of edges (internal, external, all) affected by this hyperparam */
+#else
 		bool						external_edges;			/**< if true this parameter governs the hyperprior for external edge lengths (or all edge lengths); if false, this parameter governs only the hyperprior for internal edge lengths */
+#endif
         EdgeLenMasterParamShPtr		edgelen_master_param;   /**> is the edge length master parameter whose prior this parameter controls */
 	};
 

@@ -30,6 +30,8 @@ model.edgelen_prior                = ProbDist.Exponential(10.0)
 model.edgelen_hyperparam           = 0.05
 model.fix_edgelen_hyperparam       = True
 model.edgelen_hyperprior           = ProbDist.InverseGamma(2.1, 0.9090909)
+model.separate_edgelen_hyper       = False
+
 
 mcmc.out.log                      = 'output.txt'
 mcmc.out.log.mode                 = REPLACE

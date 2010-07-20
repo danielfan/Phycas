@@ -79,13 +79,6 @@ class Partition(PhycasCommand):
 		return flattened
 		
 	def getSiteModelVector(self):
-		# if POLPY_NEWWAY
-		# else
-		#if len(self.subset) < 2:
-		#	# user has not specified a partition, so return an empty list (which will signify
-		#	# the default partition)
-		#	self.sitemodel = []
-		# endif
 		return self.sitemodel
 		
 	def getModels(self):

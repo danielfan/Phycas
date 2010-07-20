@@ -2806,21 +2806,7 @@ void TreeLikelihood::copyDataFromDiscreteMatrix(
 	//@POL commented out: compressDataMatrix(*mat->GetMatrix(0), partition_info);
 	compressDataMatrix(singleMat, partition_info);
 	
-#if POLPY_NEWWAY
-	// nothing
-#else	
-#	if !defined(NDEBUG)
-		bool default_partition = (partition_info.size() == 0 ? true : false);
-#	endif
-#endif
-
 	unsigned nsubsets = partition_model->getNumSubsets();
-
-#if POLPY_NEWWAY
-	// nothing
-#else	
-	PHYCAS_ASSERT((default_partition && nsubsets == 1) || (!default_partition && nsubsets > 1));
-#endif
 
 	state_list.clear();
 	state_list.resize(nsubsets);

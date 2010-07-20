@@ -48,7 +48,7 @@
 %\newfont{\mytt}{cmtt10 at 10pt}
 
 \newcommand{\currPhycasVersion}{1.2.0}			% TODO: CHECK PRIOR TO NEW RELEASE
-\newcommand{\currReleaseDate}{15 July 2010}		% TODO: CHECK PRIOR TO NEW RELEASE
+\newcommand{\currReleaseDate}{20 July 2010}		% TODO: CHECK PRIOR TO NEW RELEASE
 \newcommand{\currReleaseSVNBuild}{1322}			% TODO: CHECK PRIOR TO NEW RELEASE
 \newcommand{\currPyVersion}{2.6.1}
 
@@ -270,7 +270,7 @@ Phycas is an ``extension'' of Python, but you must import extensions in order fo
 \begin{floatingfigure}[l]{2cm}
 \includegraphics[scale=0.4]{images/PhycasGUI}  
 %\caption{Phycas icon}
-\end{floatingfigure} If you are using the \phycasapp\ bundle on MacOS, you can launch the Phycas application by double clicking on the icon. Although the name appears to be just \pathname{Phycas}, it is really \phycasapp; the MacOS hides the \pathname{.app} extension unless you change this in the Finder preferences. (We will hereafter use the terms \term{Phycas application} and \term{Phycas.app} bundle interchangeably.) The Phycas application will show up in your dock and the window that appears will be a terminal that has already invoked Python and issued the ``from phycas import *'' command mentioned in many places in this manual.
+\end{floatingfigure} If you are using the \phycasapp\ bundle on MacOS, you can launch the Phycas application by double clicking on the icon. Although the name appears to be just \pathname{Phycas}, it is really \phycasapp; the MacOS hides the \pathname{.app} extension unless you change this in the Finder preferences. (We will hereafter use the terms \term{Phycas application} and \term{Phycas.app} bundle interchangeably.) The Phycas application will show up in your dock and the window that appears will be a terminal that has already invoked Python and issued the \code{from phycas import *} command mentioned in many places in this manual.
 
 All the instructions for the rest of the manual will be executed the same way regardless of whether Phycas running from a Windows console window, a Linux terminal or the \pathname{Phycas} application.
 
@@ -647,9 +647,9 @@ This script will finish almost instantly, and will leave behind these files:
 \subsection{Defining a partition model}
 \label{subsec:definingpartitionmodel}
 
-This section describes \term{partitioning}, which is dividing your data set into subsets of sites and applying a separate model to each subset. We will use the term \term{partition} to mean ``wall'' and a \term{partitioning} to mean a particular division of sites into mutually-exclusive subsets. This differs from common usage, where the term partition is used to mean a subset of sites, but is in line with mathematical usage of the term.
+This section describes \term{partitioning}, which is dividing your data set into subsets of sites and applying a separate model to each subset. We will use the term \term{partition} to mean ``wall'' and \term{a partitioning} to mean a particular division of sites into mutually-exclusive subsets. This is in line with mathematical usage of the term, but differs from common usage, where the term {\em partition} is treated as being synonymous with {\em subset}.
 
-To create a \term{partition model} in Phycas, you first define models for all subsets and then apply the models to the appropriate sets of sites. Phycas always treats tree topology and branch lengths as ``linked'' across partition subsets, and always treats all other parameters as ``unlinked'', to use MrBayes' terminology. There is no way to tell Phycas to unlink branch links, and likewise there is no way to tell it to use the same value of the gamma shape parameter for two different partition subsets. To create an unpartitioned model, simply change the settings on the current model object (as we did in the previous section) and, by default, that model will be applied to all sites.
+To create a \term{partition model} in Phycas, you first define models for all subsets and then apply the models to the appropriate sets of sites. Phycas always treats tree topology and branch lengths as (to use MrBayes' terminology) ``linked'' across partition subsets (meaning that one tree topology and set of edge lengths applies to all subsets), and always treats all other parameters as ``unlinked'' (these parameter values apply to just one subset of sites). There is no way to tell Phycas to unlink branch links, and likewise there is no way to tell it to use the same value of the gamma shape parameter for two different partition subsets. To create an unpartitioned model, simply change the settings on the current model object (as we did in the previous section) and, by default, that model will be applied to all sites.
 
 I will use the following specification to illustrate how to set up a partitioned model and then you will be given the chance to apply it to real protein-coding gene set. The model that we will set up separates first, second and third codon positions. You will apply a separate K80+G model to the first and second codon positions and an HKY+G model to third positions.
 
@@ -832,7 +832,7 @@ You should delete or move these 7 files before moving on to the next section to 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Estimating marginal likelihoods}\label{subsec:margliketutorial}
 
-There are two papers \citep{FanWuChenKuoLewis2010,XieLewisFanKuoChen2010} describing the stepping stone (SS) method for estimating the marginal likelihood of a model, but at this time (6 July 2010) neither one has been published. The paper by \citet{FanWuChenKuoLewis2010} describes the method used below. Both papers are available upon request.
+There are two papers \citep{FanWuChenKuoLewis2010,XieLewisFanKuoChen2010} describing the stepping stone (SS) method for estimating the marginal likelihood of a model, but at this time (\currReleaseDate) neither one has been published. The paper by \citet{FanWuChenKuoLewis2010} describes the method used below. Both papers are available upon request.
 
 To estimate the marginal likelihood using the steppingstone method, a special MCMC analysis is conducted that begins by exploring the posterior distribution but transitions slowly to exploring a reference distribution.  The reference distribution is similar to the actual prior in that the joint reference distribution comprises a product of independent probability distributions, but differs from the actual prior in that a sample from the posterior distribution is used to inform the reference distribution. For example, if the sample posterior mean and variance of a particular branch length parameter is available, the component of the reference distribution associated with that branch length would be a Gamma distribution with this mean and variance. 
 
@@ -840,9 +840,9 @@ Technically, the distribution explored by Phycas when performing a steppingstone
 
 \[f_{\beta}(\theta|y) = \left[ f(y|\theta) p(\theta) \right]^{\beta} \left[ \pi_0(\theta) \right]^{1 - \beta}\]
 
-Note that when $\beta = 1$, the power posterior equals the posterior (the reference distribution term $\pi_0(\theta)$ disappears), whereas when $\beta = 0$, the first term disappears leaving only the reference distribution. During an analysis, $\beta$ begins at 1 (posterior) and is decreased every \opt{mcmc}{ncycles} cycles until, ultimately, it equals 0 (reference distribution) for the last \opt{mcmc}{ncycles} cycles. The number of $\beta$ values visited equals \opt{ss}{nbetavals}. The period of time at the beginning spent exploring the posterior is not actually used by the stepping stone method, but is required if a pre-existing sample from the posterior is not available for the purpose of parameterizing the reference distribution. Phycas allows you to spend longer on this first step (see \opt{ss}{xcycles}) in order to obtain a better posterior sample.
+Note that when $\beta = 1$, the power posterior equals the posterior (the reference distribution term $\pi_0(\theta)$ disappears), whereas when $\beta = 0$, the first term disappears leaving only the reference distribution. During an analysis, $\beta$ begins at 1 (posterior) and is decreased every \opt{mcmc}{ncycles} cycles until, ultimately, it equals 0 (reference distribution) for the last \opt{mcmc}{ncycles} cycles. The number of $\beta$ values visited equals \opt{ss}{nbetavals}. The period of time at the beginning spent exploring the posterior is used to gather data needed for creating the reference distribution. 
 
-The way the stepping stone method works is to attempt to estimate well a series of ratios of normalizing constants. Each ratio in the series represents a stepping stone along a path bridging the posterior to the reference distribution. The product of the ratios in this series provides an estimate of the marginal likelihood. The estimate of each ratio is based on samples taken from an MCMC analysis that is exploring the power posterior associated with one particular value of $\beta$ (the $\beta$ value associated with the denominator of each ratio). Letting subscripts represent $\beta$ values, here is the entire series assuming that 5 $\beta$ values (0.8, 0.6, 0.4, 0.2, and 0.0) were visited during the course of the analysis:
+The way the stepping stone method works is to estimate a series of ratios of normalizing constants. Each ratio in the series represents a ``stepping stone'' along a path bridging the posterior to the reference distribution. The product of the ratios in this series provides an estimate of the marginal likelihood. The estimate of each ratio is based on samples taken from an MCMC analysis that is exploring the power posterior associated with one particular value of $\beta$ (the $\beta$ value associated with the denominator of each ratio). Letting subscripts represent $\beta$ values, here is the entire series assuming that 5 $\beta$ values (0.8, 0.6, 0.4, 0.2, and 0.0) were visited during the course of the analysis:
 
 \[\frac{c_{1.0}}{c_{0.0}} = \left(\frac{c_{1.0}}{\cancel{c_{0.8}}}\right) \left(\frac{\cancel{c_{0.8}}}{\cancel{c_{0.6}}}\right) \left(\frac{\cancel{c_{0.6}}}{\cancel{c_{0.4}}}\right) \left(\frac{\cancel{c_{0.4}}}{\cancel{c_{0.2}}}\right) \left(\frac{\cancel{c_{0.2}}}{c_{0.0}}\right)\]
 
@@ -887,15 +887,24 @@ partition()
 mcmc.fix_topology = True
 mcmc.starting_tree_source = TreeCollection(newick='''(1:0.31,2:0.10,(3:0.13,(4:0.09,
 ((5:0.10,6:0.20):0.06,(7:0.10,((8:0.05,10:0.11):0.02,9:0.08):0.06):0.04):0.04):0.05):0.03)''')
-
-model.edgelen_hyperprior = None
-model.edgelen_prior = Exponential(1.0)
  
-ss.nbetavals = 11
 mcmc.ncycles = 1000
+mcmc.sample_every = 1
+
+mcmc.out.log = 'ss.log'
+mcmc.out.log.mode = REPLACE
+mcmc.out.trees = 'ss.t'
+mcmc.out.trees.mode = REPLACE
+mcmc.out.params = 'ss.p'
+mcmc.out.params.mode = REPLACE
+
+ss.nbetavals = 11
 ss.xcycles = 1000
 ss()
-sump.file = 'params.p'
+
+sump.out.log = 'ss.sump.log'
+sump.out.log.mode = REPLACE
+sump.file = 'ss.p'
 sump()
 \end{verbatim}
 
@@ -926,30 +935,40 @@ mcmc.starting_tree_source = TreeCollection(newick='''(1:0.31,2:0.10,(3:0.13,(4:0
 Note that the tree description is broken across two lines above. Note also that the tree description is surrounded by triple quotes\index{triple quoted strings} (three single quote characters in a row). When Python encounters a string defined by triple quotes, it allows line breaks inside. This is one way to handle this situation, but you could also delete the carriage return in the middle so that the tree description occupies just one line in your file. If the tree description string is all on one line, then you can use any kind of quotes you like: single, double, or triple. However, if you break the string across two or more lines and you fail to use triple quotes to define it, you will get an error message from Python (``SyntaxError: EOL while scanning string literal'').
 \end{samepage}
 
-% TODO: remove this section as soon as possible
 \begin{samepage}
 \begin{verbatim}
-model.edgelen_hyperprior = None
-model.edgelen_prior = Exponential(1.0)
+mcmc.ncycles = 1000
 \end{verbatim}
-\pointup\ These two lines are necessary because Phycas does not currently allow the use of edge length hyperpriors (see section~\ref{hierarchicalmodels}) when the tree topology is fixed. This restriction will be lifted in the next release, but for now we must choose a prior (here, an exponential distribution with rate 1.0) for the edge length parameters and turn off the hyperprior by specifying \code{None} for \opt{model}{edgelen\_hyperprior}. 
+\pointup\ The \cmd{ss} command uses the \cmd{mcmc} command to do almost all of the work. Hence, the setting \opt{mcmc}{ncycles} specifies the number of parameter update cycles devoted to each beta value visited. Note that this is the number of cycles per beta value. If you specified \opt{ss}{nbetavals} to be 11 and \opt{mcmc}{ncycles} to be 1000, then the total number of cycles would be 11 times 1000, or 11000 cycles.
+\end{samepage}
+
+This example uses 11 beta values, but is this enough? Generally the more stepping stones (i.e. beta values) used, the better the estimate will be, but the quality of the estimate also depends on the quality of the reference distribution. If the reference distribution approximates the posterior well, then fewer beta values are needed (and fewer samples per beta value are needed). If the reference distribution exactly equals the posterior, then only a single sample from the reference distribution (beta = 0.0) would be needed to determine the marginal likelihood exactly, This utopia is never achievable because if one actually knew the posterior distribution exactly, then one would also know the normalizing constant exactly and hence you would not need to estimate it! In practice, it probably makes sense to start with, say, 11 $\beta$ values, and a reasonable number (e.g. 1000) cycles per $\beta$ value. Then do another run, doubling both values. If this makes a big difference, then probably the first run was not long enough (and perhaps the second run too). 
+
+\begin{samepage}
+\begin{verbatim}
+mcmc.sample_every = 1
+\end{verbatim}
+\pointup\ Normally, the \opt{mcmc}{sample\_every} setting governs the degree of \term{thinning} performed. Thinning involves ignoring some sampled parameter values in order to decrease autocorrelation or to avoid an excessive file size. In principle, there is no reason to thin other than to keep the size of the parameter file small because one could alway thin out the samples at a later time. Because we are not worried about the size of the parameter file here, this line tells Phycas to save every sample (i.e. don't thin; sample parameter values every cycle).
+\end{samepage}
+
+\begin{samepage}
+\begin{verbatim}
+mcmc.out.log = 'ss.log'
+mcmc.out.log.mode = REPLACE
+mcmc.out.trees = 'ss.t'
+mcmc.out.trees.mode = REPLACE
+mcmc.out.params = 'ss.p'
+mcmc.out.params.mode = REPLACE
+\end{verbatim}
+\pointup\ The \opt{mcmc}{out.log}, \opt{mcmc}{out.trees} and \opt{mcmc}{out.params} settings tell Phycas to create a log file named \pathname{ss.log}, a tree file named \pathname{ss.t}, and a parameter file named \pathname{ss.p}, respectively. The \opt{mcmc}{out.log.mode}, \opt{mcmc}{out.trees.mode}, and \opt{mcmc}{out.params.mode} settings tell Phycas to automatically replace these files if they already exist (the default action is to append a number to the name rather than deleting the existing file).
 \end{samepage}
 
 \begin{samepage}
 \begin{verbatim}
 ss.nbetavals = 11
 \end{verbatim}
-\pointup\ This specifies the number of ``stepping stones''to use in estimating the marginal likelihood. With this setting, the following 11 beta values would be used: 1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0. 
+\pointup\ This specifies the number of ``stepping stones''to use in estimating the marginal likelihood. With this setting, the following 11 beta values would be used: 1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0. In \citep{FanWuChenKuoLewis2010}, the value $K$ represents the number of intervals (or stepping stone ratios), and thus $K=10$ in this case ($K$ = \opt{ss}{nbetavals} - 1).
 \end{samepage}
-
-\begin{samepage}
-\begin{verbatim}
-mcmc.ncycles = 1000
-\end{verbatim}
-\pointup\ The \cmd{ss} command uses the \cmd{mcmc} to do almost all of the work. Hence, the setting \opt{mcmc}{ncycles} specifies the number of parameter update cycles devoted to each beta value visited. Note that this is the number of cycles per beta value. If you specified \opt{ss}{nbetavals} to be 11 and \opt{mcmc}{ncycles} to be 1000, then the total number of cycles would be 11 times 1000, or 11000 cycles.
-\end{samepage}
-
-This example uses 11 beta values, but is this enough? Generally the more stepping stones (i.e. beta values) used, the better the estimate will be, but the quality of the estimate also depends on the quality of the reference distribution. If the reference distribution approximates the posterior well, then fewer beta values are needed (and fewer samples per beta value are needed). If the reference distribution exactly equals the posterior, then only a single sample from the reference distribution (beta = 0.0) would be needed to determine the marginal likelihood exactly, This utopia is never achievable because if one actually knew the posterior distribution exactly, then one would also know the normalizing constant exactly and hence you would not need to estimate it! In practice, it probably makes sense to start with, say, 11 $\beta$ values, and a reasonable number (e.g. 1000) cycles per $\beta$ value. I would do another run, however, doubling both values to see if it makes a big difference. If it does, then probably the first run was not long enough (and perhaps the second run too). 
 
 \begin{samepage}
 \begin{verbatim}
@@ -967,16 +986,26 @@ ss()
 
 \begin{samepage}
 \begin{verbatim}
-sump.file = 'params.p'
+sump.out.log = 'ss.sump.log'
+sump.out.log.mode = REPLACE
+\end{verbatim}
+\pointup\ The \opt{sump}{out.log} setting specifies the name of the file that will hold the output of the \cmd{sump} command. The \opt{sump}{out.log.mode} setting tells Phycas that it is Ok to go ahead and delete any \pathname{ss.sump.log} file that already exists.
+\end{samepage}
+
+\begin{samepage}
+\begin{verbatim}
+sump.file = 'ss.p'
 sump()
 \end{verbatim}
-\pointup\ The \cmd{sump} command is used to summarize the parameter file produced by the \cmd{ss} command and calculate the estimate of the marginal likelihood. The name of the parameter file to summarize must be supplied in the \opt{sump}{file} setting.
+\pointup\ The \cmd{sump} command is used to summarize the parameter file produced by the \cmd{ss} command and calculate the estimate of the marginal likelihood. The name of the parameter file to summarize must be supplied in the \opt{sump}{file} setting. Note that we have specified \pathname{ss.p} here, which matches the file name specified by the earlier \opt{mcmc}{out.params} setting.
 \end{samepage}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Output of \pathname{steppingstone.py}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-TODO
+The file \pathname{ss.sump.log} contains the output of interest from this analysis. This file has three sections labeled, respectively, Autocorrelations, Effective and actual sample sizes, and Marginal likelihood estimate. The first and second sections are related, for it is the autocorrelations that determine the effective sample sizes. You will note that the first line of the Effective sample sizes section (after the header line showing the $\beta$ values) provides the actual sample sizes. This is the number of times parameter values were saved while the MCMC analysis was exploring a particular $\beta$ value. The other rows in this table provide effective sample sizes. If the MCMC samples are highly autocorrelated, then you effectively have a smaller sample size than you might have thought given the actual sample size. To see this, imagine a perfectly autocorrelated sample in which every sampled value is the same. In this case, you really only have a sample size of 1, even though Phycas might have saved 2000 values. Note the last column (for $\beta=0$). The effective sample sizes in this column are often larger than the actual sample size. What's up with that? If there is zero autocorrelation, then the effective sample sizes will hover around the actual sample size. If the autocorrelation is negative, then the effective sample size will be larger than the actual sample size. When $\beta=0$, Phycas is sampling directly from standard probability distributions and zero autocorrelation is expected in this case.
+
+The last section provides some information about each of the ratios (stepping stones) that it estimated in the process of estimating the marginal likelihood. The first column (labeled \code{b\_(k-1)}) is the power (i.e. value of $\beta$) used for the distribution being sampled. You will note that $\beta=1$ (the posterior distribution) is absent. This is because the samples taken from the posterior are used to formulate the reference distribution, not for estimating the individual ratios in the stepping-stone method. The column labeled \code{beta\_incr} shows the difference between the current $\beta$ value and the previous one. For the (default) generalized stepping-stone method, these $\beta$ increments should all be the same. The column labeled \code{n} provides the number of sample used for that particular ratio. The column labeled \code{lnRk} is the log of the ratio of normalizing constants corresponding to one stepping stone ratio. The product of the individual ratios equals the estimate of the marginal likelihood. The last column, labeled \code{lnR(cum)} provides the running sum of the individual \code{lnRk} values. The final estimate of the log of the marginal likelihood is provided at the bottom of the file.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% Polytomy analyses %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1003,6 +1032,7 @@ The second possible prior allowed by Phycas is the \term{resolution class prior}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 It is instructive to run Phycas without data in order to explore the prior. Let's begin by figuring out what to expect. For a 5-taxon problem, there are 15 possible fully-resolved trees (resolution class 3), 10 trees with 2 internal nodes (resolution class 2), and 1 star tree (resolution class 1). Below is a table showing the expected results (prior probabilities of each of the 26 possible tree topologies) for both a polytomy prior and a resolution class prior when \opt{mcmc}{topo\_prior\_C} equals 1.0:
+
 \begin{tabular}{ccccc}
 Tree Number & Resolution Class & Tree Topology & Polytomy Prior & Resolution Class Prior \\ \hline
 1	 &   1	  	&  (1,2,3,4,5)	  	&    0.03846	&    0.33330 \\
@@ -1032,6 +1062,7 @@ Tree Number & Resolution Class & Tree Topology & Polytomy Prior & Resolution Cla
 25	 & 	 3		&  (1,4,(2,(3,5))	& 	 0.03846	& 	 0.02222 \\
 26	 & 	 3	  	&  (1,4,(3,(2,5))	& 	 0.03846	&    0.02222 \\ \hline
 \end{tabular}
+
 For the polytomy prior, each of the 26 tree topologies shows up in 1/26 (3.846\%) of the sample. Note that, as a class, fully-resolved trees dominate the sample (57.7\%) even though, individually, they are as frequent as any other tree topology. That is because there are 15 tree topologies in this class (resolution class 3), but only 10 in resolution class 2 and only 1 in resolution class 1 (the star tree).
 
 In the resolution class prior column, note that each of the fully resolved trees shows up 2.222\% of the time, but because there are 15 of these fully-resolved tree topologies, as a class they make up 15*2.222 = 33.33\% of the sample. Likewise, the tree topologies in resolution class 2 show up individually only 3.333\% of the time, but as a class they make up 33.33\%. Finally, the star tree, being alone in its resolution class, makes up 33.33\% of the sample.

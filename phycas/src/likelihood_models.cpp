@@ -870,7 +870,7 @@ void Model::createParameters(
 				edge_len_param->setName(boost::str(boost::format("edgelen_%d") % nd->GetNodeNumber())); 
 				edge_len_param->setStartingValue(nd->GetEdgeLen());
 				edge_len_param->setTree(t);
-				if (separate_int_ext_edgelen_priors && nd->IsInternal())
+				if (separate_int_ext_edgelen_priors && nd->IsInternal() && !nd->IsSubroot())
 					edge_len_param->setPrior(internalEdgeLenPrior);
 				else 
 					edge_len_param->setPrior(externalEdgeLenPrior);
@@ -878,6 +878,42 @@ void Model::createParameters(
 					edge_len_param->fixParameter();	
 				edgelens_vect_ref.push_back(edge_len_param);
 				}
+#if POLPY_NEWWAY
+			if (edgeLenHyperPrior)
+				{
+				if (separate_int_ext_edgelen_priors)
+					{
+					// add HyperPriorParam for internal edges
+					MCMCUpdaterShPtr p_int = MCMCUpdaterShPtr(new HyperPriorParam(HyperPriorParam::internal));
+					p_int->setName(std::string("internal_hyper"));
+					p_int->setTree(t);
+					p_int->setPrior(edgeLenHyperPrior);
+					if (edgelen_hyperprior_fixed)
+						p_int->fixParameter();
+					edgelen_hyperparams_vect_ref.push_back(p_int);
+					
+					// add HyperPriorParam for internal edges
+					MCMCUpdaterShPtr p_ext = MCMCUpdaterShPtr(new HyperPriorParam(HyperPriorParam::external));
+					p_ext->setName(std::string("external_hyper"));
+					p_ext->setTree(t);
+					p_ext->setPrior(edgeLenHyperPrior);
+					if (edgelen_hyperprior_fixed)
+						p_ext->fixParameter();
+					edgelen_hyperparams_vect_ref.push_back(p_ext);
+					}
+				else
+					{
+					// add HyperPriorParam for all edges
+					MCMCUpdaterShPtr p_all = MCMCUpdaterShPtr(new HyperPriorParam(HyperPriorParam::all));
+					p_all->setName(std::string("edgelen_hyper"));
+					p_all->setTree(t);
+					p_all->setPrior(edgeLenHyperPrior);
+					if (edgelen_hyperprior_fixed)
+						p_all->fixParameter();
+					edgelen_hyperparams_vect_ref.push_back(p_all);
+					}
+				}
+#endif
 			}
 		else if (separate_int_ext_edgelen_priors)
 			{
@@ -899,7 +935,13 @@ void Model::createParameters(
 			if (edgeLenHyperPrior)
 				{
 				EdgeLenMasterParamShPtr pit = boost::shared_dynamic_cast<EdgeLenMasterParam>(p_external);
+#if POLPY_NEWWAY
+				HyperPriorParam * h = new HyperPriorParam(HyperPriorParam::external);
+				h->setEdgeLenMasterParam(pit);
+				MCMCUpdaterShPtr p = MCMCUpdaterShPtr(h);
+#else
 				MCMCUpdaterShPtr p = MCMCUpdaterShPtr(new HyperPriorParam(pit, true));
+#endif				
 				p->setName(std::string("external_hyper"));
 				p->setTree(t);
 				p->setPrior(edgeLenHyperPrior);
@@ -920,7 +962,13 @@ void Model::createParameters(
 			if (edgeLenHyperPrior)
 				{
 				EdgeLenMasterParamShPtr pit = boost::shared_dynamic_cast<EdgeLenMasterParam>(p_internal);
+#if POLPY_NEWWAY
+				HyperPriorParam * h = new HyperPriorParam(HyperPriorParam::internal);
+				h->setEdgeLenMasterParam(pit);
+				MCMCUpdaterShPtr p = MCMCUpdaterShPtr(h);
+#else
 				MCMCUpdaterShPtr p = MCMCUpdaterShPtr(new HyperPriorParam(pit, false));
+#endif				
 				p->setName(std::string("internal_hyper"));
 				p->setTree(t);
 				p->setPrior(edgeLenHyperPrior);
@@ -946,7 +994,13 @@ void Model::createParameters(
 			if (edgeLenHyperPrior)
 				{
 				EdgeLenMasterParamShPtr pit = boost::shared_dynamic_cast<EdgeLenMasterParam>(p);
+#if POLPY_NEWWAY
+				HyperPriorParam * h = new HyperPriorParam(HyperPriorParam::all);
+				h->setEdgeLenMasterParam(pit);
+				MCMCUpdaterShPtr p_hyper = MCMCUpdaterShPtr(h);
+#else
 				MCMCUpdaterShPtr p_hyper = MCMCUpdaterShPtr(new HyperPriorParam(pit, true));
+#endif				
 				p_hyper->setName(std::string("edgelen_hyper"));
 				p_hyper->setTree(t);
 				p_hyper->setPrior(edgeLenHyperPrior);
@@ -1041,11 +1095,12 @@ std::string Model::paramHeader() const
 |	hyperparameters.
 */
 std::string Model::paramReport(
-  unsigned ndecimals) const	/**< is the number of decimal places precision to use when reporting parameter values */
+  unsigned ndecimals,						/**< is the number of decimal places precision to use when reporting parameter values */
+  bool include_edgelen_hyperparams) const	/**< if true, include values of edge length hyperparameters */
 	{
     std::string fmt = boost::str(boost::format("%%.%df\t") % ndecimals);
 	std::string s;
-	if (edgeLenHyperPrior)
+	if (edgeLenHyperPrior and include_edgelen_hyperparams)
 		{
 		if (separate_int_ext_edgelen_priors)
 			{

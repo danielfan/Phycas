@@ -418,7 +418,8 @@ std::string Codon::paramHeader() const	/**< is the suffix to tack onto the param
 |	parameters suitable for saving in a sampled parameter file (e.g. like the .p files saved by MrBayes).
 */
 std::string Codon::paramReport(
-  unsigned ndecimals) const /**< floating point precision to use */
+  unsigned ndecimals,						/**< floating point precision to use */
+  bool include_edgelen_hyperparams) const	/**< if true, include values of edge length hyperparameters */
 	{
     std::string fmt = boost::str(boost::format("%%.%df\t") % ndecimals);
 	std::string s = boost::str(boost::format(fmt) % kappa);
@@ -429,7 +430,7 @@ std::string Codon::paramReport(
 		s += str(boost::format(fmt) % state_freqs[i]);
 		//s += str(boost::format("%.5f\t") % state_freqs[i]);
 		}
-	s += Model::paramReport(ndecimals);
+	s += Model::paramReport(ndecimals, include_edgelen_hyperparams);
 	return s;
 	}
 

@@ -502,6 +502,8 @@ double MCMCUpdater::recalcPrior()
 		
 	if (prior)
 		{
+		//std::cerr << "MCMCUpdater::recalcPrior: prior = " << prior->GetDistributionDescription() << std::endl;	//@@@
+			
 		double value = getCurrValueFromModel();
 		try 
 			{

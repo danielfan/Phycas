@@ -81,7 +81,7 @@ class Codon: public Model
 		ProbDistShPtr				getStateFreqParamPrior();
 
 		virtual std::string			paramHeader() const;
-		virtual std::string			paramReport(unsigned ndecimals) const;
+		virtual std::string			paramReport(unsigned ndecimals, bool include_edgelen_hyperparams) const;
 
 		void						updateQMatrix() const;
 		virtual void				createParameters(TreeShPtr t, MCMCUpdaterVect & edgelens, MCMCUpdaterVect & edgelen_hyperparams, MCMCUpdaterVect & parameters, int subset_pos);

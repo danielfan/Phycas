@@ -194,6 +194,101 @@ double MCMCChainManager::recalcLnWorkingPrior() const
 	return ln_working_prior;
 	}
 
+#if POLPY_NEWWAY
+/*----------------------------------------------------------------------------------------------------------------------
+|	Replaces current (exponential) prior distribution for all internal edge length parameters with a new one having
+|	the supplied mean, and returns the current log joint prior over all internal edge lengths.
+*/
+double MCMCChainManager::reviseInternalEdgeLenPrior(
+  double mu)	/**< is the new mean edge length */
+	{
+	double sum_log_prior = 0.0;
+	for (MCMCUpdaterIter edgelen_param_iter = edgelens_begin; edgelen_param_iter != edgelens_end; ++edgelen_param_iter)
+		{
+		EdgeLenParam * p = dynamic_cast<EdgeLenParam *>((*edgelen_param_iter).get());
+		if (p->isInternalEdge())
+			{
+			//std::cerr << ">>> reviseInternalEdgeLenPriors: " << std::endl;	//@@@~
+			//std::cerr << "      node number       = " << p->my_node->GetNodeNumber() << std::endl;
+			//std::cerr << "      brlen             = " << p->getCurrValueFromModel() << std::endl;
+			//std::cerr << "      prior address     = " << p->getPriorDist().get() << std::endl;
+			
+			if (sum_log_prior == 0.0)
+				{
+				//std::cerr << "      old prior         = " << p->getPriorDist()->GetDistributionDescription() << std::endl;
+				// set prior just for first internal edge (all other internal edges use the same distribution object)
+				p->getPriorDist()->SetMeanAndVariance(mu, mu*mu);
+				}
+			sum_log_prior += p->recalcPrior();
+			
+			//std::cerr << "      current prior     = " << p->getPriorDist()->GetDistributionDescription() << std::endl;
+			//std::cerr << "      log-prior-density = " << p->recalcPrior() << std::endl;
+			}
+		}
+	return sum_log_prior;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Replaces current (exponential) prior distribution for all internal edge length parameters with a new one having
+|	the supplied mean, and returns the current log joint prior over all external edge lengths.
+*/
+double MCMCChainManager::reviseExternalEdgeLenPrior(
+  double mu)	/**< is the new mean edge length */
+	{
+	double sum_log_prior = 0.0;
+	for (MCMCUpdaterIter edgelen_param_iter = edgelens_begin; edgelen_param_iter != edgelens_end; ++edgelen_param_iter)
+		{
+		EdgeLenParam * p = dynamic_cast<EdgeLenParam *>((*edgelen_param_iter).get());
+		if (p->isExternalEdge())
+			{
+			//std::cerr << ">>> reviseExternalEdgeLenPriors: " << std::endl;	//@@@~
+			//std::cerr << "      node number       = " << p->my_node->GetNodeNumber() << std::endl;
+			//std::cerr << "      brlen             = " << p->getCurrValueFromModel() << std::endl;
+			//std::cerr << "      prior address     = " << p->getPriorDist().get() << std::endl;
+			
+			if (sum_log_prior == 0.0)
+				{
+				//std::cerr << "      old prior         = " << p->getPriorDist()->GetDistributionDescription() << std::endl;
+				// set prior just for first external edge (all other external edges use the same distribution object)
+				p->getPriorDist()->SetMeanAndVariance(mu, mu*mu);
+				}
+			sum_log_prior += p->recalcPrior();
+			
+			//std::cerr << "      current prior     = " << p->getPriorDist()->GetDistributionDescription() << std::endl;
+			//std::cerr << "      log-prior-density = " << p->recalcPrior() << std::endl;
+			}
+		}
+	return sum_log_prior;
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Replaces current (exponential) prior distribution for all internal edge length parameters with a new one having
+|	the supplied mean, and returns the current log joint prior over all edge lengths.
+*/
+double MCMCChainManager::reviseAllEdgeLenPriors(
+  double mu)	/**< is the new mean edge length */
+	{
+	double sum_log_prior = 0.0;
+	for (MCMCUpdaterIter edgelen_param_iter = edgelens_begin; edgelen_param_iter != edgelens_end; ++edgelen_param_iter)
+		{
+		EdgeLenParam * p = dynamic_cast<EdgeLenParam *>((*edgelen_param_iter).get());
+
+		//std::cerr << ">>> reviseAllEdgeLenPriors: " << std::endl;	//@@@~
+		//std::cerr << "      node number       = " << p->my_node->GetNodeNumber() << std::endl;
+		//std::cerr << "      brlen             = " << p->getCurrValueFromModel() << std::endl;
+		//std::cerr << "      prior address     = " << p->getPriorDist().get() << std::endl;
+		//std::cerr << "      old prior         = " << p->getPriorDist()->GetDistributionDescription() << std::endl;
+			
+		p->getPriorDist()->SetMeanAndVariance(mu, mu*mu);
+		sum_log_prior += p->recalcPrior();
+			
+		//std::cerr << "      current prior     = " << p->getPriorDist()->GetDistributionDescription() << std::endl;
+		//std::cerr << "      log-prior-density = " << p->recalcPrior() << std::endl;
+		}
+	return sum_log_prior;
+	}
+#endif
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Refreshes `last_ln_prior' by calling recalcPrior() for all parameters.
 */
