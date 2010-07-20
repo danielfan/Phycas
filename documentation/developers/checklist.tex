@@ -15,9 +15,11 @@ sudo apt-get install subversion
 \begin{verbatim}
 cd $HOME
 mkdir ndev
-svn co https://ncl.svn.sourceforge.net/svnroot/ncl ndev
-cd ndev/branches/v2.1
-./bootstrap
+cd ndev
+mkdir v2.1
+svn co https://ncl.svn.sourceforge.net/svnroot/ncl/branches/v2.1 v2.1
+cd v2.1
+sh ./bootstrap.sh
 ./configure
 make
 sudo make install
@@ -29,7 +31,16 @@ cd $HOME
 tar zxvf boost_1_42_0.tar.gz
 \end{verbatim}
 %
-\item Build bjam executable (the following should create a new directory \pathname{\$HOME/boost\_1\_42\_0/tools/jam/src/bin.linuxx86} containing the bjam executable):
+\item Build bjam executable.
+The following should create a new directory 
+containing the bjam executable. 
+The name of the directory will depend on whether your version of g++ is configured
+to build for the 32 or 64 bits. 
+The directory created should be:\\
+\pathname{\$HOME/boost\_1\_42\_0/tools/jam/src/bin.linuxx86}\\
+or \\
+\pathname{\$HOME/boost\_1\_42\_0/tools/jam/src/bin.linuxx86\_64} \\
+con):
 \begin{verbatim}
 cd $HOME/boost_1_42_0/tools/jam/src
 ./build.sh
@@ -39,8 +50,10 @@ cd $HOME/boost_1_42_0/tools/jam/src
 \begin{verbatim}
 cd $HOME
 mkdir pdev
-svn co https://phycas.svn.sourceforge.net/svnroot/phycas pdev
-cd pdev/trunk
+cd pdev
+mkdir trunk
+svn co https://phycas.svn.sourceforge.net/svnroot/phycas/trunk trunk
+cd trunk
 \end{verbatim}
 %
 \item Create file \pathname{\$HOME/pdev/trunk/go.sh} to contain the following text:
@@ -56,6 +69,14 @@ export NCL_INSTALL_DIR="/usr/local"
 export NCL_ALREADY_INSTALLED="true"
 bjam release
 \end{verbatim}
+
+Note that if building bjam created a 64 bit version then you will have to use
+\begin{verbatim}
+export PATH="${PATH}:$BOOST_ROOT/tools/jam/src/bin.linuxx86_64"
+\end{verbatim}
+to setup the correct path
+
+
 %
 \item Make \pathname{\$HOME/pdev/trunk/go.sh} executable and build phycas
 \begin{verbatim}
@@ -68,6 +89,7 @@ chmod +x go.sh
 \begin{verbatim}
 /sbin/ldconfig $HOME/pdev/trunk/phycas/Conversions /usr/local/lib/ncl
 \end{verbatim}
+(you may have to run this via sudo).
 %
 \item Create tar file of phycas distribution:
 \begin{verbatim}
@@ -82,10 +104,8 @@ python -c "from distutils.sysconfig import get_python_lib; print get_python_lib(
 %
 \item Assuming previous step revealed that the python dist-packages directory is \pathname{/usr/lib/python2.6/dist-packages}, move the tar file there and unpack:
 \begin{verbatim}
-sudo cp $HOME/pdev/trunk/phycas_distr.tar /usr/lib/python2.6/dist-packages
 cd /usr/lib/python2.6/dist-packages
-sudo tar xvf phycas_distr.tar
-sudo rm phycas_distr.tar
+sudo tar xvf "$HOME/pdev/trunk/phycas_distr.tar"
 \end{verbatim}
 %
 \item See if phycas can be loaded into python:
