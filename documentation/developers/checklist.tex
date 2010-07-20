@@ -113,4 +113,28 @@ sudo tar xvf "$HOME/pdev/trunk/phycas_distr.tar"
 python
 >>> from phycas import *
 \end{verbatim}
+
+\subsection*{Making python less painful}
+bpython and ipython allow for tab completion and other have other helpful features that make phycas less painful to work with.
+
+\subsubsection*{setuptools}
+To install them, start by installing setuptools.  See \url{http://pypi.python.org/pypi/setuptools#cygwin-mac-os-x-linux-other}
+This installation  will entail  grabbing the egg from \url{http://pypi.python.org/packages/2.6/s/setuptools/setuptools-0.6c11-py2.6.egg#md5=bfa92100bd772d5a213eedd356d64086}
+and then installing it 
+\begin{verbatim}
+sh setuptools-0.6c11-py2.6.egg
+\end{verbatim}
+That may require sudo.
+
+Setuptools should give you ``easy\_install'' on your path.
+After that you should be able to run
+\begin{verbatim}
+easy_install bpython
+easy_install ipython
+\end{verbatim}
+to install bpython and iPython.
+
+
+
+
 \end{enumerate}
