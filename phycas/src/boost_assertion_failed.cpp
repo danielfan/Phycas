@@ -19,6 +19,7 @@
 
 #if !defined(NDEBUG)
 #include <iostream>
+#include <string>
 #include <boost/assert.hpp>
 
 #define DEBUG_INPUT_ON_ASSERT

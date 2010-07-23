@@ -1100,7 +1100,7 @@ std::string Model::paramReport(
 	{
     std::string fmt = boost::str(boost::format("%%.%df\t") % ndecimals);
 	std::string s;
-	if (edgeLenHyperPrior and include_edgelen_hyperparams)
+	if (edgeLenHyperPrior && include_edgelen_hyperparams)
 		{
 		if (separate_int_ext_edgelen_priors)
 			{

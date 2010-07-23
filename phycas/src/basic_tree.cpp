@@ -2201,10 +2201,10 @@ unsigned Tree::robinsonFoulds(TreeShPtr other)
 	other->buildTreeID();
 	const TreeID & other_tree_id = other->getTreeID();
 	
-	TreeID::iterator first1 = tree_id.begin();
-	TreeID::iterator first2 = other_tree_id.begin();
-	TreeID::iterator last1 = tree_id.end();
-	TreeID::iterator last2 = other_tree_id.end();
+	TreeID::const_iterator first1 = tree_id.begin();
+	TreeID::const_iterator first2 = other_tree_id.begin();
+	TreeID::const_iterator last1 = tree_id.end();
+	TreeID::const_iterator last2 = other_tree_id.end();
 	
 	// The tree id is a std::set of Split objects. We can determine if a split is in one tree and not the other
 	// by comparing the two split objects with the < operator. Suppose there are 5 splits in each of two trees

@@ -849,19 +849,19 @@ void UnimapNNIMove::calculateProposalDist(bool before_swap)
 	{
 	if (before_swap)
 		{
-		propMeanX = std::max(min_edge_len_mean, (2*dXY + dXZ + dWX - dYZ - dWY)/4.0);
-		propMeanY = std::max(min_edge_len_mean, (2*dXY + dYZ + dWY - dXZ - dWX)/4.0);
-		propMeanZ = std::max(min_edge_len_mean, (2*dWZ + dXZ + dYZ - dWX - dWY)/4.0); 
-		propMeanW = std::max(min_edge_len_mean, (2*dWZ + dWX + dWY - dXZ - dXY)/4.0);
-		propMeanInternal = std::max(min_edge_len_mean, (dXZ + dWX + dYZ + dWY - 2*dXY - 2*dWZ)/4.0);
+		propMeanX = max(min_edge_len_mean, (2*dXY + dXZ + dWX - dYZ - dWY)/4.0);
+		propMeanY = max(min_edge_len_mean, (2*dXY + dYZ + dWY - dXZ - dWX)/4.0);
+		propMeanZ = max(min_edge_len_mean, (2*dWZ + dXZ + dYZ - dWX - dWY)/4.0); 
+		propMeanW = max(min_edge_len_mean, (2*dWZ + dWX + dWY - dXZ - dXY)/4.0);
+		propMeanInternal = max(min_edge_len_mean, (dXZ + dWX + dYZ + dWY - 2*dXY - 2*dWZ)/4.0);
 		}
 	else
 		{
-		propMeanX = std::max(min_edge_len_mean, (2*dWX + dXZ + dXY - dWZ - dWY)/4.0); 
-		propMeanY = std::max(min_edge_len_mean, (2*dYZ + dXY + dWY - dXZ - dWZ)/4.0);
-		propMeanW = std::max(min_edge_len_mean, (2*dWX + dWZ + dWY - dXZ - dXY)/4.0);
-		propMeanZ = std::max(min_edge_len_mean, (2*dYZ + dXZ + dWZ - dXY - dWY)/4.0);
-		propMeanInternal = std::max(min_edge_len_mean, (dXZ + dWZ + dXY + dWY - 2*dYZ - 2*dWX)/4.0);
+		propMeanX = max(min_edge_len_mean, (2*dWX + dXZ + dXY - dWZ - dWY)/4.0); 
+		propMeanY = max(min_edge_len_mean, (2*dYZ + dXY + dWY - dXZ - dWZ)/4.0);
+		propMeanW = max(min_edge_len_mean, (2*dWX + dWZ + dWY - dXZ - dXY)/4.0);
+		propMeanZ = max(min_edge_len_mean, (2*dYZ + dXZ + dWZ - dXY - dWY)/4.0);
+		propMeanInternal = max(min_edge_len_mean, (dXZ + dWZ + dXY + dWY - 2*dYZ - 2*dWX)/4.0);
 		}
 
 	}

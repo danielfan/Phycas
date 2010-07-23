@@ -3209,7 +3209,7 @@ unsigned TreeLikelihood::compressDataMatrix(
 			
 				// mapit->second holds the pattern count
 				pattern_counts.push_back(mapit->second);
-				num_sites_this_subset += mapit->second;
+				num_sites_this_subset += (unsigned)mapit->second;
 
 				// get list of sites that had this pattern
 				const uint_list_t & sites = pattern_to_sites_map[mapit->first];
