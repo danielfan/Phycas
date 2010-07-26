@@ -1,80 +1,116 @@
-#!/bin sh
-set -x 
-if ! test -d trunk_phycas
+#!/bin/sh
+mac_os_dir=`dirname "$0"`
+contents_os_dir=`dirname "$mac_os_dir"`
+resources_dir="$contents_os_dir/Resources"
+PHYCAS_GUI_RESOURCES_DIR="$resources_dir"
+export PHYCAS_GUI_RESOURCES_DIR
+phycas_dir="$resources_dir/phycas"
+if test -d "$phycas_dir"
 then
-    svn co https://phycas.svn.sourceforge.net/svnroot/phycas/trunk trunk_phycas || exit
+	if test -z "$PYTHONPATH"
+	then
+		PYTHONPATH="$resources_dir"
+	else
+		PYTHONPATH="$PYTHONPATH:$resources_dir"
+	fi
+	if test -z "$DYLD_LIBRARY_PATH"
+	then
+		DYLD_LIBRARY_PATH="$resources_dir:${resources_dir}/lib:$phycas_dir/Conversions"
+	else
+		DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:${resources_dir}/lib:$resources_dir:$phycas_dir/Conversions"
+	fi
+	PATH="$mac_os_dir:${resources_dir}/bin:$PATH"
+else
+	echo "$0: $phycas_dir does not exist!"
+	exit 1
 fi
-if ! test -d PhycasGUI.app
+env_settings_path="$HOME/.phycas/phycas_gui_env.sh"
+if ! test -d "$HOME/.phycas"
 then
-    tar xfvj phycas_trunk/installer/mac/iterm/PhycasGUI.app.tar.bz  || 
-exit
-
-
-
-if ! test -d readline-6.1
-then
-    wget ftp://ftp.cwru.edu/pub/bash/readline-6.1.tar.gz || exit
-    tar xfvz ~/builds/readline-6.1.tar.gz || exit
+	mkdir "$HOME/.phycas"
 fi
-cd readline-6.1  || exit
-./configure --prefix=$SELF_CONTAINED_PREFIX || exit
-make && make check && make install  || exit
-cd ..  || exit
-
-if ! test -d Python-2.7
+if test -d "$HOME/.phycas"
 then
-    wget http://www.python.org/ftp/python/2.7/Python-2.7.tar.bz2 || exit
-    tar xfvj ~/builds/Python-2.7.tar.bz2  || exit
+	echo "#!/bin/sh" > "$env_settings_path"
+	echo "PYTHONPATH=\"$PYTHONPATH\"" >> "$env_settings_path"
+	echo "DYLD_LIBRARY_PATH=\"$DYLD_LIBRARY_PATH\"" >> "$env_settings_path"
+	echo "PATH=\"$PATH\"" >> "$env_settings_path"
+	echo "export PYTHONPATH" >> "$env_settings_path"
+	echo "export DYLD_LIBRARY_PATH" >> "$env_settings_path"
+	echo "export PATH" >> "$env_settings_path"
+	active_env_path="$HOME/.phycas/active_phycas_env.sh"
+	if ! test -f "$active_env_path"
+	then
+		echo "#!/bin/sh" > "$active_env_path"
+		echo "################################################################################################" >> "$active_env_path"
+		echo "# This file sourced whenever phycas is run through the Phycas.app " >> "$active_env_path"
+		echo "# The Phycas.app executes ~/.phycas/run_phycas.sh which sources this file before invoking python." >> "$active_env_path"
+		echo "# " >> "$active_env_path"
+		echo "# The default behavior is for this file to source the file \"\$HOME/.phycas/phycas_gui_env.sh\" " >> "$active_env_path"
+		echo "#  which is overwritten every time a Phycas.app window is opened so that it always reflects " >> "$active_env_path"
+		echo "#  the current location of Phycas.app " >> "$active_env_path"
+		echo "# " >> "$active_env_path"
+		echo "# If you would like to augment the default behavior of Phycas you can:" >> "$active_env_path"
+		echo "#     - define (and export) the environmental variable PYTHONINTERPRETER " >> "$active_env_path"
+		echo "#       to point to the full path to the python executable that you would like to use. " >> "$active_env_path"
+		echo "#     - add the commnd:" >> "$active_env_path"
+		echo "# export USES_I_PYTHON=1" >> "$active_env_path"
+		echo "#       to make the Phycas.app bundle take you into the IPython environment." >> "$active_env_path"
+		echo "# " >> "$active_env_path"
+		echo "# To use  different version of the phycas python package with the Phycas.app bundle" >> "$active_env_path"
+		echo "# you can comment out the line" >> "$active_env_path"
+		echo "#    source \"\$env_settings_path\"" >> "$active_env_path"
+		echo "# below, and make sure that  PYTHONPATH and DYLD_LIBRARY_PATH are set correctly" >> "$active_env_path"
+		echo "# for the version of phycas that you would like to use" >> "$active_env_path"
+		echo "################################################################################################" >> "$active_env_path"
+		echo >> "$active_env_path"
+		echo "env_settings_path=\"\$HOME/.phycas/phycas_gui_env.sh\"" >> "$active_env_path"
+		echo "if test -f \"\$env_settings_path\"" >> "$active_env_path"
+		echo "then" >> "$active_env_path"
+		echo "  source \"\$env_settings_path\" || exit 1" >> "$active_env_path"
+		echo "fi" >> "$active_env_path"
+	fi	
+	run_cmd_path="$HOME/.phycas/run_phycas.sh"
+	if ! test -f "$run_cmd_path"
+	then
+		echo "#!/bin/sh" > "$run_cmd_path"
+		echo "active_env_path=\"\$HOME/.phycas/active_phycas_env.sh\"" >> "$run_cmd_path"
+		echo "if test -f \"\$active_env_path\"" >> "$run_cmd_path"
+		echo "then" >> "$run_cmd_path"
+		echo "  source \"\$active_env_path\" || exit 1" >> "$run_cmd_path"
+		echo "fi" >> "$run_cmd_path"
+		echo "if test -z \"\$PYTHONINTERPRETER\"" >> "$run_cmd_path"
+		echo "then" >> "$run_cmd_path"
+		echo "   PYTHONINTERPRETER=python" >> "$run_cmd_path"
+		echo "fi" >> "$run_cmd_path"
+		echo "if test \$# -eq 0" >> "$run_cmd_path"
+		echo "then" >> "$run_cmd_path"
+		echo "    if ! test \"\$USES_I_PYTHON\" = \"1\"" >> "$run_cmd_path"
+		echo "    then" >> "$run_cmd_path"
+		echo "        \$PYTHONINTERPRETER -i -c \"from phycas import *\"" >> "$run_cmd_path"
+		echo "    else" >> "$run_cmd_path"
+		echo "        \$PYTHONINTERPRETER -c \"import IPython ; IPython.Shell.start().mainloop()\" -c \"from phycas import *\"" >> "$run_cmd_path"
+		echo "    fi" >> "$run_cmd_path"
+		echo "else" >> "$run_cmd_path"
+		echo "    \$PYTHONINTERPRETER -i \$@" >> "$run_cmd_path"
+		echo "fi" >> "$run_cmd_path"
+		chmod +x "$run_cmd_path"
+	fi
+	if ! test -f "$run_cmd_path"
+	then
+		echo "The mandatory file $run_cmd_path does not exist, and cannot be created (perhaps there is a directory in the way or you do not have permissions)."
+		exit 1
+	fi
+	if test $# -eq 0
+	then
+		"$run_cmd_path"
+	else
+		bd=`dirname $1`
+		cd "$bd" || exit 1
+		"$run_cmd_path" $@
+	fi
+else
+	echo "The mandatory directory $HOME/.phycas does not exist, and cannot be created (perhaps there is a file in the way or you do not have permissions to write to the directory $HOME)."
+	exit 1
 fi
-cd  Python-2.7  || exit
-CCFLAGS="-L ${SELF_CONTAINED_PREFIX}/lib -I ${SELF_CONTAINED_PREFIX}/include ${SELF_CONTAINED_PREFIX}/include/readline" ./configure --prefix="${SELF_CONTAINED_PREFIX}" --enable-framework=/Users/mholder/Documents/projects/phycas_dev/self_contained/PhycasGUI.app/Contents/Framework || exit
-make || exit
-make install  || exit
-cd .. || exit
 
-if ! test  -d boost_1_43_0
-then
-    wget http://sourceforge.net/projects/boost/files/boost/1.43.0/boost_1_43_0.tar.bz2/download || exit
-    tar xfjv boost_1_43_0.tar.bz2  || exit
-fi
-cd boost_1_43_0/tools/jam/src || exit
-./build.sh || exit
-cd ../../../.. || exit
-
-
-if ! test -d nclv2.1
-then
-    svn co https://ncl.svn.sourceforge.net/svnroot/ncl/branches/v2.1 nclv2.1 || exit
-fi
-cd nclv2.1
-CXXFLAGS="-Wreturn-type -Woverloaded-virtual -Wformat -Wmissing-braces -Wparentheses -Wswitch -Wunused-function -Wunused-label -Wunused-parameter -Wunused-variable -Wunused-value -Wunknown-pragmas -pedantic -Wshadow -Wfour-char-constants -Wsign-compare -Wnewline-eof -Wall -Wreturn-type -Wunused -Wredundant-decls -Wcast-align -Wcomment -Wextra" /Users/mholder/Documents/projects/ncl/working/ncl/branches/v2.1/configure --prefix=${SELF_CONTAINED_PREFIX} --disable-static || exit
-make || exit
-make check || exit
-make install || exit
-make installcheck || exit
-cd .. || exit
-
-cd phycas_trunk || exit
-bjam release -q || exit
-cp -r phycas  $SELF_CONTAINED_PREFIX/phycas
-cd ..
-
-
-if ! test -f setuptools-0.6c11-py2.7.egg
-then
-    wget http://pypi.python.org/packages/2.7/s/setuptools/setuptools-0.6c11-py2.7.egg#md5=fe1f997bc722265116870bc7919059ea
-fi
-sh setuptools-0.6c11-py2.7.egg --prefix=$SELF_CONTAINED_PREFIX
-
-
-
-if ! test -d ipython-0.10
-then
-    http://ipython.scipy.org/dist/0.10/ipython-0.10.tar.gz
-    tar xfvz ipython-0.10.tar.gz
-fi
-cd ipython-0.10 || exit
-python setup.py install --prefix=$SELF_CONTAINED_PREFIX || exit
-cd .. || exit
-
-cp  phycas_trunk/installer/mac/iterm_with_python/iTerm4PhycasexecFromGUI.sh PhycasGUI.app/Contents/MacOS/iTerm4PhycasexecFromGUI.sh || exit
