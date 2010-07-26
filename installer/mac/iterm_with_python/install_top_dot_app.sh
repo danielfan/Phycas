@@ -14,7 +14,7 @@ fi
 if ! test -d readline-6.1
 then
     wget ftp://ftp.cwru.edu/pub/bash/readline-6.1.tar.gz || exit
-    tar xfvz ~/builds/readline-6.1.tar.gz || exit
+    tar xfvz readline-6.1.tar.gz || exit
 fi
 cd readline-6.1  || exit
 ./configure --prefix=$SELF_CONTAINED_PREFIX || exit
@@ -24,7 +24,7 @@ cd ..  || exit
 if ! test -d Python-2.7
 then
     wget http://www.python.org/ftp/python/2.7/Python-2.7.tar.bz2 || exit
-    tar xfvj ~/builds/Python-2.7.tar.bz2  || exit
+    tar xfvj Python-2.7.tar.bz2  || exit
 fi
 cd  Python-2.7  || exit
 CCFLAGS="-L ${SELF_CONTAINED_PREFIX}/lib -I ${SELF_CONTAINED_PREFIX}/include ${SELF_CONTAINED_PREFIX}/include/readline" ./configure --prefix="${SELF_CONTAINED_PREFIX}" --enable-framework=/Users/mholder/Documents/projects/phycas_dev/self_contained/PhycasGUI.app/Contents/Framework || exit
@@ -47,6 +47,7 @@ then
     svn co https://ncl.svn.sourceforge.net/svnroot/ncl/branches/v2.1 nclv2.1 || exit
 fi
 cd nclv2.1
+sh bootstrap.sh
 CXXFLAGS="-Wreturn-type -Woverloaded-virtual -Wformat -Wmissing-braces -Wparentheses -Wswitch -Wunused-function -Wunused-label -Wunused-parameter -Wunused-variable -Wunused-value -Wunknown-pragmas -pedantic -Wshadow -Wfour-char-constants -Wsign-compare -Wnewline-eof -Wall -Wreturn-type -Wunused -Wredundant-decls -Wcast-align -Wcomment -Wextra" /Users/mholder/Documents/projects/ncl/working/ncl/branches/v2.1/configure --prefix=${SELF_CONTAINED_PREFIX} --disable-static || exit
 make || exit
 make check || exit
@@ -54,7 +55,7 @@ make install || exit
 make installcheck || exit
 cd .. || exit
 
-cd phycas_trunk || exit
+cd trunk_phycas || exit
 bjam release -q || exit
 cp -r phycas  $SELF_CONTAINED_PREFIX/phycas
 cd ..
@@ -70,11 +71,11 @@ sh setuptools-0.6c11-py2.7.egg --prefix=$SELF_CONTAINED_PREFIX
 
 if ! test -d ipython-0.10
 then
-    http://ipython.scipy.org/dist/0.10/ipython-0.10.tar.gz
+    wget http://ipython.scipy.org/dist/0.10/ipython-0.10.tar.gz
     tar xfvz ipython-0.10.tar.gz
 fi
 cd ipython-0.10 || exit
 python setup.py install --prefix=$SELF_CONTAINED_PREFIX || exit
 cd .. || exit
 
-cp  phycas_trunk/installer/mac/iterm_with_python/iTerm4PhycasexecFromGUI.sh PhycasGUI.app/Contents/MacOS/iTerm4PhycasexecFromGUI.sh || exit
+cp  trunk_phycas/installer/mac/iterm_with_python/iTerm4PhycasexecFromGUI.sh PhycasGUI.app/Contents/MacOS/iTerm4PhycasexecFromGUI.sh || exit
