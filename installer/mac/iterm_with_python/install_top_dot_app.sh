@@ -1,5 +1,16 @@
 #!/bin sh
 set -x 
+if test -z $SELF_CONTAINED_CONTENTS_DIR
+then
+    if test -z ${SELF_CONTAINED_BUILD_ROOT}
+    then
+        echo "SELF_CONTAINED_BUILD_ROOT must be defined"
+        exit
+    fi
+    export SELF_CONTAINED_CONTENTS_DIR="${SELF_CONTAINED_BUILD_ROOT}/PhycasGUI.app/Contents"
+    export SELF_CONTAINED_PREFIX="${SELF_CONTAINED_CONTENTS_DIR}/Resources"
+fi
+
 if ! test -d trunk_phycas
 then
     svn co https://phycas.svn.sourceforge.net/svnroot/phycas/trunk trunk_phycas || exit
@@ -27,7 +38,7 @@ then
     tar xfvj Python-2.7.tar.bz2  || exit
 fi
 cd  Python-2.7  || exit
-CCFLAGS="-L ${SELF_CONTAINED_PREFIX}/lib -I ${SELF_CONTAINED_PREFIX}/include ${SELF_CONTAINED_PREFIX}/include/readline" ./configure --prefix="${SELF_CONTAINED_PREFIX}" --enable-framework=/Users/mholder/Documents/projects/phycas_dev/self_contained/PhycasGUI.app/Contents/Framework || exit
+CCFLAGS="-L ${SELF_CONTAINED_PREFIX}/lib -I ${SELF_CONTAINED_PREFIX}/include ${SELF_CONTAINED_PREFIX}/include/readline" ./configure --prefix="${SELF_CONTAINED_PREFIX}" --enable-framework="${SELF_CONTAINED_CONTENTS_DIR}/Framework" || exit
 make || exit
 make install  || exit
 cd .. || exit
