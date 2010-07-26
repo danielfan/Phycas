@@ -38,7 +38,7 @@ then
     tar xfvj Python-2.7.tar.bz2  || exit
 fi
 cd  Python-2.7  || exit
-CCFLAGS="-L ${SELF_CONTAINED_PREFIX}/lib -I ${SELF_CONTAINED_PREFIX}/include ${SELF_CONTAINED_PREFIX}/include/readline" ./configure --prefix="${SELF_CONTAINED_PREFIX}" --enable-framework="${SELF_CONTAINED_CONTENTS_DIR}/Framework" || exit
+CCFLAGS="-L ${SELF_CONTAINED_PREFIX}/lib -I ${SELF_CONTAINED_PREFIX}/include ${SELF_CONTAINED_PREFIX}/include/readline" ./configure --prefix="${SELF_CONTAINED_PREFIX}" --enable-framework="${SELF_CONTAINED_CONTENTS_DIR}/Frameworks" || exit
 make || exit
 make install  || exit
 cd .. || exit
