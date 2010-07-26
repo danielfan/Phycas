@@ -48,7 +48,7 @@ then
 fi
 cd nclv2.1
 sh bootstrap.sh
-CXXFLAGS="-Wreturn-type -Woverloaded-virtual -Wformat -Wmissing-braces -Wparentheses -Wswitch -Wunused-function -Wunused-label -Wunused-parameter -Wunused-variable -Wunused-value -Wunknown-pragmas -pedantic -Wshadow -Wfour-char-constants -Wsign-compare -Wnewline-eof -Wall -Wreturn-type -Wunused -Wredundant-decls -Wcast-align -Wcomment -Wextra" /Users/mholder/Documents/projects/ncl/working/ncl/branches/v2.1/configure --prefix=${SELF_CONTAINED_PREFIX} --disable-static || exit
+CXXFLAGS="-Wreturn-type -Woverloaded-virtual -Wformat -Wmissing-braces -Wparentheses -Wswitch -Wunused-function -Wunused-label -Wunused-parameter -Wunused-variable -Wunused-value -Wunknown-pragmas -pedantic -Wshadow -Wfour-char-constants -Wsign-compare -Wnewline-eof -Wall -Wreturn-type -Wunused -Wredundant-decls -Wcast-align -Wcomment -Wextra" ./configure --prefix=${SELF_CONTAINED_PREFIX} --disable-static || exit
 make || exit
 make check || exit
 make install || exit
