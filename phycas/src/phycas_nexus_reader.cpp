@@ -18,6 +18,7 @@
 \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #include <iostream>
+#include <iterator>
 #include <fstream>
 #include "ncl/nxsexception.h"
 #include "ncl/nxstreesblock.h"

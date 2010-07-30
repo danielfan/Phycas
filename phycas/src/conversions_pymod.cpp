@@ -24,6 +24,7 @@
 #include <boost/python.hpp>
 
 //#include "phycas/force_include.h"
+#include "phycas/src/states_patterns.hpp"	// for int8_t definition
 #include "phycas/src/basic_tree.hpp"
 //#include <boost/python/tuple.hpp>
 //#include <boost/python/numeric.hpp>

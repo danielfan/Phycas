@@ -63,6 +63,11 @@
 #	define X_SPEC_THROW(x) 
 #endif
 
+#if defined(_MSC_VER)
+#	define _CRT_SECURE_NO_WARNINGS	// avoid warnings about unsafe functions (e.g. sprintf)
+//#	pragma warning(disable: 4996)	// warning about loss of data when converting size_t to int
+#endif
+
 #include "phycas/src/phycas_config.h"
 
 #endif	/* defined(__cplusplus) */
