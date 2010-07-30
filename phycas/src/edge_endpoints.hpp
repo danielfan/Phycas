@@ -35,7 +35,7 @@ template<typename T>
 class GenericEdgeEndpoints : public std::pair<T, T>
 	{
 	public:
-		GenericEdgeEndpoints(): std::pair<T, T>(NULL, NULL)
+		GenericEdgeEndpoints(): std::pair<T, T>((T)NULL, (T)NULL)
 			{
 			}
 			
