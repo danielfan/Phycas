@@ -144,6 +144,8 @@ class CharacterSuperMatrix(object): # Kansas2010Todo
         return sum([i.getNTax() for i in self.matrix_list])
     def getNSubsets(self):
         return len(self.matrix_list)
+    def __getitem__(self, k):
+        return self.matrix_list[k]
     def getTaxLabels(self):
         for i in self.matrix_list[1:]:
             phycassert(self.matrix_list[0].taxa == i.taxa)
