@@ -2,9 +2,9 @@ from phycas import *
 
 method             = 'ss'     # 'ss' (steppingstone) or 'hm' (harmonic mean)
 partition_scheme   = 'codon'  # 'unpartitioned', 'gene', 'codon', or 'genecodon'
-num_beta_values    = 25       # 25
+num_beta_values    = 12       # 25
 burn_in            = 500      # 500
-cycles_per_beta    = 1000     # 1000
+cycles_per_beta    = 50     # 1000
 sample_freq        = 1        # 1
 print_freq         = 100      # 100
 rseed              = 13579
@@ -179,7 +179,7 @@ def runMCMC(fnprefix):
         ss.nbetavals = num_beta_values
         ss.shape1 = 1.0
         ss.shape2 = 1.0
-        ss.scubed = True
+        ss.ti = True
         ss.xcycles = xtra
         #ss.minsample = min_wp_sample_size
         ss()
