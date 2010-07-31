@@ -1,22 +1,24 @@
-export PATH=/usr/local/bin:/usr/local/sbin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/teTeX/bin/i386-apple-darwin-current
+#!/bin/sh
+export PATH=/usr/local/bin:/bin:/sbin:/usr/bin:/usr/sbin
+echo "Setting the PATH to a *very* limited. $PATH to avoid us picking up a tool in an odd place"
 unset DYLD_LIBRARY_PATH
 unset PYTHONPATH
 
-export SELF_CONTAINED_BUILD_ROOT=/Users/mholder/Desktop/stepping_stone_lab/mac/build
-
-if test -z $SELF_CONTAINED_CONTENTS_DIR
+rel_script_dir=`dirname $0`
+if ! test -d $rel_script_dir
 then
-    if test -z ${SELF_CONTAINED_BUILD_ROOT}
-    then
-        echo "SELF_CONTAINED_BUILD_ROOT must be defined"
-        exit
-    fi
-    export SELF_CONTAINED_CONTENTS_DIR="${SELF_CONTAINED_BUILD_ROOT}/PhycasGUI.app/Contents"
-    export SELF_CONTAINED_PREFIX="${SELF_CONTAINED_CONTENTS_DIR}/Resources"
+    echo "$rel_script_dir not found"
+    exit 1
 fi
 
+export SELF_CONTAINED_BUILD_ROOT=$(python -c "import os; print os.path.abspath('$script_dir')")/build
+echo "SELF_CONTAINED_BUILD_ROOT is $SELF_CONTAINED_BUILD_ROOT"
+export SELF_CONTAINED_CONTENTS_DIR="${SELF_CONTAINED_BUILD_ROOT}/PhycasGUI.app/Contents"
+export SELF_CONTAINED_PREFIX="${SELF_CONTAINED_CONTENTS_DIR}/Resources"
 
-export DYLD_LIBRARY_PATH="$SELF_CONTAINED_PREFIX/lib:$SELF_CONTAINED_PREFIX/lib/ncl:$SELF_CONTAINED_PREFIX/lib/python2.6/site-packages/phycas:$DYLD_LIBRARY_PATH:"
+pyversion=2.6
+
+export DYLD_LIBRARY_PATH="$SELF_CONTAINED_PREFIX/lib:$SELF_CONTAINED_PREFIX/lib/ncl:$SELF_CONTAINED_PREFIX/lib/python${SELF_CONTAINED_PREFIX}/site-packages/phycas:${DYLD_LIBRARY_PATH}"
 export CXXFLAGS="-arch i386 -m32"
 export CFLAGS="-arch i386 -m32"
 export LDFLAGS="-arch i386 -m32"
@@ -29,5 +31,14 @@ export PATH="${SELF_CONTAINED_PREFIX}/bin:${BOOST_ROOT}/tools/jam/src/bin.macosx
 export NCL_INSTALL_DIR="${SELF_CONTAINED_PREFIX}"
 export NCL_ALREADY_INSTALLED="true"
 export PHYCAS_ROOT="${SELF_CONTAINED_BUILD_ROOT}/phycas_trunk"
-export PYTHONPATH="${SELF_CONTAINED_PREFIX}:${SELF_CONTAINED_PREFIX}/lib/python2.7/site-packages:${PYTHONPATH}"
+export PYTHONPATH="${SELF_CONTAINED_PREFIX}:${SELF_CONTAINED_PREFIX}/lib/python${SELF_CONTAINED_PREFIX}/site-packages:${PYTHONPATH}"
 
+echo "Writing concrete_phycas_build_env.sh for future reference"
+echo '#!/bin/sh' > concrete_phycas_build_env.sh
+for p in SELF_CONTAINED_CONTENTS_DIR SELF_CONTAINED_PREFIX DYLD_LIBRARY_PATH CXXFLAGS CFLAGS LDFLAGS MACOSX_DEPLOYMENT_TARGET BOOST_ROOT BOOST_BUILD_PATH PHYCAS_ROOT OSTYPE PATH NCL_INSTALL_DIR NCL_ALREADY_INSTALLED PHYCAS_ROOT PYTHONPATH
+do
+    v=$(echo \$$p)
+    echo "echo $p=$v" > .dummy_shell.sh
+    sh .dummy_shell.sh >> concrete_phycas_build_env.sh
+    rm .dummy_shell.sh
+done
