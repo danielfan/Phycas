@@ -12,10 +12,11 @@ then
 fi
 
 export SELF_CONTAINED_BUILD_ROOT=$(python -c "import os; print os.path.abspath('$script_dir')")/build
-echo "SELF_CONTAINED_BUILD_ROOT is $SELF_CONTAINED_BUILD_ROOT"
 export SELF_CONTAINED_CONTENTS_DIR="${SELF_CONTAINED_BUILD_ROOT}/PhycasGUI.app/Contents"
 export SELF_CONTAINED_PREFIX="${SELF_CONTAINED_CONTENTS_DIR}/Resources"
 
+
+# downstream we assume 2.6, so don't think that changing this will work!!!
 pyversion=2.6
 
 export DYLD_LIBRARY_PATH="$SELF_CONTAINED_PREFIX/lib:$SELF_CONTAINED_PREFIX/lib/ncl:$SELF_CONTAINED_PREFIX/lib/python${SELF_CONTAINED_PREFIX}/site-packages/phycas:${DYLD_LIBRARY_PATH}"
@@ -35,10 +36,10 @@ export PYTHONPATH="${SELF_CONTAINED_PREFIX}:${SELF_CONTAINED_PREFIX}/lib/python$
 
 echo "Writing concrete_phycas_build_env.sh for future reference"
 echo '#!/bin/sh' > concrete_phycas_build_env.sh
-for p in SELF_CONTAINED_CONTENTS_DIR SELF_CONTAINED_PREFIX DYLD_LIBRARY_PATH CXXFLAGS CFLAGS LDFLAGS MACOSX_DEPLOYMENT_TARGET BOOST_ROOT BOOST_BUILD_PATH PHYCAS_ROOT OSTYPE PATH NCL_INSTALL_DIR NCL_ALREADY_INSTALLED PHYCAS_ROOT PYTHONPATH
+for p in SELF_CONTAINED_BUILD_ROOT SELF_CONTAINED_CONTENTS_DIR SELF_CONTAINED_PREFIX DYLD_LIBRARY_PATH CXXFLAGS CFLAGS LDFLAGS MACOSX_DEPLOYMENT_TARGET BOOST_ROOT BOOST_BUILD_PATH PHYCAS_ROOT OSTYPE PATH NCL_INSTALL_DIR NCL_ALREADY_INSTALLED PHYCAS_ROOT PYTHONPATH
 do
     v=$(echo \$$p)
-    echo "echo $p=$v" > .dummy_shell.sh
+    echo "echo export $p=\\\"$v\\\"" > .dummy_shell.sh
     sh .dummy_shell.sh >> concrete_phycas_build_env.sh
     rm .dummy_shell.sh
 done

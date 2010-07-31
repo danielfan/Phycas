@@ -30,31 +30,33 @@ then
     echo "$rel_script_dir not found"
     exit 1
 fi
-script_dir=$(python -c "import os; print os.path.abspath('$script_dir')")
+script_dir=$(python -c "import os; print os.path.abspath('$rel_script_dir')")
+
+
 
 ################################################################################
-echo "Downloading dependencies (if needed).
+echo "Downloading dependencies (if needed)."
 if ! test -f "readline-6.1.tar.gz"
 then 
-    wget ftp://ftp.cwru.edu/pub/bash/readline-6.1.tar.gz
+    wget ftp://ftp.cwru.edu/pub/bash/readline-6.1.tar.gz || exit 1
 fi
 
 if ! test -f Python-2.6.5.tar.bz2
 then
-    wget http://www.python.org/ftp/python/2.6.5/Python-2.6.5.tar.bz2 || exit
+    wget http://www.python.org/ftp/python/2.6.5/Python-2.6.5.tar.bz2 || exit 1
 fi
 
 
 if ! test  -f boost_1_43_0.tar.bz2
 then
-    wget http://sourceforge.net/projects/boost/files/boost/1.43.0/boost_1_43_0.tar.bz2/download || exit
+    wget http://sourceforge.net/projects/boost/files/boost/1.43.0/boost_1_43_0.tar.bz2/download || exit 1
 fi
 
 
 
 if ! test -f ipython-0.10.tar.gz
 then
-    wget http://ipython.scipy.org/dist/0.10/ipython-0.10.tar.gz
+    wget http://ipython.scipy.org/dist/0.10/ipython-0.10.tar.gz || exit 1
 fi
 
 ################################################################################
@@ -101,6 +103,13 @@ then
     cd  Python-2.6.5  || exit
     export EXTRA_CFLAGS="$CFLAGS -isysroot /Developer/SDKs/MacOSX10.5.sdk -I${SELF_CONTAINED_PREFIX}/include -I${SELF_CONTAINED_PREFIX}/include/readline " LDFLAGS="$LDFLAGS -L${SELF_CONTAINED_PREFIX}/lib" 
     ./configure --prefix="${SELF_CONTAINED_PREFIX}" --enable-shared || exit 1
+
+    # the following 3 lines is a hack to force hashlib and md5 lib to be built
+    cat setup.py  | sed -E "s/#print 'openssl_ver.*/openssl_ver=0 # MTH-hack/" > t
+    mv setup.py setup.py.BAK
+    mv t setup.py
+    
+    
     make -j4 || exit
     make install  || exit
     cd .. || exit
@@ -183,4 +192,28 @@ then
     cd ipython-0.10 || exit
     python setup.py install --prefix=$SELF_CONTAINED_PREFIX || exit
     cd .. || exit
+fi
+
+# CLEANUP
+grep -r "#!$SELF_CONTAINED_CONTENTS_DIR/Resources" . | sed -E 's/(\.\/.*):#!\/.*/\1/' > with_full_path_shebang
+escaped_c=$(echo $SELF_CONTAINED_CONTENTS_DIR | sed -e 's/\//\\\//g')
+for i in `cat with_full_path_shebang`
+do
+    sed -E "s/#!${escaped_c}\/Resources\/bin\//#!\/usr\/bin\/env /" $i > y
+    diff y $i
+    cp y $i
+done
+
+
+if test -z "$SELF_CONTAINED_PREFIX"
+then 
+    echo "SELF_CONTAINED_PREFIX must be defined"
+else
+    if test -d "$SELF_CONTAINED_PREFIX/lib/python2.6/site-packages/phycas"
+    then
+        find "$SELF_CONTAINED_PREFIX/lib/python2.6/site-packages/phycas" -name .svn -exec rm -rf {} \;
+        rm -r "$SELF_CONTAINED_PREFIX/lib/python2.6/site-packages/phycas/src"
+    
+    fi
+    find "$SELF_CONTAINED_PREFIX" -name "*.pyc" -exec rm {} \;
 fi
