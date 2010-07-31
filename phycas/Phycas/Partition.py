@@ -3,6 +3,16 @@ from phycas.Utilities.CommonFunctions import CommonFunctions
 from phycas import model
 
 class Subset(object):
+	'''An instance of this class is imported as subset in phycas.__init__
+	
+	Thus, to create a list of indices (for example, a list used to define a set
+	    of characters), one calls:
+	    
+	subset(1,10,2)
+	
+	    to get a list of [1, 3, 5, 7, 9]
+	
+	'''
 	def __init__(self):
 		self.start = 0
 		self.stop = 0
