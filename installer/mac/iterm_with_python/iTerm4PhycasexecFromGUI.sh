@@ -4,22 +4,22 @@ contents_os_dir=`dirname "$mac_os_dir"`
 resources_dir="$contents_os_dir/Resources"
 PHYCAS_GUI_RESOURCES_DIR="$resources_dir"
 export PHYCAS_GUI_RESOURCES_DIR
-phycas_dir="$resources_dir/phycas"
+phycas_dir="$resources_dir/lib/python2.6/site-packages/phycas"
 if test -d "$phycas_dir"
 then
 	if test -z "$PYTHONPATH"
 	then
-		PYTHONPATH="$resources_dir"
+		PYTHONPATH="$resources_dir/lib/python2.6/site-packages"
 	else
-		PYTHONPATH="$PYTHONPATH:$resources_dir"
+		PYTHONPATH="$PYTHONPATH:$resources_dir/lib/python2.6/site-packages"
 	fi
 	if test -z "$DYLD_LIBRARY_PATH"
 	then
-		DYLD_LIBRARY_PATH="$resources_dir:${resources_dir}/lib:$phycas_dir/Conversions"
+		DYLD_LIBRARY_PATH="$resources_dir/lib:$resources_dir/lib/ncl:$phycas_dir/Conversions"
 	else
-		DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:${resources_dir}/lib:$resources_dir:$phycas_dir/Conversions"
+		DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:$resources_dir/lib:$resources_dir/lib/ncl:$phycas_dir/Conversions"
 	fi
-	PATH="$mac_os_dir:${resources_dir}/bin:$PATH"
+	PATH="$resources_dir/bin:$PATH"
 else
 	echo "$0: $phycas_dir does not exist!"
 	exit 1
@@ -64,7 +64,6 @@ then
 		echo "# for the version of phycas that you would like to use" >> "$active_env_path"
 		echo "################################################################################################" >> "$active_env_path"
 		echo >> "$active_env_path"
-		echo "export USES_I_PYTHON=1" >> "$active_env_path"
 		echo "env_settings_path=\"\$HOME/.phycas/phycas_gui_env.sh\"" >> "$active_env_path"
 		echo "if test -f \"\$env_settings_path\"" >> "$active_env_path"
 		echo "then" >> "$active_env_path"
@@ -90,27 +89,7 @@ then
 		echo "    then" >> "$run_cmd_path"
 		echo "        \$PYTHONINTERPRETER -i -c \"from phycas import *\"" >> "$run_cmd_path"
 		echo "    else" >> "$run_cmd_path"
-		echo "        #\$PYTHONINTERPRETER -c \"import IPython ; IPython.Shell.start().mainloop()\" -c \"from phycas import *\"" >> "$run_cmd_path"
-		echo "        if ! ipython -i -c \"from phycas import *\"" >> "$run_cmd_path"
-		echo "        then" >> "$run_cmd_path"
-		echo "            if ! ipython -c \"from phycas import *\"" >> "$run_cmd_path"
-		echo "            then" >> "$run_cmd_path"
-		echo "                if ! ipython -c \"print 'ipython works'\"" >> "$run_cmd_path"
-		echo "                then" >> "$run_cmd_path"
-		echo "                    echo \"Your IPython installation is not working.  Try setting USES_I_PYTHON to 0 in \$HOME/.phycas/active_phycas_env.sh\"" >> "$run_cmd_path"
-		echo "                else" >> "$run_cmd_path"
-		echo "                    if ! python -c \"from phycas import *\" " >> "$run_cmd_path"
-		echo "                    then" >> "$run_cmd_path"
-		echo "                        echo \"The python installed at\" `which python` \" cannot import phycas.\"" >> "$run_cmd_path"
-		echo "                        echo \"Your PYTHONPATH variable is set to:\"" >> "$run_cmd_path"
-		echo "                        echo \$PYTHONPATH" >> "$run_cmd_path"
-		echo "                        echo \"verify that a phycas directory is on one of the paths listed in this variable.\"" >> "$run_cmd_path"
-		echo "                    else" >> "$run_cmd_path"
-		echo "                        echo \"Both IPython and phycas seem to be working separately, but the are not working together. Please check http://www.phycas.org for the current bug reporting system, and report this bug. Thanks!\"" >> "$run_cmd_path"
-		echo "                    fi" >> "$run_cmd_path"
-		echo "                 fi " >> "$run_cmd_path"
-		echo "            fi" >> "$run_cmd_path"
-		echo "        fi" >> "$run_cmd_path"
+		echo "        \$PYTHONINTERPRETER -c \"import IPython ; IPython.Shell.start().mainloop()\" -c \"from phycas import *\"" >> "$run_cmd_path"
 		echo "    fi" >> "$run_cmd_path"
 		echo "else" >> "$run_cmd_path"
 		echo "    \$PYTHONINTERPRETER -i \$@" >> "$run_cmd_path"
