@@ -6,8 +6,10 @@ else:
     phycas_version = '?'
     
 try:
-    svn_revision = subprocess.Popen('svnversion', shell=False, stdout=subprocess.PIPE).communicate()[0].strip()
+    p = subprocess.Popen(['git', 'show'], shell=False, stdout=subprocess.PIPE)
+    t = p.communicate()
+    svn_revision = t[0].split()[1]
 except OSError:
     svn_revision = '?'
     
-open('phycas/svnver.txt', 'w').write('%s-r%s' % (phycas_version,svn_revision))
+open('phycas/svnver.txt', 'w').write('%s git SHA1 %s\n' % (phycas_version,svn_revision))
