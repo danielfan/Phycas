@@ -33,10 +33,28 @@ if test -d Frameworks
 then
 	cp -r Frameworks Phycas.app/Contents/Frameworks
 fi
+if test -z "$TARGETTED_PYTHON_VERSION"
+then
+	echo "TARGETTED_PYTHON_VERSION must be defined to major.minor"
+	exit 1
+fi 
 cp -r "$PHYCAS_ROOT/phycas" Phycas.app/Contents/Resources/ || exit 2
 cp -r ./active_phycas_env.sh Phycas.app/Contents/Resources/ || exit 2
 cp -r ./run_phycas.sh Phycas.app/Contents/Resources/ || exit 2
+
+cat run_phycas.sh | sed -e "s/PYTHONINTERPRETER=python/PYTHONINTERPRETER=python${TARGETTED_PYTHON_VERSION}/" > Phycas.app/Contents/Resources/run_phycas.sh || exit 2
+
 cp  ./startup.py Phycas.app/Contents/Resources/ || exit 2
+
+if test -z $PY_PACKAGES_TO_BUNDLE
+then
+	echo not bundling python extras because PY_PACKAGES_TO_BUNDLE is not set!
+else
+	cp -r $PY_PACKAGES_TO_BUNDLE/setuptools-0.6c11-py2.5.egg Phycas.app/Contents/Resources/ || exit 1
+	cp -r $PY_PACKAGES_TO_BUNDLE/IPython Phycas.app/Contents/Resources/ || exit 1
+fi
+
+
 find  Phycas.app/Contents/Resources/phycas -name .svn -exec rm -rf {} \;
 cat Phycas.app/Contents/Resources/phycas/__init__.py  | sed "s/PHYCAS_SVN_REVISION_NUMBER_HERE/$sv/g" > t
 mv t Phycas.app/Contents/Resources/phycas/__init__.py

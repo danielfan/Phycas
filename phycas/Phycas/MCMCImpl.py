@@ -1197,13 +1197,13 @@ class MCMCImpl(CommonFunctions):
 					# if using working prior with steppingstone sampling, it is now time to 
 					# parameterize the working prior for all updaters so that this working prior
 					# can be used in the sequel
-					self.output('\nWorking prior details:')
+					self.output('\nReference distribution details:')
 					all_updaters = cold_chain.chain_manager.getAllUpdaters() 
 					for u in all_updaters:		# good candidate for moving into C++
 						if not u.isFixed():
 							u.setUseWorkingPrior(True)
 							if u.computesUnivariatePrior() or u.computesMultivariatePrior():
-								self.output('  Finalizing working prior for %s...' % u.getName())
+								self.output('  Finalizing reference distribution for %s...' % u.getName())
 								u.finalizeWorkingPrior()
 								self.output('  %s --> %s' % (u.getName(), u.getWorkingPriorDescr()))
 					self.output()

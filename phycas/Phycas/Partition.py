@@ -132,7 +132,7 @@ class Partition(PhycasCommand):
 		
 		model.type = 'hky'
 		hky = model()
-		partition.addSubset(range(1,100,3), hky, 'first')
+		partition.addSubset(subset(1,100,3), hky, 'first')
 		
 		"""
 		# the index of the new subset is simply the length of self.subset

@@ -1084,6 +1084,7 @@ class PhycasCommandHelp(object):
         a = [self.cmd_name]
         a.extend(PhycasTablePrinter._text_wrapper.wrap(self.cmd_descrip))
         o = opts._help_str_list()
+        o.sort()
         h = PhycasTablePrinter.format_help("Attribute", "Explanation")
         if len(o) > 0:
             a.extend(["\nAvailable input options:", h, d])
@@ -1103,6 +1104,7 @@ class PhycasCommandHelp(object):
         d = PhycasTablePrinter.get_help_divider()
         h = PhycasTablePrinter.format_help("Attribute", "Current Value")
         o = opts._current_str_list()
+        o.sort()
         if len(o) > 0:
             a.extend(["\nCurrent %s input settings:" % self.cmd_name , h, d])
             a.extend(o)
