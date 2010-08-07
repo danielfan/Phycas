@@ -1213,7 +1213,7 @@ class MCMCImpl(CommonFunctions):
 				chain.setPower(self.ss_beta)
 				boldness = 100.0*(1.0 - self.ss_beta)
 				chain.setBoldness(boldness)
-				print 'Setting chain boldness to %g based on beta = %g' % (boldness,self.ss_beta)
+				self.output('Setting chain boldness to %g based on beta = %g' % (boldness,self.ss_beta))
 				self.cycle_stop = self.opts.burnin + len(self.ss_sampled_betas)*self.opts.ncycles + self.opts.ssobj.xcycles
 				if self.ss_beta_index > 0:
 					self.burnin = 0

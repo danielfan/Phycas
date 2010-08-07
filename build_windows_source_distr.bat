@@ -1,2 +1,2 @@
-python setup.py sdist --force-manifest --formats=zip
+python setup.py sdist --formats=zip
 pause

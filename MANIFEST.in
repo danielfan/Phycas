@@ -1,76 +1,13 @@
 include LICENSE
-include BUGS
-include CHANGES
 include INSTALL
-
+include BUGS
+include phycas.bat
+include install_phycas.bat
 include Jamroot
-include build.sh
-include svnver.py
 include phycasver.txt
-
-include VC/VC.sln
-include VC/VC.vcproj
-include VC/conversions/conversions.vcproj
-include VC/data_matrix/data_matrix.vcproj
-include VC/likelihood/likelihood.vcproj
-include VC/pdfgen/pdfgen.vcproj
-include VC/phylogeny/phylogeny.vcproj
-include VC/prob_dist/prob_dist.vcproj
-include VC/read_nexus/read_nexus.vcproj
-include VC/profiling/profiling.vcproj
-include VC/profiling/profiling.cpp
-include VC/profiling/pol_profiling_config.h
-include VC/test/test.vcproj
-include VC/test/test.hpp
-include VC/test/test.cpp
-
-include phycas/Examples/Simplest/Simplest.py
-include phycas/Examples/Simplest/green.nex
-include phycas/Examples/Steppingstone/Steppingstone.py
-include phycas/Examples/Steppingstone/green.nex
-include phycas/Examples/Paradox/Paradox.py
-include phycas/Examples/Paradox/ShoupLewis.nex
-
 include phycas/Tests/runall.py
 include phycas/Tests/doctestall.py
 
-recursive-include phycas/PDFGen/AFM *.afm
+exclude setup.py
 
-recursive-include phycas/Tests/Data *.nex
-
-recursive-include phycas/Tests/ExplorePrior *.py
-recursive-include phycas/Tests/ExplorePrior/reference_output *
-
-recursive-include phycas/Tests/FixedParams *.py
-recursive-include phycas/Tests/FixedParams/reference_output *
-
-recursive-include phycas/Tests/GTRTest *.py
-recursive-include phycas/Tests/GTRTest/reference_output *
-
-recursive-include phycas/Tests/Simulator *.py
-recursive-include phycas/Tests/Simulator/reference_output *
-
-recursive-include phycas/Tests/SplitTest *.py
-recursive-include phycas/Tests/SplitTest/reference_output *
-
-recursive-include phycas/Tests/PDFTree *.py
-recursive-include phycas/Tests/PDFTree/reference_output *
-
-recursive-include phycas/Tests/LikelihoodTest *.py
-recursive-include phycas/Tests/LikelihoodTest/reference_output *
-recursive-include phycas/Tests/LikelihoodTest/acceptable_diff *
-
-recursive-include phycas/Tests/PathSampling *.py
-recursive-include phycas/Tests/PathSampling/reference_output *
-
-recursive-include phycas/Tests/Sumt *.py test.t
-recursive-include phycas/Tests/Sumt/reference_output *
-
-recursive-include phycas/Tests/Sump *.py test.p
-recursive-include phycas/Tests/Sump/reference_output *
-
-recursive-include phycas/Tests/Underflow *.py gtrig.rbcL50.best.tre
-recursive-include phycas/Tests/Underflow/reference_output *
-
-recursive-include phycas/src *.h *.hpp *.inl *.c *.cpp
 

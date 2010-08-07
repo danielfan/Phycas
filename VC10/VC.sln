@@ -1,35 +1,23 @@
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "conversions", "conversions\conversions.vcproj", "{E64BE6B5-4648-41CA-943C-20EC5F4041D8}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "data_matrix", "data_matrix\data_matrix.vcproj", "{4276D07D-BE49-4AC6-8BBB-C30C28E53167}"
-	ProjectSection(ProjectDependencies) = postProject
-		{3069D8C4-0FF0-47BC-AC56-31DCA91E0C86} = {3069D8C4-0FF0-47BC-AC56-31DCA91E0C86}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "likelihood", "likelihood\likelihood.vcproj", "{7236CB43-5404-475B-9DF9-08796D419A58}"
-	ProjectSection(ProjectDependencies) = postProject
-		{3069D8C4-0FF0-47BC-AC56-31DCA91E0C86} = {3069D8C4-0FF0-47BC-AC56-31DCA91E0C86}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "prob_dist", "prob_dist\prob_dist.vcproj", "{6D39CB95-6A32-4F24-8C0A-0553E8C310CA}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "phylogeny", "phylogeny\phylogeny.vcproj", "{38A3E6E4-E1A1-4274-902F-C0F7DC646891}"
-	ProjectSection(ProjectDependencies) = postProject
-		{3069D8C4-0FF0-47BC-AC56-31DCA91E0C86} = {3069D8C4-0FF0-47BC-AC56-31DCA91E0C86}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "read_nexus", "read_nexus\read_nexus.vcproj", "{4308AE1D-9E4B-446E-907E-539BF85267F8}"
-	ProjectSection(ProjectDependencies) = postProject
-		{3069D8C4-0FF0-47BC-AC56-31DCA91E0C86} = {3069D8C4-0FF0-47BC-AC56-31DCA91E0C86}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ncl", "ncl\ncl.vcproj", "{3069D8C4-0FF0-47BC-AC56-31DCA91E0C86}"
-EndProject
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A0E02497-FE2F-46FF-91BB-C8CA2CCE7FBF}"
 	ProjectSection(SolutionItems) = preProject
 		readme.txt = readme.txt
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "conversions", "conversions\conversions.vcxproj", "{E64BE6B5-4648-41CA-943C-20EC5F4041D8}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "data_matrix", "data_matrix\data_matrix.vcxproj", "{4276D07D-BE49-4AC6-8BBB-C30C28E53167}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "likelihood", "likelihood\likelihood.vcxproj", "{7236CB43-5404-475B-9DF9-08796D419A58}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "prob_dist", "prob_dist\prob_dist.vcxproj", "{6D39CB95-6A32-4F24-8C0A-0553E8C310CA}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "phylogeny", "phylogeny\phylogeny.vcxproj", "{38A3E6E4-E1A1-4274-902F-C0F7DC646891}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "read_nexus", "read_nexus\read_nexus.vcxproj", "{4308AE1D-9E4B-446E-907E-539BF85267F8}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ncl", "ncl\ncl.vcxproj", "{3069D8C4-0FF0-47BC-AC56-31DCA91E0C86}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

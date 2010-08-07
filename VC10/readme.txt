@@ -1,4 +1,4 @@
-Last updated 19 Dec 2008 by Paul O. Lewis
+Last updated 6 August 2010 by Paul O. Lewis
 
 First, note that the *proper* way to build Phycas is using bjam from the directory containing
 the file Jamroot (i.e. the parent of this directory). There is really only one good reason 
@@ -6,23 +6,27 @@ you should be trying to use this Visual Studio solution: you are interested in d
 Phycas code using the IDE. If this is the case, you will need to do some tweaking before this
 "solution" will work. 
 
+Some web pages that were useful in getting the Windows version to build:
+------------------------------------------------------------------------
+http://www.boost.org/doc/libs/1_33_1/more/getting_started.html#auto-link
+
 Setting environmental variables
 -------------------------------
 You will need to set some environmental variables before building Phycas using this 
 Visual Studio solution:
 
-BOOST_ROOT=C:\Users\Administrator\Library\boost_1_37_0
+BOOST_ROOT=C:\Users\Administrator\Library\boost_1_42_0
 NCL_ROOT=C:\Users\Administrator\Documents\ndev\branches\v2.1
 PHYCAS_NCL_STATIC=1
-PHYCAS_ROOT=C:\Users\Administrator\Documents\pdev\trunk
-PYTHON_ROOT=C:\Python26
+PHYCAS_ROOT=C:\Users\Administrator\Documents\pdevgit\Phycas
+PYTHON_ROOT=C:\Python-2.7
 PYTHONPATH=%PHYCAS_ROOT%
-PATH=%PATH%;C:\Python26;C:\Python-2.6.1\PCbuild;C:\Users\Administrator\Library\boost_1_37_0\tools\jam\src\bin.ntx86
+PATH=%PATH%;C:\Python-2.7;C:\Python-2.7\PCbuild;C:\Users\Administrator\Library\boost_1_42_0\tools\jam\src\bin.ntx86
 
-Building debug Python 2.6 library
+Building debug Python 2.7 library
 ---------------------------------
-You need python_d.exe, python26_d.dll and python26_d.lib in order to build a debug version of Phycas, 
-but unfortunately none of these come with the standard Python 2.6 release - you have to download
+You need python_d.exe, python27_d.dll and python27_d.lib in order to build a debug version of Phycas, 
+but unfortunately none of these come with the standard Python 2.7 release - you have to download
 the Python source code and build it yourself. If you try to build a debug version of 
 Phycas without having this debug version of Python, you will get link errors such as 
 these:
@@ -31,9 +35,9 @@ phylogeny_pymod.obj : error LNK2019: unresolved external symbol __imp___Py_Deall
 phylogeny_pymod.obj : error LNK2019: unresolved external symbol __imp___Py_NegativeRefcount ...
 phylogeny_pymod.obj : error LNK2001: unresolved external symbol __imp___Py_RefTotal ...
 
-To build it yourself, go to the directory C:\Python-2.6.1\PCbuild and open the pcbuild.sln file, 
+To build it yourself, go to the directory C:\Python-2.7\PCbuild and open the pcbuild.sln file, 
 choose Debug version and then build just the "python" project (this is the only project you need to build).
-Be sure to add C:\Python-2.6.1\PCbuild to the PATH environmental variable so that python_d.exe can
+Be sure to add C:\Python-2.7\PCbuild to the PATH environmental variable so that python_d.exe can
 be found when it is invoked.
 
 Building Tcl/Tk into Python debug build
@@ -63,10 +67,15 @@ Compile the _tkinter project in Python-2.6.1\PCBuild folder\sln
 
 Building the Debug version of the Boost Python DLL
 --------------------------------------------------
-Modify C:\boost_1_37_0\tools\build\v2\user-config.jam to include these lines:
+Create a file named user-config.jam in your home directory (i.e. C:\Users\plewis) and include these lines:
 
-using python : 2.6 : C:\\Python26\\python.exe ;
-using python : 2.6 : C:\\Python-2.6.1\\PCBuild\\python_d.exe
+using msvc ;
+using python 
+  : 2.7 
+  : C:\\Users\\plewis\\Documents\\Python-2.7\\PCbuild\\python 
+  : C:\\Users\\plewis\\Documents\\Python-2.7\\Include 
+  : C:\\Users\\plewis\\Documents\\Python-2.7\\PCbuild ;
+using python : 2.7 : C:\\Users\\plewis\\Documents\\Python-2.7\\PC\\VS8.0\\python_d.exe
   : # includes
   : # libs
   : <python-debugging>on ;
@@ -78,9 +87,9 @@ uncommented:
 using msvc ;
 
 To build *only* the Python library out of the many projects composing Boost, navigate
-to the Boost folder (e.g. C:\boost_1_37_0) and type
+to the Boost folder (e.g. C:\boost_1_42_0) and type
 
-bjam debug --with-python python-debugging=on stage
+bjam debug --with-python python-debugging=on --build-type=complete stage
 
 This will cause the boost python dll (boost_python-vc90-mt-gyd-1_37.dll) and import lib 
 (boost_python-vc90-mt-gyd-1_37.lib) to be placed in C:\boost_1_37_0\stage\lib.
