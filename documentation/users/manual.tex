@@ -67,8 +67,12 @@
 \newcommand{\important}[1]{{\bf Important: #1}}	% important information
 
 \newcommand{\warning}[1]{{\bf Warning: #1}}		% warnings
+<<<<<<< HEAD:documentation/users/manual.tex
+\newcommand{\warnNoPyThree}{\warning{Do not install Python 3.x --- Phycas is not yet ready to make the leap to Python 3.}}
+=======
 \newcommand{\warnNoPyThree}{\warning{Do not install Python 3.x --- Phycas is not yet ready to make the leap to Python 3}}
 \newcommand{\eg}{{\em e.g.}~}
+>>>>>>> c2f7d0ad9a4a8a1e39606e6d2921325b67d6fa1e:documentation/users/manual.tex
 
 \newcommand{\one}[1]{\mbox{${\bf 1}_{#1}$}}
 \newcommand{\data}{{\bf y}}
@@ -133,7 +137,7 @@ pdfkeywords={phylogenetics, Bayesian, Markov chain Monte Carlo, MCMC}}
 \begin{document}
 
 \title{{\sc Phycas User Manual} \\ Version \currPhycasVersion}
-\author{Paul O. Lewis, Mark. T. Holder, and David L. Swofford}
+\author{Paul O. Lewis, Mark T. Holder, and David L. Swofford}
 \date{\today}
 \maketitle
 
@@ -1787,7 +1791,7 @@ These instructions assume you are using MacOS 10.4 or later.
 
 \subsubsection{The iTerm terminal application}
 
-Bundled with Phycas is a terminal application called iTerm. The iTerm application is an open-source replacement for the Terminal application with which you may be familiar (and which comes with the MacOS). While it is possible to use Phycas from Terminal, we recommend strongly that you use the iTerm application that comes with Phycas. The iTerm application starts automatically when you click on the icon labeled ``Phycas'' (see below) or drop a script file onto the icon. The main reason for using the bundled iTerm application is that it starts Python and imports phycas for you automatically when it is started.
+Bundled with Phycas is a terminal application called iTerm. The iTerm application is an open-source replacement for the Terminal application with which you may be familiar (and which comes with the MacOS). While it is possible to use Phycas from Terminal, we recommend strongly that you use the iTerm application that comes with Phycas. The iTerm application starts automatically when you click on the icon labeled ``Phycas'' (see below) or drop a (Python) script file onto the icon. The main reason for using the bundled iTerm application is that it starts Python and imports phycas for you automatically when it is started.
 
 \subsubsection{Installing Python on a Mac}
 

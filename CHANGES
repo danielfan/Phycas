@@ -3,7 +3,21 @@ Phycas can be obtained from http://www.phycas.org/
 
 ~~~~~~~~~~~~~~~~~ Release history (most recent first) ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Release 1.1.5 (not yet released)
+Release 1.2.0 (7-Aug-2010)
+- partitioning implemented (tree topology and edge lengths apply to all subsets,
+  and all other model parameters are subset specific)
+- the ps command has been renamed the ss command to reflect the fact that the 
+  primary purpose of the command is to use the Stepping Stone method, and ps stands
+  for path sampling, a name that was never used even by the authors of the 
+  thermodynamic integration approach!
+- the mcmc command now has an option save_sitelikes which causes the site log-
+  likelihoods to be saved to a file (name determined by mcmc.out.sitelikes). If 
+  sump.cpofile is set to this site log-likelihood file, then sump will estimate 
+  the Conditional Predictive Ordinate for each site
+  - the process of specifying a master pseudorandom number seed has been simplied
+  in version 1.2. You can now simply insert the command setMasterSeed(13579) just 
+  after the "from phycas import *" command to set the master random number seed 
+  to the value 13579.
 - if mcmc.fix_topology specified, all branch lengths are recorded in the params file
   (otherwise only the tree length is recorded).
 

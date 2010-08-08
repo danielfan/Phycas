@@ -5,6 +5,26 @@ to fix, and documenting them helps to avoid repeating history. Minor bugs repres
 cosmetic glitches that are easy to work around and do not take long to fix. Minor bugs 
 are best documented in SVN comments.
 
+Bug 9: the "not-a-bug" bug (4-Aug-2010)
+---------------------------------------
+This turned out to not be a bug after all. The observation that concerned us was that
+if performing steppingstone sampling (ss.ti=False) and if model.update_freqs_separately=True,
+then the base frequency trace plots appear to gain in variance as one moves from posterior
+to reference distribution, but dramatically decrease in variance during the period when
+beta=0.0. It seemed like there should not be a reversal in the trend of increasing variance
+at the last step. This turned out to be due to autocorrelation. If each of four Gamma(1,b) random
+variables X_1, X_2, X_3 and X_4 is normalized by dividing by the sum (X_. = X_1+X_2+X_3+X_4), 
+this transforms the four into a single multivariate Dirichlet(b,b,b,b) random variable Z. 
+If, however, there is autocorrelation in the sampling of each X_i, this dramatically increases
+the variance of the individual components of Z. Thus, running the chain 100 times longer and
+sampling only every 100th. update cycle produces the expected result. We did notice in solving
+this mystery that setting model.update_freqs_separately=True and thus slice sampling individual
+frequency parameters independently results in very autocorrelated samples of the underlying
+unnormalized frequency parameters. The autocorrelation is not apparent in the normalized 
+frequencies because the unnormalized frequencies move up and down together. We could thus 
+use a move in Phycas that rescales the unnormalized frequencies in this case. This would be
+a cheap move to add because it would not require recalculation of the likelihood.
+
 Bug 8: the "Jockusch" bug (fixed in revision 1315 on 9-June-2010)
 -----------------------------------------------------------------
 Named for the person (Elizabeth Jockusch) whose data set triggered this investigation.
