@@ -1,9 +1,7 @@
-This is the Phycas/PhyPy readme file.
-Obviously it still needs to be written.
-For now, consult the readme.txt file in this
-same directory. That file is designed for
-users who have checked out the entire
-trunk, but much of that file will eventually
-find its way into this file.
+Phycas is a Python application for carrying out phylogenetic analyses.
+It is also a C++ and Python library that can be used to create new
+applications or to extend the current functionality.
+
+Phycas was written by Paul O. Lewis, Mark T. Holder and David L. Swofford.
 
 

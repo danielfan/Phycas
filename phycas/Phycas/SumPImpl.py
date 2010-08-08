@@ -662,7 +662,7 @@ class ParamSummarizer(CommonFunctions):
 			if headers[1] == 'beta':
 				try:
 					self.marginal_likelihood(headers, lines, burnin)
-				except InvalidNumberOfColumnsError as e:
+				except InvalidNumberOfColumnsError, e:
 					print e
 			else:
 				self.std_summary(headers, lines, burnin)

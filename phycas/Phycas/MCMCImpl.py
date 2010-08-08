@@ -1197,13 +1197,13 @@ class MCMCImpl(CommonFunctions):
 					# if using working prior with steppingstone sampling, it is now time to 
 					# parameterize the working prior for all updaters so that this working prior
 					# can be used in the sequel
-					self.output('\nWorking prior details:')
+					self.output('\nReference distribution details:')
 					all_updaters = cold_chain.chain_manager.getAllUpdaters() 
 					for u in all_updaters:		# good candidate for moving into C++
 						if not u.isFixed():
 							u.setUseWorkingPrior(True)
 							if u.computesUnivariatePrior() or u.computesMultivariatePrior():
-								self.output('  Finalizing working prior for %s...' % u.getName())
+								self.output('  Finalizing reference distribution for %s...' % u.getName())
 								u.finalizeWorkingPrior()
 								self.output('  %s --> %s' % (u.getName(), u.getWorkingPriorDescr()))
 					self.output()
@@ -1213,7 +1213,7 @@ class MCMCImpl(CommonFunctions):
 				chain.setPower(self.ss_beta)
 				boldness = 100.0*(1.0 - self.ss_beta)
 				chain.setBoldness(boldness)
-				print 'Setting chain boldness to %g based on beta = %g' % (boldness,self.ss_beta)
+				self.output('Setting chain boldness to %g based on beta = %g' % (boldness,self.ss_beta))
 				self.cycle_stop = self.opts.burnin + len(self.ss_sampled_betas)*self.opts.ncycles + self.opts.ssobj.xcycles
 				if self.ss_beta_index > 0:
 					self.burnin = 0

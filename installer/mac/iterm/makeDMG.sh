@@ -30,24 +30,15 @@ then
 	ditto -rsrc "$PHYCAS_ROOT/LICENSE" "phycasimg/LICENSE" || exit
 	ditto -rsrc "README" "phycasimg/README" || exit
 	ditto -rsrc "$PHYCAS_ROOT/documentation/users/manual.pdf" "phycasimg/manual.pdf" || exit
-	ditto -rsrc "$PHYCAS_ROOT/documentation/users/tutorial/basic.py" "phycasimg/tutorial/basic.py" || exit
-	ditto -rsrc "$PHYCAS_ROOT/documentation/users/tutorial/summarize.py" "phycasimg/tutorial/summarize.py" || exit
-	ditto -rsrc "$PHYCAS_ROOT/documentation/users/tutorial/partition.py" "phycasimg/tutorial/partition.py" || exit
-	ditto -rsrc "$PHYCAS_ROOT/documentation/users/tutorial/steppingstone.py" "phycasimg/tutorial/steppingstone.py" || exit
-	ditto -rsrc "$PHYCAS_ROOT/documentation/users/tutorial/polytomy.py" "phycasimg/tutorial/polytomy.py" || exit
-	# mkdir "phycasimg/PhycasTutorial"
-	# mkdir "phycasimg/PhycasTutorial/scripts"
-	# for f in $PHYCAS_ROOT/phycas/Examples/Tutorial/PhycasWHExamples/*nex
-	# do 
-	# 	ditto -rsrc "$f" "phycasimg/PhycasTutorial" || exit
-	# done
-	# for f in $PHYCAS_ROOT/phycas/Examples/Tutorial/PhycasWHExamples/scripts/*py
-	# do 
-	# 	ditto -rsrc "$f" "phycasimg/PhycasTutorial/scripts/" || exit
-	# 	ditto -rsrc "$f" "phycasimg/PhycasTutorial/" || exit
-	# done
-	# ditto -rsrc "$PHYCAS_ROOT/phycas/Examples/Tutorial/phycas_woods_hole_08.pdf" "phycasimg/PhycasTutorial/PhycasTutorial.pdf" || exit
-	
+	mkdir "phycasimg/tutorial"
+	mkdir "phycasimg/tutorial/ex1basic"
+	mkdir "phycasimg/tutorial/ex2steppingstone"
+	mkdir "phycasimg/tutorial/ex3-4polytomyPriors"
+	for f in ex1basic/basic.py ex1basic/green.nex ex2steppingstone/murphy29.rag1rag2.nex ex2steppingstone/setUpByCodonPosPartition.py ex2steppingstone/setUpByGeneAndCodonPosPartition.py ex2steppingstone/steppingstone1.py ex2steppingstone/steppingstone2.py ex2steppingstone/steppingstone3.py ex2steppingstone/steppingstoneDoMCMC.py ex2steppingstone/steppingstoneReadData.py ex3-4polytomyPriors/IntExtPrior.py ex3-4polytomyPriors/NoPolytomy.py ex3-4polytomyPriors/Polytomy.py ex3-4polytomyPriors/ShoupLewis.nex
+	do
+		ditto -rsrc "$PHYCAS_ROOT/documentation/users/tutorial/$i" "phycasimg/tutorial/$i" || exit
+	done
+
 	hdiutil create -srcfolder phycasimg $MASTER_DMG
 else
 	echo "PHYCAS_ROOT is not defined as a directory"

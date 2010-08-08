@@ -49,7 +49,7 @@
 
 \newcommand{\currPhycasVersion}{1.2.0}			% TODO: CHECK PRIOR TO NEW RELEASE
 \newcommand{\currReleaseDate}{20 July 2010}		% TODO: CHECK PRIOR TO NEW RELEASE
-\newcommand{\currReleaseSVNBuild}{1322}			% TODO: CHECK PRIOR TO NEW RELEASE
+\newcommand{\currReleaseGitBuild}{18e7a835616e453dcfd60d1b9ee9e763858778cc}			% TODO: CHECK PRIOR TO NEW RELEASE
 \newcommand{\currPyVersion}{2.6.1}
 
 \newcommand{\trademark}[1]{#1${}^{\mbox{\tiny TM}}$}
@@ -67,7 +67,12 @@
 \newcommand{\important}[1]{{\bf Important: #1}}	% important information
 
 \newcommand{\warning}[1]{{\bf Warning: #1}}		% warnings
+<<<<<<< HEAD:documentation/users/manual.tex
 \newcommand{\warnNoPyThree}{\warning{Do not install Python 3.x --- Phycas is not yet ready to make the leap to Python 3.}}
+=======
+\newcommand{\warnNoPyThree}{\warning{Do not install Python 3.x --- Phycas is not yet ready to make the leap to Python 3}}
+\newcommand{\eg}{{\em e.g.}~}
+>>>>>>> c2f7d0ad9a4a8a1e39606e6d2921325b67d6fa1e:documentation/users/manual.tex
 
 \newcommand{\one}[1]{\mbox{${\bf 1}_{#1}$}}
 \newcommand{\data}{{\bf y}}
@@ -148,7 +153,7 @@ Phycas (\url{http://www.phycas.org}) is an extension of the Python programming l
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{What's new in version 1.2?} %%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-This version was released on \currReleaseDate, and corresponds with SourceForge SVN revision number \currReleaseSVNBuild. It adds support for data partitioning, changes the name of the \cmd{ps} command to \cmd{ss}, and adds the \cmd{cpo} command. Phycas now supports a limited form of data partitioning in that topology and edge lengths are always linked across partition subsets and all other model parameters are unlinked. The name change from \cmd{ps} to \cmd{ss} reflects the fact that the primary purpose of the command is to use the Stepping Stone method, and ``ps'' stands for ``path sampling,'' a name that was never used even by the authors of the thermodynamic integration approach! Finally, the \cmd{cpo} command is identical to the \cmd{mcmc} command except that it saves the site log-likelihoods to a file and estimates the Conditional Predictive Ordinate for each site using those stored site log-likelihoods. See section \ref{cpo} for details. 
+This version was released on \currReleaseDate\footnote{This version corresponds with git commit SHA \currReleaseGitBuild}. It adds support for data partitioning, changes the name of the \cmd{ps} command to \cmd{ss}, and adds the \cmd{cpo} command. Phycas now supports a limited form of data partitioning in that topology and edge lengths are always linked across partition subsets and all other model parameters are unlinked. The name change from \cmd{ps} to \cmd{ss} reflects the fact that the primary purpose of the command is to use the Stepping Stone method, and ``ps'' stands for ``path sampling,'' a name that was never used even by the authors of the thermodynamic integration approach! Finally, the \cmd{cpo} command is identical to the \cmd{mcmc} command except that it saves the site log-likelihoods to a file and estimates the Conditional Predictive Ordinate for each site using those stored site log-likelihoods. See section \ref{cpo} for details. 
 
 The process of specifying a master pseudorandom number seed has been simplified in version 1.2. You can now simply insert the command \code{setMasterSeed(13579)}\index{setMasterSeed} just after the \code{from phycas import *} command to set the master random number seed to the value 13579.
 
@@ -172,7 +177,7 @@ Two memory leaks were fixed prior to this release. For a description of the leak
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{How to use this manual} %%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-This manual begins with a description of some things you can do with Phycas that you cannot do with most other Bayesian phylogenetics software. Following this features section (section~\ref{sec:features}) is a tutorial (section~\ref{sec:tutorial}) showing you how to perform some simple analyses. This tutorial does not attempt to explain all possible settings. The online help system provides details about settings not mentioned in the tutorial. After these initial sections, the manual switches to reference style (section~\ref{sec:reference}), detailing probability distributions (sections~\ref{subsec:probdist} and \ref{subsec:phycasprobdists}) that can be used as priors, and describing the models of character evolution (section~\ref{subsec:models}) available in Phycas. Toward the end you will find an annotated listing (section~\ref{subsec:phycassettings}) of Phycas settings. This is followed by a discussion (section~\ref{sec:designprinciples}) of design principles (e.g. Why did we decide to extend Python rather than write a stand-alone program? Why is there no graphical interface?). The final section (section~\ref{sec:install}) is devoted to the details of getting Phycas (and Python) installed on your computer system.
+This manual begins with a description of some things you can do with Phycas that you cannot do with most other Bayesian phylogenetics software. Following this features section (section~\ref{sec:features}) is a tutorial (section~\ref{sec:tutorial}) showing you how to perform some simple analyses. This tutorial does not attempt to explain all possible settings. The online help system provides details about settings not mentioned in the tutorial. After these initial sections, the manual switches to reference style (section~\ref{sec:reference}), detailing probability distributions (sections~\ref{subsec:probdist} and \ref{subsec:phycasprobdists}) that can be used as priors, and describing the models of character evolution (section~\ref{subsec:models}) available in Phycas. Toward the end you will find an annotated listing (section~\ref{subsec:phycassettings}) of Phycas settings. This is followed by a discussion (section~\ref{sec:designprinciples}) of design principles (\eg Why did we decide to extend Python rather than write a stand-alone program? Why is there no graphical interface?). The final section (section~\ref{sec:install}) is devoted to the details of getting Phycas (and Python) installed on your computer system.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% Features %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -215,9 +220,23 @@ Phycas offers several ways of estimating marginal (model) likelihoods. The margi
 
 Phycas can use two alternatives to the harmonic mean method --- {\em thermodynamic integration} \citep{LartillotPhillippe2006} (also known as path sampling), and the {\em stepping stone method} \citep{XieLewisFanKuoChen2010,FanWuChenKuoLewis2010} --- but only if the MCMC analysis is conducted using the \cmd{ss} command. The thermodynamic integration (TI) and stepping stone (SS) methods both require running a special MCMC analysis that explores a series of {\em power posterior} distributions. The power posterior is proportional to $L(\theta)^{\beta} p(\theta)^{\beta} \pi(\theta)^{1-\beta}$, where $L(\theta)$ is the likelihood, $p(\theta)$ is the prior, $\pi(\theta)$ is a ``reference distribution'' and $\beta$ is the power. 
 
-By default, the \cmd{ss} command estimates the marginal likelihood using the version of the SS method described by \citet{FanWuChenKuoLewis2010}. In this version of SS, which is in effect if the setting \opt{ss}{ti} is set to \code{False}, the reference distribution is a parameterized version of the prior distribution. That is, the first step of the analysis gathers samples from the posterior distribution, and the mean and variance of each parameter from this posterior sample is used to create a version of the prior distribution that approximates the posterior. For a simple example, if a model has two parameters and a Normal prior was associated with each parameter, then the reference distribution would be an uncorrelated bivariate normal distribution in which the marginal means and variances equal the sample means and variances of the two parameters from the initial posterior sample. The value of $\beta$ is slowly decreased from 1 (in which MCMC is exploring the posterior distribution) to 0 (in which MCMC is exploring the reference distribution) in small steps. The number of $\beta$ values used is specified by \opt{ss}{nbetavals} and the minimum and maximum $\beta$ values are set using \opt{ss}{minbeta} and \opt{ss}{maxbeta} (it is best to leave these set to their default values of 0 and 1, respectively). When the command \cmd{ss} is invoked, an MCMC analysis is run for each of the \opt{ss}{nbetavals} values of $\beta$. The current settings of the \cmd{mcmc} command are used for each value of $\beta$; however, the \opt{mcmc}{burnin} setting governs only the initial burn-in period (i.e. there is no separate burnin between successive values of $\beta$). At the end of the run, Phycas will report the log of the marginal likelihood estimated using the SS method.
 
-In TI, as well as the version of SS described by \citet{XieLewisFanKuoChen2010}, the reference distribution, $\pi(\theta)$, equals the prior, $p(\theta)$. Phycas will provide marginal likelihood estimates for TI and this original version of SS if \opt{ss}{ti} is set to \code{True}. \citet{XieLewisFanKuoChen2010} found that choosing $\beta$ values that are not equally spaced along the path from 1 to 0 substantially improves the efficiency of both TI and this version of SS. Best practice appears to place most $\beta$ values close to 0 for both TI and the original version of SS. Phycas uses evenly-spaced quantiles of a Beta($a$,$b$) distribution to choose $\beta$ values, where the two shape parameters of the Beta distribution, $a$ and $b$, are specified as \opt{ss}{shape1} and \opt{ss}{shape2}, respectively. By default, \opt{ss}{shape1} and \opt{ss}{shape2} are both set to 1.0, but when \opt{ss}{ti} is set to \code{True}, you should also change \opt{ss}{shape1} to a small value such as 0.3 (leaving \opt{ss}{shape2} equal to 1.0). 
+The value of $\beta$ is slowly decreased from 1 (in which MCMC is exploring the posterior distribution) to 0 (in which MCMC is exploring the reference distribution) in small steps. The number of $\beta$ values used is specified by \opt{ss}{nbetavals}.\footnote{You can change the minimum and maximum $\beta$ values are set using \opt{ss}{minbeta} and \opt{ss}{maxbeta} (it is best to leave these set to their default values of 0 and 1, respectively)}
+ When the command \cmd{ss} is invoked, an MCMC analysis is run for each of the \opt{ss}{nbetavals} values of $\beta$. The current settings of the \cmd{mcmc} command are used for each value of $\beta$; however, the \opt{mcmc}{burnin} setting governs only the initial burn-in period (i.e. there is no separate burnin between successive values of $\beta$). At the end of the run, Phycas will report the log of the marginal likelihood estimated using the SS method.
+
+The \opt{ss}{ti} option controls whether or not the stepping-stone command uses thermodynamic integration.
+By default, the \opt{ss}{ti} is \code{False} estimates the marginal likelihood using the version of the SS method described by \citet{FanWuChenKuoLewis2010}. 
+In this version of SS, the reference distribution is a parameterized version of the posterior distribution.
+The first portion of the analysis gathers samples from the posterior distribution.
+The mean and variance of each parameter are estimated from this posterior sample.
+These summary statistics are used to create a reference distribution that approximates the posterior.
+For a simple example, if a model has two parameters and a Normal prior was associated with each parameter, then the reference distribution would be an uncorrelated bivariate Normal distribution in which the marginal means and variances equal the sample means and variances of the two parameters from the initial posterior sample. 
+
+In thermodynamic integration (\opt{ss}{ti}\code{ = True}) the reference distribution, $\pi(\theta)$, is simply the prior, $p(\theta)$.
+The prior is also used as reference distribution in the version of the stepping stone  described by \citet{XieLewisFanKuoChen2010}.
+When \opt{ss}{ti}\code{ = True}, Phycas will provide marginal likelihood estimates for TI and the \citet{XieLewisFanKuoChen2010} version of stepping stone.
+\citet{XieLewisFanKuoChen2010} found that choosing $\beta$ values that are not equally spaced along the path from 1 to 0 substantially improves the efficiency of both TI and this version of SS.
+Phycas uses evenly-spaced quantiles of a Beta($a$,$b$) distribution to choose $\beta$ values, where the two shape parameters of the Beta distribution, $a$ and $b$, are specified as \opt{ss}{shape1} and \opt{ss}{shape2}, respectively. By default, \opt{ss}{shape1} and \opt{ss}{shape2} are both set to 1.0, but when \opt{ss}{ti} is set to \code{True}, you should also change \opt{ss}{shape1} to a small value such as 0.3 (leaving \opt{ss}{shape2} equal to 1.0).
 
 The example \pathname{$<$phycas install directory$>$/phycas/Examples/Steppingstone/Steppingstone.py} shows a complete example of the use of path/steppingstone sampling for marginal likelihood estimation. This example recreates part of Figure 10 in the \citet{XieLewisFanKuoChen2010} paper. Also, one section of the tutorial (\ref{subsec:margliketutorial}) covers marginal likelihood estimation.
 
@@ -382,7 +401,7 @@ Do not be confused by the subtle differences in typesetting within this manual. 
 
 The option \opt{model}{kappa\_prior} specifies the prior probability distribution to use for the transition/transversion rate ratio. Phycas defines several probability distributions for use as priors. In this case, the current value of \optval{Exponential(1.00000)} indicates that the $\kappa$ parameter will be assigned an exponential(1) prior distribution. See section~\ref{subsec:phycasprobdists} (p.~\pageref{subsec:phycasprobdists}) for a complete list of probability distributions available within Phycas.
 
-The option \opt{model}{relrates} specifies the values of the six GTR relative rates parameters. The square brackets around the value of the \opt{model}{relrates} parameter, \optval{[1.0, 4.0, 1.0, 1.0, 4.0, 1.0]}, indicate that you should specify the six relative rate values as a Python \term{list}. These should be specified in this order: A$<$-$>$C, A$<$-$>$G, A$<$-$>$T, C$<$-$>$G, C$<$-$>$T, G$<$-$>$T. The \opt{model}{relrates} option and others like it, such as \opt{model}{kappa}, \opt{model}{state\_freqs}, \opt{model}{gamma\_shape}, and \opt{model}{pinvar} are used to set the starting values for an MCMC analysis (the \cmd{mcmc} command) or to specify the values of parameters for calculating the likelihood (the \cmd{like} command).
+The option \opt{model}{relrates} specifies the values of the six GTR relative rates parameters. The square brackets around the value of the \opt{model}{relrates} parameter, \optval{[1.0, 4.0, 1.0, 1.0, 4.0, 1.0]}, indicate that you should specify the six relative rate values as a Python \term{list}. These should be specified in this order: A$\leftrightarrow$C, A$\leftrightarrow$G, A$\leftrightarrow$T, C$\leftrightarrow$G, C$\leftrightarrow$T, G$\leftrightarrow$T. The \opt{model}{relrates} option and others like it, such as \opt{model}{kappa}, \opt{model}{state\_freqs}, \opt{model}{gamma\_shape}, and \opt{model}{pinvar} are used to set the starting values for an MCMC analysis (the \cmd{mcmc} command) or to specify the values of parameters for calculating the likelihood (the \cmd{like} command).
 
 The \opt{model}{fix\_relrates} command is used to specify whether the relative rates are to be allowed to vary during an MCMC analysis (\opt{model}{fix\_relrates}=\optval{False}) or are to be frozen at the values specified by \opt{model}{relrates} (\opt{model}{fix\_relrates}=\optval{True}). The values \optval{True} and \optval{False} are known to Python and should not be surrounded by quotes (note also that case is important: typing \code{true} or \code{TRUE} will generate a ``not defined'' error message from Python).
 
@@ -509,9 +528,9 @@ m1 = model()
 \end{verbatim}
 to save the current model settings to a variable named \code{m1}\footnote
 %
-{The name ``m1'' here is arbitrary, but you should be careful to avoid using names that are identical to those Phycas uses. For example, if you named your model ``mcmc'', then you would lose the ability to perform an MCMC analysis because you have redifined the name ``mcmc'' to mean something else!}
+{The name ``m1'' here is arbitrary, but you should be careful to avoid using names that are identical to those Phycas uses. For example, if you named your model ``mcmc'', then you would lose the ability to perform an MCMC analysis because you have redefined the name ``mcmc'' to mean something else!}
 %
-. Why would you want to save your model? It is necessary to save the model if you are planning to partition your data because the partitioning commands require you to specify a model (e.g. ``m1'') along with the set of sites to which that model applies. You will read more about partitioning in section~\ref{subsec:definingpartitionmodel} on page~\pageref{subsec:definingpartitionmodel}.
+. Why would you want to save your model? It is necessary to save the model if you are planning to partition your data because the partitioning commands require you to specify a model (\eg ``m1'') along with the set of sites to which that model applies. You will read more about partitioning in section~\ref{subsec:definingpartitionmodel} on page~\pageref{subsec:definingpartitionmodel}.
 
 The \code{randomtrees()} invocation returns a \code{TreeCollection} that holds a set of simulated trees and is another example of a command that does not produce visible output.
 \end{samepage}
@@ -680,10 +699,15 @@ m2 = model()
 model.fix_freqs = False
 m3 = model()
 
-# Define partition subsets
 first  = subset(1, 1296, 3)
 second = subset(2, 1296, 3)
 third  = subset(3, 1296, 3)
+
+# Define partition subsets
+partition.addSubset(first, m1, 'first')
+partition.addSubset(second, m2, 'second')
+partition.addSubset(third, m3, 'third')
+partition()
 
 # Start the run
 mcmc()
@@ -767,7 +791,7 @@ model.gamma_shape_prior = Exponential(1.0)
 m1 = model()
 m2 = model()
 \end{verbatim}
-\pointup\ Because we need to create a different model for the third codon positions, it is important at this point to save the model we've just set up. Calling the model as if it were a function (by following the word \code{model} by empty parentheses, e.g.\code{model()}) saves the model in its current state to a variable. The name of the variable is up to you. Here, I've been rather unimaginative and just saved the model twice under the variable names \code{m1} and \code{m2}. These will later be assigned to subsets of sites corresponding to the first and second codon positions, respectively.
+\pointup\ Because we need to create a different model for the third codon positions, it is important at this point to save the model we've just set up. Calling the model as if it were a function (by following the word \code{model} by empty parentheses, \eg\code{model()}) saves the model in its current state to a variable. The name of the variable is up to you. Here, I've been rather unimaginative and just saved the model twice under the variable names \code{m1} and \code{m2}. These will later be assigned to subsets of sites corresponding to the first and second codon positions, respectively.
 \end{samepage}
 
 \begin{samepage}
@@ -784,7 +808,7 @@ first  = subset(1, 1296, 3)
 second = subset(2, 1296, 3)
 third  = subset(3, 1296, 3)
 \end{verbatim}
-\pointup\ We must next define the subsets of sites corresponding to first, second and third codon positions. This process is analogous to creating charsets in PAUP or MrBayes. The variable names \code{first}, \code{second} and \code{third} can be any legal Python variable name (e.g. you could call them \code{a}, \code{b} and \code{c} instead). The \cmd{subset} command takes 3 arguments: start, stop and step. Start and stop specify the first and last site in the range, and setting step to 3 means ``take every 3rd site in that range.'' You can specify only start and stop if you want; in this case step is assumed to be 1.
+\pointup\ We must next define the subsets of sites corresponding to first, second and third codon positions. This process is analogous to creating charsets in PAUP or MrBayes. The variable names \code{first}, \code{second} and \code{third} can be any legal Python variable name (\eg you could call them \code{a}, \code{b} and \code{c} instead). The \cmd{subset} command takes 3 arguments: start, stop and step. Start and stop specify the first and last site in the range, and setting step to 3 means ``take every 3rd site in that range.'' You can specify only start and stop if you want; in this case step is assumed to be 1.
 \end{samepage}
 
 \begin{samepage}
@@ -942,7 +966,7 @@ mcmc.ncycles = 1000
 \pointup\ The \cmd{ss} command uses the \cmd{mcmc} command to do almost all of the work. Hence, the setting \opt{mcmc}{ncycles} specifies the number of parameter update cycles devoted to each beta value visited. Note that this is the number of cycles per beta value. If you specified \opt{ss}{nbetavals} to be 11 and \opt{mcmc}{ncycles} to be 1000, then the total number of cycles would be 11 times 1000, or 11000 cycles.
 \end{samepage}
 
-This example uses 11 beta values, but is this enough? Generally the more stepping stones (i.e. beta values) used, the better the estimate will be, but the quality of the estimate also depends on the quality of the reference distribution. If the reference distribution approximates the posterior well, then fewer beta values are needed (and fewer samples per beta value are needed). If the reference distribution exactly equals the posterior, then only a single sample from the reference distribution (beta = 0.0) would be needed to determine the marginal likelihood exactly, This utopia is never achievable because if one actually knew the posterior distribution exactly, then one would also know the normalizing constant exactly and hence you would not need to estimate it! In practice, it probably makes sense to start with, say, 11 $\beta$ values, and a reasonable number (e.g. 1000) cycles per $\beta$ value. Then do another run, doubling both values. If this makes a big difference, then probably the first run was not long enough (and perhaps the second run too). 
+This example uses 11 beta values, but is this enough? Generally the more stepping stones (i.e. beta values) used, the better the estimate will be, but the quality of the estimate also depends on the quality of the reference distribution. If the reference distribution approximates the posterior well, then fewer beta values are needed (and fewer samples per beta value are needed). If the reference distribution exactly equals the posterior, then only a single sample from the reference distribution (beta = 0.0) would be needed to determine the marginal likelihood exactly, This utopia is never achievable because if one actually knew the posterior distribution exactly, then one would also know the normalizing constant exactly and hence you would not need to estimate it! In practice, it probably makes sense to start with, say, 11 $\beta$ values, and a reasonable number (\eg 1000) cycles per $\beta$ value. Then do another run, doubling both values. If this makes a big difference, then probably the first run was not long enough (and perhaps the second run too). 
 
 \begin{samepage}
 \begin{verbatim}
@@ -1379,7 +1403,7 @@ Variance:             & & $\Var(y) = \frac{\alpha (\alpha + \beta - 1)}{(\beta -
 %%%%%%%%%%%%%%%%%%%%%%%%
 \index{Binomial distribution}
 
-The Binomial distribution is not currently useful as a prior distribution in Phycas, and is provided for the sake of completeness. The Binomial distribution is commonly used to model counts of the number of trials satisfying some condition (a ``success''). For example, the number of heads out of 10 (independent) flips of a coin follows a Binomial distribution. The parameter of the distribution is the probability that the condition (e.g. heads) is satisfied on any given trial.
+The Binomial distribution is not currently useful as a prior distribution in Phycas, and is provided for the sake of completeness. The Binomial distribution is commonly used to model counts of the number of trials satisfying some condition (a ``success''). For example, the number of heads out of 10 (independent) flips of a coin follows a Binomial distribution. The parameter of the distribution is the probability that the condition (\eg heads) is satisfied on any given trial.
 
 \begin{tabular}{lcl}
 Type:                 & & Discrete, univariate \\
@@ -1395,7 +1419,7 @@ Variance:             & & $\Var(y) = n p(1-p)$
 %%%%%%%%%%%%%%%%%%%%%%%%%
 \index{Dirichlet distribution}
 
-The Dirichlet distribution is used as a prior for quantities that must sum to 1.0, such as state frequencies. The parameters of a Dirichlet distribution are positive real numbers. If all parameters are equal, the Dirichlet distribution is symmetric. For example, a Dirichlet(10,10,10,10) distribution would yield samples of nucleotide frequencies in which no one nucleotide predominates. Furthermore, if all Dirichlet parameters equal 1, then every combination of values has equal probability density. Thus, in a Dirichlet(1,1,1,1) distribution of nucleotide frequencies, extreme frequencies (e.g., 0.001, 0.001, 0.001, 0.997) have just as much of a chance of showing up in a sample as equal frequencies (i.e., 0.25, 0.25, 0.25, 0.25).
+The Dirichlet distribution is used as a prior for quantities that must sum to 1.0, such as state frequencies. The parameters of a Dirichlet distribution are positive real numbers. If all parameters are equal, the Dirichlet distribution is symmetric. For example, a Dirichlet(10,10,10,10) distribution would yield samples of nucleotide frequencies in which no one nucleotide predominates. Furthermore, if all Dirichlet parameters equal 1, then every combination of values has equal probability density. Thus, in a Dirichlet(1,1,1,1) distribution of nucleotide frequencies, extreme frequencies (\eg, 0.001, 0.001, 0.001, 0.997) have just as much of a chance of showing up in a sample as equal frequencies (i.e., 0.25, 0.25, 0.25, 0.25).
 \begin{indentednote}
 {\bf Important:} For multivariate distributions such as the Dirichlet distribution, you must supply a Python list or tuple rather than a single value as the parameter. Thus, to construct a flat Dirichlet prior for state frequencies, you either need to use an extra set of parentheses (the inner set being recognized by Python as defining a tuple), like this:\par\smallskip
 {\small \tt model.state\_freq\_prior = Dirichlet((1.0, 1.0, 1.0, 1.0))}\par\smallskip
