@@ -105,12 +105,12 @@ else {
 # Note that the target name supplied to make is not the same as the file generated, which
 # ensures that this command will be run every time Jamroot is executed.
 # See http://boost.sourceforge.net/boost-build2/doc/html/bbv2/builtins/raw.html
-make svnversion : phycasver.txt : @svnversion ;
-actions svnversion
-{
-    python svnver.py $(>)
-}
-#install phycas : svnversion.txt ;
+##### make svnversion : phycasver.txt : @svnversion ;
+##### actions svnversion
+##### {
+#####     python svnver.py $(>)
+##### }
+##### #install phycas : svnversion.txt ;
 
 # The rule python-extension is defined in <top-of-boost-build-system>/tools/python.jam
 # The boost-build.jam file in this directory points bjam to <top-of-boost-build-system>
