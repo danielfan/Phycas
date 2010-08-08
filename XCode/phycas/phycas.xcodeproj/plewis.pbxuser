@@ -188,7 +188,7 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					1363,
+					1263,
 					60,
 					20,
 					48,
@@ -205,8 +205,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 302915221;
-			PBXWorkspaceStateSaveDate = 302915221;
+			PBXPerProjectTemplateStateSaveDate = 302975394;
+			PBXWorkspaceStateSaveDate = 302975394;
 		};
 		perUserProjectItems = {
 			D10C5DB911F4AEA3002AFC05 /* PBXTextBookmark */ = D10C5DB911F4AEA3002AFC05 /* PBXTextBookmark */;
@@ -224,12 +224,12 @@
 			D116849611F5216600E449EE /* PBXTextBookmark */ = D116849611F5216600E449EE /* PBXTextBookmark */;
 			D138AC8E120E250100F339B3 /* PBXTextBookmark */ = D138AC8E120E250100F339B3 /* PBXTextBookmark */;
 			D138AC8F120E250100F339B3 /* PBXTextBookmark */ = D138AC8F120E250100F339B3 /* PBXTextBookmark */;
-			D138AC90120E250100F339B3 /* PBXTextBookmark */ = D138AC90120E250100F339B3 /* PBXTextBookmark */;
-			D138AC91120E250100F339B3 /* PBXTextBookmark */ = D138AC91120E250100F339B3 /* PBXTextBookmark */;
-			D19B10E911F38ECE00AB5D5F /* PBXTextBookmark */ = D19B10E911F38ECE00AB5D5F /* PBXTextBookmark */;
 			D19B10FE11F3913900AB5D5F /* PBXTextBookmark */ = D19B10FE11F3913900AB5D5F /* PBXTextBookmark */;
 			D19B10FF11F3913900AB5D5F /* PBXTextBookmark */ = D19B10FF11F3913900AB5D5F /* PBXTextBookmark */;
 			D19B110311F3917100AB5D5F /* PBXTextBookmark */ = D19B110311F3917100AB5D5F /* PBXTextBookmark */;
+			D1B4B3FE120EF8E700D32A41 /* PBXTextBookmark */ = D1B4B3FE120EF8E700D32A41 /* PBXTextBookmark */;
+			D1B4B424120F083F00D32A41 /* PBXTextBookmark */ = D1B4B424120F083F00D32A41 /* PBXTextBookmark */;
+			D1B4B434120F0A3600D32A41 /* PBXTextBookmark */ = D1B4B434120F0A3600D32A41 /* PBXTextBookmark */;
 		};
 		sourceControlManager = D13CAB7610D1D30500813B89 /* Source Control */;
 		userBookmarkGroup = D1FE65561199FEB100CD903B /* PBXBookmarkGroup */;
@@ -1982,26 +1982,6 @@
 		vrLen = 10670;
 		vrLoc = 339;
 	};
-	D138AC90120E250100F339B3 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1ABDDF610D2D60000EDC77A /* SumP.py */;
-		name = "SumP.py: 40";
-		rLen = 0;
-		rLoc = 2504;
-		rType = 0;
-		vrLen = 2505;
-		vrLoc = 0;
-	};
-	D138AC91120E250100F339B3 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1ABDDF610D2D60000EDC77A /* SumP.py */;
-		name = "SumP.py: 11";
-		rLen = 7;
-		rLoc = 545;
-		rType = 0;
-		vrLen = 2505;
-		vrLoc = 0;
-	};
 	D13CAB7610D1D30500813B89 /* Source Control */ = {
 		isa = PBXSourceControlManager;
 		fallbackIsa = XCSourceControlManager;
@@ -2561,16 +2541,6 @@
 			sepNavVisRange = "{4740, 3301}";
 		};
 	};
-	D19B10E911F38ECE00AB5D5F /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7A0945F310CAEFB900CEFDE0 /* mcmc_param.cpp */;
-		name = "mcmc_param.cpp: 551";
-		rLen = 0;
-		rLoc = 21657;
-		rType = 0;
-		vrLen = 2502;
-		vrLoc = 20926;
-	};
 	D19B10FE11F3913900AB5D5F /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 7A0945D410CAEFB900CEFDE0 /* edgelen_master_param.cpp */;
@@ -2906,7 +2876,7 @@
 	};
 	D1ABDDF610D2D60000EDC77A /* SumP.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1493, 877}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1493, 874}}";
 			sepNavSelRange = "{545, 7}";
 			sepNavVisRange = "{0, 2505}";
 		};
@@ -3038,6 +3008,49 @@
 			sepNavSelRange = "{3409, 0}";
 			sepNavVisRange = "{2894, 2461}";
 		};
+	};
+	D1B4B3FE120EF8E700D32A41 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1ABDDF610D2D60000EDC77A /* SumP.py */;
+		name = "SumP.py: 11";
+		rLen = 7;
+		rLoc = 545;
+		rType = 0;
+		vrLen = 2505;
+		vrLoc = 0;
+	};
+	D1B4B424120F083F00D32A41 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1B4B425120F083F00D32A41 /* SumP.py */;
+		name = "SumP.py: 11";
+		rLen = 7;
+		rLoc = 545;
+		rType = 0;
+		vrLen = 2505;
+		vrLoc = 0;
+	};
+	D1B4B425120F083F00D32A41 /* SumP.py */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = text.script.python;
+		name = SumP.py;
+		path = /Users/plewis/Documents/Projects/pdev/trunk/phycas/Phycas/SumP.py;
+		sourceTree = "<absolute>";
+	};
+	D1B4B434120F0A3600D32A41 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1B4B435120F0A3600D32A41 /* SumP.py */;
+		name = "SumP.py: 11";
+		rLen = 7;
+		rLoc = 545;
+		rType = 0;
+		vrLen = 2505;
+		vrLoc = 0;
+	};
+	D1B4B435120F0A3600D32A41 /* SumP.py */ = {
+		isa = PBXFileReference;
+		name = SumP.py;
+		path = /Users/plewis/Documents/Projects/pdev/trunk/phycas/Phycas/SumP.py;
+		sourceTree = "<absolute>";
 	};
 	D1B793DB11690025007A03AF /* test.py */ = {
 		uiCtxt = {
