@@ -73,7 +73,7 @@ inline bool Lot::Boolean()
 
 } // namespace phycas
 
-#include "phycas/src/basic_lot.inl"
+//#include "phycas/src/basic_lot.inl"
 
 #endif
 

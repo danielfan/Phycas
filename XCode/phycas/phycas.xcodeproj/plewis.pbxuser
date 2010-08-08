@@ -205,8 +205,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 301277186;
-			PBXWorkspaceStateSaveDate = 301277186;
+			PBXPerProjectTemplateStateSaveDate = 302915221;
+			PBXWorkspaceStateSaveDate = 302915221;
 		};
 		perUserProjectItems = {
 			D10C5DB911F4AEA3002AFC05 /* PBXTextBookmark */ = D10C5DB911F4AEA3002AFC05 /* PBXTextBookmark */;
@@ -214,18 +214,18 @@
 			D10C5DC311F4AFB8002AFC05 /* PBXTextBookmark */ = D10C5DC311F4AFB8002AFC05 /* PBXTextBookmark */;
 			D10C5DDE11F4B362002AFC05 /* PBXTextBookmark */ = D10C5DDE11F4B362002AFC05 /* PBXTextBookmark */;
 			D10C5E0A11F4C364002AFC05 /* PBXTextBookmark */ = D10C5E0A11F4C364002AFC05 /* PBXTextBookmark */;
-			D10C5E0B11F4C364002AFC05 /* PBXTextBookmark */ = D10C5E0B11F4C364002AFC05 /* PBXTextBookmark */;
 			D10C5E2911F4C83E002AFC05 /* PBXTextBookmark */ = D10C5E2911F4C83E002AFC05 /* PBXTextBookmark */;
 			D10C5E2A11F4C83E002AFC05 /* PBXTextBookmark */ = D10C5E2A11F4C83E002AFC05 /* PBXTextBookmark */;
 			D10C5E2B11F4C83E002AFC05 /* PBXTextBookmark */ = D10C5E2B11F4C83E002AFC05 /* PBXTextBookmark */;
 			D10C5E2C11F4C83E002AFC05 /* PBXTextBookmark */ = D10C5E2C11F4C83E002AFC05 /* PBXTextBookmark */;
 			D10C5E5B11F4DDBB002AFC05 /* PBXTextBookmark */ = D10C5E5B11F4DDBB002AFC05 /* PBXTextBookmark */;
 			D10C5E6611F4E03B002AFC05 /* PBXTextBookmark */ = D10C5E6611F4E03B002AFC05 /* PBXTextBookmark */;
-			D116846C11F50DEA00E449EE /* PBXTextBookmark */ = D116846C11F50DEA00E449EE /* PBXTextBookmark */;
 			D116848111F5162A00E449EE /* PBXTextBookmark */ = D116848111F5162A00E449EE /* PBXTextBookmark */;
-			D116849211F5216300E449EE /* PBXTextBookmark */ = D116849211F5216300E449EE /* PBXTextBookmark */;
 			D116849611F5216600E449EE /* PBXTextBookmark */ = D116849611F5216600E449EE /* PBXTextBookmark */;
-			D116849A11F5482600E449EE /* PBXTextBookmark */ = D116849A11F5482600E449EE /* PBXTextBookmark */;
+			D138AC8E120E250100F339B3 /* PBXTextBookmark */ = D138AC8E120E250100F339B3 /* PBXTextBookmark */;
+			D138AC8F120E250100F339B3 /* PBXTextBookmark */ = D138AC8F120E250100F339B3 /* PBXTextBookmark */;
+			D138AC90120E250100F339B3 /* PBXTextBookmark */ = D138AC90120E250100F339B3 /* PBXTextBookmark */;
+			D138AC91120E250100F339B3 /* PBXTextBookmark */ = D138AC91120E250100F339B3 /* PBXTextBookmark */;
 			D19B10E911F38ECE00AB5D5F /* PBXTextBookmark */ = D19B10E911F38ECE00AB5D5F /* PBXTextBookmark */;
 			D19B10FE11F3913900AB5D5F /* PBXTextBookmark */ = D19B10FE11F3913900AB5D5F /* PBXTextBookmark */;
 			D19B10FF11F3913900AB5D5F /* PBXTextBookmark */ = D19B10FF11F3913900AB5D5F /* PBXTextBookmark */;
@@ -1570,16 +1570,6 @@
 		vrLen = 2609;
 		vrLoc = 0;
 	};
-	D10C5E0B11F4C364002AFC05 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1ABDDF610D2D60000EDC77A /* SumP.py */;
-		name = "SumP.py: 40";
-		rLen = 0;
-		rLoc = 2504;
-		rType = 0;
-		vrLen = 2505;
-		vrLoc = 0;
-	};
 	D10C5E2911F4C83E002AFC05 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 7A98F80310CD85D8001E79F7 /* CommonFunctions.py */;
@@ -1648,16 +1638,6 @@
 			sepNavWindowFrame = "{{79, 506}, {1143, 1067}}";
 		};
 	};
-	D116846C11F50DEA00E449EE /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D1ABDDEB10D2D60000EDC77A /* MCMC.py */;
-		name = "MCMC.py: 65";
-		rLen = 1153;
-		rLoc = 9856;
-		rType = 0;
-		vrLen = 10785;
-		vrLoc = 569;
-	};
 	D116848111F5162A00E449EE /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = D1ABDDF510D2D60000EDC77A /* SS.py */;
@@ -1668,13 +1648,6 @@
 		vrLen = 3835;
 		vrLoc = 0;
 	};
-	D116849211F5216300E449EE /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7AB51C9E10CDA26800A865FF /* nxscdiscretematrix.h */;
-		rLen = 15;
-		rLoc = 1137;
-		rType = 0;
-	};
 	D116849611F5216600E449EE /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = D1ABDDF710D2D60000EDC77A /* SumPImpl.py */;
@@ -1683,16 +1656,6 @@
 		rLoc = 10317;
 		rType = 0;
 		vrLen = 2219;
-		vrLoc = 0;
-	};
-	D116849A11F5482600E449EE /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 7AB51C9E10CDA26800A865FF /* nxscdiscretematrix.h */;
-		name = "nxscdiscretematrix.h: 36";
-		rLen = 15;
-		rLoc = 1137;
-		rType = 0;
-		vrLen = 1851;
 		vrLoc = 0;
 	};
 	D11BACAB11B430400084D645 /* SplitTest.py */ = {
@@ -1998,6 +1961,46 @@
 		name = python;
 		path = /Users/plewis/pydbg/bin/python;
 		sourceTree = "<absolute>";
+	};
+	D138AC8E120E250100F339B3 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 7AB51C9E10CDA26800A865FF /* nxscdiscretematrix.h */;
+		name = "nxscdiscretematrix.h: 36";
+		rLen = 15;
+		rLoc = 1137;
+		rType = 0;
+		vrLen = 1851;
+		vrLoc = 0;
+	};
+	D138AC8F120E250100F339B3 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1ABDDEB10D2D60000EDC77A /* MCMC.py */;
+		name = "MCMC.py: 59";
+		rLen = 18;
+		rLoc = 9443;
+		rType = 0;
+		vrLen = 10670;
+		vrLoc = 339;
+	};
+	D138AC90120E250100F339B3 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1ABDDF610D2D60000EDC77A /* SumP.py */;
+		name = "SumP.py: 40";
+		rLen = 0;
+		rLoc = 2504;
+		rType = 0;
+		vrLen = 2505;
+		vrLoc = 0;
+	};
+	D138AC91120E250100F339B3 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D1ABDDF610D2D60000EDC77A /* SumP.py */;
+		name = "SumP.py: 11";
+		rLen = 7;
+		rLoc = 545;
+		rType = 0;
+		vrLen = 2505;
+		vrLoc = 0;
 	};
 	D13CAB7610D1D30500813B89 /* Source Control */ = {
 		isa = PBXSourceControlManager;
@@ -2838,9 +2841,9 @@
 	};
 	D1ABDDEB10D2D60000EDC77A /* MCMC.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {3029, 1599}}";
-			sepNavSelRange = "{9856, 1153}";
-			sepNavVisRange = "{569, 10785}";
+			sepNavIntBoundsRect = "{{0, 0}, {3029, 1521}}";
+			sepNavSelRange = "{9443, 18}";
+			sepNavVisRange = "{339, 10670}";
 		};
 	};
 	D1ABDDEC10D2D60000EDC77A /* MCMCImpl.py */ = {
@@ -2903,8 +2906,8 @@
 	};
 	D1ABDDF610D2D60000EDC77A /* SumP.py */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1872, 879}}";
-			sepNavSelRange = "{822, 14}";
+			sepNavIntBoundsRect = "{{0, 0}, {1493, 877}}";
+			sepNavSelRange = "{545, 7}";
 			sepNavVisRange = "{0, 2505}";
 		};
 	};
