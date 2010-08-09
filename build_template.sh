@@ -14,7 +14,7 @@ export BOOST_ROOT="$HOME/boost_1_42_0"
 # The build.sh script will create a macosxx86_64 folder on mac snow leopard
 # and a linuxx86 folder on linux. Be sure final part of path below is correct
 # for your platform.
-export PATH="${PATH}:$BOOST_ROOT/tools/jam/src/bin.macosxx86_64"
+export PATH="${PATH}:$BOOST_ROOT/tools/jam/src/bin.linuxx86"
 
 # This is needed for bjam to find its way
 export BOOST_BUILD_PATH="${BOOST_ROOT}/tools/build/v2"
