@@ -1,0 +1,49 @@
+include LICENSE
+include INSTALL
+include BUGS
+include Jamroot
+include phycasver.txt
+include phycas/Tests/runall.py
+include phycas/Tests/doctestall.py
+
+include phycas/src/*
+include phycas/src/thirdparty/*
+include phycas/src/thirdparty/dcdflib/doc/*
+include phycas/src/thirdparty/dcdflib/src/*
+include phycas/src/thirdparty/num_util/*
+include phycas/Tests/Data/*.nex
+include phycas/Tests/ExplorePrior/*.py
+include phycas/Tests/ExplorePrior/reference_output/*
+include phycas/Tests/SplitTest/*.py
+include phycas/Tests/SplitTest/reference_output/*
+include phycas/Tests/PDFTree/*.py
+include phycas/Tests/PDFTree/reference_output/*
+include phycas/Tests/GTRTest/*.py
+include phycas/Tests/GTRTest/reference_output/*
+include phycas/Tests/SumP/*.py
+include phycas/Tests/SumP/*.p
+include phycas/Tests/SumP/reference_output/*
+include phycas/Tests/SumT/*.py
+include phycas/Tests/SumT/*.t
+include phycas/Tests/SumT/reference_output/*
+include phycas/Tests/LikelihoodTest/*.py
+include phycas/Tests/LikelihoodTest/reference_output/*
+include phycas/Tests/LikelihoodTest/acceptable_diff/check.nex			
+include phycas/Tests/FixedParams/*.py
+include phycas/Tests/FixedParams/reference_output/*
+include phycas/Tests/Underflow/*.py
+include phycas/Tests/Underflow/*.tre
+include phycas/Tests/Underflow/reference_output/*
+include phycas/Tests/CodonTest/*.py
+include phycas/Tests/CodonTest/reference_output/*
+include phycas/Examples/Paradox/*
+include phycas/Examples/Steppingstone/*
+include phycas/Examples/Simplest/*
+include phycas/Utilities/*.py
+include phycas/TreeViewer/*.py
+include phycas/PDFGen/*.py
+include phycas/PDFGen/AFM/*.afm
+
+exclude setup.py
+
+
