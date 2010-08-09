@@ -27,12 +27,5 @@ export PHYCAS_ROOT="$HOME/Phycas-1.2.0"
 export NCL_ALREADY_INSTALLED=1
 export NCL_INSTALL_DIR="/usr/local"
 
-# Compile debug version if "debug" specified on command line
-# Otherwise, compile release version
-if [[ $# -gt 0 ]] && [[ $1 = "debug" ]]
-then
-	echo "*** COMPILING DEBUG VERSION ***"
-	bjam debug
-else
-	bjam release
-fi
+# This command initiates the build
+bjam release

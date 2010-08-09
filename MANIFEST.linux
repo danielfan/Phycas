@@ -1,3 +1,4 @@
 include build_template.sh
+include remove_dylibs.sh
 
 
