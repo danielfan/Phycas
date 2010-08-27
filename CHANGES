@@ -3,6 +3,12 @@ Phycas can be obtained from http://www.phycas.org/
 
 ~~~~~~~~~~~~~~~~~ Release history (most recent first) ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Release 1.2.1 (?date?)
+- git tag = v1.2.1
+- changed default value for ss.nbetavals from 101 to 21
+- TODO: ss.pfile can be used to specify a params file from a previous run that can
+  be used to estimate the reference distribution for the current run.
+
 Release 1.2.0 (7-Aug-2010)
 - partitioning implemented (tree topology and edge lengths apply to all subsets,
   and all other model parameters are subset specific)

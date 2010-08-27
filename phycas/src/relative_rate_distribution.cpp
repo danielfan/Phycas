@@ -258,8 +258,8 @@ double RelativeRateDistribution::GetLnPDF(
 			double ln_pdf = log_prod_p + DirichletDistribution::GetLnPDF(tmp);
 			return ln_pdf;
 			}
-		if (fabs(sum_tmp - 1.0) > 0.0000001)
-			throw XProbDist(boost::str(boost::format("Vector supplied to RelativeRateDistribution::GetLnPDF is not valid: sum of transformed elements was %g but was expected to be 1.0") % sum_tmp));
+		if (fabs(sum_tmp - 1.0) > 0.001)
+			throw XProbDist(boost::str(boost::format("Vector supplied to RelativeRateDistribution::GetLnPDF is not valid: sum of transformed elements was %g but was expected to be 1.0 (tolerance +-0.001)") % sum_tmp));
 		double ln_pdf = log_prod_p + DirichletDistribution::GetLnPDF(tmp);
 		return ln_pdf;
 		}

@@ -11,6 +11,13 @@ tags
 Release
 Debug
 XCode/phycas/build/
+documentation/developers/checklist.aux
+documentation/developers/checklist.log
+documentation/developers/data.aux
+documentation/developers/deveoperguide.out
+documentation/developers/info.aux
+documentation/developers/likelihood.aux
+documentation/developers/paramsmoves.aux
 documentation/users/cmdsettings.tex
 documentation/users/like.tex
 documentation/users/manual.log
@@ -34,6 +41,11 @@ documentation/users/manual.ind
 documentation/users/manual.log
 documentation/users/manual.pdf
 documentation/users/manual.synctex.gz
+documentation/developers/deveoperguide.aux
+documentation/developers/deveoperguide.log
+documentation/developers/deveoperguide.pdf
+documentation/developers/deveoperguide.synctex.gz
+documentation/developers/deveoperguide.toc
 phycas/Tests/ExplorePrior/nodata.nex.p
 phycas/Tests/ExplorePrior/nodata.nex.t
 phycas/Tests/ExplorePrior/nodata.nex.txt

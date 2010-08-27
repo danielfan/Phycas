@@ -1,6 +1,6 @@
 \chapter{Distribution checklist} 
 
-\section{Building Phycas for Ubuntu 10.04}
+\section{Building Phycas on Ubuntu 10.04}
 
 \begin{enumerate}
 \item Prepare operating system for building phycas
@@ -9,9 +9,21 @@ sudo apt-get install g++
 sudo apt-get install python-dev
 sudo apt-get install autoconf
 sudo apt-get install subversion
+sudo apt-get install curl
+sudo apt-get install git-core
+sudo apt-get install xsel
 \end{verbatim}
 %
-\item Download and build NCL
+\item Download \pathname{ncl-2.1.13.tar.gz} from \url{http://sourceforge.net/projects/ncl/}
+\begin{verbatim}
+cd $HOME
+tar zxvf ncl-2.1.13.tar.gz
+cd ncl-2.1.13
+./configure
+make
+sudo make install
+\end{verbatim}
+Alternatively, download and build NCL from SourceForge Subversion checkout
 \begin{verbatim}
 cd $HOME
 mkdir ndev
@@ -35,7 +47,7 @@ tar zxvf boost_1_42_0.tar.gz
 The following should create a new directory 
 containing the bjam executable. 
 The name of the directory will depend on whether your version of g++ is configured
-to build for the 32 or 64 bits. 
+to build for 32 or 64 bits. 
 The directory created should be:\\
 \pathname{\$HOME/boost\_1\_42\_0/tools/jam/src/bin.linuxx86}\\
 or \\
@@ -51,12 +63,11 @@ cd $HOME/boost_1_42_0/tools/jam/src
 cd $HOME
 mkdir pdev
 cd pdev
-mkdir trunk
-svn co https://phycas.svn.sourceforge.net/svnroot/phycas/trunk trunk
-cd trunk
+git clone git@github.com:mtholder/Phycas.git
+cd Phycas
 \end{verbatim}
 %
-\item Create file \pathname{\$HOME/pdev/trunk/go.sh} to contain the following text:
+\item Create file \pathname{\$HOME/pdev/Phycas/go.sh} to contain the following text:
 \begin{verbatim}
 #!/bin/bash
 
@@ -66,7 +77,7 @@ export PATH="${PATH}:$BOOST_ROOT/tools/jam/src/bin.linuxx86"
 export BOOST_BUILD_PATH="${BOOST_ROOT}/tools/build/v2"
 export PHYCAS_ROOT="$HOME/pdev/trunk"
 export NCL_INSTALL_DIR="/usr/local"
-export NCL_ALREADY_INSTALLED="true"
+export NCL_ALREADY_INSTALLED=1
 bjam release
 \end{verbatim}
 
@@ -76,9 +87,8 @@ export PATH="${PATH}:$BOOST_ROOT/tools/jam/src/bin.linuxx86_64"
 \end{verbatim}
 to setup the correct path
 
-
 %
-\item Make \pathname{\$HOME/pdev/trunk/go.sh} executable and build phycas
+\item Make \pathname{\$HOME/pdev/Phycas/go.sh} executable and build phycas
 \begin{verbatim}
 cd $HOME/pdev/trunk
 chmod +x go.sh
@@ -87,7 +97,7 @@ chmod +x go.sh
 %
 \item Prepare libraries for dynamic loading
 \begin{verbatim}
-/sbin/ldconfig $HOME/pdev/trunk/phycas/Conversions /usr/local/lib/ncl
+/sbin/ldconfig $HOME/pdev/Phycas/phycas/Conversions /usr/local/lib/ncl
 \end{verbatim}
 (you may have to run this via sudo).
 %
@@ -114,6 +124,13 @@ python
 >>> from phycas import *
 \end{verbatim}
 
+\subsection*{Preparing source distribution for the \url{phycas.org} web site}
+The following command will create a \pathname{dist} directory inside of which is a \pathname{Phycas-1.2.0.tar.gz} file. The ``1.2.0'' part is obtained from \pathname{phycasver.txt}, so make sure that is correct first. The shell script first creates MANIFEST.in by concatenating MANIFEST.common and MANIFEST.linux. Subsequently, the distutils sdist command is used to create the distribution including all files listed in MANIFEST.in.
+\begin{verbatim}
+cd $HOME/pdev/Phycas
+./build_linux_source_distr.sh
+\end{verbatim}
+
 \subsection*{Making python less painful}
 bpython and ipython allow for tab completion and other have other helpful features that make phycas less painful to work with.
 
@@ -134,7 +151,15 @@ easy_install ipython
 \end{verbatim}
 to install bpython and iPython.
 
+\section{Building Phycas on Windows 7}
 
+\subsection*{Preparing binary distribution for the \url{phycas.org} web site}
+The following command will create a \pathname{dist} directory inside of which is a \pathname{Phycas-1.2.0.zip} file. The ``1.2.0'' part is obtained from \pathname{phycasver.txt}, so make sure that is correct first. The shell script first creates MANIFEST.in by concatenating MANIFEST.common and MANIFEST.windows. Subsequently, the distutils sdist command is used to create the distribution including all files listed in MANIFEST.in.
+\begin{verbatim}
+cd $HOME/pdev/Phycas
+./build_windows_source_distr.sh
+\end{verbatim}
 
+\section{Building Phycas on Mac OS 10.6.4 (Snow Leopard)}
 
 \end{enumerate}
