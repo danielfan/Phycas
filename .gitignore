@@ -1,3 +1,4 @@
+distr_manifest.txt
 *.pyc
 *.dylib
 *.so

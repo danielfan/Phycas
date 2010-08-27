@@ -39,7 +39,7 @@ tarfile = 'phycas_distr.tar'
 rootdir = './phycas'
 
 # Specify directories to be ignored
-rmlist = ['.svn','src']
+rmlist = ['.git','src']
 
 # Specify valid file name extensions (files with other extensions will be skipped)
 validset = sets.Set(['.py','.so','.afm','.p','.t','.tre','.nex','.pdf','.html','.txt'])
@@ -87,3 +87,4 @@ outf.close()
 print 'These extensions ignored:'
 for x in invalid:
         print x
+
