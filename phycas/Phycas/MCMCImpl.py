@@ -999,8 +999,8 @@ class MCMCImpl(CommonFunctions):
 						c.chain_manager.refreshLastLnLike()
 						c.chain_manager.refreshLastLnPrior()
 						
-				if self.opts.doing_steppingstone_sampling and (not self.opts.ssobj.ti) and self.ss_beta_index == 0:
-					self.mcmc_manager.recordSample(True, self.cycle_start + cycle)	# dofit = True (i.e. educate the working prior if doing SS and currently exploring the posterior)
+				if self.opts.doing_steppingstone_sampling and (not self.opts.ssobj.ti) and self.ss_beta == 1.0:
+					self.mcmc_manager.recordSample(True, self.cycle_start + cycle)	# dofit = True (i.e. educate the working prior if doing generalized SS and currently exploring the posterior)
 				else:
 					self.mcmc_manager.recordSample(False, self.cycle_start + cycle)	# dofit = False
 				cold_chain_manager = self.mcmc_manager.getColdChainManager()
@@ -1014,6 +1014,35 @@ class MCMCImpl(CommonFunctions):
 				self.next_adaptation += 2*(self.next_adaptation - self.last_adaptation)
 				self.last_adaptation = cycle + 1
 		self.cycle_start += self.burnin + self.ncycles
+		
+	def debugCreateRefDistMap(self, fn):
+		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+		"""
+		For debugging purposes, takes a file name and from the contents of the
+		file (comprising reference distribution definitions, one per line)
+		creates an associative array that matches reference distributions
+		(values) with parameter names (keys). Because this function is for
+		debugging only, there is no error checking. The file fn looks like
+		this:
+		
+		state_freqs_1 = Dirichlet((238.39642,157.91107,206.25071,298.46741))
+		relrates_1 = Dirichlet((2.49381,13.95800,4.00536,0.96666,71.97821,1.20396))
+		state_freqs_2 = Dirichlet((99.07607,56.30029,25.76232,155.27580))
+		relrates_2 = Dirichlet((0.02057,6.74463,0.13622,0.07952,0.09088,0.12974))
+		state_freqs_3 = Dirichlet((223.45568,33.88380,13.25484,221.71725))
+		relrates_3 = Dirichlet((0.15491,10.04708,0.52291,1.18910,29.41715,0.73720))
+		subset_relrates = RelativeRateDistribution((2.34641,26.07778,45.84810))
+		edgelen_1001 = Gamma(10.26258, 0.08717)
+		...
+		gamma_shape_3 = Gamma(46.92875, 0.00657)
+		
+		"""
+		ref_dist_map = {}	   
+		lines = open(fn, 'r').readlines()
+		for line in lines:
+			k,v = line.split('=')
+			ref_dist_map[k.strip()] = eval(v.strip())
+		return ref_dist_map
 		
 	def run(self):
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -1193,19 +1222,29 @@ class MCMCImpl(CommonFunctions):
 			self.ss_sampled_likes = []
 			working_priors_calculated = False
 			for self.ss_beta_index, self.ss_beta in enumerate(self.ss_sampled_betas):
-				if self.ss_beta_index > 0 and (not self.opts.ssobj.ti) and not working_priors_calculated:
-					# if using working prior with steppingstone sampling, it is now time to 
+				if self.ss_beta_index < 1.0 and (not self.opts.ssobj.ti) and not working_priors_calculated:
+					# If using working prior with steppingstone sampling, it is now time to 
 					# parameterize the working prior for all updaters so that this working prior
 					# can be used in the sequel
 					self.output('\nReference distribution details:')
+					if self.opts.ssobj.refdist_definition_file is not None:
+						# User has specified a file containing the reference distribution definitions
+						ref_dist_map = self.debugCreateRefDistMap(self.opts.ssobj.refdist_definition_file)
 					all_updaters = cold_chain.chain_manager.getAllUpdaters() 
-					for u in all_updaters:		# good candidate for moving into C++
+					for u in all_updaters:
 						if not u.isFixed():
 							u.setUseWorkingPrior(True)
 							if u.computesUnivariatePrior() or u.computesMultivariatePrior():
-								self.output('  Finalizing reference distribution for %s...' % u.getName())
-								u.finalizeWorkingPrior()
-								self.output('  %s --> %s' % (u.getName(), u.getWorkingPriorDescr()))
+								if self.opts.ssobj.refdist_definition_file is not None:
+									# User has specified a file containing the reference distribution definitions
+									if u.computesUnivariatePrior():
+										u.setWorkingPrior(ref_dist_map[u.getName()])
+									else:
+										u.setMultivariateWorkingPrior(ref_dist_map[u.getName()])
+								else:							
+									# Compute reference distributions from samples already stored
+									u.finalizeWorkingPrior()
+								self.output('  %s = %s' % (u.getName(), u.getWorkingPriorDescr()))
 					self.output()
 					working_priors_calculated = True
 					

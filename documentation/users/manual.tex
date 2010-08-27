@@ -48,9 +48,13 @@
 %\newfont{\mytt}{cmtt10 at 10pt}
 
 \newcommand{\currPhycasVersion}{1.2.0}			% TODO: CHECK PRIOR TO NEW RELEASE
-\newcommand{\currReleaseDate}{20 July 2010}		% TODO: CHECK PRIOR TO NEW RELEASE
+\newcommand{\currReleaseDate}{9 August 2010}		% TODO: CHECK PRIOR TO NEW RELEASE
 \newcommand{\currReleaseGitBuild}{18e7a835616e453dcfd60d1b9ee9e763858778cc}			% TODO: CHECK PRIOR TO NEW RELEASE
-\newcommand{\currPyVersion}{2.6.1}
+\newcommand{\currPyVersion}{2.7}
+\newcommand{\windistrfilename}{Phycas-1.2.0.py27.win32.zip}
+\newcommand{\macdistrfilename}{Phycas-1.2.0-Py2.5.dmg}
+\newcommand{\linuxdistrfilename}{Phycas-1.2.0.tar.gz}
+\newcommand{\distrfolder}{Phycas-1.2}
 
 \newcommand{\trademark}[1]{#1${}^{\mbox{\tiny TM}}$}
 \newcommand{\pathname}[1]{{\em #1}}				% file name or file path
@@ -67,12 +71,10 @@
 \newcommand{\important}[1]{{\bf Important: #1}}	% important information
 
 \newcommand{\warning}[1]{{\bf Warning: #1}}		% warnings
-<<<<<<< HEAD:documentation/users/manual.tex
 \newcommand{\warnNoPyThree}{\warning{Do not install Python 3.x --- Phycas is not yet ready to make the leap to Python 3.}}
-=======
-\newcommand{\warnNoPyThree}{\warning{Do not install Python 3.x --- Phycas is not yet ready to make the leap to Python 3}}
 \newcommand{\eg}{{\em e.g.}~}
->>>>>>> c2f7d0ad9a4a8a1e39606e6d2921325b67d6fa1e:documentation/users/manual.tex
+\newcommand{\Windows}{Windows$^{\mbox{\tiny\textregistered}}$ }
+\newcommand{\registered}{$^{\mbox{\tiny\textregistered}}$ }
 
 \newcommand{\one}[1]{\mbox{${\bf 1}_{#1}$}}
 \newcommand{\data}{{\bf y}}
@@ -263,12 +265,12 @@ Phycas is an extension of Python, so to use it you must first start Python. In t
 \subsubsection{First things first}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The way Phycas is run depends on the operating system you are using. If you are using the Windows or Linux versions, you start Phycas by opening a terminal (in Windows this is referred to as a ``console window'' or ``command prompt'') and typing \code{python} to invoke Python. If you are using a Mac, you will have downloaded the \phycasapp\ bundle that is built around the open-source terminal program iTerm (\url{http://iterm.sourceforge.net/}). Starting \phycasapp\ by double-clicking the Phycas icon automatically starts an iTerm terminal, invokes Python, and loads Phycas.
+The way Phycas is run depends on the operating system you are using. If you are using the \Windows\ or Linux versions, you start Phycas by opening a terminal (in \Windows\ this is referred to as a ``console window'' or ``command prompt'') and typing \code{python} to invoke Python. If you are using a Mac, you will have downloaded the \phycasapp\ bundle that is built around the open-source terminal program iTerm (\url{http://iterm.sourceforge.net/}). Starting \phycasapp\ by double-clicking the Phycas icon automatically starts an iTerm terminal, invokes Python, and loads Phycas.
 
 % The Phycas icon looks like this: \phycasicon
 
-\subsubsection{Starting from a terminal on Windows}
-To start Python on Windows, open a console window (a.k.a. terminal window) and type the word \code{python}. This should generate output similar to the following:
+\subsubsection{Starting from a terminal on \Windows}
+To start Python on \Windows, open a console window (a.k.a. terminal window) and type the word \code{python}. This should generate output similar to the following:
 \begin{verbatim}
 Python 2.5.1 (r251:54863, Oct 30 2007, 13:54:11) 
 [GCC 4.1.2 20070925 (Red Hat 4.1.2-33)] on linux2
@@ -291,7 +293,7 @@ Phycas is an ``extension'' of Python, but you must import extensions in order fo
 %\caption{Phycas icon}
 \end{floatingfigure} If you are using the \phycasapp\ bundle on MacOS, you can launch the Phycas application by double clicking on the icon. Although the name appears to be just \pathname{Phycas}, it is really \phycasapp; the MacOS hides the \pathname{.app} extension unless you change this in the Finder preferences. (We will hereafter use the terms \term{Phycas application} and \term{Phycas.app} bundle interchangeably.) The Phycas application will show up in your dock and the window that appears will be a terminal that has already invoked Python and issued the \code{from phycas import *} command mentioned in many places in this manual.
 
-All the instructions for the rest of the manual will be executed the same way regardless of whether Phycas running from a Windows console window, a Linux terminal or the \pathname{Phycas} application.
+All the instructions for the rest of the manual will be executed the same way regardless of whether Phycas running from a \Windows\ console window, a Linux terminal or the \pathname{Phycas} application.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Getting help}
@@ -415,14 +417,14 @@ The next task is to create a Python script containing the commands to carry out 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Before proceeding...}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Exit your current Python session by typing \keycmd{Ctrl-d} (MacOS or Linux) or \keycmd{Ctrl-z} (Windows). If you are using \phycasapp\ on MacOS, type \keycmd{Ctrl-d} one more time to exit the terminal shell (this will make the iTerm window disappear). 
+Exit your current Python session by typing \keycmd{Ctrl-d} (MacOS or Linux) or \keycmd{Ctrl-z} (\Windows). If you are using \phycasapp\ on MacOS, type \keycmd{Ctrl-d} one more time to exit the terminal shell (this will make the iTerm window disappear). 
 
-Create a new, empty directory (a.k.a. folder) in which to experiment. Copy the file \pathname{green.nex} into the new directory. This file can be found under your Phycas installation directory at the location \pathname{phycas/Tests/Data/green.nex}. If you have no idea where your Phycas installation directory is located, please refer to the relevant subsection of the installation instructions (either section~\ref{subsubsec:installfolderwindows} if you are using Windows, or section~\ref{subsubsec:installfoldermac} if you are using a Mac).
+Create a new, empty directory (a.k.a. folder) in which to experiment. Copy the file \pathname{green.nex} into the new directory. This file can be found under your Phycas installation directory at the location \pathname{phycas/Tests/Data/green.nex}. If you have no idea where your Phycas installation directory is located, please refer to the relevant subsection of the installation instructions (either section~\ref{subsubsec:installfolderwindows} if you are using \Windows, or section~\ref{subsubsec:installfoldermac} if you are using a Mac).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{The {\em basic.py} script}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Create a new (plain text\footnote{It is important to save the file using plain text format. Most word processing programs, such as \trademark{Microsoft} \trademark{Word}, save files by default in a format that contains a lot of extra, proprietary information. All such programs have the option to save the file as plain text. It is best to create Python scripts using an editor that {\em only} saves files as plain text. Examples (for \trademark{Windows}) include Notepad++ and Pythonwin (or the simple Notepad program that comes with \trademark{Windows}). For Macs, Text Wrangler or BBEdit are good choices. Python comes with its own editor, named Idle, that is also a good (if slightly sluggish) choice. jEdit (\url{http://www.jedit.org/}) is a Java-Based text editor that works well on all platforms.}) file in the folder (which should contain only the file \pathname{green.nex}). Name the new file \pathname{basic.py} and type (or copy/paste) the following lines into the file:
+Create a new (plain text\footnote{It is important to save the file using plain text format. Most word processing programs, such as Microsoft\registered Word, save files by default in a format that contains a lot of extra, proprietary information. All such programs have the option to save the file as plain text. It is best to create Python scripts using an editor that {\em only} saves files as plain text. Examples (for \Windows) include Notepad++ and Pythonwin (or the simple Notepad program that comes with \Windows). For Macs, Text Wrangler or BBEdit are good choices. Python comes with its own editor, named Idle, that is also a good (if slightly sluggish) choice. jEdit (\url{http://www.jedit.org/}) is a Java-Based text editor that works well on all platforms.}) file in the folder (which should contain only the file \pathname{green.nex}). Name the new file \pathname{basic.py} and type (or copy/paste) the following lines into the file:
 \begin{verbatim}
 from phycas import *
 setMasterSeed(98765)
@@ -543,7 +545,7 @@ The \code{randomtrees()} invocation returns a \code{TreeCollection} that holds a
 \label{subsubsec:runningbasicpy}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-{\bf If you are using Windows...} 
+{\bf If you are using \Windows...} 
 
 To execute the \pathname{basic.py} script you just created, open a console window, navigate\footnote{We suggest you read section~\ref{subsubsec:winconsole}, where a registry trick is described that enables you to open a console window positioned at a particular directory by right-clicking the name of the folder in and Explorer or My Computer window. This saves having to navigate to the directory after opening the console window, which can be a very tedious and time consuming operation if the directory in which your script resides is nested deep inside your file system.} to the directory containing the script and type the following at the command prompt:
 %
@@ -1730,7 +1732,7 @@ We feel, however, that using a powerful, existing computing language to communic
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Why is there no graphical user interface (GUI)?}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\index{graphical user interface}Due to the large scale at which DNA sequencing is performed these days, and the increasing desire to ``pipeline'' analyses, we felt that using a script-based approach would best serve the needs of potential users in the near and distant future. Python is already installed on most unix-based operating systems (including Linux and MacIntosh OSX), and thus Phycas can be easily inserted into bioinformatics pipeline applications. Although it does not come pre-installed on new systems, Python is easy to install on \trademark{Windows}-based PCs, and thus Phycas can be used easily on any workstation or laptop. While many users like user-friendly GUIs with pull-down menus and dialog boxes, software that depends on a GUI has certain disadvantages: (1) cannot be pipelined easily; (2) cannot be run on a remote cluster; and (3) often does not allow one to save a record of the exact analysis performed. One of the strong benefits of a GUI is that it allows experimentation and visualization. Phycas provides for visualization by outputting trees and plots in the form of PDF files. While not quite as appealing as an on-screen visual representation, PDF files provide what most of us really need: the ability to insert a publication-quality figure into a manuscript, or load artwork into other programs for manipulation.  
+\index{graphical user interface}Due to the large scale at which DNA sequencing is performed these days, and the increasing desire to ``pipeline'' analyses, we felt that using a script-based approach would best serve the needs of potential users in the near and distant future. Python is already installed on most unix-based operating systems (including Linux and MacIntosh OSX), and thus Phycas can be easily inserted into bioinformatics pipeline applications. Although it does not come pre-installed on new systems, Python is easy to install on \Windows-based PCs, and thus Phycas can be used easily on any workstation or laptop. While many users like user-friendly GUIs with pull-down menus and dialog boxes, software that depends on a GUI has certain disadvantages: (1) cannot be pipelined easily; (2) cannot be run on a remote cluster; and (3) often does not allow one to save a record of the exact analysis performed. One of the strong benefits of a GUI is that it allows experimentation and visualization. Phycas provides for visualization by outputting trees and plots in the form of PDF files. While not quite as appealing as an on-screen visual representation, PDF files provide what most of us really need: the ability to insert a publication-quality figure into a manuscript, or load artwork into other programs for manipulation.  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Is Phycas slower than MrBayes?}
@@ -1743,45 +1745,60 @@ All scripting-based languages (R, Python, Perl, Ruby) are relatively slow compar
 \section{Installing Phycas}\label{sec:install}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Instructions for \trademark{Windows} users} 
+\subsection{Instructions for \Windows\ users} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-These instructions assume you are using \trademark{Windows} \trademark{XP} or \trademark{Vista}.
+These instructions assume you are using \Windows\ XP, Windows Vista\registered or \Windows\ 7.
 
-\subsubsection{\trademark{Windows} console}
-\label{subsubsec:winconsole}
-
-One very handy feature that does not come with \trademark{Windows} is the ability to open a command console by using the right-click speed menu in \trademark{Explorer}. The web site \url{http://www.commandline.co.uk/cmdhere/} describes how to add this functionality, which will make Phycas {\em much} easier to use (it is not required, however, in order to use Phycas). The basic procedure is to create a file named \pathname{cmdhere.reg} with the following text (or download the file from the web site above):
+%\subsubsection{\Windows\ console}
+%\label{subsubsec:winconsole}
 %
-\begin{verbatim}
-REGEDIT4
-
-[HKEY_CLASSES_ROOT\*\shell\cmdhere]
-@="Cmd&Here"
-
-[HKEY_CLASSES_ROOT\*\shell\cmdhere\command]
-@="cmd.exe /c start cmd.exe /k pushd \"%L\\..\""
-
-[HKEY_CLASSES_ROOT\Folder\shell\cmdhere]
-@="Cmd&Here"
-
-[HKEY_CLASSES_ROOT\Folder\shell\cmdhere\command]
-@="cmd.exe /c start cmd.exe /k pushd \"%L\""
-\end{verbatim}
+%One very handy feature that does not come with \Windows\ is the ability to open a command console by using the right-click speed menu in Explorer. The web site \url{http://www.commandline.co.uk/cmdhere/} describes how to add this functionality, which will make Phycas {\em much} easier to use (it is not required, however, in order to use Phycas). The basic procedure is to create a file named \pathname{cmdhere.reg} with the following text (or download the file from the web site above):
 %
-Assuming that you saved this file with the extension \pathname{.reg}, the \trademark{Windows} operating system will know what to do with it. Double-click the name of the file in \trademark{Windows} \trademark{Explorer}, and the required registry entry will be made. \warning{making changes to your system's registry is a bit risky, and we take no responsibility for any damage your system may incur by following these directions!} That said, this worked fine for us and saves an enormous amount of time. \trademark{Windows} offers a PowerToy (\url{http://www.microsoft.com/windowsxp/downloads/powertoys/xppowertoys.mspx}) for \trademark{XP} that does something similar. While perhaps safer to install, it is somewhat frustrating to use because if you are already inside a directory in which you want to open a console, you must first go up one level in order to open a console window for that directory.
+%\begin{verbatim}
+%REGEDIT4
+%
+%[HKEY_CLASSES_ROOT\*\shell\cmdhere]
+%@="Cmd&Here"
+%
+%[HKEY_CLASSES_ROOT\*\shell\cmdhere\command]
+%@="cmd.exe /c start cmd.exe /k pushd \"%L\\..\""
+%
+%[HKEY_CLASSES_ROOT\Folder\shell\cmdhere]
+%@="Cmd&Here"
+%
+%[HKEY_CLASSES_ROOT\Folder\shell\cmdhere\command]
+%@="cmd.exe /c start cmd.exe /k pushd \"%L\""
+%\end{verbatim}
+%
+%Assuming that you saved this file with the extension \pathname{.reg}, the \Windows\ operating system will know what to do with it. Double-click the name of the file in \Windows\ Explorer, and the required registry entry will be made. \warning{making changes to your system's registry is a bit risky, and we take no responsibility for any damage your system may incur by following these directions!} That said, this worked fine for us and saves an enormous amount of time. \Windows\ offers a PowerToy (\url{http://www.microsoft.com/windowsxp/downloads/powertoys/xppowertoys.mspx}) for XP that does something similar. While perhaps safer to install, it is somewhat frustrating to use because if you are already inside a directory in which you want to open a console, you must first go up one level in order to open a console window for that directory.
 
-\subsubsection{Installing Python under \trademark{Windows}}
+\subsubsection{Installing Python under \Windows}
 
-Before you go to the trouble of downloading and installing Python, make sure you do not already have Python installed on your Windows system. From the Start button, choose \menu{All Programs}, then \menu{Accessories} and finally \menu{Command Prompt}. Type \code{python -V} in the console window that appears, and if a phrase such as \code{Python 2.5.1} appears, then you already have Python installed! Most Windows users will probably see \code{'python' is not recognized as an internal or external command, operable program or batch file.} In this case, you need to visit \url{http://python.org} and download and install the latest version of Python (version \currPyVersion\ as of this writing). \warnNoPyThree
+Before you go to the trouble of downloading and installing Python, make sure you do not already have Python installed on your \Windows\ system. From the Start button, choose \menu{All Programs}, then \menu{Accessories} and finally \menu{Command Prompt}. Type \code{python -V} in the console window that appears, and if a phrase such as \code{Python 2.5.1} appears, then you already have Python installed! Most \Windows\ users will probably see \code{'python' is not recognized as an internal or external command, operable program or batch file.} In this case, you need to visit \url{http://python.org} and download and install the latest version of Python (version \currPyVersion\ as of this writing). \warnNoPyThree
 
-\subsubsection{Installing Phycas under \trademark{Windows}}
+\subsubsection{Installing Phycas under \Windows}
 
-Visit the Download section of the Phycas web site \url{http://phycas.org/} and download the Windows installer. If you are using Windows XP, double-click the installer to install Phycas. If using Vista, right-click the installer and choose to install as Administrator. The installer will attempt to identify the location of Python on your system, and if it fails to find Python will abort the installation. Assuming it can find Python, it will install Phycas into the \pathname{Lib/site-packages} directory of that Python installation. 
+Visit the Download section of the Phycas web site \url{http://phycas.org/} and download the file \windistrfilename. Extract this zip file in a location of your choice, creating a \distrfolder. It is important to actually {\em extract} the zip file. If you simply double-click the downloaded zip file, \Windows\ will let you see inside the zip file without actually unpacking the files. You will know that you have successfully unzipped it if you see the zip file itself alongside a directory of the same name (but lacking the zipper image on the folder icon). You may wish to install the program 7-zip (\url{http://www.7-zip.org/}) for this, as 7-zip is much faster at extracting zip files than \Windows.
 
-\subsubsection{Locating the ``Phycas Installation Folder'' under \trademark{Windows}} \label{subsubsec:installfolderwindows}
+Inside the folder that appears after extracting the zip file, you should find a file named \pathname{phycas.bat}. With the {\em right mouse button}, drag this file onto your desktop. When you let go of the right mouse button, you will be given a choice to move the file, copy the file or create a shortcut (see Figure~\ref{windragdrop}). Choose the option to create a shortcut on the desktop. (If you did not succeed in actually extracting the zip file, and instead are dragging a file within the zip file to the desktop, you will not see the option to create a shortcut.)
 
-You will find a Phycas section in the menu that appears when you choose \menu{Start} and \menu{All Programs}. Included in the \menu{Start/All Programs/Phycas} menu is an item named \menu{Phycas Installation Folder}. Choosing this menu item will open \trademark{Windows} (file) Explorer to the ``Phycas Installation Folder'' mentioned in the tutorial.
+It is important to not move \pathname{phycas.bat} out of its context relative to the other files in the Phycas folder. If \pathname{phycas.bat} is moved or copied elsewhere, Python will not be able to import the Phycas code. This is why you should be sure to drag with the right mouse button so that you can create a shortcut to \pathname{phycas.bat} rather than move or copy \pathname{phycas.bat}.
+
+%
+% Figure "windragdrop"
+%
+\begin{figure}[t]
+\begin{center}
+\begin{minipage}{5.in}
+\hfil\includegraphics[scale=0.3]{images/windragdrop}\hfil
+\caption{\small The popup screen just after right-dragging the phycas.bat file onto the desktop. Note that ``Create shortcuts here'' is an option (and you should choose this option).}
+\label{windragdrop}
+\end{minipage}
+\end{center}
+\end{figure}
+
+You should now be able to drag Python scripts onto the \pathname{phycas.bat} shortcut to run them. For example, navigate to \pathname{phycas}\verb+\+\pathname{Examples}\verb+\+\pathname{Simplest} and drag the file \pathname{Simplest.py} onto the \pathname{phycas.bat} shortcut. A console window should appear and Phycas should begin an MCMC analysis.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Instructions for MacIntosh Users}
