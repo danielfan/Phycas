@@ -747,6 +747,8 @@ class MCMCImpl(CommonFunctions):
 				pass
 			elif name.find('internal_edgelen') == 0:
 				pass
+			elif name.find('edgelen_') == 0:
+				pass
 			elif name.find('subset_relrates') == 0:
 				new_subset_relrate_vector = chain.partition_model.getSubsetRelRatePrior().sample()
 				chain.partition_model.setSubsetRelRatesVect(new_subset_relrate_vector)
