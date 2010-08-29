@@ -129,14 +129,14 @@ _check_for_updates = True
 _phycas_update_url = "129.237.138.231" # change this to phycas.org url
 _phycas_branch = "$HeadURL$"
 
-# Look for a file named phycasver.txt in the parent directory of this __init__.py file
+# Look for a file named phycasver.txt in the directory containing this __init__.py file
 # The phycasver.txt file should contain only the major, minor and bugfix version numbers
 # (e.g. 1.2.0)
 _phycas_revision = '?'
 try:
     phycasverfile = 'phycasver.txt'
     phycasverdir = os.path.dirname(__file__)
-    phycasverpath = os.path.join(phycasverdir,'..',phycasverfile)
+    phycasverpath = os.path.join(phycasverdir,phycasverfile)
     _phycas_revision = open(phycasverpath, 'r').read()
 except:
     print 'Warning: could not find the %s file in this directory:\n  %s' % (phycasverfile,phycasverdir)
