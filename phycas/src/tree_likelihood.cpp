@@ -2973,7 +2973,7 @@ unsigned TreeLikelihood::compressDataMatrix(
   const NxsCXXDiscreteMatrix & mat,			/**< is the data source */
   const uint_vect_t 			& 	partition_info)	/**< is a vector of indices storing the partition subset used by each site */
 	{
-	std::cerr << "Entering TreeLikelihood::compressDataMatrix..." << std::endl;//tmp
+	//std::cerr << "Entering TreeLikelihood::compressDataMatrix..." << std::endl;//tmp
 	
 	unsigned 						ntax 		= mat.getNTax();
 	unsigned 						nchar 		= mat.getNChar();
