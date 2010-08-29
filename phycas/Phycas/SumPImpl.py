@@ -179,7 +179,7 @@ class ParamSummarizer(CommonFunctions):
 		Systematic Biology; submitted Jan. 2009) for details.
 		
 		"""
-		# Calculate marginal likelihood using steppingstone sampling method
+		# Calculate marginal likelihood using Stepping Stone method
 		# betas is a list of beta values ordered from the first sampled to the last sampled
 		# likes is a map: i.e. likes[b] holds list of log-likelihoods sampled for beta value b
 		# Assumes that betas[0] = 1.0 and betas[-1] = 0.0
@@ -187,7 +187,7 @@ class ParamSummarizer(CommonFunctions):
 		seR = 0.0
 		nbetas = len(betas)
 		if betas[0] != 1.0 or betas[-1] != 0.0:
-			raise Exception('Steppingstone sampling requires beta values to be ordered from 1.0 (first) to 0.0 (last)')
+			raise Exception('Stepping Stone method requires beta values to be ordered from 1.0 (first) to 0.0 (last)')
 		for i in range(1,nbetas):
 			# find the difference between the two beta values for ratio i
 			blarger = betas[i - 1]
@@ -214,22 +214,21 @@ class ParamSummarizer(CommonFunctions):
 				tmp1 += math.pow((aa - 1.0),2.0)
 			seR += tmp1
 		seR /= math.pow(float(n), 2.0)
-		self.output(' %.8f Steppingstone Sampling (SS) method (se = %.8f)' % (lnR, seR))
+		self.output(' %.8f Stepping Stone (SS) method (se = %.8f)' % (lnR, seR))
 		
 	def gss(self, betas, p):
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
 		"""
-		This generalized stepping stone (gss) method estimates the 
+		This generalized Stepping Stone (SS) method estimates the 
 		marginal likelihood using the product of ratios (the stepping stones) 
 		bridging the gap between the posterior and the prior. Each ratio is 
 		estimated using importance sampling, with the importance distribution
 		being the power posterior defined by the smaller of the two beta
-		values in the ratio. It differs from SS (Steppingstone Sampling) in
-		making use of a reference distribution that may not be equivalent to
-		the prior.
+		values in the ratio. It differs from original SS in making use of 
+		a reference distribution that may not be equivalent to the prior.
 		
 		"""
-		# Calculate marginal likelihood using steppingstone sampling method.
+		# Calculate marginal likelihood using Stepping Stone method.
 		# betas is a list of beta values ordered from the first sampled to the last sampled.
 		# likes is a map: i.e. likes[b] holds list of log-likelihoods sampled for beta value b.
 		# priors is a map: i.e. priors[b] holds list of log-priors sampled for beta value b.
@@ -241,7 +240,7 @@ class ParamSummarizer(CommonFunctions):
 		lnR = 0.0
 		nbetas = len(betas)
 		if betas[0] != 1.0 or betas[-1] != 0.0:
-			raise Exception('Steppingstone sampling requires beta values to be ordered from 1.0 (first) to 0.0 (last)')
+			raise Exception('Stepping Stone method requires beta values to be ordered from 1.0 (first) to 0.0 (last)')
 			
 		self.output(' %10s %10s %10s %15s %15s' % ('b_(k-1)','beta_incr','n','lnRk','lnR(cum)'))
 		for i in range(1,nbetas):
@@ -309,8 +308,8 @@ class ParamSummarizer(CommonFunctions):
 	def marginal_likelihood(self, headers, lines, burnin):
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
 		"""
-		Estimates the marginal likelihood for the path sampling/steppingstone
-		sampling case and outputs the autocorrelation and effective sample 
+		Estimates the marginal likelihood for the Stepping Stone/Thermodynamic
+		Integration case and outputs the autocorrelation and effective sample 
 		size for each parameter/beta combination. The supplied list headers 
 		holds the column headers from the param file. The parameter names are
 		taken from this. The supplied lines is a list of lines from the param
@@ -393,15 +392,15 @@ class ParamSummarizer(CommonFunctions):
 			self.warning('* indicates discrepancy between actual sample size for lnL and at least one other parameter')			
 
 		if headers[4] == 'lnRefDens':
-			# Estimate marginal likelihood using generalized stepping stone method (gss)
+			# Estimate marginal likelihood using generalized Stepping Stone (SS) method
 			self.output('\nMarginal likelihood estimate:')
 			try:
 				self.gss(betas, params)
 			except Exception,e:
 				self.output(' %s' % e.message)
 		else:
-			# Estimate marginal likelihood using thermodynamic integration (ti) and classical
-			# steppingstone sampling (ss).
+			# Estimate marginal likelihood using Thermodynamic Integration (TI) and classical
+			# Stepping Stone (SS) method.
 			
 			# Compute means of log-likelihoods for each beta value (used for ps calculation)
 			means = []
