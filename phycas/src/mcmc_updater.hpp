@@ -222,9 +222,9 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		LotShPtr				rng;					/**< The pseudorandom number generator object used in updating parameter value */
 		ProbDistShPtr			prior;					/**< The probability distribution serving as the prior for a univariate parameter */
         MultivarProbDistShPtr   mv_prior;               /**< The probability distribution serving as the prior for a multivariate parameter */
-		bool					use_working_prior;		/**< If true, the (presumably already parameterized) working prior will be used in computing the power posterior in steppingstone sampling */
-		ProbDistShPtr			working_prior;			/**< The probability distribution serving as the working prior for a univariate parameter */
-        MultivarProbDistShPtr   mv_working_prior;       /**< The probability distribution serving as the working prior for a multivariate parameter */
+		bool					use_ref_dist;		/**< If true, the (presumably already parameterized) working prior will be used in computing the power posterior in steppingstone sampling */
+		ProbDistShPtr			ref_dist;			/**< The probability distribution serving as the working prior for a univariate parameter */
+        MultivarProbDistShPtr   mv_ref_dist;       /**< The probability distribution serving as the working prior for a multivariate parameter */
 		double_vect_t			fitting_sample;			/**< Storage for sample used in fitting a univariate working prior during steppingstone sampling */
 		double_vect_vect_t		mv_fitting_sample;		/**< Storage for sample used in fitting a multivariate working prior during steppingstone sampling */
 		SliceSamplerShPtr		slice_sampler;			/**< The slice sampler used by parameters for updating (not used by moves) */

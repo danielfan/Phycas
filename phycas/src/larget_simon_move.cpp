@@ -82,16 +82,16 @@ bool LargetSimonMove::update()
     curr_ln_like = (heating_power > 0.0 ? likelihood->calcLnL(tree) : 0.0);
 	
 	double prev_ln_prior = 0.0;
-	double prev_ln_working_prior = 0.0;
-	double curr_ln_working_prior = 0.0;
+	double prev_ln_ref_dist = 0.0;
+	double curr_ln_ref_dist = 0.0;
 	if (star_tree_proposal)
 		{
 		prev_ln_prior			= p->calcExternalEdgeLenPriorUnnorm(orig_edge_len);
-		prev_ln_working_prior	= (use_working_prior ? p->calcExternalEdgeLenWorkingPrior(*orig_node, orig_edge_len) : 0.0);
+		prev_ln_ref_dist	= (use_ref_dist ? p->calcExternalEdgeLenWorkingPrior(*orig_node, orig_edge_len) : 0.0);
 
         double curr_edgelen = orig_node->GetEdgeLen();
 		curr_ln_prior		= p->calcExternalEdgeLenPriorUnnorm(curr_edgelen);
-		curr_ln_working_prior	= (use_working_prior ? p->calcExternalEdgeLenWorkingPrior(*orig_node, curr_edgelen) : 0.0);
+		curr_ln_ref_dist	= (use_ref_dist ? p->calcExternalEdgeLenWorkingPrior(*orig_node, curr_edgelen) : 0.0);
 		}
 	else
 		{
@@ -101,30 +101,30 @@ bool LargetSimonMove::update()
 			{
 			prev_ln_prior  = p->calcInternalEdgeLenPriorUnnorm(x);
 			curr_ln_prior  = p->calcInternalEdgeLenPriorUnnorm(xnew);
-			if (use_working_prior)
+			if (use_ref_dist)
 				{
-				prev_ln_working_prior = p->calcInternalEdgeLenWorkingPrior(*ndX, x);
-				curr_ln_working_prior = p->calcInternalEdgeLenWorkingPrior(*ndX, xnew);
+				prev_ln_ref_dist = p->calcInternalEdgeLenWorkingPrior(*ndX, x);
+				curr_ln_ref_dist = p->calcInternalEdgeLenWorkingPrior(*ndX, xnew);
 				}
 			}
 		else 
 			{
 			prev_ln_prior  = p->calcExternalEdgeLenPriorUnnorm(x);
 			curr_ln_prior  = p->calcExternalEdgeLenPriorUnnorm(xnew);
-			if (use_working_prior)
+			if (use_ref_dist)
 				{
-				prev_ln_working_prior = p->calcExternalEdgeLenWorkingPrior(*ndX, x);
-				curr_ln_working_prior = p->calcExternalEdgeLenWorkingPrior(*ndX, xnew);
+				prev_ln_ref_dist = p->calcExternalEdgeLenWorkingPrior(*ndX, x);
+				curr_ln_ref_dist = p->calcExternalEdgeLenWorkingPrior(*ndX, xnew);
 				}
 			}
 			
         double ynew = ndY->GetEdgeLen();
         prev_ln_prior += p->calcInternalEdgeLenPriorUnnorm(y);
         curr_ln_prior += p->calcInternalEdgeLenPriorUnnorm(ynew);
-		if (use_working_prior)
+		if (use_ref_dist)
 			{
-			prev_ln_working_prior += p->calcInternalEdgeLenWorkingPrior(*ndY, y);
-			curr_ln_working_prior += p->calcInternalEdgeLenWorkingPrior(*ndY, ynew);
+			prev_ln_ref_dist += p->calcInternalEdgeLenWorkingPrior(*ndY, y);
+			curr_ln_ref_dist += p->calcInternalEdgeLenWorkingPrior(*ndY, ynew);
 			}
 		
         double znew = ndZ->GetEdgeLen();
@@ -132,20 +132,20 @@ bool LargetSimonMove::update()
 			{
     	    prev_ln_prior += p->calcInternalEdgeLenPriorUnnorm(z);
     	    curr_ln_prior += p->calcInternalEdgeLenPriorUnnorm(znew);
-			if (use_working_prior)
+			if (use_ref_dist)
 				{
-				prev_ln_working_prior += p->calcInternalEdgeLenWorkingPrior(*ndZ, z);
-				curr_ln_working_prior += p->calcInternalEdgeLenWorkingPrior(*ndZ, znew);
+				prev_ln_ref_dist += p->calcInternalEdgeLenWorkingPrior(*ndZ, z);
+				curr_ln_ref_dist += p->calcInternalEdgeLenWorkingPrior(*ndZ, znew);
 				}
 			}
 		else 
 			{
 	        prev_ln_prior += p->calcExternalEdgeLenPriorUnnorm(z);
 	        curr_ln_prior += p->calcExternalEdgeLenPriorUnnorm(znew);
-			if (use_working_prior)
+			if (use_ref_dist)
 				{
-				prev_ln_working_prior += p->calcExternalEdgeLenWorkingPrior(*ndZ, z);
-				curr_ln_working_prior += p->calcExternalEdgeLenWorkingPrior(*ndZ, znew);
+				prev_ln_ref_dist += p->calcExternalEdgeLenWorkingPrior(*ndZ, z);
+				curr_ln_ref_dist += p->calcExternalEdgeLenWorkingPrior(*ndZ, znew);
 				}
 			}
 		}
@@ -157,10 +157,10 @@ bool LargetSimonMove::update()
 		{
 		prev_posterior = heating_power*(prev_ln_like + prev_ln_prior);
 		curr_posterior = heating_power*(curr_ln_like + curr_ln_prior);
-		if (use_working_prior)
+		if (use_ref_dist)
 			{
-			prev_posterior += (1.0 - heating_power)*prev_ln_working_prior;
-			curr_posterior += (1.0 - heating_power)*curr_ln_working_prior;
+			prev_posterior += (1.0 - heating_power)*prev_ln_ref_dist;
+			curr_posterior += (1.0 - heating_power)*curr_ln_ref_dist;
 			}
 		}
 	else

@@ -179,11 +179,11 @@ class StateFreqParam : public MCMCUpdater
 /*----------------------------------------------------------------------------------------------------------------------
 |	Structure combining a vector of doubles (`fs') for storing a fitting sample and a probability distribution shared 
 |	pointer to store the working prior (`wp') that is parameterized using the fitting sample. This structure is used
-|	as the value for a map (data member `edge_working_prior') in EdgeLenMasterParam objects.
+|	as the value for a map (data member `edge_ref_dist') in EdgeLenMasterParam objects.
 */
 struct EdgeWorkingPrior
 	{
-	double_vect_t	fs;		/**< vector of doubles representing samples upon which the `edge_working_prior' will be based */
+	double_vect_t	fs;		/**< vector of doubles representing samples upon which the `edge_ref_dist' will be based */
 	ProbDistShPtr	wp;		/**< Gamma working prior distribution */
 	};
 	
@@ -253,9 +253,9 @@ class EdgeLenMasterParam : public MCMCUpdater
 	
         EdgeLenType         				edgeLenType;   						/**> holds the edge length type, which determines for which edge lengths the prior is computed when recalcPrior is called */
 		
-		bool								use_edge_specific_working_priors;	/**< if true, `edge_working_prior' will be used; otherwise, a single generic working prior will be used for all edge lengths */
-		unsigned							min_working_prior_sample_size;		/**< minimum number of samples needed for a given split to construct a split-specific edge length working prior */
-		std::map<Split,EdgeWorkingPrior>	edge_working_prior;					/**< maps splits (keys) to EdgeWorkingPrior structs (values) so that the working prior distribution can be fetched given the split corresponding to any given node in the tree */
+		bool								use_edge_specific_ref_dists;	/**< if true, `edge_ref_dist' will be used; otherwise, a single generic working prior will be used for all edge lengths */
+		unsigned							min_ref_dist_sample_size;		/**< minimum number of samples needed for a given split to construct a split-specific edge length working prior */
+		std::map<Split,EdgeWorkingPrior>	edge_ref_dist;					/**< maps splits (keys) to EdgeWorkingPrior structs (values) so that the working prior distribution can be fetched given the split corresponding to any given node in the tree */
 	};
 
 typedef std::map<Split,EdgeWorkingPrior>::iterator			WorkingPriorMapIter;

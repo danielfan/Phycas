@@ -211,10 +211,10 @@ class MCMCManager:
 			# lnWorkingPrior
 			if self.parent.opts.doing_steppingstone_sampling and self.parent.opts.ssobj and not self.parent.opts.ssobj.ti:
 				if (cycle > -1) and not dofit:
-					ln_working_prior = cold_chain.chain_manager.recalcLnWorkingPrior()
+					ln_ref_dist = cold_chain.chain_manager.recalcLnWorkingPrior()
 				else:
-					ln_working_prior = 0.0
-				self.parent.paramf.write(float_format_str % ln_working_prior)
+					ln_ref_dist = 0.0
+				self.parent.paramf.write(float_format_str % ln_ref_dist)
 	
 			# Robinson-Foulds distance between sampled tree and reference tree
 			if cold_chain.chain_manager.getRefTree() is not None:

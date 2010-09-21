@@ -35,7 +35,7 @@ namespace phycas
 */
 MCMCUpdater::MCMCUpdater()
   : 
-  use_working_prior(false),
+  use_ref_dist(false),
   nattempts(0.0),
   naccepts(0.0),
   curr_value(0.1), 
@@ -427,20 +427,20 @@ double MCMCUpdater::setCurrLnPrior(
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Returns the current value of data member `use_working_prior'.
+|	Returns the current value of data member `use_ref_dist'.
 */
 bool MCMCUpdater::useWorkingPrior() const
 	{
-	return use_working_prior;
+	return use_ref_dist;
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
-|	Sets the value of the data member `use_working_prior'.
+|	Sets the value of the data member `use_ref_dist'.
 */
 void MCMCUpdater::setUseWorkingPrior(
-  bool b)	/**< is the new value for `use_working_prior' */
+  bool b)	/**< is the new value for `use_ref_dist' */
 	{
-	use_working_prior = b;
+	use_ref_dist = b;
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
@@ -453,18 +453,18 @@ double MCMCUpdater::recalcWorkingPrior() const
 		return 0.0;
 		
 	double lnwp = 0.0;
-	if (working_prior)
+	if (ref_dist)
 		{
 		double value = getCurrValueFromModel();
 		try 
 			{
-			lnwp = working_prior->GetLnPDF(value);
+			lnwp = ref_dist->GetLnPDF(value);
 			}
 		catch(XProbDist &)
 			{
 			PHYCAS_ASSERT(0);
 			}
-		//std::cerr << boost::str(boost::format("%.8f <-- %.8f <-- %s <-- %s") % lnwp % value % working_prior->GetDistributionDescription() % getName()) << std::endl;//temp
+		//std::cerr << boost::str(boost::format("%.8f <-- %.8f <-- %s <-- %s") % lnwp % value % ref_dist->GetDistributionDescription() % getName()) << std::endl;//temp
 		}
 	else
 		{
@@ -472,8 +472,8 @@ double MCMCUpdater::recalcWorkingPrior() const
 		getCurrValuesFromModel(values);	
 		try 
 			{
-			PHYCAS_ASSERT(mv_working_prior);
-			lnwp = mv_working_prior->GetLnPDF(values);
+			PHYCAS_ASSERT(mv_ref_dist);
+			lnwp = mv_ref_dist->GetLnPDF(values);
 			}
 		catch(XProbDist &)
 			{
@@ -481,7 +481,7 @@ double MCMCUpdater::recalcWorkingPrior() const
 			}
 		//std::cerr << boost::str(boost::format("%.8f <-- {") % lnwp);//temp
 		//std::copy(values.begin(), values.end(), std::ostream_iterator<double>(std::cerr, " "));//temp
-		//std::cerr << boost::str(boost::format("} <-- %s <-- %s") % mv_working_prior->GetDistributionDescription() % getName()) << std::endl;//temp
+		//std::cerr << boost::str(boost::format("} <-- %s <-- %s") % mv_ref_dist->GetDistributionDescription() % getName()) << std::endl;//temp
 		}
 	return lnwp;
 	}
@@ -633,19 +633,19 @@ void MCMCUpdater::setMultivarPrior(MultivarProbDistShPtr p)
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Sets the `working_prior' data member to the supplied ProbabilityDistribution shared pointer.
+|	Sets the `ref_dist' data member to the supplied ProbabilityDistribution shared pointer.
 */
 void MCMCUpdater::setWorkingPrior(ProbDistShPtr p)
 	{
-	working_prior = p;
+	ref_dist = p;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Sets the `mv_working_prior' data member to the supplied MultivariateProbabilityDistribution shared pointer.
+|	Sets the `mv_ref_dist' data member to the supplied MultivariateProbabilityDistribution shared pointer.
 */
 void MCMCUpdater::setMultivariateWorkingPrior(MultivarProbDistShPtr p)
 	{
-	mv_working_prior = p;
+	mv_ref_dist = p;
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -792,11 +792,11 @@ double MCMCUpdater::getPower() const
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Returns true if either the data member `working_prior' or the data member `mv_working_prior' points to an object.
+|	Returns true if either the data member `ref_dist' or the data member `mv_ref_dist' points to an object.
 */
 bool MCMCUpdater::isWorkingPrior() const
 	{
-	return (working_prior || mv_working_prior);
+	return (ref_dist || mv_ref_dist);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -840,44 +840,44 @@ bool MCMCUpdater::isNoHeating() const
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
-|	Returns the log of the working prior density at the supplied value `x'. Assumes `working_prior' (or 
-|	`mv_working_prior') exists, whichever is appropriate.
+|	Returns the log of the working prior density at the supplied value `x'. Assumes `ref_dist' (or 
+|	`mv_ref_dist') exists, whichever is appropriate.
 */
 double MCMCUpdater::calcLnWorkingPriorPDF(
   double x) const	/**< is the value at which the log density is to be computed */
 	{
-	PHYCAS_ASSERT(prior && working_prior);	// if this function is called, updater should be a prior steward and have a working_prior data member that actually points to something
-	return working_prior->GetLnPDF(x);
+	PHYCAS_ASSERT(prior && ref_dist);	// if this function is called, updater should be a prior steward and have a ref_dist data member that actually points to something
+	return ref_dist->GetLnPDF(x);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Returns the `working_prior' data member.
+|	Returns the `ref_dist' data member.
 */
 double MCMCUpdater::sampleWorkingPrior() const
 	{
-	PHYCAS_ASSERT(working_prior);
-	return working_prior->Sample();
+	PHYCAS_ASSERT(ref_dist);
+	return ref_dist->Sample();
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Returns the `mv_working_prior' data member.
+|	Returns the `mv_ref_dist' data member.
 */
 double_vect_t MCMCUpdater::sampleMultivariateWorkingPrior() const
 	{
-	PHYCAS_ASSERT(mv_working_prior);
-	return mv_working_prior->Sample();
+	PHYCAS_ASSERT(mv_ref_dist);
+	return mv_ref_dist->Sample();
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns a const reference to the string returned by the GetDistributionDescription() function of the 
-|	`working_prior' or `mv_working_prior' data member, whichever is appropriate.
+|	`ref_dist' or `mv_ref_dist' data member, whichever is appropriate.
 */
 std::string MCMCUpdater::getWorkingPriorDescr() const
 	{
-	if (prior && working_prior)
-		return working_prior->GetDistributionDescription();
-	else if (mv_prior && mv_working_prior)
-		return mv_working_prior->GetDistributionDescription();
+	if (prior && ref_dist)
+		return ref_dist->GetDistributionDescription();
+	else if (mv_prior && mv_ref_dist)
+		return mv_ref_dist->GetDistributionDescription();
 	else
 		return "(no working prior defined)";
 	}
@@ -893,8 +893,8 @@ void MCMCUpdater::educateWorkingPrior()
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	This base class version does nothing, but derived classes should override this function and use it to fit the data
-|	stored in `fitting_sample' (or `mv_fitting_sample') to a working prior distribution stored in `working_prior' (or
-|	`mv_working_prior').
+|	stored in `fitting_sample' (or `mv_fitting_sample') to a working prior distribution stored in `ref_dist' (or
+|	`mv_ref_dist').
 */
 void MCMCUpdater::finalizeWorkingPrior()
 	{
@@ -902,7 +902,7 @@ void MCMCUpdater::finalizeWorkingPrior()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Use samples in `fitting_sample' to parameterize a new BetaDistribution, which is then stored in `working_prior'. 
+|	Use samples in `fitting_sample' to parameterize a new BetaDistribution, which is then stored in `ref_dist'. 
 |	Assumes `fitting_sample' has more than 1 element. 
 */
 void MCMCUpdater::fitBetaWorkingPrior()
@@ -933,13 +933,13 @@ void MCMCUpdater::fitBetaWorkingPrior()
 		double phi = mean*(1.0-mean)/variance - 1.0;
 		double a = phi*mean;
 		double b = phi*(1.0 - mean);
-		working_prior = ProbDistShPtr(new BetaDistribution(a, b));
+		ref_dist = ProbDistShPtr(new BetaDistribution(a, b));
 		// std::cerr << boost::str(boost::format("@@@@@@@@@ working prior is Beta(%g, %g) for updater %s: mean = %g, variance = %g") % a % b % getName() % mean % variance) << std::endl;
 		}
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
-|	Use samples in `fitting_sample' to parameterize a new GammaDistribution, which is then stored in `working_prior'. 
+|	Use samples in `fitting_sample' to parameterize a new GammaDistribution, which is then stored in `ref_dist'. 
 |	Assumes `fitting_sample' has more than 1 element. 
 */
 void MCMCUpdater::fitGammaWorkingPrior()
@@ -962,12 +962,12 @@ void MCMCUpdater::fitGammaWorkingPrior()
 		PHYCAS_ASSERT(scale > 0.0);
 		double shape = mean/scale;
 		// std::cerr << boost::str(boost::format("@@@@@@@@@ working prior is Gamma(%g,%g) for updater %s: mean = %g, variance = %g") % shape % scale % getName() % mean % variance) << std::endl;
-		working_prior = ProbDistShPtr(new GammaDistribution(shape, scale));
+		ref_dist = ProbDistShPtr(new GammaDistribution(shape, scale));
 		}
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
-|	Use samples in `fitting_sample' to parameterize a new LognormalDistribution, which is then stored in `working_prior'. 
+|	Use samples in `fitting_sample' to parameterize a new LognormalDistribution, which is then stored in `ref_dist'. 
 |	Assumes `fitting_sample' has more than 1 element. 
 */
 void MCMCUpdater::fitLognormalWorkingPrior()
@@ -988,7 +988,7 @@ void MCMCUpdater::fitLognormalWorkingPrior()
 		double logmean = sum/n;	
 		double logvar = (sum_of_squares - n*logmean*logmean)/(n - 1.0);
 		double logsd = sqrt(logvar);
-		working_prior = ProbDistShPtr(new LognormalDistribution(logmean, logsd));
+		ref_dist = ProbDistShPtr(new LognormalDistribution(logmean, logsd));
 		}
 	}
 	

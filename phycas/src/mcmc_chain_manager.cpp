@@ -180,18 +180,18 @@ double MCMCChainManager::recalcLnWorkingPrior() const
 	//std::cerr << "\nIn MCMCChainManager::recalcLnWorkingPrior()..." << std::endl;//temp
 	
 	// Visit all updaters and let those who are prior stewards update their component of the joint prior.
-	double ln_working_prior = 0.0;
+	double ln_ref_dist = 0.0;
 	for (MCMCUpdaterConstIter it = all_updaters.begin(); it != all_updaters.end(); ++it)
 		{
 		const boost::shared_ptr<MCMCUpdater> s = *it;
 		if (s->isPriorSteward())
 			{
 			double this_ln_prior = s->recalcWorkingPrior();
-			ln_working_prior += this_ln_prior;
-			//std::cerr << boost::str(boost::format("@@@@@@@@@@ this working prior = %g, cumulative = %g, name = '%s'") % this_ln_prior % ln_working_prior % s->getName()) << std::endl;
+			ln_ref_dist += this_ln_prior;
+			//std::cerr << boost::str(boost::format("@@@@@@@@@@ this working prior = %g, cumulative = %g, name = '%s'") % this_ln_prior % ln_ref_dist % s->getName()) << std::endl;
 			}
 		}
-	return ln_working_prior;
+	return ln_ref_dist;
 	}
 
 #if POLPY_NEWWAY

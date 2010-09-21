@@ -237,8 +237,8 @@ bool DirichletMove::update()
 
     double prev_ln_prior		= mv_prior->GetLnPDF(orig_params);
 	double prev_ln_like			= p->getLastLnLike();
-	PHYCAS_ASSERT(!use_working_prior || mv_working_prior);
-	double prev_ln_working_prior = (use_working_prior ? mv_working_prior->GetLnPDF(orig_params) : 0.0);
+	PHYCAS_ASSERT(!use_ref_dist || mv_ref_dist);
+	double prev_ln_ref_dist = (use_ref_dist ? mv_ref_dist->GetLnPDF(orig_params) : 0.0);
 
     // replace current parameter values with new ones
     setParams(new_params);
@@ -247,7 +247,7 @@ bool DirichletMove::update()
 	double curr_ln_prior		= mv_prior->GetLnPDF(new_params);
 
 	double curr_ln_like			= (heating_power > 0.0 ? likelihood->calcLnL(tree) : 0.0);
-	double curr_ln_working_prior = (use_working_prior ? mv_working_prior->GetLnPDF(new_params) : 0.0);
+	double curr_ln_ref_dist = (use_ref_dist ? mv_ref_dist->GetLnPDF(new_params) : 0.0);
 
     double prev_posterior = 0.0;
 	double curr_posterior = 0.0;
@@ -256,10 +256,10 @@ bool DirichletMove::update()
 		{
 		prev_posterior = heating_power*(prev_ln_like + prev_ln_prior);
 		curr_posterior = heating_power*(curr_ln_like + curr_ln_prior);
-		if (use_working_prior)
+		if (use_ref_dist)
 			{
-			prev_posterior += (1.0 - heating_power)*prev_ln_working_prior;
-			curr_posterior += (1.0 - heating_power)*curr_ln_working_prior;
+			prev_posterior += (1.0 - heating_power)*prev_ln_ref_dist;
+			curr_posterior += (1.0 - heating_power)*curr_ln_ref_dist;
 			}
 		}
 	else
@@ -277,7 +277,7 @@ bool DirichletMove::update()
 		{
 	    if (save_debug_info)
     	    {
-			debug_info = boost::str(boost::format("ACCEPT, prev_ln_working_prior = %.5f, curr_ln_working_prior = %.5f, prev_ln_prior = %.5f, curr_ln_prior = %.5f, prev_ln_like = %.5f, curr_ln_like = %.5f, lnu = %.5f, ln_accept_ratio = %.5f\norig_params: ") % prev_ln_working_prior % curr_ln_working_prior % prev_ln_prior % curr_ln_prior % prev_ln_like % curr_ln_like % lnu % ln_accept_ratio);
+			debug_info = boost::str(boost::format("ACCEPT, prev_ln_ref_dist = %.5f, curr_ln_ref_dist = %.5f, prev_ln_prior = %.5f, curr_ln_prior = %.5f, prev_ln_like = %.5f, curr_ln_like = %.5f, lnu = %.5f, ln_accept_ratio = %.5f\norig_params: ") % prev_ln_ref_dist % curr_ln_ref_dist % prev_ln_prior % curr_ln_prior % prev_ln_like % curr_ln_like % lnu % ln_accept_ratio);
 			for (std::vector<double>::const_iterator it = orig_params.begin(); it != orig_params.end(); ++it)
 				debug_info += boost::str(boost::format("%15.8f ") % (*it));
 			debug_info += "\nnew_params:  ";
@@ -299,7 +299,7 @@ bool DirichletMove::update()
 		{
 	    if (save_debug_info)
     	    {
-			debug_info = boost::str(boost::format("REJECT, prev_ln_working_prior = %.5f, curr_ln_working_prior = %.5f, prev_ln_prior = %.5f, curr_ln_prior = %.5f, prev_ln_like = %.5f, curr_ln_like = %.5f, lnu = %.5f, ln_accept_ratio = %.5f\norig_params: ") % prev_ln_working_prior % curr_ln_working_prior % prev_ln_prior % curr_ln_prior % prev_ln_like % curr_ln_like % lnu % ln_accept_ratio);
+			debug_info = boost::str(boost::format("REJECT, prev_ln_ref_dist = %.5f, curr_ln_ref_dist = %.5f, prev_ln_prior = %.5f, curr_ln_prior = %.5f, prev_ln_like = %.5f, curr_ln_like = %.5f, lnu = %.5f, ln_accept_ratio = %.5f\norig_params: ") % prev_ln_ref_dist % curr_ln_ref_dist % prev_ln_prior % curr_ln_prior % prev_ln_like % curr_ln_like % lnu % ln_accept_ratio);
 			for (std::vector<double>::const_iterator it = orig_params.begin(); it != orig_params.end(); ++it)
 				debug_info += boost::str(boost::format("%15.8f ") % (*it));
 			debug_info += "\nnew_params:  ";
@@ -338,10 +338,10 @@ void DirichletMove::educateWorkingPrior()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Use samples in `fitting_sample' to parameterize `working_prior'. This function is called during s-cubed style
+|	Use samples in `fitting_sample' to parameterize `ref_dist'. This function is called during s-cubed style
 |	steppingstone sampling after the initial phase of sampling from the posterior so that the working prior can be
 |	used for the remaining phases. Assumes `fitting_sample' has more than 1 element. Assigns a DirichletDistribution 
-|	object to `mv_working_prior'.
+|	object to `mv_ref_dist'.
 */
 void DirichletMove::finalizeWorkingPrior()
 	{
@@ -361,7 +361,7 @@ void DirichletMove::finalizeWorkingPrior()
 		// and k is the number of Dirichlet parameters. Now, 
 		// a = mu_1*phi, b = mu_2*phi, c = mu_3*phi and d = mu_4*phi
 		
-		// First compute the sample means and variances using the data stored in mv_working_prior
+		// First compute the sample means and variances using the data stored in mv_ref_dist
 		double_vect_t sums(dim, 0.0);
 		double_vect_t ss(dim, 0.0);
 		double n = 0.0;
@@ -422,7 +422,7 @@ void DirichletMove::finalizeWorkingPrior()
 			params.push_back(curr_param);
 			}
 			
-		mv_working_prior = MultivarProbDistShPtr(new DirichletDistribution(params));
+		mv_ref_dist = MultivarProbDistShPtr(new DirichletDistribution(params));
 		//	if (params.size() == 4)
 		//		std::cerr << boost::str(boost::format("@@@@@@@@@ working prior is Dirichlet(%g,%g,%g,%g) for updater %s") % params[0] % params[1] % params[2] % params[3] % getName()) << std::endl;
 		//	else if (params.size() == 6)
@@ -708,10 +708,10 @@ void SubsetRelRatesMove::setPartitionModel(
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------------
-|	Use samples in `fitting_sample' to parameterize `working_prior'. This function is called during s-cubed style
+|	Use samples in `fitting_sample' to parameterize `ref_dist'. This function is called during s-cubed style
 |	steppingstone sampling after the initial phase of sampling from the posterior so that the working prior can be
 |	used for the remaining phases. Assumes `fitting_sample' has more than 1 element. Assigns a RelativeRateDistribution 
-|	object to `mv_working_prior'.
+|	object to `mv_ref_dist'.
 */
 void SubsetRelRatesMove::finalizeWorkingPrior()
 	{
@@ -731,7 +731,7 @@ void SubsetRelRatesMove::finalizeWorkingPrior()
 		// and k is the number of Dirichlet parameters. Now, 
 		// a = mu_1*phi, b = mu_2*phi, c = mu_3*phi and d = mu_4*phi
 		
-		// First compute the sample means and variances using the data stored in mv_working_prior
+		// First compute the sample means and variances using the data stored in mv_ref_dist
 		double_vect_t sums(dim, 0.0);
 		double_vect_t ss(dim, 0.0);
 		double n = 0.0;
@@ -790,7 +790,7 @@ void SubsetRelRatesMove::finalizeWorkingPrior()
 			
 		RelativeRateDistribution * rrd = new RelativeRateDistribution(params);
 		rrd->SetCoefficients(p);
-		mv_working_prior = MultivarProbDistShPtr(rrd);
+		mv_ref_dist = MultivarProbDistShPtr(rrd);
 		}
 	}
 
@@ -908,8 +908,8 @@ bool SubsetRelRatesMove::update()
     double prev_ln_prior		= mv_prior->GetLnPDF(orig_relrates);
 
 	double prev_ln_like			= p->getLastLnLike();
-	PHYCAS_ASSERT(!use_working_prior || mv_working_prior);
-	double prev_ln_working_prior = (use_working_prior ? mv_working_prior->GetLnPDF(orig_relrates) : 0.0);
+	PHYCAS_ASSERT(!use_ref_dist || mv_ref_dist);
+	double prev_ln_ref_dist = (use_ref_dist ? mv_ref_dist->GetLnPDF(orig_relrates) : 0.0);
 
     // replace current parameter values with new ones
     setParams(new_relrates);
@@ -918,7 +918,7 @@ bool SubsetRelRatesMove::update()
 	double curr_ln_prior		= mv_prior->GetLnPDF(new_relrates);
 
 	double curr_ln_like			= (heating_power > 0.0 ? likelihood->calcLnL(tree) : 0.0);
-	double curr_ln_working_prior = (use_working_prior ? mv_working_prior->GetLnPDF(new_relrates) : 0.0);
+	double curr_ln_ref_dist = (use_ref_dist ? mv_ref_dist->GetLnPDF(new_relrates) : 0.0);
 
     double prev_posterior = 0.0;
 	double curr_posterior = 0.0;
@@ -927,10 +927,10 @@ bool SubsetRelRatesMove::update()
 		{
 		prev_posterior = heating_power*(prev_ln_like + prev_ln_prior);
 		curr_posterior = heating_power*(curr_ln_like + curr_ln_prior);
-		if (use_working_prior)
+		if (use_ref_dist)
 			{
-			prev_posterior += (1.0 - heating_power)*prev_ln_working_prior;
-			curr_posterior += (1.0 - heating_power)*curr_ln_working_prior;
+			prev_posterior += (1.0 - heating_power)*prev_ln_ref_dist;
+			curr_posterior += (1.0 - heating_power)*curr_ln_ref_dist;
 			}
 		}
 	else
@@ -950,7 +950,7 @@ bool SubsetRelRatesMove::update()
 		{
 	    if (save_debug_info)
     	    {
-			debug_info = boost::str(boost::format("ACCEPT, prev_ln_working_prior = %.5f, curr_ln_working_prior = %.5f, prev_ln_prior = %.5f, curr_ln_prior = %.5f, prev_ln_like = %.5f, curr_ln_like = %.5f, lnu = %.5f, ln_accept_ratio = %.5f\norig_params: ") % prev_ln_working_prior % curr_ln_working_prior % prev_ln_prior % curr_ln_prior % prev_ln_like % curr_ln_like % lnu % ln_accept_ratio);
+			debug_info = boost::str(boost::format("ACCEPT, prev_ln_ref_dist = %.5f, curr_ln_ref_dist = %.5f, prev_ln_prior = %.5f, curr_ln_prior = %.5f, prev_ln_like = %.5f, curr_ln_like = %.5f, lnu = %.5f, ln_accept_ratio = %.5f\norig_params: ") % prev_ln_ref_dist % curr_ln_ref_dist % prev_ln_prior % curr_ln_prior % prev_ln_like % curr_ln_like % lnu % ln_accept_ratio);
 			for (std::vector<double>::const_iterator it = orig_params.begin(); it != orig_params.end(); ++it)
 				debug_info += boost::str(boost::format("%15.8f ") % (*it));
 			debug_info += "\nnew_params:  ";
@@ -972,7 +972,7 @@ bool SubsetRelRatesMove::update()
 		{
 	    if (save_debug_info)
     	    {
-			debug_info = boost::str(boost::format("REJECT, prev_ln_working_prior = %.5f, curr_ln_working_prior = %.5f, prev_ln_prior = %.5f, curr_ln_prior = %.5f, prev_ln_like = %.5f, curr_ln_like = %.5f, lnu = %.5f, ln_accept_ratio = %.5f\norig_params: ") % prev_ln_working_prior % curr_ln_working_prior % prev_ln_prior % curr_ln_prior % prev_ln_like % curr_ln_like % lnu % ln_accept_ratio);
+			debug_info = boost::str(boost::format("REJECT, prev_ln_ref_dist = %.5f, curr_ln_ref_dist = %.5f, prev_ln_prior = %.5f, curr_ln_prior = %.5f, prev_ln_like = %.5f, curr_ln_like = %.5f, lnu = %.5f, ln_accept_ratio = %.5f\norig_params: ") % prev_ln_ref_dist % curr_ln_ref_dist % prev_ln_prior % curr_ln_prior % prev_ln_like % curr_ln_like % lnu % ln_accept_ratio);
 			for (std::vector<double>::const_iterator it = orig_params.begin(); it != orig_params.end(); ++it)
 				debug_info += boost::str(boost::format("%15.8f ") % (*it));
 			debug_info += "\nnew_params:  ";

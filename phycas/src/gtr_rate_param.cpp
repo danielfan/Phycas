@@ -76,10 +76,10 @@ void GTRRateParam::educateWorkingPrior()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Use samples in `fitting_sample' to parameterize `working_prior'. This function is called during s-cubed style
+|	Use samples in `fitting_sample' to parameterize `ref_dist'. This function is called during s-cubed style
 |	steppingstone sampling after the initial phase of sampling from the posterior so that the working prior can be
 |	used for the remaining phases. Assumes `fitting_sample' has more than 1 element.  Assigns a GammaDistribution object
-|	to `working_prior'.
+|	to `ref_dist'.
 */
 void GTRRateParam::finalizeWorkingPrior()
 	{

@@ -95,7 +95,7 @@ class MCMC(PhycasCommand):
 		# The data members added below are hidden from the user because they are set by the ss command
 		self.__dict__["doing_steppingstone_sampling"] = False
 		self.__dict__["ss_heating_likelihood"] = False
-		self.__dict__["ss_single_edgelen_working_prior"] = False
+		self.__dict__["ss_single_edgelen_ref_dist"] = False
 		self.__dict__["ssobj"] = None
 		
 		# The data members added below are hidden from the user because they are used internally when the users specifies a filename for cpofile
@@ -118,9 +118,9 @@ class MCMC(PhycasCommand):
 		self.set(**kwargs)
 		self.checkSanity()
 		if self.fix_topology:
-			self.ss_single_edgelen_working_prior = False
+			self.ss_single_edgelen_ref_dist = False
 		else:
-			self.ss_single_edgelen_working_prior = True
+			self.ss_single_edgelen_ref_dist = True
 		c = copy.deepcopy(self)
 		mcmc_impl = MCMCImpl(c)
 		
