@@ -84,6 +84,7 @@ void GTRRateParam::educateWorkingPrior()
 void GTRRateParam::finalizeWorkingPrior()
 	{
 	PHYCAS_ASSERT(isPriorSteward());	// only prior stewards should be building working priors
-	fitGammaWorkingPrior();
+	//fitGammaWorkingPrior();
+	fitLognormalWorkingPrior();
 	}
 }

@@ -397,7 +397,7 @@ void DirichletMove::finalizeWorkingPrior()
 			
 		double phi = (double)(dim - 1)/z - 1.0;
 #else
-		// Ming-hui Chen's least squares approach (better)
+		// Ming-Hui Chen's least squares approach (better)
 		// estimates phi by minimizing difference between 
 		// means[i]*(1 - means[i])/(phi+1) and variances[i]
 		// for all parameters
