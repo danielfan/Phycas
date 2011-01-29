@@ -123,14 +123,14 @@ bool TreeScalerMove::update()
 
     double prev_ln_prior			= recalcPrior();
 	double prev_ln_like				= p->getLastLnLike();
-	double prev_ln_working_prior	= (use_working_prior ? recalcWorkingPriorForMove() : 0.0);
+	double prev_ln_ref_dist	= (use_ref_dist ? recalcWorkingPriorForMove() : 0.0);
 
     proposeNewState();
 
     likelihood->useAsLikelihoodRoot(NULL);	// invalidates all CLAs
 	double curr_ln_prior			= recalcPrior();
 	double curr_ln_like				= (heating_power > 0.0 ? likelihood->calcLnL(tree) : 0.0);
-	double curr_ln_working_prior	= (use_working_prior ? recalcWorkingPriorForMove() : 0.0);
+	double curr_ln_ref_dist	= (use_ref_dist ? recalcWorkingPriorForMove() : 0.0);
 
     double prev_posterior = 0.0;
 	double curr_posterior = 0.0;
@@ -139,10 +139,10 @@ bool TreeScalerMove::update()
 		{
 		prev_posterior = heating_power*(prev_ln_like + prev_ln_prior);
 		curr_posterior = heating_power*(curr_ln_like + curr_ln_prior);
-		if (use_working_prior)
+		if (use_ref_dist)
 			{
-			prev_posterior += (1.0 - heating_power)*prev_ln_working_prior;
-			curr_posterior += (1.0 - heating_power)*curr_ln_working_prior;
+			prev_posterior += (1.0 - heating_power)*prev_ln_ref_dist;
+			curr_posterior += (1.0 - heating_power)*curr_ln_ref_dist;
 			}
 		}
 	else
@@ -222,16 +222,16 @@ double TreeScalerMove::recalcWorkingPriorForMove() const
 	{	
     // Loop through all EdgeLenMasterParam objects and call the recalcWorkingPrior function of each.
     // Each EdgeLenMasterParam object knows how to compute the working prior for the edge lengths it controls.
-    double ln_working_prior = 0.0;
+    double ln_ref_dist = 0.0;
 	ChainManagerShPtr p = chain_mgr.lock();
     const MCMCUpdaterVect & edge_length_params = p->getEdgeLenParams();
     for (MCMCUpdaterVect::const_iterator it = edge_length_params.begin(); it != edge_length_params.end(); ++it)
         {
 		if (!(*it)->isFixed())
-	        ln_working_prior += (*it)->recalcWorkingPrior();
+	        ln_ref_dist += (*it)->recalcWorkingPrior();
         }
 
-	return ln_working_prior;
+	return ln_ref_dist;
 	}
 
 }	// namespace phycas

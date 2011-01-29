@@ -82,10 +82,10 @@ void KappaParam::educateWorkingPrior()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Use samples in `fitting_sample' to parameterize `working_prior'. This function is called during s-cubed style
+|	Use samples in `fitting_sample' to parameterize `ref_dist'. This function is called during s-cubed style
 |	steppingstone sampling after the initial phase of sampling from the posterior so that the working prior can be
 |	used for the remaining phases. Assumes `fitting_sample' has more than 1 element. Assigns a GammaDistribution object
-|	to `working_prior'.
+|	to `ref_dist'.
 */
 void KappaParam::finalizeWorkingPrior()
 	{
@@ -140,11 +140,11 @@ double KappaParam::operator()(
 		p->setLastLnLike(curr_ln_like);
 
 		if (is_standard_heating)
-			if (use_working_prior)
+			if (use_ref_dist)
 				{
-				PHYCAS_ASSERT(working_prior);
-				double curr_ln_working_prior = working_prior->GetLnPDF(k);
-				return heating_power*(curr_ln_like + curr_ln_prior) + (1.0 - heating_power)*curr_ln_working_prior;
+				PHYCAS_ASSERT(ref_dist);
+				double curr_ln_ref_dist = ref_dist->GetLnPDF(k);
+				return heating_power*(curr_ln_like + curr_ln_prior) + (1.0 - heating_power)*curr_ln_ref_dist;
 				}
 			else 
 				return heating_power*(curr_ln_like + curr_ln_prior);

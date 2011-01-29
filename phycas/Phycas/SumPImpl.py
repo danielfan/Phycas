@@ -232,11 +232,11 @@ class ParamSummarizer(CommonFunctions):
 		# betas is a list of beta values ordered from the first sampled to the last sampled.
 		# likes is a map: i.e. likes[b] holds list of log-likelihoods sampled for beta value b.
 		# priors is a map: i.e. priors[b] holds list of log-priors sampled for beta value b.
-		# working_priors is a map: i.e. working_priors[b] holds list of log-working-priors 
+		# ref_dists is a map: i.e. ref_dists[b] holds list of log-working-priors 
 		# sampled for beta value b. Assumes that betas[0] = 1.0 and betas[-1] = 0.0.
 		likes = p['lnL']
 		priors = p['lnPrior']
-		working_priors = p['lnRefDens']
+		ref_dists = p['lnRefDens']
 		lnR = 0.0
 		nbetas = len(betas)
 		if betas[0] != 1.0 or betas[-1] != 0.0:
@@ -254,7 +254,7 @@ class ParamSummarizer(CommonFunctions):
 			# find the maximum term (lnL + lnp - lnwp)
 			loglikes = likes[bsmaller]
 			logpriors = priors[bsmaller]
-			logwpriors = working_priors[bsmaller]
+			logwpriors = ref_dists[bsmaller]
 			n = len(loglikes)
 			etak = max([(lnL + lnp - lnwp) for lnL,lnp,lnwp in zip(loglikes,logpriors,logwpriors)])
 			

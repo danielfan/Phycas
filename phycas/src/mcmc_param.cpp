@@ -130,10 +130,10 @@ void EdgeLenParam::educateWorkingPrior()
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Use samples in `fitting_sample' to parameterize `working_prior'. This function is called during s-cubed style
+|	Use samples in `fitting_sample' to parameterize `ref_dist'. This function is called during s-cubed style
 |	steppingstone sampling after the initial phase of sampling from the posterior so that the working prior can be
 |	used for the remaining phases. Assumes `fitting_sample' has more than 1 element. Assigns a GammaDistribution object
-|	to `working_prior'.
+|	to `ref_dist'.
 */
 void EdgeLenParam::finalizeWorkingPrior()
 	{
@@ -209,11 +209,11 @@ double EdgeLenParam::operator()(
 		p->setLastLnLike(curr_ln_like);
 
 		if (is_standard_heating)
-			if (use_working_prior)
+			if (use_ref_dist)
 				{
-				PHYCAS_ASSERT(working_prior);
-				double curr_ln_working_prior = working_prior->GetLnPDF(v);
-				return heating_power*(curr_ln_like + curr_ln_prior) + (1.0 - heating_power)*curr_ln_working_prior;
+				PHYCAS_ASSERT(ref_dist);
+				double curr_ln_ref_dist = ref_dist->GetLnPDF(v);
+				return heating_power*(curr_ln_like + curr_ln_prior) + (1.0 - heating_power)*curr_ln_ref_dist;
 				}
 			else 
 				return heating_power*(curr_ln_like + curr_ln_prior);
@@ -279,11 +279,11 @@ double GTRRateParam::operator()(
 		p->setLastLnLike(curr_ln_like);
 
 		if (is_standard_heating)
-			if (use_working_prior)
+			if (use_ref_dist)
 				{
-				PHYCAS_ASSERT(working_prior);
-				double curr_ln_working_prior = working_prior->GetLnPDF(r);
-				return heating_power*(curr_ln_like + curr_ln_prior) + (1.0 - heating_power)*curr_ln_working_prior;
+				PHYCAS_ASSERT(ref_dist);
+				double curr_ln_ref_dist = ref_dist->GetLnPDF(r);
+				return heating_power*(curr_ln_like + curr_ln_prior) + (1.0 - heating_power)*curr_ln_ref_dist;
 				}
 			else 
 				return heating_power*(curr_ln_like + curr_ln_prior);
@@ -357,11 +357,11 @@ double OmegaParam::operator()(
 		p->setLastLnLike(curr_ln_like);
 
 		if (is_standard_heating)
-			if (use_working_prior)
+			if (use_ref_dist)
 				{
-				PHYCAS_ASSERT(working_prior);
-				double curr_ln_working_prior = working_prior->GetLnPDF(w);
-				return heating_power*(curr_ln_like + curr_ln_prior) + (1.0 - heating_power)*curr_ln_working_prior;
+				PHYCAS_ASSERT(ref_dist);
+				double curr_ln_ref_dist = ref_dist->GetLnPDF(w);
+				return heating_power*(curr_ln_like + curr_ln_prior) + (1.0 - heating_power)*curr_ln_ref_dist;
 				}
 			else 
 				return heating_power*(curr_ln_like + curr_ln_prior);
@@ -412,11 +412,11 @@ double PinvarParam::operator()(
 		p->setLastLnLike(curr_ln_like);
 
 		if (is_standard_heating)
-			if (use_working_prior)
+			if (use_ref_dist)
 				{
-				PHYCAS_ASSERT(working_prior);
-				double curr_ln_working_prior = working_prior->GetLnPDF(pinv);
-				return heating_power*(curr_ln_like + curr_ln_prior) + (1.0 - heating_power)*curr_ln_working_prior;
+				PHYCAS_ASSERT(ref_dist);
+				double curr_ln_ref_dist = ref_dist->GetLnPDF(pinv);
+				return heating_power*(curr_ln_like + curr_ln_prior) + (1.0 - heating_power)*curr_ln_ref_dist;
 				}
 			else 
 				return heating_power*(curr_ln_like + curr_ln_prior);
@@ -471,11 +471,11 @@ double StateFreqParam::operator()(
 		p->setLastLnLike(curr_ln_like);
 
 		if (is_standard_heating)
-			if (use_working_prior)
+			if (use_ref_dist)
 				{
-				PHYCAS_ASSERT(working_prior);
-				double curr_ln_working_prior = working_prior->GetLnPDF(f);
-				return heating_power*(curr_ln_like + curr_ln_prior) + (1.0 - heating_power)*curr_ln_working_prior;
+				PHYCAS_ASSERT(ref_dist);
+				double curr_ln_ref_dist = ref_dist->GetLnPDF(f);
+				return heating_power*(curr_ln_like + curr_ln_prior) + (1.0 - heating_power)*curr_ln_ref_dist;
 				}
 			else 
 				return heating_power*(curr_ln_like + curr_ln_prior);
@@ -580,11 +580,11 @@ double HyperPriorParam::operator()(
 		p->setLastLnLike(curr_ln_like);
 
 		if (is_standard_heating)
-			if (use_working_prior)
+			if (use_ref_dist)
 				{
-				PHYCAS_ASSERT(working_prior);
-				double curr_ln_working_prior = working_prior->GetLnPDF(mu);
-				return heating_power*(curr_ln_like + edgeLensLnPrior + curr_ln_prior) + (1.0 - heating_power)*curr_ln_working_prior;
+				PHYCAS_ASSERT(ref_dist);
+				double curr_ln_ref_dist = ref_dist->GetLnPDF(mu);
+				return heating_power*(curr_ln_like + edgeLensLnPrior + curr_ln_prior) + (1.0 - heating_power)*curr_ln_ref_dist;
 				}
 			else 
 				return heating_power*(curr_ln_like + edgeLensLnPrior + curr_ln_prior);
