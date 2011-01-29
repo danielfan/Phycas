@@ -1224,7 +1224,7 @@ class MCMCImpl(CommonFunctions):
 			self.ss_sampled_likes = []
 			ref_dist_calculated = False
 			for self.ss_beta_index, self.ss_beta in enumerate(self.ss_sampled_betas):
-				if self.ss_beta_index < 1.0 and (not self.opts.ssobj.ti) and not ref_dist_calculated:
+				if self.ss_beta < 1.0 and (not self.opts.ssobj.ti) and not ref_dist_calculated:
 					# If using working prior with steppingstone sampling, it is now time to 
 					# parameterize the working prior for all updaters so that this working prior
 					# can be used in the sequel
