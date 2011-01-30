@@ -3,7 +3,25 @@ that prevents a user from using Phycas to analyze a particular data set, or some
 that causes Phycas to generate incorrect results. Major bugs usually take a day or more
 to fix, and documenting them helps to avoid repeating history. Minor bugs represent 
 cosmetic glitches that are easy to work around and do not take long to fix. Minor bugs 
-are best documented in SVN comments.
+are best documented in the source code and in the comments submitted when the fix is 
+committed to the git repository.
+
+Bug 10: the "Debry" bug (30-Jan-2011)
+-------------------------------------
+This bug turned out to have an easy fix, but it took a long time to determine what that easy fix 
+was. Ron Debry reported stepping-stone analyses that resulted in "nan" ("not a number"). The data 
+set in question was partitioned by codon position, and the second codon position sites were very 
+slow evolving. Fitting a Gamma reference distribution to the individual GTR relative rates for 
+second position sites yielded Gamma distributions for the transversions that had a shape parameter 
+less than 1. These, in turn, generated values very close to 0 when sampling directly from the 
+reference prior in the final step of the stepping-stone method. The nan values cropped up when the 
+likelihood was computed for these samples containing 0 relative transversion rates. The solution 
+turned out to be substituting a LogNormal reference distribution for the individual GTR relative 
+rate parameters, replacing the Gamma distributions used previously. The LogNormal always has a 
+mode, and thus avoids the extremely low values that can be sampled from a Gamma distribution with 
+shape much less than 1, yet the LogNormal involves no ad hoc constraints or limits on parameter 
+values that would be necessary if one attempted to continue using a Gamma reference distribution 
+for these parameters.
 
 Bug 9: the "not-a-bug" bug (4-Aug-2010)
 ---------------------------------------
