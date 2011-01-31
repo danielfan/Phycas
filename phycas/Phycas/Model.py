@@ -42,6 +42,73 @@ class Model(PhycasCommand):
 				("fix_edgelens",			   False,								 "not yet documented", BoolArgValidate),
 				)
 		PhycasCommand.__init__(self, args, "model", "Defines a substitution model.")
+		
+	def checkPriorSupport(self):
+		"""
+		Called from MCMCImpl.setup() to check whether priors defined by user have support
+		that is appropriate for the parameters to which they are assigned. For example,
+		assigning a Beta prior (support 0 to 1) to edgelen_prior (requires support 0 to
+		infinity) will be caught here.
+		"""
+ 		bad_priors = []
+		gamma_like = ['Exponential', 'Gamma', 'InverseGamma', 'Lognormal', 'BetaPrime']
+		gamma_support = 'univariate with support 0 to infinity'
+		dirichlet_like = ['Dirichlet', 'RelativeRateDistribution']
+		dirichlet_support = 'multivariate with support 0 to 1'
+		beta_like = ['Beta']
+		beta_support = 'univariate with support 0 to 1'
+		msg = '%s was assigned a(n) %s prior, but prior for this parameter should be %s'
+		
+		# edgelen_hyperprior 
+		if self.edgelen_hyperprior.__class__.__name__ not in gamma_like:
+			bad_priors.append(msg % ('edgelen_hyperprior', self.edgelen_hyperprior.__class__.__name__, gamma_support))
+
+		# internal_edgelen_prior 
+		if self.internal_edgelen_prior.__class__.__name__ not in gamma_like:
+			bad_priors.append(msg % ('internal_edgelen_prior', self.internal_edgelen_prior.__class__.__name__, gamma_support))
+		
+		# external_edgelen_prior 
+		if self.external_edgelen_prior.__class__.__name__ not in gamma_like:
+			bad_priors.append(msg % ('external_edgelen_prior', self.external_edgelen_prior.__class__.__name__, gamma_support))
+		
+		# edgelen_prior 
+		if self.edgelen_prior is not None:
+			if self.edgelen_prior.__class__.__name__ not in gamma_like:
+				bad_priors.append(msg % ('edgelen_prior', self.edgelen_prior.__class__.__name__, gamma_support))
+					
+		# relrate_prior 
+		if self.relrate_prior.__class__.__name__ not in dirichlet_like:
+			bad_priors.append(msg % ('relrate_prior', self.relrate_prior.__class__.__name__, dirichlet_support))
+		
+		# relrate_param_prior 
+		if self.relrate_param_prior.__class__.__name__ not in gamma_like:
+			bad_priors.append(msg % ('relrate_param_prior', self.relrate_param_prior.__class__.__name__, gamma_support))
+		
+		# kappa_prior 
+		if self.kappa_prior.__class__.__name__ not in gamma_like:
+			bad_priors.append(msg % ('kappa_prior', self.kappa_prior.__class__.__name__, gamma_support))
+		
+		# omega_prior 
+		if self.omega_prior.__class__.__name__ not in gamma_like:
+			bad_priors.append(msg % ('omega_prior', self.omega_prior.__class__.__name__, gamma_support))
+		
+		# gamma_shape_prior 
+		if self.gamma_shape_prior.__class__.__name__ not in gamma_like:
+			bad_priors.append(msg % ('gamma_shape_prior', self.gamma_shape_prior.__class__.__name__, gamma_support))
+		
+		# pinvar_prior 
+		if self.pinvar_prior.__class__.__name__ not in beta_like:
+			bad_priors.append(msg % ('pinvar_prior', self.pinvar_prior.__class__.__name__, beta_support))
+		
+		# state_freq_prior 
+		if self.state_freq_prior.__class__.__name__ not in dirichlet_like:
+			bad_priors.append(msg % ('state_freq_prior', self.state_freq_prior.__class__.__name__, dirichlet_support))
+		
+		# state_freq_param_prior 
+		if self.state_freq_param_prior.__class__.__name__ not in gamma_like:
+			bad_priors.append(msg % ('state_freq_param_prior', self.state_freq_param_prior.__class__.__name__, gamma_support))
+		
+		return bad_priors
 
 	def saveas(self):
 		return copy.deepcopy(self)

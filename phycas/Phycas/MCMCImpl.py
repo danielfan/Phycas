@@ -412,8 +412,12 @@ class MCMCImpl(CommonFunctions):
 		self.models			= [m for (n,s,m) in self.opts.partition.subset]
 		self.model_names	= [n for (n,s,m) in self.opts.partition.subset]
 		
+		# Perform sanity checks on models
 		for m,n in zip(self.models, self.model_names):
 			#print '==> checking model %s' % n
+			bad_priors = m.checkPriorSupport()
+			self.phycassert(len(bad_priors) == 0, 'In model %s, prior support is incorrect for these parameters:\n%s' % (n,'  \n'.join([p for p in bad_priors])))
+			
 			if m.edgelen_prior is not None:
 				# set both internal and external edge length priors to edgelen_prior
 				m.internal_edgelen_prior = m.edgelen_prior
@@ -1224,7 +1228,7 @@ class MCMCImpl(CommonFunctions):
 			self.ss_sampled_likes = []
 			ref_dist_calculated = False
 			for self.ss_beta_index, self.ss_beta in enumerate(self.ss_sampled_betas):
-				if self.ss_beta < 1.0 and (not self.opts.ssobj.ti) and not ref_dist_calculated:
+				if self.ss_beta_index > 0 and (not self.opts.ssobj.ti) and not ref_dist_calculated:
 					# If using working prior with steppingstone sampling, it is now time to 
 					# parameterize the working prior for all updaters so that this working prior
 					# can be used in the sequel
@@ -1268,6 +1272,7 @@ class MCMCImpl(CommonFunctions):
 				else:
 					self.mainMCMCLoop()
 		else:	# not doing steppingstone sampling
+			print '@@@@@@@@@@@@@@ debugging steppingstone @@@@@@@@@@@@@'
 			self.ss_sampled_likes = []
 			self.ss_sampled_likes.append([])
 			self.ss_beta_index = 0
