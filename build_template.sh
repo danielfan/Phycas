@@ -19,11 +19,16 @@ export PATH="${PATH}:$BOOST_ROOT/tools/jam/src/bin.linuxx86"
 # This is needed for bjam to find its way
 export BOOST_BUILD_PATH="${BOOST_ROOT}/tools/build/v2"
 
-# Provide path to Phycas source code
+# Provide path to Phycas source code (phycas/Conversions should be inside 
+# the directory specified here)
 export PHYCAS_ROOT="$HOME/Phycas-1.2.0"
 
-# Provide path to preinstalled Nexus Class Library 
-# (download from http://sourceforge.net/projects/ncl/)
+# The Nexus Class Libraqry (NCL) can be downloaded from http://sourceforge.net/projects/ncl/
+# If using preinstalled Nexus Class Library, provide path to parent directory
+#   for include/ncl and lib/ncl directories (normally this would be /usr/local)
+# To build NCL from sources, be sure NCL_ALREADY_INSTALLED is not exported (i.e.
+#   comment it out below) and provide path to NCL Jamroot file in NCL_INSTALL_DIR
+#   (normally, this would be <ncl checkout directory>/branches/v2.1)
 export NCL_ALREADY_INSTALLED=1
 export NCL_INSTALL_DIR="/usr/local"
 
