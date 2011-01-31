@@ -52,16 +52,20 @@ class Model(PhycasCommand):
 		"""
  		bad_priors = []
 		gamma_like = ['Exponential', 'Gamma', 'InverseGamma', 'Lognormal', 'BetaPrime']
+		gamma_like.extend(['ExponentialDistBase', 'GammaDistBase', 'InverseGammaDistBase', 'LognormalDistBase', 'BetaPrimeDistBase'])
 		gamma_support = 'univariate with support 0 to infinity'
 		dirichlet_like = ['Dirichlet', 'RelativeRateDistribution']
+		dirichlet_like.extend(['DirichletDistBase', 'RelativeRateDistributionDistBase'])
 		dirichlet_support = 'multivariate with support 0 to 1'
 		beta_like = ['Beta']
+		beta_like.extend(['BetaDistBase'])
 		beta_support = 'univariate with support 0 to 1'
 		msg = '%s was assigned a(n) %s prior, but prior for this parameter should be %s'
-		
+				
 		# edgelen_hyperprior 
-		if self.edgelen_hyperprior.__class__.__name__ not in gamma_like:
-			bad_priors.append(msg % ('edgelen_hyperprior', self.edgelen_hyperprior.__class__.__name__, gamma_support))
+		if self.edgelen_hyperprior is not None:
+			if self.edgelen_hyperprior.__class__.__name__ not in gamma_like:
+				bad_priors.append(msg % ('edgelen_hyperprior', self.edgelen_hyperprior.__class__.__name__, gamma_support))
 
 		# internal_edgelen_prior 
 		if self.internal_edgelen_prior.__class__.__name__ not in gamma_like:
