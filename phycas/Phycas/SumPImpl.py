@@ -351,6 +351,7 @@ class ParamSummarizer(CommonFunctions):
 		# prior and, if present, the working prior) for each beta value separately
 		self.output('\nAutocorrelations (lag 1):\n')
 		self.output('%15s%s' % ('beta ->',' '.join(['%12.5f' % b for b in betas])))
+		#print "@@@@@@@@@@@@@@@@@@@@ headers: |",["%s|" % h for h in headers[2:]]
 		for h in headers[2:]:	# skip 'Gen' and 'beta' headers
 			s = []
 			for b in betas:

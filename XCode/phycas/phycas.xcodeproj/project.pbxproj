@@ -63,7 +63,7 @@
 		2D7C9B2211076FE60028BDAD /* libncl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C9B1E11076FE60028BDAD /* libncl.dylib */; };
 		2D7C9B2311076FE60028BDAD /* libncl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C9B1E11076FE60028BDAD /* libncl.dylib */; };
 		2D7C9B2411076FE60028BDAD /* libncl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C9B1E11076FE60028BDAD /* libncl.dylib */; };
-		2DF0603211B96BB5002120A6 /* libboost_python.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DF0601511B969EC002120A6 /* libboost_python.dylib */; };
+		2DF0603211B96BB5002120A6 /* libboost_thread.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DF0601511B969EC002120A6 /* libboost_thread.dylib */; };
 		7A0946FF10CAF0FD00CEFDE0 /* conversions_pymod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945C810CAEFB900CEFDE0 /* conversions_pymod.cpp */; };
 		7A09470410CAF10500CEFDE0 /* boost_assertion_failed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945BB10CAEFB900CEFDE0 /* boost_assertion_failed.cpp */; };
 		7A09470710CAF12800CEFDE0 /* basic_tree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0945B810CAEFB900CEFDE0 /* basic_tree.cpp */; };
@@ -310,7 +310,7 @@
 /* Begin PBXFileReference section */
 		2D7C9B1311076FB50028BDAD /* libboost_python.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_python.dylib; path = phycas/Conversions/libboost_python.dylib; sourceTree = PHYCAS_ROOT; };
 		2D7C9B1E11076FE60028BDAD /* libncl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libncl.dylib; path = phycas/Conversions/libncl.dylib; sourceTree = PHYCAS_ROOT; };
-		2DF0601511B969EC002120A6 /* libboost_python.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libboost_python.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		2DF0601511B969EC002120A6 /* libboost_thread.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libboost_thread.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		5073E0C609E734A800EC74B6 /* phycasProj.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; path = phycasProj.xcconfig; sourceTree = "<group>"; };
 		5073E0C709E734A800EC74B6 /* phycasTarget.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; path = phycasTarget.xcconfig; sourceTree = "<group>"; };
 		7A0945AF10CAEFB900CEFDE0 /* basic_cdf.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = basic_cdf.cpp; path = ../../phycas/src/basic_cdf.cpp; sourceTree = SOURCE_ROOT; };
@@ -701,7 +701,7 @@
 				D13CAB9210D1D72200813B89 /* libpython2.6.dylib in Frameworks */,
 				2D7C9B1611076FB50028BDAD /* libboost_python.dylib in Frameworks */,
 				2D7C9B2111076FE60028BDAD /* libncl.dylib in Frameworks */,
-				2DF0603211B96BB5002120A6 /* libboost_python.dylib in Frameworks */,
+				2DF0603211B96BB5002120A6 /* libboost_thread.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -765,7 +765,7 @@
 				7A98F56E10CD6484001E79F7 /* _ReadNexusExt.dylib */,
 				7AB51C4A10CD9D5700A865FF /* libboost_python.dylib */,
 				7AB51CE010CDA39200A865FF /* libncl.dylib */,
-				2DF0601511B969EC002120A6 /* libboost_python.dylib */,
+				2DF0601511B969EC002120A6 /* libboost_thread.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1456,7 +1456,7 @@
 			);
 			name = BoostThread;
 			productName = LocalBoost;
-			productReference = 2DF0601511B969EC002120A6 /* libboost_python.dylib */;
+			productReference = 2DF0601511B969EC002120A6 /* libboost_thread.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		7A98F27010CD3C22001E79F7 /* DataMatrix */ = {

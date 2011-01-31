@@ -86,7 +86,7 @@ void UniventProbMgr::recalcUMat()
 	double * * oneUPtr = uMatVect[1].GetMatrix();
 	lambda = model->calcUMat(oneUPtr);
 
-    unsigned prev_maxm = maxm;
+    //unsigned prev_maxm = maxm;
 	maxm = 1;
 
 	 // the reduceMaxm bit here is a hack to try to reduce maxm as opposed to allowing it to continue to creep up.
