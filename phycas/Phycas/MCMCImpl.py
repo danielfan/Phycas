@@ -74,9 +74,9 @@ class MCMCImpl(CommonFunctions):
 		self.ss_sampled_likes		= None
 		self.siteIndicesForPatternIndex = None
 		
-	#def setSiteLikeFile(self, sitelikef):
-	#	if sitelikef is not None:
-	#		self.sitelikef = sitelikef
+	def setSiteLikeFile(self, sitelikef):
+		if sitelikef is not None:
+			self.sitelikef = sitelikef
 			
 	def siteLikeFileSetup(self, coldchain):
 		if self.sitelikef is not None:
@@ -84,17 +84,23 @@ class MCMCImpl(CommonFunctions):
 			# This allows us to spit out site likelihoods for each site, even though site likelihoods
 			# are stored for patterns, many of which represent numerous sites
 			v = coldchain.likelihood.getCharIndexToPatternIndex()
-			self.phycassert(len(v) == self.nchar,'Number of sites returned by coldchain.likelihood.getCharIndexToPatternIndex differs from MCMCImpl.nchar in MCMCImpl.siteLikeFileSetup()')
+			nexcluded = 0
+			self.phycassert(len(v) == self.nchar,'Number of sites returned by coldchain.likelihood.getCharIndexToPatternIndex (%d) differs from MCMCImpl.nchar (%d) in MCMCImpl.siteLikeFileSetup()' % (len(v), self.nchar))
 			npatterns = coldchain.likelihood.getNPatterns()
+			#raw_input('POLPOL: len(v) = %d, self.nchar = %d, npatterns = %d' % (len(v), self.nchar, npatterns))
 			self.siteIndicesForPatternIndex = []
 			for i in range(npatterns):
 				self.siteIndicesForPatternIndex.append([])
 			for i,p in enumerate(v):
-				self.siteIndicesForPatternIndex[p].append(i)
+				if p < npatterns:
+					self.siteIndicesForPatternIndex[p].append(i)
+				else:
+					nexcluded += 1;
+		#raw_input('POLPOL: leaving MCMCImpl.siteLikeFileSetup(): nexcluded = %d' % nexcluded)
 
-	#def unsetSiteLikeFile(self):
-	#	self.sitelikef = None
-	#	self.siteIndicesForPatternIndex = None
+	def unsetSiteLikeFile(self):
+		self.sitelikef = None
+		self.siteIndicesForPatternIndex = None
 
 	def adaptSliceSamplers(self):
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -222,7 +228,7 @@ class MCMCImpl(CommonFunctions):
 		sitelnl_file_spec = self.opts.out.sitelikes
 		try:
 			self.sitelikef = sitelnl_file_spec.open(self.stdout)
-			#raw_input('%s.sitelikef was opened successfully' % self.__class__.__name__)
+			raw_input('%s.sitelikef was opened successfully' % self.__class__.__name__)
 		except:
 			print '*** Attempt to open site log-likelihood file (%s) failed.' % self.opts.out.sitelike.filename
 			#raw_input('siteLikeFileOpen failed')
@@ -1272,7 +1278,7 @@ class MCMCImpl(CommonFunctions):
 				else:
 					self.mainMCMCLoop()
 		else:	# not doing steppingstone sampling
-			print '@@@@@@@@@@@@@@ debugging steppingstone @@@@@@@@@@@@@'
+			#print '@@@@@@@@@@@@@@ debugging steppingstone @@@@@@@@@@@@@'
 			self.ss_sampled_likes = []
 			self.ss_sampled_likes.append([])
 			self.ss_beta_index = 0

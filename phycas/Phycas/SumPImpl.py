@@ -588,7 +588,9 @@ class ParamSummarizer(CommonFunctions):
 			for i,logx in enumerate(parts):
 				loglikes[i].append(float(logx))
 			
-		# Compute the log-CPO measure for each site, and the sum over all sites	
+		# Compute the log-CPO measure for each site, and the sum over all sites
+		# Sites that have been excluded will have lognm = 0.0 and thus will not
+		# contribute to total_cpo
 		yvect = []
 		total_cpo = 0.0
 		for i in range(nsites):
@@ -597,6 +599,16 @@ class ParamSummarizer(CommonFunctions):
 			yvect.append(loghm)
 		self.output('Model CPO = %.5f' % total_cpo)
 		
+		# Identify the worst sites in terms of CPO, placing these in cpo_worst
+		cpo_worst = []
+		for i in range(nsites):
+			if yvect[i] < 0.0:
+				cpo_worst.append((i,yvect[i]))
+		cpo_worst.sort(cmp=lambda x,y: cmp(x[1], y[1]))
+		nincluded = len(cpo_worst)
+		last_of_worst = int(math.ceil(self.opts.cpo_cutoff*nincluded))
+		cpo_worst[last_of_worst:] = []
+
 		# Use nearest neighbor smoother to produce a more easily-interpreted plot
 		
 		# Smoothing algorithm:
@@ -637,10 +649,15 @@ class ParamSummarizer(CommonFunctions):
 			try:
 				self._cpoOpenRFile()
 				self._cpoRFile.write('# plot of log(CPO) across sites\n')
-				self._cpoRFile.write('quartz(bg="white")\n')
+				#self._cpoRFile.write('quartz(bg="white")\n')
 				self._cpoRFile.write('x = c(%s)\n' % ','.join(['%d' % x for x in range(nsites)]))
 				self._cpoRFile.write('y = c(%s)\n' % ','.join(['%g' % y for y in yvect]))
-				self._cpoRFile.write("plot(x, y, type='l', main='Overall CPO = %.5f', xlab='Site', ylab = 'CPO')\n" % total_cpo)
+				#self._cpoRFile.write("plot(x, y, type='l', main='Overall CPO = %.5f', xlab='Site', ylab = 'CPO')\n" % total_cpo)
+				#self._cpoRFile.write('quartz(bg="white")\n')
+				self._cpoRFile.write('colvec = rep("black",%d)\n' % nsites)
+				self._cpoRFile.write('z = c(%s)\n' % ','.join(['%d' % (zz[0]+1) for zz in cpo_worst]))
+				self._cpoRFile.write('colvec[z] = "red"\n')
+				self._cpoRFile.write("plot(x, y, type='h', col=colvec, main='Overall CPO = %.5f', xlab='Site', ylab = 'CPO')\n" % total_cpo)
 				self._cpoRFile.write('\n# plot of estimated probability density of log(CPO) values\n')
 				self._cpoRFile.write('quartz(bg="white")\n')
 				self._cpoRFile.write('plot(density(y))\n')

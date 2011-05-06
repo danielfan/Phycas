@@ -100,7 +100,7 @@ class MCMC(PhycasCommand):
 		
 		# The data members added below are hidden from the user because they are used internally when the users specifies a filename for cpofile
 		self.__dict__["saving_sitelikes"] = False
-		# self.__dict__["sitelikef"] = None
+		self.__dict__["sitelikef"] = None
 		
 		# The data members added below are hidden from the user because they are set when the mcmc command runs
 		self.__dict__["ss_sampled_likes"] = None
@@ -132,14 +132,15 @@ class MCMC(PhycasCommand):
 				self.saving_sitelikes = False
 				print 'Could not open the sitelike file'
 		
-		#mcmc_impl.setSiteLikeFile(self.sitelikef)
+		mcmc_impl.setSiteLikeFile(self.sitelikef)
 		
 		mcmc_impl.run()
 		
 		self.ss_sampled_betas = mcmc_impl.ss_sampled_betas
 		self.ss_sampled_likes = mcmc_impl.ss_sampled_likes
 		
-		#mcmc_impl.unsetSiteLikeFile()
-
 		if self.saving_sitelikes:
 			mcmc_impl.siteLikeFileClose()
+			
+		mcmc_impl.unsetSiteLikeFile()
+

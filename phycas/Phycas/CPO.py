@@ -44,6 +44,7 @@ class CPO(PhycasCommand):
         cpo_impl = CPOImpl(c)
         cpo_impl.siteLikeFileOpen()
         if cpo_impl.sitelikef is not None:
+            #raw_input('POLPOL: setting mcmc.sitelikef = cpo_impl.sitelikef...')
             mcmc.sitelikef = cpo_impl.sitelikef
             mcmc.saving_sitelikes = True
             mcmc()
