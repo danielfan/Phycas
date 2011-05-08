@@ -3191,7 +3191,6 @@ unsigned TreeLikelihood::compressDataMatrix(
 					pattern_vect.push_back(mapit->first);
 					pattern_counts.push_back(1);
 					num_sites_this_subset += 1;
-
 				
 					// add this sites list to pattern_to_sites vector
 					uint_list_t v(1, *sitesIt);
@@ -3241,8 +3240,9 @@ unsigned TreeLikelihood::compressDataMatrix(
 	subset_offset.push_back(pattern_index);
 	
 	// There should no longer be any elements in charIndexToPatternIndex that have the value UINT_MAX
-	// If there are, the elements that still have the value UINT_MAX should correspond with the indices stored in the all_missing vector
-	PHYCAS_ASSERT(!all_missing.empty() || (std::find(charIndexToPatternIndex.begin(), charIndexToPatternIndex.end(), UINT_MAX) == charIndexToPatternIndex.end()));
+	// If there are, the elements that still have the value UINT_MAX should correspond with indices stored in the all_missing vector
+	// or the excl set (excluded characters)
+	PHYCAS_ASSERT(!excl.empty() || !all_missing.empty() || (std::find(charIndexToPatternIndex.begin(), charIndexToPatternIndex.end(), UINT_MAX) == charIndexToPatternIndex.end()));
 
 	// pattern_map and pattern_to_sites_map are just temporary containers. The information originally in
 	// pattern_map is now in pattern_vect and pattern_counts, and the information originally in 
