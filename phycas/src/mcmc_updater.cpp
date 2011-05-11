@@ -452,6 +452,7 @@ double MCMCUpdater::recalcWorkingPrior() const
 	if (isFixed() || !isPriorSteward())
 		return 0.0;
 		
+	//std::cerr << boost::str(boost::format("calling MCMCUpdater::recalcWorkingPrior for %s") % getName()) << std::endl;//temp
 	double lnwp = 0.0;
 	if (ref_dist)
 		{

@@ -1255,6 +1255,7 @@ class MCMCImpl(CommonFunctions):
 										u.setMultivariateWorkingPrior(ref_dist_map[u.getName()])
 								else:							
 									# Compute reference distributions from samples already stored
+									#raw_input('POLPOL: calling finalizeWorkingPrior for %s' % u.getName())
 									u.finalizeWorkingPrior()
 								self.output('  %s = %s' % (u.getName(), u.getWorkingPriorDescr()))
 					self.output()

@@ -608,6 +608,16 @@ class ParamSummarizer(CommonFunctions):
 		nincluded = len(cpo_worst)
 		last_of_worst = int(math.ceil(self.opts.cpo_cutoff*nincluded))
 		cpo_worst[last_of_worst:] = []
+		
+		# Create a mask showing which sites are in the worst category
+		mask = ['-']*nsites
+		for i,j in cpo_worst:
+			mask[i] = '*'
+		for i in range(nsites):
+			if yvect[i] == 0.0:
+				mask[i] = 'x'
+		maskstr = ''.join(mask)
+		# begin again here: need to print out maskstr in output...
 
 		# Use nearest neighbor smoother to produce a more easily-interpreted plot
 		
