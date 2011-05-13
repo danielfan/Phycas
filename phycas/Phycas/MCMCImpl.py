@@ -954,7 +954,7 @@ class MCMCImpl(CommonFunctions):
 		self.last_adaptation = 0
 		self.next_adaptation = self.opts.adapt_first
 		
-		CPP_UPDATER = False # using python obsoleteUpdateAllUpdaters
+		CPP_UPDATER = True # using python obsoleteUpdateAllUpdaters
 		
 		for cycle in xrange(self.burnin + self.ncycles):
 			# Update all updaters
