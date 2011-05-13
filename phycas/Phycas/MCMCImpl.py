@@ -1011,7 +1011,7 @@ class MCMCImpl(CommonFunctions):
 						c.chain_manager.refreshLastLnLike()
 						c.chain_manager.refreshLastLnPrior()
 						
-				if self.opts.doing_steppingstone_sampling and (not self.opts.ssobj.ti) and self.ss_beta == 1.0:
+				if self.opts.doing_steppingstone_sampling and (not self.opts.ssobj.ti) and self.ss_beta_index == 0:
 					self.mcmc_manager.recordSample(True, self.cycle_start + cycle)	# dofit = True (i.e. educate the working prior if doing generalized SS and currently exploring the posterior)
 				else:
 					self.mcmc_manager.recordSample(False, self.cycle_start + cycle)	# dofit = False
