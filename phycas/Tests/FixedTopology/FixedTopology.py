@@ -54,10 +54,10 @@ if __name__ == '__main__':
     mcmc.report_every            = 10
     mcmc.outfile_prefix          = 'fixdtree'
     
-	if False:
-		import sys,os
-		if os.path.basename(sys.executable) == 'python_d.exe':
-			raw_input('debug stop')
+    if False:
+        import sys,os
+        if os.path.basename(sys.executable) == 'python_d.exe':
+            raw_input('debug stop')
     
     mcmc()
     

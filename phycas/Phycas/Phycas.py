@@ -80,7 +80,7 @@ class Phycas(object):
         self.logf                   = None
         self._logFileName           = None
         self.addition_sequence      = []        # List of taxon numbers for addition sequence
-		
+        
         self.stored_tree_defs       = None
         self.ss_delta_beta          = 0.0
         self.doing_steppingstone_sampling = False
@@ -168,23 +168,23 @@ class Phycas(object):
     #    
     #log_file_name = property(getLogFile, setLogFile)
 
-	#     def pathsampling(self):
-	#         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
-	#         """
-	#         Performs an MCMC analysis the purpose of which is to obtain an
-	#         accurate estimate of the marginal likelihood of the model by path
-	#         sampling. See Lartillot, N., and H. Philippe. 2006. Syst. Biol. 55(2):
-	#         195-207.
-	#         
-	#         """
-	#         self.check_settings()
-	#         self.phycassert(self.ss_maxbeta > self.ss_minbeta, 'ss_maxbeta must be greater than ss_minbeta')
-	#         self.nchains = 1
-	#         self.ncycles = self.ss_burnin + (self.ss_Q*(self.ss_nbetavals))
-	#         self.ss_delta_beta = (self.ss_maxbeta - self.ss_minbeta)/float(self.ss_nbetavals - 1)
-	#         self.doing_steppingstone_sampling = True
-	#         self.setupMCMC()
-	#         self.runMCMC()
+    #     def pathsampling(self):
+    #         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+    #         """
+    #         Performs an MCMC analysis the purpose of which is to obtain an
+    #         accurate estimate of the marginal likelihood of the model by path
+    #         sampling. See Lartillot, N., and H. Philippe. 2006. Syst. Biol. 55(2):
+    #         195-207.
+    #         
+    #         """
+    #         self.check_settings()
+    #         self.phycassert(self.ss_maxbeta > self.ss_minbeta, 'ss_maxbeta must be greater than ss_minbeta')
+    #         self.nchains = 1
+    #         self.ncycles = self.ss_burnin + (self.ss_Q*(self.ss_nbetavals))
+    #         self.ss_delta_beta = (self.ss_maxbeta - self.ss_minbeta)/float(self.ss_nbetavals - 1)
+    #         self.doing_steppingstone_sampling = True
+    #         self.setupMCMC()
+    #         self.runMCMC()
 
     def likelihoods(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|

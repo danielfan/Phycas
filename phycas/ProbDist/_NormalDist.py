@@ -262,8 +262,8 @@ class Normal(NormalDistBase, PyDistributionBase):
     def getRelativeLnPDF(self, x):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-		Identical to GetLnPDF(x).
-		        
+        Identical to GetLnPDF(x).
+                
         """
         return NormalDistBase.getRelativeLnPDF(self, x)
         

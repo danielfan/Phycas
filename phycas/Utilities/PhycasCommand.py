@@ -73,28 +73,28 @@ def _escape_for_latex(s):
 #    print two_column_str(l)
 
 def two_column_str(p):
-	p.sort()
-	if len(p) % 2 == 0:
-		half = len(p)/2		# p has an even number of elements
-	else:
-		half = len(p)/2 + 1	# p has an odd number of elements
-	ait = iter(p[:half])
-	bit = iter(p[half:])
-	o = []
-	done = False
-	while not done:
-		a, b = ("", "")
-		try:
-			a = ait.next()
-		except StopIteration:
-			done = True
-		try:
-			b = bit.next()
-		except StopIteration:
-			done = True
-		r = PhycasTablePrinter.format_help(a, b)
-		o.append(r)
-	return "\n".join(o)
+    p.sort()
+    if len(p) % 2 == 0:
+        half = len(p)/2     # p has an even number of elements
+    else:
+        half = len(p)/2 + 1 # p has an odd number of elements
+    ait = iter(p[:half])
+    bit = iter(p[half:])
+    o = []
+    done = False
+    while not done:
+        a, b = ("", "")
+        try:
+            a = ait.next()
+        except StopIteration:
+            done = True
+        try:
+            b = bit.next()
+        except StopIteration:
+            done = True
+        r = PhycasTablePrinter.format_help(a, b)
+        o.append(r)
+    return "\n".join(o)
 
 class PhycasHelp(object):
     _phycas_cmd_classes = set()

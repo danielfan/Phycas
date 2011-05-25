@@ -11,9 +11,9 @@ class Lognormal(LognormalDistBase, PyDistributionBase):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Specify the mean and standard deviation of the log of a lognormal
-		random variable when creating a new Lognormal object. e.g.,  
-		X ~ Lognormal(0.0, 1.0) results in a distribution such that the mean
-		of log(X) is 0.0 and the standard deviation of log(X) is 1.0.
+        random variable when creating a new Lognormal object. e.g.,  
+        X ~ Lognormal(0.0, 1.0) results in a distribution such that the mean
+        of log(X) is 0.0 and the standard deviation of log(X) is 1.0.
 
         >>> from phycas.ProbDist import *
         >>> d = Lognormal(0.0, 1.0)
@@ -148,7 +148,7 @@ class Lognormal(LognormalDistBase, PyDistributionBase):
         Returns the mean of the distribution. This is the theoretical mean
         (i.e., it will not change if sample is called to generate samples
         from this distribution). The mean of a Lognormal(logmean, logsd) 
-		random variable is exp(logmean + logsd^2/2)
+        random variable is exp(logmean + logsd^2/2)
 
         >>> from phycas.ProbDist import *
         >>> d = Lognormal(2, 3)
@@ -164,7 +164,7 @@ class Lognormal(LognormalDistBase, PyDistributionBase):
         Returns the variance of the distribution. This is the theoretical
         variance (i.e., it will not change if sample is called to generate
         samples from this distribution). The variance of a Lognormal(logmean, 
-		logsd) random variable is (exp(logsd^2) - 1)*exp(2*logmean + logsd^2).
+        logsd) random variable is (exp(logsd^2) - 1)*exp(2*logmean + logsd^2).
 
         >>> from phycas.ProbDist import *
         >>> d = Lognormal(2, 3)
@@ -238,7 +238,7 @@ class Lognormal(LognormalDistBase, PyDistributionBase):
 
         The lognormal density f(x) is
 
-				1              / -(log(x) - logmean)^2 \
+                1              / -(log(x) - logmean)^2 \
         ------------------ exp| ---------------------- |
         x*logsd*sqrt(2*pi)     \      2*logsd^2        /
         
@@ -265,9 +265,9 @@ class Lognormal(LognormalDistBase, PyDistributionBase):
     def getRelativeLnPDF(self, x):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
-		Simply returns the log of the probability density function (i.e. 
-		this function is identical to getLnPDF.
-		        
+        Simply returns the log of the probability density function (i.e. 
+        this function is identical to getLnPDF.
+                
         """
         return LognormalDistBase.getRelativeLnPDF(self, x)
         

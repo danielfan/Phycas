@@ -1,6 +1,6 @@
 from phycas import *
 
-pid_offset = -1	# this amount added to pid 
+pid_offset = -1 # this amount added to pid 
 nschemes = 4
 nmethods = 1
 nseeds   = 1

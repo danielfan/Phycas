@@ -46,8 +46,8 @@ mcmc.data_source                   = blob.characters
 mcmc.starting_tree_source         = randomtree(n_taxa=len(blob.taxon_labels), rng=rng)
 
 if False:
-	import sys,os
-	if os.path.basename(sys.executable) == 'python_d.exe':
-		raw_input('debug stop')
+    import sys,os
+    if os.path.basename(sys.executable) == 'python_d.exe':
+        raw_input('debug stop')
 
 mcmc()

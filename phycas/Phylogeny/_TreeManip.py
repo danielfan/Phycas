@@ -71,8 +71,8 @@ class TreeManip(TreeManipBase):
         edges associated with tip nodes. If neither internal_dist nor 
         external_dist are specified, every edge in the tree will have length 
         1.0. If only internal_dist is specified, external_dist will be made 
-		equal to internal_dist. Likewise, if only external_dist is specified,
-		then internal_dist will be made equal to external_dist.
+        equal to internal_dist. Likewise, if only external_dist is specified,
+        then internal_dist will be made equal to external_dist.
         
         >>> from phycas import *
         >>> r = ProbDist.Lot(13579)

@@ -57,15 +57,15 @@ mcmc.edge_move_weight     = 10
 mcmc.edge_move_lambda     = 0.2
 mcmc.edge_move_lambda0    = 0.2
 
-mcmc.state_freq_weight	  = 1
+mcmc.state_freq_weight    = 1
 mcmc.state_freq_psi       = 1000.0
 mcmc.state_freq_psi0      = 1000.0
 
-mcmc.rel_rate_weight	  = 1
+mcmc.rel_rate_weight      = 1
 mcmc.rel_rate_psi         = 1000.0 
 mcmc.rel_rate_psi0        = 1000.0
 
-mcmc.tree_scaler_weight	  = 1
+mcmc.tree_scaler_weight   = 1
 mcmc.tree_scaler_lambda   = 0.2
 mcmc.tree_scaler_lambda0  = 0.2
 
@@ -77,8 +77,8 @@ ss.shape2                 = 1
 ss.ti                     = False
 #ss()
 
-sump.file				  = 'sss.p'
-sump.out.log			  = 'sss.sump.log'
-sump.out.log.mode 		  = REPLACE
+sump.file                 = 'sss.p'
+sump.out.log              = 'sss.sump.log'
+sump.out.log.mode         = REPLACE
 sump()
 

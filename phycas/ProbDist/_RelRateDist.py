@@ -12,7 +12,7 @@ class RelativeRateDistribution(RelRateDistBase, PyDistributionBase):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Specify the parameters of the RelativeRateDistribution object as a 
-		tuple. e.g.,
+        tuple. e.g.,
 
         >>> from phycas.ProbDist import *
         >>> d = RelativeRateDistribution((10,20,30,40))
@@ -34,7 +34,7 @@ class RelativeRateDistribution(RelRateDistBase, PyDistributionBase):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Always returns False because the relative rate distribution is 
-		continuous.
+        continuous.
 
         >>> from phycas.ProbDist import *
         >>> d = RelativeRateDistribution((1,1,1,1))
@@ -61,7 +61,7 @@ class RelativeRateDistribution(RelRateDistBase, PyDistributionBase):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Returns a string that could be used to initialize another 
-		RelativeRateDistribution object identical to this one. e.g.,
+        RelativeRateDistribution object identical to this one. e.g.,
 
         >>> from phycas.ProbDist import *
         >>> d = RelativeRateDistribution((1,2,3,4))
@@ -75,7 +75,7 @@ class RelativeRateDistribution(RelRateDistBase, PyDistributionBase):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Returns a string that could be used to initialize another 
-		RelativeRateDistribution object identical to this one. e.g.,
+        RelativeRateDistribution object identical to this one. e.g.,
 
         >>> from phycas.ProbDist import *
         >>> d = RelativeRateDistribution((1,2,3,4))
@@ -118,7 +118,7 @@ class RelativeRateDistribution(RelRateDistBase, PyDistributionBase):
         1.685719371974
         1.081826860846
         1.206244242581
-	        
+            
         In this example, only one random number generator (g) was involved;
         however, one could pass g to several different probability distribu-
         tions, thus ensuring that the entire sequence of random numbers could
@@ -162,7 +162,7 @@ class RelativeRateDistribution(RelRateDistBase, PyDistributionBase):
         1.082762115186
         0.149006532930
         2.767812831334
-	
+    
         """
         return RelRateDistBase.setSeed(self, seed)
         
@@ -229,9 +229,9 @@ class RelativeRateDistribution(RelRateDistBase, PyDistributionBase):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Draws a single sampled value from the relative rate distribution 
-		specified by this RelativeRateDistribution object. Python list 
-		comprehensions can be used to store many simulated samples for use in 
-		subsequent calculations.
+        specified by this RelativeRateDistribution object. Python list 
+        comprehensions can be used to store many simulated samples for use in 
+        subsequent calculations.
 
         >>> from phycas.ProbDist import *
         >>> d = RelativeRateDistribution((1,2,3,4))
@@ -242,7 +242,7 @@ class RelativeRateDistribution(RelRateDistBase, PyDistributionBase):
         0.054914097328
         2.049601112088
         1.411934266528
-	        
+            
         """
         return RelRateDistBase.sample(self)
         
@@ -259,7 +259,7 @@ class RelativeRateDistribution(RelRateDistBase, PyDistributionBase):
         parameters of the RelativeRateDistribution. If x has length greater
         than k, the extra elements will be ignored. The setSeed call is needed
         in the following example to ensure that the approximated CDF will be 
-		the same every time this example is run:
+        the same every time this example is run:
 
         >>> from phycas.ProbDist import *
         >>> d = RelativeRateDistribution((1,1))
@@ -281,30 +281,30 @@ class RelativeRateDistribution(RelRateDistBase, PyDistributionBase):
 
         >>> from phycas.ProbDist import *
         >>> d = RelativeRateDistribution((1,2,3))
-		>>> d.setCoefficients((1.0/6.0,1.0/3.0,1.0/2.0))
+        >>> d.setCoefficients((1.0/6.0,1.0/3.0,1.0/2.0))
         >>> print '%.12f' % d.getLnPDF((0.5, 1.0))
         -0.972632485808
 
         The 3-parameter RelativeRateDistribution(a,b,c) density defined in the
-		exampel above is
+        exampel above is
 
-			  (x1*p1)^(a-1) (x2*p2)^(b-1) (x3*p3)^(c-1)
+              (x1*p1)^(a-1) (x2*p2)^(b-1) (x3*p3)^(c-1)
         p1 p2 -----------------------------------------
-			  Gamma(a) Gamma(b) Gamma(c) / Gamma(a+b+c)
+              Gamma(a) Gamma(b) Gamma(c) / Gamma(a+b+c)
         
         where a = 1, b = 2, c = 3, p1 = 1/6, p2 = 1/3, p3 = 1/2 and
         Gamma is the Gamma function, not the Gamma probability distribution.
         Note that the argument x is a tuple, which in this example could be
-		supplied as either
+        supplied as either
 
         x = (0.5, 1.0)
-		
-		or
-		
+        
+        or
+        
         x = (0.5, 1.0, 7/6)
-		
-		(The final value x3 is determined by x1, x2, p1, p2 and p3 and thus
-		does not need to be supplied.)
+        
+        (The final value x3 is determined by x1, x2, p1, p2 and p3 and thus
+        does not need to be supplied.)
                 
         """
         nparams = RelRateDistBase.getNParams(self)
@@ -325,8 +325,8 @@ class RelativeRateDistribution(RelRateDistBase, PyDistributionBase):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
         """
         Allows user to provide coefficients for this distribution, overriding
-		the default coefficients, which are all 1/dim, where dim is the 
-		dimension (number of parameters).
+        the default coefficients, which are all 1/dim, where dim is the 
+        dimension (number of parameters).
         
         """
         nparams = RelRateDistBase.getNParams(self)
@@ -457,7 +457,7 @@ class RelativeRateDistribution(RelRateDistBase, PyDistributionBase):
         Returns the variance-covariance matrix of this distribution. The
         matrix is returned in the form of a numarray object. Letting c be the
         sum of the n RelativeRateDistribution parameters, c_i be the ith. 
-		parameter, and denom be c*c*(c + 1), then
+        parameter, and denom be c*c*(c + 1), then
 
         Var_i = n*c_i*(c - c_i)/denom
         Cov_ij = -n*c_i*c_j/denom
@@ -479,7 +479,7 @@ class RelativeRateDistribution(RelRateDistBase, PyDistributionBase):
          0.50000000  -0.25000000  -0.25000000 
         -0.25000000   0.50000000  -0.25000000 
         -0.25000000  -0.25000000   0.50000000 
-	        
+            
         """
         return RelRateDistBase.getVarCovarMatrix(self)
         

@@ -68,7 +68,7 @@ class GelfandGhosh(object):
         self.trees = None
         self.is_invariable_sites_model = False
         self.is_discrete_gamma_model = False
-		
+        
         self.num_edgelen_hyperparams = 0
         self.taxon_labels = []
 
@@ -123,7 +123,7 @@ class GelfandGhosh(object):
     def outputModelInfo(self):
         pinvar_str = self.is_invariable_sites_model and '+I' or ''
         dgamma_str = self.is_discrete_gamma_model and '+G' or ''
-		
+        
         model_str = '%s%s%s' % (self.model_type, pinvar_str, dgamma_str)
         self.phycas.output('  Information about the substitution model:')
         self.phycas.output('    model name:  %s' % model_str)
@@ -157,7 +157,7 @@ class GelfandGhosh(object):
         are_relrates = ('rAC' in headers)
         self.is_invariable_sites_model = ('pinvar' in headers)
         self.is_discrete_gamma_model = ('shape' in headers)
-		
+        
         if 'hyper(all)' in headers:
             self.num_edgelen_hyperparams = 1
         elif 'hyper(external)' in headers:
@@ -201,7 +201,7 @@ class GelfandGhosh(object):
             print 'GTR model forthcoming'
             sys.exit()
         #@POL need to handle codon model
-		if self.is_invariable_sites_model and self.is_discrete_gamma_model:
+        if self.is_invariable_sites_model and self.is_discrete_gamma_model:
             self.model.setPinvar(float(parameters[8]))
             self.model.setShape(float(parameters[9]))
             self.model.setNGammaRates(self.num_rates)

@@ -22,7 +22,7 @@ class SumP(PhycasCommand):
         # The data members added below should be hidden from the user because they are for use by phycas developers.
         # The roundabout way of introducing these data members is necessary because PhycasCommand.__setattr__ tries
         # to prevent users from adding new data members (to prevent accidental misspellings from causing problems)
-        self.__dict__["cposmooth"] = 20.0	# ("cposmooth", 20.0, "Standard deviation to use in smoothing CPO plot", FloatArgValidate(min=1.0))
+        self.__dict__["cposmooth"] = 20.0   # ("cposmooth", 20.0, "Standard deviation to use in smoothing CPO plot", FloatArgValidate(min=1.0))
         
     def hidden():
         """ 

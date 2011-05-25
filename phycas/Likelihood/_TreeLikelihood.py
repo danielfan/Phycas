@@ -33,8 +33,8 @@ class TreeLikelihood(TreeLikelihoodBase):
     >>> model.setKappaFromTRatio(2.0)
     >>> print "%.5f" % model.getKappa()
     4.36364
-	>>> partition_model = Likelihood.PartitionModelBase()
-	>>> partition_model.addModel(model)
+    >>> partition_model = Likelihood.PartitionModelBase()
+    >>> partition_model.addModel(model)
     >>> likelihood = Likelihood.TreeLikelihood(partition_model)
     >>> likelihood.copyDataFromDiscreteMatrix(data_matrix, partition.getSiteModelVector())
     >>> for t in reader.getTrees():
@@ -287,7 +287,7 @@ class TreeLikelihood(TreeLikelihoodBase):
         >>> partition_model = Likelihood.PartitionModelBase()
         >>> partition_model.addModel(m)
         >>> t = Likelihood.TreeLikelihood(partition_model)
-		>>> t.setNoData()
+        >>> t.setNoData()
         >>> mean  = t.getRateMeans(0)
         >>> lower = t.getCategoryLowerBoundaries(0)
         >>> print 'No. categories = %d' % (m.getNGammaRates())

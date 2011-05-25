@@ -35,18 +35,18 @@ dmatrix = p.pairwiseDistanceMatrix()    # this function does not yet exist
 #    Number of trees retained = 1
 #    Time used = 0.01 sec
 #
-#	Translate
-#		1 Chara,
-#		2 Conocephalum,
-#		3 Bazzania,
-#		4 Sphagnum,
-#		5 Osmunda,
-#		6 Picea,
-#		7 Iris,
-#		8 Asplenium,
-#		9 Nicotiana,
-#		10 Avena
-#		;
+#   Translate
+#       1 Chara,
+#       2 Conocephalum,
+#       3 Bazzania,
+#       4 Sphagnum,
+#       5 Osmunda,
+#       6 Picea,
+#       7 Iris,
+#       8 Asplenium,
+#       9 Nicotiana,
+#       10 Avena
+#       ;
 # tree PAUP_1 = [&U] (1:0.111657,2:0.063067,(3:0.076958,(4:0.071965,((5:0.072360,8:0.113155):0.013395,(6:0.069457,((7:0.049397,9:0.056506):0.008506,10:0.064784):0.017809):0.014771):0.011382):0.012152):0.010430);
 
 addseq = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]

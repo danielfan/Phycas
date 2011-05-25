@@ -26,12 +26,12 @@ class Sim(PhycasCommand):
         self.__dict__["uf_num_edges"]   = 50
         self.__dict__["use_unimap"]     = False
         self.__dict__["data_source"]    = None
-		
+        
     def hidden():
         """ 
         Overrides the PhycasCommand.hidden method to keep Sim's name from being displayed 
         in the list of classes displayed when users type help. Change the return value to 
-		False when it is ready to be advertised.
+        False when it is ready to be advertised.
         """
         return True
         

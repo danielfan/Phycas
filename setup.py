@@ -32,11 +32,11 @@ import os
 #            'Tests/SumT/reference_output/*',
 #            'Tests/LikelihoodTest/*.py',
 #            'Tests/LikelihoodTest/reference_output/*',
-#            'Tests/LikelihoodTest/acceptable_diff/check.nex',			
+#            'Tests/LikelihoodTest/acceptable_diff/check.nex',          
 #            'Tests/FixedParams/*.py',
 #            'Tests/FixedParams/reference_output/*',
 #            'Tests/Underflow/*.py',
-#			'Tests/Underflow/*.tre',
+#           'Tests/Underflow/*.tre',
 #            'Tests/Underflow/reference_output/*',
 #            'Tests/CodonTest/*.py',
 #            'Tests/CodonTest/reference_output/*',
@@ -75,7 +75,7 @@ conversionsDataFiles = sharedObjSuffix + dynamicLibSuffix
 #        }
 phycas_description = """\
 Phycas:
- 	
+    
 Phycas is a Python application for carrying out phylogenetic analyses.
 It is also a C++ and Python library that can be used to create new
 applications or to extend the current functionality.
@@ -93,18 +93,18 @@ setupArgs = {
     'license':'GNU General Public License (GPL)',
     'package_dir':{'': '.'},
     'packages':[
-		'phycas',
-		'phycas.Conversions',
-		'phycas.DataMatrix',
-		'phycas.Likelihood',
-		'phycas.PDFGen',
-		'phycas.ProbDist',
-		'phycas.Phycas',
-		'phycas.Phylogeny',
-		'phycas.ReadNexus',
-		'phycas.TreeViewer',
-		'phycas.Utilities',
-		],
+        'phycas',
+        'phycas.Conversions',
+        'phycas.DataMatrix',
+        'phycas.Likelihood',
+        'phycas.PDFGen',
+        'phycas.ProbDist',
+        'phycas.Phycas',
+        'phycas.Phylogeny',
+        'phycas.ReadNexus',
+        'phycas.TreeViewer',
+        'phycas.Utilities',
+        ],
     'long_description':phycas_description,
     'platforms':['Linux', 'MacOS X', 'Windows'],
     'keywords':['phylogeny', 'phylogenetics', 'MCMC', 'Bayesian', 'bioinformatics'],

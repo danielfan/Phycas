@@ -72,9 +72,9 @@ mcmc.slice_weight           = 1
 mcmc.debugging              = True
 
 if False:
-	import sys,os
-	if os.path.basename(sys.executable) == 'python_d.exe':
-		raw_input('debug stop')
+    import sys,os
+    if os.path.basename(sys.executable) == 'python_d.exe':
+        raw_input('debug stop')
 
 if do_mcmc:
     print mcmc.curr

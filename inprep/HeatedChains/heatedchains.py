@@ -42,9 +42,9 @@ mcmc.rng = myrng
 mcmc.data_source = blob.characters
 
 if False:
-	import sys,os
-	if os.path.basename(sys.executable) == 'python_d.exe':
-		raw_input('debug stop')
+    import sys,os
+    if os.path.basename(sys.executable) == 'python_d.exe':
+        raw_input('debug stop')
 
 mcmc.debugging = False
 mcmc()

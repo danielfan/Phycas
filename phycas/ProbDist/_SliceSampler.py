@@ -314,7 +314,7 @@ class SliceSampler(SliceSamplerBase):
         """
         Resets slice unit width to the average distance between successive
         sampled values times the multiplier supplied. Suggested by Neal in 
-|	    section 4.4 (p. 721). At least one sample must be drawn before
+        section 4.4 (p. 721). At least one sample must be drawn before
         calling this method (because otherwise there is no basis for
         computing the average distance between successive sampled values).
 

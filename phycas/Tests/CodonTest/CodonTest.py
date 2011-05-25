@@ -55,8 +55,8 @@ mcmc.out.trees.prefix           = 'trees'
 mcmc.out.trees.mode             = REPLACE
 
 if False:
-	import sys,os
-	if os.path.basename(sys.executable) == 'python_d.exe':
-		raw_input('debug stop')
+    import sys,os
+    if os.path.basename(sys.executable) == 'python_d.exe':
+        raw_input('debug stop')
 
 mcmc()

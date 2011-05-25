@@ -40,4 +40,3 @@ for mean in internal_prior_means:
 outf = open('output.txt', 'a')
 outf.write('%.9f\t%f\t%f\t%f\n' % (mean, Pm, Gm, Dm))
 outf.close()
-	

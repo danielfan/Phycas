@@ -12,16 +12,16 @@ if __name__ == '__main__':
         sim.taxon_labels = ['A', 'B', 'C', 'D']
     else:
         sim.taxon_labels = [
-        	'Chara',
-        	'Conocephalum',
-        	'Bazzania',
-        	'Sphagnum',
-        	'Osmunda',
-        	'Picea',
-        	'Iris',
-        	'Asplenium',
-        	'Nicotiana',
-        	'Avena'
+            'Chara',
+            'Conocephalum',
+            'Bazzania',
+            'Sphagnum',
+            'Osmunda',
+            'Picea',
+            'Iris',
+            'Asplenium',
+            'Nicotiana',
+            'Avena'
         ]
 
     # Create a model tree
