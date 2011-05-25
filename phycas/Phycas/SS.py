@@ -19,6 +19,9 @@ class SS(PhycasCommand):
 		#o.__dict__["_help_order"] = ["sss"]
 		PhycasCommand.__init__(self, args, "ss", "Performs stepping stone method (and also thermodynamic integration) for purposes of estimating the marginal likelihood of the current model.")
 
+		# The data member below is hidden from the user because it overrides something that users should not be able to override 
+		self.__dict__["override_fixed_topology_restriction"] = False
+		
 		# The data members added below are hidden from the user because they are set when the mcmc command runs
 		self.__dict__["sampled_likes"] = None
 		self.__dict__["sampled_betas"] = None
@@ -43,7 +46,8 @@ class SS(PhycasCommand):
 		"""
 		cf = CommonFunctions(self)
 		cf.phycassert(mcmc.ncycles > 0, 'mcmc.ncycles cannot be less than 1 for the stepping-stone method')
-		cf.phycassert(mcmc.fix_topology == True, "mcmc.fix_topology must be True to use the stepping-stone method (we're working on relaxing this requirement)")
+		if not self.override_fixed_topology_restriction:
+			cf.phycassert(mcmc.fix_topology == True, "mcmc.fix_topology must be True to use the stepping-stone method (we're working on relaxing this requirement)")
 		
 	def __call__(self, **kwargs):
 		self.set(**kwargs)

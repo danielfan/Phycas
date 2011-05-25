@@ -1031,12 +1031,14 @@ class MCMCImpl(CommonFunctions):
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
 		"""
 		For debugging purposes, takes a file name and from the contents of the
-		file (comprising reference distribution definitions, one per line)
-		creates an associative array that matches reference distributions
-		(values) with parameter names (keys). Because this function is for
-		debugging only, there is no error checking. The file fn looks like
-		this:
+		file creates a focal tree and an associative array that matches 
+		reference distributions (values) with parameter names (keys). The 
+		first line is a tree definition with embedded clade posteriors. Lines
+		following the first are reference distribution definitions, one per 
+		line. Because this function is for debugging only, there is no error
+		checking. The file fn looks like this:
 		
+		(1,(2,(3,4):0.98)
 		state_freqs_1 = Dirichlet((238.39642,157.91107,206.25071,298.46741))
 		relrates_1 = Dirichlet((2.49381,13.95800,4.00536,0.96666,71.97821,1.20396))
 		state_freqs_2 = Dirichlet((99.07607,56.30029,25.76232,155.27580))
@@ -1044,17 +1046,21 @@ class MCMCImpl(CommonFunctions):
 		state_freqs_3 = Dirichlet((223.45568,33.88380,13.25484,221.71725))
 		relrates_3 = Dirichlet((0.15491,10.04708,0.52291,1.18910,29.41715,0.73720))
 		subset_relrates = RelativeRateDistribution((2.34641,26.07778,45.84810))
-		edgelen_1001 = Gamma(10.26258, 0.08717)
 		...
 		gamma_shape_3 = Gamma(46.92875, 0.00657)
 		
+		If the tree was fixed during the MCMC run, there will be edge length
+		reference distribution details: e.g. 
+		
+		edgelen_1001 = Gamma(10.26258, 0.08717)
 		"""
 		ref_dist_map = {}	   
 		lines = open(fn, 'r').readlines()
-		for line in lines:
+		ref_dist_tree = lines[0]
+		for line in lines[1:]:
 			k,v = line.split('=')
 			ref_dist_map[k.strip()] = eval(v.strip())
-		return ref_dist_map
+		return (ref_dist_tree,ref_dist_map)
 		
 	def run(self):
 		#---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -1241,7 +1247,9 @@ class MCMCImpl(CommonFunctions):
 					self.output('\nReference distribution details:')
 					if self.opts.ssobj.refdist_definition_file is not None:
 						# User has specified a file containing the reference distribution definitions
-						ref_dist_map = self.debugCreateRefDistMap(self.opts.ssobj.refdist_definition_file)
+						ref_dist_tree,ref_dist_map = self.debugCreateRefDistMap(self.opts.ssobj.refdist_definition_file)
+						# build focal tree
+						tree = TreeCollection(newick=ref_dist_tree).trees[0]
 					all_updaters = cold_chain.chain_manager.getAllUpdaters() 
 					for u in all_updaters:
 						if not u.isFixed():
