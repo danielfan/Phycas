@@ -6,7 +6,7 @@ class SS(PhycasCommand):
 	def __init__(self):
 		args = (   ("nbetavals", 21, "The number of values beta will take on during the run; for example, if this value is 4, then beta will take on these values: 1, 2/3, 1/3, 0", IntArgValidate(min=1)),
 				   ("ti", False, "If True, the marginal likelihood will be estimated using thermodynamic integration and the stepping stone method with reference distribution equal to the prior; if False (the default), the stepping stone method with reference distribution approximating the posterior will be used (this greatly improves the accuracy of the stepping stone method and is strongly recommended).", BoolArgValidate),
-				   ("xcycles", 0, "The number of extra cycles (above and beyond mcmc.ncycles) that will be spent exploring the posterior (additional posterior cycles help stepping stone analyses formulate an effective reference distribution).", IntArgValidate(min=0)),
+				   ("xcycles", 0, "The number of extra cycles (above and beyond mcmc.ncycles) that will be spent exploring the posterior (additional posterior cycles help stepping stone analyses formulate an effective reference distribution).", IntArgValidate()),
 				   ("maxbeta", 1.0, "The first beta value that will be sampled.", FloatArgValidate(min=0.0, max=1.0)),
 				   ("minbeta", 0.0, "The last beta value that will be sampled.", FloatArgValidate(min=0.0, max=1.0)),
 				   ("minsample", 10, "Minimum sample size needed to create a split-specific edge length reference distribution.", IntArgValidate(min=0)),

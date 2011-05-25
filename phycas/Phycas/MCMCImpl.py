@@ -1059,6 +1059,7 @@ class MCMCImpl(CommonFunctions):
 		ref_dist_tree = lines[0]
 		for line in lines[1:]:
 			k,v = line.split('=')
+			print v
 			ref_dist_map[k.strip()] = eval(v.strip())
 		return (ref_dist_tree,ref_dist_map)
 		
@@ -1202,7 +1203,6 @@ class MCMCImpl(CommonFunctions):
 
 		# Lay down first line in params file (recorded as cycle 0) containing starting values of parameters
 		self.mcmc_manager.recordSample(False)
-		
 		if self.opts.doing_steppingstone_sampling:
 			self.phycassert(self.data_matrix is not None, 'path sampling requires data')
 			self.phycassert(nchains == 1, 'path sampling requires nchains to be 1')
