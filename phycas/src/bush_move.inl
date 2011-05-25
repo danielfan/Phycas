@@ -27,7 +27,7 @@ namespace phycas
 |	Returns shared pointer copy of the `topo_prior_calculator' object. This allows an external Python program to modify
 |	the object and thus change the topology prior used by this BushMove object.
 */
-inline TopoPriorCalculatorShPtr BushMove::getTopoPriorCalculator()
+inline PolytomyTopoPriorCalculatorShPtr BushMove::getPolytomyTopoPriorCalculator()
 	{
 	return topo_prior_calculator;
 	}

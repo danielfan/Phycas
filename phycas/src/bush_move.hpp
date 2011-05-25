@@ -47,8 +47,8 @@ typedef boost::shared_ptr<ExponentialDistribution>	ExponentialDistributionShPtr;
 //class TreeLikelihood;
 //typedef boost::shared_ptr<TreeLikelihood>			TreeLikeShPtr;
 
-class TopoPriorCalculator;
-typedef boost::shared_ptr<TopoPriorCalculator>		TopoPriorCalculatorShPtr;
+class PolytomyTopoPriorCalculator;
+typedef boost::shared_ptr<PolytomyTopoPriorCalculator>		PolytomyTopoPriorCalculatorShPtr;
 
 class MCMCChainManager;
 typedef boost::weak_ptr<MCMCChainManager>			ChainManagerWkPtr;
@@ -78,7 +78,7 @@ class BushMove : public MCMCUpdater
 		// Modifiers
 		//
 		void						setEdgeLenDistMean(double mean);
-		TopoPriorCalculatorShPtr	getTopoPriorCalculator();
+		PolytomyTopoPriorCalculatorShPtr	getPolytomyTopoPriorCalculator();
 
 		// Utilities
 		//
@@ -129,7 +129,7 @@ class BushMove : public MCMCUpdater
 		CDF								cdf;								/**< CDF object needed for its LnGamma function */
 		//std::vector<double>				one_edgelen;						/**< Workspace declared here to avoid unnecessary allocs/deallocs */
 
-		TopoPriorCalculatorShPtr		topo_prior_calculator;				/**< Used to compute the various kinds of topological priors needed for dealing with polytomies */
+		PolytomyTopoPriorCalculatorShPtr		topo_prior_calculator;				/**< Used to compute the various kinds of topological priors needed for dealing with polytomies */
 	};
 
 } // namespace phycas

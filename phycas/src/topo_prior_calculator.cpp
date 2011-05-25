@@ -63,7 +63,7 @@ namespace phycas
 |   tree (the new taxon was added to an existing node, either creating a new polytomy or enlarging an existing one), or
 |   the N-1 taxon tree could have one fewer internal nodes (in which case the new taxon inserts a new node).
 */
-void TopoPriorCalculator::RecalcCountsAndPriorsImpl(
+void PolytomyTopoPriorCalculator::RecalcCountsAndPriorsImpl(
   unsigned n) /**< is the number of internal nodes (equals ntax - 1 for rooted trees and ntax - 2 for unrooted trees) */
 	{
     if (is_resolution_class_prior)
@@ -207,7 +207,7 @@ void TopoPriorCalculator::RecalcCountsAndPriorsImpl(
 |	            (no easy formula)           8.189   topology_prior[0] = ln(8.189) =  2.103
 |>												    
 */											
-void TopoPriorCalculator::RecalcPriorsImpl()	 
+void PolytomyTopoPriorCalculator::RecalcPriorsImpl()	 
 	{
 	topology_prior.clear();
 	topology_prior.push_back(0.0);	// This will hold the normalizing constant in the end
@@ -251,7 +251,7 @@ void TopoPriorCalculator::RecalcPriorsImpl()
 |   function if `n' is not equal to `ntax'. Assumes `m' is greater than 0. If `is_rooted' is true, assumes `m' is less
 |   than `ntax'. If `is_rooted' is false, assumes `m' less than `ntax' - 1. 
 */
-double TopoPriorCalculator::GetLnCount(
+double PolytomyTopoPriorCalculator::GetLnCount(
   unsigned n,	/**< is the number of taxa */
   unsigned m)	/**< is the number of internal nodes */
 	{
@@ -269,7 +269,7 @@ double TopoPriorCalculator::GetLnCount(
 |	Returns the number of saturated (i.e. fully-resolved and thus having as many internal nodes as possible) trees 
 |	of `n' taxa. Calls RecalcCountsAndPriors function if `n' is not equal to `ntax'.
 */
-double TopoPriorCalculator::GetLnSaturatedCount(
+double PolytomyTopoPriorCalculator::GetLnSaturatedCount(
   unsigned n)	/**< is the number of taxa */
 	{
 	if (n != ntax)
@@ -287,7 +287,7 @@ double TopoPriorCalculator::GetLnSaturatedCount(
 |   tree to fully resolved (saturated) trees. Calls RecalcCountsAndPriors function if `n' is not equal to `ntax' or if
 |   not using the resolution class prior (in which case counts have not been calculated).
 */
-double TopoPriorCalculator::GetLnTotalCount(
+double PolytomyTopoPriorCalculator::GetLnTotalCount(
   unsigned n)	/**< is the number of taxa */
 	{
 	if (n != ntax)
@@ -306,7 +306,7 @@ double TopoPriorCalculator::GetLnTotalCount(
 |	Phylogenetic Inference" paper (Lewis, P. O., M. T. Holder and K. E. Holsinger. 2005. Systematic Biology 54(2):
 |	241-253) presented (normalized) values from this vector.
 */
-std::vector<double> TopoPriorCalculator::GetRealizedResClassPriorsVect()
+std::vector<double> PolytomyTopoPriorCalculator::GetRealizedResClassPriorsVect()
 	{
 	if (!is_resolution_class_prior)
         counts_dirty = true;
@@ -351,7 +351,7 @@ std::vector<double> TopoPriorCalculator::GetRealizedResClassPriorsVect()
 |   the `counts' vectors first. The 0th element of the returned vector holds the natural log of the total number of tree
 |   topologies (log of the sum of all other elements).
 */
-std::vector<double> TopoPriorCalculator::GetLnCounts()
+std::vector<double> PolytomyTopoPriorCalculator::GetLnCounts()
 	{
     if (is_resolution_class_prior)
         counts_dirty = true;
@@ -375,10 +375,10 @@ std::vector<double> TopoPriorCalculator::GetLnCounts()
 
 /*----------------------------------------------------------------------------------------------------------------------
 |   Samples a resolution class (i.e. number of internal nodes) from the realized resolution class distribution. This
-|   function is not very efficient because it calls TopoPriorCalculator::GetRealizedResClassPriorsVect, resulting in an
+|   function is not very efficient because it calls PolytomyTopoPriorCalculator::GetRealizedResClassPriorsVect, resulting in an
 |   unnecessary vector copy operation.
 */
-unsigned TopoPriorCalculator::sample(
+unsigned PolytomyTopoPriorCalculator::sample(
   LotShPtr rng) /**< is the random number generator to use for sampling */
 	{
     std::vector<double> v = GetRealizedResClassPriorsVect();
@@ -396,7 +396,7 @@ unsigned TopoPriorCalculator::sample(
         }
 #else
     double u = rng->Uniform(FILE_AND_LINE);
-    //std::cerr << "TopoPriorCalculator::sample: seed = " << rng->GetSeed() << ", u = " << u << std::endl;
+    //std::cerr << "PolytomyTopoPriorCalculator::sample: seed = " << rng->GetSeed() << ", u = " << u << std::endl;
     //std::cerr << "v[0]  = " << v[0] << std::endl;
     double z = v[0];
     double cum = 0.0;

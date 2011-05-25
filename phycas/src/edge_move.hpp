@@ -32,8 +32,6 @@
 namespace phycas
 {
 
-//class TopoPriorCalculator;
-//typedef boost::shared_ptr<TopoPriorCalculator>		TopoPriorCalculatorShPtr;
 
 class MCMCChainManager;
 typedef boost::weak_ptr<MCMCChainManager>			ChainManagerWkPtr;
@@ -84,7 +82,6 @@ class EdgeMove : public MCMCUpdater
 		//
 		void						setLambda(double x);
 		//void						setEdgeLenDistMean(double mean);
-		//TopoPriorCalculatorShPtr	getTopoPriorCalculator();
 
 		// Utilities
 		//

@@ -156,7 +156,6 @@ from phycas.Utilities.io import getPhycasDir, getPhycasTestData, _runRegressionT
 import Conversions
 from DataMatrix._DataMatrix import DataMatrix
 import Likelihood
-from Likelihood import TopoPriorCalculator
 import PDFGen
 import Phylogeny
 import ProbDist

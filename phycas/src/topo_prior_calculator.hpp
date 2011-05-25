@@ -31,15 +31,19 @@ typedef boost::shared_ptr<Tree> TreeShPtr;
 class Lot;
 typedef boost::shared_ptr<Lot> LotShPtr;
 
+class TopoPriorCalculator
+    {
+    };
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes topological priors used by BushMove to handle polytomous trees in MCMC analyses. Also provides several
 |	utility functions for computing the number of tree topologies with varying degrees of resolution.
 */
-class TopoPriorCalculator
+class PolytomyTopoPriorCalculator : public TopoPriorCalculator
 	{
 	public:
-										TopoPriorCalculator();
-										~TopoPriorCalculator();
+										PolytomyTopoPriorCalculator();
+										~PolytomyTopoPriorCalculator();
 
 		bool							IsResolutionClassPrior() const;
 		bool							IsPolytomyPrior() const;
@@ -86,7 +90,7 @@ class TopoPriorCalculator
 		void							RecalcCountsAndPriorsImpl(unsigned n);
 		void							RecalcPriorsImpl();
 
-		unsigned						ntax;						/**< TopoPriorCalculator is currently holding counts for this number of taxa */
+		unsigned						ntax;						/**< PolytomyTopoPriorCalculator is currently holding counts for this number of taxa */
 		bool							is_rooted;					/**< If false, ntax is number of tips in an unrooted tree; if true, ntax is number of tips in a rooted tree */
 		bool							is_resolution_class_prior;	/**< True for the resolution class prior, false for the polytomy prior */
 		double							C;							/**< Determines strength of prior */
@@ -101,7 +105,7 @@ class TopoPriorCalculator
 		std::vector<double>				topology_prior;				/**< Vector the mth element of which holds the unnormalized prior probability of a tree with m internal nodes; the 0th element holds the normalizing constant */
 	};
 
-typedef boost::shared_ptr<TopoPriorCalculator> TopoPriorCalculatorShPtr;
+typedef boost::shared_ptr<PolytomyTopoPriorCalculator> PolytomyTopoPriorCalculatorShPtr;
 
 }	// namespace phycas
 

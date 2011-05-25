@@ -42,7 +42,7 @@ BushMove::BushMove()
 	{
 	is_move = true;
 	edgelen_mean = 1.0;
-	topo_prior_calculator = TopoPriorCalculatorShPtr(new TopoPriorCalculator());
+	topo_prior_calculator = PolytomyTopoPriorCalculatorShPtr(new PolytomyTopoPriorCalculator());
 
 	num_taxa = 0;
 	num_nodes_in_fully_resolved_tree = 0;
@@ -384,7 +384,7 @@ void BushMove::finalize()
 
 	computePolytomyDistribution(num_taxa);
 
-	// Ensure that the TopoPriorCalculator has computed the prior based on the correct number of taxa,
+	// Ensure that the PolytomyTopoPriorCalculator has computed the prior based on the correct number of taxa,
 	// but otherwise leave it alone (the user is expected to configure the prior beforehand)
 	topo_prior_calculator->SetNTax(num_taxa);
 	}

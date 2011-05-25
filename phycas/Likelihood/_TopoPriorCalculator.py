@@ -1,6 +1,6 @@
 from _LikelihoodExt import *
 
-class TopoPriorCalculator(TopoPriorCalculatorBase):
+class PolytomyTopoPriorCalculator(PolytomyTopoPriorCalculatorBase):
     #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
     """
     This class can compute one of two possible topology priors: the
@@ -45,7 +45,7 @@ class TopoPriorCalculator(TopoPriorCalculatorBase):
     >>> import math
     >>> from phycas import *
     >>> 
-    >>> tpc = Likelihood.TopoPriorCalculator()
+    >>> tpc = Likelihood.PolytomyTopoPriorCalculator()
     >>> tpc.setNTax(17)
     >>> tpc.chooseUnrooted()
     >>> 
@@ -122,7 +122,7 @@ class TopoPriorCalculator(TopoPriorCalculatorBase):
         base class data members.
         
         """
-        TopoPriorCalculatorBase.__init__(self)
+        PolytomyTopoPriorCalculatorBase.__init__(self)
         
     def setNTax(self, n):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -131,7 +131,7 @@ class TopoPriorCalculator(TopoPriorCalculatorBase):
         using rooted trees and greater than 2 if using unrooted trees.
         
         """
-        TopoPriorCalculatorBase.setNTax(self, n)
+        PolytomyTopoPriorCalculatorBase.setNTax(self, n)
         
     def getNTax(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -140,7 +140,7 @@ class TopoPriorCalculator(TopoPriorCalculatorBase):
         currently based.
         
         """
-        return TopoPriorCalculatorBase.getNTax(self)
+        return PolytomyTopoPriorCalculatorBase.getNTax(self)
 
     def chooseRooted(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -152,7 +152,7 @@ class TopoPriorCalculator(TopoPriorCalculatorBase):
         of possible trees.
         
         """
-        TopoPriorCalculatorBase.chooseRooted(self)
+        PolytomyTopoPriorCalculatorBase.chooseRooted(self)
         
     def chooseUnrooted(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -164,7 +164,7 @@ class TopoPriorCalculator(TopoPriorCalculatorBase):
         of possible trees.
         
         """
-        TopoPriorCalculatorBase.chooseUnrooted(self)
+        PolytomyTopoPriorCalculatorBase.chooseUnrooted(self)
         
     def getCount(self, n, m):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -176,7 +176,7 @@ class TopoPriorCalculator(TopoPriorCalculatorBase):
         than the number of taxa minus one. 
         
         """
-        return TopoPriorCalculatorBase.getCount(self, n, m)
+        return PolytomyTopoPriorCalculatorBase.getCount(self, n, m)
 
     def getSaturatedCount(self, n):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -185,7 +185,7 @@ class TopoPriorCalculator(TopoPriorCalculatorBase):
         as many internal nodes as possible) trees of n taxa.
         
         """
-        return TopoPriorCalculatorBase.getSaturatedCount(self, n)
+        return PolytomyTopoPriorCalculatorBase.getSaturatedCount(self, n)
 
     def getTotalCount(self, n):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -194,7 +194,7 @@ class TopoPriorCalculator(TopoPriorCalculatorBase):
         from star to saturated trees) for n taxa.
         
         """
-        return TopoPriorCalculatorBase.getTotalCount(self, n)
+        return PolytomyTopoPriorCalculatorBase.getTotalCount(self, n)
 
     def getCountsVect(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -205,7 +205,7 @@ class TopoPriorCalculator(TopoPriorCalculatorBase):
         number of tree topologies having exactly m internal nodes.
         
         """
-        return TopoPriorCalculatorBase.getCountsVect(self)
+        return PolytomyTopoPriorCalculatorBase.getCountsVect(self)
 
     def chooseResolutionClassPrior(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -218,7 +218,7 @@ class TopoPriorCalculator(TopoPriorCalculatorBase):
         setC).
         
         """
-        TopoPriorCalculatorBase.chooseResolutionClassPrior(self)
+        PolytomyTopoPriorCalculatorBase.chooseResolutionClassPrior(self)
         
     def choosePolytomyPrior(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -246,7 +246,7 @@ class TopoPriorCalculator(TopoPriorCalculatorBase):
         what appears to be a strong topology prior.
         
         """
-        TopoPriorCalculatorBase.choosePolytomyPrior(self)
+        PolytomyTopoPriorCalculatorBase.choosePolytomyPrior(self)
         
     def setC(self, c):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -261,7 +261,7 @@ class TopoPriorCalculator(TopoPriorCalculatorBase):
         saturated) tree topologies.
         
         """
-        TopoPriorCalculatorBase.setC(self, c)
+        PolytomyTopoPriorCalculatorBase.setC(self, c)
         
     def getC(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -272,7 +272,7 @@ class TopoPriorCalculator(TopoPriorCalculatorBase):
         the effects of the value C.
         
         """
-        return TopoPriorCalculatorBase.getC(self)
+        return PolytomyTopoPriorCalculatorBase.getC(self)
 
     def getLnTopologyPrior(self, m):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -286,7 +286,7 @@ class TopoPriorCalculator(TopoPriorCalculatorBase):
         2 for unrooted trees).
         
         """
-        return TopoPriorCalculatorBase.getLnTopologyPrior(self, m)
+        return PolytomyTopoPriorCalculatorBase.getLnTopologyPrior(self, m)
 
     def getLnNormalizedTopologyPrior(self, m):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -301,7 +301,7 @@ class TopoPriorCalculator(TopoPriorCalculatorBase):
         as getLnTopologyPrior(m) minus getLnNormConstant().
         
         """
-        return TopoPriorCalculatorBase.getLnNormalizedTopologyPrior(self, m)
+        return PolytomyTopoPriorCalculatorBase.getLnNormalizedTopologyPrior(self, m)
 
     def getLnNormConstant(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -310,7 +310,7 @@ class TopoPriorCalculator(TopoPriorCalculatorBase):
         topology prior.
         
         """
-        return TopoPriorCalculatorBase.getLnNormConstant(self)
+        return PolytomyTopoPriorCalculatorBase.getLnNormConstant(self)
 
     def getTopoPriorVect(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -322,7 +322,7 @@ class TopoPriorCalculator(TopoPriorCalculatorBase):
         be used to obtain the same information.
         
         """
-        return TopoPriorCalculatorBase.getTopoPriorVect(self)
+        return PolytomyTopoPriorCalculatorBase.getTopoPriorVect(self)
 
     def isResolutionClassPrior(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -332,7 +332,7 @@ class TopoPriorCalculator(TopoPriorCalculatorBase):
         (2005).
         
         """
-        return TopoPriorCalculatorBase.isResolutionClassPrior(self)
+        return PolytomyTopoPriorCalculatorBase.isResolutionClassPrior(self)
 
     def isPolytomyPrior(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -341,7 +341,7 @@ class TopoPriorCalculator(TopoPriorCalculatorBase):
         polytomy prior described in Lewis, Holder and Holsinger (2005).
         
         """
-        return TopoPriorCalculatorBase.isPolytomyPrior(self)
+        return PolytomyTopoPriorCalculatorBase.isPolytomyPrior(self)
 
     def isRooted(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -350,7 +350,7 @@ class TopoPriorCalculator(TopoPriorCalculatorBase):
         for rooted trees.
         
         """
-        return TopoPriorCalculatorBase.isRooted(self)
+        return PolytomyTopoPriorCalculatorBase.isRooted(self)
 
     def isUnrooted(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -359,7 +359,7 @@ class TopoPriorCalculator(TopoPriorCalculatorBase):
         for unrooted trees.
         
         """
-        return TopoPriorCalculatorBase.isUnrooted(self)
+        return PolytomyTopoPriorCalculatorBase.isUnrooted(self)
 
     def getRealizedResClassPriorsVect(self):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
@@ -376,9 +376,9 @@ class TopoPriorCalculator(TopoPriorCalculatorBase):
         the "Polytomies and Bayesian Phylogenetic Inference" paper (Lewis,
         P. O., M. T. Holder and K. E. Holsinger. 2005. Systematic Biology
         54(2): 241-253) presented (normalized) values from this vector. The
-        main example given for the TopoPriorCalculator class shows how the
+        main example given for the PolytomyTopoPriorCalculator class shows how the
         the values from Table 2 can be generated.
         
         """
-        return TopoPriorCalculatorBase.getRealizedResClassPriorsVect(self)
+        return PolytomyTopoPriorCalculatorBase.getRealizedResClassPriorsVect(self)
 
