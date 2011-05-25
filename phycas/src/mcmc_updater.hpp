@@ -101,8 +101,9 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		bool					isHyperParameter() const;
 		bool					hasSliceSampler() const;
 		bool					isMove() const;
-		bool					computesUnivariatePrior();
-		bool					computesMultivariatePrior();
+		bool					computesUnivariatePrior() const;
+		bool					computesMultivariatePrior() const;
+		virtual bool            computesTopologyPrior() const;
 
 		// Accessors
 		const std::string &		getName() const;

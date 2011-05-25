@@ -46,6 +46,7 @@ class UnimapFastNNIMove : public MCMCUpdater
 		virtual double			getLnHastingsRatio() const;
 		virtual double			getLnJacobian() const;
 		virtual void			accept();
+		virtual bool            computesTopologyPrior() const {return true;}
 
 		// These are virtual functions in the MCMCUpdater base class that should be overloaded
 		//

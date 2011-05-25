@@ -1249,7 +1249,23 @@ class MCMCImpl(CommonFunctions):
                         # User has specified a file containing the reference distribution definitions
                         ref_dist_tree,ref_dist_map = self.debugCreateRefDistMap(self.opts.ssobj.refdist_definition_file)
                         # build focal tree
-                        tree = TreeCollection(newick=ref_dist_tree).trees[0]
+                        focal_tree = TreeCollection(newick=ref_dist_tree).trees[0]
+                        ntips = focal_tree.getNObservables()
+                        focal_tree.recalcAllSplits(ntips)
+                        nd = focal_tree.getFirstPreorder()
+                        assert nd.isRoot(), 'the first preorder node should be the root'
+                        self.stdout.phycassert(focal_tree.hasEdgeLens(), 'focal tree from reference distribution must have edge lengths (which will be interpreted as split posteriors)')
+                        nd = nd.getNextPreorder()
+                        while nd:
+                            # Determine whether this split represents an internal or tip node
+                            if not (nd.isTip() or nd.getParent().isRoot()):
+                                split_prob = nd.getEdgeLen()
+                                self.stdout.phycassert(split_prob > 0.0 and split_prob < 1.0, 'Split probabilities must be in the range (0, 1)')
+                                s = nd.getSplit()
+                                if s.isBitSet(0):
+                                    s.invertSplit()
+                            nd = nd.getNextPreorder()
+
                     all_updaters = cold_chain.chain_manager.getAllUpdaters() 
                     for u in all_updaters:
                         if not u.isFixed():
@@ -1266,6 +1282,10 @@ class MCMCImpl(CommonFunctions):
                                     #raw_input('POLPOL: calling finalizeWorkingPrior for %s' % u.getName())
                                     u.finalizeWorkingPrior()
                                 self.output('  %s = %s' % (u.getName(), u.getWorkingPriorDescr()))
+                            if u.computesTopologyPrior():
+                                print repr(u)
+                                print u.__dict__
+                                u.setReferenceDistributionTree(focal_tree)
                     self.output()
                     ref_dist_calculated = True
                     

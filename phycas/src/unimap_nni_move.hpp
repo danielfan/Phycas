@@ -62,6 +62,7 @@ class UnimapTopoMove : public MCMCUpdater
 		virtual double			getLnHastingsRatio() const = 0;
 		virtual double			getLnJacobian() const = 0;
 		virtual void			accept() = 0;
+		virtual bool    computesTopologyPrior() const {return true;}
 
 		// These are virtual functions in the MCMCUpdater base class
 		//

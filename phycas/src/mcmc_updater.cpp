@@ -153,25 +153,22 @@ bool MCMCUpdater::update()
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns true if the `prior' data member points to something.
 */
-bool MCMCUpdater::computesUnivariatePrior()
+bool MCMCUpdater::computesUnivariatePrior() const
 	{
-	if (prior)
-		return true;
-	else
-		return false;
+	return bool(prior);
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns true if the `mv_prior' data member points to something.
 */
-bool MCMCUpdater::computesMultivariatePrior()
+bool MCMCUpdater::computesMultivariatePrior() const
 	{
-	if (mv_prior)
-		return true;
-	else
-		return false;
+	return bool(mv_prior);
 	}
-
+bool MCMCUpdater::computesTopologyPrior() const
+    {
+    return false;
+    }
 /*----------------------------------------------------------------------------------------------------------------------
 |	Returns true if the value of the data member `is_move' is false, and vice versa.
 */

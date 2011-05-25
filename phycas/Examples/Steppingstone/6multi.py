@@ -161,7 +161,7 @@ def runMCMC(fnprefix):
     #mcmc.starting_tree_source = randomtree(n_taxa=len(blob.taxon_labels))
     mcmc.starting_tree_source = TreeCollection(newick=user_tree_def)
     mcmc.debugging = False
-    mcmc.fix_topology = True
+    mcmc.fix_topology = False
     mcmc.adapt_first = 2
     mcmc.sample_every = sample_freq
     mcmc.report_every = print_freq
@@ -177,6 +177,7 @@ def runMCMC(fnprefix):
     elif method == 'ss':
         # steppingstone sampling method
         mcmc.ncycles = cycles_per_beta
+        ss.override_fixed_topology_restriction = True
         ss.nbetavals = num_beta_values
         ss.shape1 = 1.0
         ss.shape2 = 1.0

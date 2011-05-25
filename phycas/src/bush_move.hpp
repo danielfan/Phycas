@@ -73,6 +73,7 @@ class BushMove : public MCMCUpdater
 		// Accessors
 		//
 		bool						addEdgeMoveProposed() const;
+		virtual bool                computesTopologyPrior() const {return true;}
 
 		// Modifiers
 		//
