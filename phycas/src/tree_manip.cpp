@@ -170,30 +170,27 @@ void TreeManip::setRandomInternalExternalEdgeLens(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Begins with left child of parent of `start' and calls GetRightSib() until the left sibling of `start' is located.
-|	Assumes `start' is non-NULL.
+|	Begins with left child of parent of `this' and calls GetRightSib() until the left sibling of `this' is located.
 */
-TreeNode * TreeManip::FindLeftSib(
-  TreeNode * start)	/**< is the node whose left sibling is sought */
+TreeNode * TreeNode::FindLeftSib()
 	{
-	PHYCAS_ASSERT(start != NULL);
-	TreeNode * nd = start->GetParent();
+	TreeNode * nd = this->GetParent();
 
-	// If start has no parent, then there's no way it can have a left sibling
+	// If this has no parent, then there's no way it can have a left sibling
 	if (nd == NULL)
 		return NULL;	
 
 	nd = nd->GetLeftChild();
 
-	// Parent of start should have at least one child
+	// Parent of this should have at least one child
 	PHYCAS_ASSERT(nd != NULL); 
 
-	// If left child of start's parent equals start, then start is an only child and has no siblings
-	if (nd == start)
+	// If left child of this's parent equals this, then this is an only child and has no siblings
+	if (nd == this)
 		return NULL;	
 
 	TreeNode * leftsib = NULL;
-	while (nd != start)
+	while (nd != this)
 		{
 		if (nd == NULL)
 			{
@@ -206,8 +203,8 @@ TreeNode * TreeManip::FindLeftSib(
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
-|	Begins with left child of `start'. If left child is NULL, returns NULL, otherwise, returns the rightmost sibling of
-|	the left child of `start'. Assumes `start' is non-NULL.
+|	Begins with left child of `this'. If left child is NULL, returns NULL, otherwise, returns the rightmost sibling of
+|	the left child of `this'
 */
 TreeNode * TreeNode::FindRightmostChild()	/**< is the parent node whose children will be searched */
 	{

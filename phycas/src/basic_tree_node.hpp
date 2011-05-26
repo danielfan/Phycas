@@ -129,13 +129,15 @@ class TreeNode
 		unsigned		CountChildren() const;
 		TreeNode *		FindNextSib();
 		TreeNode *      FindRightmostChild();
+		TreeNode *      FindLeftSib();
+		void CollapseEdge();
 
 		std::string		briefDebugReport(unsigned verbosity = 1) const;
 		std::string		oneLineDebugReport() const;
 		std::string		longDebugReport() const;
 
 	protected:
-		TreeNode * AddChild(TreeNode *);
+		void AddChild(TreeNode *);
         void CopyNonPointerFields(const TreeNode &other) 
             {
             nodeName = other.nodeName;
@@ -180,7 +182,8 @@ class TreeNode
 		static const unsigned	nodeNumInitValue;	/**< default number for newly-created nodes */
 		static const double		edgeLenInitValue;	/**< default edge length for newly-created nodes */
 
-		friend class Tree;	
+		friend class Tree;
+		friend class FocalTreeTopoProbCalculator;
 	};
 
 }	// namespace phycas

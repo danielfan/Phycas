@@ -35,7 +35,7 @@ const unsigned TreeNode::nodeNumInitValue = UINT_MAX;
 /*----------------------------------------------------------------------------------------------------------------------
 |	Only sets par pointer and either lChild (of parent) or rSib (of left sib).
 */
-TreeNode * TreeNode::AddChild(TreeNode *nd)
+void TreeNode::AddChild(TreeNode *nd)
     {
     TreeNode * leftSib = FindRightmostChild();
     if (leftSib == 0L)
@@ -43,6 +43,7 @@ TreeNode * TreeNode::AddChild(TreeNode *nd)
     else
         leftSib->rSib = nd;
     nd->par = this;
+    
     }
 
 /*----------------------------------------------------------------------------------------------------------------------

@@ -104,7 +104,7 @@ void Tree::MirrorTopology(Tree &source)
 
 // Assumes that all nodes in focalTree have a "CorrespondingNode" that is allocated in 
 //  "this."
-// does not alter anything except the "navigational" pointers, and the split field
+// does not alter anything except the "key" navigational pointers (par, lChild, rSib), and the split field
 void Tree::RebuildTopologyFromMirror(const Tree & source)
     {
     const TreeNode * fnd = source.GetFirstPreorderConst();
@@ -136,6 +136,32 @@ void Tree::RebuildTopologyFromMirror(const Tree & source)
     
     }
 
+// Replaces "this" with its children in the tree
+// only fixes the "key" navigational pointers (par, lChild, rSib)
+// does not alter "this" node's pointers
+void TreeNode::CollapseEdge()
+    {
+    TreeNode * p = this->par;
+    if (!p)
+        return;
+    TreeNode * ls = this->FindLeftSib();
+    TreeNode * c = this->lChild;
+    if (ls == 0L)
+        p->lChild = c;
+    else
+        ls->rSib = c;
+    if (!c)
+        return;
+    for (;;c = c->rSib) 
+        {
+        c->par = p;
+        if (c->rSib == 0L)
+            {
+            c->rSib = this->rSib;
+            break;
+            }
+        }
+    }
 
 double FocalTreeTopoProbCalculator::CalcTopologyLnProb(Tree & testTree) const
     {
@@ -144,11 +170,12 @@ double FocalTreeTopoProbCalculator::CalcTopologyLnProb(Tree & testTree) const
     const TreeID::const_iterator ttIDIt = testTreeID.end();
     scratchTree.RebuildTopologyFromMirror(*focalTree);
     TreeNode * fnd = scratchTree.GetFirstPreorder();
-    fnd->SetSelected(false);
+    fnd->SetIsSelected(false);
     fnd = fnd->GetNextPreorder();
     double lnProb = 0.0;
     
     omittedNodes.clear();
+    std::set<TreeNode *> polytomyCentralNodes;
     while (fnd)
         {
         if (fnd->IsExternalEdge()) 
@@ -157,19 +184,24 @@ double FocalTreeTopoProbCalculator::CalcTopologyLnProb(Tree & testTree) const
                 {
                 lnProb += log(1 - fnd->GetEdgeLen()); // could store log(1-p) in support and log(p) in edge_len to cut down on logs
                 omittedNodes.insert(fnd);
-                fnd->SetSelected(true);
+                fnd->SetIsSelected(true);
                 TreeNode * p = fnd->GetParent();
                 if (p->IsSelected()) 
-                    fnd->prevPreorder = p->GetPrevPreorder(); // @ DANGEROUS overloading of prevPreorder to store the "deepest node" that will represent the polytomy.
+                    fnd->prevPreorder = p->prevPreorder; // @ DANGEROUS overloading of prevPreorder to store the "deepest node" that will represent the polytomy.
                 else
+                    {
                     fnd->prevPreorder = p->GetParent();
+                    polytomyCentralNodes.insert(p);
+                    fnd->CollapseEdge();
+                    }
                 }
             else
                 {
                 lnProb += log(fnd->GetEdgeLen()); // could store log(1-p) in support and log(p) in edge_len to cut down on logs
-                fnd->SetSelected(false);
+                fnd->SetIsSelected(false);
                 }
             }
+        fnd = fnd->GetNextPreorder();
         }
     
     

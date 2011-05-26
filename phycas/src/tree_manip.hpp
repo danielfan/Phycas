@@ -73,7 +73,11 @@ class TreeManip
 			kOnLeft		/**< Insert new node as lstmost child (or as left sibling of targetSib, if targetSib specified) */
 			};
 
-		TreeNode *	FindLeftSib(TreeNode * start);
+		TreeNode *	FindLeftSib(TreeNode * start)
+		    {
+		    PHYCAS_ASSERT(start != NULL);
+            return start->FindLeftSib();
+		    }
 		TreeNode *	FindRightmostChild(TreeNode * start) 
 		    {
 		    PHYCAS_ASSERT(start != NULL);
