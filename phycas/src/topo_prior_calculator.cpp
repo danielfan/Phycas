@@ -144,19 +144,32 @@ double FocalTreeTopoProbCalculator::CalcTopologyLnProb(Tree & testTree) const
     const TreeID::const_iterator ttIDIt = testTreeID.end();
     scratchTree.RebuildTopologyFromMirror(*focalTree);
     TreeNode * fnd = scratchTree.GetFirstPreorder();
+    fnd->SetSelected(false);
     fnd = fnd->GetNextPreorder();
     double lnProb = 0.0;
     
     omittedNodes.clear();
     while (fnd)
         {
-        if (testTreeID.find(fnd->GetSplitConst()) == ttIDIt)
+        if (fnd->IsExternalEdge()) 
             {
-            lnProb += log(1 - fnd->GetEdgeLen()); // could store log(1-p) in support and log(p) in edge_len to cut down on logs
-            
+            if (testTreeID.find(fnd->GetSplitConst()) == ttIDIt)
+                {
+                lnProb += log(1 - fnd->GetEdgeLen()); // could store log(1-p) in support and log(p) in edge_len to cut down on logs
+                omittedNodes.insert(fnd);
+                fnd->SetSelected(true);
+                TreeNode * p = fnd->GetParent();
+                if (p->IsSelected()) 
+                    fnd->prevPreorder = p->GetPrevPreorder(); // @ DANGEROUS overloading of prevPreorder to store the "deepest node" that will represent the polytomy.
+                else
+                    fnd->prevPreorder = p->GetParent();
+                }
+            else
+                {
+                lnProb += log(fnd->GetEdgeLen()); // could store log(1-p) in support and log(p) in edge_len to cut down on logs
+                fnd->SetSelected(false);
+                }
             }
-        else
-            lnProb += log(fnd->GetEdgeLen()); // could store log(1-p) in support and log(p) in edge_len to cut down on logs
         }
     
     

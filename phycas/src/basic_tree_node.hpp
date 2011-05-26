@@ -70,6 +70,10 @@ class TreeNode
 		bool			NumberNotYetAssigned() const;
 		bool			EdgeLenNotYetAssigned() const;
 		bool			IsSelected() const;
+		void			SetIsSelected(bool v) 
+		    {
+		    selected = v;
+		    }
 
 		// Accessors
 		float					GetSupport();
