@@ -173,10 +173,10 @@ class TreeNode
 		InternalDataDeleter internalDataDeleter;	/**< function object used to delete memory allocated for `internalData' */
 		Split				split;					/**< is the object that keeps track of the taxon bipartition implied by this node's edge */
 
-        mutable TreeNode * correspondingNd; /**< TEMPORARY - points to node in "mirror" tree */
+        //mutable TreeNode * correspondingNd; /**< TEMPORARY - points to node in "mirror" tree */
 	public:
-        TreeNode * GetCorrespondingNode() const {return correspondingNd;}
-        void SetCorrespondingNode(TreeNode *cn) {correspondingNd = cn;}
+        //TreeNode * GetCorrespondingNode() const {return correspondingNd;}
+        //void SetCorrespondingNode(TreeNode *cn) {correspondingNd = cn;}
 		static const double		edgeLenEpsilon;		/**< smallest allowable edge length */
 		static const double		edgeLenDefault;		/**< default edge length */
 		static const unsigned	nodeNumInitValue;	/**< default number for newly-created nodes */

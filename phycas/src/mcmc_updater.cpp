@@ -646,6 +646,15 @@ void MCMCUpdater::setMultivariateWorkingPrior(MultivarProbDistShPtr p)
 	mv_ref_dist = p;
 	}
 
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Sets the `mv_ref_dist' data member to the supplied MultivariateProbabilityDistribution shared pointer.
+*/
+void MCMCUpdater::setReferenceDistribution(FocalTreeTopoProbCalculatorShPtr p)
+	{
+	topo_prob_calc = p;
+	}
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets the current value to the supplied value `x'. The value is stored in the data member `curr_value' and passed to
 |   the slice sampler if and when it is created in the member function MCMCUpdater::createSliceSampler().

@@ -10,7 +10,7 @@ sample_freq        = 1
 print_freq         = 10
 rseed              = 13579
 
-data_file_name     = 'sixtaxon.nex'
+data_file_name     = 'rokas6.nex'
 
 # HKY+G ml tree
 user_tree_def = '((1:0.00156293,2:0.00325591):.1,(3:0.00156293,4:0.00325591):.1,(5:0.00156293,6:0.00325591):.1);'

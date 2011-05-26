@@ -42,19 +42,22 @@ class FocalTreeTopoProbCalculator: public TopoProbCalculator
     {
     public:
         FocalTreeTopoProbCalculator(TreeShPtr);
+
+        void SampleTree(TreeShPtr, LotShPtr) const;
         
         double CalcTopologyLnProb(Tree &) const;
         
-        double CalcLnNumTreesMaxDistFromTreeInSelectedRegion(const TreeNode *, unsigned numLeaves) const;
+        double CalcLnNumTreesMaxDistFromTreeInSelectedRegion(const TreeNode *selectedFirstFork, unsigned numLeaves) const;
     protected:
         TreeShPtr focalTree;
         std::map<Split, double> splitToProbMap;
         unsigned ntips;
-        mutable Tree scratchTree;
-        mutable std::set<TreeNode *> omittedNodes;
-        void buildScratchTree();
+       // mutable Tree scratchTree;
+        //mutable std::set<TreeNode *> omittedNodes;
+        //void buildScratchTree();
     };
-    
+
+typedef boost::shared_ptr<FocalTreeTopoProbCalculator> FocalTreeTopoProbCalculatorShPtr;
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes topological priors used by BushMove to handle polytomous trees in MCMC analyses. Also provides several
 |	utility functions for computing the number of tree topologies with varying degrees of resolution.

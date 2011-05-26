@@ -27,6 +27,32 @@ namespace phycas
 {
 
 
+void FocalTreeTopoProbCalculator::SampleTree(TreeShPtr dest, LotShPtr rng) const
+    {
+    TreeManip tm(dest);
+    tm.starTree(ntips, 0L); 
+
+
+    TreeNode * fnd = focalTree->GetFirstPreorder();
+    fnd = fnd->GetNextPreorder();
+    std::set<TreeNode *> polySet;
+    while (fnd)
+        {
+        if (!fnd->IsExternalEdge()) 
+            {
+            double probInclusion = fnd->GetEdgeLen(); // hackety-hack
+            if (rng.Uniform() < probInclusion)
+                {
+                }
+            else
+                {
+                }
+            }
+        fnd = fnd->GetNextPreorder();
+        }
+    }
+    
+
 FocalTreeTopoProbCalculator::FocalTreeTopoProbCalculator(TreeShPtr t)
     :focalTree(t)
     {
@@ -49,9 +75,10 @@ FocalTreeTopoProbCalculator::FocalTreeTopoProbCalculator(TreeShPtr t)
             }
         nd = nd->GetNextPreorder();
         }
-    buildScratchTree();
+    //buildScratchTree();
     }
 
+/*
 void FocalTreeTopoProbCalculator::buildScratchTree() 
     {
     scratchTree.MirrorTopology(*focalTree);
@@ -101,7 +128,6 @@ void Tree::MirrorTopology(Tree &source)
         }
     
     }
-
 // Assumes that all nodes in focalTree have a "CorrespondingNode" that is allocated in 
 //  "this."
 // does not alter anything except the "key" navigational pointers (par, lChild, rSib), and the split field
@@ -135,6 +161,7 @@ void Tree::RebuildTopologyFromMirror(const Tree & source)
         }
     
     }
+*/
 
 // Replaces "this" with its children in the tree
 // only fixes the "key" navigational pointers (par, lChild, rSib)
@@ -163,29 +190,35 @@ void TreeNode::CollapseEdge()
         }
     }
 
-double FocalTreeTopoProbCalculator::CalcLnNumTreesMaxDistFromTreeInSelectedRegion(const TreeNode *selectedFirstFork, unsigned numLeaves) const
+const double kLog2 = log(2);
+const double kLog10 = log(10);
+const double kLog74 = log(74);
+const double kLog68 = log(68);
+
+
+double FocalTreeTopoProbCalculator::CalcLnNumTreesMaxDistFromTreeInSelectedRegion(const TreeNode *firstFork, unsigned numLeaves) const
 {
-    PHYCAS_ASSERT(selectedFirstFork);
+    PHYCAS_ASSERT(firstFork);
     double lnNumTrees = 0.0;
     
     if (numLeaves < 7) 
         {
         if (numLeaves == 4)
-            return log(2);
+            return kLog2;
         if (numLeaves == 5)
-            return log(10);
-        const TreeNode * lc = selectedFirstFork->lChild;
+            return kLog10;
+        const TreeNode * lc = firstFork->lChild;
         const TreeNode * rc = lc->rSib;
         if (lc->IsSelected())
             {
             if (rc->IsSelected())
-                return log(89); // pectinate 6-leaf
+                return kLog74; // pectinate 6-leaf
             lc = lc->lChild;
             rc = lc->rSib;
             if (lc->IsSelected() && rc->IsSelected())
-                return log(68); // symmetric 6-leaf
+                return kLog68; // symmetric 6-leaf
             else
-                return log(89); // pectinate 6-leaf
+                return kLog74; // pectinate 6-leaf
             }
         else
             {
@@ -193,9 +226,9 @@ double FocalTreeTopoProbCalculator::CalcLnNumTreesMaxDistFromTreeInSelectedRegio
             lc = rc->lChild;
             rc = lc->rSib;
             if (lc->IsSelected() && rc->IsSelected())
-                return log(68); // symmetric 6-leaf
+                return kLog68; // symmetric 6-leaf
             else
-                return log(89); // pectinate 6-leaf
+                return kLog74; // pectinate 6-leaf
             }
         
         }
@@ -208,39 +241,32 @@ double FocalTreeTopoProbCalculator::CalcTopologyLnProb(Tree & testTree) const
     testTree.RecalcAllSplits(ntips);
     const TreeID & testTreeID = testTree.getTreeID();
     const TreeID::const_iterator ttIDIt = testTreeID.end();
-    scratchTree.RebuildTopologyFromMirror(*focalTree);
-    TreeNode * fnd = scratchTree.GetFirstPreorder();
+    //scratchTree.RebuildTopologyFromMirror(*focalTree);
+    TreeNode * fnd = focalTree->GetFirstPreorder();
     fnd->SetIsSelected(false);
     fnd = fnd->GetNextPreorder();
     double lnProb = 0.0;
     
-    omittedNodes.clear();
     std::map<TreeNode *, std::vector<TreeNode *> > polytomyToCollapsed;
     while (fnd)
         {
-        if (fnd->IsExternalEdge()) 
+        fnd->SetIsSelected(false);
+        if (!fnd->IsExternalEdge()) 
             {
             if (testTreeID.find(fnd->GetSplitConst()) == ttIDIt)
                 {
                 lnProb += log(1 - fnd->GetEdgeLen()); // could store log(1-p) in support and log(p) in edge_len to cut down on logs
-                omittedNodes.insert(fnd);
                 fnd->SetIsSelected(true);
                 TreeNode * p = fnd->GetParent();
                 if (p->IsSelected()) 
-                    fnd->prevPreorder = p->prevPreorder; // @ DANGEROUS overloading of prevPreorder to store the "deepest node" that will represent the polytomy.
+                    fnd->prevPreorder = p->prevPreorder; // @PELIGROSO  - MUY ESTUPIDO overloading of prevPreorder to store the "deepest node" that will represent the polytomy.
                 else
-                    {
-                    fnd->prevPreorder = p->GetParent();
-                    }
-                fnd->CollapseEdge();
-                std::vector<TreeNode *> & vc = polytomyToCollapsed[fnd->prevPreorder->GetCorrespondingNode()];
-                vc.push_back(fnd->GetCorrespondingNode());
+                    fnd->prevPreorder = p;
+                std::vector<TreeNode *> & vc = polytomyToCollapsed[fnd->prevPreorder];
+                vc.push_back(fnd);
                 }
             else
-                {
                 lnProb += log(fnd->GetEdgeLen()); // could store log(1-p) in support and log(p) in edge_len to cut down on logs
-                fnd->SetIsSelected(false);
-                }
             }
         fnd = fnd->GetNextPreorder();
         }
@@ -253,10 +279,24 @@ double FocalTreeTopoProbCalculator::CalcTopologyLnProb(Tree & testTree) const
 
         // flag edges that are collapsed in the consensus
         for (std::vector<TreeNode *>::const_iterator ndIt = vc.begin(); ndIt != vc.end(); ++ndIt)
+            {
+            TreeNode * adj = (*ndIt)->GetLeftChild();
+            if (adj) 
+                {
+                adj->SetIsSelected(false);
+                if (adj->rSib)
+                    adj->GetRightSib()->SetIsSelected(false);  
+                }
+            adj = (*ndIt)->GetParent();
+            if (adj)
+                adj->SetIsSelected(false);
+            }
+        // flag edges that are collapsed in the consensus
+        for (std::vector<TreeNode *>::const_iterator ndIt = vc.begin(); ndIt != vc.end(); ++ndIt)
             (*ndIt)->SetIsSelected(true);
-
-        lnDenominator += CalcLnNumTreesMaxDistFromTreeInSelectedRegion(polytomyNd, 3 + vc.size());
-
+        const unsigned numLeaves = 3 + vc.size();
+        lnDenominator += CalcLnNumTreesMaxDistFromTreeInSelectedRegion(polytomyNd, numLeaves);
+        std::cerr << "lnDenominator = " << lnDenominator << "\t numLeaves = " << numLeaves << std::endl;
         // "unflag" edges that are collapsed in the consensus
         for (std::vector<TreeNode *>::const_iterator ndIt = vc.begin(); ndIt != vc.end(); ++ndIt)
             (*ndIt)->SetIsSelected(false);

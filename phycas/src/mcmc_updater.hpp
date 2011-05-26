@@ -30,6 +30,7 @@
 #include "phycas/src/relative_rate_distribution.hpp"
 #include "phycas/src/lognormal.hpp"
 #include "phycas/src/states_patterns.hpp"		// for double_vect
+#include "phycas/src/topo_prior_calculator.hpp"
 
 namespace phycas
 {
@@ -112,7 +113,7 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		double					getLnPrior() const;
 		virtual std::string 	getPriorDescr() const;
 		virtual std::string 	getWorkingPriorDescr() const;
-		double					sampleWorkingPrior() const;
+		virtual double          sampleWorkingPrior() const;
 		double_vect_t			sampleMultivariateWorkingPrior() const;
 		LotShPtr				getLot();
         std::string             getDebugInfo() const;
@@ -150,6 +151,7 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
 		virtual void			setMultivarPrior(MultivarProbDistShPtr p);
 		virtual void			setWorkingPrior(ProbDistShPtr p);
 		virtual void			setMultivariateWorkingPrior(MultivarProbDistShPtr p);
+		virtual void			setReferenceDistribution(FocalTreeTopoProbCalculatorShPtr p);
 		void					setUseWorkingPrior(bool b);
 		virtual double		 	recalcWorkingPrior() const;
 
@@ -246,6 +248,8 @@ class MCMCUpdater : public AdHocDensity, public boost::enable_shared_from_this<M
         double                  heating_power;          /**< The power to which the posterior (in standard heating) or just the likelihood (in likelihood heating) is raised. To not heat, specify 1.0. */
         bool                    is_standard_heating;    /**< If true, standard heating is used (posterior is raised to the power `heating_power'); otherwise, likelihood heating is used (just the likelihood is raised to the power `heating_power') */
 		bool                    save_debug_info;		/**< If true, information about the last update will be stored in debug_info string */
+		
+		FocalTreeTopoProbCalculatorShPtr topo_prob_calc;
 		
 	};
 

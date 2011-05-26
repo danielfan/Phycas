@@ -521,9 +521,10 @@ class MCMCImpl(CommonFunctions):
         
         all_updaters = cold_chain.chain_manager.getAllUpdaters() 
         for u in all_updaters:      # good candidate for moving into C++
-            if u.isFixed() or not u.isPriorSteward():
-                continue
             name = u.getName()
+            if u.isFixed() or not u.isPriorSteward():
+                if name != 'larget_simon_local':
+                    continue
             # Open issue: can we completely ignore hyperparameters in stepping stone analyses?
             # For now, I'm assuming we can (edge length parameters, or master edge length parameters,
             # each have their own reference distributions that can be used for sampling, and the 
@@ -667,6 +668,8 @@ class MCMCImpl(CommonFunctions):
             elif name.find('internal_edgelen') == 0:                # C++ class EdgeLenMasterParam
                 num_edge_lens = cold_chain.tree.getNInternals()
                 new_internal_edge_lens = [u.sampleWorkingPrior() for j in range(num_edge_lens)]
+            elif name != 'larget_simon_local':
+                u.sampleWorkingPrior()
             else:
                 self.phycassert(0, 'model uses an updater (%s) that has not yet been added to MCMCImpl.exploreWorkingPrior (workaround: specify mcmc.draw_directly_from_prior = False)' % name)
         
@@ -1273,6 +1276,7 @@ class MCMCImpl(CommonFunctions):
                             if u.computesUnivariatePrior() or u.computesMultivariatePrior():
                                 if self.opts.ssobj.refdist_definition_file is not None:
                                     # User has specified a file containing the reference distribution definitions
+                                    print u.getName()
                                     if u.computesUnivariatePrior():
                                         u.setWorkingPrior(ref_dist_map[u.getName()])
                                     else:
@@ -1284,7 +1288,7 @@ class MCMCImpl(CommonFunctions):
                                 self.output('  %s = %s' % (u.getName(), u.getWorkingPriorDescr()))
                             if u.computesTopologyPrior():
                                 if topo_ref_dist_calculator is None:
-                                    topo_ref_dist_calculator = FocalTreeTopoProbCalculatorBase(focal_tree)
+                                    topo_ref_dist_calculator = Likelihood.FocalTreeTopoProbCalculatorBase(focal_tree)
                                 u.setReferenceDistribution(topo_ref_dist_calculator)
                     self.output()
                     ref_dist_calculated = True

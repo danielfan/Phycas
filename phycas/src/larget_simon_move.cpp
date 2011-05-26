@@ -34,6 +34,13 @@
 namespace phycas
 {
 
+double  LargetSimonMove::sampleWorkingPrior() const
+{
+    PHYCAS_ASSERT(topo_prob_calc);
+    topo_prob_calc->SampleTree(tree);
+    return 0.0;
+}
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	The default constructor sets `lambda' to the default value (0.2), sets `topol_changed' to false, and `m' and `mstar'
 |	to 0.0. All other data members are automatically initialized (shared pointers) or are initialized via a call to 
@@ -77,21 +84,30 @@ bool LargetSimonMove::update()
 	double prev_ln_like = p->getLastLnLike();
 	TreeNode * prev_likelihood_root = likelihood->getLikelihoodRoot();
 
+	double prev_ln_ref_dist = 0.0;
+    double prev_ln_ref_topo = 0.0;
+    if (use_ref_dist)
+        {
+        assert(topo_prob_calc);
+        prev_ln_ref_topo = topo_prob_calc->CalcTopologyLnProb(*tree);
+        prev_ln_ref_dist += prev_ln_ref_topo;
+        }
+
 	proposeNewState();
 
     curr_ln_like = (heating_power > 0.0 ? likelihood->calcLnL(tree) : 0.0);
 	
 	double prev_ln_prior = 0.0;
-	double prev_ln_ref_dist = 0.0;
 	double curr_ln_ref_dist = 0.0;
+	double curr_ln_ref_topo = 0.0;
 	if (star_tree_proposal)
 		{
 		prev_ln_prior			= p->calcExternalEdgeLenPriorUnnorm(orig_edge_len);
-		prev_ln_ref_dist	= (use_ref_dist ? p->calcExternalEdgeLenWorkingPrior(*orig_node, orig_edge_len) : 0.0);
+		prev_ln_ref_dist	+= (use_ref_dist ? p->calcExternalEdgeLenWorkingPrior(*orig_node, orig_edge_len) : 0.0);
 
         double curr_edgelen = orig_node->GetEdgeLen();
 		curr_ln_prior		= p->calcExternalEdgeLenPriorUnnorm(curr_edgelen);
-		curr_ln_ref_dist	= (use_ref_dist ? p->calcExternalEdgeLenWorkingPrior(*orig_node, curr_edgelen) : 0.0);
+		curr_ln_ref_dist	+= (use_ref_dist ? p->calcExternalEdgeLenWorkingPrior(*orig_node, curr_edgelen) : 0.0);
 		}
 	else
 		{
@@ -103,8 +119,8 @@ bool LargetSimonMove::update()
 			curr_ln_prior  = p->calcInternalEdgeLenPriorUnnorm(xnew);
 			if (use_ref_dist)
 				{
-				prev_ln_ref_dist = p->calcInternalEdgeLenWorkingPrior(*ndX, x);
-				curr_ln_ref_dist = p->calcInternalEdgeLenWorkingPrior(*ndX, xnew);
+				prev_ln_ref_dist += p->calcInternalEdgeLenWorkingPrior(*ndX, x);
+				curr_ln_ref_dist += p->calcInternalEdgeLenWorkingPrior(*ndX, xnew);
 				}
 			}
 		else 
@@ -113,8 +129,8 @@ bool LargetSimonMove::update()
 			curr_ln_prior  = p->calcExternalEdgeLenPriorUnnorm(xnew);
 			if (use_ref_dist)
 				{
-				prev_ln_ref_dist = p->calcExternalEdgeLenWorkingPrior(*ndX, x);
-				curr_ln_ref_dist = p->calcExternalEdgeLenWorkingPrior(*ndX, xnew);
+				prev_ln_ref_dist += p->calcExternalEdgeLenWorkingPrior(*ndX, x);
+				curr_ln_ref_dist += p->calcExternalEdgeLenWorkingPrior(*ndX, xnew);
 				}
 			}
 			
@@ -148,8 +164,14 @@ bool LargetSimonMove::update()
 				curr_ln_ref_dist += p->calcExternalEdgeLenWorkingPrior(*ndZ, znew);
 				}
 			}
+        if (use_ref_dist)
+            {
+            assert(topo_prob_calc);
+            curr_ln_ref_topo = topo_prob_calc->CalcTopologyLnProb(*tree);
+            curr_ln_ref_dist += curr_ln_ref_topo;
+            }
 		}
-
+    
     double prev_posterior = 0.0;
 	double curr_posterior = 0.0;
 	
@@ -169,6 +191,12 @@ bool LargetSimonMove::update()
 		curr_posterior = heating_power*curr_ln_like + curr_ln_prior;
 		}
 	
+	
+	if (use_ref_dist)
+		{
+		std::cerr << "LSmove: curr_ln_ref_topo=" << curr_ln_ref_topo << " curr_ln_ref_dist=" << curr_ln_ref_dist << '\n'; 
+    	std::cerr << "LSmove: prev_ln_ref_topo=" << prev_ln_ref_topo << " prev_ln_ref_dist=" << prev_ln_ref_dist << '\n'; 
+    	}
 	double ln_accept_ratio = curr_posterior - prev_posterior + getLnHastingsRatio() + getLnJacobian();
     //double lnu = std::log(rng->Uniform(FILE_AND_LINE));
     //bool accepted = (ln_accept_ratio >= 0.0 || lnu <= ln_accept_ratio);

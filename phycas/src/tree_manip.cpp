@@ -1288,6 +1288,8 @@ void TreeManip::buildTreeFromSplitVector(
             s.InvertSplit();    // ensure all splits are oriented correctly if tree is unrooted
         }
 
+
+
     // Sort the split objects from smallest to largest so that more inclusive splits will
     // follow the less inclusive splits
     std::sort(splits.begin(), splits.end());

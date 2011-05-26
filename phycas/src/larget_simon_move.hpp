@@ -73,6 +73,8 @@ class LargetSimonMove : public MCMCUpdater
         TreeNode *      randomChild(TreeNode * nd);
         TreeNode *      chooseZ(TreeNode * middle);
 
+		virtual double  sampleWorkingPrior() const;
+
 		virtual bool    computesTopologyPrior() const {return true;}
 		// These are virtual functions in the MCMCUpdater base class
 		//
