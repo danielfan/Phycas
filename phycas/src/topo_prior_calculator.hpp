@@ -44,6 +44,8 @@ class FocalTreeTopoProbCalculator: public TopoProbCalculator
         FocalTreeTopoProbCalculator(TreeShPtr);
         
         double CalcTopologyLnProb(Tree &) const;
+        
+        double CalcLnNumTreesMaxDistFromTreeInSelectedRegion(const TreeNode *, unsigned numLeaves) const;
     protected:
         TreeShPtr focalTree;
         std::map<Split, double> splitToProbMap;

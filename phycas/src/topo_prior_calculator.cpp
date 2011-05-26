@@ -163,6 +163,46 @@ void TreeNode::CollapseEdge()
         }
     }
 
+double FocalTreeTopoProbCalculator::CalcLnNumTreesMaxDistFromTreeInSelectedRegion(const TreeNode *selectedFirstFork, unsigned numLeaves) const
+{
+    PHYCAS_ASSERT(selectedFirstFork);
+    double lnNumTrees = 0.0;
+    
+    if (numLeaves < 7) 
+        {
+        if (numLeaves == 4)
+            return log(2);
+        if (numLeaves == 5)
+            return log(10);
+        const TreeNode * lc = selectedFirstFork->lChild;
+        const TreeNode * rc = lc->rSib;
+        if (lc->IsSelected())
+            {
+            if (rc->IsSelected())
+                return log(89); // pectinate 6-leaf
+            lc = lc->lChild;
+            rc = lc->rSib;
+            if (lc->IsSelected() && rc->IsSelected())
+                return log(68); // symmetric 6-leaf
+            else
+                return log(89); // pectinate 6-leaf
+            }
+        else
+            {
+            PHYCAS_ASSERT(rc->IsSelected());
+            lc = rc->lChild;
+            rc = lc->rSib;
+            if (lc->IsSelected() && rc->IsSelected())
+                return log(68); // symmetric 6-leaf
+            else
+                return log(89); // pectinate 6-leaf
+            }
+        
+        }
+    PHYCAS_ASSERT(false); // not implemented...
+    return lnNumTrees;
+}
+
 double FocalTreeTopoProbCalculator::CalcTopologyLnProb(Tree & testTree) const
     {
     testTree.RecalcAllSplits(ntips);
@@ -175,7 +215,7 @@ double FocalTreeTopoProbCalculator::CalcTopologyLnProb(Tree & testTree) const
     double lnProb = 0.0;
     
     omittedNodes.clear();
-    std::set<TreeNode *> polytomyCentralNodes;
+    std::map<TreeNode *, std::vector<TreeNode *> > polytomyToCollapsed;
     while (fnd)
         {
         if (fnd->IsExternalEdge()) 
@@ -191,9 +231,10 @@ double FocalTreeTopoProbCalculator::CalcTopologyLnProb(Tree & testTree) const
                 else
                     {
                     fnd->prevPreorder = p->GetParent();
-                    polytomyCentralNodes.insert(p);
-                    fnd->CollapseEdge();
                     }
+                fnd->CollapseEdge();
+                std::vector<TreeNode *> & vc = polytomyToCollapsed[fnd->prevPreorder->GetCorrespondingNode()];
+                vc.push_back(fnd->GetCorrespondingNode());
                 }
             else
                 {
@@ -204,9 +245,24 @@ double FocalTreeTopoProbCalculator::CalcTopologyLnProb(Tree & testTree) const
         fnd = fnd->GetNextPreorder();
         }
     
+    double lnDenominator = 0.0;
+    for (std::map<TreeNode *, std::vector<TreeNode *> >::const_iterator pNdIt = polytomyToCollapsed.begin(); pNdIt != polytomyToCollapsed.end(); ++pNdIt)
+        {
+        TreeNode * polytomyNd = pNdIt->first;
+        const std::vector<TreeNode *> & vc = pNdIt->second;
+
+        // flag edges that are collapsed in the consensus
+        for (std::vector<TreeNode *>::const_iterator ndIt = vc.begin(); ndIt != vc.end(); ++ndIt)
+            (*ndIt)->SetIsSelected(true);
+
+        lnDenominator += CalcLnNumTreesMaxDistFromTreeInSelectedRegion(polytomyNd, 3 + vc.size());
+
+        // "unflag" edges that are collapsed in the consensus
+        for (std::vector<TreeNode *>::const_iterator ndIt = vc.begin(); ndIt != vc.end(); ++ndIt)
+            (*ndIt)->SetIsSelected(false);
+        }
     
-    
-    return lnProb;
+    return lnProb - lnDenominator;
     }
 
 /*----------------------------------------------------------------------------------------------------------------------
