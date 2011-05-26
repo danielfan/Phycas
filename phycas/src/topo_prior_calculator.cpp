@@ -26,6 +26,144 @@
 namespace phycas
 {
 
+
+FocalTreeTopoProbCalculator::FocalTreeTopoProbCalculator(TreeShPtr t)
+    :focalTree(t)
+    {
+    assert(bool(focalTree));
+    ntips = focalTree->GetNObservables();
+    focalTree->RecalcAllSplits(ntips);
+    TreeNode * nd = focalTree->GetFirstPreorder();
+    assert(nd->IsTipRoot());
+    nd = nd->GetNextPreorder();
+    while (nd)
+        {
+        if (!nd->IsExternalEdge()) 
+            {
+            double  split_prob = nd->GetEdgeLen();
+            assert(split_prob > 0.0 && split_prob < 1.0);
+            Split & s = nd->GetSplit();
+            if (s.IsBitSet(0))
+                s.InvertSplit();
+            splitToProbMap[s] = split_prob;
+            }
+        nd = nd->GetNextPreorder();
+        }
+    buildScratchTree();
+    }
+
+void FocalTreeTopoProbCalculator::buildScratchTree() 
+    {
+    scratchTree.MirrorTopology(*focalTree);
+    }
+
+void Tree::MirrorTopology(Tree &source) 
+    {
+    Clear();
+    TreeNode * fnd = source.GetFirstPreorder();
+    assert(fnd);
+    assert(fnd->IsTipRoot());
+    TreeNode * tmpSNd = GetNewNode();
+    SetFirstPreorder(tmpSNd);
+
+
+    tmpSNd->SetCorrespondingNode(fnd);
+    fnd->SetCorrespondingNode(tmpSNd);
+    tmpSNd->CopyNonPointerFields(*fnd);
+    tmpSNd->par = 0L;
+    tmpSNd->lChild = 0L;
+    tmpSNd->rSib = 0L;
+    tmpSNd->nextPreorder = 0L;
+    tmpSNd->prevPreorder = 0L;
+    
+    TreeNode * snd = GetRoot();
+    assert(snd);
+    assert(snd->IsTipRoot());
+
+    TreeNode * prevS = snd;
+    fnd = fnd->GetNextPreorder();
+    while (fnd)
+        {
+        tmpSNd = GetNewNode();
+        tmpSNd->SetCorrespondingNode(fnd);
+        fnd->SetCorrespondingNode(tmpSNd);
+        tmpSNd->CopyNonPointerFields(*fnd);
+        tmpSNd->lChild = 0L;
+        tmpSNd->rSib = 0L;
+        tmpSNd->nextPreorder = 0L;
+        prevS->nextPreorder = tmpSNd; 
+        tmpSNd->prevPreorder = prevS;
+        TreeNode * sPar = fnd->par->GetCorrespondingNode();
+        assert(sPar);
+        sPar->AddChild(tmpSNd);
+        prevS = tmpSNd;
+        fnd = fnd->GetNextPreorder();
+        }
+    
+    }
+
+// Assumes that all nodes in focalTree have a "CorrespondingNode" that is allocated in 
+//  "this."
+// does not alter anything except the "navigational" pointers, and the split field
+void Tree::RebuildTopologyFromMirror(const Tree & source)
+    {
+    const TreeNode * fnd = source.GetFirstPreorderConst();
+    assert(fnd);
+    assert(fnd->IsTipRoot());
+    TreeNode * tmpSNd = fnd->GetCorrespondingNode();
+    SetFirstPreorder(tmpSNd);
+    tmpSNd->par = 0L;
+    tmpSNd->lChild = (fnd->lChild ? fnd->lChild->GetCorrespondingNode() : 0L);
+    tmpSNd->rSib = 0L;
+    tmpSNd->nextPreorder = tmpSNd->lChild;
+    tmpSNd->prevPreorder = 0L;
+    TreeNode * prevS = tmpSNd;
+    fnd = fnd->GetNextPreorderConst();
+    while (fnd)
+        {
+        tmpSNd = fnd->GetCorrespondingNode();
+        tmpSNd->lChild = (fnd->lChild ? fnd->lChild->GetCorrespondingNode() : 0L);
+        tmpSNd->rSib = (fnd->rSib ? fnd->rSib->GetCorrespondingNode() : 0L);
+        tmpSNd->par = (fnd->par ? fnd->par->GetCorrespondingNode() : 0L);
+        tmpSNd->nextPreorder = (fnd->nextPreorder ? fnd->nextPreorder->GetCorrespondingNode() : 0L);
+        tmpSNd->prevPreorder = prevS;
+        tmpSNd->split = fnd->split;
+        TreeNode * sPar = fnd->par->GetCorrespondingNode();
+        assert(sPar);
+        prevS = tmpSNd;
+        fnd = fnd->GetNextPreorderConst();
+        }
+    
+    }
+
+
+double FocalTreeTopoProbCalculator::CalcTopologyLnProb(Tree & testTree) const
+    {
+    testTree.RecalcAllSplits(ntips);
+    const TreeID & testTreeID = testTree.getTreeID();
+    const TreeID::const_iterator ttIDIt = testTreeID.end();
+    scratchTree.RebuildTopologyFromMirror(*focalTree);
+    TreeNode * fnd = scratchTree.GetFirstPreorder();
+    fnd = fnd->GetNextPreorder();
+    double lnProb = 0.0;
+    
+    omittedNodes.clear();
+    while (fnd)
+        {
+        if (testTreeID.find(fnd->GetSplitConst()) == ttIDIt)
+            {
+            lnProb += log(1 - fnd->GetEdgeLen()); // could store log(1-p) in support and log(p) in edge_len to cut down on logs
+            
+            }
+        else
+            lnProb += log(fnd->GetEdgeLen()); // could store log(1-p) in support and log(p) in edge_len to cut down on logs
+        }
+    
+    
+    
+    return lnProb;
+    }
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Recomputes `counts' vector for the supplied number of internal nodes (`n') using the method outlined by Joe 
 |	Felsenstein in his 2004 book and also in Felsenstein (1978) and Felsenstein (1981). 

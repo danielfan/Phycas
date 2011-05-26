@@ -22,6 +22,9 @@
 
 #include <boost/shared_ptr.hpp>
 
+#include "phycas/src/split.hpp"
+#include "phycas/src/basic_tree.hpp"
+
 namespace phycas
 {
 
@@ -31,15 +34,30 @@ typedef boost::shared_ptr<Tree> TreeShPtr;
 class Lot;
 typedef boost::shared_ptr<Lot> LotShPtr;
 
-class TopoPriorCalculator
+class TopoProbCalculator
     {
     };
 
+class FocalTreeTopoProbCalculator: public TopoProbCalculator
+    {
+    public:
+        FocalTreeTopoProbCalculator(TreeShPtr);
+        
+        double CalcTopologyLnProb(Tree &) const;
+    protected:
+        TreeShPtr focalTree;
+        std::map<Split, double> splitToProbMap;
+        unsigned ntips;
+        mutable Tree scratchTree;
+        mutable std::set<TreeNode *> omittedNodes;
+        void buildScratchTree();
+    };
+    
 /*----------------------------------------------------------------------------------------------------------------------
 |	Computes topological priors used by BushMove to handle polytomous trees in MCMC analyses. Also provides several
 |	utility functions for computing the number of tree topologies with varying degrees of resolution.
 */
-class PolytomyTopoPriorCalculator : public TopoPriorCalculator
+class PolytomyTopoPriorCalculator : public TopoProbCalculator
 	{
 	public:
 										PolytomyTopoPriorCalculator();

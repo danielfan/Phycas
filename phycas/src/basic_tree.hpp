@@ -101,12 +101,13 @@ class Tree : public boost::enable_shared_from_this<Tree>
 		bool					TipNumbersSetUsingNames() const;
 
         // Modifiers
-        #if 0//
+#       if 0//
         void                    setRooted();
         void                    setUnrooted();
-        #else
+#       else
         void					setRootedness(bool rooted);
-        #endif
+#       endif
+
 		
 		// Utilities
 		//
@@ -177,7 +178,14 @@ class Tree : public boost::enable_shared_from_this<Tree>
 		
 		void 					recDebugListTree(TreeNode *p, int nindent);
 
-
+        void SetFirstPreorder(TreeNode *nd) 
+            {
+            assert(firstPreorder == 0L);
+            firstPreorder = nd;
+            }
+            
+        void MirrorTopology(Tree &source); 
+        void RebuildTopologyFromMirror(const Tree & source);
 	protected:
 
 		TreeID					tree_id;			/**< A vector of splits that uniquely identify the tree topology */
@@ -197,6 +205,7 @@ class Tree : public boost::enable_shared_from_this<Tree>
 	private:
 
 		std::string				workspace;				/**< Used by GetNextNewickToken for storing tokens read from newick tree descriptions */
+		friend class FocalTreeTopoProbCalculator;
 	};
 
 typedef boost::shared_ptr<Tree> TreeShPtr;

@@ -66,6 +66,7 @@ class TreeNode
 		bool			IsSubroot() const;
 		bool			IsInternalRoot() const;
 		bool			IsInternal() const;
+		bool            IsExternalEdge() const;
 		bool			NumberNotYetAssigned() const;
 		bool			EdgeLenNotYetAssigned() const;
 		bool			IsSelected() const;
@@ -123,13 +124,26 @@ class TreeNode
 		void			AppendNodeInfo(std::string &s, bool num_and_name_only = false) const;
 		unsigned		CountChildren() const;
 		TreeNode *		FindNextSib();
+		TreeNode *      FindRightmostChild();
 
 		std::string		briefDebugReport(unsigned verbosity = 1) const;
 		std::string		oneLineDebugReport() const;
 		std::string		longDebugReport() const;
 
 	protected:
-
+		TreeNode * AddChild(TreeNode *);
+        void CopyNonPointerFields(const TreeNode &other) 
+            {
+            nodeName = other.nodeName;
+            nodeNum = other.nodeNum;
+            edgeLen = other.edgeLen;
+            support = other.support;
+            tmp = other.tmp;
+            x = other.x;
+            y = other.y;
+            selected = other.selected;
+            split = other.split;
+            }
 		std::string			nodeName;				/**< name of node */
 		unsigned			nodeNum;				/**< for tips, this is the taxon index, ranging from 0 to ntips-1 */
 		double				edgeLen;				/**< length of this node's edge */
@@ -153,8 +167,10 @@ class TreeNode
 		InternalDataDeleter internalDataDeleter;	/**< function object used to delete memory allocated for `internalData' */
 		Split				split;					/**< is the object that keeps track of the taxon bipartition implied by this node's edge */
 
+        mutable TreeNode * correspondingNd; /**< TEMPORARY - points to node in "mirror" tree */
 	public:
-
+        TreeNode * GetCorrespondingNode() const {return correspondingNd;}
+        void SetCorrespondingNode(TreeNode *cn) {correspondingNd = cn;}
 		static const double		edgeLenEpsilon;		/**< smallest allowable edge length */
 		static const double		edgeLenDefault;		/**< default edge length */
 		static const unsigned	nodeNumInitValue;	/**< default number for newly-created nodes */

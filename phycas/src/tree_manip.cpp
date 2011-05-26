@@ -209,11 +209,9 @@ TreeNode * TreeManip::FindLeftSib(
 |	Begins with left child of `start'. If left child is NULL, returns NULL, otherwise, returns the rightmost sibling of
 |	the left child of `start'. Assumes `start' is non-NULL.
 */
-TreeNode * TreeManip::FindRightmostChild(
-  TreeNode * start)	/**< is the parent node whose children will be searched */
+TreeNode * TreeNode::FindRightmostChild()	/**< is the parent node whose children will be searched */
 	{
-	PHYCAS_ASSERT(start != NULL);
-	TreeNode * curr = start->GetLeftChild();
+	TreeNode * curr = GetLeftChild();
 	TreeNode * rightmost = NULL;
 	while (curr != NULL)
 		{

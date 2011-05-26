@@ -174,6 +174,14 @@ inline bool TreeNode::IsSubroot() const
 	}
 
 /*----------------------------------------------------------------------------------------------------------------------
+|	Returns true if this node is an internal node that is the only child of the root tip node.
+*/
+inline bool TreeNode::IsExternalEdge() const
+	{
+	return IsTip() || par->IsTipRoot();
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
 |	Returns true if and only if either NoChildren() or IsTipRoot() returns true. A node is a tip node if it has degree
 |	one, which is true if only one edge connects it to the rest of the tree. This is true for nodes that have no 
 |	children (their only connection to the rest of the tree is through their parent), but is also true for the root node

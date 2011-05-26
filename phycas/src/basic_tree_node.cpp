@@ -31,6 +31,20 @@ const unsigned TreeNode::nodeNumInitValue = UINT_MAX;
 
 //static unsigned debug_treenode_number = 0;
 
+
+/*----------------------------------------------------------------------------------------------------------------------
+|	Only sets par pointer and either lChild (of parent) or rSib (of left sib).
+*/
+TreeNode * TreeNode::AddChild(TreeNode *nd)
+    {
+    TreeNode * leftSib = FindRightmostChild();
+    if (leftSib == 0L)
+        lChild = nd;
+    else
+        leftSib->rSib = nd;
+    nd->par = this;
+    }
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Initializes all pointers to 0, nodeNum to TreeNode::nodeNumInitValue, and edgeLen to TreeNode::edgeLenInitValue.
 */

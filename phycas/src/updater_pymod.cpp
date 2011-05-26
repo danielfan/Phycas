@@ -161,6 +161,9 @@ void updater_pymod()
 		boost::noncopyable, boost::shared_ptr<phycas::MappingMove> >("MappingMove") 
 		.def("update", &phycas::MappingMove::update)
 		;
+	class_<FocalTreeTopoProbCalculator, boost::noncopyable,
+		boost::shared_ptr<phycas::FocalTreeTopoProbCalculator> >("FocalTreeTopoProbCalculatorBase", init<TreeShPtr>())
+        ;
 	class_<PolytomyTopoPriorCalculator, boost::noncopyable, 
 		boost::shared_ptr<phycas::PolytomyTopoPriorCalculator> >("PolytomyTopoPriorCalculatorBase")
 		.def("setNTax", &PolytomyTopoPriorCalculator::SetNTax)

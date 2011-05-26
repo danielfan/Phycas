@@ -63,8 +63,6 @@ class TreeManip
 		void		setRandomInternalExternalEdgeLens(ProbDistShPtr internal_dist, ProbDistShPtr external_dist);
 
         void        buildTreeFromSplitVector(const std::vector<std::string> & split_vect, ProbDistShPtr edge_len_dist);
-		//void		BuildTreeFromID(NxsTaxaManager *tm,const TreeID& tree_id, unsigned root_at = 0);
-		//void		SimpleBuildTreeFromID(unsigned nlvs, const TreeIDShPtr tree_id, unsigned root_at = 0);
 
 		void		NNISwap(TreeNode * swap1, TreeNode * swap2);
 		void		NNISwapSpecial(TreeNode * swap1);
@@ -76,7 +74,11 @@ class TreeManip
 			};
 
 		TreeNode *	FindLeftSib(TreeNode * start);
-		TreeNode *	FindRightmostChild(TreeNode * start);
+		TreeNode *	FindRightmostChild(TreeNode * start) 
+		    {
+		    PHYCAS_ASSERT(start != NULL);
+            return start->FindRightmostChild();
+		    }
 		TreeNode *	FindLastPreorderInClade(TreeNode * start);
 
 		void		DetachSubtree(TreeNode * s);

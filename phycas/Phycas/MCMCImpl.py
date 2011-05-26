@@ -1265,7 +1265,7 @@ class MCMCImpl(CommonFunctions):
                                 if s.isBitSet(0):
                                     s.invertSplit()
                             nd = nd.getNextPreorder()
-
+                    topo_ref_dist_calculator = None
                     all_updaters = cold_chain.chain_manager.getAllUpdaters() 
                     for u in all_updaters:
                         if not u.isFixed():
@@ -1283,9 +1283,9 @@ class MCMCImpl(CommonFunctions):
                                     u.finalizeWorkingPrior()
                                 self.output('  %s = %s' % (u.getName(), u.getWorkingPriorDescr()))
                             if u.computesTopologyPrior():
-                                print repr(u)
-                                print u.__dict__
-                                u.setReferenceDistributionTree(focal_tree)
+                                if topo_ref_dist_calculator is None:
+                                    topo_ref_dist_calculator = FocalTreeTopoProbCalculatorBase(focal_tree)
+                                u.setReferenceDistribution(topo_ref_dist_calculator)
                     self.output()
                     ref_dist_calculated = True
                     
