@@ -185,6 +185,7 @@ class Tree : public boost::enable_shared_from_this<Tree>
             firstPreorder = nd;
             }
             
+        TreeNode * FindNodeBySplit(const Split & s);
 //        void MirrorTopology(Tree &source); 
 //        void RebuildTopologyFromMirror(const Tree & source);
 	protected:

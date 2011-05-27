@@ -1204,9 +1204,9 @@ void LargetSimonCallable::operator()()
 		public:
 			DualBarrierUpdater(MCMCUpdater * m, boost::barrier * startBarrier, boost::barrier * afterBarrier, boost::mutex & mx)
 				:number(0),
+				io_mutex(mx),
 				theStartUpdateBarrier(startBarrier),
 				theAfterUpdateBarrier(afterBarrier),
-				io_mutex(mx),
 				move(m)
 				//,zzz(0.0)
 				{}

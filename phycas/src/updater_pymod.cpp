@@ -164,7 +164,9 @@ void updater_pymod()
 		;
 	class_<FocalTreeTopoProbCalculator, boost::noncopyable,
 		boost::shared_ptr<phycas::FocalTreeTopoProbCalculator> >("FocalTreeTopoProbCalculatorBase", init<TreeShPtr>())
-        ;
+		.def("setDefaultEdgeLenDist", &FocalTreeTopoProbCalculator::SetDefaultEdgeLenDist)
+		.def("setEdgeLenDist", &FocalTreeTopoProbCalculator::SetEdgeLenDist)
+		;
 	class_<PolytomyTopoPriorCalculator, boost::noncopyable, 
 		boost::shared_ptr<phycas::PolytomyTopoPriorCalculator> >("PolytomyTopoPriorCalculatorBase")
 		.def("setNTax", &PolytomyTopoPriorCalculator::SetNTax)
