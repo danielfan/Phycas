@@ -1302,9 +1302,6 @@ class MCMCImpl(CommonFunctions):
                                             s.createFromPattern(split_rep)
                                             print split_rep, v, s.createPatternRepresentation()
                                             topo_ref_dist_calculator.setEdgeLenDist(s, v)
-                                sys.exit(0)
-                                if topo_ref_dist_calculator is None:
-                                    topo_ref_dist_calculator = Likelihood.FocalTreeTopoProbCalculatorBase(focal_tree, split_list, split_edge_len_list)
                                 u.setReferenceDistribution(topo_ref_dist_calculator)
                     self.output()
                     ref_dist_calculated = True

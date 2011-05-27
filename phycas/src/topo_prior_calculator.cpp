@@ -536,13 +536,16 @@ std::pair<double, double> FocalTreeTopoProbCalculator::CalcTopologyLnProb(Tree &
                 lnProb += log(fnd->GetEdgeLen()); // could store log(1-p) in support and log(p) in edge_len to cut down on logs
                 }
             }
-        if (calcEdgeLenLnProb)
-            {
-            TreeNode * testTreeNd =  testTree.FindNodeBySplit(fnd->split);
-            PHYCAS_ASSERT(testTreeNd);
-            lnEdgeLenProb = LnEdgeLenProbForSplit(fnd->split, testTreeNd->GetEdgeLen());
-            }
         fnd = fnd->GetNextPreorder();
+        }
+    if (calcEdgeLenLnProb)
+        {
+        preorder_iterator testNdIt = testTree.begin();
+        ++testNdIt;
+        for (; testNdIt != testTree.end(); ++testNdIt)
+            {
+            lnEdgeLenProb += LnEdgeLenProbForSplit(testNdIt->split, testNdIt->GetEdgeLen());
+            }
         }
     
     double lnDenominator = 0.0;
