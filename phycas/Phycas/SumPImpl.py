@@ -237,6 +237,7 @@ class ParamSummarizer(CommonFunctions):
         likes = p['lnL']
         priors = p['lnPrior']
         ref_dists = p['lnRefDens']
+
         lnR = 0.0
         nbetas = len(betas)
         if betas[0] != 1.0 or betas[-1] != 0.0:
@@ -271,6 +272,11 @@ class ParamSummarizer(CommonFunctions):
             self.output(' %10.3f %10.3f %10d %15.6f %15.6f' % (bsmaller, beta_incr, n, lnRk, lnR))
         
         self.output(' %.8f Generalized Stepping Stone method' % lnR)
+        if self.opts.kldivergence:	
+            #print 'number of loglnl values =',len(likes[1.0])	
+            log_mean_post_like = sum(likes[1.0])/float(len(likes[1.0]))
+            #print 'log_mean_post_like =',log_mean_post_like	
+            self.output(' %.8f Kullback-Leibler divergence' % (log_mean_post_like - lnR,))
         
     def autocorr_ess(self, values):
         #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
