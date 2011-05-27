@@ -23,6 +23,7 @@ class SumP(PhycasCommand):
         # The roundabout way of introducing these data members is necessary because PhycasCommand.__setattr__ tries
         # to prevent users from adding new data members (to prevent accidental misspellings from causing problems)
         self.__dict__["cposmooth"] = 20.0   # ("cposmooth", 20.0, "Standard deviation to use in smoothing CPO plot", FloatArgValidate(min=1.0))
+        self.__dict__["kldivergence"] = False 	# specify True to report KL divergence when reporting marginal likelihood estimate
         
     def hidden():
         """ 
