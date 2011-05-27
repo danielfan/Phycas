@@ -8,17 +8,19 @@ if __name__ == '__main__':
     touch("trees.pdf")
     touch("trees.tre")
     
-    sumt.out.log            = 'logfile.txt'
-    sumt.out.log.mode       = REPLACE
-    sumt.trees              = 'test.t'
-    sumt.out.trees.prefix   = "trees"
-    sumt.out.trees.mode     = REPLACE
-    sumt.out.splits.prefix  = "splits"
-    sumt.out.splits.mode    = REPLACE
-    sumt.burnin             = 11
-    sumt.outgroup_taxon     = '40 Cyanophora paradoxa'
-    sumt.tree_credible_prob = 1.0
-    sumt.useGUI             = False
-    sumt.refdistfile = 'doof.txt'
+    sumt.out.log                = 'logfile.txt'
+    sumt.out.log.mode           = REPLACE
+    sumt.trees                  = 'test.t'
+    sumt.out.trees.prefix       = "trees"
+    sumt.out.trees.mode         = REPLACE
+    sumt.out.splits.prefix      = "splits"
+    sumt.out.splits.mode        = REPLACE
+    sumt.out.refdistfile        = False # "doof_ref_dist.txt"
+    #sumt.out.refdistfile.prefix = "doof_ref_dist"
+    #sumt.out.refdistfile.mode   = REPLACE
+    sumt.burnin                 = 11
+    sumt.outgroup_taxon         = '40 Cyanophora paradoxa'
+    sumt.tree_credible_prob     = 1.0
+    sumt.useGUI                 = False
     sumt()
     

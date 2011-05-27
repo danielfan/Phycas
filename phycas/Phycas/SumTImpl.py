@@ -20,7 +20,8 @@ class TreeSummarizer(CommonFunctions):
         
         """
         CommonFunctions.__init__(self, opts)
-        
+
+        self.refdistf = None
         self.pdf_page_width = 8.5       # should be an option
         self.pdf_page_height = 11.0     # should be an option
         self.pdf_ladderize = 'right'    # should be an option - valid values are 'right', 'left' or None
@@ -637,19 +638,18 @@ class TreeSummarizer(CommonFunctions):
 
         # Output reference prior information (note: do not be tempted to move this section up 
         # because it depends on the fact that we are completely done with the tree majrule by this point)
-        if not self.opts.refdistfile is None:
-            # FIXME! need to have an output option for this
-            refdistf = open(self.opts.refdistfile, 'w')
+        self.refDistFileOpen()
+        if self.refdistf is not None:
             self.assignEdgeLensAndSupportValues(majrule, split_map, self.num_trees_considered, True) # True means assign clade posteriors as edge lengths
-            refdistf.write('%s\n' % (majrule.makeNumberedNewick()))
+            self.refdistf.write('%s\n' % (majrule.makeNumberedNewick()))
             for k,v in split_vect[:first_below_50]:
                 num_edgelens = float(v[0])
                 mean_edgelen = float(v[1])/num_edgelens
                 var_edgelen = (float(v[2]) - num_edgelens*math.pow(mean_edgelen, 2.0))/num_edgelens
                 gamma_b = var_edgelen/mean_edgelen
                 gamma_a = mean_edgelen/gamma_b
-                refdistf.write('split_%s = Gamma(%g,%g)\n' % (k,gamma_a,gamma_b))
-            refdistf.close()
+                self.refdistf.write('split_%s = Gamma(%g,%g)\n' % (k,gamma_a,gamma_b))
+            self.refDistFileClose()
         
         self.stdout.info('\nSumT finished.')
         return split_info
@@ -663,5 +663,28 @@ class TreeSummarizer(CommonFunctions):
             self._splitsPdfWriter = sp.open(11.0, 8.5, self.stdout)
         return self._splitsPdfWriter
             
+    def refDistFileOpen(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Opens the reference distribution file.
         
+        """
+        self.phycassert(self.refdistf is None, 'Attempt made to open SumTImpl.refdistf, but it is already open!')
+        refdist_file_spec = self.opts.out.refdistfile
+        try:
+            self.refdistf = refdist_file_spec.open(self.stdout)
+        except:
+            print '*** Attempt to open reference distribution file (%s) failed.' % self.opts.out.refdistfile.filename
 
+        if self.refdistf:
+            print 'Reference distribution file was opened successfully'
+
+    def refDistFileClose(self):
+        #---+----|----+----|----+----|----+----|----+----|----+----|----+----|
+        """
+        Closes the reference distribution file.
+        
+        """
+        self.phycassert(self.refdistf is not None, 'Attempt made to close SumTImpl.refdistf, but it is not open!')
+        self.refdistf.close()
+        self.refdistf = None
