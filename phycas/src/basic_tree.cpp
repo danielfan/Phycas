@@ -40,6 +40,27 @@ using namespace phycas;
 
 #define INTERNAL_NODENUM_OFFSET 1000
 
+/// Get vector of tips sorted by the node number
+std::vector<TreeNode *> Tree::GetTips()
+    {
+    std::vector<TreeNode *> leafVec;
+    leafVec.resize(nTips);
+    preorder_iterator ndIt = begin();
+    for (; ndIt != end(); ++ndIt) 
+        {
+        TreeNode & nd = (*ndIt);
+        if (nd.IsTip())
+            {
+            const unsigned index = nd.GetNodeNumber();
+            if (index >= leafVec.size())
+                leafVec.resize(index + 1);
+            leafVec[index] = &nd;
+            }
+        }
+    return leafVec;
+    }
+		
+
 /*----------------------------------------------------------------------------------------------------------------------
 |	Sets firstPreorder to NULL and calls Clear() to initialize data members.
 */

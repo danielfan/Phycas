@@ -85,6 +85,7 @@ class Tree : public boost::enable_shared_from_this<Tree>
 		std::vector<double>		EdgeLens();
 		preorder_iterator		begin();
 		preorder_iterator		end();
+		std::vector<TreeNode *> GetTips();
 		
         unsigned                NumInternalNodesStored();
         unsigned                NumTipNodesStored();
@@ -209,6 +210,7 @@ class Tree : public boost::enable_shared_from_this<Tree>
 	};
 
 typedef boost::shared_ptr<Tree> TreeShPtr;
+
 
 }	// namespace phycas
 

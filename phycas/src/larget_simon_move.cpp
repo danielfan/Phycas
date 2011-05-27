@@ -37,7 +37,7 @@ namespace phycas
 double  LargetSimonMove::sampleWorkingPrior() const
 {
     PHYCAS_ASSERT(topo_prob_calc);
-    topo_prob_calc->SampleTree(tree);
+    topo_prob_calc->SampleTree(tree, rng);
     return 0.0;
 }
 

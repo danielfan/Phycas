@@ -44,6 +44,7 @@ class FocalTreeTopoProbCalculator: public TopoProbCalculator
         FocalTreeTopoProbCalculator(TreeShPtr);
 
         void SampleTree(TreeShPtr, LotShPtr) const;
+
         
         double CalcTopologyLnProb(Tree &) const;
         
@@ -52,8 +53,11 @@ class FocalTreeTopoProbCalculator: public TopoProbCalculator
         TreeShPtr focalTree;
         std::map<Split, double> splitToProbMap;
         unsigned ntips;
-       // mutable Tree scratchTree;
-        //mutable std::set<TreeNode *> omittedNodes;
+        void ResolveToAvoidSharedSplits(TreeShPtr dest, TreeNode * destPolytomy, TreeNode * correspondingFocalNode, LotShPtr rng) const;
+        void FindTabuSplitsFromSelectedNodes(TreeNode * correspondingFocalNode, std::set<Split> & splitSet) const;
+        std::vector<TreeNode *> RandomlyResolve(TreeShPtr dest, TreeNode * destPolytomy, const std::vector<TreeNode *> & polytomyChildren, LotShPtr rng) const;
+        bool HasTabuSplit(TreeShPtr dest, TreeNode * destPolytomy, const std::vector<TreeNode *> & polytomyChildren, std::set<Split> & tabuSplits) const;
+
         //void buildScratchTree();
     };
 

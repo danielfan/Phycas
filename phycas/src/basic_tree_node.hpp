@@ -98,6 +98,17 @@ class TreeNode
 		const InternalData *	GetInternalData() const;
 		Split &					GetSplit();
 		const Split &			GetSplitConst() const;
+		std::vector<TreeNode *> GetChildren() const
+		    {
+		    std::vector<TreeNode *> v;
+		    TreeNode * c = lChild;
+		    while (c)
+		        {
+		        v.push_back(c);
+		        c = c->rSib;
+		        }
+		    return v;
+		    }
 
 		// Modifiers
 		void			SetObservable();
