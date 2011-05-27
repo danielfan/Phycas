@@ -409,62 +409,36 @@ void Tree::RefreshPreorder(TreeNode *nd) const
 		return;
 
 	if (nd == NULL)
+		{
 		nd = firstPreorder;
-	if (nd == NULL)
-		return; // tolerate calling this on a empty tree
-
-	if (nd->lChild == NULL && nd->rSib == NULL)
-		{
-		// nd has no children and no siblings, so nextPreorder is the right sibling of 
-		// the first ancestral node that has a right sibling.
-		TreeNode *anc = nd->par;
-		while ((anc != NULL) && (anc->rSib == NULL))
-			anc = anc->par;
-		if (anc == NULL)
-			{
-			// We descended all the way to the root without finding an ancestor with
-			// a right sibling, so nd must be the upper-right-most node in the tree
-			lastPreorder = nd;
-			nd->nextPreorder = NULL;
-			}
-		else
-			{
-			// We found an ancestor with a right sibling without having to go all
-			// the way to the root of the tree
-			nd->nextPreorder = anc->rSib;
-			anc->rSib->prevPreorder = nd;
-			}
-		}
-	else if (nd->lChild == NULL && nd->rSib != NULL)
-		{
-		// nd has no children (it is a tip), but does have a sibling on its right
-		nd->nextPreorder = nd->rSib;
-		nd->rSib->prevPreorder = nd;
-		}
-	else if (nd->lChild != NULL && nd->rSib == NULL)
-		{
-		// nd has children (it is an internal node) but no siblings on its right
-		nd->nextPreorder = nd->lChild;
-		nd->lChild->prevPreorder = nd;
-		}
-	else
-		{
-		// nd has both children and siblings on its right
-		nd->nextPreorder = nd->lChild;
-		nd->lChild->prevPreorder = nd;
-		}
-
-	if (nd->lChild != NULL)
-		{
-		RefreshPreorder(nd->lChild);
-		}
-
-	if (nd->rSib != NULL)
-		{
-		RefreshPreorder(nd->rSib);
-		}
-
-	if (nd == firstPreorder)
+        if (nd == NULL)
+            return; // tolerate calling this on a empty tree
+        }
+    bool updatingFromRoot = bool(nd == firstPreorder);
+    std::stack<TreeNode *> ndStack;
+    for (;;)
+        {
+        if (nd->lChild)
+            {
+            nd->nextPreorder = nd->lChild;
+            if (nd->rSib)
+                ndStack.push(nd->rSib);
+            }
+        else if (nd->rSib)
+            nd->nextPreorder = nd->rSib;
+        else 
+            {
+            if (ndStack.empty())
+                break;
+            nd->nextPreorder = ndStack.top();
+            ndStack.pop();
+            }
+        nd->nextPreorder->prevPreorder = nd;
+        nd = nd->nextPreorder;
+        }
+    nd->nextPreorder = 0L;    
+    lastPreorder = nd;
+	if (updatingFromRoot)
 		preorderDirty = false;
 	}
 
@@ -1315,6 +1289,7 @@ bool Tree::DebugCheckTree(bool allowDegTwo, bool checkDataPointers, int verbosit
 	if (nodeCountsValid)
 		{
 		PHYCAS_ASSERT(countedNLeaves == expectedNLeaves);
+		std::cerr << "countedNNodes  expectedNNodes = " <<countedNNodes << " " << expectedNNodes << "\n";
 		PHYCAS_ASSERT(countedNNodes == expectedNNodes);
 		}
 	if (!preorderDirty)

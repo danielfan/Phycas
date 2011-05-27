@@ -520,6 +520,7 @@ class MCMCImpl(CommonFunctions):
         new_external_edge_lens = None
         
         all_updaters = cold_chain.chain_manager.getAllUpdaters() 
+        edge_lens_need_updating = True
         for u in all_updaters:      # good candidate for moving into C++
             name = u.getName()
             if u.isFixed() or not u.isPriorSteward():
@@ -660,16 +661,24 @@ class MCMCImpl(CommonFunctions):
                 edgelen = u.sampleWorkingPrior()
                 new_edge_lens.append(edgelen)
             elif name.find('master_edgelen') == 0:                  # C++ class EdgeLenMasterParam
-                num_edge_lens = cold_chain.tree.getNNodes() - 1
-                new_edge_lens = [u.sampleWorkingPrior() for j in range(num_edge_lens)]
+                pass
+#                 self.phycassert(False, 'master')
+#                 num_edge_lens = cold_chain.tree.getNNodes() - 1
+#                 new_edge_lens = [u.sampleWorkingPrior() for j in range(num_edge_lens)]
             elif name.find('external_edgelen') == 0:                # C++ class EdgeLenMasterParam
-                num_edge_lens = cold_chain.tree.getNTips() - 1
-                new_external_edge_lens = [u.sampleWorkingPrior() for j in range(num_edge_lens)]
+                pass
+#                 self.phycassert(False, 'external')
+#                 num_edge_lens = cold_chain.tree.getNTips() - 1
+#                 new_external_edge_lens = [u.sampleWorkingPrior() for j in range(num_edge_lens)]
             elif name.find('internal_edgelen') == 0:                # C++ class EdgeLenMasterParam
-                num_edge_lens = cold_chain.tree.getNInternals()
-                new_internal_edge_lens = [u.sampleWorkingPrior() for j in range(num_edge_lens)]
-            elif name != 'larget_simon_local':
+                pass
+#                 self.phycassert(False, 'internal')
+#                 num_edge_lens = cold_chain.tree.getNInternals()
+#                 new_internal_edge_lens = [u.sampleWorkingPrior() for j in range(num_edge_lens)]
+            elif name == 'larget_simon_local':
                 u.sampleWorkingPrior()
+                print 'LargetSimonLocal did do a topo update!'
+                edge_lens_need_updating = False
             else:
                 self.phycassert(0, 'model uses an updater (%s) that has not yet been added to MCMCImpl.exploreWorkingPrior (workaround: specify mcmc.draw_directly_from_prior = False)' % name)
         
@@ -689,7 +698,7 @@ class MCMCImpl(CommonFunctions):
                     j += 1
                 else:
                     self.phycassert(0, 'nd is neither a tip nor an internal node in MCMCImpl.exploreWorkingPrior')
-        else:
+        elif edge_lens_need_updating:
             # Case of fixed topology (and hence each edge has its own length parameter) or there is a single master edge length parameter governing both tips and internals
             self.phycassert(len(new_edge_lens) == cold_chain.tree.getNNodes() - 1, 'new_edge_lens has %d elements but expecting %d in MCMCImpl.exploreWorkingPrior' % (len(new_edge_lens), cold_chain.tree.getNNodes() - 1)) 
             i = 0
@@ -698,16 +707,19 @@ class MCMCImpl(CommonFunctions):
                     continue
                 nd.setEdgeLen(new_edge_lens[i])
                 i += 1
-
+        print 'Calling prepareForLikelihood'
         # replace the model
         cold_chain.prepareForLikelihood()
+        print 'Calling replaceModel'
         cold_chain.likelihood.replaceModel(cold_chain.partition_model)
         
         # recalculate the likelihood
         cold_chain_manager = self.mcmc_manager.getColdChainManager()
+        c = raw_input('Calling refreshLastLnLike. Enter input: ')
         cold_chain_manager.refreshLastLnLike()
+        print 'Calling refreshLastLnPrior'
         cold_chain_manager.refreshLastLnPrior()
-
+        print 'done with exploreWorkingPrior'
         # what about polytomies?
                                             
         ############################ end exploreWorkingPrior ############################

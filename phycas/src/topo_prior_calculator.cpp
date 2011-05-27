@@ -37,24 +37,52 @@ const double kLog74 = 4.30406509320417;
 
 void FocalTreeTopoProbCalculator::SampleTree(TreeShPtr destTree, LotShPtr rng) const
     {
-    TreeManip tm(destTree);
-    tm.starTree(ntips, ProbDistShPtr()); 
+    std::cerr << "Here we are in SampleTree\n";
     /// Get vector of tips sorted by the node number
     std::vector<TreeNode *> destTips = destTree->GetTips();
-    TreeNode * destNd = destTree->GetRoot();
+    TreeNode * destNd = destTree->GetFirstPreorder();
     std::map<TreeNode *, TreeNode *> focalToDest;
     TreeNode * fnd = focalTree->GetFirstPreorder();
     focalToDest[fnd] = destNd;
+
     PHYCAS_ASSERT(destNd->GetNodeNumber() == fnd->GetNodeNumber());
-    fnd = fnd->GetNextPreorder();
     destNd = destNd->GetNextPreorder();
-    destNd->lChild = 0L;
+    fnd = fnd->GetNextPreorder();
     focalToDest[fnd] = destNd;
+    
+    TreeNode * toCollapse = destNd->GetNextPreorder();
+    while (toCollapse)
+        {
+        TreeNode * nextDestNd = toCollapse->GetNextPreorder();
+        if (!toCollapse->IsExternalEdge())
+            {
+            toCollapse->CollapseEdge();
+            destTree->StoreInternalNode(toCollapse);            
+            }
+        toCollapse = nextDestNd;
+        }
+    destTree->nInternals = 1;
+    if (true)
+        {
+        destTree->preorderDirty = true;
+        std::cerr << "About to do an extra refresh of the preorder\n";
+        destTree->RefreshPreorder();
+        std::cerr << "Done FirstExtraRefreshing the preorder\n";
+        destTree->debugMode(true);
+        destTree->DebugCheckTree(false, false, 1);
+        std::cerr << "Done FirstExtraDebugCheckTree\n";
+        }
+    std::cerr << "About to do some harmless looking code...\n";
+
+    destNd->lChild = 0L;
     fnd = fnd->GetNextPreorder();
     std::map<TreeNode *, TreeNode *> polytomyMap;
+    std::cerr << "About to enter while loop...\n";
     while (fnd)
         {
         TreeNode * newPar = focalToDest[fnd->GetParent()];
+        PHYCAS_ASSERT(newPar);
+        std::cerr << "NewPar # = " << newPar->GetNodeNumber();
         if (!fnd->IsExternalEdge()) 
             {
             double probInclusion = fnd->GetEdgeLen(); // hackety-hack
@@ -78,19 +106,41 @@ void FocalTreeTopoProbCalculator::SampleTree(TreeShPtr destTree, LotShPtr rng) c
         else
             {
             TreeNode * leafNd = destTips[fnd->GetNodeNumber()];
+            leafNd->rSib = 0L;
             newPar->AddChild(leafNd);
             fnd->SetIsSelected(false);
             }
         fnd = fnd->GetNextPreorder();
+        std::cerr << "Moving to the next node...\n";
         }
-    
+    std::cerr << "Done walking over the focal tree\n";
+
+    if (true)
+        {
+        destTree->preorderDirty = true;
+        std::cerr << "About to do an extra refresh of the preorder\n";
+        destTree->RefreshPreorder();
+        std::cerr << "Done SecondExtraRefreshing the preorder\n";
+        destTree->RefreshNodeCounts();
+        destTree->debugMode(true);
+        destTree->DebugCheckTree(false, false, 1);
+        std::cerr << "Done SecondExtraDebugCheckTree\n";
+        }
     for (std::map<TreeNode *, TreeNode *>::const_iterator pmIt = polytomyMap.begin(); pmIt != polytomyMap.end(); ++pmIt)
         {
         TreeNode * destPolytomy = pmIt->first;
         TreeNode * focalPolytomy = pmIt->second;
+        std::cerr << "resolving a polytomy...\n";
         ResolveToAvoidSharedSplits(destTree, destPolytomy, focalPolytomy, rng);
         }
+    std::cerr << "Done resolving the variate\n";
+    destTree->preorderDirty = true;
     destTree->RefreshPreorder();
+    std::cerr << "Done Refreshing the preorder\n";
+    destTree->RefreshNodeCounts();
+    destTree->debugMode(true);
+    destTree->DebugCheckTree(false, false, 1);
+    std::cerr << "Done DebugCheckTree\n";
     preorder_iterator ndIt = destTree->begin();
     ++ndIt;
     for (; ndIt != destTree->end(); ++ndIt)
@@ -98,8 +148,11 @@ void FocalTreeTopoProbCalculator::SampleTree(TreeShPtr destTree, LotShPtr rng) c
         TreeNode & nd = *ndIt;
         ProbDistShPtr d = GetEdgeLenProbDistForSplit(nd.split);
         PHYCAS_ASSERT(d);
-        nd.SetEdgeLen(d->Sample());
+        const double e = d->Sample();
+        nd.SetEdgeLen(e);
+        std::cerr << "Drew " << e << " for node # = " << nd.GetNodeNumber() << "\n";
         }
+    std::cerr << "Returning from SampleTree\n";
     }
 
 // inserts all "flagged" splits that are connected to correspondingFocalNode into
@@ -139,6 +192,7 @@ void FocalTreeTopoProbCalculator::ResolveToAvoidSharedSplits(
         TreeNode * correspondingFocalNode,
         LotShPtr rng) const
 {
+    std::cerr << "Here we are in ResolveToAvoidSharedSplits\n";
     TreeNode * newInternal = destTree->GetNewNode();
     TreeNode * origLChild = destPolytomy->GetLeftChild();       
     const unsigned polytomyDeg = 1 + destPolytomy->CountChildren();
@@ -187,6 +241,7 @@ void FocalTreeTopoProbCalculator::ResolveToAvoidSharedSplits(
         destPolytomy->AddChild(newInternal);
         newInternal->AddChild(destU1);
         newInternal->AddChild(destU2);
+        std::cerr << "leaving ResolveToAvoidSharedSplits in the deg = 4 branch\n";
         return;
         }
     std::set<Split> tabuSplits;
@@ -203,9 +258,9 @@ void FocalTreeTopoProbCalculator::ResolveToAvoidSharedSplits(
             {
             TreeNode * nd = *nnIt;
             nd->CollapseEdge();
-            destTree->StoreInternalNode(nd);
-            
+            destTree->StoreInternalNode(nd);            
             }
+        std::cerr << "Tabu split generated trying again.\n";
         }
 }
 

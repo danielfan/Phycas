@@ -37,6 +37,7 @@ const unsigned TreeNode::nodeNumInitValue = UINT_MAX;
 */
 void TreeNode::AddChild(TreeNode *nd)
     {
+    PHYCAS_ASSERT(nd);
     TreeNode * leftSib = FindRightmostChild();
     if (leftSib == 0L)
         lChild = nd;

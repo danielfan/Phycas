@@ -2518,7 +2518,7 @@ double TreeLikelihood::calcLnLFromNode(
   TreeShPtr t)				/**< is the tree */
 	{
 	double lnL;
-//printf("in calcLnLFromNode with focal_node=%d\n", focal_node.GetNodeNumber());//
+printf("in calcLnLFromNode with focal_node=%d\n", focal_node.GetNodeNumber());//
 
 	if (no_data)
 		lnL =  0.0;
